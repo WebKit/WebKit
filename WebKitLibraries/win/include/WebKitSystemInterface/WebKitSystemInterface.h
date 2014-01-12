@@ -113,9 +113,10 @@ CFArrayRef wkCFURLCacheCopyAllHostNamesInPersistentStore();
 void wkCFURLCacheDeleteHostNamesInPersistentStore(CFArrayRef hostNames);
 
 unsigned wkInitializeMaximumHTTPConnectionCountPerHost(unsigned preferredConnectionCount);
-int wkGetHTTPPipeliningPriority(CFURLRequestRef);
-void wkSetHTTPPipeliningMaximumPriority(int maximumPriority);
-void wkSetHTTPPipeliningPriority(CFURLRequestRef, int priority);
+int wkGetHTTPRequestPriority(CFURLRequestRef);
+void wkSetHTTPRequestMaximumPriority(int maximumPriority);
+void wkSetHTTPRequestPriority(CFURLRequestRef, int priority);
+void wkHTTPRequestEnablePipelining(CFURLRequestRef);
 
 void wkSetCONNECTProxyForStream(CFReadStreamRef, CFStringRef proxyHost, CFNumberRef proxyPort);
 void wkSetCONNECTProxyAuthorizationForStream(CFReadStreamRef, CFStringRef proxyAuthorizationString);

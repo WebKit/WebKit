@@ -4,6 +4,17 @@
         https://bugs.webkit.org/show_bug.cgi?id=126789
         <rdar://problem/15114727>
 
+        Update Windows WKSI.
+
+        * win/include/WebKitSystemInterface/WebKitSystemInterface.h:
+        * win/lib32/WebKitSystemInterface.lib:
+
+2014-01-11  Alexey Proskuryakov  <ap@apple.com>
+
+        [Mac] [Windows] Stop scheduling network requests in WebCore
+        https://bugs.webkit.org/show_bug.cgi?id=126789
+        <rdar://problem/15114727>
+
         Update WKSI.
 
         * WebKitSystemInterface.h:
