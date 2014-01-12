@@ -52,31 +52,27 @@ public:
         test->receivedResponse(download);
     }
 
-    static gboolean createdDestinationCallback(WebKitDownload* download, const gchar* destination, DownloadTest* test)
+    static void createdDestinationCallback(WebKitDownload* download, const gchar* destination, DownloadTest* test)
     {
         g_assert(webkit_download_get_destination(download));
         g_assert_cmpstr(webkit_download_get_destination(download), ==, destination);
         test->createdDestination(download, destination);
-        return TRUE;
     }
 
-    static gboolean receivedDataCallback(WebKitDownload* download, guint64 dataLength, DownloadTest* test)
+    static void receivedDataCallback(WebKitDownload* download, guint64 dataLength, DownloadTest* test)
     {
         test->receivedData(download, dataLength);
-        return TRUE;
     }
 
-    static gboolean finishedCallback(WebKitDownload* download, DownloadTest* test)
+    static void finishedCallback(WebKitDownload* download, DownloadTest* test)
     {
         test->finished(download);
-        return TRUE;
     }
 
-    static gboolean failedCallback(WebKitDownload* download, GError* error, DownloadTest* test)
+    static void failedCallback(WebKitDownload* download, GError* error, DownloadTest* test)
     {
         g_assert(error);
         test->failed(download, error);
-        return TRUE;
     }
 
     static gboolean decideDestinationCallback(WebKitDownload* download, const gchar* suggestedFilename, DownloadTest* test)

@@ -264,13 +264,14 @@ static void webkit_download_class_init(WebKitDownloadClass* downloadClass)
      * created successfully at @destination.
      */
     signals[CREATED_DESTINATION] =
-        g_signal_new("created-destination",
-                     G_TYPE_FROM_CLASS(objectClass),
-                     G_SIGNAL_RUN_LAST,
-                     0, 0, 0,
-                     g_cclosure_marshal_VOID__STRING,
-                     G_TYPE_BOOLEAN, 1,
-                     G_TYPE_STRING);
+        g_signal_new(
+            "created-destination",
+            G_TYPE_FROM_CLASS(objectClass),
+            G_SIGNAL_RUN_LAST,
+            0, 0, 0,
+            g_cclosure_marshal_VOID__STRING,
+            G_TYPE_NONE, 1,
+            G_TYPE_STRING);
 }
 
 WebKitDownload* webkitDownloadCreate(DownloadProxy* downloadProxy)
@@ -382,8 +383,7 @@ void webkitDownloadDestinationCreated(WebKitDownload* download, const CString& d
 {
     if (download->priv->isCancelled)
         return;
-    gboolean returnValue;
-    g_signal_emit(download, signals[CREATED_DESTINATION], 0, destinationURI.data(), &returnValue);
+    g_signal_emit(download, signals[CREATED_DESTINATION], 0, destinationURI.data(), nullptr);
 }
 
 /**

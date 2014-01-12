@@ -1,3 +1,17 @@
+2014-01-12  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Fix return value of WebKitDownload::created-destination
+        https://bugs.webkit.org/show_bug.cgi?id=126741
+
+        Reviewed by Martin Robinson.
+
+        WebKitDownload::created-destination signal should be void instead
+        of gboolean. This doesn't break the API/ABI.
+
+        * UIProcess/API/gtk/WebKitDownload.cpp:
+        (webkit_download_class_init):
+        (webkitDownloadDestinationCreated):
+
 2014-01-11  Yongjun Zhang  <yongjun_zhang@apple.com>
 
         Support bool argument for encoding/decoding invocations.
