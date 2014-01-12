@@ -1,3 +1,16 @@
+2014-01-11  Sam Weinig  <sam@webkit.org>
+
+        Add support for null StringViews
+        https://bugs.webkit.org/show_bug.cgi?id=126827
+
+        Reviewed by Anders Carlsson.
+
+        Add new test for StringView.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WTF/StringView.cpp: Added.
+        (TestWebKitAPI::TEST):
+
 2014-01-10  Benjamin Poulain  <bpoulain@apple.com>
 
         Remove the BlackBerry port from trunk

@@ -37,12 +37,18 @@ namespace WTF {
 
 class StringView {
 public:
-    StringView(const LChar *characters, unsigned length)
+    StringView()
+        : m_characters(nullptr)
+        , m_length(0)
+    {
+    }
+
+    StringView(const LChar* characters, unsigned length)
     {
         initialize(characters, length);
     }
 
-    StringView(const UChar *characters, unsigned length)
+    StringView(const UChar* characters, unsigned length)
     {
         initialize(characters, length);
     }
@@ -79,8 +85,11 @@ public:
         return static_cast<const UChar*>(m_characters);
     }
 
+    bool isNull() const { return !m_characters; }
     bool isEmpty() const { return !length(); }
     unsigned length() const { return m_length & ~is16BitStringFlag; }
+
+    explicit operator bool() const { return !isNull(); }
 
     bool is8Bit() const { return !(m_length & is16BitStringFlag); }
 
@@ -119,7 +128,7 @@ public:
     }
 
 private:
-    void initialize(const LChar *characters, unsigned length)
+    void initialize(const LChar* characters, unsigned length)
     {
         ASSERT(!(length & is16BitStringFlag));
         
@@ -127,7 +136,7 @@ private:
         m_length = length;
     }
 
-    void initialize(const UChar *characters, unsigned length)
+    void initialize(const UChar* characters, unsigned length)
     {
         ASSERT(!(length & is16BitStringFlag));
         
