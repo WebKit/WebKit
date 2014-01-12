@@ -1,5 +1,12 @@
 2014-01-12  David Kilzer  <ddkilzer@apple.com>
 
+        [iOS] Fix link errors for iOS: Part 2
+
+        * WebCore.exp.in:
+        - Move some Mac-only symbols to Mac-only section.
+
+2014-01-12  David Kilzer  <ddkilzer@apple.com>
+
         [iOS] First of many iOS fixes to WebCore.exp.in
 
         * WebCore.exp.in:
