@@ -2791,7 +2791,7 @@
 		BCACC40D16B0B7BE00B6E092 /* BaseXPCService.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = BaseXPCService.xcconfig; sourceTree = "<group>"; };
 		BCACC40E16B0B8A800B6E092 /* WebContentService.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = WebContentService.xcconfig; sourceTree = "<group>"; };
 		BCACC40F16B0B8A800B6E092 /* WebContentService.Development.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = WebContentService.Development.xcconfig; sourceTree = "<group>"; };
-		BCACC44016B24CAA00B6E092 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		BCACC44016B24CAA00B6E092 /* Info-OSX.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "Info-OSX.plist"; sourceTree = "<group>"; };
 		BCACC44316B24CAA00B6E092 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		BCAE9DE9160C097400A33217 /* com.apple.WebKit.WebContent.Development.xpc */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = com.apple.WebKit.WebContent.Development.xpc; sourceTree = BUILT_PRODUCTS_DIR; };
 		BCB0AEE7122F53E300B1341E /* MutableDictionary.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MutableDictionary.h; sourceTree = "<group>"; };
@@ -5387,7 +5387,7 @@
 		BCACC43F16B24CAA00B6E092 /* WebContentService */ = {
 			isa = PBXGroup;
 			children = (
-				BCACC44016B24CAA00B6E092 /* Info.plist */,
+				BCACC44016B24CAA00B6E092 /* Info-OSX.plist */,
 			);
 			path = WebContentService;
 			sourceTree = "<group>";
