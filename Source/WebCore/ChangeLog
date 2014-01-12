@@ -1,3 +1,19 @@
+2014-01-12  Andreas Kling  <akling@apple.com>
+
+        REGRESSION(r160806): line-height is not applied when only present in :link style.
+        <http://webkit.org/b/126839>
+        <rdar://problem/15799899>
+
+        Reviewed by Antti Koivisto.
+
+        Test: fast/css/line-height-link-style.html
+
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::CascadedProperties::Property::apply):
+
+            Use the CSSValue for SelectorChecker::MatchLink when applying
+            style inside a link.
+
 2014-01-12  David Kilzer  <ddkilzer@apple.com>
 
         [iOS] Fix link errors for iOS: Part 3

@@ -4252,8 +4252,8 @@ void StyleResolver::CascadedProperties::Property::apply(StyleResolver& resolver)
 
     // FIXME: It would be nice if line-height were less of a special snowflake.
     if (id == CSSPropertyLineHeight) {
-        if (cssValue[0])
-            state.setLineHeightValue(cssValue[0]);
+        if (auto value = state.style()->insideLink() == NotInsideLink ? cssValue[0] : cssValue[SelectorChecker::MatchLink])
+            state.setLineHeightValue(value);
         return;
     }
 

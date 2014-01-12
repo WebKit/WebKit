@@ -1,3 +1,14 @@
+2014-01-12  Andreas Kling  <akling@apple.com>
+
+        REGRESSION(r160806): line-height is not applied when only present in :link style.
+        <http://webkit.org/b/126839>
+        <rdar://problem/15799899>
+
+        Reviewed by Antti Koivisto.
+
+        * fast/css/line-height-link-style-expected.txt: Added.
+        * fast/css/line-height-link-style.html: Added.
+
 2014-01-11  Brent Fulgham  <bfulgham@apple.com>
 
         [WebGL] Correct uniform input validation for texture sampler uniforms
