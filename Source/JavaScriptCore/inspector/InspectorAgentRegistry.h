@@ -38,9 +38,6 @@ class InspectorFrontendChannel;
 class JS_EXPORT_PRIVATE InspectorAgentRegistry {
 public:
     InspectorAgentRegistry();
-    ~InspectorAgentRegistry();
-
-    InspectorAgentRegistry(const InspectorAgentRegistry&);
 
     void append(std::unique_ptr<InspectorAgentBase>);
 
@@ -49,6 +46,11 @@ public:
     void discardAgents();
 
 private:
+    // These are declared here to avoid MSVC from trying to create default iplementations which would
+    // involve generating a copy constructor and copy assignment operator for the Vector of std::unique_ptrs.
+    InspectorAgentRegistry(const InspectorAgentRegistry&) WTF_DELETED_FUNCTION;
+    InspectorAgentRegistry& operator=(const InspectorAgentRegistry&) WTF_DELETED_FUNCTION;
+
     Vector<std::unique_ptr<InspectorAgentBase>> m_agents;
 };
 

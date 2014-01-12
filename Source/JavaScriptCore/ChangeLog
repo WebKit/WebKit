@@ -1,5 +1,12 @@
 2014-01-11  Anders Carlsson  <andersca@apple.com>
 
+        Try again to fix the build.
+
+        * inspector/InspectorAgentRegistry.cpp:
+        * inspector/InspectorAgentRegistry.h:
+
+2014-01-11  Anders Carlsson  <andersca@apple.com>
+
         Try to prevent the Vector copy constructor from being instantiated.
 
         * inspector/InspectorAgentRegistry.cpp:
