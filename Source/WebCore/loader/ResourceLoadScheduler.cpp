@@ -162,9 +162,10 @@ void ResourceLoadScheduler::scheduleLoad(ResourceLoader* resourceLoader, Resourc
     bool hadRequests = host->hasRequests();
     host->schedule(resourceLoader, priority);
 
-#if PLATFORM(IOS)
-    if (ResourceRequest::httpPipeliningEnabled() && !isSuspendingPendingRequests()) {
+#if PLATFORM(MAC) || USE(CFNETWORK)
+    if (!isSuspendingPendingRequests()) {
         // Serve all requests at once to keep the pipeline full at the network layer.
+        // FIXME: Does this code do anything useful, given that we also set maxRequestsInFlightPerHost to effectively unlimited on these platforms?
         servePendingRequests(host, ResourceLoadPriorityVeryLow);
         return;
     }

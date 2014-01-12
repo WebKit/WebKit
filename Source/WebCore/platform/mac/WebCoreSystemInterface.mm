@@ -105,10 +105,11 @@ CFReadStreamRef (*wkCreateCustomCFReadStream)(void *(*formCreate)(CFReadStreamRe
 void (*wkSetNSURLConnectionDefersCallbacks)(NSURLConnection *, BOOL);
 void (*wkSetNSURLRequestShouldContentSniff)(NSMutableURLRequest *, BOOL);
 unsigned (*wkInitializeMaximumHTTPConnectionCountPerHost)(unsigned preferredConnectionCount);
-int (*wkGetHTTPPipeliningPriority)(CFURLRequestRef);
-void (*wkSetHTTPPipeliningMaximumPriority)(int priority);
-void (*wkSetHTTPPipeliningPriority)(CFURLRequestRef, int priority);
-void (*wkSetHTTPPipeliningMinimumFastLanePriority)(int priority);
+int (*wkGetHTTPRequestPriority)(CFURLRequestRef);
+void (*wkSetHTTPRequestMaximumPriority)(int priority);
+void (*wkSetHTTPRequestPriority)(CFURLRequestRef, int priority);
+void (*wkSetHTTPRequestMinimumFastLanePriority)(int priority);
+void (*wkHTTPRequestEnablePipelining)(CFURLRequestRef);
 void (*wkSetCONNECTProxyForStream)(CFReadStreamRef, CFStringRef proxyHost, CFNumberRef proxyPort);
 void (*wkSetCONNECTProxyAuthorizationForStream)(CFReadStreamRef, CFStringRef proxyAuthorizationString);
 CFHTTPMessageRef (*wkCopyCONNECTProxyResponse)(CFReadStreamRef, CFURLRef responseURL, CFStringRef proxyHost, CFNumberRef proxyPort);

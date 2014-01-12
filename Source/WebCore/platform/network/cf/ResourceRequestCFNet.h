@@ -62,7 +62,7 @@ inline ResourceLoadPriority toResourceLoadPriority(int priority)
     }
 }
 
-inline int toHTTPPipeliningPriority(ResourceLoadPriority priority)
+inline int toPlatformRequestPriority(ResourceLoadPriority priority)
 {
     switch (priority) {
     case ResourceLoadPriorityUnresolved:

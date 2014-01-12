@@ -1,3 +1,21 @@
+2014-01-11  Alexey Proskuryakov  <ap@apple.com>
+
+        [Mac] [Windows] Stop scheduling network requests in WebCore
+        https://bugs.webkit.org/show_bug.cgi?id=126789
+        <rdar://problem/15114727>
+
+        Reviewed by Sam Weinig.
+
+        * NetworkProcess/mac/NetworkResourceLoadSchedulerMac.mm:
+        (WebKit::NetworkResourceLoadScheduler::platformInitializeMaximumHTTPConnectionCountPerHost):
+        We no longer need the trick with 7 connections, as synchronous requests always have
+        the right of way.
+
+        * UIProcess/API/C/WKContext.cpp: Removed long obsolete functions.
+
+        * WebProcess/WebCoreSupport/mac/WebSystemInterface.mm: (InitWebCoreSystemInterface):
+        Updated for new WKSI function names.
+
 2014-01-11  Simon Fraser  <simon.fraser@apple.com>
 
         Unfork GraphicsContext::drawNativeImage for iOS

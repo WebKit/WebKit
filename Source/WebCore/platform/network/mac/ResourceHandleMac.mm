@@ -118,9 +118,9 @@ static bool synchronousWillSendRequestEnabled()
 #endif
 
 #if !PLATFORM(IOS)
-void ResourceHandle::createNSURLConnection(id delegate, bool shouldUseCredentialStorage, bool shouldContentSniff)
+void ResourceHandle::createNSURLConnection(id delegate, bool shouldUseCredentialStorage, bool shouldContentSniff, SchedulingBehavior schedulingBehavior)
 #else
-void ResourceHandle::createNSURLConnection(id delegate, bool shouldUseCredentialStorage, bool shouldContentSniff, NSDictionary *connectionProperties)
+void ResourceHandle::createNSURLConnection(id delegate, bool shouldUseCredentialStorage, bool shouldContentSniff, SchedulingBehavior schedulingBehavior, NSDictionary *connectionProperties)
 #endif
 {
     // Credentials for ftp can only be passed in URL, the connection:didReceiveAuthenticationChallenge: delegate call won't be made.
@@ -162,14 +162,26 @@ void ResourceHandle::createNSURLConnection(id delegate, bool shouldUseCredential
     ASSERT([NSURLConnection instancesRespondToSelector:@selector(_initWithRequest:delegate:usesCache:maxContentLength:startImmediately:connectionProperties:)]);
 
 #if PLATFORM(IOS)
+    // FIXME: This code is different from iOS code in ResourceHandleCFNet.cpp in that here we respect stream properties that were present in client properties.
     NSDictionary *streamPropertiesFromClient = [connectionProperties objectForKey:@"kCFURLConnectionSocketStreamProperties"];
     NSMutableDictionary *streamProperties = streamPropertiesFromClient ? [[streamPropertiesFromClient mutableCopy] autorelease] : [NSMutableDictionary dictionary];
 #else
     NSMutableDictionary *streamProperties = [NSMutableDictionary dictionary];
 #endif
 
-    if (!shouldUseCredentialStorage)
+    if (!shouldUseCredentialStorage) {
+        // Avoid using existing connections, because they may be already authenticated.
         [streamProperties setObject:@"WebKitPrivateSession" forKey:@"_kCFURLConnectionSessionID"];
+    }
+
+    if (schedulingBehavior == SchedulingBehavior::Synchronous) {
+        // Synchronous requests should not be subject to regular connection count limit to avoid deadlocks.
+        // If we are using all available connections for async requests, and make a sync request, then prior
+        // requests may get stuck waiting for delegate calls while we are in nested run loop, and the sync
+        // request won't start because there are no available connections.
+        // Connections are grouped by their socket stream properties, with each group having a separate count.
+        [streamProperties setObject:@TRUE forKey:@"_WebKitSynchronousRequest"];
+    }
 
 #if PLATFORM(IOS) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
     RetainPtr<CFDataRef> sourceApplicationAuditData = d->m_context->sourceApplicationAuditData();
@@ -213,12 +225,14 @@ bool ResourceHandle::start()
     createNSURLConnection(
         ResourceHandle::delegate(),
         shouldUseCredentialStorage,
-        d->m_shouldContentSniff || d->m_context->localFileContentSniffingEnabled());
+        d->m_shouldContentSniff || d->m_context->localFileContentSniffingEnabled(),
+        SchedulingBehavior::Asynchronous);
 #else
     createNSURLConnection(
         d->m_proxy.get(),
         shouldUseCredentialStorage,
         d->m_shouldContentSniff || d->m_context->localFileContentSniffingEnabled(),
+        SchedulingBehavior::Asynchronous,
         (NSDictionary *)client()->connectionProperties(this));
 #endif
 
@@ -366,13 +380,15 @@ void ResourceHandle::platformLoadResourceSynchronously(NetworkingContext* contex
     handle->createNSURLConnection(
         handle->delegate(),
         storedCredentials == AllowStoredCredentials,
-        handle->shouldContentSniff() || context->localFileContentSniffingEnabled());
+        handle->shouldContentSniff() || context->localFileContentSniffingEnabled(),
+        SchedulingBehavior::Synchronous);
 #else
     handle->createNSURLConnection(
         handle->delegate(), // A synchronous request cannot turn into a download, so there is no need to proxy the delegate.
         storedCredentials == AllowStoredCredentials,
         shouldRelaxThirdPartyCookiePolicy(context, request.url()),
         handle->shouldContentSniff() || (context && context->localFileContentSniffingEnabled()),
+        SchedulingBehavior::Synchronous,
         (NSDictionary *)handle->client()->connectionProperties(handle.get()));
 #endif
 

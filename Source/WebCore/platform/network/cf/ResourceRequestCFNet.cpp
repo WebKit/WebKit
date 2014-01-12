@@ -53,6 +53,7 @@
 
 namespace WebCore {
 
+// FIXME: Make this a NetworkingContext property.
 #if PLATFORM(IOS)
 bool ResourceRequest::s_httpPipeliningEnabled = true;
 #else
@@ -151,7 +152,10 @@ void ResourceRequest::doUpdatePlatformRequest()
     CFURLRequestSetHTTPRequestMethod(cfRequest, httpMethod().createCFString().get());
 
     if (httpPipeliningEnabled())
-        wkSetHTTPPipeliningPriority(cfRequest, toHTTPPipeliningPriority(m_priority));
+        wkHTTPRequestEnablePipelining(cfRequest);
+
+    wkSetHTTPRequestPriority(cfRequest, toPlatformRequestPriority(m_priority));
+
 #if !PLATFORM(WIN)
     wkCFURLRequestAllowAllPostCaching(cfRequest);
 #endif
@@ -270,8 +274,7 @@ void ResourceRequest::doUpdateResourceRequest()
     }
     m_allowCookies = CFURLRequestShouldHandleHTTPCookies(m_cfRequest.get());
 
-    if (httpPipeliningEnabled())
-        m_priority = toResourceLoadPriority(wkGetHTTPPipeliningPriority(m_cfRequest.get()));
+    m_priority = toResourceLoadPriority(wkGetHTTPRequestPriority(m_cfRequest.get()));
 
     m_httpHeaderFields.clear();
     if (CFDictionaryRef headers = CFURLRequestCopyAllHTTPHeaderFields(m_cfRequest.get())) {
@@ -392,28 +395,22 @@ void ResourceRequest::doPlatformAdopt(PassOwnPtr<CrossThreadResourceRequestData>
 unsigned initializeMaximumHTTPConnectionCountPerHost()
 {
     static const unsigned preferredConnectionCount = 6;
-
-    // Always set the connection count per host, even when pipelining.
-    unsigned maximumHTTPConnectionCountPerHost = wkInitializeMaximumHTTPConnectionCountPerHost(preferredConnectionCount);
-
     static const unsigned unlimitedConnectionCount = 10000;
+
+    wkInitializeMaximumHTTPConnectionCountPerHost(preferredConnectionCount);
 
     Boolean keyExistsAndHasValidFormat = false;
     Boolean prefValue = CFPreferencesGetAppBooleanValue(CFSTR("WebKitEnableHTTPPipelining"), kCFPreferencesCurrentApplication, &keyExistsAndHasValidFormat);
     if (keyExistsAndHasValidFormat)
         ResourceRequest::setHTTPPipeliningEnabled(prefValue);
 
-    if (ResourceRequest::httpPipeliningEnabled()) {
-        wkSetHTTPPipeliningMaximumPriority(toHTTPPipeliningPriority(ResourceLoadPriorityHighest));
+    wkSetHTTPRequestMaximumPriority(toPlatformRequestPriority(ResourceLoadPriorityHighest));
 #if !PLATFORM(WIN)
-        // FIXME: <rdar://problem/9375609> Implement minimum fast lane priority setting on Windows
-        wkSetHTTPPipeliningMinimumFastLanePriority(toHTTPPipeliningPriority(ResourceLoadPriorityMedium));
+    // FIXME: <rdar://problem/9375609> Implement minimum fast lane priority setting on Windows
+    wkSetHTTPRequestMinimumFastLanePriority(toPlatformRequestPriority(ResourceLoadPriorityMedium));
 #endif
-        // When pipelining do not rate-limit requests sent from WebCore since CFNetwork handles that.
-        return unlimitedConnectionCount;
-    }
 
-    return maximumHTTPConnectionCountPerHost;
+    return unlimitedConnectionCount;
 }
     
 #if PLATFORM(IOS)
@@ -426,8 +423,8 @@ void initializeHTTPConnectionSettingsOnStartup()
     static const unsigned preferredConnectionCount = 6;
     static const unsigned fastLaneConnectionCount = 1;
     wkInitializeMaximumHTTPConnectionCountPerHost(preferredConnectionCount);
-    wkSetHTTPPipeliningMaximumPriority(ResourceLoadPriorityHighest);
-    wkSetHTTPPipeliningMinimumFastLanePriority(ResourceLoadPriorityMedium);
+    wkSetHTTPRequestMaximumPriority(ResourceLoadPriorityHighest);
+    wkSetHTTPRequestMinimumFastLanePriority(ResourceLoadPriorityMedium);
     _CFNetworkHTTPConnectionCacheSetLimit(kHTTPNumFastLanes, fastLaneConnectionCount);
 }
 #endif

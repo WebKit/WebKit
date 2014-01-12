@@ -272,10 +272,17 @@ private:
     virtual void refAuthenticationClient() OVERRIDE { ref(); }
     virtual void derefAuthenticationClient() OVERRIDE { deref(); }
 
-#if PLATFORM(MAC) && !USE(CFNETWORK)
-    void createNSURLConnection(id delegate, bool shouldUseCredentialStorage, bool shouldContentSniff);
-#elif USE(CFNETWORK)
-    void createCFURLConnection(bool shouldUseCredentialStorage, bool shouldContentSniff, CFDictionaryRef clientProperties);
+#if PLATFORM(MAC) || USE(CFNETWORK)
+    enum class SchedulingBehavior {
+        Asynchronous,
+        Synchronous
+    };
+
+#if USE(CFNETWORK)
+    void createCFURLConnection(bool shouldUseCredentialStorage, bool shouldContentSniff, SchedulingBehavior, CFDictionaryRef clientProperties);
+#else
+    void createNSURLConnection(id delegate, bool shouldUseCredentialStorage, bool shouldContentSniff, SchedulingBehavior);
+#endif
 #endif
 
     friend class ResourceHandleInternal;

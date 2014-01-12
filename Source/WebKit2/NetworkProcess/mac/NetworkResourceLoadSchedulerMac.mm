@@ -39,36 +39,20 @@ namespace WebKit {
 
 void NetworkResourceLoadScheduler::platformInitializeMaximumHTTPConnectionCountPerHost()
 {
-    wkInitializeMaximumHTTPConnectionCountPerHost = WKInitializeMaximumHTTPConnectionCountPerHost;
-    wkSetHTTPPipeliningMaximumPriority = WKSetHTTPPipeliningMaximumPriority;
-    wkSetHTTPPipeliningMinimumFastLanePriority = WKSetHTTPPipeliningMinimumFastLanePriority;
-
-    // Our preferred connection-per-host limit is the standard 6, but we need to let CFNetwork handle a 7th
-    // in case a synchronous XHRs is made while 6 loads are already outstanding.
-    static const unsigned preferredConnectionCount = 7;
+    static const unsigned preferredConnectionCount = 6;
     static const unsigned unlimitedConnectionCount = 10000;
 
-    // Always set the connection count per host, even when pipelining.
-    unsigned maximumHTTPConnectionCountPerHost = wkInitializeMaximumHTTPConnectionCountPerHost(preferredConnectionCount);
+    WKInitializeMaximumHTTPConnectionCountPerHost(preferredConnectionCount);
 
     Boolean keyExistsAndHasValidFormat = false;
     Boolean prefValue = CFPreferencesGetAppBooleanValue(CFSTR("WebKitEnableHTTPPipelining"), kCFPreferencesCurrentApplication, &keyExistsAndHasValidFormat);
-    
     if (keyExistsAndHasValidFormat)
         ResourceRequest::setHTTPPipeliningEnabled(prefValue);
 
-    if (ResourceRequest::httpPipeliningEnabled()) {
-        wkSetHTTPPipeliningMaximumPriority(toHTTPPipeliningPriority(ResourceLoadPriorityHighest));
-        wkSetHTTPPipeliningMinimumFastLanePriority(toHTTPPipeliningPriority(ResourceLoadPriorityMedium));
+    WKSetHTTPRequestMaximumPriority(toPlatformRequestPriority(ResourceLoadPriorityHighest));
+    WKSetHTTPRequestMinimumFastLanePriority(toPlatformRequestPriority(ResourceLoadPriorityMedium));
 
-        // When pipelining do not rate-limit requests sent from WebCore since CFNetwork handles that.
-        m_maxRequestsInFlightPerHost = unlimitedConnectionCount;
-
-        return;
-    }
-
-    // We've asked for one more connection per host than we intend to use in most cases so synch XHRs can bypass that limit.
-    m_maxRequestsInFlightPerHost = maximumHTTPConnectionCountPerHost - 1;
+    m_maxRequestsInFlightPerHost = unlimitedConnectionCount;
 }
 
 } // namespace WebKit

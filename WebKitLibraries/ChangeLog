@@ -1,3 +1,16 @@
+2014-01-11  Alexey Proskuryakov  <ap@apple.com>
+
+        [Mac] [Windows] Stop scheduling network requests in WebCore
+        https://bugs.webkit.org/show_bug.cgi?id=126789
+        <rdar://problem/15114727>
+
+        Update WKSI.
+
+        * WebKitSystemInterface.h:
+        * libWebKitSystemInterfaceLion.a:
+        * libWebKitSystemInterfaceMavericks.a:
+        * libWebKitSystemInterfaceMountainLion.a:
+
 2014-01-10  peavo@outlook.com  <peavo@outlook.com>
 
         [WinCairo] Crash when rendering (in pixman dll)
