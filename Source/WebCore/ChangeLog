@@ -1,3 +1,11 @@
+2014-01-11  David Kilzer  <ddkilzer@apple.com>
+
+        [iOS] Fix build of RenderLayerCompositor::registerAllViewportConstrainedLayers()
+
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::registerAllViewportConstrainedLayers):
+        Fix use of std::make_unique<>() and add an adoptPtr() call.
+
 2014-01-11  Alexey Proskuryakov  <ap@apple.com>
 
         [Mac] [Windows] Stop scheduling network requests in WebCore

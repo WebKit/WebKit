@@ -3500,16 +3500,16 @@ void RenderLayerCompositor::registerAllViewportConstrainedLayers()
 
         std::unique_ptr<ViewportConstraints> constraints;
         if (layer.renderer().isStickyPositioned()) {
-            constraints = std::make_unique<ViewportConstraints>(new StickyPositionViewportConstraints(computeStickyViewportConstraints(layer)));
+            constraints = std::make_unique<StickyPositionViewportConstraints>(computeStickyViewportConstraints(layer));
             const RenderLayer* enclosingTouchScrollableLayer = nullptr;
             if (isStickyInAcceleratedScrollingLayerOrViewport(layer, &enclosingTouchScrollableLayer) && enclosingTouchScrollableLayer) {
                 ASSERT(enclosingTouchScrollableLayer->isComposited());
                 stickyContainerMap.add(layer.backing()->graphicsLayer()->platformLayer(), enclosingTouchScrollableLayer->backing()->scrollingLayer()->platformLayer());
             }
         } else
-            constraints = std::make_unique<ViewportConstraints>(new FixedPositionViewportConstraints(computeFixedViewportConstraints(layer)));
+            constraints = std::make_unique<FixedPositionViewportConstraints>(computeFixedViewportConstraints(layer));
 
-        layerMap.add(layer.backing()->graphicsLayer()->platformLayer(), constraints.release());
+        layerMap.add(layer.backing()->graphicsLayer()->platformLayer(), adoptPtr(constraints.release()));
     }
     
     if (ChromeClient* client = this->chromeClient())
