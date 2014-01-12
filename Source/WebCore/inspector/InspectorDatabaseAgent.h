@@ -52,10 +52,7 @@ typedef String ErrorString;
 
 class InspectorDatabaseAgent : public InspectorAgentBase, public Inspector::InspectorDatabaseBackendDispatcherHandler {
 public:
-    static PassOwnPtr<InspectorDatabaseAgent> create(InstrumentingAgents* instrumentingAgents)
-    {
-        return adoptPtr(new InspectorDatabaseAgent(instrumentingAgents));
-    }
+    explicit InspectorDatabaseAgent(InstrumentingAgents*);
     ~InspectorDatabaseAgent();
 
     virtual void didCreateFrontendAndBackend(Inspector::InspectorFrontendChannel*, Inspector::InspectorBackendDispatcher*) OVERRIDE;
@@ -74,8 +71,6 @@ public:
 
     void didOpenDatabase(PassRefPtr<Database>, const String& domain, const String& name, const String& version);
 private:
-    explicit InspectorDatabaseAgent(InstrumentingAgents*);
-
     Database* databaseForId(const String& databaseId);
     InspectorDatabaseResource* findByFileName(const String& fileName);
 

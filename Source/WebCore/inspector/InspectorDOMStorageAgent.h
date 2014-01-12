@@ -54,10 +54,7 @@ typedef String ErrorString;
 
 class InspectorDOMStorageAgent : public InspectorAgentBase, public Inspector::InspectorDOMStorageBackendDispatcherHandler {
 public:
-    static PassOwnPtr<InspectorDOMStorageAgent> create(InstrumentingAgents* instrumentingAgents, InspectorPageAgent* pageAgent)
-    {
-        return adoptPtr(new InspectorDOMStorageAgent(instrumentingAgents, pageAgent));
-    }
+    InspectorDOMStorageAgent(InstrumentingAgents*, InspectorPageAgent*);
     ~InspectorDOMStorageAgent();
 
     virtual void didCreateFrontendAndBackend(Inspector::InspectorFrontendChannel*, Inspector::InspectorBackendDispatcher*) OVERRIDE;
@@ -78,9 +75,6 @@ public:
     void didDispatchDOMStorageEvent(const String& key, const String& oldValue, const String& newValue, StorageType, SecurityOrigin*, Page*);
 
 private:
-
-    InspectorDOMStorageAgent(InstrumentingAgents*, InspectorPageAgent*);
-
     PassRefPtr<StorageArea> findStorageArea(ErrorString*, const RefPtr<Inspector::InspectorObject>&, Frame*&);
 
     InspectorPageAgent* m_pageAgent;

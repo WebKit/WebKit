@@ -47,7 +47,7 @@ typedef String ErrorString;
 class JS_EXPORT_PRIVATE InspectorAgent FINAL : public InspectorAgentBase, public InspectorInspectorBackendDispatcherHandler {
     WTF_MAKE_NONCOPYABLE(InspectorAgent);
 public:
-    static PassOwnPtr<InspectorAgent> create() { return adoptPtr(new InspectorAgent); }
+    InspectorAgent();
     virtual ~InspectorAgent();
 
     virtual void didCreateFrontendAndBackend(InspectorFrontendChannel*, InspectorBackendDispatcher*) OVERRIDE;
@@ -60,8 +60,6 @@ public:
     void evaluateForTestInFrontend(long testCallId, const String& script);
 
 private:
-    InspectorAgent();
-
     std::unique_ptr<InspectorInspectorFrontendDispatcher> m_frontendDispatcher;
     RefPtr<InspectorInspectorBackendDispatcher> m_backendDispatcher;
     Vector<std::pair<long, String>> m_pendingEvaluateTestCommands;

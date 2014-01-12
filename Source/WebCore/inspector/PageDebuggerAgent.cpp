@@ -48,11 +48,6 @@ using namespace Inspector;
 
 namespace WebCore {
 
-PassOwnPtr<PageDebuggerAgent> PageDebuggerAgent::create(InstrumentingAgents* instrumentingAgents, InspectorPageAgent* pageAgent, InjectedScriptManager* injectedScriptManager, InspectorOverlay* overlay)
-{
-    return adoptPtr(new PageDebuggerAgent(instrumentingAgents, pageAgent, injectedScriptManager, overlay));
-}
-
 PageDebuggerAgent::PageDebuggerAgent(InstrumentingAgents* instrumentingAgents, InspectorPageAgent* pageAgent, InjectedScriptManager* injectedScriptManager, InspectorOverlay* overlay)
     : InspectorDebuggerAgent(instrumentingAgents, injectedScriptManager)
     , m_pageAgent(pageAgent)

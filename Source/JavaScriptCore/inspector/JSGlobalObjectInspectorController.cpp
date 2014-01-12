@@ -45,8 +45,7 @@ JSGlobalObjectInspectorController::JSGlobalObjectInspectorController(JSGlobalObj
     , m_injectedScriptManager(std::make_unique<InjectedScriptManager>(*this, InjectedScriptHost::create()))
     , m_inspectorFrontendChannel(nullptr)
 {
-    OwnPtr<InspectorAgent> inspectorAgent(InspectorAgent::create());
-    m_agents.append(inspectorAgent.release());
+    m_agents.append(std::make_unique<InspectorAgent>());
 
     // FIXME: Create RuntimeAgent.
     // FIXME: Create DebuggerAgent.

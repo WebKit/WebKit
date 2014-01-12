@@ -28,7 +28,6 @@
 #define InspectorAgentRegistry_h
 
 #include "InspectorAgentBase.h"
-#include <wtf/PassOwnPtr.h>
 #include <wtf/Vector.h>
 
 namespace Inspector {
@@ -38,14 +37,22 @@ class InspectorFrontendChannel;
 
 class JS_EXPORT_PRIVATE InspectorAgentRegistry {
 public:
-    void append(PassOwnPtr<InspectorAgentBase>);
+    template<typename T, typename... Args>
+    T& createAndAppend(Args&&... args)
+    {
+        m_agents.append(std::make_unique<T>(std::forward<Args...>(args)...));
+
+        return static_cast<T&>(*m_agents.last());
+    }
+
+    void append(std::unique_ptr<InspectorAgentBase>);
 
     void didCreateFrontendAndBackend(InspectorFrontendChannel*, InspectorBackendDispatcher*);
     void willDestroyFrontendAndBackend();
     void discardAgents();
 
 private:
-    Vector<OwnPtr<InspectorAgentBase>> m_agents;
+    Vector<std::unique_ptr<InspectorAgentBase>> m_agents;
 };
 
 } // namespace Inspector

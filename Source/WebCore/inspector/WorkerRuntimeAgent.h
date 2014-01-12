@@ -42,10 +42,7 @@ class WorkerGlobalScope;
 
 class WorkerRuntimeAgent : public InspectorRuntimeAgent {
 public:
-    static PassOwnPtr<WorkerRuntimeAgent> create(InstrumentingAgents* instrumentingAgents, Inspector::InjectedScriptManager* injectedScriptManager, WorkerGlobalScope* context)
-    {
-        return adoptPtr(new WorkerRuntimeAgent(instrumentingAgents, injectedScriptManager, context));
-    }
+    WorkerRuntimeAgent(InstrumentingAgents*, Inspector::InjectedScriptManager*, WorkerGlobalScope*);
     virtual ~WorkerRuntimeAgent();
 
     virtual void didCreateFrontendAndBackend(Inspector::InspectorFrontendChannel*, Inspector::InspectorBackendDispatcher*) OVERRIDE;
@@ -59,7 +56,6 @@ public:
 #endif // ENABLE(JAVASCRIPT_DEBUGGER)
 
 private:
-    WorkerRuntimeAgent(InstrumentingAgents*, Inspector::InjectedScriptManager*, WorkerGlobalScope*);
     virtual Inspector::InjectedScript injectedScriptForEval(ErrorString*, const int* executionContextId);
     virtual void muteConsole();
     virtual void unmuteConsole();

@@ -31,9 +31,9 @@
 
 namespace Inspector {
 
-void InspectorAgentRegistry::append(PassOwnPtr<InspectorAgentBase> agent)
+void InspectorAgentRegistry::append(std::unique_ptr<InspectorAgentBase> agent)
 {
-    m_agents.append(agent);
+    m_agents.append(std::move(agent));
 }
 
 void InspectorAgentRegistry::didCreateFrontendAndBackend(InspectorFrontendChannel* frontendChannel, InspectorBackendDispatcher* backendDispatcher)

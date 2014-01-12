@@ -70,6 +70,8 @@ typedef String ErrorString;
 class InspectorPageAgent : public InspectorAgentBase, public Inspector::InspectorPageBackendDispatcherHandler {
     WTF_MAKE_NONCOPYABLE(InspectorPageAgent);
 public:
+    InspectorPageAgent(InstrumentingAgents*, Page*, InspectorClient*, InspectorOverlay*);
+
     enum ResourceType {
         DocumentResource,
         StylesheetResource,
@@ -80,8 +82,6 @@ public:
         WebSocketResource,
         OtherResource
     };
-
-    static PassOwnPtr<InspectorPageAgent> create(InstrumentingAgents*, Page*, InspectorClient*, InspectorOverlay*);
 
     static bool cachedResourceContent(CachedResource*, String* result, bool* base64Encoded);
     static bool sharedBufferContent(PassRefPtr<SharedBuffer>, const String& textEncodingName, bool withBase64Encode, String* result);
@@ -163,7 +163,6 @@ public:
     static DocumentLoader* assertDocumentLoader(ErrorString*, Frame*);
 
 private:
-    InspectorPageAgent(InstrumentingAgents*, Page*, InspectorClient*, InspectorOverlay*);
 #if ENABLE(TOUCH_EVENTS)
     void updateTouchEventEmulationInPage(bool);
 #endif

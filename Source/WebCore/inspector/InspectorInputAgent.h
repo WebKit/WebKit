@@ -47,11 +47,7 @@ typedef String ErrorString;
 class InspectorInputAgent : public InspectorAgentBase, public Inspector::InspectorInputBackendDispatcherHandler {
     WTF_MAKE_NONCOPYABLE(InspectorInputAgent);
 public:
-    static PassOwnPtr<InspectorInputAgent> create(InstrumentingAgents* instrumentingAgents, Page* page)
-    {
-        return adoptPtr(new InspectorInputAgent(instrumentingAgents, page));
-    }
-
+    InspectorInputAgent(InstrumentingAgents*, Page*);
     ~InspectorInputAgent();
 
     virtual void didCreateFrontendAndBackend(Inspector::InspectorFrontendChannel*, Inspector::InspectorBackendDispatcher*) OVERRIDE;
@@ -62,8 +58,6 @@ public:
     virtual void dispatchMouseEvent(ErrorString*, const String& type, int x, int y, const int* modifiers, const double* timestamp, const String* button, const int* clickCount);
 
 private:
-    InspectorInputAgent(InstrumentingAgents*, Page*);
-
     Page* m_page;
     RefPtr<Inspector::InspectorInputBackendDispatcher> m_backendDispatcher;
 };

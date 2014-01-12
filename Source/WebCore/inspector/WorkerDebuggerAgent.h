@@ -44,22 +44,20 @@ class WorkerDebuggerAgent : public InspectorDebuggerAgent {
     WTF_MAKE_NONCOPYABLE(WorkerDebuggerAgent);
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static PassOwnPtr<WorkerDebuggerAgent> create(InstrumentingAgents*, WorkerGlobalScope*, Inspector::InjectedScriptManager*);
+    WorkerDebuggerAgent(InstrumentingAgents*, WorkerGlobalScope*, Inspector::InjectedScriptManager*);
     virtual ~WorkerDebuggerAgent();
 
     static const char* debuggerTaskMode;
     static void interruptAndDispatchInspectorCommands(WorkerThread*);
 
+    virtual void startListeningScriptDebugServer() OVERRIDE;
+    virtual void stopListeningScriptDebugServer() OVERRIDE;
+    virtual WorkerScriptDebugServer& scriptDebugServer() OVERRIDE;
+    virtual Inspector::InjectedScript injectedScriptForEval(ErrorString*, const int* executionContextId) OVERRIDE;
+    virtual void muteConsole() OVERRIDE;
+    virtual void unmuteConsole() OVERRIDE;
+
 private:
-    WorkerDebuggerAgent(InstrumentingAgents*, WorkerGlobalScope*, Inspector::InjectedScriptManager*);
-
-    virtual void startListeningScriptDebugServer();
-    virtual void stopListeningScriptDebugServer();
-    virtual WorkerScriptDebugServer& scriptDebugServer();
-    virtual Inspector::InjectedScript injectedScriptForEval(ErrorString*, const int* executionContextId);
-    virtual void muteConsole();
-    virtual void unmuteConsole();
-
     WorkerScriptDebugServer m_scriptDebugServer;
     WorkerGlobalScope* m_inspectedWorkerGlobalScope;
 };

@@ -106,14 +106,10 @@ public:
         virtual void didModifyDOMAttr(Element*) = 0;
     };
 
-    static PassOwnPtr<InspectorDOMAgent> create(InstrumentingAgents* instrumentingAgents, InspectorPageAgent* pageAgent, Inspector::InjectedScriptManager* injectedScriptManager, InspectorOverlay* overlay)
-    {
-        return adoptPtr(new InspectorDOMAgent(instrumentingAgents, pageAgent, injectedScriptManager, overlay));
-    }
+    InspectorDOMAgent(InstrumentingAgents*, InspectorPageAgent*, Inspector::InjectedScriptManager*, InspectorOverlay*);
+    ~InspectorDOMAgent();
 
     static String toErrorString(const ExceptionCode&);
-
-    ~InspectorDOMAgent();
 
     virtual void didCreateFrontendAndBackend(Inspector::InspectorFrontendChannel*, Inspector::InspectorBackendDispatcher*) OVERRIDE;
     virtual void willDestroyFrontendAndBackend() OVERRIDE;
@@ -215,8 +211,6 @@ public:
     InspectorPageAgent* pageAgent() { return m_pageAgent; }
 
 private:
-    InspectorDOMAgent(InstrumentingAgents*, InspectorPageAgent*, Inspector::InjectedScriptManager*, InspectorOverlay*);
-
     void setSearchingForNode(ErrorString*, bool enabled, Inspector::InspectorObject* highlightConfig);
     PassOwnPtr<HighlightConfig> highlightConfigFromInspectorObject(ErrorString*, Inspector::InspectorObject* highlightInspectorObject);
 

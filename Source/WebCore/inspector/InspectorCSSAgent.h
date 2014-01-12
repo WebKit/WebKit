@@ -90,13 +90,10 @@ public:
         ContentSecurityPolicy* m_contentSecurityPolicy;
     };
 
-    static CSSStyleRule* asCSSStyleRule(CSSRule*);
-
-    static PassOwnPtr<InspectorCSSAgent> create(InstrumentingAgents* instrumentingAgents, InspectorDOMAgent* domAgent)
-    {
-        return adoptPtr(new InspectorCSSAgent(instrumentingAgents, domAgent));
-    }
+    InspectorCSSAgent(InstrumentingAgents*, InspectorDOMAgent*);
     ~InspectorCSSAgent();
+
+    static CSSStyleRule* asCSSStyleRule(CSSRule*);
 
     bool forcePseudoState(Element*, CSSSelector::PseudoType);
     virtual void didCreateFrontendAndBackend(Inspector::InspectorFrontendChannel*, Inspector::InspectorBackendDispatcher*) OVERRIDE;
@@ -148,8 +145,6 @@ private:
     class TogglePropertyAction;
     class SetRuleSelectorAction;
     class AddRuleAction;
-
-    InspectorCSSAgent(InstrumentingAgents*, InspectorDOMAgent*);
 
     typedef HashMap<String, RefPtr<InspectorStyleSheet>> IdToInspectorStyleSheet;
     typedef HashMap<CSSStyleSheet*, RefPtr<InspectorStyleSheet>> CSSStyleSheetToInspectorStyleSheet;

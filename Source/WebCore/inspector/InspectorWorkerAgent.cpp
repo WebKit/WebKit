@@ -103,11 +103,6 @@ private:
 
 int InspectorWorkerAgent::WorkerFrontendChannel::s_nextId = 1;
 
-PassOwnPtr<InspectorWorkerAgent> InspectorWorkerAgent::create(InstrumentingAgents* instrumentingAgents)
-{
-    return adoptPtr(new InspectorWorkerAgent(instrumentingAgents));
-}
-
 InspectorWorkerAgent::InspectorWorkerAgent(InstrumentingAgents* instrumentingAgents)
     : InspectorAgentBase(ASCIILiteral("Worker"), instrumentingAgents)
     , m_enabled(false)

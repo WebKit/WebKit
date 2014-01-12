@@ -90,11 +90,6 @@ InspectorMemoryAgent::InspectorMemoryAgent(InstrumentingAgents* instrumentingAge
 {
 }
 
-PassOwnPtr<InspectorMemoryAgent> InspectorMemoryAgent::create(InstrumentingAgents* instrumentingAgents)
-{
-    return adoptPtr(new InspectorMemoryAgent(instrumentingAgents));
-}
-
 } // namespace WebCore
 
 #endif // ENABLE(INSPECTOR)

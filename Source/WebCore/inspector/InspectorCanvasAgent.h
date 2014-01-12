@@ -62,10 +62,7 @@ typedef String ErrorString;
 
 class InspectorCanvasAgent : public InspectorAgentBase, public Inspector::InspectorCanvasBackendDispatcherHandler {
 public:
-    static PassOwnPtr<InspectorCanvasAgent> create(InstrumentingAgents* instrumentingAgents, InspectorPageAgent* pageAgent, Inspector::InjectedScriptManager* injectedScriptManager)
-    {
-        return adoptPtr(new InspectorCanvasAgent(instrumentingAgents, pageAgent, injectedScriptManager));
-    }
+    InspectorCanvasAgent(InstrumentingAgents*, InspectorPageAgent*, Inspector::InjectedScriptManager*);
     ~InspectorCanvasAgent();
 
     virtual void didCreateFrontendAndBackend(Inspector::InspectorFrontendChannel*, Inspector::InspectorBackendDispatcher*) OVERRIDE;
@@ -95,8 +92,6 @@ public:
     virtual void getResourceState(ErrorString*, const Inspector::TypeBuilder::Canvas::TraceLogId&, const Inspector::TypeBuilder::Canvas::ResourceId&, RefPtr<Inspector::TypeBuilder::Canvas::ResourceState>&);
 
 private:
-    InspectorCanvasAgent(InstrumentingAgents*, InspectorPageAgent*, Inspector::InjectedScriptManager*);
-
     InjectedScriptCanvasModule injectedScriptCanvasModule(ErrorString*, JSC::ExecState*);
     InjectedScriptCanvasModule injectedScriptCanvasModule(ErrorString*, const Deprecated::ScriptObject&);
     InjectedScriptCanvasModule injectedScriptCanvasModule(ErrorString*, const String&);
