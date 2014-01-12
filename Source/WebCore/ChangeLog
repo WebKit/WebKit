@@ -1,3 +1,18 @@
+2014-01-11  David Kilzer  <ddkilzer@apple.com>
+
+        [iOS] Fix build failure in WebCore::findEndWordBoundary()
+
+        Filed Bug 126830 for the proper fix:
+        <http://webkit.org/b/126830>
+
+        * editing/VisibleUnits.cpp:
+        (WebCore::endWordBoundary): Switch back to using
+        WebCore::findWordBoundary() on iOS.
+
+        * platform/text/mac/TextBoundaries.mm:
+        (WebCore::findEndWordBoundary): Add FIXME for iOS implementation
+        that doesn't use NSAttributedString.
+
 2014-01-11  Andy Estes  <aestes@apple.com>
 
         [iOS] Move text autosizing code from RenderBlock to RenderBlockFlow

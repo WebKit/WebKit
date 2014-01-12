@@ -658,8 +658,14 @@ static unsigned endWordBoundary(const UChar* characters, unsigned length, unsign
         return length;
     }
     needMoreContext = false;
+#if PLATFORM(IOS)
+    // FIXME: Bug 126830: [iOS] Implement WebCore::findEndWordBoundary()
+    int start, end;
+    findWordBoundary(characters, length, offset, &start, &end);
+#else
     int end;
     findEndWordBoundary(characters, length, offset, &end);
+#endif
     return end;
 }
 

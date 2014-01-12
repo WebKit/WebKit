@@ -247,6 +247,7 @@ void findWordBoundary(const UChar* chars, int len, int position, int* start, int
 
 void findEndWordBoundary(const UChar* chars, int len, int position, int* end)
 {
+#if !PLATFORM(IOS)
     NSString* string = [[NSString alloc] initWithCharactersNoCopy:const_cast<unichar*>(chars)
         length:len freeWhenDone:NO];
     NSAttributedString* attr = [[NSAttributedString alloc] initWithString:string];
@@ -254,6 +255,13 @@ void findEndWordBoundary(const UChar* chars, int len, int position, int* end)
     [attr release];
     [string release];
     *end = range.location + range.length;
+#else
+    // FIXME: Bug 126830: [iOS] Implement WebCore::findEndWordBoundary()
+    UNUSED_PARAM(chars);
+    UNUSED_PARAM(len);
+    UNUSED_PARAM(position);
+    UNUSED_PARAM(end);
+#endif
 }
 
 int findNextWordFromIndex(const UChar* chars, int len, int position, bool forward)
