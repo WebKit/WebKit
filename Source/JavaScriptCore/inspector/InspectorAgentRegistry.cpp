@@ -31,6 +31,10 @@
 
 namespace Inspector {
 
+InspectorAgentRegistry::InspectorAgentRegistry()
+{
+}
+
 void InspectorAgentRegistry::append(std::unique_ptr<InspectorAgentBase> agent)
 {
     m_agents.append(std::move(agent));

@@ -1,5 +1,13 @@
 2014-01-11  Anders Carlsson  <andersca@apple.com>
 
+        Try to fix the build by introducing a constructor.
+
+        * inspector/InspectorAgentRegistry.cpp:
+        (Inspector::InspectorAgentRegistry::InspectorAgentRegistry):
+        * inspector/InspectorAgentRegistry.h:
+
+2014-01-11  Anders Carlsson  <andersca@apple.com>
+
         * inspector/InspectorAgentRegistry.h:
 
         Remove an unused function.

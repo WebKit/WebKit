@@ -37,6 +37,8 @@ class InspectorFrontendChannel;
 
 class JS_EXPORT_PRIVATE InspectorAgentRegistry {
 public:
+    InspectorAgentRegistry();
+
     void append(std::unique_ptr<InspectorAgentBase>);
 
     void didCreateFrontendAndBackend(InspectorFrontendChannel*, InspectorBackendDispatcher*);
