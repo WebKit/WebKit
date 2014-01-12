@@ -4249,6 +4249,7 @@ webcore_sources += \
 	Source/WebCore/page/UserStyleSheet.h \
 	Source/WebCore/page/UserStyleSheetTypes.h \
 	Source/WebCore/page/ValidationMessageClient.h \
+	Source/WebCore/page/ViewState.h \
 	Source/WebCore/page/WebCoreKeyboardUIMode.h \
 	Source/WebCore/page/WebKitPoint.h \
 	Source/WebCore/page/WindowFeatures.cpp \
@@ -4343,7 +4344,7 @@ webcore_sources += \
 	Source/WebCore/rendering/RenderAncestorIterator.h \
 	Source/WebCore/rendering/RenderBlock.cpp \
 	Source/WebCore/rendering/RenderBlock.h \
-    Source/WebCore/rendering/RenderBlockFlow.cpp \
+	Source/WebCore/rendering/RenderBlockFlow.cpp \
 	Source/WebCore/rendering/RenderBlockFlow.h \
 	Source/WebCore/rendering/RenderBlockLineLayout.cpp \
 	Source/WebCore/rendering/RenderBox.cpp \
@@ -4440,8 +4441,8 @@ webcore_sources += \
 	Source/WebCore/rendering/RenderMultiColumnFlowThread.h \
 	Source/WebCore/rendering/RenderMultiColumnSet.cpp \
 	Source/WebCore/rendering/RenderMultiColumnSet.h \
-    Source/WebCore/rendering/RenderNamedFlowFragment.cpp \
-    Source/WebCore/rendering/RenderNamedFlowFragment.h \
+	Source/WebCore/rendering/RenderNamedFlowFragment.cpp \
+	Source/WebCore/rendering/RenderNamedFlowFragment.h \
 	Source/WebCore/rendering/RenderNamedFlowThread.cpp \
 	Source/WebCore/rendering/RenderNamedFlowThread.h \
 	Source/WebCore/rendering/RenderObject.cpp \
@@ -4449,6 +4450,7 @@ webcore_sources += \
 	Source/WebCore/rendering/RenderOverflow.h \
 	Source/WebCore/rendering/RenderProgress.cpp \
 	Source/WebCore/rendering/RenderProgress.h \
+	Source/WebCore/rendering/RenderPtr.h \
 	Source/WebCore/rendering/RenderQuote.cpp \
 	Source/WebCore/rendering/RenderQuote.h \
 	Source/WebCore/rendering/RenderRegion.cpp \
@@ -5559,6 +5561,9 @@ platform_sources += \
 	Source/WebCore/platform/audio/AudioResampler.h \
 	Source/WebCore/platform/audio/AudioResamplerKernel.cpp \
 	Source/WebCore/platform/audio/AudioResamplerKernel.h \
+	Source/WebCore/platform/audio/AudioSession.cpp \
+	Source/WebCore/platform/audio/AudioSession.h \
+	Source/WebCore/platform/audio/AudioSessionListener.h \
 	Source/WebCore/platform/audio/AudioSourceProvider.h \
 	Source/WebCore/platform/audio/AudioSourceProviderClient.h \
 	Source/WebCore/platform/audio/AudioUtilities.cpp \

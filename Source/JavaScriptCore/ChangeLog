@@ -1,3 +1,12 @@
+2014-01-12  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix make distcheck.
+
+        * GNUmakefile.am: Add inline-and-minify-stylesheets-and-scripts.py
+        to EXTRA_DIST and fix InjectedScriptSource.h generation rule.
+        * GNUmakefile.list.am: Move InjectedScriptSource.h to
+        built_nosources to make sure it's not disted.
+
 2014-01-11  Anders Carlsson  <andersca@apple.com>
 
         Try again to fix the build.

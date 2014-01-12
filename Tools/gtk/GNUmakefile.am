@@ -2,6 +2,7 @@ EXTRA_DIST += \
 	Tools/gtk/common.py \
 	Tools/gtk/generate-feature-defines-files \
 	Tools/gtk/generate-gtkdoc \
+	Tools/gtk/generate-inspector-gresource-manifest.py \
 	Tools/gtk/generate-webkitdom-doc-files \
 	Tools/gtk/gtkdoc.py
 

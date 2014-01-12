@@ -29,7 +29,6 @@
 
 #if ENABLE(NETWORK_PROCESS)
 
-#include "ProxyResolverSoup.h"
 #include "WKBase.h"
 #include "WebKit2Initialize.h"
 #include <WebCore/ResourceHandle.h>
@@ -42,6 +41,7 @@
 #include <wtf/gobject/GRefPtr.h>
 
 #if PLATFORM(EFL)
+#include "ProxyResolverSoup.h"
 #include <Ecore.h>
 #endif
 

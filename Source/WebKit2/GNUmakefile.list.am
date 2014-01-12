@@ -256,7 +256,6 @@ webkit2_sources += \
 	Source/WebKit2/Shared/FontInfo.h \
 	Source/WebKit2/Shared/HTTPCookieAcceptPolicy.h \
 	Source/WebKit2/Shared/ResourceCachesToClear.h \
-	Source/WebKit2/Shared/ViewState.h \
 	Source/WebKit2/Shared/WebMemorySampler.h \
 	Source/WebKit2/Shared/APIArray.cpp \
 	Source/WebKit2/Shared/APIArray.h \
@@ -377,7 +376,6 @@ webkit2_sources += \
 	Source/WebKit2/Shared/EditorState.h \
 	Source/WebKit2/Shared/FileAPI/BlobRegistrationData.cpp \
 	Source/WebKit2/Shared/FileAPI/BlobRegistrationData.h \
-	Source/WebKit2/Shared/FilterIterator.h \
 	Source/WebKit2/Shared/FontSmoothingLevel.h \
 	Source/WebKit2/Shared/ProcessExecutablePath.h \
 	Source/WebKit2/Shared/UserData.cpp \
@@ -396,7 +394,6 @@ webkit2_sources += \
 	Source/WebKit2/Shared/ImageOptions.h \
 	Source/WebKit2/Shared/ImmutableDictionary.cpp \
 	Source/WebKit2/Shared/ImmutableDictionary.h \
-	Source/WebKit2/Shared/IteratorPair.h \
 	Source/WebKit2/Shared/LayerTreeContext.h \
 	Source/WebKit2/Shared/MutableDictionary.cpp \
 	Source/WebKit2/Shared/MutableDictionary.h \
@@ -622,6 +619,8 @@ webkit2_sources += \
 	Source/WebKit2/UIProcess/API/C/WKProtectionSpaceTypes.h \
 	Source/WebKit2/UIProcess/API/C/WKResourceCacheManager.h \
 	Source/WebKit2/UIProcess/API/C/WKResourceCacheManager.cpp \
+	Source/WebKit2/UIProcess/API/C/WKSessionRef.h \
+	Source/WebKit2/UIProcess/API/C/WKSessionRef.cpp \
 	Source/WebKit2/UIProcess/API/C/WKTextChecker.h \
 	Source/WebKit2/UIProcess/API/C/WKTextChecker.cpp \
 	Source/WebKit2/UIProcess/API/C/WKVibration.cpp \
@@ -788,6 +787,8 @@ webkit2_sources += \
 	Source/WebKit2/UIProcess/AutoCorrectionCallback.h \
 	Source/WebKit2/UIProcess/APINavigationData.cpp \
 	Source/WebKit2/UIProcess/APINavigationData.h \
+	Source/WebKit2/UIProcess/APISession.cpp \
+	Source/WebKit2/UIProcess/APISession.h \
 	Source/WebKit2/UIProcess/BackingStore.cpp \
 	Source/WebKit2/UIProcess/BackingStore.h \
 	Source/WebKit2/UIProcess/DefaultUndoController.cpp \

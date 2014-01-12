@@ -8,6 +8,7 @@ javascriptcore_h_api += \
 	Source/JavaScriptCore/API/WebKitAvailability.h
 
 javascriptcore_built_nosources += \
+	DerivedSources/JavaScriptCore/InjectedScriptSource.h \
 	DerivedSources/JavaScriptCore/KeywordLookup.h \
 	DerivedSources/JavaScriptCore/Lexer.lut.h \
 	DerivedSources/JavaScriptCore/RegExpJitTables.h \
@@ -1209,7 +1210,6 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/yarr/YarrPattern.h \
 	Source/JavaScriptCore/yarr/YarrSyntaxChecker.cpp \
 	Source/JavaScriptCore/yarr/YarrSyntaxChecker.h \
-	DerivedSources/JavaScriptCore/InjectedScriptSource.h \
 	DerivedSources/JavaScriptCore/InspectorJSBackendDispatchers.cpp \
 	DerivedSources/JavaScriptCore/InspectorJSBackendDispatchers.h \
 	DerivedSources/JavaScriptCore/InspectorJSFrontendDispatchers.cpp \

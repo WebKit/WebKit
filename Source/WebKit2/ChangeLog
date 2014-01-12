@@ -1,5 +1,16 @@
 2014-01-12  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        Unreviewed. Fix make distcheck.
+
+        * GNUmakefile.am: Add WebKit2InspectorGResourceBundle.xml to
+        EXTRA_DIST.
+        * GNUmakefile.list.am: Removed deleted files and add missing ones.
+        * NetworkProcess/unix/NetworkProcessMainUnix.cpp: Move
+        ProxyResolverSoup.h to EFL platform ifdef, because GTK port doesn't
+        build the proxy resolver.
+
+2014-01-12  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK] Fix return value of WebKitDownload::created-destination
         https://bugs.webkit.org/show_bug.cgi?id=126741
 

@@ -1,3 +1,9 @@
+2014-01-12  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix make distcheck.
+
+        * GNUmakefile.am: Add enum types template files to EXTRA_DIST.
+
 2014-01-12  Tobias Mueller  <tobiasmue@gnome.org>
 
         --disable-dependency-tracking causes build failure due to missing directories

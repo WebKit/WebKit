@@ -815,6 +815,7 @@ EXTRA_DIST += \
 	$(WebKit2)/UIProcess/API/gtk/webkit2marshal.list \
 	$(WebKit2)/UIProcess/API/gtk/WebKitEnumTypes.h.template \
 	$(WebKit2)/UIProcess/API/gtk/WebKitEnumTypes.cpp.template \
+	$(WebKit2)/UIProcess/API/gtk/WebKit2InspectorGResourceBundle.xml \
 	$(WebKit2)/UIProcess/InspectorServer/front-end/inspectorPageIndex.html \
 	$(WebKit2)/Scripts/generate-forwarding-headers.pl \
 	$(shell ls $(WebKit2)/NetworkProcess/*.in) \

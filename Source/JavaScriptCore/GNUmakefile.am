@@ -198,6 +198,7 @@ EXTRA_DIST += \
 	Source/JavaScriptCore/inspector/scripts/CodeGeneratorInspectorStrings.py \
 	Source/JavaScriptCore/inspector/scripts/cssmin.py \
 	Source/JavaScriptCore/inspector/scripts/generate-combined-inspector-json.py \
+	Source/JavaScriptCore/inspector/scripts/inline-and-minify-stylesheets-and-scripts.py \
 	Source/JavaScriptCore/inspector/scripts/jsmin.py \
 	Source/JavaScriptCore/inspector/scripts/xxd.pl \
 	Source/JavaScriptCore/KeywordLookupGenerator.py \
@@ -252,6 +253,7 @@ DerivedSources/JavaScriptCore/InspectorJSFrontendDispatchers.cpp: DerivedSources
 DerivedSources/JavaScriptCore/InspectorJSBackendCommands.js: DerivedSources/JavaScriptCore/InspectorJSBackendDispatchers.h
 DerivedSources/JavaScriptCore/InspectorJSBackendDispatchers.h: DerivedSources/JavaScriptCore/InspectorJSBackendDispatchers.cpp
 
-DerivedSources/JavaScriptCore/InjectedScriptSource.h: $(JavaScriptCore)/inspector/InjectedScriptSource.js
-	$(AM_V_GEN)$(PYTHON) $(INSPECTOR_SCRIPTS_DIR)/jsmin.py <$(JavaScriptCore)/inspector/InjectedScriptSource.js > $(GENSOURCES_JAVASCRIPTCORE)/InjectedScriptSource.min.js
-	$(AM_V_GEN)$(PERL) $(INSPECTOR_SCRIPTS_DIR)/xxd.pl InjectedScriptSource_js $(GENSOURCES_JAVASCRIPTCORE)/InjectedScriptSource.min.js $(GENSOURCES_JAVASCRIPTCORE)/InjectedScriptSource.h
+DerivedSources/JavaScriptCore/InjectedScriptSource.h: $(JavaScriptCore)/inspector/InjectedScriptSource.js $(INSPECTOR_SCRIPTS_DIR)/xxd.pl $(INSPECTOR_SCRIPTS_DIR)/jsmin.py
+	$(AM_V_GEN)$(PYTHON) $(INSPECTOR_SCRIPTS_DIR)/jsmin.py < $< > $(GENSOURCES_JAVASCRIPTCORE)/InjectedScriptSource.min.js
+	$(AM_V_at)$(PERL) $(INSPECTOR_SCRIPTS_DIR)/xxd.pl InjectedScriptSource_js $(GENSOURCES_JAVASCRIPTCORE)/InjectedScriptSource.min.js $@
+	$(AM_V_at)rm -rf $(GENSOURCES_JAVASCRIPTCORE)/InjectedScriptSource.min.js

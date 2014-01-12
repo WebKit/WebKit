@@ -389,6 +389,8 @@ EXTRA_DIST += \
 	$(WebKit)/docs/webkitenvironment.xml \
 	$(WebKit)/docs/webkitgtk-overrides.txt \
 	$(WebKit)/webkitmarshal.list \
+	$(WebKit)/webkit/webkitenumtypes.cpp.template \
+	$(WebKit)/webkit/webkitenumtypes.h.template \
 	$(WebKit)/resources/*
 
 # extra resource files
