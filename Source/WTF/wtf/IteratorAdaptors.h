@@ -87,7 +87,7 @@ public:
         return *this;
     }
 
-    const decltype(std::declval<Transform>()(*std::declval<Iterator>())) operator*() const
+    decltype(std::declval<Transform>()(*std::declval<Iterator>())) operator*() const
     {
         return m_transform(*m_iter);
     }

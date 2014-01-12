@@ -1,5 +1,12 @@
 2014-01-11  Sam Weinig  <sam@webkit.org>
 
+        Fix the EFL build.
+
+        * wtf/IteratorAdaptors.h:
+        (WTF::TransformIterator::operator*):
+
+2014-01-11  Sam Weinig  <sam@webkit.org>
+
         Add support for null StringViews
         https://bugs.webkit.org/show_bug.cgi?id=126827
 
