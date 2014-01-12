@@ -57,7 +57,7 @@ void (*wkSetNSURLConnectionDefersCallbacks)(NSURLConnection *, BOOL);
 void (*wkSetNSURLRequestShouldContentSniff)(NSMutableURLRequest *, BOOL);
 id (*wkCreateNSURLConnectionDelegateProxy)(void);
 unsigned (*wkInitializeMaximumHTTPConnectionCountPerHost)(unsigned preferredConnectionCount);
-int (*wkGetHTTPPipeliningPriority)(CFURLRequestRef);
+int (*wkGetHTTPRequestPriority)(CFURLRequestRef);
 void (*wkSetHTTPRequestMaximumPriority)(int priority);
 void (*wkSetHTTPRequestPriority)(CFURLRequestRef, int priority);
 void (*wkSetHTTPRequestMinimumFastLanePriority)(int priority);
