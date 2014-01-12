@@ -53,19 +53,16 @@ public:
 #if USE(CFNETWORK)
     AuthenticationChallenge(CFURLAuthChallengeRef, AuthenticationClient*);
 
-    AuthenticationClient* authenticationClient() const;
-    void setAuthenticationClient(AuthenticationClient* client) { m_authenticationClient = client; }
-
     CFURLAuthChallengeRef cfURLAuthChallengeRef() const { return m_cfChallenge.get(); }
 #else
     AuthenticationChallenge(NSURLAuthenticationChallenge *);
 
     id sender() const { return m_sender.get(); }
     NSURLAuthenticationChallenge *nsURLAuthenticationChallenge() const { return m_nsChallenge.get(); }
+#endif
 
     void setAuthenticationClient(AuthenticationClient*); // Changes sender to one that invokes client methods.
     AuthenticationClient* authenticationClient() const;
-#endif
 
 private:
     friend class AuthenticationChallengeBase;

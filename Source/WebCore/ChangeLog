@@ -1,3 +1,16 @@
+2014-01-12  David Kilzer  <ddkilzer@apple.com>
+
+        Move implementation of AuthenticationChallenge::setAuthenticationClient() to source file for USE(CFNETWORK)
+        <http://webkit.org/b/126848>
+
+        Reviewed by Simon Fraser.
+
+        * platform/network/cf/AuthenticationCF.cpp:
+        (WebCore::AuthenticationChallenge::setAuthenticationClient):
+        Move implementation to here...
+        * platform/network/cf/AuthenticationChallenge.h: ...from here.
+        Remove duplicate header definitions inside USE(CFNETWORK).
+
 2014-01-12  Sam Weinig  <sam@webkit.org>
 
         Fix windows.

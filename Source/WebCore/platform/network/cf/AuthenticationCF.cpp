@@ -68,6 +68,11 @@ AuthenticationChallenge::AuthenticationChallenge(CFURLAuthChallengeRef cfChallen
 {
 }
 
+void AuthenticationChallenge::setAuthenticationClient(AuthenticationClient* client)
+{
+    m_authenticationClient = client;
+}
+
 AuthenticationClient* AuthenticationChallenge::authenticationClient() const
 {
     return m_authenticationClient.get();
