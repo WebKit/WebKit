@@ -530,6 +530,7 @@
 		0FDA7C1E188322FC00C954B5 /* JSGestureEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FDA7C1C188322FC00C954B5 /* JSGestureEvent.cpp */; };
 		0FDA7C1F188322FC00C954B5 /* JSGestureEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FDA7C1D188322FC00C954B5 /* JSGestureEvent.h */; };
 		0FDA7C2118832BCC00C954B5 /* DateTimeFormat.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FDA7C2018832BCC00C954B5 /* DateTimeFormat.cpp */; };
+		0FDA7C23188330A900C954B5 /* DragImageIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0FDA7C22188330A900C954B5 /* DragImageIOS.mm */; };
 		0FE71405142170B800DB33BA /* ScrollbarThemeMock.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FE71403142170B800DB33BA /* ScrollbarThemeMock.cpp */; };
 		0FE71406142170B800DB33BA /* ScrollbarThemeMock.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FE71404142170B800DB33BA /* ScrollbarThemeMock.h */; };
 		0FF5025B102BA9010066F39A /* DOMStyleMedia.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FF50259102BA9010066F39A /* DOMStyleMedia.h */; };
@@ -7316,6 +7317,7 @@
 		0FDA7C1C188322FC00C954B5 /* JSGestureEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSGestureEvent.cpp; sourceTree = "<group>"; };
 		0FDA7C1D188322FC00C954B5 /* JSGestureEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSGestureEvent.h; sourceTree = "<group>"; };
 		0FDA7C2018832BCC00C954B5 /* DateTimeFormat.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DateTimeFormat.cpp; sourceTree = "<group>"; };
+		0FDA7C22188330A900C954B5 /* DragImageIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = DragImageIOS.mm; path = ios/DragImageIOS.mm; sourceTree = "<group>"; };
 		0FE71403142170B800DB33BA /* ScrollbarThemeMock.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScrollbarThemeMock.cpp; sourceTree = "<group>"; };
 		0FE71404142170B800DB33BA /* ScrollbarThemeMock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScrollbarThemeMock.h; sourceTree = "<group>"; };
 		0FE71415142189FC00DB33BA /* ScrollbarTheme.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScrollbarTheme.cpp; sourceTree = "<group>"; };
@@ -18003,6 +18005,7 @@
 				31EAF97D121435A400E7C1BF /* DeviceMotionClientIOS.mm */,
 				31403799124BEA7F00AF40E4 /* DeviceOrientationClientIOS.h */,
 				3140379A124BEA7F00AF40E4 /* DeviceOrientationClientIOS.mm */,
+				0FDA7C22188330A900C954B5 /* DragImageIOS.mm */,
 				26F40D4914904A6300CA67C4 /* EventLoopIOS.mm */,
 				26C17A3C1491D2D400D12BA2 /* FileSystemIOS.h */,
 				26C17A3D1491D2D400D12BA2 /* FileSystemIOS.mm */,
@@ -28026,6 +28029,7 @@
 				B2FA3DC20AB75A6F000E5AC4 /* JSSVGPathSegCurvetoCubicSmoothAbs.cpp in Sources */,
 				B2FA3DC40AB75A6F000E5AC4 /* JSSVGPathSegCurvetoCubicSmoothRel.cpp in Sources */,
 				E4B65A5E132FADB60070E7BE /* TileLayer.mm in Sources */,
+				0FDA7C23188330A900C954B5 /* DragImageIOS.mm in Sources */,
 				B2FA3DC60AB75A6F000E5AC4 /* JSSVGPathSegCurvetoQuadraticAbs.cpp in Sources */,
 				B2FA3DC80AB75A6F000E5AC4 /* JSSVGPathSegCurvetoQuadraticRel.cpp in Sources */,
 				B2FA3DCA0AB75A6F000E5AC4 /* JSSVGPathSegCurvetoQuadraticSmoothAbs.cpp in Sources */,

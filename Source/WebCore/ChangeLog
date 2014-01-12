@@ -1,5 +1,15 @@
 2014-01-12  Simon Fraser  <simon.fraser@apple.com>
 
+        Stub out some DragImage functions for iOS.
+        
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/ios/DragImageIOS.mm: Added.
+        (WebCore::dragImageSize):
+        (WebCore::scaleDragImage):
+        (WebCore::createDragImageFromImage):
+
+2014-01-12  Simon Fraser  <simon.fraser@apple.com>
+
         We need DragImage.cpp code even when ENABLE_DRAG_SUPPORT is
         not defined, because these are actually generic snapshotting
         functions.
