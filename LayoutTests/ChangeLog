@@ -1,3 +1,16 @@
+2014-01-11  Brent Fulgham  <bfulgham@apple.com>
+
+        [WebGL] Correct uniform input validation for texture sampler uniforms
+        https://bugs.webkit.org/show_bug.cgi?id=126775
+
+        Reviewed by Anders Carlsson.
+
+        * fast/canvas/webgl/uniform-samplers-test-expected.txt: Added.
+        * fast/canvas/webgl/uniform-samplers-test.html: Corrected resource
+        includes when moving from khronos suite to our fast suite.
+        * resources/js-test-pre.js:
+        (expectTrue): Added.
+
 2014-01-11  Dean Jackson  <dino@apple.com>
 
         [JSC] Revise typed array implementations to match ECMAScript and WebGL Specification
