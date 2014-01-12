@@ -1,3 +1,38 @@
+2014-01-12  Darin Adler  <darin@apple.com>
+
+        Reduce use of String::characters
+        https://bugs.webkit.org/show_bug.cgi?id=126854
+
+        Reviewed by Sam Weinig.
+
+        * API/JSValueRef.cpp:
+        (JSValueMakeFromJSONString): Use characters16 instead of characters for 16-bit case.
+        Had to remove length check because an empty string could be either 8 bit or 16 bit.
+        Don't need a null string check before calling is8Bit because JSStringRef can't hold
+        a null string.
+
+        * bindings/ScriptValue.cpp:
+        (Deprecated::jsToInspectorValue): Use the existing string here instead of creating
+        a new one by calling characters and length on the old string. I think this may be
+        left over from when string types were not the same in JavaScriptCore and WebCore.
+        Also rewrite the property names loop to use modern for syntax and fewer locals.
+
+        * inspector/InspectorValues.cpp:
+        (Inspector::escapeChar): Changed to use appendLiteral instead of hard-coding string
+        lengths. Moved handling of "<" and ">" in here instead of at the call site.
+        (Inspector::doubleQuoteString): Simplify the code so there is no use of characters
+        and length. This is still an inefficient way of doing this job and could use a rethink.
+
+        * runtime/DatePrototype.cpp:
+        (JSC::formatLocaleDate): Use RetainPtr, createCFString, and the conversion from
+        CFStringRef to WTF::String to remove a lot of unneeded code.
+
+        * runtime/Identifier.h: Removed unneeded Identifier::characters function.
+
+        * runtime/JSStringBuilder.h:
+        (JSC::JSStringBuilder::append): Use characters16 instead of characters function here,
+        since we have already checked is8Bit above.
+
 2014-01-12  Andy Estes  <aestes@apple.com>
 
         [iOS] Enable the JSC Objective-C API

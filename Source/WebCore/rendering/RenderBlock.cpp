@@ -5479,11 +5479,10 @@ TextRun RenderBlock::constructTextRun(RenderObject* context, const Font& font, c
 TextRun RenderBlock::constructTextRun(RenderObject* context, const Font& font, const String& string, const RenderStyle& style, TextRun::ExpansionBehavior expansion, TextRunFlags flags)
 {
     unsigned length = string.length();
-
 #if ENABLE(8BIT_TEXTRUN)
-    if (length && string.is8Bit())
+    if (string.isNull() || string.is8Bit())
         return constructTextRunInternal(context, font, string.characters8(), length, style, expansion, flags);
-    return constructTextRunInternal(context, font, string.characters(), length, style, expansion, flags);
+    return constructTextRunInternal(context, font, string.characters16(), length, style, expansion, flags);
 #else
     return constructTextRunInternal(context, font, string.characters(), length, style, expansion, flags);
 #endif

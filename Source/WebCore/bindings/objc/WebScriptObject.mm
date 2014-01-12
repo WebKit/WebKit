@@ -548,11 +548,8 @@ static void getListFromNSArray(ExecState *exec, NSArray *array, RootObject* root
         return [WebScriptObject scriptObjectForJSObject:toRef(object) originRootObject:originRootObject rootObject:rootObject];
     }
 
-    if (value.isString()) {
-        ExecState* exec = rootObject->globalObject()->globalExec();
-        const String& u = asString(value)->value(exec);
-        return [NSString stringWithCharacters:u.characters() length:u.length()];
-    }
+    if (value.isString())
+        return asString(value)->value(rootObject->globalObject()->globalExec());
 
     if (value.isNumber())
         return [NSNumber numberWithDouble:value.asNumber()];

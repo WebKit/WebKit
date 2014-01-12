@@ -446,14 +446,17 @@ PassRefPtr<InspectorValue> buildValue(const UChar* start, const UChar* end, cons
 
 inline bool escapeChar(UChar c, StringBuilder* dst)
 {
+    // Must escape < and > to prevent script execution.
     switch (c) {
-    case '\b': dst->append("\\b", 2); break;
-    case '\f': dst->append("\\f", 2); break;
-    case '\n': dst->append("\\n", 2); break;
-    case '\r': dst->append("\\r", 2); break;
-    case '\t': dst->append("\\t", 2); break;
-    case '\\': dst->append("\\\\", 2); break;
-    case '"': dst->append("\\\"", 2); break;
+    case '\b': dst->appendLiteral("\\b"); break;
+    case '\f': dst->appendLiteral("\\f"); break;
+    case '\n': dst->appendLiteral("\\n"); break;
+    case '\r': dst->appendLiteral("\\r"); break;
+    case '\t': dst->appendLiteral("\\t"); break;
+    case '\\': dst->appendLiteral("\\\\"); break;
+    case '"': dst->appendLiteral("\\\""); break;
+    case '<': dst->appendLiteral("\\u003C"); break;
+    case '>': dst->appendLiteral("\\u003E"); break;
     default:
         return false;
     }
@@ -466,15 +469,13 @@ inline void doubleQuoteString(const String& str, StringBuilder* dst)
     for (unsigned i = 0; i < str.length(); ++i) {
         UChar c = str[i];
         if (!escapeChar(c, dst)) {
-            if (c < 32 || c > 126 || c == '<' || c == '>') {
-                // 1. Escaping <, > to prevent script execution.
-                // 2. Technically, we could also pass through c > 126 as UTF8, but this
-                //    is also optional.  It would also be a pain to implement here.
-                unsigned int symbol = static_cast<unsigned int>(c);
-                String symbolCode = String::format("\\u%04X", symbol);
-                dst->append(symbolCode.characters(), symbolCode.length());
-            } else
+            // We could format c > 126 as UTF-8 instead of escaping them.
+            if (c >= 32 || c <= 126)
                 dst->append(c);
+            else {
+                // FIXME: Way too slow to do this by creating and destroying a string each time.
+                dst->append(String::format("\\u%04X", static_cast<unsigned>(c)));
+            }
         }
     }
     dst->append('"');

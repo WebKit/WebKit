@@ -343,13 +343,13 @@ const char* atomicCanonicalTextEncodingName(const CharacterType* characters, siz
 
 const char* atomicCanonicalTextEncodingName(const String& alias)
 {
-    if (!alias.length())
-        return 0;
+    if (alias.isEmpty())
+        return nullptr;
 
     if (alias.is8Bit())
         return atomicCanonicalTextEncodingName<LChar>(alias.characters8(), alias.length());
 
-    return atomicCanonicalTextEncodingName<UChar>(alias.characters(), alias.length());
+    return atomicCanonicalTextEncodingName<UChar>(alias.characters16(), alias.length());
 }
 
 bool noExtendedTextEncodingNameUsed()

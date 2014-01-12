@@ -44,6 +44,9 @@ namespace WebCore {
             void reserveCapacity(size_t newCapacity) { m_nodes.reserveCapacity(newCapacity); }
             void clear() { m_nodes.clear(); }
 
+            Vector<RefPtr<Node>>::const_iterator begin() const { return m_nodes.begin(); }
+            Vector<RefPtr<Node>>::const_iterator end() const { return m_nodes.end(); }
+
             // NodeSet itself does not verify that nodes in it are unique.
             void append(PassRefPtr<Node> node) { m_nodes.append(node); }
             void append(const NodeSet& nodeSet) { m_nodes.appendVector(nodeSet.m_nodes); }

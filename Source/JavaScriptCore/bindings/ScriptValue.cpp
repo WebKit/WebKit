@@ -115,10 +115,8 @@ static PassRefPtr<InspectorValue> jsToInspectorValue(ExecState* scriptState, JSV
         return InspectorBasicValue::create(value.asBoolean());
     if (value.isNumber())
         return InspectorBasicValue::create(value.asNumber());
-    if (value.isString()) {
-        String s = value.getString(scriptState);
-        return InspectorString::create(String(s.characters(), s.length()));
-    }
+    if (value.isString())
+        return InspectorString::create(value.getString(scriptState));
 
     if (value.isObject()) {
         if (isJSArray(value)) {
@@ -138,13 +136,11 @@ static PassRefPtr<InspectorValue> jsToInspectorValue(ExecState* scriptState, JSV
         JSObject* object = value.getObject();
         PropertyNameArray propertyNames(scriptState);
         object->methodTable()->getOwnPropertyNames(object, scriptState, propertyNames, ExcludeDontEnumProperties);
-        for (size_t i = 0; i < propertyNames.size(); i++) {
-            const Identifier& name =  propertyNames[i];
-            JSValue propertyValue = object->get(scriptState, name);
-            RefPtr<InspectorValue> inspectorValue = jsToInspectorValue(scriptState, propertyValue, maxDepth);
+        for (auto& name : propertyNames) {
+            RefPtr<InspectorValue> inspectorValue = jsToInspectorValue(scriptState, object->get(scriptState, name), maxDepth);
             if (!inspectorValue)
                 return nullptr;
-            inspectorObject->setValue(String(name.characters(), name.length()), inspectorValue);
+            inspectorObject->setValue(name.string(), inspectorValue);
         }
         return inspectorObject;
     }

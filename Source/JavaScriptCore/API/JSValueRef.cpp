@@ -323,11 +323,11 @@ JSValueRef JSValueMakeFromJSONString(JSContextRef ctx, JSStringRef string)
     APIEntryShim entryShim(exec);
     String str = string->string();
     unsigned length = str.length();
-    if (length && str.is8Bit()) {
+    if (str.is8Bit()) {
         LiteralParser<LChar> parser(exec, str.characters8(), length, StrictJSON);
         return toRef(exec, parser.tryLiteralParse());
     }
-    LiteralParser<UChar> parser(exec, str.characters(), length, StrictJSON);
+    LiteralParser<UChar> parser(exec, str.characters16(), length, StrictJSON);
     return toRef(exec, parser.tryLiteralParse());
 }
 

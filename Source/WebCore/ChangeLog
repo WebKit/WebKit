@@ -1,3 +1,89 @@
+2014-01-12  Darin Adler  <darin@apple.com>
+
+        Reduce use of String::characters
+        https://bugs.webkit.org/show_bug.cgi?id=126854
+
+        Reviewed by Sam Weinig.
+
+        * bindings/objc/WebScriptObject.mm:
+        (+[WebScriptObject _convertValueToObjcValue:JSC::originRootObject:rootObject:]):
+        Get rid of unneeded code to turn a WTF::String into an NSString, since that's
+        built into the WTF::String class.
+
+        * editing/CompositeEditCommand.cpp:
+        (WebCore::containsOnlyWhitespace): Use WTF::String's [] operator instead of
+        an explicit call to the characters function. Small performance cost.
+        * editing/TypingCommand.cpp:
+        (WebCore::TypingCommand::insertText): Ditto.
+
+        * editing/VisibleUnits.cpp:
+        (WebCore::startOfParagraph): Use reverseFind instead of writing our own loop.
+        (WebCore::endOfParagraph): Use find instead of writing our own loop.
+
+        * html/parser/HTMLParserIdioms.cpp:
+        (WebCore::stripLeadingAndTrailingHTMLSpaces): Use characters16 instead of
+        characters since we have already checked is8Bit.
+        (WebCore::parseHTMLNonNegativeInteger): Ditto. Replace the length check with
+        a check of isNull since a zero length string could be 8 bit, but it's not
+        safe to call is8Bit on a null WTF::String. (That should probably be fixed.)
+
+        * inspector/ContentSearchUtils.cpp:
+        (WebCore::ContentSearchUtils::createSearchRegexSource): Use StringBuilder
+        instead of String in code that builds up a string one character at a time.
+        The old way was ridiculously slow because it allocated a new string for every
+        character; the new way still isn't all that efficient, but it's better. Also
+        changed to use strchr instead of WTF::String::find for special characters.
+
+        * inspector/InspectorStyleSheet.cpp:
+        (WebCore::InspectorStyle::newLineAndWhitespaceDelimiters): Use WTF::String's
+        [] operator instead of an explicit call to the characters function.
+        * inspector/InspectorStyleTextEditor.cpp:
+        (WebCore::InspectorStyleTextEditor::insertProperty): Ditto.
+        (WebCore::InspectorStyleTextEditor::internalReplaceProperty): Ditto.
+        * platform/Length.cpp:
+        (WebCore::newCoordsArray): Ditto.
+
+        * platform/LinkHash.cpp:
+        (WebCore::visitedLinkHash): Use characters16 instead of characters since
+        we have already checked is8Bit. Replace the length check with a check of
+        isNull (as above in parseHTMLNonNegativeInteger).
+
+        * platform/graphics/Color.cpp:
+        (WebCore::Color::parseHexColor): Use characters16 since we already checked is8Bit.
+        (WebCore::Color::Color): Ditto.
+
+        * platform/graphics/TextRun.h:
+        (WebCore::TextRun::TextRun): Use characters16 instead of characters since
+        we have already checked is8Bit. Replace the length check with a check of
+        isNull (as above in parseHTMLNonNegativeInteger).
+
+        * platform/text/TextEncodingRegistry.cpp:
+        (WebCore::atomicCanonicalTextEncodingName): Use characters16 instead of
+        characters since we already checked is8Bit. Also use isEmpty instead of !length.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::constructTextRun): Use characters16 instead of characters
+        since we have already checked is8Bit. Replace the length check with a check of
+        isNull (as above in parseHTMLNonNegativeInteger).
+
+        * rendering/RenderCombineText.cpp:
+        (WebCore::RenderCombineText::width): Check for zero length instead of checking
+        for null characters.
+
+        * svg/SVGFontElement.cpp:
+        (WebCore::SVGFontElement::registerLigaturesInGlyphCache): Rewrite ligatures
+        for loop and give local variables a better name. Construct the substring with
+        the substring function. Still a really inefficient approach -- allocating a new
+        string for every character is absurdly expensive.
+
+        * xml/XPathFunctions.cpp:
+        (WebCore::XPath::FunId::evaluate): Use String instead of StringBuilder. Still
+        not all that efficient, but better than before. Use substring to construct the
+        substring.
+
+        * xml/XPathNodeSet.h: Added begin and end functions so we can use a C++11 for
+        loop with this class.
+
 2014-01-12  Benjamin Poulain  <benjamin@webkit.org>
 
         Use the Selector Code Generator for matching in SelectorQuery

@@ -1146,15 +1146,10 @@ VisiblePosition startOfParagraph(const VisiblePosition& c, EditingBoundaryCrossi
             ASSERT_WITH_SECURITY_IMPLICATION(n->isTextNode());
             type = Position::PositionIsOffsetInAnchor;
             if (style.preserveNewline()) {
-                const UChar* chars = toRenderText(r)->characters();
-                int i = toRenderText(r)->textLength();
-                int o = offset;
-                if (n == startNode && o < i)
-                    i = std::max(0, o);
-                while (--i >= 0) {
-                    if (chars[i] == '\n')
-                        return VisiblePosition(Position(toText(n), i + 1), DOWNSTREAM);
-                }
+                unsigned startOffset = n == startNode ? std::max(0, offset) : std::numeric_limits<unsigned>::max();
+                size_t newlineOffset = toRenderText(r)->text()->reverseFind('\n', startOffset);
+                if (newlineOffset != notFound)
+                    return VisiblePosition(Position(toText(n), newlineOffset + 1), DOWNSTREAM);
             }
             node = n;
             offset = 0;
@@ -1226,15 +1221,11 @@ VisiblePosition endOfParagraph(const VisiblePosition &c, EditingBoundaryCrossing
         // FIXME: We avoid returning a position where the renderer can't accept the caret.
         if (r->isText() && toRenderText(r)->hasRenderedText()) {
             ASSERT_WITH_SECURITY_IMPLICATION(n->isTextNode());
-            int length = toRenderText(r)->textLength();
             type = Position::PositionIsOffsetInAnchor;
             if (style.preserveNewline()) {
-                const UChar* chars = toRenderText(r)->characters();
-                int o = n == startNode ? offset : 0;
-                for (int i = o; i < length; ++i) {
-                    if (chars[i] == '\n')
-                        return VisiblePosition(Position(toText(n), i), DOWNSTREAM);
-                }
+                size_t newlineOffset = toRenderText(r)->text()->find('\n', n == startNode ? offset : 0);
+                if (newlineOffset != notFound)
+                    return VisiblePosition(Position(toText(n), newlineOffset), DOWNSTREAM);
             }
             node = n;
             offset = r->caretMaxOffset();
