@@ -1,3 +1,22 @@
+2014-01-12  Anders Carlsson  <andersca@apple.com>
+
+        Use std::call_once instead of AtomicallyInitializedStatic in DatabaseBackendBase
+        https://bugs.webkit.org/show_bug.cgi?id=126851
+
+        Reviewed by Sam Weinig.
+
+        * Modules/webdatabase/DatabaseBackendBase.cpp:
+        (WebCore::guidMutex):
+        (WebCore::guidToVersionMap):
+        (WebCore::updateGuidVersionMap):
+        (WebCore::guidToDatabaseMap):
+        (WebCore::guidForOriginAndName):
+        (WebCore::DatabaseBackendBase::DatabaseBackendBase):
+        (WebCore::DatabaseBackendBase::closeDatabase):
+        (WebCore::DatabaseBackendBase::performOpenAndVerify):
+        (WebCore::DatabaseBackendBase::getCachedVersion):
+        (WebCore::DatabaseBackendBase::setCachedVersion):
+
 2014-01-12  Dan Bernstein  <mitz@apple.com>
 
         Try to fix the Windows build after r161830.
