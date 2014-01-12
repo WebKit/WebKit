@@ -44,7 +44,7 @@ static const int dateDefaultStep = 1;
 static const int dateDefaultStepBase = 0;
 static const int dateStepScaleFactor = 86400000;
 
-inline DateInputType::DateInputType(HTMLInputElement& element)
+DateInputType::DateInputType(HTMLInputElement& element)
     : BaseChooserOnlyDateAndTimeInputType(element)
 {
 }

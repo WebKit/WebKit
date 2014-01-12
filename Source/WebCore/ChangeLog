@@ -1,5 +1,15 @@
 2014-01-12  Simon Fraser  <simon.fraser@apple.com>
 
+        Fix linker errors: add DateTimeFormat.cpp to the project,
+        and make DateInputType::DateInputType not inline.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * html/DateInputType.cpp:
+        (WebCore::DateInputType::DateInputType):
+        * platform/DragImage.cpp:
+
+2014-01-12  Simon Fraser  <simon.fraser@apple.com>
+
         Fix a bunch of linker errors related to exported functions.
         I removed some iOS symbols from the .exp.in file; we may have
         to add some back.
