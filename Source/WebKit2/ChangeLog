@@ -1,5 +1,11 @@
 2014-01-12  Andy Estes  <aestes@apple.com>
 
+        Build Fix: Objective-C GC should be unsupported in iOS WebKit2
+
+        * Configurations/Base.xcconfig:
+
+2014-01-12  Andy Estes  <aestes@apple.com>
+
         [iOS] Upstream WebKit2 xcconfig changes to fix the build
 
         * Configurations/All-iOS.xcconfig: Added.
