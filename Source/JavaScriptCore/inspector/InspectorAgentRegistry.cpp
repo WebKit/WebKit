@@ -29,9 +29,15 @@
 
 #if ENABLE(INSPECTOR)
 
+#include "InspectorAgentBase.h"
+
 namespace Inspector {
 
 InspectorAgentRegistry::InspectorAgentRegistry()
+{
+}
+
+InspectorAgentRegistry::~InspectorAgentRegistry()
 {
 }
 

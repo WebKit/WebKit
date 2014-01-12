@@ -27,17 +27,18 @@
 #ifndef InspectorAgentRegistry_h
 #define InspectorAgentRegistry_h
 
-#include "InspectorAgentBase.h"
 #include <wtf/Vector.h>
 
 namespace Inspector {
 
+class InspectorAgentBase;
 class InspectorBackendDispatcher;
 class InspectorFrontendChannel;
 
 class JS_EXPORT_PRIVATE InspectorAgentRegistry {
 public:
     InspectorAgentRegistry();
+    ~InspectorAgentRegistry();
 
     void append(std::unique_ptr<InspectorAgentBase>);
 
