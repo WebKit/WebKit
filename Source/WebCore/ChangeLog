@@ -1,5 +1,11 @@
 2014-01-12  Simon Fraser  <simon.fraser@apple.com>
 
+        Add JSWebKitPlaybackTargetAvailabilityEvent.* to the project.
+
+        * WebCore.xcodeproj/project.pbxproj:
+
+2014-01-12  Simon Fraser  <simon.fraser@apple.com>
+
         Stub out some DragImage functions for iOS.
         
         * WebCore.xcodeproj/project.pbxproj:

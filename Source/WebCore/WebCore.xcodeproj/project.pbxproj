@@ -531,6 +531,8 @@
 		0FDA7C1F188322FC00C954B5 /* JSGestureEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FDA7C1D188322FC00C954B5 /* JSGestureEvent.h */; };
 		0FDA7C2118832BCC00C954B5 /* DateTimeFormat.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FDA7C2018832BCC00C954B5 /* DateTimeFormat.cpp */; };
 		0FDA7C23188330A900C954B5 /* DragImageIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0FDA7C22188330A900C954B5 /* DragImageIOS.mm */; };
+		0FDA7C261883333200C954B5 /* JSWebKitPlaybackTargetAvailabilityEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FDA7C241883333200C954B5 /* JSWebKitPlaybackTargetAvailabilityEvent.cpp */; };
+		0FDA7C271883333200C954B5 /* JSWebKitPlaybackTargetAvailabilityEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FDA7C251883333200C954B5 /* JSWebKitPlaybackTargetAvailabilityEvent.h */; };
 		0FE71405142170B800DB33BA /* ScrollbarThemeMock.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FE71403142170B800DB33BA /* ScrollbarThemeMock.cpp */; };
 		0FE71406142170B800DB33BA /* ScrollbarThemeMock.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FE71404142170B800DB33BA /* ScrollbarThemeMock.h */; };
 		0FF5025B102BA9010066F39A /* DOMStyleMedia.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FF50259102BA9010066F39A /* DOMStyleMedia.h */; };
@@ -7318,6 +7320,8 @@
 		0FDA7C1D188322FC00C954B5 /* JSGestureEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSGestureEvent.h; sourceTree = "<group>"; };
 		0FDA7C2018832BCC00C954B5 /* DateTimeFormat.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DateTimeFormat.cpp; sourceTree = "<group>"; };
 		0FDA7C22188330A900C954B5 /* DragImageIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = DragImageIOS.mm; path = ios/DragImageIOS.mm; sourceTree = "<group>"; };
+		0FDA7C241883333200C954B5 /* JSWebKitPlaybackTargetAvailabilityEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = JSWebKitPlaybackTargetAvailabilityEvent.cpp; path = "JSWebKitPlaybackTargetAvailabilityEvent.cpp"; sourceTree = "<group>"; };
+		0FDA7C251883333200C954B5 /* JSWebKitPlaybackTargetAvailabilityEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = JSWebKitPlaybackTargetAvailabilityEvent.h; path = "JSWebKitPlaybackTargetAvailabilityEvent.h"; sourceTree = "<group>"; };
 		0FE71403142170B800DB33BA /* ScrollbarThemeMock.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScrollbarThemeMock.cpp; sourceTree = "<group>"; };
 		0FE71404142170B800DB33BA /* ScrollbarThemeMock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScrollbarThemeMock.h; sourceTree = "<group>"; };
 		0FE71415142189FC00DB33BA /* ScrollbarTheme.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScrollbarTheme.cpp; sourceTree = "<group>"; };
@@ -18425,6 +18429,8 @@
 				0C45342610CDBBFA00869157 /* JSWebGLUniformLocation.h */,
 				77EF62F112F9DB7400C77BD2 /* JSWebGLVertexArrayObjectOES.cpp */,
 				77EF62F212F9DB7400C77BD2 /* JSWebGLVertexArrayObjectOES.h */,
+				0FDA7C241883333200C954B5 /* JSWebKitPlaybackTargetAvailabilityEvent.cpp */,
+				0FDA7C251883333200C954B5 /* JSWebKitPlaybackTargetAvailabilityEvent.h */,
 			);
 			name = HTML;
 			sourceTree = "<group>";
@@ -25358,6 +25364,7 @@
 				93309E10099E64920056E581 /* SetNodeAttributeCommand.h in Headers */,
 				B8DBDB4C130B0F8A00F5CDB1 /* SetSelectionCommand.h in Headers */,
 				93F1994F08245E59001E9ABC /* Settings.h in Headers */,
+				0FDA7C271883333200C954B5 /* JSWebKitPlaybackTargetAvailabilityEvent.h in Headers */,
 				53EF766B16530A61004CBE49 /* SettingsMacros.h in Headers */,
 				498770E91242C535002226BA /* Shader.h in Headers */,
 				0F3DD45012F5EA1B000D9190 /* ShadowBlur.h in Headers */,
@@ -28166,6 +28173,7 @@
 				BC60DA390D2A302800B9918F /* JSXMLHttpRequestException.cpp in Sources */,
 				F916C48D0DB510F80076CD83 /* JSXMLHttpRequestProgressEvent.cpp in Sources */,
 				BCDFD4950E30592F009D10AD /* JSXMLHttpRequestUpload.cpp in Sources */,
+				0FDA7C261883333200C954B5 /* JSWebKitPlaybackTargetAvailabilityEvent.cpp in Sources */,
 				1ACE53F60A8D19470022947D /* JSXMLSerializer.cpp in Sources */,
 				1A762C730A074F2600989F5B /* JSXPathEvaluator.cpp in Sources */,
 				BC60DB490D2A3D1E00B9918F /* JSXPathException.cpp in Sources */,
