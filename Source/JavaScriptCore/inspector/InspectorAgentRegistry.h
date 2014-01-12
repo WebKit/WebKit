@@ -37,14 +37,6 @@ class InspectorFrontendChannel;
 
 class JS_EXPORT_PRIVATE InspectorAgentRegistry {
 public:
-    template<typename T, typename... Args>
-    T& createAndAppend(Args&&... args)
-    {
-        m_agents.append(std::make_unique<T>(std::forward<Args...>(args)...));
-
-        return static_cast<T&>(*m_agents.last());
-    }
-
     void append(std::unique_ptr<InspectorAgentBase>);
 
     void didCreateFrontendAndBackend(InspectorFrontendChannel*, InspectorBackendDispatcher*);
