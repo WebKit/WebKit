@@ -1,3 +1,18 @@
+2014-01-12  David Kilzer  <ddkilzer@apple.com>
+
+        [iOS] Don't link to Mac-only frameworks when building iOS
+        <http://webkit.org/b/126841>
+
+        * Configurations/WebCore.xcconfig:
+        (OTHER_LDFLAGS_iphonesimulator): Remove common frameworks that
+        are already in the Xcode project.
+        (OTHER_LDFLAGS_macosx): Add Mac-only frameworks removed from the
+        Xcode project.
+        * Configurations/WebCoreTestShim.xcconfig:
+        (OTHER_LDFLAGS[sdk=macosx*]): Link to Carbon.framework for Mac
+        since it was removed from the Xcode project.
+        * WebCore.xcodeproj/project.pbxproj: Remove Mac-only frameworks.
+
 2014-01-12  Tobias Mueller  <tobiasmue@gnome.org>
 
         --disable-dependency-tracking causes build failure due to missing directories

@@ -1586,7 +1586,6 @@
 		49C7B9E51042D32F0009D447 /* WebGLTexture.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49C7B9C51042D32F0009D447 /* WebGLTexture.cpp */; };
 		49C7B9E61042D32F0009D447 /* WebGLTexture.h in Headers */ = {isa = PBXBuildFile; fileRef = 49C7B9C61042D32F0009D447 /* WebGLTexture.h */; };
 		49C7B9FC1042D3650009D447 /* GraphicsContext3D.h in Headers */ = {isa = PBXBuildFile; fileRef = 49C7B9FB1042D3650009D447 /* GraphicsContext3D.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		49C7BA791042EFAE0009D447 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 49C7BA781042EFAE0009D447 /* OpenGL.framework */; };
 		49C7BA8D1042F5B10009D447 /* JSDocumentCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49C7BA8C1042F5B10009D447 /* JSDocumentCustom.cpp */; };
 		49D5DC2B0F423A73008F20FD /* Matrix3DTransformOperation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49D5DC270F423A73008F20FD /* Matrix3DTransformOperation.cpp */; };
 		49D5DC2C0F423A73008F20FD /* Matrix3DTransformOperation.h in Headers */ = {isa = PBXBuildFile; fileRef = 49D5DC280F423A73008F20FD /* Matrix3DTransformOperation.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -3233,8 +3232,6 @@
 		93F19B0408245E59001E9ABC /* XSLTProcessor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC06F24B06D18A7E004A6FA3 /* XSLTProcessor.cpp */; };
 		93F19B0508245E59001E9ABC /* XSLTProcessorLibxslt.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC06F24D06D18A7E004A6FA3 /* XSLTProcessorLibxslt.cpp */; };
 		93F19B0708245E59001E9ABC /* WebCoreView.m in Sources */ = {isa = PBXBuildFile; fileRef = BE8560510701F91100239769 /* WebCoreView.m */; };
-		93F19B1408245E59001E9ABC /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F5C2869402846DCD018635CA /* Carbon.framework */; };
-		93F19B1508245E59001E9ABC /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F5C2869502846DCD018635CA /* Cocoa.framework */; };
 		93F19B1608245E59001E9ABC /* JavaScriptCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F8216299029F4FB501000131 /* JavaScriptCore.framework */; };
 		93F19B1708245E59001E9ABC /* libicucore.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 93F1D31A0558CC5C00821BC0 /* libicucore.dylib */; };
 		93F1D5BA12D532C400832BEC /* WebGLLoseContext.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93F1D5B712D532C400832BEC /* WebGLLoseContext.cpp */; };
@@ -5846,7 +5843,6 @@
 		E1B784201639CBBE0007B692 /* SharedWorkerRepository.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1B7841F1639CBBE0007B692 /* SharedWorkerRepository.cpp */; };
 		E1BA003116FB92AC00BA7A35 /* ResourceHandleClient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1BA003016FB92AC00BA7A35 /* ResourceHandleClient.cpp */; };
 		E1BA66F11742BD8600C20251 /* DynamicLinkerInterposing.h in Headers */ = {isa = PBXBuildFile; fileRef = E1BA66F01742BD8600C20251 /* DynamicLinkerInterposing.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		E1BA67181742BEE600C20251 /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F5C2869402846DCD018635CA /* Carbon.framework */; };
 		E1BA671A1742BEF400C20251 /* WebCoreTestShimLibrary.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1BA67191742BEF400C20251 /* WebCoreTestShimLibrary.cpp */; };
 		E1BB84AD1822CA7400525043 /* CryptoAlgorithmRegistryMac.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1BB84AC1822CA7400525043 /* CryptoAlgorithmRegistryMac.cpp */; };
 		E1BD3319182D8DDD00C05D9F /* CryptoAlgorithmRSASSA_PKCS1_v1_5.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1BD3317182D8DDD00C05D9F /* CryptoAlgorithmRSASSA_PKCS1_v1_5.cpp */; };
@@ -6228,7 +6224,6 @@
 		FD23A12613F5FA5900F67001 /* JSMediaElementAudioSourceNode.h in Headers */ = {isa = PBXBuildFile; fileRef = FD23A12413F5FA5900F67001 /* JSMediaElementAudioSourceNode.h */; };
 		FD2DBF1212B048A300ED98C6 /* Accelerate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FD2DBF0E12B048A300ED98C6 /* Accelerate.framework */; };
 		FD2DBF1312B048A300ED98C6 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FD2DBF0F12B048A300ED98C6 /* AudioToolbox.framework */; };
-		FD2DBF1412B048A300ED98C6 /* AudioUnit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FD2DBF1012B048A300ED98C6 /* AudioUnit.framework */; };
 		FD2DBF1512B048A300ED98C6 /* CoreAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FD2DBF1112B048A300ED98C6 /* CoreAudio.framework */; };
 		FD315FF612B0267600C1A359 /* AudioBasicProcessorNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FD315FAC12B0267500C1A359 /* AudioBasicProcessorNode.cpp */; };
 		FD315FF712B0267600C1A359 /* AudioBasicProcessorNode.h in Headers */ = {isa = PBXBuildFile; fileRef = FD315FAD12B0267500C1A359 /* AudioBasicProcessorNode.h */; };
@@ -8495,7 +8490,6 @@
 		49C7B9C61042D32F0009D447 /* WebGLTexture.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebGLTexture.h; path = canvas/WebGLTexture.h; sourceTree = "<group>"; };
 		49C7B9C71042D32F0009D447 /* WebGLTexture.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = WebGLTexture.idl; path = canvas/WebGLTexture.idl; sourceTree = "<group>"; };
 		49C7B9FB1042D3650009D447 /* GraphicsContext3D.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GraphicsContext3D.h; sourceTree = "<group>"; };
-		49C7BA781042EFAE0009D447 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = /System/Library/Frameworks/OpenGL.framework; sourceTree = "<absolute>"; };
 		49C7BA8C1042F5B10009D447 /* JSDocumentCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSDocumentCustom.cpp; sourceTree = "<group>"; };
 		49D5DC270F423A73008F20FD /* Matrix3DTransformOperation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Matrix3DTransformOperation.cpp; path = transforms/Matrix3DTransformOperation.cpp; sourceTree = "<group>"; };
 		49D5DC280F423A73008F20FD /* Matrix3DTransformOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Matrix3DTransformOperation.h; path = transforms/Matrix3DTransformOperation.h; sourceTree = "<group>"; };
@@ -13520,8 +13514,6 @@
 		F5C041E00FFCA96D00839D4A /* DOMHTMLDataListElementInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMHTMLDataListElementInternal.h; sourceTree = "<group>"; };
 		F5C041E10FFCA96D00839D4A /* JSHTMLDataListElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLDataListElement.cpp; sourceTree = "<group>"; };
 		F5C041E20FFCA96D00839D4A /* JSHTMLDataListElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSHTMLDataListElement.h; sourceTree = "<group>"; };
-		F5C2869402846DCD018635CA /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = /System/Library/Frameworks/Carbon.framework; sourceTree = "<absolute>"; };
-		F5C2869502846DCD018635CA /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = /System/Library/Frameworks/Cocoa.framework; sourceTree = "<absolute>"; };
 		F5E0C6591643C42C00D6CB69 /* BaseChooserOnlyDateAndTimeInputType.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BaseChooserOnlyDateAndTimeInputType.cpp; sourceTree = "<group>"; };
 		F5E0C65A1643C42C00D6CB69 /* BaseChooserOnlyDateAndTimeInputType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BaseChooserOnlyDateAndTimeInputType.h; sourceTree = "<group>"; };
 		F75A059AF170D8FAA5B8CABE /* MathMLSelectElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MathMLSelectElement.cpp; sourceTree = "<group>"; };
@@ -13616,7 +13608,6 @@
 		FD23A12413F5FA5900F67001 /* JSMediaElementAudioSourceNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSMediaElementAudioSourceNode.h; sourceTree = "<group>"; };
 		FD2DBF0E12B048A300ED98C6 /* Accelerate.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Accelerate.framework; path = /System/Library/Frameworks/Accelerate.framework; sourceTree = "<absolute>"; };
 		FD2DBF0F12B048A300ED98C6 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = /System/Library/Frameworks/AudioToolbox.framework; sourceTree = "<absolute>"; };
-		FD2DBF1012B048A300ED98C6 /* AudioUnit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioUnit.framework; path = /System/Library/Frameworks/AudioUnit.framework; sourceTree = "<absolute>"; };
 		FD2DBF1112B048A300ED98C6 /* CoreAudio.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreAudio.framework; path = /System/Library/Frameworks/CoreAudio.framework; sourceTree = "<absolute>"; };
 		FD315FAC12B0267500C1A359 /* AudioBasicProcessorNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AudioBasicProcessorNode.cpp; sourceTree = "<group>"; };
 		FD315FAD12B0267500C1A359 /* AudioBasicProcessorNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AudioBasicProcessorNode.h; sourceTree = "<group>"; };
@@ -13946,9 +13937,6 @@
 				5FE1D292178FD1F3001AA3C3 /* Security.framework in Frameworks */,
 				FD2DBF1212B048A300ED98C6 /* Accelerate.framework in Frameworks */,
 				FD2DBF1312B048A300ED98C6 /* AudioToolbox.framework in Frameworks */,
-				FD2DBF1412B048A300ED98C6 /* AudioUnit.framework in Frameworks */,
-				93F19B1408245E59001E9ABC /* Carbon.framework in Frameworks */,
-				93F19B1508245E59001E9ABC /* Cocoa.framework in Frameworks */,
 				FD2DBF1512B048A300ED98C6 /* CoreAudio.framework in Frameworks */,
 				1AB33DA512551E320024457A /* IOKit.framework in Frameworks */,
 				93F19B1608245E59001E9ABC /* JavaScriptCore.framework in Frameworks */,
@@ -13956,7 +13944,6 @@
 				1CFAE3230A6D6A3F0032593D /* libobjc.dylib in Frameworks */,
 				DD763BB20992C2C900740B8E /* libxml2.dylib in Frameworks */,
 				379919B21200DE5000EA041C /* libz.dylib in Frameworks */,
-				49C7BA791042EFAE0009D447 /* OpenGL.framework in Frameworks */,
 				A88AD52F09524B92001DD196 /* QuartzCore.framework in Frameworks */,
 				1A7FA7CC0DDA4B770028F8A5 /* SystemConfiguration.framework in Frameworks */,
 			);
@@ -13966,7 +13953,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E1BA67181742BEE600C20251 /* Carbon.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -14351,9 +14337,6 @@
 			children = (
 				FD2DBF0E12B048A300ED98C6 /* Accelerate.framework */,
 				FD2DBF0F12B048A300ED98C6 /* AudioToolbox.framework */,
-				FD2DBF1012B048A300ED98C6 /* AudioUnit.framework */,
-				F5C2869402846DCD018635CA /* Carbon.framework */,
-				F5C2869502846DCD018635CA /* Cocoa.framework */,
 				FD2DBF1112B048A300ED98C6 /* CoreAudio.framework */,
 				AA5F3B9016CC5BEB00455EB0 /* CoreFoundation.framework */,
 				1AB33DA412551E320024457A /* IOKit.framework */,
@@ -14362,7 +14345,6 @@
 				1CFAE3220A6D6A3F0032593D /* libobjc.dylib */,
 				DD763BB10992C2C900740B8E /* libxml2.dylib */,
 				379919B11200DE5000EA041C /* libz.dylib */,
-				49C7BA781042EFAE0009D447 /* OpenGL.framework */,
 				A85D7A2F0879EBA9006A9172 /* QuartzCore.framework */,
 				5FE1D291178FD1F3001AA3C3 /* Security.framework */,
 				1A7FA7CB0DDA4B770028F8A5 /* SystemConfiguration.framework */,
