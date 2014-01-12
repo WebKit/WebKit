@@ -1,5 +1,13 @@
 2014-01-12  Simon Fraser  <simon.fraser@apple.com>
 
+        Fix a bunch of linker errors related to exported functions.
+        I removed some iOS symbols from the .exp.in file; we may have
+        to add some back.
+
+        * WebCore.exp.in:
+
+2014-01-12  Simon Fraser  <simon.fraser@apple.com>
+
         Add generated JSTouch* and JSGestureEvent.* files to the project.
 
         * WebCore.xcodeproj/project.pbxproj:
