@@ -1,3 +1,10 @@
+2014-01-12  Andy Estes  <aestes@apple.com>
+
+        Fix the Mac build after r161777.
+
+        * gtest/xcode/Config/General.xcconfig: AspenFamily.xcconfig excludes
+        macosx from SUPPORTED_PLATFORMS, so add it back in ourselves.
+
 2014-01-11  David Kilzer  <ddkilzer@apple.com>
 
         [iOS] Upstream gtest
