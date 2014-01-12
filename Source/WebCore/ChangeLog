@@ -1,3 +1,13 @@
+2014-01-12  David Kilzer  <ddkilzer@apple.com>
+
+        [iOS] Fix link errors for iOS: Part 3
+
+        * WebCore.exp.in:
+        - Move some Mac-only symbols to Mac-only section.
+        * WebCore.xcodeproj/project.pbxproj:
+        - Add missing references to AuthenticationCF.cpp and
+          CookieJarCFNet.cpp.
+
 2014-01-11  Anders Carlsson  <andersca@apple.com>
 
         Remove unsafe uses of AtomicallyInitializedStatic

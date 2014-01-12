@@ -2319,8 +2319,10 @@
 		7EA30F6917EFFE7500257D0B /* JSWebGLCompressedTexturePVRTC.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7EA30F6717EFFE7500257D0B /* JSWebGLCompressedTexturePVRTC.cpp */; };
 		7EA30F6A16DFFE7500257D0B /* JSWebGLCompressedTextureATC.h in Headers */ = {isa = PBXBuildFile; fileRef = 7EA30F6816DFFE7500257D0B /* JSWebGLCompressedTextureATC.h */; };
 		7EA30F6A17EFFE7500257D0B /* JSWebGLCompressedTexturePVRTC.h in Headers */ = {isa = PBXBuildFile; fileRef = 7EA30F6817EFFE7500257D0B /* JSWebGLCompressedTexturePVRTC.h */; };
+		7EE6845F12D26E3800E79415 /* AuthenticationCF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7EE6844C12D26E3800E79415 /* AuthenticationCF.cpp */; };
 		7EE6846012D26E3800E79415 /* AuthenticationCF.h in Headers */ = {isa = PBXBuildFile; fileRef = 7EE6844D12D26E3800E79415 /* AuthenticationCF.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7EE6846112D26E3800E79415 /* AuthenticationChallenge.h in Headers */ = {isa = PBXBuildFile; fileRef = 7EE6844E12D26E3800E79415 /* AuthenticationChallenge.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		7EE6846212D26E3800E79415 /* CookieJarCFNet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7EE6844F12D26E3800E79415 /* CookieJarCFNet.cpp */; };
 		7EE6846312D26E3800E79415 /* CookieStorageCFNet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7EE6845012D26E3800E79415 /* CookieStorageCFNet.cpp */; };
 		7EE6846512D26E3800E79415 /* CredentialStorageCFNet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7EE6845212D26E3800E79415 /* CredentialStorageCFNet.cpp */; };
 		7EE6846612D26E3800E79415 /* FormDataStreamCFNet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7EE6845312D26E3800E79415 /* FormDataStreamCFNet.cpp */; };
@@ -9291,8 +9293,10 @@
 		7EA30F6717EFFE7500257D0B /* JSWebGLCompressedTexturePVRTC.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWebGLCompressedTexturePVRTC.cpp; sourceTree = "<group>"; };
 		7EA30F6816DFFE7500257D0B /* JSWebGLCompressedTextureATC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWebGLCompressedTextureATC.h; sourceTree = "<group>"; };
 		7EA30F6817EFFE7500257D0B /* JSWebGLCompressedTexturePVRTC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWebGLCompressedTexturePVRTC.h; sourceTree = "<group>"; };
+		7EE6844C12D26E3800E79415 /* AuthenticationCF.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AuthenticationCF.cpp; sourceTree = "<group>"; };
 		7EE6844D12D26E3800E79415 /* AuthenticationCF.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AuthenticationCF.h; sourceTree = "<group>"; };
 		7EE6844E12D26E3800E79415 /* AuthenticationChallenge.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AuthenticationChallenge.h; sourceTree = "<group>"; };
+		7EE6844F12D26E3800E79415 /* CookieJarCFNet.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CookieJarCFNet.cpp; sourceTree = "<group>"; };
 		7EE6845012D26E3800E79415 /* CookieStorageCFNet.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CookieStorageCFNet.cpp; sourceTree = "<group>"; };
 		7EE6845212D26E3800E79415 /* CredentialStorageCFNet.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CredentialStorageCFNet.cpp; sourceTree = "<group>"; };
 		7EE6845312D26E3800E79415 /* FormDataStreamCFNet.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FormDataStreamCFNet.cpp; sourceTree = "<group>"; };
@@ -20094,8 +20098,10 @@
 		B2F34FE70E82F81700F627CD /* cf */ = {
 			isa = PBXGroup;
 			children = (
+				7EE6844C12D26E3800E79415 /* AuthenticationCF.cpp */,
 				7EE6844D12D26E3800E79415 /* AuthenticationCF.h */,
 				7EE6844E12D26E3800E79415 /* AuthenticationChallenge.h */,
+				7EE6844F12D26E3800E79415 /* CookieJarCFNet.cpp */,
 				7EE6845012D26E3800E79415 /* CookieStorageCFNet.cpp */,
 				7EE6845212D26E3800E79415 /* CredentialStorageCFNet.cpp */,
 				B2F34FE80E82F82700F627CD /* DNSCFNet.cpp */,
@@ -26475,6 +26481,7 @@
 				BE88E0DB1715D2A200658D98 /* AudioTrackList.cpp in Sources */,
 				FD31608A12B026F700C1A359 /* AudioUtilities.cpp in Sources */,
 				7E428CE513E3407F003B661C /* ResourceHandleIOS.mm in Sources */,
+				7EE6845F12D26E3800E79415 /* AuthenticationCF.cpp in Sources */,
 				934F71380D5A6EFF00018D69 /* AuthenticationChallengeBase.cpp in Sources */,
 				514C764D0CE9234E007EF3CD /* AuthenticationMac.mm in Sources */,
 				45830D4D1679B4F800ACF8C3 /* AutoscrollController.cpp in Sources */,
@@ -26614,6 +26621,7 @@
 				93B6A0EA0B0BCA8400F5027A /* ContextMenuMac.mm in Sources */,
 				FD31602812B0267600C1A359 /* ConvolverNode.cpp in Sources */,
 				E1424C93164B52C800F32D40 /* CookieJar.cpp in Sources */,
+				7EE6846212D26E3800E79415 /* CookieJarCFNet.cpp in Sources */,
 				E1424C90164B460B00F32D40 /* CookieJarMac.mm in Sources */,
 				7EE6846312D26E3800E79415 /* CookieStorageCFNet.cpp in Sources */,
 				37E65950163B10C200EB4574 /* SimpleFontDataIOS.mm in Sources */,
