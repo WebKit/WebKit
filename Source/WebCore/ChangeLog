@@ -1,5 +1,13 @@
 2014-01-12  David Kilzer  <ddkilzer@apple.com>
 
+        [iOS] First of many iOS fixes to WebCore.exp.in
+
+        * WebCore.exp.in:
+        - Move some Mac-only symbols to Mac-only section.
+        - Upstream some changes to iOS-only section.
+
+2014-01-12  David Kilzer  <ddkilzer@apple.com>
+
         [iOS] Don't link to Mac-only frameworks when building iOS
         <http://webkit.org/b/126841>
 
