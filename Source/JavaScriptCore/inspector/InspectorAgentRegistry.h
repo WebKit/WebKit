@@ -40,6 +40,8 @@ public:
     InspectorAgentRegistry();
     ~InspectorAgentRegistry();
 
+    InspectorAgentRegistry(const InspectorAgentRegistry&);
+
     void append(std::unique_ptr<InspectorAgentBase>);
 
     void didCreateFrontendAndBackend(InspectorFrontendChannel*, InspectorBackendDispatcher*);

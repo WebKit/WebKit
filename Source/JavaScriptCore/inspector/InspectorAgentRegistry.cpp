@@ -37,6 +37,10 @@ InspectorAgentRegistry::InspectorAgentRegistry()
 {
 }
 
+InspectorAgentRegistry::InspectorAgentRegistry(const InspectorAgentRegistry&)
+{
+}
+
 InspectorAgentRegistry::~InspectorAgentRegistry()
 {
 }
