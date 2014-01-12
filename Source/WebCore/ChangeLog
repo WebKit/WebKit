@@ -1,3 +1,19 @@
+2014-01-12  Anders Carlsson  <andersca@apple.com>
+
+        Simplify creation of XMLHttpRequestStaticData
+        https://bugs.webkit.org/show_bug.cgi?id=126852
+
+        Reviewed by Sam Weinig.
+
+        Add a staticData() getter that does the initialization and get rid of the explicit
+        calls to initializeXMLHttpRequestStaticData().
+
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequestStaticData::XMLHttpRequestStaticData):
+        (WebCore::staticData):
+        (WebCore::XMLHttpRequest::XMLHttpRequest):
+        (WebCore::XMLHttpRequest::isAllowedHTTPHeader):
+
 2014-01-12  Simon Fraser  <simon.fraser@apple.com>
 
         Final WebCore link error: update a symbol in WebCoreSystemInterfaceIOS.mm.

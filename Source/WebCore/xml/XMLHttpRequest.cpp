@@ -55,6 +55,7 @@
 #include "XMLHttpRequestUpload.h"
 #include "markup.h"
 #include <heap/Strong.h>
+#include <mutex>
 #include <runtime/ArrayBuffer.h>
 #include <runtime/ArrayBufferView.h>
 #include <runtime/JSLock.h>
@@ -83,36 +84,50 @@ struct XMLHttpRequestStaticData {
     WTF_MAKE_NONCOPYABLE(XMLHttpRequestStaticData); WTF_MAKE_FAST_ALLOCATED;
 public:
     XMLHttpRequestStaticData();
-    String m_proxyHeaderPrefix;
-    String m_secHeaderPrefix;
-    HashSet<String, CaseFoldingHash> m_forbiddenRequestHeaders;
+    const String m_proxyHeaderPrefix;
+    const String m_secHeaderPrefix;
+    const HashSet<String, CaseFoldingHash> m_forbiddenRequestHeaders;
 };
 
 XMLHttpRequestStaticData::XMLHttpRequestStaticData()
     : m_proxyHeaderPrefix("proxy-")
     , m_secHeaderPrefix("sec-")
+    , m_forbiddenRequestHeaders({
+        "accept-charset",
+        "accept-encoding",
+        "access-control-request-headers",
+        "access-control-request-method",
+        "connection",
+        "content-length",
+        "content-transfer-encoding",
+        "cookie",
+        "cookie2",
+        "date",
+        "expect",
+        "host",
+        "keep-alive",
+        "origin",
+        "referer",
+        "te",
+        "trailer",
+        "transfer-encoding",
+        "upgrade",
+        "user-agent",
+        "via",
+    })
 {
-    m_forbiddenRequestHeaders.add("accept-charset");
-    m_forbiddenRequestHeaders.add("accept-encoding");
-    m_forbiddenRequestHeaders.add("access-control-request-headers");
-    m_forbiddenRequestHeaders.add("access-control-request-method");
-    m_forbiddenRequestHeaders.add("connection");
-    m_forbiddenRequestHeaders.add("content-length");
-    m_forbiddenRequestHeaders.add("content-transfer-encoding");
-    m_forbiddenRequestHeaders.add("cookie");
-    m_forbiddenRequestHeaders.add("cookie2");
-    m_forbiddenRequestHeaders.add("date");
-    m_forbiddenRequestHeaders.add("expect");
-    m_forbiddenRequestHeaders.add("host");
-    m_forbiddenRequestHeaders.add("keep-alive");
-    m_forbiddenRequestHeaders.add("origin");
-    m_forbiddenRequestHeaders.add("referer");
-    m_forbiddenRequestHeaders.add("te");
-    m_forbiddenRequestHeaders.add("trailer");
-    m_forbiddenRequestHeaders.add("transfer-encoding");
-    m_forbiddenRequestHeaders.add("upgrade");
-    m_forbiddenRequestHeaders.add("user-agent");
-    m_forbiddenRequestHeaders.add("via");
+}
+
+static const XMLHttpRequestStaticData& staticData()
+{
+    std::once_flag onceFlag;
+    static const XMLHttpRequestStaticData* staticData;
+
+    std::call_once(onceFlag, [] {
+        staticData = std::make_unique<XMLHttpRequestStaticData>().release();
+    });
+
+    return *staticData;
 }
 
 static bool isSetCookieHeader(const AtomicString& name)
@@ -137,21 +152,6 @@ static void replaceCharsetInMediaType(String& mediaType, const String& charsetVa
         unsigned int start = pos + charsetValue.length();
         findCharsetInMediaType(mediaType, pos, len, start);
     }
-}
-
-static const XMLHttpRequestStaticData* staticData = 0;
-
-static const XMLHttpRequestStaticData* createXMLHttpRequestStaticData()
-{
-    staticData = new XMLHttpRequestStaticData;
-    return staticData;
-}
-
-static const XMLHttpRequestStaticData* initializeXMLHttpRequestStaticData()
-{
-    // Uses dummy to avoid warnings about an unused variable.
-    AtomicallyInitializedStatic(const XMLHttpRequestStaticData*, dummy = createXMLHttpRequestStaticData());
-    return dummy;
 }
 
 static void logConsoleError(ScriptExecutionContext* context, const String& message)
@@ -192,7 +192,6 @@ XMLHttpRequest::XMLHttpRequest(ScriptExecutionContext& context)
     , m_responseTypeCode(ResponseTypeDefault)
     , m_responseCacheIsValid(false)
 {
-    initializeXMLHttpRequestStaticData();
 #ifndef NDEBUG
     xmlHttpRequestCounter.increment();
 #endif
@@ -474,9 +473,8 @@ String XMLHttpRequest::uppercaseKnownHTTPMethod(const String& method)
 
 bool XMLHttpRequest::isAllowedHTTPHeader(const String& name)
 {
-    initializeXMLHttpRequestStaticData();
-    return !staticData->m_forbiddenRequestHeaders.contains(name) && !name.startsWith(staticData->m_proxyHeaderPrefix, false)
-        && !name.startsWith(staticData->m_secHeaderPrefix, false);
+    return !staticData().m_forbiddenRequestHeaders.contains(name) && !name.startsWith(staticData().m_proxyHeaderPrefix, false)
+        && !name.startsWith(staticData().m_secHeaderPrefix, false);
 }
 
 void XMLHttpRequest::open(const String& method, const URL& url, ExceptionCode& ec)
