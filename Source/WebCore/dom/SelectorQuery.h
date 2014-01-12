@@ -28,6 +28,7 @@
 
 #include "CSSSelectorList.h"
 #include "NodeList.h"
+#include "SelectorCompiler.h"
 #include <wtf/HashMap.h>
 #include <wtf/Vector.h>
 #include <wtf/text/AtomicStringHash.h>
@@ -55,6 +56,11 @@ private:
         SelectorData(const CSSSelector* selector, bool isFastCheckable) : selector(selector), isFastCheckable(isFastCheckable) { }
         const CSSSelector* selector;
         bool isFastCheckable;
+
+#if ENABLE(CSS_SELECTOR_JIT)
+        mutable SelectorCompilationStatus compilationStatus;
+        mutable JSC::MacroAssemblerCodeRef compiledSelectorCodeRef;
+#endif // ENABLE(CSS_SELECTOR_JIT)
     };
 
     bool selectorMatches(const SelectorData&, Element&, const ContainerNode& rootNode) const;
@@ -65,6 +71,10 @@ private:
     template <typename SelectorQueryTrait> void executeSingleClassNameSelectorData(const ContainerNode& rootNode, const SelectorData&, typename SelectorQueryTrait::OutputType&) const;
     template <typename SelectorQueryTrait> void executeSingleSelectorData(const ContainerNode& rootNode, const SelectorData&, typename SelectorQueryTrait::OutputType&) const;
     template <typename SelectorQueryTrait> void executeSingleMultiSelectorData(const ContainerNode& rootNode, typename SelectorQueryTrait::OutputType&) const;
+#if ENABLE(CSS_SELECTOR_JIT)
+    template <typename SelectorQueryTrait> void executeCompiledSimpleSelectorChecker(const ContainerNode& rootNode, SelectorCompiler::SimpleSelectorChecker, typename SelectorQueryTrait::OutputType&) const;
+    template <typename SelectorQueryTrait> void executeCompiledSelectorCheckerWithContext(const ContainerNode& rootNode, SelectorCompiler::SelectorCheckerWithCheckingContext, const SelectorCompiler::CheckingContext&, typename SelectorQueryTrait::OutputType&) const;
+#endif // ENABLE(CSS_SELECTOR_JIT)
 
     Vector<SelectorData> m_selectors;
 };

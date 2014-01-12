@@ -266,6 +266,32 @@ ALWAYS_INLINE void SelectorDataList::executeSingleMultiSelectorData(const Contai
     }
 }
 
+#if ENABLE(CSS_SELECTOR_JIT)
+template <typename SelectorQueryTrait>
+ALWAYS_INLINE void SelectorDataList::executeCompiledSimpleSelectorChecker(const ContainerNode& rootNode, SelectorCompiler::SimpleSelectorChecker selectorChecker, typename SelectorQueryTrait::OutputType& output) const
+{
+    for (auto& element : elementDescendants(const_cast<ContainerNode&>(rootNode))) {
+        if (selectorChecker(&element)) {
+            SelectorQueryTrait::appendOutputForElement(output, &element);
+            if (SelectorQueryTrait::shouldOnlyMatchFirstElement)
+                return;
+        }
+    }
+}
+
+template <typename SelectorQueryTrait>
+ALWAYS_INLINE void SelectorDataList::executeCompiledSelectorCheckerWithContext(const ContainerNode& rootNode, SelectorCompiler::SelectorCheckerWithCheckingContext selectorChecker, const SelectorCompiler::CheckingContext& context, typename SelectorQueryTrait::OutputType& output) const
+{
+    for (auto& element : elementDescendants(const_cast<ContainerNode&>(rootNode))) {
+        if (selectorChecker(&element, &context)) {
+            SelectorQueryTrait::appendOutputForElement(output, &element);
+            if (SelectorQueryTrait::shouldOnlyMatchFirstElement)
+                return;
+        }
+    }
+}
+#endif // ENABLE(CSS_SELECTOR_JIT)
+
 template <typename SelectorQueryTrait>
 ALWAYS_INLINE void SelectorDataList::execute(ContainerNode& rootNode, typename SelectorQueryTrait::OutputType& output) const
 {
@@ -277,8 +303,33 @@ ALWAYS_INLINE void SelectorDataList::execute(ContainerNode& rootNode, typename S
             executeSingleTagNameSelectorData<SelectorQueryTrait>(rootNode, selectorData, output);
         else if (isSingleClassNameSelector(*selectorData.selector))
             executeSingleClassNameSelectorData<SelectorQueryTrait>(rootNode, selectorData, output);
-        else
+        else {
+#if ENABLE(CSS_SELECTOR_JIT)
+            void* compiledSelectorChecker = selectorData.compiledSelectorCodeRef.code().executableAddress();
+            if (!compiledSelectorChecker && selectorData.compilationStatus == SelectorCompilationStatus::NotCompiled) {
+                JSC::VM* vm = rootNode.document().scriptExecutionContext()->vm();
+                selectorData.compilationStatus = SelectorCompiler::compileSelector(selectorData.selector, vm, selectorData.compiledSelectorCodeRef);
+            }
+
+            if (compiledSelectorChecker) {
+                if (selectorData.compilationStatus == SelectorCompilationStatus::SimpleSelectorChecker) {
+                    SelectorCompiler::SimpleSelectorChecker selectorChecker = SelectorCompiler::simpleSelectorCheckerFunction(compiledSelectorChecker, selectorData.compilationStatus);
+                    executeCompiledSimpleSelectorChecker<SelectorQueryTrait>(rootNode, selectorChecker, output);
+                } else {
+                    ASSERT(selectorData.compilationStatus == SelectorCompilationStatus::SelectorCheckerWithCheckingContext);
+                    SelectorCompiler::SelectorCheckerWithCheckingContext selectorChecker = SelectorCompiler::selectorCheckerFunctionWithCheckingContext(compiledSelectorChecker, selectorData.compilationStatus);
+
+                    SelectorCompiler::CheckingContext context;
+                    context.elementStyle = nullptr;
+                    context.resolvingMode = SelectorChecker::QueryingRules;
+                    executeCompiledSelectorCheckerWithContext<SelectorQueryTrait>(rootNode, selectorChecker, context, output);
+                }
+                return;
+            }
+#endif // ENABLE(CSS_SELECTOR_JIT)
+
             executeSingleSelectorData<SelectorQueryTrait>(rootNode, selectorData, output);
+        }
         return;
     }
     executeSingleMultiSelectorData<SelectorQueryTrait>(rootNode, output);

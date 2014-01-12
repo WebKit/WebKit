@@ -1,3 +1,26 @@
+2014-01-12  Benjamin Poulain  <benjamin@webkit.org>
+
+        Use the Selector Code Generator for matching in SelectorQuery
+        https://bugs.webkit.org/show_bug.cgi?id=126185
+
+        Reviewed by Ryosuke Niwa.
+
+        Compile selectors on demand and use the generated binary to perform
+        element matching in SelectorQuery.
+
+        Tests: fast/selectors/querySelector-long-adjacent-backtracking.html
+               fast/selectors/querySelector-long-child-backtracking.html
+               fast/selectors/querySelector-mixed-child-adjacent-backtracking.html
+               fast/selectors/querySelector-multiple-simple-child-backtracking.html
+               fast/selectors/querySelector-simple-adjacent-backtracking.html
+               fast/selectors/querySelector-simple-child-backtracking.html
+
+        * dom/SelectorQuery.cpp:
+        (WebCore::SelectorDataList::executeCompiledSimpleSelectorChecker):
+        (WebCore::SelectorDataList::executeCompiledSelectorCheckerWithContext):
+        (WebCore::SelectorDataList::execute):
+        * dom/SelectorQuery.h:
+
 2014-01-12  Anders Carlsson  <andersca@apple.com>
 
         Simplify creation of XMLHttpRequestStaticData

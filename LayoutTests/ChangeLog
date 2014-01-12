@@ -1,3 +1,25 @@
+2014-01-12  Benjamin Poulain  <benjamin@webkit.org>
+
+        Use the Selector Code Generator for matching in SelectorQuery
+        https://bugs.webkit.org/show_bug.cgi?id=126185
+
+        Reviewed by Ryosuke Niwa.
+
+        Add some tests for longer backtracking cases typically not covered by the other tests.
+
+        * fast/selectors/querySelector-long-adjacent-backtracking-expected.txt: Added.
+        * fast/selectors/querySelector-long-adjacent-backtracking.html: Added.
+        * fast/selectors/querySelector-long-child-backtracking-expected.txt: Added.
+        * fast/selectors/querySelector-long-child-backtracking.html: Added.
+        * fast/selectors/querySelector-mixed-child-adjacent-backtracking-expected.txt: Added.
+        * fast/selectors/querySelector-mixed-child-adjacent-backtracking.html: Added.
+        * fast/selectors/querySelector-multiple-simple-child-backtracking-expected.txt: Added.
+        * fast/selectors/querySelector-multiple-simple-child-backtracking.html: Added.
+        * fast/selectors/querySelector-simple-adjacent-backtracking-expected.txt: Added.
+        * fast/selectors/querySelector-simple-adjacent-backtracking.html: Added.
+        * fast/selectors/querySelector-simple-child-backtracking-expected.txt: Added.
+        * fast/selectors/querySelector-simple-child-backtracking.html: Added.
+
 2014-01-12  Andreas Kling  <akling@apple.com>
 
         REGRESSION(r160806): line-height is not applied when only present in :link style.

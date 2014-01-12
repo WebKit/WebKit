@@ -29,6 +29,7 @@
 #if ENABLE(CSS_SELECTOR_JIT)
 
 #include "SelectorChecker.h"
+#include <JavaScriptCore/MacroAssemblerCodeRef.h>
 
 namespace JSC {
 class MacroAssemblerCodeRef;
