@@ -1,5 +1,11 @@
 2014-01-12  Dan Bernstein  <mitz@apple.com>
 
+        Added a reference to WebContentService/Info-OSX.plist to the project.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+
+2014-01-12  Dan Bernstein  <mitz@apple.com>
+
         OS X build fix.
 
         * WebKit2.xcodeproj/project.pbxproj:
