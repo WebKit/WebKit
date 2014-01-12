@@ -58,6 +58,7 @@ xcopy /y /d "%ProjectDir%..\platform\graphics\win\%1\*.h" "%CONFIGURATIONBUILDDI
 xcopy /y /d "%ProjectDir%..\platform\graphics\opentype\*.h" "%CONFIGURATIONBUILDDIR%\include\WebCore"
 xcopy /y /d "%ProjectDir%..\platform\mock\*.h" "%CONFIGURATIONBUILDDIR%\include\WebCore"
 xcopy /y /d "%ProjectDir%..\platform\text\*.h" "%CONFIGURATIONBUILDDIR%\include\WebCore"
+xcopy /y /d "%ProjectDir%..\platform\text\icu\*.h" "%CONFIGURATIONBUILDDIR%\include\WebCore"
 xcopy /y /d "%ProjectDir%..\platform\text\transcoder\*.h" "%CONFIGURATIONBUILDDIR%\include\WebCore"
 xcopy /y /d "%ProjectDir%..\platform\win\*.h" "%CONFIGURATIONBUILDDIR%\include\WebCore"
 xcopy /y /d "%ProjectDir%..\platform\network\*.h" "%CONFIGURATIONBUILDDIR%\include\WebCore"

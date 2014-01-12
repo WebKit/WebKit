@@ -2293,6 +2293,12 @@
 		7C522D4B15B477E8009B7C95 /* InspectorOverlay.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C522D4915B477E8009B7C95 /* InspectorOverlay.cpp */; };
 		7C5343FC17B74B63004232F0 /* JSMediaQueryListListener.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C5343FA17B74B63004232F0 /* JSMediaQueryListListener.cpp */; };
 		7C5343FD17B74B63004232F0 /* JSMediaQueryListListener.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C5343FB17B74B63004232F0 /* JSMediaQueryListListener.h */; };
+		7C74D43318823A9300E5ED57 /* UTextProviderLatin1.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C74D43118823A9300E5ED57 /* UTextProviderLatin1.cpp */; };
+		7C74D43418823A9300E5ED57 /* UTextProviderLatin1.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C74D43218823A9300E5ED57 /* UTextProviderLatin1.h */; };
+		7C74D43718823B1900E5ED57 /* UTextProvider.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C74D43518823B1900E5ED57 /* UTextProvider.cpp */; };
+		7C74D43818823B1900E5ED57 /* UTextProvider.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C74D43618823B1900E5ED57 /* UTextProvider.h */; };
+		7C74D43B1882400400E5ED57 /* UTextProviderUTF16.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C74D4391882400400E5ED57 /* UTextProviderUTF16.cpp */; };
+		7C74D43C1882400400E5ED57 /* UTextProviderUTF16.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C74D43A1882400400E5ED57 /* UTextProviderUTF16.h */; };
 		7CC7E3D717208C0F003C5277 /* IDNScriptWhiteList.txt in Resources */ = {isa = PBXBuildFile; fileRef = 7CC7E3D617208C0F003C5277 /* IDNScriptWhiteList.txt */; };
 		7CE6CBFB187F370700D46BF5 /* FormatConverter.h in Headers */ = {isa = PBXBuildFile; fileRef = 7CE6CBFA187F370700D46BF5 /* FormatConverter.h */; };
 		7CE6CBFD187F394900D46BF5 /* FormatConverter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CE6CBFC187F394900D46BF5 /* FormatConverter.cpp */; };
@@ -9266,6 +9272,12 @@
 		7C6136F71710C35200FF4A57 /* InFilesCompiler.pm */ = {isa = PBXFileReference; lastKnownFileType = text.script.perl; name = InFilesCompiler.pm; path = scripts/InFilesCompiler.pm; sourceTree = "<group>"; };
 		7C6136F81710C35200FF4A57 /* InFilesParser.pm */ = {isa = PBXFileReference; lastKnownFileType = text.script.perl; name = InFilesParser.pm; path = scripts/InFilesParser.pm; sourceTree = "<group>"; };
 		7C6136F91710C35200FF4A57 /* StaticString.pm */ = {isa = PBXFileReference; lastKnownFileType = text.script.perl; name = StaticString.pm; path = scripts/StaticString.pm; sourceTree = "<group>"; };
+		7C74D43118823A9300E5ED57 /* UTextProviderLatin1.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UTextProviderLatin1.cpp; sourceTree = "<group>"; };
+		7C74D43218823A9300E5ED57 /* UTextProviderLatin1.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UTextProviderLatin1.h; sourceTree = "<group>"; };
+		7C74D43518823B1900E5ED57 /* UTextProvider.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UTextProvider.cpp; sourceTree = "<group>"; };
+		7C74D43618823B1900E5ED57 /* UTextProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UTextProvider.h; sourceTree = "<group>"; };
+		7C74D4391882400400E5ED57 /* UTextProviderUTF16.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UTextProviderUTF16.cpp; sourceTree = "<group>"; };
+		7C74D43A1882400400E5ED57 /* UTextProviderUTF16.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UTextProviderUTF16.h; sourceTree = "<group>"; };
 		7CC7E3D617208C0F003C5277 /* IDNScriptWhiteList.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = IDNScriptWhiteList.txt; sourceTree = "<group>"; };
 		7CE6CBFA187F370700D46BF5 /* FormatConverter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FormatConverter.h; sourceTree = "<group>"; };
 		7CE6CBFC187F394900D46BF5 /* FormatConverter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FormatConverter.cpp; sourceTree = "<group>"; };
@@ -16273,6 +16285,19 @@
 			tabWidth = 4;
 			usesTabs = 0;
 		};
+		7C74D43018823A4200E5ED57 /* icu */ = {
+			isa = PBXGroup;
+			children = (
+				7C74D43118823A9300E5ED57 /* UTextProviderLatin1.cpp */,
+				7C74D43218823A9300E5ED57 /* UTextProviderLatin1.h */,
+				7C74D4391882400400E5ED57 /* UTextProviderUTF16.cpp */,
+				7C74D43A1882400400E5ED57 /* UTextProviderUTF16.h */,
+				7C74D43518823B1900E5ED57 /* UTextProvider.cpp */,
+				7C74D43618823B1900E5ED57 /* UTextProvider.h */,
+			);
+			path = icu;
+			sourceTree = "<group>";
+		};
 		7E474E1912494DA900235364 /* ios */ = {
 			isa = PBXGroup;
 			children = (
@@ -20014,6 +20039,7 @@
 				B2B264590D00A77E000ACC1D /* cf */,
 				A516E8B2136E04C00076C3C0 /* ios */,
 				B2C3D9F90D006C1D00EF6F26 /* mac */,
+				7C74D43018823A4200E5ED57 /* icu */,
 				37C61F0012095C87007A3C67 /* AtomicStringKeyedMRUCache.h */,
 				B2C3D9F20D006C1D00EF6F26 /* BidiContext.cpp */,
 				B2C3D9F30D006C1D00EF6F26 /* BidiContext.h */,
@@ -25190,10 +25216,12 @@
 				D0A3A7311405A39800FB8ED3 /* ResourceLoaderOptions.h in Headers */,
 				51AF503616F100F60095B2E8 /* ResourceLoaderTypes.h in Headers */,
 				973E325710883B7C005BC493 /* ResourceLoadNotifier.h in Headers */,
+				7C74D43418823A9300E5ED57 /* UTextProviderLatin1.h in Headers */,
 				E4295FA412B0614E00D1ACE0 /* ResourceLoadPriority.h in Headers */,
 				D0CE58F9125E4CC200F3F199 /* ResourceLoadScheduler.h in Headers */,
 				07C59B7617F7D0DB000FBCBB /* CapabilityRange.h in Headers */,
 				8A81BF8511DCFD9000DA2B98 /* ResourceLoadTiming.h in Headers */,
+				7C74D43818823B1900E5ED57 /* UTextProvider.h in Headers */,
 				7EE6846D12D26E3800E79415 /* ResourceRequest.h in Headers */,
 				514C767D0CE923A1007EF3CD /* ResourceRequestBase.h in Headers */,
 				07969DB817D14151007FF842 /* JSRTCIceCandidateEvent.h in Headers */,
@@ -25426,6 +25454,7 @@
 				BCEF444A0E6745E0001C1287 /* StyleGeneratedImage.h in Headers */,
 				A10DC76B14747BAB005E2471 /* StyleGridData.h in Headers */,
 				A110DB9B14F5DF7700A03B93 /* StyleGridItemData.h in Headers */,
+				7C74D43C1882400400E5ED57 /* UTextProviderUTF16.h in Headers */,
 				BCEF43CF0E673DA1001C1287 /* StyleImage.h in Headers */,
 				BC2273040E82F1E600E7F975 /* StyleInheritedData.h in Headers */,
 				E47127CB163438AE00ED6F5A /* StyleInvalidationAnalysis.h in Headers */,
@@ -26728,6 +26757,7 @@
 				FE16CFD5169D1DED00D3A0C7 /* DatabaseBackendSync.cpp in Sources */,
 				FEBC5F3116BD0CC300659BD3 /* DatabaseBase.cpp in Sources */,
 				97BC6A271505F081001B74AC /* DatabaseContext.cpp in Sources */,
+				7C74D43318823A9300E5ED57 /* UTextProviderLatin1.cpp in Sources */,
 				FE456F181677D74E005EDDF9 /* DatabaseManager.cpp in Sources */,
 				FEB26D28167A8F2A00FDD26B /* DatabaseServer.cpp in Sources */,
 				FEDEF84116797108000E444A /* DatabaseStrategy.cpp in Sources */,
@@ -26838,6 +26868,7 @@
 				0783228418013ED800999E0C /* MediaStreamAudioSource.cpp in Sources */,
 				2D9A247315B9C2D100D34527 /* DOMDOMSecurityPolicy.mm in Sources */,
 				7694565C1214DB630007CBAE /* DOMDOMTokenList.mm in Sources */,
+				7C74D43B1882400400E5ED57 /* UTextProviderUTF16.cpp in Sources */,
 				7AABA25914BC613300AA9A11 /* DOMEditor.cpp in Sources */,
 				85ACA9C10A9B5FA500671E90 /* DOMElement.mm in Sources */,
 				85CA96B90A9621A600690CCF /* DOMEntity.mm in Sources */,
@@ -28949,6 +28980,7 @@
 				078E090A17D14CEE00420AA1 /* RTCIceCandidateEvent.cpp in Sources */,
 				A14832C8187F673F00DA63A6 /* WebCoreThread.mm in Sources */,
 				B2227AC40D00BF220071B782 /* SVGTests.cpp in Sources */,
+				7C74D43718823B1900E5ED57 /* UTextProvider.cpp in Sources */,
 				B2227AC70D00BF220071B782 /* SVGTextContentElement.cpp in Sources */,
 				07969DBB17D14151007FF842 /* JSRTCSessionDescription.cpp in Sources */,
 				B2227ACA0D00BF220071B782 /* SVGTextElement.cpp in Sources */,

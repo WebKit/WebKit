@@ -57,6 +57,7 @@ platform_webcore_cppflags += \
 	-I$(srcdir)/Source/WebCore/platform/network/gtk \
 	-I$(srcdir)/Source/WebCore/platform/network/soup \
 	-I$(srcdir)/Source/WebCore/platform/text \
+	-I$(srcdir)/Source/WebCore/platform/text/icu \
 	-I$(srcdir)/Source/WebCore/platform/text/transcoder
 
 noinst_LTLIBRARIES += \

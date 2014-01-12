@@ -77,6 +77,7 @@ set(WebCore_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/platform/network"
     "${WEBCORE_DIR}/platform/sql"
     "${WEBCORE_DIR}/platform/text"
+    "${WEBCORE_DIR}/platform/text/icu"
     "${WEBCORE_DIR}/plugins"
     "${WEBCORE_DIR}/rendering"
     "${WEBCORE_DIR}/rendering/line"
@@ -2801,6 +2802,9 @@ endif ()
 
 if (WTF_USE_ICU_UNICODE)
     list(APPEND WebCore_SOURCES
+        platform/text/icu/UTextProvider.cpp
+        platform/text/icu/UTextProviderLatin1.cpp
+        platform/text/icu/UTextProviderUTF16.cpp
         platform/text/TextBreakIteratorICU.cpp
         platform/text/TextCodecICU.cpp
         platform/text/TextEncodingDetectorICU.cpp

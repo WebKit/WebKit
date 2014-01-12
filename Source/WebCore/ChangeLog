@@ -1,3 +1,43 @@
+2014-01-11  Sam Weinig  <sam@webkit.org>
+
+        Split ICU UText providers out into their own files
+        https://bugs.webkit.org/show_bug.cgi?id=126834
+
+        Reviewed by Anders Carlsson.
+
+        Moves the implementation of our custom UText providers out into
+        their own files.
+        - UTextProviderLatin1.h/cpp contains the Latin-1 provider.
+        - UTextProviderUTF16.h/cpp contains the UTF-16 provider.
+        - UTextProvider.h/cpp contains code common to all the providers.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * PlatformGTK.cmake:
+        * WebCore.vcxproj/WebCoreCommon.props:
+        * WebCore.vcxproj/copyForwardingHeaders.cmd:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/text/TextAllInOne.cpp:
+        * platform/text/TextBreakIteratorICU.cpp:
+        (WebCore::setUpIterator):
+        (WebCore::wordBreakIterator):
+        (WebCore::acquireLineBreakIterator):
+        (WebCore::sentenceBreakIterator):
+        (WebCore::setUpIteratorWithRules):
+        * platform/text/icu: Added.
+        * platform/text/icu/UTextProvider.cpp: Added.
+        (WebCore::fixPointer):
+        (WebCore::uTextCloneImpl):
+        * platform/text/icu/UTextProvider.h: Added.
+        (WebCore::uTextProviderContext):
+        (WebCore::uTextInitialize):
+        (WebCore::uTextAccessPinIndex):
+        (WebCore::uTextAccessInChunkOrOutOfRange):
+        * platform/text/icu/UTextProviderLatin1.cpp: Added.
+        * platform/text/icu/UTextProviderLatin1.h: Added.
+        * platform/text/icu/UTextProviderUTF16.cpp: Added.
+        * platform/text/icu/UTextProviderUTF16.h: Added.
+
 2014-01-12  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Fix make distcheck.

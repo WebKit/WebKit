@@ -38,3 +38,6 @@
 #include "TextEncodingDetectorICU.cpp"
 #include "TextEncodingRegistry.cpp"
 #include "TextStream.cpp"
+#include "UTextProvider.cpp"
+#include "UTextProviderLatin1.cpp"
+#include "UTextProviderUTF16.cpp"

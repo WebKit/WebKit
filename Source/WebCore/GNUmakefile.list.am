@@ -5978,6 +5978,12 @@ platform_sources += \
 	Source/WebCore/platform/soup/SharedBufferSoup.cpp \
 	Source/WebCore/platform/text/enchant/TextCheckerEnchant.h \
 	Source/WebCore/platform/text/enchant/TextCheckerEnchant.cpp \
+	Source/WebCore/platform/text/icu/UTextProvider.cpp \
+	Source/WebCore/platform/text/icu/UTextProvider.h \
+	Source/WebCore/platform/text/icu/UTextProviderLatin1.cpp \
+	Source/WebCore/platform/text/icu/UTextProviderLatin1.h \
+	Source/WebCore/platform/text/icu/UTextProviderUTF16.cpp \
+	Source/WebCore/platform/text/icu/UTextProviderUTF16.h \
 	Source/WebCore/platform/text/BidiContext.cpp \
 	Source/WebCore/platform/text/BidiContext.h \
 	Source/WebCore/platform/text/BidiResolver.h \

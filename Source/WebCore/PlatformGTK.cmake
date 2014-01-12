@@ -20,6 +20,7 @@ list(APPEND WebCore_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/platform/network/gtk"
     "${WEBCORE_DIR}/platform/network/soup"
     "${WEBCORE_DIR}/platform/text/gtk"
+    "${WEBCORE_DIR}/platform/text/icu"
     "${WEBCORE_DIR}/plugins/gtk"
 )
 
@@ -128,6 +129,9 @@ list(APPEND WebCore_SOURCES
 
     platform/soup/SharedBufferSoup.cpp
 
+    platform/text/icu/UTextProvider.cpp
+    platform/text/icu/UTextProviderLatin1.cpp
+    platform/text/icu/UTextProviderUTF16.cpp
     platform/text/LocaleICU.cpp
     platform/text/TextBreakIteratorICU.cpp
     platform/text/TextCodecICU.cpp
@@ -255,6 +259,9 @@ list(APPEND WebCorePlatformGTK_SOURCES
 
     platform/soup/SharedBufferSoup.cpp
 
+    platform/text/icu/UTextProvider.cpp
+    platform/text/icu/UTextProviderLatin1.cpp
+    platform/text/icu/UTextProviderUTF16.cpp
     platform/text/LocaleICU.cpp
     platform/text/TextBreakIteratorICU.cpp
     platform/text/TextCodecICU.cpp
