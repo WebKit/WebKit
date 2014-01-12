@@ -1,3 +1,22 @@
+2014-01-11  Anders Carlsson  <andersca@apple.com>
+
+        Remove unsafe uses of AtomicallyInitializedStatic
+        https://bugs.webkit.org/show_bug.cgi?id=126838
+
+        Reviewed by Andreas Kling.
+
+        AtomicStrings are per thread so any static initialization of them is potentially dangerous
+        unless it's certain that they're only ever used from the same thread.
+        
+        This goes against using them with AtomicallyInitializedStatic, so just create AtomicStrings where needed.
+        (This is highly unlikely to have any real negative performance impact since these two functions
+        aren't called very frequently).
+
+        * loader/CrossOriginAccessControl.cpp:
+        (WebCore::passesAccessControlCheck):
+        * page/PerformanceResourceTiming.cpp:
+        (WebCore::passesTimingAllowCheck):
+
 2014-01-12  David Kilzer  <ddkilzer@apple.com>
 
         [iOS] Fix link errors for iOS: Part 2

@@ -53,13 +53,11 @@ static double monotonicTimeToDocumentMilliseconds(Document* document, double sec
 
 static bool passesTimingAllowCheck(const ResourceResponse& response, Document* requestingDocument)
 {
-    AtomicallyInitializedStatic(AtomicString&, timingAllowOrigin = *new AtomicString("timing-allow-origin"));
-
     RefPtr<SecurityOrigin> resourceOrigin = SecurityOrigin::create(response.url());
     if (resourceOrigin->isSameSchemeHostPort(requestingDocument->securityOrigin()))
         return true;
 
-    const String& timingAllowOriginString = response.httpHeaderField(timingAllowOrigin);
+    const String& timingAllowOriginString = response.httpHeaderField("timing-allow-origin");
     if (timingAllowOriginString.isEmpty() || equalIgnoringCase(timingAllowOriginString, "null"))
         return false;
 
