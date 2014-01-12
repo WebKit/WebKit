@@ -1,3 +1,31 @@
+2014-01-11  Andy Estes  <aestes@apple.com>
+
+        [iOS] Move text autosizing code from RenderBlock to RenderBlockFlow
+        https://bugs.webkit.org/show_bug.cgi?id=126829
+
+        Reviewed by Sam Weinig.
+
+        Some newly-upstreamed iOS text autosizing code needs to move to
+        RenderBlockFlow in order to build.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::RenderBlock):
+        * rendering/RenderBlock.h:
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::RenderBlockFlow):
+        (WebCore::isVisibleRenderText):
+        (WebCore::resizeTextPermitted):
+        (WebCore::RenderBlockFlow::immediateLineCount):
+        (WebCore::isNonBlocksOrNonFixedHeightListItems):
+        (WebCore::oneLineTextMultiplier):
+        (WebCore::textMultiplier):
+        (WebCore::RenderBlockFlow::adjustComputedFontSizes):
+        * rendering/RenderBlockFlow.h:
+        (WebCore::RenderBlockFlow::resetComputedFontSize):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::adjustComputedFontSizesOnBlocks):
+        (WebCore::RenderObject::resetTextAutosizing):
+
 2014-01-11  Daniel Bates  <dabates@apple.com>
 
         [iOS] Fix the build

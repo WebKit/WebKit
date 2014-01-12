@@ -435,8 +435,8 @@ void RenderObject::adjustComputedFontSizesOnBlocks(float size, float visibleWidt
             depthStack.append(newFixedDepth);
 
         int stackSize = depthStack.size();
-        if (descendent->isRenderBlock() && !descendent->isListItem() && (!stackSize || currentDepth - depthStack[stackSize - 1] > TextAutoSizingFixedHeightDepth))
-            static_cast<RenderBlock*>(descendent)->adjustComputedFontSizes(size, visibleWidth);
+        if (descendent->isRenderBlockFlow() && !descendent->isListItem() && (!stackSize || currentDepth - depthStack[stackSize - 1] > TextAutoSizingFixedHeightDepth))
+            toRenderBlockFlow(descendent)->adjustComputedFontSizes(size, visibleWidth);
         newFixedDepth = 0;
     }
 
@@ -463,8 +463,8 @@ void RenderObject::resetTextAutosizing()
             depthStack.append(newFixedDepth);
 
         int stackSize = depthStack.size();
-        if (descendent->isRenderBlock() && !descendent->isListItem() && (!stackSize || currentDepth - depthStack[stackSize - 1] > TextAutoSizingFixedHeightDepth))
-            toRenderBlock(descendent)->resetComputedFontSize();
+        if (descendent->isRenderBlockFlow() && !descendent->isListItem() && (!stackSize || currentDepth - depthStack[stackSize - 1] > TextAutoSizingFixedHeightDepth))
+            toRenderBlockFlow(descendent)->resetComputedFontSize();
         newFixedDepth = 0;
     }
 }

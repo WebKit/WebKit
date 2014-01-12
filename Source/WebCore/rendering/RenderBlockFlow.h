@@ -44,6 +44,12 @@ struct FloatWithRect;
 template <class Run> class BidiRunList;
 typedef Vector<WordMeasurement, 64> WordMeasurements;
 
+#if ENABLE(IOS_TEXT_AUTOSIZING)
+enum LineCount {
+    NOT_SET = 0, NO_LINE = 1, ONE_LINE = 2, MULTI_LINE = 3
+};
+#endif
+
 class RenderBlockFlow : public RenderBlock {
 public:
     RenderBlockFlow(Element&, PassRef<RenderStyle>);
@@ -526,6 +532,11 @@ private:
     bool namedFlowFragmentNeedsUpdate() const;
     virtual bool canHaveChildren() const OVERRIDE;
 
+#if ENABLE(IOS_TEXT_AUTOSIZING)
+    int m_widthForTextAutosizing;
+    unsigned m_lineCountForTextAutosizing : 2;
+#endif
+
 public:
     // FIXME-BLOCKFLOW: These can be made protected again once all callers have been moved here.
     void adjustLinePositionForPagination(RootInlineBox*, LayoutUnit& deltaOffset, RenderFlowThread*); // Computes a deltaOffset value that put a line at the top of the next page if it doesn't fit on the current page.
@@ -539,6 +550,16 @@ public:
     RenderBlockFlowRareData* rareBlockFlowData() const { ASSERT_WITH_SECURITY_IMPLICATION(hasRareBlockFlowData()); return m_rareBlockFlowData.get(); }
     RenderBlockFlowRareData& ensureRareBlockFlowData();
     void materializeRareBlockFlowData();
+
+#if ENABLE(IOS_TEXT_AUTOSIZING)
+    int immediateLineCount();
+    void adjustComputedFontSizes(float size, float visibleWidth);
+    void resetComputedFontSize()
+    {
+        m_widthForTextAutosizing = -1;
+        m_lineCountForTextAutosizing = NOT_SET;
+    }
+#endif
 
 protected:
     OwnPtr<FloatingObjects> m_floatingObjects;

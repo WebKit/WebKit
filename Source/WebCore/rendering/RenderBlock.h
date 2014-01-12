@@ -51,12 +51,6 @@ typedef WTF::HashMap<const RenderBox*, OwnPtr<HashSet<RenderBlock*>>> TrackedCon
 enum CaretType { CursorCaret, DragCaret };
 enum ContainingBlockState { NewContainingBlock, SameContainingBlock };
 
-#if ENABLE(IOS_TEXT_AUTOSIZING)
-enum LineCount {
-    NOT_SET = 0, NO_LINE = 1, ONE_LINE = 2, MULTI_LINE = 3
-};
-#endif
-
 enum TextRunFlag {
     DefaultTextRunFlags = 0,
     RespectDirection = 1 << 0,
@@ -354,16 +348,6 @@ public:
     virtual void showLineTreeAndMark(const InlineBox* = nullptr, const char* = nullptr, const InlineBox* = nullptr, const char* = nullptr, const RenderObject* = nullptr) const;
 #endif
 
-#if ENABLE(IOS_TEXT_AUTOSIZING)
-    int immediateLineCount();
-    void adjustComputedFontSizes(float size, float visibleWidth);
-    void resetComputedFontSize()
-    {
-        m_widthForTextAutosizing = -1;
-        m_lineCountForTextAutosizing = NOT_SET;
-    }
-#endif
-
 #if ENABLE(CSS_SHAPES)
     ShapeInsideInfo& ensureShapeInsideInfo();
     ShapeInsideInfo* shapeInsideInfo() const;
@@ -630,11 +614,6 @@ public:
     unsigned m_hasBorderOrPaddingLogicalWidthChanged : 1;
     enum LineLayoutPath { UndeterminedPath, SimpleLinesPath, LineBoxesPath, ForceLineBoxesPath };
     unsigned m_lineLayoutPath : 2;
-
-#if ENABLE(IOS_TEXT_AUTOSIZING)
-    int m_widthForTextAutosizing;
-    unsigned m_lineCountForTextAutosizing : 2;
-#endif
     
     // RenderRubyBase objects need to be able to split and merge, moving their children around
     // (calling moveChildTo, moveAllChildrenTo, and makeChildrenNonInline).
