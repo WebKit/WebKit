@@ -1,4 +1,4 @@
-// Copyright (C) 2013 Apple Inc. All rights reserved.
+// Copyright (C) 2012 Apple Inc. All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
 // modification, are permitted provided that the following conditions
@@ -19,22 +19,6 @@
 // PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
 // OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-// OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+// OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#include "BaseTarget.xcconfig"
-
-GCC_ENABLE_OBJC_GC = NO;
-INSTALL_PATH = $(INSTALL_PATH_$(PLATFORM_NAME));
-INSTALL_PATH_iphoneos = $(SYSTEM_LIBRARY_DIR)/PrivateFrameworks/WebKit2.framework;
-INSTALL_PATH_iphonesimulator = $(INSTALL_PATH_PREFIX)$(INSTALL_PATH_ACTUAL);
-INSTALL_PATH_macosx = $(WEBKIT2_FRAMEWORKS_DIR)/WebKit2.framework;
-INSTALL_PATH_ACTUAL = $(INSTALL_PATH_ACTUAL_$(PLATFORM_NAME));
-INSTALL_PATH_ACTUAL_iphonesimulator = $(INSTALL_PATH_iphoneos);
-
-APP_ICON = $(APP_ICON_$(CONFIGURATION));
-APP_ICON_Debug = WebKit.icns;
-APP_ICON_Release = WebKit.icns;
-APP_ICON_Production = ;
-
-EXCLUDED_SOURCE_FILE_NAMES = $(EXCLUDED_SOURCE_FILE_NAMES_$(CONFIGURATION));
-EXCLUDED_SOURCE_FILE_NAMES_Production = WebKit.icns;
+#include "<DEVELOPER_DIR>/AppleInternal/XcodeConfig/AspenFamily.xcconfig"

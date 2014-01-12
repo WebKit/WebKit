@@ -1,3 +1,16 @@
+2014-01-12  Andy Estes  <aestes@apple.com>
+
+        [iOS] Upstream WebKit2 xcconfig changes to fix the build
+
+        * Configurations/All-iOS.xcconfig: Added.
+        * Configurations/Base.xcconfig:
+        * Configurations/BaseLegacyProcess.xcconfig:
+        * Configurations/BaseTarget.xcconfig:
+        * Configurations/BaseXPCService.xcconfig:
+        * Configurations/DebugRelease.xcconfig:
+        * Configurations/WebContentService.xcconfig:
+        * Configurations/iOS.xcconfig: Added.
+
 2014-01-12  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Fix make distcheck.
