@@ -206,6 +206,14 @@ function shouldBeUndefined(_a)
     testFailed(_a + " should be undefined. Was " + _av);
 }
 
+function shouldNotThrow(_a) {
+    try {
+        eval(_a);
+        testPassed(_a + " did not throw exception.");
+    } catch (e) {
+        testFailed(_a + " should not throw exception. Threw exception " + e + ".");
+    }
+}
 
 function shouldThrow(_a, _e)
 {

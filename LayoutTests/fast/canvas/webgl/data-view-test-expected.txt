@@ -4,7 +4,7 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 
 Test for constructor not called as a function
-FAIL DataView(new ArrayBuffer) does not throw exception
+PASS DataView(new ArrayBuffer) threw exception
 
 Test for constructor taking 1 argument
 PASS view = new DataView(arayBuffer) is defined.
