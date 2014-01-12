@@ -1,3 +1,10 @@
+2014-01-12  Simon Fraser  <simon.fraser@apple.com>
+
+        Fix some CoreVideo linker errors on iOS by softlinking with more CoreVideo
+        symbols.
+
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+
 2014-01-12  Andreas Kling  <akling@apple.com>
 
         REGRESSION(r160806): line-height is not applied when only present in :link style.
