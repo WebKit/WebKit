@@ -26,30 +26,35 @@
 #include "config.h"
 #include "NetworkStateNotifier.h"
 
+#include <mutex>
 #include <wtf/Assertions.h>
 #include <wtf/StdLibExtras.h>
-#include <wtf/Threading.h>
 
 namespace WebCore {
 
 NetworkStateNotifier& networkStateNotifier()
 {
-    AtomicallyInitializedStatic(NetworkStateNotifier*, networkStateNotifier = new NetworkStateNotifier);
+    static std::once_flag onceFlag;
+    static NetworkStateNotifier* networkStateNotifier;
+
+    std::call_once(onceFlag, []{
+        networkStateNotifier = std::make_unique<NetworkStateNotifier>().release();
+    });
 
     return *networkStateNotifier;
 }
 
-void NetworkStateNotifier::addNetworkStateChangeListener(NetworkStateChangeListener listener)
+void NetworkStateNotifier::addNetworkStateChangeListener(std::function<void (bool)> listener)
 {
     ASSERT(listener);
-    m_listeners.append(listener);
+
+    m_listeners.append(std::move(listener));
 }
 
 void NetworkStateNotifier::notifyNetworkStateChange()
 {
-    Vector<NetworkStateChangeListener>::iterator end = m_listeners.end();
-    for (Vector<NetworkStateChangeListener>::iterator it = m_listeners.begin(); it != end; ++it)
-        (*it)(m_isOnLine);
+    for (const auto& listener : m_listeners)
+        listener(m_isOnLine);
 }
 
-}
+} // namespace WebCore

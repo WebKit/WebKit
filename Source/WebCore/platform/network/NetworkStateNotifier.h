@@ -58,8 +58,7 @@ public:
 #if PLATFORM(EFL)
     ~NetworkStateNotifier();
 #endif
-    typedef void (*NetworkStateChangeListener)(bool m_isOnLine);
-    void addNetworkStateChangeListener(NetworkStateChangeListener);
+    void addNetworkStateChangeListener(std::function<void (bool isOnLine)>);
 
     bool onLine() const { return m_isOnLine; }
     
@@ -69,7 +68,7 @@ public:
 
 private:
     bool m_isOnLine;
-    Vector<NetworkStateChangeListener> m_listeners;
+    Vector<std::function<void (bool)>> m_listeners;
 
     void notifyNetworkStateChange();
     void updateState();
