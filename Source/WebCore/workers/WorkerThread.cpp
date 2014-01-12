@@ -35,6 +35,7 @@
 #include "ThreadGlobalData.h"
 #include "URL.h"
 #include <utility>
+#include <wtf/NeverDestroyed.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/text/WTFString.h>
 
@@ -49,21 +50,29 @@
 
 namespace WebCore {
 
-static Mutex& threadSetMutex()
+static std::mutex& threadSetMutex()
 {
-    AtomicallyInitializedStatic(Mutex&, mutex = *new Mutex);
-    return mutex;
+    static std::once_flag onceFlag;
+    static std::mutex* mutex;
+
+    std::call_once(onceFlag, []{
+        mutex = std::make_unique<std::mutex>().release();
+    });
+
+    return *mutex;
 }
 
 static HashSet<WorkerThread*>& workerThreads()
 {
-    DEFINE_STATIC_LOCAL(HashSet<WorkerThread*>, threads, ());
-    return threads;
+    static NeverDestroyed<HashSet<WorkerThread*>> workerThreads;
+
+    return workerThreads;
 }
 
 unsigned WorkerThread::workerThreadCount()
 {
-    MutexLocker lock(threadSetMutex());
+    std::lock_guard<std::mutex> lock(threadSetMutex());
+
     return workerThreads().size();
 }
 
@@ -114,13 +123,15 @@ WorkerThread::WorkerThread(const URL& scriptURL, const String& userAgent, const 
     , m_notificationClient(0)
 #endif
 {
-    MutexLocker lock(threadSetMutex());
+    std::lock_guard<std::mutex> lock(threadSetMutex());
+
     workerThreads().add(this);
 }
 
 WorkerThread::~WorkerThread()
 {
-    MutexLocker lock(threadSetMutex());
+    std::lock_guard<std::mutex> lock(threadSetMutex());
+
     ASSERT(workerThreads().contains(this));
     workerThreads().remove(this);
 }
@@ -279,11 +290,10 @@ class ReleaseFastMallocFreeMemoryTask : public ScriptExecutionContext::Task {
 
 void WorkerThread::releaseFastMallocFreeMemoryInAllThreads()
 {
-    MutexLocker lock(threadSetMutex());
-    HashSet<WorkerThread*>& threads = workerThreads();
-    HashSet<WorkerThread*>::iterator end = threads.end();
-    for (HashSet<WorkerThread*>::iterator it = threads.begin(); it != end; ++it)
-        (*it)->runLoop().postTask(adoptPtr(new ReleaseFastMallocFreeMemoryTask));
+    std::lock_guard<std::mutex> lock(threadSetMutex());
+
+    for (auto* workerThread : workerThreads())
+        workerThread->runLoop().postTask(adoptPtr(new ReleaseFastMallocFreeMemoryTask));
 }
 
 } // namespace WebCore

@@ -1,3 +1,30 @@
+2014-01-12  Anders Carlsson  <andersca@apple.com>
+
+        Replace more uses of AtomicallyInitializedStatic with std::call_once
+        https://bugs.webkit.org/show_bug.cgi?id=126847
+
+        Reviewed by Sam Weinig.
+
+        * crypto/CryptoAlgorithmRegistry.cpp:
+        (WebCore::CryptoAlgorithmRegistry::shared):
+        (WebCore::registryMutex):
+        (WebCore::CryptoAlgorithmRegistry::getIdentifierForName):
+        (WebCore::CryptoAlgorithmRegistry::nameForIdentifier):
+        (WebCore::CryptoAlgorithmRegistry::create):
+        (WebCore::CryptoAlgorithmRegistry::registerAlgorithm):
+        * crypto/CryptoAlgorithmRegistry.h:
+        * inspector/WorkerDebuggerAgent.cpp:
+        (WebCore::WorkerDebuggerAgent::WorkerDebuggerAgent):
+        (WebCore::WorkerDebuggerAgent::~WorkerDebuggerAgent):
+        (WebCore::WorkerDebuggerAgent::interruptAndDispatchInspectorCommands):
+        * workers/WorkerThread.cpp:
+        (WebCore::threadSetMutex):
+        (WebCore::workerThreads):
+        (WebCore::WorkerThread::workerThreadCount):
+        (WebCore::WorkerThread::WorkerThread):
+        (WebCore::WorkerThread::~WorkerThread):
+        (WebCore::WorkerThread::releaseFastMallocFreeMemoryInAllThreads):
+
 2014-01-11  Sam Weinig  <sam@webkit.org>
 
         Split ICU UText providers out into their own files

@@ -1,3 +1,13 @@
+2014-01-12  Anders Carlsson  <andersca@apple.com>
+
+        Replace more uses of AtomicallyInitializedStatic with std::call_once
+        https://bugs.webkit.org/show_bug.cgi?id=126847
+
+        Reviewed by Sam Weinig.
+
+        * wtf/Forward.h:
+        Forward declare NeverDestroyed.
+
 2014-01-11  Zan Dobersek  <zdobersek@igalia.com>
 
         Unreviewed build fix for ports using GCC after r161770.

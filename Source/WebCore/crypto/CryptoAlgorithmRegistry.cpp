@@ -29,20 +29,28 @@
 #if ENABLE(SUBTLE_CRYPTO)
 
 #include "CryptoAlgorithm.h"
-#include <wtf/MainThread.h>
+#include <mutex>
+#include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
 
 CryptoAlgorithmRegistry& CryptoAlgorithmRegistry::shared()
 {
-    DEFINE_STATIC_LOCAL(CryptoAlgorithmRegistry, registry, ());
+    static NeverDestroyed<CryptoAlgorithmRegistry> registry;
+
     return registry;
 }
 
-static Mutex& registryMutex()
+static std::mutex& registryMutex()
 {
-    AtomicallyInitializedStatic(Mutex&, mutex = *new Mutex);
-    return mutex;
+    static std::once_flag onceFlag;
+    static std::mutex* mutex;
+
+    std::call_once(onceFlag, []{
+        mutex = std::make_unique<std::mutex>().release();
+    });
+
+    return *mutex;
 }
 
 CryptoAlgorithmRegistry::CryptoAlgorithmRegistry()
@@ -55,7 +63,7 @@ bool CryptoAlgorithmRegistry::getIdentifierForName(const String& name, CryptoAlg
     if (name.isEmpty())
         return false;
 
-    MutexLocker lock(registryMutex());
+    std::lock_guard<std::mutex> lock(registryMutex());
 
     auto iter = m_nameToIdentifierMap.find(name.isolatedCopy());
     if (iter == m_nameToIdentifierMap.end())
@@ -67,14 +75,14 @@ bool CryptoAlgorithmRegistry::getIdentifierForName(const String& name, CryptoAlg
 
 String CryptoAlgorithmRegistry::nameForIdentifier(CryptoAlgorithmIdentifier identifier)
 {
-    MutexLocker lock(registryMutex());
+    std::lock_guard<std::mutex> lock(registryMutex());
 
     return m_identifierToNameMap.get(static_cast<unsigned>(identifier)).isolatedCopy();
 }
 
 std::unique_ptr<CryptoAlgorithm> CryptoAlgorithmRegistry::create(CryptoAlgorithmIdentifier identifier)
 {
-    MutexLocker lock(registryMutex());
+    std::lock_guard<std::mutex> lock(registryMutex());
 
     auto iter = m_identifierToConstructorMap.find(static_cast<unsigned>(identifier));
     if (iter == m_identifierToConstructorMap.end())
@@ -85,7 +93,7 @@ std::unique_ptr<CryptoAlgorithm> CryptoAlgorithmRegistry::create(CryptoAlgorithm
 
 void CryptoAlgorithmRegistry::registerAlgorithm(const String& name, CryptoAlgorithmIdentifier identifier, CryptoAlgorithmConstructor constructor)
 {
-    MutexLocker lock(registryMutex());
+    std::lock_guard<std::mutex> lock(registryMutex());
 
     bool added = m_nameToIdentifierMap.add(name, identifier).isNewEntry;
     ASSERT_UNUSED(added, added);

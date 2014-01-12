@@ -26,6 +26,7 @@
 namespace WTF {
 
 template<typename T> class Function;
+template<typename T> class NeverDestroyed;
 template<typename T> class OwnPtr;
 template<typename T> class PassOwnPtr;
 template<typename T> class PassRef;
@@ -59,6 +60,7 @@ using WTF::Decoder;
 using WTF::Encoder;
 using WTF::Function;
 using WTF::FunctionDispatcher;
+using WTF::NeverDestroyed;
 using WTF::OwnPtr;
 using WTF::PassOwnPtr;
 using WTF::PassRef;

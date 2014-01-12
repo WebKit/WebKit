@@ -38,7 +38,9 @@
 #include "WorkerThread.h"
 #include <inspector/InjectedScript.h>
 #include <inspector/InjectedScriptManager.h>
+#include <mutex>
 #include <wtf/MessageQueue.h>
+#include <wtf/NeverDestroyed.h>
 
 using namespace Inspector;
 
@@ -46,20 +48,26 @@ namespace WebCore {
 
 namespace {
 
-Mutex& workerDebuggerAgentsMutex()
+std::mutex& workerDebuggerAgentsMutex()
 {
-    AtomicallyInitializedStatic(Mutex&, mutex = *new Mutex);
-    return mutex;
+    static std::once_flag onceFlag;
+    static std::mutex* mutex;
+
+    std::call_once(onceFlag, []{
+        mutex = std::make_unique<std::mutex>().release();
+    });
+
+    return *mutex;
 }
 
 typedef HashMap<WorkerThread*, WorkerDebuggerAgent*> WorkerDebuggerAgents;
 
 WorkerDebuggerAgents& workerDebuggerAgents()
 {
-    DEFINE_STATIC_LOCAL(WorkerDebuggerAgents, agents, ());
+    static NeverDestroyed<WorkerDebuggerAgents> agents;
+
     return agents;
 }
-
 
 class RunInspectorCommandsTask : public ScriptDebugServer::Task {
 public:
@@ -89,22 +97,23 @@ WorkerDebuggerAgent::WorkerDebuggerAgent(InstrumentingAgents* instrumentingAgent
     , m_scriptDebugServer(inspectedWorkerGlobalScope, WorkerDebuggerAgent::debuggerTaskMode)
     , m_inspectedWorkerGlobalScope(inspectedWorkerGlobalScope)
 {
-    MutexLocker lock(workerDebuggerAgentsMutex());
+    std::lock_guard<std::mutex> lock(workerDebuggerAgentsMutex());
     workerDebuggerAgents().set(inspectedWorkerGlobalScope->thread(), this);
 }
 
 WorkerDebuggerAgent::~WorkerDebuggerAgent()
 {
-    MutexLocker lock(workerDebuggerAgentsMutex());
+    std::lock_guard<std::mutex> lock(workerDebuggerAgentsMutex());
+
     ASSERT(workerDebuggerAgents().contains(m_inspectedWorkerGlobalScope->thread()));
     workerDebuggerAgents().remove(m_inspectedWorkerGlobalScope->thread());
 }
 
 void WorkerDebuggerAgent::interruptAndDispatchInspectorCommands(WorkerThread* thread)
 {
-    MutexLocker lock(workerDebuggerAgentsMutex());
-    WorkerDebuggerAgent* agent = workerDebuggerAgents().get(thread);
-    if (agent)
+    std::lock_guard<std::mutex> lock(workerDebuggerAgentsMutex());
+
+    if (WorkerDebuggerAgent* agent = workerDebuggerAgents().get(thread))
         agent->m_scriptDebugServer.interruptAndRunTask(adoptPtr(new RunInspectorCommandsTask(thread, agent->m_inspectedWorkerGlobalScope)));
 }
 
