@@ -32,10 +32,12 @@
 #include "TextCodecUTF16.h"
 #include "TextCodecUTF8.h"
 #include "TextEncoding.h"
+#include <mutex>
 #include <wtf/ASCIICType.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/MainThread.h>
+#include <wtf/NeverDestroyed.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/StringExtras.h>
 
@@ -105,12 +107,12 @@ struct TextCodecFactory {
 typedef HashMap<const char*, const char*, TextEncodingNameHash> TextEncodingNameMap;
 typedef HashMap<const char*, TextCodecFactory> TextCodecMap;
 
-static Mutex& encodingRegistryMutex()
+static std::mutex& encodingRegistryMutex()
 {
-    // We don't have to use AtomicallyInitializedStatic here because
-    // this function is called on the main thread for any page before
-    // it is used in worker threads.
-    DEFINE_STATIC_LOCAL(Mutex, mutex, ());
+    // We don't have to construct this mutex in a thread safe way because this function
+    // is called on the main thread for any page before it is used in worker threads.
+    static NeverDestroyed<std::mutex> mutex;
+
     return mutex;
 }
 
@@ -300,7 +302,7 @@ static void extendTextCodecMaps()
 
 PassOwnPtr<TextCodec> newTextCodec(const TextEncoding& encoding)
 {
-    MutexLocker lock(encodingRegistryMutex());
+    std::lock_guard<std::mutex> lock(encodingRegistryMutex());
 
     ASSERT(textCodecMap);
     TextCodecFactory factory = textCodecMap->get(encoding.name());
@@ -311,16 +313,18 @@ PassOwnPtr<TextCodec> newTextCodec(const TextEncoding& encoding)
 const char* atomicCanonicalTextEncodingName(const char* name)
 {
     if (!name || !name[0])
-        return 0;
+        return nullptr;
+
     if (!textEncodingNameMap)
         buildBaseTextCodecMaps();
 
-    MutexLocker lock(encodingRegistryMutex());
+    std::lock_guard<std::mutex> lock(encodingRegistryMutex());
 
     if (const char* atomicName = textEncodingNameMap->get(name))
         return atomicName;
     if (didExtendTextCodecMaps)
-        return 0;
+        return nullptr;
+
     extendTextCodecMaps();
     didExtendTextCodecMaps = true;
     return textEncodingNameMap->get(name);
@@ -364,7 +368,7 @@ void dumpTextEncodingNameMap()
     unsigned size = textEncodingNameMap->size();
     fprintf(stderr, "Dumping %u entries in WebCore::textEncodingNameMap...\n", size);
 
-    MutexLocker lock(encodingRegistryMutex());
+    std::lock_guard<std::mutex> lock(encodingRegistryMutex());
 
     TextEncodingNameMap::const_iterator it = textEncodingNameMap->begin();
     TextEncodingNameMap::const_iterator end = textEncodingNameMap->end();

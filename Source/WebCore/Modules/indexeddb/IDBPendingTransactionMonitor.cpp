@@ -26,6 +26,7 @@
 #include "config.h"
 #include "IDBPendingTransactionMonitor.h"
 #include "IDBTransaction.h"
+#include <mutex>
 #include <wtf/ThreadSpecific.h>
 
 using WTF::ThreadSpecific;
@@ -35,11 +36,17 @@ using WTF::ThreadSpecific;
 namespace WebCore {
 
 typedef Vector<RefPtr<IDBTransaction>> TransactionList;
+
 static ThreadSpecific<TransactionList>& transactions()
 {
     // FIXME: Move the Vector to ScriptExecutionContext to avoid dealing with
     // thread-local storage.
-    AtomicallyInitializedStatic(ThreadSpecific<TransactionList>*, transactions = new ThreadSpecific<TransactionList>);
+    static std::once_flag onceFlag;
+    static ThreadSpecific<TransactionList>* transactions;
+    std::call_once(onceFlag, []{
+        transactions = new ThreadSpecific<TransactionList>;
+    });
+
     return *transactions;
 }
 

@@ -56,6 +56,7 @@
 #include "WorkerReportingProxy.h"
 #include "WorkerScriptLoader.h"
 #include "WorkerScriptLoaderClient.h"
+#include <mutex>
 #include <wtf/HashSet.h>
 #include <wtf/Threading.h>
 #include <wtf/text/WTFString.h>
@@ -340,7 +341,12 @@ void SharedWorkerScriptLoader::notifyFinished()
 
 DefaultSharedWorkerRepository& DefaultSharedWorkerRepository::instance()
 {
-    AtomicallyInitializedStatic(DefaultSharedWorkerRepository*, instance = new DefaultSharedWorkerRepository);
+    static std::once_flag onceFlag;
+    static DefaultSharedWorkerRepository* instance;
+    std::call_once(onceFlag, []{
+        instance = new DefaultSharedWorkerRepository;
+    });
+
     return *instance;
 }
 

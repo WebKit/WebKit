@@ -35,6 +35,7 @@
 #include "BlobRegistry.h"
 #include "BlobURL.h"
 #include "SecurityOrigin.h"
+#include <mutex>
 #include <wtf/HashMap.h>
 #include <wtf/MainThread.h>
 #include <wtf/RefPtr.h>
@@ -74,9 +75,15 @@ public:
 #if ENABLE(BLOB)
 
 typedef HashMap<String, RefPtr<SecurityOrigin>> BlobUrlOriginMap;
+
 static ThreadSpecific<BlobUrlOriginMap>& originMap()
 {
-    AtomicallyInitializedStatic(ThreadSpecific<BlobUrlOriginMap>*, map = new ThreadSpecific<BlobUrlOriginMap>);
+    static std::once_flag onceFlag;
+    static ThreadSpecific<BlobUrlOriginMap>* map;
+    std::call_once(onceFlag, []{
+        map = new ThreadSpecific<BlobUrlOriginMap>;
+    });
+
     return *map;
 }
 
