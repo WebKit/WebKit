@@ -1,3 +1,9 @@
+2014-01-13  Zalan Bujtas  <zalan@apple.com>
+
+        Unreviewed Mac WK2 gardering after r161882.
+
+        * platform/mac-wk2/fast/dynamic/012-expected.txt:
+
 2014-01-13  Youenn Fablet  <youennf@gmail.com>
 
         Dispatch a progress event before dispatching abort, error or timeout event
