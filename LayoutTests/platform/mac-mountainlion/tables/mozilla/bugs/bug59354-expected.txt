@@ -32,7 +32,7 @@ layer at (0,0) size 800x600
                     RenderTableCell {TD} at (1,30) size 454x109 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=5]
                       RenderBlock (anonymous) at (5,5) size 444x18
                         RenderBR {BR} at (222,0) size 0x18
-                      RenderTable {TABLE} at (91,23) size 271x81
+                      RenderTable {TABLE} at (91,23) size 272x81
                         RenderTableSection {TBODY} at (0,0) size 271x81
                           RenderTableRow {TR} at (0,2) size 271x77
                             RenderTableCell {TD} at (2,2) size 267x77 [r=0 c=0 rs=1 cs=1]
@@ -54,7 +54,7 @@ layer at (0,0) size 800x600
                                               RenderTableCell {TD} at (121,1) size 137x33 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
                                                 RenderTextControl {INPUT} at (7,7) size 123x19 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
                                                 RenderText {#text} at (0,0) size 0x0
-layer at (240,99) size 117x13 scrollWidth 197
+layer at (241,99) size 117x13 scrollWidth 197
   RenderBlock {DIV} at (3,3) size 117x13
     RenderText {#text} at (0,0) size 196x13
       text run at (0,0) width 196: "simon.king@pipinghotnetworks.com"

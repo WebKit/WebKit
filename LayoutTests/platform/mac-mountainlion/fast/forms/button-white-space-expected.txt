@@ -21,9 +21,9 @@ layer at (0,0) size 800x600
                 RenderBlock (anonymous) at (8,2) size 61x13
                   RenderText {#text} at (0,0) size 61x13
                     text run at (0,0) width 61: "Search Mail"
-              RenderText {#text} at (82,2) size 4x18
-                text run at (82,2) width 4: " "
-              RenderButton {BUTTON} at (88,3) size 98x18 [bgcolor=#C0C0C0] [border: none (2px outset #C0C0C0) none (2px outset #C0C0C0)]
+              RenderText {#text} at (81,2) size 5x18
+                text run at (81,2) width 5: " "
+              RenderButton {BUTTON} at (87,3) size 99x18 [bgcolor=#C0C0C0] [border: none (2px outset #C0C0C0) none (2px outset #C0C0C0)]
                 RenderBlock (anonymous) at (8,2) size 82x13
                   RenderText {#text} at (0,0) size 82x13
                     text run at (0,0) width 82: "Search the Web"

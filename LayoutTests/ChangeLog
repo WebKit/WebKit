@@ -1,3 +1,103 @@
+2014-01-13  Alexey Proskuryakov  <ap@apple.com>
+
+        Update Mountain Lion test results for subpixel layout chanegs.
+
+        Patch by Zalan Bujtas.
+
+        * platform/mac-mountainlion/compositing: Added.
+        * platform/mac-mountainlion/compositing/contents-opaque: Added.
+        * platform/mac-mountainlion/compositing/contents-opaque/control-layer-expected.txt: Added.
+        * platform/mac-mountainlion/css3/selectors3/html/css3-modsel-23-expected.txt:
+        * platform/mac-mountainlion/css3/selectors3/html/css3-modsel-24-expected.txt:
+        * platform/mac-mountainlion/css3/selectors3/html/css3-modsel-68-expected.txt:
+        * platform/mac-mountainlion/css3/selectors3/html/css3-modsel-69-expected.txt:
+        * platform/mac-mountainlion/css3/selectors3/xhtml/css3-modsel-23-expected.txt:
+        * platform/mac-mountainlion/css3/selectors3/xhtml/css3-modsel-24-expected.txt:
+        * platform/mac-mountainlion/css3/selectors3/xhtml/css3-modsel-68-expected.txt:
+        * platform/mac-mountainlion/css3/selectors3/xhtml/css3-modsel-69-expected.txt:
+        * platform/mac-mountainlion/css3/selectors3/xml/css3-modsel-23-expected.txt:
+        * platform/mac-mountainlion/css3/selectors3/xml/css3-modsel-24-expected.txt:
+        * platform/mac-mountainlion/css3/selectors3/xml/css3-modsel-68-expected.txt:
+        * platform/mac-mountainlion/css3/selectors3/xml/css3-modsel-69-expected.txt:
+        * platform/mac-mountainlion/editing/selection/3690703-2-expected.txt:
+        * platform/mac-mountainlion/editing/selection/3690703-expected.txt:
+        * platform/mac-mountainlion/editing/selection/3690719-expected.txt:
+        * platform/mac-mountainlion/fast/block/margin-collapse/103-expected.txt:
+        * platform/mac-mountainlion/fast/css/continuationCrash-expected.txt:
+        * platform/mac-mountainlion/fast/css/css2-system-fonts-expected.txt:
+        * platform/mac-mountainlion/fast/css/margin-top-bottom-dynamic-expected.txt: Added.
+        * platform/mac-mountainlion/fast/css/text-overflow-input-expected.txt:
+        * platform/mac-mountainlion/fast/dom/HTMLTextAreaElement/reset-textarea-expected.txt:
+        * platform/mac-mountainlion/fast/forms/basic-inputs-expected.txt:
+        * platform/mac-mountainlion/fast/forms/basic-textareas-expected.txt:
+        * platform/mac-mountainlion/fast/forms/basic-textareas-quirks-expected.txt:
+        * platform/mac-mountainlion/fast/forms/box-shadow-override-expected.txt:
+        * platform/mac-mountainlion/fast/forms/button-cannot-be-nested-expected.txt: Added.
+        * platform/mac-mountainlion/fast/forms/button-positioned-expected.txt:
+        * platform/mac-mountainlion/fast/forms/button-sizes-expected.txt:
+        * platform/mac-mountainlion/fast/forms/button-style-color-expected.txt:
+        * platform/mac-mountainlion/fast/forms/button-table-styles-expected.txt:
+        * platform/mac-mountainlion/fast/forms/button-text-transform-expected.txt:
+        * platform/mac-mountainlion/fast/forms/button-white-space-expected.txt:
+        * platform/mac-mountainlion/fast/forms/control-restrict-line-height-expected.txt:
+        * platform/mac-mountainlion/fast/forms/fieldset-align-expected.txt:
+        * platform/mac-mountainlion/fast/forms/file/input-file-re-render-expected.txt:
+        * platform/mac-mountainlion/fast/forms/form-element-geometry-expected.txt:
+        * platform/mac-mountainlion/fast/forms/input-appearance-height-expected.txt:
+        * platform/mac-mountainlion/fast/forms/input-button-sizes-expected.txt:
+        * platform/mac-mountainlion/fast/forms/input-disabled-color-expected.txt:
+        * platform/mac-mountainlion/fast/forms/input-readonly-autoscroll-expected.txt:
+        * platform/mac-mountainlion/fast/forms/input-readonly-dimmed-expected.txt:
+        * platform/mac-mountainlion/fast/forms/input-text-scroll-left-on-blur-expected.txt:
+        * platform/mac-mountainlion/fast/forms/input-value-expected.txt:
+        * platform/mac-mountainlion/fast/forms/listbox-hit-test-zoomed-expected.txt:
+        * platform/mac-mountainlion/fast/forms/minWidthPercent-expected.txt:
+        * platform/mac-mountainlion/fast/forms/search-rtl-expected.txt:
+        * platform/mac-mountainlion/fast/forms/search-vertical-alignment-expected.txt:
+        * platform/mac-mountainlion/fast/forms/searchfield-heights-expected.txt:
+        * platform/mac-mountainlion/fast/forms/select-baseline-expected.txt: Added.
+        * platform/mac-mountainlion/fast/forms/textAreaLineHeight-expected.txt:
+        * platform/mac-mountainlion/fast/forms/validation-message-appearance-expected.txt:
+        * platform/mac-mountainlion/fast/html/details-no-summary4-expected.txt:
+        * platform/mac-mountainlion/fast/html/details-open-javascript-expected.txt:
+        * platform/mac-mountainlion/fast/html/details-open2-expected.txt:
+        * platform/mac-mountainlion/fast/html/details-open4-expected.txt:
+        * platform/mac-mountainlion/fast/html/details-replace-summary-child-expected.txt:
+        * platform/mac-mountainlion/fast/html/details-replace-text-expected.txt:
+        * platform/mac-mountainlion/fast/overflow/scroll-nested-positioned-layer-in-overflow-expected.txt:
+        * platform/mac-mountainlion/fast/replaced/replaced-breaking-expected.txt:
+        * platform/mac-mountainlion/fast/text/textIteratorNilRenderer-expected.txt:
+        * platform/mac-mountainlion/http/tests/navigation/javascriptlink-frames-expected.txt:
+        * platform/mac-mountainlion/svg/custom/inline-svg-in-xhtml-expected.txt:
+        * platform/mac-mountainlion/tables/mozilla/bugs/bug1188-expected.txt:
+        * platform/mac-mountainlion/tables/mozilla/bugs/bug138725-expected.txt:
+        * platform/mac-mountainlion/tables/mozilla/bugs/bug18359-expected.txt:
+        * platform/mac-mountainlion/tables/mozilla/bugs/bug24200-expected.txt:
+        * platform/mac-mountainlion/tables/mozilla/bugs/bug2479-2-expected.txt:
+        * platform/mac-mountainlion/tables/mozilla/bugs/bug2479-3-expected.txt:
+        * platform/mac-mountainlion/tables/mozilla/bugs/bug2479-4-expected.txt:
+        * platform/mac-mountainlion/tables/mozilla/bugs/bug26178-expected.txt:
+        * platform/mac-mountainlion/tables/mozilla/bugs/bug28928-expected.txt:
+        * platform/mac-mountainlion/tables/mozilla/bugs/bug30692-expected.txt:
+        * platform/mac-mountainlion/tables/mozilla/bugs/bug33855-expected.txt:
+        * platform/mac-mountainlion/tables/mozilla/bugs/bug4527-expected.txt:
+        * platform/mac-mountainlion/tables/mozilla/bugs/bug46368-1-expected.txt:
+        * platform/mac-mountainlion/tables/mozilla/bugs/bug46368-2-expected.txt:
+        * platform/mac-mountainlion/tables/mozilla/bugs/bug51037-expected.txt:
+        * platform/mac-mountainlion/tables/mozilla/bugs/bug51727-expected.txt:
+        * platform/mac-mountainlion/tables/mozilla/bugs/bug52505-expected.txt:
+        * platform/mac-mountainlion/tables/mozilla/bugs/bug59354-expected.txt:
+        * platform/mac-mountainlion/tables/mozilla/bugs/bug7342-expected.txt:
+        * platform/mac-mountainlion/tables/mozilla/collapsing_borders/bug41262-4-expected.txt:
+        * platform/mac-mountainlion/tables/mozilla/core/margins-expected.txt:
+        * platform/mac-mountainlion/tables/mozilla/dom/tableDom-expected.txt:
+        * platform/mac-mountainlion/tables/mozilla/other/move_row-expected.txt:
+        * platform/mac-mountainlion/tables/mozilla_expected_failures/bugs/bug2479-5-expected.txt:
+        * platform/mac-mountainlion/tables/mozilla_expected_failures/bugs/bug58402-2-expected.txt:
+        * platform/mac-mountainlion/tables/mozilla_expected_failures/collapsing_borders/bug41262-5-expected.txt:
+        * platform/mac-mountainlion/tables/mozilla_expected_failures/collapsing_borders/bug41262-6-expected.txt:
+        * platform/mac-mountainlion/transforms/2d/zoom-menulist-expected.txt:
+
 2014-01-13  Eric Carlson  <eric.carlson@apple.com>
 
         Allow MediaSessionManager to restrict media playback
