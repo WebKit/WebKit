@@ -69,6 +69,12 @@
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/ThreadingPrimitives.h>
 
+// For portability, we do not use thread-safe statics natively supported by some compilers (e.g. gcc).
+#define AtomicallyInitializedStatic(T, name) \
+    WTF::lockAtomicallyInitializedStaticMutex(); \
+    static T name; \
+    WTF::unlockAtomicallyInitializedStaticMutex();
+
 namespace WTF {
 
 typedef uint32_t ThreadIdentifier;
@@ -93,6 +99,9 @@ void initializeCurrentThreadInternal(const char* threadName);
 WTF_EXPORT_PRIVATE ThreadIdentifier currentThread();
 WTF_EXPORT_PRIVATE int waitForThreadCompletion(ThreadIdentifier);
 WTF_EXPORT_PRIVATE void detachThread(ThreadIdentifier);
+
+WTF_EXPORT_PRIVATE void lockAtomicallyInitializedStaticMutex();
+WTF_EXPORT_PRIVATE void unlockAtomicallyInitializedStaticMutex();
 
 } // namespace WTF
 
