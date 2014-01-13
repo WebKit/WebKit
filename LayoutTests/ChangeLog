@@ -1,5 +1,12 @@
 2014-01-12  Brent Fulgham  <bfulgham@apple.com>
 
+        Unreviewed test maintenance.
+
+        * platform/mac/TestExpectations: Re-enable the typedarray/data-view-test.html
+        WebGL test now that it works properly.
+
+2014-01-12  Brent Fulgham  <bfulgham@apple.com>
+
         [WebGL] Error messages should use source code labels, not internal mangled symbols.
         https://bugs.webkit.org/show_bug.cgi?id=126832
 
