@@ -89,11 +89,12 @@ using namespace WebCore;
     return reinterpret_cast<SecurityOrigin*>(_private)->port();
 }
 
+// FIXME: Overriding isEqual: without overriding hash will cause trouble if this ever goes into an NSSet or is the key in an NSDictionary,
+// since two equal objects could have different hashes.
 - (BOOL)isEqual:(id)anObject
 {
-    if (![anObject isMemberOfClass:[WebSecurityOrigin class]]) {
+    if (![anObject isMemberOfClass:[WebSecurityOrigin class]])
         return NO;
-    }
     
     return [self _core]->equal([anObject _core]);
 }

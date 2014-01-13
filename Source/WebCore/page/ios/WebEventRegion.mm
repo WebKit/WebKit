@@ -66,12 +66,16 @@ using namespace WebCore;
     return [self quad].containsPoint(point);
 }
 
+// FIXME: Overriding isEqual: without overriding hash will cause trouble if this ever goes into an NSSet or is the key in an NSDictionary,
+// since two equal objects could have different hashes.
 - (BOOL)isEqual:(id)other
 {
-    return  CGPointEqualToPoint(p1, ((WebEventRegion *)other)->p1) &&
-            CGPointEqualToPoint(p2, ((WebEventRegion *)other)->p2) &&
-            CGPointEqualToPoint(p3, ((WebEventRegion *)other)->p3) &&
-            CGPointEqualToPoint(p4, ((WebEventRegion *)other)->p4);
+    if (![other isKindOfClass:[WebEventRegion class]])
+        return NO;
+    return CGPointEqualToPoint(p1, ((WebEventRegion *)other)->p1)
+        && CGPointEqualToPoint(p2, ((WebEventRegion *)other)->p2)
+        && CGPointEqualToPoint(p3, ((WebEventRegion *)other)->p3)
+        && CGPointEqualToPoint(p4, ((WebEventRegion *)other)->p4);
 }
 
 - (FloatQuad)quad

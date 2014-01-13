@@ -1,3 +1,15 @@
+2014-01-12  Darin Adler  <darin@apple.com>
+
+        Add type checking to isEqual methods
+        https://bugs.webkit.org/show_bug.cgi?id=126862
+
+        Reviewed by Anders Carlsson.
+
+        * WebCoreSupport/WebVisiblePosition.mm:
+        (-[WebVisiblePosition isEqual:]): Add type checking on the argument.
+        Add a FIXME about the lack of a hash method override. Simplified by
+        removing the unneeded local variables.
+
 2014-01-02  Andy Estes  <aestes@apple.com>
 
         [iOS] Upstream remainder of minimal-ui viewport changes

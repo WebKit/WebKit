@@ -1515,24 +1515,31 @@ static void autocorrectionContext(const String& beforeText, const String& marked
     return !self.isRange;
 }
 
+// FIXME: Overriding isEqual: without overriding hash will cause trouble if this ever goes into an NSSet or is the key in an NSDictionary,
+// since two equal items could have different hashes.
 - (BOOL)isEqual:(id)other
 {
-    assert([other isKindOfClass:[WKTextRange class]]);
+    if (![other isKindOfClass:[WKTextRange class]])
+        return NO;
+
     WKTextRange *otherRange = (WKTextRange *)other;
-    
+
     if (self == other)
         return YES;
-    
+
+    // FIXME: Probably incorrect for equality to ignore so much of the object state.
+    // It ignores isNone, isEditable, selectedTextLength, and selectionRects.
+
     if (self.isRange) {
         if (!otherRange.isRange)
             return NO;
         return CGRectEqualToRect(self.startRect, otherRange.startRect) && CGRectEqualToRect(self.endRect, otherRange.endRect);
-    } else if (!self.isRange) {
+    } else {
         if (otherRange.isRange)
             return NO;
+        // FIXME: Do we need to check isNone here?
         return CGRectEqualToRect(self.startRect, otherRange.startRect);
     }
-    return otherRange.isNone;
 }
 
 @end
@@ -1548,9 +1555,13 @@ static void autocorrectionContext(const String& beforeText, const String& marked
     return [pos autorelease];
 }
 
+// FIXME: Overriding isEqual: without overriding hash will cause trouble if this ever goes into a NSSet or is the key in an NSDictionary,
+// since two equal items could have different hashes.
 - (BOOL)isEqual:(id)other
 {
-    assert([other isKindOfClass:[self class]]);
+    if (![object isKindOfClass:[WKTextPosition class]])
+        return NO;
+
     return CGRectEqualToRect(self.positionRect, ((WKTextPosition *)other).positionRect);
 }
 

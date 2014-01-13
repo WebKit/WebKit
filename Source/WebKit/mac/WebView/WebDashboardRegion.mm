@@ -80,9 +80,13 @@ static const char* typeName(WebDashboardRegionType type)
     return [NSString stringWithFormat:@"rect:%@ clip:%@ type:%s", NSStringFromRect(rect), NSStringFromRect(clip), typeName(type)];
 }
 
-// FIXME: Overriding isEqual: without overriding hash will cause trouble if this ever goes into a NSSet or is the key in an NSDictionary.
+// FIXME: Overriding isEqual: without overriding hash will cause trouble if this ever goes into an NSSet or is the key in an NSDictionary,
+// since two equal objects could have different hashes.
 - (BOOL)isEqual:(id)other
 {
+    if (![other isKindOfClass:[WebDashboardRegion class]])
+        return NO;
+
     return NSEqualRects(rect, [other dashboardRegionRect]) && NSEqualRects(clip, [other dashboardRegionClip]) && type == [other dashboardRegionType];
 }
 
