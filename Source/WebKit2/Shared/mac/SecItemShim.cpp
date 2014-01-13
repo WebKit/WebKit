@@ -37,12 +37,19 @@
 #include "SecItemShimProxyMessages.h"
 #include <Security/Security.h>
 #include <dlfcn.h>
+#include <mutex>
 
 namespace WebKit {
 
 static BlockingResponseMap<SecItemResponseData>& responseMap()
 {
-    AtomicallyInitializedStatic(BlockingResponseMap<SecItemResponseData>*, responseMap = new BlockingResponseMap<SecItemResponseData>);
+    static std::once_flag onceFlag;
+    static BlockingResponseMap<SecItemResponseData>* responseMap;
+
+    std::call_once(onceFlag, []{
+        responseMap = std::make_unique<BlockingResponseMap<SecItemResponseData>>().release();
+    });
+
     return *responseMap;
 }
 
