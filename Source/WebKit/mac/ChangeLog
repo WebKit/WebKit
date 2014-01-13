@@ -1,3 +1,20 @@
+2014-01-13  Daniel Bates  <dabates@apple.com>
+
+        [iOS] More build fixes for WebKit
+
+        * Configurations/Base.xcconfig: Removed extraneous definition of SUPPORTED_PLATFORMS.
+        * Configurations/WebKit.xcconfig: Exclude more Mac-specific files when building for iOS:
+        CarbonUtils.m, CarbonWindowAdapter.mm, CarbonWindowContentView.m, CarbonWindowFrame.m,
+        HIViewAdapter.m, HIWebView.mm, MailQuirksUserScript.js, OutlookQuirksUserScript.js,
+        PopupMenuMac.mm, SearchPopupMenuMac.mm, WebClipView.mm, WebInspectorClient.mm,
+        WebNetscapeContainerCheckContextInfo.mm, WebNetscapeContainerCheckPrivate.mm, WebRenderNode.mm,
+        WebStringTruncator.mm, and WebTextCompletionController.mm. I haven't verified the Mac-specific
+        nature of each of these files. We may be able to reduce this list upon further investigation.
+        * WebView/WebDocument.h: Include header <WebKit/WAKView.h> for definition of WAKView.
+        * WebView/WebFrameView.h: Ditto.
+        * WebView/WebUIDelegate.h: Ditto.
+        * WebView/WebView.h: Ditto.
+
 2014-01-13  Simon Fraser  <simon.fraser@apple.com>
 
         Include WAKAppKitStubs.h to get NSSelectionAffinity.

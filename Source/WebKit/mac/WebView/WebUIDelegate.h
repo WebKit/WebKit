@@ -34,6 +34,7 @@
 #import <AppKit/AppKit.h>
 #else
 #import <WebKit/WAKAppKitStubs.h>
+#import <WebKit/WAKView.h>
 #endif
 
 /*!

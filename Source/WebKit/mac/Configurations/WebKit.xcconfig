@@ -25,9 +25,9 @@
 #include "Version.xcconfig"
 
 EXCLUDED_SOURCE_FILE_NAMES = $(EXCLUDED_SOURCE_FILE_NAMES_$(PLATFORM_NAME));
-EXCLUDED_SOURCE_FILE_NAMES_iphoneos = *.nib *.pdf *.tiff WebDashboardRegion.h WebDynamicScrollBarsView.h WebIconDatabase.h WebIconDatabasePrivate.h WebJavaScriptTextInputPanel.h WebKeyGenerator.h WebNSEventExtras.h WebNSPasteboardExtras.h WebNSWindowExtras.h WebPanelAuthenticationHandler.h WebPluginsPrivate.h;
+EXCLUDED_SOURCE_FILE_NAMES_iphoneos = *.nib *.pdf *.tiff CarbonUtils.m CarbonWindowAdapter.mm CarbonWindowContentView.m CarbonWindowFrame.m HIViewAdapter.m HIWebView.mm MailQuirksUserScript.js OutlookQuirksUserScript.js PopupMenuMac.mm SearchPopupMenuMac.mm WebClipView.mm WebDashboardRegion.h WebDynamicScrollBarsView.h WebIconDatabase.h WebIconDatabasePrivate.h WebInspectorClient.mm WebJavaScriptTextInputPanel.h WebKeyGenerator.h WebNSEventExtras.h WebNSPasteboardExtras.h WebNSWindowExtras.h WebNetscapeContainerCheckContextInfo.mm WebNetscapeContainerCheckPrivate.mm WebPanelAuthenticationHandler.h WebPluginsPrivate.h WebRenderNode.mm WebStringTruncator.mm WebTextCompletionController.mm;
 EXCLUDED_SOURCE_FILE_NAMES_iphonesimulator = $(EXCLUDED_SOURCE_FILE_NAMES_iphoneos);
-EXCLUDED_SOURCE_FILE_NAMES_macosx = MemoryMeasure.h WebCaretChangeListener.h WebFixedPositionContent.h WebFrameIOS.h WebFrameIPhone.h WebGeolocationCoreLocationProvider.h WebGeolocationPrivate.h WebGeolocationProviderIOS.h WebMIMETypeRegistry.h WebNSStringDrawing.h WebNSStringExtrasIOS.h WebNSStringExtrasIPhone.h WebPDFViewIOS.h WebPDFViewIPhone.h WebPDFViewPlaceholder.h WebSelectionRect.h WebUIKitDelegate.h WebUIKitSupport.h WebVisiblePosition.h;
+EXCLUDED_SOURCE_FILE_NAMES_macosx = *IOS.mm MemoryMeasure.h WebCaretChangeListener.h WebFixedPositionContent.h WebFrameIOS.h WebFrameIPhone.h WebGeolocationCoreLocationProvider.h WebGeolocationPrivate.h WebGeolocationProviderIOS.h WebMIMETypeRegistry.h WebNSStringDrawing.h WebNSStringExtrasIOS.h WebNSStringExtrasIPhone.h WebPDFViewIOS.h WebPDFViewIPhone.h WebPDFViewPlaceholder.h WebSelectionRect.h WebUIKitDelegate.h WebUIKitSupport.h WebVisiblePosition.h;
 
 EXPORTED_SYMBOLS_FILE = $(EXPORTED_SYMBOLS_FILE_$(CURRENT_ARCH));
 EXPORTED_SYMBOLS_FILE_ = mac/WebKit.exp;
