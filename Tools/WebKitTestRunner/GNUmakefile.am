@@ -156,10 +156,7 @@ code_generation_dependencies = \
 	Source/WebCore/bindings/scripts/InFilesParser.pm \
 	Source/WebCore/bindings/scripts/generate-bindings.pl
 
-$(top_builddir)/DerivedSources/InjectedBundle:
-	$(AM_V_at)mkdir -p $@
-
-DerivedSources/InjectedBundle/JS%.cpp: Tools/WebKitTestRunner/InjectedBundle/Bindings/%.idl $(code_generation_dependencies) $(top_builddir)/DerivedSources/InjectedBundle
+DerivedSources/InjectedBundle/JS%.cpp: Tools/WebKitTestRunner/InjectedBundle/Bindings/%.idl $(code_generation_dependencies)
 	$(AM_V_GEN)$(PERL) \
 		-I $(srcdir)/Source/WebCore/bindings/scripts \
 		-I $(srcdir)/Tools/WebKitTestRunner/InjectedBundle/Bindings \

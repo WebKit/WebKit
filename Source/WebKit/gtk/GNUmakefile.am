@@ -349,16 +349,13 @@ $(GENSOURCES_WEBKIT)/webkitmarshal.cpp: stamp-webkitmarshal.cpp
 $(GENSOURCES_WEBKIT)/webkitmarshal.h: stamp-webkitmarshal.h
 	@true
 
-$(GENSOURCES_WEBKIT):
-	$(AM_V_at)mkdir -p $@
-
-stamp-webkitmarshal.cpp: $(WEBKIT_MARSHAL_LIST) $(GENSOURCES_WEBKIT)
+stamp-webkitmarshal.cpp: $(WEBKIT_MARSHAL_LIST)
 	$(AM_V_GEN) echo "extern \"C\" {" > $(GENSOURCES_WEBKIT)/webkitmarshal.cpp && \
 	$(GLIB_GENMARSHAL) --prefix=webkit_marshal $(WEBKIT_MARSHAL_LIST) --body >> $(GENSOURCES_WEBKIT)/webkitmarshal.cpp && \
 	echo '}' >> $(GENSOURCES_WEBKIT)/webkitmarshal.cpp && \
 	echo timestamp > $(@F)
 
-stamp-webkitmarshal.h: $(WEBKIT_MARSHAL_LIST) $(GENSOURCES_WEBKIT)
+stamp-webkitmarshal.h: $(WEBKIT_MARSHAL_LIST)
 	$(AM_V_GEN)$(GLIB_GENMARSHAL) --prefix=webkit_marshal $(WEBKIT_MARSHAL_LIST) --header > $(GENSOURCES_WEBKIT)/webkitmarshal.h && \
 	echo timestamp > $(@F)
 
@@ -373,7 +370,7 @@ stamp-webkitenumtypes.h: $(webkitgtk_h_api) $(WebKit)/GNUmakefile.am
 	&& rm -f xgen-gth \
 	&& echo timestamp > $(@F)
 
-$(GENSOURCES_WEBKIT)/webkitenumtypes.cpp: $(webkitgtk_h_api) $(WebKit)/GNUmakefile.am $(GENSOURCES_WEBKIT)
+$(GENSOURCES_WEBKIT)/webkitenumtypes.cpp: $(webkitgtk_h_api) $(WebKit)/GNUmakefile.am
 	$(AM_V_GEN)glib-mkenums --template $(srcdir)/Source/WebKit/gtk/webkit/webkitenumtypes.cpp.template $(webkitgtk_h_api) | \
 		sed 's,web_kit,webkit,' \
 		> xgen-gtc \
