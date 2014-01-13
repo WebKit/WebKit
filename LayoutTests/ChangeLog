@@ -1,3 +1,12 @@
+2014-01-13  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed GTK gardening. Rebaselining after r161696. Adding failure expectations
+        for a few reference tests that were introduced in r161573 and r161626.
+
+        * platform/gtk/TestExpectations:
+        * platform/gtk/css1/text_properties/word_spacing-expected.png:
+        * platform/gtk/css1/text_properties/word_spacing-expected.txt:
+
 2014-01-13  László Langó  <llango.u-szeged@partner.samsung.com>
 
         Comment should be consructable.
