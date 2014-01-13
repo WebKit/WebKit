@@ -1,5 +1,12 @@
 2014-01-13  Alexey Proskuryakov  <ap@apple.com>
 
+        Fix the build more.
+
+        * xml/XMLHttpRequestProgressEventThrottle.cpp:
+        (WebCore::XMLHttpRequestProgressEventThrottle::dispatchProgressEvent):
+
+2014-01-13  Alexey Proskuryakov  <ap@apple.com>
+
         Fix the build.
 
         * xml/XMLHttpRequestProgressEventThrottle.cpp:
