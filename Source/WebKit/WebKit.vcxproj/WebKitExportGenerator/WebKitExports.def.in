@@ -141,7 +141,6 @@ EXPORTS
         symbolWithPointer(?instrumentationForPage@WebCore@@YAPAVInstrumentingAgents@1@PAVPage@1@@Z, ?instrumentationForPage@WebCore@@YAPEAVInstrumentingAgents@1@PEAVPage@1@@Z)
         ?isMainThread@WTF@@YA_NXZ
         symbolWithPointer(?lock@Mutex@WTF@@QAEXXZ, ?lock@Mutex@WTF@@QEAAXXZ)
-        ?lockAtomicallyInitializedStaticMutex@WTF@@YAXXZ
         symbolWithPointer(?scriptedAnimationControllerSetThrottled@Document@WebCore@@UAEX_N@Z, ?scriptedAnimationControllerSetThrottled@Document@WebCore@@UEAAX_N@Z)
         symbolWithPointer(?signal@ThreadCondition@WTF@@QAEXXZ, ?signal@ThreadCondition@WTF@@QEAAXXZ)
         symbolWithPointer(?timedWait@ThreadCondition@WTF@@QAE_NAAVMutex@2@N@Z, ?timedWait@ThreadCondition@WTF@@QEAA_NAEAVMutex@2@N@Z)
@@ -149,7 +148,6 @@ EXPORTS
         symbolWithPointer(?tlsKeys@WTF@@YAPAKXZ, ?tlsKeys@WTF@@YAPEAKXZ)
         symbolWithPointer(?tryLock@Mutex@WTF@@QAE_NXZ, ?tryLock@Mutex@WTF@@QEAA_NXZ)
         symbolWithPointer(?unlock@Mutex@WTF@@QAEXXZ, ?unlock@Mutex@WTF@@QEAAXXZ)
-        ?unlockAtomicallyInitializedStaticMutex@WTF@@YAXXZ
         symbolWithPointer(?wait@ThreadCondition@WTF@@QAEXAAVMutex@2@@Z, ?wait@ThreadCondition@WTF@@QEAAXAEAVMutex@2@@Z)
         ?waitForThreadCompletion@WTF@@YAHI@Z
         symbolWithPointer(?waitForThreadCompletion@WTF@@YAHIPAPAX@Z, ?waitForThreadCompletion@WTF@@YAHIPEAPEAX@Z)
