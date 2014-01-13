@@ -1,3 +1,27 @@
+2014-01-13  Brent Fulgham  <bfulgham@apple.com>
+
+        [WebGL] Error messages should use source code labels, not internal mangled symbols.
+        https://bugs.webkit.org/show_bug.cgi?id=126832
+
+        Reviewed by Dean Jackson.
+
+        Revised fast/canvas/webgl/glsl-conformance.html.
+
+        * platform/graphics/ANGLEWebKitBridge.cpp:
+        (WebCore::getSymbolInfo): Correct missing 'break'.
+        (WebCore::ANGLEWebKitBridge::compileShaderSource): Call 'getSymbolInfo'
+        for SH_VARYINGS.
+        * platform/graphics/GraphicsContext3D.h: Add new declarations.
+        * platform/graphics/filters/CustomFilterValidatedProgram.cpp: Add case
+        for SHADER_SYMBOL_TYPE_VARYING. This is a no-op to match existing
+        behavior.
+        * platform/graphics/opengl/GraphicsContext3DOpenGLCommon.cpp:
+        (WebCore::GraphicsContext3D::compileShader): Demangle log output.
+        (WebCore::GraphicsContext3D::mappedSymbolName): Added.
+        (WebCore::GraphicsContext3D::getUnmangledInfoLog): Added.
+        (WebCore::GraphicsContext3D::getProgramInfoLog): Demangle log output.
+        (WebCore::GraphicsContext3D::getShaderInfoLog): Demangle log output.
+
 2014-01-13  David Kilzer  <ddkilzer@apple.com>
 
         [iOS] Include RenderElement.h to fix BaseChooserOnlyDateAndTimeInputType.cpp

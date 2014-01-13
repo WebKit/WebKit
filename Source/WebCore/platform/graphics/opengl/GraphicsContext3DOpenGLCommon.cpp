@@ -47,6 +47,7 @@
 #include "IntSize.h"
 #include "Logging.h"
 #include "NotImplemented.h"
+#include "RegularExpression.h"
 #include "TemporaryOpenGLSetting.h"
 #include <cstring>
 #include <runtime/ArrayBuffer.h>
@@ -546,7 +547,8 @@ void GraphicsContext3D::compileShader(Platform3DObject shader)
         auto info = std::make_unique<GLchar[]>(length);
         ::glGetShaderInfoLog(shader, length, &size, info.get());
 
-        entry.log = info.get();
+        Platform3DObject shaders[2] = { shader, 0 };
+        entry.log = getUnmangledInfoLog(shaders, 1, String(info.get()));
     }
 
     if (GLCompileSuccess != GL_TRUE) {
@@ -801,6 +803,24 @@ String GraphicsContext3D::originalSymbolName(Platform3DObject program, ANGLEShad
         for (const auto& symbolEntry : symbolMap) {
             if (symbolEntry.value.mappedName == name)
                 return symbolEntry.key;
+        }
+    }
+    return name;
+}
+
+String GraphicsContext3D::mappedSymbolName(Platform3DObject shaders[2], size_t count, const String& name)
+{
+    for (size_t symbolType = 0; symbolType <= static_cast<size_t>(SHADER_SYMBOL_TYPE_VARYING); ++symbolType) {
+        for (size_t i = 0; i < count; ++i) {
+            ShaderSourceMap::iterator result = m_shaderSourceMap.find(shaders[i]);
+            if (result == m_shaderSourceMap.end())
+                continue;
+            
+            const ShaderSymbolMap& symbolMap = result->value.symbolMap(static_cast<enum ANGLEShaderSymbolType>(symbolType));
+            for (const auto& symbolEntry : symbolMap) {
+                if (symbolEntry.value.mappedName == name)
+                    return symbolEntry.key;
+            }
         }
     }
     return name;
@@ -1278,6 +1298,36 @@ void GraphicsContext3D::getNonBuiltInActiveSymbolCount(Platform3DObject program,
     *value = m_shaderSymbolCount->countForType(pname);
 }
 
+String GraphicsContext3D::getUnmangledInfoLog(Platform3DObject shaders[2], GC3Dsizei count, const String& log)
+{
+    LOG(WebGL, "Was: %s", log.utf8().data());
+
+    RegularExpression regExp("webgl_[0123456789abcdefABCDEF]+", TextCaseSensitive);
+
+    String processedLog;
+    
+    int startFrom = 0;
+    int matchedLength = 0;
+    do {
+        int start = regExp.match(log, startFrom, &matchedLength);
+        if (start == -1)
+            break;
+
+        processedLog.append(log.substring(startFrom, start - startFrom));
+        startFrom = start + matchedLength;
+
+        const String& mangledSymbol = log.substring(start, matchedLength);
+        const String& mappedSymbol = mappedSymbolName(shaders, count, mangledSymbol);
+        LOG(WebGL, "Demangling: %s to %s", mangledSymbol.utf8().data(), mappedSymbol.utf8().data());
+        processedLog.append(mappedSymbol);
+    } while (startFrom < static_cast<int>(log.length()));
+
+    processedLog.append(log.substring(startFrom, log.length() - startFrom));
+
+    LOG(WebGL, "-->: %s", processedLog.utf8().data());
+    return processedLog;
+}
+
 String GraphicsContext3D::getProgramInfoLog(Platform3DObject program)
 {
     ASSERT(program);
@@ -1292,7 +1342,11 @@ String GraphicsContext3D::getProgramInfoLog(Platform3DObject program)
     auto info = std::make_unique<GLchar[]>(length);
     ::glGetProgramInfoLog(program, length, &size, info.get());
 
-    return String(info.get());
+    GC3Dsizei count;
+    Platform3DObject shaders[2];
+    getAttachedShaders(program, 2, &count, shaders);
+
+    return getUnmangledInfoLog(shaders, count, String(info.get()));
 }
 
 void GraphicsContext3D::getRenderbufferParameteriv(GC3Denum target, GC3Denum pname, GC3Dint* value)
@@ -1359,7 +1413,8 @@ String GraphicsContext3D::getShaderInfoLog(Platform3DObject shader)
     auto info = std::make_unique<GLchar[]>(length);
     ::glGetShaderInfoLog(shader, length, &size, info.get());
 
-    return String(info.get());
+    Platform3DObject shaders[2] = { shader, 0 };
+    return getUnmangledInfoLog(shaders, 1, String(info.get()));
 }
 
 String GraphicsContext3D::getShaderSource(Platform3DObject shader)

@@ -125,6 +125,9 @@ static bool validateSymbols(const Vector<ANGLEShaderSymbol>& symbols, CustomFilt
             }
             break;
         }
+        case SHADER_SYMBOL_TYPE_VARYING:
+            // No special validation for varying types.
+            break;
         default:
             ASSERT_NOT_REACHED();
             break;

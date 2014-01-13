@@ -211,6 +211,16 @@ void main()
     gl_Position = vPosition;
 }
 </script>
+<script id="fragmentShaderUsedVarying" type="text/something-not-javascript">
+precision mediump float;
+
+varying vec4 v_varying;
+
+void main()
+{
+    gl_FragColor = v_varying;
+}
+</script>
 <script id="vshaderWith__FILE__" type="text/something-not-javascript">
 __FILE__
 </script>
@@ -403,6 +413,13 @@ if (!gl) {
       linkSuccess: true,
       passMsg: 'vertex shader uses the #version 100 directive should succeed',
     },
+    { vShaderId: 'vshaderWithVersion100',
+      vShaderSuccess: true,
+      fShaderId: 'fragmentShaderUsedVarying',
+      fShaderSuccess: true,
+      linkSuccess: false,
+      passMsg: 'vertex shader with no varying and fragment shader with used varying must fail',
+    },
   ];
 
   // Read in all the shader source.
@@ -498,12 +515,16 @@ if (!gl) {
       gl.linkProgram(program);
       var linked = (gl.getProgramParameter(program, gl.LINK_STATUS) != 0);
       if (!linked) {
-        var error = gl.getProgramInfoLog(shader);
+        var error = gl.getProgramInfoLog(program);
         log("*** Error linking program '"+program+"':"+error);
       }
       if (linked != info.linkSuccess) {
         testFailed(passMsg);
         continue;
+      }
+      if (!info.linkSuccess) {
+        var error = gl.getProgramInfoLog(program);
+        debug("Program link log:" + error);
       }
     } else {
       if (info.linkSuccess) {
