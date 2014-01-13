@@ -3608,6 +3608,12 @@
 		A14832CF187F684700DA63A6 /* WebCoreThreadSystemInterface.h in Headers */ = {isa = PBXBuildFile; fileRef = A14832A1187F508700DA63A6 /* WebCoreThreadSystemInterface.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A17C81220F2A5CF7005DAAEB /* HTMLElementFactory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A17C81200F2A5CF7005DAAEB /* HTMLElementFactory.cpp */; };
 		A17C81230F2A5CF7005DAAEB /* HTMLElementFactory.h in Headers */ = {isa = PBXBuildFile; fileRef = A17C81210F2A5CF7005DAAEB /* HTMLElementFactory.h */; };
+		A1C797181883DD82000F5E1F /* DOMGestureEvent.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = 0F54DCDD1880F901003EEDBB /* DOMGestureEvent.h */; };
+		A1C797191883DDED000F5E1F /* DOMTouch.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = 0F54DCCD1880F867003EEDBB /* DOMTouch.h */; };
+		A1C7971A1883DE0D000F5E1F /* DOMTouchEvent.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = 0F54DCCF1880F867003EEDBB /* DOMTouchEvent.h */; };
+		A1C7971B1883DE2B000F5E1F /* DOMTouchList.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = 0F54DCD31880F867003EEDBB /* DOMTouchList.h */; };
+		A1C7971D1883E51F000F5E1F /* DOMHTMLTextAreaElementPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = A1C7971C1883E51F000F5E1F /* DOMHTMLTextAreaElementPrivate.h */; };
+		A1C7971E1883E63F000F5E1F /* DOMHTMLTextAreaElementPrivate.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = A1C7971C1883E51F000F5E1F /* DOMHTMLTextAreaElementPrivate.h */; };
 		A1C7FAA2133A5D3500D6732D /* JSXPathResultCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A1C7FAA1133A5D3500D6732D /* JSXPathResultCustom.cpp */; };
 		A1DE712D18612AC100734192 /* TouchEvents.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A1DE712B18612AC100734192 /* TouchEvents.cpp */; };
 		A1DE71321861322200734192 /* TouchConstructors.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A1DE71301861322200734192 /* TouchConstructors.cpp */; };
@@ -6594,7 +6600,7 @@
 		1C11CCB40AA6093700DADB20 /* Copy Generated Headers */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
-			dstPath = Versions/A/PrivateHeaders;
+			dstPath = PrivateHeaders;
 			dstSubfolderSpec = 1;
 			files = (
 				5DF7F5C20F01F92A00526B4B /* CSSPropertyNames.h in Copy Generated Headers */,
@@ -6643,6 +6649,7 @@
 				BC00F0370E0A19DB00FD04E3 /* DOMFileInternal.h in Copy Generated Headers */,
 				BC00F0380E0A19DB00FD04E3 /* DOMFileList.h in Copy Generated Headers */,
 				BC00F0390E0A19DB00FD04E3 /* DOMFileListInternal.h in Copy Generated Headers */,
+				A1C797181883DD82000F5E1F /* DOMGestureEvent.h in Copy Generated Headers */,
 				85DF812D0AA778A300486AD7 /* DOMHTMLAnchorElement.h in Copy Generated Headers */,
 				854075830AD6CF1400620C57 /* DOMHTMLAppletElement.h in Copy Generated Headers */,
 				85ECBF080AA7628900544F0B /* DOMHTMLAreaElement.h in Copy Generated Headers */,
@@ -6706,6 +6713,7 @@
 				85DF82330AA7866800486AD7 /* DOMHTMLTableSectionElement.h in Copy Generated Headers */,
 				85F32B430AA6401A00FF3184 /* DOMHTMLTextAreaElement.h in Copy Generated Headers */,
 				6596F2C10B87325C001326BD /* DOMHTMLTextAreaElementInternal.h in Copy Generated Headers */,
+				A1C7971E1883E63F000F5E1F /* DOMHTMLTextAreaElementPrivate.h in Copy Generated Headers */,
 				8575DF870AA6130E00F5DBB5 /* DOMHTMLTitleElement.h in Copy Generated Headers */,
 				85BA4D2E0AA6889F0088052D /* DOMHTMLUListElement.h in Copy Generated Headers */,
 				85DF34620AAFC2D400E59AE3 /* DOMKeyboardEvent.h in Copy Generated Headers */,
@@ -6733,6 +6741,9 @@
 				850657A10AAB4A8E002D15C0 /* DOMStyleSheetList.h in Copy Generated Headers */,
 				1C11CCC20AA6093700DADB20 /* DOMText.h in Copy Generated Headers */,
 				933A14760B7D1BAF00A53FFD /* DOMTextEvent.h in Copy Generated Headers */,
+				A1C797191883DDED000F5E1F /* DOMTouch.h in Copy Generated Headers */,
+				A1C7971A1883DE0D000F5E1F /* DOMTouchEvent.h in Copy Generated Headers */,
+				A1C7971B1883DE2B000F5E1F /* DOMTouchList.h in Copy Generated Headers */,
 				85526D050AB0B979000302EA /* DOMTreeWalker.h in Copy Generated Headers */,
 				85C7F4D00AAF83F6004014DD /* DOMUIEvent.h in Copy Generated Headers */,
 				85DF34600AAFC2D400E59AE3 /* DOMWheelEvent.h in Copy Generated Headers */,
@@ -7320,8 +7331,8 @@
 		0FDA7C1D188322FC00C954B5 /* JSGestureEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSGestureEvent.h; sourceTree = "<group>"; };
 		0FDA7C2018832BCC00C954B5 /* DateTimeFormat.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DateTimeFormat.cpp; sourceTree = "<group>"; };
 		0FDA7C22188330A900C954B5 /* DragImageIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = DragImageIOS.mm; path = ios/DragImageIOS.mm; sourceTree = "<group>"; };
-		0FDA7C241883333200C954B5 /* JSWebKitPlaybackTargetAvailabilityEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = JSWebKitPlaybackTargetAvailabilityEvent.cpp; path = "JSWebKitPlaybackTargetAvailabilityEvent.cpp"; sourceTree = "<group>"; };
-		0FDA7C251883333200C954B5 /* JSWebKitPlaybackTargetAvailabilityEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = JSWebKitPlaybackTargetAvailabilityEvent.h; path = "JSWebKitPlaybackTargetAvailabilityEvent.h"; sourceTree = "<group>"; };
+		0FDA7C241883333200C954B5 /* JSWebKitPlaybackTargetAvailabilityEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWebKitPlaybackTargetAvailabilityEvent.cpp; sourceTree = "<group>"; };
+		0FDA7C251883333200C954B5 /* JSWebKitPlaybackTargetAvailabilityEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWebKitPlaybackTargetAvailabilityEvent.h; sourceTree = "<group>"; };
 		0FE71403142170B800DB33BA /* ScrollbarThemeMock.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScrollbarThemeMock.cpp; sourceTree = "<group>"; };
 		0FE71404142170B800DB33BA /* ScrollbarThemeMock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScrollbarThemeMock.h; sourceTree = "<group>"; };
 		0FE71415142189FC00DB33BA /* ScrollbarTheme.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScrollbarTheme.cpp; sourceTree = "<group>"; };
@@ -10619,6 +10630,7 @@
 		A14832AB187F508700DA63A6 /* WKViewPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WKViewPrivate.h; path = ios/wak/WKViewPrivate.h; sourceTree = "<group>"; };
 		A17C81200F2A5CF7005DAAEB /* HTMLElementFactory.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLElementFactory.cpp; sourceTree = "<group>"; };
 		A17C81210F2A5CF7005DAAEB /* HTMLElementFactory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HTMLElementFactory.h; sourceTree = "<group>"; };
+		A1C7971C1883E51F000F5E1F /* DOMHTMLTextAreaElementPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMHTMLTextAreaElementPrivate.h; sourceTree = "<group>"; };
 		A1C7FAA1133A5D3500D6732D /* JSXPathResultCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSXPathResultCustom.cpp; sourceTree = "<group>"; };
 		A1DE712B18612AC100734192 /* TouchEvents.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TouchEvents.cpp; sourceTree = "<group>"; };
 		A1DE71301861322200734192 /* TouchConstructors.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TouchConstructors.cpp; sourceTree = "<group>"; };
@@ -16742,6 +16754,7 @@
 				85DF821C0AA7849E00486AD7 /* DOMHTMLTableSectionElement.mm */,
 				85F32AEA0AA63B8700FF3184 /* DOMHTMLTextAreaElement.h */,
 				85F32AEB0AA63B8700FF3184 /* DOMHTMLTextAreaElement.mm */,
+				A1C7971C1883E51F000F5E1F /* DOMHTMLTextAreaElementPrivate.h */,
 				85992EB80AA5069500AC0785 /* DOMHTMLTitleElement.h */,
 				85992EB90AA5069500AC0785 /* DOMHTMLTitleElement.mm */,
 				85BA4D090AA688680088052D /* DOMHTMLUListElement.h */,
@@ -24874,6 +24887,7 @@
 				A818721E0977D3C0005826D9 /* NameNodeList.h in Headers */,
 				6B3480940EEF50D400AC1B41 /* NativeImagePtr.h in Headers */,
 				078E093217D1684600420AA1 /* MediaStreamCenterMac.h in Headers */,
+				A1C7971D1883E51F000F5E1F /* DOMHTMLTextAreaElementPrivate.h in Headers */,
 				E10B9B6C0B747599003ED890 /* NativeXPathNSResolver.h in Headers */,
 				93CCF0270AF6C52900018E89 /* NavigationAction.h in Headers */,
 				979F43D41075E44A0000F83B /* NavigationScheduler.h in Headers */,
