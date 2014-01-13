@@ -115,8 +115,6 @@ void initializeThreading()
     if (atomicallyInitializedStaticMutex)
         return;
 
-    isInitialized = true;
-
     WTF::double_conversion::initialize();
     // StringImpl::empty() does not construct its static string in a threadsafe fashion,
     // so ensure it has been initialized from here.
