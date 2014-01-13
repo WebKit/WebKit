@@ -1,3 +1,15 @@
+2014-01-13  Brent Fulgham  <bfulgham@apple.com>
+
+        [WebGL] Invalid range checking in WebGLRenderingContext::validateTexFuncLevel
+        https://bugs.webkit.org/show_bug.cgi?id=126925
+
+        Reviewed by Dean Jackson.
+
+        Added fast/canvas/webgl/webgl-compressed-texture-size-limit.html.
+
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore::WebGLRenderingContext::validateTexFuncLevel): Avoid off-by-one error
+
 2014-01-13  Daniel Bates  <dabates@apple.com>
 
         Add uint8_t specialization for WebCore::writeLittleEndian()
