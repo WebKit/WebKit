@@ -31,6 +31,7 @@
 #include "HTMLDivElement.h"
 #include "HTMLInputElement.h"
 #include "Page.h"
+#include "RenderElement.h"
 #include "ScriptController.h"
 #include "ShadowRoot.h"
 
