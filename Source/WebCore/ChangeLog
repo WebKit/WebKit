@@ -1,3 +1,10 @@
+2014-01-13  Alexey Proskuryakov  <ap@apple.com>
+
+        Fix the build.
+
+        * xml/XMLHttpRequestProgressEventThrottle.cpp:
+        (WebCore::XMLHttpRequestProgressEventThrottle::dispatchProgressEvent):
+
 2014-01-13  Simon Fraser  <simon.fraser@apple.com>
 
         Fix copy of SystemMemory.h in iOS WebKit build.
