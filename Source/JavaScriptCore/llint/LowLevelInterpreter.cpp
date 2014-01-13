@@ -522,7 +522,7 @@ JSValue CLoop::execute(CallFrame* callFrame, Opcode entryOpcode, bool isInitiali
 //
 
 // These are for building an interpreter from generated assembly code:
-#if CPU(X86_64)
+#if CPU(X86_64) && COMPILER(CLANG)
 #define OFFLINE_ASM_BEGIN   asm ( \
     ".cfi_startproc\n"
 
@@ -545,7 +545,7 @@ JSValue CLoop::execute(CallFrame* callFrame, Opcode entryOpcode, bool isInitiali
     ".thumb\n"                                   \
     ".thumb_func " THUMB_FUNC_PARAM(label) "\n"  \
     SYMBOL_STRING(label) ":\n"
-#elif CPU(X86_64)
+#elif CPU(X86_64) && COMPILER(CLANG)
 #define OFFLINE_ASM_GLOBAL_LABEL(label)         \
     ".text\n"                                   \
     ".globl " SYMBOL_STRING(label) "\n"         \
