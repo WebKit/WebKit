@@ -1,3 +1,27 @@
+2014-01-13  Anders Carlsson  <andersca@apple.com>
+
+        Remove AtomicallyInitializedStatic
+        https://bugs.webkit.org/show_bug.cgi?id=126864
+
+        Reviewed by Andreas Kling.
+
+        Remove the lockAtomicallyInitializedStaticMutex and unlockAtomicallyInitializedStaticMutex functions
+        everywhere except on Mac (where they unfortunately were used by Safari).
+        
+        On Mac, add them to a separate file which will hold functions and symbols that we would like
+        to remove but that are used by Safari. Reimplement them in terms of std::call_once and std::mutex.
+
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/Threading.h:
+        * wtf/ThreadingPthreads.cpp:
+        (WTF::initializeThreading):
+        * wtf/ThreadingWin.cpp:
+        (WTF::initializeThreading):
+        * wtf/mac/DeprecatedSymbolsUsedBySafari.mm: Added.
+        (WTF::atomicallyInitializedStaticMutex):
+        (WTF::lockAtomicallyInitializedStaticMutex):
+        (WTF::unlockAtomicallyInitializedStaticMutex):
+
 2014-01-13  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r161855.

@@ -148,19 +148,6 @@ void initializeCurrentThreadInternal(const char* szThreadName)
 #endif
 }
 
-static Mutex* atomicallyInitializedStaticMutex;
-
-void lockAtomicallyInitializedStaticMutex()
-{
-    ASSERT(atomicallyInitializedStaticMutex);
-    atomicallyInitializedStaticMutex->lock();
-}
-
-void unlockAtomicallyInitializedStaticMutex()
-{
-    atomicallyInitializedStaticMutex->unlock();
-}
-
 static Mutex& threadMapMutex()
 {
     static Mutex mutex;
@@ -169,8 +156,12 @@ static Mutex& threadMapMutex()
 
 void initializeThreading()
 {
-    if (atomicallyInitializedStaticMutex)
+    static bool isInitialized;
+    
+    if (isInitialized)
         return;
+
+    isInitialized = true;
 
     WTF::double_conversion::initialize();
     // StringImpl::empty() does not construct its static string in a threadsafe fashion,
