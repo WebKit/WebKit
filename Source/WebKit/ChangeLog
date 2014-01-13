@@ -1,5 +1,13 @@
 2014-01-13  Daniel Bates  <dabates@apple.com>
 
+        [iOS] Fix up WebKit build phases
+
+        Add iOS-specific logic to build phrases "Generate 64-bit Export File" and "Migrate Headers".
+
+        * WebKit.xcodeproj/project.pbxproj:
+
+2014-01-13  Daniel Bates  <dabates@apple.com>
+
         [iOS] Don't link to Mac-only frameworks when building WebKit
 
         Currently the Xcode project always links against various Mac-only frameworks (e.g. Carbon.framework).

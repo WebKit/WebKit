@@ -1994,15 +1994,17 @@
 			files = (
 			);
 			inputPaths = (
-				"$(PROJECT_DIR)/mac/WebKit.exp",
+				"$(SRCROOT)/mac/WebKit.exp",
+				"$(SRCROOT)/ios/WebKit.IOS.exp",
 			);
 			name = "Generate 64-bit Export File";
 			outputPaths = (
 				"$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebKit.LP64.exp",
+				"$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebKit.generated.exp",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "mkdir -p \"${BUILT_PRODUCTS_DIR}/DerivedSources/WebKit\"\n\n# exclude Carbon functions on 64-bit\nsed -e s/^_HIWebViewCreate$// -e s/^_HIWebViewGetWebView$// -e s/^_WebConvertNSImageToCGImageRef$// -e s/^_WebInitForCarbon$// \"${PROJECT_DIR}/mac/WebKit.exp\" > \"${BUILT_PRODUCTS_DIR}/DerivedSources/WebKit/WebKit.LP64.exp\"\n";
+			shellScript = "mkdir -p \"${BUILT_PRODUCTS_DIR}/DerivedSources/WebKit\"\n\n# exclude Carbon functions on 64-bit\nsed -e s/^_HIWebViewCreate$// -e s/^_HIWebViewGetWebView$// -e s/^_WebConvertNSImageToCGImageRef$// -e s/^_WebInitForCarbon$// \"${PROJECT_DIR}/mac/WebKit.exp\" > \"${BUILT_PRODUCTS_DIR}/DerivedSources/WebKit/WebKit.LP64.exp\"\n\nif [[ \"${PLATFORM_NAME}\" == \"iphoneos\" || \"${PLATFORM_NAME}\" == \"iphonesimulator\" ]]; then\n    cat \"${BUILT_PRODUCTS_DIR}/DerivedSources/WebKit/WebKit.LP64.exp\" \"${PROJECT_DIR}/ios/WebKit.iOS.exp\" > \"${BUILT_PRODUCTS_DIR}/DerivedSources/WebKit/WebKit.generated.exp\"\nfi;\n";
 		};
 		1C6CB0510AA63EB000D23BFD /* Migrate Headers */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -2109,7 +2111,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 1;
 			shellPath = /bin/sh;
-			shellScript = "ln -sf Versions/Current/Frameworks \"$TARGET_BUILD_DIR/WebKit.framework/Frameworks\"\n";
+			shellScript = "if [[ ${PLATFORM_NAME} == \"iphoneos\" || ${PLATFORM_NAME} == \"iphonesimulator\" ]]; then\n    exit 0\nfi\n\nln -sf Versions/Current/Frameworks \"$TARGET_BUILD_DIR/WebKit.framework/Frameworks\"\n";
 		};
 		A13EE61D185AE82700556064 /* Postprocess Headers */ = {
 			isa = PBXShellScriptBuildPhase;
