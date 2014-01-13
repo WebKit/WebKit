@@ -1,3 +1,25 @@
+2014-01-13  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [GTK] Make MiniBrowser windows non-transient by default
+        https://bugs.webkit.org/show_bug.cgi?id=126840
+
+        Reviewed by Carlos Garcia Campos.
+
+        Instead of making new browser windows transient as soon as they are
+        created, save the pointer to the parent window and set the transient
+        state later on when handling the "run-as-modal" signal. This makes
+        it easier to use the MiniBrowser to do tests involving multiple
+        windows, and will be useful as well when multi-web-process mode is
+        enabled for the GTK port.
+
+        * MiniBrowser/gtk/BrowserWindow.c:
+        (webViewRunAsModal): Set the parent window using
+        gtk_window_set_transient_for() using the saved parent
+        window.
+        (browser_window_new): Save the parent window using
+        g_object_set_data() instead of making the new window
+        transient immediately.
+
 2014-01-12  Sergio Correia  <sergio.correia@openbossa.org>
 
         [EFL][WK2] Make API tests work again

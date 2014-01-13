@@ -59,6 +59,7 @@ struct _BrowserWindow {
     GdkPixbuf *favicon;
     GtkWidget *reloadOrStopButton;
     GtkWidget *fullScreenMessageLabel;
+    GtkWindow *parentWindow;
     guint fullScreenMessageLabelId;
 };
 
@@ -269,6 +270,7 @@ static void webViewClose(WebKitWebView *webView, BrowserWindow *window)
 static void webViewRunAsModal(WebKitWebView *webView, BrowserWindow *window)
 {
     gtk_window_set_modal(GTK_WINDOW(window), TRUE);
+    gtk_window_set_transient_for(GTK_WINDOW(window), window->parentWindow);
 }
 
 static void webViewReadyToShow(WebKitWebView *webView, BrowserWindow *window)
@@ -700,10 +702,15 @@ GtkWidget *browser_window_new(WebKitWebView *view, GtkWindow *parent)
 {
     g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(view), 0);
 
-    return GTK_WIDGET(g_object_new(BROWSER_TYPE_WINDOW,
-                                   "transient-for", parent,
-                                   "type", GTK_WINDOW_TOPLEVEL,
-                                   "view", view, NULL));
+    BrowserWindow *window = BROWSER_WINDOW(g_object_new(BROWSER_TYPE_WINDOW,
+        "type", GTK_WINDOW_TOPLEVEL, "view", view, NULL));
+
+    if (parent) {
+        window->parentWindow = parent;
+        g_object_add_weak_pointer(G_OBJECT(parent), &window->parentWindow);
+    }
+
+    return GTK_WIDGET(window);
 }
 
 WebKitWebView *browser_window_get_view(BrowserWindow *window)
