@@ -1,3 +1,40 @@
+2014-01-13  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: protocol generator should support integer-typed declarations
+        https://bugs.webkit.org/show_bug.cgi?id=126828
+
+        Reviewed by Joseph Pecoraro.
+
+        Add new binding classes for parameter/ad-hoc and normal integer type declarations.
+
+        * inspector/scripts/CodeGeneratorInspector.py:
+        (TypeBindings.create_type_declaration_):
+        (TypeBindings.create_type_declaration_.PlainInteger):
+        (TypeBindings.create_type_declaration_.PlainInteger.resolve_inner):
+        (TypeBindings.create_type_declaration_.PlainInteger.request_user_runtime_cast):
+        (TypeBindings.create_type_declaration_.PlainInteger.request_internal_runtime_cast):
+        (TypeBindings.create_type_declaration_.PlainInteger.get_code_generator):
+        (TypeBindings.create_type_declaration_.PlainInteger.get_validator_call_text):
+        (TypeBindings.create_type_declaration_.PlainInteger.reduce_to_raw_type):
+        (TypeBindings.create_type_declaration_.PlainInteger.get_type_model):
+        (TypeBindings.create_type_declaration_.PlainInteger.get_setter_value_expression_pattern):
+        (TypeBindings.create_type_declaration_.PlainInteger.get_array_item_c_type_text):
+        (TypeBindings.create_type_declaration_.TypedefInteger):
+        (TypeBindings.create_type_declaration_.TypedefInteger.resolve_inner):
+        (TypeBindings.create_type_declaration_.TypedefInteger.request_user_runtime_cast):
+        (TypeBindings.create_type_declaration_.TypedefInteger.request_internal_runtime_cast):
+        (TypeBindings.create_type_declaration_.TypedefInteger.get_code_generator):
+        (TypeBindings.create_type_declaration_.TypedefInteger.get_code_generator.CodeGenerator):
+        (TypeBindings.create_type_declaration_.TypedefInteger.get_code_generator.CodeGenerator.generate_type_builder):
+        (TypeBindings.create_type_declaration_.TypedefInteger.get_code_generator.CodeGenerator.generate_type_builder.int):
+        (TypeBindings.create_type_declaration_.TypedefInteger.get_code_generator.CodeGenerator.register_use):
+        (TypeBindings.create_type_declaration_.TypedefInteger.get_code_generator.CodeGenerator.get_generate_pass_id):
+        (TypeBindings.create_type_declaration_.TypedefInteger.get_validator_call_text):
+        (TypeBindings.create_type_declaration_.TypedefInteger.reduce_to_raw_type):
+        (TypeBindings.create_type_declaration_.TypedefInteger.get_type_model):
+        (TypeBindings.create_type_declaration_.TypedefInteger.get_setter_value_expression_pattern):
+        (TypeBindings.create_type_declaration_.TypedefInteger.get_array_item_c_type_text):
+
 2014-01-13  Zalan Bujtas  <zalan@apple.com>
 
         Enable SUBPIXEL_LAYOUT on Mac

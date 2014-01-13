@@ -1112,6 +1112,106 @@ class TypeBindings:
 
                     return TypedefString
 
+        elif json_typable["type"] == "integer":
+                if helper.is_ad_hoc:
+
+                    class PlainInteger:
+                        @classmethod
+                        def resolve_inner(cls, resolve_context):
+                            pass
+
+                        @staticmethod
+                        def request_user_runtime_cast(request):
+                            raise Exception("Unsupported")
+
+                        @staticmethod
+                        def request_internal_runtime_cast():
+                            pass
+
+                        @staticmethod
+                        def get_code_generator():
+                            return None
+
+                        @classmethod
+                        def get_validator_call_text(cls):
+                            return RawTypes.Int.get_raw_validator_call_text()
+
+                        @staticmethod
+                        def reduce_to_raw_type():
+                            return RawTypes.Int
+
+                        @staticmethod
+                        def get_type_model():
+                            return TypeModel.Int
+
+                        @staticmethod
+                        def get_setter_value_expression_pattern():
+                            return None
+
+                        @classmethod
+                        def get_array_item_c_type_text(cls):
+                            return cls.reduce_to_raw_type().get_array_item_raw_c_type_text()
+
+                    return PlainInteger
+
+                else:
+
+                    class TypedefInteger:
+                        @classmethod
+                        def resolve_inner(cls, resolve_context):
+                            pass
+
+                        @staticmethod
+                        def request_user_runtime_cast(request):
+                            raise Exception("Unsupported")
+
+                        @staticmethod
+                        def request_internal_runtime_cast():
+                            RawTypes.Int.request_raw_internal_runtime_cast()
+
+                        @staticmethod
+                        def get_code_generator():
+                            class CodeGenerator:
+                                @staticmethod
+                                def generate_type_builder(writer, generate_context):
+                                    helper.write_doc(writer)
+                                    fixed_type_name.output_comment(writer)
+                                    writer.newline("typedef int ")
+                                    writer.append(fixed_type_name.class_name)
+                                    writer.append(";\n\n")
+
+                                @staticmethod
+                                def register_use(forward_listener):
+                                    pass
+
+                                @staticmethod
+                                def get_generate_pass_id():
+                                    return TypeBuilderPass.TYPEDEF
+
+                            return CodeGenerator
+
+                        @classmethod
+                        def get_validator_call_text(cls):
+                            return RawTypes.Int.get_raw_validator_call_text()
+
+                        @staticmethod
+                        def reduce_to_raw_type():
+                            return RawTypes.Int
+
+                        @staticmethod
+                        def get_type_model():
+                            return TypeModel.Int
+
+                        @staticmethod
+                        def get_setter_value_expression_pattern():
+                            return None
+
+                        @classmethod
+                        def get_array_item_c_type_text(cls):
+                            return helper.full_name_prefix_for_use + fixed_type_name.class_name
+
+                    return TypedefInteger
+
         elif json_typable["type"] == "object":
             if "properties" in json_typable:
 
