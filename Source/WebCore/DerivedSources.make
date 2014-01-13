@@ -702,16 +702,16 @@ vpath %.idl $(BUILT_PRODUCTS_DIR)/usr/local/include $(SDKROOT)/usr/local/include
 $(ADDITIONAL_BINDING_IDLS) : % : WebKitAdditions/%
 	cp $< .
 
-else
+endif
 
+endif # MACOS
+
+ifneq ($(WTF_PLATFORM_IOS), 1)
 BINDING_IDLS += \
     $(WebCore)/dom/Touch.idl \
     $(WebCore)/dom/TouchEvent.idl \
     $(WebCore)/dom/TouchList.idl
-
 endif
-
-endif # MACOS
 
 .PHONY : all
 
