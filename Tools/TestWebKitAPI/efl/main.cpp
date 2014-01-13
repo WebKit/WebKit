@@ -50,6 +50,7 @@ static bool checkForUseX11WindowArgument(int argc, char** argv)
 int main(int argc, char** argv)
 {
     WTFInstallReportBacktraceOnCrashHook();
+    setenv("WEBKIT_EXEC_PATH", WEBKIT_EXEC_PATH, false);
 
     if (!eina_init())
         return EXIT_FAILURE;

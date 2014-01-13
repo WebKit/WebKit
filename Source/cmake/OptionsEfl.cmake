@@ -287,3 +287,6 @@ if (ENABLE_FTL_JIT)
     find_package(LLVM REQUIRED)
     set(HAVE_LLVM ON)
 endif ()
+
+# [E]WebKit2 tests need a hint to find out where processes such as WebProcess are located at.
+add_definitions(-DWEBKIT_EXEC_PATH=\"${CMAKE_RUNTIME_OUTPUT_DIRECTORY}\")

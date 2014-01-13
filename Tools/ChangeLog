@@ -1,3 +1,22 @@
+2014-01-12  Sergio Correia  <sergio.correia@openbossa.org>
+
+        [EFL][WK2] Make API tests work again
+        https://bugs.webkit.org/show_bug.cgi?id=126769
+
+        Reviewed by Gyuyoung Kim.
+
+        The EFL and WK2 test binaries are currently being generated at *TestWebKitAPI/
+        [E]WebKit2, respectively, and this causes problems because the logic to find
+        where WebProcess is to look in the same directory of the running process and
+        then proceed to use LIBEXECDIR (typically /usr/loca/bin).
+
+        This patch introduces a WEBKIT_EXEC_PATH environment variable, inspired in the
+        Gtk port, which allows us to look for WebProcess initially in this directory,
+        if it's defined.
+
+        * TestWebKitAPI/efl/main.cpp:
+        (main): Define WEBKIT_EXEC_PATH to be used by WebKit2 API tests.
+
 2014-01-12  Daniel Bates  <dabates@apple.com>
 
         [iOS] Fix the build

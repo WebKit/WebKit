@@ -30,6 +30,7 @@ EWK2UnitTestEnvironment::EWK2UnitTestEnvironment()
     : m_defaultWidth(800)
     , m_defaultHeight(600)
 {
+    setenv("WEBKIT_EXEC_PATH", WEBKIT_EXEC_PATH, false);
 }
 
 const char* EWK2UnitTestEnvironment::defaultTestPageUrl() const
