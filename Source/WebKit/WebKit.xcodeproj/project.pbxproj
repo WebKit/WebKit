@@ -2137,7 +2137,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "postProcessInDirectory() {\n    cd \"$1\"\n\n    if [[ ${PLATFORM_NAME} == iphoneos ]]; then\n        local unifdefOptions=\"-DTARGET_OS_EMBEDDED=1 -DTARGET_OS_IPHONE=1 -DTARGET_IPHONE_SIMULATOR=0 -DENABLE_IOS_TOUCH_EVENTS=1 -DENABLE_IOS_GESTURE_EVENTS=1\";\n    elif [[ ${PLATFORM_NAME} == iphonesimulator ]]; then\n        local unifdefOptions=\"-DTARGET_OS_EMBEDDED=0 -DTARGET_OS_IPHONE=1 -DTARGET_IPHONE_SIMULATOR=1 -DENABLE_IOS_TOUCH_EVENTS=1 -DENABLE_IOS_GESTURE_EVENTS=1\";\n    else\n        local unifdefOptions=\"-DTARGET_OS_EMBEDDED=0 -DTARGET_OS_IPHONE=0 -DTARGET_IPHONE_SIMULATOR=0 -DENABLE_IOS_TOUCH_EVENTS=0 -DENABLE_IOS_GESTURE_EVENTS=0\";\n    fi\n\n    for header in $(find . -name '*.h' -type f); do\n        unifdef -B ${unifdefOptions} -o ${header}.unifdef ${header}\n        case $? in\n        0)\n            rm ${header}.unifdef\n            ;;\n        1)\n            mv ${header}{.unifdef,}\n            ;;\n        *)\n            exit 1\n            ;;\n        esac\n    done\n}\n\npostProcessInDirectory \"${TARGET_BUILD_DIR}/${PUBLIC_HEADERS_FOLDER_PATH}\"\npostProcessInDirectory \"${TARGET_BUILD_DIR}/${PRIVATE_HEADERS_FOLDER_PATH}\"";
+			shellScript = "exec \"${SRCROOT}/mac/postprocess-headers.sh\"";
 		};
 		A55DEAA516703F9F003DB841 /* Check For Inappropriate Macros in External Headers */ = {
 			isa = PBXShellScriptBuildPhase;
