@@ -53,7 +53,7 @@ void XMLHttpRequestUpload::dispatchThrottledProgressEvent(bool lengthComputable,
 
 void XMLHttpRequestUpload::dispatchProgressEvent(const AtomicString &type)
 {
-    ASSERT(type == eventNames().loadEvent || type == eventNames().loadendEvent || type == eventNames().loadstartEvent || type == eventNames().abortEvent || type == eventNames().errorEvent || type == eventNames().timeoutEvent);
+    ASSERT(type == eventNames().loadstartEvent || type == eventNames().progressEvent || type == eventNames().loadEvent || type == eventNames().loadendEvent || type == eventNames().abortEvent || type == eventNames().errorEvent || type == eventNames().timeoutEvent);
 
     if (type == eventNames().loadstartEvent) {
         m_lengthComputable = false;

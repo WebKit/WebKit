@@ -1245,10 +1245,12 @@ void XMLHttpRequest::dispatchErrorEvents(const AtomicString& type)
     if (!m_uploadComplete) {
         m_uploadComplete = true;
         if (m_upload && m_uploadEventsAllowed) {
+            m_upload->dispatchProgressEvent(eventNames().progressEvent);
             m_upload->dispatchProgressEvent(type);
             m_upload->dispatchProgressEvent(eventNames().loadendEvent);
         }
     }
+    m_progressEventThrottle.dispatchProgressEvent(eventNames().progressEvent);
     m_progressEventThrottle.dispatchProgressEvent(type);
     m_progressEventThrottle.dispatchProgressEvent(eventNames().loadendEvent);
 }

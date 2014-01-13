@@ -42,7 +42,7 @@ function completeTest()
 function test()
 {
     xhr.upload.onprogress = function(e) {
-        logProgressEvent(e);
+        xhr.upload.onprogress = logProgressEvent;
         xhr.abort();
     }
     xhr.upload.onabort = logProgressEvent;

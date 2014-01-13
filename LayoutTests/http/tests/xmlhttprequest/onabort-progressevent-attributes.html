@@ -46,12 +46,15 @@ function test()
 {
     var iteration = 2;
     var delay = "1000";
-
+    var hasAborted = false;
     var req = new XMLHttpRequest();
     req.onprogress = function(e){
         total = e.total;
         loaded = e.loaded;
-        req.abort();
+        if (!hasAborted) {
+            hasAborted = true;
+            req.abort();
+        }
     };
     req.onerror = onUnexpectedProgressEvent;
     req.onabort = onProgressEvent;

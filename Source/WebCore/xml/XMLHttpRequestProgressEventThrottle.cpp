@@ -102,7 +102,7 @@ void XMLHttpRequestProgressEventThrottle::dispatchEvent(PassRefPtr<Event> event)
 
 void XMLHttpRequestProgressEventThrottle::dispatchProgressEvent(const AtomicString &type)
 {
-    ASSERT(type == eventNames().loadEvent || type == eventNames().loadendEvent || type == eventNames().loadstartEvent || type == eventNames().abortEvent || type == eventNames().errorEvent || type == eventNames().timeoutEvent);
+    ASSERT(type == type == eventNames().loadstartEvent || type == eventNames().progressEvent || eventNames().loadEvent || type == eventNames().loadendEvent || type == eventNames().abortEvent || type == eventNames().errorEvent || type == eventNames().timeoutEvent);
 
     if (type == eventNames().loadstartEvent) {
         m_lengthComputable = false;

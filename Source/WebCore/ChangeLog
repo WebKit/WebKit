@@ -1,3 +1,20 @@
+2014-01-13  Youenn Fablet  <youennf@gmail.com>
+
+        Dispatch a progress event before dispatching abort, error or timeout event
+        https://bugs.webkit.org/show_bug.cgi?id=126575
+
+        Reviewed by Alexey Proskuryakov.
+
+        Added sending of progress event after readystatechange event (switching to DONE state) in case of abort, error or timeout. 
+        Fixed assertions in XMLHttpRequestProgressEventThrottle and XMLHttpRequestUpload.
+
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::dispatchErrorEvents): added sending of progress event before the specific error event
+        * xml/XMLHttpRequestProgressEventThrottle.cpp:
+        (WebCore::XMLHttpRequestProgressEventThrottle::dispatchProgressEvent): fixed assertion
+        * xml/XMLHttpRequestUpload.cpp:
+        (WebCore::XMLHttpRequestUpload::dispatchProgressEvent): fixed assertion
+
 2014-01-13  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [SOUP] Add SoupNetworkSession class to wrap a SoupSession
