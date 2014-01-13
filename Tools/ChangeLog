@@ -1,3 +1,9 @@
+2014-01-13  Martin Robinson  <mrobinson@igalia.com>
+
+        Build fix for the GTK+ CMake port
+
+        * TestWebKitAPI/PlatformGTK.cmake: The WKConnection test is no longer with us.
+
 2014-01-13  Adrian Perez de Castro  <aperez@igalia.com>
 
         [GTK] Add cast in call to g_object_add_weak_pointer in MiniBrowser

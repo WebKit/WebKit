@@ -109,7 +109,6 @@ set(test_webkit2_api_BINARIES
     ShouldGoToBackForwardListItem
     UserMessage
     WillSendSubmitEvent
-    WKConnection
     WKPageGetScaleFactorNotZero
     WKPreferences
     WKString
