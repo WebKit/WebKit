@@ -41,6 +41,8 @@ WebInspector.TimelineDecorations = function()
     this.clear();
 }
 
+WebInspector.TimelineDecorations.MinimumDividerSpacing = 64;
+
 WebInspector.TimelineDecorations.StyleClassName = "timeline-decorations";
 WebInspector.TimelineDecorations.HeaderElementStyleClassName = "header";
 WebInspector.TimelineDecorations.DividerElementStyleClassName = "divider";
@@ -71,30 +73,50 @@ WebInspector.TimelineDecorations.prototype = {
         this._markersElement.removeChildren();
     },
 
-    updateHeaderTimes: function(boundarySpan, leftPadding, rightPadding, force)
+    updateHeaderTimes: function(timeSpan, leftPadding, rightPadding, force)
     {
         if (!this.isShowingHeaderDividers())
             return;
 
-        if (isNaN(boundarySpan))
+        if (isNaN(timeSpan))
             return;
 
         leftPadding = leftPadding || 0;
         rightPadding = rightPadding || 0;
 
         var clientWidth = this._headerElement.clientWidth;
+
         var leftVisibleEdge = leftPadding;
         var rightVisibleEdge = clientWidth - rightPadding;
         var visibleWidth = rightVisibleEdge - leftVisibleEdge;
         if (visibleWidth <= 0)
             return;
 
-        var dividerCount = Math.round(visibleWidth / 64);
-        var slice = boundarySpan / dividerCount;
-        if (!force && this._currentDividerSlice === slice)
+        var pixelsPerSecond = clientWidth / timeSpan;
+
+        if (!force && this._currentPixelsPerSecond === pixelsPerSecond)
             return;
 
-        this._currentDividerSlice = slice;
+        this._currentPixelsPerSecond = pixelsPerSecond;
+
+        // Calculate a divider count based on the maximum allowed divider density.
+        var dividerCount = Math.round(visibleWidth / WebInspector.TimelineDecorations.MinimumDividerSpacing);
+
+        // Calculate the slice time based on the rough divider count and the time span.
+        var sliceTime = timeSpan / dividerCount;
+
+        // Snap the slice time to a nearest number (e.g. 0.1, 0.2, 0.5, 1, 2, 5, 10, 20, 50, etc.)
+        sliceTime = Math.pow(10, Math.ceil(Math.log(sliceTime) / Math.LN10));
+        if (sliceTime * pixelsPerSecond >= 5 * WebInspector.TimelineDecorations.MinimumDividerSpacing)
+            sliceTime = sliceTime / 5;
+        if (sliceTime * pixelsPerSecond >= 2 * WebInspector.TimelineDecorations.MinimumDividerSpacing)
+            sliceTime = sliceTime / 2;
+
+        var firstDividerTime = sliceTime;
+        var lastDividerTime = timeSpan;
+
+        // Calculate the divider count now based on the final slice time.
+        dividerCount = Math.ceil((lastDividerTime - firstDividerTime) / sliceTime);
 
         var dividerElement = this._headerElement.firstChild;
         for (var i = 0; i <= dividerCount; ++i) {
@@ -113,13 +135,13 @@ WebInspector.TimelineDecorations.prototype = {
             var totalLeft = left + leftVisibleEdge;
             var fractionLeft = totalLeft / clientWidth;
             var percentLeft = 100 * fractionLeft;
-            var time = fractionLeft * boundarySpan;
+            var time = firstDividerTime + (sliceTime * i);
 
             var currentPercentLeft = parseFloat(dividerElement.style.left);
             if (isNaN(currentPercentLeft) || Math.abs(currentPercentLeft - percentLeft) >= 0.1)
                 dividerElement.style.left = percentLeft + "%";
 
-            dividerElement._labelElement.textContent = isNaN(slice) ? "" : Number.secondsToString(time);
+            dividerElement._labelElement.textContent = isNaN(time) ? "" : Number.secondsToString(time);
             dividerElement = dividerElement.nextSibling;
         }
 
@@ -138,8 +160,8 @@ WebInspector.TimelineDecorations.prototype = {
         if (!this._eventMarkers.length)
             return;
 
-        var boundarySpan = maximumBoundary - minimumBoundary;
-        if (isNaN(boundarySpan))
+        var timeSpan = maximumBoundary - minimumBoundary;
+        if (isNaN(timeSpan))
             return;
 
         function toolTipForEventMarker(eventMarker, time)
@@ -163,7 +185,7 @@ WebInspector.TimelineDecorations.prototype = {
                 continue;
 
             var time = eventMarker.timestamp - minimumBoundary;
-            var percentLeft = (100 * time) / boundarySpan;
+            var percentLeft = (100 * time) / timeSpan;
 
             var tooltipElement = document.createElement("div");
             tooltipElement.className = WebInspector.TimelineDecorations.EventMarkerTooltipElementStyleClassName;
