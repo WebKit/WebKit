@@ -241,11 +241,6 @@ void callOnMainThread(std::function<void ()> function)
     callOnMainThread(callFunctionObject, std::make_unique<std::function<void ()>>(std::move(function)).release());
 }
 
-void callOnMainThread(const Function<void ()>& function)
-{
-    callOnMainThread(std::function<void ()>(function));
-}
-
 void setMainThreadCallbacksPaused(bool paused)
 {
     ASSERT(isMainThread());

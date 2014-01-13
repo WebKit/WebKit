@@ -25,6 +25,8 @@
 
 #include "config.h"
 
+#include "Functional.h"
+#include "MainThread.h"
 #include "StdLibExtras.h"
 #include <mutex>
 
@@ -33,8 +35,14 @@
 
 namespace WTF {
 
-WTF_EXPORT void lockAtomicallyInitializedStaticMutex();
-WTF_EXPORT void unlockAtomicallyInitializedStaticMutex();
+WTF_EXPORT_PRIVATE void callOnMainThread(const Function<void ()>&);
+WTF_EXPORT_PRIVATE void lockAtomicallyInitializedStaticMutex();
+WTF_EXPORT_PRIVATE void unlockAtomicallyInitializedStaticMutex();
+
+void callOnMainThread(const Function<void ()>& function)
+{
+    callOnMainThread(std::function<void ()>(function));
+}
 
 static std::mutex& atomicallyInitializedStaticMutex()
 {
