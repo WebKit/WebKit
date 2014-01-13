@@ -14583,6 +14583,7 @@
     <ClCompile Include="..\html\DOMSettableTokenList.cpp" />
     <ClCompile Include="..\html\DOMTokenList.cpp" />
     <ClCompile Include="..\html\DOMURL.cpp" />
+    <ClCompile Include="..\html\HTMLMediaSession.cpp" />
     <ClCompile Include="..\html\EmailInputType.cpp" />
     <ClCompile Include="..\fileapi\File.cpp" />
     <ClCompile Include="..\fileapi\FileException.cpp" />
@@ -20439,6 +20440,7 @@
     <ClInclude Include="..\html\DOMSettableTokenList.h" />
     <ClInclude Include="..\html\DOMTokenList.h" />
     <ClInclude Include="..\html\DOMURL.h" />
+    <ClInclude Include="..\html\ElementMediaSession.h" />
     <ClInclude Include="..\html\EmailInputType.h" />
     <ClInclude Include="..\fileapi\File.h" />
     <ClInclude Include="..\fileapi\FileException.h" />

@@ -29,8 +29,6 @@
 #include "HTMLMediaElement.h"
 #include "Logging.h"
 #include "MediaSessionManager.h"
-#include "Page.h"
-#include "ScriptController.h"
 
 namespace WebCore {
 
@@ -55,14 +53,22 @@ MediaSession::~MediaSession()
 
 void MediaSession::beginInterruption()
 {
+    LOG(Media, "MediaSession::beginInterruption");
     m_state = Interrupted;
     m_client.beginInterruption();
 }
 
 void MediaSession::endInterruption(EndInterruptionFlags flags)
 {
+    LOG(Media, "MediaSession::endInterruption");
     m_state = Running;
     m_client.endInterruption(flags);
+}
+
+void MediaSession::pauseSession()
+{
+    LOG(Media, "MediaSession::pauseSession");
+    m_client.pausePlayback();
 }
 
 }

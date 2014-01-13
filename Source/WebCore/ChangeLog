@@ -1,3 +1,83 @@
+2014-01-13  Eric Carlson  <eric.carlson@apple.com>
+
+        Allow MediaSessionManager to restrict media playback
+        https://bugs.webkit.org/show_bug.cgi?id=126780
+
+        Reviewed by Jer Noble.
+
+        Test: media/video-concurrent-playback.html
+
+        * WebCore.exp.in: Export functions needed by Internals.
+
+        Add HTMLMediaSession.
+        * WebCore.xcodeproj/project.pbxproj:
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.vcxproj/WebCore.vcxproj.filters:
+        * WebCore.xcodeproj/project.pbxproj:
+
+        Add a media session object to manage HTMLMediaElement restrictions.
+        * html/HTMLMediaSession.cpp: Added.
+        * html/HTMLMediaSession.h: Added.
+
+        Move media restriction management to a MediaSession.
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::HTMLMediaElement): Use the media session to manage restrictions.
+        (WebCore::HTMLMediaElement::parseAttribute): Ditto.
+        (WebCore::HTMLMediaElement::insertedInto): Ditto.
+        (WebCore::HTMLMediaElement::parseAttribute): Ditto.
+        (WebCore::HTMLMediaElement::loadInternal): Ditto.
+        (WebCore::HTMLMediaElement::loadResource): Ditto.
+        (WebCore::HTMLMediaElement::setReadyState): Ditto.
+        (WebCore::HTMLMediaElement::autoplay): Ditto.
+        (WebCore::HTMLMediaElement::play): Ditto.
+        (WebCore::HTMLMediaElement::pause): Ditto
+        (WebCore::HTMLMediaElement::pauseInternal): Ditto
+        (WebCore::HTMLMediaElement::suspend): Ditto
+        (WebCore::HTMLMediaElement::resume): Ditto.
+        (WebCore::HTMLMediaElement::updatePlayState): Tell media session playback is about to start.
+        (WebCore::HTMLMediaElement::deliverNotification): Ditto.
+        (WebCore::HTMLMediaElement::webkitShowPlaybackTargetPicker): Ditto.
+        (WebCore::HTMLMediaElement::mediaPlayerIsFullscreenPermitted): Ditto.
+        (WebCore::HTMLMediaElement::removeBehaviorsRestrictionsAfterFirstUserGesture): Ditto.
+        (WebCore::HTMLMediaElement::pausePlayback): New, allows the media session to pause playback.
+        * html/HTMLMediaElement.h:
+
+        * html/HTMLVideoElement.cpp:
+        (WebCore::HTMLVideoElement::webkitEnterFullscreen): Use the media session to manage restrictions.
+
+        * platform/audio/MediaSession.cpp:
+        (WebCore::MediaSession::beginInterruption): Add logging.
+        (WebCore::MediaSession::endInterruption): Ditto.
+        (WebCore::MediaSession::pauseSession): New, allows the session manager to pause playback.
+        * platform/audio/MediaSession.h:
+
+        Add per-media type restrictions.
+        * platform/audio/MediaSessionManager.cpp:
+        (WebCore::MediaSessionManager::MediaSessionManager): Initialize restrictions.
+        (WebCore::MediaSessionManager::addRestriction): New.
+        (WebCore::MediaSessionManager::removeRestriction): New.
+        (WebCore::MediaSessionManager::restrictions): New.
+        (WebCore::MediaSessionManager::sessionWillBeginPlayback): New. If only one session if the same
+            type is allowed to play, pause all others.
+        * platform/audio/MediaSessionManager.h:
+
+        * platform/audio/ios/MediaSessionManagerIOS.h: Added.
+        * platform/audio/ios/MediaSessionManagerIOS.mm: Added.
+        (WebCore::MediaSessionManager::sharedManager):
+        (WebCore::m_objcObserver):
+        (-[WebAVAudioSessionHelper initWithCallback:]):
+        (-[WebAVAudioSessionHelper dealloc]):
+        (-[WebAVAudioSessionHelper interruption:]):
+
+        * platform/audio/mac/AudioDestinationMac.h: Add pausePlayback.
+
+        Allow tests to set media session restrictions.
+        * testing/Internals.cpp:
+        * testing/Internals.h:
+        * testing/Internals.idl:
+
 2014-01-13  Alexey Proskuryakov  <ap@apple.com>
 
         Fix the build more.

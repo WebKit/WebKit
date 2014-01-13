@@ -30,15 +30,20 @@
 
 namespace WebCore {
 
+#if !PLATFORM(IOS)
 MediaSessionManager& MediaSessionManager::sharedManager()
 {
     DEFINE_STATIC_LOCAL(MediaSessionManager, manager, ());
     return manager;
 }
+#endif
 
 MediaSessionManager::MediaSessionManager()
     : m_interruptions(0)
 {
+    m_restrictions[MediaSession::Video] = NoRestrictions;
+    m_restrictions[MediaSession::Audio] = NoRestrictions;
+    m_restrictions[MediaSession::WebAudio] = NoRestrictions;
 }
 
 bool MediaSessionManager::has(MediaSession::MediaType type) const
@@ -101,6 +106,40 @@ void MediaSessionManager::removeSession(MediaSession& session)
 
     m_sessions.remove(index);
     updateSessionState();
+}
+
+void MediaSessionManager::addRestriction(MediaSession::MediaType type, SessionRestrictions restriction)
+{
+    ASSERT(type > MediaSession::None && type <= MediaSession::WebAudio);
+    m_restrictions[type] = m_restrictions[type] | restriction;
+}
+
+void MediaSessionManager::removeRestriction(MediaSession::MediaType type, SessionRestrictions restriction)
+{
+    ASSERT(type > MediaSession::None && type <= MediaSession::WebAudio);
+    m_restrictions[type] = m_restrictions[type] & ~restriction;
+}
+
+MediaSessionManager::SessionRestrictions MediaSessionManager::restrictions(MediaSession::MediaType sessionType)
+{
+    return m_restrictions[sessionType];
+}
+
+void MediaSessionManager::sessionWillBeginPlayback(MediaSession& session)
+{
+    MediaSession::MediaType sessionType = session.mediaType();
+    SessionRestrictions restrictions = m_restrictions[sessionType];
+    if (restrictions == NoRestrictions)
+        return;
+
+    for (auto* oneSession : m_sessions) {
+        if (oneSession == &session)
+            continue;
+        if (oneSession->mediaType() != sessionType)
+            continue;
+        if (restrictions & ConcurrentPlaybackNotPermitted)
+            oneSession->pauseSession();
+    }
 }
 
 #if !PLATFORM(MAC)

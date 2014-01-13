@@ -3457,6 +3457,8 @@ webcore_sources += \
 	Source/WebCore/html/HTMLMediaSource.h \
 	Source/WebCore/html/HTMLMediaElement.cpp \
 	Source/WebCore/html/HTMLMediaElement.h \
+	Source/WebCore/html/HTMLMediaSession.cpp \
+	Source/WebCore/html/HTMLMediaSession.h \
 	Source/WebCore/html/HTMLMenuElement.cpp \
 	Source/WebCore/html/HTMLMenuElement.h \
 	Source/WebCore/html/HTMLMetaElement.cpp \

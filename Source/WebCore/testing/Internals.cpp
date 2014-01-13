@@ -2291,4 +2291,29 @@ void Internals::endMediaSessionInterruption(const String& flagsString)
     MediaSessionManager::sharedManager().endInterruption(flags);
 }
 
+void Internals::setMediaSessionRestrictions(const String& mediaTypeString, const String& restrictionsString, ExceptionCode& ec)
+{
+    MediaSession::MediaType mediaType = MediaSession::None;
+    if (equalIgnoringCase(mediaTypeString, "Video"))
+        mediaType = MediaSession::Video;
+    else if (equalIgnoringCase(mediaTypeString, "Audio"))
+        mediaType = MediaSession::Audio;
+    else if (equalIgnoringCase(mediaTypeString, "WebAudio"))
+        mediaType = MediaSession::WebAudio;
+    else {
+        ec = INVALID_ACCESS_ERR;
+        return;
+    }
+
+    MediaSessionManager::SessionRestrictions restrictions = MediaSessionManager::sharedManager().restrictions(mediaType);
+    MediaSessionManager::sharedManager().removeRestriction(mediaType, restrictions);
+
+    restrictions = MediaSessionManager::NoRestrictions;
+    
+    if (equalIgnoringCase(restrictionsString, "ConcurrentPlaybackNotPermitted"))
+        restrictions = MediaSessionManager::ConcurrentPlaybackNotPermitted;
+    
+    MediaSessionManager::sharedManager().addRestriction(mediaType, restrictions);
+}
+
 }

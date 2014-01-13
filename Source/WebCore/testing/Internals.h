@@ -334,6 +334,7 @@ public:
 
     void beginMediaSessionInterruption();
     void endMediaSessionInterruption(const String&);
+    void setMediaSessionRestrictions(const String& mediaType, const String& restrictions, ExceptionCode& ec);
 
 private:
     explicit Internals(Document*);

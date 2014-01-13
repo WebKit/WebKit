@@ -30,10 +30,10 @@
 #include "HTMLElement.h"
 #include "ActiveDOMObject.h"
 #include "GenericEventQueue.h"
+#include "HTMLMediaSession.h"
 #include "MediaCanStartListener.h"
 #include "MediaControllerInterface.h"
 #include "MediaPlayer.h"
-#include "MediaSession.h"
 
 #if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
 #include "HTMLFrameOwnerElement.h"
@@ -442,32 +442,6 @@ protected:
     
     virtual bool isMediaElement() const OVERRIDE { return true; }
 
-    // Restrictions to change default behaviors.
-    enum BehaviorRestrictionFlags {
-        NoRestrictions = 0,
-        RequireUserGestureForLoadRestriction = 1 << 0,
-        RequireUserGestureForRateChangeRestriction = 1 << 1,
-        RequireUserGestureForFullscreenRestriction = 1 << 2,
-        RequirePageConsentToLoadMediaRestriction = 1 << 3,
-        RequirePageConsentToResumeMediaRestriction = 1 << 4,
-#if ENABLE(IOS_AIRPLAY)
-        RequireUserGestureToShowPlaybackTargetPickerRestriction = 1 << 5,
-#endif
-    };
-    typedef unsigned BehaviorRestrictions;
-    
-    bool userGestureRequiredForLoad() const { return m_restrictions & RequireUserGestureForLoadRestriction; }
-    bool userGestureRequiredForRateChange() const { return m_restrictions & RequireUserGestureForRateChangeRestriction; }
-    bool userGestureRequiredForFullscreen() const { return m_restrictions & RequireUserGestureForFullscreenRestriction; }
-    bool pageConsentRequiredForLoad() const { return m_restrictions & RequirePageConsentToLoadMediaRestriction; }
-    bool pageConsentRequiredForResume() const { return m_restrictions & RequirePageConsentToResumeMediaRestriction; }
-#if ENABLE(IOS_AIRPLAY)
-    bool userGestureRequiredToShowPlaybackTargetPicker() const { return m_restrictions & RequireUserGestureToShowPlaybackTargetPickerRestriction; }
-#endif
-    
-    void addBehaviorRestriction(BehaviorRestrictions restriction) { m_restrictions |= restriction; }
-    void removeBehaviorRestriction(BehaviorRestrictions restriction) { m_restrictions &= ~restriction; }
-
 #if ENABLE(VIDEO_TRACK)
     bool ignoreTrackDisplayUpdateRequests() const { return m_ignoreTrackDisplayUpdate > 0 || !m_textTracks || !m_cueTree.size(); }
     void beginIgnoringTrackDisplayUpdateRequests();
@@ -476,7 +450,7 @@ protected:
 
     virtual RenderPtr<RenderElement> createElementRenderer(PassRef<RenderStyle>) OVERRIDE;
 
-    MediaSession& mediaSession() const { return *m_mediaSession; }
+    HTMLMediaSession& mediaSession() const { return *m_mediaSession; }
 
 private:
     void createMediaPlayer();
@@ -697,6 +671,7 @@ private:
 
     virtual void beginInterruption() OVERRIDE;
     virtual void endInterruption(MediaSession::EndInterruptionFlags) OVERRIDE;
+    virtual void pausePlayback() OVERRIDE;
 
     Timer<HTMLMediaElement> m_loadTimer;
     Timer<HTMLMediaElement> m_progressEventTimer;
@@ -738,8 +713,6 @@ private:
     RefPtr<Widget> m_proxyWidget;
 #endif
 
-    BehaviorRestrictions m_restrictions;
-    
     MediaPlayer::Preload m_preload;
 
     DisplayMode m_displayMode;
@@ -852,7 +825,7 @@ private:
     RefPtr<PlatformTextTrackMenuInterface> m_platformMenu;
 #endif
 
-    std::unique_ptr<MediaSession> m_mediaSession;
+    std::unique_ptr<HTMLMediaSession> m_mediaSession;
     std::unique_ptr<PageActivityAssertionToken> m_activityToken;
     size_t m_reportedExtraMemoryCost;
 

@@ -23,72 +23,31 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef MediaSession_h
-#define MediaSession_h
+#ifndef MediaSessionManageriOS_h
+#define MediaSessionManageriOS_h
 
-#include <wtf/Noncopyable.h>
+#if PLATFORM(IOS)
+
+#include "MediaSessionManager.h"
+#include <wtf/RetainPtr.h>
+
+OBJC_CLASS WebMediaSessionHelper;
 
 namespace WebCore {
 
-class MediaSessionClient;
-
-class MediaSession {
+class MediaSessionManageriOS : public MediaSessionManager {
 public:
-    static std::unique_ptr<MediaSession> create(MediaSessionClient&);
-
-    MediaSession(MediaSessionClient&);
-    virtual ~MediaSession();
-
-    enum MediaType {
-        None,
-        Video,
-        Audio,
-        WebAudio,
-    };
-    
-    MediaType mediaType() const { return m_type; }
-
-    enum State {
-        Running,
-        Interrupted,
-    };
-    State state() const { return m_state; }
-    void setState(State state) { m_state = state; }
-
-    enum EndInterruptionFlags {
-        NoFlags = 0,
-        MayResumePlaying = 1 << 0,
-    };
-    void beginInterruption();
-    void endInterruption(EndInterruptionFlags);
-
-    virtual void pauseSession();
-
-protected:
-    MediaSessionClient& client() const { return m_client; }
+    virtual ~MediaSessionManageriOS() { }
 
 private:
-    MediaSessionClient& m_client;
-    MediaType m_type;
-    State m_state;
+    friend class MediaSessionManager;
+
+    MediaSessionManageriOS();
+    RetainPtr<WebMediaSessionHelper> m_objcObserver;
 };
 
-class MediaSessionClient {
-    WTF_MAKE_NONCOPYABLE(MediaSessionClient);
-public:
-    MediaSessionClient() { }
-    
-    virtual MediaSession::MediaType mediaType() const = 0;
-    
-    virtual void beginInterruption() { }
-    virtual void endInterruption(MediaSession::EndInterruptionFlags) { }
+} // namespace WebCore
 
-    virtual void pausePlayback() = 0;
+#endif // MediaSessionManageriOS_h
 
-protected:
-    virtual ~MediaSessionClient() { }
-};
-
-}
-
-#endif // MediaSession_h
+#endif // PLATFORM(IOS)

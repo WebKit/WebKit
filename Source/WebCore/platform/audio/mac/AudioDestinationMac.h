@@ -48,6 +48,7 @@ public:
     virtual void start() OVERRIDE;
     virtual void stop() OVERRIDE;
     virtual bool isPlaying() OVERRIDE { return m_isPlaying; }
+    virtual void pausePlayback() OVERRIDE { stop(); }
 
     virtual float sampleRate() const OVERRIDE { return m_sampleRate; }
 
