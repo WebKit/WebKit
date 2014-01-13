@@ -98,8 +98,6 @@ private:
 
 typedef HashMap<ThreadIdentifier, std::unique_ptr<PthreadState>> ThreadMap;
 
-static Mutex* atomicallyInitializedStaticMutex;
-
 void unsafeThreadWasDetached(ThreadIdentifier);
 void threadDidExit(ThreadIdentifier);
 void threadWasJoined(ThreadIdentifier);
@@ -112,14 +110,16 @@ static Mutex& threadMapMutex()
 
 void initializeThreading()
 {
-    if (atomicallyInitializedStaticMutex)
+    static bool isInitialized;
+
+    if (isInitialized)
         return;
 
     WTF::double_conversion::initialize();
     // StringImpl::empty() does not construct its static string in a threadsafe fashion,
     // so ensure it has been initialized from here.
     StringImpl::empty();
-    atomicallyInitializedStaticMutex = new Mutex;
+
     threadMapMutex();
     initializeRandomNumberGenerator();
     ThreadIdentifierData::initializeOnce();
@@ -127,17 +127,6 @@ void initializeThreading()
     wtfThreadData();
     s_dtoaP5Mutex = new Mutex;
     initializeDates();
-}
-
-void lockAtomicallyInitializedStaticMutex()
-{
-    ASSERT(atomicallyInitializedStaticMutex);
-    atomicallyInitializedStaticMutex->lock();
-}
-
-void unlockAtomicallyInitializedStaticMutex()
-{
-    atomicallyInitializedStaticMutex->unlock();
 }
 
 static ThreadMap& threadMap()

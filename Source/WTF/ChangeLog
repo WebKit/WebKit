@@ -1,3 +1,16 @@
+2014-01-12  Anders Carlsson  <andersca@apple.com>
+
+        Remove AtomicallyInitializedStatic
+        https://bugs.webkit.org/show_bug.cgi?id=126864
+
+        Reviewed by Darin Adler.
+
+        * wtf/Threading.h:
+        * wtf/ThreadingPthreads.cpp:
+        (WTF::initializeThreading):
+        * wtf/ThreadingWin.cpp:
+        (WTF::initializeThreading):
+
 2014-01-12  Darin Adler  <darin@apple.com>
 
         Add deprecatedCharacters as a synonym for characters and convert most call sites
