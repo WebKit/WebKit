@@ -9,10 +9,10 @@ layer at (20,20) size 644x433
       RenderBlock {DIV} at (41,121) size 562x312
         RenderBlock {P} at (7,80) size 54x42 [bgcolor=#FF0000] [border: (1px solid #000000)]
         RenderBlock {P} at (70,64) size 64x50 [bgcolor=#FFA500] [border: (1px solid #000000)]
-        RenderBlock {P} at (145,48) size 74x58 [bgcolor=#FFFF00] [border: (1px solid #000000)]
-        RenderBlock {P} at (231,32) size 86x66 [bgcolor=#00FF00] [border: (1px solid #000000)]
-        RenderBlock {P} at (330,16) size 96x74 [bgcolor=#0000FF] [border: (1px solid #000000)]
-        RenderBlock {P} at (441,0) size 106x82 [bgcolor=#800080] [border: (1px solid #000000)]
+        RenderBlock {P} at (144,48) size 75x58 [bgcolor=#FFFF00] [border: (1px solid #000000)]
+        RenderBlock {P} at (230,32) size 87x66 [bgcolor=#00FF00] [border: (1px solid #000000)]
+        RenderBlock {P} at (329,16) size 97x74 [bgcolor=#0000FF] [border: (1px solid #000000)]
+        RenderBlock {P} at (440,0) size 107x82 [bgcolor=#800080] [border: (1px solid #000000)]
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {P} at (41,214) size 568x120
         RenderInline {SPAN} at (0,0) size 168x112
@@ -213,8 +213,8 @@ layer at (20,20) size 644x433
             text run at (131,39) width 168: "this reference rendering"
         RenderText {#text} at (299,39) size 4x17
           text run at (299,39) width 4: "."
-layer at (130,84) size 300x150
-  RenderEmbeddedObject {OBJECT} at (130,84) size 300x150
+layer at (131,84) size 300x150
+  RenderEmbeddedObject {OBJECT} at (130,84) size 301x151
     layer at (0,0) size 300x150
       RenderView at (0,0) size 300x150
     layer at (0,0) size 300x16

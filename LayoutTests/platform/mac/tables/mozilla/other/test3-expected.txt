@@ -1,15 +1,15 @@
-layer at (0,0) size 785x869
+layer at (0,0) size 785x876
   RenderView at (0,0) size 785x600
-layer at (0,0) size 785x869
-  RenderBlock {HTML} at (0,0) size 785x869
-    RenderBody {BODY} at (8,8) size 769x845 [bgcolor=#FFFFFF]
+layer at (0,0) size 785x876
+  RenderBlock {HTML} at (0,0) size 785x876
+    RenderBody {BODY} at (8,8) size 769x852 [bgcolor=#FFFFFF]
       RenderBlock {H1} at (0,0) size 769x37
         RenderText {#text} at (0,0) size 334x37
           text run at (0,0) width 334: "Example 3: Basic Tables"
-      RenderBlock {H2} at (0,58) size 769x28
+      RenderBlock {H2} at (0,58) size 769x29
         RenderText {#text} at (0,0) size 361x28
           text run at (0,0) width 361: "Simple table, 75% width, border=1"
-      RenderTable {TABLE} at (0,105) size 576x104 [border: (1px outset #808080)]
+      RenderTable {TABLE} at (0,106) size 576x105 [border: (1px outset #808080)]
         RenderTableSection {TBODY} at (1,1) size 574x102
           RenderTableRow {TR} at (0,2) size 574x22
             RenderTableCell {TD} at (2,2) size 199x22 [bgcolor=#0000FF] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
@@ -41,10 +41,10 @@ layer at (0,0) size 785x869
             RenderTableCell {TD} at (376,78) size 196x22 [border: (1px inset #808080)] [r=2 c=2 rs=1 cs=1]
               RenderText {#text} at (2,2) size 44x18
                 text run at (2,2) width 44: "bottom"
-      RenderBlock {H2} at (0,228) size 769x28
+      RenderBlock {H2} at (0,230) size 769x29
         RenderText {#text} at (0,0) size 390x28
           text run at (0,0) width 390: "Row Span, auto width table, border=5"
-      RenderTable {TABLE} at (0,275) size 268x252 [border: (5px outset #808080)]
+      RenderTable {TABLE} at (0,278) size 268x253 [border: (5px outset #808080)]
         RenderTableSection {TBODY} at (5,5) size 258x242
           RenderTableRow {TR} at (0,2) size 258x22
             RenderTableCell {TD} at (2,14) size 186x22 [border: (1px inset #808080)] [r=0 c=0 rs=2 cs=1]
@@ -125,10 +125,10 @@ layer at (0,0) size 785x869
             RenderTableCell {TD} at (224,218) size 32x22 [border: (1px inset #808080)] [r=9 c=2 rs=1 cs=1]
               RenderText {#text} at (2,2) size 28x18
                 text run at (2,2) width 28: "c1r9"
-      RenderBlock {H2} at (0,546) size 769x28
+      RenderBlock {H2} at (0,550) size 769x29
         RenderText {#text} at (0,0) size 265x28
           text run at (0,0) width 265: "Col Span auto width table"
-      RenderTable {TABLE} at (0,593) size 698x76 [border: (1px outset #808080)]
+      RenderTable {TABLE} at (0,597) size 698x77 [border: (1px outset #808080)]
         RenderTableSection {TBODY} at (1,1) size 696x74
           RenderTableRow {TR} at (0,2) size 696x22
             RenderTableCell {TD} at (2,2) size 279x22 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=8]
@@ -205,10 +205,10 @@ layer at (0,0) size 785x869
             RenderTableCell {TD} at (653,50) size 41x22 [border: (1px inset #808080)] [r=2 c=17 rs=1 cs=1]
               RenderText {#text} at (2,2) size 36x18
                 text run at (2,2) width 36: "r2c18"
-      RenderBlock {H2} at (0,688) size 769x28
+      RenderBlock {H2} at (0,693) size 769x29
         RenderText {#text} at (0,0) size 189x28
           text run at (0,0) width 189: "Row and Col Span"
-      RenderTable {TABLE} at (0,735) size 152x76 [border: (1px outset #808080)]
+      RenderTable {TABLE} at (0,741) size 152x77 [border: (1px outset #808080)]
         RenderTableSection {TBODY} at (1,1) size 150x74
           RenderTableRow {TR} at (0,2) size 150x22
             RenderTableCell {TD} at (2,14) size 78x22 [border: (1px inset #808080)] [r=0 c=0 rs=2 cs=2]
@@ -240,6 +240,6 @@ layer at (0,0) size 785x869
             RenderTableCell {TD} at (116,50) size 32x22 [border: (1px inset #808080)] [r=2 c=3 rs=1 cs=1]
               RenderText {#text} at (2,2) size 28x18
                 text run at (2,2) width 28: "r2c3"
-      RenderBlock {P} at (0,827) size 769x18
+      RenderBlock {P} at (0,833) size 769x19
         RenderText {#text} at (0,0) size 4x18
           text run at (0,0) width 4: " "

@@ -1,13 +1,13 @@
 layer at (0,0) size 785x1029
   RenderView at (0,0) size 785x600
 layer at (0,0) size 785x1029
-  RenderBlock {HTML} at (0,0) size 785x1029
-    RenderBody {BODY} at (8,21) size 769x1000
+  RenderBlock {HTML} at (0,0) size 785x1030
+    RenderBody {BODY} at (8,21) size 769x1001
       RenderBlock {H4} at (0,0) size 769x18
         RenderText {#text} at (0,0) size 287x18
           text run at (0,0) width 287: "Safari Fixed / Overflow Hidden Scroll Bug"
-      RenderBlock {PRE} at (0,39) size 769x0
-      RenderBlock {PRE} at (0,39) size 769x495
+      RenderBlock {PRE} at (0,39) size 769x1
+      RenderBlock {PRE} at (0,39) size 769x496
         RenderText {#text} at (0,0) size 264x495
           text run at (0,0) width 72: "#fixed1 {"
           text run at (72,0) width 0: " "
@@ -74,17 +74,17 @@ layer at (0,0) size 785x1029
           text run at (0,465) width 64: "\x{9}"
           text run at (64,465) width 0: " "
           text run at (0,480) width 0: " "
-      RenderBlock {P} at (0,550) size 769x18
+      RenderBlock {P} at (0,550) size 769x19
         RenderText {#text} at (0,0) size 401x18
           text run at (0,0) width 401: "When you scroll this page the following objects will be clipped:"
-      RenderBlock {P} at (0,584) size 769x18
+      RenderBlock {P} at (0,584) size 769x19
         RenderText {#text} at (0,0) size 739x18
           text run at (0,0) width 739: "- (relative objects and overflowHidden objects) inside (overflowHidden objects) inside (fixed objects) will be clipped;"
-      RenderBlock {P} at (0,618) size 769x36
+      RenderBlock {P} at (0,618) size 769x37
         RenderText {#text} at (0,0) size 717x36
           text run at (0,0) width 717: "- (relative objects and overflowHidden objects and absolute objects) inside (fixed/overflowHidden objects) will be"
           text run at (0,18) width 50: "clipped;"
-      RenderBlock {P} at (0,670) size 769x36
+      RenderBlock {P} at (0,670) size 769x37
         RenderText {#text} at (0,0) size 723x36
           text run at (0,0) width 723: "Nice effect, but not what we want. Tested in Safari Version 2.0.4 (419.3), and WebKit Nightly Build Mon Nov 20"
           text run at (0,18) width 128: "5:18:23 GMT 2006."

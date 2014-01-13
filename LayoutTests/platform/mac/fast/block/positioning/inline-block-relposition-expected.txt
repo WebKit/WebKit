@@ -9,7 +9,7 @@ layer at (8,10) size 100x18
     RenderBlock (anonymous) at (8,2) size 84x13
       RenderText {#text} at (19,0) size 46x13
         text run at (19,0) width 46: "Click Me"
-layer at (87,25) size 24x13
+layer at (88,25) size 23x13
   RenderBlock (positioned) {DIV} at (79,15) size 24x13
     RenderText {#text} at (0,0) size 24x13
       text run at (0,0) width 24: "Now"

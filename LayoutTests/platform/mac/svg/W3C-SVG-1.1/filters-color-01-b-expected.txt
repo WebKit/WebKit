@@ -2,8 +2,8 @@ layer at (0,0) size 480x360
   RenderView at (0,0) size 480x360
 layer at (0,0) size 480x360
   RenderSVGRoot {svg} at (0,0) size 480x360
-    RenderSVGContainer {g} at (0,5) size 480x293
-      RenderSVGViewportContainer {svg} at (0,5) size 480x293
+    RenderSVGContainer {g} at (0,5) size 480x292
+      RenderSVGViewportContainer {svg} at (0,5) size 480x292
         RenderSVGHiddenContainer {defs} at (0,0) size 0x0
           RenderSVGResourceLinearGradient {linearGradient} [id="MyGradient"] [gradientUnits=userSpaceOnUse] [start=(20,0)] [end=(760,0)]
             RenderSVGGradientStop {stop} [offset=0.00] [color=#DD00DD]
@@ -24,7 +24,7 @@ layer at (0,0) size 480x360
               [SourceGraphic]
               [feColorMatrix type="LUMINANCETOALPHA"]
                 [SourceGraphic]
-        RenderSVGContainer {g} at (0,5) size 480x293
+        RenderSVGContainer {g} at (0,5) size 480x292
           RenderSVGRect {rect} at (8,5) size 464x290 [stroke={[type=SOLID] [color=#0000FF]}] [x=1.00] [y=1.00] [width=798.00] [height=498.00]
           RenderSVGRect {rect} at (19,16) size 442x24 [fill={[type=LINEAR-GRADIENT] [id="MyGradient"]}] [x=20.00] [y=20.00] [width=760.00] [height=40.00]
           RenderSVGText {text} at (20,55) size 195x49 contains 1 chunk(s)

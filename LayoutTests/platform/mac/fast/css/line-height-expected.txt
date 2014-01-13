@@ -18,7 +18,7 @@ layer at (0,0) size 800x600
           text run at (0,0) width 574: "Select the text in the text field using horizontal mouse movements, then drag up and down. "
           text run at (574,0) width 161: "The text should not move"
           text run at (0,18) width 62: "vertically."
-layer at (13,31) size 140x13
+layer at (13,31) size 139x13
   RenderBlock {DIV} at (3,3) size 140x13
     RenderText {#text} at (0,0) size 70x13
       text run at (0,0) width 70: "Lorem Ipsum"

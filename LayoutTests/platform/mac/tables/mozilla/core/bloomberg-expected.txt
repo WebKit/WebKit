@@ -213,7 +213,7 @@ layer at (0,0) size 785x669
                 RenderBR {BR} at (78,590) size 0x0
               RenderBR {BR} at (4,593) size 0x18
             RenderTableCell {TD} at (148,0) size 486x24 [bgcolor=#660000] [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=3]
-              RenderImage {IMG} at (11,4) size 465x16
+              RenderImage {IMG} at (10,4) size 466x16
           RenderTableRow {TR} at (0,24) size 634x69
             RenderTableCell {TD} at (148,24) size 128x69 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
               RenderInline {A} at (0,0) size 120x18

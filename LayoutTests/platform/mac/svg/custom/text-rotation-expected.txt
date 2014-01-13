@@ -2,7 +2,7 @@ layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderSVGRoot {svg} at (2,44) size 441x280
-    RenderSVGText {text} at (2,44) size 344x80 contains 1 chunk(s)
+    RenderSVGText {text} at (2,44) size 345x80 contains 1 chunk(s)
       RenderSVGTSpan {tspan} at (0,0) size 344x80
         RenderSVGInlineText {#text} at (0,0) size 344x80
           chunk 1 text run 1 at (25.00,100.00) startOffset 0 endOffset 1 width 33.00: "R"
@@ -34,7 +34,7 @@ layer at (0,0) size 800x600
             chunk 1 text run 7 at (260.00,200.00) startOffset 6 endOffset 7 width 25.00: "d"
         RenderSVGInlineText {#text} at (260,0) size 146x58
           chunk 1 text run 1 at (285.00,200.00) startOffset 0 endOffset 7 width 146.00: " glyphs"
-    RenderSVGText {text} at (21,256) size 421x68 contains 1 chunk(s)
+    RenderSVGText {text} at (21,256) size 422x68 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 421x68
         chunk 1 text run 1 at (25.00,300.00) startOffset 0 endOffset 1 width 44.00: "M"
         chunk 1 text run 2 at (69.00,300.00) startOffset 1 endOffset 2 width 25.00: "o"

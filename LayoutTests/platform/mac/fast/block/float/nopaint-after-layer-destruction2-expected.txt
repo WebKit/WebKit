@@ -20,13 +20,13 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,0) size 491x18
           text run at (0,0) width 491: "There should be a solid green square below mixed in with a paragraph of text."
       RenderBlock {HR} at (0,86) size 784x2 [border: (1px inset #000000)]
-      RenderBlock {DIV} at (0,106) size 784x130
-        RenderBlock {DIV} at (0,0) size 784x130
+      RenderBlock {DIV} at (0,106) size 784x132
+        RenderBlock {DIV} at (0,0) size 784x131
           RenderBlock (floating) {DIV} at (3,3) size 75x75 [bgcolor=#008000]
           RenderBlock {H3} at (0,0) size 784x22
             RenderText {#text} at (81,0) size 163x22
               text run at (81,0) width 163: "Stanley Park Forest"
-          RenderBlock {P} at (0,40) size 784x90
+          RenderBlock {P} at (0,40) size 784x91
             RenderText {#text} at (81,0) size 784x90
               text run at (81,0) width 703: "The forest is primarily second and third growth. The area was saved from development because of its status as a"
               text run at (81,18) width 664: "federal military reserve; it occupied a strategic location for defending the former provincial capital of New"

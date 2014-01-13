@@ -15,8 +15,8 @@ layer at (0,0) size 800x600
               text run at (8,2) width 8: "A"
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {P} at (0,56) size 784x0
-layer at (470,45) size 47x50
-  RenderBlock (positioned) {H2} at (470,45) size 47x50 [border: (2px solid #008000)]
+layer at (470,46) size 47x50
+  RenderBlock (positioned) {H2} at (470,45) size 47x51 [border: (2px solid #008000)]
     RenderBlock {FORM} at (2,2) size 43x22
       RenderMenuList {SELECT} at (2,2) size 39x18 [bgcolor=#FFFFFF]
         RenderBlock (anonymous) at (0,0) size 39x18

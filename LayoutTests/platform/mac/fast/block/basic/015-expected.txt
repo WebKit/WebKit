@@ -1,12 +1,12 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x423
-  RenderBlock {HTML} at (0,0) size 800x423
-    RenderBody {BODY} at (8,21) size 784x386
+layer at (0,0) size 800x424
+  RenderBlock {HTML} at (0,0) size 800x424
+    RenderBody {BODY} at (8,21) size 784x387
       RenderBlock {H1} at (0,0) size 784x37
         RenderText {#text} at (0,0) size 457x37
           text run at (0,0) width 457: "Minimum and Maximum Widths"
-      RenderBlock {DIV} at (0,58) size 784x24 [border: (3px solid #800080)]
+      RenderBlock {DIV} at (0,58) size 784x25 [border: (3px solid #800080)]
         RenderText {#text} at (3,3) size 32x18
           text run at (3,3) width 32: "This "
         RenderInline {CODE} at (0,0) size 24x15
@@ -14,7 +14,7 @@ layer at (0,0) size 800x423
             text run at (35,5) width 24: "div"
         RenderText {#text} at (59,3) size 408x18
           text run at (59,3) width 408: " should have a medium solid purple border, as should all the rest."
-      RenderBlock {DIV} at (0,82) size 319x60 [border: (3px solid #800080)]
+      RenderBlock {DIV} at (0,82) size 320x61 [border: (3px solid #800080)]
         RenderText {#text} at (3,3) size 32x18
           text run at (3,3) width 32: "This "
         RenderInline {CODE} at (0,0) size 24x15
@@ -34,7 +34,7 @@ layer at (0,0) size 800x423
             text run at (269,23) width 40: "width"
         RenderText {#text} at (3,39) size 43x18
           text run at (3,39) width 43: "works."
-      RenderBlock {DIV} at (0,142) size 319x24 [border: (3px solid #800080)]
+      RenderBlock {DIV} at (0,142) size 320x25 [border: (3px solid #800080)]
         RenderText {#text} at (3,3) size 32x18
           text run at (3,3) width 32: "This "
         RenderInline {CODE} at (0,0) size 24x15
@@ -42,7 +42,7 @@ layer at (0,0) size 800x423
             text run at (35,5) width 24: "div"
         RenderText {#text} at (59,3) size 185x18
           text run at (59,3) width 185: " should have a width of 40%."
-      RenderBlock {DIV} at (0,166) size 319x24 [border: (3px solid #800080)]
+      RenderBlock {DIV} at (0,166) size 320x25 [border: (3px solid #800080)]
         RenderText {#text} at (3,3) size 32x18
           text run at (3,3) width 32: "This "
         RenderInline {CODE} at (0,0) size 24x15
@@ -50,7 +50,7 @@ layer at (0,0) size 800x423
             text run at (35,5) width 24: "div"
         RenderText {#text} at (59,3) size 185x18
           text run at (59,3) width 185: " should have a width of 40%."
-      RenderBlock {DIV} at (0,190) size 319x24 [border: (3px solid #800080)]
+      RenderBlock {DIV} at (0,190) size 320x25 [border: (3px solid #800080)]
         RenderText {#text} at (3,3) size 32x18
           text run at (3,3) width 32: "This "
         RenderInline {CODE} at (0,0) size 24x15
@@ -58,7 +58,7 @@ layer at (0,0) size 800x423
             text run at (35,5) width 24: "div"
         RenderText {#text} at (59,3) size 185x18
           text run at (59,3) width 185: " should have a width of 40%."
-      RenderBlock {DIV} at (0,214) size 319x24 [border: (3px solid #800080)]
+      RenderBlock {DIV} at (0,214) size 320x25 [border: (3px solid #800080)]
         RenderText {#text} at (3,3) size 32x18
           text run at (3,3) width 32: "This "
         RenderInline {CODE} at (0,0) size 24x15
@@ -66,7 +66,7 @@ layer at (0,0) size 800x423
             text run at (35,5) width 24: "div"
         RenderText {#text} at (59,3) size 185x18
           text run at (59,3) width 185: " should have a width of 40%."
-      RenderBlock {DIV} at (0,238) size 319x24 [border: (3px solid #800080)]
+      RenderBlock {DIV} at (0,238) size 320x25 [border: (3px solid #800080)]
         RenderText {#text} at (3,3) size 32x18
           text run at (3,3) width 32: "This "
         RenderInline {CODE} at (0,0) size 24x15
@@ -74,7 +74,7 @@ layer at (0,0) size 800x423
             text run at (35,5) width 24: "div"
         RenderText {#text} at (59,3) size 185x18
           text run at (59,3) width 185: " should have a width of 40%."
-      RenderBlock {DIV} at (0,262) size 319x24 [border: (3px solid #800080)]
+      RenderBlock {DIV} at (0,262) size 320x25 [border: (3px solid #800080)]
         RenderText {#text} at (3,3) size 32x18
           text run at (3,3) width 32: "This "
         RenderInline {CODE} at (0,0) size 24x15
@@ -82,7 +82,7 @@ layer at (0,0) size 800x423
             text run at (35,5) width 24: "div"
         RenderText {#text} at (59,3) size 185x18
           text run at (59,3) width 185: " should have a width of 40%."
-      RenderBlock {DIV} at (0,286) size 319x24 [border: (3px solid #800080)]
+      RenderBlock {DIV} at (0,286) size 320x25 [border: (3px solid #800080)]
         RenderText {#text} at (3,3) size 32x18
           text run at (3,3) width 32: "This "
         RenderInline {CODE} at (0,0) size 24x15
@@ -90,7 +90,7 @@ layer at (0,0) size 800x423
             text run at (35,5) width 24: "div"
         RenderText {#text} at (59,3) size 185x18
           text run at (59,3) width 185: " should have a width of 40%."
-      RenderBlock {DIV} at (0,310) size 319x24 [border: (3px solid #800080)]
+      RenderBlock {DIV} at (0,310) size 320x25 [border: (3px solid #800080)]
         RenderText {#text} at (3,3) size 32x18
           text run at (3,3) width 32: "This "
         RenderInline {CODE} at (0,0) size 24x15
@@ -98,7 +98,7 @@ layer at (0,0) size 800x423
             text run at (35,5) width 24: "div"
         RenderText {#text} at (59,3) size 185x18
           text run at (59,3) width 185: " should have a width of 40%."
-      RenderBlock {P} at (0,350) size 784x36
+      RenderBlock {P} at (0,350) size 784x37
         RenderText {#text} at (0,0) size 200x18
           text run at (0,0) width 200: "If the browser does not support "
         RenderInline {CODE} at (0,0) size 72x15

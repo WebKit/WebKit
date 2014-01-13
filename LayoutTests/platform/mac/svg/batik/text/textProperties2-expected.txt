@@ -4,13 +4,13 @@ layer at (0,0) size 450x500
   RenderSVGRoot {svg} at (0,0) size 450x498
     RenderSVGHiddenContainer {defs} at (0,0) size 0x0
     RenderSVGContainer {g} at (12,26) size 438x307
-      RenderSVGText {text} at (142,26) size 166x17 contains 1 chunk(s)
+      RenderSVGText {text} at (142,26) size 166x18 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 166x17
           chunk 1 (middle anchor) text run 1 at (142.00,40.00) startOffset 0 endOffset 28 width 166.00: "Text display and visibility."
       RenderSVGText {text} at (143,60) size 164x18 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 164x18
           chunk 1 (middle anchor) text run 1 at (143.00,74.00) startOffset 0 endOffset 27 width 164.00: "Visibility on text & tspans"
-      RenderSVGText {text} at (147,186) size 155x18 contains 1 chunk(s)
+      RenderSVGText {text} at (147,186) size 156x18 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 155x18
           chunk 1 (middle anchor) text run 1 at (147.50,200.00) startOffset 0 endOffset 24 width 155.00: "Display on text & tspans"
       RenderSVGContainer {g} at (12,81) size 426x252

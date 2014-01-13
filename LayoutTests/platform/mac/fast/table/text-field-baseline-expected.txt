@@ -81,21 +81,21 @@ layer at (0,0) size 800x419
                   RenderBR {BR} at (0,0) size 0x18
                   RenderText {#text} at (0,18) size 209x18
                     text run at (0,18) width 209: "Bar (should be aligned with Foo)"
-layer at (38,125) size 140x13
+layer at (38,125) size 139x13
   RenderBlock {DIV} at (3,3) size 140x13
-layer at (38,234) size 140x13
+layer at (38,234) size 139x13
   RenderBlock {DIV} at (3,3) size 140x13
-layer at (38,257) size 140x13
+layer at (38,257) size 139x13
   RenderBlock {DIV} at (3,3) size 140x13
-layer at (38,280) size 140x13
-  RenderBlock {DIV} at (3,3) size 140x13
-    RenderText {#text} at (0,0) size 17x13
-      text run at (0,0) width 17: "Bar"
-layer at (38,303) size 140x13
+layer at (38,280) size 139x13
   RenderBlock {DIV} at (3,3) size 140x13
     RenderText {#text} at (0,0) size 17x13
       text run at (0,0) width 17: "Bar"
-layer at (38,326) size 140x13
+layer at (38,303) size 139x13
   RenderBlock {DIV} at (3,3) size 140x13
-layer at (38,349) size 140x13
+    RenderText {#text} at (0,0) size 17x13
+      text run at (0,0) width 17: "Bar"
+layer at (38,326) size 139x13
+  RenderBlock {DIV} at (3,3) size 140x13
+layer at (38,349) size 139x13
   RenderBlock {DIV} at (3,3) size 140x13

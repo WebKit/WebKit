@@ -3,7 +3,7 @@ layer at (0,0) size 480x360
 layer at (0,0) size 480x360
   RenderSVGRoot {svg} at (0,0) size 480x360
     RenderSVGContainer {g} at (195,64) size 90x46
-      RenderSVGText {text} at (195,64) size 89x46 contains 1 chunk(s)
+      RenderSVGText {text} at (195,64) size 90x46 contains 1 chunk(s)
         RenderSVGInline {toto:a} at (0,0) size 89x46
           RenderSVGInlineText {#text} at (0,0) size 89x46
             chunk 1 (middle anchor) text run 1 at (195.50,100.00) startOffset 0 endOffset 5 width 89.00: "Valid"

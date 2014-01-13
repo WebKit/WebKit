@@ -6,7 +6,7 @@ layer at (0,0) size 800x600
       RenderBlock {P} at (0,0) size 664x18
         RenderText {#text} at (0,0) size 639x18
           text run at (0,0) width 639: "text text text previous paragraph text text above the table more text text text normal paragraph etc. etc."
-      RenderTable {TABLE} at (254,34) size 155x246
+      RenderTable {TABLE} at (254,34) size 156x246
         RenderBlock {CAPTION} at (-128,0) size 128x90
           RenderText {#text} at (9,0) size 119x90
             text run at (9,0) width 119: "This is the caption."

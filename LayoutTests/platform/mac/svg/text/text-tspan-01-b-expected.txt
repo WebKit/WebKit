@@ -2,11 +2,11 @@ layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderSVGRoot {svg} at (0,0) size 800x600
-    RenderSVGContainer {g} at (28,8) size 762x490
+    RenderSVGContainer {g} at (28,8) size 761x490
       RenderSVGText {text} at (25,5) size 432x19 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 432x19
           chunk 1 text run 1 at (25.00,20.00) startOffset 0 endOffset 60 width 431.40: "Basics of tspan: changing visual properties and positioning."
-      RenderSVGContainer {g} at (78,81) size 524x134
+      RenderSVGContainer {g} at (78,81) size 523x134
         RenderSVGText {text} at (74,49) size 164x19 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 57x19
             chunk 1 text run 1 at (74.00,63.75) startOffset 0 endOffset 7 width 57.00: "You are"
@@ -22,10 +22,10 @@ layer at (0,0) size 800x600
         RenderSVGText {text} at (65,93) size 296x19 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 296x19
             chunk 1 text run 1 at (65.25,108.00) startOffset 0 endOffset 43 width 295.20: "'tspan' changes visual attributes of \"not\","
-        RenderSVGText {text} at (65,110) size 87x19 contains 1 chunk(s)
+        RenderSVGText {text} at (65,110) size 88x19 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 87x19
             chunk 1 text run 1 at (65.25,125.25) startOffset 0 endOffset 13 width 87.00: "to red, bold."
-      RenderSVGContainer {g} at (374,213) size 416x176
+      RenderSVGContainer {g} at (374,213) size 415x176
         RenderSVGText {text} at (257,128) size 181x44 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,10) size 56x19
             chunk 1 text run 1 at (257.50,153.75) startOffset 0 endOffset 7 width 55.80: "But you"
@@ -45,7 +45,7 @@ layer at (0,0) size 800x600
         RenderSVGText {text} at (238,214) size 178x19 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 178x19
             chunk 1 text run 1 at (238.00,229.50) startOffset 0 endOffset 25 width 177.60: "'tspan' lowers \"a peach!\""
-      RenderSVGContainer {g} at (28,308) size 564x190
+      RenderSVGContainer {g} at (28,308) size 563x190
         RenderSVGText {text} at (35,185) size 146x49 contains 1 chunk(s)
           RenderSVGTSpan {tspan} at (0,0) size 146x19
             RenderSVGInlineText {#text} at (0,0) size 146x19
@@ -67,16 +67,16 @@ layer at (0,0) size 800x600
               chunk 1 text run 1 at (138.13,230.50) startOffset 0 endOffset 2 width 13.20: "y."
           RenderSVGInlineText {#text} at (0,0) size 0x0
         RenderSVGRect {rect} at (28,407) size 562x91 [stroke={[type=SOLID] [color=#000000]}] [x=17.50] [y=244.75] [width=335.50] [height=53.50]
-        RenderSVGText {text} at (25,243) size 168x19 contains 1 chunk(s)
+        RenderSVGText {text} at (25,243) size 169x19 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 168x19
             chunk 1 text run 1 at (25.25,258.00) startOffset 0 endOffset 23 width 168.00: "Text: \"Cute and fuzzy.\""
-        RenderSVGText {text} at (25,260) size 329x19 contains 1 chunk(s)
+        RenderSVGText {text} at (25,260) size 330x19 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 329x19
             chunk 1 text run 1 at (25.25,275.25) startOffset 0 endOffset 45 width 328.80: "'tspan' char-by-char placement of \"Cute and\","
         RenderSVGText {text} at (25,277) size 269x19 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 269x19
             chunk 1 text run 1 at (25.25,292.50) startOffset 0 endOffset 39 width 268.20: "'tspan' char-by-char \"fuzzy\", below it."
-    RenderSVGText {text} at (10,303) size 269x47 contains 1 chunk(s)
+    RenderSVGText {text} at (10,303) size 269x48 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 269x47
         chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 268.20: "$Revision: 1.7 $"
     RenderSVGRect {rect} at (0,0) size 800x600 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

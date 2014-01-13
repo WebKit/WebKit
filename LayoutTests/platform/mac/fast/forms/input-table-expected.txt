@@ -92,7 +92,7 @@ layer at (22,551) size 64x13
   RenderBlock {DIV} at (3,3) size 64x13
     RenderText {#text} at (0,0) size 54x13
       text run at (0,0) width 54: "max 70px"
-layer at (22,642) size 140x13
+layer at (22,642) size 139x13
   RenderBlock {DIV} at (3,3) size 140x13
     RenderText {#text} at (0,0) size 94x13
       text run at (0,0) width 94: "min-width 100px"

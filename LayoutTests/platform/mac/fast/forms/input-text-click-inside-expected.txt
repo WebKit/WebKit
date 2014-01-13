@@ -9,6 +9,6 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,0) size 739x36
           text run at (0,0) width 739: "This test clicks inside an input element, and must result in the element receiving focus. If the test succeeds the element"
           text run at (0,18) width 158: "should have a focus ring."
-layer at (38,38) size 140x13
+layer at (38,38) size 139x13
   RenderBlock {DIV} at (3,3) size 140x13
 caret: position 0 of child 0 {DIV} of {#document-fragment} of child 0 {INPUT} of child 0 {DIV} of body

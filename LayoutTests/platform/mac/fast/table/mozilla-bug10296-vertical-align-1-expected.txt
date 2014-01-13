@@ -1,15 +1,15 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x357
-  RenderBlock {HTML} at (0,0) size 800x357
-    RenderBody {BODY} at (8,21) size 784x328
+layer at (0,0) size 800x358
+  RenderBlock {HTML} at (0,0) size 800x358
+    RenderBody {BODY} at (8,21) size 784x329
       RenderBlock {H1} at (0,0) size 784x37
         RenderText {#text} at (0,0) size 486x37
           text run at (0,0) width 486: "Vertical alignment and table height"
-      RenderBlock {P} at (0,58) size 784x18
+      RenderBlock {P} at (0,58) size 784x19
         RenderText {#text} at (0,0) size 535x18
           text run at (0,0) width 535: "In each of the following tables the cells with 'Data' should all have the same baseline:"
-      RenderTable {TABLE} at (0,92) size 458x118
+      RenderTable {TABLE} at (0,92) size 458x119
         RenderTableSection {TBODY} at (0,0) size 458x118
           RenderTableRow {TR} at (0,2) size 458x114
             RenderTableCell {TD} at (2,74) size 34x22 [border: (1px solid #000000)] [r=0 c=0 rs=1 cs=1]
@@ -30,7 +30,7 @@ layer at (0,0) size 800x357
             RenderTableCell {TD} at (405,94) size 51x22 [border: (1px solid #000000)] [r=0 c=5 rs=1 cs=1]
               RenderText {#text} at (2,2) size 47x18
                 text run at (2,2) width 47: "Bottom"
-      RenderTable {TABLE} at (0,210) size 458x118
+      RenderTable {TABLE} at (0,210) size 458x119
         RenderTableSection {TBODY} at (0,0) size 458x118
           RenderTableRow {TR} at (0,2) size 458x114
             RenderTableCell {TD} at (2,2) size 30x22 [border: (1px solid #000000)] [r=0 c=0 rs=1 cs=1]

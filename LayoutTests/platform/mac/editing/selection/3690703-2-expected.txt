@@ -30,7 +30,7 @@ layer at (0,0) size 800x600
           RenderBR {BR} at (392,0) size 0x18
           RenderBR {BR} at (392,18) size 0x18
         RenderBlock {DIV} at (0,55) size 784x105 [border: (2px solid #AAAAFF)]
-          RenderTable {TABLE} at (215,2) size 353x23
+          RenderTable {TABLE} at (215,2) size 354x23
             RenderTableSection {TBODY} at (0,0) size 353x23
               RenderTableRow {TR} at (0,0) size 353x23
                 RenderTableCell {TD} at (0,0) size 353x23 [r=0 c=0 rs=1 cs=1]
@@ -82,13 +82,13 @@ layer at (0,0) size 800x600
                     text run at (0,0) width 4: " "
                 RenderTableCell {TD} at (193,0) size 393x45 [r=0 c=1 rs=1 cs=1]
                   RenderTextControl {INPUT} at (2,2) size 389x19 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
-                  RenderBR {BR} at (393,16) size 0x0
+                  RenderBR {BR} at (392,16) size 1x0
                   RenderButton {INPUT} at (94,25) size 93x18 [bgcolor=#C0C0C0]
-                    RenderBlock (anonymous) at (8,2) size 77x13
+                    RenderBlock (anonymous) at (8,2) size 77x14
                       RenderText at (0,0) size 77x13
                         text run at (0,0) width 77: "Google Search"
-                  RenderButton {INPUT} at (191,25) size 108x18 [bgcolor=#C0C0C0]
-                    RenderBlock (anonymous) at (8,2) size 92x13
+                  RenderButton {INPUT} at (190,25) size 109x18 [bgcolor=#C0C0C0]
+                    RenderBlock (anonymous) at (8,2) size 92x14
                       RenderText at (0,0) size 92x13
                         text run at (0,0) width 92: "I'm Feeling Lucky"
                 RenderTableCell {TD} at (586,0) size 194x39 [r=0 c=2 rs=1 cs=1]

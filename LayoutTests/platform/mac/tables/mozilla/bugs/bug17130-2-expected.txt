@@ -9,10 +9,10 @@ layer at (0,0) size 800x600
         RenderInline {A} at (0,0) size 502x18 [color=#0000EE]
           RenderText {#text} at (154,0) size 502x18
             text run at (154,0) width 502: "http://www.download.com/pc/list/0,339,0-b-0-0-a-1,00.html?st.dl.fd.ag.new"
-      RenderBlock {H4} at (0,39) size 784x18
+      RenderBlock {H4} at (0,39) size 784x19
         RenderText {#text} at (0,0) size 305x18
           text run at (0,0) width 305: "Minimize the window and then open it again."
-      RenderTable {TABLE} at (0,78) size 784x24
+      RenderTable {TABLE} at (0,78) size 784x25
         RenderTableSection {TBODY} at (0,0) size 784x24
           RenderTableRow {TR} at (0,2) size 784x20 [bgcolor=#006633]
             RenderTableCell {TD} at (2,2) size 780x20 [r=0 c=0 rs=1 cs=1]
@@ -29,12 +29,12 @@ layer at (0,0) size 800x600
                     text run at (64,1) width 73: "Downloads"
                 RenderText {#text} at (137,1) size 8x18
                   text run at (137,1) width 8: " :"
-      RenderBlock (anonymous) at (0,102) size 784x18
+      RenderBlock (anonymous) at (0,102) size 784x19
         RenderBR {BR} at (0,0) size 0x18
-      RenderBlock {H4} at (0,141) size 784x18
+      RenderBlock {H4} at (0,141) size 784x19
         RenderText {#text} at (0,0) size 481x18
           text run at (0,0) width 481: "This is the same table as above but with all <SPAN> elements removed."
-      RenderTable {TABLE} at (0,180) size 784x24
+      RenderTable {TABLE} at (0,181) size 784x25
         RenderTableSection {TBODY} at (0,0) size 784x24
           RenderTableRow {TR} at (0,2) size 784x20 [bgcolor=#006633]
             RenderTableCell {TD} at (2,2) size 780x20 [r=0 c=0 rs=1 cs=1]

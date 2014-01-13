@@ -1,8 +1,8 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 400x400
-  RenderSVGRoot {svg} at (30,15) size 270x237
-    RenderSVGContainer {g} at (30,15) size 270x237 [transform={m=((3.00,0.00)(0.00,3.00)) t=(0.00,0.00)}]
+  RenderSVGRoot {svg} at (30,16) size 269x236
+    RenderSVGContainer {g} at (30,16) size 269x236 [transform={m=((3.00,0.00)(0.00,3.00)) t=(0.00,0.00)}]
       RenderSVGText {text} at (10,5) size 90x19 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 90x19
           chunk 1 text run 1 at (10.00,20.00) startOffset 0 endOffset 1 width 9.67: "T"

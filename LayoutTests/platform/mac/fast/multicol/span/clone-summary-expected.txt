@@ -9,11 +9,11 @@ layer at (8,8) size 784x32
       RenderBlock {DIV} at (0,0) size 784x0
 layer at (8,8) size 784x16
   RenderBlock (anonymous multi-column) at (0,0) size 784x16
-    RenderBlock {SUMMARY} at (0,0) size 117x16 [color=#FFFFFF]
+    RenderBlock {SUMMARY} at (0,0) size 118x16 [color=#FFFFFF]
       RenderText {#text} at (0,0) size 16x16
         text run at (0,0) width 16: "a"
 layer at (8,24) size 784x16
   RenderBlock (anonymous multi-column) at (0,16) size 784x16
-    RenderBlock {SUMMARY} at (0,0) size 117x16 [color=#FFFFFF]
+    RenderBlock {SUMMARY} at (0,0) size 118x16 [color=#FFFFFF]
       RenderText {#text} at (0,0) size 16x16
         text run at (0,0) width 16: "b"

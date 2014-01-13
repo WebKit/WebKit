@@ -59,7 +59,7 @@ layer at (0,0) size 800x600
                           RenderText {#text} at (0,0) size 0x0
                         RenderTableCell {TD} at (355,4) size 97x32 [border: (1px inset #808080)] [r=0 c=3 rs=1 cs=1]
                           RenderButton {INPUT} at (7,7) size 52x18 [bgcolor=#C0C0C0]
-                            RenderBlock (anonymous) at (8,2) size 36x13
+                            RenderBlock (anonymous) at (8,2) size 36x14
                               RenderText at (0,0) size 36x13
                                 text run at (0,0) width 36: "Search"
                           RenderText {#text} at (0,0) size 0x0
@@ -76,5 +76,5 @@ layer at (0,0) size 800x600
                         RenderTableCell {TD} at (355,41) size 97x28 [border: (1px inset #808080)] [r=1 c=3 rs=1 cs=1]
                           RenderText {#text} at (5,5) size 26x18
                             text run at (5,5) width 26: "asdf"
-layer at (249,123) size 286x13
+layer at (249,123) size 285x13
   RenderBlock {DIV} at (3,3) size 286x13

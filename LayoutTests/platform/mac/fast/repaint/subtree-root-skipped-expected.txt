@@ -13,7 +13,7 @@ layer at (8,8) size 200x200
     RenderBlock {DIV} at (0,23) size 200x18
       RenderText {#text} at (0,0) size 103x18
         text run at (0,0) width 103: "Selection is here"
-layer at (13,13) size 140x13
+layer at (13,13) size 139x13
   RenderBlock {DIV} at (3,3) size 140x13
     RenderText {#text} at (0,0) size 26x13
       text run at (0,0) width 26: "PASS"

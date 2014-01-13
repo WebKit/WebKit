@@ -9,7 +9,7 @@ layer at (0,0) size 800x600
       RenderBlock {P} at (0,39) size 784x18
         RenderText {#text} at (0,0) size 567x18
           text run at (0,0) width 567: "Tests double-clicking on a word. If the test succeeds, the word \"word\" should be selected."
-layer at (13,13) size 140x13
+layer at (13,13) size 139x13
   RenderBlock {DIV} at (3,3) size 140x13
     RenderText {#text} at (0,0) size 72x13
       text run at (0,0) width 72: "word another"

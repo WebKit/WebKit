@@ -1,12 +1,12 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x356
-  RenderBlock {HTML} at (0,0) size 800x356
-    RenderBody {BODY} at (8,21) size 784x319
+layer at (0,0) size 800x357
+  RenderBlock {HTML} at (0,0) size 800x358
+    RenderBody {BODY} at (8,21) size 784x321
       RenderBlock {H4} at (0,0) size 784x18
         RenderText {#text} at (0,0) size 45x18
           text run at (0,0) width 45: "table 1"
-      RenderTable {TABLE} at (0,39) size 160x76 [border: (1px outset #808080)]
+      RenderTable {TABLE} at (0,39) size 160x77 [border: (1px outset #808080)]
         RenderTableSection {TBODY} at (1,1) size 158x74
           RenderTableRow {TR} at (0,2) size 158x22
             RenderTableCell {TD} at (2,2) size 24x22 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
@@ -50,13 +50,13 @@ layer at (0,0) size 800x356
             RenderTableCell {TD} at (132,50) size 24x22 [border: (1px inset #808080)] [r=2 c=5 rs=1 cs=1]
               RenderText {#text} at (2,2) size 20x18
                 text run at (2,2) width 20: "3.6"
-      RenderBlock {P} at (0,131) size 784x18
+      RenderBlock {P} at (0,131) size 784x19
         RenderText {#text} at (0,0) size 160x18
           text run at (0,0) width 160: "cell 1.5 has rowspan=\"2\""
-      RenderBlock {H4} at (0,170) size 784x18
+      RenderBlock {H4} at (0,170) size 784x19
         RenderText {#text} at (0,0) size 45x18
           text run at (0,0) width 45: "table 2"
-      RenderTable {TABLE} at (0,209) size 160x76 [border: (1px outset #808080)]
+      RenderTable {TABLE} at (0,209) size 160x77 [border: (1px outset #808080)]
         RenderTableSection {TBODY} at (1,1) size 158x74
           RenderTableRow {TR} at (0,2) size 158x22
             RenderTableCell {TD} at (2,2) size 24x22 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
@@ -97,6 +97,6 @@ layer at (0,0) size 800x356
             RenderTableCell {TD} at (132,50) size 24x22 [border: (1px inset #808080)] [r=2 c=5 rs=1 cs=1]
               RenderText {#text} at (2,2) size 20x18
                 text run at (2,2) width 20: "3.6"
-      RenderBlock {P} at (0,301) size 784x18
+      RenderBlock {P} at (0,301) size 784x19
         RenderText {#text} at (0,0) size 243x18
           text run at (0,0) width 243: "cell 1.5 has colspan=\"2\" rowspan=\"2\""

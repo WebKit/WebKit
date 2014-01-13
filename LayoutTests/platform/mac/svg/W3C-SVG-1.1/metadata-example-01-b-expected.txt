@@ -63,7 +63,7 @@ layer at (0,0) size 480x360
           RenderSVGPath {polygon} at (220,64) size 2x1 [fill={[type=SOLID] [color=#5A59CE]}] [points="600 210 592 214 592 206"]
           RenderSVGPath {polygon} at (217,69) size 2x2 [fill={[type=SOLID] [color=#5A59CE]}] [points="511 264 503 268 503 260"]
           RenderSVGPath {polygon} at (223,70) size 2x2 [fill={[type=SOLID] [color=#5A59CE]}] [points="597 324 590 329 588 321"]
-        RenderSVGContainer {g} at (195,47) size 50x36
+        RenderSVGContainer {g} at (195,48) size 50x35
           RenderSVGText {text} at (458,92) size 508x17 contains 1 chunk(s)
             RenderSVGInlineText {#text} at (0,0) size 508x17
               chunk 1 text run 1 at (458.00,105.00) startOffset 0 endOffset 67 width 507.65: "http://prismstandard.org/vocabularies/1.0/resourcetype.xml#birdsEye"

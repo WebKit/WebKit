@@ -619,7 +619,7 @@ layer at (0,0) size 785x1438
                 text run at (0,26) width 45: "UVWXYZ"
                 text run at (44,26) width 5: " "
                 text run at (0,39) width 130: "abcdefghijklmnopqrstuv"
-        layer at (337,587) size 161x32 clip at (338,588) size 144x15 scrollWidth 422 scrollHeight 17
+        layer at (337,587) size 161x32 clip at (338,588) size 144x15 scrollWidth 421 scrollHeight 17
           RenderTextControl {TEXTAREA} at (3,31) size 161x32 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
             RenderBlock {DIV} at (3,3) size 155x13
               RenderText {#text} at (0,0) size 420x13
@@ -634,7 +634,7 @@ layer at (0,0) size 785x1438
                 text run at (0,13) width 138: "ABCDEFGHIJKLMNOPQRST"
                 text run at (0,26) width 45: "UVWXYZ"
                 text run at (0,39) width 130: "abcdefghijklmnopqrstuv"
-        layer at (3,670) size 161x47 clip at (4,671) size 144x30 scrollWidth 185 scrollHeight 43
+        layer at (3,670) size 161x47 clip at (4,671) size 144x30 scrollWidth 184 scrollHeight 43
           RenderTextControl {TEXTAREA} at (3,31) size 161x47 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
             RenderBlock {DIV} at (3,3) size 155x39
               RenderText {#text} at (0,0) size 183x39
@@ -642,7 +642,7 @@ layer at (0,0) size 785x1438
                 text run at (104,0) width 4: " "
                 text run at (0,13) width 183: "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
                 text run at (0,26) width 133: " abcdefghijklmnopqrstuv"
-        layer at (170,670) size 161x47 clip at (171,671) size 144x30 scrollWidth 185 scrollHeight 43
+        layer at (170,670) size 161x47 clip at (171,671) size 144x30 scrollWidth 184 scrollHeight 43
           RenderTextControl {TEXTAREA} at (3,45) size 161x47 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
             RenderBlock {DIV} at (3,3) size 155x39
               RenderText {#text} at (0,0) size 183x39
@@ -1318,7 +1318,7 @@ layer at (0,0) size 785x1438
                 text run at (0,26) width 45: "UVWXYZ"
                 text run at (44,26) width 5: " "
                 text run at (0,39) width 130: "abcdefghijklmnopqrstuv"
-        layer at (337,560) size 161x32 clip at (338,561) size 144x15 scrollWidth 422 scrollHeight 17
+        layer at (337,560) size 161x32 clip at (338,561) size 144x15 scrollWidth 421 scrollHeight 17
           RenderTextControl {TEXTAREA} at (3,31) size 161x32 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
             RenderBlock {DIV} at (3,3) size 155x13
               RenderText {#text} at (0,0) size 420x13
@@ -1333,7 +1333,7 @@ layer at (0,0) size 785x1438
                 text run at (0,13) width 138: "ABCDEFGHIJKLMNOPQRST"
                 text run at (0,26) width 45: "UVWXYZ"
                 text run at (0,39) width 130: "abcdefghijklmnopqrstuv"
-        layer at (3,640) size 161x47 clip at (4,641) size 144x30 scrollWidth 185 scrollHeight 43
+        layer at (3,640) size 161x47 clip at (4,641) size 144x30 scrollWidth 184 scrollHeight 43
           RenderTextControl {TEXTAREA} at (3,31) size 161x47 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
             RenderBlock {DIV} at (3,3) size 155x39
               RenderText {#text} at (0,0) size 183x39
@@ -1341,7 +1341,7 @@ layer at (0,0) size 785x1438
                 text run at (104,0) width 4: " "
                 text run at (0,13) width 183: "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
                 text run at (0,26) width 133: " abcdefghijklmnopqrstuv"
-        layer at (170,640) size 161x47 clip at (171,641) size 144x30 scrollWidth 185 scrollHeight 43
+        layer at (170,640) size 161x47 clip at (171,641) size 144x30 scrollWidth 184 scrollHeight 43
           RenderTextControl {TEXTAREA} at (3,45) size 161x47 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
             RenderBlock {DIV} at (3,3) size 155x39
               RenderText {#text} at (0,0) size 183x39

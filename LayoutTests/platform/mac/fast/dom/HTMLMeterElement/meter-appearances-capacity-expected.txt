@@ -6,10 +6,10 @@ layer at (0,0) size 800x600
       RenderBlock {H1} at (0,0) size 784x18
         RenderText {#text} at (0,0) size 218x18
           text run at (0,0) width 218: "Meters with various appearance"
-      RenderBlock {H2} at (0,31) size 784x18
+      RenderBlock {H2} at (0,31) size 784x19
         RenderText {#text} at (0,0) size 214x18
           text run at (0,0) width 214: "discrete-capacity-level-indicator"
-      RenderBlock {H2} at (0,65) size 784x212
+      RenderBlock {H2} at (0,65) size 784x213
         RenderBlock {UL} at (0,0) size 784x212
           RenderListItem {LI} at (40,0) size 744x18 [bgcolor=#EEEEEE]
             RenderListMarker at (-17,0) size 7x18: bullet
@@ -61,10 +61,10 @@ layer at (0,0) size 800x600
             RenderText {#text} at (0,0) size 59x18
               text run at (0,0) width 59: "Narrow:"
             RenderMeter {METER} at (714,0) size 30x18
-      RenderBlock {H2} at (0,293) size 784x18
+      RenderBlock {H2} at (0,293) size 784x19
         RenderText {#text} at (0,0) size 236x18
           text run at (0,0) width 236: "continuous-capacity-level-indicator"
-      RenderBlock {H2} at (0,327) size 784x212
+      RenderBlock {H2} at (0,327) size 784x213
         RenderBlock {UL} at (0,0) size 784x212
           RenderListItem {LI} at (40,0) size 744x18 [bgcolor=#EEEEEE]
             RenderListMarker at (-17,0) size 7x18: bullet

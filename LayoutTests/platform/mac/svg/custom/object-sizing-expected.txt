@@ -1,8 +1,8 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x390
-  RenderBlock {html} at (0,0) size 800x390
-    RenderBody {body} at (8,8) size 784x366
+layer at (0,0) size 800x392
+  RenderBlock {html} at (0,0) size 800x392
+    RenderBody {body} at (8,8) size 784x368
       RenderBlock {div} at (0,0) size 784x212 [bgcolor=#008000]
         RenderEmbeddedObject {object} at (0,0) size 208x208 [bgcolor=#FFA500]
           layer at (0,0) size 208x208
@@ -14,10 +14,10 @@ layer at (0,0) size 800x390
       RenderBlock {p} at (0,228) size 208x18 [bgcolor=#0000FF]
         RenderText {#text} at (0,0) size 12x18
           text run at (0,0) width 12: "hi"
-      RenderBlock {h2} at (0,265) size 784x28
+      RenderBlock {h2} at (0,265) size 784x29
         RenderText {#text} at (0,0) size 169x28
           text run at (0,0) width 169: "Expected results"
-      RenderBlock {ul} at (0,312) size 784x54
+      RenderBlock {ul} at (0,313) size 784x55
         RenderListItem {li} at (40,0) size 744x18
           RenderListMarker at (-17,0) size 7x18: bullet
           RenderText {#text} at (0,0) size 29x18
