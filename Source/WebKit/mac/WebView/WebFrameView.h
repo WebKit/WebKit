@@ -31,7 +31,6 @@
 #if !TARGET_OS_IPHONE
 #import <AppKit/AppKit.h>
 #else
-#import <WebKit/WAKView.h>
 #import <WebKit/WAKAppKitStubs.h>
 #import <WebKit/WAKView.h>
 #endif
