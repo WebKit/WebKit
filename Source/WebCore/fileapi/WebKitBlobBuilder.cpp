@@ -73,7 +73,7 @@ Vector<char>& BlobBuilder::getBuffer()
 
 void BlobBuilder::append(const String& text, const String& endingType)
 {
-    CString utf8Text = UTF8Encoding().encode(text.characters(), text.length(), EntitiesForUnencodables);
+    CString utf8Text = UTF8Encoding().encode(text.deprecatedCharacters(), text.length(), EntitiesForUnencodables);
 
     Vector<char>& buffer = getBuffer();
     size_t oldSize = buffer.size();

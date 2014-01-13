@@ -35,7 +35,7 @@ unsigned numGraphemeClusters(const String& s)
     if (s.is8Bit() && !s.contains('\r'))
         return stringLength;
 
-    NonSharedCharacterBreakIterator it(s.characters(), stringLength);
+    NonSharedCharacterBreakIterator it(s.deprecatedCharacters(), stringLength);
     if (!it)
         return stringLength;
 
@@ -56,7 +56,7 @@ unsigned numCharactersInGraphemeClusters(const String& s, unsigned numGraphemeCl
     if (s.is8Bit() && !s.contains('\r'))
         return std::min(stringLength, numGraphemeClusters);
 
-    NonSharedCharacterBreakIterator it(s.characters(), stringLength);
+    NonSharedCharacterBreakIterator it(s.deprecatedCharacters(), stringLength);
     if (!it)
         return std::min(stringLength, numGraphemeClusters);
 

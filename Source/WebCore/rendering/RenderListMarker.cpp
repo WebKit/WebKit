@@ -1351,7 +1351,7 @@ void RenderListMarker::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffse
             reversedText.reserveCapacity(length);
             for (int i = length - 1; i >= 0; --i)
                 reversedText.append(m_text[i]);
-            textRun.setText(reversedText.characters(), length);
+            textRun.setText(reversedText.deprecatedCharacters(), length);
         }
 
         const UChar suffix = listMarkerSuffix(type, m_listItem.value());

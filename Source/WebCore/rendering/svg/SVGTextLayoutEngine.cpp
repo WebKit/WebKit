@@ -438,7 +438,7 @@ void SVGTextLayoutEngine::layoutTextOnLineOrPath(SVGInlineTextBox* textBox, Rend
     Vector<SVGTextMetrics>& visualMetricsValues = text->layoutAttributes()->textMetricsValues();
     ASSERT(!visualMetricsValues.isEmpty());
 
-    const UChar* characters = text->characters();
+    const UChar* characters = text->deprecatedCharacters();
     const Font& font = style->font();
 
     SVGTextLayoutEngineSpacing spacingLayout(font);

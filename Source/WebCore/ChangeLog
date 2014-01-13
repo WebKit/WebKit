@@ -1,5 +1,190 @@
 2014-01-12  Darin Adler  <darin@apple.com>
 
+        Add deprecatedCharacters as a synonym for characters and convert most call sites
+        https://bugs.webkit.org/show_bug.cgi?id=126858
+
+        Reviewed by Anders Carlsson.
+
+        * Modules/indexeddb/IDBKeyPath.cpp:
+        (WebCore::IDBKeyPathLexer::IDBKeyPathLexer):
+        * Modules/websockets/ThreadableWebSocketChannelClientWrapper.cpp:
+        (WebCore::ThreadableWebSocketChannelClientWrapper::setSubprotocol):
+        (WebCore::ThreadableWebSocketChannelClientWrapper::setExtensions):
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::hasMisspelling):
+        * accessibility/mac/WebAccessibilityObjectWrapperMac.mm:
+        (-[WebAccessibilityObjectWrapper doAXAttributedStringForTextMarkerRange:]):
+        * bindings/js/SerializedScriptValue.cpp:
+        (WebCore::CloneSerializer::serialize):
+        (WebCore::CloneSerializer::write):
+        * dom/CharacterData.cpp:
+        (WebCore::CharacterData::parserAppendData):
+        * dom/Document.cpp:
+        (WebCore::Document::parseQualifiedName):
+        * editing/Editor.cpp:
+        (WebCore::Editor::misspelledWordAtCaretOrRange):
+        (WebCore::Editor::misspelledSelectionString):
+        (WebCore::Editor::markAllMisspellingsAndBadGrammarInRanges):
+        * editing/TextCheckingHelper.cpp:
+        (WebCore::TextCheckingHelper::findFirstMisspellingOrBadGrammar):
+        (WebCore::TextCheckingHelper::findFirstBadGrammar):
+        (WebCore::TextCheckingHelper::guessesForMisspelledOrUngrammaticalRange):
+        * editing/TextCheckingHelper.h:
+        (WebCore::TextCheckingParagraph::textDeprecatedCharacters):
+        * editing/TextIterator.cpp:
+        (WebCore::collapsedSpaceLength):
+        (WebCore::SimplifiedBackwardsTextIterator::handleTextNode):
+        (WebCore::containsKanaLetters):
+        (WebCore::SearchBuffer::SearchBuffer):
+        * editing/TextIterator.h:
+        (WebCore::TextIterator::characters):
+        * editing/VisiblePosition.cpp:
+        (WebCore::VisiblePosition::characterAfter):
+        * editing/VisibleUnits.cpp:
+        (WebCore::wordBreakIteratorForMinOffsetBoundary):
+        (WebCore::wordBreakIteratorForMaxOffsetBoundary):
+        (WebCore::visualWordPosition):
+        (WebCore::previousBoundary):
+        (WebCore::nextBoundary):
+        * fileapi/WebKitBlobBuilder.cpp:
+        (WebCore::BlobBuilder::append):
+        * html/FormDataList.cpp:
+        (WebCore::FormDataList::appendString):
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::normalizeSpaces):
+        * html/parser/HTMLParserIdioms.cpp:
+        (WebCore::parseImagesWithScaleFromSrcsetAttribute):
+        * html/parser/HTMLTreeBuilder.cpp:
+        (WebCore::HTMLTreeBuilder::ExternalCharacterTokenBuffer::ExternalCharacterTokenBuffer):
+        * loader/appcache/ManifestParser.cpp:
+        (WebCore::parseManifest):
+        * page/ContentSecurityPolicy.cpp:
+        (WebCore::isSourceListNone):
+        (WebCore::CSPSourceList::parse):
+        (WebCore::NonceDirective::parse):
+        (WebCore::MediaListDirective::parse):
+        (WebCore::CSPDirectiveList::parse):
+        (WebCore::CSPDirectiveList::parseReportURI):
+        (WebCore::CSPDirectiveList::parseReflectedXSS):
+        (WebCore::ContentSecurityPolicy::didReceiveHeader):
+        * page/PageSerializer.cpp:
+        (WebCore::PageSerializer::serializeFrame):
+        (WebCore::PageSerializer::serializeCSSStyleSheet):
+        * platform/Length.cpp:
+        (WebCore::newCoordsArray):
+        (WebCore::newLengthArray):
+        * platform/LinkHash.cpp:
+        (WebCore::visitedURL):
+        (WebCore::visitedLinkHash):
+        * platform/SharedBuffer.cpp:
+        (WebCore::utf8Buffer):
+        * platform/URL.cpp:
+        (WebCore::URL::port):
+        (WebCore::encodeHostnames):
+        * platform/graphics/StringTruncator.cpp:
+        (WebCore::centerTruncateToBuffer):
+        (WebCore::rightTruncateToBuffer):
+        (WebCore::rightClipToCharacterBuffer):
+        (WebCore::rightClipToWordBuffer):
+        (WebCore::leftTruncateToBuffer):
+        (WebCore::truncateString):
+        (WebCore::StringTruncator::width):
+        * platform/graphics/TextRun.h:
+        (WebCore::TextRun::TextRun):
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::shouldWaitForLoadingOfResource):
+        * platform/network/FormDataBuilder.cpp:
+        (WebCore::FormDataBuilder::addFilenameToMultiPartHeader):
+        * platform/sql/SQLiteStatement.cpp:
+        (WebCore::SQLiteStatement::bindBlob):
+        (WebCore::SQLiteStatement::bindText):
+        * platform/text/DecodeEscapeSequences.h:
+        (WebCore::decodeEscapeSequences):
+        * platform/text/TextBreakIterator.cpp:
+        (WebCore::numGraphemeClusters):
+        (WebCore::numCharactersInGraphemeClusters):
+        * platform/text/TextBreakIteratorICU.cpp:
+        (WebCore::setUpIteratorWithRules):
+        * platform/text/TextCodecICU.cpp:
+        (WebCore::TextCodecICU::encode):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::constructTextRun):
+        * rendering/RenderListMarker.cpp:
+        (WebCore::RenderListMarker::paint):
+        * rendering/RenderText.cpp:
+        (WebCore::maxWordFragmentWidth):
+        (WebCore::RenderText::computePreferredLogicalWidths):
+        (WebCore::RenderText::computeCanUseSimpleFontCodePath):
+        * rendering/RenderText.h:
+        (WebCore::RenderText::characters):
+        (WebCore::RenderText::deprecatedCharacters):
+        * rendering/line/BreakingContextInlineHeaders.h:
+        (WebCore::tryHyphenating):
+        * rendering/svg/SVGInlineTextBox.cpp:
+        (WebCore::SVGInlineTextBox::constructTextRun):
+        * rendering/svg/SVGTextLayoutAttributesBuilder.cpp:
+        (WebCore::processRenderSVGInlineText):
+        * rendering/svg/SVGTextLayoutEngine.cpp:
+        (WebCore::SVGTextLayoutEngine::layoutTextOnLineOrPath):
+        * rendering/svg/SVGTextMetrics.cpp:
+        (WebCore::SVGTextMetrics::measureCharacterRange):
+        (WebCore::SVGTextMetrics::SVGTextMetrics):
+        * rendering/svg/SVGTextMetricsBuilder.cpp:
+        (WebCore::SVGTextMetricsBuilder::initializeMeasurementWithTextRenderer):
+        * svg/SVGAngle.cpp:
+        (WebCore::SVGAngle::setValueAsString):
+        * svg/SVGAnimateMotionElement.cpp:
+        (WebCore::parsePoint):
+        * svg/SVGAnimationElement.cpp:
+        (WebCore::parseKeySplines):
+        * svg/SVGFitToViewBox.cpp:
+        (WebCore::SVGFitToViewBox::parseViewBox):
+        * svg/SVGFontData.cpp:
+        (WebCore::SVGFontData::applySVGGlyphSelection):
+        * svg/SVGGlyphMap.h:
+        (WebCore::SVGGlyphMap::addGlyph):
+        (WebCore::SVGGlyphMap::collectGlyphsForString):
+        * svg/SVGGlyphRefElement.cpp:
+        (WebCore::SVGGlyphRefElement::parseAttribute):
+        * svg/SVGLength.cpp:
+        (WebCore::SVGLength::setValueAsString):
+        * svg/SVGLengthList.cpp:
+        (WebCore::SVGLengthList::parse):
+        * svg/SVGNumberList.cpp:
+        (WebCore::SVGNumberList::parse):
+        * svg/SVGParserUtilities.cpp:
+        (WebCore::parseNumberFromString):
+        (WebCore::parseNumberOptionalNumber):
+        (WebCore::parseRect):
+        (WebCore::pointsListFromSVGData):
+        (WebCore::parseGlyphName):
+        (WebCore::parseKerningUnicodeString):
+        (WebCore::parseDelimitedString):
+        * svg/SVGPreserveAspectRatio.cpp:
+        (WebCore::SVGPreserveAspectRatio::parse):
+        * svg/SVGStringList.cpp:
+        (WebCore::SVGStringList::parse):
+        * svg/SVGTransformList.cpp:
+        (WebCore::SVGTransformList::parse):
+        * svg/SVGTransformable.cpp:
+        (WebCore::SVGTransformable::parseTransformType):
+        * svg/SVGViewSpec.cpp:
+        (WebCore::SVGViewSpec::parseViewSpec):
+        * svg/SVGZoomAndPan.h:
+        (WebCore::SVGZoomAndPan::parseAttribute):
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::send):
+        * xml/XSLStyleSheetLibxslt.cpp:
+        (WebCore::XSLStyleSheet::parseString):
+        * xml/XSLTUnicodeSort.cpp:
+        (WebCore::xsltUnicodeSortFunction):
+        * xml/parser/XMLDocumentParserLibxml2.cpp:
+        (WebCore::XMLDocumentParser::doWrite):
+        (WebCore::parseAttributes):
+        Use deprecatedCharacters instead of characters.
+
+2014-01-12  Darin Adler  <darin@apple.com>
+
         Add type checking to isEqual methods
         https://bugs.webkit.org/show_bug.cgi?id=126862
 

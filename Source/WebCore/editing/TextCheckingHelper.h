@@ -45,7 +45,7 @@ public:
 
     int textLength() const { return text().length(); }
     String textSubstring(unsigned pos, unsigned len = UINT_MAX) const { return text().substring(pos, len); }
-    const UChar* textCharacters() const { return text().characters(); }
+    const UChar* textDeprecatedCharacters() const { return text().deprecatedCharacters(); }
     UChar textCharAt(int index) const { return text()[static_cast<unsigned>(index)]; }
 
     bool isEmpty() const;

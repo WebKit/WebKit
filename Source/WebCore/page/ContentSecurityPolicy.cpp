@@ -215,8 +215,8 @@ static void skipWhile(const UChar*& position, const UChar* end)
 
 static bool isSourceListNone(const String& value)
 {
-    const UChar* begin = value.characters();
-    const UChar* end = value.characters() + value.length();
+    const UChar* begin = value.deprecatedCharacters();
+    const UChar* end = value.deprecatedCharacters() + value.length();
     skipWhile<isASCIISpace>(begin, end);
 
     const UChar* position = begin;
@@ -365,7 +365,7 @@ void CSPSourceList::parse(const String& value)
     // We represent 'none' as an empty m_list.
     if (isSourceListNone(value))
         return;
-    parse(value.characters(), value.characters() + value.length());
+    parse(value.deprecatedCharacters(), value.deprecatedCharacters() + value.length());
 }
 
 bool CSPSourceList::matches(const URL& url)
@@ -706,7 +706,7 @@ private:
     void parse(const String& value)
     {
         String nonce;
-        const UChar* position = value.characters();
+        const UChar* position = value.deprecatedCharacters();
         const UChar* end = position + value.length();
 
         skipWhile<isASCIISpace>(position, end);
@@ -749,7 +749,7 @@ public:
 private:
     void parse(const String& value)
     {
-        const UChar* begin = value.characters();
+        const UChar* begin = value.deprecatedCharacters();
         const UChar* position = begin;
         const UChar* end = begin + value.length();
 
@@ -1237,7 +1237,7 @@ void CSPDirectiveList::parse(const String& policy)
     if (policy.isEmpty())
         return;
 
-    const UChar* position = policy.characters();
+    const UChar* position = policy.deprecatedCharacters();
     const UChar* end = position + policy.length();
 
     while (position < end) {
@@ -1316,7 +1316,7 @@ void CSPDirectiveList::parseReportURI(const String& name, const String& value)
         m_policy->reportDuplicateDirective(name);
         return;
     }
-    const UChar* position = value.characters();
+    const UChar* position = value.deprecatedCharacters();
     const UChar* end = position + value.length();
 
     while (position < end) {
@@ -1370,7 +1370,7 @@ void CSPDirectiveList::parseReflectedXSS(const String& name, const String& value
         return;
     }
 
-    const UChar* position = value.characters();
+    const UChar* position = value.deprecatedCharacters();
     const UChar* end = position + value.length();
 
     skipWhile<isASCIISpace>(position, end);
@@ -1475,7 +1475,7 @@ void ContentSecurityPolicy::didReceiveHeader(const String& header, HeaderType ty
     // RFC2616, section 4.2 specifies that headers appearing multiple times can
     // be combined with a comma. Walk the header string, and parse each comma
     // separated chunk as a separate header.
-    const UChar* begin = header.characters();
+    const UChar* begin = header.deprecatedCharacters();
     const UChar* position = begin;
     const UChar* end = begin + header.length();
     while (position < end) {

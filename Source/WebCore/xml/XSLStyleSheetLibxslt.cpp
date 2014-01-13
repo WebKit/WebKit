@@ -148,7 +148,7 @@ bool XSLStyleSheet::parseString(const String& string)
 
     XMLDocumentParserScope scope(cachedResourceLoader(), XSLTProcessor::genericErrorFunc, XSLTProcessor::parseErrorFunc, console);
 
-    const char* buffer = reinterpret_cast<const char*>(string.characters());
+    const char* buffer = reinterpret_cast<const char*>(string.deprecatedCharacters());
     int size = string.length() * sizeof(UChar);
 
     xmlParserCtxtPtr ctxt = xmlCreateMemoryParserCtxt(buffer, size);

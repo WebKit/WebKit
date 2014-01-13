@@ -63,7 +63,7 @@ static unsigned centerTruncateToBuffer(const String& string, unsigned length, un
     ASSERT_WITH_SECURITY_IMPLICATION(keepCount < STRING_BUFFER_SIZE);
     
     unsigned omitStart = (keepCount + 1) / 2;
-    NonSharedCharacterBreakIterator it(string.characters(), length);
+    NonSharedCharacterBreakIterator it(string.deprecatedCharacters(), length);
     unsigned omitEnd = boundedTextBreakFollowing(it, omitStart + (length - keepCount) - 1, length);
     omitStart = textBreakAtOrPreceding(it, omitStart);
 
@@ -89,12 +89,12 @@ static unsigned centerTruncateToBuffer(const String& string, unsigned length, un
     unsigned truncatedLength = shouldInsertEllipsis ? omitStart + 1 + (length - omitEnd) : length - (omitEnd - omitStart);
     ASSERT(truncatedLength <= length);
 
-    memcpy(buffer, string.characters(), sizeof(UChar) * omitStart);
+    memcpy(buffer, string.deprecatedCharacters(), sizeof(UChar) * omitStart);
     if (shouldInsertEllipsis) {
         buffer[omitStart] = horizontalEllipsis;
-        memcpy(&buffer[omitStart + 1], &string.characters()[omitEnd], sizeof(UChar) * (length - omitEnd));    
+        memcpy(&buffer[omitStart + 1], &string.deprecatedCharacters()[omitEnd], sizeof(UChar) * (length - omitEnd));
     } else
-        memcpy(&buffer[omitStart], &string.characters()[omitEnd], sizeof(UChar) * (length - omitEnd));
+        memcpy(&buffer[omitStart], &string.deprecatedCharacters()[omitEnd], sizeof(UChar) * (length - omitEnd));
     return truncatedLength;
 }
 
@@ -115,11 +115,11 @@ static unsigned rightTruncateToBuffer(const String& string, unsigned length, uns
         --keepCount;
 #endif
 
-    NonSharedCharacterBreakIterator it(string.characters(), length);
+    NonSharedCharacterBreakIterator it(string.deprecatedCharacters(), length);
     unsigned keepLength = textBreakAtOrPreceding(it, keepCount);
     unsigned truncatedLength = shouldInsertEllipsis ? keepLength + 1 : keepLength;
 
-    memcpy(buffer, string.characters(), sizeof(UChar) * keepLength);
+    memcpy(buffer, string.deprecatedCharacters(), sizeof(UChar) * keepLength);
     if (shouldInsertEllipsis)
         buffer[keepLength] = horizontalEllipsis;
 
@@ -131,9 +131,9 @@ static unsigned rightClipToCharacterBuffer(const String& string, unsigned length
     ASSERT(keepCount < length);
     ASSERT(keepCount < STRING_BUFFER_SIZE);
 
-    NonSharedCharacterBreakIterator it(string.characters(), length);
+    NonSharedCharacterBreakIterator it(string.deprecatedCharacters(), length);
     unsigned keepLength = textBreakAtOrPreceding(it, keepCount);
-    memcpy(buffer, string.characters(), sizeof(UChar) * keepLength);
+    memcpy(buffer, string.deprecatedCharacters(), sizeof(UChar) * keepLength);
 
     return keepLength;
 }
@@ -143,9 +143,9 @@ static unsigned rightClipToWordBuffer(const String& string, unsigned length, uns
     ASSERT(keepCount < length);
     ASSERT(keepCount < STRING_BUFFER_SIZE);
 
-    TextBreakIterator* it = wordBreakIterator(string.characters(), length);
+    TextBreakIterator* it = wordBreakIterator(string.deprecatedCharacters(), length);
     unsigned keepLength = textBreakAtOrPreceding(it, keepCount);
-    memcpy(buffer, string.characters(), sizeof(UChar) * keepLength);
+    memcpy(buffer, string.deprecatedCharacters(), sizeof(UChar) * keepLength);
 
 #if PLATFORM(IOS)
     // FIXME: We should guard this code behind an editing behavior. Then we can remove the PLATFORM(IOS)-guard.
@@ -163,7 +163,7 @@ static unsigned leftTruncateToBuffer(const String& string, unsigned length, unsi
 
     unsigned startIndex = length - keepCount;
 
-    NonSharedCharacterBreakIterator it(string.characters(), length);
+    NonSharedCharacterBreakIterator it(string.deprecatedCharacters(), length);
     unsigned adjustedStartIndex = startIndex;
     startIndex = boundedTextBreakFollowing(it, startIndex, length - startIndex);
 
@@ -178,10 +178,10 @@ static unsigned leftTruncateToBuffer(const String& string, unsigned length, unsi
 
     if (shouldInsertEllipsis) {
         buffer[0] = horizontalEllipsis;
-        memcpy(&buffer[1], &string.characters()[adjustedStartIndex], sizeof(UChar) * (length - adjustedStartIndex + 1));
+        memcpy(&buffer[1], &string.deprecatedCharacters()[adjustedStartIndex], sizeof(UChar) * (length - adjustedStartIndex + 1));
         return length - adjustedStartIndex + 1;
     }
-    memcpy(&buffer[0], &string.characters()[adjustedStartIndex], sizeof(UChar) * (length - adjustedStartIndex + 1));
+    memcpy(&buffer[0], &string.deprecatedCharacters()[adjustedStartIndex], sizeof(UChar) * (length - adjustedStartIndex + 1));
     return length - adjustedStartIndex;
 }
 
@@ -218,7 +218,7 @@ static String truncateString(const String& string, float maxWidth, const Font& f
         truncatedLength = centerTruncateToBuffer(string, length, keepCount, stringBuffer, shouldInsertEllipsis);
     } else {
         keepCount = length;
-        memcpy(stringBuffer, string.characters(), sizeof(UChar) * length);
+        memcpy(stringBuffer, string.deprecatedCharacters(), sizeof(UChar) * length);
         truncatedLength = length;
     }
 
@@ -301,7 +301,7 @@ String StringTruncator::rightTruncate(const String& string, float maxWidth, cons
 
 float StringTruncator::width(const String& string, const Font& font, EnableRoundingHacksOrNot enableRoundingHacks)
 {
-    return stringWidth(font, string.characters(), string.length(), !enableRoundingHacks);
+    return stringWidth(font, string.deprecatedCharacters(), string.length(), !enableRoundingHacks);
 }
 
 String StringTruncator::centerTruncate(const String& string, float maxWidth, const Font& font, EnableRoundingHacksOrNot enableRoundingHacks, float& resultWidth, bool shouldInsertEllipsis, float customTruncationElementWidth)

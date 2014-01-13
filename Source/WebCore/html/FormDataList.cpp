@@ -32,7 +32,7 @@ FormDataList::FormDataList(const TextEncoding& c)
 
 void FormDataList::appendString(const String& s)
 {
-    CString cstr = m_encoding.encode(s.characters(), s.length(), EntitiesForUnencodables);
+    CString cstr = m_encoding.encode(s.deprecatedCharacters(), s.length(), EntitiesForUnencodables);
     m_items.append(normalizeLineEndingsToCRLF(cstr));
 }
 

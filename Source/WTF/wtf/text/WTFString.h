@@ -156,13 +156,14 @@ public:
         return m_impl->length();
     }
 
-    const UChar* characters() const
+    const UChar* characters() const { return deprecatedCharacters(); } // FIXME: Delete this.
+    const UChar* deprecatedCharacters() const
     {
         if (!m_impl)
             return 0;
-        return m_impl->characters();
+        return m_impl->deprecatedCharacters();
     }
-    
+
     const LChar* characters8() const
     {
         if (!m_impl)
@@ -540,7 +541,7 @@ inline const LChar* String::getCharactersWithUpconvert<LChar>() const
 template<>
 inline const UChar* String::getCharactersWithUpconvert<UChar>() const
 {
-    return characters();
+    return deprecatedCharacters();
 }
 
 inline bool String::containsOnlyLatin1() const
@@ -587,7 +588,7 @@ inline bool codePointCompareLessThan(const String& a, const String& b)
 template<size_t inlineCapacity>
 inline void append(Vector<UChar, inlineCapacity>& vector, const String& string)
 {
-    vector.append(string.characters(), string.length());
+    vector.append(string.deprecatedCharacters(), string.length());
 }
 
 template<typename CharacterType>

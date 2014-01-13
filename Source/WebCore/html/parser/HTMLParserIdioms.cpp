@@ -388,7 +388,7 @@ static void parseImagesWithScaleFromSrcsetAttribute(const String& srcsetAttribut
                 }
                 bool validScaleFactor = false;
                 size_t scaleFactorLengthWithoutUnit = imageScaleEnd - imageScaleStart - 1;
-                imageScaleFactor = charactersToFloat(srcsetAttribute.characters() + imageScaleStart, scaleFactorLengthWithoutUnit, &validScaleFactor);
+                imageScaleFactor = charactersToFloat(srcsetAttribute.deprecatedCharacters() + imageScaleStart, scaleFactorLengthWithoutUnit, &validScaleFactor);
 
                 if (!validScaleFactor) {
                     imageCandidateStart = separator + 1;

@@ -450,10 +450,10 @@ public:
     unsigned length() const { return m_length; }
     bool is8Bit() const { return m_hashAndFlags & s_hashFlag8BitBuffer; }
 
-    // FIXME: Remove all unnecessary usages of characters()
     ALWAYS_INLINE const LChar* characters8() const { ASSERT(is8Bit()); return m_data8; }
     ALWAYS_INLINE const UChar* characters16() const { ASSERT(!is8Bit()); return m_data16; }
-    ALWAYS_INLINE const UChar* characters() const
+    const UChar* characters() const { return deprecatedCharacters(); } // FIXME: Delete this.
+    ALWAYS_INLINE const UChar* deprecatedCharacters() const
     {
         if (!is8Bit())
             return m_data16;
@@ -865,7 +865,7 @@ template <>
 ALWAYS_INLINE const LChar* StringImpl::getCharacters<LChar>() const { return characters8(); }
 
 template <>
-ALWAYS_INLINE const UChar* StringImpl::getCharacters<UChar>() const { return characters(); }
+ALWAYS_INLINE const UChar* StringImpl::getCharacters<UChar>() const { return deprecatedCharacters(); }
 
 WTF_EXPORT_STRING_API bool equal(const StringImpl*, const StringImpl*);
 WTF_EXPORT_STRING_API bool equal(const StringImpl*, const LChar*);
@@ -1255,7 +1255,7 @@ bool equalIgnoringNullity(const Vector<UChar, inlineCapacity>& a, StringImpl* b)
         return !a.size();
     if (a.size() != b->length())
         return false;
-    return !memcmp(a.data(), b->characters(), b->length() * sizeof(UChar));
+    return !memcmp(a.data(), b->deprecatedCharacters(), b->length() * sizeof(UChar));
 }
 
 template<typename CharacterType1, typename CharacterType2>

@@ -893,7 +893,7 @@ static bool shouldEmitExtraNewlineForNode(Node* node)
 
 static int collapsedSpaceLength(RenderText* renderer, int textEnd)
 {
-    const UChar* characters = renderer->text()->characters();
+    const UChar* characters = renderer->text()->deprecatedCharacters();
     int length = renderer->text()->length();
     for (int i = textEnd; i < length; ++i) {
         if (!renderer->style().isCollapsibleWhiteSpace(characters[i]))
@@ -1309,9 +1309,9 @@ bool SimplifiedBackwardsTextIterator::handleTextNode()
     ASSERT(m_positionStartOffset <= m_positionEndOffset);
 
     m_textLength = m_positionEndOffset - m_positionStartOffset;
-    m_textCharacters = text.characters() + (m_positionStartOffset - offsetInNode);
-    ASSERT(m_textCharacters >= text.characters());
-    ASSERT(m_textCharacters + m_textLength <= text.characters() + static_cast<int>(text.length()));
+    m_textCharacters = text.deprecatedCharacters() + (m_positionStartOffset - offsetInNode);
+    ASSERT(m_textCharacters >= text.deprecatedCharacters());
+    ASSERT(m_textCharacters + m_textLength <= text.deprecatedCharacters() + static_cast<int>(text.length()));
 
     m_lastCharacter = text[m_positionEndOffset - 1];
 
@@ -1922,7 +1922,7 @@ static inline bool isCombiningVoicedSoundMark(UChar character)
 
 static inline bool containsKanaLetters(const String& pattern)
 {
-    const UChar* characters = pattern.characters();
+    const UChar* characters = pattern.deprecatedCharacters();
     unsigned length = pattern.length();
     for (unsigned i = 0; i < length; ++i) {
         if (isKanaLetter(characters[i]))
@@ -2007,7 +2007,7 @@ inline SearchBuffer::SearchBuffer(const String& target, FindOptions options)
 
     if ((m_options & AtWordStarts) && targetLength) {
         UChar32 targetFirstCharacter;
-        U16_GET(m_target.characters(), 0, 0, targetLength, targetFirstCharacter);
+        U16_GET(m_target.deprecatedCharacters(), 0, 0, targetLength, targetFirstCharacter);
         // Characters in the separator category never really occur at the beginning of a word,
         // so if the target begins with such a character, we just ignore the AtWordStart option.
         if (isSeparator(targetFirstCharacter)) {
@@ -2044,12 +2044,12 @@ inline SearchBuffer::SearchBuffer(const String& target, FindOptions options)
     usearch_setAttribute(searcher, USEARCH_ELEMENT_COMPARISON, comparator, &status);
     ASSERT(status == U_ZERO_ERROR);
 
-    usearch_setPattern(searcher, m_target.characters(), targetLength, &status);
+    usearch_setPattern(searcher, m_target.deprecatedCharacters(), targetLength, &status);
     ASSERT(status == U_ZERO_ERROR);
 
     // The kana workaround requires a normalized copy of the target string.
     if (m_targetRequiresKanaWorkaround)
-        normalizeCharacters(m_target.characters(), m_target.length(), m_normalizedTarget);
+        normalizeCharacters(m_target.deprecatedCharacters(), m_target.length(), m_normalizedTarget);
 }
 
 inline SearchBuffer::~SearchBuffer()

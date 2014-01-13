@@ -165,7 +165,7 @@ void FormDataBuilder::addFilenameToMultiPartHeader(Vector<char>& buffer, const T
     // FIXME: This loses data irreversibly if the filename includes characters you can't encode
     // in the website's character set.
     append(buffer, "; filename=\"");
-    appendQuotedString(buffer, encoding.encode(filename.characters(), filename.length(), QuestionMarksForUnencodables));
+    appendQuotedString(buffer, encoding.encode(filename.deprecatedCharacters(), filename.length(), QuestionMarksForUnencodables));
     append(buffer, '"');
 }
 

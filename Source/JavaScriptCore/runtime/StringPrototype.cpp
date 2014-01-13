@@ -237,7 +237,7 @@ static inline String substituteBackreferences(const String& replacement, const S
 
 static inline int localeCompare(const String& a, const String& b)
 {
-    return Collator::userDefault()->collate(reinterpret_cast<const ::UChar*>(a.characters()), a.length(), reinterpret_cast<const ::UChar*>(b.characters()), b.length());
+    return Collator::userDefault()->collate(reinterpret_cast<const ::UChar*>(a.deprecatedCharacters()), a.length(), reinterpret_cast<const ::UChar*>(b.deprecatedCharacters()), b.length());
 }
 
 struct StringRange {
@@ -1427,7 +1427,7 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncFontsize(ExecState* exec)
         buffer[12] = '0' + smallInteger;
         buffer[13] = '"';
         buffer[14] = '>';
-        memcpy(&buffer[15], s.characters(), stringSize * sizeof(UChar));
+        memcpy(&buffer[15], s.deprecatedCharacters(), stringSize * sizeof(UChar));
         buffer[15 + stringSize] = '<';
         buffer[16 + stringSize] = '/';
         buffer[17 + stringSize] = 'f';
@@ -1483,10 +1483,10 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncLink(ExecState* exec)
     buffer[6] = 'f';
     buffer[7] = '=';
     buffer[8] = '"';
-    memcpy(&buffer[9], linkText.characters(), linkTextSize * sizeof(UChar));
+    memcpy(&buffer[9], linkText.deprecatedCharacters(), linkTextSize * sizeof(UChar));
     buffer[9 + linkTextSize] = '"';
     buffer[10 + linkTextSize] = '>';
-    memcpy(&buffer[11 + linkTextSize], s.characters(), stringSize * sizeof(UChar));
+    memcpy(&buffer[11 + linkTextSize], s.deprecatedCharacters(), stringSize * sizeof(UChar));
     buffer[11 + linkTextSize + stringSize] = '<';
     buffer[12 + linkTextSize + stringSize] = '/';
     buffer[13 + linkTextSize + stringSize] = 'a';

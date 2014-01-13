@@ -250,7 +250,7 @@ static inline bool base64DecodeInternal(const T* data, unsigned length, Vector<c
 
 bool base64Decode(const String& in, SignedOrUnsignedCharVectorAdapter out, Base64DecodePolicy policy)
 {
-    return base64DecodeInternal<UChar>(in.characters(), in.length(), out, policy, base64DecMap);
+    return base64DecodeInternal<UChar>(in.deprecatedCharacters(), in.length(), out, policy, base64DecMap);
 }
 
 bool base64Decode(const Vector<char>& in, SignedOrUnsignedCharVectorAdapter out, Base64DecodePolicy policy)
@@ -271,7 +271,7 @@ bool base64Decode(const char* data, unsigned len, SignedOrUnsignedCharVectorAdap
 
 bool base64URLDecode(const String& in, SignedOrUnsignedCharVectorAdapter out)
 {
-    return base64DecodeInternal<UChar>(in.characters(), in.length(), out, Base64FailOnInvalidCharacter, base64URLDecMap);
+    return base64DecodeInternal<UChar>(in.deprecatedCharacters(), in.length(), out, Base64FailOnInvalidCharacter, base64URLDecMap);
 }
 
 bool base64URLDecode(const Vector<char>& in, SignedOrUnsignedCharVectorAdapter out)

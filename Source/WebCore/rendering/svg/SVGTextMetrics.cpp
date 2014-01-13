@@ -92,7 +92,7 @@ TextRun SVGTextMetrics::constructTextRun(RenderSVGInlineText* text, const UChar*
 SVGTextMetrics SVGTextMetrics::measureCharacterRange(RenderSVGInlineText* text, unsigned position, unsigned length)
 {
     ASSERT(text);
-    return SVGTextMetrics(text, constructTextRun(text, text->characters(), position, length));
+    return SVGTextMetrics(text, constructTextRun(text, text->deprecatedCharacters(), position, length));
 }
 
 SVGTextMetrics::SVGTextMetrics(RenderSVGInlineText* text, unsigned position, unsigned length, float width, const String& glyphName)
@@ -107,7 +107,7 @@ SVGTextMetrics::SVGTextMetrics(RenderSVGInlineText* text, unsigned position, uns
     m_height = text->scaledFont().fontMetrics().floatHeight() / scalingFactor;
     if (needsContext) {
         m_glyph.isValid = true;
-        m_glyph.unicodeString = String(text->characters() + position, length);
+        m_glyph.unicodeString = String(text->deprecatedCharacters() + position, length);
         m_glyph.name = glyphName;
     }
 

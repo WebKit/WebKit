@@ -330,7 +330,7 @@ bool AccessibilityObject::hasMisspelling() const
     if (!textChecker)
         return false;
     
-    const UChar* chars = stringValue().characters();
+    const UChar* chars = stringValue().deprecatedCharacters();
     int charsLength = stringValue().length();
     bool isMisspelled = false;
 

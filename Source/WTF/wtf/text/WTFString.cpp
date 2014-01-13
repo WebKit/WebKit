@@ -113,8 +113,8 @@ void String::append(const String& str)
             if (str.length() > std::numeric_limits<unsigned>::max() - m_impl->length())
                 CRASH();
             RefPtr<StringImpl> newImpl = StringImpl::createUninitialized(m_impl->length() + str.length(), data);
-            memcpy(data, m_impl->characters(), m_impl->length() * sizeof(UChar));
-            memcpy(data + m_impl->length(), str.characters(), str.length() * sizeof(UChar));
+            memcpy(data, m_impl->deprecatedCharacters(), m_impl->length() * sizeof(UChar));
+            memcpy(data + m_impl->length(), str.deprecatedCharacters(), str.length() * sizeof(UChar));
             m_impl = newImpl.release();
         } else
             m_impl = str.m_impl;
@@ -133,7 +133,7 @@ inline void String::appendInternal(CharacterType c)
         if (m_impl->length() >= std::numeric_limits<unsigned>::max())
             CRASH();
         RefPtr<StringImpl> newImpl = StringImpl::createUninitialized(m_impl->length() + 1, data);
-        memcpy(data, m_impl->characters(), m_impl->length() * sizeof(UChar));
+        memcpy(data, m_impl->deprecatedCharacters(), m_impl->length() * sizeof(UChar));
         data[m_impl->length()] = c;
         m_impl = newImpl.release();
     } else
@@ -164,7 +164,7 @@ void String::insert(const String& str, unsigned pos)
             m_impl = str.impl();
         return;
     }
-    insert(str.characters(), str.length(), pos);
+    insert(str.deprecatedCharacters(), str.length(), pos);
 }
 
 void String::append(const LChar* charactersToAppend, unsigned lengthToAppend)
@@ -248,9 +248,9 @@ void String::insert(const UChar* charactersToInsert, unsigned lengthToInsert, un
     if (lengthToInsert > std::numeric_limits<unsigned>::max() - length())
         CRASH();
     RefPtr<StringImpl> newImpl = StringImpl::createUninitialized(length() + lengthToInsert, data);
-    memcpy(data, characters(), position * sizeof(UChar));
+    memcpy(data, deprecatedCharacters(), position * sizeof(UChar));
     memcpy(data + position, charactersToInsert, lengthToInsert * sizeof(UChar));
-    memcpy(data + position + lengthToInsert, characters() + position, (length() - position) * sizeof(UChar));
+    memcpy(data + position + lengthToInsert, deprecatedCharacters() + position, (length() - position) * sizeof(UChar));
     m_impl = newImpl.release();
 }
 
@@ -267,7 +267,7 @@ void String::truncate(unsigned position)
         return;
     UChar* data;
     RefPtr<StringImpl> newImpl = StringImpl::createUninitialized(position, data);
-    memcpy(data, characters(), position * sizeof(UChar));
+    memcpy(data, deprecatedCharacters(), position * sizeof(UChar));
     m_impl = newImpl.release();
 }
 
@@ -399,7 +399,7 @@ bool String::percentage(int& result) const
     if ((*m_impl)[m_impl->length() - 1] != '%')
        return false;
 
-    result = charactersToIntStrict(m_impl->characters(), m_impl->length() - 1);
+    result = charactersToIntStrict(m_impl->deprecatedCharacters(), m_impl->length() - 1);
     return true;
 }
 

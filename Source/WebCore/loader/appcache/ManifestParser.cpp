@@ -53,8 +53,8 @@ bool parseManifest(const URL& manifestURL, const char* data, int length, Manifes
     if (!s.startsWith("CACHE MANIFEST"))
         return false;
     
-    const UChar* end = s.characters() + s.length();    
-    const UChar* p = s.characters() + 14; // "CACHE MANIFEST" is 14 characters.
+    const UChar* end = s.deprecatedCharacters() + s.length();
+    const UChar* p = s.deprecatedCharacters() + 14; // "CACHE MANIFEST" is 14 characters.
 
     if (p < end && *p != ' ' && *p != '\t' && *p != '\n' && *p != '\r')
         return false;
@@ -99,20 +99,20 @@ bool parseManifest(const URL& manifestURL, const char* data, int length, Manifes
         else if (mode == Unknown)
             continue;
         else if (mode == Explicit || mode == OnlineWhitelist) {
-            const UChar* p = line.characters();
+            const UChar* p = line.deprecatedCharacters();
             const UChar* lineEnd = p + line.length();
             
             // Look for whitespace separating the URL from subsequent ignored tokens.
             while (p < lineEnd && *p != '\t' && *p != ' ') 
                 p++;
 
-            if (mode == OnlineWhitelist && p - line.characters() == 1 && *line.characters() == '*') {
+            if (mode == OnlineWhitelist && p - line.deprecatedCharacters() == 1 && *line.deprecatedCharacters() == '*') {
                 // Wildcard was found.
                 manifest.allowAllNetworkRequests = true;
                 continue;
             }
 
-            URL url(manifestURL, String(line.characters(), p - line.characters()));
+            URL url(manifestURL, String(line.deprecatedCharacters(), p - line.deprecatedCharacters()));
             
             if (!url.isValid())
                 continue;
@@ -132,7 +132,7 @@ bool parseManifest(const URL& manifestURL, const char* data, int length, Manifes
                 manifest.onlineWhitelistedURLs.append(url);
             
         } else if (mode == Fallback) {
-            const UChar* p = line.characters();
+            const UChar* p = line.deprecatedCharacters();
             const UChar* lineEnd = p + line.length();
             
             // Look for whitespace separating the two URLs
@@ -144,7 +144,7 @@ bool parseManifest(const URL& manifestURL, const char* data, int length, Manifes
                 continue;
             }
             
-            URL namespaceURL(manifestURL, String(line.characters(), p - line.characters()));
+            URL namespaceURL(manifestURL, String(line.deprecatedCharacters(), p - line.deprecatedCharacters()));
             if (!namespaceURL.isValid())
                 continue;
             if (namespaceURL.hasFragmentIdentifier())

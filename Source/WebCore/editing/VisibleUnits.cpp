@@ -295,10 +295,10 @@ static TextBreakIterator* wordBreakIteratorForMinOffsetBoundary(const VisiblePos
     if (previousBox && previousBox->isInlineTextBox()) {
         const InlineTextBox* previousTextBox = toInlineTextBox(previousBox);
         previousBoxLength = previousTextBox->len();
-        string.append(previousTextBox->renderer().text()->characters() + previousTextBox->start(), previousBoxLength);
+        string.append(previousTextBox->renderer().text()->deprecatedCharacters() + previousTextBox->start(), previousBoxLength);
         len += previousBoxLength;
     }
-    string.append(textBox->renderer().text()->characters() + textBox->start(), textBox->len());
+    string.append(textBox->renderer().text()->deprecatedCharacters() + textBox->start(), textBox->len());
     len += textBox->len();
 
     return wordBreakIterator(string.data(), len);
@@ -314,11 +314,11 @@ static TextBreakIterator* wordBreakIteratorForMaxOffsetBoundary(const VisiblePos
 
     int len = 0;
     string.clear();
-    string.append(textBox->renderer().text()->characters() + textBox->start(), textBox->len());
+    string.append(textBox->renderer().text()->deprecatedCharacters() + textBox->start(), textBox->len());
     len += textBox->len();
     if (nextBox && nextBox->isInlineTextBox()) {
         const InlineTextBox* nextTextBox = toInlineTextBox(nextBox);
-        string.append(nextTextBox->renderer().text()->characters() + nextTextBox->start(), nextTextBox->len());
+        string.append(nextTextBox->renderer().text()->deprecatedCharacters() + nextTextBox->start(), nextTextBox->len());
         len += nextTextBox->len();
     }
 
@@ -385,7 +385,7 @@ static VisiblePosition visualWordPosition(const VisiblePosition& visiblePosition
         else if (offsetInBox == box->caretMaxOffset())
             iter = wordBreakIteratorForMaxOffsetBoundary(visiblePosition, textBox, nextBoxInDifferentBlock, string, leafBoxes);
         else if (movingIntoNewBox) {
-            iter = wordBreakIterator(textBox->renderer().text()->characters() + textBox->start(), textBox->len());
+            iter = wordBreakIterator(textBox->renderer().text()->deprecatedCharacters() + textBox->start(), textBox->len());
             previouslyVisitedBox = box;
         }
 
@@ -502,7 +502,7 @@ static VisiblePosition previousBoundary(const VisiblePosition& c, BoundarySearch
 #else
             iteratorString.fill('x');
 #endif
-            string.insert(0, iteratorString.characters(), iteratorString.length());
+            string.insert(0, iteratorString.deprecatedCharacters(), iteratorString.length());
         }
         next = searchFunction(string.data(), string.size(), string.size() - suffixLength, MayHaveMoreContext, needMoreContext);
         if (next > 1) // FIXME: This is a work around for https://webkit.org/b/115070. We need to provide more contexts in general case.
@@ -580,7 +580,7 @@ static VisiblePosition nextBoundary(const VisiblePosition& c, BoundarySearchFunc
 #else
             iteratorString.fill('x');
 #endif
-            string.append(iteratorString.characters(), iteratorString.length());
+            string.append(iteratorString.deprecatedCharacters(), iteratorString.length());
         }
         next = searchFunction(string.data(), string.size(), prefixLength, MayHaveMoreContext, needMoreContext);
         if (next != string.size())

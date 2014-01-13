@@ -33,7 +33,7 @@ void SVGLengthList::parse(const String& value, SVGLengthMode mode)
     clear();
     ExceptionCode ec = 0;
 
-    const UChar* ptr = value.characters();
+    const UChar* ptr = value.deprecatedCharacters();
     const UChar* end = ptr + value.length();
     while (ptr < end) {
         const UChar* start = ptr;

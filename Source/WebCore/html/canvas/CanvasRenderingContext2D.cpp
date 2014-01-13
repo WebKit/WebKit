@@ -2143,7 +2143,7 @@ static void normalizeSpaces(String& text)
 
     unsigned textLength = text.length();
     Vector<UChar> charVector(textLength);
-    memcpy(charVector.data(), text.characters(), textLength * sizeof(UChar));
+    memcpy(charVector.data(), text.deprecatedCharacters(), textLength * sizeof(UChar));
 
     charVector[i++] = ' ';
 

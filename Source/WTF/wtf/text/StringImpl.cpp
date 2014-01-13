@@ -309,7 +309,7 @@ const UChar* StringImpl::getData16SlowCase() const
         // If this is a substring, return a pointer into the parent string.
         // TODO: Consider severing this string from the parent string
         unsigned offset = m_data8 - m_substringBuffer->characters8();
-        return m_substringBuffer->characters() + offset;
+        return m_substringBuffer->deprecatedCharacters() + offset;
     }
 
     STRING_STATS_ADD_UPCONVERTED_STRING(m_length);
@@ -539,7 +539,7 @@ PassRef<StringImpl> StringImpl::upper()
     }
 
 upconvert:
-    const UChar* source16 = characters();
+    const UChar* source16 = deprecatedCharacters();
 
     UChar* data16;
     RefPtr<StringImpl> newImpl = createUninitialized(m_length, data16);
@@ -597,7 +597,7 @@ PassRef<StringImpl> StringImpl::lower(const AtomicString& localeIdentifier)
     // Below, we pass in the hardcoded locale "tr". Passing that is more efficient than
     // allocating memory just to turn localeIdentifier into a C string, and we assume
     // there is no difference between the uppercasing for "tr" and "az" locales.
-    const UChar* source16 = characters();
+    const UChar* source16 = deprecatedCharacters();
     UChar* data16;
     RefPtr<StringImpl> newString = createUninitialized(length, data16);
     UErrorCode status = U_ZERO_ERROR;
@@ -627,7 +627,7 @@ PassRef<StringImpl> StringImpl::upper(const AtomicString& localeIdentifier)
     // Below, we pass in the hardcoded locale "tr". Passing that is more efficient than
     // allocating memory just to turn localeIdentifier into a C string, and we assume
     // there is no difference between the uppercasing for "tr" and "az" locales.
-    const UChar* source16 = characters();
+    const UChar* source16 = deprecatedCharacters();
     UChar* data16;
     RefPtr<StringImpl> newString = createUninitialized(length, data16);
     UErrorCode status = U_ZERO_ERROR;
@@ -998,7 +998,7 @@ size_t StringImpl::find(const LChar* matchString, unsigned index)
     // delta is the number of additional times to test; delta == 0 means test only once.
     unsigned delta = searchLength - matchLength;
 
-    const UChar* searchCharacters = characters() + index;
+    const UChar* searchCharacters = deprecatedCharacters() + index;
 
     // Optimization 2: keep a running hash of the strings,
     // only call equal if the hashes match.
@@ -1042,7 +1042,7 @@ size_t StringImpl::findIgnoringCase(const LChar* matchString, unsigned index)
     // delta is the number of additional times to test; delta == 0 means test only once.
     unsigned delta = searchLength - matchLength;
 
-    const UChar* searchCharacters = characters() + index;
+    const UChar* searchCharacters = deprecatedCharacters() + index;
 
     unsigned i = 0;
     // keep looping until we match

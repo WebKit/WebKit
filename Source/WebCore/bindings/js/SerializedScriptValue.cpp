@@ -444,7 +444,7 @@ public:
         }
         writeLittleEndian<uint8_t>(out, StringTag);
         writeLittleEndian(out, s.length());
-        return writeLittleEndian(out, s.impl()->characters(), s.length());
+        return writeLittleEndian(out, s.impl()->deprecatedCharacters(), s.length());
     }
 
     static void serializeUndefined(Vector<uint8_t>& out)
@@ -948,7 +948,7 @@ private:
         }
 
         writeLittleEndian<uint32_t>(m_buffer, str.length());
-        if (!writeLittleEndian<uint16_t>(m_buffer, reinterpret_cast<const uint16_t*>(str.characters()), str.length()))
+        if (!writeLittleEndian<uint16_t>(m_buffer, reinterpret_cast<const uint16_t*>(str.deprecatedCharacters()), str.length()))
             fail();
     }
 

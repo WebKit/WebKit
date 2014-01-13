@@ -165,7 +165,7 @@ public:
     }
 
     explicit ExternalCharacterTokenBuffer(const String& string)
-        : m_current(string.characters())
+        : m_current(string.deprecatedCharacters())
         , m_end(m_current + string.length())
         , m_isAll8BitData(string.length() && string.is8Bit())
     {

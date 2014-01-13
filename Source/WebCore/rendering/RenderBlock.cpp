@@ -5460,7 +5460,7 @@ TextRun RenderBlock::constructTextRun(RenderObject* context, const Font& font, c
         return constructTextRunInternal(context, font, text->characters8(), text->textLength(), style, expansion);
     return constructTextRunInternal(context, font, text->characters16(), text->textLength(), style, expansion);
 #else
-    return constructTextRunInternal(context, font, text->characters(), text->textLength(), style, expansion);
+    return constructTextRunInternal(context, font, text->deprecatedCharacters(), text->textLength(), style, expansion);
 #endif
 }
 
@@ -5472,7 +5472,7 @@ TextRun RenderBlock::constructTextRun(RenderObject* context, const Font& font, c
         return constructTextRunInternal(context, font, text->characters8() + offset, length, style, expansion);
     return constructTextRunInternal(context, font, text->characters16() + offset, length, style, expansion);
 #else
-    return constructTextRunInternal(context, font, text->characters() + offset, length, style, expansion);
+    return constructTextRunInternal(context, font, text->deprecatedCharacters() + offset, length, style, expansion);
 #endif
 }
 
@@ -5484,7 +5484,7 @@ TextRun RenderBlock::constructTextRun(RenderObject* context, const Font& font, c
         return constructTextRunInternal(context, font, string.characters8(), length, style, expansion, flags);
     return constructTextRunInternal(context, font, string.characters16(), length, style, expansion, flags);
 #else
-    return constructTextRunInternal(context, font, string.characters(), length, style, expansion, flags);
+    return constructTextRunInternal(context, font, string.deprecatedCharacters(), length, style, expansion, flags);
 #endif
 }
 

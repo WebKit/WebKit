@@ -83,7 +83,7 @@ size_t JSStringGetLength(JSStringRef string)
 
 const JSChar* JSStringGetCharactersPtr(JSStringRef string)
 {
-    return string->characters();
+    return string->deprecatedCharacters();
 }
 
 size_t JSStringGetMaximumUTF8CStringSize(JSStringRef string)
@@ -98,7 +98,7 @@ size_t JSStringGetUTF8CString(JSStringRef string, char* buffer, size_t bufferSiz
         return 0;
 
     char* p = buffer;
-    const UChar* d = string->characters();
+    const UChar* d = string->deprecatedCharacters();
     ConversionResult result = convertUTF16ToUTF8(&d, d + string->length(), &p, p + bufferSize - 1, true);
     *p++ = '\0';
     if (result != conversionOK && result != targetExhausted)
@@ -110,7 +110,7 @@ size_t JSStringGetUTF8CString(JSStringRef string, char* buffer, size_t bufferSiz
 bool JSStringIsEqual(JSStringRef a, JSStringRef b)
 {
     unsigned len = a->length();
-    return len == b->length() && 0 == memcmp(a->characters(), b->characters(), len * sizeof(UChar));
+    return len == b->length() && 0 == memcmp(a->deprecatedCharacters(), b->deprecatedCharacters(), len * sizeof(UChar));
 }
 
 bool JSStringIsEqualToUTF8CString(JSStringRef a, const char* b)

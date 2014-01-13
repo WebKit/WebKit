@@ -182,7 +182,7 @@ int SQLiteStatement::bindBlob(int index, const String& text)
     if (text.isEmpty() && !text.isNull())
         characters = &anyCharacter;
     else
-        characters = text.characters();
+        characters = text.deprecatedCharacters();
 
     return bindBlob(index, characters, text.length() * sizeof(UChar));
 }
@@ -200,7 +200,7 @@ int SQLiteStatement::bindText(int index, const String& text)
     if (text.isEmpty() && !text.isNull())
         characters = &anyCharacter;
     else
-        characters = text.characters();
+        characters = text.deprecatedCharacters();
 
     return sqlite3_bind_text16(m_statement, index, characters, sizeof(UChar) * text.length(), SQLITE_TRANSIENT);
 }

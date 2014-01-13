@@ -94,7 +94,7 @@ public:
     void advance();
     
     int length() const { return m_textLength; }
-    const UChar* characters() const { return m_textCharacters ? m_textCharacters : m_text.characters() + startOffset(); }
+    const UChar* characters() const { return m_textCharacters ? m_textCharacters : m_text.deprecatedCharacters() + startOffset(); }
     UChar characterAt(unsigned index) const;
     void appendTextToStringBuilder(StringBuilder&) const;
     

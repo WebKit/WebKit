@@ -503,7 +503,7 @@ PassRefPtr<SharedBuffer> utf8Buffer(const String& string)
 
     // Convert to runs of 8-bit characters.
     char* p = buffer.data();
-    const UChar* d = string.characters();
+    const UChar* d = string.deprecatedCharacters();
     WTF::Unicode::ConversionResult result = WTF::Unicode::convertUTF16ToUTF8(&d, d + length, &p, p + buffer.size(), true);
     if (result != WTF::Unicode::conversionOK)
         return 0;

@@ -308,7 +308,7 @@ static double parseInt(const String& s, const CharType* data, int radix)
     if (number >= mantissaOverflowLowerBound) {
         if (radix == 10) {
             size_t parsedLength;
-            number = parseDouble(s.characters() + firstDigitPosition, p - firstDigitPosition, parsedLength);
+            number = parseDouble(s.deprecatedCharacters() + firstDigitPosition, p - firstDigitPosition, parsedLength);
         } else if (radix == 2 || radix == 4 || radix == 8 || radix == 16 || radix == 32)
             number = parseIntOverflow(s.substringSharingImpl(firstDigitPosition, p - firstDigitPosition).utf8().data(), p - firstDigitPosition, radix);
     }

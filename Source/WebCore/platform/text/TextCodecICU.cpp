@@ -498,7 +498,7 @@ CString TextCodecICU::encode(const UChar* characters, size_t length, Unencodable
     if (shouldShowBackslashAsCurrencySymbolIn(m_encodingName)) {
         copy.append(characters, length);
         copy.replace('\\', 0xA5);
-        source = copy.characters();
+        source = copy.deprecatedCharacters();
         sourceLimit = source + copy.length();
     } else {
         source = characters;

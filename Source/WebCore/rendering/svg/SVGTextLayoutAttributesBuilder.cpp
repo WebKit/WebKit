@@ -88,7 +88,7 @@ static inline void processRenderSVGInlineText(RenderSVGInlineText* text, unsigne
         return;
     }
 
-    const UChar* characters = text->characters();
+    const UChar* characters = text->deprecatedCharacters();
     unsigned textLength = text->textLength();    
     for (unsigned textPosition = 0; textPosition < textLength; ++textPosition) {
         const UChar* currentCharacter = characters + textPosition;

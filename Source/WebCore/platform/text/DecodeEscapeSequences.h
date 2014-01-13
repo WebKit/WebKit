@@ -134,7 +134,7 @@ String decodeEscapeSequences(const String& string, const TextEncoding& encoding)
             continue;
         }
 
-        String decoded = EscapeSequence::decodeRun(string.characters() + encodedRunPosition, encodedRunEnd - encodedRunPosition, encoding);
+        String decoded = EscapeSequence::decodeRun(string.deprecatedCharacters() + encodedRunPosition, encodedRunEnd - encodedRunPosition, encoding);
         if (decoded.isEmpty())
             continue;
 

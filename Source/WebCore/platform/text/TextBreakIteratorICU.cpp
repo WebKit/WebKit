@@ -49,7 +49,7 @@ static TextBreakIterator* initializeIteratorWithRules(const char* breakRules)
     UParseError parseStatus;
     UErrorCode openStatus = U_ZERO_ERROR;
     String rules(breakRules);
-    TextBreakIterator* iterator = reinterpret_cast<TextBreakIterator*>(ubrk_openRules(rules.characters(), rules.length(), 0, 0, &parseStatus, &openStatus));
+    TextBreakIterator* iterator = reinterpret_cast<TextBreakIterator*>(ubrk_openRules(rules.deprecatedCharacters(), rules.length(), 0, 0, &parseStatus, &openStatus));
     ASSERT_WITH_MESSAGE(U_SUCCESS(openStatus), "ICU could not open a break iterator: %s (%d)", u_errorName(openStatus), openStatus);
     return iterator;
 }

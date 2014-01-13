@@ -691,7 +691,7 @@ void BinaryPropertyListSerializer::appendInteger(size_t integer)
 void BinaryPropertyListSerializer::appendStringObject(const String& string)
 {
     startObject();
-    const UChar* characters = string.characters();
+    const UChar* characters = string.deprecatedCharacters();
     unsigned length = string.length();
     if (charactersAreAllASCII(characters, length)) {
         if (length <= maxLengthInMarkerByte)
