@@ -17,6 +17,9 @@
  * Boston, MA 02110-1301, USA.
  */
 
-interface Comment : CharacterData {
+[
+    Constructor([Default=NullString] optional DOMString data),
+    ConstructorCallWith=ScriptExecutionContext
+] interface Comment : CharacterData {
 };
 

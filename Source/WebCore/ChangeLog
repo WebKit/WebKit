@@ -1,3 +1,22 @@
+2014-01-13  László Langó  <llango.u-szeged@partner.samsung.com>
+
+        Comment should be consructable.
+        https://bugs.webkit.org/show_bug.cgi?id=115642
+
+        Reviewed by Andreas Kling.
+
+        http://dom.spec.whatwg.org/#comment
+        This allows us to do `new Comment('abc')` instead of `document.createComment('abc')`.
+
+        Backported from Blink: https://chromium.googlesource.com/chromium/blink/+/06e4a37f6b11348606de5405edac1ada97499d2a%5E%21
+
+        Test: fast/dom/Comment/comment-constructor.html
+
+        * dom/Comment.cpp:
+        (WebCore::Comment::create):
+        * dom/Comment.h:
+        * dom/Comment.idl:
+
 2014-01-13  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r161808.
