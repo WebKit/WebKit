@@ -1,4 +1,23 @@
 =================
+WebKitGTK+  2.3.4
+=================
+
+What's new in WebKitGTK+ 2.3.4?
+
+  - Add API to WebKitResponsePolicyDecision to check if the MIME type
+    can be shown.
+  - Enable fullscreen API by default.
+  - Fix handling of HTTP certificates with the network process enabled.
+  - Fix downloads with the network process enabled.
+  - Fix handling of cookies when network process is enabled.
+  - Remove the partial file downloaded when the download operation
+    fails or is cancelled.
+  - Make WebKitWebPage::send-request signal work after a redirect.
+  - Add xdg.origin.url extended attribute to downloads in WebKit2.
+  - Fix WebGL with GLES.
+  - Translation updates: Dutch, Brazilian Portuguese.
+
+=================
 WebKitGTK+  2.3.3
 =================
 
