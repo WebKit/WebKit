@@ -1,3 +1,9 @@
+2014-01-12  Dan Bernstein  <mitz@apple.com>
+
+        Try to fix the Windows build after r161839.
+
+        * WebCore.vcxproj/WebCoreCommon.props:
+
 2014-01-12  Darin Adler  <darin@apple.com>
 
         Reduce use of String::characters
