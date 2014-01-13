@@ -35,6 +35,7 @@
 #include <WebCore/FileSystem.h>
 #include <WebCore/NotImplemented.h>
 #include <WebCore/ResourceHandle.h>
+#include <WebCore/SoupNetworkSession.h>
 #include <libsoup/soup.h>
 #include <wtf/gobject/GOwnPtr.h>
 #include <wtf/gobject/GRefPtr.h>
@@ -78,7 +79,7 @@ void NetworkProcess::platformInitializeNetworkProcess(const NetworkProcessCreati
 {
     ASSERT(!parameters.diskCacheDirectory.isEmpty());
     GRefPtr<SoupCache> soupCache = adoptGRef(soup_cache_new(parameters.diskCacheDirectory.utf8().data(), SOUP_CACHE_SINGLE_USER));
-    soup_session_add_feature(WebCore::ResourceHandle::defaultSession(), SOUP_SESSION_FEATURE(soupCache.get()));
+    SoupNetworkSession::defaultSession().setCache(soupCache.get());
     soup_cache_load(soupCache.get());
 
     if (!parameters.cookiePersistentStoragePath.isEmpty()) {
@@ -101,8 +102,7 @@ void NetworkProcess::platformSetCacheModel(CacheModel cacheModel)
     unsigned long urlCacheMemoryCapacity = 0;
     unsigned long urlCacheDiskCapacity = 0;
 
-    SoupSession* session = ResourceHandle::defaultSession();
-    SoupCache* cache = SOUP_CACHE(soup_session_get_feature(session, SOUP_TYPE_CACHE));
+    SoupCache* cache = SoupNetworkSession::defaultSession().cache();
     uint64_t diskFreeSize = getCacheDiskFreeSize(cache) / 1024 / 1024;
 
     uint64_t memSize = getMemorySize();
@@ -129,8 +129,7 @@ void NetworkProcess::clearCacheForAllOrigins(uint32_t cachesToClear)
     if (cachesToClear == InMemoryResourceCachesOnly)
         return;
 
-    SoupSession* session = ResourceHandle::defaultSession();
-    soup_cache_clear(SOUP_CACHE(soup_session_get_feature(session, SOUP_TYPE_CACHE)));
+    soup_cache_clear(SoupNetworkSession::defaultSession().cache());
 }
 
 void NetworkProcess::platformTerminate()

@@ -32,15 +32,12 @@
 #if PLATFORM(MAC) || USE(CFNETWORK)
 typedef const struct __CFURLStorageSession* CFURLStorageSessionRef;
 typedef struct OpaqueCFHTTPCookieStorage*  CFHTTPCookieStorageRef;
-#elif USE(SOUP)
-#include <wtf/gobject/GRefPtr.h>
-typedef struct _SoupCookieJar SoupCookieJar;
-typedef struct _SoupSession SoupSession;
 #endif
 
 namespace WebCore {
 
 class NetworkingContext;
+class SoupNetworkSession;
 
 class NetworkStorageSession {
     WTF_MAKE_NONCOPYABLE(NetworkStorageSession); WTF_MAKE_FAST_ALLOCATED;
@@ -60,9 +57,10 @@ public:
     CFURLStorageSessionRef platformSession() { return m_platformSession.get(); }
     RetainPtr<CFHTTPCookieStorageRef> cookieStorage() const;
 #elif USE(SOUP)
-    NetworkStorageSession(SoupSession*);
-    void setSoupSession(SoupSession* session) { m_session = session; }
-    SoupSession* soupSession() const { return m_session.get(); }
+    NetworkStorageSession(std::unique_ptr<SoupNetworkSession>);
+    ~NetworkStorageSession();
+    SoupNetworkSession& soupNetworkSession() const;
+    void setSoupNetworkSession(std::unique_ptr<SoupNetworkSession>);
 #else
     NetworkStorageSession(NetworkingContext*);
     ~NetworkStorageSession();
@@ -74,7 +72,7 @@ private:
     NetworkStorageSession();
     RetainPtr<CFURLStorageSessionRef> m_platformSession;
 #elif USE(SOUP)
-    GRefPtr<SoupSession> m_session;
+    std::unique_ptr<SoupNetworkSession> m_session;
 #else
     RefPtr<NetworkingContext> m_context;
 #endif

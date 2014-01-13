@@ -26,7 +26,7 @@
 #include "URL.h"
 #include "NetworkingContext.h"
 #include "PlatformCookieJar.h"
-#include "ResourceHandle.h"
+#include "SoupNetworkSession.h"
 #include <wtf/gobject/GRefPtr.h>
 #include <wtf/text/CString.h>
 
@@ -34,8 +34,7 @@ namespace WebCore {
 
 static SoupCookieJar* cookieJarForSession(const NetworkStorageSession& session)
 {
-    ASSERT(session.soupSession());
-    return SOUP_COOKIE_JAR(soup_session_get_feature(session.soupSession(), SOUP_TYPE_COOKIE_JAR));
+    return session.soupNetworkSession().cookieJar();
 }
 
 static GRefPtr<SoupCookieJar>& defaultCookieJar()

@@ -1,3 +1,28 @@
+2014-01-13  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [SOUP] Add SoupNetworkSession class to wrap a SoupSession
+        https://bugs.webkit.org/show_bug.cgi?id=126813
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Use the new SoupNetworkSession API.
+
+        * ewk/ewk_cookies.cpp:
+        (ewk_cookies_file_set):
+        * ewk/ewk_main.cpp:
+        (_ewk_init_body):
+        * ewk/ewk_network.cpp:
+        (ewk_network_proxy_uri_set):
+        (ewk_network_proxy_uri_get):
+        (ewk_network_tls_certificate_check_get):
+        (ewk_network_tls_certificate_check_set):
+        (ewk_network_tls_ca_certificates_path_get):
+        (ewk_network_tls_ca_certificates_path_set):
+        (ewk_network_default_soup_session_get):
+        * ewk/ewk_view.cpp:
+        (ewk_view_soup_session_get):
+        (ewk_view_soup_session_set):
+
 2014-01-12  Jinwoo Song  <jinwoo7.song@samsung.com>
 
         Fix build warnings by unused parameter

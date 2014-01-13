@@ -31,7 +31,7 @@
 
 #include "WKBase.h"
 #include "WebKit2Initialize.h"
-#include <WebCore/ResourceHandle.h>
+#include <WebCore/SoupNetworkSession.h>
 #include <WebKit2/NetworkProcess.h>
 #include <error.h>
 #include <runtime/InitializeThreading.h>
@@ -41,7 +41,6 @@
 #include <wtf/gobject/GRefPtr.h>
 
 #if PLATFORM(EFL)
-#include "ProxyResolverSoup.h"
 #include <Ecore.h>
 #endif
 
@@ -68,18 +67,7 @@ WK_EXPORT int NetworkProcessMain(int argc, char* argv[])
 
     InitializeWebKit2();
 
-#if USE(SOUP)
-    SoupSession* session = ResourceHandle::defaultSession();
-#if PLATFORM(EFL)
-    // Only for EFL because GTK port uses the default resolver, which uses GIO's proxy resolver.
-    const char* httpProxy = getenv("http_proxy");
-    if (httpProxy) {
-        const char* noProxy = getenv("no_proxy");
-        GRefPtr<SoupProxyURIResolver> resolver = adoptGRef(soupProxyResolverWkNew(httpProxy, noProxy));
-        soup_session_add_feature(session, SOUP_SESSION_FEATURE(resolver.get()));
-    }
-#endif
-#endif
+    SoupNetworkSession::defaultSession().setupHTTPProxyFromEnvironment();
 
     int socket = atoi(argv[1]);
 
@@ -92,16 +80,15 @@ WK_EXPORT int NetworkProcessMain(int argc, char* argv[])
     // Despite using system CAs to validate certificates we're
     // accepting invalid certificates by default. New API will be
     // added later to let client accept/discard invalid certificates.
-    g_object_set(session, SOUP_SESSION_SSL_USE_SYSTEM_CA_FILE, TRUE,
-        SOUP_SESSION_SSL_STRICT, FALSE, NULL);
+    SoupNetworkSession::defaultSession().setSSLPolicy(SoupNetworkSession::SSLUseSystemCAFile);
 #endif
 
     RunLoop::run();
 
 #if USE(SOUP)
-    if (SoupSessionFeature* soupCache = soup_session_get_feature(session, SOUP_TYPE_CACHE)) {
-        soup_cache_flush(SOUP_CACHE(soupCache));
-        soup_cache_dump(SOUP_CACHE(soupCache));
+    if (SoupCache* soupCache = SoupNetworkSession::defaultSession().cache()) {
+        soup_cache_flush(soupCache);
+        soup_cache_dump(soupCache);
     }
 #endif
 

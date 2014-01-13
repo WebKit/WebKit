@@ -65,6 +65,7 @@
 #include "RuntimeEnabledFeatures.h"
 #include "ScriptController.h"
 #include "Settings.h"
+#include "SoupNetworkSession.h"
 #include "TiledBackingStore.h"
 #include "c_instance.h"
 #include "ewk_contextmenu_private.h"
@@ -4546,7 +4547,7 @@ SoupSession* ewk_view_soup_session_get(const Evas_Object* ewkView)
 {
     EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData, 0);
     EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv, 0);
-    return priv->storageSession->soupSession();
+    return priv->storageSession->soupNetworkSession().soupSession();
 }
 
 void ewk_view_soup_session_set(Evas_Object* ewkView, SoupSession* session)
@@ -4558,7 +4559,7 @@ void ewk_view_soup_session_set(Evas_Object* ewkView, SoupSession* session)
             "a SoupSessionSync was provided.");
         return;
     }
-    priv->storageSession->setSoupSession(session);
+    priv->storageSession->setSoupNetworkSession(WebCore::SoupNetworkSession::createForSoupSession(session));
 }
 
 Eina_Bool ewk_view_setting_enable_xss_auditor_get(const Evas_Object* ewkView)

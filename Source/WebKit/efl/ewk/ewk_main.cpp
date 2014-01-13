@@ -29,6 +29,7 @@
 #include "ResourceHandle.h"
 #include "ScriptController.h"
 #include "Settings.h"
+#include "SoupNetworkSession.h"
 #include "StorageTracker.h"
 #include "StorageTrackerClientEfl.h"
 #include "ewk_auth_soup_private.h"
@@ -204,9 +205,8 @@ Eina_Bool _ewk_init_body(void)
 
     WebCore::StorageTracker::initializeTracker(localStorageDirectory.utf8().data(), trackerClient());
 
-    SoupSession* session = WebCore::ResourceHandle::defaultSession();
     SoupSessionFeature* auth_dialog = static_cast<SoupSessionFeature*>(g_object_new(EWK_TYPE_SOUP_AUTH_DIALOG, 0));
-    soup_session_add_feature(session, auth_dialog);
+    soup_session_add_feature(WebCore::SoupNetworkSession::defaultSession().soupSession(), auth_dialog);
 
     WebCore::ResourceHandle::setIgnoreSSLErrors(true);
 

@@ -29,7 +29,7 @@
 #include "DNSResolveQueue.h"
 
 #include "GOwnPtrSoup.h"
-#include "ResourceHandle.h"
+#include "SoupNetworkSession.h"
 #include <libsoup/soup.h>
 #include <wtf/MainThread.h>
 #include <wtf/text/CString.h>
@@ -53,7 +53,7 @@ void DNSResolveQueue::platformResolve(const String& hostname)
 {
     ASSERT(isMainThread());
 
-    soup_session_prefetch_dns(ResourceHandle::defaultSession(), hostname.utf8().data(), 0, resolvedCallback, 0);
+    soup_session_prefetch_dns(SoupNetworkSession::defaultSession().soupSession(), hostname.utf8().data(), nullptr, resolvedCallback, nullptr);
 }
 
 void prefetchDNS(const String& hostname)

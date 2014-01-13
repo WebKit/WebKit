@@ -30,6 +30,7 @@
 #include "WebSoupRequestManagerProxyMessages.h"
 #include <WebCore/ResourceHandle.h>
 #include <WebCore/ResourceRequest.h>
+#include <WebCore/SoupNetworkSession.h>
 #include <wtf/gobject/GOwnPtr.h>
 #include <wtf/text/CString.h>
 
@@ -98,7 +99,7 @@ void WebSoupRequestManager::registerURIScheme(const String& scheme)
     g_ptr_array_add(m_schemes.get(), g_strdup(scheme.utf8().data()));
     g_ptr_array_add(m_schemes.get(), 0);
 
-    SoupSession* session = WebCore::ResourceHandle::defaultSession();
+    SoupSession* session = WebCore::SoupNetworkSession::defaultSession().soupSession();
     SoupRequestClass* genericRequestClass = static_cast<SoupRequestClass*>(g_type_class_ref(WEBKIT_TYPE_SOUP_REQUEST_GENERIC));
     genericRequestClass->schemes = const_cast<const char**>(reinterpret_cast<char**>(m_schemes->pdata));
     soup_session_add_feature_by_type(session, WEBKIT_TYPE_SOUP_REQUEST_GENERIC);

@@ -180,9 +180,7 @@ public:
     bool cancelledOrClientless();
     void ensureReadBuffer();
     size_t currentStreamPosition() const;
-    static SoupSession* defaultSession();
-    static SoupSession* createTestingSession();
-    static SoupSession* createPrivateBrowsingSession();
+    void didStartRequest();
     static uint64_t getSoupRequestInitiatingPageID(SoupRequest*);
     static void setHostAllowsAnyHTTPSCertificate(const String&);
     static void setClientCertificate(const String& host, GTlsCertificate*);

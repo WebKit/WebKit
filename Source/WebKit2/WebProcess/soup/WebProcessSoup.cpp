@@ -40,11 +40,10 @@
 #include <WebCore/MemoryCache.h>
 #include <WebCore/PageCache.h>
 #include <WebCore/ResourceHandle.h>
+#include <WebCore/SoupNetworkSession.h>
 #include <libsoup/soup.h>
 #include <wtf/gobject/GOwnPtr.h>
 #include <wtf/gobject/GRefPtr.h>
-#include <wtf/text/CString.h>
-#include <wtf/text/StringBuilder.h>
 
 namespace WebKit {
 
@@ -94,7 +93,7 @@ void WebProcess::platformSetCacheModel(CacheModel cacheModel)
     SoupCache* cache = nullptr;
 
     if (!usesNetworkProcess()) {
-        cache = SOUP_CACHE(soup_session_get_feature(WebCore::ResourceHandle::defaultSession(), SOUP_TYPE_CACHE));
+        cache = WebCore::SoupNetworkSession::defaultSession().cache();
         diskFreeSize = getCacheDiskFreeSize(cache) / 1024 / 1024;
     }
 
@@ -122,52 +121,12 @@ void WebProcess::platformClearResourceCaches(ResourceCachesToClear cachesToClear
     if (usesNetworkProcess())
         return;
 
-    soup_cache_clear(SOUP_CACHE(soup_session_get_feature(WebCore::ResourceHandle::defaultSession(), SOUP_TYPE_CACHE)));
-}
-
-// This function is based on Epiphany code in ephy-embed-prefs.c.
-static CString buildAcceptLanguages(Vector<String> languages)
-{
-    // Ignore "C" locale.
-    size_t position = languages.find("c");
-    if (position != notFound)
-        languages.remove(position);
-
-    // Fallback to "en" if the list is empty.
-    if (languages.isEmpty())
-        return "en";
-
-    // Calculate deltas for the quality values.
-    int delta;
-    if (languages.size() < 10)
-        delta = 10;
-    else if (languages.size() < 20)
-        delta = 5;
-    else
-        delta = 1;
-
-    // Set quality values for each language.
-    StringBuilder builder;
-    for (size_t i = 0; i < languages.size(); ++i) {
-        if (i)
-            builder.append(", ");
-
-        builder.append(languages[i]);
-
-        int quality = 100 - i * delta;
-        if (quality > 0 && quality < 100) {
-            char buffer[8];
-            g_ascii_formatd(buffer, 8, "%.2f", quality / 100.0);
-            builder.append(String::format(";q=%s", buffer));
-        }
-    }
-
-    return builder.toString().utf8();
+    soup_cache_clear(WebCore::SoupNetworkSession::defaultSession().cache());
 }
 
 static void setSoupSessionAcceptLanguage(Vector<String> languages)
 {
-    g_object_set(WebCore::ResourceHandle::defaultSession(), "accept-language", buildAcceptLanguages(languages).data(), NULL);
+    WebCore::SoupNetworkSession::defaultSession().setAcceptLanguages(languages);
 }
 
 static void languageChanged(void*)
@@ -191,7 +150,7 @@ void WebProcess::platformInitializeWebProcess(const WebProcessCreationParameters
 
     ASSERT(!parameters.diskCacheDirectory.isEmpty());
     GRefPtr<SoupCache> soupCache = adoptGRef(soup_cache_new(parameters.diskCacheDirectory.utf8().data(), SOUP_CACHE_SINGLE_USER));
-    soup_session_add_feature(WebCore::ResourceHandle::defaultSession(), SOUP_SESSION_FEATURE(soupCache.get()));
+    WebCore::SoupNetworkSession::defaultSession().setCache(soupCache.get());
     soup_cache_load(soupCache.get());
 
     if (!parameters.cookiePersistentStoragePath.isEmpty()) {

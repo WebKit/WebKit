@@ -23,6 +23,7 @@
 #include "NetworkStateNotifier.h"
 #include "ProxyResolverSoup.h"
 #include "ResourceHandle.h"
+#include "SoupNetworkSession.h"
 #include "ewk_private.h"
 #include <Eina.h>
 #include <libsoup/soup.h>
@@ -30,59 +31,39 @@
 
 void ewk_network_proxy_uri_set(const char* proxy)
 {
-    SoupSession* session = WebCore::ResourceHandle::defaultSession();
-
-    if (!proxy) {
+    if (!proxy)
         ERR("no proxy uri. remove proxy feature in soup.");
-        soup_session_remove_feature_by_type(session, SOUP_TYPE_PROXY_URI_RESOLVER);
-        return;
-    }
-
-    SoupProxyURIResolver* resolverEfl = soupProxyResolverWkNew(proxy, 0);
-    soup_session_add_feature(session, SOUP_SESSION_FEATURE(resolverEfl));
-    g_object_unref(resolverEfl);
+    WebCore::SoupNetworkSession::defaultSession().setHTTPProxy(proxy, 0);
 }
 
 const char* ewk_network_proxy_uri_get(void)
 {
-    SoupURI* uri;
-    SoupSession* session = WebCore::ResourceHandle::defaultSession();
-    SoupProxyURIResolver* resolver = SOUP_PROXY_URI_RESOLVER(soup_session_get_feature(session, SOUP_TYPE_PROXY_URI_RESOLVER));
-    if (!resolver)
-        return 0;
-
-    g_object_get(resolver, SOUP_PROXY_RESOLVER_WK_PROXY_URI, &uri, NULL);
-
+    char* uri = WebCore::SoupNetworkSession::defaultSession().httpProxy();
     if (!uri) {
         ERR("no proxy uri");
         return 0;
     }
 
-    WTF::String proxy = soup_uri_to_string(uri, false);
-    return eina_stringshare_add(proxy.utf8().data());
+    return eina_stringshare_add(uri);
 }
 
 Eina_Bool ewk_network_tls_certificate_check_get()
 {
-    bool checkCertificates = false;
-
-    SoupSession* defaultSession = WebCore::ResourceHandle::defaultSession();
-    g_object_get(defaultSession, "ssl-strict", &checkCertificates, NULL);
-
-    return checkCertificates;
+    unsigned policy = WebCore::SoupNetworkSession::defaultSession().sslPolicy();
+    return policy & WebCore::SoupNetworkSession::SSLStrict;
 }
 
 void ewk_network_tls_certificate_check_set(Eina_Bool checkCertificates)
 {
-    SoupSession* defaultSession = WebCore::ResourceHandle::defaultSession();
-    g_object_set(defaultSession, "ssl-strict", checkCertificates, NULL);
+    unsigned policy = WebCore::SoupNetworkSession::defaultSession().sslPolicy();
+    WebCore::SoupNetworkSession::defaultSession().setSSLPolicy(policy | WebCore::SoupNetworkSession::SSLStrict);
 }
 
 const char* ewk_network_tls_ca_certificates_path_get()
 {
     const char* bundlePath = 0;
 
-    SoupSession* defaultSession = WebCore::ResourceHandle::defaultSession();
+    SoupSession* defaultSession = WebCore::SoupNetworkSession::defaultSession().soupSession();
     g_object_get(defaultSession, "ssl-ca-file", &bundlePath, NULL);
 
     return bundlePath;
@@ -90,11 +71,11 @@ const char* ewk_network_tls_ca_certificates_path_get()
 
 void ewk_network_tls_ca_certificates_path_set(const char* bundlePath)
 {
-    SoupSession* defaultSession = WebCore::ResourceHandle::defaultSession();
+    SoupSession* defaultSession = WebCore::SoupNetworkSession::defaultSession().soupSession();
     g_object_set(defaultSession, "ssl-ca-file", bundlePath, NULL);
 }
 
 SoupSession* ewk_network_default_soup_session_get()
 {
-    return WebCore::ResourceHandle::defaultSession();
+    return WebCore::SoupNetworkSession::defaultSession().soupSession();
 }

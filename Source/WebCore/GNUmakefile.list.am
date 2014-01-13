@@ -5472,7 +5472,6 @@ webcore_platform_sources += \
 	Source/WebCore/platform/network/BlobRegistryImpl.h \
 	Source/WebCore/platform/network/BlobResourceHandle.cpp \
 	Source/WebCore/platform/network/BlobResourceHandle.h \
-	Source/WebCore/platform/network/soup/CertificateInfo.h \
 	Source/WebCore/platform/network/BlobStorageData.h \
 	Source/WebCore/platform/network/FormDataBuilder.cpp \
 	Source/WebCore/platform/network/FormDataBuilder.h \
@@ -5494,6 +5493,7 @@ webcore_platform_sources += \
 	Source/WebCore/platform/network/SynchronousLoaderClient.h \
 	Source/WebCore/platform/network/soup/AuthenticationChallenge.h \
 	Source/WebCore/platform/network/soup/AuthenticationChallengeSoup.cpp \
+	Source/WebCore/platform/network/soup/CertificateInfo.h \
 	Source/WebCore/platform/network/soup/CertificateInfo.cpp \
 	Source/WebCore/platform/network/soup/CookieJarSoup.cpp \
 	Source/WebCore/platform/network/soup/CookieJarSoup.h \
@@ -5506,6 +5506,8 @@ webcore_platform_sources += \
 	Source/WebCore/platform/network/soup/ResourceRequestSoup.cpp \
 	Source/WebCore/platform/network/soup/ResourceResponse.h \
 	Source/WebCore/platform/network/soup/ResourceResponseSoup.cpp \
+	Source/WebCore/platform/network/soup/SoupNetworkSession.h \
+	Source/WebCore/platform/network/soup/SoupNetworkSession.cpp \
 	Source/WebCore/platform/network/soup/SynchronousLoaderClientSoup.cpp \
 	Source/WebCore/platform/ScrollableArea.cpp \
 	Source/WebCore/platform/ScrollableArea.h \

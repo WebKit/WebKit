@@ -1,3 +1,89 @@
+2014-01-13  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [SOUP] Add SoupNetworkSession class to wrap a SoupSession
+        https://bugs.webkit.org/show_bug.cgi?id=126813
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Add SoupNetworkSession class that wraps a SoupSession and move all
+        the code related to the SoupSession from ResourceHandle to
+        SoupNetworkSession, including the static methods to get the
+        default session and create testing and private sessions.
+
+        * GNUmakefile.list.am: Add new files to compilation.
+        * PlatformEfl.cmake: Ditto.
+        * PlatformGTK.cmake: Ditto.
+        * platform/network/NetworkStorageSession.h: Use SoupNetworkSession
+        instead of SoupSession.
+        * platform/network/ResourceHandle.h:
+        * platform/network/soup/CookieJarSoup.cpp:
+        (WebCore::cookieJarForSession): Use SoupNetworkSession to get the
+        SoupSession.
+        * platform/network/soup/DNSSoup.cpp:
+        (WebCore::DNSResolveQueue::platformResolve): Ditto.
+        * platform/network/soup/NetworkStorageSessionSoup.cpp:
+        (WebCore::NetworkStorageSession::NetworkStorageSession): Use
+        SoupNetworkSession instead of SoupSession.
+        (WebCore::NetworkStorageSession::~NetworkStorageSession):
+        (WebCore::NetworkStorageSession::defaultStorageSession): Create a
+        NetworkStorageSession with a NULL SoupNetworkSession which means
+        that the default SoupNetworkSession will be used.
+        (WebCore::NetworkStorageSession::createPrivateBrowsingSession):
+        Call SoupNetworkSession::createPrivateBrowsingSession() to create
+        the private session.
+        (WebCore::NetworkStorageSession::switchToNewTestingSession): Call
+        SoupNetworkSession::createTestingSession() to create the testing
+        session.
+        (WebCore::NetworkStorageSession::soupNetworkSession): Return the
+        SoupNetworkSession or the default one.
+        (WebCore::NetworkStorageSession::setSoupNetworkSession): Set a new
+        SoupNetworkSession.
+        * platform/network/soup/ResourceHandleSoup.cpp:
+        (WebCore::sessionFromContext): Use SoupNetworkSession to get the
+        SoupSession.
+        (WebCore::ResourceHandleInternal::soupSession): Simply call
+        sessionFromContext(), since ensureSessionIsInitialized() is no
+        longer needed, because the SoupSession are now initialized in the
+        SoupNetworkSession constructor.
+        (WebCore::ResourceHandle::didStartRequest): Function to notify the
+        ResourceHandle that current request has just started for web timing.
+        * platform/network/soup/SoupNetworkSession.cpp: Added.
+        (WebCore::soupLogPrinter): Logger callback.
+        (WebCore::SoupNetworkSession::defaultSession): Return a reference
+        to the default SoupNetworkSession.
+        (WebCore::SoupNetworkSession::createPrivateBrowsingSession):
+        Create a new private session.
+        (WebCore::SoupNetworkSession::createTestingSession): Create a new
+        testing session.
+        (WebCore::SoupNetworkSession::createForSoupSession): Create a new
+        SoupNetworkSession for the given SoupSession.
+        (WebCore::authenticateCallback): Callback emitted by the
+        SoupSession when the request needs authentication.
+        (WebCore::requestStartedCallback): Callback emitted by the
+        SoupSession when as request has just started.
+        (WebCore::SoupNetworkSession::SoupNetworkSession):
+        (WebCore::SoupNetworkSession::~SoupNetworkSession):
+        (WebCore::SoupNetworkSession::setupLogger): Helper private
+        function to setup the logger.
+        (WebCore::SoupNetworkSession::setCookieJar): Set a new CookieJar
+        in the session replacing the existing one.
+        (WebCore::SoupNetworkSession::cookieJar): Return the current
+        CookieJar of the session.
+        (WebCore::SoupNetworkSession::setCache): Set a disk cache.
+        (WebCore::SoupNetworkSession::cache): Return the current disk cache.
+        (WebCore::SoupNetworkSession::setSSLPolicy): Set the SSL policy.
+        (WebCore::SoupNetworkSession::sslPolicy): Get the current SSL policy.
+        (WebCore::SoupNetworkSession::setHTTPProxy): Set the HTTP proxy.
+        (WebCore::SoupNetworkSession::httpProxy): Get the current HTTP proxy.
+        (WebCore::SoupNetworkSession::setupHTTPProxyFromEnvironment): Set
+        the HTTP proxy using the environment variables.
+        (WebCore::buildAcceptLanguages): Helper function build the accept
+        language string in the format expected by soup (RFC 2616).
+        (WebCore::SoupNetworkSession::setAcceptLanguages): Set the accept
+        language for the given list of languages.
+        * platform/network/soup/SoupNetworkSession.h: Added.
+        (WebCore::SoupNetworkSession::soupSession): Return the SoupSession.
+
 2014-01-13  Brent Fulgham  <bfulgham@apple.com>
 
         [WebGL] Error messages should use source code labels, not internal mangled symbols.

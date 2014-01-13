@@ -39,6 +39,7 @@
 #include "ResourceHandleInternal.h"
 #include "ResourceResponse.h"
 #include "SchemeRegistry.h"
+#include "SoupNetworkSession.h"
 #include "TextEncodingRegistry.h"
 #include "webkitapplicationcache.h"
 #include "webkitfavicondatabase.h"
@@ -83,7 +84,7 @@ using namespace WebCore;
 SoupSession* webkit_get_default_session ()
 {
     webkitInit();
-    return ResourceHandle::defaultSession();
+    return SoupNetworkSession::defaultSession().soupSession();
 }
 
 /**

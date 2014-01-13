@@ -35,7 +35,7 @@
 #include <Efreet.h>
 #include <WebCore/AuthenticationChallenge.h>
 #include <WebCore/NetworkingContext.h>
-#include <WebCore/ResourceHandle.h>
+#include <WebCore/SoupNetworkSession.h>
 #include <WebKit2/WebProcess.h>
 #include <libsoup/soup.h>
 #include <runtime/Operations.h>
@@ -114,14 +114,7 @@ WK_EXPORT int WebProcessMainEfl(int argc, char* argv[])
 
     InitializeWebKit2();
 
-    SoupSession* session = WebCore::ResourceHandle::defaultSession();
-    const char* httpProxy = getenv("http_proxy");
-    if (httpProxy) {
-        const char* noProxy = getenv("no_proxy");
-        SoupProxyURIResolver* resolverEfl = soupProxyResolverWkNew(httpProxy, noProxy);
-        soup_session_add_feature(session, SOUP_SESSION_FEATURE(resolverEfl));
-        g_object_unref(resolverEfl);
-    }
+    SoupNetworkSession::defaultSession().setupHTTPProxyFromEnvironment();
 
     int socket = atoi(argv[1]);
 
@@ -132,9 +125,9 @@ WK_EXPORT int WebProcessMainEfl(int argc, char* argv[])
 
     RunLoop::run();
 
-    if (SoupSessionFeature* soupCache = soup_session_get_feature(session, SOUP_TYPE_CACHE)) {
-        soup_cache_flush(SOUP_CACHE(soupCache));
-        soup_cache_dump(SOUP_CACHE(soupCache));
+    if (SoupCache* soupCache = SoupNetworkSession::defaultSession().cache()) {
+        soup_cache_flush(soupCache);
+        soup_cache_dump(soupCache);
     }
 
     edje_shutdown();

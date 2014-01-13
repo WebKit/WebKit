@@ -28,14 +28,19 @@
 #include "NetworkStorageSession.h"
 
 #include "ResourceHandle.h"
+#include "SoupNetworkSession.h"
 #include <wtf/MainThread.h>
 #include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
 
-NetworkStorageSession::NetworkStorageSession(SoupSession* session)
-    : m_session(adoptGRef(session))
+NetworkStorageSession::NetworkStorageSession(std::unique_ptr<SoupNetworkSession> session)
+    : m_session(std::move(session))
     , m_isPrivate(false)
+{
+}
+
+NetworkStorageSession::~NetworkStorageSession()
 {
 }
 
@@ -49,20 +54,30 @@ static std::unique_ptr<NetworkStorageSession>& defaultSession()
 NetworkStorageSession& NetworkStorageSession::defaultStorageSession()
 {
     if (!defaultSession())
-        defaultSession() = std::make_unique<NetworkStorageSession>(ResourceHandle::defaultSession());
+        defaultSession() = std::make_unique<NetworkStorageSession>(nullptr);
     return *defaultSession();
 }
 
 std::unique_ptr<NetworkStorageSession> NetworkStorageSession::createPrivateBrowsingSession(const String&)
 {
-    auto session = std::make_unique<NetworkStorageSession>(ResourceHandle::createPrivateBrowsingSession());
+    auto session = std::make_unique<NetworkStorageSession>(SoupNetworkSession::createPrivateBrowsingSession());
     session->m_isPrivate = true;
     return session;
 }
 
 void NetworkStorageSession::switchToNewTestingSession()
 {
-    defaultSession() = std::make_unique<NetworkStorageSession>(ResourceHandle::createTestingSession());
+    defaultSession() = std::make_unique<NetworkStorageSession>(SoupNetworkSession::createTestingSession());
+}
+
+SoupNetworkSession& NetworkStorageSession::soupNetworkSession() const
+{
+    return m_session ? *m_session : SoupNetworkSession::defaultSession();
+}
+
+void NetworkStorageSession::setSoupNetworkSession(std::unique_ptr<SoupNetworkSession> session)
+{
+    m_session = std::move(session);
 }
 
 }

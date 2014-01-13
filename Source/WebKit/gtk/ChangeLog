@@ -1,5 +1,16 @@
 2014-01-13  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [SOUP] Add SoupNetworkSession class to wrap a SoupSession
+        https://bugs.webkit.org/show_bug.cgi?id=126813
+
+        Reviewed by Gustavo Noronha Silva.
+
+        * webkit/webkitglobals.cpp:
+        (webkit_get_default_session): Use the new SoupNetworkSession API
+        to get the default SoupSession
+
+2014-01-13  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         Unreviewed. Update NEWS and Versions.m4 for 2.3.4 release.
 
         * NEWS: Added release notes for 2.3.4.

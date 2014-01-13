@@ -22,7 +22,7 @@
 #include "ewk_cookies.h"
 
 #include "CookieJarSoup.h"
-#include "ResourceHandle.h"
+#include "SoupNetworkSession.h"
 #include <Eina.h>
 #include <eina_safety_checks.h>
 #include <glib.h>
@@ -42,13 +42,9 @@ Eina_Bool ewk_cookies_file_set(const char* filename)
 
     soup_cookie_jar_set_accept_policy(cookieJar, SOUP_COOKIE_JAR_ACCEPT_NO_THIRD_PARTY);
 
-    SoupSession* session = WebCore::ResourceHandle::defaultSession();
-    SoupSessionFeature* oldjar = soup_session_get_feature(session, SOUP_TYPE_COOKIE_JAR);
-    if (oldjar)
-        soup_session_remove_feature(session, oldjar);
-
+    WebCore::SoupNetworkSession::defaultSession().setCookieJar(cookieJar);
     WebCore::setSoupCookieJar(cookieJar);
-    soup_session_add_feature(session, SOUP_SESSION_FEATURE(cookieJar));
+    g_object_unref(cookieJar);
 
     return true;
 }
