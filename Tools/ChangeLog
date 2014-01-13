@@ -1,3 +1,33 @@
+2014-01-13  Daniel Batyai  <dbatyai.u-szeged@partner.samsung.com>
+
+        Remove wdiff
+        https://bugs.webkit.org/show_bug.cgi?id=124766
+
+        Reviewed by Ryosuke Niwa.
+
+        * Scripts/webkitpy/common/net/resultsjsonparser_unittest.py:
+        (ResultsJSONParserTest):
+        * Scripts/webkitpy/layout_tests/controllers/test_result_writer.py:
+        (TestResultWriter):
+        (TestResultWriter.create_text_diff_and_write_result):
+        * Scripts/webkitpy/layout_tests/models/test_run_results.py:
+        (summarize_results):
+        * Scripts/webkitpy/layout_tests/run_webkit_tests_integrationtest.py:
+        (RunTest.test_output_diffs):
+        * Scripts/webkitpy/port/base.py:
+        (Port.__init__):
+        (Port.driver_stop_timeout):
+        (Port.check_image_diff):
+        (Port.repository_paths):
+        (Port._path_to_lighttpd_php):
+        * Scripts/webkitpy/port/base_unittest.py:
+        (PortTest.test_default_child_processes):
+        (PortTest.test_pretty_patch_script_error):
+        * Scripts/webkitpy/port/port_testcase.py:
+        (PortTestCase.test_diff_image_crashed):
+        * Scripts/webkitpy/port/test.py:
+        (TestPort.operating_system):
+
 2014-01-13  Martin Robinson  <mrobinson@igalia.com>
 
         Build fix for the GTK+ CMake port

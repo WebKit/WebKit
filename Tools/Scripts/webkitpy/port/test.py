@@ -451,9 +451,6 @@ class TestPort(Port):
     def operating_system(self):
         return self._operating_system
 
-    def _path_to_wdiff(self):
-        return None
-
     def default_results_directory(self):
         return '/tmp/layout-test-results'
 

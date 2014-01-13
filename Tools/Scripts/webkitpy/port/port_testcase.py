@@ -291,10 +291,6 @@ class PortTestCase(unittest.TestCase):
         self.assertEqual(port.diff_image('foo', 'bar'), ('', 0, 'ImageDiff crashed\n'))
         port.clean_up_test_run()
 
-    def test_check_wdiff(self):
-        port = self.make_port()
-        port.check_wdiff()
-
     def integration_test_websocket_server__normal(self):
         port = self.make_port()
         self.assert_servers_are_down('localhost', self.WEBSOCKET_PORTS)

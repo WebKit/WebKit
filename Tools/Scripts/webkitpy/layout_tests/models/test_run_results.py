@@ -249,7 +249,6 @@ def summarize_results(port_obj, expectations, initial_results, retry_results, en
     results['uses_expectations_file'] = port_obj.uses_test_expectations_file()
     results['interrupted'] = initial_results.interrupted  # Does results.html have enough information to compute this itself? (by checking total number of results vs. total number of tests?)
     results['layout_tests_dir'] = port_obj.layout_tests_dir()
-    results['has_wdiff'] = port_obj.wdiff_available()
     results['has_pretty_patch'] = port_obj.pretty_patch.pretty_patch_available()
     results['pixel_tests_enabled'] = port_obj.get_option('pixel_tests')
 

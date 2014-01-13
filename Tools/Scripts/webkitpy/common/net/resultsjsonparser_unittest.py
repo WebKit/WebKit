@@ -80,8 +80,7 @@ class ResultsJSONParserTest(unittest.TestCase):
     "has_pretty_patch": false,
     "fixable": 1220,
     "num_flaky": 0,
-    "uses_expectations_file": true,
-    "has_wdiff": false
+    "uses_expectations_file": true
 });"""
 
     def test_basic(self):
