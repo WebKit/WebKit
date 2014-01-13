@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004, 2005, 2006, 2013 Apple Inc.
+ * Copyright (C) 2004, 2005, 2006, 2013, 2014 Apple Inc. All rights reserved.
  * Copyright (C) 2009 Google Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -29,7 +29,7 @@
 
 #include <wtf/Platform.h>
 
-#if PLATFORM(MAC) || PLATFORM(IOS)
+#if PLATFORM(COCOA)
 #define WTF_USE_FILE_LOCK 1
 #endif
 
@@ -101,9 +101,8 @@
 #endif
 
 #if PLATFORM(MAC) && !PLATFORM(IOS)
-// New theme
 #define WTF_USE_NEW_THEME 1
-#endif // PLATFORM(MAC)
+#endif
 
 #if USE(CG)
 #ifndef CGFLOAT_DEFINED
@@ -118,11 +117,6 @@ typedef float CGFloat;
 
 #if PLATFORM(WIN) && USE(CG)
 #define WTF_USE_SAFARI_THEME 1
-#endif
-
-// CoreAnimation is available to IOS, Mac and Windows if using CG
-#if PLATFORM(MAC) || PLATFORM(IOS) || (PLATFORM(WIN) && USE(CG))
-#define WTF_USE_CA 1
 #endif
 
 #if PLATFORM(IOS)

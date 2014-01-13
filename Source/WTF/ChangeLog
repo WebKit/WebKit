@@ -1,3 +1,17 @@
+2014-01-12  Darin Adler  <darin@apple.com>
+
+        Add PLATFORM(COCOA) and USE(FOUNDATION)
+        https://bugs.webkit.org/show_bug.cgi?id=126859
+
+        Reviewed by Anders Carlsson.
+
+        * wtf/Platform.h: Added PLATFORM(COCOA), which for now is set at exactly the same
+        times that PLATFORM(MAC) is. Added USE(FOUNDATION), which is set at the same times
+        that PLATFORM(COCOA) is. Re-organize the PLATFORM(MAC) and PLATFORM(IOS) settings
+        in the header so they are a bit easier to read. Put HAVE_LANGINFO_H in with the
+        rest of the OS(UNIX) settings and put HAVE_READLINE in with the rest of the
+        OS(DARWIN) settings. Tweak formatting a bit.
+
 2014-01-12  Anders Carlsson  <andersca@apple.com>
 
         Remove AtomicallyInitializedStatic

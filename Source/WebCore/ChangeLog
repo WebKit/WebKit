@@ -1,5 +1,18 @@
 2014-01-12  Darin Adler  <darin@apple.com>
 
+        Add PLATFORM(COCOA) and USE(FOUNDATION)
+        https://bugs.webkit.org/show_bug.cgi?id=126859
+
+        Reviewed by Anders Carlsson.
+
+        * config.h: Use PLATFORM(COCOA) instead of PLATFORM(MAC) || PLATFORM(IOS)
+        to set USE(FILE_LOCK). Would be nice to use OS(DARWIN), but that would be
+        a change in behavior that might be incorrect. Removed bogus comments in
+        the USE(NEW_THEME) setting code. Removed redundant code to set USE(CA),
+        which exactly duplicates code that already exists in Platform.h.
+
+2014-01-12  Darin Adler  <darin@apple.com>
+
         Add deprecatedCharacters as a synonym for characters and convert most call sites
         https://bugs.webkit.org/show_bug.cgi?id=126858
 

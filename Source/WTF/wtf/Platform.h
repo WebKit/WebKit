@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007, 2008, 2009, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2006, 2007, 2008, 2009, 2013, 2014 Apple Inc. All rights reserved.
  * Copyright (C) 2007-2009 Torch Mobile, Inc.
  * Copyright (C) 2010, 2011 Research In Motion Limited. All rights reserved.
  *
@@ -429,6 +429,7 @@
 #elif defined(BUILDING_NIX__)
 #include "nix/PlatformNix.h"
 #elif OS(DARWIN)
+#define WTF_PLATFORM_COCOA 1
 #define WTF_PLATFORM_MAC 1
 #elif OS(WINDOWS)
 #define WTF_PLATFORM_WIN 1
@@ -475,39 +476,44 @@
 #define WTF_USE_ICU_UNICODE 1
 #endif
 
-#if PLATFORM(MAC) && !PLATFORM(IOS)
-#if CPU(X86_64)
-#define WTF_USE_PLUGIN_HOST_PROCESS 1
-#endif
+#if PLATFORM(COCOA)
+
 #define WTF_USE_CF 1
-#define HAVE_READLINE 1
+#define WTF_USE_FOUNDATION 1
+
+#endif
+
+#if PLATFORM(MAC) && !PLATFORM(IOS)
+
+#define WTF_USE_APPKIT 1
 #define HAVE_RUNLOOP_TIMER 1
 #define HAVE_SEC_IDENTITY 1
 #define HAVE_SEC_KEYCHAIN 1
+
+#if CPU(X86_64)
+#define WTF_USE_PLUGIN_HOST_PROCESS 1
+#endif
+
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1080
 #define HAVE_LAYER_HOSTING_IN_WINDOW_SERVER 1
 #endif
-#define WTF_USE_APPKIT 1
 
 /* OS X defines a series of platform macros for debugging. */
 /* Some of them are really annoying because they use common names (e.g. check()). */
 /* Disable those macros so that we are not limited in how we name methods and functions. */
 #undef __ASSERT_MACROS_DEFINE_VERSIONS_WITHOUT_UNDERSCORES
 #define __ASSERT_MACROS_DEFINE_VERSIONS_WITHOUT_UNDERSCORES 0
-#endif /* PLATFORM(MAC) && !PLATFORM(IOS) */
 
-#if PLATFORM(IOS)
-#define DONT_FINALIZE_ON_MAIN_THREAD 1
-#endif
+#endif /* PLATFORM(MAC) && !PLATFORM(IOS) */
 
 #if OS(DARWIN) && !PLATFORM(GTK)
 #define ENABLE_PURGEABLE_MEMORY 1
 #endif
 
 #if PLATFORM(IOS)
+
+#define DONT_FINALIZE_ON_MAIN_THREAD 1
 #define HAVE_READLINE 1
-#define WTF_USE_APPKIT 0
-#define WTF_USE_CF 1
 #define WTF_USE_CFNETWORK 1
 #define WTF_USE_NETWORK_CFDATA_ARRAY_CALLBACK 1
 #define WTF_USE_WEB_THREAD 1
@@ -515,6 +521,7 @@
 #if CPU(ARM64)
 #define ENABLE_JIT_CONSTANT_BLINDING 0
 #endif
+
 #endif /* PLATFORM(IOS) */
 
 #if PLATFORM(WIN) && !USE(WINGDI)
@@ -537,17 +544,14 @@
 
 #if OS(UNIX)
 #define HAVE_ERRNO_H 1
-#define HAVE_MMAP 1   
+#define HAVE_LANGINFO_H 1
+#define HAVE_MMAP 1
 #define HAVE_SIGNAL_H 1
 #define HAVE_STRINGS_H 1
 #define HAVE_SYS_PARAM_H 1
 #define HAVE_SYS_TIME_H 1 
 #define WTF_USE_PTHREADS 1
 #endif /* OS(UNIX) */
-
-#if OS(UNIX)
-#define HAVE_LANGINFO_H 1
-#endif
 
 #if (OS(FREEBSD) || OS(OPENBSD)) && !defined(__GLIBC__)
 #define HAVE_PTHREAD_NP_H 1
@@ -578,16 +582,18 @@
 #define HAVE_MADV_FREE_REUSE 1
 #define HAVE_MERGESORT 1
 #define HAVE_PTHREAD_SETNAME_NP 1
+#define HAVE_READLINE 1
 #define HAVE_SYS_TIMEB_H 1
 #define WTF_USE_ACCELERATE 1
 
 #if !PLATFORM(IOS)
 #define HAVE_HOSTED_CORE_ANIMATION 1
-#endif /* !PLATFORM(IOS) */
+#endif
 
 #endif /* OS(DARWIN) */
 
 #if OS(WINDOWS) && !OS(WINCE)
+
 #define HAVE_SYS_TIMEB_H 1
 #define HAVE_ALIGNED_MALLOC 1
 #define HAVE_ISDEBUGGERPRESENT 1
