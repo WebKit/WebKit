@@ -425,6 +425,12 @@ template <typename T> static bool writeLittleEndian(Vector<uint8_t>& buffer, con
     return true;
 }
 
+template <> bool writeLittleEndian<uint8_t>(Vector<uint8_t>& buffer, const uint8_t* values, uint32_t length)
+{
+    buffer.append(values, length);
+    return true;
+}
+
 class CloneSerializer : CloneBase {
 public:
     static SerializationReturnCode serialize(ExecState* exec, JSValue value,
