@@ -1,3 +1,13 @@
+2014-01-12  Anders Carlsson  <andersca@apple.com>
+
+        Use an std::atomic<uint32_t> when computing IDBDatabase transaction IDs
+        https://bugs.webkit.org/show_bug.cgi?id=126853
+
+        Reviewed by Sam Weinig.
+
+        * Modules/indexeddb/IDBDatabase.cpp:
+        (WebCore::IDBDatabase::nextTransactionId):
+
 2014-01-12  Sam Weinig  <sam@webkit.org>
 
         TextBreakIterator's should support Latin-1 for all iterator types (Part 1)

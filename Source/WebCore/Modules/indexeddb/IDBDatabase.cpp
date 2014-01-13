@@ -46,6 +46,7 @@
 #include "Logging.h"
 #include "ScriptCallStack.h"
 #include "ScriptExecutionContext.h"
+#include <atomic>
 #include <limits>
 #include <wtf/Atomics.h>
 
@@ -78,8 +79,9 @@ int64_t IDBDatabase::nextTransactionId()
 {
     // Only keep a 32-bit counter to allow ports to use the other 32
     // bits of the id.
-    AtomicallyInitializedStatic(int, currentTransactionId = 0);
-    return atomicIncrement(&currentTransactionId);
+    static std::atomic<uint32_t> currentTransactionId;
+
+    return ++currentTransactionId;
 }
 
 void IDBDatabase::transactionCreated(IDBTransaction* transaction)
