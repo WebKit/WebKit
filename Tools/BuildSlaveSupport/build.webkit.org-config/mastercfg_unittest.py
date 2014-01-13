@@ -60,7 +60,7 @@ class MasterCfgTest(unittest.TestCase):
             '13981 total leaks found for a total of 197,936 bytes!',
             '1 unique leaks found!',
         ]
-        run_webkit_tests._parseNewRunWebKitTestsOutput(log_text)
+        run_webkit_tests._parseRunWebKitTestsOutput(log_text)
         self.assertEqual(run_webkit_tests.incorrectLayoutLines, expected_incorrect_lines)
 
     def test_nrwt_missing_results(self):
@@ -83,7 +83,7 @@ Regressions: Unexpected missing results (1)
 Regressions: Unexpected text-only failures (1)
   svg/custom/zero-path-square-cap-rendering2.svg [ Failure ]
 """
-        run_webkit_tests._parseNewRunWebKitTestsOutput(log_text)
+        run_webkit_tests._parseRunWebKitTestsOutput(log_text)
         self.assertEqual(set(run_webkit_tests.incorrectLayoutLines),
             set(['2 new passes', '3 flakes', '1 missing results', '1 failures']))
 
