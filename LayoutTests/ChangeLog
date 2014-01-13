@@ -1,3 +1,15 @@
+2014-01-13  László Langó  <llango.u-szeged@partner.samsung.com>
+
+        Text should be constructable.
+        https://bugs.webkit.org/show_bug.cgi?id=115640
+
+        Reviewed by Csaba Osztrogonác.
+
+        * fast/dom/Text/text-constructor-expected.txt: Added.
+        * fast/dom/Text/text-constructor.html: Added.
+        * fast/dom/dom-constructors-expected.txt:
+        * fast/dom/dom-constructors.html:
+
 2014-01-13  Zan Dobersek  <zdobersek@igalia.com>
 
         Unreviewed GTK gardening. Rebaselining after r161696. Adding failure expectations

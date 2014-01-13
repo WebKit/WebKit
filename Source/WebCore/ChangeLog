@@ -1,3 +1,23 @@
+2014-01-13  László Langó  <llango.u-szeged@partner.samsung.com>
+
+        Text should be constructable.
+        https://bugs.webkit.org/show_bug.cgi?id=115640
+
+        Reviewed by Csaba Osztrogonác.
+
+        http://dom.spec.whatwg.org/#interface-text
+        Make Text constructable so that one can do "new Text('abc')"
+        instead of "document.createTexte('abc')".
+
+        Backported from Blink: https://chromium.googlesource.com/chromium/blink/+/cdd5a914daf3862379a5ce4596149bd690d0fa08
+
+        Test: fast/dom/Text/text-constructor.html
+
+        * dom/Text.cpp:
+        (WebCore::Text::create):
+        * dom/Text.h:
+        * dom/Text.idl:
+
 2014-01-13  Zan Dobersek  <zdobersek@igalia.com>
 
         Avoid unnecessary copies of AccessibilityObject::AccessibilityChildrenVector

@@ -16,8 +16,10 @@
  * the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
  * Boston, MA 02110-1301, USA.
  */
-
-interface Text : CharacterData {
+[
+    Constructor([Default=NullString] optional DOMString data),
+    ConstructorCallWith=ScriptExecutionContext
+] interface Text : CharacterData {
 
     // DOM Level 1
 
