@@ -1,3 +1,16 @@
+2014-01-13  Benjamin Poulain  <benjamin@webkit.org>
+
+        Update the SelectorQuery code using compiled selector after r161196
+        https://bugs.webkit.org/show_bug.cgi?id=126860
+
+        Reviewed by Andreas Kling.
+
+        Update tree traversal code to the current traversal functions.
+
+        * dom/SelectorQuery.cpp:
+        (WebCore::SelectorDataList::executeCompiledSimpleSelectorChecker):
+        (WebCore::SelectorDataList::executeCompiledSelectorCheckerWithContext):
+
 2014-01-13  Simon Fraser  <simon.fraser@apple.com>
 
         Various iOS WebKit1 build fixes.

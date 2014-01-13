@@ -270,7 +270,7 @@ ALWAYS_INLINE void SelectorDataList::executeSingleMultiSelectorData(const Contai
 template <typename SelectorQueryTrait>
 ALWAYS_INLINE void SelectorDataList::executeCompiledSimpleSelectorChecker(const ContainerNode& rootNode, SelectorCompiler::SimpleSelectorChecker selectorChecker, typename SelectorQueryTrait::OutputType& output) const
 {
-    for (auto& element : elementDescendants(const_cast<ContainerNode&>(rootNode))) {
+    for (auto& element : descendantsOfType<Element>(const_cast<ContainerNode&>(rootNode))) {
         if (selectorChecker(&element)) {
             SelectorQueryTrait::appendOutputForElement(output, &element);
             if (SelectorQueryTrait::shouldOnlyMatchFirstElement)
@@ -282,7 +282,7 @@ ALWAYS_INLINE void SelectorDataList::executeCompiledSimpleSelectorChecker(const 
 template <typename SelectorQueryTrait>
 ALWAYS_INLINE void SelectorDataList::executeCompiledSelectorCheckerWithContext(const ContainerNode& rootNode, SelectorCompiler::SelectorCheckerWithCheckingContext selectorChecker, const SelectorCompiler::CheckingContext& context, typename SelectorQueryTrait::OutputType& output) const
 {
-    for (auto& element : elementDescendants(const_cast<ContainerNode&>(rootNode))) {
+    for (auto& element : descendantsOfType<Element>(const_cast<ContainerNode&>(rootNode))) {
         if (selectorChecker(&element, &context)) {
             SelectorQueryTrait::appendOutputForElement(output, &element);
             if (SelectorQueryTrait::shouldOnlyMatchFirstElement)
