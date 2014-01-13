@@ -707,7 +707,7 @@ GtkWidget *browser_window_new(WebKitWebView *view, GtkWindow *parent)
 
     if (parent) {
         window->parentWindow = parent;
-        g_object_add_weak_pointer(G_OBJECT(parent), &window->parentWindow);
+        g_object_add_weak_pointer(G_OBJECT(parent), (gpointer *)&window->parentWindow);
     }
 
     return GTK_WIDGET(window);
