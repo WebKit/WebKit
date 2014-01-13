@@ -199,10 +199,14 @@ void MarkedBlock::stopAllocating(const FreeList& freeList)
 
 void MarkedBlock::clearMarks()
 {
+#if ENABLE(GGC)
     if (heap()->operationInProgress() == JSC::EdenCollection)
         this->clearMarksWithCollectionType<EdenCollection>();
     else
         this->clearMarksWithCollectionType<FullCollection>();
+#else
+    this->clearMarksWithCollectionType<FullCollection>();
+#endif
 }
 
 void MarkedBlock::clearRememberedSet()
@@ -219,7 +223,9 @@ void MarkedBlock::clearMarksWithCollectionType()
     ASSERT(m_state != New && m_state != FreeListed);
     if (collectionType == FullCollection) {
         m_marks.clearAll();
+#if ENABLE(GGC)
         m_rememberedSet.clearAll();
+#endif
     }
 
     // This will become true at the end of the mark phase. We set it now to

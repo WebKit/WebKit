@@ -1,3 +1,27 @@
+2014-01-13  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Performance regression on dromaeo due to generational marking
+        https://bugs.webkit.org/show_bug.cgi?id=126901
+
+        Reviewed by Oliver Hunt.
+
+        We were seeing some performance regression with ENABLE_GGC == 0, so this patch
+        ifdefs out more things to get rid of the additional overhead.
+
+        * heap/Heap.cpp:
+        (JSC::Heap::markRoots):
+        (JSC::Heap::writeBarrier):
+        * heap/MarkedBlock.cpp:
+        (JSC::MarkedBlock::clearMarks):
+        (JSC::MarkedBlock::clearMarksWithCollectionType):
+        * heap/MarkedSpace.cpp:
+        (JSC::MarkedSpace::resetAllocators):
+        * heap/MarkedSpace.h:
+        (JSC::MarkedSpace::didAllocateInBlock):
+        * heap/SlotVisitorInlines.h:
+        (JSC::SlotVisitor::internalAppend):
+        (JSC::SlotVisitor::reportExtraMemoryUsage):
+
 2014-01-13  Brian Burg  <bburg@apple.com>
 
         Web Inspector: protocol generator should support integer-typed declarations

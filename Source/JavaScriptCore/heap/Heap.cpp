@@ -489,8 +489,10 @@ void Heap::markRoots()
     visitor.setup();
     HeapRootVisitor heapRootVisitor(visitor);
 
+#if ENABLE(GGC)
     Vector<const JSCell*> rememberedSet(m_slotVisitor.markStack().size());
     m_slotVisitor.markStack().fillVector(rememberedSet);
+#endif
 
     {
         ParallelModeEnabler enabler(visitor);
@@ -595,6 +597,7 @@ void Heap::markRoots()
         }
     }
 
+#if ENABLE(GGC)
     {
         GCPHASE(ClearRememberedSet);
         for (unsigned i = 0; i < rememberedSet.size(); ++i) {
@@ -602,6 +605,7 @@ void Heap::markRoots()
             MarkedBlock::blockFor(cell)->clearRemembered(cell);
         }
     }
+#endif
 
     GCCOUNTER(VisitedValueCount, visitor.visitCount());
 
@@ -1076,11 +1080,15 @@ void Heap::decrementDeferralDepthAndGCIfNeeded()
 
 void Heap::writeBarrier(const JSCell* from)
 {
+#if ENABLE(GGC)
     ASSERT_GC_OBJECT_LOOKS_VALID(const_cast<JSCell*>(from));
     if (!from || !isMarked(from))
         return;
     Heap* heap = Heap::heap(from);
     heap->addToRememberedSet(from);
+#else
+    UNUSED_PARAM(from);
+#endif
 }
 
 void Heap::flushWriteBarrierBuffer(JSCell* cell)
