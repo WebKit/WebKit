@@ -64,8 +64,11 @@ public:
     LayoutUnit paginatedLineWidth() const { return m_paginatedLineWidth; }
     void setPaginatedLineWidth(LayoutUnit width) { m_paginatedLineWidth = width; }
 
+    // It should not be assumed the containingRegion() is always valid.
+    // It can also be nullptr if the flow has no region chain.
     RenderRegion* containingRegion() const;
-    void setContainingRegion(RenderRegion*);
+    void setContainingRegion(RenderRegion&);
+    void clearContainingRegion();
 
     LayoutUnit selectionTop() const;
     LayoutUnit selectionBottom() const;
@@ -217,10 +220,6 @@ private:
 
     LayoutUnit m_lineTopWithLeading;
     LayoutUnit m_lineBottomWithLeading;
-
-    // It should not be assumed the |containingRegion| is always valid.
-    // It can also be nullptr if the flow has no region chain.
-    RenderRegion* m_containingRegion;
 
     LayoutUnit m_paginationStrut;
     LayoutUnit m_paginatedLineWidth;

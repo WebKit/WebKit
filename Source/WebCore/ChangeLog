@@ -1,3 +1,42 @@
+2014-01-13  Andreas Kling  <akling@apple.com>
+
+        Map RootInlineBox to containing region via bit+hashmap.
+        <https://webkit.org/b/126917>
+
+        The vas majority of RootInlineBox objects don't have a containing
+        RenderRegion, so let's store that in a bit+hashmap configuration
+        instead of having a dedicated pointer member for it.
+
+        148 kB progression on Membuster3.
+
+        Reviewed by Antti Koivisto.
+
+        * rendering/InlineFlowBox.h:
+        (WebCore::InlineFlowBox::InlineFlowBox):
+        * rendering/RootInlineBox.cpp:
+        (WebCore::RootInlineBox::RootInlineBox):
+
+            Added m_hasContainingRegion bit.
+
+        (WebCore::containingRegionMap):
+
+            Global map between RootInlineBox and RenderRegion.
+
+        (WebCore::RootInlineBox::~RootInlineBox):
+
+            Remove self from aforementioned global map if needed.
+
+        (WebCore::RootInlineBox::paint):
+
+            Tweak a condition to avoid double hash lookup.
+
+        * rendering/RootInlineBox.h:
+        (WebCore::RootInlineBox::containingRegion):
+        (WebCore::RootInlineBox::clearContainingRegion):
+        (WebCore::RootInlineBox::setContainingRegion):
+
+            Store the containing region in a bit+hashmap.
+
 2014-01-13  Brent Fulgham  <bfulgham@apple.com>
 
         [WebGL] Invalid range checking in WebGLRenderingContext::validateTexFuncLevel

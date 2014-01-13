@@ -35,13 +35,14 @@
 #include "RenderFlowThread.h"
 #include "RenderView.h"
 #include "VerticalPositionCache.h"
+#include <wtf/NeverDestroyed.h>
 #include <wtf/unicode/Unicode.h>
 
 namespace WebCore {
     
 struct SameSizeAsRootInlineBox : public InlineFlowBox {
     unsigned variables[7];
-    void* pointers[4];
+    void* pointers[3];
 };
 
 COMPILE_ASSERT(sizeof(RootInlineBox) == sizeof(SameSizeAsRootInlineBox), RootInlineBox_should_stay_small);
@@ -49,11 +50,17 @@ COMPILE_ASSERT(sizeof(RootInlineBox) == sizeof(SameSizeAsRootInlineBox), RootInl
 typedef WTF::HashMap<const RootInlineBox*, std::unique_ptr<EllipsisBox>> EllipsisBoxMap;
 static EllipsisBoxMap* gEllipsisBoxMap = 0;
 
+typedef HashMap<const RootInlineBox*, RenderRegion*> ContainingRegionMap;
+static ContainingRegionMap& containingRegionMap()
+{
+    static NeverDestroyed<ContainingRegionMap> map;
+    return map;
+}
+
 RootInlineBox::RootInlineBox(RenderBlockFlow& block)
     : InlineFlowBox(block)
     , m_lineBreakPos(0)
     , m_lineBreakObj(nullptr)
-    , m_containingRegion(nullptr)
 {
     setIsHorizontal(block.isHorizontalWritingMode());
 }
@@ -61,6 +68,9 @@ RootInlineBox::RootInlineBox(RenderBlockFlow& block)
 RootInlineBox::~RootInlineBox()
 {
     detachEllipsisBox();
+
+    if (m_hasContainingRegion)
+        containingRegionMap().remove(this);
 }
 
 void RootInlineBox::detachEllipsisBox()
@@ -194,7 +204,7 @@ void RootInlineBox::paintCustomHighlight(PaintInfo& paintInfo, const LayoutPoint
 void RootInlineBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset, LayoutUnit lineTop, LayoutUnit lineBottom)
 {
     // Check if we are in the correct region.
-    if (paintInfo.renderRegion && containingRegion() && containingRegion() != paintInfo.renderRegion)
+    if (paintInfo.renderRegion && m_hasContainingRegion && containingRegion() != paintInfo.renderRegion)
         return;
     
     InlineFlowBox::paint(paintInfo, paintOffset, lineTop, lineBottom);
@@ -243,21 +253,34 @@ void RootInlineBox::childRemoved(InlineBox* box)
 RenderRegion* RootInlineBox::containingRegion() const
 {
 #ifndef NDEBUG
-    if (m_containingRegion) {
+    if (m_hasContainingRegion) {
         RenderFlowThread* flowThread = blockFlow().flowThreadContainingBlock();
         const RenderRegionList& regionList = flowThread->renderRegionList();
-        ASSERT(regionList.contains(m_containingRegion));
+        ASSERT(regionList.contains(containingRegionMap().get(this)));
     }
 #endif
-
-    return m_containingRegion;
+    return m_hasContainingRegion ? containingRegionMap().get(this) : nullptr;
 }
 
-void RootInlineBox::setContainingRegion(RenderRegion* region)
+void RootInlineBox::clearContainingRegion()
 {
     ASSERT(!isDirty());
     ASSERT(blockFlow().flowThreadContainingBlock());
-    m_containingRegion = region;
+
+    if (!m_hasContainingRegion)
+        return;
+
+    containingRegionMap().remove(this);
+    m_hasContainingRegion = false;
+}
+
+void RootInlineBox::setContainingRegion(RenderRegion& region)
+{
+    ASSERT(!isDirty());
+    ASSERT(blockFlow().flowThreadContainingBlock());
+
+    containingRegionMap().set(this, &region);
+    m_hasContainingRegion = true;
 }
 
 LayoutUnit RootInlineBox::alignBoxesInBlockDirection(LayoutUnit heightOfBlock, GlyphOverflowAndFallbackFontsMap& textBoxDataMap, VerticalPositionCache& verticalPositionCache)

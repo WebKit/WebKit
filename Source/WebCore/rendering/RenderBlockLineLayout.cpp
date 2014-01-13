@@ -2157,7 +2157,11 @@ LayoutUnit RenderBlockFlow::startAlignedOffsetForLine(LayoutUnit position, bool 
 void RenderBlockFlow::updateRegionForLine(RootInlineBox* lineBox) const
 {
     ASSERT(lineBox);
-    lineBox->setContainingRegion(regionAtBlockOffset(lineBox->lineTopWithLeading()));
+
+    if (auto containingRegion = regionAtBlockOffset(lineBox->lineTopWithLeading()))
+        lineBox->setContainingRegion(*containingRegion);
+    else
+        lineBox->clearContainingRegion();
 
     RootInlineBox* prevLineBox = lineBox->prevRootBox();
     if (!prevLineBox)
