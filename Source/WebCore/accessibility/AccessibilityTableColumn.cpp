@@ -80,7 +80,7 @@ AccessibilityObject* AccessibilityTableColumn::headerObject()
     
     AccessibilityTable* parentTable = toAccessibilityTable(m_parent);
     if (parentTable->isAriaTable()) {
-        AccessibilityChildrenVector rowChildren = children();
+        const AccessibilityChildrenVector& rowChildren = children();
         unsigned childrenCount = rowChildren.size();
         for (unsigned i = 0; i < childrenCount; ++i) {
             AccessibilityObject* cell = rowChildren[i].get();

@@ -142,7 +142,7 @@ AccessibilityObject* AXObjectCache::focusedImageMapUIElement(HTMLAreaElement* ar
     if (!axRenderImage)
         return 0;
     
-    AccessibilityObject::AccessibilityChildrenVector imageChildren = axRenderImage->children();
+    const AccessibilityObject::AccessibilityChildrenVector& imageChildren = axRenderImage->children();
     unsigned count = imageChildren.size();
     for (unsigned k = 0; k < count; ++k) {
         AccessibilityObject* child = imageChildren[k].get();

@@ -117,7 +117,7 @@ AccessibilityObject* AccessibilityTableRow::headerObject()
     if (!m_renderer || !m_renderer->isTableRow())
         return 0;
     
-    AccessibilityChildrenVector rowChildren = children();
+    const AccessibilityChildrenVector& rowChildren = children();
     if (!rowChildren.size())
         return 0;
     

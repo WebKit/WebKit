@@ -84,7 +84,7 @@ void AccessibilityARIAGridCell::rowIndexRange(std::pair<unsigned, unsigned>& row
         if (!columnCount)
             return;
 
-        AccessibilityChildrenVector siblings = parent->children();
+        const AccessibilityChildrenVector& siblings = parent->children();
         unsigned childrenSize = siblings.size();
         for (unsigned k = 0; k < childrenSize; ++k) {
             if (siblings[k].get() == this) {
@@ -107,7 +107,7 @@ void AccessibilityARIAGridCell::columnIndexRange(std::pair<unsigned, unsigned>& 
     if (!parent->isTableRow() && !parent->isAccessibilityTable())
         return;
 
-    AccessibilityChildrenVector siblings = parent->children();
+    const AccessibilityChildrenVector& siblings = parent->children();
     unsigned childrenSize = siblings.size();
     for (unsigned k = 0; k < childrenSize; ++k) {
         if (siblings[k].get() == this) {

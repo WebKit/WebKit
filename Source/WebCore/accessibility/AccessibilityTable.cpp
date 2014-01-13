@@ -509,7 +509,7 @@ AccessibilityTableCell* AccessibilityTable::cellForColumnAndRow(unsigned column,
     // Iterate backwards through the rows in case the desired cell has a rowspan and exists in a previous row.
     for (unsigned rowIndexCounter = row + 1; rowIndexCounter > 0; --rowIndexCounter) {
         unsigned rowIndex = rowIndexCounter - 1;
-        AccessibilityChildrenVector children = m_rows[rowIndex]->children();
+        const AccessibilityChildrenVector& children = m_rows[rowIndex]->children();
         // Since some cells may have colspans, we have to check the actual range of each
         // cell to determine which is the right one.
         for (unsigned colIndexCounter = std::min(static_cast<unsigned>(children.size()), column + 1); colIndexCounter > 0; --colIndexCounter) {

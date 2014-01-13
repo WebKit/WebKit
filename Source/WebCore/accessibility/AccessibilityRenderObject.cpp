@@ -2155,7 +2155,7 @@ AccessibilityObject* AccessibilityRenderObject::accessibilityImageMapHitTest(HTM
     if (!parent)
         return 0;
     
-    AccessibilityObject::AccessibilityChildrenVector children = parent->children();
+    const AccessibilityObject::AccessibilityChildrenVector& children = parent->children();
     
     unsigned count = children.size();
     for (unsigned k = 0; k < count; ++k) {
@@ -2859,7 +2859,7 @@ void AccessibilityRenderObject::addRemoteSVGChildren()
     root->setParent(this);
     
     if (root->accessibilityIsIgnored()) {
-        AccessibilityChildrenVector children = root->children();
+        const AccessibilityChildrenVector& children = root->children();
         unsigned length = children.size();
         for (unsigned i = 0; i < length; ++i)
             m_children.append(children[i]);
@@ -2941,7 +2941,7 @@ void AccessibilityRenderObject::addHiddenChildren()
             // Find out where the last render sibling is located within m_children.
             AccessibilityObject* childObject = axObjectCache()->get(child->renderer());
             if (childObject && childObject->accessibilityIsIgnored()) {
-                AccessibilityChildrenVector children = childObject->children();
+                const AccessibilityChildrenVector& children = childObject->children();
                 if (children.size())
                     childObject = children.last().get();
                 else
@@ -3082,7 +3082,7 @@ void AccessibilityRenderObject::ariaListboxSelectedChildren(AccessibilityChildre
 {
     bool isMulti = isMultiSelectable();
 
-    AccessibilityChildrenVector childObjects = children();
+    const AccessibilityChildrenVector& childObjects = children();
     unsigned childrenSize = childObjects.size();
     for (unsigned k = 0; k < childrenSize; ++k) {
         // Every child should have aria-role option, and if so, check for selected attribute/state.
@@ -3112,7 +3112,7 @@ void AccessibilityRenderObject::ariaListboxVisibleChildren(AccessibilityChildren
     if (!hasChildren())
         addChildren();
     
-    AccessibilityObject::AccessibilityChildrenVector children = this->children();
+    const AccessibilityObject::AccessibilityChildrenVector& children = this->children();
     size_t size = children.size();
     for (size_t i = 0; i < size; i++) {
         if (!children[i]->isOffScreen())
@@ -3136,7 +3136,7 @@ void AccessibilityRenderObject::tabChildren(AccessibilityChildrenVector& result)
 {
     ASSERT(roleValue() == TabListRole);
     
-    AccessibilityObject::AccessibilityChildrenVector children = this->children();
+    const AccessibilityObject::AccessibilityChildrenVector& children = this->children();
     size_t size = children.size();
     for (size_t i = 0; i < size; ++i) {
         if (children[i]->isTabItem())
@@ -3571,7 +3571,7 @@ AccessibilityObject* AccessibilityRenderObject::mathRadicandObject()
     if (!isMathRoot())
         return 0;
     
-    AccessibilityObject::AccessibilityChildrenVector children = this->children();
+    const AccessibilityObject::AccessibilityChildrenVector& children = this->children();
     if (children.size() < 1)
         return 0;
     
@@ -3584,7 +3584,7 @@ AccessibilityObject* AccessibilityRenderObject::mathRootIndexObject()
     if (!isMathRoot())
         return 0;
     
-    AccessibilityObject::AccessibilityChildrenVector children = this->children();
+    const AccessibilityObject::AccessibilityChildrenVector& children = this->children();
     if (children.size() != 2)
         return 0;
 
@@ -3598,7 +3598,7 @@ AccessibilityObject* AccessibilityRenderObject::mathNumeratorObject()
     if (!isMathFraction())
         return 0;
     
-    AccessibilityObject::AccessibilityChildrenVector children = this->children();
+    const AccessibilityObject::AccessibilityChildrenVector& children = this->children();
     if (children.size() != 2)
         return 0;
     
@@ -3610,7 +3610,7 @@ AccessibilityObject* AccessibilityRenderObject::mathDenominatorObject()
     if (!isMathFraction())
         return 0;
 
-    AccessibilityObject::AccessibilityChildrenVector children = this->children();
+    const AccessibilityObject::AccessibilityChildrenVector& children = this->children();
     if (children.size() != 2)
         return 0;
     
@@ -3622,7 +3622,7 @@ AccessibilityObject* AccessibilityRenderObject::mathUnderObject()
     if (!isMathUnderOver() || !node())
         return 0;
     
-    AccessibilityChildrenVector children = this->children();
+    const AccessibilityChildrenVector& children = this->children();
     if (children.size() < 2)
         return 0;
     
@@ -3637,7 +3637,7 @@ AccessibilityObject* AccessibilityRenderObject::mathOverObject()
     if (!isMathUnderOver() || !node())
         return 0;
     
-    AccessibilityChildrenVector children = this->children();
+    const AccessibilityChildrenVector& children = this->children();
     if (children.size() < 2)
         return 0;
     
@@ -3654,7 +3654,7 @@ AccessibilityObject* AccessibilityRenderObject::mathBaseObject()
     if (!isMathSubscriptSuperscript() && !isMathUnderOver() && !isMathMultiscript())
         return 0;
     
-    AccessibilityChildrenVector children = this->children();
+    const AccessibilityChildrenVector& children = this->children();
     // The base object in question is always the first child.
     if (children.size() > 0)
         return children[0].get();
@@ -3667,7 +3667,7 @@ AccessibilityObject* AccessibilityRenderObject::mathSubscriptObject()
     if (!isMathSubscriptSuperscript() || !node())
         return 0;
     
-    AccessibilityChildrenVector children = this->children();
+    const AccessibilityChildrenVector& children = this->children();
     if (children.size() < 2)
         return 0;
 
@@ -3682,7 +3682,7 @@ AccessibilityObject* AccessibilityRenderObject::mathSuperscriptObject()
     if (!isMathSubscriptSuperscript() || !node())
         return 0;
     
-    AccessibilityChildrenVector children = this->children();
+    const AccessibilityChildrenVector& children = this->children();
     unsigned count = children.size();
 
     if (count >= 2 && node()->hasTagName(MathMLNames::msupTag))

@@ -65,7 +65,7 @@ static AccessibilityObject* listObjectForSelection(AtkSelection* selection)
     // For menu lists we need to return the first accessible child,
     // with role MenuListPopupRole, since that's the one holding the list
     // of items with role MenuListOptionRole.
-    AccessibilityObject::AccessibilityChildrenVector children = coreSelection->children();
+    const AccessibilityObject::AccessibilityChildrenVector& children = coreSelection->children();
     if (!children.size())
         return 0;
 
@@ -87,7 +87,7 @@ static AccessibilityObject* optionFromList(AtkSelection* selection, gint index)
     if (!listObject)
         return 0;
 
-    AccessibilityObject::AccessibilityChildrenVector options = listObject->children();
+    const AccessibilityObject::AccessibilityChildrenVector& options = listObject->children();
     if (index < static_cast<gint>(options.size()))
         return options.at(index).get();
 
@@ -250,8 +250,8 @@ static gboolean webkitAccessibleSelectionSelectAllSelection(AtkSelection* select
     if (!coreSelection || !coreSelection->isMultiSelectable())
         return FALSE;
 
-    AccessibilityObject::AccessibilityChildrenVector children = coreSelection->children();
     if (coreSelection->isListBox()) {
+        const AccessibilityObject::AccessibilityChildrenVector& children = coreSelection->children();
         AccessibilityListBox* listBox = toAccessibilityListBox(coreSelection);
         listBox->setSelectedChildren(children);
         AccessibilityObject::AccessibilityChildrenVector selectedItems;

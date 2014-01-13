@@ -415,13 +415,9 @@ static void appendAccessibilityObject(AccessibilityObject* object, Accessibility
     
 static void appendChildrenToArray(AccessibilityObject* object, bool isForward, AccessibilityObject* startObject, AccessibilityObject::AccessibilityChildrenVector& results)
 {
-    AccessibilityObject::AccessibilityChildrenVector searchChildren;
     // A table's children includes elements whose own children are also the table's children (due to the way the Mac exposes tables).
     // The rows from the table should be queried, since those are direct descendants of the table, and they contain content.
-    if (object->isAccessibilityTable())
-        searchChildren = toAccessibilityTable(object)->rows();
-    else
-        searchChildren = object->children();
+    const AccessibilityObject::AccessibilityChildrenVector& searchChildren = object->isAccessibilityTable() ? toAccessibilityTable(object)->rows() : object->children();
 
     size_t childrenSize = searchChildren.size();
 
@@ -1324,7 +1320,7 @@ AccessibilityObject* AccessibilityObject::headingElementForNode(Node* node)
 
 void AccessibilityObject::ariaTreeRows(AccessibilityChildrenVector& result)
 {
-    AccessibilityChildrenVector axChildren = children();
+    const AccessibilityChildrenVector& axChildren = children();
     unsigned count = axChildren.size();
     for (unsigned k = 0; k < count; ++k) {
         AccessibilityObject* obj = axChildren[k].get();
@@ -1341,7 +1337,7 @@ void AccessibilityObject::ariaTreeRows(AccessibilityChildrenVector& result)
 void AccessibilityObject::ariaTreeItemContent(AccessibilityChildrenVector& result)
 {
     // The ARIA tree item content are the item that are not other tree items or their containing groups.
-    AccessibilityChildrenVector axChildren = children();
+    const AccessibilityChildrenVector& axChildren = children();
     unsigned count = axChildren.size();
     for (unsigned k = 0; k < count; ++k) {
         AccessibilityObject* obj = axChildren[k].get();
@@ -1355,7 +1351,7 @@ void AccessibilityObject::ariaTreeItemContent(AccessibilityChildrenVector& resul
 
 void AccessibilityObject::ariaTreeItemDisclosedRows(AccessibilityChildrenVector& result)
 {
-    AccessibilityChildrenVector axChildren = children();
+    const AccessibilityChildrenVector& axChildren = children();
     unsigned count = axChildren.size();
     for (unsigned k = 0; k < count; ++k) {
         AccessibilityObject* obj = axChildren[k].get();

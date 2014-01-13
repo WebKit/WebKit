@@ -2377,7 +2377,7 @@ static NSString* roleValueToNSString(AccessibilityRole value)
     if ([attributeName isEqualToString:NSAccessibilityContentsAttribute]) {
         // The contents of a tab list are all the children except the tabs.
         if (m_object->isTabList()) {
-            AccessibilityObject::AccessibilityChildrenVector children = m_object->children();
+            const AccessibilityObject::AccessibilityChildrenVector& children = m_object->children();
             AccessibilityObject::AccessibilityChildrenVector tabsChildren;
             m_object->tabChildren(tabsChildren);
             
@@ -2389,7 +2389,7 @@ static NSString* roleValueToNSString(AccessibilityRole value)
             }
             return convertToNSArray(contents);
         } else if (m_object->isScrollView()) {
-            AccessibilityObject::AccessibilityChildrenVector children = m_object->children();
+            const AccessibilityObject::AccessibilityChildrenVector& children = m_object->children();
             
             // A scrollView's contents are everything except the scroll bars.
             AccessibilityObject::AccessibilityChildrenVector contents;

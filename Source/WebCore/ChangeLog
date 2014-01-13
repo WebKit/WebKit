@@ -1,3 +1,80 @@
+2014-01-13  Zan Dobersek  <zdobersek@igalia.com>
+
+        Avoid unnecessary copies of AccessibilityObject::AccessibilityChildrenVector
+        https://bugs.webkit.org/show_bug.cgi?id=126876
+
+        Reviewed by Andreas Kling.
+
+        AccessibilityObject::children() returns a reference to the Vector of that AccessibilityObject's children.
+        The majority of callsites stores the return value in a temporary value instead of a reference, causing
+        a copy each time. A reference to the return value should be used instead.
+
+        * accessibility/AXObjectCache.cpp:
+        (WebCore::AXObjectCache::focusedImageMapUIElement):
+        * accessibility/AccessibilityARIAGrid.cpp:
+        (WebCore::AccessibilityARIAGrid::addRowDescendant):
+        * accessibility/AccessibilityARIAGridCell.cpp:
+        (WebCore::AccessibilityARIAGridCell::rowIndexRange):
+        (WebCore::AccessibilityARIAGridCell::columnIndexRange):
+        * accessibility/AccessibilityARIAGridRow.cpp:
+        (WebCore::AccessibilityARIAGridRow::headerObject):
+        * accessibility/AccessibilityListBox.cpp:
+        (WebCore::AccessibilityListBox::setSelectedChildren):
+        * accessibility/AccessibilityListBox.h:
+        * accessibility/AccessibilityNodeObject.cpp:
+        (WebCore::AccessibilityNodeObject::insertChild):
+        (WebCore::AccessibilityNodeObject::selectedRadioButton):
+        (WebCore::AccessibilityNodeObject::selectedTabItem):
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::appendChildrenToArray):
+        (WebCore::AccessibilityObject::ariaTreeRows):
+        (WebCore::AccessibilityObject::ariaTreeItemContent):
+        (WebCore::AccessibilityObject::ariaTreeItemDisclosedRows):
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::accessibilityImageMapHitTest):
+        (WebCore::AccessibilityRenderObject::addRemoteSVGChildren):
+        (WebCore::AccessibilityRenderObject::addHiddenChildren):
+        (WebCore::AccessibilityRenderObject::ariaListboxSelectedChildren):
+        (WebCore::AccessibilityRenderObject::ariaListboxVisibleChildren):
+        (WebCore::AccessibilityRenderObject::tabChildren):
+        (WebCore::AccessibilityRenderObject::mathRadicandObject):
+        (WebCore::AccessibilityRenderObject::mathRootIndexObject):
+        (WebCore::AccessibilityRenderObject::mathNumeratorObject):
+        (WebCore::AccessibilityRenderObject::mathDenominatorObject):
+        (WebCore::AccessibilityRenderObject::mathUnderObject):
+        (WebCore::AccessibilityRenderObject::mathOverObject):
+        (WebCore::AccessibilityRenderObject::mathBaseObject):
+        (WebCore::AccessibilityRenderObject::mathSubscriptObject):
+        (WebCore::AccessibilityRenderObject::mathSuperscriptObject):
+        * accessibility/AccessibilityTable.cpp:
+        (WebCore::AccessibilityTable::cellForColumnAndRow):
+        * accessibility/AccessibilityTableColumn.cpp:
+        (WebCore::AccessibilityTableColumn::headerObject):
+        * accessibility/AccessibilityTableRow.cpp:
+        (WebCore::AccessibilityTableRow::headerObject):
+        * accessibility/atk/AXObjectCacheAtk.cpp:
+        (WebCore::getListObject):
+        (WebCore::notifyChildrenSelectionChange):
+        * accessibility/atk/WebKitAccessibleInterfaceHypertext.cpp:
+        (webkitAccessibleHypertextGetLink):
+        (webkitAccessibleHypertextGetNLinks):
+        * accessibility/atk/WebKitAccessibleInterfaceSelection.cpp:
+        (listObjectForSelection):
+        (optionFromList):
+        (webkitAccessibleSelectionSelectAllSelection):
+        * accessibility/atk/WebKitAccessibleWrapperAtk.cpp:
+        (getNChildrenForTable):
+        (getChildForTable):
+        (webkitAccessibleRefChild):
+        (getIndexInParentForCellInRow):
+        (getInterfaceMaskFromObject):
+        * accessibility/ios/WebAccessibilityObjectWrapperIOS.mm:
+        (-[WebAccessibilityObjectWrapper accessibilityElementAtIndex:]):
+        (-[WebAccessibilityObjectWrapper indexOfAccessibilityElement:]):
+        (-[WebAccessibilityObjectWrapper containsUnnaturallySegmentedChildren]):
+        * accessibility/mac/WebAccessibilityObjectWrapperMac.mm:
+        (-[WebAccessibilityObjectWrapper accessibilityAttributeValue:]):
+
 2014-01-13  László Langó  <llango.u-szeged@partner.samsung.com>
 
         Comment should be consructable.

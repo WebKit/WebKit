@@ -83,7 +83,7 @@ void AccessibilityListBox::addChildren()
     }
 }
 
-void AccessibilityListBox::setSelectedChildren(AccessibilityChildrenVector& children)
+void AccessibilityListBox::setSelectedChildren(const AccessibilityChildrenVector& children)
 {
     if (!canSetSelectedChildrenAttribute())
         return;

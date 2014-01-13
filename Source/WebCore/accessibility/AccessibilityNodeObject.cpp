@@ -335,7 +335,7 @@ void AccessibilityNodeObject::insertChild(AccessibilityObject* child, unsigned i
     child->clearChildren();
     
     if (child->accessibilityIsIgnored()) {
-        AccessibilityChildrenVector children = child->children();
+        const AccessibilityChildrenVector& children = child->children();
         size_t length = children.size();
         for (size_t i = 0; i < length; ++i)
             m_children.insert(index + i, children[i]);
@@ -911,7 +911,7 @@ AccessibilityObject* AccessibilityNodeObject::selectedRadioButton()
     if (!isRadioGroup())
         return 0;
 
-    AccessibilityObject::AccessibilityChildrenVector children = this->children();
+    const AccessibilityObject::AccessibilityChildrenVector& children = this->children();
 
     // Find the child radio button that is selected (ie. the intValue == 1).
     size_t size = children.size();
@@ -932,7 +932,7 @@ AccessibilityObject* AccessibilityNodeObject::selectedTabItem()
     AccessibilityObject::AccessibilityChildrenVector tabs;
     tabChildren(tabs);
 
-    AccessibilityObject::AccessibilityChildrenVector children = this->children();
+    const AccessibilityObject::AccessibilityChildrenVector& children = this->children();
     size_t size = tabs.size();
     for (size_t i = 0; i < size; ++i) {
         AccessibilityObject* object = children[i].get();

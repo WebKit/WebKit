@@ -103,7 +103,7 @@ static AccessibilityObject* getListObject(AccessibilityObject* object)
     // For menu lists we need to return the first accessible child,
     // with role MenuListPopupRole, since that's the one holding the list
     // of items with role MenuListOptionRole.
-    AccessibilityObject::AccessibilityChildrenVector children = object->children();
+    const AccessibilityObject::AccessibilityChildrenVector& children = object->children();
     if (!children.size())
         return 0;
 
@@ -147,7 +147,7 @@ static void notifyChildrenSelectionChange(AccessibilityObject* object)
         return;
     }
 
-    AccessibilityObject::AccessibilityChildrenVector items = listObject->children();
+    const AccessibilityObject::AccessibilityChildrenVector& items = listObject->children();
     if (changedItemIndex < 0 || changedItemIndex >= static_cast<int>(items.size()))
         return;
     AccessibilityObject* item = items.at(changedItemIndex).get();

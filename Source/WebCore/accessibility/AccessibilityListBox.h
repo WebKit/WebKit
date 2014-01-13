@@ -44,7 +44,7 @@ public:
     virtual bool isListBox() const OVERRIDE { return true; }
     
     virtual bool canSetSelectedChildrenAttribute() const OVERRIDE;
-    void setSelectedChildren(AccessibilityChildrenVector&);
+    void setSelectedChildren(const AccessibilityChildrenVector&);
     virtual AccessibilityRole roleValue() const OVERRIDE { return ListBoxRole; }
         
     virtual void selectedChildren(AccessibilityChildrenVector&) OVERRIDE;

@@ -320,14 +320,14 @@ static AtkObject* webkitAccessibleGetParent(AtkObject* object)
 
 static gint getNChildrenForTable(AccessibilityObject* coreObject)
 {
-    AccessibilityObject::AccessibilityChildrenVector tableChildren = coreObject->children();
+    const AccessibilityObject::AccessibilityChildrenVector& tableChildren = coreObject->children();
     size_t tableChildrenCount = tableChildren.size();
     size_t cellsCount = 0;
 
     // Look for the actual index of the cell inside the table.
     for (unsigned i = 0; i < tableChildrenCount; ++i) {
         if (tableChildren[i]->isTableRow()) {
-            AccessibilityObject::AccessibilityChildrenVector rowChildren = tableChildren[i]->children();
+            const AccessibilityObject::AccessibilityChildrenVector& rowChildren = tableChildren[i]->children();
             cellsCount += rowChildren.size();
         } else
             cellsCount++;
@@ -353,7 +353,7 @@ static gint webkitAccessibleGetNChildren(AtkObject* object)
 
 static AccessibilityObject* getChildForTable(AccessibilityObject* coreObject, gint index)
 {
-    AccessibilityObject::AccessibilityChildrenVector tableChildren = coreObject->children();
+    const AccessibilityObject::AccessibilityChildrenVector& tableChildren = coreObject->children();
     size_t tableChildrenCount = tableChildren.size();
     size_t cellsCount = 0;
 
@@ -361,7 +361,7 @@ static AccessibilityObject* getChildForTable(AccessibilityObject* coreObject, gi
     size_t current = static_cast<size_t>(index);
     for (unsigned i = 0; i < tableChildrenCount; ++i) {
         if (tableChildren[i]->isTableRow()) {
-            AccessibilityObject::AccessibilityChildrenVector rowChildren = tableChildren[i]->children();
+            const AccessibilityObject::AccessibilityChildrenVector& rowChildren = tableChildren[i]->children();
             size_t rowChildrenCount = rowChildren.size();
             if (current < cellsCount + rowChildrenCount)
                 return rowChildren.at(current - cellsCount).get();
@@ -392,7 +392,7 @@ static AtkObject* webkitAccessibleRefChild(AtkObject* object, gint index)
     if (coreObject->isAccessibilityTable())
         coreChild = getChildForTable(coreObject, index);
     else {
-        AccessibilityObject::AccessibilityChildrenVector children = coreObject->children();
+        const AccessibilityObject::AccessibilityChildrenVector& children = coreObject->children();
         if (static_cast<unsigned>(index) >= children.size())
             return 0;
         coreChild = children.at(index).get();
@@ -418,7 +418,7 @@ static gint getIndexInParentForCellInRow(AccessibilityObject* coreObject)
     if (!grandParent)
         return -1;
 
-    AccessibilityObject::AccessibilityChildrenVector rows = grandParent->children();
+    const AccessibilityObject::AccessibilityChildrenVector& rows = grandParent->children();
     size_t rowsCount = rows.size();
     size_t previousCellsCount = 0;
 
@@ -427,7 +427,7 @@ static gint getIndexInParentForCellInRow(AccessibilityObject* coreObject)
         if (!rows[i]->isTableRow())
             continue;
 
-        AccessibilityObject::AccessibilityChildrenVector cells = rows[i]->children();
+        const AccessibilityObject::AccessibilityChildrenVector& cells = rows[i]->children();
         size_t cellsCount = cells.size();
 
         if (rows[i] == parent) {
@@ -1133,7 +1133,7 @@ static guint16 getInterfaceMaskFromObject(AccessibilityObject* coreObject)
             // Add the TEXT interface for list items whose
             // first accessible child has a text renderer
             if (role == ListItemRole) {
-                AccessibilityObject::AccessibilityChildrenVector children = coreObject->children();
+                const AccessibilityObject::AccessibilityChildrenVector& children = coreObject->children();
                 if (children.size()) {
                     AccessibilityObject* axRenderChild = children.at(0).get();
                     interfaceMask |= getInterfaceMaskFromObject(axRenderChild);
