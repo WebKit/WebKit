@@ -739,7 +739,6 @@ public:
     void getProgramiv(Platform3DObject program, GC3Denum pname, GC3Dint* value);
     void getNonBuiltInActiveSymbolCount(Platform3DObject program, GC3Denum pname, GC3Dint* value);
     String getProgramInfoLog(Platform3DObject);
-    String getUnmangledInfoLog(Platform3DObject[2], GC3Dsizei, const String&);
     void getRenderbufferParameteriv(GC3Denum target, GC3Denum pname, GC3Dint* value);
     void getShaderiv(Platform3DObject, GC3Denum pname, GC3Dint* value);
     String getShaderInfoLog(Platform3DObject);
@@ -1085,7 +1084,6 @@ private:
     std::unique_ptr<ActiveShaderSymbolCounts> m_shaderSymbolCount;
 
     String mappedSymbolName(Platform3DObject program, ANGLEShaderSymbolType, const String& name);
-    String mappedSymbolName(Platform3DObject shaders[2], size_t count, const String& name);
     String originalSymbolName(Platform3DObject program, ANGLEShaderSymbolType, const String& name);
 
     ANGLEWebKitBridge m_compiler;
