@@ -192,11 +192,11 @@ all : \
 
 ifneq ($(filter iphoneos iphonesimulator, $(PLATFORM_NAME)), )
 all : \
-    $(PUBLIC_HEADERS_DIR)/DOMGestureEvent.h \
+    $(PRIVATE_HEADERS_DIR)/DOMGestureEvent.h \
     $(PRIVATE_HEADERS_DIR)/DOMHTMLTextAreaElementPrivate.h \
-    $(PUBLIC_HEADERS_DIR)/DOMTouch.h \
-    $(PUBLIC_HEADERS_DIR)/DOMTouchEvent.h \
-    $(PUBLIC_HEADERS_DIR)/DOMTouchList.h \
+    $(PRIVATE_HEADERS_DIR)/DOMTouch.h \
+    $(PRIVATE_HEADERS_DIR)/DOMTouchEvent.h \
+    $(PRIVATE_HEADERS_DIR)/DOMTouchList.h \
     $(PRIVATE_HEADERS_DIR)/DOMUIKitExtensions.h \
     $(PRIVATE_HEADERS_DIR)/KeyEventCodesIOS.h \
     $(PRIVATE_HEADERS_DIR)/MediaPlayerProxy.h \

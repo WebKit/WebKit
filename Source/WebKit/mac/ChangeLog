@@ -1,3 +1,9 @@
+2014-01-13  Simon Fraser  <simon.fraser@apple.com>
+
+        DOMTouch* etc should not be public headers on iOS.
+        
+        * MigrateHeaders.make:
+
 2014-01-13  Andy Estes  <aestes@apple.com>
 
         [iOS] Build Fix: switch back to calling postprocess-headers.sh
