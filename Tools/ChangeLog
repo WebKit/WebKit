@@ -1,3 +1,13 @@
+2014-01-12  Daniel Bates  <dabates@apple.com>
+
+        [iOS] Fix the build
+
+        For now, ensure we build WebKit System Interface before we build WebKit.
+        We'll remove this constraint and the constraint to build WebKit Additions
+        in a subsequent commit.
+
+        * Scripts/build-webkit:
+
 2014-01-12  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Fix make distcheck.

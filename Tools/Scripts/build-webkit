@@ -238,9 +238,12 @@ if (isAppleMacWebKit()) {
     $ENV{ENABLE_LLINT_C_LOOP} = 1 if $forceCLoop;
 
     if (isIOSWebKit()) {
+        # FIXME: Remove the inclusion of both WebKit System Interface and WebKit Additions projects
+        # once the iOS build is stable.
+
         # WebKitSystemInterface should always be built just before WebKit.
         my $webKitIndex = first { $projects[$_] eq "Source/WebKit" } 0..$#projects;
-        splice(@projects, $webKitIndex, 0, "WebKitSystemInterface");
+        splice(@projects, $webKitIndex, 0, "../Internal/WebKitSystemInterface");
 
         # WebKitAdditions must come before WebCore
         splice(@projects, 0, 0, "../Internal/WebKitAdditions");
