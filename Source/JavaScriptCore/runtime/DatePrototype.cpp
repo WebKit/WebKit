@@ -162,14 +162,33 @@ static JSCell* formatLocaleDate(ExecState* exec, DateInstance*, double timeInMil
     else if (format != LocaleDate && !exec->argument(0).isUndefined())
         timeStyle = styleFromArgString(arg0String, timeStyle);
 
-    RetainPtr<CFDateFormatterRef> formatter = adoptCF(CFDateFormatterCreate(kCFAllocatorDefault, adoptCF(CFLocaleCopyCurrent()).get(), dateStyle, timeStyle));
+    CFLocaleRef locale = CFLocaleCopyCurrent();
+    CFDateFormatterRef formatter = CFDateFormatterCreate(0, locale, dateStyle, timeStyle);
+    CFRelease(locale);
 
-    if (useCustomFormat)
-        CFDateFormatterSetFormat(formatter.get(), customFormatString.createCFString().get());
+    if (useCustomFormat) {
+        CFStringRef customFormatCFString = CFStringCreateWithCharacters(0, customFormatString.characters(), customFormatString.length());
+        CFDateFormatterSetFormat(formatter, customFormatCFString);
+        CFRelease(customFormatCFString);
+    }
 
-    RetainPtr<CFStringRef> string = adoptCF(CFDateFormatterCreateStringWithAbsoluteTime(kCFAllocatorDefault, formatter.get(), floor(timeInMilliseconds / msPerSecond) - kCFAbsoluteTimeIntervalSince1970));
+    CFStringRef string = CFDateFormatterCreateStringWithAbsoluteTime(0, formatter, floor(timeInMilliseconds / msPerSecond) - kCFAbsoluteTimeIntervalSince1970);
 
-    return jsNontrivialString(exec, string.get());
+    CFRelease(formatter);
+
+    // We truncate the string returned from CFDateFormatter if it's absurdly long (> 200 characters).
+    // That's not great error handling, but it just won't happen so it doesn't matter.
+    UChar buffer[200];
+    const size_t bufferLength = WTF_ARRAY_LENGTH(buffer);
+    size_t length = CFStringGetLength(string);
+    ASSERT(length <= bufferLength);
+    if (length > bufferLength)
+        length = bufferLength;
+    CFStringGetCharacters(string, CFRangeMake(0, length), buffer);
+
+    CFRelease(string);
+
+    return jsNontrivialString(exec, String(buffer, length));
 }
 
 #elif USE(ICU_UNICODE) && !UCONFIG_NO_FORMATTING

@@ -667,9 +667,10 @@ void CompositeEditCommand::setNodeAttribute(PassRefPtr<Element> element, const Q
 static inline bool containsOnlyWhitespace(const String& text)
 {
     for (unsigned i = 0; i < text.length(); ++i) {
-        if (!isWhitespace(text[i]))
+        if (!isWhitespace(text.characters()[i]))
             return false;
     }
+    
     return true;
 }
 

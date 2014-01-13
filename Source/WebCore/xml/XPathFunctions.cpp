@@ -307,17 +307,18 @@ Value FunPosition::evaluate() const
 Value FunId::evaluate() const
 {
     Value a = argument(0).evaluate();
+    StringBuilder idList; // A whitespace-separated list of IDs
 
-    String idList; // A whitespace-separated list of IDs
     if (a.isNodeSet()) {
-        StringBuilder spaceSeparatedList;
-        for (auto& node : a.toNodeSet()) {
-            spaceSeparatedList.append(stringValue(node.get()));
-            spaceSeparatedList.append(' ');
+        const NodeSet& nodes = a.toNodeSet();
+        for (size_t i = 0; i < nodes.size(); ++i) {
+            String str = stringValue(nodes[i]);
+            idList.append(str);
+            idList.append(' ');
         }
-        idList = spaceSeparatedList.toString();
     } else {
-        idList = a.toString();
+        String str = a.toString();
+        idList.append(str);
     }
     
     TreeScope& contextScope = evaluationContext().node->treeScope();
@@ -339,7 +340,7 @@ Value FunId::evaluate() const
 
         // If there are several nodes with the same id, id() should return the first one.
         // In WebKit, getElementById behaves so, too, although its behavior in this case is formally undefined.
-        Node* node = contextScope.getElementById(idList.substring(startPos, endPos - startPos));
+        Node* node = contextScope.getElementById(String(idList.characters() + startPos, endPos - startPos));
         if (node && resultSet.add(node).isNewEntry)
             result.append(node);
         

@@ -1,3 +1,52 @@
+2014-01-12  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r161840.
+        http://trac.webkit.org/changeset/161840
+        https://bugs.webkit.org/show_bug.cgi?id=126870
+
+        Caused jsscore and layout test failures (Requested by smfr on
+        #webkit).
+
+        * bindings/objc/WebScriptObject.mm:
+        (+[WebScriptObject _convertValueToObjcValue:JSC::originRootObject:rootObject:]):
+        * editing/CompositeEditCommand.cpp:
+        (WebCore::containsOnlyWhitespace):
+        * editing/TypingCommand.cpp:
+        (WebCore::TypingCommand::insertText):
+        * editing/VisibleUnits.cpp:
+        (WebCore::startOfParagraph):
+        (WebCore::endOfParagraph):
+        * html/parser/HTMLParserIdioms.cpp:
+        (WebCore::stripLeadingAndTrailingHTMLSpaces):
+        (WebCore::parseHTMLNonNegativeInteger):
+        * inspector/ContentSearchUtils.cpp:
+        (WebCore::ContentSearchUtils::createSearchRegexSource):
+        * inspector/InspectorStyleSheet.cpp:
+        (WebCore::InspectorStyle::newLineAndWhitespaceDelimiters):
+        * inspector/InspectorStyleTextEditor.cpp:
+        (WebCore::InspectorStyleTextEditor::insertProperty):
+        (WebCore::InspectorStyleTextEditor::internalReplaceProperty):
+        * platform/Length.cpp:
+        (WebCore::newCoordsArray):
+        * platform/LinkHash.cpp:
+        (WebCore::visitedLinkHash):
+        * platform/graphics/Color.cpp:
+        (WebCore::Color::parseHexColor):
+        (WebCore::Color::Color):
+        * platform/graphics/TextRun.h:
+        (WebCore::TextRun::TextRun):
+        * platform/text/TextEncodingRegistry.cpp:
+        (WebCore::atomicCanonicalTextEncodingName):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::constructTextRun):
+        * rendering/RenderCombineText.cpp:
+        (WebCore::RenderCombineText::width):
+        * svg/SVGFontElement.cpp:
+        (WebCore::SVGFontElement::registerLigaturesInGlyphCache):
+        * xml/XPathFunctions.cpp:
+        (WebCore::XPath::FunId::evaluate):
+        * xml/XPathNodeSet.h:
+
 2014-01-12  Jinwoo Song  <jinwoo7.song@samsung.com>
 
         Fix build warnings by unused parameter

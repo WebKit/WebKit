@@ -87,13 +87,16 @@ void SVGFontElement::registerLigaturesInGlyphCache(Vector<String>& ligatures)
     // will not be able to find a glyph for "f", but handles the fallback
     // character substitution properly through glyphDataForCharacter().
     Vector<SVGGlyph> glyphs;
-    for (auto& ligature : ligatures) {
-        unsigned ligatureLength = ligature.length();
-        ASSERT(ligatureLength > 1);
+    size_t ligaturesSize = ligatures.size();
+    for (size_t i = 0; i < ligaturesSize; ++i) {
+        const String& unicode = ligatures[i];
 
-        for (unsigned i = 0; i < ligatureLength; ++i) {
-            // FIXME: Is there a faster way to do this without allocating/deallocating a string for every character in every ligature?
-            String lookupString(ligature.substring(i, 1));
+        unsigned unicodeLength = unicode.length();
+        ASSERT(unicodeLength > 1);
+
+        const UChar* characters = unicode.characters();
+        for (unsigned i = 0; i < unicodeLength; ++i) {
+            String lookupString(characters + i, 1);
             m_glyphMap.collectGlyphsForString(lookupString, glyphs);
             if (!glyphs.isEmpty()) {
                 glyphs.clear();

@@ -88,9 +88,10 @@ static int countCharacter(const UChar* data, unsigned length, UChar character)
 std::unique_ptr<Length[]> newCoordsArray(const String& string, int& len)
 {
     unsigned length = string.length();
+    const UChar* data = string.characters();
     StringBuffer<UChar> spacified(length);
     for (unsigned i = 0; i < length; i++) {
-        UChar cc = string[i];
+        UChar cc = data[i];
         if (cc > '9' || (cc < '0' && cc != '-' && cc != '*' && cc != '.'))
             spacified[i] = ' ';
         else

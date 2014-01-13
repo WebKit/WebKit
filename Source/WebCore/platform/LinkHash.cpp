@@ -214,9 +214,10 @@ static ALWAYS_INLINE LinkHash visitedLinkHashInline(const CharacterType* url, un
 LinkHash visitedLinkHash(const String& url)
 {
     unsigned length = url.length();
-    if (url.isNull() || url.is8Bit())
+
+    if (length && url.is8Bit())
         return visitedLinkHashInline(url.characters8(), length);
-    return visitedLinkHashInline(url.characters16(), length);
+    return visitedLinkHashInline(url.characters(), length);
 }
 
 LinkHash visitedLinkHash(const UChar* url, unsigned length)

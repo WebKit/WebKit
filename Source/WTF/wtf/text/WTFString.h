@@ -625,14 +625,14 @@ inline bool isAllSpecialCharacters(const CharacterType* characters, size_t lengt
 template<bool isSpecialCharacter(UChar)>
 inline bool String::isAllSpecialCharacters() const
 {
-    size_t length = this->length();
+    size_t len = length();
 
-    if (!length)
+    if (!len)
         return true;
 
     if (is8Bit())
-        return WTF::isAllSpecialCharacters<isSpecialCharacter>(characters8(), length);
-    return WTF::isAllSpecialCharacters<isSpecialCharacter>(characters16(), length);
+        return WTF::isAllSpecialCharacters<isSpecialCharacter, LChar>(characters8(), len);
+    return WTF::isAllSpecialCharacters<isSpecialCharacter, UChar>(characters(), len);
 }
 
 // StringHash is the default hash for String

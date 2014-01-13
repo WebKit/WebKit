@@ -36,7 +36,6 @@
 #include <inspector/InspectorValues.h>
 #include <wtf/BumpPointerAllocator.h>
 #include <wtf/StdLibExtras.h>
-#include <wtf/text/StringBuilder.h>
 #include <yarr/Yarr.h>
 
 using namespace Inspector;
@@ -51,13 +50,17 @@ static const char regexSpecialCharacters[] = "[](){}+-*.,?\\^$|";
 
 static String createSearchRegexSource(const String& text)
 {
-    StringBuilder result;
+    String result;
+    const UChar* characters = text.characters();
+    String specials(regexSpecialCharacters);
+
     for (unsigned i = 0; i < text.length(); i++) {
-        if (isASCII(text[i]) && strchr(regexSpecialCharacters, text[i]))
-            result.append('\\');
-        result.append(text[i]);
+        if (specials.find(characters[i]) != notFound)
+            result.append("\\");
+        result.append(characters[i]);
     }
-    return result.toString();
+
+    return result;
 }
 
 static inline size_t sizetExtractor(const size_t* value)
