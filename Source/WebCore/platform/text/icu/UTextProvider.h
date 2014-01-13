@@ -46,7 +46,7 @@ inline UTextProviderContext uTextProviderContext(const UText* text, int64_t nati
     return UTextProviderContext::PriorContext;
 }
 
-inline void uTextInitialize(UText* text, const UTextFuncs* funcs, const void* string, unsigned length, const UChar* priorContext, int priorContextLength)
+inline void initializeContextAwareUTextProvider(UText* text, const UTextFuncs* funcs, const void* string, unsigned length, const UChar* priorContext, int priorContextLength)
 {
     text->pFuncs = funcs;
     text->providerProperties = 1 << UTEXT_PROVIDER_STABLE_CHUNKS;

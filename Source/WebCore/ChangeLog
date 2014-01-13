@@ -1,3 +1,31 @@
+2014-01-12  Sam Weinig  <sam@webkit.org>
+
+        TextBreakIterator's should support Latin-1 for all iterator types (Part 1)
+        https://bugs.webkit.org/show_bug.cgi?id=126856
+
+        Reviewed by Darin Adler.
+
+        - Do some initial cleanup before adding complete Latin-1 support.
+
+        * platform/text/TextBreakIterator.cpp:
+        Remove non-ICU acquireLineBreakIterator() implementation.
+
+        * platform/text/TextBreakIterator.h:
+        - Changes acquireLineBreakIterator() to take a StringView.
+
+        * platform/text/TextBreakIteratorICU.cpp:
+        - Refactor iterator initialization and setting of text on the iterator.
+        - Add support for using a Latin-1 provider (this is not currently used).
+
+        * platform/text/icu/UTextProviderLatin1.cpp:
+        * platform/text/icu/UTextProviderLatin1.h:
+        - Add back non-context aware Latin-1 provider (from r129662).
+        - Rename context aware provider.
+
+        * platform/text/icu/UTextProviderUTF16.cpp:
+        * platform/text/icu/UTextProviderUTF16.h:
+        - Rename context aware provider.
+
 2014-01-12  Brent Fulgham  <bfulgham@apple.com>
 
         [WebGL] Error messages should use source code labels, not internal mangled symbols.

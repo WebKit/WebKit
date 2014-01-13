@@ -38,7 +38,8 @@ struct UTextWithBuffer {
     UChar buffer[UTextWithBufferInlineCapacity];
 };
 
-UText* uTextOpenLatin1(UTextWithBuffer* utWithBuffer, const LChar* string, unsigned length, const UChar* priorContext, int priorContextLength, UErrorCode* status);
+UText* openLatin1UTextProvider(UTextWithBuffer* utWithBuffer, const LChar* string, unsigned length, UErrorCode* status);
+UText* openLatin1ContextAwareUTextProvider(UTextWithBuffer* utWithBuffer, const LChar* string, unsigned length, const UChar* priorContext, int priorContextLength, UErrorCode* status);
 
 } // namespace WebCore
 

@@ -31,7 +31,7 @@
 
 namespace WebCore {
 
-UText* uTextOpenUTF16(UText*, const UChar*, unsigned length, const UChar* priorContext, int priorContextLength, UErrorCode*);
+UText* openUTF16ContextAwareUTextProvider(UText*, const UChar*, unsigned length, const UChar* priorContext, int priorContextLength, UErrorCode*);
 
 } // namespace WebCore
 

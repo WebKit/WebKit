@@ -23,6 +23,7 @@
 #define TextBreakIterator_h
 
 #include <wtf/text/AtomicString.h>
+#include <wtf/text/StringView.h>
 #include <wtf/unicode/Unicode.h>
 
 namespace WebCore {
@@ -38,10 +39,10 @@ class TextBreakIterator;
 TextBreakIterator* cursorMovementIterator(const UChar*, int length);
 
 TextBreakIterator* wordBreakIterator(const UChar*, int length);
-TextBreakIterator* acquireLineBreakIterator(const LChar*, int length, const AtomicString& locale, const UChar* priorContext, unsigned priorContextLength);
-TextBreakIterator* acquireLineBreakIterator(const UChar*, int length, const AtomicString& locale, const UChar* priorContext, unsigned priorContextLength);
-void releaseLineBreakIterator(TextBreakIterator*);
 TextBreakIterator* sentenceBreakIterator(const UChar*, int length);
+
+TextBreakIterator* acquireLineBreakIterator(StringView, const AtomicString& locale, const UChar* priorContext, unsigned priorContextLength);
+void releaseLineBreakIterator(TextBreakIterator*);
 
 int textBreakFirst(TextBreakIterator*);
 int textBreakLast(TextBreakIterator*);
@@ -130,10 +131,7 @@ public:
         ASSERT(priorContextLength <= priorContextCapacity);
         const UChar* priorContext = priorContextLength ? &m_priorContext[priorContextCapacity - priorContextLength] : 0;
         if (!m_iterator) {
-            if (m_string.is8Bit())
-                m_iterator = acquireLineBreakIterator(m_string.characters8(), m_string.length(), m_locale, priorContext, priorContextLength);
-            else
-                m_iterator = acquireLineBreakIterator(m_string.characters16(), m_string.length(), m_locale, priorContext, priorContextLength);
+            m_iterator = acquireLineBreakIterator(m_string, m_locale, priorContext, priorContextLength);
             m_cachedPriorContext = priorContext;
             m_cachedPriorContextLength = priorContextLength;
         } else if (priorContext != m_cachedPriorContext || priorContextLength != m_cachedPriorContextLength) {
