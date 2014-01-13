@@ -120,6 +120,7 @@ extern NSString *WebHistoryItemsKey;
 */
 @property (nonatomic, readonly, copy) NSArray *orderedLastVisitedDays;
 
+#if !TARGET_OS_IPHONE
 /*!
     @method orderedItemsLastVisitedOnDay:
     @discussion Get an array of WebHistoryItem that were last visited on the day represented by the
@@ -131,6 +132,7 @@ extern NSString *WebHistoryItemsKey;
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
 - (NSArray *)orderedItemsLastVisitedOnDay:(NSCalendarDate *)calendarDate;
 #pragma clang diagnostic pop
+#endif
 
 /*!
     @method itemForURL:

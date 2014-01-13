@@ -35,6 +35,7 @@
 
 #if PLATFORM(IOS)
 #import <CoreGraphics/CoreGraphics.h>
+#import <WebCore/FloatQuad.h>
 #import <WebCore/InspectorOverlay.h>
 #import <WebCore/WebCoreThread.h>
 #endif

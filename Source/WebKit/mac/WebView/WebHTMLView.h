@@ -28,6 +28,11 @@
 
 #import <WebKit/WebDocument.h>
 
+#if TARGET_OS_IPHONE
+#import <WebKit/WAKView.h>
+#import <WebKit/WAKAppKitStubs.h>
+#endif
+
 @class WebDataSource;
 @class WebHTMLViewPrivate;
 

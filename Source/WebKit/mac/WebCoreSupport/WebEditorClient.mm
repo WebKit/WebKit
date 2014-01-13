@@ -797,6 +797,14 @@ void WebEditorClient::textDidChangeInTextArea(Element* element)
     CallFormDelegate(m_webView, @selector(textDidChangeInTextArea:inFrame:), textAreaElement, kit(element->document().frame()));
 }
 
+static RetainPtr<NSString> nsStringWithoutCopying(StringView stringView)
+{
+    if (stringView.is8Bit())
+        return adoptNS([[NSString alloc] initWithBytesNoCopy:const_cast<LChar*>(stringView.characters8()) length:stringView.length() encoding:NSISOLatin1StringEncoding freeWhenDone:NO]);
+
+    return adoptNS([[NSString alloc] initWithCharactersNoCopy:const_cast<unichar*>(stringView.characters16()) length:stringView.length() freeWhenDone:NO]);
+}
+
 #if PLATFORM(IOS)
 void WebEditorClient::suppressSelectionNotifications() 
 {
@@ -875,14 +883,15 @@ int WebEditorClient::pasteboardChangeCount()
     return 0;
 }
 
-void WebEditorClient::checkTextOfParagraph(StringView string, TextCheckingTypeMask checkingTypes)
+Vector<TextCheckingResult> WebEditorClient::checkTextOfParagraph(StringView string, TextCheckingTypeMask checkingTypes)
 {
     ASSERT(checkingTypes & NSTextCheckingTypeSpelling);
 
-    NSArray *incomingResults = [[m_webView _UIKitDelegateForwarder] checkSpellingOfString:nsStringWithoutCopying(string).get()];
-
     Vector<TextCheckingResult> results;
 
+    auto textString = nsStringWithoutCopying(string);
+    NSArray *incomingResults = [[m_webView _UIKitDelegateForwarder] checkSpellingOfString:textString.get()];
+    [textString release];
     for (NSValue *incomingResult in incomingResults) {
         NSRange resultRange = [incomingResult rangeValue];
         ASSERT(resultRange.location != NSNotFound && resultRange.length > 0);
@@ -896,14 +905,6 @@ void WebEditorClient::checkTextOfParagraph(StringView string, TextCheckingTypeMa
     return results;
 }
 #endif // PLATFORM(IOS)
-
-static RetainPtr<NSString> nsStringWithoutCopying(StringView stringView)
-{
-    if (stringView.is8Bit())
-        return adoptNS([[NSString alloc] initWithBytesNoCopy:const_cast<LChar*>(stringView.characters8()) length:stringView.length() encoding:NSISOLatin1StringEncoding freeWhenDone:NO]);
-
-    return adoptNS([[NSString alloc] initWithCharactersNoCopy:const_cast<unichar*>(stringView.characters16()) length:stringView.length() freeWhenDone:NO]);
-}
 
 #if !PLATFORM(IOS)
 bool WebEditorClient::shouldEraseMarkersAfterChangeSelection(TextCheckingType type) const

@@ -28,10 +28,13 @@
 
 #import "WebDefaultUIDelegate.h"
 
-#import "WebJavaScriptTextInputPanel.h"
 #import "WebTypesInternal.h"
 #import "WebUIDelegatePrivate.h"
 #import "WebView.h"
+
+#if !PLATFORM(IOS)
+#import "WebJavaScriptTextInputPanel.h"
+#endif
 
 #if PLATFORM(IOS)
 #import <WebCore/WAKViewPrivate.h>

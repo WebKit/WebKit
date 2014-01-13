@@ -33,9 +33,12 @@
 #import <WebKit/WebFramePrivate.h>
 #import <WebKit/WebFrameViewInternal.h>
 #import <WebKit/WebNSImageExtras.h>
-#import <WebKit/WebNSPasteboardExtras.h>
 #import <WebKit/WebNSURLExtras.h>
 #import <WebKit/WebView.h>
+
+#if !PLATFORM(IOS)
+#import <WebKit/WebNSPasteboardExtras.h>
+#endif
 
 #if PLATFORM(IOS)
 #import <WebCore/WAKViewPrivate.h>

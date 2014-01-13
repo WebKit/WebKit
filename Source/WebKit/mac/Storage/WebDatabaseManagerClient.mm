@@ -31,6 +31,7 @@
 #import "WebSecurityOriginInternal.h"
 #import <wtf/MainThread.h>
 #import <wtf/RetainPtr.h>
+#import <WebCore/DatabaseTracker.h>
 #import <WebCore/SecurityOrigin.h>
 
 #if PLATFORM(IOS)

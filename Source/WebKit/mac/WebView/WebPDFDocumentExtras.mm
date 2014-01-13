@@ -64,10 +64,9 @@ static void getAllValuesInPDFNameTree(CGPDFDictionaryRef tree, Vector<CGPDFObjec
     appendValuesInPDFNameSubtreeToVector(tree, allValues);
 }
 
-NSArray *allScriptsInPDFDocument(PDFDocument *document)
+NSArray *allScriptsInPDFDocument(CGPDFDocumentRef pdfDocument)
 {
     NSMutableArray *scripts = [NSMutableArray array];
-    CGPDFDocumentRef pdfDocument = [document documentRef];
     if (!pdfDocument)
         return scripts;
 
@@ -130,3 +129,10 @@ NSArray *allScriptsInPDFDocument(PDFDocument *document)
 
     return scripts;
 }
+
+#if !PLATFORM(IOS)
+NSArray *allScriptsInPDFDocument(PDFDocument *document)
+{
+    return allScriptsInPDFDocument([document documentRef]);
+}
+#endif

@@ -1,3 +1,30 @@
+2014-01-13  Simon Fraser  <simon.fraser@apple.com>
+
+        Various iOS WebKit1 build fixes.
+
+        * Configurations/WebKit.xcconfig: Add more Mac-only files
+        to the excluded files list for iOS.
+        * DefaultDelegates/WebDefaultUIDelegate.m: Don't include WebJavaScriptTextInputPanel.h
+        on iOS
+        * History/WebHistory.h: NSCalendarDate doesn't exist on iOS.
+        * Misc/WebDownload.h: Need WAKAppKitStubs.h
+        * Misc/WebNSViewExtras.m: No WebNSPasteboardExtras on iOS
+        * Storage/WebDatabaseManagerClient.mm: Need DatabaseTracker.h, no harm
+        in including it for all platforms.
+        * WebCoreSupport/WebEditorClient.h: Remove useless comment.
+        * WebCoreSupport/WebEditorClient.mm:
+        (nsStringWithoutCopying): Moved
+        (WebEditorClient::checkTextOfParagraph): Modernized.
+        * WebInspector/WebNodeHighlightView.mm: Need FloatQuad.h.
+        * WebView/WebDataSource.mm: Need WebFrameViewInternal.h
+        * WebView/WebDocument.h: Needs WAKView.h.
+        * WebView/WebFrameView.h: Ditto.
+        * WebView/WebHTMLView.h: Ditto.
+        * WebView/WebPDFDocumentExtras.mm:
+        (allScriptsInPDFDocument): No PDFDocument on iOS.
+        * WebView/WebPolicyDelegate.h:
+        * WebView/WebView.h: Fix incorrect #if.
+
 2014-01-13  Daniel Bates  <dabates@apple.com>
 
         [iOS] More build fixes for WebKit
