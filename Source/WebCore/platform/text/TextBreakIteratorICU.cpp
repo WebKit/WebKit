@@ -246,7 +246,7 @@ TextBreakIterator* cursorMovementIterator(const UChar* buffer, int length)
     static TextBreakIterator* staticCursorMovementIterator = initializeIteratorWithRules(kRules);
 #else // PLATFORM(IOS)
     // Use the special Thai character break iterator for all locales
-    static TextBreakIterator* staticCursorMovementIterator = createSharedIterator(UBRK_CHARACTER, "th");
+    static TextBreakIterator* staticCursorMovementIterator = initializeIterator(UBRK_CHARACTER, "th");
 #endif // !PLATFORM(IOS)
 
     if (!staticCursorMovementIterator)

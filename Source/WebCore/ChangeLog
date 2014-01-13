@@ -1,3 +1,14 @@
+2014-01-12  Maciej Stachowiak  <mjs@apple.com>
+
+        Fix iOS build breakage from http://trac.webkit.org/changeset/161844
+        https://bugs.webkit.org/show_bug.cgi?id=126866
+
+        Reviewed by Simon Fraser.
+
+        * platform/text/TextBreakIteratorICU.cpp:
+        (WebCore::cursorMovementIterator): Use initializeIterator instead of createSharedIterator,
+        which does not exist.
+
 2014-01-12  Darin Adler  <darin@apple.com>
 
         Add PLATFORM(COCOA) and USE(FOUNDATION)
