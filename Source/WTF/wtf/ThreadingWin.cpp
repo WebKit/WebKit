@@ -167,7 +167,6 @@ void initializeThreading()
     // StringImpl::empty() does not construct its static string in a threadsafe fashion,
     // so ensure it has been initialized from here.
     StringImpl::empty();
-    atomicallyInitializedStaticMutex = new Mutex;
     threadMapMutex();
     initializeRandomNumberGenerator();
     wtfThreadData();

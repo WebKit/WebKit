@@ -1,5 +1,12 @@
 2014-01-13  Anders Carlsson  <andersca@apple.com>
 
+        Fix Windows build.
+
+        * wtf/ThreadingWin.cpp:
+        (WTF::initializeThreading):
+
+2014-01-13  Anders Carlsson  <andersca@apple.com>
+
         Remove AtomicallyInitializedStatic
         https://bugs.webkit.org/show_bug.cgi?id=126864
 
