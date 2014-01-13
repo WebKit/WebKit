@@ -1,3 +1,12 @@
+2014-01-12  Dan Bernstein  <mitz@apple.com>
+
+        Fix an assertion failure in initializeDates() when launching Safari, which was introduced in r161852.
+
+        Reviewed by Andy Estes.
+
+        * wtf/ThreadingPthreads.cpp:
+        (WTF::initializeThreading): Set isInitialized to true.
+
 2014-01-12  Darin Adler  <darin@apple.com>
 
         Add PLATFORM(COCOA) and USE(FOUNDATION)
