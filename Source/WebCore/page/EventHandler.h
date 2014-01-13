@@ -86,9 +86,9 @@ class OptionalCursor;
 class PlatformKeyboardEvent;
 class PlatformTouchEvent;
 class PlatformWheelEvent;
+class RenderBox;
 class RenderElement;
 class RenderLayer;
-class RenderObject;
 class RenderWidget;
 class SVGElementInstance;
 class Scrollbar;
@@ -138,7 +138,7 @@ public:
 #endif
 
     void stopAutoscrollTimer(bool rendererIsBeingDestroyed = false);
-    RenderElement* autoscrollRenderer() const;
+    RenderBox* autoscrollRenderer() const;
     void updateAutoscrollRenderer();
     bool autoscrollInProgress() const;
     bool mouseDownWasInSubframe() const { return m_mouseDownWasInSubframe; }

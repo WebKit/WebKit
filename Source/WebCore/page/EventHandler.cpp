@@ -1023,7 +1023,7 @@ void EventHandler::startPanScrolling(RenderElement* renderer)
 
 #endif // ENABLE(PAN_SCROLLING)
 
-RenderElement* EventHandler::autoscrollRenderer() const
+RenderBox* EventHandler::autoscrollRenderer() const
 {
     return m_autoscrollController->autoscrollRenderer();
 }

@@ -28,6 +28,7 @@
 #include "Chrome.h"
 #include "ChromeClient.h"
 #include "Document.h"
+#include "EventHandler.h"
 #include "FloatQuad.h"
 #include "Frame.h"
 #include "FrameView.h"
@@ -218,6 +219,9 @@ void RenderBox::clearRenderBoxRegionInfo()
 
 void RenderBox::willBeDestroyed()
 {
+    if (frame().eventHandler().autoscrollRenderer() == this)
+        frame().eventHandler().stopAutoscrollTimer(true);
+
     clearOverrideSize();
     clearContainingBlockOverrideSize();
 

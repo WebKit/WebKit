@@ -1,3 +1,25 @@
+2014-01-13  Andreas Kling  <akling@apple.com>
+
+        CTTE: Autoscroll renderer is always a RenderBox.
+        <https://webkit.org/b/126884>
+
+        Reviewed by Antti Koivisto.
+
+        * page/EventHandler.h:
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::autoscrollRenderer):
+
+            Make autoscrollRenderer() return a RenderBox*.
+
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::willBeDestroyed):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::willBeDestroyed):
+
+            Only check if the autoscroll renderer is being torn down
+            in RenderBox::willBeDestroyed() since it's not relevant for
+            other renderer types.
+
 2014-01-13  László Langó  <llango.u-szeged@partner.samsung.com>
 
         Text should be constructable.
