@@ -60,6 +60,7 @@ static bool getSymbolInfo(ShHandle compiler, ShShaderInfo symbolType, Vector<ANG
         break;
     case SH_VARYINGS:
         symbolMaxNameLengthType = SH_VARYING_MAX_LENGTH;
+        break;
     default:
         ASSERT_NOT_REACHED();
         return false;
@@ -226,6 +227,8 @@ bool ANGLEWebKitBridge::compileShaderSource(const char* shaderSource, ANGLEShade
     if (!getSymbolInfo(compiler, SH_ACTIVE_ATTRIBUTES, symbols))
         return false;
     if (!getSymbolInfo(compiler, SH_ACTIVE_UNIFORMS, symbols))
+        return false;
+    if (!getSymbolInfo(compiler, SH_VARYINGS, symbols))
         return false;
 
     return true;

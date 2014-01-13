@@ -1,3 +1,14 @@
+2014-01-12  Brent Fulgham  <bfulgham@apple.com>
+
+        [WebGL] Error messages should use source code labels, not internal mangled symbols.
+        https://bugs.webkit.org/show_bug.cgi?id=126832
+
+        Reviewed by Dean Jackson.
+
+        * fast/canvas/webgl/glsl-conformance.html: Add log to program output
+        showing error message to confirm proper labels are being used.
+        * fast/canvas/webgl/glsl-conformance-expected.txt: updated.
+
 2014-01-12  Benjamin Poulain  <benjamin@webkit.org>
 
         Use the Selector Code Generator for matching in SelectorQuery

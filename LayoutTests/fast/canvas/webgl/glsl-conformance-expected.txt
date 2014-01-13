@@ -28,6 +28,9 @@ PASS [vshaderWithImplicitVec3Cast/fshader]: vertex shader that implicit vec3 to 
 PASS [vshaderWithVersion130/fshader]: vertex shader uses the #version not 100 directive should fail
 PASS [vshaderWithVersion120/fshader]: vertex shader uses the #version not 100 directive should fail
 PASS [vshaderWithVersion100/fshader]: vertex shader uses the #version 100 directive should succeed
+Program link log:ERROR: Input of fragment shader 'v_varying' not written by vertex shader
+
+PASS [vshaderWithVersion100/fragmentShaderUsedVarying]: vertex shader with no varying and fragment shader with used varying must fail
 PASS [shaders/implicit/add_int_float.vert/fshader]: implicit cast adding integer to float should fail
 PASS [shaders/implicit/add_int_mat2.vert/fshader]: implicit cast adding integer to mat2 should fail
 PASS [shaders/implicit/add_int_mat3.vert/fshader]: implicit cast adding integer to mat3 should fail
