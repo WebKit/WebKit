@@ -449,6 +449,7 @@
 		0C3F1F5B10C8871200D72CE1 /* WebGLUniformLocation.h in Headers */ = {isa = PBXBuildFile; fileRef = 0C3F1F5810C8871200D72CE1 /* WebGLUniformLocation.h */; };
 		0C45342710CDBBFA00869157 /* JSWebGLUniformLocation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0C45342510CDBBFA00869157 /* JSWebGLUniformLocation.cpp */; };
 		0C45342810CDBBFA00869157 /* JSWebGLUniformLocation.h in Headers */ = {isa = PBXBuildFile; fileRef = 0C45342610CDBBFA00869157 /* JSWebGLUniformLocation.h */; };
+		0F03C0741884695E00A5F8CA /* SystemMemory.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F03C0731884695E00A5F8CA /* SystemMemory.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F09087F1444FDB200028917 /* ScrollbarTheme.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FE71415142189FC00DB33BA /* ScrollbarTheme.cpp */; };
 		0F099D0817B968A100FF84B9 /* WebCoreTypedArrayController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F099D0617B968A100FF84B9 /* WebCoreTypedArrayController.cpp */; };
 		0F099D0917B968A100FF84B9 /* WebCoreTypedArrayController.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F099D0717B968A100FF84B9 /* WebCoreTypedArrayController.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -7249,6 +7250,7 @@
 		0C3F1F5910C8871200D72CE1 /* WebGLUniformLocation.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = WebGLUniformLocation.idl; path = canvas/WebGLUniformLocation.idl; sourceTree = "<group>"; };
 		0C45342510CDBBFA00869157 /* JSWebGLUniformLocation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWebGLUniformLocation.cpp; sourceTree = "<group>"; };
 		0C45342610CDBBFA00869157 /* JSWebGLUniformLocation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWebGLUniformLocation.h; sourceTree = "<group>"; };
+		0F03C0731884695E00A5F8CA /* SystemMemory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SystemMemory.h; path = ios/SystemMemory.h; sourceTree = "<group>"; };
 		0F099D0617B968A100FF84B9 /* WebCoreTypedArrayController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebCoreTypedArrayController.cpp; sourceTree = "<group>"; };
 		0F099D0717B968A100FF84B9 /* WebCoreTypedArrayController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebCoreTypedArrayController.h; sourceTree = "<group>"; };
 		0F11A54E0F39233100C37884 /* RenderSelectionInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderSelectionInfo.h; sourceTree = "<group>"; };
@@ -18048,6 +18050,7 @@
 				E45390350EAFD637003695C8 /* SharedTimerIOS.mm */,
 				E45390360EAFD637003695C8 /* SoundIOS.mm */,
 				4476531A133170990006B789 /* SSLKeyGeneratorIOS.cpp */,
+				0F03C0731884695E00A5F8CA /* SystemMemory.h */,
 				E45390AD0EAFF4B5003695C8 /* SystemMemoryIOS.cpp */,
 				44C9919D0F3D210E00586670 /* ThemeIOS.h */,
 				44C9919E0F3D210E00586670 /* ThemeIOS.mm */,
@@ -22828,6 +22831,7 @@
 				BCF7E491137CD7C7001DDAE7 /* AdjustViewSizeOrNot.h in Headers */,
 				84D0C4061115F1EA0018AA34 /* AffineTransform.h in Headers */,
 				CEDA12D7152CA1CB00D9E08D /* AlternativeTextClient.h in Headers */,
+				0F03C0741884695E00A5F8CA /* SystemMemory.h in Headers */,
 				CE08C3D2152B599A0021B8C2 /* AlternativeTextController.h in Headers */,
 				CE7B2DB31586ABAD0098B3FA /* AlternativeTextUIController.h in Headers */,
 				FE0D84E910484348001A179E /* WebEvent.h in Headers */,

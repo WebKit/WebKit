@@ -1,3 +1,15 @@
+2014-01-13  Simon Fraser  <simon.fraser@apple.com>
+
+        Fix copy of SystemMemory.h in iOS WebKit build.
+        
+        Move SystemMemory.h from platform/SystemMemory.h to platform/ios/SystemMemory.h.
+        Add it to the project file.
+        Make it a Private header.
+        Add PLATFORM(IOS) #idfefs around its contents.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/ios/SystemMemory.h: Renamed from Source/WebCore/platform/SystemMemory.h.
+
 2014-01-13  Youenn Fablet  <youennf@gmail.com>
 
         Dispatch a progress event before dispatching abort, error or timeout event
