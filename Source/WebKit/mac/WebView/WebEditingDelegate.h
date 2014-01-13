@@ -30,6 +30,8 @@
 
 #if !TARGET_OS_IPHONE
 #import <AppKit/AppKit.h>
+#else
+#import <WebKit/WAKAppKitStubs.h>
 #endif
 
 @class DOMCSSStyleDeclaration;
