@@ -76,7 +76,7 @@ static UText* uTextLatin1Clone(UText* destination, const UText* source, UBool de
     // Point at the same position, but with an empty buffer.
     result->chunkNativeStart = source->chunkNativeStart;
     result->chunkNativeLimit = source->chunkNativeStart;
-    result->nativeIndexingLimit = source->chunkNativeStart;
+    result->nativeIndexingLimit = static_cast<int32_t>(source->chunkNativeStart);
     result->chunkOffset = 0;
     result->context = source->context;
     result->a = source->a;
@@ -174,7 +174,7 @@ static int32_t uTextLatin1Extract(UText* uText, int64_t start, int64_t limit, UC
         return 0;
 
     if (destCapacity > 0 && !dest) {
-        int32_t trimmedLength = length;
+        int32_t trimmedLength = static_cast<int32_t>(length);
         if (trimmedLength > destCapacity)
             trimmedLength = destCapacity;
 
@@ -190,7 +190,7 @@ static int32_t uTextLatin1Extract(UText* uText, int64_t start, int64_t limit, UC
     else
         *status = U_BUFFER_OVERFLOW_ERROR;
 
-    return length;
+    return static_cast<int32_t>(length);
 }
 
 static int64_t uTextLatin1MapOffsetToNative(const UText* uText)
@@ -202,7 +202,7 @@ static int32_t uTextLatin1MapNativeIndexToUTF16(const UText* uText, int64_t nati
 {
     ASSERT_UNUSED(uText, uText->chunkNativeStart >= nativeIndex);
     ASSERT_UNUSED(uText, nativeIndex < uText->chunkNativeLimit);
-    return nativeIndex;
+    return static_cast<int32_t>(nativeIndex);
 }
 
 static void uTextLatin1Close(UText* uText)
