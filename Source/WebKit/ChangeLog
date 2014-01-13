@@ -1,3 +1,10 @@
+2014-01-13  Eric Carlson  <eric.carlson@apple.com>
+
+        Unreviewed build fix.
+
+        * WebKit.vcxproj/WebKitExportGenerator/WebKitExports.def.in: Add missing
+            exports needed for Windows build after r161899.
+
 2014-01-13  Andy Estes  <aestes@apple.com>
 
         [iOS] Build Fix: switch back to calling postprocess-headers.sh
