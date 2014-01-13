@@ -1,3 +1,12 @@
+2014-01-13  Zalan Bujtas  <zalan@apple.com>
+
+        Enable SUBPIXEL_LAYOUT on Mac
+        <https://webkit.org/b/126283>
+
+        Reviewed by Simon Fraser.
+
+        * Configurations/FeatureDefines.xcconfig:
+
 2014-01-13  Zan Dobersek  <zdobersek@igalia.com>
 
         Unreviewed. Changes in r161686 are exposing a bug in GCC where the global .cfi_startproc directive
