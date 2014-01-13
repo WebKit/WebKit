@@ -1,3 +1,10 @@
+2014-01-12  Brent Fulgham  <bfulgham@apple.com>
+
+        Unreviewed build fix for WinCairo.
+
+        * WebCore.vcxproj/WebCoreCairo.props: Add missing include path
+        to locate SelectorCompiler.h.
+
 2014-01-12  Maciej Stachowiak  <mjs@apple.com>
 
         Fix iOS build breakage from http://trac.webkit.org/changeset/161844
