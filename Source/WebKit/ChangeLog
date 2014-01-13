@@ -1,3 +1,14 @@
+2014-01-13  Daniel Bates  <dabates@apple.com>
+
+        [iOS] Don't link to Mac-only frameworks when building WebKit
+
+        Currently the Xcode project always links against various Mac-only frameworks (e.g. Carbon.framework).
+        Instead the Xcode project should only link against {JavaScriptCore, WebCore}.framework and
+        libicucore.dylib, which are the frameworks/libraries that are shared by both the Mac and iOS port. We'll
+        use Configuration/WebCore.xcconfig to specify additional port-specific frameworks to link against.
+
+        * WebKit.xcodeproj/project.pbxproj:
+
 2014-01-13  Eric Carlson  <eric.carlson@apple.com>
 
         Unreviewed build fix.
