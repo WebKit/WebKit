@@ -1,3 +1,14 @@
+2014-01-14  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        Unreviewed GTK gardening.
+
+        Added missing baselines for some regions tests.
+
+        * platform/gtk/fast/regions/auto-size/autoheight-regions-mark-expected.txt: Added.
+        * platform/gtk/fast/regions/flows-dependency-dynamic-remove-expected.txt: Added.
+        * platform/gtk/fast/regions/flows-dependency-same-flow-expected.txt: Added.
+        * platform/gtk/fast/regions/iframe-html-collected-expected.txt: Added.
+
 2014-01-13  Grzegorz Czajkowski  <g.czajkowski@samsung.com>
 
         Make spelling tests added in r141354 to be able to run asynchronously
