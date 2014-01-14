@@ -1,3 +1,9 @@
+2014-01-14  Simon Fraser  <simon.fraser@apple.com>
+
+        iOS build fixing: link WebKit against Security.framework on iOS.
+
+        * Configurations/WebKit.xcconfig:
+
 2014-01-14  Dean Jackson  <dino@apple.com>
 
         [WK1] Allow generated export files on iOS
