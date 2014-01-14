@@ -41,3 +41,8 @@ find_library(ENCHANT_LIBRARIES
     PATHS ${PC_ENCHANT_LIBDIR}
           ${PC_ENCHANT_LIBRARY_DIRS}
 )
+
+mark_as_advanced(
+    ENCHANT_INCLUDE_DIRS
+    ENCHANT_LIBRARIES
+)

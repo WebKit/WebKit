@@ -1,5 +1,21 @@
 2014-01-13  Martin Robinson  <mrobinson@igalia.com>
 
+        [CMake] Mark all dependency include paths and libraries as advanced variables
+        https://bugs.webkit.org/show_bug.cgi?id=126504
+
+        Reviewed by Daniel Bates.
+
+        * Source/cmake/FindATK.cmake: Mark result variable as advanced.
+        * Source/cmake/FindCairo.cmake: Ditto.
+        * Source/cmake/FindEGL.cmake: Ditto.
+        * Source/cmake/FindEnchant.cmake: Ditto.
+        * Source/cmake/FindGLIB.cmake: Ditto.
+        * Source/cmake/FindGStreamer.cmake: Ditto.
+        * Source/cmake/FindHarfBuzz.cmake: Ditto.
+        * Source/cmake/FindLibSoup.cmake: Ditto.
+
+2014-01-13  Martin Robinson  <mrobinson@igalia.com>
+
         [GTK][CMake] Add a 'check' target
         https://bugs.webkit.org/show_bug.cgi?id=126770
 

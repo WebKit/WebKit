@@ -50,3 +50,8 @@ find_library(LIBSOUP_LIBRARIES
 include(FindPackageHandleStandardArgs)
 FIND_PACKAGE_HANDLE_STANDARD_ARGS(LibSoup REQUIRED_VARS LIBSOUP_INCLUDE_DIRS LIBSOUP_LIBRARIES
                                           VERSION_VAR   PC_LIBSOUP_VERSION)
+
+mark_as_advanced(
+    LIBSOUP_INCLUDE_DIRS
+    LIBSOUP_LIBRARIES
+)

@@ -676,6 +676,7 @@ set(WebKit2_LIBRARIES
 
 # librt is needed for shm_open on Linux.
 find_library(LIBRT_LIBRARIES NAMES rt)
+mark_as_advanced(LIBRT_LIBRARIES)
 if (LIBRT_LIBRARIES)
     list(APPEND WebKit2_LIBRARIES ${LIBRT_LIBRARIES})
 endif ()

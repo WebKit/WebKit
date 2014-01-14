@@ -46,3 +46,7 @@ find_library(ATK_LIBRARIES
 include(FindPackageHandleStandardArgs)
 FIND_PACKAGE_HANDLE_STANDARD_ARGS(ATK REQUIRED_VARS ATK_INCLUDE_DIRS ATK_LIBRARIES
                                       VERSION_VAR   PC_ATK_VERSION)
+mark_as_advanced(
+    ATK_INCLUDE_DIRS
+    ATK_LIBRARIES
+)

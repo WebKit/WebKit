@@ -68,3 +68,8 @@ endif ()
 include(FindPackageHandleStandardArgs)
 FIND_PACKAGE_HANDLE_STANDARD_ARGS(Cairo REQUIRED_VARS CAIRO_INCLUDE_DIRS CAIRO_LIBRARIES
                                         VERSION_VAR CAIRO_VERSION)
+
+mark_as_advanced(
+    CAIRO_INCLUDE_DIRS
+    CAIRO_LIBRARIES
+)

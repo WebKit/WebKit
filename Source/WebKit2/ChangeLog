@@ -1,5 +1,14 @@
 2014-01-13  Martin Robinson  <mrobinson@igalia.com>
 
+        [CMake] Mark all dependency include paths and libraries as advanced variables
+        https://bugs.webkit.org/show_bug.cgi?id=126504
+
+        Reviewed by Daniel Bates.
+
+        * CMakeLists.txt: Mark the LIBRT_LIBRARIES variable as advanced.
+
+2014-01-13  Martin Robinson  <mrobinson@igalia.com>
+
         [GTK][CMake] Circular dependency in generation of WebKitEnumTypes.h
         https://bugs.webkit.org/show_bug.cgi?id=126912
 
