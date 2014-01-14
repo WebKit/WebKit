@@ -1,3 +1,11 @@
+2014-01-14  Simon Fraser  <simon.fraser@apple.com>
+
+        Fix WK1 iOS build: need implementations of these functions in WebInspectorClientIOS.
+
+        * WebCoreSupport/WebInspectorClientIOS.mm:
+        (WebInspectorClient::indicate):
+        (WebInspectorClient::hideIndication):
+
 2014-01-13  Simon Fraser  <simon.fraser@apple.com>
 
         More work towards getting iOS WK1 building.

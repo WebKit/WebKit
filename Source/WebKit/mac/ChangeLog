@@ -1,5 +1,13 @@
 2014-01-14  Simon Fraser  <simon.fraser@apple.com>
 
+        Fix iOS WK1 linking.
+
+        * Configurations/WebKit.xcconfig: We do need WebOpenPanelResultListener
+        on iOS.
+        * WebCoreSupport/WebOpenPanelResultListener.mm: Need <WebCore/Icon.h>
+
+2014-01-14  Simon Fraser  <simon.fraser@apple.com>
+
         iOS build fixing: link WebKit against Security.framework on iOS.
 
         * Configurations/WebKit.xcconfig:

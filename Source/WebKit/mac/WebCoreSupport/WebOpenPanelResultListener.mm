@@ -28,6 +28,10 @@
 #import <WebCore/FileChooser.h>
 #import <wtf/PassRefPtr.h>
 
+#if PLATFORM(IOS)
+#import <WebCore/Icon.h>
+#endif
+
 using namespace WebCore;
 
 @implementation WebOpenPanelResultListener
