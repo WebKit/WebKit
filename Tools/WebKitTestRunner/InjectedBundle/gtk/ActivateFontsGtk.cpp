@@ -82,6 +82,9 @@ static CString getFontsPath()
 
 void initializeFontConfigSetting()
 {
+    if (g_getenv("WEBKIT_SKIP_WEBKITTESTRUNNER_FONTCONFIG_INITIALIZATION"))
+        return;
+
     FcInit();
 
     // If a test resulted a font being added or removed via the @font-face rule, then

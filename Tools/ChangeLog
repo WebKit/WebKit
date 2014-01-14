@@ -1,3 +1,18 @@
+2014-01-14  Zan Dobersek  <zdobersek@igalia.com>
+
+        [GTK] Skip FontConfig initialization in WebKitTestRunner if requested
+        https://bugs.webkit.org/show_bug.cgi?id=120110
+
+        Reviewed by Martin Robinson.
+
+        Skip the FontConfig settings initialization in WebKitTestRunner if the
+        WEBKIT_SKIP_WEBKITTESTRUNNER_FONTCONFIG_INITIALIZATION environment variable is set.
+        This is useful when profiling the WebKitTestRunner execution, where at the startup
+        this step takes considerable amount of time and disturbs the profiling output.
+
+        * WebKitTestRunner/InjectedBundle/gtk/ActivateFontsGtk.cpp:
+        (WTR::initializeFontConfigSetting):
+
 2014-01-14  Brian J. Burg  <burg@cs.washington.edu>
 
         Add ENABLE(WEB_REPLAY) feature flag to the build system
