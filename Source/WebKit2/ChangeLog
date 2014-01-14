@@ -1,3 +1,9 @@
+2014-01-13  Andy Estes  <aestes@apple.com>
+
+        [iOS] Build Fix: Don't build the 'All-iOS' target on iOS. Just use 'All'.
+
+        * Makefile:
+
 2014-01-13  Martin Robinson  <mrobinson@igalia.com>
 
         [CMake] Mark all dependency include paths and libraries as advanced variables

@@ -4,9 +4,6 @@ OSX_VERSION ?= $(shell sw_vers -productVersion | cut -d. -f 2)
 BUILD_WEBKIT2 = $(shell (( $(OSX_VERSION) >= 6 )) && echo "YES" )
 
 ifeq "$(BUILD_WEBKIT2)" "YES"
-ifneq (,$(filter iphoneos iphonesimulator,$(foreach sdk,iphoneos iphonesimulator,$(findstring $(sdk),$(SDKROOT)))))
-	OTHER_OPTIONS += -target All-iOS
-endif
 
 include ../Makefile.shared
 
