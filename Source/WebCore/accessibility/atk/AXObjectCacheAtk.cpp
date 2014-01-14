@@ -193,16 +193,6 @@ void AXObjectCache::postPlatformNotification(AccessibilityObject* coreObject, AX
         atk_object_notify_state_change(axObject, ATK_STATE_CHECKED, coreObject->isChecked());
         break;
 
-    case AXChildrenChanged:
-        // We need to make sure that the children AtkObjects are created at this moment,
-        // so the children-changed::add signal gets properly emitted in attachWrapper().
-        {
-            int numOfChildren = atk_object_get_n_accessible_children(axObject);
-            for (int i = 0; i < numOfChildren; ++i)
-                GRefPtr<AtkObject> child(atk_object_ref_accessible_child(axObject, i));
-        }
-        break;
-
     case AXSelectedChildrenChanged:
     case AXMenuListValueChanged:
         if (notification == AXMenuListValueChanged && coreObject->isMenuList()) {

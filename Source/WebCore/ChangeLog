@@ -1,3 +1,24 @@
+2014-01-14  Mario Sanchez Prada  <mario.prada@samsung.com>
+
+        [ATK] AXChildrenChanged notification handling is a performance black hole
+        https://bugs.webkit.org/show_bug.cgi?id=126970
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Remove code that is causing a huge performance problem when
+        loading big pages, just to be able to emit the children-changed:add
+        signal at the exact time a child is added.
+
+        This removal does not imply that the signal won't be ever emitted,
+        just that it will be emitted a bit later (when the new child is
+        asynchronously added to the tree), which should be good enough
+        anyway for Accessible Technologies, without impacting perfformance
+        in such a negative way.
+
+        * accessibility/atk/AXObjectCacheAtk.cpp:
+        (WebCore::AXObjectCache::postPlatformNotification): Removed
+        extremely expensive referring loop when AXChildrenChanged is received.
+
 2014-01-14  Mihai Tica  <mitica@adobe.com>
 
         [CSS Background Blending] Background layer with -webkit-cross-fade doesn't blend

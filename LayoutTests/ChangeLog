@@ -1,3 +1,16 @@
+2014-01-14  Mario Sanchez Prada  <mario.prada@samsung.com>
+
+        [ATK] AXChildrenChanged notification handling is a performance black hole
+        https://bugs.webkit.org/show_bug.cgi?id=126970
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Because of the removal of the referring test when
+        AXChildrenChanged is received, the children-changed:add signal is
+        now emitted later, so we need to reorder the expectations.
+
+        * accessibility/children-changed-sends-notification-expected.txt: Updated.
+
 2014-01-14  Mihai Tica  <mitica@adobe.com>
 
         [CSS Background Blending] Background layer with -webkit-cross-fade doesn't blend
