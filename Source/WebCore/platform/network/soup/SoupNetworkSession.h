@@ -70,7 +70,7 @@ public:
     char* httpProxy() const;
     void setupHTTPProxyFromEnvironment();
 
-    void setAcceptLanguages(Vector<String>);
+    void setAcceptLanguages(const Vector<String>&);
 
 private:
     SoupNetworkSession(SoupCookieJar*);

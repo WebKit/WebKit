@@ -228,22 +228,24 @@ void SoupNetworkSession::setupHTTPProxyFromEnvironment()
 #endif
 }
 
-static CString buildAcceptLanguages(Vector<String> languages)
+static CString buildAcceptLanguages(const Vector<String>& languages)
 {
+    size_t languagesCount = languages.size();
+
     // Ignore "C" locale.
-    size_t position = languages.find("c");
-    if (position != notFound)
-        languages.remove(position);
+    size_t cLocalePosition = languages.find("c");
+    if (cLocalePosition != notFound)
+        languagesCount--;
 
     // Fallback to "en" if the list is empty.
-    if (languages.isEmpty())
+    if (!languagesCount)
         return "en";
 
     // Calculate deltas for the quality values.
     int delta;
-    if (languages.size() < 10)
+    if (languagesCount < 10)
         delta = 10;
-    else if (languages.size() < 20)
+    else if (languagesCount < 20)
         delta = 5;
     else
         delta = 1;
@@ -251,8 +253,11 @@ static CString buildAcceptLanguages(Vector<String> languages)
     // Set quality values for each language.
     StringBuilder builder;
     for (size_t i = 0; i < languages.size(); ++i) {
+        if (i == cLocalePosition)
+            continue;
+
         if (i)
-            builder.append(", ");
+            builder.appendLiteral(", ");
 
         builder.append(languages[i]);
 
@@ -267,7 +272,7 @@ static CString buildAcceptLanguages(Vector<String> languages)
     return builder.toString().utf8();
 }
 
-void SoupNetworkSession::setAcceptLanguages(Vector<String> languages)
+void SoupNetworkSession::setAcceptLanguages(const Vector<String>& languages)
 {
     g_object_set(m_soupSession.get(), "accept-language", buildAcceptLanguages(languages).data(), nullptr);
 }

@@ -124,7 +124,7 @@ void WebProcess::platformClearResourceCaches(ResourceCachesToClear cachesToClear
     soup_cache_clear(WebCore::SoupNetworkSession::defaultSession().cache());
 }
 
-static void setSoupSessionAcceptLanguage(Vector<String> languages)
+static void setSoupSessionAcceptLanguage(const Vector<String>& languages)
 {
     WebCore::SoupNetworkSession::defaultSession().setAcceptLanguages(languages);
 }
