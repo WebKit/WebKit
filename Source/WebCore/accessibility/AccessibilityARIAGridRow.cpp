@@ -73,7 +73,7 @@ void AccessibilityARIAGridRow::disclosedRows(AccessibilityChildrenVector& disclo
         return;
     
     unsigned level = hierarchicalLevel();
-    AccessibilityChildrenVector& allRows = toAccessibilityTable(parent)->rows();
+    auto& allRows = toAccessibilityTable(parent)->rows();
     int rowCount = allRows.size();
     for (int k = index + 1; k < rowCount; ++k) {
         AccessibilityObject* row = allRows[k].get();
@@ -100,7 +100,7 @@ AccessibilityObject* AccessibilityARIAGridRow::disclosedByRow() const
     
     // Search for the previous row that matches the correct level.
     int index = rowIndex();
-    AccessibilityChildrenVector& allRows = toAccessibilityTable(parent)->rows();
+    auto& allRows = toAccessibilityTable(parent)->rows();
     int rowCount = allRows.size();
     if (index >= rowCount)
         return 0;
@@ -111,7 +111,7 @@ AccessibilityObject* AccessibilityARIAGridRow::disclosedByRow() const
             return row;
     }
     
-    return 0;
+    return nullptr;
 }
     
 AccessibilityObject* AccessibilityARIAGridRow::parentTable() const
@@ -124,20 +124,17 @@ AccessibilityObject* AccessibilityARIAGridRow::parentTable() const
             return parent;
     }
     
-    return 0;
+    return nullptr;
 }
 
 AccessibilityObject* AccessibilityARIAGridRow::headerObject()
 {
-    const AccessibilityChildrenVector& rowChildren = children();
-    unsigned childrenCount = rowChildren.size();
-    for (unsigned i = 0; i < childrenCount; ++i) {
-        AccessibilityObject* cell = rowChildren[i].get();
-        if (cell->ariaRoleAttribute() == RowHeaderRole)
-            return cell;
+    for (const auto& child : children()) {
+        if (child->ariaRoleAttribute() == RowHeaderRole)
+            return child.get();
     }
     
-    return 0;
+    return nullptr;
 }
 
 } // namespace WebCore

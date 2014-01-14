@@ -108,7 +108,7 @@ void AccessibilityMenuList::didUpdateActiveOption(int optionIndex)
     Ref<Document> document(m_renderer->document());
     AXObjectCache* cache = document->axObjectCache();
 
-    const AccessibilityChildrenVector& childObjects = children();
+    const auto& childObjects = children();
     if (!childObjects.isEmpty()) {
         ASSERT(childObjects.size() == 1);
         ASSERT(childObjects[0]->isMenuListPopup());

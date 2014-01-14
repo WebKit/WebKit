@@ -124,7 +124,7 @@ bool AccessibilityTable::isDataTable() const
         return true;    
 
     // if there's a colgroup or col element, it's probably a data table.
-    for (auto& child : childrenOfType<Element>(*tableElement)) {
+    for (const auto& child : childrenOfType<Element>(*tableElement)) {
         if (child.hasTagName(colTag) || child.hasTagName(colgroupTag))
             return true;
     }
@@ -428,9 +428,8 @@ void AccessibilityTable::columnHeaders(AccessibilityChildrenVector& headers)
     
     updateChildrenIfNecessary();
     
-    size_t columnCount = m_columns.size();
-    for (size_t i = 0; i < columnCount; ++i) {
-        if (AccessibilityObject* header = toAccessibilityTableColumn(m_columns[i].get())->headerObject())
+    for (const auto& column : m_columns) {
+        if (AccessibilityObject* header = toAccessibilityTableColumn(column.get())->headerObject())
             headers.append(header);
     }
 }
@@ -442,9 +441,8 @@ void AccessibilityTable::rowHeaders(AccessibilityChildrenVector& headers)
     
     updateChildrenIfNecessary();
     
-    size_t rowCount = m_rows.size();
-    for (size_t i = 0; i < rowCount; ++i) {
-        if (AccessibilityObject* header = toAccessibilityTableRow(m_rows[i].get())->headerObject())
+    for (const auto& row : m_rows) {
+        if (AccessibilityObject* header = toAccessibilityTableRow(row.get())->headerObject())
             headers.append(header);
     }
 }
@@ -456,9 +454,7 @@ void AccessibilityTable::visibleRows(AccessibilityChildrenVector& rows)
     
     updateChildrenIfNecessary();
     
-    size_t rowCount = m_rows.size();
-    for (size_t i = 0; i < rowCount; ++i) {
-        AccessibilityObject* row = m_rows[i].get();
+    for (const auto& row : m_rows) {
         if (row && !row->isOffScreen())
             rows.append(row);
     }
@@ -471,8 +467,8 @@ void AccessibilityTable::cells(AccessibilityObject::AccessibilityChildrenVector&
     
     updateChildrenIfNecessary();
     
-    for (size_t row = 0; row < m_rows.size(); ++row)
-        cells.appendVector(m_rows[row]->children());
+    for (const auto& row : m_rows)
+        cells.appendVector(row->children());
 }
     
 unsigned AccessibilityTable::columnCount()
@@ -509,7 +505,7 @@ AccessibilityTableCell* AccessibilityTable::cellForColumnAndRow(unsigned column,
     // Iterate backwards through the rows in case the desired cell has a rowspan and exists in a previous row.
     for (unsigned rowIndexCounter = row + 1; rowIndexCounter > 0; --rowIndexCounter) {
         unsigned rowIndex = rowIndexCounter - 1;
-        const AccessibilityChildrenVector& children = m_rows[rowIndex]->children();
+        const auto& children = m_rows[rowIndex]->children();
         // Since some cells may have colspans, we have to check the actual range of each
         // cell to determine which is the right one.
         for (unsigned colIndexCounter = std::min(static_cast<unsigned>(children.size()), column + 1); colIndexCounter > 0; --colIndexCounter) {

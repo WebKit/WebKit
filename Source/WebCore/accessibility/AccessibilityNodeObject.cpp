@@ -335,7 +335,7 @@ void AccessibilityNodeObject::insertChild(AccessibilityObject* child, unsigned i
     child->clearChildren();
     
     if (child->accessibilityIsIgnored()) {
-        const AccessibilityChildrenVector& children = child->children();
+        const auto& children = child->children();
         size_t length = children.size();
         for (size_t i = 0; i < length; ++i)
             m_children.insert(index + i, children[i]);
@@ -909,37 +909,30 @@ bool AccessibilityNodeObject::isGroup() const
 AccessibilityObject* AccessibilityNodeObject::selectedRadioButton()
 {
     if (!isRadioGroup())
-        return 0;
-
-    const AccessibilityObject::AccessibilityChildrenVector& children = this->children();
+        return nullptr;
 
     // Find the child radio button that is selected (ie. the intValue == 1).
-    size_t size = children.size();
-    for (size_t i = 0; i < size; ++i) {
-        AccessibilityObject* object = children[i].get();
-        if (object->roleValue() == RadioButtonRole && object->checkboxOrRadioValue() == ButtonStateOn)
-            return object;
+    for (const auto& child : children()) {
+        if (child->roleValue() == RadioButtonRole && child->checkboxOrRadioValue() == ButtonStateOn)
+            return child.get();
     }
-    return 0;
+    return nullptr;
 }
 
 AccessibilityObject* AccessibilityNodeObject::selectedTabItem()
 {
     if (!isTabList())
-        return 0;
+        return nullptr;
 
     // Find the child tab item that is selected (ie. the intValue == 1).
     AccessibilityObject::AccessibilityChildrenVector tabs;
     tabChildren(tabs);
 
-    const AccessibilityObject::AccessibilityChildrenVector& children = this->children();
-    size_t size = tabs.size();
-    for (size_t i = 0; i < size; ++i) {
-        AccessibilityObject* object = children[i].get();
-        if (object->isTabItem() && object->isChecked())
-            return object;
+    for (const auto& child : children()) {
+        if (child->isTabItem() && child->isChecked())
+            return child.get();
     }
-    return 0;
+    return nullptr;
 }
 
 AccessibilityButtonState AccessibilityNodeObject::checkboxOrRadioValue() const
@@ -1433,9 +1426,8 @@ void AccessibilityNodeObject::ariaLabeledByText(Vector<AccessibilityText>& textO
         ariaLabeledByElements(elements);
         
         Vector<RefPtr<AccessibilityObject>> axElements;
-        unsigned length = elements.size();
-        for (unsigned k = 0; k < length; k++) {
-            RefPtr<AccessibilityObject> axElement = axObjectCache()->getOrCreate(elements[k]);
+        for (const auto& element : elements) {
+            RefPtr<AccessibilityObject> axElement = axObjectCache()->getOrCreate(element);
             axElements.append(axElement);
         }
         

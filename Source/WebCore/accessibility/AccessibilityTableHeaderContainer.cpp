@@ -75,9 +75,8 @@ void AccessibilityTableHeaderContainer::addChildren()
     
     toAccessibilityTable(m_parent)->columnHeaders(m_children);
     
-    unsigned length = m_children.size();
-    for (unsigned k = 0; k < length; ++k)
-        m_headerRect.unite(m_children[k]->elementRect());
+    for (const auto& child : m_children)
+        m_headerRect.unite(child->elementRect());
 }
 
 } // namespace WebCore

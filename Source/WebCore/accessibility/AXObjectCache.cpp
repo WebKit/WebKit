@@ -118,12 +118,10 @@ AXObjectCache::~AXObjectCache()
 {
     m_notificationPostTimer.stop();
 
-    HashMap<AXID, RefPtr<AccessibilityObject>>::iterator end = m_objects.end();
-    for (HashMap<AXID, RefPtr<AccessibilityObject>>::iterator it = m_objects.begin(); it != end; ++it) {
-        AccessibilityObject* obj = (*it).value.get();
-        detachWrapper(obj, CacheDestroyed);
-        obj->detach(CacheDestroyed);
-        removeAXID(obj);
+    for (const auto& object : m_objects.values()) {
+        detachWrapper(object.get(), CacheDestroyed);
+        object->detach(CacheDestroyed);
+        removeAXID(object.get());
     }
 }
 
@@ -142,15 +140,12 @@ AccessibilityObject* AXObjectCache::focusedImageMapUIElement(HTMLAreaElement* ar
     if (!axRenderImage)
         return 0;
     
-    const AccessibilityObject::AccessibilityChildrenVector& imageChildren = axRenderImage->children();
-    unsigned count = imageChildren.size();
-    for (unsigned k = 0; k < count; ++k) {
-        AccessibilityObject* child = imageChildren[k].get();
+    for (const auto& child : axRenderImage->children()) {
         if (!child->isImageMapLink())
             continue;
         
-        if (toAccessibilityImageMapLink(child)->areaElement() == areaElement)
-            return child;
+        if (toAccessibilityImageMapLink(child.get())->areaElement() == areaElement)
+            return child.get();
     }    
     
     return 0;

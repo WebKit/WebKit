@@ -80,12 +80,9 @@ AccessibilityObject* AccessibilityTableColumn::headerObject()
     
     AccessibilityTable* parentTable = toAccessibilityTable(m_parent);
     if (parentTable->isAriaTable()) {
-        const AccessibilityChildrenVector& rowChildren = children();
-        unsigned childrenCount = rowChildren.size();
-        for (unsigned i = 0; i < childrenCount; ++i) {
-            AccessibilityObject* cell = rowChildren[i].get();
+        for (const auto& cell : children()) {
             if (cell->ariaRoleAttribute() == ColumnHeaderRole)
-                return cell;
+                return cell.get();
         }
         
         return 0;

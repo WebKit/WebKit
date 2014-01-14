@@ -1,3 +1,98 @@
+2014-01-13  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: Modernize AccessibilityChildrenVector loops
+        https://bugs.webkit.org/show_bug.cgi?id=126915
+
+        Reviewed by Anders Carlsson.
+
+        Change appropriate for loops to use the new style.
+        Use auto where appropriate.
+
+        * accessibility/AXObjectCache.cpp:
+        (WebCore::AXObjectCache::focusedImageMapUIElement):
+        * accessibility/AccessibilityARIAGrid.cpp:
+        (WebCore::AccessibilityARIAGrid::addRowDescendant):
+        * accessibility/AccessibilityARIAGridCell.cpp:
+        (WebCore::AccessibilityARIAGridCell::rowIndexRange):
+        * accessibility/AccessibilityARIAGridRow.cpp:
+        (WebCore::AccessibilityARIAGridRow::disclosedRows):
+        (WebCore::AccessibilityARIAGridRow::disclosedByRow):
+        (WebCore::AccessibilityARIAGridRow::parentTable):
+        (WebCore::AccessibilityARIAGridRow::headerObject):
+        * accessibility/AccessibilityListBox.cpp:
+        (WebCore::AccessibilityListBox::addChildren):
+        (WebCore::AccessibilityListBox::setSelectedChildren):
+        (WebCore::AccessibilityListBox::selectedChildren):
+        * accessibility/AccessibilityListBoxOption.cpp:
+        (WebCore::AccessibilityListBoxOption::listBoxOptionIndex):
+        * accessibility/AccessibilityMenuList.cpp:
+        (WebCore::AccessibilityMenuList::didUpdateActiveOption):
+        * accessibility/AccessibilityMenuListPopup.cpp:
+        (WebCore::AccessibilityMenuListPopup::addChildren):
+        * accessibility/AccessibilityNodeObject.cpp:
+        (WebCore::AccessibilityNodeObject::insertChild):
+        (WebCore::AccessibilityNodeObject::selectedRadioButton):
+        (WebCore::AccessibilityNodeObject::selectedTabItem):
+        (WebCore::AccessibilityNodeObject::ariaLabeledByText):
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::appendChildrenToArray):
+        (WebCore::AccessibilityObject::clearChildren):
+        (WebCore::AccessibilityObject::ariaTreeRows):
+        (WebCore::AccessibilityObject::ariaTreeItemContent):
+        (WebCore::AccessibilityObject::ariaTreeItemDisclosedRows):
+        (WebCore::AccessibilityObject::elementAccessibilityHitTest):
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::addRadioButtonGroupMembers):
+        (WebCore::AccessibilityRenderObject::ariaFlowToElements):
+        (WebCore::AccessibilityRenderObject::isTabItemSelected):
+        (WebCore::AccessibilityRenderObject::setSelectedRows):
+        (WebCore::AccessibilityRenderObject::ariaOwnsElements):
+        (WebCore::AccessibilityRenderObject::accessibilityImageMapHitTest):
+        (WebCore::AccessibilityRenderObject::addRemoteSVGChildren):
+        (WebCore::AccessibilityRenderObject::updateAttachmentViewParents):
+        (WebCore::AccessibilityRenderObject::addHiddenChildren):
+        (WebCore::AccessibilityRenderObject::ariaSelectedRows):
+        (WebCore::AccessibilityRenderObject::ariaListboxSelectedChildren):
+        (WebCore::AccessibilityRenderObject::ariaListboxVisibleChildren):
+        (WebCore::AccessibilityRenderObject::tabChildren):
+        (WebCore::AccessibilityRenderObject::mathRadicandObject):
+        (WebCore::AccessibilityRenderObject::mathRootIndexObject):
+        (WebCore::AccessibilityRenderObject::mathNumeratorObject):
+        (WebCore::AccessibilityRenderObject::mathDenominatorObject):
+        (WebCore::AccessibilityRenderObject::mathUnderObject):
+        (WebCore::AccessibilityRenderObject::mathOverObject):
+        (WebCore::AccessibilityRenderObject::mathBaseObject):
+        (WebCore::AccessibilityRenderObject::mathSubscriptObject):
+        (WebCore::AccessibilityRenderObject::mathSuperscriptObject):
+        * accessibility/AccessibilityTable.cpp:
+        (WebCore::AccessibilityTable::columnHeaders):
+        (WebCore::AccessibilityTable::rowHeaders):
+        (WebCore::AccessibilityTable::visibleRows):
+        (WebCore::AccessibilityTable::cells):
+        (WebCore::AccessibilityTable::cellForColumnAndRow):
+        * accessibility/AccessibilityTableColumn.cpp:
+        (WebCore::AccessibilityTableColumn::headerObject):
+        * accessibility/AccessibilityTableHeaderContainer.cpp:
+        (WebCore::AccessibilityTableHeaderContainer::addChildren):
+        * accessibility/AccessibilityTableRow.cpp:
+        (WebCore::AccessibilityTableRow::headerObject):
+        * accessibility/ios/WebAccessibilityObjectWrapperIOS.mm:
+        (-[WebAccessibilityObjectWrapper accessibilityElementAtIndex:]):
+        (-[WebAccessibilityObjectWrapper indexOfAccessibilityElement:]):
+        (-[WebAccessibilityObjectWrapper containsUnnaturallySegmentedChildren]):
+        * accessibility/mac/WebAccessibilityObjectWrapperBase.mm:
+        (convertMathPairsToNSArray):
+        (-[WebAccessibilityObjectWrapperBase accessibilityTitle]):
+        (-[WebAccessibilityObjectWrapperBase accessibilityDescription]):
+        (-[WebAccessibilityObjectWrapperBase accessibilityHelpText]):
+        * accessibility/mac/WebAccessibilityObjectWrapperMac.mm:
+        (convertToNSArray):
+        (convertStringsToNSArray):
+        (-[WebAccessibilityObjectWrapper accessibilityAttributeValue:]):
+        (-[WebAccessibilityObjectWrapper accessibilityIndexOfChild:]):
+        (-[WebAccessibilityObjectWrapper accessibilityArrayAttributeCount:]):
+        (-[WebAccessibilityObjectWrapper accessibilityArrayAttributeValues:index:maxCount:]):
+
 2014-01-14  Brent Fulgham  <bfulgham@apple.com>
 
         [WebGL] Invalid range checking in WebGLRenderingContext::validateTexFuncLevel

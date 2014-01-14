@@ -347,7 +347,7 @@ static AccessibilityObjectWrapper* AccessibilityUnignoredAncestor(AccessibilityO
     if ([self isAttachment])
         return [[self attachmentView] accessibilityElementAtIndex:index];
     
-    const AccessibilityObject::AccessibilityChildrenVector& children = m_object->children();
+    const auto& children = m_object->children();
     if (static_cast<unsigned>(index) >= children.size())
         return nil;
     
@@ -367,7 +367,7 @@ static AccessibilityObjectWrapper* AccessibilityUnignoredAncestor(AccessibilityO
     if ([self isAttachment])
         return [[self attachmentView] indexOfAccessibilityElement:element];
     
-    const AccessibilityObject::AccessibilityChildrenVector& children = m_object->children();
+    const auto& children = m_object->children();
     unsigned count = children.size();
     for (unsigned k = 0; k < count; ++k) {
         AccessibilityObjectWrapper* wrapper = children[k]->wrapper();
@@ -1073,7 +1073,7 @@ static void appendStringToResult(NSMutableString *result, NSString *string)
     if (role != LinkRole && role != WebCoreLinkRole)
         return NO;
     
-    const AccessibilityObject::AccessibilityChildrenVector& children = m_object->children();
+    const auto& children = m_object->children();
     unsigned childrenSize = children.size();
 
     // If there's only one child, then it doesn't have segmented children. 

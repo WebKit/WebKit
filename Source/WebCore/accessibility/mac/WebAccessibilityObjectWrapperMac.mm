@@ -1562,15 +1562,14 @@ static void convertToVector(NSArray* array, AccessibilityObject::AccessibilityCh
 
 static NSMutableArray* convertToNSArray(const AccessibilityObject::AccessibilityChildrenVector& vector)
 {
-    unsigned length = vector.size();
-    NSMutableArray* array = [NSMutableArray arrayWithCapacity: length];
-    for (unsigned i = 0; i < length; ++i) {
-        WebAccessibilityObjectWrapper* wrapper = vector[i]->wrapper();
+    NSMutableArray* array = [NSMutableArray arrayWithCapacity:vector.size()];
+    for (const auto& child : vector) {
+        WebAccessibilityObjectWrapper* wrapper = child->wrapper();
         ASSERT(wrapper);
         if (wrapper) {
             // we want to return the attachment view instead of the object representing the attachment.
             // otherwise, we get palindrome errors in the AX hierarchy
-            if (vector[i]->isAttachment() && [wrapper attachmentView])
+            if (child->isAttachment() && [wrapper attachmentView])
                 [array addObject:[wrapper attachmentView]];
             else
                 [array addObject:wrapper];
@@ -1581,10 +1580,9 @@ static NSMutableArray* convertToNSArray(const AccessibilityObject::Accessibility
 
 static NSMutableArray *convertStringsToNSArray(const Vector<String>& vector)
 {
-    size_t length = vector.size();
-    NSMutableArray *array = [NSMutableArray arrayWithCapacity:length];
-    for (size_t i = 0; i < length; ++i)
-        [array addObject:vector[i]];
+    NSMutableArray *array = [NSMutableArray arrayWithCapacity:vector.size()];
+    for (const auto& string : vector)
+        [array addObject:string];
     return array;
 }
 
@@ -2377,7 +2375,7 @@ static NSString* roleValueToNSString(AccessibilityRole value)
     if ([attributeName isEqualToString:NSAccessibilityContentsAttribute]) {
         // The contents of a tab list are all the children except the tabs.
         if (m_object->isTabList()) {
-            const AccessibilityObject::AccessibilityChildrenVector& children = m_object->children();
+            const auto& children = m_object->children();
             AccessibilityObject::AccessibilityChildrenVector tabsChildren;
             m_object->tabChildren(tabsChildren);
             
@@ -2389,14 +2387,11 @@ static NSString* roleValueToNSString(AccessibilityRole value)
             }
             return convertToNSArray(contents);
         } else if (m_object->isScrollView()) {
-            const AccessibilityObject::AccessibilityChildrenVector& children = m_object->children();
-            
             // A scrollView's contents are everything except the scroll bars.
             AccessibilityObject::AccessibilityChildrenVector contents;
-            unsigned childrenSize = children.size();
-            for (unsigned k = 0; k < childrenSize; ++k) {
-                if (!children[k]->isScrollbar())
-                    contents.append(children[k]);
+            for (const auto& child : m_object->children()) {
+                if (!child->isScrollbar())
+                    contents.append(child);
             }
             return convertToNSArray(contents);
         }
@@ -3614,7 +3609,7 @@ static RenderObject* rendererForView(NSView* view)
     if (m_object->isTree())
         return [super accessibilityIndexOfChild:child];
     
-    const AccessibilityObject::AccessibilityChildrenVector& children = m_object->children();
+    const auto& children = m_object->children();
     
     if (children.isEmpty())
         return [[self renderWidgetChildren] indexOfObject:child];
@@ -3640,7 +3635,7 @@ static RenderObject* rendererForView(NSView* view)
         if (m_object->isTree() || m_object->isTreeItem())
             return [[self accessibilityAttributeValue:NSAccessibilityChildrenAttribute] count];
         
-        const AccessibilityObject::AccessibilityChildrenVector& children = m_object->children();
+        const auto& children = m_object->children();
         if (children.isEmpty())
             return [[self renderWidgetChildren] count];
         
@@ -3672,7 +3667,7 @@ static RenderObject* rendererForView(NSView* view)
             return [super accessibilityArrayAttributeValues:attribute index:index maxCount:maxCount];
         }
         
-        const AccessibilityObject::AccessibilityChildrenVector& children = m_object->children();
+        const auto& children = m_object->children();
         unsigned childCount = children.size();
         if (index >= childCount)
             return nil;
