@@ -38,6 +38,7 @@ from webkitpy.port.pulseaudio_sanitizer import PulseAudioSanitizer
 from webkitpy.port.xvfbdriver import XvfbDriver
 from webkitpy.port.westondriver import WestonDriver
 from webkitpy.port.linux_get_crash_log import GDBCrashLogGenerator
+from webkitpy.port.leakdetector_valgrind import LeakDetectorValgrind
 
 
 class GtkPort(Port):
@@ -48,6 +49,7 @@ class GtkPort(Port):
         self._pulseaudio_sanitizer = PulseAudioSanitizer()
 
         if self.get_option("leaks"):
+            self._leakdetector = LeakDetectorValgrind(self._executive, self._filesystem, self.results_directory())
             if not self.get_option("wrapper"):
                 raise ValueError('use --wrapper=\"valgrind\" for memory leak detection on GTK')
 
@@ -80,6 +82,9 @@ class GtkPort(Port):
     def setup_test_run(self):
         super(GtkPort, self).setup_test_run()
         self._pulseaudio_sanitizer.unload_pulseaudio_module()
+
+        if self.get_option("leaks"):
+            self._leakdetector.clean_leaks_files_from_results_directory()
 
     def clean_up_test_run(self):
         super(GtkPort, self).clean_up_test_run()
@@ -158,6 +163,16 @@ class GtkPort(Port):
 
     def _port_specific_expectations_files(self):
         return [self._filesystem.join(self._webkit_baseline_path(p), 'TestExpectations') for p in reversed(self._search_paths())]
+
+    def print_leaks_summary(self):
+        if not self.get_option('leaks'):
+            return
+        # FIXME: This is a hack, but we don't have a better way to get this information from the workers yet
+        # because we're in the manager process.
+        leaks_files = self._leakdetector.leaks_files_in_results_directory()
+        if not leaks_files:
+            return
+        self._leakdetector.parse_and_print_leaks_detail(leaks_files)
 
     # FIXME: We should find a way to share this implmentation with Gtk,
     # or teach run-launcher how to call run-safari and move this down to Port.
