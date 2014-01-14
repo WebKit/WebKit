@@ -71,6 +71,10 @@
 #import "WebPDFViewIOS.h"
 #endif
 
+#if USE(QUICK_LOOK)
+#import <WebCore/QuickLook.h>
+#endif
+
 using namespace WebCore;
 
 class WebDataSourcePrivate

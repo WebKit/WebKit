@@ -1,3 +1,9 @@
+2014-01-14  Simon Fraser  <simon.fraser@apple.com>
+
+        Need to #import <WebCore/QuickLook.h>.
+
+        * WebView/WebDataSource.mm:
+
 2014-01-14  Daniel Bates  <dabates@apple.com>
 
         [iOS] Enable QuickLook
