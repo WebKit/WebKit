@@ -1,5 +1,17 @@
 2014-01-14  Andreas Kling  <akling@apple.com>
 
+        Pack ResourceLoaderOptions harder.
+        <https://webkit.org/b/126972>
+
+        Make all ResourceLoaderOptions members bitfields to reduce padding,
+        shrinking it from 28 to 4 bytes.
+
+        Reviewed by Antti Koivisto.
+
+        * loader/ResourceLoaderOptions.h:
+
+2014-01-14  Andreas Kling  <akling@apple.com>
+
         Pack ResourceError harder.
         <https://webkit.org/b/126969>
 
