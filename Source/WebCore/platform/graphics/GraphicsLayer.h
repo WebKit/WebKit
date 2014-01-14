@@ -292,7 +292,7 @@ public:
 
     // The size of the layer.
     const FloatSize& size() const { return m_size; }
-    virtual void setSize(const FloatSize& size) { m_size = size; }
+    virtual void setSize(const FloatSize&);
 
     // The boundOrigin affects the offset at which content is rendered, and sublayers are positioned.
     const FloatPoint& boundsOrigin() const { return m_boundsOrigin; }
@@ -503,6 +503,8 @@ protected:
     // If the lists don't match return -1. On return, if hasBigRotation is true, functions contain 
     // rotations of >= 180 degrees
     static int validateTransformOperations(const KeyframeValueList&, bool& hasBigRotation);
+
+    virtual bool shouldRepaintOnSizeChange() const { return drawsContent(); }
 
     virtual void setOpacityInternal(float) { }
 
