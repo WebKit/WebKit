@@ -1,3 +1,20 @@
+2014-01-13  David Kilzer  <ddkilzer@apple.com>
+
+        Fix typedef of DragDataRef from id back to id<NSDraggingInfo>
+        <http://webkit.org/b/126958>
+        <rdar://problem/14814649>
+
+        Reviewed by Mark Rowe.
+
+        * WebCore.exp.in: Export different symbols based on
+        __has_feature(objc_protocol_qualifier_mangling) since clang
+        mangles the type differently with that change.
+
+        * platform/DragData.h:
+        * platform/mac/DragDataMac.mm:
+        (WebCore::DragData::DragData):
+        - Revert r154493 by switching back to id<NSDraggingInfo>.
+
 2014-01-13  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r161939.

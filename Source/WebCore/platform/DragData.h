@@ -41,8 +41,7 @@
 #ifdef __OBJC__ 
 #import <Foundation/Foundation.h>
 #import <AppKit/NSDragging.h>
-// Use id instead of id <NSDraggingInfo> here due to clang ABI change. See <rdar://problem/14764114>.
-typedef id DragDataRef;
+typedef id <NSDraggingInfo> DragDataRef;
 #else
 typedef void* DragDataRef;
 #endif

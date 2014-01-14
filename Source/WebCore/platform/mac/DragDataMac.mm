@@ -51,7 +51,6 @@ DragData::DragData(DragDataRef data, const IntPoint& clientPosition, const IntPo
     , m_applicationFlags(flags)
     , m_pasteboardName([[m_platformDragData draggingPasteboard] name])
 {
-    ASSERT([data conformsToProtocol:@protocol(NSDraggingInfo)]);
 }
 
 DragData::DragData(const String& dragStorageName, const IntPoint& clientPosition, const IntPoint& globalPosition,
