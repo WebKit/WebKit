@@ -153,21 +153,10 @@ inline bool TimerBase::isActive() const
 template <typename TimerFiredClass> class DeferrableOneShotTimer : protected TimerBase {
 public:
     typedef void (TimerFiredClass::*TimerFiredFunction)(DeferrableOneShotTimer&);
-    typedef void (TimerFiredClass::*DeprecatedTimerFiredFunction)(DeferrableOneShotTimer*);
 
     DeferrableOneShotTimer(TimerFiredClass* object, TimerFiredFunction function, double delay)
         : m_object(object)
         , m_function(function)
-        , m_deprecatedFunction(nullptr)
-        , m_delay(delay)
-        , m_shouldRestartWhenTimerFires(false)
-    {
-    }
-
-    DeferrableOneShotTimer(TimerFiredClass* object, DeprecatedTimerFiredFunction function, double delay)
-        : m_object(object)
-        , m_function(nullptr)
-        , m_deprecatedFunction(function)
         , m_delay(delay)
         , m_shouldRestartWhenTimerFires(false)
     {
@@ -203,17 +192,11 @@ private:
             return;
         }
 
-        if (m_deprecatedFunction) {
-            (m_object->*m_deprecatedFunction)(this);
-            return;
-        }
-
         (m_object->*m_function)(*this);
     }
 
     TimerFiredClass* m_object;
     TimerFiredFunction m_function;
-    DeprecatedTimerFiredFunction m_deprecatedFunction;
 
     double m_delay;
     bool m_shouldRestartWhenTimerFires;

@@ -1,3 +1,18 @@
+2014-01-14  Andreas Kling  <akling@apple.com>
+
+        Remove deprecated DeferrableOneShotTimer constructor.
+        <https://webkit.org/b/126984>
+
+        Remove the deprecated constructor for callback functions that take
+        the timer by pointer instead of by reference.
+
+        This shrinks DeferrableOneShotTimer by 8 bytes.
+
+        Reviewed by Anders Carlsson.
+
+        * platform/Timer.h:
+        (WebCore::DeferrableOneShotTimer::DeferrableOneShotTimer):
+
 2014-01-14  Dirk Schulze  <krit@webkit.org>
 
         Make CachedSVGDocument independent of CSS Filters

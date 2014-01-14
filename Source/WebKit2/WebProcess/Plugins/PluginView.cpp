@@ -1673,7 +1673,7 @@ static bool isAlmostSolidColor(BitmapImage* bitmap)
 }
 #endif
 
-void PluginView::pluginSnapshotTimerFired(DeferrableOneShotTimer<PluginView>*)
+void PluginView::pluginSnapshotTimerFired(DeferrableOneShotTimer<PluginView>&)
 {
     ASSERT(m_plugin);
 

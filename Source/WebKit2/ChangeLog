@@ -1,3 +1,16 @@
+2014-01-14  Andreas Kling  <akling@apple.com>
+
+        Remove deprecated DeferrableOneShotTimer constructor.
+        <https://webkit.org/b/126984>
+
+        Reviewed by Anders Carlsson.
+
+        * WebProcess/Plugins/PluginView.h:
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::pluginSnapshotTimerFired):
+
+            Take the timer by reference so we can use the new constructor.
+
 2014-01-13  Tim Horton  <timothy_horton@apple.com>
 
         iOS WebKit2 build fixes, part 1

@@ -136,7 +136,7 @@ private:
 
     void redeliverManualStream();
 
-    void pluginSnapshotTimerFired(WebCore::DeferrableOneShotTimer<PluginView>*);
+    void pluginSnapshotTimerFired(WebCore::DeferrableOneShotTimer<PluginView>&);
     void pluginDidReceiveUserInteraction();
 
     bool shouldCreateTransientPaintingSnapshot() const;
