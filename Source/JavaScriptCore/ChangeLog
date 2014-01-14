@@ -1,3 +1,15 @@
+2014-01-14  Mark Lam  <mark.lam@apple.com>
+
+        ASSERTION FAILED: !hasError() in JSC::Parser<LexerType>::createSavePoint().
+        https://bugs.webkit.org/show_bug.cgi?id=126990.
+
+        Reviewed by Geoffrey Garen.
+
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::parseConstDeclarationList):
+        - We were missing an error check after attempting to parse an initializer
+          expression. This is now fixed.
+
 2014-01-14  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: For Remote Inspection link WebProcess's to their parent UIProcess

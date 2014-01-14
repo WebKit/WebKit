@@ -1,3 +1,15 @@
+2014-01-14  Mark Lam  <mark.lam@apple.com>
+
+        ASSERTION FAILED: !hasError() in JSC::Parser<LexerType>::createSavePoint().
+        https://bugs.webkit.org/show_bug.cgi?id=126990.
+
+        Reviewed by Geoffrey Garen.
+
+        * js/dom/parse-syntax-error-in-initializer-expected.txt: Added.
+        * js/dom/parse-syntax-error-in-initializer.html: Added.
+        * js/resources/parse-syntax-error-in-initializer.js: Added.
+        - Added bug test case as a regression test.
+
 2014-01-14  Roger Fong  <roger_fong@apple.com>
 
         Skip some tests that now fail after r162000.
