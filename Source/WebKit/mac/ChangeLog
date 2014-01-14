@@ -1,3 +1,10 @@
+2014-01-14  Dean Jackson  <dino@apple.com>
+
+        Move some Mac-only exports to WebKit.mac.exp for iOS build.
+
+        * WebKit.exp:
+        * WebKit.mac.exp:
+
 2014-01-14  Simon Fraser  <simon.fraser@apple.com>
 
         Move some Mac-only exports to WebKit.mac.exp for iOS build.
