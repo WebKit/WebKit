@@ -1,5 +1,13 @@
 2014-01-13  Tim Horton  <timothy_horton@apple.com>
 
+        iOS WebCore build fixes
+
+        Add WebKit and WebKit2 as allowable clients of WebCore.
+
+        * Configurations/WebCore.xcconfig:
+
+2014-01-13  Tim Horton  <timothy_horton@apple.com>
+
         iOS WebKit2 build fixes, part 1
 
         * WebCore.xcodeproj/project.pbxproj:
