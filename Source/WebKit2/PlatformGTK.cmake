@@ -445,14 +445,17 @@ add_custom_command(
     COMMAND glib-genmarshal --prefix=webkit_marshal ${WebKit2_MARSHAL_LIST} --header > ${DERIVED_SOURCES_WEBKIT2GTK_API_DIR}/WebKitMarshal.h
     VERBATIM)
 
+# To generate WebKitEnumTypes.h we want to use all installed headers, except WebKitEnumTypes.h itself.
+set(WebKit2GTK_ENUM_GENERATION_HEADERS ${WebKit2GTK_INSTALLED_HEADERS})
+list(REMOVE_ITEM WebKit2GTK_ENUM_GENERATION_HEADERS ${DERIVED_SOURCES_WEBKIT2GTK_API_DIR}/WebKitEnumTypes.h)
 add_custom_command(
     OUTPUT ${DERIVED_SOURCES_WEBKIT2GTK_API_DIR}/WebKitEnumTypes.h
            ${DERIVED_SOURCES_WEBKIT2GTK_API_DIR}/WebKitEnumTypes.cpp
-    DEPENDS ${WebKit2GTK_INSTALLED_HEADERS}
+    DEPENDS ${WebKit2GTK_ENUM_GENERATION_HEADERS}
 
-    COMMAND glib-mkenums --template ${WEBKIT2_DIR}/UIProcess/API/gtk/WebKitEnumTypes.h.template ${WebKit2GTK_INSTALLED_HEADERS} | sed s/web_kit/webkit/ | sed s/WEBKIT_TYPE_KIT/WEBKIT_TYPE/ > ${DERIVED_SOURCES_WEBKIT2GTK_API_DIR}/WebKitEnumTypes.h
+    COMMAND glib-mkenums --template ${WEBKIT2_DIR}/UIProcess/API/gtk/WebKitEnumTypes.h.template ${WebKit2GTK_ENUM_GENERATION_HEADERS} | sed s/web_kit/webkit/ | sed s/WEBKIT_TYPE_KIT/WEBKIT_TYPE/ > ${DERIVED_SOURCES_WEBKIT2GTK_API_DIR}/WebKitEnumTypes.h
 
-    COMMAND glib-mkenums --template ${WEBKIT2_DIR}/UIProcess/API/gtk/WebKitEnumTypes.cpp.template ${WebKit2GTK_INSTALLED_HEADERS} | sed s/web_kit/webkit/ > ${DERIVED_SOURCES_WEBKIT2GTK_API_DIR}/WebKitEnumTypes.cpp
+    COMMAND glib-mkenums --template ${WEBKIT2_DIR}/UIProcess/API/gtk/WebKitEnumTypes.cpp.template ${WebKit2GTK_ENUM_GENERATION_HEADERS} | sed s/web_kit/webkit/ > ${DERIVED_SOURCES_WEBKIT2GTK_API_DIR}/WebKitEnumTypes.cpp
     VERBATIM)
 
 add_custom_command(
