@@ -1,3 +1,10 @@
+2014-01-14  Roger Fong  <roger_fong@apple.com>
+
+        Skip some tests that now fail after r162000.
+        https://bugs.webkit.org/show_bug.cgi?id=127000.
+
+        * platform/mac/TestExpectations:
+
 2014-01-14  Brent Fulgham  <bfulgham@apple.com>
 
         [WebGL] Invalid range checking in WebGLRenderContext::validateTexFunctionLevel
