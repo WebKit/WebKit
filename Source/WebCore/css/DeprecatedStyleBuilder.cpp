@@ -2110,7 +2110,7 @@ public:
                 || primitiveValue.getValueID() == CSSValueMarginBox
                 || primitiveValue.getValueID() == CSSValueBoundingBox)
                 && referenceBox == BoxMissing)
-                referenceBox = boxForValue(&primitiveValue);
+                referenceBox = LayoutBox(primitiveValue);
             else
                 return;
         }
@@ -2144,7 +2144,7 @@ public:
                 || primitiveValue->getValueID() == CSSValueBorderBox
                 || primitiveValue->getValueID() == CSSValuePaddingBox
                 || primitiveValue->getValueID() == CSSValueMarginBox)
-                setValue(styleResolver->style(), ShapeValue::createLayoutBoxValue(boxForValue(primitiveValue)));
+                setValue(styleResolver->style(), ShapeValue::createLayoutBoxValue(LayoutBox(*primitiveValue)));
             else if (primitiveValue->getValueID() == CSSValueOutsideShape)
                 setValue(styleResolver->style(), ShapeValue::createOutsideValue());
             else if (primitiveValue->isShape()) {

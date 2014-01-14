@@ -5165,6 +5165,53 @@ template<> inline CSSPrimitiveValue::operator ImageOrientationEnum() const
 
 #endif // ENABLE(CSS_IMAGE_ORIENTATION)
 
+template<> inline CSSPrimitiveValue::CSSPrimitiveValue(LayoutBox layoutBox)
+    : CSSValue(PrimitiveClass)
+{
+    m_primitiveUnitType = CSS_VALUE_ID;
+    switch (layoutBox) {
+    case BoundingBox:
+        m_value.valueID = CSSValueBoundingBox;
+        break;
+    case MarginBox:
+        m_value.valueID = CSSValueMarginBox;
+        break;
+    case BorderBox:
+        m_value.valueID = CSSValueBorderBox;
+        break;
+    case PaddingBox:
+        m_value.valueID = CSSValuePaddingBox;
+        break;
+    case ContentBox:
+        m_value.valueID = CSSValueContentBox;
+        break;
+    case BoxMissing:
+        ASSERT_NOT_REACHED();
+        m_value.valueID = CSSValueNone;
+        break;
+    }
+}
+
+template<> inline CSSPrimitiveValue::operator LayoutBox() const
+{
+    switch (getValueID()) {
+    case CSSValueBoundingBox:
+        return BoundingBox;
+    case CSSValueMarginBox:
+        return MarginBox;
+    case CSSValueBorderBox:
+        return BorderBox;
+    case CSSValuePaddingBox:
+        return PaddingBox;
+    case CSSValueContentBox:
+        return ContentBox;
+    default:
+        break;
+    }
+    ASSERT_NOT_REACHED();
+    return BoxMissing;
+}
+
 }
 
 #endif

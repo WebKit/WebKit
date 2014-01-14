@@ -39,48 +39,6 @@
 
 namespace WebCore {
 
-PassRefPtr<CSSPrimitiveValue> valueForBox(LayoutBox box)
-{
-    switch (box) {
-    case ContentBox:
-        return cssValuePool().createIdentifierValue(CSSValueContentBox);
-    case PaddingBox:
-        return cssValuePool().createIdentifierValue(CSSValuePaddingBox);
-    case BorderBox:
-        return cssValuePool().createIdentifierValue(CSSValueBorderBox);
-    case MarginBox:
-        return cssValuePool().createIdentifierValue(CSSValueMarginBox);
-    case BoundingBox:
-        return cssValuePool().createIdentifierValue(CSSValueBoundingBox);
-    case BoxMissing:
-        return nullptr;
-    }
-    ASSERT_NOT_REACHED();
-    return nullptr;
-}
-
-LayoutBox boxForValue(const CSSPrimitiveValue* value)
-{
-    if (!value)
-        return BoxMissing;
-
-    switch (value->getValueID()) {
-    case CSSValueContentBox:
-        return ContentBox;
-    case CSSValuePaddingBox:
-        return PaddingBox;
-    case CSSValueBorderBox:
-        return BorderBox;
-    case CSSValueMarginBox:
-        return MarginBox;
-    case CSSValueBoundingBox:
-        return BoundingBox;
-    default:
-        ASSERT_NOT_REACHED();
-        return BoxMissing;
-    }
-}
-
 static PassRefPtr<CSSPrimitiveValue> valueForCenterCoordinate(CSSValuePool& pool, const RenderStyle* style, const BasicShapeCenterCoordinate& center)
 {
     CSSValueID keyword = CSSValueInvalid;
@@ -230,7 +188,8 @@ PassRefPtr<CSSValue> valueForBasicShape(const RenderStyle* style, const BasicSha
         break;
     }
 
-    basicShapeValue->setLayoutBox(valueForBox(basicShape->layoutBox()));
+    if (basicShape->layoutBox() != BoxMissing)
+        basicShapeValue->setLayoutBox(pool.createValue(basicShape->layoutBox()));
 
     return pool.createValue(basicShapeValue.release());
 }
@@ -460,7 +419,8 @@ PassRefPtr<BasicShape> basicShapeForValue(const RenderStyle* style, const Render
         break;
     }
 
-    basicShape->setLayoutBox(boxForValue(basicShapeValue->layoutBox()));
+    if (basicShapeValue->layoutBox())
+        basicShape->setLayoutBox(LayoutBox(*basicShapeValue->layoutBox()));
 
     return basicShape.release();
 }

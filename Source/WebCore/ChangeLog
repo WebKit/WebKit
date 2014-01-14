@@ -1,3 +1,28 @@
+2014-01-14  Bear Travis  <betravis@adobe.com>
+
+        [CSS Shapes] Move CSSPrimitiveValue <-> LayoutBox Conversion to CSSPrimitiveValueMappings
+        https://bugs.webkit.org/show_bug.cgi?id=126719
+
+        Reviewed by Dirk Schulze.
+
+        The standard location for conversions to/from CSSPrimitiveValues is CSSPrimitiveValueMappings.
+        This patch moves the conversion for LayoutBoxes from BasicShapeFunctions to
+        CSSPrimitiveValueMappings.h.
+
+        Refactoring, no new tests.
+
+        * css/BasicShapeFunctions.cpp:
+        (WebCore::valueForBasicShape):
+        (WebCore::basicShapeForValue):
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::ComputedStyleExtractor::propertyValue):
+        * css/CSSPrimitiveValueMappings.h:
+        (WebCore::CSSPrimitiveValue::CSSPrimitiveValue):
+        (WebCore::CSSPrimitiveValue::operator LayoutBox):
+        * css/DeprecatedStyleBuilder.cpp:
+        (WebCore::ApplyPropertyClipPath::applyValue):
+        (WebCore::ApplyPropertyShape::applyValue):
+
 2014-01-09  Roger Fong  <roger_fong@apple.com>
 
         Add support for handling WebGL load policies.
