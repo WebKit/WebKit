@@ -43,6 +43,7 @@
 #include <WebCore/FileSystem.h>
 #include <WebCore/IconDatabase.h>
 #include <wtf/HashMap.h>
+#include <wtf/NeverDestroyed.h>
 #include <wtf/text/WTFString.h>
 
 #if ENABLE(SPELLCHECK)
@@ -56,7 +57,7 @@ typedef HashMap<WKContextRef, EwkContext*> ContextMap;
 
 static inline ContextMap& contextMap()
 {
-    DEFINE_STATIC_LOCAL(ContextMap, map, ());
+    static NeverDestroyed<ContextMap> map;
     return map;
 }
 

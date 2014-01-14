@@ -38,6 +38,7 @@ namespace WebKit {
 class TextCheckerClientEfl {
 public:
     static TextCheckerClientEfl& instance();
+    friend class NeverDestroyed<TextCheckerClientEfl>;
 
     // Can be set by ewk APIs, by default they are 0.
     ClientCallbacks& clientCallbacks() { return m_clientCallbacks; }

@@ -32,6 +32,7 @@
 #include "WKPageGroup.h"
 #include "WKString.h"
 #include "ewk_page_group_private.h"
+#include <wtf/NeverDestroyed.h>
 
 using namespace WebKit;
 
@@ -39,7 +40,7 @@ typedef HashMap<WKPageGroupRef, EwkPageGroup*> PageGroupMap;
 
 static inline PageGroupMap& pageGroupMap()
 {
-    DEFINE_STATIC_LOCAL(PageGroupMap, map, ());
+    static NeverDestroyed<PageGroupMap> map;
     return map;
 }
 

@@ -76,6 +76,7 @@
 #include <WebCore/PlatformContextCairo.h>
 #include <WebKit2/WKImageCairo.h>
 #include <wtf/MathExtras.h>
+#include <wtf/NeverDestroyed.h>
 #include <wtf/StdLibExtras.h>
 
 #if ENABLE(VIBRATION)
@@ -244,7 +245,7 @@ typedef HashMap<WKPageRef, Evas_Object*> WKPageToEvasObjectMap;
 
 static inline WKPageToEvasObjectMap& wkPageToEvasObjectMap()
 {
-    DEFINE_STATIC_LOCAL(WKPageToEvasObjectMap, map, ());
+    static NeverDestroyed<WKPageToEvasObjectMap> map;
     return map;
 }
 

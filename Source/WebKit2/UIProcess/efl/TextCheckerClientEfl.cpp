@@ -39,6 +39,7 @@
 #include "WebPageProxy.h"
 #include "ewk_text_checker_private.h"
 #include <Eina.h>
+#include <wtf/NeverDestroyed.h>
 
 using namespace WebCore;
 using namespace WebKit;
@@ -82,7 +83,7 @@ TextCheckerClientEfl::TextCheckerClientEfl()
 
 TextCheckerClientEfl& TextCheckerClientEfl::instance()
 {
-    DEFINE_STATIC_LOCAL(TextCheckerClientEfl, textCheckerClient, ());
+    static NeverDestroyed<TextCheckerClientEfl> textCheckerClient;
     return textCheckerClient;
 }
 

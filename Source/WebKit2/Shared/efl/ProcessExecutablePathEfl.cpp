@@ -29,6 +29,7 @@
 #include "FileSystem.h"
 #include <libgen.h>
 #include <unistd.h>
+#include <wtf/NeverDestroyed.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/CString.h>
 
@@ -68,14 +69,14 @@ static String findProcessPath(const char* processName)
 
 String executablePathOfWebProcess()
 {
-    DEFINE_STATIC_LOCAL(const String, webKitWebProcessName, (findProcessPath(WEBPROCESSNAME)));
+    static NeverDestroyed<const String> webKitWebProcessName(findProcessPath(WEBPROCESSNAME));
 
     return webKitWebProcessName;
 }
 
 String executablePathOfPluginProcess()
 {
-    DEFINE_STATIC_LOCAL(const String, webKitPluginProcessName, (findProcessPath(PLUGINPROCESSNAME)));
+    static NeverDestroyed<const String> webKitPluginProcessName(findProcessPath(PLUGINPROCESSNAME));
 
     return webKitPluginProcessName;
 }
@@ -83,7 +84,7 @@ String executablePathOfPluginProcess()
 #if ENABLE(NETWORK_PROCESS)
 String executablePathOfNetworkProcess()
 {
-    DEFINE_STATIC_LOCAL(const String, webKitNetworkProcessName, (findProcessPath(NETWORKPROCESSNAME)));
+    static NeverDestroyed<const String> webKitNetworkProcessName(findProcessPath(NETWORKPROCESSNAME));
 
     return webKitNetworkProcessName;
 }
