@@ -1,3 +1,15 @@
+2014-01-14  Daniel Bates  <dabates@apple.com>
+
+        [iOS] Enable QuickLook
+        https://bugs.webkit.org/show_bug.cgi?id=126954
+
+        Reviewed by David Kilzer.
+
+        Remove empty implementation for quickLookContentForURL: since we always enable QuickLook on iOS.
+
+        * WebView/WebView.mm:
+        (-[WebView quickLookContentForURL:]):
+
 2014-01-14  Dean Jackson  <dino@apple.com>
 
         Move some Mac-only exports to WebKit.mac.exp for iOS build.
