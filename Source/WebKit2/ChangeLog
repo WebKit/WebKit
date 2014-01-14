@@ -1,3 +1,24 @@
+2014-01-13  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r161939.
+        http://trac.webkit.org/changeset/161939
+        https://bugs.webkit.org/show_bug.cgi?id=126956
+
+        didn't work with mac, of course (Requested by thorton on
+        #webkit).
+
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        * NetworkProcess/NetworkResourceLoader.h:
+        * NetworkProcess/RemoteNetworkingContext.h:
+        * Shared/WebEventConversion.h:
+        * UIProcess/API/ios/WKGeolocationProviderIOS.mm:
+        * UIProcess/API/ios/WKInteractionView.mm:
+        (-[WKTextPosition isEqual:]):
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/WebCoreSupport/mac/WebFrameNetworkingContext.h:
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/mac/RemoteLayerTreeDrawingArea.h:
+
 2014-01-13  Benjamin Poulain  <bpoulain@apple.com>
 
         Update WebPageProxyIOS's user agent string

@@ -518,7 +518,7 @@
 		0FC4E40E187F82E10045882C /* ScrollingCoordinatorIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0FC4E408187F82E10045882C /* ScrollingCoordinatorIOS.mm */; };
 		0FC4E40F187F82E10045882C /* ScrollingTreeIOS.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FC4E409187F82E10045882C /* ScrollingTreeIOS.cpp */; };
 		0FC4E410187F82E10045882C /* ScrollingTreeIOS.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FC4E40A187F82E10045882C /* ScrollingTreeIOS.h */; };
-		0FC4E411187F82E10045882C /* ScrollingTreeScrollingNodeIOS.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FC4E40B187F82E10045882C /* ScrollingTreeScrollingNodeIOS.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		0FC4E411187F82E10045882C /* ScrollingTreeScrollingNodeIOS.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FC4E40B187F82E10045882C /* ScrollingTreeScrollingNodeIOS.h */; };
 		0FC4E412187F82E10045882C /* ScrollingTreeScrollingNodeIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0FC4E40C187F82E10045882C /* ScrollingTreeScrollingNodeIOS.mm */; };
 		0FCF33240F2B9715004B6795 /* ColorCG.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FCF33230F2B9715004B6795 /* ColorCG.cpp */; };
 		0FCF332E0F2B9A25004B6795 /* WebLayer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0FCF332A0F2B9A25004B6795 /* WebLayer.mm */; };

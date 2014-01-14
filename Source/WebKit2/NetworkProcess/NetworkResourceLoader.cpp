@@ -405,7 +405,7 @@ void NetworkResourceLoader::didReceiveDataArray(ResourceHandle*, CFArrayRef)
 }
 #endif
 
-#if PLATFORM(MAC) && !PLATFORM(IOS)
+#if PLATFORM(MAC)
 void NetworkResourceLoader::willStopBufferingData(ResourceHandle*, const char*, unsigned)
 {
     notImplemented();

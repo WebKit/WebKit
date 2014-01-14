@@ -58,6 +58,9 @@ private:
     virtual RetainPtr<CFDataRef> sourceApplicationAuditData() const OVERRIDE;
     virtual WebCore::ResourceError blockedError(const WebCore::ResourceRequest&) const OVERRIDE;
     virtual WebCore::NetworkStorageSession& storageSession() const OVERRIDE;
+#if PLATFORM(IOS)
+    virtual void reportNetworkDataUsage(uint64_t rawBytesSent, uint64_t rawBytesReceived, uint64_t cellularBytesSent, uint64_t cellularBytesReceived) OVERRIDE { }
+#endif // PLATFORM(IOS)
 };
 
 }

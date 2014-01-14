@@ -32,7 +32,7 @@
 
 #if ENABLE(TOUCH_EVENTS)
 #if PLATFORM(IOS)
-#include <WebKitAdditions/PlatformTouchEventIOS.h>
+#include <WebCore/PlatformTouchEventIOS.h>
 #else
 #include <WebCore/PlatformTouchEvent.h>
 #include <WebCore/PlatformTouchPoint.h>

@@ -1559,7 +1559,7 @@ static void autocorrectionContext(const String& beforeText, const String& marked
 // since two equal items could have different hashes.
 - (BOOL)isEqual:(id)other
 {
-    if (![other isKindOfClass:[WKTextPosition class]])
+    if (![object isKindOfClass:[WKTextPosition class]])
         return NO;
 
     return CGRectEqualToRect(self.positionRect, ((WKTextPosition *)other).positionRect);
