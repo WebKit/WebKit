@@ -41,21 +41,6 @@
 # Tests that require new results.
 #////////////////////////////////////////////////////////////////////////////////////////
 
-# Tests need new generated expected results
-webkit.org/b/122963 fast/regions/auto-size/autoheight-regions-mark.html [ Missing ]
-webkit.org/b/122963 fast/regions/flows-dependency-dynamic-remove.html [ Missing ]
-webkit.org/b/122963 fast/regions/flows-dependency-same-flow.html [ Missing ]
-webkit.org/b/122963 fast/regions/multiple-directionality-changes-in-variable-width-regions.html [ Missing ]
-webkit.org/b/122963 fast/regions/region-dynamic-after-before.html [ Missing ]
-webkit.org/b/122963 fast/regions/region-generated-content-before-after.html [ Missing ]
-webkit.org/b/122963 fast/regions/text-region-split-small-pagination.html [ Missing ]
-
-webkit.org/b/122963 fast/regions/repaint/japanese-rl-selection-repaint-in-regions.html [ Missing ]
-webkit.org/b/122963 fast/regions/repaint/line-flow-with-floats-in-regions.html [ Missing ]
-webkit.org/b/122963 fast/regions/repaint/overflow-flipped-writing-mode-block-in-regions.html [ Missing ]
-webkit.org/b/122963 fast/regions/repaint/region-painting-invalidation.html [ Missing ]
-webkit.org/b/122963 fast/regions/repaint/region-painting-via-layout.html [ Missing ]
-
 #////////////////////////////////////////////////////////////////////////////////////////
 # Expected failures
 #////////////////////////////////////////////////////////////////////////////////////////

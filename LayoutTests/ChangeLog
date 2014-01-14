@@ -4,6 +4,23 @@
 
         Added missing baselines for some regions tests.
 
+        * platform/gtk/TestExpectations: Unskip tests as new baselines have been added.
+        * platform/gtk/fast/regions/multiple-directionality-changes-in-variable-width-regions-expected.txt: Added.
+        * platform/gtk/fast/regions/region-dynamic-after-before-expected.txt: Added.
+        * platform/gtk/fast/regions/region-generated-content-before-after-expected.txt: Added.
+        * platform/gtk/fast/regions/repaint/japanese-rl-selection-repaint-in-regions-expected.txt: Added.
+        * platform/gtk/fast/regions/repaint/line-flow-with-floats-in-regions-expected.txt: Added.
+        * platform/gtk/fast/regions/repaint/overflow-flipped-writing-mode-block-in-regions-expected.txt: Added.
+        * platform/gtk/fast/regions/repaint/region-painting-invalidation-expected.txt: Added.
+        * platform/gtk/fast/regions/repaint/region-painting-via-layout-expected.txt: Added.
+        * platform/gtk/fast/regions/text-region-split-small-pagination-expected.txt: Added.
+
+2014-01-14  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        Unreviewed GTK gardening.
+
+        Added missing baselines for some regions tests.
+
         * platform/gtk/fast/regions/auto-size/autoheight-regions-mark-expected.txt: Added.
         * platform/gtk/fast/regions/flows-dependency-dynamic-remove-expected.txt: Added.
         * platform/gtk/fast/regions/flows-dependency-same-flow-expected.txt: Added.
