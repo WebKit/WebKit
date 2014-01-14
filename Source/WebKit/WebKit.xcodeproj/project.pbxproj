@@ -526,6 +526,7 @@
 		312E2FE314E48182007CCA18 /* WebNotification.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebNotification.h; sourceTree = "<group>"; };
 		312E2FE414E48182007CCA18 /* WebNotification.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebNotification.mm; sourceTree = "<group>"; };
 		312E2FE814E48215007CCA18 /* WebNotificationInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebNotificationInternal.h; sourceTree = "<group>"; };
+		319A3F4D1885E5FB00E0C900 /* WebKit.mac.exp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.exports; name = WebKit.mac.exp; path = mac/WebKit.mac.exp; sourceTree = "<group>"; };
 		31C11A6C1476552E0049A4CC /* WebNotificationClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebNotificationClient.h; sourceTree = "<group>"; };
 		31C11A6D1476552E0049A4CC /* WebNotificationClient.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebNotificationClient.mm; sourceTree = "<group>"; };
 		35081D9202B6D4D80ACA2ACA /* WebHTMLRepresentation.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; indentWidth = 4; path = WebHTMLRepresentation.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -923,6 +924,7 @@
 			children = (
 				1C6CB03E0AA6391D00D23BFD /* MigrateHeaders.make */,
 				F5F732D202FF4D4F01A80180 /* WebKit.exp */,
+				319A3F4D1885E5FB00E0C900 /* WebKit.mac.exp */,
 				A10C1D8F1820307D0036883A /* WebKit.iOS.exp */,
 				F5C283730284676D018635CA /* WebKitPrefix.h */,
 				6508A4A7099B375F00BCBF45 /* Default Delegates */,
@@ -1922,7 +1924,7 @@
 				A13EE61D185AE82700556064 /* Postprocess Headers */,
 				939810B20824BF01008DF038 /* Resources */,
 				939810BB0824BF01008DF038 /* Sources */,
-				1C395DE20C6BE8E0000D1E52 /* Generate 64-bit Export File */,
+				1C395DE20C6BE8E0000D1E52 /* Generate Export Files */,
 				939811270824BF01008DF038 /* Frameworks */,
 				5D0D54210E98631D0029E223 /* Check For Weak VTables and Externals */,
 				3713F018142905B70036387F /* Check For Inappropriate Objective-C Class Names */,
@@ -1988,7 +1990,7 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		1C395DE20C6BE8E0000D1E52 /* Generate 64-bit Export File */ = {
+		1C395DE20C6BE8E0000D1E52 /* Generate Export Files */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -1996,15 +1998,16 @@
 			inputPaths = (
 				"$(SRCROOT)/mac/WebKit.exp",
 				"$(SRCROOT)/ios/WebKit.IOS.exp",
+				"$(SRCROOT)/mac/WebKit.mac.exp",
 			);
-			name = "Generate 64-bit Export File";
+			name = "Generate Export Files";
 			outputPaths = (
 				"$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebKit.LP64.exp",
 				"$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebKit.generated.exp",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "mkdir -p \"${BUILT_PRODUCTS_DIR}/DerivedSources/WebKit\"\n\n# exclude Carbon functions on 64-bit\nsed -e s/^_HIWebViewCreate$// -e s/^_HIWebViewGetWebView$// -e s/^_WebConvertNSImageToCGImageRef$// -e s/^_WebInitForCarbon$// \"${PROJECT_DIR}/mac/WebKit.exp\" > \"${BUILT_PRODUCTS_DIR}/DerivedSources/WebKit/WebKit.LP64.exp\"\n\nif [[ \"${PLATFORM_NAME}\" == \"iphoneos\" || \"${PLATFORM_NAME}\" == \"iphonesimulator\" ]]; then\n    cat \"${BUILT_PRODUCTS_DIR}/DerivedSources/WebKit/WebKit.LP64.exp\" \"${PROJECT_DIR}/ios/WebKit.iOS.exp\" > \"${BUILT_PRODUCTS_DIR}/DerivedSources/WebKit/WebKit.generated.exp\"\nfi;\n";
+			shellScript = "mkdir -p \"${BUILT_PRODUCTS_DIR}/DerivedSources/WebKit\"\n\nif [[ \"${PLATFORM_NAME}\" == \"iphoneos\" || \"${PLATFORM_NAME}\" == \"iphonesimulator\" ]]; then\n    cat \"${PROJECT_DIR}/mac/WebKit.exp\" \"${PROJECT_DIR}/ios/WebKit.iOS.exp\" > \"${BUILT_PRODUCTS_DIR}/DerivedSources/WebKit/WebKit.generated.exp\"\nelse\n    cat \"${PROJECT_DIR}/mac/WebKit.exp\" \"${PROJECT_DIR}/mac/WebKit.mac.exp\" > \"${BUILT_PRODUCTS_DIR}/DerivedSources/WebKit/WebKit.generated.exp\"\nfi;\n\n# exclude Carbon functions on 64-bit\nsed -e s/^_HIWebViewCreate$// -e s/^_HIWebViewGetWebView$// -e s/^_WebConvertNSImageToCGImageRef$// -e s/^_WebInitForCarbon$// \"${BUILT_PRODUCTS_DIR}/DerivedSources/WebKit/WebKit.generated.exp\" > \"${BUILT_PRODUCTS_DIR}/DerivedSources/WebKit/WebKit.LP64.exp\"\n";
 		};
 		1C6CB0510AA63EB000D23BFD /* Migrate Headers */ = {
 			isa = PBXShellScriptBuildPhase;

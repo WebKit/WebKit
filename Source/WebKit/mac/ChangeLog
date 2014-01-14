@@ -1,3 +1,15 @@
+2014-01-14  Dean Jackson  <dino@apple.com>
+
+        [WK1] Allow generated export files on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=127008
+
+        Reviewed by Simon Fraser.
+
+        Add a new Mac-only symbol file.
+
+        * WebKit.exp: To begin, move the WebIcon* into the Mac-specific exports.
+        * WebKit.mac.exp: Added. New file holds Mac-only symbols.
+
 2014-01-14  Brian J. Burg  <burg@cs.washington.edu>
 
         Add ENABLE(WEB_REPLAY) feature flag to the build system
@@ -12,7 +24,7 @@
         Fix the Mac build. WebViewPrivate.h declares quickLookContentForURL:
         for iOS, but the implementation conditionalizes on USE(QUICK_LOOK),
         which we are confused about.
-        
+
         * WebView/WebView.mm:
         (-[WebView quickLookContentForURL:]):
         * WebView/WebViewPrivate.h:
