@@ -1,5 +1,25 @@
 2014-01-13  Simon Fraser  <simon.fraser@apple.com>
 
+        Fix the remaining compiler errors in iOS WK1.
+
+        * WebView/WebFrame.mm:
+        (vectorForDictationPhrasesArray): Need this function on iOS.
+        (-[WebFrame setSelectedDOMRange:affinity:closeTyping:]): We're already inside
+        a huge if PLATFORM(IOS) block.
+        (-[WebFrame resetTextAutosizingBeforeLayout]): Document now exposes RenderView.
+        * WebView/WebFrameInternal.h: Declare vectorForDictationPhrasesArray() (not a good place for it!)
+        * WebView/WebView.mm: #import cleanup for iOS.
+        (-[WebView initSimpleHTMLDocumentWithStyle:frame:preferences:groupName:]): Declare autoStartRemoteInspector
+        here but this needs cleaning up (<rdar://problem/15810991>).
+        (-[WebView setHostApplicationBundleId:name:]): No [WebView sharedWebInspectorServer] any more.
+        (-[WebView _didCommitLoadForFrame:]): Ditto.
+        * WebView/WebViewData.h: Add allowsRemoteInspection.
+        * WebView/WebViewData.mm: Initialize allowsRemoteInspection
+        (-[WebViewPrivate init]):
+        * WebView/WebViewPrivate.h: Fumbled #ifdef.
+
+2014-01-13  Simon Fraser  <simon.fraser@apple.com>
+
         More work towards getting iOS WK1 building.
 
         * DOM/WebDOMOperations.mm: Need RenderObject.h.

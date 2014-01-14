@@ -239,6 +239,40 @@ TextDirectionSubmenuInclusionBehavior core(WebTextDirectionSubmenuInclusionBehav
     return TextDirectionSubmenuNeverIncluded;
 }
 
+#if PLATFORM(IOS)
+PassOwnPtr<Vector<Vector<String>>> vectorForDictationPhrasesArray(NSArray *dictationPhrases)
+{
+    NSUInteger dictationPhrasesCount = [dictationPhrases count];
+    if (!dictationPhrasesCount)
+        return PassOwnPtr<Vector<Vector<String> > >();
+    
+    OwnPtr<Vector<Vector<String> > > dictationPhrasesVector = adoptPtr(new Vector<Vector<String> >(dictationPhrasesCount));
+    
+    for (NSUInteger i = 0; i < dictationPhrasesCount; i++) {
+        
+        id dictationPhrase = [dictationPhrases objectAtIndex:i];
+        if (![dictationPhrase isKindOfClass:[NSArray class]])
+            continue;
+        
+        NSArray *interpretationsArray = (NSArray *)dictationPhrase;
+        Vector<String>& interpretationsVector = dictationPhrasesVector->at(i);
+        
+        NSUInteger interpretationsCount = [interpretationsArray count];
+        
+        for (NSUInteger j = 0; j < interpretationsCount; j++) {
+            
+            id interpretation = [interpretationsArray objectAtIndex:j];
+            if (![interpretation isKindOfClass:[NSString class]])
+                continue;
+            
+            interpretationsVector.append(String((NSString *)interpretation));
+        }
+    }
+    
+    return dictationPhrasesVector.release();
+}
+#endif
+
 @implementation WebFrame (WebInternal)
 
 Frame* core(WebFrame *frame)
@@ -1418,7 +1452,7 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
 - (void)setSelectedDOMRange:(DOMRange *)range affinity:(NSSelectionAffinity)affinity closeTyping:(BOOL)closeTyping
 {
     WebCore::Frame *frame = core(self);
-#if PLATFORM(IOS)
+
     // Ensure the view becomes first responder.
     // This does not happen automatically on iOS because we don't forward
     // all the click events to WebKit.
@@ -1430,7 +1464,7 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
             page->chrome().focusNSView(documentView);
         }
     }
-#endif
+
     frame->selection().setSelectedRange(core(range), (EAffinity)affinity, closeTyping);
     if (!closeTyping)
         frame->editor().ensureLastEditCommandHasCurrentSelectionIfOpenForMoreTyping();
@@ -1868,11 +1902,11 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
         return;
     
     Frame* coreFrame = core(self);
-    for (Frame* frame = coreFrame; frame; frame = frame->tree()->traverseNext(coreFrame)) {
+    for (Frame* frame = coreFrame; frame; frame = frame->tree().traverseNext(coreFrame)) {
         Document *doc = frame->document();
-        if (!doc || !doc->renderer())
+        if (!doc || !doc->renderView())
             continue;
-        doc->renderer()->resetTextAutosizing();
+        doc->renderView()->resetTextAutosizing();
     }
 }
 

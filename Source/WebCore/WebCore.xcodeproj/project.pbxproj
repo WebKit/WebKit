@@ -725,7 +725,7 @@
 		1A762C790A074F2600989F5B /* JSXPathResult.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A762C710A074F2600989F5B /* JSXPathResult.cpp */; };
 		1A762C7A0A074F2600989F5B /* JSXPathResult.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A762C720A074F2600989F5B /* JSXPathResult.h */; };
 		1A7E3C291710997300367935 /* ThreadableLoaderClientWrapper.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A7E3C281710997300367935 /* ThreadableLoaderClientWrapper.h */; };
-		1A7FA6190DDA3B3A0028F8A5 /* NetworkStateNotifier.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A7FA6180DDA3B3A0028F8A5 /* NetworkStateNotifier.h */; };
+		1A7FA6190DDA3B3A0028F8A5 /* NetworkStateNotifier.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A7FA6180DDA3B3A0028F8A5 /* NetworkStateNotifier.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1A7FA61B0DDA3BBE0028F8A5 /* NetworkStateNotifier.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A7FA61A0DDA3BBE0028F8A5 /* NetworkStateNotifier.cpp */; };
 		1A7FA6490DDA3CBA0028F8A5 /* NetworkStateNotifierMac.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A7FA6470DDA3CBA0028F8A5 /* NetworkStateNotifierMac.cpp */; };
 		1A7FA7CC0DDA4B770028F8A5 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A7FA7CB0DDA4B770028F8A5 /* SystemConfiguration.framework */; };

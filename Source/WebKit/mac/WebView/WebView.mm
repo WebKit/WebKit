@@ -41,7 +41,6 @@
 #import "WebBaseNetscapePluginView.h"
 #import "WebCache.h"
 #import "WebChromeClient.h"
-#import "WebContextMenuClient.h"
 #import "WebDOMOperationsPrivate.h"
 #import "WebDataSourceInternal.h"
 #import "WebDatabaseManagerPrivate.h"
@@ -64,7 +63,6 @@
 #import "WebFrameLoaderClient.h"
 #import "WebFrameNetworkingContext.h"
 #import "WebFrameViewInternal.h"
-#import "WebFullScreenController.h"
 #import "WebGeolocationClient.h"
 #import "WebGeolocationPositionInternal.h"
 #import "WebHTMLRepresentation.h"
@@ -84,10 +82,6 @@
 #import "WebNSDataExtras.h"
 #import "WebNSDataExtrasPrivate.h"
 #import "WebNSDictionaryExtras.h"
-#import "WebNSEventExtras.h"
-#import "WebNSObjectExtras.h"
-#import "WebNSPasteboardExtras.h"
-#import "WebNSPrintOperationExtras.h"
 #import "WebNSURLExtras.h"
 #import "WebNSURLRequestExtras.h"
 #import "WebNSViewExtras.h"
@@ -178,7 +172,6 @@
 #import <WebCore/ThreadCheck.h>
 #import <WebCore/WebCoreObjCExtras.h>
 #import <WebCore/WebCoreView.h>
-#import <WebCore/WebVideoFullscreenController.h>
 #import <WebCore/Widget.h>
 #import <WebKit/DOM.h>
 #import <WebKit/DOMExtensions.h>
@@ -202,7 +195,16 @@
 #import <wtf/RunLoop.h>
 #import <wtf/StdLibExtras.h>
 
-#if PLATFORM(IOS)
+#if !PLATFORM(IOS)
+#import "WebContextMenuClient.h"
+#import "WebFullScreenController.h"
+#import "WebNSEventExtras.h"
+#import "WebNSObjectExtras.h"
+#import "WebNSPasteboardExtras.h"
+#import "WebNSPrintOperationExtras.h"
+#import "WebPDFView.h"
+#import <WebCore/WebVideoFullscreenController.h>
+#else
 #import "MemoryMeasure.h"
 #import "WebCaretChangeListener.h"
 #import "WebChromeClientIOS.h"
@@ -231,19 +233,20 @@
 #import <WebCore/SQLiteDatabaseTracker.h>
 #import <WebCore/SmartReplace.h>
 #import <WebCore/TextRun.h>
+#import <WebCore/TileCache.h>
 #import <WebCore/TileControllerMemoryHandlerIOS.h>
 #import <WebCore/WAKWindow.h>
 #import <WebCore/WebCoreThread.h>
 #import <WebCore/WebCoreThreadMessage.h>
 #import <WebCore/WebCoreThreadRun.h>
 #import <WebCore/WebEvent.h>
-#import <dispatch/private.h
+#import <dispatch/private.h>
 #import <wtf/FastMalloc.h>
 
 #if USE(ACCELERATED_COMPOSITING)
 #import <WebCore/GraphicsLayer.h>
 #endif
-#endif
+#endif // !PLATFORM(IOS)
 
 #if ENABLE(DASHBOARD_SUPPORT)
 #import <WebKit/WebDashboardRegion.h>
@@ -457,7 +460,8 @@ static const char webViewIsOpen[] = "At least one WebView is still open.";
 
 #if PLATFORM(IOS)
 @interface WebView(WebViewPrivate)
-- (void)_preferencesChanged:(WebPreferences *)preferoid)_updateScreenScaleFromWindow;
+- (void)_preferencesChanged:(WebPreferences *)preferences;
+- (void)_updateScreenScaleFromWindow;
 @end
 
 @interface NSURLCache (WebPrivate)
@@ -1206,6 +1210,7 @@ static bool shouldUseLegacyBackgroundSizeShorthandBehavior()
     else {
         static BOOL textFieldInspectionEnabled = [[NSUserDefaults standardUserDefaults] boolForKey:WebKitTextFieldRemoteInspectionEnabledPreferenceKey];
         _private->allowsRemoteInspection = textFieldInspectionEnabled;
+        BOOL autoStartRemoteInspector = YES; // FIXME: <rdar://problem/15810991>
         if (_private->allowsRemoteInspection && autoStartRemoteInspector)
             [WebView _enableRemoteInspector];
     }
@@ -1988,7 +1993,8 @@ static bool fastDocumentTeardownEnabled()
         _private->hostApplicationName = [name copy];
     }
 
-    [[WebView sharedWebInspectorServer] pushListing];
+    // FIXME: <rdar://problem/15810991>
+    // [[WebView sharedWebInspectorServer] pushListing];
 }
 
 - (NSString *)hostApplicationBundleId
@@ -3036,7 +3042,8 @@ static inline IMP getMethod(id o, SEL s)
     if (frame == [self mainFrame]) {
         _private->didDrawTiles = 0;
 #if ENABLE(REMOTE_INSPECTOR)
-        [[WebView sharedWebInspectorServer] pushListing];
+        // FIXME: <rdar://problem/15810991>
+        // [[WebView sharedWebInspectorServer] pushListing];
 #endif
     }
 }

@@ -72,6 +72,10 @@ WebView *kit(WebCore::Page*);
 WebCore::EditableLinkBehavior core(WebKitEditableLinkBehavior);
 WebCore::TextDirectionSubmenuInclusionBehavior core(WebTextDirectionSubmenuInclusionBehavior);
 
+#if defined(__cplusplus) && PLATFORM(IOS)
+PassOwnPtr<Vector<Vector<String>>> vectorForDictationPhrasesArray(NSArray *);
+#endif
+
 WebView *getWebView(WebFrame *webFrame);
 
 @interface WebFramePrivate : NSObject {

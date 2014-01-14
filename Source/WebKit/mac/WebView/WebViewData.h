@@ -255,6 +255,7 @@ private:
 #endif
 
 #if ENABLE(REMOTE_INSPECTOR)
+    BOOL allowsRemoteInspection;
 #if PLATFORM(IOS)
     WebIndicateLayer *indicateLayer;
     NSString *hostApplicationBundleId;
