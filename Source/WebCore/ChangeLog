@@ -1,3 +1,23 @@
+2014-01-14  Piotr Grad  <p.grad@samsung.com>
+
+        [GStreamer] Playback rate is not set when pipeline is not ready.
+        https://bugs.webkit.org/show_bug.cgi?id=126692
+
+        Reviewed by Philippe Normand.
+
+        No new tests. Covered by existing tests.
+
+        Added new method updatePlaybackRate which is called when playback rate change is possible.
+        Added m_lastPlaybackRate in order to retrieve last correct playback rate and notify upper
+        layers about that setting playback rate failed.
+
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivateGStreamer::MediaPlayerPrivateGStreamer):
+        (WebCore::MediaPlayerPrivateGStreamer::updatePlaybackRate):
+        (WebCore::MediaPlayerPrivateGStreamer::setRate):
+        (WebCore::MediaPlayerPrivateGStreamer::updateStates):
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.h:
+
 2014-01-14  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r161978.
