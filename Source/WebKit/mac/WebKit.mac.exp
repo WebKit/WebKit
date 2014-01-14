@@ -1,3 +1,8 @@
+_HIWebViewCreate
+_HIWebViewGetWebView
+_WebArchivePboardType
+_WebConvertNSImageToCGImageRef
+_WebCoreScrollbarAlwaysOn
 _WebIconDatabaseDidAddIconNotification
 _WebIconDatabaseDidRemoveAllIconsNotification
 _WebIconDatabaseDirectoryDefaultsKey
@@ -5,3 +10,8 @@ _WebIconLargeSize
 _WebIconMediumSize
 _WebIconNotificationUserInfoURLKey
 _WebIconSmallSize
+_WebInitForCarbon
+_WebPluginWillPresentNativeUserInterfaceNotification
+_WebURLNamePboardType
+_WebURLPboardType
+_WebViewProgressFinishedNotification
