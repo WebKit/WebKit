@@ -473,7 +473,7 @@ Could be worth adding to the API.
 - (void)_replaceCurrentHistoryItem:(WebHistoryItem *)item;
 #endif // PLATFORM(IOS)
 
-#if !TARGET_OS_IPHONE
+#if TARGET_OS_IPHONE
 - (NSDictionary *)quickLookContentForURL:(NSURL *)url;
 #endif
 

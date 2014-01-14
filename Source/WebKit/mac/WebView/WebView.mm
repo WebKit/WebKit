@@ -3632,6 +3632,7 @@ static inline IMP getMethod(id o, SEL s)
     return _private->page->setDefersLoading(defer);
 }
 
+#if TARGET_OS_IPHONE
 #if USE(QUICK_LOOK)
 - (NSDictionary *)quickLookContentForURL:(NSURL *)url
 {
@@ -3645,6 +3646,13 @@ static inline IMP getMethod(id o, SEL s)
 
     return [NSDictionary dictionaryWithObjectsAndKeys: fileName, WebQuickLookFileNameKey, uti, WebQuickLookUTIKey, nil];
 }
+#else
+// FIXME: USE(QUICK_LOOK) is not defined for iOS but should be: https://bugs.webkit.org/show_bug.cgi?id=126954
+- (NSDictionary *)quickLookContentForURL:(NSURL *)url
+{
+    return nil;
+}
+#endif
 #endif
 
 #if PLATFORM(IOS)
