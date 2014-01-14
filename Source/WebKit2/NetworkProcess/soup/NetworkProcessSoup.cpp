@@ -28,10 +28,10 @@
 #if ENABLE(NETWORK_PROCESS)
 #include "NetworkProcess.h"
 
-#include "CertificateInfo.h"
 #include "NetworkProcessCreationParameters.h"
 #include "ResourceCachesToClear.h"
 #include "WebCookieManager.h"
+#include <WebCore/CertificateInfo.h>
 #include <WebCore/FileSystem.h>
 #include <WebCore/NotImplemented.h>
 #include <WebCore/ResourceHandle.h>
@@ -75,6 +75,11 @@ static uint64_t getMemorySize()
 #endif
 }
 
+void NetworkProcess::userPreferredLanguagesChanged(const Vector<String>& languages)
+{
+    SoupNetworkSession::defaultSession().setAcceptLanguages(languages);
+}
+
 void NetworkProcess::platformInitializeNetworkProcess(const NetworkProcessCreationParameters& parameters)
 {
     ASSERT(!parameters.diskCacheDirectory.isEmpty());
@@ -87,6 +92,9 @@ void NetworkProcess::platformInitializeNetworkProcess(const NetworkProcessCreati
             parameters.cookiePersistentStorageType);
     }
     supplement<WebCookieManager>()->setHTTPCookieAcceptPolicy(parameters.cookieAcceptPolicy);
+
+    if (!parameters.languages.isEmpty())
+        userPreferredLanguagesChanged(parameters.languages);
 
     setIgnoreTLSErrors(parameters.ignoreTLSErrors);
 }
@@ -121,7 +129,7 @@ void NetworkProcess::setIgnoreTLSErrors(bool ignoreTLSErrors)
 
 void NetworkProcess::allowSpecificHTTPSCertificateForHost(const CertificateInfo& certificateInfo, const String& host)
 {
-    WebCore::ResourceHandle::setClientCertificate(host, certificateInfo.certificate());
+    ResourceHandle::setClientCertificate(host, certificateInfo.certificate());
 }
 
 void NetworkProcess::clearCacheForAllOrigins(uint32_t cachesToClear)

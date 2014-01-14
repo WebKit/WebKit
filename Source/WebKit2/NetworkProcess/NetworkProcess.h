@@ -115,6 +115,7 @@ private:
 
 #if USE(SOUP)
     void setIgnoreTLSErrors(bool);
+    void userPreferredLanguagesChanged(const Vector<String>&);
 #endif
 
     // Platform Helpers

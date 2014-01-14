@@ -59,6 +59,7 @@ void NetworkProcessCreationParameters::encode(IPC::ArgumentEncoder& encoder) con
     encoder << cookiePersistentStorageType;
     encoder.encodeEnum(cookieAcceptPolicy);
     encoder << ignoreTLSErrors;
+    encoder << languages;
 #endif
 }
 
@@ -101,6 +102,8 @@ bool NetworkProcessCreationParameters::decode(IPC::ArgumentDecoder& decoder, Net
     if (!decoder.decodeEnum(result.cookieAcceptPolicy))
         return false;
     if (!decoder.decode(result.ignoreTLSErrors))
+        return false;
+    if (!decoder.decode(result.languages))
         return false;
 #endif
 

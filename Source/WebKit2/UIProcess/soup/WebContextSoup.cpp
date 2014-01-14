@@ -29,6 +29,7 @@
 
 #include "NetworkProcessCreationParameters.h"
 #include "WebCookieManagerProxy.h"
+#include <WebCore/Language.h>
 
 namespace WebKit {
 
@@ -37,6 +38,7 @@ void WebContext::platformInitializeNetworkProcess(NetworkProcessCreationParamete
     supplement<WebCookieManagerProxy>()->getCookiePersistentStorage(parameters.cookiePersistentStoragePath, parameters.cookiePersistentStorageType);
     parameters.cookieAcceptPolicy = m_initialHTTPCookieAcceptPolicy;
     parameters.ignoreTLSErrors = m_ignoreTLSErrors;
+    parameters.languages = WebCore::userPreferredLanguages();
 }
 
 }

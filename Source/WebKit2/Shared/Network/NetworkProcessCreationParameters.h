@@ -77,6 +77,7 @@ struct NetworkProcessCreationParameters {
     uint32_t cookiePersistentStorageType;
     HTTPCookieAcceptPolicy cookieAcceptPolicy;
     bool ignoreTLSErrors;
+    Vector<String> languages;
 #endif
 };
 
