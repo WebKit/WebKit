@@ -1,3 +1,10 @@
+2014-01-14  Tim Horton  <timothy_horton@apple.com>
+
+        iOS WebKit2 build fixes, part 2
+
+        * WebCore.exp.in:
+        Export some more symbols.
+
 2014-01-14  Brian J. Burg  <burg@cs.washington.edu>
 
         Add ENABLE(WEB_REPLAY) feature flag to the build system
