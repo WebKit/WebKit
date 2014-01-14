@@ -29,6 +29,7 @@
 #include <functional>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
+#include <wtf/ThreadSafeRefCounted.h>
 
 #if PLATFORM(MAC)
 #include "WKFoundation.h"

@@ -1,3 +1,9 @@
+2014-01-14  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Speculative buildfix after r161999.
+
+        * Shared/APIObject.h:
+
 2014-01-09  Roger Fong  <roger_fong@apple.com>
 
         Add support for handling WebGL load policies.
