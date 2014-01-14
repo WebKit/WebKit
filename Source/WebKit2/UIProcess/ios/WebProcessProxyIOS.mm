@@ -57,12 +57,6 @@ void WebProcessProxy::platformGetLaunchOptions(ProcessLauncher::LaunchOptions& l
     launchOptions.useXPC = shouldUseXPC();
 }
 
-bool WebProcessProxy::pageIsProcessSuppressible(WebPageProxy* page)
-{
-    notImplemented();
-    return false;
-}
-
 bool WebProcessProxy::allPagesAreProcessSuppressible() const
 {
     notImplemented();

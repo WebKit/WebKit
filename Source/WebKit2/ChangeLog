@@ -1,3 +1,25 @@
+2014-01-13  Tim Horton  <timothy_horton@apple.com>
+
+        iOS WebKit2 build fixes, part 1
+
+        * Configurations/WebKit2.xcconfig:
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        * NetworkProcess/NetworkResourceLoader.h:
+        * NetworkProcess/RemoteNetworkingContext.h:
+        * Shared/WebEventConversion.h:
+        * UIProcess/API/ios/WKGeolocationProviderIOS.mm:
+        * UIProcess/API/ios/WKInteractionView.mm:
+        (-[WKTextPosition isEqual:]):
+        * UIProcess/API/ios/WKViewIOS.mm: Renamed from Source/WebKit2/UIProcess/API/ios/WKView.mm.
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        * UIProcess/ios/WebProcessProxyIOS.mm:
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/WebCoreSupport/mac/WebFrameNetworkingContext.h:
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::elementDidFocus):
+        * WebProcess/WebPage/mac/RemoteLayerTreeDrawingArea.h:
+
 2014-01-13  Jinwoo Song  <jinwoo7.song@samsung.com>
 
         [EFL][WK2] Disable failing API tests

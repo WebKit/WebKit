@@ -29,6 +29,7 @@
 #import "NativeWebKeyboardEvent.h"
 #import "PageClient.h"
 #import "WKBrowsingContextControllerInternal.h"
+#import "WebKitSystemInterfaceIOS.h"
 #import "WebPageMessages.h"
 #import "WebProcessProxy.h"
 #import <WebCore/NotImplemented.h>

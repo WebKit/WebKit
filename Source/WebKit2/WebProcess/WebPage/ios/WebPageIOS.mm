@@ -806,7 +806,7 @@ void WebPage::getAutocorrectionContext(String& contextBefore, String& markedText
 void WebPage::elementDidFocus(WebCore::Node* node)
 {
     m_assistedNode = node;
-    if (node->hasTagName(WebCore::HTMLNames::inputTag) || node->hasTagName(WebCore::HTMLNames::textareaTag) || node->rendererIsEditable())
+    if (node->hasTagName(WebCore::HTMLNames::inputTag) || node->hasTagName(WebCore::HTMLNames::textareaTag) || node->hasEditableStyle())
         send(Messages::WebPageProxy::StartAssistingNode(WebCore::IntRect(), true, true));    
 }
 

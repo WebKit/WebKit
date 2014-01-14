@@ -77,7 +77,7 @@
 
 #if ENABLE(TOUCH_EVENTS)
 #if PLATFORM(IOS)
-#include <WebCore/PlatformTouchEventIOS.h>
+#include <WebKitAdditions/PlatformTouchEventIOS.h>
 #else
 #include <WebCore/PlatformTouchEvent.h>
 #endif

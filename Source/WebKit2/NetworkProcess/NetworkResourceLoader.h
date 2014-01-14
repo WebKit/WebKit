@@ -108,8 +108,8 @@ public:
     static size_t fileBackedResourceMinimumSize();
 #if !PLATFORM(IOS)
     virtual void willCacheResponseAsync(WebCore::ResourceHandle*, NSCachedURLResponse *) OVERRIDE;
-#endif
     virtual void willStopBufferingData(WebCore::ResourceHandle*, const char*, unsigned) OVERRIDE;
+#endif
 #endif // PLATFORM(MAC)
 
     // Message handlers.
