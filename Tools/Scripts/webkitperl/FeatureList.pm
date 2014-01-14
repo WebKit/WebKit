@@ -150,6 +150,7 @@ my (
     $webglSupport,
     $webAnimationSupport,
     $webAudioSupport,
+    $webReplaySupport,
     $webSocketsSupport,
     $webTimingSupport,
     $xhrTimeoutSupport,
@@ -470,6 +471,9 @@ my @features = (
 
     { option => "web-audio", desc => "Toggle Web Audio support",
       define => "ENABLE_WEB_AUDIO", default => (isEfl() || isGtk()), value => \$webAudioSupport },
+
+    { option => "web-replay", desc => "Toggle Web Replay support",
+      define => "ENABLE_WEB_REPLAY", default => 0, value => \$webReplaySupport },
 
     { option => "web-sockets", desc => "Toggle Web Sockets support",
       define => "ENABLE_WEB_SOCKETS", default => 1, value => \$webSocketsSupport },

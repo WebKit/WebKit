@@ -1,3 +1,12 @@
+2014-01-14  Brian J. Burg  <burg@cs.washington.edu>
+
+        Add ENABLE(WEB_REPLAY) feature flag to the build system
+        https://bugs.webkit.org/show_bug.cgi?id=126949
+
+        Reviewed by Joseph Pecoraro.
+
+        * Scripts/webkitperl/FeatureList.pm:
+
 2014-01-14  László Langó  <llango.u-szeged@partner.samsung.com>
 
         REGRESSION (r160085): check-webkit-style: utf8' codec can't decode byte 0x89 in position 0: invalid start byte.

@@ -1,3 +1,12 @@
+2014-01-14  Brian J. Burg  <burg@cs.washington.edu>
+
+        Add ENABLE(WEB_REPLAY) feature flag to the build system
+        https://bugs.webkit.org/show_bug.cgi?id=126949
+
+        Reviewed by Joseph Pecoraro.
+
+        * Configurations/FeatureDefines.xcconfig:
+
 2014-01-14  Tim Horton  <timothy_horton@apple.com>
 
         Move WKView.mm to WKViewIOS.mm as 161950 was supposed to do.
