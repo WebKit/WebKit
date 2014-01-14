@@ -1,3 +1,13 @@
+2014-01-14  Mihnea Ovidenie  <mihnea@adobe.com>
+
+        [CSSRegions] Test dynamic change of position for fixed element in named flow
+        https://bugs.webkit.org/show_bug.cgi?id=126807
+
+        Reviewed by Dirk Schulze.
+
+        * fast/regions/fixed-in-named-flow-position-changed-expected.html: Added.
+        * fast/regions/fixed-in-named-flow-position-changed.html: Added.
+
 2014-01-14  Manuel Rego Casasnovas  <rego@igalia.com>
 
         Unreviewed GTK gardening.
