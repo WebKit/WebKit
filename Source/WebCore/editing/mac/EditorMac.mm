@@ -269,6 +269,8 @@ void Editor::readSelectionFromPasteboard(const String& pasteboardName)
 // This was left in a bad state when selectedTextForClipboard was added. Need to look over clients and fix this.
 String Editor::stringSelectionForPasteboard()
 {
+    if (!canCopy())
+        return "";
     String text = selectedText();
     text.replace(noBreakSpace, ' ');
     return text;
@@ -276,6 +278,8 @@ String Editor::stringSelectionForPasteboard()
 
 String Editor::stringSelectionForPasteboardWithImageAltText()
 {
+    if (!canCopy())
+        return "";
     String text = selectedTextForClipboard();
     text.replace(noBreakSpace, ' ');
     return text;
@@ -324,6 +328,8 @@ PassRefPtr<SharedBuffer> Editor::dataSelectionForPasteboard(const String& pasteb
     // which is only used to support OS X services.
 
     // FIXME: Does this function really need to use adjustedSelectionRange()? Because writeSelectionToPasteboard() just uses selectedRange().
+    if (!canCopy())
+        return nullptr;
 
     if (pasteboardType == WebArchivePboardType)
         return selectionInWebArchiveFormat();

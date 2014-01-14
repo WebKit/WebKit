@@ -1,3 +1,20 @@
+2014-01-13  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Highlighting password field then making a Sticky Note via Safari Services exposes password
+        https://bugs.webkit.org/show_bug.cgi?id=126946
+
+        Reviewed by Enrica Casucci.
+
+        Using the Services menu has a slightly different codepath than Editor::copy() does. This
+        patch duplicates the canCopy() check that Editor::copy() does.
+
+        Testing is not possible because the Services menu is not accessible to our tests.
+
+        * editing/mac/EditorMac.mm:
+        (WebCore::Editor::stringSelectionForPasteboard):
+        (WebCore::Editor::stringSelectionForPasteboardWithImageAltText):
+        (WebCore::Editor::dataSelectionForPasteboard):
+
 2014-01-13  Brent Fulgham  <bfulgham@apple.com>
 
         [WebGL] Crash due to forceLostContext
