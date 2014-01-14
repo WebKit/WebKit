@@ -44,9 +44,7 @@
 #import "WebKitVersionChecks.h"
 #import "WebNSDictionaryExtras.h"
 #import "WebNSObjectExtras.h"
-#import "WebNSPasteboardExtras.h"
 #import "WebNSViewExtras.h"
-#import "WebNSWindowExtras.h"
 #import "WebPDFView.h"
 #import "WebPreferenceKeysPrivate.h"
 #import "WebResourceInternal.h"
@@ -83,6 +81,9 @@
 #import <WebCore/WAKWindow.h>
 #import <WebCore/WKGraphics.h>
 #import <WebCore/WebEvent.h>
+#else
+#import "WebNSPasteboardExtras.h"
+#import "WebNSWindowExtras.h"
 #endif
 
 using namespace WebCore;

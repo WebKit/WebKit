@@ -41,6 +41,7 @@
 #import "WebNSURLExtras.h"
 #import "WebSystemInterface.h"
 #import <WebCore/ApplicationCacheStorage.h>
+#import <WebCore/AudioSession.h>
 #import <WebCore/NetworkStorageSession.h>
 #import <WebCore/ResourceHandle.h>
 #import <runtime/InitializeThreading.h>
@@ -51,6 +52,7 @@
 using namespace WebCore;
 
 #if PLATFORM(IOS)
+#import <AudioToolbox/AudioSession.h>
 #import <WebCore/GraphicsContext.h>
 #import <WebCore/ImageSource.h>
 #import <WebCore/WebCoreThreadMessage.h>

@@ -1,3 +1,11 @@
+2014-01-13  Simon Fraser  <simon.fraser@apple.com>
+
+        More work towards getting iOS WK1 building.
+
+        * WebCoreSupport/WebFrameIOS.mm:
+        (-[WebFrame imageForNode:allowDownsampling:drawContentBehindTransparentNodes:]): Stub out this
+        function, since it should use recently-refactored node snapshotting code. Covered by <rdar://problem/15808709>.
+
 2014-01-12  Darin Adler  <darin@apple.com>
 
         Add type checking to isEqual methods

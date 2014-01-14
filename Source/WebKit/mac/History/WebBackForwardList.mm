@@ -179,9 +179,10 @@ WebBackForwardList *kit(BackForwardList* backForwardList)
     BackForwardList *coreBFList = core(self);
     
     HistoryItemVector historyItems = coreBFList->entries();
-    NSMutableArray *entriesArray = [[NSMutableArray alloc] init];
-    for (auto it : historyItems)
-        [entriesArray addObject:[(WebHistoryItem *)kit((*it).get()) dictionaryRepresentationIncludingChildren:NO]];
+    unsigned size = historyItems.size();
+    NSMutableArray *entriesArray = [[NSMutableArray alloc] initWithCapacity:size];
+    for (unsigned i = 0; i < size; ++i)
+        [entriesArray addObject:[kit(historyItems[i].get()) dictionaryRepresentationIncludingChildren:NO]];
     
     NSDictionary *dictionary = [NSDictionary dictionaryWithObjectsAndKeys:
         entriesArray, WebBackForwardListDictionaryEntriesKey,

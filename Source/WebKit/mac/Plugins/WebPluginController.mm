@@ -66,6 +66,7 @@
 #if PLATFORM(IOS)
 #import "DOMElementInternal.h"
 #import "WebUIKitDelegate.h"
+#import <WebCore/AudioSession.h>
 #import <WebCore/FrameView.h>
 #import <WebCore/GraphicsLayer.h>
 #import <WebCore/Page.h>

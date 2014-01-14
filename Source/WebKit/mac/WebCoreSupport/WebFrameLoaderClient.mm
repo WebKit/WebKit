@@ -1499,7 +1499,6 @@ void WebFrameLoaderClient::didRestoreFrameHierarchyForCachedFrame()
 
 void WebFrameLoaderClient::transitionToCommittedForNewPage()
 {
-    WebView *webView = getWebView(m_webFrame.get());
     WebDataSource *dataSource = [m_webFrame.get() _dataSource];
 
 #if PLATFORM(IOS)
@@ -1525,6 +1524,7 @@ void WebFrameLoaderClient::transitionToCommittedForNewPage()
         [[m_webFrame->_private->webFrameView _scrollView] setScrollBarsSuppressed:NO repaintOnUnsuppress:NO];
     
     // clean up webkit plugin instances before WebHTMLView gets freed.
+    WebView *webView = getWebView(m_webFrame.get());
     [webView removePluginInstanceViewsFor:(m_webFrame.get())];
     
     NSView <WebDocumentView> *documentView = [m_webFrame->_private->webFrameView _makeDocumentViewForDataSource:dataSource];
@@ -2332,12 +2332,22 @@ PassRefPtr<Widget> WebFrameLoaderClient::createMediaPlayerProxyPlugin(const IntS
         errorCode = WebKitErrorCannotLoadPlugIn;
 
     if (errorCode) {
+#if PLATFORM(IOS)
+        WebResourceDelegateImplementationCache* implementations = WebViewGetResourceLoadDelegateImplementations(getWebView(m_webFrame.get()));
+        if (implementations->plugInFailedWithErrorFunc) {
+            NSError *error = [[NSError alloc] _initWithPluginErrorCode:errorCode contentURL:URL pluginPageURL:nil pluginName:[pluginPackage pluginInfo].name MIMEType:mimeType];
+            CallResourceLoadDelegate(implementations->plugInFailedWithErrorFunc, [m_webFrame.get() webView],
+                                     @selector(webView:plugInFailedWithError:dataSource:), error, [m_webFrame.get() _dataSource]);
+            [error release];
+        }
+#else
         NSError *error = [[NSError alloc] _initWithPluginErrorCode:errorCode
             contentURL:URL pluginPageURL:nil pluginName:[pluginPackage pluginInfo].name MIMEType:mimeType];
         WebNullPluginView *nullView = [[[WebNullPluginView alloc] initWithFrame:NSMakeRect(0, 0, size.width(), size.height())
             error:error DOMElement:kit(element)] autorelease];
         view = nullView;
         [error release];
+#endif
     }
     
     ASSERT(view);

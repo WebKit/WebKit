@@ -26,7 +26,11 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#if TARGET_OS_IPHONE
+#import <Foundation/Foundation.h>
+#else
 #import <Cocoa/Cocoa.h>
+#endif
 
 // Sent whenever a site icon has changed. The object of the notification is the icon database.
 // The userInfo contains the site URL whose icon has changed.
@@ -75,6 +79,7 @@ extern NSSize WebIconLargeSize;  // 128 x 128
 */
 + (WebIconDatabase *)sharedIconDatabase;
 
+#if !TARGET_OS_IPHONE
 /*!
     @method iconForURL:withSize:
     @discussion Calls iconForURL:withSize:cache: with YES for cache.
@@ -93,6 +98,7 @@ extern NSSize WebIconLargeSize;  // 128 x 128
     @param cache If yes, caches the returned image in memory if not already cached
 */
 - (NSImage *)iconForURL:(NSString *)URL withSize:(NSSize)size cache:(BOOL)cache;
+#endif
 
 /*!
     @method iconURLForURL:withSize:cache:
@@ -101,12 +107,14 @@ extern NSSize WebIconLargeSize;  // 128 x 128
 */
 - (NSString *)iconURLForURL:(NSString *)URL;
 
+#if !TARGET_OS_IPHONE
 /*!
     @method defaultIconWithSize:
     @param size
 */
 - (NSImage *)defaultIconWithSize:(NSSize)size;
 - (NSImage *)defaultIconForURL:(NSString *)URL withSize:(NSSize)size;
+#endif
 
 /*!
     @method retainIconForURL:

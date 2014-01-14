@@ -832,16 +832,8 @@ static VisiblePosition SimpleSmartExtendEnd(const VisiblePosition& start, const 
 
 - (CGImageRef)imageForNode:(DOMNode *)node allowDownsampling:(BOOL)allowDownsampling drawContentBehindTransparentNodes:(BOOL)drawContentBehindTransparentNodes
 {
-    Node* coreNode = core(node);
-    Frame* frame = [self coreFrame];
-    NodeImageFlags flags = DrawNormally;
-    if (allowDownsampling)
-        flags |= AllowDownsampling;
-    if (drawContentBehindTransparentNodes)
-        flags |= DrawContentBehindTransparentNodes;
-    if (coreNode)
-        return nodeImage(frame, coreNode, flags);
-    return NULL;
+    // FIXME: implement: <rdar://problem/15808709>
+    return nullptr;
 }
 
 // Iterates backward through the document and returns the point at which untouched dictation results end.

@@ -53,11 +53,9 @@
 #import "WebKitNSStringExtras.h"
 #import "WebKitVersionChecks.h"
 #import "WebLocalizableStringsInternal.h"
-#import "WebNSEventExtras.h"
 #import "WebNSFileManagerExtras.h"
 #import "WebNSImageExtras.h"
 #import "WebNSObjectExtras.h"
-#import "WebNSPasteboardExtras.h"
 #import "WebNSPrintOperationExtras.h"
 #import "WebNSURLExtras.h"
 #import "WebNSViewExtras.h"
@@ -115,7 +113,6 @@
 #import <WebCore/Text.h>
 #import <WebCore/TextAlternativeWithRange.h>
 #import <WebCore/WebCoreObjCExtras.h>
-#import <WebCore/WebFontCache.h>
 #import <WebCore/WebNSAttributedStringExtras.h>
 #import <WebCore/markup.h>
 #import <WebKit/DOM.h>
@@ -129,20 +126,24 @@
 #import <wtf/ObjcRuntimeExtras.h>
 #import <wtf/RunLoop.h>
 
-#if USE(ACCELERATED_COMPOSITING)
-#import <QuartzCore/QuartzCore.h>
-#endif
-
 #if !PLATFORM(IOS)
 #import <AppKit/NSAccessibility.h>
 #import <ApplicationServices/ApplicationServices.h>
+#import "WebNSEventExtras.h"
+#import "WebNSPasteboardExtras.h"
+#import <WebCore/WebFontCache.h>
 #import <WebCore/PlatformEventFactoryMac.h>
+#endif
+
+#if USE(ACCELERATED_COMPOSITING)
+#import <QuartzCore/QuartzCore.h>
 #endif
 
 #if PLATFORM(IOS)
 #import "WebUIKitDelegate.h"
 #import <WebCore/KeyEventCodesIOS.h>
 #import <WebCore/PlatformEventFactoryIOS.h>
+#import <WebCore/WAKClipView.h>
 #import <WebCore/WAKScrollView.h>
 #import <WebCore/WAKViewPrivate.h>
 #import <WebCore/WAKWindow.h>
@@ -6627,7 +6628,12 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
     Frame* coreFrame = core([self _frame]);
     if (!coreFrame)
         return nil;
+
+#if PLATFORM(IOS)
+    return createDragImageForSelection(*coreFrame, forceBlackText).leakRef();
+#else
     return [createDragImageForSelection(*coreFrame, forceBlackText).leakRef() autorelease];
+#endif
 }
 
 - (NSRect)selectionImageRect
