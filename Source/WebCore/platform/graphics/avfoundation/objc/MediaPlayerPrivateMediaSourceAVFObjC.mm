@@ -308,11 +308,17 @@ IntSize MediaPlayerPrivateMediaSourceAVFObjC::naturalSize() const
 
 bool MediaPlayerPrivateMediaSourceAVFObjC::hasVideo() const
 {
+    if (!m_mediaSourcePrivate)
+        return false;
+
     return m_mediaSourcePrivate->hasVideo();
 }
 
 bool MediaPlayerPrivateMediaSourceAVFObjC::hasAudio() const
 {
+    if (!m_mediaSourcePrivate)
+        return false;
+
     return m_mediaSourcePrivate->hasAudio();
 }
 
@@ -349,7 +355,7 @@ void MediaPlayerPrivateMediaSourceAVFObjC::seekWithTolerance(double time, double
 
 void MediaPlayerPrivateMediaSourceAVFObjC::seekInternal(double time, double negativeThreshold, double positiveThreshold)
 {
-    MediaTime seekTime = m_mediaSourcePrivate->seekToTime(MediaTime::createWithDouble(time), MediaTime::createWithDouble(positiveThreshold), MediaTime::createWithDouble(negativeThreshold));
+    MediaTime seekTime = m_mediaSourcePrivate ? m_mediaSourcePrivate->seekToTime(MediaTime::createWithDouble(time), MediaTime::createWithDouble(positiveThreshold), MediaTime::createWithDouble(negativeThreshold)) : MediaTime::zeroTime();
 
     [m_synchronizer setRate:(m_playing ? m_rate : 0) time:toCMTime(seekTime)];
 }
