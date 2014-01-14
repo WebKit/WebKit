@@ -27,22 +27,30 @@
 #define CachedSVGDocumentReference_h
 
 #if ENABLE(SVG) && ENABLE(CSS_FILTERS)
-
 #include "CachedResourceHandle.h"
 #include "CachedSVGDocumentClient.h"
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
 class CachedSVGDocument;
+class CachedResourceLoader;
 
 class CachedSVGDocumentReference : public CachedSVGDocumentClient {
 public:
-    CachedSVGDocumentReference(CachedSVGDocument*);
+    CachedSVGDocumentReference(const String&);
+
     virtual ~CachedSVGDocumentReference();
+
+    void load(CachedResourceLoader*);
+    bool loadRequested() const { return m_loadRequested; }
+
     CachedSVGDocument* document() { return m_document.get(); }
 
 private:
+    String m_url;
     CachedResourceHandle<CachedSVGDocument> m_document;
+    bool m_loadRequested;
 };
 
 };

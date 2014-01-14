@@ -1,3 +1,38 @@
+2014-01-14  Dirk Schulze  <krit@webkit.org>
+
+        Make CachedSVGDocument independent of CSS Filters
+        https://bugs.webkit.org/show_bug.cgi?id=126133
+
+        Reviewed by Antti Koivisto.
+
+        Clean-up the pendingSVGDocuments code in StyleResolver.
+        CachedSVGDocumentReference is responsible for requesting the
+        SVG document instead of WebKitCSSSVGDocumentValue.
+        CachedSVGDocumentReference can be used by other SVG resource like
+        clip-path and mask now so that these may load external resources
+        as well.
+        WebKitCSSSVGDocumentValue does not provide any further value
+        and will be removed in the next patch.
+
+        Refactoring, no new test cases.
+
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::loadPendingSVGDocuments):
+        (WebCore::StyleResolver::createFilterOperations):
+        * css/StyleResolver.h: Replace Map with a Set.
+        (WebCore::StyleResolver::State::pendingSVGDocuments): Use the Set from now on.
+        * loader/cache/CachedSVGDocumentReference.cpp:
+        (WebCore::CachedSVGDocumentReference::CachedSVGDocumentReference):
+        (WebCore::CachedSVGDocumentReference::~CachedSVGDocumentReference):
+        (WebCore::CachedSVGDocumentReference::load):
+        * loader/cache/CachedSVGDocumentReference.h: Is responsible for 
+            requesting the SVG document.
+        (WebCore::CachedSVGDocumentReference::create):
+        (WebCore::CachedSVGDocumentReference::loadRequested):
+        * platform/graphics/filters/FilterOperation.cpp:
+        (WebCore::ReferenceFilterOperation::createCachedSVGDocumentReference):
+        * platform/graphics/filters/FilterOperation.h:
+
 2014-01-14  Mario Sanchez Prada  <mario.prada@samsung.com>
 
         [ATK] AXChildrenChanged notification handling is a performance black hole

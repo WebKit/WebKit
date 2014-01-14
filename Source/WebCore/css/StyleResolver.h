@@ -379,7 +379,7 @@ private:
 public:
     typedef HashMap<CSSPropertyID, RefPtr<CSSValue>> PendingImagePropertyMap;
 #if ENABLE(CSS_FILTERS) && ENABLE(SVG)
-    typedef HashMap<FilterOperation*, RefPtr<WebKitCSSSVGDocumentValue>> PendingSVGDocumentMap;
+    typedef HashSet<CachedSVGDocumentReference*> PendingSVGDocumentSet;
 #endif
 
     class State {
@@ -432,7 +432,7 @@ public:
         bool applyPropertyToVisitedLinkStyle() const { return m_applyPropertyToVisitedLinkStyle; }
         PendingImagePropertyMap& pendingImageProperties() { return m_pendingImageProperties; }
 #if ENABLE(CSS_FILTERS) && ENABLE(SVG)
-        PendingSVGDocumentMap& pendingSVGDocuments() { return m_pendingSVGDocuments; }
+        PendingSVGDocumentSet& pendingSVGDocuments() { return m_pendingSVGDocuments; }
 #endif
 #if ENABLE(CSS_SHADERS)
         void setHasPendingShaders(bool hasPendingShaders) { m_hasPendingShaders = hasPendingShaders; }
@@ -486,7 +486,7 @@ public:
         bool m_hasPendingShaders;
 #endif
 #if ENABLE(CSS_FILTERS) && ENABLE(SVG)
-        PendingSVGDocumentMap m_pendingSVGDocuments;
+        PendingSVGDocumentSet m_pendingSVGDocuments;
 #endif
         CSSValue* m_lineHeightValue;
         bool m_fontDirty;

@@ -3429,19 +3429,8 @@ void StyleResolver::loadPendingSVGDocuments()
         return;
 
     CachedResourceLoader* cachedResourceLoader = state.document().cachedResourceLoader();
-    for (auto it = state.pendingSVGDocuments().begin(), end = state.pendingSVGDocuments().end(); it != end; ++it) {
-        WebKitCSSSVGDocumentValue* value = it->value.get();
-        // FIXME: It is unclear why it should be null. Maybe an ASSERT instead?
-        if (!value)
-            continue;
-        CachedSVGDocument* cachedDocument = value->load(cachedResourceLoader);
-        if (!cachedDocument)
-            continue;
-
-        // Stash the CachedSVGDocument on the reference filter.
-        ReferenceFilterOperation& referenceFilter = *toReferenceFilterOperation(it->key);
-        referenceFilter.setCachedSVGDocumentReference(adoptPtr(new CachedSVGDocumentReference(cachedDocument)));
-    }
+    for (auto pendingDocument : state.pendingSVGDocuments())
+        pendingDocument->load(cachedResourceLoader);
     state.pendingSVGDocuments().clear();
 }
 #endif
@@ -3837,12 +3826,8 @@ bool StyleResolver::createFilterOperations(CSSValue* inValue, FilterOperations& 
             URL url = m_state.document().completeURL(svgDocumentValue->url());
 
             RefPtr<ReferenceFilterOperation> operation = ReferenceFilterOperation::create(svgDocumentValue->url(), url.fragmentIdentifier(), operationType);
-            if (SVGURIReference::isExternalURIReference(svgDocumentValue->url(), m_state.document())) {
-                if (!svgDocumentValue->loadRequested())
-                    m_state.pendingSVGDocuments().set(operation.get(), svgDocumentValue);
-                else if (svgDocumentValue->cachedSVGDocument())
-                    operation->setCachedSVGDocumentReference(adoptPtr(new CachedSVGDocumentReference(svgDocumentValue->cachedSVGDocument())));
-            }
+            if (SVGURIReference::isExternalURIReference(svgDocumentValue->url(), m_state.document()))
+                m_state.pendingSVGDocuments().add(operation->createCachedSVGDocumentReference());
             operations.operations().append(operation);
 #endif
             continue;

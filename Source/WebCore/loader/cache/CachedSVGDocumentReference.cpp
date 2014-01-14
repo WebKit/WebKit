@@ -27,20 +27,38 @@
 #include "CachedSVGDocumentReference.h"
 
 #if ENABLE(SVG) && ENABLE(CSS_FILTERS)
-
+#include "CachedResourceHandle.h"
+#include "CachedResourceLoader.h"
+#include "CachedResourceRequest.h"
+#include "CachedResourceRequestInitiators.h"
 #include "CachedSVGDocument.h"
 
 namespace WebCore {
 
-CachedSVGDocumentReference::CachedSVGDocumentReference(CachedSVGDocument* document)
-    : m_document(document)
+CachedSVGDocumentReference::CachedSVGDocumentReference(const String& url)
+    : m_url(url)
+    , m_document(0)
+    , m_loadRequested(false)
 {
-    m_document->addClient(this);
 }
 
 CachedSVGDocumentReference::~CachedSVGDocumentReference()
 {
-    m_document->removeClient(this);
+    if (m_loadRequested)
+        m_document->removeClient(this);
+}
+
+void CachedSVGDocumentReference::load(CachedResourceLoader* loader)
+{
+    ASSERT(loader);
+    if (m_loadRequested)
+        return;
+
+    CachedResourceRequest request(ResourceRequest(loader->document()->completeURL(m_url)));
+    request.setInitiator(cachedResourceRequestInitiators().css);
+    m_document = loader->requestSVGDocument(request);
+    m_document->addClient(this);
+    m_loadRequested = true;
 }
 
 }

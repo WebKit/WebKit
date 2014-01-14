@@ -48,9 +48,10 @@ ReferenceFilterOperation::~ReferenceFilterOperation()
 }
 
 #if ENABLE(SVG)
-void ReferenceFilterOperation::setCachedSVGDocumentReference(PassOwnPtr<CachedSVGDocumentReference> cachedSVGDocumentReference)
+CachedSVGDocumentReference* ReferenceFilterOperation::createCachedSVGDocumentReference()
 {
-    m_cachedSVGDocumentReference = cachedSVGDocumentReference;
+    m_cachedSVGDocumentReference = std::make_unique<CachedSVGDocumentReference>(m_url);
+    return m_cachedSVGDocumentReference.get();
 }
 #endif
 

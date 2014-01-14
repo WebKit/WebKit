@@ -166,7 +166,7 @@ public:
 
 #if ENABLE(SVG)
     CachedSVGDocumentReference* cachedSVGDocumentReference() const { return m_cachedSVGDocumentReference.get(); }
-    void setCachedSVGDocumentReference(PassOwnPtr<CachedSVGDocumentReference>);
+    CachedSVGDocumentReference* createCachedSVGDocumentReference();
 #endif
 
     FilterEffect* filterEffect() const { return m_filterEffect.get(); }
@@ -186,7 +186,7 @@ private:
     String m_url;
     String m_fragment;
 #if ENABLE(SVG)
-    OwnPtr<CachedSVGDocumentReference> m_cachedSVGDocumentReference;
+    std::unique_ptr<CachedSVGDocumentReference> m_cachedSVGDocumentReference;
 #endif
     RefPtr<FilterEffect> m_filterEffect;
 };
