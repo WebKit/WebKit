@@ -1,3 +1,22 @@
+2014-01-14  Mihnea Ovidenie  <mihnea@adobe.com>
+
+        [CSSRegions] The list of fixed positioned layers in named flows should be sorted by z-index
+        https://bugs.webkit.org/show_bug.cgi?id=126978
+
+        Reviewed by Antti Koivisto.
+
+        Return the list of fixed positioned layers sorted by z-index from
+        FlowThreadController::collectFixedPositionedLayers instead of manually sort it
+        every time we need it (RenderLayer::paintFixedLayersInNamedFlows, RenderLayer::hitTestFixedLayersInNamedFlows).
+        Refactoring covered by existing regions tests.
+
+        * rendering/FlowThreadController.cpp:
+        (WebCore::compareZIndex):
+        (WebCore::FlowThreadController::collectFixedPositionedLayers):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::paintFixedLayersInNamedFlows):
+        (WebCore::RenderLayer::hitTestFixedLayersInNamedFlows):
+
 2014-01-14  Andreas Kling  <akling@apple.com>
 
         Pack ResourceLoaderOptions harder.

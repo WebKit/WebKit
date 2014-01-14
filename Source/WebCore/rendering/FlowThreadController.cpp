@@ -28,7 +28,6 @@
  */
 
 #include "config.h"
-
 #include "FlowThreadController.h"
 
 #include "NamedFlowCollection.h"
@@ -280,6 +279,11 @@ bool FlowThreadController::isContentElementRegisteredWithAnyNamedFlow(const Elem
     return m_mapNamedFlowContentElement.contains(&contentElement);
 }
 
+static inline bool compareZIndex(RenderLayer* first, RenderLayer* second)
+{
+    return first->zIndex() < second->zIndex();
+}
+
 // Collect the fixed positioned layers that have the named flows as containing block
 // These layers are painted and hit-tested starting from RenderView not from regions.
 void FlowThreadController::collectFixedPositionedLayers(Vector<RenderLayer*>& fixedPosLayers) const
@@ -303,6 +307,8 @@ void FlowThreadController::collectFixedPositionedLayers(Vector<RenderLayer*>& fi
             }
         }
     }
+
+    std::stable_sort(fixedPosLayers.begin(), fixedPosLayers.end(), compareZIndex);
 }
 
 #ifndef NDEBUG
