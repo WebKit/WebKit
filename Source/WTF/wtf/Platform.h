@@ -859,7 +859,11 @@
 
 /* CSS Selector JIT Compiler */
 #if !defined(ENABLE_CSS_SELECTOR_JIT)
+#if CPU(X86_64) && ENABLE(JIT) && PLATFORM(MAC)
+#define ENABLE_CSS_SELECTOR_JIT 1
+#else
 #define ENABLE_CSS_SELECTOR_JIT 0
+#endif
 #endif
 
 /* Accelerated compositing */
