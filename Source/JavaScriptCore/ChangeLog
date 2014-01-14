@@ -1,3 +1,13 @@
+2014-01-14  Peter Molnar  <pmolnar.u-szeged@partner.samsung.com>
+
+        [EFL] FTL buildfix, add missing includes
+        https://bugs.webkit.org/show_bug.cgi?id=126641
+
+        Reviewed by Csaba Osztrogonác.
+
+        * ftl/FTLOSREntry.cpp:
+        * ftl/FTLOSRExitCompiler.cpp:
+
 2014-01-14  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: RemoteInspector::updateDebuggable may miss a push
