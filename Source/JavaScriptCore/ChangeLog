@@ -1,3 +1,15 @@
+2014-01-14  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: RemoteInspector::updateDebuggable may miss a push
+        https://bugs.webkit.org/show_bug.cgi?id=126965
+
+        Reviewed by Timothy Hatcher.
+
+        * inspector/remote/RemoteInspector.mm:
+        (Inspector::RemoteInspector::updateDebuggable):
+        Always push an update. If a debuggable went from allowed to
+        not allowed, we would have missed pushing an update.
+
 2014-01-13  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Performance regression on dromaeo due to generational marking

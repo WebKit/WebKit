@@ -131,8 +131,7 @@ void RemoteInspector::updateDebuggable(RemoteInspectorDebuggable* debuggable)
     auto result = m_debuggableMap.set(identifier, std::make_pair(debuggable, debuggable->info()));
     ASSERT_UNUSED(result, !result.isNewEntry);
 
-    if (debuggable->remoteDebuggingAllowed())
-        pushListingSoon();
+    pushListingSoon();
 }
 
 void RemoteInspector::sendMessageToRemoteFrontend(unsigned identifier, const String& message)
