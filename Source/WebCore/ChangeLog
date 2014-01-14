@@ -1,5 +1,20 @@
 2014-01-14  Mihai Tica  <mitica@adobe.com>
 
+        [CSS Background Blending] Background layer with -webkit-cross-fade doesn't blend
+        when having -webkit-background-blending applied. Turns out the problem was
+        the blending parameter not being passed to WebCore::CrossfadeGeneratedImage::draw
+
+        https://bugs.webkit.org/show_bug.cgi?id=126887
+
+        Reviewed by Dirk Schulze.
+
+        Test: css3/compositing/background-blend-mode-crossfade-image.html
+
+        * platform/graphics/CrossfadeGeneratedImage.cpp:
+        (WebCore::CrossfadeGeneratedImage::draw): set blendMode on context.
+
+2014-01-14  Mihai Tica  <mitica@adobe.com>
+
         Background-blend-mode doesn't work for an element with an
         SVG image as background and border-style or padding set.
         The problem consisted in the drawing path using the default
