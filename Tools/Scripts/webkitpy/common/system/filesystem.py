@@ -198,10 +198,10 @@ class FileSystem(object):
         with file(path, 'wb') as f:
             f.write(contents)
 
-    def open_text_file_for_reading(self, path):
+    def open_text_file_for_reading(self, path, errors='strict'):
         # Note: There appears to be an issue with the returned file objects
         # not being seekable. See http://stackoverflow.com/questions/1510188/can-seek-and-tell-work-with-utf-8-encoded-documents-in-python .
-        return codecs.open(path, 'r', 'utf8')
+        return codecs.open(path, 'r', 'utf8', errors)
 
     def open_text_file_for_writing(self, path):
         return codecs.open(path, 'w', 'utf8')

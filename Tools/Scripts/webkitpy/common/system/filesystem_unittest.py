@@ -227,6 +227,8 @@ class RealFileSystemTest(unittest.TestCase, GenericFileSystemTests):
             self.assertRaises(ValueError, fs.read_text_file, binary_path)
             text_contents = fs.read_binary_file(binary_path).decode('utf8', 'ignore')
             self.assertEquals(text_contents, malformed_ignored_text_hex)
+            fs.open_text_file_for_reading(binary_path, 'replace').readline()
+
         finally:
             if text_path and fs.isfile(text_path):
                 os.remove(text_path)

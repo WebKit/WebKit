@@ -80,7 +80,7 @@ class TextFileReader(object):
             # (codecs does not support it anyway), so the resulting
             # lines contain trailing "\r" characters if we are reading
             # a file with CRLF endings.
-            file = self.filesystem.open_text_file_for_reading(file_path)
+            file = self.filesystem.open_text_file_for_reading(file_path, 'replace')
 
         try:
             contents = file.read()

@@ -1,3 +1,23 @@
+2014-01-14  László Langó  <llango.u-szeged@partner.samsung.com>
+
+        REGRESSION (r160085): check-webkit-style: utf8' codec can't decode byte 0x89 in position 0: invalid start byte.
+        https://bugs.webkit.org/show_bug.cgi?id=126702
+
+        Reviewed by Alexey Proskuryakov.
+
+        Resolve regression and remove a FIXME comment that is already fixed.
+
+        * Scripts/webkitpy/common/system/filesystem.py:
+        (FileSystem.open_text_file_for_reading):
+        * Scripts/webkitpy/common/system/filesystem_unittest.py:
+        (RealFileSystemTest.test_read_and_write_file):
+        * Scripts/webkitpy/style/filereader.py:
+        (TextFileReader._read_lines):
+        * Scripts/webkitpy/style/filereader_unittest.py:
+        (TextFileReaderTest.test_count_delete_only_file):
+        (TextFileReaderTest):
+        (TextFileReaderTest.test_process_malformed_file):
+
 2014-01-02  Brian Holt  <brian.holt@samsung.com>
 
         [GTK] Parse Valgrind xml leak files
