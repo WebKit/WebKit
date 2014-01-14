@@ -1,5 +1,12 @@
 2014-01-14  Tim Horton  <timothy_horton@apple.com>
 
+        iOS WebKit2 build fixes, part 3
+
+        * WebKit2.xcodeproj/project.pbxproj:
+        Remove some files from the 'All' target that should never have been a part of it.
+
+2014-01-14  Tim Horton  <timothy_horton@apple.com>
+
         iOS WebKit2 build fixes, part 2
 
         * WebKit2.xcodeproj/project.pbxproj:
