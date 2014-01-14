@@ -251,11 +251,12 @@ PassOwnPtr<Shape> Shape::createShape(const BasicShape* basicShape, const LayoutS
     return shape.release();
 }
 
-PassOwnPtr<Shape> Shape::createRasterShape(const StyleImage* styleImage, float threshold, const LayoutSize&, WritingMode writingMode, Length margin, Length padding)
+PassOwnPtr<Shape> Shape::createRasterShape(const StyleImage& styleImage, float threshold, const LayoutSize&, WritingMode writingMode, Length margin, Length padding)
 {
-    ASSERT(styleImage && styleImage->isCachedImage() && styleImage->cachedImage() && styleImage->cachedImage()->image());
+    ASSERT(styleImage.cachedImage());
+    ASSERT(styleImage.cachedImage()->hasImage());
 
-    Image* image = styleImage->cachedImage()->image();
+    Image* image = styleImage.cachedImage()->image();
     const IntSize& imageSize = image->size();
 
     OwnPtr<RasterShapeIntervals> intervals = adoptPtr(new RasterShapeIntervals(imageSize.height()));

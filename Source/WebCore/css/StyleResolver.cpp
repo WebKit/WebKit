@@ -3935,10 +3935,10 @@ bool StyleResolver::createFilterOperations(CSSValue* inValue, FilterOperations& 
 
 #endif
 
-PassRefPtr<StyleImage> StyleResolver::loadPendingImage(StylePendingImage* pendingImage)
+PassRefPtr<StyleImage> StyleResolver::loadPendingImage(StylePendingImage* pendingImage, const ResourceLoaderOptions& options)
 {
     if (auto imageValue = pendingImage->cssImageValue())
-        return imageValue->cachedImage(m_state.document().cachedResourceLoader());
+        return imageValue->cachedImage(m_state.document().cachedResourceLoader(), options);
 
     if (auto imageGeneratorValue = pendingImage->cssImageGeneratorValue()) {
         imageGeneratorValue->loadSubimages(m_state.document().cachedResourceLoader());
@@ -3950,12 +3950,16 @@ PassRefPtr<StyleImage> StyleResolver::loadPendingImage(StylePendingImage* pendin
 
 #if ENABLE(CSS_IMAGE_SET)
     if (CSSImageSetValue* imageSetValue = pendingImage->cssImageSetValue())
-        return imageSetValue->cachedImageSet(m_state.document().cachedResourceLoader());
+        return imageSetValue->cachedImageSet(m_state.document().cachedResourceLoader(), options);
 #endif
 
     return nullptr;
 }
 
+PassRefPtr<StyleImage> StyleResolver::loadPendingImage(StylePendingImage* pendingImage)
+{
+    return loadPendingImage(pendingImage, CachedResourceLoader::defaultCachedResourceOptions());
+}
 
 #if ENABLE(CSS_SHAPES)
 void StyleResolver::loadPendingShapeImage(ShapeValue* shapeValue)
@@ -3968,14 +3972,12 @@ void StyleResolver::loadPendingShapeImage(ShapeValue* shapeValue)
         return;
 
     StylePendingImage* pendingImage = static_cast<StylePendingImage*>(image);
-    CSSImageValue* cssImageValue =  pendingImage->cssImageValue();
-    CachedResourceLoader* cachedResourceLoader = m_state.document().cachedResourceLoader();
 
     ResourceLoaderOptions options = CachedResourceLoader::defaultCachedResourceOptions();
     options.requestOriginPolicy = PotentiallyCrossOriginEnabled;
     options.allowCredentials = DoNotAllowStoredCredentials;
 
-    shapeValue->setImage(cssImageValue->cachedImage(cachedResourceLoader, options));
+    shapeValue->setImage(loadPendingImage(pendingImage, options));
 }
 #endif
 

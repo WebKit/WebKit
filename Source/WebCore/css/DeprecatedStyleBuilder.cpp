@@ -2151,7 +2151,7 @@ public:
                 RefPtr<ShapeValue> shape = ShapeValue::createShapeValue(basicShapeForValue(styleResolver->style(), styleResolver->rootElementStyle(), primitiveValue->getShapeValue()));
                 setValue(styleResolver->style(), shape.release());
             }
-        } else if (value->isImageValue()) {
+        } else if (value->isImageValue() || value->isImageSetValue()) {
             RefPtr<ShapeValue> shape = ShapeValue::createImageValue(styleResolver->styleImage(property, value));
             setValue(styleResolver->style(), shape.release());
         }

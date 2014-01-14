@@ -1,3 +1,32 @@
+2014-01-14  Hans Muller  <hmuller@adobe.com>
+
+        [CSS Shapes] Shape images are now <image> types, not just URIs
+        https://bugs.webkit.org/show_bug.cgi?id=125224
+
+        Reviewed by Andreas Kling.
+
+        Added support for image-set valued shapes. Added an optional ResourceLoaderOptions
+        parameter to CSSImageSetValue::cachedImageSet() to enable CORS-enabled fetch of
+        image-set images. This change is based on a similar patch for ordinary shape image values:
+        https://bugs.webkit.org/show_bug.cgi?id=123114.
+
+        Tests: fast/shapes/shape-inside/shape-inside-image-set.html
+               fast/shapes/shape-outside-floats/shape-outside-image-set.html
+
+        * css/CSSImageSetValue.cpp:
+        (WebCore::CSSImageSetValue::cachedImageSet):
+        * css/CSSImageSetValue.h:
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseShapeProperty):
+        * css/DeprecatedStyleBuilder.cpp:
+        (WebCore::ApplyPropertyShape::applyValue):
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::loadPendingImage):
+        (WebCore::StyleResolver::loadPendingShapeImage):
+        * css/StyleResolver.h:
+        * rendering/shapes/Shape.cpp:
+        (WebCore::Shape::createShape):
+
 2014-01-13  Chris Fleizach  <cfleizach@apple.com>
 
         AX: Modernize AccessibilityChildrenVector loops

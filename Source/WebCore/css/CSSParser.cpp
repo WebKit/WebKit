@@ -5881,8 +5881,8 @@ PassRefPtr<CSSValue> CSSParser::parseShapeProperty(CSSPropertyID propId)
         return keywordValue.release();
     }
 
-    if (value->unit == CSSPrimitiveValue::CSS_URI) {
-        RefPtr<CSSImageValue> imageValue = CSSImageValue::create(completeURL(value->string));
+    RefPtr<CSSValue> imageValue;
+    if (valueId != CSSValueNone && parseFillImage(m_valueList.get(), imageValue)) {
         m_valueList->next();
         return imageValue.release();
     }

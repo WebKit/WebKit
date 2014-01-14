@@ -74,7 +74,7 @@ const Shape& ShapeInfo<RenderType>::computedShape() const
         break;
     case ShapeValue::Image:
         ASSERT(shapeValue->image());
-        m_shape = Shape::createRasterShape(shapeValue->image(), shapeImageThreshold, m_shapeLogicalSize, writingMode, margin, padding);
+        m_shape = Shape::createRasterShape(*(shapeValue->image()), shapeImageThreshold, m_shapeLogicalSize, writingMode, margin, padding);
         break;
     case ShapeValue::Box: {
         const RoundedRect& shapeRect = m_renderer.style().getRoundedBorderFor(LayoutRect(LayoutPoint(), m_shapeLogicalSize), &(m_renderer.view()));
