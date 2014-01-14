@@ -1,5 +1,18 @@
 2014-01-14  Andreas Kling  <akling@apple.com>
 
+        Pack ResourceError harder.
+        <https://webkit.org/b/126969>
+
+        Re-arrange the members of ResourceError to reduce padding,
+        shrinking it by 8 bytes.
+
+        Reviewed by Antti Koivisto.
+
+        * platform/network/ResourceErrorBase.h:
+        (WebCore::ResourceErrorBase::ResourceErrorBase):
+
+2014-01-14  Andreas Kling  <akling@apple.com>
+
         Pack RenderLayer harder.
         <https://webkit.org/b/126967>
 
