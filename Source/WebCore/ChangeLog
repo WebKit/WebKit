@@ -1,3 +1,13 @@
+2014-01-14  Peter Molnar  <pmolnar.u-szeged@partner.samsung.com>
+
+        Remove accidentally added PLATFORM(QT) from Source/WebCore/editing/EditorCommand.cpp after r161638
+        https://bugs.webkit.org/show_bug.cgi?id=126980
+
+        Reviewed by Andreas Kling.
+
+        * editing/EditorCommand.cpp:
+        (WebCore::createCommandMap):
+
 2014-01-14  Mihnea Ovidenie  <mihnea@adobe.com>
 
         [CSSRegions] The list of fixed positioned layers in named flows should be sorted by z-index
