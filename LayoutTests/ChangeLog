@@ -1,3 +1,11 @@
+2014-01-14  Zalan Bujtas  <zalan@apple.com>
+
+        Unreviewed Mac TestExpectations update.
+
+        <https://webkit.org/b/126890> is duplicate of <https://webkit.org/b/126889>
+
+        * platform/mac/TestExpectations: Mark it as such.
+
 2014-01-14  Mario Sanchez Prada  <mario.prada@samsung.com>
 
         [ATK] AXChildrenChanged notification handling is a performance black hole

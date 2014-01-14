@@ -1325,11 +1325,9 @@ webkit.org/b/52016 http/tests/xmlhttprequest/xmlhttprequest-50ms-download-dispat
 webkit.org/b/117756 media/track/media-element-enqueue-event-crash.html [ Skip ]
 
 # Subpixel failures
-# Subpixel: password field reports wrong size
+# Subpixel: position dependent size: snapSizeToPixel()
 webkit.org/b/126889 fast/forms/input-widths.html
-
-# Subpixel: checking textWidthPlusSpinButtonWidth reports wrong value unless it is reset with 1 value inbetween 7 and 8
-webkit.org/b/126890 fast/forms/number/number-size.html
+webkit.org/b/126889 fast/forms/number/number-size.html
 
 # Subpixel: word-spacing should not make lines taller
 webkit.org/b/126891 fast/css/word-spacing-between-blocks.html
