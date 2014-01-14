@@ -641,10 +641,7 @@ void Heap::markRoots()
 template <HeapOperation collectionType>
 void Heap::copyBackingStores()
 {
-    if (collectionType == EdenCollection)
-        return;
-
-    m_storageSpace.startedCopying();
+    m_storageSpace.startedCopying<collectionType>();
     if (m_storageSpace.shouldDoCopyPhase()) {
         m_sharedData.didStartCopying();
         m_copyVisitor.startCopying();

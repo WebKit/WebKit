@@ -181,7 +181,15 @@ void GCThreadSharedData::didStartCopying()
 {
     {
         SpinLockHolder locker(&m_copyLock);
-        WTF::copyToVector(m_copiedSpace->m_blockSet, m_blocksToCopy);
+        if (m_vm->heap.operationInProgress() == EdenCollection) {
+            // Reset the vector to be empty, but don't throw away the backing store.
+            m_blocksToCopy.shrink(0);
+            for (CopiedBlock* block = m_copiedSpace->m_newGen.fromSpace->head(); block; block = block->next())
+                m_blocksToCopy.append(block);
+        } else {
+            ASSERT(m_vm->heap.operationInProgress() == FullCollection);
+            WTF::copyToVector(m_copiedSpace->m_blockSet, m_blocksToCopy);
+        }
         m_copyIndex = 0;
     }
 

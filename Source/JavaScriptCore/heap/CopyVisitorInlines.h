@@ -55,7 +55,7 @@ inline bool CopyVisitor::checkIfShouldCopy(void* oldPtr)
 inline void* CopyVisitor::allocateNewSpace(size_t bytes)
 {
     void* result = 0; // Compilers don't realize that this will be assigned.
-    if (LIKELY(m_copiedAllocator.tryAllocate(bytes, &result)))
+    if (LIKELY(m_copiedAllocator.tryAllocateDuringCopying(bytes, &result)))
         return result;
     
     result = allocateNewSpaceSlow(bytes);
@@ -70,7 +70,7 @@ inline void* CopyVisitor::allocateNewSpaceSlow(size_t bytes)
     m_copiedAllocator.setCurrentBlock(newBlock);
 
     void* result = 0;
-    CheckedBoolean didSucceed = m_copiedAllocator.tryAllocate(bytes, &result);
+    CheckedBoolean didSucceed = m_copiedAllocator.tryAllocateDuringCopying(bytes, &result);
     ASSERT(didSucceed);
     return result;
 }

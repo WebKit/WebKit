@@ -35,6 +35,7 @@ public:
     TinyBloomFilter();
 
     void add(Bits);
+    void add(TinyBloomFilter&);
     bool ruleOut(Bits) const; // True for 0.
     void reset();
 
@@ -50,6 +51,11 @@ inline TinyBloomFilter::TinyBloomFilter()
 inline void TinyBloomFilter::add(Bits bits)
 {
     m_bits |= bits;
+}
+
+inline void TinyBloomFilter::add(TinyBloomFilter& other)
+{
+    m_bits |= other.m_bits;
 }
 
 inline bool TinyBloomFilter::ruleOut(Bits bits) const

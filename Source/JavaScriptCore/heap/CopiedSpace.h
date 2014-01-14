@@ -28,6 +28,7 @@
 
 #include "CopiedAllocator.h"
 #include "HeapBlock.h"
+#include "HeapOperation.h"
 #include "TinyBloomFilter.h"
 #include <wtf/Assertions.h>
 #include <wtf/CheckedBoolean.h>
@@ -62,7 +63,10 @@ public:
 
     void didStartFullCollection();
 
+    template <HeapOperation collectionType>
     void startedCopying();
+    void startedEdenCopy();
+    void startedFullCopy();
     void doneCopying();
     bool isInCopyPhase() { return m_inCopyingPhase; }
 
@@ -95,24 +99,36 @@ private:
     CopiedBlock* allocateBlockForCopyingPhase();
 
     void doneFillingBlock(CopiedBlock*, CopiedBlock**);
-    void recycleEvacuatedBlock(CopiedBlock*);
+    void recycleEvacuatedBlock(CopiedBlock*, HeapOperation collectionType);
     void recycleBorrowedBlock(CopiedBlock*);
 
     Heap* m_heap;
 
     CopiedAllocator m_allocator;
 
-    TinyBloomFilter m_blockFilter;
     HashSet<CopiedBlock*> m_blockSet;
 
     SpinLock m_toSpaceLock;
 
-    DoublyLinkedList<CopiedBlock>* m_toSpace;
-    DoublyLinkedList<CopiedBlock>* m_fromSpace;
-    
-    DoublyLinkedList<CopiedBlock> m_blocks1;
-    DoublyLinkedList<CopiedBlock> m_blocks2;
-    DoublyLinkedList<CopiedBlock> m_oversizeBlocks;
+    struct CopiedGeneration {
+        CopiedGeneration()
+            : toSpace(0)
+            , fromSpace(0)
+        {
+        }
+
+        DoublyLinkedList<CopiedBlock>* toSpace;
+        DoublyLinkedList<CopiedBlock>* fromSpace;
+        
+        DoublyLinkedList<CopiedBlock> blocks1;
+        DoublyLinkedList<CopiedBlock> blocks2;
+        DoublyLinkedList<CopiedBlock> oversizeBlocks;
+
+        TinyBloomFilter blockFilter;
+    };
+
+    CopiedGeneration m_oldGen;
+    CopiedGeneration m_newGen;
    
     bool m_inCopyingPhase;
     bool m_shouldDoCopyPhase;

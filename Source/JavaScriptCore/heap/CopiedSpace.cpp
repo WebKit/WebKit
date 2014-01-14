@@ -35,8 +35,6 @@ namespace JSC {
 
 CopiedSpace::CopiedSpace(Heap* heap)
     : m_heap(heap)
-    , m_toSpace(0)
-    , m_fromSpace(0)
     , m_inCopyingPhase(false)
     , m_shouldDoCopyPhase(false)
     , m_numberOfLoanedBlocks(0)
@@ -46,21 +44,40 @@ CopiedSpace::CopiedSpace(Heap* heap)
 
 CopiedSpace::~CopiedSpace()
 {
-    while (!m_toSpace->isEmpty())
-        m_heap->blockAllocator().deallocate(CopiedBlock::destroy(m_toSpace->removeHead()));
+    while (!m_oldGen.toSpace->isEmpty())
+        m_heap->blockAllocator().deallocate(CopiedBlock::destroy(m_oldGen.toSpace->removeHead()));
 
-    while (!m_fromSpace->isEmpty())
-        m_heap->blockAllocator().deallocate(CopiedBlock::destroy(m_fromSpace->removeHead()));
+    while (!m_oldGen.fromSpace->isEmpty())
+        m_heap->blockAllocator().deallocate(CopiedBlock::destroy(m_oldGen.fromSpace->removeHead()));
 
-    while (!m_oversizeBlocks.isEmpty())
-        m_heap->blockAllocator().deallocateCustomSize(CopiedBlock::destroy(m_oversizeBlocks.removeHead()));
+    while (!m_oldGen.oversizeBlocks.isEmpty())
+        m_heap->blockAllocator().deallocateCustomSize(CopiedBlock::destroy(m_oldGen.oversizeBlocks.removeHead()));
+
+    while (!m_newGen.toSpace->isEmpty())
+        m_heap->blockAllocator().deallocate(CopiedBlock::destroy(m_newGen.toSpace->removeHead()));
+
+    while (!m_newGen.fromSpace->isEmpty())
+        m_heap->blockAllocator().deallocate(CopiedBlock::destroy(m_newGen.fromSpace->removeHead()));
+
+    while (!m_newGen.oversizeBlocks.isEmpty())
+        m_heap->blockAllocator().deallocateCustomSize(CopiedBlock::destroy(m_newGen.oversizeBlocks.removeHead()));
+
+    ASSERT(m_oldGen.toSpace->isEmpty());
+    ASSERT(m_oldGen.fromSpace->isEmpty());
+    ASSERT(m_oldGen.oversizeBlocks.isEmpty());
+    ASSERT(m_newGen.toSpace->isEmpty());
+    ASSERT(m_newGen.fromSpace->isEmpty());
+    ASSERT(m_newGen.oversizeBlocks.isEmpty());
 }
 
 void CopiedSpace::init()
 {
-    m_toSpace = &m_blocks1;
-    m_fromSpace = &m_blocks2;
+    m_oldGen.toSpace = &m_oldGen.blocks1;
+    m_oldGen.fromSpace = &m_oldGen.blocks2;
     
+    m_newGen.toSpace = &m_newGen.blocks1;
+    m_newGen.fromSpace = &m_newGen.blocks2;
+
     allocateBlock();
 }   
 
@@ -83,9 +100,10 @@ CheckedBoolean CopiedSpace::tryAllocateOversize(size_t bytes, void** outPtr)
     ASSERT(isOversize(bytes));
     
     CopiedBlock* block = CopiedBlock::create(m_heap->blockAllocator().allocateCustomSize(sizeof(CopiedBlock) + bytes, CopiedBlock::blockSize));
-    m_oversizeBlocks.push(block);
-    m_blockFilter.add(reinterpret_cast<Bits>(block));
+    m_newGen.oversizeBlocks.push(block);
+    m_newGen.blockFilter.add(reinterpret_cast<Bits>(block));
     m_blockSet.add(block);
+    ASSERT(!block->isOld());
     
     CopiedAllocator allocator;
     allocator.setCurrentBlock(block);
@@ -138,7 +156,10 @@ CheckedBoolean CopiedSpace::tryReallocateOversize(void** ptr, size_t oldSize, si
 
     CopiedBlock* oldBlock = CopiedSpace::blockFor(oldPtr);
     if (oldBlock->isOversize()) {
-        m_oversizeBlocks.remove(oldBlock);
+        if (oldBlock->isOld())
+            m_oldGen.oversizeBlocks.remove(oldBlock);
+        else
+            m_newGen.oversizeBlocks.remove(oldBlock);
         m_blockSet.remove(oldBlock);
         m_heap->blockAllocator().deallocateCustomSize(CopiedBlock::destroy(oldBlock));
     }
@@ -165,10 +186,11 @@ void CopiedSpace::doneFillingBlock(CopiedBlock* block, CopiedBlock** exchange)
     block->zeroFillWilderness();
 
     {
+        // Always put the block into the old gen because it's being promoted!
         SpinLockHolder locker(&m_toSpaceLock);
-        m_toSpace->push(block);
+        m_oldGen.toSpace->push(block);
         m_blockSet.add(block);
-        m_blockFilter.add(reinterpret_cast<Bits>(block));
+        m_oldGen.blockFilter.add(reinterpret_cast<Bits>(block));
     }
 
     {
@@ -181,52 +203,25 @@ void CopiedSpace::doneFillingBlock(CopiedBlock* block, CopiedBlock** exchange)
     }
 }
 
-void CopiedSpace::startedCopying()
+void CopiedSpace::didStartFullCollection()
 {
-    std::swap(m_fromSpace, m_toSpace);
+    ASSERT(heap()->operationInProgress() == FullCollection);
+    ASSERT(m_oldGen.fromSpace->isEmpty());
+    ASSERT(m_newGen.fromSpace->isEmpty());
 
-    m_blockFilter.reset();
-    m_allocator.resetCurrentBlock();
+#ifndef NDEBUG
+    for (CopiedBlock* block = m_newGen.toSpace->head(); block; block = block->next())
+        ASSERT(!block->liveBytes());
 
-    CopiedBlock* next = 0;
-    size_t totalLiveBytes = 0;
-    size_t totalUsableBytes = 0;
-    for (CopiedBlock* block = m_fromSpace->head(); block; block = next) {
-        next = block->next();
-        if (!block->isPinned() && block->canBeRecycled()) {
-            recycleEvacuatedBlock(block);
-            continue;
-        }
-        totalLiveBytes += block->liveBytes();
-        totalUsableBytes += block->payloadCapacity();
-    }
+    for (CopiedBlock* block = m_newGen.oversizeBlocks.head(); block; block = block->next())
+        ASSERT(!block->liveBytes());
+#endif
 
-    CopiedBlock* block = m_oversizeBlocks.head();
-    while (block) {
-        CopiedBlock* next = block->next();
-        if (block->isPinned()) {
-            m_blockFilter.add(reinterpret_cast<Bits>(block));
-            totalLiveBytes += block->payloadCapacity();
-            totalUsableBytes += block->payloadCapacity();
-            block->didSurviveGC();
-        } else {
-            m_oversizeBlocks.remove(block);
-            m_blockSet.remove(block);
-            m_heap->blockAllocator().deallocateCustomSize(CopiedBlock::destroy(block));
-        } 
-        block = next;
-    }
+    for (CopiedBlock* block = m_oldGen.toSpace->head(); block; block = block->next())
+        block->didSurviveGC();
 
-    double markedSpaceBytes = m_heap->objectSpace().capacity();
-    double totalFragmentation = ((double)totalLiveBytes + markedSpaceBytes) / ((double)totalUsableBytes + markedSpaceBytes);
-    m_shouldDoCopyPhase = totalFragmentation <= Options::minHeapUtilization();
-    if (!m_shouldDoCopyPhase)
-        return;
-
-    ASSERT(m_shouldDoCopyPhase);
-    ASSERT(!m_inCopyingPhase);
-    ASSERT(!m_numberOfLoanedBlocks);
-    m_inCopyingPhase = true;
+    for (CopiedBlock* block = m_oldGen.oversizeBlocks.head(); block; block = block->next())
+        block->didSurviveGC();
 }
 
 void CopiedSpace::doneCopying()
@@ -240,21 +235,39 @@ void CopiedSpace::doneCopying()
     ASSERT(m_inCopyingPhase == m_shouldDoCopyPhase);
     m_inCopyingPhase = false;
 
-    while (!m_fromSpace->isEmpty()) {
-        CopiedBlock* block = m_fromSpace->removeHead();
-        // All non-pinned blocks in from-space should have been reclaimed as they were evacuated.
-        ASSERT(block->isPinned() || !m_shouldDoCopyPhase);
-        block->didSurviveGC();
-        // We don't add the block to the blockSet because it was never removed.
-        ASSERT(m_blockSet.contains(block));
-        m_blockFilter.add(reinterpret_cast<Bits>(block));
-        m_toSpace->push(block);
+    DoublyLinkedList<CopiedBlock>* toSpace;
+    DoublyLinkedList<CopiedBlock>* fromSpace;
+    TinyBloomFilter* blockFilter;
+    if (heap()->operationInProgress() == FullCollection) {
+        toSpace = m_oldGen.toSpace;
+        fromSpace = m_oldGen.fromSpace;
+        blockFilter = &m_oldGen.blockFilter;
+    } else {
+        toSpace = m_newGen.toSpace;
+        fromSpace = m_newGen.fromSpace;
+        blockFilter = &m_newGen.blockFilter;
     }
 
-    if (!m_toSpace->head())
-        allocateBlock();
-    else
-        m_allocator.setCurrentBlock(m_toSpace->head());
+    while (!fromSpace->isEmpty()) {
+        CopiedBlock* block = fromSpace->removeHead();
+        // We don't add the block to the blockSet because it was never removed.
+        ASSERT(m_blockSet.contains(block));
+        blockFilter->add(reinterpret_cast<Bits>(block));
+        toSpace->push(block);
+    }
+
+    if (heap()->operationInProgress() == EdenCollection) {
+        m_oldGen.toSpace->append(*m_newGen.toSpace);
+        m_oldGen.oversizeBlocks.append(m_newGen.oversizeBlocks);
+        m_oldGen.blockFilter.add(m_newGen.blockFilter);
+        m_newGen.blockFilter.reset();
+    }
+
+    ASSERT(m_newGen.toSpace->isEmpty());
+    ASSERT(m_newGen.fromSpace->isEmpty());
+    ASSERT(m_newGen.oversizeBlocks.isEmpty());
+
+    allocateBlock();
 
     m_shouldDoCopyPhase = false;
 }
@@ -263,13 +276,22 @@ size_t CopiedSpace::size()
 {
     size_t calculatedSize = 0;
 
-    for (CopiedBlock* block = m_toSpace->head(); block; block = block->next())
+    for (CopiedBlock* block = m_oldGen.toSpace->head(); block; block = block->next())
         calculatedSize += block->size();
 
-    for (CopiedBlock* block = m_fromSpace->head(); block; block = block->next())
+    for (CopiedBlock* block = m_oldGen.fromSpace->head(); block; block = block->next())
         calculatedSize += block->size();
 
-    for (CopiedBlock* block = m_oversizeBlocks.head(); block; block = block->next())
+    for (CopiedBlock* block = m_oldGen.oversizeBlocks.head(); block; block = block->next())
+        calculatedSize += block->size();
+
+    for (CopiedBlock* block = m_newGen.toSpace->head(); block; block = block->next())
+        calculatedSize += block->size();
+
+    for (CopiedBlock* block = m_newGen.fromSpace->head(); block; block = block->next())
+        calculatedSize += block->size();
+
+    for (CopiedBlock* block = m_newGen.oversizeBlocks.head(); block; block = block->next())
         calculatedSize += block->size();
 
     return calculatedSize;
@@ -279,13 +301,22 @@ size_t CopiedSpace::capacity()
 {
     size_t calculatedCapacity = 0;
 
-    for (CopiedBlock* block = m_toSpace->head(); block; block = block->next())
+    for (CopiedBlock* block = m_oldGen.toSpace->head(); block; block = block->next())
         calculatedCapacity += block->capacity();
 
-    for (CopiedBlock* block = m_fromSpace->head(); block; block = block->next())
+    for (CopiedBlock* block = m_oldGen.fromSpace->head(); block; block = block->next())
         calculatedCapacity += block->capacity();
 
-    for (CopiedBlock* block = m_oversizeBlocks.head(); block; block = block->next())
+    for (CopiedBlock* block = m_oldGen.oversizeBlocks.head(); block; block = block->next())
+        calculatedCapacity += block->capacity();
+
+    for (CopiedBlock* block = m_newGen.toSpace->head(); block; block = block->next())
+        calculatedCapacity += block->capacity();
+
+    for (CopiedBlock* block = m_newGen.fromSpace->head(); block; block = block->next())
+        calculatedCapacity += block->capacity();
+
+    for (CopiedBlock* block = m_newGen.oversizeBlocks.head(); block; block = block->next())
         calculatedCapacity += block->capacity();
 
     return calculatedCapacity;
@@ -311,22 +342,12 @@ static bool isBlockListPagedOut(double deadline, DoublyLinkedList<CopiedBlock>* 
 
 bool CopiedSpace::isPagedOut(double deadline)
 {
-    return isBlockListPagedOut(deadline, m_toSpace) 
-        || isBlockListPagedOut(deadline, m_fromSpace) 
-        || isBlockListPagedOut(deadline, &m_oversizeBlocks);
-}
-
-void CopiedSpace::didStartFullCollection()
-{
-    ASSERT(heap()->operationInProgress() == FullCollection);
-
-    ASSERT(m_fromSpace->isEmpty());
-
-    for (CopiedBlock* block = m_toSpace->head(); block; block = block->next())
-        block->didSurviveGC();
-
-    for (CopiedBlock* block = m_oversizeBlocks.head(); block; block = block->next())
-        block->didSurviveGC();
+    return isBlockListPagedOut(deadline, m_oldGen.toSpace) 
+        || isBlockListPagedOut(deadline, m_oldGen.fromSpace) 
+        || isBlockListPagedOut(deadline, &m_oldGen.oversizeBlocks)
+        || isBlockListPagedOut(deadline, m_newGen.toSpace) 
+        || isBlockListPagedOut(deadline, m_newGen.fromSpace) 
+        || isBlockListPagedOut(deadline, &m_newGen.oversizeBlocks);
 }
 
 } // namespace JSC

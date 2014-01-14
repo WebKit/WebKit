@@ -1,3 +1,64 @@
+2014-01-10  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Copying should be generational
+        https://bugs.webkit.org/show_bug.cgi?id=126555
+
+        Reviewed by Geoffrey Garen.
+
+        This patch adds support for copying to our generational collector. Eden collections 
+        always trigger copying. Full collections use our normal fragmentation-based heuristics.
+
+        The way this works is that the CopiedSpace now has the notion of an old generation set of CopiedBlocks
+        and a new generation of CopiedBlocks. During each mutator cycle new CopiedSpace allocations reside
+        in the new generation. When a collection occurs, those blocks are moved to the old generation.
+
+        One key thing to remember is that both new and old generation objects in the MarkedSpace can
+        refer to old or new generation allocations in CopiedSpace. This is why we must fire write barriers 
+        when assigning to an old (MarkedSpace) object's Butterfly.
+
+        * heap/CopiedAllocator.h:
+        (JSC::CopiedAllocator::tryAllocateDuringCopying):
+        * heap/CopiedBlock.h:
+        (JSC::CopiedBlock::CopiedBlock):
+        (JSC::CopiedBlock::didEvacuateBytes):
+        (JSC::CopiedBlock::isOld):
+        (JSC::CopiedBlock::didPromote):
+        * heap/CopiedBlockInlines.h:
+        (JSC::CopiedBlock::reportLiveBytes):
+        (JSC::CopiedBlock::reportLiveBytesDuringCopying):
+        * heap/CopiedSpace.cpp:
+        (JSC::CopiedSpace::CopiedSpace):
+        (JSC::CopiedSpace::~CopiedSpace):
+        (JSC::CopiedSpace::init):
+        (JSC::CopiedSpace::tryAllocateOversize):
+        (JSC::CopiedSpace::tryReallocateOversize):
+        (JSC::CopiedSpace::doneFillingBlock):
+        (JSC::CopiedSpace::didStartFullCollection):
+        (JSC::CopiedSpace::doneCopying):
+        (JSC::CopiedSpace::size):
+        (JSC::CopiedSpace::capacity):
+        (JSC::CopiedSpace::isPagedOut):
+        * heap/CopiedSpace.h:
+        (JSC::CopiedSpace::CopiedGeneration::CopiedGeneration):
+        * heap/CopiedSpaceInlines.h:
+        (JSC::CopiedSpace::contains):
+        (JSC::CopiedSpace::recycleEvacuatedBlock):
+        (JSC::CopiedSpace::allocateBlock):
+        (JSC::CopiedSpace::startedCopying):
+        * heap/CopyVisitor.cpp:
+        (JSC::CopyVisitor::copyFromShared):
+        * heap/CopyVisitorInlines.h:
+        (JSC::CopyVisitor::allocateNewSpace):
+        (JSC::CopyVisitor::allocateNewSpaceSlow):
+        * heap/GCThreadSharedData.cpp:
+        (JSC::GCThreadSharedData::didStartCopying):
+        * heap/Heap.cpp:
+        (JSC::Heap::copyBackingStores):
+        * heap/SlotVisitorInlines.h:
+        (JSC::SlotVisitor::copyLater):
+        * heap/TinyBloomFilter.h:
+        (JSC::TinyBloomFilter::add):
+
 2014-01-14  Mark Lam  <mark.lam@apple.com>
 
         ASSERTION FAILED: !hasError() in JSC::Parser<LexerType>::createSavePoint().

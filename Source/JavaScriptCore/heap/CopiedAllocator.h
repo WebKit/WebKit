@@ -38,6 +38,7 @@ public:
     
     bool fastPathShouldSucceed(size_t bytes) const;
     CheckedBoolean tryAllocate(size_t bytes, void** outPtr);
+    CheckedBoolean tryAllocateDuringCopying(size_t bytes, void** outPtr);
     CheckedBoolean tryReallocate(void *oldPtr, size_t oldBytes, size_t newBytes);
     void* forceAllocate(size_t bytes);
     CopiedBlock* resetCurrentBlock();
@@ -90,6 +91,14 @@ inline CheckedBoolean CopiedAllocator::tryAllocate(size_t bytes, void** outPtr)
 
     ASSERT(is8ByteAligned(*outPtr));
 
+    return true;
+}
+
+inline CheckedBoolean CopiedAllocator::tryAllocateDuringCopying(size_t bytes, void** outPtr)
+{
+    if (!tryAllocate(bytes, outPtr))
+        return false;
+    m_currentBlock->reportLiveBytesDuringCopying(bytes);
     return true;
 }
 

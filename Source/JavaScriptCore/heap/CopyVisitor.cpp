@@ -57,7 +57,7 @@ void CopyVisitor::copyFromShared()
                 visitItem(*it);
 
             ASSERT(!block->liveBytes());
-            m_shared.m_copiedSpace->recycleEvacuatedBlock(block);
+            m_shared.m_copiedSpace->recycleEvacuatedBlock(block, m_shared.m_vm->heap.operationInProgress());
         }
         m_shared.getNextBlocksToCopy(next, end);
     }
