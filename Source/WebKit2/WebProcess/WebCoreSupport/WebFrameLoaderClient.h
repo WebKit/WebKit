@@ -194,6 +194,10 @@ private:
     virtual void recreatePlugin(WebCore::Widget*) OVERRIDE;
     virtual void redirectDataToPlugin(WebCore::Widget* pluginWidget) OVERRIDE;
     
+#if ENABLE(WEBGL)
+    virtual WebCore::WebGLLoadPolicy webGLPolicyForHost(const String&) const OVERRIDE;
+#endif // ENABLE(WEBGL)
+
     virtual PassRefPtr<WebCore::Widget> createJavaAppletWidget(const WebCore::IntSize&, WebCore::HTMLAppletElement*, const WebCore::URL& baseURL, const Vector<String>& paramNames, const Vector<String>& paramValues) OVERRIDE;
     
 #if ENABLE(PLUGIN_PROXY_FOR_VIDEO)

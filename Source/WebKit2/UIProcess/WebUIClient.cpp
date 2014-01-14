@@ -207,6 +207,14 @@ void WebUIClient::unavailablePluginButtonClicked(WebPageProxy* page, WKPluginUna
 }
 #endif // ENABLE(NETSCAPE_PLUGIN_API)
 
+#if ENABLE(WEBGL)
+void WebUIClient::webGLContextCreated(WebPageProxy* page, const String& originatingURL)
+{
+    if (m_client.webGLContextCreated)
+        m_client.webGLContextCreated(toAPI(page), toAPI(originatingURL.impl()), m_client.base.clientInfo);
+}
+#endif // ENABLE(WEBGL)
+
 bool WebUIClient::implementsDidNotHandleKeyEvent() const
 {
     return m_client.didNotHandleKeyEvent;

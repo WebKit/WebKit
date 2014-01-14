@@ -2680,6 +2680,20 @@ void WebPageProxy::unavailablePluginButtonClicked(uint32_t opaquePluginUnavailab
 }
 #endif // ENABLE(NETSCAPE_PLUGIN_API)
 
+#if ENABLE(WEBGL)
+void WebPageProxy::webGLContextCreated(const String& pageURLString)
+{
+    m_uiClient.webGLContextCreated(this, pageURLString);
+}
+
+void WebPageProxy::webGLPolicyForHost(const String& host, uint32_t& loadPolicy)
+{
+    WebCore::WebGLLoadPolicy policy;
+    m_loaderClient.webGLLoadPolicy(this, policy, host);
+    loadPolicy = static_cast<uint32_t>(policy);
+}
+#endif // ENABLE(WEBGL)
+
 void WebPageProxy::setToolbarsAreVisible(bool toolbarsAreVisible)
 {
     m_uiClient.setToolbarsAreVisible(this, toolbarsAreVisible);

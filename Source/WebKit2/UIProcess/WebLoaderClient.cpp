@@ -333,4 +333,12 @@ PluginModuleLoadPolicy WebLoaderClient::pluginLoadPolicy(WebPageProxy* page, Plu
 
 #endif // ENABLE(NETSCAPE_PLUGIN_API)
 
+#if ENABLE(WEBGL)
+void WebLoaderClient::webGLLoadPolicy(WebPageProxy* page, WebCore::WebGLLoadPolicy& loadPolicy, const String& host)
+{
+    if (m_client.webGLLoadPolicy)
+        loadPolicy = toWebGLLoadPolicy(m_client.webGLLoadPolicy(toAPI(page), toAPI(host.impl()), m_client.base.clientInfo));
+}
+#endif // ENABLE(WEBGL)
+
 } // namespace WebKit

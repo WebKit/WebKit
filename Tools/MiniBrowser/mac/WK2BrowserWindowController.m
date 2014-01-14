@@ -581,6 +581,7 @@ static void runOpenPanel(WKPageRef page, WKFrameRef frame, WKOpenPanelParameters
         0, // showColorPicker
         0, // hideColorPicker
         0, // unavailablePluginButtonClicked
+        0, // webGLContextCreated
     };
     WKPageSetPageUIClient(_webView.pageRef, &uiClient.base);
 }

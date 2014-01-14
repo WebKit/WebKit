@@ -590,6 +590,19 @@ PassRefPtr<Plugin> WebPage::createPlugin(WebFrame* frame, HTMLPlugInElement* plu
 
 #endif // ENABLE(NETSCAPE_PLUGIN_API)
 
+#if ENABLE(WEBGL)
+WebCore::WebGLLoadPolicy WebPage::getWebGLPolicyForHost(WebFrame* frame, const String& url)
+{
+    WebGLLoadPolicy defaultPolicy = WebGLAsk;
+    uint32_t policyResult = 0;
+    // FIXME: Get rid of sendSync in favor of a non-blocking strategy.
+    sendSync(Messages::WebPageProxy::WebGLPolicyForHost(url), Messages::WebPageProxy::WebGLPolicyForHost::Reply(policyResult));
+    if (policyResult)
+        return static_cast<WebGLLoadPolicy>(policyResult);
+    return defaultPolicy;
+}
+#endif // ENABLE(WEBGL)
+
 EditorState WebPage::editorState() const
 {
     Frame& frame = m_page->focusController().focusedOrMainFrame();

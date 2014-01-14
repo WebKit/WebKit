@@ -33,13 +33,16 @@
 #include "CanvasPattern.h"
 #include "CanvasRenderingContext2D.h"
 #include "Chrome.h"
+#include "ChromeClient.h"
 #include "Document.h"
 #include "ExceptionCode.h"
 #include "Frame.h"
+#include "FrameLoaderClient.h"
 #include "GraphicsContext.h"
 #include "HTMLNames.h"
 #include "ImageData.h"
 #include "MIMETypeRegistry.h"
+#include "MainFrame.h"
 #include "Page.h"
 #include "RenderHTMLCanvas.h"
 #include "ScriptController.h"
@@ -201,7 +204,7 @@ CanvasRenderingContext* HTMLCanvasElement::getContext(const String& type, Canvas
     // once it is created. https://bugs.webkit.org/show_bug.cgi?id=117095
     if (is2dType(type)) {
         if (m_context && !m_context->is2d())
-            return 0;
+            return nullptr;
         if (!m_context) {
             bool usesDashbardCompatibilityMode = false;
 #if ENABLE(DASHBOARD_SUPPORT)
@@ -223,6 +226,17 @@ CanvasRenderingContext* HTMLCanvasElement::getContext(const String& type, Canvas
             if (m_context && !m_context->is3d())
                 return 0;
             if (!m_context) {
+                Page* page = document().page();
+                if (page && !document().url().isLocalFile()) {
+                    WebGLLoadPolicy policy = page->mainFrame().loader().client().webGLPolicyForHost(document().url().host());
+
+                    if (policy == WebGLAsk) {
+                        page->chrome().client().webGLContextCreated(this);
+                        return nullptr;
+                    }
+                    if (policy == WebGLBlock)
+                        return nullptr;
+                }
                 m_context = WebGLRenderingContext::create(this, static_cast<WebGLContextAttributes*>(attrs));
                 if (m_context) {
                     // Need to make sure a RenderLayer and compositing layer get created for the Canvas
@@ -235,7 +249,7 @@ CanvasRenderingContext* HTMLCanvasElement::getContext(const String& type, Canvas
 #else
     UNUSED_PARAM(attrs);
 #endif
-    return 0;
+    return nullptr;
 }
     
 bool HTMLCanvasElement::probablySupportsContext(const String& type, CanvasContextAttributes*)
