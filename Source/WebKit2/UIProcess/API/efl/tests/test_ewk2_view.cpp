@@ -221,7 +221,8 @@ public:
             return;
 
         size_t fileSize = eina_file_size_get(f);
-        EXPECT_EQ(fileSize, String(data).length());
+        // As the day in 'Date' field may be one digit or two digit, the data length may also be varied by one byte.
+        EXPECT_TRUE(String(data).length() == fileSize || String(data).length() == fileSize + 1);
 
         obtainedPageContents = true;
         eina_file_close(f);
