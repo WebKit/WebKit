@@ -138,13 +138,13 @@ static Mutex& qlPreviewConverterDictionaryMutex()
 
 static NSMutableDictionary *QLPreviewConverterDictionary()
 {
-    static NSMutableDictionary *dictionary = adoptNS([NSMutableDictionary dictionary]).leakRef();
+    static NSMutableDictionary *dictionary = [[NSMutableDictionary alloc] init];
     return dictionary;
 }
 
 static NSMutableDictionary *QLContentDictionary()
 {
-    static NSMutableDictionary *contentDictionary = adoptNS([NSMutableDictionary dictionary]).leakRef();
+    static NSMutableDictionary *contentDictionary = [[NSMutableDictionary alloc] init];
     return contentDictionary;
 }
 

@@ -1,3 +1,20 @@
+2014-01-14  Daniel Bates  <dabates@apple.com>
+
+        [iOS] Directly allocate NSMutableDictionary in QLPreviewConverterDictionary() and QLContentDictionary()
+        https://bugs.webkit.org/show_bug.cgi?id=126999
+        <rdar://problem/15810305>
+
+        Reviewed by Joseph Pecoraro.
+
+        Fixes an issue where we may crash when subsequently accessing WebCore::QLPreviewConverterDictionary()
+        or WebCore::QLContentDictionary(). Currently neither of these functions retain'ed the NSMutable dictionary
+        returned by [NSMutableDictionary dictionary]. Instead, we should allocate and initialize NSMutableDictionary
+        directly to ensure that the dictionary is retained.
+
+        * platform/network/ios/QuickLook.mm:
+        (QLPreviewConverterDictionary):
+        (QLContentDictionary):
+
 2014-01-14  Brent Fulgham  <bfulgham@apple.com>
 
         [WebGL] Invalid range checking in WebGLRenderingContext::validateTexFuncLevel
