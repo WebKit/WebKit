@@ -1,3 +1,22 @@
+2014-01-14  Mark Rowe  <mrowe@apple.com>
+
+        WebKit2 leaks sudden termination assertions when a page with unload handlers is closed.
+        <https://webkit.org/b/126974> / <rdar://problem/15812954>
+
+        When a page with an unload handler is loaded, the web process tells the UI process that it
+        should disable sudden termination. However, when the page is closed the connection between
+        the web and UI process is torn down before the web content has a chance to tell the UI
+        process to reenable sudden termination.
+
+        Reviewed by Anders Carlsson.
+
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::WebProcessProxy):
+        (WebKit::WebProcessProxy::~WebProcessProxy): Balance any outstanding disableSuddenTermination calls.
+        (WebKit::WebProcessProxy::enableSuddenTermination): Decrement the count.
+        (WebKit::WebProcessProxy::disableSuddenTermination): Increment the count.
+        * UIProcess/WebProcessProxy.h:
+
 2014-01-14  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: For Remote Inspection link WebProcess's to their parent UIProcess

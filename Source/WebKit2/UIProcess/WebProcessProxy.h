@@ -208,6 +208,8 @@ private:
     HashSet<uint64_t> m_processSuppressiblePages;
     bool m_processSuppressionEnabled;
 #endif
+
+    int m_numberOfTimesSuddenTerminationWasDisabled;
 };
     
 } // namespace WebKit

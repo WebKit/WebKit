@@ -94,6 +94,7 @@ WebProcessProxy::WebProcessProxy(WebContext& context)
 #if PLATFORM(MAC)
     , m_processSuppressionEnabled(false)
 #endif
+    , m_numberOfTimesSuddenTerminationWasDisabled(0)
 {
     connect();
 }
@@ -102,6 +103,9 @@ WebProcessProxy::~WebProcessProxy()
 {
     if (m_webConnection)
         m_webConnection->invalidate();
+
+    while (m_numberOfTimesSuddenTerminationWasDisabled-- > 0)
+        WebCore::enableSuddenTermination();
 }
 
 void WebProcessProxy::getLaunchOptions(ProcessLauncher::LaunchOptions& launchOptions)
@@ -662,7 +666,9 @@ void WebProcessProxy::enableSuddenTermination()
     if (!isValid())
         return;
 
+    ASSERT(m_numberOfTimesSuddenTerminationWasDisabled);
     WebCore::enableSuddenTermination();
+    --m_numberOfTimesSuddenTerminationWasDisabled;
 }
 
 void WebProcessProxy::disableSuddenTermination()
@@ -671,6 +677,7 @@ void WebProcessProxy::disableSuddenTermination()
         return;
 
     WebCore::disableSuddenTermination();
+    ++m_numberOfTimesSuddenTerminationWasDisabled;
 }
 
 RefPtr<API::Object> WebProcessProxy::apiObjectByConvertingToHandles(API::Object* object)
