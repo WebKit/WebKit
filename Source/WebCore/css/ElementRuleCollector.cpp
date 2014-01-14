@@ -40,6 +40,7 @@
 #include "RenderRegion.h"
 #include "SVGElement.h"
 #include "SelectorCheckerFastPath.h"
+#include "SelectorCompiler.h"
 #include "StyleProperties.h"
 #include "StyledElement.h"
 
@@ -292,7 +293,8 @@ inline bool ElementRuleCollector::ruleMatches(const RuleData& ruleData, PseudoId
 {
     const StyleResolver::State& state = m_state;
 
-    if (ruleData.hasFastCheckableSelector()) {
+    bool fastCheckableSelector = ruleData.hasFastCheckableSelector();
+    if (fastCheckableSelector) {
         // We know this selector does not include any pseudo elements.
         if (m_pseudoStyleRequest.pseudoId != NOPSEUDO)
             return false;
@@ -302,6 +304,38 @@ inline bool ElementRuleCollector::ruleMatches(const RuleData& ruleData, PseudoId
             if (!ruleData.hasMultipartSelector())
                 return true;
         }
+    }
+
+#if ENABLE(CSS_SELECTOR_JIT)
+    void* compiledSelectorChecker = ruleData.compiledSelectorCodeRef().code().executableAddress();
+    if (!compiledSelectorChecker && ruleData.compilationStatus() == SelectorCompilationStatus::NotCompiled) {
+        JSC::VM* vm = document().scriptExecutionContext()->vm();
+        SelectorCompilationStatus compilationStatus;
+        JSC::MacroAssemblerCodeRef compiledSelectorCodeRef;
+        compilationStatus = SelectorCompiler::compileSelector(ruleData.selector(), vm, compiledSelectorCodeRef);
+
+        ruleData.setCompiledSelector(compilationStatus, compiledSelectorCodeRef);
+        compiledSelectorChecker = ruleData.compiledSelectorCodeRef().code().executableAddress();
+    }
+    if (compiledSelectorChecker) {
+        if (m_pseudoStyleRequest.pseudoId != NOPSEUDO)
+            return false;
+
+        if (ruleData.compilationStatus() == SelectorCompilationStatus::SimpleSelectorChecker) {
+            SelectorCompiler::SimpleSelectorChecker selectorChecker = SelectorCompiler::simpleSelectorCheckerFunction(compiledSelectorChecker, ruleData.compilationStatus());
+            return selectorChecker(state.element());
+        }
+        ASSERT(ruleData.compilationStatus() == SelectorCompilationStatus::SelectorCheckerWithCheckingContext);
+
+        SelectorCompiler::SelectorCheckerWithCheckingContext selectorChecker = SelectorCompiler::selectorCheckerFunctionWithCheckingContext(compiledSelectorChecker, ruleData.compilationStatus());
+        SelectorCompiler::CheckingContext context;
+        context.elementStyle = state.style();
+        context.resolvingMode = m_mode;
+        return selectorChecker(state.element(), &context);
+    }
+#endif // ENABLE(CSS_SELECTOR_JIT)
+
+    if (fastCheckableSelector) {
         if (ruleData.selector()->m_match == CSSSelector::Tag && !SelectorChecker::tagMatches(state.element(), ruleData.selector()->tagQName()))
             return false;
         SelectorCheckerFastPath selectorCheckerFastPath(ruleData.selector(), state.element());

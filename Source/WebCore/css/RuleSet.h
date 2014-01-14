@@ -23,6 +23,7 @@
 #define RuleSet_h
 
 #include "RuleFeature.h"
+#include "SelectorCompiler.h"
 #include "StyleRule.h"
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
@@ -76,6 +77,16 @@ public:
     static const unsigned maximumIdentifierCount = 4;
     const unsigned* descendantSelectorIdentifierHashes() const { return m_descendantSelectorIdentifierHashes; }
 
+#if ENABLE(CSS_SELECTOR_JIT)
+    SelectorCompilationStatus compilationStatus() const { return m_compilationStatus; }
+    JSC::MacroAssemblerCodeRef compiledSelectorCodeRef() const { return m_compiledSelectorCodeRef; }
+    void setCompiledSelector(SelectorCompilationStatus status, JSC::MacroAssemblerCodeRef codeRef) const
+    {
+        m_compilationStatus = status;
+        m_compiledSelectorCodeRef = codeRef;
+    }
+#endif // ENABLE(CSS_SELECTOR_JIT)
+
 private:
     StyleRule* m_rule;
     unsigned m_selectorIndex : 13;
@@ -92,9 +103,19 @@ private:
     unsigned m_propertyWhitelistType : 2;
     // Use plain array instead of a Vector to minimize memory overhead.
     unsigned m_descendantSelectorIdentifierHashes[maximumIdentifierCount];
+#if ENABLE(CSS_SELECTOR_JIT)
+    mutable SelectorCompilationStatus m_compilationStatus;
+    mutable JSC::MacroAssemblerCodeRef m_compiledSelectorCodeRef;
+#endif // ENABLE(CSS_SELECTOR_JIT)
 };
     
 struct SameSizeAsRuleData {
+#if ENABLE(CSS_SELECTOR_JIT)
+    unsigned compilationStatus;
+    void* compiledSelectorPointer;
+    void* codeRefPtr;
+#endif // ENABLE(CSS_SELECTOR_JIT)
+
     void* a;
     unsigned b;
     unsigned c;
