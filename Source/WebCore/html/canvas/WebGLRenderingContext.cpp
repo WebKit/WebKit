@@ -5144,7 +5144,7 @@ bool WebGLRenderingContext::validateTexFuncLevel(const char* functionName, GC3De
     }
     switch (target) {
     case GraphicsContext3D::TEXTURE_2D:
-        if (level > m_maxTextureLevel) {
+        if (level >= m_maxTextureLevel) {
             synthesizeGLError(GraphicsContext3D::INVALID_VALUE, functionName, "level out of range");
             return false;
         }
@@ -5155,7 +5155,7 @@ bool WebGLRenderingContext::validateTexFuncLevel(const char* functionName, GC3De
     case GraphicsContext3D::TEXTURE_CUBE_MAP_NEGATIVE_Y:
     case GraphicsContext3D::TEXTURE_CUBE_MAP_POSITIVE_Z:
     case GraphicsContext3D::TEXTURE_CUBE_MAP_NEGATIVE_Z:
-        if (level > m_maxCubeMapTextureLevel) {
+        if (level >= m_maxCubeMapTextureLevel) {
             synthesizeGLError(GraphicsContext3D::INVALID_VALUE, functionName, "level out of range");
             return false;
         }
