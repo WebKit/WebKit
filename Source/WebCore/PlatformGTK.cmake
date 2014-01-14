@@ -425,6 +425,7 @@ if (ENABLE_WEBKIT2)
     # dependent files into a separate library which can be used to construct a GTK+2 WebCore
     # for the plugin process.
     add_library(WebCorePlatformGTK2 ${WebCore_LIBRARY_TYPE} ${WebCorePlatformGTK_SOURCES})
+    add_dependencies(WebCorePlatformGTK2 WebCore)
     WEBKIT_SET_EXTRA_COMPILER_FLAGS(WebCorePlatformGTK2)
     set_property(TARGET WebCorePlatformGTK2
         APPEND
@@ -446,6 +447,7 @@ if (ENABLE_WEBKIT2)
 endif ()
 
 add_library(WebCorePlatformGTK ${WebCore_LIBRARY_TYPE} ${WebCorePlatformGTK_SOURCES})
+add_dependencies(WebCorePlatformGTK WebCore)
 WEBKIT_SET_EXTRA_COMPILER_FLAGS(WebCorePlatformGTK)
 set_property(
     TARGET WebCorePlatformGTK
