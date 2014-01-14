@@ -31,6 +31,7 @@
 #include "AudioDestinationConsumer.h"
 #include "MediaStreamSource.h"
 #include <wtf/RefCounted.h>
+#include <wtf/ThreadingPrimitives.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 

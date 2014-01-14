@@ -1,3 +1,9 @@
+2014-01-14  Csaba Osztrogonác  <ossy@webkit.org>
+
+        One more buildfix after r161999.
+
+        * Modules/webaudio/MediaStreamAudioSource.h:
+
 2014-01-14  Simon Fraser  <simon.fraser@apple.com>
 
         Export __ZN7WebCore11FileChooser16chooseMediaFilesERKN3WTF6VectorINS1_6StringELm0ENS1_15CrashOnOverflowEEERKS3_PNS_4IconE
