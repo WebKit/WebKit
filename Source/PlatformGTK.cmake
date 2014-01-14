@@ -48,3 +48,7 @@ endif ()
 if (ENABLE_WEBKIT2)
     add_dependencies(fake-docs-target WebKit2)
 endif ()
+
+add_custom_target(check
+    COMMAND "${TOOLS_DIR}/Scripts/run-gtk-tests"
+)
