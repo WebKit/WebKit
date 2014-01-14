@@ -1,3 +1,10 @@
+2014-01-13  Tim Horton  <timothy_horton@apple.com>
+
+        iOS WebKit2 build fixes
+
+        * WebCore.xcodeproj/project.pbxproj:
+        Make some headers private instead of project for WK2's use.
+
 2014-01-13  Simon Fraser  <simon.fraser@apple.com>
 
         Make NetworkStateNotifier.h a private header, needed by iOS.

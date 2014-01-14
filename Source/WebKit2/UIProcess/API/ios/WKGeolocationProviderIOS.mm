@@ -45,6 +45,9 @@
 
 using namespace WebKit;
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+
 @interface WKGeolocationProviderIOS ()
 -(void)_startUpdating;
 -(void)_stopUpdating;
@@ -275,3 +278,5 @@ struct GeolocationRequestData {
     return NO;
 }
 @end
+
+#pragma clang diagnostic pop

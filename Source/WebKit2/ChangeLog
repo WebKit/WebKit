@@ -1,3 +1,32 @@
+2014-01-13  Tim Horton  <timothy_horton@apple.com>
+
+        iOS WebKit2 build fixes
+
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        * NetworkProcess/NetworkResourceLoader.h:
+        Introduce/clarify some confusion about CFNETWORK vs. PLATFORM(IOS).
+
+        * NetworkProcess/RemoteNetworkingContext.h:
+        * WebProcess/WebCoreSupport/mac/WebFrameNetworkingContext.h:
+        Get rid of an override of something that doesn't exist anymore.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+        Add some files. It's likely there are more missing, but this is a start.
+
+        * Shared/WebEventConversion.h:
+        * WebProcess/WebPage/WebPage.h:
+        Use WebKitAdditions.
+
+        * UIProcess/API/ios/WKGeolocationProviderIOS.mm:
+        Something bizarre is happening with internal deprecation warnings.
+
+        * UIProcess/API/ios/WKInteractionView.mm:
+        (-[WKTextPosition isEqual:]):
+        Fix a typo.
+
+        * WebProcess/WebPage/mac/RemoteLayerTreeDrawingArea.h:
+        Remove an override of something that doesn't exist anymore.
+
 2014-01-13  Andy Estes  <aestes@apple.com>
 
         [iOS] Build Fix: Don't build the 'All-iOS' target on iOS. Just use 'All'.
