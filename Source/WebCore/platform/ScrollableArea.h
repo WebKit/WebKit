@@ -252,16 +252,6 @@ private:
     virtual void setScrollOffset(const IntPoint&) = 0;
 
     mutable OwnPtr<ScrollAnimator> m_scrollAnimator;
-    unsigned m_constrainsScrollingToContentEdge : 1;
-
-    unsigned m_inLiveResize : 1;
-
-    unsigned m_verticalScrollElasticity : 2; // ScrollElasticity
-    unsigned m_horizontalScrollElasticity : 2; // ScrollElasticity
-
-    unsigned m_scrollbarOverlayStyle : 2; // ScrollbarOverlayStyle
-
-    unsigned m_scrollOriginChanged : 1;
 
     // There are 8 possible combinations of writing mode and direction. Scroll origin will be non-zero in the x or y axis
     // if there is any reversed direction or writing-mode. The combinations are:
@@ -275,6 +265,17 @@ private:
     // vertical-rl / ltr            YES                     NO
     // vertical-rl / rtl            YES                     YES
     IntPoint m_scrollOrigin;
+
+    unsigned m_constrainsScrollingToContentEdge : 1;
+
+    unsigned m_inLiveResize : 1;
+
+    unsigned m_verticalScrollElasticity : 2; // ScrollElasticity
+    unsigned m_horizontalScrollElasticity : 2; // ScrollElasticity
+
+    unsigned m_scrollbarOverlayStyle : 2; // ScrollbarOverlayStyle
+
+    unsigned m_scrollOriginChanged : 1;
 };
 
 } // namespace WebCore

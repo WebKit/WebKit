@@ -1,3 +1,27 @@
+2014-01-14  Andreas Kling  <akling@apple.com>
+
+        Pack RenderLayer harder.
+        <https://webkit.org/b/126967>
+
+        Re-arrange the members of ScrollableArea a bit so that RenderLayer
+        can combine its bitfields with the ones in ScrollableArea.
+        This makes RenderLayer fit into a snugger size class, saving 32 bytes
+        per layer.
+
+        296 kB progression on Membuster3.
+
+        Reviewed by Antti Koivisto.
+
+        * platform/ScrollableArea.cpp:
+        * platform/ScrollableArea.h:
+
+            Put bitfield members at the end of ScrollableArea so inheriting
+            classes can synergize with the padding.
+
+        * rendering/RenderLayer.h:
+
+            Make m_blendMode a bitfield to avoid bloating the class.
+
 2014-01-13  Tim Horton  <timothy_horton@apple.com>
 
         iOS WebCore build fixes

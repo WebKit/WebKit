@@ -1260,7 +1260,7 @@ private:
 #endif
 
 #if ENABLE(CSS_COMPOSITING)
-    BlendMode m_blendMode;
+    BlendMode m_blendMode : 5;
 #endif
 
     RenderLayerModelObject& m_renderer;

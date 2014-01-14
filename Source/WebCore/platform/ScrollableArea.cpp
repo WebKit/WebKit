@@ -45,8 +45,8 @@ namespace WebCore {
 struct SameSizeAsScrollableArea {
     virtual ~SameSizeAsScrollableArea();
     void* pointer;
-    unsigned bitfields : 16;
     IntPoint origin;
+    unsigned bitfields : 16;
 };
 
 COMPILE_ASSERT(sizeof(ScrollableArea) == sizeof(SameSizeAsScrollableArea), ScrollableArea_should_stay_small);
