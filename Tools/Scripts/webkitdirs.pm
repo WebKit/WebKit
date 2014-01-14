@@ -1436,6 +1436,7 @@ sub setupAppleWinEnv()
         # Those environment variables must be set to be able to build inside Visual Studio.
         $variablesToSet{WEBKIT_LIBRARIES} = windowsLibrariesDir() unless $ENV{WEBKIT_LIBRARIES};
         $variablesToSet{WEBKIT_OUTPUTDIR} = windowsOutputDir() unless $ENV{WEBKIT_OUTPUTDIR};
+        $variablesToSet{MSBUILDDISABLENODEREUSE} = "1" unless $ENV{MSBUILDDISABLENODEREUSE};
 
         foreach my $variable (keys %variablesToSet) {
             print "Setting the Environment Variable '" . $variable . "' to '" . $variablesToSet{$variable} . "'\n\n";
@@ -1447,15 +1448,19 @@ sub setupAppleWinEnv()
             print "Please restart your computer before attempting to build inside Visual Studio.\n\n";
         }
     } else {
-        if (!$ENV{'WEBKIT_LIBRARIES'}) {
+        if (!defined $ENV{'WEBKIT_LIBRARIES'} || !$ENV{'WEBKIT_LIBRARIES'}) {
             print "Warning: You must set the 'WebKit_Libraries' environment variable\n";
             print "         to be able build WebKit from within Visual Studio 2013 and newer.\n";
             print "         Make sure that 'WebKit_Libraries' points to the\n";
             print "         'WebKitLibraries/win' directory, not the 'WebKitLibraries/' directory.\n\n";
         }
-        if (!$ENV{'WEBKIT_OUTPUTDIR'}) {
+        if (!defined $ENV{'WEBKIT_OUTPUTDIR'} || !$ENV{'WEBKIT_OUTPUTDIR'}) {
             print "Warning: You must set the 'WebKit_OutputDir' environment variable\n";
             print "         to be able build WebKit from within Visual Studio 2013 and newer.\n\n";
+        }
+        if (!defined $ENV{'MSBUILDDISABLENODEREUSE'} || !$ENV{'MSBUILDDISABLENODEREUSE'}) {
+            print "Warning: You should set the 'MSBUILDDISABLENODEREUSE' environment variable to '1'\n";
+            print "         to avoid periodic locked log files when building.\n\n";
         }
     }
     # FIXME (125180): Remove the following temporary 64-bit support once official support is available.
