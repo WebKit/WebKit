@@ -30,7 +30,7 @@ initSpellTest("destination", "wellcome home.", function(textNode) {
     shouldBeEqualToString("window.getSelection().toString()", "wellcome");
 
     spellingMarkerRange = internals.markerRangeForNode(textNode, "spelling", 0);
-    shouldBeEqualToString("spellingMarkerRange.toString()", "wellcome");
+    shouldBecomeEqualToString("spellingMarkerRange.toString()", "wellcome", finishJSTest);
 });
 
 </script>

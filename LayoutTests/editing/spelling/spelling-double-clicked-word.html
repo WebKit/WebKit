@@ -21,38 +21,32 @@ initSpellTest("destination", "wellcome home.", function(textNode) {
     shouldBeEqualToString("window.getSelection().toString()", "");
 
     // Double-click the misspelled word without trailing whitespace.
-    internals.settings.setSmartInsertDeleteEnabled(true);
-    internals.settings.setSelectTrailingWhitespaceEnabled(false);
-    var x = destination.offsetParent.offsetLeft + destination.offsetLeft + 40;
-    var y = destination.offsetParent.offsetTop + destination.offsetTop + destination.offsetHeight / 2;
-    eventSender.mouseMoveTo(x, y);
-    eventSender.mouseDown();
-    eventSender.mouseUp();
-    eventSender.mouseDown();
-    eventSender.mouseUp();
+    verifySpellingMarkersAfterDoubleClick(textNode, false, function() {
+        window.getSelection().removeAllRanges();
+        shouldBeEqualToString("window.getSelection().toString()", "");
 
-    spellingMarkerRange = internals.markerRangeForNode(textNode, "spelling", 0);
-    shouldBeEqualToString("spellingMarkerRange.toString()", "wellcome");
-    shouldBeEqualToString("window.getSelection().toString()", "wellcome");
+        // Double-click the misspelled word with trailing whitespace.
+        verifySpellingMarkersAfterDoubleClick(textNode, true, finishJSTest);
+    });
 
-    window.getSelection().removeAllRanges();
-    shouldBeEqualToString("window.getSelection().toString()", "");
-
-    // Double-click the misspelled word with trailing whitespace.
-    internals.settings.setSmartInsertDeleteEnabled(false);
-    internals.settings.setSelectTrailingWhitespaceEnabled(true);
-    var x = destination.offsetParent.offsetLeft + destination.offsetLeft + 40;
-    var y = destination.offsetParent.offsetTop + destination.offsetTop + destination.offsetHeight / 2;
-    eventSender.mouseMoveTo(x, y);
-    eventSender.mouseDown();
-    eventSender.mouseUp();
-    eventSender.mouseDown();
-    eventSender.mouseUp();
-
-    spellingMarkerRange = internals.markerRangeForNode(textNode, "spelling", 0);
-    shouldBeEqualToString("spellingMarkerRange.toString()", "wellcome");
-    shouldBeEqualToString("window.getSelection().toString()", "wellcome ");
 });
+
+function verifySpellingMarkersAfterDoubleClick(textNode, isSelectTrailingWhitespaceEnabled, completionCallback) {
+    internals.settings.setSelectTrailingWhitespaceEnabled(isSelectTrailingWhitespaceEnabled);
+    internals.settings.setSmartInsertDeleteEnabled(!isSelectTrailingWhitespaceEnabled);
+
+    var x = destination.offsetParent.offsetLeft + destination.offsetLeft + 40;
+    var y = destination.offsetParent.offsetTop + destination.offsetTop + destination.offsetHeight / 2;
+    eventSender.mouseMoveTo(x, y);
+    eventSender.mouseDown();
+    eventSender.mouseUp();
+    eventSender.mouseDown();
+    eventSender.mouseUp();
+
+    shouldBeEqualToString("window.getSelection().toString()", isSelectTrailingWhitespaceEnabled ? "wellcome " : "wellcome");
+    var spellingMarkerRange = internals.markerRangeForNode(textNode, "spelling", 0);
+    shouldBecomeEqualToString("spellingMarkerRange.toString()", "wellcome", completionCallback);
+}
 
 </script>
 <script src="../../resources/js-test-post.js"></script>

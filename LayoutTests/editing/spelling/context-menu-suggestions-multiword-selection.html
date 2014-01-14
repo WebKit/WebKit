@@ -45,10 +45,10 @@ initSpellTest("destination", "wellcome home.", function(textNode) {
     // Esc key to hide the context menu.
     eventSender.keyDown(String.fromCharCode(0x001B), null);
 
-    spellingMarkerRange = internals.markerRangeForNode(textNode, "spelling", 0);
-    shouldBeEqualToString("spellingMarkerRange.toString()", "wellcome");
     shouldBeEqualToString("window.getSelection().toString()", "wellcome home");
     shouldBeTrue("contextMenuItemsWithoutSpellingSuggestions < contextMenuItemsWithSpellingSuggestions");
+    spellingMarkerRange = internals.markerRangeForNode(textNode, "spelling", 0);
+    shouldBecomeEqualToString("spellingMarkerRange.toString()", "wellcome", finishJSTest);
 });
 
 </script>

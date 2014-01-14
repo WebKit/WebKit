@@ -11,9 +11,9 @@
 
 <script>
 
-description("Spelling should ignore whitespace. " +
-            "To test manually, type 'hello, wellcome home.', select ' wellcome ', and context-click on the selection. " +
-            "The test succeeds when the context menu has spell check suggestions.");
+description("Spelling should ignore whitespace. "
+    + "To test manually, type 'hello, wellcome home.', select ' wellcome '. "
+    + "The test succeeds when 'wellcome' has spelling marker.");
 
 initSpellTest("destination", "hello, wellcome home.", function(textNode) {
     spellingMarkerRange = internals.markerRangeForNode(textNode, "spelling", 0);
@@ -28,16 +28,8 @@ initSpellTest("destination", "hello, wellcome home.", function(textNode) {
 
     shouldBeEqualToString("window.getSelection().toString()", " wellcome ");
 
-    // Context click on " wellcome " to show the context menu.
-    var x = destination.offsetParent.offsetLeft + destination.offsetLeft + 80;
-    var y = destination.offsetParent.offsetTop + destination.offsetTop + destination.offsetHeight / 2;
-    eventSender.mouseMoveTo(x, y);
-    // Esc key to hide the context menu.
-    eventSender.keyDown(String.fromCharCode(0x001B), null);
-
     spellingMarkerRange = internals.markerRangeForNode(textNode, "spelling", 0);
-    shouldBeEqualToString("spellingMarkerRange.toString()", "wellcome");
-    shouldBeEqualToString("window.getSelection().toString()", " wellcome ");
+    shouldBecomeEqualToString("spellingMarkerRange.toString()", "wellcome", finishJSTest);
 });
 
 </script>

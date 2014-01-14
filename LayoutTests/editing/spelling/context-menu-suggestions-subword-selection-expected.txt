@@ -7,9 +7,9 @@ PASS internals.markerCountForNode(destination.childNodes[0], "spelling") became 
 PASS spellingMarkerRange.toString() is "wellcome"
 PASS window.getSelection().toString() is ""
 PASS window.getSelection().toString() is "llco"
-PASS spellingMarkerRange.toString() is "wellcome"
 PASS window.getSelection().toString() is "llco"
 PASS contextMenuItemsWithoutSpellingSuggestions < contextMenuItemsWithSpellingSuggestions is true
+PASS spellingMarkerRange.toString() became "wellcome"
 PASS successfullyParsed is true
 
 TEST COMPLETE

@@ -24,6 +24,5 @@ function initSpellTest(testElementId, testText, testFunction)
     document.execCommand("InsertText", false, testText);
     shouldBecomeDifferent('internals.markerCountForNode(destination.childNodes[0], "spelling")', '0', function() {
         testFunctionCallback(destination.childNodes[0]);
-        finishJSTest();
     });
 }

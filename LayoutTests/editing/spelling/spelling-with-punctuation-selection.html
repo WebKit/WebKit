@@ -11,9 +11,9 @@
 
 <script>
 
-description("Punctuation marks should be treated as whitespace: spelling should ignore them. " +
-            "To test manually, type 'wellcome!', select 'wellcome!', and context-click on the selection. " +
-            "The test succeeds when the context menu has spell check suggestions.");
+description("Punctuation marks should be treated as whitespace: spelling should ignore them. "
+    + "To test manually, type 'wellcome!' and select 'wellcome!'. "
+    + "The test succeeds when 'wellcome' has spelling marker.");
 
 initSpellTest("destination", "wellcome!", function(textNode) {
     spellingMarkerRange = internals.markerRangeForNode(textNode, "spelling", 0);
@@ -29,16 +29,8 @@ initSpellTest("destination", "wellcome!", function(textNode) {
 
     shouldBeEqualToString("window.getSelection().toString()", "wellcome!");
 
-    // Context click to show the context menu.
-    var x = destination.offsetParent.offsetLeft + destination.offsetLeft + 40;
-    var y = destination.offsetParent.offsetTop + destination.offsetTop + destination.offsetHeight / 2;
-    eventSender.mouseMoveTo(x, y);
-    // Esc key to hide the context menu.
-    eventSender.keyDown(String.fromCharCode(0x001B), null);
-
     spellingMarkerRange = internals.markerRangeForNode(textNode, "spelling", 0);
-    shouldBeEqualToString("spellingMarkerRange.toString()", "wellcome");
-    shouldBeEqualToString("window.getSelection().toString()", "wellcome!");
+    shouldBecomeEqualToString("spellingMarkerRange.toString()", "wellcome", finishJSTest);
 });
 
 </script>

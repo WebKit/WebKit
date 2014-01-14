@@ -27,9 +27,10 @@ initSpellTest("destination", "Spell wellcome. Is it broken?", function(textNode)
     eventSender.keyDown(String.fromCharCode(0x007F), null);
 
     spellingMarkerRange = internals.markerRangeForNode(textNode, "spelling", 0);
-    shouldBeEqualToString("spellingMarkerRange.toString()", "wellcome");
-
-    document.getElementById("destination").innerHTML = "";
+    shouldBecomeEqualToString("spellingMarkerRange.toString()", "wellcome", function() {
+        document.getElementById("destination").innerHTML = "";
+        finishJSTest();
+    });
 });
 
 </script>
