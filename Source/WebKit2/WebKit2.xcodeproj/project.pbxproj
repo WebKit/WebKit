@@ -138,8 +138,6 @@
 		1A30EAC6115D7DA30053E937 /* ConnectionMac.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A30EAC5115D7DA30053E937 /* ConnectionMac.cpp */; };
 		1A334DED16DE8F88006A8E38 /* StorageAreaMapMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A334DEB16DE8F88006A8E38 /* StorageAreaMapMessageReceiver.cpp */; };
 		1A334DEE16DE8F88006A8E38 /* StorageAreaMapMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A334DEC16DE8F88006A8E38 /* StorageAreaMapMessages.h */; };
-		1A3979F61332983A00E00300 /* AppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0867D6A5FE840307C02AAC07 /* AppKit.framework */; };
-		1A3979F71332983F00E00300 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1AA1CC5C100FA1A10078DEBC /* QuartzCore.framework */; };
 		1A3D610113A7CC2A00F95D4E /* PluginModuleInfo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3D60FF13A7CC2A00F95D4E /* PluginModuleInfo.cpp */; };
 		1A3D610213A7CC2A00F95D4E /* PluginModuleInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A3D610013A7CC2A00F95D4E /* PluginModuleInfo.h */; };
 		1A3D610513A7F03A00F95D4E /* ArgumentCoders.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3D610413A7F03A00F95D4E /* ArgumentCoders.cpp */; };
@@ -228,7 +226,6 @@
 		1AA417EF12C00D87002BE67B /* TextCheckerMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1AA417ED12C00D87002BE67B /* TextCheckerMac.mm */; };
 		1AA41AB512C02EC4002BE67B /* EditorState.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AA41AB412C02EC4002BE67B /* EditorState.h */; };
 		1AA4792312A59FD9008236C3 /* PluginProcessMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1AA4792212A59FD9008236C3 /* PluginProcessMac.mm */; };
-		1AA479B012A5A436008236C3 /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1AA1CD06100FA1BA0078DEBC /* Carbon.framework */; };
 		1AA56F2911E92BC80061B882 /* PluginController.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AA56F2811E92BC80061B882 /* PluginController.h */; };
 		1AA575FA1496B52600A4EE06 /* EventDispatcher.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AA575F81496B52600A4EE06 /* EventDispatcher.cpp */; };
 		1AA575FB1496B52600A4EE06 /* EventDispatcher.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AA575F91496B52600A4EE06 /* EventDispatcher.h */; };
@@ -700,7 +697,6 @@
 		51D0D431183B34130097041D /* DatabaseProcessIDBConnection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51D0D42E183B34130097041D /* DatabaseProcessIDBConnection.cpp */; };
 		51D0D436183B353D0097041D /* DatabaseProcessIDBConnectionMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51D0D434183B353D0097041D /* DatabaseProcessIDBConnectionMessageReceiver.cpp */; };
 		51D0D437183B353D0097041D /* DatabaseProcessIDBConnectionMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 51D0D435183B353D0097041D /* DatabaseProcessIDBConnectionMessages.h */; };
-		51D1304E1382E5B700351EDD /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BCF5068412431861005955AE /* Security.framework */; };
 		51D130531382EAC000351EDD /* SecItemRequestData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51D1304F1382EAC000351EDD /* SecItemRequestData.cpp */; };
 		51D130541382EAC000351EDD /* SecItemRequestData.h in Headers */ = {isa = PBXBuildFile; fileRef = 51D130501382EAC000351EDD /* SecItemRequestData.h */; };
 		51D130551382EAC000351EDD /* SecItemResponseData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51D130511382EAC000351EDD /* SecItemResponseData.cpp */; };
@@ -1282,14 +1278,12 @@
 		CD73BA4E131ACDB700EEDED2 /* WebFullScreenManagerMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD73BA48131ACD8E00EEDED2 /* WebFullScreenManagerMessageReceiver.cpp */; };
 		CD73BA53131B645B00EEDED2 /* WebFullScreenManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD73BA37131A29FE00EEDED2 /* WebFullScreenManager.cpp */; };
 		CDC382FE17211799008A2FC3 /* SecItemShimLibrary.mm in Sources */ = {isa = PBXBuildFile; fileRef = 511F8A78138B460900A95F44 /* SecItemShimLibrary.mm */; };
-		CDC3830117211799008A2FC3 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BCF5068412431861005955AE /* Security.framework */; };
 		CDC38307172117DD008A2FC3 /* CookieStorageShimLibrary.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CDC382F9172116D3008A2FC3 /* CookieStorageShimLibrary.cpp */; };
 		CDC3830817211890008A2FC3 /* WebProcessShim.dylib in Copy WebProcessShim */ = {isa = PBXBuildFile; fileRef = CDC3830617211799008A2FC3 /* WebProcessShim.dylib */; };
 		CDC3830C17212282008A2FC3 /* CookieStorageShimLibrary.h in Headers */ = {isa = PBXBuildFile; fileRef = CDC3830B172121CE008A2FC3 /* CookieStorageShimLibrary.h */; };
 		CDC3831017212440008A2FC3 /* CookieStorageShim.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CDC3830D1721242D008A2FC3 /* CookieStorageShim.cpp */; };
 		CDCA85C8132ABA4E00E961DF /* WKFullScreenWindowController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CDCA85C6132ABA4E00E961DF /* WKFullScreenWindowController.mm */; };
 		CDCA85C9132ABA4E00E961DF /* WKFullScreenWindowController.h in Headers */ = {isa = PBXBuildFile; fileRef = CDCA85C7132ABA4E00E961DF /* WKFullScreenWindowController.h */; };
-		CDDF622F1728A20D001EC01F /* CoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BCD0042C110C1E27003B8A67 /* CoreServices.framework */; };
 		CEDA12E2152CD1AE00D9E08D /* WebAlternativeTextClient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CEDA12DF152CCAE800D9E08D /* WebAlternativeTextClient.cpp */; };
 		CEDA12E3152CD1B300D9E08D /* WebAlternativeTextClient.h in Headers */ = {isa = PBXBuildFile; fileRef = CEDA12DE152CCAE800D9E08D /* WebAlternativeTextClient.h */; };
 		D3B9484611FF4B6500032B39 /* WebPopupMenu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D3B9484211FF4B6500032B39 /* WebPopupMenu.cpp */; };
@@ -2474,6 +2468,10 @@
 		9F54F8941648AE0E007DF81A /* PluginProcessManagerMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PluginProcessManagerMac.mm; sourceTree = "<group>"; };
 		9FB5F392169E6A80002C25BF /* WKContextPrivateMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WKContextPrivateMac.mm; path = mac/WKContextPrivateMac.mm; sourceTree = "<group>"; };
 		9FB5F393169E6A80002C25BF /* WKContextPrivateMac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WKContextPrivateMac.h; path = mac/WKContextPrivateMac.h; sourceTree = "<group>"; };
+		A1EDD2D91884ACE000BBFE98 /* All.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = All.xcconfig; sourceTree = "<group>"; };
+		A1EDD2DB1884B96400BBFE98 /* PluginProcessShim.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = PluginProcessShim.xcconfig; sourceTree = "<group>"; };
+		A1EDD2DC1884B9B500BBFE98 /* SecItemShim.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = SecItemShim.xcconfig; sourceTree = "<group>"; };
+		A1EDD2DD1884B9E300BBFE98 /* WebProcessShim.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = WebProcessShim.xcconfig; sourceTree = "<group>"; };
 		A5EFD38B16B0E88C00B2F0E8 /* WKPageVisibilityTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKPageVisibilityTypes.h; sourceTree = "<group>"; };
 		A72D5D7F1236CBA800A88B15 /* WebSerializedScriptValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebSerializedScriptValue.h; sourceTree = "<group>"; };
 		A7D792D41767CB0900881CBE /* ActivityAssertion.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ActivityAssertion.h; sourceTree = "<group>"; };
@@ -3063,9 +3061,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				1A3979F61332983A00E00300 /* AppKit.framework in Frameworks */,
-				1AA479B012A5A436008236C3 /* Carbon.framework in Frameworks */,
-				1A3979F71332983F00E00300 /* QuartzCore.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3073,7 +3068,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				51D1304E1382E5B700351EDD /* Security.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3195,8 +3189,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CDDF622F1728A20D001EC01F /* CoreServices.framework in Frameworks */,
-				CDC3830117211799008A2FC3 /* Security.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3409,6 +3401,7 @@
 		1A4F9769100E7B6600637A18 /* Configurations */ = {
 			isa = PBXGroup;
 			children = (
+				A1EDD2D91884ACE000BBFE98 /* All.xcconfig */,
 				1A4F976A100E7B6600637A18 /* Base.xcconfig */,
 				BC5D24B816CC40BB007D5461 /* BaseLegacyProcess.xcconfig */,
 				5DAD73F1116FF90C00EE5396 /* BaseTarget.xcconfig */,
@@ -3422,16 +3415,19 @@
 				BC8283AA16B4BEAD00A278FE /* NetworkService.Development.xcconfig */,
 				BC8283AB16B4BEAD00A278FE /* NetworkService.xcconfig */,
 				BC122FA3132707F300F7EAC1 /* PluginProcess.xcconfig */,
+				A1EDD2DB1884B96400BBFE98 /* PluginProcessShim.xcconfig */,
 				BC8283F216B4FC5300A278FE /* PluginService.32.xcconfig */,
 				BC8283F416B4FC5300A278FE /* PluginService.64.xcconfig */,
 				BCBECDC216B5CE2A00047A1A /* PluginService.Development.xcconfig */,
 				5D442A5516D5856700AC3331 /* PluginService.entitlements */,
+				A1EDD2DC1884B9B500BBFE98 /* SecItemShim.xcconfig */,
 				5183B3931379F85C00E8754E /* Shim.xcconfig */,
 				1A4F976E100E7B6600637A18 /* Version.xcconfig */,
 				5DAD7294116FF70B00EE5396 /* WebContentProcess.xcconfig */,
 				BCACC40F16B0B8A800B6E092 /* WebContentService.Development.xcconfig */,
 				BCACC40E16B0B8A800B6E092 /* WebContentService.xcconfig */,
 				BCB86F4B116AAACD00CE20B7 /* WebKit2.xcconfig */,
+				A1EDD2DD1884B9E300BBFE98 /* WebProcessShim.xcconfig */,
 			);
 			path = Configurations;
 			sourceTree = "<group>";
@@ -8004,6 +8000,7 @@
 		};
 		1A50DB39110A3C13000D3FE5 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = A1EDD2D91884ACE000BBFE98 /* All.xcconfig */;
 			buildSettings = {
 				PRODUCT_NAME = All;
 			};
@@ -8011,6 +8008,7 @@
 		};
 		1A50DB3A110A3C13000D3FE5 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = A1EDD2D91884ACE000BBFE98 /* All.xcconfig */;
 			buildSettings = {
 				PRODUCT_NAME = All;
 			};
@@ -8018,7 +8016,7 @@
 		};
 		1AC25FB112A48EA700BD2671 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 5183B3931379F85C00E8754E /* Shim.xcconfig */;
+			baseConfigurationReference = A1EDD2DB1884B96400BBFE98 /* PluginProcessShim.xcconfig */;
 			buildSettings = {
 				OTHER_LDFLAGS = (
 					"$(OTHER_LDFLAGS)",
@@ -8030,7 +8028,7 @@
 		};
 		1AC25FB212A48EA700BD2671 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 5183B3931379F85C00E8754E /* Shim.xcconfig */;
+			baseConfigurationReference = A1EDD2DB1884B96400BBFE98 /* PluginProcessShim.xcconfig */;
 			buildSettings = {
 				OTHER_LDFLAGS = (
 					"$(OTHER_LDFLAGS)",
@@ -8042,7 +8040,7 @@
 		};
 		1AC25FB312A48EA700BD2671 /* Production */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 5183B3931379F85C00E8754E /* Shim.xcconfig */;
+			baseConfigurationReference = A1EDD2DB1884B96400BBFE98 /* PluginProcessShim.xcconfig */;
 			buildSettings = {
 				OTHER_LDFLAGS = (
 					"$(OTHER_LDFLAGS)",
@@ -8094,7 +8092,7 @@
 		};
 		510031F31379CACB00C8DFE4 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 5183B3931379F85C00E8754E /* Shim.xcconfig */;
+			baseConfigurationReference = A1EDD2DC1884B9B500BBFE98 /* SecItemShim.xcconfig */;
 			buildSettings = {
 				PRODUCT_NAME = SecItemShim;
 			};
@@ -8102,7 +8100,7 @@
 		};
 		510031F41379CACB00C8DFE4 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 5183B3931379F85C00E8754E /* Shim.xcconfig */;
+			baseConfigurationReference = A1EDD2DC1884B9B500BBFE98 /* SecItemShim.xcconfig */;
 			buildSettings = {
 				PRODUCT_NAME = SecItemShim;
 			};
@@ -8110,7 +8108,7 @@
 		};
 		510031F51379CACB00C8DFE4 /* Production */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 5183B3931379F85C00E8754E /* Shim.xcconfig */;
+			baseConfigurationReference = A1EDD2DC1884B9B500BBFE98 /* SecItemShim.xcconfig */;
 			buildSettings = {
 				PRODUCT_NAME = SecItemShim;
 			};
@@ -8209,6 +8207,7 @@
 		};
 		5D22D69C11A7534600BF30E5 /* Production */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = A1EDD2D91884ACE000BBFE98 /* All.xcconfig */;
 			buildSettings = {
 				PRODUCT_NAME = All;
 			};
@@ -8431,7 +8430,7 @@
 		};
 		CDC3830317211799008A2FC3 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 5183B3931379F85C00E8754E /* Shim.xcconfig */;
+			baseConfigurationReference = A1EDD2DD1884B9E300BBFE98 /* WebProcessShim.xcconfig */;
 			buildSettings = {
 				PRODUCT_NAME = WebProcessShim;
 			};
@@ -8439,7 +8438,7 @@
 		};
 		CDC3830417211799008A2FC3 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 5183B3931379F85C00E8754E /* Shim.xcconfig */;
+			baseConfigurationReference = A1EDD2DD1884B9E300BBFE98 /* WebProcessShim.xcconfig */;
 			buildSettings = {
 				PRODUCT_NAME = WebProcessShim;
 			};
@@ -8447,7 +8446,7 @@
 		};
 		CDC3830517211799008A2FC3 /* Production */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 5183B3931379F85C00E8754E /* Shim.xcconfig */;
+			baseConfigurationReference = A1EDD2DD1884B9E300BBFE98 /* WebProcessShim.xcconfig */;
 			buildSettings = {
 				PRODUCT_NAME = WebProcessShim;
 			};

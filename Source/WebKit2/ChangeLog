@@ -1,3 +1,29 @@
+2014-01-13  Andy Estes  <aestes@apple.com>
+
+        [iOS] Exclude shims and PluginProcess.app from the WebKit2 build
+        https://bugs.webkit.org/show_bug.cgi?id=126936
+
+        Reviewed by Daniel Bates.
+
+        * Configurations/All.xcconfig: Added. Excluded PluginProcess.app from
+        being copied into WebKit2.framework on iOS.
+        * Configurations/NetworkProcess.xcconfig: Excluded SecItemShim.dylib
+        from being copied into NetworkProcess.app on iOS.
+        * Configurations/PluginProcess.xcconfig: Excluded
+        PluginProcessShim.dylib from being copied into PluginProcess.app and
+        set SKIP_INSTALL to YES on iOS.
+        * Configurations/PluginProcessShim.xcconfig: Added. Linked the shim
+        against necessary frameworks on Mac.
+        * Configurations/SecItemShim.xcconfig: Ditto.
+        * Configurations/WebProcessShim.xcconfig: Ditto.
+        * Configurations/WebContentProcess.xcconfig: Excluded
+        WebProcessShim.dylib from being copied into WebProcess.app on iOS.
+        * PluginProcess/mac/PluginProcessShim.mm: Added #if !PLATFORM(IOS) guards.
+        * Shared/mac/CookieStorageShimLibrary.cpp: Ditto.
+        * WebProcess/mac/SecItemShimLibrary.mm: Ditto.
+        * WebKit2.xcodeproj/project.pbxproj: Removed Mac-only frameworks from
+        the shims' 'Link Binary with Libraries' build phases. Added new xcconfigs.
+
 2014-01-13  Jinwoo Song  <jinwoo7.song@samsung.com>
 
         [EFL][WK2] Replace usage of DEFINE_STATIC_LOCAL with NeverDestroyed

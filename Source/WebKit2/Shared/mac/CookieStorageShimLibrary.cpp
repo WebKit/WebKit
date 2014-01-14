@@ -26,7 +26,7 @@
 #include "config.h"
 #include "CookieStorageShimLibrary.h"
 
-#if ENABLE(NETWORK_PROCESS)
+#if ENABLE(NETWORK_PROCESS) && !PLATFORM(IOS)
 
 #include <WebCore/DynamicLinkerInterposing.h>
 
@@ -90,4 +90,4 @@ void WebKitCookieStorageShimInitialize(const CookieStorageShimCallbacks& callbac
     
 }
 
-#endif // ENABLE(NETWORK_PROCESS)
+#endif // ENABLE(NETWORK_PROCESS) && !PLATFORM(IOS)

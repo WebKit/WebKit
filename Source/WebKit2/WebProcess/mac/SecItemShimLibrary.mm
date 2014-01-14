@@ -22,6 +22,9 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
+
+#if !PLATFORM(IOS)
+
 #import "SecItemShimLibrary.h"
 
 #import <Security/SecItem.h>
@@ -66,3 +69,5 @@ void WebKitSecItemShimInitialize(const SecItemShimCallbacks& callbacks)
 }
 
 } // namespace WebKit
+
+#endif // !PLATFORM(IOS)
