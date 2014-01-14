@@ -1,3 +1,32 @@
+2014-01-14  Mark Rowe  <mrowe@apple.com>
+
+        WebCore icon database appears to leak sudden termination assertions
+        <https://webkit.org/b/126971> / <rdar://problem/15808797>
+
+        Introduce an RAII wrapper around disableSuddenTermination / enableSuddenTermination
+        and adopt it in IconDatabase to address the incorrect management of sudden termination.
+
+        IconDatabase now owns up to two SuddenTerminationDisabler objects. One ensures that
+        sudden termination is disabled while we're waiting on the sync timer to fire. The second
+        ensures that sudden termination is disabled while we're waiting on the sync thread to
+        process any pending work.
+
+        Reviewed by Alexey Proskuryakov.
+
+        * loader/icon/IconDatabase.cpp:
+        (WebCore::IconDatabase::IconDatabase):
+        (WebCore::IconDatabase::wakeSyncThread): Disable sudden termination until the sync thread
+        has finished this unit of work.
+        (WebCore::IconDatabase::scheduleOrDeferSyncTimer): Disable sudden termination until the
+        sync timer has fired.
+        (WebCore::IconDatabase::syncTimerFired): Clear the member variable to reenable sudden termination.
+        (WebCore::IconDatabase::syncThreadMainLoop): Taken ownership of the SuddenTerminationDisabler
+        instance when we start processing a unit of work. Discard the object when our work is complete.
+        * loader/icon/IconDatabase.h:
+        * platform/SuddenTermination.h:
+        (WebCore::SuddenTerminationDisabler::SuddenTerminationDisabler): Disable sudden termination when created.
+        (WebCore::SuddenTerminationDisabler::~SuddenTerminationDisabler): Enable it when destroyed.
+
 2014-01-14  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: For Remote Inspection link WebProcess's to their parent UIProcess

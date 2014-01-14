@@ -797,7 +797,6 @@ IconDatabase::IconDatabase()
     , m_removeIconsRequested(false)
     , m_iconURLImportComplete(false)
     , m_syncThreadHasWorkToDo(false)
-    , m_disabledSuddenTerminationForSyncThread(false)
     , m_retainOrReleaseIconRequested(false)
     , m_initialPruningComplete(false)
     , m_client(defaultClient())
@@ -838,14 +837,8 @@ void IconDatabase::wakeSyncThread()
 {
     MutexLocker locker(m_syncLock);
 
-    if (!m_disabledSuddenTerminationForSyncThread) {
-        m_disabledSuddenTerminationForSyncThread = true;
-        // The following is balanced by the call to enableSuddenTermination in the
-        // syncThreadMainLoop function.
-        // FIXME: It would be better to only disable sudden termination if we have
-        // something to write, not just if we have something to read.
-        disableSuddenTermination();
-    }
+    if (!m_disableSuddenTerminationWhileSyncThreadHasWorkToDo)
+        m_disableSuddenTerminationWhileSyncThreadHasWorkToDo = std::make_unique<SuddenTerminationDisabler>();
 
     m_syncThreadHasWorkToDo = true;
     m_syncCondition.signal();
@@ -869,9 +862,8 @@ void IconDatabase::scheduleOrDeferSyncTimer()
     if (m_scheduleOrDeferSyncTimerRequested)
         return;
 
-    // The following is balanced by the call to enableSuddenTermination in the
-    // syncTimerFired function.
-    disableSuddenTermination();
+    if (!m_disableSuddenTerminationWhileSyncTimerScheduled)
+        m_disableSuddenTerminationWhileSyncTimerScheduled = std::make_unique<SuddenTerminationDisabler>();
 
     m_scheduleOrDeferSyncTimerRequested = true;
     callOnMainThread(performScheduleOrDeferSyncTimerOnMainThread, this);
@@ -882,9 +874,7 @@ void IconDatabase::syncTimerFired(Timer<IconDatabase>&)
     ASSERT_NOT_SYNC_THREAD();
     wakeSyncThread();
 
-    // The following is balanced by the call to disableSuddenTermination in the
-    // scheduleOrDeferSyncTimer function.
-    enableSuddenTermination();
+    m_disableSuddenTerminationWhileSyncTimerScheduled.reset();
 }
 
 // ******************
@@ -1363,8 +1353,7 @@ void IconDatabase::syncThreadMainLoop()
 
     m_syncLock.lock();
 
-    bool shouldReenableSuddenTermination = m_disabledSuddenTerminationForSyncThread;
-    m_disabledSuddenTerminationForSyncThread = false;
+    std::unique_ptr<SuddenTerminationDisabler> disableSuddenTermination = std::move(m_disableSuddenTerminationWhileSyncThreadHasWorkToDo);
 
     // We'll either do any pending work on our first pass through the loop, or we'll terminate
     // without doing any work. Either way we're dealing with any currently-pending work.
@@ -1444,37 +1433,21 @@ void IconDatabase::syncThreadMainLoop()
         if (shouldStopThreadActivity())
             continue;
 
-        if (shouldReenableSuddenTermination) {
-            // The following is balanced by the call to disableSuddenTermination in the
-            // wakeSyncThread function. Any time we wait on the condition, we also have
-            // to enableSuddenTermation, after doing the next batch of work.
-            enableSuddenTermination();
-        }
+        disableSuddenTermination.reset();
 
         while (!m_syncThreadHasWorkToDo)
             m_syncCondition.wait(m_syncLock);
 
         m_syncThreadHasWorkToDo = false;
 
-        ASSERT(m_disabledSuddenTerminationForSyncThread);
-        shouldReenableSuddenTermination = true;
-        m_disabledSuddenTerminationForSyncThread = false;
+        ASSERT(m_disableSuddenTerminationWhileSyncThreadHasWorkToDo);
+        disableSuddenTermination = std::move(m_disableSuddenTerminationWhileSyncThreadHasWorkToDo);
     }
 
     m_syncLock.unlock();
     
     // Thread is terminating at this point
     cleanupSyncThread();
-
-    if (shouldReenableSuddenTermination) {
-        // The following is balanced by the call to disableSuddenTermination in the
-        // wakeSyncThread function. Any time we wait on the condition, we also have
-        // to enableSuddenTermation, after doing the next batch of work.
-        enableSuddenTermination();
-
-        MutexLocker locker(m_syncLock);
-        m_disabledSuddenTerminationForSyncThread = false;
-    }
 }
 
 void IconDatabase::performPendingRetainAndReleaseOperations()
