@@ -46,6 +46,7 @@ public:
     virtual String name() const OVERRIDE;
     virtual String url() const OVERRIDE;
     virtual bool hasLocalDebugger() const OVERRIDE;
+    virtual pid_t parentProcessIdentifier() const OVERRIDE;
 
     virtual void connect(Inspector::InspectorFrontendChannel*) OVERRIDE;
     virtual void disconnect() OVERRIDE;

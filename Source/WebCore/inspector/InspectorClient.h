@@ -49,6 +49,10 @@ public:
     virtual void bringFrontendToFront() = 0;
     virtual void didResizeMainFrame(Frame*) { }
 
+#if ENABLE(REMOTE_INSPECTOR)
+    virtual pid_t parentProcessIdentifier() const { return 0; }
+#endif
+
     virtual void highlight() = 0;
     virtual void hideHighlight() = 0;
 

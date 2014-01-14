@@ -40,6 +40,7 @@
 
 
 #define WIRApplicationIdentifierKey             @"WIRApplicationIdentifierKey"
+#define WIRApplicationBundleIdentifierKey       @"WIRApplicationBundleIdentifierKey"
 #define WIRApplicationNameKey                   @"WIRApplicationNameKey"
 #define WIRIsApplicationProxyKey                @"WIRIsApplicationProxyKey"
 #define WIRHostApplicationIdentifierKey         @"WIRHostApplicationIdentifierKey"

@@ -297,6 +297,11 @@ NSDictionary *RemoteInspector::listingForDebuggable(const RemoteInspectorDebugga
     if (debuggableInfo.hasLocalDebugger)
         [debuggableDetails setObject:@YES forKey:WIRHasLocalDebuggerKey];
 
+    if (debuggableInfo.hasParentProcess()) {
+        NSString *parentApplicationIdentifier = [NSString stringWithFormat:@"PID:%lu", (unsigned long)debuggableInfo.parentProcessIdentifier];
+        [debuggableDetails setObject:parentApplicationIdentifier forKey:WIRHostApplicationIdentifierKey];
+    }
+
     return debuggableDetails;
 }
 

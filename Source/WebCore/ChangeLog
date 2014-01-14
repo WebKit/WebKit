@@ -1,3 +1,19 @@
+2014-01-14  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: For Remote Inspection link WebProcess's to their parent UIProcess
+        https://bugs.webkit.org/show_bug.cgi?id=126995
+
+        Reviewed by Timothy Hatcher.
+
+        * inspector/InspectorClient.h:
+        (WebCore::InspectorClient::parentProcessIdentifier):
+        Client method intended for WebKit2 so a WebProcess can link to its UIProcess.
+
+        * page/PageDebuggable.h:
+        * page/PageDebuggable.cpp:
+        (WebCore::PageDebuggable::parentProcessIdentifier):
+        Provide parent process identifier if there is one.
+
 2014-01-14  Tim Horton  <timothy_horton@apple.com>
 
         iOS WebKit2 build fixes, part 2

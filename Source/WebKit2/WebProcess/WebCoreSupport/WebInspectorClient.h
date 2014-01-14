@@ -58,6 +58,10 @@ private:
     virtual void bringFrontendToFront() OVERRIDE;
     virtual void didResizeMainFrame(WebCore::Frame*) OVERRIDE;
 
+#if ENABLE(REMOTE_INSPECTOR)
+    virtual pid_t parentProcessIdentifier() const OVERRIDE;
+#endif
+
     virtual void highlight() OVERRIDE;
     virtual void hideHighlight() OVERRIDE;
 
