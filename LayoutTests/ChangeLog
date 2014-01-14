@@ -1,5 +1,20 @@
 2014-01-13  Jinwoo Song  <jinwoo7.song@samsung.com>
 
+        Unreviewed EFL gardening. Rebaselining after r161669.
+
+        * platform/efl/css3/masking/clip-path-circle-border-box-expected.png: Added.
+        * platform/efl/css3/masking/clip-path-circle-border-box-expected.txt: Added.
+        * platform/efl/css3/masking/clip-path-circle-bounding-box-expected.png: Added.
+        * platform/efl/css3/masking/clip-path-circle-bounding-box-expected.txt: Added.
+        * platform/efl/css3/masking/clip-path-circle-content-box-expected.png: Added.
+        * platform/efl/css3/masking/clip-path-circle-content-box-expected.txt: Added.
+        * platform/efl/css3/masking/clip-path-circle-margin-box-expected.png: Added.
+        * platform/efl/css3/masking/clip-path-circle-margin-box-expected.txt: Added.
+        * platform/efl/css3/masking/clip-path-circle-padding-box-expected.png: Added.
+        * platform/efl/css3/masking/clip-path-circle-padding-box-expected.txt: Added.
+
+2014-01-13  Jinwoo Song  <jinwoo7.song@samsung.com>
+
         Unreviewed EFL gardening. Rebaseline after r161696.
 
         * platform/efl/css1/text_properties/word_spacing-expected.png:
