@@ -651,9 +651,6 @@
     <ClInclude Include="..\wtf\ThreadingPrimitives.h">
       <Filter>wtf</Filter>
     </ClInclude>
-    <ClInclude Include="..\wtf\ThreadRestrictionVerifier.h">
-      <Filter>wtf</Filter>
-    </ClInclude>
     <ClInclude Include="..\wtf\ValueCheck.h">
       <Filter>wtf</Filter>
     </ClInclude>

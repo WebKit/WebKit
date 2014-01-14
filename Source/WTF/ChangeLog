@@ -1,3 +1,26 @@
+2014-01-14  Anders Carlsson  <andersca@apple.com>
+
+        Get rid of ThreadRestrictionVerifier
+        https://bugs.webkit.org/show_bug.cgi?id=127004
+
+        Reviewed by Sam Weinig.
+
+        The ThreadRestrictionVerifier mechanism has been turned off for a while
+        since it doesn't really have a good solution for objects that are passed between threads.
+        Instead of having dead code in the tree, just get rid of it.
+        
+        * GNUmakefile.list.am:
+        * WTF.vcxproj/WTF.vcxproj:
+        * WTF.vcxproj/WTF.vcxproj.filters:
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/CMakeLists.txt:
+        * wtf/RefCounted.h:
+        (WTF::RefCountedBase::ref):
+        (WTF::RefCountedBase::hasOneRef):
+        (WTF::RefCountedBase::refCount):
+        (WTF::RefCountedBase::derefBase):
+        * wtf/ThreadRestrictionVerifier.h: Removed.
+
 2014-01-14  Benjamin Poulain  <benjamin@webkit.org>
 
         Enable the experimental selector code generator by default

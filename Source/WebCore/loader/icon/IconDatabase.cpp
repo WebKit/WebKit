@@ -402,7 +402,6 @@ Image* IconDatabase::defaultIcon(const IntSize& size)
     
     if (!m_defaultIconRecord) {
         m_defaultIconRecord = IconRecord::create("urlIcon");
-        m_defaultIconRecord->setMutexForVerifier(m_urlAndIconLock);
         loadDefaultIconRecord(m_defaultIconRecord.get());
     }
     
@@ -544,8 +543,6 @@ void IconDatabase::setIconDataForIconURL(PassRefPtr<SharedBuffer> dataOriginal, 
         return;
     
     RefPtr<SharedBuffer> data = dataOriginal ? dataOriginal->copy() : PassRefPtr<SharedBuffer>(0);
-    if (data)
-        data->setMutexForVerifier(m_urlAndIconLock);
     String iconURL = iconURLOriginal.isolatedCopy();
     
     Vector<String> pageURLs;
@@ -909,7 +906,6 @@ PassRefPtr<IconRecord> IconDatabase::getOrCreateIconRecord(const String& iconURL
         return icon;
 
     RefPtr<IconRecord> newIcon = IconRecord::create(iconURL);
-    newIcon->setMutexForVerifier(m_urlAndIconLock);
     m_iconURLToRecordMap.set(iconURL, newIcon.get());
 
     return newIcon.release();
@@ -1506,7 +1502,6 @@ bool IconDatabase::readFromDatabase()
     for (unsigned i = 0; i < icons.size(); ++i) {
         didAnyWork = true;
         RefPtr<SharedBuffer> imageData = getImageDataForIconURLFromSQLDatabase(icons[i]->iconURL());
-        imageData->setMutexForVerifier(m_urlAndIconLock);
 
         // Verify this icon still wants to be read from disk
         {

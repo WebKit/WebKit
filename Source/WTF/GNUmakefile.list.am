@@ -169,7 +169,6 @@ wtf_sources += \
     Source/WTF/wtf/ThreadFunctionInvocation.h \
     Source/WTF/wtf/ThreadIdentifierDataPthreads.cpp \
     Source/WTF/wtf/ThreadIdentifierDataPthreads.h \
-    Source/WTF/wtf/ThreadRestrictionVerifier.h \
     Source/WTF/wtf/ThreadSafeRefCounted.h \
     Source/WTF/wtf/ThreadSpecific.h \
     Source/WTF/wtf/ThreadSpecificWin.cpp \

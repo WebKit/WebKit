@@ -101,7 +101,6 @@ set(WTF_HEADERS
     TCSpinLock.h
     TCSystemAlloc.h
     ThreadIdentifierDataPthreads.h
-    ThreadRestrictionVerifier.h
     ThreadSafeRefCounted.h
     ThreadSpecific.h
     Threading.h

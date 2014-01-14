@@ -295,7 +295,6 @@
     <ClInclude Include="..\wtf\text\WTFString.h" />
     <ClInclude Include="..\wtf\Threading.h" />
     <ClInclude Include="..\wtf\ThreadingPrimitives.h" />
-    <ClInclude Include="..\wtf\ThreadRestrictionVerifier.h" />
     <ClInclude Include="..\wtf\threadsafeRefCounted.h" />
     <ClInclude Include="..\wtf\threadspecific.h" />
     <ClInclude Include="..\wtf\threads\BinarySemaphore.h" />

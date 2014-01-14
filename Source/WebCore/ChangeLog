@@ -1,3 +1,18 @@
+2014-01-14  Anders Carlsson  <andersca@apple.com>
+
+        Get rid of ThreadRestrictionVerifier
+        https://bugs.webkit.org/show_bug.cgi?id=127004
+
+        Reviewed by Sam Weinig.
+
+        Remove now unneeded calls.
+
+        * loader/icon/IconDatabase.cpp:
+        (WebCore::IconDatabase::defaultIcon):
+        (WebCore::IconDatabase::setIconDataForIconURL):
+        (WebCore::IconDatabase::getOrCreateIconRecord):
+        (WebCore::IconDatabase::readFromDatabase):
+
 2014-01-14  Daniel Bates  <dabates@apple.com>
 
         [iOS] Directly allocate NSMutableDictionary in QLPreviewConverterDictionary() and QLContentDictionary()

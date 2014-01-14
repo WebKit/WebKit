@@ -246,7 +246,6 @@
 		A8A4744B151A825B004123FF /* Threading.h in Headers */ = {isa = PBXBuildFile; fileRef = A8A47333151A825B004123FF /* Threading.h */; };
 		A8A4744D151A825B004123FF /* ThreadingPrimitives.h in Headers */ = {isa = PBXBuildFile; fileRef = A8A47335151A825B004123FF /* ThreadingPrimitives.h */; };
 		A8A4744E151A825B004123FF /* ThreadingPthreads.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8A47336151A825B004123FF /* ThreadingPthreads.cpp */; };
-		A8A47450151A825B004123FF /* ThreadRestrictionVerifier.h in Headers */ = {isa = PBXBuildFile; fileRef = A8A47338151A825B004123FF /* ThreadRestrictionVerifier.h */; };
 		A8A47451151A825B004123FF /* BinarySemaphore.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8A4733A151A825B004123FF /* BinarySemaphore.cpp */; };
 		A8A47452151A825B004123FF /* BinarySemaphore.h in Headers */ = {isa = PBXBuildFile; fileRef = A8A4733B151A825B004123FF /* BinarySemaphore.h */; };
 		A8A47454151A825B004123FF /* ThreadSafeRefCounted.h in Headers */ = {isa = PBXBuildFile; fileRef = A8A4733E151A825B004123FF /* ThreadSafeRefCounted.h */; };
@@ -524,7 +523,6 @@
 		A8A47333151A825B004123FF /* Threading.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Threading.h; sourceTree = "<group>"; };
 		A8A47335151A825B004123FF /* ThreadingPrimitives.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ThreadingPrimitives.h; sourceTree = "<group>"; };
 		A8A47336151A825B004123FF /* ThreadingPthreads.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ThreadingPthreads.cpp; sourceTree = "<group>"; };
-		A8A47338151A825B004123FF /* ThreadRestrictionVerifier.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ThreadRestrictionVerifier.h; sourceTree = "<group>"; };
 		A8A4733A151A825B004123FF /* BinarySemaphore.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BinarySemaphore.cpp; sourceTree = "<group>"; };
 		A8A4733B151A825B004123FF /* BinarySemaphore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BinarySemaphore.h; sourceTree = "<group>"; };
 		A8A4733E151A825B004123FF /* ThreadSafeRefCounted.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ThreadSafeRefCounted.h; sourceTree = "<group>"; };
@@ -827,7 +825,6 @@
 				A8A47333151A825B004123FF /* Threading.h */,
 				A8A47335151A825B004123FF /* ThreadingPrimitives.h */,
 				A8A47336151A825B004123FF /* ThreadingPthreads.cpp */,
-				A8A47338151A825B004123FF /* ThreadRestrictionVerifier.h */,
 				A8A4733E151A825B004123FF /* ThreadSafeRefCounted.h */,
 				A8A4733F151A825B004123FF /* ThreadSpecific.h */,
 				149EF16216BBFE0D000A4331 /* TriState.h */,
@@ -1117,7 +1114,6 @@
 				A8A47449151A825B004123FF /* ThreadIdentifierDataPthreads.h in Headers */,
 				A8A4744B151A825B004123FF /* Threading.h in Headers */,
 				A8A4744D151A825B004123FF /* ThreadingPrimitives.h in Headers */,
-				A8A47450151A825B004123FF /* ThreadRestrictionVerifier.h in Headers */,
 				A8A47454151A825B004123FF /* ThreadSafeRefCounted.h in Headers */,
 				A8A47455151A825B004123FF /* ThreadSpecific.h in Headers */,
 				149EF16316BBFE0D000A4331 /* TriState.h in Headers */,
