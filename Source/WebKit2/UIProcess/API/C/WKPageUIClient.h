@@ -85,7 +85,6 @@ typedef void (*WKPageDecidePolicyForNotificationPermissionRequestCallback)(WKPag
 typedef void (*WKPageShowColorPickerCallback)(WKPageRef page, WKStringRef initialColor, WKColorPickerResultListenerRef listener, const void* clientInfo);
 typedef void (*WKPageHideColorPickerCallback)(WKPageRef page, const void* clientInfo);
 typedef void (*WKPageUnavailablePluginButtonClickedCallback)(WKPageRef page, WKPluginUnavailabilityReason pluginUnavailabilityReason, WKDictionaryRef pluginInfoDictionary, const void* clientInfo);
-typedef void (*WKPageWebGLContextCreatedCallback)(WKPageRef page, WKStringRef, const void* clientInfo);
 
 // Deprecated    
 typedef WKPageRef (*WKPageCreateNewPageCallback_deprecatedForUseWithV0)(WKPageRef page, WKDictionaryRef features, WKEventModifiers modifiers, WKEventMouseButton mouseButton, const void *clientInfo);
@@ -248,7 +247,6 @@ typedef struct WKPageUIClientV2 {
     WKPageShowColorPickerCallback                                       showColorPicker;
     WKPageHideColorPickerCallback                                       hideColorPicker;
     WKPageUnavailablePluginButtonClickedCallback                        unavailablePluginButtonClicked;
-    WKPageWebGLContextCreatedCallback                                   webGLContextCreated;
 } WKPageUIClientV2;
 
 enum { kWKPageUIClientCurrentVersion WK_ENUM_DEPRECATED("Use an explicit version number instead") = 2 };

@@ -30,7 +30,6 @@
 #include "PluginModuleInfo.h"
 #include "SameDocumentNavigationType.h"
 #include "WKPage.h"
-#include <WebCore/FrameLoaderTypes.h>
 #include <WebCore/LayoutMilestones.h>
 #include <wtf/Forward.h>
 #include <wtf/RefPtr.h>
@@ -103,10 +102,6 @@ public:
     void didFailToInitializePlugin(WebPageProxy*, ImmutableDictionary*);
     void didBlockInsecurePluginVersion(WebPageProxy*, ImmutableDictionary*);
 #endif // ENABLE(NETSCAPE_PLUGIN_API)
-
-#if ENABLE(WEBGL)
-    void webGLLoadPolicy(WebPageProxy*, WebCore::WebGLLoadPolicy&, const String&);
-#endif // ENABLE(WEBGL)
 };
 
 } // namespace WebKit

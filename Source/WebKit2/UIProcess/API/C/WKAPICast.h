@@ -473,21 +473,6 @@ inline PluginModuleLoadPolicy toPluginModuleLoadPolicy(WKPluginLoadPolicy plugin
     return PluginModuleBlocked;
 }
 
-inline WebCore::WebGLLoadPolicy toWebGLLoadPolicy(WKWebGLLoadPolicy webGLLoadPolicy)
-{
-    switch (webGLLoadPolicy) {
-    case kWKWebGLLoadPolicyInactive:
-        return WebCore::WebGLAsk;
-    case kWKWebGLLoadPolicyLoadNormally:
-        return WebCore::WebGLAllow;
-    case kWKWebGLLoadPolicyBlocked:
-        return WebCore::WebGLBlock;
-    }
-    
-    ASSERT_NOT_REACHED();
-    return WebCore::WebGLAsk;
-}
-
 inline ProxyingRefPtr<WebGrammarDetail> toAPI(const WebCore::GrammarDetail& grammarDetail)
 {
     return ProxyingRefPtr<WebGrammarDetail>(WebGrammarDetail::create(grammarDetail));

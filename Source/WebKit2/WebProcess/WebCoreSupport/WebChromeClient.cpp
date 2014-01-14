@@ -58,7 +58,6 @@
 #include <WebCore/FrameLoadRequest.h>
 #include <WebCore/FrameLoader.h>
 #include <WebCore/FrameView.h>
-#include <WebCore/HTMLCanvasElement.h>
 #include <WebCore/HTMLInputElement.h>
 #include <WebCore/HTMLNames.h>
 #include <WebCore/HTMLParserIdioms.h>
@@ -562,14 +561,6 @@ void WebChromeClient::unavailablePluginButtonClicked(Element* element, RenderEmb
     UNUSED_PARAM(pluginUnavailabilityReason);
 #endif // ENABLE(NETSCAPE_PLUGIN_API)
 }
-
-#if ENABLE(WEBGL)
-void WebChromeClient::webGLContextCreated(Element* element) const
-{
-    String pageURLString = m_page->mainFrame()->loader().documentLoader()->responseURL().string();
-    m_page->send(Messages::WebPageProxy::WebGLContextCreated(pageURLString));
-}
-#endif // ENABLE(WEBGL)
 
 void WebChromeClient::scrollbarsModeDidChange() const
 {

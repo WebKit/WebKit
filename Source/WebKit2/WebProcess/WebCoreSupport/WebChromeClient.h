@@ -123,9 +123,6 @@ private:
 
     virtual bool shouldUnavailablePluginMessageBeButton(WebCore::RenderEmbeddedObject::PluginUnavailabilityReason) const OVERRIDE;
     virtual void unavailablePluginButtonClicked(WebCore::Element*, WebCore::RenderEmbeddedObject::PluginUnavailabilityReason) const OVERRIDE;
-#if ENABLE(WEBGL)
-    virtual void webGLContextCreated(WebCore::Element*) const OVERRIDE;
-#endif // ENABLE(WEBGL)
 
     virtual void scrollbarsModeDidChange() const OVERRIDE;
     virtual void mouseDidMoveOverElement(const WebCore::HitTestResult&, unsigned modifierFlags) OVERRIDE;

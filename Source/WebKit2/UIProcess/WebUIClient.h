@@ -81,9 +81,7 @@ public:
 #if ENABLE(NETSCAPE_PLUGIN_API)
     void unavailablePluginButtonClicked(WebPageProxy*, WKPluginUnavailabilityReason, ImmutableDictionary*);
 #endif // ENABLE(NETSCAPE_PLUGIN_API)
-#if ENABLE(WEBGL)
-    void webGLContextCreated(WebPageProxy*, const String&);
-#endif // ENABLE(WEBGL)
+
     bool implementsDidNotHandleKeyEvent() const;
     void didNotHandleKeyEvent(WebPageProxy*, const NativeWebKeyboardEvent&);
 

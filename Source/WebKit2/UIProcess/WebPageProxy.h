@@ -929,10 +929,6 @@ private:
 #if ENABLE(NETSCAPE_PLUGIN_API)
     void unavailablePluginButtonClicked(uint32_t opaquePluginUnavailabilityReason, const String& mimeType, const String& pluginURLString, const String& pluginsPageURLString, const String& frameURLString, const String& pageURLString);
 #endif // ENABLE(NETSCAPE_PLUGIN_API)
-#if ENABLE(WEBGL)
-    void webGLContextCreated(const String& pageURLString);
-    void webGLPolicyForHost(const String& host, uint32_t& loadPolicy);
-#endif // ENABLE(WEBGL)
     void setToolbarsAreVisible(bool toolbarsAreVisible);
     void getToolbarsAreVisible(bool& toolbarsAreVisible);
     void setMenuBarIsVisible(bool menuBarIsVisible);
