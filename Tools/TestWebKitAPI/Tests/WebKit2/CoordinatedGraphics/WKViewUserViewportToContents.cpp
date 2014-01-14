@@ -30,7 +30,7 @@
 
 namespace TestWebKitAPI {
 
-TEST(WebKit2, WKViewUserViewportToContents)
+TEST(WebKit2, DISABLED_WKViewUserViewportToContents)
 {
     // This test creates a WKView and uses the WKViewUserViewportToContents
     // function to convert viewport coordinates to contents (page) coordinates.
