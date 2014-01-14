@@ -4107,12 +4107,8 @@ PassRefPtr<TimeRanges> HTMLMediaElement::seekable() const
 
 bool HTMLMediaElement::potentiallyPlaying() const
 {
-    // "pausedToBuffer" means the media engine's rate is 0, but only because it had to stop playing
-    // when it ran out of buffered data. A movie is this state is "potentially playing", modulo the
-    // checks in couldPlayIfEnoughData().
-    bool pausedToBuffer = m_readyStateMaximum >= HAVE_FUTURE_DATA && m_readyState < HAVE_FUTURE_DATA;
-    
-    if (!pausedToBuffer && m_readyState < HAVE_FUTURE_DATA)
+    // When media engine ran out of buffered data it's not playing.
+    if (m_readyStateMaximum < HAVE_FUTURE_DATA && m_readyState < HAVE_FUTURE_DATA)
         return false;
 
     return couldPlayIfEnoughData() && !isBlockedOnMediaController();
