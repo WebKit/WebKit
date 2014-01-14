@@ -3285,7 +3285,7 @@ GC3Dboolean WebGLRenderingContext::isBuffer(WebGLBuffer* buffer)
     return m_context->isBuffer(buffer->object());
 }
 
-bool WebGLRenderingContext::isContextLost()
+bool WebGLRenderingContext::isContextLost() const
 {
     return m_contextLost;
 }
@@ -4733,7 +4733,7 @@ void WebGLRenderingContext::forceRestoreContext()
 #if USE(ACCELERATED_COMPOSITING)
 PlatformLayer* WebGLRenderingContext::platformLayer() const
 {
-    return m_context->platformLayer();
+    return (!isContextLost()) ? m_context->platformLayer() : 0;
 }
 #endif
 

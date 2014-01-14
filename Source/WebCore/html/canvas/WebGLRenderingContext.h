@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2009, 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -187,7 +187,7 @@ public:
 
     void hint(GC3Denum target, GC3Denum mode);
     GC3Dboolean isBuffer(WebGLBuffer*);
-    bool isContextLost();
+    bool isContextLost() const;
     GC3Dboolean isEnabled(GC3Denum cap);
     GC3Dboolean isFramebuffer(WebGLFramebuffer*);
     GC3Dboolean isProgram(WebGLProgram*);

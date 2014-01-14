@@ -1,3 +1,18 @@
+2014-01-13  Brent Fulgham  <bfulgham@apple.com>
+
+        [WebGL] Crash due to forceLostContext
+        https://bugs.webkit.org/show_bug.cgi?id=126947
+
+        Reviewed by Dean Jackson.
+
+        Covered by webgl/conformance/textures/origin-clean-conformance.html.
+
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore::WebGLRenderingContext::isContextLost): Make const.
+        (WebCore::WebGLRenderingContext::platformLayer): Don't attempt to use
+        a lost context.
+        * html/canvas/WebGLRenderingContext.h: isContextLost should be const.
+
 2014-01-13  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK][CMake] WebCorePlatform build can sometimes fail due to missing generated headers
