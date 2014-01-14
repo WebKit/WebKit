@@ -1,3 +1,10 @@
+2014-01-14  Tim Horton  <timothy_horton@apple.com>
+
+        Move WKView.mm to WKViewIOS.mm as 161950 was supposed to do.
+
+        * UIProcess/API/ios/WKView.mm: Removed.
+        * UIProcess/API/ios/WKViewIOS.mm: Copied from UIProcess/API/ios/WKView.mm.
+
 2014-01-14  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Test /webkit2/WebKitWebContext/languages crashes with network process enabled
