@@ -1,3 +1,68 @@
+2014-01-13  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        [EFL] Do not store reference variables as a pointer in private data structure
+        https://bugs.webkit.org/show_bug.cgi?id=126945
+
+        Reviewed by Gyuyoung Kim.
+
+        Remove pageSettings, mainFrame and storageSession variables from Ewk_View_Private_Data.
+
+        * ewk/ewk_view.cpp:
+        (_ewk_view_priv_new):
+        (_ewk_view_smart_add):
+        (_ewk_view_smart_repaints_process):
+        (_ewk_view_smart_calculate):
+        (ewk_view_fixed_layout_size_set):
+        (ewk_view_fixed_layout_size_get):
+        (ewk_view_bg_color_set):
+        (ewk_view_setting_user_agent_set):
+        (ewk_view_setting_user_stylesheet_set):
+        (ewk_view_setting_auto_load_images_set):
+        (ewk_view_setting_auto_shrink_images_set):
+        (ewk_view_setting_enable_scripts_set):
+        (ewk_view_setting_enable_plugins_set):
+        (ewk_view_setting_enable_frame_flattening_set):
+        (ewk_view_setting_scripts_can_open_windows_set):
+        (ewk_view_setting_scripts_can_close_windows_set):
+        (ewk_view_setting_scripts_can_access_clipboard_set):
+        (ewk_view_setting_resizable_textareas_set):
+        (ewk_view_setting_private_browsing_set):
+        (ewk_view_setting_application_cache_set):
+        (ewk_view_setting_caret_browsing_set):
+        (ewk_view_setting_encoding_default_set):
+        (ewk_view_setting_encoding_detector_set):
+        (ewk_view_setting_enable_developer_extras_set):
+        (ewk_view_setting_font_minimum_size_set):
+        (ewk_view_setting_font_minimum_logical_size_set):
+        (ewk_view_setting_font_default_size_set):
+        (ewk_view_setting_font_monospace_size_set):
+        (ewk_view_font_family_name_set):
+        (ewk_view_setting_spatial_navigation_set):
+        (ewk_view_setting_local_storage_set):
+        (ewk_view_setting_page_cache_set):
+        (ewk_view_setting_local_storage_database_path_set):
+        (ewk_view_setting_minimum_timer_interval_set):
+        (ewk_view_setting_enable_webgl_set):
+        (ewk_view_setting_enable_hyperlink_auditing_set):
+        (ewk_view_setting_allow_universal_access_from_file_urls_set):
+        (ewk_view_setting_allow_file_access_from_file_urls_set):
+        (ewk_view_layout_if_needed_recursive):
+        (ewk_view_paint):
+        (ewk_view_paint_contents):
+        (ewk_view_js_object_add):
+        (ewk_view_page_rect_get):
+        (ewk_view_soup_session_get):
+        (ewk_view_soup_session_set):
+        (ewk_view_setting_enable_xss_auditor_set):
+        (ewk_view_setting_should_display_captions_set):
+        (ewk_view_setting_should_display_subtitles_set):
+        (ewk_view_setting_should_display_text_descriptions_set):
+        (ewk_view_setting_enable_fullscreen_set):
+        (ewk_view_setting_tiled_backing_store_enabled_set):
+        (ewk_view_setting_tiled_backing_store_enabled_get):
+        (ewk_view_tiled_backing_store_invalidate):
+        (EWKPrivate::storageSession):
+
 2014-01-13  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [SOUP] Add SoupNetworkSession class to wrap a SoupSession
