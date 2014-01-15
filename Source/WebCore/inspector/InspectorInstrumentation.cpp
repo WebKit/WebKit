@@ -550,42 +550,6 @@ void InspectorInstrumentation::didScheduleStyleRecalculationImpl(InstrumentingAg
         resourceAgent->didScheduleStyleRecalculation(document);
 }
 
-InspectorInstrumentationCookie InspectorInstrumentation::willMatchRuleImpl(InstrumentingAgents* instrumentingAgents, StyleRule* rule, InspectorCSSOMWrappers& inspectorCSSOMWrappers, DocumentStyleSheetCollection& sheetCollection)
-{
-    InspectorCSSAgent* cssAgent = instrumentingAgents->inspectorCSSAgent();
-    if (cssAgent) {
-        cssAgent->willMatchRule(rule, inspectorCSSOMWrappers, sheetCollection);
-        return InspectorInstrumentationCookie(instrumentingAgents, 1);
-    }
-
-    return InspectorInstrumentationCookie();
-}
-
-void InspectorInstrumentation::didMatchRuleImpl(const InspectorInstrumentationCookie& cookie, bool matched)
-{
-    InspectorCSSAgent* cssAgent = cookie.instrumentingAgents()->inspectorCSSAgent();
-    if (cssAgent)
-        cssAgent->didMatchRule(matched);
-}
-
-InspectorInstrumentationCookie InspectorInstrumentation::willProcessRuleImpl(InstrumentingAgents* instrumentingAgents, StyleRule* rule, StyleResolver& styleResolver)
-{
-    InspectorCSSAgent* cssAgent = instrumentingAgents->inspectorCSSAgent();
-    if (cssAgent) {
-        cssAgent->willProcessRule(rule, styleResolver);
-        return InspectorInstrumentationCookie(instrumentingAgents, 1);
-    }
-
-    return InspectorInstrumentationCookie();
-}
-
-void InspectorInstrumentation::didProcessRuleImpl(const InspectorInstrumentationCookie& cookie)
-{
-    InspectorCSSAgent* cssAgent = cookie.instrumentingAgents()->inspectorCSSAgent();
-    if (cssAgent)
-        cssAgent->didProcessRule();
-}
-
 void InspectorInstrumentation::applyEmulatedMediaImpl(InstrumentingAgents* instrumentingAgents, String* media)
 {
     if (InspectorPageAgent* pageAgent = instrumentingAgents->inspectorPageAgent())

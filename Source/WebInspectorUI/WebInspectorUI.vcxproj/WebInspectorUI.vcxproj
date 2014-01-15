@@ -305,9 +305,6 @@
     <None Include="..\UserInterface\CSSObserver.js" />
     <None Include="..\UserInterface\CSSProperty.js" />
     <None Include="..\UserInterface\CSSRule.js" />
-    <None Include="..\UserInterface\CSSSelectorProfileObject.js" />
-    <None Include="..\UserInterface\CSSSelectorProfileType.js" />
-    <None Include="..\UserInterface\CSSSelectorProfileView.js" />
     <None Include="..\UserInterface\CSSStyleDeclaration.js" />
     <None Include="..\UserInterface\CSSStyleDeclarationSection.css" />
     <None Include="..\UserInterface\CSSStyleDeclarationSection.js" />

@@ -276,15 +276,6 @@
     <None Include="..\UserInterface\CSSRule.js">
       <Filter>UserInterface</Filter>
     </None>
-    <None Include="..\UserInterface\CSSSelectorProfileObject.js">
-      <Filter>UserInterface</Filter>
-    </None>
-    <None Include="..\UserInterface\CSSSelectorProfileType.js">
-      <Filter>UserInterface</Filter>
-    </None>
-    <None Include="..\UserInterface\CSSSelectorProfileView.js">
-      <Filter>UserInterface</Filter>
-    </None>
     <None Include="..\UserInterface\CSSStyleDeclaration.js">
       <Filter>UserInterface</Filter>
     </None>

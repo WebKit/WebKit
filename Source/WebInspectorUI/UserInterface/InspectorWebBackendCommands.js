@@ -45,8 +45,6 @@ InspectorBackend.registerCommand("CSS.setRuleSelector", [{"name": "ruleId", "typ
 InspectorBackend.registerCommand("CSS.addRule", [{"name": "contextNodeId", "type": "number", "optional": false}, {"name": "selector", "type": "string", "optional": false}], ["rule"]);
 InspectorBackend.registerCommand("CSS.getSupportedCSSProperties", [], ["cssProperties"]);
 InspectorBackend.registerCommand("CSS.forcePseudoState", [{"name": "nodeId", "type": "number", "optional": false}, {"name": "forcedPseudoClasses", "type": "object", "optional": false}], []);
-InspectorBackend.registerCommand("CSS.startSelectorProfiler", [], []);
-InspectorBackend.registerCommand("CSS.stopSelectorProfiler", [], ["profile"]);
 InspectorBackend.registerCommand("CSS.getNamedFlowCollection", [{"name": "documentNodeId", "type": "number", "optional": false}], ["namedFlows"]);
 
 // Canvas.

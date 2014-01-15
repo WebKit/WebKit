@@ -1,3 +1,36 @@
+2014-01-15  Andreas Kling  <akling@apple.com>
+
+        Remove the CSS selector profiler.
+        <https://webkit.org/b/127039>
+
+        Purge selector profiler code from the new Web Inspector UI.
+
+        Reviewed by Sam Weinig.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        * UserInterface/CSSSelectorProfileObject.js: Removed.
+        * UserInterface/CSSSelectorProfileType.js: Removed.
+        * UserInterface/CSSSelectorProfileView.js: Removed.
+        * UserInterface/ContentView.js:
+        (WebInspector.ContentView):
+        (WebInspector.ContentView.isViewable):
+        * UserInterface/InspectorWebBackendCommands.js:
+        * UserInterface/InstrumentSidebarPanel.js:
+        (WebInspector.InstrumentSidebarPanel):
+        (WebInspector.InstrumentSidebarPanel.prototype._recordProfileGlyphMousedOver):
+        (WebInspector.InstrumentSidebarPanel.prototype._recordProfileGlyphMousedDown):
+        (WebInspector.InstrumentSidebarPanel.prototype._recordProfileGlyphClicked):
+        (WebInspector.InstrumentSidebarPanel.prototype._profileTypeWasSelected):
+        (WebInspector.InstrumentSidebarPanel.prototype._profilesCleared):
+        * UserInterface/Main.html:
+        * UserInterface/ProfileManager.js:
+        (WebInspector.ProfileManager):
+        (WebInspector.ProfileManager.prototype.initialize):
+        (WebInspector.ProfileManager.prototype._checkForInterruptions):
+        (WebInspector.ProfileManager.prototype._attemptToResumeProfiling):
+        * WebInspectorUI.vcxproj/WebInspectorUI.vcxproj:
+        * WebInspectorUI.vcxproj/WebInspectorUI.vcxproj.filters:
+
 2014-01-13  Timothy Hatcher  <timothy@apple.com>
 
         Snap time dividers to nearest numbers instead of just dividing the time span into max density slices.

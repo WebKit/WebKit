@@ -189,27 +189,6 @@
             "description": "CSS media query descriptor."
         },
         {
-            "id": "SelectorProfileEntry",
-            "type": "object",
-            "properties": [
-                { "name": "selector", "type": "string", "description": "CSS selector of the corresponding rule." },
-                { "name": "url", "type": "string", "description": "URL of the resource containing the corresponding rule." },
-                { "name": "lineNumber", "type": "integer", "description": "Selector line number in the resource for the corresponding rule." },
-                { "name": "time", "type": "number", "description": "Total time this rule handling contributed to the browser running time during profiling (in milliseconds.)" },
-                { "name": "hitCount", "type": "integer", "description": "Number of times this rule was considered a candidate for matching against DOM elements." },
-                { "name": "matchCount", "type": "integer", "description": "Number of times this rule actually matched a DOM element." }
-            ],
-            "description": "CSS selector profile entry."
-        },
-        {
-            "id": "SelectorProfile",
-            "type": "object",
-            "properties": [
-                { "name": "totalTime", "type": "number", "description": "Total processing time for all selectors in the profile (in milliseconds.)" },
-                { "name": "data", "type": "array", "items": { "$ref": "SelectorProfileEntry" }, "description": "CSS selector profile entries." }
-            ]
-        },
-        {
             "id": "Region",
             "type": "object",
             "properties": [
@@ -382,15 +361,6 @@
                 { "name": "forcedPseudoClasses", "type": "array", "items": { "type": "string", "enum": ["active", "focus", "hover", "visited"] }, "description": "Element pseudo classes to force when computing the element's style." }
             ],
             "description": "Ensures that the given node will have specified pseudo-classes whenever its style is computed by the browser."
-        },
-        {
-            "name": "startSelectorProfiler"
-        },
-        {
-            "name": "stopSelectorProfiler",
-            "returns": [
-                { "name": "profile", "$ref": "SelectorProfile" }
-            ]
         },
         {
             "name": "getNamedFlowCollection",

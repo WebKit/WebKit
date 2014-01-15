@@ -159,10 +159,6 @@ public:
     static InspectorInstrumentationCookie willRecalculateStyle(Document*);
     static void didRecalculateStyle(const InspectorInstrumentationCookie&);
     static void didScheduleStyleRecalculation(Document*);
-    static InspectorInstrumentationCookie willMatchRule(Document*, StyleRule*, InspectorCSSOMWrappers&, DocumentStyleSheetCollection&);
-    static void didMatchRule(const InspectorInstrumentationCookie&, bool matched);
-    static InspectorInstrumentationCookie willProcessRule(Document*, StyleRule*, StyleResolver&);
-    static void didProcessRule(const InspectorInstrumentationCookie&);
 
     static void applyEmulatedMedia(Frame*, String*);
     static void willSendRequest(Frame*, unsigned long identifier, DocumentLoader*, ResourceRequest&, const ResourceResponse& redirectResponse);
@@ -349,10 +345,6 @@ private:
     static InspectorInstrumentationCookie willRecalculateStyleImpl(InstrumentingAgents*, Frame*);
     static void didRecalculateStyleImpl(const InspectorInstrumentationCookie&);
     static void didScheduleStyleRecalculationImpl(InstrumentingAgents*, Document*);
-    static InspectorInstrumentationCookie willMatchRuleImpl(InstrumentingAgents*, StyleRule*, InspectorCSSOMWrappers&, DocumentStyleSheetCollection&);
-    static void didMatchRuleImpl(const InspectorInstrumentationCookie&, bool matched);
-    static InspectorInstrumentationCookie willProcessRuleImpl(InstrumentingAgents*, StyleRule*, StyleResolver&);
-    static void didProcessRuleImpl(const InspectorInstrumentationCookie&);
 
     static void applyEmulatedMediaImpl(InstrumentingAgents*, String*);
     static void willSendRequestImpl(InstrumentingAgents*, unsigned long identifier, DocumentLoader*, ResourceRequest&, const ResourceResponse& redirectResponse);
@@ -1169,60 +1161,6 @@ inline void InspectorInstrumentation::didScheduleStyleRecalculation(Document* do
         didScheduleStyleRecalculationImpl(instrumentingAgents, document);
 #else
     UNUSED_PARAM(document);
-#endif
-}
-
-inline InspectorInstrumentationCookie InspectorInstrumentation::willMatchRule(Document* document, StyleRule* rule, InspectorCSSOMWrappers& inspectorCSSOMWrappers, DocumentStyleSheetCollection& styleSheetCollection)
-{
-#if ENABLE(INSPECTOR)
-    FAST_RETURN_IF_NO_FRONTENDS(InspectorInstrumentationCookie());
-    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForDocument(document))
-        return willMatchRuleImpl(instrumentingAgents, rule, inspectorCSSOMWrappers, styleSheetCollection);
-#else
-    UNUSED_PARAM(document);
-    UNUSED_PARAM(rule);
-    UNUSED_PARAM(inspectorCSSOMWrappers);
-    UNUSED_PARAM(styleSheetCollection);
-#endif
-    return InspectorInstrumentationCookie();
-}
-
-inline void InspectorInstrumentation::didMatchRule(const InspectorInstrumentationCookie& cookie, bool matched)
-{
-#if ENABLE(INSPECTOR)
-    FAST_RETURN_IF_NO_FRONTENDS(void());
-    if (cookie.isValid())
-        didMatchRuleImpl(cookie, matched);
-#else
-    UNUSED_PARAM(cookie);
-    UNUSED_PARAM(matched);
-#endif
-}
-
-inline InspectorInstrumentationCookie InspectorInstrumentation::willProcessRule(Document* document, StyleRule* rule, StyleResolver& styleResolver)
-{
-#if ENABLE(INSPECTOR)
-    FAST_RETURN_IF_NO_FRONTENDS(InspectorInstrumentationCookie());
-    if (!rule)
-        return InspectorInstrumentationCookie();
-    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForDocument(document))
-        return willProcessRuleImpl(instrumentingAgents, rule, styleResolver);
-#else
-    UNUSED_PARAM(document);
-    UNUSED_PARAM(rule);
-    UNUSED_PARAM(styleResolver);
-#endif
-    return InspectorInstrumentationCookie();
-}
-
-inline void InspectorInstrumentation::didProcessRule(const InspectorInstrumentationCookie& cookie)
-{
-#if ENABLE(INSPECTOR)
-    FAST_RETURN_IF_NO_FRONTENDS(void());
-    if (cookie.isValid())
-        didProcessRuleImpl(cookie);
-#else
-    UNUSED_PARAM(cookie);
 #endif
 }
 

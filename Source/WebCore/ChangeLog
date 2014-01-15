@@ -1,3 +1,28 @@
+2014-01-15  Andreas Kling  <akling@apple.com>
+
+        Remove the CSS selector profiler.
+        <https://webkit.org/b/127039>
+
+        The selector profiler was painting a mostly fictional picture of what
+        selectors we were spending time on. It never really grokked the fast
+        path selectors, nor did it understand recent additions like the extra
+        cascading pass or the selector JIT.
+
+        Somewhat ironically, this may end up making some selectors run faster
+        since it removes a number of brances in hot code.
+
+        Reviewed by Sam Weinig.
+
+        * css/ElementRuleCollector.cpp:
+        (WebCore::ElementRuleCollector::collectMatchingRulesForList):
+        * css/ElementRuleCollector.h:
+        * inspector/InspectorCSSAgent.cpp:
+        (WebCore::InspectorCSSAgent::willDestroyFrontendAndBackend):
+        * inspector/InspectorCSSAgent.h:
+        * inspector/InspectorInstrumentation.cpp:
+        * inspector/InspectorInstrumentation.h:
+        * inspector/protocol/CSS.json:
+
 2014-01-15  Frédéric Wang  <fred.wang@free.fr>
 
         [SVG] Accept HTML and MathML namespaces as valid requiredExtensions

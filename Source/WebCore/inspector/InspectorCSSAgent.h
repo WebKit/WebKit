@@ -58,7 +58,6 @@ class InstrumentingAgents;
 class NameNodeMap;
 class Node;
 class NodeList;
-class SelectorProfile;
 class StyleResolver;
 class StyleRule;
 class UpdateRegionLayoutTask;
@@ -128,15 +127,6 @@ public:
     virtual void forcePseudoState(ErrorString*, int nodeId, const RefPtr<Inspector::InspectorArray>& forcedPseudoClasses);
     virtual void getNamedFlowCollection(ErrorString*, int documentNodeId, RefPtr<Inspector::TypeBuilder::Array<Inspector::TypeBuilder::CSS::NamedFlow>>& result);
 
-    virtual void startSelectorProfiler(ErrorString*);
-    virtual void stopSelectorProfiler(ErrorString*, RefPtr<Inspector::TypeBuilder::CSS::SelectorProfile>&);
-
-    PassRefPtr<Inspector::TypeBuilder::CSS::SelectorProfile> stopSelectorProfilerImpl(ErrorString*, bool needProfile);
-    void willMatchRule(StyleRule*, InspectorCSSOMWrappers&, DocumentStyleSheetCollection&);
-    void didMatchRule(bool);
-    void willProcessRule(StyleRule*, StyleResolver&);
-    void didProcessRule();
-
 private:
     class StyleSheetAction;
     class SetStyleSheetTextAction;
@@ -195,8 +185,6 @@ private:
     OwnPtr<ChangeRegionOversetTask> m_changeRegionOversetTask;
 
     int m_lastStyleSheetId;
-
-    OwnPtr<SelectorProfile> m_currentSelectorProfile;
 };
 
 #endif
