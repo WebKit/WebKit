@@ -1,3 +1,12 @@
+2014-01-15  Brent Fulgham  <bfulgham@apple.com>
+
+        Unreviewed test correctino for webgl compressed textures.
+
+        * fast/canvas/webgl/webgl-compressed-texture-size-limit-expected.txt:
+        * platform/mac-mountainlion/fast/canvas: Removed.
+        * platform/mac-mountainlion/fast/canvas/webgl: Removed.
+        * platform/mac-mountainlion/fast/canvas/webgl/webgl-compressed-texture-size-limit-expected.txt: Removed.
+
 2014-01-15  Michał Pakuła vel Rutka  <m.pakula@samsung.com>
 
         Unreviewed EFL gardening
