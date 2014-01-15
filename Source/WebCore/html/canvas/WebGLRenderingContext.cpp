@@ -5392,7 +5392,7 @@ bool WebGLRenderingContext::validateCompressedTexDimensions(const char* function
         bool widthValid = (level && width == 1) || (level && width == 2) || (!(width % kBlockWidth) && width <= maxCompressedDimension);
         bool heightValid = (level && height == 1) || (level && height == 2) || (!(height % kBlockHeight) && height <= maxCompressedDimension);
         if (!widthValid || !heightValid) {
-            synthesizeGLError(GraphicsContext3D::INVALID_VALUE, functionName, "width or height invalid for level");
+            synthesizeGLError(GraphicsContext3D::INVALID_OPERATION, functionName, "width or height invalid for level");
             return false;
         }
         return true;

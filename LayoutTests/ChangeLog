@@ -1,3 +1,10 @@
+2014-01-14  Brent Fulgham  <bfulgham@apple.com>
+
+        Unreviewed test fix.
+
+        * fast/canvas/webgl/webgl-compressed-texture-size-limit.html: Use same
+        failure mode as the khronos test suite.
+
 2014-01-14  Zalan Bujtas  <zalan@apple.com>
 
         Merged some subpixel skipped tests. Unreviewed.

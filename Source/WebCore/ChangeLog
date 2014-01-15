@@ -1,3 +1,11 @@
+2014-01-14  Brent Fulgham  <bfulgham@apple.com>
+
+        Unreviewed test fix.
+
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore::WebGLRenderingContext::validateCompressedTexDimensions): Emit
+        error state expected by Khronos test suite.
+
 2014-01-14  Brady Eidson  <beidson@apple.com>
 
         IDB: create object store support
