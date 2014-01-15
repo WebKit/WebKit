@@ -1,3 +1,45 @@
+2014-01-15  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Web process sometimes crashes when printing in synchronous mode
+        https://bugs.webkit.org/show_bug.cgi?id=126979
+
+        Reviewed by Gustavo Noronha Silva.
+
+        When printing synchronously in GTK+ we need to make sure that we
+        have a list of Printers before starting the print operation. Getting
+        the list of printers is done synchronously by GTK+, but using a
+        nested main loop that might process IPC messages comming from the
+        UI process like EndPrinting. When the EndPrinting message is
+        received while the printer list is being populated, the print
+        operation is finished unexpectely and the web process crashes. The
+        PrinterListGtk class gets the list of printers in the constructor
+        so we just need to ensure there's an instance alive during the
+        synchronous print operation. In case of asynchronous printing the
+        printer list will be created during the print operation without
+        any risk, because the EndPrinting message is not sent until the
+        printing callback has been received in the UI process.
+
+        * GNUmakefile.list.am: Add new files to compilation.
+        * PlatformGTK.cmake: Ditto.
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::print): Ensure PrinterListGtk is created
+        before the synchronous printing and destroyed afterwards.
+        * WebProcess/WebPage/gtk/PrinterListGtk.cpp: Added.
+        (WebKit::PrinterListGtk::shared): Return the singleton.
+        (WebKit::PrinterListGtk::enumeratePrintersFunction): Callback
+        called by gtk_enumerate_printers() when a new printer is found.
+        (WebKit::PrinterListGtk::PrinterListGtk): Call
+        gtk_enumerate_printers() in syhchronous mode.
+        (WebKit::PrinterListGtk::~PrinterListGtk):
+        (WebKit::PrinterListGtk::addPrinter): Add the printer to the list
+        and set the default printer if needed.
+        (WebKit::PrinterListGtk::findPrinter): Find the printer for the
+        given name.
+        * WebProcess/WebPage/gtk/PrinterListGtk.h: Added.
+        * WebProcess/WebPage/gtk/WebPrintOperationGtk.cpp: Use
+        PrinterListGtk class to find the printer instead of calling
+        gtk_enumerate_printers().
+
 2014-01-15  Tomas Popela  <tpopela@redhat.com>
 
         [SOUP] [WK2] - Disable MemoryCache when the DOCUMENT_VIEWER cache model is set

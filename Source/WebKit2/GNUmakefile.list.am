@@ -1243,6 +1243,8 @@ webkit2_sources += \
 	Source/WebKit2/WebProcess/WebPage/TapHighlightController.h \
 	Source/WebKit2/WebProcess/WebPage/atk/WebPageAccessibilityObject.h \
 	Source/WebKit2/WebProcess/WebPage/atk/WebPageAccessibilityObjectAtk.cpp \
+	Source/WebKit2/WebProcess/WebPage/gtk/PrinterListGtk.h \
+	Source/WebKit2/WebProcess/WebPage/gtk/PrinterListGtk.cpp \
 	Source/WebKit2/WebProcess/WebPage/gtk/WebInspectorGtk.cpp \
 	Source/WebKit2/WebProcess/WebPage/gtk/WebPageGtk.cpp \
 	Source/WebKit2/WebProcess/WebPage/gtk/WebPrintOperationGtk.cpp \

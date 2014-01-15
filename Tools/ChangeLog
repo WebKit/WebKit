@@ -1,3 +1,14 @@
+2014-01-15  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Web process sometimes crashes when printing in synchronous mode
+        https://bugs.webkit.org/show_bug.cgi?id=126979
+
+        Reviewed by Gustavo Noronha Silva.
+
+        * Scripts/run-gtk-tests:
+        (TestRunner): Unskip
+        /webkit2/WebKitPrintOperation/close-after-print.
+
 2014-01-15  ChangSeok Oh  <changseok.oh@collabora.com>
 
         [EFL] Change test font installed path to webkitgtk-font-tests
