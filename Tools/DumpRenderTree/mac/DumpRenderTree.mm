@@ -837,6 +837,8 @@ static void prepareConsistentTestingEnvironment()
     poseAsClass("DumpRenderTreePasteboard", "NSPasteboard");
     poseAsClass("DumpRenderTreeEvent", "NSEvent");
 
+    [[WebPreferences standardPreferences] setAutosaves:NO];
+
     // FIXME: We'd like to start with a clean state for every test, but this function can't be used more than once yet.
     [WebPreferences _switchNetworkLoaderToNewTestingSession];
 

@@ -1,3 +1,13 @@
+2014-01-15  Alexey Proskuryakov  <ap@apple.com>
+
+        DumpRenderTree doesn't disable web preferences autosave
+        https://bugs.webkit.org/show_bug.cgi?id=127062
+
+        Reviewed by Dan Bernstein.
+
+        * DumpRenderTree/mac/DumpRenderTree.mm: (prepareConsistentTestingEnvironment):
+        Do it.
+
 2014-01-15  Dean Jackson  <dino@apple.com>
 
         Improve filter-build-webkit, especially for iOS builds
