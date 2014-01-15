@@ -1796,3 +1796,10 @@ webkit.org/b/125573 compositing/backgrounds/fixed-background-on-descendant.html 
 webkit.org/b/125573 compositing/backgrounds/fixed-backgrounds.html [ ImageOnlyFailure ]
 
 webkit.org/b/125578 compositing/images/positioned-image-content-rect.html [ ImageOnlyFailure ]
+
+# Added in r161626, failing due insigificant pixel differences
+webkit.org/b/127054 fast/regions/overflow-in-variable-width-regions-inline-bt.html [ ImageOnlyFailure ]
+webkit.org/b/127054 fast/regions/overflow-in-variable-width-regions-inline-continuation.html [ ImageOnlyFailure ]
+webkit.org/b/127054 fast/regions/overflow-in-variable-width-regions-inline-lr.html [ ImageOnlyFailure ]
+webkit.org/b/127054 fast/regions/overflow-in-variable-width-regions-inline-rl.html [ ImageOnlyFailure ]
+webkit.org/b/127054 fast/regions/overflow-in-variable-width-regions-inline.html [ ImageOnlyFailure ]
