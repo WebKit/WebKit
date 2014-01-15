@@ -1,3 +1,17 @@
+2014-01-15  Zoltan Horvath  <zoltan@webkit.org>
+
+        WordMeasurement is a struct, not a class
+        https://bugs.webkit.org/show_bug.cgi?id=125373
+
+        Reviewed by Anders Carlsson.
+
+        Change class to struct, because there is no reason for WordMeasurement to be a class.
+
+        No new tests, no behavior change.
+
+        * rendering/RenderBlockFlow.h:
+        * rendering/line/BreakingContextInlineHeaders.h:
+
 2014-01-15  Mihai Tica  <mitica@adobe.com>
 
         Reapplying:

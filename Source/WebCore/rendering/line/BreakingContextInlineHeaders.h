@@ -51,8 +51,7 @@ namespace WebCore {
 // We don't let our line box tree for a single line get any deeper than this.
 const unsigned cMaxLineDepth = 200;
 
-class WordMeasurement {
-public:
+struct WordMeasurement {
     WordMeasurement()
         : renderer(0)
         , width(0)

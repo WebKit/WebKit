@@ -37,9 +37,9 @@ class LineInfo;
 class LineWidth;
 class RenderNamedFlowFragment;
 class RenderRubyRun;
-class WordMeasurement;
 
 struct FloatWithRect;
+struct WordMeasurement;
 
 template <class Run> class BidiRunList;
 typedef Vector<WordMeasurement, 64> WordMeasurements;
