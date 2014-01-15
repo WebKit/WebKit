@@ -1,3 +1,21 @@
+2014-01-15  Mario Sanchez Prada  <mario.prada@samsung.com>
+
+        AX: Merge layout test from Mac and GTK checking accessibility roles
+        https://bugs.webkit.org/show_bug.cgi?id=126685
+
+        Reviewed by Chris Fleizach.
+
+        Merged GTK and Mac tests into one cross-platform test that is
+        aware of the platform-specific differences by declaring which
+        elements are supported in which platforms and which platform
+        specific roles (if it's the case) should be expected.
+
+        * accessibility/roles-exposed-expected.txt: Renamed from LayoutTests/platform/gtk/accessibility/roles-exposed-expected.txt.
+        * accessibility/roles-exposed.html: Added.
+        * platform/gtk/accessibility/roles-exposed.html: Removed.
+        * platform/mac/accessibility/role-subrole-roledescription.html: Removed.
+        * platform/mac/accessibility/roles-exposed-expected.txt: Renamed from LayoutTests/platform/mac/accessibility/role-subrole-roledescription-expected.txt.
+
 2014-01-15  Mihai Tica  <mitica@adobe.com>
 
         Reapplying:

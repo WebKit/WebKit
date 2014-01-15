@@ -1,4 +1,5 @@
-This tests that native elements and ARIA overrides result in the expected role and role description.
+ X
+This tests that native elements and ARIA overrides result in the expected role, subrole and role description.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
@@ -171,24 +172,12 @@ PASS: optgroup
 PASS: table
       AXRole: AXTable
       
-FAIL: tr
-      AXRole: (no element)
-      Expected: AXRow
-
 PASS: th
       AXRole: AXCell
       
-FAIL: tr
-      AXRole: (no element)
-      Expected: AXRow
-
 PASS: td
       AXRole: AXCell
       
-FAIL: tr
-      AXRole: (no element)
-      Expected: AXRow
-
 PASS: th
       AXRole: AXCell
       
@@ -279,14 +268,6 @@ PASS: div[role=directory]
 PASS: div[role=grid]
       AXRole: AXTable
       
-FAIL: div[role=rowgroup]
-      AXRole: (no element)
-      Expected: 
-
-FAIL: div[role=row]
-      AXRole: (no element)
-      Expected: AXRow
-
 PASS: div[role=gridcell]
       AXRole: AXCell
       
@@ -308,10 +289,6 @@ PASS: div[role=list]
 PASS: div[role=listitem]
       AXRole: AXListItem
       
-FAIL: div[role=listbox]
-      AXRole: AXList
-      Expected: AXListBox
-
 PASS: div[role=option]
       AXRole: AXListItem
       
@@ -399,14 +376,6 @@ PASS: div[role=toolbar]
 PASS: div[role=treegrid]
       AXRole: AXTable
       
-FAIL: div[role=rowgroup]
-      AXRole: (no element)
-      Expected: 
-
-FAIL: div[role=row]
-      AXRole: (no element)
-      Expected: AXRow
-
 PASS: div[role=gridcell]
       AXRole: AXCell
       
