@@ -1343,14 +1343,12 @@ webkit.org/b/126891 fast/css/word-spacing-between-inlines.html
 
 # Subpixel: simple line layout produces different layout
 webkit.org/b/126892 fast/forms/textAreaLineHeight-simple-lines.html
-
-# Subpixel: webkit-flow-into produces off-by-one layout
-webkit.org/b/126893 fast/regions/floats-basic-in-variable-width-regions.html
-webkit.org/b/126893 fast/regions/overflow-moving-below-floats-in-variable-width-regions.html
-webkit.org/b/126893 fast/regions/overflow-not-moving-below-floats-in-variable-width-regions.html
-webkit.org/b/126893 fast/regions/overflow-size-change-in-variable-width-regions.html
-webkit.org/b/126893 fast/regions/overflow-size-change-with-stacking-context.html
-webkit.org/b/126893 fast/regions/selection/selecting-text-through-different-region-flows.html
+webkit.org/b/126892 fast/regions/floats-basic-in-variable-width-regions.html
+webkit.org/b/126892 fast/regions/overflow-moving-below-floats-in-variable-width-regions.html
+webkit.org/b/126892 fast/regions/overflow-not-moving-below-floats-in-variable-width-regions.html
+webkit.org/b/126892 fast/regions/overflow-size-change-in-variable-width-regions.html
+webkit.org/b/126892 fast/regions/overflow-size-change-with-stacking-context.html
+webkit.org/b/126892 fast/regions/selection/selecting-text-through-different-region-flows.html
 
 # Subpixel: -webkit-shape-inside: content position calculation is wrong
 webkit.org/b/126894 fast/shapes/shape-inside/shape-inside-circle-padding.html
