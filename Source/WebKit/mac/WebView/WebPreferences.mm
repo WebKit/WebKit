@@ -70,8 +70,6 @@ enum { WebPreferencesVersion = 1 };
 static WebPreferences *_standardPreferences;
 static NSMutableDictionary *webPreferencesInstances;
 
-static unsigned webPreferencesInstanceCountWithPrivateBrowsingEnabled;
-
 static bool contains(const char* const array[], int count, const char* item)
 {
     if (!item)
@@ -266,8 +264,6 @@ public:
 
     [[self class] _setInstance:self forIdentifier:_private->identifier.get()];
 
-    [self _updatePrivateBrowsingStateFrom:NO to:[self privateBrowsingEnabled]];
-
 #if PLATFORM(IOS)
     if (sendChangeNotification) {
         [self _postPreferencesChangedNotification];
@@ -324,7 +320,6 @@ public:
         self = [instance retain];
     } else {
         [[self class] _setInstance:self forIdentifier:_private->identifier.get()];
-        [self _updatePrivateBrowsingStateFrom:NO to:[self privateBrowsingEnabled]];
     }
 
     return self;
@@ -365,7 +360,6 @@ public:
         [_standardPreferences setAutosaves:YES];
     }
 #else
-    // FIXME: This check is necessary to avoid recursion (see <rdar://problem/9564337>), but it also makes _standardPreferences construction not thread safe.
     if (_standardPreferences)
         return _standardPreferences;
 
@@ -606,8 +600,6 @@ public:
 
 - (void)dealloc
 {
-    [self _updatePrivateBrowsingStateFrom:[self privateBrowsingEnabled] to:NO];
-
     delete _private;
     [super dealloc];
 }
@@ -1080,30 +1072,14 @@ public:
 }
 #endif
 
-- (void)setPrivateBrowsingEnabled:(BOOL)enabled
+- (void)setPrivateBrowsingEnabled:(BOOL)flag
 {
-    [self _updatePrivateBrowsingStateFrom:[self privateBrowsingEnabled] to:enabled];
-    [self _setBoolValue:enabled forKey:WebKitPrivateBrowsingEnabledPreferenceKey];
+    [self _setBoolValue:flag forKey:WebKitPrivateBrowsingEnabledPreferenceKey];
 }
 
 - (BOOL)privateBrowsingEnabled
 {
     return [self _boolValueForKey:WebKitPrivateBrowsingEnabledPreferenceKey];
-}
-
-- (void)_updatePrivateBrowsingStateFrom:(BOOL)wasEnabled to:(BOOL)enabled
-{
-    if (enabled == wasEnabled)
-        return;
-    if (enabled > wasEnabled) {
-        WebFrameNetworkingContext::ensurePrivateBrowsingSession();
-        ++webPreferencesInstanceCountWithPrivateBrowsingEnabled;
-    } else {
-        ASSERT(webPreferencesInstanceCountWithPrivateBrowsingEnabled);
-        --webPreferencesInstanceCountWithPrivateBrowsingEnabled;
-        if (!webPreferencesInstanceCountWithPrivateBrowsingEnabled)
-            WebFrameNetworkingContext::destroyPrivateBrowsingSession();
-    }
 }
 
 - (void)setUsesPageCache:(BOOL)usesPageCache
@@ -2289,14 +2265,10 @@ static NSString *classIBCreatorID = nil;
 #if PLATFORM(IOS)
 - (void)_invalidateCachedPreferences
 {
-    BOOL privateBrowsingWasEnabled = [self privateBrowsingEnabled];
-
     dispatch_barrier_sync(_private->readWriteQueue, ^{
         if (_private->values)
             _private->values = adoptNS([[NSMutableDictionary alloc] init]);
     });
-
-    [self _updatePrivateBrowsingStateFrom:privateBrowsingWasEnabled to:[self privateBrowsingEnabled]];
 
     // Tell any live WebViews to refresh their preferences
     [self _postPreferencesChangedNotification];
