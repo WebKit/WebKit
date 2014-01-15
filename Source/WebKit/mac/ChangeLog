@@ -1,5 +1,11 @@
 2014-01-14  Simon Fraser  <simon.fraser@apple.com>
 
+        #define ENABLE_DASHBOARD_SUPPORT for iOS.
+
+        * WebView/WebViewPrivate.h:
+
+2014-01-14  Simon Fraser  <simon.fraser@apple.com>
+
         Clean up exports and headers for iOS.
         
         Need to export WebArchivePboardType on Mac and iOS.

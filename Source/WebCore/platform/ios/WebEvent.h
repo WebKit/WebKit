@@ -30,7 +30,7 @@
 #import <CoreGraphics/CoreGraphics.h>
 #import <Foundation/Foundation.h>
 
-#if PLATFORM(IOS)
+#if TARGET_OS_IPHONE
 
 typedef enum {
     WebEventMouseDown,
@@ -191,5 +191,5 @@ typedef enum {
 @interface WebIOSEvent : WebEvent
 @end
 
-#endif // PLATFORM(IOS)
+#endif // TARGET_OS_IPHONE
 #endif // WebEventIOS_h

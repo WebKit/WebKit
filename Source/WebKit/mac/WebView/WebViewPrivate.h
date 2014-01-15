@@ -34,8 +34,10 @@
 #import <CoreGraphics/CGColor.h>
 #endif
 
-#if !TARGET_OS_IPHONE
 #if !defined(ENABLE_DASHBOARD_SUPPORT)
+#if TARGET_OS_IPHONE
+#define ENABLE_DASHBOARD_SUPPORT 0
+#else
 #define ENABLE_DASHBOARD_SUPPORT 1
 #endif
 #endif

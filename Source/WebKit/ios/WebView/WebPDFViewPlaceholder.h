@@ -25,7 +25,7 @@
 
 #import <WebKit/WebDocumentPrivate.h>
 
-#if PLATFORM(IOS)
+#if TARGET_OS_IPHONE
 
 @class UIPDFDocument;
 @protocol WebPDFViewPlaceholderDelegate;
@@ -164,4 +164,4 @@
 
 @end
 
-#endif /* PLATFORM(IOS) */
+#endif /* TARGET_OS_IPHONE */

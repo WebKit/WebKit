@@ -1,5 +1,11 @@
 2014-01-14  Simon Fraser  <simon.fraser@apple.com>
 
+        Avoid PLATFORM() macros in exported headers.
+
+        * WebView/WebPDFViewPlaceholder.h:
+
+2014-01-14  Simon Fraser  <simon.fraser@apple.com>
+
         Clean up exports and headers for iOS.
 
         * Misc/WebNSStringDrawing.h: Don't use PLATFORM() macro in an exported header.
