@@ -28,6 +28,7 @@
 #include "DNSResolveQueue.h"
 
 #include <wtf/CurrentTime.h>
+#include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
 
@@ -49,8 +50,16 @@ static const int gMaxRequestsToQueue = 64;
 // If there were queued names that couldn't be sent simultaneously, check the state of resolvers after this delay.
 static const double gRetryResolvingInSeconds = 0.1;
 
+DNSResolveQueue& DNSResolveQueue::shared()
+{
+    static NeverDestroyed<DNSResolveQueue> queue;
+
+    return queue;
+}
+
 DNSResolveQueue::DNSResolveQueue()
-    : m_requestsInFlight(0)
+    : m_timer(this, &DNSResolveQueue::timerFired)
+    , m_requestsInFlight(0)
     , m_cachedProxyEnabledStatus(false)
     , m_lastProxyEnabledStatusCheckTime(0)
 {
@@ -73,23 +82,23 @@ void DNSResolveQueue::add(const String& hostname)
     if (!m_names.size()) {
         if (isUsingProxy())
             return;
-        if (atomicIncrement(&m_requestsInFlight) <= gNamesToResolveImmediately) {
+        if (++m_requestsInFlight <= gNamesToResolveImmediately) {
             platformResolve(hostname);
             return;
         }
-        atomicDecrement(&m_requestsInFlight);
+        --m_requestsInFlight;
     }
 
     // It's better to not prefetch some names than to clog the queue.
     // Dropping the newest names, because on a single page, these are likely to be below oldest ones.
     if (m_names.size() < gMaxRequestsToQueue) {
         m_names.add(hostname);
-        if (!isActive())
-            startOneShot(gCoalesceDelayInSeconds);
+        if (!m_timer.isActive())
+            m_timer.startOneShot(gCoalesceDelayInSeconds);
     }
 }
 
-void DNSResolveQueue::fired()
+void DNSResolveQueue::timerFired(Timer<DNSResolveQueue>&)
 {
     if (isUsingProxy()) {
         m_names.clear();
@@ -99,14 +108,14 @@ void DNSResolveQueue::fired()
     int requestsAllowed = gMaxSimultaneousRequests - m_requestsInFlight;
 
     for (; !m_names.isEmpty() && requestsAllowed > 0; --requestsAllowed) {
-        atomicIncrement(&m_requestsInFlight);
+        ++m_requestsInFlight;
         HashSet<String>::iterator currentName = m_names.begin();
         platformResolve(*currentName);
         m_names.remove(currentName);
     }
 
     if (!m_names.isEmpty())
-        startOneShot(gRetryResolvingInSeconds);
+        m_timer.startOneShot(gRetryResolvingInSeconds);
 }
 
 } // namespace WebCore

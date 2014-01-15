@@ -28,25 +28,23 @@
 #define DNSResolveQueue_h
 
 #include "Timer.h"
+#include <atomic>
 #include <wtf/Forward.h>
 #include <wtf/HashSet.h>
 #include <wtf/text/StringHash.h>
 
 namespace WebCore {
 
-class DNSResolveQueue : public TimerBase {
+class DNSResolveQueue {
+    friend NeverDestroyed<DNSResolveQueue>;
 
 public:
-    static DNSResolveQueue& shared()
-    {
-      DEFINE_STATIC_LOCAL(DNSResolveQueue, queue, ());
-      return queue;
-    }
+    static DNSResolveQueue& shared();
 
     void add(const String& hostname);
     void decrementRequestCount()
     {
-      atomicDecrement(&m_requestsInFlight);
+        --m_requestsInFlight;
     }
 
 private:
@@ -57,10 +55,12 @@ private:
     bool platformProxyIsEnabledInSystemPreferences();
     void platformResolve(const String&);
 
-    void fired();
+    void timerFired(Timer<DNSResolveQueue>&);
+
+    Timer<DNSResolveQueue> m_timer;
 
     HashSet<String> m_names;
-    int m_requestsInFlight;
+    std::atomic<int> m_requestsInFlight;
     bool m_cachedProxyEnabledStatus;
     double m_lastProxyEnabledStatusCheckTime;
 };
