@@ -1,3 +1,15 @@
+2014-01-15  Brent Fulgham  <bfulgham@apple.com>
+
+        [WebGL] Validation function for compressed formats incorrect
+        https://bugs.webkit.org/show_bug.cgi?id=127023
+
+        Reviewed by Dean Jackson.
+
+        No new tests. Covered by existing WebGL compressed texture tests.
+
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore::WebGLRenderingContext::validateCompressedTexFuncData): Revise to match specifications.
+
 2014-01-15  Andreas Kling  <akling@apple.com>
 
         Remove the CSS selector profiler.

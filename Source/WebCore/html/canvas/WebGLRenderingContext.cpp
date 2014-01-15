@@ -5318,51 +5318,48 @@ bool WebGLRenderingContext::validateCompressedTexFuncData(const char* functionNa
 
     unsigned int bytesRequired = 0;
 
-    const int kBlockWidth = 4;
-    const int kBlockHeight = 4;
-
     switch (format) {
     case Extensions3D::COMPRESSED_RGB_S3TC_DXT1_EXT:
     case Extensions3D::COMPRESSED_RGBA_S3TC_DXT1_EXT:
+    case Extensions3D::COMPRESSED_ATC_RGB_AMD:
         {
             const int kBlockSize = 8;
+            const int kBlockWidth = 4;
+            const int kBlockHeight = 4;
             int numBlocksAcross = (width + kBlockWidth - 1) / kBlockWidth;
             int numBlocksDown = (height + kBlockHeight - 1) / kBlockHeight;
-            int numBlocks = numBlocksAcross * numBlocksDown;
-            bytesRequired = numBlocks * kBlockSize;
+            bytesRequired = numBlocksAcross * numBlocksDown * kBlockSize;
         }
         break;
     case Extensions3D::COMPRESSED_RGBA_S3TC_DXT3_EXT:
     case Extensions3D::COMPRESSED_RGBA_S3TC_DXT5_EXT:
-        {
-            const int kBlockSize = 16;
-            int numBlocksAcross = (width + kBlockWidth - 1) / kBlockWidth;
-            int numBlocksDown = (height + kBlockHeight - 1) / kBlockHeight;
-            int numBlocks = numBlocksAcross * numBlocksDown;
-            bytesRequired = numBlocks * kBlockSize;
-        }
-        break;
-    case Extensions3D::COMPRESSED_ATC_RGB_AMD:
-        {
-            bytesRequired = floor(static_cast<double>((width + kBlockWidth - 1) / 4)) * floor(static_cast<double>((height + 3) / 4)) * 8;
-        }
-        break;
     case Extensions3D::COMPRESSED_ATC_RGBA_EXPLICIT_ALPHA_AMD:
     case Extensions3D::COMPRESSED_ATC_RGBA_INTERPOLATED_ALPHA_AMD:
         {
-            bytesRequired = floor(static_cast<double>((width + kBlockWidth - 1) / 4)) * floor(static_cast<double>((height + 3) / 4)) * 16;
+            const int kBlockSize = 16;
+            const int kBlockWidth = 4;
+            const int kBlockHeight = 4;
+            int numBlocksAcross = (width + kBlockWidth - 1) / kBlockWidth;
+            int numBlocksDown = (height + kBlockHeight - 1) / kBlockHeight;
+            bytesRequired = numBlocksAcross * numBlocksDown * kBlockSize;
         }
         break;
     case Extensions3D::COMPRESSED_RGB_PVRTC_4BPPV1_IMG:
     case Extensions3D::COMPRESSED_RGBA_PVRTC_4BPPV1_IMG:
         {
-            bytesRequired = std::max(width, 8) * std::max(height, 8) / 2;
+            const int kBlockSize = 8;
+            const int kBlockWidth = 8;
+            const int kBlockHeight = 8;
+            bytesRequired = (std::max(width, kBlockWidth) * std::max(height, kBlockHeight) * 4 + 7) / kBlockSize;
         }
         break;
     case Extensions3D::COMPRESSED_RGB_PVRTC_2BPPV1_IMG:
     case Extensions3D::COMPRESSED_RGBA_PVRTC_2BPPV1_IMG:
         {
-            bytesRequired = std::max(width, 8) * std::max(height, 8) / 4;
+            const int kBlockSize = 8;
+            const int kBlockWidth = 16;
+            const int kBlockHeight = 8;
+            bytesRequired = (std::max(width, kBlockWidth) * std::max(height, kBlockHeight) * 2 + 7) / kBlockSize;
         }
         break;
     default:
