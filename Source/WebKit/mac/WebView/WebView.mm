@@ -1232,7 +1232,7 @@ static bool shouldUseLegacyBackgroundSizeShorthandBehavior()
     pageClients.editorClient = new WebEditorClient(self);
     pageClients.inspectorClient = new WebInspectorClient(self);
     pageClients.loaderClientForMainFrame = new WebFrameLoaderClient;
-    pageClients.progressTrackerClient = new WebFrameLoaderClient;
+    pageClients.progressTrackerClient = new WebProgressTrackerClient(self);
     _private->page = new Page(pageClients);
     
     [self setSmartInsertDeleteEnabled:YES];

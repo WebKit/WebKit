@@ -1,3 +1,11 @@
+2014-01-14  Simon Fraser  <simon.fraser@apple.com>
+
+        Fix the iOS build after r162034.
+
+        * WebCoreSupport/WebProgressTrackerClient.mm:
+        * WebView/WebView.mm:
+        (-[WebView initSimpleHTMLDocumentWithStyle:frame:preferences:groupName:]):
+
 2014-01-14  Mark Rowe  <mrowe@apple.com>
 
         Stop cmp from spewing useless info during postprocess-headers.sh.

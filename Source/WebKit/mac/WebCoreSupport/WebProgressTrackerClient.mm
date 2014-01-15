@@ -28,6 +28,10 @@
 #import "WebFramePrivate.h"
 #import "WebViewInternal.h"
 
+#if PLATFORM(IOS)
+#import <WebCore/WebCoreThreadMessage.h>
+#endif
+
 using namespace WebCore;
 
 WebProgressTrackerClient::WebProgressTrackerClient(WebView *webView)
