@@ -1,5 +1,11 @@
 2014-01-14  Dean Jackson  <dino@apple.com>
 
+        Attempt to fix 32-bit Mac build.
+
+        * WebKit.xcodeproj/project.pbxproj:
+
+2014-01-14  Dean Jackson  <dino@apple.com>
+
         [WK1] Allow generated export files on iOS
         https://bugs.webkit.org/show_bug.cgi?id=127008
 
