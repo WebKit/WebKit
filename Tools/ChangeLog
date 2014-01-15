@@ -1,3 +1,18 @@
+2014-01-15  ChangSeok Oh  <changseok.oh@collabora.com>
+
+        [EFL] Change test font installed path to webkitgtk-font-tests
+        https://bugs.webkit.org/show_bug.cgi?id=126723
+
+        Reviewed by Gyuyoung Kim.
+
+        I'd like to change the test fonts installed directory from 'webkitgtk-test-fonts-0.0.3'
+        to 'webkitgtk-test-fonts'. webkitgtk-test-fonts-0.0.3 doesn't match the path
+        hard-coded in FontManagement.cpp#105
+
+        * DumpRenderTree/PlatformEfl.cmake:
+        * WebKitTestRunner/PlatformEfl.cmake:
+        * efl/jhbuild.modules:
+
 2014-01-14  Ryosuke Niwa  <rniwa@webkit.org>
 
         Make DoYouEvenBench runnable by run-perf-tests

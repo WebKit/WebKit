@@ -77,6 +77,7 @@
   <autotools id="fonts"
              skip-autogen="true">
     <branch module="downloads/mrobinson/webkitgtk-test-fonts/webkitgtk-test-fonts-0.0.3.tar.gz" version="0.0.3"
+            checkoutdir="webkitgtk-test-fonts"
             repo="github.com"
             hash="sha256:4a0a01f00855997cdcc7201f164b33a4e4144e8eadf40a5e542a1c448e035de5"
             md5sum="10e74de1a8ba961d9037994d427b1dd2" size="16981642">
