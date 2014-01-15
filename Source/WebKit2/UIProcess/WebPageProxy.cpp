@@ -517,8 +517,7 @@ void WebPageProxy::initializeWebPage()
         inspector()->enableRemoteInspection();
 #endif
 
-    initializeCreationParameters();
-    process().send(Messages::WebProcess::CreateWebPage(m_pageID, m_creationParameters), 0);
+    process().send(Messages::WebProcess::CreateWebPage(m_pageID, creationParameters()), 0);
 
 #if PLATFORM(MAC)
     send(Messages::WebPage::SetSmartInsertDeleteEnabled(m_isSmartInsertDeleteEnabled));
@@ -3868,41 +3867,45 @@ void WebPageProxy::resetStateAfterProcessExited()
 #endif
 }
 
-void WebPageProxy::initializeCreationParameters()
+WebPageCreationParameters WebPageProxy::creationParameters()
 {
-    m_creationParameters.viewSize = m_pageClient.viewSize();
-    m_creationParameters.viewState = m_viewState;
-    m_creationParameters.drawingAreaType = m_drawingArea->type();
-    m_creationParameters.store = m_pageGroup->preferences()->store();
-    m_creationParameters.pageGroupData = m_pageGroup->data();
-    m_creationParameters.drawsBackground = m_drawsBackground;
-    m_creationParameters.drawsTransparentBackground = m_drawsTransparentBackground;
-    m_creationParameters.underlayColor = m_underlayColor;
-    m_creationParameters.areMemoryCacheClientCallsEnabled = m_areMemoryCacheClientCallsEnabled;
-    m_creationParameters.useFixedLayout = m_useFixedLayout;
-    m_creationParameters.fixedLayoutSize = m_fixedLayoutSize;
-    m_creationParameters.suppressScrollbarAnimations = m_suppressScrollbarAnimations;
-    m_creationParameters.paginationMode = m_paginationMode;
-    m_creationParameters.paginationBehavesLikeColumns = m_paginationBehavesLikeColumns;
-    m_creationParameters.pageLength = m_pageLength;
-    m_creationParameters.gapBetweenPages = m_gapBetweenPages;
-    m_creationParameters.userAgent = userAgent();
-    m_creationParameters.sessionState = SessionState(m_backForwardList->entries(), m_backForwardList->currentIndex());
-    m_creationParameters.highestUsedBackForwardItemID = WebBackForwardListItem::highedUsedItemID();
-    m_creationParameters.canRunBeforeUnloadConfirmPanel = m_uiClient.canRunBeforeUnloadConfirmPanel();
-    m_creationParameters.canRunModal = m_canRunModal;
-    m_creationParameters.deviceScaleFactor = deviceScaleFactor();
-    m_creationParameters.mediaVolume = m_mediaVolume;
-    m_creationParameters.mayStartMediaWhenInWindow = m_mayStartMediaWhenInWindow;
-    m_creationParameters.minimumLayoutSize = m_minimumLayoutSize;
-    m_creationParameters.autoSizingShouldExpandToViewHeight = m_autoSizingShouldExpandToViewHeight;
-    m_creationParameters.scrollPinningBehavior = m_scrollPinningBehavior;
-    m_creationParameters.backgroundExtendsBeyondPage = m_backgroundExtendsBeyondPage;
-    m_creationParameters.layerHostingMode = m_layerHostingMode;
+    WebPageCreationParameters parameters;
+
+    parameters.viewSize = m_pageClient.viewSize();
+    parameters.viewState = m_viewState;
+    parameters.drawingAreaType = m_drawingArea->type();
+    parameters.store = m_pageGroup->preferences()->store();
+    parameters.pageGroupData = m_pageGroup->data();
+    parameters.drawsBackground = m_drawsBackground;
+    parameters.drawsTransparentBackground = m_drawsTransparentBackground;
+    parameters.underlayColor = m_underlayColor;
+    parameters.areMemoryCacheClientCallsEnabled = m_areMemoryCacheClientCallsEnabled;
+    parameters.useFixedLayout = m_useFixedLayout;
+    parameters.fixedLayoutSize = m_fixedLayoutSize;
+    parameters.suppressScrollbarAnimations = m_suppressScrollbarAnimations;
+    parameters.paginationMode = m_paginationMode;
+    parameters.paginationBehavesLikeColumns = m_paginationBehavesLikeColumns;
+    parameters.pageLength = m_pageLength;
+    parameters.gapBetweenPages = m_gapBetweenPages;
+    parameters.userAgent = userAgent();
+    parameters.sessionState = SessionState(m_backForwardList->entries(), m_backForwardList->currentIndex());
+    parameters.highestUsedBackForwardItemID = WebBackForwardListItem::highedUsedItemID();
+    parameters.canRunBeforeUnloadConfirmPanel = m_uiClient.canRunBeforeUnloadConfirmPanel();
+    parameters.canRunModal = m_canRunModal;
+    parameters.deviceScaleFactor = deviceScaleFactor();
+    parameters.mediaVolume = m_mediaVolume;
+    parameters.mayStartMediaWhenInWindow = m_mayStartMediaWhenInWindow;
+    parameters.minimumLayoutSize = m_minimumLayoutSize;
+    parameters.autoSizingShouldExpandToViewHeight = m_autoSizingShouldExpandToViewHeight;
+    parameters.scrollPinningBehavior = m_scrollPinningBehavior;
+    parameters.backgroundExtendsBeyondPage = m_backgroundExtendsBeyondPage;
+    parameters.layerHostingMode = m_layerHostingMode;
 
 #if PLATFORM(MAC) && !PLATFORM(IOS)
-    m_creationParameters.colorSpace = m_pageClient.colorSpace();
+    parameters.colorSpace = m_pageClient.colorSpace();
 #endif
+
+    return parameters;
 }
 
 #if USE(ACCELERATED_COMPOSITING)

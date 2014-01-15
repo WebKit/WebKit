@@ -564,7 +564,8 @@ void WebProcess::createWebPage(uint64_t pageID, const WebPageCreationParameters&
 
         // Balanced by an enableTermination in removeWebPage.
         disableTermination();
-    }
+    } else
+        result.iterator->value->reinitializeWebPage(parameters);
 
     ASSERT(result.iterator->value);
 }

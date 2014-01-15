@@ -170,6 +170,8 @@ public:
     static PassRefPtr<WebPage> create(uint64_t pageID, const WebPageCreationParameters&);
     virtual ~WebPage();
 
+    void reinitializeWebPage(const WebPageCreationParameters&);
+
     void close();
 
     static WebPage* fromCorePage(WebCore::Page*);
@@ -730,6 +732,7 @@ private:
     void setWindowResizerSize(const WebCore::IntSize&);
     void updateIsInWindow(bool isInitialState = false);
     void setViewState(WebCore::ViewState::Flags, bool wantsDidUpdateViewState);
+    void setViewStateInternal(WebCore::ViewState::Flags, bool isInitialState);
     void validateCommand(const String&, uint64_t);
     void executeEditCommand(const String&);
 

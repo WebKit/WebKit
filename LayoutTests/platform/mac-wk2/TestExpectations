@@ -443,6 +443,9 @@ webkit.org/b/123431 [ Mavericks ] http/tests/local/link-stylesheet-load-order.ht
 # <rdar://problem/15171108>
 [ Mavericks ] fast/forms/form-associated-element-removal.html [ Crash Pass ]
 
+# test results in DRT don't match in browser behavior, test seems broken
+fast/dom/Window/mozilla-focus-blur.html [ Failure ]
+
 webkit.org/b/126962 plugins/plugin-document-load-prevented-userscript.html [ Crash Pass Timeout ]
 
 ### END OF (3) Unclassified failures

@@ -1,3 +1,28 @@
+2014-01-10  Gavin Barraclough  <barraclough@apple.com>
+
+        REGRESSION (r158369): Some pop-up windows open at incorrect size (affects GMail, theblaze.com)
+        https://bugs.webkit.org/show_bug.cgi?id=126289
+
+        Reviewed by Anders Carlson.
+
+        Partial revert of https://bugs.webkit.org/show_bug.cgi?id=123557.
+        On window.open, update page when the UIProcess sends the create message
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::initializeWebPage):
+        (WebKit::WebPageProxy::creationParameters):
+        * UIProcess/WebPageProxy.h:
+            - creation paraments are not preserved at window.open.
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::reinitializeWebPage):
+        (WebKit::WebPage::setViewState):
+        (WebKit::WebPage::setViewStateInternal):
+        * WebProcess/WebPage/WebPage.h:
+            - add interface to update page.
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::createWebPage):
+            - if we try to create a page that already exists, update the current page's view state.
+
 2014-01-15  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Web process sometimes crashes when printing in synchronous mode

@@ -734,10 +734,7 @@ public:
     void didChooseFilesForOpenPanel(const Vector<String>&);
     void didCancelForOpenPanel();
 
-    WebPageCreationParameters creationParameters() const
-    {
-        return m_creationParameters;
-    }
+    WebPageCreationParameters creationParameters();
 
 #if USE(COORDINATED_GRAPHICS)
     void findZoomableAreaForPoint(const WebCore::IntPoint&, const WebCore::IntSize&);
@@ -856,7 +853,6 @@ public:
 private:
     WebPageProxy(PageClient&, WebProcessProxy&, WebPageGroup&, uint64_t pageID);
     void platformInitialize();
-    void initializeCreationParameters();
 
     void updateViewState(WebCore::ViewState::Flags flagsToUpdate = WebCore::ViewState::AllFlags);
 
@@ -1373,8 +1369,6 @@ private:
 #endif
         
     WebCore::ScrollPinningBehavior m_scrollPinningBehavior;
-
-    WebPageCreationParameters m_creationParameters;
 };
 
 } // namespace WebKit
