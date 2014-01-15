@@ -1,3 +1,17 @@
+2014-01-15  Tomas Popela  <tpopela@redhat.com>
+
+        [SOUP] [WK2] - Disable MemoryCache when the DOCUMENT_VIEWER cache model is set
+        https://bugs.webkit.org/show_bug.cgi?id=126577
+
+        Reviewed by Carlos Garcia Campos.
+
+        As in http://trac.webkit.org/changeset/152483, but this time for
+        WebKit2. When WEBKIT_CACHE_MODEL_DOCUMENT_VIEWER is set we need to
+        disable the MemoryCache completely to prevent caching of the resources.
+
+        * WebProcess/soup/WebProcessSoup.cpp:
+        (WebKit::WebProcess::platformSetCacheModel):
+
 2014-01-14  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] UI process crashes when closing the window right after printing with javascript
