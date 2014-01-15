@@ -38,9 +38,6 @@
 #include "StyleInheritedData.h"
 #include "StyleScopeResolver.h"
 #include "ViewportStyleResolver.h"
-#if ENABLE(CSS_FILTERS) && ENABLE(SVG)
-#include "WebKitCSSSVGDocumentValue.h"
-#endif
 #if ENABLE(CSS_SHADERS)
 #include "CustomFilterConstants.h"
 #endif
@@ -107,7 +104,6 @@ class StyledElement;
 class ViewportStyleResolver;
 class WebKitCSSFilterValue;
 class WebKitCSSShaderValue;
-class WebKitCSSSVGDocumentValue;
 
 class MediaQueryResult {
     WTF_MAKE_NONCOPYABLE(MediaQueryResult); WTF_MAKE_FAST_ALLOCATED;

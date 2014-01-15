@@ -1118,7 +1118,6 @@ set(WebCore_SOURCES
     css/WebKitCSSMatrix.cpp
     css/WebKitCSSMixFunctionValue.cpp
     css/WebKitCSSRegionRule.cpp
-    css/WebKitCSSSVGDocumentValue.cpp
     css/WebKitCSSShaderValue.cpp
     css/WebKitCSSTransformValue.cpp
     css/WebKitCSSViewportRule.cpp

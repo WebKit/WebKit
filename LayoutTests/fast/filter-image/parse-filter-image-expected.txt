@@ -4,10 +4,10 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 
 PASS innerStyle("background-image", "-webkit-filter(none, blur(3px))") is "-webkit-filter(none, blur(3px))"
-PASS innerStyle("background-image", "-webkit-filter(none, url('#a'))") is "-webkit-filter(none, url('#a'))"
-PASS innerStyle("background-image", "-webkit-filter(none, url(#a))") is "-webkit-filter(none, url('#a'))"
-PASS innerStyle("background-image", "-webkit-filter(none, url('#a') url('#b'))") is "-webkit-filter(none, url('#a') url('#b'))"
-PASS innerStyle("background-image", "-webkit-filter(none, grayscale(1) url('#a'))") is "-webkit-filter(none, grayscale(1) url('#a'))"
+PASS innerStyle("background-image", "-webkit-filter(none, url(#a))") is "-webkit-filter(none, url(#a))"
+PASS innerStyle("background-image", "-webkit-filter(none, url(#a))") is "-webkit-filter(none, url(#a))"
+PASS innerStyle("background-image", "-webkit-filter(none, url(#a) url(#b))") is "-webkit-filter(none, url(#a) url(#b))"
+PASS innerStyle("background-image", "-webkit-filter(none, grayscale(1) url(#a))") is "-webkit-filter(none, grayscale(1) url(#a))"
 PASS innerStyle("background-image", "-webkit-filter(none, grayscale(1))") is "-webkit-filter(none, grayscale(1))"
 PASS innerStyle("background-image", "-webkit-filter(none, grayscale(50%))") is "-webkit-filter(none, grayscale(50%))"
 PASS innerStyle("background-image", "-webkit-filter(none, grayscale(1.0))") is "-webkit-filter(none, grayscale(1))"

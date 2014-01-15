@@ -7,42 +7,42 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 Basic reference : url('#a')
 PASS cssRule.type is 1
 PASS declaration.length is 1
-PASS declaration.getPropertyValue('-webkit-filter') is 'url(\'#a\')'
+PASS declaration.getPropertyValue('-webkit-filter') is 'url(#a)'
 PASS jsWrapperClass(filterRule) is 'CSSValueList'
 PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueListPrototype'
 PASS jsWrapperClass(filterRule.constructor) is 'CSSValueListConstructor'
 PASS filterRule.length is 1
 PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_REFERENCE
-PASS subRule.cssText is 'url(\'#a\')'
+PASS subRule.cssText is 'url(#a)'
 
 Bare unquoted reference converting to quoted form : url(#a)
 PASS cssRule.type is 1
 PASS declaration.length is 1
-PASS declaration.getPropertyValue('-webkit-filter') is 'url(\'#a\')'
+PASS declaration.getPropertyValue('-webkit-filter') is 'url(#a)'
 PASS jsWrapperClass(filterRule) is 'CSSValueList'
 PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueListPrototype'
 PASS jsWrapperClass(filterRule.constructor) is 'CSSValueListConstructor'
 PASS filterRule.length is 1
 PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_REFERENCE
-PASS subRule.cssText is 'url(\'#a\')'
+PASS subRule.cssText is 'url(#a)'
 
 Multiple references : url('#a') url('#b')
 PASS cssRule.type is 1
 PASS declaration.length is 1
-PASS declaration.getPropertyValue('-webkit-filter') is 'url(\'#a\') url(\'#b\')'
+PASS declaration.getPropertyValue('-webkit-filter') is 'url(#a) url(#b)'
 PASS jsWrapperClass(filterRule) is 'CSSValueList'
 PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueListPrototype'
 PASS jsWrapperClass(filterRule.constructor) is 'CSSValueListConstructor'
 PASS filterRule.length is 2
 PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_REFERENCE
-PASS subRule.cssText is 'url(\'#a\')'
+PASS subRule.cssText is 'url(#a)'
 PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_REFERENCE
-PASS subRule.cssText is 'url(\'#b\')'
+PASS subRule.cssText is 'url(#b)'
 
 Reference as 2nd value : grayscale(1) url('#a')
 PASS cssRule.type is 1
 PASS declaration.length is 1
-PASS declaration.getPropertyValue('-webkit-filter') is 'grayscale(1) url(\'#a\')'
+PASS declaration.getPropertyValue('-webkit-filter') is 'grayscale(1) url(#a)'
 PASS jsWrapperClass(filterRule) is 'CSSValueList'
 PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueListPrototype'
 PASS jsWrapperClass(filterRule.constructor) is 'CSSValueListConstructor'
@@ -50,7 +50,7 @@ PASS filterRule.length is 2
 PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_GRAYSCALE
 PASS subRule.cssText is 'grayscale(1)'
 PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_REFERENCE
-PASS subRule.cssText is 'url(\'#a\')'
+PASS subRule.cssText is 'url(#a)'
 
 Integer value : grayscale(1)
 PASS cssRule.type is 1

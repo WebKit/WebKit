@@ -99,9 +99,6 @@
 
 #if ENABLE(CSS_FILTERS)
 #include "WebKitCSSFilterValue.h"
-#if ENABLE(SVG)
-#include "WebKitCSSSVGDocumentValue.h"
-#endif
 #endif
 
 #if ENABLE(CSS_SHADERS)
@@ -9826,7 +9823,7 @@ bool CSSParser::parseFilter(CSSParserValueList* valueList, RefPtr<CSSValue>& res
         if (value->unit == CSSPrimitiveValue::CSS_URI) {
 #if ENABLE(SVG)
             RefPtr<WebKitCSSFilterValue> referenceFilterValue = WebKitCSSFilterValue::create(WebKitCSSFilterValue::ReferenceFilterOperation);
-            referenceFilterValue->append(WebKitCSSSVGDocumentValue::create(value->string));
+            referenceFilterValue->append(CSSPrimitiveValue::create(value->string, CSSPrimitiveValue::CSS_URI));
             list->append(referenceFilterValue.release());
 #endif
         } else {

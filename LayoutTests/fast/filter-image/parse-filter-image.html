@@ -48,20 +48,20 @@ testInner(
     "-webkit-filter(none, blur(3px))");
 testInner(
     "background-image",
-    "-webkit-filter(none, url('#a'))",
-    "-webkit-filter(none, url('#a'))");
+    "-webkit-filter(none, url(#a))",
+    "-webkit-filter(none, url(#a))");
 testInner(
     "background-image",
     "-webkit-filter(none, url(#a))",
-    "-webkit-filter(none, url('#a'))");
+    "-webkit-filter(none, url(#a))");
 testInner(
     "background-image",
-    "-webkit-filter(none, url('#a') url('#b'))",
-    "-webkit-filter(none, url('#a') url('#b'))");
+    "-webkit-filter(none, url(#a) url(#b))",
+    "-webkit-filter(none, url(#a) url(#b))");
 testInner(
     "background-image",
-    "-webkit-filter(none, grayscale(1) url('#a'))",
-    "-webkit-filter(none, grayscale(1) url('#a'))");
+    "-webkit-filter(none, grayscale(1) url(#a))",
+    "-webkit-filter(none, grayscale(1) url(#a))");
 testInner(
     "background-image",
     "-webkit-filter(none, grayscale(1))",

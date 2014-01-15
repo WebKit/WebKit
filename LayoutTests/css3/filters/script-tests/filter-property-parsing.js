@@ -54,24 +54,24 @@ function testFilterRule(description, rule, expectedLength, expectedValue, expect
 }
 
 testFilterRule("Basic reference",
-               "url('#a')", 1, "url(\\'#a\\')",
+               "url('#a')", 1, "url(#a)",
                ["WebKitCSSFilterValue.CSS_FILTER_REFERENCE"],
-               ["url(\\'#a\\')"]);
+               ["url(#a)"]);
 
 testFilterRule("Bare unquoted reference converting to quoted form",
-               "url(#a)", 1, "url(\\'#a\\')",
+               "url(#a)", 1, "url(#a)",
                ["WebKitCSSFilterValue.CSS_FILTER_REFERENCE"],
-               ["url(\\'#a\\')"]);
+               ["url(#a)"]);
 
 testFilterRule("Multiple references",
-               "url('#a') url('#b')", 2, "url(\\'#a\\') url(\\'#b\\')",
+               "url('#a') url('#b')", 2, "url(#a) url(#b)",
                ["WebKitCSSFilterValue.CSS_FILTER_REFERENCE", "WebKitCSSFilterValue.CSS_FILTER_REFERENCE"],
-               ["url(\\'#a\\')", "url(\\'#b\\')"]);
+               ["url(#a)", "url(#b)"]);
 
 testFilterRule("Reference as 2nd value",
-               "grayscale(1) url('#a')", 2, "grayscale(1) url(\\'#a\\')",
+               "grayscale(1) url('#a')", 2, "grayscale(1) url(#a)",
                ["WebKitCSSFilterValue.CSS_FILTER_GRAYSCALE", "WebKitCSSFilterValue.CSS_FILTER_REFERENCE"],
-               ["grayscale(1)", "url(\\'#a\\')"]);
+               ["grayscale(1)", "url(#a)"]);
 
 testFilterRule("Integer value",
                "grayscale(1)", 1, "grayscale(1)",

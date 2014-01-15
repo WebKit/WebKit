@@ -58,8 +58,7 @@ String WebKitCSSFilterValue::customCSSText() const
         result = "";
         break;
     case ReferenceFilterOperation:
-        result = "url(";
-        break;
+        return CSSValueList::customCSSText();
     case GrayscaleFilterOperation:
         result = "grayscale(";
         break;

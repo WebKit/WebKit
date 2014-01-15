@@ -107,7 +107,6 @@ public:
 #if ENABLE(SVG)
     bool isSVGColor() const { return m_classType == SVGColorClass || m_classType == SVGPaintClass; }
     bool isSVGPaint() const { return m_classType == SVGPaintClass; }
-    bool isWebKitCSSSVGDocumentValue() const { return m_classType == WebKitCSSSVGDocumentClass; }
 #endif
     bool isUnicodeRangeValue() const { return m_classType == UnicodeRangeClass; }
 
@@ -175,7 +174,6 @@ protected:
 #if ENABLE(SVG)
         SVGColorClass,
         SVGPaintClass,
-        WebKitCSSSVGDocumentClass,
 #endif
 
         // List class types must appear after ValueListClass.

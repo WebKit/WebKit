@@ -7,26 +7,26 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 Basic reference : url('#a')
 PASS filterStyle.length is 1
 PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_REFERENCE
-PASS subRule.cssText is 'url(\'#a\')'
+PASS subRule.cssText is 'url(#a)'
 
 Bare unquoted reference converting to quoted form : url(#a)
 PASS filterStyle.length is 1
 PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_REFERENCE
-PASS subRule.cssText is 'url(\'#a\')'
+PASS subRule.cssText is 'url(#a)'
 
 Multiple references : url('#a') url('#b')
 PASS filterStyle.length is 2
 PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_REFERENCE
-PASS subRule.cssText is 'url(\'#a\')'
+PASS subRule.cssText is 'url(#a)'
 PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_REFERENCE
-PASS subRule.cssText is 'url(\'#b\')'
+PASS subRule.cssText is 'url(#b)'
 
 Reference as 2nd value : grayscale(1) url('#a')
 PASS filterStyle.length is 2
 PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_GRAYSCALE
 PASS subRule.cssText is 'grayscale(1)'
 PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_REFERENCE
-PASS subRule.cssText is 'url(\'#a\')'
+PASS subRule.cssText is 'url(#a)'
 
 Integer value : grayscale(1)
 PASS filterStyle.length is 1

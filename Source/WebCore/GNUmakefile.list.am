@@ -4815,8 +4815,6 @@ webcore_svg_sources += \
 	Source/WebCore/css/SVGCSSComputedStyleDeclaration.cpp \
 	Source/WebCore/css/SVGCSSParser.cpp \
 	Source/WebCore/css/SVGCSSStyleSelector.cpp \
-	Source/WebCore/css/WebKitCSSSVGDocumentValue.cpp \
-	Source/WebCore/css/WebKitCSSSVGDocumentValue.h \
 	Source/WebCore/loader/cache/CachedSVGDocument.cpp \
 	Source/WebCore/loader/cache/CachedSVGDocument.h \
 	Source/WebCore/loader/cache/CachedSVGDocumentClient.h \

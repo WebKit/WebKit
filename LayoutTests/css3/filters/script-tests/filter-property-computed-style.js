@@ -26,22 +26,22 @@ function testComputedFilterRule(description, rule, expectedLength, expectedTypes
 testComputedFilterRule("Basic reference",
                        "url('#a')", 1,
                        ["WebKitCSSFilterValue.CSS_FILTER_REFERENCE"],
-                       ["url(\\'#a\\')"]);
+                       ["url(#a)"]);
 
 testComputedFilterRule("Bare unquoted reference converting to quoted form",
                        "url(#a)", 1,
                        ["WebKitCSSFilterValue.CSS_FILTER_REFERENCE"],
-                       ["url(\\'#a\\')"]);
+                       ["url(#a)"]);
 
 testComputedFilterRule("Multiple references",
                        "url('#a') url('#b')", 2,
                        ["WebKitCSSFilterValue.CSS_FILTER_REFERENCE", "WebKitCSSFilterValue.CSS_FILTER_REFERENCE"],
-                       ["url(\\'#a\\')", "url(\\'#b\\')"]);
+                       ["url(#a)", "url(#b)"]);
 
 testComputedFilterRule("Reference as 2nd value",
                        "grayscale(1) url('#a')", 2,
                        ["WebKitCSSFilterValue.CSS_FILTER_GRAYSCALE", "WebKitCSSFilterValue.CSS_FILTER_REFERENCE"],
-                       ["grayscale(1)", "url(\\'#a\\')"]);
+                       ["grayscale(1)", "url(#a)"]);
 
 testComputedFilterRule("Integer value",
                        "grayscale(1)", 1,

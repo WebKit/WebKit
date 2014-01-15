@@ -13,6 +13,6 @@ shouldBe("cssRule.type", "1");
 
 var declaration = cssRule.style;
 shouldBe("declaration.length", "1");
-shouldBe("declaration.getPropertyValue('-webkit-filter')", "'url(\\'#a\\') url(\\'#b\\')'");
+shouldBe("declaration.getPropertyValue('-webkit-filter')", "'url(#a) url(#b)'");
 
 successfullyParsed = true;

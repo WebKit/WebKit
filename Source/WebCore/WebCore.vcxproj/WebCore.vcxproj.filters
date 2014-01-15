@@ -2367,9 +2367,6 @@
     <ClCompile Include="..\css\WebKitCSSShaderValue.cpp">
       <Filter>css</Filter>
     </ClCompile>
-    <ClCompile Include="..\css\WebKitCSSSVGDocumentValue.cpp">
-      <Filter>css</Filter>
-    </ClCompile>
     <ClCompile Include="..\css\WebKitCSSTransformValue.cpp">
       <Filter>css</Filter>
     </ClCompile>
@@ -9297,9 +9294,6 @@
       <Filter>css</Filter>
     </ClInclude>
     <ClInclude Include="..\css\WebKitCSSShaderValue.h">
-      <Filter>css</Filter>
-    </ClInclude>
-    <ClInclude Include="..\css\WebKitCSSSVGDocumentValue.h">
       <Filter>css</Filter>
     </ClInclude>
     <ClInclude Include="..\css\WebKitCSSTransformValue.h">

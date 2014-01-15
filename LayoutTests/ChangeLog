@@ -1,3 +1,21 @@
+2014-01-14  Dirk Schulze  <krit@webkit.org>
+
+        Remove unnecessary WebkitCSSSVGDocumentValue
+        https://bugs.webkit.org/show_bug.cgi?id=126997
+
+        Reviewed by Andreas Kling.
+
+        Update results after use of CSSPrimitiveValue.
+
+        * css3/filters/filter-property-computed-style-expected.txt:
+        * css3/filters/filter-property-expected.txt:
+        * css3/filters/filter-property-parsing-expected.txt:
+        * css3/filters/script-tests/filter-property-computed-style.js:
+        * css3/filters/script-tests/filter-property-parsing.js:
+        * css3/filters/script-tests/filter-property.js:
+        * fast/filter-image/parse-filter-image-expected.txt:
+        * fast/filter-image/parse-filter-image.html:
+
 2014-01-14  Mihnea Ovidenie  <mihnea@adobe.com>
 
         [CSSRegions] Incorrect repaint of fixed element with transformed parent

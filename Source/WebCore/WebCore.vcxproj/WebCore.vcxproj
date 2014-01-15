@@ -9567,7 +9567,6 @@
     <ClCompile Include="..\css\WebKitCSSMixFunctionValue.cpp" />
     <ClCompile Include="..\css\WebKitCSSRegionRule.cpp" />
     <ClCompile Include="..\css\WebKitCSSShaderValue.cpp" />
-    <ClCompile Include="..\css\WebKitCSSSVGDocumentValue.cpp" />
     <ClCompile Include="..\css\WebKitCSSTransformValue.cpp" />
     <ClCompile Include="..\css\WebKitCSSViewportRule.cpp" />
     <ClCompile Include="..\cssjit\SelectorCompiler.cpp" />
@@ -19882,7 +19881,6 @@
     <ClInclude Include="..\css\WebKitCSSMixFunctionValue.h" />
     <ClInclude Include="..\css\WebKitCSSRegionRule.h" />
     <ClInclude Include="..\css\WebKitCSSShaderValue.h" />
-    <ClInclude Include="..\css\WebKitCSSSVGDocumentValue.h" />
     <ClInclude Include="..\css\WebKitCSSTransformValue.h" />
     <ClInclude Include="..\css\WebKitCSSViewportRule.h" />
     <ClInclude Include="..\cssjit\FunctionCall.h" />

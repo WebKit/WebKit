@@ -177,7 +177,6 @@
 #include "SVGElement.h"
 #include "SVGNames.h"
 #include "SVGURIReference.h"
-#include "WebKitCSSSVGDocumentValue.h"
 #endif
 
 #if ENABLE(VIDEO_TRACK)
@@ -3819,14 +3818,15 @@ bool StyleResolver::createFilterOperations(CSSValue* inValue, FilterOperations& 
                 continue;
             CSSValue* argument = filterValue->itemWithoutBoundsCheck(0);
 
-            if (!argument->isWebKitCSSSVGDocumentValue())
+            if (!argument->isPrimitiveValue())
                 continue;
 
-            WebKitCSSSVGDocumentValue* svgDocumentValue = toWebKitCSSSVGDocumentValue(argument);
-            URL url = m_state.document().completeURL(svgDocumentValue->url());
+            CSSPrimitiveValue& primitiveValue = toCSSPrimitiveValue(*argument);
+            String cssUrl = primitiveValue.getStringValue();
+            URL url = m_state.document().completeURL(cssUrl);
 
-            RefPtr<ReferenceFilterOperation> operation = ReferenceFilterOperation::create(svgDocumentValue->url(), url.fragmentIdentifier(), operationType);
-            if (SVGURIReference::isExternalURIReference(svgDocumentValue->url(), m_state.document()))
+            RefPtr<ReferenceFilterOperation> operation = ReferenceFilterOperation::create(cssUrl, url.fragmentIdentifier(), operationType);
+            if (SVGURIReference::isExternalURIReference(cssUrl, m_state.document()))
                 m_state.pendingSVGDocuments().add(operation->createCachedSVGDocumentReference());
             operations.operations().append(operation);
 #endif

@@ -1,3 +1,38 @@
+2014-01-14  Dirk Schulze  <krit@webkit.org>
+
+        Remove unnecessary WebkitCSSSVGDocumentValue
+        https://bugs.webkit.org/show_bug.cgi?id=126997
+
+        Reviewed by Andreas Kling.
+
+        Removing redundant code path. WebkitCSSSVGDocumentValue
+        can be expressed by a CSSPrimitiveValue.
+
+        No new tests.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * WebCore.order:
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.vcxproj/WebCore.vcxproj.filters:
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseFilter):
+        * css/CSSValue.cpp:
+        (WebCore::CSSValue::equals):
+        (WebCore::CSSValue::cssText):
+        (WebCore::CSSValue::destroy):
+        * css/CSSValue.h:
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::createFilterOperations):
+        * css/StyleResolver.h:
+        * css/WebKitCSSSVGDocumentValue.cpp: Removed.
+        * css/WebKitCSSSVGDocumentValue.h: Removed.
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::ComputedStyleExtractor::valueForFilter):
+        * css/WebKitCSSFilterValue.cpp:
+        (WebCore::WebKitCSSFilterValue::customCSSText):
+
 2014-01-14  Mihnea Ovidenie  <mihnea@adobe.com>
 
         [CSSRegions] Incorrect repaint of fixed element with transformed parent
