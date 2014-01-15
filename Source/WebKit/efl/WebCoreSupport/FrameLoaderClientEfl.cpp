@@ -243,22 +243,6 @@ void FrameLoaderClientEfl::assignIdentifierToInitialRequest(unsigned long identi
     evas_object_smart_callback_call(m_view, "resource,request,new", &request);
 }
 
-void FrameLoaderClientEfl::progressStarted(WebCore::Frame& frame)
-{
-    ewk_frame_load_started(m_frame);
-    progressEstimateChanged(frame);
-}
-
-void FrameLoaderClientEfl::progressEstimateChanged(Frame&)
-{
-    ewk_frame_load_progress_changed(m_frame);
-}
-
-void FrameLoaderClientEfl::progressFinished(Frame&)
-{
-    notImplemented();
-}
-
 void FrameLoaderClientEfl::frameLoaderDestroyed()
 {
     if (m_frame)

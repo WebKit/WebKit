@@ -36,7 +36,6 @@
 #include "EWebKit.h"
 #include "FrameLoaderClient.h"
 #include "PluginView.h"
-#include "ProgressTrackerClient.h"
 #include "ResourceError.h"
 #include "ResourceResponse.h"
 
@@ -44,7 +43,7 @@ namespace WebCore {
 
 class FormState;
 
-class FrameLoaderClientEfl : public FrameLoaderClient, public ProgressTrackerClient {
+class FrameLoaderClientEfl : public FrameLoaderClient {
  public:
     explicit FrameLoaderClientEfl(Evas_Object *view);
     virtual ~FrameLoaderClientEfl() { }
@@ -124,10 +123,6 @@ class FrameLoaderClientEfl : public FrameLoaderClient, public ProgressTrackerCli
 
     virtual void revertToProvisionalState(DocumentLoader*) { }
     virtual void setMainDocumentError(DocumentLoader*, const ResourceError&);
-
-    virtual void progressStarted(Frame&);
-    virtual void progressEstimateChanged(Frame&);
-    virtual void progressFinished(Frame&);
 
     virtual PassRefPtr<Frame> createFrame(const URL&, const String& name, HTMLFrameOwnerElement*,
                                const String& referrer, bool allowsScrolling, int marginWidth, int marginHeight);

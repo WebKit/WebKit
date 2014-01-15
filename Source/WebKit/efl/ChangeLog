@@ -1,3 +1,25 @@
+2014-01-15  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        [EFL][WK1] Implement ProgressTrackerClientEfl to fix the crash
+        https://bugs.webkit.org/show_bug.cgi?id=127031
+
+        Reviewed by Gyuyoung Kim.
+
+        Implmemented and moved ProgressTrackerClient logic from FrameLoaderClientEfl.
+        ProgressTrackerClient should be indenpendent instance since r162034
+
+        * WebCoreSupport/FrameLoaderClientEfl.cpp:
+        * WebCoreSupport/FrameLoaderClientEfl.h:
+        * WebCoreSupport/ProgressTrackerClientEfl.cpp:
+        (WebCore::ProgressTrackerClientEfl::ProgressTrackerClientEfl):
+        (WebCore::ProgressTrackerClientEfl::progressTrackerDestroyed):
+        (WebCore::ProgressTrackerClientEfl::progressStarted):
+        (WebCore::ProgressTrackerClientEfl::progressEstimateChanged):
+        (WebCore::ProgressTrackerClientEfl::progressFinished):
+        * WebCoreSupport/ProgressTrackerClientEfl.h: Added.
+        * ewk/ewk_view.cpp:
+        (_ewk_view_priv_new):
+
 2014-01-13  Ryuan Choi  <ryuan.choi@samsung.com>
 
         [EFL] Do not store reference variables as a pointer in private data structure

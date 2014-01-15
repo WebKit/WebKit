@@ -59,6 +59,7 @@
 #include "PlatformMouseEvent.h"
 #include "PopupMenuClient.h"
 #include "ProgressTracker.h"
+#include "ProgressTrackerClientEfl.h"
 #include "RefPtrCairo.h"
 #include "RenderThemeEfl.h"
 #include "ResourceHandle.h"
@@ -681,7 +682,7 @@ static Ewk_View_Private_Data* _ewk_view_priv_new(Ewk_View_Smart_Data* smartData)
     pageClients.inspectorClient = new WebCore::InspectorClientEfl(smartData->self);
 #endif
     pageClients.loaderClientForMainFrame = new WebCore::FrameLoaderClientEfl(smartData->self);
-    pageClients.progressTrackerClient = static_cast<WebCore::FrameLoaderClientEfl*>(pageClients.loaderClientForMainFrame);
+    pageClients.progressTrackerClient = new WebCore::ProgressTrackerClientEfl(smartData->self);
     priv->page = adoptPtr(new WebCore::Page(pageClients));
 
 #if ENABLE(DEVICE_ORIENTATION)

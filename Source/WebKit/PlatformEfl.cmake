@@ -120,6 +120,7 @@ list(APPEND WebKit_SOURCES
     efl/WebCoreSupport/NotificationPresenterClientEfl.cpp
     efl/WebCoreSupport/PageClientEfl.cpp
     efl/WebCoreSupport/PlatformStrategiesEfl.cpp
+    efl/WebCoreSupport/ProgressTrackerClientEfl.cpp
     efl/WebCoreSupport/PopupMenuEfl.cpp
     efl/WebCoreSupport/SearchPopupMenuEfl.cpp
     efl/WebCoreSupport/StorageTrackerClientEfl.cpp
