@@ -32,7 +32,7 @@
          },
 
          testObject: function(name) {
-             return {dromaeoIterationCount: ITERATION_COUNT, doNotMeasureMemoryUsage: true, doNotIgnoreInitialRun: true, unit: 'runs/s',
+             return {customIterationCount: ITERATION_COUNT, doNotMeasureMemoryUsage: true, doNotIgnoreInitialRun: true, unit: 'runs/s',
                 name: name, continueTesting: !!name};
          },
 

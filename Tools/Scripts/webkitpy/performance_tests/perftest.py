@@ -168,7 +168,7 @@ class PerfTest(object):
             (median, unit, stdev, unit, sorted_values[0], unit, sorted_values[-1], unit))
 
     _description_regex = re.compile(r'^Description: (?P<description>.*)$', re.IGNORECASE)
-    _metrics_regex = re.compile(r'^(?P<subtest>[A-Za-z0-9\(\[].+)?:(?P<metric>[A-Z][A-Za-z]+) -> \[(?P<values>(\d+(\.\d+)?)(, \d+(\.\d+)?)+)\] (?P<unit>[a-z/]+)?$')
+    _metrics_regex = re.compile(r'^(?P<subtest>[A-Za-z0-9\(\[].+)?:(?P<metric>[A-Z][A-Za-z]+)(:(?P<aggregator>[A-Z][A-Za-z]+))? -> \[(?P<values>(\d+(\.\d+)?)(, \d+(\.\d+)?)+)\] (?P<unit>[a-z/]+)?$')
 
     def _run_with_driver(self, driver, time_out_ms):
         output = self.run_single(driver, self.test_path(), time_out_ms)
@@ -246,6 +246,17 @@ class PerfTest(object):
         re.compile(re.escape("""Blocked access to external URL http://www.whatwg.org/specs/web-apps/current-work/""")),
         re.compile(r"CONSOLE MESSAGE: (line \d+: )?Blocked script execution in '[A-Za-z0-9\-\.:]+' because the document's frame is sandboxed and the 'allow-scripts' permission is not set."),
         re.compile(r"CONSOLE MESSAGE: (line \d+: )?Not allowed to load local resource"),
+        # DoYouEvenBench
+        re.compile(re.escape("CONSOLE MESSAGE: line 140: Miss the info bar? Run TodoMVC from a server to avoid a cross-origin error.")),
+        re.compile(re.escape("CONSOLE MESSAGE: line 315: TypeError: Attempted to assign to readonly property.")),
+        re.compile(re.escape("CONSOLE MESSAGE: line 339: DEBUG: -------------------------------")),
+        re.compile(re.escape("CONSOLE MESSAGE: line 339: DEBUG: Ember.VERSION : 1.0.0-rc.1")),
+        re.compile(re.escape("CONSOLE MESSAGE: line 339: DEBUG: Handlebars.VERSION : 1.0.0-rc.3")),
+        re.compile(re.escape("CONSOLE MESSAGE: line 339: DEBUG: jQuery.VERSION : 1.9.1")),
+        re.compile(re.escape("CONSOLE MESSAGE: line 339: DEPRECATION: Namespaces should not begin with lowercase")),
+        re.compile(re.escape("processAllNamespaces@ember.js:4359:36")),
+        re.compile(re.escape("CONSOLE MESSAGE: line 124: Booting in DEBUG mode")),
+        re.compile(re.escape("CONSOLE MESSAGE: line 125: You can configure event logging with DEBUG.events.logAll()/logNone()/logByName()/logByAction()")),
     ]
 
     def _filter_output(self, output):

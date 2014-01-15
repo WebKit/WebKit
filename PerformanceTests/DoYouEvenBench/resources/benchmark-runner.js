@@ -40,7 +40,6 @@ function BenchmarkTestStep(testName, testFunction) {
 function BenchmarkRunner(suites, client) {
     this._suites = suites;
     this._prepareReturnValue = null;
-    this._measuredValues = {};
     this._client = client;
 }
 
@@ -69,8 +68,21 @@ BenchmarkRunner.prototype._removeFrame = function () {
 BenchmarkRunner.prototype._appendFrame = function (src) {
     var frame = document.createElement('iframe');
     frame.style.width = '800px';
-    frame.style.height = '600px'
-    document.body.appendChild(frame);
+    frame.style.height = '600px';
+    frame.style.border = '0px none';
+    frame.style.position = 'absolute';
+
+    var marginTop = document.body.style.marginTop;
+    var marginBottom = document.body.style.marginBottom;
+    if (window.innerWidth > 800 + marginTop && window.innerHeight > 600 + marginBottom) {
+        frame.style.left = marginTop + 'px';
+        frame.style.top = marginBottom + 'px';
+    } else {
+        frame.style.left = '0px';
+        frame.style.top = '0px';
+    }
+
+    document.body.insertBefore(frame, document.body.firstChild);
     this._frame = frame;
     return frame;
 }
@@ -162,8 +174,10 @@ BenchmarkState.prototype.prepareCurrentSuite = function (runner, frame) {
 }
 
 BenchmarkRunner.prototype.step = function (state) {
-    if (!state)
+    if (!state) {
         state = new BenchmarkState(this._suites);
+        this._measuredValues = {tests: {}, total: 0};
+    }
 
     var suite = state.currentSuite();
     if (!suite) {
@@ -185,6 +199,32 @@ BenchmarkRunner.prototype.step = function (state) {
     return this._runTestAndRecordResults(state);
 }
 
+BenchmarkRunner.prototype.runAllSteps = function (startingState) {
+    var nextCallee = this.runAllSteps.bind(this);
+    this.step(startingState).then(function (nextState) {
+        if (nextState)
+            nextCallee(nextState);
+    });
+}
+
+BenchmarkRunner.prototype.runMultipleIterations = function (iterationCount) {
+    var self = this;
+    var currentIteration = 0;
+
+    this._runNextIteration = function () {
+        currentIteration++;
+        if (currentIteration < iterationCount)
+            self.runAllSteps();
+        else if (this._client && this._client.didFinishLastIteration)
+            this._client.didFinishLastIteration();
+    }
+
+    if (this._client && this._client.willStartFirstIteration)
+        this._client.willStartFirstIteration(iterationCount);
+
+    self.runAllSteps();
+}
+
 BenchmarkRunner.prototype._runTestAndRecordResults = function (state) {
     var promise = new SimplePromise;
     var suite = state.currentSuite();
@@ -196,10 +236,12 @@ BenchmarkRunner.prototype._runTestAndRecordResults = function (state) {
     var self = this;
     setTimeout(function () {
         self._runTest(suite, test.run, self._prepareReturnValue, function (syncTime, asyncTime) {
-            var suiteResults = self._measuredValues[suite.name] || {tests:{}, total: 0};
-            self._measuredValues[suite.name] = suiteResults;
-            suiteResults.tests[test.name] = {'Sync': syncTime, 'Async': asyncTime};
-            suiteResults.total += syncTime + asyncTime;
+            var suiteResults = self._measuredValues.tests[suite.name] || {tests:{}, total: 0};
+            var total = syncTime + asyncTime;
+            self._measuredValues.tests[suite.name] = suiteResults;
+            suiteResults.tests[test.name] = {tests: {'Sync': syncTime, 'Async': asyncTime}, total: total};
+            suiteResults.total += total;
+            self._measuredValues.total += total;
 
             if (self._client && self._client.willRunTest)
                 self._client.didRunTest(suite, test);
@@ -219,6 +261,6 @@ BenchmarkRunner.prototype._finalize = function () {
     if (this._client && this._client.didRunSuites)
         this._client.didRunSuites(this._measuredValues);
 
-    // FIXME: This should be done when we start running tests.
-    this._measuredValues = {};
+    if (this._runNextIteration)
+        this._runNextIteration();
 }

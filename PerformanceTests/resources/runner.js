@@ -153,7 +153,7 @@ if (window.testRunner) {
         currentTest = test;
         // FIXME: We should be using multiple instances of test runner on Dromaeo as well but it's too slow now.
         // FIXME: Don't hard code the number of in-process iterations to use inside a test runner.
-        iterationCount = test.dromaeoIterationCount || (window.testRunner ? 5 : 20);
+        iterationCount = test.customIterationCount || (window.testRunner ? 5 : 20);
         completedIterations = -1;
         results = [];
         jsHeapResults = [];
@@ -220,8 +220,9 @@ if (window.testRunner) {
             var prefix = currentTest.name || '';
             if (currentTest.description)
                 PerfTestRunner.log("Description: " + currentTest.description);
-            metric = {'fps': 'FrameRate', 'runs/s': 'Runs', 'ms': 'Time'}[PerfTestRunner.unit]
-            PerfTestRunner.logStatistics(results, PerfTestRunner.unit, prefix + ":" + metric);
+            metric = {'fps': 'FrameRate', 'runs/s': 'Runs', 'ms': 'Time'}[PerfTestRunner.unit];
+            var suffix = currentTest.aggregation ? ':' + currentTest.aggregation : '';
+            PerfTestRunner.logStatistics(results, PerfTestRunner.unit, prefix + ":" + metric + suffix);
             if (jsHeapResults.length) {
                 PerfTestRunner.logStatistics(jsHeapResults, "bytes", prefix + ":JSHeap");
                 PerfTestRunner.logStatistics(mallocHeapResults, "bytes", prefix + ":Malloc");

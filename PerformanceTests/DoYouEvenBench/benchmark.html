@@ -84,20 +84,18 @@ function startTest() {
         },
         didRunSuites: function (measuredValues) {
             var results = '';
-            var total = 0; // FIXME: Compute the total properly.
-            for (var suiteName in measuredValues) {
-                var suiteResults = measuredValues[suiteName];
+            for (var suiteName in measuredValues.tests) {
+                var suiteResults = measuredValues.tests[suiteName];
                 for (var testName in suiteResults.tests) {
                     var testResults = suiteResults.tests[testName];
-                    for (var subtestName in testResults) {
+                    for (var subtestName in testResults.tests) {
                         results += suiteName + ' : ' + testName + ' : ' + subtestName
-                            + ': ' + testResults[subtestName] + ' ms\n';
+                            + ': ' + testResults.tests[subtestName] + ' ms\n';
                     }
                 }
                 results += suiteName + ' : ' + suiteResults.total + ' ms\n';
-                total += suiteResults.total;
             }
-            results += 'Total : ' + total + ' ms\n';
+            results += 'Total : ' + measuredValues.total + ' ms\n';
 
             if (!results)
                 return;
@@ -109,18 +107,11 @@ function startTest() {
     });
 
     var currentState = null;
-    function callNextStep(state) {
-        runner.step(state).then(function (newState) {
-            currentState = newState;
-            if (newState)
-                callNextStep(newState);
-        });
-    }
 
     // Don't call step while step is already executing.
     document.body.appendChild(createUIForSuites(Suites,
         function () { runner.step(currentState).then(function (state) { currentState = state; }); },
-        function () { callNextStep(currentState); }));
+        function () { runner.runAllSteps(currentState); currentState = null; }));
 }
 
 window.addEventListener('load', startTest);
