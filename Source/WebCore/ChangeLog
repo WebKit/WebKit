@@ -1,3 +1,15 @@
+2014-01-14  Timothy Hatcher  <timothy@apple.com>
+
+        Web Inspector: Resource finish time is sometimes earlier than response received time.
+
+        https://bugs.webkit.org/show_bug.cgi?id=127027
+
+        Reviewed by Joseph Pecoraro.
+
+        * inspector/InspectorResourceAgent.cpp:
+        (WebCore::InspectorResourceAgent::didFinishLoading): Use currentTime() and not the
+        passed in finishTime.
+
 2014-01-14  Anders Carlsson  <andersca@apple.com>
 
         Follow up build fix attempt.

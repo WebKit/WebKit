@@ -295,8 +295,11 @@ void InspectorResourceAgent::didFinishLoading(unsigned long identifier, Document
 
     m_resourcesData->maybeDecodeDataToContent(requestId);
 
-    if (!finishTime)
-        finishTime = currentTime();
+    // FIXME: The finishTime that is passed in is from the NetworkProcess and is more accurate.
+    // However, all other times passed to the Inspector are generated from the web process. Mixing
+    // times from different processes can cause the finish time to be earlier than the response
+    // received time due to inter-process communication lag.
+    finishTime = currentTime();
 
     String sourceMappingURL;
     NetworkResourcesData::ResourceData const* resourceData = m_resourcesData->data(requestId);
