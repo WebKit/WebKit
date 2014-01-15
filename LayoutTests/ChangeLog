@@ -1,3 +1,19 @@
+2014-01-15  Alexey Proskuryakov  <ap@apple.com>
+
+        AX: Merge layout test from Mac and GTK checking accessibility roles
+        https://bugs.webkit.org/show_bug.cgi?id=126685
+
+        Fix Mac test results.
+
+        * platform/mac-mountainlion/platform/mac/accessibility/role-subrole-roledescription-expected.txt: Removed.
+        This test was merged into another, but its Mountain Lion results were not moved accordingly.
+
+        * platform/mac-mountainlion/accessibility/roles-exposed-expected.txt: Copied from LayoutTests/platform/mac/accessibility/roles-exposed-expected.txt.
+        Custom results with a different role for "dl".
+
+        * platform/mac/accessibility/roles-exposed-expected.txt: Changed to have results that
+        are correct forward looking.
+
 2014-01-15  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r162066.
