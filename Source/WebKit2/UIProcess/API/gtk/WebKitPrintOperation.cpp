@@ -269,7 +269,7 @@ static void drawPagesForPrintingCompleted(WKErrorRef wkPrintError, WKErrorRef, v
     if (printOperation->priv->printMode == PrintInfo::PrintModeAsync)
         page->endPrinting();
 
-    const WebCore::ResourceError& resourceError = toImpl(wkPrintError)->platformError();
+    const WebCore::ResourceError& resourceError = wkPrintError ? toImpl(wkPrintError)->platformError() : WebCore::ResourceError();
     if (!resourceError.isNull()) {
         GOwnPtr<GError> printError(g_error_new_literal(g_quark_from_string(resourceError.domain().utf8().data()),
                                                      resourceError.errorCode(),

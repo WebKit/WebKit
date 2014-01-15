@@ -72,6 +72,23 @@ static void testWebViewPrint(WebViewTest* test, gconstpointer)
 }
 
 #ifdef HAVE_GTK_UNIX_PRINTING
+static gboolean testPrintOperationPrintPrinter(GtkPrinter* printer, gpointer userData)
+{
+    if (strcmp(gtk_printer_get_name(printer), "Print to File"))
+        return FALSE;
+
+    GtkPrinter** foundPrinter = static_cast<GtkPrinter**>(userData);
+    *foundPrinter = static_cast<GtkPrinter*>(g_object_ref(printer));
+    return TRUE;
+}
+
+static GtkPrinter* findPrintToFilePrinter()
+{
+    GtkPrinter* printer = 0;
+    gtk_enumerate_printers(testPrintOperationPrintPrinter, &printer, 0, TRUE);
+    return printer;
+}
+
 class PrintTest: public WebViewTest {
 public:
     MAKE_GLIB_TEST_FIXTURE(PrintTest);
@@ -97,23 +114,6 @@ public:
         g_signal_connect(m_printOperation.get(), "failed", G_CALLBACK(printFailedCallback), this);
     }
 
-    static gboolean testPrintOperationPrintPrinter(GtkPrinter* printer, gpointer userData)
-    {
-        if (strcmp(gtk_printer_get_name(printer), "Print to File"))
-            return FALSE;
-
-        GtkPrinter** foundPrinter = static_cast<GtkPrinter**>(userData);
-        *foundPrinter = static_cast<GtkPrinter*>(g_object_ref(printer));
-        return TRUE;
-    }
-
-    GtkPrinter* findPrintToFilePrinter()
-    {
-        GtkPrinter* printer = 0;
-        gtk_enumerate_printers(testPrintOperationPrintPrinter, &printer, 0, TRUE);
-        return printer;
-    }
-
     void waitUntilPrintFinished()
     {
         g_main_loop_run(m_mainLoop);
@@ -128,7 +128,7 @@ static void testPrintOperationPrint(PrintTest* test, gconstpointer)
     test->loadHtml("<html><body>WebKitGTK+ printing test</body></html>", 0);
     test->waitUntilLoadFinished();
 
-    GRefPtr<GtkPrinter> printer = adoptGRef(test->findPrintToFilePrinter());
+    GRefPtr<GtkPrinter> printer = adoptGRef(findPrintToFilePrinter());
     if (!printer) {
         g_message("%s", "Cannot test WebKitPrintOperation/print: no suitable printer found");
         return;
@@ -161,7 +161,7 @@ static void testPrintOperationErrors(PrintTest* test, gconstpointer)
     test->loadHtml("<html><body>WebKitGTK+ printing errors test</body></html>", 0);
     test->waitUntilLoadFinished();
 
-    GRefPtr<GtkPrinter> printer = adoptGRef(test->findPrintToFilePrinter());
+    GRefPtr<GtkPrinter> printer = adoptGRef(findPrintToFilePrinter());
     if (!printer) {
         g_message("%s", "Cannot test WebKitPrintOperation/print: no suitable printer found");
         return;
@@ -189,6 +189,105 @@ static void testPrintOperationErrors(PrintTest* test, gconstpointer)
     webkit_print_operation_print(test->m_printOperation.get());
     test->waitUntilPrintFinished();
 }
+
+class CloseAfterPrintTest: public WebViewTest {
+public:
+    MAKE_GLIB_TEST_FIXTURE(CloseAfterPrintTest);
+
+    static GtkWidget* webViewCreate(WebKitWebView* webView, CloseAfterPrintTest* test)
+    {
+        return test->createWebView();
+    }
+
+    static gboolean webViewPrint(WebKitWebView* webView, WebKitPrintOperation* printOperation, CloseAfterPrintTest* test)
+    {
+        test->print(printOperation);
+        return TRUE;
+    }
+
+    static void printOperationFinished(WebKitPrintOperation* printOperation, CloseAfterPrintTest* test)
+    {
+        test->printFinished();
+    }
+
+    static void webViewClosed(WebKitWebView* webView, CloseAfterPrintTest* test)
+    {
+        gtk_widget_destroy(GTK_WIDGET(webView));
+        test->m_webViewClosed = true;
+        if (test->m_printFinished)
+            g_main_loop_quit(test->m_mainLoop);
+    }
+
+    CloseAfterPrintTest()
+        : m_webViewClosed(false)
+        , m_printFinished(false)
+    {
+        webkit_settings_set_javascript_can_open_windows_automatically(webkit_web_view_get_settings(m_webView), TRUE);
+        g_signal_connect(m_webView, "create", G_CALLBACK(webViewCreate), this);
+    }
+
+    GtkWidget* createWebView()
+    {
+        GtkWidget* newWebView = webkit_web_view_new();
+        g_object_ref_sink(newWebView);
+
+        assertObjectIsDeletedWhenTestFinishes(G_OBJECT(newWebView));
+        g_signal_connect(newWebView, "print", G_CALLBACK(webViewPrint), this);
+        g_signal_connect(newWebView, "close", G_CALLBACK(webViewClosed), this);
+        return newWebView;
+    }
+
+    void print(WebKitPrintOperation* printOperation)
+    {
+        assertObjectIsDeletedWhenTestFinishes(G_OBJECT(printOperation));
+
+        GRefPtr<GtkPrinter> printer = adoptGRef(findPrintToFilePrinter());
+        if (!printer) {
+            g_message("%s", "Cannot test WebKitPrintOperation/print: no suitable printer found");
+            return;
+        }
+
+        GOwnPtr<char> outputFilename(g_build_filename(kTempDirectory, "webkit-close-after-print.pdf", NULL));
+        m_outputFile = adoptGRef(g_file_new_for_path(outputFilename.get()));
+        GOwnPtr<char> outputURI(g_file_get_uri(m_outputFile.get()));
+
+        GRefPtr<GtkPrintSettings> printSettings = adoptGRef(gtk_print_settings_new());
+        gtk_print_settings_set_printer(printSettings.get(), gtk_printer_get_name(printer.get()));
+        gtk_print_settings_set(printSettings.get(), GTK_PRINT_SETTINGS_OUTPUT_URI, outputURI.get());
+        webkit_print_operation_set_print_settings(printOperation, printSettings.get());
+
+        m_printOperation = printOperation;
+        g_signal_connect(m_printOperation.get(), "finished", G_CALLBACK(printOperationFinished), this);
+        webkit_print_operation_print(m_printOperation.get());
+    }
+
+    void printFinished()
+    {
+        m_printFinished = true;
+        m_printOperation = nullptr;
+        g_assert(m_outputFile);
+        g_file_delete(m_outputFile.get(), 0, 0);
+        m_outputFile = nullptr;
+        if (m_webViewClosed)
+            g_main_loop_quit(m_mainLoop);
+    }
+
+    void waitUntilPrintFinishedAndViewClosed()
+    {
+        g_main_loop_run(m_mainLoop);
+    }
+
+    GRefPtr<WebKitPrintOperation> m_printOperation;
+    GRefPtr<GFile> m_outputFile;
+    bool m_webViewClosed;
+    bool m_printFinished;
+};
+
+static void testPrintOperationCloseAfterPrint(CloseAfterPrintTest* test, gconstpointer)
+{
+    test->loadHtml("<html><body onLoad=\"w = window.open();w.print();w.close();\"></body></html>", 0);
+    test->waitUntilPrintFinishedAndViewClosed();
+}
 #endif // HAVE_GTK_UNIX_PRINTING
 
 void beforeAll()
@@ -201,6 +300,7 @@ void beforeAll()
 #ifdef HAVE_GTK_UNIX_PRINTING
     PrintTest::add("WebKitPrintOperation", "print", testPrintOperationPrint);
     PrintTest::add("WebKitPrintOperation", "print-errors", testPrintOperationErrors);
+    CloseAfterPrintTest::add("WebKitPrintOperation", "close-after-print", testPrintOperationCloseAfterPrint);
 #endif
 }
 

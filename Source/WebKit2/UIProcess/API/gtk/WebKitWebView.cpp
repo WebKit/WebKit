@@ -1678,12 +1678,12 @@ void webkitWebViewMouseTargetChanged(WebKitWebView* webView, WebHitTestResult* h
 void webkitWebViewPrintFrame(WebKitWebView* webView, WebFrameProxy* frame)
 {
     GRefPtr<WebKitPrintOperation> printOperation = adoptGRef(webkit_print_operation_new(webView));
+    webkitPrintOperationSetPrintMode(printOperation.get(), PrintInfo::PrintModeSync);
     gboolean returnValue;
     g_signal_emit(webView, signals[PRINT], 0, printOperation.get(), &returnValue);
     if (returnValue)
         return;
 
-    webkitPrintOperationSetPrintMode(printOperation.get(), PrintInfo::PrintModeSync);
     WebKitPrintOperationResponse response = webkitPrintOperationRunDialogForFrame(printOperation.get(), 0, frame);
     if (response == WEBKIT_PRINT_OPERATION_RESPONSE_CANCEL)
         return;

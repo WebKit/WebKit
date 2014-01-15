@@ -1,3 +1,20 @@
+2014-01-14  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] UI process crashes when the web process crashes while printing
+        https://bugs.webkit.org/show_bug.cgi?id=126977
+
+        Reviewed by Gustavo Noronha Silva.
+
+        When the web process crashes, the printing callback is
+        invalidated, so the function is called with a NULL error.
+
+        * UIProcess/API/gtk/WebKitPrintOperation.cpp:
+        (drawPagesForPrintingCompleted): Check wkError is not NULL before
+        trying to use it.
+        * UIProcess/API/gtk/WebKitWebView.cpp:
+        (webkitWebViewPrintFrame): Set the print mode of the operation
+        before emitting the print signal.
+
 2014-01-14  Brady Eidson  <beidson@apple.com>
 
         IDB: create object store support
