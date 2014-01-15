@@ -1,3 +1,10 @@
+2014-01-14  Daniel Bates  <dabates@apple.com>
+
+        [iOS] Move symbol __ZN7WebCore34registerQLPreviewConverterIfNeededEP5NSURLP8NSStringP6NSData to
+        section USE(QUICK_LOOK)
+
+        * WebCore.exp.in:
+
 2014-01-14  Anders Carlsson  <andersca@apple.com>
 
         Clean up DNSResolveQueue
