@@ -1,5 +1,18 @@
 2014-01-14  Simon Fraser  <simon.fraser@apple.com>
 
+        Fix header availability checks on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=127016
+
+        Reviewed by Andy Estes.
+
+        Make DOMTouch* and DOMGesture* headers public headers on iOS,
+        and fix MigrateHeaders.make to skip availability checks when
+        building for iOS.
+
+        * MigrateHeaders.make:
+
+2014-01-14  Simon Fraser  <simon.fraser@apple.com>
+
         Need to #import <WebCore/QuickLook.h>.
 
         * WebView/WebDataSource.mm:
