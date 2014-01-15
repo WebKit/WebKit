@@ -3241,7 +3241,7 @@
 		93F199BB08245E59001E9ABC /* WebCoreKeyboardUIMode.h in Headers */ = {isa = PBXBuildFile; fileRef = BE983D95052A2E0A00892D85 /* WebCoreKeyboardUIMode.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		93F199BE08245E59001E9ABC /* BlockExceptions.h in Headers */ = {isa = PBXBuildFile; fileRef = 65A640F00533BB1F0085E777 /* BlockExceptions.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		93F199DE08245E59001E9ABC /* Position.h in Headers */ = {isa = PBXBuildFile; fileRef = BE91FC8B06133666005E3790 /* Position.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		93F199E508245E59001E9ABC /* HTMLCanvasElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 51F6A3D60663BF04004D2919 /* HTMLCanvasElement.h */; };
+		93F199E508245E59001E9ABC /* HTMLCanvasElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 51F6A3D60663BF04004D2919 /* HTMLCanvasElement.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		93F199EC08245E59001E9ABC /* XSLStyleSheet.h in Headers */ = {isa = PBXBuildFile; fileRef = BC06F24A06D18A7E004A6FA3 /* XSLStyleSheet.h */; };
 		93F199ED08245E59001E9ABC /* XSLTProcessor.h in Headers */ = {isa = PBXBuildFile; fileRef = BC06F24C06D18A7E004A6FA3 /* XSLTProcessor.h */; };
 		93F199F008245E59001E9ABC /* WebCoreView.h in Headers */ = {isa = PBXBuildFile; fileRef = BE855F7F0701E83500239769 /* WebCoreView.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -23190,6 +23190,7 @@
 				E4B65A58132FA8E70070E7BE /* TileGrid.h in Headers */,
 				93F1992F08245E59001E9ABC /* Cursor.h in Headers */,
 				BC2272A20E82E87C00E7F975 /* CursorData.h in Headers */,
+				93F199E508245E59001E9ABC /* HTMLCanvasElement.h in Headers */,
 				868160D618766A130021E79D /* UserActivity.h in Headers */,
 				BC2272AD0E82E8F300E7F975 /* CursorList.h in Headers */,
 				62CD325A1157E57C0063B0A7 /* CustomEvent.h in Headers */,
@@ -23953,7 +23954,6 @@
 				A871DE2C0A152AC800B12A68 /* HTMLBodyElement.h in Headers */,
 				A8CFF7AA0A156978000A4234 /* HTMLBRElement.h in Headers */,
 				A81369D2097374F600D74463 /* HTMLButtonElement.h in Headers */,
-				93F199E508245E59001E9ABC /* HTMLCanvasElement.h in Headers */,
 				07969DC017D14151007FF842 /* JSRTCStatsCallback.h in Headers */,
 				A8DF3FD0097FA0FC0052981B /* HTMLCollection.h in Headers */,
 				977B3865122883E900B81FF8 /* HTMLConstructionSite.h in Headers */,

@@ -1,3 +1,22 @@
+2014-01-14  Roger Fong  <roger_fong@apple.com>
+
+        Add support for handling WebGL load policies.
+        https://bugs.webkit.org/show_bug.cgi?id=126935
+        <rdar://problem/15790448>.
+
+        Reviewed by Brent Fulgham.
+
+        * WebCore.xcodeproj/project.pbxproj: Copy over HTMLCanvasElement.h to the private headers directory.
+        * html/HTMLCanvasElement.cpp: Show the policy dialog and retrieve policies as necessary.
+        (WebCore::HTMLCanvasElement::getContext): Make sure that WebGL is allowed on the site.
+                                                  If it isn't, be sure to notify the frame loader client that
+                                                  the site is trying to create a WebGL context.
+        * loader/FrameLoaderClient.h:
+        (WebCore::FrameLoaderClient::webGLPolicyForHost): Used to get the WebGL load policy for a site.
+        * loader/FrameLoaderTypes.h:
+        * page/ChromeClient.h:
+        (WebCore::ChromeClient::webGLContextCreated): Called when a site is creating a WebGL context.
+
 2014-01-14  Anders Carlsson  <andersca@apple.com>
 
         Create separate progress tracker clients
