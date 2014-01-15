@@ -29,9 +29,12 @@
 
 namespace WebCore {
 
+class ScriptExecutionContext;
+
 class DocumentFragment : public ContainerNode {
 public:
     static PassRefPtr<DocumentFragment> create(Document&);
+    static PassRefPtr<DocumentFragment> create(ScriptExecutionContext&);
 
     void parseHTML(const String&, Element* contextElement, ParserContentPolicy = AllowScriptingContent);
     bool parseXML(const String&, Element* contextElement, ParserContentPolicy = AllowScriptingContent);

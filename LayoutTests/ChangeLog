@@ -1,3 +1,15 @@
+2014-01-15  László Langó  <llango.u-szeged@partner.samsung.com>
+
+        DocumentFragment should be constructable.
+        https://bugs.webkit.org/show_bug.cgi?id=115641
+
+        Reviewed by Ryosuke Niwa.
+
+        * fast/dom/DocumentFragment/document-fragment-constructor-expected.txt: Added.
+        * fast/dom/DocumentFragment/document-fragment-constructor.html: Added.
+        * fast/dom/dom-constructors-expected.txt:
+        * fast/dom/dom-constructors.html:
+
 2014-01-14  Ryosuke Niwa  <rniwa@webkit.org>
 
         Make DoYouEvenBench runnable by run-perf-tests

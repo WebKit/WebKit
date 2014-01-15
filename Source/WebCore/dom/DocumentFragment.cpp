@@ -41,6 +41,11 @@ PassRefPtr<DocumentFragment> DocumentFragment::create(Document& document)
     return adoptRef(new DocumentFragment(&document, Node::CreateDocumentFragment));
 }
 
+PassRefPtr<DocumentFragment> DocumentFragment::create(ScriptExecutionContext& context)
+{
+    return adoptRef(new DocumentFragment(&toDocument(context), Node::CreateDocumentFragment));
+}
+
 String DocumentFragment::nodeName() const
 {
     return "#document-fragment";
