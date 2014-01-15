@@ -1,3 +1,12 @@
+2014-01-15  Alberto Garcia  <berto@igalia.com>
+
+        [GTK] v2.3.3 fails to build in Debian / FreeBSD
+        https://bugs.webkit.org/show_bug.cgi?id=126502
+
+        Reviewed by Mark Lam.
+
+        * wtf/Platform.h: Add LLINT support to FreeBSD.
+
 2014-01-15  Anders Carlsson  <andersca@apple.com>
 
         Get rid of RefCountedCustomAllocated
