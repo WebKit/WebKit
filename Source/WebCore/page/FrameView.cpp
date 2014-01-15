@@ -832,7 +832,7 @@ GraphicsLayer* FrameView::layerForScrollCorner() const
     return renderView->compositor().layerForScrollCorner();
 }
 
-TiledBacking* FrameView::tiledBacking()
+TiledBacking* FrameView::tiledBacking() const
 {
     RenderView* renderView = this->renderView();
     if (!renderView)
@@ -2643,6 +2643,27 @@ void FrameView::updateBackgroundRecursively(const Color& backgroundColor, bool t
             view->setBaseBackgroundColor(backgroundColor);
         }
     }
+}
+
+bool FrameView::hasExtendedBackground() const
+{
+    if (!frame().settings().backgroundShouldExtendBeyondPage())
+        return false;
+
+    TiledBacking* tiledBacking = this->tiledBacking();
+    if (!tiledBacking)
+        return false;
+
+    return tiledBacking->hasMargins();
+}
+
+IntRect FrameView::extendedBackgroundRect() const
+{
+    TiledBacking* tiledBacking = this->tiledBacking();
+    if (!tiledBacking)
+        return IntRect();
+
+    return tiledBacking->bounds();
 }
 
 bool FrameView::shouldUpdateWhileOffscreen() const

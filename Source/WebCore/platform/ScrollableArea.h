@@ -208,7 +208,7 @@ public:
 #endif
 
 #if USE(ACCELERATED_COMPOSITING)
-    virtual TiledBacking* tiledBacking() { return 0; }
+    virtual TiledBacking* tiledBacking() const { return 0; }
     virtual bool usesCompositedScrolling() const { return false; }
 
     virtual GraphicsLayer* layerForHorizontalScrollbar() const { return 0; }

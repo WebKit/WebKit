@@ -1236,7 +1236,7 @@ RenderLayerModelObject* RenderObject::containerForRepaint() const
     return repaintContainer;
 }
 
-void RenderObject::repaintUsingContainer(const RenderLayerModelObject* repaintContainer, const IntRect& r, bool immediate) const
+void RenderObject::repaintUsingContainer(const RenderLayerModelObject* repaintContainer, const IntRect& r, bool immediate, bool shouldClipToLayer) const
 {
     if (!repaintContainer) {
         view().repaintViewRectangle(r, immediate);
@@ -1268,7 +1268,7 @@ void RenderObject::repaintUsingContainer(const RenderLayerModelObject* repaintCo
     
     if (v.usesCompositing()) {
         ASSERT(repaintContainer->hasLayer() && repaintContainer->layer()->isComposited());
-        repaintContainer->layer()->setBackingNeedsRepaintInRect(r);
+        repaintContainer->layer()->setBackingNeedsRepaintInRect(r, shouldClipToLayer ? GraphicsLayer::ClipToLayer : GraphicsLayer::DoNotClipToLayer);
     }
 #else
     if (repaintContainer->isRenderView())
@@ -1290,7 +1290,7 @@ void RenderObject::repaint(bool immediate) const
     repaintUsingContainer(repaintContainer ? repaintContainer : view, pixelSnappedIntRect(clippedOverflowRectForRepaint(repaintContainer)), immediate);
 }
 
-void RenderObject::repaintRectangle(const LayoutRect& r, bool immediate) const
+void RenderObject::repaintRectangle(const LayoutRect& r, bool immediate, bool shouldClipToLayer) const
 {
     // Don't repaint if we're unrooted (note that view() still returns the view when unrooted)
     RenderView* view;
@@ -1308,7 +1308,7 @@ void RenderObject::repaintRectangle(const LayoutRect& r, bool immediate) const
 
     RenderLayerModelObject* repaintContainer = containerForRepaint();
     computeRectForRepaint(repaintContainer, dirtyRect);
-    repaintUsingContainer(repaintContainer ? repaintContainer : view, pixelSnappedIntRect(dirtyRect), immediate);
+    repaintUsingContainer(repaintContainer ? repaintContainer : view, pixelSnappedIntRect(dirtyRect), immediate, shouldClipToLayer);
 }
 
 IntRect RenderObject::pixelSnappedAbsoluteClippedOverflowRect() const

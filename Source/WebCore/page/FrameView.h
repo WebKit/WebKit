@@ -150,7 +150,7 @@ public:
     GraphicsLayer* graphicsLayerForPlatformWidget(PlatformWidget);
     void scheduleLayerFlushAllowingThrottling();
 
-    virtual TiledBacking* tiledBacking() OVERRIDE;
+    virtual TiledBacking* tiledBacking() const OVERRIDE;
 
     // In the future when any ScrollableArea can have a node in th ScrollingTree, this should
     // become a virtual function on ScrollableArea.
@@ -192,6 +192,10 @@ public:
     Color baseBackgroundColor() const;
     void setBaseBackgroundColor(const Color&);
     void updateBackgroundRecursively(const Color&, bool);
+
+    // extendedBackgroundRect() is in the viewport's coordinate space. 
+    bool hasExtendedBackground() const;
+    IntRect extendedBackgroundRect() const;
 
     bool shouldUpdateWhileOffscreen() const;
     void setShouldUpdateWhileOffscreen(bool);

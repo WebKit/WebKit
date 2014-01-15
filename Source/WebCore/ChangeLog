@@ -1,3 +1,67 @@
+2014-01-15  Beth Dakin  <bdakin@apple.com>
+
+        Repeating background images should continue into margin tiles
+        https://bugs.webkit.org/show_bug.cgi?id=127021
+        -and corresponding-
+        <rdar://problem/15571300>
+
+        Reviewed by Simon Fraser.
+
+        This patch makes repeating background images continue into margin tiles. 
+
+        RenderObject::repaintRectangle() now takes an addition bool parameter which 
+        indicates whether or not the repaint rect should be clipped to the layer size.
+        * WebCore.exp.in:
+
+        These new functions on FrameView provide a way for code in the render tree to know 
+        if the TiledBacking has a margin. tiledBacking() is now const. It should have 
+        always been const, and it needs to be const to make these new functions const.
+        * page/FrameView.cpp:
+        (WebCore::FrameView::tiledBacking):
+        (WebCore::FrameView::hasExtendedBackground):
+        (WebCore::FrameView::extendedBackgroundRect):
+        * page/FrameView.h:
+        * platform/ScrollableArea.h:
+        (WebCore::ScrollableArea::tiledBacking):
+
+        If we’re painting the root background and it is an extended background, we need to 
+        inflate the repaint rect to span the extended background. 
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::repaintLayerRectsForImage):
+
+        To get the phase right on repeated background images on a page with margin tiles, 
+        we need to make sure we factor the size of the margin tiles into the left and top 
+        values that we use when calculating background image geometry.
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::calculateBackgroundImageGeometry):
+
+        setBackingNeedsRepaintInRect() now takes GraphicsLayer::ShouldClipToLayer as a 
+        parameter, just like setBackingNeedsRepaint(). 
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::calculateClipRects):
+
+        setContentsNeedDisplayInRect() also takes a GraphicsLayer::ShouldClipToLayer now, 
+        and it passes that information down to the GraphicsLayer.
+        * rendering/RenderLayer.h:
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::setContentsNeedDisplayInRect):
+        * rendering/RenderLayerBacking.h:
+
+        These two RenderObject functions now take an optional bool parameter which 
+        indicates whether or not the rect should be clipped to the layer size. They use a 
+        bool instead of the GraphicsLayer enum in order to avoid including GraphicsLayer.h 
+        from within RenderObject.h. This seems like a simpler solution than adding a new 
+        stand-alone file for this very simple enum.
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::repaintUsingContainer):
+        (WebCore::RenderObject::repaintRectangle):
+        * rendering/RenderObject.h:
+
+        RenderView::backgroundRect needs to return the extendedBackgroundRect when it had 
+        one.
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::backgroundRect):
+
 2014-01-15  Brian Burg  <bburg@apple.com>
 
         Web Inspector: capture probe samples on the backend

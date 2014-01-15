@@ -6315,7 +6315,7 @@ void RenderLayer::setBackingNeedsRepaint(GraphicsLayer::ShouldClipToLayer should
         backing()->setContentsNeedDisplay(shouldClip);
 }
 
-void RenderLayer::setBackingNeedsRepaintInRect(const LayoutRect& r)
+void RenderLayer::setBackingNeedsRepaintInRect(const LayoutRect& r, GraphicsLayer::ShouldClipToLayer shouldClip)
 {
     // https://bugs.webkit.org/show_bug.cgi?id=61159 describes an unreproducible crash here,
     // so assert but check that the layer is composited.
@@ -6330,7 +6330,7 @@ void RenderLayer::setBackingNeedsRepaintInRect(const LayoutRect& r)
 
         renderer().view().repaintViewRectangle(absRect);
     } else
-        backing()->setContentsNeedDisplayInRect(pixelSnappedIntRect(r));
+        backing()->setContentsNeedDisplayInRect(pixelSnappedIntRect(r), shouldClip);
 }
 
 // Since we're only painting non-composited layers, we know that they all share the same repaintContainer.

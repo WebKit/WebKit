@@ -1557,8 +1557,8 @@ bool RenderBox::repaintLayerRectsForImage(WrappedImagePtr image, const FillLayer
     for (const FillLayer* curLayer = layers; curLayer; curLayer = curLayer->next()) {
         if (curLayer->image() && image == curLayer->image()->data() && curLayer->image()->canRender(this, style().effectiveZoom())) {
             // Now that we know this image is being used, compute the renderer and the rect if we haven't already.
+            bool drawingRootBackground = drawingBackground && (isRoot() || (isBody() && !document().documentElement()->renderer()->hasBackground()));
             if (!layerRenderer) {
-                bool drawingRootBackground = drawingBackground && (isRoot() || (isBody() && !document().documentElement()->renderer()->hasBackground()));
                 if (drawingRootBackground) {
                     layerRenderer = &view();
 
@@ -1584,7 +1584,26 @@ bool RenderBox::repaintLayerRectsForImage(WrappedImagePtr image, const FillLayer
                 return true;
             }
             
-            layerRenderer->repaintRectangle(geometry.destRect());
+            IntRect rectToRepaint = geometry.destRect();
+            bool shouldClipToLayer = true;
+
+            // If this is the root background layer, we may need to extend the repaintRect if the FrameView has an
+            // extendedBackground. We should only extend the rect if it is already extending the full width or height
+            // of the rendererRect.
+            if (drawingRootBackground && view().frameView().hasExtendedBackground()) {
+                shouldClipToLayer = false;
+                IntRect extendedBackgroundRect = view().frameView().extendedBackgroundRect();
+                if (rectToRepaint.width() == rendererRect.width()) {
+                    rectToRepaint.move(extendedBackgroundRect.x(), 0);
+                    rectToRepaint.setWidth(extendedBackgroundRect.width());
+                }
+                if (rectToRepaint.height() == rendererRect.height()) {
+                    rectToRepaint.move(0, extendedBackgroundRect.y());
+                    rectToRepaint.setHeight(extendedBackgroundRect.height());
+                }
+            }
+
+            layerRenderer->repaintRectangle(rectToRepaint, false, shouldClipToLayer);
             if (geometry.destRect() == rendererRect)
                 return true;
         }
