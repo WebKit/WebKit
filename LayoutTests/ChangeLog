@@ -1,3 +1,27 @@
+2014-01-15  Frédéric Wang  <fred.wang@free.fr>
+
+        [SVG] Accept HTML and MathML namespaces as valid requiredExtensions
+        https://bugs.webkit.org/show_bug.cgi?id=88188
+
+        Reviewed by Chris Fleizach.
+
+        conditional-processing-1 verifies that indeed a renderer object is only
+        created for the first "valid" SVG element of a <switch>, contrary to
+        what an incorrect FIXME comment said. conditional-processing-2 verifies
+        that the <switch> takes into account XHTML and MathML namespaces in the
+        requiredExtensions attribute to decide which SVG element is "valid".
+        SVGTests.html verifies the SVGTests interface of SVG DOM: three
+        SVGStringList attributes (already tested in svg/dom/SVGStringList.html)
+        and the hasExtension() function.
+
+        * svg/custom/conditional-processing-1-expected.svg: Added.
+        * svg/custom/conditional-processing-1.svg: Added.
+        * svg/custom/conditional-processing-2-expected.html: Added.
+        * svg/custom/conditional-processing-2.html: Added.
+        * svg/dom/SVGTests-expected.txt: Added.
+        * svg/dom/SVGTests.html: Added.
+        * svg/dom/script-tests/SVGTests.js: Added.
+
 2014-01-15  Alexey Proskuryakov  <ap@apple.com>
 
         AX: Merge layout test from Mac and GTK checking accessibility roles

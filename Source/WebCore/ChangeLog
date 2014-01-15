@@ -1,3 +1,26 @@
+2014-01-15  Frédéric Wang  <fred.wang@free.fr>
+
+        [SVG] Accept HTML and MathML namespaces as valid requiredExtensions
+        https://bugs.webkit.org/show_bug.cgi?id=88188
+
+        Reviewed by Chris Fleizach.
+
+        When HTML and MathML are used as foreign objects of an SVG image, it is
+        important for Web authors to be able to specify a fallback content for
+        SVG-only readers or browsers without MathML support. We rely on the
+        requiredExtensions for that purpose and we use the XHTML/MathML
+        namespaces as suggested in SVG Tiny 1.2 and implemented in Gecko.
+
+        Tests: svg/custom/conditional-processing-1.svg
+               svg/custom/conditional-processing-2.html
+               svg/dom/SVGTests.html
+
+        * svg/SVGSwitchElement.cpp: Remove an incorrect FIXME comment and replace it with a reference to bug 74749.
+        (WebCore::SVGSwitchElement::childShouldCreateRenderer):
+        * svg/SVGTests.cpp: Check if the list of required extensions contains only the XHTML/MathML namespaces.
+        (WebCore::SVGTests::hasExtension):
+        (WebCore::SVGTests::isValid):
+
 2014-01-15  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r162066.
