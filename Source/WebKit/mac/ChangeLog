@@ -1,3 +1,17 @@
+2014-01-15  David Kilzer  <ddkilzer@apple.com>
+
+        [iOS] Missing RenderObject::style() symbol in WebDOMOperations.mm
+
+        Fixes the following linker error:
+
+            Undefined symbols for architecture x86_64:
+              "__ZNK7WebCore12RenderObject5styleEv", referenced from:
+                  -[DOMNode(WebDOMNodeOperations) isHorizontalWritingMode] in WebDOMOperations.o
+
+        * DOM/WebDOMOperations.mm: Include RenderElement.h instead of
+        RenderObject.h since the inline RenderObject::style() method
+        moved to the former header.
+
 2014-01-15  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r162054.
