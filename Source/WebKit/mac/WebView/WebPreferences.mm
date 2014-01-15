@@ -1097,6 +1097,11 @@ public:
 
 - (void)_updatePrivateBrowsingStateTo:(BOOL)enabled
 {
+    if (!_private) {
+        ASSERT(!enabled);
+        return;
+    }
+
     if (enabled == _private->inPrivateBrowsing)
         return;
     if (enabled > _private->inPrivateBrowsing) {
