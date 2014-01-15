@@ -1,3 +1,13 @@
+2014-01-15  Brent Fulgham  <bfulgham@apple.com>
+
+        Unreviewed test fix for Mountain Lion WebGL behavior.
+
+        Add Mountain Lion expected output matching ML's output of INVALID_OPERATION for improperly-sized textures.
+
+        * platform/mac-mountainlion/fast/canvas: Added.
+        * platform/mac-mountainlion/fast/canvas/webgl: Added.
+        * platform/mac-mountainlion/fast/canvas/webgl/webgl-compressed-texture-size-limit-expected.txt: Added.
+
 2014-01-15  Zan Dobersek  <zdobersek@igalia.com>
 
 
