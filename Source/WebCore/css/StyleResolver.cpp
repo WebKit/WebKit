@@ -54,6 +54,7 @@
 #include "CSSTimingFunctionValue.h"
 #include "CSSValueList.h"
 #include "CachedImage.h"
+#include "CachedResourceLoader.h"
 #include "CalculationValue.h"
 #include "ContentData.h"
 #include "Counter.h"
@@ -156,10 +157,6 @@
 #include "StyleShader.h"
 #include "WebKitCSSMixFunctionValue.h"
 #include "WebKitCSSShaderValue.h"
-#endif
-
-#if ENABLE(CSS_SHAPES)
-#include "CachedResourceLoader.h"
 #endif
 
 #if ENABLE(DASHBOARD_SUPPORT)
