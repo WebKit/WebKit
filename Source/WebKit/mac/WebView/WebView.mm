@@ -2316,16 +2316,7 @@ static bool needsSelfRetainWhileLoadingQuirk()
 #if !PLATFORM(IOS)
     settings.setExperimentalNotificationsEnabled([preferences experimentalNotificationsEnabled]);
 #endif
-
-    bool privateBrowsingEnabled = [preferences privateBrowsingEnabled];
-#if PLATFORM(MAC) || USE(CFNETWORK)
-    if (privateBrowsingEnabled)
-        WebFrameNetworkingContext::ensurePrivateBrowsingSession();
-    else
-        WebFrameNetworkingContext::destroyPrivateBrowsingSession();
-#endif
-    settings.setPrivateBrowsingEnabled(privateBrowsingEnabled);
-
+    settings.setPrivateBrowsingEnabled([preferences privateBrowsingEnabled]);
     settings.setSansSerifFontFamily([preferences sansSerifFontFamily]);
     settings.setSerifFontFamily([preferences serifFontFamily]);
     settings.setStandardFontFamily([preferences standardFontFamily]);

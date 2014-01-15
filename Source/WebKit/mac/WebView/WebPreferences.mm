@@ -70,6 +70,8 @@ enum { WebPreferencesVersion = 1 };
 static WebPreferences *_standardPreferences;
 static NSMutableDictionary *webPreferencesInstances;
 
+static unsigned webPreferencesInstanceCountWithPrivateBrowsingEnabled;
+
 static bool contains(const char* const array[], int count, const char* item)
 {
     if (!item)
@@ -170,7 +172,8 @@ struct WebPreferencesPrivate
 {
 public:
     WebPreferencesPrivate()
-    : autosaves(NO)
+    : inPrivateBrowsing(NO)
+    , autosaves(NO)
     , automaticallyDetectsCacheModel(NO)
     , numWebViews(0)
 #if PLATFORM(IOS)
@@ -187,6 +190,7 @@ public:
 #endif
 
     RetainPtr<NSMutableDictionary> values;
+    BOOL inPrivateBrowsing;
     RetainPtr<NSString> identifier;
     BOOL autosaves;
     BOOL automaticallyDetectsCacheModel;
@@ -264,6 +268,8 @@ public:
 
     [[self class] _setInstance:self forIdentifier:_private->identifier.get()];
 
+    [self _updatePrivateBrowsingStateTo:[self privateBrowsingEnabled]];
+
 #if PLATFORM(IOS)
     if (sendChangeNotification) {
         [self _postPreferencesChangedNotification];
@@ -320,6 +326,7 @@ public:
         self = [instance retain];
     } else {
         [[self class] _setInstance:self forIdentifier:_private->identifier.get()];
+        [self _updatePrivateBrowsingStateTo:[self privateBrowsingEnabled]];
     }
 
     return self;
@@ -360,6 +367,7 @@ public:
         [_standardPreferences setAutosaves:YES];
     }
 #else
+    // FIXME: This check is necessary to avoid recursion (see <rdar://problem/9564337>), but it also makes _standardPreferences construction not thread safe.
     if (_standardPreferences)
         return _standardPreferences;
 
@@ -600,6 +608,8 @@ public:
 
 - (void)dealloc
 {
+    [self _updatePrivateBrowsingStateTo:NO];
+
     delete _private;
     [super dealloc];
 }
@@ -1072,14 +1082,33 @@ public:
 }
 #endif
 
-- (void)setPrivateBrowsingEnabled:(BOOL)flag
+- (void)setPrivateBrowsingEnabled:(BOOL)enabled
 {
-    [self _setBoolValue:flag forKey:WebKitPrivateBrowsingEnabledPreferenceKey];
+    [self _updatePrivateBrowsingStateTo:enabled];
+    [self _setBoolValue:enabled forKey:WebKitPrivateBrowsingEnabledPreferenceKey];
 }
 
 - (BOOL)privateBrowsingEnabled
 {
-    return [self _boolValueForKey:WebKitPrivateBrowsingEnabledPreferenceKey];
+    // Changes to private browsing defaults do not have effect on existing WebPreferences, and must be done through -setPrivateBrowsingEnabled.
+    // This is needed to accurately track private browsing sessions in the process.
+    return _private->inPrivateBrowsing;
+}
+
+- (void)_updatePrivateBrowsingStateTo:(BOOL)enabled
+{
+    if (enabled == _private->inPrivateBrowsing)
+        return;
+    if (enabled > _private->inPrivateBrowsing) {
+        WebFrameNetworkingContext::ensurePrivateBrowsingSession();
+        ++webPreferencesInstanceCountWithPrivateBrowsingEnabled;
+    } else {
+        ASSERT(webPreferencesInstanceCountWithPrivateBrowsingEnabled);
+        --webPreferencesInstanceCountWithPrivateBrowsingEnabled;
+        if (!webPreferencesInstanceCountWithPrivateBrowsingEnabled)
+            WebFrameNetworkingContext::destroyPrivateBrowsingSession();
+    }
+    _private->inPrivateBrowsing = enabled;
 }
 
 - (void)setUsesPageCache:(BOOL)usesPageCache
@@ -2265,10 +2294,14 @@ static NSString *classIBCreatorID = nil;
 #if PLATFORM(IOS)
 - (void)_invalidateCachedPreferences
 {
+    BOOL privateBrowsingWasEnabled = [self privateBrowsingEnabled];
+
     dispatch_barrier_sync(_private->readWriteQueue, ^{
         if (_private->values)
             _private->values = adoptNS([[NSMutableDictionary alloc] init]);
     });
+
+    [self _updatePrivateBrowsingStateFrom:privateBrowsingWasEnabled to:[self privateBrowsingEnabled]];
 
     // Tell any live WebViews to refresh their preferences
     [self _postPreferencesChangedNotification];
@@ -2431,6 +2464,7 @@ static bool needsScreenFontsEnabledQuirk()
 {
 #if PLATFORM(IOS)
     // We don't want to write the setting out, so we just reset the default instead of storing the new setting.
+    // FIXME: This code removes any defaults previously registered by client process, which is not appropriate for this method to do.
     NSDictionary *dict = [NSDictionary dictionaryWithObject:[NSNumber numberWithInt:storageBlockingPolicy] forKey:WebKitStorageBlockingPolicyKey];
     [[NSUserDefaults standardUserDefaults] registerDefaults:dict];
 #else
