@@ -61,6 +61,7 @@ public:
     virtual bool rollbackTransaction(const IDBTransactionIdentifier&) OVERRIDE;
 
     virtual bool changeDatabaseVersion(const IDBTransactionIdentifier&, uint64_t newVersion) OVERRIDE;
+    virtual bool createObjectStore(const IDBTransactionIdentifier&, const WebCore::IDBObjectStoreMetadata&) OVERRIDE;
 
 private:
     UniqueIDBDatabaseBackingStoreSQLite(const UniqueIDBDatabaseIdentifier&, const String& databaseDirectory);

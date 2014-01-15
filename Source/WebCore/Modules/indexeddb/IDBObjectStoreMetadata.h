@@ -26,60 +26,44 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef IDBDatabaseMetadata_h
-#define IDBDatabaseMetadata_h
+#ifndef IDBObjectStoreMetadata_h
+#define IDBObjectStoreMetadata_h
 
-#include "IDBObjectStoreMetadata.h"
+#include "IDBIndexMetadata.h"
 
 #if ENABLE(INDEXED_DATABASE)
 
 namespace WebCore {
 
-struct IDBDatabaseMetadata {
-
-    // FIXME: These are only here to support the LevelDB backend which incorrectly handles versioning.
-    // Once LevelDB supports a single, uint64_t version and throws out the old string version, these
-    // should be gotten rid of.
-    // Also, "NoIntVersion" used to be a magic number of -1, which doesn't work with the new unsigned type.
-    // Changing the value to INT64_MAX here seems like a reasonable temporary fix as the current LevelDB
-    // already cannot represent valid version numbers between INT64_MAX and UINT64_MAX.
-
-#ifndef INT64_MAX
-#define INT64_MAX 9223372036854775807LL
-#endif
-
-    enum {
-        NoIntVersion = INT64_MAX,
-        DefaultIntVersion = 0
-    };
-
-    IDBDatabaseMetadata()
-        : id(0)
-        , version(0)
-        , maxObjectStoreId(0)
+struct IDBObjectStoreMetadata {
+    IDBObjectStoreMetadata()
     {
     }
 
-    IDBDatabaseMetadata(const String& name, int64_t id, uint64_t version, int64_t maxObjectStoreId)
+    IDBObjectStoreMetadata(const String& name, int64_t id, const IDBKeyPath& keyPath, bool autoIncrement, int64_t maxIndexId)
         : name(name)
         , id(id)
-        , version(version)
-        , maxObjectStoreId(maxObjectStoreId)
+        , keyPath(keyPath)
+        , autoIncrement(autoIncrement)
+        , maxIndexId(maxIndexId)
     {
     }
 
     String name;
     int64_t id;
-    uint64_t version;
-    int64_t maxObjectStoreId;
+    IDBKeyPath keyPath;
+    bool autoIncrement;
+    int64_t maxIndexId;
 
-    typedef HashMap<int64_t, IDBObjectStoreMetadata> ObjectStoreMap;
-    ObjectStoreMap objectStores;
+    static const int64_t InvalidId = -1;
 
-    IDBDatabaseMetadata isolatedCopy() const;
+    typedef HashMap<int64_t, IDBIndexMetadata> IndexMap;
+    IndexMap indexes;
+
+    IDBObjectStoreMetadata isolatedCopy() const;
 };
 
 } // namespace WebCore
 
 #endif // ENABLE(INDEXED_DATABASE)
-#endif // IDBDatabaseMetadata_h
+#endif // IDBObjectStoreMetadata_h

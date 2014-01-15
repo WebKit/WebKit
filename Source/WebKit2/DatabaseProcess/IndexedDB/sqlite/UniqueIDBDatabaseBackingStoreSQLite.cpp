@@ -28,6 +28,8 @@
 
 #if ENABLE(INDEXED_DATABASE) && ENABLE(DATABASE_PROCESS)
 
+#include "ArgumentDecoder.h"
+#include "IDBSerialization.h"
 #include "SQLiteIDBTransaction.h"
 #include <WebCore/FileSystem.h>
 #include <WebCore/IDBDatabaseMetadata.h>
@@ -75,6 +77,18 @@ std::unique_ptr<WebCore::IDBDatabaseMetadata> UniqueIDBDatabaseBackingStoreSQLit
         return nullptr;
     }
 
+    if (!m_sqliteDB->executeCommand("CREATE TABLE ObjectStoreInfo (id INTEGER PRIMARY KEY NOT NULL ON CONFLICT FAIL UNIQUE ON CONFLICT FAIL, name TEXT NOT NULL ON CONFLICT FAIL UNIQUE ON CONFLICT FAIL, keyPath BLOB NOT NULL ON CONFLICT FAIL, autoInc INTEGER NOT NULL ON CONFLICT FAIL, maxIndexID INTEGER NOT NULL ON CONFLICT FAIL);")) {
+        LOG_ERROR("Could not create ObjectStoreInfo table in database (%i) - %s", m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg());
+        m_sqliteDB = nullptr;
+        return nullptr;
+    }
+
+    if (!m_sqliteDB->executeCommand("CREATE TABLE IndexInfo (id INTEGER PRIMARY KEY NOT NULL ON CONFLICT FAIL, name TEXT NOT NULL ON CONFLICT FAIL UNIQUE ON CONFLICT FAIL, objectStoreID INTEGER NOT NULL ON CONFLICT FAIL, keyPath BLOB NOT NULL ON CONFLICT FAIL, isUnique INTEGER NOT NULL ON CONFLICT FAIL, multiEntry INTEGER NOT NULL ON CONFLICT FAIL);")) {
+        LOG_ERROR("Could not create IndexInfo table in database (%i) - %s", m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg());
+        m_sqliteDB = nullptr;
+        return nullptr;
+    }
+
     {
         SQLiteStatement sql(*m_sqliteDB, ASCIILiteral("INSERT INTO IDBDatabaseInfo VALUES ('MetadataVersion', ?);"));
         if (sql.prepare() != SQLResultOk
@@ -108,10 +122,17 @@ std::unique_ptr<WebCore::IDBDatabaseMetadata> UniqueIDBDatabaseBackingStoreSQLit
         }
     }
 
+    if (!m_sqliteDB->executeCommand(ASCIILiteral("INSERT INTO IDBDatabaseInfo VALUES ('MaxObjectStoreID', 1);"))) {
+        LOG_ERROR("Could not insert default version into IDBDatabaseInfo table (%i) - %s", m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg());
+        m_sqliteDB = nullptr;
+        return nullptr;
+    }
+
     // This initial metadata matches the default values we just put into the metadata database.
     auto metadata = std::make_unique<IDBDatabaseMetadata>();
     metadata->name = m_identifier.databaseName();
     metadata->version = 0;
+    metadata->maxObjectStoreId = 1;
 
     return metadata;
 }
@@ -154,7 +175,42 @@ std::unique_ptr<IDBDatabaseMetadata> UniqueIDBDatabaseBackingStoreSQLite::extrac
         }
     }
 
-    // FIXME: Once we save ObjectStores and indexes we need to extract their metadata, also.
+    {
+        SQLiteStatement sql(*m_sqliteDB, ASCIILiteral("SELECT id, name, keyPath, autoInc, maxIndexID FROM ObjectStoreInfo;"));
+        if (sql.prepare() != SQLResultOk)
+            return nullptr;
+
+        int result = sql.step();
+        while (result == SQLResultRow) {
+            IDBObjectStoreMetadata metadata;
+            metadata.id = sql.getColumnInt64(0);
+            metadata.name = sql.getColumnText(1);
+
+            int keyPathSize;
+            const uint8_t* keyPathBuffer = static_cast<const uint8_t*>(sql.getColumnBlob(2, keyPathSize));
+
+            std::unique_ptr<IDBKeyPath> keyPath = deserializeIDBKeyPath(keyPathBuffer, keyPathSize);
+
+            if (!keyPath) {
+                LOG_ERROR("Unable to extract key path metadata from database");
+                return nullptr;
+            }
+
+            metadata.keyPath = *keyPath;
+            metadata.autoIncrement = sql.getColumnInt(3);
+            metadata.maxIndexId = sql.getColumnInt64(4);
+
+            result = sql.step();
+        }
+
+        if (result != SQLResultDone) {
+            LOG_ERROR("Error fetching object store metadata from database on disk");
+            return nullptr;
+        }
+    }
+
+    // FIXME: Once we save indexes we need to extract their metadata, also.
+
     return metadata;
 }
 
@@ -285,6 +341,43 @@ bool UniqueIDBDatabaseBackingStoreSQLite::changeDatabaseVersion(const IDBTransac
             LOG_ERROR("Could not update database version in IDBDatabaseInfo table (%i) - %s", m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg());
             return false;
         }
+    }
+
+    return true;
+}
+
+bool UniqueIDBDatabaseBackingStoreSQLite::createObjectStore(const IDBTransactionIdentifier& identifier, const IDBObjectStoreMetadata& metadata)
+{
+    ASSERT(!isMainThread());
+    ASSERT(m_sqliteDB);
+    ASSERT(m_sqliteDB->isOpen());
+
+    SQLiteIDBTransaction* transaction = m_transactions.get(identifier);
+    if (!transaction || !transaction->inProgress()) {
+        LOG_ERROR("Attempt to change database version with an establish, in-progress transaction");
+        return false;
+    }
+    if (transaction->mode() != IndexedDB::TransactionMode::VersionChange) {
+        LOG_ERROR("Attempt to change database version during a non version-change transaction");
+        return false;
+    }
+
+    std::unique_ptr<Vector<uint8_t>> keyPathBlob = serializeIDBKeyPath(metadata.keyPath);
+    if (!keyPathBlob) {
+        LOG_ERROR("Unable to serialize IDBKeyPath to save in database");
+        return false;
+    }
+
+    SQLiteStatement sql(*m_sqliteDB, ASCIILiteral("INSERT INTO ObjectStoreInfo VALUES (?, ?, ?, ?, ?);"));
+    if (sql.prepare() != SQLResultOk
+        || sql.bindInt64(1, metadata.id) != SQLResultOk
+        || sql.bindText(2, metadata.name) != SQLResultOk
+        || sql.bindBlob(3, keyPathBlob->data(), keyPathBlob->size()) != SQLResultOk
+        || sql.bindInt(4, metadata.autoIncrement) != SQLResultOk
+        || sql.bindInt64(5, metadata.maxIndexId) != SQLResultOk
+        || sql.step() != SQLResultDone) {
+        LOG_ERROR("Could not add object store '%s' to in ObjectStoreInfo table (%i) - %s", metadata.name.utf8().data(), m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg());
+        return false;
     }
 
     return true;

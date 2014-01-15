@@ -32,6 +32,7 @@ messages -> WebIDBServerConnection LegacyReceiver {
     DidRollbackTransaction(uint64_t requestID, bool success)
 
     DidChangeDatabaseVersion(uint64_t requestID, bool success)
+    DidCreateObjectStore(uint64_t requestID, bool success)
 }
 
 #endif // ENABLE(INDEXED_DATABASE) && ENABLE(DATABASE_PROCESS)

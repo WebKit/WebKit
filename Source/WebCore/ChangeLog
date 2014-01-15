@@ -1,3 +1,26 @@
+2014-01-14  Brady Eidson  <beidson@apple.com>
+
+        IDB: create object store support
+        <rdar://problem/15779639> and https://bugs.webkit.org/show_bug.cgi?id=127011
+
+        Reviewed by Anders Carlsson.
+
+        Split the 3 objects declared in IDBDatabaseMetadata into their own header files:
+        * Modules/indexeddb/IDBDatabaseMetadata.h:
+        * Modules/indexeddb/IDBIndexMetadata.h:
+        (WebCore::IDBIndexMetadata::IDBIndexMetadata):
+        * Modules/indexeddb/IDBObjectStoreMetadata.h:
+        (WebCore::IDBObjectStoreMetadata::IDBObjectStoreMetadata):
+
+        Add cross thread copying for IDBDatabaseMetadata:
+        * platform/CrossThreadCopier.cpp:
+        (WebCore::IDBIndexMetadata>::copy):
+        (WebCore::IDBObjectStoreMetadata>::copy):
+        * platform/CrossThreadCopier.h:
+
+        * WebCore.exp.in:
+        * WebCore.xcodeproj/project.pbxproj:
+
 2014-01-14  Joseph Pecoraro  <pecoraro@apple.com>
 
         [iOS] Crash in NavigatorBase::vendor loading apple.com

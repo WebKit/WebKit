@@ -683,6 +683,8 @@
 		51829DA61637C70C000953D6 /* NetworkResourceLoadScheduler.h in Headers */ = {isa = PBXBuildFile; fileRef = 51829DA41637C70C000953D6 /* NetworkResourceLoadScheduler.h */; };
 		51834592134532E90092B696 /* WebIconDatabaseClient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51834590134532E80092B696 /* WebIconDatabaseClient.cpp */; };
 		51834593134532E90092B696 /* WebIconDatabaseClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 51834591134532E80092B696 /* WebIconDatabaseClient.h */; };
+		518353DA1885BF8C00D9FE44 /* IDBSerialization.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 518353D81885BF8C00D9FE44 /* IDBSerialization.cpp */; };
+		518353DB1885BF8C00D9FE44 /* IDBSerialization.h in Headers */ = {isa = PBXBuildFile; fileRef = 518353D91885BF8C00D9FE44 /* IDBSerialization.h */; };
 		5183DDEC1630BDFC008BE5C7 /* NetworkProcessConnection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5105B0D4162F7A7A00E27709 /* NetworkProcessConnection.cpp */; };
 		51871B5B127CB89D00F76232 /* WebContextMenu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51871B59127CB89D00F76232 /* WebContextMenu.cpp */; };
 		51871B5C127CB89D00F76232 /* WebContextMenu.h in Headers */ = {isa = PBXBuildFile; fileRef = 51871B5A127CB89D00F76232 /* WebContextMenu.h */; };
@@ -2333,6 +2335,8 @@
 		51829DA41637C70C000953D6 /* NetworkResourceLoadScheduler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NetworkResourceLoadScheduler.h; path = NetworkProcess/NetworkResourceLoadScheduler.h; sourceTree = "<group>"; };
 		51834590134532E80092B696 /* WebIconDatabaseClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebIconDatabaseClient.cpp; sourceTree = "<group>"; };
 		51834591134532E80092B696 /* WebIconDatabaseClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebIconDatabaseClient.h; sourceTree = "<group>"; };
+		518353D81885BF8C00D9FE44 /* IDBSerialization.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IDBSerialization.cpp; sourceTree = "<group>"; };
+		518353D91885BF8C00D9FE44 /* IDBSerialization.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDBSerialization.h; sourceTree = "<group>"; };
 		5183B3931379F85C00E8754E /* Shim.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Shim.xcconfig; sourceTree = "<group>"; };
 		5184BC4A132E907A006B9E28 /* WebIconDatabase.messages.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebIconDatabase.messages.in; sourceTree = "<group>"; };
 		51871B59127CB89D00F76232 /* WebContextMenu.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebContextMenu.cpp; sourceTree = "<group>"; };
@@ -4510,6 +4514,8 @@
 				51D0D42E183B34130097041D /* DatabaseProcessIDBConnection.cpp */,
 				51D0D42F183B34130097041D /* DatabaseProcessIDBConnection.h */,
 				51D0D430183B34130097041D /* DatabaseProcessIDBConnection.messages.in */,
+				518353D81885BF8C00D9FE44 /* IDBSerialization.cpp */,
+				518353D91885BF8C00D9FE44 /* IDBSerialization.h */,
 				51D54A72185BAC42000CAED2 /* IDBTransactionIdentifier.h */,
 				515E772D184015800007203F /* UniqueIDBDatabase.cpp */,
 				515E772E184015800007203F /* UniqueIDBDatabase.h */,
@@ -6408,6 +6414,7 @@
 				31D5929F166E060000E6BF02 /* WebPlugInClient.h in Headers */,
 				1AC8702D130B49A2002C1257 /* WebPluginSiteDataManager.h in Headers */,
 				BCB9F8B01124E07700A137E0 /* WebPolicyClient.h in Headers */,
+				518353DB1885BF8C00D9FE44 /* IDBSerialization.h in Headers */,
 				BC5744F012638FB3006F0F12 /* WebPopupItem.h in Headers */,
 				51D54A73185BAC42000CAED2 /* IDBTransactionIdentifier.h in Headers */,
 				D3B9484711FF4B6500032B39 /* WebPopupMenu.h in Headers */,
@@ -7512,6 +7519,7 @@
 				51DD9F2816367DA2001578E9 /* NetworkConnectionToWebProcessMessageReceiver.cpp in Sources */,
 				51795568162876CF00FA43B6 /* NetworkProcess.cpp in Sources */,
 				5183DDEC1630BDFC008BE5C7 /* NetworkProcessConnection.cpp in Sources */,
+				518353DA1885BF8C00D9FE44 /* IDBSerialization.cpp in Sources */,
 				517CF0E3163A486C00C2950E /* NetworkProcessConnectionMessageReceiver.cpp in Sources */,
 				51795570162877CF00FA43B6 /* NetworkProcessCreationParameters.cpp in Sources */,
 				51795567162876CB00FA43B6 /* NetworkProcessMac.mm in Sources */,

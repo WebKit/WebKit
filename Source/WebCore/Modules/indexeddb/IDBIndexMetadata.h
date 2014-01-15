@@ -26,60 +26,43 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef IDBDatabaseMetadata_h
-#define IDBDatabaseMetadata_h
+#ifndef IDBIndexMetadata_h
+#define IDBIndexMetadata_h
 
-#include "IDBObjectStoreMetadata.h"
+#include "IDBKeyPath.h"
+#include <wtf/HashMap.h>
+#include <wtf/text/WTFString.h>
 
 #if ENABLE(INDEXED_DATABASE)
 
 namespace WebCore {
 
-struct IDBDatabaseMetadata {
-
-    // FIXME: These are only here to support the LevelDB backend which incorrectly handles versioning.
-    // Once LevelDB supports a single, uint64_t version and throws out the old string version, these
-    // should be gotten rid of.
-    // Also, "NoIntVersion" used to be a magic number of -1, which doesn't work with the new unsigned type.
-    // Changing the value to INT64_MAX here seems like a reasonable temporary fix as the current LevelDB
-    // already cannot represent valid version numbers between INT64_MAX and UINT64_MAX.
-
-#ifndef INT64_MAX
-#define INT64_MAX 9223372036854775807LL
-#endif
-
-    enum {
-        NoIntVersion = INT64_MAX,
-        DefaultIntVersion = 0
-    };
-
-    IDBDatabaseMetadata()
-        : id(0)
-        , version(0)
-        , maxObjectStoreId(0)
+struct IDBIndexMetadata {
+    IDBIndexMetadata()
     {
     }
 
-    IDBDatabaseMetadata(const String& name, int64_t id, uint64_t version, int64_t maxObjectStoreId)
+    IDBIndexMetadata(const String& name, int64_t id, const IDBKeyPath& keyPath, bool unique, bool multiEntry)
         : name(name)
         , id(id)
-        , version(version)
-        , maxObjectStoreId(maxObjectStoreId)
+        , keyPath(keyPath)
+        , unique(unique)
+        , multiEntry(multiEntry)
     {
     }
 
     String name;
     int64_t id;
-    uint64_t version;
-    int64_t maxObjectStoreId;
+    IDBKeyPath keyPath;
+    bool unique;
+    bool multiEntry;
 
-    typedef HashMap<int64_t, IDBObjectStoreMetadata> ObjectStoreMap;
-    ObjectStoreMap objectStores;
+    IDBIndexMetadata isolatedCopy() const;
 
-    IDBDatabaseMetadata isolatedCopy() const;
+    static const int64_t InvalidId = -1;
 };
 
 } // namespace WebCore
 
 #endif // ENABLE(INDEXED_DATABASE)
-#endif // IDBDatabaseMetadata_h
+#endif // IDBIndexMetadata_h

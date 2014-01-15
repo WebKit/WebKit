@@ -1,3 +1,49 @@
+2014-01-14  Brady Eidson  <beidson@apple.com>
+
+        IDB: create object store support
+        <rdar://problem/15779639> and https://bugs.webkit.org/show_bug.cgi?id=127011
+
+        Reviewed by Anders Carlsson.
+
+        Add messaging/callback infrastructure for creating object stores:
+        * DatabaseProcess/IndexedDB/DatabaseProcessIDBConnection.cpp:
+        (WebKit::DatabaseProcessIDBConnection::createObjectStore):
+        * DatabaseProcess/IndexedDB/DatabaseProcessIDBConnection.h:
+        * DatabaseProcess/IndexedDB/DatabaseProcessIDBConnection.messages.in:
+
+        * WebProcess/Databases/IndexedDB/WebIDBServerConnection.cpp:
+        (WebKit::WebIDBServerConnection::createObjectStore):
+        (WebKit::WebIDBServerConnection::didCreateObjectStore):
+        * WebProcess/Databases/IndexedDB/WebIDBServerConnection.h:
+        * WebProcess/Databases/IndexedDB/WebIDBServerConnection.messages.in:
+
+        * DatabaseProcess/IndexedDB/UniqueIDBDatabase.cpp:
+        (WebKit::UniqueIDBDatabase::didChangeDatabaseVersion):
+        (WebKit::UniqueIDBDatabase::didCreateObjectStore):
+        (WebKit::UniqueIDBDatabase::didCompleteBoolRequest):
+        (WebKit::UniqueIDBDatabase::createObjectStore):
+        (WebKit::UniqueIDBDatabase::createObjectStoreInBackingStore):
+        * DatabaseProcess/IndexedDB/UniqueIDBDatabase.h:
+
+        * DatabaseProcess/IndexedDB/UniqueIDBDatabaseBackingStore.h:
+
+        Add serialization helpers to save/restore an IDBKeyPath to/from disk:
+        * DatabaseProcess/IndexedDB/IDBSerialization.cpp:
+        (WebKit::serializeIDBKeyPath):
+        (WebKit::deserializeIDBKeyPath):
+        * DatabaseProcess/IndexedDB/IDBSerialization.h:
+
+        Add object store metadata to the schema, and save/restore the metadata:
+        * DatabaseProcess/IndexedDB/sqlite/UniqueIDBDatabaseBackingStoreSQLite.cpp:
+        (WebKit::UniqueIDBDatabaseBackingStoreSQLite::createAndPopulateInitialMetadata):
+        (WebKit::UniqueIDBDatabaseBackingStoreSQLite::extractExistingMetadata):
+        (WebKit::UniqueIDBDatabaseBackingStoreSQLite::createObjectStore):
+        * DatabaseProcess/IndexedDB/sqlite/UniqueIDBDatabaseBackingStoreSQLite.h:
+
+        * Scripts/webkit2/messages.py:
+        (struct_or_class):
+        * WebKit2.xcodeproj/project.pbxproj:
+
 2014-01-14  Jae Hyun Park  <jae.park@company100.net>
 
         [GTK] Unreviewed build fix after r162034

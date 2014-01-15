@@ -93,6 +93,16 @@ CrossThreadCopierBase<false, false, IDBDatabaseMetadata>::Type CrossThreadCopier
     return metadata.isolatedCopy();
 }
 
+CrossThreadCopierBase<false, false, IDBIndexMetadata>::Type CrossThreadCopierBase<false, false, IDBIndexMetadata>::copy(const IDBIndexMetadata& metadata)
+{
+    return metadata.isolatedCopy();
+}
+
+CrossThreadCopierBase<false, false, IDBObjectStoreMetadata>::Type CrossThreadCopierBase<false, false, IDBObjectStoreMetadata>::copy(const IDBObjectStoreMetadata& metadata)
+{
+    return metadata.isolatedCopy();
+}
+
 #endif
 
 // Test CrossThreadCopier using COMPILE_ASSERT.

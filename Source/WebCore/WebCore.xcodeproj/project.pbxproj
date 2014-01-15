@@ -1879,6 +1879,8 @@
 		51ABAE1B103C18FF008C5260 /* SocketStreamError.h in Headers */ = {isa = PBXBuildFile; fileRef = 51ABAE1A103C18FF008C5260 /* SocketStreamError.h */; };
 		51ABAE1E103C1913008C5260 /* SocketStreamHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = 51ABAE1C103C1913008C5260 /* SocketStreamHandle.h */; };
 		51ABAE1F103C1913008C5260 /* SocketStreamHandleCFNet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51ABAE1D103C1913008C5260 /* SocketStreamHandleCFNet.cpp */; };
+		51ABB5B8186D0ED1008391A1 /* IDBIndexMetadata.h in Headers */ = {isa = PBXBuildFile; fileRef = 51ABB5B6186D0ED1008391A1 /* IDBIndexMetadata.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		51ABB5B9186D0ED1008391A1 /* IDBObjectStoreMetadata.h in Headers */ = {isa = PBXBuildFile; fileRef = 51ABB5B7186D0ED1008391A1 /* IDBObjectStoreMetadata.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		51ABF64D16392E2800132A7A /* LoaderStrategy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51ABF64C16392E2800132A7A /* LoaderStrategy.cpp */; };
 		51AF503616F100F60095B2E8 /* ResourceLoaderTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = 51AF503516F100F60095B2E8 /* ResourceLoaderTypes.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		51B07A441823248B00AA8D1A /* IDBPendingDeleteCall.h in Headers */ = {isa = PBXBuildFile; fileRef = 51B07A431823248B00AA8D1A /* IDBPendingDeleteCall.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -8831,6 +8833,8 @@
 		51ABAE1A103C18FF008C5260 /* SocketStreamError.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SocketStreamError.h; sourceTree = "<group>"; };
 		51ABAE1C103C1913008C5260 /* SocketStreamHandle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SocketStreamHandle.h; sourceTree = "<group>"; };
 		51ABAE1D103C1913008C5260 /* SocketStreamHandleCFNet.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SocketStreamHandleCFNet.cpp; sourceTree = "<group>"; };
+		51ABB5B6186D0ED1008391A1 /* IDBIndexMetadata.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDBIndexMetadata.h; sourceTree = "<group>"; };
+		51ABB5B7186D0ED1008391A1 /* IDBObjectStoreMetadata.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDBObjectStoreMetadata.h; sourceTree = "<group>"; };
 		51ABF64C16392E2800132A7A /* LoaderStrategy.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LoaderStrategy.cpp; sourceTree = "<group>"; };
 		51AF503516F100F60095B2E8 /* ResourceLoaderTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ResourceLoaderTypes.h; sourceTree = "<group>"; };
 		51B07A431823248B00AA8D1A /* IDBPendingDeleteCall.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDBPendingDeleteCall.h; sourceTree = "<group>"; };
@@ -17687,6 +17691,7 @@
 				51D7198E181106E00016DC51 /* IDBIndex.cpp */,
 				51D7198F181106E00016DC51 /* IDBIndex.h */,
 				51D71990181106E00016DC51 /* IDBIndex.idl */,
+				51ABB5B6186D0ED1008391A1 /* IDBIndexMetadata.h */,
 				51D71991181106E00016DC51 /* IDBKey.cpp */,
 				51D71992181106E00016DC51 /* IDBKey.h */,
 				51D71993181106E00016DC51 /* IDBKeyPath.cpp */,
@@ -17697,6 +17702,7 @@
 				51D71999181106E00016DC51 /* IDBObjectStore.cpp */,
 				51D7199A181106E00016DC51 /* IDBObjectStore.h */,
 				51D7199B181106E00016DC51 /* IDBObjectStore.idl */,
+				51ABB5B7186D0ED1008391A1 /* IDBObjectStoreMetadata.h */,
 				51D7199C181106E00016DC51 /* IDBOpenDBRequest.cpp */,
 				51D7199D181106E00016DC51 /* IDBOpenDBRequest.h */,
 				51D7199E181106E00016DC51 /* IDBOpenDBRequest.idl */,
@@ -23687,6 +23693,7 @@
 				FC9A0F75164094CF003D6B8D /* DOMWindowCSS.h in Headers */,
 				51FA2D78152132B300C1BA0B /* DOMWindowExtension.h in Headers */,
 				97B38E27151C4271004622E9 /* DOMWindowNotifications.h in Headers */,
+				51ABB5B9186D0ED1008391A1 /* IDBObjectStoreMetadata.h in Headers */,
 				97D2AD0414B823A60093DF32 /* DOMWindowProperty.h in Headers */,
 				0779BF0E18453168000B6AE7 /* HTMLMediaElementMediaStream.h in Headers */,
 				89F60B11157F686E0075E157 /* DOMWindowQuota.h in Headers */,
@@ -24257,6 +24264,7 @@
 				14CF78A609F58CD800EB3665 /* JSCSSValue.h in Headers */,
 				A8D05FAC0A23B30F005E7203 /* JSCSSValueList.h in Headers */,
 				E4778B80115A581A00B5D372 /* JSCustomEvent.h in Headers */,
+				51ABB5B8186D0ED1008391A1 /* IDBIndexMetadata.h in Headers */,
 				E10B937C0B73C00A003ED890 /* JSCustomXPathNSResolver.h in Headers */,
 				073BE34117D17E01002BD431 /* JSNavigatorMediaStream.h in Headers */,
 				1AE82F900CAAFA9D002237AE /* JSDatabase.h in Headers */,

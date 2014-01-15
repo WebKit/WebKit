@@ -313,10 +313,48 @@ void UniqueIDBDatabase::changeDatabaseVersion(const IDBTransactionIdentifier& id
 
 void UniqueIDBDatabase::didChangeDatabaseVersion(uint64_t requestID, bool success)
 {
+    didCompleteBoolRequest(requestID, success);
+}
+
+void UniqueIDBDatabase::didCreateObjectStore(uint64_t requestID, bool success)
+{
+    didCompleteBoolRequest(requestID, success);
+}
+
+void UniqueIDBDatabase::didCompleteBoolRequest(uint64_t requestID, bool success)
+{
     RefPtr<AsyncRequest> request = m_pendingDatabaseTasks.take(requestID);
     ASSERT(request);
 
     request->completeRequest(success);
+}
+
+void UniqueIDBDatabase::createObjectStore(const IDBTransactionIdentifier& identifier, const WebCore::IDBObjectStoreMetadata& metadata, std::function<void(bool)> successCallback)
+{
+    ASSERT(isMainThread());
+
+    if (!m_acceptingNewRequests) {
+        successCallback(false);
+        return;
+    }
+
+    ASSERT(!m_metadata->objectStores.contains(metadata.id));
+    m_metadata->objectStores.set(metadata.id, metadata);
+    int64_t addedObjectStoreID = metadata.id;
+
+    RefPtr<AsyncRequest> request = AsyncRequestImpl<bool>::create([this, addedObjectStoreID, successCallback](bool success) {
+        if (!success)
+            m_metadata->objectStores.remove(addedObjectStoreID);
+        successCallback(success);
+    }, [this, addedObjectStoreID, successCallback]() {
+        m_metadata->objectStores.remove(addedObjectStoreID);
+        successCallback(false);
+    });
+
+    uint64_t requestID = request->requestID();
+    m_pendingDatabaseTasks.add(requestID, request.release());
+
+    postDatabaseTask(createAsyncTask(*this, &UniqueIDBDatabase::createObjectStoreInBackingStore, requestID, identifier, metadata));
 }
 
 void UniqueIDBDatabase::openBackingStoreTransaction(const IDBTransactionIdentifier& identifier, const Vector<int64_t>& objectStoreIDs, WebCore::IndexedDB::TransactionMode mode)
@@ -377,6 +415,16 @@ void UniqueIDBDatabase::changeDatabaseVersionInBackingStore(uint64_t requestID, 
     bool success = m_backingStore->changeDatabaseVersion(identifier, newVersion);
 
     postMainThreadTask(createAsyncTask(*this, &UniqueIDBDatabase::didChangeDatabaseVersion, requestID, success));
+}
+
+void UniqueIDBDatabase::createObjectStoreInBackingStore(uint64_t requestID, const IDBTransactionIdentifier& identifier, const IDBObjectStoreMetadata& metadata)
+{
+    ASSERT(!isMainThread());
+    ASSERT(m_backingStore);
+
+    bool success = m_backingStore->createObjectStore(identifier, metadata);
+
+    postMainThreadTask(createAsyncTask(*this, &UniqueIDBDatabase::didCreateObjectStore, requestID, success));
 }
 
 String UniqueIDBDatabase::absoluteDatabaseDirectory() const

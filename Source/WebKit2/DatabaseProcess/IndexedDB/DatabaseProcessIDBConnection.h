@@ -69,7 +69,7 @@ private:
     void resetTransaction(uint64_t requestID, int64_t transactionID);
     void rollbackTransaction(uint64_t requestID, int64_t transactionID);
     void changeDatabaseVersion(uint64_t requestID, int64_t transactionID, uint64_t newVersion);
-
+    void createObjectStore(uint64_t requestID, int64_t transactionID, WebCore::IDBObjectStoreMetadata);
 
     Ref<DatabaseToWebProcessConnection> m_connection;
     uint64_t m_serverConnectionIdentifier;

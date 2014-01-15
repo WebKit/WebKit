@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,40 +23,23 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef UniqueIDBDatabaseBackingStore_h
-#define UniqueIDBDatabaseBackingStore_h
+#ifndef IDBSerialization_h
+#define IDBSerialization_h
 
-#if ENABLE(INDEXED_DATABASE) && ENABLE(DATABASE_PROCESS)
+#if ENABLE(INDEXED_DATABASE)
 
-#include <WebCore/IndexedDB.h>
-#include <wtf/RefCounted.h>
+#include <wtf/Vector.h>
 
 namespace WebCore {
-struct IDBDatabaseMetadata;
-struct IDBObjectStoreMetadata;
+class IDBKeyPath;
 }
 
 namespace WebKit {
 
-class IDBTransactionIdentifier;
-
-class UniqueIDBDatabaseBackingStore : public RefCounted<UniqueIDBDatabaseBackingStore> {
-public:
-    virtual ~UniqueIDBDatabaseBackingStore() { }
-
-    virtual std::unique_ptr<WebCore::IDBDatabaseMetadata> getOrEstablishMetadata() = 0;
-
-    virtual bool establishTransaction(const IDBTransactionIdentifier&, const Vector<int64_t>& objectStoreIDs, WebCore::IndexedDB::TransactionMode) = 0;
-    virtual bool beginTransaction(const IDBTransactionIdentifier&) = 0;
-    virtual bool commitTransaction(const IDBTransactionIdentifier&) = 0;
-    virtual bool resetTransaction(const IDBTransactionIdentifier&) = 0;
-    virtual bool rollbackTransaction(const IDBTransactionIdentifier&) = 0;
-
-    virtual bool changeDatabaseVersion(const IDBTransactionIdentifier&, uint64_t newVersion) = 0;
-    virtual bool createObjectStore(const IDBTransactionIdentifier&, const WebCore::IDBObjectStoreMetadata&) = 0;
-};
+std::unique_ptr<Vector<uint8_t>> serializeIDBKeyPath(const WebCore::IDBKeyPath&);
+std::unique_ptr<WebCore::IDBKeyPath> deserializeIDBKeyPath(const uint8_t* buffer, size_t bufferSize);
 
 } // namespace WebKit
 
-#endif // ENABLE(INDEXED_DATABASE) && ENABLE(DATABASE_PROCESS)
-#endif // UniqueIDBDatabaseBackingStore_h
+#endif // ENABLE(INDEXED_DATABASE)
+#endif // IDBSerialization_h

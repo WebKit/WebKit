@@ -100,6 +100,7 @@ private:
     void didResetTransaction(uint64_t requestID, bool success);
     void didRollbackTransaction(uint64_t requestID, bool success);
     void didChangeDatabaseVersion(uint64_t requestID, bool success);
+    void didCreateObjectStore(uint64_t requestID, bool success);
 
     uint64_t m_serverConnectionIdentifier;
 

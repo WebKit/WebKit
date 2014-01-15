@@ -33,6 +33,7 @@ messages -> DatabaseProcessIDBConnection LegacyReceiver {
     RollbackTransaction(uint64_t requestID, int64_t transactionID)
     
     ChangeDatabaseVersion(uint64_t requestID, int64_t transactionID, uint64_t newVersion)
+    CreateObjectStore(uint64_t requestID, int64_t transactionID, WebCore::IDBObjectStoreMetadata objectStoreMetadata)
 }
 
 #endif // ENABLE(INDEXED_DATABASE) && ENABLE(DATABASE_PROCESS)
