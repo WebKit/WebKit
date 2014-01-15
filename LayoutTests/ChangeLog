@@ -1,3 +1,21 @@
+2014-01-14  Mihnea Ovidenie  <mihnea@adobe.com>
+
+        [CSSRegions] Incorrect repaint of fixed element with transformed parent
+        https://bugs.webkit.org/show_bug.cgi?id=125756
+
+        Reviewed by Simon Fraser.
+
+        Add tests for a fixed positioned element with a parent that:
+        1. dynamically gets a transform, in which case the fixed positioned element should be positioned
+        relative to its parent
+        2. dynamically loses its transform, in which case the fixed positioned element should be positioned
+        relative to the view.
+
+        * fast/regions/repaint/fixed-in-named-flow-cb-changed-expected.html: Added.
+        * fast/regions/repaint/fixed-in-named-flow-cb-changed.html: Added.
+        * fast/regions/repaint/fixed-in-named-flow-cb-changed2-expected.html: Added.
+        * fast/regions/repaint/fixed-in-named-flow-cb-changed2.html: Added.
+
 2014-01-14  Brent Fulgham  <bfulgham@apple.com>
 
         Unreviewed test fix.

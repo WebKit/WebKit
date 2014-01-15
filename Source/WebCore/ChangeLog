@@ -1,3 +1,32 @@
+2014-01-14  Mihnea Ovidenie  <mihnea@adobe.com>
+
+        [CSSRegions] Incorrect repaint of fixed element with transformed parent
+        https://bugs.webkit.org/show_bug.cgi?id=125756
+
+        Reviewed by Simon Fraser.
+
+        When collecting the layers for fixed positioned elements with named flow
+        as a containing block, use layers collection at named flow layer level
+        instead of relying on the positioned elements collection.
+
+        With this approach, there are situations with nested named flows laid out in
+        auto-height regions and thus assuming 2 step layouts, in which is enough to lay
+        out the inner named flow once instead of twice with a performance gain.
+        In such situations, the layers lists for the inner named flow are not yet updated
+        when collectFixedPositionedLayers is called to paint the fixed positioned layers.
+        Therefore I called updateLayerListsIfNeeded for all named flows layers, via the flow thread controller, before inspecting the named flow layers to avoid hitting the assertions when
+        accessing the named flows layers lists.
+
+        Tests: fast/regions/repaint/fixed-in-named-flow-cb-changed.html
+               fast/regions/repaint/fixed-in-named-flow-cb-changed2.html
+
+        * rendering/FlowThreadController.cpp:
+        (WebCore::FlowThreadController::updateNamedFlowsLayerListsIfNeeded):
+        (WebCore::FlowThreadController::collectFixedPositionedLayers):
+        * rendering/FlowThreadController.h:
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::paintFixedLayersInNamedFlows):
+
 2014-01-14  Brent Fulgham  <bfulgham@apple.com>
 
         Unreviewed test fix.

@@ -4057,6 +4057,9 @@ void RenderLayer::paintFixedLayersInNamedFlows(GraphicsContext* context, const L
     if (!renderer().view().hasRenderNamedFlowThreads())
         return;
 
+    // Ensure the flow threads hierarchy is up-to-date before using it.
+    renderer().view().flowThreadController().updateNamedFlowsLayerListsIfNeeded();
+
     // Collect the fixed layers in a list to be painted
     Vector<RenderLayer*> fixedLayers;
     renderer().view().flowThreadController().collectFixedPositionedLayers(fixedLayers);
