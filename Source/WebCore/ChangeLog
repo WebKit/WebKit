@@ -1,3 +1,20 @@
+2014-01-15  Andrei Bucur  <abucur@adobe.com>
+
+        [CSS Regions] Hit-testing goes through clipped layer in fast/regions/overflow-first-and-last-regions-in-container-hidden.html
+        https://bugs.webkit.org/show_bug.cgi?id=126886
+
+        Reviewed by Mihnea Ovidenie.
+
+        Currently, when hit testing a location inside a flow thread we ignore the clipping rectangle of
+        the region. This leads to false positives when the location is over the clipped out content of a
+        flow thread. The patch verifies that the location is inside the clipping rectangle of the region before
+        forwarding the hit test verification to the flow thread layer.
+
+        Test: fast/regions/hover-and-js-in-visual-overflow-hidden.html
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::hitTestFlowThreadIfRegion):
+
 2014-01-15  Antti Koivisto  <antti@apple.com>
 
         Suspend resource requests during computedStyle

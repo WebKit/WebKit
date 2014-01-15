@@ -1,3 +1,16 @@
+2014-01-15  Andrei Bucur  <abucur@adobe.com>
+
+        [CSS Regions] Hit-testing goes through clipped layer in fast/regions/overflow-first-and-last-regions-in-container-hidden.html
+        https://bugs.webkit.org/show_bug.cgi?id=126886
+
+        Reviewed by Mihnea Ovidenie.
+
+        Add a test that verifies you can't hover an element flowed inside a region but found inside
+        the hidden overflow of the region.
+
+        * fast/regions/hover-and-js-in-visual-overflow-hidden-expected.html: Added.
+        * fast/regions/hover-and-js-in-visual-overflow-hidden.html: Added.
+
 2014-01-15  László Langó  <llango.u-szeged@partner.samsung.com>
 
         DocumentFragment should be constructable.

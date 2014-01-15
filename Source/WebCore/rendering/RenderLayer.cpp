@@ -7007,6 +7007,14 @@ RenderLayer* RenderLayer::hitTestFlowThreadIfRegion(RenderLayer* rootLayer, cons
 
     RenderFlowThread* flowThread = region->flowThread();
 
+    // If the hit location is inside a clipped out area, don't forward the hit test to the flow thread.
+    if (rootLayer != this && parent()) {
+        ClipRectsContext clipRectsContext(rootLayer, hitTestLocation.region(), TemporaryClipRects);
+        ClipRect clipRect = backgroundClipRect(clipRectsContext);
+        if (!clipRect.intersects(hitTestLocation))
+            return 0;
+    }
+
     LayoutPoint regionOffsetFromRoot;
     convertToLayerCoords(rootLayer, regionOffsetFromRoot);
 
