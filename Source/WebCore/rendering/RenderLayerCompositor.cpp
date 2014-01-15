@@ -2733,6 +2733,9 @@ bool RenderLayerCompositor::shouldCompositeOverflowControls() const
     if (frameView.platformWidget())
         return false;
 
+    if (frameView.delegatesScrolling())
+        return false;
+
     if (mainFrameBackingIsTiled())
         return true;
 
