@@ -38,6 +38,7 @@ _WebActionFormKey
 _WebActionModifierFlagsKey
 _WebActionNavigationTypeKey
 _WebActionOriginalURLKey
+_WebArchivePboardType
 _WebDatabaseDidModifyDatabaseNotification
 _WebDatabaseDidModifyOriginNotification
 _WebDatabaseDirectoryDefaultsKey

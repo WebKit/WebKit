@@ -26,7 +26,7 @@
 #ifndef WebNSStringDrawing_h
 #define WebNSStringDrawing_h
 
-#if PLATFORM(IOS)
+#if TARGET_OS_IPHONE
 
 #import <CoreGraphics/CoreGraphics.h>
 #import <Foundation/Foundation.h>
@@ -112,6 +112,6 @@ typedef enum {
 
 @end
 
-#endif // PLATFORM(IOS)
+#endif // TARGET_OS_IPHONE
 
 #endif // WebNSStringDrawing_h

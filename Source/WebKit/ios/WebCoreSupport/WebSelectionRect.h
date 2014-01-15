@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#if PLATFORM(IOS)
+#if TARGET_OS_IPHONE
 
 #import <CoreGraphics/CoreGraphics.h>
 #import <Foundation/Foundation.h>
@@ -58,4 +58,4 @@
 
 @end
 
-#endif // PLATFORM(IOS)
+#endif // TARGET_OS_IPHONE

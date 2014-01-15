@@ -8,7 +8,6 @@
 .objc_class_name_WebURLsWithTitles
 _HIWebViewCreate
 _HIWebViewGetWebView
-_WebArchivePboardType
 _WebConvertNSImageToCGImageRef
 _WebCoreScrollbarAlwaysOn
 _WebIconDatabaseDidAddIconNotification
