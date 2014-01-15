@@ -79,10 +79,10 @@ NSURLResponse *ResourceResponse::nsURLResponse() const
 }
 
 ResourceResponse::ResourceResponse(NSURLResponse* nsResponse)
-    : m_cfResponse([nsResponse _CFURLResponse])
-    , m_nsResponse(nsResponse)
-    , m_initLevel(Uninitialized)
+    : m_initLevel(Uninitialized)
     , m_platformResponseIsUpToDate(true)
+    , m_cfResponse([nsResponse _CFURLResponse])
+    , m_nsResponse(nsResponse)
 {
     m_isNull = !nsResponse;
 }

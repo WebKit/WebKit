@@ -1,3 +1,18 @@
+2014-01-15  David Kilzer  <ddkilzer@apple.com>
+
+        [iOS] Fix intialization order of ResourceResponse constructor
+
+        Fixes the following build failure:
+
+            WebCore/platform/network/mac/ResourceResponseMac.mm:83:7: error: field 'm_nsResponse' will be initialized after field 'm_initLevel' [-Werror,-Wreorder]
+                , m_nsResponse(nsResponse)
+                  ^
+
+        * platform/network/mac/ResourceResponseMac.mm:
+        (WebCore::ResourceResponse::ResourceResponse): Reorder member
+        initializers to match the order that they are defined in the
+        header.
+
 2014-01-15  Roger Fong  <roger_fong@apple.com>
 
         Unreviewed. Comment out part of r162036 which broke WebGL on many ports.
