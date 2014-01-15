@@ -1,0 +1,98 @@
+<html>
+<head>
+<script src="../../http/tests/inspector-protocol/resources/protocol-test.js"></script>
+<script src="resources/breakpoint.js"></script>
+<script>
+function test()
+{
+    InspectorTest.importScript("../../../../inspector-protocol/resources/probe-helper.js");
+
+    InspectorTest.sendCommand("Debugger.enable", {});
+    InspectorTest.sendCommand("Debugger.setBreakpointsActive", {active: true}, function() {
+        InspectorTest.log("Breakpoints Enabled");
+    });
+
+    var samples = [];
+    const expectedSampleCount = 2;
+
+    function receivedAllExpectedSamples() {
+        return samples.length === expectedSampleCount;
+    }
+
+    function dumpSamples()
+    {
+        InspectorTest.log("Sample 1: " + JSON.stringify(samples[0]));
+        InspectorTest.log("Sample 2: " + JSON.stringify(samples[1]));
+    }
+
+    var tests = [
+        {
+            message: "Samples from probe actions on the same breakpoint should have unique action identifiers.",
+            predicate: function samplesHaveUniqueActionIds() {
+                return samples[0].probeId !== samples[1].probeId;
+            },
+            error: dumpSamples
+        },
+        {
+            message: "Samples from probe actions on the same breakpoint should have the same batch identifiers.",
+            predicate: function samplesHaveEqualBatchIds() {
+                return samples[0].batchId === samples[1].batchId;
+            },
+            error: dumpSamples
+        },
+    ];
+
+    InspectorTest.eventHandler["Debugger.scriptParsed"] = function(messageObject)
+    {
+        if (/resources\/breakpoint\.js$/.test(messageObject.params.url)) {
+            InspectorTest.log("Found breakpoint.js");
+            var scriptIdentifier = messageObject.params.scriptId;
+            var location = {scriptId: scriptIdentifier, lineNumber: 18, columnNumber: 0};
+            var options = {
+                autoContinue: true,
+                actions: [
+                    {"type": "probe", "data": "a"},
+                    {"type": "probe", "data": "a"}
+                ]
+            };
+
+            InspectorTest.sendCommand("Debugger.setBreakpoint", {location: location, options: options}, function(responseObject) {
+                InspectorTest.checkForError(responseObject);
+                var actionIdentifiers = responseObject.result.breakpointActionIdentifiers;
+                InspectorTest.assert(actionIdentifiers instanceof Array && actionIdentifiers.length === 2,
+                                     "Should receive two breakpoint action identifiers on Debugger.setBreakpoint callback.");
+
+                // FIXME: should we use the Breakpoint/BreakpointAction model objects to manage this?
+                if (actionIdentifiers.length === 2) {
+                    options.actions[0].identifier = actionIdentifiers[0];
+                    options.actions[1].identifier = actionIdentifiers[1];
+                }
+                InspectorTest.log("Running breakpointActions to trigger probe samples.");
+                InspectorTest.sendCommand("Runtime.evaluate", {expression: "breakpointActions(12, {x:1,y:2})"});
+            });
+        }
+    }
+
+    InspectorTest.eventHandler["Debugger.didSampleProbe"] = function(messageObject)
+    {
+        var sample = ProbeHelper.simplifiedProbeSample(messageObject);
+        samples.push(sample);
+        InspectorTest.log("Received probe sample payload: " + JSON.stringify(sample.payload));
+
+        if (receivedAllExpectedSamples()) {
+            tests.forEach(function(test) {
+                var result = test.predicate();
+                InspectorTest.assert(result, test.message);
+                if (!result)
+                    test.error();
+            });
+            InspectorTest.completeTest();
+        }
+    }
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Debugger.setBreakpoint with multiple probe actions at the same breakpoint. Test Debugger.didSampleProbe events for the probe samples.</p>
+</body>
+</html>

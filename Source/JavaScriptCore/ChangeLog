@@ -1,3 +1,17 @@
+2014-01-15  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: capture probe samples on the backend
+        https://bugs.webkit.org/show_bug.cgi?id=126668
+
+        Reviewed by Joseph Pecoraro.
+
+        Add the 'probe' breakpoint action to the protocol. Change the setBreakpoint
+        commands to return a list of assigned breakpoint action identifiers
+        Add a type for breakpoint action identifiers. Add an event for sending
+        captured probe samples to the inspector frontend.
+
+        * inspector/protocol/Debugger.json:
+
 2014-01-10  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Copying should be generational

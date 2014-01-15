@@ -1,3 +1,51 @@
+2014-01-15  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: capture probe samples on the backend
+        https://bugs.webkit.org/show_bug.cgi?id=126668
+
+        Reviewed by Joseph Pecoraro.
+
+        Test: inspector-protocol/debugger/setProbe-multiple-actions.html
+
+        Add the probe breakpoint action type. A probe action
+        evaluates an expression on the script call frame, and
+        the result is aggregated on a per-probe basis. Each
+        evaluated expression result is called a probe sample.
+
+        * bindings/js/ScriptDebugServer.cpp:
+        (WebCore::ScriptDebugServer::evaluateBreakpointAction): Teach
+        the debug server to evaluate a probe.
+
+        (WebCore::ScriptDebugServer::dispatchDidSampleProbe): Added.
+        (WebCore::ScriptDebugServer::handleBreakpointHit): Increment a hit count.
+        (WebCore::ScriptDebugServer::getActionsForBreakpoint):
+        * bindings/js/ScriptDebugServer.h:
+        * inspector/InspectorDebuggerAgent.cpp:
+        (WebCore::objectGroupForBreakpointAction): Added. Create an object
+        group for each breakpoint action. Currently only probes make objects.
+        (WebCore::InspectorDebuggerAgent::InspectorDebuggerAgent):
+        (WebCore::InspectorDebuggerAgent::disable):
+        (WebCore::InspectorDebuggerAgent::enable): Remove stale comment.
+        (WebCore::breakpointActionTypeForString): Add new case.
+        (WebCore::InspectorDebuggerAgent::breakpointActionsFromProtocol): Make
+        this a member function instead of a static function, so it can increment
+        the breakpoint action identifier counter.
+        (WebCore::InspectorDebuggerAgent::setBreakpointByUrl): Propagate the
+        assigned breakpoint action identifiers.
+        (WebCore::InspectorDebuggerAgent::setBreakpoint): Propagate the
+        assigned breakpoint action identifiers.
+        (WebCore::InspectorDebuggerAgent::removeBreakpoint): Release object
+        groups for any actions that were associated with the removed breakpoint.
+        (WebCore::InspectorDebuggerAgent::didSampleProbe): Added.
+        (WebCore::InspectorDebuggerAgent::clearResolvedBreakpointState): Renamed from clear().
+        (WebCore::InspectorDebuggerAgent::didClearGlobalObject): Renamed from reset().
+        * inspector/InspectorDebuggerAgent.h:
+        * inspector/PageDebuggerAgent.cpp:
+        (WebCore::PageDebuggerAgent::didClearMainFrameWindowObject):
+        * inspector/ScriptBreakpoint.h:
+        (WebCore::ScriptBreakpointAction::ScriptBreakpointAction): Add identifier member.
+        * inspector/ScriptDebugListener.h:
+
 2014-01-15  Brent Fulgham  <bfulgham@apple.com>
 
         [WebGL] Validation function for compressed formats incorrect

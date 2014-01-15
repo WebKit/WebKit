@@ -8,6 +8,11 @@
             "description": "Breakpoint identifier."
         },
         {
+            "id": "BreakpointActionIdentifier",
+            "type": "integer",
+            "description": "Breakpoint action identifier."
+        },
+        {
             "id": "ScriptId",
             "type": "string",
             "description": "Unique script identifier."
@@ -31,7 +36,7 @@
             "id": "BreakpointAction",
             "type": "object",
             "properties": [
-                { "name": "type", "type": "string", "enum": ["log", "evaluate", "sound"], "description": "Different kinds of breakpoint actions." },
+                { "name": "type", "type": "string", "enum": ["log", "evaluate", "sound", "probe"], "description": "Different kinds of breakpoint actions." },
                 { "name": "data", "type": "string", "optional": true, "description": "Data associated with this breakpoint type (e.g. for type \"eval\" this is the JavaScript string to evalulate)." }
             ],
             "description": "Action to perform when a breakpoint is triggered."
@@ -78,6 +83,18 @@
                 { "name": "object", "$ref": "Runtime.RemoteObject", "description": "Object representing the scope. For <code>global</code> and <code>with</code> scopes it represents the actual object; for the rest of the scopes, it is artificial transient object enumerating scope variables as its properties." }
             ],
             "description": "Scope description."
+        },
+        {
+            "id": "ProbeSample",
+            "description": "A sample collected by evaluating a probe breakpoint action.",
+            "type": "object",
+            "properties": [
+                { "name": "probeId", "$ref": "BreakpointActionIdentifier", "description": "Identifier of the probe breakpoint action that created the sample." },
+                { "name": "sampleId", "type": "integer", "description": "Unique identifier for this sample." },
+                { "name": "batchId", "type": "integer", "description": "A batch identifier which is the same for all samples taken at the same breakpoint hit." },
+                { "name": "timestamp", "type": "number", "description": "Timestamp of when the sample was taken." },
+                { "name": "payload", "$ref": "Runtime.RemoteObject", "description": "Contents of the sample." }
+            ]
         }
     ],
     "commands": [
@@ -107,7 +124,8 @@
             ],
             "returns": [
                 { "name": "breakpointId", "$ref": "BreakpointId", "description": "Id of the created breakpoint for further reference." },
-                { "name": "locations", "type": "array", "items": { "$ref": "Location"}, "description": "List of the locations this breakpoint resolved into upon addition." }
+                { "name": "locations", "type": "array", "items": { "$ref": "Location"}, "description": "List of the locations this breakpoint resolved into upon addition." },
+                { "name": "breakpointActionIdentifiers", "type": "array", "items": { "$ref": "BreakpointActionIdentifier" }, "description": "Assigned breakpoint action identifiers." }
             ],
             "description": "Sets JavaScript breakpoint at given location specified either by URL or URL regex. Once this command is issued, all existing parsed scripts will have breakpoints resolved and returned in <code>locations</code> property. Further matching script parsing will result in subsequent <code>breakpointResolved</code> events issued. This logical breakpoint will survive page reloads."
         },
@@ -119,7 +137,8 @@
             ],
             "returns": [
                 { "name": "breakpointId", "$ref": "BreakpointId", "description": "Id of the created breakpoint for further reference." },
-                { "name": "actualLocation", "$ref": "Location", "description": "Location this breakpoint resolved into." }
+                { "name": "actualLocation", "$ref": "Location", "description": "Location this breakpoint resolved into." },
+                { "name": "breakpointActionIdentifiers", "type": "array", "items": { "$ref": "BreakpointActionIdentifier" }, "description": "Assigned breakpoint action identifiers." }
             ],
             "description": "Sets JavaScript breakpoint at a given location."
         },
@@ -273,6 +292,13 @@
         {
             "name": "resumed",
             "description": "Fired when the virtual machine resumed execution."
+        },
+        {
+            "name": "didSampleProbe",
+            "description": "Fires when a new proben sample is collected.",
+            "parameters": [
+                { "name": "sample", "$ref": "ProbeSample", "description": "A collected probe sample." }
+            ]
         }
     ]
 }

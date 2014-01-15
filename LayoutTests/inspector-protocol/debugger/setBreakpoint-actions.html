@@ -6,6 +6,7 @@
 function test()
 {
     InspectorTest.importScript("../../../../inspector-protocol/resources/console-helper.js");
+    InspectorTest.importScript("../../../../inspector-protocol/resources/probe-helper.js");
 
     InspectorTest.sendCommand("Console.enable", {});
     InspectorTest.sendCommand("Debugger.enable", {});
@@ -13,9 +14,16 @@ function test()
         InspectorTest.log("Breakpoints Enabled");
     });
 
-    var expectLogs = false;
-    var logsSeen = 0;
-    const expectedLogs = 6;
+    var isExpectingLogs = false;
+    var isExpectingSamples = false;
+    var logCount = 0;
+    var sampleCount = 0;
+    const expectedLogCount = 6;
+    const expectedSampleCount = 2;
+
+    function receivedAllExpectedOutput() {
+        return logCount === expectedLogCount && sampleCount === expectedSampleCount;
+    }
 
     InspectorTest.eventHandler["Debugger.scriptParsed"] = function(messageObject)
     {
@@ -30,7 +38,8 @@ function test()
                     {"type": "log", "data": "log-action-before"},
                     {"type": "sound"},
                     {"type": "evaluate", "data": "(function() { console.log('eval-action', a, b); })()"},
-                    {"type": "log", "data": "log-action-after"}
+                    {"type": "log", "data": "log-action-after"},
+                    {"type": "probe", "data": "a"}
                 ]
             };
 
@@ -41,7 +50,8 @@ function test()
                 InspectorTest.sendCommand("Runtime.evaluate", {expression: "breakpointActions(1)"});
                 InspectorTest.sendCommand("Runtime.evaluate", {expression: "breakpointActions(2, 12)"});
                 InspectorTest.sendCommand("Runtime.evaluate", {expression: "breakpointActions(2, {x:1,y:2})"}, function() {
-                    expectLogs = true;
+                    isExpectingLogs = true;
+                    isExpectingSamples = true;
                     InspectorTest.log("Running breakpointActions to triggering the breakpoint actions");
                     InspectorTest.sendCommand("Runtime.evaluate", {expression: "breakpointActions(12, {x:1,y:2})"}, function() {
                         InspectorTest.sendCommand("Runtime.evaluate", {expression: "breakpointActions(100, document.body)"});
@@ -59,9 +69,26 @@ function test()
         InspectorTest.completeTest();
     }
 
+    InspectorTest.eventHandler["Debugger.didSampleProbe"] = function(messageObject)
+    {
+        if (!isExpectingSamples) {
+            InspectorTest.log("FAIL: unexpected probe sample, probe samples should only have come from breakpoint actions.");
+            InspectorTest.completeTest();
+            return;
+        }
+
+        var simplifiedSample = ProbeHelper.simplifiedProbeSample(messageObject);
+        InspectorTest.log("PASS: Probe sample payload: " + JSON.stringify(simplifiedSample.payload));
+
+        ++sampleCount;
+
+        if (receivedAllExpectedOutput())
+            InspectorTest.completeTest();
+    }
+
     InspectorTest.eventHandler["Console.messageAdded"] = function(messageObject)
     {
-        if (!expectLogs) {
+        if (!isExpectingLogs) {
             InspectorTest.log("FAIL: unexpected log, logs should only have come from breakpoint actions.");
             InspectorTest.completeTest();
             return;
@@ -70,7 +97,9 @@ function test()
         var simplifiedMessage = ConsoleHelper.simplifiedConsoleMessage(messageObject);
         InspectorTest.log("PASS: Console Message: " + JSON.stringify(simplifiedMessage));
 
-        if (++logsSeen === expectedLogs)
+        ++logCount;
+
+        if (receivedAllExpectedOutput())
             InspectorTest.completeTest();
     }
 }

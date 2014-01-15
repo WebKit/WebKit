@@ -81,8 +81,8 @@ public:
     virtual void disable(ErrorString*);
     virtual void setBreakpointsActive(ErrorString*, bool active);
 
-    virtual void setBreakpointByUrl(ErrorString*, int lineNumber, const String* optionalURL, const String* optionalURLRegex, const int* optionalColumnNumber, const RefPtr<Inspector::InspectorObject>* options, Inspector::TypeBuilder::Debugger::BreakpointId*, RefPtr<Inspector::TypeBuilder::Array<Inspector::TypeBuilder::Debugger::Location>>& locations);
-    virtual void setBreakpoint(ErrorString*, const RefPtr<Inspector::InspectorObject>& location, const RefPtr<Inspector::InspectorObject>* options, Inspector::TypeBuilder::Debugger::BreakpointId*, RefPtr<Inspector::TypeBuilder::Debugger::Location>& actualLocation);
+    virtual void setBreakpointByUrl(ErrorString*, int lineNumber, const String* optionalURL, const String* optionalURLRegex, const int* optionalColumnNumber, const RefPtr<Inspector::InspectorObject>* options, Inspector::TypeBuilder::Debugger::BreakpointId*, RefPtr<Inspector::TypeBuilder::Array<Inspector::TypeBuilder::Debugger::Location>>& locations, RefPtr<Inspector::TypeBuilder::Array<Inspector::TypeBuilder::Debugger::BreakpointActionIdentifier>>& breakpointActionIdentifiers);
+    virtual void setBreakpoint(ErrorString*, const RefPtr<Inspector::InspectorObject>& location, const RefPtr<Inspector::InspectorObject>* options, Inspector::TypeBuilder::Debugger::BreakpointId*, RefPtr<Inspector::TypeBuilder::Debugger::Location>& actualLocation, RefPtr<Inspector::TypeBuilder::Array<Inspector::TypeBuilder::Debugger::BreakpointActionIdentifier>>& breakpointActionIdentifiers);
     virtual void removeBreakpoint(ErrorString*, const String& breakpointIdentifier);
     virtual void continueToLocation(ErrorString*, const RefPtr<Inspector::InspectorObject>& location);
 
@@ -138,18 +138,21 @@ protected:
     virtual void disable();
     virtual void didPause(JSC::ExecState*, const Deprecated::ScriptValue& callFrames, const Deprecated::ScriptValue& exception);
     virtual void didContinue();
-    void reset();
+    void didClearGlobalObject();
 
 private:
     PassRefPtr<Inspector::TypeBuilder::Array<Inspector::TypeBuilder::Debugger::CallFrame>> currentCallFrames();
 
     virtual void didParseSource(JSC::SourceID, const Script&) OVERRIDE FINAL;
     virtual void failedToParseSource(const String& url, const String& data, int firstLine, int errorLine, const String& errorMessage) OVERRIDE FINAL;
+    virtual void didSampleProbe(JSC::ExecState*, int probeIdentifier, int hitCount, const Deprecated::ScriptValue& sample) OVERRIDE FINAL;
 
     PassRefPtr<Inspector::TypeBuilder::Debugger::Location> resolveBreakpoint(const String& breakpointIdentifier, JSC::SourceID, const ScriptBreakpoint&);
-    void clear();
     bool assertPaused(ErrorString*);
+    void clearResolvedBreakpointState();
     void clearBreakDetails();
+
+    bool breakpointActionsFromProtocol(ErrorString*, RefPtr<Inspector::InspectorArray>& actions, Vector<ScriptBreakpointAction>* result);
 
     String sourceMapURLForScript(const Script&);
 
@@ -171,6 +174,8 @@ private:
     bool m_enabled;
     bool m_javaScriptPauseScheduled;
     Listener* m_listener;
+    int m_nextProbeSampleId;
+    int m_nextBreakpointActionIdentifier;
 };
 
 } // namespace WebCore

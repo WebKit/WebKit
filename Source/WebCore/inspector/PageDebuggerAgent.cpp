@@ -115,7 +115,7 @@ void PageDebuggerAgent::setOverlayMessage(ErrorString*, const String* message)
 
 void PageDebuggerAgent::didClearMainFrameWindowObject()
 {
-    reset();
+    didClearGlobalObject();
 }
 
 } // namespace WebCore

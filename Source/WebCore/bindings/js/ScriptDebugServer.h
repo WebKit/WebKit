@@ -62,6 +62,8 @@ public:
     void recompileAllJSFunctionsSoon();
     virtual void recompileAllJSFunctions() = 0;
 
+    const Vector<ScriptBreakpointAction>& getActionsForBreakpoint(JSC::BreakpointID);
+
     class Task {
         WTF_MAKE_FAST_ALLOCATED;
     public:
@@ -84,7 +86,7 @@ protected:
 
     virtual bool isContentScript(JSC::ExecState*);
 
-    bool evaluateBreakpointAction(const ScriptBreakpointAction&) const;
+    bool evaluateBreakpointAction(const ScriptBreakpointAction&);
 
     void dispatchFunctionToListeners(JavaScriptExecutionCallback, JSC::JSGlobalObject*);
     void dispatchFunctionToListeners(const ListenerSet& listeners, JavaScriptExecutionCallback callback);
@@ -92,6 +94,7 @@ protected:
     void dispatchDidContinue(ScriptDebugListener*);
     void dispatchDidParseSource(const ListenerSet& listeners, JSC::SourceProvider*, bool isContentScript);
     void dispatchFailedToParseSource(const ListenerSet& listeners, JSC::SourceProvider*, int errorLine, const String& errorMessage);
+    void dispatchDidSampleProbe(JSC::ExecState*, int probeIdentifier, const Deprecated::ScriptValue& sample);
 
     bool m_doneProcessingDebuggerEvents;
 
@@ -108,6 +111,7 @@ private:
 
     void recompileAllJSFunctionsTimerFired(Timer<ScriptDebugServer>&);
 
+    unsigned m_hitCount;
     bool m_callingListeners;
     BreakpointIDToActionsMap m_breakpointIDToActions;
     Timer<ScriptDebugServer> m_recompileTimer;

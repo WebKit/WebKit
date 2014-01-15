@@ -1,3 +1,19 @@
+2014-01-15  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: capture probe samples on the backend
+        https://bugs.webkit.org/show_bug.cgi?id=126668
+
+        Reviewed by Joseph Pecoraro.
+
+        Add protocol tests for setting and hitting the probe breakpoint action type.
+
+        * inspector-protocol/debugger/setBreakpoint-actions-expected.txt:
+        * inspector-protocol/debugger/setBreakpoint-actions.html:
+        * inspector-protocol/debugger/setProbe-multiple-actions-expected.txt: Added.
+        * inspector-protocol/debugger/setProbe-multiple-actions.html: Added.
+        * inspector-protocol/resources/probe-helper.js: Added.
+        (ProbeHelper.simplifiedProbeSample):
+
 2014-01-15  Gavin Barraclough  <barraclough@apple.com>
 
         REGRESSION (r158369): Some pop-up windows open at incorrect size (affects GMail, theblaze.com)
