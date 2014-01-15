@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link rel="stylesheet" href="resources/regions.css" type="text/css"></link>
+        <script src="../resources/runner.js"></script>
+        <script src="resources/regions.js"></script>
+        <style type="text/css">
+        #log {
+            position: fixed;
+        }
+        </style>
+    </head>
+    <body>
+        <pre id="log"></pre>
+        <script>
+            function performSelectionMixedContent() {
+                var paragraphs = document.getElementsByClassName("contentParagraph");
+                var selection = getSelection();
+
+                selection.collapse(paragraphs[paragraphs.length / 2], 0);
+
+                // Traverse the paragraphs following visual order and not DOM order.
+                for (var i = 1; i < paragraphs.length; i++) {
+                    var paragraph;
+                    if (i % 2)
+                        paragraph = paragraphs[(i - 1) / 2];
+                    else
+                        paragraph = paragraphs[(paragraphs.length + i) / 2];
+                    selection.extend(paragraph, 0);
+                }
+            }
+
+            function createRegionsExtendingSelectionMixedContentTest(regionCount) {
+                var article = createArticle(regionCount, 1);
+                article.className = "articleInFlow";
+                var container = createMixedContent(regionCount);
+                document.body.appendChild(article);
+                document.body.appendChild(container);
+                return {
+                    description: "Testing selection with mixed content (" + regionCount + " regular paragraphs and " + regionCount + " regions). Select text from first paragraph to last one passing through all the paragraphs.",
+                    run: function() {
+                        performSelectionMixedContent();
+                    },
+                    setup: function() {
+                        window.getSelection().removeAllRanges();
+                    },
+                    done: function() {
+                        document.body.removeChild(article);
+                        document.body.removeChild(container);
+                        templateParagraph = null;
+                        templateRegion = null;
+                    }
+                };
+            }
+
+            PerfTestRunner.measureTime(createRegionsExtendingSelectionMixedContentTest(100));
+        </script>
+    </body>
+</html>

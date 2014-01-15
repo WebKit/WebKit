@@ -12,6 +12,10 @@
     -webkit-region-fragment: break;
 }
 
+.regular {
+    border: 1px solid red;
+}
+
 .contentParagraph {
     font-size: 16px;
 }

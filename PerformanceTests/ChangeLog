@@ -1,3 +1,25 @@
+2014-01-15  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [CSS Regions] Add performance tests for selection with mixed content
+        https://bugs.webkit.org/show_bug.cgi?id=126427
+
+        Reviewed by Ryosuke Niwa.
+
+        Add new performance tests for selection in CSS Regions mixing regular
+        content with regions. 2 new tests are added, one checking select all
+        command and another simulating a user selection passing through all the
+        paragraphs (similar to Layout/RegionsSelection.html).
+
+        Test are skipped for now while implementation of selection in CSS
+        Regions is still evolving.
+
+        * Layout/RegionsExtendingSelectionMixedContent.html: Added.
+        * Layout/RegionsSelectAllMixedContent.html: Added.
+        * Layout/resources/regions.css:
+        (.regular):
+        * Layout/resources/regions.js:
+        * Skipped:
+
 2014-01-14  Ryosuke Niwa  <rniwa@webkit.org>
 
         Make DoYouEvenBench runnable by run-perf-tests
