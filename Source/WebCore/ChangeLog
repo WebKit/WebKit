@@ -1,3 +1,11 @@
+2014-01-14  Jeffrey Pfau  <jpfau@apple.com>
+
+        Build fix after r162034
+
+        Rubber-stamped by Benjamin Poulain.
+
+        * WebCore.exp.in:
+
 2014-01-14  Timothy Hatcher  <timothy@apple.com>
 
         Web Inspector: Resource finish time is sometimes earlier than response received time.

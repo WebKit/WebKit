@@ -29,6 +29,7 @@
 #include "WebPage.h"
 #include "WebPageProxyMessages.h"
 #include <WebCore/Frame.h>
+#include <WebCore/MainFrame.h>
 #include <WebCore/Page.h>
 #include <WebCore/ProgressTracker.h>
 
