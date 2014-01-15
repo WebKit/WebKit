@@ -1,5 +1,11 @@
 2014-01-14  Anders Carlsson  <andersca@apple.com>
 
+        And yet another build fix.
+
+        * wtf/SizeLimits.cpp:
+
+2014-01-14  Anders Carlsson  <andersca@apple.com>
+
         Another build fix.
 
         * wtf/SizeLimits.cpp:

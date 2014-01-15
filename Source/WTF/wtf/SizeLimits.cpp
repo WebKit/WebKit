@@ -46,7 +46,6 @@ struct SameSizeAsRefCounted {
     int a;
     bool b;
     bool c;
-    ThreadRestrictionVerifier d;
     // The debug version may get bigger.
 };
 #else
