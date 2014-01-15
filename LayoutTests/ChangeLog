@@ -1,3 +1,11 @@
+2014-01-15  Zalan Bujtas  <zalan@apple.com>
+
+        Merged some subpixel skipped tests. Unreviewed.
+
+        webkit.org/b/126894 is a duplicate of webkit.org/b/126892
+
+        * platform/mac/TestExpectations:
+
 2014-01-15  Brent Fulgham  <bfulgham@apple.com>
 
         Unreviewed test fix for Mountain Lion WebGL behavior.

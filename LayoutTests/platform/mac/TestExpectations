@@ -1349,14 +1349,14 @@ webkit.org/b/126892 fast/regions/overflow-not-moving-below-floats-in-variable-wi
 webkit.org/b/126892 fast/regions/overflow-size-change-in-variable-width-regions.html
 webkit.org/b/126892 fast/regions/overflow-size-change-with-stacking-context.html
 webkit.org/b/126892 fast/regions/selection/selecting-text-through-different-region-flows.html
+webkit.org/b/126892 fast/shapes/shape-inside/shape-inside-circle-padding.html
+webkit.org/b/126892 fast/shapes/shape-inside/shape-inside-circle.html
+webkit.org/b/126892 fast/shapes/shape-inside/shape-inside-ellipse-padding.html
+webkit.org/b/126892 fast/shapes/shape-inside/shape-inside-ellipse.html
+webkit.org/b/126892 fast/shapes/shape-inside/shape-inside-rounded-rectangle-fit-002.html
 
-# Subpixel: -webkit-shape-inside: content position calculation is wrong
-webkit.org/b/126894 fast/shapes/shape-inside/shape-inside-circle-padding.html
-webkit.org/b/126894 fast/shapes/shape-inside/shape-inside-circle.html
-webkit.org/b/126894 fast/shapes/shape-inside/shape-inside-ellipse-padding.html
-webkit.org/b/126894 fast/shapes/shape-inside/shape-inside-ellipse.html
-webkit.org/b/126894 fast/shapes/shape-inside/shape-inside-rounded-rectangle-fit-002.html
-webkit.org/b/126894 fast/shapes/shape-inside/shape-inside-subpixel-rectangle-top.html
+# webkit.org/b/124784 needs revisiting.
+webkit.org/b/124784 fast/shapes/shape-inside/shape-inside-subpixel-rectangle-top.html
 
 # Subpixel: 100000px overflow test
 webkit.org/b/126896 fast/spatial-navigation/snav-unit-overflow-and-scroll-in-direction.html
