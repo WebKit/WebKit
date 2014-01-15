@@ -1,3 +1,9 @@
+2014-01-14  Anders Carlsson  <andersca@apple.com>
+
+        Another build fix.
+
+        * wtf/SizeLimits.cpp:
+
 2014-01-14  Daniel Bates  <dabates@apple.com>
 
         [iOS] Enable WTF_USE_UIKIT_EDITING

@@ -37,7 +37,6 @@
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
-#include <wtf/ThreadRestrictionVerifier.h>
 #include <wtf/Vector.h>
 
 namespace WTF {
