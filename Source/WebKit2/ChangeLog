@@ -1,3 +1,23 @@
+2014-01-15  Piotr Grad  <p.grad@samsung.com>
+
+        toStringVector static function definition should not be redundant.
+        https://bugs.webkit.org/show_bug.cgi?id=126872.
+
+        Reviewed by Anders Carlsson.
+
+        toStringVector function was declared twice in InjectedBundle.cpp and WebPageGroup.cpp as static.
+        In order to remove redundant definition this function was moved into API::Array.
+
+        * Shared/APIArray.cpp:
+        (API::Array::toStringVector):
+        * Shared/APIArray.h:
+        * UIProcess/WebPageGroup.cpp:
+        (WebKit::WebPageGroup::addUserStyleSheet):
+        (WebKit::WebPageGroup::addUserScript):
+        * WebProcess/InjectedBundle/InjectedBundle.cpp:
+        (WebKit::InjectedBundle::addUserScript):
+        (WebKit::InjectedBundle::addUserStyleSheet):
+
 2014-01-10  Gavin Barraclough  <barraclough@apple.com>
 
         REGRESSION (r158369): Some pop-up windows open at incorrect size (affects GMail, theblaze.com)

@@ -54,6 +54,7 @@ public:
     static PassRefPtr<Array> create();
     static PassRefPtr<Array> create(Vector<RefPtr<Object>> elements);
     static PassRefPtr<Array> createStringArray(const Vector<WTF::String>&);
+    Vector<WTF::String> toStringVector();
 
     virtual ~Array();
 

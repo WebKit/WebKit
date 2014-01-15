@@ -51,6 +51,20 @@ PassRefPtr<Array> Array::createStringArray(const Vector<WTF::String>& strings)
     return create(std::move(elements));
 }
 
+Vector<WTF::String> Array::toStringVector()
+{
+    Vector<WTF::String> patternsVector;
+
+    size_t size = this->size();
+    if (!size)
+        return patternsVector;
+
+    patternsVector.reserveInitialCapacity(size);
+    for (const auto& entry : elementsOfType<API::String>())
+        patternsVector.uncheckedAppend(entry->string());
+    return patternsVector;
+}
+
 Array::Array(Vector<RefPtr<Object>> elements)
     : m_elements(std::move(elements))
 {

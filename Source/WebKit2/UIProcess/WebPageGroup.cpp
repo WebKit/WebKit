@@ -134,32 +134,12 @@ void WebPageGroup::preferencesDidChange()
     }
 }
 
-static Vector<String> toStringVector(API::Array* array)
-{
-    Vector<String> patternVector;
-    if (!array)
-        return patternVector;
-
-    size_t size = array->size();
-    if (!size)
-        return patternVector;
-    
-    patternVector.reserveInitialCapacity(size);
-    for (size_t i = 0; i < size; ++i) {
-        API::String* string = array->at<API::String>(i);
-        ASSERT(string);
-        patternVector.uncheckedAppend(string->string());
-    }
-    
-    return patternVector;
-}
-
 void WebPageGroup::addUserStyleSheet(const String& source, const String& baseURL, API::Array* whitelist, API::Array* blacklist, WebCore::UserContentInjectedFrames injectedFrames, WebCore::UserStyleLevel level)
 {
     if (source.isEmpty())
         return;
 
-    WebCore::UserStyleSheet userStyleSheet = WebCore::UserStyleSheet(source, (baseURL.isEmpty() ? WebCore::blankURL() : WebCore::URL(WebCore::URL(), baseURL)), toStringVector(whitelist), toStringVector(blacklist), injectedFrames, level);
+    WebCore::UserStyleSheet userStyleSheet = WebCore::UserStyleSheet(source, (baseURL.isEmpty() ? WebCore::blankURL() : WebCore::URL(WebCore::URL(), baseURL)), whitelist ? whitelist->toStringVector() : Vector<String>(), blacklist ? blacklist->toStringVector() : Vector<String>(), injectedFrames, level);
 
     m_data.userStyleSheets.append(userStyleSheet);
     sendToAllProcessesInGroup(Messages::WebPageGroupProxy::AddUserStyleSheet(userStyleSheet), m_data.pageGroupID);
@@ -170,7 +150,7 @@ void WebPageGroup::addUserScript(const String& source, const String& baseURL, AP
     if (source.isEmpty())
         return;
 
-    WebCore::UserScript userScript = WebCore::UserScript(source, (baseURL.isEmpty() ? WebCore::blankURL() : WebCore::URL(WebCore::URL(), baseURL)), toStringVector(whitelist), toStringVector(blacklist), injectionTime, injectedFrames);
+    WebCore::UserScript userScript = WebCore::UserScript(source, (baseURL.isEmpty() ? WebCore::blankURL() : WebCore::URL(WebCore::URL(), baseURL)), whitelist ? whitelist->toStringVector() : Vector<String>(), blacklist ? blacklist->toStringVector() : Vector<String>(), injectionTime, injectedFrames);
 
     m_data.userScripts.append(userScript);
     sendToAllProcessesInGroup(Messages::WebPageGroupProxy::AddUserScript(userScript), m_data.pageGroupID);
