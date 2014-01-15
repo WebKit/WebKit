@@ -65,13 +65,7 @@ enum {
 };
 
 struct _WebKitPrintOperationPrivate {
-    ~_WebKitPrintOperationPrivate()
-    {
-        g_signal_handler_disconnect(webView, webViewDestroyedId);
-    }
-
     WebKitWebView* webView;
-    gulong webViewDestroyedId;
     PrintInfo::PrintMode printMode;
 
     GRefPtr<GtkPrintSettings> printSettings;
@@ -82,11 +76,6 @@ static guint signals[LAST_SIGNAL] = { 0, };
 
 WEBKIT_DEFINE_TYPE(WebKitPrintOperation, webkit_print_operation, G_TYPE_OBJECT)
 
-static void webViewDestroyed(GtkWidget* webView, GObject* printOperation)
-{
-    g_object_unref(printOperation);
-}
-
 static void webkitPrintOperationConstructed(GObject* object)
 {
     WebKitPrintOperation* printOperation = WEBKIT_PRINT_OPERATION(object);
@@ -95,7 +84,7 @@ static void webkitPrintOperationConstructed(GObject* object)
     if (G_OBJECT_CLASS(webkit_print_operation_parent_class)->constructed)
         G_OBJECT_CLASS(webkit_print_operation_parent_class)->constructed(object);
 
-    priv->webViewDestroyedId = g_signal_connect(priv->webView, "destroy", G_CALLBACK(webViewDestroyed), printOperation);
+    g_object_add_weak_pointer(G_OBJECT(priv->webView), (gpointer*)&priv->webView);
 }
 
 static void webkitPrintOperationGetProperty(GObject* object, guint propId, GValue* value, GParamSpec* paramSpec)
@@ -263,11 +252,12 @@ static WebKitPrintOperationResponse webkitPrintOperationRunDialog(WebKitPrintOpe
 static void drawPagesForPrintingCompleted(WKErrorRef wkPrintError, WKErrorRef, void* context)
 {
     GRefPtr<WebKitPrintOperation> printOperation = adoptGRef(WEBKIT_PRINT_OPERATION(context));
-    WebPageProxy* page = webkitWebViewBaseGetPage(WEBKIT_WEB_VIEW_BASE(printOperation->priv->webView));
 
     // When running synchronously WebPageProxy::printFrame() calls endPrinting().
-    if (printOperation->priv->printMode == PrintInfo::PrintModeAsync)
+    if (printOperation->priv->printMode == PrintInfo::PrintModeAsync && printOperation->priv->webView) {
+        WebPageProxy* page = webkitWebViewBaseGetPage(WEBKIT_WEB_VIEW_BASE(printOperation->priv->webView));
         page->endPrinting();
+    }
 
     const WebCore::ResourceError& resourceError = wkPrintError ? toImpl(wkPrintError)->platformError() : WebCore::ResourceError();
     if (!resourceError.isNull()) {
