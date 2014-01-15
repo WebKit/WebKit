@@ -31,7 +31,6 @@
 #define FrameLoaderClientGtk_h
 
 #include "FrameLoaderClient.h"
-#include "ProgressTrackerClient.h"
 #include "ResourceResponse.h"
 #include "webkitwebpolicydecision.h"
 
@@ -43,7 +42,7 @@ class PluginView;
 
 namespace WebKit {
 
-    class FrameLoaderClient : public WebCore::FrameLoaderClient, public WebCore::ProgressTrackerClient {
+    class FrameLoaderClient : public WebCore::FrameLoaderClient {
     public:
         FrameLoaderClient(WebKitWebFrame* = 0);
         virtual ~FrameLoaderClient();
@@ -111,10 +110,6 @@ namespace WebKit {
 
         virtual void revertToProvisionalState(WebCore::DocumentLoader*) { }
         virtual void setMainDocumentError(WebCore::DocumentLoader*, const WebCore::ResourceError&);
-
-        virtual void progressStarted(WebCore::Frame&);
-        virtual void progressEstimateChanged(WebCore::Frame&);
-        virtual void progressFinished(WebCore::Frame&);
 
         virtual PassRefPtr<WebCore::Frame> createFrame(const WebCore::URL& url, const WTF::String& name, WebCore::HTMLFrameOwnerElement* ownerElement,
                                    const WTF::String& referrer, bool allowsScrolling, int marginWidth, int marginHeight);

@@ -1,3 +1,28 @@
+2014-01-15  Zan Dobersek  <zdobersek@igalia.com>
+
+        [GTK][WK1] Add ProgressTrackerClient implementation
+        https://bugs.webkit.org/show_bug.cgi?id=127048
+
+        Reviewed by Anders Carlsson.
+
+        In r162034, the progress tracker client was separated from FrameLoaderClient into the
+        ProgressTrackerClient class. This patch adds the WebKit layer implementation of that
+        class for GTK-WK1 that's practically identical to the client implementation that was
+        in use under WebKit::FrameLoaderClient.
+
+        * GNUmakefile.am:
+        * WebCoreSupport/FrameLoaderClientGtk.cpp:
+        * WebCoreSupport/FrameLoaderClientGtk.h:
+        * WebCoreSupport/ProgressTrackerClientGtk.cpp: Added.
+        (WebKit::ProgressTrackerClient::ProgressTrackerClient):
+        (WebKit::ProgressTrackerClient::progressTrackerDestroyed):
+        (WebKit::ProgressTrackerClient::progressStarted):
+        (WebKit::ProgressTrackerClient::progressEstimateChanged):
+        (WebKit::ProgressTrackerClient::progressFinished):
+        * WebCoreSupport/ProgressTrackerClientGtk.h: Added.
+        * webkit/webkitwebview.cpp:
+        (webkit_web_view_init):
+
 2014-01-13  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [SOUP] Add SoupNetworkSession class to wrap a SoupSession
