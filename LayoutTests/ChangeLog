@@ -1,3 +1,16 @@
+2014-01-15  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r162066.
+        http://trac.webkit.org/changeset/162066
+        https://bugs.webkit.org/show_bug.cgi?id=127056
+
+        The added test still fails on some bots (Requested by ap on
+        #webkit).
+
+        * css3/compositing/background-blend-mode-data-uri-svg-image-expected.html: Removed.
+        * css3/compositing/background-blend-mode-data-uri-svg-image.html: Removed.
+        * platform/efl/TestExpectations:
+
 2014-01-15  Brent Fulgham  <bfulgham@apple.com>
 
         Unreviewed test correctino for webgl compressed textures.
