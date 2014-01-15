@@ -2306,7 +2306,7 @@ static NSString *classIBCreatorID = nil;
             _private->values = adoptNS([[NSMutableDictionary alloc] init]);
     });
 
-    [self _updatePrivateBrowsingStateFrom:privateBrowsingWasEnabled to:[self privateBrowsingEnabled]];
+    [self _updatePrivateBrowsingStateTo:[self privateBrowsingEnabled]];
 
     // Tell any live WebViews to refresh their preferences
     [self _postPreferencesChangedNotification];
