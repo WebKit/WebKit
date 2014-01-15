@@ -547,6 +547,7 @@ set(WebKit2_SOURCES
     WebProcess/WebCoreSupport/WebPlatformStrategies.cpp
     WebProcess/WebCoreSupport/WebPlugInClient.cpp
     WebProcess/WebCoreSupport/WebPopupMenu.cpp
+    WebProcess/WebCoreSupport/WebProgressTrackerClient.cpp
     WebProcess/WebCoreSupport/WebSearchPopupMenu.cpp
     WebProcess/WebCoreSupport/WebVibrationClient.cpp
 
