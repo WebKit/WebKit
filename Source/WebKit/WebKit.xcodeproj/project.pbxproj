@@ -2361,9 +2361,6 @@
 			baseConfigurationReference = 1C904FD20BA9DD0F0081E9D0 /* WebKit.xcconfig */;
 			buildSettings = {
 				DEBUG_DEFINES = "$(DEBUG_DEFINES_debug) ENABLE_WEBKIT_UNSET_DYLD_FRAMEWORK_PATH";
-				EXPORTED_SYMBOLS_FILE_ = "$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebKit.generated.exp";
-				EXPORTED_SYMBOLS_FILE_i386 = "$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebKit.generated.exp";
-				EXPORTED_SYMBOLS_FILE_i386_macosx = "$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebKit.generated.exp";
 				INSTALL_PATH = "$(BUILT_PRODUCTS_DIR)";
 				OTHER_LDFLAGS = (
 					"$(OTHER_LDFLAGS)",
@@ -2377,9 +2374,6 @@
 			baseConfigurationReference = 1C904FD20BA9DD0F0081E9D0 /* WebKit.xcconfig */;
 			buildSettings = {
 				DEBUG_DEFINES = "$(DEBUG_DEFINES_$(CURRENT_VARIANT)) ENABLE_WEBKIT_UNSET_DYLD_FRAMEWORK_PATH";
-				EXPORTED_SYMBOLS_FILE_ = "$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebKit.generated.exp";
-				EXPORTED_SYMBOLS_FILE_i386 = "$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebKit.generated.exp";
-				EXPORTED_SYMBOLS_FILE_i386_macosx = "$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebKit.generated.exp";
 				INSTALL_PATH = "$(BUILT_PRODUCTS_DIR)";
 				OTHER_LDFLAGS = (
 					"$(OTHER_LDFLAGS)",
@@ -2393,9 +2387,6 @@
 			baseConfigurationReference = 1C904FD20BA9DD0F0081E9D0 /* WebKit.xcconfig */;
 			buildSettings = {
 				BUILD_VARIANTS = normal;
-				EXPORTED_SYMBOLS_FILE_ = "$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebKit.generated.exp";
-				EXPORTED_SYMBOLS_FILE_i386 = "$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebKit.generated.exp";
-				EXPORTED_SYMBOLS_FILE_i386_macosx = "$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebKit.generated.exp";
 				OTHER_LDFLAGS = (
 					"$(OTHER_LDFLAGS)",
 					"-lWebKitSystemInterface",

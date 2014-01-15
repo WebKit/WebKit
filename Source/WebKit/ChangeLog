@@ -1,5 +1,11 @@
 2014-01-14  Dean Jackson  <dino@apple.com>
 
+        Correct grave mistake in updating the pbxproj file rather than xcconfig.
+
+        * WebKit.xcodeproj/project.pbxproj:
+
+2014-01-14  Dean Jackson  <dino@apple.com>
+
         Attempt to fix 32-bit Mac build.
 
         * WebKit.xcodeproj/project.pbxproj:

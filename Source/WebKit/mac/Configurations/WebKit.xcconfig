@@ -30,14 +30,14 @@ EXCLUDED_SOURCE_FILE_NAMES_iphonesimulator = $(EXCLUDED_SOURCE_FILE_NAMES_iphone
 EXCLUDED_SOURCE_FILE_NAMES_macosx = *IOS.mm MemoryMeasure.h WebCaretChangeListener.h WebFixedPositionContent.h WebFrameIOS.h WebFrameIPhone.h WebGeolocationCoreLocationProvider.h WebGeolocationPrivate.h WebGeolocationProviderIOS.h WebMIMETypeRegistry.h WebNSStringDrawing.h WebNSStringExtrasIOS.h WebNSStringExtrasIPhone.h WebPDFViewIOS.h WebPDFViewIPhone.h WebPDFViewPlaceholder.h WebSelectionRect.h WebUIKitDelegate.h WebUIKitSupport.h WebVisiblePosition.h;
 
 EXPORTED_SYMBOLS_FILE = $(EXPORTED_SYMBOLS_FILE_$(CURRENT_ARCH));
-EXPORTED_SYMBOLS_FILE_ = mac/WebKit.exp;
+EXPORTED_SYMBOLS_FILE_ = $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebKit.generated.exp;
 EXPORTED_SYMBOLS_FILE_armv7 = $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebKit.generated.exp;
 EXPORTED_SYMBOLS_FILE_armv7k = $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebKit.generated.exp;
 EXPORTED_SYMBOLS_FILE_armv7s = $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebKit.generated.exp;
 EXPORTED_SYMBOLS_FILE_arm64 = $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebKit.generated.exp;
 EXPORTED_SYMBOLS_FILE_i386 = $(EXPORTED_SYMBOLS_FILE_i386_$(PLATFORM_NAME));
 EXPORTED_SYMBOLS_FILE_i386_iphonesimulator = $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebKit.generated.exp;
-EXPORTED_SYMBOLS_FILE_i386_macosx = mac/WebKit.exp;
+EXPORTED_SYMBOLS_FILE_i386_macosx = $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebKit.generated.exp;
 EXPORTED_SYMBOLS_FILE_x86_64 = $(EXPORTED_SYMBOLS_FILE_x86_64_$(PLATFORM_NAME));
 EXPORTED_SYMBOLS_FILE_x86_64_iphonesimulator = $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebKit.generated.exp;
 EXPORTED_SYMBOLS_FILE_x86_64_macosx = $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebKit.LP64.exp;
