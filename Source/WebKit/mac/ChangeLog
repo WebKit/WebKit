@@ -1,3 +1,10 @@
+2014-01-14  Mark Rowe  <mrowe@apple.com>
+
+        Stop cmp from spewing useless info during postprocess-headers.sh.
+
+        * postprocess-headers.sh: Pass -s to silence cmp since we only care about the
+        exit status.
+
 2014-01-14  Joseph Pecoraro  <pecoraro@apple.com>
 
         [iOS] Crash in NavigatorBase::vendor loading apple.com

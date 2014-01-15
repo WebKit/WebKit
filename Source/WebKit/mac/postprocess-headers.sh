@@ -39,7 +39,7 @@ postProcessInDirectory()
         fi
 
         sed -E -e "${sedExpression}" < ${header} > ${header}.sed
-        if cmp ${header} ${header}.sed; then
+        if cmp -s ${header} ${header}.sed; then
             rm ${header}.sed
         else
             mv ${header}.sed ${header}
