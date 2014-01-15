@@ -1,3 +1,17 @@
+2014-01-14  Alexey Proskuryakov  <ap@apple.com>
+
+        Crash when multiple WebView instances have different PrivateBrowsing settings
+        https://bugs.webkit.org/show_bug.cgi?id=127019
+
+        Reviewed by Sam Weinig.
+
+        * WebView/WebView.mm: (-[WebView _preferencesChanged:]): Don't delete a private
+        browsing session simply because one preferences object doesn't use private browsing.
+        There could be others that do.
+
+        * WebView/WebPreferences.mm: Track how many WebPreferences objects use private
+        browsing, and only delete the private session when there are none any more.
+
 2014-01-14  Simon Fraser  <simon.fraser@apple.com>
 
         Fix the iOS build after r162034.
