@@ -1221,6 +1221,8 @@ webkit2_sources += \
 	Source/WebKit2/WebProcess/WebCoreSupport/WebPlugInClient.h \
 	Source/WebKit2/WebProcess/WebCoreSupport/WebPopupMenu.cpp \
 	Source/WebKit2/WebProcess/WebCoreSupport/WebPopupMenu.h \
+	Source/WebKit2/WebProcess/WebCoreSupport/WebProgressTrackerClient.cpp \
+	Source/WebKit2/WebProcess/WebCoreSupport/WebProgressTrackerClient.h \
 	Source/WebKit2/WebProcess/WebCoreSupport/WebSearchPopupMenu.cpp \
 	Source/WebKit2/WebProcess/WebCoreSupport/WebSearchPopupMenu.h \
 	Source/WebKit2/WebProcess/WebCoreSupport/WebVibrationClient.cpp \
