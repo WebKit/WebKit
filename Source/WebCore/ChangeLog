@@ -1,3 +1,21 @@
+2014-01-14  Brent Fulgham  <bfulgham@apple.com>
+
+        [WebGL] WebGLRenderingContext::validateCompressedTexDimensions improperly calculates values
+        https://bugs.webkit.org/show_bug.cgi?id=126926
+
+        Reviewed by Dean Jackson.
+
+        Test coverage in fast/canvas/webgl/webgl-compressed-texture-size-limit.html
+
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore::WebGLRenderingContext::compressedTexImage2D): Pass target to
+        validation function.
+        (WebCore::WebGLRenderingContext::validateCompressedTexDimensions): Revise
+        calculation to also confirm size is in bounds.
+        (WebCore::WebGLRenderingContext::validateCompressedTexSubDimensions): Pass
+       target to validation function.
+        * html/canvas/WebGLRenderingContext.h: Modify signature.
+
 2014-01-14  Simon Fraser  <simon.fraser@apple.com>
 
         On iOS, we never want to make scrollbar layers

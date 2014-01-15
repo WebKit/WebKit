@@ -1326,7 +1326,7 @@ void WebGLRenderingContext::compressedTexImage2D(GC3Denum target, GC3Dint level,
         synthesizeGLError(GraphicsContext3D::INVALID_VALUE, "compressedTexImage2D", "border not 0");
         return;
     }
-    if (!validateCompressedTexDimensions("compressedTexImage2D", level, width, height, internalformat))
+    if (!validateCompressedTexDimensions("compressedTexImage2D", target, level, width, height, internalformat))
         return;
     if (!validateCompressedTexFuncData("compressedTexImage2D", width, height, internalformat, data))
         return;
@@ -5318,12 +5318,13 @@ bool WebGLRenderingContext::validateCompressedTexFuncData(const char* functionNa
 
     unsigned int bytesRequired = 0;
 
+    const int kBlockWidth = 4;
+    const int kBlockHeight = 4;
+
     switch (format) {
     case Extensions3D::COMPRESSED_RGB_S3TC_DXT1_EXT:
     case Extensions3D::COMPRESSED_RGBA_S3TC_DXT1_EXT:
         {
-            const int kBlockWidth = 4;
-            const int kBlockHeight = 4;
             const int kBlockSize = 8;
             int numBlocksAcross = (width + kBlockWidth - 1) / kBlockWidth;
             int numBlocksDown = (height + kBlockHeight - 1) / kBlockHeight;
@@ -5334,8 +5335,6 @@ bool WebGLRenderingContext::validateCompressedTexFuncData(const char* functionNa
     case Extensions3D::COMPRESSED_RGBA_S3TC_DXT3_EXT:
     case Extensions3D::COMPRESSED_RGBA_S3TC_DXT5_EXT:
         {
-            const int kBlockWidth = 4;
-            const int kBlockHeight = 4;
             const int kBlockSize = 16;
             int numBlocksAcross = (width + kBlockWidth - 1) / kBlockWidth;
             int numBlocksDown = (height + kBlockHeight - 1) / kBlockHeight;
@@ -5345,13 +5344,13 @@ bool WebGLRenderingContext::validateCompressedTexFuncData(const char* functionNa
         break;
     case Extensions3D::COMPRESSED_ATC_RGB_AMD:
         {
-            bytesRequired = floor(static_cast<double>((width + 3) / 4)) * floor(static_cast<double>((height + 3) / 4)) * 8;
+            bytesRequired = floor(static_cast<double>((width + kBlockWidth - 1) / 4)) * floor(static_cast<double>((height + 3) / 4)) * 8;
         }
         break;
     case Extensions3D::COMPRESSED_ATC_RGBA_EXPLICIT_ALPHA_AMD:
     case Extensions3D::COMPRESSED_ATC_RGBA_INTERPOLATED_ALPHA_AMD:
         {
-            bytesRequired = floor(static_cast<double>((width + 3) / 4)) * floor(static_cast<double>((height + 3) / 4)) * 16;
+            bytesRequired = floor(static_cast<double>((width + kBlockWidth - 1) / 4)) * floor(static_cast<double>((height + 3) / 4)) * 16;
         }
         break;
     case Extensions3D::COMPRESSED_RGB_PVRTC_4BPPV1_IMG:
@@ -5379,20 +5378,22 @@ bool WebGLRenderingContext::validateCompressedTexFuncData(const char* functionNa
     return true;
 }
 
-bool WebGLRenderingContext::validateCompressedTexDimensions(const char* functionName, GC3Dint level, GC3Dsizei width, GC3Dsizei height, GC3Denum format)
+bool WebGLRenderingContext::validateCompressedTexDimensions(const char* functionName, GC3Denum target, GC3Dint level, GC3Dsizei width, GC3Dsizei height, GC3Denum format)
 {
     switch (format) {
     case Extensions3D::COMPRESSED_RGB_S3TC_DXT1_EXT:
     case Extensions3D::COMPRESSED_RGBA_S3TC_DXT1_EXT:
     case Extensions3D::COMPRESSED_RGBA_S3TC_DXT3_EXT:
     case Extensions3D::COMPRESSED_RGBA_S3TC_DXT5_EXT: {
-        const int kBlockWidth = 4;
-        const int kBlockHeight = 4;
-        bool widthValid = (level && width == 1) || (level && width == 2) || !(width % kBlockWidth);
-        bool heightValid = (level && height == 1) || (level && height == 2) || !(height % kBlockHeight);
+        const GC3Dsizei kBlockWidth = 4;
+        const GC3Dsizei kBlockHeight = 4;
+        const GC3Dint maxTextureSize = target ? m_maxTextureSize : m_maxCubeMapTextureSize;
+        const GC3Dsizei maxCompressedDimension = maxTextureSize >> level;
+        bool widthValid = (level && width == 1) || (level && width == 2) || (!(width % kBlockWidth) && width <= maxCompressedDimension);
+        bool heightValid = (level && height == 1) || (level && height == 2) || (!(height % kBlockHeight) && height <= maxCompressedDimension);
         if (!widthValid || !heightValid) {
-          synthesizeGLError(GraphicsContext3D::INVALID_OPERATION, functionName, "width or height invalid for level");
-          return false;
+            synthesizeGLError(GraphicsContext3D::INVALID_VALUE, functionName, "width or height invalid for level");
+            return false;
         }
         return true;
     }
@@ -5425,7 +5426,7 @@ bool WebGLRenderingContext::validateCompressedTexSubDimensions(const char* funct
             synthesizeGLError(GraphicsContext3D::INVALID_OPERATION, functionName, "dimensions out of range");
             return false;
         }
-        return validateCompressedTexDimensions(functionName, level, width, height, format);
+        return validateCompressedTexDimensions(functionName, target, level, width, height, format);
     }
     default:
         return false;
