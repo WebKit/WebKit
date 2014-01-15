@@ -145,13 +145,23 @@ protected:
     long long m_expectedContentLength;
     String m_textEncodingName;
     String m_suggestedFilename;
-    int m_httpStatusCode;
     String m_httpStatusText;
     HTTPHeaderMap m_httpHeaderFields;
-    bool m_wasCached : 1;
-    unsigned m_connectionID;
-    bool m_connectionReused : 1;
     RefPtr<ResourceLoadTiming> m_resourceLoadTiming;
+
+    int m_httpStatusCode;
+    unsigned m_connectionID;
+
+private:
+    mutable double m_cacheControlMaxAge;
+    mutable double m_age;
+    mutable double m_date;
+    mutable double m_expires;
+    mutable double m_lastModified;
+
+public:
+    bool m_wasCached : 1;
+    bool m_connectionReused : 1;
 
     bool m_isNull : 1;
     
@@ -169,12 +179,6 @@ private:
     mutable bool m_cacheControlContainsNoCache : 1;
     mutable bool m_cacheControlContainsNoStore : 1;
     mutable bool m_cacheControlContainsMustRevalidate : 1;
-    mutable double m_cacheControlMaxAge;
-
-    mutable double m_age;
-    mutable double m_date;
-    mutable double m_expires;
-    mutable double m_lastModified;
 };
 
 inline bool operator==(const ResourceResponse& a, const ResourceResponse& b) { return ResourceResponseBase::compare(a, b); }

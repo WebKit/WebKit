@@ -47,9 +47,9 @@ public:
 
 #if USE(CFNETWORK)
     ResourceResponse(CFURLResponseRef cfResponse)
-        : m_cfResponse(cfResponse)
-        , m_initLevel(Uninitialized)
+        : m_initLevel(Uninitialized)
         , m_platformResponseIsUpToDate(true)
+        , m_cfResponse(cfResponse)
     {
         m_isNull = !cfResponse;
     }
@@ -58,9 +58,9 @@ public:
 #endif
 #else
     ResourceResponse(NSURLResponse *nsResponse)
-        : m_nsResponse(nsResponse)
-        , m_initLevel(Uninitialized)
+        : m_initLevel(Uninitialized)
         , m_platformResponseIsUpToDate(true)
+        , m_nsResponse(nsResponse)
     {
         m_isNull = !nsResponse;
     }
@@ -111,6 +111,9 @@ private:
 
     static bool platformCompare(const ResourceResponse& a, const ResourceResponse& b);
 
+    InitLevel m_initLevel : 3;
+    bool m_platformResponseIsUpToDate : 1;
+
 #if USE(CFNETWORK)
     mutable RetainPtr<CFURLResponseRef> m_cfResponse;
 #endif
@@ -121,8 +124,6 @@ private:
     // Certificate chain is normally part of NS/CFURLResponse, but there is no way to re-add it to a deserialized response after IPC.
     RetainPtr<CFArrayRef> m_externalCertificateChain;
 #endif
-    InitLevel m_initLevel;
-    bool m_platformResponseIsUpToDate;
 };
 
 struct CrossThreadResourceResponseData : public CrossThreadResourceResponseDataBase {
