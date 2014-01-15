@@ -23,28 +23,55 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ProgressTrackerClient_h
-#define ProgressTrackerClient_h
+#include "config.h"
+#include "WebProgressTrackerClient.h"
 
-namespace WebCore {
+#include "WebPage.h"
+#include "WebPageProxyMessages.h"
+#include <WebCore/Frame.h>
+#include <WebCore/Page.h>
+#include <WebCore/ProgressTracker.h>
 
-class Frame;
+using namespace WebCore;
 
-class ProgressTrackerClient {
-protected:
-    virtual ~ProgressTrackerClient() { }
+namespace WebKit {
 
-public:
-    virtual void progressTrackerDestroyed() { }
+WebProgressTrackerClient::WebProgressTrackerClient(WebPage& webPage)
+    : m_webPage(webPage)
+{
+}
+    
+void WebProgressTrackerClient::progressTrackerDestroyed()
+{
+    delete this;
+}
+    
+void WebProgressTrackerClient::progressStarted(Frame& originatingProgressFrame)
+{
+    if (!originatingProgressFrame.isMainFrame())
+        return;
+    
+    m_webPage.send(Messages::WebPageProxy::DidStartProgress());
+}
 
-    virtual void willChangeEstimatedProgress() { }
-    virtual void didChangeEstimatedProgress() { }
+void WebProgressTrackerClient::progressEstimateChanged(Frame& originatingProgressFrame)
+{
+    if (!originatingProgressFrame.isMainFrame())
+        return;
+    
+    double progress = m_webPage.corePage()->progress().estimatedProgress();
+    m_webPage.send(Messages::WebPageProxy::DidChangeProgress(progress));
+}
 
-    virtual void progressStarted(Frame& originatingProgressFrame) = 0;
-    virtual void progressEstimateChanged(Frame& originatingProgressFrame) = 0;
-    virtual void progressFinished(Frame& originatingProgressFrame) = 0;
-};
+void WebProgressTrackerClient::progressFinished(Frame& originatingProgressFrame)
+{
+    if (!originatingProgressFrame.isMainFrame())
+        return;
+    
+    // Notify the bundle client.
+    m_webPage.injectedBundleLoaderClient().didFinishProgress(&m_webPage);
+    
+    m_webPage.send(Messages::WebPageProxy::DidFinishProgress());
+}
 
-} // namespace WebCore
-
-#endif // ProgressTrackerClient_h
+} // namespace WebKit

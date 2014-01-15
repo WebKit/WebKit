@@ -31,6 +31,8 @@
 		1A60519217502A5D00BC62F5 /* BinaryPropertyList.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A60518E17502A5D00BC62F5 /* BinaryPropertyList.h */; };
 		1A60519317502A5D00BC62F5 /* HistoryPropertyList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A60518F17502A5D00BC62F5 /* HistoryPropertyList.cpp */; };
 		1A60519417502A5D00BC62F5 /* HistoryPropertyList.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A60519017502A5D00BC62F5 /* HistoryPropertyList.h */; };
+		1A6A208D1886154600E50F5F /* WebProgressTrackerClient.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1A6A208B1886154600E50F5F /* WebProgressTrackerClient.mm */; };
+		1A6A208E1886154600E50F5F /* WebProgressTrackerClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A6A208C1886154600E50F5F /* WebProgressTrackerClient.h */; };
 		1A74A28E0F4F75400082E228 /* WebTextInputWindowController.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A74A28C0F4F75400082E228 /* WebTextInputWindowController.h */; };
 		1A74A28F0F4F75400082E228 /* WebTextInputWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A74A28D0F4F75400082E228 /* WebTextInputWindowController.m */; };
 		1A77B02E0EE7730500C8A1F9 /* WebPluginRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A77B02C0EE7730500C8A1F9 /* WebPluginRequest.h */; };
@@ -471,6 +473,8 @@
 		1A60518E17502A5D00BC62F5 /* BinaryPropertyList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BinaryPropertyList.h; sourceTree = "<group>"; };
 		1A60518F17502A5D00BC62F5 /* HistoryPropertyList.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HistoryPropertyList.cpp; sourceTree = "<group>"; };
 		1A60519017502A5D00BC62F5 /* HistoryPropertyList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HistoryPropertyList.h; sourceTree = "<group>"; };
+		1A6A208B1886154600E50F5F /* WebProgressTrackerClient.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebProgressTrackerClient.mm; sourceTree = "<group>"; };
+		1A6A208C1886154600E50F5F /* WebProgressTrackerClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebProgressTrackerClient.h; sourceTree = "<group>"; };
 		1A74A28C0F4F75400082E228 /* WebTextInputWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebTextInputWindowController.h; sourceTree = "<group>"; };
 		1A74A28D0F4F75400082E228 /* WebTextInputWindowController.m */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.objc; fileEncoding = 4; path = WebTextInputWindowController.m; sourceTree = "<group>"; };
 		1A77B02C0EE7730500C8A1F9 /* WebPluginRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebPluginRequest.h; sourceTree = "<group>"; };
@@ -1555,6 +1559,8 @@
 				A58A5798143E727000125F50 /* WebOpenPanelResultListener.mm */,
 				1AA879B411CBE9BF003C664F /* WebPlatformStrategies.h */,
 				1AA879B511CBE9BF003C664F /* WebPlatformStrategies.mm */,
+				1A6A208C1886154600E50F5F /* WebProgressTrackerClient.h */,
+				1A6A208B1886154600E50F5F /* WebProgressTrackerClient.mm */,
 				A5DEFC0711D5331C00885273 /* WebSecurityOrigin.mm */,
 				A5DEFC0811D5331C00885273 /* WebSecurityOriginInternal.h */,
 				A5DEFC0911D5331C00885273 /* WebSecurityOriginPrivate.h */,
@@ -1662,6 +1668,7 @@
 				B82958D3132707D0000D0E79 /* CorrectionPanel.h in Headers */,
 				1A60519417502A5D00BC62F5 /* HistoryPropertyList.h in Headers */,
 				939810680824BF01008DF038 /* HIViewAdapter.h in Headers */,
+				1A6A208E1886154600E50F5F /* WebProgressTrackerClient.h in Headers */,
 				070F549B17F1E42B00169E04 /* WebUserMediaClient.h in Headers */,
 				939810690824BF01008DF038 /* HIWebView.h in Headers */,
 				1A8DED500EE88B8A00F25022 /* HostedNetscapePluginStream.h in Headers */,
@@ -2201,6 +2208,7 @@
 				9398110A0824BF01008DF038 /* WebDefaultUIDelegate.m in Sources */,
 				BC542C430FD7766F00D8AB5D /* WebDelegateImplementationCaching.mm in Sources */,
 				598AD9221201CF1000ABAE4E /* WebDeviceOrientation.mm in Sources */,
+				1A6A208D1886154600E50F5F /* WebProgressTrackerClient.mm in Sources */,
 				598AD91E1201CECF00ABAE4E /* WebDeviceOrientationClient.mm in Sources */,
 				598AD9281201CF3200ABAE4E /* WebDeviceOrientationProviderMock.mm in Sources */,
 				A10C1D751820300E0036883A /* WebSelectionRect.m in Sources */,

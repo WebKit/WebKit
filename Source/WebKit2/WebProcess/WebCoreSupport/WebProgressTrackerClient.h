@@ -23,28 +23,29 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ProgressTrackerClient_h
-#define ProgressTrackerClient_h
+#ifndef WebProgressTrackerClient_h
+#define WebProgressTrackerClient_h
 
-namespace WebCore {
+#include <WebCore/ProgressTrackerClient.h>
 
-class Frame;
+namespace WebKit {
 
-class ProgressTrackerClient {
-protected:
-    virtual ~ProgressTrackerClient() { }
+class WebPage;
 
+class WebProgressTrackerClient : public WebCore::ProgressTrackerClient {
 public:
-    virtual void progressTrackerDestroyed() { }
+    explicit WebProgressTrackerClient(WebPage&);
+    
+private:
+    virtual void progressTrackerDestroyed() OVERRIDE;
 
-    virtual void willChangeEstimatedProgress() { }
-    virtual void didChangeEstimatedProgress() { }
+    virtual void progressStarted(WebCore::Frame& originatingProgressFrame) OVERRIDE;
+    virtual void progressEstimateChanged(WebCore::Frame& originatingProgressFrame) OVERRIDE;
+    virtual void progressFinished(WebCore::Frame& originatingProgressFrame) OVERRIDE;
 
-    virtual void progressStarted(Frame& originatingProgressFrame) = 0;
-    virtual void progressEstimateChanged(Frame& originatingProgressFrame) = 0;
-    virtual void progressFinished(Frame& originatingProgressFrame) = 0;
+    WebPage& m_webPage;
 };
 
-} // namespace WebCore
+} // namespace WebKit
 
-#endif // ProgressTrackerClient_h
+#endif // WebProgressTrackerClient_h

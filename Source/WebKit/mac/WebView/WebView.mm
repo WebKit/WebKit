@@ -94,6 +94,7 @@
 #import "WebPolicyDelegate.h"
 #import "WebPreferenceKeysPrivate.h"
 #import "WebPreferencesPrivate.h"
+#import "WebProgressTrackerClient.h"
 #import "WebScriptDebugDelegate.h"
 #import "WebScriptWorldInternal.h"
 #import "WebStorageManagerInternal.h"
@@ -983,7 +984,7 @@ static bool shouldUseLegacyBackgroundSizeShorthandBehavior()
     pageClients.editorClient = new WebEditorClient(self);
     pageClients.alternativeTextClient = new WebAlternativeTextClient(self);
     pageClients.loaderClientForMainFrame = new WebFrameLoaderClient;
-    pageClients.progressTrackerClient = static_cast<WebFrameLoaderClient*>(pageClients.loaderClientForMainFrame);
+    pageClients.progressTrackerClient = new WebProgressTrackerClient(self);
     _private->page = new Page(pageClients);
 #if ENABLE(GEOLOCATION)
     WebCore::provideGeolocationTo(_private->page, new WebGeolocationClient(self));
@@ -1231,6 +1232,7 @@ static bool shouldUseLegacyBackgroundSizeShorthandBehavior()
     pageClients.editorClient = new WebEditorClient(self);
     pageClients.inspectorClient = new WebInspectorClient(self);
     pageClients.loaderClientForMainFrame = new WebFrameLoaderClient;
+    pageClients.progressTrackerClient = new WebFrameLoaderClient;
     _private->page = new Page(pageClients);
     
     [self setSmartInsertDeleteEnabled:YES];

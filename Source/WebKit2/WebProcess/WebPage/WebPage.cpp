@@ -85,6 +85,7 @@
 #include "WebPreferencesStore.h"
 #include "WebProcess.h"
 #include "WebProcessProxyMessages.h"
+#include "WebProgressTrackerClient.h"
 #include <JavaScriptCore/APICast.h>
 #include <WebCore/ArchiveResource.h>
 #include <WebCore/Chrome.h>
@@ -309,7 +310,7 @@ WebPage::WebPage(uint64_t pageID, const WebPageCreationParameters& parameters)
 #endif
     pageClients.plugInClient = new WebPlugInClient(this);
     pageClients.loaderClientForMainFrame = new WebFrameLoaderClient;
-    pageClients.progressTrackerClient = static_cast<WebFrameLoaderClient*>(pageClients.loaderClientForMainFrame);
+    pageClients.progressTrackerClient = new WebProgressTrackerClient(*this);
 
     m_page = adoptPtr(new Page(pageClients));
 

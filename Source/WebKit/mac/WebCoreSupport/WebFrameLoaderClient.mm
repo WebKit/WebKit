@@ -1017,55 +1017,6 @@ void WebFrameLoaderClient::setMainDocumentError(DocumentLoader* loader, const Re
     [dataSource(loader) _setMainDocumentError:error];
 }
 
-#if !PLATFORM(IOS)
-void WebFrameLoaderClient::willChangeEstimatedProgress()
-{
-    [getWebView(m_webFrame.get()) _willChangeValueForKey:_WebEstimatedProgressKey];
-}
-
-void WebFrameLoaderClient::didChangeEstimatedProgress()
-{
-    [getWebView(m_webFrame.get()) _didChangeValueForKey:_WebEstimatedProgressKey];
-}
-#endif
-
-void WebFrameLoaderClient::progressStarted(WebCore::Frame&)
-{
-#if !PLATFORM(IOS)
-    [[NSNotificationCenter defaultCenter] postNotificationName:WebViewProgressStartedNotification object:getWebView(m_webFrame.get())];
-#else
-    WebThreadPostNotification(WebViewProgressStartedNotification, getWebView(m_webFrame.get()), nil);
-#endif
-}
-
-void WebFrameLoaderClient::progressEstimateChanged(WebCore::Frame&)
-{
-#if !PLATFORM(IOS)
-    [[NSNotificationCenter defaultCenter] postNotificationName:WebViewProgressEstimateChangedNotification object:getWebView(m_webFrame.get())];
-#else
-    WebView *webView = getWebView(m_webFrame.get());
-    NSNumber *progress = [NSNumber numberWithFloat:[webView estimatedProgress]];
-    CGColorRef bodyBackgroundColor = [[webView mainFrame] _bodyBackgroundColor];
-
-    // Use a CFDictionary so we can add the CGColorRef without compile errors. And then thanks to
-    // toll-free bridging we can pass the CFDictionary as an NSDictionary to postNotification.
-    CFMutableDictionaryRef userInfo = CFDictionaryCreateMutable(kCFAllocatorDefault, 2, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks);
-    CFDictionaryAddValue(userInfo, WebViewProgressEstimatedProgressKey, progress);
-    if (bodyBackgroundColor)
-        CFDictionaryAddValue(userInfo, WebViewProgressBackgroundColorKey, bodyBackgroundColor);
-
-    WebThreadPostNotification(WebViewProgressEstimateChangedNotification, webView, (NSDictionary *) userInfo);
-    CFRelease(userInfo);
-#endif
-}
-
-void WebFrameLoaderClient::progressFinished(WebCore::Frame&)
-{
-#if !PLATFORM(IOS)
-    [[NSNotificationCenter defaultCenter] postNotificationName:WebViewProgressFinishedNotification object:getWebView(m_webFrame.get())];
-#endif
-}
-
 void WebFrameLoaderClient::setMainFrameDocumentReady(bool ready)
 {
     [getWebView(m_webFrame.get()) setMainFrameDocumentReady:ready];

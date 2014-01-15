@@ -27,14 +27,13 @@
 #define WebFrameLoaderClient_h
 
 #include <WebCore/FrameLoaderClient.h>
-#include <WebCore/ProgressTrackerClient.h>
 
 namespace WebKit {
 
 class PluginView;
 class WebFrame;
     
-class WebFrameLoaderClient : public WebCore::FrameLoaderClient, public WebCore::ProgressTrackerClient {
+class WebFrameLoaderClient : public WebCore::FrameLoaderClient {
 public:
     WebFrameLoaderClient();
     ~WebFrameLoaderClient();
@@ -115,13 +114,6 @@ private:
     
     virtual void revertToProvisionalState(WebCore::DocumentLoader*) OVERRIDE;
     virtual void setMainDocumentError(WebCore::DocumentLoader*, const WebCore::ResourceError&) OVERRIDE;
-    
-    // Maybe these should go into a ProgressTrackerClient some day
-    virtual void willChangeEstimatedProgress() OVERRIDE;
-    virtual void didChangeEstimatedProgress() OVERRIDE;
-    virtual void progressStarted(WebCore::Frame&) OVERRIDE;
-    virtual void progressEstimateChanged(WebCore::Frame&) OVERRIDE;
-    virtual void progressFinished(WebCore::Frame&) OVERRIDE;
     
     virtual void setMainFrameDocumentReady(bool) OVERRIDE;
     

@@ -815,46 +815,6 @@ void WebFrameLoaderClient::setMainDocumentError(DocumentLoader*, const ResourceE
     m_hasSentResponseToPluginView = false;
 }
 
-void WebFrameLoaderClient::willChangeEstimatedProgress()
-{
-    notImplemented();
-}
-
-void WebFrameLoaderClient::didChangeEstimatedProgress()
-{
-    notImplemented();
-}
-
-void WebFrameLoaderClient::progressStarted(Frame& originatingProgressFrame)
-{
-    if (WebPage* webPage = m_frame->page()) {
-        if (originatingProgressFrame.isMainFrame())
-            webPage->send(Messages::WebPageProxy::DidStartProgress());
-    }
-}
-
-void WebFrameLoaderClient::progressEstimateChanged(Frame& originatingProgressFrame)
-{
-    if (WebPage* webPage = m_frame->page()) {
-        if (originatingProgressFrame.isMainFrame()) {
-            double progress = webPage->corePage()->progress().estimatedProgress();
-            webPage->send(Messages::WebPageProxy::DidChangeProgress(progress));
-        }
-    }
-}
-
-void WebFrameLoaderClient::progressFinished(Frame& originatingProgressFrame)
-{
-    if (WebPage* webPage = m_frame->page()) {
-        if (originatingProgressFrame.isMainFrame()) {
-            // Notify the bundle client.
-            webPage->injectedBundleLoaderClient().didFinishProgress(webPage);
-
-            webPage->send(Messages::WebPageProxy::DidFinishProgress());
-        }
-    }
-}
-
 void WebFrameLoaderClient::setMainFrameDocumentReady(bool)
 {
     notImplemented();

@@ -27,7 +27,6 @@
  */
 
 #import <WebCore/FrameLoaderClient.h>
-#import <WebCore/ProgressTrackerClient.h>
 #import <WebCore/Timer.h>
 #import <wtf/Forward.h>
 #import <wtf/HashMap.h>
@@ -50,7 +49,7 @@ namespace WebCore {
 
 typedef HashMap<RefPtr<WebCore::ResourceLoader>, RetainPtr<WebResource>> ResourceMap;
 
-class WebFrameLoaderClient : public WebCore::FrameLoaderClient, public WebCore::ProgressTrackerClient {
+class WebFrameLoaderClient : public WebCore::FrameLoaderClient {
 public:
     WebFrameLoaderClient(WebFrame* = 0);
 
@@ -135,14 +134,6 @@ private:
     virtual void setMainDocumentError(WebCore::DocumentLoader*, const WebCore::ResourceError&) OVERRIDE;
     virtual bool dispatchDidLoadResourceFromMemoryCache(WebCore::DocumentLoader*, const WebCore::ResourceRequest&, const WebCore::ResourceResponse&, int length) OVERRIDE;
 
-#if !PLATFORM(IOS)
-    virtual void willChangeEstimatedProgress() OVERRIDE;
-    virtual void didChangeEstimatedProgress() OVERRIDE;
-#endif
-    virtual void progressStarted(WebCore::Frame&) OVERRIDE;
-    virtual void progressEstimateChanged(WebCore::Frame&) OVERRIDE;
-    virtual void progressFinished(WebCore::Frame&) OVERRIDE;
-    
     virtual void setMainFrameDocumentReady(bool) OVERRIDE;
 
     virtual void startDownload(const WebCore::ResourceRequest&, const String& suggestedName = String()) OVERRIDE;

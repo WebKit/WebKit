@@ -93,8 +93,7 @@ ProgressTracker::ProgressTracker(ProgressTrackerClient& client)
 
 ProgressTracker::~ProgressTracker()
 {
-    // FIXME: Uncomment this once we've transitioned to custom progress tracker clients.
-    // m_client.progressTrackerDestroyed();
+    m_client.progressTrackerDestroyed();
 }
 
 double ProgressTracker::estimatedProgress() const

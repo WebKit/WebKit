@@ -1,3 +1,25 @@
+2014-01-14  Anders Carlsson  <andersca@apple.com>
+
+        Create separate progress tracker clients
+        https://bugs.webkit.org/show_bug.cgi?id=127025
+
+        Reviewed by Sam Weinig.
+
+        * WebCoreSupport/WebFrameLoaderClient.h:
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        * WebCoreSupport/WebProgressTrackerClient.h: Copied from Source/WebCore/loader/ProgressTrackerClient.h.
+        * WebCoreSupport/WebProgressTrackerClient.mm: Added.
+        (WebProgressTrackerClient::WebProgressTrackerClient):
+        (WebProgressTrackerClient::progressTrackerDestroyed):
+        (WebProgressTrackerClient::willChangeEstimatedProgress):
+        (WebProgressTrackerClient::didChangeEstimatedProgress):
+        (WebProgressTrackerClient::progressStarted):
+        (WebProgressTrackerClient::progressEstimateChanged):
+        (WebProgressTrackerClient::progressFinished):
+        * WebView/WebView.mm:
+        (-[WebView _commonInitializationWithFrameName:groupName:]):
+        (-[WebView initSimpleHTMLDocumentWithStyle:frame:preferences:groupName:]):
+
 2014-01-14  Dean Jackson  <dino@apple.com>
 
         Correct grave mistake in updating the pbxproj file rather than xcconfig.

@@ -1,3 +1,14 @@
+2014-01-14  Anders Carlsson  <andersca@apple.com>
+
+        Create separate progress tracker clients
+        https://bugs.webkit.org/show_bug.cgi?id=127025
+
+        Reviewed by Sam Weinig.
+
+        * loader/ProgressTracker.cpp:
+        (WebCore::ProgressTracker::~ProgressTracker):
+        * loader/ProgressTrackerClient.h:
+
 2014-01-14  Brent Fulgham  <bfulgham@apple.com>
 
         [WebGL] WebGLRenderingContext::validateCompressedTexDimensions improperly calculates values

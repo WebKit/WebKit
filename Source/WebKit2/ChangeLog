@@ -1,3 +1,23 @@
+2014-01-14  Anders Carlsson  <andersca@apple.com>
+
+        Create separate progress tracker clients
+        https://bugs.webkit.org/show_bug.cgi?id=127025
+
+        Reviewed by Sam Weinig.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.h:
+        * WebProcess/WebCoreSupport/WebProgressTrackerClient.cpp: Copied from Source/WebCore/loader/ProgressTrackerClient.h.
+        (WebKit::WebProgressTrackerClient::WebProgressTrackerClient):
+        (WebKit::WebProgressTrackerClient::progressTrackerDestroyed):
+        (WebKit::WebProgressTrackerClient::progressStarted):
+        (WebKit::WebProgressTrackerClient::progressEstimateChanged):
+        (WebKit::WebProgressTrackerClient::progressFinished):
+        * WebProcess/WebCoreSupport/WebProgressTrackerClient.h: Copied from Source/WebCore/loader/ProgressTrackerClient.h.
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::WebPage):
+
 2014-01-14  Benjamin Poulain  <bpoulain@apple.com>
 
         [WK2] Make WebPageProxy's setUserAgent private
