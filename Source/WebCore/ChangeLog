@@ -1,3 +1,22 @@
+2014-01-15  Mihai Tica  <mitica@adobe.com>
+
+        Reapplying:
+        Background-blend-mode doesn't work for an element with an
+        SVG image as background and border-style or padding set.
+        The problem consisted in the drawing path using the default
+        blending parameter at all times.
+        https://bugs.webkit.org/show_bug.cgi?id=118894
+
+        Reviewed by Dirk Schulze.
+
+        Test: css3/compositing/background-blend-mode-data-uri-svg-image.html
+
+        * svg/graphics/SVGImage.cpp:
+        (WebCore::SVGImage::drawPatternForContainer): Pass blendMode to Image::drawPattern.
+        * svg/graphics/SVGImage.h: Add a blendMode parameter to drawPatternForContainer.
+        * svg/graphics/SVGImageForContainer.cpp:
+        (WebCore::SVGImageForContainer::drawPattern): Pass blendMode to drawPatternForContainer call.
+
 2014-01-15  Andrei Bucur  <abucur@adobe.com>
 
         [CSS Regions] Hit-testing goes through clipped layer in fast/regions/overflow-first-and-last-regions-in-container-hidden.html

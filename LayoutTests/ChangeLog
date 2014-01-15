@@ -1,3 +1,17 @@
+2014-01-15  Mihai Tica  <mitica@adobe.com>
+
+        Reapplying:
+        Background-blend-mode doesn't work for an element with an
+        SVG image as background and border-style or padding set.
+        Tests now use rectangles instead of circles for SVGs.
+        https://bugs.webkit.org/show_bug.cgi?id=118894
+
+        Reviewed by Dirk Schulze.
+
+        * css3/compositing/background-blend-mode-data-uri-svg-image-expected.html:
+        * css3/compositing/background-blend-mode-data-uri-svg-image.html:
+        * platform/efl/TestExpectations: pass tests for efl, blendMode is not implemented.
+
 2014-01-15  Andrei Bucur  <abucur@adobe.com>
 
         [CSS Regions] Hit-testing goes through clipped layer in fast/regions/overflow-first-and-last-regions-in-container-hidden.html
