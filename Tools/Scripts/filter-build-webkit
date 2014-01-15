@@ -138,22 +138,33 @@ for (my $previousLine = "", my $line = <>; $line; $previousLine = $line, $line =
         $buildFinished = 1;
     } elsif ($line =~ /^===/) {
         printLine($line, STYLE_HEADER);
-    } elsif ($line =~ /Checking Dependencies|Check dependencies/) {
+    } elsif ($line =~ /Checking Dependencies|Check dependencies|Create product structure/) {
         printLine($line, STYLE_PLAIN);
     } elsif ($line =~ /\*\* BUILD SUCCEEDED \*\*/) {
         printLine("Build Succeeded", STYLE_SUCCESS);
-    } elsif ($line =~ /^(PhaseScriptExecution|ClCompile|CompileC|Distributed-CompileC|Ld|PBXCp|CpResource|CopyPNGFile|CopyTiffFile|CpHeader|Processing|ProcessInfoPlistFile|ProcessPCH|ProcessPCH\+\+|Touch|Libtool|CopyStringsFile|Mig|CreateUniversalBinary|Analyze|ProcessProductPackaging|CodeSign|SymLink|Updating|CompileXIB|StripNIB|CopyPlistFile|GenerateDSYMFile) ("[^"]+"|\S+)?/) {
-        my ($command, $path) = ($1, basename($2));
-        $path =~ s/"//g;
+    } elsif ($line =~ /^(\e\[1m)?(PhaseScriptExecution|ClCompile|CompileC|Distributed-CompileC|Ld|PBXCp|CpResource|CopyPNGFile|CopyTiffFile|CpHeader|Processing|ProcessInfoPlistFile|ProcessPCH|ProcessPCH\+\+|Touch|Libtool|CopyStringsFile|Mig|CreateUniversalBinary|Analyze|ProcessProductPackaging|CodeSign|SymLink|Updating|CompileXIB|StripNIB|CopyPlistFile|GenerateDSYMFile)(\e\[0m)? ("[^"]+"|(\\|(?<=\\)\s|\S)+)?/) {
+        my ($command, $path) = ($2, basename($4));
+        $path =~ s/("|\\|\.[oah]$)//g;
         printLine("$command $path", STYLE_PLAIN);
+    } elsif ($line =~ /^\S+mkdir .*?(\S+)$/) {
+        my $path = basename($1);
+        printLine("mkdir $path", STYLE_PLAIN);
+    } elsif ($line =~ /^cp (\S+)/) {
+        my $path = basename($1);
+        printLine("cp $path", STYLE_PLAIN);
+    } elsif ($line =~ /python (\S+\.py) (\S+)/) {
+        my ($command, $path) = (basename($1), basename($2));
+        printLine("python $command $path", STYLE_PLAIN);
     } elsif ($line =~ /^\/\S+?(strip|WebCoreExportFileGenerator) .*?(\/|\> )(\S+)/) {
         my ($command, $path) = (basename($1), basename($3));
         printLine("$command $path", STYLE_PLAIN);
     } elsif ($line =~ /^offlineasm\: /) {
         printLine($line, STYLE_PLAIN);
-    } elsif ($line =~ /^Generating message.*(header|receiver) for (\S+)\.\.\./) {
-        my ($command, $path) = ($1, basename($2));
-        printLine("Generating message $command $path", STYLE_PLAIN);
+    } elsif ($line =~ /^Generating (bindings|messages? (header|receiver)|derived source) for (\S+)\.\.\./) {
+        my ($command, $path) = ($1, basename($3));
+        printLine("Generating $command $path", STYLE_PLAIN);
+    } elsif ($line =~ /^Pre-processing (\S+) sandbox profile/) {
+        printLine($line, STYLE_PLAIN);
     } elsif ($line =~ /^(\S+\/cc).*?(\S+)\.(out|exp)/) {
         my ($command, $path) = (basename($1), basename($2));
         printLine("$command $path", STYLE_PLAIN);
@@ -230,6 +241,18 @@ sub shouldIgnoreLine($$)
     return 1 if $line =~ /libtool.*has no symbols/;
     return 1 if $line =~ /^# Lower case all the values, as CSS values are case-insensitive$/;
     return 1 if $line =~ /^if sort /;
+    return 1 if $line =~ /set-webkit-configuration/;
+    return 1 if $line =~ /^building file list/;
+    return 1 if $line =~ /^\.\/$/;
+    return 1 if $line =~ /^\S+\.h$/;
+    return 1 if $line =~ /^\S+\/$/;
+    return 1 if $line =~ /^sent \d+ bytes/;
+    return 1 if $line =~ /^total size is/;
+    return 1 if $line =~ /^\( (xcodebuild|if) /;
+    return 1 if $line =~ /^warning\: detected internal install, passing entitlements to simulator anyway\./;
+    return 1 if $line =~ /may not function in the Simulator because Ad Hoc/;
+    return 1 if $line =~ /\/usr\/bin\/clang .*? \> \S+.sb/;
+
     if ($platform eq "win") {
         return 1 if $line =~ /^\s*(touch|perl|cat|rm -f|bison|del|flex|python|\/usr\/bin\/g\+\+|gperf|echo|sed|if \[ \-f|WebCore\/generate-export-file) /;
         return 1 if $line =~ /^\s*(if not exist \"|if errorlevel 1)/;
