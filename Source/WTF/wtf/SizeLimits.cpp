@@ -73,7 +73,6 @@ struct SameSizeAsVectorWithInlineCapacity {
 static_assert(sizeof(OwnPtr<int>) == sizeof(int*), "OwnPtr should stay small!");
 static_assert(sizeof(PassRefPtr<RefCounted<int>>) == sizeof(int*), "PassRefPtr should stay small!");
 static_assert(sizeof(RefCounted<int>) == sizeof(SameSizeAsRefCounted), "RefCounted should stay small!");
-static_assert(sizeof(RefCountedCustomAllocated<int>) == sizeof(SameSizeAsRefCounted), "RefCountedCustomAllocated should stay small!");
 static_assert(sizeof(RefPtr<RefCounted<int>>) == sizeof(int*), "RefPtr should stay small!");
 static_assert(sizeof(Vector<int>) == sizeof(SameSizeAsVectorWithInlineCapacity<int>), "Vector should stay small!");
 static_assert(sizeof(Vector<int, 1>) == sizeof(SameSizeAsVectorWithInlineCapacity<int, 1>), "Vector should stay small!");

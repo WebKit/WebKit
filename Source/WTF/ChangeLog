@@ -1,3 +1,15 @@
+2014-01-15  Anders Carlsson  <andersca@apple.com>
+
+        Get rid of RefCountedCustomAllocated
+        https://bugs.webkit.org/show_bug.cgi?id=127051
+
+        Reviewed by Antti Koivisto.
+
+        It's not used anywhere anymore, get rid of it.
+
+        * wtf/RefCounted.h:
+        * wtf/SizeLimits.cpp:
+
 2014-01-14  Anders Carlsson  <andersca@apple.com>
 
         And yet another build fix.

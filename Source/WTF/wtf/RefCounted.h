@@ -154,25 +154,8 @@ protected:
     }
 };
 
-template<typename T> class RefCountedCustomAllocated : public RefCountedBase {
-    WTF_MAKE_NONCOPYABLE(RefCountedCustomAllocated);
-
-public:
-    void deref()
-    {
-        if (derefBase())
-            delete static_cast<T*>(this);
-    }
-
-protected:
-    ~RefCountedCustomAllocated()
-    {
-    }
-};
-
 } // namespace WTF
 
 using WTF::RefCounted;
-using WTF::RefCountedCustomAllocated;
 
 #endif // RefCounted_h
