@@ -92,6 +92,7 @@
 #include "InspectorInstrumentation.h"
 #include "JSLazyEventListener.h"
 #include "Language.h"
+#include "LoaderStrategy.h"
 #include "Logging.h"
 #include "MainFrame.h"
 #include "MediaCanStartListener.h"
@@ -107,6 +108,7 @@
 #include "PageGroup.h"
 #include "PageTransitionEvent.h"
 #include "PlatformLocale.h"
+#include "PlatformStrategies.h"
 #include "PlugInsResources.h"
 #include "PluginDocument.h"
 #include "PointerLockController.h"
@@ -114,6 +116,7 @@
 #include "ProcessingInstruction.h"
 #include "RenderView.h"
 #include "RenderWidget.h"
+#include "ResourceLoadScheduler.h"
 #include "ResourceLoader.h"
 #include "RuntimeEnabledFeatures.h"
 #include "SchemeRegistry.h"
@@ -1865,6 +1868,9 @@ void Document::updateLayoutIgnorePendingStylesheets()
 PassRef<RenderStyle> Document::styleForElementIgnoringPendingStylesheets(Element* element)
 {
     ASSERT_ARG(element, &element->document() == this);
+
+    // On iOS request delegates called during styleForElement may result in re-entering WebKit and killing the style resolver.
+    ResourceLoadScheduler::Suspender suspender(*platformStrategies()->loaderStrategy()->resourceLoadScheduler());
 
     TemporaryChange<bool> change(m_ignorePendingStylesheets, true);
     return ensureStyleResolver().styleForElement(element, element->parentNode() ? element->parentNode()->computedStyle() : nullptr);

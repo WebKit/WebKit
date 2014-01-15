@@ -1,3 +1,22 @@
+2014-01-15  Antti Koivisto  <antti@apple.com>
+
+        Suspend resource requests during computedStyle
+        https://bugs.webkit.org/show_bug.cgi?id=127034
+
+        Reviewed by Andreas Kling.
+
+        We have some cases where getting computed style leads to crashes in loadPendingImages. 
+        This is probably caused by load callbacks resulting in re-entering WebKit and killing the StyleResolver.
+        
+        As a speculative fix suspend resource loads (and so callbacks) when getting the computed style.
+        We do similar suspension during style recalc for the same reason.
+
+        * dom/Document.cpp:
+        (WebCore::Document::styleForElementIgnoringPendingStylesheets):
+        * loader/ResourceLoadScheduler.h:
+        (WebCore::ResourceLoadScheduler::Suspender::Suspender):
+        (WebCore::ResourceLoadScheduler::Suspender::~Suspender):
+
 2014-01-15  László Langó  <llango.u-szeged@partner.samsung.com>
 
         DocumentFragment should be constructable.
