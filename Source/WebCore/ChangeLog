@@ -1,3 +1,9 @@
+2014-01-14  Anders Carlsson  <andersca@apple.com>
+
+        Follow up build fix attempt.
+
+        * WebCore.exp.in:
+
 2014-01-14  Roger Fong  <roger_fong@apple.com>
 
         Add support for handling WebGL load policies.
