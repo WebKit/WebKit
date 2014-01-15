@@ -1,6 +1,7 @@
 SCRIPTS_PATH ?= ../Tools/Scripts
 
-XCODE_OPTIONS = `perl -I$(SCRIPTS_PATH) -Mwebkitdirs -e 'print XcodeOptionString()' -- $(BUILD_WEBKIT_OPTIONS)` COLOR_DIAGNOSTICS=YES $(ARGS)
+SET_COLOR_DIAGNOSTICS_ARG = if [[ -t 1 ]]; then COLOR_DIAGNOSTICS_ARG="COLOR_DIAGNOSTICS=YES"; fi
+XCODE_OPTIONS = `perl -I$(SCRIPTS_PATH) -Mwebkitdirs -e 'print XcodeOptionString()' -- $(BUILD_WEBKIT_OPTIONS)` $${COLOR_DIAGNOSTICS_ARG} $(ARGS)
 
 ifneq (,$(SDKROOT))
 	XCODE_OPTIONS += SDKROOT=$(SDKROOT)
@@ -25,17 +26,17 @@ endif
 endif
 
 all:
-	( xcodebuild $(OTHER_OPTIONS) $(XCODE_OPTIONS) | $(OUTPUT_FILTER) && exit $${PIPESTATUS[0]} )
+	( $(SET_COLOR_DIAGNOSTICS_ARG); xcodebuild $(OTHER_OPTIONS) $(XCODE_OPTIONS) | $(OUTPUT_FILTER) && exit $${PIPESTATUS[0]} )
 
 debug d development dev develop: force
 	$(SCRIPTS_PATH)/set-webkit-configuration --debug
-	( xcodebuild $(OTHER_OPTIONS) $(XCODE_OPTIONS) | $(OUTPUT_FILTER) && exit $${PIPESTATUS[0]} )
+	( $(SET_COLOR_DIAGNOSTICS_ARG); xcodebuild $(OTHER_OPTIONS) $(XCODE_OPTIONS) | $(OUTPUT_FILTER) && exit $${PIPESTATUS[0]} )
 
 release r deployment dep deploy: force
 	$(SCRIPTS_PATH)/set-webkit-configuration --release
-	( xcodebuild $(OTHER_OPTIONS) $(XCODE_OPTIONS) | $(OUTPUT_FILTER) && exit $${PIPESTATUS[0]} )
+	( $(SET_COLOR_DIAGNOSTICS_ARG); xcodebuild $(OTHER_OPTIONS) $(XCODE_OPTIONS) | $(OUTPUT_FILTER) && exit $${PIPESTATUS[0]} )
 
 clean:
-	( xcodebuild $(OTHER_OPTIONS) -alltargets clean $(XCODE_OPTIONS) | $(OUTPUT_FILTER) && exit $${PIPESTATUS[0]} )
+	( $(SET_COLOR_DIAGNOSTICS_ARG); xcodebuild $(OTHER_OPTIONS) -alltargets clean $(XCODE_OPTIONS) | $(OUTPUT_FILTER) && exit $${PIPESTATUS[0]} )
 
 force: ;
