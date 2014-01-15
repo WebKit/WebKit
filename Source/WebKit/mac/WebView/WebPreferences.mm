@@ -2299,8 +2299,6 @@ static NSString *classIBCreatorID = nil;
 #if PLATFORM(IOS)
 - (void)_invalidateCachedPreferences
 {
-    BOOL privateBrowsingWasEnabled = [self privateBrowsingEnabled];
-
     dispatch_barrier_sync(_private->readWriteQueue, ^{
         if (_private->values)
             _private->values = adoptNS([[NSMutableDictionary alloc] init]);

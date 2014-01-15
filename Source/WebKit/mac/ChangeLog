@@ -1,5 +1,12 @@
 2014-01-15  Alexey Proskuryakov  <ap@apple.com>
 
+        More iOS build fixing.
+
+        * WebView/WebPreferences.mm: (-[WebPreferences _invalidateCachedPreferences]):
+        Removed a now unused local variable.
+
+2014-01-15  Alexey Proskuryakov  <ap@apple.com>
+
         Build fix for iOS.
 
         * WebView/WebPreferences.mm: (-[WebPreferences _invalidateCachedPreferences]):
