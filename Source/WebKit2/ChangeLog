@@ -1,3 +1,23 @@
+2014-01-14  Benjamin Poulain  <bpoulain@apple.com>
+
+        [WK2] Make WebPageProxy's setUserAgent private
+        https://bugs.webkit.org/show_bug.cgi?id=127013
+
+        Reviewed by Anders Carlsson.
+
+        * UIProcess/WebPageProxy.h:
+        The API to modify the user agent already has 3 "setters":
+        -standardUserAgent
+        -setApplicationNameForUserAgent
+        -setCustomUserAgent
+
+        The method WebPageProxy::setUserAgent() is supposed to be internal, not used directly.
+        Using it directly would cause unexpected behaviors, for example:
+        -Set the user agent with setUserAgent.
+        -Set CustomUserAgent.
+        -Reset CustomUserAgent.
+        ->The user agent is now standardUserAgent instead of the user agent defined initially.
+
 2014-01-14  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r162000.

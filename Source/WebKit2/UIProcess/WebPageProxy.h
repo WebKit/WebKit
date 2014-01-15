@@ -522,7 +522,6 @@ public:
 
     const String& toolTip() const { return m_toolTip; }
 
-    void setUserAgent(const String&);
     const String& userAgent() const { return m_userAgent; }
     void setApplicationNameForUserAgent(const String&);
     const String& applicationNameForUserAgent() const { return m_applicationNameForUserAgent; }
@@ -863,6 +862,8 @@ private:
 
     void resetState();
     void resetStateAfterProcessExited();
+
+    void setUserAgent(const String&);
 
     // IPC::MessageReceiver
     virtual void didReceiveMessage(IPC::Connection*, IPC::MessageDecoder&) OVERRIDE;
