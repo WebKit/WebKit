@@ -1,3 +1,14 @@
+2014-01-14  Joseph Pecoraro  <pecoraro@apple.com>
+
+        [iOS] Crash in NavigatorBase::vendor loading apple.com
+        https://bugs.webkit.org/show_bug.cgi?id=127028
+
+        Reviewed by Daniel Bates.
+
+        Export function pointers to be filled in with WebKitSystemInterface functions.
+
+        * WebCore.exp.in:
+
 2014-01-14  Jeffrey Pfau  <jpfau@apple.com>
 
         Build fix after r162034
