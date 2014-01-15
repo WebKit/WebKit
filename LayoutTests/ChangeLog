@@ -1,3 +1,11 @@
+2014-01-15  Zan Dobersek  <zdobersek@igalia.com>
+
+
+        Unreviewed GTK gardening. Removing an unneeded GTK-specific baseline
+        for a layout test that was fixed proper in r161549.
+
+        * platform/gtk/http/tests/security/redirect-BLOCKED-to-localURL-expected.txt: Removed.
+
 2014-01-15  Mario Sanchez Prada  <mario.prada@samsung.com>
 
         AX: Merge layout test from Mac and GTK checking accessibility roles
