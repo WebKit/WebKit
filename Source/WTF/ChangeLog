@@ -1,3 +1,16 @@
+2014-01-16  Alberto Garcia  <berto@igalia.com>
+
+        Source/WTF/wtf/Atomics.h:300: Error: bad register name `%bpl'
+        https://bugs.webkit.org/show_bug.cgi?id=126985
+
+        Reviewed by Csaba Osztrogonác.
+
+        Use the 'q' constraint to force using a register that allows
+        access to its lower byte.
+
+        * wtf/Atomics.h:
+        (WTF::weakCompareAndSwap):
+
 2014-01-16  Peter Molnar  <pmolnar.u-szeged@partner.samsung.com>
 
         Fix unnecessary checks for Clang compiler if the compiler is MSVC.

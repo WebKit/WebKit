@@ -295,7 +295,7 @@ inline bool weakCompareAndSwap(uint8_t* location, uint8_t expected, uint8_t newV
         "lock; cmpxchgb %3, %2\n\t"
         "sete %1"
         : "+a"(expected), "=q"(result), "+m"(*location)
-        : "r"(newValue)
+        : "q"(newValue)
         : "memory"
         );
     return result;
