@@ -593,7 +593,7 @@ void RenderElement::insertChildInternal(RenderObject* newChild, RenderObject* be
         setChildNeedsLayout(); // We may supply the static position for an absolute positioned child.
 
     if (AXObjectCache* cache = document().axObjectCache())
-        cache->childrenChanged(this);
+        cache->childrenChanged(this, newChild);
 }
 
 void RenderElement::removeChildInternal(RenderObject& oldChild, NotifyChildrenType notifyChildren)
@@ -842,7 +842,7 @@ void RenderElement::styleWillChange(StyleDifference diff, const RenderStyle& new
 #endif
         if (visibilityChanged) {
             if (AXObjectCache* cache = document().existingAXObjectCache())
-                cache->childrenChanged(parent());
+                cache->childrenChanged(parent(), this);
         }
 
         // Keep layer hierarchy visibility bits up to date if visibility changes.

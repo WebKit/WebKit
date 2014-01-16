@@ -183,7 +183,7 @@ void RenderMenuList::addChild(RenderObject* newChild, RenderObject* beforeChild)
     ASSERT(m_innerBlock == firstChild());
 
     if (AXObjectCache* cache = document().existingAXObjectCache())
-        cache->childrenChanged(this);
+        cache->childrenChanged(this, newChild);
 }
 
 void RenderMenuList::removeChild(RenderObject& oldChild)

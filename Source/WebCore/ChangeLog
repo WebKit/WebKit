@@ -1,5 +1,35 @@
 2014-01-16  Chris Fleizach  <cfleizach@apple.com>
 
+        AX: WebKit is not firing AXMenuOpenedNotification
+        https://bugs.webkit.org/show_bug.cgi?id=126993
+
+        Reviewed by Mario Sanchez Prada.
+
+        To monitor for menu open notifications, we need to know which children are added to
+        the render tree, so the childrenChanged() method has been updated to allow for that.
+        Once we know the new child, we can then check what kind of role it has.
+
+        I also found a flakiness issue with DRT where posting a notification back to DRT
+        would sometimes cause a new notification to be queued, which would then be lost when the
+        queue was cleared. This was fixed by copying the notifications to post before iterating them.
+
+        Test: platform/mac/accessibility/aria-menu-open-notification.html
+
+        * accessibility/AXObjectCache.cpp:
+        (WebCore::AXObjectCache::checkForOpenMenu):
+        (WebCore::AXObjectCache::childrenChanged):
+        (WebCore::AXObjectCache::notificationPostTimerFired):
+        * accessibility/AXObjectCache.h:
+        (WebCore::AXObjectCache::childrenChanged):
+        * accessibility/AccessibilityNodeObject.h:
+        * accessibility/mac/AXObjectCacheMac.mm:
+        (WebCore::AXObjectCache::postPlatformNotification):
+        * rendering/RenderElement.cpp:
+        (WebCore::RenderElement::insertChildInternal):
+        (WebCore::RenderElement::styleWillChange):
+
+2014-01-16  Chris Fleizach  <cfleizach@apple.com>
+
         AX: WebKit is not firing AXMenuItemSelectedNotification
         https://bugs.webkit.org/show_bug.cgi?id=127081
 

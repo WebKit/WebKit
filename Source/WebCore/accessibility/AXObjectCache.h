@@ -105,7 +105,7 @@ public:
     void detachWrapper(AccessibilityObject*, AccessibilityDetachmentType);
     void attachWrapper(AccessibilityObject*);
     void childrenChanged(Node*);
-    void childrenChanged(RenderObject*);
+    void childrenChanged(RenderObject*, RenderObject* newChild = nullptr);
     void childrenChanged(AccessibilityObject*);
     void checkedStateChanged(Node*);
     void selectedChildrenChanged(Node*);
@@ -170,6 +170,7 @@ public:
         AXMenuListItemSelected,
         AXMenuListValueChanged,
         AXMenuClosed,
+        AXMenuOpened,
         AXRowCountChanged,
         AXRowCollapsed,
         AXRowExpanded,
@@ -238,6 +239,7 @@ private:
     Timer<AXObjectCache> m_notificationPostTimer;
     Vector<std::pair<RefPtr<AccessibilityObject>, AXNotification>> m_notificationsToPost;
     void notificationPostTimerFired(Timer<AXObjectCache>&);
+    void handleMenuOpened(Node*);
     void handleMenuItemSelected(Node*);
     
     static AccessibilityObject* focusedImageMapUIElement(HTMLAreaElement*);
@@ -282,7 +284,7 @@ inline bool isNodeAriaVisible(Node*) { return true; }
 inline const Element* AXObjectCache::rootAXEditableElement(const Node*) { return 0; }
 inline void AXObjectCache::attachWrapper(AccessibilityObject*) { }
 inline void AXObjectCache::checkedStateChanged(Node*) { }
-inline void AXObjectCache::childrenChanged(RenderObject*) { }
+inline void AXObjectCache::childrenChanged(RenderObject*, RenderObject*) { }
 inline void AXObjectCache::childrenChanged(Node*) { }
 inline void AXObjectCache::childrenChanged(AccessibilityObject*) { }
 inline void AXObjectCache::textChanged(RenderObject*) { }

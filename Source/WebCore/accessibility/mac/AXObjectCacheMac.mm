@@ -124,6 +124,9 @@ void AXObjectCache::postPlatformNotification(AccessibilityObject* obj, AXNotific
         case AXMenuListItemSelected:
             macNotification = (id)kAXMenuItemSelectedNotification;
             break;
+        case AXMenuOpened:
+            macNotification = (id)kAXMenuOpenedNotification;
+            break;
         case AXCheckedStateChanged:
             // Does not exist on Mac.
         default:

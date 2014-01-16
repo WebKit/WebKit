@@ -1,3 +1,13 @@
+2014-01-16  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: WebKit is not firing AXMenuOpenedNotification
+        https://bugs.webkit.org/show_bug.cgi?id=126993
+
+        Reviewed by Mario Sanchez Prada.
+
+        * platform/mac/accessibility/aria-menu-open-notification-expected.txt: Added.
+        * platform/mac/accessibility/aria-menu-open-notification.html: Added.
+
 2014-01-16  Zalan Bujtas  <zalan@apple.com>
 
         Merged some more subpixel skipped tests. Unreviewed.

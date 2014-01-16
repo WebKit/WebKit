@@ -615,13 +615,26 @@ void AXObjectCache::updateCacheAfterNodeIsAttached(Node* node)
     get(node);
 }
 
+void AXObjectCache::handleMenuOpened(Node* node)
+{
+    if (!node || !node->renderer() || !nodeHasRole(node, "menu"))
+        return;
+    
+    postNotification(getOrCreate(node), &document(), AXMenuOpened);
+}
+    
 void AXObjectCache::childrenChanged(Node* node)
 {
     childrenChanged(get(node));
 }
 
-void AXObjectCache::childrenChanged(RenderObject* renderer)
+void AXObjectCache::childrenChanged(RenderObject* renderer, RenderObject* newChild)
 {
+    if (!renderer)
+        return;
+    if (newChild)
+        handleMenuOpened(newChild->node());
+    
     childrenChanged(get(renderer));
 }
 
@@ -636,12 +649,15 @@ void AXObjectCache::childrenChanged(AccessibilityObject* obj)
 void AXObjectCache::notificationPostTimerFired(Timer<AXObjectCache>&)
 {
     Ref<Document> protectorForCacheOwner(m_document);
-
     m_notificationPostTimer.stop();
-
-    unsigned i = 0, count = m_notificationsToPost.size();
-    for (i = 0; i < count; ++i) {
-        AccessibilityObject* obj = m_notificationsToPost[i].first.get();
+    
+    // In DRT, posting notifications has a tendency to immediately queue up other notifications, which can lead to unexpected behavior
+    // when the notification list is cleared at the end. Instead copy this list at the start.
+    auto notifications = m_notificationsToPost;
+    m_notificationsToPost.clear();
+    
+    for (const auto& note : notifications) {
+        AccessibilityObject* obj = note.first.get();
         if (!obj->axObjectID())
             continue;
 
@@ -658,15 +674,13 @@ void AXObjectCache::notificationPostTimerFired(Timer<AXObjectCache>&)
                 ASSERT(!renderer->view().layoutState());
         }
 #endif
-        
-        AXNotification notification = m_notificationsToPost[i].second;
+
+        AXNotification notification = note.second;
         postPlatformNotification(obj, notification);
 
         if (notification == AXChildrenChanged && obj->parentObjectIfExists() && obj->lastKnownIsIgnoredValue() != obj->accessibilityIsIgnored())
             childrenChanged(obj->parentObject());
     }
-    
-    m_notificationsToPost.clear();
 }
     
 void AXObjectCache::postNotification(RenderObject* renderer, AXNotification notification, PostTarget postTarget, PostType postType)
