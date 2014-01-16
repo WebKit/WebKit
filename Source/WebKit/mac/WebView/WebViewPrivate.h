@@ -418,7 +418,6 @@ Could be worth adding to the API.
 
 + (NSString *)_standardUserAgentWithApplicationName:(NSString *)applicationName;
 #if TARGET_OS_IPHONE
-+ (NSString *)_standardUserAgentWithApplicationName:(NSString *)applicationName osMarketingVersion:(NSString *)osMarketingVersion;
 - (void)_setBrowserUserAgentProductVersion:(NSString *)productVersion buildVersion:(NSString *)buildVersion bundleVersion:(NSString *)bundleVersion;
 - (void)_setUIWebViewUserAgentWithBuildVersion:(NSString *)buildVersion;
 #endif

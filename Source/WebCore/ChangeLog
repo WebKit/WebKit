@@ -1,3 +1,11 @@
+2014-01-15  Benjamin Poulain  <bpoulain@apple.com>
+
+        Fix the iOS build after r162114
+
+        Unreviewed.
+
+        * WebCore.exp.in: Move the symbol to the right section and add the missing symbols for iOS.
+
 2014-01-15  Mihai Maerean  <mmaerean@adobe.com>
 
         [CSS Regions] Fix painting when the composited region has overflow:hidden
