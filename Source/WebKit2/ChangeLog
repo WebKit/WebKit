@@ -1,3 +1,15 @@
+2014-01-15  Yongjun Zhang  <yongjun_zhang@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=127066
+        Add WKBrowsingContextHandle.h to WebKit2 private headers.
+
+        Reviewed by Dan Bernstein.
+
+        Add WKBrowsingContextHandle.h to WebKit2 private headers so that WebKit2 client
+        can use WKBrowsingContextHandle class.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+
 2014-01-15  Piotr Grad  <p.grad@samsung.com>
 
         toStringVector static function definition should not be redundant.
