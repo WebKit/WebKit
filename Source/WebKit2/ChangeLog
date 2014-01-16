@@ -1,3 +1,104 @@
+2014-01-15  Enrica Casucci  <enrica@apple.com>
+
+        Support WebSelections in WK2 on iOS.
+        https://bugs.webkit.org/show_bug.cgi?id=127015
+
+        Reviewed by Benjamin Poulain.
+
+        This is the first step towards adding support for selections in
+        non editable content on iOS for WK2.
+        In particular, this patch adds the basic plumbing to decide which
+        gesture recognizers are enabled and adds empty stubs for the gestures
+        that we'll need to support.
+        There are two separate assistants for selections, one to be used
+        in editable text (UIWKTextInteractionAssistant) and one for non editable
+        text (UIWKSelectionAssistant) and they are mutually exclusive.
+        UIWKSelectionAssistant is created at the time the view is created, 
+        and swapped with UIWKTextInteraction assistant
+        only when an editable element is focused and the keyboard appears on screen.
+
+        gestureRecognizerShouldBegin is the delegate call used to decide which gestures
+        should begin based on the position the gesture occurred at.
+        We want to avoid as much as possible synchronous calls to the WebProcess to
+        retrieve information about the content and in order to do so, we take advantage
+        of the order in which the gesture recognizers will trigger, based on the delay
+        configured at initialization.
+        The first gesture to trigger is highlightLongPress, followed by longpress in the
+        active assistant and longpress in the WKInteractionView.
+        There are two different scenarios for highlighlongpress based on which assistant is
+        currently active.
+
+        UIWKSelectionAssistant is active:
+            We send a request to the WebProcess to get information on the position
+            and we return YES, allowing the gesture to start.
+            We delegate to the WebProcess the proper handling of highlight based on the element.
+            When longPress gesture fires for the assistant, we assume we have received the reply to our
+            previous request, if not we fetch the information synchronously.
+            We are then able to make an informed decision about whether
+            or not to start the gesture. If the reply is NO, the third and last long press
+            gesture can be evaluated to decide whether to show the action sheet or simply generate
+            a click event.
+
+        UIWKTextInteractionAssistant is active:
+            In this case we must have information about the position immediately and we issue
+            a synchronous request to the WebProcess.
+            If we are not interacting with the same node, we return NO.
+            Then the longpress gesture fires for the assistant which performs the same check.
+            If the node is the same, the loupe gesture will start, otherwise the last longpress
+            gesture will be evaluated to decide about showing the action sheet or generating a
+            click event.
+
+        * Scripts/webkit2/messages.py:
+        * Shared/InteractionInformationAtPosition.cpp: Added.
+        (WebKit::InteractionInformationAtPosition::encode):
+        (WebKit::InteractionInformationAtPosition::decode):
+        * Shared/InteractionInformationAtPosition.h: Added.
+        (WebKit::InteractionInformationAtPosition::InteractionInformationAtPosition):
+        * UIProcess/API/ios/PageClientImplIOS.h:
+        * UIProcess/API/ios/PageClientImplIOS.mm:
+        (WebKit::PageClientImpl::positionInformationDidChange):
+        * UIProcess/API/ios/WKContentView.mm:
+        (-[WKContentView _positionInformationDidChange:]):
+        * UIProcess/API/ios/WKContentViewInternal.h:
+        * UIProcess/API/ios/WKInteractionView.h:
+        * UIProcess/API/ios/WKInteractionView.mm:
+        (-[WKInteractionView initWithFrame:]):
+        (-[WKInteractionView dealloc]):
+        (-[WKInteractionView gestureRecognizer:canPreventGestureRecognizer:]):
+        (-[WKInteractionView gestureRecognizer:canBePreventedByGestureRecognizer:]):
+        (isSamePair):
+        (-[WKInteractionView gestureRecognizer:shouldRecognizeSimultaneouslyWithGestureRecognizer:]):
+        (-[WKInteractionView _showImageSheet]):
+        (-[WKInteractionView _showLinkSheet]):
+        (-[WKInteractionView _actionForLongPress]):
+        (-[WKInteractionView ensurePositionInformationIsUpToDate:]):
+        (-[WKInteractionView gestureRecognizerShouldBegin:]):
+        (-[WKInteractionView hasSelectablePositionAtPoint:]):
+        (-[WKInteractionView pointIsInAssistedNode:]):
+        (-[WKInteractionView _longPressRecognized:]):
+        (-[WKInteractionView _doubleTapRecognized:]):
+        (-[WKInteractionView _twoFingerDoubleTapRecognized:]):
+        (-[WKInteractionView _twoFingerPanRecognized:]):
+        (-[WKInteractionView useSelectionAssistantWithMode:]):
+        (-[WKInteractionView _positionInformationDidChange:]):
+        (-[WKInteractionView interactionAssistant]):
+        (-[WKInteractionView _startAssistingKeyboard]):
+        (-[WKInteractionView _stopAssistingKeyboard]):
+        * UIProcess/PageClient.h:
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::didReceivePositionInformation):
+        (WebKit::WebPageProxy::getPositionInformation):
+        (WebKit::WebPageProxy::requestPositionInformation):
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::selectWithGesture):
+        (WebKit::WebPage::getPositionInformation):
+        (WebKit::WebPage::requestPositionInformation):
+
 2014-01-15  Yongjun Zhang  <yongjun_zhang@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=127066

@@ -27,6 +27,7 @@
 #import <UIKit/UITextInput_Private.h>
 #import <UIKit/UIView.h>
 #import <UIKit/UIWebTouchEventsGestureRecognizer.h>
+#import <UIKit/UIWKSelectionAssistant.h>
 #import <UIKit/UIWKTextInteractionAssistant.h>
 #import <wtf/Forward.h>
 #import <wtf/Vector.h>
@@ -41,6 +42,7 @@ class IntSize;
 
 namespace WebKit {
 class WebPageProxy;
+struct InteractionInformationAtPosition;
 }
 
 @class WebIOSEvent;
@@ -56,4 +58,5 @@ class WebPageProxy;
 - (void)_stopAssistingNode;
 - (void)_selectionChanged;
 - (BOOL)_interpretKeyEvent:(WebIOSEvent *)theEvent isCharEvent:(BOOL)isCharEvent;
+- (void)_positionInformationDidChange:(const WebKit::InteractionInformationAtPosition&)info;
 @end

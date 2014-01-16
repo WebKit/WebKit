@@ -207,6 +207,7 @@ def struct_or_class(namespace, type):
         'WebKit::DictionaryPopupInfo',
         'WebKit::DrawingAreaInfo',
         'WebKit::EditorState',
+        'WebKit::InteractionInformationAtPosition',
         'WebKit::NetworkProcessCreationParameters',
         'WebKit::PlatformPopupMenuData',
         'WebKit::PluginCreationParameters',

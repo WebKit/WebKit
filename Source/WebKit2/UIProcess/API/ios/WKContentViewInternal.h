@@ -40,6 +40,7 @@ class GeolocationPermissionRequestProxy;
 class LayerTreeContext;
 class WebFrameProxy;
 class WebSecurityOrigin;
+struct InteractionInformationAtPosition;
 }
 
 @class WebIOSEvent;
@@ -62,7 +63,7 @@ class WebSecurityOrigin;
 - (void)_stopAssistingNode;
 - (void)_selectionChanged;
 - (BOOL)_interpretKeyEvent:(WebIOSEvent *)theEvent isCharEvent:(BOOL)isCharEvent;
-
+- (void)_positionInformationDidChange:(const WebKit::InteractionInformationAtPosition&)info;
 - (void)_decidePolicyForGeolocationRequestFromOrigin:(WebKit::WebSecurityOrigin&)origin frame:(WebKit::WebFrameProxy&)frame request:(WebKit::GeolocationPermissionRequestProxy&)permissionRequest;
 
 @end

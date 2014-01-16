@@ -27,6 +27,7 @@
 #import "WebPage.h"
 
 #import "EditorState.h"
+#import "InteractionInformationAtPosition.h"
 #import "WebChromeClient.h"
 #import "WebCoreArgumentCoders.h"
 #import "WebFrame.h"
@@ -41,11 +42,15 @@
 #import <WebCore/FloatQuad.h>
 #import <WebCore/Frame.h>
 #import <WebCore/FrameView.h>
+#import <WebCore/HitTestResult.h>
+#import <WebCore/HTMLElementTypeHelpers.h>
 #import <WebCore/MainFrame.h>
+#import <WebCore/Node.h>
 #import <WebCore/NotImplemented.h>
 #import <WebCore/Page.h>
 #import <WebCore/PlatformKeyboardEvent.h>
 #import <WebCore/PlatformMouseEvent.h>
+#import <WebCore/RenderImage.h>
 #import <WebCore/SharedBuffer.h>
 #import <WebCore/TextIterator.h>
 #import <WebCore/VisibleUnits.h>
@@ -378,13 +383,8 @@ void WebPage::selectWithGesture(const IntPoint& point, uint32_t granularity, uin
     Frame& frame = m_page->focusController().focusedOrMainFrame();
     FloatPoint adjustedPoint(point);
     Node* node = frame.nodeRespondingToClickEvents(FloatPoint(point), adjustedPoint);
-    if (node && node != m_assistedNode.get()) {
-        handleTap(IntPoint(adjustedPoint));
-        if (!m_assistedNode) {
-            send(Messages::WebPageProxy::GestureCallback(point, gestureType, gestureState, 0, callbackID));
-            return;
-        }
-    }
+    ASSERT(!node || node && node == m_assistedNode.get());
+
     IntPoint constrainedPoint = constrainPoint(point, &frame, m_assistedNode.get());
     VisiblePosition position = frame.visiblePositionForPoint(constrainedPoint);
     if (position.isNull()) {
@@ -801,6 +801,49 @@ void WebPage::requestAutocorrectionContext(uint64_t callbackID)
 void WebPage::getAutocorrectionContext(String& contextBefore, String& markedText, String& selectedText, String& contextAfter, uint64_t& location, uint64_t& length)
 {
     computeAutocorrectionContext(m_page->focusController().focusedOrMainFrame(), contextBefore, markedText, selectedText, contextAfter, location, length);
+}
+
+void WebPage::getPositionInformation(const IntPoint& point, InteractionInformationAtPosition& info)
+{
+    FloatPoint adjustedPoint;
+    Node* hitNode = m_page->mainFrame().nodeRespondingToClickEvents(point, adjustedPoint);
+
+    info.point = point;
+    info.nodeAtPositionIsAssistedNode = (hitNode == m_assistedNode);
+    if (hitNode) {
+        info.clickableElementName = hitNode->nodeName();
+
+        const HTMLElement* element = toHTMLElement(hitNode);
+        if (!element)
+            return;
+
+        if (element->renderer() && element->renderer()->isImage()) {
+            URL url = toRenderImage(element->renderer())->cachedImage()->url();
+            if (!url.string().isNull())
+                info.url = url.string();
+        } else if (element->isLink())
+            info.url = element->getAttribute(HTMLNames::hrefAttr).string();
+    } else {
+        Frame& frame = m_page->mainFrame();
+        hitNode = frame.eventHandler().hitTestResultAtPoint((point), HitTestRequest::ReadOnly | HitTestRequest::Active | HitTestRequest::DisallowShadowContent).innerNode();
+        if (hitNode->isTextNode()) {
+            VisiblePosition position = frame.visiblePositionForPoint(point);
+            RefPtr<Range> range = wordRangeFromPosition(position);
+            if (range)
+                range->collectSelectionRects(info.selectionRects);
+        } else {
+            // FIXME: implement the logic for the block selection.
+        }
+
+    }
+}
+
+void WebPage::requestPositionInformation(const IntPoint& point)
+{
+    InteractionInformationAtPosition info;
+
+    getPositionInformation(point, info);
+    send(Messages::WebPageProxy::DidReceivePositionInformation(info));
 }
 
 void WebPage::elementDidFocus(WebCore::Node* node)

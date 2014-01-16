@@ -106,6 +106,7 @@ private:
     virtual void stopAssistingNode() OVERRIDE;
     virtual void selectionDidChange() OVERRIDE;
     virtual bool interpretKeyEvent(const NativeWebKeyboardEvent&, bool isCharEvent) OVERRIDE;
+    virtual void positionInformationDidChange(const InteractionInformationAtPosition&);
 
     // Auxiliary Client Creation
 #if ENABLE(FULLSCREEN_API)

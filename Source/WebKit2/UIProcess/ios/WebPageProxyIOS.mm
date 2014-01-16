@@ -301,6 +301,21 @@ void WebPageProxy::selectWithTwoTouches(const WebCore::IntPoint from, const WebC
     m_process->send(Messages::WebPage::SelectWithTwoTouches(from, to, gestureType, gestureState, callbackID), m_pageID);
 }
 
+void WebPageProxy::didReceivePositionInformation(const InteractionInformationAtPosition& info)
+{
+    m_pageClient.positionInformationDidChange(info);
+}
+
+void WebPageProxy::getPositionInformation(const WebCore::IntPoint& point, InteractionInformationAtPosition& info)
+{
+    m_process->sendSync(Messages::WebPage::GetPositionInformation(point), Messages::WebPage::GetPositionInformation::Reply(info), m_pageID);
+}
+
+void WebPageProxy::requestPositionInformation(const WebCore::IntPoint& point)
+{
+    m_process->send(Messages::WebPage::RequestPositionInformation(point), m_pageID);
+}
+
 void WebPageProxy::notifyRevealedSelection()
 {
     m_pageClient.selectionDidChange();

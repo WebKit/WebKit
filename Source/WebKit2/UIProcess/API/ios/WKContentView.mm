@@ -26,6 +26,7 @@
 #import "config.h"
 #import "WKContentViewInternal.h"
 
+#import "InteractionInformationAtPosition.h"
 #import "PageClientImplIOS.h"
 #import "RemoteLayerTreeDrawingAreaProxy.h"
 #import "WebKit2Initialize.h"
@@ -275,6 +276,11 @@ using namespace WebKit;
 - (BOOL)_interpretKeyEvent:(WebIOSEvent *)theEvent isCharEvent:(BOOL)isCharEvent
 {
     return [_interactionView _interpretKeyEvent:theEvent isCharEvent:isCharEvent];
+}
+
+- (void)_positionInformationDidChange:(const InteractionInformationAtPosition&)info
+{
+    [_interactionView _positionInformationDidChange:info];
 }
 
 - (void)_decidePolicyForGeolocationRequestFromOrigin:(WebSecurityOrigin&)origin frame:(WebFrameProxy&)frame request:(GeolocationPermissionRequestProxy&)permissionRequest

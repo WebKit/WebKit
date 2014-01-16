@@ -153,6 +153,7 @@ messages -> WebPageProxy {
     AutocorrectionDataCallback(Vector<WebCore::FloatRect> textRects, String fontName, double fontSize, uint64_t traits, uint64_t callbackID)
     AutocorrectionContextCallback(String beforeText, String markedText, String selectedText, String afterText, uint64_t location, uint64_t length, uint64_t callbackID)
     InterpretKeyEvent(WebKit::EditorState state, bool isCharEvent) -> (bool handled)
+    DidReceivePositionInformation(WebKit::InteractionInformationAtPosition information)
 #endif
 #if PLATFORM(GTK)
     PrintFinishedCallback(WebCore::ResourceError error, uint64_t callbackID)

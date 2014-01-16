@@ -53,6 +53,8 @@ messages -> WebPage LegacyReceiver {
     InsertText(String text, uint64_t replacementRangeStart, uint64_t replacementRangeEnd)
     SetComposition(String text, Vector<WebCore::CompositionUnderline> underlines, uint64_t selectionStart, uint64_t selectionEnd)
     ConfirmComposition()
+    GetPositionInformation(WebCore::IntPoint point) -> (WebKit::InteractionInformationAtPosition information)
+    RequestPositionInformation(WebCore::IntPoint point)
 #endif
 
 #if ENABLE(TOUCH_EVENTS)

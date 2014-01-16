@@ -1299,6 +1299,9 @@
 		C574A37712E6099D002DFE98 /* WebDragClientMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = C554FFA212E4E8EA002F22C0 /* WebDragClientMac.mm */; };
 		C574A58112E66681002DFE98 /* PasteboardTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = C574A57F12E66681002DFE98 /* PasteboardTypes.h */; };
 		C574A58212E66681002DFE98 /* PasteboardTypes.mm in Sources */ = {isa = PBXBuildFile; fileRef = C574A58012E66681002DFE98 /* PasteboardTypes.mm */; };
+		C58CDF2A1887548B00871536 /* InteractionInformationAtPosition.h in Headers */ = {isa = PBXBuildFile; fileRef = C58CDF281887548B00871536 /* InteractionInformationAtPosition.h */; };
+		C58CDF2D1887609F00871536 /* InteractionInformationAtPosition.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C58CDF2B1887609F00871536 /* InteractionInformationAtPosition.cpp */; };
+		C58CDF2E1887609F00871536 /* InteractionInformationAtPosition.h in Headers */ = {isa = PBXBuildFile; fileRef = C58CDF2C1887609F00871536 /* InteractionInformationAtPosition.h */; };
 		C5E1AFE816B20B67006CC1F2 /* WKWebArchive.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC329DA516ACE5A900316DE2 /* WKWebArchive.cpp */; };
 		C5E1AFE916B20B75006CC1F2 /* WKWebArchive.h in Headers */ = {isa = PBXBuildFile; fileRef = BC329DA616ACE5A900316DE2 /* WKWebArchive.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		C5E1AFEA16B20B7B006CC1F2 /* WKWebArchiveResource.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC329DA916ACE5BF00316DE2 /* WKWebArchiveResource.cpp */; };
@@ -3021,6 +3024,9 @@
 		C554FFA212E4E8EA002F22C0 /* WebDragClientMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebDragClientMac.mm; sourceTree = "<group>"; };
 		C574A57F12E66681002DFE98 /* PasteboardTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PasteboardTypes.h; sourceTree = "<group>"; };
 		C574A58012E66681002DFE98 /* PasteboardTypes.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PasteboardTypes.mm; sourceTree = "<group>"; };
+		C58CDF281887548B00871536 /* InteractionInformationAtPosition.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InteractionInformationAtPosition.h; sourceTree = "<group>"; };
+		C58CDF2B1887609F00871536 /* InteractionInformationAtPosition.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InteractionInformationAtPosition.cpp; sourceTree = "<group>"; };
+		C58CDF2C1887609F00871536 /* InteractionInformationAtPosition.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InteractionInformationAtPosition.h; sourceTree = "<group>"; };
 		CD5C669E134B9D36004FE2A8 /* InjectedBundlePageFullScreenClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InjectedBundlePageFullScreenClient.cpp; sourceTree = "<group>"; };
 		CD5C669F134B9D37004FE2A8 /* InjectedBundlePageFullScreenClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InjectedBundlePageFullScreenClient.h; sourceTree = "<group>"; };
 		CD67D30815C07BE000843ADF /* InjectedBundlePageDiagnosticLoggingClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InjectedBundlePageDiagnosticLoggingClient.cpp; sourceTree = "<group>"; };
@@ -3694,6 +3700,8 @@
 				BCCF6B2312C93E7A008F9C35 /* ImageOptions.h */,
 				BCBCB0CC1215E33A00DE59CA /* ImmutableDictionary.cpp */,
 				BCBCB0CA1215E32100DE59CA /* ImmutableDictionary.h */,
+				C58CDF2B1887609F00871536 /* InteractionInformationAtPosition.cpp */,
+				C58CDF2C1887609F00871536 /* InteractionInformationAtPosition.h */,
 				1A92DC1012F8BA460017AF65 /* LayerTreeContext.h */,
 				BCB0AEE8122F53E300B1341E /* MutableDictionary.cpp */,
 				BCB0AEE7122F53E300B1341E /* MutableDictionary.h */,
@@ -6039,6 +6047,7 @@
 				2984F57D164B915F004BC0C6 /* CustomProtocolManagerProxyMessages.h in Headers */,
 				93FC67BE12D3CCF200A60610 /* DecoderAdapter.h in Headers */,
 				BCE81D99131AE02100241910 /* DictionaryPopupInfo.h in Headers */,
+				C58CDF2E1887609F00871536 /* InteractionInformationAtPosition.h in Headers */,
 				5167EEA0170377BF007681CA /* DiskCacheMonitor.h in Headers */,
 				518E8F0816B2093700E91429 /* Download.h in Headers */,
 				518E8F0A16B2093700E91429 /* DownloadAuthenticationClient.h in Headers */,
@@ -6419,6 +6428,7 @@
 				51D54A73185BAC42000CAED2 /* IDBTransactionIdentifier.h in Headers */,
 				D3B9484711FF4B6500032B39 /* WebPopupMenu.h in Headers */,
 				BC574E631267D080006F0F12 /* WebPopupMenuProxy.h in Headers */,
+				C58CDF2A1887548B00871536 /* InteractionInformationAtPosition.h in Headers */,
 				BC5750971268F3C6006F0F12 /* WebPopupMenuProxyMac.h in Headers */,
 				BCD597FF112B57BE00EC8C23 /* WebPreferences.h in Headers */,
 				BCD598AC112B7FDF00EC8C23 /* WebPreferencesStore.h in Headers */,
@@ -7808,6 +7818,7 @@
 				BC963D6E113DD1A500574BE2 /* WebPageMac.mm in Sources */,
 				C0CE72A01247E71D00BC0EC4 /* WebPageMessageReceiver.cpp in Sources */,
 				BC111B0F112F5E4F00337BAB /* WebPageProxy.cpp in Sources */,
+				C58CDF2D1887609F00871536 /* InteractionInformationAtPosition.cpp in Sources */,
 				51B3005112529D0E000B5CA0 /* WebPageProxyCF.cpp in Sources */,
 				1F7506AD1859161C00EC0FF7 /* WKWebProcessPlugInFrame.mm in Sources */,
 				BC857E8712B71EBB00EDEB2E /* WebPageProxyMac.mm in Sources */,

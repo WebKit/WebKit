@@ -27,6 +27,7 @@
 #import "PageClientImplIOS.h"
 
 #import "NativeWebKeyboardEvent.h"
+#import "InteractionInformationAtPosition.h"
 #import "WKContentViewInternal.h"
 #import "WebContextMenuProxy.h"
 #import "WebEditCommandProxy.h"
@@ -200,7 +201,12 @@ bool PageClientImpl::interpretKeyEvent(const NativeWebKeyboardEvent& event, bool
 {
     return [m_view _interpretKeyEvent:event.nativeEvent() isCharEvent:isCharEvent];
 }
-    
+
+void PageClientImpl::positionInformationDidChange(const InteractionInformationAtPosition& info)
+{
+    [m_view _positionInformationDidChange:info];
+}
+
 bool PageClientImpl::executeSavedCommandBySelector(const String&)
 {
     notImplemented();

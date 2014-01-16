@@ -155,6 +155,7 @@ class WebPopupMenu;
 class WebWheelEvent;
 struct AttributedString;
 struct EditorState;
+struct InteractionInformationAtPosition;
 struct PrintInfo;
 struct WebPageCreationParameters;
 struct WebPreferencesStore;
@@ -421,6 +422,8 @@ public:
     void insertText(const String& text, uint64_t replacementRangeStart, uint64_t replacementRangeEnd);
     void setComposition(const String& text, Vector<WebCore::CompositionUnderline> underlines, uint64_t selectionStart, uint64_t selectionEnd);
     void confirmComposition();
+    void getPositionInformation(const WebCore::IntPoint&, InteractionInformationAtPosition&);
+    void requestPositionInformation(const WebCore::IntPoint&);
 #endif
 
     NotificationPermissionRequestManager* notificationPermissionRequestManager();

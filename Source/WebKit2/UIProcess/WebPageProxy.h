@@ -33,6 +33,7 @@
 #include "DrawingAreaProxy.h"
 #include "EditorState.h"
 #include "GeolocationPermissionRequestManagerProxy.h"
+#include "InteractionInformationAtPosition.h"
 #include "LayerTreeContext.h"
 #include "MessageSender.h"
 #include "NotificationPermissionRequestManagerProxy.h"
@@ -444,6 +445,9 @@ public:
     void applyAutocorrection(const String& correction, const String& originalText, PassRefPtr<StringCallback>);
     void requestAutocorrectionContext(PassRefPtr<AutocorrectionContextCallback>);
     void getAutocorrectionContext(String& contextBefore, String& markedText, String& selectedText, String& contextAfter, uint64_t& location, uint64_t& length);
+    void didReceivePositionInformation(const InteractionInformationAtPosition&);
+    void getPositionInformation(const WebCore::IntPoint&, InteractionInformationAtPosition&);
+    void requestPositionInformation(const WebCore::IntPoint&);
 #endif
 
     const EditorState& editorState() const { return m_editorState; }
