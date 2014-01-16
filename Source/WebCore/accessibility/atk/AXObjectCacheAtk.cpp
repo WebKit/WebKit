@@ -302,7 +302,7 @@ void AXObjectCache::frameLoadingEventPlatformNotification(AccessibilityObject* o
     }
 }
 
-void AXObjectCache::handleFocusedUIElementChanged(Node* oldFocusedNode, Node* newFocusedNode)
+void AXObjectCache::platformHandleFocusedUIElementChanged(Node* oldFocusedNode, Node* newFocusedNode)
 {
     RefPtr<AccessibilityObject> oldObject = getOrCreate(oldFocusedNode);
     if (oldObject) {

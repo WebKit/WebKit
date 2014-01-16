@@ -1289,6 +1289,7 @@ static id textMarkerRangeFromVisiblePositions(AXObjectCache *cache, VisiblePosit
     if (menuItemAttrs == nil) {
         tempArray = [[NSMutableArray alloc] initWithArray:commonMenuAttrs];
         [tempArray addObject:NSAccessibilityTitleAttribute];
+        [tempArray addObject:NSAccessibilityDescriptionAttribute];
         [tempArray addObject:NSAccessibilityHelpAttribute];
         [tempArray addObject:NSAccessibilitySelectedAttribute];
         [tempArray addObject:NSAccessibilityValueAttribute];

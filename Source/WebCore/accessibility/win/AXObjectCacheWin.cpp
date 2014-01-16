@@ -166,7 +166,7 @@ AXID AXObjectCache::platformGenerateAXID() const
     return objID;
 }
 
-void AXObjectCache::handleFocusedUIElementChanged(Node*, Node* newFocusedNode)
+void AXObjectCache::platformHandleFocusedUIElementChanged(Node*, Node* newFocusedNode)
 {
     if (!newFocusedNode)
         return;

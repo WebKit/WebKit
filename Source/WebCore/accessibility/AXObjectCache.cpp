@@ -239,7 +239,7 @@ bool nodeHasRole(Node* node, const String& role)
     if (!node || !node->isElementNode())
         return false;
 
-    return equalIgnoringCase(toElement(node)->getAttribute(roleAttr), role);
+    return equalIgnoringCase(toElement(node)->fastGetAttribute(roleAttr), role);
 }
 
 static PassRefPtr<AccessibilityObject> createFromRenderer(RenderObject* renderer)
@@ -737,8 +737,30 @@ void AXObjectCache::checkedStateChanged(Node* node)
     postNotification(node, AXObjectCache::AXCheckedStateChanged);
 }
 
+void AXObjectCache::handleMenuItemSelected(Node* node)
+{
+    if (!node)
+        return;
+    
+    if (!nodeHasRole(node, "menuitem") && !nodeHasRole(node, "menuitemradio") && !nodeHasRole(node, "menuitemcheckbox"))
+        return;
+    
+    if (!toElement(node)->focused() && !equalIgnoringCase(toElement(node)->fastGetAttribute(aria_selectedAttr), "true"))
+        return;
+    
+    postNotification(getOrCreate(node), &document(), AXMenuListItemSelected);
+}
+    
+void AXObjectCache::handleFocusedUIElementChanged(Node* oldNode, Node* newNode)
+{
+    handleMenuItemSelected(newNode);
+    platformHandleFocusedUIElementChanged(oldNode, newNode);
+}
+    
 void AXObjectCache::selectedChildrenChanged(Node* node)
 {
+    handleMenuItemSelected(node);
+    
     // postTarget is TargetObservableParent so that you can pass in any child of an element and it will go up the parent tree
     // to find the container which should send out the notification.
     postNotification(node, AXSelectedChildrenChanged, TargetObservableParent);
@@ -746,6 +768,9 @@ void AXObjectCache::selectedChildrenChanged(Node* node)
 
 void AXObjectCache::selectedChildrenChanged(RenderObject* renderer)
 {
+    if (renderer)
+        handleMenuItemSelected(renderer->node());
+
     // postTarget is TargetObservableParent so that you can pass in any child of an element and it will go up the parent tree
     // to find the container which should send out the notification.
     postNotification(renderer, AXSelectedChildrenChanged, TargetObservableParent);

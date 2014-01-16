@@ -199,7 +199,6 @@ public:
 
     void frameLoadingEventNotification(Frame*, AXLoadingEvent);
 
-    bool nodeHasRole(Node*, const AtomicString& role);
     void clearTextMarkerNodesInUse(Document*);
 
     void startCachingComputedObjectAttributesUntilTreeMutates();
@@ -211,6 +210,8 @@ public:
     
 protected:
     void postPlatformNotification(AccessibilityObject*, AXNotification);
+    void platformHandleFocusedUIElementChanged(Node* oldFocusedNode, Node* newFocusedNode);
+
     void nodeTextChangePlatformNotification(AccessibilityObject*, AXTextChange, unsigned offset, const String&);
     void frameLoadingEventPlatformNotification(AccessibilityObject*, AXLoadingEvent);
     void textChanged(AccessibilityObject*);
@@ -237,6 +238,7 @@ private:
     Timer<AXObjectCache> m_notificationPostTimer;
     Vector<std::pair<RefPtr<AccessibilityObject>, AXNotification>> m_notificationsToPost;
     void notificationPostTimerFired(Timer<AXObjectCache>&);
+    void handleMenuItemSelected(Node*);
     
     static AccessibilityObject* focusedImageMapUIElement(HTMLAreaElement*);
     

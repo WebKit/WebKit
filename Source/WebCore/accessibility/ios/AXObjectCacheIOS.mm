@@ -98,7 +98,7 @@ void AXObjectCache::frameLoadingEventPlatformNotification(AccessibilityObject*, 
 {
 }
 
-void AXObjectCache::handleFocusedUIElementChanged(Node*, Node* newNode)
+void AXObjectCache::platformHandleFocusedUIElementChanged(Node*, Node* newNode)
 {
     postNotification(newNode, AXFocusedUIElementChanged, TargetElement, PostAsynchronously);
 }

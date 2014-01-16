@@ -1,3 +1,32 @@
+2014-01-16  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: WebKit is not firing AXMenuItemSelectedNotification
+        https://bugs.webkit.org/show_bug.cgi?id=127081
+
+        Reviewed by Mario Sanchez Prada.
+
+        Monitor for when a menu item either gains focus() or has aria-selected set,
+        in which case, we need to fire a specific notification.
+
+        Test: platform/mac/accessibility/aria-menu-item-selected-notification.html
+
+        * accessibility/AXObjectCache.cpp:
+        (WebCore::nodeHasRole):
+            This method was declared in the header, but never implemented, leading to compilation issues.
+        (WebCore::AXObjectCache::handleMenuItemSelected):
+        (WebCore::AXObjectCache::handleFocusedUIElementChanged):
+            Allow the core class to handle focus changes first, then pass off to platform
+        (WebCore::AXObjectCache::selectedChildrenChanged):
+        * accessibility/AXObjectCache.h:
+        * accessibility/ios/AXObjectCacheIOS.mm:
+        (WebCore::AXObjectCache::platformHandleFocusedUIElementChanged):
+        * accessibility/mac/AXObjectCacheMac.mm:
+        (WebCore::AXObjectCache::postPlatformNotification):
+        (WebCore::AXObjectCache::platformHandleFocusedUIElementChanged):
+        * accessibility/mac/WebAccessibilityObjectWrapperMac.mm:
+        (-[WebAccessibilityObjectWrapper accessibilityAttributeNames]):
+            Allow menu items to expose a description attribute.
+
 2014-01-16  Andy Estes  <aestes@apple.com>
 
         [iOS] Fix build issues with exported headers

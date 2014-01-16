@@ -121,6 +121,9 @@ void AXObjectCache::postPlatformNotification(AccessibilityObject* obj, AXNotific
         case AXMenuClosed:
             macNotification = (id)kAXMenuClosedNotification;
             break;
+        case AXMenuListItemSelected:
+            macNotification = (id)kAXMenuItemSelectedNotification;
+            break;
         case AXCheckedStateChanged:
             // Does not exist on Mac.
         default:
@@ -145,7 +148,7 @@ void AXObjectCache::frameLoadingEventPlatformNotification(AccessibilityObject*, 
 {
 }
 
-void AXObjectCache::handleFocusedUIElementChanged(Node*, Node*)
+void AXObjectCache::platformHandleFocusedUIElementChanged(Node*, Node*)
 {
     wkAccessibilityHandleFocusChanged();
 }
