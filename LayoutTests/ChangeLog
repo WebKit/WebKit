@@ -1,3 +1,11 @@
+2014-01-16  Michał Pakuła vel Rutka  <m.pakula@samsung.com>
+
+        Unreviewed EFL gardening
+
+        Add failure test expectations for tests introduced in r162117.
+
+        * platform/efl-wk2/TestExpectations:
+
 2014-01-16  Chris Fleizach  <cfleizach@apple.com>
 
         AX: WebKit is not firing AXMenuOpenedNotification
