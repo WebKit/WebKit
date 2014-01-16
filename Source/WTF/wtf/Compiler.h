@@ -253,19 +253,6 @@
 #define WARN_UNUSED_RETURN
 #endif
 
-/* FINAL */
-
-#if COMPILER_SUPPORTS(CXX_OVERRIDE_CONTROL) && !COMPILER_QUIRK(FINAL_IS_BUGGY)
-#if COMPILER_QUIRK(FINAL_IS_CALLED_SEALED)
-#define FINAL sealed
-#define final sealed
-#else
-#define FINAL final
-#endif
-#else
-#define FINAL
-#endif
-
 #if COMPILER_SUPPORTS(CXX_DELETED_FUNCTIONS)
 #define WTF_DELETED_FUNCTION = delete
 #else
