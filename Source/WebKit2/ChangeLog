@@ -1,3 +1,16 @@
+2014-01-15  Yongjun Zhang  <yongjun_zhang@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=127072
+        Don't autorelease wrapper object (WebProcessPlugInScriptWorld) for InjectedBundleScriptWorld::normalWorld().
+
+        Reviewed by Geoffrey Garen.
+
+        In [WKWebProcessPlugInScriptWorld normalWorld], InjectedBundleScriptWorld::normalWorld() returns a static
+        instance,  autoreleasing its wrapper object could cause a dangling pointer and crash later.
+
+        * WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInScriptWorld.mm:
+        (+[WKWebProcessPlugInScriptWorld normalWorld]):
+
 2014-01-15  Andy Estes  <aestes@apple.com>
 
         [iOS] Properly exclude the shim dylibs this time
