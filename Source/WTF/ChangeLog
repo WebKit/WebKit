@@ -1,5 +1,16 @@
 2014-01-16  Peter Molnar  <pmolnar.u-szeged@partner.samsung.com>
 
+        Fix unnecessary checks for Clang compiler if the compiler is MSVC.
+        https://bugs.webkit.org/show_bug.cgi?id=127037
+
+        Reviewed by Csaba Osztrogonác.
+
+        Inside the #if defined(_MSC_VER) there's no need for checking whether the compiler is not Clang.
+
+        * wtf/Compiler.h:
+
+2014-01-16  Peter Molnar  <pmolnar.u-szeged@partner.samsung.com>
+
         Require at least GCC version 4.7
         https://bugs.webkit.org/show_bug.cgi?id=127049
 
