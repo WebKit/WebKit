@@ -127,8 +127,7 @@ static void drawSkipInkUnderline(TextPainter& textPainter, GraphicsContext& cont
     DashArray a = translateIntersectionPointsToSkipInkBoundaries(intersections, underlineBoundingBox.height(), width);
 
     ASSERT(!(a.size() % 2));
-    for (auto i = a.begin(); i != a.end(); i++, i++)
-        context.drawLineForText(FloatPoint(localOrigin.x() + *i, localOrigin.y() + underlineOffset), *(i+1) - *i, isPrinting);
+    context.drawLinesForText(adjustedLocalOrigin, a, isPrinting);
 }
 #endif
 
