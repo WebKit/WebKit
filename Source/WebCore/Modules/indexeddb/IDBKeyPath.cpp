@@ -28,6 +28,7 @@
 
 #if ENABLE(INDEXED_DATABASE)
 
+#include "KeyedCoding.h"
 #include <wtf/ASCIICType.h>
 #include <wtf/dtoa.h>
 #include <wtf/unicode/Unicode.h>
@@ -259,6 +260,49 @@ IDBKeyPath IDBKeyPath::isolatedCopy() const
         result.m_array.uncheckedAppend(m_array[i].isolatedCopy());
 
     return result;
+}
+
+void IDBKeyPath::encode(KeyedEncoder& encoder) const
+{
+    encoder.encodeEnum("type", m_type);
+    switch (m_type) {
+    case IDBKeyPath::NullType:
+        break;
+    case IDBKeyPath::StringType:
+        encoder.encodeString("string", m_string);
+        break;
+    case IDBKeyPath::ArrayType:
+        encoder.encodeObjects("array", m_array.begin(), m_array.end(), [](WebCore::KeyedEncoder& encoder, const String& string) {
+            encoder.encodeString("string", string);
+        });
+        break;
+    default:
+        ASSERT_NOT_REACHED();
+    };
+}
+
+bool IDBKeyPath::decode(KeyedDecoder& decoder, IDBKeyPath& result)
+{
+    auto enumFunction = [](int64_t value) {
+        return value == NullType || value == StringType || value == ArrayType;
+    };
+
+    if (!decoder.decodeVerifiedEnum("type", result.m_type, enumFunction))
+        return false;
+
+    if (result.m_type == NullType)
+        return true;
+
+    if (result.m_type == StringType)
+        return decoder.decodeString("string", result.m_string);
+
+    ASSERT(result.m_type == ArrayType);
+
+    auto arrayFunction = [](KeyedDecoder& decoder, String& result) {
+        return decoder.decodeString("string", result);
+    };
+
+    return decoder.decodeObjects("array", result.m_array, arrayFunction);
 }
 
 } // namespace WebCore

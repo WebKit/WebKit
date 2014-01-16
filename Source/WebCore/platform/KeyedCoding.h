@@ -26,16 +26,78 @@
 #ifndef KeyedCoding_h
 #define KeyedCoding_h
 
+#include <functional>
 #include <wtf/Forward.h>
+#include <wtf/Vector.h>
 
 namespace WebCore {
+
+class SharedBuffer;
 
 class KeyedDecoder {
 protected:
     virtual ~KeyedDecoder() { }
 
 public:
+    virtual bool decodeInt64(const String& key, int64_t&) = 0;
     virtual bool decodeUInt32(const String& key, uint32_t&) = 0;
+    virtual bool decodeString(const String& key, String&) = 0;
+
+    template<typename T, typename F>
+    bool decodeVerifiedEnum(const String& key, T& value, F&& function)
+    {
+        static_assert(std::is_enum<T>::value, "T must be an enum type");
+
+        int64_t intValue;
+        if (!decodeInt64(key, intValue))
+            return false;
+
+        if (!function(intValue))
+            return false;
+
+        value = static_cast<T>(intValue);
+        return true;
+    }
+
+    template<typename T, typename F>
+    bool decodeObject(const String& key, T& object, F&& function)
+    {
+        if (!beginObject(key))
+            return false;
+        bool result = function(*this, object);
+        endObject();
+        return result;
+    }
+
+    template<typename T, typename F>
+    bool decodeObjects(const String& key, Vector<T>& objects, F&& function)
+    {
+        if (!beginArray(key))
+            return false;
+
+        bool result = true;
+        while (beginArrayElement()) {
+            T element;
+            if (!function(*this, element)) {
+                result = false;
+                break;
+            }
+            objects.append(std::move(element));
+            endArrayElement();
+        }
+
+        endArray();
+        return result;
+    }
+
+private:
+    virtual bool beginObject(const String& key) = 0;
+    virtual void endObject() = 0;
+
+    virtual bool beginArray(const String& key) = 0;
+    virtual bool beginArrayElement() = 0;
+    virtual void endArrayElement() = 0;
+    virtual void endArray() = 0;
 };
 
 class KeyedEncoder {
@@ -51,6 +113,8 @@ public:
     virtual void encodeFloat(const String& key, float) = 0;
     virtual void encodeDouble(const String& key, double) = 0;
     virtual void encodeString(const String& key, const String&) = 0;
+
+    virtual PassRefPtr<SharedBuffer> finishEncoding() = 0;
 
     template<typename T>
     void encodeEnum(const String& key, T value)

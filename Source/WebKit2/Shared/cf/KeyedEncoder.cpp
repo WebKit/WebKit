@@ -27,7 +27,10 @@
 #include "KeyedEncoder.h"
 
 #include <CoreFoundation/CoreFoundation.h>
+#include <WebCore/SharedBuffer.h>
 #include <wtf/text/WTFString.h>
+
+using namespace WebCore;
 
 namespace WebKit {
 
@@ -132,6 +135,16 @@ void KeyedEncoder::endArrayElement()
 void KeyedEncoder::endArray()
 {
     m_arrayStack.removeLast();
+}
+
+PassRefPtr<SharedBuffer> KeyedEncoder::finishEncoding()
+{
+    CFErrorRef error = nullptr;
+    RetainPtr<CFDataRef> data = adoptCF(CFPropertyListCreateData(kCFAllocatorDefault, m_rootDictionary.get(), kCFPropertyListBinaryFormat_v1_0, 0, &error));
+    if (error)
+        return nullptr;
+
+    return SharedBuffer::wrapCFData(data.get());
 }
 
 } // namespace WebKit

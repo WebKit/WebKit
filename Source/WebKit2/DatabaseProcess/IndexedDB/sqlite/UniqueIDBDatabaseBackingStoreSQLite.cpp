@@ -362,7 +362,7 @@ bool UniqueIDBDatabaseBackingStoreSQLite::createObjectStore(const IDBTransaction
         return false;
     }
 
-    std::unique_ptr<Vector<uint8_t>> keyPathBlob = serializeIDBKeyPath(metadata.keyPath);
+    RefPtr<SharedBuffer> keyPathBlob = serializeIDBKeyPath(metadata.keyPath);
     if (!keyPathBlob) {
         LOG_ERROR("Unable to serialize IDBKeyPath to save in database");
         return false;

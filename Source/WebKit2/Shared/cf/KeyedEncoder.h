@@ -37,6 +37,8 @@ public:
     KeyedEncoder();
     ~KeyedEncoder();
 
+    virtual PassRefPtr<WebCore::SharedBuffer> finishEncoding() OVERRIDE;
+
 private:
     virtual void encodeBytes(const String& key, const uint8_t*, size_t) override;
     virtual void encodeBool(const String& key, bool) override;

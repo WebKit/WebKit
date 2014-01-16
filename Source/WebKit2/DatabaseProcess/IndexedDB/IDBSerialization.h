@@ -28,6 +28,7 @@
 
 #if ENABLE(INDEXED_DATABASE)
 
+#include <WebCore/SharedBuffer.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
@@ -36,7 +37,7 @@ class IDBKeyPath;
 
 namespace WebKit {
 
-std::unique_ptr<Vector<uint8_t>> serializeIDBKeyPath(const WebCore::IDBKeyPath&);
+RefPtr<WebCore::SharedBuffer> serializeIDBKeyPath(const WebCore::IDBKeyPath&);
 std::unique_ptr<WebCore::IDBKeyPath> deserializeIDBKeyPath(const uint8_t* buffer, size_t bufferSize);
 
 } // namespace WebKit

@@ -1,3 +1,41 @@
+2014-01-15  Brady Eidson  <beidson@apple.com>
+
+        Use KeyedCoding as a persistent storage mechanism for blobs
+        https://bugs.webkit.org/show_bug.cgi?id=127012
+
+        Reviewed by Anders Carlsson.
+
+        Add a way to get the encoded buffer to save:
+        * Shared/cf/KeyedEncoder.cpp:
+        (WebKit::KeyedEncoder::finishEncoding):
+        * Shared/cf/KeyedEncoder.h:
+
+        Add a WebKit KeyedDecoder for CF platforms that can decode the previously encoded buffer:
+        * Shared/cf/KeyedDecoder.cpp: Added.
+        (WebKit::KeyedDecoder::KeyedDecoder):
+        (WebKit::KeyedDecoder::~KeyedDecoder):
+        (WebKit::KeyedDecoder::decodeInt64):
+        (WebKit::KeyedDecoder::decodeUInt32):
+        (WebKit::KeyedDecoder::decodeString):
+        (WebKit::KeyedDecoder::beginObject):
+        (WebKit::KeyedDecoder::endObject):
+        (WebKit::KeyedDecoder::beginArray):
+        (WebKit::KeyedDecoder::beginArrayElement):
+        (WebKit::KeyedDecoder::endArrayElement):
+        (WebKit::KeyedDecoder::endArray):
+        * Shared/cf/KeyedDecoder.h:
+
+        Create a WebKit KeyedEncoder/Decoder and use to encode/decode IDBKeyPaths:
+        * DatabaseProcess/IndexedDB/IDBSerialization.cpp:
+        (WebKit::serializeIDBKeyPath):
+        (WebKit::deserializeIDBKeyPath):
+        * DatabaseProcess/IndexedDB/IDBSerialization.h:
+
+        * DatabaseProcess/IndexedDB/sqlite/UniqueIDBDatabaseBackingStoreSQLite.cpp:
+        (WebKit::UniqueIDBDatabaseBackingStoreSQLite::createObjectStore):
+
+        * WebKit2.xcodeproj/project.pbxproj:
+
 2014-01-16  Andy Estes  <aestes@apple.com>
 
         Stop copying WKOriginDataManager.cpp into WebKit2.framework

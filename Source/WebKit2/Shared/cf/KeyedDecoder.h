@@ -22,37 +22,41 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
-#include "config.h"
-#include "IDBSerialization.h"
 
-#if ENABLE(INDEXED_DATABASE)
+#ifndef KeyedDecoder_h
+#define KeyedDecoder_h
 
-#include "ArgumentEncoder.h"
-#include "KeyedDecoder.h"
-#include "KeyedEncoder.h"
-#include <WebCore/IDBKeyPath.h>
-
-using namespace WebCore;
+#include <WebCore/KeyedCoding.h>
+#include <wtf/RetainPtr.h>
+#include <wtf/Vector.h>
 
 namespace WebKit {
 
-RefPtr<SharedBuffer> serializeIDBKeyPath(const WebCore::IDBKeyPath& keyPath)
-{
-    KeyedEncoder encoder;
-    keyPath.encode(encoder);
-    return encoder.finishEncoding();
-}
+class KeyedDecoder FINAL : public WebCore::KeyedDecoder {
+public:
+    KeyedDecoder(const uint8_t* data, size_t);
+    virtual ~KeyedDecoder();
 
-std::unique_ptr<WebCore::IDBKeyPath> deserializeIDBKeyPath(const uint8_t* data, size_t size)
-{
-    KeyedDecoder decoder(data, size);
-    std::unique_ptr<IDBKeyPath> result = std::make_unique<IDBKeyPath>();
-    if (!IDBKeyPath::decode(decoder, *result))
-        return nullptr;
+private:
+    virtual bool decodeInt64(const String& key, int64_t&);
+    virtual bool decodeUInt32(const String& key, uint32_t&);
+    virtual bool decodeString(const String& key, String&);
 
-    return result;
-}
+    virtual bool beginObject(const String& key);
+    virtual void endObject();
+
+    virtual bool beginArray(const String& key);
+    virtual bool beginArrayElement();
+    virtual void endArrayElement();
+    virtual void endArray();
+
+    RetainPtr<CFDictionaryRef> m_rootDictionary;
+
+    Vector<CFDictionaryRef, 16> m_dictionaryStack;
+    Vector<CFArrayRef, 16> m_arrayStack;
+    Vector<CFIndex> m_arrayIndexStack;
+};
 
 } // namespace WebKit
 
-#endif // ENABLE(INDEXED_DATABASE)
+#endif // KeyedDecoder_h

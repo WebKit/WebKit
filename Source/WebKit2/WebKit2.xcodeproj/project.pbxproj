@@ -685,6 +685,8 @@
 		51834593134532E90092B696 /* WebIconDatabaseClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 51834591134532E80092B696 /* WebIconDatabaseClient.h */; };
 		518353DA1885BF8C00D9FE44 /* IDBSerialization.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 518353D81885BF8C00D9FE44 /* IDBSerialization.cpp */; };
 		518353DB1885BF8C00D9FE44 /* IDBSerialization.h in Headers */ = {isa = PBXBuildFile; fileRef = 518353D91885BF8C00D9FE44 /* IDBSerialization.h */; };
+		518353DE1887128B00D9FE44 /* KeyedDecoder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 518353DC1887128B00D9FE44 /* KeyedDecoder.cpp */; };
+		518353DF1887128B00D9FE44 /* KeyedDecoder.h in Headers */ = {isa = PBXBuildFile; fileRef = 518353DD1887128B00D9FE44 /* KeyedDecoder.h */; };
 		5183DDEC1630BDFC008BE5C7 /* NetworkProcessConnection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5105B0D4162F7A7A00E27709 /* NetworkProcessConnection.cpp */; };
 		51871B5B127CB89D00F76232 /* WebContextMenu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51871B59127CB89D00F76232 /* WebContextMenu.cpp */; };
 		51871B5C127CB89D00F76232 /* WebContextMenu.h in Headers */ = {isa = PBXBuildFile; fileRef = 51871B5A127CB89D00F76232 /* WebContextMenu.h */; };
@@ -2338,6 +2340,8 @@
 		51834591134532E80092B696 /* WebIconDatabaseClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebIconDatabaseClient.h; sourceTree = "<group>"; };
 		518353D81885BF8C00D9FE44 /* IDBSerialization.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IDBSerialization.cpp; sourceTree = "<group>"; };
 		518353D91885BF8C00D9FE44 /* IDBSerialization.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDBSerialization.h; sourceTree = "<group>"; };
+		518353DC1887128B00D9FE44 /* KeyedDecoder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = KeyedDecoder.cpp; sourceTree = "<group>"; };
+		518353DD1887128B00D9FE44 /* KeyedDecoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KeyedDecoder.h; sourceTree = "<group>"; };
 		5183B3931379F85C00E8754E /* Shim.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Shim.xcconfig; sourceTree = "<group>"; };
 		5184BC4A132E907A006B9E28 /* WebIconDatabase.messages.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebIconDatabase.messages.in; sourceTree = "<group>"; };
 		51871B59127CB89D00F76232 /* WebContextMenu.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebContextMenu.cpp; sourceTree = "<group>"; };
@@ -3833,6 +3837,8 @@
 			children = (
 				1AAF0C4912B16334008E49E2 /* ArgumentCodersCF.cpp */,
 				1AAF0C4812B16334008E49E2 /* ArgumentCodersCF.h */,
+				518353DC1887128B00D9FE44 /* KeyedDecoder.cpp */,
+				518353DD1887128B00D9FE44 /* KeyedDecoder.h */,
 				1AE00D5A182DADE100087DD7 /* KeyedEncoder.cpp */,
 				1AE00D5B182DADE100087DD7 /* KeyedEncoder.h */,
 			);
@@ -6043,6 +6049,7 @@
 				2984F589164BA095004BC0C6 /* CustomProtocolManagerMessages.h in Headers */,
 				29AD3093164B4C5D0072DEA9 /* CustomProtocolManagerProxy.h in Headers */,
 				2984F57D164B915F004BC0C6 /* CustomProtocolManagerProxyMessages.h in Headers */,
+				518353DF1887128B00D9FE44 /* KeyedDecoder.h in Headers */,
 				93FC67BE12D3CCF200A60610 /* DecoderAdapter.h in Headers */,
 				BCE81D99131AE02100241910 /* DictionaryPopupInfo.h in Headers */,
 				C58CDF2E1887609F00871536 /* InteractionInformationAtPosition.h in Headers */,
@@ -7871,6 +7878,7 @@
 				BCA0EF8012331E78007D3CFB /* WebUndoStep.cpp in Sources */,
 				2DA944AF1884E9BA00ED86DB /* WebPageProxyIOS.mm in Sources */,
 				BCE2315E122C30CA00D5C35A /* APIURLRequest.cpp in Sources */,
+				518353DE1887128B00D9FE44 /* KeyedDecoder.cpp in Sources */,
 				BC90A1D3122DD55E00CC8C50 /* APIURLResponse.cpp in Sources */,
 				C0337DD1127A2980008FF4F4 /* WebWheelEvent.cpp in Sources */,
 				51FCB18517BBFE0300394CD8 /* AsynchronousNetworkLoaderClient.cpp in Sources */,

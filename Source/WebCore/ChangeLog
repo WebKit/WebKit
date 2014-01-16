@@ -1,3 +1,24 @@
+2014-01-16  Brady Eidson  <beidson@apple.com>
+
+        Use KeyedCoding as a persistent storage mechanism for blobs
+        https://bugs.webkit.org/show_bug.cgi?id=127012
+
+        Reviewed by Anders Carlsson.
+
+        Add basic KeyedDecoder interface that is the inverse of KeyedEncoder:
+        * platform/KeyedCoding.h:
+        (WebCore::KeyedDecoder::decodeVerifiedEnum):
+        (WebCore::KeyedDecoder::decodeObject):
+        (WebCore::KeyedDecoder::decodeObjects):
+
+        Use KeyedEncoder/Decoder to encode/decode IDBKeyPath:
+        * Modules/indexeddb/IDBKeyPath.cpp:
+        (WebCore::IDBKeyPath::encode):
+        (WebCore::IDBKeyPath::decode):
+        * Modules/indexeddb/IDBKeyPath.h:
+
+        * WebCore.exp.in:
+
 2014-01-16  Eric Carlson  <eric.carlson@apple.com>
 
         Allow MediaSessionManager to restrict inline <video> playback
