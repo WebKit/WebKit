@@ -33,6 +33,7 @@
 #import "WebPageMessages.h"
 #import "WebProcessProxy.h"
 #import <WebCore/NotImplemented.h>
+#import <WebCore/UserAgent.h>
 #import <WebCore/SharedBuffer.h>
 
 using namespace WebCore;
@@ -46,15 +47,22 @@ void WebPageProxy::platformInitialize()
 #endif
 }
 
-String WebPageProxy::standardUserAgent(const String&)
+static String userVisibleWebKitVersionString()
 {
-    if (CFStringRef overrideUserAgent = WKGetUserAgent())
-        return overrideUserAgent;
+    // If the version is longer than 3 digits then the leading digits represent the version of the OS. Our user agent
+    // string should not include the leading digits, so strip them off and report the rest as the version. <rdar://problem/4997547>
+    NSString *fullVersion = [[NSBundle bundleForClass:NSClassFromString(@"WKView")] objectForInfoDictionaryKey:(NSString *)kCFBundleVersionKey];
+    NSRange nonDigitRange = [fullVersion rangeOfCharacterFromSet:[[NSCharacterSet decimalDigitCharacterSet] invertedSet]];
+    if (nonDigitRange.location == NSNotFound && fullVersion.length > 3)
+        return [fullVersion substringFromIndex:fullVersion.length - 3];
+    if (nonDigitRange.location != NSNotFound && nonDigitRange.location > 3)
+        return [fullVersion substringFromIndex:nonDigitRange.location - 3];
+    return fullVersion;
+}
 
-    notImplemented();
-
-    // Just return the iOS 7 user agent for now.
-    return [NSString stringWithFormat:@"Mozilla/5.0 (%@; CPU %@ 7_0_2 like Mac OS X) AppleWebKit/537.51.1 (KHTML, like Gecko) Version/7.0 Mobile/11B489 Safari/9537.53", WKGetDeviceName(), WKGetOSNameForUserAgent()];
+String WebPageProxy::standardUserAgent(const String& applicationName)
+{
+    return standardUserAgentWithApplicationName(applicationName, userVisibleWebKitVersionString());
 }
 
 void WebPageProxy::getIsSpeaking(bool&)

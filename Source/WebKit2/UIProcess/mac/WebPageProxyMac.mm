@@ -43,8 +43,8 @@
 #import <WebCore/DictationAlternative.h>
 #import <WebCore/GraphicsLayer.h>
 #import <WebCore/SharedBuffer.h>
-#import <WebCore/SystemVersionMac.h>
 #import <WebCore/TextAlternativeWithRange.h>
+#import <WebCore/UserAgent.h>
 #import <WebKitSystemInterface.h>
 #import <mach-o/dyld.h>
 #import <wtf/NeverDestroyed.h>
@@ -75,22 +75,6 @@ void WebPageProxy::platformInitialize()
 #endif
 }
 
-#if defined(__ppc__) || defined(__ppc64__)
-#define PROCESSOR "PPC"
-#elif defined(__i386__) || defined(__x86_64__)
-#define PROCESSOR "Intel"
-#else
-#error Unknown architecture
-#endif
-
-static NSString *systemMarketingVersionForUserAgentString()
-{
-    // Use underscores instead of dots because when we first added the Mac OS X version to the user agent string
-    // we were concerned about old DHTML libraries interpreting "4." as Netscape 4. That's no longer a concern for us
-    // but we're sticking with the underscores for compatibility with the format used by older versions of Safari.
-    return [systemMarketingVersion() stringByReplacingOccurrencesOfString:@"." withString:@"_"];
-}
-
 static String userVisibleWebKitVersionString()
 {
     // If the version is longer than 3 digits then the leading digits represent the version of the OS. Our user agent
@@ -106,12 +90,7 @@ static String userVisibleWebKitVersionString()
 
 String WebPageProxy::standardUserAgent(const String& applicationNameForUserAgent)
 {
-    static NeverDestroyed<String> osVersion(systemMarketingVersionForUserAgentString());
-    static NeverDestroyed<String> webKitVersion(userVisibleWebKitVersionString());
-
-    if (applicationNameForUserAgent.isEmpty())
-        return makeString("Mozilla/5.0 (Macintosh; " PROCESSOR " Mac OS X ", osVersion.get(), ") AppleWebKit/", webKitVersion.get(), " (KHTML, like Gecko)");
-    return makeString("Mozilla/5.0 (Macintosh; " PROCESSOR " Mac OS X ", osVersion.get(), ") AppleWebKit/", webKitVersion.get(), " (KHTML, like Gecko) ", applicationNameForUserAgent);
+    return standardUserAgentWithApplicationName(applicationNameForUserAgent, userVisibleWebKitVersionString());
 }
 
 void WebPageProxy::getIsSpeaking(bool& isSpeaking)

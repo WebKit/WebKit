@@ -237,6 +237,8 @@ void InitWebCoreSystemInterface(void)
 
 #if PLATFORM(IOS)
     INIT(GetUserAgent);
+    INIT(GetDeviceName);
+    INIT(GetOSNameForUserAgent);
     INIT(GetPlatformNameForNavigator);
     INIT(GetVendorNameForNavigator);
 #endif

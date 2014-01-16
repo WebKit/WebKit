@@ -139,5 +139,7 @@ CFStringRef (*wkCachePartitionKey)(void);
 #endif
 
 CFStringRef (*wkGetUserAgent)(void);
+CFStringRef (*wkGetDeviceName)(void);
+CFStringRef (*wkGetOSNameForUserAgent)(void);
 CFStringRef (*wkGetPlatformNameForNavigator)(void);
 CFStringRef (*wkGetVendorNameForNavigator)(void);

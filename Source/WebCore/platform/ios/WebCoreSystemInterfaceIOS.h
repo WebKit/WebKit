@@ -68,6 +68,8 @@ inline wkDeviceClass iosDeviceClass(void)
 }
 
 extern CFStringRef (*wkGetUserAgent)(void);
+extern CFStringRef (*wkGetDeviceName)(void);
+extern CFStringRef (*wkGetOSNameForUserAgent)(void);
 extern CFStringRef (*wkGetPlatformNameForNavigator)(void);
 extern CFStringRef (*wkGetVendorNameForNavigator)(void);
 

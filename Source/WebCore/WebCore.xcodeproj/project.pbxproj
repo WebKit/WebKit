@@ -968,6 +968,9 @@
 		24F54EAD101FE914000AE741 /* ApplicationCacheHost.h in Headers */ = {isa = PBXBuildFile; fileRef = 24F54EAB101FE914000AE741 /* ApplicationCacheHost.h */; settings = {ATTRIBUTES = (); }; };
 		2542F4DA1166C25A00E89A86 /* UserGestureIndicator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2542F4D81166C25A00E89A86 /* UserGestureIndicator.cpp */; };
 		2542F4DB1166C25A00E89A86 /* UserGestureIndicator.h in Headers */ = {isa = PBXBuildFile; fileRef = 2542F4D91166C25A00E89A86 /* UserGestureIndicator.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		26255F0018878DFF0006E1FD /* UserAgentIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = 26255EFF18878DFF0006E1FD /* UserAgentIOS.mm */; };
+		26255F0318878E110006E1FD /* UserAgent.h in Headers */ = {isa = PBXBuildFile; fileRef = 26255F0118878E110006E1FD /* UserAgent.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		26255F0418878E110006E1FD /* UserAgentMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 26255F0218878E110006E1FD /* UserAgentMac.mm */; };
 		265541391489811C000DFC5D /* KeyEventCodesIOS.h in Headers */ = {isa = PBXBuildFile; fileRef = 265541371489811C000DFC5D /* KeyEventCodesIOS.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		2655413A1489811C000DFC5D /* KeyEventIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = 265541381489811C000DFC5D /* KeyEventIOS.mm */; };
 		265541521489B233000DFC5D /* CursorIOS.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2655414B1489AA2B000DFC5D /* CursorIOS.cpp */; };
@@ -7815,6 +7818,9 @@
 		2527CC9516BF95DD009DDAC0 /* PlatformSpeechSynthesisUtterance.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PlatformSpeechSynthesisUtterance.cpp; sourceTree = "<group>"; };
 		2542F4D81166C25A00E89A86 /* UserGestureIndicator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UserGestureIndicator.cpp; sourceTree = "<group>"; };
 		2542F4D91166C25A00E89A86 /* UserGestureIndicator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UserGestureIndicator.h; sourceTree = "<group>"; };
+		26255EFF18878DFF0006E1FD /* UserAgentIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = UserAgentIOS.mm; sourceTree = "<group>"; };
+		26255F0118878E110006E1FD /* UserAgent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UserAgent.h; sourceTree = "<group>"; };
+		26255F0218878E110006E1FD /* UserAgentMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = UserAgentMac.mm; sourceTree = "<group>"; };
 		265541371489811C000DFC5D /* KeyEventCodesIOS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = KeyEventCodesIOS.h; path = ios/KeyEventCodesIOS.h; sourceTree = "<group>"; };
 		265541381489811C000DFC5D /* KeyEventIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = KeyEventIOS.mm; path = ios/KeyEventIOS.mm; sourceTree = "<group>"; };
 		2655414B1489AA2B000DFC5D /* CursorIOS.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CursorIOS.cpp; path = ios/CursorIOS.cpp; sourceTree = "<group>"; };
@@ -14633,6 +14639,7 @@
 			children = (
 				FE6938B51045D67E008EABB6 /* EventHandlerIOS.mm */,
 				FED13D3B0CEA936A00D89466 /* FrameIOS.mm */,
+				26255EFF18878DFF0006E1FD /* UserAgentIOS.mm */,
 				225A16B30D5C11E900090295 /* WebEventRegion.h */,
 				225A16B40D5C11E900090295 /* WebEventRegion.mm */,
 			);
@@ -17173,6 +17180,8 @@
 				93C09A7E0B064EEF005ABD4D /* EventHandlerMac.mm */,
 				1C26497B0D7E24EC00BD10F2 /* PageMac.cpp */,
 				E1C2F2481533A2120083F974 /* SettingsMac.mm */,
+				26255F0118878E110006E1FD /* UserAgent.h */,
+				26255F0218878E110006E1FD /* UserAgentMac.mm */,
 				F587854C02DE375901EA4122 /* WebCoreFrameView.h */,
 			);
 			path = mac;
@@ -25937,6 +25946,7 @@
 				D086FE9809D53AAB005BC74D /* UnlinkCommand.h in Headers */,
 				F55B3DDE1251F12D003EF269 /* URLInputType.h in Headers */,
 				A72763BF16689BFB002FCACB /* UserActionElementSet.h in Headers */,
+				26255F0318878E110006E1FD /* UserAgent.h in Headers */,
 				078E091717D14D1C00420AA1 /* MediaStreamRegistry.h in Headers */,
 				656581B209D14EE6000E61D7 /* UserAgentStyleSheets.h in Headers */,
 				003F1FEA11E6AB43008258D9 /* UserContentTypes.h in Headers */,
@@ -29182,6 +29192,8 @@
 				65DF326109D1E199000BE325 /* UserAgentStyleSheetsData.cpp in Sources */,
 				BCACF3BC1072921A00C0C8A3 /* UserContentURLPattern.cpp in Sources */,
 				FFDBC048183D27B700407109 /* LineWidth.cpp in Sources */,
+				26255F0018878DFF0006E1FD /* UserAgentIOS.mm in Sources */,
+				26255F0418878E110006E1FD /* UserAgentMac.mm in Sources */,
 				2542F4DA1166C25A00E89A86 /* UserGestureIndicator.cpp in Sources */,
 				BCDF317B11F8D683003C5BF8 /* UserTypingGestureIndicator.cpp in Sources */,
 				1FAFBF1815A5FA6E00083A20 /* UTIUtilities.mm in Sources */,

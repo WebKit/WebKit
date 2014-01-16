@@ -203,6 +203,14 @@ void InitWebCoreSystemInterface(void)
         INIT(CGPathAddRoundedRect);
         INIT(CFURLRequestAllowAllPostCaching);
 
+#if PLATFORM(IOS)
+        INIT(GetUserAgent);
+        INIT(GetDeviceName);
+        INIT(GetOSNameForUserAgent);
+        INIT(GetPlatformNameForNavigator);
+        INIT(GetVendorNameForNavigator);
+#endif
+
 #if !PLATFORM(IOS) && PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 1080
         INIT(NSElasticDeltaForTimeDelta);
         INIT(NSElasticDeltaForReboundDelta);

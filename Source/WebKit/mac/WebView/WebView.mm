@@ -168,9 +168,9 @@
 #import <WebCore/SecurityPolicy.h>
 #import <WebCore/Settings.h>
 #import <WebCore/StyleProperties.h>
-#import <WebCore/SystemVersionMac.h>
 #import <WebCore/TextResourceDecoder.h>
 #import <WebCore/ThreadCheck.h>
+#import <WebCore/UserAgent.h>
 #import <WebCore/WebCoreObjCExtras.h>
 #import <WebCore/WebCoreView.h>
 #import <WebCore/Widget.h>
@@ -304,16 +304,6 @@
 using namespace JSC;
 using namespace Inspector;
 using namespace WebCore;
-
-#if defined(__ppc__) || defined(__ppc64__)
-#define PROCESSOR "PPC"
-#elif defined(__i386__) || defined(__x86_64__)
-#define PROCESSOR "Intel"
-#else
-#if !PLATFORM(IOS)
-#error Unknown architecture
-#endif
-#endif
 
 #define FOR_EACH_RESPONDER_SELECTOR(macro) \
 macro(alignCenter) \
@@ -683,81 +673,25 @@ static CFMutableSetRef allWebViewsSet;
 
 @implementation WebView (WebPrivate)
 
-#if !PLATFORM(IOS)
-static NSString *systemMarketingVersionForUserAgentString()
-{
-    // Use underscores instead of dots because when we first added the Mac OS X version to the user agent string
-    // we were concerned about old DHTML libraries interpreting "4." as Netscape 4. That's no longer a concern for us
-    // but we're sticking with the underscores for compatibility with the format used by older versions of Safari.
-    return [systemMarketingVersion() stringByReplacingOccurrencesOfString:@"." withString:@"_"];
-}
-#endif
-
-static NSString *createUserVisibleWebKitVersionString()
+static String userVisibleWebKitVersionString()
 {
     // If the version is longer than 3 digits then the leading digits represent the version of the OS. Our user agent
     // string should not include the leading digits, so strip them off and report the rest as the version. <rdar://problem/4997547>
     NSString *fullVersion = [[NSBundle bundleForClass:[WebView class]] objectForInfoDictionaryKey:(NSString *)kCFBundleVersionKey];
     NSRange nonDigitRange = [fullVersion rangeOfCharacterFromSet:[[NSCharacterSet decimalDigitCharacterSet] invertedSet]];
     if (nonDigitRange.location == NSNotFound && fullVersion.length > 3)
-        return [[fullVersion substringFromIndex:fullVersion.length - 3] copy];
+        return [fullVersion substringFromIndex:fullVersion.length - 3];
     if (nonDigitRange.location != NSNotFound && nonDigitRange.location > 3)
-        return [[fullVersion substringFromIndex:nonDigitRange.location - 3] copy];
-    return [fullVersion copy];
-}
-
-#if !PLATFORM(IOS)
-+ (NSString *)_standardUserAgentWithApplicationName:(NSString *)applicationName
-{
-    // Note: Do *not* move the initialization of osVersion nor webKitVersion into the declaration.
-    // Garbage collection won't correctly mark the global variable in that case <rdar://problem/5733674>.
-    static NSString *osVersion;
-    static NSString *webKitVersion;
-    if (!osVersion)
-        osVersion = [systemMarketingVersionForUserAgentString() retain];
-    if (!webKitVersion)
-        webKitVersion = createUserVisibleWebKitVersionString();
-    if ([applicationName length])
-        return [NSString stringWithFormat:@"Mozilla/5.0 (Macintosh; " PROCESSOR " Mac OS X %@) AppleWebKit/%@ (KHTML, like Gecko) %@", osVersion, webKitVersion, applicationName];
-    return [NSString stringWithFormat:@"Mozilla/5.0 (Macintosh; " PROCESSOR " Mac OS X %@) AppleWebKit/%@ (KHTML, like Gecko)", osVersion, webKitVersion];
-}
-#else
-+ (NSString *)_standardUserAgentWithApplicationName:(NSString *)applicationName osMarketingVersion:(NSString *)osMarketingVersion
-{
-    // Check to see if there is a user agent override for all WebKit clients.
-    CFPropertyListRef override = CFPreferencesCopyAppValue(CFSTR("UserAgent"), CFSTR("com.apple.WebFoundation"));
-    if (override) {
-        if (CFGetTypeID(override) == CFStringGetTypeID())
-            return (NSString *)CFBridgingRelease(override);
-        CFRelease(override);
-    }
-
-    static NSString *webKitVersion;
-    if (!webKitVersion)
-        webKitVersion = createUserVisibleWebKitVersionString();
-    if ([applicationName length])
-        return [NSString stringWithFormat:@"Mozilla/5.0 (%@; CPU %@ %@ like Mac OS X) AppleWebKit/%@ (KHTML, like Gecko) %@", WKGetDeviceName(), WKGetOSNameForUserAgent(), osMarketingVersion, webKitVersion, applicationName];
-    return [NSString stringWithFormat:@"Mozilla/5.0 (%@; CPU %@ %@ like Mac OS X) AppleWebKit/%@ (KHTML, like Gecko)", WKGetDeviceName(), WKGetOSNameForUserAgent(), osMarketingVersion,  webKitVersion];
+        return [fullVersion substringFromIndex:nonDigitRange.location - 3];
+    return fullVersion;
 }
 
 + (NSString *)_standardUserAgentWithApplicationName:(NSString *)applicationName
 {
-    static NSString *osMarketingVersion;
-    if (!osMarketingVersion) {
-#if !PLATFORM(IOS_SIMULATOR)
-        NSDictionary *systemInfo = [[NSDictionary alloc] initWithContentsOfFile:@"/System/Library/CoreServices/SystemVersion.plist"];
-#else
-        NSString *rootDirectory = [NSString stringWithUTF8String:WebKitPlatformSystemRootDirectory()];
-        NSDictionary *systemInfo = [[NSDictionary alloc] initWithContentsOfFile:[rootDirectory stringByAppendingPathComponent:@"System/Library/CoreServices/SystemVersion.plist"]];
-#endif
-        NSString *productVersion = [systemInfo objectForKey:@"ProductVersion"];
-        // Due to <rdar://problem/3787996>, we must use something other than periods to delimit the marketing version.  Using underscores to match Leopard's new convention.
-        osMarketingVersion = !productVersion ? @"" : [[productVersion stringByReplacingOccurrencesOfString:@"." withString:@"_"] retain];
-        [systemInfo release];
-    }
-    return [self _standardUserAgentWithApplicationName:applicationName osMarketingVersion:osMarketingVersion];
+    return standardUserAgentWithApplicationName(applicationName, userVisibleWebKitVersionString());
 }
 
+#if PLATFORM(IOS)
 - (void)_setBrowserUserAgentProductVersion:(NSString *)productVersion buildVersion:(NSString *)buildVersion bundleVersion:(NSString *)bundleVersion
 {
     [self setApplicationNameForUserAgent:[NSString stringWithFormat:@"Version/%@ Mobile/%@ Safari/%@", productVersion, buildVersion, bundleVersion]];
@@ -767,7 +701,6 @@ static NSString *createUserVisibleWebKitVersionString()
 {
     [self setApplicationNameForUserAgent:[@"Mobile/" stringByAppendingString:buildVersion]];
 }
-
 #endif // PLATFORM(IOS)
 
 + (void)_reportException:(JSValueRef)exception inContext:(JSContextRef)context
