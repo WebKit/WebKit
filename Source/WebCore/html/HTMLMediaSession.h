@@ -26,6 +26,8 @@
 #ifndef HTMLMediaSession_h
 #define HTMLMediaSession_h
 
+#if ENABLE(VIDEO)
+
 #include "MediaSession.h"
 
 namespace WebCore {
@@ -76,3 +78,5 @@ private:
 }
 
 #endif // MediaSession_h
+
+#endif // ENABLE(VIDEO)

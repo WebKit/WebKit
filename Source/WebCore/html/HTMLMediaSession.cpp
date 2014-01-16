@@ -24,6 +24,9 @@
  */
 
 #include "config.h"
+
+#if ENABLE(VIDEO)
+
 #include "HTMLMediaSession.h"
 
 #include "HTMLMediaElement.h"
@@ -130,3 +133,5 @@ void HTMLMediaSession::pauseSession()
 }
  
 }
+
+#endif // ENABLE(VIDEO)
