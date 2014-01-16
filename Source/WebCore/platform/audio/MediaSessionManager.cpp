@@ -111,18 +111,19 @@ void MediaSessionManager::removeSession(MediaSession& session)
 void MediaSessionManager::addRestriction(MediaSession::MediaType type, SessionRestrictions restriction)
 {
     ASSERT(type > MediaSession::None && type <= MediaSession::WebAudio);
-    m_restrictions[type] = m_restrictions[type] | restriction;
+    m_restrictions[type] |= restriction;
 }
 
 void MediaSessionManager::removeRestriction(MediaSession::MediaType type, SessionRestrictions restriction)
 {
     ASSERT(type > MediaSession::None && type <= MediaSession::WebAudio);
-    m_restrictions[type] = m_restrictions[type] & ~restriction;
+    m_restrictions[type] &= ~restriction;
 }
 
-MediaSessionManager::SessionRestrictions MediaSessionManager::restrictions(MediaSession::MediaType sessionType)
+MediaSessionManager::SessionRestrictions MediaSessionManager::restrictions(MediaSession::MediaType type)
 {
-    return m_restrictions[sessionType];
+    ASSERT(type > MediaSession::None && type <= MediaSession::WebAudio);
+    return m_restrictions[type];
 }
 
 void MediaSessionManager::sessionWillBeginPlayback(MediaSession& session)

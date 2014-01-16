@@ -68,7 +68,7 @@ protected:
 private:
     void updateSessionState();
 
-    std::map<MediaSession::MediaType, SessionRestrictions> m_restrictions;
+    SessionRestrictions m_restrictions[MediaSession::WebAudio + 1];
 
     Vector<MediaSession*> m_sessions;
     int m_interruptions;

@@ -40,7 +40,7 @@ public:
     virtual ~MediaSession();
 
     enum MediaType {
-        None,
+        None = 0,
         Video,
         Audio,
         WebAudio,

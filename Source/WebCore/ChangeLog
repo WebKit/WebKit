@@ -1,3 +1,21 @@
+2014-01-15  Eric Carlson  <eric.carlson@apple.com>
+
+        MediaSessionManager shouldn't use std::map
+        https://bugs.webkit.org/show_bug.cgi?id=127003
+
+        Reviewed by Sam Weinig.
+
+        No new tests, no functional change.
+
+        Use an array instead of std::map.
+        * platform/audio/MediaSessionManager.cpp:
+        (WebCore::MediaSessionManager::MediaSessionManager):
+        (WebCore::MediaSessionManager::addRestriction):
+        (WebCore::MediaSessionManager::removeRestriction):
+        (WebCore::MediaSessionManager::restrictions):
+        (WebCore::MediaSessionManager::sessionWillBeginPlayback):
+        * platform/audio/MediaSessionManager.h:
+
 2014-01-15  Gavin Barraclough  <barraclough@apple.com>
 
         Change Page, FocusController to use ViewState
