@@ -677,7 +677,6 @@ NEVER_INLINE HandlerInfo* Interpreter::unwind(CallFrame*& callFrame, JSValue& ex
     }
 
     ASSERT(callFrame->vm().exceptionStack().size());
-    ASSERT(!exceptionValue.isObject() || asObject(exceptionValue)->hasProperty(callFrame, callFrame->vm().propertyNames->stack));
 
     Debugger* debugger = callFrame->vmEntryGlobalObject()->debugger();
     if (debugger && debugger->needsExceptionCallbacks()) {

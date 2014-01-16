@@ -1,3 +1,16 @@
+2014-01-16  Oliver Hunt  <oliver@apple.com>
+
+        throwing an objc object (or general binding object) triggers an assertion
+        https://bugs.webkit.org/show_bug.cgi?id=127146
+
+        Reviewed by Alexey Proskuryakov.
+
+        This is simply a bogus assertion as we can't guarantee a bindings object
+        won't intercept assignment to .stack
+
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::unwind):
+
 2014-01-16  Peter Molnar  <pmolnar.u-szeged@partner.samsung.com>
 
         Remove workaround for compilers not supporting explicit override control
