@@ -1,3 +1,12 @@
+2014-01-15  Roger Fong  <roger_fong@apple.com>
+
+        Remove unnecessary call to webGLContextCreated
+        https://bugs.webkit.org/show_bug.cgi?id=127000
+
+        Reviewed by Brent Fulgham.
+
+        * platform/mac/TestExpectations: Unskipping tests skipped in r162002.
+
 2014-01-15  Brian Burg  <bburg@apple.com>
 
         Web Inspector: capture probe samples on the backend

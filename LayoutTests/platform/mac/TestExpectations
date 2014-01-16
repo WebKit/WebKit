@@ -726,14 +726,6 @@ webgl/1.0.2/conformance/uniforms/gl-uniform-arrays.html [ Failure Pass ]
 webgl/1.0.2/conformance/context/context-attribute-preserve-drawing-buffer.html [ Pass Failure ]
 http/tests/webgl/1.0.2/origin-clean-conformance.html [ Skip ]
 
-# https://bugs.webkit.org/show_bug.cgi?id=127000
-http/tests/canvas/webgl/origin-clean-conformance.html
-http/tests/webgl/1.0.2/texSubImage2DHTML.html
-http/tests/security/webgl-remote-read-remote-image-allowed.html
-http/tests/security/webgl-remote-read-remote-image-allowed-with-credentials.html
-http/tests/webgl/1.0.2/texImage2DHTML.html
-http/tests/security/webgl-remote-read-remote-image-blocked-no-crossorigin.html
-
 # Sending the mouse down event to the scrollbar starts a nested run loop which causes a hang.
 fast/events/mousedown-in-subframe-scrollbar.html
 

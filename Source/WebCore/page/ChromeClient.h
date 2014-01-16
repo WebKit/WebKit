@@ -428,10 +428,6 @@ public:
     // would likely want the page to remain running uninterrupted.
     virtual void incrementActivePageCount() { }
     virtual void decrementActivePageCount() { }
-    
-#if ENABLE(WEBGL)
-    virtual void webGLContextCreated(Element*) const { }
-#endif
 
 protected:
     virtual ~ChromeClient() { }

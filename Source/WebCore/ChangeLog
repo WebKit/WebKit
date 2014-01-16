@@ -1,3 +1,23 @@
+2014-01-15  Roger Fong  <roger_fong@apple.com>
+
+        Remove unnecessary call to webGLContextCreated
+        https://bugs.webkit.org/show_bug.cgi?id=127000
+
+        Reviewed by Brent Fulgham.
+
+        Note that the functionality of webGLContextCreated will be handled by webGLPolicyForSite now.
+
+        Tests: Unskipping tests skipped in r162002.
+
+        * html/HTMLCanvasElement.cpp: Remove webGLContextCreated call.
+        (WebCore::HTMLCanvasElement::getContext):
+        * loader/FrameLoaderClient.h:
+        Have the returned load policy default to WebGLAllow so as to not break clients that don't implement the method.
+        (WebCore::FrameLoaderClient::webGLPolicyForSite):
+        webGLPolicyForSite is now assuming the role of webGLContextCreated as well, pass in the whole site URL instead of just the host.
+        * page/ChromeClient.h: Remove webGLContextCreated method.
+        (WebCore::ChromeClient::decrementActivePageCount):
+
 2014-01-15  Beth Dakin  <bdakin@apple.com>
 
         Repeating background images should continue into margin tiles

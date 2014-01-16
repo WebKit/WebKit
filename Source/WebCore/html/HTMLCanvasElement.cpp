@@ -228,15 +228,11 @@ CanvasRenderingContext* HTMLCanvasElement::getContext(const String& type, Canvas
             if (!m_context) {
                 Page* page = document().page();
                 if (page && !document().url().isLocalFile()) {
-                    WebGLLoadPolicy policy = page->mainFrame().loader().client().webGLPolicyForHost(document().url().host());
-                    // FIXME: This breaks most clients because they will not implement webGLContextCreated in the way want them to
-                    //        nor should they be expected to. We need to find a way to not run this code if the client hasn't implemented
-                    //        webGLContextCreated. It might also make sense for the method to return true or false depending on
-                    //        whether or not the client wants the page to continue loading after the call.
-                    // if (policy == WebGLAsk) {
-                    //    page->chrome().client().webGLContextCreated(this);
-                    //    return nullptr;
-                    // }
+                    WebGLLoadPolicy policy = page->mainFrame().loader().client().webGLPolicyForSite(document().url());
+
+                    if (policy == WebGLAsk)
+                        return nullptr;
+
                     if (policy == WebGLBlock)
                         return nullptr;
                 }
