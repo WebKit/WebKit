@@ -47,7 +47,8 @@ WebInspector.BreakpointAction = function(breakpoint, typeOrInfo, data)
 WebInspector.BreakpointAction.Type = {
     Log: "log",
     Evaluate: "evaluate",
-    Sound: "sound"
+    Sound: "sound",
+    Probe: "probe"
 }
 
 WebInspector.BreakpointAction.prototype = {

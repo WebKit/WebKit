@@ -1,3 +1,19 @@
+2014-01-16  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: add probe breakpoint action to popup breakpoint editor
+        https://bugs.webkit.org/show_bug.cgi?id=126931
+
+        Reviewed by Timothy Hatcher.
+
+        Add probes to the breakpoint action dropdown.
+        Reuse the "evaluate JavaScript" input UI.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        * UserInterface/BreakpointAction.js:
+        * UserInterface/BreakpointActionView.js:
+        (WebInspector.BreakpointActionView.displayStringForType):
+        (WebInspector.BreakpointActionView.prototype._updateBody.switch.break):
+
 2014-01-15  Brian Burg  <bburg@apple.com>
 
         Web Inspector: capture probe samples on the backend

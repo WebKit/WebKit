@@ -77,6 +77,8 @@ WebInspector.BreakpointActionView.displayStringForType = function(type)
         return WebInspector.UIString("Evaluate JavaScript");
     case WebInspector.BreakpointAction.Type.Sound:
         return WebInspector.UIString("Play Sound");
+    case WebInspector.BreakpointAction.Type.Probe:
+        return WebInspector.UIString("Probe Expression");
     default:
         console.assert(false);
         return "";
@@ -139,6 +141,7 @@ WebInspector.BreakpointActionView.prototype = {
             break;
 
         case WebInspector.BreakpointAction.Type.Evaluate:
+        case WebInspector.BreakpointAction.Type.Probe:
             this._bodyElement.hidden = false;
 
             var editorElement = this._bodyElement.appendChild(document.createElement("div"));
