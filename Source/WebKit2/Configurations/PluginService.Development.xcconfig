@@ -27,3 +27,8 @@ PRODUCT_NAME = com.apple.WebKit.Plugin.Development;
 INFOPLIST_FILE = PluginProcess/EntryPoint/mac/XPCService/PluginService.Development/Info.plist;
 
 CODE_SIGN_ENTITLEMENTS = Configurations/PluginService.entitlements;
+
+SKIP_INSTALL = $(SKIP_INSTALL_$(PLATFORM_NAME));
+SKIP_INSTALL_macosx = $(inherited);
+SKIP_INSTALL_iphoneos = YES;
+SKIP_INSTALL_iphonesimulator = $(SKIP_INSTALL_iphoneos);

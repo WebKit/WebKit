@@ -7265,7 +7265,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "ln -sf Versions/Current/XPCServices \"${BUILT_PRODUCTS_DIR}/${WRAPPER_NAME}/WebKit2.framework/XPCServices\"\n";
+			shellScript = "if [[ ${PLATFORM_NAME} == macosx ]]; then\n    ln -sf Versions/Current/XPCServices \"${BUILT_PRODUCTS_DIR}/${WRAPPER_NAME}/WebKit2.framework/XPCServices\"\nfi\n";
 		};
 		BCFFCA8B160D6E7B003DF315 /* Copy XPC services for engineering builds */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -7287,21 +7287,21 @@
 			);
 			name = "Copy XPC services for engineering builds";
 			outputPaths = (
-				"$(BUILT_PRODUCTS_DIR)/${WRAPPER_NAME}/WebKit2.framework/Versions/A/XPCServices/com.apple.WebKit.WebContent.xpc",
-				"$(BUILT_PRODUCTS_DIR)/${WRAPPER_NAME}/WebKit2.framework/Versions/A/XPCServices/com.apple.WebKit.WebContent.Development.xpc",
-				"$(BUILT_PRODUCTS_DIR)/${WRAPPER_NAME}/WebKit2.framework/Versions/A/XPCServices/com.apple.WebKit.Networking.xpc",
-				"$(BUILT_PRODUCTS_DIR)/${WRAPPER_NAME}/WebKit2.framework/Versions/A/XPCServices/com.apple.WebKit.Networking.Development.xpc",
-				"$(BUILT_PRODUCTS_DIR)/${WRAPPER_NAME}/WebKit2.framework/Versions/A/XPCServices/com.apple.WebKit.Plugin.32.xpc",
-				"$(BUILT_PRODUCTS_DIR)/${WRAPPER_NAME}/WebKit2.framework/Versions/A/XPCServices/com.apple.WebKit.Plugin.64.xpc",
-				"$(BUILT_PRODUCTS_DIR)/${WRAPPER_NAME}/WebKit2.framework/Versions/A/XPCServices/com.apple.WebKit.Plugin.Development.xpc",
-				"$(BUILT_PRODUCTS_DIR)/${WRAPPER_NAME}/WebKit2.framework/Versions/A/XPCServices/com.apple.WebKit.OfflineStorage.xpc",
-				"$(BUILT_PRODUCTS_DIR)/${WRAPPER_NAME}/WebKit2.framework/Versions/A/XPCServices/com.apple.WebKit.OfflineStorage.Development.xpc",
-				"$(BUILT_PRODUCTS_DIR)/${WRAPPER_NAME}/WebKit2.framework/Versions/A/XPCServices/com.apple.WebKit.Databases.xpc",
-				"$(BUILT_PRODUCTS_DIR)/${WRAPPER_NAME}/WebKit2.framework/Versions/A/XPCServices/com.apple.WebKit.Databases.Development.xpc",
+				"$(BUILT_PRODUCTS_DIR)/${WRAPPER_NAME}/WebKit2.framework/XPCServices/com.apple.WebKit.WebContent.xpc",
+				"$(BUILT_PRODUCTS_DIR)/${WRAPPER_NAME}/WebKit2.framework/XPCServices/com.apple.WebKit.WebContent.Development.xpc",
+				"$(BUILT_PRODUCTS_DIR)/${WRAPPER_NAME}/WebKit2.framework/XPCServices/com.apple.WebKit.Networking.xpc",
+				"$(BUILT_PRODUCTS_DIR)/${WRAPPER_NAME}/WebKit2.framework/XPCServices/com.apple.WebKit.Networking.Development.xpc",
+				"$(BUILT_PRODUCTS_DIR)/${WRAPPER_NAME}/WebKit2.framework/XPCServices/com.apple.WebKit.Plugin.32.xpc",
+				"$(BUILT_PRODUCTS_DIR)/${WRAPPER_NAME}/WebKit2.framework/XPCServices/com.apple.WebKit.Plugin.64.xpc",
+				"$(BUILT_PRODUCTS_DIR)/${WRAPPER_NAME}/WebKit2.framework/XPCServices/com.apple.WebKit.Plugin.Development.xpc",
+				"$(BUILT_PRODUCTS_DIR)/${WRAPPER_NAME}/WebKit2.framework/XPCServices/com.apple.WebKit.OfflineStorage.xpc",
+				"$(BUILT_PRODUCTS_DIR)/${WRAPPER_NAME}/WebKit2.framework/XPCServices/com.apple.WebKit.OfflineStorage.Development.xpc",
+				"$(BUILT_PRODUCTS_DIR)/${WRAPPER_NAME}/WebKit2.framework/XPCServices/com.apple.WebKit.Databases.xpc",
+				"$(BUILT_PRODUCTS_DIR)/${WRAPPER_NAME}/WebKit2.framework/XPCServices/com.apple.WebKit.Databases.Development.xpc",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "if [[ \"${CONFIGURATION}\" == \"Production\" ]]; then\n    exit\nfi\n\nXPC_SERVICES_PATH=\"${BUILT_PRODUCTS_DIR}/${WRAPPER_NAME}/WebKit2.framework/Versions/A/XPCServices\"\nmkdir -p \"${XPC_SERVICES_PATH}\"\nditto \"${BUILT_PRODUCTS_DIR}/com.apple.WebKit.WebContent.xpc\" \"${XPC_SERVICES_PATH}/com.apple.WebKit.WebContent.xpc\"\nditto \"${BUILT_PRODUCTS_DIR}/com.apple.WebKit.WebContent.Development.xpc\" \"${XPC_SERVICES_PATH}/com.apple.WebKit.WebContent.Development.xpc\"\nditto \"${BUILT_PRODUCTS_DIR}/com.apple.WebKit.Networking.xpc\" \"${XPC_SERVICES_PATH}/com.apple.WebKit.Networking.xpc\"\nditto \"${BUILT_PRODUCTS_DIR}/com.apple.WebKit.Networking.Development.xpc\" \"${XPC_SERVICES_PATH}/com.apple.WebKit.Networking.Development.xpc\"\nditto \"${BUILT_PRODUCTS_DIR}/com.apple.WebKit.Plugin.32.xpc\" \"${XPC_SERVICES_PATH}/com.apple.WebKit.Plugin.32.xpc\"\nditto \"${BUILT_PRODUCTS_DIR}/com.apple.WebKit.Plugin.64.xpc\" \"${XPC_SERVICES_PATH}/com.apple.WebKit.Plugin.64.xpc\"\nditto \"${BUILT_PRODUCTS_DIR}/com.apple.WebKit.Plugin.Development.xpc\" \"${XPC_SERVICES_PATH}/com.apple.WebKit.Plugin.Development.xpc\"\nditto \"${BUILT_PRODUCTS_DIR}/com.apple.WebKit.Databases.xpc\" \"${XPC_SERVICES_PATH}/com.apple.WebKit.Databases.xpc\"\nditto \"${BUILT_PRODUCTS_DIR}/com.apple.WebKit.Databases.Development.xpc\" \"${XPC_SERVICES_PATH}/com.apple.WebKit.Databases.Development.xpc\"\n";
+			shellScript = "if [[ \"${CONFIGURATION}\" == \"Production\" ]]; then\n    exit\nfi\n\nif [[ ${PLATFORM_NAME} == iphone* ]]; then\n    XPC_SERVICES_PATH=\"${BUILT_PRODUCTS_DIR}/${WRAPPER_NAME}/WebKit2.framework/XPCServices\"\nelse\n    XPC_SERVICES_PATH=\"${BUILT_PRODUCTS_DIR}/${WRAPPER_NAME}/WebKit2.framework/Versions/A/XPCServices\"\nfi\n\nmkdir -p \"${XPC_SERVICES_PATH}\"\nditto \"${BUILT_PRODUCTS_DIR}/com.apple.WebKit.WebContent.xpc\" \"${XPC_SERVICES_PATH}/com.apple.WebKit.WebContent.xpc\"\nditto \"${BUILT_PRODUCTS_DIR}/com.apple.WebKit.WebContent.Development.xpc\" \"${XPC_SERVICES_PATH}/com.apple.WebKit.WebContent.Development.xpc\"\nditto \"${BUILT_PRODUCTS_DIR}/com.apple.WebKit.Networking.xpc\" \"${XPC_SERVICES_PATH}/com.apple.WebKit.Networking.xpc\"\nditto \"${BUILT_PRODUCTS_DIR}/com.apple.WebKit.Networking.Development.xpc\" \"${XPC_SERVICES_PATH}/com.apple.WebKit.Networking.Development.xpc\"\nditto \"${BUILT_PRODUCTS_DIR}/com.apple.WebKit.Databases.xpc\" \"${XPC_SERVICES_PATH}/com.apple.WebKit.Databases.xpc\"\nditto \"${BUILT_PRODUCTS_DIR}/com.apple.WebKit.Databases.Development.xpc\" \"${XPC_SERVICES_PATH}/com.apple.WebKit.Databases.Development.xpc\"\n\nif [[ ${PLATFORM_NAME} == macosx ]]; then\n    ditto \"${BUILT_PRODUCTS_DIR}/com.apple.WebKit.Plugin.32.xpc\" \"${XPC_SERVICES_PATH}/com.apple.WebKit.Plugin.32.xpc\"\n    ditto \"${BUILT_PRODUCTS_DIR}/com.apple.WebKit.Plugin.64.xpc\" \"${XPC_SERVICES_PATH}/com.apple.WebKit.Plugin.64.xpc\"\n    ditto \"${BUILT_PRODUCTS_DIR}/com.apple.WebKit.Plugin.Development.xpc\" \"${XPC_SERVICES_PATH}/com.apple.WebKit.Plugin.Development.xpc\"\nfi\n";
 		};
 		C0CE72841247E66800BC0EC4 /* Generate Derived Sources */ = {
 			isa = PBXShellScriptBuildPhase;
