@@ -20,7 +20,9 @@
 #include "config.h"
 #include "TestController.h"
 
+#include "PlatformWebView.h"
 #include <Ecore.h>
+#include <Evas.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -101,9 +103,19 @@ void TestController::platformInitializeContext()
 {
 }
 
-void TestController::setHidden(bool)
+void TestController::setHidden(bool hidden)
 {
-    // FIXME: Need to implement this to test visibilityState.
+    PlatformWKView view = mainWebView()->platformView();
+
+    if (!view) {
+        fprintf(stderr, "ERROR: view is null.\n");
+        return;
+    }
+
+    if (hidden)
+        evas_object_hide(view);
+    else
+        evas_object_show(view);
 }
 
 void TestController::runModal(PlatformWebView*)
