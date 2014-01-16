@@ -30,7 +30,7 @@ namespace WebCore {
     
 class HTMLSelectElement;
 
-class HTMLOptGroupElement FINAL : public HTMLElement {
+class HTMLOptGroupElement final : public HTMLElement {
 public:
     static PassRefPtr<HTMLOptGroupElement> create(const QualifiedName&, Document&);
 

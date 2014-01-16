@@ -31,7 +31,7 @@ namespace WebCore {
 class HTMLInputElement;
 class SearchPopupMenu;
 
-class RenderSearchField FINAL : public RenderTextControlSingleLine, private PopupMenuClient {
+class RenderSearchField final : public RenderTextControlSingleLine, private PopupMenuClient {
 public:
     RenderSearchField(HTMLInputElement&, PassRef<RenderStyle>);
     virtual ~RenderSearchField();

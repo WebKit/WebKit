@@ -30,7 +30,7 @@
 
 namespace WebCore {
 
-class TextDocumentParser FINAL : public HTMLDocumentParser {
+class TextDocumentParser final : public HTMLDocumentParser {
 public:
     static PassRefPtr<TextDocumentParser> create(HTMLDocument& document)
     {

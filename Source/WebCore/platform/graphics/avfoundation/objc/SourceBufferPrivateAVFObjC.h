@@ -56,7 +56,7 @@ class VideoTrackPrivate;
 class AudioTrackPrivateMediaSourceAVFObjC;
 class VideoTrackPrivateMediaSourceAVFObjC;
 
-class SourceBufferPrivateAVFObjC FINAL : public SourceBufferPrivate {
+class SourceBufferPrivateAVFObjC final : public SourceBufferPrivate {
 public:
     static RefPtr<SourceBufferPrivateAVFObjC> create(MediaSourcePrivateAVFObjC*);
     virtual ~SourceBufferPrivateAVFObjC();

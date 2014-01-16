@@ -34,7 +34,7 @@
 
 namespace WebCore {
 
-class RenderMathMLFraction FINAL : public RenderMathMLBlock {
+class RenderMathMLFraction final : public RenderMathMLBlock {
 public:
     RenderMathMLFraction(MathMLInlineContainerElement&, PassRef<RenderStyle>);
 

@@ -58,13 +58,13 @@ namespace WebCore {
 
         virtual bool isWorkerGlobalScope() const override { return true; }
 
-        virtual ScriptExecutionContext* scriptExecutionContext() const override FINAL { return const_cast<WorkerGlobalScope*>(this); }
+        virtual ScriptExecutionContext* scriptExecutionContext() const override final { return const_cast<WorkerGlobalScope*>(this); }
 
         virtual bool isSharedWorkerGlobalScope() const { return false; }
         virtual bool isDedicatedWorkerGlobalScope() const { return false; }
 
-        virtual const URL& url() const override FINAL { return m_url; }
-        virtual URL completeURL(const String&) const override FINAL;
+        virtual const URL& url() const override final { return m_url; }
+        virtual URL completeURL(const String&) const override final;
 
         const GroupSettings* groupSettings() { return m_groupSettings.get(); }
         virtual String userAgent(const URL&) const override;
@@ -147,15 +147,15 @@ namespace WebCore {
         virtual void refScriptExecutionContext() override { ref(); }
         virtual void derefScriptExecutionContext() override { deref(); }
 
-        virtual void refEventTarget() override FINAL { ref(); }
-        virtual void derefEventTarget() override FINAL { deref(); }
+        virtual void refEventTarget() override final { ref(); }
+        virtual void derefEventTarget() override final { deref(); }
 
         virtual void addMessage(MessageSource, MessageLevel, const String& message, const String& sourceURL, unsigned lineNumber, unsigned columnNumber, PassRefPtr<ScriptCallStack>, JSC::ExecState* = 0, unsigned long requestIdentifier = 0) override;
         virtual void addConsoleMessage(MessageSource, MessageLevel, const String& message, unsigned long requestIdentifier = 0) override;
 
         virtual EventTarget* errorEventTarget() override;
 
-        virtual WorkerEventQueue& eventQueue() const override FINAL;
+        virtual WorkerEventQueue& eventQueue() const override final;
 
         URL m_url;
         String m_userAgent;

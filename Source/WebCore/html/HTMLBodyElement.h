@@ -30,7 +30,7 @@ namespace WebCore {
 
 class Document;
 
-class HTMLBodyElement FINAL : public HTMLElement {
+class HTMLBodyElement final : public HTMLElement {
 public:
     static PassRefPtr<HTMLBodyElement> create(Document&);
     static PassRefPtr<HTMLBodyElement> create(const QualifiedName&, Document&);

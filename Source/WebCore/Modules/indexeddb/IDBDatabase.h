@@ -49,7 +49,7 @@ class ScriptExecutionContext;
 
 typedef int ExceptionCode;
 
-class IDBDatabase FINAL : public RefCounted<IDBDatabase>, public ScriptWrappable, public EventTargetWithInlineData, public ActiveDOMObject {
+class IDBDatabase final : public RefCounted<IDBDatabase>, public ScriptWrappable, public EventTargetWithInlineData, public ActiveDOMObject {
 public:
     static PassRefPtr<IDBDatabase> create(ScriptExecutionContext*, PassRefPtr<IDBDatabaseBackend>, PassRefPtr<IDBDatabaseCallbacks>);
     ~IDBDatabase();
@@ -84,8 +84,8 @@ public:
     virtual bool hasPendingActivity() const override;
 
     // EventTarget
-    virtual EventTargetInterface eventTargetInterface() const override FINAL { return IDBDatabaseEventTargetInterfaceType; }
-    virtual ScriptExecutionContext* scriptExecutionContext() const override FINAL { return ActiveDOMObject::scriptExecutionContext(); }
+    virtual EventTargetInterface eventTargetInterface() const override final { return IDBDatabaseEventTargetInterfaceType; }
+    virtual ScriptExecutionContext* scriptExecutionContext() const override final { return ActiveDOMObject::scriptExecutionContext(); }
 
     bool isClosePending() const { return m_closePending; }
     void forceClose();
@@ -115,8 +115,8 @@ private:
     virtual void stop() override;
 
     // EventTarget
-    virtual void refEventTarget() override FINAL { ref(); }
-    virtual void derefEventTarget() override FINAL { deref(); }
+    virtual void refEventTarget() override final { ref(); }
+    virtual void derefEventTarget() override final { deref(); }
 
     void closeConnection();
 

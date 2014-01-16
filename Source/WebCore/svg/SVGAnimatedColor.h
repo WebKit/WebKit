@@ -27,7 +27,7 @@ namespace WebCore {
 
 class SVGAnimationElement;
 
-class SVGAnimatedColorAnimator FINAL : public SVGAnimatedTypeAnimator {
+class SVGAnimatedColorAnimator final : public SVGAnimatedTypeAnimator {
 public:
     SVGAnimatedColorAnimator(SVGAnimationElement*, SVGElement*);
 

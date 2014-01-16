@@ -50,7 +50,7 @@ namespace WebCore {
 class Blob;
 class ThreadableWebSocketChannel;
 
-class WebSocket FINAL : public RefCounted<WebSocket>, public EventTargetWithInlineData, public ActiveDOMObject, public WebSocketChannelClient {
+class WebSocket final : public RefCounted<WebSocket>, public EventTargetWithInlineData, public ActiveDOMObject, public WebSocketChannelClient {
 public:
     static void setIsAvailable(bool);
     static bool isAvailable();

@@ -31,7 +31,7 @@
 
 namespace WebCore {
 
-class MathMLSelectElement FINAL : public MathMLInlineContainerElement {
+class MathMLSelectElement final : public MathMLInlineContainerElement {
 public:
     static PassRefPtr<MathMLSelectElement> create(const QualifiedName& tagName, Document&);
 

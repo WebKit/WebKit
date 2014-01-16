@@ -32,7 +32,7 @@ namespace WebCore {
 class HTMLPlugInElement;
 class Widget;
 
-class PluginDocument FINAL : public HTMLDocument {
+class PluginDocument final : public HTMLDocument {
 public:
     static PassRefPtr<PluginDocument> create(Frame* frame, const URL& url)
     {

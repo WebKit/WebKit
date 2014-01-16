@@ -44,7 +44,7 @@ namespace WebCore {
 using namespace HTMLNames;
 
 // FIXME: Share more code with MediaDocumentParser.
-class PluginDocumentParser FINAL : public RawDataDocumentParser {
+class PluginDocumentParser final : public RawDataDocumentParser {
 public:
     static PassRefPtr<PluginDocumentParser> create(PluginDocument& document)
     {

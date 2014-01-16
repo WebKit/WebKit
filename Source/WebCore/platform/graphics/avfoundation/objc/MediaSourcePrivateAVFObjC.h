@@ -46,7 +46,7 @@ class MediaPlayerPrivateMediaSourceAVFObjC;
 class SourceBufferPrivateAVFObjC;
 class TimeRanges;
 
-class MediaSourcePrivateAVFObjC FINAL : public MediaSourcePrivate {
+class MediaSourcePrivateAVFObjC final : public MediaSourcePrivate {
 public:
     static RefPtr<MediaSourcePrivateAVFObjC> create(MediaPlayerPrivateMediaSourceAVFObjC*);
     virtual ~MediaSourcePrivateAVFObjC();

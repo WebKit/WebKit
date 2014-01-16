@@ -30,7 +30,7 @@
 
 namespace WebCore {
 
-class LabelsNodeList FINAL : public LiveNodeList {
+class LabelsNodeList final : public LiveNodeList {
 public:
     static PassRef<LabelsNodeList> create(LabelableElement& forNode, Type type, const AtomicString&)
     {

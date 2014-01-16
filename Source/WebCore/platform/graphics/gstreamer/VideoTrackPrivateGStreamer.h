@@ -34,7 +34,7 @@
 
 namespace WebCore {
 
-class VideoTrackPrivateGStreamer FINAL : public VideoTrackPrivate, public TrackPrivateBaseGStreamer {
+class VideoTrackPrivateGStreamer final : public VideoTrackPrivate, public TrackPrivateBaseGStreamer {
 public:
     static PassRefPtr<VideoTrackPrivateGStreamer> create(GRefPtr<GstElement> playbin, gint index, GRefPtr<GstPad> pad)
     {

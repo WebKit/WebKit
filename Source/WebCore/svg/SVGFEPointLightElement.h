@@ -25,7 +25,7 @@
 
 namespace WebCore {
 
-class SVGFEPointLightElement FINAL : public SVGFELightElement {
+class SVGFEPointLightElement final : public SVGFELightElement {
 public:
     static PassRefPtr<SVGFEPointLightElement> create(const QualifiedName&, Document&);
 

@@ -39,7 +39,7 @@ OBJC_CLASS NSString;
 
 namespace Inspector {
 
-class RemoteInspectorDebuggableConnection FINAL : public ThreadSafeRefCounted<RemoteInspectorDebuggableConnection>, public InspectorFrontendChannel {
+class RemoteInspectorDebuggableConnection final : public ThreadSafeRefCounted<RemoteInspectorDebuggableConnection>, public InspectorFrontendChannel {
 public:
     RemoteInspectorDebuggableConnection(RemoteInspectorDebuggable*, NSString *connectionIdentifier, NSString *destination, RemoteInspectorDebuggable::DebuggableType);
     virtual ~RemoteInspectorDebuggableConnection();

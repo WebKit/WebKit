@@ -31,7 +31,7 @@
 
 namespace WebKit {
 
-class RemoteNetworkingContext FINAL : public WebCore::NetworkingContext {
+class RemoteNetworkingContext final : public WebCore::NetworkingContext {
 public:
     static PassRefPtr<RemoteNetworkingContext> create(bool privateBrowsingEnabled, bool shouldClearReferrerOnHTTPSToHTTPRedirect)
     {

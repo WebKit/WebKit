@@ -33,7 +33,7 @@
 
 namespace WebCore {
 
-class CryptoAlgorithmHmacParams FINAL : public CryptoAlgorithmParameters {
+class CryptoAlgorithmHmacParams final : public CryptoAlgorithmParameters {
 public:
     // The inner hash function to use.
     CryptoAlgorithmIdentifier hash;

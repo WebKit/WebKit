@@ -74,10 +74,10 @@ protected:
     void layoutInlineChildren(bool relayoutChildren, LayoutUnit& repaintLogicalTop, LayoutUnit& repaintLogicalBottom);
 
     // RenderBlockFlows override these methods, since they are the only class that supports margin collapsing.
-    virtual LayoutUnit collapsedMarginBefore() const override FINAL { return maxPositiveMarginBefore() - maxNegativeMarginBefore(); }
-    virtual LayoutUnit collapsedMarginAfter() const override FINAL { return maxPositiveMarginAfter() - maxNegativeMarginAfter(); }
+    virtual LayoutUnit collapsedMarginBefore() const override final { return maxPositiveMarginBefore() - maxNegativeMarginBefore(); }
+    virtual LayoutUnit collapsedMarginAfter() const override final { return maxPositiveMarginAfter() - maxNegativeMarginAfter(); }
 
-    virtual void dirtyLinesFromChangedChild(RenderObject* child) override FINAL { lineBoxes().dirtyLinesFromChangedChild(this, child); }
+    virtual void dirtyLinesFromChangedChild(RenderObject* child) override final { lineBoxes().dirtyLinesFromChangedChild(this, child); }
     virtual void updateLogicalHeight() override;
 
 public:
@@ -333,7 +333,7 @@ public:
     RootInlineBox* firstRootBox() const { return toRootInlineBox(m_lineBoxes.firstLineBox()); }
     RootInlineBox* lastRootBox() const { return toRootInlineBox(m_lineBoxes.lastLineBox()); }
 
-    virtual bool hasLines() const override FINAL;
+    virtual bool hasLines() const override final;
 
     // Helper methods for computing line counts and heights for line counts.
     RootInlineBox* lineAtIndex(int) const;
@@ -425,7 +425,7 @@ private:
     virtual void paintFloats(PaintInfo&, const LayoutPoint&, bool preservePhase = false) override;
 
     virtual void moveAllChildrenIncludingFloatsTo(RenderBlock* toBlock, bool fullRemoveInsert) override;
-    virtual void repaintOverhangingFloats(bool paintAllDescendants) override FINAL;
+    virtual void repaintOverhangingFloats(bool paintAllDescendants) override final;
     virtual void clipOutFloatingObjects(RenderBlock&, const PaintInfo*, const LayoutPoint&, const LayoutSize&) override;
 
     FloatingObject* insertFloatingObject(RenderBox&);

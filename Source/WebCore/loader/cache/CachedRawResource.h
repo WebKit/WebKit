@@ -30,7 +30,7 @@ namespace WebCore {
 class CachedResourceClient;
 class SubresourceLoader;
 
-class CachedRawResource FINAL : public CachedResource {
+class CachedRawResource final : public CachedResource {
 public:
     CachedRawResource(ResourceRequest&, Type);
 

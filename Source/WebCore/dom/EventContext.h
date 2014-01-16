@@ -62,7 +62,7 @@ protected:
     RefPtr<EventTarget> m_target;
 };
 
-class MouseOrFocusEventContext FINAL : public EventContext {
+class MouseOrFocusEventContext final : public EventContext {
 public:
     MouseOrFocusEventContext(PassRefPtr<Node>, PassRefPtr<EventTarget> currentTarget, PassRefPtr<EventTarget> target);
     virtual ~MouseOrFocusEventContext();
@@ -83,7 +83,7 @@ inline MouseOrFocusEventContext& toMouseOrFocusEventContext(EventContext& eventC
 
 
 #if ENABLE(TOUCH_EVENTS) && !PLATFORM(IOS)
-class TouchEventContext FINAL : public EventContext {
+class TouchEventContext final : public EventContext {
 public:
     TouchEventContext(PassRefPtr<Node>, PassRefPtr<EventTarget> currentTarget, PassRefPtr<EventTarget> target);
     virtual ~TouchEventContext();

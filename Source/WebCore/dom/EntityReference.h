@@ -26,7 +26,7 @@
 
 namespace WebCore {
 
-class EntityReference FINAL : public ContainerNode {
+class EntityReference final : public ContainerNode {
 public:
     static PassRefPtr<EntityReference> create(Document&, const String& entityName);
 

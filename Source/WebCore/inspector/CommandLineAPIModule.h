@@ -32,7 +32,7 @@
 
 namespace WebCore {
 
-class CommandLineAPIModule FINAL : public Inspector::InjectedScriptModule {
+class CommandLineAPIModule final : public Inspector::InjectedScriptModule {
 public:
     CommandLineAPIModule();
 

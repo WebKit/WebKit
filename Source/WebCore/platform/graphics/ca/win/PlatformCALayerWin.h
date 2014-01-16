@@ -32,7 +32,7 @@
 
 namespace WebCore {
 
-class PlatformCALayerWin FINAL : public PlatformCALayer {
+class PlatformCALayerWin final : public PlatformCALayer {
 public:
     static PassRefPtr<PlatformCALayer> create(LayerType, PlatformCALayerClient*);
     static PassRefPtr<PlatformCALayer> create(PlatformLayer*, PlatformCALayerClient*);

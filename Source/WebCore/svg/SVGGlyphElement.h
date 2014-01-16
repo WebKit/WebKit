@@ -30,7 +30,7 @@ namespace WebCore {
 
 class SVGFontData;
 
-class SVGGlyphElement FINAL : public SVGElement {
+class SVGGlyphElement final : public SVGElement {
 public:
     static PassRefPtr<SVGGlyphElement> create(const QualifiedName&, Document&);
 

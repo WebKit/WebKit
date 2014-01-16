@@ -32,7 +32,7 @@
 
 namespace WebCore {
     
-class RenderMathMLMath FINAL : public RenderMathMLRow {
+class RenderMathMLMath final : public RenderMathMLRow {
 public:
     RenderMathMLMath(Element&, PassRef<RenderStyle>);
 

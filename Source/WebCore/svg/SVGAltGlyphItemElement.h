@@ -26,7 +26,7 @@
 
 namespace WebCore {
 
-class SVGAltGlyphItemElement FINAL : public SVGElement {
+class SVGAltGlyphItemElement final : public SVGElement {
 public:
     static PassRefPtr<SVGAltGlyphItemElement> create(const QualifiedName&, Document&);
 

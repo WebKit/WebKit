@@ -38,7 +38,7 @@ public:
     std::unique_ptr<ImageBuffer> clipMaskImage;
 };
 
-class RenderSVGResourceClipper FINAL : public RenderSVGResourceContainer {
+class RenderSVGResourceClipper final : public RenderSVGResourceContainer {
 public:
     RenderSVGResourceClipper(SVGClipPathElement&, PassRef<RenderStyle>);
     virtual ~RenderSVGResourceClipper();

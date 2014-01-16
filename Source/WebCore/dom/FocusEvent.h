@@ -56,7 +56,7 @@ public:
         return adoptRef(new FocusEvent(type, initializer));
     }
 
-    virtual EventTarget* relatedTarget() const override FINAL { return m_relatedTarget.get(); }
+    virtual EventTarget* relatedTarget() const override final { return m_relatedTarget.get(); }
     void setRelatedTarget(PassRefPtr<EventTarget> relatedTarget) { m_relatedTarget = relatedTarget; }
 
     virtual EventInterface eventInterface() const;

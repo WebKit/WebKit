@@ -37,7 +37,7 @@ namespace WebCore {
 
 class AVTrackPrivateAVFObjCImpl;
 
-class VideoTrackPrivateAVFObjC FINAL : public VideoTrackPrivateAVF {
+class VideoTrackPrivateAVFObjC final : public VideoTrackPrivateAVF {
     WTF_MAKE_NONCOPYABLE(VideoTrackPrivateAVFObjC)
 public:
     static RefPtr<VideoTrackPrivateAVFObjC> create(AVPlayerItemTrack* track)

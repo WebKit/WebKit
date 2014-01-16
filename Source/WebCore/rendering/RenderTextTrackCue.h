@@ -37,7 +37,7 @@ namespace WebCore {
 class RenderBox;
 class TextTrackCueBox;
 
-class RenderTextTrackCue FINAL : public RenderBlockFlow {
+class RenderTextTrackCue final : public RenderBlockFlow {
 public:
     RenderTextTrackCue(TextTrackCueBox&, PassRef<RenderStyle>);
 

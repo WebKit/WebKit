@@ -37,7 +37,7 @@
 
 namespace JSC {
 
-class ExecutePromiseReactionMicrotask FINAL : public Microtask {
+class ExecutePromiseReactionMicrotask final : public Microtask {
 public:
     ExecutePromiseReactionMicrotask(VM& vm, JSPromiseReaction* reaction, JSValue argument)
     {

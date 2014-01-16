@@ -32,7 +32,7 @@ namespace WebCore {
 class CachedImage;
 class ImageDocumentElement;
 
-class ImageDocument FINAL : public HTMLDocument {
+class ImageDocument final : public HTMLDocument {
 public:
     static PassRefPtr<ImageDocument> create(Frame* frame, const URL& url)
     {

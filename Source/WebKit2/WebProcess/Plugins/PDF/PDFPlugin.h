@@ -65,7 +65,7 @@ class PDFPluginPasswordField;
 class PluginView;
 class WebFrame;
 
-class PDFPlugin FINAL : public Plugin, private WebCore::ScrollableArea {
+class PDFPlugin final : public Plugin, private WebCore::ScrollableArea {
 public:
     static PassRefPtr<PDFPlugin> create(WebFrame*);
     ~PDFPlugin();

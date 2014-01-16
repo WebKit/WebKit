@@ -29,7 +29,7 @@
 
 namespace WebCore {
 
-class HTMLFrameSetElement FINAL : public HTMLElement {
+class HTMLFrameSetElement final : public HTMLElement {
 public:
     static PassRefPtr<HTMLFrameSetElement> create(const QualifiedName&, Document&);
 

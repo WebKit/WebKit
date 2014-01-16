@@ -63,7 +63,7 @@ public:
 #endif
 
 protected:
-    virtual void paintReplaced(PaintInfo&, const LayoutPoint&) override FINAL;
+    virtual void paintReplaced(PaintInfo&, const LayoutPoint&) override final;
     virtual void paint(PaintInfo&, const LayoutPoint&) override;
 
     virtual CursorDirective getCursor(const LayoutPoint&, Cursor&) const override;
@@ -73,19 +73,19 @@ protected:
 
 private:
     virtual const char* renderName() const override { return "RenderEmbeddedObject"; }
-    virtual bool isEmbeddedObject() const override FINAL { return true; }
+    virtual bool isEmbeddedObject() const override final { return true; }
 
     void paintSnapshotImage(PaintInfo&, const LayoutPoint&, Image*);
-    virtual void paintContents(PaintInfo&, const LayoutPoint&) override FINAL;
+    virtual void paintContents(PaintInfo&, const LayoutPoint&) override final;
 
 #if USE(ACCELERATED_COMPOSITING)
-    virtual bool requiresLayer() const override FINAL;
+    virtual bool requiresLayer() const override final;
 #endif
 
-    virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction) override FINAL;
+    virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction) override final;
 
-    virtual bool scroll(ScrollDirection, ScrollGranularity, float multiplier, Element** stopElement) override FINAL;
-    virtual bool logicalScroll(ScrollLogicalDirection, ScrollGranularity, float multiplier, Element** stopElement) override FINAL;
+    virtual bool scroll(ScrollDirection, ScrollGranularity, float multiplier, Element** stopElement) override final;
+    virtual bool logicalScroll(ScrollLogicalDirection, ScrollGranularity, float multiplier, Element** stopElement) override final;
 
     void setUnavailablePluginIndicatorIsPressed(bool);
     bool isInUnavailablePluginIndicator(MouseEvent*) const;
@@ -93,7 +93,7 @@ private:
     bool getReplacementTextGeometry(const LayoutPoint& accumulatedOffset, FloatRect& contentRect, FloatRect& indicatorRect, FloatRect& replacementTextRect, FloatRect& arrowRect, Font&, TextRun&, float& textWidth) const;
     LayoutRect unavailablePluginIndicatorBounds(const LayoutPoint&) const;
 
-    virtual bool canHaveChildren() const override FINAL;
+    virtual bool canHaveChildren() const override final;
     virtual bool canHaveWidget() const { return true; }
 
     bool m_isPluginUnavailable;

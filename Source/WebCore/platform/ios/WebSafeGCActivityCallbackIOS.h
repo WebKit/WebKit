@@ -31,7 +31,7 @@
 
 namespace WebCore {
 
-class WebSafeGCActivityCallback FINAL : public JSC::DefaultGCActivityCallback {
+class WebSafeGCActivityCallback final : public JSC::DefaultGCActivityCallback {
 public:
     static PassOwnPtr<WebSafeGCActivityCallback> create(JSC::Heap* heap)
     {

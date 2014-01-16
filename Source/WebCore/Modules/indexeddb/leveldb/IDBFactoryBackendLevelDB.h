@@ -56,12 +56,12 @@ public:
     virtual ~IDBFactoryBackendLevelDB();
 
     // Notifications from weak pointers.
-    virtual void removeIDBDatabaseBackend(const String& uniqueIdentifier) override FINAL;
+    virtual void removeIDBDatabaseBackend(const String& uniqueIdentifier) override final;
 
-    virtual void getDatabaseNames(PassRefPtr<IDBCallbacks>, PassRefPtr<SecurityOrigin>, ScriptExecutionContext*, const String& dataDir) override FINAL;
-    virtual void open(const String& name, uint64_t version, int64_t transactionId, PassRefPtr<IDBCallbacks>, PassRefPtr<IDBDatabaseCallbacks>, const SecurityOrigin& openingOrigin, const SecurityOrigin& mainFrameOrigin) override FINAL;
+    virtual void getDatabaseNames(PassRefPtr<IDBCallbacks>, PassRefPtr<SecurityOrigin>, ScriptExecutionContext*, const String& dataDir) override final;
+    virtual void open(const String& name, uint64_t version, int64_t transactionId, PassRefPtr<IDBCallbacks>, PassRefPtr<IDBDatabaseCallbacks>, const SecurityOrigin& openingOrigin, const SecurityOrigin& mainFrameOrigin) override final;
 
-    virtual void deleteDatabase(const String& name, PassRefPtr<IDBCallbacks>, PassRefPtr<SecurityOrigin>, ScriptExecutionContext*, const String& dataDir) override FINAL;
+    virtual void deleteDatabase(const String& name, PassRefPtr<IDBCallbacks>, PassRefPtr<SecurityOrigin>, ScriptExecutionContext*, const String& dataDir) override final;
 
 protected:
     virtual PassRefPtr<IDBBackingStoreLevelDB> openBackingStore(const SecurityOrigin&, const String& dataDir);

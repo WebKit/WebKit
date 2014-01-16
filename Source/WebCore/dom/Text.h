@@ -51,7 +51,7 @@ public:
     
     RenderPtr<RenderText> createTextRenderer(const RenderStyle&);
     
-    virtual bool canContainRangeEndPoint() const override FINAL { return true; }
+    virtual bool canContainRangeEndPoint() const override final { return true; }
 
     RenderText* renderer() const;
 

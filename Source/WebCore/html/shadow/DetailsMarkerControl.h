@@ -38,7 +38,7 @@ namespace WebCore {
 
 class HTMLSummaryElement;
 
-class DetailsMarkerControl FINAL : public HTMLDivElement {
+class DetailsMarkerControl final : public HTMLDivElement {
 public:
     static PassRefPtr<DetailsMarkerControl> create(Document&);
 

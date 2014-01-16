@@ -33,7 +33,7 @@ namespace WebCore {
     class CachedResourceLoader;
     class TextResourceDecoder;
 
-    class CachedScript FINAL : public CachedResource {
+    class CachedScript final : public CachedResource {
     public:
         CachedScript(const ResourceRequest&, const String& charset);
         virtual ~CachedScript();

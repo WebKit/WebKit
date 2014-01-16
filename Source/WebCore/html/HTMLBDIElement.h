@@ -25,7 +25,7 @@
 
 namespace WebCore {
 
-class HTMLBDIElement FINAL : public HTMLElement {
+class HTMLBDIElement final : public HTMLElement {
 public:
     static PassRefPtr<HTMLBDIElement> create(const QualifiedName& name, Document& document)
     {

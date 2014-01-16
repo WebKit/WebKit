@@ -46,7 +46,7 @@ class NodeList;
 class RenderNamedFlowThread;
 class ScriptExecutionContext;
 
-class WebKitNamedFlow FINAL : public RefCounted<WebKitNamedFlow>, public EventTargetWithInlineData {
+class WebKitNamedFlow final : public RefCounted<WebKitNamedFlow>, public EventTargetWithInlineData {
 public:
     static PassRefPtr<WebKitNamedFlow> create(PassRefPtr<NamedFlowCollection> manager, const AtomicString& flowThreadName);
 

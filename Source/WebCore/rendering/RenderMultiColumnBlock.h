@@ -33,7 +33,7 @@ namespace WebCore {
 
 class RenderMultiColumnFlowThread;
 
-class RenderMultiColumnBlock FINAL : public RenderBlockFlow {
+class RenderMultiColumnBlock final : public RenderBlockFlow {
 public:
     RenderMultiColumnBlock(Element&, PassRef<RenderStyle>);
     Element& element() const { return toElement(nodeForNonAnonymous()); }

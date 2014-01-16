@@ -32,7 +32,7 @@
 
 namespace WebKit {
 
-class PlatformCALayerRemoteTiledBacking FINAL : public PlatformCALayerRemote {
+class PlatformCALayerRemoteTiledBacking final : public PlatformCALayerRemote {
     friend class PlatformCALayerRemote;
 public:
     virtual ~PlatformCALayerRemoteTiledBacking();

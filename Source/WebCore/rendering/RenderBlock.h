@@ -72,7 +72,7 @@ public:
     bool beingDestroyed() const { return m_beingDestroyed; }
 
     // These two functions are overridden for inline-block.
-    virtual LayoutUnit lineHeight(bool firstLine, LineDirectionMode, LinePositionMode = PositionOnContainingLine) const override FINAL;
+    virtual LayoutUnit lineHeight(bool firstLine, LineDirectionMode, LinePositionMode = PositionOnContainingLine) const override final;
     virtual int baselinePosition(FontBaseline, bool firstLine, LineDirectionMode, LinePositionMode = PositionOnContainingLine) const override;
 
     LayoutUnit minLineHeightForReplacedRenderer(bool isFirstLine, LayoutUnit replacedHeight) const;
@@ -118,7 +118,7 @@ public:
     bool generatesLineBoxesForInlineChild(RenderObject*);
 
     void markPositionedObjectsForLayout();
-    virtual void markForPaginationRelayoutIfNeeded() override FINAL;
+    virtual void markForPaginationRelayoutIfNeeded() override final;
     
     // FIXME-BLOCKFLOW: Remove virtualizaion when all of the line layout code has been moved out of RenderBlock
     virtual bool containsFloats() const { return false; }
@@ -189,7 +189,7 @@ public:
     virtual VisiblePosition positionForPoint(const LayoutPoint&) override;
     
     // Block flows subclass availableWidth to handle multi column layout (shrinking the width available to children when laying out.)
-    virtual LayoutUnit availableLogicalWidth() const override FINAL;
+    virtual LayoutUnit availableLogicalWidth() const override final;
 
     LayoutPoint flipForWritingModeIncludingColumns(const LayoutPoint&) const;
     void adjustStartEdgeForWritingModeIncludingColumns(LayoutRect&) const;
@@ -205,13 +205,13 @@ public:
     LayoutRect logicalRectToPhysicalRect(const LayoutPoint& physicalPosition, const LayoutRect& logicalRect);
 
     void adjustRectForColumns(LayoutRect&) const;
-    virtual void adjustForColumns(LayoutSize&, const LayoutPoint&) const override FINAL;
+    virtual void adjustForColumns(LayoutSize&, const LayoutPoint&) const override final;
     void adjustForColumnRect(LayoutSize& offset, const LayoutPoint& locationInContainer) const;
 
     void addContinuationWithOutline(RenderInline*);
     bool paintsContinuationOutline(RenderInline*);
 
-    virtual RenderBoxModelObject* virtualContinuation() const override FINAL { return continuation(); }
+    virtual RenderBoxModelObject* virtualContinuation() const override final { return continuation(); }
     bool isAnonymousBlockContinuation() const { return isAnonymousBlock() && continuation(); }
     RenderInline* inlineElementContinuation() const;
     RenderBlock* blockElementContinuation() const;
@@ -460,7 +460,7 @@ private:
 
     virtual const char* renderName() const override;
 
-    virtual bool isInlineBlockOrInlineTable() const override FINAL { return isInline() && isReplaced(); }
+    virtual bool isInlineBlockOrInlineTable() const override final { return isInline() && isReplaced(); }
 
     void makeChildrenNonInline(RenderObject* insertionPoint = nullptr);
     virtual void removeLeftoverAnonymousBlock(RenderBlock* child);
@@ -474,7 +474,7 @@ private:
 
     void addChildIgnoringAnonymousColumnBlocks(RenderObject* newChild, RenderObject* beforeChild = 0);
     
-    virtual bool isSelfCollapsingBlock() const override FINAL;
+    virtual bool isSelfCollapsingBlock() const override final;
     // FIXME-BLOCKFLOW: Remove virtualizaion when all callers have moved to RenderBlockFlow
     virtual bool hasLines() const { return false; }
 
@@ -516,18 +516,18 @@ private:
     // children.
     virtual RenderBlock* firstLineBlock() const override;
 
-    virtual LayoutRect rectWithOutlineForRepaint(const RenderLayerModelObject* repaintContainer, LayoutUnit outlineWidth) const override FINAL;
-    virtual const RenderStyle& outlineStyleForRepaint() const override FINAL;
+    virtual LayoutRect rectWithOutlineForRepaint(const RenderLayerModelObject* repaintContainer, LayoutUnit outlineWidth) const override final;
+    virtual const RenderStyle& outlineStyleForRepaint() const override final;
     
-    virtual RenderElement* hoverAncestor() const override FINAL;
-    virtual void updateDragState(bool dragOn) override FINAL;
-    virtual void childBecameNonInline(RenderObject* child) override FINAL;
+    virtual RenderElement* hoverAncestor() const override final;
+    virtual void updateDragState(bool dragOn) override final;
+    virtual void childBecameNonInline(RenderObject* child) override final;
 
-    virtual LayoutRect selectionRectForRepaint(const RenderLayerModelObject* repaintContainer, bool /*clipToVisibleContent*/) override FINAL
+    virtual LayoutRect selectionRectForRepaint(const RenderLayerModelObject* repaintContainer, bool /*clipToVisibleContent*/) override final
     {
         return selectionGapRectsForRepaint(repaintContainer);
     }
-    virtual bool shouldPaintSelectionGaps() const override FINAL;
+    virtual bool shouldPaintSelectionGaps() const override final;
     bool isSelectionRoot() const;
     GapRects selectionGaps(RenderBlock& rootBlock, const LayoutPoint& rootBlockPhysicalPosition, const LayoutSize& offsetFromRootBlock,
         LayoutUnit& lastLogicalTop, LayoutUnit& lastLogicalLeft, LayoutUnit& lastLogicalRight, const LogicalSelectionOffsetCaches&, const PaintInfo* = 0);
@@ -551,7 +551,7 @@ private:
 
     void paintContinuationOutlines(PaintInfo&, const LayoutPoint&);
 
-    virtual LayoutRect localCaretRect(InlineBox*, int caretOffset, LayoutUnit* extraWidthToEndOfLine = 0) override FINAL;
+    virtual LayoutRect localCaretRect(InlineBox*, int caretOffset, LayoutUnit* extraWidthToEndOfLine = 0) override final;
 
     void adjustPointToColumnContents(LayoutPoint&) const;
     

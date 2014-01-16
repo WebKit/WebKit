@@ -45,12 +45,12 @@ class RenderSVGResourceGradient : public RenderSVGResourceContainer {
 public:
     SVGGradientElement& gradientElement() const { return static_cast<SVGGradientElement&>(RenderSVGResourceContainer::element()); }
 
-    virtual void removeAllClientsFromCache(bool markForInvalidation = true) override FINAL;
-    virtual void removeClientFromCache(RenderObject&, bool markForInvalidation = true) override FINAL;
+    virtual void removeAllClientsFromCache(bool markForInvalidation = true) override final;
+    virtual void removeClientFromCache(RenderObject&, bool markForInvalidation = true) override final;
 
-    virtual bool applyResource(RenderElement&, const RenderStyle&, GraphicsContext*&, unsigned short resourceMode) override FINAL;
-    virtual void postApplyResource(RenderElement&, GraphicsContext*&, unsigned short resourceMode, const Path*, const RenderSVGShape*) override FINAL;
-    virtual FloatRect resourceBoundingBox(const RenderObject&) override FINAL { return FloatRect(); }
+    virtual bool applyResource(RenderElement&, const RenderStyle&, GraphicsContext*&, unsigned short resourceMode) override final;
+    virtual void postApplyResource(RenderElement&, GraphicsContext*&, unsigned short resourceMode, const Path*, const RenderSVGShape*) override final;
+    virtual FloatRect resourceBoundingBox(const RenderObject&) override final { return FloatRect(); }
 
 protected:
     RenderSVGResourceGradient(SVGGradientElement&, PassRef<RenderStyle>);

@@ -356,7 +356,7 @@ private:
     virtual bool isEnumeratable() const override;
     virtual bool supportLabels() const override;
     virtual void updateFocusAppearance(bool restorePreviousSelection) override;
-    virtual bool shouldUseInputMethod() override FINAL;
+    virtual bool shouldUseInputMethod() override final;
 
     virtual bool isTextFormControl() const override { return isTextField(); }
 

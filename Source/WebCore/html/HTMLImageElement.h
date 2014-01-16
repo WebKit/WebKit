@@ -111,10 +111,10 @@ private:
     virtual InsertionNotificationRequest insertedInto(ContainerNode&) override;
     virtual void removedFrom(ContainerNode&) override;
 
-    virtual bool isFormAssociatedElement() const override FINAL { return false; }
-    virtual FormNamedItem* asFormNamedItem() override FINAL { return this; }
-    virtual HTMLImageElement& asHTMLElement() override FINAL { return *this; }
-    virtual const HTMLImageElement& asHTMLElement() const override FINAL { return *this; }
+    virtual bool isFormAssociatedElement() const override final { return false; }
+    virtual FormNamedItem* asFormNamedItem() override final { return this; }
+    virtual HTMLImageElement& asHTMLElement() override final { return *this; }
+    virtual const HTMLImageElement& asHTMLElement() const override final { return *this; }
 
     HTMLImageLoader m_imageLoader;
     HTMLFormElement* m_form;

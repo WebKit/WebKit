@@ -42,7 +42,7 @@ class CryptoKeyDataRSAComponents;
 class CryptoKeyPair;
 class PromiseWrapper;
 
-class CryptoKeyRSA FINAL : public CryptoKey {
+class CryptoKeyRSA final : public CryptoKey {
 public:
     static PassRefPtr<CryptoKeyRSA> create(CryptoAlgorithmIdentifier identifier, CryptoKeyType type, PlatformRSAKey platformKey, bool extractable, CryptoKeyUsage usage)
     {

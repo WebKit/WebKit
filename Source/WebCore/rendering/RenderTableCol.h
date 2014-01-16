@@ -33,7 +33,7 @@ namespace WebCore {
 class RenderTable;
 class RenderTableCell;
 
-class RenderTableCol FINAL : public RenderBox {
+class RenderTableCol final : public RenderBox {
 public:
     RenderTableCol(Element&, PassRef<RenderStyle>);
     Element& element() const { return toElement(nodeForNonAnonymous()); }

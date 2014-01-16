@@ -41,7 +41,7 @@ namespace WebCore {
 
 #if ENABLE(DRAG_SUPPORT)
 
-class DragImageLoader FINAL : private CachedImageClient {
+class DragImageLoader final : private CachedImageClient {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     static PassOwnPtr<DragImageLoader> create(Clipboard*);

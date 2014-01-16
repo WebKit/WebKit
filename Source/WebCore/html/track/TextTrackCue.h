@@ -153,8 +153,8 @@ public:
     int calculateComputedLinePosition();
     std::pair<double, double> getPositionCoordinates() const;
 
-    virtual EventTargetInterface eventTargetInterface() const override FINAL { return TextTrackCueEventTargetInterfaceType; }
-    virtual ScriptExecutionContext* scriptExecutionContext() const override FINAL { return &m_scriptExecutionContext; }
+    virtual EventTargetInterface eventTargetInterface() const override final { return TextTrackCueEventTargetInterfaceType; }
+    virtual ScriptExecutionContext* scriptExecutionContext() const override final { return &m_scriptExecutionContext; }
 
     std::pair<double, double> getCSSPosition() const;
 
@@ -219,8 +219,8 @@ private:
     void determineTextDirection();
     void calculateDisplayParameters();
 
-    virtual void refEventTarget() override FINAL { ref(); }
-    virtual void derefEventTarget() override FINAL { deref(); }
+    virtual void refEventTarget() override final { ref(); }
+    virtual void derefEventTarget() override final { deref(); }
 
     enum CueSetting {
         None,

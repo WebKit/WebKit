@@ -34,7 +34,7 @@ namespace WebKit {
 
 class LayerHostingContext;
 
-class PlatformCALayerRemoteCustom FINAL : public PlatformCALayerRemote {
+class PlatformCALayerRemoteCustom final : public PlatformCALayerRemote {
     friend class PlatformCALayerRemote;
 public:
     virtual ~PlatformCALayerRemoteCustom();

@@ -30,7 +30,7 @@
 
 namespace WebCore {
 
-class ClockGeneric FINAL : public Clock {
+class ClockGeneric final : public Clock {
 public:
     ClockGeneric();
 

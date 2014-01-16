@@ -30,7 +30,7 @@ namespace WebCore {
 
 class HTMLSelectElement;
 
-class HTMLKeygenElement FINAL : public HTMLFormControlElementWithState {
+class HTMLKeygenElement final : public HTMLFormControlElementWithState {
 public:
     static PassRefPtr<HTMLKeygenElement> create(const QualifiedName&, Document&, HTMLFormElement*);
 

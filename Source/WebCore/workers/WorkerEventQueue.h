@@ -35,7 +35,7 @@ namespace WebCore {
 
 class ScriptExecutionContext;
 
-class WorkerEventQueue FINAL : public EventQueue {
+class WorkerEventQueue final : public EventQueue {
 public:
     explicit WorkerEventQueue(ScriptExecutionContext&);
     virtual ~WorkerEventQueue();

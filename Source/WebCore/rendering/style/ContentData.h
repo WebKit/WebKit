@@ -65,7 +65,7 @@ private:
     String m_altText;
 };
 
-class ImageContentData FINAL : public ContentData {
+class ImageContentData final : public ContentData {
 public:
     explicit ImageContentData(PassRefPtr<StyleImage> image)
         : m_image(image)
@@ -97,7 +97,7 @@ private:
     RefPtr<StyleImage> m_image;
 };
 
-class TextContentData FINAL : public ContentData {
+class TextContentData final : public ContentData {
 public:
     explicit TextContentData(const String& text)
         : m_text(text)
@@ -123,7 +123,7 @@ private:
     String m_text;
 };
 
-class CounterContentData FINAL : public ContentData {
+class CounterContentData final : public ContentData {
 public:
     explicit CounterContentData(std::unique_ptr<CounterContent> counter)
         : m_counter(std::move(counter))
@@ -153,7 +153,7 @@ private:
     std::unique_ptr<CounterContent> m_counter;
 };
 
-class QuoteContentData FINAL : public ContentData {
+class QuoteContentData final : public ContentData {
 public:
     explicit QuoteContentData(QuoteType quote)
         : m_quote(quote)

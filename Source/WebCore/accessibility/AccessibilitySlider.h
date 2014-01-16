@@ -72,7 +72,7 @@ public:
     static PassRefPtr<AccessibilitySliderThumb> create();
     virtual ~AccessibilitySliderThumb() { }
 
-    virtual bool isSliderThumb() const override FINAL { return true; }
+    virtual bool isSliderThumb() const override final { return true; }
 
     virtual AccessibilityRole roleValue() const override { return SliderThumbRole; }
 

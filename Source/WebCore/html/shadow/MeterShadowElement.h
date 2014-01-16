@@ -51,7 +51,7 @@ private:
     virtual bool rendererIsNeeded(const RenderStyle&);
 };
 
-class MeterInnerElement FINAL : public MeterShadowElement {
+class MeterInnerElement final : public MeterShadowElement {
 public:
     static PassRefPtr<MeterInnerElement> create(Document&);
 
@@ -67,7 +67,7 @@ inline PassRefPtr<MeterInnerElement> MeterInnerElement::create(Document& documen
     return adoptRef(new MeterInnerElement(document));
 }
 
-class MeterBarElement FINAL : public MeterShadowElement {
+class MeterBarElement final : public MeterShadowElement {
 public:
     static PassRefPtr<MeterBarElement> create(Document&);
 
@@ -85,7 +85,7 @@ inline PassRefPtr<MeterBarElement> MeterBarElement::create(Document& document)
     return adoptRef(new MeterBarElement(document));
 }
 
-class MeterValueElement FINAL : public MeterShadowElement {
+class MeterValueElement final : public MeterShadowElement {
 public:
     static PassRefPtr<MeterValueElement> create(Document&);
     void setWidthPercentage(double);

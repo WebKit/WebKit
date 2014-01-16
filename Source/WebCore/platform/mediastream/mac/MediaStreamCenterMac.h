@@ -41,7 +41,7 @@
 
 namespace WebCore {
 
-class MediaStreamCenterMac FINAL : public MediaStreamCenter {
+class MediaStreamCenterMac final : public MediaStreamCenter {
 public:
     MediaStreamCenterMac();
     ~MediaStreamCenterMac();

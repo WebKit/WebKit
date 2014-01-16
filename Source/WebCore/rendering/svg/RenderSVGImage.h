@@ -35,7 +35,7 @@ namespace WebCore {
 class RenderImageResource;
 class SVGImageElement;
 
-class RenderSVGImage FINAL : public RenderSVGModelObject {
+class RenderSVGImage final : public RenderSVGModelObject {
 public:
     RenderSVGImage(SVGImageElement&, PassRef<RenderStyle>);
     virtual ~RenderSVGImage();

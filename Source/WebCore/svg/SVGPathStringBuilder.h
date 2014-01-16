@@ -26,7 +26,7 @@
 
 namespace WebCore {
 
-class SVGPathStringBuilder FINAL : public SVGPathConsumer {
+class SVGPathStringBuilder final : public SVGPathConsumer {
 public:
     SVGPathStringBuilder();
     ~SVGPathStringBuilder();

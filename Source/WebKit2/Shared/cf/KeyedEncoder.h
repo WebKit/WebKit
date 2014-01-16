@@ -32,7 +32,7 @@
 
 namespace WebKit {
 
-class KeyedEncoder FINAL : public WebCore::KeyedEncoder {
+class KeyedEncoder final : public WebCore::KeyedEncoder {
 public:
     KeyedEncoder();
     ~KeyedEncoder();

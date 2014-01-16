@@ -39,7 +39,7 @@
 
 namespace WebCore {
 
-class SourceBufferPrivateGStreamer FINAL : public SourceBufferPrivate {
+class SourceBufferPrivateGStreamer final : public SourceBufferPrivate {
 public:
     SourceBufferPrivateGStreamer(PassRefPtr<MediaSourceClientGstreamer>, const ContentType&);
     ~SourceBufferPrivateGStreamer() { }

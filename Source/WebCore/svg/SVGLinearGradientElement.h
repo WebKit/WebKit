@@ -30,7 +30,7 @@ namespace WebCore {
 
 struct LinearGradientAttributes;
 
-class SVGLinearGradientElement FINAL : public SVGGradientElement {
+class SVGLinearGradientElement final : public SVGGradientElement {
 public:
     static PassRefPtr<SVGLinearGradientElement> create(const QualifiedName&, Document&);
 

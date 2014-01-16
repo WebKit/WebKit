@@ -37,7 +37,7 @@ namespace WebCore {
 
 class StickyPositionViewportConstraints;
 
-class ScrollingStateStickyNode FINAL : public ScrollingStateNode {
+class ScrollingStateStickyNode final : public ScrollingStateNode {
 public:
     static PassOwnPtr<ScrollingStateStickyNode> create(ScrollingStateTree&, ScrollingNodeID);
 

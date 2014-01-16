@@ -28,7 +28,7 @@
 
 namespace WebCore {
 
-class SVGDefsElement FINAL : public SVGGraphicsElement,
+class SVGDefsElement final : public SVGGraphicsElement,
                              public SVGExternalResourcesRequired {
 public:
     static PassRefPtr<SVGDefsElement> create(const QualifiedName&, Document&);

@@ -51,7 +51,7 @@ namespace WebCore {
 // Generated :before/:after content is shunted into anonymous inline blocks
 
 // <ruby> when used as 'display:inline'
-class RenderRubyAsInline FINAL : public RenderInline {
+class RenderRubyAsInline final : public RenderInline {
 public:
     RenderRubyAsInline(Element&, PassRef<RenderStyle>);
     virtual ~RenderRubyAsInline();
@@ -69,7 +69,7 @@ private:
 };
 
 // <ruby> when used as 'display:block' or 'display:inline-block'
-class RenderRubyAsBlock FINAL : public RenderBlockFlow {
+class RenderRubyAsBlock final : public RenderBlockFlow {
 public:
     RenderRubyAsBlock(Element&, PassRef<RenderStyle>);
     virtual ~RenderRubyAsBlock();

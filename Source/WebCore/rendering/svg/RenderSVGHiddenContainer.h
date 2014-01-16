@@ -37,15 +37,15 @@ protected:
     virtual void layout() override;
 
 private:
-    virtual bool isSVGHiddenContainer() const override FINAL { return true; }
+    virtual bool isSVGHiddenContainer() const override final { return true; }
     virtual const char* renderName() const override { return "RenderSVGHiddenContainer"; }
 
-    virtual void paint(PaintInfo&, const LayoutPoint&) override FINAL;
+    virtual void paint(PaintInfo&, const LayoutPoint&) override final;
     
-    virtual LayoutRect clippedOverflowRectForRepaint(const RenderLayerModelObject*) const override FINAL { return LayoutRect(); }
-    virtual void absoluteQuads(Vector<FloatQuad>&, bool* wasFixed) const override FINAL;
+    virtual LayoutRect clippedOverflowRectForRepaint(const RenderLayerModelObject*) const override final { return LayoutRect(); }
+    virtual void absoluteQuads(Vector<FloatQuad>&, bool* wasFixed) const override final;
 
-    virtual bool nodeAtFloatPoint(const HitTestRequest&, HitTestResult&, const FloatPoint& pointInParent, HitTestAction) override FINAL;
+    virtual bool nodeAtFloatPoint(const HitTestRequest&, HitTestResult&, const FloatPoint& pointInParent, HitTestAction) override final;
 };
 }
 

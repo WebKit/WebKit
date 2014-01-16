@@ -63,7 +63,7 @@ struct LineSegmentRange {
 
 typedef Vector<LineSegmentRange> SegmentRangeList;
 
-class ShapeInsideInfo FINAL : public ShapeInfo<RenderBlock> { 
+class ShapeInsideInfo final : public ShapeInfo<RenderBlock> { 
 public:
     ShapeInsideInfo(const RenderBlock& renderer)
         : ShapeInfo<RenderBlock>(renderer)

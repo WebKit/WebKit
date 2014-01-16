@@ -27,7 +27,7 @@
 
 namespace WebCore {
 
-class CDATASection FINAL : public Text {
+class CDATASection final : public Text {
 public:
     static PassRefPtr<CDATASection> create(Document&, const String&);
 

@@ -35,7 +35,7 @@ namespace WebCore {
 
         class Step;
 
-        class Filter FINAL : public Expression {
+        class Filter final : public Expression {
         public:
             Filter(std::unique_ptr<Expression>, Vector<std::unique_ptr<Expression>> predicates);
 
@@ -47,7 +47,7 @@ namespace WebCore {
             Vector<std::unique_ptr<Expression>> m_predicates;
         };
 
-        class LocationPath FINAL : public Expression {
+        class LocationPath final : public Expression {
         public:
             LocationPath();
 
@@ -66,7 +66,7 @@ namespace WebCore {
             bool m_isAbsolute;
         };
 
-        class Path FINAL : public Expression {
+        class Path final : public Expression {
         public:
             Path(std::unique_ptr<Expression> filter, std::unique_ptr<LocationPath>);
 

@@ -66,12 +66,12 @@ private:
 
 #if ENABLE(FULLSCREEN_API)
     // WebFullScreenManagerProxyClient
-    virtual void closeFullScreenManager() override FINAL { }
-    virtual bool isFullScreen() override FINAL;
-    virtual void enterFullScreen() override FINAL;
-    virtual void exitFullScreen() override FINAL;
-    virtual void beganEnterFullScreen(const WebCore::IntRect&, const WebCore::IntRect&) override FINAL { }
-    virtual void beganExitFullScreen(const WebCore::IntRect&, const WebCore::IntRect&) override FINAL { }
+    virtual void closeFullScreenManager() override final { }
+    virtual bool isFullScreen() override final;
+    virtual void enterFullScreen() override final;
+    virtual void exitFullScreen() override final;
+    virtual void beganEnterFullScreen(const WebCore::IntRect&, const WebCore::IntRect&) override final { }
+    virtual void beganExitFullScreen(const WebCore::IntRect&, const WebCore::IntRect&) override final { }
 #endif
 
 private:

@@ -31,7 +31,7 @@ namespace WebCore {
 class FEDiffuseLighting;
 class SVGColor;
 
-class SVGFEDiffuseLightingElement FINAL : public SVGFilterPrimitiveStandardAttributes {
+class SVGFEDiffuseLightingElement final : public SVGFilterPrimitiveStandardAttributes {
 public:
     static PassRefPtr<SVGFEDiffuseLightingElement> create(const QualifiedName&, Document&);
     void lightElementAttributeChanged(const SVGFELightElement*, const QualifiedName&);

@@ -63,7 +63,7 @@ class ThreadableLoader;
 
 typedef int ExceptionCode;
 
-class Notification FINAL : public RefCounted<Notification>, public ActiveDOMObject, public EventTargetWithInlineData {
+class Notification final : public RefCounted<Notification>, public ActiveDOMObject, public EventTargetWithInlineData {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     Notification();

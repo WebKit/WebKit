@@ -36,28 +36,28 @@ public:
     virtual ~RenderSVGContainer();
 
     virtual void paint(PaintInfo&, const LayoutPoint&) override;
-    virtual void setNeedsBoundariesUpdate() override FINAL { m_needsBoundariesUpdate = true; }
-    virtual bool needsBoundariesUpdate() override FINAL { return m_needsBoundariesUpdate; }
+    virtual void setNeedsBoundariesUpdate() override final { m_needsBoundariesUpdate = true; }
+    virtual bool needsBoundariesUpdate() override final { return m_needsBoundariesUpdate; }
     virtual bool didTransformToRootUpdate() { return false; }
     bool isObjectBoundingBoxValid() const { return m_objectBoundingBoxValid; }
 
 protected:
     RenderSVGContainer(SVGElement&, PassRef<RenderStyle>);
 
-    virtual bool isSVGContainer() const override FINAL { return true; }
+    virtual bool isSVGContainer() const override final { return true; }
     virtual const char* renderName() const override { return "RenderSVGContainer"; }
 
-    virtual bool canHaveChildren() const override FINAL { return true; }
+    virtual bool canHaveChildren() const override final { return true; }
 
     virtual void layout() override;
 
-    virtual void addChild(RenderObject* child, RenderObject* beforeChild = 0) override FINAL;
-    virtual void removeChild(RenderObject&) override FINAL;
-    virtual void addFocusRingRects(Vector<IntRect>&, const LayoutPoint& additionalOffset, const RenderLayerModelObject* paintContainer = 0) override FINAL;
+    virtual void addChild(RenderObject* child, RenderObject* beforeChild = 0) override final;
+    virtual void removeChild(RenderObject&) override final;
+    virtual void addFocusRingRects(Vector<IntRect>&, const LayoutPoint& additionalOffset, const RenderLayerModelObject* paintContainer = 0) override final;
 
-    virtual FloatRect objectBoundingBox() const override FINAL { return m_objectBoundingBox; }
-    virtual FloatRect strokeBoundingBox() const override FINAL { return m_strokeBoundingBox; }
-    virtual FloatRect repaintRectInLocalCoordinates() const override FINAL { return m_repaintBoundingBox; }
+    virtual FloatRect objectBoundingBox() const override final { return m_objectBoundingBox; }
+    virtual FloatRect strokeBoundingBox() const override final { return m_strokeBoundingBox; }
+    virtual FloatRect repaintRectInLocalCoordinates() const override final { return m_repaintBoundingBox; }
 
     virtual bool nodeAtFloatPoint(const HitTestRequest&, HitTestResult&, const FloatPoint& pointInParent, HitTestAction) override;
 

@@ -319,7 +319,7 @@ void InspectorConsoleAgent::addConsoleMessage(PassOwnPtr<ConsoleMessage> console
     }
 }
 
-class InspectableHeapObject FINAL : public CommandLineAPIHost::InspectableObject {
+class InspectableHeapObject final : public CommandLineAPIHost::InspectableObject {
 public:
     explicit InspectableHeapObject(int heapObjectId) : m_heapObjectId(heapObjectId) { }
     virtual Deprecated::ScriptValue get(JSC::ExecState*) override

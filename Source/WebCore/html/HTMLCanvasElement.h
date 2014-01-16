@@ -60,7 +60,7 @@ public:
     virtual void canvasDestroyed(HTMLCanvasElement&) = 0;
 };
 
-class HTMLCanvasElement FINAL : public HTMLElement {
+class HTMLCanvasElement final : public HTMLElement {
 public:
     static PassRefPtr<HTMLCanvasElement> create(Document&);
     static PassRefPtr<HTMLCanvasElement> create(const QualifiedName&, Document&);

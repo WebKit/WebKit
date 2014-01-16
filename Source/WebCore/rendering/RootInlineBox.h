@@ -47,7 +47,7 @@ public:
     RootInlineBox* nextRootBox() const;
     RootInlineBox* prevRootBox() const;
 
-    virtual void adjustPosition(float dx, float dy) override FINAL;
+    virtual void adjustPosition(float dx, float dy) override final;
 
     LayoutUnit lineTop() const { return m_lineTop; }
     LayoutUnit lineBottom() const { return m_lineBottom; }
@@ -104,19 +104,19 @@ public:
     // Return the truncatedWidth, the width of the truncated text + ellipsis.
     float placeEllipsis(const AtomicString& ellipsisStr, bool ltr, float blockLeftEdge, float blockRightEdge, float ellipsisWidth, InlineBox* markupBox = 0);
     // Return the position of the EllipsisBox or -1.
-    virtual float placeEllipsisBox(bool ltr, float blockLeftEdge, float blockRightEdge, float ellipsisWidth, float &truncatedWidth, bool& foundBox) override FINAL;
+    virtual float placeEllipsisBox(bool ltr, float blockLeftEdge, float blockRightEdge, float ellipsisWidth, float &truncatedWidth, bool& foundBox) override final;
 
     using InlineBox::hasEllipsisBox;
     EllipsisBox* ellipsisBox() const;
 
     void paintEllipsisBox(PaintInfo&, const LayoutPoint&, LayoutUnit lineTop, LayoutUnit lineBottom) const;
 
-    virtual void clearTruncation() override FINAL;
+    virtual void clearTruncation() override final;
 
     bool isHyphenated() const;
 
-    virtual int baselinePosition(FontBaseline baselineType) const override FINAL;
-    virtual LayoutUnit lineHeight() const override FINAL;
+    virtual int baselinePosition(FontBaseline baselineType) const override final;
+    virtual LayoutUnit lineHeight() const override final;
 
 #if PLATFORM(MAC)
     void addHighlightOverflow();
@@ -124,12 +124,12 @@ public:
 #endif
 
     virtual void paint(PaintInfo&, const LayoutPoint&, LayoutUnit lineTop, LayoutUnit lineBottom) override;
-    virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, LayoutUnit lineTop, LayoutUnit lineBottom) override FINAL;
+    virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, LayoutUnit lineTop, LayoutUnit lineBottom) override final;
 
     using InlineBox::hasSelectedChildren;
     using InlineBox::setHasSelectedChildren;
 
-    virtual RenderObject::SelectionState selectionState() override FINAL;
+    virtual RenderObject::SelectionState selectionState() override final;
     InlineBox* firstSelectedBox();
     InlineBox* lastSelectedBox();
 
@@ -152,9 +152,9 @@ public:
 
     Vector<RenderBox*>* floatsPtr() { ASSERT(!isDirty()); return m_floats.get(); }
 
-    virtual void extractLineBoxFromRenderObject() override FINAL;
-    virtual void attachLineBoxToRenderObject() override FINAL;
-    virtual void removeLineBoxFromRenderObject() override FINAL;
+    virtual void extractLineBoxFromRenderObject() override final;
+    virtual void attachLineBoxToRenderObject() override final;
+    virtual void removeLineBoxFromRenderObject() override final;
     
     FontBaseline baselineType() const { return static_cast<FontBaseline>(m_baselineType); }
 
@@ -201,7 +201,7 @@ public:
     virtual const char* boxName() const override;
 #endif
 private:
-    virtual bool isRootInlineBox() const override FINAL { return true; }
+    virtual bool isRootInlineBox() const override final { return true; }
 
     LayoutUnit lineSnapAdjustment(LayoutUnit delta = 0) const;
 

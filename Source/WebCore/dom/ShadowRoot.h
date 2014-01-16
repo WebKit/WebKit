@@ -37,7 +37,7 @@
 
 namespace WebCore {
 
-class ShadowRoot FINAL : public DocumentFragment, public TreeScope {
+class ShadowRoot final : public DocumentFragment, public TreeScope {
 public:
     // FIXME: We will support multiple shadow subtrees, however current implementation does not work well
     // if a shadow root is dynamically created. So we prohibit multiple shadow subtrees

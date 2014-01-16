@@ -37,7 +37,7 @@ class JSObject;
 
 namespace WebCore {
 
-class JSCryptoAlgorithmBuilder FINAL : public CryptoAlgorithmDescriptionBuilder {
+class JSCryptoAlgorithmBuilder final : public CryptoAlgorithmDescriptionBuilder {
 public:
     JSCryptoAlgorithmBuilder(JSC::ExecState*);
     virtual ~JSCryptoAlgorithmBuilder();

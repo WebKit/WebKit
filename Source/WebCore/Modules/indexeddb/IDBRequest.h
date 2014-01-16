@@ -100,8 +100,8 @@ public:
 
     // EventTarget
     virtual EventTargetInterface eventTargetInterface() const override;
-    virtual ScriptExecutionContext* scriptExecutionContext() const override FINAL { return ActiveDOMObject::scriptExecutionContext(); }
-    virtual void uncaughtExceptionInEventHandler() override FINAL;
+    virtual ScriptExecutionContext* scriptExecutionContext() const override final { return ActiveDOMObject::scriptExecutionContext(); }
+    virtual void uncaughtExceptionInEventHandler() override final;
 
     using EventTarget::dispatchEvent;
     virtual bool dispatchEvent(PassRefPtr<Event>) override;
@@ -136,8 +136,8 @@ private:
     virtual void stop() override;
 
     // EventTarget
-    virtual void refEventTarget() override FINAL { ref(); }
-    virtual void derefEventTarget() override FINAL { deref(); }
+    virtual void refEventTarget() override final { ref(); }
+    virtual void derefEventTarget() override final { deref(); }
 
     PassRefPtr<IDBCursor> getResultCursor();
     void setResultCursor(PassRefPtr<IDBCursor>, PassRefPtr<IDBKey>, PassRefPtr<IDBKey> primaryKey, const Deprecated::ScriptValue&);

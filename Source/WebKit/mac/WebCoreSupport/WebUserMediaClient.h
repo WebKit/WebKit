@@ -38,7 +38,7 @@ class UserMediaRequest;
 
 @class WebView;
 
-class WebUserMediaClient FINAL : public WebCore::UserMediaClient {
+class WebUserMediaClient final : public WebCore::UserMediaClient {
 public:
     WebUserMediaClient(WebView*);
     ~WebUserMediaClient();

@@ -41,7 +41,7 @@ enum WebVTTNodeType {
     WebVTTNodeTypeVoice
 };
 
-class WebVTTElement FINAL : public Element {
+class WebVTTElement final : public Element {
 public:
     static PassRefPtr<WebVTTElement> create(const WebVTTNodeType, Document&);
     PassRefPtr<HTMLElement> createEquivalentHTMLElement(Document&);

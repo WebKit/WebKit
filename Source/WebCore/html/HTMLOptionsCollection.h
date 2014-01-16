@@ -33,7 +33,7 @@ class HTMLOptionElement;
 
 typedef int ExceptionCode;
 
-class HTMLOptionsCollection FINAL : public HTMLCollection {
+class HTMLOptionsCollection final : public HTMLCollection {
 public:
     static PassRef<HTMLOptionsCollection> create(HTMLSelectElement&, CollectionType);
 

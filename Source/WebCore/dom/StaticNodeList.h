@@ -37,7 +37,7 @@
 
 namespace WebCore {
 
-class StaticNodeList FINAL : public NodeList {
+class StaticNodeList final : public NodeList {
 public:
     static PassRefPtr<StaticNodeList> adopt(Vector<Ref<Node>>& nodes)
     {
@@ -61,7 +61,7 @@ private:
     Vector<Ref<Node>> m_nodes;
 };
 
-class StaticElementList FINAL : public NodeList {
+class StaticElementList final : public NodeList {
 public:
     static PassRefPtr<StaticElementList> adopt(Vector<Ref<Element>>& elements)
     {

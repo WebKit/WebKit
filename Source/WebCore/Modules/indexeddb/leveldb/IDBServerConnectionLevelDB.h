@@ -37,7 +37,7 @@ class IDBBackingStoreCursorLevelDB;
 class IDBBackingStoreLevelDB;
 class IDBBackingStoreTransactionLevelDB;
 
-class IDBServerConnectionLevelDB FINAL : public IDBServerConnection {
+class IDBServerConnectionLevelDB final : public IDBServerConnection {
 public:
     static PassRefPtr<IDBServerConnection> create(const String& databaseName, IDBBackingStoreLevelDB* backingStore)
     {

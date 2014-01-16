@@ -36,7 +36,7 @@ namespace WebCore {
 
 class CryptoKey;
 
-class CryptoKeySerializationRaw FINAL : public CryptoKeySerialization {
+class CryptoKeySerializationRaw final : public CryptoKeySerialization {
     WTF_MAKE_NONCOPYABLE(CryptoKeySerializationRaw);
 public:
     static std::unique_ptr<CryptoKeySerializationRaw> create(const CryptoOperationData& data)

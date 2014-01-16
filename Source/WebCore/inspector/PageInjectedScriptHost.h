@@ -32,7 +32,7 @@
 
 namespace WebCore {
 
-class PageInjectedScriptHost FINAL : public Inspector::InjectedScriptHost {
+class PageInjectedScriptHost final : public Inspector::InjectedScriptHost {
 public:
     static PassRefPtr<PageInjectedScriptHost> create() { return adoptRef(new PageInjectedScriptHost); }
 

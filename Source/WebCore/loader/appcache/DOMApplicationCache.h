@@ -43,7 +43,7 @@ namespace WebCore {
 class Frame;
 class URL;
 
-class DOMApplicationCache FINAL : public ScriptWrappable, public RefCounted<DOMApplicationCache>, public EventTargetWithInlineData, public DOMWindowProperty {
+class DOMApplicationCache final : public ScriptWrappable, public RefCounted<DOMApplicationCache>, public EventTargetWithInlineData, public DOMWindowProperty {
 public:
     static PassRefPtr<DOMApplicationCache> create(Frame* frame) { return adoptRef(new DOMApplicationCache(frame)); }
     virtual ~DOMApplicationCache() { ASSERT(!m_frame); }

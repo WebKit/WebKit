@@ -44,10 +44,10 @@ public:
 
     virtual const char* renderName() const override;
 
-    virtual bool isFlexibleBox() const override FINAL { return true; }
-    virtual bool avoidsFloats() const override FINAL { return true; }
-    virtual bool canCollapseAnonymousBlockChild() const override FINAL { return false; }
-    virtual void layoutBlock(bool relayoutChildren, LayoutUnit pageLogicalHeight = 0) override FINAL;
+    virtual bool isFlexibleBox() const override final { return true; }
+    virtual bool avoidsFloats() const override final { return true; }
+    virtual bool canCollapseAnonymousBlockChild() const override final { return false; }
+    virtual void layoutBlock(bool relayoutChildren, LayoutUnit pageLogicalHeight = 0) override final;
 
     virtual int baselinePosition(FontBaseline, bool firstLine, LineDirectionMode, LinePositionMode = PositionOnContainingLine) const override;
     virtual int firstLineBaseline() const override;

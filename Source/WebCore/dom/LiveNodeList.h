@@ -66,7 +66,7 @@ public:
 
         document().registerNodeList(*this);
     }
-    virtual Node* namedItem(const AtomicString&) const override FINAL;
+    virtual Node* namedItem(const AtomicString&) const override final;
     virtual bool nodeMatches(Element*) const = 0;
 
     virtual ~LiveNodeList()
@@ -75,8 +75,8 @@ public:
     }
 
     // DOM API
-    virtual unsigned length() const override FINAL;
-    virtual Node* item(unsigned offset) const override FINAL;
+    virtual unsigned length() const override final;
+    virtual Node* item(unsigned offset) const override final;
 
     ALWAYS_INLINE bool isRootedAtDocument() const { return m_rootType == NodeListIsRootedAtDocument; }
     ALWAYS_INLINE NodeListInvalidationType invalidationType() const { return static_cast<NodeListInvalidationType>(m_invalidationType); }

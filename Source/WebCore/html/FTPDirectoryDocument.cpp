@@ -46,7 +46,7 @@ namespace WebCore {
 
 using namespace HTMLNames;
     
-class FTPDirectoryDocumentParser FINAL : public HTMLDocumentParser {
+class FTPDirectoryDocumentParser final : public HTMLDocumentParser {
 public:
     static PassRefPtr<FTPDirectoryDocumentParser> create(HTMLDocument& document)
     {

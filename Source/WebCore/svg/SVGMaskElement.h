@@ -32,7 +32,7 @@
 
 namespace WebCore {
 
-class SVGMaskElement FINAL : public SVGElement,
+class SVGMaskElement final : public SVGElement,
                              public SVGTests,
                              public SVGExternalResourcesRequired {
 public:

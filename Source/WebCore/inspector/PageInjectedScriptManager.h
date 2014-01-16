@@ -34,7 +34,7 @@ namespace WebCore {
 
 class DOMWindow;
 
-class PageInjectedScriptManager FINAL : public Inspector::InjectedScriptManager {
+class PageInjectedScriptManager final : public Inspector::InjectedScriptManager {
 public:
     PageInjectedScriptManager(Inspector::InspectorEnvironment&, PassRefPtr<Inspector::InjectedScriptHost>);
     virtual ~PageInjectedScriptManager() { }

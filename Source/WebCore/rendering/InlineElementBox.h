@@ -52,7 +52,7 @@ public:
     virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, LayoutUnit lineTop, LayoutUnit lineBottom) override;
 
 private:
-    virtual bool isInlineElementBox() const override FINAL { return true; }
+    virtual bool isInlineElementBox() const override final { return true; }
 };
 
 INLINE_BOX_OBJECT_TYPE_CASTS(InlineElementBox, isInlineElementBox())

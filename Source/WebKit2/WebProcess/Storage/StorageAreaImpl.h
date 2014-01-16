@@ -35,7 +35,7 @@ namespace WebKit {
 
 class StorageAreaMap;
 
-class StorageAreaImpl FINAL : public WebCore::StorageArea {
+class StorageAreaImpl final : public WebCore::StorageArea {
 public:
     static PassRefPtr<StorageAreaImpl> create(PassRefPtr<StorageAreaMap>);
     virtual ~StorageAreaImpl();

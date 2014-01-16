@@ -40,7 +40,7 @@ namespace WebCore {
 class DocumentFragment;
 class TemplateContentDocumentFragment;
 
-class HTMLTemplateElement FINAL : public HTMLElement {
+class HTMLTemplateElement final : public HTMLElement {
 public:
     static PassRefPtr<HTMLTemplateElement> create(const QualifiedName&, Document&);
     virtual ~HTMLTemplateElement();

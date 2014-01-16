@@ -41,7 +41,7 @@ DEFINE_ANIMATED_PROPERTY(AnimatedNumberOptionalNumber, OwnerType, DOMAttribute, 
 
 class SVGAnimationElement;
 
-class SVGAnimatedNumberAnimator FINAL : public SVGAnimatedTypeAnimator {
+class SVGAnimatedNumberAnimator final : public SVGAnimatedTypeAnimator {
 public:
     SVGAnimatedNumberAnimator(SVGAnimationElement*, SVGElement*);
 

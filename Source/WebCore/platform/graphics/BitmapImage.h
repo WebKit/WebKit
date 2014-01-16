@@ -110,7 +110,7 @@ public:
 // FIXME: We should better integrate the iOS and non-iOS code in this class. Unlike other ports, the
 // iOS port caches the metadata for a frame without decoding the image.
 
-class BitmapImage FINAL : public Image {
+class BitmapImage final : public Image {
     friend class GeneratedImage;
     friend class CrossfadeGeneratedImage;
     friend class GradientImage;

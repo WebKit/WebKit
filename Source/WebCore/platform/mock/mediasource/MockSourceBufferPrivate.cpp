@@ -41,7 +41,7 @@
 
 namespace WebCore {
 
-class MockMediaSample FINAL : public MediaSample {
+class MockMediaSample final : public MediaSample {
 public:
     static RefPtr<MockMediaSample> create(const MockSampleBox& box) { return adoptRef(new MockMediaSample(box)); }
     virtual ~MockMediaSample() { }
@@ -79,7 +79,7 @@ PlatformSample MockMediaSample::platformSample()
     return sample;
 }
 
-class MockMediaDescription FINAL : public MediaDescription {
+class MockMediaDescription final : public MediaDescription {
 public:
     static RefPtr<MockMediaDescription> create(const MockTrackBox& box) { return adoptRef(new MockMediaDescription(box)); }
     virtual ~MockMediaDescription() { }

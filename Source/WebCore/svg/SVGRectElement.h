@@ -30,7 +30,7 @@
 
 namespace WebCore {
 
-class SVGRectElement FINAL : public SVGGraphicsElement,
+class SVGRectElement final : public SVGGraphicsElement,
                              public SVGExternalResourcesRequired {
 public:
     static PassRefPtr<SVGRectElement> create(const QualifiedName&, Document&);

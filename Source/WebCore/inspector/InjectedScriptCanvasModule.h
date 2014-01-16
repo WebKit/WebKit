@@ -46,7 +46,7 @@ typedef String ErrorString;
 
 #if ENABLE(INSPECTOR)
 
-class InjectedScriptCanvasModule FINAL : public Inspector::InjectedScriptModule {
+class InjectedScriptCanvasModule final : public Inspector::InjectedScriptModule {
 public:
     InjectedScriptCanvasModule();
     

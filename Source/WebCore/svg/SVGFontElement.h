@@ -64,7 +64,7 @@ struct SVGKerningMap {
 
 class SVGMissingGlyphElement;
 
-class SVGFontElement FINAL : public SVGElement
+class SVGFontElement final : public SVGElement
                            , public SVGExternalResourcesRequired {
 public:
     static PassRefPtr<SVGFontElement> create(const QualifiedName&, Document&);

@@ -43,7 +43,7 @@ class HTMLInputElement;
 class FloatPoint;
 class TouchEvent;
 
-class SliderThumbElement FINAL : public HTMLDivElement {
+class SliderThumbElement final : public HTMLDivElement {
 public:
     static PassRefPtr<SliderThumbElement> create(Document&);
 
@@ -115,7 +115,7 @@ inline PassRefPtr<SliderThumbElement> SliderThumbElement::create(Document& docum
 
 // --------------------------------
 
-class RenderSliderThumb FINAL : public RenderBlockFlow {
+class RenderSliderThumb final : public RenderBlockFlow {
 public:
     RenderSliderThumb(SliderThumbElement&, PassRef<RenderStyle>);
     void updateAppearance(RenderStyle* parentStyle);
@@ -126,7 +126,7 @@ private:
 
 // --------------------------------
 
-class SliderContainerElement FINAL : public HTMLDivElement {
+class SliderContainerElement final : public HTMLDivElement {
 public:
     static PassRefPtr<SliderContainerElement> create(Document&);
 

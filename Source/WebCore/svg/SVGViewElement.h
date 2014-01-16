@@ -33,7 +33,7 @@
 
 namespace WebCore {
 
-class SVGViewElement FINAL : public SVGElement,
+class SVGViewElement final : public SVGElement,
                              public SVGExternalResourcesRequired,
                              public SVGFitToViewBox,
                              public SVGZoomAndPan {

@@ -33,7 +33,7 @@
 
 namespace WebKit {
 
-class WebIDBFactoryBackend FINAL : public WebCore::IDBFactoryBackendInterface {
+class WebIDBFactoryBackend final : public WebCore::IDBFactoryBackendInterface {
 public:
     static PassRefPtr<WebIDBFactoryBackend> create(const String& databaseDirectoryIdentifier) { return adoptRef(new WebIDBFactoryBackend(databaseDirectoryIdentifier)); }
 

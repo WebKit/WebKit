@@ -149,16 +149,16 @@ private:
     virtual bool isFormControlElement() const override { return true; }
     virtual bool alwaysCreateUserAgentShadowRoot() const override { return true; }
 
-    virtual short tabIndex() const override FINAL;
+    virtual short tabIndex() const override final;
 
     virtual HTMLFormElement* virtualForm() const override;
     virtual bool isDefaultButtonForForm() const override;
     virtual bool isValidFormControlElement() override;
     void updateAncestorDisabledState() const;
 
-    virtual HTMLElement& asHTMLElement() override FINAL { return *this; }
-    virtual const HTMLFormControlElement& asHTMLElement() const override FINAL { return *this; }
-    virtual HTMLFormControlElement* asFormNamedItem() override FINAL { return this; }
+    virtual HTMLElement& asHTMLElement() override final { return *this; }
+    virtual const HTMLFormControlElement& asHTMLElement() const override final { return *this; }
+    virtual HTMLFormControlElement* asFormNamedItem() override final { return this; }
 
     OwnPtr<ValidationMessage> m_validationMessage;
     bool m_disabled : 1;

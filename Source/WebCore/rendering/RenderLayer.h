@@ -315,7 +315,7 @@ public:
 
 typedef Vector<LayerFragment, 1> LayerFragments;
 
-class RenderLayer FINAL : public ScrollableArea {
+class RenderLayer final : public ScrollableArea {
 public:
     friend class RenderReplica;
 

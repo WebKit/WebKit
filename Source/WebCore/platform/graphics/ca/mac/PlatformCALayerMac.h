@@ -34,7 +34,7 @@ OBJC_CLASS NSObject;
 
 namespace WebCore {
 
-class PlatformCALayerMac FINAL : public PlatformCALayer {
+class PlatformCALayerMac final : public PlatformCALayer {
 public:
     static PassRefPtr<PlatformCALayer> create(LayerType, PlatformCALayerClient*);
     

@@ -36,7 +36,7 @@
 
 namespace WebCore {
     
-class DocumentEventQueue::Timer FINAL : public SuspendableTimer {
+class DocumentEventQueue::Timer final : public SuspendableTimer {
 public:
     static PassOwnPtr<Timer> create(DocumentEventQueue& eventQueue)
     {

@@ -36,7 +36,7 @@ namespace WebCore {
 
 class HTMLTableRowElement;
 
-class HTMLTableRowsCollection FINAL : public HTMLCollection {
+class HTMLTableRowsCollection final : public HTMLCollection {
 public:
     static PassRef<HTMLTableRowsCollection> create(HTMLTableElement&, CollectionType);
 

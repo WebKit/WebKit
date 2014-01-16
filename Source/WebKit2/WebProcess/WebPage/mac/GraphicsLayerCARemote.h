@@ -35,7 +35,7 @@ namespace WebKit {
 
 class RemoteLayerTreeContext;
 
-class GraphicsLayerCARemote FINAL : public WebCore::GraphicsLayerCA {
+class GraphicsLayerCARemote final : public WebCore::GraphicsLayerCA {
 public:
     GraphicsLayerCARemote(WebCore::GraphicsLayerClient* client, RemoteLayerTreeContext* context)
         : GraphicsLayerCA(client)

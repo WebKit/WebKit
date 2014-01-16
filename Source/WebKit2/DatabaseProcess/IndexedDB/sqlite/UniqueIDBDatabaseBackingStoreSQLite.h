@@ -43,7 +43,7 @@ namespace WebKit {
 
 class SQLiteIDBTransaction;
 
-class UniqueIDBDatabaseBackingStoreSQLite FINAL : public UniqueIDBDatabaseBackingStore {
+class UniqueIDBDatabaseBackingStoreSQLite final : public UniqueIDBDatabaseBackingStore {
 public:
     static PassRefPtr<UniqueIDBDatabaseBackingStore> create(const UniqueIDBDatabaseIdentifier& identifier, const String& databaseDirectory)
     {

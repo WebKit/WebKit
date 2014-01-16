@@ -46,7 +46,7 @@ class Document;
 class FontDescription;
 class StyleRuleFontFace;
 
-class CSSFontSelector FINAL : public FontSelector {
+class CSSFontSelector final : public FontSelector {
 public:
     static PassRefPtr<CSSFontSelector> create(Document* document)
     {

@@ -33,7 +33,7 @@
 
 namespace WebCore {
 
-class CryptoAlgorithmRsaOaepParams FINAL : public CryptoAlgorithmParameters {
+class CryptoAlgorithmRsaOaepParams final : public CryptoAlgorithmParameters {
 public:
     CryptoAlgorithmRsaOaepParams()
         : hasLabel(false)

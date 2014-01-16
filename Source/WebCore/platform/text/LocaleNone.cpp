@@ -35,7 +35,7 @@ public:
     virtual ~LocaleNone();
 
 private:
-    virtual void initializeLocaleData() override FINAL;
+    virtual void initializeLocaleData() override final;
 #if ENABLE(DATE_AND_TIME_INPUT_TYPES)
     virtual String dateFormat() override;
     virtual String monthFormat() override;

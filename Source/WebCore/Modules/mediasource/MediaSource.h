@@ -96,9 +96,9 @@ public:
     virtual void stop() override;
 
     // EventTarget interface
-    virtual ScriptExecutionContext* scriptExecutionContext() const override FINAL;
-    virtual void refEventTarget() override FINAL { ref(); }
-    virtual void derefEventTarget() override FINAL { deref(); }
+    virtual ScriptExecutionContext* scriptExecutionContext() const override final;
+    virtual void refEventTarget() override final { ref(); }
+    virtual void derefEventTarget() override final { deref(); }
     virtual EventTargetInterface eventTargetInterface() const override;
 
     // URLRegistrable interface

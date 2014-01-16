@@ -36,7 +36,7 @@ DECLARE_ANIMATED_PROPERTY(SVGAnimatedEnumerationPropertyTearOff<EnumType>, EnumT
 #define DEFINE_ANIMATED_ENUMERATION(OwnerType, DOMAttribute, UpperProperty, LowerProperty, EnumType) \
 DEFINE_ANIMATED_PROPERTY(AnimatedEnumeration, OwnerType, DOMAttribute, DOMAttribute.localName(), UpperProperty, LowerProperty)
 
-class SVGAnimatedEnumerationAnimator FINAL : public SVGAnimatedTypeAnimator {
+class SVGAnimatedEnumerationAnimator final : public SVGAnimatedTypeAnimator {
 public:
     SVGAnimatedEnumerationAnimator(SVGAnimationElement*, SVGElement*);
 

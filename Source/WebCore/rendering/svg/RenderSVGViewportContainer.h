@@ -30,7 +30,7 @@ namespace WebCore {
 
 // This is used for non-root <svg> elements and <marker> elements, neither of which are SVGTransformable
 // thus we inherit from RenderSVGContainer instead of RenderSVGTransformableContainer
-class RenderSVGViewportContainer FINAL : public RenderSVGContainer {
+class RenderSVGViewportContainer final : public RenderSVGContainer {
 public:
     RenderSVGViewportContainer(SVGSVGElement&, PassRef<RenderStyle>);
 

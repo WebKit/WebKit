@@ -40,7 +40,7 @@ class SVGDocument;
 class SVGFontElement;
 struct FontCustomPlatformData;
 
-class CachedFont FINAL : public CachedResource {
+class CachedFont final : public CachedResource {
 public:
     CachedFont(const ResourceRequest&);
     virtual ~CachedFont();

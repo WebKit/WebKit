@@ -36,7 +36,7 @@
 
 namespace WebCore {
 
-class SVGFilterElement FINAL : public SVGElement,
+class SVGFilterElement final : public SVGElement,
                                public SVGURIReference,
                                public SVGExternalResourcesRequired {
 public:

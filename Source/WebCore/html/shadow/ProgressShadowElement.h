@@ -51,7 +51,7 @@ private:
     virtual bool rendererIsNeeded(const RenderStyle&);
 };
 
-class ProgressInnerElement FINAL : public ProgressShadowElement {
+class ProgressInnerElement final : public ProgressShadowElement {
 public:
     static PassRefPtr<ProgressInnerElement> create(Document&);
 
@@ -69,7 +69,7 @@ inline PassRefPtr<ProgressInnerElement> ProgressInnerElement::create(Document& d
     return result;
 }
 
-class ProgressBarElement FINAL : public ProgressShadowElement {
+class ProgressBarElement final : public ProgressShadowElement {
 public:
     static PassRefPtr<ProgressBarElement> create(Document&);
 
@@ -84,7 +84,7 @@ inline PassRefPtr<ProgressBarElement> ProgressBarElement::create(Document& docum
     return result;
 }
 
-class ProgressValueElement FINAL : public ProgressShadowElement {
+class ProgressValueElement final : public ProgressShadowElement {
 public:
     static PassRefPtr<ProgressValueElement> create(Document&);
     void setWidthPercentage(double);

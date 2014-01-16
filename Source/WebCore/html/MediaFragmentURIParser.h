@@ -35,7 +35,7 @@ namespace WebCore {
 
 class URL;
 
-class MediaFragmentURIParser FINAL {
+class MediaFragmentURIParser final {
 public:
     
     MediaFragmentURIParser(const URL&);

@@ -36,7 +36,7 @@ namespace WebCore {
     class TextResourceDecoder;
     struct CSSParserContext;
 
-    class CachedCSSStyleSheet FINAL : public CachedResource {
+    class CachedCSSStyleSheet final : public CachedResource {
     public:
         CachedCSSStyleSheet(const ResourceRequest&, const String& charset);
         virtual ~CachedCSSStyleSheet();

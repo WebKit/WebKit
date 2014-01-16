@@ -36,7 +36,7 @@
 
 namespace API {
 
-class String FINAL : public ObjectImpl<Object::Type::String> {
+class String final : public ObjectImpl<Object::Type::String> {
 public:
     static PassRefPtr<String> createNull()
     {

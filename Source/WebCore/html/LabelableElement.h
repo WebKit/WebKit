@@ -47,7 +47,7 @@ protected:
     LabelableElement(const QualifiedName& tagName, Document&);
 
 private:
-    virtual bool isLabelable() const override FINAL { return true; }
+    virtual bool isLabelable() const override final { return true; }
 };
 
 void isLabelableElement(const LabelableElement&); // Catch unnecessary runtime check of type known at compile time.

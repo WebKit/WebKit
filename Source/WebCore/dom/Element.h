@@ -258,11 +258,11 @@ public:
     bool hasLocalName(const AtomicString& other) const { return m_tagName.localName() == other; }
     bool hasLocalName(const QualifiedName& other) const { return m_tagName.localName() == other.localName(); }
 
-    virtual const AtomicString& localName() const override FINAL { return m_tagName.localName(); }
-    virtual const AtomicString& prefix() const override FINAL { return m_tagName.prefix(); }
-    virtual const AtomicString& namespaceURI() const override FINAL { return m_tagName.namespaceURI(); }
+    virtual const AtomicString& localName() const override final { return m_tagName.localName(); }
+    virtual const AtomicString& prefix() const override final { return m_tagName.prefix(); }
+    virtual const AtomicString& namespaceURI() const override final { return m_tagName.namespaceURI(); }
 
-    virtual URL baseURI() const override FINAL;
+    virtual URL baseURI() const override final;
 
     virtual String nodeName() const override;
 
@@ -437,7 +437,7 @@ public:
 
     bool isFinishedParsingChildren() const { return isParsingChildrenFinished(); }
     virtual void finishParsingChildren() override;
-    virtual void beginParsingChildren() override FINAL;
+    virtual void beginParsingChildren() override final;
 
     PseudoElement* beforePseudoElement() const;
     PseudoElement* afterPseudoElement() const;
@@ -575,7 +575,7 @@ protected:
     virtual InsertionNotificationRequest insertedInto(ContainerNode&) override;
     virtual void removedFrom(ContainerNode&) override;
     virtual void childrenChanged(const ChildChange&) override;
-    virtual void removeAllEventListeners() override FINAL;
+    virtual void removeAllEventListeners() override final;
 
     virtual PassRefPtr<RenderStyle> customStyleForRenderer();
 
@@ -628,9 +628,9 @@ private:
 
     void scrollByUnits(int units, ScrollGranularity);
 
-    virtual void setPrefix(const AtomicString&, ExceptionCode&) override FINAL;
-    virtual NodeType nodeType() const override FINAL;
-    virtual bool childTypeAllowed(NodeType) const override FINAL;
+    virtual void setPrefix(const AtomicString&, ExceptionCode&) override final;
+    virtual NodeType nodeType() const override final;
+    virtual bool childTypeAllowed(NodeType) const override final;
 
     void setAttributeInternal(unsigned index, const QualifiedName&, const AtomicString& value, SynchronizationOfLazyAttribute);
     void addAttributeInternal(const QualifiedName&, const AtomicString& value, SynchronizationOfLazyAttribute);

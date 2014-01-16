@@ -44,7 +44,7 @@ class CryptoAlgorithmParameters;
 class CryptoKey;
 class CryptoKeyDataRSAComponents;
 
-class JSCryptoKeySerializationJWK FINAL : public CryptoKeySerialization {
+class JSCryptoKeySerializationJWK final : public CryptoKeySerialization {
 WTF_MAKE_NONCOPYABLE(JSCryptoKeySerializationJWK);
 public:
     static std::unique_ptr<JSCryptoKeySerializationJWK> create(JSC::ExecState* exec, const String& jsonString)

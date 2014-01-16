@@ -47,14 +47,14 @@ class RenderStyle;
 // http://dev.w3.org/csswg/css-regions/#the-flow-from-property.
 // list-item, table-caption, table-cell can become regions in addition to block | inline-block.
 
-class RenderNamedFlowFragment FINAL : public RenderRegion {
+class RenderNamedFlowFragment final : public RenderRegion {
 public:
     RenderNamedFlowFragment(Document&, PassRef<RenderStyle>);
     virtual ~RenderNamedFlowFragment();
 
     static PassRef<RenderStyle> createStyle(const RenderStyle& parentStyle);
 
-    virtual bool isRenderNamedFlowFragment() const override FINAL { return true; }
+    virtual bool isRenderNamedFlowFragment() const override final { return true; }
     virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle) override;
 
     virtual LayoutUnit pageLogicalHeight() const;

@@ -97,7 +97,7 @@ struct SVGPropertyTraits<SVGTextPathSpacingType> {
     }
 };
 
-class SVGTextPathElement FINAL : public SVGTextContentElement,
+class SVGTextPathElement final : public SVGTextContentElement,
                                  public SVGURIReference {
 public:
     // Forward declare enumerations in the W3C naming scheme, for IDL generation.

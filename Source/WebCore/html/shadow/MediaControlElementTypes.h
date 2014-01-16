@@ -169,7 +169,7 @@ protected:
     virtual bool isForwardButton() const = 0;
 
 private:
-    virtual void setActive(bool /*flag*/ = true, bool /*pause*/ = false) override FINAL;
+    virtual void setActive(bool /*flag*/ = true, bool /*pause*/ = false) override final;
 
     void startTimer();
     void stopTimer();

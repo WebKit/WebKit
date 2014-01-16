@@ -31,7 +31,7 @@ namespace WebCore {
 class FormAssociatedElement;
 class HTMLCollection;
 
-class HTMLFieldSetElement FINAL : public HTMLFormControlElement {
+class HTMLFieldSetElement final : public HTMLFormControlElement {
 public:
     static PassRefPtr<HTMLFieldSetElement> create(const QualifiedName&, Document&, HTMLFormElement*);
 

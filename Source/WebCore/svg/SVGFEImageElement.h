@@ -34,7 +34,7 @@
 
 namespace WebCore {
 
-class SVGFEImageElement FINAL : public SVGFilterPrimitiveStandardAttributes,
+class SVGFEImageElement final : public SVGFilterPrimitiveStandardAttributes,
                                 public SVGURIReference,
                                 public SVGExternalResourcesRequired,
                                 public CachedImageClient {

@@ -45,7 +45,7 @@ class MediaKeyError;
 class MediaKeys;
 class CDMSession;
 
-class MediaKeySession FINAL : public RefCounted<MediaKeySession>, public EventTargetWithInlineData, public ContextDestructionObserver {
+class MediaKeySession final : public RefCounted<MediaKeySession>, public EventTargetWithInlineData, public ContextDestructionObserver {
 public:
     static PassRefPtr<MediaKeySession> create(ScriptExecutionContext*, MediaKeys*, const String& keySystem);
     ~MediaKeySession();

@@ -33,7 +33,7 @@
 
 namespace WebCore {
 
-class CachedTextTrack FINAL : public CachedResource {
+class CachedTextTrack final : public CachedResource {
 public:
     CachedTextTrack(const ResourceRequest&);
     virtual ~CachedTextTrack();

@@ -67,7 +67,7 @@ protected:
 // 4 bytes : 4CC : codec
 // 1 byte  : unsigned : kind
 // 
-class MockTrackBox FINAL : public MockBox {
+class MockTrackBox final : public MockBox {
 public:
     static const String& type();
     MockTrackBox(JSC::ArrayBuffer*);
@@ -94,7 +94,7 @@ protected:
 // 4 bytes : signed : duration time scale
 // N bytes : MockTrackBoxes : tracks
 //
-class MockInitializationBox FINAL : public MockBox {
+class MockInitializationBox final : public MockBox {
 public:
     static const String& type();
     MockInitializationBox(JSC::ArrayBuffer*);
@@ -118,7 +118,7 @@ protected:
 // 4 bytes : signed : track ID
 // 1 byte  : unsigned : flags
 //
-class MockSampleBox FINAL : public MockBox {
+class MockSampleBox final : public MockBox {
 public:
     static const String& type();
     MockSampleBox(JSC::ArrayBuffer*);

@@ -36,7 +36,7 @@ namespace WebCore {
 
 class IDBDatabase;
 
-class IDBDatabaseCallbacksImpl FINAL : public IDBDatabaseCallbacks {
+class IDBDatabaseCallbacksImpl final : public IDBDatabaseCallbacks {
 public:
     static PassRefPtr<IDBDatabaseCallbacksImpl> create();
     virtual ~IDBDatabaseCallbacksImpl() override;

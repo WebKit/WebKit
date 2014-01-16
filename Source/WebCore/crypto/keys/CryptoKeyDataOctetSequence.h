@@ -33,7 +33,7 @@
 
 namespace WebCore {
 
-class CryptoKeyDataOctetSequence FINAL : public CryptoKeyData {
+class CryptoKeyDataOctetSequence final : public CryptoKeyData {
 public:
     static std::unique_ptr<CryptoKeyDataOctetSequence> create(const Vector<uint8_t>& keyData)
     {

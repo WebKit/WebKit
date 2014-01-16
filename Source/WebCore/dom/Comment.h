@@ -27,7 +27,7 @@
 
 namespace WebCore {
 
-class Comment FINAL : public CharacterData {
+class Comment final : public CharacterData {
 public:
     static PassRefPtr<Comment> create(Document&, const String&);
     static PassRefPtr<Comment> create(ScriptExecutionContext&, const String&);

@@ -31,7 +31,7 @@ typedef SVGAnimatedListPropertyTearOff<SVGPointList> SVGAnimatedPointList;
 
 class SVGAnimationElement;
 
-class SVGAnimatedPointListAnimator FINAL : public SVGAnimatedTypeAnimator {
+class SVGAnimatedPointListAnimator final : public SVGAnimatedTypeAnimator {
 public:
     SVGAnimatedPointListAnimator(SVGAnimationElement*, SVGElement*);
 

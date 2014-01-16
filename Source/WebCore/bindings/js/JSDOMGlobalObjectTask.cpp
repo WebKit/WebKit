@@ -36,7 +36,7 @@ using namespace JSC;
 
 namespace WebCore {
 
-class JSGlobalObjectCallback FINAL : public RefCounted<JSGlobalObjectCallback>, private ActiveDOMCallback {
+class JSGlobalObjectCallback final : public RefCounted<JSGlobalObjectCallback>, private ActiveDOMCallback {
 public:
     static PassRefPtr<JSGlobalObjectCallback> create(JSDOMGlobalObject* globalObject, PassRefPtr<Microtask> task)
     {

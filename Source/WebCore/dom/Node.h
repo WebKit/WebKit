@@ -507,7 +507,7 @@ public:
     virtual HTMLInputElement* toInputElement();
 
     virtual EventTargetInterface eventTargetInterface() const override;
-    virtual ScriptExecutionContext* scriptExecutionContext() const override FINAL; // Implemented in Document.h
+    virtual ScriptExecutionContext* scriptExecutionContext() const override final; // Implemented in Document.h
 
     virtual bool addEventListener(const AtomicString& eventType, PassRefPtr<EventListener>, bool useCapture) override;
     virtual bool removeEventListener(const AtomicString& eventType, EventListener*, bool useCapture) override;
@@ -539,8 +539,8 @@ public:
     using TreeShared<Node>::ref;
     using TreeShared<Node>::deref;
 
-    virtual EventTargetData* eventTargetData() override FINAL;
-    virtual EventTargetData& ensureEventTargetData() override FINAL;
+    virtual EventTargetData* eventTargetData() override final;
+    virtual EventTargetData& ensureEventTargetData() override final;
 
     void getRegisteredMutationObserversOfType(HashMap<MutationObserver*, MutationRecordDeliveryOptions>&, MutationObserver::MutationType, const QualifiedName* attributeName);
     void registerMutationObserver(MutationObserver*, MutationObserverOptions, const HashSet<AtomicString>& attributeFilter);

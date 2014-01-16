@@ -75,7 +75,7 @@ private:
     void element() const WTF_DELETED_FUNCTION;
 
     virtual const char* renderName() const override { return "RenderTextControl"; }
-    virtual bool isTextControl() const override FINAL { return true; }
+    virtual bool isTextControl() const override final { return true; }
     virtual void computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const override;
     virtual void computePreferredLogicalWidths() override;
     virtual void removeLeftoverAnonymousBlock(RenderBlock*) override { }
@@ -96,7 +96,7 @@ RENDER_OBJECT_TYPE_CASTS(RenderTextControl, isTextControl())
 // We can't use RenderFlexibleBox directly, because flexboxes have a different
 // baseline definition, and then inputs of different types wouldn't line up
 // anymore.
-class RenderTextControlInnerContainer FINAL : public RenderFlexibleBox {
+class RenderTextControlInnerContainer final : public RenderFlexibleBox {
 public:
     explicit RenderTextControlInnerContainer(Element& element, PassRef<RenderStyle> style)
         : RenderFlexibleBox(element, std::move(style))

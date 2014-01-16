@@ -94,7 +94,7 @@ struct SVGPropertyTraits<SVGMarkerOrientType> {
     }
 };
 
-class SVGMarkerElement FINAL : public SVGElement,
+class SVGMarkerElement final : public SVGElement,
                                public SVGExternalResourcesRequired,
                                public SVGFitToViewBox {
 public:

@@ -37,7 +37,7 @@ DEFINE_ANIMATED_PROPERTY(AnimatedBoolean, OwnerType, DOMAttribute, DOMAttribute.
 
 class SVGAnimationElement;
 
-class SVGAnimatedBooleanAnimator FINAL : public SVGAnimatedTypeAnimator {
+class SVGAnimatedBooleanAnimator final : public SVGAnimatedTypeAnimator {
 public:
     SVGAnimatedBooleanAnimator(SVGAnimationElement*, SVGElement*);
 

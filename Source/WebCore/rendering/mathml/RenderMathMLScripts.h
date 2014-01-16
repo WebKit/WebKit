@@ -58,7 +58,7 @@ private:
     void removeChildInternal(bool normalRemoval, RenderObject& child);
 
     virtual const char* renderName() const override { return m_kind == Base ? "Base Wrapper" : "SubSupPair Wrapper"; }
-    virtual bool isRenderMathMLScriptsWrapper() const override FINAL { return true; }
+    virtual bool isRenderMathMLScriptsWrapper() const override final { return true; }
 
     RenderMathMLScripts* parentMathMLScripts();
 
@@ -87,7 +87,7 @@ private:
     void addChildInternal(bool normalInsertion, RenderObject* child, RenderObject* beforeChild = 0);
     void removeChildInternal(bool normalRemoval, RenderObject& child);
 
-    virtual bool isRenderMathMLScripts() const override FINAL { return true; }
+    virtual bool isRenderMathMLScripts() const override final { return true; }
     virtual const char* renderName() const override { return "RenderMathMLScripts"; }
 
     void fixAnonymousStyleForSubSupPair(RenderObject* subSupPair, bool isPostScript);

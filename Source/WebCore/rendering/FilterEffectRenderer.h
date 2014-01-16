@@ -86,7 +86,7 @@ private:
     bool m_startedFilterEffect;
 };
 
-class FilterEffectRenderer FINAL : public Filter {
+class FilterEffectRenderer final : public Filter {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     static RefPtr<FilterEffectRenderer> create()

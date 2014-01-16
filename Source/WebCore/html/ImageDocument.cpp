@@ -74,7 +74,7 @@ private:
     ImageDocument* m_doc;
 };
     
-class ImageDocumentParser FINAL : public RawDataDocumentParser {
+class ImageDocumentParser final : public RawDataDocumentParser {
 public:
     static PassRefPtr<ImageDocumentParser> create(ImageDocument& document)
     {
@@ -96,7 +96,7 @@ private:
     virtual void finish();
 };
 
-class ImageDocumentElement FINAL : public HTMLImageElement {
+class ImageDocumentElement final : public HTMLImageElement {
 public:
     static PassRefPtr<ImageDocumentElement> create(ImageDocument&);
 

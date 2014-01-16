@@ -36,7 +36,7 @@ namespace WebCore {
 // This parameters class is currently not specified in WebCrypto.
 // It is necessary to support import from JWK, which treats hash function as part of algorithm
 // identifier, so we need to remember it to compare with one passed to sign or verify functions.
-class CryptoAlgorithmRsaKeyParamsWithHash FINAL : public CryptoAlgorithmParameters {
+class CryptoAlgorithmRsaKeyParamsWithHash final : public CryptoAlgorithmParameters {
 public:
     CryptoAlgorithmRsaKeyParamsWithHash()
         : hasHash(false)

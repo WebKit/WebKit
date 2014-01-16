@@ -1,3 +1,29 @@
+2014-01-16  Anders Carlsson  <andersca@apple.com>
+
+        Change all uses of FINAL to final now that all our compilers support it
+        https://bugs.webkit.org/show_bug.cgi?id=127142
+
+        Reviewed by Benjamin Poulain.
+
+        * DatabaseProcess/IndexedDB/sqlite/UniqueIDBDatabaseBackingStoreSQLite.h:
+        * NetworkProcess/RemoteNetworkingContext.h:
+        * Shared/API/Cocoa/RemoteObjectRegistry.h:
+        * Shared/APIArray.h:
+        * Shared/APIString.h:
+        * Shared/AsyncRequest.h:
+        * Shared/AsyncTask.h:
+        * Shared/cf/KeyedEncoder.h:
+        * UIProcess/API/gtk/PageClientImpl.h:
+        * UIProcess/API/mac/PageClientImpl.h:
+        * UIProcess/efl/WebViewEfl.h:
+        * WebProcess/Databases/IndexedDB/WebIDBFactoryBackend.h:
+        * WebProcess/Databases/IndexedDB/WebIDBServerConnection.h:
+        * WebProcess/Plugins/PDF/PDFPlugin.h:
+        * WebProcess/Storage/StorageAreaImpl.h:
+        * WebProcess/WebPage/mac/GraphicsLayerCARemote.h:
+        * WebProcess/WebPage/mac/PlatformCALayerRemoteCustom.h:
+        * WebProcess/WebPage/mac/PlatformCALayerRemoteTiledBacking.h:
+
 2014-01-16  Brady Eidson  <beidson@apple.com>
 
         Fix the build after r162148

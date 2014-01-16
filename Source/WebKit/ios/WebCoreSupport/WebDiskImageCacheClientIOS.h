@@ -27,7 +27,7 @@
 
 #import <WebCore/DiskImageCacheClientIOS.h>
 
-class WebDiskImageCacheClient FINAL : public WebCore::DiskImageCacheClient {
+class WebDiskImageCacheClient final : public WebCore::DiskImageCacheClient {
 public:
     static PassRefPtr<WebDiskImageCacheClient> create() { return adoptRef(new WebDiskImageCacheClient()); }
 private:

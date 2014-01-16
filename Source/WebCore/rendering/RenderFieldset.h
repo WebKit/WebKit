@@ -31,7 +31,7 @@ namespace WebCore {
 
 class HTMLFieldSetElement;
 
-class RenderFieldset FINAL : public RenderBlockFlow {
+class RenderFieldset final : public RenderBlockFlow {
 public:
     RenderFieldset(HTMLFieldSetElement&, PassRef<RenderStyle>);
 

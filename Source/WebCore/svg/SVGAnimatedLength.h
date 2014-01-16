@@ -38,7 +38,7 @@ DEFINE_ANIMATED_PROPERTY(AnimatedLength, OwnerType, DOMAttribute, DOMAttribute.l
 
 class SVGAnimationElement;
 
-class SVGAnimatedLengthAnimator FINAL : public SVGAnimatedTypeAnimator {
+class SVGAnimatedLengthAnimator final : public SVGAnimatedTypeAnimator {
 public:
     SVGAnimatedLengthAnimator(SVGAnimationElement*, SVGElement*);
 

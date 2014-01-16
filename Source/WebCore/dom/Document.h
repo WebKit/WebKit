@@ -605,7 +605,7 @@ public:
 
     bool wellFormed() const { return m_wellFormed; }
 
-    virtual const URL& url() const override FINAL { return m_url; }
+    virtual const URL& url() const override final { return m_url; }
     void setURL(const URL&);
 
     // To understand how these concepts relate to one another, please see the
@@ -617,7 +617,7 @@ public:
     const String& baseTarget() const { return m_baseTarget; }
     void processBaseElement();
 
-    virtual URL completeURL(const String&) const override FINAL;
+    virtual URL completeURL(const String&) const override final;
     URL completeURL(const String&, const URL& baseURLOverride) const;
 
     virtual String userAgent(const URL&) const override;

@@ -45,7 +45,7 @@ namespace WebCore {
 class GraphicsContext;
 class ImageBuffer;
 
-class PDFDocumentImage FINAL : public Image {
+class PDFDocumentImage final : public Image {
 public:
     static PassRefPtr<PDFDocumentImage> create(ImageObserver* observer)
     {

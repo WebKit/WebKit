@@ -26,7 +26,7 @@
 
 namespace WebCore {
 
-class SVGDescElement FINAL : public SVGElement {
+class SVGDescElement final : public SVGElement {
 public:
     static PassRefPtr<SVGDescElement> create(const QualifiedName&, Document&);
 

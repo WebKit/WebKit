@@ -192,7 +192,7 @@ private:
     float calculateAnimationPercentAndRepeat(SMILTime elapsed, unsigned& repeat) const;
     SMILTime calculateNextProgressTime(SMILTime elapsed) const;
 
-    virtual bool isSMILElement() const override FINAL { return true; }
+    virtual bool isSMILElement() const override final { return true; }
 
     mutable SVGElement* m_targetElement;
 

@@ -108,7 +108,7 @@ private:
 
     // Auxiliary Client Creation
 #if ENABLE(FULLSCREEN_API)
-    virtual WebFullScreenManagerProxyClient& fullScreenManagerProxyClient() FINAL;
+    virtual WebFullScreenManagerProxyClient& fullScreenManagerProxyClient() final;
 #endif
 
 #if ENABLE(FULLSCREEN_API)

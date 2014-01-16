@@ -37,7 +37,7 @@ namespace WebCore {
 
 class RenderRubyRun;
 
-class RenderRubyBase FINAL : public RenderBlockFlow {
+class RenderRubyBase final : public RenderBlockFlow {
 public:
     RenderRubyBase(Document&, PassRef<RenderStyle>);
     virtual ~RenderRubyBase();

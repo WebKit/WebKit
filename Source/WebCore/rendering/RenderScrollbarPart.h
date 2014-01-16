@@ -33,7 +33,7 @@ namespace WebCore {
 
 class RenderScrollbar;
 
-class RenderScrollbarPart FINAL : public RenderBlock {
+class RenderScrollbarPart final : public RenderBlock {
 public:
     RenderScrollbarPart(Document&, PassRef<RenderStyle>, RenderScrollbar* = 0, ScrollbarPart = NoPart);
     

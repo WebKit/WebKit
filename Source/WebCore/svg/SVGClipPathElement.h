@@ -32,7 +32,7 @@ namespace WebCore {
 
 class RenderObject;
 
-class SVGClipPathElement FINAL : public SVGGraphicsElement,
+class SVGClipPathElement final : public SVGGraphicsElement,
                                  public SVGExternalResourcesRequired {
 public:
     static PassRefPtr<SVGClipPathElement> create(const QualifiedName&, Document&);

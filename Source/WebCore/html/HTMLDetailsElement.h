@@ -25,7 +25,7 @@
 
 namespace WebCore {
 
-class HTMLDetailsElement FINAL : public HTMLElement {
+class HTMLDetailsElement final : public HTMLElement {
 public:
     static PassRefPtr<HTMLDetailsElement> create(const QualifiedName& tagName, Document& document);
     void toggleOpen();

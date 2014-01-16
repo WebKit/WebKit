@@ -71,7 +71,7 @@ public:
     PassRefPtr<Range> selection() const;
     String selectedText() const;
 
-    virtual void dispatchFormControlChangeEvent() override FINAL;
+    virtual void dispatchFormControlChangeEvent() override final;
 
     virtual int maxLength() const = 0;
     virtual String value() const = 0;
@@ -120,8 +120,8 @@ private:
     int computeSelectionEnd() const;
     TextFieldSelectionDirection computeSelectionDirection() const;
 
-    virtual void dispatchFocusEvent(PassRefPtr<Element> oldFocusedElement, FocusDirection) override FINAL;
-    virtual void dispatchBlurEvent(PassRefPtr<Element> newFocusedElement) override FINAL;
+    virtual void dispatchFocusEvent(PassRefPtr<Element> oldFocusedElement, FocusDirection) override final;
+    virtual void dispatchBlurEvent(PassRefPtr<Element> newFocusedElement) override final;
     virtual bool childShouldCreateRenderer(const Node&) const override;
 
     // Returns true if user-editable value is empty. Used to check placeholder visibility.

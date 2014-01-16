@@ -33,7 +33,7 @@
 
 namespace WebCore {
 
-class CryptoAlgorithmRsaSsaParams FINAL : public CryptoAlgorithmParameters {
+class CryptoAlgorithmRsaSsaParams final : public CryptoAlgorithmParameters {
 public:
     // The hash algorithm to use.
     CryptoAlgorithmIdentifier hash;

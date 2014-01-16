@@ -30,7 +30,7 @@
 
 namespace WebCore {
 
-class SVGAElement FINAL : public SVGGraphicsElement,
+class SVGAElement final : public SVGGraphicsElement,
                           public SVGURIReference,
                           public SVGExternalResourcesRequired {
 public:

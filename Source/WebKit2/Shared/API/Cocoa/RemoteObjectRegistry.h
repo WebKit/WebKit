@@ -38,7 +38,7 @@ namespace WebKit {
 
 class UserData;
 
-class RemoteObjectRegistry FINAL : public IPC::MessageReceiver {
+class RemoteObjectRegistry final : public IPC::MessageReceiver {
 public:
     RemoteObjectRegistry(WKRemoteObjectRegistry *, IPC::MessageSender&);
     ~RemoteObjectRegistry();

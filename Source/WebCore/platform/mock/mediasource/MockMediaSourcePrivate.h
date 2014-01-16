@@ -37,7 +37,7 @@ class MockMediaPlayerMediaSource;
 class MockSourceBufferPrivate;
 class TimeRanges;
 
-class MockMediaSourcePrivate FINAL : public MediaSourcePrivate {
+class MockMediaSourcePrivate final : public MediaSourcePrivate {
 public:
     static RefPtr<MockMediaSourcePrivate> create(MockMediaPlayerMediaSource*);
     virtual ~MockMediaSourcePrivate();

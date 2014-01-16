@@ -32,7 +32,7 @@ namespace WebCore {
 
 class SVGInlineTextBox;
 
-class RenderSVGInlineText FINAL : public RenderText {
+class RenderSVGInlineText final : public RenderText {
 public:
     RenderSVGInlineText(Text&, const String&);
 

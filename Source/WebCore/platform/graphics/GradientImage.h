@@ -35,7 +35,7 @@
 
 namespace WebCore {
 
-class GradientImage FINAL : public GeneratedImage {
+class GradientImage final : public GeneratedImage {
 public:
     static PassRefPtr<GradientImage> create(PassRefPtr<Gradient> generator, const IntSize& size)
     {

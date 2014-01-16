@@ -33,7 +33,7 @@
 
 namespace WebCore {
 
-class CryptoAlgorithmAesCbcParams FINAL : public CryptoAlgorithmParameters {
+class CryptoAlgorithmAesCbcParams final : public CryptoAlgorithmParameters {
 public:
     // The initialization vector. MUST be 16 bytes.
     std::array<char, 16> iv;

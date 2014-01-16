@@ -35,7 +35,7 @@
 
 namespace WebCore {
 
-class RTCPeerConnectionHandlerMock FINAL : public RTCPeerConnectionHandler, public TimerEventBasedMock {
+class RTCPeerConnectionHandlerMock final : public RTCPeerConnectionHandler, public TimerEventBasedMock {
 public:
     static std::unique_ptr<RTCPeerConnectionHandler> create(RTCPeerConnectionHandlerClient*);
 

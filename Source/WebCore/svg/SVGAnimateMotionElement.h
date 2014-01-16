@@ -28,7 +28,7 @@ namespace WebCore {
 
 class AffineTransform;
             
-class SVGAnimateMotionElement FINAL : public SVGAnimationElement {
+class SVGAnimateMotionElement final : public SVGAnimationElement {
 public:
     static PassRefPtr<SVGAnimateMotionElement> create(const QualifiedName&, Document&);
     void updateAnimationPath();

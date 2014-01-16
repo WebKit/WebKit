@@ -62,7 +62,7 @@ Pagination::Mode paginationModeForRenderStyle(const RenderStyle&);
 
 typedef unsigned long long DOMTimeStamp;
 
-class FrameView FINAL : public ScrollView {
+class FrameView final : public ScrollView {
 public:
     friend class RenderView;
     friend class Internals;

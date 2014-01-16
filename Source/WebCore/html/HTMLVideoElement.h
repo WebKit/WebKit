@@ -33,7 +33,7 @@ namespace WebCore {
 
 class HTMLImageLoader;
 
-class HTMLVideoElement FINAL : public HTMLMediaElement {
+class HTMLVideoElement final : public HTMLMediaElement {
 public:
     static PassRefPtr<HTMLVideoElement> create(const QualifiedName&, Document&, bool);
 

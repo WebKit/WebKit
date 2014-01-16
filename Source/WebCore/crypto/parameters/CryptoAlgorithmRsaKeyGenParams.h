@@ -33,7 +33,7 @@
 
 namespace WebCore {
 
-class CryptoAlgorithmRsaKeyGenParams FINAL : public CryptoAlgorithmParameters {
+class CryptoAlgorithmRsaKeyGenParams final : public CryptoAlgorithmParameters {
 public:
     // The length, in bits, of the RSA modulus.
     unsigned modulusLength;

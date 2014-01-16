@@ -36,7 +36,7 @@ namespace WebCore {
 class CachedSVGDocument;
 class SVGElementInstance;
 
-class SVGUseElement FINAL : public SVGGraphicsElement,
+class SVGUseElement final : public SVGGraphicsElement,
                             public SVGExternalResourcesRequired,
                             public SVGURIReference,
                             public CachedSVGDocumentClient {

@@ -32,7 +32,7 @@
 
 namespace WebCore {
 
-class CryptoAlgorithmAesKeyGenParams FINAL : public CryptoAlgorithmParameters {
+class CryptoAlgorithmAesKeyGenParams final : public CryptoAlgorithmParameters {
 public:
     // The length, in bits, of the key.
     unsigned length;

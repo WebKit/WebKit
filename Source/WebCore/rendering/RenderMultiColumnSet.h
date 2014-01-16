@@ -41,7 +41,7 @@ namespace WebCore {
 //
 // Column spans result in the creation of new column sets as well, since a spanning region has to be placed in between the column sets that
 // come before and after the span.
-class RenderMultiColumnSet FINAL : public RenderRegionSet {
+class RenderMultiColumnSet final : public RenderRegionSet {
 public:
     RenderMultiColumnSet(RenderFlowThread&, PassRef<RenderStyle>);
 

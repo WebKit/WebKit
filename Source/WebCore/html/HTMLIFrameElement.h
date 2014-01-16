@@ -28,7 +28,7 @@
 
 namespace WebCore {
 
-class HTMLIFrameElement FINAL : public HTMLFrameElementBase {
+class HTMLIFrameElement final : public HTMLFrameElementBase {
 public:
     static PassRefPtr<HTMLIFrameElement> create(const QualifiedName&, Document&);
 

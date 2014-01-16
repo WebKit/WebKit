@@ -27,7 +27,7 @@ namespace WebCore {
 
 class SVGAnimationElement;
 
-class SVGAnimatedPathAnimator FINAL : public SVGAnimatedTypeAnimator {
+class SVGAnimatedPathAnimator final : public SVGAnimatedTypeAnimator {
 public:
     SVGAnimatedPathAnimator(SVGAnimationElement*, SVGElement*);
 

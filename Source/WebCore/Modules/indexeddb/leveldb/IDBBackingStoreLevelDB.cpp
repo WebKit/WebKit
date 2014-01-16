@@ -1567,7 +1567,7 @@ bool ObjectStoreCursorImpl::loadCurrentRow()
     return true;
 }
 
-class IndexKeyCursorImpl FINAL : public IDBBackingStoreCursorLevelDB {
+class IndexKeyCursorImpl final : public IDBBackingStoreCursorLevelDB {
 public:
     static PassRefPtr<IndexKeyCursorImpl> create(int64_t cursorID, LevelDBTransaction* transaction, const IDBBackingStoreCursorLevelDB::CursorOptions& cursorOptions)
     {
@@ -1658,7 +1658,7 @@ bool IndexKeyCursorImpl::loadCurrentRow()
     return true;
 }
 
-class IndexCursorImpl FINAL : public IDBBackingStoreCursorLevelDB {
+class IndexCursorImpl final : public IDBBackingStoreCursorLevelDB {
 public:
     static PassRefPtr<IndexCursorImpl> create(int64_t cursorID, LevelDBTransaction* transaction, const IDBBackingStoreCursorLevelDB::CursorOptions& cursorOptions)
     {

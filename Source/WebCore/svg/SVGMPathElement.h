@@ -32,7 +32,7 @@ namespace WebCore {
     
 class SVGPathElement;
 
-class SVGMPathElement FINAL : public SVGElement,
+class SVGMPathElement final : public SVGElement,
                               public SVGURIReference,
                               public SVGExternalResourcesRequired {
 public:

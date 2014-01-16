@@ -73,8 +73,8 @@ public:
     }
     virtual ~TextTrack();
 
-    virtual EventTargetInterface eventTargetInterface() const override FINAL { return TextTrackEventTargetInterfaceType; }
-    virtual ScriptExecutionContext* scriptExecutionContext() const override FINAL { return m_scriptExecutionContext; }
+    virtual EventTargetInterface eventTargetInterface() const override final { return TextTrackEventTargetInterfaceType; }
+    virtual ScriptExecutionContext* scriptExecutionContext() const override final { return m_scriptExecutionContext; }
 
     static TextTrack* captionMenuOffItem();
     static TextTrack* captionMenuAutomaticItem();
@@ -170,8 +170,8 @@ private:
 
     virtual bool enabled() const override;
 
-    virtual void refEventTarget() override FINAL { ref(); }
-    virtual void derefEventTarget() override FINAL { deref(); }
+    virtual void refEventTarget() override final { ref(); }
+    virtual void derefEventTarget() override final { deref(); }
 
 #if ENABLE(VIDEO_TRACK) && ENABLE(WEBVTT_REGIONS)
     TextTrackRegionList* ensureTextTrackRegionList();

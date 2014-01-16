@@ -33,7 +33,7 @@
 
 namespace WebCore {
 
-class MockMediaStreamCenter FINAL : public MediaStreamCenter {
+class MockMediaStreamCenter final : public MediaStreamCenter {
 public:
     static void registerMockMediaStreamCenter();
 

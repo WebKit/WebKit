@@ -34,7 +34,7 @@ namespace WebCore {
 
 class CryptoKeyAES;
 
-class CryptoAlgorithmAES_KW FINAL : public CryptoAlgorithm {
+class CryptoAlgorithmAES_KW final : public CryptoAlgorithm {
 public:
     static const char* const s_name;
     static const CryptoAlgorithmIdentifier s_identifier = CryptoAlgorithmIdentifier::AES_KW;

@@ -44,11 +44,11 @@ class Element;
 
 class RenderLayer::FilterInfo
 #if ENABLE(CSS_SHADERS) && ENABLE(SVG)
-    FINAL : public CustomFilterProgramClient, public CachedSVGDocumentClient
+    final : public CustomFilterProgramClient, public CachedSVGDocumentClient
 #elif ENABLE(CSS_SHADERS)
-    FINAL : public CustomFilterProgramClient
+    final : public CustomFilterProgramClient
 #elif ENABLE(SVG)
-    FINAL : public CachedSVGDocumentClient
+    final : public CachedSVGDocumentClient
 #endif
 {
 public:

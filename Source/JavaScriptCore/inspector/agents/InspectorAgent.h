@@ -44,7 +44,7 @@ class InstrumentingAgents;
 
 typedef String ErrorString;
 
-class JS_EXPORT_PRIVATE InspectorAgent FINAL : public InspectorAgentBase, public InspectorInspectorBackendDispatcherHandler {
+class JS_EXPORT_PRIVATE InspectorAgent final : public InspectorAgentBase, public InspectorInspectorBackendDispatcherHandler {
     WTF_MAKE_NONCOPYABLE(InspectorAgent);
 public:
     InspectorAgent();

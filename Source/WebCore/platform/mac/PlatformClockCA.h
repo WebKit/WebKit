@@ -34,7 +34,7 @@ typedef struct OpaqueCAClock *CAClockRef;
 
 namespace WebCore {
 
-class PlatformClockCA FINAL : public Clock {
+class PlatformClockCA final : public Clock {
 public:
     PlatformClockCA();
     virtual ~PlatformClockCA();

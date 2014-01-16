@@ -35,7 +35,7 @@
 
 namespace API {
 
-class Array FINAL : public ObjectImpl<Object::Type::Array> {
+class Array final : public ObjectImpl<Object::Type::Array> {
 private:
     template <class T>
     struct IsTypePredicate {

@@ -29,7 +29,7 @@ namespace WebCore {
 class ProgressValueElement;
 class RenderProgress;
 
-class HTMLProgressElement FINAL : public LabelableElement {
+class HTMLProgressElement final : public LabelableElement {
 public:
     static const double IndeterminatePosition;
     static const double InvalidPosition;

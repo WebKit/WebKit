@@ -47,7 +47,7 @@ namespace WebCore {
     class AbstractWorker : public RefCounted<AbstractWorker>, public ActiveDOMObject, public EventTargetWithInlineData {
     public:
         // EventTarget APIs
-        virtual ScriptExecutionContext* scriptExecutionContext() const override FINAL { return ActiveDOMObject::scriptExecutionContext(); }
+        virtual ScriptExecutionContext* scriptExecutionContext() const override final { return ActiveDOMObject::scriptExecutionContext(); }
 
         DEFINE_ATTRIBUTE_EVENT_LISTENER(error);
 
@@ -64,8 +64,8 @@ namespace WebCore {
         intptr_t asID() const { return reinterpret_cast<intptr_t>(this); }
 
     private:
-        virtual void refEventTarget() override FINAL { ref(); }
-        virtual void derefEventTarget() override FINAL { deref(); }
+        virtual void refEventTarget() override final { ref(); }
+        virtual void derefEventTarget() override final { deref(); }
     };
 
 } // namespace WebCore

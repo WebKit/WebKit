@@ -36,7 +36,7 @@
 
 namespace WebCore {
 
-class SVGImageForContainer FINAL : public Image {
+class SVGImageForContainer final : public Image {
 public:
     static PassRefPtr<SVGImageForContainer> create(SVGImage* image, const FloatSize& containerSize, float zoom)
     {

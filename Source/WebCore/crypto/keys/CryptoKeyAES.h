@@ -34,7 +34,7 @@
 
 namespace WebCore {
 
-class CryptoKeyAES FINAL : public CryptoKey {
+class CryptoKeyAES final : public CryptoKey {
 public:
     static PassRefPtr<CryptoKeyAES> create(CryptoAlgorithmIdentifier algorithm, const Vector<uint8_t>& key, bool extractable, CryptoKeyUsage usage)
     {

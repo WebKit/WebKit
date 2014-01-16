@@ -47,7 +47,7 @@ class RenderNamedFlowThread;
 
 class RenderRegion : public RenderBlockFlow {
 public:
-    virtual bool isRenderRegion() const override FINAL { return true; }
+    virtual bool isRenderRegion() const override final { return true; }
 
     virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle);
 

@@ -34,7 +34,7 @@ namespace WebCore {
 
 class HTMLPlugInImageElement;
 
-class RenderSnapshottedPlugIn FINAL : public RenderEmbeddedObject {
+class RenderSnapshottedPlugIn final : public RenderEmbeddedObject {
 public:
     RenderSnapshottedPlugIn(HTMLPlugInImageElement&, PassRef<RenderStyle>);
     virtual ~RenderSnapshottedPlugIn();
@@ -49,11 +49,11 @@ private:
     void frameOwnerElement() const WTF_DELETED_FUNCTION;
     virtual const char* renderName() const { return "RenderSnapshottedPlugIn"; }
 
-    virtual CursorDirective getCursor(const LayoutPoint&, Cursor&) const override FINAL;
-    virtual bool isSnapshottedPlugIn() const override FINAL { return true; }
+    virtual CursorDirective getCursor(const LayoutPoint&, Cursor&) const override final;
+    virtual bool isSnapshottedPlugIn() const override final { return true; }
     virtual void paint(PaintInfo&, const LayoutPoint&) override;
     
-    virtual bool canHaveWidget() const override FINAL { return false; }
+    virtual bool canHaveWidget() const override final { return false; }
 
     void paintSnapshot(PaintInfo&, const LayoutPoint&);
 

@@ -30,7 +30,7 @@ class InlineElementBox;
 class HTMLElement;
 class Position;
 
-class RenderLineBreak FINAL : public RenderBoxModelObject {
+class RenderLineBreak final : public RenderBoxModelObject {
 public:
     RenderLineBreak(HTMLElement&, PassRef<RenderStyle>);
     virtual ~RenderLineBreak();
@@ -56,7 +56,7 @@ private:
     void node() const WTF_DELETED_FUNCTION;
 
     virtual bool canHaveChildren() const override { return false; }
-    virtual void paint(PaintInfo&, const LayoutPoint&) override FINAL { }
+    virtual void paint(PaintInfo&, const LayoutPoint&) override final { }
 
     virtual VisiblePosition positionForPoint(const LayoutPoint&) override;
     virtual int caretMinOffset() const override;

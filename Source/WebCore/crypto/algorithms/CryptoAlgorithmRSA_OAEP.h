@@ -35,7 +35,7 @@ namespace WebCore {
 class CryptoAlgorithmRsaOaepParams;
 class CryptoKeyRSA;
 
-class CryptoAlgorithmRSA_OAEP FINAL : public CryptoAlgorithm {
+class CryptoAlgorithmRSA_OAEP final : public CryptoAlgorithm {
 public:
     static const char* const s_name;
     static const CryptoAlgorithmIdentifier s_identifier = CryptoAlgorithmIdentifier::RSA_OAEP;

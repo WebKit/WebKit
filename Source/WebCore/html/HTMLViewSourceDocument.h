@@ -33,7 +33,7 @@ class HTMLTableCellElement;
 class HTMLTableSectionElement;
 class HTMLToken;
 
-class HTMLViewSourceDocument FINAL : public HTMLDocument {
+class HTMLViewSourceDocument final : public HTMLDocument {
 public:
     static PassRefPtr<HTMLViewSourceDocument> create(Frame* frame, const URL& url, const String& mimeType)
     {

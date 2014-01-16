@@ -29,7 +29,7 @@
 
 namespace WebCore {
 
-class BeforeUnloadEvent FINAL : public Event {
+class BeforeUnloadEvent final : public Event {
 public:
     virtual ~BeforeUnloadEvent();
 

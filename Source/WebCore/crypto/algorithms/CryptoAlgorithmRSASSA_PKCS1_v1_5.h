@@ -35,7 +35,7 @@ namespace WebCore {
 class CryptoAlgorithmRsaSsaParams;
 class CryptoKeyRSA;
 
-class CryptoAlgorithmRSASSA_PKCS1_v1_5 FINAL : public CryptoAlgorithm {
+class CryptoAlgorithmRSASSA_PKCS1_v1_5 final : public CryptoAlgorithm {
 public:
     static const char* const s_name;
     static const CryptoAlgorithmIdentifier s_identifier = CryptoAlgorithmIdentifier::RSASSA_PKCS1_v1_5;

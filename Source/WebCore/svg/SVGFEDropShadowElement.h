@@ -27,7 +27,7 @@
 
 namespace WebCore {
     
-class SVGFEDropShadowElement FINAL : public SVGFilterPrimitiveStandardAttributes {
+class SVGFEDropShadowElement final : public SVGFilterPrimitiveStandardAttributes {
 public:
     static PassRefPtr<SVGFEDropShadowElement> create(const QualifiedName&, Document&);
     

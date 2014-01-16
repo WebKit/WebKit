@@ -33,7 +33,7 @@ namespace WebCore {
 
 class ContainerNode;
 
-class EmptyNodeList FINAL : public NodeList {
+class EmptyNodeList final : public NodeList {
 public:
     static PassRefPtr<EmptyNodeList> create(Node& owner)
     {
@@ -55,7 +55,7 @@ private:
     Ref<Node> m_owner;
 };
 
-class ChildNodeList FINAL : public NodeList {
+class ChildNodeList final : public NodeList {
 public:
     static PassRefPtr<ChildNodeList> create(ContainerNode& parent)
     {

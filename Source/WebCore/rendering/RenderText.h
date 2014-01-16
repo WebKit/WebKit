@@ -61,13 +61,13 @@ public:
     InlineTextBox* createInlineTextBox() { return m_lineBoxes.createAndAppendLineBox(*this); }
     void dirtyLineBoxes(bool fullLayout);
 
-    virtual void absoluteRects(Vector<IntRect>&, const LayoutPoint& accumulatedOffset) const override FINAL;
+    virtual void absoluteRects(Vector<IntRect>&, const LayoutPoint& accumulatedOffset) const override final;
     Vector<IntRect> absoluteRectsForRange(unsigned startOffset = 0, unsigned endOffset = UINT_MAX, bool useSelectionHeight = false, bool* wasFixed = nullptr) const;
 #if PLATFORM(IOS)
     virtual void collectSelectionRects(Vector<SelectionRect>&, unsigned startOffset = 0, unsigned endOffset = std::numeric_limits<unsigned>::max()) override;
 #endif
 
-    virtual void absoluteQuads(Vector<FloatQuad>&, bool* wasFixed) const override FINAL;
+    virtual void absoluteQuads(Vector<FloatQuad>&, bool* wasFixed) const override final;
     Vector<FloatQuad> absoluteQuadsForRange(unsigned startOffset = 0, unsigned endOffset = UINT_MAX, bool useSelectionHeight = false, bool* wasFixed = nullptr) const;
 
     Vector<FloatQuad> absoluteQuadsClippedToEllipsis() const;
@@ -108,14 +108,14 @@ public:
     void setTextWithOffset(const String&, unsigned offset, unsigned len, bool force = false);
 
     virtual bool canBeSelectionLeaf() const override { return true; }
-    virtual void setSelectionState(SelectionState s) override FINAL;
+    virtual void setSelectionState(SelectionState) override final;
     virtual LayoutRect selectionRectForRepaint(const RenderLayerModelObject* repaintContainer, bool clipToVisibleContent = true) override;
     virtual LayoutRect localCaretRect(InlineBox*, int caretOffset, LayoutUnit* extraWidthToEndOfLine = 0) override;
 
     LayoutUnit marginLeft() const { return minimumValueForLength(style().marginLeft(), 0); }
     LayoutUnit marginRight() const { return minimumValueForLength(style().marginRight(), 0); }
 
-    virtual LayoutRect clippedOverflowRectForRepaint(const RenderLayerModelObject* repaintContainer) const override FINAL;
+    virtual LayoutRect clippedOverflowRectForRepaint(const RenderLayerModelObject* repaintContainer) const override final;
 
     InlineTextBox* firstTextBox() const { return m_lineBoxes.first(); }
     InlineTextBox* lastTextBox() const { return m_lineBoxes.last(); }
@@ -127,9 +127,9 @@ public:
     bool containsCaretOffset(unsigned) const;
     bool hasRenderedText() const;
 
-    virtual int previousOffset(int current) const override FINAL;
-    virtual int previousOffsetForBackwardDeletion(int current) const override FINAL;
-    virtual int nextOffset(int current) const override FINAL;
+    virtual int previousOffset(int current) const override final;
+    virtual int previousOffsetForBackwardDeletion(int current) const override final;
+    virtual int nextOffset(int current) const override final;
 
     bool containsReversedText() const { return m_containsReversedText; }
 
@@ -165,7 +165,7 @@ protected:
     virtual UChar previousCharacter() const;
 
 private:
-    virtual bool canHaveChildren() const override FINAL { return false; }
+    virtual bool canHaveChildren() const override final { return false; }
 
     void computePreferredLogicalWidths(float leadWidth, HashSet<const SimpleFontData*>& fallbackFonts, GlyphOverflow&);
 
@@ -174,9 +174,9 @@ private:
     // Make length() private so that callers that have a RenderText*
     // will use the more efficient textLength() instead, while
     // callers with a RenderObject* can continue to use length().
-    virtual unsigned length() const override FINAL { return textLength(); }
+    virtual unsigned length() const override final { return textLength(); }
 
-    virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation&, const LayoutPoint&, HitTestAction) override FINAL { ASSERT_NOT_REACHED(); return false; }
+    virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation&, const LayoutPoint&, HitTestAction) override final { ASSERT_NOT_REACHED(); return false; }
 
     bool containsOnlyWhitespace(unsigned from, unsigned len) const;
     float widthFromCache(const Font&, int start, int len, float xPos, HashSet<const SimpleFontData*>* fallbackFonts, GlyphOverflow*, const RenderStyle&) const;

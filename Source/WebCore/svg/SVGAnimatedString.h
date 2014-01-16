@@ -38,7 +38,7 @@ DEFINE_ANIMATED_PROPERTY(AnimatedString, OwnerType, DOMAttribute, DOMAttribute.l
 
 class SVGAnimationElement;
 
-class SVGAnimatedStringAnimator FINAL : public SVGAnimatedTypeAnimator {
+class SVGAnimatedStringAnimator final : public SVGAnimatedTypeAnimator {
 public:
     SVGAnimatedStringAnimator(SVGAnimationElement*, SVGElement*);
 

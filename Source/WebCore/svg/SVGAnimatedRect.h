@@ -39,7 +39,7 @@ DEFINE_ANIMATED_PROPERTY(AnimatedRect, OwnerType, DOMAttribute, DOMAttribute.loc
 
 class SVGAnimationElement;
 
-class SVGAnimatedRectAnimator FINAL : public SVGAnimatedTypeAnimator {
+class SVGAnimatedRectAnimator final : public SVGAnimatedTypeAnimator {
 public:
     SVGAnimatedRectAnimator(SVGAnimationElement*, SVGElement*);
 

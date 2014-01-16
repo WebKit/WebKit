@@ -40,7 +40,7 @@ namespace WebCore {
 
 struct PatternAttributes;
  
-class SVGPatternElement FINAL : public SVGElement,
+class SVGPatternElement final : public SVGElement,
                                 public SVGURIReference,
                                 public SVGTests,
                                 public SVGExternalResourcesRequired,

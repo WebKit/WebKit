@@ -30,7 +30,7 @@
 
 namespace WebCore {
 
-class SinkDocumentParser FINAL : public RawDataDocumentParser {
+class SinkDocumentParser final : public RawDataDocumentParser {
 public:
     static PassRefPtr<SinkDocumentParser> create(SinkDocument& document)
     {

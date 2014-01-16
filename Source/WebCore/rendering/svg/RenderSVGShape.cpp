@@ -49,7 +49,7 @@
 
 namespace WebCore {
 
-class BoundingRectStrokeStyleApplier FINAL : public StrokeStyleApplier {
+class BoundingRectStrokeStyleApplier final : public StrokeStyleApplier {
 public:
     BoundingRectStrokeStyleApplier(const RenderSVGShape& renderer)
         : m_renderer(renderer)

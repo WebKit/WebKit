@@ -112,12 +112,12 @@ private:
     virtual bool isMouseFocusable() const override;
     virtual bool isKeyboardFocusable(KeyboardEvent*) const override;
     virtual void defaultEventHandler(Event*) override;
-    virtual void setActive(bool active = true, bool pause = false) override FINAL;
+    virtual void setActive(bool active = true, bool pause = false) override final;
     virtual void accessKeyAction(bool sendMouseEvents) override;
     virtual bool isURLAttribute(const Attribute&) const override;
     virtual bool canStartSelection() const override;
     virtual String target() const override;
-    virtual short tabIndex() const override FINAL;
+    virtual short tabIndex() const override final;
     virtual bool draggable() const override;
 
     void sendPings(const URL& destinationURL);

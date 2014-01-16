@@ -28,7 +28,7 @@ namespace WebCore {
 
 // FIXME: This class is never instantiated. Maybe it should be removed.
 
-class Notation FINAL : public ContainerNode {
+class Notation final : public ContainerNode {
 public:
     const String& publicId() const { return m_publicId; }
     const String& systemId() const { return m_systemId; }

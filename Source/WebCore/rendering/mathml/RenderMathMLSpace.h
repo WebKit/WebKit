@@ -33,7 +33,7 @@
 
 namespace WebCore {
     
-class RenderMathMLSpace FINAL : public RenderMathMLBlock {
+class RenderMathMLSpace final : public RenderMathMLBlock {
 public:
     RenderMathMLSpace(MathMLTextElement&, PassRef<RenderStyle>);
     MathMLTextElement& element() { return static_cast<MathMLTextElement&>(nodeForNonAnonymous()); }

@@ -28,7 +28,7 @@
 
 namespace WebCore {
 
-class HTMLFontElement FINAL : public HTMLElement {
+class HTMLFontElement final : public HTMLElement {
 public:
     static PassRefPtr<HTMLFontElement> create(const QualifiedName&, Document&);
     

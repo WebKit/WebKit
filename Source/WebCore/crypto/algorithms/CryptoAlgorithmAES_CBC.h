@@ -35,7 +35,7 @@ namespace WebCore {
 class CryptoAlgorithmAesCbcParams;
 class CryptoKeyAES;
 
-class CryptoAlgorithmAES_CBC FINAL : public CryptoAlgorithm {
+class CryptoAlgorithmAES_CBC final : public CryptoAlgorithm {
 public:
     static const char* const s_name;
     static const CryptoAlgorithmIdentifier s_identifier = CryptoAlgorithmIdentifier::AES_CBC;

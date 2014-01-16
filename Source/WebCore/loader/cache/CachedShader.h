@@ -38,7 +38,7 @@ namespace WebCore {
 
 class TextResourceDecoder;
 
-class CachedShader FINAL : public CachedResource {
+class CachedShader final : public CachedResource {
 public:
     CachedShader(const ResourceRequest&);
     virtual ~CachedShader();

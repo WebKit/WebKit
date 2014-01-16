@@ -60,7 +60,7 @@ private:
 
     // NOTE: We put the CanvasObserver in a member instead of inheriting from it
     // to avoid adding a vptr to CSSCanvasValue.
-    class CanvasObserverProxy FINAL : public CanvasObserver {
+    class CanvasObserverProxy final : public CanvasObserver {
     public:
         explicit CanvasObserverProxy(CSSCanvasValue& ownerValue)
             : m_ownerValue(ownerValue)

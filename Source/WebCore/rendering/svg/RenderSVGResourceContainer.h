@@ -34,10 +34,10 @@ public:
     virtual ~RenderSVGResourceContainer();
 
     virtual void layout() override;
-    virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle) override FINAL;
+    virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle) override final;
 
-    virtual bool isSVGResourceContainer() const override FINAL { return true; }
-    virtual RenderSVGResourceContainer* toRenderSVGResourceContainer() override FINAL { return this; }
+    virtual bool isSVGResourceContainer() const override final { return true; }
+    virtual RenderSVGResourceContainer* toRenderSVGResourceContainer() override final { return this; }
 
     static bool shouldTransformOnTextPainting(RenderObject*, AffineTransform&);
     static AffineTransform transformOnNonScalingStroke(RenderObject*, const AffineTransform& resourceTransform);
@@ -67,7 +67,7 @@ private:
     void removeClient(RenderObject*);
 
 private:
-    virtual void willBeDestroyed() override FINAL;
+    virtual void willBeDestroyed() override final;
     void registerResource();
 
     AtomicString m_id;

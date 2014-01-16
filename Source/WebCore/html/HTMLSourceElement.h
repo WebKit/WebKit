@@ -32,7 +32,7 @@
 
 namespace WebCore {
 
-class HTMLSourceElement FINAL : public HTMLElement {
+class HTMLSourceElement final : public HTMLElement {
 public:
     static PassRefPtr<HTMLSourceElement> create(const QualifiedName&, Document&);
 

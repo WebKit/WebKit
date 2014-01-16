@@ -38,7 +38,7 @@ namespace WebCore {
 
 class HTMLSelectElement;
 
-class RenderListBox FINAL : public RenderBlockFlow, private ScrollableArea {
+class RenderListBox final : public RenderBlockFlow, private ScrollableArea {
 public:
     RenderListBox(HTMLSelectElement&, PassRef<RenderStyle>);
     virtual ~RenderListBox();

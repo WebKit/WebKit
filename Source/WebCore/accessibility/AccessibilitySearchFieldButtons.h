@@ -30,7 +30,7 @@
 
 namespace WebCore {
 
-class AccessibilitySearchFieldCancelButton FINAL : public AccessibilityRenderObject {
+class AccessibilitySearchFieldCancelButton final : public AccessibilityRenderObject {
 public:
     static PassRefPtr<AccessibilitySearchFieldCancelButton> create(RenderObject*);
     

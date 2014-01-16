@@ -33,7 +33,7 @@
 
 namespace WebCore {
 
-class RenderReplica FINAL : public RenderBox {
+class RenderReplica final : public RenderBox {
 public:
     RenderReplica(Document&, PassRef<RenderStyle>);
     virtual ~RenderReplica();

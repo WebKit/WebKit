@@ -34,7 +34,7 @@
 
 namespace WebCore {
 
-class RTCDataChannelHandlerMock FINAL : public RTCDataChannelHandler, public TimerEventBasedMock {
+class RTCDataChannelHandlerMock final : public RTCDataChannelHandler, public TimerEventBasedMock {
 public:
     RTCDataChannelHandlerMock(const String&, const RTCDataChannelInit&);
     virtual ~RTCDataChannelHandlerMock() { }

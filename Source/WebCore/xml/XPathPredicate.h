@@ -33,7 +33,7 @@ namespace WebCore {
 
     namespace XPath {
         
-        class Number FINAL : public Expression {
+        class Number final : public Expression {
         public:
             explicit Number(double);
 
@@ -44,7 +44,7 @@ namespace WebCore {
             Value m_value;
         };
 
-        class StringExpression FINAL : public Expression {
+        class StringExpression final : public Expression {
         public:
             explicit StringExpression(String&&);
 
@@ -55,7 +55,7 @@ namespace WebCore {
             Value m_value;
         };
 
-        class Negative FINAL : public Expression {
+        class Negative final : public Expression {
         public:
             explicit Negative(std::unique_ptr<Expression>);
 
@@ -64,7 +64,7 @@ namespace WebCore {
             virtual Value::Type resultType() const override { return Value::NumberValue; }
         };
 
-        class NumericOp FINAL : public Expression {
+        class NumericOp final : public Expression {
         public:
             enum Opcode { OP_Add, OP_Sub, OP_Mul, OP_Div, OP_Mod };
             NumericOp(Opcode, std::unique_ptr<Expression> lhs, std::unique_ptr<Expression> rhs);
@@ -76,7 +76,7 @@ namespace WebCore {
             Opcode m_opcode;
         };
 
-        class EqTestOp FINAL : public Expression {
+        class EqTestOp final : public Expression {
         public:
             enum Opcode { OP_EQ, OP_NE, OP_GT, OP_LT, OP_GE, OP_LE };
             EqTestOp(Opcode, std::unique_ptr<Expression> lhs, std::unique_ptr<Expression> rhs);
@@ -89,7 +89,7 @@ namespace WebCore {
             Opcode m_opcode;
         };
 
-        class LogicalOp FINAL : public Expression {
+        class LogicalOp final : public Expression {
         public:
             enum Opcode { OP_And, OP_Or };
             LogicalOp(Opcode, std::unique_ptr<Expression> lhs, std::unique_ptr<Expression> rhs);
@@ -102,7 +102,7 @@ namespace WebCore {
             Opcode m_opcode;
         };
 
-        class Union FINAL : public Expression {
+        class Union final : public Expression {
         public:
             Union(std::unique_ptr<Expression>, std::unique_ptr<Expression>);
 

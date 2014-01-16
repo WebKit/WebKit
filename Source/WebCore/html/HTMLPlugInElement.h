@@ -121,7 +121,7 @@ private:
     virtual bool supportsFocus() const override;
 
     virtual bool isKeyboardFocusable(KeyboardEvent*) const override;
-    virtual bool isPluginElement() const override FINAL;
+    virtual bool isPluginElement() const override final;
 
     RefPtr<JSC::Bindings::Instance> m_instance;
     Timer<HTMLPlugInElement> m_swapRendererTimer;

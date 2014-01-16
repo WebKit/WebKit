@@ -32,7 +32,7 @@
 
 namespace WebCore {
 
-class SynchronousResourceHandleCFURLConnectionDelegate FINAL : public ResourceHandleCFURLConnectionDelegate {
+class SynchronousResourceHandleCFURLConnectionDelegate final : public ResourceHandleCFURLConnectionDelegate {
 public:
     SynchronousResourceHandleCFURLConnectionDelegate(ResourceHandle*);
 

@@ -31,7 +31,7 @@ namespace WebCore {
 class BeforeTextInsertedEvent;
 class VisibleSelection;
 
-class HTMLTextAreaElement FINAL : public HTMLTextFormControlElement {
+class HTMLTextAreaElement final : public HTMLTextFormControlElement {
 public:
     static PassRefPtr<HTMLTextAreaElement> create(const QualifiedName&, Document&, HTMLFormElement*);
 

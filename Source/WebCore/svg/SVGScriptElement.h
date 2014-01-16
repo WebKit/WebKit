@@ -31,7 +31,7 @@
 
 namespace WebCore {
 
-class SVGScriptElement FINAL : public SVGElement
+class SVGScriptElement final : public SVGElement
                              , public SVGURIReference
                              , public SVGExternalResourcesRequired
                              , public ScriptElement {

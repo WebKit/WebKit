@@ -32,7 +32,7 @@
 
 namespace WebCore {
 
-class CryptoAlgorithmSHA384 FINAL : public CryptoAlgorithm {
+class CryptoAlgorithmSHA384 final : public CryptoAlgorithm {
 public:
     static const char* const s_name;
     static const CryptoAlgorithmIdentifier s_identifier = CryptoAlgorithmIdentifier::SHA_384;

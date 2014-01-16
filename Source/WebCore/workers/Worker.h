@@ -47,7 +47,7 @@ namespace WebCore {
 
     typedef int ExceptionCode;
 
-    class Worker FINAL : public AbstractWorker, private WorkerScriptLoaderClient {
+    class Worker final : public AbstractWorker, private WorkerScriptLoaderClient {
     public:
         static PassRefPtr<Worker> create(ScriptExecutionContext&, const String& url, ExceptionCode&);
         virtual ~Worker();

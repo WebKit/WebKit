@@ -68,7 +68,7 @@ public:
     bool ignoreInAccessibilityTree() const { return m_ignoreInAccessibilityTree; }
     
 private:
-    virtual bool isRenderMathMLBlock() const override FINAL { return true; }
+    virtual bool isRenderMathMLBlock() const override final { return true; }
     virtual const char* renderName() const override;
 
     bool m_ignoreInAccessibilityTree;
@@ -77,7 +77,7 @@ private:
 template<> inline bool isRendererOfType<const RenderMathMLBlock>(const RenderObject& renderer) { return renderer.isRenderMathMLBlock(); }
 RENDER_OBJECT_TYPE_CASTS(RenderMathMLBlock, isRenderMathMLBlock())
 
-class RenderMathMLTable FINAL : public RenderTable {
+class RenderMathMLTable final : public RenderTable {
 public:
     explicit RenderMathMLTable(Element& element, PassRef<RenderStyle> style)
         : RenderTable(element, std::move(style))

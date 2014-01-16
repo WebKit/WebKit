@@ -38,7 +38,7 @@
 
 namespace WebCore {
 
-class MediaSourceGStreamer FINAL : public MediaSourcePrivate {
+class MediaSourceGStreamer final : public MediaSourcePrivate {
 public:
     static void open(PassRefPtr<HTMLMediaSource>, WebKitMediaSrc*);
     ~MediaSourceGStreamer();

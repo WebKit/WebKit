@@ -38,7 +38,7 @@
 
 namespace WebCore {
 
-    class SharedWorker FINAL : public AbstractWorker {
+    class SharedWorker final : public AbstractWorker {
     public:
         static PassRefPtr<SharedWorker> create(ScriptExecutionContext&, const String& url, const String& name, ExceptionCode&);
         virtual ~SharedWorker();

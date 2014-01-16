@@ -32,7 +32,7 @@
 
 namespace WebCore {
 
-class SVGCursorElement FINAL : public SVGElement,
+class SVGCursorElement final : public SVGElement,
                                public SVGTests,
                                public SVGExternalResourcesRequired,
                                public SVGURIReference {

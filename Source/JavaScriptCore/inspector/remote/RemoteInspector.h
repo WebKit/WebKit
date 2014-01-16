@@ -43,7 +43,7 @@ class RemoteInspectorDebuggable;
 class RemoteInspectorDebuggableConnection;
 struct RemoteInspectorDebuggableInfo;
 
-class JS_EXPORT_PRIVATE RemoteInspector FINAL : public RemoteInspectorXPCConnection::Client {
+class JS_EXPORT_PRIVATE RemoteInspector final : public RemoteInspectorXPCConnection::Client {
 public:
     static void startDisabled();
     static RemoteInspector& shared();

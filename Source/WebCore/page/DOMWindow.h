@@ -86,7 +86,7 @@ namespace WebCore {
     enum SetLocationLocking { LockHistoryBasedOnGestureState, LockHistoryAndBackForwardList };
 
     // FIXME: DOMWindow shouldn't subclass FrameDestructionObserver and instead should get to Frame via its Document.
-    class DOMWindow FINAL
+    class DOMWindow final
         : public RefCounted<DOMWindow>
         , public EventTargetWithInlineData
         , public ContextDestructionObserver

@@ -43,7 +43,7 @@ typedef ListHashSet<RenderNamedFlowThread*> RenderNamedFlowThreadList;
 typedef HashCountedSet<RenderNamedFlowThread*> RenderNamedFlowThreadCountedSet;
 typedef ListHashSet<Element*> NamedFlowContentElements;
 
-class RenderNamedFlowThread FINAL : public RenderFlowThread {
+class RenderNamedFlowThread final : public RenderFlowThread {
 public:
     RenderNamedFlowThread(Document&, PassRef<RenderStyle>, PassRefPtr<WebKitNamedFlow>);
     virtual ~RenderNamedFlowThread();
@@ -90,7 +90,7 @@ public:
 
     void clearRenderObjectCustomStyle(const RenderObject*);
 
-    virtual void removeFlowChildInfo(RenderObject*) override FINAL;
+    virtual void removeFlowChildInfo(RenderObject*) override final;
 
 protected:
     void setMarkForDestruction();

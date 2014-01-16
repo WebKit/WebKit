@@ -94,7 +94,7 @@ struct SVGPropertyTraits<TurbulenceType> {
     }
 };
 
-class SVGFETurbulenceElement FINAL : public SVGFilterPrimitiveStandardAttributes {
+class SVGFETurbulenceElement final : public SVGFilterPrimitiveStandardAttributes {
 public:
     static PassRefPtr<SVGFETurbulenceElement> create(const QualifiedName&, Document&);
 

@@ -33,7 +33,7 @@ namespace WebCore {
 class RenderSVGText;
 class SVGInlineTextBox;
 
-class SVGRootInlineBox FINAL : public RootInlineBox {
+class SVGRootInlineBox final : public RootInlineBox {
 public:
     SVGRootInlineBox(RenderSVGText&);
 

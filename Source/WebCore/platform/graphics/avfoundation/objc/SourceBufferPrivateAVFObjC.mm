@@ -202,7 +202,7 @@ namespace WebCore {
 #pragma mark -
 #pragma mark MediaSampleAVFObjC
 
-class MediaSampleAVFObjC FINAL : public MediaSample {
+class MediaSampleAVFObjC final : public MediaSample {
 public:
     static RefPtr<MediaSampleAVFObjC> create(CMSampleBufferRef sample, int trackID) { return adoptRef(new MediaSampleAVFObjC(sample, trackID)); }
     virtual ~MediaSampleAVFObjC() { }
@@ -259,7 +259,7 @@ MediaSample::SampleFlags MediaSampleAVFObjC::flags() const
 #pragma mark -
 #pragma mark MediaDescriptionAVFObjC
 
-class MediaDescriptionAVFObjC FINAL : public MediaDescription {
+class MediaDescriptionAVFObjC final : public MediaDescription {
 public:
     static RefPtr<MediaDescriptionAVFObjC> create(AVAssetTrack* track) { return adoptRef(new MediaDescriptionAVFObjC(track)); }
     virtual ~MediaDescriptionAVFObjC() { }

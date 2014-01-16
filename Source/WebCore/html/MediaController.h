@@ -43,7 +43,7 @@ class HTMLMediaElement;
 class Event;
 class ScriptExecutionContext;
 
-class MediaController FINAL : public RefCounted<MediaController>, public MediaControllerInterface, public EventTargetWithInlineData {
+class MediaController final : public RefCounted<MediaController>, public MediaControllerInterface, public EventTargetWithInlineData {
 public:
     static PassRefPtr<MediaController> create(ScriptExecutionContext&);
     virtual ~MediaController();

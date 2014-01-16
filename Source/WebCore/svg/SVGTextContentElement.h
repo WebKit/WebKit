@@ -106,7 +106,7 @@ protected:
     virtual bool selfHasRelativeLengths() const;
 
 private:
-    virtual bool isTextContent() const override FINAL { return true; }
+    virtual bool isTextContent() const override final { return true; }
 
     // Custom 'textLength' property
     static void synchronizeTextLength(SVGElement* contextElement);

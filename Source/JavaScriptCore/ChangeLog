@@ -1,3 +1,19 @@
+2014-01-16  Anders Carlsson  <andersca@apple.com>
+
+        Change all uses of FINAL to final now that all our compilers support it
+        https://bugs.webkit.org/show_bug.cgi?id=127142
+
+        Reviewed by Benjamin Poulain.
+
+        * inspector/JSGlobalObjectInspectorController.h:
+        * inspector/agents/InspectorAgent.h:
+        * inspector/remote/RemoteInspector.h:
+        * inspector/remote/RemoteInspectorDebuggableConnection.h:
+        * inspector/scripts/CodeGeneratorInspector.py:
+        (Generator.go):
+        * runtime/JSGlobalObjectDebuggable.h:
+        * runtime/JSPromiseReaction.cpp:
+
 2014-01-16  Oliver Hunt  <oliver@apple.com>
 
         throwing an objc object (or general binding object) triggers an assertion

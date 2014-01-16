@@ -28,7 +28,7 @@
 
 namespace WebCore {
 
-class HTMLButtonElement FINAL : public HTMLFormControlElement {
+class HTMLButtonElement final : public HTMLFormControlElement {
 public:
     static PassRefPtr<HTMLButtonElement> create(const QualifiedName&, Document&, HTMLFormElement*);
 

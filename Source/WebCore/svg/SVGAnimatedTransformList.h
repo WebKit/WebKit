@@ -37,7 +37,7 @@ DEFINE_ANIMATED_PROPERTY(AnimatedTransformList, OwnerType, DOMAttribute, DOMAttr
 
 class SVGAnimationElement;
 
-class SVGAnimatedTransformListAnimator FINAL : public SVGAnimatedTypeAnimator {
+class SVGAnimatedTransformListAnimator final : public SVGAnimatedTypeAnimator {
 public:
     SVGAnimatedTransformListAnimator(SVGAnimationElement*, SVGElement*);
 

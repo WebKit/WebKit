@@ -29,7 +29,7 @@ namespace WebCore {
 class RenderObject;
 class RenderSVGResource;
 
-class SVGTextRunRenderingContext FINAL : public TextRun::RenderingContext {
+class SVGTextRunRenderingContext final : public TextRun::RenderingContext {
 public:
     static PassRef<SVGTextRunRenderingContext> create(RenderObject& renderer)
     {

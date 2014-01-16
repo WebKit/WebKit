@@ -33,7 +33,7 @@ class HitTestResult;
 class HTMLImageElement;
 class Path;
 
-class HTMLAreaElement FINAL : public HTMLAnchorElement {
+class HTMLAreaElement final : public HTMLAnchorElement {
 public:
     static PassRefPtr<HTMLAreaElement> create(const QualifiedName&, Document&);
 

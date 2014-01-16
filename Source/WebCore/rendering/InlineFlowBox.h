@@ -87,7 +87,7 @@ public:
     InlineBox* firstChild() const { checkConsistency(); return m_firstChild; }
     InlineBox* lastChild() const { checkConsistency(); return m_lastChild; }
 
-    virtual bool isLeaf() const override FINAL { return false; }
+    virtual bool isLeaf() const override final { return false; }
     
     InlineBox* firstLeafChild() const;
     InlineBox* lastLeafChild() const;
@@ -95,7 +95,7 @@ public:
     typedef void (*CustomInlineBoxRangeReverse)(void* userData, Vector<InlineBox*>::iterator first, Vector<InlineBox*>::iterator last);
     void collectLeafBoxesInLogicalOrder(Vector<InlineBox*>&, CustomInlineBoxRangeReverse customReverseImplementation = 0, void* userData = 0) const;
 
-    virtual void setConstructed() override FINAL
+    virtual void setConstructed() override final
     {
         InlineBox::setConstructed();
         for (InlineBox* child = firstChild(); child; child = child->nextOnLine())
@@ -103,9 +103,9 @@ public:
     }
 
     void addToLine(InlineBox* child);
-    virtual void deleteLine() override FINAL;
-    virtual void extractLine() override FINAL;
-    virtual void attachLine() override FINAL;
+    virtual void deleteLine() override final;
+    virtual void extractLine() override final;
+    virtual void attachLine() override final;
     virtual void adjustPosition(float dx, float dy) override;
 
     virtual void extractLineBoxFromRenderObject();
@@ -206,7 +206,7 @@ public:
 
     virtual RenderObject::SelectionState selectionState() override;
 
-    virtual bool canAccommodateEllipsis(bool ltr, int blockEdge, int ellipsisWidth) const override FINAL;
+    virtual bool canAccommodateEllipsis(bool ltr, int blockEdge, int ellipsisWidth) const override final;
     virtual float placeEllipsisBox(bool ltr, float blockLeftEdge, float blockRightEdge, float ellipsisWidth, float &truncatedWidth, bool&) override;
 
     bool hasTextChildren() const { return m_hasTextChildren; }
@@ -295,7 +295,7 @@ public:
     }
 
 private:
-    virtual bool isInlineFlowBox() const override FINAL { return true; }
+    virtual bool isInlineFlowBox() const override final { return true; }
     void boxModelObject() const WTF_DELETED_FUNCTION;
 
     void addBoxShadowVisualOverflow(LayoutRect& logicalVisualOverflow);

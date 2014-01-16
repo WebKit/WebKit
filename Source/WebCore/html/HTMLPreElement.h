@@ -27,7 +27,7 @@
 
 namespace WebCore {
 
-class HTMLPreElement FINAL : public HTMLElement {
+class HTMLPreElement final : public HTMLElement {
 public:
     static PassRefPtr<HTMLPreElement> create(const QualifiedName&, Document&);
 

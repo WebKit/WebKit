@@ -36,7 +36,7 @@ namespace WebCore {
 class GenericCueData;
 
 // A "generic" cue is a non-WebVTT cue, so it is not positioned/sized with the WebVTT logic.
-class TextTrackCueGeneric FINAL : public TextTrackCue {
+class TextTrackCueGeneric final : public TextTrackCue {
 public:
     static PassRefPtr<TextTrackCueGeneric> create(ScriptExecutionContext& context, double start, double end, const String& content)
     {

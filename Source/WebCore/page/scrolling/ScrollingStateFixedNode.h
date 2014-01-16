@@ -37,7 +37,7 @@ namespace WebCore {
 
 class FixedPositionViewportConstraints;
 
-class ScrollingStateFixedNode FINAL : public ScrollingStateNode {
+class ScrollingStateFixedNode final : public ScrollingStateNode {
 public:
     static PassOwnPtr<ScrollingStateFixedNode> create(ScrollingStateTree&, ScrollingNodeID);
 

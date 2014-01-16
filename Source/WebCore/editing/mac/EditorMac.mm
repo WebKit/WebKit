@@ -419,7 +419,7 @@ void Editor::writeImageToPasteboard(Pasteboard& pasteboard, Element& imageElemen
     pasteboard.write(pasteboardImage);
 }
 
-class Editor::WebContentReader FINAL : public PasteboardWebContentReader {
+class Editor::WebContentReader final : public PasteboardWebContentReader {
 public:
     Frame& frame;
     Range& context;

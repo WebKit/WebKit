@@ -31,7 +31,7 @@ namespace WebCore {
 class HTMLOListElement;
 class RenderListMarker;
 
-class RenderListItem FINAL : public RenderBlockFlow {
+class RenderListItem final : public RenderBlockFlow {
 public:
     RenderListItem(Element&, PassRef<RenderStyle>);
     Element& element() const { return toElement(nodeForNonAnonymous()); }

@@ -43,7 +43,7 @@ namespace WebCore {
 class URL;
 class MediaSource;
 
-class MediaSourceRegistry FINAL : public URLRegistry {
+class MediaSourceRegistry final : public URLRegistry {
 public:
     // Returns a single instance of MediaSourceRegistry.
     static MediaSourceRegistry& registry();

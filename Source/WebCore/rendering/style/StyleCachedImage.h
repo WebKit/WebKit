@@ -32,7 +32,7 @@ namespace WebCore {
 
 class CachedImage;
 
-class StyleCachedImage FINAL : public StyleImage, private CachedImageClient {
+class StyleCachedImage final : public StyleImage, private CachedImageClient {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     static PassRefPtr<StyleCachedImage> create(CachedImage* image) { return adoptRef(new StyleCachedImage(image)); }

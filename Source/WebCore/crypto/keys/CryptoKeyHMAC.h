@@ -33,7 +33,7 @@
 
 namespace WebCore {
 
-class CryptoKeyHMAC FINAL : public CryptoKey {
+class CryptoKeyHMAC final : public CryptoKey {
 public:
     static PassRefPtr<CryptoKeyHMAC> create(const Vector<uint8_t>& key, CryptoAlgorithmIdentifier hash, bool extractable, CryptoKeyUsage usage)
     {

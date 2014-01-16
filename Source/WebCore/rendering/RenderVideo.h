@@ -34,7 +34,7 @@ namespace WebCore {
 
 class HTMLVideoElement;
 
-class RenderVideo FINAL : public RenderMedia {
+class RenderVideo final : public RenderMedia {
 public:
     RenderVideo(HTMLVideoElement&, PassRef<RenderStyle>);
     virtual ~RenderVideo();

@@ -95,7 +95,7 @@ static const QualifiedName& frameOwnerURLAttributeName(const HTMLFrameOwnerEleme
     return isHTMLObjectElement(frameOwner) ? HTMLNames::dataAttr : HTMLNames::srcAttr;
 }
 
-class SerializerMarkupAccumulator FINAL : public WebCore::MarkupAccumulator {
+class SerializerMarkupAccumulator final : public WebCore::MarkupAccumulator {
 public:
     SerializerMarkupAccumulator(PageSerializer&, Document&, Vector<Node*>*);
     virtual ~SerializerMarkupAccumulator();

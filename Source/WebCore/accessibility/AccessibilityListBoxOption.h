@@ -62,7 +62,7 @@ public:
 
     virtual LayoutRect elementRect() const override;
     virtual AccessibilityObject* parentObject() const override;
-    virtual bool isListBoxOption() const override FINAL { return true; }
+    virtual bool isListBoxOption() const override final { return true; }
 
 private:
     HTMLElement* m_optionElement;

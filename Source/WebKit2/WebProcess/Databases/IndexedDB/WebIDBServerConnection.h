@@ -37,7 +37,7 @@ namespace WebKit {
 
 class AsyncRequest;
 
-class WebIDBServerConnection FINAL : public WebCore::IDBServerConnection, public IPC::MessageSender {
+class WebIDBServerConnection final : public WebCore::IDBServerConnection, public IPC::MessageSender {
 public:
     static PassRefPtr<WebIDBServerConnection> create(const String& databaseName, const WebCore::SecurityOrigin& openingOrigin, const WebCore::SecurityOrigin& mainFrameOrigin);
 

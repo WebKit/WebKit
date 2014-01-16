@@ -30,7 +30,7 @@ namespace WebCore {
 
 class HTMLFormElement;
 
-class HTMLObjectElement FINAL : public HTMLPlugInImageElement, public FormAssociatedElement {
+class HTMLObjectElement final : public HTMLPlugInImageElement, public FormAssociatedElement {
 public:
     static PassRefPtr<HTMLObjectElement> create(const QualifiedName&, Document&, HTMLFormElement*, bool createdByParser);
     virtual ~HTMLObjectElement();
@@ -100,9 +100,9 @@ private:
     virtual void derefFormAssociatedElement() { deref(); }
     virtual HTMLFormElement* virtualForm() const;
 
-    virtual FormNamedItem* asFormNamedItem() override FINAL { return this; }
-    virtual HTMLObjectElement& asHTMLElement() override FINAL { return *this; }
-    virtual const HTMLObjectElement& asHTMLElement() const override FINAL { return *this; }
+    virtual FormNamedItem* asFormNamedItem() override final { return this; }
+    virtual HTMLObjectElement& asHTMLElement() override final { return *this; }
+    virtual const HTMLObjectElement& asHTMLElement() const override final { return *this; }
 
     String m_classId;
     bool m_docNamedItem : 1;

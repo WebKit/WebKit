@@ -33,7 +33,7 @@ namespace WebCore {
 
 class Element;
 
-class ClassList FINAL : public DOMTokenList {
+class ClassList final : public DOMTokenList {
 public:
     ClassList(Element& element)
         : m_element(element)

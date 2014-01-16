@@ -38,7 +38,7 @@ namespace WebCore {
 class CachedResourceLoader;
 class XSLImportRule;
     
-class XSLStyleSheet FINAL : public StyleSheet {
+class XSLStyleSheet final : public StyleSheet {
 public:
     static PassRefPtr<XSLStyleSheet> create(XSLImportRule* parentImport, const String& originalURL, const URL& finalURL)
     {

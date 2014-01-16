@@ -30,7 +30,7 @@
 
 namespace WebCore {
 
-class TextViewSourceParser FINAL : public HTMLViewSourceParser {
+class TextViewSourceParser final : public HTMLViewSourceParser {
 public:
     static PassRefPtr<TextViewSourceParser> create(HTMLViewSourceDocument& document)
     {

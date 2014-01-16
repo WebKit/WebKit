@@ -30,7 +30,7 @@
 
 namespace WebCore {
 
-class TrailingFloatsRootInlineBox FINAL : public RootInlineBox {
+class TrailingFloatsRootInlineBox final : public RootInlineBox {
 public:
     explicit TrailingFloatsRootInlineBox(RenderBlockFlow& blockFlow)
         : RootInlineBox(blockFlow)

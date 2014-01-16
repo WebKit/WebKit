@@ -36,7 +36,7 @@ namespace JSC {
 
 class JSGlobalObject;
 
-class JSGlobalObjectDebuggable FINAL : public Inspector::RemoteInspectorDebuggable {
+class JSGlobalObjectDebuggable final : public Inspector::RemoteInspectorDebuggable {
     WTF_MAKE_NONCOPYABLE(JSGlobalObjectDebuggable);
 public:
     JSGlobalObjectDebuggable(JSGlobalObject&);

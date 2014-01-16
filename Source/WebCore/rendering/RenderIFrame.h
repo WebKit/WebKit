@@ -32,7 +32,7 @@ namespace WebCore {
 
 class RenderView;
 
-class RenderIFrame FINAL : public RenderFrameBase {
+class RenderIFrame final : public RenderFrameBase {
 public:
     RenderIFrame(HTMLIFrameElement&, PassRef<RenderStyle>);
 

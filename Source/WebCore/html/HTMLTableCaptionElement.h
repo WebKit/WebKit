@@ -30,7 +30,7 @@
 
 namespace WebCore {
 
-class HTMLTableCaptionElement FINAL : public HTMLElement {
+class HTMLTableCaptionElement final : public HTMLElement {
 public:
     static PassRefPtr<HTMLTableCaptionElement> create(const QualifiedName&, Document&);
 

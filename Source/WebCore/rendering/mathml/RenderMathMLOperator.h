@@ -34,7 +34,7 @@
 
 namespace WebCore {
     
-class RenderMathMLOperator FINAL : public RenderMathMLBlock {
+class RenderMathMLOperator final : public RenderMathMLBlock {
 public:
     RenderMathMLOperator(MathMLElement&, PassRef<RenderStyle>);
     RenderMathMLOperator(MathMLElement&, PassRef<RenderStyle>, UChar operatorChar);

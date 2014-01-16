@@ -38,7 +38,7 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-class FormAttributeTargetObserver FINAL : private IdTargetObserver {
+class FormAttributeTargetObserver final : private IdTargetObserver {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     FormAttributeTargetObserver(const AtomicString& id, FormAssociatedElement&);

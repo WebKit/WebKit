@@ -69,17 +69,17 @@ public:
     void setAltText(const String& altText) { m_altText = altText; }
     
 protected:
-    virtual bool needsPreferredWidthsRecalculation() const override FINAL;
-    virtual RenderBox* embeddedContentBox() const override FINAL;
-    virtual void computeIntrinsicRatioInformation(FloatSize& intrinsicSize, double& intrinsicRatio, bool& isPercentageIntrinsicSize) const override FINAL;
+    virtual bool needsPreferredWidthsRecalculation() const override final;
+    virtual RenderBox* embeddedContentBox() const override final;
+    virtual void computeIntrinsicRatioInformation(FloatSize& intrinsicSize, double& intrinsicRatio, bool& isPercentageIntrinsicSize) const override final;
     virtual bool foregroundIsKnownToBeOpaqueInRect(const LayoutRect& localRect, unsigned maxDepthToTest) const override;
 
-    virtual void styleDidChange(StyleDifference, const RenderStyle*) override FINAL;
+    virtual void styleDidChange(StyleDifference, const RenderStyle*) override final;
 
     virtual void imageChanged(WrappedImagePtr, const IntRect* = 0) override;
 
     void paintIntoRect(GraphicsContext*, const LayoutRect&);
-    virtual void paint(PaintInfo&, const LayoutPoint&) override FINAL;
+    virtual void paint(PaintInfo&, const LayoutPoint&) override final;
     virtual void layout() override;
 
     virtual void intrinsicSizeChanged() override
@@ -92,18 +92,18 @@ private:
     virtual const char* renderName() const override { return "RenderImage"; }
 
     virtual bool isImage() const override { return true; }
-    virtual bool isRenderImage() const override FINAL { return true; }
+    virtual bool isRenderImage() const override final { return true; }
 
     virtual void paintReplaced(PaintInfo&, const LayoutPoint&) override;
 
-    virtual bool computeBackgroundIsKnownToBeObscured() override FINAL;
+    virtual bool computeBackgroundIsKnownToBeObscured() override final;
 
     virtual LayoutUnit minimumReplacedHeight() const override;
 
-    virtual void notifyFinished(CachedResource*) override FINAL;
-    virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction) override FINAL;
+    virtual void notifyFinished(CachedResource*) override final;
+    virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction) override final;
 
-    virtual bool boxShadowShouldBeAppliedToBackground(BackgroundBleedAvoidance, InlineFlowBox*) const override FINAL;
+    virtual bool boxShadowShouldBeAppliedToBackground(BackgroundBleedAvoidance, InlineFlowBox*) const override final;
 
     IntSize imageSizeForError(CachedImage*) const;
     void imageDimensionsChanged(bool imageSizeChanged, const IntRect* = 0);

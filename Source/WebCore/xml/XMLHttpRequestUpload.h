@@ -37,7 +37,7 @@ namespace WebCore {
     class ScriptExecutionContext;
     class XMLHttpRequest;
 
-    class XMLHttpRequestUpload FINAL : public EventTargetWithInlineData {
+    class XMLHttpRequestUpload final : public EventTargetWithInlineData {
     public:
         explicit XMLHttpRequestUpload(XMLHttpRequest*);
 
@@ -59,8 +59,8 @@ namespace WebCore {
         void dispatchProgressEvent(const AtomicString &type);
 
     private:
-        virtual void refEventTarget() override FINAL { ref(); }
-        virtual void derefEventTarget() override FINAL { deref(); }
+        virtual void refEventTarget() override final { ref(); }
+        virtual void derefEventTarget() override final { deref(); }
 
         XMLHttpRequest* m_xmlHttpRequest;
         bool m_lengthComputable;

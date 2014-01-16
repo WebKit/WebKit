@@ -45,7 +45,7 @@ class InjectedScriptManager;
 class InspectorBackendDispatcher;
 class InspectorFrontendChannel;
 
-class JSGlobalObjectInspectorController FINAL : public InspectorEnvironment {
+class JSGlobalObjectInspectorController final : public InspectorEnvironment {
     WTF_MAKE_NONCOPYABLE(JSGlobalObjectInspectorController);
     WTF_MAKE_FAST_ALLOCATED;
 public:

@@ -29,7 +29,7 @@
 
 namespace WebCore {
 
-class SVGCircleElement FINAL : public SVGGraphicsElement,
+class SVGCircleElement final : public SVGGraphicsElement,
                                public SVGExternalResourcesRequired {
 public:
     static PassRefPtr<SVGCircleElement> create(const QualifiedName&, Document&);

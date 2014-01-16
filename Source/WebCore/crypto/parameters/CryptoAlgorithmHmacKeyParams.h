@@ -33,7 +33,7 @@
 
 namespace WebCore {
 
-class CryptoAlgorithmHmacKeyParams FINAL : public CryptoAlgorithmParameters {
+class CryptoAlgorithmHmacKeyParams final : public CryptoAlgorithmParameters {
 public:
     CryptoAlgorithmHmacKeyParams()
         : hasLength(false)

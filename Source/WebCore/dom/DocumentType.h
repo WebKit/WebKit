@@ -30,7 +30,7 @@ namespace WebCore {
 
 class NamedNodeMap;
 
-class DocumentType FINAL : public Node {
+class DocumentType final : public Node {
 public:
     static PassRefPtr<DocumentType> create(Document& document, const String& name, const String& publicId, const String& systemId)
     {

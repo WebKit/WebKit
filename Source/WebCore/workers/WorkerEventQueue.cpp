@@ -46,7 +46,7 @@ WorkerEventQueue::~WorkerEventQueue()
     close();
 }
 
-class WorkerEventQueue::EventDispatcherTask FINAL : public ScriptExecutionContext::Task {
+class WorkerEventQueue::EventDispatcherTask final : public ScriptExecutionContext::Task {
 public:
     static PassOwnPtr<EventDispatcherTask> create(PassRefPtr<Event> event, WorkerEventQueue& eventQueue)
     {

@@ -41,7 +41,7 @@
 
 namespace WebCore {
 
-class TextTrackCueGenericBoxElement FINAL : public TextTrackCueBox {
+class TextTrackCueGenericBoxElement final : public TextTrackCueBox {
 public:
     static PassRefPtr<TextTrackCueGenericBoxElement> create(Document& document, TextTrackCueGeneric* cue)
     {

@@ -29,7 +29,7 @@ namespace WebCore {
 
 class RenderSVGInlineText;
 
-class SVGInlineFlowBox FINAL : public InlineFlowBox {
+class SVGInlineFlowBox final : public InlineFlowBox {
 public:
     SVGInlineFlowBox(RenderSVGInline& renderer)
         : InlineFlowBox(renderer)

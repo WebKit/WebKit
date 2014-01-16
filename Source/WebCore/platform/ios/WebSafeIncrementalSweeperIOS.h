@@ -31,7 +31,7 @@
 
 namespace WebCore {
 
-class WebSafeIncrementalSweeper FINAL : public JSC::IncrementalSweeper {
+class WebSafeIncrementalSweeper final : public JSC::IncrementalSweeper {
 public:
     static PassOwnPtr<WebSafeIncrementalSweeper> create(JSC::Heap* heap)
     {

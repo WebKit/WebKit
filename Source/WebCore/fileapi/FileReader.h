@@ -53,7 +53,7 @@ class ScriptExecutionContext;
 
 typedef int ExceptionCode;
 
-class FileReader FINAL : public RefCounted<FileReader>, public ActiveDOMObject, public EventTargetWithInlineData, public FileReaderLoaderClient {
+class FileReader final : public RefCounted<FileReader>, public ActiveDOMObject, public EventTargetWithInlineData, public FileReaderLoaderClient {
 public:
     static PassRefPtr<FileReader> create(ScriptExecutionContext&);
 

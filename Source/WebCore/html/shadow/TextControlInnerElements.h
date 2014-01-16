@@ -36,7 +36,7 @@ namespace WebCore {
 class RenderTextControlInnerBlock;
 class SpeechInput;
 
-class TextControlInnerContainer FINAL : public HTMLDivElement {
+class TextControlInnerContainer final : public HTMLDivElement {
 public:
     static PassRefPtr<TextControlInnerContainer> create(Document&);
 protected:
@@ -44,7 +44,7 @@ protected:
     virtual RenderPtr<RenderElement> createElementRenderer(PassRef<RenderStyle>) override;
 };
 
-class TextControlInnerElement FINAL : public HTMLDivElement {
+class TextControlInnerElement final : public HTMLDivElement {
 public:
     static PassRefPtr<TextControlInnerElement> create(Document&);
 
@@ -56,7 +56,7 @@ private:
     virtual bool isMouseFocusable() const override { return false; }
 };
 
-class TextControlInnerTextElement FINAL : public HTMLDivElement {
+class TextControlInnerTextElement final : public HTMLDivElement {
 public:
     static PassRefPtr<TextControlInnerTextElement> create(Document&);
 
@@ -76,7 +76,7 @@ inline bool isTextControlInnerTextElement(const HTMLElement& element) { return e
 inline bool isTextControlInnerTextElement(const Node& node) { return node.isHTMLElement() && isTextControlInnerTextElement(toHTMLElement(node)); }
 NODE_TYPE_CASTS(TextControlInnerTextElement)
 
-class SearchFieldResultsButtonElement FINAL : public HTMLDivElement {
+class SearchFieldResultsButtonElement final : public HTMLDivElement {
 public:
     static PassRefPtr<SearchFieldResultsButtonElement> create(Document&);
 
@@ -91,7 +91,7 @@ private:
     virtual bool isMouseFocusable() const override { return false; }
 };
 
-class SearchFieldCancelButtonElement FINAL : public HTMLDivElement {
+class SearchFieldCancelButtonElement final : public HTMLDivElement {
 public:
     static PassRefPtr<SearchFieldCancelButtonElement> create(Document&);
 
@@ -112,7 +112,7 @@ private:
 
 #if ENABLE(INPUT_SPEECH)
 
-class InputFieldSpeechButtonElement FINAL
+class InputFieldSpeechButtonElement final
     : public HTMLDivElement,
       public SpeechInputListener {
 public:

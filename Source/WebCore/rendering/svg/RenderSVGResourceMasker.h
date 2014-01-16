@@ -36,7 +36,7 @@ struct MaskerData {
     std::unique_ptr<ImageBuffer> maskImage;
 };
 
-class RenderSVGResourceMasker FINAL : public RenderSVGResourceContainer {
+class RenderSVGResourceMasker final : public RenderSVGResourceContainer {
 public:
     RenderSVGResourceMasker(SVGMaskElement&, PassRef<RenderStyle>);
     virtual ~RenderSVGResourceMasker();

@@ -32,7 +32,7 @@
 
 namespace WebCore {
 
-class RenderFullScreen FINAL : public RenderFlexibleBox {
+class RenderFullScreen final : public RenderFlexibleBox {
 public:
     RenderFullScreen(Document&, PassRef<RenderStyle>);
 

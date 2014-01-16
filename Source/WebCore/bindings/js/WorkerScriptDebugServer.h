@@ -39,7 +39,7 @@ namespace WebCore {
 
 class WorkerGlobalScope;
 
-class WorkerScriptDebugServer FINAL : public ScriptDebugServer {
+class WorkerScriptDebugServer final : public ScriptDebugServer {
     WTF_MAKE_NONCOPYABLE(WorkerScriptDebugServer);
 public:
     WorkerScriptDebugServer(WorkerGlobalScope*, const String&);

@@ -56,7 +56,7 @@ class InstrumentingAgents;
 class PageInjectedScriptManager;
 class WorkerGlobalScope;
 
-class WorkerInspectorController FINAL : public Inspector::InspectorEnvironment {
+class WorkerInspectorController final : public Inspector::InspectorEnvironment {
     WTF_MAKE_NONCOPYABLE(WorkerInspectorController);
     WTF_MAKE_FAST_ALLOCATED;
 public:

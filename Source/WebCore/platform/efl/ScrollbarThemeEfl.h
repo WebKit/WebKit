@@ -33,7 +33,7 @@
 
 namespace WebCore {
 
-class ScrollbarThemeEfl FINAL : public ScrollbarTheme {
+class ScrollbarThemeEfl final : public ScrollbarTheme {
 public:
     ScrollbarThemeEfl() : m_scrollbarThickness(0) { }
     void setScrollbarThickness(int thickness) { m_scrollbarThickness = thickness; }

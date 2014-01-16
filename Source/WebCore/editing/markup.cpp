@@ -115,7 +115,7 @@ static void completeURLs(DocumentFragment* fragment, const String& baseURL)
         changes[i].apply();
 }
     
-class StyledMarkupAccumulator FINAL : public MarkupAccumulator {
+class StyledMarkupAccumulator final : public MarkupAccumulator {
 public:
     enum RangeFullySelectsNode { DoesFullySelectNode, DoesNotFullySelectNode };
 

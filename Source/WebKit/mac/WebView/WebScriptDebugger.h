@@ -48,7 +48,7 @@ namespace JSC {
 
 @class WebScriptCallFrame;
 
-class WebScriptDebugger FINAL : public JSC::Debugger {
+class WebScriptDebugger final : public JSC::Debugger {
 public:
     WebScriptDebugger(JSC::JSGlobalObject*);
 

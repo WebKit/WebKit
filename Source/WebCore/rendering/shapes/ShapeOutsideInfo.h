@@ -41,7 +41,7 @@ class RenderBlockFlow;
 class RenderBox;
 class FloatingObject;
 
-class ShapeOutsideInfo FINAL : public ShapeInfo<RenderBox>, public MappedInfo<RenderBox, ShapeOutsideInfo> {
+class ShapeOutsideInfo final : public ShapeInfo<RenderBox>, public MappedInfo<RenderBox, ShapeOutsideInfo> {
 public:
     ShapeOutsideInfo(const RenderBox& renderer)
         : ShapeInfo<RenderBox>(renderer)

@@ -31,7 +31,7 @@
 
 namespace WebCore {
 
-class SVGSymbolElement FINAL : public SVGElement,
+class SVGSymbolElement final : public SVGElement,
                                public SVGExternalResourcesRequired,
                                public SVGFitToViewBox {
 public:

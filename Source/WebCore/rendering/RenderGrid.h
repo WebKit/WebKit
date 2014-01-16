@@ -36,7 +36,7 @@ class GridCoordinate;
 class GridSpan;
 class GridTrack;
 
-class RenderGrid FINAL : public RenderBlock {
+class RenderGrid final : public RenderBlock {
 public:
     RenderGrid(Element&, PassRef<RenderStyle>);
     virtual ~RenderGrid();
@@ -116,7 +116,7 @@ private:
 
     LayoutUnit gridAreaBreadthForChild(const RenderBox* child, TrackSizingDirection, const Vector<GridTrack>&) const;
 
-    virtual void paintChildren(PaintInfo& forSelf, const LayoutPoint& paintOffset, PaintInfo& forChild, bool usePrintRect) override FINAL;
+    virtual void paintChildren(PaintInfo& forSelf, const LayoutPoint& paintOffset, PaintInfo& forChild, bool usePrintRect) override final;
 
 #ifndef NDEBUG
     bool tracksAreWiderThanMinTrackBreadth(TrackSizingDirection, const Vector<GridTrack>&);

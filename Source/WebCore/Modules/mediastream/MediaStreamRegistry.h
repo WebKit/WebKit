@@ -38,7 +38,7 @@ namespace WebCore {
 class URL;
 class MediaStream;
 
-class MediaStreamRegistry FINAL : public URLRegistry {
+class MediaStreamRegistry final : public URLRegistry {
 public:
     // Returns a single instance of MediaStreamRegistry.
     static MediaStreamRegistry& registry();

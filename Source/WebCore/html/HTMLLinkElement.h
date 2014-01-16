@@ -42,7 +42,7 @@ class URL;
 template<typename T> class EventSender;
 typedef EventSender<HTMLLinkElement> LinkEventSender;
 
-class HTMLLinkElement FINAL : public HTMLElement, public CachedStyleSheetClient, public LinkLoaderClient {
+class HTMLLinkElement final : public HTMLElement, public CachedStyleSheetClient, public LinkLoaderClient {
 public:
     static PassRefPtr<HTMLLinkElement> create(const QualifiedName&, Document&, bool createdByParser);
     virtual ~HTMLLinkElement();

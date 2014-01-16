@@ -41,7 +41,7 @@ class AlternativeTextUIController;
 namespace WebKit {
 class FindIndicatorWindow;
 
-class PageClientImpl FINAL : public PageClient
+class PageClientImpl final : public PageClient
 #if ENABLE(FULLSCREEN_API)
     , public WebFullScreenManagerProxyClient
 #endif

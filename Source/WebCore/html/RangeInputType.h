@@ -37,7 +37,7 @@ namespace WebCore {
 
 class SliderThumbElement;
 
-class RangeInputType FINAL : public InputType {
+class RangeInputType final : public InputType {
 public:
     explicit RangeInputType(HTMLInputElement&);
 

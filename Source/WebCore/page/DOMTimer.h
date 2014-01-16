@@ -35,7 +35,7 @@ namespace WebCore {
 
     class ScheduledAction;
 
-    class DOMTimer FINAL : public SuspendableTimer {
+    class DOMTimer final : public SuspendableTimer {
     public:
         virtual ~DOMTimer();
         // Creates a new timer owned by specified ScriptExecutionContext, starts it

@@ -73,7 +73,7 @@ class Node;
 
 struct Highlight;
 
-class InspectorController FINAL : public Inspector::InspectorEnvironment {
+class InspectorController final : public Inspector::InspectorEnvironment {
     WTF_MAKE_NONCOPYABLE(InspectorController);
     WTF_MAKE_FAST_ALLOCATED;
 public:

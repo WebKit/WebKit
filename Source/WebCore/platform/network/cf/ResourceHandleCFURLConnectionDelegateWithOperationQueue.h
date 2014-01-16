@@ -35,7 +35,7 @@
 
 namespace WebCore {
 
-class ResourceHandleCFURLConnectionDelegateWithOperationQueue FINAL : public ResourceHandleCFURLConnectionDelegate {
+class ResourceHandleCFURLConnectionDelegateWithOperationQueue final : public ResourceHandleCFURLConnectionDelegate {
 public:
     ResourceHandleCFURLConnectionDelegateWithOperationQueue(ResourceHandle*);
     virtual ~ResourceHandleCFURLConnectionDelegateWithOperationQueue();

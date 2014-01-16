@@ -31,7 +31,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 namespace WebCore {
 
-class MainFrame FINAL : public Frame {
+class MainFrame final : public Frame {
 public:
     static RefPtr<MainFrame> create(Page&, FrameLoaderClient&);
 

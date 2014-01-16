@@ -38,7 +38,7 @@ namespace WebCore {
 class RenderStyle;
 
 // A KeyframeAnimation tracks the state of an explicit animation for a single RenderElement.
-class KeyframeAnimation FINAL : public AnimationBase {
+class KeyframeAnimation final : public AnimationBase {
 public:
     static RefPtr<KeyframeAnimation> create(const Animation& animation, RenderElement* renderer, int index, CompositeAnimation* compositeAnimation, RenderStyle* unanimatedStyle)
     {

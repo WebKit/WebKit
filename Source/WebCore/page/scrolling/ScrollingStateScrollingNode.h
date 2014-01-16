@@ -41,7 +41,7 @@ namespace WebCore {
 
 class Scrollbar;
 
-class ScrollingStateScrollingNode FINAL : public ScrollingStateNode {
+class ScrollingStateScrollingNode final : public ScrollingStateNode {
 public:
     static PassOwnPtr<ScrollingStateScrollingNode> create(ScrollingStateTree&, ScrollingNodeID);
 

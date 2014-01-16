@@ -52,7 +52,7 @@ private:
 
     virtual bool hasControlClip() const override;
     virtual LayoutRect controlClipRect(const LayoutPoint&) const override;
-    virtual bool isTextField() const override FINAL { return true; }
+    virtual bool isTextField() const override final { return true; }
 
     virtual void paint(PaintInfo&, const LayoutPoint&) override;
     virtual void layout() override;
@@ -68,8 +68,8 @@ private:
     virtual int scrollHeight() const override;
     virtual void setScrollLeft(int) override;
     virtual void setScrollTop(int) override;
-    virtual bool scroll(ScrollDirection, ScrollGranularity, float multiplier = 1, Element** stopElement = 0) override FINAL;
-    virtual bool logicalScroll(ScrollLogicalDirection, ScrollGranularity, float multiplier = 1, Element** stopElement = 0) override FINAL;
+    virtual bool scroll(ScrollDirection, ScrollGranularity, float multiplier = 1, Element** stopElement = 0) override final;
+    virtual bool logicalScroll(ScrollLogicalDirection, ScrollGranularity, float multiplier = 1, Element** stopElement = 0) override final;
 
     int textBlockWidth() const;
     virtual float getAvgCharWidth(AtomicString family) override;
@@ -100,7 +100,7 @@ RENDER_OBJECT_TYPE_CASTS(RenderTextControlSingleLine, isTextField())
 
 // ----------------------------
 
-class RenderTextControlInnerBlock FINAL : public RenderBlockFlow {
+class RenderTextControlInnerBlock final : public RenderBlockFlow {
 public:
     RenderTextControlInnerBlock(Element& element, PassRef<RenderStyle> style)
         : RenderBlockFlow(element, std::move(style))

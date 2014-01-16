@@ -29,7 +29,7 @@
 
 namespace WebCore {
 
-class HTMLScriptElement FINAL : public HTMLElement, public ScriptElement {
+class HTMLScriptElement final : public HTMLElement, public ScriptElement {
 public:
     static PassRefPtr<HTMLScriptElement> create(const QualifiedName&, Document&, bool wasInsertedByParser, bool alreadyStarted = false);
 

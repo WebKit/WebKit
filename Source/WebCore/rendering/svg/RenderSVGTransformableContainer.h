@@ -28,7 +28,7 @@
 namespace WebCore {
     
 class SVGGraphicsElement;
-class RenderSVGTransformableContainer FINAL : public RenderSVGContainer {
+class RenderSVGTransformableContainer final : public RenderSVGContainer {
 public:
     RenderSVGTransformableContainer(SVGGraphicsElement&, PassRef<RenderStyle>);
     SVGGraphicsElement& graphicsElement() { return toSVGGraphicsElement(RenderSVGContainer::element()); }

@@ -122,8 +122,8 @@ private:
     virtual bool isKeyboardFocusable(KeyboardEvent*) const override;
     virtual bool isMouseFocusable() const override;
 
-    virtual void dispatchFocusEvent(PassRefPtr<Element> oldFocusedElement, FocusDirection) override FINAL;
-    virtual void dispatchBlurEvent(PassRefPtr<Element> newFocusedElement) override FINAL;
+    virtual void dispatchFocusEvent(PassRefPtr<Element> oldFocusedElement, FocusDirection) override final;
+    virtual void dispatchBlurEvent(PassRefPtr<Element> newFocusedElement) override final;
     
     virtual bool canStartSelection() const override { return false; }
 
@@ -146,7 +146,7 @@ private:
 
     void dispatchChangeEventForMenuList();
 
-    virtual void didRecalcStyle(Style::Change) override FINAL;
+    virtual void didRecalcStyle(Style::Change) override final;
 
     void recalcListItems(bool updateSelectedStates = true) const;
 

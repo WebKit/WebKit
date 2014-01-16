@@ -35,7 +35,7 @@ namespace WebCore {
 class CryptoAlgorithmHmacParams;
 class CryptoKeyHMAC;
 
-class CryptoAlgorithmHMAC FINAL : public CryptoAlgorithm {
+class CryptoAlgorithmHMAC final : public CryptoAlgorithm {
 public:
     static const char* const s_name;
     static const CryptoAlgorithmIdentifier s_identifier = CryptoAlgorithmIdentifier::HMAC;

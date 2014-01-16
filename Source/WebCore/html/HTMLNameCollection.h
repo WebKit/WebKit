@@ -43,7 +43,7 @@ protected:
     AtomicString m_name;
 };
 
-class WindowNameCollection FINAL : public HTMLNameCollection {
+class WindowNameCollection final : public HTMLNameCollection {
 public:
     static PassRef<WindowNameCollection> create(Document& document, CollectionType type, const AtomicString& name)
     {
@@ -64,7 +64,7 @@ private:
     }
 };
 
-class DocumentNameCollection FINAL : public HTMLNameCollection {
+class DocumentNameCollection final : public HTMLNameCollection {
 public:
     static PassRef<DocumentNameCollection> create(Document& document, CollectionType type, const AtomicString& name)
     {

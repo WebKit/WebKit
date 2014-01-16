@@ -37,7 +37,7 @@ namespace WebCore {
 class MediaStreamSource;
 class ScriptExecutionContext;
 
-class AudioStreamTrack FINAL : public MediaStreamTrack {
+class AudioStreamTrack final : public MediaStreamTrack {
 public:
     static RefPtr<AudioStreamTrack> create(ScriptExecutionContext&, const Dictionary&);
     static RefPtr<AudioStreamTrack> create(ScriptExecutionContext&, MediaStreamTrackPrivate&);

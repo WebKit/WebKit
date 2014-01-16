@@ -60,7 +60,7 @@ void PageConsoleAgent::clearMessages(ErrorString* errorString)
     InspectorConsoleAgent::clearMessages(errorString);
 }
 
-class InspectableNode FINAL : public CommandLineAPIHost::InspectableObject {
+class InspectableNode final : public CommandLineAPIHost::InspectableObject {
 public:
     explicit InspectableNode(Node* node) : m_node(node) { }
     virtual Deprecated::ScriptValue get(JSC::ExecState* state) override

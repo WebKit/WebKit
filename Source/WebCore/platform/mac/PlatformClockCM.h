@@ -37,7 +37,7 @@ typedef struct OpaqueCMClock* CMClockRef;
 
 namespace WebCore {
 
-class PlatformClockCM FINAL : public Clock {
+class PlatformClockCM final : public Clock {
 public:
     PlatformClockCM();
     PlatformClockCM(CMClockRef);

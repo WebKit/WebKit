@@ -30,7 +30,7 @@ namespace WebCore {
     class Frame;
     class QualifiedName;
 
-    class JSLazyEventListener FINAL : public JSEventListener {
+    class JSLazyEventListener final : public JSEventListener {
     public:
         static PassRefPtr<JSLazyEventListener> createForNode(ContainerNode&, const QualifiedName& attributeName, const AtomicString& attributeValue);
         static PassRefPtr<JSLazyEventListener> createForDOMWindow(Frame&, const QualifiedName& attributeName, const AtomicString& attributeValue);

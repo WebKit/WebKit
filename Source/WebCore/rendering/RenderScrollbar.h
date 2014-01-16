@@ -39,7 +39,7 @@ class RenderBox;
 class RenderScrollbarPart;
 class RenderStyle;
 
-class RenderScrollbar FINAL : public Scrollbar {
+class RenderScrollbar final : public Scrollbar {
 public:
     friend class Scrollbar;
     static RefPtr<Scrollbar> createCustomScrollbar(ScrollableArea*, ScrollbarOrientation, Element*, Frame* owningFrame = nullptr);

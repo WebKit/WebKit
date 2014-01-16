@@ -43,7 +43,7 @@ protected:
 };
 
 template <typename T, typename... Arguments>
-class AsyncTaskImpl FINAL : public AsyncTask {
+class AsyncTaskImpl final : public AsyncTask {
 public:
     AsyncTaskImpl(T* callee, void (T::*method)(Arguments...), Arguments&&... arguments)
     {

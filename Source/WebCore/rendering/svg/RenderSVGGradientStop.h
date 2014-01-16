@@ -30,7 +30,7 @@ class SVGGradientElement;
 class SVGStopElement;
 
 // This class exists mostly so we can hear about gradient stop style changes
-class RenderSVGGradientStop FINAL : public RenderElement {
+class RenderSVGGradientStop final : public RenderElement {
 public:
     RenderSVGGradientStop(SVGStopElement&, PassRef<RenderStyle>);
     virtual ~RenderSVGGradientStop();
@@ -54,7 +54,7 @@ protected:
 
 private:
     virtual bool canHaveChildren() const override { return false; }
-    virtual void paint(PaintInfo&, const LayoutPoint&) override FINAL { }
+    virtual void paint(PaintInfo&, const LayoutPoint&) override final { }
 
     SVGGradientElement* gradientElement() const;
 };

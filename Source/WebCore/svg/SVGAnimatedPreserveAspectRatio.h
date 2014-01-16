@@ -38,7 +38,7 @@ DEFINE_ANIMATED_PROPERTY(AnimatedPreserveAspectRatio, OwnerType, DOMAttribute, D
 
 class SVGAnimationElement;
 
-class SVGAnimatedPreserveAspectRatioAnimator FINAL : public SVGAnimatedTypeAnimator {
+class SVGAnimatedPreserveAspectRatioAnimator final : public SVGAnimatedTypeAnimator {
 public:
     SVGAnimatedPreserveAspectRatioAnimator(SVGAnimationElement*, SVGElement*);
 

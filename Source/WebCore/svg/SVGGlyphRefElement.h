@@ -26,7 +26,7 @@
 
 namespace WebCore {
 
-class SVGGlyphRefElement FINAL : public SVGElement,
+class SVGGlyphRefElement final : public SVGElement,
                                  public SVGURIReference {
 public:
     static PassRefPtr<SVGGlyphRefElement> create(const QualifiedName&, Document&);

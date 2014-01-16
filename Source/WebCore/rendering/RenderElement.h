@@ -183,8 +183,8 @@ private:
     void isText() const WTF_DELETED_FUNCTION;
     void isRenderElement() const WTF_DELETED_FUNCTION;
 
-    virtual RenderObject* firstChildSlow() const override FINAL { return firstChild(); }
-    virtual RenderObject* lastChildSlow() const override FINAL { return lastChild(); }
+    virtual RenderObject* firstChildSlow() const override final { return firstChild(); }
+    virtual RenderObject* lastChildSlow() const override final { return lastChild(); }
 
     bool shouldRepaintForStyleDifference(StyleDifference) const;
     bool hasImmediateNonWhitespaceTextChildOrBorderOrOutline() const;

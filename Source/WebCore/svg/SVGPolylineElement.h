@@ -26,7 +26,7 @@
 
 namespace WebCore {
 
-class SVGPolylineElement FINAL : public SVGPolyElement {
+class SVGPolylineElement final : public SVGPolyElement {
 public:
     static PassRefPtr<SVGPolylineElement> create(const QualifiedName&, Document&);
 

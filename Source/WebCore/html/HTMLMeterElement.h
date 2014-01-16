@@ -29,7 +29,7 @@ namespace WebCore {
 class MeterValueElement;
 class RenderMeter;
 
-class HTMLMeterElement FINAL : public LabelableElement {
+class HTMLMeterElement final : public LabelableElement {
 public:
     static PassRefPtr<HTMLMeterElement> create(const QualifiedName&, Document&);
 

@@ -39,7 +39,7 @@ class Document;
 class Event;
 class Node;
 
-class DocumentEventQueue FINAL : public EventQueue {
+class DocumentEventQueue final : public EventQueue {
 public:
     explicit DocumentEventQueue(Document&);
     virtual ~DocumentEventQueue();

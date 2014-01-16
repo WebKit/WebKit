@@ -234,8 +234,8 @@ public:
     void removeMarkedSummingJunction(AudioSummingJunction*);
 
     // EventTarget
-    virtual EventTargetInterface eventTargetInterface() const override FINAL { return AudioContextEventTargetInterfaceType; }
-    virtual ScriptExecutionContext* scriptExecutionContext() const override FINAL;
+    virtual EventTargetInterface eventTargetInterface() const override final { return AudioContextEventTargetInterfaceType; }
+    virtual ScriptExecutionContext* scriptExecutionContext() const override final;
 
     DEFINE_ATTRIBUTE_EVENT_LISTENER(complete);
 

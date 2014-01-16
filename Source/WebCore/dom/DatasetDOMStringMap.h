@@ -32,7 +32,7 @@ namespace WebCore {
 
 class Element;
 
-class DatasetDOMStringMap FINAL : public DOMStringMap {
+class DatasetDOMStringMap final : public DOMStringMap {
 public:
     explicit DatasetDOMStringMap(Element& element)
         : m_element(element)

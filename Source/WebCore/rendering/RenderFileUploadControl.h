@@ -31,7 +31,7 @@ class HTMLInputElement;
 // sufficient space to draw a file icon and filename. The RenderButton has a shadow node
 // associated with it to receive click/hover events.
 
-class RenderFileUploadControl FINAL : public RenderBlockFlow {
+class RenderFileUploadControl final : public RenderBlockFlow {
 public:
     RenderFileUploadControl(HTMLInputElement&, PassRef<RenderStyle>);
     virtual ~RenderFileUploadControl();

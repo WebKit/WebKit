@@ -34,7 +34,7 @@
 
 namespace WebCore {
 
-class AudioTrackPrivateGStreamer FINAL : public AudioTrackPrivate, public TrackPrivateBaseGStreamer {
+class AudioTrackPrivateGStreamer final : public AudioTrackPrivate, public TrackPrivateBaseGStreamer {
 public:
     static PassRefPtr<AudioTrackPrivateGStreamer> create(GRefPtr<GstElement> playbin, gint index, GRefPtr<GstPad> pad)
     {

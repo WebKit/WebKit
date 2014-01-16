@@ -30,7 +30,7 @@
 
 namespace WebCore {
 
-class HTMLAllCollection FINAL : public HTMLCollection {
+class HTMLAllCollection final : public HTMLCollection {
 public:
     static PassRef<HTMLAllCollection> create(Document&, CollectionType);
     virtual ~HTMLAllCollection();

@@ -39,7 +39,7 @@ DEFINE_ANIMATED_PROPERTY(AnimatedAngle, OwnerType, DOMAttribute, SVGDOMAttribute
 
 class SVGAnimationElement;
 
-class SVGAnimatedAngleAnimator FINAL : public SVGAnimatedTypeAnimator {
+class SVGAnimatedAngleAnimator final : public SVGAnimatedTypeAnimator {
 public:
     SVGAnimatedAngleAnimator(SVGAnimationElement*, SVGElement*);
 

@@ -27,7 +27,7 @@
 
 namespace WebCore {
 
-class RenderDetailsMarker FINAL : public RenderBlockFlow {
+class RenderDetailsMarker final : public RenderBlockFlow {
 public:
     RenderDetailsMarker(DetailsMarkerControl&, PassRef<RenderStyle>);
     DetailsMarkerControl& element() const { return static_cast<DetailsMarkerControl&>(nodeForNonAnonymous()); }

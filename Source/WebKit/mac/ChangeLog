@@ -1,3 +1,13 @@
+2014-01-16  Anders Carlsson  <andersca@apple.com>
+
+        Change all uses of FINAL to final now that all our compilers support it
+        https://bugs.webkit.org/show_bug.cgi?id=127142
+
+        Reviewed by Benjamin Poulain.
+
+        * WebCoreSupport/WebUserMediaClient.h:
+        * WebView/WebScriptDebugger.h:
+
 2014-01-16  Peter Molnar  <pmolnar.u-szeged@partner.samsung.com>
 
         Remove workaround for compilers not supporting explicit override control

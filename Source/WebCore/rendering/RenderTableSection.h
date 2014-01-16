@@ -62,7 +62,7 @@ private:
 class RenderTableCell;
 class RenderTableRow;
 
-class RenderTableSection FINAL : public RenderBox {
+class RenderTableSection final : public RenderBox {
 public:
     RenderTableSection(Element&, PassRef<RenderStyle>);
     RenderTableSection(Document&, PassRef<RenderStyle>);

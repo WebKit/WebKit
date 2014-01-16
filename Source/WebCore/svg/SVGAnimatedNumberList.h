@@ -38,7 +38,7 @@ DEFINE_ANIMATED_PROPERTY(AnimatedNumberList, OwnerType, DOMAttribute, DOMAttribu
 
 class SVGAnimationElement;
 
-class SVGAnimatedNumberListAnimator FINAL : public SVGAnimatedTypeAnimator {
+class SVGAnimatedNumberListAnimator final : public SVGAnimatedTypeAnimator {
 public:
     SVGAnimatedNumberListAnimator(SVGAnimationElement*, SVGElement*);
 

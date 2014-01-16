@@ -35,7 +35,7 @@ class HTMLTableCaptionElement;
 class HTMLTableRowsCollection;
 class HTMLTableSectionElement;
 
-class HTMLTableElement FINAL : public HTMLElement {
+class HTMLTableElement final : public HTMLElement {
 public:
     static PassRefPtr<HTMLTableElement> create(Document&);
     static PassRefPtr<HTMLTableElement> create(const QualifiedName&, Document&);
