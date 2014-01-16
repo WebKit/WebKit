@@ -783,7 +783,6 @@
 		6EE849C81368D9390038D481 /* WKInspectorPrivateMac.h in Headers */ = {isa = PBXBuildFile; fileRef = 6EE849C61368D92D0038D481 /* WKInspectorPrivateMac.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		728E86F11795188C0087879E /* WebColorPickerMac.h in Headers */ = {isa = PBXBuildFile; fileRef = 728E86EF1795188C0087879E /* WebColorPickerMac.h */; };
 		728E86F21795188C0087879E /* WebColorPickerMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 728E86F01795188C0087879E /* WebColorPickerMac.mm */; };
-		755422BB18062B9C0046F6A8 /* WKOriginDataManager.cpp in Copy Files */ = {isa = PBXBuildFile; fileRef = 755422B918062B9C0046F6A8 /* WKOriginDataManager.cpp */; };
 		755422BD18062BB20046F6A8 /* WKOriginDataManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 755422B918062B9C0046F6A8 /* WKOriginDataManager.cpp */; };
 		755422C418062BF90046F6A8 /* WebOriginDataManagerProxy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 755422BE18062BE40046F6A8 /* WebOriginDataManagerProxy.cpp */; };
 		755422CB180650020046F6A8 /* WebOriginDataManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 755422C618064FFC0046F6A8 /* WebOriginDataManager.cpp */; };
@@ -1566,7 +1565,6 @@
 				BCDE0ABF13272708001259FB /* PluginProcess.app in Copy Files */,
 				51A60B2A180CCEB500F3BF50 /* DatabaseProcess.app in Copy Files */,
 				1A50DB66110A3D57000D3FE5 /* WebProcess.app in Copy Files */,
-				755422BB18062B9C0046F6A8 /* WKOriginDataManager.cpp in Copy Files */,
 			);
 			name = "Copy Files";
 			runOnlyForDeploymentPostprocessing = 0;
