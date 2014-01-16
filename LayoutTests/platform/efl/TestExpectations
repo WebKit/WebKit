@@ -1802,3 +1802,9 @@ webkit.org/b/127054 fast/regions/overflow-in-variable-width-regions-inline-conti
 webkit.org/b/127054 fast/regions/overflow-in-variable-width-regions-inline-lr.html [ ImageOnlyFailure ]
 webkit.org/b/127054 fast/regions/overflow-in-variable-width-regions-inline-rl.html [ ImageOnlyFailure ]
 webkit.org/b/127054 fast/regions/overflow-in-variable-width-regions-inline.html [ ImageOnlyFailure ]
+
+webkit.org/b/127106 media/video-canvas-drawing-output.html [ Failure ]
+
+webkit.org/b/127107 media/volume-bar-empty-when-muted.html [ Failure ]
+
+webkit.org/b/127108 media/media-document-audio-controls-visible.html [ Failure ]
