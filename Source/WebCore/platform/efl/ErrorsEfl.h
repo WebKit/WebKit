@@ -30,10 +30,10 @@
 
 namespace WebCore {
 
-class PrintContext;
 class ResourceError;
 class ResourceRequest;
 class ResourceResponse;
+class URL;
 
 static const char errorDomainNetwork[] = "WebKitNetworkError";
 static const char errorDomainPolicy[] = "WebKitPolicyError";
@@ -90,9 +90,9 @@ ResourceError pluginWillHandleLoadError(const ResourceResponse&);
 ResourceError downloadNetworkError(const ResourceError&);
 ResourceError downloadCancelledByUserError(const ResourceResponse&);
 ResourceError downloadDestinationError(const ResourceResponse&, const String& errorMessage);
-ResourceError printError(const PrintContext*, const String& errorMessage);
-ResourceError printerNotFoundError(const PrintContext*);
-ResourceError invalidPageRangeToPrint(const PrintContext*);
+ResourceError printError(const URL& failingURL, const String& errorMessage);
+ResourceError printerNotFoundError(const URL& failingURL);
+ResourceError invalidPageRangeToPrint(const URL& failingURL);
 
 }
 

@@ -20,10 +20,6 @@
 #include "config.h"
 #include "ErrorsGtk.h"
 
-#include "DocumentLoader.h"
-#include "Frame.h"
-#include "FrameLoader.h"
-#include "PrintContext.h"
 #include "ResourceError.h"
 #include "ResourceRequest.h"
 #include "ResourceResponse.h"
@@ -91,25 +87,19 @@ ResourceError downloadDestinationError(const ResourceResponse& response, const S
                          response.url().string(), errorMessage);
 }
 
-ResourceError printError(const PrintContext* printContext, const String& errorMessage)
+ResourceError printError(const URL& failingURL, const String& errorMessage)
 {
-    DocumentLoader* documentLoader = printContext->frame()->loader().documentLoader();
-    return ResourceError(errorDomainPrint, PrintErrorGeneral,
-                         documentLoader ? documentLoader->url() : URL(), errorMessage);
+    return ResourceError(errorDomainPrint, PrintErrorGeneral, failingURL, errorMessage);
 }
 
-ResourceError printerNotFoundError(const PrintContext* printContext)
+ResourceError printerNotFoundError(const URL& failingURL)
 {
-    DocumentLoader* documentLoader = printContext->frame()->loader().documentLoader();
-    return ResourceError(errorDomainPrint, PrintErrorPrinterNotFound,
-                         documentLoader ? documentLoader->url() : URL(), _("Printer not found"));
+    return ResourceError(errorDomainPrint, PrintErrorPrinterNotFound, failingURL, _("Printer not found"));
 }
 
-ResourceError invalidPageRangeToPrint(const PrintContext* printContext)
+ResourceError invalidPageRangeToPrint(const URL& failingURL)
 {
-    DocumentLoader* documentLoader = printContext->frame()->loader().documentLoader();
-    return ResourceError(errorDomainPrint, PrintErrorInvalidPageRange,
-                         documentLoader ? documentLoader->url() : URL(), _("Invalid page range"));
+    return ResourceError(errorDomainPrint, PrintErrorInvalidPageRange, failingURL, _("Invalid page range"));
 }
 
 } // namespace WebCore

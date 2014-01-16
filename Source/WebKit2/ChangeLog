@@ -1,3 +1,17 @@
+2014-01-15  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK][EFL][NIX] Do not use PrintContext, Frame and DocumentLoader in Errors
+        https://bugs.webkit.org/show_bug.cgi?id=127047
+
+        Reviewed by Martin Robinson.
+
+        * WebProcess/WebPage/gtk/WebPrintOperationGtk.cpp:
+        (WebKit::WebPrintOperationGtk::frameURL): Helper function to get
+        the URL of the frame being printed.
+        (WebKit::WebPrintOperationGtk::print): Use frameURL() as failing
+        URL for printing errors.
+        * WebProcess/WebPage/gtk/WebPrintOperationGtk.h:
+
 2014-01-15  Benjamin Poulain  <bpoulain@apple.com>
 
         Move user agent code to WebCore and unify some code between OS X and iOS

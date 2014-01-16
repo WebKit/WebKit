@@ -29,12 +29,15 @@
 #include "WebCoreArgumentCoders.h"
 #include "WebPage.h"
 #include "WebPageProxyMessages.h"
+#include <WebCore/DocumentLoader.h>
 #include <WebCore/ErrorsGtk.h>
+#include <WebCore/Frame.h>
 #include <WebCore/IntRect.h>
 #include <WebCore/NotImplemented.h>
 #include <WebCore/PlatformContextCairo.h>
 #include <WebCore/PrintContext.h>
 #include <WebCore/ResourceError.h>
+#include <WebCore/URL.h>
 #include <gtk/gtk.h>
 #include <wtf/Vector.h>
 #include <wtf/gobject/GOwnPtr.h>
@@ -66,7 +69,7 @@ public:
         const char* printerName = gtk_print_settings_get_printer(m_printSettings.get());
         GtkPrinter* printer = printerName ? printerList->findPrinter(printerName) : printerList->defaultPrinter();
         if (!printer) {
-            printDone(printerNotFoundError(m_printContext));
+            printDone(printerNotFoundError(frameURL()));
             return;
         }
 
@@ -78,7 +81,7 @@ public:
         GOwnPtr<GError> error;
         cairo_surface_t* surface = gtk_print_job_get_surface(m_printJob.get(), &error.outPtr());
         if (!surface) {
-            printDone(printError(m_printContext, error->message));
+            printDone(printError(frameURL(), error->message));
             return;
         }
 
@@ -137,7 +140,7 @@ public:
 
     static void printJobComplete(GtkPrintJob* printJob, WebPrintOperationGtkUnix* printOperation, const GError* error)
     {
-        printOperation->printDone(error ? printError(printOperation->m_printContext, error->message) : WebCore::ResourceError());
+        printOperation->printDone(error ? printError(printOperation->frameURL(), error->message) : WebCore::ResourceError());
         printOperation->m_printJob = 0;
     }
 
@@ -427,6 +430,15 @@ bool WebPrintOperationGtk::currentPageIsLastPageOfSheet() const
     return (m_numberUp < 2 || !((m_pagePosition + 1) % m_numberUp) || m_pagePosition == m_numberOfPagesToPrint - 1);
 }
 
+WebCore::URL WebPrintOperationGtk::frameURL() const
+{
+    if (!m_printContext)
+        return WebCore::URL();
+
+    WebCore::DocumentLoader* documentLoader = m_printContext->frame()->loader().documentLoader();
+    return documentLoader ? documentLoader->url() : WebCore::URL();
+}
+
 void WebPrintOperationGtk::rotatePageIfNeeded()
 {
     if (!m_needsRotation)
@@ -693,7 +705,7 @@ void WebPrintOperationGtk::print(cairo_surface_t* surface, double xDPI, double y
     OwnPtr<PrintPagesData> data = adoptPtr(new PrintPagesData(this));
     if (!data->isValid) {
         cairo_surface_finish(surface);
-        printDone(invalidPageRangeToPrint(m_printContext));
+        printDone(invalidPageRangeToPrint(frameURL()));
         return;
     }
 
