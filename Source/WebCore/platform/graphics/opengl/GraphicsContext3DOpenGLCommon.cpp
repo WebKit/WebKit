@@ -208,7 +208,7 @@ void GraphicsContext3D::prepareTexture()
     makeContextCurrent();
 
     TemporaryOpenGLSetting scopedScissor(GL_SCISSOR_TEST, GL_FALSE);
-    TemporaryOpenGLSetting scopedDither(GL_SCISSOR_TEST, GL_FALSE);
+    TemporaryOpenGLSetting scopedDither(GL_DITHER, GL_FALSE);
     
     if (m_attrs.antialias)
         resolveMultisamplingIfNecessary();
@@ -269,6 +269,8 @@ void GraphicsContext3D::reshape(int width, int height)
     if (width == m_currentWidth && height == m_currentHeight)
         return;
 
+    markContextChanged();
+
 #if (PLATFORM(EFL) || PLATFORM(NIX)) && USE(GRAPHICS_SURFACE)
     ::glFlush(); // Make sure all GL calls have been committed before resizing.
     createGraphicsSurfaces(IntSize(width, height));
@@ -280,13 +282,16 @@ void GraphicsContext3D::reshape(int width, int height)
     makeContextCurrent();
     validateAttributes();
 
+    TemporaryOpenGLSetting scopedScissor(GL_SCISSOR_TEST, GL_FALSE);
+    TemporaryOpenGLSetting scopedDither(GL_DITHER, GL_FALSE);
+    
     bool mustRestoreFBO = reshapeFBOs(IntSize(width, height));
 
     // Initialize renderbuffers to 0.
     GLfloat clearColor[] = {0, 0, 0, 0}, clearDepth = 0;
     GLint clearStencil = 0;
     GLboolean colorMask[] = {GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE}, depthMask = GL_TRUE;
-    GLuint stencilMask = 0xffffffff;
+    GLuint stencilMask = 0xffffffff, stencilMaskBack = 0xffffffff;
     GLbitfield clearMask = GL_COLOR_BUFFER_BIT;
     ::glGetFloatv(GL_COLOR_CLEAR_VALUE, clearColor);
     ::glClearColor(0, 0, 0, 0);
@@ -303,12 +308,11 @@ void GraphicsContext3D::reshape(int width, int height)
         ::glGetIntegerv(GL_STENCIL_CLEAR_VALUE, &clearStencil);
         ::glClearStencil(0);
         ::glGetIntegerv(GL_STENCIL_WRITEMASK, reinterpret_cast<GLint*>(&stencilMask));
+        ::glGetIntegerv(GL_STENCIL_BACK_WRITEMASK, reinterpret_cast<GLint*>(&stencilMaskBack));
         ::glStencilMaskSeparate(GL_FRONT, 0xffffffff);
+        ::glStencilMaskSeparate(GL_BACK, 0xffffffff);
         clearMask |= GL_STENCIL_BUFFER_BIT;
     }
-
-    TemporaryOpenGLSetting scopedScissor(GL_SCISSOR_TEST, GL_FALSE);
-    TemporaryOpenGLSetting scopedDither(GL_SCISSOR_TEST, GL_FALSE);
 
     ::glClear(clearMask);
 
@@ -321,6 +325,7 @@ void GraphicsContext3D::reshape(int width, int height)
     if (m_attrs.stencil) {
         ::glClearStencil(clearStencil);
         ::glStencilMaskSeparate(GL_FRONT, stencilMask);
+        ::glStencilMaskSeparate(GL_BACK, stencilMaskBack);
     }
 
     if (mustRestoreFBO)
