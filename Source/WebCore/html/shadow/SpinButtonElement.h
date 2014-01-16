@@ -61,29 +61,29 @@ public:
 
     void step(int amount);
     
-    virtual bool willRespondToMouseMoveEvents() OVERRIDE;
-    virtual bool willRespondToMouseClickEvents() OVERRIDE;
+    virtual bool willRespondToMouseMoveEvents() override;
+    virtual bool willRespondToMouseClickEvents() override;
 
     void forwardEvent(Event*);
 
 private:
     SpinButtonElement(Document&, SpinButtonOwner&);
 
-    virtual const AtomicString& shadowPseudoId() const OVERRIDE;
-    virtual void willDetachRenderers() OVERRIDE;
-    virtual bool isSpinButtonElement() const OVERRIDE { return true; }
-    virtual bool isDisabledFormControl() const OVERRIDE { return shadowHost() && shadowHost()->isDisabledFormControl(); }
-    virtual bool matchesReadOnlyPseudoClass() const OVERRIDE;
-    virtual bool matchesReadWritePseudoClass() const OVERRIDE;
-    virtual void defaultEventHandler(Event*) OVERRIDE;
-    virtual void willOpenPopup() OVERRIDE;
+    virtual const AtomicString& shadowPseudoId() const override;
+    virtual void willDetachRenderers() override;
+    virtual bool isSpinButtonElement() const override { return true; }
+    virtual bool isDisabledFormControl() const override { return shadowHost() && shadowHost()->isDisabledFormControl(); }
+    virtual bool matchesReadOnlyPseudoClass() const override;
+    virtual bool matchesReadWritePseudoClass() const override;
+    virtual void defaultEventHandler(Event*) override;
+    virtual void willOpenPopup() override;
     void doStepAction(int);
     void startRepeatingTimer();
     void stopRepeatingTimer();
     void repeatingTimerFired(Timer<SpinButtonElement>*);
-    virtual void setHovered(bool = true) OVERRIDE;
+    virtual void setHovered(bool = true) override;
     bool shouldRespondToMouseEvents();
-    virtual bool isMouseFocusable() const OVERRIDE { return false; }
+    virtual bool isMouseFocusable() const override { return false; }
 
     SpinButtonOwner* m_spinButtonOwner;
     bool m_capturing;

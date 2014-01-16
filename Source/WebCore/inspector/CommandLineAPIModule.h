@@ -36,9 +36,9 @@ class CommandLineAPIModule FINAL : public Inspector::InjectedScriptModule {
 public:
     CommandLineAPIModule();
 
-    virtual String source() const OVERRIDE;
-    virtual JSC::JSValue host(Inspector::InjectedScriptManager*, JSC::ExecState*) const OVERRIDE;
-    virtual bool returnsObject() const OVERRIDE { return false; }
+    virtual String source() const override;
+    virtual JSC::JSValue host(Inspector::InjectedScriptManager*, JSC::ExecState*) const override;
+    virtual bool returnsObject() const override { return false; }
 
     static void injectIfNeeded(Inspector::InjectedScriptManager*, Inspector::InjectedScript);
 };

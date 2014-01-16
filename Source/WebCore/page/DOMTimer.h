@@ -50,18 +50,18 @@ namespace WebCore {
 
     private:
         DOMTimer(ScriptExecutionContext*, PassOwnPtr<ScheduledAction>, int interval, bool singleShot);
-        virtual void fired() OVERRIDE;
+        virtual void fired() override;
 
         // ActiveDOMObject
-        virtual void contextDestroyed() OVERRIDE;
+        virtual void contextDestroyed() override;
 
         // SuspendableTimer
-        virtual void didStop() OVERRIDE;
+        virtual void didStop() override;
 
         double intervalClampedToMinimum(int timeout, double minimumTimerInterval) const;
 
         // Retuns timer fire time rounded to the next multiple of timer alignment interval.
-        virtual double alignedFireTime(double) const OVERRIDE;
+        virtual double alignedFireTime(double) const override;
 
         int m_timeoutId;
         int m_nestingLevel;

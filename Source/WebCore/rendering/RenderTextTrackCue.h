@@ -42,7 +42,7 @@ public:
     RenderTextTrackCue(TextTrackCueBox&, PassRef<RenderStyle>);
 
 private:
-    virtual void layout() OVERRIDE;
+    virtual void layout() override;
 
     bool isOutside() const;
     bool rectIsWithinContainer(const IntRect&) const;

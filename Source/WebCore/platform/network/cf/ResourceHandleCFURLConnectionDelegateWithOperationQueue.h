@@ -43,31 +43,31 @@ public:
 private:
     bool hasHandle() const;
 
-    virtual void setupRequest(CFMutableURLRequestRef) OVERRIDE;
-    virtual void setupConnectionScheduling(CFURLConnectionRef) OVERRIDE;
+    virtual void setupRequest(CFMutableURLRequestRef) override;
+    virtual void setupConnectionScheduling(CFURLConnectionRef) override;
 
-    virtual CFURLRequestRef willSendRequest(CFURLRequestRef, CFURLResponseRef) OVERRIDE;
-    virtual void didReceiveResponse(CFURLResponseRef) OVERRIDE;
-    virtual void didReceiveData(CFDataRef, CFIndex originalLength) OVERRIDE;
-    virtual void didFinishLoading() OVERRIDE;
-    virtual void didFail(CFErrorRef) OVERRIDE;
-    virtual CFCachedURLResponseRef willCacheResponse(CFCachedURLResponseRef) OVERRIDE;
-    virtual void didReceiveChallenge(CFURLAuthChallengeRef) OVERRIDE;
-    virtual void didSendBodyData(CFIndex totalBytesWritten, CFIndex totalBytesExpectedToWrite) OVERRIDE;
-    virtual Boolean shouldUseCredentialStorage() OVERRIDE;
+    virtual CFURLRequestRef willSendRequest(CFURLRequestRef, CFURLResponseRef) override;
+    virtual void didReceiveResponse(CFURLResponseRef) override;
+    virtual void didReceiveData(CFDataRef, CFIndex originalLength) override;
+    virtual void didFinishLoading() override;
+    virtual void didFail(CFErrorRef) override;
+    virtual CFCachedURLResponseRef willCacheResponse(CFCachedURLResponseRef) override;
+    virtual void didReceiveChallenge(CFURLAuthChallengeRef) override;
+    virtual void didSendBodyData(CFIndex totalBytesWritten, CFIndex totalBytesExpectedToWrite) override;
+    virtual Boolean shouldUseCredentialStorage() override;
 #if USE(PROTECTION_SPACE_AUTH_CALLBACK)
-    virtual Boolean canRespondToProtectionSpace(CFURLProtectionSpaceRef) OVERRIDE;
+    virtual Boolean canRespondToProtectionSpace(CFURLProtectionSpaceRef) override;
 #endif // USE(PROTECTION_SPACE_AUTH_CALLBACK)
 #if USE(NETWORK_CFDATA_ARRAY_CALLBACK)
-    virtual void didReceiveDataArray(CFArrayRef dataArray) OVERRIDE;
+    virtual void didReceiveDataArray(CFArrayRef dataArray) override;
 #endif // USE(NETWORK_CFDATA_ARRAY_CALLBACK)
 
-    virtual void continueWillSendRequest(CFURLRequestRef) OVERRIDE;
-    virtual void continueDidReceiveResponse() OVERRIDE;
-    virtual void continueShouldUseCredentialStorage(bool) OVERRIDE;
-    virtual void continueWillCacheResponse(CFCachedURLResponseRef) OVERRIDE;
+    virtual void continueWillSendRequest(CFURLRequestRef) override;
+    virtual void continueDidReceiveResponse() override;
+    virtual void continueShouldUseCredentialStorage(bool) override;
+    virtual void continueWillCacheResponse(CFCachedURLResponseRef) override;
 #if USE(PROTECTION_SPACE_AUTH_CALLBACK)
-    virtual void continueCanAuthenticateAgainstProtectionSpace(bool) OVERRIDE;
+    virtual void continueCanAuthenticateAgainstProtectionSpace(bool) override;
 #endif // USE(PROTECTION_SPACE_AUTH_CALLBACK)
 
     dispatch_queue_t m_queue;

@@ -46,8 +46,8 @@ public:
 private:
     AccessibilityObject* m_parent;
     
-    virtual AccessibilityObject* parentObject() const OVERRIDE;
-    virtual bool isAccessibilitySVGRoot() const OVERRIDE { return true; }
+    virtual AccessibilityObject* parentObject() const override;
+    virtual bool isAccessibilitySVGRoot() const override { return true; }
 };
 
 ACCESSIBILITY_OBJECT_TYPE_CASTS(AccessibilitySVGRoot, isAccessibilitySVGRoot())

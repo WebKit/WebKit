@@ -95,14 +95,14 @@ private:
     virtual bool isAcceleratedCompositingEnabled();
     virtual void pluginProcessCrashed();
     virtual void willSendEventToPlugin();
-    virtual void didInitializePlugin() OVERRIDE;
-    virtual void didFailToInitializePlugin() OVERRIDE;
+    virtual void didInitializePlugin() override;
+    virtual void didFailToInitializePlugin() override;
 
 #if PLATFORM(MAC)
-    virtual void pluginFocusOrWindowFocusChanged(bool) OVERRIDE;
-    virtual void setComplexTextInputState(PluginComplexTextInputState) OVERRIDE;
-    virtual mach_port_t compositingRenderServerPort() OVERRIDE;
-    virtual void openPluginPreferencePane() OVERRIDE;
+    virtual void pluginFocusOrWindowFocusChanged(bool) override;
+    virtual void setComplexTextInputState(PluginComplexTextInputState) override;
+    virtual mach_port_t compositingRenderServerPort() override;
+    virtual void openPluginPreferencePane() override;
 #endif
 
     virtual float contentsScaleFactor();

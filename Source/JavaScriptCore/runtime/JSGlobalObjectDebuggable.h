@@ -42,14 +42,14 @@ public:
     JSGlobalObjectDebuggable(JSGlobalObject&);
     ~JSGlobalObjectDebuggable();
 
-    virtual Inspector::RemoteInspectorDebuggable::DebuggableType type() const OVERRIDE { return Inspector::RemoteInspectorDebuggable::JavaScript; }
+    virtual Inspector::RemoteInspectorDebuggable::DebuggableType type() const override { return Inspector::RemoteInspectorDebuggable::JavaScript; }
 
-    virtual String name() const OVERRIDE;
-    virtual bool hasLocalDebugger() const OVERRIDE { return false; }
+    virtual String name() const override;
+    virtual bool hasLocalDebugger() const override { return false; }
 
-    virtual void connect(Inspector::InspectorFrontendChannel*) OVERRIDE;
-    virtual void disconnect() OVERRIDE;
-    virtual void dispatchMessageFromRemoteFrontend(const String& message) OVERRIDE;
+    virtual void connect(Inspector::InspectorFrontendChannel*) override;
+    virtual void disconnect() override;
+    virtual void dispatchMessageFromRemoteFrontend(const String& message) override;
 
 private:
     JSGlobalObject& m_globalObject;

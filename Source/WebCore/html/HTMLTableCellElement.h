@@ -52,14 +52,14 @@ public:
 private:
     HTMLTableCellElement(const QualifiedName&, Document&);
 
-    virtual void parseAttribute(const QualifiedName&, const AtomicString&) OVERRIDE;
-    virtual bool isPresentationAttribute(const QualifiedName&) const OVERRIDE;
-    virtual void collectStyleForPresentationAttribute(const QualifiedName&, const AtomicString&, MutableStyleProperties&) OVERRIDE;
-    virtual const StyleProperties* additionalPresentationAttributeStyle() OVERRIDE;
+    virtual void parseAttribute(const QualifiedName&, const AtomicString&) override;
+    virtual bool isPresentationAttribute(const QualifiedName&) const override;
+    virtual void collectStyleForPresentationAttribute(const QualifiedName&, const AtomicString&, MutableStyleProperties&) override;
+    virtual const StyleProperties* additionalPresentationAttributeStyle() override;
 
-    virtual bool isURLAttribute(const Attribute&) const OVERRIDE;
+    virtual bool isURLAttribute(const Attribute&) const override;
 
-    virtual void addSubresourceAttributeURLs(ListHashSet<URL>&) const OVERRIDE;
+    virtual void addSubresourceAttributeURLs(ListHashSet<URL>&) const override;
 };
 
 void isHTMLTableCellElement(const HTMLTableCellElement&); // Catch unnecessary runtime check of type known at compile time.

@@ -45,8 +45,8 @@ public:
     WorkerRuntimeAgent(InstrumentingAgents*, Inspector::InjectedScriptManager*, WorkerGlobalScope*);
     virtual ~WorkerRuntimeAgent();
 
-    virtual void didCreateFrontendAndBackend(Inspector::InspectorFrontendChannel*, Inspector::InspectorBackendDispatcher*) OVERRIDE;
-    virtual void willDestroyFrontendAndBackend() OVERRIDE;
+    virtual void didCreateFrontendAndBackend(Inspector::InspectorFrontendChannel*, Inspector::InspectorBackendDispatcher*) override;
+    virtual void willDestroyFrontendAndBackend() override;
 
     // Protocol commands.
     virtual void run(ErrorString*);

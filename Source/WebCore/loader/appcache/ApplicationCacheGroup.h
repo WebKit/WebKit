@@ -107,12 +107,12 @@ private:
 
     // For normal resource loading, WebKit client is asked about each resource individually. Since application cache does not belong to any particular document,
     // the existing client callback cannot be used, so assume that any client that enables application cache also wants it to use credential storage.
-    virtual bool shouldUseCredentialStorage(ResourceHandle*) OVERRIDE { return true; }
+    virtual bool shouldUseCredentialStorage(ResourceHandle*) override { return true; }
 
-    virtual void didReceiveResponse(ResourceHandle*, const ResourceResponse&) OVERRIDE;
-    virtual void didReceiveData(ResourceHandle*, const char*, unsigned length, int encodedDataLength) OVERRIDE;
-    virtual void didFinishLoading(ResourceHandle*, double finishTime) OVERRIDE;
-    virtual void didFail(ResourceHandle*, const ResourceError&) OVERRIDE;
+    virtual void didReceiveResponse(ResourceHandle*, const ResourceResponse&) override;
+    virtual void didReceiveData(ResourceHandle*, const char*, unsigned length, int encodedDataLength) override;
+    virtual void didFinishLoading(ResourceHandle*, double finishTime) override;
+    virtual void didFail(ResourceHandle*, const ResourceError&) override;
 
     void didReceiveManifestResponse(const ResourceResponse&);
     void didReceiveManifestData(const char*, int);

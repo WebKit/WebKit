@@ -140,8 +140,6 @@ my %renamesContemplatedForTheFuture = (
     "nativeFunctionThunk" => "hostFunctionThunk",
     "nativeFunction" => "hostFunction",
     "NativeFunction" => "HostFunction",
-
-    "OVERRIDE" => "override",
 );
 
 # Sort the keys of the renames hash in order of decreasing length. This

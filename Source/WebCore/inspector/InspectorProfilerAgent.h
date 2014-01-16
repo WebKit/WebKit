@@ -91,8 +91,8 @@ public:
     virtual void getHeapSnapshot(ErrorString*, int uid);
     virtual void removeProfile(ErrorString*, const String& type, int uid);
 
-    virtual void didCreateFrontendAndBackend(Inspector::InspectorFrontendChannel*, Inspector::InspectorBackendDispatcher*) OVERRIDE;
-    virtual void willDestroyFrontendAndBackend() OVERRIDE;
+    virtual void didCreateFrontendAndBackend(Inspector::InspectorFrontendChannel*, Inspector::InspectorBackendDispatcher*) override;
+    virtual void willDestroyFrontendAndBackend() override;
 
     virtual void takeHeapSnapshot(ErrorString*, const bool* reportProgress);
     void toggleRecordButton(bool isProfiling);

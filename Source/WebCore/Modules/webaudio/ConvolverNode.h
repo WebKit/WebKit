@@ -45,10 +45,10 @@ public:
     virtual ~ConvolverNode();
     
     // AudioNode
-    virtual void process(size_t framesToProcess) OVERRIDE;
-    virtual void reset() OVERRIDE;
-    virtual void initialize() OVERRIDE;
-    virtual void uninitialize() OVERRIDE;
+    virtual void process(size_t framesToProcess) override;
+    virtual void reset() override;
+    virtual void initialize() override;
+    virtual void uninitialize() override;
 
     // Impulse responses
     void setBuffer(AudioBuffer*);
@@ -60,8 +60,8 @@ public:
 private:
     ConvolverNode(AudioContext*, float sampleRate);
 
-    virtual double tailTime() const OVERRIDE;
-    virtual double latencyTime() const OVERRIDE;
+    virtual double tailTime() const override;
+    virtual double latencyTime() const override;
 
     OwnPtr<Reverb> m_reverb;
     RefPtr<AudioBuffer> m_buffer;

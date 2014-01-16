@@ -40,20 +40,20 @@ public:
 private:
     PlatformCALayerRemoteTiledBacking(WebCore::PlatformCALayer::LayerType, WebCore::PlatformCALayerClient* owner, RemoteLayerTreeContext*);
 
-    virtual WebCore::TiledBacking* tiledBacking() OVERRIDE { return m_tileController.get(); }
+    virtual WebCore::TiledBacking* tiledBacking() override { return m_tileController.get(); }
 
-    virtual void setNeedsDisplay(const WebCore::FloatRect* dirtyRect = 0) OVERRIDE;
+    virtual void setNeedsDisplay(const WebCore::FloatRect* dirtyRect = 0) override;
 
-    virtual const WebCore::PlatformCALayerList* customSublayers() const OVERRIDE;
+    virtual const WebCore::PlatformCALayerList* customSublayers() const override;
 
-    virtual void setBounds(const WebCore::FloatRect&) OVERRIDE;
-    virtual bool isOpaque() const OVERRIDE;
-    virtual void setOpaque(bool) OVERRIDE;
-    virtual bool acceleratesDrawing() const OVERRIDE;
-    virtual void setAcceleratesDrawing(bool) OVERRIDE;
-    virtual void setContentsScale(float) OVERRIDE;
-    virtual void setBorderWidth(float) OVERRIDE;
-    virtual void setBorderColor(const WebCore::Color&) OVERRIDE;
+    virtual void setBounds(const WebCore::FloatRect&) override;
+    virtual bool isOpaque() const override;
+    virtual void setOpaque(bool) override;
+    virtual bool acceleratesDrawing() const override;
+    virtual void setAcceleratesDrawing(bool) override;
+    virtual void setContentsScale(float) override;
+    virtual void setBorderWidth(float) override;
+    virtual void setBorderColor(const WebCore::Color&) override;
 
     OwnPtr<WebCore::TileController> m_tileController;
     OwnPtr<WebCore::PlatformCALayerList> m_customSublayers;

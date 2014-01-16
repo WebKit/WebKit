@@ -47,12 +47,12 @@ public:
         return adoptPtr(new DeviceOrientationClientIOS());
     }
     DeviceOrientationClientIOS();
-    virtual ~DeviceOrientationClientIOS() OVERRIDE;
-    virtual void setController(DeviceOrientationController*) OVERRIDE;
-    virtual void startUpdating() OVERRIDE;
-    virtual void stopUpdating() OVERRIDE;
-    virtual DeviceOrientationData* lastOrientation() const OVERRIDE;
-    virtual void deviceOrientationControllerDestroyed() OVERRIDE;
+    virtual ~DeviceOrientationClientIOS() override;
+    virtual void setController(DeviceOrientationController*) override;
+    virtual void startUpdating() override;
+    virtual void stopUpdating() override;
+    virtual DeviceOrientationData* lastOrientation() const override;
+    virtual void deviceOrientationControllerDestroyed() override;
 
     void orientationChanged(double, double, double, double, double);
 

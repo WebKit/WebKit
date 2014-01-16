@@ -40,7 +40,7 @@ public:
     virtual ~ScrollAnimatorIOS();
 
 #if ENABLE(TOUCH_EVENTS)
-    virtual bool handleTouchEvent(const PlatformTouchEvent&) OVERRIDE;
+    virtual bool handleTouchEvent(const PlatformTouchEvent&) override;
 #endif
 
 private:

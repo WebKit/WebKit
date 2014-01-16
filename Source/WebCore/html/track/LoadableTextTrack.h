@@ -57,15 +57,15 @@ public:
 
     virtual void clearClient();
 
-    virtual AtomicString id() const OVERRIDE;
+    virtual AtomicString id() const override;
 
     size_t trackElementIndex();
     HTMLTrackElement* trackElement() { return m_trackElement; }
     void setTrackElement(HTMLTrackElement*);
-    virtual Element* element() OVERRIDE;
+    virtual Element* element() override;
 
-    virtual bool isDefault() const OVERRIDE { return m_isDefault; }
-    virtual void setIsDefault(bool isDefault) OVERRIDE  { m_isDefault = isDefault; }
+    virtual bool isDefault() const override { return m_isDefault; }
+    virtual void setIsDefault(bool isDefault) override  { m_isDefault = isDefault; }
 
 private:
     // TextTrackLoaderClient

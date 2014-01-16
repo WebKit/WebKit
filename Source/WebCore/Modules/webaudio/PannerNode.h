@@ -69,11 +69,11 @@ public:
     virtual ~PannerNode();
 
     // AudioNode
-    virtual void process(size_t framesToProcess) OVERRIDE;
-    virtual void pullInputs(size_t framesToProcess) OVERRIDE;
-    virtual void reset() OVERRIDE;
-    virtual void initialize() OVERRIDE;
-    virtual void uninitialize() OVERRIDE;
+    virtual void process(size_t framesToProcess) override;
+    virtual void pullInputs(size_t framesToProcess) override;
+    virtual void reset() override;
+    virtual void initialize() override;
+    virtual void uninitialize() override;
 
     // Listener
     AudioListener* listener();
@@ -126,8 +126,8 @@ public:
     AudioParam* distanceGain() { return m_distanceGain.get(); }
     AudioParam* coneGain() { return m_coneGain.get(); }
 
-    virtual double tailTime() const OVERRIDE { return m_panner ? m_panner->tailTime() : 0; }
-    virtual double latencyTime() const OVERRIDE { return m_panner ? m_panner->latencyTime() : 0; }
+    virtual double tailTime() const override { return m_panner ? m_panner->tailTime() : 0; }
+    virtual double latencyTime() const override { return m_panner ? m_panner->latencyTime() : 0; }
 
 private:
     PannerNode(AudioContext*, float sampleRate);

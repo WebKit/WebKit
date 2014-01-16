@@ -69,9 +69,9 @@ class WebKitCSSKeyframeRule : public CSSRule {
 public:
     virtual ~WebKitCSSKeyframeRule();
 
-    virtual CSSRule::Type type() const OVERRIDE { return WEBKIT_KEYFRAME_RULE; }
-    virtual String cssText() const OVERRIDE { return m_keyframe->cssText(); }
-    virtual void reattach(StyleRuleBase*) OVERRIDE;
+    virtual CSSRule::Type type() const override { return WEBKIT_KEYFRAME_RULE; }
+    virtual String cssText() const override { return m_keyframe->cssText(); }
+    virtual void reattach(StyleRuleBase*) override;
 
     String keyText() const { return m_keyframe->keyText(); }
     void setKeyText(const String& s) { m_keyframe->setKeyText(s); }

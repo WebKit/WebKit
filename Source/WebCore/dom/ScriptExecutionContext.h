@@ -161,7 +161,7 @@ protected:
         {
             return adoptPtr(new AddConsoleMessageTask(source, level, message));
         }
-        virtual void performTask(ScriptExecutionContext*) OVERRIDE;
+        virtual void performTask(ScriptExecutionContext*) override;
     private:
         AddConsoleMessageTask(MessageSource source, MessageLevel level, const String& message)
             : m_source(source)

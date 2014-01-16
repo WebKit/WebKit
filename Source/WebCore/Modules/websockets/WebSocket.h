@@ -97,33 +97,33 @@ public:
     DEFINE_ATTRIBUTE_EVENT_LISTENER(close);
 
     // EventTarget functions.
-    virtual EventTargetInterface eventTargetInterface() const OVERRIDE;
-    virtual ScriptExecutionContext* scriptExecutionContext() const OVERRIDE;
+    virtual EventTargetInterface eventTargetInterface() const override;
+    virtual ScriptExecutionContext* scriptExecutionContext() const override;
 
     using RefCounted<WebSocket>::ref;
     using RefCounted<WebSocket>::deref;
 
     // WebSocketChannelClient functions.
-    virtual void didConnect() OVERRIDE;
-    virtual void didReceiveMessage(const String& message) OVERRIDE;
-    virtual void didReceiveBinaryData(PassOwnPtr<Vector<char>>) OVERRIDE;
-    virtual void didReceiveMessageError() OVERRIDE;
-    virtual void didUpdateBufferedAmount(unsigned long bufferedAmount) OVERRIDE;
-    virtual void didStartClosingHandshake() OVERRIDE;
-    virtual void didClose(unsigned long unhandledBufferedAmount, ClosingHandshakeCompletionStatus, unsigned short code, const String& reason) OVERRIDE;
+    virtual void didConnect() override;
+    virtual void didReceiveMessage(const String& message) override;
+    virtual void didReceiveBinaryData(PassOwnPtr<Vector<char>>) override;
+    virtual void didReceiveMessageError() override;
+    virtual void didUpdateBufferedAmount(unsigned long bufferedAmount) override;
+    virtual void didStartClosingHandshake() override;
+    virtual void didClose(unsigned long unhandledBufferedAmount, ClosingHandshakeCompletionStatus, unsigned short code, const String& reason) override;
 
 private:
     explicit WebSocket(ScriptExecutionContext&);
 
     // ActiveDOMObject functions.
-    virtual void contextDestroyed() OVERRIDE;
-    virtual bool canSuspend() const OVERRIDE;
-    virtual void suspend(ReasonForSuspension) OVERRIDE;
-    virtual void resume() OVERRIDE;
-    virtual void stop() OVERRIDE;
+    virtual void contextDestroyed() override;
+    virtual bool canSuspend() const override;
+    virtual void suspend(ReasonForSuspension) override;
+    virtual void resume() override;
+    virtual void stop() override;
 
-    virtual void refEventTarget() OVERRIDE { ref(); }
-    virtual void derefEventTarget() OVERRIDE { deref(); }
+    virtual void refEventTarget() override { ref(); }
+    virtual void derefEventTarget() override { deref(); }
 
     size_t getFramingOverhead(size_t payloadSize);
 

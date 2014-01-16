@@ -285,7 +285,7 @@ void WorkerThread::stop()
 }
 
 class ReleaseFastMallocFreeMemoryTask : public ScriptExecutionContext::Task {
-    virtual void performTask(ScriptExecutionContext*) OVERRIDE { WTF::releaseFastMallocFreeMemory(); }
+    virtual void performTask(ScriptExecutionContext*) override { WTF::releaseFastMallocFreeMemory(); }
 };
 
 void WorkerThread::releaseFastMallocFreeMemoryInAllThreads()

@@ -57,7 +57,7 @@ public:
 private:
     HTMLTableSectionElement(const QualifiedName& tagName, Document&);
 
-    virtual const StyleProperties* additionalPresentationAttributeStyle() OVERRIDE;
+    virtual const StyleProperties* additionalPresentationAttributeStyle() override;
 };
 
 inline bool isHTMLTableSectionElement(const Node& node)

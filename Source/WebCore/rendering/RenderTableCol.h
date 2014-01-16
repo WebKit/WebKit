@@ -72,23 +72,23 @@ public:
     const BorderValue& borderAdjoiningCellAfter(const RenderTableCell*) const;
 
 private:
-    virtual const char* renderName() const OVERRIDE { return "RenderTableCol"; }
-    virtual bool isRenderTableCol() const OVERRIDE { return true; }
-    virtual void updateFromElement() OVERRIDE;
-    virtual void computePreferredLogicalWidths() OVERRIDE { ASSERT_NOT_REACHED(); }
+    virtual const char* renderName() const override { return "RenderTableCol"; }
+    virtual bool isRenderTableCol() const override { return true; }
+    virtual void updateFromElement() override;
+    virtual void computePreferredLogicalWidths() override { ASSERT_NOT_REACHED(); }
 
-    virtual void insertedIntoTree() OVERRIDE;
-    virtual void willBeRemovedFromTree() OVERRIDE;
+    virtual void insertedIntoTree() override;
+    virtual void willBeRemovedFromTree() override;
 
-    virtual bool isChildAllowed(const RenderObject&, const RenderStyle&) const OVERRIDE;
-    virtual bool canHaveChildren() const OVERRIDE;
-    virtual bool requiresLayer() const OVERRIDE { return false; }
+    virtual bool isChildAllowed(const RenderObject&, const RenderStyle&) const override;
+    virtual bool canHaveChildren() const override;
+    virtual bool requiresLayer() const override { return false; }
 
-    virtual LayoutRect clippedOverflowRectForRepaint(const RenderLayerModelObject* repaintContainer) const OVERRIDE;
-    virtual void imageChanged(WrappedImagePtr, const IntRect* = 0) OVERRIDE;
+    virtual LayoutRect clippedOverflowRectForRepaint(const RenderLayerModelObject* repaintContainer) const override;
+    virtual void imageChanged(WrappedImagePtr, const IntRect* = 0) override;
 
-    virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle) OVERRIDE;
-    virtual void paint(PaintInfo&, const LayoutPoint&) OVERRIDE { }
+    virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle) override;
+    virtual void paint(PaintInfo&, const LayoutPoint&) override { }
 
     RenderTable* table() const;
 

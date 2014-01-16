@@ -184,7 +184,7 @@ private:
     virtual PlatformLayer* pluginLayer();
 #endif
     virtual bool isTransparent();
-    virtual bool wantsWheelEvents() OVERRIDE;
+    virtual bool wantsWheelEvents() override;
     virtual void geometryDidChange(const WebCore::IntSize& pluginSize, const WebCore::IntRect& clipRect, const WebCore::AffineTransform& pluginToRootViewTransform);
     virtual void visibilityDidChange();
     virtual void frameDidFinishLoading(uint64_t requestID);
@@ -209,18 +209,18 @@ private:
     virtual bool handleKeyboardEvent(const WebKeyboardEvent&);
     virtual void setFocus(bool);
 
-    virtual bool handleEditingCommand(const String& commandName, const String& argument) OVERRIDE;
-    virtual bool isEditingCommandEnabled(const String&) OVERRIDE;
+    virtual bool handleEditingCommand(const String& commandName, const String& argument) override;
+    virtual bool isEditingCommandEnabled(const String&) override;
 
-    virtual bool shouldAllowScripting() OVERRIDE;
-    virtual bool shouldAllowNavigationFromDrags() OVERRIDE;
+    virtual bool shouldAllowScripting() override;
+    virtual bool shouldAllowNavigationFromDrags() override;
     
-    virtual bool handlesPageScaleFactor() OVERRIDE;
+    virtual bool handlesPageScaleFactor() override;
 
     virtual NPObject* pluginScriptableNPObject();
     
-    virtual unsigned countFindMatches(const String&, WebCore::FindOptions, unsigned maxMatchCount) OVERRIDE;
-    virtual bool findString(const String&, WebCore::FindOptions, unsigned maxMatchCount) OVERRIDE;
+    virtual unsigned countFindMatches(const String&, WebCore::FindOptions, unsigned maxMatchCount) override;
+    virtual bool findString(const String&, WebCore::FindOptions, unsigned maxMatchCount) override;
 
 #if PLATFORM(MAC)
     virtual void windowFocusChanged(bool);
@@ -229,7 +229,7 @@ private:
 
     virtual uint64_t pluginComplexTextInputIdentifier() const;
     virtual void sendComplexTextInput(const String& textInput);
-    virtual void setLayerHostingMode(LayerHostingMode) OVERRIDE;
+    virtual void setLayerHostingMode(LayerHostingMode) override;
 
     void pluginFocusOrWindowFocusChanged();
     void setComplexTextInputEnabled(bool);
@@ -248,17 +248,17 @@ private:
     virtual bool supportsSnapshotting() const;
 
     // Convert the given point from plug-in coordinates to root view coordinates.
-    virtual WebCore::IntPoint convertToRootView(const WebCore::IntPoint&) const OVERRIDE;
+    virtual WebCore::IntPoint convertToRootView(const WebCore::IntPoint&) const override;
 
     // Convert the given point from root view coordinates to plug-in coordinates. Returns false if the point can't be
     // converted (if the transformation matrix isn't invertible).
     bool convertFromRootView(const WebCore::IntPoint& pointInRootViewCoordinates, WebCore::IntPoint& pointInPluginCoordinates);
 
-    virtual PassRefPtr<WebCore::SharedBuffer> liveResourceData() const OVERRIDE;
+    virtual PassRefPtr<WebCore::SharedBuffer> liveResourceData() const override;
 
-    virtual bool performDictionaryLookupAtLocation(const WebCore::FloatPoint&) OVERRIDE { return false; }
+    virtual bool performDictionaryLookupAtLocation(const WebCore::FloatPoint&) override { return false; }
 
-    virtual String getSelectionString() const OVERRIDE { return String(); }
+    virtual String getSelectionString() const override { return String(); }
 
     void updateNPNPrivateMode();
 

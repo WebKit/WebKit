@@ -48,7 +48,7 @@ public:
     bool hasLabel;
     Vector<uint8_t> label;
 
-    virtual Class parametersClass() const OVERRIDE { return Class::RsaOaepParams; }
+    virtual Class parametersClass() const override { return Class::RsaOaepParams; }
 };
 
 CRYPTO_ALGORITHM_PARAMETERS_CASTS(RsaOaepParams)

@@ -234,7 +234,7 @@ namespace JSC {
         static const size_t maxExtraCost = 1024 * 1024;
         
         class FinalizerOwner : public WeakHandleOwner {
-            virtual void finalize(Handle<Unknown>, void* context) OVERRIDE;
+            virtual void finalize(Handle<Unknown>, void* context) override;
         };
 
         JS_EXPORT_PRIVATE bool isValidAllocation(size_t);

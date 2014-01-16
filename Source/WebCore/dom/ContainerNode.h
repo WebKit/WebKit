@@ -107,7 +107,7 @@ public:
 
     void cloneChildNodes(ContainerNode* clone);
 
-    virtual LayoutRect boundingBox() const OVERRIDE;
+    virtual LayoutRect boundingBox() const override;
 
     enum ChildChangeType { ElementInserted, ElementRemoved, TextInserted, TextRemoved, TextChanged, AllChildrenRemoved, NonContentsChildChanged };
     enum ChildChangeSource { ChildChangeSourceParser, ChildChangeSourceAPI };

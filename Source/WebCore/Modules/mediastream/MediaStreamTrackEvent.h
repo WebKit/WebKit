@@ -51,7 +51,7 @@ public:
     MediaStreamTrack* track() const;
 
     // Event
-    virtual EventInterface eventInterface() const OVERRIDE;
+    virtual EventInterface eventInterface() const override;
 
 private:
     MediaStreamTrackEvent();

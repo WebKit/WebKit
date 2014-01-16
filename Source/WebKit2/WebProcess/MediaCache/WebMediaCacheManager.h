@@ -44,7 +44,7 @@ public:
     static const char* supplementName();
 
 private:
-    virtual void didReceiveMessage(IPC::Connection*, IPC::MessageDecoder&) OVERRIDE;
+    virtual void didReceiveMessage(IPC::Connection*, IPC::MessageDecoder&) override;
 
     void getHostnamesWithMediaCache(uint64_t callbackID);
     void clearCacheForHostname(const String&);

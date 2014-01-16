@@ -59,7 +59,7 @@ public:
     float k4() const;
     bool setK4(float);
 
-    virtual void correctFilterResultIfNeeded() OVERRIDE;
+    virtual void correctFilterResultIfNeeded() override;
 
     virtual void platformApplySoftware();
     virtual void dump();
@@ -69,7 +69,7 @@ public:
     virtual TextStream& externalRepresentation(TextStream&, int indention) const;
 
 protected:
-    virtual bool requiresValidPreMultipliedPixels() OVERRIDE { return m_type != FECOMPOSITE_OPERATOR_ARITHMETIC; }
+    virtual bool requiresValidPreMultipliedPixels() override { return m_type != FECOMPOSITE_OPERATOR_ARITHMETIC; }
 
 private:
     FEComposite(Filter*, const CompositeOperationType&, float, float, float, float);

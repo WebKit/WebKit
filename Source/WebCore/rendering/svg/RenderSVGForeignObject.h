@@ -40,8 +40,8 @@ public:
 
     virtual void paint(PaintInfo&, const LayoutPoint&);
 
-    virtual LayoutRect clippedOverflowRectForRepaint(const RenderLayerModelObject* repaintContainer) const OVERRIDE;
-    virtual void computeFloatRectForRepaint(const RenderLayerModelObject* repaintContainer, FloatRect&, bool fixed = false) const OVERRIDE;
+    virtual LayoutRect clippedOverflowRectForRepaint(const RenderLayerModelObject* repaintContainer) const override;
+    virtual void computeFloatRectForRepaint(const RenderLayerModelObject* repaintContainer, FloatRect&, bool fixed = false) const override;
 
     virtual bool requiresLayer() const { return false; }
     virtual void layout();
@@ -51,19 +51,19 @@ public:
     virtual FloatRect repaintRectInLocalCoordinates() const { return FloatRect(FloatPoint(), m_viewport.size()); }
 
     virtual bool nodeAtFloatPoint(const HitTestRequest&, HitTestResult&, const FloatPoint& pointInParent, HitTestAction);
-    virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction) OVERRIDE;
+    virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction) override;
     virtual bool isSVGForeignObject() const { return true; }
 
-    virtual void mapLocalToContainer(const RenderLayerModelObject* repaintContainer, TransformState&, MapCoordinatesFlags = ApplyContainerFlip, bool* wasFixed = 0) const OVERRIDE;
-    virtual const RenderObject* pushMappingToContainer(const RenderLayerModelObject* ancestorToStopAt, RenderGeometryMap&) const OVERRIDE;
+    virtual void mapLocalToContainer(const RenderLayerModelObject* repaintContainer, TransformState&, MapCoordinatesFlags = ApplyContainerFlip, bool* wasFixed = 0) const override;
+    virtual const RenderObject* pushMappingToContainer(const RenderLayerModelObject* ancestorToStopAt, RenderGeometryMap&) const override;
     virtual void setNeedsTransformUpdate() { m_needsTransformUpdate = true; }
 
 private:
     void graphicsElement() const WTF_DELETED_FUNCTION;
-    virtual const char* renderName() const OVERRIDE { return "RenderSVGForeignObject"; }
+    virtual const char* renderName() const override { return "RenderSVGForeignObject"; }
 
-    virtual void updateLogicalWidth() OVERRIDE;
-    virtual void computeLogicalHeight(LayoutUnit logicalHeight, LayoutUnit logicalTop, LogicalExtentComputedValues&) const OVERRIDE;
+    virtual void updateLogicalWidth() override;
+    virtual void computeLogicalHeight(LayoutUnit logicalHeight, LayoutUnit logicalTop, LogicalExtentComputedValues&) const override;
 
     virtual const AffineTransform& localToParentTransform() const;
     virtual AffineTransform localTransform() const { return m_localTransform; }

@@ -48,20 +48,20 @@ private:
     DatabaseProcessProxy(WebContext*);
 
     // ChildProcessProxy
-    virtual void getLaunchOptions(ProcessLauncher::LaunchOptions&) OVERRIDE;
-    virtual void connectionWillOpen(IPC::Connection*) OVERRIDE;
-    virtual void connectionWillClose(IPC::Connection*) OVERRIDE;
+    virtual void getLaunchOptions(ProcessLauncher::LaunchOptions&) override;
+    virtual void connectionWillOpen(IPC::Connection*) override;
+    virtual void connectionWillClose(IPC::Connection*) override;
 
     // IPC::Connection::Client
-    virtual void didReceiveMessage(IPC::Connection*, IPC::MessageDecoder&) OVERRIDE;
-    virtual void didClose(IPC::Connection*) OVERRIDE;
-    virtual void didReceiveInvalidMessage(IPC::Connection*, IPC::StringReference messageReceiverName, IPC::StringReference messageName) OVERRIDE;
+    virtual void didReceiveMessage(IPC::Connection*, IPC::MessageDecoder&) override;
+    virtual void didClose(IPC::Connection*) override;
+    virtual void didReceiveInvalidMessage(IPC::Connection*, IPC::StringReference messageReceiverName, IPC::StringReference messageName) override;
 
     // Message handlers
     void didCreateDatabaseToWebProcessConnection(const IPC::Attachment&);
 
     // ProcessLauncher::Client
-    virtual void didFinishLaunching(ProcessLauncher*, IPC::Connection::Identifier) OVERRIDE;
+    virtual void didFinishLaunching(ProcessLauncher*, IPC::Connection::Identifier) override;
 
     void platformGetLaunchOptions(ProcessLauncher::LaunchOptions&);
 

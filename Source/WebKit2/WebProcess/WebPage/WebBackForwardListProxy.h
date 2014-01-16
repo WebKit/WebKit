@@ -63,9 +63,9 @@ private:
     virtual void close();
 
 #if PLATFORM(IOS)
-    virtual unsigned current() OVERRIDE;
-    virtual void setCurrent(unsigned newCurrent) OVERRIDE;
-    virtual bool clearAllPageCaches() OVERRIDE;
+    virtual unsigned current() override;
+    virtual void setCurrent(unsigned newCurrent) override;
+    virtual bool clearAllPageCaches() override;
 #endif
 
     WebPage* m_page;

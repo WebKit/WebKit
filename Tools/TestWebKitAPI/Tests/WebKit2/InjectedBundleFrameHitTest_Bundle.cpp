@@ -41,7 +41,7 @@ public:
     {
     }
 
-    virtual void didCreatePage(WKBundleRef, WKBundlePageRef) OVERRIDE;
+    virtual void didCreatePage(WKBundleRef, WKBundlePageRef) override;
     void frameLoadFinished(WKBundleFrameRef);
 
     WKBundleRef m_bundle;

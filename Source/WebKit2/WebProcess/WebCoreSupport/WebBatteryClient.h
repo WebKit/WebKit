@@ -44,9 +44,9 @@ public:
     virtual ~WebBatteryClient() { }
 
 private:
-    virtual void startUpdating() OVERRIDE;
-    virtual void stopUpdating() OVERRIDE;
-    virtual void batteryControllerDestroyed() OVERRIDE;
+    virtual void startUpdating() override;
+    virtual void stopUpdating() override;
+    virtual void batteryControllerDestroyed() override;
 
     WebPage* m_page;
 };

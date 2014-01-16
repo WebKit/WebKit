@@ -44,13 +44,13 @@ public:
     virtual ~WebNetworkInfoClient();
 
 private:
-    virtual void networkInfoControllerDestroyed() OVERRIDE;
+    virtual void networkInfoControllerDestroyed() override;
 
-    virtual double bandwidth() const OVERRIDE;
-    virtual bool metered() const OVERRIDE;
+    virtual double bandwidth() const override;
+    virtual bool metered() const override;
 
-    virtual void startUpdating() OVERRIDE;
-    virtual void stopUpdating() OVERRIDE;
+    virtual void startUpdating() override;
+    virtual void stopUpdating() override;
 
     WebPage* m_page;
 };

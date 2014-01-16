@@ -42,7 +42,7 @@ public:
     // its IDL). This is to make the implementation more simple while matching what the spec says.
 
 protected:
-    virtual bool isKeyCursor() const OVERRIDE { return false; }
+    virtual bool isKeyCursor() const override { return false; }
 
 private:
     IDBCursorWithValue(PassRefPtr<IDBCursorBackend>, IndexedDB::CursorDirection, IDBRequest*, IDBAny* source, IDBTransaction*);

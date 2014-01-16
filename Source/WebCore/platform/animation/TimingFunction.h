@@ -64,7 +64,7 @@ public:
     
     virtual ~LinearTimingFunction() { }
     
-    virtual bool operator==(const TimingFunction& other) OVERRIDE
+    virtual bool operator==(const TimingFunction& other) override
     {
         return other.isLinearTimingFunction();
     }
@@ -115,7 +115,7 @@ public:
 
     virtual ~CubicBezierTimingFunction() { }
     
-    virtual bool operator==(const TimingFunction& other) OVERRIDE
+    virtual bool operator==(const TimingFunction& other) override
     {
         if (other.isCubicBezierTimingFunction()) {
             const CubicBezierTimingFunction* ctf = static_cast<const CubicBezierTimingFunction*>(&other);
@@ -172,7 +172,7 @@ public:
     
     virtual ~StepsTimingFunction() { }
     
-    virtual bool operator==(const TimingFunction& other) OVERRIDE
+    virtual bool operator==(const TimingFunction& other) override
     {
         if (other.isStepsTimingFunction()) {
             const StepsTimingFunction* stf = static_cast<const StepsTimingFunction*>(&other);

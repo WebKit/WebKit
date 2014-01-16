@@ -39,9 +39,9 @@ public:
     virtual ~CachedTextTrack();
 
 private:
-    virtual bool mayTryReplaceEncodedData() const OVERRIDE { return true; }
-    virtual void addDataBuffer(ResourceBuffer*) OVERRIDE;
-    virtual void finishLoading(ResourceBuffer*) OVERRIDE;
+    virtual bool mayTryReplaceEncodedData() const override { return true; }
+    virtual void addDataBuffer(ResourceBuffer*) override;
+    virtual void finishLoading(ResourceBuffer*) override;
 };
 
 }

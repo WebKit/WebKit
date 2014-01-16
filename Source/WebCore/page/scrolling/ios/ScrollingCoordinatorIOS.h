@@ -45,14 +45,14 @@ public:
 
     virtual void pageDestroyed();
 
-    virtual void commitTreeStateIfNeeded() OVERRIDE;
+    virtual void commitTreeStateIfNeeded() override;
 
     // Handle the wheel event on the scrolling thread. Returns whether the event was handled or not.
-    virtual bool handleWheelEvent(FrameView*, const PlatformWheelEvent&) OVERRIDE { return false; }
+    virtual bool handleWheelEvent(FrameView*, const PlatformWheelEvent&) override { return false; }
 
 private:
-    virtual PassOwnPtr<ScrollingTreeNode> createScrollingTreeNode(ScrollingNodeType, ScrollingNodeID) OVERRIDE;
-    virtual void scheduleTreeStateCommit() OVERRIDE;
+    virtual PassOwnPtr<ScrollingTreeNode> createScrollingTreeNode(ScrollingNodeType, ScrollingNodeID) override;
+    virtual void scheduleTreeStateCommit() override;
 
     void scrollingStateTreeCommitterTimerFired(Timer<ScrollingCoordinatorIOS>*);
     void commitTreeState();

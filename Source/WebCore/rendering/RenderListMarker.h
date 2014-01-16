@@ -48,34 +48,34 @@ public:
 private:
     void element() const WTF_DELETED_FUNCTION;
 
-    virtual const char* renderName() const OVERRIDE { return "RenderListMarker"; }
-    virtual void computePreferredLogicalWidths() OVERRIDE;
+    virtual const char* renderName() const override { return "RenderListMarker"; }
+    virtual void computePreferredLogicalWidths() override;
 
-    virtual bool isListMarker() const OVERRIDE { return true; }
-    virtual bool canHaveChildren() const OVERRIDE { return false; }
+    virtual bool isListMarker() const override { return true; }
+    virtual bool canHaveChildren() const override { return false; }
 
-    virtual void paint(PaintInfo&, const LayoutPoint&) OVERRIDE;
+    virtual void paint(PaintInfo&, const LayoutPoint&) override;
 
-    virtual void layout() OVERRIDE;
+    virtual void layout() override;
 
-    virtual void imageChanged(WrappedImagePtr, const IntRect* = 0) OVERRIDE;
+    virtual void imageChanged(WrappedImagePtr, const IntRect* = 0) override;
 
-    virtual std::unique_ptr<InlineElementBox> createInlineBox() OVERRIDE;
+    virtual std::unique_ptr<InlineElementBox> createInlineBox() override;
 
-    virtual LayoutUnit lineHeight(bool firstLine, LineDirectionMode, LinePositionMode = PositionOnContainingLine) const OVERRIDE;
-    virtual int baselinePosition(FontBaseline, bool firstLine, LineDirectionMode, LinePositionMode = PositionOnContainingLine) const OVERRIDE;
+    virtual LayoutUnit lineHeight(bool firstLine, LineDirectionMode, LinePositionMode = PositionOnContainingLine) const override;
+    virtual int baselinePosition(FontBaseline, bool firstLine, LineDirectionMode, LinePositionMode = PositionOnContainingLine) const override;
 
-    virtual bool isImage() const OVERRIDE;
+    virtual bool isImage() const override;
     bool isText() const { return !isImage(); }
 
-    virtual void setSelectionState(SelectionState) OVERRIDE;
-    virtual LayoutRect selectionRectForRepaint(const RenderLayerModelObject* repaintContainer, bool clipToVisibleContent = true) OVERRIDE;
-    virtual bool canBeSelectionLeaf() const OVERRIDE { return true; }
+    virtual void setSelectionState(SelectionState) override;
+    virtual LayoutRect selectionRectForRepaint(const RenderLayerModelObject* repaintContainer, bool clipToVisibleContent = true) override;
+    virtual bool canBeSelectionLeaf() const override { return true; }
 
     void updateMargins();
     void updateContent();
 
-    virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle) OVERRIDE;
+    virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle) override;
 
     IntRect getRelativeMarkerRect();
     LayoutRect localSelectionRect();

@@ -50,7 +50,7 @@ public:
 
 private:
     DragImageLoader(Clipboard*);
-    virtual void imageChanged(CachedImage*, const IntRect*) OVERRIDE;
+    virtual void imageChanged(CachedImage*, const IntRect*) override;
     Clipboard* m_clipboard;
 };
 

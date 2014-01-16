@@ -39,15 +39,15 @@ public:
     MathMLTextElement& element() { return static_cast<MathMLTextElement&>(nodeForNonAnonymous()); }
 
 private:
-    virtual const char* renderName() const OVERRIDE { return isAnonymous() ? "RenderMathMLSpace (anonymous)" : "RenderMathMLSpace"; }
-    virtual bool isRenderMathMLSpace() const OVERRIDE { return true; }
-    virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle) OVERRIDE;
-    virtual bool isChildAllowed(const RenderObject&, const RenderStyle&) const OVERRIDE { return false; }
-    virtual void computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const OVERRIDE;
-    virtual void updateFromElement() OVERRIDE;
-    virtual int firstLineBaseline() const OVERRIDE;
-    virtual void updateLogicalWidth() OVERRIDE;
-    virtual void updateLogicalHeight() OVERRIDE;
+    virtual const char* renderName() const override { return isAnonymous() ? "RenderMathMLSpace (anonymous)" : "RenderMathMLSpace"; }
+    virtual bool isRenderMathMLSpace() const override { return true; }
+    virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle) override;
+    virtual bool isChildAllowed(const RenderObject&, const RenderStyle&) const override { return false; }
+    virtual void computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const override;
+    virtual void updateFromElement() override;
+    virtual int firstLineBaseline() const override;
+    virtual void updateLogicalWidth() override;
+    virtual void updateLogicalHeight() override;
 
     LayoutUnit m_width;
     LayoutUnit m_height;

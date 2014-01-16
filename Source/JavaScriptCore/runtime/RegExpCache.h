@@ -52,7 +52,7 @@ private:
 
     static const int maxStrongCacheableEntries = 32;
 
-    virtual void finalize(Handle<Unknown>, void* context) OVERRIDE;
+    virtual void finalize(Handle<Unknown>, void* context) override;
 
     RegExp* lookupOrCreate(const WTF::String& patternString, RegExpFlags);
     void addToStrongCache(RegExp*);

@@ -50,11 +50,11 @@ public:
 private:
     explicit ReplaceNodeWithSpanCommand(PassRefPtr<HTMLElement>);
 
-    virtual void doApply() OVERRIDE;
-    virtual void doUnapply() OVERRIDE;
+    virtual void doApply() override;
+    virtual void doUnapply() override;
     
 #ifndef NDEBUG
-    virtual void getNodesInCommand(HashSet<Node*>&) OVERRIDE;
+    virtual void getNodesInCommand(HashSet<Node*>&) override;
 #endif
 
     RefPtr<HTMLElement> m_elementToReplace;

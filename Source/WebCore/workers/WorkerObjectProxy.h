@@ -48,7 +48,7 @@ namespace WebCore {
         virtual void reportPendingActivity(bool hasPendingActivity) = 0;
 
         // No need to notify the parent page context when dedicated workers are closing.
-        virtual void workerGlobalScopeClosed() OVERRIDE { }
+        virtual void workerGlobalScopeClosed() override { }
     };
 
 } // namespace WebCore

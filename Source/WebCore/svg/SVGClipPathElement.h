@@ -44,11 +44,11 @@ private:
     virtual bool needsPendingResourceHandling() const { return false; }
 
     bool isSupportedAttribute(const QualifiedName&);
-    virtual void parseAttribute(const QualifiedName&, const AtomicString&) OVERRIDE;
+    virtual void parseAttribute(const QualifiedName&, const AtomicString&) override;
     virtual void svgAttributeChanged(const QualifiedName&);
-    virtual void childrenChanged(const ChildChange&) OVERRIDE;
+    virtual void childrenChanged(const ChildChange&) override;
 
-    virtual RenderPtr<RenderElement> createElementRenderer(PassRef<RenderStyle>) OVERRIDE;
+    virtual RenderPtr<RenderElement> createElementRenderer(PassRef<RenderStyle>) override;
 
     BEGIN_DECLARE_ANIMATED_PROPERTIES(SVGClipPathElement)
         DECLARE_ANIMATED_ENUMERATION(ClipPathUnits, clipPathUnits, SVGUnitTypes::SVGUnitType)

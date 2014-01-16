@@ -38,7 +38,7 @@ public:
 private:
     HTMLHtmlElement(const QualifiedName&, Document&);
 
-    virtual bool isURLAttribute(const Attribute&) const OVERRIDE;
+    virtual bool isURLAttribute(const Attribute&) const override;
 };
 
 NODE_TYPE_CASTS(HTMLHtmlElement)

@@ -30,11 +30,11 @@ public:
     explicit ProgressTrackerClient(WebKitWebView*);
 
 private:
-    virtual void progressTrackerDestroyed() OVERRIDE;
+    virtual void progressTrackerDestroyed() override;
 
-    virtual void progressStarted(WebCore::Frame&) OVERRIDE;
-    virtual void progressEstimateChanged(WebCore::Frame&) OVERRIDE;
-    virtual void progressFinished(WebCore::Frame&) OVERRIDE;
+    virtual void progressStarted(WebCore::Frame&) override;
+    virtual void progressEstimateChanged(WebCore::Frame&) override;
+    virtual void progressFinished(WebCore::Frame&) override;
 
     WebKitWebView* m_webView;
 };

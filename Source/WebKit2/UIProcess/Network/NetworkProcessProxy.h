@@ -65,18 +65,18 @@ private:
     NetworkProcessProxy(WebContext&);
 
     // ChildProcessProxy
-    virtual void getLaunchOptions(ProcessLauncher::LaunchOptions&) OVERRIDE;
-    virtual void connectionWillOpen(IPC::Connection*) OVERRIDE;
-    virtual void connectionWillClose(IPC::Connection*) OVERRIDE;
+    virtual void getLaunchOptions(ProcessLauncher::LaunchOptions&) override;
+    virtual void connectionWillOpen(IPC::Connection*) override;
+    virtual void connectionWillClose(IPC::Connection*) override;
 
     void platformGetLaunchOptions(ProcessLauncher::LaunchOptions&);
     void networkProcessCrashedOrFailedToLaunch();
 
     // IPC::Connection::Client
-    virtual void didReceiveMessage(IPC::Connection*, IPC::MessageDecoder&) OVERRIDE;
-    virtual void didReceiveSyncMessage(IPC::Connection*, IPC::MessageDecoder&, std::unique_ptr<IPC::MessageEncoder>&) OVERRIDE;
-    virtual void didClose(IPC::Connection*) OVERRIDE;
-    virtual void didReceiveInvalidMessage(IPC::Connection*, IPC::StringReference messageReceiverName, IPC::StringReference messageName) OVERRIDE;
+    virtual void didReceiveMessage(IPC::Connection*, IPC::MessageDecoder&) override;
+    virtual void didReceiveSyncMessage(IPC::Connection*, IPC::MessageDecoder&, std::unique_ptr<IPC::MessageEncoder>&) override;
+    virtual void didClose(IPC::Connection*) override;
+    virtual void didReceiveInvalidMessage(IPC::Connection*, IPC::StringReference messageReceiverName, IPC::StringReference messageName) override;
 
     // Message handlers
     void didReceiveNetworkProcessProxyMessage(IPC::Connection*, IPC::MessageDecoder&);

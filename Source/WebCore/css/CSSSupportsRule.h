@@ -47,8 +47,8 @@ public:
 
     virtual ~CSSSupportsRule() { }
 
-    virtual CSSRule::Type type() const OVERRIDE { return SUPPORTS_RULE; }
-    virtual String cssText() const OVERRIDE;
+    virtual CSSRule::Type type() const override { return SUPPORTS_RULE; }
+    virtual String cssText() const override;
 
     String conditionText() const;
 

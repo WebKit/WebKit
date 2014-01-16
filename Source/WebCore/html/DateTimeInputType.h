@@ -42,15 +42,15 @@ public:
     explicit DateTimeInputType(HTMLInputElement& element) : BaseDateTimeInputType(element) { }
 
 private:
-    virtual void attach() OVERRIDE;
-    virtual const AtomicString& formControlType() const OVERRIDE;
-    virtual DateComponents::Type dateType() const OVERRIDE;
-    virtual StepRange createStepRange(AnyStepHandling) const OVERRIDE;
-    virtual Decimal defaultValueForStepUp() const OVERRIDE;
-    virtual bool parseToDateComponentsInternal(const UChar*, unsigned length, DateComponents*) const OVERRIDE;
-    virtual bool setMillisecondToDateComponents(double, DateComponents*) const OVERRIDE;
-    virtual bool isDateTimeField() const OVERRIDE;
-    virtual String sanitizeValue(const String&) const OVERRIDE;
+    virtual void attach() override;
+    virtual const AtomicString& formControlType() const override;
+    virtual DateComponents::Type dateType() const override;
+    virtual StepRange createStepRange(AnyStepHandling) const override;
+    virtual Decimal defaultValueForStepUp() const override;
+    virtual bool parseToDateComponentsInternal(const UChar*, unsigned length, DateComponents*) const override;
+    virtual bool setMillisecondToDateComponents(double, DateComponents*) const override;
+    virtual bool isDateTimeField() const override;
+    virtual String sanitizeValue(const String&) const override;
 };
 
 } // namespace WebCore

@@ -44,7 +44,7 @@ public:
     WorkerConsoleAgent(InstrumentingAgents*, PageInjectedScriptManager*);
     virtual ~WorkerConsoleAgent();
 
-    virtual bool isWorkerAgent() OVERRIDE { return true; }
+    virtual bool isWorkerAgent() override { return true; }
 
 private:
     virtual void addInspectedNode(ErrorString*, int nodeId);

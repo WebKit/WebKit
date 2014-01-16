@@ -45,7 +45,7 @@ class RenderMultiColumnSet FINAL : public RenderRegionSet {
 public:
     RenderMultiColumnSet(RenderFlowThread&, PassRef<RenderStyle>);
 
-    virtual bool isRenderMultiColumnSet() const OVERRIDE { return true; }
+    virtual bool isRenderMultiColumnSet() const override { return true; }
 
     unsigned computedColumnCount() const { return m_computedColumnCount; }
     LayoutUnit computedColumnWidth() const { return m_computedColumnWidth; }
@@ -93,28 +93,28 @@ public:
     // after layout that the columns weren't tall enough.
     void recordSpaceShortage(LayoutUnit spaceShortage);
 
-    virtual void updateLogicalWidth() OVERRIDE;
+    virtual void updateLogicalWidth() override;
 
     void prepareForLayout();
 
 private:
-    virtual void computeLogicalHeight(LayoutUnit logicalHeight, LayoutUnit logicalTop, LogicalExtentComputedValues&) const OVERRIDE;
+    virtual void computeLogicalHeight(LayoutUnit logicalHeight, LayoutUnit logicalTop, LogicalExtentComputedValues&) const override;
 
-    virtual void paintObject(PaintInfo&, const LayoutPoint& paintOffset) OVERRIDE;
+    virtual void paintObject(PaintInfo&, const LayoutPoint& paintOffset) override;
 
-    virtual LayoutUnit pageLogicalWidth() const OVERRIDE { return m_computedColumnWidth; }
-    virtual LayoutUnit pageLogicalHeight() const OVERRIDE { return m_computedColumnHeight; }
+    virtual LayoutUnit pageLogicalWidth() const override { return m_computedColumnWidth; }
+    virtual LayoutUnit pageLogicalHeight() const override { return m_computedColumnHeight; }
 
-    virtual LayoutUnit pageLogicalTopForOffset(LayoutUnit offset) const OVERRIDE;
+    virtual LayoutUnit pageLogicalTopForOffset(LayoutUnit offset) const override;
     
     // FIXME: This will change once we have column sets constrained by enclosing pages, etc.
-    virtual LayoutUnit logicalHeightOfAllFlowThreadContent() const OVERRIDE { return m_computedColumnHeight; }
+    virtual LayoutUnit logicalHeightOfAllFlowThreadContent() const override { return m_computedColumnHeight; }
     
-    virtual void repaintFlowThreadContent(const LayoutRect& repaintRect, bool immediate) OVERRIDE;
+    virtual void repaintFlowThreadContent(const LayoutRect& repaintRect, bool immediate) override;
 
-    virtual void collectLayerFragments(LayerFragments&, const LayoutRect& layerBoundingBox, const LayoutRect& dirtyRect) OVERRIDE;
+    virtual void collectLayerFragments(LayerFragments&, const LayoutRect& layerBoundingBox, const LayoutRect& dirtyRect) override;
 
-    virtual void adjustRegionBoundsFromFlowThreadPortionRect(const IntPoint& layerOffset, IntRect& regionBounds) OVERRIDE;
+    virtual void adjustRegionBoundsFromFlowThreadPortionRect(const IntPoint& layerOffset, IntRect& regionBounds) override;
 
     virtual const char* renderName() const;
     

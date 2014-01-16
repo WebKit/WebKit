@@ -49,7 +49,7 @@ protected:
     virtual bool decodeMessageBody(IPC::ArgumentDecoder&, RefPtr<API::Object>&) = 0;
 
     // IPC::MessageReceiver
-    void didReceiveMessage(IPC::Connection*, IPC::MessageDecoder&) OVERRIDE;
+    void didReceiveMessage(IPC::Connection*, IPC::MessageDecoder&) override;
 
     // Implemented in generated WebConnectionMessageReceiver.cpp
     void didReceiveWebConnectionMessage(IPC::Connection*, IPC::MessageDecoder&);

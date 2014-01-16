@@ -109,7 +109,7 @@ public:
     
     virtual void setAttachedWindowHeight(unsigned height);
     virtual void setAttachedWindowWidth(unsigned);
-    virtual void setToolbarHeight(unsigned) OVERRIDE;
+    virtual void setToolbarHeight(unsigned) override;
 
     virtual void inspectedURLChanged(const WTF::String& newURL);
 

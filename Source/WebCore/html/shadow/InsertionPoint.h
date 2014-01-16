@@ -64,11 +64,11 @@ public:
 
 protected:
     InsertionPoint(const QualifiedName&, Document&);
-    virtual bool rendererIsNeeded(const RenderStyle&) OVERRIDE;
-    virtual void childrenChanged(const ChildChange&) OVERRIDE;
-    virtual InsertionNotificationRequest insertedInto(ContainerNode&) OVERRIDE;
-    virtual void removedFrom(ContainerNode&) OVERRIDE;
-    virtual bool isInsertionPointNode() const OVERRIDE { return true; }
+    virtual bool rendererIsNeeded(const RenderStyle&) override;
+    virtual void childrenChanged(const ChildChange&) override;
+    virtual InsertionNotificationRequest insertedInto(ContainerNode&) override;
+    virtual void removedFrom(ContainerNode&) override;
+    virtual bool isInsertionPointNode() const override { return true; }
 
 private:
 

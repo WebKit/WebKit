@@ -57,13 +57,13 @@ public:
 protected:
     MathMLElement(const QualifiedName& tagName, Document&);
 
-    virtual void parseAttribute(const QualifiedName&, const AtomicString&) OVERRIDE;
-    virtual bool childShouldCreateRenderer(const Node&) const OVERRIDE;
-    virtual void attributeChanged(const QualifiedName&, const AtomicString& newValue, AttributeModificationReason) OVERRIDE;
+    virtual void parseAttribute(const QualifiedName&, const AtomicString&) override;
+    virtual bool childShouldCreateRenderer(const Node&) const override;
+    virtual void attributeChanged(const QualifiedName&, const AtomicString& newValue, AttributeModificationReason) override;
 
 private:    
-    virtual bool isPresentationAttribute(const QualifiedName&) const OVERRIDE;
-    virtual void collectStyleForPresentationAttribute(const QualifiedName&, const AtomicString&, MutableStyleProperties&) OVERRIDE;
+    virtual bool isPresentationAttribute(const QualifiedName&) const override;
+    virtual void collectStyleForPresentationAttribute(const QualifiedName&, const AtomicString&, MutableStyleProperties&) override;
 
     virtual void updateSelectedChild() { };
 };

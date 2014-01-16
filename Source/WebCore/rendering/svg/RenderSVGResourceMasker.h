@@ -45,8 +45,8 @@ public:
 
     virtual void removeAllClientsFromCache(bool markForInvalidation = true);
     virtual void removeClientFromCache(RenderObject&, bool markForInvalidation = true);
-    virtual bool applyResource(RenderElement&, const RenderStyle&, GraphicsContext*&, unsigned short resourceMode) OVERRIDE;
-    virtual FloatRect resourceBoundingBox(const RenderObject&) OVERRIDE;
+    virtual bool applyResource(RenderElement&, const RenderStyle&, GraphicsContext*&, unsigned short resourceMode) override;
+    virtual FloatRect resourceBoundingBox(const RenderObject&) override;
 
     SVGUnitTypes::SVGUnitType maskUnits() const { return maskElement().maskUnits(); }
     SVGUnitTypes::SVGUnitType maskContentUnits() const { return maskElement().maskContentUnits(); }
@@ -57,7 +57,7 @@ public:
 private:
     void element() const WTF_DELETED_FUNCTION;
 
-    virtual const char* renderName() const OVERRIDE { return "RenderSVGResourceMasker"; }
+    virtual const char* renderName() const override { return "RenderSVGResourceMasker"; }
 
     bool drawContentIntoMaskImage(MaskerData*, ColorSpace, RenderObject*);
     void calculateMaskContentRepaintRect();

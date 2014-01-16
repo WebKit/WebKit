@@ -42,9 +42,9 @@ class EditCommandComposition : public UndoStep {
 public:
     static PassRefPtr<EditCommandComposition> create(Document&, const VisibleSelection&, const VisibleSelection&, EditAction);
 
-    virtual void unapply() OVERRIDE;
-    virtual void reapply() OVERRIDE;
-    virtual EditAction editingAction() const OVERRIDE { return m_editAction; }
+    virtual void unapply() override;
+    virtual void reapply() override;
+    virtual EditAction editingAction() const override { return m_editAction; }
     void append(SimpleEditCommand*);
     bool wasCreateLinkCommand() const { return m_editAction == EditActionCreateLink; }
 
@@ -173,7 +173,7 @@ protected:
     Vector<RefPtr<EditCommand>> m_commands;
 
 private:
-    virtual bool isCompositeEditCommand() const OVERRIDE { return true; }
+    virtual bool isCompositeEditCommand() const override { return true; }
 
     RefPtr<EditCommandComposition> m_composition;
 };

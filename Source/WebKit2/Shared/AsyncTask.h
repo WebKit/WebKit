@@ -57,7 +57,7 @@ public:
     }
 
 private:
-    virtual void performTask() OVERRIDE
+    virtual void performTask() override
     {
         m_taskFunction();
     }

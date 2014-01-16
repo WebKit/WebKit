@@ -48,7 +48,7 @@ public:
     const CodeOrigin& codeOrigin() const { return m_codeOrigin; }
 
 protected:
-    virtual void markRequiredObjectsInternal(SlotVisitor&) OVERRIDE;
+    virtual void markRequiredObjectsInternal(SlotVisitor&) override;
 
 private:
     WriteBarrier<Structure> m_structure;

@@ -52,8 +52,8 @@ public:
 private:
     void gradientElement() const WTF_DELETED_FUNCTION;
 
-    virtual const char* renderName() const OVERRIDE { return "RenderSVGResourceRadialGradient"; }
-    virtual bool collectGradientAttributes() OVERRIDE;
+    virtual const char* renderName() const override { return "RenderSVGResourceRadialGradient"; }
+    virtual bool collectGradientAttributes() override;
 
     RadialGradientAttributes m_attributes;
 };

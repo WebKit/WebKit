@@ -42,10 +42,10 @@ public:
 
     ~InbandTextTrackPrivateAVFIOS();
 
-    virtual InbandTextTrackPrivate::Kind kind() const OVERRIDE;
-    virtual AtomicString label() const OVERRIDE { return m_name; }
-    virtual AtomicString language() const OVERRIDE { return m_language; }
-    virtual bool isLegacyClosedCaptionsTrack() const OVERRIDE { return false; }
+    virtual InbandTextTrackPrivate::Kind kind() const override;
+    virtual AtomicString label() const override { return m_name; }
+    virtual AtomicString language() const override { return m_language; }
+    virtual bool isLegacyClosedCaptionsTrack() const override { return false; }
     int internalID() const { return m_internalID; }
 
 protected:

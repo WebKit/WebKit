@@ -53,8 +53,8 @@ public:
 
 private:
     void configure();
-    virtual void beganAudioInterruption() OVERRIDE;
-    virtual void endedAudioInterruption() OVERRIDE;
+    virtual void beganAudioInterruption() override;
+    virtual void endedAudioInterruption() override;
 
     // DefaultOutputUnit callback
     static OSStatus inputProc(void* userData, AudioUnitRenderActionFlags*, const AudioTimeStamp*, UInt32 busNumber, UInt32 numberOfFrames, AudioBufferList* ioData);

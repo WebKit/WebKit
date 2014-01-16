@@ -41,11 +41,11 @@ public:
     explicit ProgressTrackerClientEfl(Evas_Object*);
     
 private:
-    virtual void progressTrackerDestroyed() OVERRIDE;
+    virtual void progressTrackerDestroyed() override;
 
-    virtual void progressStarted(WebCore::Frame& originatingProgressFrame) OVERRIDE;
-    virtual void progressEstimateChanged(WebCore::Frame& originatingProgressFrame) OVERRIDE;
-    virtual void progressFinished(WebCore::Frame& originatingProgressFrame) OVERRIDE;
+    virtual void progressStarted(WebCore::Frame& originatingProgressFrame) override;
+    virtual void progressEstimateChanged(WebCore::Frame& originatingProgressFrame) override;
+    virtual void progressFinished(WebCore::Frame& originatingProgressFrame) override;
 
     Evas_Object* m_view;
 };

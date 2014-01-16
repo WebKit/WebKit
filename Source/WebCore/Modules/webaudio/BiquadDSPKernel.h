@@ -43,8 +43,8 @@ public:
     }
     
     // AudioDSPKernel
-    virtual void process(const float* source, float* dest, size_t framesToProcess) OVERRIDE;
-    virtual void reset() OVERRIDE { m_biquad.reset(); }
+    virtual void process(const float* source, float* dest, size_t framesToProcess) override;
+    virtual void reset() override { m_biquad.reset(); }
 
     // Get the magnitude and phase response of the filter at the given
     // set of frequencies (in Hz). The phase response is in radians.
@@ -53,8 +53,8 @@ public:
                               float* magResponse,
                               float* phaseResponse);
 
-    virtual double tailTime() const OVERRIDE;
-    virtual double latencyTime() const OVERRIDE;
+    virtual double tailTime() const override;
+    virtual double latencyTime() const override;
 
 protected:
     Biquad m_biquad;

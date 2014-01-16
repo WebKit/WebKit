@@ -50,17 +50,17 @@ public:
     bool hitTest(const HitTestRequest&, HitTestResult&);
     bool hitTest(const HitTestRequest&, const HitTestLocation&, HitTestResult&);
 
-    virtual const char* renderName() const OVERRIDE { return "RenderView"; }
+    virtual const char* renderName() const override { return "RenderView"; }
 
-    virtual bool requiresLayer() const OVERRIDE { return true; }
+    virtual bool requiresLayer() const override { return true; }
 
-    virtual bool isChildAllowed(const RenderObject&, const RenderStyle&) const OVERRIDE;
+    virtual bool isChildAllowed(const RenderObject&, const RenderStyle&) const override;
 
-    virtual void layout() OVERRIDE;
-    virtual void updateLogicalWidth() OVERRIDE;
-    virtual void computeLogicalHeight(LayoutUnit logicalHeight, LayoutUnit logicalTop, LogicalExtentComputedValues&) const OVERRIDE;
+    virtual void layout() override;
+    virtual void updateLogicalWidth() override;
+    virtual void computeLogicalHeight(LayoutUnit logicalHeight, LayoutUnit logicalTop, LogicalExtentComputedValues&) const override;
 
-    virtual LayoutUnit availableLogicalHeight(AvailableLogicalHeightType) const OVERRIDE;
+    virtual LayoutUnit availableLogicalHeight(AvailableLogicalHeightType) const override;
 
     // The same as the FrameView's layoutHeight/layoutWidth but with null check guards.
     int viewHeight() const;
@@ -72,8 +72,8 @@ public:
 
     FrameView& frameView() const { return m_frameView; }
 
-    virtual LayoutRect visualOverflowRect() const OVERRIDE;
-    virtual void computeRectForRepaint(const RenderLayerModelObject* repaintContainer, LayoutRect&, bool fixed = false) const OVERRIDE;
+    virtual LayoutRect visualOverflowRect() const override;
+    virtual void computeRectForRepaint(const RenderLayerModelObject* repaintContainer, LayoutRect&, bool fixed = false) const override;
     void repaintRootContents();
     void repaintViewRectangle(const LayoutRect&, bool immediate = false) const;
     // Repaint the view, and all composited layers that intersect the given absolute rectangle.
@@ -81,8 +81,8 @@ public:
     void repaintRectangleInViewAndCompositedLayers(const LayoutRect&, bool immediate = false);
     void repaintViewAndCompositedLayers();
 
-    virtual void paint(PaintInfo&, const LayoutPoint&) OVERRIDE;
-    virtual void paintBoxDecorations(PaintInfo&, const LayoutPoint&) OVERRIDE;
+    virtual void paint(PaintInfo&, const LayoutPoint&) override;
+    virtual void paintBoxDecorations(PaintInfo&, const LayoutPoint&) override;
 
     enum SelectionRepaintMode { RepaintNewXOROld, RepaintNewMinusOld, RepaintNothing };
     void setSelection(RenderObject* start, int startPos, RenderObject* end, int endPos, SelectionRepaintMode = RepaintNewXOROld);
@@ -96,8 +96,8 @@ public:
 
     bool printing() const;
 
-    virtual void absoluteRects(Vector<IntRect>&, const LayoutPoint& accumulatedOffset) const OVERRIDE;
-    virtual void absoluteQuads(Vector<FloatQuad>&, bool* wasFixed) const OVERRIDE;
+    virtual void absoluteRects(Vector<IntRect>&, const LayoutPoint& accumulatedOffset) const override;
+    virtual void absoluteQuads(Vector<FloatQuad>&, bool* wasFixed) const override;
 
 #if USE(ACCELERATED_COMPOSITING)
     void setMaximalOutlineSize(int o);
@@ -151,7 +151,7 @@ public:
     bool layoutStateEnabled() const { return m_layoutStateDisableCount == 0 && m_layoutState; }
     LayoutState* layoutState() const { return m_layoutState.get(); }
 
-    virtual void updateHitTestResult(HitTestResult&, const LayoutPoint&) OVERRIDE;
+    virtual void updateHitTestResult(HitTestResult&, const LayoutPoint&) override;
 
     LayoutUnit pageLogicalHeight() const { return m_pageLogicalHeight; }
     void setPageLogicalHeight(LayoutUnit height)
@@ -202,7 +202,7 @@ public:
     bool checkTwoPassLayoutForAutoHeightRegions() const;
     FlowThreadController& flowThreadController();
 
-    virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle) OVERRIDE;
+    virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle) override;
 
 #if PLATFORM(IOS)
     enum ContainingBlockCheck { CheckContainingBlock, DontCheckContainingBlock };
@@ -224,7 +224,7 @@ public:
     void removeRenderCounter() { ASSERT(m_renderCounterCount > 0); m_renderCounterCount--; }
     bool hasRenderCounters() { return m_renderCounterCount; }
     
-    virtual void addChild(RenderObject* newChild, RenderObject* beforeChild = 0) OVERRIDE;
+    virtual void addChild(RenderObject* newChild, RenderObject* beforeChild = 0) override;
 
     IntRect pixelSnappedLayoutOverflowRect() const { return pixelSnappedIntRect(layoutOverflowRect()); }
 
@@ -240,16 +240,16 @@ public:
     void didDestroyRenderer() { --m_rendererCount; }
 
 protected:
-    virtual void mapLocalToContainer(const RenderLayerModelObject* repaintContainer, TransformState&, MapCoordinatesFlags = ApplyContainerFlip, bool* wasFixed = 0) const OVERRIDE;
-    virtual const RenderObject* pushMappingToContainer(const RenderLayerModelObject* ancestorToStopAt, RenderGeometryMap&) const OVERRIDE;
-    virtual void mapAbsoluteToLocalPoint(MapCoordinatesFlags, TransformState&) const OVERRIDE;
-    virtual bool requiresColumns(int desiredColumnCount) const OVERRIDE;
+    virtual void mapLocalToContainer(const RenderLayerModelObject* repaintContainer, TransformState&, MapCoordinatesFlags = ApplyContainerFlip, bool* wasFixed = 0) const override;
+    virtual const RenderObject* pushMappingToContainer(const RenderLayerModelObject* ancestorToStopAt, RenderGeometryMap&) const override;
+    virtual void mapAbsoluteToLocalPoint(MapCoordinatesFlags, TransformState&) const override;
+    virtual bool requiresColumns(int desiredColumnCount) const override;
     
 private:
     bool initializeLayoutState(LayoutState&);
 
-    virtual void calcColumnWidth() OVERRIDE;
-    virtual ColumnInfo::PaginationUnit paginationUnit() const OVERRIDE;
+    virtual void calcColumnWidth() override;
+    virtual ColumnInfo::PaginationUnit paginationUnit() const override;
 
     bool shouldRepaint(const LayoutRect&) const;
 

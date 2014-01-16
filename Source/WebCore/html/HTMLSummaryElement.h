@@ -31,19 +31,19 @@ class HTMLSummaryElement FINAL : public HTMLElement {
 public:
     static PassRefPtr<HTMLSummaryElement> create(const QualifiedName&, Document&);
     bool isMainSummary() const;
-    virtual bool willRespondToMouseClickEvents() OVERRIDE;
+    virtual bool willRespondToMouseClickEvents() override;
 
 private:
     HTMLSummaryElement(const QualifiedName&, Document&);
 
-    virtual RenderPtr<RenderElement> createElementRenderer(PassRef<RenderStyle>) OVERRIDE;
-    virtual bool childShouldCreateRenderer(const Node&) const OVERRIDE;
+    virtual RenderPtr<RenderElement> createElementRenderer(PassRef<RenderStyle>) override;
+    virtual bool childShouldCreateRenderer(const Node&) const override;
     virtual void defaultEventHandler(Event*);
 
-    virtual void didAddUserAgentShadowRoot(ShadowRoot*) OVERRIDE;
+    virtual void didAddUserAgentShadowRoot(ShadowRoot*) override;
     HTMLDetailsElement* detailsElement() const;
 
-    bool supportsFocus() const OVERRIDE;
+    bool supportsFocus() const override;
 };
 
 NODE_TYPE_CASTS(HTMLSummaryElement)

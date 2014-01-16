@@ -44,9 +44,9 @@ private:
     ScrollingTreeScrollingNodeIOS(ScrollingTree&, ScrollingNodeID);
 
     // ScrollingTreeNode member functions.
-    virtual void updateBeforeChildren(const ScrollingStateNode&) OVERRIDE;
-    virtual void updateAfterChildren(const ScrollingStateNode&) OVERRIDE;
-    virtual void handleWheelEvent(const PlatformWheelEvent&) OVERRIDE { }
+    virtual void updateBeforeChildren(const ScrollingStateNode&) override;
+    virtual void updateAfterChildren(const ScrollingStateNode&) override;
+    virtual void handleWheelEvent(const PlatformWheelEvent&) override { }
 
     IntPoint scrollPosition() const;
     void setScrollPosition(const IntPoint&);

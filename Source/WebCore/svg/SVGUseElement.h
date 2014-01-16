@@ -56,19 +56,19 @@ private:
     SVGUseElement(const QualifiedName&, Document&, bool wasInsertedByParser);
 
     virtual bool isValid() const { return SVGTests::isValid(); }
-    virtual bool supportsFocus() const OVERRIDE { return true; }
+    virtual bool supportsFocus() const override { return true; }
 
-    virtual InsertionNotificationRequest insertedInto(ContainerNode&) OVERRIDE;
-    virtual void removedFrom(ContainerNode&) OVERRIDE;
+    virtual InsertionNotificationRequest insertedInto(ContainerNode&) override;
+    virtual void removedFrom(ContainerNode&) override;
     virtual void buildPendingResource();
 
     bool isSupportedAttribute(const QualifiedName&);
-    virtual void parseAttribute(const QualifiedName&, const AtomicString&) OVERRIDE;
+    virtual void parseAttribute(const QualifiedName&, const AtomicString&) override;
     virtual void svgAttributeChanged(const QualifiedName&);
 
-    virtual void willAttachRenderers() OVERRIDE;
+    virtual void willAttachRenderers() override;
 
-    virtual RenderPtr<RenderElement> createElementRenderer(PassRef<RenderStyle>) OVERRIDE;
+    virtual RenderPtr<RenderElement> createElementRenderer(PassRef<RenderStyle>) override;
     virtual void toClipPath(Path&);
 
     void clearResourceReferences();
@@ -117,7 +117,7 @@ private:
     virtual void setHaveFiredLoadEvent(bool haveFiredLoadEvent) { m_haveFiredLoadEvent = haveFiredLoadEvent; }
     virtual bool isParserInserted() const { return m_wasInsertedByParser; }
     virtual bool haveFiredLoadEvent() const { return m_haveFiredLoadEvent; }
-    virtual Timer<SVGElement>* svgLoadEventTimer() OVERRIDE { return &m_svgLoadEventTimer; }
+    virtual Timer<SVGElement>* svgLoadEventTimer() override { return &m_svgLoadEventTimer; }
 
     bool m_wasInsertedByParser;
     bool m_haveFiredLoadEvent;

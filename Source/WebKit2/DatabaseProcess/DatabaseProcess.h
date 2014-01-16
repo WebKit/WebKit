@@ -64,16 +64,16 @@ private:
     DatabaseProcess();
 
     // ChildProcess
-    virtual void initializeProcess(const ChildProcessInitializationParameters&) OVERRIDE;
-    virtual void initializeProcessName(const ChildProcessInitializationParameters&) OVERRIDE;
-    virtual void initializeSandbox(const ChildProcessInitializationParameters&, SandboxInitializationParameters&) OVERRIDE;
-    virtual void initializeConnection(IPC::Connection*) OVERRIDE;
-    virtual bool shouldTerminate() OVERRIDE;
+    virtual void initializeProcess(const ChildProcessInitializationParameters&) override;
+    virtual void initializeProcessName(const ChildProcessInitializationParameters&) override;
+    virtual void initializeSandbox(const ChildProcessInitializationParameters&, SandboxInitializationParameters&) override;
+    virtual void initializeConnection(IPC::Connection*) override;
+    virtual bool shouldTerminate() override;
 
     // IPC::Connection::Client
-    virtual void didReceiveMessage(IPC::Connection*, IPC::MessageDecoder&) OVERRIDE;
-    virtual void didClose(IPC::Connection*) OVERRIDE;
-    virtual void didReceiveInvalidMessage(IPC::Connection*, IPC::StringReference messageReceiverName, IPC::StringReference messageName) OVERRIDE;
+    virtual void didReceiveMessage(IPC::Connection*, IPC::MessageDecoder&) override;
+    virtual void didClose(IPC::Connection*) override;
+    virtual void didReceiveInvalidMessage(IPC::Connection*, IPC::StringReference messageReceiverName, IPC::StringReference messageName) override;
 
     // Message Handlers
     void initializeDatabaseProcess(const DatabaseProcessCreationParameters&);

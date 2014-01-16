@@ -36,23 +36,23 @@ public:
     LabelableElement* control();
     HTMLFormElement* form() const;
 
-    virtual bool willRespondToMouseClickEvents() OVERRIDE;
+    virtual bool willRespondToMouseClickEvents() override;
 
 private:
     HTMLLabelElement(const QualifiedName&, Document&);
 
-    virtual bool isFocusable() const OVERRIDE;
+    virtual bool isFocusable() const override;
 
-    virtual void accessKeyAction(bool sendMouseEvents) OVERRIDE;
+    virtual void accessKeyAction(bool sendMouseEvents) override;
 
     // Overridden to update the hover/active state of the corresponding control.
-    virtual void setActive(bool = true, bool pause = false) OVERRIDE;
-    virtual void setHovered(bool = true) OVERRIDE;
+    virtual void setActive(bool = true, bool pause = false) override;
+    virtual void setHovered(bool = true) override;
 
     // Overridden to either click() or focus() the corresponding control.
-    virtual void defaultEventHandler(Event*) OVERRIDE;
+    virtual void defaultEventHandler(Event*) override;
 
-    virtual void focus(bool restorePreviousSelection, FocusDirection) OVERRIDE;
+    virtual void focus(bool restorePreviousSelection, FocusDirection) override;
 };
 
 NODE_TYPE_CASTS(HTMLLabelElement)

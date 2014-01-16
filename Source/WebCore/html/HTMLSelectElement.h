@@ -46,8 +46,8 @@ public:
     void optionSelectedByUser(int index, bool dispatchChangeEvent, bool allowMultipleSelection = false);
 
     // For ValidityState
-    virtual String validationMessage() const OVERRIDE;
-    virtual bool valueMissing() const OVERRIDE;
+    virtual String validationMessage() const override;
+    virtual bool valueMissing() const override;
 
     unsigned length() const;
 
@@ -77,7 +77,7 @@ public:
 
     const Vector<HTMLElement*>& listItems() const;
 
-    virtual void accessKeyAction(bool sendMouseEvents) OVERRIDE;
+    virtual void accessKeyAction(bool sendMouseEvents) override;
     void accessKeySetSelectedIndex(int);
 
     void setMultiple(bool);
@@ -95,7 +95,7 @@ public:
     void listBoxSelectItem(int listIndex, bool allowMultiplySelections, bool shift, bool fireOnChangeNow = true);
 
 #if PLATFORM(IOS)
-    virtual bool willRespondToMouseClickEvents() OVERRIDE;
+    virtual bool willRespondToMouseClickEvents() override;
 #endif
 
     bool canSelectAll() const;
@@ -117,36 +117,36 @@ protected:
     HTMLSelectElement(const QualifiedName&, Document&, HTMLFormElement*);
 
 private:
-    virtual const AtomicString& formControlType() const OVERRIDE;
+    virtual const AtomicString& formControlType() const override;
     
-    virtual bool isKeyboardFocusable(KeyboardEvent*) const OVERRIDE;
-    virtual bool isMouseFocusable() const OVERRIDE;
+    virtual bool isKeyboardFocusable(KeyboardEvent*) const override;
+    virtual bool isMouseFocusable() const override;
 
-    virtual void dispatchFocusEvent(PassRefPtr<Element> oldFocusedElement, FocusDirection) OVERRIDE FINAL;
-    virtual void dispatchBlurEvent(PassRefPtr<Element> newFocusedElement) OVERRIDE FINAL;
+    virtual void dispatchFocusEvent(PassRefPtr<Element> oldFocusedElement, FocusDirection) override FINAL;
+    virtual void dispatchBlurEvent(PassRefPtr<Element> newFocusedElement) override FINAL;
     
-    virtual bool canStartSelection() const OVERRIDE { return false; }
+    virtual bool canStartSelection() const override { return false; }
 
-    virtual bool isEnumeratable() const OVERRIDE { return true; }
-    virtual bool supportLabels() const OVERRIDE { return true; }
+    virtual bool isEnumeratable() const override { return true; }
+    virtual bool supportLabels() const override { return true; }
 
-    virtual FormControlState saveFormControlState() const OVERRIDE;
-    virtual void restoreFormControlState(const FormControlState&) OVERRIDE;
+    virtual FormControlState saveFormControlState() const override;
+    virtual void restoreFormControlState(const FormControlState&) override;
 
-    virtual void parseAttribute(const QualifiedName&, const AtomicString&) OVERRIDE;
-    virtual bool isPresentationAttribute(const QualifiedName&) const OVERRIDE;
+    virtual void parseAttribute(const QualifiedName&, const AtomicString&) override;
+    virtual bool isPresentationAttribute(const QualifiedName&) const override;
 
-    virtual bool childShouldCreateRenderer(const Node&) const OVERRIDE;
-    virtual RenderPtr<RenderElement> createElementRenderer(PassRef<RenderStyle>) OVERRIDE;
-    virtual bool appendFormData(FormDataList&, bool) OVERRIDE;
+    virtual bool childShouldCreateRenderer(const Node&) const override;
+    virtual RenderPtr<RenderElement> createElementRenderer(PassRef<RenderStyle>) override;
+    virtual bool appendFormData(FormDataList&, bool) override;
 
-    virtual void reset() OVERRIDE;
+    virtual void reset() override;
 
-    virtual void defaultEventHandler(Event*) OVERRIDE;
+    virtual void defaultEventHandler(Event*) override;
 
     void dispatchChangeEventForMenuList();
 
-    virtual void didRecalcStyle(Style::Change) OVERRIDE FINAL;
+    virtual void didRecalcStyle(Style::Change) override FINAL;
 
     void recalcListItems(bool updateSelectedStates = true) const;
 
@@ -154,10 +154,10 @@ private:
     void typeAheadFind(KeyboardEvent*);
     void saveLastSelection();
 
-    virtual InsertionNotificationRequest insertedInto(ContainerNode&) OVERRIDE;
+    virtual InsertionNotificationRequest insertedInto(ContainerNode&) override;
 
-    virtual bool isOptionalFormControl() const OVERRIDE { return !isRequiredFormControl(); }
-    virtual bool isRequiredFormControl() const OVERRIDE;
+    virtual bool isOptionalFormControl() const override { return !isRequiredFormControl(); }
+    virtual bool isRequiredFormControl() const override;
 
     bool hasPlaceholderLabelOption() const;
 
@@ -189,13 +189,13 @@ private:
     int lastSelectableListIndex() const;
     int nextSelectableListIndexPageAway(int startIndex, SkipDirection) const;
 
-    virtual void childrenChanged(const ChildChange&) OVERRIDE;
-    virtual bool areAuthorShadowsAllowed() const OVERRIDE { return false; }
+    virtual void childrenChanged(const ChildChange&) override;
+    virtual bool areAuthorShadowsAllowed() const override { return false; }
 
     // TypeAheadDataSource functions.
-    virtual int indexOfSelectedOption() const OVERRIDE;
-    virtual int optionCount() const OVERRIDE;
-    virtual String optionAtIndex(int index) const OVERRIDE;
+    virtual int indexOfSelectedOption() const override;
+    virtual int optionCount() const override;
+    virtual String optionAtIndex(int index) const override;
 
     // m_listItems contains HTMLOptionElement, HTMLOptGroupElement, and HTMLHRElement objects.
     mutable Vector<HTMLElement*> m_listItems;

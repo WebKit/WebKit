@@ -68,8 +68,8 @@ public:
     bool imageHasRelativeWidth() const;
     bool imageHasRelativeHeight() const;
 
-    virtual void addDataBuffer(ResourceBuffer*) OVERRIDE;
-    virtual void finishLoading(ResourceBuffer*) OVERRIDE;
+    virtual void addDataBuffer(ResourceBuffer*) override;
+    virtual void finishLoading(ResourceBuffer*) override;
 
     enum SizeType {
         UsedSize,
@@ -87,14 +87,14 @@ public:
     static void resumeAnimatingImagesForLoader(CachedResourceLoader*);
 
 #if ENABLE(DISK_IMAGE_CACHE)
-    virtual bool canUseDiskImageCache() const OVERRIDE;
-    virtual void useDiskImageCache() OVERRIDE;
+    virtual bool canUseDiskImageCache() const override;
+    virtual void useDiskImageCache() override;
 #endif
 
     bool isOriginClean(SecurityOrigin*);
 
 private:
-    virtual void load(CachedResourceLoader*, const ResourceLoaderOptions&) OVERRIDE;
+    virtual void load(CachedResourceLoader*, const ResourceLoaderOptions&) override;
 
     void clear();
 
@@ -103,35 +103,35 @@ private:
     bool canBeDrawn() const;
     // If not null, changeRect is the changed part of the image.
     void notifyObservers(const IntRect* changeRect = 0);
-    virtual PurgePriority purgePriority() const OVERRIDE { return PurgeFirst; }
+    virtual PurgePriority purgePriority() const override { return PurgeFirst; }
     void checkShouldPaintBrokenImage();
 
-    virtual void switchClientsToRevalidatedResource() OVERRIDE;
-    virtual bool mayTryReplaceEncodedData() const OVERRIDE { return true; }
+    virtual void switchClientsToRevalidatedResource() override;
+    virtual bool mayTryReplaceEncodedData() const override { return true; }
 
-    virtual void didAddClient(CachedResourceClient*) OVERRIDE;
-    virtual void didRemoveClient(CachedResourceClient*) OVERRIDE;
+    virtual void didAddClient(CachedResourceClient*) override;
+    virtual void didRemoveClient(CachedResourceClient*) override;
 
-    virtual void allClientsRemoved() OVERRIDE;
-    virtual void destroyDecodedData() OVERRIDE;
+    virtual void allClientsRemoved() override;
+    virtual void destroyDecodedData() override;
 
-    virtual void addData(const char* data, unsigned length) OVERRIDE;
-    virtual void error(CachedResource::Status) OVERRIDE;
-    virtual void responseReceived(const ResourceResponse&) OVERRIDE;
+    virtual void addData(const char* data, unsigned length) override;
+    virtual void error(CachedResource::Status) override;
+    virtual void responseReceived(const ResourceResponse&) override;
 
     // For compatibility, images keep loading even if there are HTTP errors.
-    virtual bool shouldIgnoreHTTPStatusCodeErrors() const OVERRIDE { return true; }
+    virtual bool shouldIgnoreHTTPStatusCodeErrors() const override { return true; }
 
-    virtual bool isImage() const OVERRIDE { return true; }
-    virtual bool stillNeedsLoad() const OVERRIDE { return !errorOccurred() && status() == Unknown && !isLoading(); }
+    virtual bool isImage() const override { return true; }
+    virtual bool stillNeedsLoad() const override { return !errorOccurred() && status() == Unknown && !isLoading(); }
 
     // ImageObserver
-    virtual void decodedSizeChanged(const Image*, int delta) OVERRIDE;
-    virtual void didDraw(const Image*) OVERRIDE;
+    virtual void decodedSizeChanged(const Image*, int delta) override;
+    virtual void didDraw(const Image*) override;
 
-    virtual bool shouldPauseAnimation(const Image*) OVERRIDE;
-    virtual void animationAdvanced(const Image*) OVERRIDE;
-    virtual void changedInRect(const Image*, const IntRect&) OVERRIDE;
+    virtual bool shouldPauseAnimation(const Image*) override;
+    virtual void animationAdvanced(const Image*) override;
+    virtual void changedInRect(const Image*, const IntRect&) override;
 
     void addIncrementalDataBuffer(ResourceBuffer*);
 
@@ -155,7 +155,7 @@ public:
     CachedImageManual(const URL&, Image*);
     void addFakeClient() { addClient(m_fakeClient.get()); }
     void removeFakeClient() { removeClient(m_fakeClient.get()); }
-    virtual bool isManual() const OVERRIDE { return true; }
+    virtual bool isManual() const override { return true; }
     virtual bool mustRevalidateDueToCacheHeaders(CachePolicy) const;
 private:
     std::unique_ptr<CachedResourceClient> m_fakeClient;

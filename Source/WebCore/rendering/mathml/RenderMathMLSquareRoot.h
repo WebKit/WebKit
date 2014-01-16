@@ -38,8 +38,8 @@ public:
     RenderMathMLSquareRoot(Element&, PassRef<RenderStyle>);
     
 private:
-    virtual bool isRenderMathMLSquareRoot() const OVERRIDE { return true; }
-    virtual const char* renderName() const OVERRIDE { return "RenderMathMLSquareRoot"; }
+    virtual bool isRenderMathMLSquareRoot() const override { return true; }
+    virtual const char* renderName() const override { return "RenderMathMLSquareRoot"; }
 };
     
 }

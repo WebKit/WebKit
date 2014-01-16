@@ -45,32 +45,32 @@ class TextFieldInputType : public InputType, protected SpinButtonElement::SpinBu
 protected:
     explicit TextFieldInputType(HTMLInputElement&);
     virtual ~TextFieldInputType();
-    virtual bool canSetSuggestedValue() OVERRIDE;
-    virtual void handleKeydownEvent(KeyboardEvent*) OVERRIDE;
+    virtual bool canSetSuggestedValue() override;
+    virtual void handleKeydownEvent(KeyboardEvent*) override;
     void handleKeydownEventForSpinButton(KeyboardEvent*);
 
-    virtual HTMLElement* containerElement() const OVERRIDE;
-    virtual HTMLElement* innerBlockElement() const OVERRIDE;
-    virtual TextControlInnerTextElement* innerTextElement() const OVERRIDE;
-    virtual HTMLElement* innerSpinButtonElement() const OVERRIDE;
+    virtual HTMLElement* containerElement() const override;
+    virtual HTMLElement* innerBlockElement() const override;
+    virtual TextControlInnerTextElement* innerTextElement() const override;
+    virtual HTMLElement* innerSpinButtonElement() const override;
 #if ENABLE(INPUT_SPEECH)
-    virtual HTMLElement* speechButtonElement() const OVERRIDE;
+    virtual HTMLElement* speechButtonElement() const override;
 #endif
 
 protected:
     virtual bool needsContainer() const;
     virtual bool shouldHaveSpinButton() const;
-    virtual void createShadowSubtree() OVERRIDE;
-    virtual void destroyShadowSubtree() OVERRIDE;
-    virtual void attributeChanged() OVERRIDE;
-    virtual void disabledAttributeChanged() OVERRIDE;
-    virtual void readonlyAttributeChanged() OVERRIDE;
-    virtual bool supportsReadOnly() const OVERRIDE;
-    virtual void handleBlurEvent() OVERRIDE;
-    virtual void setValue(const String&, bool valueChanged, TextFieldEventBehavior) OVERRIDE;
-    virtual void updateInnerTextValue() OVERRIDE;
+    virtual void createShadowSubtree() override;
+    virtual void destroyShadowSubtree() override;
+    virtual void attributeChanged() override;
+    virtual void disabledAttributeChanged() override;
+    virtual void readonlyAttributeChanged() override;
+    virtual bool supportsReadOnly() const override;
+    virtual void handleBlurEvent() override;
+    virtual void setValue(const String&, bool valueChanged, TextFieldEventBehavior) override;
+    virtual void updateInnerTextValue() override;
 #if PLATFORM(IOS)
-    virtual String sanitizeValue(const String&) const OVERRIDE;
+    virtual String sanitizeValue(const String&) const override;
 #endif
 
     virtual String convertFromVisibleValue(const String&) const;
@@ -81,30 +81,30 @@ protected:
     virtual void didSetValueByUserEdit(ValueChangeState);
 
 private:
-    virtual bool isKeyboardFocusable(KeyboardEvent*) const OVERRIDE;
-    virtual bool isMouseFocusable() const OVERRIDE;
-    virtual bool isTextField() const OVERRIDE;
-    virtual bool valueMissing(const String&) const OVERRIDE;
-    virtual void handleBeforeTextInsertedEvent(BeforeTextInsertedEvent*) OVERRIDE;
-    virtual void forwardEvent(Event*) OVERRIDE;
-    virtual bool shouldSubmitImplicitly(Event*) OVERRIDE;
-    virtual RenderPtr<RenderElement> createInputRenderer(PassRef<RenderStyle>) OVERRIDE;
-    virtual bool shouldUseInputMethod() const OVERRIDE;
+    virtual bool isKeyboardFocusable(KeyboardEvent*) const override;
+    virtual bool isMouseFocusable() const override;
+    virtual bool isTextField() const override;
+    virtual bool valueMissing(const String&) const override;
+    virtual void handleBeforeTextInsertedEvent(BeforeTextInsertedEvent*) override;
+    virtual void forwardEvent(Event*) override;
+    virtual bool shouldSubmitImplicitly(Event*) override;
+    virtual RenderPtr<RenderElement> createInputRenderer(PassRef<RenderStyle>) override;
+    virtual bool shouldUseInputMethod() const override;
 #if !PLATFORM(IOS)
-    virtual String sanitizeValue(const String&) const OVERRIDE;
+    virtual String sanitizeValue(const String&) const override;
 #endif
-    virtual bool shouldRespectListAttribute() OVERRIDE;
-    virtual HTMLElement* placeholderElement() const OVERRIDE;
-    virtual void updatePlaceholderText() OVERRIDE;
-    virtual bool appendFormData(FormDataList&, bool multipart) const OVERRIDE;
-    virtual void subtreeHasChanged() OVERRIDE;
+    virtual bool shouldRespectListAttribute() override;
+    virtual HTMLElement* placeholderElement() const override;
+    virtual void updatePlaceholderText() override;
+    virtual bool appendFormData(FormDataList&, bool multipart) const override;
+    virtual void subtreeHasChanged() override;
 
     // SpinButtonElement::SpinButtonOwner functions.
-    virtual void focusAndSelectSpinButtonOwner() OVERRIDE;
-    virtual bool shouldSpinButtonRespondToMouseEvents() OVERRIDE;
-    virtual bool shouldSpinButtonRespondToWheelEvents() OVERRIDE;
-    virtual void spinButtonStepDown() OVERRIDE;
-    virtual void spinButtonStepUp() OVERRIDE;
+    virtual void focusAndSelectSpinButtonOwner() override;
+    virtual bool shouldSpinButtonRespondToMouseEvents() override;
+    virtual bool shouldSpinButtonRespondToWheelEvents() override;
+    virtual void spinButtonStepDown() override;
+    virtual void spinButtonStepUp() override;
 
     RefPtr<HTMLElement> m_container;
     RefPtr<HTMLElement> m_innerBlock;

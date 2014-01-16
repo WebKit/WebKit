@@ -80,11 +80,11 @@ public:
     void didEnd();
 
     // EventTarget.
-    virtual EventTargetInterface eventTargetInterface() const OVERRIDE;
-    virtual ScriptExecutionContext* scriptExecutionContext() const OVERRIDE;
+    virtual EventTargetInterface eventTargetInterface() const override;
+    virtual ScriptExecutionContext* scriptExecutionContext() const override;
 
     // ActiveDOMObject.
-    virtual void stop() OVERRIDE;
+    virtual void stop() override;
 
     using RefCounted<SpeechRecognition>::ref;
     using RefCounted<SpeechRecognition>::deref;
@@ -108,10 +108,10 @@ private:
 
 
     // EventTarget
-    virtual void refEventTarget() OVERRIDE { ref(); }
-    virtual void derefEventTarget() OVERRIDE { deref(); }
-    virtual EventTargetData* eventTargetData() OVERRIDE { return &m_eventTargetData; }
-    virtual EventTargetData& ensureEventTargetData() OVERRIDE { return m_eventTargetData; }
+    virtual void refEventTarget() override { ref(); }
+    virtual void derefEventTarget() override { deref(); }
+    virtual EventTargetData* eventTargetData() override { return &m_eventTargetData; }
+    virtual EventTargetData& ensureEventTargetData() override { return m_eventTargetData; }
 
     RefPtr<SpeechGrammarList> m_grammars;
     String m_lang;

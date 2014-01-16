@@ -50,9 +50,9 @@ class InjectedScriptCanvasModule FINAL : public Inspector::InjectedScriptModule 
 public:
     InjectedScriptCanvasModule();
     
-    virtual String source() const OVERRIDE;
-    virtual JSC::JSValue host(Inspector::InjectedScriptManager*, JSC::ExecState*) const OVERRIDE;
-    virtual bool returnsObject() const OVERRIDE { return true; }
+    virtual String source() const override;
+    virtual JSC::JSValue host(Inspector::InjectedScriptManager*, JSC::ExecState*) const override;
+    virtual bool returnsObject() const override { return true; }
 
     static InjectedScriptCanvasModule moduleForState(Inspector::InjectedScriptManager*, JSC::ExecState*);
 

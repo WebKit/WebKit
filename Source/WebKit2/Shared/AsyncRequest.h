@@ -86,7 +86,7 @@ private:
         ASSERT(m_completionHandler);
     }
 
-    virtual void clearCompletionHandler() OVERRIDE
+    virtual void clearCompletionHandler() override
     {
         m_completionHandler = nullptr;
     }

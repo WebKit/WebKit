@@ -129,64 +129,64 @@ public:
 #endif
     virtual ~BitmapImage();
     
-    virtual bool isBitmapImage() const OVERRIDE { return true; }
+    virtual bool isBitmapImage() const override { return true; }
 
-    virtual bool hasSingleSecurityOrigin() const OVERRIDE;
+    virtual bool hasSingleSecurityOrigin() const override;
 
-    virtual IntSize size() const OVERRIDE;
+    virtual IntSize size() const override;
     IntSize sizeRespectingOrientation(ImageOrientationDescription = ImageOrientationDescription()) const;
 #if PLATFORM(IOS)
     virtual IntSize originalSize() const;
     IntSize originalSizeRespectingOrientation() const;
 #endif
     IntSize currentFrameSize() const;
-    virtual bool getHotSpot(IntPoint&) const OVERRIDE;
+    virtual bool getHotSpot(IntPoint&) const override;
 
     unsigned decodedSize() const { return m_decodedSize; }
 
-    virtual bool dataChanged(bool allDataReceived) OVERRIDE;
-    virtual String filenameExtension() const OVERRIDE;
+    virtual bool dataChanged(bool allDataReceived) override;
+    virtual String filenameExtension() const override;
 
     // It may look unusual that there is no start animation call as public API.  This is because
     // we start and stop animating lazily.  Animation begins whenever someone draws the image.  It will
     // automatically pause once all observers no longer want to render the image anywhere.
-    virtual void stopAnimation() OVERRIDE;
-    virtual void resetAnimation() OVERRIDE;
+    virtual void stopAnimation() override;
+    virtual void resetAnimation() override;
 
     virtual void drawPattern(GraphicsContext*, const FloatRect& srcRect, const AffineTransform& patternTransform,
-        const FloatPoint& phase, ColorSpace styleColorSpace, CompositeOperator, const FloatRect& destRect, BlendMode = BlendModeNormal) OVERRIDE;
+        const FloatPoint& phase, ColorSpace styleColorSpace, CompositeOperator, const FloatRect& destRect, BlendMode = BlendModeNormal) override;
 
 #if PLATFORM(MAC)
     // Accessors for native image formats.
 #if !PLATFORM(IOS)
-    virtual NSImage* getNSImage() OVERRIDE;
+    virtual NSImage* getNSImage() override;
 #endif
-    virtual CFDataRef getTIFFRepresentation() OVERRIDE;
+    virtual CFDataRef getTIFFRepresentation() override;
 #endif
 
 #if USE(CG)
-    virtual CGImageRef getCGImageRef() OVERRIDE;
-    virtual CGImageRef getFirstCGImageRefOfSize(const IntSize&) OVERRIDE;
-    virtual RetainPtr<CFArrayRef> getCGImageArray() OVERRIDE;
+    virtual CGImageRef getCGImageRef() override;
+    virtual CGImageRef getFirstCGImageRefOfSize(const IntSize&) override;
+    virtual RetainPtr<CFArrayRef> getCGImageArray() override;
 #endif
 
 #if PLATFORM(WIN)
-    virtual bool getHBITMAP(HBITMAP) OVERRIDE;
-    virtual bool getHBITMAPOfSize(HBITMAP, const IntSize*) OVERRIDE;
+    virtual bool getHBITMAP(HBITMAP) override;
+    virtual bool getHBITMAPOfSize(HBITMAP, const IntSize*) override;
 #endif
 
 #if PLATFORM(GTK)
-    virtual GdkPixbuf* getGdkPixbuf() OVERRIDE;
+    virtual GdkPixbuf* getGdkPixbuf() override;
 #endif
 
 #if PLATFORM(EFL)
-    virtual Evas_Object* getEvasObject(Evas*) OVERRIDE;
+    virtual Evas_Object* getEvasObject(Evas*) override;
 #endif
 
-    virtual PassNativeImagePtr nativeImageForCurrentFrame() OVERRIDE;
-    virtual ImageOrientation orientationForCurrentFrame() OVERRIDE { return frameOrientationAtIndex(currentFrame()); }
+    virtual PassNativeImagePtr nativeImageForCurrentFrame() override;
+    virtual ImageOrientation orientationForCurrentFrame() override { return frameOrientationAtIndex(currentFrame()); }
 
-    virtual bool currentFrameKnownToBeOpaque() OVERRIDE;
+    virtual bool currentFrameKnownToBeOpaque() override;
     
     bool canAnimate();
 
@@ -204,9 +204,9 @@ protected:
     BitmapImage(ImageObserver* = 0);
 
 #if PLATFORM(WIN)
-    virtual void drawFrameMatchingSourceSize(GraphicsContext*, const FloatRect& dstRect, const IntSize& srcSize, ColorSpace styleColorSpace, CompositeOperator) OVERRIDE;
+    virtual void drawFrameMatchingSourceSize(GraphicsContext*, const FloatRect& dstRect, const IntSize& srcSize, ColorSpace styleColorSpace, CompositeOperator) override;
 #endif
-    virtual void draw(GraphicsContext*, const FloatRect& dstRect, const FloatRect& srcRect, ColorSpace styleColorSpace, CompositeOperator, BlendMode, ImageOrientationDescription) OVERRIDE;
+    virtual void draw(GraphicsContext*, const FloatRect& dstRect, const FloatRect& srcRect, ColorSpace styleColorSpace, CompositeOperator, BlendMode, ImageOrientationDescription) override;
 
 #if USE(WINGDI)
     virtual void drawPattern(GraphicsContext*, const FloatRect& srcRect, const AffineTransform& patternTransform,
@@ -245,7 +245,7 @@ protected:
     // cache.  If |destroyAll| is false, we only delete frames up to the current
     // one; this is used while animating large images to keep memory footprint
     // low without redecoding the whole image on every frame.
-    virtual void destroyDecodedData(bool destroyAll = true) OVERRIDE;
+    virtual void destroyDecodedData(bool destroyAll = true) override;
 
     // If the image is large enough, calls destroyDecodedData() and passes
     // |destroyAll| along.
@@ -268,7 +268,7 @@ protected:
     // Animation.
     int repetitionCount(bool imageKnownToBeComplete);  // |imageKnownToBeComplete| should be set if the caller knows the entire image has been decoded.
     bool shouldAnimate();
-    virtual void startAnimation(bool catchUpIfNecessary = true) OVERRIDE;
+    virtual void startAnimation(bool catchUpIfNecessary = true) override;
     void advanceAnimation(Timer<BitmapImage>&);
 
     // Function that does the real work of advancing the animation.  When
@@ -286,11 +286,11 @@ protected:
     // changed.
     void checkForSolidColor();
 
-    virtual bool mayFillWithSolidColor() OVERRIDE;
-    virtual Color solidColor() const OVERRIDE;
+    virtual bool mayFillWithSolidColor() override;
+    virtual Color solidColor() const override;
 
 #if !ASSERT_DISABLED
-    virtual bool notSolidColor() OVERRIDE;
+    virtual bool notSolidColor() override;
 #endif
 
 private:

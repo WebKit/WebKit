@@ -49,11 +49,11 @@ public:
     static PassRefPtr<PluginReplacement> create(HTMLPlugInElement&, const Vector<String>& paramNames, const Vector<String>& paramValues);
     ~QuickTimePluginReplacement();
 
-    virtual bool installReplacement(ShadowRoot*) OVERRIDE;
-    virtual JSC::JSObject* scriptObject() OVERRIDE { return m_scriptObject; }
+    virtual bool installReplacement(ShadowRoot*) override;
+    virtual JSC::JSObject* scriptObject() override { return m_scriptObject; }
 
-    virtual bool willCreateRenderer() OVERRIDE { return m_mediaElement; }
-    virtual RenderPtr<RenderElement> createElementRenderer(HTMLPlugInElement&, PassRef<RenderStyle>) OVERRIDE;
+    virtual bool willCreateRenderer() override { return m_mediaElement; }
+    virtual RenderPtr<RenderElement> createElementRenderer(HTMLPlugInElement&, PassRef<RenderStyle>) override;
 
     unsigned long long movieSize() const;
     void postEvent(const String&);

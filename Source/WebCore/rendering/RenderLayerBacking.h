@@ -161,24 +161,24 @@ public:
     void updateDebugIndicators(bool showBorder, bool showRepaintCounter);
 
     // GraphicsLayerClient interface
-    virtual bool shouldUseTiledBacking(const GraphicsLayer*) const OVERRIDE;
-    virtual void tiledBackingUsageChanged(const GraphicsLayer*, bool /*usingTiledBacking*/) OVERRIDE;
-    virtual void notifyAnimationStarted(const GraphicsLayer*, double startTime) OVERRIDE;
-    virtual void notifyFlushRequired(const GraphicsLayer*) OVERRIDE;
-    virtual void notifyFlushBeforeDisplayRefresh(const GraphicsLayer*) OVERRIDE;
+    virtual bool shouldUseTiledBacking(const GraphicsLayer*) const override;
+    virtual void tiledBackingUsageChanged(const GraphicsLayer*, bool /*usingTiledBacking*/) override;
+    virtual void notifyAnimationStarted(const GraphicsLayer*, double startTime) override;
+    virtual void notifyFlushRequired(const GraphicsLayer*) override;
+    virtual void notifyFlushBeforeDisplayRefresh(const GraphicsLayer*) override;
 
-    virtual void paintContents(const GraphicsLayer*, GraphicsContext&, GraphicsLayerPaintingPhase, const IntRect& clip) OVERRIDE;
+    virtual void paintContents(const GraphicsLayer*, GraphicsContext&, GraphicsLayerPaintingPhase, const IntRect& clip) override;
 
-    virtual float deviceScaleFactor() const OVERRIDE;
-    virtual float contentsScaleMultiplierForNewTiles(const GraphicsLayer*) const OVERRIDE;
+    virtual float deviceScaleFactor() const override;
+    virtual float contentsScaleMultiplierForNewTiles(const GraphicsLayer*) const override;
 
-    virtual float pageScaleFactor() const OVERRIDE;
-    virtual void didCommitChangesForLayer(const GraphicsLayer*) const OVERRIDE;
-    virtual bool getCurrentTransform(const GraphicsLayer*, TransformationMatrix&) const OVERRIDE;
+    virtual float pageScaleFactor() const override;
+    virtual void didCommitChangesForLayer(const GraphicsLayer*) const override;
+    virtual bool getCurrentTransform(const GraphicsLayer*, TransformationMatrix&) const override;
 
-    virtual bool isTrackingRepaints() const OVERRIDE;
-    virtual bool shouldSkipLayerInDump(const GraphicsLayer*) const OVERRIDE;
-    virtual bool shouldDumpPropertyForLayer(const GraphicsLayer*, const char* propertyName) const OVERRIDE;
+    virtual bool isTrackingRepaints() const override;
+    virtual bool shouldSkipLayerInDump(const GraphicsLayer*) const override;
+    virtual bool shouldDumpPropertyForLayer(const GraphicsLayer*, const char* propertyName) const override;
 
 #ifndef NDEBUG
     virtual void verifyNotPainting();

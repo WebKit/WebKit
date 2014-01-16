@@ -85,7 +85,7 @@ private:
     {
     }
 
-    virtual void performTask() OVERRIDE
+    virtual void performTask() override
     {
         (*m_method)(m_parameter1);
     }
@@ -116,7 +116,7 @@ private:
     {
     }
 
-    virtual void performTask() OVERRIDE
+    virtual void performTask() override
     {
         (*m_method)(m_parameter1, m_parameter2);
     }
@@ -150,7 +150,7 @@ private:
     {
     }
 
-    virtual void performTask() OVERRIDE
+    virtual void performTask() override
     {
         (*m_method)(m_parameter1, m_parameter2, m_parameter3);
     }
@@ -187,7 +187,7 @@ private:
     {
     }
 
-    virtual void performTask() OVERRIDE
+    virtual void performTask() override
     {
         (*m_method)(m_parameter1, m_parameter2, m_parameter3, m_parameter4);
     }
@@ -227,7 +227,7 @@ private:
     {
     }
 
-    virtual void performTask() OVERRIDE
+    virtual void performTask() override
     {
         (*m_method)(m_parameter1, m_parameter2, m_parameter3, m_parameter4, m_parameter5);
     }
@@ -270,7 +270,7 @@ private:
     {
     }
 
-    virtual void performTask() OVERRIDE
+    virtual void performTask() override
     {
         (*m_method)(m_parameter1, m_parameter2, m_parameter3, m_parameter4, m_parameter5, m_parameter6);
     }
@@ -316,7 +316,7 @@ private:
     {
     }
 
-    virtual void performTask() OVERRIDE
+    virtual void performTask() override
     {
         (*m_method)(m_parameter1, m_parameter2, m_parameter3, m_parameter4, m_parameter5, m_parameter6, m_parameter7);
     }
@@ -365,7 +365,7 @@ private:
     {
     }
     
-    virtual void performTask() OVERRIDE
+    virtual void performTask() override
     {
         (*m_method)(m_parameter1, m_parameter2, m_parameter3, m_parameter4, m_parameter5, m_parameter6, m_parameter7, m_parameter8);
     }

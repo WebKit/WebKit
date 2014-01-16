@@ -85,19 +85,19 @@ private:
     explicit SourceBufferPrivateAVFObjC(MediaSourcePrivateAVFObjC*);
 
     // SourceBufferPrivate overrides
-    virtual void setClient(SourceBufferPrivateClient*) OVERRIDE;
-    virtual AppendResult append(const unsigned char* data, unsigned length) OVERRIDE;
-    virtual void abort() OVERRIDE;
-    virtual void removedFromMediaSource() OVERRIDE;
-    virtual MediaPlayer::ReadyState readyState() const OVERRIDE;
-    virtual void setReadyState(MediaPlayer::ReadyState) OVERRIDE;
-    virtual void evictCodedFrames() OVERRIDE;
-    virtual bool isFull() OVERRIDE;
-    virtual void flushAndEnqueueNonDisplayingSamples(Vector<RefPtr<MediaSample>>, AtomicString trackID) OVERRIDE;
-    virtual void enqueueSample(PassRefPtr<MediaSample>, AtomicString trackID) OVERRIDE;
-    virtual bool isReadyForMoreSamples(AtomicString trackID) OVERRIDE;
-    virtual void setActive(bool) OVERRIDE;
-    virtual void notifyClientWhenReadyForMoreSamples(AtomicString trackID) OVERRIDE;
+    virtual void setClient(SourceBufferPrivateClient*) override;
+    virtual AppendResult append(const unsigned char* data, unsigned length) override;
+    virtual void abort() override;
+    virtual void removedFromMediaSource() override;
+    virtual MediaPlayer::ReadyState readyState() const override;
+    virtual void setReadyState(MediaPlayer::ReadyState) override;
+    virtual void evictCodedFrames() override;
+    virtual bool isFull() override;
+    virtual void flushAndEnqueueNonDisplayingSamples(Vector<RefPtr<MediaSample>>, AtomicString trackID) override;
+    virtual void enqueueSample(PassRefPtr<MediaSample>, AtomicString trackID) override;
+    virtual bool isReadyForMoreSamples(AtomicString trackID) override;
+    virtual void setActive(bool) override;
+    virtual void notifyClientWhenReadyForMoreSamples(AtomicString trackID) override;
 
     void flushAndEnqueueNonDisplayingSamples(Vector<RefPtr<MediaSample>>, AVSampleBufferAudioRenderer*);
     void flushAndEnqueueNonDisplayingSamples(Vector<RefPtr<MediaSample>>, AVSampleBufferDisplayLayer*);

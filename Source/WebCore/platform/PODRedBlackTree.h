@@ -730,7 +730,7 @@ private:
         Counter()
             : m_count(0) { }
 
-        virtual void visit(const T&) OVERRIDE { ++m_count; }
+        virtual void visit(const T&) override { ++m_count; }
         int count() const { return m_count; }
 
     private:

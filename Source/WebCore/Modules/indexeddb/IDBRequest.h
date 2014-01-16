@@ -96,15 +96,15 @@ public:
     virtual void onSuccessWithPrefetch(const Vector<RefPtr<IDBKey>>&, const Vector<RefPtr<IDBKey>>&, const Vector<RefPtr<SharedBuffer>>&) { ASSERT_NOT_REACHED(); } // Not implemented. Callback should not reach the renderer side.
 
     // ActiveDOMObject
-    virtual bool hasPendingActivity() const OVERRIDE;
+    virtual bool hasPendingActivity() const override;
 
     // EventTarget
-    virtual EventTargetInterface eventTargetInterface() const OVERRIDE;
-    virtual ScriptExecutionContext* scriptExecutionContext() const OVERRIDE FINAL { return ActiveDOMObject::scriptExecutionContext(); }
-    virtual void uncaughtExceptionInEventHandler() OVERRIDE FINAL;
+    virtual EventTargetInterface eventTargetInterface() const override;
+    virtual ScriptExecutionContext* scriptExecutionContext() const override FINAL { return ActiveDOMObject::scriptExecutionContext(); }
+    virtual void uncaughtExceptionInEventHandler() override FINAL;
 
     using EventTarget::dispatchEvent;
-    virtual bool dispatchEvent(PassRefPtr<Event>) OVERRIDE;
+    virtual bool dispatchEvent(PassRefPtr<Event>) override;
 
     void transactionDidFinishAndDispatch();
 
@@ -133,11 +133,11 @@ protected:
 
 private:
     // ActiveDOMObject
-    virtual void stop() OVERRIDE;
+    virtual void stop() override;
 
     // EventTarget
-    virtual void refEventTarget() OVERRIDE FINAL { ref(); }
-    virtual void derefEventTarget() OVERRIDE FINAL { deref(); }
+    virtual void refEventTarget() override FINAL { ref(); }
+    virtual void derefEventTarget() override FINAL { deref(); }
 
     PassRefPtr<IDBCursor> getResultCursor();
     void setResultCursor(PassRefPtr<IDBCursor>, PassRefPtr<IDBKey>, PassRefPtr<IDBKey> primaryKey, const Deprecated::ScriptValue&);

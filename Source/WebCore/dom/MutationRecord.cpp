@@ -51,12 +51,12 @@ public:
     }
 
 private:
-    virtual const AtomicString& type() OVERRIDE;
-    virtual Node* target() OVERRIDE { return &m_target.get(); }
-    virtual NodeList* addedNodes() OVERRIDE { return m_addedNodes.get(); }
-    virtual NodeList* removedNodes() OVERRIDE { return m_removedNodes.get(); }
-    virtual Node* previousSibling() OVERRIDE { return m_previousSibling.get(); }
-    virtual Node* nextSibling() OVERRIDE { return m_nextSibling.get(); }
+    virtual const AtomicString& type() override;
+    virtual Node* target() override { return &m_target.get(); }
+    virtual NodeList* addedNodes() override { return m_addedNodes.get(); }
+    virtual NodeList* removedNodes() override { return m_removedNodes.get(); }
+    virtual Node* previousSibling() override { return m_previousSibling.get(); }
+    virtual Node* nextSibling() override { return m_nextSibling.get(); }
 
     Ref<ContainerNode> m_target;
     RefPtr<NodeList> m_addedNodes;
@@ -74,10 +74,10 @@ public:
     }
 
 private:
-    virtual Node* target() OVERRIDE { return &m_target.get(); }
-    virtual String oldValue() OVERRIDE { return m_oldValue; }
-    virtual NodeList* addedNodes() OVERRIDE { return lazilyInitializeEmptyNodeList(m_addedNodes); }
-    virtual NodeList* removedNodes() OVERRIDE { return lazilyInitializeEmptyNodeList(m_removedNodes); }
+    virtual Node* target() override { return &m_target.get(); }
+    virtual String oldValue() override { return m_oldValue; }
+    virtual NodeList* addedNodes() override { return lazilyInitializeEmptyNodeList(m_addedNodes); }
+    virtual NodeList* removedNodes() override { return lazilyInitializeEmptyNodeList(m_removedNodes); }
 
     static NodeList* lazilyInitializeEmptyNodeList(RefPtr<NodeList>& nodeList)
     {
@@ -102,9 +102,9 @@ public:
     }
 
 private:
-    virtual const AtomicString& type() OVERRIDE;
-    virtual const AtomicString& attributeName() OVERRIDE { return m_attributeName; }
-    virtual const AtomicString& attributeNamespace() OVERRIDE { return m_attributeNamespace; }
+    virtual const AtomicString& type() override;
+    virtual const AtomicString& attributeName() override { return m_attributeName; }
+    virtual const AtomicString& attributeNamespace() override { return m_attributeNamespace; }
 
     AtomicString m_attributeName;
     AtomicString m_attributeNamespace;
@@ -118,7 +118,7 @@ public:
     }
 
 private:
-    virtual const AtomicString& type() OVERRIDE;
+    virtual const AtomicString& type() override;
 };
 
 class MutationRecordWithNullOldValue : public MutationRecord {
@@ -129,16 +129,16 @@ public:
     }
 
 private:
-    virtual const AtomicString& type() OVERRIDE { return m_record->type(); }
-    virtual Node* target() OVERRIDE { return m_record->target(); }
-    virtual NodeList* addedNodes() OVERRIDE { return m_record->addedNodes(); }
-    virtual NodeList* removedNodes() OVERRIDE { return m_record->removedNodes(); }
-    virtual Node* previousSibling() OVERRIDE { return m_record->previousSibling(); }
-    virtual Node* nextSibling() OVERRIDE { return m_record->nextSibling(); }
-    virtual const AtomicString& attributeName() OVERRIDE { return m_record->attributeName(); }
-    virtual const AtomicString& attributeNamespace() OVERRIDE { return m_record->attributeNamespace(); }
+    virtual const AtomicString& type() override { return m_record->type(); }
+    virtual Node* target() override { return m_record->target(); }
+    virtual NodeList* addedNodes() override { return m_record->addedNodes(); }
+    virtual NodeList* removedNodes() override { return m_record->removedNodes(); }
+    virtual Node* previousSibling() override { return m_record->previousSibling(); }
+    virtual Node* nextSibling() override { return m_record->nextSibling(); }
+    virtual const AtomicString& attributeName() override { return m_record->attributeName(); }
+    virtual const AtomicString& attributeNamespace() override { return m_record->attributeNamespace(); }
 
-    virtual String oldValue() OVERRIDE { return String(); }
+    virtual String oldValue() override { return String(); }
 
     RefPtr<MutationRecord> m_record;
 };

@@ -51,7 +51,7 @@ namespace WebCore {
     
         String data() const { return m_data; }
 
-        virtual EventInterface eventInterface() const OVERRIDE;
+        virtual EventInterface eventInterface() const override;
 
         bool isLineBreak() const { return m_inputType == TextEventInputLineBreak; }
         bool isComposition() const { return m_inputType == TextEventInputComposition; }

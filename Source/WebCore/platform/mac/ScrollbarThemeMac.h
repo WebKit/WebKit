@@ -45,7 +45,7 @@ public:
     
     virtual bool supportsControlTints() const { return true; }
     virtual bool usesOverlayScrollbars() const;
-    virtual void usesOverlayScrollbarsChanged() OVERRIDE;
+    virtual void usesOverlayScrollbarsChanged() override;
     virtual void updateScrollbarOverlayStyle(ScrollbarThemeClient*);
 
     virtual double initialAutoscrollTimerDelay();
@@ -89,8 +89,8 @@ protected:
     int scrollbarPartToHIPressedState(ScrollbarPart);
 
 #if USE(ACCELERATED_COMPOSITING) && ENABLE(RUBBER_BANDING)
-    virtual void setUpOverhangAreasLayerContents(GraphicsLayer*, const Color&) OVERRIDE;
-    virtual void setUpContentShadowLayer(GraphicsLayer*) OVERRIDE;
+    virtual void setUpOverhangAreasLayerContents(GraphicsLayer*, const Color&) override;
+    virtual void setUpContentShadowLayer(GraphicsLayer*) override;
 #endif
 };
 

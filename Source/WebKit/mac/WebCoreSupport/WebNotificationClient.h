@@ -54,19 +54,19 @@ public:
 #endif
 
 private:
-    virtual bool show(WebCore::Notification*) OVERRIDE;
-    virtual void cancel(WebCore::Notification*) OVERRIDE;
-    virtual void clearNotifications(WebCore::ScriptExecutionContext*) OVERRIDE;
-    virtual void notificationObjectDestroyed(WebCore::Notification*) OVERRIDE;
-    virtual void notificationControllerDestroyed() OVERRIDE;
+    virtual bool show(WebCore::Notification*) override;
+    virtual void cancel(WebCore::Notification*) override;
+    virtual void clearNotifications(WebCore::ScriptExecutionContext*) override;
+    virtual void notificationObjectDestroyed(WebCore::Notification*) override;
+    virtual void notificationControllerDestroyed() override;
 #if ENABLE(LEGACY_NOTIFICATIONS)
-    virtual void requestPermission(WebCore::ScriptExecutionContext*, PassRefPtr<WebCore::VoidCallback>) OVERRIDE;
+    virtual void requestPermission(WebCore::ScriptExecutionContext*, PassRefPtr<WebCore::VoidCallback>) override;
 #endif
 #if ENABLE(NOTIFICATIONS)
-    virtual void requestPermission(WebCore::ScriptExecutionContext*, PassRefPtr<WebCore::NotificationPermissionCallback>) OVERRIDE;
+    virtual void requestPermission(WebCore::ScriptExecutionContext*, PassRefPtr<WebCore::NotificationPermissionCallback>) override;
 #endif
-    virtual void cancelRequestsForPermission(WebCore::ScriptExecutionContext*) OVERRIDE { }
-    virtual WebCore::NotificationClient::Permission checkPermission(WebCore::ScriptExecutionContext*) OVERRIDE;
+    virtual void cancelRequestsForPermission(WebCore::ScriptExecutionContext*) override { }
+    virtual WebCore::NotificationClient::Permission checkPermission(WebCore::ScriptExecutionContext*) override;
 
 #if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
     void requestPermission(WebCore::ScriptExecutionContext*, WebNotificationPolicyListener *);

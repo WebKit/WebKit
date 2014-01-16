@@ -58,7 +58,7 @@ public:
 
 private:
     // IPC::MessageReceiver
-    virtual void didReceiveMessage(IPC::Connection*, IPC::MessageDecoder&) OVERRIDE;
+    virtual void didReceiveMessage(IPC::Connection*, IPC::MessageDecoder&) override;
 
     bool isUpdating() const { return !m_pageSet.isEmpty(); }
     bool isHighAccuracyEnabled() const { return !m_highAccuracyPageSet.isEmpty(); }

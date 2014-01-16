@@ -64,10 +64,10 @@ public:
 
     void pushDependencies(RenderNamedFlowThreadList&);
 
-    virtual void addRegionToThread(RenderRegion*) OVERRIDE;
-    virtual void removeRegionFromThread(RenderRegion*) OVERRIDE;
+    virtual void addRegionToThread(RenderRegion*) override;
+    virtual void removeRegionFromThread(RenderRegion*) override;
 
-    virtual void regionChangedWritingMode(RenderRegion*) OVERRIDE;
+    virtual void regionChangedWritingMode(RenderRegion*) override;
 
     bool overset() const { return m_overset; }
     void computeOversetStateForRegions(LayoutUnit oldClientAfterEdge);
@@ -81,7 +81,7 @@ public:
     void getRanges(Vector<RefPtr<Range>>&, const RenderRegion*) const;
 
 #if USE(ACCELERATED_COMPOSITING)
-    virtual bool collectsGraphicsLayersUnderRegions() const OVERRIDE;
+    virtual bool collectsGraphicsLayersUnderRegions() const override;
 #endif
 
     // Check if the content is flown into at least a region with region styling rules.
@@ -90,19 +90,19 @@ public:
 
     void clearRenderObjectCustomStyle(const RenderObject*);
 
-    virtual void removeFlowChildInfo(RenderObject*) OVERRIDE FINAL;
+    virtual void removeFlowChildInfo(RenderObject*) override FINAL;
 
 protected:
     void setMarkForDestruction();
     void resetMarkForDestruction();
 
 private:
-    virtual const char* renderName() const OVERRIDE;
-    virtual bool isRenderNamedFlowThread() const OVERRIDE { return true; }
-    virtual bool isChildAllowed(const RenderObject&, const RenderStyle&) const OVERRIDE;
+    virtual const char* renderName() const override;
+    virtual bool isRenderNamedFlowThread() const override { return true; }
+    virtual bool isChildAllowed(const RenderObject&, const RenderStyle&) const override;
 
-    virtual void dispatchRegionLayoutUpdateEvent() OVERRIDE;
-    virtual void dispatchRegionOversetChangeEvent() OVERRIDE;
+    virtual void dispatchRegionLayoutUpdateEvent() override;
+    virtual void dispatchRegionOversetChangeEvent() override;
 
     bool dependsOn(RenderNamedFlowThread* otherRenderFlowThread) const;
     void addDependencyOnFlowThread(RenderNamedFlowThread*);

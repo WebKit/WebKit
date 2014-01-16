@@ -32,10 +32,10 @@ public:
     HTMLImageLoader(Element*);
     virtual ~HTMLImageLoader();
 
-    virtual void dispatchLoadEvent() OVERRIDE;
-    virtual String sourceURI(const AtomicString&) const OVERRIDE;
+    virtual void dispatchLoadEvent() override;
+    virtual String sourceURI(const AtomicString&) const override;
 
-    virtual void notifyFinished(CachedResource*) OVERRIDE;
+    virtual void notifyFinished(CachedResource*) override;
 };
 
 }

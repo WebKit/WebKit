@@ -153,10 +153,10 @@ private:
     virtual WebCore::Scrollbar* horizontalScrollbar();
     virtual WebCore::Scrollbar* verticalScrollbar();
     virtual bool wantsWheelEvents();
-    virtual bool shouldAlwaysAutoStart() const OVERRIDE;
-    virtual void beginSnapshottingRunningPlugin() OVERRIDE;
-    virtual bool shouldAllowNavigationFromDrags() const OVERRIDE;
-    virtual bool shouldNotAddLayer() const OVERRIDE;
+    virtual bool shouldAlwaysAutoStart() const override;
+    virtual void beginSnapshottingRunningPlugin() override;
+    virtual bool shouldAllowNavigationFromDrags() const override;
+    virtual bool shouldNotAddLayer() const override;
 
     // WebCore::Widget
     virtual void setFrameRect(const WebCore::IntRect&);
@@ -170,7 +170,7 @@ private:
     virtual void show();
     virtual void hide();
     virtual bool transformsAffectFrameRect();
-    virtual void clipRectChanged() OVERRIDE;
+    virtual void clipRectChanged() override;
 
     // WebCore::MediaCanStartListener
     virtual void mediaCanStart();
@@ -196,7 +196,7 @@ private:
     virtual void pluginFocusOrWindowFocusChanged(bool pluginHasFocusAndWindowHasFocus);
     virtual void setComplexTextInputState(PluginComplexTextInputState);
     virtual mach_port_t compositingRenderServerPort();
-    virtual void openPluginPreferencePane() OVERRIDE;
+    virtual void openPluginPreferencePane() override;
 #endif
     virtual float contentsScaleFactor();
     virtual String proxiesForURL(const String&);

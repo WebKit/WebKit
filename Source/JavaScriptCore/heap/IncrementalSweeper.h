@@ -39,7 +39,7 @@ class IncrementalSweeper : public HeapTimer {
 public:
     static PassOwnPtr<IncrementalSweeper> create(Heap*);
     void startSweeping(Vector<MarkedBlock*>&);
-    JS_EXPORT_PRIVATE virtual void doWork() OVERRIDE;
+    JS_EXPORT_PRIVATE virtual void doWork() override;
     void sweepNextBlock();
     void willFinishSweeping();
 

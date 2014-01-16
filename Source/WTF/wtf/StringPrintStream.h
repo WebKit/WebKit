@@ -37,7 +37,7 @@ public:
     WTF_EXPORT_PRIVATE StringPrintStream();
     WTF_EXPORT_PRIVATE virtual ~StringPrintStream();
     
-    virtual void vprintf(const char* format, va_list) OVERRIDE WTF_ATTRIBUTE_PRINTF(2, 0);
+    virtual void vprintf(const char* format, va_list) override WTF_ATTRIBUTE_PRINTF(2, 0);
     
     WTF_EXPORT_PRIVATE CString toCString();
     WTF_EXPORT_PRIVATE String toString();

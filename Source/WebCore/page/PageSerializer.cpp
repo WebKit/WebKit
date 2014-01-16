@@ -104,10 +104,10 @@ private:
     PageSerializer& m_serializer;
     Document& m_document;
 
-    virtual void appendText(StringBuilder&, const Text&) OVERRIDE;
-    virtual void appendElement(StringBuilder&, const Element&, Namespaces*) OVERRIDE;
-    virtual void appendCustomAttributes(StringBuilder&, const Element&, Namespaces*) OVERRIDE;
-    virtual void appendEndTag(const Node&) OVERRIDE;
+    virtual void appendText(StringBuilder&, const Text&) override;
+    virtual void appendElement(StringBuilder&, const Element&, Namespaces*) override;
+    virtual void appendCustomAttributes(StringBuilder&, const Element&, Namespaces*) override;
+    virtual void appendEndTag(const Node&) override;
 };
 
 SerializerMarkupAccumulator::SerializerMarkupAccumulator(PageSerializer& serializer, Document& document, Vector<Node*>* nodes)

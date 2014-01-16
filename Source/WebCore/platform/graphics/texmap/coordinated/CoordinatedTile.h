@@ -56,7 +56,7 @@ public:
     const IntRect& rect() const { return m_rect; }
     void resize(const IntSize&);
 
-    virtual void paintToSurfaceContext(GraphicsContext*) OVERRIDE;
+    virtual void paintToSurfaceContext(GraphicsContext*) override;
 
 private:
     CoordinatedTile(CoordinatedTileClient*, TiledBackingStore*, const Coordinate&);

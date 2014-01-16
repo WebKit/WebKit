@@ -164,10 +164,10 @@ private:
     void computePatternTransformIfNeeded();
 
     // GraphicsLayerAnimation::Client
-    virtual void setAnimatedTransform(const TransformationMatrix&) OVERRIDE;
-    virtual void setAnimatedOpacity(float) OVERRIDE;
+    virtual void setAnimatedTransform(const TransformationMatrix&) override;
+    virtual void setAnimatedOpacity(float) override;
 #if ENABLE(CSS_FILTERS)
-    virtual void setAnimatedFilters(const FilterOperations&) OVERRIDE;
+    virtual void setAnimatedFilters(const FilterOperations&) override;
 #endif
 
     bool isVisible() const;

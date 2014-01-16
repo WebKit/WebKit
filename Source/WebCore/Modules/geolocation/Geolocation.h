@@ -55,9 +55,9 @@ public:
     ~Geolocation();
 
 #if PLATFORM(IOS)
-    virtual bool canSuspend() const OVERRIDE;
-    virtual void suspend(ReasonForSuspension) OVERRIDE;
-    virtual void resume() OVERRIDE;
+    virtual bool canSuspend() const override;
+    virtual void suspend(ReasonForSuspension) override;
+    virtual void resume() override;
     void resetAllGeolocationPermission();
 #endif // PLATFORM(IOS)
     Document* document() const;
@@ -79,7 +79,7 @@ private:
     Geoposition* lastPosition();
 
     // ActiveDOMObject
-    virtual void stop() OVERRIDE;
+    virtual void stop() override;
 
     bool isDenied() const { return m_allowGeolocation == No; }
 

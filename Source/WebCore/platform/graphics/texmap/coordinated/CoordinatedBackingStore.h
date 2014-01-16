@@ -63,8 +63,8 @@ public:
     PassRefPtr<BitmapTexture> texture() const;
     void setSize(const FloatSize&);
     virtual void paintToTextureMapper(TextureMapper*, const FloatRect&, const TransformationMatrix&, float);
-    virtual void drawBorder(TextureMapper*, const Color&, float borderWidth, const FloatRect&, const TransformationMatrix&) OVERRIDE;
-    virtual void drawRepaintCounter(TextureMapper*, int repaintCount, const Color&, const FloatRect&, const TransformationMatrix&) OVERRIDE;
+    virtual void drawBorder(TextureMapper*, const Color&, float borderWidth, const FloatRect&, const TransformationMatrix&) override;
+    virtual void drawRepaintCounter(TextureMapper*, int repaintCount, const Color&, const FloatRect&, const TransformationMatrix&) override;
 
 private:
     CoordinatedBackingStore()

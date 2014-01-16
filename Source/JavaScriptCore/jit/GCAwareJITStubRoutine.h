@@ -67,7 +67,7 @@ public:
     bool isClosureCall() const { return m_isClosureCall; }
     
 protected:
-    virtual void observeZeroRefCount() OVERRIDE;
+    virtual void observeZeroRefCount() override;
     
     virtual void markRequiredObjectsInternal(SlotVisitor&);
 
@@ -88,7 +88,7 @@ public:
     virtual ~MarkingGCAwareJITStubRoutineWithOneObject();
     
 protected:
-    virtual void markRequiredObjectsInternal(SlotVisitor&) OVERRIDE;
+    virtual void markRequiredObjectsInternal(SlotVisitor&) override;
 
 private:
     WriteBarrier<JSCell> m_object;

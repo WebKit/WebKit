@@ -39,8 +39,8 @@ public:
     }
 private:
     SpellingCorrectionCommand(PassRefPtr<Range> rangeToBeCorrected, const String& correction);
-    virtual void doApply() OVERRIDE;
-    virtual bool shouldRetainAutocorrectionIndicator() const OVERRIDE;
+    virtual void doApply() override;
+    virtual bool shouldRetainAutocorrectionIndicator() const override;
 
     RefPtr<Range> m_rangeToBeCorrected;
     VisibleSelection m_selectionToBeCorrected;

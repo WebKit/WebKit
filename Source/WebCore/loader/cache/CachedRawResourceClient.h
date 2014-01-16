@@ -35,7 +35,7 @@ class CachedRawResourceClient : public CachedResourceClient {
 public:
     virtual ~CachedRawResourceClient() { }
     static CachedResourceClientType expectedType() { return RawResourceType; }
-    virtual CachedResourceClientType resourceClientType() const OVERRIDE { return expectedType(); }
+    virtual CachedResourceClientType resourceClientType() const override { return expectedType(); }
 
     virtual void dataSent(CachedResource*, unsigned long long /* bytesSent */, unsigned long long /* totalBytesToBeSent */) { }
     virtual void responseReceived(CachedResource*, const ResourceResponse&) { }

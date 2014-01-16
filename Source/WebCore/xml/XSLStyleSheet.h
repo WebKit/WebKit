@@ -74,7 +74,7 @@ public:
     CachedResourceLoader* cachedResourceLoader();
 
     Document* ownerDocument();
-    virtual XSLStyleSheet* parentStyleSheet() const OVERRIDE { return m_parentStyleSheet; }
+    virtual XSLStyleSheet* parentStyleSheet() const override { return m_parentStyleSheet; }
     void setParentStyleSheet(XSLStyleSheet* parent);
 
     xmlDocPtr document();
@@ -86,18 +86,18 @@ public:
     void markAsProcessed();
     bool processed() const { return m_processed; }
     
-    virtual String type() const OVERRIDE { return "text/xml"; }
-    virtual bool disabled() const OVERRIDE { return m_isDisabled; }
-    virtual void setDisabled(bool b) OVERRIDE { m_isDisabled = b; }
-    virtual Node* ownerNode() const OVERRIDE { return m_ownerNode; }
-    virtual String href() const OVERRIDE { return m_originalURL; }
-    virtual String title() const OVERRIDE { return emptyString(); }
+    virtual String type() const override { return "text/xml"; }
+    virtual bool disabled() const override { return m_isDisabled; }
+    virtual void setDisabled(bool b) override { m_isDisabled = b; }
+    virtual Node* ownerNode() const override { return m_ownerNode; }
+    virtual String href() const override { return m_originalURL; }
+    virtual String title() const override { return emptyString(); }
 
-    virtual void clearOwnerNode() OVERRIDE { m_ownerNode = 0; }
-    virtual URL baseURL() const OVERRIDE { return m_finalURL; }
-    virtual bool isLoading() const OVERRIDE;
+    virtual void clearOwnerNode() override { m_ownerNode = 0; }
+    virtual URL baseURL() const override { return m_finalURL; }
+    virtual bool isLoading() const override;
 
-    virtual bool isXSLStyleSheet() const OVERRIDE { return true; }
+    virtual bool isXSLStyleSheet() const override { return true; }
 
 private:
     XSLStyleSheet(Node* parentNode, const String& originalURL, const URL& finalURL, bool embedded);

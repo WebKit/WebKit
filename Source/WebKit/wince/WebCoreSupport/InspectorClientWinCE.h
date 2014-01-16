@@ -37,16 +37,16 @@ public:
     explicit InspectorClientWinCE(WebView*);
     ~InspectorClientWinCE();
 
-    virtual void inspectorDestroyed() OVERRIDE;
+    virtual void inspectorDestroyed() override;
 
-    virtual WebCore::InspectorFrontendChannel* openInspectorFrontend(WebCore::InspectorController*) OVERRIDE;
-    virtual void closeInspectorFrontend() OVERRIDE;
-    virtual void bringFrontendToFront() OVERRIDE;
+    virtual WebCore::InspectorFrontendChannel* openInspectorFrontend(WebCore::InspectorController*) override;
+    virtual void closeInspectorFrontend() override;
+    virtual void bringFrontendToFront() override;
 
-    virtual void highlight() OVERRIDE;
-    virtual void hideHighlight() OVERRIDE;
+    virtual void highlight() override;
+    virtual void hideHighlight() override;
 
-    virtual bool sendMessageToFrontend(const WTF::String&) OVERRIDE;
+    virtual bool sendMessageToFrontend(const WTF::String&) override;
 
 private:
     WebView* m_inspectedWebView;

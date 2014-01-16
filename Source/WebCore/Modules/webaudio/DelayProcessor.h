@@ -40,7 +40,7 @@ public:
     DelayProcessor(AudioContext*, float sampleRate, unsigned numberOfChannels, double maxDelayTime);
     virtual ~DelayProcessor();
     
-    virtual PassOwnPtr<AudioDSPKernel> createKernel() OVERRIDE;
+    virtual PassOwnPtr<AudioDSPKernel> createKernel() override;
         
     AudioParam* delayTime() const { return m_delayTime.get(); }
 

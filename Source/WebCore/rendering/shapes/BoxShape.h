@@ -42,14 +42,14 @@ public:
     {
     }
 
-    virtual LayoutRect shapeMarginLogicalBoundingBox() const OVERRIDE;
-    virtual LayoutRect shapePaddingLogicalBoundingBox() const OVERRIDE;
-    virtual bool isEmpty() const OVERRIDE { return m_bounds.isEmpty(); }
-    virtual void getExcludedIntervals(LayoutUnit logicalTop, LayoutUnit logicalHeight, SegmentList&) const OVERRIDE;
-    virtual void getIncludedIntervals(LayoutUnit logicalTop, LayoutUnit logicalHeight, SegmentList&) const OVERRIDE;
-    virtual bool firstIncludedIntervalLogicalTop(LayoutUnit minLogicalIntervalTop, const FloatSize& minLogicalIntervalSize, LayoutUnit&) const OVERRIDE;
+    virtual LayoutRect shapeMarginLogicalBoundingBox() const override;
+    virtual LayoutRect shapePaddingLogicalBoundingBox() const override;
+    virtual bool isEmpty() const override { return m_bounds.isEmpty(); }
+    virtual void getExcludedIntervals(LayoutUnit logicalTop, LayoutUnit logicalHeight, SegmentList&) const override;
+    virtual void getIncludedIntervals(LayoutUnit logicalTop, LayoutUnit logicalHeight, SegmentList&) const override;
+    virtual bool firstIncludedIntervalLogicalTop(LayoutUnit minLogicalIntervalTop, const FloatSize& minLogicalIntervalSize, LayoutUnit&) const override;
 
-    virtual void buildDisplayPaths(DisplayPaths&) const OVERRIDE;
+    virtual void buildDisplayPaths(DisplayPaths&) const override;
 
 private:
     FloatRoundedRect shapeMarginBounds() const;

@@ -39,20 +39,20 @@ class AccessibilityMenuList : public AccessibilityRenderObject {
 public:
     static PassRefPtr<AccessibilityMenuList> create(RenderMenuList* renderer);
 
-    virtual bool isCollapsed() const OVERRIDE;
-    virtual bool press() const OVERRIDE;
+    virtual bool isCollapsed() const override;
+    virtual bool press() const override;
 
     void didUpdateActiveOption(int optionIndex);
 
 private:
     explicit AccessibilityMenuList(RenderMenuList*);
 
-    virtual bool isMenuList() const OVERRIDE { return true; }
-    virtual AccessibilityRole roleValue() const OVERRIDE { return PopUpButtonRole; }
-    virtual bool canSetFocusAttribute() const OVERRIDE;
+    virtual bool isMenuList() const override { return true; }
+    virtual AccessibilityRole roleValue() const override { return PopUpButtonRole; }
+    virtual bool canSetFocusAttribute() const override;
 
-    virtual void addChildren() OVERRIDE;
-    virtual void childrenChanged() OVERRIDE;
+    virtual void addChildren() override;
+    virtual void childrenChanged() override;
 };
 
 ACCESSIBILITY_OBJECT_TYPE_CASTS(AccessibilityMenuList, isMenuList())

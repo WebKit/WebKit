@@ -81,11 +81,11 @@ public:
     virtual void onComplete(int64_t);
 
     // ActiveDOMObject
-    virtual bool hasPendingActivity() const OVERRIDE;
+    virtual bool hasPendingActivity() const override;
 
     // EventTarget
-    virtual EventTargetInterface eventTargetInterface() const OVERRIDE FINAL { return IDBDatabaseEventTargetInterfaceType; }
-    virtual ScriptExecutionContext* scriptExecutionContext() const OVERRIDE FINAL { return ActiveDOMObject::scriptExecutionContext(); }
+    virtual EventTargetInterface eventTargetInterface() const override FINAL { return IDBDatabaseEventTargetInterfaceType; }
+    virtual ScriptExecutionContext* scriptExecutionContext() const override FINAL { return ActiveDOMObject::scriptExecutionContext(); }
 
     bool isClosePending() const { return m_closePending; }
     void forceClose();
@@ -93,7 +93,7 @@ public:
     void enqueueEvent(PassRefPtr<Event>);
 
     using EventTarget::dispatchEvent;
-    virtual bool dispatchEvent(PassRefPtr<Event>) OVERRIDE;
+    virtual bool dispatchEvent(PassRefPtr<Event>) override;
 
     int64_t findObjectStoreId(const String& name) const;
     bool containsObjectStore(const String& name) const
@@ -112,11 +112,11 @@ private:
     IDBDatabase(ScriptExecutionContext*, PassRefPtr<IDBDatabaseBackend>, PassRefPtr<IDBDatabaseCallbacks>);
 
     // ActiveDOMObject
-    virtual void stop() OVERRIDE;
+    virtual void stop() override;
 
     // EventTarget
-    virtual void refEventTarget() OVERRIDE FINAL { ref(); }
-    virtual void derefEventTarget() OVERRIDE FINAL { deref(); }
+    virtual void refEventTarget() override FINAL { ref(); }
+    virtual void derefEventTarget() override FINAL { deref(); }
 
     void closeConnection();
 

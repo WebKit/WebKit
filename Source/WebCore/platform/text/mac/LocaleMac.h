@@ -52,29 +52,29 @@ public:
     ~LocaleMac();
 
 #if PLATFORM(IOS)
-    virtual float maximumWidthForDateType(DateComponents::Type, const Font&) OVERRIDE;
-    virtual String formatDateTime(const DateComponents&, FormatType = FormatTypeUnspecified) OVERRIDE;
+    virtual float maximumWidthForDateType(DateComponents::Type, const Font&) override;
+    virtual String formatDateTime(const DateComponents&, FormatType = FormatTypeUnspecified) override;
 #endif
 
 #if ENABLE(DATE_AND_TIME_INPUT_TYPES)
-    virtual String dateFormat() OVERRIDE;
-    virtual String monthFormat() OVERRIDE;
-    virtual String shortMonthFormat() OVERRIDE;
-    virtual String timeFormat() OVERRIDE;
-    virtual String shortTimeFormat() OVERRIDE;
-    virtual String dateTimeFormatWithSeconds() OVERRIDE;
-    virtual String dateTimeFormatWithoutSeconds() OVERRIDE;
-    virtual const Vector<String>& monthLabels() OVERRIDE;
-    virtual const Vector<String>& shortMonthLabels() OVERRIDE;
-    virtual const Vector<String>& standAloneMonthLabels() OVERRIDE;
-    virtual const Vector<String>& shortStandAloneMonthLabels() OVERRIDE;
-    virtual const Vector<String>& timeAMPMLabels() OVERRIDE;
+    virtual String dateFormat() override;
+    virtual String monthFormat() override;
+    virtual String shortMonthFormat() override;
+    virtual String timeFormat() override;
+    virtual String shortTimeFormat() override;
+    virtual String dateTimeFormatWithSeconds() override;
+    virtual String dateTimeFormatWithoutSeconds() override;
+    virtual const Vector<String>& monthLabels() override;
+    virtual const Vector<String>& shortMonthLabels() override;
+    virtual const Vector<String>& standAloneMonthLabels() override;
+    virtual const Vector<String>& shortStandAloneMonthLabels() override;
+    virtual const Vector<String>& timeAMPMLabels() override;
 #endif
 
 private:
     explicit LocaleMac(NSLocale*);
     RetainPtr<NSDateFormatter> shortDateFormatter();
-    virtual void initializeLocaleData() OVERRIDE;
+    virtual void initializeLocaleData() override;
 
     RetainPtr<NSLocale> m_locale;
     RetainPtr<NSCalendar> m_gregorianCalendar;

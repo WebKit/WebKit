@@ -40,35 +40,35 @@ public:
 
     bool shouldWrapText() const { return m_wrap != NoWrap; }
 
-    virtual String value() const OVERRIDE;
+    virtual String value() const override;
     void setValue(const String&);
     String defaultValue() const;
     void setDefaultValue(const String&);
     int textLength() const { return value().length(); }
-    virtual int maxLength() const OVERRIDE;
+    virtual int maxLength() const override;
     void setMaxLength(int, ExceptionCode&);
     // For ValidityState
-    virtual String validationMessage() const OVERRIDE;
-    virtual bool valueMissing() const OVERRIDE;
-    virtual bool tooLong() const OVERRIDE;
+    virtual String validationMessage() const override;
+    virtual bool valueMissing() const override;
+    virtual bool tooLong() const override;
     bool isValidValue(const String&) const;
     
-    virtual TextControlInnerTextElement* innerTextElement() const OVERRIDE;
+    virtual TextControlInnerTextElement* innerTextElement() const override;
 
     void rendererWillBeDestroyed();
 
     void setCols(int);
     void setRows(int);
 
-    virtual bool willRespondToMouseClickEvents() OVERRIDE;
+    virtual bool willRespondToMouseClickEvents() override;
 
 private:
     HTMLTextAreaElement(const QualifiedName&, Document&, HTMLFormElement*);
 
     enum WrapMethod { NoWrap, SoftWrap, HardWrap };
 
-    virtual void didAddUserAgentShadowRoot(ShadowRoot*) OVERRIDE;
-    virtual bool areAuthorShadowsAllowed() const OVERRIDE { return false; }
+    virtual void didAddUserAgentShadowRoot(ShadowRoot*) override;
+    virtual bool areAuthorShadowsAllowed() const override { return false; }
 
     void handleBeforeTextInsertedEvent(BeforeTextInsertedEvent*) const;
     static String sanitizeUserInputValue(const String&, unsigned maxLength);
@@ -76,45 +76,45 @@ private:
     void setNonDirtyValue(const String&);
     void setValueCommon(const String&);
 
-    virtual bool supportsPlaceholder() const OVERRIDE { return true; }
-    virtual HTMLElement* placeholderElement() const OVERRIDE;
-    virtual void updatePlaceholderText() OVERRIDE;
-    virtual bool isEmptyValue() const OVERRIDE { return value().isEmpty(); }
+    virtual bool supportsPlaceholder() const override { return true; }
+    virtual HTMLElement* placeholderElement() const override;
+    virtual void updatePlaceholderText() override;
+    virtual bool isEmptyValue() const override { return value().isEmpty(); }
 
-    virtual bool isOptionalFormControl() const OVERRIDE { return !isRequiredFormControl(); }
-    virtual bool isRequiredFormControl() const OVERRIDE { return isRequired(); }
+    virtual bool isOptionalFormControl() const override { return !isRequiredFormControl(); }
+    virtual bool isRequiredFormControl() const override { return isRequired(); }
 
-    virtual void defaultEventHandler(Event*) OVERRIDE;
+    virtual void defaultEventHandler(Event*) override;
     
-    virtual void subtreeHasChanged() OVERRIDE;
+    virtual void subtreeHasChanged() override;
 
-    virtual bool isEnumeratable() const OVERRIDE { return true; }
-    virtual bool supportLabels() const OVERRIDE { return true; }
+    virtual bool isEnumeratable() const override { return true; }
+    virtual bool supportLabels() const override { return true; }
 
-    virtual const AtomicString& formControlType() const OVERRIDE;
+    virtual const AtomicString& formControlType() const override;
 
-    virtual FormControlState saveFormControlState() const OVERRIDE;
-    virtual void restoreFormControlState(const FormControlState&) OVERRIDE;
+    virtual FormControlState saveFormControlState() const override;
+    virtual void restoreFormControlState(const FormControlState&) override;
 
-    virtual bool isTextFormControl() const OVERRIDE { return true; }
+    virtual bool isTextFormControl() const override { return true; }
 
-    virtual void childrenChanged(const ChildChange&) OVERRIDE;
-    virtual void parseAttribute(const QualifiedName&, const AtomicString&) OVERRIDE;
-    virtual bool isPresentationAttribute(const QualifiedName&) const OVERRIDE;
-    virtual void collectStyleForPresentationAttribute(const QualifiedName&, const AtomicString&, MutableStyleProperties&) OVERRIDE;
-    virtual RenderPtr<RenderElement> createElementRenderer(PassRef<RenderStyle>) OVERRIDE;
-    virtual bool appendFormData(FormDataList&, bool) OVERRIDE;
-    virtual void reset() OVERRIDE;
-    virtual bool hasCustomFocusLogic() const OVERRIDE;
-    virtual bool isMouseFocusable() const OVERRIDE;
-    virtual bool isKeyboardFocusable(KeyboardEvent*) const OVERRIDE;
-    virtual void updateFocusAppearance(bool restorePreviousSelection) OVERRIDE;
+    virtual void childrenChanged(const ChildChange&) override;
+    virtual void parseAttribute(const QualifiedName&, const AtomicString&) override;
+    virtual bool isPresentationAttribute(const QualifiedName&) const override;
+    virtual void collectStyleForPresentationAttribute(const QualifiedName&, const AtomicString&, MutableStyleProperties&) override;
+    virtual RenderPtr<RenderElement> createElementRenderer(PassRef<RenderStyle>) override;
+    virtual bool appendFormData(FormDataList&, bool) override;
+    virtual void reset() override;
+    virtual bool hasCustomFocusLogic() const override;
+    virtual bool isMouseFocusable() const override;
+    virtual bool isKeyboardFocusable(KeyboardEvent*) const override;
+    virtual void updateFocusAppearance(bool restorePreviousSelection) override;
 
-    virtual void accessKeyAction(bool sendMouseEvents) OVERRIDE;
+    virtual void accessKeyAction(bool sendMouseEvents) override;
 
-    virtual bool shouldUseInputMethod() OVERRIDE;
-    virtual bool matchesReadOnlyPseudoClass() const OVERRIDE;
-    virtual bool matchesReadWritePseudoClass() const OVERRIDE;
+    virtual bool shouldUseInputMethod() override;
+    virtual bool matchesReadOnlyPseudoClass() const override;
+    virtual bool matchesReadWritePseudoClass() const override;
 
     bool valueMissing(const String& value) const { return isRequiredFormControl() && !isDisabledOrReadOnly() && value.isEmpty(); }
     bool tooLong(const String&, NeedsToCheckDirtyFlag) const;

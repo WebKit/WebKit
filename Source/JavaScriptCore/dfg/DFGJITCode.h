@@ -49,8 +49,8 @@ public:
     JITCode();
     virtual ~JITCode();
     
-    virtual CommonData* dfgCommon() OVERRIDE;
-    virtual JITCode* dfg() OVERRIDE;
+    virtual CommonData* dfgCommon() override;
+    virtual JITCode* dfg() override;
     
     OSREntryData* appendOSREntryData(unsigned bytecodeIndex, unsigned machineCodeOffset)
     {

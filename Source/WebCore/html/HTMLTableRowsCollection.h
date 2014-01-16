@@ -49,7 +49,7 @@ public:
 private:
     explicit HTMLTableRowsCollection(HTMLTableElement&);
 
-    virtual Element* customElementAfter(Element*) const OVERRIDE;
+    virtual Element* customElementAfter(Element*) const override;
 };
 
 } // namespace

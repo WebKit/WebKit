@@ -34,19 +34,19 @@ class WebContextMenuClient : public WebCore::ContextMenuClient {
 public:
     WebContextMenuClient(WebView *webView);
     
-    virtual void contextMenuDestroyed() OVERRIDE;
+    virtual void contextMenuDestroyed() override;
     
-    virtual NSMutableArray* getCustomMenuFromDefaultItems(WebCore::ContextMenu*) OVERRIDE;
-    virtual void contextMenuItemSelected(WebCore::ContextMenuItem*, const WebCore::ContextMenu*) OVERRIDE;
+    virtual NSMutableArray* getCustomMenuFromDefaultItems(WebCore::ContextMenu*) override;
+    virtual void contextMenuItemSelected(WebCore::ContextMenuItem*, const WebCore::ContextMenu*) override;
     
-    virtual void downloadURL(const WebCore::URL&) OVERRIDE;
-    virtual void searchWithGoogle(const WebCore::Frame*) OVERRIDE;
-    virtual void lookUpInDictionary(WebCore::Frame*) OVERRIDE;
-    virtual bool isSpeaking() OVERRIDE;
-    virtual void speak(const WTF::String&) OVERRIDE;
-    virtual void stopSpeaking() OVERRIDE;
-    virtual void searchWithSpotlight() OVERRIDE;
-    virtual void showContextMenu() OVERRIDE;
+    virtual void downloadURL(const WebCore::URL&) override;
+    virtual void searchWithGoogle(const WebCore::Frame*) override;
+    virtual void lookUpInDictionary(WebCore::Frame*) override;
+    virtual bool isSpeaking() override;
+    virtual void speak(const WTF::String&) override;
+    virtual void stopSpeaking() override;
+    virtual void searchWithSpotlight() override;
+    virtual void showContextMenu() override;
 
     WebView *webView() { return m_webView; }
         

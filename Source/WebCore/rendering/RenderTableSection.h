@@ -71,9 +71,9 @@ public:
     RenderTableRow* firstRow() const;
     RenderTableRow* lastRow() const;
 
-    virtual void addChild(RenderObject* child, RenderObject* beforeChild = 0) OVERRIDE;
+    virtual void addChild(RenderObject* child, RenderObject* beforeChild = 0) override;
 
-    virtual int firstLineBaseline() const OVERRIDE;
+    virtual int firstLineBaseline() const override;
 
     void addCell(RenderTableCell*, RenderTableRow* row);
 
@@ -219,29 +219,29 @@ public:
     int distributeExtraLogicalHeightToRows(int extraLogicalHeight);
 
     static RenderTableSection* createAnonymousWithParentRenderer(const RenderObject*);
-    virtual RenderBox* createAnonymousBoxWithSameTypeAs(const RenderObject* parent) const OVERRIDE
+    virtual RenderBox* createAnonymousBoxWithSameTypeAs(const RenderObject* parent) const override
     {
         return createAnonymousWithParentRenderer(parent);
     }
     
-    virtual void paint(PaintInfo&, const LayoutPoint&) OVERRIDE;
+    virtual void paint(PaintInfo&, const LayoutPoint&) override;
 
 protected:
-    virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle) OVERRIDE;
+    virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle) override;
 
 private:
-    virtual const char* renderName() const OVERRIDE { return (isAnonymous() || isPseudoElement()) ? "RenderTableSection (anonymous)" : "RenderTableSection"; }
+    virtual const char* renderName() const override { return (isAnonymous() || isPseudoElement()) ? "RenderTableSection (anonymous)" : "RenderTableSection"; }
 
-    virtual bool canHaveChildren() const OVERRIDE { return true; }
+    virtual bool canHaveChildren() const override { return true; }
 
-    virtual bool isTableSection() const OVERRIDE { return true; }
+    virtual bool isTableSection() const override { return true; }
 
-    virtual void willBeRemovedFromTree() OVERRIDE;
+    virtual void willBeRemovedFromTree() override;
 
-    virtual void layout() OVERRIDE;
+    virtual void layout() override;
 
     void paintCell(RenderTableCell*, PaintInfo&, const LayoutPoint&);
-    virtual void paintObject(PaintInfo&, const LayoutPoint&) OVERRIDE;
+    virtual void paintObject(PaintInfo&, const LayoutPoint&) override;
     void paintRowGroupBorder(const PaintInfo&, bool antialias, LayoutRect, BoxSide, CSSPropertyID borderColor, EBorderStyle, EBorderStyle tableBorderStyle);
     void paintRowGroupBorderIfRequired(const PaintInfo&, const LayoutPoint& paintOffset, unsigned row, unsigned col, BoxSide, RenderTableCell* = 0);
     int offsetLeftForRowGroupBorder(RenderTableCell*, const LayoutRect& rowGroupRect, unsigned row);
@@ -250,9 +250,9 @@ private:
     int verticalRowGroupBorderHeight(RenderTableCell*, const LayoutRect& rowGroupRect, unsigned row);
     int horizontalRowGroupBorderWidth(RenderTableCell*, const LayoutRect& rowGroupRect, unsigned row, unsigned column);
 
-    virtual void imageChanged(WrappedImagePtr, const IntRect* = 0) OVERRIDE;
+    virtual void imageChanged(WrappedImagePtr, const IntRect* = 0) override;
 
-    virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction) OVERRIDE;
+    virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction) override;
 
     void ensureRows(unsigned);
 

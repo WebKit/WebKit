@@ -70,12 +70,12 @@ public:
     void resume();
 #endif
 
-    virtual bool developerExtrasEnabled() const OVERRIDE { return true; }
-    virtual bool canAccessInspectedScriptState(JSC::ExecState*) const OVERRIDE { return true; }
-    virtual Inspector::InspectorFunctionCallHandler functionCallHandler() const OVERRIDE;
-    virtual Inspector::InspectorEvaluateHandler evaluateHandler() const OVERRIDE;
-    virtual void willCallInjectedScriptFunction(JSC::ExecState*, const String& scriptName, int scriptLine) OVERRIDE;
-    virtual void didCallInjectedScriptFunction() OVERRIDE;
+    virtual bool developerExtrasEnabled() const override { return true; }
+    virtual bool canAccessInspectedScriptState(JSC::ExecState*) const override { return true; }
+    virtual Inspector::InspectorFunctionCallHandler functionCallHandler() const override;
+    virtual Inspector::InspectorEvaluateHandler evaluateHandler() const override;
+    virtual void willCallInjectedScriptFunction(JSC::ExecState*, const String& scriptName, int scriptLine) override;
+    virtual void didCallInjectedScriptFunction() override;
 
 private:
     friend InstrumentingAgents* instrumentationForWorkerGlobalScope(WorkerGlobalScope*);

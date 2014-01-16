@@ -54,7 +54,7 @@ public:
     virtual EventTargetInterface eventTargetInterface() const = 0;
     using RefCounted<TrackListBase>::ref;
     using RefCounted<TrackListBase>::deref;
-    virtual ScriptExecutionContext* scriptExecutionContext() const OVERRIDE FINAL { return m_context; }
+    virtual ScriptExecutionContext* scriptExecutionContext() const override FINAL { return m_context; }
 
     DEFINE_ATTRIBUTE_EVENT_LISTENER(addtrack);
     DEFINE_ATTRIBUTE_EVENT_LISTENER(change);
@@ -81,8 +81,8 @@ private:
     void scheduleTrackEvent(const AtomicString& eventName, PassRefPtr<TrackBase>);
 
     // EventTarget
-    virtual void refEventTarget() OVERRIDE FINAL { ref(); }
-    virtual void derefEventTarget() OVERRIDE FINAL { deref(); }
+    virtual void refEventTarget() override FINAL { ref(); }
+    virtual void derefEventTarget() override FINAL { deref(); }
 
     ScriptExecutionContext* m_context;
     HTMLMediaElement* m_element;

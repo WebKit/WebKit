@@ -57,8 +57,8 @@ public:
     InspectorDOMStorageAgent(InstrumentingAgents*, InspectorPageAgent*);
     ~InspectorDOMStorageAgent();
 
-    virtual void didCreateFrontendAndBackend(Inspector::InspectorFrontendChannel*, Inspector::InspectorBackendDispatcher*) OVERRIDE;
-    virtual void willDestroyFrontendAndBackend() OVERRIDE;
+    virtual void didCreateFrontendAndBackend(Inspector::InspectorFrontendChannel*, Inspector::InspectorBackendDispatcher*) override;
+    virtual void willDestroyFrontendAndBackend() override;
 
     // Called from the front-end.
     virtual void enable(ErrorString*);

@@ -98,15 +98,15 @@ protected:
     virtual bool isValid() const { return SVGTests::isValid(); }
 
     bool isSupportedAttribute(const QualifiedName&);
-    virtual void parseAttribute(const QualifiedName&, const AtomicString&) OVERRIDE;
-    virtual bool isPresentationAttribute(const QualifiedName&) const OVERRIDE;
-    virtual void collectStyleForPresentationAttribute(const QualifiedName&, const AtomicString&, MutableStyleProperties&) OVERRIDE;
+    virtual void parseAttribute(const QualifiedName&, const AtomicString&) override;
+    virtual bool isPresentationAttribute(const QualifiedName&) const override;
+    virtual void collectStyleForPresentationAttribute(const QualifiedName&, const AtomicString&, MutableStyleProperties&) override;
     virtual void svgAttributeChanged(const QualifiedName&);
 
     virtual bool selfHasRelativeLengths() const;
 
 private:
-    virtual bool isTextContent() const OVERRIDE FINAL { return true; }
+    virtual bool isTextContent() const override FINAL { return true; }
 
     // Custom 'textLength' property
     static void synchronizeTextLength(SVGElement* contextElement);

@@ -122,8 +122,8 @@ public:
     using RefCounted<Notification>::deref;
 
     // EventTarget interface
-    virtual EventTargetInterface eventTargetInterface() const OVERRIDE { return NotificationEventTargetInterfaceType; }
-    virtual ScriptExecutionContext* scriptExecutionContext() const OVERRIDE { return ActiveDOMObject::scriptExecutionContext(); }
+    virtual EventTargetInterface eventTargetInterface() const override { return NotificationEventTargetInterfaceType; }
+    virtual ScriptExecutionContext* scriptExecutionContext() const override { return ActiveDOMObject::scriptExecutionContext(); }
 
     void stopLoadingIcon();
 
@@ -149,11 +149,11 @@ private:
     void setBody(const String& body) { m_body = body; }
 
     // ActiveDOMObject interface
-    virtual void contextDestroyed() OVERRIDE;
+    virtual void contextDestroyed() override;
 
     // EventTarget interface
-    virtual void refEventTarget() OVERRIDE { ref(); }
-    virtual void derefEventTarget() OVERRIDE { deref(); }
+    virtual void refEventTarget() override { ref(); }
+    virtual void derefEventTarget() override { deref(); }
 
     void startLoadingIcon();
     void finishLoadingIcon();

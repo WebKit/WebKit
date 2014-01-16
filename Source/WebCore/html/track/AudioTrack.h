@@ -60,12 +60,12 @@ public:
     static const AtomicString& mainDescKeyword();
     static const AtomicString& translationKeyword();
     static const AtomicString& commentaryKeyword();
-    virtual const AtomicString& defaultKindKeyword() const OVERRIDE { return emptyAtom; }
+    virtual const AtomicString& defaultKindKeyword() const override { return emptyAtom; }
 
-    virtual bool enabled() const OVERRIDE { return m_enabled; }
+    virtual bool enabled() const override { return m_enabled; }
     virtual void setEnabled(const bool);
 
-    virtual void clearClient() OVERRIDE { m_client = 0; }
+    virtual void clearClient() override { m_client = 0; }
     AudioTrackClient* client() const { return m_client; }
 
     size_t inbandTrackIndex();
@@ -74,13 +74,13 @@ protected:
     AudioTrack(AudioTrackClient*, PassRefPtr<AudioTrackPrivate>);
 
 private:
-    virtual bool isValidKind(const AtomicString&) const OVERRIDE;
+    virtual bool isValidKind(const AtomicString&) const override;
 
-    virtual void enabledChanged(AudioTrackPrivate*, bool) OVERRIDE;
-    virtual void idChanged(TrackPrivateBase*, const String&) OVERRIDE;
-    virtual void labelChanged(TrackPrivateBase*, const String&) OVERRIDE;
-    virtual void languageChanged(TrackPrivateBase*, const String&) OVERRIDE;
-    virtual void willRemove(TrackPrivateBase*) OVERRIDE;
+    virtual void enabledChanged(AudioTrackPrivate*, bool) override;
+    virtual void idChanged(TrackPrivateBase*, const String&) override;
+    virtual void labelChanged(TrackPrivateBase*, const String&) override;
+    virtual void languageChanged(TrackPrivateBase*, const String&) override;
+    virtual void willRemove(TrackPrivateBase*) override;
 
     bool m_enabled;
     AudioTrackClient* m_client;

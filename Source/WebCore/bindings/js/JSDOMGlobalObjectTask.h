@@ -45,7 +45,7 @@ public:
 private:
     JSGlobalObjectTask(JSDOMGlobalObject*, PassRefPtr<JSC::Microtask>);
 
-    virtual void performTask(ScriptExecutionContext*) OVERRIDE;
+    virtual void performTask(ScriptExecutionContext*) override;
 
     RefPtr<JSGlobalObjectCallback> m_callback;
 };

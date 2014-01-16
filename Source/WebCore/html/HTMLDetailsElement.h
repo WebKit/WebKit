@@ -35,11 +35,11 @@ public:
 private:
     HTMLDetailsElement(const QualifiedName&, Document&);
 
-    virtual RenderPtr<RenderElement> createElementRenderer(PassRef<RenderStyle>) OVERRIDE;
-    virtual bool childShouldCreateRenderer(const Node&) const OVERRIDE;
-    virtual void parseAttribute(const QualifiedName&, const AtomicString&) OVERRIDE;
+    virtual RenderPtr<RenderElement> createElementRenderer(PassRef<RenderStyle>) override;
+    virtual bool childShouldCreateRenderer(const Node&) const override;
+    virtual void parseAttribute(const QualifiedName&, const AtomicString&) override;
 
-    virtual void didAddUserAgentShadowRoot(ShadowRoot*) OVERRIDE;
+    virtual void didAddUserAgentShadowRoot(ShadowRoot*) override;
 
     bool m_isOpen;
 };

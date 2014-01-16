@@ -118,12 +118,12 @@ public:
     }
 
 private:
-    virtual bool operator==(const FilterOperation& o) const OVERRIDE
+    virtual bool operator==(const FilterOperation& o) const override
     {
         return isSameType(o);
     }
 
-    virtual bool isDefault() const OVERRIDE { return true; }
+    virtual bool isDefault() const override { return true; }
 
     DefaultFilterOperation(OperationType type)
         : FilterOperation(type)
@@ -139,7 +139,7 @@ public:
     }
 
 private:
-    virtual bool operator==(const FilterOperation& o) const OVERRIDE
+    virtual bool operator==(const FilterOperation& o) const override
     {
         return isSameType(o);
     }
@@ -158,8 +158,8 @@ public:
     }
     virtual ~ReferenceFilterOperation();
 
-    virtual bool affectsOpacity() const OVERRIDE { return true; }
-    virtual bool movesPixels() const OVERRIDE { return true; }
+    virtual bool affectsOpacity() const override { return true; }
+    virtual bool movesPixels() const override { return true; }
 
     const String& url() const { return m_url; }
     const String& fragment() const { return m_fragment; }
@@ -175,7 +175,7 @@ public:
 private:
     ReferenceFilterOperation(const String& url, const String& fragment, OperationType);
 
-    virtual bool operator==(const FilterOperation& o) const OVERRIDE
+    virtual bool operator==(const FilterOperation& o) const override
     {
         if (!isSameType(o))
             return false;
@@ -202,10 +202,10 @@ public:
 
     double amount() const { return m_amount; }
 
-    virtual PassRefPtr<FilterOperation> blend(const FilterOperation* from, double progress, bool blendToPassthrough = false) OVERRIDE;
+    virtual PassRefPtr<FilterOperation> blend(const FilterOperation* from, double progress, bool blendToPassthrough = false) override;
 
 private:
-    virtual bool operator==(const FilterOperation& o) const OVERRIDE
+    virtual bool operator==(const FilterOperation& o) const override
     {
         if (!isSameType(o))
             return false;
@@ -234,12 +234,12 @@ public:
 
     double amount() const { return m_amount; }
 
-    virtual bool affectsOpacity() const OVERRIDE { return m_type == OPACITY; }
+    virtual bool affectsOpacity() const override { return m_type == OPACITY; }
 
-    virtual PassRefPtr<FilterOperation> blend(const FilterOperation* from, double progress, bool blendToPassthrough = false) OVERRIDE;
+    virtual PassRefPtr<FilterOperation> blend(const FilterOperation* from, double progress, bool blendToPassthrough = false) override;
 
 private:
-    virtual bool operator==(const FilterOperation& o) const OVERRIDE
+    virtual bool operator==(const FilterOperation& o) const override
     {
         if (!isSameType(o))
             return false;
@@ -267,13 +267,13 @@ public:
 
     const Length& stdDeviation() const { return m_stdDeviation; }
 
-    virtual bool affectsOpacity() const OVERRIDE { return true; }
-    virtual bool movesPixels() const OVERRIDE { return true; }
+    virtual bool affectsOpacity() const override { return true; }
+    virtual bool movesPixels() const override { return true; }
 
-    virtual PassRefPtr<FilterOperation> blend(const FilterOperation* from, double progress, bool blendToPassthrough = false) OVERRIDE;
+    virtual PassRefPtr<FilterOperation> blend(const FilterOperation* from, double progress, bool blendToPassthrough = false) override;
 
 private:
-    virtual bool operator==(const FilterOperation& o) const OVERRIDE
+    virtual bool operator==(const FilterOperation& o) const override
     {
         if (!isSameType(o))
             return false;
@@ -303,13 +303,13 @@ public:
     int stdDeviation() const { return m_stdDeviation; }
     Color color() const { return m_color; }
 
-    virtual bool affectsOpacity() const OVERRIDE { return true; }
-    virtual bool movesPixels() const OVERRIDE { return true; }
+    virtual bool affectsOpacity() const override { return true; }
+    virtual bool movesPixels() const override { return true; }
 
-    virtual PassRefPtr<FilterOperation> blend(const FilterOperation* from, double progress, bool blendToPassthrough = false) OVERRIDE;
+    virtual PassRefPtr<FilterOperation> blend(const FilterOperation* from, double progress, bool blendToPassthrough = false) override;
 
 private:
-    virtual bool operator==(const FilterOperation& o) const OVERRIDE
+    virtual bool operator==(const FilterOperation& o) const override
     {
         if (!isSameType(o))
             return false;

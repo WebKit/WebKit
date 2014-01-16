@@ -49,7 +49,7 @@ public:
     void append(PassRefPtr<AudioTrack>);
 
     // EventTarget
-    virtual EventTargetInterface eventTargetInterface() const OVERRIDE;
+    virtual EventTargetInterface eventTargetInterface() const override;
 
 private:
     AudioTrackList(HTMLMediaElement*, ScriptExecutionContext*);

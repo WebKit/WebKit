@@ -49,7 +49,7 @@ private:
     {
     }
 
-    virtual MatchType matchTypeFor(Node* node) const OVERRIDE
+    virtual MatchType matchTypeFor(Node* node) const override
     {
         if (node->isElementNode() && node == node->parentNode()->querySelector(summaryQuerySelector(), ASSERT_NO_EXCEPTION))
             return NeverMatches;
@@ -78,7 +78,7 @@ private:
     {
     }
 
-    virtual MatchType matchTypeFor(Node* node) const OVERRIDE
+    virtual MatchType matchTypeFor(Node* node) const override
     {
         if (node->isElementNode() && node == node->parentNode()->querySelector(summaryQuerySelector(), ASSERT_NO_EXCEPTION))
             return AlwaysMatches;

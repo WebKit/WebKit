@@ -61,24 +61,24 @@ public:
 private:
     SliderThumbElement(Document&);
 
-    virtual RenderPtr<RenderElement> createElementRenderer(PassRef<RenderStyle>) OVERRIDE;
-    virtual PassRefPtr<Element> cloneElementWithoutAttributesAndChildren() OVERRIDE;
-    virtual bool isDisabledFormControl() const OVERRIDE;
-    virtual bool matchesReadOnlyPseudoClass() const OVERRIDE;
-    virtual bool matchesReadWritePseudoClass() const OVERRIDE;
-    virtual Element* focusDelegate() OVERRIDE;
+    virtual RenderPtr<RenderElement> createElementRenderer(PassRef<RenderStyle>) override;
+    virtual PassRefPtr<Element> cloneElementWithoutAttributesAndChildren() override;
+    virtual bool isDisabledFormControl() const override;
+    virtual bool matchesReadOnlyPseudoClass() const override;
+    virtual bool matchesReadWritePseudoClass() const override;
+    virtual Element* focusDelegate() override;
 #if !PLATFORM(IOS)
-    virtual void defaultEventHandler(Event*) OVERRIDE;
-    virtual bool willRespondToMouseMoveEvents() OVERRIDE;
-    virtual bool willRespondToMouseClickEvents() OVERRIDE;
+    virtual void defaultEventHandler(Event*) override;
+    virtual bool willRespondToMouseMoveEvents() override;
+    virtual bool willRespondToMouseClickEvents() override;
 #endif
 
 #if ENABLE(TOUCH_EVENTS) && PLATFORM(IOS)
-    virtual void didAttachRenderers() OVERRIDE;
+    virtual void didAttachRenderers() override;
 #endif
-    virtual void willDetachRenderers() OVERRIDE;
+    virtual void willDetachRenderers() override;
 
-    virtual const AtomicString& shadowPseudoId() const OVERRIDE;
+    virtual const AtomicString& shadowPseudoId() const override;
 
     void startDragging();
     void stopDragging();
@@ -132,7 +132,7 @@ public:
 
 private:
     SliderContainerElement(Document&);
-    virtual RenderPtr<RenderElement> createElementRenderer(PassRef<RenderStyle>) OVERRIDE;
+    virtual RenderPtr<RenderElement> createElementRenderer(PassRef<RenderStyle>) override;
     virtual const AtomicString& shadowPseudoId() const;
 };
 

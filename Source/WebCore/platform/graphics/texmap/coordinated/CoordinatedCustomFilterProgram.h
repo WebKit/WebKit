@@ -39,14 +39,14 @@ public:
         return adoptRef(new CoordinatedCustomFilterProgram(vertexShaderString, fragmentShaderString, programType, mixSettings, meshType));
     }
 
-    virtual bool isLoaded() const OVERRIDE { return true; }
+    virtual bool isLoaded() const override { return true; }
 
 protected:
-    virtual String vertexShaderString() const OVERRIDE { return m_vertexShaderString; }
-    virtual String fragmentShaderString() const OVERRIDE { return m_fragmentShaderString; }
+    virtual String vertexShaderString() const override { return m_vertexShaderString; }
+    virtual String fragmentShaderString() const override { return m_fragmentShaderString; }
 
-    virtual void willHaveClients() OVERRIDE { notifyClients(); }
-    virtual void didRemoveLastClient() OVERRIDE { }
+    virtual void willHaveClients() override { notifyClients(); }
+    virtual void didRemoveLastClient() override { }
 
 private:
     CoordinatedCustomFilterProgram(const String& vertexShaderString, const String& fragmentShaderString, CustomFilterProgramType programType, const CustomFilterProgramMixSettings& mixSettings, CustomFilterMeshType meshType)

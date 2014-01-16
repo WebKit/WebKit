@@ -69,8 +69,8 @@ private:
     WebResourceLoader(PassRefPtr<WebCore::ResourceLoader>);
 
     // IPC::MessageSender
-    virtual IPC::Connection* messageSenderConnection() OVERRIDE;
-    virtual uint64_t messageSenderDestinationID() OVERRIDE;
+    virtual IPC::Connection* messageSenderConnection() override;
+    virtual uint64_t messageSenderDestinationID() override;
 
     void cancelResourceLoader();
 

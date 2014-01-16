@@ -43,10 +43,10 @@ public:
 
     Element& element() const { return toElement(nodeForNonAnonymous()); }
 
-    virtual void layoutBlock(bool relayoutChildren, LayoutUnit pageLogicalHeight = 0) OVERRIDE;
+    virtual void layoutBlock(bool relayoutChildren, LayoutUnit pageLogicalHeight = 0) override;
 
-    virtual bool avoidsFloats() const OVERRIDE { return true; }
-    virtual bool canCollapseAnonymousBlockChild() const OVERRIDE { return false; }
+    virtual bool avoidsFloats() const override { return true; }
+    virtual bool canCollapseAnonymousBlockChild() const override { return false; }
 
     enum GridPositionSide {
         ColumnStartSide,
@@ -56,10 +56,10 @@ public:
     };
 
 private:
-    virtual const char* renderName() const OVERRIDE;
-    virtual bool isRenderGrid() const OVERRIDE { return true; }
-    virtual void computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const OVERRIDE;
-    virtual void computePreferredLogicalWidths() OVERRIDE;
+    virtual const char* renderName() const override;
+    virtual bool isRenderGrid() const override { return true; }
+    virtual void computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const override;
+    virtual void computePreferredLogicalWidths() override;
 
     class GridIterator;
     class GridSizingData;
@@ -116,7 +116,7 @@ private:
 
     LayoutUnit gridAreaBreadthForChild(const RenderBox* child, TrackSizingDirection, const Vector<GridTrack>&) const;
 
-    virtual void paintChildren(PaintInfo& forSelf, const LayoutPoint& paintOffset, PaintInfo& forChild, bool usePrintRect) OVERRIDE FINAL;
+    virtual void paintChildren(PaintInfo& forSelf, const LayoutPoint& paintOffset, PaintInfo& forChild, bool usePrintRect) override FINAL;
 
 #ifndef NDEBUG
     bool tracksAreWiderThanMinTrackBreadth(TrackSizingDirection, const Vector<GridTrack>&);

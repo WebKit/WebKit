@@ -63,11 +63,11 @@ protected:
     void dispatchModifiedEvent(const String& oldValue);
 
 private:
-    virtual String nodeValue() const OVERRIDE FINAL;
-    virtual void setNodeValue(const String&, ExceptionCode&) OVERRIDE FINAL;
-    virtual bool isCharacterDataNode() const OVERRIDE FINAL { return true; }
-    virtual int maxCharacterOffset() const OVERRIDE FINAL;
-    virtual bool offsetInCharacters() const OVERRIDE FINAL;
+    virtual String nodeValue() const override FINAL;
+    virtual void setNodeValue(const String&, ExceptionCode&) override FINAL;
+    virtual bool isCharacterDataNode() const override FINAL { return true; }
+    virtual int maxCharacterOffset() const override FINAL;
+    virtual bool offsetInCharacters() const override FINAL;
     void setDataAndUpdate(const String&, unsigned offsetOfReplacedData, unsigned oldLength, unsigned newLength);
     void checkCharDataOperation(unsigned offset, ExceptionCode&);
 

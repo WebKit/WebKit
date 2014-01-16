@@ -98,9 +98,9 @@ public:
 #endif
 
 protected:
-    virtual void insert(const SegmentedString&) OVERRIDE;
-    virtual void append(PassRefPtr<StringImpl>) OVERRIDE;
-    virtual void finish() OVERRIDE;
+    virtual void insert(const SegmentedString&) override;
+    virtual void append(PassRefPtr<StringImpl>) override;
+    virtual void finish() override;
 
     explicit HTMLDocumentParser(HTMLDocument&);
     HTMLDocumentParser(DocumentFragment&, Element* contextElement, ParserContentPolicy);
@@ -117,23 +117,23 @@ private:
 
     // DocumentParser
 #if ENABLE(THREADED_HTML_PARSER)
-    virtual void pinToMainThread() OVERRIDE;
+    virtual void pinToMainThread() override;
 #endif
-    virtual void detach() OVERRIDE;
-    virtual bool hasInsertionPoint() OVERRIDE;
-    virtual bool processingData() const OVERRIDE;
-    virtual void prepareToStopParsing() OVERRIDE;
-    virtual void stopParsing() OVERRIDE;
-    virtual bool isWaitingForScripts() const OVERRIDE;
-    virtual bool isExecutingScript() const OVERRIDE;
-    virtual void executeScriptsWaitingForStylesheets() OVERRIDE;
+    virtual void detach() override;
+    virtual bool hasInsertionPoint() override;
+    virtual bool processingData() const override;
+    virtual void prepareToStopParsing() override;
+    virtual void stopParsing() override;
+    virtual bool isWaitingForScripts() const override;
+    virtual bool isExecutingScript() const override;
+    virtual void executeScriptsWaitingForStylesheets() override;
 
     // HTMLScriptRunnerHost
-    virtual void watchForLoad(CachedResource*) OVERRIDE;
-    virtual void stopWatchingForLoad(CachedResource*) OVERRIDE;
+    virtual void watchForLoad(CachedResource*) override;
+    virtual void stopWatchingForLoad(CachedResource*) override;
     virtual HTMLInputStream& inputStream() { return m_input; }
     virtual bool hasPreloadScanner() const { return m_preloadScanner.get() && !shouldUseThreading(); }
-    virtual void appendCurrentInputStreamToPreloadScannerAndScan() OVERRIDE;
+    virtual void appendCurrentInputStreamToPreloadScannerAndScan() override;
 
     // CachedResourceClient
     virtual void notifyFinished(CachedResource*);

@@ -34,13 +34,13 @@ public:
 private:
     HTMLAppletElement(const QualifiedName&, Document&, bool createdByParser);
 
-    virtual void parseAttribute(const QualifiedName&, const AtomicString&) OVERRIDE;
+    virtual void parseAttribute(const QualifiedName&, const AtomicString&) override;
     
-    virtual bool rendererIsNeeded(const RenderStyle&) OVERRIDE;
-    virtual RenderPtr<RenderElement> createElementRenderer(PassRef<RenderStyle>) OVERRIDE;
+    virtual bool rendererIsNeeded(const RenderStyle&) override;
+    virtual RenderPtr<RenderElement> createElementRenderer(PassRef<RenderStyle>) override;
 
     virtual RenderWidget* renderWidgetForJSBindings() const;
-    virtual void updateWidget(PluginCreationOption) OVERRIDE;
+    virtual void updateWidget(PluginCreationOption) override;
 
     bool canEmbedJava() const;
 };

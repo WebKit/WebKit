@@ -51,44 +51,44 @@ public:
     static Vector<FileChooserFileInfo> filesFromFormControlState(const FormControlState&);
 
 private:
-    virtual const AtomicString& formControlType() const OVERRIDE;
-    virtual FormControlState saveFormControlState() const OVERRIDE;
-    virtual void restoreFormControlState(const FormControlState&) OVERRIDE;
-    virtual bool appendFormData(FormDataList&, bool) const OVERRIDE;
-    virtual bool valueMissing(const String&) const OVERRIDE;
-    virtual String valueMissingText() const OVERRIDE;
-    virtual void handleDOMActivateEvent(Event*) OVERRIDE;
-    virtual RenderPtr<RenderElement> createInputRenderer(PassRef<RenderStyle>) OVERRIDE;
-    virtual bool canSetStringValue() const OVERRIDE;
-    virtual bool canChangeFromAnotherType() const OVERRIDE;
-    virtual FileList* files() OVERRIDE;
-    virtual void setFiles(PassRefPtr<FileList>) OVERRIDE;
+    virtual const AtomicString& formControlType() const override;
+    virtual FormControlState saveFormControlState() const override;
+    virtual void restoreFormControlState(const FormControlState&) override;
+    virtual bool appendFormData(FormDataList&, bool) const override;
+    virtual bool valueMissing(const String&) const override;
+    virtual String valueMissingText() const override;
+    virtual void handleDOMActivateEvent(Event*) override;
+    virtual RenderPtr<RenderElement> createInputRenderer(PassRef<RenderStyle>) override;
+    virtual bool canSetStringValue() const override;
+    virtual bool canChangeFromAnotherType() const override;
+    virtual FileList* files() override;
+    virtual void setFiles(PassRefPtr<FileList>) override;
 #if PLATFORM(IOS)
-    virtual String displayString() const OVERRIDE;
+    virtual String displayString() const override;
 #endif
-    virtual bool canSetValue(const String&) OVERRIDE;
-    virtual bool getTypeSpecificValue(String&) OVERRIDE; // Checked first, before internal storage or the value attribute.
-    virtual void setValue(const String&, bool valueChanged, TextFieldEventBehavior) OVERRIDE;
+    virtual bool canSetValue(const String&) override;
+    virtual bool getTypeSpecificValue(String&) override; // Checked first, before internal storage or the value attribute.
+    virtual void setValue(const String&, bool valueChanged, TextFieldEventBehavior) override;
 
 #if ENABLE(DRAG_SUPPORT)
-    virtual bool receiveDroppedFiles(const DragData&) OVERRIDE;
+    virtual bool receiveDroppedFiles(const DragData&) override;
 #endif
 
-    virtual Icon* icon() const OVERRIDE;
-    virtual bool isFileUpload() const OVERRIDE;
-    virtual void createShadowSubtree() OVERRIDE;
-    virtual void disabledAttributeChanged() OVERRIDE;
-    virtual void multipleAttributeChanged() OVERRIDE;
-    virtual String defaultToolTip() const OVERRIDE;
+    virtual Icon* icon() const override;
+    virtual bool isFileUpload() const override;
+    virtual void createShadowSubtree() override;
+    virtual void disabledAttributeChanged() override;
+    virtual void multipleAttributeChanged() override;
+    virtual String defaultToolTip() const override;
 
     // FileChooserClient implementation.
-    virtual void filesChosen(const Vector<FileChooserFileInfo>&) OVERRIDE;
+    virtual void filesChosen(const Vector<FileChooserFileInfo>&) override;
 #if PLATFORM(IOS)
-    virtual void filesChosen(const Vector<FileChooserFileInfo>&, const String& displayString, Icon*) OVERRIDE;
+    virtual void filesChosen(const Vector<FileChooserFileInfo>&, const String& displayString, Icon*) override;
 #endif
 
     // FileIconLoaderClient implementation.
-    virtual void updateRendering(PassRefPtr<Icon>) OVERRIDE;
+    virtual void updateRendering(PassRefPtr<Icon>) override;
 
     PassRefPtr<FileList> createFileList(const Vector<FileChooserFileInfo>& files) const;
 #if ENABLE(DIRECTORY_UPLOAD)

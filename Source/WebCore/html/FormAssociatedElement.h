@@ -111,7 +111,7 @@ private:
 
     void resetFormAttributeTargetObserver();
 
-    virtual bool isFormAssociatedElement() const OVERRIDE FINAL { return true; }
+    virtual bool isFormAssociatedElement() const override FINAL { return true; }
 
     std::unique_ptr<FormAttributeTargetObserver> m_formAttributeTargetObserver;
     HTMLFormElement* m_form;

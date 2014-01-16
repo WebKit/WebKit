@@ -74,9 +74,9 @@ private:
 
     virtual void layout();
 
-    virtual LayoutUnit computeReplacedLogicalWidth(ShouldComputePreferred  = ComputeActual) const OVERRIDE;
+    virtual LayoutUnit computeReplacedLogicalWidth(ShouldComputePreferred  = ComputeActual) const override;
     virtual LayoutUnit computeReplacedLogicalHeight() const;
-    virtual LayoutUnit minimumReplacedHeight() const OVERRIDE;
+    virtual LayoutUnit minimumReplacedHeight() const override;
 
 #if ENABLE(FULLSCREEN_API)
     virtual LayoutUnit offsetLeft() const;
@@ -87,7 +87,7 @@ private:
 
     void updatePlayer();
 
-    virtual bool foregroundIsKnownToBeOpaqueInRect(const LayoutRect& localRect, unsigned maxDepthToTest) const OVERRIDE;
+    virtual bool foregroundIsKnownToBeOpaqueInRect(const LayoutRect& localRect, unsigned maxDepthToTest) const override;
 
     LayoutSize m_cachedImageSize;
 };

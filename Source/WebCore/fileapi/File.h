@@ -67,8 +67,8 @@ public:
         return adoptRef(new File(path, name, policy));
     }
 
-    virtual unsigned long long size() const OVERRIDE;
-    virtual bool isFile() const OVERRIDE { return true; }
+    virtual unsigned long long size() const override;
+    virtual bool isFile() const override { return true; }
 
     const String& path() const { return m_path; }
     const String& name() const { return m_name; }

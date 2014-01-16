@@ -39,7 +39,7 @@ public:
 
 private:
     explicit BreakBlockquoteCommand(Document&);
-    virtual void doApply() OVERRIDE;
+    virtual void doApply() override;
 };
 
 } // namespace WebCore

@@ -175,7 +175,7 @@ public:
         return true;
     }
 
-    virtual void startRunLoop() OVERRIDE
+    virtual void startRunLoop() override
     {
 #if USE(APPKIT)
         ASSERT(NSApp);

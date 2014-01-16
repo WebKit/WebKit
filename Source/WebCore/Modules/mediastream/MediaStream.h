@@ -85,7 +85,7 @@ public:
     using RefCounted<MediaStream>::deref;
 
     // URLRegistrable
-    virtual URLRegistry& registry() const OVERRIDE;
+    virtual URLRegistry& registry() const override;
 
     void addObserver(Observer*);
     void removeObserver(Observer*);
@@ -94,20 +94,20 @@ protected:
     MediaStream(ScriptExecutionContext&, PassRefPtr<MediaStreamPrivate>);
 
     // ContextDestructionObserver
-    virtual void contextDestroyed() OVERRIDE FINAL;
+    virtual void contextDestroyed() override FINAL;
 
 private:
     // EventTarget
-    virtual void refEventTarget() OVERRIDE FINAL { ref(); }
-    virtual void derefEventTarget() OVERRIDE FINAL { deref(); }
+    virtual void refEventTarget() override FINAL { ref(); }
+    virtual void derefEventTarget() override FINAL { deref(); }
 
     // MediaStreamPrivateClient
-    virtual void trackDidEnd() OVERRIDE FINAL;
-    virtual void streamDidEnd() OVERRIDE FINAL;
-    virtual void addRemoteSource(MediaStreamSource*) OVERRIDE FINAL;
-    virtual void removeRemoteSource(MediaStreamSource*) OVERRIDE FINAL;
-    virtual void addRemoteTrack(MediaStreamTrackPrivate*) OVERRIDE FINAL;
-    virtual void removeRemoteTrack(MediaStreamTrackPrivate*) OVERRIDE FINAL;
+    virtual void trackDidEnd() override FINAL;
+    virtual void streamDidEnd() override FINAL;
+    virtual void addRemoteSource(MediaStreamSource*) override FINAL;
+    virtual void removeRemoteSource(MediaStreamSource*) override FINAL;
+    virtual void addRemoteTrack(MediaStreamTrackPrivate*) override FINAL;
+    virtual void removeRemoteTrack(MediaStreamTrackPrivate*) override FINAL;
 
     bool removeTrack(PassRefPtr<MediaStreamTrack>);
     bool addTrack(PassRefPtr<MediaStreamTrack>);

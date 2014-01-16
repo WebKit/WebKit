@@ -188,7 +188,7 @@ namespace WebCore {
         virtual void show();
         virtual void hide();
         virtual void paint(GraphicsContext*, const IntRect&);
-        virtual void clipRectChanged() OVERRIDE;
+        virtual void clipRectChanged() override;
 
         // This method is used by plugins on all platforms to obtain a clip rect that includes clips set by WebCore,
         // e.g., in overflow:auto sections.  The clip rects coordinates are in the containing window's coordinate space.
@@ -199,7 +199,7 @@ namespace WebCore {
         virtual void setParent(ScrollView*);
         virtual void setParentVisible(bool);
 
-        virtual bool isPluginView() const OVERRIDE { return true; }
+        virtual bool isPluginView() const override { return true; }
 
         Frame* parentFrame() const { return m_parentFrame.get(); }
 

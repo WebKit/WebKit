@@ -79,7 +79,7 @@ public:
     static bool isNormalizedContentType(const CString&);
 
     // URLRegistrable
-    virtual URLRegistry& registry() const OVERRIDE;
+    virtual URLRegistry& registry() const override;
 
 #if ENABLE(BLOB)
     PassRefPtr<Blob> slice(long long start = 0, long long end = std::numeric_limits<long long>::max(), const String& contentType = String()) const;

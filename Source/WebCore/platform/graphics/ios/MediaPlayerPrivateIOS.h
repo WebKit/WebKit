@@ -52,9 +52,9 @@ public:
     static void registerMediaEngine(MediaEngineRegistrar);
     virtual ~MediaPlayerPrivateIOS();
 
-    virtual void deliverNotification(MediaPlayerProxyNotificationType) OVERRIDE;
+    virtual void deliverNotification(MediaPlayerProxyNotificationType) override;
     bool callbacksDelayed() { return m_delayCallbacks > 0; }
-    virtual void prepareToPlay() OVERRIDE;
+    virtual void prepareToPlay() override;
     void processDeferredRequests();
 
 #if ENABLE(VIDEO_TRACK)
@@ -72,81 +72,81 @@ private:
     static MediaPlayer::SupportsType supportsType(const MediaEngineSupportParameters&);
     static bool isAvailable();
 
-    virtual IntSize naturalSize() const OVERRIDE;
-    virtual bool hasVideo() const OVERRIDE;
-    virtual bool hasAudio() const OVERRIDE;
-    virtual bool supportsFullscreen() const OVERRIDE { return true; }
+    virtual IntSize naturalSize() const override;
+    virtual bool hasVideo() const override;
+    virtual bool hasAudio() const override;
+    virtual bool supportsFullscreen() const override { return true; }
 
-    virtual bool canLoadPoster() const OVERRIDE { return true; }
-    virtual void setPoster(const String& url) OVERRIDE;
+    virtual bool canLoadPoster() const override { return true; }
+    virtual void setPoster(const String& url) override;
 
-    virtual void setControls(bool) OVERRIDE;
+    virtual void setControls(bool) override;
 
-    virtual void enterFullscreen() OVERRIDE;
-    virtual void exitFullscreen() OVERRIDE;
+    virtual void enterFullscreen() override;
+    virtual void exitFullscreen() override;
 
-    virtual bool hasClosedCaptions() const OVERRIDE;
-    virtual void setClosedCaptionsVisible(bool) OVERRIDE;
+    virtual bool hasClosedCaptions() const override;
+    virtual void setClosedCaptionsVisible(bool) override;
 
-    virtual void load(const String& url) OVERRIDE;
+    virtual void load(const String& url) override;
 #if ENABLE(MEDIA_SOURCE)
-    virtual void load(const String&, PassRefPtr<HTMLMediaSource>) OVERRIDE { }
+    virtual void load(const String&, PassRefPtr<HTMLMediaSource>) override { }
 #endif
-    virtual void cancelLoad() OVERRIDE;
+    virtual void cancelLoad() override;
 
-    virtual void play() OVERRIDE;
-    virtual void pause() OVERRIDE;
+    virtual void play() override;
+    virtual void pause() override;
 
-    virtual bool paused() const OVERRIDE;
-    virtual bool seeking() const OVERRIDE;
+    virtual bool paused() const override;
+    virtual bool seeking() const override;
 
-    virtual float duration() const OVERRIDE;
-    virtual float currentTime() const OVERRIDE;
+    virtual float duration() const override;
+    virtual float currentTime() const override;
 
-    virtual void seek(float time) OVERRIDE;
+    virtual void seek(float time) override;
     void setEndTime(float);
 
     float rate() const;
-    virtual void setRate(float inRate) OVERRIDE;
-    virtual float volume() const OVERRIDE;
-    virtual void setVolume(float inVolume) OVERRIDE;
-    virtual void setMuted(bool inMute) OVERRIDE;
+    virtual void setRate(float inRate) override;
+    virtual float volume() const override;
+    virtual void setVolume(float inVolume) override;
+    virtual void setMuted(bool inMute) override;
 
     int dataRate() const;
 
-    virtual MediaPlayer::NetworkState networkState() const OVERRIDE;
-    virtual MediaPlayer::ReadyState readyState() const OVERRIDE;
+    virtual MediaPlayer::NetworkState networkState() const override;
+    virtual MediaPlayer::ReadyState readyState() const override;
     
     float maxTimeBuffered() const;
-    virtual float maxTimeSeekable() const OVERRIDE;
-    virtual PassRefPtr<TimeRanges> buffered() const OVERRIDE;
+    virtual float maxTimeSeekable() const override;
+    virtual PassRefPtr<TimeRanges> buffered() const override;
 
-    virtual bool didLoadingProgress() const OVERRIDE;
+    virtual bool didLoadingProgress() const override;
     bool totalBytesKnown() const;
     unsigned totalBytes() const;
 
-    virtual void setVisible(bool) OVERRIDE;
-    virtual void setSize(const IntSize&) OVERRIDE;
+    virtual void setVisible(bool) override;
+    virtual void setSize(const IntSize&) override;
     
-    virtual void paint(GraphicsContext*, const IntRect&) OVERRIDE;
+    virtual void paint(GraphicsContext*, const IntRect&) override;
 
 #if ENABLE(IOS_AIRPLAY)
-    virtual bool isCurrentPlaybackTargetWireless() const OVERRIDE;
-    virtual void showPlaybackTargetPicker() OVERRIDE;
+    virtual bool isCurrentPlaybackTargetWireless() const override;
+    virtual void showPlaybackTargetPicker() override;
 
-    virtual bool hasWirelessPlaybackTargets() const OVERRIDE;
+    virtual bool hasWirelessPlaybackTargets() const override;
 
-    virtual bool wirelessVideoPlaybackDisabled() const OVERRIDE;
-    virtual void setWirelessVideoPlaybackDisabled(bool) OVERRIDE;
+    virtual bool wirelessVideoPlaybackDisabled() const override;
+    virtual void setWirelessVideoPlaybackDisabled(bool) override;
 
-    virtual void setHasPlaybackTargetAvailabilityListeners(bool) OVERRIDE;
+    virtual void setHasPlaybackTargetAvailabilityListeners(bool) override;
 #endif
 
 #if USE(ACCELERATED_COMPOSITING)
-    virtual bool supportsAcceleratedRendering() const OVERRIDE;
+    virtual bool supportsAcceleratedRendering() const override;
 #endif
 
-    virtual void setMediaPlayerProxy(WebMediaPlayerProxy*) OVERRIDE;
+    virtual void setMediaPlayerProxy(WebMediaPlayerProxy*) override;
     void processPendingRequests();
 
     void setDelayCallbacks(bool doDelay) { m_delayCallbacks += (doDelay ? 1 : -1); }
@@ -158,8 +158,8 @@ private:
 
     virtual String engineDescription() const { return String(ASCIILiteral("iOS")); }
 
-    virtual void attributeChanged(const String& name, const String& value) OVERRIDE;
-    virtual bool readyForPlayback() const OVERRIDE;
+    virtual void attributeChanged(const String& name, const String& value) override;
+    virtual bool readyForPlayback() const override;
 
 #if ENABLE(VIDEO_TRACK)
     virtual bool requiresTextTrackRepresentation() const;
@@ -167,7 +167,7 @@ private:
 
     void clearTextTracks();
     void setSelectedTextTrack(NSNumber *);
-    virtual void trackModeChanged() OVERRIDE;
+    virtual void trackModeChanged() override;
     void setOutOfBandTextTracks(NSArray *);
 
     virtual bool implementsTextTrackControls() const { return true; }
@@ -188,19 +188,19 @@ private:
 
         virtual ~PlatformTextTrackMenuInterfaceIOS();
 
-        virtual void tracksDidChange() OVERRIDE
+        virtual void tracksDidChange() override
         {
             if (m_owner)
                 m_owner->outOfBandTextTracksChanged();
         }
 
-        virtual void trackWasSelected(PassRefPtr<PlatformTextTrack> track) OVERRIDE
+        virtual void trackWasSelected(PassRefPtr<PlatformTextTrack> track) override
         {
             if (m_owner)
                 m_owner->textTrackWasSelectedByMediaElement(track);
         }
 
-        virtual void setClient(PlatformTextTrackMenuClient* client) OVERRIDE { m_client = client; }
+        virtual void setClient(PlatformTextTrackMenuClient* client) override { m_client = client; }
         PlatformTextTrackMenuClient* client() { return m_client; }
 
     private:

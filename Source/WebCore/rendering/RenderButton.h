@@ -40,39 +40,39 @@ public:
 
     HTMLFormControlElement& formControlElement() const;
 
-    virtual bool canBeSelectionLeaf() const OVERRIDE;
+    virtual bool canBeSelectionLeaf() const override;
 
-    virtual void addChild(RenderObject* newChild, RenderObject *beforeChild = 0) OVERRIDE;
-    virtual void removeChild(RenderObject&) OVERRIDE;
-    virtual void removeLeftoverAnonymousBlock(RenderBlock*) OVERRIDE { }
-    virtual bool createsAnonymousWrapper() const OVERRIDE { return true; }
+    virtual void addChild(RenderObject* newChild, RenderObject *beforeChild = 0) override;
+    virtual void removeChild(RenderObject&) override;
+    virtual void removeLeftoverAnonymousBlock(RenderBlock*) override { }
+    virtual bool createsAnonymousWrapper() const override { return true; }
 
     void setupInnerStyle(RenderStyle*);
-    virtual void updateFromElement() OVERRIDE;
+    virtual void updateFromElement() override;
 
-    virtual bool canHaveGeneratedChildren() const OVERRIDE;
-    virtual bool hasControlClip() const OVERRIDE { return true; }
-    virtual LayoutRect controlClipRect(const LayoutPoint&) const OVERRIDE;
+    virtual bool canHaveGeneratedChildren() const override;
+    virtual bool hasControlClip() const override { return true; }
+    virtual LayoutRect controlClipRect(const LayoutPoint&) const override;
 
     void setText(const String&);
     String text() const;
 
 #if PLATFORM(IOS)
-    virtual void layout() OVERRIDE;
+    virtual void layout() override;
 #endif
 
 private:
     void element() const WTF_DELETED_FUNCTION;
 
-    virtual const char* renderName() const OVERRIDE { return "RenderButton"; }
-    virtual bool isRenderButton() const OVERRIDE { return true; }
+    virtual const char* renderName() const override { return "RenderButton"; }
+    virtual bool isRenderButton() const override { return true; }
 
-    virtual void styleWillChange(StyleDifference, const RenderStyle& newStyle) OVERRIDE;
-    virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle) OVERRIDE;
+    virtual void styleWillChange(StyleDifference, const RenderStyle& newStyle) override;
+    virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle) override;
 
-    virtual bool hasLineIfEmpty() const OVERRIDE;
+    virtual bool hasLineIfEmpty() const override;
 
-    virtual bool requiresForcedStyleRecalcPropagation() const OVERRIDE { return true; }
+    virtual bool requiresForcedStyleRecalcPropagation() const override { return true; }
 
     void timerFired(Timer<RenderButton>&);
 

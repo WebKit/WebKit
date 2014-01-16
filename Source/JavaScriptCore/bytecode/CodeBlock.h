@@ -923,8 +923,8 @@ public:
     NO_RETURN_DUE_TO_CRASH void endValidationDidFail();
 
 protected:
-    virtual void visitWeakReferences(SlotVisitor&) OVERRIDE;
-    virtual void finalizeUnconditionally() OVERRIDE;
+    virtual void visitWeakReferences(SlotVisitor&) override;
+    virtual void finalizeUnconditionally() override;
 
 #if ENABLE(DFG_JIT)
     void tallyFrequentExitSites();
@@ -1146,8 +1146,8 @@ public:
 
 #if ENABLE(JIT)
 protected:
-    virtual CodeBlock* replacement() OVERRIDE;
-    virtual DFG::CapabilityLevel capabilityLevelInternal() OVERRIDE;
+    virtual CodeBlock* replacement() override;
+    virtual DFG::CapabilityLevel capabilityLevelInternal() override;
 #endif
 };
 
@@ -1168,8 +1168,8 @@ public:
     
 #if ENABLE(JIT)
 protected:
-    virtual CodeBlock* replacement() OVERRIDE;
-    virtual DFG::CapabilityLevel capabilityLevelInternal() OVERRIDE;
+    virtual CodeBlock* replacement() override;
+    virtual DFG::CapabilityLevel capabilityLevelInternal() override;
 #endif
     
 private:
@@ -1190,8 +1190,8 @@ public:
     
 #if ENABLE(JIT)
 protected:
-    virtual CodeBlock* replacement() OVERRIDE;
-    virtual DFG::CapabilityLevel capabilityLevelInternal() OVERRIDE;
+    virtual CodeBlock* replacement() override;
+    virtual DFG::CapabilityLevel capabilityLevelInternal() override;
 #endif
 };
 

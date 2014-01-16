@@ -29,10 +29,10 @@ class WebSQLiteDatabaseTrackerClient : public WebCore::SQLiteDatabaseTrackerClie
 public:
     static WebSQLiteDatabaseTrackerClient* sharedWebSQLiteDatabaseTrackerClient();
 
-    virtual ~WebSQLiteDatabaseTrackerClient() OVERRIDE { }
+    virtual ~WebSQLiteDatabaseTrackerClient() override { }
 
-    virtual void willBeginFirstTransaction() OVERRIDE;
-    virtual void didFinishLastTransaction() OVERRIDE;
+    virtual void willBeginFirstTransaction() override;
+    virtual void didFinishLastTransaction() override;
 
 private:
     WebSQLiteDatabaseTrackerClient() { }

@@ -50,7 +50,7 @@ private:
     {
     }
 
-    virtual void appendBytes(DocumentWriter&, const char*, size_t) OVERRIDE
+    virtual void appendBytes(DocumentWriter&, const char*, size_t) override
     {
         // Ignore all calls
     }

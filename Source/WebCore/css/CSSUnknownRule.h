@@ -31,9 +31,9 @@ public:
     CSSUnknownRule() : CSSRule(0) { }
     virtual ~CSSUnknownRule() { }
 
-    virtual CSSRule::Type type() const OVERRIDE { return UNKNOWN_RULE; }
-    virtual String cssText() const OVERRIDE { return String(); }
-    virtual void reattach(StyleRuleBase*) OVERRIDE { }
+    virtual CSSRule::Type type() const override { return UNKNOWN_RULE; }
+    virtual String cssText() const override { return String(); }
+    virtual void reattach(StyleRuleBase*) override { }
 };
 
 } // namespace WebCore

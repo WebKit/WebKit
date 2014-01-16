@@ -40,11 +40,11 @@ public:
 private:
     explicit RemoveNodeCommand(PassRefPtr<Node>, ShouldAssumeContentIsAlwaysEditable);
 
-    virtual void doApply() OVERRIDE;
-    virtual void doUnapply() OVERRIDE;
+    virtual void doApply() override;
+    virtual void doUnapply() override;
 
 #ifndef NDEBUG
-    void getNodesInCommand(HashSet<Node*>&) OVERRIDE;
+    void getNodesInCommand(HashSet<Node*>&) override;
 #endif
 
     RefPtr<Node> m_node;

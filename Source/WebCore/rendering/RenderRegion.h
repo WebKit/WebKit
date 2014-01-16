@@ -47,7 +47,7 @@ class RenderNamedFlowThread;
 
 class RenderRegion : public RenderBlockFlow {
 public:
-    virtual bool isRenderRegion() const OVERRIDE FINAL { return true; }
+    virtual bool isRenderRegion() const override FINAL { return true; }
 
     virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle);
 
@@ -129,9 +129,9 @@ public:
     void setRegionObjectsRegionStyle();
     void restoreRegionObjectsOriginalStyle();
 
-    virtual bool canHaveChildren() const OVERRIDE { return false; }
-    virtual bool canHaveGeneratedChildren() const OVERRIDE { return true; }
-    virtual VisiblePosition positionForPoint(const LayoutPoint&) OVERRIDE;
+    virtual bool canHaveChildren() const override { return false; }
+    virtual bool canHaveGeneratedChildren() const override { return true; }
+    virtual VisiblePosition positionForPoint(const LayoutPoint&) override;
 
     virtual bool hasAutoLogicalHeight() const { return false; }
 
@@ -141,8 +141,8 @@ protected:
 
     void ensureOverflowForBox(const RenderBox*, RefPtr<RenderOverflow>&, bool);
 
-    virtual void computePreferredLogicalWidths() OVERRIDE;
-    virtual void computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const OVERRIDE;
+    virtual void computePreferredLogicalWidths() override;
+    virtual void computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const override;
 
     enum OverflowType {
         LayoutOverflow = 0,
@@ -157,8 +157,8 @@ protected:
 private:
     virtual const char* renderName() const { return "RenderRegion"; }
 
-    virtual void insertedIntoTree() OVERRIDE;
-    virtual void willBeRemovedFromTree() OVERRIDE;
+    virtual void insertedIntoTree() override;
+    virtual void willBeRemovedFromTree() override;
 
     virtual void installFlowThread();
 

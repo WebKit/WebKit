@@ -40,7 +40,7 @@ public:
     {
         return adoptRef(new CursorIterationOperation(cursor, key, callbacks));
     }
-    virtual void perform(std::function<void()> completionCallback) OVERRIDE FINAL;
+    virtual void perform(std::function<void()> completionCallback) override FINAL;
 
     IDBKey* key() const { return m_key.get(); }
     IDBCallbacks* callbacks() const { return m_callbacks.get(); }
@@ -64,7 +64,7 @@ public:
     {
         return adoptRef(new CursorAdvanceOperation(cursor, count, callbacks));
     }
-    virtual void perform(std::function<void()> completionCallback) OVERRIDE FINAL;
+    virtual void perform(std::function<void()> completionCallback) override FINAL;
 
     unsigned long count() const { return m_count; }
     IDBCallbacks* callbacks() const { return m_callbacks.get(); }
@@ -88,7 +88,7 @@ public:
     {
         return adoptRef(new CursorPrefetchIterationOperation(cursor, numberToFetch, callbacks));
     }
-    virtual void perform(std::function<void()> completionCallback) OVERRIDE FINAL;
+    virtual void perform(std::function<void()> completionCallback) override FINAL;
 
     int numberToFetch() const { return m_numberToFetch; }
     IDBCallbacks* callbacks() const { return m_callbacks.get(); }

@@ -51,7 +51,7 @@ public:
     virtual void requestFailed(const String& error);
 
     // ActiveDOMObject
-    virtual void stop() OVERRIDE;
+    virtual void stop() override;
 
 private:
     RTCVoidRequestImpl(ScriptExecutionContext*, PassRefPtr<VoidCallback>, PassRefPtr<RTCPeerConnectionErrorCallback>);

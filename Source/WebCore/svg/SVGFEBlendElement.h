@@ -77,7 +77,7 @@ private:
     SVGFEBlendElement(const QualifiedName&, Document&);
 
     bool isSupportedAttribute(const QualifiedName&);
-    virtual void parseAttribute(const QualifiedName&, const AtomicString&) OVERRIDE;
+    virtual void parseAttribute(const QualifiedName&, const AtomicString&) override;
     virtual bool setFilterEffectAttribute(FilterEffect*, const QualifiedName& attrName);
     virtual void svgAttributeChanged(const QualifiedName&);
     virtual PassRefPtr<FilterEffect> build(SVGFilterBuilder*, Filter*);

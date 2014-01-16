@@ -60,8 +60,8 @@ public:
     virtual HRESULT STDMETHODCALLTYPE setOptionalSharedHistory( 
         /* [in] */ IWebHistory* history);
     
-    virtual HRESULT STDMETHODCALLTYPE unused1() OVERRIDE;
-    virtual HRESULT STDMETHODCALLTYPE unused2() OVERRIDE;
+    virtual HRESULT STDMETHODCALLTYPE unused1() override;
+    virtual HRESULT STDMETHODCALLTYPE unused2() override;
     
     virtual HRESULT STDMETHODCALLTYPE addItems( 
         /* [in] */ int itemCount,

@@ -49,36 +49,36 @@ public:
     void setHTMLMapElement(HTMLMapElement* element) { m_mapElement = element; }    
     HTMLMapElement* mapElement() const { return m_mapElement.get(); }
     
-    virtual Node* node() const OVERRIDE { return m_areaElement.get(); }
+    virtual Node* node() const override { return m_areaElement.get(); }
         
-    virtual AccessibilityRole roleValue() const OVERRIDE;
-    virtual bool isEnabled() const OVERRIDE { return true; }
+    virtual AccessibilityRole roleValue() const override;
+    virtual bool isEnabled() const override { return true; }
     
-    virtual Element* anchorElement() const OVERRIDE;
-    virtual Element* actionElement() const OVERRIDE;
-    virtual URL url() const OVERRIDE;
-    virtual bool isLink() const OVERRIDE { return true; }
-    virtual bool isLinked() const OVERRIDE { return true; }
-    virtual String title() const OVERRIDE;
-    virtual String accessibilityDescription() const OVERRIDE;
-    virtual AccessibilityObject* parentObject() const OVERRIDE;
+    virtual Element* anchorElement() const override;
+    virtual Element* actionElement() const override;
+    virtual URL url() const override;
+    virtual bool isLink() const override { return true; }
+    virtual bool isLinked() const override { return true; }
+    virtual String title() const override;
+    virtual String accessibilityDescription() const override;
+    virtual AccessibilityObject* parentObject() const override;
     
-    virtual String stringValueForMSAA() const OVERRIDE;
-    virtual String nameForMSAA() const OVERRIDE;
+    virtual String stringValueForMSAA() const override;
+    virtual String nameForMSAA() const override;
 
-    virtual LayoutRect elementRect() const OVERRIDE;
+    virtual LayoutRect elementRect() const override;
 
 private:    
     RefPtr<HTMLAreaElement> m_areaElement;
     RefPtr<HTMLMapElement> m_mapElement;
 
-    virtual void detachFromParent() OVERRIDE;
+    virtual void detachFromParent() override;
 
-    virtual Path elementPath() const OVERRIDE;
+    virtual Path elementPath() const override;
     RenderElement* imageMapLinkRenderer() const;
-    virtual void accessibilityText(Vector<AccessibilityText>&) OVERRIDE;
-    virtual bool isImageMapLink() const OVERRIDE { return true; }
-    virtual bool supportsPath() const OVERRIDE { return true; }
+    virtual void accessibilityText(Vector<AccessibilityText>&) override;
+    virtual bool isImageMapLink() const override { return true; }
+    virtual bool supportsPath() const override { return true; }
 };
 
 ACCESSIBILITY_OBJECT_TYPE_CASTS(AccessibilityImageMapLink, isImageMapLink())

@@ -47,16 +47,16 @@ namespace WebCore {
 #endif
 
     private:
-        virtual PurgePriority purgePriority() const OVERRIDE { return PurgeLast; }
-        virtual bool mayTryReplaceEncodedData() const OVERRIDE { return true; }
+        virtual PurgePriority purgePriority() const override { return PurgeLast; }
+        virtual bool mayTryReplaceEncodedData() const override { return true; }
 
-        virtual bool shouldIgnoreHTTPStatusCodeErrors() const OVERRIDE;
+        virtual bool shouldIgnoreHTTPStatusCodeErrors() const override;
 
-        virtual void setEncoding(const String&) OVERRIDE;
-        virtual String encoding() const OVERRIDE;
-        virtual void finishLoading(ResourceBuffer*) OVERRIDE;
+        virtual void setEncoding(const String&) override;
+        virtual String encoding() const override;
+        virtual void finishLoading(ResourceBuffer*) override;
 
-        virtual void destroyDecodedData() OVERRIDE;
+        virtual void destroyDecodedData() override;
 
         String m_script;
         RefPtr<TextResourceDecoder> m_decoder;

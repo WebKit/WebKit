@@ -88,7 +88,7 @@ public:
     virtual ~WebViewLayerFlushScheduler() { }
 
 private:
-    virtual void runLoopObserverCallback() OVERRIDE
+    virtual void runLoopObserverCallback() override
     {
         RefPtr<LayerFlushController> protector = m_flushController;
         WebCore::LayerFlushScheduler::runLoopObserverCallback();

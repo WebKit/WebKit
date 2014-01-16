@@ -59,15 +59,15 @@ public:
 private:
     HTMLBodyElement(const QualifiedName&, Document&);
 
-    virtual void parseAttribute(const QualifiedName&, const AtomicString&) OVERRIDE;
-    virtual bool isPresentationAttribute(const QualifiedName&) const OVERRIDE;
-    virtual void collectStyleForPresentationAttribute(const QualifiedName&, const AtomicString&, MutableStyleProperties&) OVERRIDE;
+    virtual void parseAttribute(const QualifiedName&, const AtomicString&) override;
+    virtual bool isPresentationAttribute(const QualifiedName&) const override;
+    virtual void collectStyleForPresentationAttribute(const QualifiedName&, const AtomicString&, MutableStyleProperties&) override;
 
-    virtual InsertionNotificationRequest insertedInto(ContainerNode&) OVERRIDE;
+    virtual InsertionNotificationRequest insertedInto(ContainerNode&) override;
 
-    virtual bool isURLAttribute(const Attribute&) const OVERRIDE;
+    virtual bool isURLAttribute(const Attribute&) const override;
     
-    virtual bool supportsFocus() const OVERRIDE;
+    virtual bool supportsFocus() const override;
 
     virtual int scrollLeft();
     virtual void setScrollLeft(int scrollLeft);

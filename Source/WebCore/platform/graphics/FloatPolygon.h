@@ -95,13 +95,13 @@ public:
 class FloatPolygonEdge : public VertexPair {
     friend class FloatPolygon;
 public:
-    virtual const FloatPoint& vertex1() const OVERRIDE
+    virtual const FloatPoint& vertex1() const override
     {
         ASSERT(m_polygon);
         return m_polygon->vertexAt(m_vertexIndex1);
     }
 
-    virtual const FloatPoint& vertex2() const OVERRIDE
+    virtual const FloatPoint& vertex2() const override
     {
         ASSERT(m_polygon);
         return m_polygon->vertexAt(m_vertexIndex2);

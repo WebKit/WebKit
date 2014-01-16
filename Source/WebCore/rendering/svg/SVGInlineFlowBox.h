@@ -39,16 +39,16 @@ public:
 
     RenderSVGInline& renderer() { return static_cast<RenderSVGInline&>(InlineFlowBox::renderer()); }
 
-    virtual FloatRect calculateBoundaries() const OVERRIDE;
+    virtual FloatRect calculateBoundaries() const override;
 
     void setLogicalHeight(float h) { m_logicalHeight = h; }
     void paintSelectionBackground(PaintInfo&);
     static void computeTextMatchMarkerRectForRenderer(RenderSVGInlineText*);
 
 private:
-    virtual bool isSVGInlineFlowBox() const OVERRIDE { return true; }
-    virtual float virtualLogicalHeight() const OVERRIDE { return m_logicalHeight; }
-    virtual void paint(PaintInfo&, const LayoutPoint&, LayoutUnit lineTop, LayoutUnit lineBottom) OVERRIDE;
+    virtual bool isSVGInlineFlowBox() const override { return true; }
+    virtual float virtualLogicalHeight() const override { return m_logicalHeight; }
+    virtual void paint(PaintInfo&, const LayoutPoint&, LayoutUnit lineTop, LayoutUnit lineBottom) override;
 
     float m_logicalHeight;
 };

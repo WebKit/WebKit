@@ -146,7 +146,7 @@ public:
 #endif
 
 #if PLATFORM(WIN) && USE(AVFOUNDATION)
-    virtual WebCore::GraphicsDeviceAdapter* graphicsDeviceAdapter() const OVERRIDE;
+    virtual WebCore::GraphicsDeviceAdapter* graphicsDeviceAdapter() const override;
 #endif
 
     virtual void scrollRectIntoView(const WebCore::IntRect&) const { }

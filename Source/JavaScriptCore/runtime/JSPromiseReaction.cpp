@@ -50,7 +50,7 @@ public:
     }
 
 private:
-    virtual void run(ExecState*) OVERRIDE;
+    virtual void run(ExecState*) override;
 
     Strong<JSPromiseReaction> m_reaction;
     Strong<Unknown> m_argument;

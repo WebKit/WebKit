@@ -60,51 +60,51 @@ private:
     explicit PageClientImpl(GtkWidget*);
 
     // PageClient
-    virtual std::unique_ptr<DrawingAreaProxy> createDrawingAreaProxy() OVERRIDE;
-    virtual void setViewNeedsDisplay(const WebCore::IntRect&) OVERRIDE;
-    virtual void displayView() OVERRIDE;
-    virtual bool canScrollView() OVERRIDE { return false; }
-    virtual void scrollView(const WebCore::IntRect& scrollRect, const WebCore::IntSize& scrollOffset) OVERRIDE;
-    virtual WebCore::IntSize viewSize() OVERRIDE;
-    virtual bool isViewWindowActive() OVERRIDE;
-    virtual bool isViewFocused() OVERRIDE;
-    virtual bool isViewVisible() OVERRIDE;
-    virtual bool isViewInWindow() OVERRIDE;
-    virtual void processDidCrash() OVERRIDE;
-    virtual void didRelaunchProcess() OVERRIDE;
-    virtual void pageClosed() OVERRIDE;
-    virtual void preferencesDidChange() OVERRIDE;
-    virtual void toolTipChanged(const WTF::String&, const WTF::String&) OVERRIDE;
-    virtual void setCursor(const WebCore::Cursor&) OVERRIDE;
-    virtual void setCursorHiddenUntilMouseMoves(bool) OVERRIDE;
-    virtual void didChangeViewportProperties(const WebCore::ViewportAttributes&) OVERRIDE;
-    virtual void registerEditCommand(PassRefPtr<WebEditCommandProxy>, WebPageProxy::UndoOrRedo) OVERRIDE;
-    virtual void clearAllEditCommands() OVERRIDE;
-    virtual bool canUndoRedo(WebPageProxy::UndoOrRedo) OVERRIDE;
-    virtual void executeUndoRedo(WebPageProxy::UndoOrRedo) OVERRIDE;
-    virtual WebCore::FloatRect convertToDeviceSpace(const WebCore::FloatRect&) OVERRIDE;
-    virtual WebCore::FloatRect convertToUserSpace(const WebCore::FloatRect&) OVERRIDE;
-    virtual WebCore::IntPoint screenToWindow(const WebCore::IntPoint&) OVERRIDE;
-    virtual WebCore::IntRect windowToScreen(const WebCore::IntRect&) OVERRIDE;
-    virtual void doneWithKeyEvent(const NativeWebKeyboardEvent&, bool wasEventHandled) OVERRIDE;
-    virtual PassRefPtr<WebPopupMenuProxy> createPopupMenuProxy(WebPageProxy*) OVERRIDE;
-    virtual PassRefPtr<WebContextMenuProxy> createContextMenuProxy(WebPageProxy*) OVERRIDE;
+    virtual std::unique_ptr<DrawingAreaProxy> createDrawingAreaProxy() override;
+    virtual void setViewNeedsDisplay(const WebCore::IntRect&) override;
+    virtual void displayView() override;
+    virtual bool canScrollView() override { return false; }
+    virtual void scrollView(const WebCore::IntRect& scrollRect, const WebCore::IntSize& scrollOffset) override;
+    virtual WebCore::IntSize viewSize() override;
+    virtual bool isViewWindowActive() override;
+    virtual bool isViewFocused() override;
+    virtual bool isViewVisible() override;
+    virtual bool isViewInWindow() override;
+    virtual void processDidCrash() override;
+    virtual void didRelaunchProcess() override;
+    virtual void pageClosed() override;
+    virtual void preferencesDidChange() override;
+    virtual void toolTipChanged(const WTF::String&, const WTF::String&) override;
+    virtual void setCursor(const WebCore::Cursor&) override;
+    virtual void setCursorHiddenUntilMouseMoves(bool) override;
+    virtual void didChangeViewportProperties(const WebCore::ViewportAttributes&) override;
+    virtual void registerEditCommand(PassRefPtr<WebEditCommandProxy>, WebPageProxy::UndoOrRedo) override;
+    virtual void clearAllEditCommands() override;
+    virtual bool canUndoRedo(WebPageProxy::UndoOrRedo) override;
+    virtual void executeUndoRedo(WebPageProxy::UndoOrRedo) override;
+    virtual WebCore::FloatRect convertToDeviceSpace(const WebCore::FloatRect&) override;
+    virtual WebCore::FloatRect convertToUserSpace(const WebCore::FloatRect&) override;
+    virtual WebCore::IntPoint screenToWindow(const WebCore::IntPoint&) override;
+    virtual WebCore::IntRect windowToScreen(const WebCore::IntRect&) override;
+    virtual void doneWithKeyEvent(const NativeWebKeyboardEvent&, bool wasEventHandled) override;
+    virtual PassRefPtr<WebPopupMenuProxy> createPopupMenuProxy(WebPageProxy*) override;
+    virtual PassRefPtr<WebContextMenuProxy> createContextMenuProxy(WebPageProxy*) override;
 #if ENABLE(INPUT_TYPE_COLOR)
-    virtual PassRefPtr<WebColorPicker> createColorPicker(WebPageProxy*, const WebCore::Color& intialColor, const WebCore::IntRect&) OVERRIDE;
+    virtual PassRefPtr<WebColorPicker> createColorPicker(WebPageProxy*, const WebCore::Color& intialColor, const WebCore::IntRect&) override;
 #endif
-    virtual void setFindIndicator(PassRefPtr<FindIndicator>, bool fadeOut, bool animate) OVERRIDE;
-    virtual void getEditorCommandsForKeyEvent(const NativeWebKeyboardEvent&, const AtomicString&, Vector<WTF::String>&) OVERRIDE;
-    virtual void updateTextInputState() OVERRIDE;
-    virtual void startDrag(const WebCore::DragData&, PassRefPtr<ShareableBitmap> dragImage) OVERRIDE;
+    virtual void setFindIndicator(PassRefPtr<FindIndicator>, bool fadeOut, bool animate) override;
+    virtual void getEditorCommandsForKeyEvent(const NativeWebKeyboardEvent&, const AtomicString&, Vector<WTF::String>&) override;
+    virtual void updateTextInputState() override;
+    virtual void startDrag(const WebCore::DragData&, PassRefPtr<ShareableBitmap> dragImage) override;
 
 #if USE(ACCELERATED_COMPOSITING)
-    virtual void enterAcceleratedCompositingMode(const LayerTreeContext&) OVERRIDE;
-    virtual void exitAcceleratedCompositingMode() OVERRIDE;
-    virtual void updateAcceleratedCompositingMode(const LayerTreeContext&) OVERRIDE;
+    virtual void enterAcceleratedCompositingMode(const LayerTreeContext&) override;
+    virtual void exitAcceleratedCompositingMode() override;
+    virtual void updateAcceleratedCompositingMode(const LayerTreeContext&) override;
 #endif
 
-    virtual void handleDownloadRequest(DownloadProxy*) OVERRIDE;
-    virtual void didCommitLoadForMainFrame() OVERRIDE;
+    virtual void handleDownloadRequest(DownloadProxy*) override;
+    virtual void didCommitLoadForMainFrame() override;
 
     // Auxiliary Client Creation
 #if ENABLE(FULLSCREEN_API)
@@ -113,12 +113,12 @@ private:
 
 #if ENABLE(FULLSCREEN_API)
     // WebFullScreenManagerProxyClient
-    virtual void closeFullScreenManager() OVERRIDE;
-    virtual bool isFullScreen() OVERRIDE;
-    virtual void enterFullScreen() OVERRIDE;
-    virtual void exitFullScreen() OVERRIDE;
-    virtual void beganEnterFullScreen(const WebCore::IntRect& initialFrame, const WebCore::IntRect& finalFrame) OVERRIDE;
-    virtual void beganExitFullScreen(const WebCore::IntRect& initialFrame, const WebCore::IntRect& finalFrame) OVERRIDE;
+    virtual void closeFullScreenManager() override;
+    virtual bool isFullScreen() override;
+    virtual void enterFullScreen() override;
+    virtual void exitFullScreen() override;
+    virtual void beganEnterFullScreen(const WebCore::IntRect& initialFrame, const WebCore::IntRect& finalFrame) override;
+    virtual void beganExitFullScreen(const WebCore::IntRect& initialFrame, const WebCore::IntRect& finalFrame) override;
 #endif
 
     // Members of PageClientImpl class

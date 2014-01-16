@@ -42,26 +42,26 @@ public:
     RenderFlexibleBox(Document&, PassRef<RenderStyle>);
     virtual ~RenderFlexibleBox();
 
-    virtual const char* renderName() const OVERRIDE;
+    virtual const char* renderName() const override;
 
-    virtual bool isFlexibleBox() const OVERRIDE FINAL { return true; }
-    virtual bool avoidsFloats() const OVERRIDE FINAL { return true; }
-    virtual bool canCollapseAnonymousBlockChild() const OVERRIDE FINAL { return false; }
-    virtual void layoutBlock(bool relayoutChildren, LayoutUnit pageLogicalHeight = 0) OVERRIDE FINAL;
+    virtual bool isFlexibleBox() const override FINAL { return true; }
+    virtual bool avoidsFloats() const override FINAL { return true; }
+    virtual bool canCollapseAnonymousBlockChild() const override FINAL { return false; }
+    virtual void layoutBlock(bool relayoutChildren, LayoutUnit pageLogicalHeight = 0) override FINAL;
 
-    virtual int baselinePosition(FontBaseline, bool firstLine, LineDirectionMode, LinePositionMode = PositionOnContainingLine) const OVERRIDE;
-    virtual int firstLineBaseline() const OVERRIDE;
-    virtual int inlineBlockBaseline(LineDirectionMode) const OVERRIDE;
+    virtual int baselinePosition(FontBaseline, bool firstLine, LineDirectionMode, LinePositionMode = PositionOnContainingLine) const override;
+    virtual int firstLineBaseline() const override;
+    virtual int inlineBlockBaseline(LineDirectionMode) const override;
 
-    virtual void paintChildren(PaintInfo& forSelf, const LayoutPoint&, PaintInfo& forChild, bool usePrintRect) OVERRIDE;
+    virtual void paintChildren(PaintInfo& forSelf, const LayoutPoint&, PaintInfo& forChild, bool usePrintRect) override;
 
     bool isHorizontalFlow() const;
 
 protected:
-    virtual void computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const OVERRIDE;
-    virtual void computePreferredLogicalWidths() OVERRIDE;
+    virtual void computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const override;
+    virtual void computePreferredLogicalWidths() override;
 
-    virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle) OVERRIDE;
+    virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle) override;
 
 private:
     enum FlexSign {

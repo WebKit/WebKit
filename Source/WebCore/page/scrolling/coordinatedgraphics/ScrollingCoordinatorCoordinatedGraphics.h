@@ -39,16 +39,16 @@ public:
     explicit ScrollingCoordinatorCoordinatedGraphics(Page*);
     virtual ~ScrollingCoordinatorCoordinatedGraphics();
 
-    virtual bool supportsFixedPositionLayers() const OVERRIDE { return true; }
+    virtual bool supportsFixedPositionLayers() const override { return true; }
 
-    virtual ScrollingNodeID attachToStateTree(ScrollingNodeType, ScrollingNodeID newNodeID, ScrollingNodeID parentID) OVERRIDE;
-    virtual void detachFromStateTree(ScrollingNodeID) OVERRIDE;
-    virtual void clearStateTree() OVERRIDE;
+    virtual ScrollingNodeID attachToStateTree(ScrollingNodeType, ScrollingNodeID newNodeID, ScrollingNodeID parentID) override;
+    virtual void detachFromStateTree(ScrollingNodeID) override;
+    virtual void clearStateTree() override;
 
-    virtual void updateViewportConstrainedNode(ScrollingNodeID, const ViewportConstraints&, GraphicsLayer*) OVERRIDE;
+    virtual void updateViewportConstrainedNode(ScrollingNodeID, const ViewportConstraints&, GraphicsLayer*) override;
 
-    virtual void scrollableAreaScrollLayerDidChange(ScrollableArea*) OVERRIDE;
-    virtual void willDestroyScrollableArea(ScrollableArea*) OVERRIDE;
+    virtual void scrollableAreaScrollLayerDidChange(ScrollableArea*) override;
+    virtual void willDestroyScrollableArea(ScrollableArea*) override;
 
 private:
     OwnPtr<ScrollingStateTree> m_scrollingStateTree;

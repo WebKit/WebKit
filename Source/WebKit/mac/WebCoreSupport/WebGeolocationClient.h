@@ -37,20 +37,20 @@ public:
     WebGeolocationClient(WebView *);
     WebView *webView() { return m_webView; }
 
-    virtual void geolocationDestroyed() OVERRIDE;
-    virtual void startUpdating() OVERRIDE;
-    virtual void stopUpdating() OVERRIDE;
+    virtual void geolocationDestroyed() override;
+    virtual void startUpdating() override;
+    virtual void stopUpdating() override;
 #if PLATFORM(IOS)
     // FIXME: unify this with Mac on OpenSource.
-    virtual void setEnableHighAccuracy(bool) OVERRIDE;
+    virtual void setEnableHighAccuracy(bool) override;
 #else
-    virtual void setEnableHighAccuracy(bool) OVERRIDE { }
+    virtual void setEnableHighAccuracy(bool) override { }
 #endif
 
-    virtual WebCore::GeolocationPosition* lastPosition() OVERRIDE;
+    virtual WebCore::GeolocationPosition* lastPosition() override;
 
-    virtual void requestPermission(WebCore::Geolocation*) OVERRIDE;
-    virtual void cancelPermissionRequest(WebCore::Geolocation*) OVERRIDE { };
+    virtual void requestPermission(WebCore::Geolocation*) override;
+    virtual void cancelPermissionRequest(WebCore::Geolocation*) override { };
 
 private:
     WebView *m_webView;

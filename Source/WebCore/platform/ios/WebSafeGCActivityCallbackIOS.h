@@ -38,7 +38,7 @@ public:
         return adoptPtr(new WebSafeGCActivityCallback(heap));
     }
 
-    virtual ~WebSafeGCActivityCallback() OVERRIDE { }
+    virtual ~WebSafeGCActivityCallback() override { }
 
 private:
     WebSafeGCActivityCallback(JSC::Heap* heap)

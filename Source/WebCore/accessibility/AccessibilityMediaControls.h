@@ -43,20 +43,20 @@ public:
     static PassRefPtr<AccessibilityObject> create(RenderObject*);
     virtual ~AccessibilityMediaControl() { }
 
-    virtual AccessibilityRole roleValue() const OVERRIDE;
+    virtual AccessibilityRole roleValue() const override;
 
-    virtual String title() const OVERRIDE;
-    virtual String accessibilityDescription() const OVERRIDE;
-    virtual String helpText() const OVERRIDE;
+    virtual String title() const override;
+    virtual String accessibilityDescription() const override;
+    virtual String helpText() const override;
 
 protected:
     explicit AccessibilityMediaControl(RenderObject*);
     MediaControlElementType controlType() const;
     String controlTypeName() const;
-    virtual bool computeAccessibilityIsIgnored() const OVERRIDE;
+    virtual bool computeAccessibilityIsIgnored() const override;
 
 private:
-    virtual void accessibilityText(Vector<AccessibilityText>&) OVERRIDE;
+    virtual void accessibilityText(Vector<AccessibilityText>&) override;
 };
 
 
@@ -66,10 +66,10 @@ public:
     static PassRefPtr<AccessibilityObject> create(RenderObject*);
     virtual ~AccessibilityMediaTimeline() { }
 
-    virtual bool isMediaTimeline() const OVERRIDE { return true; }
+    virtual bool isMediaTimeline() const override { return true; }
 
-    virtual String helpText() const OVERRIDE;
-    virtual String valueDescription() const OVERRIDE;
+    virtual String helpText() const override;
+    virtual String valueDescription() const override;
     const AtomicString& getAttribute(const QualifiedName& attribute) const;
 
 private:
@@ -83,16 +83,16 @@ public:
     static PassRefPtr<AccessibilityObject> create(RenderObject*);
     virtual ~AccessibilityMediaControlsContainer() { }
 
-    virtual AccessibilityRole roleValue() const OVERRIDE { return ToolbarRole; }
+    virtual AccessibilityRole roleValue() const override { return ToolbarRole; }
 
-    virtual String helpText() const OVERRIDE;
-    virtual String accessibilityDescription() const OVERRIDE;
+    virtual String helpText() const override;
+    virtual String accessibilityDescription() const override;
 
 private:
     explicit AccessibilityMediaControlsContainer(RenderObject*);
     bool controllingVideoElement() const;
     const String elementTypeName() const;
-    virtual bool computeAccessibilityIsIgnored() const OVERRIDE;
+    virtual bool computeAccessibilityIsIgnored() const override;
 };
 
 
@@ -102,15 +102,15 @@ public:
     static PassRefPtr<AccessibilityObject> create(RenderObject*);
     virtual ~AccessibilityMediaTimeDisplay() { }
 
-    virtual AccessibilityRole roleValue() const OVERRIDE { return ApplicationTimerRole; }
+    virtual AccessibilityRole roleValue() const override { return ApplicationTimerRole; }
 
-    virtual String stringValue() const OVERRIDE;
-    virtual String accessibilityDescription() const OVERRIDE;
+    virtual String stringValue() const override;
+    virtual String accessibilityDescription() const override;
 
 private:
     explicit AccessibilityMediaTimeDisplay(RenderObject*);
-    virtual bool isMediaControlLabel() const OVERRIDE { return true; }
-    virtual bool computeAccessibilityIsIgnored() const OVERRIDE;
+    virtual bool isMediaControlLabel() const override { return true; }
+    virtual bool computeAccessibilityIsIgnored() const override;
 };
 
 

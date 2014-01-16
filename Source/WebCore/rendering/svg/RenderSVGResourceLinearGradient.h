@@ -40,7 +40,7 @@ public:
 
     virtual SVGUnitTypes::SVGUnitType gradientUnits() const { return m_attributes.gradientUnits(); }
     virtual void calculateGradientTransform(AffineTransform& transform) { transform = m_attributes.gradientTransform(); }
-    virtual bool collectGradientAttributes() OVERRIDE;
+    virtual bool collectGradientAttributes() override;
     virtual void buildGradient(GradientData*) const;
 
     FloatPoint startPoint(const LinearGradientAttributes&) const;
@@ -49,7 +49,7 @@ public:
 private:
     void gradientElement() const WTF_DELETED_FUNCTION;
 
-    virtual const char* renderName() const OVERRIDE { return "RenderSVGResourceLinearGradient"; }
+    virtual const char* renderName() const override { return "RenderSVGResourceLinearGradient"; }
 
     LinearGradientAttributes m_attributes;
 };

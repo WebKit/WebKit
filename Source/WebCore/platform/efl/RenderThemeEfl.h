@@ -163,12 +163,12 @@ public:
     virtual void adjustSliderThumbSize(RenderStyle*, Element*) const;
 
 #if ENABLE(DATALIST_ELEMENT)
-    virtual IntSize sliderTickSize() const OVERRIDE;
-    virtual int sliderTickOffsetFromTrackCenter() const OVERRIDE;
-    virtual LayoutUnit sliderTickSnappingThreshold() const OVERRIDE;
+    virtual IntSize sliderTickSize() const override;
+    virtual int sliderTickOffsetFromTrackCenter() const override;
+    virtual LayoutUnit sliderTickSnappingThreshold() const override;
 #endif
 
-    virtual bool supportsDataListUI(const AtomicString&) const OVERRIDE;
+    virtual bool supportsDataListUI(const AtomicString&) const override;
 
     virtual bool paintSliderThumb(RenderObject*, const PaintInfo&, const IntRect&);
 
@@ -205,10 +205,10 @@ public:
     virtual bool paintMediaCurrentTime(RenderObject*, const PaintInfo&, const IntRect&);
 #endif
 #if ENABLE(VIDEO_TRACK)
-    virtual bool supportsClosedCaptioning() const OVERRIDE;
-    virtual bool paintMediaToggleClosedCaptionsButton(RenderObject*, const PaintInfo&, const IntRect&) OVERRIDE;
+    virtual bool supportsClosedCaptioning() const override;
+    virtual bool paintMediaToggleClosedCaptionsButton(RenderObject*, const PaintInfo&, const IntRect&) override;
 #endif
-    virtual bool shouldShowPlaceholderWhenFocused() const OVERRIDE { return true; }
+    virtual bool shouldShowPlaceholderWhenFocused() const override { return true; }
 
     void setThemePath(const String&);
     String themePath() const;

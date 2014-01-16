@@ -84,7 +84,7 @@ public:
     // but we will match the standard DOM.
     unsigned short button() const { return m_button; }
     bool buttonDown() const { return m_buttonDown; }
-    virtual EventTarget* relatedTarget() const OVERRIDE FINAL { return m_relatedTarget.get(); }
+    virtual EventTarget* relatedTarget() const override FINAL { return m_relatedTarget.get(); }
     void setRelatedTarget(PassRefPtr<EventTarget> relatedTarget) { m_relatedTarget = relatedTarget; }
 
     Clipboard* clipboard() const { return m_clipboard.get(); }
@@ -100,7 +100,7 @@ public:
     virtual bool isDragEvent() const;
     virtual int which() const;
 
-    virtual PassRefPtr<Event> cloneFor(HTMLIFrameElement*) const OVERRIDE;
+    virtual PassRefPtr<Event> cloneFor(HTMLIFrameElement*) const override;
 
 protected:
     MouseEvent(const AtomicString& type, bool canBubble, bool cancelable, double timestamp, PassRefPtr<AbstractView>,

@@ -49,15 +49,15 @@ private:
     void frameOwnerElement() const WTF_DELETED_FUNCTION;
     virtual const char* renderName() const { return "RenderSnapshottedPlugIn"; }
 
-    virtual CursorDirective getCursor(const LayoutPoint&, Cursor&) const OVERRIDE FINAL;
-    virtual bool isSnapshottedPlugIn() const OVERRIDE FINAL { return true; }
-    virtual void paint(PaintInfo&, const LayoutPoint&) OVERRIDE;
+    virtual CursorDirective getCursor(const LayoutPoint&, Cursor&) const override FINAL;
+    virtual bool isSnapshottedPlugIn() const override FINAL { return true; }
+    virtual void paint(PaintInfo&, const LayoutPoint&) override;
     
-    virtual bool canHaveWidget() const OVERRIDE FINAL { return false; }
+    virtual bool canHaveWidget() const override FINAL { return false; }
 
     void paintSnapshot(PaintInfo&, const LayoutPoint&);
 
-    virtual void layout() OVERRIDE;
+    virtual void layout() override;
 
     OwnPtr<RenderImageResource> m_snapshotResource;
     bool m_isPotentialMouseActivation;

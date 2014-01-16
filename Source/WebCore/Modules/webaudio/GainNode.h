@@ -45,18 +45,18 @@ public:
     }
 
     // AudioNode
-    virtual void process(size_t framesToProcess) OVERRIDE;
-    virtual void reset() OVERRIDE;
+    virtual void process(size_t framesToProcess) override;
+    virtual void reset() override;
 
     // Called in the main thread when the number of channels for the input may have changed.
-    virtual void checkNumberOfChannelsForInput(AudioNodeInput*) OVERRIDE;
+    virtual void checkNumberOfChannelsForInput(AudioNodeInput*) override;
 
     // JavaScript interface
     AudioParam* gain() { return m_gain.get(); }
 
 private:
-    virtual double tailTime() const OVERRIDE { return 0; }
-    virtual double latencyTime() const OVERRIDE { return 0; }
+    virtual double tailTime() const override { return 0; }
+    virtual double latencyTime() const override { return 0; }
 
     GainNode(AudioContext*, float sampleRate);
 

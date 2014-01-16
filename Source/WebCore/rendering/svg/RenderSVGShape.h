@@ -53,9 +53,9 @@ public:
     SVGGraphicsElement& graphicsElement() const { return toSVGGraphicsElement(RenderSVGModelObject::element()); }
 
     void setNeedsShapeUpdate() { m_needsShapeUpdate = true; }
-    virtual void setNeedsBoundariesUpdate() OVERRIDE FINAL { m_needsBoundariesUpdate = true; }
-    virtual bool needsBoundariesUpdate() OVERRIDE FINAL { return m_needsBoundariesUpdate; }
-    virtual void setNeedsTransformUpdate() OVERRIDE FINAL { m_needsTransformUpdate = true; }
+    virtual void setNeedsBoundariesUpdate() override FINAL { m_needsBoundariesUpdate = true; }
+    virtual bool needsBoundariesUpdate() override FINAL { return m_needsBoundariesUpdate; }
+    virtual void setNeedsTransformUpdate() override FINAL { m_needsTransformUpdate = true; }
     virtual void fillShape(GraphicsContext*) const;
     virtual void strokeShape(GraphicsContext*) const;
 
@@ -70,7 +70,7 @@ protected:
     void element() const WTF_DELETED_FUNCTION;
 
     virtual void updateShapeFromElement();
-    virtual bool isEmpty() const OVERRIDE;
+    virtual bool isEmpty() const override;
     virtual bool shapeDependentStrokeContains(const FloatPoint&);
     virtual bool shapeDependentFillContains(const FloatPoint&, const WindRule) const;
     float strokeWidth() const;
@@ -88,23 +88,23 @@ private:
     bool fillContains(const FloatPoint&, bool requiresFill = true, const WindRule fillRule = RULE_NONZERO);
     bool strokeContains(const FloatPoint&, bool requiresStroke = true);
 
-    virtual FloatRect repaintRectInLocalCoordinates() const OVERRIDE FINAL { return m_repaintBoundingBox; }
-    virtual FloatRect repaintRectInLocalCoordinatesExcludingSVGShadow() const OVERRIDE FINAL { return m_repaintBoundingBoxExcludingShadow; }
-    virtual const AffineTransform& localToParentTransform() const OVERRIDE FINAL { return m_localTransform; }
-    virtual AffineTransform localTransform() const OVERRIDE FINAL { return m_localTransform; }
+    virtual FloatRect repaintRectInLocalCoordinates() const override FINAL { return m_repaintBoundingBox; }
+    virtual FloatRect repaintRectInLocalCoordinatesExcludingSVGShadow() const override FINAL { return m_repaintBoundingBoxExcludingShadow; }
+    virtual const AffineTransform& localToParentTransform() const override FINAL { return m_localTransform; }
+    virtual AffineTransform localTransform() const override FINAL { return m_localTransform; }
 
-    virtual bool isSVGShape() const OVERRIDE FINAL { return true; }
-    virtual bool canHaveChildren() const OVERRIDE FINAL { return false; }
-    virtual const char* renderName() const OVERRIDE { return "RenderSVGShape"; }
+    virtual bool isSVGShape() const override FINAL { return true; }
+    virtual bool canHaveChildren() const override FINAL { return false; }
+    virtual const char* renderName() const override { return "RenderSVGShape"; }
 
-    virtual void layout() OVERRIDE FINAL;
-    virtual void paint(PaintInfo&, const LayoutPoint&) OVERRIDE FINAL;
-    virtual void addFocusRingRects(Vector<IntRect>&, const LayoutPoint& additionalOffset, const RenderLayerModelObject* paintContainer = 0) OVERRIDE FINAL;
+    virtual void layout() override FINAL;
+    virtual void paint(PaintInfo&, const LayoutPoint&) override FINAL;
+    virtual void addFocusRingRects(Vector<IntRect>&, const LayoutPoint& additionalOffset, const RenderLayerModelObject* paintContainer = 0) override FINAL;
 
-    virtual bool nodeAtFloatPoint(const HitTestRequest&, HitTestResult&, const FloatPoint& pointInParent, HitTestAction) OVERRIDE FINAL;
+    virtual bool nodeAtFloatPoint(const HitTestRequest&, HitTestResult&, const FloatPoint& pointInParent, HitTestAction) override FINAL;
 
-    virtual FloatRect objectBoundingBox() const OVERRIDE FINAL { return m_fillBoundingBox; }
-    virtual FloatRect strokeBoundingBox() const OVERRIDE FINAL { return m_strokeBoundingBox; }
+    virtual FloatRect objectBoundingBox() const override FINAL { return m_fillBoundingBox; }
+    virtual FloatRect strokeBoundingBox() const override FINAL { return m_strokeBoundingBox; }
     FloatRect calculateObjectBoundingBox() const;
     FloatRect calculateStrokeBoundingBox() const;
     void updateRepaintBoundingBox();

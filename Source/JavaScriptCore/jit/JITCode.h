@@ -197,12 +197,12 @@ public:
     
     void initializeCodeRef(CodeRef ref);
 
-    virtual CodePtr addressForCall() OVERRIDE;
-    virtual void* executableAddressAtOffset(size_t offset) OVERRIDE;
-    virtual void* dataAddressAtOffset(size_t offset) OVERRIDE;
-    virtual unsigned offsetOf(void* pointerIntoCode) OVERRIDE;
-    virtual size_t size() OVERRIDE;
-    virtual bool contains(void*) OVERRIDE;
+    virtual CodePtr addressForCall() override;
+    virtual void* executableAddressAtOffset(size_t offset) override;
+    virtual void* dataAddressAtOffset(size_t offset) override;
+    virtual unsigned offsetOf(void* pointerIntoCode) override;
+    virtual size_t size() override;
+    virtual bool contains(void*) override;
 
 private:
     CodeRef m_ref;

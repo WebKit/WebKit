@@ -43,10 +43,10 @@ public:
     virtual ~SVGSMILElement();
 
     bool isSupportedAttribute(const QualifiedName&);
-    virtual void parseAttribute(const QualifiedName&, const AtomicString&) OVERRIDE;
-    virtual void svgAttributeChanged(const QualifiedName&) OVERRIDE;
-    virtual InsertionNotificationRequest insertedInto(ContainerNode&) OVERRIDE;
-    virtual void removedFrom(ContainerNode&) OVERRIDE;
+    virtual void parseAttribute(const QualifiedName&, const AtomicString&) override;
+    virtual void svgAttributeChanged(const QualifiedName&) override;
+    virtual InsertionNotificationRequest insertedInto(ContainerNode&) override;
+    virtual void removedFrom(ContainerNode&) override;
     
     virtual bool hasValidAttributeType() = 0;
     virtual bool hasValidAttributeName();
@@ -114,7 +114,7 @@ protected:
 
     void setInactive() { m_activeState = Inactive; }
 
-    virtual bool rendererIsNeeded(const RenderStyle&) OVERRIDE { return false; }
+    virtual bool rendererIsNeeded(const RenderStyle&) override { return false; }
 
     // Sub-classes may need to take action when the target is changed.
     virtual void setTargetElement(SVGElement*);
@@ -192,7 +192,7 @@ private:
     float calculateAnimationPercentAndRepeat(SMILTime elapsed, unsigned& repeat) const;
     SMILTime calculateNextProgressTime(SMILTime elapsed) const;
 
-    virtual bool isSMILElement() const OVERRIDE FINAL { return true; }
+    virtual bool isSMILElement() const override FINAL { return true; }
 
     mutable SVGElement* m_targetElement;
 

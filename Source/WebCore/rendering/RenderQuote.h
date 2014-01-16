@@ -37,12 +37,12 @@ public:
 private:
     void detachQuote();
 
-    virtual void willBeDestroyed() OVERRIDE;
-    virtual const char* renderName() const OVERRIDE { return "RenderQuote"; }
-    virtual bool isQuote() const OVERRIDE { return true; };
-    virtual String originalText() const OVERRIDE;
-    virtual void styleDidChange(StyleDifference, const RenderStyle*) OVERRIDE;
-    virtual void willBeRemovedFromTree() OVERRIDE;
+    virtual void willBeDestroyed() override;
+    virtual const char* renderName() const override { return "RenderQuote"; }
+    virtual bool isQuote() const override { return true; };
+    virtual String originalText() const override;
+    virtual void styleDidChange(StyleDifference, const RenderStyle*) override;
+    virtual void willBeRemovedFromTree() override;
 
     void updateDepth();
 

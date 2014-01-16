@@ -43,7 +43,7 @@ private:
     {
     }
 
-    virtual PassRefPtr<DocumentParser> createParser() OVERRIDE;
+    virtual PassRefPtr<DocumentParser> createParser() override;
 };
     
 }

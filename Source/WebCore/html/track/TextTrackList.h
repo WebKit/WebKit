@@ -42,20 +42,20 @@ public:
     }
     virtual ~TextTrackList();
 
-    virtual unsigned length() const OVERRIDE;
+    virtual unsigned length() const override;
     int getTrackIndex(TextTrack*);
     int getTrackIndexRelativeToRenderedTracks(TextTrack*);
-    virtual bool contains(TrackBase*) const OVERRIDE;
+    virtual bool contains(TrackBase*) const override;
 
     TextTrack* item(unsigned index) const;
     TextTrack* getTrackById(const AtomicString&);
     TextTrack* lastItem() const { return item(length() - 1); }
 
     void append(PassRefPtr<TextTrack>);
-    virtual void remove(TrackBase*) OVERRIDE;
+    virtual void remove(TrackBase*) override;
 
     // EventTarget
-    virtual EventTargetInterface eventTargetInterface() const OVERRIDE;
+    virtual EventTargetInterface eventTargetInterface() const override;
 
 private:
     TextTrackList(HTMLMediaElement*, ScriptExecutionContext*);

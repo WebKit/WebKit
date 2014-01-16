@@ -38,10 +38,10 @@ private:
     HTMLBaseElement(const QualifiedName&, Document&);
 
     virtual String target() const;
-    virtual bool isURLAttribute(const Attribute&) const OVERRIDE;
-    virtual void parseAttribute(const QualifiedName&, const AtomicString&) OVERRIDE;
-    virtual InsertionNotificationRequest insertedInto(ContainerNode&) OVERRIDE;
-    virtual void removedFrom(ContainerNode&) OVERRIDE;
+    virtual bool isURLAttribute(const Attribute&) const override;
+    virtual void parseAttribute(const QualifiedName&, const AtomicString&) override;
+    virtual InsertionNotificationRequest insertedInto(ContainerNode&) override;
+    virtual void removedFrom(ContainerNode&) override;
 };
 
 NODE_TYPE_CASTS(HTMLBaseElement)

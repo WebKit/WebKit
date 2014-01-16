@@ -69,7 +69,7 @@ public:
         OwnPtr<StructureStubClearingWatchpoint>& head);
 
 protected:
-    virtual void fireInternal() OVERRIDE;
+    virtual void fireInternal() override;
 
 private:
     WatchpointsOnStructureStubInfo& m_holder;

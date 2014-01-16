@@ -196,7 +196,7 @@ private:
     virtual bool platformCALayerDrawsContent() const { return false; }
     virtual void platformCALayerLayerDidDisplay(PlatformLayer*) { }
     virtual void platformCALayerDidCreateTiles(const Vector<FloatRect>&) { }
-    virtual float platformCALayerDeviceScaleFactor() const OVERRIDE { return 1; }
+    virtual float platformCALayerDeviceScaleFactor() const override { return 1; }
 
     FullscreenVideoController* m_parent;
 };

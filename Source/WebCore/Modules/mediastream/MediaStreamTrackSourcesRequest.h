@@ -48,8 +48,8 @@ private:
     MediaStreamTrackSourcesRequest(ScriptExecutionContext*, PassRefPtr<MediaStreamTrackSourcesCallback>);
 
     // MediaStreamTrackSourcesRequestClient
-    virtual const String& requestOrigin() const OVERRIDE { return m_origin; }
-    virtual void didCompleteRequest(const Vector<RefPtr<TrackSourceInfo>>&) OVERRIDE;
+    virtual const String& requestOrigin() const override { return m_origin; }
+    virtual void didCompleteRequest(const Vector<RefPtr<TrackSourceInfo>>&) override;
 
     void callCompletionHandler();
 

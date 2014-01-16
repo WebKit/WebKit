@@ -46,13 +46,13 @@ public:
     static RefPtr<MockMediaSample> create(const MockSampleBox& box) { return adoptRef(new MockMediaSample(box)); }
     virtual ~MockMediaSample() { }
 
-    virtual MediaTime presentationTime() const OVERRIDE { return m_box.presentationTimestamp(); }
-    virtual MediaTime decodeTime() const OVERRIDE { return m_box.decodeTimestamp(); }
-    virtual MediaTime duration() const OVERRIDE { return m_box.duration(); }
-    virtual AtomicString trackID() const OVERRIDE { return m_id; }
+    virtual MediaTime presentationTime() const override { return m_box.presentationTimestamp(); }
+    virtual MediaTime decodeTime() const override { return m_box.decodeTimestamp(); }
+    virtual MediaTime duration() const override { return m_box.duration(); }
+    virtual AtomicString trackID() const override { return m_id; }
 
-    virtual SampleFlags flags() const OVERRIDE;
-    virtual PlatformSample platformSample() OVERRIDE;
+    virtual SampleFlags flags() const override;
+    virtual PlatformSample platformSample() override;
 
 protected:
     MockMediaSample(const MockSampleBox& box)
@@ -84,10 +84,10 @@ public:
     static RefPtr<MockMediaDescription> create(const MockTrackBox& box) { return adoptRef(new MockMediaDescription(box)); }
     virtual ~MockMediaDescription() { }
 
-    virtual AtomicString codec() const OVERRIDE { return m_box.codec(); }
-    virtual bool isVideo() const OVERRIDE { return m_box.kind() == MockTrackBox::Video; }
-    virtual bool isAudio() const OVERRIDE { return m_box.kind() == MockTrackBox::Audio; }
-    virtual bool isText() const OVERRIDE { return m_box.kind() == MockTrackBox::Text; }
+    virtual AtomicString codec() const override { return m_box.codec(); }
+    virtual bool isVideo() const override { return m_box.kind() == MockTrackBox::Video; }
+    virtual bool isAudio() const override { return m_box.kind() == MockTrackBox::Audio; }
+    virtual bool isText() const override { return m_box.kind() == MockTrackBox::Text; }
 
 protected:
     MockMediaDescription(const MockTrackBox& box) : m_box(box) { }

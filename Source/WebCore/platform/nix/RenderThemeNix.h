@@ -36,106 +36,106 @@ public:
 
     virtual ~RenderThemeNix();
 
-    virtual String extraDefaultStyleSheet() OVERRIDE;
-    virtual String extraQuirksStyleSheet() OVERRIDE;
-    virtual String extraPlugInsStyleSheet() OVERRIDE;
+    virtual String extraDefaultStyleSheet() override;
+    virtual String extraQuirksStyleSheet() override;
+    virtual String extraPlugInsStyleSheet() override;
 
-    virtual void systemFont(WebCore::CSSValueID, FontDescription&) const OVERRIDE;
+    virtual void systemFont(WebCore::CSSValueID, FontDescription&) const override;
 
 #if ENABLE(PROGRESS_ELEMENT)
     // Returns the repeat interval of the animation for the progress bar.
-    virtual double animationRepeatIntervalForProgressBar(RenderProgress*) const OVERRIDE;
+    virtual double animationRepeatIntervalForProgressBar(RenderProgress*) const override;
     // Returns the duration of the animation for the progress bar.
-    virtual double animationDurationForProgressBar(RenderProgress*) const OVERRIDE;
+    virtual double animationDurationForProgressBar(RenderProgress*) const override;
 #endif
 
 #if ENABLE(METER_ELEMENT)
-    virtual IntSize meterSizeForBounds(const RenderMeter*, const IntRect&) const OVERRIDE;
-    virtual bool supportsMeter(ControlPart) const OVERRIDE;
+    virtual IntSize meterSizeForBounds(const RenderMeter*, const IntRect&) const override;
+    virtual bool supportsMeter(ControlPart) const override;
 #endif
 
 protected:
     // The platform selection color.
-    virtual Color platformActiveSelectionBackgroundColor() const OVERRIDE;
-    virtual Color platformInactiveSelectionBackgroundColor() const OVERRIDE;
-    virtual Color platformActiveSelectionForegroundColor() const OVERRIDE;
-    virtual Color platformInactiveSelectionForegroundColor() const OVERRIDE;
+    virtual Color platformActiveSelectionBackgroundColor() const override;
+    virtual Color platformInactiveSelectionBackgroundColor() const override;
+    virtual Color platformActiveSelectionForegroundColor() const override;
+    virtual Color platformInactiveSelectionForegroundColor() const override;
 
-    virtual Color platformActiveListBoxSelectionBackgroundColor() const OVERRIDE;
-    virtual Color platformInactiveListBoxSelectionBackgroundColor() const OVERRIDE;
-    virtual Color platformActiveListBoxSelectionForegroundColor() const OVERRIDE;
-    virtual Color platformInactiveListBoxSelectionForegroundColor() const OVERRIDE;
+    virtual Color platformActiveListBoxSelectionBackgroundColor() const override;
+    virtual Color platformInactiveListBoxSelectionBackgroundColor() const override;
+    virtual Color platformActiveListBoxSelectionForegroundColor() const override;
+    virtual Color platformInactiveListBoxSelectionForegroundColor() const override;
 
     // Highlighting colors for TextMatches.
-    virtual Color platformActiveTextSearchHighlightColor() const OVERRIDE;
-    virtual Color platformInactiveTextSearchHighlightColor() const OVERRIDE;
+    virtual Color platformActiveTextSearchHighlightColor() const override;
+    virtual Color platformInactiveTextSearchHighlightColor() const override;
 
-    virtual Color platformFocusRingColor() const OVERRIDE;
+    virtual Color platformFocusRingColor() const override;
 
 #if ENABLE(TOUCH_EVENTS)
-    virtual Color platformTapHighlightColor() const OVERRIDE;
+    virtual Color platformTapHighlightColor() const override;
 #endif
 
-    virtual bool paintButton(RenderObject*, const PaintInfo&, const IntRect&) OVERRIDE;
-    virtual bool paintTextField(RenderObject*, const PaintInfo&, const IntRect&) OVERRIDE;
-    virtual bool paintTextArea(RenderObject*, const PaintInfo&, const IntRect&) OVERRIDE;
+    virtual bool paintButton(RenderObject*, const PaintInfo&, const IntRect&) override;
+    virtual bool paintTextField(RenderObject*, const PaintInfo&, const IntRect&) override;
+    virtual bool paintTextArea(RenderObject*, const PaintInfo&, const IntRect&) override;
 
-    virtual bool paintCheckbox(RenderObject*, const PaintInfo&, const IntRect&) OVERRIDE;
-    virtual void setCheckboxSize(RenderStyle*) const OVERRIDE;
+    virtual bool paintCheckbox(RenderObject*, const PaintInfo&, const IntRect&) override;
+    virtual void setCheckboxSize(RenderStyle*) const override;
 
-    virtual bool paintRadio(RenderObject*, const PaintInfo&, const IntRect&) OVERRIDE;
-    virtual void setRadioSize(RenderStyle*) const OVERRIDE;
+    virtual bool paintRadio(RenderObject*, const PaintInfo&, const IntRect&) override;
+    virtual void setRadioSize(RenderStyle*) const override;
 
-    virtual bool paintMenuList(RenderObject*, const PaintInfo&, const IntRect&) OVERRIDE;
-    virtual void adjustMenuListStyle(StyleResolver*, RenderStyle*, Element*) const OVERRIDE;
-    virtual bool paintMenuListButtonDecorations(RenderObject* renderer, const PaintInfo& paintInfo, const IntRect& rect) OVERRIDE
+    virtual bool paintMenuList(RenderObject*, const PaintInfo&, const IntRect&) override;
+    virtual void adjustMenuListStyle(StyleResolver*, RenderStyle*, Element*) const override;
+    virtual bool paintMenuListButtonDecorations(RenderObject* renderer, const PaintInfo& paintInfo, const IntRect& rect) override
     {
         return paintMenuList(renderer, paintInfo, rect);
     }
 
-    virtual void adjustInnerSpinButtonStyle(StyleResolver*, RenderStyle*, Element*) const OVERRIDE;
-    virtual bool paintInnerSpinButton(RenderObject*, const PaintInfo&, const IntRect&) OVERRIDE;
+    virtual void adjustInnerSpinButtonStyle(StyleResolver*, RenderStyle*, Element*) const override;
+    virtual bool paintInnerSpinButton(RenderObject*, const PaintInfo&, const IntRect&) override;
 
 #if ENABLE(PROGRESS_ELEMENT)
-    virtual void adjustProgressBarStyle(StyleResolver*, RenderStyle*, Element*) const OVERRIDE;
-    virtual bool paintProgressBar(RenderObject*, const PaintInfo&, const IntRect&) OVERRIDE;
+    virtual void adjustProgressBarStyle(StyleResolver*, RenderStyle*, Element*) const override;
+    virtual bool paintProgressBar(RenderObject*, const PaintInfo&, const IntRect&) override;
 #endif
 
 #if ENABLE(METER_ELEMENT)
-    virtual void adjustMeterStyle(StyleResolver*, RenderStyle*, Element*) const OVERRIDE;
-    virtual bool paintMeter(RenderObject*, const PaintInfo&, const IntRect&) OVERRIDE;
+    virtual void adjustMeterStyle(StyleResolver*, RenderStyle*, Element*) const override;
+    virtual bool paintMeter(RenderObject*, const PaintInfo&, const IntRect&) override;
 #endif
 
 #if ENABLE(VIDEO)
-    virtual String extraMediaControlsStyleSheet() OVERRIDE;
-    virtual bool usesVerticalVolumeSlider() const OVERRIDE { return false; }
-    virtual bool usesMediaControlStatusDisplay() OVERRIDE { return true; }
-    virtual bool usesMediaControlVolumeSlider() const OVERRIDE { return false; }
+    virtual String extraMediaControlsStyleSheet() override;
+    virtual bool usesVerticalVolumeSlider() const override { return false; }
+    virtual bool usesMediaControlStatusDisplay() override { return true; }
+    virtual bool usesMediaControlVolumeSlider() const override { return false; }
 
-    virtual bool paintMediaPlayButton(RenderObject*, const PaintInfo&, const IntRect&) OVERRIDE;
-    virtual bool paintMediaMuteButton(RenderObject*, const PaintInfo&, const IntRect&) OVERRIDE;
-    virtual bool paintMediaSeekBackButton(RenderObject*, const PaintInfo&, const IntRect&) OVERRIDE;
-    virtual bool paintMediaSeekForwardButton(RenderObject*, const PaintInfo&, const IntRect&) OVERRIDE;
-    virtual bool paintMediaSliderTrack(RenderObject*, const PaintInfo&, const IntRect&) OVERRIDE;
-    virtual bool paintMediaVolumeSliderContainer(RenderObject*, const PaintInfo&, const IntRect&) OVERRIDE;
-    virtual bool paintMediaVolumeSliderTrack(RenderObject*, const PaintInfo&, const IntRect&) OVERRIDE;
-    virtual bool paintMediaRewindButton(RenderObject*, const PaintInfo&, const IntRect&) OVERRIDE;
+    virtual bool paintMediaPlayButton(RenderObject*, const PaintInfo&, const IntRect&) override;
+    virtual bool paintMediaMuteButton(RenderObject*, const PaintInfo&, const IntRect&) override;
+    virtual bool paintMediaSeekBackButton(RenderObject*, const PaintInfo&, const IntRect&) override;
+    virtual bool paintMediaSeekForwardButton(RenderObject*, const PaintInfo&, const IntRect&) override;
+    virtual bool paintMediaSliderTrack(RenderObject*, const PaintInfo&, const IntRect&) override;
+    virtual bool paintMediaVolumeSliderContainer(RenderObject*, const PaintInfo&, const IntRect&) override;
+    virtual bool paintMediaVolumeSliderTrack(RenderObject*, const PaintInfo&, const IntRect&) override;
+    virtual bool paintMediaRewindButton(RenderObject*, const PaintInfo&, const IntRect&) override;
 #endif
 
-    virtual bool paintSliderTrack(RenderObject*, const PaintInfo&, const IntRect&) OVERRIDE;
-    virtual void adjustSliderTrackStyle(StyleResolver*, RenderStyle*, Element*) const OVERRIDE;
+    virtual bool paintSliderTrack(RenderObject*, const PaintInfo&, const IntRect&) override;
+    virtual void adjustSliderTrackStyle(StyleResolver*, RenderStyle*, Element*) const override;
 
-    virtual bool paintSliderThumb(RenderObject*, const PaintInfo&, const IntRect&) OVERRIDE;
-    virtual void adjustSliderThumbStyle(StyleResolver*, RenderStyle*, Element*) const OVERRIDE;
+    virtual bool paintSliderThumb(RenderObject*, const PaintInfo&, const IntRect&) override;
+    virtual void adjustSliderThumbStyle(StyleResolver*, RenderStyle*, Element*) const override;
 
-    virtual void adjustSliderThumbSize(RenderStyle*, Element*) const OVERRIDE;
+    virtual void adjustSliderThumbSize(RenderStyle*, Element*) const override;
 
 #if ENABLE(DATALIST_ELEMENT)
-    virtual IntSize sliderTickSize() const OVERRIDE;
-    virtual int sliderTickOffsetFromTrackCenter() const OVERRIDE;
-    virtual LayoutUnit sliderTickSnappingThreshold() const OVERRIDE;
+    virtual IntSize sliderTickSize() const override;
+    virtual int sliderTickOffsetFromTrackCenter() const override;
+    virtual LayoutUnit sliderTickSnappingThreshold() const override;
 
-    virtual bool supportsDataListUI(const AtomicString&) const OVERRIDE;
+    virtual bool supportsDataListUI(const AtomicString&) const override;
 #endif
 
 private:

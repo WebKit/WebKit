@@ -35,31 +35,31 @@ class RenderSVGContainer : public RenderSVGModelObject {
 public:
     virtual ~RenderSVGContainer();
 
-    virtual void paint(PaintInfo&, const LayoutPoint&) OVERRIDE;
-    virtual void setNeedsBoundariesUpdate() OVERRIDE FINAL { m_needsBoundariesUpdate = true; }
-    virtual bool needsBoundariesUpdate() OVERRIDE FINAL { return m_needsBoundariesUpdate; }
+    virtual void paint(PaintInfo&, const LayoutPoint&) override;
+    virtual void setNeedsBoundariesUpdate() override FINAL { m_needsBoundariesUpdate = true; }
+    virtual bool needsBoundariesUpdate() override FINAL { return m_needsBoundariesUpdate; }
     virtual bool didTransformToRootUpdate() { return false; }
     bool isObjectBoundingBoxValid() const { return m_objectBoundingBoxValid; }
 
 protected:
     RenderSVGContainer(SVGElement&, PassRef<RenderStyle>);
 
-    virtual bool isSVGContainer() const OVERRIDE FINAL { return true; }
-    virtual const char* renderName() const OVERRIDE { return "RenderSVGContainer"; }
+    virtual bool isSVGContainer() const override FINAL { return true; }
+    virtual const char* renderName() const override { return "RenderSVGContainer"; }
 
-    virtual bool canHaveChildren() const OVERRIDE FINAL { return true; }
+    virtual bool canHaveChildren() const override FINAL { return true; }
 
-    virtual void layout() OVERRIDE;
+    virtual void layout() override;
 
-    virtual void addChild(RenderObject* child, RenderObject* beforeChild = 0) OVERRIDE FINAL;
-    virtual void removeChild(RenderObject&) OVERRIDE FINAL;
-    virtual void addFocusRingRects(Vector<IntRect>&, const LayoutPoint& additionalOffset, const RenderLayerModelObject* paintContainer = 0) OVERRIDE FINAL;
+    virtual void addChild(RenderObject* child, RenderObject* beforeChild = 0) override FINAL;
+    virtual void removeChild(RenderObject&) override FINAL;
+    virtual void addFocusRingRects(Vector<IntRect>&, const LayoutPoint& additionalOffset, const RenderLayerModelObject* paintContainer = 0) override FINAL;
 
-    virtual FloatRect objectBoundingBox() const OVERRIDE FINAL { return m_objectBoundingBox; }
-    virtual FloatRect strokeBoundingBox() const OVERRIDE FINAL { return m_strokeBoundingBox; }
-    virtual FloatRect repaintRectInLocalCoordinates() const OVERRIDE FINAL { return m_repaintBoundingBox; }
+    virtual FloatRect objectBoundingBox() const override FINAL { return m_objectBoundingBox; }
+    virtual FloatRect strokeBoundingBox() const override FINAL { return m_strokeBoundingBox; }
+    virtual FloatRect repaintRectInLocalCoordinates() const override FINAL { return m_repaintBoundingBox; }
 
-    virtual bool nodeAtFloatPoint(const HitTestRequest&, HitTestResult&, const FloatPoint& pointInParent, HitTestAction) OVERRIDE;
+    virtual bool nodeAtFloatPoint(const HitTestRequest&, HitTestResult&, const FloatPoint& pointInParent, HitTestAction) override;
 
     // Allow RenderSVGTransformableContainer to hook in at the right time in layout()
     virtual bool calculateLocalTransform() { return false; }

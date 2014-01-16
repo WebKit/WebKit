@@ -97,14 +97,14 @@ public:
     static PassRefPtr<InspectorBasicValue> create(int);
     static PassRefPtr<InspectorBasicValue> create(double);
 
-    virtual bool asBoolean(bool* output) const OVERRIDE;
-    virtual bool asNumber(double* output) const OVERRIDE;
-    virtual bool asNumber(long* output) const OVERRIDE;
-    virtual bool asNumber(int* output) const OVERRIDE;
-    virtual bool asNumber(unsigned long* output) const OVERRIDE;
-    virtual bool asNumber(unsigned* output) const OVERRIDE;
+    virtual bool asBoolean(bool* output) const override;
+    virtual bool asNumber(double* output) const override;
+    virtual bool asNumber(long* output) const override;
+    virtual bool asNumber(int* output) const override;
+    virtual bool asNumber(unsigned long* output) const override;
+    virtual bool asNumber(unsigned* output) const override;
 
-    virtual void writeJSON(StringBuilder* output) const OVERRIDE;
+    virtual void writeJSON(StringBuilder* output) const override;
 
 private:
     explicit InspectorBasicValue(bool value) : InspectorValue(TypeBoolean), m_boolValue(value) { }
@@ -122,9 +122,9 @@ public:
     static PassRefPtr<InspectorString> create(const String&);
     static PassRefPtr<InspectorString> create(const char*);
 
-    virtual bool asString(String* output) const OVERRIDE;
+    virtual bool asString(String* output) const override;
 
-    virtual void writeJSON(StringBuilder* output) const OVERRIDE;
+    virtual void writeJSON(StringBuilder* output) const override;
 
 private:
     explicit InspectorString(const String& value) : InspectorValue(TypeString), m_stringValue(value) { }
@@ -141,13 +141,13 @@ public:
     typedef Dictionary::iterator iterator;
     typedef Dictionary::const_iterator const_iterator;
 
-    virtual PassRefPtr<InspectorObject> asObject() OVERRIDE;
+    virtual PassRefPtr<InspectorObject> asObject() override;
     InspectorObject* openAccessors();
 
 protected:
     virtual ~InspectorObjectBase();
 
-    virtual bool asObject(RefPtr<InspectorObject>* output) OVERRIDE;
+    virtual bool asObject(RefPtr<InspectorObject>* output) override;
 
     void setBoolean(const String& name, bool);
     void setNumber(const String& name, double);
@@ -173,7 +173,7 @@ protected:
 
     void remove(const String& name);
 
-    virtual void writeJSON(StringBuilder* output) const OVERRIDE;
+    virtual void writeJSON(StringBuilder* output) const override;
 
     iterator begin() { return m_data.begin(); }
     iterator end() { return m_data.end(); }
@@ -225,14 +225,14 @@ public:
     typedef Vector<RefPtr<InspectorValue>>::iterator iterator;
     typedef Vector<RefPtr<InspectorValue>>::const_iterator const_iterator;
 
-    virtual PassRefPtr<InspectorArray> asArray() OVERRIDE;
+    virtual PassRefPtr<InspectorArray> asArray() override;
 
     unsigned length() const { return m_data.size(); }
 
 protected:
     virtual ~InspectorArrayBase();
 
-    virtual bool asArray(RefPtr<InspectorArray>* output) OVERRIDE;
+    virtual bool asArray(RefPtr<InspectorArray>* output) override;
 
     void pushBoolean(bool);
     void pushInt(int);
@@ -244,7 +244,7 @@ protected:
 
     PassRefPtr<InspectorValue> get(size_t index);
 
-    virtual void writeJSON(StringBuilder* output) const OVERRIDE;
+    virtual void writeJSON(StringBuilder* output) const override;
 
     iterator begin() { return m_data.begin(); }
     iterator end() { return m_data.end(); }

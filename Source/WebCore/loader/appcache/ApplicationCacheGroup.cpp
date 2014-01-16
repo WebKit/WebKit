@@ -1078,7 +1078,7 @@ public:
     }
 
 private:
-    virtual void fired() OVERRIDE
+    virtual void fired() override
     {
         m_cacheGroup->didReachMaxAppCacheSize();
         delete this;
@@ -1104,7 +1104,7 @@ public:
         return adoptPtr(new CallCacheListenerTask(loader, eventID, progressTotal, progressDone));
     }
 
-    virtual void performTask(ScriptExecutionContext* context) OVERRIDE
+    virtual void performTask(ScriptExecutionContext* context) override
     {
         
         ASSERT_UNUSED(context, context->isDocument());

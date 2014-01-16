@@ -1,3 +1,21 @@
+2014-01-16  Peter Molnar  <pmolnar.u-szeged@partner.samsung.com>
+
+        Remove workaround for compilers not supporting explicit override control
+        https://bugs.webkit.org/show_bug.cgi?id=127111
+
+        Reviewed by Anders Carlsson.
+
+        Now all compilers support explicit override control, this workaround can be removed.
+
+        * WebCoreSupport/ChromeClientWinCE.h:
+        * WebCoreSupport/ContextMenuClientWinCE.h:
+        * WebCoreSupport/DragClientWinCE.h:
+        * WebCoreSupport/EditorClientWinCE.h:
+        * WebCoreSupport/FrameLoaderClientWinCE.h:
+        * WebCoreSupport/FrameNetworkingContextWinCE.h:
+        * WebCoreSupport/InspectorClientWinCE.h:
+        * WebCoreSupport/PlatformStrategiesWinCE.h:
+
 2013-12-03  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Push Remote Inspector debugging connection management into JavaScriptCore

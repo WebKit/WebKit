@@ -35,7 +35,7 @@ class CSSGroupingRule : public CSSRule {
 public:
     virtual ~CSSGroupingRule();
 
-    virtual void reattach(StyleRuleBase*) OVERRIDE;
+    virtual void reattach(StyleRuleBase*) override;
 
     CSSRuleList* cssRules() const;
 

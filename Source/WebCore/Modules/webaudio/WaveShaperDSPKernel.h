@@ -45,8 +45,8 @@ public:
     // AudioDSPKernel
     virtual void process(const float* source, float* dest, size_t framesToProcess);
     virtual void reset();
-    virtual double tailTime() const OVERRIDE { return 0; }
-    virtual double latencyTime() const OVERRIDE;
+    virtual double tailTime() const override { return 0; }
+    virtual double latencyTime() const override;
 
     // Oversampling requires more resources, so let's only allocate them if needed.
     void lazyInitializeOversampling();

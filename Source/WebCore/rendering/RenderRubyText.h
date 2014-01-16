@@ -42,16 +42,16 @@ public:
 
     Element& element() const { return toElement(nodeForNonAnonymous()); }
 
-    virtual bool isChildAllowed(const RenderObject&, const RenderStyle&) const OVERRIDE;
+    virtual bool isChildAllowed(const RenderObject&, const RenderStyle&) const override;
 
 private:
-    virtual const char* renderName() const OVERRIDE { return "RenderRubyText"; }
-    virtual bool isRubyText() const OVERRIDE { return true; }
+    virtual const char* renderName() const override { return "RenderRubyText"; }
+    virtual bool isRubyText() const override { return true; }
 
-    virtual bool avoidsFloats() const OVERRIDE;
+    virtual bool avoidsFloats() const override;
 
-    virtual ETextAlign textAlignmentForLine(bool endsWithSoftBreak) const OVERRIDE;
-    virtual void adjustInlineDirectionLineBounds(int expansionOpportunityCount, float& logicalLeft, float& logicalWidth) const OVERRIDE;
+    virtual ETextAlign textAlignmentForLine(bool endsWithSoftBreak) const override;
+    virtual void adjustInlineDirectionLineBounds(int expansionOpportunityCount, float& logicalLeft, float& logicalWidth) const override;
 };
 
 } // namespace WebCore

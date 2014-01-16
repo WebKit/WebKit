@@ -42,17 +42,17 @@ public:
 private:
     InbandWebVTTTextTrack(ScriptExecutionContext*, TextTrackClient*, PassRefPtr<InbandTextTrackPrivate>);
 
-    virtual void parseWebVTTCueData(InbandTextTrackPrivate*, const char* data, unsigned length) OVERRIDE;
+    virtual void parseWebVTTCueData(InbandTextTrackPrivate*, const char* data, unsigned length) override;
 
-    virtual void newCuesParsed() OVERRIDE;
+    virtual void newCuesParsed() override;
 #if ENABLE(WEBVTT_REGIONS)
-    virtual void newRegionsParsed() OVERRIDE;
+    virtual void newRegionsParsed() override;
 #endif
-    virtual void fileFailedToParse() OVERRIDE;
+    virtual void fileFailedToParse() override;
 
-    virtual void addGenericCue(InbandTextTrackPrivate*, PassRefPtr<GenericCueData>) OVERRIDE { ASSERT_NOT_REACHED(); }
-    virtual void updateGenericCue(InbandTextTrackPrivate*, GenericCueData*) OVERRIDE { ASSERT_NOT_REACHED(); }
-    virtual void removeGenericCue(InbandTextTrackPrivate*, GenericCueData*) OVERRIDE { ASSERT_NOT_REACHED(); }
+    virtual void addGenericCue(InbandTextTrackPrivate*, PassRefPtr<GenericCueData>) override { ASSERT_NOT_REACHED(); }
+    virtual void updateGenericCue(InbandTextTrackPrivate*, GenericCueData*) override { ASSERT_NOT_REACHED(); }
+    virtual void removeGenericCue(InbandTextTrackPrivate*, GenericCueData*) override { ASSERT_NOT_REACHED(); }
 
     OwnPtr<WebVTTParser> m_webVTTParser;
 };

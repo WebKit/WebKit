@@ -38,7 +38,7 @@ public:
     // The initialization vector. MUST be 16 bytes.
     std::array<char, 16> iv;
 
-    virtual Class parametersClass() const OVERRIDE { return Class::AesCbcParams; }
+    virtual Class parametersClass() const override { return Class::AesCbcParams; }
 };
 
 CRYPTO_ALGORITHM_PARAMETERS_CASTS(AesCbcParams)

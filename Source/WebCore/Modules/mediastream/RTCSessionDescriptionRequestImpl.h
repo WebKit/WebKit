@@ -48,11 +48,11 @@ public:
     static PassRefPtr<RTCSessionDescriptionRequestImpl> create(ScriptExecutionContext*, PassRefPtr<RTCSessionDescriptionCallback>, PassRefPtr<RTCPeerConnectionErrorCallback>);
     virtual ~RTCSessionDescriptionRequestImpl();
 
-    virtual void requestSucceeded(PassRefPtr<RTCSessionDescriptionDescriptor>) OVERRIDE;
-    virtual void requestFailed(const String& error) OVERRIDE;
+    virtual void requestSucceeded(PassRefPtr<RTCSessionDescriptionDescriptor>) override;
+    virtual void requestFailed(const String& error) override;
 
     // ActiveDOMObject
-    virtual void stop() OVERRIDE;
+    virtual void stop() override;
 
 private:
     RTCSessionDescriptionRequestImpl(ScriptExecutionContext*, PassRefPtr<RTCSessionDescriptionCallback>, PassRefPtr<RTCPeerConnectionErrorCallback>);

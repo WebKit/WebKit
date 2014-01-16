@@ -79,36 +79,36 @@ public:
     void abort();
 
     // ResourceHandleClient methods
-    virtual void willSendRequestAsync(WebCore::ResourceHandle*, const WebCore::ResourceRequest&, const WebCore::ResourceResponse& redirectResponse) OVERRIDE;
-    virtual void didSendData(WebCore::ResourceHandle*, unsigned long long bytesSent, unsigned long long totalBytesToBeSent) OVERRIDE;
-    virtual void didReceiveResponseAsync(WebCore::ResourceHandle*, const WebCore::ResourceResponse&) OVERRIDE;
-    virtual void didReceiveData(WebCore::ResourceHandle*, const char*, unsigned, int encodedDataLength) OVERRIDE;
-    virtual void didReceiveBuffer(WebCore::ResourceHandle*, PassRefPtr<WebCore::SharedBuffer>, int encodedDataLength) OVERRIDE;
-    virtual void didFinishLoading(WebCore::ResourceHandle*, double finishTime) OVERRIDE;
-    virtual void didFail(WebCore::ResourceHandle*, const WebCore::ResourceError&) OVERRIDE;
-    virtual void wasBlocked(WebCore::ResourceHandle*) OVERRIDE;
-    virtual void cannotShowURL(WebCore::ResourceHandle*) OVERRIDE;
-    virtual bool shouldUseCredentialStorage(WebCore::ResourceHandle*) OVERRIDE;
-    virtual void shouldUseCredentialStorageAsync(WebCore::ResourceHandle*) OVERRIDE;
-    virtual void didReceiveAuthenticationChallenge(WebCore::ResourceHandle*, const WebCore::AuthenticationChallenge&) OVERRIDE;
-    virtual void didCancelAuthenticationChallenge(WebCore::ResourceHandle*, const WebCore::AuthenticationChallenge&) OVERRIDE;
-    virtual void receivedCancellation(WebCore::ResourceHandle*, const WebCore::AuthenticationChallenge&) OVERRIDE;
-    virtual bool usesAsyncCallbacks() OVERRIDE { return true; }
+    virtual void willSendRequestAsync(WebCore::ResourceHandle*, const WebCore::ResourceRequest&, const WebCore::ResourceResponse& redirectResponse) override;
+    virtual void didSendData(WebCore::ResourceHandle*, unsigned long long bytesSent, unsigned long long totalBytesToBeSent) override;
+    virtual void didReceiveResponseAsync(WebCore::ResourceHandle*, const WebCore::ResourceResponse&) override;
+    virtual void didReceiveData(WebCore::ResourceHandle*, const char*, unsigned, int encodedDataLength) override;
+    virtual void didReceiveBuffer(WebCore::ResourceHandle*, PassRefPtr<WebCore::SharedBuffer>, int encodedDataLength) override;
+    virtual void didFinishLoading(WebCore::ResourceHandle*, double finishTime) override;
+    virtual void didFail(WebCore::ResourceHandle*, const WebCore::ResourceError&) override;
+    virtual void wasBlocked(WebCore::ResourceHandle*) override;
+    virtual void cannotShowURL(WebCore::ResourceHandle*) override;
+    virtual bool shouldUseCredentialStorage(WebCore::ResourceHandle*) override;
+    virtual void shouldUseCredentialStorageAsync(WebCore::ResourceHandle*) override;
+    virtual void didReceiveAuthenticationChallenge(WebCore::ResourceHandle*, const WebCore::AuthenticationChallenge&) override;
+    virtual void didCancelAuthenticationChallenge(WebCore::ResourceHandle*, const WebCore::AuthenticationChallenge&) override;
+    virtual void receivedCancellation(WebCore::ResourceHandle*, const WebCore::AuthenticationChallenge&) override;
+    virtual bool usesAsyncCallbacks() override { return true; }
 
 #if USE(PROTECTION_SPACE_AUTH_CALLBACK)
-    virtual void canAuthenticateAgainstProtectionSpaceAsync(WebCore::ResourceHandle*, const WebCore::ProtectionSpace&) OVERRIDE;
+    virtual void canAuthenticateAgainstProtectionSpaceAsync(WebCore::ResourceHandle*, const WebCore::ProtectionSpace&) override;
 #endif
 
 #if USE(NETWORK_CFDATA_ARRAY_CALLBACK)
-    virtual bool supportsDataArray() OVERRIDE;
-    virtual void didReceiveDataArray(WebCore::ResourceHandle*, CFArrayRef) OVERRIDE;
+    virtual bool supportsDataArray() override;
+    virtual void didReceiveDataArray(WebCore::ResourceHandle*, CFArrayRef) override;
 #endif
 
 #if PLATFORM(MAC)
     static size_t fileBackedResourceMinimumSize();
 #if !PLATFORM(IOS)
-    virtual void willCacheResponseAsync(WebCore::ResourceHandle*, NSCachedURLResponse *) OVERRIDE;
-    virtual void willStopBufferingData(WebCore::ResourceHandle*, const char*, unsigned) OVERRIDE;
+    virtual void willCacheResponseAsync(WebCore::ResourceHandle*, NSCachedURLResponse *) override;
+    virtual void willStopBufferingData(WebCore::ResourceHandle*, const char*, unsigned) override;
 #endif
 #endif // PLATFORM(MAC)
 
@@ -148,8 +148,8 @@ private:
     NetworkResourceLoader(const NetworkResourceLoadParameters&, NetworkConnectionToWebProcess*, PassRefPtr<Messages::NetworkConnectionToWebProcess::PerformSynchronousLoad::DelayedReply>);
 
     // IPC::MessageSender
-    virtual IPC::Connection* messageSenderConnection() OVERRIDE;
-    virtual uint64_t messageSenderDestinationID() OVERRIDE { return m_identifier; }
+    virtual IPC::Connection* messageSenderConnection() override;
+    virtual uint64_t messageSenderDestinationID() override { return m_identifier; }
 
     void continueDidReceiveResponse();
 

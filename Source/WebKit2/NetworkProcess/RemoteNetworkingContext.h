@@ -45,7 +45,7 @@ public:
 
     static WebCore::NetworkStorageSession* privateBrowsingSession();
 
-    virtual bool shouldClearReferrerOnHTTPSToHTTPRedirect() const OVERRIDE { return m_shouldClearReferrerOnHTTPSToHTTPRedirect; }
+    virtual bool shouldClearReferrerOnHTTPSToHTTPRedirect() const override { return m_shouldClearReferrerOnHTTPSToHTTPRedirect; }
 
 private:
     RemoteNetworkingContext(bool privateBrowsingEnabled, bool shouldClearReferrerOnHTTPSToHTTPRedirect)
@@ -57,16 +57,16 @@ private:
 #endif
     { }
 
-    virtual bool isValid() const OVERRIDE;
-    virtual WebCore::NetworkStorageSession& storageSession() const OVERRIDE;
+    virtual bool isValid() const override;
+    virtual WebCore::NetworkStorageSession& storageSession() const override;
 
 #if PLATFORM(MAC)
     void setNeedsSiteSpecificQuirks(bool value) { m_needsSiteSpecificQuirks = value; }
-    virtual bool needsSiteSpecificQuirks() const OVERRIDE;
+    virtual bool needsSiteSpecificQuirks() const override;
     void setLocalFileContentSniffingEnabled(bool value) { m_localFileContentSniffingEnabled = value; }
-    virtual bool localFileContentSniffingEnabled() const OVERRIDE;
-    virtual RetainPtr<CFDataRef> sourceApplicationAuditData() const OVERRIDE;
-    virtual WebCore::ResourceError blockedError(const WebCore::ResourceRequest&) const OVERRIDE;
+    virtual bool localFileContentSniffingEnabled() const override;
+    virtual RetainPtr<CFDataRef> sourceApplicationAuditData() const override;
+    virtual WebCore::ResourceError blockedError(const WebCore::ResourceRequest&) const override;
 #endif
 
 #if USE(SOUP)

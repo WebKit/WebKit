@@ -67,7 +67,7 @@ public:
 
     void setVisibleScrollerThumbRect(const IntRect&);
 
-    virtual bool scrollbarsCanBeActive() const OVERRIDE FINAL;
+    virtual bool scrollbarsCanBeActive() const override FINAL;
 
 private:
     RetainPtr<id> m_scrollAnimationHelper;
@@ -89,10 +89,10 @@ private:
     virtual void scrollToOffsetWithoutAnimation(const FloatPoint&);
 
 #if ENABLE(RUBBER_BANDING)
-    virtual bool handleWheelEvent(const PlatformWheelEvent&) OVERRIDE;
+    virtual bool handleWheelEvent(const PlatformWheelEvent&) override;
 #endif
 
-    virtual void handleWheelEventPhase(PlatformWheelEventPhase) OVERRIDE;
+    virtual void handleWheelEventPhase(PlatformWheelEventPhase) override;
 
     virtual void cancelAnimations();
     
@@ -112,7 +112,7 @@ private:
     void didEndScrollGesture() const;
     void mayBeginScrollGesture() const;
 
-    virtual void lockOverlayScrollbarStateToHidden(bool shouldLockState) OVERRIDE FINAL;
+    virtual void lockOverlayScrollbarStateToHidden(bool shouldLockState) override FINAL;
 
     virtual void didAddVerticalScrollbar(Scrollbar*);
     virtual void willRemoveVerticalScrollbar(Scrollbar*);
@@ -124,7 +124,7 @@ private:
 
     virtual bool shouldScrollbarParticipateInHitTesting(Scrollbar*);
 
-    virtual void notifyContentAreaScrolled(const FloatSize& delta) OVERRIDE;
+    virtual void notifyContentAreaScrolled(const FloatSize& delta) override;
 
     // sendContentAreaScrolledSoon() will do the same work that sendContentAreaScrolled() does except
     // it does it after a zero-delay timer fires. This will prevent us from updating overlay scrollbar 
@@ -136,23 +136,23 @@ private:
 
     void immediateScrollTo(const FloatPoint&);
 
-    virtual bool isRubberBandInProgress() const OVERRIDE;
+    virtual bool isRubberBandInProgress() const override;
 
 #if ENABLE(RUBBER_BANDING)
     /// ScrollElasticityControllerClient member functions.
-    virtual IntSize stretchAmount() OVERRIDE;
-    virtual bool allowsHorizontalStretching() OVERRIDE;
-    virtual bool allowsVerticalStretching() OVERRIDE;
-    virtual bool pinnedInDirection(const FloatSize&) OVERRIDE;
-    virtual bool canScrollHorizontally() OVERRIDE;
-    virtual bool canScrollVertically() OVERRIDE;
-    virtual bool shouldRubberBandInDirection(ScrollDirection) OVERRIDE;
-    virtual WebCore::IntPoint absoluteScrollPosition() OVERRIDE;
-    virtual void immediateScrollByWithoutContentEdgeConstraints(const FloatSize&) OVERRIDE;
-    virtual void immediateScrollBy(const FloatSize&) OVERRIDE;
-    virtual void startSnapRubberbandTimer() OVERRIDE;
-    virtual void stopSnapRubberbandTimer() OVERRIDE;
-    virtual void adjustScrollPositionToBoundsIfNecessary() OVERRIDE;
+    virtual IntSize stretchAmount() override;
+    virtual bool allowsHorizontalStretching() override;
+    virtual bool allowsVerticalStretching() override;
+    virtual bool pinnedInDirection(const FloatSize&) override;
+    virtual bool canScrollHorizontally() override;
+    virtual bool canScrollVertically() override;
+    virtual bool shouldRubberBandInDirection(ScrollDirection) override;
+    virtual WebCore::IntPoint absoluteScrollPosition() override;
+    virtual void immediateScrollByWithoutContentEdgeConstraints(const FloatSize&) override;
+    virtual void immediateScrollBy(const FloatSize&) override;
+    virtual void startSnapRubberbandTimer() override;
+    virtual void stopSnapRubberbandTimer() override;
+    virtual void adjustScrollPositionToBoundsIfNecessary() override;
 
     bool pinnedInDirection(float deltaX, float deltaY);
     void snapRubberBandTimerFired(Timer<ScrollAnimatorMac>&);

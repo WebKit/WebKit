@@ -55,12 +55,12 @@ public:
     static void loadResourceSynchronously(BlobStorageData* blobData, const ResourceRequest& request, ResourceError& error, ResourceResponse& response, Vector<char>& data);
 
     // FileStreamClient methods.
-    virtual void didGetSize(long long) OVERRIDE;
-    virtual void didOpen(bool) OVERRIDE;
-    virtual void didRead(int) OVERRIDE;
+    virtual void didGetSize(long long) override;
+    virtual void didOpen(bool) override;
+    virtual void didRead(int) override;
 
     // ResourceHandle methods.
-    virtual void cancel() OVERRIDE;
+    virtual void cancel() override;
 
     void start();
     int readSync(char*, int);

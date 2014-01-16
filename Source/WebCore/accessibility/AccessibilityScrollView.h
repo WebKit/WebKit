@@ -37,44 +37,44 @@ class ScrollView;
 class AccessibilityScrollView : public AccessibilityObject {
 public:
     static PassRefPtr<AccessibilityScrollView> create(ScrollView*);    
-    virtual AccessibilityRole roleValue() const OVERRIDE { return ScrollAreaRole; }
+    virtual AccessibilityRole roleValue() const override { return ScrollAreaRole; }
     ScrollView* scrollView() const { return m_scrollView; }
 
     virtual ~AccessibilityScrollView();
-    virtual void detach(AccessibilityDetachmentType, AXObjectCache*) OVERRIDE;
+    virtual void detach(AccessibilityDetachmentType, AXObjectCache*) override;
 
 protected:
-    virtual ScrollableArea* getScrollableAreaIfScrollable() const OVERRIDE;
-    virtual void scrollTo(const IntPoint&) const OVERRIDE;
+    virtual ScrollableArea* getScrollableAreaIfScrollable() const override;
+    virtual void scrollTo(const IntPoint&) const override;
     
 private:
     explicit AccessibilityScrollView(ScrollView*);
     
-    virtual bool computeAccessibilityIsIgnored() const OVERRIDE;
-    virtual bool isAccessibilityScrollView() const OVERRIDE { return true; }
-    virtual bool isEnabled() const OVERRIDE { return true; }
+    virtual bool computeAccessibilityIsIgnored() const override;
+    virtual bool isAccessibilityScrollView() const override { return true; }
+    virtual bool isEnabled() const override { return true; }
     
-    virtual bool isAttachment() const OVERRIDE;
-    virtual Widget* widgetForAttachmentView() const OVERRIDE;
+    virtual bool isAttachment() const override;
+    virtual Widget* widgetForAttachmentView() const override;
     
-    virtual AccessibilityObject* scrollBar(AccessibilityOrientation) OVERRIDE;
-    virtual void addChildren() OVERRIDE;
-    virtual void clearChildren() OVERRIDE;
-    virtual AccessibilityObject* accessibilityHitTest(const IntPoint&) const OVERRIDE;
-    virtual void updateChildrenIfNecessary() OVERRIDE;
-    virtual void setNeedsToUpdateChildren() OVERRIDE { m_childrenDirty = true; }
+    virtual AccessibilityObject* scrollBar(AccessibilityOrientation) override;
+    virtual void addChildren() override;
+    virtual void clearChildren() override;
+    virtual AccessibilityObject* accessibilityHitTest(const IntPoint&) const override;
+    virtual void updateChildrenIfNecessary() override;
+    virtual void setNeedsToUpdateChildren() override { m_childrenDirty = true; }
     void updateScrollbars();
-    virtual void setFocused(bool) OVERRIDE;
-    virtual bool canSetFocusAttribute() const OVERRIDE;
-    virtual bool isFocused() const OVERRIDE;
+    virtual void setFocused(bool) override;
+    virtual bool canSetFocusAttribute() const override;
+    virtual bool isFocused() const override;
     
-    virtual FrameView* documentFrameView() const OVERRIDE;
-    virtual LayoutRect elementRect() const OVERRIDE;
-    virtual AccessibilityObject* parentObject() const OVERRIDE;
-    virtual AccessibilityObject* parentObjectIfExists() const OVERRIDE;
+    virtual FrameView* documentFrameView() const override;
+    virtual LayoutRect elementRect() const override;
+    virtual AccessibilityObject* parentObject() const override;
+    virtual AccessibilityObject* parentObjectIfExists() const override;
     
     AccessibilityObject* webAreaObject() const;
-    virtual AccessibilityObject* firstChild() const OVERRIDE { return webAreaObject(); }
+    virtual AccessibilityObject* firstChild() const override { return webAreaObject(); }
     AccessibilityScrollbar* addChildScrollbar(Scrollbar*);
     void removeChildScrollbar(AccessibilityObject*);
     

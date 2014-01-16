@@ -69,8 +69,8 @@ private:
     StorageManager();
 
     // IPC::Connection::WorkQueueMessageReceiver.
-    virtual void didReceiveMessage(IPC::Connection*, IPC::MessageDecoder&) OVERRIDE;
-    virtual void didReceiveSyncMessage(IPC::Connection*, IPC::MessageDecoder&, std::unique_ptr<IPC::MessageEncoder>& replyEncoder) OVERRIDE;
+    virtual void didReceiveMessage(IPC::Connection*, IPC::MessageDecoder&) override;
+    virtual void didReceiveSyncMessage(IPC::Connection*, IPC::MessageDecoder&, std::unique_ptr<IPC::MessageEncoder>& replyEncoder) override;
 
     // Message handlers.
     void createLocalStorageMap(IPC::Connection*, uint64_t storageMapID, uint64_t storageNamespaceID, const SecurityOriginData&);

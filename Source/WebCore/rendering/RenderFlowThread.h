@@ -63,13 +63,13 @@ public:
     RenderFlowThread(Document&, PassRef<RenderStyle>);
     virtual ~RenderFlowThread() { };
     
-    virtual bool isRenderFlowThread() const OVERRIDE FINAL { return true; }
+    virtual bool isRenderFlowThread() const override FINAL { return true; }
 
-    virtual void layout() OVERRIDE FINAL;
+    virtual void layout() override FINAL;
 
     // Always create a RenderLayer for the RenderFlowThread so that we 
     // can easily avoid drawing the children directly.
-    virtual bool requiresLayer() const OVERRIDE FINAL { return true; }
+    virtual bool requiresLayer() const override FINAL { return true; }
     
     virtual void removeFlowChildInfo(RenderObject*);
 #ifndef NDEBUG
@@ -80,10 +80,10 @@ public:
     virtual void removeRegionFromThread(RenderRegion*);
     const RenderRegionList& renderRegionList() const { return m_regionList; }
 
-    virtual void updateLogicalWidth() OVERRIDE FINAL;
-    virtual void computeLogicalHeight(LayoutUnit logicalHeight, LayoutUnit logicalTop, LogicalExtentComputedValues&) const OVERRIDE;
+    virtual void updateLogicalWidth() override FINAL;
+    virtual void computeLogicalHeight(LayoutUnit logicalHeight, LayoutUnit logicalTop, LogicalExtentComputedValues&) const override;
 
-    virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction) OVERRIDE;
+    virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction) override;
 
     bool hasRegions() const { return m_regionList.size(); }
     virtual void regionChangedWritingMode(RenderRegion*) { }
@@ -94,7 +94,7 @@ public:
 
     static PassRef<RenderStyle> createFlowThreadStyle(RenderStyle* parentStyle);
 
-    virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle) OVERRIDE;
+    virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle) override;
 
     void repaintRectangleInRegions(const LayoutRect&, bool immediate) const;
     
@@ -227,7 +227,7 @@ protected:
     // no regions have been generated yet.
     virtual LayoutUnit initialLogicalWidth() const { return 0; };
 
-    virtual void mapLocalToContainer(const RenderLayerModelObject* repaintContainer, TransformState&, MapCoordinatesFlags = ApplyContainerFlip, bool* wasFixed = 0) const OVERRIDE;
+    virtual void mapLocalToContainer(const RenderLayerModelObject* repaintContainer, TransformState&, MapCoordinatesFlags = ApplyContainerFlip, bool* wasFixed = 0) const override;
 
     void updateRegionsFlowThreadPortionRect(const RenderRegion* = 0);
     bool shouldRepaint(const LayoutRect&) const;

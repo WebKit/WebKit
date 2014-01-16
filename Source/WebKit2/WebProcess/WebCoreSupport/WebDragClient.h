@@ -42,18 +42,18 @@ public:
     }
 
 private:
-    virtual void willPerformDragDestinationAction(WebCore::DragDestinationAction, WebCore::DragData&) OVERRIDE;
-    virtual void willPerformDragSourceAction(WebCore::DragSourceAction, const WebCore::IntPoint&, WebCore::Clipboard&) OVERRIDE;
-    virtual WebCore::DragDestinationAction actionMaskForDrag(WebCore::DragData&) OVERRIDE;
-    virtual WebCore::DragSourceAction dragSourceActionMaskForPoint(const WebCore::IntPoint& windowPoint) OVERRIDE;
+    virtual void willPerformDragDestinationAction(WebCore::DragDestinationAction, WebCore::DragData&) override;
+    virtual void willPerformDragSourceAction(WebCore::DragSourceAction, const WebCore::IntPoint&, WebCore::Clipboard&) override;
+    virtual WebCore::DragDestinationAction actionMaskForDrag(WebCore::DragData&) override;
+    virtual WebCore::DragSourceAction dragSourceActionMaskForPoint(const WebCore::IntPoint& windowPoint) override;
 
-    virtual void startDrag(WebCore::DragImageRef, const WebCore::IntPoint& dragImageOrigin, const WebCore::IntPoint& eventPos, WebCore::Clipboard&, WebCore::Frame&, bool linkDrag = false) OVERRIDE;
+    virtual void startDrag(WebCore::DragImageRef, const WebCore::IntPoint& dragImageOrigin, const WebCore::IntPoint& eventPos, WebCore::Clipboard&, WebCore::Frame&, bool linkDrag = false) override;
 
 #if PLATFORM(MAC)
-    virtual void declareAndWriteDragImage(const String& pasteboardName, WebCore::Element&, const WebCore::URL&, const String&, WebCore::Frame*) OVERRIDE;
+    virtual void declareAndWriteDragImage(const String& pasteboardName, WebCore::Element&, const WebCore::URL&, const String&, WebCore::Frame*) override;
 #endif
 
-    virtual void dragControllerDestroyed() OVERRIDE;
+    virtual void dragControllerDestroyed() override;
 
     WebPage* m_page;
 };

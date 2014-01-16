@@ -71,10 +71,10 @@ public:
     virtual void removeAllClientsFromCache(bool markForInvalidation = true);
     virtual void removeClientFromCache(RenderObject&, bool markForInvalidation = true);
 
-    virtual bool applyResource(RenderElement&, const RenderStyle&, GraphicsContext*&, unsigned short resourceMode) OVERRIDE;
-    virtual void postApplyResource(RenderElement&, GraphicsContext*&, unsigned short resourceMode, const Path*, const RenderSVGShape*) OVERRIDE;
+    virtual bool applyResource(RenderElement&, const RenderStyle&, GraphicsContext*&, unsigned short resourceMode) override;
+    virtual void postApplyResource(RenderElement&, GraphicsContext*&, unsigned short resourceMode, const Path*, const RenderSVGShape*) override;
 
-    virtual FloatRect resourceBoundingBox(const RenderObject&) OVERRIDE;
+    virtual FloatRect resourceBoundingBox(const RenderObject&) override;
 
     std::unique_ptr<SVGFilterBuilder> buildPrimitives(SVGFilter*);
 
@@ -90,8 +90,8 @@ public:
 private:
     void element() const WTF_DELETED_FUNCTION;
 
-    virtual const char* renderName() const OVERRIDE { return "RenderSVGResourceFilter"; }
-    virtual bool isSVGResourceFilter() const OVERRIDE { return true; }
+    virtual const char* renderName() const override { return "RenderSVGResourceFilter"; }
+    virtual bool isSVGResourceFilter() const override { return true; }
 
     bool fitsInMaximumImageSize(const FloatSize&, FloatSize&);
 

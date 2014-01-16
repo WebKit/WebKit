@@ -40,20 +40,20 @@ public:
     {
     }
 
-    virtual void ref() OVERRIDE;
-    virtual void deref() OVERRIDE;
+    virtual void ref() override;
+    virtual void deref() override;
 
-    virtual unsigned length() const OVERRIDE;
-    virtual const AtomicString item(unsigned index) const OVERRIDE;
+    virtual unsigned length() const override;
+    virtual const AtomicString item(unsigned index) const override;
 
-    virtual Element* element() const OVERRIDE;
+    virtual Element* element() const override;
 
     void clearValueForQuirksMode() { m_classNamesForQuirksMode.clear(); }
 
 private:
-    virtual bool containsInternal(const AtomicString&) const OVERRIDE;
-    virtual AtomicString value() const OVERRIDE;
-    virtual void setValue(const AtomicString&) OVERRIDE;
+    virtual bool containsInternal(const AtomicString&) const override;
+    virtual AtomicString value() const override;
+    virtual void setValue(const AtomicString&) override;
 
     const SpaceSplitString& classNames() const;
 

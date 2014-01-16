@@ -58,7 +58,7 @@ public:
     Document* emma() { return 0; }
 
     // Event
-    virtual EventInterface eventInterface() const OVERRIDE;
+    virtual EventInterface eventInterface() const override;
 
 private:
     SpeechRecognitionEvent();

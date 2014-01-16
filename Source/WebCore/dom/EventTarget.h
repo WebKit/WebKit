@@ -161,8 +161,8 @@ namespace WebCore {
 
     class EventTargetWithInlineData : public EventTarget {
     protected:
-        virtual EventTargetData* eventTargetData() OVERRIDE FINAL { return &m_eventTargetData; }
-        virtual EventTargetData& ensureEventTargetData() OVERRIDE FINAL { return m_eventTargetData; }
+        virtual EventTargetData* eventTargetData() override FINAL { return &m_eventTargetData; }
+        virtual EventTargetData& ensureEventTargetData() override FINAL { return m_eventTargetData; }
     private:
         EventTargetData m_eventTargetData;
     };

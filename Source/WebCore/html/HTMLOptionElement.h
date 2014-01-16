@@ -60,7 +60,7 @@ public:
 
     bool ownElementDisabled() const { return m_disabled; }
 
-    virtual bool isDisabledFormControl() const OVERRIDE;
+    virtual bool isDisabledFormControl() const override;
 
     String textIndentedToRespectGroupLabel() const;
 
@@ -69,24 +69,24 @@ public:
 private:
     HTMLOptionElement(const QualifiedName&, Document&);
 
-    virtual bool isFocusable() const OVERRIDE;
-    virtual bool rendererIsNeeded(const RenderStyle&) OVERRIDE { return false; }
-    virtual void didAttachRenderers() OVERRIDE;
-    virtual void willDetachRenderers() OVERRIDE;
+    virtual bool isFocusable() const override;
+    virtual bool rendererIsNeeded(const RenderStyle&) override { return false; }
+    virtual void didAttachRenderers() override;
+    virtual void willDetachRenderers() override;
 
-    virtual void parseAttribute(const QualifiedName&, const AtomicString&) OVERRIDE;
+    virtual void parseAttribute(const QualifiedName&, const AtomicString&) override;
 
-    virtual InsertionNotificationRequest insertedInto(ContainerNode&) OVERRIDE;
-    virtual void accessKeyAction(bool) OVERRIDE;
+    virtual InsertionNotificationRequest insertedInto(ContainerNode&) override;
+    virtual void accessKeyAction(bool) override;
 
-    virtual void childrenChanged(const ChildChange&) OVERRIDE;
+    virtual void childrenChanged(const ChildChange&) override;
 
     // <option> never has a renderer so we manually manage a cached style.
     void updateNonRenderStyle();
-    virtual RenderStyle* nonRendererStyle() const OVERRIDE;
-    virtual PassRefPtr<RenderStyle> customStyleForRenderer() OVERRIDE;
+    virtual RenderStyle* nonRendererStyle() const override;
+    virtual PassRefPtr<RenderStyle> customStyleForRenderer() override;
 
-    virtual void didRecalcStyle(Style::Change) OVERRIDE;
+    virtual void didRecalcStyle(Style::Change) override;
 
     String collectOptionInnerText() const;
 

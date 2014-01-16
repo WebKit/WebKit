@@ -71,15 +71,15 @@ public:
 private:
     HTMLTableElement(const QualifiedName&, Document&);
 
-    virtual void parseAttribute(const QualifiedName&, const AtomicString&) OVERRIDE;
-    virtual bool isPresentationAttribute(const QualifiedName&) const OVERRIDE;
-    virtual void collectStyleForPresentationAttribute(const QualifiedName&, const AtomicString&, MutableStyleProperties&) OVERRIDE;
-    virtual bool isURLAttribute(const Attribute&) const OVERRIDE;
+    virtual void parseAttribute(const QualifiedName&, const AtomicString&) override;
+    virtual bool isPresentationAttribute(const QualifiedName&) const override;
+    virtual void collectStyleForPresentationAttribute(const QualifiedName&, const AtomicString&, MutableStyleProperties&) override;
+    virtual bool isURLAttribute(const Attribute&) const override;
 
     // Used to obtain either a solid or outset border decl and to deal with the frame and rules attributes.
-    virtual const StyleProperties* additionalPresentationAttributeStyle() OVERRIDE;
+    virtual const StyleProperties* additionalPresentationAttributeStyle() override;
 
-    virtual void addSubresourceAttributeURLs(ListHashSet<URL>&) const OVERRIDE;
+    virtual void addSubresourceAttributeURLs(ListHashSet<URL>&) const override;
 
     enum TableRules { UnsetRules, NoneRules, GroupsRules, RowsRules, ColsRules, AllRules };
     enum CellBorders { NoBorders, SolidBorders, InsetBorders, SolidBordersColsOnly, SolidBordersRowsOnly };

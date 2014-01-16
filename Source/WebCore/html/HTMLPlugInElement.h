@@ -77,31 +77,31 @@ public:
     bool isCapturingMouseEvents() const { return m_isCapturingMouseEvents; }
     void setIsCapturingMouseEvents(bool capturing) { m_isCapturingMouseEvents = capturing; }
 
-    virtual bool canContainRangeEndPoint() const OVERRIDE { return false; }
+    virtual bool canContainRangeEndPoint() const override { return false; }
 
     bool canProcessDrag() const;
 
 #if PLATFORM(IOS)
-    virtual bool willRespondToMouseMoveEvents() OVERRIDE { return false; }
+    virtual bool willRespondToMouseMoveEvents() override { return false; }
 #endif
-    virtual bool willRespondToMouseClickEvents() OVERRIDE;
+    virtual bool willRespondToMouseClickEvents() override;
 
     virtual bool isPlugInImageElement() const { return false; }
 
 protected:
     HTMLPlugInElement(const QualifiedName& tagName, Document&);
 
-    virtual void willDetachRenderers() OVERRIDE;
-    virtual bool isPresentationAttribute(const QualifiedName&) const OVERRIDE;
-    virtual void collectStyleForPresentationAttribute(const QualifiedName&, const AtomicString&, MutableStyleProperties&) OVERRIDE;
+    virtual void willDetachRenderers() override;
+    virtual bool isPresentationAttribute(const QualifiedName&) const override;
+    virtual void collectStyleForPresentationAttribute(const QualifiedName&, const AtomicString&, MutableStyleProperties&) override;
 
     virtual bool useFallbackContent() const { return false; }
 
-    virtual void defaultEventHandler(Event*) OVERRIDE;
+    virtual void defaultEventHandler(Event*) override;
 
     virtual bool requestObject(const String& url, const String& mimeType, const Vector<String>& paramNames, const Vector<String>& paramValues);
-    virtual RenderPtr<RenderElement> createElementRenderer(PassRef<RenderStyle>) OVERRIDE;
-    virtual void didAddUserAgentShadowRoot(ShadowRoot*) OVERRIDE;
+    virtual RenderPtr<RenderElement> createElementRenderer(PassRef<RenderStyle>) override;
+    virtual void didAddUserAgentShadowRoot(ShadowRoot*) override;
 
     // Subclasses should use guardedDispatchBeforeLoadEvent instead of calling dispatchBeforeLoadEvent directly.
     bool guardedDispatchBeforeLoadEvent(const String& sourceURL);
@@ -114,14 +114,14 @@ private:
 
     bool dispatchBeforeLoadEvent(const String& sourceURL); // Not implemented, generates a compile error if subclasses call this by mistake.
 
-    virtual bool areAuthorShadowsAllowed() const OVERRIDE { return false; }
+    virtual bool areAuthorShadowsAllowed() const override { return false; }
 
     virtual RenderWidget* renderWidgetForJSBindings() const = 0;
 
-    virtual bool supportsFocus() const OVERRIDE;
+    virtual bool supportsFocus() const override;
 
-    virtual bool isKeyboardFocusable(KeyboardEvent*) const OVERRIDE;
-    virtual bool isPluginElement() const OVERRIDE FINAL;
+    virtual bool isKeyboardFocusable(KeyboardEvent*) const override;
+    virtual bool isPluginElement() const override FINAL;
 
     RefPtr<JSC::Bindings::Instance> m_instance;
     Timer<HTMLPlugInElement> m_swapRendererTimer;

@@ -40,11 +40,11 @@ public:
 private:
     AppendNodeCommand(PassRefPtr<ContainerNode> parent, PassRefPtr<Node>);
 
-    virtual void doApply() OVERRIDE;
-    virtual void doUnapply() OVERRIDE;
+    virtual void doApply() override;
+    virtual void doUnapply() override;
 
 #ifndef NDEBUG
-    virtual void getNodesInCommand(HashSet<Node*>&) OVERRIDE;
+    virtual void getNodesInCommand(HashSet<Node*>&) override;
 #endif
 
     RefPtr<ContainerNode> m_parent;

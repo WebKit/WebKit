@@ -56,15 +56,15 @@ private:
     {
     }
 
-    virtual void willSendRequest(ResourceHandle*, ResourceRequest&, const ResourceResponse& /*redirectResponse*/) OVERRIDE;
-    virtual bool shouldUseCredentialStorage(ResourceHandle*) OVERRIDE;
-    virtual void didReceiveAuthenticationChallenge(ResourceHandle*, const AuthenticationChallenge&) OVERRIDE;
-    virtual void didReceiveResponse(ResourceHandle*, const ResourceResponse&) OVERRIDE;
-    virtual void didReceiveData(ResourceHandle*, const char*, unsigned, int /*encodedDataLength*/) OVERRIDE;
-    virtual void didFinishLoading(ResourceHandle*, double /*finishTime*/) OVERRIDE;
-    virtual void didFail(ResourceHandle*, const ResourceError&) OVERRIDE;
+    virtual void willSendRequest(ResourceHandle*, ResourceRequest&, const ResourceResponse& /*redirectResponse*/) override;
+    virtual bool shouldUseCredentialStorage(ResourceHandle*) override;
+    virtual void didReceiveAuthenticationChallenge(ResourceHandle*, const AuthenticationChallenge&) override;
+    virtual void didReceiveResponse(ResourceHandle*, const ResourceResponse&) override;
+    virtual void didReceiveData(ResourceHandle*, const char*, unsigned, int /*encodedDataLength*/) override;
+    virtual void didFinishLoading(ResourceHandle*, double /*finishTime*/) override;
+    virtual void didFail(ResourceHandle*, const ResourceError&) override;
 #if USE(PROTECTION_SPACE_AUTH_CALLBACK)
-    virtual bool canAuthenticateAgainstProtectionSpace(ResourceHandle*, const ProtectionSpace&) OVERRIDE;
+    virtual bool canAuthenticateAgainstProtectionSpace(ResourceHandle*, const ProtectionSpace&) override;
 #endif
 
     bool m_allowStoredCredentials;

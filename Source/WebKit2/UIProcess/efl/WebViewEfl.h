@@ -55,23 +55,23 @@ public:
 private:
     WebViewEfl(WebContext*, WebPageGroup*);
 
-    void setCursor(const WebCore::Cursor&) OVERRIDE;
-    PassRefPtr<WebPopupMenuProxy> createPopupMenuProxy(WebPageProxy*) OVERRIDE;
-    void updateTextInputState() OVERRIDE;
-    void handleDownloadRequest(DownloadProxy*) OVERRIDE;
+    void setCursor(const WebCore::Cursor&) override;
+    PassRefPtr<WebPopupMenuProxy> createPopupMenuProxy(WebPageProxy*) override;
+    void updateTextInputState() override;
+    void handleDownloadRequest(DownloadProxy*) override;
 
 #if ENABLE(CONTEXT_MENUS)
-    PassRefPtr<WebContextMenuProxy> createContextMenuProxy(WebPageProxy*) OVERRIDE;
+    PassRefPtr<WebContextMenuProxy> createContextMenuProxy(WebPageProxy*) override;
 #endif
 
 #if ENABLE(FULLSCREEN_API)
     // WebFullScreenManagerProxyClient
-    virtual void closeFullScreenManager() OVERRIDE FINAL { }
-    virtual bool isFullScreen() OVERRIDE FINAL;
-    virtual void enterFullScreen() OVERRIDE FINAL;
-    virtual void exitFullScreen() OVERRIDE FINAL;
-    virtual void beganEnterFullScreen(const WebCore::IntRect&, const WebCore::IntRect&) OVERRIDE FINAL { }
-    virtual void beganExitFullScreen(const WebCore::IntRect&, const WebCore::IntRect&) OVERRIDE FINAL { }
+    virtual void closeFullScreenManager() override FINAL { }
+    virtual bool isFullScreen() override FINAL;
+    virtual void enterFullScreen() override FINAL;
+    virtual void exitFullScreen() override FINAL;
+    virtual void beganEnterFullScreen(const WebCore::IntRect&, const WebCore::IntRect&) override FINAL { }
+    virtual void beganExitFullScreen(const WebCore::IntRect&, const WebCore::IntRect&) override FINAL { }
 #endif
 
 private:

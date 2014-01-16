@@ -63,22 +63,22 @@ class WebInspectorClient : public WebCore::InspectorClient, public WebCore::Insp
 public:
     explicit WebInspectorClient(WebView *);
 
-    virtual void inspectorDestroyed() OVERRIDE;
+    virtual void inspectorDestroyed() override;
 
-    virtual WebCore::InspectorFrontendChannel* openInspectorFrontend(WebCore::InspectorController*) OVERRIDE;
-    virtual void closeInspectorFrontend() OVERRIDE;
-    virtual void bringFrontendToFront() OVERRIDE;
-    virtual void didResizeMainFrame(WebCore::Frame*) OVERRIDE;
+    virtual WebCore::InspectorFrontendChannel* openInspectorFrontend(WebCore::InspectorController*) override;
+    virtual void closeInspectorFrontend() override;
+    virtual void bringFrontendToFront() override;
+    virtual void didResizeMainFrame(WebCore::Frame*) override;
 
-    virtual void highlight() OVERRIDE;
-    virtual void hideHighlight() OVERRIDE;
+    virtual void highlight() override;
+    virtual void hideHighlight() override;
 
-    virtual void indicate() OVERRIDE;
-    virtual void hideIndication() OVERRIDE;
+    virtual void indicate() override;
+    virtual void hideIndication() override;
 
-    virtual void didSetSearchingForNode(bool) OVERRIDE;
+    virtual void didSetSearchingForNode(bool) override;
 
-    virtual bool sendMessageToFrontend(const String&) OVERRIDE;
+    virtual bool sendMessageToFrontend(const String&) override;
 
     bool inspectorStartsAttached();
     void setInspectorStartsAttached(bool);
@@ -117,16 +117,16 @@ public:
 
     virtual void setAttachedWindowHeight(unsigned height);
     virtual void setAttachedWindowWidth(unsigned height);
-    virtual void setToolbarHeight(unsigned) OVERRIDE;
+    virtual void setToolbarHeight(unsigned) override;
 
     virtual void inspectedURLChanged(const String& newURL);
 
 private:
     void updateWindowTitle() const;
 
-    virtual bool canSave() OVERRIDE { return true; }
-    virtual void save(const String& url, const String& content, bool forceSaveAs, bool base64Encoded) OVERRIDE;
-    virtual void append(const String& url, const String& content) OVERRIDE;
+    virtual bool canSave() override { return true; }
+    virtual void save(const String& url, const String& content, bool forceSaveAs, bool base64Encoded) override;
+    virtual void append(const String& url, const String& content) override;
 
 #if !PLATFORM(IOS)
     WebView* m_inspectedWebView;

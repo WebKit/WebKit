@@ -50,29 +50,29 @@ public:
     
     void setHTMLElement(HTMLElement* element) { m_optionElement = element; }
     
-    virtual AccessibilityRole roleValue() const OVERRIDE { return ListBoxOptionRole; }
-    virtual bool isSelected() const OVERRIDE;
-    virtual bool isEnabled() const OVERRIDE;
-    virtual bool isSelectedOptionActive() const OVERRIDE;
-    virtual String stringValue() const OVERRIDE;
-    virtual Element* actionElement() const OVERRIDE;
-    virtual Node* node() const OVERRIDE { return m_optionElement; }
-    virtual void setSelected(bool) OVERRIDE;
-    virtual bool canSetSelectedAttribute() const OVERRIDE;
+    virtual AccessibilityRole roleValue() const override { return ListBoxOptionRole; }
+    virtual bool isSelected() const override;
+    virtual bool isEnabled() const override;
+    virtual bool isSelectedOptionActive() const override;
+    virtual String stringValue() const override;
+    virtual Element* actionElement() const override;
+    virtual Node* node() const override { return m_optionElement; }
+    virtual void setSelected(bool) override;
+    virtual bool canSetSelectedAttribute() const override;
 
-    virtual LayoutRect elementRect() const OVERRIDE;
-    virtual AccessibilityObject* parentObject() const OVERRIDE;
-    virtual bool isListBoxOption() const OVERRIDE FINAL { return true; }
+    virtual LayoutRect elementRect() const override;
+    virtual AccessibilityObject* parentObject() const override;
+    virtual bool isListBoxOption() const override FINAL { return true; }
 
 private:
     HTMLElement* m_optionElement;
     
-    virtual bool canHaveChildren() const OVERRIDE { return false; }
+    virtual bool canHaveChildren() const override { return false; }
     HTMLSelectElement* listBoxOptionParentNode() const;
     int listBoxOptionIndex() const;
     IntRect listBoxOptionRect() const;
     AccessibilityObject* listBoxOptionAccessibilityObject(HTMLElement*) const;
-    virtual bool computeAccessibilityIsIgnored() const OVERRIDE;
+    virtual bool computeAccessibilityIsIgnored() const override;
 };
 
 ACCESSIBILITY_OBJECT_TYPE_CASTS(AccessibilityListBoxOption, isListBoxOption())

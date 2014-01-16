@@ -43,27 +43,27 @@ public:
     virtual ~ColorInputType();
 
     // ColorChooserClient implementation.
-    virtual void didChooseColor(const Color&) OVERRIDE;
-    virtual void didEndChooser() OVERRIDE;
-    virtual IntRect elementRectRelativeToRootView() const OVERRIDE;
-    virtual Color currentColor() OVERRIDE;
-    virtual bool shouldShowSuggestions() const OVERRIDE;
-    virtual Vector<Color> suggestions() const OVERRIDE;
+    virtual void didChooseColor(const Color&) override;
+    virtual void didEndChooser() override;
+    virtual IntRect elementRectRelativeToRootView() const override;
+    virtual Color currentColor() override;
+    virtual bool shouldShowSuggestions() const override;
+    virtual Vector<Color> suggestions() const override;
 
 private:
-    virtual void attach() OVERRIDE;
-    virtual bool isColorControl() const OVERRIDE;
-    virtual const AtomicString& formControlType() const OVERRIDE;
-    virtual bool supportsRequired() const OVERRIDE;
-    virtual String fallbackValue() const OVERRIDE;
-    virtual String sanitizeValue(const String&) const OVERRIDE;
-    virtual void createShadowSubtree() OVERRIDE;
-    virtual void setValue(const String&, bool valueChanged, TextFieldEventBehavior) OVERRIDE;
-    virtual void handleDOMActivateEvent(Event*) OVERRIDE;
-    virtual void detach() OVERRIDE;
-    virtual bool shouldRespectListAttribute() OVERRIDE;
-    virtual bool typeMismatchFor(const String&) const OVERRIDE;
-    virtual bool shouldResetOnDocumentActivation() OVERRIDE;
+    virtual void attach() override;
+    virtual bool isColorControl() const override;
+    virtual const AtomicString& formControlType() const override;
+    virtual bool supportsRequired() const override;
+    virtual String fallbackValue() const override;
+    virtual String sanitizeValue(const String&) const override;
+    virtual void createShadowSubtree() override;
+    virtual void setValue(const String&, bool valueChanged, TextFieldEventBehavior) override;
+    virtual void handleDOMActivateEvent(Event*) override;
+    virtual void detach() override;
+    virtual bool shouldRespectListAttribute() override;
+    virtual bool typeMismatchFor(const String&) const override;
+    virtual bool shouldResetOnDocumentActivation() override;
 
     Color valueAsColor() const;
     void endColorChooser();

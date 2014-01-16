@@ -96,12 +96,12 @@ public:
     
     const PlatformKeyboardEvent* keyEvent() const { return m_keyEvent.get(); }
 
-    virtual int keyCode() const OVERRIDE; // key code for keydown and keyup, character for keypress
-    virtual int charCode() const OVERRIDE; // character code for keypress, 0 for keydown and keyup
+    virtual int keyCode() const override; // key code for keydown and keyup, character for keypress
+    virtual int charCode() const override; // character code for keypress, 0 for keydown and keyup
 
-    virtual EventInterface eventInterface() const OVERRIDE;
-    virtual bool isKeyboardEvent() const OVERRIDE;
-    virtual int which() const OVERRIDE;
+    virtual EventInterface eventInterface() const override;
+    virtual bool isKeyboardEvent() const override;
+    virtual int which() const override;
 
 #if PLATFORM(MAC)
     // We only have this need to store keypress command info on the Mac.

@@ -41,10 +41,10 @@ public:
     TextTrackRepresentationIOS(TextTrackRepresentationClient*);
     virtual ~TextTrackRepresentationIOS();
 
-    virtual void update() OVERRIDE;
-    virtual PlatformLayer* platformLayer() OVERRIDE { return m_layer.get(); }
-    virtual void setContentScale(float) OVERRIDE;
-    virtual IntRect bounds() const OVERRIDE;
+    virtual void update() override;
+    virtual PlatformLayer* platformLayer() override { return m_layer.get(); }
+    virtual void setContentScale(float) override;
+    virtual IntRect bounds() const override;
 
     TextTrackRepresentationClient* client() const { return m_client; }
 

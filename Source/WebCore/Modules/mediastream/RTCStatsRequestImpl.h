@@ -43,14 +43,14 @@ public:
     static PassRefPtr<RTCStatsRequestImpl> create(ScriptExecutionContext*, PassRefPtr<RTCStatsCallback>, PassRefPtr<MediaStreamTrack>);
     virtual ~RTCStatsRequestImpl();
 
-    virtual PassRefPtr<RTCStatsResponseBase> createResponse() OVERRIDE;
-    virtual bool hasSelector() OVERRIDE;
-    virtual MediaStreamTrack* track() OVERRIDE;
+    virtual PassRefPtr<RTCStatsResponseBase> createResponse() override;
+    virtual bool hasSelector() override;
+    virtual MediaStreamTrack* track() override;
 
-    virtual void requestSucceeded(PassRefPtr<RTCStatsResponseBase>) OVERRIDE;
+    virtual void requestSucceeded(PassRefPtr<RTCStatsResponseBase>) override;
 
     // ActiveDOMObject
-    virtual void stop() OVERRIDE;
+    virtual void stop() override;
 
 private:
     RTCStatsRequestImpl(ScriptExecutionContext*, PassRefPtr<RTCStatsCallback>, PassRefPtr<MediaStreamTrack>);

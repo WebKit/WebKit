@@ -57,9 +57,9 @@ public:
     virtual void setRootCompositingLayer(WebCore::GraphicsLayer*);
     virtual void invalidate();
 
-    virtual void setNonCompositedContentsNeedDisplay() OVERRIDE { }
-    virtual void setNonCompositedContentsNeedDisplayInRect(const WebCore::IntRect&) OVERRIDE { }
-    virtual void scrollNonCompositedContents(const WebCore::IntRect&) OVERRIDE { }
+    virtual void setNonCompositedContentsNeedDisplay() override { }
+    virtual void setNonCompositedContentsNeedDisplayInRect(const WebCore::IntRect&) override { }
+    virtual void scrollNonCompositedContents(const WebCore::IntRect&) override { }
     virtual void forceRepaint();
     virtual bool forceRepaintAsync(uint64_t callbackID);
     virtual void sizeDidChange(const WebCore::IntSize& newSize);
@@ -71,17 +71,17 @@ public:
 
     virtual void pauseRendering() { m_isSuspended = true; }
     virtual void resumeRendering() { m_isSuspended = false; scheduleLayerFlush(); }
-    virtual void deviceOrPageScaleFactorChanged() OVERRIDE;
-    virtual void pageBackgroundTransparencyChanged() OVERRIDE;
+    virtual void deviceOrPageScaleFactorChanged() override;
+    virtual void pageBackgroundTransparencyChanged() override;
 
     virtual void didReceiveCoordinatedLayerTreeHostMessage(IPC::Connection*, IPC::MessageDecoder&);
-    virtual WebCore::GraphicsLayerFactory* graphicsLayerFactory() OVERRIDE;
+    virtual WebCore::GraphicsLayerFactory* graphicsLayerFactory() override;
     WebCore::CoordinatedGraphicsLayer* mainContentsLayer();
 
 #if ENABLE(REQUEST_ANIMATION_FRAME)
-    virtual void scheduleAnimation() OVERRIDE;
+    virtual void scheduleAnimation() override;
 #endif
-    virtual void setBackgroundColor(const WebCore::Color&) OVERRIDE;
+    virtual void setBackgroundColor(const WebCore::Color&) override;
 
     static PassRefPtr<WebCore::CoordinatedSurface> createCoordinatedSurface(const WebCore::IntSize&, WebCore::CoordinatedSurface::Flags);
 
@@ -102,11 +102,11 @@ private:
     void layerFlushTimerFired(WebCore::Timer<CoordinatedLayerTreeHost>*);
 
     // CompositingCoordinator::Client
-    virtual void didFlushRootLayer() OVERRIDE;
-    virtual void willSyncLayerState(WebCore::CoordinatedGraphicsLayerState&) OVERRIDE;
-    virtual void notifyFlushRequired() OVERRIDE { scheduleLayerFlush(); };
-    virtual void commitSceneState(const WebCore::CoordinatedGraphicsState&) OVERRIDE;
-    virtual void paintLayerContents(const WebCore::GraphicsLayer*, WebCore::GraphicsContext&, const WebCore::IntRect& clipRect) OVERRIDE;
+    virtual void didFlushRootLayer() override;
+    virtual void willSyncLayerState(WebCore::CoordinatedGraphicsLayerState&) override;
+    virtual void notifyFlushRequired() override { scheduleLayerFlush(); };
+    virtual void commitSceneState(const WebCore::CoordinatedGraphicsState&) override;
+    virtual void paintLayerContents(const WebCore::GraphicsLayer*, WebCore::GraphicsContext&, const WebCore::IntRect& clipRect) override;
 
 #if ENABLE(CSS_SHADERS)
     void prepareCustomFilterProxiesForAnimations(WebCore::GraphicsLayerAnimations&);

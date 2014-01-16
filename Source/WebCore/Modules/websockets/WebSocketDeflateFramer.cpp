@@ -49,9 +49,9 @@ public:
     }
     virtual ~WebSocketExtensionDeflateFrame() { }
 
-    virtual String handshakeString() OVERRIDE;
-    virtual bool processResponse(const HashMap<String, String>&) OVERRIDE;
-    virtual String failureReason() OVERRIDE { return m_failureReason; }
+    virtual String handshakeString() override;
+    virtual bool processResponse(const HashMap<String, String>&) override;
+    virtual String failureReason() override { return m_failureReason; }
 
 private:
     WebSocketExtensionDeflateFrame(WebSocketDeflateFramer*);

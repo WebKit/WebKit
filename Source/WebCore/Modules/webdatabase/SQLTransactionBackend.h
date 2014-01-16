@@ -81,19 +81,19 @@ private:
         PassRefPtr<SQLTransactionWrapper>, bool readOnly);
 
     // APIs called from the frontend published via AbstractSQLTransactionBackend:
-    virtual void requestTransitToState(SQLTransactionState) OVERRIDE;
-    virtual PassRefPtr<SQLError> transactionError() OVERRIDE;
-    virtual AbstractSQLStatement* currentStatement() OVERRIDE;
-    virtual void setShouldRetryCurrentStatement(bool) OVERRIDE;
+    virtual void requestTransitToState(SQLTransactionState) override;
+    virtual PassRefPtr<SQLError> transactionError() override;
+    virtual AbstractSQLStatement* currentStatement() override;
+    virtual void setShouldRetryCurrentStatement(bool) override;
     virtual void executeSQL(PassOwnPtr<AbstractSQLStatement>, const String& statement,
-        const Vector<SQLValue>& arguments, int permissions) OVERRIDE;
+        const Vector<SQLValue>& arguments, int permissions) override;
 
     void doCleanup();
 
     void enqueueStatementBackend(PassRefPtr<SQLStatementBackend>);
 
     // State Machine functions:
-    virtual StateFunction stateFunctionFor(SQLTransactionState) OVERRIDE;
+    virtual StateFunction stateFunctionFor(SQLTransactionState) override;
     void computeNextStateAndCleanupIfNeeded();
 
     // State functions:

@@ -58,7 +58,7 @@ public:
     void highQualityRepaintTimerFired(Timer<RenderImage>*);
     
 #if PLATFORM(IOS)
-    virtual void collectSelectionRects(Vector<SelectionRect>&, unsigned, unsigned) OVERRIDE;
+    virtual void collectSelectionRects(Vector<SelectionRect>&, unsigned, unsigned) override;
 #endif
 
     void setIsGeneratedContent(bool generated = true) { m_isGeneratedContent = generated; }
@@ -69,41 +69,41 @@ public:
     void setAltText(const String& altText) { m_altText = altText; }
     
 protected:
-    virtual bool needsPreferredWidthsRecalculation() const OVERRIDE FINAL;
-    virtual RenderBox* embeddedContentBox() const OVERRIDE FINAL;
-    virtual void computeIntrinsicRatioInformation(FloatSize& intrinsicSize, double& intrinsicRatio, bool& isPercentageIntrinsicSize) const OVERRIDE FINAL;
-    virtual bool foregroundIsKnownToBeOpaqueInRect(const LayoutRect& localRect, unsigned maxDepthToTest) const OVERRIDE;
+    virtual bool needsPreferredWidthsRecalculation() const override FINAL;
+    virtual RenderBox* embeddedContentBox() const override FINAL;
+    virtual void computeIntrinsicRatioInformation(FloatSize& intrinsicSize, double& intrinsicRatio, bool& isPercentageIntrinsicSize) const override FINAL;
+    virtual bool foregroundIsKnownToBeOpaqueInRect(const LayoutRect& localRect, unsigned maxDepthToTest) const override;
 
-    virtual void styleDidChange(StyleDifference, const RenderStyle*) OVERRIDE FINAL;
+    virtual void styleDidChange(StyleDifference, const RenderStyle*) override FINAL;
 
-    virtual void imageChanged(WrappedImagePtr, const IntRect* = 0) OVERRIDE;
+    virtual void imageChanged(WrappedImagePtr, const IntRect* = 0) override;
 
     void paintIntoRect(GraphicsContext*, const LayoutRect&);
-    virtual void paint(PaintInfo&, const LayoutPoint&) OVERRIDE FINAL;
-    virtual void layout() OVERRIDE;
+    virtual void paint(PaintInfo&, const LayoutPoint&) override FINAL;
+    virtual void layout() override;
 
-    virtual void intrinsicSizeChanged() OVERRIDE
+    virtual void intrinsicSizeChanged() override
     {
         if (m_imageResource)
             imageChanged(m_imageResource->imagePtr());
     }
 
 private:
-    virtual const char* renderName() const OVERRIDE { return "RenderImage"; }
+    virtual const char* renderName() const override { return "RenderImage"; }
 
-    virtual bool isImage() const OVERRIDE { return true; }
-    virtual bool isRenderImage() const OVERRIDE FINAL { return true; }
+    virtual bool isImage() const override { return true; }
+    virtual bool isRenderImage() const override FINAL { return true; }
 
-    virtual void paintReplaced(PaintInfo&, const LayoutPoint&) OVERRIDE;
+    virtual void paintReplaced(PaintInfo&, const LayoutPoint&) override;
 
-    virtual bool computeBackgroundIsKnownToBeObscured() OVERRIDE FINAL;
+    virtual bool computeBackgroundIsKnownToBeObscured() override FINAL;
 
-    virtual LayoutUnit minimumReplacedHeight() const OVERRIDE;
+    virtual LayoutUnit minimumReplacedHeight() const override;
 
-    virtual void notifyFinished(CachedResource*) OVERRIDE FINAL;
-    virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction) OVERRIDE FINAL;
+    virtual void notifyFinished(CachedResource*) override FINAL;
+    virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction) override FINAL;
 
-    virtual bool boxShadowShouldBeAppliedToBackground(BackgroundBleedAvoidance, InlineFlowBox*) const OVERRIDE FINAL;
+    virtual bool boxShadowShouldBeAppliedToBackground(BackgroundBleedAvoidance, InlineFlowBox*) const override FINAL;
 
     IntSize imageSizeForError(CachedImage*) const;
     void imageDimensionsChanged(bool imageSizeChanged, const IntRect* = 0);

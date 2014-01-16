@@ -41,7 +41,7 @@ public:
     static PassRefPtr<AccessibilityTableCell> create(RenderObject*);
     virtual ~AccessibilityTableCell();
     
-    virtual bool isTableCell() const OVERRIDE;
+    virtual bool isTableCell() const override;
     
     // fills in the start location and row span of cell
     virtual void rowIndexRange(std::pair<unsigned, unsigned>& rowRange);
@@ -51,13 +51,13 @@ public:
 protected:
     virtual AccessibilityObject* parentTable() const;
     int m_rowIndex;
-    virtual AccessibilityRole determineAccessibilityRole() OVERRIDE;
+    virtual AccessibilityRole determineAccessibilityRole() override;
 
 private:
     // If a table cell is not exposed as a table cell, a TH element can serve as its title UI element.
-    virtual AccessibilityObject* titleUIElement() const OVERRIDE;
-    virtual bool exposesTitleUIElement() const OVERRIDE { return true; }
-    virtual bool computeAccessibilityIsIgnored() const OVERRIDE;
+    virtual AccessibilityObject* titleUIElement() const override;
+    virtual bool exposesTitleUIElement() const override { return true; }
+    virtual bool computeAccessibilityIsIgnored() const override;
 }; 
 
 ACCESSIBILITY_OBJECT_TYPE_CASTS(AccessibilityTableCell, isTableCell())

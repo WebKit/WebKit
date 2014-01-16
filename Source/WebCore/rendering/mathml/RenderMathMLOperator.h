@@ -60,18 +60,18 @@ public:
         UChar middleGlyph;
     };
 
-    virtual void updateFromElement() OVERRIDE;
+    virtual void updateFromElement() override;
 
 private:
-    virtual const char* renderName() const OVERRIDE { return isAnonymous() ? "RenderMathMLOperator (anonymous)" : "RenderMathMLOperator"; }
-    virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle) OVERRIDE;
-    virtual void paintChildren(PaintInfo& forSelf, const LayoutPoint&, PaintInfo& forChild, bool usePrintRect) OVERRIDE;
-    virtual bool isRenderMathMLOperator() const OVERRIDE { return true; }
-    virtual bool isChildAllowed(const RenderObject&, const RenderStyle&) const OVERRIDE;
-    virtual void computePreferredLogicalWidths() OVERRIDE;
-    virtual void computeLogicalHeight(LayoutUnit logicalHeight, LayoutUnit logicalTop, LogicalExtentComputedValues&) const OVERRIDE;
-    virtual int firstLineBaseline() const OVERRIDE;
-    virtual RenderMathMLOperator* unembellishedOperator() OVERRIDE { return this; }
+    virtual const char* renderName() const override { return isAnonymous() ? "RenderMathMLOperator (anonymous)" : "RenderMathMLOperator"; }
+    virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle) override;
+    virtual void paintChildren(PaintInfo& forSelf, const LayoutPoint&, PaintInfo& forChild, bool usePrintRect) override;
+    virtual bool isRenderMathMLOperator() const override { return true; }
+    virtual bool isChildAllowed(const RenderObject&, const RenderStyle&) const override;
+    virtual void computePreferredLogicalWidths() override;
+    virtual void computeLogicalHeight(LayoutUnit logicalHeight, LayoutUnit logicalTop, LogicalExtentComputedValues&) const override;
+    virtual int firstLineBaseline() const override;
+    virtual RenderMathMLOperator* unembellishedOperator() override { return this; }
 
     bool shouldAllowStretching(UChar& characterForStretching);
     StretchyCharacter* findAcceptableStretchyCharacter(UChar);

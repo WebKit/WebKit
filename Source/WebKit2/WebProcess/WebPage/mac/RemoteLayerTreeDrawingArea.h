@@ -47,41 +47,41 @@ public:
 
 private:
     // DrawingArea
-    virtual void setNeedsDisplay() OVERRIDE;
-    virtual void setNeedsDisplayInRect(const WebCore::IntRect&) OVERRIDE;
-    virtual void scroll(const WebCore::IntRect& scrollRect, const WebCore::IntSize& scrollDelta) OVERRIDE;
-    virtual void updateGeometry(const WebCore::IntSize& viewSize, const WebCore::IntSize& layerPosition) OVERRIDE;
+    virtual void setNeedsDisplay() override;
+    virtual void setNeedsDisplayInRect(const WebCore::IntRect&) override;
+    virtual void scroll(const WebCore::IntRect& scrollRect, const WebCore::IntSize& scrollDelta) override;
+    virtual void updateGeometry(const WebCore::IntSize& viewSize, const WebCore::IntSize& layerPosition) override;
 
-    virtual WebCore::GraphicsLayerFactory* graphicsLayerFactory() OVERRIDE;
-    virtual void setRootCompositingLayer(WebCore::GraphicsLayer*) OVERRIDE;
-    virtual void scheduleCompositingLayerFlush() OVERRIDE;
+    virtual WebCore::GraphicsLayerFactory* graphicsLayerFactory() override;
+    virtual void setRootCompositingLayer(WebCore::GraphicsLayer*) override;
+    virtual void scheduleCompositingLayerFlush() override;
 
-    virtual bool shouldUseTiledBackingForFrameView(const WebCore::FrameView*) OVERRIDE;
+    virtual bool shouldUseTiledBackingForFrameView(const WebCore::FrameView*) override;
 
-    virtual void updatePreferences(const WebPreferencesStore&) OVERRIDE;
+    virtual void updatePreferences(const WebPreferencesStore&) override;
 
-    virtual void didInstallPageOverlay(PageOverlay*) OVERRIDE;
-    virtual void didUninstallPageOverlay(PageOverlay*) OVERRIDE;
-    virtual void setPageOverlayNeedsDisplay(PageOverlay*, const WebCore::IntRect&) OVERRIDE;
-    virtual void setPageOverlayOpacity(PageOverlay*, float) OVERRIDE;
-    virtual bool supportsAsyncScrolling() OVERRIDE { return true; }
+    virtual void didInstallPageOverlay(PageOverlay*) override;
+    virtual void didUninstallPageOverlay(PageOverlay*) override;
+    virtual void setPageOverlayNeedsDisplay(PageOverlay*, const WebCore::IntRect&) override;
+    virtual void setPageOverlayOpacity(PageOverlay*, float) override;
+    virtual bool supportsAsyncScrolling() override { return true; }
 
-    virtual void setLayerTreeStateIsFrozen(bool) OVERRIDE;
+    virtual void setLayerTreeStateIsFrozen(bool) override;
 
-    virtual void forceRepaint() OVERRIDE;
-    virtual bool forceRepaintAsync(uint64_t) OVERRIDE { return false; }
+    virtual void forceRepaint() override;
+    virtual bool forceRepaintAsync(uint64_t) override { return false; }
 
-    virtual void setExposedRect(const WebCore::FloatRect&) OVERRIDE;
-    virtual WebCore::FloatRect exposedRect() const OVERRIDE { return m_scrolledExposedRect; }
+    virtual void setExposedRect(const WebCore::FloatRect&) override;
+    virtual WebCore::FloatRect exposedRect() const override { return m_scrolledExposedRect; }
 
     // WebCore::GraphicsLayerClient
-    virtual void notifyAnimationStarted(const WebCore::GraphicsLayer*, double time) OVERRIDE { }
-    virtual void notifyFlushRequired(const WebCore::GraphicsLayer*) OVERRIDE { }
-    virtual void paintContents(const WebCore::GraphicsLayer*, WebCore::GraphicsContext&, WebCore::GraphicsLayerPaintingPhase, const WebCore::IntRect& clipRect) OVERRIDE;
-    virtual float deviceScaleFactor() const OVERRIDE;
-    virtual void didCommitChangesForLayer(const WebCore::GraphicsLayer*) const OVERRIDE { }
+    virtual void notifyAnimationStarted(const WebCore::GraphicsLayer*, double time) override { }
+    virtual void notifyFlushRequired(const WebCore::GraphicsLayer*) override { }
+    virtual void paintContents(const WebCore::GraphicsLayer*, WebCore::GraphicsContext&, WebCore::GraphicsLayerPaintingPhase, const WebCore::IntRect& clipRect) override;
+    virtual float deviceScaleFactor() const override;
+    virtual void didCommitChangesForLayer(const WebCore::GraphicsLayer*) const override { }
 #if PLATFORM(IOS)
-    virtual void setDeviceScaleFactor(float) OVERRIDE;
+    virtual void setDeviceScaleFactor(float) override;
 #endif
 
     void updateScrolledExposedRect();

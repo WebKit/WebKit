@@ -105,14 +105,14 @@ public:
     void onComplete();
 
     // EventTarget
-    virtual EventTargetInterface eventTargetInterface() const OVERRIDE { return IDBTransactionEventTargetInterfaceType; }
-    virtual ScriptExecutionContext* scriptExecutionContext() const OVERRIDE { return ActiveDOMObject::scriptExecutionContext(); }
+    virtual EventTargetInterface eventTargetInterface() const override { return IDBTransactionEventTargetInterfaceType; }
+    virtual ScriptExecutionContext* scriptExecutionContext() const override { return ActiveDOMObject::scriptExecutionContext(); }
 
     using EventTarget::dispatchEvent;
-    virtual bool dispatchEvent(PassRefPtr<Event>) OVERRIDE;
+    virtual bool dispatchEvent(PassRefPtr<Event>) override;
 
     // ActiveDOMObject
-    virtual bool hasPendingActivity() const OVERRIDE;
+    virtual bool hasPendingActivity() const override;
 
     using RefCounted<IDBTransaction>::ref;
     using RefCounted<IDBTransaction>::deref;
@@ -127,12 +127,12 @@ private:
     void unregisterOpenCursor(IDBCursor*);
 
     // ActiveDOMObject
-    virtual bool canSuspend() const OVERRIDE;
-    virtual void stop() OVERRIDE;
+    virtual bool canSuspend() const override;
+    virtual void stop() override;
 
     // EventTarget
-    virtual void refEventTarget() OVERRIDE { ref(); }
-    virtual void derefEventTarget() OVERRIDE { deref(); }
+    virtual void refEventTarget() override { ref(); }
+    virtual void derefEventTarget() override { deref(); }
 
     enum State {
         Inactive, // Created or started, but not in an event callback

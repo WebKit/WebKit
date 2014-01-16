@@ -49,9 +49,9 @@ public:
     static MediaSourceRegistry& registry();
 
     // Registers a blob URL referring to the specified media source.
-    virtual void registerURL(SecurityOrigin*, const URL&, URLRegistrable*) OVERRIDE;
-    virtual void unregisterURL(const URL&) OVERRIDE;
-    virtual URLRegistrable* lookup(const String&) const OVERRIDE;
+    virtual void registerURL(SecurityOrigin*, const URL&, URLRegistrable*) override;
+    virtual void unregisterURL(const URL&) override;
+    virtual URLRegistrable* lookup(const String&) const override;
 
 private:
     MediaSourceRegistry();

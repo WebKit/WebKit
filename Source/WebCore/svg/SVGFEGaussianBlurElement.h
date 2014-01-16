@@ -40,7 +40,7 @@ private:
     SVGFEGaussianBlurElement(const QualifiedName&, Document&);
 
     bool isSupportedAttribute(const QualifiedName&);
-    virtual void parseAttribute(const QualifiedName&, const AtomicString&) OVERRIDE;
+    virtual void parseAttribute(const QualifiedName&, const AtomicString&) override;
     virtual void svgAttributeChanged(const QualifiedName&);
     virtual PassRefPtr<FilterEffect> build(SVGFilterBuilder*, Filter*);
 

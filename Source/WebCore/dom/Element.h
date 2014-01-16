@@ -258,13 +258,13 @@ public:
     bool hasLocalName(const AtomicString& other) const { return m_tagName.localName() == other; }
     bool hasLocalName(const QualifiedName& other) const { return m_tagName.localName() == other.localName(); }
 
-    virtual const AtomicString& localName() const OVERRIDE FINAL { return m_tagName.localName(); }
-    virtual const AtomicString& prefix() const OVERRIDE FINAL { return m_tagName.prefix(); }
-    virtual const AtomicString& namespaceURI() const OVERRIDE FINAL { return m_tagName.namespaceURI(); }
+    virtual const AtomicString& localName() const override FINAL { return m_tagName.localName(); }
+    virtual const AtomicString& prefix() const override FINAL { return m_tagName.prefix(); }
+    virtual const AtomicString& namespaceURI() const override FINAL { return m_tagName.namespaceURI(); }
 
-    virtual URL baseURI() const OVERRIDE FINAL;
+    virtual URL baseURI() const override FINAL;
 
-    virtual String nodeName() const OVERRIDE;
+    virtual String nodeName() const override;
 
     PassRefPtr<Element> cloneElementWithChildren();
     PassRefPtr<Element> cloneElementWithoutChildren();
@@ -344,7 +344,7 @@ public:
     virtual short tabIndex() const;
     virtual Element* focusDelegate();
 
-    virtual RenderStyle* computedStyle(PseudoId = NOPSEUDO) OVERRIDE;
+    virtual RenderStyle* computedStyle(PseudoId = NOPSEUDO) override;
 
     // Methods for indicating the style is affected by dynamic updates (e.g., children changing, our position changing in our sibling list, etc.)
     bool styleAffectedByEmpty() const { return hasRareData() && rareDataStyleAffectedByEmpty(); }
@@ -436,8 +436,8 @@ public:
 #endif
 
     bool isFinishedParsingChildren() const { return isParsingChildrenFinished(); }
-    virtual void finishParsingChildren() OVERRIDE;
-    virtual void beginParsingChildren() OVERRIDE FINAL;
+    virtual void finishParsingChildren() override;
+    virtual void beginParsingChildren() override FINAL;
 
     PseudoElement* beforePseudoElement() const;
     PseudoElement* afterPseudoElement() const;
@@ -481,13 +481,13 @@ public:
     virtual bool isFrameElementBase() const { return false; }
     virtual bool isSearchFieldCancelButtonElement() const { return false; }
 
-    virtual bool canContainRangeEndPoint() const OVERRIDE { return true; }
+    virtual bool canContainRangeEndPoint() const override { return true; }
 
     // Used for disabled form elements; if true, prevents mouse events from being dispatched
     // to event listeners, and prevents DOMActivate events from being sent at all.
     virtual bool isDisabledFormControl() const { return false; }
 
-    virtual bool childShouldCreateRenderer(const Node&) const OVERRIDE;
+    virtual bool childShouldCreateRenderer(const Node&) const override;
 
 #if ENABLE(SVG)
     bool hasPendingResources() const;
@@ -572,10 +572,10 @@ protected:
     {
     }
 
-    virtual InsertionNotificationRequest insertedInto(ContainerNode&) OVERRIDE;
-    virtual void removedFrom(ContainerNode&) OVERRIDE;
-    virtual void childrenChanged(const ChildChange&) OVERRIDE;
-    virtual void removeAllEventListeners() OVERRIDE FINAL;
+    virtual InsertionNotificationRequest insertedInto(ContainerNode&) override;
+    virtual void removedFrom(ContainerNode&) override;
+    virtual void childrenChanged(const ChildChange&) override;
+    virtual void removeAllEventListeners() override FINAL;
 
     virtual PassRefPtr<RenderStyle> customStyleForRenderer();
 
@@ -628,23 +628,23 @@ private:
 
     void scrollByUnits(int units, ScrollGranularity);
 
-    virtual void setPrefix(const AtomicString&, ExceptionCode&) OVERRIDE FINAL;
-    virtual NodeType nodeType() const OVERRIDE FINAL;
-    virtual bool childTypeAllowed(NodeType) const OVERRIDE FINAL;
+    virtual void setPrefix(const AtomicString&, ExceptionCode&) override FINAL;
+    virtual NodeType nodeType() const override FINAL;
+    virtual bool childTypeAllowed(NodeType) const override FINAL;
 
     void setAttributeInternal(unsigned index, const QualifiedName&, const AtomicString& value, SynchronizationOfLazyAttribute);
     void addAttributeInternal(const QualifiedName&, const AtomicString& value, SynchronizationOfLazyAttribute);
     void removeAttributeInternal(unsigned index, SynchronizationOfLazyAttribute);
 
 #ifndef NDEBUG
-    virtual void formatForDebugger(char* buffer, unsigned length) const OVERRIDE;
+    virtual void formatForDebugger(char* buffer, unsigned length) const override;
 #endif
 
     void cancelFocusAppearanceUpdate();
 
     // cloneNode is private so that non-virtual cloneElementWithChildren and cloneElementWithoutChildren
     // are used instead.
-    virtual PassRefPtr<Node> cloneNode(bool deep) OVERRIDE;
+    virtual PassRefPtr<Node> cloneNode(bool deep) override;
     virtual PassRefPtr<Element> cloneElementWithoutAttributesAndChildren();
 
     void addShadowRoot(PassRefPtr<ShadowRoot>);

@@ -47,7 +47,7 @@ public:
     }
 
     void setClient(VideoTrackPrivateClient* client) { m_client = client; }
-    virtual VideoTrackPrivateClient* client() const OVERRIDE { return m_client; }
+    virtual VideoTrackPrivateClient* client() const override { return m_client; }
 
     virtual void setSelected(bool selected)
     {

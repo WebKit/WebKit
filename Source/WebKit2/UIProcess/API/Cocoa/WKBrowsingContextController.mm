@@ -68,52 +68,52 @@ public:
     }
 
 private:
-    virtual void willChangeIsLoading() OVERRIDE
+    virtual void willChangeIsLoading() override
     {
         [m_controller willChangeValueForKey:@"loading"];
     }
 
-    virtual void didChangeIsLoading() OVERRIDE
+    virtual void didChangeIsLoading() override
     {
         [m_controller didChangeValueForKey:@"loading"];
     }
 
-    virtual void willChangeTitle() OVERRIDE
+    virtual void willChangeTitle() override
     {
         [m_controller willChangeValueForKey:@"title"];
     }
 
-    virtual void didChangeTitle() OVERRIDE
+    virtual void didChangeTitle() override
     {
         [m_controller didChangeValueForKey:@"title"];
     }
 
-    virtual void willChangeActiveURL() OVERRIDE
+    virtual void willChangeActiveURL() override
     {
         [m_controller willChangeValueForKey:@"activeURL"];
     }
 
-    virtual void didChangeActiveURL() OVERRIDE
+    virtual void didChangeActiveURL() override
     {
         [m_controller didChangeValueForKey:@"activeURL"];
     }
 
-    virtual void willChangeHasOnlySecureContent() OVERRIDE
+    virtual void willChangeHasOnlySecureContent() override
     {
         [m_controller willChangeValueForKey:@"hasOnlySecureContent"];
     }
 
-    virtual void didChangeHasOnlySecureContent() OVERRIDE
+    virtual void didChangeHasOnlySecureContent() override
     {
         [m_controller didChangeValueForKey:@"hasOnlySecureContent"];
     }
 
-    virtual void willChangeEstimatedProgress() OVERRIDE
+    virtual void willChangeEstimatedProgress() override
     {
         [m_controller willChangeValueForKey:@"estimatedProgress"];
     }
 
-    virtual void didChangeEstimatedProgress() OVERRIDE
+    virtual void didChangeEstimatedProgress() override
     {
         [m_controller didChangeValueForKey:@"estimatedProgress"];
     }

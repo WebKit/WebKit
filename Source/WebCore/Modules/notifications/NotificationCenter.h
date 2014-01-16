@@ -75,7 +75,7 @@ private:
     NotificationCenter(ScriptExecutionContext*, NotificationClient*);
 
     // ActiveDOMObject
-    virtual void stop() OVERRIDE;
+    virtual void stop() override;
 
     class NotificationRequestCallback : public RefCounted<NotificationRequestCallback> {
     public:

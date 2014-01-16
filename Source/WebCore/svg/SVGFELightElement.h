@@ -38,13 +38,13 @@ public:
 protected:
     SVGFELightElement(const QualifiedName&, Document&);
 
-    virtual bool rendererIsNeeded(const RenderStyle&) OVERRIDE { return false; }
+    virtual bool rendererIsNeeded(const RenderStyle&) override { return false; }
 
 private:
     bool isSupportedAttribute(const QualifiedName&);
-    virtual void parseAttribute(const QualifiedName&, const AtomicString&) OVERRIDE;
+    virtual void parseAttribute(const QualifiedName&, const AtomicString&) override;
     virtual void svgAttributeChanged(const QualifiedName&);
-    virtual void childrenChanged(const ChildChange&) OVERRIDE;
+    virtual void childrenChanged(const ChildChange&) override;
 
     BEGIN_DECLARE_ANIMATED_PROPERTIES(SVGFELightElement)
         DECLARE_ANIMATED_NUMBER(Azimuth, azimuth)

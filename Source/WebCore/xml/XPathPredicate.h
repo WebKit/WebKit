@@ -38,8 +38,8 @@ namespace WebCore {
             explicit Number(double);
 
         private:
-            virtual Value evaluate() const OVERRIDE;
-            virtual Value::Type resultType() const OVERRIDE { return Value::NumberValue; }
+            virtual Value evaluate() const override;
+            virtual Value::Type resultType() const override { return Value::NumberValue; }
 
             Value m_value;
         };
@@ -49,8 +49,8 @@ namespace WebCore {
             explicit StringExpression(String&&);
 
         private:
-            virtual Value evaluate() const OVERRIDE;
-            virtual Value::Type resultType() const OVERRIDE { return Value::StringValue; }
+            virtual Value evaluate() const override;
+            virtual Value::Type resultType() const override { return Value::StringValue; }
 
             Value m_value;
         };
@@ -60,8 +60,8 @@ namespace WebCore {
             explicit Negative(std::unique_ptr<Expression>);
 
         private:
-            virtual Value evaluate() const OVERRIDE;
-            virtual Value::Type resultType() const OVERRIDE { return Value::NumberValue; }
+            virtual Value evaluate() const override;
+            virtual Value::Type resultType() const override { return Value::NumberValue; }
         };
 
         class NumericOp FINAL : public Expression {
@@ -70,8 +70,8 @@ namespace WebCore {
             NumericOp(Opcode, std::unique_ptr<Expression> lhs, std::unique_ptr<Expression> rhs);
 
         private:
-            virtual Value evaluate() const OVERRIDE;
-            virtual Value::Type resultType() const OVERRIDE { return Value::NumberValue; }
+            virtual Value evaluate() const override;
+            virtual Value::Type resultType() const override { return Value::NumberValue; }
 
             Opcode m_opcode;
         };
@@ -80,10 +80,10 @@ namespace WebCore {
         public:
             enum Opcode { OP_EQ, OP_NE, OP_GT, OP_LT, OP_GE, OP_LE };
             EqTestOp(Opcode, std::unique_ptr<Expression> lhs, std::unique_ptr<Expression> rhs);
-            virtual Value evaluate() const OVERRIDE;
+            virtual Value evaluate() const override;
 
         private:
-            virtual Value::Type resultType() const OVERRIDE { return Value::BooleanValue; }
+            virtual Value::Type resultType() const override { return Value::BooleanValue; }
             bool compare(const Value&, const Value&) const;
 
             Opcode m_opcode;
@@ -95,9 +95,9 @@ namespace WebCore {
             LogicalOp(Opcode, std::unique_ptr<Expression> lhs, std::unique_ptr<Expression> rhs);
 
         private:
-            virtual Value::Type resultType() const OVERRIDE { return Value::BooleanValue; }
+            virtual Value::Type resultType() const override { return Value::BooleanValue; }
             bool shortCircuitOn() const;
-            virtual Value evaluate() const OVERRIDE;
+            virtual Value evaluate() const override;
 
             Opcode m_opcode;
         };
@@ -107,8 +107,8 @@ namespace WebCore {
             Union(std::unique_ptr<Expression>, std::unique_ptr<Expression>);
 
         private:
-            virtual Value evaluate() const OVERRIDE;
-            virtual Value::Type resultType() const OVERRIDE { return Value::NodeSetValue; }
+            virtual Value evaluate() const override;
+            virtual Value::Type resultType() const override { return Value::NodeSetValue; }
         };
 
         bool evaluatePredicate(const Expression&);

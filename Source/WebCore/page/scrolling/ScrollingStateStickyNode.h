@@ -56,9 +56,9 @@ private:
     ScrollingStateStickyNode(ScrollingStateTree&, ScrollingNodeID);
     ScrollingStateStickyNode(const ScrollingStateStickyNode&, ScrollingStateTree&);
 
-    virtual void syncLayerPositionForViewportRect(const LayoutRect& viewportRect) OVERRIDE;
+    virtual void syncLayerPositionForViewportRect(const LayoutRect& viewportRect) override;
 
-    virtual void dumpProperties(TextStream&, int indent) const OVERRIDE;
+    virtual void dumpProperties(TextStream&, int indent) const override;
 
     StickyPositionViewportConstraints m_constraints;
 };

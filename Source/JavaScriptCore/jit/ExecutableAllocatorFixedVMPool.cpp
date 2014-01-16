@@ -76,13 +76,13 @@ public:
     virtual ~FixedVMPoolExecutableAllocator();
     
 protected:
-    virtual void* allocateNewSpace(size_t&) OVERRIDE
+    virtual void* allocateNewSpace(size_t&) override
     {
         // We're operating in a fixed pool, so new allocation is always prohibited.
         return 0;
     }
     
-    virtual void notifyNeedPage(void* page) OVERRIDE
+    virtual void notifyNeedPage(void* page) override
     {
 #if USE(MADV_FREE_FOR_JIT_MEMORY)
         UNUSED_PARAM(page);
@@ -91,7 +91,7 @@ protected:
 #endif
     }
     
-    virtual void notifyPageIsFree(void* page) OVERRIDE
+    virtual void notifyPageIsFree(void* page) override
     {
 #if USE(MADV_FREE_FOR_JIT_MEMORY)
         for (;;) {

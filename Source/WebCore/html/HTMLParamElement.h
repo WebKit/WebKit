@@ -39,7 +39,7 @@ public:
 private:
     HTMLParamElement(const QualifiedName&, Document&);
 
-    virtual bool isURLAttribute(const Attribute&) const OVERRIDE;
+    virtual bool isURLAttribute(const Attribute&) const override;
     virtual void addSubresourceAttributeURLs(ListHashSet<URL>&) const;
 };
 

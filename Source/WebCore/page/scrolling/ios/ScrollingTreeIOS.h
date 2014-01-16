@@ -42,23 +42,23 @@ public:
     static RefPtr<ScrollingTreeIOS> create(AsyncScrollingCoordinator*);
     virtual ~ScrollingTreeIOS();
 
-    virtual void commitNewTreeState(PassOwnPtr<ScrollingStateTree>) OVERRIDE;
+    virtual void commitNewTreeState(PassOwnPtr<ScrollingStateTree>) override;
 
     // No wheel events on iOS
-    virtual void handleWheelEvent(const PlatformWheelEvent&) OVERRIDE { }
-    virtual EventResult tryToHandleWheelEvent(const PlatformWheelEvent&) OVERRIDE { return DidNotHandleEvent; }
+    virtual void handleWheelEvent(const PlatformWheelEvent&) override { }
+    virtual EventResult tryToHandleWheelEvent(const PlatformWheelEvent&) override { return DidNotHandleEvent; }
 
-    virtual void invalidate() OVERRIDE;
+    virtual void invalidate() override;
 
 private:
     explicit ScrollingTreeIOS(AsyncScrollingCoordinator*);
-    virtual bool isScrollingTreeIOS() const OVERRIDE { return true; }
+    virtual bool isScrollingTreeIOS() const override { return true; }
 
-    virtual PassOwnPtr<ScrollingTreeNode> createNode(ScrollingNodeType, ScrollingNodeID) OVERRIDE;
+    virtual PassOwnPtr<ScrollingTreeNode> createNode(ScrollingNodeType, ScrollingNodeID) override;
 
-    virtual void updateMainFrameScrollPosition(const IntPoint& scrollPosition, SetOrSyncScrollingLayerPosition = SyncScrollingLayerPosition) OVERRIDE;
+    virtual void updateMainFrameScrollPosition(const IntPoint& scrollPosition, SetOrSyncScrollingLayerPosition = SyncScrollingLayerPosition) override;
 #if PLATFORM(MAC)
-    virtual void handleWheelEventPhase(PlatformWheelEventPhase) OVERRIDE { }
+    virtual void handleWheelEventPhase(PlatformWheelEventPhase) override { }
 #endif
 
     RefPtr<AsyncScrollingCoordinator> m_scrollingCoordinator;

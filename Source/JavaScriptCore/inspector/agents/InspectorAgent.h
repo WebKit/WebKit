@@ -50,11 +50,11 @@ public:
     InspectorAgent();
     virtual ~InspectorAgent();
 
-    virtual void didCreateFrontendAndBackend(InspectorFrontendChannel*, InspectorBackendDispatcher*) OVERRIDE;
-    virtual void willDestroyFrontendAndBackend() OVERRIDE;
+    virtual void didCreateFrontendAndBackend(InspectorFrontendChannel*, InspectorBackendDispatcher*) override;
+    virtual void willDestroyFrontendAndBackend() override;
 
-    virtual void enable(ErrorString*) OVERRIDE;
-    virtual void disable(ErrorString*) OVERRIDE;
+    virtual void enable(ErrorString*) override;
+    virtual void disable(ErrorString*) override;
 
     void inspect(PassRefPtr<TypeBuilder::Runtime::RemoteObject> objectToInspect, PassRefPtr<InspectorObject> hints);
     void evaluateForTestInFrontend(long testCallId, const String& script);

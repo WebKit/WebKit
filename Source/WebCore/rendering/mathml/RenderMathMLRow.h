@@ -45,8 +45,8 @@ protected:
     virtual void layout();
 
 private:
-    virtual bool isRenderMathMLRow() const OVERRIDE FINAL { return true; }
-    virtual const char* renderName() const OVERRIDE { return isAnonymous() ? "RenderMathMLRow (anonymous)" : "RenderMathMLRow"; }
+    virtual bool isRenderMathMLRow() const override FINAL { return true; }
+    virtual const char* renderName() const override { return isAnonymous() ? "RenderMathMLRow (anonymous)" : "RenderMathMLRow"; }
 };
 
 }

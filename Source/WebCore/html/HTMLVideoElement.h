@@ -74,26 +74,26 @@ public:
     bool shouldDisplayPosterImage() const { return displayMode() == Poster || displayMode() == PosterWaitingForVideo; }
 
     URL posterImageURL() const;
-    virtual RenderPtr<RenderElement> createElementRenderer(PassRef<RenderStyle>) OVERRIDE;
+    virtual RenderPtr<RenderElement> createElementRenderer(PassRef<RenderStyle>) override;
 
 private:
     HTMLVideoElement(const QualifiedName&, Document&, bool);
 
-    virtual bool rendererIsNeeded(const RenderStyle&) OVERRIDE;
-    virtual void didAttachRenderers() OVERRIDE;
-    virtual void parseAttribute(const QualifiedName&, const AtomicString&) OVERRIDE;
-    virtual bool isPresentationAttribute(const QualifiedName&) const OVERRIDE;
-    virtual void collectStyleForPresentationAttribute(const QualifiedName&, const AtomicString&, MutableStyleProperties&) OVERRIDE;
-    virtual bool isVideo() const OVERRIDE { return true; }
-    virtual bool hasVideo() const OVERRIDE { return player() && player()->hasVideo(); }
-    virtual bool supportsFullscreen() const OVERRIDE;
-    virtual bool isURLAttribute(const Attribute&) const OVERRIDE;
-    virtual const AtomicString& imageSourceURL() const OVERRIDE;
+    virtual bool rendererIsNeeded(const RenderStyle&) override;
+    virtual void didAttachRenderers() override;
+    virtual void parseAttribute(const QualifiedName&, const AtomicString&) override;
+    virtual bool isPresentationAttribute(const QualifiedName&) const override;
+    virtual void collectStyleForPresentationAttribute(const QualifiedName&, const AtomicString&, MutableStyleProperties&) override;
+    virtual bool isVideo() const override { return true; }
+    virtual bool hasVideo() const override { return player() && player()->hasVideo(); }
+    virtual bool supportsFullscreen() const override;
+    virtual bool isURLAttribute(const Attribute&) const override;
+    virtual const AtomicString& imageSourceURL() const override;
 
     virtual bool hasAvailableVideoFrame() const;
-    virtual void updateDisplayState() OVERRIDE;
-    virtual void didMoveToNewDocument(Document* oldDocument) OVERRIDE;
-    virtual void setDisplayMode(DisplayMode) OVERRIDE;
+    virtual void updateDisplayState() override;
+    virtual void didMoveToNewDocument(Document* oldDocument) override;
+    virtual void setDisplayMode(DisplayMode) override;
 
     OwnPtr<HTMLImageLoader> m_imageLoader;
 

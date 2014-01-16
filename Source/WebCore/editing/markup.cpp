@@ -137,8 +137,8 @@ private:
 
     void appendElement(StringBuilder& out, const Element&, bool addDisplayInline, RangeFullySelectsNode);
 
-    virtual void appendText(StringBuilder& out, const Text&) OVERRIDE;
-    virtual void appendElement(StringBuilder& out, const Element& element, Namespaces*) OVERRIDE
+    virtual void appendText(StringBuilder& out, const Text&) override;
+    virtual void appendElement(StringBuilder& out, const Element& element, Namespaces*) override
     {
         appendElement(out, element, false, DoesFullySelectNode);
     }

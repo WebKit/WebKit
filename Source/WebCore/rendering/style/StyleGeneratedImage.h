@@ -41,20 +41,20 @@ public:
     CSSImageGeneratorValue& imageValue() { return m_imageGeneratorValue.get(); }
 
 private:
-    virtual WrappedImagePtr data() const OVERRIDE { return &m_imageGeneratorValue.get(); }
+    virtual WrappedImagePtr data() const override { return &m_imageGeneratorValue.get(); }
 
-    virtual PassRefPtr<CSSValue> cssValue() const OVERRIDE;
+    virtual PassRefPtr<CSSValue> cssValue() const override;
 
-    virtual LayoutSize imageSize(const RenderElement*, float multiplier) const OVERRIDE;
-    virtual bool imageHasRelativeWidth() const OVERRIDE { return !m_fixedSize; }
-    virtual bool imageHasRelativeHeight() const OVERRIDE { return !m_fixedSize; }
-    virtual void computeIntrinsicDimensions(const RenderElement*, Length& intrinsicWidth, Length& intrinsicHeight, FloatSize& intrinsicRatio) OVERRIDE;
-    virtual bool usesImageContainerSize() const OVERRIDE { return !m_fixedSize; }
-    virtual void setContainerSizeForRenderer(const RenderElement*, const IntSize& containerSize, float) OVERRIDE { m_containerSize = containerSize; }
-    virtual void addClient(RenderElement*) OVERRIDE;
-    virtual void removeClient(RenderElement*) OVERRIDE;
-    virtual PassRefPtr<Image> image(RenderElement*, const IntSize&) const OVERRIDE;
-    virtual bool knownToBeOpaque(const RenderElement*) const OVERRIDE;
+    virtual LayoutSize imageSize(const RenderElement*, float multiplier) const override;
+    virtual bool imageHasRelativeWidth() const override { return !m_fixedSize; }
+    virtual bool imageHasRelativeHeight() const override { return !m_fixedSize; }
+    virtual void computeIntrinsicDimensions(const RenderElement*, Length& intrinsicWidth, Length& intrinsicHeight, FloatSize& intrinsicRatio) override;
+    virtual bool usesImageContainerSize() const override { return !m_fixedSize; }
+    virtual void setContainerSizeForRenderer(const RenderElement*, const IntSize& containerSize, float) override { m_containerSize = containerSize; }
+    virtual void addClient(RenderElement*) override;
+    virtual void removeClient(RenderElement*) override;
+    virtual PassRefPtr<Image> image(RenderElement*, const IntSize&) const override;
+    virtual bool knownToBeOpaque(const RenderElement*) const override;
 
     StyleGeneratedImage(PassRef<CSSImageGeneratorValue>);
     

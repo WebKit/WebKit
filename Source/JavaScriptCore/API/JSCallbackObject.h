@@ -110,7 +110,7 @@ struct JSCallbackObjectData : WeakHandleOwner {
         PrivatePropertyMap m_propertyMap;
     };
     OwnPtr<JSPrivatePropertyMap> m_privateProperties;
-    virtual void finalize(Handle<Unknown>, void*) OVERRIDE;
+    virtual void finalize(Handle<Unknown>, void*) override;
 };
 
     

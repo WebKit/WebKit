@@ -45,7 +45,7 @@ public:
     // A general method asking if any control tinting is supported at all.
     virtual bool supportsControlTints() const { return true; }
 
-    virtual void adjustRepaintRect(const RenderObject*, IntRect&) OVERRIDE;
+    virtual void adjustRepaintRect(const RenderObject*, IntRect&) override;
 
     virtual bool isControlStyled(const RenderStyle*, const BorderData&, const FillLayer&, const Color& backgroundColor) const;
 
@@ -69,8 +69,8 @@ public:
     virtual void adjustSliderThumbSize(RenderStyle*, Element*) const;
 
 #if ENABLE(DATALIST_ELEMENT)
-    virtual IntSize sliderTickSize() const OVERRIDE;
-    virtual int sliderTickOffsetFromTrackCenter() const OVERRIDE;
+    virtual IntSize sliderTickSize() const override;
+    virtual int sliderTickOffsetFromTrackCenter() const override;
 #endif
 
     virtual int popupInternalPaddingLeft(RenderStyle*) const;
@@ -78,12 +78,12 @@ public:
     virtual int popupInternalPaddingTop(RenderStyle*) const;
     virtual int popupInternalPaddingBottom(RenderStyle*) const;
 
-    virtual bool paintCapsLockIndicator(RenderObject*, const PaintInfo&, const IntRect&) OVERRIDE;
+    virtual bool paintCapsLockIndicator(RenderObject*, const PaintInfo&, const IntRect&) override;
 
-    virtual bool popsMenuByArrowKeys() const OVERRIDE { return true; }
+    virtual bool popsMenuByArrowKeys() const override { return true; }
 
 #if ENABLE(METER_ELEMENT)
-    virtual IntSize meterSizeForBounds(const RenderMeter*, const IntRect&) const OVERRIDE;
+    virtual IntSize meterSizeForBounds(const RenderMeter*, const IntRect&) const override;
     virtual bool paintMeter(RenderObject*, const PaintInfo&, const IntRect&);
     virtual bool supportsMeter(ControlPart) const;
 #endif
@@ -93,7 +93,7 @@ public:
     virtual double animationRepeatIntervalForProgressBar(RenderProgress*) const;
     // Returns the duration of the animation for the progress bar.
     virtual double animationDurationForProgressBar(RenderProgress*) const;
-    virtual IntRect progressBarRectForBounds(const RenderObject*, const IntRect&) const OVERRIDE;
+    virtual IntRect progressBarRectForBounds(const RenderObject*, const IntRect&) const override;
 #endif
 
     virtual Color systemColor(CSSValueID) const;
@@ -109,8 +109,8 @@ protected:
 
 #if ENABLE(VIDEO)
     // Media controls
-    virtual String mediaControlsStyleSheet() OVERRIDE;
-    virtual String mediaControlsScript() OVERRIDE;
+    virtual String mediaControlsStyleSheet() override;
+    virtual String mediaControlsScript() override;
 #endif
     virtual bool supportsSelectionForegroundColors() const { return false; }
 
@@ -161,7 +161,7 @@ protected:
     virtual bool paintSnapshottedPluginOverlay(RenderObject*, const PaintInfo&, const IntRect&);
 
 private:
-    virtual String fileListNameForWidth(const FileList*, const Font&, int width, bool multipleFilesAllowed) const OVERRIDE;
+    virtual String fileListNameForWidth(const FileList*, const Font&, int width, bool multipleFilesAllowed) const override;
 
     IntRect inflateRect(const IntRect&, const IntSize&, const int* margins, float zoomLevel = 1.0f) const;
 

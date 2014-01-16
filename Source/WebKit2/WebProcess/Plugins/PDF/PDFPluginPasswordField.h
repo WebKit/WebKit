@@ -37,7 +37,7 @@ public:
     static PassRefPtr<PDFPluginPasswordField> create(PDFLayerController *, PDFPlugin*);
     virtual ~PDFPluginPasswordField();
 
-    virtual void updateGeometry() OVERRIDE;
+    virtual void updateGeometry() override;
 
 private:
     PDFPluginPasswordField(PDFLayerController *pdfLayerController, PDFPlugin* plugin)
@@ -45,9 +45,9 @@ private:
     {
     }
 
-    virtual PassRefPtr<WebCore::Element> createAnnotationElement() OVERRIDE;
+    virtual PassRefPtr<WebCore::Element> createAnnotationElement() override;
 
-    virtual bool handleEvent(WebCore::Event*) OVERRIDE;
+    virtual bool handleEvent(WebCore::Event*) override;
 };
 
 } // namespace WebKit

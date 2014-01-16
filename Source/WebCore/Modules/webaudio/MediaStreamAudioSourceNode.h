@@ -59,11 +59,11 @@ public:
 private:
     MediaStreamAudioSourceNode(AudioContext*, MediaStream*, MediaStreamTrack*, AudioSourceProvider*);
 
-    virtual double tailTime() const OVERRIDE { return 0; }
-    virtual double latencyTime() const OVERRIDE { return 0; }
+    virtual double tailTime() const override { return 0; }
+    virtual double latencyTime() const override { return 0; }
 
     // As an audio source, we will never propagate silence.
-    virtual bool propagatesSilence() const OVERRIDE { return false; }
+    virtual bool propagatesSilence() const override { return false; }
 
     RefPtr<MediaStream> m_mediaStream;
     RefPtr<MediaStreamTrack> m_audioTrack;

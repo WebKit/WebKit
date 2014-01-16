@@ -54,20 +54,20 @@ public:
     typedef int Flags;
 
     // TextureMapper implementation
-    virtual void drawBorder(const Color&, float borderWidth, const FloatRect&, const TransformationMatrix&) OVERRIDE;
-    virtual void drawNumber(int number, const Color&, const FloatPoint&, const TransformationMatrix&) OVERRIDE;
-    virtual void drawTexture(const BitmapTexture&, const FloatRect&, const TransformationMatrix&, float opacity, unsigned exposedEdges) OVERRIDE;
+    virtual void drawBorder(const Color&, float borderWidth, const FloatRect&, const TransformationMatrix&) override;
+    virtual void drawNumber(int number, const Color&, const FloatPoint&, const TransformationMatrix&) override;
+    virtual void drawTexture(const BitmapTexture&, const FloatRect&, const TransformationMatrix&, float opacity, unsigned exposedEdges) override;
     virtual void drawTexture(Platform3DObject texture, Flags, const IntSize& textureSize, const FloatRect& targetRect, const TransformationMatrix& modelViewMatrix, float opacity, unsigned exposedEdges = AllEdges);
-    virtual void drawSolidColor(const FloatRect&, const TransformationMatrix&, const Color&) OVERRIDE;
+    virtual void drawSolidColor(const FloatRect&, const TransformationMatrix&, const Color&) override;
 
-    virtual void bindSurface(BitmapTexture* surface) OVERRIDE;
-    virtual void beginClip(const TransformationMatrix&, const FloatRect&) OVERRIDE;
-    virtual void beginPainting(PaintFlags = 0) OVERRIDE;
-    virtual void endPainting() OVERRIDE;
-    virtual void endClip() OVERRIDE;
-    virtual IntRect clipBounds() OVERRIDE;
-    virtual IntSize maxTextureSize() const OVERRIDE { return IntSize(2000, 2000); }
-    virtual PassRefPtr<BitmapTexture> createTexture() OVERRIDE;
+    virtual void bindSurface(BitmapTexture* surface) override;
+    virtual void beginClip(const TransformationMatrix&, const FloatRect&) override;
+    virtual void beginPainting(PaintFlags = 0) override;
+    virtual void endPainting() override;
+    virtual void endClip() override;
+    virtual IntRect clipBounds() override;
+    virtual IntSize maxTextureSize() const override { return IntSize(2000, 2000); }
+    virtual PassRefPtr<BitmapTexture> createTexture() override;
     inline GraphicsContext3D* graphicsContext3D() const { return m_context3D.get(); }
 
 #if ENABLE(CSS_FILTERS)
@@ -170,7 +170,7 @@ public:
     virtual bool isBackedByOpenGL() const { return true; }
 
 #if ENABLE(CSS_FILTERS)
-    virtual PassRefPtr<BitmapTexture> applyFilters(TextureMapper*, const FilterOperations&) OVERRIDE;
+    virtual PassRefPtr<BitmapTexture> applyFilters(TextureMapper*, const FilterOperations&) override;
     struct FilterInfo {
         RefPtr<FilterOperation> filter;
         unsigned pass;

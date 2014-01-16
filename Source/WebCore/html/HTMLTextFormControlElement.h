@@ -46,7 +46,7 @@ public:
 
     void forwardEvent(Event*);
 
-    virtual InsertionNotificationRequest insertedInto(ContainerNode&) OVERRIDE;
+    virtual InsertionNotificationRequest insertedInto(ContainerNode&) override;
 
     // The derived class should return true if placeholder processing is needed.
     virtual bool supportsPlaceholder() const = 0;
@@ -71,7 +71,7 @@ public:
     PassRefPtr<Range> selection() const;
     String selectedText() const;
 
-    virtual void dispatchFormControlChangeEvent() OVERRIDE FINAL;
+    virtual void dispatchFormControlChangeEvent() override FINAL;
 
     virtual int maxLength() const = 0;
     virtual String value() const = 0;
@@ -96,7 +96,7 @@ protected:
     bool isPlaceholderEmpty() const;
     virtual void updatePlaceholderText() = 0;
 
-    virtual void parseAttribute(const QualifiedName&, const AtomicString&) OVERRIDE;
+    virtual void parseAttribute(const QualifiedName&, const AtomicString&) override;
 
     void cacheSelection(int start, int end, TextFieldSelectionDirection direction)
     {
@@ -108,7 +108,7 @@ protected:
     void restoreCachedSelection();
     bool hasCachedSelection() const { return m_cachedSelectionStart >= 0; }
 
-    virtual void defaultEventHandler(Event*) OVERRIDE;
+    virtual void defaultEventHandler(Event*) override;
     virtual void subtreeHasChanged() = 0;
 
     void setLastChangeWasNotUserEdit() { m_lastChangeWasUserEdit = false; }
@@ -120,9 +120,9 @@ private:
     int computeSelectionEnd() const;
     TextFieldSelectionDirection computeSelectionDirection() const;
 
-    virtual void dispatchFocusEvent(PassRefPtr<Element> oldFocusedElement, FocusDirection) OVERRIDE FINAL;
-    virtual void dispatchBlurEvent(PassRefPtr<Element> newFocusedElement) OVERRIDE FINAL;
-    virtual bool childShouldCreateRenderer(const Node&) const OVERRIDE;
+    virtual void dispatchFocusEvent(PassRefPtr<Element> oldFocusedElement, FocusDirection) override FINAL;
+    virtual void dispatchBlurEvent(PassRefPtr<Element> newFocusedElement) override FINAL;
+    virtual bool childShouldCreateRenderer(const Node&) const override;
 
     // Returns true if user-editable value is empty. Used to check placeholder visibility.
     virtual bool isEmptyValue() const = 0;

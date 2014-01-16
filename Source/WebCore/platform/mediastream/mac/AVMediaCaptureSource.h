@@ -54,10 +54,10 @@ public:
 protected:
     AVMediaCaptureSource(AVCaptureDevice*, const AtomicString&, MediaStreamSource::Type, PassRefPtr<MediaConstraints>);
 
-    virtual const MediaStreamSourceStates& states() OVERRIDE;
+    virtual const MediaStreamSourceStates& states() override;
 
-    virtual void startProducingData() OVERRIDE;
-    virtual void stopProducingData() OVERRIDE;
+    virtual void startProducingData() override;
+    virtual void stopProducingData() override;
 
     virtual void setupCaptureSession() = 0;
     virtual void updateStates() = 0;

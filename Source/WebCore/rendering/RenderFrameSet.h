@@ -91,14 +91,14 @@ private:
         int m_splitResizeOffset;
     };
 
-    virtual const char* renderName() const OVERRIDE { return "RenderFrameSet"; }
-    virtual bool isFrameSet() const OVERRIDE { return true; }
+    virtual const char* renderName() const override { return "RenderFrameSet"; }
+    virtual bool isFrameSet() const override { return true; }
 
-    virtual void layout() OVERRIDE;
-    virtual void paint(PaintInfo&, const LayoutPoint&) OVERRIDE;
-    virtual bool canHaveChildren() const OVERRIDE { return true; }
-    virtual bool isChildAllowed(const RenderObject&, const RenderStyle&) const OVERRIDE;
-    virtual CursorDirective getCursor(const LayoutPoint&, Cursor&) const OVERRIDE;
+    virtual void layout() override;
+    virtual void paint(PaintInfo&, const LayoutPoint&) override;
+    virtual bool canHaveChildren() const override { return true; }
+    virtual bool isChildAllowed(const RenderObject&, const RenderStyle&) const override;
+    virtual CursorDirective getCursor(const LayoutPoint&, Cursor&) const override;
 
     bool flattenFrameSet() const;
 

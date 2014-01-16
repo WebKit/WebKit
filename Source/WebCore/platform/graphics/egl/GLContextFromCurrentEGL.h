@@ -36,16 +36,16 @@ class GLContextFromCurrentEGL : public GLContext {
 public:
     static PassOwnPtr<GLContextFromCurrentEGL> createFromCurrentGLContext();
 
-    virtual bool makeContextCurrent() OVERRIDE;
+    virtual bool makeContextCurrent() override;
 
-    virtual void swapBuffers() OVERRIDE { }
-    virtual IntSize defaultFrameBufferSize() OVERRIDE { return IntSize(); }
-    virtual cairo_device_t* cairoDevice() OVERRIDE { return 0; }
+    virtual void swapBuffers() override { }
+    virtual IntSize defaultFrameBufferSize() override { return IntSize(); }
+    virtual cairo_device_t* cairoDevice() override { return 0; }
 
-    virtual bool canRenderToDefaultFramebuffer() OVERRIDE { return false; }
+    virtual bool canRenderToDefaultFramebuffer() override { return false; }
 
-    virtual PlatformGraphicsContext3D platformContext() OVERRIDE { return this; }
-    virtual void waitNative() OVERRIDE { }
+    virtual PlatformGraphicsContext3D platformContext() override { return this; }
+    virtual void waitNative() override { }
 
 private:
     static bool initialize();

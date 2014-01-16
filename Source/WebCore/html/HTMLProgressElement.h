@@ -44,26 +44,26 @@ public:
 
     double position() const;
 
-    virtual bool canContainRangeEndPoint() const OVERRIDE { return false; }
+    virtual bool canContainRangeEndPoint() const override { return false; }
 
 private:
     HTMLProgressElement(const QualifiedName&, Document&);
     virtual ~HTMLProgressElement();
 
-    virtual bool areAuthorShadowsAllowed() const OVERRIDE { return false; }
-    virtual bool shouldAppearIndeterminate() const OVERRIDE;
-    virtual bool supportLabels() const OVERRIDE { return true; }
+    virtual bool areAuthorShadowsAllowed() const override { return false; }
+    virtual bool shouldAppearIndeterminate() const override;
+    virtual bool supportLabels() const override { return true; }
 
-    virtual RenderPtr<RenderElement> createElementRenderer(PassRef<RenderStyle>) OVERRIDE;
-    virtual bool childShouldCreateRenderer(const Node&) const OVERRIDE;
+    virtual RenderPtr<RenderElement> createElementRenderer(PassRef<RenderStyle>) override;
+    virtual bool childShouldCreateRenderer(const Node&) const override;
     RenderProgress* renderProgress() const;
 
-    virtual void parseAttribute(const QualifiedName&, const AtomicString&) OVERRIDE;
+    virtual void parseAttribute(const QualifiedName&, const AtomicString&) override;
 
-    virtual void didAttachRenderers() OVERRIDE;
+    virtual void didAttachRenderers() override;
 
     void didElementStateChange();
-    virtual void didAddUserAgentShadowRoot(ShadowRoot*) OVERRIDE;
+    virtual void didAddUserAgentShadowRoot(ShadowRoot*) override;
     bool isDeterminate() const;
 
     ProgressValueElement* m_value;

@@ -42,7 +42,7 @@ public:
     virtual ~InbandTextTrackPrivate() { }
 
     void setClient(InbandTextTrackPrivateClient* client) { m_client = client; }
-    virtual InbandTextTrackPrivateClient* client() const OVERRIDE { return m_client; }
+    virtual InbandTextTrackPrivateClient* client() const override { return m_client; }
 
     enum Mode {
         Disabled,

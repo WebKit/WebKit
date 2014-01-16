@@ -51,7 +51,7 @@ public:
     }
     
 protected:
-    virtual void fireInternal() OVERRIDE;
+    virtual void fireInternal() override;
 
 private:
     CodeOrigin m_codeOrigin;

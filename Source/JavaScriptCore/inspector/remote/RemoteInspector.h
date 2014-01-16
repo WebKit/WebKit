@@ -73,9 +73,9 @@ private:
 
     void updateHasActiveDebugSession();
 
-    virtual void xpcConnectionReceivedMessage(RemoteInspectorXPCConnection*, NSString *messageName, NSDictionary *userInfo) OVERRIDE;
-    virtual void xpcConnectionFailed(RemoteInspectorXPCConnection*) OVERRIDE;
-    virtual void xpcConnectionUnhandledMessage(RemoteInspectorXPCConnection*, xpc_object_t) OVERRIDE;
+    virtual void xpcConnectionReceivedMessage(RemoteInspectorXPCConnection*, NSString *messageName, NSDictionary *userInfo) override;
+    virtual void xpcConnectionFailed(RemoteInspectorXPCConnection*) override;
+    virtual void xpcConnectionUnhandledMessage(RemoteInspectorXPCConnection*, xpc_object_t) override;
 
     void receivedSetupMessage(NSDictionary *userInfo);
     void receivedDataMessage(NSDictionary *userInfo);

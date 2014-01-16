@@ -47,14 +47,14 @@ private:
     DatabaseToWebProcessConnection(IPC::Connection::Identifier);
 
     // IPC::Connection::Client
-    virtual void didReceiveMessage(IPC::Connection*, IPC::MessageDecoder&) OVERRIDE;
-    virtual void didClose(IPC::Connection*) OVERRIDE;
-    virtual void didReceiveInvalidMessage(IPC::Connection*, IPC::StringReference messageReceiverName, IPC::StringReference messageName) OVERRIDE;
+    virtual void didReceiveMessage(IPC::Connection*, IPC::MessageDecoder&) override;
+    virtual void didClose(IPC::Connection*) override;
+    virtual void didReceiveInvalidMessage(IPC::Connection*, IPC::StringReference messageReceiverName, IPC::StringReference messageName) override;
     void didReceiveDatabaseToWebProcessConnectionMessage(IPC::Connection*, IPC::MessageDecoder&);
 
     // IPC::MessageSender
-    virtual IPC::Connection* messageSenderConnection() OVERRIDE { return m_connection.get(); }
-    virtual uint64_t messageSenderDestinationID() OVERRIDE { return 0; }
+    virtual IPC::Connection* messageSenderConnection() override { return m_connection.get(); }
+    virtual uint64_t messageSenderDestinationID() override { return 0; }
 
 #if ENABLE(INDEXED_DATABASE)
     // Messages handlers

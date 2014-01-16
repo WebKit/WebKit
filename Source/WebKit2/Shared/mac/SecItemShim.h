@@ -47,7 +47,7 @@ private:
     SecItemShim();
 
     // IPC::Connection::WorkQueueMessageReceiver.
-    virtual void didReceiveMessage(IPC::Connection*, IPC::MessageDecoder&) OVERRIDE;
+    virtual void didReceiveMessage(IPC::Connection*, IPC::MessageDecoder&) override;
 
     void secItemResponse(uint64_t requestID, const SecItemResponseData&);
 

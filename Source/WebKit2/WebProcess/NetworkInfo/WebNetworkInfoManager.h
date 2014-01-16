@@ -56,7 +56,7 @@ public:
     bool metered(WebPage*) const;
 private:
     // IPC::MessageReceiver
-    void didReceiveMessage(IPC::Connection*, IPC::MessageDecoder&) OVERRIDE;
+    void didReceiveMessage(IPC::Connection*, IPC::MessageDecoder&) override;
 
     void didChangeNetworkInformation(const AtomicString& eventType, const WebNetworkInfo::Data&);
 

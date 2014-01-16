@@ -41,7 +41,7 @@ public:
     static PassRefPtr<TextControlInnerContainer> create(Document&);
 protected:
     TextControlInnerContainer(Document&);
-    virtual RenderPtr<RenderElement> createElementRenderer(PassRef<RenderStyle>) OVERRIDE;
+    virtual RenderPtr<RenderElement> createElementRenderer(PassRef<RenderStyle>) override;
 };
 
 class TextControlInnerElement FINAL : public HTMLDivElement {
@@ -50,26 +50,26 @@ public:
 
 protected:
     TextControlInnerElement(Document&);
-    virtual PassRefPtr<RenderStyle> customStyleForRenderer() OVERRIDE;
+    virtual PassRefPtr<RenderStyle> customStyleForRenderer() override;
 
 private:
-    virtual bool isMouseFocusable() const OVERRIDE { return false; }
+    virtual bool isMouseFocusable() const override { return false; }
 };
 
 class TextControlInnerTextElement FINAL : public HTMLDivElement {
 public:
     static PassRefPtr<TextControlInnerTextElement> create(Document&);
 
-    virtual void defaultEventHandler(Event*) OVERRIDE;
+    virtual void defaultEventHandler(Event*) override;
 
     RenderTextControlInnerBlock* renderer() const;
 
 private:
     TextControlInnerTextElement(Document&);
-    virtual RenderPtr<RenderElement> createElementRenderer(PassRef<RenderStyle>) OVERRIDE;
-    virtual PassRefPtr<RenderStyle> customStyleForRenderer() OVERRIDE;
-    virtual bool isMouseFocusable() const OVERRIDE { return false; }
-    virtual bool isTextControlInnerTextElement() const OVERRIDE { return true; }
+    virtual RenderPtr<RenderElement> createElementRenderer(PassRef<RenderStyle>) override;
+    virtual PassRefPtr<RenderStyle> customStyleForRenderer() override;
+    virtual bool isMouseFocusable() const override { return false; }
+    virtual bool isTextControlInnerTextElement() const override { return true; }
 };
 
 inline bool isTextControlInnerTextElement(const HTMLElement& element) { return element.isTextControlInnerTextElement(); }
@@ -80,32 +80,32 @@ class SearchFieldResultsButtonElement FINAL : public HTMLDivElement {
 public:
     static PassRefPtr<SearchFieldResultsButtonElement> create(Document&);
 
-    virtual void defaultEventHandler(Event*) OVERRIDE;
+    virtual void defaultEventHandler(Event*) override;
 #if !PLATFORM(IOS)
-    virtual bool willRespondToMouseClickEvents() OVERRIDE;
+    virtual bool willRespondToMouseClickEvents() override;
 #endif
 
 private:
     SearchFieldResultsButtonElement(Document&);
-    virtual const AtomicString& shadowPseudoId() const OVERRIDE;
-    virtual bool isMouseFocusable() const OVERRIDE { return false; }
+    virtual const AtomicString& shadowPseudoId() const override;
+    virtual bool isMouseFocusable() const override { return false; }
 };
 
 class SearchFieldCancelButtonElement FINAL : public HTMLDivElement {
 public:
     static PassRefPtr<SearchFieldCancelButtonElement> create(Document&);
 
-    virtual void defaultEventHandler(Event*) OVERRIDE;
-    virtual bool isSearchFieldCancelButtonElement() const OVERRIDE { return true; }
+    virtual void defaultEventHandler(Event*) override;
+    virtual bool isSearchFieldCancelButtonElement() const override { return true; }
 #if !PLATFORM(IOS)
-    virtual bool willRespondToMouseClickEvents() OVERRIDE;
+    virtual bool willRespondToMouseClickEvents() override;
 #endif
 
 private:
     SearchFieldCancelButtonElement(Document&);
-    virtual const AtomicString& shadowPseudoId() const OVERRIDE;
-    virtual void willDetachRenderers() OVERRIDE;
-    virtual bool isMouseFocusable() const OVERRIDE { return false; }
+    virtual const AtomicString& shadowPseudoId() const override;
+    virtual void willDetachRenderers() override;
+    virtual bool isMouseFocusable() const override { return false; }
 
     bool m_capturing;
 };
@@ -144,9 +144,9 @@ private:
     SpeechInput* speechInput();
     void setState(SpeechInputState state);
     virtual const AtomicString& shadowPseudoId() const;
-    virtual bool isMouseFocusable() const OVERRIDE { return false; }
-    virtual void willAttachRenderers() OVERRIDE;
-    virtual void willDetachRenderers() OVERRIDE;
+    virtual bool isMouseFocusable() const override { return false; }
+    virtual void willAttachRenderers() override;
+    virtual void willDetachRenderers() override;
 
 
     bool m_capturing;

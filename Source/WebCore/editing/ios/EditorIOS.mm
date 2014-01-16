@@ -396,14 +396,14 @@ public:
     bool madeFragmentFromPlainText;
 
 private:
-    virtual bool readWebArchive(PassRefPtr<SharedBuffer>) OVERRIDE;
-    virtual bool readFilenames(const Vector<String>&) OVERRIDE;
-    virtual bool readHTML(const String&) OVERRIDE;
-    virtual bool readRTFD(PassRefPtr<SharedBuffer>) OVERRIDE;
-    virtual bool readRTF(PassRefPtr<SharedBuffer>) OVERRIDE;
-    virtual bool readImage(PassRefPtr<SharedBuffer>, const String& type) OVERRIDE;
-    virtual bool readURL(const URL&, const String& title) OVERRIDE;
-    virtual bool readPlainText(const String&) OVERRIDE;
+    virtual bool readWebArchive(PassRefPtr<SharedBuffer>) override;
+    virtual bool readFilenames(const Vector<String>&) override;
+    virtual bool readHTML(const String&) override;
+    virtual bool readRTFD(PassRefPtr<SharedBuffer>) override;
+    virtual bool readRTF(PassRefPtr<SharedBuffer>) override;
+    virtual bool readImage(PassRefPtr<SharedBuffer>, const String& type) override;
+    virtual bool readURL(const URL&, const String& title) override;
+    virtual bool readPlainText(const String&) override;
     void addFragment(PassRefPtr<DocumentFragment>);
 };
 

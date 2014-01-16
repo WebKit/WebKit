@@ -42,16 +42,16 @@ public:
     virtual ~WebGeolocationClient();
 
 private:
-    virtual void geolocationDestroyed() OVERRIDE;
+    virtual void geolocationDestroyed() override;
 
-    virtual void startUpdating() OVERRIDE;
-    virtual void stopUpdating() OVERRIDE;
-    virtual void setEnableHighAccuracy(bool) OVERRIDE;
+    virtual void startUpdating() override;
+    virtual void stopUpdating() override;
+    virtual void setEnableHighAccuracy(bool) override;
 
-    virtual WebCore::GeolocationPosition* lastPosition() OVERRIDE;
+    virtual WebCore::GeolocationPosition* lastPosition() override;
 
-    virtual void requestPermission(WebCore::Geolocation*) OVERRIDE;
-    virtual void cancelPermissionRequest(WebCore::Geolocation*) OVERRIDE;
+    virtual void requestPermission(WebCore::Geolocation*) override;
+    virtual void cancelPermissionRequest(WebCore::Geolocation*) override;
 
 
     WebPage* m_page;

@@ -56,8 +56,8 @@ public:
     InspectorApplicationCacheAgent(InstrumentingAgents*, InspectorPageAgent*);
     ~InspectorApplicationCacheAgent() { }
 
-    virtual void didCreateFrontendAndBackend(Inspector::InspectorFrontendChannel*, Inspector::InspectorBackendDispatcher*) OVERRIDE;
-    virtual void willDestroyFrontendAndBackend() OVERRIDE;
+    virtual void didCreateFrontendAndBackend(Inspector::InspectorFrontendChannel*, Inspector::InspectorBackendDispatcher*) override;
+    virtual void willDestroyFrontendAndBackend() override;
 
     void updateApplicationCacheStatus(Frame*);
     void networkStateChanged();

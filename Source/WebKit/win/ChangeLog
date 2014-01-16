@@ -1,3 +1,20 @@
+2014-01-16  Peter Molnar  <pmolnar.u-szeged@partner.samsung.com>
+
+        Remove workaround for compilers not supporting explicit override control
+        https://bugs.webkit.org/show_bug.cgi?id=127111
+
+        Reviewed by Anders Carlsson.
+
+        Now all compilers support explicit override control, this workaround can be removed.
+
+        * AccessibleDocument.h:
+        * FullscreenVideoController.cpp:
+        * WebCoreSupport/WebChromeClient.h:
+        * WebCoreSupport/WebFrameLoaderClient.h:
+        * WebCoreSupport/WebFrameNetworkingContext.h:
+        * WebCoreSupport/WebInspectorClient.h:
+        * WebHistory.h:
+
 2014-01-10  Anders Carlsson  <andersca@apple.com>
 
         Tweak ProgressTrackerClient functions

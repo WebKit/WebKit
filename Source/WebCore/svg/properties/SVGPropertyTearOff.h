@@ -89,14 +89,14 @@ public:
         m_animatedProperty = 0;
     }
 
-    virtual void commitChange() OVERRIDE
+    virtual void commitChange() override
     {
         if (!m_animatedProperty || m_valueIsCopy)
             return;
         m_animatedProperty->commitChange();
     }
 
-    virtual bool isReadOnly() const OVERRIDE
+    virtual bool isReadOnly() const override
     {
         if (m_role == AnimValRole)
             return true;

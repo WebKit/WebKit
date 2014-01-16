@@ -424,21 +424,21 @@ public:
     bool hasVerticalScrollbar() const { return verticalScrollbar(); }
 
     // ScrollableArea overrides
-    virtual Scrollbar* horizontalScrollbar() const OVERRIDE { return m_hBar.get(); }
-    virtual Scrollbar* verticalScrollbar() const OVERRIDE { return m_vBar.get(); }
-    virtual ScrollableArea* enclosingScrollableArea() const OVERRIDE;
+    virtual Scrollbar* horizontalScrollbar() const override { return m_hBar.get(); }
+    virtual Scrollbar* verticalScrollbar() const override { return m_vBar.get(); }
+    virtual ScrollableArea* enclosingScrollableArea() const override;
 
 #if PLATFORM(IOS)
 #if ENABLE(TOUCH_EVENTS)
-    virtual bool handleTouchEvent(const PlatformTouchEvent&) OVERRIDE;
-    virtual bool isTouchScrollable() const OVERRIDE { return true; }
+    virtual bool handleTouchEvent(const PlatformTouchEvent&) override;
+    virtual bool isTouchScrollable() const override { return true; }
 #endif
-    virtual bool isOverflowScroll() const OVERRIDE { return true; }
+    virtual bool isOverflowScroll() const override { return true; }
     
-    virtual void didStartScroll() OVERRIDE;
-    virtual void didEndScroll() OVERRIDE;
-    virtual void didUpdateScroll() OVERRIDE;
-    virtual void setIsUserScroll(bool isUserScroll) OVERRIDE { m_inUserScroll = isUserScroll; }
+    virtual void didStartScroll() override;
+    virtual void didEndScroll() override;
+    virtual void didUpdateScroll() override;
+    virtual void setIsUserScroll(bool isUserScroll) override { m_inUserScroll = isUserScroll; }
 
     bool isInUserScroll() const { return m_inUserScroll; }
 
@@ -799,11 +799,11 @@ public:
     RenderLayerBacking* backing() const { return m_backing.get(); }
     RenderLayerBacking* ensureBacking();
     void clearBacking(bool layerBeingDestroyed = false);
-    virtual GraphicsLayer* layerForScrolling() const OVERRIDE;
-    virtual GraphicsLayer* layerForHorizontalScrollbar() const OVERRIDE;
-    virtual GraphicsLayer* layerForVerticalScrollbar() const OVERRIDE;
-    virtual GraphicsLayer* layerForScrollCorner() const OVERRIDE;
-    virtual bool usesCompositedScrolling() const OVERRIDE;
+    virtual GraphicsLayer* layerForScrolling() const override;
+    virtual GraphicsLayer* layerForHorizontalScrollbar() const override;
+    virtual GraphicsLayer* layerForVerticalScrollbar() const override;
+    virtual GraphicsLayer* layerForScrollCorner() const override;
+    virtual bool usesCompositedScrolling() const override;
     bool needsCompositedScrolling() const;
     bool needsCompositingLayersRebuiltForClip(const RenderStyle* oldStyle, const RenderStyle* newStyle) const;
     bool needsCompositingLayersRebuiltForOverflow(const RenderStyle* oldStyle, const RenderStyle* newStyle) const;
@@ -1050,33 +1050,33 @@ private:
 
     bool shouldBeSelfPaintingLayer() const;
 
-    virtual int scrollPosition(Scrollbar*) const OVERRIDE;
+    virtual int scrollPosition(Scrollbar*) const override;
     
     // ScrollableArea interface
-    virtual void invalidateScrollbarRect(Scrollbar*, const IntRect&) OVERRIDE;
-    virtual void invalidateScrollCornerRect(const IntRect&) OVERRIDE;
-    virtual bool isActive() const OVERRIDE;
-    virtual bool isScrollCornerVisible() const OVERRIDE;
-    virtual IntRect scrollCornerRect() const OVERRIDE;
-    virtual IntRect convertFromScrollbarToContainingView(const Scrollbar*, const IntRect&) const OVERRIDE;
-    virtual IntRect convertFromContainingViewToScrollbar(const Scrollbar*, const IntRect&) const OVERRIDE;
-    virtual IntPoint convertFromScrollbarToContainingView(const Scrollbar*, const IntPoint&) const OVERRIDE;
-    virtual IntPoint convertFromContainingViewToScrollbar(const Scrollbar*, const IntPoint&) const OVERRIDE;
-    virtual int scrollSize(ScrollbarOrientation) const OVERRIDE;
-    virtual void setScrollOffset(const IntPoint&) OVERRIDE;
-    virtual IntPoint scrollPosition() const OVERRIDE;
-    virtual IntPoint minimumScrollPosition() const OVERRIDE;
-    virtual IntPoint maximumScrollPosition() const OVERRIDE;
-    virtual IntRect visibleContentRect(VisibleContentRectIncludesScrollbars) const OVERRIDE;
-    virtual int visibleHeight() const OVERRIDE;
-    virtual int visibleWidth() const OVERRIDE;
-    virtual IntSize contentsSize() const OVERRIDE;
-    virtual IntSize overhangAmount() const OVERRIDE;
-    virtual IntPoint lastKnownMousePosition() const OVERRIDE;
-    virtual bool isHandlingWheelEvent() const OVERRIDE;
-    virtual bool shouldSuspendScrollAnimations() const OVERRIDE;
-    virtual IntRect scrollableAreaBoundingBox() const OVERRIDE;
-    virtual bool updatesScrollLayerPositionOnMainThread() const OVERRIDE { return true; }
+    virtual void invalidateScrollbarRect(Scrollbar*, const IntRect&) override;
+    virtual void invalidateScrollCornerRect(const IntRect&) override;
+    virtual bool isActive() const override;
+    virtual bool isScrollCornerVisible() const override;
+    virtual IntRect scrollCornerRect() const override;
+    virtual IntRect convertFromScrollbarToContainingView(const Scrollbar*, const IntRect&) const override;
+    virtual IntRect convertFromContainingViewToScrollbar(const Scrollbar*, const IntRect&) const override;
+    virtual IntPoint convertFromScrollbarToContainingView(const Scrollbar*, const IntPoint&) const override;
+    virtual IntPoint convertFromContainingViewToScrollbar(const Scrollbar*, const IntPoint&) const override;
+    virtual int scrollSize(ScrollbarOrientation) const override;
+    virtual void setScrollOffset(const IntPoint&) override;
+    virtual IntPoint scrollPosition() const override;
+    virtual IntPoint minimumScrollPosition() const override;
+    virtual IntPoint maximumScrollPosition() const override;
+    virtual IntRect visibleContentRect(VisibleContentRectIncludesScrollbars) const override;
+    virtual int visibleHeight() const override;
+    virtual int visibleWidth() const override;
+    virtual IntSize contentsSize() const override;
+    virtual IntSize overhangAmount() const override;
+    virtual IntPoint lastKnownMousePosition() const override;
+    virtual bool isHandlingWheelEvent() const override;
+    virtual bool shouldSuspendScrollAnimations() const override;
+    virtual IntRect scrollableAreaBoundingBox() const override;
+    virtual bool updatesScrollLayerPositionOnMainThread() const override { return true; }
 
 #if PLATFORM(IOS)
     void registerAsTouchEventListenerForScrolling();

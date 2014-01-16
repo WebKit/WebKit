@@ -349,12 +349,12 @@ namespace WebCore {
 
     private:
         // TiledBackingStoreClient interface
-        virtual void tiledBackingStorePaintBegin() OVERRIDE FINAL;
-        virtual void tiledBackingStorePaint(GraphicsContext*, const IntRect&) OVERRIDE FINAL;
-        virtual void tiledBackingStorePaintEnd(const Vector<IntRect>& paintedArea) OVERRIDE FINAL;
-        virtual IntRect tiledBackingStoreContentsRect() OVERRIDE FINAL;
-        virtual IntRect tiledBackingStoreVisibleRect() OVERRIDE FINAL;
-        virtual Color tiledBackingStoreBackgroundColor() const OVERRIDE FINAL;
+        virtual void tiledBackingStorePaintBegin() override FINAL;
+        virtual void tiledBackingStorePaint(GraphicsContext*, const IntRect&) override FINAL;
+        virtual void tiledBackingStorePaintEnd(const Vector<IntRect>& paintedArea) override FINAL;
+        virtual IntRect tiledBackingStoreContentsRect() override FINAL;
+        virtual IntRect tiledBackingStoreVisibleRect() override FINAL;
+        virtual Color tiledBackingStoreBackgroundColor() const override FINAL;
 
         OwnPtr<TiledBackingStore> m_tiledBackingStore;
 #endif

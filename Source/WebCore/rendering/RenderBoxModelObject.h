@@ -85,9 +85,9 @@ public:
     virtual int pixelSnappedOffsetWidth() const;
     virtual int pixelSnappedOffsetHeight() const;
 
-    virtual void updateFromStyle() OVERRIDE;
+    virtual void updateFromStyle() override;
 
-    virtual bool requiresLayer() const OVERRIDE { return isRoot() || isPositioned() || createsGroup() || hasClipPath() || hasTransform() || hasHiddenBackface() || hasReflection() || style().specifiesColumns(); }
+    virtual bool requiresLayer() const override { return isRoot() || isPositioned() || createsGroup() || hasClipPath() || hasTransform() || hasHiddenBackface() || hasReflection() || style().specifiesColumns(); }
 
     // This will work on inlines to return the bounding box of all of the lines' border boxes.
     virtual IntRect borderBoundingBox() const = 0;
@@ -173,11 +173,11 @@ public:
     virtual LayoutUnit lineHeight(bool firstLine, LineDirectionMode, LinePositionMode = PositionOnContainingLine) const = 0;
     virtual int baselinePosition(FontBaseline, bool firstLine, LineDirectionMode, LinePositionMode = PositionOnContainingLine) const = 0;
 
-    virtual void mapAbsoluteToLocalPoint(MapCoordinatesFlags, TransformState&) const OVERRIDE;
+    virtual void mapAbsoluteToLocalPoint(MapCoordinatesFlags, TransformState&) const override;
 
     void highQualityRepaintTimerFired(Timer<RenderBoxModelObject>*);
 
-    virtual void setSelectionState(SelectionState) OVERRIDE;
+    virtual void setSelectionState(SelectionState) override;
 
     bool canHaveBoxInfoInRegion() const { return !isFloating() && !isReplaced() && !isInline() && !hasColumns() && !isTableCell() && isRenderBlock() && !isRenderSVGBlock(); }
 
@@ -201,7 +201,7 @@ protected:
     RenderBoxModelObject(Element&, PassRef<RenderStyle>, unsigned baseTypeFlags);
     RenderBoxModelObject(Document&, PassRef<RenderStyle>, unsigned baseTypeFlags);
 
-    virtual void willBeDestroyed() OVERRIDE;
+    virtual void willBeDestroyed() override;
 
     class BackgroundImageGeometry {
     public:

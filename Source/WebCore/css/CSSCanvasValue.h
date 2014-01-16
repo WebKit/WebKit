@@ -72,15 +72,15 @@ private:
         }
 
     private:
-        virtual void canvasChanged(HTMLCanvasElement& canvas, const FloatRect& changedRect) OVERRIDE
+        virtual void canvasChanged(HTMLCanvasElement& canvas, const FloatRect& changedRect) override
         {
             m_ownerValue.canvasChanged(canvas, changedRect);
         }
-        virtual void canvasResized(HTMLCanvasElement& canvas) OVERRIDE
+        virtual void canvasResized(HTMLCanvasElement& canvas) override
         {
             m_ownerValue.canvasResized(canvas);
         }
-        virtual void canvasDestroyed(HTMLCanvasElement& canvas) OVERRIDE
+        virtual void canvasDestroyed(HTMLCanvasElement& canvas) override
         {
             m_ownerValue.canvasDestroyed(canvas);
         }

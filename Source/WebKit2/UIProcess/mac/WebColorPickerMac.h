@@ -63,9 +63,9 @@ public:
     static PassRefPtr<WebColorPickerMac> create(WebColorPicker::Client*, const WebCore::Color&, const WebCore::IntRect&, WKView*);
     ~WebColorPickerMac();
 
-    virtual void endPicker() OVERRIDE;
-    virtual void setSelectedColor(const WebCore::Color&) OVERRIDE;
-    virtual void showColorPicker(const WebCore::Color&) OVERRIDE;
+    virtual void endPicker() override;
+    virtual void setSelectedColor(const WebCore::Color&) override;
+    virtual void showColorPicker(const WebCore::Color&) override;
     
     void didChooseColor(const WebCore::Color&);
 

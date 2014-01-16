@@ -37,25 +37,25 @@ class RenderMathMLRoot : public RenderMathMLBlock {
 public:
     RenderMathMLRoot(Element&, PassRef<RenderStyle>);
 
-    virtual LayoutUnit paddingTop() const OVERRIDE;
-    virtual LayoutUnit paddingBottom() const OVERRIDE;
-    virtual LayoutUnit paddingLeft() const OVERRIDE;
-    virtual LayoutUnit paddingRight() const OVERRIDE;
-    virtual LayoutUnit paddingBefore() const OVERRIDE;
-    virtual LayoutUnit paddingAfter() const OVERRIDE;
-    virtual LayoutUnit paddingStart() const OVERRIDE;
-    virtual LayoutUnit paddingEnd() const OVERRIDE;
+    virtual LayoutUnit paddingTop() const override;
+    virtual LayoutUnit paddingBottom() const override;
+    virtual LayoutUnit paddingLeft() const override;
+    virtual LayoutUnit paddingRight() const override;
+    virtual LayoutUnit paddingBefore() const override;
+    virtual LayoutUnit paddingAfter() const override;
+    virtual LayoutUnit paddingStart() const override;
+    virtual LayoutUnit paddingEnd() const override;
 
-    virtual void addChild(RenderObject* newChild, RenderObject* beforeChild = 0) OVERRIDE;
+    virtual void addChild(RenderObject* newChild, RenderObject* beforeChild = 0) override;
     
 protected:
-    virtual void layout() OVERRIDE;
+    virtual void layout() override;
     
-    virtual void paint(PaintInfo&, const LayoutPoint&) OVERRIDE;
+    virtual void paint(PaintInfo&, const LayoutPoint&) override;
 
 private:
-    virtual bool isRenderMathMLRoot() const OVERRIDE FINAL { return true; }
-    virtual const char* renderName() const OVERRIDE { return "RenderMathMLRoot"; }
+    virtual bool isRenderMathMLRoot() const override FINAL { return true; }
+    virtual const char* renderName() const override { return "RenderMathMLRoot"; }
     
     // This may return 0 for a non-MathML index (which won't occur in valid MathML).
     RenderBox* index() const;

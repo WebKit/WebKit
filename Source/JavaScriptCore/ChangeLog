@@ -1,3 +1,55 @@
+2014-01-16  Peter Molnar  <pmolnar.u-szeged@partner.samsung.com>
+
+        Remove workaround for compilers not supporting explicit override control
+        https://bugs.webkit.org/show_bug.cgi?id=127111
+
+        Reviewed by Anders Carlsson.
+
+        Now all compilers support explicit override control, this workaround can be removed.
+
+        * API/JSAPIWrapperObject.mm:
+        * API/JSCallbackObject.h:
+        * API/JSManagedValue.mm:
+        * API/JSScriptRef.cpp:
+        * bytecode/CodeBlock.h:
+        * bytecode/CodeBlockJettisoningWatchpoint.h:
+        * bytecode/ProfiledCodeBlockJettisoningWatchpoint.h:
+        * bytecode/StructureStubClearingWatchpoint.h:
+        * dfg/DFGArrayifySlowPathGenerator.h:
+        * dfg/DFGCallArrayAllocatorSlowPathGenerator.h:
+        * dfg/DFGFailedFinalizer.h:
+        * dfg/DFGJITCode.h:
+        * dfg/DFGJITFinalizer.h:
+        * dfg/DFGSaneStringGetByValSlowPathGenerator.h:
+        * dfg/DFGSlowPathGenerator.h:
+        * dfg/DFGSpeculativeJIT64.cpp:
+        * heap/Heap.h:
+        * heap/IncrementalSweeper.h:
+        * heap/SuperRegion.h:
+        * inspector/InspectorValues.h:
+        * inspector/JSGlobalObjectInspectorController.h:
+        * inspector/agents/InspectorAgent.h:
+        * inspector/remote/RemoteInspector.h:
+        * inspector/remote/RemoteInspectorDebuggableConnection.h:
+        * inspector/scripts/CodeGeneratorInspector.py:
+        (Generator.go):
+        * jit/ClosureCallStubRoutine.h:
+        * jit/ExecutableAllocatorFixedVMPool.cpp:
+        * jit/GCAwareJITStubRoutine.h:
+        * jit/JITCode.h:
+        * jit/JITToDFGDeferredCompilationCallback.h:
+        * parser/Nodes.h:
+        * parser/SourceProvider.h:
+        * runtime/DataView.h:
+        * runtime/GCActivityCallback.h:
+        * runtime/GenericTypedArrayView.h:
+        * runtime/JSGlobalObjectDebuggable.h:
+        * runtime/JSPromiseReaction.cpp:
+        * runtime/RegExpCache.h:
+        * runtime/SimpleTypedArrayController.h:
+        * runtime/SymbolTable.h:
+        * runtime/WeakMapData.h:
+
 2014-01-15  Joseph Pecoraro  <pecoraro@apple.com>
 
         [iOS] Clean up REMOTE_INSPECTOR code in OpenSource after the iOS merge

@@ -37,20 +37,20 @@ protected:
 public:
     virtual ~AccessibilityMockObject();
     
-    virtual AccessibilityObject* parentObject() const OVERRIDE { return m_parent; }
+    virtual AccessibilityObject* parentObject() const override { return m_parent; }
     virtual void setParent(AccessibilityObject* parent) { m_parent = parent; };
-    virtual bool isEnabled() const OVERRIDE { return true; }
+    virtual bool isEnabled() const override { return true; }
 
 protected:
     AccessibilityObject* m_parent;
 
     // Must be called when the parent object clears its children.
-    virtual void detachFromParent() OVERRIDE { m_parent = 0; }
+    virtual void detachFromParent() override { m_parent = 0; }
 
 private:
-    virtual bool isMockObject() const OVERRIDE { return true; }
+    virtual bool isMockObject() const override { return true; }
 
-    virtual bool computeAccessibilityIsIgnored() const OVERRIDE;
+    virtual bool computeAccessibilityIsIgnored() const override;
 }; 
 
 ACCESSIBILITY_OBJECT_TYPE_CASTS(AccessibilityMockObject, isMockObject())

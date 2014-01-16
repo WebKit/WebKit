@@ -45,9 +45,9 @@ class InbandTextTrackPrivateAVF : public InbandTextTrackPrivate {
 public:
     virtual ~InbandTextTrackPrivateAVF();
 
-    virtual void setMode(InbandTextTrackPrivate::Mode) OVERRIDE;
+    virtual void setMode(InbandTextTrackPrivate::Mode) override;
 
-    virtual int trackIndex() const OVERRIDE { return m_index; }
+    virtual int trackIndex() const override { return m_index; }
     void setTextTrackIndex(int index) { m_index = index; }
 
     virtual void disconnect();

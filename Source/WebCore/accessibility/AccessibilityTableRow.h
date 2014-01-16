@@ -41,7 +41,7 @@ public:
     static PassRefPtr<AccessibilityTableRow> create(RenderObject*);
     virtual ~AccessibilityTableRow();
     
-    virtual bool isTableRow() const OVERRIDE;
+    virtual bool isTableRow() const override;
 
     // retrieves the "row" header (a th tag in the rightmost column)
     virtual AccessibilityObject* headerObject();
@@ -55,13 +55,13 @@ public:
     void appendChild(AccessibilityObject*);
     
 protected:
-    virtual AccessibilityRole determineAccessibilityRole() OVERRIDE;
+    virtual AccessibilityRole determineAccessibilityRole() override;
 
 private:
     int m_rowIndex;
     
-    virtual AccessibilityObject* observableObject() const OVERRIDE;
-    virtual bool computeAccessibilityIsIgnored() const OVERRIDE;
+    virtual AccessibilityObject* observableObject() const override;
+    virtual bool computeAccessibilityIsIgnored() const override;
 }; 
 
 ACCESSIBILITY_OBJECT_TYPE_CASTS(AccessibilityTableRow, isTableRow())

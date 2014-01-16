@@ -233,7 +233,7 @@ private:
         State(const State&);
         State& operator=(const State&);
 
-        virtual void fontsNeedUpdate(FontSelector*) OVERRIDE;
+        virtual void fontsNeedUpdate(FontSelector*) override;
 
         String m_unparsedStrokeColor;
         String m_unparsedFillColor;
@@ -325,13 +325,13 @@ private:
     PassRefPtr<ImageData> getImageData(ImageBuffer::CoordinateSystem, float sx, float sy, float sw, float sh, ExceptionCode&) const;
     void putImageData(ImageData*, ImageBuffer::CoordinateSystem, float dx, float dy, float dirtyX, float dirtyY, float dirtyWidth, float dirtyHeight, ExceptionCode&);
 
-    virtual bool is2d() const OVERRIDE { return true; }
-    virtual bool isAccelerated() const OVERRIDE;
+    virtual bool is2d() const override { return true; }
+    virtual bool isAccelerated() const override;
 
-    virtual bool hasInvertibleTransform() const OVERRIDE { return state().m_hasInvertibleTransform; }
+    virtual bool hasInvertibleTransform() const override { return state().m_hasInvertibleTransform; }
 
 #if ENABLE(ACCELERATED_2D_CANVAS) && USE(ACCELERATED_COMPOSITING)
-    virtual PlatformLayer* platformLayer() const OVERRIDE;
+    virtual PlatformLayer* platformLayer() const override;
 #endif
 
     Vector<State, 1> m_stateStack;

@@ -44,11 +44,11 @@ public:
     void disclosedRows(AccessibilityChildrenVector&);
     AccessibilityObject* disclosedByRow() const;
     
-    virtual AccessibilityObject* headerObject() OVERRIDE;
+    virtual AccessibilityObject* headerObject() override;
     
 private:
-    virtual bool isARIATreeGridRow() const OVERRIDE;
-    virtual AccessibilityObject* parentTable() const OVERRIDE;
+    virtual bool isARIATreeGridRow() const override;
+    virtual AccessibilityObject* parentTable() const override;
 }; 
 
 ACCESSIBILITY_OBJECT_TYPE_CASTS(AccessibilityARIAGridRow, isARIATreeGridRow())

@@ -39,16 +39,16 @@ class IDBDatabase;
 class IDBDatabaseCallbacksImpl FINAL : public IDBDatabaseCallbacks {
 public:
     static PassRefPtr<IDBDatabaseCallbacksImpl> create();
-    virtual ~IDBDatabaseCallbacksImpl() OVERRIDE;
+    virtual ~IDBDatabaseCallbacksImpl() override;
 
     // IDBDatabaseCallbacks
-    virtual void onForcedClose() OVERRIDE;
-    virtual void onVersionChange(uint64_t oldVersion, uint64_t newVersion, IndexedDB::VersionNullness newVersionNullness) OVERRIDE;
+    virtual void onForcedClose() override;
+    virtual void onVersionChange(uint64_t oldVersion, uint64_t newVersion, IndexedDB::VersionNullness newVersionNullness) override;
 
-    virtual void onAbort(int64_t transactionId, PassRefPtr<IDBDatabaseError>) OVERRIDE;
-    virtual void onComplete(int64_t transactionId) OVERRIDE;
+    virtual void onAbort(int64_t transactionId, PassRefPtr<IDBDatabaseError>) override;
+    virtual void onComplete(int64_t transactionId) override;
 
-    virtual void connect(IDBDatabase*) OVERRIDE;
+    virtual void connect(IDBDatabase*) override;
 
 private:
     IDBDatabaseCallbacksImpl();

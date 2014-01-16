@@ -132,7 +132,7 @@ class EditorClient : public WebCore::EditorClient {
 
         virtual bool shouldShowUnicodeMenu();
 
-        virtual bool supportsGlobalSelection() OVERRIDE;
+        virtual bool supportsGlobalSelection() override;
 
     private:
 #if ENABLE(SPELLCHECK)

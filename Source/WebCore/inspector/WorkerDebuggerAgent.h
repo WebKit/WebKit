@@ -50,12 +50,12 @@ public:
     static const char* debuggerTaskMode;
     static void interruptAndDispatchInspectorCommands(WorkerThread*);
 
-    virtual void startListeningScriptDebugServer() OVERRIDE;
-    virtual void stopListeningScriptDebugServer() OVERRIDE;
-    virtual WorkerScriptDebugServer& scriptDebugServer() OVERRIDE;
-    virtual Inspector::InjectedScript injectedScriptForEval(ErrorString*, const int* executionContextId) OVERRIDE;
-    virtual void muteConsole() OVERRIDE;
-    virtual void unmuteConsole() OVERRIDE;
+    virtual void startListeningScriptDebugServer() override;
+    virtual void stopListeningScriptDebugServer() override;
+    virtual WorkerScriptDebugServer& scriptDebugServer() override;
+    virtual Inspector::InjectedScript injectedScriptForEval(ErrorString*, const int* executionContextId) override;
+    virtual void muteConsole() override;
+    virtual void unmuteConsole() override;
 
 private:
     WorkerScriptDebugServer m_scriptDebugServer;

@@ -54,7 +54,7 @@ public:
     void closeFromDebuggable();
 
     void sendMessageToBackend(NSString *);
-    virtual bool sendMessageToFrontend(const String&) OVERRIDE;
+    virtual bool sendMessageToFrontend(const String&) override;
 
 private:
     void dispatchSyncOnDebuggable(void (^block)());

@@ -72,7 +72,7 @@ public:
         return m_length;
     }
     
-    virtual unsigned byteLength() const OVERRIDE
+    virtual unsigned byteLength() const override
     {
         return length() * sizeof(typename Adaptor::Type);
     }
@@ -101,12 +101,12 @@ public:
     PassRefPtr<GenericTypedArrayView> subarray(int start) const;
     PassRefPtr<GenericTypedArrayView> subarray(int start, int end) const;
     
-    virtual TypedArrayType getType() const OVERRIDE
+    virtual TypedArrayType getType() const override
     {
         return Adaptor::typeValue;
     }
 
-    virtual JSArrayBufferView* wrap(ExecState*, JSGlobalObject*) OVERRIDE;
+    virtual JSArrayBufferView* wrap(ExecState*, JSGlobalObject*) override;
 
 private:
     unsigned m_length;

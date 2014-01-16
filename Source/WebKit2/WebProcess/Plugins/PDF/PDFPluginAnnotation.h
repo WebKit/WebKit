@@ -84,7 +84,7 @@ private:
             return adoptRef(new PDFPluginAnnotationEventListener(annotation));
         }
 
-        virtual bool operator==(const EventListener& listener) OVERRIDE { return this == &listener; }
+        virtual bool operator==(const EventListener& listener) override { return this == &listener; }
 
         void setAnnotation(PDFPluginAnnotation* annotation) { m_annotation = annotation; }
 
@@ -96,7 +96,7 @@ private:
         {
         }
 
-        virtual void handleEvent(WebCore::ScriptExecutionContext*, WebCore::Event*) OVERRIDE;
+        virtual void handleEvent(WebCore::ScriptExecutionContext*, WebCore::Event*) override;
 
         PDFPluginAnnotation* m_annotation;
     };

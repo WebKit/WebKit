@@ -44,11 +44,11 @@ public:
         return adoptRef(new DOMWindowExtension(frame, world));
     }
 
-    virtual void disconnectFrameForPageCache() OVERRIDE;
-    virtual void reconnectFrameFromPageCache(Frame*) OVERRIDE;
-    virtual void willDestroyGlobalObjectInCachedFrame() OVERRIDE;
-    virtual void willDestroyGlobalObjectInFrame() OVERRIDE;
-    virtual void willDetachGlobalObjectFromFrame() OVERRIDE;
+    virtual void disconnectFrameForPageCache() override;
+    virtual void reconnectFrameFromPageCache(Frame*) override;
+    virtual void willDestroyGlobalObjectInCachedFrame() override;
+    virtual void willDestroyGlobalObjectInFrame() override;
+    virtual void willDetachGlobalObjectFromFrame() override;
 
     DOMWrapperWorld& world() const { return *m_world; }
 

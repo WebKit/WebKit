@@ -38,15 +38,15 @@ class AVVideoCaptureSource : public AVMediaCaptureSource {
 public:
     static RefPtr<AVMediaCaptureSource> create(AVCaptureDevice*, const AtomicString&, PassRefPtr<MediaConstraints>);
 
-    virtual RefPtr<MediaStreamSourceCapabilities> capabilities() const OVERRIDE;
-    virtual void captureOutputDidOutputSampleBufferFromConnection(AVCaptureOutput*, CMSampleBufferRef, AVCaptureConnection*) OVERRIDE;
+    virtual RefPtr<MediaStreamSourceCapabilities> capabilities() const override;
+    virtual void captureOutputDidOutputSampleBufferFromConnection(AVCaptureOutput*, CMSampleBufferRef, AVCaptureConnection*) override;
 
 private:
     AVVideoCaptureSource(AVCaptureDevice*, const AtomicString&, PassRefPtr<MediaConstraints>);
     virtual ~AVVideoCaptureSource();
 
-    virtual void setupCaptureSession() OVERRIDE;
-    virtual void updateStates() OVERRIDE;
+    virtual void setupCaptureSession() override;
+    virtual void updateStates() override;
 
     bool applyConstraints(MediaConstraints*);
     bool setFrameRateConstraint(float minFrameRate, float maxFrameRate);

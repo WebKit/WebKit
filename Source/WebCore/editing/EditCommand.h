@@ -101,7 +101,7 @@ protected:
 #endif
 
 private:
-    virtual bool isSimpleEditCommand() const OVERRIDE { return true; }
+    virtual bool isSimpleEditCommand() const override { return true; }
 };
 
 inline SimpleEditCommand* toSimpleEditCommand(EditCommand* command)

@@ -39,22 +39,22 @@ public:
 
 private:
     // DrawingAreaProxy
-    virtual void deviceScaleFactorDidChange() OVERRIDE;
-    virtual void sizeDidChange() OVERRIDE;
-    virtual void waitForPossibleGeometryUpdate(std::chrono::milliseconds timeout = didUpdateBackingStoreStateTimeout()) OVERRIDE;
-    virtual void colorSpaceDidChange() OVERRIDE;
-    virtual void minimumLayoutSizeDidChange() OVERRIDE;
+    virtual void deviceScaleFactorDidChange() override;
+    virtual void sizeDidChange() override;
+    virtual void waitForPossibleGeometryUpdate(std::chrono::milliseconds timeout = didUpdateBackingStoreStateTimeout()) override;
+    virtual void colorSpaceDidChange() override;
+    virtual void minimumLayoutSizeDidChange() override;
 
-    virtual void enterAcceleratedCompositingMode(uint64_t backingStoreStateID, const LayerTreeContext&) OVERRIDE;
-    virtual void exitAcceleratedCompositingMode(uint64_t backingStoreStateID, const UpdateInfo&) OVERRIDE;
-    virtual void updateAcceleratedCompositingMode(uint64_t backingStoreStateID, const LayerTreeContext&) OVERRIDE;
+    virtual void enterAcceleratedCompositingMode(uint64_t backingStoreStateID, const LayerTreeContext&) override;
+    virtual void exitAcceleratedCompositingMode(uint64_t backingStoreStateID, const UpdateInfo&) override;
+    virtual void updateAcceleratedCompositingMode(uint64_t backingStoreStateID, const LayerTreeContext&) override;
 
-    virtual void adjustTransientZoom(double scale, WebCore::FloatPoint origin) OVERRIDE;
-    virtual void commitTransientZoom(double scale, WebCore::FloatPoint origin) OVERRIDE;
+    virtual void adjustTransientZoom(double scale, WebCore::FloatPoint origin) override;
+    virtual void commitTransientZoom(double scale, WebCore::FloatPoint origin) override;
 
     // Message handlers.
-    virtual void didUpdateGeometry() OVERRIDE;
-    virtual void intrinsicContentSizeDidChange(const WebCore::IntSize& newIntrinsicContentSize) OVERRIDE;
+    virtual void didUpdateGeometry() override;
+    virtual void intrinsicContentSizeDidChange(const WebCore::IntSize& newIntrinsicContentSize) override;
 
     void sendUpdateGeometry();
 

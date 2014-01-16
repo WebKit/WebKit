@@ -37,9 +37,9 @@ public:
 
     virtual ~CSSPageRule();
 
-    virtual CSSRule::Type type() const OVERRIDE { return PAGE_RULE; }
-    virtual String cssText() const OVERRIDE;
-    virtual void reattach(StyleRuleBase*) OVERRIDE;
+    virtual CSSRule::Type type() const override { return PAGE_RULE; }
+    virtual String cssText() const override;
+    virtual void reattach(StyleRuleBase*) override;
 
     CSSStyleDeclaration* style();
 

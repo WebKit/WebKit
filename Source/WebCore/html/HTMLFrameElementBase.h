@@ -34,7 +34,7 @@ public:
     URL location() const;
     void setLocation(const String&);
 
-    virtual ScrollbarMode scrollingMode() const OVERRIDE { return m_scrolling; }
+    virtual ScrollbarMode scrollingMode() const override { return m_scrolling; }
     
     int marginWidth() const { return m_marginWidth; }
     int marginHeight() const { return m_marginHeight; }
@@ -42,28 +42,28 @@ public:
     int width();
     int height();
 
-    virtual bool canContainRangeEndPoint() const OVERRIDE { return false; }
+    virtual bool canContainRangeEndPoint() const override { return false; }
 
 protected:
     HTMLFrameElementBase(const QualifiedName&, Document&);
 
     bool isURLAllowed() const;
 
-    virtual void parseAttribute(const QualifiedName&, const AtomicString&) OVERRIDE;
-    virtual InsertionNotificationRequest insertedInto(ContainerNode&) OVERRIDE;
-    virtual void didNotifySubtreeInsertions(ContainerNode*) OVERRIDE;
-    virtual void didAttachRenderers() OVERRIDE;
+    virtual void parseAttribute(const QualifiedName&, const AtomicString&) override;
+    virtual InsertionNotificationRequest insertedInto(ContainerNode&) override;
+    virtual void didNotifySubtreeInsertions(ContainerNode*) override;
+    virtual void didAttachRenderers() override;
 
 private:
-    virtual bool supportsFocus() const OVERRIDE;
-    virtual void setFocus(bool) OVERRIDE;
+    virtual bool supportsFocus() const override;
+    virtual void setFocus(bool) override;
     
-    virtual bool isURLAttribute(const Attribute&) const OVERRIDE;
-    virtual bool isHTMLContentAttribute(const Attribute&) const OVERRIDE;
+    virtual bool isURLAttribute(const Attribute&) const override;
+    virtual bool isHTMLContentAttribute(const Attribute&) const override;
 
-    virtual bool isFrameElementBase() const OVERRIDE { return true; }
+    virtual bool isFrameElementBase() const override { return true; }
 
-    virtual bool areAuthorShadowsAllowed() const OVERRIDE { return false; }
+    virtual bool areAuthorShadowsAllowed() const override { return false; }
 
     bool viewSourceMode() const { return m_viewSource; }
 

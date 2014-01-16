@@ -75,7 +75,7 @@ public:
     using RefCounted<SpeechSynthesisUtterance>::ref;
     using RefCounted<SpeechSynthesisUtterance>::deref;
 
-    virtual ScriptExecutionContext* scriptExecutionContext() const OVERRIDE { return ContextDestructionObserver::scriptExecutionContext(); }
+    virtual ScriptExecutionContext* scriptExecutionContext() const override { return ContextDestructionObserver::scriptExecutionContext(); }
 
     PlatformSpeechSynthesisUtterance* platformUtterance() const { return m_platformUtterance.get(); }
 
@@ -84,9 +84,9 @@ private:
     RefPtr<PlatformSpeechSynthesisUtterance> m_platformUtterance;
     RefPtr<SpeechSynthesisVoice> m_voice;
 
-    virtual EventTargetInterface eventTargetInterface() const OVERRIDE { return SpeechSynthesisUtteranceEventTargetInterfaceType; }
-    virtual void refEventTarget() OVERRIDE { ref(); }
-    virtual void derefEventTarget() OVERRIDE { deref(); }
+    virtual EventTargetInterface eventTargetInterface() const override { return SpeechSynthesisUtteranceEventTargetInterfaceType; }
+    virtual void refEventTarget() override { ref(); }
+    virtual void derefEventTarget() override { deref(); }
 };
     
 } // namespace WebCore

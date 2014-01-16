@@ -46,13 +46,13 @@ public:
 #endif
 
 private:
-    virtual AccessibilityRole roleValue() const OVERRIDE { return ProgressIndicatorRole; }
+    virtual AccessibilityRole roleValue() const override { return ProgressIndicatorRole; }
 
-    virtual bool isProgressIndicator() const OVERRIDE { return true; }
+    virtual bool isProgressIndicator() const override { return true; }
 
-    virtual float valueForRange() const OVERRIDE;
-    virtual float maxValueForRange() const OVERRIDE;
-    virtual float minValueForRange() const OVERRIDE;
+    virtual float valueForRange() const override;
+    virtual float maxValueForRange() const override;
+    virtual float minValueForRange() const override;
 
 #if ENABLE(PROGRESS_ELEMENT)
     explicit AccessibilityProgressIndicator(RenderProgress*);
@@ -63,7 +63,7 @@ private:
     HTMLMeterElement* meterElement() const;
 #endif
     
-    virtual bool computeAccessibilityIsIgnored() const OVERRIDE;
+    virtual bool computeAccessibilityIsIgnored() const override;
 };
 
 

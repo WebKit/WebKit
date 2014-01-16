@@ -44,13 +44,13 @@ private:
     WebConnectionToWebProcess(WebProcessProxy*);
 
     // WebConnection
-    virtual void encodeMessageBody(IPC::ArgumentEncoder&, API::Object*) OVERRIDE;
-    virtual bool decodeMessageBody(IPC::ArgumentDecoder&, RefPtr<API::Object>&) OVERRIDE;
-    virtual bool hasValidConnection() const OVERRIDE;
+    virtual void encodeMessageBody(IPC::ArgumentEncoder&, API::Object*) override;
+    virtual bool decodeMessageBody(IPC::ArgumentDecoder&, RefPtr<API::Object>&) override;
+    virtual bool hasValidConnection() const override;
 
     // IPC::MessageSender
-    virtual IPC::Connection* messageSenderConnection() OVERRIDE;
-    virtual uint64_t messageSenderDestinationID() OVERRIDE;
+    virtual IPC::Connection* messageSenderConnection() override;
+    virtual uint64_t messageSenderDestinationID() override;
 
     WebProcessProxy* m_process;
 };

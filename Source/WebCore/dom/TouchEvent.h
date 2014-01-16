@@ -69,7 +69,7 @@ public:
     void setTargetTouches(PassRefPtr<TouchList> targetTouches) { m_targetTouches = targetTouches; }
     void setChangedTouches(PassRefPtr<TouchList> changedTouches) { m_changedTouches = changedTouches; }
 
-    virtual bool isTouchEvent() const OVERRIDE;
+    virtual bool isTouchEvent() const override;
 
     virtual EventInterface eventInterface() const;
 

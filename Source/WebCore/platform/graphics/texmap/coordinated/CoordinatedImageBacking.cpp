@@ -41,7 +41,7 @@ public:
     {
     }
 
-    virtual void paintToSurfaceContext(GraphicsContext* context) OVERRIDE
+    virtual void paintToSurfaceContext(GraphicsContext* context) override
     {
         context->drawImage(m_image, ColorSpaceDeviceRGB, m_rect, m_rect);
     }

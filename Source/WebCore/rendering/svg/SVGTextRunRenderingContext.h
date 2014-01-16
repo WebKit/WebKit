@@ -42,10 +42,10 @@ public:
     RenderSVGResource* activePaintingResource() const { return m_activePaintingResource; }
     void setActivePaintingResource(RenderSVGResource* object) { m_activePaintingResource = object; }
 
-    virtual GlyphData glyphDataForCharacter(const Font&, WidthIterator&, UChar32 character, bool mirror, int currentCharacter, unsigned& advanceLength) OVERRIDE;
-    virtual void drawSVGGlyphs(GraphicsContext*, const SimpleFontData*, const GlyphBuffer&, int from, int to, const FloatPoint&) const OVERRIDE;
-    virtual float floatWidthUsingSVGFont(const Font&, const TextRun&, int& charsConsumed, String& glyphName) const OVERRIDE;
-    virtual bool applySVGKerning(const SimpleFontData*, WidthIterator&, GlyphBuffer*, int from) const OVERRIDE;
+    virtual GlyphData glyphDataForCharacter(const Font&, WidthIterator&, UChar32 character, bool mirror, int currentCharacter, unsigned& advanceLength) override;
+    virtual void drawSVGGlyphs(GraphicsContext*, const SimpleFontData*, const GlyphBuffer&, int from, int to, const FloatPoint&) const override;
+    virtual float floatWidthUsingSVGFont(const Font&, const TextRun&, int& charsConsumed, String& glyphName) const override;
+    virtual bool applySVGKerning(const SimpleFontData*, WidthIterator&, GlyphBuffer*, int from) const override;
 #endif
 
 private:

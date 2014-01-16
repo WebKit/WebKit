@@ -50,20 +50,20 @@ public:
     FloatRect floatLinesBoundingBox() const;
 
 private:
-    virtual const char* renderName() const OVERRIDE { return "RenderSVGInlineText"; }
+    virtual const char* renderName() const override { return "RenderSVGInlineText"; }
 
-    virtual String originalText() const OVERRIDE;
-    virtual void setTextInternal(const String&) OVERRIDE;
-    virtual void styleDidChange(StyleDifference, const RenderStyle*) OVERRIDE;
+    virtual String originalText() const override;
+    virtual void setTextInternal(const String&) override;
+    virtual void styleDidChange(StyleDifference, const RenderStyle*) override;
 
-    virtual FloatRect objectBoundingBox() const OVERRIDE { return floatLinesBoundingBox(); }
+    virtual FloatRect objectBoundingBox() const override { return floatLinesBoundingBox(); }
 
-    virtual bool isSVGInlineText() const OVERRIDE { return true; }
+    virtual bool isSVGInlineText() const override { return true; }
 
-    virtual VisiblePosition positionForPoint(const LayoutPoint&) OVERRIDE;
-    virtual LayoutRect localCaretRect(InlineBox*, int caretOffset, LayoutUnit* extraWidthToEndOfLine = 0) OVERRIDE;
-    virtual IntRect linesBoundingBox() const OVERRIDE;
-    virtual std::unique_ptr<InlineTextBox> createTextBox() OVERRIDE;
+    virtual VisiblePosition positionForPoint(const LayoutPoint&) override;
+    virtual LayoutRect localCaretRect(InlineBox*, int caretOffset, LayoutUnit* extraWidthToEndOfLine = 0) override;
+    virtual IntRect linesBoundingBox() const override;
+    virtual std::unique_ptr<InlineTextBox> createTextBox() override;
 
     float m_scalingFactor;
     Font m_scaledFont;

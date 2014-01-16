@@ -45,8 +45,8 @@ public:
 
     virtual ~CDMPrivateAVFoundation() { }
 
-    virtual bool supportsMIMEType(const String& mimeType) OVERRIDE;
-    virtual PassOwnPtr<CDMSession> createSession() OVERRIDE;
+    virtual bool supportsMIMEType(const String& mimeType) override;
+    virtual PassOwnPtr<CDMSession> createSession() override;
 
     CDM* cdm() const { return m_cdm; }
 

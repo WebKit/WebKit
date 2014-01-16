@@ -38,7 +38,7 @@ public:
     // The hash algorithm to use.
     CryptoAlgorithmIdentifier hash;
 
-    virtual Class parametersClass() const OVERRIDE { return Class::RsaSsaParams; }
+    virtual Class parametersClass() const override { return Class::RsaSsaParams; }
 };
 
 CRYPTO_ALGORITHM_PARAMETERS_CASTS(RsaSsaParams)

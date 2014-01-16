@@ -32,17 +32,17 @@
 class EmojiFallbackFontSelector : public WebCore::FontSelector {
 public:
     static PassRefPtr<EmojiFallbackFontSelector> create() { return adoptRef(new EmojiFallbackFontSelector()); }
-    virtual ~EmojiFallbackFontSelector() OVERRIDE { }
-    virtual PassRefPtr<WebCore::FontData> getFontData(const WebCore::FontDescription&, const AtomicString& familyName) OVERRIDE { ASSERT_NOT_REACHED(); return 0; }
-    virtual bool resolvesFamilyFor(const WebCore::FontDescription&) const OVERRIDE { ASSERT_NOT_REACHED(); return false; }
-    virtual size_t fallbackFontDataCount() OVERRIDE { return 1; };
-    virtual PassRefPtr<WebCore::FontData> getFallbackFontData(const WebCore::FontDescription&, size_t) OVERRIDE;
+    virtual ~EmojiFallbackFontSelector() override { }
+    virtual PassRefPtr<WebCore::FontData> getFontData(const WebCore::FontDescription&, const AtomicString& familyName) override { ASSERT_NOT_REACHED(); return 0; }
+    virtual bool resolvesFamilyFor(const WebCore::FontDescription&) const override { ASSERT_NOT_REACHED(); return false; }
+    virtual size_t fallbackFontDataCount() override { return 1; };
+    virtual PassRefPtr<WebCore::FontData> getFallbackFontData(const WebCore::FontDescription&, size_t) override;
 
-    virtual void registerForInvalidationCallbacks(WebCore::FontSelectorClient*) OVERRIDE { }
-    virtual void unregisterForInvalidationCallbacks(WebCore::FontSelectorClient*) OVERRIDE { }
+    virtual void registerForInvalidationCallbacks(WebCore::FontSelectorClient*) override { }
+    virtual void unregisterForInvalidationCallbacks(WebCore::FontSelectorClient*) override { }
 
-    virtual unsigned version() const OVERRIDE { return 0; }
-    virtual unsigned uniqueId() const OVERRIDE { return 0; }
+    virtual unsigned version() const override { return 0; }
+    virtual unsigned uniqueId() const override { return 0; }
 
 private:
     EmojiFallbackFontSelector() { }

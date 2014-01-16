@@ -54,13 +54,13 @@ public:
     MediaPlayerPrivateMediaSourceAVFObjC* player() const { return m_player; }
     const Vector<SourceBufferPrivateAVFObjC*>& activeSourceBuffers() const { return m_activeSourceBuffers; }
 
-    virtual AddStatus addSourceBuffer(const ContentType&, RefPtr<SourceBufferPrivate>&) OVERRIDE;
-    virtual double duration() OVERRIDE;
-    virtual void setDuration(double) OVERRIDE;
-    virtual void markEndOfStream(EndOfStreamStatus) OVERRIDE;
-    virtual void unmarkEndOfStream() OVERRIDE;
-    virtual MediaPlayer::ReadyState readyState() const OVERRIDE;
-    virtual void setReadyState(MediaPlayer::ReadyState) OVERRIDE;
+    virtual AddStatus addSourceBuffer(const ContentType&, RefPtr<SourceBufferPrivate>&) override;
+    virtual double duration() override;
+    virtual void setDuration(double) override;
+    virtual void markEndOfStream(EndOfStreamStatus) override;
+    virtual void unmarkEndOfStream() override;
+    virtual MediaPlayer::ReadyState readyState() const override;
+    virtual void setReadyState(MediaPlayer::ReadyState) override;
 
     bool hasAudio() const;
     bool hasVideo() const;

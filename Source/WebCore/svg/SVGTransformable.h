@@ -44,7 +44,7 @@ public:
     static bool parseTransformValue(unsigned type, const UChar*& ptr, const UChar* end, SVGTransform&);
     static SVGTransform::SVGTransformType parseTransformType(const String&);
 
-    virtual AffineTransform localCoordinateSpaceTransform(SVGLocatable::CTMScope) const OVERRIDE { return animatedLocalTransform(); }
+    virtual AffineTransform localCoordinateSpaceTransform(SVGLocatable::CTMScope) const override { return animatedLocalTransform(); }
     virtual AffineTransform animatedLocalTransform() const = 0;
 };
 

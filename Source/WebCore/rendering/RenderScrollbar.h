@@ -64,17 +64,17 @@ public:
 private:
     RenderScrollbar(ScrollableArea*, ScrollbarOrientation, Element*, Frame*);
 
-    virtual void setParent(ScrollView*) OVERRIDE;
-    virtual void setEnabled(bool) OVERRIDE;
+    virtual void setParent(ScrollView*) override;
+    virtual void setEnabled(bool) override;
 
-    virtual void paint(GraphicsContext*, const IntRect& damageRect) OVERRIDE;
+    virtual void paint(GraphicsContext*, const IntRect& damageRect) override;
 
-    virtual void setHoveredPart(ScrollbarPart) OVERRIDE;
-    virtual void setPressedPart(ScrollbarPart) OVERRIDE;
+    virtual void setHoveredPart(ScrollbarPart) override;
+    virtual void setPressedPart(ScrollbarPart) override;
 
-    virtual void styleChanged() OVERRIDE;
+    virtual void styleChanged() override;
 
-    virtual bool isCustomScrollbar() const OVERRIDE { return true; }
+    virtual bool isCustomScrollbar() const override { return true; }
 
     void updateScrollbarParts();
 

@@ -43,22 +43,22 @@ public:
     explicit ImageInputType(HTMLInputElement&);
 
 private:
-    virtual const AtomicString& formControlType() const OVERRIDE;
-    virtual bool isFormDataAppendable() const OVERRIDE;
-    virtual bool appendFormData(FormDataList&, bool) const OVERRIDE;
-    virtual bool supportsValidation() const OVERRIDE;
-    virtual RenderPtr<RenderElement> createInputRenderer(PassRef<RenderStyle>) OVERRIDE;
-    virtual void handleDOMActivateEvent(Event*) OVERRIDE;
-    virtual void altAttributeChanged() OVERRIDE;
-    virtual void srcAttributeChanged() OVERRIDE;
-    virtual void attach() OVERRIDE;
-    virtual bool shouldRespectAlignAttribute() OVERRIDE;
-    virtual bool canBeSuccessfulSubmitButton() OVERRIDE;
-    virtual bool isImageButton() const OVERRIDE;
-    virtual bool isEnumeratable() OVERRIDE;
-    virtual bool shouldRespectHeightAndWidthAttributes() OVERRIDE;
-    virtual unsigned height() const OVERRIDE;
-    virtual unsigned width() const OVERRIDE;
+    virtual const AtomicString& formControlType() const override;
+    virtual bool isFormDataAppendable() const override;
+    virtual bool appendFormData(FormDataList&, bool) const override;
+    virtual bool supportsValidation() const override;
+    virtual RenderPtr<RenderElement> createInputRenderer(PassRef<RenderStyle>) override;
+    virtual void handleDOMActivateEvent(Event*) override;
+    virtual void altAttributeChanged() override;
+    virtual void srcAttributeChanged() override;
+    virtual void attach() override;
+    virtual bool shouldRespectAlignAttribute() override;
+    virtual bool canBeSuccessfulSubmitButton() override;
+    virtual bool isImageButton() const override;
+    virtual bool isEnumeratable() override;
+    virtual bool shouldRespectHeightAndWidthAttributes() override;
+    virtual unsigned height() const override;
+    virtual unsigned width() const override;
 
     IntPoint m_clickLocation; // Valid only during HTMLFormElement::prepareForSubmission().
 };

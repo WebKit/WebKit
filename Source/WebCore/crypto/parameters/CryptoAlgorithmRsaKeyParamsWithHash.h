@@ -47,7 +47,7 @@ public:
     bool hasHash;
     CryptoAlgorithmIdentifier hash;
 
-    virtual Class parametersClass() const OVERRIDE { return Class::RsaKeyParamsWithHash; }
+    virtual Class parametersClass() const override { return Class::RsaKeyParamsWithHash; }
 };
 
 CRYPTO_ALGORITHM_PARAMETERS_CASTS(RsaKeyParamsWithHash)

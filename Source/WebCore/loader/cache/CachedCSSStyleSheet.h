@@ -48,18 +48,18 @@ namespace WebCore {
 
     private:
         bool canUseSheet(bool enforceMIMEType, bool* hasValidMIMEType) const;
-        virtual PurgePriority purgePriority() const OVERRIDE { return PurgeLast; }
-        virtual bool mayTryReplaceEncodedData() const OVERRIDE { return true; }
+        virtual PurgePriority purgePriority() const override { return PurgeLast; }
+        virtual bool mayTryReplaceEncodedData() const override { return true; }
 
-        virtual void didAddClient(CachedResourceClient*) OVERRIDE;
+        virtual void didAddClient(CachedResourceClient*) override;
 
-        virtual void setEncoding(const String&) OVERRIDE;
-        virtual String encoding() const OVERRIDE;
-        virtual void finishLoading(ResourceBuffer*) OVERRIDE;
-        virtual void destroyDecodedData() OVERRIDE;
+        virtual void setEncoding(const String&) override;
+        virtual String encoding() const override;
+        virtual void finishLoading(ResourceBuffer*) override;
+        virtual void destroyDecodedData() override;
 
     protected:
-        virtual void checkNotify() OVERRIDE;
+        virtual void checkNotify() override;
 
         RefPtr<TextResourceDecoder> m_decoder;
         String m_decodedSheetText;

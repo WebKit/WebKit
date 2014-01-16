@@ -37,14 +37,14 @@ public:
     virtual ~RenderSVGPath();
 
 private:
-    virtual bool isSVGPath() const OVERRIDE { return true; }
+    virtual bool isSVGPath() const override { return true; }
     virtual const char* renderName() const { return "RenderSVGPath"; }
 
-    virtual void updateShapeFromElement() OVERRIDE;
+    virtual void updateShapeFromElement() override;
     FloatRect calculateUpdatedStrokeBoundingBox() const;
 
-    virtual void strokeShape(GraphicsContext*) const OVERRIDE;
-    virtual bool shapeDependentStrokeContains(const FloatPoint&) OVERRIDE;
+    virtual void strokeShape(GraphicsContext*) const override;
+    virtual bool shapeDependentStrokeContains(const FloatPoint&) override;
 
     bool shouldStrokeZeroLengthSubpath() const;
     Path* zeroLengthLinecapPath(const FloatPoint&) const;

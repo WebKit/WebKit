@@ -54,12 +54,12 @@ public:
 private:
     HTMLOutputElement(const QualifiedName&, Document&, HTMLFormElement*);
 
-    virtual void parseAttribute(const QualifiedName&, const AtomicString&) OVERRIDE;
+    virtual void parseAttribute(const QualifiedName&, const AtomicString&) override;
     virtual const AtomicString& formControlType() const;
     virtual bool isEnumeratable() const { return true; }
-    virtual bool supportLabels() const OVERRIDE { return true; }
-    virtual bool supportsFocus() const OVERRIDE;
-    virtual void childrenChanged(const ChildChange&) OVERRIDE;
+    virtual bool supportLabels() const override { return true; }
+    virtual bool supportsFocus() const override;
+    virtual void childrenChanged(const ChildChange&) override;
     virtual void reset();
 
     void setTextContentInternal(const String&);

@@ -38,7 +38,7 @@ public:
         return adoptPtr(new WebSafeIncrementalSweeper(heap));
     }
 
-    virtual ~WebSafeIncrementalSweeper() OVERRIDE { }
+    virtual ~WebSafeIncrementalSweeper() override { }
 
 private:
     WebSafeIncrementalSweeper(JSC::Heap* heap)

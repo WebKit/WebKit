@@ -108,97 +108,97 @@ private:
 
     // Plugin functions.
     virtual bool initialize(const Parameters&);
-    virtual void destroy() OVERRIDE;
-    virtual void paint(WebCore::GraphicsContext*, const WebCore::IntRect& dirtyRectInWindowCoordinates) OVERRIDE { }
-    virtual void updateControlTints(WebCore::GraphicsContext*) OVERRIDE;
-    virtual bool supportsSnapshotting() const OVERRIDE { return true; }
-    virtual PassRefPtr<ShareableBitmap> snapshot() OVERRIDE;
-    virtual PlatformLayer* pluginLayer() OVERRIDE;
-    virtual bool isTransparent() OVERRIDE { return false; }
-    virtual bool wantsWheelEvents() OVERRIDE { return true; }
-    virtual void geometryDidChange(const WebCore::IntSize& pluginSize, const WebCore::IntRect& clipRect, const WebCore::AffineTransform& pluginToRootViewTransform) OVERRIDE;
-    virtual void contentsScaleFactorChanged(float) OVERRIDE;
-    virtual void visibilityDidChange() OVERRIDE { }
-    virtual void frameDidFinishLoading(uint64_t requestID) OVERRIDE;
-    virtual void frameDidFail(uint64_t requestID, bool wasCancelled) OVERRIDE;
-    virtual void didEvaluateJavaScript(uint64_t requestID, const String& result) OVERRIDE;
-    virtual void streamDidReceiveResponse(uint64_t streamID, const WebCore::URL& responseURL, uint32_t streamLength, uint32_t lastModifiedTime, const String& mimeType, const String& headers, const String& suggestedFileName) OVERRIDE;
-    virtual void streamDidReceiveData(uint64_t streamID, const char* bytes, int length) OVERRIDE;
-    virtual void streamDidFinishLoading(uint64_t streamID) OVERRIDE;
-    virtual void streamDidFail(uint64_t streamID, bool wasCancelled) OVERRIDE;
-    virtual void manualStreamDidReceiveResponse(const WebCore::URL& responseURL, uint32_t streamLength, uint32_t lastModifiedTime, const WTF::String& mimeType, const WTF::String& headers, const String& suggestedFileName) OVERRIDE;
-    virtual void manualStreamDidReceiveData(const char* bytes, int length) OVERRIDE;
-    virtual void manualStreamDidFinishLoading() OVERRIDE;
-    virtual void manualStreamDidFail(bool wasCancelled) OVERRIDE;
-    virtual bool handleMouseEvent(const WebMouseEvent&) OVERRIDE;
-    virtual bool handleWheelEvent(const WebWheelEvent&) OVERRIDE;
-    virtual bool handleMouseEnterEvent(const WebMouseEvent&) OVERRIDE;
-    virtual bool handleMouseLeaveEvent(const WebMouseEvent&) OVERRIDE;
-    virtual bool handleContextMenuEvent(const WebMouseEvent&) OVERRIDE;
-    virtual bool handleKeyboardEvent(const WebKeyboardEvent&) OVERRIDE;
-    virtual bool handleEditingCommand(const String& commandName, const String& argument) OVERRIDE;
-    virtual bool isEditingCommandEnabled(const String&) OVERRIDE;
-    virtual bool handlesPageScaleFactor() OVERRIDE;
-    virtual void setFocus(bool) OVERRIDE { }
-    virtual NPObject* pluginScriptableNPObject() OVERRIDE { return 0; }
-    virtual void windowFocusChanged(bool) OVERRIDE { }
-    virtual void windowAndViewFramesChanged(const WebCore::IntRect& windowFrameInScreenCoordinates, const WebCore::IntRect& viewFrameInWindowCoordinates) OVERRIDE { }
-    virtual void windowVisibilityChanged(bool) OVERRIDE { }
-    virtual uint64_t pluginComplexTextInputIdentifier() const OVERRIDE { return 0; }
-    virtual void sendComplexTextInput(const String& textInput) OVERRIDE { }
-    virtual void setLayerHostingMode(LayerHostingMode) OVERRIDE { }
-    virtual WebCore::Scrollbar* horizontalScrollbar() OVERRIDE { return m_horizontalScrollbar.get(); }
-    virtual WebCore::Scrollbar* verticalScrollbar() OVERRIDE { return m_verticalScrollbar.get(); }
-    virtual void storageBlockingStateChanged(bool) OVERRIDE { }
-    virtual void privateBrowsingStateChanged(bool) OVERRIDE { }
-    virtual bool getFormValue(String& formValue) OVERRIDE { return false; }
-    virtual bool handleScroll(WebCore::ScrollDirection, WebCore::ScrollGranularity) OVERRIDE;
-    virtual PassRefPtr<WebCore::SharedBuffer> liveResourceData() const OVERRIDE;
+    virtual void destroy() override;
+    virtual void paint(WebCore::GraphicsContext*, const WebCore::IntRect& dirtyRectInWindowCoordinates) override { }
+    virtual void updateControlTints(WebCore::GraphicsContext*) override;
+    virtual bool supportsSnapshotting() const override { return true; }
+    virtual PassRefPtr<ShareableBitmap> snapshot() override;
+    virtual PlatformLayer* pluginLayer() override;
+    virtual bool isTransparent() override { return false; }
+    virtual bool wantsWheelEvents() override { return true; }
+    virtual void geometryDidChange(const WebCore::IntSize& pluginSize, const WebCore::IntRect& clipRect, const WebCore::AffineTransform& pluginToRootViewTransform) override;
+    virtual void contentsScaleFactorChanged(float) override;
+    virtual void visibilityDidChange() override { }
+    virtual void frameDidFinishLoading(uint64_t requestID) override;
+    virtual void frameDidFail(uint64_t requestID, bool wasCancelled) override;
+    virtual void didEvaluateJavaScript(uint64_t requestID, const String& result) override;
+    virtual void streamDidReceiveResponse(uint64_t streamID, const WebCore::URL& responseURL, uint32_t streamLength, uint32_t lastModifiedTime, const String& mimeType, const String& headers, const String& suggestedFileName) override;
+    virtual void streamDidReceiveData(uint64_t streamID, const char* bytes, int length) override;
+    virtual void streamDidFinishLoading(uint64_t streamID) override;
+    virtual void streamDidFail(uint64_t streamID, bool wasCancelled) override;
+    virtual void manualStreamDidReceiveResponse(const WebCore::URL& responseURL, uint32_t streamLength, uint32_t lastModifiedTime, const WTF::String& mimeType, const WTF::String& headers, const String& suggestedFileName) override;
+    virtual void manualStreamDidReceiveData(const char* bytes, int length) override;
+    virtual void manualStreamDidFinishLoading() override;
+    virtual void manualStreamDidFail(bool wasCancelled) override;
+    virtual bool handleMouseEvent(const WebMouseEvent&) override;
+    virtual bool handleWheelEvent(const WebWheelEvent&) override;
+    virtual bool handleMouseEnterEvent(const WebMouseEvent&) override;
+    virtual bool handleMouseLeaveEvent(const WebMouseEvent&) override;
+    virtual bool handleContextMenuEvent(const WebMouseEvent&) override;
+    virtual bool handleKeyboardEvent(const WebKeyboardEvent&) override;
+    virtual bool handleEditingCommand(const String& commandName, const String& argument) override;
+    virtual bool isEditingCommandEnabled(const String&) override;
+    virtual bool handlesPageScaleFactor() override;
+    virtual void setFocus(bool) override { }
+    virtual NPObject* pluginScriptableNPObject() override { return 0; }
+    virtual void windowFocusChanged(bool) override { }
+    virtual void windowAndViewFramesChanged(const WebCore::IntRect& windowFrameInScreenCoordinates, const WebCore::IntRect& viewFrameInWindowCoordinates) override { }
+    virtual void windowVisibilityChanged(bool) override { }
+    virtual uint64_t pluginComplexTextInputIdentifier() const override { return 0; }
+    virtual void sendComplexTextInput(const String& textInput) override { }
+    virtual void setLayerHostingMode(LayerHostingMode) override { }
+    virtual WebCore::Scrollbar* horizontalScrollbar() override { return m_horizontalScrollbar.get(); }
+    virtual WebCore::Scrollbar* verticalScrollbar() override { return m_verticalScrollbar.get(); }
+    virtual void storageBlockingStateChanged(bool) override { }
+    virtual void privateBrowsingStateChanged(bool) override { }
+    virtual bool getFormValue(String& formValue) override { return false; }
+    virtual bool handleScroll(WebCore::ScrollDirection, WebCore::ScrollGranularity) override;
+    virtual PassRefPtr<WebCore::SharedBuffer> liveResourceData() const override;
 
-    virtual bool isBeingAsynchronouslyInitialized() const OVERRIDE { return false; }
+    virtual bool isBeingAsynchronouslyInitialized() const override { return false; }
 
-    virtual RetainPtr<PDFDocument> pdfDocumentForPrinting() const OVERRIDE { return m_pdfDocument; }
-    virtual NSObject *accessibilityObject() const OVERRIDE;
+    virtual RetainPtr<PDFDocument> pdfDocumentForPrinting() const override { return m_pdfDocument; }
+    virtual NSObject *accessibilityObject() const override;
 
-    virtual unsigned countFindMatches(const String& target, WebCore::FindOptions, unsigned maxMatchCount) OVERRIDE;
-    virtual bool findString(const String& target, WebCore::FindOptions, unsigned maxMatchCount) OVERRIDE;
+    virtual unsigned countFindMatches(const String& target, WebCore::FindOptions, unsigned maxMatchCount) override;
+    virtual bool findString(const String& target, WebCore::FindOptions, unsigned maxMatchCount) override;
 
     PDFSelection *nextMatchForString(const String& target, BOOL searchForward, BOOL caseSensitive, BOOL wrapSearch, PDFSelection *initialSelection, BOOL startInSelection);
 
-    virtual bool performDictionaryLookupAtLocation(const WebCore::FloatPoint&) OVERRIDE;
-    virtual String getSelectionString() const OVERRIDE;
+    virtual bool performDictionaryLookupAtLocation(const WebCore::FloatPoint&) override;
+    virtual String getSelectionString() const override;
 
-    virtual bool shouldAllowScripting() OVERRIDE { return false; }
-    virtual bool shouldAllowNavigationFromDrags() OVERRIDE { return true; }
-    virtual bool shouldAlwaysAutoStart() const OVERRIDE { return true; }
+    virtual bool shouldAllowScripting() override { return false; }
+    virtual bool shouldAllowNavigationFromDrags() override { return true; }
+    virtual bool shouldAlwaysAutoStart() const override { return true; }
 
     // ScrollableArea functions.
-    virtual WebCore::IntRect scrollCornerRect() const OVERRIDE;
-    virtual WebCore::ScrollableArea* enclosingScrollableArea() const OVERRIDE;
-    virtual WebCore::IntRect scrollableAreaBoundingBox() const OVERRIDE;
-    virtual void setScrollOffset(const WebCore::IntPoint&) OVERRIDE;
-    virtual void invalidateScrollbarRect(WebCore::Scrollbar*, const WebCore::IntRect&) OVERRIDE;
-    virtual void invalidateScrollCornerRect(const WebCore::IntRect&) OVERRIDE;
-    virtual WebCore::IntPoint lastKnownMousePosition() const OVERRIDE { return m_lastMousePositionInPluginCoordinates; }
-    virtual int scrollSize(WebCore::ScrollbarOrientation) const OVERRIDE;
-    virtual bool isActive() const OVERRIDE;
-    virtual bool isScrollCornerVisible() const OVERRIDE { return false; }
-    virtual int scrollPosition(WebCore::Scrollbar*) const OVERRIDE;
-    virtual WebCore::IntPoint scrollPosition() const OVERRIDE;
-    virtual WebCore::IntPoint minimumScrollPosition() const OVERRIDE;
-    virtual WebCore::IntPoint maximumScrollPosition() const OVERRIDE;
-    virtual int visibleHeight() const OVERRIDE { return m_size.height(); }
-    virtual int visibleWidth() const OVERRIDE { return m_size.width(); }
-    virtual WebCore::IntSize contentsSize() const OVERRIDE { return m_pdfDocumentSize; }
-    virtual WebCore::Scrollbar* horizontalScrollbar() const OVERRIDE { return m_horizontalScrollbar.get(); }
-    virtual WebCore::Scrollbar* verticalScrollbar() const OVERRIDE { return m_verticalScrollbar.get(); }
-    virtual bool shouldSuspendScrollAnimations() const OVERRIDE { return false; } // If we return true, ScrollAnimatorMac will keep cycling a timer forever, waiting for a good time to animate.
-    virtual void scrollbarStyleChanged(int newStyle, bool forceUpdate) OVERRIDE;
-    virtual WebCore::IntRect convertFromScrollbarToContainingView(const WebCore::Scrollbar*, const WebCore::IntRect& scrollbarRect) const OVERRIDE;
-    virtual WebCore::IntRect convertFromContainingViewToScrollbar(const WebCore::Scrollbar*, const WebCore::IntRect& parentRect) const OVERRIDE;
-    virtual WebCore::IntPoint convertFromScrollbarToContainingView(const WebCore::Scrollbar*, const WebCore::IntPoint& scrollbarPoint) const OVERRIDE;
-    virtual WebCore::IntPoint convertFromContainingViewToScrollbar(const WebCore::Scrollbar*, const WebCore::IntPoint& parentPoint) const OVERRIDE;
-    virtual bool updatesScrollLayerPositionOnMainThread() const OVERRIDE { return true; }
+    virtual WebCore::IntRect scrollCornerRect() const override;
+    virtual WebCore::ScrollableArea* enclosingScrollableArea() const override;
+    virtual WebCore::IntRect scrollableAreaBoundingBox() const override;
+    virtual void setScrollOffset(const WebCore::IntPoint&) override;
+    virtual void invalidateScrollbarRect(WebCore::Scrollbar*, const WebCore::IntRect&) override;
+    virtual void invalidateScrollCornerRect(const WebCore::IntRect&) override;
+    virtual WebCore::IntPoint lastKnownMousePosition() const override { return m_lastMousePositionInPluginCoordinates; }
+    virtual int scrollSize(WebCore::ScrollbarOrientation) const override;
+    virtual bool isActive() const override;
+    virtual bool isScrollCornerVisible() const override { return false; }
+    virtual int scrollPosition(WebCore::Scrollbar*) const override;
+    virtual WebCore::IntPoint scrollPosition() const override;
+    virtual WebCore::IntPoint minimumScrollPosition() const override;
+    virtual WebCore::IntPoint maximumScrollPosition() const override;
+    virtual int visibleHeight() const override { return m_size.height(); }
+    virtual int visibleWidth() const override { return m_size.width(); }
+    virtual WebCore::IntSize contentsSize() const override { return m_pdfDocumentSize; }
+    virtual WebCore::Scrollbar* horizontalScrollbar() const override { return m_horizontalScrollbar.get(); }
+    virtual WebCore::Scrollbar* verticalScrollbar() const override { return m_verticalScrollbar.get(); }
+    virtual bool shouldSuspendScrollAnimations() const override { return false; } // If we return true, ScrollAnimatorMac will keep cycling a timer forever, waiting for a good time to animate.
+    virtual void scrollbarStyleChanged(int newStyle, bool forceUpdate) override;
+    virtual WebCore::IntRect convertFromScrollbarToContainingView(const WebCore::Scrollbar*, const WebCore::IntRect& scrollbarRect) const override;
+    virtual WebCore::IntRect convertFromContainingViewToScrollbar(const WebCore::Scrollbar*, const WebCore::IntRect& parentRect) const override;
+    virtual WebCore::IntPoint convertFromScrollbarToContainingView(const WebCore::Scrollbar*, const WebCore::IntPoint& scrollbarPoint) const override;
+    virtual WebCore::IntPoint convertFromContainingViewToScrollbar(const WebCore::Scrollbar*, const WebCore::IntPoint& parentPoint) const override;
+    virtual bool updatesScrollLayerPositionOnMainThread() const override { return true; }
 
     // PDFPlugin functions.
     void updateScrollbars();

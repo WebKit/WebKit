@@ -60,7 +60,7 @@ public:
 
 protected:
     // CDMClient:
-    virtual MediaPlayer* cdmMediaPlayer(const CDM*) const OVERRIDE;
+    virtual MediaPlayer* cdmMediaPlayer(const CDM*) const override;
 
     MediaKeys(const String& keySystem, PassOwnPtr<CDM>);
 

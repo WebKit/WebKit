@@ -43,16 +43,16 @@ public:
         return adoptRef(new CrossfadeGeneratedImage(fromImage, toImage, percentage, crossfadeSize, size));
     }
 
-    virtual void setContainerSize(const IntSize&) OVERRIDE { }
-    virtual bool usesContainerSize() const OVERRIDE { return false; }
-    virtual bool hasRelativeWidth() const OVERRIDE { return false; }
-    virtual bool hasRelativeHeight() const OVERRIDE { return false; }
+    virtual void setContainerSize(const IntSize&) override { }
+    virtual bool usesContainerSize() const override { return false; }
+    virtual bool hasRelativeWidth() const override { return false; }
+    virtual bool hasRelativeHeight() const override { return false; }
 
-    virtual IntSize size() const OVERRIDE { return m_crossfadeSize; }
+    virtual IntSize size() const override { return m_crossfadeSize; }
 
 protected:
-    virtual void draw(GraphicsContext*, const FloatRect& dstRect, const FloatRect& srcRect, ColorSpace styleColorSpace, CompositeOperator, BlendMode, ImageOrientationDescription) OVERRIDE;
-    virtual void drawPattern(GraphicsContext*, const FloatRect& srcRect, const AffineTransform& patternTransform, const FloatPoint& phase, ColorSpace styleColorSpace, CompositeOperator, const FloatRect& dstRect, BlendMode) OVERRIDE;
+    virtual void draw(GraphicsContext*, const FloatRect& dstRect, const FloatRect& srcRect, ColorSpace styleColorSpace, CompositeOperator, BlendMode, ImageOrientationDescription) override;
+    virtual void drawPattern(GraphicsContext*, const FloatRect& srcRect, const AffineTransform& patternTransform, const FloatPoint& phase, ColorSpace styleColorSpace, CompositeOperator, const FloatRect& dstRect, BlendMode) override;
 
     CrossfadeGeneratedImage(Image* fromImage, Image* toImage, float percentage, IntSize crossfadeSize, const IntSize&);
 

@@ -55,9 +55,9 @@ public:
     JSC::JSGlobalObject* globalObject() const { return m_globalObject.get(); }
 
 private:
-    virtual void sourceParsed(JSC::ExecState*, JSC::SourceProvider*, int errorLine, const WTF::String& errorMsg) OVERRIDE;
-    virtual void handlePause(JSC::Debugger::ReasonForPause, JSC::JSGlobalObject*) OVERRIDE;
-    virtual bool needPauseHandling(JSC::JSGlobalObject*) OVERRIDE { return true; }
+    virtual void sourceParsed(JSC::ExecState*, JSC::SourceProvider*, int errorLine, const WTF::String& errorMsg) override;
+    virtual void handlePause(JSC::Debugger::ReasonForPause, JSC::JSGlobalObject*) override;
+    virtual bool needPauseHandling(JSC::JSGlobalObject*) override { return true; }
 
     bool m_callingDelegate;
 

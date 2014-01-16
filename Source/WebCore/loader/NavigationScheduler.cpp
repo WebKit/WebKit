@@ -106,13 +106,13 @@ protected:
     {
     }
 
-    virtual void fire(Frame& frame) OVERRIDE
+    virtual void fire(Frame& frame) override
     {
         UserGestureIndicator gestureIndicator(wasUserGesture() ? DefinitelyProcessingUserGesture : DefinitelyNotProcessingUserGesture);
         frame.loader().changeLocation(m_securityOrigin.get(), URL(ParsedURLString, m_url), m_referrer, lockHistory(), lockBackForwardList(), false);
     }
 
-    virtual void didStartTimer(Frame& frame, Timer<NavigationScheduler>& timer) OVERRIDE
+    virtual void didStartTimer(Frame& frame, Timer<NavigationScheduler>& timer) override
     {
         if (m_haveToldClient)
             return;
@@ -122,7 +122,7 @@ protected:
         frame.loader().clientRedirected(URL(ParsedURLString, m_url), delay(), currentTime() + timer.nextFireInterval(), lockBackForwardList());
     }
 
-    virtual void didStopTimer(Frame& frame, bool newLoadInProgress) OVERRIDE
+    virtual void didStopTimer(Frame& frame, bool newLoadInProgress) override
     {
         if (!m_haveToldClient)
             return;
@@ -155,12 +155,12 @@ public:
         clearUserGesture();
     }
 
-    virtual bool shouldStartTimer(Frame& frame) OVERRIDE
+    virtual bool shouldStartTimer(Frame& frame) override
     {
         return frame.loader().allAncestorsAreComplete();
     }
 
-    virtual void fire(Frame& frame) OVERRIDE
+    virtual void fire(Frame& frame) override
     {
         UserGestureIndicator gestureIndicator(wasUserGesture() ? DefinitelyProcessingUserGesture : DefinitelyNotProcessingUserGesture);
         bool refresh = equalIgnoringFragmentIdentifier(frame.document()->url(), URL(ParsedURLString, url()));
@@ -181,7 +181,7 @@ public:
     {
     }
 
-    virtual void fire(Frame& frame) OVERRIDE
+    virtual void fire(Frame& frame) override
     {
         UserGestureIndicator gestureIndicator(wasUserGesture() ? DefinitelyProcessingUserGesture : DefinitelyNotProcessingUserGesture);
         frame.loader().changeLocation(securityOrigin(), URL(ParsedURLString, url()), referrer(), lockHistory(), lockBackForwardList(), true);
@@ -196,7 +196,7 @@ public:
     {
     }
 
-    virtual void fire(Frame& frame) OVERRIDE
+    virtual void fire(Frame& frame) override
     {
         UserGestureIndicator gestureIndicator(wasUserGesture() ? DefinitelyProcessingUserGesture : DefinitelyNotProcessingUserGesture);
 
@@ -226,7 +226,7 @@ public:
         ASSERT(m_submission->state());
     }
 
-    virtual void fire(Frame& frame) OVERRIDE
+    virtual void fire(Frame& frame) override
     {
         UserGestureIndicator gestureIndicator(wasUserGesture() ? DefinitelyProcessingUserGesture : DefinitelyNotProcessingUserGesture);
 
@@ -242,7 +242,7 @@ public:
         frame.loader().loadFrameRequest(frameRequest, lockHistory(), lockBackForwardList(), m_submission->event(), m_submission->state(), MaybeSendReferrer);
     }
     
-    virtual void didStartTimer(Frame& frame, Timer<NavigationScheduler>& timer) OVERRIDE
+    virtual void didStartTimer(Frame& frame, Timer<NavigationScheduler>& timer) override
     {
         if (m_haveToldClient)
             return;
@@ -252,7 +252,7 @@ public:
         frame.loader().clientRedirected(m_submission->requestURL(), delay(), currentTime() + timer.nextFireInterval(), lockBackForwardList());
     }
 
-    virtual void didStopTimer(Frame& frame, bool newLoadInProgress) OVERRIDE
+    virtual void didStopTimer(Frame& frame, bool newLoadInProgress) override
     {
         if (!m_haveToldClient)
             return;

@@ -41,17 +41,17 @@ public:
     PageDebuggable(Page&);
     ~PageDebuggable() { }
 
-    virtual Inspector::RemoteInspectorDebuggable::DebuggableType type() const OVERRIDE { return Inspector::RemoteInspectorDebuggable::Web; }
+    virtual Inspector::RemoteInspectorDebuggable::DebuggableType type() const override { return Inspector::RemoteInspectorDebuggable::Web; }
 
-    virtual String name() const OVERRIDE;
-    virtual String url() const OVERRIDE;
-    virtual bool hasLocalDebugger() const OVERRIDE;
-    virtual pid_t parentProcessIdentifier() const OVERRIDE;
+    virtual String name() const override;
+    virtual String url() const override;
+    virtual bool hasLocalDebugger() const override;
+    virtual pid_t parentProcessIdentifier() const override;
 
-    virtual void connect(Inspector::InspectorFrontendChannel*) OVERRIDE;
-    virtual void disconnect() OVERRIDE;
-    virtual void dispatchMessageFromRemoteFrontend(const String& message) OVERRIDE;
-    virtual void setIndicating(bool) OVERRIDE;
+    virtual void connect(Inspector::InspectorFrontendChannel*) override;
+    virtual void disconnect() override;
+    virtual void dispatchMessageFromRemoteFrontend(const String& message) override;
+    virtual void setIndicating(bool) override;
 
 private:
     Page& m_page;

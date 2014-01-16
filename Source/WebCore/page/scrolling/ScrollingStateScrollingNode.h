@@ -124,7 +124,7 @@ public:
 
     bool requestedScrollPositionRepresentsProgrammaticScroll() const { return m_requestedScrollPositionRepresentsProgrammaticScroll; }
 
-    virtual void dumpProperties(TextStream&, int indent) const OVERRIDE;
+    virtual void dumpProperties(TextStream&, int indent) const override;
 
 private:
     ScrollingStateScrollingNode(ScrollingStateTree&, ScrollingNodeID);

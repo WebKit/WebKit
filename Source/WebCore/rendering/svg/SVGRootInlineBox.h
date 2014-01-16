@@ -52,7 +52,7 @@ public:
     InlineBox* closestLeafChildForPosition(const LayoutPoint&);
 
 private:
-    virtual bool isSVGRootInlineBox() const OVERRIDE { return true; }
+    virtual bool isSVGRootInlineBox() const override { return true; }
     void reorderValueLists(Vector<SVGTextLayoutAttributes*>&);
     void layoutCharactersInTextBoxes(InlineFlowBox*, SVGTextLayoutEngine&);
     void layoutChildBoxes(InlineFlowBox*, FloatRect* = 0);

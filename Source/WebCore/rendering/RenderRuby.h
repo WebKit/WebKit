@@ -56,16 +56,16 @@ public:
     RenderRubyAsInline(Element&, PassRef<RenderStyle>);
     virtual ~RenderRubyAsInline();
 
-    virtual void addChild(RenderObject* child, RenderObject* beforeChild = 0) OVERRIDE;
-    virtual void removeChild(RenderObject& child) OVERRIDE;
+    virtual void addChild(RenderObject* child, RenderObject* beforeChild = 0) override;
+    virtual void removeChild(RenderObject& child) override;
 
 protected:
-    virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle) OVERRIDE;
+    virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle) override;
 
 private:
-    virtual bool isRuby() const OVERRIDE { return true; }
-    virtual const char* renderName() const OVERRIDE { return "RenderRuby (inline)"; }
-    virtual bool createsAnonymousWrapper() const OVERRIDE { return true; }
+    virtual bool isRuby() const override { return true; }
+    virtual const char* renderName() const override { return "RenderRuby (inline)"; }
+    virtual bool createsAnonymousWrapper() const override { return true; }
 };
 
 // <ruby> when used as 'display:block' or 'display:inline-block'
@@ -76,17 +76,17 @@ public:
 
     Element& element() const { return toElement(nodeForNonAnonymous()); }
 
-    virtual void addChild(RenderObject* child, RenderObject* beforeChild = 0) OVERRIDE;
-    virtual void removeChild(RenderObject& child) OVERRIDE;
+    virtual void addChild(RenderObject* child, RenderObject* beforeChild = 0) override;
+    virtual void removeChild(RenderObject& child) override;
 
 protected:
-    virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle) OVERRIDE;
+    virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle) override;
 
 private:
-    virtual bool isRuby() const OVERRIDE { return true; }
-    virtual const char* renderName() const OVERRIDE { return "RenderRuby (block)"; }
-    virtual bool createsAnonymousWrapper() const OVERRIDE { return true; }
-    virtual void removeLeftoverAnonymousBlock(RenderBlock*) OVERRIDE { ASSERT_NOT_REACHED(); }
+    virtual bool isRuby() const override { return true; }
+    virtual const char* renderName() const override { return "RenderRuby (block)"; }
+    virtual bool createsAnonymousWrapper() const override { return true; }
+    virtual void removeLeftoverAnonymousBlock(RenderBlock*) override { ASSERT_NOT_REACHED(); }
 };
 
 } // namespace WebCore

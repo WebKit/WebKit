@@ -40,9 +40,9 @@ public:
     virtual ~SuperRegion();
 
 protected:
-    virtual void* allocateNewSpace(size_t&) OVERRIDE;
-    virtual void notifyNeedPage(void*) OVERRIDE;
-    virtual void notifyPageIsFree(void*) OVERRIDE;
+    virtual void* allocateNewSpace(size_t&) override;
+    virtual void notifyNeedPage(void*) override;
+    virtual void notifyPageIsFree(void*) override;
 
 private:
     static const uint64_t s_fixedHeapMemoryPoolSize;

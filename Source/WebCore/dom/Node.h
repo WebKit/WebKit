@@ -503,17 +503,17 @@ public:
 
     unsigned short compareDocumentPosition(Node*);
 
-    virtual Node* toNode() OVERRIDE;
+    virtual Node* toNode() override;
     virtual HTMLInputElement* toInputElement();
 
-    virtual EventTargetInterface eventTargetInterface() const OVERRIDE;
-    virtual ScriptExecutionContext* scriptExecutionContext() const OVERRIDE FINAL; // Implemented in Document.h
+    virtual EventTargetInterface eventTargetInterface() const override;
+    virtual ScriptExecutionContext* scriptExecutionContext() const override FINAL; // Implemented in Document.h
 
-    virtual bool addEventListener(const AtomicString& eventType, PassRefPtr<EventListener>, bool useCapture) OVERRIDE;
-    virtual bool removeEventListener(const AtomicString& eventType, EventListener*, bool useCapture) OVERRIDE;
+    virtual bool addEventListener(const AtomicString& eventType, PassRefPtr<EventListener>, bool useCapture) override;
+    virtual bool removeEventListener(const AtomicString& eventType, EventListener*, bool useCapture) override;
 
     using EventTarget::dispatchEvent;
-    virtual bool dispatchEvent(PassRefPtr<Event>) OVERRIDE;
+    virtual bool dispatchEvent(PassRefPtr<Event>) override;
 
     void dispatchScopedEvent(PassRefPtr<Event>);
 
@@ -539,8 +539,8 @@ public:
     using TreeShared<Node>::ref;
     using TreeShared<Node>::deref;
 
-    virtual EventTargetData* eventTargetData() OVERRIDE FINAL;
-    virtual EventTargetData& ensureEventTargetData() OVERRIDE FINAL;
+    virtual EventTargetData* eventTargetData() override FINAL;
+    virtual EventTargetData& ensureEventTargetData() override FINAL;
 
     void getRegisteredMutationObserversOfType(HashMap<MutationObserver*, MutationRecordDeliveryOptions>&, MutationObserver::MutationType, const QualifiedName* attributeName);
     void registerMutationObserver(MutationObserver*, MutationObserverOptions, const HashSet<AtomicString>& attributeFilter);
@@ -664,8 +664,8 @@ private:
     bool hasEditableStyle(EditableLevel, UserSelectAllTreatment = UserSelectAllIsAlwaysNonEditable) const;
     bool isEditableToAccessibility(EditableLevel) const;
 
-    virtual void refEventTarget() OVERRIDE;
-    virtual void derefEventTarget() OVERRIDE;
+    virtual void refEventTarget() override;
+    virtual void derefEventTarget() override;
 
     virtual RenderStyle* nonRendererStyle() const { return 0; }
 

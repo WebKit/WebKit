@@ -40,12 +40,12 @@ public:
     static PassRefPtr<InbandTextTrack> create(ScriptExecutionContext*, TextTrackClient*, PassRefPtr<InbandTextTrackPrivate>);
     virtual ~InbandTextTrack();
 
-    virtual bool isClosedCaptions() const OVERRIDE;
-    virtual bool isSDH() const OVERRIDE;
-    virtual bool containsOnlyForcedSubtitles() const OVERRIDE;
-    virtual bool isMainProgramContent() const OVERRIDE;
-    virtual bool isEasyToRead() const OVERRIDE;
-    virtual void setMode(const AtomicString&) OVERRIDE;
+    virtual bool isClosedCaptions() const override;
+    virtual bool isSDH() const override;
+    virtual bool containsOnlyForcedSubtitles() const override;
+    virtual bool isMainProgramContent() const override;
+    virtual bool isEasyToRead() const override;
+    virtual void setMode(const AtomicString&) override;
     size_t inbandTrackIndex();
 
 protected:
@@ -55,13 +55,13 @@ protected:
 
 private:
 
-    virtual void idChanged(TrackPrivateBase*, const String&) OVERRIDE;
-    virtual void labelChanged(TrackPrivateBase*, const String&) OVERRIDE;
-    virtual void languageChanged(TrackPrivateBase*, const String&) OVERRIDE;
-    virtual void willRemove(TrackPrivateBase*) OVERRIDE;
+    virtual void idChanged(TrackPrivateBase*, const String&) override;
+    virtual void labelChanged(TrackPrivateBase*, const String&) override;
+    virtual void languageChanged(TrackPrivateBase*, const String&) override;
+    virtual void willRemove(TrackPrivateBase*) override;
 
 #if USE(PLATFORM_TEXT_TRACK_MENU)
-    virtual InbandTextTrackPrivate* privateTrack() OVERRIDE { return m_private.get(); }
+    virtual InbandTextTrackPrivate* privateTrack() override { return m_private.get(); }
 #endif
 };
 

@@ -98,12 +98,12 @@ public:
 
     virtual ~GetDatabaseNamesCallback() { }
 
-    virtual bool operator==(const EventListener& other) OVERRIDE
+    virtual bool operator==(const EventListener& other) override
     {
         return this == &other;
     }
 
-    virtual void handleEvent(ScriptExecutionContext*, Event* event) OVERRIDE
+    virtual void handleEvent(ScriptExecutionContext*, Event* event) override
     {
         if (!m_requestCallback->isActive())
             return;
@@ -162,12 +162,12 @@ public:
 
     virtual ~OpenDatabaseCallback() { }
 
-    virtual bool operator==(const EventListener& other) OVERRIDE
+    virtual bool operator==(const EventListener& other) override
     {
         return this == &other;
     }
 
-    virtual void handleEvent(ScriptExecutionContext*, Event* event) OVERRIDE
+    virtual void handleEvent(ScriptExecutionContext*, Event* event) override
     {
         if (event->type() != eventNames().successEvent) {
             m_executableWithDatabase->requestCallback()->sendFailure("Unexpected event type.");
@@ -412,12 +412,12 @@ public:
 
     virtual ~OpenCursorCallback() { }
 
-    virtual bool operator==(const EventListener& other) OVERRIDE
+    virtual bool operator==(const EventListener& other) override
     {
         return this == &other;
     }
 
-    virtual void handleEvent(ScriptExecutionContext*, Event* event) OVERRIDE
+    virtual void handleEvent(ScriptExecutionContext*, Event* event) override
     {
         if (event->type() != eventNames().successEvent) {
             m_requestCallback->sendFailure("Unexpected event type.");
@@ -679,12 +679,12 @@ public:
 
     virtual ~ClearObjectStoreListener() { }
 
-    virtual bool operator==(const EventListener& other) OVERRIDE
+    virtual bool operator==(const EventListener& other) override
     {
         return this == &other;
     }
 
-    virtual void handleEvent(ScriptExecutionContext*, Event* event) OVERRIDE
+    virtual void handleEvent(ScriptExecutionContext*, Event* event) override
     {
         if (!m_requestCallback->isActive())
             return;

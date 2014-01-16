@@ -45,8 +45,8 @@ public:
     explicit AudioNodeInput(AudioNode*);
 
     // AudioSummingJunction
-    virtual bool canUpdateState() OVERRIDE { return !node()->isMarkedForDeletion(); }
-    virtual void didUpdate() OVERRIDE;
+    virtual bool canUpdateState() override { return !node()->isMarkedForDeletion(); }
+    virtual void didUpdate() override;
 
     // Can be called from any thread.
     AudioNode* node() const { return m_node; }

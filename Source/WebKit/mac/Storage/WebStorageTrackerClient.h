@@ -41,5 +41,5 @@ private:
     WebStorageTrackerClient();
 
     // WebCore::StorageTrackerClient
-    virtual void didFinishLoadingOrigins() OVERRIDE;
+    virtual void didFinishLoadingOrigins() override;
 };

@@ -73,7 +73,7 @@ protected:
     void abortProcessLaunchIfNeeded();
 
     // ProcessLauncher::Client
-    virtual void didFinishLaunching(ProcessLauncher*, IPC::Connection::Identifier) OVERRIDE;
+    virtual void didFinishLaunching(ProcessLauncher*, IPC::Connection::Identifier) override;
 
     bool dispatchMessage(IPC::Connection*, IPC::MessageDecoder&);
     bool dispatchSyncMessage(IPC::Connection*, IPC::MessageDecoder&, std::unique_ptr<IPC::MessageEncoder>&);

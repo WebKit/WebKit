@@ -56,12 +56,12 @@ public:
     void disconnectFrontend();
     void dispatchMessageFromFrontend(const String&);
 
-    virtual bool developerExtrasEnabled() const OVERRIDE { return true; }
-    virtual bool canAccessInspectedScriptState(JSC::ExecState*) const OVERRIDE { return true; }
-    virtual InspectorFunctionCallHandler functionCallHandler() const OVERRIDE;
-    virtual InspectorEvaluateHandler evaluateHandler() const OVERRIDE;
-    virtual void willCallInjectedScriptFunction(JSC::ExecState*, const String&, int) OVERRIDE { }
-    virtual void didCallInjectedScriptFunction() OVERRIDE { }
+    virtual bool developerExtrasEnabled() const override { return true; }
+    virtual bool canAccessInspectedScriptState(JSC::ExecState*) const override { return true; }
+    virtual InspectorFunctionCallHandler functionCallHandler() const override;
+    virtual InspectorEvaluateHandler evaluateHandler() const override;
+    virtual void willCallInjectedScriptFunction(JSC::ExecState*, const String&, int) override { }
+    virtual void didCallInjectedScriptFunction() override { }
 
 private:
     JSC::JSGlobalObject& m_globalObject;

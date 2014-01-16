@@ -45,7 +45,7 @@ public:
 
     virtual ~AudioStreamTrack() { }
 
-    virtual const AtomicString& kind() const OVERRIDE;
+    virtual const AtomicString& kind() const override;
 
 private:
     AudioStreamTrack(ScriptExecutionContext&, MediaStreamTrackPrivate&, const Dictionary*);

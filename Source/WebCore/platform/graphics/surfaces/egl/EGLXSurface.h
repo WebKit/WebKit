@@ -41,15 +41,15 @@ class EGLWindowTransportSurface : public EGLTransportSurface {
 public:
     EGLWindowTransportSurface(const IntSize&, GLPlatformSurface::SurfaceAttributes);
     virtual ~EGLWindowTransportSurface();
-    virtual void swapBuffers() OVERRIDE;
-    virtual void destroy() OVERRIDE;
+    virtual void swapBuffers() override;
+    virtual void destroy() override;
 };
 
 class EGLPixmapSurface : public EGLOffScreenSurface {
 public:
     EGLPixmapSurface(GLPlatformSurface::SurfaceAttributes);
     virtual ~EGLPixmapSurface();
-    virtual void destroy() OVERRIDE;
+    virtual void destroy() override;
 };
 
 class EGLTextureFromPixmap {
@@ -70,8 +70,8 @@ class EGLXTransportSurfaceClient : public GLTransportSurfaceClient {
 public:
     EGLXTransportSurfaceClient(const PlatformBufferHandle, const IntSize&, bool);
     virtual ~EGLXTransportSurfaceClient();
-    virtual void prepareTexture() OVERRIDE;
-    virtual void destroy() OVERRIDE;
+    virtual void prepareTexture() override;
+    virtual void destroy() override;
 
 private:
     XImage* m_image;

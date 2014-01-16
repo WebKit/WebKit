@@ -340,8 +340,8 @@ private:
     void setupFlags();
 
     // ActiveDOMObject
-    virtual bool hasPendingActivity() const OVERRIDE;
-    virtual void stop() OVERRIDE;
+    virtual bool hasPendingActivity() const override;
+    virtual void stop() override;
 
     void addSharedObject(WebGLSharedObject*);
     void addContextObject(WebGLContextObject*);

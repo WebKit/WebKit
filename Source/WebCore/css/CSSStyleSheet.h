@@ -53,13 +53,13 @@ public:
 
     virtual ~CSSStyleSheet();
 
-    virtual CSSStyleSheet* parentStyleSheet() const OVERRIDE;
-    virtual Node* ownerNode() const OVERRIDE { return m_ownerNode; }
-    virtual MediaList* media() const OVERRIDE;
-    virtual String href() const OVERRIDE;
-    virtual String title() const OVERRIDE { return m_title; }
-    virtual bool disabled() const OVERRIDE { return m_isDisabled; }
-    virtual void setDisabled(bool) OVERRIDE;
+    virtual CSSStyleSheet* parentStyleSheet() const override;
+    virtual Node* ownerNode() const override { return m_ownerNode; }
+    virtual MediaList* media() const override;
+    virtual String href() const override;
+    virtual String title() const override { return m_title; }
+    virtual bool disabled() const override { return m_isDisabled; }
+    virtual void setDisabled(bool) override;
     
     PassRefPtr<CSSRuleList> cssRules();
     unsigned insertRule(const String& rule, unsigned index, ExceptionCode&);
@@ -75,10 +75,10 @@ public:
     unsigned length() const;
     CSSRule* item(unsigned index);
 
-    virtual void clearOwnerNode() OVERRIDE;
-    virtual CSSImportRule* ownerRule() const OVERRIDE { return m_ownerRule; }
-    virtual URL baseURL() const OVERRIDE;
-    virtual bool isLoading() const OVERRIDE;
+    virtual void clearOwnerNode() override;
+    virtual CSSImportRule* ownerRule() const override { return m_ownerRule; }
+    virtual URL baseURL() const override;
+    virtual bool isLoading() const override;
     
     void clearOwnerRule() { m_ownerRule = 0; }
     Document* ownerDocument() const;
@@ -119,8 +119,8 @@ private:
     CSSStyleSheet(PassRef<StyleSheetContents>, CSSImportRule* ownerRule);
     CSSStyleSheet(PassRef<StyleSheetContents>, Node* ownerNode, bool isInlineStylesheet);
 
-    virtual bool isCSSStyleSheet() const OVERRIDE { return true; }
-    virtual String type() const OVERRIDE { return ASCIILiteral("text/css"); }
+    virtual bool isCSSStyleSheet() const override { return true; }
+    virtual String type() const override { return ASCIILiteral("text/css"); }
 
     bool canAccessRules() const;
     

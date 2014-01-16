@@ -44,12 +44,12 @@ public:
 
     JSC::JSObject* result() const { return m_dictionary; }
 
-    virtual std::unique_ptr<CryptoAlgorithmDescriptionBuilder> createEmptyClone() const OVERRIDE;
+    virtual std::unique_ptr<CryptoAlgorithmDescriptionBuilder> createEmptyClone() const override;
 
-    virtual void add(const char*, unsigned) OVERRIDE;
-    virtual void add(const char*, const String&) OVERRIDE;
-    virtual void add(const char*, const Vector<uint8_t>&) OVERRIDE;
-    virtual void add(const char*, const CryptoAlgorithmDescriptionBuilder&) OVERRIDE;
+    virtual void add(const char*, unsigned) override;
+    virtual void add(const char*, const String&) override;
+    virtual void add(const char*, const Vector<uint8_t>&) override;
+    virtual void add(const char*, const CryptoAlgorithmDescriptionBuilder&) override;
 
 private:
     JSC::ExecState* m_exec;

@@ -41,15 +41,15 @@ public:
     float specularExponent() const { return m_specularExponent; }
     float limitingConeAngle() const { return m_limitingConeAngle; }
 
-    virtual bool setX(float) OVERRIDE;
-    virtual bool setY(float) OVERRIDE;
-    virtual bool setZ(float) OVERRIDE;
-    virtual bool setPointsAtX(float) OVERRIDE;
-    virtual bool setPointsAtY(float) OVERRIDE;
-    virtual bool setPointsAtZ(float) OVERRIDE;
+    virtual bool setX(float) override;
+    virtual bool setY(float) override;
+    virtual bool setZ(float) override;
+    virtual bool setPointsAtX(float) override;
+    virtual bool setPointsAtY(float) override;
+    virtual bool setPointsAtZ(float) override;
 
-    virtual bool setSpecularExponent(float) OVERRIDE;
-    virtual bool setLimitingConeAngle(float) OVERRIDE;
+    virtual bool setSpecularExponent(float) override;
+    virtual bool setLimitingConeAngle(float) override;
 
     virtual void initPaintingData(PaintingData&);
     virtual void updatePaintingData(PaintingData&, int x, int y, float z);

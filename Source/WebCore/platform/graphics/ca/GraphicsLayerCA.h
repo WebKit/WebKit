@@ -56,11 +56,11 @@ public:
     GraphicsLayerCA(GraphicsLayerClient*);
     virtual ~GraphicsLayerCA();
 
-    virtual void initialize() OVERRIDE;
+    virtual void initialize() override;
 
     virtual void setName(const String&);
 
-    virtual PlatformLayerID primaryLayerID() const OVERRIDE;
+    virtual PlatformLayerID primaryLayerID() const override;
 
     virtual PlatformLayer* platformLayer() const;
     virtual PlatformCALayer* platformCALayer() const { return primaryLayer(); }
@@ -106,7 +106,7 @@ public:
 #endif
 
 #if ENABLE(CSS_COMPOSITING)
-    virtual void setBlendMode(BlendMode) OVERRIDE;
+    virtual void setBlendMode(BlendMode) override;
 #endif
 
     virtual void setNeedsDisplay();
@@ -114,7 +114,7 @@ public:
     virtual void setContentsNeedsDisplay();
     
     virtual void setContentsRect(const IntRect&);
-    virtual void setContentsClippingRect(const IntRect&) OVERRIDE;
+    virtual void setContentsClippingRect(const IntRect&) override;
     
     virtual void suspendAnimations(double time);
     virtual void resumeAnimations();
@@ -126,15 +126,15 @@ public:
     virtual void setContentsToImage(Image*);
     virtual void setContentsToMedia(PlatformLayer*);
 #if PLATFORM(IOS)
-    virtual PlatformLayer* contentsLayerForMedia() const OVERRIDE;
+    virtual PlatformLayer* contentsLayerForMedia() const override;
 #endif
     virtual void setContentsToCanvas(PlatformLayer*);
     virtual void setContentsToSolidColor(const Color&);
 
     virtual bool hasContentsLayer() const { return m_contentsLayer; }
     
-    virtual void setShowDebugBorder(bool) OVERRIDE;
-    virtual void setShowRepaintCounter(bool) OVERRIDE;
+    virtual void setShowDebugBorder(bool) override;
+    virtual void setShowRepaintCounter(bool) override;
 
     virtual void setDebugBackgroundColor(const Color&);
     virtual void setDebugBorder(const Color&, float borderWidth);
@@ -145,7 +145,7 @@ public:
 
     virtual void setMaintainsPixelAlignment(bool);
 #if PLATFORM(IOS)
-    virtual FloatSize pixelAlignmentOffset() const OVERRIDE { return m_pixelAlignmentOffset; }
+    virtual FloatSize pixelAlignmentOffset() const override { return m_pixelAlignmentOffset; }
 #endif
     virtual void deviceOrPageScaleFactorChanged();
 
@@ -162,9 +162,9 @@ public:
     virtual void flushCompositingState(const FloatRect&);
     virtual void flushCompositingStateForThisLayerOnly();
 
-    virtual bool visibleRectChangeRequiresFlush(const FloatRect& visibleRect) const OVERRIDE;
+    virtual bool visibleRectChangeRequiresFlush(const FloatRect& visibleRect) const override;
 
-    virtual TiledBacking* tiledBacking() const OVERRIDE;
+    virtual TiledBacking* tiledBacking() const override;
 
     bool allowTiledLayer() const { return m_allowTiledLayer; }
     virtual void setAllowTiledLayer(bool b);
@@ -191,15 +191,15 @@ private:
     virtual bool platformCALayerContentsOpaque() const { return contentsOpaque(); }
     virtual bool platformCALayerDrawsContent() const { return drawsContent(); }
     virtual void platformCALayerLayerDidDisplay(PlatformLayer* layer) { return layerDidDisplay(layer); }
-    virtual void platformCALayerSetNeedsToRevalidateTiles() OVERRIDE;
-    virtual float platformCALayerDeviceScaleFactor() const OVERRIDE;
-    virtual float platformCALayerContentsScaleMultiplierForNewTiles(PlatformCALayer*) const OVERRIDE;
+    virtual void platformCALayerSetNeedsToRevalidateTiles() override;
+    virtual float platformCALayerDeviceScaleFactor() const override;
+    virtual float platformCALayerContentsScaleMultiplierForNewTiles(PlatformCALayer*) const override;
 
-    virtual bool isCommittingChanges() const OVERRIDE { return m_isCommittingChanges; }
+    virtual bool isCommittingChanges() const override { return m_isCommittingChanges; }
 
     virtual double backingStoreMemoryEstimate() const;
 
-    virtual bool shouldRepaintOnSizeChange() const OVERRIDE;
+    virtual bool shouldRepaintOnSizeChange() const override;
 
     void updateOpacityOnLayer();
     

@@ -42,26 +42,26 @@ private:
     SVGImageElement(const QualifiedName&, Document&);
     
     virtual bool isValid() const { return SVGTests::isValid(); }
-    virtual bool supportsFocus() const OVERRIDE { return true; }
+    virtual bool supportsFocus() const override { return true; }
 
     bool isSupportedAttribute(const QualifiedName&);
-    virtual void parseAttribute(const QualifiedName&, const AtomicString&) OVERRIDE;
-    virtual bool isPresentationAttribute(const QualifiedName&) const OVERRIDE;
-    virtual void collectStyleForPresentationAttribute(const QualifiedName&, const AtomicString&, MutableStyleProperties&) OVERRIDE;
+    virtual void parseAttribute(const QualifiedName&, const AtomicString&) override;
+    virtual bool isPresentationAttribute(const QualifiedName&) const override;
+    virtual void collectStyleForPresentationAttribute(const QualifiedName&, const AtomicString&, MutableStyleProperties&) override;
     virtual void svgAttributeChanged(const QualifiedName&);
 
-    virtual void didAttachRenderers() OVERRIDE;
-    virtual InsertionNotificationRequest insertedInto(ContainerNode&) OVERRIDE;
+    virtual void didAttachRenderers() override;
+    virtual InsertionNotificationRequest insertedInto(ContainerNode&) override;
 
-    virtual RenderPtr<RenderElement> createElementRenderer(PassRef<RenderStyle>) OVERRIDE;
+    virtual RenderPtr<RenderElement> createElementRenderer(PassRef<RenderStyle>) override;
 
-    virtual const AtomicString& imageSourceURL() const OVERRIDE;
+    virtual const AtomicString& imageSourceURL() const override;
     virtual void addSubresourceAttributeURLs(ListHashSet<URL>&) const;
 
     virtual bool haveLoadedRequiredResources();
 
     virtual bool selfHasRelativeLengths() const;
-    virtual void didMoveToNewDocument(Document* oldDocument) OVERRIDE;
+    virtual void didMoveToNewDocument(Document* oldDocument) override;
 
     BEGIN_DECLARE_ANIMATED_PROPERTIES(SVGImageElement)
         DECLARE_ANIMATED_LENGTH(X, x)

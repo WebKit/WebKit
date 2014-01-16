@@ -44,10 +44,10 @@ class ScrollingTreeScrollingNode : public ScrollingTreeNode {
 public:
     virtual ~ScrollingTreeScrollingNode();
 
-    virtual void updateBeforeChildren(const ScrollingStateNode&) OVERRIDE;
+    virtual void updateBeforeChildren(const ScrollingStateNode&) override;
 
     // FIXME: We should implement this when we support ScrollingTreeScrollingNodes as children.
-    virtual void parentScrollPositionDidChange(const IntRect& /*viewportRect*/, const FloatSize& /*cumulativeDelta*/) OVERRIDE { }
+    virtual void parentScrollPositionDidChange(const IntRect& /*viewportRect*/, const FloatSize& /*cumulativeDelta*/) override { }
 
     virtual void handleWheelEvent(const PlatformWheelEvent&) = 0;
     virtual void setScrollPosition(const IntPoint&) = 0;

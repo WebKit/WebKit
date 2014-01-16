@@ -42,7 +42,7 @@ public:
 
     ~InbandMetadataTextTrackPrivateGStreamer() { }
 
-    virtual Kind kind() const OVERRIDE { return m_kind; }
+    virtual Kind kind() const override { return m_kind; }
 
 private:
     InbandMetadataTextTrackPrivateGStreamer(Kind kind)

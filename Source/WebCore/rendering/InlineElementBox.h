@@ -44,15 +44,15 @@ public:
 
     RenderBoxModelObject& renderer() const { return toRenderBoxModelObject(InlineBox::renderer()); }
 
-    virtual void deleteLine() OVERRIDE;
-    virtual void extractLine() OVERRIDE;
-    virtual void attachLine() OVERRIDE;
+    virtual void deleteLine() override;
+    virtual void extractLine() override;
+    virtual void attachLine() override;
 
-    virtual void paint(PaintInfo&, const LayoutPoint&, LayoutUnit lineTop, LayoutUnit lineBottom) OVERRIDE;
-    virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, LayoutUnit lineTop, LayoutUnit lineBottom) OVERRIDE;
+    virtual void paint(PaintInfo&, const LayoutPoint&, LayoutUnit lineTop, LayoutUnit lineBottom) override;
+    virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, LayoutUnit lineTop, LayoutUnit lineBottom) override;
 
 private:
-    virtual bool isInlineElementBox() const OVERRIDE FINAL { return true; }
+    virtual bool isInlineElementBox() const override FINAL { return true; }
 };
 
 INLINE_BOX_OBJECT_TYPE_CASTS(InlineElementBox, isInlineElementBox())

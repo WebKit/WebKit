@@ -39,9 +39,9 @@ class PlatformCALayerRemoteCustom FINAL : public PlatformCALayerRemote {
 public:
     virtual ~PlatformCALayerRemoteCustom();
 
-    virtual PlatformLayer* platformLayer() const OVERRIDE { return m_platformLayer.get(); }
+    virtual PlatformLayer* platformLayer() const override { return m_platformLayer.get(); }
 
-    virtual uint32_t hostingContextID() OVERRIDE;
+    virtual uint32_t hostingContextID() override;
 
 private:
     PlatformCALayerRemoteCustom(PlatformLayer*, WebCore::PlatformCALayerClient* owner, RemoteLayerTreeContext*);

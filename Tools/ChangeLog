@@ -1,3 +1,21 @@
+2014-01-16  Peter Molnar  <pmolnar.u-szeged@partner.samsung.com>
+
+        Remove workaround for compilers not supporting explicit override control
+        https://bugs.webkit.org/show_bug.cgi?id=127111
+
+        Reviewed by Anders Carlsson.
+
+        Now all compilers support explicit override control, this workaround can be removed.
+
+        * DumpRenderTree/gtk/fonts/fonts.conf:
+        * Scripts/do-webcore-rename:
+        Removed this rename operation from the list of contemplated future renames.
+        * TestWebKitAPI/Tests/WebKit2/DidAssociateFormControls_Bundle.cpp:
+        * TestWebKitAPI/Tests/WebKit2/InjectedBundleFrameHitTest_Bundle.cpp:
+        * TestWebKitAPI/Tests/WebKit2/WillLoad_Bundle.cpp:
+        * TestWebKitAPI/Tests/WebKit2ObjC/CustomProtocolsInvalidScheme_Bundle.cpp:
+        * TestWebKitAPI/Tests/mac/PageVisibilityStateWithWindowChanges.mm:
+
 2014-01-16  Oliver Hunt  <oliver@apple.com>
 
         Stop run-jsc from consuming stderr output

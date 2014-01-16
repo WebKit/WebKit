@@ -47,8 +47,8 @@ private:
     DiskCacheMonitor(CFCachedURLResponseRef, NetworkResourceLoader*);
 
     // IPC::MessageSender
-    virtual IPC::Connection* messageSenderConnection() OVERRIDE;
-    virtual uint64_t messageSenderDestinationID() OVERRIDE;
+    virtual IPC::Connection* messageSenderConnection() override;
+    virtual uint64_t messageSenderDestinationID() override;
 
     RefPtr<NetworkConnectionToWebProcess> m_connectionToWebProcess;
     WebCore::ResourceRequest m_resourceRequest;

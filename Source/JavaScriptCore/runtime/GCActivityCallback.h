@@ -82,11 +82,11 @@ public:
 
     DefaultGCActivityCallback(Heap*);
 
-    JS_EXPORT_PRIVATE virtual void didAllocate(size_t) OVERRIDE;
-    JS_EXPORT_PRIVATE virtual void willCollect() OVERRIDE;
-    JS_EXPORT_PRIVATE virtual void cancel() OVERRIDE;
+    JS_EXPORT_PRIVATE virtual void didAllocate(size_t) override;
+    JS_EXPORT_PRIVATE virtual void willCollect() override;
+    JS_EXPORT_PRIVATE virtual void cancel() override;
 
-    JS_EXPORT_PRIVATE virtual void doWork() OVERRIDE;
+    JS_EXPORT_PRIVATE virtual void doWork() override;
 
 #if USE(CF)
 protected:

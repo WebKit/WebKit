@@ -79,26 +79,26 @@ public:
 protected:
     RenderWidget(HTMLFrameOwnerElement&, PassRef<RenderStyle>);
 
-    virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle) OVERRIDE FINAL;
-    virtual void layout() OVERRIDE;
-    virtual void paint(PaintInfo&, const LayoutPoint&) OVERRIDE;
-    virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction) OVERRIDE;
+    virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle) override FINAL;
+    virtual void layout() override;
+    virtual void paint(PaintInfo&, const LayoutPoint&) override;
+    virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction) override;
     virtual void paintContents(PaintInfo&, const LayoutPoint&);
 #if USE(ACCELERATED_COMPOSITING)
-    virtual bool requiresLayer() const OVERRIDE;
+    virtual bool requiresLayer() const override;
 #endif
 
 private:
     void element() const WTF_DELETED_FUNCTION;
 
-    virtual bool isWidget() const OVERRIDE FINAL { return true; }
+    virtual bool isWidget() const override FINAL { return true; }
 
-    virtual bool needsPreferredWidthsRecalculation() const OVERRIDE FINAL;
-    virtual RenderBox* embeddedContentBox() const OVERRIDE FINAL;
+    virtual bool needsPreferredWidthsRecalculation() const override FINAL;
+    virtual RenderBox* embeddedContentBox() const override FINAL;
 
-    virtual void willBeDestroyed() OVERRIDE FINAL;
-    virtual void setSelectionState(SelectionState) OVERRIDE FINAL;
-    virtual void setOverlapTestResult(bool) OVERRIDE FINAL;
+    virtual void willBeDestroyed() override FINAL;
+    virtual void setSelectionState(SelectionState) override FINAL;
+    virtual void setOverlapTestResult(bool) override FINAL;
 
     bool setWidgetGeometry(const LayoutRect&);
     bool updateWidgetGeometry();

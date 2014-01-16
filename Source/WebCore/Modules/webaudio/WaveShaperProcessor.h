@@ -48,9 +48,9 @@ public:
 
     virtual ~WaveShaperProcessor();
 
-    virtual PassOwnPtr<AudioDSPKernel> createKernel() OVERRIDE;
+    virtual PassOwnPtr<AudioDSPKernel> createKernel() override;
 
-    virtual void process(const AudioBus* source, AudioBus* destination, size_t framesToProcess) OVERRIDE;
+    virtual void process(const AudioBus* source, AudioBus* destination, size_t framesToProcess) override;
 
     void setCurve(Float32Array*);
     Float32Array* curve() { return m_curve.get(); }

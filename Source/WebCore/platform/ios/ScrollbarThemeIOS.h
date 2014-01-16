@@ -35,31 +35,31 @@ public:
     ScrollbarThemeIOS();
     virtual ~ScrollbarThemeIOS();
 
-    virtual bool paint(ScrollbarThemeClient*, GraphicsContext*, const IntRect& damageRect) OVERRIDE;
+    virtual bool paint(ScrollbarThemeClient*, GraphicsContext*, const IntRect& damageRect) override;
 
-    virtual int scrollbarThickness(ScrollbarControlSize = RegularScrollbar) OVERRIDE;
+    virtual int scrollbarThickness(ScrollbarControlSize = RegularScrollbar) override;
     
-    virtual bool supportsControlTints() const OVERRIDE { return true; }
+    virtual bool supportsControlTints() const override { return true; }
 
-    virtual double initialAutoscrollTimerDelay() OVERRIDE;
-    virtual double autoscrollTimerDelay() OVERRIDE;
+    virtual double initialAutoscrollTimerDelay() override;
+    virtual double autoscrollTimerDelay() override;
 
-    virtual ScrollbarButtonsPlacement buttonsPlacement() const OVERRIDE;
+    virtual ScrollbarButtonsPlacement buttonsPlacement() const override;
 
-    virtual void registerScrollbar(ScrollbarThemeClient*) OVERRIDE;
-    virtual void unregisterScrollbar(ScrollbarThemeClient*) OVERRIDE;
+    virtual void registerScrollbar(ScrollbarThemeClient*) override;
+    virtual void unregisterScrollbar(ScrollbarThemeClient*) override;
 
 protected:
-    virtual bool hasButtons(ScrollbarThemeClient*) OVERRIDE;
-    virtual bool hasThumb(ScrollbarThemeClient*) OVERRIDE;
+    virtual bool hasButtons(ScrollbarThemeClient*) override;
+    virtual bool hasThumb(ScrollbarThemeClient*) override;
 
-    virtual IntRect backButtonRect(ScrollbarThemeClient*, ScrollbarPart, bool painting = false) OVERRIDE;
-    virtual IntRect forwardButtonRect(ScrollbarThemeClient*, ScrollbarPart, bool painting = false) OVERRIDE;
-    virtual IntRect trackRect(ScrollbarThemeClient*, bool painting = false) OVERRIDE;
+    virtual IntRect backButtonRect(ScrollbarThemeClient*, ScrollbarPart, bool painting = false) override;
+    virtual IntRect forwardButtonRect(ScrollbarThemeClient*, ScrollbarPart, bool painting = false) override;
+    virtual IntRect trackRect(ScrollbarThemeClient*, bool painting = false) override;
 
-    virtual int minimumThumbLength(ScrollbarThemeClient*) OVERRIDE;
+    virtual int minimumThumbLength(ScrollbarThemeClient*) override;
     
-    virtual bool shouldCenterOnThumb(ScrollbarThemeClient*, const PlatformMouseEvent&) OVERRIDE;
+    virtual bool shouldCenterOnThumb(ScrollbarThemeClient*, const PlatformMouseEvent&) override;
     
 public:
     void preferencesChanged();

@@ -71,7 +71,7 @@ public:
     static void registerMediaEngine(MediaEngineRegistrar);
 
     void setAsset(id);
-    virtual void tracksChanged() OVERRIDE;
+    virtual void tracksChanged() override;
 
 #if HAVE(AVFOUNDATION_MEDIA_SELECTION_GROUP)
     RetainPtr<AVPlayerItem> playerItem() const { return m_avPlayerItem; }
@@ -170,7 +170,7 @@ private:
     virtual bool hasContextRenderer() const;
     virtual bool hasLayerRenderer() const;
 
-    virtual void updateVideoLayerGravity() OVERRIDE;
+    virtual void updateVideoLayerGravity() override;
 
     virtual bool hasSingleSecurityOrigin() const;
     
@@ -186,7 +186,7 @@ private:
     void updateLastImage();
     bool videoOutputHasAvailableFrame();
     void paintWithVideoOutput(GraphicsContext*, const IntRect&);
-    virtual PassNativeImagePtr nativeImageForCurrentTime() OVERRIDE;
+    virtual PassNativeImagePtr nativeImageForCurrentTime() override;
     void waitForVideoOutputMediaDataWillChange();
 #endif
 
@@ -196,15 +196,15 @@ private:
     virtual MediaPlayer::MediaKeyException cancelKeyRequest(const String&, const String&);
 #endif
 
-    virtual String languageOfPrimaryAudioTrack() const OVERRIDE;
+    virtual String languageOfPrimaryAudioTrack() const override;
 
 #if HAVE(AVFOUNDATION_MEDIA_SELECTION_GROUP)
     void processMediaSelectionOptions();
     AVMediaSelectionGroup* safeMediaSelectionGroupForLegibleMedia();
 #endif
 
-    virtual void setCurrentTrack(InbandTextTrackPrivateAVF*) OVERRIDE;
-    virtual InbandTextTrackPrivateAVF* currentTrack() const OVERRIDE { return m_currentTrack; }
+    virtual void setCurrentTrack(InbandTextTrackPrivateAVF*) override;
+    virtual InbandTextTrackPrivateAVF* currentTrack() const override { return m_currentTrack; }
 
 #if !HAVE(AVFOUNDATION_LEGIBLE_OUTPUT_SUPPORT)
     void processLegacyClosedCaptionsTracks();

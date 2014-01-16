@@ -45,21 +45,21 @@ private:
     virtual String target() const { return svgTarget(); }
 
     bool isSupportedAttribute(const QualifiedName&);
-    virtual void parseAttribute(const QualifiedName&, const AtomicString&) OVERRIDE;
+    virtual void parseAttribute(const QualifiedName&, const AtomicString&) override;
     virtual void svgAttributeChanged(const QualifiedName&);
 
-    virtual RenderPtr<RenderElement> createElementRenderer(PassRef<RenderStyle>) OVERRIDE;
-    virtual bool childShouldCreateRenderer(const Node&) const OVERRIDE;
+    virtual RenderPtr<RenderElement> createElementRenderer(PassRef<RenderStyle>) override;
+    virtual bool childShouldCreateRenderer(const Node&) const override;
 
     virtual void defaultEventHandler(Event*);
     
-    virtual bool supportsFocus() const OVERRIDE;
-    virtual bool isMouseFocusable() const OVERRIDE;
-    virtual bool isKeyboardFocusable(KeyboardEvent*) const OVERRIDE;
-    virtual bool isFocusable() const OVERRIDE;
+    virtual bool supportsFocus() const override;
+    virtual bool isMouseFocusable() const override;
+    virtual bool isKeyboardFocusable(KeyboardEvent*) const override;
+    virtual bool isFocusable() const override;
     virtual bool isURLAttribute(const Attribute&) const;
 
-    virtual bool willRespondToMouseClickEvents() OVERRIDE;
+    virtual bool willRespondToMouseClickEvents() override;
 
     BEGIN_DECLARE_ANIMATED_PROPERTIES(SVGAElement)
         // This declaration used to define a non-virtual "String& target() const" method, that clashes with "virtual String Element::target() const".

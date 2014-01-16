@@ -47,14 +47,14 @@ protected:
 private:
     void element() const WTF_DELETED_FUNCTION;
 
-    virtual bool canHaveChildren() const OVERRIDE FINAL { return true; }
+    virtual bool canHaveChildren() const override FINAL { return true; }
 
-    virtual const char* renderName() const OVERRIDE { return "RenderMedia"; }
-    virtual bool isMedia() const OVERRIDE FINAL { return true; }
-    virtual bool isImage() const OVERRIDE FINAL { return false; }
-    virtual void paintReplaced(PaintInfo&, const LayoutPoint&) OVERRIDE;
+    virtual const char* renderName() const override { return "RenderMedia"; }
+    virtual bool isMedia() const override FINAL { return true; }
+    virtual bool isImage() const override FINAL { return false; }
+    virtual void paintReplaced(PaintInfo&, const LayoutPoint&) override;
 
-    virtual bool requiresForcedStyleRecalcPropagation() const OVERRIDE FINAL { return true; }
+    virtual bool requiresForcedStyleRecalcPropagation() const override FINAL { return true; }
 };
 
 RENDER_OBJECT_TYPE_CASTS(RenderMedia, isMedia())

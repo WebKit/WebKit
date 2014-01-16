@@ -49,7 +49,7 @@ public:
     void advanceCurrentTime();
     void updateDuration(double);
 
-    virtual MediaPlayer::ReadyState readyState() const OVERRIDE;
+    virtual MediaPlayer::ReadyState readyState() const override;
     void setReadyState(MediaPlayer::ReadyState);
     void setNetworkState(MediaPlayer::NetworkState);
 
@@ -57,30 +57,30 @@ private:
     MockMediaPlayerMediaSource(MediaPlayer*);
 
     // MediaPlayerPrivate Overrides
-    virtual void load(const String& url) OVERRIDE;
-    virtual void load(const String& url, PassRefPtr<HTMLMediaSource>) OVERRIDE;
-    virtual void cancelLoad() OVERRIDE;
-    virtual void play() OVERRIDE;
-    virtual void pause() OVERRIDE;
-    virtual IntSize naturalSize() const OVERRIDE;
-    virtual bool hasVideo() const OVERRIDE;
-    virtual bool hasAudio() const OVERRIDE;
-    virtual void setVisible(bool) OVERRIDE;
-    virtual bool seeking() const OVERRIDE;
-    virtual bool paused() const OVERRIDE;
-    virtual MediaPlayer::NetworkState networkState() const OVERRIDE;
-    virtual double maxTimeSeekableDouble() const OVERRIDE;
-    virtual PassRefPtr<TimeRanges> buffered() const OVERRIDE;
-    virtual bool didLoadingProgress() const OVERRIDE;
-    virtual void setSize(const IntSize&) OVERRIDE;
-    virtual void paint(GraphicsContext*, const IntRect&) OVERRIDE;
-    virtual double currentTimeDouble() const OVERRIDE;
-    virtual double durationDouble() const OVERRIDE;
-    virtual void seekWithTolerance(double time, double, double) OVERRIDE;
-    virtual unsigned long totalVideoFrames() OVERRIDE;
-    virtual unsigned long droppedVideoFrames() OVERRIDE;
-    virtual unsigned long corruptedVideoFrames() OVERRIDE;
-    virtual double totalFrameDelay() OVERRIDE;
+    virtual void load(const String& url) override;
+    virtual void load(const String& url, PassRefPtr<HTMLMediaSource>) override;
+    virtual void cancelLoad() override;
+    virtual void play() override;
+    virtual void pause() override;
+    virtual IntSize naturalSize() const override;
+    virtual bool hasVideo() const override;
+    virtual bool hasAudio() const override;
+    virtual void setVisible(bool) override;
+    virtual bool seeking() const override;
+    virtual bool paused() const override;
+    virtual MediaPlayer::NetworkState networkState() const override;
+    virtual double maxTimeSeekableDouble() const override;
+    virtual PassRefPtr<TimeRanges> buffered() const override;
+    virtual bool didLoadingProgress() const override;
+    virtual void setSize(const IntSize&) override;
+    virtual void paint(GraphicsContext*, const IntRect&) override;
+    virtual double currentTimeDouble() const override;
+    virtual double durationDouble() const override;
+    virtual void seekWithTolerance(double time, double, double) override;
+    virtual unsigned long totalVideoFrames() override;
+    virtual unsigned long droppedVideoFrames() override;
+    virtual unsigned long corruptedVideoFrames() override;
+    virtual double totalFrameDelay() override;
 
     MediaPlayer* m_player;
     RefPtr<HTMLMediaSource> m_mediaSource;

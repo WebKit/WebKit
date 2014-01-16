@@ -49,7 +49,7 @@ public:
 
     virtual void frameRectsChanged();
 
-    virtual void invalidate() OVERRIDE;
+    virtual void invalidate() override;
 protected:
     ScrollbarEfl(ScrollableArea*, ScrollbarOrientation, ScrollbarControlSize);
 

@@ -43,8 +43,8 @@ public:
     static CClass* classForIsA(NPClass*);
     virtual ~CClass();
 
-    virtual Method* methodNamed(PropertyName, Instance*) const OVERRIDE;
-    virtual Field* fieldNamed(PropertyName, Instance*) const OVERRIDE;
+    virtual Method* methodNamed(PropertyName, Instance*) const override;
+    virtual Field* fieldNamed(PropertyName, Instance*) const override;
 
 private:
     NPClass* m_isa;

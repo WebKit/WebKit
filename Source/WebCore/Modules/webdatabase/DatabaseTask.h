@@ -110,7 +110,7 @@ public:
     }
     
 #if PLATFORM(IOS)
-    virtual bool shouldPerformWhilePaused() const OVERRIDE { return true; }
+    virtual bool shouldPerformWhilePaused() const override { return true; }
 #endif
 
 private:
@@ -135,7 +135,7 @@ public:
     }
 
 #if PLATFORM(IOS)
-    virtual bool shouldPerformWhilePaused() const OVERRIDE { return true; }
+    virtual bool shouldPerformWhilePaused() const override { return true; }
 #endif
 
 private:
@@ -158,7 +158,7 @@ public:
     }
 
 #if PLATFORM(IOS)
-    virtual bool shouldPerformWhilePaused() const OVERRIDE;
+    virtual bool shouldPerformWhilePaused() const override;
 #endif
 
     SQLTransactionBackend* transaction() const { return m_transaction.get(); }
@@ -183,7 +183,7 @@ public:
     }
 
 #if PLATFORM(IOS)
-    virtual bool shouldPerformWhilePaused() const OVERRIDE { return true; }
+    virtual bool shouldPerformWhilePaused() const override { return true; }
 #endif
 
 private:

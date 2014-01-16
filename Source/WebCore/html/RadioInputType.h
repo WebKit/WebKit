@@ -40,18 +40,18 @@ public:
     explicit RadioInputType(HTMLInputElement& element) : BaseCheckableInputType(element) { }
 
 private:
-    virtual const AtomicString& formControlType() const OVERRIDE;
-    virtual bool valueMissing(const String&) const OVERRIDE;
-    virtual String valueMissingText() const OVERRIDE;
-    virtual void handleClickEvent(MouseEvent*) OVERRIDE;
-    virtual void handleKeydownEvent(KeyboardEvent*) OVERRIDE;
-    virtual void handleKeyupEvent(KeyboardEvent*) OVERRIDE;
-    virtual bool isKeyboardFocusable(KeyboardEvent*) const OVERRIDE;
-    virtual bool shouldSendChangeEventAfterCheckedChanged() OVERRIDE;
-    virtual void willDispatchClick(InputElementClickState&) OVERRIDE;
-    virtual void didDispatchClick(Event*, const InputElementClickState&) OVERRIDE;
-    virtual bool isRadioButton() const OVERRIDE;
-    virtual bool supportsIndeterminateAppearance() const OVERRIDE;
+    virtual const AtomicString& formControlType() const override;
+    virtual bool valueMissing(const String&) const override;
+    virtual String valueMissingText() const override;
+    virtual void handleClickEvent(MouseEvent*) override;
+    virtual void handleKeydownEvent(KeyboardEvent*) override;
+    virtual void handleKeyupEvent(KeyboardEvent*) override;
+    virtual bool isKeyboardFocusable(KeyboardEvent*) const override;
+    virtual bool shouldSendChangeEventAfterCheckedChanged() override;
+    virtual void willDispatchClick(InputElementClickState&) override;
+    virtual void didDispatchClick(Event*, const InputElementClickState&) override;
+    virtual bool isRadioButton() const override;
+    virtual bool supportsIndeterminateAppearance() const override;
 };
 
 } // namespace WebCore

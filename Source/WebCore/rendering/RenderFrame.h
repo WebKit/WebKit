@@ -40,10 +40,10 @@ public:
 private:
     void frameOwnerElement() const WTF_DELETED_FUNCTION;
 
-    virtual const char* renderName() const OVERRIDE { return "RenderFrame"; }
-    virtual bool isFrame() const OVERRIDE { return true; }
+    virtual const char* renderName() const override { return "RenderFrame"; }
+    virtual bool isFrame() const override { return true; }
 
-    virtual void updateFromElement() OVERRIDE;
+    virtual void updateFromElement() override;
 };
 
 RENDER_OBJECT_TYPE_CASTS(RenderFrame, isFrame())

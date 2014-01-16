@@ -40,7 +40,7 @@ public:
 
     virtual ~RenderText();
 
-    virtual const char* renderName() const OVERRIDE;
+    virtual const char* renderName() const override;
 
     Text* textNode() const;
 
@@ -61,18 +61,18 @@ public:
     InlineTextBox* createInlineTextBox() { return m_lineBoxes.createAndAppendLineBox(*this); }
     void dirtyLineBoxes(bool fullLayout);
 
-    virtual void absoluteRects(Vector<IntRect>&, const LayoutPoint& accumulatedOffset) const OVERRIDE FINAL;
+    virtual void absoluteRects(Vector<IntRect>&, const LayoutPoint& accumulatedOffset) const override FINAL;
     Vector<IntRect> absoluteRectsForRange(unsigned startOffset = 0, unsigned endOffset = UINT_MAX, bool useSelectionHeight = false, bool* wasFixed = nullptr) const;
 #if PLATFORM(IOS)
-    virtual void collectSelectionRects(Vector<SelectionRect>&, unsigned startOffset = 0, unsigned endOffset = std::numeric_limits<unsigned>::max()) OVERRIDE;
+    virtual void collectSelectionRects(Vector<SelectionRect>&, unsigned startOffset = 0, unsigned endOffset = std::numeric_limits<unsigned>::max()) override;
 #endif
 
-    virtual void absoluteQuads(Vector<FloatQuad>&, bool* wasFixed) const OVERRIDE FINAL;
+    virtual void absoluteQuads(Vector<FloatQuad>&, bool* wasFixed) const override FINAL;
     Vector<FloatQuad> absoluteQuadsForRange(unsigned startOffset = 0, unsigned endOffset = UINT_MAX, bool useSelectionHeight = false, bool* wasFixed = nullptr) const;
 
     Vector<FloatQuad> absoluteQuadsClippedToEllipsis() const;
 
-    virtual VisiblePosition positionForPoint(const LayoutPoint&) OVERRIDE;
+    virtual VisiblePosition positionForPoint(const LayoutPoint&) override;
 
     bool is8Bit() const { return m_text.is8Bit(); }
     const LChar* characters8() const { return m_text.impl()->characters8(); }
@@ -107,29 +107,29 @@ public:
     virtual void setText(const String&, bool force = false);
     void setTextWithOffset(const String&, unsigned offset, unsigned len, bool force = false);
 
-    virtual bool canBeSelectionLeaf() const OVERRIDE { return true; }
-    virtual void setSelectionState(SelectionState s) OVERRIDE FINAL;
-    virtual LayoutRect selectionRectForRepaint(const RenderLayerModelObject* repaintContainer, bool clipToVisibleContent = true) OVERRIDE;
-    virtual LayoutRect localCaretRect(InlineBox*, int caretOffset, LayoutUnit* extraWidthToEndOfLine = 0) OVERRIDE;
+    virtual bool canBeSelectionLeaf() const override { return true; }
+    virtual void setSelectionState(SelectionState s) override FINAL;
+    virtual LayoutRect selectionRectForRepaint(const RenderLayerModelObject* repaintContainer, bool clipToVisibleContent = true) override;
+    virtual LayoutRect localCaretRect(InlineBox*, int caretOffset, LayoutUnit* extraWidthToEndOfLine = 0) override;
 
     LayoutUnit marginLeft() const { return minimumValueForLength(style().marginLeft(), 0); }
     LayoutUnit marginRight() const { return minimumValueForLength(style().marginRight(), 0); }
 
-    virtual LayoutRect clippedOverflowRectForRepaint(const RenderLayerModelObject* repaintContainer) const OVERRIDE FINAL;
+    virtual LayoutRect clippedOverflowRectForRepaint(const RenderLayerModelObject* repaintContainer) const override FINAL;
 
     InlineTextBox* firstTextBox() const { return m_lineBoxes.first(); }
     InlineTextBox* lastTextBox() const { return m_lineBoxes.last(); }
 
-    virtual int caretMinOffset() const OVERRIDE;
-    virtual int caretMaxOffset() const OVERRIDE;
+    virtual int caretMinOffset() const override;
+    virtual int caretMaxOffset() const override;
     unsigned countRenderedCharacterOffsetsUntil(unsigned) const;
     bool containsRenderedCharacterOffset(unsigned) const;
     bool containsCaretOffset(unsigned) const;
     bool hasRenderedText() const;
 
-    virtual int previousOffset(int current) const OVERRIDE FINAL;
-    virtual int previousOffsetForBackwardDeletion(int current) const OVERRIDE FINAL;
-    virtual int nextOffset(int current) const OVERRIDE FINAL;
+    virtual int previousOffset(int current) const override FINAL;
+    virtual int previousOffsetForBackwardDeletion(int current) const override FINAL;
+    virtual int nextOffset(int current) const override FINAL;
 
     bool containsReversedText() const { return m_containsReversedText; }
 
@@ -159,13 +159,13 @@ public:
 
 protected:
     virtual void computePreferredLogicalWidths(float leadWidth);
-    virtual void willBeDestroyed() OVERRIDE;
+    virtual void willBeDestroyed() override;
 
     virtual void setTextInternal(const String&);
     virtual UChar previousCharacter() const;
 
 private:
-    virtual bool canHaveChildren() const OVERRIDE FINAL { return false; }
+    virtual bool canHaveChildren() const override FINAL { return false; }
 
     void computePreferredLogicalWidths(float leadWidth, HashSet<const SimpleFontData*>& fallbackFonts, GlyphOverflow&);
 
@@ -174,9 +174,9 @@ private:
     // Make length() private so that callers that have a RenderText*
     // will use the more efficient textLength() instead, while
     // callers with a RenderObject* can continue to use length().
-    virtual unsigned length() const OVERRIDE FINAL { return textLength(); }
+    virtual unsigned length() const override FINAL { return textLength(); }
 
-    virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation&, const LayoutPoint&, HitTestAction) OVERRIDE FINAL { ASSERT_NOT_REACHED(); return false; }
+    virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation&, const LayoutPoint&, HitTestAction) override FINAL { ASSERT_NOT_REACHED(); return false; }
 
     bool containsOnlyWhitespace(unsigned from, unsigned len) const;
     float widthFromCache(const Font&, int start, int len, float xPos, HashSet<const SimpleFontData*>* fallbackFonts, GlyphOverflow*, const RenderStyle&) const;

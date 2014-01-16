@@ -71,14 +71,14 @@ private:
     void clearCallbackWrappers();
 
     // APIs called from the backend published via AbstractSQLTransaction:
-    virtual void requestTransitToState(SQLTransactionState) OVERRIDE;
-    virtual bool hasCallback() const OVERRIDE;
-    virtual bool hasSuccessCallback() const OVERRIDE;
-    virtual bool hasErrorCallback() const OVERRIDE;
-    virtual void setBackend(AbstractSQLTransactionBackend*) OVERRIDE;
+    virtual void requestTransitToState(SQLTransactionState) override;
+    virtual bool hasCallback() const override;
+    virtual bool hasSuccessCallback() const override;
+    virtual bool hasErrorCallback() const override;
+    virtual void setBackend(AbstractSQLTransactionBackend*) override;
 
     // State Machine functions:
-    virtual StateFunction stateFunctionFor(SQLTransactionState) OVERRIDE;
+    virtual StateFunction stateFunctionFor(SQLTransactionState) override;
     bool computeNextStateAndCleanupIfNeeded();
 
     // State functions:

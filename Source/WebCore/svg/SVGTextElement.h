@@ -35,10 +35,10 @@ public:
 private:
     SVGTextElement(const QualifiedName&, Document&);
 
-    virtual bool supportsFocus() const OVERRIDE { return true; }
+    virtual bool supportsFocus() const override { return true; }
 
-    virtual RenderPtr<RenderElement> createElementRenderer(PassRef<RenderStyle>) OVERRIDE;
-    virtual bool childShouldCreateRenderer(const Node&) const OVERRIDE;
+    virtual RenderPtr<RenderElement> createElementRenderer(PassRef<RenderStyle>) override;
+    virtual bool childShouldCreateRenderer(const Node&) const override;
 };
 
 NODE_TYPE_CASTS(SVGTextElement)

@@ -50,7 +50,7 @@ private:
     {
     }
 
-    virtual void fired() OVERRIDE
+    virtual void fired() override
     {
         ASSERT(!isSuspended());
         m_eventQueue.pendingEventTimerFired();

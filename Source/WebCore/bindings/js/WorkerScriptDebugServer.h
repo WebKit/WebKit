@@ -50,16 +50,16 @@ public:
 
     void interruptAndRunTask(PassOwnPtr<ScriptDebugServer::Task>);
 
-    void recompileAllJSFunctions() OVERRIDE;
+    void recompileAllJSFunctions() override;
 
 private:
-    virtual ListenerSet* getListenersForGlobalObject(JSC::JSGlobalObject*) OVERRIDE { return &m_listeners; }
-    virtual void didPause(JSC::JSGlobalObject*) OVERRIDE { }
-    virtual void didContinue(JSC::JSGlobalObject*) OVERRIDE { }
+    virtual ListenerSet* getListenersForGlobalObject(JSC::JSGlobalObject*) override { return &m_listeners; }
+    virtual void didPause(JSC::JSGlobalObject*) override { }
+    virtual void didContinue(JSC::JSGlobalObject*) override { }
 
-    virtual bool isContentScript(JSC::ExecState*) OVERRIDE { return false; }
+    virtual bool isContentScript(JSC::ExecState*) override { return false; }
 
-    virtual void runEventLoopWhilePaused() OVERRIDE;
+    virtual void runEventLoopWhilePaused() override;
 
     WorkerGlobalScope* m_workerGlobalScope;
     ListenerSet m_listeners;

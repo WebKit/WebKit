@@ -39,9 +39,9 @@ public:
 
     static std::unique_ptr<CryptoAlgorithm> create();
 
-    virtual CryptoAlgorithmIdentifier identifier() const OVERRIDE;
+    virtual CryptoAlgorithmIdentifier identifier() const override;
 
-    virtual void digest(const CryptoAlgorithmParameters&, const CryptoOperationData&, VectorCallback, VoidCallback failureCallback, ExceptionCode&) OVERRIDE;
+    virtual void digest(const CryptoAlgorithmParameters&, const CryptoOperationData&, VectorCallback, VoidCallback failureCallback, ExceptionCode&) override;
 
 private:
     CryptoAlgorithmSHA224();

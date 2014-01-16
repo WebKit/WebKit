@@ -34,18 +34,18 @@ public:
     RenderSVGHiddenContainer(SVGElement&, PassRef<RenderStyle>);
 
 protected:
-    virtual void layout() OVERRIDE;
+    virtual void layout() override;
 
 private:
-    virtual bool isSVGHiddenContainer() const OVERRIDE FINAL { return true; }
-    virtual const char* renderName() const OVERRIDE { return "RenderSVGHiddenContainer"; }
+    virtual bool isSVGHiddenContainer() const override FINAL { return true; }
+    virtual const char* renderName() const override { return "RenderSVGHiddenContainer"; }
 
-    virtual void paint(PaintInfo&, const LayoutPoint&) OVERRIDE FINAL;
+    virtual void paint(PaintInfo&, const LayoutPoint&) override FINAL;
     
-    virtual LayoutRect clippedOverflowRectForRepaint(const RenderLayerModelObject*) const OVERRIDE FINAL { return LayoutRect(); }
-    virtual void absoluteQuads(Vector<FloatQuad>&, bool* wasFixed) const OVERRIDE FINAL;
+    virtual LayoutRect clippedOverflowRectForRepaint(const RenderLayerModelObject*) const override FINAL { return LayoutRect(); }
+    virtual void absoluteQuads(Vector<FloatQuad>&, bool* wasFixed) const override FINAL;
 
-    virtual bool nodeAtFloatPoint(const HitTestRequest&, HitTestResult&, const FloatPoint& pointInParent, HitTestAction) OVERRIDE FINAL;
+    virtual bool nodeAtFloatPoint(const HitTestRequest&, HitTestResult&, const FloatPoint& pointInParent, HitTestAction) override FINAL;
 };
 }
 

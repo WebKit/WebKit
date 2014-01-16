@@ -37,10 +37,10 @@ class ScrollbarThemeEfl FINAL : public ScrollbarTheme {
 public:
     ScrollbarThemeEfl() : m_scrollbarThickness(0) { }
     void setScrollbarThickness(int thickness) { m_scrollbarThickness = thickness; }
-    virtual int scrollbarThickness(ScrollbarControlSize = RegularScrollbar) OVERRIDE { return m_scrollbarThickness; }
+    virtual int scrollbarThickness(ScrollbarControlSize = RegularScrollbar) override { return m_scrollbarThickness; }
 
-    virtual void registerScrollbar(ScrollbarThemeClient*) OVERRIDE { }
-    virtual void unregisterScrollbar(ScrollbarThemeClient*) OVERRIDE { }
+    virtual void registerScrollbar(ScrollbarThemeClient*) override { }
+    virtual void unregisterScrollbar(ScrollbarThemeClient*) override { }
 private:
     int m_scrollbarThickness;
 };

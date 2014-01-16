@@ -207,13 +207,13 @@ public:
     static RefPtr<MediaSampleAVFObjC> create(CMSampleBufferRef sample, int trackID) { return adoptRef(new MediaSampleAVFObjC(sample, trackID)); }
     virtual ~MediaSampleAVFObjC() { }
 
-    virtual MediaTime presentationTime() const OVERRIDE { return toMediaTime(CMSampleBufferGetPresentationTimeStamp(m_sample.get())); }
-    virtual MediaTime decodeTime() const OVERRIDE { return toMediaTime(CMSampleBufferGetDecodeTimeStamp(m_sample.get())); }
-    virtual MediaTime duration() const OVERRIDE { return toMediaTime(CMSampleBufferGetDuration(m_sample.get())); }
-    virtual AtomicString trackID() const OVERRIDE { return m_id; }
+    virtual MediaTime presentationTime() const override { return toMediaTime(CMSampleBufferGetPresentationTimeStamp(m_sample.get())); }
+    virtual MediaTime decodeTime() const override { return toMediaTime(CMSampleBufferGetDecodeTimeStamp(m_sample.get())); }
+    virtual MediaTime duration() const override { return toMediaTime(CMSampleBufferGetDuration(m_sample.get())); }
+    virtual AtomicString trackID() const override { return m_id; }
 
-    virtual SampleFlags flags() const OVERRIDE;
-    virtual PlatformSample platformSample() OVERRIDE;
+    virtual SampleFlags flags() const override;
+    virtual PlatformSample platformSample() override;
 
 protected:
     MediaSampleAVFObjC(CMSampleBufferRef sample, int trackID)
@@ -264,10 +264,10 @@ public:
     static RefPtr<MediaDescriptionAVFObjC> create(AVAssetTrack* track) { return adoptRef(new MediaDescriptionAVFObjC(track)); }
     virtual ~MediaDescriptionAVFObjC() { }
 
-    virtual AtomicString codec() const OVERRIDE { return m_codec; }
-    virtual bool isVideo() const OVERRIDE { return m_isVideo; }
-    virtual bool isAudio() const OVERRIDE { return m_isAudio; }
-    virtual bool isText() const OVERRIDE { return m_isText; }
+    virtual AtomicString codec() const override { return m_codec; }
+    virtual bool isVideo() const override { return m_isVideo; }
+    virtual bool isAudio() const override { return m_isAudio; }
+    virtual bool isText() const override { return m_isText; }
     
 protected:
     MediaDescriptionAVFObjC(AVAssetTrack* track)

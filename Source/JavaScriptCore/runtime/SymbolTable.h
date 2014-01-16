@@ -480,7 +480,7 @@ private:
         virtual ~WatchpointCleanup();
         
     protected:
-        virtual void finalizeUnconditionally() OVERRIDE;
+        virtual void finalizeUnconditionally() override;
 
     private:
         SymbolTable* m_symbolTable;

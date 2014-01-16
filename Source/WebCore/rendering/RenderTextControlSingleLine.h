@@ -35,7 +35,7 @@ public:
     RenderTextControlSingleLine(HTMLInputElement&, PassRef<RenderStyle>);
     virtual ~RenderTextControlSingleLine();
     // FIXME: Move create*Style() to their classes.
-    virtual PassRef<RenderStyle> createInnerTextStyle(const RenderStyle* startStyle) const OVERRIDE;
+    virtual PassRef<RenderStyle> createInnerTextStyle(const RenderStyle* startStyle) const override;
     PassRef<RenderStyle> createInnerBlockStyle(const RenderStyle* startStyle) const;
 
     void capsLockStateMayHaveChanged();
@@ -50,33 +50,33 @@ protected:
 private:
     void textFormControlElement() const WTF_DELETED_FUNCTION;
 
-    virtual bool hasControlClip() const OVERRIDE;
-    virtual LayoutRect controlClipRect(const LayoutPoint&) const OVERRIDE;
-    virtual bool isTextField() const OVERRIDE FINAL { return true; }
+    virtual bool hasControlClip() const override;
+    virtual LayoutRect controlClipRect(const LayoutPoint&) const override;
+    virtual bool isTextField() const override FINAL { return true; }
 
-    virtual void paint(PaintInfo&, const LayoutPoint&) OVERRIDE;
-    virtual void layout() OVERRIDE;
+    virtual void paint(PaintInfo&, const LayoutPoint&) override;
+    virtual void layout() override;
 
-    virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction) OVERRIDE;
+    virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction) override;
 
-    virtual void autoscroll(const IntPoint&) OVERRIDE;
+    virtual void autoscroll(const IntPoint&) override;
 
     // Subclassed to forward to our inner div.
-    virtual int scrollLeft() const OVERRIDE;
-    virtual int scrollTop() const OVERRIDE;
-    virtual int scrollWidth() const OVERRIDE;
-    virtual int scrollHeight() const OVERRIDE;
-    virtual void setScrollLeft(int) OVERRIDE;
-    virtual void setScrollTop(int) OVERRIDE;
-    virtual bool scroll(ScrollDirection, ScrollGranularity, float multiplier = 1, Element** stopElement = 0) OVERRIDE FINAL;
-    virtual bool logicalScroll(ScrollLogicalDirection, ScrollGranularity, float multiplier = 1, Element** stopElement = 0) OVERRIDE FINAL;
+    virtual int scrollLeft() const override;
+    virtual int scrollTop() const override;
+    virtual int scrollWidth() const override;
+    virtual int scrollHeight() const override;
+    virtual void setScrollLeft(int) override;
+    virtual void setScrollTop(int) override;
+    virtual bool scroll(ScrollDirection, ScrollGranularity, float multiplier = 1, Element** stopElement = 0) override FINAL;
+    virtual bool logicalScroll(ScrollLogicalDirection, ScrollGranularity, float multiplier = 1, Element** stopElement = 0) override FINAL;
 
     int textBlockWidth() const;
-    virtual float getAvgCharWidth(AtomicString family) OVERRIDE;
-    virtual LayoutUnit preferredContentLogicalWidth(float charWidth) const OVERRIDE;
-    virtual LayoutUnit computeControlLogicalHeight(LayoutUnit lineHeight, LayoutUnit nonContentHeight) const OVERRIDE;
+    virtual float getAvgCharWidth(AtomicString family) override;
+    virtual LayoutUnit preferredContentLogicalWidth(float charWidth) const override;
+    virtual LayoutUnit computeControlLogicalHeight(LayoutUnit lineHeight, LayoutUnit nonContentHeight) const override;
     
-    virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle) OVERRIDE;
+    virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle) override;
 
     bool textShouldBeTruncated() const;
 
@@ -108,8 +108,8 @@ public:
     }
 
 private:
-    virtual bool hasLineIfEmpty() const OVERRIDE { return true; }
-    virtual bool isTextControlInnerBlock() const OVERRIDE { return true; }
+    virtual bool hasLineIfEmpty() const override { return true; }
+    virtual bool isTextControlInnerBlock() const override { return true; }
 };
 
 RENDER_OBJECT_TYPE_CASTS(RenderTextControlInnerBlock, isTextControlInnerBlock())

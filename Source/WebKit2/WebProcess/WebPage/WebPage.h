@@ -245,8 +245,8 @@ public:
     WebOpenPanelResultListener* activeOpenPanelResultListener() const { return m_activeOpenPanelResultListener.get(); }
     void setActiveOpenPanelResultListener(PassRefPtr<WebOpenPanelResultListener>);
 
-    void didReceiveMessage(IPC::Connection*, IPC::MessageDecoder&) OVERRIDE;
-    void didReceiveSyncMessage(IPC::Connection*, IPC::MessageDecoder&, std::unique_ptr<IPC::MessageEncoder>&) OVERRIDE;
+    void didReceiveMessage(IPC::Connection*, IPC::MessageDecoder&) override;
+    void didReceiveSyncMessage(IPC::Connection*, IPC::MessageDecoder&, std::unique_ptr<IPC::MessageEncoder>&) override;
 
     // -- InjectedBundle methods
 #if ENABLE(CONTEXT_MENUS)
@@ -690,8 +690,8 @@ private:
     WebPage(uint64_t pageID, const WebPageCreationParameters&);
 
     // IPC::MessageSender
-    virtual IPC::Connection* messageSenderConnection() OVERRIDE;
-    virtual uint64_t messageSenderDestinationID() OVERRIDE;
+    virtual IPC::Connection* messageSenderConnection() override;
+    virtual uint64_t messageSenderDestinationID() override;
 
     void platformInitialize();
 

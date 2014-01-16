@@ -38,22 +38,22 @@ public:
     ~KeyedEncoder();
 
 private:
-    virtual void encodeBytes(const String& key, const uint8_t*, size_t) OVERRIDE;
-    virtual void encodeBool(const String& key, bool) OVERRIDE;
-    virtual void encodeUInt32(const String& key, uint32_t) OVERRIDE;
-    virtual void encodeInt32(const String& key, int32_t) OVERRIDE;
-    virtual void encodeInt64(const String& key, int64_t) OVERRIDE;
-    virtual void encodeFloat(const String& key, float) OVERRIDE;
-    virtual void encodeDouble(const String& key, double) OVERRIDE;
-    virtual void encodeString(const String& key, const String&) OVERRIDE;
+    virtual void encodeBytes(const String& key, const uint8_t*, size_t) override;
+    virtual void encodeBool(const String& key, bool) override;
+    virtual void encodeUInt32(const String& key, uint32_t) override;
+    virtual void encodeInt32(const String& key, int32_t) override;
+    virtual void encodeInt64(const String& key, int64_t) override;
+    virtual void encodeFloat(const String& key, float) override;
+    virtual void encodeDouble(const String& key, double) override;
+    virtual void encodeString(const String& key, const String&) override;
 
-    virtual void beginObject(const String& key) OVERRIDE;
-    virtual void endObject() OVERRIDE;
+    virtual void beginObject(const String& key) override;
+    virtual void endObject() override;
 
-    virtual void beginArray(const String& key) OVERRIDE;
-    virtual void beginArrayElement() OVERRIDE;
-    virtual void endArrayElement() OVERRIDE;
-    virtual void endArray() OVERRIDE;
+    virtual void beginArray(const String& key) override;
+    virtual void beginArrayElement() override;
+    virtual void endArrayElement() override;
+    virtual void endArray() override;
 
     RetainPtr<CFMutableDictionaryRef> m_rootDictionary;
 

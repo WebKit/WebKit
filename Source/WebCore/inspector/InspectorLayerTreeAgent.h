@@ -52,8 +52,8 @@ public:
     explicit InspectorLayerTreeAgent(InstrumentingAgents*);
     ~InspectorLayerTreeAgent();
 
-    virtual void didCreateFrontendAndBackend(Inspector::InspectorFrontendChannel*, Inspector::InspectorBackendDispatcher*) OVERRIDE;
-    virtual void willDestroyFrontendAndBackend() OVERRIDE;
+    virtual void didCreateFrontendAndBackend(Inspector::InspectorFrontendChannel*, Inspector::InspectorBackendDispatcher*) override;
+    virtual void willDestroyFrontendAndBackend() override;
     void reset();
 
     void layerTreeDidChange();

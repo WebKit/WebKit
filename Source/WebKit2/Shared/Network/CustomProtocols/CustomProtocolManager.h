@@ -77,18 +77,18 @@ public:
 
 private:
     // ChildProcessSupplement
-    void initializeConnection(IPC::Connection*) OVERRIDE;
+    void initializeConnection(IPC::Connection*) override;
 
     // WebProcessSupplement
-    void initialize(const WebProcessCreationParameters&) OVERRIDE;
+    void initialize(const WebProcessCreationParameters&) override;
 
 #if ENABLE(NETWORK_PROCESS)
     // NetworkProcessSupplement
-    void initialize(const NetworkProcessCreationParameters&) OVERRIDE;
+    void initialize(const NetworkProcessCreationParameters&) override;
 #endif
 
     // IPC::MessageReceiver
-    virtual void didReceiveMessage(IPC::Connection*, IPC::MessageDecoder&) OVERRIDE;
+    virtual void didReceiveMessage(IPC::Connection*, IPC::MessageDecoder&) override;
 
     void didFailWithError(uint64_t customProtocolID, const WebCore::ResourceError&);
     void didLoadData(uint64_t customProtocolID, const IPC::DataReference&);

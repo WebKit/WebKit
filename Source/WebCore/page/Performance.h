@@ -57,8 +57,8 @@ public:
     static PassRefPtr<Performance> create(Frame* frame) { return adoptRef(new Performance(frame)); }
     ~Performance();
 
-    virtual EventTargetInterface eventTargetInterface() const OVERRIDE { return PerformanceEventTargetInterfaceType; }
-    virtual ScriptExecutionContext* scriptExecutionContext() const OVERRIDE;
+    virtual EventTargetInterface eventTargetInterface() const override { return PerformanceEventTargetInterfaceType; }
+    virtual ScriptExecutionContext* scriptExecutionContext() const override;
 
     PerformanceNavigation* navigation() const;
     PerformanceTiming* timing() const;
@@ -93,8 +93,8 @@ public:
 private:
     explicit Performance(Frame*);
 
-    virtual void refEventTarget() OVERRIDE { ref(); }
-    virtual void derefEventTarget() OVERRIDE { deref(); }
+    virtual void refEventTarget() override { ref(); }
+    virtual void derefEventTarget() override { deref(); }
     bool isResourceTimingBufferFull();
 
     mutable RefPtr<PerformanceNavigation> m_navigation;

@@ -35,16 +35,16 @@ public:
     explicit WebProgressTrackerClient(WebView*);
 
 private:
-    virtual void progressTrackerDestroyed() OVERRIDE;
+    virtual void progressTrackerDestroyed() override;
     
 #if !PLATFORM(IOS)
-    virtual void willChangeEstimatedProgress() OVERRIDE;
-    virtual void didChangeEstimatedProgress() OVERRIDE;
+    virtual void willChangeEstimatedProgress() override;
+    virtual void didChangeEstimatedProgress() override;
 #endif
 
-    virtual void progressStarted(WebCore::Frame& originatingProgressFrame) OVERRIDE;
-    virtual void progressEstimateChanged(WebCore::Frame& originatingProgressFrame) OVERRIDE;
-    virtual void progressFinished(WebCore::Frame& originatingProgressFrame) OVERRIDE;
+    virtual void progressStarted(WebCore::Frame& originatingProgressFrame) override;
+    virtual void progressEstimateChanged(WebCore::Frame& originatingProgressFrame) override;
+    virtual void progressFinished(WebCore::Frame& originatingProgressFrame) override;
 
     WebView *m_webView;
 };

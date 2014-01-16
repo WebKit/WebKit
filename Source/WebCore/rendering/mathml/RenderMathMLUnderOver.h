@@ -38,11 +38,11 @@ public:
     
     virtual RenderMathMLOperator* unembellishedOperator();
 
-    virtual int firstLineBaseline() const OVERRIDE;
+    virtual int firstLineBaseline() const override;
     
 private:
-    virtual bool isRenderMathMLUnderOver() const OVERRIDE { return true; }
-    virtual const char* renderName() const OVERRIDE { return "RenderMathMLUnderOver"; }
+    virtual bool isRenderMathMLUnderOver() const override { return true; }
+    virtual const char* renderName() const override { return "RenderMathMLUnderOver"; }
 
     enum UnderOverType { Under, Over, UnderOver };
     UnderOverType m_kind;

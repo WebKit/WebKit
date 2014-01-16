@@ -189,10 +189,10 @@ private:
     WebProcess();
 
     // DownloadManager::Client.
-    virtual void didCreateDownload() OVERRIDE;
-    virtual void didDestroyDownload() OVERRIDE;
-    virtual IPC::Connection* downloadProxyConnection() OVERRIDE;
-    virtual AuthenticationManager& downloadsAuthenticationManager() OVERRIDE;
+    virtual void didCreateDownload() override;
+    virtual void didDestroyDownload() override;
+    virtual IPC::Connection* downloadProxyConnection() override;
+    virtual AuthenticationManager& downloadsAuthenticationManager() override;
 
     void initializeWebProcess(const WebProcessCreationParameters&, IPC::MessageDecoder&);
     void platformInitializeWebProcess(const WebProcessCreationParameters&, IPC::MessageDecoder&);
@@ -246,15 +246,15 @@ private:
     void postInjectedBundleMessage(const IPC::DataReference& messageData);
 
     // ChildProcess
-    virtual void initializeProcess(const ChildProcessInitializationParameters&) OVERRIDE;
-    virtual void initializeProcessName(const ChildProcessInitializationParameters&) OVERRIDE;
-    virtual void initializeSandbox(const ChildProcessInitializationParameters&, SandboxInitializationParameters&) OVERRIDE;
-    virtual void initializeConnection(IPC::Connection*) OVERRIDE;
-    virtual bool shouldTerminate() OVERRIDE;
-    virtual void terminate() OVERRIDE;
+    virtual void initializeProcess(const ChildProcessInitializationParameters&) override;
+    virtual void initializeProcessName(const ChildProcessInitializationParameters&) override;
+    virtual void initializeSandbox(const ChildProcessInitializationParameters&, SandboxInitializationParameters&) override;
+    virtual void initializeConnection(IPC::Connection*) override;
+    virtual bool shouldTerminate() override;
+    virtual void terminate() override;
 
 #if PLATFORM(MAC) && !PLATFORM(IOS)
-    virtual void stopRunLoop() OVERRIDE;
+    virtual void stopRunLoop() override;
 #endif
 
     void platformInitializeProcess(const ChildProcessInitializationParameters&);
@@ -264,7 +264,7 @@ private:
     virtual void didReceiveMessage(IPC::Connection*, IPC::MessageDecoder&);
     virtual void didReceiveSyncMessage(IPC::Connection*, IPC::MessageDecoder&, std::unique_ptr<IPC::MessageEncoder>&);
     virtual void didClose(IPC::Connection*);
-    virtual void didReceiveInvalidMessage(IPC::Connection*, IPC::StringReference messageReceiverName, IPC::StringReference messageName) OVERRIDE;
+    virtual void didReceiveInvalidMessage(IPC::Connection*, IPC::StringReference messageReceiverName, IPC::StringReference messageName) override;
 
     // Implemented in generated WebProcessMessageReceiver.cpp
     void didReceiveWebProcessMessage(IPC::Connection*, IPC::MessageDecoder&);

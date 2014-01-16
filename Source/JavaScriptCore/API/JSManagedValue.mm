@@ -40,8 +40,8 @@
 
 class JSManagedValueHandleOwner : public JSC::WeakHandleOwner {
 public:
-    virtual void finalize(JSC::Handle<JSC::Unknown>, void* context) OVERRIDE;
-    virtual bool isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown>, void* context, JSC::SlotVisitor&) OVERRIDE;
+    virtual void finalize(JSC::Handle<JSC::Unknown>, void* context) override;
+    virtual bool isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown>, void* context, JSC::SlotVisitor&) override;
 };
 
 static JSManagedValueHandleOwner* managedValueHandleOwner()

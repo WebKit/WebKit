@@ -46,19 +46,19 @@ private:
     StorageAreaImpl(PassRefPtr<StorageAreaMap>);
 
     // WebCore::StorageArea.
-    virtual unsigned length() OVERRIDE;
-    virtual String key(unsigned index) OVERRIDE;
-    virtual String item(const String& key) OVERRIDE;
-    virtual void setItem(WebCore::Frame* sourceFrame, const String& key, const String& value, bool& quotaException) OVERRIDE;
-    virtual void removeItem(WebCore::Frame* sourceFrame, const String& key) OVERRIDE;
-    virtual void clear(WebCore::Frame* sourceFrame) OVERRIDE;
-    virtual bool contains(const String& key) OVERRIDE;
-    virtual bool canAccessStorage(WebCore::Frame*) OVERRIDE;
-    virtual WebCore::StorageType storageType() const OVERRIDE;
-    virtual size_t memoryBytesUsedByCache() OVERRIDE;
-    virtual void incrementAccessCount() OVERRIDE;
-    virtual void decrementAccessCount() OVERRIDE;
-    virtual void closeDatabaseIfIdle() OVERRIDE;
+    virtual unsigned length() override;
+    virtual String key(unsigned index) override;
+    virtual String item(const String& key) override;
+    virtual void setItem(WebCore::Frame* sourceFrame, const String& key, const String& value, bool& quotaException) override;
+    virtual void removeItem(WebCore::Frame* sourceFrame, const String& key) override;
+    virtual void clear(WebCore::Frame* sourceFrame) override;
+    virtual bool contains(const String& key) override;
+    virtual bool canAccessStorage(WebCore::Frame*) override;
+    virtual WebCore::StorageType storageType() const override;
+    virtual size_t memoryBytesUsedByCache() override;
+    virtual void incrementAccessCount() override;
+    virtual void decrementAccessCount() override;
+    virtual void closeDatabaseIfIdle() override;
 
     uint64_t m_storageAreaID;
     RefPtr<StorageAreaMap> m_storageAreaMap;

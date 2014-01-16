@@ -57,8 +57,8 @@ private:
     DatabaseProcessIDBConnection(DatabaseToWebProcessConnection&, uint64_t idbConnectionIdentifier);
 
     // IPC::MessageSender
-    virtual IPC::Connection* messageSenderConnection() OVERRIDE;
-    virtual uint64_t messageSenderDestinationID() OVERRIDE { return m_serverConnectionIdentifier; }
+    virtual IPC::Connection* messageSenderConnection() override;
+    virtual uint64_t messageSenderDestinationID() override { return m_serverConnectionIdentifier; }
 
     // Message handlers.
     void establishConnection(const String& databaseName, const SecurityOriginData& openingOrigin, const SecurityOriginData& mainFrameOrigin);

@@ -40,8 +40,8 @@ public:
 private:
     void graphicsElement() const WTF_DELETED_FUNCTION;
 
-    virtual bool isSVGTextPath() const OVERRIDE { return true; }
-    virtual const char* renderName() const OVERRIDE { return "RenderSVGTextPath"; }
+    virtual bool isSVGTextPath() const override { return true; }
+    virtual const char* renderName() const override { return "RenderSVGTextPath"; }
 
     Path m_layoutPath;
 };

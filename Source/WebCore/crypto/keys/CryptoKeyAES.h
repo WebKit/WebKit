@@ -46,15 +46,15 @@ public:
 
     static PassRefPtr<CryptoKeyAES> generate(CryptoAlgorithmIdentifier, size_t lengthBits, bool extractable, CryptoKeyUsage);
 
-    virtual CryptoKeyClass keyClass() const OVERRIDE { return CryptoKeyClass::AES; }
+    virtual CryptoKeyClass keyClass() const override { return CryptoKeyClass::AES; }
 
     const Vector<uint8_t>& key() const { return m_key; }
 
 private:
     CryptoKeyAES(CryptoAlgorithmIdentifier, const Vector<uint8_t>& key, bool extractable, CryptoKeyUsage);
 
-    virtual void buildAlgorithmDescription(CryptoAlgorithmDescriptionBuilder&) const OVERRIDE;
-    virtual std::unique_ptr<CryptoKeyData> exportData() const OVERRIDE;
+    virtual void buildAlgorithmDescription(CryptoAlgorithmDescriptionBuilder&) const override;
+    virtual std::unique_ptr<CryptoKeyData> exportData() const override;
 
     Vector<uint8_t> m_key;
 };

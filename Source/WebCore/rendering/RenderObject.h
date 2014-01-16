@@ -859,9 +859,9 @@ public:
     virtual int previousOffsetForBackwardDeletion(int current) const;
     virtual int nextOffset(int current) const;
 
-    virtual void imageChanged(CachedImage*, const IntRect* = 0) OVERRIDE;
+    virtual void imageChanged(CachedImage*, const IntRect* = 0) override;
     virtual void imageChanged(WrappedImagePtr, const IntRect* = 0) { }
-    virtual bool willRenderImage(CachedImage*) OVERRIDE;
+    virtual bool willRenderImage(CachedImage*) override;
 
     void selectionStartEnd(int& spos, int& epos) const;
     

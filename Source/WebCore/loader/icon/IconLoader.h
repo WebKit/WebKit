@@ -47,7 +47,7 @@ public:
     void stopLoading();
 
 private:
-    virtual void notifyFinished(CachedResource*) OVERRIDE;
+    virtual void notifyFinished(CachedResource*) override;
 
     Frame& m_frame;
     CachedResourceHandle<CachedRawResource> m_resource;

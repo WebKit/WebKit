@@ -53,7 +53,7 @@ public:
         return adoptRef(new MediaKeyNeededEvent(type, initializer));
     }
 
-    virtual EventInterface eventInterface() const OVERRIDE;
+    virtual EventInterface eventInterface() const override;
 
     Uint8Array* initData() const { return m_initData.get(); }
 

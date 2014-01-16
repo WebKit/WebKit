@@ -46,40 +46,40 @@ public:
 
     virtual ~IDBServerConnectionLevelDB();
 
-    virtual bool isClosed() OVERRIDE;
+    virtual bool isClosed() override;
 
     // Factory-level operations
-    virtual void deleteDatabase(const String& name, BoolCallbackFunction successCallback) OVERRIDE;
+    virtual void deleteDatabase(const String& name, BoolCallbackFunction successCallback) override;
 
     // Database-level operations
-    virtual void getOrEstablishIDBDatabaseMetadata(GetIDBDatabaseMetadataFunction) OVERRIDE;
-    virtual void close() OVERRIDE;
+    virtual void getOrEstablishIDBDatabaseMetadata(GetIDBDatabaseMetadataFunction) override;
+    virtual void close() override;
 
     // Transaction-level operations
-    virtual void openTransaction(int64_t transactionID, const HashSet<int64_t>& objectStoreIds, IndexedDB::TransactionMode, BoolCallbackFunction successCallback) OVERRIDE;
-    virtual void beginTransaction(int64_t transactionID, std::function<void()> completionCallback) OVERRIDE;
-    virtual void commitTransaction(int64_t transactionID, BoolCallbackFunction successCallback) OVERRIDE;
-    virtual void resetTransaction(int64_t transactionID, std::function<void()> completionCallback) OVERRIDE;
-    virtual void rollbackTransaction(int64_t transactionID, std::function<void()> completionCallback) OVERRIDE;
+    virtual void openTransaction(int64_t transactionID, const HashSet<int64_t>& objectStoreIds, IndexedDB::TransactionMode, BoolCallbackFunction successCallback) override;
+    virtual void beginTransaction(int64_t transactionID, std::function<void()> completionCallback) override;
+    virtual void commitTransaction(int64_t transactionID, BoolCallbackFunction successCallback) override;
+    virtual void resetTransaction(int64_t transactionID, std::function<void()> completionCallback) override;
+    virtual void rollbackTransaction(int64_t transactionID, std::function<void()> completionCallback) override;
     virtual void setIndexKeys(int64_t transactionID, int64_t databaseID, int64_t objectStoreID, const IDBObjectStoreMetadata&, IDBKey& primaryKey, const Vector<int64_t>& indexIDs, const Vector<Vector<RefPtr<IDBKey>>>& indexKeys, std::function<void(PassRefPtr<IDBDatabaseError>)> completionCallback);
 
-    virtual void createObjectStore(IDBTransactionBackend&, const CreateObjectStoreOperation&, std::function<void(PassRefPtr<IDBDatabaseError>)> completionCallback) OVERRIDE;
-    virtual void createIndex(IDBTransactionBackend&, const CreateIndexOperation&, std::function<void(PassRefPtr<IDBDatabaseError>)> completionCallback) OVERRIDE;
-    virtual void deleteIndex(IDBTransactionBackend&, const DeleteIndexOperation&, std::function<void(PassRefPtr<IDBDatabaseError>)> completionCallback) OVERRIDE;
-    virtual void get(IDBTransactionBackend&, const GetOperation&, std::function<void(PassRefPtr<IDBDatabaseError>)> completionCallback) OVERRIDE;
-    virtual void put(IDBTransactionBackend&, const PutOperation&, std::function<void(PassRefPtr<IDBDatabaseError>)> completionCallback) OVERRIDE;
-    virtual void openCursor(IDBTransactionBackend&, const OpenCursorOperation&, std::function<void(PassRefPtr<IDBDatabaseError>)> completionCallback) OVERRIDE;
-    virtual void count(IDBTransactionBackend&, const CountOperation&, std::function<void(PassRefPtr<IDBDatabaseError>)> completionCallback) OVERRIDE;
-    virtual void deleteRange(IDBTransactionBackend&, const DeleteRangeOperation&, std::function<void(PassRefPtr<IDBDatabaseError>)> completionCallback) OVERRIDE;
-    virtual void clearObjectStore(IDBTransactionBackend&, const ClearObjectStoreOperation&, std::function<void(PassRefPtr<IDBDatabaseError>)> completionCallback) OVERRIDE;
-    virtual void deleteObjectStore(IDBTransactionBackend&, const DeleteObjectStoreOperation&, std::function<void(PassRefPtr<IDBDatabaseError>)> completionCallback) OVERRIDE;
-    virtual void changeDatabaseVersion(IDBTransactionBackend&, const IDBDatabaseBackend::VersionChangeOperation&, std::function<void(PassRefPtr<IDBDatabaseError>)> completionCallback) OVERRIDE;
+    virtual void createObjectStore(IDBTransactionBackend&, const CreateObjectStoreOperation&, std::function<void(PassRefPtr<IDBDatabaseError>)> completionCallback) override;
+    virtual void createIndex(IDBTransactionBackend&, const CreateIndexOperation&, std::function<void(PassRefPtr<IDBDatabaseError>)> completionCallback) override;
+    virtual void deleteIndex(IDBTransactionBackend&, const DeleteIndexOperation&, std::function<void(PassRefPtr<IDBDatabaseError>)> completionCallback) override;
+    virtual void get(IDBTransactionBackend&, const GetOperation&, std::function<void(PassRefPtr<IDBDatabaseError>)> completionCallback) override;
+    virtual void put(IDBTransactionBackend&, const PutOperation&, std::function<void(PassRefPtr<IDBDatabaseError>)> completionCallback) override;
+    virtual void openCursor(IDBTransactionBackend&, const OpenCursorOperation&, std::function<void(PassRefPtr<IDBDatabaseError>)> completionCallback) override;
+    virtual void count(IDBTransactionBackend&, const CountOperation&, std::function<void(PassRefPtr<IDBDatabaseError>)> completionCallback) override;
+    virtual void deleteRange(IDBTransactionBackend&, const DeleteRangeOperation&, std::function<void(PassRefPtr<IDBDatabaseError>)> completionCallback) override;
+    virtual void clearObjectStore(IDBTransactionBackend&, const ClearObjectStoreOperation&, std::function<void(PassRefPtr<IDBDatabaseError>)> completionCallback) override;
+    virtual void deleteObjectStore(IDBTransactionBackend&, const DeleteObjectStoreOperation&, std::function<void(PassRefPtr<IDBDatabaseError>)> completionCallback) override;
+    virtual void changeDatabaseVersion(IDBTransactionBackend&, const IDBDatabaseBackend::VersionChangeOperation&, std::function<void(PassRefPtr<IDBDatabaseError>)> completionCallback) override;
 
     // Cursor-level operations
-    virtual void cursorAdvance(IDBCursorBackend&, const CursorAdvanceOperation&, std::function<void()> completionCallback) OVERRIDE;
-    virtual void cursorIterate(IDBCursorBackend&, const CursorIterationOperation&, std::function<void()> completionCallback) OVERRIDE;
-    virtual void cursorPrefetchIteration(IDBCursorBackend&, const CursorPrefetchIterationOperation&, std::function<void()> completionCallback) OVERRIDE;
-    virtual void cursorPrefetchReset(IDBCursorBackend&, int usedPrefetches) OVERRIDE;
+    virtual void cursorAdvance(IDBCursorBackend&, const CursorAdvanceOperation&, std::function<void()> completionCallback) override;
+    virtual void cursorIterate(IDBCursorBackend&, const CursorIterationOperation&, std::function<void()> completionCallback) override;
+    virtual void cursorPrefetchIteration(IDBCursorBackend&, const CursorPrefetchIterationOperation&, std::function<void()> completionCallback) override;
+    virtual void cursorPrefetchReset(IDBCursorBackend&, int usedPrefetches) override;
 
 private:
     IDBServerConnectionLevelDB(const String& databaseName, IDBBackingStoreLevelDB*);

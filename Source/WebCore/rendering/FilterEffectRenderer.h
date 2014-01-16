@@ -101,10 +101,10 @@ public:
         setFilterRegion(sourceImageRect);
         m_graphicsBufferAttached = false;
     }
-    virtual FloatRect sourceImageRect() const OVERRIDE { return m_sourceDrawingRegion; }
+    virtual FloatRect sourceImageRect() const override { return m_sourceDrawingRegion; }
 
     void setFilterRegion(const FloatRect& filterRegion) { m_filterRegion = filterRegion; }
-    virtual FloatRect filterRegion() const OVERRIDE { return m_filterRegion; }
+    virtual FloatRect filterRegion() const override { return m_filterRegion; }
 
     GraphicsContext* inputContext();
     ImageBuffer* output() const { return lastEffect()->asImageBuffer(); }

@@ -65,7 +65,7 @@ private:
 
     }
 
-    virtual void didCreatePage(WKBundleRef, WKBundlePageRef bundlePage) OVERRIDE
+    virtual void didCreatePage(WKBundleRef, WKBundlePageRef bundlePage) override
     {
         WKBundlePageLoaderClientV6 pageLoaderClient;
         memset(&pageLoaderClient, 0, sizeof(pageLoaderClient));

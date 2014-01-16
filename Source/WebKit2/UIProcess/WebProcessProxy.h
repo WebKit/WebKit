@@ -130,10 +130,10 @@ private:
     explicit WebProcessProxy(WebContext&);
 
     // From ChildProcessProxy
-    virtual void getLaunchOptions(ProcessLauncher::LaunchOptions&) OVERRIDE;
+    virtual void getLaunchOptions(ProcessLauncher::LaunchOptions&) override;
     void platformGetLaunchOptions(ProcessLauncher::LaunchOptions&);
-    virtual void connectionWillOpen(IPC::Connection*) OVERRIDE;
-    virtual void connectionWillClose(IPC::Connection*) OVERRIDE;
+    virtual void connectionWillOpen(IPC::Connection*) override;
+    virtual void connectionWillClose(IPC::Connection*) override;
 
     // Called when the web process has crashed or we know that it will terminate soon.
     // Will potentially cause the WebProcessProxy object to be freed.
@@ -161,18 +161,18 @@ private:
 
     // IPC::Connection::Client
     friend class WebConnectionToWebProcess;
-    virtual void didReceiveMessage(IPC::Connection*, IPC::MessageDecoder&) OVERRIDE;
-    virtual void didReceiveSyncMessage(IPC::Connection*, IPC::MessageDecoder&, std::unique_ptr<IPC::MessageEncoder>&) OVERRIDE;
-    virtual void didClose(IPC::Connection*) OVERRIDE;
-    virtual void didReceiveInvalidMessage(IPC::Connection*, IPC::StringReference messageReceiverName, IPC::StringReference messageName) OVERRIDE;
+    virtual void didReceiveMessage(IPC::Connection*, IPC::MessageDecoder&) override;
+    virtual void didReceiveSyncMessage(IPC::Connection*, IPC::MessageDecoder&, std::unique_ptr<IPC::MessageEncoder>&) override;
+    virtual void didClose(IPC::Connection*) override;
+    virtual void didReceiveInvalidMessage(IPC::Connection*, IPC::StringReference messageReceiverName, IPC::StringReference messageName) override;
 
     // ResponsivenessTimer::Client
-    void didBecomeUnresponsive(ResponsivenessTimer*) OVERRIDE;
-    void interactionOccurredWhileUnresponsive(ResponsivenessTimer*) OVERRIDE;
-    void didBecomeResponsive(ResponsivenessTimer*) OVERRIDE;
+    void didBecomeUnresponsive(ResponsivenessTimer*) override;
+    void interactionOccurredWhileUnresponsive(ResponsivenessTimer*) override;
+    void didBecomeResponsive(ResponsivenessTimer*) override;
 
     // ProcessLauncher::Client
-    virtual void didFinishLaunching(ProcessLauncher*, IPC::Connection::Identifier) OVERRIDE;
+    virtual void didFinishLaunching(ProcessLauncher*, IPC::Connection::Identifier) override;
 
     // History client
     void didNavigateWithNavigationData(uint64_t pageID, const WebNavigationDataStore&, uint64_t frameID);

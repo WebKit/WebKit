@@ -244,11 +244,11 @@ public:
 
     String layerTreeAsText(LayerTreeFlags);
 
-    virtual float deviceScaleFactor() const OVERRIDE;
-    virtual float contentsScaleMultiplierForNewTiles(const GraphicsLayer*) const OVERRIDE;
-    virtual float pageScaleFactor() const OVERRIDE;
-    virtual void didCommitChangesForLayer(const GraphicsLayer*) const OVERRIDE;
-    virtual void notifyFlushBeforeDisplayRefresh(const GraphicsLayer*) OVERRIDE;
+    virtual float deviceScaleFactor() const override;
+    virtual float contentsScaleMultiplierForNewTiles(const GraphicsLayer*) const override;
+    virtual float pageScaleFactor() const override;
+    virtual void didCommitChangesForLayer(const GraphicsLayer*) const override;
+    virtual void notifyFlushBeforeDisplayRefresh(const GraphicsLayer*) override;
 
     void layerTiledBackingUsageChanged(const GraphicsLayer*, bool /*usingTiledBacking*/);
     
@@ -307,15 +307,15 @@ private:
     class OverlapMap;
 
     // GraphicsLayerClient implementation
-    virtual void notifyAnimationStarted(const GraphicsLayer*, double) OVERRIDE { }
-    virtual void notifyFlushRequired(const GraphicsLayer*) OVERRIDE;
-    virtual void paintContents(const GraphicsLayer*, GraphicsContext&, GraphicsLayerPaintingPhase, const IntRect&) OVERRIDE;
+    virtual void notifyAnimationStarted(const GraphicsLayer*, double) override { }
+    virtual void notifyFlushRequired(const GraphicsLayer*) override;
+    virtual void paintContents(const GraphicsLayer*, GraphicsContext&, GraphicsLayerPaintingPhase, const IntRect&) override;
 
-    virtual bool isTrackingRepaints() const OVERRIDE;
+    virtual bool isTrackingRepaints() const override;
     
     // GraphicsLayerUpdaterClient implementation
-    virtual void flushLayers(GraphicsLayerUpdater*) OVERRIDE;
-    virtual void customPositionForVisibleRectComputation(const GraphicsLayer*, FloatPoint&) const OVERRIDE;
+    virtual void flushLayers(GraphicsLayerUpdater*) override;
+    virtual void customPositionForVisibleRectComputation(const GraphicsLayer*, FloatPoint&) const override;
     
     // Whether the given RL needs a compositing layer.
     bool needsToBeComposited(const RenderLayer&, RenderLayer::ViewportConstrainedNotCompositedReason* = 0) const;

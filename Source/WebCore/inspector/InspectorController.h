@@ -136,12 +136,12 @@ public:
     void willComposite();
     void didComposite();
 
-    virtual bool developerExtrasEnabled() const OVERRIDE;
-    virtual bool canAccessInspectedScriptState(JSC::ExecState*) const OVERRIDE;
-    virtual Inspector::InspectorFunctionCallHandler functionCallHandler() const OVERRIDE;
-    virtual Inspector::InspectorEvaluateHandler evaluateHandler() const OVERRIDE;
-    virtual void willCallInjectedScriptFunction(JSC::ExecState*, const String& scriptName, int scriptLine) OVERRIDE;
-    virtual void didCallInjectedScriptFunction() OVERRIDE;
+    virtual bool developerExtrasEnabled() const override;
+    virtual bool canAccessInspectedScriptState(JSC::ExecState*) const override;
+    virtual Inspector::InspectorFunctionCallHandler functionCallHandler() const override;
+    virtual Inspector::InspectorEvaluateHandler evaluateHandler() const override;
+    virtual void willCallInjectedScriptFunction(JSC::ExecState*, const String& scriptName, int scriptLine) override;
+    virtual void didCallInjectedScriptFunction() override;
 
 private:
     InspectorController(Page*, InspectorClient*);

@@ -43,10 +43,10 @@ protected:
     RefPtr<TextResourceDecoder> m_decoder;
 
 private:
-    virtual bool mayTryReplaceEncodedData() const OVERRIDE { return true; }
-    virtual void setEncoding(const String&) OVERRIDE;
-    virtual String encoding() const OVERRIDE;
-    virtual void finishLoading(ResourceBuffer*) OVERRIDE;
+    virtual bool mayTryReplaceEncodedData() const override { return true; }
+    virtual void setEncoding(const String&) override;
+    virtual String encoding() const override;
+    virtual void finishLoading(ResourceBuffer*) override;
 };
 
 } // namespace WebCore

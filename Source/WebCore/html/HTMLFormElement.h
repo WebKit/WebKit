@@ -104,7 +104,7 @@ public:
     String method() const;
     void setMethod(const String&);
 
-    virtual String target() const OVERRIDE;
+    virtual String target() const override;
 
     bool wasUserSubmitted() const;
 
@@ -124,21 +124,21 @@ public:
 private:
     HTMLFormElement(const QualifiedName&, Document&);
 
-    virtual bool rendererIsNeeded(const RenderStyle&) OVERRIDE;
-    virtual InsertionNotificationRequest insertedInto(ContainerNode&) OVERRIDE;
-    virtual void removedFrom(ContainerNode&) OVERRIDE;
-    virtual void finishParsingChildren() OVERRIDE;
+    virtual bool rendererIsNeeded(const RenderStyle&) override;
+    virtual InsertionNotificationRequest insertedInto(ContainerNode&) override;
+    virtual void removedFrom(ContainerNode&) override;
+    virtual void finishParsingChildren() override;
 
-    virtual void handleLocalEvents(Event&) OVERRIDE;
+    virtual void handleLocalEvents(Event&) override;
 
-    virtual void parseAttribute(const QualifiedName&, const AtomicString&) OVERRIDE;
-    virtual bool isURLAttribute(const Attribute&) const OVERRIDE;
+    virtual void parseAttribute(const QualifiedName&, const AtomicString&) override;
+    virtual bool isURLAttribute(const Attribute&) const override;
 
-    virtual void documentDidResumeFromPageCache() OVERRIDE;
+    virtual void documentDidResumeFromPageCache() override;
 
-    virtual void didMoveToNewDocument(Document* oldDocument) OVERRIDE;
+    virtual void didMoveToNewDocument(Document* oldDocument) override;
 
-    virtual void copyNonAttributePropertiesFromElement(const Element&) OVERRIDE;
+    virtual void copyNonAttributePropertiesFromElement(const Element&) override;
 
     void submit(Event*, bool activateSubmitButton, bool processingUserGesture, FormSubmissionTrigger);
 

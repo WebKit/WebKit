@@ -68,15 +68,15 @@ protected:
     virtual IntRect forwardButtonRect(ScrollbarThemeClient*, ScrollbarPart, bool painting = false);
     virtual IntRect trackRect(ScrollbarThemeClient*, bool painting = false);
 
-    virtual void willPaintScrollbar(GraphicsContext*, ScrollbarThemeClient*) OVERRIDE;
-    virtual void didPaintScrollbar(GraphicsContext*, ScrollbarThemeClient*) OVERRIDE;
+    virtual void willPaintScrollbar(GraphicsContext*, ScrollbarThemeClient*) override;
+    virtual void didPaintScrollbar(GraphicsContext*, ScrollbarThemeClient*) override;
     
     virtual void paintScrollbarBackground(GraphicsContext*, ScrollbarThemeClient*);
     virtual void paintTrackBackground(GraphicsContext*, ScrollbarThemeClient*, const IntRect&);
     virtual void paintTrackPiece(GraphicsContext*, ScrollbarThemeClient*, const IntRect&, ScrollbarPart);
     virtual void paintButton(GraphicsContext*, ScrollbarThemeClient*, const IntRect&, ScrollbarPart);
     virtual void paintThumb(GraphicsContext*, ScrollbarThemeClient*, const IntRect&);
-    virtual void paintTickmarks(GraphicsContext*, ScrollbarThemeClient*, const IntRect&) OVERRIDE;
+    virtual void paintTickmarks(GraphicsContext*, ScrollbarThemeClient*, const IntRect&) override;
 
     virtual IntRect constrainTrackRectToTrackPieces(ScrollbarThemeClient*, const IntRect&);
 };

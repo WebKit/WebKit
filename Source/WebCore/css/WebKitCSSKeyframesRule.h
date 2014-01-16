@@ -70,9 +70,9 @@ public:
 
     virtual ~WebKitCSSKeyframesRule();
 
-    virtual CSSRule::Type type() const OVERRIDE { return WEBKIT_KEYFRAMES_RULE; }
-    virtual String cssText() const OVERRIDE;
-    virtual void reattach(StyleRuleBase*) OVERRIDE;
+    virtual CSSRule::Type type() const override { return WEBKIT_KEYFRAMES_RULE; }
+    virtual String cssText() const override;
+    virtual void reattach(StyleRuleBase*) override;
 
     String name() const { return m_keyframesRule->name(); }
     void setName(const String&);

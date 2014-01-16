@@ -116,9 +116,9 @@ public:
 #if PLATFORM(MAC) || USE(CFNETWORK) || USE(CURL) || USE(SOUP)
     bool shouldUseCredentialStorage();
     void didReceiveAuthenticationChallenge(const AuthenticationChallenge&);
-    virtual void receivedCredential(const AuthenticationChallenge&, const Credential&) OVERRIDE;
-    virtual void receivedRequestToContinueWithoutCredential(const AuthenticationChallenge&) OVERRIDE;
-    virtual void receivedCancellation(const AuthenticationChallenge&) OVERRIDE;
+    virtual void receivedCredential(const AuthenticationChallenge&, const Credential&) override;
+    virtual void receivedRequestToContinueWithoutCredential(const AuthenticationChallenge&) override;
+    virtual void receivedCancellation(const AuthenticationChallenge&) override;
 #endif
 
 #if PLATFORM(MAC)
@@ -267,8 +267,8 @@ private:
     bool start();
     static void platformLoadResourceSynchronously(NetworkingContext*, const ResourceRequest&, StoredCredentials, ResourceError&, ResourceResponse&, Vector<char>& data);
 
-    virtual void refAuthenticationClient() OVERRIDE { ref(); }
-    virtual void derefAuthenticationClient() OVERRIDE { deref(); }
+    virtual void refAuthenticationClient() override { ref(); }
+    virtual void derefAuthenticationClient() override { deref(); }
 
 #if PLATFORM(MAC) || USE(CFNETWORK)
     enum class SchedulingBehavior {

@@ -2049,7 +2049,7 @@ class Generator:
                 Generator.backend_dispatcher_interface_list.append("class %s %s FINAL : public Inspector::InspectorSupplementalBackendDispatcher {\n" % (INSPECTOR_TYPES_GENERATOR_CONFIG_MAP[output_type]["export_macro"], dispatcher_name))
                 Generator.backend_dispatcher_interface_list.append("public:\n")
                 Generator.backend_dispatcher_interface_list.append("    static PassRefPtr<%s> create(Inspector::InspectorBackendDispatcher*, %s*);\n" % (dispatcher_name, agent_interface_name))
-                Generator.backend_dispatcher_interface_list.append("    virtual void dispatch(long callId, const String& method, PassRefPtr<Inspector::InspectorObject> message) OVERRIDE;\n")
+                Generator.backend_dispatcher_interface_list.append("    virtual void dispatch(long callId, const String& method, PassRefPtr<Inspector::InspectorObject> message) override;\n")
                 Generator.backend_dispatcher_interface_list.append("private:\n")
 
                 Generator.backend_handler_interface_list.append("class %s %s {\n" % (INSPECTOR_TYPES_GENERATOR_CONFIG_MAP[output_type]["export_macro"], agent_interface_name))

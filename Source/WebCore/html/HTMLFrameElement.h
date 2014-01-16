@@ -39,12 +39,12 @@ public:
 private:
     HTMLFrameElement(const QualifiedName&, Document&);
 
-    virtual void didAttachRenderers() OVERRIDE;
+    virtual void didAttachRenderers() override;
 
     virtual bool rendererIsNeeded(const RenderStyle&);
-    virtual RenderPtr<RenderElement> createElementRenderer(PassRef<RenderStyle>) OVERRIDE;
+    virtual RenderPtr<RenderElement> createElementRenderer(PassRef<RenderStyle>) override;
     
-    virtual void parseAttribute(const QualifiedName&, const AtomicString&) OVERRIDE;
+    virtual void parseAttribute(const QualifiedName&, const AtomicString&) override;
 
 #if ENABLE(FULLSCREEN_API)
     virtual bool allowFullScreen() const { return false; }

@@ -63,8 +63,8 @@ public:
     Vector<RefPtr<SourceBuffer>>::iterator end() { return m_list.end(); }
 
     // EventTarget interface
-    virtual EventTargetInterface eventTargetInterface() const OVERRIDE { return SourceBufferListEventTargetInterfaceType; }
-    virtual ScriptExecutionContext* scriptExecutionContext() const OVERRIDE { return m_scriptExecutionContext; }
+    virtual EventTargetInterface eventTargetInterface() const override { return SourceBufferListEventTargetInterfaceType; }
+    virtual ScriptExecutionContext* scriptExecutionContext() const override { return m_scriptExecutionContext; }
 
     using RefCounted<SourceBufferList>::ref;
     using RefCounted<SourceBufferList>::deref;
@@ -74,8 +74,8 @@ private:
 
     void scheduleEvent(const AtomicString&);
 
-    virtual void refEventTarget() OVERRIDE { ref(); }
-    virtual void derefEventTarget() OVERRIDE { deref(); }
+    virtual void refEventTarget() override { ref(); }
+    virtual void derefEventTarget() override { deref(); }
 
     ScriptExecutionContext* m_scriptExecutionContext;
     GenericEventQueue m_asyncEventQueue;

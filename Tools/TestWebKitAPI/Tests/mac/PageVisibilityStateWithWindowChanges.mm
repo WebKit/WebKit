@@ -68,15 +68,15 @@ public:
     template <typename View> void runTest(View);
 
     // WebKitAgnosticTest
-    virtual NSURL *url() const OVERRIDE { return [[NSBundle mainBundle] URLForResource:@"PageVisibilityStateWithWindowChanges" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]; }
-    virtual void didLoadURL(WebView *webView) OVERRIDE { runTest(webView); }
-    virtual void didLoadURL(WKView *wkView) OVERRIDE { runTest(wkView); }
+    virtual NSURL *url() const override { return [[NSBundle mainBundle] URLForResource:@"PageVisibilityStateWithWindowChanges" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]; }
+    virtual void didLoadURL(WebView *webView) override { runTest(webView); }
+    virtual void didLoadURL(WKView *wkView) override { runTest(wkView); }
 
     // Setup and teardown the UIDelegate which gets alert() signals from the page.
-    virtual void initializeView(WebView *) OVERRIDE;
-    virtual void initializeView(WKView *) OVERRIDE;
-    virtual void teardownView(WebView *) OVERRIDE;
-    virtual void teardownView(WKView *) OVERRIDE;
+    virtual void initializeView(WebView *) override;
+    virtual void initializeView(WKView *) override;
+    virtual void teardownView(WebView *) override;
+    virtual void teardownView(WKView *) override;
     virtual void setPrerender(WebView *);
     virtual void setPrerender(WKView *);
 };

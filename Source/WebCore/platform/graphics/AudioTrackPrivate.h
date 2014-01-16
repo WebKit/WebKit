@@ -47,7 +47,7 @@ public:
     }
 
     void setClient(AudioTrackPrivateClient* client) { m_client = client; }
-    virtual AudioTrackPrivateClient* client() const OVERRIDE { return m_client; }
+    virtual AudioTrackPrivateClient* client() const override { return m_client; }
 
     virtual void setEnabled(bool enabled)
     {

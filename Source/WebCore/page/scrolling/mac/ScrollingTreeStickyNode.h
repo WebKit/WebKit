@@ -47,8 +47,8 @@ public:
 private:
     ScrollingTreeStickyNode(ScrollingTree&, ScrollingNodeID);
 
-    virtual void updateBeforeChildren(const ScrollingStateNode&) OVERRIDE;
-    virtual void parentScrollPositionDidChange(const IntRect& viewportRect, const FloatSize& cumulativeDelta) OVERRIDE;
+    virtual void updateBeforeChildren(const ScrollingStateNode&) override;
+    virtual void parentScrollPositionDidChange(const IntRect& viewportRect, const FloatSize& cumulativeDelta) override;
 
     StickyPositionViewportConstraints m_constraints;
     RetainPtr<CALayer> m_layer;

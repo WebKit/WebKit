@@ -41,11 +41,11 @@ public:
 private:
     SetSelectionCommand(const VisibleSelection&, FrameSelection::SetSelectionOptions);
 
-    virtual void doApply() OVERRIDE;
-    virtual void doUnapply() OVERRIDE;
+    virtual void doApply() override;
+    virtual void doUnapply() override;
 
 #ifndef NDEBUG
-    virtual void getNodesInCommand(HashSet<Node*>&) OVERRIDE { }
+    virtual void getNodesInCommand(HashSet<Node*>&) override { }
 #endif
 
     FrameSelection::SetSelectionOptions m_options;

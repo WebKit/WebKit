@@ -45,26 +45,26 @@ public:
     Element* hostElement() const { return m_hostElement; }
     void clearHostElement() { m_hostElement = nullptr; }
 
-    virtual PassRefPtr<RenderStyle> customStyleForRenderer() OVERRIDE;
-    virtual void didAttachRenderers() OVERRIDE;
-    virtual bool rendererIsNeeded(const RenderStyle&) OVERRIDE;
+    virtual PassRefPtr<RenderStyle> customStyleForRenderer() override;
+    virtual void didAttachRenderers() override;
+    virtual bool rendererIsNeeded(const RenderStyle&) override;
 
     // As per http://dev.w3.org/csswg/css3-regions/#flow-into, pseudo-elements such as ::first-line, ::first-letter, ::before or ::after
     // cannot be directly collected into a named flow.
 #if ENABLE(CSS_REGIONS)
-    virtual bool shouldMoveToFlowThread(const RenderStyle&) const OVERRIDE { return false; }
+    virtual bool shouldMoveToFlowThread(const RenderStyle&) const override { return false; }
 #endif
 
-    virtual bool canStartSelection() const OVERRIDE { return false; }
-    virtual bool canContainRangeEndPoint() const OVERRIDE { return false; }
+    virtual bool canStartSelection() const override { return false; }
+    virtual bool canContainRangeEndPoint() const override { return false; }
 
     static String pseudoElementNameForEvents(PseudoId);
 
 private:
     PseudoElement(Element&, PseudoId);
 
-    virtual void didRecalcStyle(Style::Change) OVERRIDE;
-    virtual PseudoId customPseudoId() const OVERRIDE { return m_pseudoId; }
+    virtual void didRecalcStyle(Style::Change) override;
+    virtual PseudoId customPseudoId() const override { return m_pseudoId; }
 
     Element* m_hostElement;
     PseudoId m_pseudoId;

@@ -47,9 +47,9 @@ public:
     virtual void paint(PaintInfo&, const LayoutPoint&);
 
 private:
-    virtual bool isReplica() const OVERRIDE { return true; }
-    virtual bool canHaveChildren() const OVERRIDE { return false; }
-    virtual void computePreferredLogicalWidths() OVERRIDE;
+    virtual bool isReplica() const override { return true; }
+    virtual bool canHaveChildren() const override { return false; }
+    virtual void computePreferredLogicalWidths() override;
 
 };
 

@@ -52,7 +52,7 @@ public:
 
     RenderEmbeddedObject* renderEmbeddedObject() const;
 
-    virtual void setDisplayState(DisplayState) OVERRIDE;
+    virtual void setDisplayState(DisplayState) override;
 
     virtual void updateWidget(PluginCreationOption) = 0;
 
@@ -116,42 +116,42 @@ protected:
     static void updateWidgetCallback(Node&, unsigned);
     static void startLoadingImageCallback(Node&, unsigned);
 
-    virtual void didAttachRenderers() OVERRIDE;
-    virtual void willDetachRenderers() OVERRIDE;
+    virtual void didAttachRenderers() override;
+    virtual void willDetachRenderers() override;
 
     bool allowedToLoadFrameURL(const String& url);
     bool wouldLoadAsNetscapePlugin(const String& url, const String& serviceType);
 
-    virtual void didMoveToNewDocument(Document* oldDocument) OVERRIDE;
+    virtual void didMoveToNewDocument(Document* oldDocument) override;
 
-    virtual void documentWillSuspendForPageCache() OVERRIDE;
-    virtual void documentDidResumeFromPageCache() OVERRIDE;
+    virtual void documentWillSuspendForPageCache() override;
+    virtual void documentDidResumeFromPageCache() override;
 
-    virtual bool isRestartedPlugin() const OVERRIDE { return m_isRestartedPlugin; }
-    virtual bool requestObject(const String& url, const String& mimeType, const Vector<String>& paramNames, const Vector<String>& paramValues) OVERRIDE;
+    virtual bool isRestartedPlugin() const override { return m_isRestartedPlugin; }
+    virtual bool requestObject(const String& url, const String& mimeType, const Vector<String>& paramNames, const Vector<String>& paramValues) override;
 
 private:
-    virtual RenderPtr<RenderElement> createElementRenderer(PassRef<RenderStyle>) OVERRIDE;
-    virtual bool willRecalcStyle(Style::Change) OVERRIDE;
+    virtual RenderPtr<RenderElement> createElementRenderer(PassRef<RenderStyle>) override;
+    virtual bool willRecalcStyle(Style::Change) override;
 
-    virtual void didAddUserAgentShadowRoot(ShadowRoot*) OVERRIDE;
+    virtual void didAddUserAgentShadowRoot(ShadowRoot*) override;
 
-    virtual void finishParsingChildren() OVERRIDE;
+    virtual void finishParsingChildren() override;
 
     void updateWidgetIfNecessary();
     void startLoadingImage();
 
-    virtual void updateSnapshot(PassRefPtr<Image>) OVERRIDE;
-    virtual void dispatchPendingMouseClick() OVERRIDE;
+    virtual void updateSnapshot(PassRefPtr<Image>) override;
+    virtual void dispatchPendingMouseClick() override;
     void simulatedMouseClickTimerFired(DeferrableOneShotTimer<HTMLPlugInImageElement>&);
 
     void restartSimilarPlugIns();
 
-    virtual bool isPlugInImageElement() const OVERRIDE { return true; }
+    virtual bool isPlugInImageElement() const override { return true; }
 
     void removeSnapshotTimerFired(Timer<HTMLPlugInImageElement>&);
 
-    virtual void defaultEventHandler(Event*) OVERRIDE;
+    virtual void defaultEventHandler(Event*) override;
 
     bool m_needsWidgetUpdate;
     bool m_shouldPreferPlugInsForImages;

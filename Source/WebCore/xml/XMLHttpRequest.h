@@ -81,8 +81,8 @@ public:
     virtual void didTimeout();
 #endif
 
-    virtual EventTargetInterface eventTargetInterface() const OVERRIDE { return XMLHttpRequestEventTargetInterfaceType; }
-    virtual ScriptExecutionContext* scriptExecutionContext() const OVERRIDE { return ActiveDOMObject::scriptExecutionContext(); }
+    virtual EventTargetInterface eventTargetInterface() const override { return XMLHttpRequestEventTargetInterfaceType; }
+    virtual ScriptExecutionContext* scriptExecutionContext() const override { return ActiveDOMObject::scriptExecutionContext(); }
 
     const URL& url() const { return m_url; }
     String statusText(ExceptionCode&) const;
@@ -160,14 +160,14 @@ private:
     explicit XMLHttpRequest(ScriptExecutionContext&);
 
     // ActiveDOMObject
-    virtual void contextDestroyed() OVERRIDE;
-    virtual bool canSuspend() const OVERRIDE;
-    virtual void suspend(ReasonForSuspension) OVERRIDE;
-    virtual void resume() OVERRIDE;
-    virtual void stop() OVERRIDE;
+    virtual void contextDestroyed() override;
+    virtual bool canSuspend() const override;
+    virtual void suspend(ReasonForSuspension) override;
+    virtual void resume() override;
+    virtual void stop() override;
 
-    virtual void refEventTarget() OVERRIDE { ref(); }
-    virtual void derefEventTarget() OVERRIDE { deref(); }
+    virtual void refEventTarget() override { ref(); }
+    virtual void derefEventTarget() override { deref(); }
 
     Document* document() const;
     SecurityOrigin* securityOrigin() const;
@@ -176,12 +176,12 @@ private:
     bool usesDashboardBackwardCompatibilityMode() const;
 #endif
 
-    virtual void didSendData(unsigned long long bytesSent, unsigned long long totalBytesToBeSent) OVERRIDE;
-    virtual void didReceiveResponse(unsigned long identifier, const ResourceResponse&) OVERRIDE;
-    virtual void didReceiveData(const char* data, int dataLength) OVERRIDE;
-    virtual void didFinishLoading(unsigned long identifier, double finishTime) OVERRIDE;
-    virtual void didFail(const ResourceError&) OVERRIDE;
-    virtual void didFailRedirectCheck() OVERRIDE;
+    virtual void didSendData(unsigned long long bytesSent, unsigned long long totalBytesToBeSent) override;
+    virtual void didReceiveResponse(unsigned long identifier, const ResourceResponse&) override;
+    virtual void didReceiveData(const char* data, int dataLength) override;
+    virtual void didFinishLoading(unsigned long identifier, double finishTime) override;
+    virtual void didFail(const ResourceError&) override;
+    virtual void didFailRedirectCheck() override;
 
     String responseMIMEType() const;
     bool responseIsXML() const;

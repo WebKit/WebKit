@@ -80,11 +80,11 @@ private:
     friend void WTF::deleteOwnedPtr<FilterInfo>(FilterInfo*);
 
 #if ENABLE(CSS_SHADERS)
-    virtual void notifyCustomFilterProgramLoaded(CustomFilterProgram*) OVERRIDE;
+    virtual void notifyCustomFilterProgramLoaded(CustomFilterProgram*) override;
 #endif
 
 #if ENABLE(SVG)
-    virtual void notifyFinished(CachedResource*) OVERRIDE;
+    virtual void notifyFinished(CachedResource*) override;
 #endif
 
     static HashMap<const RenderLayer*, OwnPtr<FilterInfo>>& map();

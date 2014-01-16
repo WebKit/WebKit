@@ -42,19 +42,19 @@ public:
 
     using IDBRequest::onSuccess;
 
-    virtual void onBlocked(uint64_t existingVersion) OVERRIDE;
-    virtual void onUpgradeNeeded(uint64_t oldVersion, PassRefPtr<IDBDatabaseBackend>, const IDBDatabaseMetadata&) OVERRIDE;
-    virtual void onSuccess(PassRefPtr<IDBDatabaseBackend>, const IDBDatabaseMetadata&) OVERRIDE;
+    virtual void onBlocked(uint64_t existingVersion) override;
+    virtual void onUpgradeNeeded(uint64_t oldVersion, PassRefPtr<IDBDatabaseBackend>, const IDBDatabaseMetadata&) override;
+    virtual void onSuccess(PassRefPtr<IDBDatabaseBackend>, const IDBDatabaseMetadata&) override;
 
     // EventTarget
     virtual EventTargetInterface eventTargetInterface() const;
-    virtual bool dispatchEvent(PassRefPtr<Event>) OVERRIDE;
+    virtual bool dispatchEvent(PassRefPtr<Event>) override;
 
     DEFINE_ATTRIBUTE_EVENT_LISTENER(blocked);
     DEFINE_ATTRIBUTE_EVENT_LISTENER(upgradeneeded);
 
 protected:
-    virtual bool shouldEnqueueEvent() const OVERRIDE;
+    virtual bool shouldEnqueueEvent() const override;
 
 private:
     IDBOpenDBRequest(ScriptExecutionContext*, PassRefPtr<IDBDatabaseCallbacks>, int64_t transactionId, uint64_t version, IndexedDB::VersionNullness);

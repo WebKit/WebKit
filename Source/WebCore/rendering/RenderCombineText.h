@@ -49,7 +49,7 @@ private:
     virtual float width(unsigned from, unsigned length, const Font&, float xPosition, HashSet<const SimpleFontData*>* fallbackFonts = 0, GlyphOverflow* = 0) const;
     virtual const char* renderName() const { return "RenderCombineText"; }
     virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle);
-    virtual void setTextInternal(const String&) OVERRIDE;
+    virtual void setTextInternal(const String&) override;
 
     RefPtr<RenderStyle> m_combineFontStyle;
     float m_combinedTextWidth;

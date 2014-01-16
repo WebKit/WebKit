@@ -38,7 +38,7 @@ class MediaPlayerPrivateAVFoundationCF : public MediaPlayerPrivateAVFoundation {
 public:
     virtual ~MediaPlayerPrivateAVFoundationCF();
 
-    virtual void tracksChanged() OVERRIDE;
+    virtual void tracksChanged() override;
 
     static void registerMediaEngine(MediaEngineRegistrar);
 
@@ -85,7 +85,7 @@ private:
     virtual float platformMaxTimeLoaded() const;
     virtual void beginLoadingMetadata();
     virtual void sizeChanged();
-    virtual bool requiresImmediateCompositing() const OVERRIDE;
+    virtual bool requiresImmediateCompositing() const override;
 
     virtual bool hasAvailableVideoFrame() const;
 
@@ -98,18 +98,18 @@ private:
     virtual bool hasContextRenderer() const;
     virtual bool hasLayerRenderer() const;
 
-    virtual void updateVideoLayerGravity() OVERRIDE;
+    virtual void updateVideoLayerGravity() override;
 
     virtual void contentsNeedsDisplay();
 
-    virtual String languageOfPrimaryAudioTrack() const OVERRIDE;
+    virtual String languageOfPrimaryAudioTrack() const override;
 
 #if HAVE(AVFOUNDATION_MEDIA_SELECTION_GROUP)
     void processMediaSelectionOptions();
 #endif
 
-    virtual void setCurrentTrack(InbandTextTrackPrivateAVF*) OVERRIDE;
-    virtual InbandTextTrackPrivateAVF* currentTrack() const OVERRIDE;
+    virtual void setCurrentTrack(InbandTextTrackPrivateAVF*) override;
+    virtual InbandTextTrackPrivateAVF* currentTrack() const override;
 
 #if !HAVE(AVFOUNDATION_LEGIBLE_OUTPUT_SUPPORT)
     void processLegacyClosedCaptionsTracks();

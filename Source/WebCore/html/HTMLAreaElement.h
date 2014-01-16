@@ -51,14 +51,14 @@ public:
 private:
     HTMLAreaElement(const QualifiedName&, Document&);
 
-    virtual void parseAttribute(const QualifiedName&, const AtomicString&) OVERRIDE;
-    virtual bool supportsFocus() const OVERRIDE;
-    virtual String target() const OVERRIDE;
-    virtual bool isKeyboardFocusable(KeyboardEvent*) const OVERRIDE;
-    virtual bool isMouseFocusable() const OVERRIDE;
-    virtual bool isFocusable() const OVERRIDE;
-    virtual void updateFocusAppearance(bool /*restorePreviousSelection*/) OVERRIDE;
-    virtual void setFocus(bool) OVERRIDE;
+    virtual void parseAttribute(const QualifiedName&, const AtomicString&) override;
+    virtual bool supportsFocus() const override;
+    virtual String target() const override;
+    virtual bool isKeyboardFocusable(KeyboardEvent*) const override;
+    virtual bool isMouseFocusable() const override;
+    virtual bool isFocusable() const override;
+    virtual void updateFocusAppearance(bool /*restorePreviousSelection*/) override;
+    virtual void setFocus(bool) override;
 
     enum Shape { Default, Poly, Rect, Circle, Unknown };
     Path getRegion(const LayoutSize&) const;

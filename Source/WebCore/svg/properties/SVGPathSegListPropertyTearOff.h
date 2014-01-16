@@ -146,7 +146,7 @@ private:
         m_values->commitChange(m_animatedProperty->contextElement(), listModification);
     }
 
-    virtual bool processIncomingListItemValue(const ListItemType& newItem, unsigned* indexToModify) OVERRIDE;
+    virtual bool processIncomingListItemValue(const ListItemType& newItem, unsigned* indexToModify) override;
     virtual bool processIncomingListItemWrapper(RefPtr<ListItemTearOff>&, unsigned*)
     {
         ASSERT_NOT_REACHED();

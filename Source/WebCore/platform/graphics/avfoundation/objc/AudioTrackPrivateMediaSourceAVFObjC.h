@@ -46,8 +46,8 @@ public:
         return adoptRef(new AudioTrackPrivateMediaSourceAVFObjC(track, parent));
     }
 
-    virtual bool enabled() const OVERRIDE;
-    virtual void setEnabled(bool) OVERRIDE;
+    virtual bool enabled() const override;
+    virtual void setEnabled(bool) override;
 
     void setAssetTrack(AVAssetTrack*);
     AVAssetTrack* assetTrack();

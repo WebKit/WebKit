@@ -67,12 +67,12 @@ public:
 private:
     InbandGenericTextTrack(ScriptExecutionContext*, TextTrackClient*, PassRefPtr<InbandTextTrackPrivate>);
 
-    virtual void addGenericCue(InbandTextTrackPrivate*, PassRefPtr<GenericCueData>) OVERRIDE;
-    virtual void updateGenericCue(InbandTextTrackPrivate*, GenericCueData*) OVERRIDE;
-    virtual void removeGenericCue(InbandTextTrackPrivate*, GenericCueData*) OVERRIDE;
-    virtual void removeCue(TextTrackCue*, ExceptionCode&) OVERRIDE;
+    virtual void addGenericCue(InbandTextTrackPrivate*, PassRefPtr<GenericCueData>) override;
+    virtual void updateGenericCue(InbandTextTrackPrivate*, GenericCueData*) override;
+    virtual void removeGenericCue(InbandTextTrackPrivate*, GenericCueData*) override;
+    virtual void removeCue(TextTrackCue*, ExceptionCode&) override;
 
-    virtual void parseWebVTTCueData(InbandTextTrackPrivate*, const char*, unsigned) OVERRIDE { ASSERT_NOT_REACHED(); }
+    virtual void parseWebVTTCueData(InbandTextTrackPrivate*, const char*, unsigned) override { ASSERT_NOT_REACHED(); }
 
     PassRefPtr<TextTrackCueGeneric> createCue(PassRefPtr<GenericCueData>);
     void updateCueFromCueData(TextTrackCueGeneric*, GenericCueData*);

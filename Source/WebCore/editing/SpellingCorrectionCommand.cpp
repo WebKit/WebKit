@@ -55,11 +55,11 @@ private:
     {
     }
 
-    virtual void doApply() OVERRIDE
+    virtual void doApply() override
     {
     }
 
-    virtual void doUnapply() OVERRIDE
+    virtual void doUnapply() override
     {
         if (!m_hasBeenUndone) {
             frame().editor().unappliedSpellCorrection(startingSelection(), m_corrected, m_correction);
@@ -69,7 +69,7 @@ private:
     }
 
 #ifndef NDEBUG
-    virtual void getNodesInCommand(HashSet<Node*>&) OVERRIDE
+    virtual void getNodesInCommand(HashSet<Node*>&) override
     {
     }
 #endif

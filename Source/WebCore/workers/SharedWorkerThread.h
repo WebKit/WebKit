@@ -43,7 +43,7 @@ namespace WebCore {
         virtual ~SharedWorkerThread();
 
     protected:
-        virtual PassRefPtr<WorkerGlobalScope> createWorkerGlobalScope(const URL&, const String& userAgent, std::unique_ptr<GroupSettings>, const String& contentSecurityPolicy, ContentSecurityPolicy::HeaderType, PassRefPtr<SecurityOrigin> topOrigin) OVERRIDE;
+        virtual PassRefPtr<WorkerGlobalScope> createWorkerGlobalScope(const URL&, const String& userAgent, std::unique_ptr<GroupSettings>, const String& contentSecurityPolicy, ContentSecurityPolicy::HeaderType, PassRefPtr<SecurityOrigin> topOrigin) override;
 
     private:
         SharedWorkerThread(const String& name, const URL&, const String& userAgent, const GroupSettings*, const String& sourceCode, WorkerLoaderProxy&, WorkerReportingProxy&, WorkerThreadStartMode, const String& contentSecurityPolicy, ContentSecurityPolicy::HeaderType);

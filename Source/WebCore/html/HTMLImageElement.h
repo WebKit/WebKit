@@ -76,45 +76,45 @@ public:
     bool complete() const;
 
 #if PLATFORM(IOS)
-    virtual bool willRespondToMouseClickEvents() OVERRIDE;
+    virtual bool willRespondToMouseClickEvents() override;
 #endif
 
     bool hasPendingActivity() const { return m_imageLoader.hasPendingActivity(); }
 
-    virtual bool canContainRangeEndPoint() const OVERRIDE { return false; }
+    virtual bool canContainRangeEndPoint() const override { return false; }
 
-    virtual const AtomicString& imageSourceURL() const OVERRIDE;
+    virtual const AtomicString& imageSourceURL() const override;
 
 protected:
     HTMLImageElement(const QualifiedName&, Document&, HTMLFormElement* = 0);
 
-    virtual void didMoveToNewDocument(Document* oldDocument) OVERRIDE;
+    virtual void didMoveToNewDocument(Document* oldDocument) override;
 
 private:
-    virtual bool areAuthorShadowsAllowed() const OVERRIDE { return false; }
+    virtual bool areAuthorShadowsAllowed() const override { return false; }
 
-    virtual void parseAttribute(const QualifiedName&, const AtomicString&) OVERRIDE;
-    virtual bool isPresentationAttribute(const QualifiedName&) const OVERRIDE;
-    virtual void collectStyleForPresentationAttribute(const QualifiedName&, const AtomicString&, MutableStyleProperties&) OVERRIDE;
+    virtual void parseAttribute(const QualifiedName&, const AtomicString&) override;
+    virtual bool isPresentationAttribute(const QualifiedName&) const override;
+    virtual void collectStyleForPresentationAttribute(const QualifiedName&, const AtomicString&, MutableStyleProperties&) override;
 
-    virtual void didAttachRenderers() OVERRIDE;
-    virtual RenderPtr<RenderElement> createElementRenderer(PassRef<RenderStyle>) OVERRIDE;
+    virtual void didAttachRenderers() override;
+    virtual RenderPtr<RenderElement> createElementRenderer(PassRef<RenderStyle>) override;
 
-    virtual bool canStartSelection() const OVERRIDE;
+    virtual bool canStartSelection() const override;
 
-    virtual bool isURLAttribute(const Attribute&) const OVERRIDE;
+    virtual bool isURLAttribute(const Attribute&) const override;
 
-    virtual bool draggable() const OVERRIDE;
+    virtual bool draggable() const override;
 
-    virtual void addSubresourceAttributeURLs(ListHashSet<URL>&) const OVERRIDE;
+    virtual void addSubresourceAttributeURLs(ListHashSet<URL>&) const override;
 
-    virtual InsertionNotificationRequest insertedInto(ContainerNode&) OVERRIDE;
-    virtual void removedFrom(ContainerNode&) OVERRIDE;
+    virtual InsertionNotificationRequest insertedInto(ContainerNode&) override;
+    virtual void removedFrom(ContainerNode&) override;
 
-    virtual bool isFormAssociatedElement() const OVERRIDE FINAL { return false; }
-    virtual FormNamedItem* asFormNamedItem() OVERRIDE FINAL { return this; }
-    virtual HTMLImageElement& asHTMLElement() OVERRIDE FINAL { return *this; }
-    virtual const HTMLImageElement& asHTMLElement() const OVERRIDE FINAL { return *this; }
+    virtual bool isFormAssociatedElement() const override FINAL { return false; }
+    virtual FormNamedItem* asFormNamedItem() override FINAL { return this; }
+    virtual HTMLImageElement& asHTMLElement() override FINAL { return *this; }
+    virtual const HTMLImageElement& asHTMLElement() const override FINAL { return *this; }
 
     HTMLImageLoader m_imageLoader;
     HTMLFormElement* m_form;

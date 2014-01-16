@@ -65,8 +65,8 @@ public:
         return LoadFontCallback::create(numFamilies, onsuccess, onerror);
     }
 
-    virtual void notifyLoaded() OVERRIDE;
-    virtual void notifyError() OVERRIDE;
+    virtual void notifyLoaded() override;
+    virtual void notifyError() override;
 private:
     LoadFontCallback(int numLoading, PassRefPtr<VoidCallback> loadCallback, PassRefPtr<VoidCallback> errorCallback)
         : m_numLoading(numLoading)

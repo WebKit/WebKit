@@ -64,7 +64,7 @@ public:
         event->target()->dispatchEvent(event);
     }
 
-    virtual void performTask(ScriptExecutionContext* context) OVERRIDE
+    virtual void performTask(ScriptExecutionContext* context) override
     {
         if (m_isCancelled)
             return;

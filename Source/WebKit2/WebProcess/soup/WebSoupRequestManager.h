@@ -53,7 +53,7 @@ public:
 
 private:
     // IPC::MessageReceiver
-    void didReceiveMessage(IPC::Connection*, IPC::MessageDecoder&) OVERRIDE;
+    void didReceiveMessage(IPC::Connection*, IPC::MessageDecoder&) override;
 
     void didHandleURIRequest(const IPC::DataReference&, uint64_t contentLength, const String& mimeType, uint64_t requestID);
     void didReceiveURIRequestData(const IPC::DataReference&, uint64_t requestID);

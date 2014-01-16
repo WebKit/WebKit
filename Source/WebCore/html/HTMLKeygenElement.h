@@ -39,21 +39,21 @@ public:
 private:
     HTMLKeygenElement(const QualifiedName&, Document&, HTMLFormElement*);
 
-    virtual bool areAuthorShadowsAllowed() const OVERRIDE { return false; }
+    virtual bool areAuthorShadowsAllowed() const override { return false; }
 
     virtual bool canStartSelection() const { return false; }
 
-    virtual void parseAttribute(const QualifiedName&, const AtomicString&) OVERRIDE;
+    virtual void parseAttribute(const QualifiedName&, const AtomicString&) override;
 
     virtual bool appendFormData(FormDataList&, bool);
     virtual const AtomicString& formControlType() const;
     virtual bool isOptionalFormControl() const { return false; }
 
     virtual bool isEnumeratable() const { return true; }
-    virtual bool supportLabels() const OVERRIDE { return true; }
+    virtual bool supportLabels() const override { return true; }
 
     virtual void reset();
-    virtual bool shouldSaveAndRestoreFormControlState() const OVERRIDE;
+    virtual bool shouldSaveAndRestoreFormControlState() const override;
 
     HTMLSelectElement* shadowSelect() const;
 };

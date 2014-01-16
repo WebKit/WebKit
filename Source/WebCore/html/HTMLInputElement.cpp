@@ -86,7 +86,7 @@ class ListAttributeTargetObserver : IdTargetObserver {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     static OwnPtr<ListAttributeTargetObserver> create(const AtomicString& id, HTMLInputElement*);
-    virtual void idTargetChanged() OVERRIDE;
+    virtual void idTargetChanged() override;
 
 private:
     ListAttributeTargetObserver(const AtomicString& id, HTMLInputElement*);

@@ -31,15 +31,15 @@ namespace WebKit {
 
 class DragClientWinCE : public WebCore::DragClient {
 public:
-    virtual void willPerformDragDestinationAction(WebCore::DragDestinationAction, WebCore::DragData&) OVERRIDE;
-    virtual void willPerformDragSourceAction(WebCore::DragSourceAction, const WebCore::IntPoint&, WebCore::Clipboard&) OVERRIDE;
-    virtual WebCore::DragDestinationAction actionMaskForDrag(WebCore::DragData&) OVERRIDE;
+    virtual void willPerformDragDestinationAction(WebCore::DragDestinationAction, WebCore::DragData&) override;
+    virtual void willPerformDragSourceAction(WebCore::DragSourceAction, const WebCore::IntPoint&, WebCore::Clipboard&) override;
+    virtual WebCore::DragDestinationAction actionMaskForDrag(WebCore::DragData&) override;
 
-    virtual WebCore::DragSourceAction dragSourceActionMaskForPoint(const WebCore::IntPoint&) OVERRIDE;
+    virtual WebCore::DragSourceAction dragSourceActionMaskForPoint(const WebCore::IntPoint&) override;
 
-    virtual void startDrag(WebCore::DragImageRef, const WebCore::IntPoint&, const WebCore::IntPoint&, WebCore::Clipboard&, WebCore::Frame&, bool = false) OVERRIDE;
+    virtual void startDrag(WebCore::DragImageRef, const WebCore::IntPoint&, const WebCore::IntPoint&, WebCore::Clipboard&, WebCore::Frame&, bool = false) override;
 
-    virtual void dragControllerDestroyed() OVERRIDE;
+    virtual void dragControllerDestroyed() override;
 };
 
 } // namespace WebKit

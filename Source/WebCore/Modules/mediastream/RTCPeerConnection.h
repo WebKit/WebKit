@@ -111,24 +111,24 @@ public:
     DEFINE_ATTRIBUTE_EVENT_LISTENER(datachannel);
 
     // RTCPeerConnectionHandlerClient
-    virtual void negotiationNeeded() OVERRIDE;
-    virtual void didGenerateIceCandidate(PassRefPtr<RTCIceCandidateDescriptor>) OVERRIDE;
-    virtual void didChangeSignalingState(SignalingState) OVERRIDE;
-    virtual void didChangeIceGatheringState(IceGatheringState) OVERRIDE;
-    virtual void didChangeIceConnectionState(IceConnectionState) OVERRIDE;
-    virtual void didAddRemoteStream(PassRefPtr<MediaStreamPrivate>) OVERRIDE;
-    virtual void didRemoveRemoteStream(MediaStreamPrivate*) OVERRIDE;
-    virtual void didAddRemoteDataChannel(std::unique_ptr<RTCDataChannelHandler>) OVERRIDE;
+    virtual void negotiationNeeded() override;
+    virtual void didGenerateIceCandidate(PassRefPtr<RTCIceCandidateDescriptor>) override;
+    virtual void didChangeSignalingState(SignalingState) override;
+    virtual void didChangeIceGatheringState(IceGatheringState) override;
+    virtual void didChangeIceConnectionState(IceConnectionState) override;
+    virtual void didAddRemoteStream(PassRefPtr<MediaStreamPrivate>) override;
+    virtual void didRemoveRemoteStream(MediaStreamPrivate*) override;
+    virtual void didAddRemoteDataChannel(std::unique_ptr<RTCDataChannelHandler>) override;
 
     // EventTarget
-    virtual EventTargetInterface eventTargetInterface() const OVERRIDE { return RTCPeerConnectionEventTargetInterfaceType; }
-    virtual ScriptExecutionContext* scriptExecutionContext() const OVERRIDE { return ActiveDOMObject::scriptExecutionContext(); }
+    virtual EventTargetInterface eventTargetInterface() const override { return RTCPeerConnectionEventTargetInterfaceType; }
+    virtual ScriptExecutionContext* scriptExecutionContext() const override { return ActiveDOMObject::scriptExecutionContext(); }
 
     // ActiveDOMObject
-    virtual void stop() OVERRIDE;
+    virtual void stop() override;
 
     // MediaStream::Observer
-    virtual void didAddOrRemoveTrack() OVERRIDE;
+    virtual void didAddOrRemoveTrack() override;
 
     using RefCounted<RTCPeerConnection>::ref;
     using RefCounted<RTCPeerConnection>::deref;
@@ -142,8 +142,8 @@ private:
     bool hasLocalStreamWithTrackId(const String& trackId);
 
     // EventTarget implementation.
-    virtual void refEventTarget() OVERRIDE { ref(); }
-    virtual void derefEventTarget() OVERRIDE { deref(); }
+    virtual void refEventTarget() override { ref(); }
+    virtual void derefEventTarget() override { deref(); }
 
     void changeSignalingState(SignalingState);
     void changeIceGatheringState(IceGatheringState);

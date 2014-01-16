@@ -72,15 +72,15 @@ public:
     static void dispatchPendingLoadEvents();
 
 private:
-    virtual void parseAttribute(const QualifiedName&, const AtomicString&) OVERRIDE;
+    virtual void parseAttribute(const QualifiedName&, const AtomicString&) override;
 
     virtual bool shouldLoadLink();
     void process();
     static void processCallback(Node*);
     void clearSheet();
 
-    virtual InsertionNotificationRequest insertedInto(ContainerNode&) OVERRIDE;
-    virtual void removedFrom(ContainerNode&) OVERRIDE;
+    virtual InsertionNotificationRequest insertedInto(ContainerNode&) override;
+    virtual void removedFrom(ContainerNode&) override;
 
     // from CachedResourceClient
     virtual void setCSSStyleSheet(const String& href, const URL& baseURL, const String& charset, const CachedCSSStyleSheet* sheet);
@@ -88,14 +88,14 @@ private:
     virtual void notifyLoadedSheetAndAllCriticalSubresources(bool errorOccurred);
     virtual void startLoadingDynamicSheet();
 
-    virtual void linkLoaded() OVERRIDE;
-    virtual void linkLoadingErrored() OVERRIDE;
+    virtual void linkLoaded() override;
+    virtual void linkLoadingErrored() override;
 
     bool isAlternate() const { return m_disabledState == Unset && m_relAttribute.m_isAlternate; }
     
     void setDisabledState(bool);
 
-    virtual bool isURLAttribute(const Attribute&) const OVERRIDE;
+    virtual bool isURLAttribute(const Attribute&) const override;
 
 private:
     HTMLLinkElement(const QualifiedName&, Document&, bool createdByParser);

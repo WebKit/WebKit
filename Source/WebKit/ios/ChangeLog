@@ -1,3 +1,19 @@
+2014-01-16  Peter Molnar  <pmolnar.u-szeged@partner.samsung.com>
+
+        Remove workaround for compilers not supporting explicit override control
+        https://bugs.webkit.org/show_bug.cgi?id=127111
+
+        Reviewed by Anders Carlsson.
+
+        Now all compilers support explicit override control, this workaround can be removed.
+
+        * Misc/EmojiFallbackFontSelector.h:
+        * Storage/WebSQLiteDatabaseTrackerClient.h:
+        * WebCoreSupport/PopupMenuIOS.h:
+        * WebCoreSupport/SearchPopupMenuIOS.h:
+        * WebCoreSupport/WebChromeClientIOS.h:
+        * WebCoreSupport/WebDiskImageCacheClientIOS.h:
+
 2014-01-16  Andy Estes  <aestes@apple.com>
 
         [iOS] Fix build issues with exported headers

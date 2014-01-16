@@ -44,7 +44,7 @@ public:
     virtual void determineIfLayoutSizeChanged();
     virtual void setNeedsTransformUpdate() { m_needsTransformUpdate = true; }
 
-    virtual void paint(PaintInfo&, const LayoutPoint&) OVERRIDE;
+    virtual void paint(PaintInfo&, const LayoutPoint&) override;
 
 private:
     void element() const WTF_DELETED_FUNCTION;

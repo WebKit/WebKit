@@ -31,7 +31,7 @@ class WebDiskImageCacheClient FINAL : public WebCore::DiskImageCacheClient {
 public:
     static PassRefPtr<WebDiskImageCacheClient> create() { return adoptRef(new WebDiskImageCacheClient()); }
 private:
-    virtual void didCreateDiskImageCacheDirectory(const WTF::String& directory) OVERRIDE;
+    virtual void didCreateDiskImageCacheDirectory(const WTF::String& directory) override;
 };
 
 void WebKitInitializeWebDiskImageCache();

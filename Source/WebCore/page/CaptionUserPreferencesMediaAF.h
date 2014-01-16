@@ -41,30 +41,30 @@ public:
     virtual ~CaptionUserPreferencesMediaAF();
 
 #if HAVE(MEDIA_ACCESSIBILITY_FRAMEWORK)
-    virtual CaptionDisplayMode captionDisplayMode() const OVERRIDE;
-    virtual void setCaptionDisplayMode(CaptionDisplayMode) OVERRIDE;
+    virtual CaptionDisplayMode captionDisplayMode() const override;
+    virtual void setCaptionDisplayMode(CaptionDisplayMode) override;
 
-    virtual bool userPrefersCaptions() const OVERRIDE;
-    virtual bool userPrefersSubtitles() const OVERRIDE;
+    virtual bool userPrefersCaptions() const override;
+    virtual bool userPrefersSubtitles() const override;
 
-    virtual float captionFontSizeScaleAndImportance(bool&) const OVERRIDE;
+    virtual float captionFontSizeScaleAndImportance(bool&) const override;
 
-    virtual void setInterestedInCaptionPreferenceChanges() OVERRIDE;
+    virtual void setInterestedInCaptionPreferenceChanges() override;
 
-    virtual void setPreferredLanguage(const String&) OVERRIDE;
-    virtual Vector<String> preferredLanguages() const OVERRIDE;
+    virtual void setPreferredLanguage(const String&) override;
+    virtual Vector<String> preferredLanguages() const override;
 
-    virtual void captionPreferencesChanged() OVERRIDE;
+    virtual void captionPreferencesChanged() override;
 
     bool shouldFilterTrackMenu() const { return true; }
 #else
     bool shouldFilterTrackMenu() const { return false; }
 #endif
 
-    virtual String captionsStyleSheetOverride() const OVERRIDE;
-    virtual int textTrackSelectionScore(TextTrack*, HTMLMediaElement*) const OVERRIDE;
-    virtual Vector<RefPtr<TextTrack>> sortedTrackListForMenu(TextTrackList*) OVERRIDE;
-    virtual String displayNameForTrack(TextTrack*) const OVERRIDE;
+    virtual String captionsStyleSheetOverride() const override;
+    virtual int textTrackSelectionScore(TextTrack*, HTMLMediaElement*) const override;
+    virtual Vector<RefPtr<TextTrack>> sortedTrackListForMenu(TextTrackList*) override;
+    virtual String displayNameForTrack(TextTrack*) const override;
 
 private:
 #if HAVE(MEDIA_ACCESSIBILITY_FRAMEWORK)

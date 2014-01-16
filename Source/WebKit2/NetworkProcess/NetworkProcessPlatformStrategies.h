@@ -37,20 +37,20 @@ public:
     
 private:
     // WebCore::PlatformStrategies
-    virtual WebCore::CookiesStrategy* createCookiesStrategy() OVERRIDE;
-    virtual WebCore::DatabaseStrategy* createDatabaseStrategy() OVERRIDE;
-    virtual WebCore::LoaderStrategy* createLoaderStrategy() OVERRIDE;
-    virtual WebCore::PasteboardStrategy* createPasteboardStrategy() OVERRIDE;
-    virtual WebCore::PluginStrategy* createPluginStrategy() OVERRIDE;
-    virtual WebCore::SharedWorkerStrategy* createSharedWorkerStrategy() OVERRIDE;
-    virtual WebCore::StorageStrategy* createStorageStrategy() OVERRIDE;
-    virtual WebCore::VisitedLinkStrategy* createVisitedLinkStrategy() OVERRIDE;
+    virtual WebCore::CookiesStrategy* createCookiesStrategy() override;
+    virtual WebCore::DatabaseStrategy* createDatabaseStrategy() override;
+    virtual WebCore::LoaderStrategy* createLoaderStrategy() override;
+    virtual WebCore::PasteboardStrategy* createPasteboardStrategy() override;
+    virtual WebCore::PluginStrategy* createPluginStrategy() override;
+    virtual WebCore::SharedWorkerStrategy* createSharedWorkerStrategy() override;
+    virtual WebCore::StorageStrategy* createStorageStrategy() override;
+    virtual WebCore::VisitedLinkStrategy* createVisitedLinkStrategy() override;
 
     // WebCore::LoaderStrategy
-    virtual WebCore::ResourceLoadScheduler* resourceLoadScheduler() OVERRIDE;
-    virtual void loadResourceSynchronously(WebCore::NetworkingContext*, unsigned long resourceLoadIdentifier, const WebCore::ResourceRequest&, WebCore::StoredCredentials, WebCore::ClientCredentialPolicy, WebCore::ResourceError&, WebCore::ResourceResponse&, Vector<char>& data) OVERRIDE;
+    virtual WebCore::ResourceLoadScheduler* resourceLoadScheduler() override;
+    virtual void loadResourceSynchronously(WebCore::NetworkingContext*, unsigned long resourceLoadIdentifier, const WebCore::ResourceRequest&, WebCore::StoredCredentials, WebCore::ClientCredentialPolicy, WebCore::ResourceError&, WebCore::ResourceResponse&, Vector<char>& data) override;
 #if ENABLE(BLOB)
-    virtual WebCore::BlobRegistry* createBlobRegistry() OVERRIDE;
+    virtual WebCore::BlobRegistry* createBlobRegistry() override;
 #endif
 };
 

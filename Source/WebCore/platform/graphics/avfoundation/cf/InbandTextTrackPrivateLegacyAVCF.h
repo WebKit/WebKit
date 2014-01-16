@@ -45,17 +45,17 @@ public:
 
     ~InbandTextTrackPrivateLegacyAVCF() { }
 
-    virtual InbandTextTrackPrivate::Kind kind() const OVERRIDE;
-    virtual bool isClosedCaptions() const OVERRIDE;
-    virtual bool containsOnlyForcedSubtitles() const OVERRIDE;
-    virtual bool isMainProgramContent() const OVERRIDE;
-    virtual bool isEasyToRead() const OVERRIDE;
-    virtual AtomicString label() const OVERRIDE;
-    virtual AtomicString language() const OVERRIDE;
+    virtual InbandTextTrackPrivate::Kind kind() const override;
+    virtual bool isClosedCaptions() const override;
+    virtual bool containsOnlyForcedSubtitles() const override;
+    virtual bool isMainProgramContent() const override;
+    virtual bool isEasyToRead() const override;
+    virtual AtomicString label() const override;
+    virtual AtomicString language() const override;
 
-    virtual void disconnect() OVERRIDE;
+    virtual void disconnect() override;
 
-    virtual bool isLegacyClosedCaptionsTrack() const OVERRIDE { return true; }
+    virtual bool isLegacyClosedCaptionsTrack() const override { return true; }
 
     AVCFPlayerItemTrackRef avPlayerItemTrack() const { return m_playerItemTrack.get(); }
 

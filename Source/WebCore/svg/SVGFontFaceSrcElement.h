@@ -36,8 +36,8 @@ public:
 private:
     SVGFontFaceSrcElement(const QualifiedName&, Document&);
     
-    virtual void childrenChanged(const ChildChange&) OVERRIDE;
-    virtual bool rendererIsNeeded(const RenderStyle&) OVERRIDE { return false; }
+    virtual void childrenChanged(const ChildChange&) override;
+    virtual bool rendererIsNeeded(const RenderStyle&) override { return false; }
 };
 
 NODE_TYPE_CASTS(SVGFontFaceSrcElement)

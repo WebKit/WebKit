@@ -70,7 +70,7 @@ public:
     String reason() const { return m_reason; }
 
     // Event function.
-    virtual EventInterface eventInterface() const OVERRIDE { return CloseEventInterfaceType; }
+    virtual EventInterface eventInterface() const override { return CloseEventInterfaceType; }
 
 private:
     CloseEvent()

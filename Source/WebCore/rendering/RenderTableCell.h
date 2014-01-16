@@ -110,21 +110,21 @@ public:
 
     void setCellLogicalWidth(int constrainedLogicalWidth);
 
-    virtual int borderLeft() const OVERRIDE;
-    virtual int borderRight() const OVERRIDE;
-    virtual int borderTop() const OVERRIDE;
-    virtual int borderBottom() const OVERRIDE;
-    virtual int borderStart() const OVERRIDE;
-    virtual int borderEnd() const OVERRIDE;
-    virtual int borderBefore() const OVERRIDE;
-    virtual int borderAfter() const OVERRIDE;
+    virtual int borderLeft() const override;
+    virtual int borderRight() const override;
+    virtual int borderTop() const override;
+    virtual int borderBottom() const override;
+    virtual int borderStart() const override;
+    virtual int borderEnd() const override;
+    virtual int borderBefore() const override;
+    virtual int borderAfter() const override;
 
     void collectBorderValues(RenderTable::CollapsedBorderValues&) const;
     static void sortBorderValues(RenderTable::CollapsedBorderValues&);
 
-    virtual void layout() OVERRIDE;
+    virtual void layout() override;
 
-    virtual void paint(PaintInfo&, const LayoutPoint&) OVERRIDE;
+    virtual void paint(PaintInfo&, const LayoutPoint&) override;
 
     bool alignLeftRightBorderPaintRect(int& leftXOffset, int& rightXOffset);
     bool alignTopBottomBorderPaintRect(int& topYOffset, int& bottomYOffset);
@@ -144,26 +144,26 @@ public:
     int intrinsicPaddingBefore() const { return m_intrinsicPaddingBefore; }
     int intrinsicPaddingAfter() const { return m_intrinsicPaddingAfter; }
 
-    virtual LayoutUnit paddingTop() const OVERRIDE;
-    virtual LayoutUnit paddingBottom() const OVERRIDE;
-    virtual LayoutUnit paddingLeft() const OVERRIDE;
-    virtual LayoutUnit paddingRight() const OVERRIDE;
+    virtual LayoutUnit paddingTop() const override;
+    virtual LayoutUnit paddingBottom() const override;
+    virtual LayoutUnit paddingLeft() const override;
+    virtual LayoutUnit paddingRight() const override;
     
     // FIXME: For now we just assume the cell has the same block flow direction as the table. It's likely we'll
     // create an extra anonymous RenderBlock to handle mixing directionality anyway, in which case we can lock
     // the block flow directionality of the cells to the table's directionality.
-    virtual LayoutUnit paddingBefore() const OVERRIDE;
-    virtual LayoutUnit paddingAfter() const OVERRIDE;
+    virtual LayoutUnit paddingBefore() const override;
+    virtual LayoutUnit paddingAfter() const override;
 
     void setOverrideLogicalContentHeightFromRowHeight(LayoutUnit);
 
-    virtual void scrollbarsChanged(bool horizontalScrollbarChanged, bool verticalScrollbarChanged) OVERRIDE;
+    virtual void scrollbarsChanged(bool horizontalScrollbarChanged, bool verticalScrollbarChanged) override;
 
     bool cellWidthChanged() const { return m_cellWidthChanged; }
     void setCellWidthChanged(bool b = true) { m_cellWidthChanged = b; }
 
     static RenderTableCell* createAnonymousWithParentRenderer(const RenderObject*);
-    virtual RenderBox* createAnonymousBoxWithSameTypeAs(const RenderObject* parent) const OVERRIDE
+    virtual RenderBox* createAnonymousBoxWithSameTypeAs(const RenderObject* parent) const override
     {
         return createAnonymousWithParentRenderer(parent);
     }
@@ -219,26 +219,26 @@ public:
     }
 #endif
 protected:
-    virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle) OVERRIDE;
-    virtual void computePreferredLogicalWidths() OVERRIDE;
+    virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle) override;
+    virtual void computePreferredLogicalWidths() override;
 
 private:
-    virtual const char* renderName() const OVERRIDE { return (isAnonymous() || isPseudoElement()) ? "RenderTableCell (anonymous)" : "RenderTableCell"; }
+    virtual const char* renderName() const override { return (isAnonymous() || isPseudoElement()) ? "RenderTableCell (anonymous)" : "RenderTableCell"; }
 
-    virtual bool isTableCell() const OVERRIDE { return true; }
+    virtual bool isTableCell() const override { return true; }
 
-    virtual void willBeRemovedFromTree() OVERRIDE;
+    virtual void willBeRemovedFromTree() override;
 
-    virtual void updateLogicalWidth() OVERRIDE;
+    virtual void updateLogicalWidth() override;
 
-    virtual void paintBoxDecorations(PaintInfo&, const LayoutPoint&) OVERRIDE;
-    virtual void paintMask(PaintInfo&, const LayoutPoint&) OVERRIDE;
+    virtual void paintBoxDecorations(PaintInfo&, const LayoutPoint&) override;
+    virtual void paintMask(PaintInfo&, const LayoutPoint&) override;
 
-    virtual bool boxShadowShouldBeAppliedToBackground(BackgroundBleedAvoidance, InlineFlowBox*) const OVERRIDE;
+    virtual bool boxShadowShouldBeAppliedToBackground(BackgroundBleedAvoidance, InlineFlowBox*) const override;
 
-    virtual LayoutSize offsetFromContainer(RenderObject*, const LayoutPoint&, bool* offsetDependsOnPoint = 0) const OVERRIDE;
-    virtual LayoutRect clippedOverflowRectForRepaint(const RenderLayerModelObject* repaintContainer) const OVERRIDE;
-    virtual void computeRectForRepaint(const RenderLayerModelObject* repaintContainer, LayoutRect&, bool fixed = false) const OVERRIDE;
+    virtual LayoutSize offsetFromContainer(RenderObject*, const LayoutPoint&, bool* offsetDependsOnPoint = 0) const override;
+    virtual LayoutRect clippedOverflowRectForRepaint(const RenderLayerModelObject* repaintContainer) const override;
+    virtual void computeRectForRepaint(const RenderLayerModelObject* repaintContainer, LayoutRect&, bool fixed = false) const override;
 
     int borderHalfLeft(bool outer) const;
     int borderHalfRight(bool outer) const;

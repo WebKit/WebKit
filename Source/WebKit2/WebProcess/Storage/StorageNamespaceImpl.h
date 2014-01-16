@@ -49,13 +49,13 @@ public:
 private:
     explicit StorageNamespaceImpl(WebCore::StorageType, uint64_t storageNamespaceID, unsigned quotaInBytes);
 
-    virtual PassRefPtr<WebCore::StorageArea> storageArea(PassRefPtr<WebCore::SecurityOrigin>) OVERRIDE;
-    virtual PassRefPtr<WebCore::StorageNamespace> copy(WebCore::Page*) OVERRIDE;
-    virtual void close() OVERRIDE;
-    virtual void clearOriginForDeletion(WebCore::SecurityOrigin*) OVERRIDE;
-    virtual void clearAllOriginsForDeletion() OVERRIDE;
-    virtual void sync() OVERRIDE;
-    virtual void closeIdleLocalStorageDatabases() OVERRIDE;
+    virtual PassRefPtr<WebCore::StorageArea> storageArea(PassRefPtr<WebCore::SecurityOrigin>) override;
+    virtual PassRefPtr<WebCore::StorageNamespace> copy(WebCore::Page*) override;
+    virtual void close() override;
+    virtual void clearOriginForDeletion(WebCore::SecurityOrigin*) override;
+    virtual void clearAllOriginsForDeletion() override;
+    virtual void sync() override;
+    virtual void closeIdleLocalStorageDatabases() override;
 
     WebCore::StorageType m_storageType;
     uint64_t m_storageNamespaceID;

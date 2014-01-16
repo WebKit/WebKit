@@ -49,9 +49,9 @@ protected:
     SVGFilterPrimitiveStandardAttributes(const QualifiedName&, Document&);
 
     bool isSupportedAttribute(const QualifiedName&);
-    virtual void parseAttribute(const QualifiedName&, const AtomicString&) OVERRIDE;
+    virtual void parseAttribute(const QualifiedName&, const AtomicString&) override;
     virtual void svgAttributeChanged(const QualifiedName&);
-    virtual void childrenChanged(const ChildChange&) OVERRIDE;
+    virtual void childrenChanged(const ChildChange&) override;
 
     inline void invalidate()
     {
@@ -66,11 +66,11 @@ protected:
     }
 
 private:
-    virtual bool isFilterEffect() const OVERRIDE { return true; }
+    virtual bool isFilterEffect() const override { return true; }
 
-    virtual RenderPtr<RenderElement> createElementRenderer(PassRef<RenderStyle>) OVERRIDE;
-    virtual bool rendererIsNeeded(const RenderStyle&) OVERRIDE;
-    virtual bool childShouldCreateRenderer(const Node&) const OVERRIDE { return false; }
+    virtual RenderPtr<RenderElement> createElementRenderer(PassRef<RenderStyle>) override;
+    virtual bool rendererIsNeeded(const RenderStyle&) override;
+    virtual bool childShouldCreateRenderer(const Node&) const override { return false; }
 
     BEGIN_DECLARE_ANIMATED_PROPERTIES(SVGFilterPrimitiveStandardAttributes)
         DECLARE_ANIMATED_LENGTH(X, x)

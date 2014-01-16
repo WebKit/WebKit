@@ -47,23 +47,23 @@ public:
     
     AccessibilityObject* headerObject();
         
-    virtual AccessibilityRole roleValue() const OVERRIDE { return ColumnRole; }
-    virtual bool isTableColumn() const OVERRIDE { return true; }
+    virtual AccessibilityRole roleValue() const override { return ColumnRole; }
+    virtual bool isTableColumn() const override { return true; }
     
     void setColumnIndex(int columnIndex) { m_columnIndex = columnIndex; }
     int columnIndex() const { return m_columnIndex; }    
     
-    virtual void addChildren() OVERRIDE;
-    virtual void setParent(AccessibilityObject*) OVERRIDE;
+    virtual void addChildren() override;
+    virtual void setParent(AccessibilityObject*) override;
     
-    virtual LayoutRect elementRect() const OVERRIDE;
+    virtual LayoutRect elementRect() const override;
     
 private:    
     unsigned m_columnIndex;
     LayoutRect m_columnRect;
     
     AccessibilityObject* headerObjectForSection(RenderTableSection*, bool thTagRequired);
-    virtual bool computeAccessibilityIsIgnored() const OVERRIDE;
+    virtual bool computeAccessibilityIsIgnored() const override;
 };
 
 ACCESSIBILITY_OBJECT_TYPE_CASTS(AccessibilityTableColumn, isTableColumn())

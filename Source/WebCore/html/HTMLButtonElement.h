@@ -36,7 +36,7 @@ public:
     
     String value() const;
 
-    virtual bool willRespondToMouseClickEvents() OVERRIDE;
+    virtual bool willRespondToMouseClickEvents() override;
 
 private:
     HTMLButtonElement(const QualifiedName& tagName, Document&, HTMLFormElement*);
@@ -45,26 +45,26 @@ private:
 
     virtual const AtomicString& formControlType() const;
 
-    virtual RenderPtr<RenderElement> createElementRenderer(PassRef<RenderStyle>) OVERRIDE;
+    virtual RenderPtr<RenderElement> createElementRenderer(PassRef<RenderStyle>) override;
 
     // HTMLFormControlElement always creates one, but buttons don't need it.
-    virtual bool alwaysCreateUserAgentShadowRoot() const OVERRIDE { return false; }
+    virtual bool alwaysCreateUserAgentShadowRoot() const override { return false; }
 
-    virtual void parseAttribute(const QualifiedName&, const AtomicString&) OVERRIDE;
-    virtual bool isPresentationAttribute(const QualifiedName&) const OVERRIDE;
+    virtual void parseAttribute(const QualifiedName&, const AtomicString&) override;
+    virtual bool isPresentationAttribute(const QualifiedName&) const override;
     virtual void defaultEventHandler(Event*);
 
     virtual bool appendFormData(FormDataList&, bool);
 
     virtual bool isEnumeratable() const { return true; } 
-    virtual bool supportLabels() const OVERRIDE { return true; }
+    virtual bool supportLabels() const override { return true; }
 
     virtual bool isSuccessfulSubmitButton() const;
     virtual bool isActivatedSubmit() const;
     virtual void setActivatedSubmit(bool flag);
 
     virtual void accessKeyAction(bool sendMouseEvents);
-    virtual bool isURLAttribute(const Attribute&) const OVERRIDE;
+    virtual bool isURLAttribute(const Attribute&) const override;
 
     virtual bool canStartSelection() const { return false; }
 

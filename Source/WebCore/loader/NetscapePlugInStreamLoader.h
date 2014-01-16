@@ -56,18 +56,18 @@ public:
     bool isDone() const;
 
 private:
-    virtual void didReceiveResponse(const ResourceResponse&) OVERRIDE;
-    virtual void didReceiveData(const char*, unsigned, long long encodedDataLength, DataPayloadType) OVERRIDE;
-    virtual void didReceiveBuffer(PassRefPtr<SharedBuffer>, long long encodedDataLength, DataPayloadType) OVERRIDE;
-    virtual void didFinishLoading(double finishTime) OVERRIDE;
-    virtual void didFail(const ResourceError&) OVERRIDE;
+    virtual void didReceiveResponse(const ResourceResponse&) override;
+    virtual void didReceiveData(const char*, unsigned, long long encodedDataLength, DataPayloadType) override;
+    virtual void didReceiveBuffer(PassRefPtr<SharedBuffer>, long long encodedDataLength, DataPayloadType) override;
+    virtual void didFinishLoading(double finishTime) override;
+    virtual void didFail(const ResourceError&) override;
 
-    virtual void releaseResources() OVERRIDE;
+    virtual void releaseResources() override;
 
     NetscapePlugInStreamLoader(Frame*, NetscapePlugInStreamLoaderClient*);
 
-    virtual void willCancel(const ResourceError&) OVERRIDE;
-    virtual void didCancel(const ResourceError&) OVERRIDE;
+    virtual void willCancel(const ResourceError&) override;
+    virtual void didCancel(const ResourceError&) override;
 
     void didReceiveDataOrBuffer(const char*, int, PassRefPtr<SharedBuffer>, long long encodedDataLength, DataPayloadType);
 

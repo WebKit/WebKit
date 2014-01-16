@@ -95,14 +95,14 @@ public:
     {
     }
 
-    virtual LayoutRect shapeMarginLogicalBoundingBox() const OVERRIDE { return static_cast<LayoutRect>(marginIntervals().bounds()); }
-    virtual LayoutRect shapePaddingLogicalBoundingBox() const OVERRIDE { return static_cast<LayoutRect>(paddingIntervals().bounds()); }
-    virtual bool isEmpty() const OVERRIDE { return m_intervals->isEmpty(); }
-    virtual void getExcludedIntervals(LayoutUnit logicalTop, LayoutUnit logicalHeight, SegmentList&) const OVERRIDE;
-    virtual void getIncludedIntervals(LayoutUnit logicalTop, LayoutUnit logicalHeight, SegmentList&) const OVERRIDE;
-    virtual bool firstIncludedIntervalLogicalTop(LayoutUnit minLogicalIntervalTop, const FloatSize& minLogicalIntervalSize, LayoutUnit&) const OVERRIDE;
+    virtual LayoutRect shapeMarginLogicalBoundingBox() const override { return static_cast<LayoutRect>(marginIntervals().bounds()); }
+    virtual LayoutRect shapePaddingLogicalBoundingBox() const override { return static_cast<LayoutRect>(paddingIntervals().bounds()); }
+    virtual bool isEmpty() const override { return m_intervals->isEmpty(); }
+    virtual void getExcludedIntervals(LayoutUnit logicalTop, LayoutUnit logicalHeight, SegmentList&) const override;
+    virtual void getIncludedIntervals(LayoutUnit logicalTop, LayoutUnit logicalHeight, SegmentList&) const override;
+    virtual bool firstIncludedIntervalLogicalTop(LayoutUnit minLogicalIntervalTop, const FloatSize& minLogicalIntervalSize, LayoutUnit&) const override;
 
-    virtual void buildDisplayPaths(DisplayPaths& paths) const OVERRIDE
+    virtual void buildDisplayPaths(DisplayPaths& paths) const override
     {
         m_intervals->buildBoundsPath(paths.shape);
         if (shapeMargin())

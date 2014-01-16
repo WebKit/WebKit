@@ -49,7 +49,7 @@ public:
 private:
     // IPC::MessageReceiver
     // Implemented in generated WebResourceCacheManagerMessageReceiver.cpp
-    virtual void didReceiveMessage(IPC::Connection*, IPC::MessageDecoder&) OVERRIDE;
+    virtual void didReceiveMessage(IPC::Connection*, IPC::MessageDecoder&) override;
 
     void getCacheOrigins(uint64_t callbackID) const;
     void returnCacheOrigins(uint64_t callbackID, const WebCore::MemoryCache::SecurityOriginSet&) const;

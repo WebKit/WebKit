@@ -118,12 +118,12 @@ public:
         return m_value == o.m_value;
     }
 
-    virtual bool operator==(const CalcExpressionNode& o) const OVERRIDE
+    virtual bool operator==(const CalcExpressionNode& o) const override
     {
         return type() == o.type() && *this == static_cast<const CalcExpressionNumber&>(o);
     }
 
-    virtual float evaluate(float) const OVERRIDE
+    virtual float evaluate(float) const override
     {
         return m_value;
     }
@@ -153,12 +153,12 @@ public:
         return m_length == o.m_length;
     }
 
-    virtual bool operator==(const CalcExpressionNode& o) const OVERRIDE
+    virtual bool operator==(const CalcExpressionNode& o) const override
     {
         return type() == o.type() && *this == static_cast<const CalcExpressionLength&>(o);
     }
 
-    virtual float evaluate(float maxValue) const OVERRIDE
+    virtual float evaluate(float maxValue) const override
     {
         return floatValueForLength(m_length, maxValue);
     }
@@ -190,12 +190,12 @@ public:
         return m_operator == o.m_operator && *m_leftSide == *o.m_leftSide && *m_rightSide == *o.m_rightSide;
     }
 
-    virtual bool operator==(const CalcExpressionNode& o) const OVERRIDE
+    virtual bool operator==(const CalcExpressionNode& o) const override
     {
         return type() == o.type() && *this == static_cast<const CalcExpressionBinaryOperation&>(o);
     }
 
-    virtual float evaluate(float) const OVERRIDE;
+    virtual float evaluate(float) const override;
 
     const CalcExpressionNode* leftSide() const { return m_leftSide.get(); }
     const CalcExpressionNode* rightSide() const { return m_rightSide.get(); }
@@ -228,12 +228,12 @@ public:
         return m_progress == o.m_progress && m_from == o.m_from && m_to == o.m_to;
     }
 
-    virtual bool operator==(const CalcExpressionNode& o) const OVERRIDE
+    virtual bool operator==(const CalcExpressionNode& o) const override
     {
         return type() == o.type() && *this == static_cast<const CalcExpressionBlendLength&>(o);
     }
 
-    virtual float evaluate(float maxValue) const OVERRIDE
+    virtual float evaluate(float maxValue) const override
     {
         return (1.0f - m_progress) * floatValueForLength(m_from, maxValue) + m_progress * floatValueForLength(m_to, maxValue);
     }

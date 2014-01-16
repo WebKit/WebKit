@@ -66,16 +66,16 @@ private:
     virtual bool isViewVisible();
     virtual bool isViewInWindow();
     virtual bool isVisuallyIdle();
-    virtual LayerHostingMode viewLayerHostingMode() OVERRIDE;
-    virtual ColorSpaceData colorSpace() OVERRIDE;
-    virtual void setAcceleratedCompositingRootLayer(CALayer *) OVERRIDE;
+    virtual LayerHostingMode viewLayerHostingMode() override;
+    virtual ColorSpaceData colorSpace() override;
+    virtual void setAcceleratedCompositingRootLayer(CALayer *) override;
 
     virtual void processDidCrash();
     virtual void pageClosed();
     virtual void didRelaunchProcess();
-    virtual void preferencesDidChange() OVERRIDE;
+    virtual void preferencesDidChange() override;
     virtual void toolTipChanged(const String& oldToolTip, const String& newToolTip);
-    virtual void didCommitLoadForMainFrame() OVERRIDE;
+    virtual void didCommitLoadForMainFrame() override;
     virtual void setCursor(const WebCore::Cursor&);
     virtual void setCursorHiddenUntilMouseMoves(bool);
     virtual void didChangeViewportProperties(const WebCore::ViewportAttributes&);
@@ -89,9 +89,9 @@ private:
     virtual void setDragImage(const WebCore::IntPoint& clientPosition, PassRefPtr<ShareableBitmap> dragImage, bool isLinkDrag);
     virtual void setPromisedData(const String& pasteboardName, PassRefPtr<WebCore::SharedBuffer> imageBuffer, const String& filename, const String& extension, const String& title,
                                  const String& url, const String& visibleUrl, PassRefPtr<WebCore::SharedBuffer> archiveBuffer);
-    virtual void updateSecureInputState() OVERRIDE;
-    virtual void resetSecureInputState() OVERRIDE;
-    virtual void notifyInputContextAboutDiscardedComposition() OVERRIDE;
+    virtual void updateSecureInputState() override;
+    virtual void resetSecureInputState() override;
+    virtual void notifyInputContextAboutDiscardedComposition() override;
 
     virtual WebCore::FloatRect convertToDeviceSpace(const WebCore::FloatRect&);
     virtual WebCore::FloatRect convertToUserSpace(const WebCore::FloatRect&);
@@ -131,7 +131,7 @@ private:
     virtual void recommendedScrollbarStyleDidChange(int32_t newStyle);
 
     virtual WKView* wkView() const { return m_wkView; }
-    virtual void intrinsicContentSizeDidChange(const WebCore::IntSize& intrinsicContentSize) OVERRIDE;
+    virtual void intrinsicContentSizeDidChange(const WebCore::IntSize& intrinsicContentSize) override;
 
 #if USE(DICTATION_ALTERNATIVES)
     virtual uint64_t addDictationAlternatives(const RetainPtr<NSTextAlternatives>&);
@@ -142,17 +142,17 @@ private:
 
     // Auxiliary Client Creation
 #if ENABLE(FULLSCREEN_API)
-    WebFullScreenManagerProxyClient& fullScreenManagerProxyClient() OVERRIDE;
+    WebFullScreenManagerProxyClient& fullScreenManagerProxyClient() override;
 #endif
 
 #if ENABLE(FULLSCREEN_API)
     // WebFullScreenManagerProxyClient
-    virtual void closeFullScreenManager() OVERRIDE;
-    virtual bool isFullScreen() OVERRIDE;
-    virtual void enterFullScreen() OVERRIDE;
-    virtual void exitFullScreen() OVERRIDE;
-    virtual void beganEnterFullScreen(const WebCore::IntRect& initialFrame, const WebCore::IntRect& finalFrame) OVERRIDE;
-    virtual void beganExitFullScreen(const WebCore::IntRect& initialFrame, const WebCore::IntRect& finalFrame) OVERRIDE;
+    virtual void closeFullScreenManager() override;
+    virtual bool isFullScreen() override;
+    virtual void enterFullScreen() override;
+    virtual void exitFullScreen() override;
+    virtual void beganEnterFullScreen(const WebCore::IntRect& initialFrame, const WebCore::IntRect& finalFrame) override;
+    virtual void beganExitFullScreen(const WebCore::IntRect& initialFrame, const WebCore::IntRect& finalFrame) override;
 #endif
 
     WKView* m_wkView;

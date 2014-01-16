@@ -45,13 +45,13 @@ public:
     static PassRefPtr<AccessibilityTable> create(RenderObject*);
     virtual ~AccessibilityTable();
 
-    virtual void init() OVERRIDE;
+    virtual void init() override;
 
-    virtual AccessibilityRole roleValue() const OVERRIDE;
+    virtual AccessibilityRole roleValue() const override;
     virtual bool isAriaTable() const { return false; }
     
-    virtual void addChildren() OVERRIDE;
-    virtual void clearChildren() OVERRIDE;
+    virtual void addChildren() override;
+    virtual void clearChildren() override;
     
     AccessibilityChildrenVector& columns();
     AccessibilityChildrenVector& rows();
@@ -59,9 +59,9 @@ public:
     virtual bool supportsSelectedRows() { return false; }
     unsigned columnCount();
     unsigned rowCount();
-    virtual int tableLevel() const OVERRIDE;
+    virtual int tableLevel() const override;
     
-    virtual String title() const OVERRIDE;
+    virtual String title() const override;
     
     // all the cells in the table
     void cells(AccessibilityChildrenVector&);
@@ -84,18 +84,18 @@ protected:
     bool hasARIARole() const;
 
     // isTable is whether it's an AccessibilityTable object.
-    virtual bool isTable() const OVERRIDE { return true; }
+    virtual bool isTable() const override { return true; }
     // isAccessibilityTable is whether it is exposed as an AccessibilityTable to the platform.
-    virtual bool isAccessibilityTable() const OVERRIDE;
+    virtual bool isAccessibilityTable() const override;
     // isDataTable is whether it is exposed as an AccessibilityTable because the heuristic
     // think this "looks" like a data-based table (instead of a table used for layout).
-    virtual bool isDataTable() const OVERRIDE;
+    virtual bool isDataTable() const override;
 
     virtual bool isTableExposableThroughAccessibility() const;
-    virtual bool computeAccessibilityIsIgnored() const OVERRIDE;
+    virtual bool computeAccessibilityIsIgnored() const override;
 
 private:
-    virtual void titleElementText(Vector<AccessibilityText>&) const OVERRIDE;
+    virtual void titleElementText(Vector<AccessibilityText>&) const override;
 };
 
 ACCESSIBILITY_OBJECT_TYPE_CASTS(AccessibilityTable, isTable())

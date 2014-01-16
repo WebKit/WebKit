@@ -39,7 +39,7 @@ class YouTubeEmbedShadowElement FINAL : public HTMLDivElement {
 public:
     static PassRefPtr<YouTubeEmbedShadowElement> create(Document&);
 
-    virtual const AtomicString& shadowPseudoId() const OVERRIDE;
+    virtual const AtomicString& shadowPseudoId() const override;
     HTMLPlugInImageElement* pluginElement() const;
 
 private:

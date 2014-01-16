@@ -43,19 +43,19 @@ public:
 
     ~InbandTextTrackPrivateAVCF() { }
 
-    virtual InbandTextTrackPrivate::Kind kind() const OVERRIDE;
-    virtual bool isClosedCaptions() const OVERRIDE;
-    virtual bool isSDH() const OVERRIDE;
-    virtual bool containsOnlyForcedSubtitles() const OVERRIDE;
-    virtual bool isMainProgramContent() const OVERRIDE;
-    virtual bool isEasyToRead() const OVERRIDE;
-    virtual AtomicString label() const OVERRIDE;
-    virtual AtomicString language() const OVERRIDE;
-    virtual bool isDefault() const OVERRIDE;
+    virtual InbandTextTrackPrivate::Kind kind() const override;
+    virtual bool isClosedCaptions() const override;
+    virtual bool isSDH() const override;
+    virtual bool containsOnlyForcedSubtitles() const override;
+    virtual bool isMainProgramContent() const override;
+    virtual bool isEasyToRead() const override;
+    virtual AtomicString label() const override;
+    virtual AtomicString language() const override;
+    virtual bool isDefault() const override;
 
-    virtual void disconnect() OVERRIDE;
+    virtual void disconnect() override;
 
-    virtual bool isLegacyClosedCaptionsTrack() const OVERRIDE { return false; }
+    virtual bool isLegacyClosedCaptionsTrack() const override { return false; }
 
     AVCFMediaSelectionOptionRef mediaSelectionOption() const { return m_mediaSelectionOption.get(); }
 

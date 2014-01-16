@@ -70,9 +70,9 @@ public:
     Color solidColor() const { return m_solidColor; }
     virtual void setContentsToMedia(PlatformLayer*);
     virtual void setContentsToCanvas(PlatformLayer* canvas) { setContentsToMedia(canvas); }
-    virtual void setShowDebugBorder(bool) OVERRIDE;
-    virtual void setDebugBorder(const Color&, float width) OVERRIDE;
-    virtual void setShowRepaintCounter(bool) OVERRIDE;
+    virtual void setShowDebugBorder(bool) override;
+    virtual void setDebugBorder(const Color&, float width) override;
+    virtual void setShowRepaintCounter(bool) override;
     virtual void flushCompositingState(const FloatRect&);
     virtual void flushCompositingStateForThisLayerOnly();
     virtual void setName(const String& name);
@@ -112,8 +112,8 @@ private:
     void prepareBackingStoreIfNeeded();
     bool shouldHaveBackingStore() const;
 
-    virtual void platformLayerWillBeDestroyed() OVERRIDE { setContentsToMedia(0); }
-    virtual void setPlatformLayerNeedsDisplay() OVERRIDE { setContentsNeedsDisplay(); }
+    virtual void platformLayerWillBeDestroyed() override { setContentsToMedia(0); }
+    virtual void setPlatformLayerNeedsDisplay() override { setContentsNeedsDisplay(); }
 
     // This set of flags help us defer which properties of the layer have been
     // modified by the compositor, so we can know what to look for in the next flush.

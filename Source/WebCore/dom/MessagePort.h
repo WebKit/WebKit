@@ -73,9 +73,9 @@ namespace WebCore {
 
         void contextDestroyed();
 
-        virtual EventTargetInterface eventTargetInterface() const OVERRIDE { return MessagePortEventTargetInterfaceType; }
-        virtual ScriptExecutionContext* scriptExecutionContext() const OVERRIDE { return m_scriptExecutionContext; }
-        virtual bool isMessagePort() const OVERRIDE { return true; }
+        virtual EventTargetInterface eventTargetInterface() const override { return MessagePortEventTargetInterfaceType; }
+        virtual ScriptExecutionContext* scriptExecutionContext() const override { return m_scriptExecutionContext; }
+        virtual bool isMessagePort() const override { return true; }
 
         void dispatchMessages();
 
@@ -105,8 +105,8 @@ namespace WebCore {
     private:
         explicit MessagePort(ScriptExecutionContext&);
 
-        virtual void refEventTarget() OVERRIDE { ref(); }
-        virtual void derefEventTarget() OVERRIDE { deref(); }
+        virtual void refEventTarget() override { ref(); }
+        virtual void derefEventTarget() override { deref(); }
 
         OwnPtr<MessagePortChannel> m_entangledChannel;
 

@@ -43,11 +43,11 @@ public:
     WebDeviceOrientationClient(WebView*);
 
     // DeviceOrientationClient methods
-    virtual void setController(WebCore::DeviceOrientationController*) OVERRIDE;
-    virtual void startUpdating() OVERRIDE;
-    virtual void stopUpdating() OVERRIDE;
-    virtual WebCore::DeviceOrientationData* lastOrientation() const OVERRIDE;
-    virtual void deviceOrientationControllerDestroyed() OVERRIDE;
+    virtual void setController(WebCore::DeviceOrientationController*) override;
+    virtual void startUpdating() override;
+    virtual void stopUpdating() override;
+    virtual WebCore::DeviceOrientationData* lastOrientation() const override;
+    virtual void deviceOrientationControllerDestroyed() override;
 
 private:
     id<WebDeviceOrientationProvider> getProvider() const;

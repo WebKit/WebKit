@@ -38,7 +38,7 @@ public:
 
     virtual const char* renderName() const;
 
-    virtual void styleWillChange(StyleDifference, const RenderStyle& newStyle) OVERRIDE;
+    virtual void styleWillChange(StyleDifference, const RenderStyle& newStyle) override;
 
     virtual void layoutBlock(bool relayoutChildren, LayoutUnit pageHeight = 0);
     void layoutHorizontalBox(bool relayoutChildren);
@@ -47,13 +47,13 @@ public:
     virtual bool avoidsFloats() const { return true; }
     virtual bool isDeprecatedFlexibleBox() const { return true; }
     virtual bool isStretchingChildren() const { return m_stretchingChildren; }
-    virtual bool canCollapseAnonymousBlockChild() const OVERRIDE { return false; }
+    virtual bool canCollapseAnonymousBlockChild() const override { return false; }
 
     void placeChild(RenderBox* child, const LayoutPoint& location, LayoutSize* childLayoutDelta = 0);
 
 private:
-    virtual void computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const OVERRIDE;
-    virtual void computePreferredLogicalWidths() OVERRIDE;
+    virtual void computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const override;
+    virtual void computePreferredLogicalWidths() override;
 
     LayoutUnit allowedChildFlex(RenderBox* child, bool expanding, unsigned group);
 

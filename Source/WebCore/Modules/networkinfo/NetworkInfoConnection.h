@@ -76,10 +76,10 @@ private:
     explicit NetworkInfoConnection(Navigator*);
 
     // EventTarget implementation.
-    virtual EventTargetData* eventTargetData() OVERRIDE;
-    virtual EventTargetData& ensureEventTargetData() OVERRIDE;
-    virtual void refEventTarget() OVERRIDE { ref(); }
-    virtual void derefEventTarget() OVERRIDE { deref(); }
+    virtual EventTargetData* eventTargetData() override;
+    virtual EventTargetData& ensureEventTargetData() override;
+    virtual void refEventTarget() override { ref(); }
+    virtual void derefEventTarget() override { deref(); }
 
     // EventTarget implementation.
     EventTargetData m_eventTargetData;

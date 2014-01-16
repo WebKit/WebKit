@@ -45,7 +45,7 @@ public:
     }
 
 private:
-    virtual void didCreatePage(WKBundleRef, WKBundlePageRef bundlePage) OVERRIDE
+    virtual void didCreatePage(WKBundleRef, WKBundlePageRef bundlePage) override
     {
         WKBundlePagePolicyClientV0 policyClient;
         memset(&policyClient, 0, sizeof(policyClient));

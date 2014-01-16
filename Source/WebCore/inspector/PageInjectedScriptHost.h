@@ -36,8 +36,8 @@ class PageInjectedScriptHost FINAL : public Inspector::InjectedScriptHost {
 public:
     static PassRefPtr<PageInjectedScriptHost> create() { return adoptRef(new PageInjectedScriptHost); }
 
-    virtual JSC::JSValue type(JSC::ExecState*, JSC::JSValue) OVERRIDE;
-    virtual bool isHTMLAllCollection(JSC::JSValue) OVERRIDE;
+    virtual JSC::JSValue type(JSC::ExecState*, JSC::JSValue) override;
+    virtual bool isHTMLAllCollection(JSC::JSValue) override;
 };
 
 } // namespace WebCore

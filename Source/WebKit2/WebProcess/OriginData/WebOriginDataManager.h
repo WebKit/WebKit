@@ -53,7 +53,7 @@ private:
     void stopObservingChanges(WKOriginDataTypes);
 
     // IPC::MessageReceiver
-    virtual void didReceiveMessage(IPC::Connection*, IPC::MessageDecoder&) OVERRIDE;
+    virtual void didReceiveMessage(IPC::Connection*, IPC::MessageDecoder&) override;
 
     ChildProcess* m_childProcess;
 };

@@ -33,8 +33,8 @@ class CSSHostRule : public CSSGroupingRule {
 public:
     static PassRefPtr<CSSHostRule> create(StyleRuleHost* rule, CSSStyleSheet* sheet) { return adoptRef(new CSSHostRule(rule, sheet)); }
 
-    virtual CSSRule::Type type() const OVERRIDE { return CSSRule::HOST_RULE; }
-    virtual String cssText() const OVERRIDE;
+    virtual CSSRule::Type type() const override { return CSSRule::HOST_RULE; }
+    virtual String cssText() const override;
 
 private:
     CSSHostRule(StyleRuleHost*, CSSStyleSheet*);

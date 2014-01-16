@@ -50,7 +50,7 @@ public:
 protected:
     TagNodeList(ContainerNode& rootNode, Type, const AtomicString& namespaceURI, const AtomicString& localName);
 
-    virtual bool nodeMatches(Element*) const OVERRIDE;
+    virtual bool nodeMatches(Element*) const override;
 
     AtomicString m_namespaceURI;
     AtomicString m_localName;
@@ -69,7 +69,7 @@ public:
 private:
     HTMLTagNodeList(ContainerNode& rootNode, const AtomicString& localName);
 
-    virtual bool nodeMatches(Element*) const OVERRIDE;
+    virtual bool nodeMatches(Element*) const override;
 
     AtomicString m_loweredLocalName;
 };

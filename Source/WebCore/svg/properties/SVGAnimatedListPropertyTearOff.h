@@ -54,7 +54,7 @@ public:
         return static_cast<ListProperty*>(m_animVal.get());
     }
 
-    virtual bool isAnimatedListTearOff() const OVERRIDE { return true; }
+    virtual bool isAnimatedListTearOff() const override { return true; }
 
     int findItem(SVGProperty* property) const
     {

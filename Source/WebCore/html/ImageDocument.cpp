@@ -108,7 +108,7 @@ private:
     }
 
     virtual ~ImageDocumentElement();
-    virtual void didMoveToNewDocument(Document* oldDocument) OVERRIDE;
+    virtual void didMoveToNewDocument(Document* oldDocument) override;
 
     ImageDocument* m_imageDocument;
 };

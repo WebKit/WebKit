@@ -40,8 +40,8 @@ namespace WebCore {
     private:
         JSLazyEventListener(const String& functionName, const String& eventParameterName, const String& code, ContainerNode*, const String& sourceURL, const TextPosition&, JSC::JSObject* wrapper, DOMWrapperWorld& isolatedWorld);
 
-        virtual JSC::JSObject* initializeJSFunction(ScriptExecutionContext*) const OVERRIDE;
-        virtual bool wasCreatedFromMarkup() const OVERRIDE { return true; }
+        virtual JSC::JSObject* initializeJSFunction(ScriptExecutionContext*) const override;
+        virtual bool wasCreatedFromMarkup() const override { return true; }
 
         static void create() WTF_DELETED_FUNCTION;
 

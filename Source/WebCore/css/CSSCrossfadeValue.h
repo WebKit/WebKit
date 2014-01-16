@@ -89,7 +89,7 @@ private:
         }
 
         virtual ~CrossfadeSubimageObserverProxy() { }
-        virtual void imageChanged(CachedImage*, const IntRect* = 0) OVERRIDE;
+        virtual void imageChanged(CachedImage*, const IntRect* = 0) override;
         void setReady(bool ready) { m_ready = ready; }
     private:
         CSSCrossfadeValue* m_ownerValue;

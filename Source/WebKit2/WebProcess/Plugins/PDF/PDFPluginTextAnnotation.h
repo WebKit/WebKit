@@ -45,8 +45,8 @@ public:
     static PassRefPtr<PDFPluginTextAnnotation> create(PDFAnnotation *, PDFLayerController *, PDFPlugin*);
     virtual ~PDFPluginTextAnnotation();
 
-    virtual void updateGeometry() OVERRIDE;
-    virtual void commit() OVERRIDE;
+    virtual void updateGeometry() override;
+    virtual void commit() override;
 
 protected:
     PDFPluginTextAnnotation(PDFAnnotation *annotation, PDFLayerController *pdfLayerController, PDFPlugin* plugin)
@@ -54,11 +54,11 @@ protected:
     {
     }
 
-    virtual PassRefPtr<WebCore::Element> createAnnotationElement() OVERRIDE;
+    virtual PassRefPtr<WebCore::Element> createAnnotationElement() override;
     String value() const;
 
 private:
-    virtual bool handleEvent(WebCore::Event*) OVERRIDE;
+    virtual bool handleEvent(WebCore::Event*) override;
 
     PDFAnnotationTextWidget *textAnnotation() const { return static_cast<PDFAnnotationTextWidget *>(annotation()); }
 };

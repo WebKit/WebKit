@@ -45,7 +45,7 @@ class SessionRequestNotifier : public MockNotifier {
 public:
     SessionRequestNotifier(PassRefPtr<RTCSessionDescriptionRequest>, PassRefPtr<RTCSessionDescriptionDescriptor>, const String& = emptyString());
 
-    void fire() OVERRIDE;
+    void fire() override;
 
 private:
     RefPtr<RTCSessionDescriptionRequest> m_request;
@@ -57,7 +57,7 @@ class VoidRequestNotifier : public MockNotifier {
 public:
     VoidRequestNotifier(PassRefPtr<RTCVoidRequest>, bool, const String& = emptyString());
 
-    void fire() OVERRIDE;
+    void fire() override;
 
 private:
     RefPtr<RTCVoidRequest> m_request;
@@ -69,7 +69,7 @@ class IceConnectionNotifier : public MockNotifier {
 public:
     IceConnectionNotifier(RTCPeerConnectionHandlerClient*, RTCPeerConnectionHandlerClient::IceConnectionState, RTCPeerConnectionHandlerClient::IceGatheringState);
 
-    void fire() OVERRIDE;
+    void fire() override;
 
 private:
     RTCPeerConnectionHandlerClient* m_client;
@@ -81,7 +81,7 @@ class SignalingStateNotifier : public MockNotifier {
 public:
     SignalingStateNotifier(RTCPeerConnectionHandlerClient*, RTCPeerConnectionHandlerClient::SignalingState);
 
-    void fire() OVERRIDE;
+    void fire() override;
 
 private:
     RTCPeerConnectionHandlerClient* m_client;
@@ -92,7 +92,7 @@ class RemoteDataChannelNotifier : public MockNotifier {
 public:
     RemoteDataChannelNotifier(RTCPeerConnectionHandlerClient*);
 
-    void fire() OVERRIDE;
+    void fire() override;
 
 private:
     RTCPeerConnectionHandlerClient* m_client;
@@ -102,7 +102,7 @@ class DataChannelStateNotifier : public MockNotifier {
 public:
     DataChannelStateNotifier(RTCDataChannelHandlerClient*, RTCDataChannelHandlerClient::ReadyState);
 
-    void fire() OVERRIDE;
+    void fire() override;
 
 private:
     RTCDataChannelHandlerClient* m_client;

@@ -41,7 +41,7 @@ public:
 
     void clientWillBeginPlayback();
 
-    virtual void pauseSession() OVERRIDE;
+    virtual void pauseSession() override;
 
     bool playbackPermitted(const HTMLMediaElement&) const;
     bool dataLoadingPermitted(const HTMLMediaElement&) const;

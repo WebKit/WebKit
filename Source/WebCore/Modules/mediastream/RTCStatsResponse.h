@@ -49,8 +49,8 @@ public:
     PassRefPtr<RTCStatsReport> namedItem(const AtomicString&);
     bool canGetItemsForName(const AtomicString&);
 
-    virtual size_t addReport(String id, String type, double timestamp) OVERRIDE;
-    virtual void addStatistic(size_t report, String name, String value) OVERRIDE;
+    virtual size_t addReport(String id, String type, double timestamp) override;
+    virtual void addStatistic(size_t report, String name, String value) override;
 
 private:
     RTCStatsResponse();

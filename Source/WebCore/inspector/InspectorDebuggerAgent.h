@@ -70,8 +70,8 @@ public:
 
     virtual ~InspectorDebuggerAgent();
 
-    virtual void didCreateFrontendAndBackend(Inspector::InspectorFrontendChannel*, Inspector::InspectorBackendDispatcher*) OVERRIDE;
-    virtual void willDestroyFrontendAndBackend() OVERRIDE;
+    virtual void didCreateFrontendAndBackend(Inspector::InspectorFrontendChannel*, Inspector::InspectorBackendDispatcher*) override;
+    virtual void willDestroyFrontendAndBackend() override;
 
     bool isPaused();
     void addMessageToConsole(MessageSource, MessageType);
@@ -143,9 +143,9 @@ protected:
 private:
     PassRefPtr<Inspector::TypeBuilder::Array<Inspector::TypeBuilder::Debugger::CallFrame>> currentCallFrames();
 
-    virtual void didParseSource(JSC::SourceID, const Script&) OVERRIDE FINAL;
-    virtual void failedToParseSource(const String& url, const String& data, int firstLine, int errorLine, const String& errorMessage) OVERRIDE FINAL;
-    virtual void didSampleProbe(JSC::ExecState*, int probeIdentifier, int hitCount, const Deprecated::ScriptValue& sample) OVERRIDE FINAL;
+    virtual void didParseSource(JSC::SourceID, const Script&) override FINAL;
+    virtual void failedToParseSource(const String& url, const String& data, int firstLine, int errorLine, const String& errorMessage) override FINAL;
+    virtual void didSampleProbe(JSC::ExecState*, int probeIdentifier, int hitCount, const Deprecated::ScriptValue& sample) override FINAL;
 
     PassRefPtr<Inspector::TypeBuilder::Debugger::Location> resolveBreakpoint(const String& breakpointIdentifier, JSC::SourceID, const ScriptBreakpoint&);
     bool assertPaused(ErrorString*);

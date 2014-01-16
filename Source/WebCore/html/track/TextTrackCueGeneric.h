@@ -45,10 +45,10 @@ public:
     
     virtual ~TextTrackCueGeneric() { }
 
-    virtual PassRefPtr<TextTrackCueBox> createDisplayTree() OVERRIDE;
+    virtual PassRefPtr<TextTrackCueBox> createDisplayTree() override;
 
-    virtual void setLine(int, ExceptionCode&) OVERRIDE;
-    virtual void setPosition(int, ExceptionCode&) OVERRIDE;
+    virtual void setLine(int, ExceptionCode&) override;
+    virtual void setPosition(int, ExceptionCode&) override;
 
     bool useDefaultPosition() const { return m_defaultPosition; }
     
@@ -70,14 +70,14 @@ public:
     Color highlightColor() const { return m_highlightColor; }
     void setHighlightColor(RGBA32 color) { m_highlightColor.setRGB(color); }
     
-    virtual void setFontSize(int, const IntSize&, bool important) OVERRIDE;
+    virtual void setFontSize(int, const IntSize&, bool important) override;
 
-    virtual bool isEqual(const TextTrackCue&, CueMatchRules) const OVERRIDE;
+    virtual bool isEqual(const TextTrackCue&, CueMatchRules) const override;
 
-    virtual TextTrackCue::CueType cueType() const OVERRIDE { return TextTrackCue::Generic; }
+    virtual TextTrackCue::CueType cueType() const override { return TextTrackCue::Generic; }
 
 private:
-    virtual bool isOrderedBefore(const TextTrackCue*) const OVERRIDE;
+    virtual bool isOrderedBefore(const TextTrackCue*) const override;
 
     TextTrackCueGeneric(ScriptExecutionContext&, double start, double end, const String&);
     

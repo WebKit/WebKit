@@ -56,28 +56,28 @@ public:
     static unsigned itemCountForOrderedList(const HTMLOListElement*);
 
 private:
-    virtual const char* renderName() const OVERRIDE { return "RenderListItem"; }
+    virtual const char* renderName() const override { return "RenderListItem"; }
 
-    virtual bool isListItem() const OVERRIDE { return true; }
+    virtual bool isListItem() const override { return true; }
     
-    virtual void willBeDestroyed() OVERRIDE;
+    virtual void willBeDestroyed() override;
 
-    virtual void insertedIntoTree() OVERRIDE;
-    virtual void willBeRemovedFromTree() OVERRIDE;
+    virtual void insertedIntoTree() override;
+    virtual void willBeRemovedFromTree() override;
 
-    virtual bool isEmpty() const OVERRIDE;
-    virtual void paint(PaintInfo&, const LayoutPoint&) OVERRIDE;
+    virtual bool isEmpty() const override;
+    virtual void paint(PaintInfo&, const LayoutPoint&) override;
 
-    virtual void layout() OVERRIDE;
+    virtual void layout() override;
 
     void positionListMarker();
 
-    virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle) OVERRIDE;
+    virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle) override;
 
-    virtual bool requiresForcedStyleRecalcPropagation() const OVERRIDE { return true; }
+    virtual bool requiresForcedStyleRecalcPropagation() const override { return true; }
 
-    virtual void addOverflowFromChildren() OVERRIDE;
-    virtual void computePreferredLogicalWidths() OVERRIDE;
+    virtual void addOverflowFromChildren() override;
+    virtual void computePreferredLogicalWidths() override;
 
     void insertOrMoveMarkerRendererIfNeeded();
     inline int calcValue() const;

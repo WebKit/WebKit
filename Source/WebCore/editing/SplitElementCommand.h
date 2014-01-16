@@ -40,13 +40,13 @@ public:
 private:
     SplitElementCommand(PassRefPtr<Element>, PassRefPtr<Node> splitPointChild);
 
-    virtual void doApply() OVERRIDE;
-    virtual void doUnapply() OVERRIDE;
-    virtual void doReapply() OVERRIDE;
+    virtual void doApply() override;
+    virtual void doUnapply() override;
+    virtual void doReapply() override;
     void executeApply();
 
 #ifndef NDEBUG
-    virtual void getNodesInCommand(HashSet<Node*>&) OVERRIDE;
+    virtual void getNodesInCommand(HashSet<Node*>&) override;
 #endif
 
     RefPtr<Element> m_element1;

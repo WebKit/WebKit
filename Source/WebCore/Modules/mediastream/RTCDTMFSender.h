@@ -59,11 +59,11 @@ public:
     DEFINE_ATTRIBUTE_EVENT_LISTENER(tonechange);
 
     // EventTarget
-    virtual EventTargetInterface eventTargetInterface() const OVERRIDE { return RTCDTMFSenderEventTargetInterfaceType; }
-    virtual ScriptExecutionContext* scriptExecutionContext() const OVERRIDE { return ActiveDOMObject::scriptExecutionContext(); }
+    virtual EventTargetInterface eventTargetInterface() const override { return RTCDTMFSenderEventTargetInterfaceType; }
+    virtual ScriptExecutionContext* scriptExecutionContext() const override { return ActiveDOMObject::scriptExecutionContext(); }
 
     // ActiveDOMObject
-    virtual void stop() OVERRIDE;
+    virtual void stop() override;
 
     using RefCounted<RTCDTMFSender>::ref;
     using RefCounted<RTCDTMFSender>::deref;
@@ -75,11 +75,11 @@ private:
     void scheduledEventTimerFired(Timer<RTCDTMFSender>*);
 
     // EventTarget
-    virtual void refEventTarget() OVERRIDE { ref(); }
-    virtual void derefEventTarget() OVERRIDE { deref(); }
+    virtual void refEventTarget() override { ref(); }
+    virtual void derefEventTarget() override { deref(); }
 
     // RTCDTMFSenderHandlerClient
-    virtual void didPlayTone(const String&) OVERRIDE;
+    virtual void didPlayTone(const String&) override;
 
     RefPtr<MediaStreamTrack> m_track;
     long m_duration;

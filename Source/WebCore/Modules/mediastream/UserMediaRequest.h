@@ -70,14 +70,14 @@ private:
     UserMediaRequest(ScriptExecutionContext*, UserMediaController*, PassRefPtr<MediaConstraints> audioConstraints, PassRefPtr<MediaConstraints> videoConstraints, PassRefPtr<NavigatorUserMediaSuccessCallback>, PassRefPtr<NavigatorUserMediaErrorCallback>);
 
     // MediaStreamCreationClient
-    virtual void constraintsValidated() OVERRIDE FINAL;
-    virtual void constraintsInvalid(const String& constraintName) OVERRIDE FINAL;
-    virtual void didCreateStream(PassRefPtr<MediaStreamPrivate>) OVERRIDE FINAL;
-    virtual void failedToCreateStreamWithConstraintsError(const String& constraintName) OVERRIDE FINAL;
-    virtual void failedToCreateStreamWithPermissionError() OVERRIDE FINAL;
+    virtual void constraintsValidated() override FINAL;
+    virtual void constraintsInvalid(const String& constraintName) override FINAL;
+    virtual void didCreateStream(PassRefPtr<MediaStreamPrivate>) override FINAL;
+    virtual void failedToCreateStreamWithConstraintsError(const String& constraintName) override FINAL;
+    virtual void failedToCreateStreamWithPermissionError() override FINAL;
 
     // ContextDestructionObserver
-    virtual void contextDestroyed() OVERRIDE FINAL;
+    virtual void contextDestroyed() override FINAL;
     
     void callSuccessHandler(PassRefPtr<MediaStreamPrivate>);
     void callErrorHandler(PassRefPtr<NavigatorUserMediaError>);

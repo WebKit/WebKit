@@ -93,7 +93,7 @@ public:
     HRTFDatabaseLoader* hrtfDatabaseLoader() const { return m_hrtfDatabaseLoader.get(); }
 
     // Document notification
-    virtual void stop() OVERRIDE;
+    virtual void stop() override;
 
     Document* document() const; // ASSERTs if document no longer exists.
 
@@ -234,8 +234,8 @@ public:
     void removeMarkedSummingJunction(AudioSummingJunction*);
 
     // EventTarget
-    virtual EventTargetInterface eventTargetInterface() const OVERRIDE FINAL { return AudioContextEventTargetInterfaceType; }
-    virtual ScriptExecutionContext* scriptExecutionContext() const OVERRIDE FINAL;
+    virtual EventTargetInterface eventTargetInterface() const override FINAL { return AudioContextEventTargetInterfaceType; }
+    virtual ScriptExecutionContext* scriptExecutionContext() const override FINAL;
 
     DEFINE_ATTRIBUTE_EVENT_LISTENER(complete);
 
@@ -283,7 +283,7 @@ private:
     void scheduleNodeDeletion();
     static void deleteMarkedNodesDispatch(void* userData);
 
-    virtual void mediaCanStart() OVERRIDE;
+    virtual void mediaCanStart() override;
 
     bool m_isInitialized;
     bool m_isAudioThreadFinished;
@@ -348,8 +348,8 @@ private:
     RefPtr<HRTFDatabaseLoader> m_hrtfDatabaseLoader;
 
     // EventTarget
-    virtual void refEventTarget() OVERRIDE { ref(); }
-    virtual void derefEventTarget() OVERRIDE { deref(); }
+    virtual void refEventTarget() override { ref(); }
+    virtual void derefEventTarget() override { deref(); }
 
     RefPtr<AudioBuffer> m_renderTarget;
     

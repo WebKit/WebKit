@@ -46,12 +46,12 @@ private:
     SVGScriptElement(const QualifiedName&, Document&, bool wasInsertedByParser, bool alreadyStarted);
 
     bool isSupportedAttribute(const QualifiedName&);
-    virtual void parseAttribute(const QualifiedName&, const AtomicString&) OVERRIDE;
-    virtual InsertionNotificationRequest insertedInto(ContainerNode&) OVERRIDE;
-    virtual void childrenChanged(const ChildChange&) OVERRIDE;
+    virtual void parseAttribute(const QualifiedName&, const AtomicString&) override;
+    virtual InsertionNotificationRequest insertedInto(ContainerNode&) override;
+    virtual void childrenChanged(const ChildChange&) override;
 
     virtual void svgAttributeChanged(const QualifiedName&);
-    virtual bool isURLAttribute(const Attribute&) const OVERRIDE;
+    virtual bool isURLAttribute(const Attribute&) const override;
     virtual void finishParsingChildren();
 
     virtual void addSubresourceAttributeURLs(ListHashSet<URL>&) const;
@@ -71,13 +71,13 @@ private:
     virtual void dispatchLoadEvent() { SVGExternalResourcesRequired::dispatchLoadEvent(this); }
 
     virtual PassRefPtr<Element> cloneElementWithoutAttributesAndChildren();
-    virtual bool rendererIsNeeded(const RenderStyle&) OVERRIDE { return false; }
+    virtual bool rendererIsNeeded(const RenderStyle&) override { return false; }
 
     // SVGExternalResourcesRequired
     virtual void setHaveFiredLoadEvent(bool haveFiredLoadEvent) { ScriptElement::setHaveFiredLoadEvent(haveFiredLoadEvent); }
     virtual bool isParserInserted() const { return ScriptElement::isParserInserted(); }
     virtual bool haveFiredLoadEvent() const { return ScriptElement::haveFiredLoadEvent(); }
-    virtual Timer<SVGElement>* svgLoadEventTimer() OVERRIDE { return &m_svgLoadEventTimer; }
+    virtual Timer<SVGElement>* svgLoadEventTimer() override { return &m_svgLoadEventTimer; }
 
     BEGIN_DECLARE_ANIMATED_PROPERTIES(SVGScriptElement)
         DECLARE_ANIMATED_STRING(Href, href)

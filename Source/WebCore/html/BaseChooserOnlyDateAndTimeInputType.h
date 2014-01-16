@@ -44,19 +44,19 @@ private:
     void closeDateTimeChooser();
 
     // InputType functions:
-    virtual void createShadowSubtree() OVERRIDE;
-    virtual void detach() OVERRIDE;
-    virtual void setValue(const String&, bool valueChanged, TextFieldEventBehavior) OVERRIDE;
-    virtual void handleDOMActivateEvent(Event*) OVERRIDE;
-    virtual void handleKeydownEvent(KeyboardEvent*) OVERRIDE;
-    virtual void handleKeypressEvent(KeyboardEvent*) OVERRIDE;
-    virtual void handleKeyupEvent(KeyboardEvent*) OVERRIDE;
-    virtual void accessKeyAction(bool sendMouseEvents) OVERRIDE;
-    virtual bool isMouseFocusable() const OVERRIDE;
+    virtual void createShadowSubtree() override;
+    virtual void detach() override;
+    virtual void setValue(const String&, bool valueChanged, TextFieldEventBehavior) override;
+    virtual void handleDOMActivateEvent(Event*) override;
+    virtual void handleKeydownEvent(KeyboardEvent*) override;
+    virtual void handleKeypressEvent(KeyboardEvent*) override;
+    virtual void handleKeyupEvent(KeyboardEvent*) override;
+    virtual void accessKeyAction(bool sendMouseEvents) override;
+    virtual bool isMouseFocusable() const override;
 
     // DateTimeChooserClient functions:
-    virtual void didChooseValue(const String&) OVERRIDE;
-    virtual void didEndChooser() OVERRIDE;
+    virtual void didChooseValue(const String&) override;
+    virtual void didEndChooser() override;
 
     RefPtr<DateTimeChooser> m_dateTimeChooser;
 };

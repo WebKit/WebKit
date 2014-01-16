@@ -1,3 +1,16 @@
+2014-01-16  Peter Molnar  <pmolnar.u-szeged@partner.samsung.com>
+
+        Remove workaround for compilers not supporting explicit override control
+        https://bugs.webkit.org/show_bug.cgi?id=127111
+
+        Reviewed by Anders Carlsson.
+
+        Now all compilers support explicit override control, this workaround can be removed.
+
+        * WebCoreSupport/EditorClientGtk.h:
+        * WebCoreSupport/InspectorClientGtk.h:
+        * WebCoreSupport/ProgressTrackerClientGtk.h:
+
 2014-01-15  Zan Dobersek  <zdobersek@igalia.com>
 
         [GTK][WK1] Add ProgressTrackerClient implementation

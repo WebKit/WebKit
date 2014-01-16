@@ -40,12 +40,12 @@ private:
 
     virtual bool isValid() const { return SVGTests::isValid(); }
     bool isSupportedAttribute(const QualifiedName&);
-    virtual void parseAttribute(const QualifiedName&, const AtomicString&) OVERRIDE;
+    virtual void parseAttribute(const QualifiedName&, const AtomicString&) override;
     virtual void svgAttributeChanged(const QualifiedName&);
 
-    virtual bool rendererIsNeeded(const RenderStyle&) OVERRIDE;
-    virtual bool childShouldCreateRenderer(const Node&) const OVERRIDE;
-    virtual RenderPtr<RenderElement> createElementRenderer(PassRef<RenderStyle>) OVERRIDE;
+    virtual bool rendererIsNeeded(const RenderStyle&) override;
+    virtual bool childShouldCreateRenderer(const Node&) const override;
+    virtual RenderPtr<RenderElement> createElementRenderer(PassRef<RenderStyle>) override;
 
     virtual bool selfHasRelativeLengths() const;
 

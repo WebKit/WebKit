@@ -44,12 +44,12 @@ public:
     const RemoteLayerTreeHost& remoteLayerTreeHost() const { return m_remoteLayerTreeHost; }
     
 private:
-    virtual void sizeDidChange() OVERRIDE;
-    virtual void deviceScaleFactorDidChange() OVERRIDE;
-    virtual void didUpdateGeometry() OVERRIDE;
+    virtual void sizeDidChange() override;
+    virtual void deviceScaleFactorDidChange() override;
+    virtual void didUpdateGeometry() override;
 
     // IPC::MessageReceiver
-    virtual void didReceiveMessage(IPC::Connection*, IPC::MessageDecoder&) OVERRIDE;
+    virtual void didReceiveMessage(IPC::Connection*, IPC::MessageDecoder&) override;
 
     // Message handlers
     void commitLayerTree(const RemoteLayerTreeTransaction&, const RemoteScrollingCoordinatorTransaction&);

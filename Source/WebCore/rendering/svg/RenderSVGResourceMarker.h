@@ -53,8 +53,8 @@ public:
     virtual const AffineTransform& localToParentTransform() const;
     AffineTransform markerTransformation(const FloatPoint& origin, float angle, float strokeWidth) const;
 
-    virtual bool applyResource(RenderElement&, const RenderStyle&, GraphicsContext*&, unsigned short) OVERRIDE { return false; }
-    virtual FloatRect resourceBoundingBox(const RenderObject&) OVERRIDE { return FloatRect(); }
+    virtual bool applyResource(RenderElement&, const RenderStyle&, GraphicsContext*&, unsigned short) override { return false; }
+    virtual FloatRect resourceBoundingBox(const RenderObject&) override { return FloatRect(); }
 
     FloatPoint referencePoint() const;
     float angle() const;
@@ -66,7 +66,7 @@ public:
 private:
     void element() const WTF_DELETED_FUNCTION;
 
-    virtual const char* renderName() const OVERRIDE { return "RenderSVGResourceMarker"; }
+    virtual const char* renderName() const override { return "RenderSVGResourceMarker"; }
 
     // Generates a transformation matrix usable to render marker content. Handles scaling the marker content
     // acording to SVGs markerUnits="strokeWidth" concept, when a strokeWidth value != -1 is passed in.

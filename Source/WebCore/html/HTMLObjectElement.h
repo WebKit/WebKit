@@ -54,9 +54,9 @@ public:
 
     // Implementations of constraint validation API.
     // Note that the object elements are always barred from constraint validation.
-    virtual String validationMessage() const OVERRIDE { return String(); }
+    virtual String validationMessage() const override { return String(); }
     bool checkValidity() { return true; }
-    virtual void setCustomValidity(const String&) OVERRIDE { }
+    virtual void setCustomValidity(const String&) override { }
 
     using Node::ref;
     using Node::deref;
@@ -68,19 +68,19 @@ public:
 private:
     HTMLObjectElement(const QualifiedName&, Document&, HTMLFormElement*, bool createdByParser);
 
-    virtual void parseAttribute(const QualifiedName&, const AtomicString&) OVERRIDE;
-    virtual bool isPresentationAttribute(const QualifiedName&) const OVERRIDE;
-    virtual void collectStyleForPresentationAttribute(const QualifiedName&, const AtomicString&, MutableStyleProperties&) OVERRIDE;
+    virtual void parseAttribute(const QualifiedName&, const AtomicString&) override;
+    virtual bool isPresentationAttribute(const QualifiedName&) const override;
+    virtual void collectStyleForPresentationAttribute(const QualifiedName&, const AtomicString&, MutableStyleProperties&) override;
 
-    virtual InsertionNotificationRequest insertedInto(ContainerNode&) OVERRIDE;
-    virtual void removedFrom(ContainerNode&) OVERRIDE;
+    virtual InsertionNotificationRequest insertedInto(ContainerNode&) override;
+    virtual void removedFrom(ContainerNode&) override;
 
-    virtual void didMoveToNewDocument(Document* oldDocument) OVERRIDE;
+    virtual void didMoveToNewDocument(Document* oldDocument) override;
 
-    virtual void childrenChanged(const ChildChange&) OVERRIDE;
+    virtual void childrenChanged(const ChildChange&) override;
 
-    virtual bool isURLAttribute(const Attribute&) const OVERRIDE;
-    virtual const AtomicString& imageSourceURL() const OVERRIDE;
+    virtual bool isURLAttribute(const Attribute&) const override;
+    virtual const AtomicString& imageSourceURL() const override;
 
     virtual RenderWidget* renderWidgetForJSBindings() const;
 
@@ -100,9 +100,9 @@ private:
     virtual void derefFormAssociatedElement() { deref(); }
     virtual HTMLFormElement* virtualForm() const;
 
-    virtual FormNamedItem* asFormNamedItem() OVERRIDE FINAL { return this; }
-    virtual HTMLObjectElement& asHTMLElement() OVERRIDE FINAL { return *this; }
-    virtual const HTMLObjectElement& asHTMLElement() const OVERRIDE FINAL { return *this; }
+    virtual FormNamedItem* asFormNamedItem() override FINAL { return this; }
+    virtual HTMLObjectElement& asHTMLElement() override FINAL { return *this; }
+    virtual const HTMLObjectElement& asHTMLElement() const override FINAL { return *this; }
 
     String m_classId;
     bool m_docNamedItem : 1;

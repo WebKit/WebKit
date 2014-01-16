@@ -49,32 +49,32 @@ public:
     }
     virtual ~StyleCachedImageSet();
 
-    virtual CachedImage* cachedImage() const OVERRIDE { return m_bestFitImage.get(); }
+    virtual CachedImage* cachedImage() const override { return m_bestFitImage.get(); }
 
     void clearImageSetValue() { m_imageSetValue = nullptr; }
 
 private:
-    virtual PassRefPtr<CSSValue> cssValue() const OVERRIDE;
+    virtual PassRefPtr<CSSValue> cssValue() const override;
 
     // FIXME: This is used by StyleImage for equality comparison, but this implementation
     // only looks at the image from the set that we have loaded. I'm not sure if that is
     // meaningful enough or not.
-    virtual WrappedImagePtr data() const OVERRIDE { return m_bestFitImage.get(); }
+    virtual WrappedImagePtr data() const override { return m_bestFitImage.get(); }
 
-    virtual bool canRender(const RenderObject*, float multiplier) const OVERRIDE;
-    virtual bool isLoaded() const OVERRIDE;
-    virtual bool errorOccurred() const OVERRIDE;
-    virtual LayoutSize imageSize(const RenderElement*, float multiplier) const OVERRIDE;
-    virtual bool imageHasRelativeWidth() const OVERRIDE;
-    virtual bool imageHasRelativeHeight() const OVERRIDE;
-    virtual void computeIntrinsicDimensions(const RenderElement*, Length& intrinsicWidth, Length& intrinsicHeight, FloatSize& intrinsicRatio) OVERRIDE;
-    virtual bool usesImageContainerSize() const OVERRIDE;
-    virtual void setContainerSizeForRenderer(const RenderElement*, const IntSize&, float) OVERRIDE;
-    virtual void addClient(RenderElement*) OVERRIDE;
-    virtual void removeClient(RenderElement*) OVERRIDE;
-    virtual PassRefPtr<Image> image(RenderElement*, const IntSize&) const OVERRIDE;
-    virtual float imageScaleFactor() const OVERRIDE { return m_imageScaleFactor; }
-    virtual bool knownToBeOpaque(const RenderElement*) const OVERRIDE;
+    virtual bool canRender(const RenderObject*, float multiplier) const override;
+    virtual bool isLoaded() const override;
+    virtual bool errorOccurred() const override;
+    virtual LayoutSize imageSize(const RenderElement*, float multiplier) const override;
+    virtual bool imageHasRelativeWidth() const override;
+    virtual bool imageHasRelativeHeight() const override;
+    virtual void computeIntrinsicDimensions(const RenderElement*, Length& intrinsicWidth, Length& intrinsicHeight, FloatSize& intrinsicRatio) override;
+    virtual bool usesImageContainerSize() const override;
+    virtual void setContainerSizeForRenderer(const RenderElement*, const IntSize&, float) override;
+    virtual void addClient(RenderElement*) override;
+    virtual void removeClient(RenderElement*) override;
+    virtual PassRefPtr<Image> image(RenderElement*, const IntSize&) const override;
+    virtual float imageScaleFactor() const override { return m_imageScaleFactor; }
+    virtual bool knownToBeOpaque(const RenderElement*) const override;
 
     StyleCachedImageSet(CachedImage*, float imageScaleFactor, CSSImageSetValue*);
 

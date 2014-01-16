@@ -369,7 +369,7 @@ public:
     }
 
     virtual ~WorkerGlobalScopeDidInitializeTask() { }
-    virtual void performTask(ScriptExecutionContext* context) OVERRIDE
+    virtual void performTask(ScriptExecutionContext* context) override
     {
         ASSERT_UNUSED(context, context->isWorkerGlobalScope());
         if (m_workerClientWrapper->failedWebSocketChannelCreation()) {
@@ -380,7 +380,7 @@ public:
         } else
             m_workerClientWrapper->didCreateWebSocketChannel(m_peer);
     }
-    virtual bool isCleanupTask() const OVERRIDE { return true; }
+    virtual bool isCleanupTask() const override { return true; }
 
 private:
     WorkerGlobalScopeDidInitializeTask(WorkerThreadableWebSocketChannel::Peer* peer,

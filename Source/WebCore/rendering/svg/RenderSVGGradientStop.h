@@ -43,18 +43,18 @@ public:
     // This overrides are needed to prevent ASSERTs on <svg><stop /></svg>
     // RenderObject's default implementations ASSERT_NOT_REACHED()
     // https://bugs.webkit.org/show_bug.cgi?id=20400
-    virtual LayoutRect clippedOverflowRectForRepaint(const RenderLayerModelObject*) const OVERRIDE { return LayoutRect(); }
+    virtual LayoutRect clippedOverflowRectForRepaint(const RenderLayerModelObject*) const override { return LayoutRect(); }
     virtual FloatRect objectBoundingBox() const { return FloatRect(); }
     virtual FloatRect strokeBoundingBox() const { return FloatRect(); }
     virtual FloatRect repaintRectInLocalCoordinates() const { return FloatRect(); }
-    virtual bool nodeAtFloatPoint(const HitTestRequest&, HitTestResult&, const FloatPoint&, HitTestAction) OVERRIDE { return false; }
+    virtual bool nodeAtFloatPoint(const HitTestRequest&, HitTestResult&, const FloatPoint&, HitTestAction) override { return false; }
 
 protected:
     virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle);
 
 private:
-    virtual bool canHaveChildren() const OVERRIDE { return false; }
-    virtual void paint(PaintInfo&, const LayoutPoint&) OVERRIDE FINAL { }
+    virtual bool canHaveChildren() const override { return false; }
+    virtual void paint(PaintInfo&, const LayoutPoint&) override FINAL { }
 
     SVGGradientElement* gradientElement() const;
 };

@@ -50,8 +50,8 @@ public:
 private:
     HTMLTemplateElement(const QualifiedName&, Document&);
 
-    virtual PassRefPtr<Node> cloneNode(bool deep) OVERRIDE;
-    virtual void didMoveToNewDocument(Document* oldDocument) OVERRIDE;
+    virtual PassRefPtr<Node> cloneNode(bool deep) override;
+    virtual void didMoveToNewDocument(Document* oldDocument) override;
 
     mutable RefPtr<TemplateContentDocumentFragment> m_content;
 };

@@ -38,7 +38,7 @@ private:
 
     virtual bool isValid() const;
 
-    virtual RenderPtr<RenderElement> createElementRenderer(PassRef<RenderStyle>) OVERRIDE;
+    virtual RenderPtr<RenderElement> createElementRenderer(PassRef<RenderStyle>) override;
 
     BEGIN_DECLARE_ANIMATED_PROPERTIES(SVGDefsElement)
         DECLARE_ANIMATED_BOOLEAN(ExternalResourcesRequired, externalResourcesRequired)

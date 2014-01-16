@@ -179,20 +179,20 @@ class InspectorFrontendClientDummy : public InspectorFrontendClientLocal {
 public:
     InspectorFrontendClientDummy(InspectorController*, Page*);
     virtual ~InspectorFrontendClientDummy() { }
-    virtual void attachWindow(DockSide) OVERRIDE { }
-    virtual void detachWindow() OVERRIDE { }
+    virtual void attachWindow(DockSide) override { }
+    virtual void detachWindow() override { }
 
-    virtual String localizedStringsURL() OVERRIDE { return String(); }
+    virtual String localizedStringsURL() override { return String(); }
 
-    virtual void bringToFront() OVERRIDE { }
-    virtual void closeWindow() OVERRIDE { }
+    virtual void bringToFront() override { }
+    virtual void closeWindow() override { }
 
-    virtual void inspectedURLChanged(const String&) OVERRIDE { }
+    virtual void inspectedURLChanged(const String&) override { }
 
 protected:
-    virtual void setAttachedWindowHeight(unsigned) OVERRIDE { }
-    virtual void setAttachedWindowWidth(unsigned) OVERRIDE { }
-    virtual void setToolbarHeight(unsigned) OVERRIDE { }
+    virtual void setAttachedWindowHeight(unsigned) override { }
+    virtual void setAttachedWindowWidth(unsigned) override { }
+    virtual void setToolbarHeight(unsigned) override { }
 };
 
 InspectorFrontendClientDummy::InspectorFrontendClientDummy(InspectorController* controller, Page* page)
@@ -204,7 +204,7 @@ class InspectorFrontendChannelDummy : public InspectorFrontendChannel {
 public:
     explicit InspectorFrontendChannelDummy(Page*);
     virtual ~InspectorFrontendChannelDummy() { }
-    virtual bool sendMessageToFrontend(const String& message) OVERRIDE;
+    virtual bool sendMessageToFrontend(const String& message) override;
 
 private:
     Page* m_frontendPage;

@@ -42,33 +42,33 @@ private:
     PlatformStrategiesWinCE();
 
     // WebCore::PlatformStrategies
-    virtual WebCore::CookiesStrategy* createCookiesStrategy() OVERRIDE;
-    virtual WebCore::DatabaseStrategy* createDatabaseStrategy() OVERRIDE;
-    virtual WebCore::LoaderStrategy* createLoaderStrategy() OVERRIDE;
-    virtual WebCore::PasteboardStrategy* createPasteboardStrategy() OVERRIDE;
-    virtual WebCore::PluginStrategy* createPluginStrategy() OVERRIDE;
-    virtual WebCore::SharedWorkerStrategy* createSharedWorkerStrategy() OVERRIDE;
-    virtual WebCore::StorageStrategy* createStorageStrategy() OVERRIDE;
-    virtual WebCore::VisitedLinkStrategy* createVisitedLinkStrategy() OVERRIDE;
+    virtual WebCore::CookiesStrategy* createCookiesStrategy() override;
+    virtual WebCore::DatabaseStrategy* createDatabaseStrategy() override;
+    virtual WebCore::LoaderStrategy* createLoaderStrategy() override;
+    virtual WebCore::PasteboardStrategy* createPasteboardStrategy() override;
+    virtual WebCore::PluginStrategy* createPluginStrategy() override;
+    virtual WebCore::SharedWorkerStrategy* createSharedWorkerStrategy() override;
+    virtual WebCore::StorageStrategy* createStorageStrategy() override;
+    virtual WebCore::VisitedLinkStrategy* createVisitedLinkStrategy() override;
 
     // WebCore::CookiesStrategy
-    virtual String cookiesForDOM(const WebCore::NetworkStorageSession&, const WebCore::URL& firstParty, const WebCore::URL&) OVERRIDE;
-    virtual void setCookiesFromDOM(const WebCore::NetworkStorageSession&, const WebCore::URL& firstParty, const WebCore::URL&, const String&) OVERRIDE;
-    virtual bool cookiesEnabled(const WebCore::NetworkStorageSession&, const WebCore::URL& firstParty, const WebCore::URL&) OVERRIDE;
-    virtual String cookieRequestHeaderFieldValue(const WebCore::NetworkStorageSession&, const WebCore::URL& firstParty, const WebCore::URL&) OVERRIDE;
-    virtual bool getRawCookies(const WebCore::NetworkStorageSession&, const WebCore::URL& firstParty, const WebCore::URL&, Vector<WebCore::Cookie>&) OVERRIDE;
-    virtual void deleteCookie(const WebCore::NetworkStorageSession&, const WebCore::URL&, const String&) OVERRIDE;
+    virtual String cookiesForDOM(const WebCore::NetworkStorageSession&, const WebCore::URL& firstParty, const WebCore::URL&) override;
+    virtual void setCookiesFromDOM(const WebCore::NetworkStorageSession&, const WebCore::URL& firstParty, const WebCore::URL&, const String&) override;
+    virtual bool cookiesEnabled(const WebCore::NetworkStorageSession&, const WebCore::URL& firstParty, const WebCore::URL&) override;
+    virtual String cookieRequestHeaderFieldValue(const WebCore::NetworkStorageSession&, const WebCore::URL& firstParty, const WebCore::URL&) override;
+    virtual bool getRawCookies(const WebCore::NetworkStorageSession&, const WebCore::URL& firstParty, const WebCore::URL&, Vector<WebCore::Cookie>&) override;
+    virtual void deleteCookie(const WebCore::NetworkStorageSession&, const WebCore::URL&, const String&) override;
 
     // WebCore::DatabaseStrategy
     // - Using default implementation.
 
     // WebCore::PluginStrategy
-    virtual void refreshPlugins() OVERRIDE;
-    virtual void getPluginInfo(const WebCore::Page*, Vector<WebCore::PluginInfo>&) OVERRIDE;
+    virtual void refreshPlugins() override;
+    virtual void getPluginInfo(const WebCore::Page*, Vector<WebCore::PluginInfo>&) override;
 
     // WebCore::VisitedLinkStrategy
-    virtual bool isLinkVisited(WebCore::Page*, WebCore::LinkHash, const WebCore::URL&, const WTF::AtomicString&) OVERRIDE;
-    virtual void addVisitedLink(WebCore::Page*, WebCore::LinkHash) OVERRIDE;
+    virtual bool isLinkVisited(WebCore::Page*, WebCore::LinkHash, const WebCore::URL&, const WTF::AtomicString&) override;
+    virtual void addVisitedLink(WebCore::Page*, WebCore::LinkHash) override;
 };
 
 #endif // PlatformStrategiesWinCE_h

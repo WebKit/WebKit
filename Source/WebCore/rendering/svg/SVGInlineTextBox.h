@@ -48,7 +48,7 @@ public:
 
     void paintSelectionBackground(PaintInfo&);
     virtual void paint(PaintInfo&, const LayoutPoint&, LayoutUnit lineTop, LayoutUnit lineBottom);
-    virtual LayoutRect localSelectionRect(int startPosition, int endPosition) const OVERRIDE;
+    virtual LayoutRect localSelectionRect(int startPosition, int endPosition) const override;
 
     bool mapStartEndPositionsIntoFragmentCoordinates(const SVGTextFragment&, int& startPosition, int& endPosition) const;
 
@@ -58,7 +58,7 @@ public:
     Vector<SVGTextFragment>& textFragments() { return m_textFragments; }
     const Vector<SVGTextFragment>& textFragments() const { return m_textFragments; }
 
-    virtual void dirtyLineBoxes() OVERRIDE;
+    virtual void dirtyLineBoxes() override;
 
     bool startsNewTextChunk() const { return m_startsNewTextChunk; }
     void setStartsNewTextChunk(bool newTextChunk) { m_startsNewTextChunk = newTextChunk; }
@@ -67,7 +67,7 @@ public:
     FloatRect selectionRectForTextFragment(const SVGTextFragment&, int fragmentStartPosition, int fragmentEndPosition, RenderStyle*) const;
 
 private:
-    virtual bool isSVGInlineTextBox() const OVERRIDE { return true; }
+    virtual bool isSVGInlineTextBox() const override { return true; }
 
     TextRun constructTextRun(RenderStyle*, const SVGTextFragment&) const;
 
@@ -82,7 +82,7 @@ private:
     void paintTextWithShadows(GraphicsContext*, RenderStyle*, TextRun&, const SVGTextFragment&, int startPosition, int endPosition);
     void paintText(GraphicsContext*, RenderStyle*, RenderStyle* selectionStyle, const SVGTextFragment&, bool hasSelection, bool paintSelectedTextOnly);
 
-    virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, LayoutUnit lineTop, LayoutUnit lineBottom) OVERRIDE;
+    virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, LayoutUnit lineTop, LayoutUnit lineBottom) override;
 
 private:
     float m_logicalHeight;

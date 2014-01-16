@@ -39,8 +39,8 @@ class AccessibilityMenuListPopup : public AccessibilityMockObject {
 public:
     static PassRefPtr<AccessibilityMenuListPopup> create() { return adoptRef(new AccessibilityMenuListPopup); }
 
-    virtual bool isEnabled() const OVERRIDE;
-    virtual bool isOffScreen() const OVERRIDE;
+    virtual bool isEnabled() const override;
+    virtual bool isOffScreen() const override;
 
     void didUpdateActiveOption(int optionIndex);
 
@@ -48,16 +48,16 @@ public:
 private:
     AccessibilityMenuListPopup();
 
-    virtual bool isMenuListPopup() const OVERRIDE { return true; }
+    virtual bool isMenuListPopup() const override { return true; }
 
-    virtual LayoutRect elementRect() const OVERRIDE { return LayoutRect(); }
-    virtual AccessibilityRole roleValue() const OVERRIDE { return MenuListPopupRole; }
+    virtual LayoutRect elementRect() const override { return LayoutRect(); }
+    virtual AccessibilityRole roleValue() const override { return MenuListPopupRole; }
 
-    virtual bool isVisible() const OVERRIDE;
-    virtual bool press() const OVERRIDE;
-    virtual void addChildren() OVERRIDE;
-    virtual void childrenChanged() OVERRIDE;
-    virtual bool computeAccessibilityIsIgnored() const OVERRIDE;
+    virtual bool isVisible() const override;
+    virtual bool press() const override;
+    virtual void addChildren() override;
+    virtual void childrenChanged() override;
+    virtual bool computeAccessibilityIsIgnored() const override;
 
     AccessibilityMenuListOption* menuListOptionAccessibilityObject(HTMLElement*) const;
 };

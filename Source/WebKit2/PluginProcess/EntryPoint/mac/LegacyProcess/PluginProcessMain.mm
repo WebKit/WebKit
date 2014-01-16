@@ -92,7 +92,7 @@ public:
         return true;
     }
 
-    virtual void startRunLoop() OVERRIDE
+    virtual void startRunLoop() override
     {
         ASSERT(NSApp);
         [NSApp run];

@@ -71,8 +71,8 @@ private:
     ApplyStyleCommand(PassRefPtr<Element>, bool removeOnly, EditAction);
     ApplyStyleCommand(Document&, const EditingStyle*, bool (*isInlineElementToRemove)(const Element*), EditAction);
 
-    virtual void doApply() OVERRIDE;
-    virtual EditAction editingAction() const OVERRIDE;
+    virtual void doApply() override;
+    virtual EditAction editingAction() const override;
 
     // style-removal helpers
     bool isStyledInlineElementToRemove(Element*) const;

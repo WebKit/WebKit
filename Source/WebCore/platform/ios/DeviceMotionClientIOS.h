@@ -47,12 +47,12 @@ public:
         return adoptPtr(new DeviceMotionClientIOS());
     }
     DeviceMotionClientIOS();
-    virtual ~DeviceMotionClientIOS() OVERRIDE;
-    virtual void setController(DeviceMotionController*) OVERRIDE;
-    virtual void startUpdating() OVERRIDE;
-    virtual void stopUpdating() OVERRIDE;
-    virtual DeviceMotionData* lastMotion() const OVERRIDE;
-    virtual void deviceMotionControllerDestroyed() OVERRIDE;
+    virtual ~DeviceMotionClientIOS() override;
+    virtual void setController(DeviceMotionController*) override;
+    virtual void startUpdating() override;
+    virtual void stopUpdating() override;
+    virtual DeviceMotionData* lastMotion() const override;
+    virtual void deviceMotionControllerDestroyed() override;
 
     void motionChanged(double, double, double, double, double, double, double, double, double);
 

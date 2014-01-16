@@ -41,12 +41,12 @@ public:
 
     CommandLineAPIHost* commandLineAPIHost() const { return m_commandLineAPIHost.get(); }
 
-    virtual void disconnect() OVERRIDE;
+    virtual void disconnect() override;
 
     void discardInjectedScriptsFor(DOMWindow*);
 
 protected:
-    virtual void didCreateInjectedScript(Inspector::InjectedScript) OVERRIDE;
+    virtual void didCreateInjectedScript(Inspector::InjectedScript) override;
 
 private:
     RefPtr<CommandLineAPIHost> m_commandLineAPIHost;

@@ -50,7 +50,7 @@ private:
     {
     }
 
-    virtual bool isTemplateContent() const OVERRIDE { return true; }
+    virtual bool isTemplateContent() const override { return true; }
 
     const Element* m_host;
 };

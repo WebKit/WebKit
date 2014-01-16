@@ -42,11 +42,11 @@ public:
 
 private:
     void element() const WTF_DELETED_FUNCTION;
-    virtual bool requiresLayer() const OVERRIDE;
-    virtual bool isCanvas() const OVERRIDE { return true; }
-    virtual const char* renderName() const OVERRIDE { return "RenderHTMLCanvas"; }
-    virtual void paintReplaced(PaintInfo&, const LayoutPoint&) OVERRIDE;
-    virtual void intrinsicSizeChanged() OVERRIDE { canvasSizeChanged(); }
+    virtual bool requiresLayer() const override;
+    virtual bool isCanvas() const override { return true; }
+    virtual const char* renderName() const override { return "RenderHTMLCanvas"; }
+    virtual void paintReplaced(PaintInfo&, const LayoutPoint&) override;
+    virtual void intrinsicSizeChanged() override { canvasSizeChanged(); }
 };
 
 RENDER_OBJECT_TYPE_CASTS(RenderHTMLCanvas, isCanvas())

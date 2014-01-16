@@ -54,8 +54,8 @@ public:
 
     static PassRef<RenderStyle> createStyle(const RenderStyle& parentStyle);
 
-    virtual bool isRenderNamedFlowFragment() const OVERRIDE FINAL { return true; }
-    virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle) OVERRIDE;
+    virtual bool isRenderNamedFlowFragment() const override FINAL { return true; }
+    virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle) override;
 
     virtual LayoutUnit pageLogicalHeight() const;
     LayoutUnit maxPageLogicalHeight() const;
@@ -76,11 +76,11 @@ public:
     void setRegionObjectsRegionStyle();
     void restoreRegionObjectsOriginalStyle();
     
-    virtual LayoutRect visualOverflowRect() const OVERRIDE;
+    virtual LayoutRect visualOverflowRect() const override;
 
     RenderNamedFlowThread* namedFlowThread() const;
 
-    virtual bool hasAutoLogicalHeight() const OVERRIDE { return m_hasAutoLogicalHeight; }
+    virtual bool hasAutoLogicalHeight() const override { return m_hasAutoLogicalHeight; }
 
     LayoutUnit computedAutoHeight() const { return m_computedAutoHeight; }
 
@@ -98,17 +98,17 @@ public:
 
     bool hasComputedAutoHeight() const { return m_hasComputedAutoHeight; }
 
-    virtual void attachRegion() OVERRIDE;
-    virtual void detachRegion() OVERRIDE;
+    virtual void attachRegion() override;
+    virtual void detachRegion() override;
 
-    virtual void updateLogicalHeight() OVERRIDE;
+    virtual void updateLogicalHeight() override;
 
 // FIXME: Temporarily public until we move all the CSSRegions functionality from RenderRegion to here.
 public:
     void checkRegionStyle();
 
 private:
-    virtual const char* renderName() const OVERRIDE { return "RenderNamedFlowFragment"; }
+    virtual const char* renderName() const override { return "RenderNamedFlowFragment"; }
 
     PassRefPtr<RenderStyle> computeStyleInRegion(const RenderObject*);
     void computeChildrenStyleInRegion(const RenderElement*);
@@ -121,7 +121,7 @@ private:
 
     bool shouldHaveAutoLogicalHeight() const;
 
-    virtual void layoutBlock(bool relayoutChildren, LayoutUnit pageLogicalHeight = 0) OVERRIDE;
+    virtual void layoutBlock(bool relayoutChildren, LayoutUnit pageLogicalHeight = 0) override;
 
     struct ObjectRegionStyleInfo {
         // Used to store the original style of the object in region

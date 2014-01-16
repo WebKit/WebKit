@@ -101,13 +101,13 @@ public:
     void setNeedsLayout(bool value) { m_needsLayout = value; }
     bool needsLayout() { return m_needsLayout; }
 
-    virtual bool lineOverlapsShapeBounds() const OVERRIDE
+    virtual bool lineOverlapsShapeBounds() const override
     {
         return computedShape().lineOverlapsShapePaddingBounds(m_shapeLineTop, m_lineHeight);
     }
 
 protected:
-    virtual LayoutBox resolvedLayoutBox() const OVERRIDE
+    virtual LayoutBox resolvedLayoutBox() const override
     {
         if (shapeValue()->layoutBox() == BoxMissing)
             return ContentBox;
@@ -116,9 +116,9 @@ protected:
     }
 
 private:
-    virtual LayoutRect computedShapeLogicalBoundingBox() const OVERRIDE { return computedShape().shapePaddingLogicalBoundingBox(); }
-    virtual ShapeValue* shapeValue() const OVERRIDE;
-    virtual void getIntervals(LayoutUnit lineTop, LayoutUnit lineHeight, SegmentList& segments) const OVERRIDE
+    virtual LayoutRect computedShapeLogicalBoundingBox() const override { return computedShape().shapePaddingLogicalBoundingBox(); }
+    virtual ShapeValue* shapeValue() const override;
+    virtual void getIntervals(LayoutUnit lineTop, LayoutUnit lineHeight, SegmentList& segments) const override
     {
         return computedShape().getIncludedIntervals(lineTop, lineHeight, segments);
     }

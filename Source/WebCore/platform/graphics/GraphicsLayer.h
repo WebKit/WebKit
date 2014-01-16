@@ -104,7 +104,7 @@ public:
         return adoptPtr(new FloatAnimationValue(keyTime, value, timingFunction));
     }
 
-    virtual PassOwnPtr<AnimationValue> clone() const OVERRIDE
+    virtual PassOwnPtr<AnimationValue> clone() const override
     {
         return adoptPtr(new FloatAnimationValue(*this));
     }
@@ -130,7 +130,7 @@ public:
         return adoptPtr(new TransformAnimationValue(keyTime, value, timingFunction));
     }
 
-    virtual PassOwnPtr<AnimationValue> clone() const OVERRIDE
+    virtual PassOwnPtr<AnimationValue> clone() const override
     {
         return adoptPtr(new TransformAnimationValue(*this));
     }
@@ -157,7 +157,7 @@ public:
         return adoptPtr(new FilterAnimationValue(keyTime, value, timingFunction));
     }
 
-    virtual PassOwnPtr<AnimationValue> clone() const OVERRIDE
+    virtual PassOwnPtr<AnimationValue> clone() const override
     {
         return adoptPtr(new FilterAnimationValue(*this));
     }

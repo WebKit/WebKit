@@ -47,11 +47,11 @@ public:
 private:
     AccessibilitySpinButton();
 
-    virtual AccessibilityRole roleValue() const OVERRIDE { return SpinButtonRole; }
-    virtual bool isSpinButton() const OVERRIDE { return true; }
-    virtual bool isNativeSpinButton() const OVERRIDE { return true; }
-    virtual void addChildren() OVERRIDE;
-    virtual LayoutRect elementRect() const OVERRIDE;
+    virtual AccessibilityRole roleValue() const override { return SpinButtonRole; }
+    virtual bool isSpinButton() const override { return true; }
+    virtual bool isNativeSpinButton() const override { return true; }
+    virtual void addChildren() override;
+    virtual LayoutRect elementRect() const override;
     
     SpinButtonElement* m_spinButtonElement;
 }; 
@@ -68,10 +68,10 @@ private:
     AccessibilitySpinButtonPart();
     bool m_isIncrementor : 1;
     
-    virtual bool press() const OVERRIDE;
-    virtual AccessibilityRole roleValue() const OVERRIDE { return ButtonRole; }
-    virtual bool isSpinButtonPart() const OVERRIDE { return true; }
-    virtual LayoutRect elementRect() const OVERRIDE;
+    virtual bool press() const override;
+    virtual AccessibilityRole roleValue() const override { return ButtonRole; }
+    virtual bool isSpinButtonPart() const override { return true; }
+    virtual LayoutRect elementRect() const override;
 };
 
 ACCESSIBILITY_OBJECT_TYPE_CASTS(AccessibilitySpinButton, isNativeSpinButton())

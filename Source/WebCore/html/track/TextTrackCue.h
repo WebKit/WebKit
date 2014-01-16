@@ -64,7 +64,7 @@ public:
 protected:
     TextTrackCueBox(Document&, TextTrackCue*);
 
-    virtual RenderPtr<RenderElement> createElementRenderer(PassRef<RenderStyle>) OVERRIDE;
+    virtual RenderPtr<RenderElement> createElementRenderer(PassRef<RenderStyle>) override;
 
     TextTrackCue* m_cue;
 };
@@ -132,7 +132,7 @@ public:
     PassRefPtr<DocumentFragment> createCueRenderingTree();
 
     using EventTarget::dispatchEvent;
-    virtual bool dispatchEvent(PassRefPtr<Event>) OVERRIDE;
+    virtual bool dispatchEvent(PassRefPtr<Event>) override;
 
 #if ENABLE(WEBVTT_REGIONS)
     const String& regionId() const { return m_regionId; }
@@ -153,8 +153,8 @@ public:
     int calculateComputedLinePosition();
     std::pair<double, double> getPositionCoordinates() const;
 
-    virtual EventTargetInterface eventTargetInterface() const OVERRIDE FINAL { return TextTrackCueEventTargetInterfaceType; }
-    virtual ScriptExecutionContext* scriptExecutionContext() const OVERRIDE FINAL { return &m_scriptExecutionContext; }
+    virtual EventTargetInterface eventTargetInterface() const override FINAL { return TextTrackCueEventTargetInterfaceType; }
+    virtual ScriptExecutionContext* scriptExecutionContext() const override FINAL { return &m_scriptExecutionContext; }
 
     std::pair<double, double> getCSSPosition() const;
 
@@ -219,8 +219,8 @@ private:
     void determineTextDirection();
     void calculateDisplayParameters();
 
-    virtual void refEventTarget() OVERRIDE FINAL { ref(); }
-    virtual void derefEventTarget() OVERRIDE FINAL { deref(); }
+    virtual void refEventTarget() override FINAL { ref(); }
+    virtual void derefEventTarget() override FINAL { deref(); }
 
     enum CueSetting {
         None,

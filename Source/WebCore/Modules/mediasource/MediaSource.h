@@ -67,15 +67,15 @@ public:
     void streamEndedWithError(const AtomicString& error, ExceptionCode&);
 
     // HTMLMediaSource
-    virtual bool attachToElement(HTMLMediaElement*) OVERRIDE;
-    virtual void setPrivateAndOpen(PassRef<MediaSourcePrivate>) OVERRIDE;
-    virtual void close() OVERRIDE;
-    virtual bool isClosed() const OVERRIDE;
-    virtual double duration() const OVERRIDE;
-    virtual PassRefPtr<TimeRanges> buffered() const OVERRIDE;
-    virtual void refHTMLMediaSource() OVERRIDE { ref(); }
-    virtual void derefHTMLMediaSource() OVERRIDE { deref(); }
-    virtual void monitorSourceBuffers() OVERRIDE;
+    virtual bool attachToElement(HTMLMediaElement*) override;
+    virtual void setPrivateAndOpen(PassRef<MediaSourcePrivate>) override;
+    virtual void close() override;
+    virtual bool isClosed() const override;
+    virtual double duration() const override;
+    virtual PassRefPtr<TimeRanges> buffered() const override;
+    virtual void refHTMLMediaSource() override { ref(); }
+    virtual void derefHTMLMediaSource() override { deref(); }
+    virtual void monitorSourceBuffers() override;
 
     void setDuration(double, ExceptionCode&);
     const AtomicString& readyState() const { return m_readyState; }
@@ -92,17 +92,17 @@ public:
     static bool isTypeSupported(const String& type);
 
     // ActiveDOMObject interface
-    virtual bool hasPendingActivity() const OVERRIDE;
-    virtual void stop() OVERRIDE;
+    virtual bool hasPendingActivity() const override;
+    virtual void stop() override;
 
     // EventTarget interface
-    virtual ScriptExecutionContext* scriptExecutionContext() const OVERRIDE FINAL;
-    virtual void refEventTarget() OVERRIDE FINAL { ref(); }
-    virtual void derefEventTarget() OVERRIDE FINAL { deref(); }
-    virtual EventTargetInterface eventTargetInterface() const OVERRIDE;
+    virtual ScriptExecutionContext* scriptExecutionContext() const override FINAL;
+    virtual void refEventTarget() override FINAL { ref(); }
+    virtual void derefEventTarget() override FINAL { deref(); }
+    virtual EventTargetInterface eventTargetInterface() const override;
 
     // URLRegistrable interface
-    virtual URLRegistry& registry() const OVERRIDE;
+    virtual URLRegistry& registry() const override;
 
     using RefCounted<MediaSource>::ref;
     using RefCounted<MediaSource>::deref;

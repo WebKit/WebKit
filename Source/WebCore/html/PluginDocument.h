@@ -53,7 +53,7 @@ public:
 private:
     PluginDocument(Frame*, const URL&);
 
-    virtual PassRefPtr<DocumentParser> createParser() OVERRIDE;
+    virtual PassRefPtr<DocumentParser> createParser() override;
 
     void setShouldLoadPluginManually(bool loadManually) { m_shouldLoadPluginManually = loadManually; }
 

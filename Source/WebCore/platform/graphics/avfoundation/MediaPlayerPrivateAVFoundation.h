@@ -144,49 +144,49 @@ protected:
     WeakPtr<MediaPlayerPrivateAVFoundation> createWeakPtr() { return m_weakPtrFactory.createWeakPtr(); }
 
     // MediaPlayerPrivatePrivateInterface overrides.
-    virtual void load(const String& url) OVERRIDE;
+    virtual void load(const String& url) override;
 #if ENABLE(MEDIA_SOURCE)
     virtual void load(const String&, PassRefPtr<HTMLMediaSource>);
 #endif
     virtual void cancelLoad() = 0;
 
-    virtual void prepareToPlay() OVERRIDE;
+    virtual void prepareToPlay() override;
     virtual PlatformMedia platformMedia() const = 0;
 
-    virtual void play() OVERRIDE;
-    virtual void pause() OVERRIDE;
+    virtual void play() override;
+    virtual void pause() override;
 
-    virtual IntSize naturalSize() const OVERRIDE;
-    virtual bool hasVideo() const OVERRIDE { return m_cachedHasVideo; }
-    virtual bool hasAudio() const OVERRIDE { return m_cachedHasAudio; }
-    virtual void setVisible(bool) OVERRIDE;
-    virtual float duration() const OVERRIDE;
+    virtual IntSize naturalSize() const override;
+    virtual bool hasVideo() const override { return m_cachedHasVideo; }
+    virtual bool hasAudio() const override { return m_cachedHasAudio; }
+    virtual void setVisible(bool) override;
+    virtual float duration() const override;
     virtual float currentTime() const = 0;
-    virtual void seek(float) OVERRIDE;
-    virtual void seekWithTolerance(double, double, double) OVERRIDE;
-    virtual bool seeking() const OVERRIDE;
-    virtual void setRate(float) OVERRIDE;
-    virtual bool paused() const OVERRIDE;
+    virtual void seek(float) override;
+    virtual void seekWithTolerance(double, double, double) override;
+    virtual bool seeking() const override;
+    virtual void setRate(float) override;
+    virtual bool paused() const override;
     virtual void setVolume(float) = 0;
-    virtual bool hasClosedCaptions() const OVERRIDE { return m_cachedHasCaptions; }
+    virtual bool hasClosedCaptions() const override { return m_cachedHasCaptions; }
     virtual void setClosedCaptionsVisible(bool) = 0;
-    virtual MediaPlayer::NetworkState networkState() const OVERRIDE { return m_networkState; }
-    virtual MediaPlayer::ReadyState readyState() const OVERRIDE { return m_readyState; }
-    virtual double maxTimeSeekableDouble() const OVERRIDE;
-    virtual double minTimeSeekable() const OVERRIDE;
-    virtual PassRefPtr<TimeRanges> buffered() const OVERRIDE;
-    virtual bool didLoadingProgress() const OVERRIDE;
-    virtual void setSize(const IntSize&) OVERRIDE;
+    virtual MediaPlayer::NetworkState networkState() const override { return m_networkState; }
+    virtual MediaPlayer::ReadyState readyState() const override { return m_readyState; }
+    virtual double maxTimeSeekableDouble() const override;
+    virtual double minTimeSeekable() const override;
+    virtual PassRefPtr<TimeRanges> buffered() const override;
+    virtual bool didLoadingProgress() const override;
+    virtual void setSize(const IntSize&) override;
     virtual void paint(GraphicsContext*, const IntRect&) = 0;
     virtual void paintCurrentFrameInContext(GraphicsContext*, const IntRect&) = 0;
-    virtual void setPreload(MediaPlayer::Preload) OVERRIDE;
+    virtual void setPreload(MediaPlayer::Preload) override;
 #if USE(ACCELERATED_COMPOSITING)
     virtual PlatformLayer* platformLayer() const { return 0; }
     virtual bool supportsAcceleratedRendering() const = 0;
-    virtual void acceleratedRenderingStateChanged() OVERRIDE;
+    virtual void acceleratedRenderingStateChanged() override;
 #endif
-    virtual bool shouldMaintainAspectRatio() const OVERRIDE { return m_shouldMaintainAspectRatio; }
-    virtual void setShouldMaintainAspectRatio(bool) OVERRIDE;
+    virtual bool shouldMaintainAspectRatio() const override { return m_shouldMaintainAspectRatio; }
+    virtual void setShouldMaintainAspectRatio(bool) override;
 
     virtual MediaPlayer::MovieLoadType movieLoadType() const;
     virtual void prepareForRendering();
@@ -289,9 +289,9 @@ protected:
 
     virtual String engineDescription() const { return "AVFoundation"; }
 
-    virtual size_t extraMemoryCost() const OVERRIDE;
+    virtual size_t extraMemoryCost() const override;
 
-    virtual void trackModeChanged() OVERRIDE;
+    virtual void trackModeChanged() override;
     void processNewAndRemovedTextTracks(const Vector<RefPtr<InbandTextTrackPrivateAVF>>&);
     void clearTextTracks();
     Vector<RefPtr<InbandTextTrackPrivateAVF>> m_textTracks;

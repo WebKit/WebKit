@@ -82,12 +82,12 @@ public:
     virtual void systemFont(CSSValueID, FontDescription&) const;
     virtual Color systemColor(CSSValueID) const;
 
-    virtual bool popsMenuBySpaceOrReturn() const OVERRIDE { return true; }
+    virtual bool popsMenuBySpaceOrReturn() const override { return true; }
 
 #if ENABLE(VIDEO)
     virtual String extraMediaControlsStyleSheet();
     virtual String formatMediaControlsCurrentTime(float currentTime, float duration) const;
-    virtual bool supportsClosedCaptioning() const OVERRIDE { return true; }
+    virtual bool supportsClosedCaptioning() const override { return true; }
 
 #if ENABLE(FULLSCREEN_API)
     virtual String extraFullScreenStyleSheet();
@@ -189,7 +189,7 @@ protected:
     virtual bool paintInnerSpinButton(RenderObject*, const PaintInfo&, const IntRect&);
 
 private:
-    virtual String fileListNameForWidth(const FileList*, const Font&, int width, bool multipleFilesAllowed) const OVERRIDE;
+    virtual String fileListNameForWidth(const FileList*, const Font&, int width, bool multipleFilesAllowed) const override;
 
     void platformInit();
     static void setTextInputBorders(RenderStyle*);

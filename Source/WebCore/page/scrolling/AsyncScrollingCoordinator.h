@@ -66,31 +66,31 @@ protected:
     PassRefPtr<ScrollingTree> releaseScrollingTree() { return m_scrollingTree.release(); }
 
 private:
-    virtual bool isAsyncScrollingCoordinator() const OVERRIDE { return true; }
+    virtual bool isAsyncScrollingCoordinator() const override { return true; }
 
-    virtual bool supportsFixedPositionLayers() const OVERRIDE { return true; }
-    virtual bool hasVisibleSlowRepaintViewportConstrainedObjects(FrameView*) const OVERRIDE { return false; }
+    virtual bool supportsFixedPositionLayers() const override { return true; }
+    virtual bool hasVisibleSlowRepaintViewportConstrainedObjects(FrameView*) const override { return false; }
 
-    virtual void frameViewLayoutUpdated(FrameView*) OVERRIDE;
-    virtual void frameViewRootLayerDidChange(FrameView*) OVERRIDE;
+    virtual void frameViewLayoutUpdated(FrameView*) override;
+    virtual void frameViewRootLayerDidChange(FrameView*) override;
 
-    virtual bool requestScrollPositionUpdate(FrameView*, const IntPoint&) OVERRIDE;
+    virtual bool requestScrollPositionUpdate(FrameView*, const IntPoint&) override;
 
-    virtual ScrollingNodeID attachToStateTree(ScrollingNodeType, ScrollingNodeID newNodeID, ScrollingNodeID parentID) OVERRIDE;
-    virtual void detachFromStateTree(ScrollingNodeID) OVERRIDE;
-    virtual void clearStateTree() OVERRIDE;
+    virtual ScrollingNodeID attachToStateTree(ScrollingNodeType, ScrollingNodeID newNodeID, ScrollingNodeID parentID) override;
+    virtual void detachFromStateTree(ScrollingNodeID) override;
+    virtual void clearStateTree() override;
 
-    virtual void updateViewportConstrainedNode(ScrollingNodeID, const ViewportConstraints&, GraphicsLayer*) OVERRIDE;
-    virtual void updateScrollingNode(ScrollingNodeID, GraphicsLayer* scrollLayer, GraphicsLayer* counterScrollingLayer) OVERRIDE;
-    virtual String scrollingStateTreeAsText() const OVERRIDE;
-    virtual bool isRubberBandInProgress() const OVERRIDE;
-    virtual void setScrollPinningBehavior(ScrollPinningBehavior) OVERRIDE;
+    virtual void updateViewportConstrainedNode(ScrollingNodeID, const ViewportConstraints&, GraphicsLayer*) override;
+    virtual void updateScrollingNode(ScrollingNodeID, GraphicsLayer* scrollLayer, GraphicsLayer* counterScrollingLayer) override;
+    virtual String scrollingStateTreeAsText() const override;
+    virtual bool isRubberBandInProgress() const override;
+    virtual void setScrollPinningBehavior(ScrollPinningBehavior) override;
 
-    virtual void syncChildPositions(const LayoutRect& viewportRect) OVERRIDE;
-    virtual void scrollableAreaScrollbarLayerDidChange(ScrollableArea*, ScrollbarOrientation) OVERRIDE;
+    virtual void syncChildPositions(const LayoutRect& viewportRect) override;
+    virtual void scrollableAreaScrollbarLayerDidChange(ScrollableArea*, ScrollbarOrientation) override;
 
-    virtual void recomputeWheelEventHandlerCountForFrameView(FrameView*) OVERRIDE;
-    virtual void setSynchronousScrollingReasons(SynchronousScrollingReasons) OVERRIDE;
+    virtual void recomputeWheelEventHandlerCountForFrameView(FrameView*) override;
+    virtual void setSynchronousScrollingReasons(SynchronousScrollingReasons) override;
 
     virtual void scheduleTreeStateCommit() = 0;
 

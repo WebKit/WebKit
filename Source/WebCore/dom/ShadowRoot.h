@@ -55,7 +55,7 @@ public:
 
     virtual ~ShadowRoot();
 
-    virtual bool applyAuthorStyles() const OVERRIDE { return m_applyAuthorStyles; }
+    virtual bool applyAuthorStyles() const override { return m_applyAuthorStyles; }
     void setApplyAuthorStyles(bool);
     bool resetStyleInheritance() const { return m_resetStyleInheritance; }
     void setResetStyleInheritance(bool);
@@ -75,17 +75,17 @@ public:
     ContentDistributor& distributor() { return m_distributor; }
     void invalidateDistribution() { m_distributor.invalidateDistribution(hostElement()); }
 
-    virtual void removeAllEventListeners() OVERRIDE;
+    virtual void removeAllEventListeners() override;
 
 private:
     ShadowRoot(Document&, ShadowRootType);
 
-    virtual void dropChildren() OVERRIDE;
-    virtual bool childTypeAllowed(NodeType) const OVERRIDE;
-    virtual void childrenChanged(const ChildChange&) OVERRIDE;
+    virtual void dropChildren() override;
+    virtual bool childTypeAllowed(NodeType) const override;
+    virtual void childrenChanged(const ChildChange&) override;
 
     // ShadowRoots should never be cloned.
-    virtual PassRefPtr<Node> cloneNode(bool) OVERRIDE { return 0; }
+    virtual PassRefPtr<Node> cloneNode(bool) override { return 0; }
 
     // FIXME: This shouldn't happen. https://bugs.webkit.org/show_bug.cgi?id=88834
     bool isOrphan() const { return !hostElement(); }

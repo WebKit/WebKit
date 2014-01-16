@@ -42,11 +42,11 @@ public:
 private:
     DeleteFromTextNodeCommand(PassRefPtr<Text>, unsigned offset, unsigned count);
 
-    virtual void doApply() OVERRIDE;
-    virtual void doUnapply() OVERRIDE;
+    virtual void doApply() override;
+    virtual void doUnapply() override;
     
 #ifndef NDEBUG
-    virtual void getNodesInCommand(HashSet<Node*>&) OVERRIDE;
+    virtual void getNodesInCommand(HashSet<Node*>&) override;
 #endif
     
     RefPtr<Text> m_node;

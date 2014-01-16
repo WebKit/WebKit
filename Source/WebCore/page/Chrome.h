@@ -69,26 +69,26 @@ public:
     ChromeClient& client() { return m_client; }
 
     // HostWindow methods.
-    virtual void invalidateRootView(const IntRect&, bool) OVERRIDE;
-    virtual void invalidateContentsAndRootView(const IntRect&, bool) OVERRIDE;
-    virtual void invalidateContentsForSlowScroll(const IntRect&, bool) OVERRIDE;
-    virtual void scroll(const IntSize&, const IntRect&, const IntRect&) OVERRIDE;
+    virtual void invalidateRootView(const IntRect&, bool) override;
+    virtual void invalidateContentsAndRootView(const IntRect&, bool) override;
+    virtual void invalidateContentsForSlowScroll(const IntRect&, bool) override;
+    virtual void scroll(const IntSize&, const IntRect&, const IntRect&) override;
 #if USE(TILED_BACKING_STORE)
-    virtual void delegatedScrollRequested(const IntPoint& scrollPoint) OVERRIDE;
+    virtual void delegatedScrollRequested(const IntPoint& scrollPoint) override;
 #endif
-    virtual IntPoint screenToRootView(const IntPoint&) const OVERRIDE;
-    virtual IntRect rootViewToScreen(const IntRect&) const OVERRIDE;
-    virtual PlatformPageClient platformPageClient() const OVERRIDE;
-    virtual void scrollbarsModeDidChange() const OVERRIDE;
-    virtual void setCursor(const Cursor&) OVERRIDE;
-    virtual void setCursorHiddenUntilMouseMoves(bool) OVERRIDE;
+    virtual IntPoint screenToRootView(const IntPoint&) const override;
+    virtual IntRect rootViewToScreen(const IntRect&) const override;
+    virtual PlatformPageClient platformPageClient() const override;
+    virtual void scrollbarsModeDidChange() const override;
+    virtual void setCursor(const Cursor&) override;
+    virtual void setCursorHiddenUntilMouseMoves(bool) override;
 
 #if ENABLE(REQUEST_ANIMATION_FRAME)
-    virtual void scheduleAnimation() OVERRIDE;
+    virtual void scheduleAnimation() override;
 #endif
 
-    virtual PlatformDisplayID displayID() const OVERRIDE;
-    virtual void windowScreenDidChange(PlatformDisplayID) OVERRIDE;
+    virtual PlatformDisplayID displayID() const override;
+    virtual void windowScreenDidChange(PlatformDisplayID) override;
 
     void scrollRectIntoView(const IntRect&) const;
 

@@ -53,20 +53,20 @@ public:
 
     virtual ~CInstance();
 
-    virtual Class *getClass() const OVERRIDE;
+    virtual Class *getClass() const override;
 
-    virtual JSValue valueOf(ExecState*) const OVERRIDE;
-    virtual JSValue defaultValue(ExecState*, PreferredPrimitiveType) const OVERRIDE;
+    virtual JSValue valueOf(ExecState*) const override;
+    virtual JSValue defaultValue(ExecState*, PreferredPrimitiveType) const override;
 
-    virtual JSValue getMethod(ExecState*, PropertyName) OVERRIDE;
-    virtual JSValue invokeMethod(ExecState*, RuntimeMethod*) OVERRIDE;
-    virtual bool supportsInvokeDefaultMethod() const OVERRIDE;
-    virtual JSValue invokeDefaultMethod(ExecState*) OVERRIDE;
+    virtual JSValue getMethod(ExecState*, PropertyName) override;
+    virtual JSValue invokeMethod(ExecState*, RuntimeMethod*) override;
+    virtual bool supportsInvokeDefaultMethod() const override;
+    virtual JSValue invokeDefaultMethod(ExecState*) override;
 
-    virtual bool supportsConstruct() const OVERRIDE;
-    virtual JSValue invokeConstruct(ExecState*, const ArgList&) OVERRIDE;
+    virtual bool supportsConstruct() const override;
+    virtual JSValue invokeConstruct(ExecState*, const ArgList&) override;
 
-    virtual void getPropertyNames(ExecState*, PropertyNameArray&) OVERRIDE;
+    virtual void getPropertyNames(ExecState*, PropertyNameArray&) override;
 
     JSValue stringValue(ExecState*) const;
     JSValue numberValue(ExecState*) const;
@@ -77,7 +77,7 @@ public:
 private:
     CInstance(NPObject*, PassRefPtr<RootObject>);
 
-    virtual RuntimeObject* newRuntimeObject(ExecState*) OVERRIDE;
+    virtual RuntimeObject* newRuntimeObject(ExecState*) override;
     bool toJSPrimitive(ExecState*, const char*, JSValue&) const;
 
 

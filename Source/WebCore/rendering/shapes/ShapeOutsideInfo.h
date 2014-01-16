@@ -55,13 +55,13 @@ public:
 
     void updateDeltasForContainingBlockLine(const RenderBlockFlow&, const FloatingObject&, LayoutUnit lineTop, LayoutUnit lineHeight);
 
-    virtual bool lineOverlapsShapeBounds() const OVERRIDE
+    virtual bool lineOverlapsShapeBounds() const override
     {
         return computedShape().lineOverlapsShapeMarginBounds(m_shapeLineTop, m_lineHeight);
     }
 
 protected:
-    virtual LayoutBox resolvedLayoutBox() const OVERRIDE
+    virtual LayoutBox resolvedLayoutBox() const override
     {
         if (shapeValue()->layoutBox() == BoxMissing) {
             if (shapeValue()->type() == ShapeValue::Image)
@@ -72,9 +72,9 @@ protected:
     }
 
 private:
-    virtual LayoutRect computedShapeLogicalBoundingBox() const OVERRIDE { return computedShape().shapeMarginLogicalBoundingBox(); }
-    virtual ShapeValue* shapeValue() const OVERRIDE;
-    virtual void getIntervals(LayoutUnit lineTop, LayoutUnit lineHeight, SegmentList& segments) const OVERRIDE
+    virtual LayoutRect computedShapeLogicalBoundingBox() const override { return computedShape().shapeMarginLogicalBoundingBox(); }
+    virtual ShapeValue* shapeValue() const override;
+    virtual void getIntervals(LayoutUnit lineTop, LayoutUnit lineHeight, SegmentList& segments) const override
     {
         return computedShape().getExcludedIntervals(lineTop, lineHeight, segments);
     }

@@ -41,7 +41,7 @@ public:
     bool canScroll() const;
 
     // Returns the line height of the inner renderer.
-    virtual int innerLineHeight() const OVERRIDE;
+    virtual int innerLineHeight() const override;
 #endif
 
 protected:
@@ -53,7 +53,7 @@ protected:
     int scrollbarThickness() const;
     void adjustInnerTextStyle(const RenderStyle* startStyle, RenderStyle* textBlockStyle) const;
 
-    virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle) OVERRIDE;
+    virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle) override;
 
     void hitInnerTextElement(HitTestResult&, const LayoutPoint& pointInContainer, const LayoutPoint& accumulatedOffset);
 
@@ -67,27 +67,27 @@ protected:
     virtual LayoutUnit preferredContentLogicalWidth(float charWidth) const = 0;
     virtual LayoutUnit computeControlLogicalHeight(LayoutUnit lineHeight, LayoutUnit nonContentHeight) const = 0;
 
-    virtual void updateFromElement() OVERRIDE;
-    virtual void computeLogicalHeight(LayoutUnit logicalHeight, LayoutUnit logicalTop, LogicalExtentComputedValues&) const OVERRIDE;
-    virtual RenderObject* layoutSpecialExcludedChild(bool relayoutChildren) OVERRIDE;
+    virtual void updateFromElement() override;
+    virtual void computeLogicalHeight(LayoutUnit logicalHeight, LayoutUnit logicalTop, LogicalExtentComputedValues&) const override;
+    virtual RenderObject* layoutSpecialExcludedChild(bool relayoutChildren) override;
 
 private:
     void element() const WTF_DELETED_FUNCTION;
 
-    virtual const char* renderName() const OVERRIDE { return "RenderTextControl"; }
-    virtual bool isTextControl() const OVERRIDE FINAL { return true; }
-    virtual void computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const OVERRIDE;
-    virtual void computePreferredLogicalWidths() OVERRIDE;
-    virtual void removeLeftoverAnonymousBlock(RenderBlock*) OVERRIDE { }
-    virtual bool avoidsFloats() const OVERRIDE { return true; }
-    virtual bool canHaveGeneratedChildren() const OVERRIDE { return false; }
-    virtual bool canBeReplacedWithInlineRunIn() const OVERRIDE;
+    virtual const char* renderName() const override { return "RenderTextControl"; }
+    virtual bool isTextControl() const override FINAL { return true; }
+    virtual void computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const override;
+    virtual void computePreferredLogicalWidths() override;
+    virtual void removeLeftoverAnonymousBlock(RenderBlock*) override { }
+    virtual bool avoidsFloats() const override { return true; }
+    virtual bool canHaveGeneratedChildren() const override { return false; }
+    virtual bool canBeReplacedWithInlineRunIn() const override;
     
-    virtual void addFocusRingRects(Vector<IntRect>&, const LayoutPoint& additionalOffset, const RenderLayerModelObject* paintContainer = 0) OVERRIDE;
+    virtual void addFocusRingRects(Vector<IntRect>&, const LayoutPoint& additionalOffset, const RenderLayerModelObject* paintContainer = 0) override;
 
-    virtual bool canBeProgramaticallyScrolled() const OVERRIDE { return true; }
+    virtual bool canBeProgramaticallyScrolled() const override { return true; }
 
-    virtual bool requiresForcedStyleRecalcPropagation() const OVERRIDE { return true; }
+    virtual bool requiresForcedStyleRecalcPropagation() const override { return true; }
 };
 
 RENDER_OBJECT_TYPE_CASTS(RenderTextControl, isTextControl())
@@ -103,12 +103,12 @@ public:
     { }
     virtual ~RenderTextControlInnerContainer() { }
 
-    virtual int baselinePosition(FontBaseline baseline, bool firstLine, LineDirectionMode direction, LinePositionMode position) const OVERRIDE
+    virtual int baselinePosition(FontBaseline baseline, bool firstLine, LineDirectionMode direction, LinePositionMode position) const override
     {
         return RenderBlock::baselinePosition(baseline, firstLine, direction, position);
     }
-    virtual int firstLineBaseline() const OVERRIDE { return RenderBlock::firstLineBaseline(); }
-    virtual int inlineBlockBaseline(LineDirectionMode direction) const OVERRIDE { return RenderBlock::inlineBlockBaseline(direction); }
+    virtual int firstLineBaseline() const override { return RenderBlock::firstLineBaseline(); }
+    virtual int inlineBlockBaseline(LineDirectionMode direction) const override { return RenderBlock::inlineBlockBaseline(direction); }
 
 };
 

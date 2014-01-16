@@ -102,12 +102,12 @@ private:
     typedef Vector<ScriptBreakpointAction> BreakpointActions;
     typedef HashMap<JSC::BreakpointID, BreakpointActions> BreakpointIDToActionsMap;
 
-    virtual void sourceParsed(JSC::ExecState*, JSC::SourceProvider*, int errorLine, const String& errorMsg) OVERRIDE FINAL;
-    virtual bool needPauseHandling(JSC::JSGlobalObject*) OVERRIDE FINAL;
-    virtual void handleBreakpointHit(const JSC::Breakpoint&) OVERRIDE FINAL;
-    virtual void handleExceptionInBreakpointCondition(JSC::ExecState*, JSC::JSValue exception) const OVERRIDE FINAL;
-    virtual void handlePause(JSC::Debugger::ReasonForPause, JSC::JSGlobalObject*) OVERRIDE FINAL;
-    virtual void notifyDoneProcessingDebuggerEvents() OVERRIDE FINAL;
+    virtual void sourceParsed(JSC::ExecState*, JSC::SourceProvider*, int errorLine, const String& errorMsg) override FINAL;
+    virtual bool needPauseHandling(JSC::JSGlobalObject*) override FINAL;
+    virtual void handleBreakpointHit(const JSC::Breakpoint&) override FINAL;
+    virtual void handleExceptionInBreakpointCondition(JSC::ExecState*, JSC::JSValue exception) const override FINAL;
+    virtual void handlePause(JSC::Debugger::ReasonForPause, JSC::JSGlobalObject*) override FINAL;
+    virtual void notifyDoneProcessingDebuggerEvents() override FINAL;
 
     void recompileAllJSFunctionsTimerFired(Timer<ScriptDebugServer>&);
 

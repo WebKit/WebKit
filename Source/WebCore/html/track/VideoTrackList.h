@@ -50,7 +50,7 @@ public:
     void append(PassRefPtr<VideoTrack>);
 
     // EventTarget
-    virtual EventTargetInterface eventTargetInterface() const OVERRIDE;
+    virtual EventTargetInterface eventTargetInterface() const override;
 
 private:
     VideoTrackList(HTMLMediaElement*, ScriptExecutionContext*);

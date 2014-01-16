@@ -44,18 +44,18 @@ public:
     static PassRefPtr<StorageNamespace> sessionStorageNamespace(Page*);
     virtual ~StorageNamespaceImpl();
 
-    virtual PassRefPtr<StorageArea> storageArea(PassRefPtr<SecurityOrigin>)  OVERRIDE;
-    virtual PassRefPtr<StorageNamespace> copy(Page* newPage) OVERRIDE;
-    virtual void close() OVERRIDE;
+    virtual PassRefPtr<StorageArea> storageArea(PassRefPtr<SecurityOrigin>)  override;
+    virtual PassRefPtr<StorageNamespace> copy(Page* newPage) override;
+    virtual void close() override;
 
     // Not removing the origin's StorageArea from m_storageAreaMap because
     // we're just deleting the underlying db file. If an item is added immediately
     // after file deletion, we want the same StorageArea to eventually trigger
     // a sync and for StorageAreaSync to recreate the backing db file.
-    virtual void clearOriginForDeletion(SecurityOrigin*) OVERRIDE;
-    virtual void clearAllOriginsForDeletion() OVERRIDE;
-    virtual void sync() OVERRIDE;
-    virtual void closeIdleLocalStorageDatabases() OVERRIDE;
+    virtual void clearOriginForDeletion(SecurityOrigin*) override;
+    virtual void clearAllOriginsForDeletion() override;
+    virtual void sync() override;
+    virtual void closeIdleLocalStorageDatabases() override;
 
 private:
     StorageNamespaceImpl(StorageType, const String& path, unsigned quota);

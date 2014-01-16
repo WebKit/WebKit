@@ -49,7 +49,7 @@ public:
     static PassRefPtr<LegacyWebArchive> createFromSelection(Frame*);
     static PassRefPtr<LegacyWebArchive> create(Range*);
 
-    virtual Type type() const OVERRIDE;
+    virtual Type type() const override;
 
     RetainPtr<CFDataRef> rawDataRepresentation();
 

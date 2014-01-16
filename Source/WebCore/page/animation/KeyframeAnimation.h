@@ -45,8 +45,8 @@ public:
         return adoptRef(new KeyframeAnimation(animation, renderer, index, compositeAnimation, unanimatedStyle));
     }
 
-    virtual void animate(CompositeAnimation*, RenderElement*, const RenderStyle* currentStyle, RenderStyle* targetStyle, RefPtr<RenderStyle>& animatedStyle) OVERRIDE;
-    virtual void getAnimatedStyle(RefPtr<RenderStyle>&) OVERRIDE;
+    virtual void animate(CompositeAnimation*, RenderElement*, const RenderStyle* currentStyle, RenderStyle* targetStyle, RefPtr<RenderStyle>& animatedStyle) override;
+    virtual void getAnimatedStyle(RefPtr<RenderStyle>&) override;
 
     const KeyframeList& keyframes() const { return m_keyframes; }
 
@@ -59,23 +59,23 @@ public:
     void setUnanimatedStyle(PassRefPtr<RenderStyle> style) { m_unanimatedStyle = style; }
     RenderStyle* unanimatedStyle() const { return m_unanimatedStyle.get(); }
 
-    virtual double timeToNextService() OVERRIDE;
+    virtual double timeToNextService() override;
 
 protected:
-    virtual void onAnimationStart(double elapsedTime) OVERRIDE;
-    virtual void onAnimationIteration(double elapsedTime) OVERRIDE;
-    virtual void onAnimationEnd(double elapsedTime) OVERRIDE;
-    virtual bool startAnimation(double timeOffset) OVERRIDE;
-    virtual void pauseAnimation(double timeOffset) OVERRIDE;
-    virtual void endAnimation() OVERRIDE;
+    virtual void onAnimationStart(double elapsedTime) override;
+    virtual void onAnimationIteration(double elapsedTime) override;
+    virtual void onAnimationEnd(double elapsedTime) override;
+    virtual bool startAnimation(double timeOffset) override;
+    virtual void pauseAnimation(double timeOffset) override;
+    virtual void endAnimation() override;
 
-    virtual void overrideAnimations() OVERRIDE;
-    virtual void resumeOverriddenAnimations() OVERRIDE;
+    virtual void overrideAnimations() override;
+    virtual void resumeOverriddenAnimations() override;
 
     bool shouldSendEventForListener(Document::ListenerType inListenerType) const;
     bool sendAnimationEvent(const AtomicString&, double elapsedTime);
 
-    virtual bool affectsProperty(CSSPropertyID) const OVERRIDE;
+    virtual bool affectsProperty(CSSPropertyID) const override;
 
     void validateTransformFunctionList();
 #if ENABLE(CSS_FILTERS)

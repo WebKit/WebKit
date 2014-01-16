@@ -44,107 +44,107 @@ public:
 
     ~PlatformCALayerMac();
 
-    virtual bool usesTiledBackingLayer() const OVERRIDE { return layerType() == LayerTypePageTiledBackingLayer || layerType() == LayerTypeTiledBackingLayer; }
+    virtual bool usesTiledBackingLayer() const override { return layerType() == LayerTypePageTiledBackingLayer || layerType() == LayerTypeTiledBackingLayer; }
 
-    virtual void setOwner(PlatformCALayerClient*) OVERRIDE;
+    virtual void setOwner(PlatformCALayerClient*) override;
 
-    virtual void setNeedsDisplay(const FloatRect* dirtyRect = 0) OVERRIDE;
+    virtual void setNeedsDisplay(const FloatRect* dirtyRect = 0) override;
 
-    virtual void setContentsChanged() OVERRIDE;
+    virtual void setContentsChanged() override;
 
-    virtual PlatformCALayer* superlayer() const OVERRIDE;
-    virtual void removeFromSuperlayer() OVERRIDE;
-    virtual void setSublayers(const PlatformCALayerList&) OVERRIDE;
-    virtual void removeAllSublayers() OVERRIDE;
-    virtual void appendSublayer(PlatformCALayer*) OVERRIDE;
-    virtual void insertSublayer(PlatformCALayer*, size_t index) OVERRIDE;
-    virtual void replaceSublayer(PlatformCALayer* reference, PlatformCALayer*) OVERRIDE;
-    virtual const PlatformCALayerList* customSublayers() const OVERRIDE { return m_customSublayers.get(); }
-    virtual void adoptSublayers(PlatformCALayer* source) OVERRIDE;
+    virtual PlatformCALayer* superlayer() const override;
+    virtual void removeFromSuperlayer() override;
+    virtual void setSublayers(const PlatformCALayerList&) override;
+    virtual void removeAllSublayers() override;
+    virtual void appendSublayer(PlatformCALayer*) override;
+    virtual void insertSublayer(PlatformCALayer*, size_t index) override;
+    virtual void replaceSublayer(PlatformCALayer* reference, PlatformCALayer*) override;
+    virtual const PlatformCALayerList* customSublayers() const override { return m_customSublayers.get(); }
+    virtual void adoptSublayers(PlatformCALayer* source) override;
 
-    virtual void addAnimationForKey(const String& key, PlatformCAAnimation*) OVERRIDE;
-    virtual void removeAnimationForKey(const String& key) OVERRIDE;
-    virtual PassRefPtr<PlatformCAAnimation> animationForKey(const String& key) OVERRIDE;
-    virtual void animationStarted(CFTimeInterval beginTime) OVERRIDE;
+    virtual void addAnimationForKey(const String& key, PlatformCAAnimation*) override;
+    virtual void removeAnimationForKey(const String& key) override;
+    virtual PassRefPtr<PlatformCAAnimation> animationForKey(const String& key) override;
+    virtual void animationStarted(CFTimeInterval beginTime) override;
 
-    virtual void setMask(PlatformCALayer*) OVERRIDE;
+    virtual void setMask(PlatformCALayer*) override;
 
-    virtual bool isOpaque() const OVERRIDE;
-    virtual void setOpaque(bool) OVERRIDE;
+    virtual bool isOpaque() const override;
+    virtual void setOpaque(bool) override;
 
-    virtual FloatRect bounds() const OVERRIDE;
-    virtual void setBounds(const FloatRect&) OVERRIDE;
+    virtual FloatRect bounds() const override;
+    virtual void setBounds(const FloatRect&) override;
 
-    virtual FloatPoint3D position() const OVERRIDE;
-    virtual void setPosition(const FloatPoint3D&) OVERRIDE;
+    virtual FloatPoint3D position() const override;
+    virtual void setPosition(const FloatPoint3D&) override;
 
-    virtual FloatPoint3D anchorPoint() const OVERRIDE;
-    virtual void setAnchorPoint(const FloatPoint3D&) OVERRIDE;
+    virtual FloatPoint3D anchorPoint() const override;
+    virtual void setAnchorPoint(const FloatPoint3D&) override;
 
-    virtual TransformationMatrix transform() const OVERRIDE;
-    virtual void setTransform(const TransformationMatrix&) OVERRIDE;
+    virtual TransformationMatrix transform() const override;
+    virtual void setTransform(const TransformationMatrix&) override;
 
-    virtual TransformationMatrix sublayerTransform() const OVERRIDE;
-    virtual void setSublayerTransform(const TransformationMatrix&) OVERRIDE;
+    virtual TransformationMatrix sublayerTransform() const override;
+    virtual void setSublayerTransform(const TransformationMatrix&) override;
 
-    virtual void setHidden(bool) OVERRIDE;
+    virtual void setHidden(bool) override;
 
-    virtual void setGeometryFlipped(bool) OVERRIDE;
+    virtual void setGeometryFlipped(bool) override;
 
-    virtual bool isDoubleSided() const OVERRIDE;
-    virtual void setDoubleSided(bool) OVERRIDE;
+    virtual bool isDoubleSided() const override;
+    virtual void setDoubleSided(bool) override;
 
-    virtual bool masksToBounds() const OVERRIDE;
-    virtual void setMasksToBounds(bool) OVERRIDE;
+    virtual bool masksToBounds() const override;
+    virtual void setMasksToBounds(bool) override;
 
-    virtual bool acceleratesDrawing() const OVERRIDE;
-    virtual void setAcceleratesDrawing(bool) OVERRIDE;
+    virtual bool acceleratesDrawing() const override;
+    virtual void setAcceleratesDrawing(bool) override;
 
-    virtual CFTypeRef contents() const OVERRIDE;
-    virtual void setContents(CFTypeRef) OVERRIDE;
+    virtual CFTypeRef contents() const override;
+    virtual void setContents(CFTypeRef) override;
 
-    virtual void setContentsRect(const FloatRect&) OVERRIDE;
+    virtual void setContentsRect(const FloatRect&) override;
 
-    virtual void setMinificationFilter(FilterType) OVERRIDE;
-    virtual void setMagnificationFilter(FilterType) OVERRIDE;
+    virtual void setMinificationFilter(FilterType) override;
+    virtual void setMagnificationFilter(FilterType) override;
 
-    virtual Color backgroundColor() const OVERRIDE;
-    virtual void setBackgroundColor(const Color&) OVERRIDE;
+    virtual Color backgroundColor() const override;
+    virtual void setBackgroundColor(const Color&) override;
 
-    virtual void setBorderWidth(float) OVERRIDE;
+    virtual void setBorderWidth(float) override;
 
-    virtual void setBorderColor(const Color&) OVERRIDE;
+    virtual void setBorderColor(const Color&) override;
 
-    virtual float opacity() const OVERRIDE;
-    virtual void setOpacity(float) OVERRIDE;
+    virtual float opacity() const override;
+    virtual void setOpacity(float) override;
 
 #if ENABLE(CSS_FILTERS)
-    virtual void setFilters(const FilterOperations&) OVERRIDE;
+    virtual void setFilters(const FilterOperations&) override;
     static bool filtersCanBeComposited(const FilterOperations&);
-    virtual void copyFiltersFrom(const PlatformCALayer*) OVERRIDE;
+    virtual void copyFiltersFrom(const PlatformCALayer*) override;
 #endif
 
-    virtual void setName(const String&) OVERRIDE;
+    virtual void setName(const String&) override;
 
-    virtual void setSpeed(float) OVERRIDE;
+    virtual void setSpeed(float) override;
 
-    virtual void setTimeOffset(CFTimeInterval) OVERRIDE;
+    virtual void setTimeOffset(CFTimeInterval) override;
 
-    virtual float contentsScale() const OVERRIDE;
-    virtual void setContentsScale(float) OVERRIDE;
+    virtual float contentsScale() const override;
+    virtual void setContentsScale(float) override;
 
-    virtual void setEdgeAntialiasingMask(unsigned) OVERRIDE;
+    virtual void setEdgeAntialiasingMask(unsigned) override;
 
-    virtual GraphicsLayer::CustomAppearance customAppearance() const OVERRIDE { return m_customAppearance; }
-    virtual void updateCustomAppearance(GraphicsLayer::CustomAppearance) OVERRIDE;
+    virtual GraphicsLayer::CustomAppearance customAppearance() const override { return m_customAppearance; }
+    virtual void updateCustomAppearance(GraphicsLayer::CustomAppearance) override;
 
-    virtual TiledBacking* tiledBacking() OVERRIDE;
+    virtual TiledBacking* tiledBacking() override;
 
-    virtual PassRefPtr<PlatformCALayer> clone(PlatformCALayerClient* owner) const OVERRIDE;
+    virtual PassRefPtr<PlatformCALayer> clone(PlatformCALayerClient* owner) const override;
 
-    virtual PassRefPtr<PlatformCALayer> createCompatibleLayer(PlatformCALayer::LayerType, PlatformCALayerClient*) const OVERRIDE;
+    virtual PassRefPtr<PlatformCALayer> createCompatibleLayer(PlatformCALayer::LayerType, PlatformCALayerClient*) const override;
 
-    virtual void enumerateRectsBeingDrawn(CGContextRef, void (^block)(CGRect)) OVERRIDE;
+    virtual void enumerateRectsBeingDrawn(CGContextRef, void (^block)(CGRect)) override;
 
 private:
     PlatformCALayerMac(LayerType, PlatformCALayerClient* owner);
@@ -152,7 +152,7 @@ private:
 
     void commonInit();
 
-    virtual bool isPlatformCALayerMac() const OVERRIDE { return true; }
+    virtual bool isPlatformCALayerMac() const override { return true; }
 
     bool requiresCustomAppearanceUpdateOnBoundsChange() const;
 

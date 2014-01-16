@@ -58,11 +58,11 @@ private:
     virtual void fired() = 0;
 
     // ActiveDOMObject
-    virtual bool hasPendingActivity() const FINAL OVERRIDE;
-    virtual void stop() FINAL OVERRIDE;
-    virtual bool canSuspend() const FINAL OVERRIDE;
-    virtual void suspend(ReasonForSuspension) FINAL OVERRIDE;
-    virtual void resume() FINAL OVERRIDE;
+    virtual bool hasPendingActivity() const FINAL override;
+    virtual void stop() FINAL override;
+    virtual bool canSuspend() const FINAL override;
+    virtual void suspend(ReasonForSuspension) FINAL override;
+    virtual void resume() FINAL override;
 
     bool m_suspended;
 

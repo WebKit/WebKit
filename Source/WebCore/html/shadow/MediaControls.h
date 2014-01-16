@@ -94,7 +94,7 @@ class MediaControls : public HTMLDivElement {
     virtual void exitedFullscreen();
 
 #if !PLATFORM(IOS)
-    virtual bool willRespondToMouseMoveEvents() OVERRIDE { return true; }
+    virtual bool willRespondToMouseMoveEvents() override { return true; }
 #endif
 
     virtual void hideFullscreenControlsTimerFired(Timer<MediaControls>&);

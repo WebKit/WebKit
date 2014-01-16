@@ -43,55 +43,55 @@ public:
 
     virtual ~WebIDBServerConnection();
 
-    virtual bool isClosed() OVERRIDE;
+    virtual bool isClosed() override;
 
     typedef std::function<void (bool success)> BoolCallbackFunction;
 
     // Factory-level operations
-    virtual void deleteDatabase(const String& name, BoolCallbackFunction successCallback) OVERRIDE;
+    virtual void deleteDatabase(const String& name, BoolCallbackFunction successCallback) override;
 
     // Database-level operations
-    virtual void getOrEstablishIDBDatabaseMetadata(GetIDBDatabaseMetadataFunction) OVERRIDE;
-    virtual void close() OVERRIDE;
+    virtual void getOrEstablishIDBDatabaseMetadata(GetIDBDatabaseMetadataFunction) override;
+    virtual void close() override;
 
     // Transaction-level operations
-    virtual void openTransaction(int64_t transactionID, const HashSet<int64_t>& objectStoreIds, WebCore::IndexedDB::TransactionMode, BoolCallbackFunction successCallback) OVERRIDE;
-    virtual void beginTransaction(int64_t transactionID, std::function<void()> completionCallback) OVERRIDE;
-    virtual void commitTransaction(int64_t transactionID, BoolCallbackFunction successCallback) OVERRIDE;
-    virtual void resetTransaction(int64_t transactionID, std::function<void()> completionCallback) OVERRIDE;
-    virtual void rollbackTransaction(int64_t transactionID, std::function<void()> completionCallback) OVERRIDE;
+    virtual void openTransaction(int64_t transactionID, const HashSet<int64_t>& objectStoreIds, WebCore::IndexedDB::TransactionMode, BoolCallbackFunction successCallback) override;
+    virtual void beginTransaction(int64_t transactionID, std::function<void()> completionCallback) override;
+    virtual void commitTransaction(int64_t transactionID, BoolCallbackFunction successCallback) override;
+    virtual void resetTransaction(int64_t transactionID, std::function<void()> completionCallback) override;
+    virtual void rollbackTransaction(int64_t transactionID, std::function<void()> completionCallback) override;
 
-    virtual void setIndexKeys(int64_t transactionID, int64_t databaseID, int64_t objectStoreID, const WebCore::IDBObjectStoreMetadata&, WebCore::IDBKey& primaryKey, const Vector<int64_t>& indexIDs, const Vector<Vector<RefPtr<WebCore::IDBKey>>>& indexKeys, std::function<void(PassRefPtr<WebCore::IDBDatabaseError>)> completionCallback) OVERRIDE;
+    virtual void setIndexKeys(int64_t transactionID, int64_t databaseID, int64_t objectStoreID, const WebCore::IDBObjectStoreMetadata&, WebCore::IDBKey& primaryKey, const Vector<int64_t>& indexIDs, const Vector<Vector<RefPtr<WebCore::IDBKey>>>& indexKeys, std::function<void(PassRefPtr<WebCore::IDBDatabaseError>)> completionCallback) override;
 
-    virtual void createObjectStore(WebCore::IDBTransactionBackend&, const WebCore::CreateObjectStoreOperation&, std::function<void(PassRefPtr<WebCore::IDBDatabaseError>)> completionCallback) OVERRIDE;
-    virtual void createIndex(WebCore::IDBTransactionBackend&, const WebCore::CreateIndexOperation&, std::function<void(PassRefPtr<WebCore::IDBDatabaseError>)> completionCallback) OVERRIDE;
-    virtual void deleteIndex(WebCore::IDBTransactionBackend&, const WebCore::DeleteIndexOperation&, std::function<void(PassRefPtr<WebCore::IDBDatabaseError>)> completionCallback) OVERRIDE;
-    virtual void get(WebCore::IDBTransactionBackend&, const WebCore::GetOperation&, std::function<void(PassRefPtr<WebCore::IDBDatabaseError>)> completionCallback) OVERRIDE;
-    virtual void put(WebCore::IDBTransactionBackend&, const WebCore::PutOperation&, std::function<void(PassRefPtr<WebCore::IDBDatabaseError>)> completionCallback) OVERRIDE;
-    virtual void openCursor(WebCore::IDBTransactionBackend&, const WebCore::OpenCursorOperation&, std::function<void(PassRefPtr<WebCore::IDBDatabaseError>)> completionCallback) OVERRIDE;
-    virtual void count(WebCore::IDBTransactionBackend&, const WebCore::CountOperation&, std::function<void(PassRefPtr<WebCore::IDBDatabaseError>)> completionCallback) OVERRIDE;
-    virtual void deleteRange(WebCore::IDBTransactionBackend&, const WebCore::DeleteRangeOperation&, std::function<void(PassRefPtr<WebCore::IDBDatabaseError>)> completionCallback) OVERRIDE;
-    virtual void clearObjectStore(WebCore::IDBTransactionBackend&, const WebCore::ClearObjectStoreOperation&, std::function<void(PassRefPtr<WebCore::IDBDatabaseError>)> completionCallback) OVERRIDE;
-    virtual void deleteObjectStore(WebCore::IDBTransactionBackend&, const WebCore::DeleteObjectStoreOperation&, std::function<void(PassRefPtr<WebCore::IDBDatabaseError>)> completionCallback) OVERRIDE;
-    virtual void changeDatabaseVersion(WebCore::IDBTransactionBackend&, const WebCore::IDBDatabaseBackend::VersionChangeOperation&, std::function<void(PassRefPtr<WebCore::IDBDatabaseError>)> completionCallback) OVERRIDE;
+    virtual void createObjectStore(WebCore::IDBTransactionBackend&, const WebCore::CreateObjectStoreOperation&, std::function<void(PassRefPtr<WebCore::IDBDatabaseError>)> completionCallback) override;
+    virtual void createIndex(WebCore::IDBTransactionBackend&, const WebCore::CreateIndexOperation&, std::function<void(PassRefPtr<WebCore::IDBDatabaseError>)> completionCallback) override;
+    virtual void deleteIndex(WebCore::IDBTransactionBackend&, const WebCore::DeleteIndexOperation&, std::function<void(PassRefPtr<WebCore::IDBDatabaseError>)> completionCallback) override;
+    virtual void get(WebCore::IDBTransactionBackend&, const WebCore::GetOperation&, std::function<void(PassRefPtr<WebCore::IDBDatabaseError>)> completionCallback) override;
+    virtual void put(WebCore::IDBTransactionBackend&, const WebCore::PutOperation&, std::function<void(PassRefPtr<WebCore::IDBDatabaseError>)> completionCallback) override;
+    virtual void openCursor(WebCore::IDBTransactionBackend&, const WebCore::OpenCursorOperation&, std::function<void(PassRefPtr<WebCore::IDBDatabaseError>)> completionCallback) override;
+    virtual void count(WebCore::IDBTransactionBackend&, const WebCore::CountOperation&, std::function<void(PassRefPtr<WebCore::IDBDatabaseError>)> completionCallback) override;
+    virtual void deleteRange(WebCore::IDBTransactionBackend&, const WebCore::DeleteRangeOperation&, std::function<void(PassRefPtr<WebCore::IDBDatabaseError>)> completionCallback) override;
+    virtual void clearObjectStore(WebCore::IDBTransactionBackend&, const WebCore::ClearObjectStoreOperation&, std::function<void(PassRefPtr<WebCore::IDBDatabaseError>)> completionCallback) override;
+    virtual void deleteObjectStore(WebCore::IDBTransactionBackend&, const WebCore::DeleteObjectStoreOperation&, std::function<void(PassRefPtr<WebCore::IDBDatabaseError>)> completionCallback) override;
+    virtual void changeDatabaseVersion(WebCore::IDBTransactionBackend&, const WebCore::IDBDatabaseBackend::VersionChangeOperation&, std::function<void(PassRefPtr<WebCore::IDBDatabaseError>)> completionCallback) override;
 
     // Cursor-level operations
-    virtual void cursorAdvance(WebCore::IDBCursorBackend&, const WebCore::CursorAdvanceOperation&, std::function<void()> completionCallback) OVERRIDE;
-    virtual void cursorIterate(WebCore::IDBCursorBackend&, const WebCore::CursorIterationOperation&, std::function<void()> completionCallback) OVERRIDE;
-    virtual void cursorPrefetchIteration(WebCore::IDBCursorBackend&, const WebCore::CursorPrefetchIterationOperation&, std::function<void()> completionCallback) OVERRIDE;
-    virtual void cursorPrefetchReset(WebCore::IDBCursorBackend&, int usedPrefetches) OVERRIDE;
+    virtual void cursorAdvance(WebCore::IDBCursorBackend&, const WebCore::CursorAdvanceOperation&, std::function<void()> completionCallback) override;
+    virtual void cursorIterate(WebCore::IDBCursorBackend&, const WebCore::CursorIterationOperation&, std::function<void()> completionCallback) override;
+    virtual void cursorPrefetchIteration(WebCore::IDBCursorBackend&, const WebCore::CursorPrefetchIterationOperation&, std::function<void()> completionCallback) override;
+    virtual void cursorPrefetchReset(WebCore::IDBCursorBackend&, int usedPrefetches) override;
 
     // Message handlers.
     void didReceiveWebIDBServerConnectionMessage(IPC::Connection*, IPC::MessageDecoder&);
 
     // IPC::MessageSender
-    virtual uint64_t messageSenderDestinationID() OVERRIDE { return m_serverConnectionIdentifier; }
+    virtual uint64_t messageSenderDestinationID() override { return m_serverConnectionIdentifier; }
 
 private:
     WebIDBServerConnection(const String& databaseName, const WebCore::SecurityOrigin& openingOrigin, const WebCore::SecurityOrigin& mainFrameOrigin);
 
     // IPC::MessageSender
-    virtual IPC::Connection* messageSenderConnection() OVERRIDE;
+    virtual IPC::Connection* messageSenderConnection() override;
 
     void didGetOrEstablishIDBDatabaseMetadata(uint64_t requestID, bool success, const WebCore::IDBDatabaseMetadata&);
     void didOpenTransaction(uint64_t requestID, bool success);

@@ -44,7 +44,7 @@ public:
 
     bool updateImageViewport();
     virtual void setNeedsBoundariesUpdate() { m_needsBoundariesUpdate = true; }
-    virtual bool needsBoundariesUpdate() OVERRIDE { return m_needsBoundariesUpdate; }
+    virtual bool needsBoundariesUpdate() override { return m_needsBoundariesUpdate; }
     virtual void setNeedsTransformUpdate() { m_needsTransformUpdate = true; }
 
     RenderImageResource* imageResource() { return m_imageResource.get(); }
@@ -57,17 +57,17 @@ private:
     void element() const WTF_DELETED_FUNCTION;
 
     virtual const char* renderName() const { return "RenderSVGImage"; }
-    virtual bool isSVGImage() const OVERRIDE { return true; }
-    virtual bool canHaveChildren() const OVERRIDE { return false; }
+    virtual bool isSVGImage() const override { return true; }
+    virtual bool canHaveChildren() const override { return false; }
 
     virtual const AffineTransform& localToParentTransform() const { return m_localTransform; }
 
     virtual FloatRect objectBoundingBox() const { return m_objectBoundingBox; }
     virtual FloatRect strokeBoundingBox() const { return m_objectBoundingBox; }
     virtual FloatRect repaintRectInLocalCoordinates() const { return m_repaintBoundingBox; }
-    virtual FloatRect repaintRectInLocalCoordinatesExcludingSVGShadow() const OVERRIDE { return m_repaintBoundingBoxExcludingShadow; }
+    virtual FloatRect repaintRectInLocalCoordinatesExcludingSVGShadow() const override { return m_repaintBoundingBoxExcludingShadow; }
 
-    virtual void addFocusRingRects(Vector<IntRect>&, const LayoutPoint& additionalOffset, const RenderLayerModelObject* paintContainer = 0) OVERRIDE;
+    virtual void addFocusRingRects(Vector<IntRect>&, const LayoutPoint& additionalOffset, const RenderLayerModelObject* paintContainer = 0) override;
 
     virtual void imageChanged(WrappedImagePtr, const IntRect* = 0);
 

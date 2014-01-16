@@ -99,10 +99,10 @@ private:
     MediaStreamTrackPrivateClient* client() const { return m_client; }
 
     // MediaStreamSourceObserver
-    virtual void sourceReadyStateChanged() OVERRIDE FINAL;
-    virtual void sourceMutedChanged() OVERRIDE FINAL;
-    virtual void sourceEnabledChanged() OVERRIDE FINAL;
-    virtual bool observerIsEnabled() OVERRIDE FINAL;
+    virtual void sourceReadyStateChanged() override FINAL;
+    virtual void sourceMutedChanged() override FINAL;
+    virtual void sourceEnabledChanged() override FINAL;
+    virtual bool observerIsEnabled() override FINAL;
     
     RefPtr<MediaStreamSource> m_source;
     MediaStreamTrackPrivateClient* m_client;

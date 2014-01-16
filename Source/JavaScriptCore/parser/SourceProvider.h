@@ -83,7 +83,7 @@ namespace JSC {
             return adoptRef(new StringSourceProvider(source, url, startPosition));
         }
 
-        virtual const String& source() const OVERRIDE
+        virtual const String& source() const override
         {
             return m_source;
         }

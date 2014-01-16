@@ -56,26 +56,26 @@ public:
     void detachFromCSSValue() { m_value = nullptr; }
 
 private:
-    virtual WrappedImagePtr data() const OVERRIDE { return const_cast<StylePendingImage*>(this); }
+    virtual WrappedImagePtr data() const override { return const_cast<StylePendingImage*>(this); }
 
-    virtual PassRefPtr<CSSValue> cssValue() const OVERRIDE { return m_value; }
+    virtual PassRefPtr<CSSValue> cssValue() const override { return m_value; }
     
-    virtual LayoutSize imageSize(const RenderElement*, float /*multiplier*/) const OVERRIDE { return LayoutSize(); }
-    virtual bool imageHasRelativeWidth() const OVERRIDE { return false; }
-    virtual bool imageHasRelativeHeight() const OVERRIDE { return false; }
+    virtual LayoutSize imageSize(const RenderElement*, float /*multiplier*/) const override { return LayoutSize(); }
+    virtual bool imageHasRelativeWidth() const override { return false; }
+    virtual bool imageHasRelativeHeight() const override { return false; }
     virtual void computeIntrinsicDimensions(const RenderElement*, Length& /* intrinsicWidth */ , Length& /* intrinsicHeight */, FloatSize& /* intrinsicRatio */) { }
-    virtual bool usesImageContainerSize() const OVERRIDE { return false; }
-    virtual void setContainerSizeForRenderer(const RenderElement*, const IntSize&, float) OVERRIDE { }
-    virtual void addClient(RenderElement*) OVERRIDE { }
-    virtual void removeClient(RenderElement*) OVERRIDE { }
+    virtual bool usesImageContainerSize() const override { return false; }
+    virtual void setContainerSizeForRenderer(const RenderElement*, const IntSize&, float) override { }
+    virtual void addClient(RenderElement*) override { }
+    virtual void removeClient(RenderElement*) override { }
 
-    virtual PassRefPtr<Image> image(RenderElement*, const IntSize&) const OVERRIDE
+    virtual PassRefPtr<Image> image(RenderElement*, const IntSize&) const override
     {
         ASSERT_NOT_REACHED();
         return nullptr;
     }
 
-    virtual bool knownToBeOpaque(const RenderElement*) const OVERRIDE { return false; }
+    virtual bool knownToBeOpaque(const RenderElement*) const override { return false; }
     
     StylePendingImage(CSSValue* value)
         : m_value(value)

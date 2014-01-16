@@ -54,58 +54,58 @@ public:
 
     const String& mediaGroup() const { return m_mediaGroup; }
     
-    virtual PassRefPtr<TimeRanges> buffered() const OVERRIDE;
-    virtual PassRefPtr<TimeRanges> seekable() const OVERRIDE;
-    virtual PassRefPtr<TimeRanges> played() OVERRIDE;
+    virtual PassRefPtr<TimeRanges> buffered() const override;
+    virtual PassRefPtr<TimeRanges> seekable() const override;
+    virtual PassRefPtr<TimeRanges> played() override;
     
-    virtual double duration() const OVERRIDE;
-    virtual double currentTime() const OVERRIDE;
-    virtual void setCurrentTime(double) OVERRIDE;
+    virtual double duration() const override;
+    virtual double currentTime() const override;
+    virtual void setCurrentTime(double) override;
     
-    virtual bool paused() const OVERRIDE { return m_paused; }
-    virtual void play() OVERRIDE;
-    virtual void pause() OVERRIDE;
+    virtual bool paused() const override { return m_paused; }
+    virtual void play() override;
+    virtual void pause() override;
     void unpause();
     
-    virtual double defaultPlaybackRate() const OVERRIDE { return m_defaultPlaybackRate; }
-    virtual void setDefaultPlaybackRate(double) OVERRIDE;
+    virtual double defaultPlaybackRate() const override { return m_defaultPlaybackRate; }
+    virtual void setDefaultPlaybackRate(double) override;
     
-    virtual double playbackRate() const OVERRIDE;
-    virtual void setPlaybackRate(double) OVERRIDE;
+    virtual double playbackRate() const override;
+    virtual void setPlaybackRate(double) override;
     
-    virtual double volume() const OVERRIDE { return m_volume; }
-    virtual void setVolume(double, ExceptionCode&) OVERRIDE;
+    virtual double volume() const override { return m_volume; }
+    virtual void setVolume(double, ExceptionCode&) override;
     
-    virtual bool muted() const OVERRIDE { return m_muted; }
-    virtual void setMuted(bool) OVERRIDE;
+    virtual bool muted() const override { return m_muted; }
+    virtual void setMuted(bool) override;
     
-    virtual ReadyState readyState() const OVERRIDE { return m_readyState; }
+    virtual ReadyState readyState() const override { return m_readyState; }
 
     enum PlaybackState { WAITING, PLAYING, ENDED };
     const AtomicString& playbackState() const;
 
-    virtual bool supportsFullscreen() const OVERRIDE { return false; }
-    virtual bool isFullscreen() const OVERRIDE { return false; }
-    virtual void enterFullscreen() OVERRIDE { }
+    virtual bool supportsFullscreen() const override { return false; }
+    virtual bool isFullscreen() const override { return false; }
+    virtual void enterFullscreen() override { }
 
-    virtual bool hasAudio() const OVERRIDE;
-    virtual bool hasVideo() const OVERRIDE;
-    virtual bool hasClosedCaptions() const OVERRIDE;
-    virtual void setClosedCaptionsVisible(bool) OVERRIDE;
-    virtual bool closedCaptionsVisible() const OVERRIDE { return m_closedCaptionsVisible; }
+    virtual bool hasAudio() const override;
+    virtual bool hasVideo() const override;
+    virtual bool hasClosedCaptions() const override;
+    virtual void setClosedCaptionsVisible(bool) override;
+    virtual bool closedCaptionsVisible() const override { return m_closedCaptionsVisible; }
     
-    virtual bool supportsScanning() const OVERRIDE;
+    virtual bool supportsScanning() const override;
     
-    virtual void beginScrubbing() OVERRIDE;
-    virtual void endScrubbing() OVERRIDE;
+    virtual void beginScrubbing() override;
+    virtual void endScrubbing() override;
     
-    virtual bool canPlay() const OVERRIDE;
+    virtual bool canPlay() const override;
     
-    virtual bool isLiveStream() const OVERRIDE;
+    virtual bool isLiveStream() const override;
     
-    virtual bool hasCurrentSrc() const OVERRIDE;
+    virtual bool hasCurrentSrc() const override;
     
-    virtual void returnToRealtime() OVERRIDE;
+    virtual void returnToRealtime() override;
 
     bool isBlocked() const;
 
@@ -129,10 +129,10 @@ private:
     void startTimeupdateTimer();
 
     // EventTarget
-    virtual void refEventTarget() OVERRIDE { ref(); }
-    virtual void derefEventTarget() OVERRIDE { deref(); }
-    virtual EventTargetInterface eventTargetInterface() const OVERRIDE { return MediaControllerEventTargetInterfaceType; }
-    virtual ScriptExecutionContext* scriptExecutionContext() const OVERRIDE { return &m_scriptExecutionContext; };
+    virtual void refEventTarget() override { ref(); }
+    virtual void derefEventTarget() override { deref(); }
+    virtual EventTargetInterface eventTargetInterface() const override { return MediaControllerEventTargetInterfaceType; }
+    virtual ScriptExecutionContext* scriptExecutionContext() const override { return &m_scriptExecutionContext; };
 
     friend class HTMLMediaElement;
     friend class MediaControllerEventListener;
