@@ -1,3 +1,9 @@
+2014-01-16  Brady Eidson  <beidson@apple.com>
+
+        Fix the build after r162148
+
+        * Shared/cf/KeyedEncoder.h: s/OVERRIDE/override/
+
 2014-01-15  Brady Eidson  <beidson@apple.com>
 
         Use KeyedCoding as a persistent storage mechanism for blobs
