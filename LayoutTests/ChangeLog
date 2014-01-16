@@ -1,3 +1,10 @@
+2014-01-15  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        Unreviewed. EFL Gardening.
+
+        * platform/efl-wk1/TestExpectations:
+        Unskipped some tests in svg/dynamic-updates which are passing now.
+
 2014-01-15  Roger Fong  <roger_fong@apple.com>
 
         Remove unnecessary call to webGLContextCreated

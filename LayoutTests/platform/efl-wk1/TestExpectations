@@ -102,18 +102,6 @@ webkit.org/b/102006 fast/repaint/block-selection-gap-stale-cache-2.html [ ImageO
  
 webkit.org/b/99180 svg/as-image/img-preserveAspectRatio-support-1.html [ ImageOnlyFailure ]
  
-webkit.org/b/99181 svg/dynamic-updates/SVGFEConvolveMatrixElement-dom-kernelUnitLength-attr.html [ ImageOnlyFailure ]
-webkit.org/b/99181 svg/dynamic-updates/SVGFEConvolveMatrixElement-svgdom-kernelUnitLength-prop.html [ ImageOnlyFailure ]
- 
-webkit.org/b/99182 svg/dynamic-updates/SVGFEDropShadowElement-dom-shadow-color-attr.html [ ImageOnlyFailure ]
-webkit.org/b/99182 svg/dynamic-updates/SVGFEDropShadowElement-dom-shadow-opacity-attr.html [ ImageOnlyFailure ]
-webkit.org/b/99182 svg/dynamic-updates/SVGFEDropShadowElement-svgdom-shadow-color-prop.html [ ImageOnlyFailure ]
-webkit.org/b/99182 svg/dynamic-updates/SVGFEDropShadowElement-svgdom-shadow-opacity-prop.html [ ImageOnlyFailure ]
- 
-webkit.org/b/99183 svg/dynamic-updates/SVGFETurbulenceElement-dom-baseFrequency-attr.html [ ImageOnlyFailure ]
-webkit.org/b/99183 svg/dynamic-updates/SVGFETurbulenceElement-dom-stitchTiles-attr.html [ ImageOnlyFailure ]
-webkit.org/b/99183 svg/dynamic-updates/SVGFETurbulenceElement-svgdom-stitchTiles-prop.html [ ImageOnlyFailure ]
-
 webkit.org/b/111984 accessibility/aria-hidden-updates-alldescendants.html [ Failure ]
 webkit.org/b/111988 accessibility/aria-readonly.html [ Failure ]
 webkit.org/b/111991 accessibility/aria-text-role.html [ Failure ]
