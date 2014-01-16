@@ -1,3 +1,10 @@
+2014-01-16  Andy Estes  <aestes@apple.com>
+
+        [iOS] Fix build issues with exported headers
+
+        * WebKit.xcodeproj/project.pbxproj: Removed WebPluginPrivate.h from
+        the project.
+
 2014-01-15  Ryuan Choi  <ryuan.choi@samsung.com>
 
         [EFL][WK1] Implement ProgressTrackerClientEfl to fix the crash

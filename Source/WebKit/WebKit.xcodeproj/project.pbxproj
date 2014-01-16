@@ -76,7 +76,6 @@
 		1CCFFD130B1F81F2002EE926 /* OldWebAssertions.c in Sources */ = {isa = PBXBuildFile; fileRef = 1CCFFD120B1F81F2002EE926 /* OldWebAssertions.c */; };
 		224100F3091818D900D2D266 /* WebPluginsPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 224100F2091818D900D2D266 /* WebPluginsPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		224100F90918190100D2D266 /* WebPluginsPrivate.m in Sources */ = {isa = PBXBuildFile; fileRef = 224100F80918190100D2D266 /* WebPluginsPrivate.m */; };
-		225F881509F97E8A00423A40 /* WebPluginPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 225F881409F97E8A00423A40 /* WebPluginPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		22F219CC08D236730030E078 /* WebBackForwardListPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 22F219CB08D236730030E078 /* WebBackForwardListPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		29AEF960134C76FB00FE5096 /* OutlookQuirksUserScript.js in Resources */ = {isa = PBXBuildFile; fileRef = 29AEF95D134C755400FE5096 /* OutlookQuirksUserScript.js */; };
 		312E2FE514E48182007CCA18 /* WebNotification.h in Headers */ = {isa = PBXBuildFile; fileRef = 312E2FE314E48182007CCA18 /* WebNotification.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -520,7 +519,6 @@
 		1CCFFD120B1F81F2002EE926 /* OldWebAssertions.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = OldWebAssertions.c; sourceTree = "<group>"; };
 		224100F2091818D900D2D266 /* WebPluginsPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebPluginsPrivate.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		224100F80918190100D2D266 /* WebPluginsPrivate.m */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.objc; path = WebPluginsPrivate.m; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		225F881409F97E8A00423A40 /* WebPluginPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebPluginPrivate.h; sourceTree = "<group>"; };
 		22F219CB08D236730030E078 /* WebBackForwardListPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebBackForwardListPrivate.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		2568C72C0174912D0ECA149E /* WebKit.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebKit.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		29AEF95D134C755400FE5096 /* OutlookQuirksUserScript.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = OutlookQuirksUserScript.js; sourceTree = "<group>"; };
@@ -1260,7 +1258,6 @@
 				83E4AF4B036659440000E506 /* WebPluginPackage.h */,
 				83E4AF4C036659440000E506 /* WebPluginPackage.mm */,
 				A17A11B0180DC84800E5498C /* WebPluginPackagePrivate.h */,
-				225F881409F97E8A00423A40 /* WebPluginPrivate.h */,
 				848DFF860365FE6A00CA2ACA /* WebPluginViewFactory.h */,
 				83E679780726D7CF006C7A36 /* WebPluginViewFactoryPrivate.h */,
 			);
@@ -1862,7 +1859,6 @@
 				7C1FB3C21846E8E1001A03D8 /* WebAllowDenyPolicyListener.h in Headers */,
 				939810380824BF01008DF038 /* WebPluginDatabase.h in Headers */,
 				939810390824BF01008DF038 /* WebPluginPackage.h in Headers */,
-				225F881509F97E8A00423A40 /* WebPluginPrivate.h in Headers */,
 				1A77B02E0EE7730500C8A1F9 /* WebPluginRequest.h in Headers */,
 				224100F3091818D900D2D266 /* WebPluginsPrivate.h in Headers */,
 				9398103A0824BF01008DF038 /* WebPluginViewFactory.h in Headers */,

@@ -579,6 +579,8 @@ Could be worth adding to the API.
 
 - (void)_viewGeometryDidChange;
 - (void)_overflowScrollPositionChangedTo:(CGPoint)offset forNode:(DOMNode *)node isUserScroll:(BOOL)userScroll;
+
+- (NSArray *)_touchEventRegions;
 #endif
 
 #if !TARGET_OS_IPHONE

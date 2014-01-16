@@ -29,7 +29,7 @@
 #import <WebKit/WebDOMOperations.h>
 #import <JavaScriptCore/JSBase.h>
 
-#if PLATFORM(IOS)
+#if TARGET_OS_IPHONE
 #import <Foundation/NSGeometry.h>
 #endif
 

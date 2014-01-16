@@ -26,8 +26,6 @@
 #ifndef WebEventRegion_h
 #define WebEventRegion_h
 
-#if ENABLE(TOUCH_EVENTS)
-
 #import <CoreGraphics/CGGeometry.h>
 #import <Foundation/NSObject.h>
 
@@ -38,7 +36,5 @@
 - (id)initWithPoints:(CGPoint)inP1 :(CGPoint)inP2 :(CGPoint)inP3 :(CGPoint)inP4;
 - (BOOL)hitTest:(CGPoint)point;
 @end
-
-#endif // ENABLE(TOUCH_EVENTS)
 
 #endif // WebEventRegion_h

@@ -1,3 +1,21 @@
+2014-01-16  Andy Estes  <aestes@apple.com>
+
+        [iOS] Fix build issues with exported headers
+
+        * DOM/WebDOMOperationsPrivate.h: Changed PLATFORM(IOS) to
+        TARGET_OS_IPHONE.
+        * MigrateHeaders.make: Excluded WAKScrollView.h from normal replacement
+        rules so that WebCoreFrameScrollView won't inadvertently get changed to
+        WebKitFrameScrollView.
+        * Plugins/WebPlugin.h: Moved contents of WebPluginPrivate.h to here in
+        order to maintain source compatibility.
+        * Plugins/WebPluginController.mm: Removed an import of WebPluginPrivate.h.
+        * Plugins/WebPluginPrivate.h: Removed.
+        * Storage/WebDatabaseManagerPrivate.h: Replaced ENABLE(SQL_DATABASE)
+        with ENABLE_SQL_DATABASE.
+        * WebView/WebViewPrivate.h: Added declaration of
+        -[WebView _touchEventRegions] for source compatibility.
+
 2014-01-15  Benjamin Poulain  <bpoulain@apple.com>
 
         Fix the iOS build after r162114

@@ -44,7 +44,6 @@
 #import "WebPluginContainer.h"
 #import "WebPluginContainerCheck.h"
 #import "WebPluginPackage.h"
-#import "WebPluginPrivate.h"
 #import "WebPluginViewFactory.h"
 #import "WebUIDelegate.h"
 #import "WebViewInternal.h"

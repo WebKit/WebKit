@@ -221,6 +221,13 @@ all : \
     $(PRIVATE_HEADERS_DIR)/WebCoreThreadRun.h \
     $(PRIVATE_HEADERS_DIR)/WebEvent.h \
     $(PRIVATE_HEADERS_DIR)/WebEventRegion.h
+
+
+# Special case WAKScrollView.h, which contains the protocol named
+# <WebCoreFrameScrollView> and shouldn't be changed by the default rule.
+$(PRIVATE_HEADERS_DIR)/WAKScrollView.h : WAKScrollView.h MigrateHeaders.make
+	cat $< > $@
+
 endif
 
 REPLACE_RULES = -e s/\<WebCore/\<WebKit/ -e s/DOMDOMImplementation/DOMImplementation/

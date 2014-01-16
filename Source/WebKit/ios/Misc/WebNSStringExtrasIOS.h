@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#if PLATFORM(IOS)
+#if TARGET_OS_IPHONE
 
 #import <Foundation/Foundation.h>
 
@@ -35,4 +35,4 @@
 
 @end
 
-#endif // PLATFORM(IOS)
+#endif

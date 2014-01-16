@@ -135,4 +135,37 @@
 */
 - (void)webPlugInMainResourceDidFinishLoading WEBKIT_AVAILABLE_MAC(10_6);
 
+#if TARGET_OS_IPHONE
+
+// FIXME: Comment me
+- (Class)webPlugInFullScreenWindowClass;
+
+// FIXME: Comment me
+- (void)webPlugInWillEnterFullScreenWithFrame:(CGRect)newFrame;
+
+// FIXME: Comment me
+- (void)webPlugInWillLeaveFullScreenWithFrame:(CGRect)newFrame;
+
+// FIXME: Comment me
+- (BOOL)webPlugInReceivesEventsDirectly;
+
+// FIXME: Comment me
+- (void)webPlugInLayout;
+
+// FIXME: Comment me
+- (void)webPlugInDidDraw;
+
+/*!
+ @method webPlugInStopForPageCache
+ @abstract Tell the plug-in to stop normal operation because the page the plug-in
+ belongs to is entering a cache.
+ @discussion A page in the PageCache can be quickly resumed. This is much like
+ pausing and resuming a plug-in except the frame containing the plug-in will
+ not be visible, is not active, and may even have been torn down. The API contract
+ for messages before and after this message are the same as -webPlugInStop.
+ */
+- (void)webPlugInStopForPageCache;
+
+#endif
+
 @end

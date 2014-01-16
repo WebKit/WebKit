@@ -1,3 +1,12 @@
+2014-01-16  Andy Estes  <aestes@apple.com>
+
+        [iOS] Fix build issues with exported headers
+
+        * Configurations/WebCore.xcconfig: Allowed UIKit to link against
+        WebCore.
+        * page/ios/WebEventRegion.h: Removed ENABLE(TOUCH_EVENTS), which are
+        always enabled on iOS.
+
 2014-01-16  Dirk Schulze  <krit@webkit.org>
 
         Rename functions in SVGDocumentExtension
