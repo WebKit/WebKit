@@ -27,7 +27,6 @@
 
 #include "TextBoundaries.cpp"
 #include "TextBreakIterator.cpp"
-#include "TextBreakIteratorICU.cpp"
 #include "TextCodec.cpp"
 #include "TextCodecICU.cpp"
 #include "TextCodecLatin1.cpp"

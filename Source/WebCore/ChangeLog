@@ -1,3 +1,9 @@
+2014-01-15  Sam Weinig  <sam@webkit.org>
+
+        Fix windows build.
+
+        * platform/text/TextAllInOne.cpp:
+
 2014-01-15  Joseph Pecoraro  <pecoraro@apple.com>
 
         [iOS] Clean up REMOTE_INSPECTOR code in OpenSource after the iOS merge
