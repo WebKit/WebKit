@@ -1,3 +1,14 @@
+2014-01-16  Zalan Bujtas  <zalan@apple.com>
+
+        Subpixel layout: Enable subpixel layout for Apple Windows.
+        https://bugs.webkit.org/show_bug.cgi?id=127074
+
+        Reviewed by Antti Koivisto.
+
+        This should make the Apple Windows bots happier. It probably still needs rebaselining.
+
+        * win/tools/vsprops/FeatureDefines.props:
+
 2014-01-11  Alexey Proskuryakov  <ap@apple.com>
 
         [Mac] [Windows] Stop scheduling network requests in WebCore
