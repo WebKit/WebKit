@@ -1,5 +1,14 @@
 2014-01-16  Brian Burg  <bburg@apple.com>
 
+        Web Inspector: CallFrame is missing saveIdentityToCookie, or should be excluded
+        https://bugs.webkit.org/show_bug.cgi?id=126791
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/CallFrame.js: Add a dummy saveIdentityToCookie() implementation.
+
+2014-01-16  Brian Burg  <bburg@apple.com>
+
         Web Inspector: add probe breakpoint action to popup breakpoint editor
         https://bugs.webkit.org/show_bug.cgi?id=126931
 

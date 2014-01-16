@@ -74,6 +74,12 @@ WebInspector.CallFrame.prototype = {
         return this._scopeChain;
     },
 
+    saveIdentityToCookie: function()
+    {
+        // Do nothing. The call frame is torn down when the inspector closes, and
+        // we shouldn't restore call frame content views across debugger pauses.
+    },
+
     collectScopeChainVariableNames: function(callback)
     {
         var result = {this: true};
