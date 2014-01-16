@@ -505,7 +505,13 @@ enum TextEmphasisFill { TextEmphasisFillFilled, TextEmphasisFillOpen };
 
 enum TextEmphasisMark { TextEmphasisMarkNone, TextEmphasisMarkAuto, TextEmphasisMarkDot, TextEmphasisMarkCircle, TextEmphasisMarkDoubleCircle, TextEmphasisMarkTriangle, TextEmphasisMarkSesame, TextEmphasisMarkCustom };
 
-enum TextEmphasisPosition { TextEmphasisPositionOver, TextEmphasisPositionUnder };
+enum TextEmphasisPositions {
+    TextEmphasisPositionOver = 1 << 0,
+    TextEmphasisPositionUnder = 1 << 1,
+    TextEmphasisPositionLeft = 1 << 2,
+    TextEmphasisPositionRight = 1 << 3
+};
+typedef unsigned TextEmphasisPosition;
 
 enum TextOrientation { TextOrientationVerticalRight, TextOrientationUpright, TextOrientationSideways, TextOrientationSidewaysRight };
 

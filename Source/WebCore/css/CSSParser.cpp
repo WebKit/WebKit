@@ -983,10 +983,6 @@ static inline bool isValidKeywordPropertyAndValue(CSSPropertyID propertyId, int 
         if (valueID == CSSValueNone || valueID == CSSValueHorizontal)
             return true;
         break;
-    case CSSPropertyWebkitTextEmphasisPosition:
-        if (valueID == CSSValueOver || valueID == CSSValueUnder)
-            return true;
-        break;
 #if ENABLE(CSS3_TEXT)
     case CSSPropertyWebkitTextJustify:
         // auto | none | inter-word | inter-ideograph | inter-cluster | distribute | kashida
@@ -1156,7 +1152,6 @@ static inline bool isKeywordPropertyID(CSSPropertyID propertyId)
     case CSSPropertyWebkitTextAlignLast:
 #endif // CSS3_TEXT
     case CSSPropertyWebkitTextCombine:
-    case CSSPropertyWebkitTextEmphasisPosition:
 #if ENABLE(CSS3_TEXT)
     case CSSPropertyWebkitTextJustify:
 #endif // CSS3_TEXT
@@ -2921,6 +2916,9 @@ bool CSSParser::parseValue(CSSPropertyID propId, bool important)
     case CSSPropertyWebkitTextEmphasisStyle:
         return parseTextEmphasisStyle(important);
 
+    case CSSPropertyWebkitTextEmphasisPosition:
+        return parseTextEmphasisPosition(important);
+
     case CSSPropertyWebkitTextOrientation:
         // FIXME: For now just support sideways, sideways-right, upright and vertical-right.
         if (id == CSSValueSideways || id == CSSValueSidewaysRight || id == CSSValueVerticalRight || id == CSSValueUpright)
@@ -3068,7 +3066,6 @@ bool CSSParser::parseValue(CSSPropertyID propId, bool important)
     case CSSPropertyWebkitTextAlignLast:
 #endif // CSS3_TEXT
     case CSSPropertyWebkitTextCombine:
-    case CSSPropertyWebkitTextEmphasisPosition:
 #if ENABLE(CSS3_TEXT)
     case CSSPropertyWebkitTextJustify:
 #endif // CSS3_TEXT
@@ -10186,6 +10183,52 @@ bool CSSParser::parseTextEmphasisStyle(bool important)
     }
 
     return false;
+}
+
+bool CSSParser::parseTextEmphasisPosition(bool important)
+{
+    bool foundOverOrUnder = false;
+    CSSValueID overUnderValueID = CSSValueOver;
+    bool foundLeftOrRight = false;
+    CSSValueID leftRightValueID = CSSValueRight;
+    for (CSSParserValue* value = m_valueList->current(); value; value = m_valueList->next()) {
+        switch (value->id) {
+        case CSSValueOver:
+            if (foundOverOrUnder)
+                return false;
+            foundOverOrUnder = true;
+            overUnderValueID = CSSValueOver;
+            break;
+        case CSSValueUnder:
+            if (foundOverOrUnder)
+                return false;
+            foundOverOrUnder = true;
+            overUnderValueID = CSSValueUnder;
+            break;
+        case CSSValueLeft:
+            if (foundLeftOrRight)
+                return false;
+            foundLeftOrRight = true;
+            leftRightValueID = CSSValueLeft;
+            break;
+        case CSSValueRight:
+            if (foundLeftOrRight)
+                return false;
+            foundLeftOrRight = true;
+            leftRightValueID = CSSValueRight;
+            break;
+        default:
+            return false;
+        }
+    }
+    if (!foundOverOrUnder)
+        return false;
+    RefPtr<CSSValueList> list = CSSValueList::createSpaceSeparated();
+    list->append(cssValuePool().createIdentifierValue(overUnderValueID));
+    if (foundLeftOrRight)
+        list->append(cssValuePool().createIdentifierValue(leftRightValueID));
+    addProperty(CSSPropertyWebkitTextEmphasisPosition, list, important);
+    return true;
 }
 
 PassRefPtr<CSSValue> CSSParser::parseTextIndent()

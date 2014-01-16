@@ -38,6 +38,16 @@
     test('-webkit-text-emphasis-position: inherit;', '', 'inherit', '');
     test('-webkit-text-emphasis-position: over;', '', 'over', '');
     test('-webkit-text-emphasis-position: under;', '', 'under', '');
+    test('-webkit-text-emphasis-position: right;', '', '', '');
+    test('-webkit-text-emphasis-position: left;', '', '', '');
+    test('-webkit-text-emphasis-position: right over;', '', 'over right', '');
+    test('-webkit-text-emphasis-position: right under;', '', 'under right', '');
+    test('-webkit-text-emphasis-position: left over;', '', 'over left', '');
+    test('-webkit-text-emphasis-position: left under;', '', 'under left', '');
+    test('-webkit-text-emphasis-position: left right under;', '', '', '');
+    test('-webkit-text-emphasis-position: left right left;', '', '', '');
+    test('-webkit-text-emphasis-position: left under left;', '', '', '');
+    test('-webkit-text-emphasis-position: over inherit;', '', '', '');
     test('-webkit-text-emphasis-position: bold;', '', '', '');
     test('-webkit-text-emphasis-position: 1px;', '', '', '');
     test('-webkit-text-emphasis-position: "over";', '', '', '');

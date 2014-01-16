@@ -3301,37 +3301,6 @@ template<> inline CSSPrimitiveValue::operator RubyPosition() const
     return RubyPositionBefore;
 }
 
-template<> inline CSSPrimitiveValue::CSSPrimitiveValue(TextEmphasisPosition position)
-    : CSSValue(PrimitiveClass)
-{
-    m_primitiveUnitType = CSS_VALUE_ID;
-    switch (position) {
-    case TextEmphasisPositionOver:
-        m_value.valueID = CSSValueOver;
-        break;
-    case TextEmphasisPositionUnder:
-        m_value.valueID = CSSValueUnder;
-        break;
-    }
-}
-
-template<> inline CSSPrimitiveValue::operator TextEmphasisPosition() const
-{
-    ASSERT(isValueID());
-
-    switch (m_value.valueID) {
-    case CSSValueOver:
-        return TextEmphasisPositionOver;
-    case CSSValueUnder:
-        return TextEmphasisPositionUnder;
-    default:
-        break;
-    }
-
-    ASSERT_NOT_REACHED();
-    return TextEmphasisPositionOver;
-}
-
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(TextOverflow overflow)
     : CSSValue(PrimitiveClass)
 {

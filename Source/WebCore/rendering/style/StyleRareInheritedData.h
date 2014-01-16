@@ -97,7 +97,7 @@ public:
     unsigned hyphens : 2; // Hyphens
     unsigned textEmphasisFill : 1; // TextEmphasisFill
     unsigned textEmphasisMark : 3; // TextEmphasisMark
-    unsigned textEmphasisPosition : 1; // TextEmphasisPosition
+    unsigned textEmphasisPosition : 4; // TextEmphasisPosition
     unsigned m_textOrientation : 2; // TextOrientation
 #if ENABLE(CSS3_TEXT)
     unsigned m_textIndentLine : 1; // TextIndentLine

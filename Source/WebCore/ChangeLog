@@ -1,3 +1,56 @@
+2014-01-07  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        text-emphasis-position CSS property doesn't recognize 'left' and 'right'
+        https://bugs.webkit.org/show_bug.cgi?id=126611
+
+        Reviewed by Simon Fraser.
+
+        This patch allows the text-emphasis-position to accept the "left" and
+        "right" CSS values. In horizontal writing modes, these values no not
+        change behavior. In vertical writing modes, however, these values specify
+        which side to place the emphasis mark. Similarly, in vertical writing
+        modes, the "above" and "below" values should not change behavior.
+
+        However, in order to keep existing behavior, if neither "left" nor "right"
+        is specified, we should draw as if the appropriate value were
+        specified ("over" -> "right" and "under" -> "left"). Note that this
+        will have to be updated when we implement the
+        "text-orientation: sideways-left" CSS property.
+
+        Tests: fast/text/emphasis-horizontal-left-right.html
+               fast/text/emphasis-vertical-over-right.html
+               fast/text/emphasis-vertical-over-under.html
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::renderEmphasisPositionFlagsToCSSValue):
+        (WebCore::ComputedStyleExtractor::propertyValue):
+        * css/CSSParser.cpp:
+        (WebCore::isValidKeywordPropertyAndValue):
+        (WebCore::isKeywordPropertyID):
+        (WebCore::CSSParser::parseValue):
+        (WebCore::CSSParser::parseTextEmphasisPosition):
+        * css/CSSParser.h:
+        * css/CSSPrimitiveValueMappings.h:
+        * css/DeprecatedStyleBuilder.cpp:
+        (WebCore::valueToEmphasisPosition):
+        (WebCore::ApplyPropertyTextEmphasisPosition::applyValue):
+        (WebCore::ApplyPropertyTextEmphasisPosition::createHandler):
+        (WebCore::DeprecatedStyleBuilder::DeprecatedStyleBuilder):
+        * rendering/InlineFlowBox.cpp:
+        (WebCore::InlineFlowBox::placeBoxesInBlockDirection):
+        (WebCore::InlineFlowBox::addTextBoxVisualOverflow):
+        (WebCore::InlineFlowBox::computeOverAnnotationAdjustment):
+        (WebCore::InlineFlowBox::computeUnderAnnotationAdjustment):
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::emphasisMarkExistsAndIsAbove):
+        (WebCore::InlineTextBox::paint):
+        * rendering/InlineTextBox.h:
+        * rendering/style/RenderStyle.h:
+        * rendering/style/RenderStyleConstants.h:
+        * rendering/style/StyleRareInheritedData.cpp:
+        (WebCore::StyleRareInheritedData::StyleRareInheritedData):
+        * rendering/style/StyleRareInheritedData.h:
+
 2014-01-16  Chris Fleizach  <cfleizach@apple.com>
 
         AX: WebKit is not firing AXMenuOpenedNotification

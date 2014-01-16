@@ -1789,6 +1789,48 @@ public:
     static PropertyHandler createHandler() { return PropertyHandler(&applyInheritValue, &applyInitialValue, &applyValue); }
 };
 
+static TextEmphasisPosition valueToEmphasisPosition(CSSPrimitiveValue& primitiveValue)
+{
+    ASSERT(primitiveValue.isValueID());
+
+    switch (primitiveValue.getValueID()) {
+    case CSSValueOver:
+        return TextEmphasisPositionOver;
+    case CSSValueUnder:
+        return TextEmphasisPositionUnder;
+    case CSSValueLeft:
+        return TextEmphasisPositionLeft;
+    case CSSValueRight:
+        return TextEmphasisPositionRight;
+    default:
+        break;
+    }
+
+    ASSERT_NOT_REACHED();
+    return RenderStyle::initialTextEmphasisPosition();
+}
+
+class ApplyPropertyTextEmphasisPosition {
+public:
+    static void applyValue(CSSPropertyID, StyleResolver* styleResolver, CSSValue* value)
+    {
+        if (value->isPrimitiveValue()) {
+            styleResolver->style()->setTextEmphasisPosition(valueToEmphasisPosition(*toCSSPrimitiveValue(value)));
+            return;
+        }
+
+        TextEmphasisPosition position = 0;
+        for (CSSValueListIterator i(value); i.hasMore(); i.advance())
+            position |= valueToEmphasisPosition(*toCSSPrimitiveValue(i.value()));
+        styleResolver->style()->setTextEmphasisPosition(position);
+    }
+    static PropertyHandler createHandler()
+    {
+        PropertyHandler handler = ApplyPropertyDefaultBase<TextEmphasisPosition, &RenderStyle::textEmphasisPosition, TextEmphasisPosition, &RenderStyle::setTextEmphasisPosition, TextEmphasisPosition, &RenderStyle::initialTextEmphasisPosition>::createHandler();
+        return PropertyHandler(handler.inheritFunction(), handler.initialFunction(), &applyValue);
+    }
+};
+
 template <typename T,
           T (Animation::*getterFunction)() const,
           void (Animation::*setterFunction)(T),
@@ -2530,7 +2572,7 @@ DeprecatedStyleBuilder::DeprecatedStyleBuilder()
     setPropertyHandler(CSSPropertyWebkitRubyPosition, ApplyPropertyDefault<RubyPosition, &RenderStyle::rubyPosition, RubyPosition, &RenderStyle::setRubyPosition, RubyPosition, &RenderStyle::initialRubyPosition>::createHandler());
     setPropertyHandler(CSSPropertyWebkitTextCombine, ApplyPropertyDefault<TextCombine, &RenderStyle::textCombine, TextCombine, &RenderStyle::setTextCombine, TextCombine, &RenderStyle::initialTextCombine>::createHandler());
     setPropertyHandler(CSSPropertyWebkitTextEmphasisColor, ApplyPropertyColor<NoInheritFromParent, &RenderStyle::textEmphasisColor, &RenderStyle::setTextEmphasisColor, &RenderStyle::setVisitedLinkTextEmphasisColor, &RenderStyle::color>::createHandler());
-    setPropertyHandler(CSSPropertyWebkitTextEmphasisPosition, ApplyPropertyDefault<TextEmphasisPosition, &RenderStyle::textEmphasisPosition, TextEmphasisPosition, &RenderStyle::setTextEmphasisPosition, TextEmphasisPosition, &RenderStyle::initialTextEmphasisPosition>::createHandler());
+    setPropertyHandler(CSSPropertyWebkitTextEmphasisPosition, ApplyPropertyTextEmphasisPosition::createHandler());
     setPropertyHandler(CSSPropertyWebkitTextEmphasisStyle, ApplyPropertyTextEmphasisStyle::createHandler());
     setPropertyHandler(CSSPropertyWebkitTextFillColor, ApplyPropertyColor<NoInheritFromParent, &RenderStyle::textFillColor, &RenderStyle::setTextFillColor, &RenderStyle::setVisitedLinkTextFillColor, &RenderStyle::color>::createHandler());
     setPropertyHandler(CSSPropertyWebkitTextSecurity, ApplyPropertyDefault<ETextSecurity, &RenderStyle::textSecurity, ETextSecurity, &RenderStyle::setTextSecurity, ETextSecurity, &RenderStyle::initialTextSecurity>::createHandler());

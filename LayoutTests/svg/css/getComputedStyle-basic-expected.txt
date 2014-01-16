@@ -384,8 +384,8 @@ rect: style.getPropertyValue(-webkit-text-decorations-in-effect) : none
 rect: style.getPropertyCSSValue(-webkit-text-decorations-in-effect) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(-webkit-text-emphasis-color) : rgb(0, 0, 0)
 rect: style.getPropertyCSSValue(-webkit-text-emphasis-color) : [object CSSPrimitiveValue]
-rect: style.getPropertyValue(-webkit-text-emphasis-position) : over
-rect: style.getPropertyCSSValue(-webkit-text-emphasis-position) : [object CSSPrimitiveValue]
+rect: style.getPropertyValue(-webkit-text-emphasis-position) : over right
+rect: style.getPropertyCSSValue(-webkit-text-emphasis-position) : [object CSSValueList]
 rect: style.getPropertyValue(-webkit-text-emphasis-style) : none
 rect: style.getPropertyCSSValue(-webkit-text-emphasis-style) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(-webkit-text-fill-color) : rgb(0, 0, 0)
@@ -880,8 +880,8 @@ g: style.getPropertyValue(-webkit-text-decorations-in-effect) : none
 g: style.getPropertyCSSValue(-webkit-text-decorations-in-effect) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(-webkit-text-emphasis-color) : rgb(0, 0, 0)
 g: style.getPropertyCSSValue(-webkit-text-emphasis-color) : [object CSSPrimitiveValue]
-g: style.getPropertyValue(-webkit-text-emphasis-position) : over
-g: style.getPropertyCSSValue(-webkit-text-emphasis-position) : [object CSSPrimitiveValue]
+g: style.getPropertyValue(-webkit-text-emphasis-position) : over right
+g: style.getPropertyCSSValue(-webkit-text-emphasis-position) : [object CSSValueList]
 g: style.getPropertyValue(-webkit-text-emphasis-style) : none
 g: style.getPropertyCSSValue(-webkit-text-emphasis-style) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(-webkit-text-fill-color) : rgb(0, 0, 0)

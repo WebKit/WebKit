@@ -89,7 +89,7 @@ public:
     virtual int baselinePosition(FontBaseline) const OVERRIDE FINAL;
     virtual LayoutUnit lineHeight() const OVERRIDE FINAL;
 
-    bool getEmphasisMarkPosition(const RenderStyle&, TextEmphasisPosition&) const;
+    bool emphasisMarkExistsAndIsAbove(const RenderStyle&, bool& isAbove) const;
 
     LayoutRect logicalOverflowRect() const;
     void setLogicalOverflowRect(const LayoutRect&);

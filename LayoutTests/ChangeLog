@@ -1,3 +1,31 @@
+2014-01-07  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        text-emphasis-position CSS property doesn't recognize 'left' and 'right'
+        https://bugs.webkit.org/show_bug.cgi?id=126611
+
+        Reviewed by Simon Fraser.
+
+        With regards to text-emphasis-position, "left" and "right" are only valid in
+        vertical writing modes, and "over" and "under" are only valid in horizontal
+        writing modes.
+
+        In order to keep in line with existing pages, specifying "under" without
+        "left" or "right" should draw text as if "under left" was specified (and
+        vice-versa).
+
+        The default value for text-emphasis-position should be "over right".
+
+        * fast/css/getComputedStyle/computed-style-expected.txt:
+        * fast/css/getComputedStyle/computed-style-without-renderer-expected.txt:
+        * fast/css/parsing-text-emphasis-expected.txt:
+        * fast/css/parsing-text-emphasis.html:
+        * fast/text/emphasis-horizontal-left-right-expected.html: Added.
+        * fast/text/emphasis-horizontal-left-right.html: Added.
+        * fast/text/emphasis-vertical-over-right-expected.html: Added.
+        * fast/text/emphasis-vertical-over-right.html: Added.
+        * fast/text/emphasis-vertical-over-under-expected.html: Added.
+        * fast/text/emphasis-vertical-over-under.html: Added.
+
 2014-01-16  Michał Pakuła vel Rutka  <m.pakula@samsung.com>
 
         Unreviewed EFL gardening

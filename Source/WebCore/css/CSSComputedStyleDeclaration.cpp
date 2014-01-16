@@ -1463,6 +1463,25 @@ static PassRef<CSSValue> renderTextDecorationSkipFlagsToCSSValue(TextDecorationS
 }
 #endif // CSS3_TEXT_DECORATION
 
+static PassRef<CSSValue> renderEmphasisPositionFlagsToCSSValue(TextEmphasisPosition textEmphasisPosition)
+{
+    ASSERT(!((textEmphasisPosition & TextEmphasisPositionOver) && (textEmphasisPosition & TextEmphasisPositionUnder)));
+    ASSERT(!((textEmphasisPosition & TextEmphasisPositionLeft) && (textEmphasisPosition & TextEmphasisPositionRight)));
+    RefPtr<CSSValueList> list = CSSValueList::createSpaceSeparated();
+    if (textEmphasisPosition & TextEmphasisPositionOver)
+        list->append(cssValuePool().createIdentifierValue(CSSValueOver));
+    if (textEmphasisPosition & TextEmphasisPositionUnder)
+        list->append(cssValuePool().createIdentifierValue(CSSValueUnder));
+    if (textEmphasisPosition & TextEmphasisPositionLeft)
+        list->append(cssValuePool().createIdentifierValue(CSSValueLeft));
+    if (textEmphasisPosition & TextEmphasisPositionRight)
+        list->append(cssValuePool().createIdentifierValue(CSSValueRight));
+
+    if (!list->length())
+        return cssValuePool().createIdentifierValue(CSSValueNone);
+    return list.releaseNonNull();
+}
+
 static PassRef<CSSValue> fillRepeatToCSSValue(EFillRepeat xRepeat, EFillRepeat yRepeat)
 {
     // For backwards compatibility, if both values are equal, just return one of them. And
@@ -2399,7 +2418,7 @@ PassRefPtr<CSSValue> ComputedStyleExtractor::propertyValue(CSSPropertyID propert
         case CSSPropertyWebkitTextEmphasisColor:
             return currentColorOrValidColor(style.get(), style->textEmphasisColor());
         case CSSPropertyWebkitTextEmphasisPosition:
-            return cssValuePool().createValue(style->textEmphasisPosition());
+            return renderEmphasisPositionFlagsToCSSValue(style->textEmphasisPosition());
         case CSSPropertyWebkitTextEmphasisStyle:
             switch (style->textEmphasisMark()) {
             case TextEmphasisMarkNone:

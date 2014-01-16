@@ -1769,7 +1769,7 @@ public:
     static TextEmphasisFill initialTextEmphasisFill() { return TextEmphasisFillFilled; }
     static TextEmphasisMark initialTextEmphasisMark() { return TextEmphasisMarkNone; }
     static const AtomicString& initialTextEmphasisCustomMark() { return nullAtom; }
-    static TextEmphasisPosition initialTextEmphasisPosition() { return TextEmphasisPositionOver; }
+    static TextEmphasisPosition initialTextEmphasisPosition() { return TextEmphasisPositionOver | TextEmphasisPositionRight; }
     static RubyPosition initialRubyPosition() { return RubyPositionBefore; }
     static LineBoxContain initialLineBoxContain() { return LineBoxContainBlock | LineBoxContainInline | LineBoxContainReplaced; }
     static ImageOrientationEnum initialImageOrientation() { return OriginTopLeft; }

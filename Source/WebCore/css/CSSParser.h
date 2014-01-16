@@ -288,6 +288,7 @@ public:
     bool parsePerspectiveOrigin(CSSPropertyID propId, CSSPropertyID& propId1, CSSPropertyID& propId2,  RefPtr<CSSValue>&, RefPtr<CSSValue>&);
 
     bool parseTextEmphasisStyle(bool important);
+    bool parseTextEmphasisPosition(bool important);
 
     void addTextDecorationProperty(CSSPropertyID, PassRefPtr<CSSValue>, bool important);
     bool parseTextDecoration(CSSPropertyID propId, bool important);

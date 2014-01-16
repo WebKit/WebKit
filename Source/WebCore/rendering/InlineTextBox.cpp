@@ -462,14 +462,30 @@ FloatSize InlineTextBox::applyShadowToGraphicsContext(GraphicsContext* context, 
     return extraOffset;
 }
 
-bool InlineTextBox::getEmphasisMarkPosition(const RenderStyle& style, TextEmphasisPosition& emphasisPosition) const
+static inline bool emphasisPositionHasNeitherLeftNorRight(TextEmphasisPosition emphasisPosition)
+{
+    return !(emphasisPosition & TextEmphasisPositionLeft) && !(emphasisPosition & TextEmphasisPositionRight);
+}
+
+bool InlineTextBox::emphasisMarkExistsAndIsAbove(const RenderStyle& style, bool& above) const
 {
     // This function returns true if there are text emphasis marks and they are suppressed by ruby text.
     if (style.textEmphasisMark() == TextEmphasisMarkNone)
         return false;
 
-    emphasisPosition = style.textEmphasisPosition();
-    if (emphasisPosition == TextEmphasisPositionUnder)
+    TextEmphasisPosition emphasisPosition = style.textEmphasisPosition();
+    ASSERT(!((emphasisPosition & TextEmphasisPositionOver) && (emphasisPosition & TextEmphasisPositionUnder)));
+    ASSERT(!((emphasisPosition & TextEmphasisPositionLeft) && (emphasisPosition & TextEmphasisPositionRight)));
+    
+    if (emphasisPositionHasNeitherLeftNorRight(emphasisPosition))
+        above = emphasisPosition & TextEmphasisPositionOver;
+    else if (style.isHorizontalWritingMode())
+        above = emphasisPosition & TextEmphasisPositionOver;
+    else
+        above = emphasisPosition & TextEmphasisPositionRight;
+    
+    if ((style.isHorizontalWritingMode() && (emphasisPosition & TextEmphasisPositionUnder))
+        || (!style.isHorizontalWritingMode() && (emphasisPosition & TextEmphasisPositionLeft)))
         return true; // Ruby text is always over, so it cannot suppress emphasis marks under.
 
     RenderBlock* containingBlock = renderer().containingBlock();
@@ -629,11 +645,11 @@ void InlineTextBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset, 
     }
 
     int emphasisMarkOffset = 0;
-    TextEmphasisPosition emphasisMarkPosition;
-    bool hasTextEmphasis = getEmphasisMarkPosition(lineStyle, emphasisMarkPosition);
+    bool emphasisMarkAbove;
+    bool hasTextEmphasis = emphasisMarkExistsAndIsAbove(lineStyle, emphasisMarkAbove);
     const AtomicString& emphasisMark = hasTextEmphasis ? lineStyle.textEmphasisMarkString() : nullAtom;
     if (!emphasisMark.isEmpty())
-        emphasisMarkOffset = emphasisMarkPosition == TextEmphasisPositionOver ? -font.fontMetrics().ascent() - font.emphasisMarkDescent(emphasisMark) : font.fontMetrics().descent() + font.emphasisMarkAscent(emphasisMark);
+        emphasisMarkOffset = emphasisMarkAbove ? -font.fontMetrics().ascent() - font.emphasisMarkDescent(emphasisMark) : font.fontMetrics().descent() + font.emphasisMarkAscent(emphasisMark);
 
     const ShadowData* textShadow = paintInfo.forceBlackText() ? 0 : lineStyle.textShadow();
 

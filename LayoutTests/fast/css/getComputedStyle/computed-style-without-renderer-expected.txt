@@ -192,7 +192,7 @@ zoom: 1
 -webkit-text-combine: none
 -webkit-text-decorations-in-effect: none
 -webkit-text-emphasis-color: rgb(0, 0, 0)
--webkit-text-emphasis-position: over
+-webkit-text-emphasis-position: over right
 -webkit-text-emphasis-style: none
 -webkit-text-fill-color: rgb(0, 0, 0)
 -webkit-text-orientation: vertical-right
