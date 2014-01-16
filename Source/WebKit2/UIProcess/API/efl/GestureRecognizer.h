@@ -56,11 +56,11 @@ private:
     bool exceedsDoubleTapThreshold(const WebCore::IntPoint& first, const WebCore::IntPoint& last) const;
 
     // State functions.
-    void noGesture(WKEventType, WKArrayRef);
-    void singleTapGesture(WKEventType, WKArrayRef);
-    void doubleTapGesture(WKEventType, WKArrayRef);
-    void panGesture(WKEventType, WKArrayRef);
-    void pinchGesture(WKEventType, WKArrayRef);
+    void noGesture(WKTouchEventRef);
+    void singleTapGesture(WKTouchEventRef);
+    void doubleTapGesture(WKTouchEventRef);
+    void panGesture(WKTouchEventRef);
+    void pinchGesture(WKTouchEventRef);
 
     void stopTapTimers();
 
@@ -69,7 +69,7 @@ private:
     static const int s_squaredDoubleTapThreshold;
     static const int s_squaredPanThreshold;
 
-    typedef void (GestureRecognizer::*RecognizerFunction)(WKEventType, WKArrayRef);
+    typedef void (GestureRecognizer::*RecognizerFunction)(WKTouchEventRef);
     RecognizerFunction m_recognizerFunction;
 
     std::unique_ptr<WebKit::GestureHandler> m_gestureHandler;

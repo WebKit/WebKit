@@ -239,10 +239,13 @@ private:
     static Eina_Bool handleEwkViewKeyUp(Ewk_View_Smart_Data* smartData, const Evas_Event_Key_Up* upEvent);
 
 #if ENABLE(TOUCH_EVENTS)
-    void feedTouchEvents(Ewk_Touch_Event_Type type);
-    static void handleTouchDown(void* data, Evas*, Evas_Object*, void* eventInfo);
-    static void handleTouchUp(void* data, Evas*, Evas_Object*, void* eventInfo);
-    static void handleTouchMove(void* data, Evas*, Evas_Object*, void* eventInfo);
+    void feedTouchEvents(Ewk_Touch_Event_Type type, double timestamp);
+    static void handleMouseDownForTouch(void* data, Evas*, Evas_Object*, void* eventInfo);
+    static void handleMouseUpForTouch(void* data, Evas*, Evas_Object*, void* eventInfo);
+    static void handleMouseMoveForTouch(void* data, Evas*, Evas_Object*, void* eventInfo);
+    static void handleMultiDownForTouch(void* data, Evas*, Evas_Object*, void* eventInfo);
+    static void handleMultiUpForTouch(void* data, Evas*, Evas_Object*, void* eventInfo);
+    static void handleMultiMoveForTouch(void* data, Evas*, Evas_Object*, void* eventInfo);
 #endif
     static void handleFaviconChanged(const char* pageURL, void* eventInfo);
 

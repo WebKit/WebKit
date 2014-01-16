@@ -1,3 +1,36 @@
+2014-01-15  Eunmi Lee  <eunmi15.lee@samsung.com>
+
+        [EFL][WK2] Use timestamp when event occurs for touch events.
+        https://bugs.webkit.org/show_bug.cgi?id=126424
+
+        Reviewed by Gyuyoung Kim.
+
+        Current time is used for touch event's timestamp instead of timestamp
+        when event occurs. Timestamp of touch event is used to implement flick
+        gesture, so it should be real value for accurate gesture processing.
+
+        * UIProcess/API/efl/EwkView.cpp:
+        Function names for handling touch events are changed to distinguish
+        mouse events and multi events.
+        (EwkView::setTouchEventsEnabled):
+        (EwkView::feedTouchEvents):
+        (EwkView::handleMouseDownForTouch):
+        (EwkView::handleMouseUpForTouch):
+        (EwkView::handleMouseMoveForTouch):
+        (EwkView::handleMultiDownForTouch):
+        (EwkView::handleMultiUpForTouch):
+        (EwkView::handleMultiMoveForTouch):
+        * UIProcess/API/efl/EwkView.h:
+        * UIProcess/API/efl/GestureRecognizer.cpp:
+        (WebKit::GestureHandler::handlePan):
+        (WebKit::GestureRecognizer::processTouchEvent):
+        (WebKit::GestureRecognizer::noGesture):
+        (WebKit::GestureRecognizer::singleTapGesture):
+        (WebKit::GestureRecognizer::doubleTapGesture):
+        (WebKit::GestureRecognizer::panGesture):
+        (WebKit::GestureRecognizer::pinchGesture):
+        * UIProcess/API/efl/GestureRecognizer.h:
+
 2014-01-15  Gavin Barraclough  <barraclough@apple.com>
 
         Change Page, FocusController to use ViewState
