@@ -1,3 +1,14 @@
+2014-01-16  Oliver Hunt  <oliver@apple.com>
+
+        Stop run-jsc from consuming stderr output
+        https://bugs.webkit.org/show_bug.cgi?id=127115
+
+        Reviewed by Mark Lam.
+
+        Simple patch to make run-jsc easier to deal with
+
+        * Scripts/run-jsc:
+
 2014-01-16  Eva Balazsfalvi  <balazsfalvi.eva@stud.u-szeged.hu>
 
         Tools/gtk/generate-feature-defines-files doesn't work with older versions of python

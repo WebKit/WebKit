@@ -36,15 +36,12 @@ use lib $FindBin::Bin;
 use Getopt::Long;
 use webkitdirs;
 
-my $usage = "Usage: run-jsc [--count run_count] [--verbose] shell_file [file2...]";
+my $usage = "Usage: run-jsc [--count run_count] shell_file [file2...]";
 
 my $count = 1;
-my $verbose = 0;
-GetOptions("count|c=i" => \$count,
-           "verbose|v" => \$verbose);
+GetOptions("count|c=i" => \$count);
 
 my $jsc = jscProductDir() . "/jsc @ARGV";
-$jsc .= " 2> " . File::Spec->devnull() unless $verbose;
 
 my $dyld = jscProductDir();
 
