@@ -6958,36 +6958,42 @@ void RenderLayer::paintFlowThreadIfRegion(GraphicsContext* context, const LayerP
         return;
     
     RenderBlockFlow* renderNamedFlowFragmentContainer = toRenderBlockFlow(&renderer());
-    RenderNamedFlowFragment* region = renderNamedFlowFragmentContainer->renderNamedFlowFragment();
-    if (!region->isValid())
+    RenderNamedFlowFragment* flowFragment = renderNamedFlowFragmentContainer->renderNamedFlowFragment();
+    if (!flowFragment->isValid())
         return;
     
     ClipRect regionClipRect;
-    if (paintingInfo.rootLayer != this && parent()) {
-        ClipRectsContext clipRectsContext(paintingInfo.rootLayer, region,
-            (paintFlags & PaintLayerTemporaryClipRects) ? TemporaryClipRects : PaintingClipRects,
-            IgnoreOverlayScrollbarSize, (isPaintingOverflowContents) ? IgnoreOverflowClip : RespectOverflowClip);
-        regionClipRect = backgroundClipRect(clipRectsContext);
-    } else
-        regionClipRect = dirtyRect;
-
-    RenderNamedFlowThread* flowThread = region->namedFlowThread();
-    LayoutRect regionContentBox = renderNamedFlowFragmentContainer->contentBoxRect();
-    
+    RenderNamedFlowThread* flowThread = flowFragment->namedFlowThread();
     RenderLayer* flowThreadLayer = flowThread->layer();
-    bool isLastRegionWithRegionFragmentBreak = (region->isLastRegion() && region->style().regionFragment() == BreakRegionFragment);
-    if (region->hasOverflowClip() || isLastRegionWithRegionFragmentBreak) {
-        LayoutPoint regionOffsetFromRoot;
-        convertToLayerCoords(flowThreadLayer, regionOffsetFromRoot);
-        regionClipRect = regionContentBox;
-        regionClipRect.moveBy(regionOffsetFromRoot);
+    bool isLastRegionWithRegionFragmentBreak = (flowFragment->isLastRegion() && flowFragment->style().regionFragment() == BreakRegionFragment);
+    if (flowFragment->hasOverflowClip() || isLastRegionWithRegionFragmentBreak) {
+        regionClipRect = renderNamedFlowFragmentContainer->paddingBoxRect();
+
+        // When the layer of the flow fragment's container is composited, the flow fragment container receives a
+        // GraphicsLayer of its own so the clipping coordinates (caused by overflow:hidden) must be relative to the
+        // GraphicsLayer coordinates in which the fragment gets painted. So what is computed so far is enough.
+        // If the layer of the flowFragment is not composited, then we change the coordinates to be relative to the flow
+        // thread's layer.
+        if (!isComposited()) {
+            LayoutPoint regionOffsetFromRoot;
+            convertToLayerCoords(flowThreadLayer, regionOffsetFromRoot);
+            regionClipRect.moveBy(regionOffsetFromRoot);
+        }
+    } else {
+        if (paintingInfo.rootLayer != this && parent()) {
+            ClipRectsContext clipRectsContext(paintingInfo.rootLayer, flowFragment,
+                (paintFlags & PaintLayerTemporaryClipRects) ? TemporaryClipRects : PaintingClipRects,
+                IgnoreOverlayScrollbarSize, (isPaintingOverflowContents) ? IgnoreOverflowClip : RespectOverflowClip);
+            regionClipRect = backgroundClipRect(clipRectsContext);
+        } else
+            regionClipRect = dirtyRect;
     }
 
     // Optimize clipping for the single fragment case.
     if (!regionClipRect.isEmpty() && regionClipRect != LayoutRect::infiniteRect())
         clipToRect(paintingInfo.rootLayer, context, paintingInfo.paintDirtyRect, regionClipRect);
 
-    flowThreadLayer->paintNamedFlowThreadInsideRegion(context, region, paintingInfo.paintDirtyRect, paintOffset, paintingInfo.paintBehavior, paintFlags);
+    flowThreadLayer->paintNamedFlowThreadInsideRegion(context, flowFragment, paintingInfo.paintDirtyRect, paintOffset, paintingInfo.paintBehavior, paintFlags);
 
     if (!regionClipRect.isEmpty() && regionClipRect != LayoutRect::infiniteRect())
         restoreClip(context, paintingInfo.paintDirtyRect, regionClipRect);

@@ -1,0 +1,44 @@
+<!doctype html>
+<html>
+    <head>
+        <title>Test - Bug #124887: [CSS Regions] Fix painting when the composited region has overflow:hidden</title>
+        <style>
+            .content {
+                -webkit-flow-into: theFlow;
+                margin: -5px -10px -15px -20px;
+            }
+            .transformed {
+                -webkit-transform: translateZ(1px);
+            }
+            .region {
+                overflow: hidden;
+
+                -webkit-flow-from: theFlow;
+                width: 600px;
+                height: 100px;
+                box-shadow: 0px 0px 0px 10px Green;
+                padding: 5px 10px 15px 20px;
+                margin: 10px 15px 20px 5px;
+                border-width: 15px 20px 5px 10px;
+                border-style: solid;
+                border-color: #888;
+            }
+            html {
+                -webkit-font-smoothing:none;
+                font-size: 16px;
+                line-height: 16px;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="content">
+            Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+            <br/>
+            Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+        </div>
+
+        <div class="region transformed"></div>
+
+        <p>Test passes if the content of the composited region is painted in its entirety (in the region with overflow:hidden) as in the region that doesn't have overflow:hidden .</p>
+    </body>
+</html>

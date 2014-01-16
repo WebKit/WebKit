@@ -1,3 +1,15 @@
+2014-01-15  Mihai Maerean  <mmaerean@adobe.com>
+
+        [CSS Regions] Fix painting when the composited region has overflow:hidden
+        https://bugs.webkit.org/show_bug.cgi?id=124887
+
+        Reviewed by Alexandru Chiculita.
+
+        * compositing/regions/paint-inside-composited-region-overflow-hidden-versus-div.html: Added.
+        * compositing/regions/paint-inside-composited-region-overflow-hidden-versus-div-expected.html: Added.
+        * compositing/regions/paint-inside-composited-region-overflow-hidden-versus-region.html: Added.
+        * compositing/regions/paint-inside-composited-region-overflow-hidden-versus-region-expected.html: Added.
+
 2014-01-15  Ryuan Choi  <ryuan.choi@samsung.com>
 
         Unreviewed. EFL Gardening.

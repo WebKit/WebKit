@@ -1,3 +1,23 @@
+2014-01-15  Mihai Maerean  <mmaerean@adobe.com>
+
+        [CSS Regions] Fix painting when the composited region has overflow:hidden
+        https://bugs.webkit.org/show_bug.cgi?id=124887
+
+        Reviewed by Alexandru Chiculita.
+
+        When the layer of the region is composited, the region receives a GraphicsLayer of its own
+        so the clipping coordinates (caused by overflow:hidden) must be relative to the
+        GraphicsLayer coordinates in which the region gets painted.
+
+        Also, while the painting is done relative to the location of the region's content box, the
+        clipping is bound to the padding box of the region.
+
+        Tests: compositing/regions/paint-inside-composited-region-overflow-hidden-versus-div.html
+               compositing/regions/paint-inside-composited-region-overflow-hidden-versus-region.html
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::paintFlowThreadIfRegion):
+
 2014-01-15  Benjamin Poulain  <bpoulain@apple.com>
 
         Move user agent code to WebCore and unify some code between OS X and iOS
