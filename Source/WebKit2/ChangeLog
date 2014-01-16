@@ -1,5 +1,11 @@
 2014-01-16  Roger Fong  <roger_fong@apple.com>
 
+        Build fix for mac following r162141.
+
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.h: Switch OVERRIDE to override.
+
+2014-01-16  Roger Fong  <roger_fong@apple.com>
+
         Add support for handling WebGL load policies.
         https://bugs.webkit.org/show_bug.cgi?id=126935
         <rdar://problem/15790448>.
