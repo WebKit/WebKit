@@ -43,7 +43,7 @@ class Element;
 class SVGDocumentExtensions {
     WTF_MAKE_NONCOPYABLE(SVGDocumentExtensions); WTF_MAKE_FAST_ALLOCATED;
 public:
-    typedef HashSet<Element*> SVGPendingElements;
+    typedef HashSet<Element*> PendingElements;
     SVGDocumentExtensions(Document*);
     ~SVGDocumentExtensions();
     
@@ -83,8 +83,8 @@ private:
     HashSet<SVGFontFaceElement*> m_svgFontFaceElements;
 #endif
     HashMap<AtomicString, RenderSVGResourceContainer*> m_resources;
-    HashMap<AtomicString, std::unique_ptr<SVGPendingElements>> m_pendingResources; // Resources that are pending.
-    HashMap<AtomicString, std::unique_ptr<SVGPendingElements>> m_pendingResourcesForRemoval; // Resources that are pending and scheduled for removal.
+    HashMap<AtomicString, std::unique_ptr<PendingElements>> m_pendingResources; // Resources that are pending.
+    HashMap<AtomicString, std::unique_ptr<PendingElements>> m_pendingResourcesForRemoval; // Resources that are pending and scheduled for removal.
     HashMap<SVGElement*, std::unique_ptr<HashSet<SVGElement*>>> m_elementDependencies;
     std::unique_ptr<SVGResourcesCache> m_resourcesCache;
 
@@ -93,19 +93,19 @@ public:
     // which are referenced by any object in the SVG document, but do NOT exist yet.
     // For instance, dynamically build gradients / patterns / clippers...
     void addPendingResource(const AtomicString& id, Element*);
-    bool hasPendingResource(const AtomicString& id) const;
-    bool isElementPendingResources(Element*) const;
-    bool isElementPendingResource(Element*, const AtomicString& id) const;
+    bool isIdOfPendingResource(const AtomicString& id) const;
+    bool isPendingResource(Element*, const AtomicString& id) const;
     void clearHasPendingResourcesIfPossible(Element*);
     void removeElementFromPendingResources(Element*);
-    std::unique_ptr<SVGPendingElements> removePendingResource(const AtomicString& id);
+    std::unique_ptr<PendingElements> removePendingResource(const AtomicString& id);
 
     // The following two functions are used for scheduling a pending resource to be removed.
     void markPendingResourcesForRemoval(const AtomicString&);
-    Element* removeElementFromPendingResourcesForRemoval(const AtomicString&);
+    Element* removeElementFromPendingResourcesForRemovalMap(const AtomicString&);
 
 private:
-    std::unique_ptr<SVGPendingElements> removePendingResourceForRemoval(const AtomicString&);
+    bool isElementWithPendingResources(Element*) const;
+    std::unique_ptr<PendingElements> removePendingResourceForRemoval(const AtomicString&);
 };
 
 }

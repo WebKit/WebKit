@@ -1,3 +1,38 @@
+2014-01-16  Dirk Schulze  <krit@webkit.org>
+
+        Rename functions in SVGDocumentExtension
+        https://bugs.webkit.org/show_bug.cgi?id=127046
+
+        Reviewed by Sam Weinig.
+
+        Change some function names in SVGDocumentExtension
+        to make them more descriptive.
+
+        Simple refactoring. No new tests.
+
+        * rendering/svg/RenderSVGResourceContainer.cpp:
+        (WebCore::RenderSVGResourceContainer::registerResource):
+        * svg/SVGDocumentExtensions.cpp:
+        (WebCore::SVGDocumentExtensions::addPendingResource):
+        (WebCore::SVGDocumentExtensions::isIdOfPendingResource):
+        (WebCore::SVGDocumentExtensions::isElementWithPendingResources):
+        (WebCore::SVGDocumentExtensions::isPendingResource):
+        (WebCore::SVGDocumentExtensions::clearHasPendingResourcesIfPossible):
+        (WebCore::SVGDocumentExtensions::removeElementFromPendingResources):
+        (WebCore::SVGDocumentExtensions::removePendingResource):
+        (WebCore::SVGDocumentExtensions::removePendingResourceForRemoval):
+        (WebCore::SVGDocumentExtensions::markPendingResourcesForRemoval):
+        (WebCore::SVGDocumentExtensions::removeElementFromPendingResourcesForRemovalMap): The name is not great but a bit more descriptive.
+        * svg/SVGDocumentExtensions.h:
+        * svg/SVGElement.cpp:
+        (WebCore::SVGElement::buildPendingResourcesIfNeeded):
+        * svg/SVGMPathElement.cpp:
+        (WebCore::SVGMPathElement::buildPendingResource):
+        * svg/SVGTextPathElement.cpp:
+        (WebCore::SVGTextPathElement::buildPendingResource):
+        * svg/animation/SVGSMILElement.cpp:
+        (WebCore::SVGSMILElement::buildPendingResource):
+
 2014-01-15  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK][EFL][NIX] Do not use PrintContext, Frame and DocumentLoader in Errors

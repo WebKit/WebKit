@@ -1036,14 +1036,14 @@ void SVGElement::buildPendingResourcesIfNeeded()
 
     SVGDocumentExtensions* extensions = document().accessSVGExtensions();
     String resourceId = getIdAttribute();
-    if (!extensions->hasPendingResource(resourceId))
+    if (!extensions->isIdOfPendingResource(resourceId))
         return;
 
     // Mark pending resources as pending for removal.
     extensions->markPendingResourcesForRemoval(resourceId);
 
     // Rebuild pending resources for each client of a pending resource that is being removed.
-    while (Element* clientElement = extensions->removeElementFromPendingResourcesForRemoval(resourceId)) {
+    while (Element* clientElement = extensions->removeElementFromPendingResourcesForRemovalMap(resourceId)) {
         ASSERT(clientElement->hasPendingResources());
         if (clientElement->hasPendingResources()) {
             clientElement->buildPendingResource();

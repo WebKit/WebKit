@@ -169,19 +169,19 @@ void RenderSVGResourceContainer::removeClientRenderLayer(RenderLayer* client)
 void RenderSVGResourceContainer::registerResource()
 {
     SVGDocumentExtensions& extensions = svgExtensionsFromElement(element());
-    if (!extensions.hasPendingResource(m_id)) {
+    if (!extensions.isIdOfPendingResource(m_id)) {
         extensions.addResource(m_id, this);
         return;
     }
 
-    std::unique_ptr<SVGDocumentExtensions::SVGPendingElements> clients = extensions.removePendingResource(m_id);
+    std::unique_ptr<SVGDocumentExtensions::PendingElements> clients = extensions.removePendingResource(m_id);
 
     // Cache us with the new id.
     extensions.addResource(m_id, this);
 
     // Update cached resources of pending clients.
-    const SVGDocumentExtensions::SVGPendingElements::const_iterator end = clients->end();
-    for (SVGDocumentExtensions::SVGPendingElements::const_iterator it = clients->begin(); it != end; ++it) {
+    auto end = clients->end();
+    for (auto it = clients->begin(); it != end; ++it) {
         ASSERT((*it)->hasPendingResources());
         extensions.clearHasPendingResourcesIfPossible(*it);
         auto renderer = (*it)->renderer();
