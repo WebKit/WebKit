@@ -1,3 +1,11 @@
+2014-01-16  Zalan Bujtas  <zalan@apple.com>
+
+        Merged some more subpixel skipped tests. Unreviewed.
+
+        webkit.org/b/126891 is a duplicate of webkit.org/b/126892
+
+        * platform/mac/TestExpectations:
+
 2014-01-16  Chris Fleizach  <cfleizach@apple.com>
 
         AX: WebKit is not firing AXMenuItemSelectedNotification

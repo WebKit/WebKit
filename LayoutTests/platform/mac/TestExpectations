@@ -1329,11 +1329,9 @@ webkit.org/b/117756 media/track/media-element-enqueue-event-crash.html [ Skip ]
 webkit.org/b/126889 fast/forms/input-widths.html
 webkit.org/b/126889 fast/forms/number/number-size.html
 
-# Subpixel: word-spacing should not make lines taller
-webkit.org/b/126891 fast/css/word-spacing-between-blocks.html
-webkit.org/b/126891 fast/css/word-spacing-between-inlines.html
-
 # Subpixel: simple line layout produces different layout
+webkit.org/b/126892 fast/css/word-spacing-between-blocks.html
+webkit.org/b/126892 fast/css/word-spacing-between-inlines.html
 webkit.org/b/126892 fast/forms/textAreaLineHeight-simple-lines.html
 webkit.org/b/126892 fast/regions/floats-basic-in-variable-width-regions.html
 webkit.org/b/126892 fast/regions/overflow-moving-below-floats-in-variable-width-regions.html
