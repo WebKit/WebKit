@@ -61,7 +61,7 @@
 /* COMPILER(MSVC) - Microsoft Visual C++ */
 #if defined(_MSC_VER)
 #if _MSC_VER < 1800
-#error "Please use a newer version of Visual Studio. WebKit requires VS2013 or newere to compile."
+#error "Please use a newer version of Visual Studio. WebKit requires VS2013 or newer to compile."
 #endif
 #define WTF_COMPILER_MSVC 1
 
@@ -105,6 +105,9 @@
 
 /* Specific compiler features */
 #if COMPILER(GCC) && !COMPILER(CLANG)
+#if !GCC_VERSION_AT_LEAST(4, 7, 0)
+#error "Please use a newer version of GCC. WebKit requires GCC 4.7.0 or newer to compile."
+#endif
 #if GCC_VERSION_AT_LEAST(4, 8, 0)
 #pragma GCC diagnostic ignored "-Wmaybe-uninitialized"
 #endif
@@ -114,27 +117,17 @@
 #endif
 #if defined(__GXX_EXPERIMENTAL_CXX0X__) || (defined(__cplusplus) && __cplusplus >= 201103L)
 /* C++11 support */
-#if GCC_VERSION_AT_LEAST(4, 3, 0)
 #define WTF_COMPILER_SUPPORTS_CXX_RVALUE_REFERENCES 1
 #define WTF_COMPILER_SUPPORTS_CXX_STATIC_ASSERT 1
 #define WTF_COMPILER_SUPPORTS_CXX_VARIADIC_TEMPLATES 1
 #define WTF_COMPILER_SUPPORTS_CXX_AUTO_TYPE 1
-#endif
-#if GCC_VERSION_AT_LEAST(4, 4, 0)
 #define WTF_COMPILER_SUPPORTS_CXX_DELETED_FUNCTIONS 1
-#endif
-#if GCC_VERSION_AT_LEAST(4, 5, 0)
 #define WTF_COMPILER_SUPPORTS_CXX_EXPLICIT_CONVERSIONS 1
-#endif
-#if GCC_VERSION_AT_LEAST(4, 6, 0)
 #define WTF_COMPILER_SUPPORTS_CXX_NULLPTR 1
 /* Strong enums should work from gcc 4.4, but doesn't seem to support some operators */
 #define WTF_COMPILER_SUPPORTS_CXX_STRONG_ENUMS 1
-#endif
-#if GCC_VERSION_AT_LEAST(4, 7, 0)
 #pragma GCC diagnostic ignored "-Wunused-local-typedefs"
 #define WTF_COMPILER_SUPPORTS_CXX_OVERRIDE_CONTROL 1
-#endif
 #endif /* defined(__GXX_EXPERIMENTAL_CXX0X__) || (defined(__cplusplus) && __cplusplus >= 201103L) */
 #endif /* COMPILER(GCC) */
 
