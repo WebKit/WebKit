@@ -1,0 +1,7 @@
+Test that a fixed positioned element that is dynamicaly changed to absolute is positioned relative to the first region instead of the viewport.
+
+The fixed element should NOT be composited.
+
+On success you should not see red below.
+
+

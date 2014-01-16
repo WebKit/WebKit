@@ -1,0 +1,28 @@
+Test that a fixed positioned element in a named flow whose parent is dynamically transformed is positioned relative to the parent instead of viewport.
+
+The fixed positioned element should NOT be composited.
+
+On success you should not see red below.
+
+(GraphicsLayer
+  (bounds 800.00 600.00)
+  (children 1
+    (GraphicsLayer
+      (bounds 800.00 600.00)
+      (contentsOpaque 1)
+      (children 1
+        (GraphicsLayer
+          (drawsContent 1)
+          (children 1
+            (GraphicsLayer
+              (position 100.00 100.00)
+              (bounds 150.00 150.00)
+              (drawsContent 1)
+            )
+          )
+        )
+      )
+    )
+  )
+)
+

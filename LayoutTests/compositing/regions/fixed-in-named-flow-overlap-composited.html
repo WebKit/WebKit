@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <style>
+            .transformed { -webkit-transform: scale3d(1, 1, 1); }
+            #orange { position: absolute; width: 100px; height: 100px; top: 150px; left: 150px; background-color: orange; }
+            #fixed { -webkit-flow-into: flow; position: fixed; width: 100px; height: 100px; background-color: green; top: 200px; left: 200px; }
+            /* The region is requires because otherwise the fixed positioned element is not displayed */
+            #region { -webkit-flow-from: flow; }
+        </style>
+        <script>
+            if (window.testRunner)
+                testRunner.dumpAsText();
+
+            if (window.internals)
+                window.addEventListener("load", function() {
+                    document.getElementById("layerTree").innerText = window.internals.layerTreeAsText(document);
+                  }, false);
+        </script>
+    </head>
+    <body>
+        <p>Test that a fixed positioned element in a named flow that overlaps a composited element is composited too.</p>
+        <p>On success you should see a green rectangle over an orange rectangle.</p>
+        <div id="orange" class="transformed"></div>
+        <div id="fixed"></div>
+        <div id="region"></div>
+        <pre id="layerTree"></pre>
+    </body>
+</html>

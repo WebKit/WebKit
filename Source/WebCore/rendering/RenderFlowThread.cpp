@@ -28,7 +28,6 @@
  */
 
 #include "config.h"
-
 #include "RenderFlowThread.h"
 
 #include "FlowThreadController.h"
@@ -271,6 +270,9 @@ const RenderLayerList* RenderFlowThread::getLayerListForRegion(RenderNamedFlowFr
 
 RenderNamedFlowFragment* RenderFlowThread::regionForCompositedLayer(RenderLayer& childLayer)
 {
+    if (childLayer.renderer().fixedPositionedWithNamedFlowContainingBlock())
+        return 0;
+
     if (childLayer.renderBox()) {
         RenderRegion* startRegion = 0;
         RenderRegion* endRegion = 0;

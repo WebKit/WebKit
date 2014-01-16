@@ -1,0 +1,21 @@
+Test that a fixed positioned element that is dinamically collected into a named flow is still positioned relative to viewport and composited.
+
+On success you should not see red below.
+
+(GraphicsLayer
+  (bounds 800.00 600.00)
+  (children 1
+    (GraphicsLayer
+      (bounds 800.00 600.00)
+      (contentsOpaque 1)
+      (children 1
+        (GraphicsLayer
+          (position 100.00 100.00)
+          (bounds 50.00 50.00)
+          (contentsOpaque 1)
+        )
+      )
+    )
+  )
+)
+

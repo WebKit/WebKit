@@ -153,4 +153,3 @@ RENDER_OBJECT_TYPE_CASTS(RenderNamedFlowThread, isRenderNamedFlowThread())
 } // namespace WebCore
 
 #endif // RenderNamedFlowThread_h
-

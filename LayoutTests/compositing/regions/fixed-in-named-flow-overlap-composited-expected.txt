@@ -1,0 +1,26 @@
+Test that a fixed positioned element in a named flow that overlaps a composited element is composited too.
+
+On success you should see a green rectangle over an orange rectangle.
+
+(GraphicsLayer
+  (bounds 800.00 600.00)
+  (children 1
+    (GraphicsLayer
+      (bounds 800.00 600.00)
+      (contentsOpaque 1)
+      (children 2
+        (GraphicsLayer
+          (position 150.00 150.00)
+          (bounds 100.00 100.00)
+          (contentsOpaque 1)
+        )
+        (GraphicsLayer
+          (position 200.00 200.00)
+          (bounds 100.00 100.00)
+          (contentsOpaque 1)
+        )
+      )
+    )
+  )
+)
+

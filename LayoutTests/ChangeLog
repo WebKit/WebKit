@@ -1,3 +1,44 @@
+2014-01-15  Mihnea Ovidenie  <mihnea@adobe.com>
+
+        [CSS Regions] Enable accelerated compositing for fixed elements in named flows
+        https://bugs.webkit.org/show_bug.cgi?id=125144
+
+        Reviewed by David Hyatt.
+
+        Added new tests and made the existing tests for fixed positioned elements use the
+        non-compositing mode.
+
+        * compositing/regions/abs-in-named-flow-from-fixed-in-named-flow-expected.txt: Added.
+        * compositing/regions/abs-in-named-flow-from-fixed-in-named-flow.html: Added.
+        * compositing/regions/fixed-in-diff-named-flows-zIndex-expected.html: Added.
+        * compositing/regions/fixed-in-diff-named-flows-zIndex.html: Added.
+        * compositing/regions/fixed-in-named-flow-clip-descendant-expected.txt: Added.
+        * compositing/regions/fixed-in-named-flow-clip-descendant.html: Added.
+        * compositing/regions/fixed-in-named-flow-expected.txt: Added.
+        * compositing/regions/fixed-in-named-flow-from-abs-in-named-flow-expected.txt: Added.
+        * compositing/regions/fixed-in-named-flow-from-abs-in-named-flow.html: Added.
+        * compositing/regions/fixed-in-named-flow-from-outflow-expected.txt: Added.
+        * compositing/regions/fixed-in-named-flow-from-outflow.html: Added.
+        * compositing/regions/fixed-in-named-flow-got-transformed-parent-expected.txt: Added.
+        * compositing/regions/fixed-in-named-flow-got-transformed-parent.html: Added.
+        * compositing/regions/fixed-in-named-flow-lost-transformed-parent-expected.txt: Added.
+        * compositing/regions/fixed-in-named-flow-lost-transformed-parent.html: Added.
+        * compositing/regions/fixed-in-named-flow-overlap-composited-expected.txt: Added.
+        * compositing/regions/fixed-in-named-flow-overlap-composited.html: Added.
+        * compositing/regions/fixed-in-named-flow-position-changed-expected.html: Added.
+        * compositing/regions/fixed-in-named-flow-position-changed.html: Added.
+        * compositing/regions/fixed-in-named-flow-transformed-parent-expected.txt: Added.
+        * compositing/regions/fixed-in-named-flow-transformed-parent.html: Added.
+        * compositing/regions/fixed-in-named-flow-zIndex-expected.html: Added.
+        * compositing/regions/fixed-in-named-flow-zIndex.html: Added.
+        * compositing/regions/fixed-in-named-flow.html: Added.
+        * compositing/regions/fixed-transformed-in-named-flow-expected.txt: Added.
+        * compositing/regions/fixed-transformed-in-named-flow.html: Added.
+        * fast/regions/repaint/element-in-named-flow-absolute-from-fixed.html:
+        * fast/regions/repaint/element-in-named-flow-fixed-from-absolute.html:
+        * fast/regions/repaint/element-inflow-fixed-from-outflow-static.html:
+        * fast/regions/repaint/element-outflow-static-from-inflow-fixed.html:
+
 2014-01-15  Mihai Maerean  <mmaerean@adobe.com>
 
         [CSS Regions] Fix painting when the composited region has overflow:hidden

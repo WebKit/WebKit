@@ -19,6 +19,9 @@
         <div id="target"></div>
         <div id="region"></div>
         <script>
+            if (window.internals)
+                window.internals.settings.setAcceleratedCompositingForFixedPositionEnabled(false);
+
             function repaintTest() {
                 document.getElementById("target").style.position = "fixed";
             }

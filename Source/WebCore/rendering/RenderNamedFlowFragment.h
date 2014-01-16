@@ -66,8 +66,8 @@ public:
     // parent renderer instead.
     // This method returns that renderer holding the layer.
     // The return value may be null.
-    RenderLayerModelObject* layerOwner() const { return parent() && parent()->isRenderLayerModelObject() ?
-        toRenderLayerModelObject(parent()) : nullptr; }
+    RenderLayerModelObject* layerOwner() const { return parent() && parent()->isRenderLayerModelObject() ? toRenderLayerModelObject(parent())
+        : nullptr; }
 
     bool hasCustomRegionStyle() const { return m_hasCustomRegionStyle; }
     void setHasCustomRegionStyle(bool hasCustomRegionStyle) { m_hasCustomRegionStyle = hasCustomRegionStyle; }

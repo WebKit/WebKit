@@ -1022,6 +1022,23 @@ void RenderLayerCompositor::addToOverlapMapRecursive(OverlapMap& overlapMap, Ren
         overlapMap.geometryMap().popMappingsToAncestor(ancestorLayer);
 }
 
+void RenderLayerCompositor::computeCompositingRequirementsForNamedFlowFixed(RenderLayer& layer, OverlapMap* overlapMap, CompositingState& childState, bool& layersChanged, bool& anyDescendantHas3DTransform)
+{
+    if (!layer.isRootLayer())
+        return;
+
+    if (!layer.renderer().view().hasRenderNamedFlowThreads())
+        return;
+
+    Vector<RenderLayer*> fixedLayers;
+    layer.renderer().view().flowThreadController().collectFixedPositionedLayers(fixedLayers);
+
+    for (size_t i = 0; i < fixedLayers.size(); ++i) {
+        RenderLayer* fixedLayer = fixedLayers.at(i);
+        computeCompositingRequirements(&layer, *fixedLayer, overlapMap, childState, layersChanged, anyDescendantHas3DTransform);
+    }
+}
+
 //  Recurse through the layers in z-index and overflow order (which is equivalent to painting order)
 //  For the z-order children of a compositing layer:
 //      If a child layers has a compositing layer, then all subsequent layers must
@@ -1148,7 +1165,10 @@ void RenderLayerCompositor::computeCompositingRequirements(RenderLayer* ancestor
                 computeCompositingRequirements(&layer, *posZOrderList->at(i), overlapMap, childState, layersChanged, anyDescendantHas3DTransform);
         }
     }
-    
+
+    if (layer.isRootLayer())
+        computeCompositingRequirementsForNamedFlowFixed(layer, overlapMap, childState, layersChanged, anyDescendantHas3DTransform);
+
     // If we just entered compositing mode, the root will have become composited (as long as accelerated compositing is enabled).
     if (layer.isRootLayer()) {
         if (inCompositingMode() && m_hasAcceleratedCompositing)
@@ -1308,6 +1328,23 @@ bool RenderLayerCompositor::canAccelerateVideoRendering(RenderVideo& video) cons
 }
 #endif
 
+void RenderLayerCompositor::rebuildCompositingLayerTreeForNamedFlowFixed(RenderLayer& layer, Vector<GraphicsLayer*>& childGraphicsLayersOfEnclosingLayer, int depth)
+{
+    if (!layer.isRootLayer())
+        return;
+
+    if (!layer.renderer().view().hasRenderNamedFlowThreads())
+        return;
+
+    Vector<RenderLayer*> fixedLayers;
+    layer.renderer().view().flowThreadController().collectFixedPositionedLayers(fixedLayers);
+
+    for (size_t i = 0; i < fixedLayers.size(); ++i) {
+        RenderLayer* fixedLayer = fixedLayers.at(i);
+        rebuildCompositingLayerTree(*fixedLayer, childGraphicsLayersOfEnclosingLayer, depth);
+    }
+}
+
 void RenderLayerCompositor::rebuildCompositingLayerTree(RenderLayer& layer, Vector<GraphicsLayer*>& childLayersOfEnclosingLayer, int depth)
 {
     // Make the layer compositing if necessary, and set up clipping and content layers.
@@ -1317,7 +1354,7 @@ void RenderLayerCompositor::rebuildCompositingLayerTree(RenderLayer& layer, Vect
     // Do not iterate the RenderFlowThread directly. We are going to collect composited layers as part of regions.
     if (layer.isFlowThreadCollectingGraphicsLayersUnderRegions())
         return;
-    
+
     RenderLayerBacking* layerBacking = layer.backing();
     if (layerBacking) {
         // The compositing state of all our children has been updated already, so now
@@ -1380,7 +1417,10 @@ void RenderLayerCompositor::rebuildCompositingLayerTree(RenderLayer& layer, Vect
                 rebuildCompositingLayerTree(*posZOrderList->at(i), childList, depth + 1);
         }
     }
-    
+
+    if (layer.isRootLayer())
+        rebuildCompositingLayerTreeForNamedFlowFixed(layer, childList, depth + 1);
+
     if (layerBacking) {
         bool parented = false;
         if (layer.renderer().isWidget())
@@ -1598,10 +1638,6 @@ bool RenderLayerCompositor::parentFrameContentLayers(RenderWidget* renderer)
 // This just updates layer geometry without changing the hierarchy.
 void RenderLayerCompositor::updateLayerTreeGeometry(RenderLayer& layer, int depth)
 {
-    // FIXME: fixed positioned elements inside a named flow are not composited yet.
-    if (layer.isOutOfFlowRenderFlowThread())
-        return;
-
     if (RenderLayerBacking* layerBacking = layer.backing()) {
         // The compositing state of all our children has been updated already, so now
         // we can compute and cache the composited bounds for this layer.
@@ -2501,7 +2537,7 @@ bool RenderLayerCompositor::requiresCompositingForPosition(RenderLayerModelObjec
 
     // Don't promote fixed position elements that are descendants of a non-view container, e.g. transformed elements.
     // They will stay fixed wrt the container rather than the enclosing frame.
-    if (container != &m_renderView) {
+    if (container != &m_renderView && !renderer.fixedPositionedWithNamedFlowContainingBlock()) {
         if (viewportConstrainedNotCompositedReason)
             *viewportConstrainedNotCompositedReason = RenderLayer::NotCompositedForNonViewContainer;
         return false;

@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <style>
+            #red { position: absolute; width: 100px; height: 100px; top: 150px; left: 150px; background-color: red; }
+            #fixedTransformed { -webkit-flow-into: flow; position: fixed; width: 100px; height: 100px; background-color: green; top: 150px; left: 150px; -webkit-transform: scale3d(1, 1, 1); }
+            /* The region is requires because otherwise the fixed positioned element is not displayed */
+            #region { -webkit-flow-from: flow; }
+        </style>
+        <script>
+            if (window.testRunner)
+                testRunner.dumpAsText();
+
+            if (window.internals)
+                window.addEventListener("load", function() {
+                    document.getElementById("layerTree").innerText = window.internals.layerTreeAsText(document);
+                  }, false);
+        </script>
+    </head>
+    <body>
+        <p>This test collects a transformed fixed position element inside a named flow and flows it into a region.</p>
+        <p>The fixed positioned element should be positioned relative to the viewport and it should be composited.</p>
+        <p>On success you should not see red below.</p>
+        <div id="red"></div>
+        <div id="fixedTransformed"></div>
+        <div id="region"></div>
+        <pre id="layerTree"></pre>
+    </body>
+</html>

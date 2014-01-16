@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <style>
+            .region { -webkit-flow-from: flow; }
+            .absolute { position: absolute; }
+            .fixed { position: fixed; }
+            #red { position: absolute; top: 150px; left: 150px; width: 50px; height: 50px; background-color: red; }
+            #fixedFromAbs { -webkit-flow-into: flow; top: 150px; left: 150px; width: 50px; height: 50px; background-color: green; }
+        </style>
+        <script>
+            if (window.internals)
+                window.internals.settings.setAcceleratedCompositingForFixedPositionEnabled(true);
+
+            if (window.testRunner)
+                testRunner.dumpAsText();
+
+            window.addEventListener("load", function() {
+                document.getElementById("fixedFromAbs").className = "fixed";
+                if (window.internals)
+                    document.getElementById("layerTree").innerText = window.internals.layerTreeAsText(document);
+            }, false);
+        </script>
+    </head>
+    <body>
+        <p>Test that an absolutely positioned element that is dynamicaly changed to fixed is positioned relative to the viewport instead of first region.</p>
+        <p>The fixed element should be composited.</p>
+        <p>On success you should not see red below.</p>
+        <!-- The region is necessary in order to show the fixed element -->
+        <div class="region"></div>
+        <div id="red"></div>
+        <div id="fixedFromAbs" class="absolute"></div>
+        <pre id="layerTree"></pre>
+    </body>
+</html>

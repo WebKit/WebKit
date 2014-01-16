@@ -1,3 +1,41 @@
+2014-01-15  Mihnea Ovidenie  <mihnea@adobe.com>
+
+        [CSS Regions] Enable accelerated compositing for fixed elements in named flows
+        https://bugs.webkit.org/show_bug.cgi?id=125144
+
+        Reviewed by David Hyatt.
+
+        Add support for compositing for fixed positioned element that are collected
+        inside a named flow. Prior to this patch, the fixed positioned elements were
+        positioned and sized properly but only in the non-compositing scenario.
+
+        Tests: compositing/regions/abs-in-named-flow-from-fixed-in-named-flow.html
+               compositing/regions/fixed-in-diff-named-flows-zIndex.html
+               compositing/regions/fixed-in-named-flow-clip-descendant.html
+               compositing/regions/fixed-in-named-flow-from-abs-in-named-flow.html
+               compositing/regions/fixed-in-named-flow-from-outflow.html
+               compositing/regions/fixed-in-named-flow-got-transformed-parent.html
+               compositing/regions/fixed-in-named-flow-lost-transformed-parent.html
+               compositing/regions/fixed-in-named-flow-overlap-composited.html
+               compositing/regions/fixed-in-named-flow-position-changed.html
+               compositing/regions/fixed-in-named-flow-transformed-parent.html
+               compositing/regions/fixed-in-named-flow-zIndex.html
+               compositing/regions/fixed-in-named-flow.html
+               compositing/regions/fixed-transformed-in-named-flow.html
+
+        * rendering/RenderFlowThread.cpp:
+        (WebCore::RenderFlowThread::regionForCompositedLayer):
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::computeCompositingRequirementsForNamedFlowFixed):
+        (WebCore::RenderLayerCompositor::computeCompositingRequirements):
+        (WebCore::RenderLayerCompositor::rebuildCompositingLayerTreeForNamedFlowFixed):
+        (WebCore::RenderLayerCompositor::rebuildCompositingLayerTree):
+        (WebCore::RenderLayerCompositor::updateLayerTreeGeometry):
+        (WebCore::RenderLayerCompositor::requiresCompositingForPosition):
+        * rendering/RenderLayerCompositor.h:
+        * rendering/RenderNamedFlowFragment.h:
+        * rendering/RenderNamedFlowThread.h:
+
 2014-01-15  Benjamin Poulain  <bpoulain@apple.com>
 
         Fix the iOS build after r162114
