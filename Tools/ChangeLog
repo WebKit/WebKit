@@ -1,3 +1,23 @@
+2014-01-16  Zan Dobersek  <zdobersek@igalia.com>
+
+        [GTK][MiniBrowser] The progress entry reset callback can be fired after the BrowserWindow is destroyed
+        https://bugs.webkit.org/show_bug.cgi?id=127083
+
+        Reviewed by Carlos Garcia Campos.
+
+        When the load progress reaches 1.0 (i.e. 100%), a timeout callback is set up in webViewLoadProgressChanged.
+        The progress entry is then reset back to 0 in that callback and the timeout source is removed.
+
+        The callback can be fired after the relevant BrowserWindow and its progress entry are destroyed, causing
+        assertion failures in gtk_entry_set_progress_fraction due to an invalid GtkEntry object. To avoid that,
+        To avoid that, the ID of the timeout source is stored on the BrowserWindow and is destroyed when the
+        BrowserWindow object is being finalized, preventing the callback from firing.
+
+        * MiniBrowser/gtk/BrowserWindow.c:
+        (resetEntryProgress):
+        (webViewLoadProgressChanged):
+        (browserWindowFinalize):
+
 2014-01-15  Alexey Proskuryakov  <ap@apple.com>
 
         DumpRenderTree doesn't disable web preferences autosave
