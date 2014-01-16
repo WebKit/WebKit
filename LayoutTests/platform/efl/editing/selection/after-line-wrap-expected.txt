@@ -29,9 +29,9 @@ layer at (0,0) size 800x600
           text run at (0,18) width 285: "after a line wrap can be selected successfully."
       RenderBlock {P} at (0,104) size 784x0
       RenderBlock {DIV} at (16,104) size 752x38 [border: (1px solid #000000)]
-        RenderText {#text} at (1,1) size 749x17
+        RenderText {#text} at (1,1) size 750x17
           text run at (1,1) width 93: "don't select me"
-          text run at (94,1) width 656: "                                                                                                                                                                    "
+          text run at (94,1) width 657: "                                                                                                                                                                                                                                                                                                                                                             "
         RenderInline {I} at (0,0) size 150x17
           RenderText {#text} at (1,19) size 150x17
             text run at (1,19) width 150: "try to select just this text"
