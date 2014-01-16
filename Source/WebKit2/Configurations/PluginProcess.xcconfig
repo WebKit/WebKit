@@ -27,9 +27,9 @@ PRODUCT_NAME = PluginProcess;
 INFOPLIST_FILE = PluginProcess/EntryPoint/mac/LegacyProcess/Info.plist;
 CODE_SIGN_ENTITLEMENTS = Configurations/PluginService.entitlements;
 
-EXCLUDED_SOURCE_FILE_NAMES = $(EXCLUDED_SOURCE_FILE_NAME_$(PLATFORM_NAME));
-EXCLUDED_SOURCE_FILE_NAMES_iphoneos = PluginProcessShim.dylib;
-EXCLUDED_SOURCE_FILE_NAMES_iphonesimulator = $(EXCLUDED_SOURCE_FILE_NAMES_iphoneos);
+EXCLUDED_SHIM_FILE_NAME = $(EXCLUDED_SHIM_FILE_NAME_$(PLATFORM_NAME));
+EXCLUDED_SHIM_FILE_NAME_iphoneos = PluginProcessShim.dylib;
+EXCLUDED_SHIM_FILE_NAME_iphonesimulator = $(EXCLUDED_SHIM_FILE_NAME_iphoneos);
 
 SKIP_INSTALL = $(SKIP_INSTALL_$(PLATFORM_NAME));
 SKIP_INSTALL_macosx = $(inherited);

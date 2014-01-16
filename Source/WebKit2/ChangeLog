@@ -1,3 +1,22 @@
+2014-01-15  Andy Estes  <aestes@apple.com>
+
+        [iOS] Properly exclude the shim dylibs this time
+        https://bugs.webkit.org/show_bug.cgi?id=127075
+
+        Reviewed by Anders Carlsson.
+
+        BaseLegacyProcess.xcconfig was setting EXCLUDED_SOURCE_FILE_NAMES in
+        conflict with what I added in r161918, and I misspelled the setting
+        name in two instances. Fix these two bugs.
+
+        Also remove a vestigial OTHER_LDFLAGS from WebContentProcess.xcconfig
+        while we're here.
+
+        * Configurations/BaseLegacyProcess.xcconfig:
+        * Configurations/NetworkProcess.xcconfig:
+        * Configurations/PluginProcess.xcconfig:
+        * Configurations/WebContentProcess.xcconfig:
+
 2014-01-15  Enrica Casucci  <enrica@apple.com>
 
         Support WebSelections in WK2 on iOS.
