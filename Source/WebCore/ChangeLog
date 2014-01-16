@@ -1,3 +1,19 @@
+2014-01-16  Dean Jackson  <dino@apple.com>
+
+        glReadPixels should use UNSIGNED_BYTE on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=127148
+
+        Reviewed by Benjamin Poulain.
+
+        We were incorrectly mapping GL_UNSIGNED_INT_8_8_8_8_REV to
+        GL_RGBA on iOS. It's only used in glReadPixels, so should
+        be GL_UNSIGNED_BYTE.
+
+        This is covered by lots of tests in the Khronos test suite,
+        that now pass on iOS.
+
+        * platform/graphics/ios/GraphicsContext3DIOS.h:
+
 2014-01-16  Anders Carlsson  <andersca@apple.com>
 
         Change all uses of FINAL to final now that all our compilers support it
