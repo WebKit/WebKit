@@ -66,6 +66,9 @@ class AbstractEarlyWarningSystem(AbstractReviewQueue, EarlyWarningSystemTaskDele
         return "New failing tests:\n%s" % "\n".join(unexpected_failures)
 
     def _post_reject_message_on_bug(self, tool, patch, status_id, extra_message_text=None):
+        if not extra_message_text:
+            return  # Don't comment on Bugzilla if we don't have failing tests.
+
         results_link = tool.status_server.results_url_for_status(status_id)
         message = "Attachment %s did not pass %s (%s):\nOutput: %s" % (patch.id(), self.name, self.port_name, results_link)
         if extra_message_text:

@@ -30,6 +30,7 @@
 import codecs
 import logging
 import os
+import re
 import sys
 import time
 import traceback
@@ -465,7 +466,8 @@ class StyleQueue(AbstractReviewQueue, StyleQueueTaskDelegate):
             self._did_error(patch, "%s unable to apply patch." % self.name)
             return False
         except ScriptError, e:
-            message = "Attachment %s did not pass %s:\n\n%s\n\nIf any of these errors are false positives, please file a bug against check-webkit-style." % (patch.id(), self.name, e.output)
+            output = re.sub(r'Failed to run .+ exit_code: 1', '', e.output)
+            message = "Attachment %s did not pass %s:\n\n%s\n\nIf any of these errors are false positives, please file a bug against check-webkit-style." % (patch.id(), self.name, output)
             self._tool.bugs.post_comment_to_bug(patch.bug_id(), message, cc=self.watchers)
             self._did_fail(patch)
             return False
