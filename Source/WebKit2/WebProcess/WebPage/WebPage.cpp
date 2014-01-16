@@ -611,6 +611,18 @@ PassRefPtr<Plugin> WebPage::createPlugin(WebFrame* frame, HTMLPlugInElement* plu
 
 #endif // ENABLE(NETSCAPE_PLUGIN_API)
 
+#if ENABLE(WEBGL)
+WebCore::WebGLLoadPolicy WebPage::webGLPolicyForURL(WebFrame* frame, const String& url)
+{
+    uint32_t policyResult = 0;
+
+    if (sendSync(Messages::WebPageProxy::WebGLPolicyForURL(url), Messages::WebPageProxy::WebGLPolicyForURL::Reply(policyResult)))
+        return static_cast<WebGLLoadPolicy>(policyResult);
+
+    return WebGLAllow;
+}
+#endif // ENABLE(WEBGL)
+
 EditorState WebPage::editorState() const
 {
     Frame& frame = m_page->focusController().focusedOrMainFrame();

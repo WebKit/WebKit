@@ -42,6 +42,13 @@ enum {
 };
 typedef uint32_t WKPluginLoadPolicy;
 
+enum {
+    kWKWebGLLoadPolicyInactive = 0,
+    kWKWebGLLoadPolicyLoadNormally,
+    kWKWebGLLoadPolicyBlocked
+};
+typedef uint32_t WKWebGLLoadPolicy;
+
 typedef void (*WKPageLoaderClientCallback)(WKPageRef page, const void* clientInfo);
 typedef void (*WKPageDidStartProvisionalLoadForFrameCallback)(WKPageRef page, WKFrameRef frame, WKTypeRef userData, const void *clientInfo);
 typedef void (*WKPageDidReceiveServerRedirectForProvisionalLoadForFrameCallback)(WKPageRef page, WKFrameRef frame, WKTypeRef userData, const void *clientInfo);
@@ -66,6 +73,7 @@ typedef void (*WKPageWillGoToBackForwardListItemCallback)(WKPageRef page, WKBack
 typedef void (*WKPageDidLayoutCallback)(WKPageRef page, WKLayoutMilestones milestones, WKTypeRef userData, const void *clientInfo);
 typedef WKPluginLoadPolicy (*WKPagePluginLoadPolicyCallback)(WKPageRef page, WKPluginLoadPolicy currentPluginLoadPolicy, WKDictionaryRef pluginInfoDictionary, WKStringRef* unavailabilityDescription, const void* clientInfo);
 typedef void (*WKPagePluginDidFailCallback)(WKPageRef page, WKErrorCode errorCode, WKDictionaryRef pluginInfoDictionary, const void* clientInfo);
+typedef WKWebGLLoadPolicy (*WKPageWebGLLoadPolicyCallback)(WKPageRef page, WKStringRef url, const void* clientInfo);
 
 // Deprecated
 typedef void (*WKPageDidFailToInitializePluginCallback_deprecatedForUseWithV0)(WKPageRef page, WKStringRef mimeType, const void* clientInfo);
@@ -265,6 +273,65 @@ typedef struct WKPageLoaderClientV3 {
     // Version 3.
     WKPagePluginLoadPolicyCallback                                      pluginLoadPolicy;
 } WKPageLoaderClientV3;
+
+typedef struct WKPageLoaderClientV4 {
+    WKPageLoaderClientBase                                              base;
+    
+    // Version 0.
+    WKPageDidStartProvisionalLoadForFrameCallback                       didStartProvisionalLoadForFrame;
+    WKPageDidReceiveServerRedirectForProvisionalLoadForFrameCallback    didReceiveServerRedirectForProvisionalLoadForFrame;
+    WKPageDidFailProvisionalLoadWithErrorForFrameCallback               didFailProvisionalLoadWithErrorForFrame;
+    WKPageDidCommitLoadForFrameCallback                                 didCommitLoadForFrame;
+    WKPageDidFinishDocumentLoadForFrameCallback                         didFinishDocumentLoadForFrame;
+    WKPageDidFinishLoadForFrameCallback                                 didFinishLoadForFrame;
+    WKPageDidFailLoadWithErrorForFrameCallback                          didFailLoadWithErrorForFrame;
+    WKPageDidSameDocumentNavigationForFrameCallback                     didSameDocumentNavigationForFrame;
+    WKPageDidReceiveTitleForFrameCallback                               didReceiveTitleForFrame;
+    WKPageDidFirstLayoutForFrameCallback                                didFirstLayoutForFrame;
+    WKPageDidFirstVisuallyNonEmptyLayoutForFrameCallback                didFirstVisuallyNonEmptyLayoutForFrame;
+    WKPageDidRemoveFrameFromHierarchyCallback                           didRemoveFrameFromHierarchy;
+    WKPageDidDisplayInsecureContentForFrameCallback                     didDisplayInsecureContentForFrame;
+    WKPageDidRunInsecureContentForFrameCallback                         didRunInsecureContentForFrame;
+    WKPageCanAuthenticateAgainstProtectionSpaceInFrameCallback          canAuthenticateAgainstProtectionSpaceInFrame;
+    WKPageDidReceiveAuthenticationChallengeInFrameCallback              didReceiveAuthenticationChallengeInFrame;
+    
+    // FIXME: Move to progress client.
+    WKPageLoaderClientCallback                                          didStartProgress;
+    WKPageLoaderClientCallback                                          didChangeProgress;
+    WKPageLoaderClientCallback                                          didFinishProgress;
+    
+    // FIXME: These three functions should not be part of this client.
+    WKPageLoaderClientCallback                                          processDidBecomeUnresponsive;
+    WKPageLoaderClientCallback                                          processDidBecomeResponsive;
+    WKPageLoaderClientCallback                                          processDidCrash;
+    WKPageDidChangeBackForwardListCallback                              didChangeBackForwardList;
+    WKPageShouldGoToBackForwardListItemCallback                         shouldGoToBackForwardListItem;
+    WKPageDidFailToInitializePluginCallback_deprecatedForUseWithV0      didFailToInitializePlugin_deprecatedForUseWithV0;
+    
+    // Version 1.
+    WKPageDidDetectXSSForFrameCallback                                  didDetectXSSForFrame;
+    
+    void*                                                               didNewFirstVisuallyNonEmptyLayout_unavailable;
+    
+    WKPageWillGoToBackForwardListItemCallback                           willGoToBackForwardListItem;
+    
+    WKPageLoaderClientCallback                                          interactionOccurredWhileProcessUnresponsive;
+    WKPagePluginDidFailCallback_deprecatedForUseWithV1                  pluginDidFail_deprecatedForUseWithV1;
+    
+    // Version 2.
+    void                                                                (*didReceiveIntentForFrame_unavailable)(void);
+    void                                                                (*registerIntentServiceForFrame_unavailable)(void);
+    
+    WKPageDidLayoutCallback                                             didLayout;
+    WKPagePluginLoadPolicyCallback_deprecatedForUseWithV2               pluginLoadPolicy_deprecatedForUseWithV2;
+    WKPagePluginDidFailCallback                                         pluginDidFail;
+    
+    // Version 3.
+    WKPagePluginLoadPolicyCallback                                      pluginLoadPolicy;
+    
+    // Version 4
+    WKPageWebGLLoadPolicyCallback                                       webGLLoadPolicy;
+} WKPageLoaderClientV4;
 
 // FIXME: These should be deprecated.
 enum { kWKPageLoaderClientCurrentVersion WK_ENUM_DEPRECATED("Use an explicit version number instead") = 3 };

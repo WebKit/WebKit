@@ -1,3 +1,14 @@
+2014-01-15  Roger Fong  <roger_fong@apple.com>
+
+        Add support for handling WebGL load policies.
+        https://bugs.webkit.org/show_bug.cgi?id=126935
+        <rdar://problem/15790448>.
+
+        Reviewed by Timothy Horton.
+
+        * WebKitTestRunner/TestController.cpp: Update WKPageLoaderClient to V4.
+        (WTR::TestController::createWebViewWithOptions):
+
 2014-01-16  Peter Molnar  <pmolnar.u-szeged@partner.samsung.com>
 
         Remove workaround for compilers not supporting explicit override control

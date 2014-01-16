@@ -619,10 +619,10 @@ static void didLayout(WKPageRef page, WKLayoutMilestones milestones, WKTypeRef u
 
 static void setUpPageLoaderClient(WKBrowsingContextController *browsingContext, WebPageProxy& page)
 {
-    WKPageLoaderClientV3 loaderClient;
+    WKPageLoaderClientV4 loaderClient;
     memset(&loaderClient, 0, sizeof(loaderClient));
 
-    loaderClient.base.version = 3;
+    loaderClient.base.version = 4;
     loaderClient.base.clientInfo = browsingContext;
     loaderClient.didStartProvisionalLoadForFrame = didStartProvisionalLoadForFrame;
     loaderClient.didReceiveServerRedirectForProvisionalLoadForFrame = didReceiveServerRedirectForProvisionalLoadForFrame;

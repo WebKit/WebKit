@@ -2679,6 +2679,13 @@ void WebPageProxy::unavailablePluginButtonClicked(uint32_t opaquePluginUnavailab
 }
 #endif // ENABLE(NETSCAPE_PLUGIN_API)
 
+#if ENABLE(WEBGL)
+void WebPageProxy::webGLPolicyForURL(const String& url, uint32_t& loadPolicy)
+{
+    loadPolicy = static_cast<uint32_t>(m_loaderClient.webGLLoadPolicy(this, url));
+}
+#endif // ENABLE(WEBGL)
+
 void WebPageProxy::setToolbarsAreVisible(bool toolbarsAreVisible)
 {
     m_uiClient.setToolbarsAreVisible(this, toolbarsAreVisible);

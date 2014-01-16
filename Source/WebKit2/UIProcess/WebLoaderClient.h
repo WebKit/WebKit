@@ -30,6 +30,7 @@
 #include "PluginModuleInfo.h"
 #include "SameDocumentNavigationType.h"
 #include "WKPage.h"
+#include <WebCore/FrameLoaderTypes.h>
 #include <WebCore/LayoutMilestones.h>
 #include <wtf/Forward.h>
 #include <wtf/RefPtr.h>
@@ -39,7 +40,7 @@ namespace API {
 class Object;
 
 template<> struct ClientTraits<WKPageLoaderClientBase> {
-    typedef std::tuple<WKPageLoaderClientV0, WKPageLoaderClientV1, WKPageLoaderClientV2, WKPageLoaderClientV3> Versions;
+    typedef std::tuple<WKPageLoaderClientV0, WKPageLoaderClientV1, WKPageLoaderClientV2, WKPageLoaderClientV3, WKPageLoaderClientV4> Versions;
 };
 }
 
@@ -102,6 +103,10 @@ public:
     void didFailToInitializePlugin(WebPageProxy*, ImmutableDictionary*);
     void didBlockInsecurePluginVersion(WebPageProxy*, ImmutableDictionary*);
 #endif // ENABLE(NETSCAPE_PLUGIN_API)
+
+#if ENABLE(WEBGL)
+    WebCore::WebGLLoadPolicy webGLLoadPolicy(WebPageProxy*, const String&) const;
+#endif // ENABLE(WEBGL)
 };
 
 } // namespace WebKit

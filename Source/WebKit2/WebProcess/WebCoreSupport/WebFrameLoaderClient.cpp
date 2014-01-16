@@ -1338,6 +1338,16 @@ void WebFrameLoaderClient::redirectDataToPlugin(Widget* pluginWidget)
         m_pluginView = static_cast<PluginView*>(pluginWidget);
 }
 
+#if ENABLE(WEBGL)
+WebCore::WebGLLoadPolicy WebFrameLoaderClient::webGLPolicyForURL(const String& url) const
+{
+    if (WebPage* webPage = m_frame->page())
+        return webPage->webGLPolicyForURL(m_frame, url);
+
+    return WebGLAllow;
+}
+#endif // ENABLE(WEBGL)
+
 PassRefPtr<Widget> WebFrameLoaderClient::createJavaAppletWidget(const IntSize& pluginSize, HTMLAppletElement* appletElement, const URL&, const Vector<String>& paramNames, const Vector<String>& paramValues)
 {
 #if ENABLE(NETSCAPE_PLUGIN_API)

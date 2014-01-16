@@ -290,6 +290,10 @@ public:
     PassRefPtr<Plugin> createPlugin(WebFrame*, WebCore::HTMLPlugInElement*, const Plugin::Parameters&, String& newMIMEType);
 #endif
 
+#if ENABLE(WEBGL)
+    WebCore::WebGLLoadPolicy webGLPolicyForURL(WebFrame*, const String&);
+#endif // ENABLE(WEBGL)
+    
     EditorState editorState() const;
 
     String renderTreeExternalRepresentation() const;

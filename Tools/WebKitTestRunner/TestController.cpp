@@ -422,8 +422,8 @@ void TestController::createWebViewWithOptions(WKDictionaryRef options)
     };
     WKPageSetPageUIClient(m_mainWebView->page(), &pageUIClient.base);
 
-    WKPageLoaderClientV3 pageLoaderClient = {
-        { 3, this },
+    WKPageLoaderClientV4 pageLoaderClient = {
+        { 4, this },
         0, // didStartProvisionalLoadForFrame
         0, // didReceiveServerRedirectForProvisionalLoadForFrame
         0, // didFailProvisionalLoadWithErrorForFrame
@@ -460,6 +460,7 @@ void TestController::createWebViewWithOptions(WKDictionaryRef options)
         0, // pluginLoadPolicy_deprecatedForUseWithV2
         0, // pluginDidFail
         pluginLoadPolicy, // pluginLoadPolicy
+        0, // webGLLoadPolicy
     };
     WKPageSetPageLoaderClient(m_mainWebView->page(), &pageLoaderClient.base);
 

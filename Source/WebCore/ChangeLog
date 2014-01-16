@@ -1,3 +1,18 @@
+2014-01-16  Roger Fong  <roger_fong@apple.com>
+
+        Add support for handling WebGL load policies.
+        https://bugs.webkit.org/show_bug.cgi?id=126935
+        <rdar://problem/15790448>.
+
+        Reviewed by Timothy Horton.
+
+        Rename webGLPolicyForSite to webGLPolicyForURL.
+
+        * html/HTMLCanvasElement.cpp:
+        (WebCore::HTMLCanvasElement::getContext):
+        * loader/FrameLoaderClient.h:
+        (WebCore::FrameLoaderClient::webGLPolicyForURL):
+
 2014-01-16  Thiago de Barros Lacerda  <thiago.lacerda@openbossa.org>
 
         Guarding HTMLMediaSession with ENABLE(VIDEO)
