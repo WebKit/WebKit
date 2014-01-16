@@ -1,3 +1,10 @@
+2014-01-16  Alexey Proskuryakov  <ap@apple.com>
+
+        REGRESSION(r162145): media/video-controls-visible-audio-only.html fails
+        https://bugs.webkit.org/show_bug.cgi?id=127147
+
+        * platform/mac/TestExpectations: Marking it as flaky while Jer investigates.
+
 2014-01-16  Eric Carlson  <eric.carlson@apple.com>
 
         Allow MediaSessionManager to restrict inline <video> playback
