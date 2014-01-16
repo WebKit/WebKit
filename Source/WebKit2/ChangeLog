@@ -1,3 +1,9 @@
+2014-01-16  Jeffrey Pfau  <jpfau@apple.com>
+
+        Fix build after r162161. One FINAL was still present.
+
+        * Shared/cf/KeyedDecoder.h:
+
 2014-01-16  Anders Carlsson  <andersca@apple.com>
 
         Change all uses of FINAL to final now that all our compilers support it

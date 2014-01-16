@@ -32,7 +32,7 @@
 
 namespace WebKit {
 
-class KeyedDecoder FINAL : public WebCore::KeyedDecoder {
+class KeyedDecoder final : public WebCore::KeyedDecoder {
 public:
     KeyedDecoder(const uint8_t* data, size_t);
     virtual ~KeyedDecoder();
