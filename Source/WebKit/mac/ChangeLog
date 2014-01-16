@@ -1,3 +1,9 @@
+2014-01-16  Daniel Bates  <dabates@apple.com>
+
+        [iOS] Fix UIKit build warning about undefined macro ENABLE_NETSCAPE_PLUGIN_API
+
+        * WebView/WebFramePrivate.h: Wrap use of ENABLE_NETSCAPE_PLUGIN_API in TARGET_OS_IPHONE.
+
 2014-01-16  Anders Carlsson  <andersca@apple.com>
 
         Change all uses of FINAL to final now that all our compilers support it

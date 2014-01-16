@@ -213,9 +213,11 @@ typedef enum {
 
 - (unsigned)_pendingFrameUnloadEventCount;
 
+#if !TARGET_OS_IPHONE
 #if ENABLE_NETSCAPE_PLUGIN_API
 - (void)_recursive_resumeNullEventsForAllNetscapePlugins;
 - (void)_recursive_pauseNullEventsForAllNetscapePlugins;
+#endif
 #endif
 
 - (NSString *)_stringByEvaluatingJavaScriptFromString:(NSString *)string withGlobalObject:(JSObjectRef)globalObject inScriptWorld:(WebScriptWorld *)world;
