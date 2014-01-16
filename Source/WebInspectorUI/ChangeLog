@@ -1,5 +1,18 @@
 2014-01-16  Brian Burg  <bburg@apple.com>
 
+        Web Inspector: add more context to Object.addEventListener assertions
+        https://bugs.webkit.org/show_bug.cgi?id=127125
+
+        Reviewed by Joseph Pecoraro.
+
+        Log invalid event type and listener parameters, and log the other
+        parameters so the callsite is easier to figure out.
+
+        * UserInterface/Object.js:
+        (WebInspector.Object.addEventListener):
+
+2014-01-16  Brian Burg  <bburg@apple.com>
+
         Web Inspector: CallFrame is missing saveIdentityToCookie, or should be excluded
         https://bugs.webkit.org/show_bug.cgi?id=126791
 
