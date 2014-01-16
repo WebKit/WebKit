@@ -105,10 +105,6 @@ WebViewLayerFlushScheduler::WebViewLayerFlushScheduler(LayerFlushController* flu
     dashboardBehaviorAllowWheelScrolling = YES;
 #endif
 
-#if ENABLE(REMOTE_INSPECTOR)
-    allowsRemoteInspection = YES;
-#endif
-
 #if PLATFORM(IOS)
     isStopping = NO;
     _geolocationProvider = [WebGeolocationProviderIOS sharedGeolocationProvider];

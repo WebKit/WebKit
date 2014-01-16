@@ -954,7 +954,7 @@
 		A5BA15EA182340B400A82E69 /* RemoteInspectorConstants.h in Headers */ = {isa = PBXBuildFile; fileRef = A5BA15E3182340B300A82E69 /* RemoteInspectorConstants.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A5BA15EB182340B400A82E69 /* RemoteInspectorDebuggableConnection.h in Headers */ = {isa = PBXBuildFile; fileRef = A5BA15E4182340B300A82E69 /* RemoteInspectorDebuggableConnection.h */; };
 		A5BA15EC182340B400A82E69 /* RemoteInspectorDebuggableConnection.mm in Sources */ = {isa = PBXBuildFile; fileRef = A5BA15E5182340B300A82E69 /* RemoteInspectorDebuggableConnection.mm */; };
-		A5BA15ED182340B400A82E69 /* RemoteInspectorXPCConnection.h in Headers */ = {isa = PBXBuildFile; fileRef = A5BA15E6182340B300A82E69 /* RemoteInspectorXPCConnection.h */; };
+		A5BA15ED182340B400A82E69 /* RemoteInspectorXPCConnection.h in Headers */ = {isa = PBXBuildFile; fileRef = A5BA15E6182340B300A82E69 /* RemoteInspectorXPCConnection.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A5BA15EE182340B400A82E69 /* RemoteInspectorXPCConnection.mm in Sources */ = {isa = PBXBuildFile; fileRef = A5BA15E7182340B300A82E69 /* RemoteInspectorXPCConnection.mm */; };
 		A5BA15F0182345AF00A82E69 /* RemoteInspectorDebuggable.h in Headers */ = {isa = PBXBuildFile; fileRef = A5BA15EF182345AF00A82E69 /* RemoteInspectorDebuggable.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A5CEEE14187F3BAD00E55C99 /* InspectorAgent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5CEEE12187F3BAD00E55C99 /* InspectorAgent.cpp */; };

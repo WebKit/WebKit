@@ -28,23 +28,24 @@
 #ifndef RemoteInspector_h
 #define RemoteInspector_h
 
-#import "RemoteInspectorDebuggableConnection.h"
 #import "RemoteInspectorXPCConnection.h"
 #import <wtf/Forward.h>
 #import <wtf/HashMap.h>
 #import <wtf/NeverDestroyed.h>
 #import <wtf/Threading.h>
 
-OBJC_CLASS NSString;
 OBJC_CLASS NSDictionary;
+OBJC_CLASS NSString;
 
 namespace Inspector {
 
 class RemoteInspectorDebuggable;
+class RemoteInspectorDebuggableConnection;
 struct RemoteInspectorDebuggableInfo;
 
 class JS_EXPORT_PRIVATE RemoteInspector FINAL : public RemoteInspectorXPCConnection::Client {
 public:
+    static void startDisabled();
     static RemoteInspector& shared();
     friend class NeverDestroyed<RemoteInspector>;
 
@@ -83,6 +84,8 @@ private:
     void receivedIndicateMessage(NSDictionary *userInfo);
     void receivedConnectionDiedMessage(NSDictionary *userInfo);
 
+    static bool startEnabled;
+
     // Debuggables can be registered from any thread at any time.
     // Any debuggable can send messages over the XPC connection.
     // So lock access to all maps and state as they can change
@@ -101,6 +104,6 @@ private:
 
 } // namespace Inspector
 
-#endif // ENABLE(REMOTE_INSPECTOR)
+#endif // RemoteInspector_h
 
-#endif // WebInspectorServer_h
+#endif // ENABLE(REMOTE_INSPECTOR)

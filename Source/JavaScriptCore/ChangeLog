@@ -1,3 +1,20 @@
+2014-01-15  Joseph Pecoraro  <pecoraro@apple.com>
+
+        [iOS] Clean up REMOTE_INSPECTOR code in OpenSource after the iOS merge
+        https://bugs.webkit.org/show_bug.cgi?id=127069
+
+        Reviewed by Timothy Hatcher.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        Export XPCConnection because it is needed by RemoteInspector.h.
+
+        * inspector/remote/RemoteInspectorXPCConnection.h:
+        * inspector/remote/RemoteInspector.h:
+        * inspector/remote/RemoteInspector.mm:
+        (Inspector::RemoteInspector::startDisabled):
+        (Inspector::RemoteInspector::shared):
+        Allow RemoteInspector singleton to start disabled.
+
 2014-01-15  Brian Burg  <bburg@apple.com>
 
         Web Inspector: capture probe samples on the backend

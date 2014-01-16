@@ -32,8 +32,8 @@
 #import <wtf/Noncopyable.h>
 #import <xpc/xpc.h>
 
-OBJC_CLASS NSString;
 OBJC_CLASS NSDictionary;
+OBJC_CLASS NSString;
 
 namespace Inspector {
 

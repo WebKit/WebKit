@@ -1,3 +1,32 @@
+2014-01-15  Joseph Pecoraro  <pecoraro@apple.com>
+
+        [iOS] Clean up REMOTE_INSPECTOR code in OpenSource after the iOS merge
+        https://bugs.webkit.org/show_bug.cgi?id=127069
+
+        Reviewed by Timothy Hatcher.
+
+        * WebView/WebView.mm:
+        (-[WebView initSimpleHTMLDocumentWithStyle:frame:preferences:groupName:]):
+        (+[WebView _enableRemoteInspector]):
+        (+[WebView _disableRemoteInspector]):
+        (+[WebView _disableAutoStartRemoteInspector]):
+        (+[WebView _isRemoteInspectorEnabled]):
+        (+[WebView _hasRemoteInspectorSession]):
+        (-[WebView allowsRemoteInspection]):
+        Implement with RemoteInspector.h SPIs.
+
+        (-[WebView setAllowsRemoteInspection:]):
+        (-[WebView setHostApplicationBundleId:name:]):
+        Still unimplemented, update comment.
+
+        (-[WebView _didCommitLoadForFrame:]):
+        Remove dead path, WebCore now pushes updates on navigations.
+
+        * WebView/WebViewData.h:
+        * WebView/WebViewData.mm:
+        (-[WebViewPrivate init]):
+        Remove now unused ivar.
+
 2014-01-15  Alexey Proskuryakov  <ap@apple.com>
 
         More iOS build fixing.

@@ -2932,8 +2932,9 @@ __ZN7WebCore34registerQLPreviewConverterIfNeededEP5NSURLP8NSStringP6NSData
 #endif
 
 #if ENABLE(REMOTE_INSPECTOR)
-__ZN7WebCore4Page26setRemoteInspectionAllowedEb
 __ZN7WebCore19InspectorController27dispatchMessageFromFrontendERKN3WTF6StringE
+__ZN7WebCore4Page26setRemoteInspectionAllowedEb
+__ZNK7WebCore4Page23remoteInspectionAllowedEv
 #endif
 
 #if ENABLE(REQUEST_ANIMATION_FRAME)

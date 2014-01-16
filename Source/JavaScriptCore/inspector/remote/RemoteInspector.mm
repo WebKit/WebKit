@@ -31,12 +31,13 @@
 #import "InitializeThreading.h"
 #import "RemoteInspectorConstants.h"
 #import "RemoteInspectorDebuggable.h"
-#import <notify.h>
-#import <xpc/xpc.h>
+#import "RemoteInspectorDebuggableConnection.h"
 #import <Foundation/Foundation.h>
+#import <notify.h>
 #import <wtf/Assertions.h>
 #import <wtf/MainThread.h>
 #import <wtf/text/WTFString.h>
+#import <xpc/xpc.h>
 
 #if PLATFORM(IOS)
 #import <wtf/ios/WebCoreThread.h>
@@ -56,6 +57,13 @@ static void dispatchAsyncOnQueueSafeForAnyDebuggable(void (^block)())
     dispatch_async(dispatch_get_main_queue(), block);
 }
 
+bool RemoteInspector::startEnabled = true;
+
+void RemoteInspector::startDisabled()
+{
+    RemoteInspector::startEnabled = false;
+}
+
 RemoteInspector& RemoteInspector::shared()
 {
     static NeverDestroyed<RemoteInspector> shared;
@@ -64,7 +72,8 @@ RemoteInspector& RemoteInspector::shared()
     dispatch_once(&once, ^{
         JSC::initializeThreading();
         WTF::initializeMainThread();
-        shared.get().start();
+        if (RemoteInspector::startEnabled)
+            shared.get().start();
     });
 
     return shared;

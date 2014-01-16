@@ -259,6 +259,7 @@
 #endif
 
 #if ENABLE(REMOTE_INSPECTOR)
+#import <JavaScriptCore/RemoteInspector.h>
 #if PLATFORM(IOS)
 #import "WebIndicateLayer.h"
 #endif
@@ -300,8 +301,9 @@
 @end
 #endif
 
-using namespace WebCore;
 using namespace JSC;
+using namespace Inspector;
+using namespace WebCore;
 
 #if defined(__ppc__) || defined(__ppc64__)
 #define PROCESSOR "PPC"
@@ -1183,7 +1185,7 @@ static bool shouldUseLegacyBackgroundSizeShorthandBehavior()
 }
 
 - (id)initSimpleHTMLDocumentWithStyle:(NSString *)style frame:(CGRect)frame preferences:(WebPreferences *)preferences groupName:(NSString *)groupName
-{    
+{
     self = [super initWithFrame:frame];
     if (!self)
         return nil;
@@ -1207,13 +1209,10 @@ static bool shouldUseLegacyBackgroundSizeShorthandBehavior()
     // Production installs always disallow debugging simple HTML documents.
     // Internal installs allow debugging simple HTML documents (TextFields) if the Internal Setting is enabled.
     if (!isInternalInstall())
-        _private->allowsRemoteInspection = NO;
+        _private->page->setRemoteInspectionAllowed(false);
     else {
         static BOOL textFieldInspectionEnabled = [[NSUserDefaults standardUserDefaults] boolForKey:WebKitTextFieldRemoteInspectionEnabledPreferenceKey];
-        _private->allowsRemoteInspection = textFieldInspectionEnabled;
-        BOOL autoStartRemoteInspector = YES; // FIXME: <rdar://problem/15810991>
-        if (_private->allowsRemoteInspection && autoStartRemoteInspector)
-            [WebView _enableRemoteInspector];
+        _private->page->setRemoteInspectionAllowed(textFieldInspectionEnabled);
     }
 #endif
     
@@ -1923,40 +1922,37 @@ static bool fastDocumentTeardownEnabled()
 #if ENABLE(REMOTE_INSPECTOR)
 + (void)_enableRemoteInspector
 {
-    // FIXME: Move this to a new Inspector::RemoteInspectorServer interface or remove it.
+    RemoteInspector::shared().start();
 }
 
 + (void)_disableRemoteInspector
 {
-    // FIXME: Move this to a new Inspector::RemoteInspectorServer interface or remove it.
+    RemoteInspector::shared().stop();
 }
 
 + (void)_disableAutoStartRemoteInspector
 {
-    // FIXME: Move this to a new Inspector::RemoteInspectorServer interface or remove it.
+    RemoteInspector::startDisabled();
 }
 
 + (BOOL)_isRemoteInspectorEnabled
 {
-    // FIXME: Move this to a new Inspector::RemoteInspectorServer interface or remove it.
-    return NO;
+    return RemoteInspector::shared().enabled();
 }
 
 + (BOOL)_hasRemoteInspectorSession
 {
-    // FIXME: Move this to a new Inspector::RemoteInspectorServer interface or remove it.
-    return NO;
+    return RemoteInspector::shared().hasActiveDebugSession();
 }
 
 - (BOOL)allowsRemoteInspection
 {
-    // FIXME: Move this to a new API.
-    return NO;
+    return _private->page->remoteInspectionAllowed();
 }
 
 - (void)setAllowsRemoteInspection:(BOOL)allow
 {
-    // FIXME: Move this to a new API.
+    _private->page->setRemoteInspectionAllowed(allow);
 }
 
 - (void)setIndicatingForRemoteInspector:(BOOL)enabled
@@ -1983,8 +1979,6 @@ static bool fastDocumentTeardownEnabled()
 #if PLATFORM(IOS)
 - (void)setHostApplicationBundleId:(NSString *)bundleId name:(NSString *)name
 {
-    // FIXME: This has not yet been ported to Inspector::RemoteInspectorServer.
-
     if (![_private->hostApplicationBundleId isEqualToString:bundleId]) {
         [_private->hostApplicationBundleId release];
         _private->hostApplicationBundleId = [bundleId copy];
@@ -1995,8 +1989,7 @@ static bool fastDocumentTeardownEnabled()
         _private->hostApplicationName = [name copy];
     }
 
-    // FIXME: <rdar://problem/15810991>
-    // [[WebView sharedWebInspectorServer] pushListing];
+    // FIXME: This has not yet been ported to Inspector::RemoteInspectorServer.
 }
 
 - (NSString *)hostApplicationBundleId
@@ -3032,13 +3025,8 @@ static inline IMP getMethod(id o, SEL s)
 
 - (void)_didCommitLoadForFrame:(WebFrame *)frame
 {
-    if (frame == [self mainFrame]) {
+    if (frame == [self mainFrame])
         _private->didDrawTiles = 0;
-#if ENABLE(REMOTE_INSPECTOR)
-        // FIXME: <rdar://problem/15810991>
-        // [[WebView sharedWebInspectorServer] pushListing];
-#endif
-    }
 }
 
 #endif // PLATFORM(IOS)
