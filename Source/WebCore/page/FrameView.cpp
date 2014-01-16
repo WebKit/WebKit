@@ -2647,6 +2647,7 @@ void FrameView::updateBackgroundRecursively(const Color& backgroundColor, bool t
 
 bool FrameView::hasExtendedBackground() const
 {
+#if USE(ACCELERATED_COMPOSITING)
     if (!frame().settings().backgroundShouldExtendBeyondPage())
         return false;
 
@@ -2655,15 +2656,26 @@ bool FrameView::hasExtendedBackground() const
         return false;
 
     return tiledBacking->hasMargins();
+#else
+    return false;
+#endif
 }
 
 IntRect FrameView::extendedBackgroundRect() const
 {
+#if USE(ACCELERATED_COMPOSITING)
     TiledBacking* tiledBacking = this->tiledBacking();
     if (!tiledBacking)
         return IntRect();
 
     return tiledBacking->bounds();
+#else
+    RenderView* renderView = this->renderView();
+    if (!renderView)
+        return IntRect();
+
+    return renderView->backgroundRect();
+#endif
 }
 
 bool FrameView::shouldUpdateWhileOffscreen() const
