@@ -26,4 +26,7 @@
 #import <UIKit/UIWebScrollView.h>
 
 @interface WKScrollView : UIWebScrollView
+
+@property (nonatomic, assign) id <UIScrollViewDelegate> internalDelegate;
+
 @end

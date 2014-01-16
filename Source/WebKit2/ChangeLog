@@ -1,3 +1,33 @@
+2014-01-16  Ian Henderson  <ianh@apple.com>
+
+        Expose scrollView on WKView
+        https://bugs.webkit.org/show_bug.cgi?id=127085
+
+        Reviewed by Antti Koivisto.
+
+        Expose WKView's scroll view as a property.  In order to support
+        clients calling setDelegate:, we create a forwarder object that sends
+        delegate methods to both WKView (the "internal delegate") and the
+        publicly-exposed delegate (the "external delegate").
+
+        * UIProcess/API/Cocoa/WKView.h:
+        * UIProcess/API/ios/WKScrollView.h:
+        * UIProcess/API/ios/WKScrollView.mm:
+        (-[WKScrollViewDelegateForwarder initWithInternalDelegate:externalDelegate:]):
+        (-[WKScrollViewDelegateForwarder methodSignatureForSelector:]):
+        (-[WKScrollViewDelegateForwarder respondsToSelector:]):
+        (-[WKScrollViewDelegateForwarder forwardInvocation:]):
+        (-[WKScrollView setInternalDelegate:]):
+        (-[WKScrollView setDelegate:]):
+        (-[WKScrollView delegate]):
+        Pretend like _externalDelegate is the real delegate to avoid exposing
+        our internal delegate or forwarder object.
+        (-[WKScrollView _updateDelegate]):
+        (-[WKScrollView dealloc]):
+        * UIProcess/API/ios/WKViewIOS.mm:
+        (-[WKView scrollView]):
+        (-[WKView _commonInitializationWithContextRef:pageGroupRef:relatedToPage:]):
+
 2014-01-15  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK][EFL][NIX] Do not use PrintContext, Frame and DocumentLoader in Errors

@@ -90,6 +90,11 @@ static struct _UIWebViewportConfiguration standardViewportConfiguration = { { UI
         [self _frameOrBoundsChanged];
 }
 
+- (UIScrollView *)scrollView
+{
+    return _scrollView.get();
+}
+
 - (WKBrowsingContextController *)browsingContextController
 {
     return [_contentView browsingContextController];
@@ -232,7 +237,7 @@ static struct _UIWebViewportConfiguration standardViewportConfiguration = { { UI
     CGRect bounds = self.bounds;
 
     _scrollView = adoptNS([[WKScrollView alloc] initWithFrame:bounds]);
-    [_scrollView setDelegate:self];
+    [_scrollView setInternalDelegate:self];
     [_scrollView setBouncesZoom:YES];
 
     [self addSubview:_scrollView.get()];

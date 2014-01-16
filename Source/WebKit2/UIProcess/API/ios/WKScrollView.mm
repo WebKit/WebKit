@@ -26,11 +26,109 @@
 #import "config.h"
 #import "WKScrollView.h"
 
-@implementation WKScrollView
+@interface WKScrollViewDelegateForwarder : NSObject <UIScrollViewDelegate>
+
+- (instancetype)initWithInternalDelegate:(id <UIScrollViewDelegate>)internalDelegate externalDelegate:(id <UIScrollViewDelegate>)externalDelegate;
+
+@end
+
+@implementation WKScrollViewDelegateForwarder {
+    id <UIScrollViewDelegate> _internalDelegate;
+    id <UIScrollViewDelegate> _externalDelegate;
+}
+
+- (instancetype)initWithInternalDelegate:(id <UIScrollViewDelegate>)internalDelegate externalDelegate:(id <UIScrollViewDelegate>)externalDelegate
+{
+    self = [super init];
+    if (!self)
+        return nil;
+    _internalDelegate = internalDelegate;
+    _externalDelegate = externalDelegate;
+    return self;
+}
+
+- (NSMethodSignature *)methodSignatureForSelector:(SEL)aSelector
+{
+    NSMethodSignature *signature = [super methodSignatureForSelector:aSelector];
+    if (!signature)
+        signature = [(NSObject *)_internalDelegate methodSignatureForSelector:aSelector];
+    if (!signature)
+        signature = [(NSObject *)_externalDelegate methodSignatureForSelector:aSelector];
+    return signature;
+}
+
+- (BOOL)respondsToSelector:(SEL)aSelector
+{
+    return [super respondsToSelector:aSelector] || [_internalDelegate respondsToSelector:aSelector] || [_externalDelegate respondsToSelector:aSelector];
+}
+
+- (void)forwardInvocation:(NSInvocation *)anInvocation
+{
+    BOOL messageHandled = NO;
+    if ([_internalDelegate respondsToSelector:[anInvocation selector]]) {
+        [anInvocation invokeWithTarget:_internalDelegate];
+        messageHandled = YES;
+    }
+    if ([_externalDelegate respondsToSelector:[anInvocation selector]]) {
+        [anInvocation invokeWithTarget:_externalDelegate];
+        messageHandled = YES;
+    }
+    if (!messageHandled)
+        [super forwardInvocation:anInvocation];
+}
+
+@end
+
+@implementation WKScrollView {
+    id <UIScrollViewDelegate> _externalDelegate;
+    WKScrollViewDelegateForwarder *_delegateForwarder;
+}
 
 - (BOOL)touchesShouldCancelInContentView:(UIView *)contentView
 {
     return NO;
+}
+
+- (void)setInternalDelegate:(id <UIScrollViewDelegate>)internalDelegate
+{
+    if (internalDelegate == _internalDelegate)
+        return;
+    _internalDelegate = internalDelegate;
+    [self _updateDelegate];
+}
+
+- (void)setDelegate:(id <UIScrollViewDelegate>)delegate
+{
+    if (_externalDelegate == delegate)
+        return;
+    _externalDelegate = delegate;
+    [self _updateDelegate];
+}
+
+- (id <UIScrollViewDelegate>)delegate
+{
+    return _externalDelegate;
+}
+
+- (void)_updateDelegate
+{
+    WKScrollViewDelegateForwarder *oldForwarder = _delegateForwarder;
+    _delegateForwarder = nil;
+    if (!_externalDelegate)
+        [super setDelegate:_internalDelegate];
+    else if (!_internalDelegate)
+        [super setDelegate:_externalDelegate];
+    else {
+        _delegateForwarder = [[WKScrollViewDelegateForwarder alloc] initWithInternalDelegate:_internalDelegate externalDelegate:_externalDelegate];
+        [super setDelegate:_delegateForwarder];
+    }
+    [oldForwarder release];
+}
+
+- (void)dealloc
+{
+    [_delegateForwarder release];
+    [super dealloc];
 }
 
 @end

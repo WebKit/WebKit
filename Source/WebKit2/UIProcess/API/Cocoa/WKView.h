@@ -66,4 +66,8 @@ WK_EXPORT
 @property BOOL drawsBackground;
 @property BOOL drawsTransparentBackground;
 
+#if TARGET_OS_IPHONE
+@property (nonatomic, readonly) UIScrollView *scrollView;
+#endif
+
 @end
