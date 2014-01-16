@@ -4255,10 +4255,10 @@ void HTMLMediaElement::updatePlayState()
         setDisplayMode(Video);
         invalidateCachedTime();
 
-        m_mediaSession->clientWillBeginPlayback();
-
         if (playerPaused) {
-            if (!m_isFullscreen && isVideo() && document().page() && document().page()->chrome().requiresFullscreenForVideoPlayback())
+            m_mediaSession->clientWillBeginPlayback();
+
+            if (m_mediaSession->requiresFullscreenForVideoPlayback(*this))
                 enterFullscreen();
 
             // Set rate, muted before calling play in case they were set before the media engine was setup.

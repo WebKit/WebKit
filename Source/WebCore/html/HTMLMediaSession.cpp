@@ -35,6 +35,10 @@
 #include "Page.h"
 #include "ScriptController.h"
 
+#if PLATFORM(IOS)
+#include "RuntimeApplicationChecksIOS.h"
+#endif
+
 namespace WebCore {
 
 std::unique_ptr<HTMLMediaSession> HTMLMediaSession::create(MediaSessionClient& client)
@@ -122,16 +126,31 @@ bool HTMLMediaSession::showingPlaybackTargetPickerPermitted(const HTMLMediaEleme
 }
 #endif
 
-void HTMLMediaSession::clientWillBeginPlayback()
+void HTMLMediaSession::clientWillBeginPlayback() const
 {
     MediaSessionManager::sharedManager().sessionWillBeginPlayback(*this);
 }
 
-void HTMLMediaSession::pauseSession()
+bool HTMLMediaSession::requiresFullscreenForVideoPlayback(const HTMLMediaElement& element) const
 {
-    client().pausePlayback();
+    if (!MediaSessionManager::sharedManager().sessionRestrictsInlineVideoPlayback(*this))
+        return false;
+
+    Settings* settings = element.document().settings();
+    if (!settings || !settings->mediaPlaybackAllowsInline())
+        return true;
+
+    if (element.fastHasAttribute(HTMLNames::webkit_playsinlineAttr))
+        return false;
+
+#if PLATFORM(IOS)
+    if (applicationIsDumpRenderTree())
+        return false;
+#endif
+
+    return true;
 }
- 
+
 }
 
 #endif // ENABLE(VIDEO)

@@ -1,0 +1,77 @@
+<html>
+    <head>
+        <script src=media-file.js></script>
+        <script src=video-test.js></script>
+        <script src=media-controls.js></script>
+        <script>
+
+            function fullscreenchange()
+            {
+                if (document.webkitIsFullScreen)
+                    beginfullscreen();
+                else
+                    endfullscreen();
+            }
+
+            function beginfullscreen()
+            {
+                consoleWrite("<br>** Entered fullscreen");
+                testExpected("video.webkitDisplayingFullscreen", true);
+                run("video.webkitExitFullScreen()");
+            }
+
+            function endfullscreen()
+            {
+                consoleWrite("<br>** Exited fullscreen");
+                endTest();
+            }
+
+            function canplaythrough()
+            {
+                testExpected("video.webkitSupportsFullscreen", true);
+                testExpected("video.webkitDisplayingFullscreen", false);
+
+                consoleWrite("<br>** Clicking \'play\' button...");
+
+                var playCoords;
+                try {
+                    playCoords = mediaControlsButtonCoordinates(video, "play-button");
+                } catch (exception) {
+                    failTest(exception.description);
+                    return;
+                }
+
+                eventSender.mouseMoveTo(playCoords[0], playCoords[1]);
+                eventSender.mouseDown();
+                eventSender.mouseUp();
+            }
+
+
+            function start()
+            {
+                if (!window.internals) {
+                    failTest('This test requires window.internals.');
+                    return;
+                }
+
+                video = document.getElementsByTagName('video')[0];
+                waitForEvent("canplaythrough", canplaythrough);
+                waitForEvent('playing');
+
+                video.addEventListener('webkitbeginfullscreen', beginfullscreen, true);
+                video.addEventListener('webkitendfullscreen', endfullscreen, true);
+                video.addEventListener('webkitfullscreenchange', fullscreenchange, true);
+
+                video.src = findMediaFile("video", "content/test");
+
+                run("internals.setMediaSessionRestrictions('video', 'InlineVideoPlaybackRestricted')");
+                consoleWrite("");
+            }
+        </script>
+    </head>
+
+    <body onload="start()">
+        <video controls></video>
+        <p>Test play() when &lt;video&gt; playback requires fullscreen.</p>
+    </body>
+</html>

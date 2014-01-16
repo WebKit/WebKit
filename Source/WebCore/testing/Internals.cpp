@@ -2312,6 +2312,8 @@ void Internals::setMediaSessionRestrictions(const String& mediaTypeString, const
     
     if (equalIgnoringCase(restrictionsString, "ConcurrentPlaybackNotPermitted"))
         restrictions = MediaSessionManager::ConcurrentPlaybackNotPermitted;
+    if (equalIgnoringCase(restrictionsString, "InlineVideoPlaybackRestricted"))
+        restrictions += MediaSessionManager::InlineVideoPlaybackRestricted;
     
     MediaSessionManager::sharedManager().addRestriction(mediaType, restrictions);
 }

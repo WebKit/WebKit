@@ -126,11 +126,11 @@ MediaSessionManager::SessionRestrictions MediaSessionManager::restrictions(Media
     return m_restrictions[type];
 }
 
-void MediaSessionManager::sessionWillBeginPlayback(MediaSession& session)
+void MediaSessionManager::sessionWillBeginPlayback(const MediaSession& session) const
 {
     MediaSession::MediaType sessionType = session.mediaType();
     SessionRestrictions restrictions = m_restrictions[sessionType];
-    if (restrictions == NoRestrictions)
+    if (!restrictions & ConcurrentPlaybackNotPermitted)
         return;
 
     for (auto* oneSession : m_sessions) {
@@ -141,6 +141,15 @@ void MediaSessionManager::sessionWillBeginPlayback(MediaSession& session)
         if (restrictions & ConcurrentPlaybackNotPermitted)
             oneSession->pauseSession();
     }
+}
+
+bool MediaSessionManager::sessionRestrictsInlineVideoPlayback(const MediaSession& session) const
+{
+    MediaSession::MediaType sessionType = session.mediaType();
+    if (sessionType != MediaSession::Video)
+        return false;
+
+    return m_restrictions[sessionType] & InlineVideoPlaybackRestricted;
 }
 
 #if !PLATFORM(MAC)

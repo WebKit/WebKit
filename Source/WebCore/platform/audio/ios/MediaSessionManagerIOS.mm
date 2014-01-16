@@ -32,6 +32,7 @@
 #import "MediaSession.h"
 #import "SoftLinking.h"
 #import "WebCoreThreadRun.h"
+#import "WebCoreSystemInterface.h"
 #import <AVFoundation/AVAudioSession.h>
 #import <objc/runtime.h>
 #import <wtf/RetainPtr.h>
@@ -72,6 +73,11 @@ MediaSessionManageriOS::MediaSessionManageriOS()
     :MediaSessionManager()
     , m_objcObserver(adoptNS([[WebMediaSessionHelper alloc] initWithCallback:this]))
 {
+    DEFINE_STATIC_LOCAL(wkDeviceClass, deviceClass, iosDeviceClass());
+
+    if (deviceClass == wkDeviceClassiPhone || deviceClass == wkDeviceClassiPod)
+        addRestriction(MediaSession::Video, InlineVideoPlaybackRestricted);
+
     addRestriction(MediaSession::Video, ConcurrentPlaybackNotPermitted);
 }
 

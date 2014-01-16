@@ -41,9 +41,7 @@ public:
     HTMLMediaSession(MediaSessionClient&);
     virtual ~HTMLMediaSession() { }
 
-    void clientWillBeginPlayback();
-
-    virtual void pauseSession() override;
+    void clientWillBeginPlayback() const;
 
     bool playbackPermitted(const HTMLMediaElement&) const;
     bool dataLoadingPermitted(const HTMLMediaElement&) const;
@@ -53,6 +51,7 @@ public:
 #if ENABLE(IOS_AIRPLAY)
     bool showingPlaybackTargetPickerPermitted(const HTMLMediaElement&) const;
 #endif
+    bool requiresFullscreenForVideoPlayback(const HTMLMediaElement&) const;
 
     // Restrictions to modify default behaviors.
     enum BehaviorRestrictionFlags {

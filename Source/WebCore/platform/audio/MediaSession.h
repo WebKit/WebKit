@@ -62,7 +62,7 @@ public:
     void beginInterruption();
     void endInterruption(EndInterruptionFlags);
 
-    virtual void pauseSession();
+    void pauseSession();
 
 protected:
     MediaSessionClient& client() const { return m_client; }

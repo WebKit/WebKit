@@ -49,6 +49,7 @@ public:
     enum SessionRestrictionFlags {
         NoRestrictions = 0,
         ConcurrentPlaybackNotPermitted = 1 << 0,
+        InlineVideoPlaybackRestricted = 1 << 0,
     };
     typedef unsigned SessionRestrictions;
     
@@ -56,7 +57,8 @@ public:
     void removeRestriction(MediaSession::MediaType, SessionRestrictions);
     SessionRestrictions restrictions(MediaSession::MediaType);
 
-    void sessionWillBeginPlayback(MediaSession&);
+    void sessionWillBeginPlayback(const MediaSession&) const;
+    bool sessionRestrictsInlineVideoPlayback(const MediaSession&) const;
 
 protected:
     friend class MediaSession;

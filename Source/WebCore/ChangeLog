@@ -1,3 +1,39 @@
+2014-01-16  Eric Carlson  <eric.carlson@apple.com>
+
+        Allow MediaSessionManager to restrict inline <video> playback
+        https://bugs.webkit.org/show_bug.cgi?id=127113
+
+        Reviewed by Jer Noble.
+
+        Test: media/video-fullscreeen-only-playback.html
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::updatePlayState): Drive-by change to not tell the media session that
+            playback is starting if the media player is already playing. Enter fullscreen if the media
+            session says it is required.
+
+        * html/HTMLMediaSession.cpp:
+        (WebCore::HTMLMediaSession::clientWillBeginPlayback): Make it const.
+        (WebCore::HTMLMediaSession::requiresFullscreenForVideoPlayback): New, see if the specified
+            media element must be played in fullscreen based on the media session settings, document
+            settings, and attributes.
+        * html/HTMLMediaSession.h:
+
+        * platform/audio/MediaSession.h: pauseSession shouldn't be virtual.
+
+        * platform/audio/MediaSessionManager.cpp:
+        (WebCore::MediaSessionManager::sessionWillBeginPlayback): Return immediately if ConcurrentPlaybackNotPermitted
+            is not set.
+        (WebCore::MediaSessionManager::sessionRestrictsInlineVideoPlayback): New.
+        * platform/audio/MediaSessionManager.h:
+
+        * platform/audio/ios/MediaSessionManagerIOS.mm:
+        (WebCore::MediaSessionManageriOS::MediaSessionManageriOS): Set InlineVideoPlaybackRestricted if
+            running on an iPhone or iPod class device.
+
+        * testing/Internals.cpp:
+        (WebCore::Internals::setMediaSessionRestrictions): Support InlineVideoPlaybackRestricted.
+
 2014-01-16  Roger Fong  <roger_fong@apple.com>
 
         Add support for handling WebGL load policies.
