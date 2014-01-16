@@ -1,3 +1,30 @@
+2014-01-15  Gavin Barraclough  <barraclough@apple.com>
+
+        Change Page, FocusController to use ViewState
+        https://bugs.webkit.org/show_bug.cgi?id=126533
+
+        Unreviewed rollout, this caused a regression.
+
+        * WebCore.exp.in:
+        * page/FocusController.cpp:
+        (WebCore::FocusController::FocusController):
+        (WebCore::FocusController::setFocused):
+        (WebCore::FocusController::setActive):
+        (WebCore::FocusController::setContentIsVisible):
+        * page/FocusController.h:
+        (WebCore::FocusController::isActive):
+        (WebCore::FocusController::isFocused):
+        * page/Page.cpp:
+        (WebCore::Page::Page):
+        (WebCore::Page::setIsInWindow):
+        (WebCore::Page::setIsVisuallyIdle):
+        (WebCore::Page::setIsVisible):
+        (WebCore::Page::visibilityState):
+        (WebCore::Page::hiddenPageCSSAnimationSuspensionStateChanged):
+        * page/Page.h:
+        (WebCore::Page::isVisible):
+        (WebCore::Page::isInWindow):
+
 2014-01-15  Brent Fulgham  <bfulgham@apple.com>
 
         [WebGL] Resizing and entering/exiting full screen draws garbage
