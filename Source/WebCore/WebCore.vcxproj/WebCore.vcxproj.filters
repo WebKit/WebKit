@@ -2013,9 +2013,6 @@
     <ClCompile Include="..\platform\text\TextBreakIterator.cpp">
       <Filter>platform\text</Filter>
     </ClCompile>
-    <ClCompile Include="..\platform\text\TextBreakIteratorICU.cpp">
-      <Filter>platform\text</Filter>
-    </ClCompile>
     <ClCompile Include="..\platform\text\TextCodec.cpp">
       <Filter>platform\text</Filter>
     </ClCompile>

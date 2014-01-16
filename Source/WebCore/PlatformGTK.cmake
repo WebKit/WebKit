@@ -134,7 +134,6 @@ list(APPEND WebCore_SOURCES
     platform/text/icu/UTextProviderLatin1.cpp
     platform/text/icu/UTextProviderUTF16.cpp
     platform/text/LocaleICU.cpp
-    platform/text/TextBreakIteratorICU.cpp
     platform/text/TextCodecICU.cpp
     platform/text/TextEncodingDetectorICU.cpp
 
@@ -264,7 +263,6 @@ list(APPEND WebCorePlatformGTK_SOURCES
     platform/text/icu/UTextProviderLatin1.cpp
     platform/text/icu/UTextProviderUTF16.cpp
     platform/text/LocaleICU.cpp
-    platform/text/TextBreakIteratorICU.cpp
     platform/text/TextCodecICU.cpp
     platform/text/TextEncodingDetectorICU.cpp
 

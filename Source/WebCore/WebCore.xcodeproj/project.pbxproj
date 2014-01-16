@@ -4556,7 +4556,6 @@
 		B2C3DA2F0D006C1D00EF6F26 /* SegmentedString.h in Headers */ = {isa = PBXBuildFile; fileRef = B2C3D9FF0D006C1D00EF6F26 /* SegmentedString.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		B2C3DA340D006C1D00EF6F26 /* TextBoundaries.h in Headers */ = {isa = PBXBuildFile; fileRef = B2C3DA040D006C1D00EF6F26 /* TextBoundaries.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		B2C3DA360D006C1D00EF6F26 /* TextBreakIterator.h in Headers */ = {isa = PBXBuildFile; fileRef = B2C3DA060D006C1D00EF6F26 /* TextBreakIterator.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		B2C3DA370D006C1D00EF6F26 /* TextBreakIteratorICU.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2C3DA070D006C1D00EF6F26 /* TextBreakIteratorICU.cpp */; };
 		B2C3DA380D006C1D00EF6F26 /* TextBreakIteratorInternalICU.h in Headers */ = {isa = PBXBuildFile; fileRef = B2C3DA080D006C1D00EF6F26 /* TextBreakIteratorInternalICU.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		B2C3DA390D006C1D00EF6F26 /* TextCodec.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2C3DA090D006C1D00EF6F26 /* TextCodec.cpp */; };
 		B2C3DA3A0D006C1D00EF6F26 /* TextCodec.h in Headers */ = {isa = PBXBuildFile; fileRef = B2C3DA0A0D006C1D00EF6F26 /* TextCodec.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -11788,7 +11787,6 @@
 		B2C3D9FF0D006C1D00EF6F26 /* SegmentedString.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = SegmentedString.h; sourceTree = "<group>"; };
 		B2C3DA040D006C1D00EF6F26 /* TextBoundaries.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = TextBoundaries.h; sourceTree = "<group>"; };
 		B2C3DA060D006C1D00EF6F26 /* TextBreakIterator.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = TextBreakIterator.h; sourceTree = "<group>"; };
-		B2C3DA070D006C1D00EF6F26 /* TextBreakIteratorICU.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = TextBreakIteratorICU.cpp; sourceTree = "<group>"; };
 		B2C3DA080D006C1D00EF6F26 /* TextBreakIteratorInternalICU.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = TextBreakIteratorInternalICU.h; sourceTree = "<group>"; };
 		B2C3DA090D006C1D00EF6F26 /* TextCodec.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = TextCodec.cpp; sourceTree = "<group>"; };
 		B2C3DA0A0D006C1D00EF6F26 /* TextCodec.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = TextCodec.h; sourceTree = "<group>"; };
@@ -20136,7 +20134,6 @@
 				B2C3DA040D006C1D00EF6F26 /* TextBoundaries.h */,
 				BCD8A5EF15F56F2C0098D071 /* TextBreakIterator.cpp */,
 				B2C3DA060D006C1D00EF6F26 /* TextBreakIterator.h */,
-				B2C3DA070D006C1D00EF6F26 /* TextBreakIteratorICU.cpp */,
 				B2C3DA080D006C1D00EF6F26 /* TextBreakIteratorInternalICU.h */,
 				A7151BD712F1558F005A0F64 /* TextCheckerClient.h */,
 				A77D0011133B0AEB00D6658C /* TextChecking.h */,
@@ -29100,7 +29097,6 @@
 				372C00C4129611F1005C9575 /* TextBoundaries.cpp in Sources */,
 				B2AFFC970D00A5DF0030074D /* TextBoundaries.mm in Sources */,
 				BCD8A5F015F56F2C0098D071 /* TextBreakIterator.cpp in Sources */,
-				B2C3DA370D006C1D00EF6F26 /* TextBreakIteratorICU.cpp in Sources */,
 				B2AFFC980D00A5DF0030074D /* TextBreakIteratorInternalICUMac.mm in Sources */,
 				A7DBF8DD1276919C006B6008 /* TextCheckingHelper.cpp in Sources */,
 				078E093117D1684200420AA1 /* MediaStreamCenterMac.cpp in Sources */,

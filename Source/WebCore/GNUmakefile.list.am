@@ -6017,7 +6017,6 @@ platform_sources += \
 	Source/WebCore/platform/text/TextBoundaries.h \
 	Source/WebCore/platform/text/TextBreakIterator.cpp \
 	Source/WebCore/platform/text/TextBreakIterator.h \
-	Source/WebCore/platform/text/TextBreakIteratorICU.cpp \
 	Source/WebCore/platform/text/TextBreakIteratorInternalICU.h \
 	Source/WebCore/platform/text/TextCheckerClient.h \
 	Source/WebCore/platform/text/TextChecking.h \

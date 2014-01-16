@@ -2805,7 +2805,6 @@ if (WTF_USE_ICU_UNICODE)
         platform/text/icu/UTextProvider.cpp
         platform/text/icu/UTextProviderLatin1.cpp
         platform/text/icu/UTextProviderUTF16.cpp
-        platform/text/TextBreakIteratorICU.cpp
         platform/text/TextCodecICU.cpp
         platform/text/TextEncodingDetectorICU.cpp
     )

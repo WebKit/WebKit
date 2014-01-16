@@ -1,3 +1,21 @@
+2014-01-15  Sam Weinig  <sam@webkit.org>
+
+        TextBreakIterator's should support Latin-1 for all iterator types (Part 2)
+        https://bugs.webkit.org/show_bug.cgi?id=126856
+
+        Reviewed by Ryosuke Niwa.
+
+        Move the contents of TextBreakIteratorICU.cpp to TextBreakIterator.cpp and remove TextBreakIteratorICU.cpp.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * PlatformGTK.cmake:
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.vcxproj/WebCore.vcxproj.filters:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/text/TextBreakIterator.cpp:
+        * platform/text/TextBreakIteratorICU.cpp: Removed.
+
 2014-01-15  Eric Carlson  <eric.carlson@apple.com>
 
         MediaSessionManager shouldn't use std::map
