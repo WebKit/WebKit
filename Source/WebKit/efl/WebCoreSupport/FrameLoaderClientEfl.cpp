@@ -463,11 +463,6 @@ void FrameLoaderClientEfl::documentElementAvailable()
     return;
 }
 
-void FrameLoaderClientEfl::didPerformFirstNavigation() const
-{
-    ewk_frame_did_perform_first_navigation(m_frame);
-}
-
 void FrameLoaderClientEfl::registerForIconNotification(bool)
 {
     notImplemented();

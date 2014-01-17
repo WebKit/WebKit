@@ -134,8 +134,6 @@ class FrameLoaderClientEfl : public FrameLoaderClient {
     virtual String overrideMediaType() const;
     virtual void documentElementAvailable();
 
-    virtual void didPerformFirstNavigation() const;
-
     virtual void registerForIconNotification(bool);
 
     virtual ObjectContentType objectContentType(const URL&, const String& mimeType, bool shouldPreferPlugInsForImages);

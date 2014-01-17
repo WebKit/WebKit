@@ -1295,27 +1295,6 @@ void WebFrameLoaderClient::registerForIconNotification(bool listen)
     m_webFrame->webView()->registerForIconNotification(listen);
 }
 
-void WebFrameLoaderClient::didPerformFirstNavigation() const
-{
-    COMPtr<IWebPreferences> preferences;
-    if (FAILED(m_webFrame->webView()->preferences(&preferences)))
-        return;
-
-    COMPtr<IWebPreferencesPrivate> preferencesPrivate(Query, preferences);
-    if (!preferencesPrivate)
-        return;
-    BOOL automaticallyDetectsCacheModel;
-    if (FAILED(preferencesPrivate->automaticallyDetectsCacheModel(&automaticallyDetectsCacheModel)))
-        return;
-
-    WebCacheModel cacheModel;
-    if (FAILED(preferences->cacheModel(&cacheModel)))
-        return;
-
-    if (automaticallyDetectsCacheModel && cacheModel < WebCacheModelDocumentBrowser)
-        preferences->setCacheModel(WebCacheModelDocumentBrowser);
-}
-
 PassRefPtr<FrameNetworkingContext> WebFrameLoaderClient::createNetworkingContext()
 {
     return WebFrameNetworkingContext::create(core(m_webFrame), userAgent(m_webFrame->url()));

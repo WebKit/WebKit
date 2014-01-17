@@ -1,3 +1,17 @@
+2014-01-17  Anders Carlsson  <andersca@apple.com>
+
+        Remove didPerformFirstNavigation from all FrameLoaderClient subclasses
+        https://bugs.webkit.org/show_bug.cgi?id=127190
+
+        Reviewed by Dan Bernstein.
+
+        According to the EFl maintainers, this is not used by any applications so it's safe to remove it.
+
+        * WebCoreSupport/FrameLoaderClientEfl.cpp:
+        * WebCoreSupport/FrameLoaderClientEfl.h:
+        * ewk/ewk_frame.cpp:
+        * ewk/ewk_frame_private.h:
+
 2014-01-16  Jaehun Lim  <ljaehun.lim@samsung.com>
 
         Use final instead of FINAL

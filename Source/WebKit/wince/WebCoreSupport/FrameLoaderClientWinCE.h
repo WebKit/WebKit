@@ -113,7 +113,6 @@ public:
     virtual WTF::String overrideMediaType() const override;
     virtual void dispatchDidClearWindowObjectInWorld(WebCore::DOMWrapperWorld&) override;
     virtual void documentElementAvailable() override;
-    virtual void didPerformFirstNavigation() const override;
 
     virtual void registerForIconNotification(bool) override;
 

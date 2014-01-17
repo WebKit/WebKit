@@ -191,7 +191,6 @@ public:
 
     virtual void dispatchDidClearWindowObjectInWorld(WebCore::DOMWrapperWorld&) override;
     virtual void documentElementAvailable() override;
-    virtual void didPerformFirstNavigation() const override;
 
     COMPtr<WebFramePolicyListener> setUpPolicyListener(WebCore::FramePolicyFunction);
     void receivedPolicyDecision(WebCore::PolicyAction);

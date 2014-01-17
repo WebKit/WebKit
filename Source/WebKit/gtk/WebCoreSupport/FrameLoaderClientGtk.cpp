@@ -576,14 +576,6 @@ void FrameLoaderClient::documentElementAvailable()
 {
 }
 
-void FrameLoaderClient::didPerformFirstNavigation() const
-{
-    WebKitCacheModel cacheModel = webkit_get_cache_model();
-    // If user agents do not determine the cache model, we use WEBKIT_CACHE_MODEL_WEB_BROWSER by default.
-    if (cacheModel == WEBKIT_CACHE_MODEL_DEFAULT)
-        webkit_set_cache_model(WEBKIT_CACHE_MODEL_WEB_BROWSER);
-}
-
 void FrameLoaderClient::registerForIconNotification(bool shouldRegister)
 {
     webkitWebViewRegisterForIconNotification(getViewFromFrame(m_frame), shouldRegister);

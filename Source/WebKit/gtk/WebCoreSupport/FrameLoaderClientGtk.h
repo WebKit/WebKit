@@ -120,7 +120,6 @@ namespace WebKit {
         virtual WTF::String overrideMediaType() const;
         virtual void dispatchDidClearWindowObjectInWorld(WebCore::DOMWrapperWorld&);
         virtual void documentElementAvailable();
-        virtual void didPerformFirstNavigation() const;
 
         virtual void registerForIconNotification(bool);
 

@@ -1276,19 +1276,6 @@ void ewk_frame_response_received(Evas_Object* ewkFrame, Ewk_Frame_Resource_Respo
 
 /**
  * @internal
- * Reports that first navigation occurred
- *
- * @param ewkFrame Frame.
- *
- * Emits signal: "navigation,first"
- */
-void ewk_frame_did_perform_first_navigation(Evas_Object* ewkFrame)
-{
-    evas_object_smart_callback_call(ewkFrame, "navigation,first", 0);
-}
-
-/**
- * @internal
  * Reports frame will be saved to current state
  *
  * @param ewkFrame Frame.
