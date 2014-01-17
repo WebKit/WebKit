@@ -1,3 +1,28 @@
+2014-01-17  Anders Carlsson  <andersca@apple.com>
+
+        Move didPerformFirstNavigation() logic to -[WebView _didCommitLoadForFrame:]
+        https://bugs.webkit.org/show_bug.cgi?id=127189
+
+        Reviewed by Dan Bernstein.
+
+        This is a first step towards completely eliminating the didPerformFirstNavigation() client callback.
+        
+        * WebCoreSupport/WebFrameLoaderClient.h:
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        Remove didPerformFirstNavigation() implementation.
+
+        * WebView/WebView.mm:
+        (-[WebView _checkDidPerformFirstNavigation]):
+        Check if we have both a current item and a previous item which indicates that we've navigated once.
+        The old code was called before there was a current item but since this is called from _didCommitLoadForFrame
+        we have to check that there's a current item as well.
+
+        (-[WebView _didCommitLoadForFrame:]):
+        Call _didCommitLoadForFrame.
+
+        * WebView/WebViewData.h:
+        Add new ivar.
+
 2014-01-17  Alexey Proskuryakov  <ap@apple.com>
 
         More iOS build fix.

@@ -111,6 +111,7 @@
 #import <WebCore/AlternativeTextUIController.h>
 #import <WebCore/AnimationController.h>
 #import <WebCore/ApplicationCacheStorage.h>
+#import <WebCore/BackForwardController.h>
 #import <WebCore/BackForwardList.h>
 #import <WebCore/MemoryCache.h>
 #import <WebCore/Chrome.h>
@@ -2857,10 +2858,33 @@ static inline IMP getMethod(id o, SEL s)
 #endif
 }
 
+- (void)_checkDidPerformFirstNavigation
+{
+    if (_private->_didPerformFirstNavigation)
+        return;
+
+    Page* page = _private->page;
+    if (!page)
+        return;
+
+    auto& backForwardController = page->backForward();
+
+    if (!backForwardController.backItem())
+        return;
+
+    _private->_didPerformFirstNavigation = YES;
+
+    if (_private->preferences.automaticallyDetectsCacheModel && _private->preferences.cacheModel < WebCacheModelDocumentBrowser)
+        _private->preferences.cacheModel = WebCacheModelDocumentBrowser;
+}
+
 - (void)_didCommitLoadForFrame:(WebFrame *)frame
 {
     if (frame == [self mainFrame])
         [self _didChangeValueForKey: _WebMainFrameURLKey];
+
+    [self _checkDidPerformFirstNavigation];
+
     [NSApp setWindowsNeedUpdate:YES];
 }
 

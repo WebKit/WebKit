@@ -282,7 +282,7 @@ namespace WebCore {
 
         virtual void dispatchDidClearWindowObjectInWorld(DOMWrapperWorld&) = 0;
         virtual void documentElementAvailable() = 0;
-        virtual void didPerformFirstNavigation() const = 0; // "Navigation" here means a transition from one page to another that ends up in the back/forward list.
+        virtual void didPerformFirstNavigation() const { }
 
         virtual void registerForIconNotification(bool listen = true) = 0;
 

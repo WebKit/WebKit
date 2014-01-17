@@ -217,7 +217,6 @@ private:
     
     virtual void dispatchDidClearWindowObjectInWorld(WebCore::DOMWrapperWorld&) override;
     virtual void documentElementAvailable() override;
-    virtual void didPerformFirstNavigation() const override;
 
     virtual void registerForIconNotification(bool listen) override;
 

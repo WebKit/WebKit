@@ -288,5 +288,7 @@ private:
 #endif
 
     RetainPtr<NSData> sourceApplicationAuditData;
+
+    BOOL _didPerformFirstNavigation;
 }
 @end

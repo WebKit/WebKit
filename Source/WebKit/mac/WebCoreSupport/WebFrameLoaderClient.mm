@@ -2381,13 +2381,6 @@ void WebFrameLoaderClient::registerForIconNotification(bool listen)
 #endif
 }
 
-void WebFrameLoaderClient::didPerformFirstNavigation() const
-{
-    WebPreferences *preferences = [[m_webFrame.get() webView] preferences];
-    if ([preferences automaticallyDetectsCacheModel] && [preferences cacheModel] < WebCacheModelDocumentBrowser)
-        [preferences setCacheModel:WebCacheModelDocumentBrowser];
-}
-
 PassRefPtr<FrameNetworkingContext> WebFrameLoaderClient::createNetworkingContext()
 {
     return WebFrameNetworkingContext::create(core(m_webFrame.get()));
