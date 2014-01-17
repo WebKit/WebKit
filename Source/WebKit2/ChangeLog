@@ -1,3 +1,14 @@
+2014-01-16  Andy Estes  <aestes@apple.com>
+
+        Build Fix: Use standard architectures when building for iOS
+
+        Even though we don't use the plug-in services on iOS, we still need
+        them to build (we won't install them). Be sure we specify valid iOS
+        architectures when doing so.
+
+        * Configurations/PluginService.32.xcconfig:
+        * Configurations/PluginService.64.xcconfig:
+
 2014-01-16  Enrica Casucci  <enrica@apple.com>
 
         Crash when destroying WKInteractionView.

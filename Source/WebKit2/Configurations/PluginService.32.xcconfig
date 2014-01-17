@@ -23,7 +23,11 @@
 
 #include "BaseXPCService.xcconfig"
 
-ARCHS = i386;
+ARCHS = $(ARCHS_$(PLATFORM_NAME));
+ARCHS_macosx = i386;
+ARCHS_iphoneos = $(ARCHS_STANDARD_32_64_BIT);
+ARCHS_iphonesimulator = $(ARCHS_iphoneos);
+
 PRODUCT_NAME = com.apple.WebKit.Plugin.32;
 INFOPLIST_FILE = PluginProcess/EntryPoint/mac/XPCService/PluginService.32-64.Info.plist;
 
