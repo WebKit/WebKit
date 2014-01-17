@@ -2674,7 +2674,7 @@ IntRect FrameView::extendedBackgroundRect() const
     if (!renderView)
         return IntRect();
 
-    return renderView->backgroundRect();
+    return renderView->unscaledDocumentRect();
 #endif
 }
 

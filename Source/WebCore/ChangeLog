@@ -1,3 +1,14 @@
+2014-01-16  Alex Christensen  <achristensen@webkit.org>
+
+        Compile fix for WinCairo after r162138.
+        https://bugs.webkit.org/show_bug.cgi?id=127140
+
+        Reviewed by Beth Dakin.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::extendedBackgroundRect):
+        Use unscaledDocumentRect for extendedBackgroundRect without accelerated compositing.
+
 2014-01-16  Brady Eidson  <beidson@apple.com>
 
         IDB: delete object store support
