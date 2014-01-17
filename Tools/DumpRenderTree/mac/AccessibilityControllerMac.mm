@@ -44,8 +44,7 @@ AccessibilityController::AccessibilityController()
 
 AccessibilityController::~AccessibilityController()
 {
-    // The notification handler should be nil because removeNotificationListener() should have been called in the test.
-    ASSERT(!m_globalNotificationHandler);
+    m_globalNotificationHandler.clear();
 }
 
 AccessibilityUIElement AccessibilityController::elementAtPoint(int x, int y)

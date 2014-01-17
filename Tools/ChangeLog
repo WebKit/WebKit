@@ -1,3 +1,15 @@
+2014-01-16  Chris Fleizach  <cfleizach@apple.com>
+
+        platform/mac/accessibility/aria-multiline.html sometimes asserts in AccessibilityController::removeNotificationListener
+        https://bugs.webkit.org/show_bug.cgi?id=127141
+
+        Reviewed by Alexey Proskuryakov.
+
+        Don't assert that the notification handler needs to be cleaned up. Deallocing the controller should be enough to clean up as it is.
+
+        * DumpRenderTree/mac/AccessibilityControllerMac.mm:
+        (AccessibilityController::~AccessibilityController):
+
 2014-01-16  Ryosuke Niwa  <rniwa@webkit.org>
 
         EWS shouldn't comment on Bugzilla for failing builds or style errors
