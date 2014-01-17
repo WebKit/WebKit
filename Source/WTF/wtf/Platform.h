@@ -426,8 +426,6 @@
 #define WTF_PLATFORM_EFL 1
 #elif defined(BUILDING_GTK__)
 #define WTF_PLATFORM_GTK 1
-#elif defined(BUILDING_NIX__)
-#include "nix/PlatformNix.h"
 #elif OS(DARWIN)
 #define WTF_PLATFORM_COCOA 1
 #define WTF_PLATFORM_MAC 1

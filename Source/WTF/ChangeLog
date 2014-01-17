@@ -1,3 +1,16 @@
+2014-01-16  Benjamin Poulain  <bpoulain@apple.com>
+
+        Remove Nix from WTF
+        https://bugs.webkit.org/show_bug.cgi?id=127150
+
+        Reviewed by Alexey Proskuryakov.
+
+        * wtf/DisallowCType.h:
+        * wtf/FeatureDefines.h:
+        * wtf/Platform.h:
+        * wtf/PlatformNix.cmake: Removed.
+        * wtf/nix: Removed.
+
 2014-01-16  Anders Carlsson  <andersca@apple.com>
 
         Remove FINAL macro

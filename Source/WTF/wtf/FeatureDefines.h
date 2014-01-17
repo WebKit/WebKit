@@ -301,11 +301,6 @@
 
 #endif /* PLATFORM(WIN_CAIRO) */
 
-/* --------- NIX port (Unix) --------- */
-#if PLATFORM(NIX)
-#include "nix/FeatureDefinesNix.h"
-#endif /* PLATFORM(NIX) */
-
 /* --------- EFL port (Unix) --------- */
 #if PLATFORM(EFL)
 
