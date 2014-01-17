@@ -2320,7 +2320,7 @@ static NSString *classIBCreatorID = nil;
 
     NSHTTPCookieAcceptPolicy cookieAcceptPolicy = [[NSHTTPCookieStorage sharedHTTPCookieStorage] cookieAcceptPolicy];
     WebStorageBlockingPolicy storageBlockingPolicy;
-    switch (cookieAcceptPolicy) {
+    switch (static_cast<unsigned>(cookieAcceptPolicy)) {
     case NSHTTPCookieAcceptPolicyAlways:
         storageBlockingPolicy = WebAllowAllStorage;
         break;
@@ -2329,6 +2329,10 @@ static NSString *classIBCreatorID = nil;
         storageBlockingPolicy = WebBlockThirdPartyStorage;
         break;
     case NSHTTPCookieAcceptPolicyNever:
+        storageBlockingPolicy = WebBlockAllStorage;
+        break;
+    default:
+        ASSERT_NOT_REACHED();
         storageBlockingPolicy = WebBlockAllStorage;
         break;
     }    
