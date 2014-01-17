@@ -43,14 +43,14 @@ PassRefPtr<OpaqueJSString> OpaqueJSString::create(const String& string)
 OpaqueJSString::~OpaqueJSString()
 {
     // m_characters is put in a local here to avoid an extra atomic load.
-    const UChar* characters = m_characters;
+    UChar* characters = m_characters;
     if (!characters)
         return;
 
     if (!m_string.is8Bit() && m_string.characters() == characters)
         return;
 
-    fastFree(const_cast<void*>(static_cast<const void*>(characters)));
+    fastFree(characters);
 }
 
 String OpaqueJSString::string() const
@@ -82,7 +82,7 @@ const UChar* OpaqueJSString::characters()
         return nullptr;
 
     // m_characters is put in a local here to avoid an extra atomic load.
-    const UChar* characters = m_characters;
+    UChar* characters = m_characters;
     if (characters)
         return characters;
 

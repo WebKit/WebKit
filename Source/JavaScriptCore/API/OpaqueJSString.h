@@ -71,13 +71,13 @@ private:
     friend class WTF::ThreadSafeRefCounted<OpaqueJSString>;
 
     OpaqueJSString()
-        : m_characters(static_cast<const UChar*>(nullptr))
+        : m_characters(nullptr)
     {
     }
 
     OpaqueJSString(const String& string)
         : m_string(string.isolatedCopy())
-        , m_characters(m_string.is8Bit() ? nullptr : m_string.characters16())
+        , m_characters(m_string.is8Bit() ? nullptr : const_cast<UChar*>(m_string.characters16()))
     {
     }
 
@@ -89,14 +89,14 @@ private:
 
     OpaqueJSString(const UChar* characters, unsigned length)
         : m_string(characters, length)
-        , m_characters(m_string.is8Bit() ? nullptr : m_string.characters16())
+        , m_characters(m_string.is8Bit() ? nullptr : const_cast<UChar*>(m_string.characters16()))
     {
     }
 
     String m_string;
 
-    // This will be initialized on demand when characters() is called.
-    std::atomic<const UChar*> m_characters;
+    // This will be initialized on demand when characters() is called if the string needs up-conversion.
+    std::atomic<UChar*> m_characters;
 };
 
 #endif
