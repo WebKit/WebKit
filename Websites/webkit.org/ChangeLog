@@ -5,6 +5,18 @@
 
         Reviewed by Benjamin Poulain.
 
+        The previous patch didn't quite work due to cross-origin restrictions.
+        Simply add a hyperlink to a trac page.
+
+        * perf/DoYouEvenBench/index.html:
+
+2014-01-17  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Host DoYouEvenBench on webkit.org
+        https://bugs.webkit.org/show_bug.cgi?id=127185
+
+        Reviewed by Benjamin Poulain.
+
         Added webkit.org/perf/DoYouEvenBench.
 
         * perf/DoYouEvenBench: Added.
