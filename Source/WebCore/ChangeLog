@@ -1,5 +1,20 @@
 2014-01-17  Anders Carlsson  <andersca@apple.com>
 
+        Remove FrameLoaderClient::didPerformFirstNavigation()
+        https://bugs.webkit.org/show_bug.cgi?id=127191
+
+        Reviewed by Dan Bernstein.
+
+        * loader/EmptyClients.h:
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::FrameLoader):
+        * loader/FrameLoader.h:
+        * loader/FrameLoaderClient.h:
+        * loader/HistoryController.cpp:
+        (WebCore::HistoryController::updateBackForwardListClippedAtTarget):
+
+2014-01-17  Anders Carlsson  <andersca@apple.com>
+
         Move didPerformFirstNavigation() logic to -[WebView _didCommitLoadForFrame:]
         https://bugs.webkit.org/show_bug.cgi?id=127189
 

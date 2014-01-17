@@ -282,7 +282,6 @@ namespace WebCore {
 
         virtual void dispatchDidClearWindowObjectInWorld(DOMWrapperWorld&) = 0;
         virtual void documentElementAvailable() = 0;
-        virtual void didPerformFirstNavigation() const { }
 
         virtual void registerForIconNotification(bool listen = true) = 0;
 

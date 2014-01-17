@@ -799,8 +799,6 @@ void HistoryController::updateBackForwardListClippedAtTarget(bool doClip)
 
     FrameLoader& frameLoader = m_frame.mainFrame().loader();
 
-    frameLoader.checkDidPerformFirstNavigation();
-
     RefPtr<HistoryItem> topItem = frameLoader.history().createItemTree(m_frame, doClip);
     LOG(BackForward, "WebCoreBackForward - Adding backforward item %p for frame %s", topItem.get(), m_frame.loader().documentLoader()->url().string().ascii().data());
     page->backForward().addItem(topItem.release());

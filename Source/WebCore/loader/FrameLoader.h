@@ -240,8 +240,6 @@ public:
     void finishedParsing();
     void checkCompleted();
 
-    void checkDidPerformFirstNavigation();
-
     bool isComplete() const;
 
     void commitProvisionalLoad();
@@ -436,7 +434,6 @@ private:
     Frame* m_opener;
     HashSet<Frame*> m_openedFrames;
 
-    bool m_didPerformFirstNavigation;
     bool m_loadingFromCachedPage;
     bool m_suppressOpenerInNewFrame;
 

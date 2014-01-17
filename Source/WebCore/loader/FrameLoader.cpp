@@ -246,7 +246,6 @@ FrameLoader::FrameLoader(Frame& frame, FrameLoaderClient& client)
     , m_shouldCallCheckCompleted(false)
     , m_shouldCallCheckLoadComplete(false)
     , m_opener(nullptr)
-    , m_didPerformFirstNavigation(false)
     , m_loadingFromCachedPage(false)
     , m_suppressOpenerInNewFrame(false)
     , m_currentNavigationHasShownBeforeUnloadConfirmPanel(false)
@@ -3143,18 +3142,6 @@ bool FrameLoader::shouldTreatURLAsSrcdocDocument(const URL& url) const
     if (!ownerElement->hasTagName(iframeTag))
         return false;
     return ownerElement->fastHasAttribute(srcdocAttr);
-}
-
-void FrameLoader::checkDidPerformFirstNavigation()
-{
-    Page* page = m_frame.page();
-    if (!page)
-        return;
-
-    if (!m_didPerformFirstNavigation && page->backForward().currentItem() && !page->backForward().backItem() && !page->backForward().forwardItem()) {
-        m_didPerformFirstNavigation = true;
-        m_client.didPerformFirstNavigation();
-    }
 }
 
 Frame* FrameLoader::findFrameForNavigation(const AtomicString& name, Document* activeDocument)

@@ -1507,11 +1507,6 @@ void WebFrameLoaderClient::documentElementAvailable()
     notImplemented();
 }
 
-void WebFrameLoaderClient::didPerformFirstNavigation() const
-{
-    notImplemented();
-}
-
 void WebFrameLoaderClient::registerForIconNotification(bool /*listen*/)
 {
     notImplemented();

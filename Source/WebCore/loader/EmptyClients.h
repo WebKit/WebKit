@@ -393,7 +393,6 @@ public:
     virtual void redirectDataToPlugin(Widget*) override { }
     virtual void dispatchDidClearWindowObjectInWorld(DOMWrapperWorld&) override { }
     virtual void documentElementAvailable() override { }
-    virtual void didPerformFirstNavigation() const override { }
 
     virtual void registerForIconNotification(bool) override { }
 

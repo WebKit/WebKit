@@ -209,8 +209,7 @@ private:
     virtual void dispatchWillDestroyGlobalObjectForDOMWindowExtension(WebCore::DOMWindowExtension*) override;
 
     virtual void documentElementAvailable() override;
-    virtual void didPerformFirstNavigation() const override; // "Navigation" here means a transition from one page to another that ends up in the back/forward list.
-    
+
     virtual void registerForIconNotification(bool listen = true) override;
     
 #if PLATFORM(MAC)
