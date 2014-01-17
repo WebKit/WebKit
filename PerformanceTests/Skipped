@@ -91,3 +91,7 @@ Layout/LineLayoutJapanese.html
 
 # Don't run the interactive runner. We run Full.html
 DoYouEvenBench/benchmark.html
+
+# Ignore HTML files that are not tests.
+DoYouEvenBench/flightjs-example-app
+DoYouEvenBench/todomvc
