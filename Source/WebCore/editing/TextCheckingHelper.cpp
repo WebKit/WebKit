@@ -70,9 +70,9 @@ static void findBadGrammars(TextCheckerClient* client, const UChar* text, int st
 }
 #endif
 
-static void findMisspellings(TextCheckerClient* client, const UChar* text, int start, int length, Vector<TextCheckingResult>& results)
+static void findMisspellings(TextCheckerClient* client, const UChar* text, int length, Vector<TextCheckingResult>& results)
 {
-    TextBreakIterator* iterator = wordBreakIterator(text + start, length);
+    TextBreakIterator* iterator = wordBreakIterator(StringView(text, length));
     if (!iterator)
         return;
     int wordStart = textBreakCurrent(iterator);
@@ -83,13 +83,13 @@ static void findMisspellings(TextCheckerClient* client, const UChar* text, int s
         int wordLength = wordEnd - wordStart;
         int misspellingLocation = -1;
         int misspellingLength = 0;
-        client->checkSpellingOfString(text + start + wordStart, wordLength, &misspellingLocation, &misspellingLength);
+        client->checkSpellingOfString(text + wordStart, wordLength, &misspellingLocation, &misspellingLength);
         if (0 < misspellingLength) {
             ASSERT(0 <= misspellingLocation && misspellingLocation <= wordLength);
             ASSERT(0 < misspellingLength && misspellingLocation + misspellingLength <= wordLength);
             TextCheckingResult misspelling;
             misspelling.type = TextCheckingTypeSpelling;
-            misspelling.location = start + wordStart + misspellingLocation;
+            misspelling.location = wordStart + misspellingLocation;
             misspelling.length = misspellingLength;
             misspelling.replacement = client->getAutoCorrectSuggestionForMisspelledWord(String(text + misspelling.location, misspelling.length));
             results.append(misspelling);
@@ -648,7 +648,7 @@ void checkTextOfParagraph(TextCheckerClient* client, const UChar* text, int leng
 #else
     Vector<TextCheckingResult> spellingResult;
     if (checkingTypes & TextCheckingTypeSpelling)
-        findMisspellings(client, text, 0, length, spellingResult);
+        findMisspellings(client, text, length, spellingResult);
 
 #if USE(GRAMMAR_CHECKING)
     Vector<TextCheckingResult> grammarResult;

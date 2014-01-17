@@ -36,10 +36,10 @@ class TextBreakIterator;
 // platform UI conventions. One notable example where this can be different
 // from character break iterator is Thai prepend characters, see bug 24342.
 // Use this for insertion point and selection manipulations.
-TextBreakIterator* cursorMovementIterator(const UChar*, int length);
+TextBreakIterator* cursorMovementIterator(StringView);
 
-TextBreakIterator* wordBreakIterator(const UChar*, int length);
-TextBreakIterator* sentenceBreakIterator(const UChar*, int length);
+TextBreakIterator* wordBreakIterator(StringView);
+TextBreakIterator* sentenceBreakIterator(StringView);
 
 TextBreakIterator* acquireLineBreakIterator(StringView, const AtomicString& locale, const UChar* priorContext, unsigned priorContextLength);
 void releaseLineBreakIterator(TextBreakIterator*);
@@ -169,7 +169,7 @@ private:
 class NonSharedCharacterBreakIterator {
     WTF_MAKE_NONCOPYABLE(NonSharedCharacterBreakIterator);
 public:
-    NonSharedCharacterBreakIterator(const UChar*, int length);
+    NonSharedCharacterBreakIterator(StringView);
     ~NonSharedCharacterBreakIterator();
 
     operator TextBreakIterator*() const { return m_iterator; }

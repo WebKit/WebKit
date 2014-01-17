@@ -63,7 +63,7 @@ static unsigned centerTruncateToBuffer(const String& string, unsigned length, un
     ASSERT_WITH_SECURITY_IMPLICATION(keepCount < STRING_BUFFER_SIZE);
     
     unsigned omitStart = (keepCount + 1) / 2;
-    NonSharedCharacterBreakIterator it(string.deprecatedCharacters(), length);
+    NonSharedCharacterBreakIterator it(StringView(string).substring(0, length));
     unsigned omitEnd = boundedTextBreakFollowing(it, omitStart + (length - keepCount) - 1, length);
     omitStart = textBreakAtOrPreceding(it, omitStart);
 
@@ -115,7 +115,7 @@ static unsigned rightTruncateToBuffer(const String& string, unsigned length, uns
         --keepCount;
 #endif
 
-    NonSharedCharacterBreakIterator it(string.deprecatedCharacters(), length);
+    NonSharedCharacterBreakIterator it(StringView(string).substring(0, length));
     unsigned keepLength = textBreakAtOrPreceding(it, keepCount);
     unsigned truncatedLength = shouldInsertEllipsis ? keepLength + 1 : keepLength;
 
@@ -131,7 +131,7 @@ static unsigned rightClipToCharacterBuffer(const String& string, unsigned length
     ASSERT(keepCount < length);
     ASSERT(keepCount < STRING_BUFFER_SIZE);
 
-    NonSharedCharacterBreakIterator it(string.deprecatedCharacters(), length);
+    NonSharedCharacterBreakIterator it(StringView(string).substring(0, length));
     unsigned keepLength = textBreakAtOrPreceding(it, keepCount);
     memcpy(buffer, string.deprecatedCharacters(), sizeof(UChar) * keepLength);
 
@@ -143,7 +143,7 @@ static unsigned rightClipToWordBuffer(const String& string, unsigned length, uns
     ASSERT(keepCount < length);
     ASSERT(keepCount < STRING_BUFFER_SIZE);
 
-    TextBreakIterator* it = wordBreakIterator(string.deprecatedCharacters(), length);
+    TextBreakIterator* it = wordBreakIterator(StringView(string).substring(0, length));
     unsigned keepLength = textBreakAtOrPreceding(it, keepCount);
     memcpy(buffer, string.deprecatedCharacters(), sizeof(UChar) * keepLength);
 
@@ -163,7 +163,7 @@ static unsigned leftTruncateToBuffer(const String& string, unsigned length, unsi
 
     unsigned startIndex = length - keepCount;
 
-    NonSharedCharacterBreakIterator it(string.deprecatedCharacters(), length);
+    NonSharedCharacterBreakIterator it(string);
     unsigned adjustedStartIndex = startIndex;
     startIndex = boundedTextBreakFollowing(it, startIndex, length - startIndex);
 

@@ -301,8 +301,8 @@ static TextBreakIterator* wordBreakIteratorForMinOffsetBoundary(const VisiblePos
     string.append(textBox->renderer().text()->deprecatedCharacters() + textBox->start(), textBox->len());
     len += textBox->len();
 
-    return wordBreakIterator(string.data(), len);
-} 
+    return wordBreakIterator(StringView(string.data(), len));
+}
 
 static TextBreakIterator* wordBreakIteratorForMaxOffsetBoundary(const VisiblePosition& visiblePosition, const InlineTextBox* textBox,
     bool& nextBoxInDifferentBlock, Vector<UChar, 1024>& string, CachedLogicallyOrderedLeafBoxes& leafBoxes)
@@ -322,8 +322,8 @@ static TextBreakIterator* wordBreakIteratorForMaxOffsetBoundary(const VisiblePos
         len += nextTextBox->len();
     }
 
-    return wordBreakIterator(string.data(), len);
-} 
+    return wordBreakIterator(StringView(string.data(), len));
+}
 
 static bool isLogicalStartOfWord(TextBreakIterator* iter, int position, bool hardLineBreak)
 {
@@ -385,7 +385,7 @@ static VisiblePosition visualWordPosition(const VisiblePosition& visiblePosition
         else if (offsetInBox == box->caretMaxOffset())
             iter = wordBreakIteratorForMaxOffsetBoundary(visiblePosition, textBox, nextBoxInDifferentBlock, string, leafBoxes);
         else if (movingIntoNewBox) {
-            iter = wordBreakIterator(textBox->renderer().text()->deprecatedCharacters() + textBox->start(), textBox->len());
+            iter = wordBreakIterator(StringView(textBox->renderer().text()).substring(textBox->start(), textBox->len()));
             previouslyVisitedBox = box;
         }
 
@@ -1046,7 +1046,7 @@ VisiblePosition nextLinePosition(const VisiblePosition &visiblePosition, int lin
 
 static unsigned startSentenceBoundary(const UChar* characters, unsigned length, unsigned, BoundarySearchContextAvailability, bool&)
 {
-    TextBreakIterator* iterator = sentenceBreakIterator(characters, length);
+    TextBreakIterator* iterator = sentenceBreakIterator(StringView(characters, length));
     // FIXME: The following function can return -1; we don't handle that.
     return textBreakPreceding(iterator, length);
 }
@@ -1058,7 +1058,7 @@ VisiblePosition startOfSentence(const VisiblePosition &c)
 
 static unsigned endSentenceBoundary(const UChar* characters, unsigned length, unsigned, BoundarySearchContextAvailability, bool&)
 {
-    TextBreakIterator* iterator = sentenceBreakIterator(characters, length);
+    TextBreakIterator* iterator = sentenceBreakIterator(StringView(characters, length));
     return textBreakNext(iterator);
 }
 
@@ -1071,7 +1071,7 @@ VisiblePosition endOfSentence(const VisiblePosition &c)
 static unsigned previousSentencePositionBoundary(const UChar* characters, unsigned length, unsigned, BoundarySearchContextAvailability, bool&)
 {
     // FIXME: This is identical to startSentenceBoundary. I'm pretty sure that's not right.
-    TextBreakIterator* iterator = sentenceBreakIterator(characters, length);
+    TextBreakIterator* iterator = sentenceBreakIterator(StringView(characters, length));
     // FIXME: The following function can return -1; we don't handle that.
     return textBreakPreceding(iterator, length);
 }
@@ -1086,7 +1086,7 @@ static unsigned nextSentencePositionBoundary(const UChar* characters, unsigned l
 {
     // FIXME: This is identical to endSentenceBoundary. This isn't right, it needs to 
     // move to the equivlant position in the following sentence.
-    TextBreakIterator* iterator = sentenceBreakIterator(characters, length);
+    TextBreakIterator* iterator = sentenceBreakIterator(StringView(characters, length));
     return textBreakFollowing(iterator, 0);
 }
 

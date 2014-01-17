@@ -209,7 +209,7 @@ int ComplexTextController::offsetForPosition(float h, bool includePartialGlyphs)
                 // ligature carets.
                 CFIndex hitIndex = hitGlyphStart + (hitGlyphEnd - hitGlyphStart) * (m_run.ltr() ? x / adjustedAdvance : 1 - x / adjustedAdvance);
                 int stringLength = complexTextRun.stringLength();
-                TextBreakIterator* cursorPositionIterator = cursorMovementIterator(complexTextRun.characters(), stringLength);
+                TextBreakIterator* cursorPositionIterator = cursorMovementIterator(StringView(complexTextRun.characters(), stringLength));
                 int clusterStart;
                 if (isTextBreak(cursorPositionIterator, hitIndex))
                     clusterStart = hitIndex;

@@ -91,7 +91,7 @@ void TextCheckerEnchant::checkSpellingOfString(const String& string, int& misspe
     if (!hasDictionary())
         return;
 
-    TextBreakIterator* iter = wordBreakIterator(string.characters(), string.length());
+    TextBreakIterator* iter = wordBreakIterator(string);
     if (!iter)
         return;
 

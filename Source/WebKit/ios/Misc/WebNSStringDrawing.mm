@@ -456,7 +456,7 @@ static bool needsBidiLayout(const UChar *characters, unsigned length, UCharDirec
                         if (ellipsisStyle == WebEllipsisStyleCharacterWrap) {
                             // We can break on characters. We should do something smarter, like split the length of the entire line 
                             // Don't, however, break in the middle of a character.
-                            NonSharedCharacterBreakIterator it(pos, lengthRemaining);
+                            NonSharedCharacterBreakIterator it(StringView(pos, lengthRemaining));
                             breakPos = boundedTextBreakFollowing(it, 0, lengthRemaining);
                         }                        
                         break;
@@ -537,7 +537,7 @@ static bool needsBidiLayout(const UChar *characters, unsigned length, UCharDirec
                     // This must be a long word that doesn't fit inside the entire width
                     // Fit it on a line one character at a time and break when no more characters fit
                     // Force at least one character to avoid the edge case where a single glyph doesn't fit within width
-                    NonSharedCharacterBreakIterator it(pos, lengthRemaining);
+                    NonSharedCharacterBreakIterator it(StringView(pos, lengthRemaining));
                     int offset = 0;
                     int nextCharBreak = boundedTextBreakFollowing(it, offset, lengthRemaining);
                     TextRun textRun(pos, nextCharBreak);

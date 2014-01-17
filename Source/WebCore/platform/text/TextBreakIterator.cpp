@@ -138,25 +138,25 @@ static TextBreakIterator* setContextAwareTextForIterator(TextBreakIterator& iter
 
 // Static iterators
 
-TextBreakIterator* wordBreakIterator(const UChar* buffer, int length)
+TextBreakIterator* wordBreakIterator(StringView string)
 {
     static TextBreakIterator* staticWordBreakIterator = initializeIterator(UBRK_WORD);
     if (!staticWordBreakIterator)
         return nullptr;
 
-    return setTextForIterator(*staticWordBreakIterator, StringView(buffer, length));
+    return setTextForIterator(*staticWordBreakIterator, string);
 }
 
-TextBreakIterator* sentenceBreakIterator(const UChar* buffer, int length)
+TextBreakIterator* sentenceBreakIterator(StringView string)
 {
     static TextBreakIterator* staticSentenceBreakIterator = initializeIterator(UBRK_SENTENCE);
     if (!staticSentenceBreakIterator)
         return nullptr;
 
-    return setTextForIterator(*staticSentenceBreakIterator, StringView(buffer, length));
+    return setTextForIterator(*staticSentenceBreakIterator, string);
 }
 
-TextBreakIterator* cursorMovementIterator(const UChar* buffer, int length)
+TextBreakIterator* cursorMovementIterator(StringView string)
 {
 #if !PLATFORM(IOS)
     // This rule set is based on character-break iterator rules of ICU 4.0
@@ -250,7 +250,7 @@ TextBreakIterator* cursorMovementIterator(const UChar* buffer, int length)
     if (!staticCursorMovementIterator)
         return nullptr;
 
-    return setTextForIterator(*staticCursorMovementIterator, StringView(buffer, length));
+    return setTextForIterator(*staticCursorMovementIterator, string);
 }
 
 TextBreakIterator* acquireLineBreakIterator(StringView string, const AtomicString& locale, const UChar* priorContext, unsigned priorContextLength)
@@ -285,7 +285,7 @@ static inline bool compareAndSwapNonSharedCharacterBreakIterator(TextBreakIterat
 #endif
 }
 
-NonSharedCharacterBreakIterator::NonSharedCharacterBreakIterator(const UChar* buffer, int length)
+NonSharedCharacterBreakIterator::NonSharedCharacterBreakIterator(StringView string)
 {
     m_iterator = nonSharedCharacterBreakIterator;
 
@@ -295,7 +295,7 @@ NonSharedCharacterBreakIterator::NonSharedCharacterBreakIterator(const UChar* bu
     if (!m_iterator)
         return;
 
-    m_iterator = setTextForIterator(*m_iterator, StringView(buffer, length));
+    m_iterator = setTextForIterator(*m_iterator, string);
 }
 
 NonSharedCharacterBreakIterator::~NonSharedCharacterBreakIterator()
@@ -364,7 +364,7 @@ unsigned numGraphemeClusters(const String& s)
     if (s.is8Bit() && !s.contains('\r'))
         return stringLength;
 
-    NonSharedCharacterBreakIterator it(s.deprecatedCharacters(), stringLength);
+    NonSharedCharacterBreakIterator it(s);
     if (!it)
         return stringLength;
 
@@ -385,7 +385,7 @@ unsigned numCharactersInGraphemeClusters(const String& s, unsigned numGraphemeCl
     if (s.is8Bit() && !s.contains('\r'))
         return std::min(stringLength, numGraphemeClusters);
 
-    NonSharedCharacterBreakIterator it(s.deprecatedCharacters(), stringLength);
+    NonSharedCharacterBreakIterator it(s);
     if (!it)
         return std::min(stringLength, numGraphemeClusters);
 

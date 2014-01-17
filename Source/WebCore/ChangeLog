@@ -1,3 +1,23 @@
+2014-01-15  Sam Weinig  <sam@webkit.org>
+
+        TextBreakIterator's should support Latin-1 for all iterator types (Part 3)
+        https://bugs.webkit.org/show_bug.cgi?id=126856
+
+        Reviewed by Ryosuke Niwa.
+
+        Change all the TextBreakIterator creation functions to take StringViews. Remove a few
+        now unnecessary up-conversions to UTF-16 in the process.
+
+        * dom/CharacterData.cpp:
+        * editing/TextCheckingHelper.cpp:
+        * editing/VisibleUnits.cpp:
+        * platform/graphics/StringTruncator.cpp:
+        * platform/graphics/mac/ComplexTextController.cpp:
+        * platform/text/TextBoundaries.cpp:
+        * platform/text/TextBreakIterator.cpp:
+        * platform/text/TextBreakIterator.h:
+        * rendering/RenderText.cpp:
+
 2014-01-16  Anders Carlsson  <andersca@apple.com>
 
         Run clang-modernize and let it add a bunch of missing overrides.

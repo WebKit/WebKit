@@ -134,7 +134,7 @@ static void makeCapitalized(String* string, UChar previous)
             stringWithPrevious[i] = stringImpl[i - 1];
     }
 
-    TextBreakIterator* boundary = wordBreakIterator(stringWithPrevious.characters(), length + 1);
+    TextBreakIterator* boundary = wordBreakIterator(StringView(stringWithPrevious.characters(), length + 1));
     if (!boundary)
         return;
 
@@ -1340,7 +1340,7 @@ int RenderText::previousOffset(int current) const
         return current - 1;
 
     StringImpl* textImpl = m_text.impl();
-    TextBreakIterator* iterator = cursorMovementIterator(textImpl->characters16(), textImpl->length());
+    TextBreakIterator* iterator = cursorMovementIterator(StringView(textImpl->characters16(), textImpl->length()));
     if (!iterator)
         return current - 1;
 
@@ -1493,7 +1493,7 @@ int RenderText::nextOffset(int current) const
         return current + 1;
 
     StringImpl* textImpl = m_text.impl();
-    TextBreakIterator* iterator = cursorMovementIterator(textImpl->characters16(), textImpl->length());
+    TextBreakIterator* iterator = cursorMovementIterator(StringView(textImpl->characters16(), textImpl->length()));
     if (!iterator)
         return current + 1;
 

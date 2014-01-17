@@ -61,7 +61,7 @@ int startOfLastWordBoundaryContext(const UChar* characters, int length)
 
 int findNextWordFromIndex(const UChar* chars, int len, int position, bool forward)
 {
-    TextBreakIterator* it = wordBreakIterator(chars, len);
+    TextBreakIterator* it = wordBreakIterator(StringView(chars, len));
 
     if (forward) {
         position = textBreakFollowing(it, position);
@@ -90,7 +90,7 @@ int findNextWordFromIndex(const UChar* chars, int len, int position, bool forwar
 
 void findWordBoundary(const UChar* chars, int len, int position, int* start, int* end)
 {
-    TextBreakIterator* it = wordBreakIterator(chars, len);
+    TextBreakIterator* it = wordBreakIterator(StringView(chars, len));
     *end = textBreakFollowing(it, position);
     if (*end < 0)
         *end = textBreakLast(it);
@@ -99,7 +99,7 @@ void findWordBoundary(const UChar* chars, int len, int position, int* start, int
 
 void findEndWordBoundary(const UChar* chars, int len, int position, int* end)
 {
-    TextBreakIterator* it = wordBreakIterator(chars, len);
+    TextBreakIterator* it = wordBreakIterator(StringView(chars, len));
     *end = textBreakFollowing(it, position);
     if (*end < 0)
         *end = textBreakLast(it);
