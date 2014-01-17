@@ -218,6 +218,8 @@ struct WKAutoCorrectionData{
 
 - (void)dealloc
 {
+    _webSelectionAssistant = nil;
+    _textSelectionAssistant = nil;
     [_touchEventGestureRecognizer setDelegate:nil];
     [_singleTapGestureRecognizer setDelegate:nil];
     [_doubleTapGestureRecognizer setDelegate:nil];

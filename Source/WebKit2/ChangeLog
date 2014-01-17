@@ -1,3 +1,22 @@
+2014-01-16  Enrica Casucci  <enrica@apple.com>
+
+        Crash when destroying WKInteractionView.
+        https://bugs.webkit.org/show_bug.cgi?id=127153
+        <rdar://problem/15840761>
+
+        Reviewed by Anders Carlsson.
+
+        UIWKSelectionAssistant is a RetainPtr and it is being 
+        deallocated after the view and its gesture recognizers
+        have been destroyed.
+        The parent class UIWebSelectionAssistant assumes to be
+        deallocated before the view is gone.
+        We deallocate the interaction assistants explicitly to
+        fix the problem.
+
+        * UIProcess/API/ios/WKInteractionView.mm:
+        (-[WKInteractionView dealloc]):
+
 2014-01-16  Brady Eidson  <beidson@apple.com>
 
         IDB: delete object store support
