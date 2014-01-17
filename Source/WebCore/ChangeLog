@@ -1,3 +1,16 @@
+2014-01-14  Andreas Kling  <akling@apple.com>
+
+        Pack ResourceRequest harder.
+        <https://webkit.org/b/126982>
+
+        Re-arrange the members of ResourceRequest to reduce padding,
+        shrinking it by 8 bytes.
+
+        Reviewed by Anders Carlsson.
+
+        * platform/network/ResourceRequestBase.h:
+        (WebCore::ResourceRequestBase::ResourceRequestBase):
+
 2014-01-17  Peter Molnar  <pmolnar.u-szeged@partner.samsung.com>
 
         Remove workaround for compilers not supporting deleted functions
