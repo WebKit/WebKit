@@ -292,6 +292,9 @@ void Internals::resetToConsistentState(Page* page)
     if (page->mainFrame().editor().isOverwriteModeEnabled())
         page->mainFrame().editor().toggleOverwriteModeEnabled();
     cacheStorage().setDefaultOriginQuota(ApplicationCacheStorage::noQuota());
+#if ENABLE(VIDEO)
+    MediaSessionManager::sharedManager().resetRestrictions();
+#endif
 }
 
 Internals::Internals(Document* document)

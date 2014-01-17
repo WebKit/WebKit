@@ -1,3 +1,29 @@
+2014-01-16  Jer Noble  <jer.noble@apple.com>
+
+        REGRESSION(r162145): media/video-controls-visible-audio-only.html fails
+        https://bugs.webkit.org/show_bug.cgi?id=127147
+
+        Reviewed by Eric Carlson.
+
+        Reset the MediaSessionManager's restrictions to their default values before
+        each run.
+
+        Add a new virtual method "resetRestrictions()" so that each port-specific
+        MediaSessionManager can reset the restrictions to their default values.
+        Call this from Internals::resetToConsistentState() so that tests which change
+        the restrictions don't affect later tests.
+
+        * platform/audio/MediaSessionManager.cpp:
+        (WebCore::MediaSessionManager::MediaSessionManager):
+        (WebCore::MediaSessionManager::resetRestrictions):
+        * platform/audio/MediaSessionManager.h:
+        (WebCore::MediaSessionManager::~MediaSessionManager):
+        * platform/audio/ios/MediaSessionManagerIOS.h:
+        * platform/audio/ios/MediaSessionManagerIOS.mm:
+        (WebCore::MediaSessionManageriOS::resetRestrictions):
+        * testing/Internals.cpp:
+        (WebCore::Internals::resetToConsistentState):
+
 2014-01-16  Alex Christensen  <achristensen@webkit.org>
 
         Compile fix for WinCairo after r162138.

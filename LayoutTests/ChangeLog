@@ -1,3 +1,14 @@
+2014-01-16  Jer Noble  <jer.noble@apple.com>
+
+        REGRESSION(r162145): media/video-controls-visible-audio-only.html fails
+        https://bugs.webkit.org/show_bug.cgi?id=127147
+
+        Re-enable media/video-controls-visible-audio-only.html.
+
+        Reviewed by Eric Carlson.
+
+        * platform/mac/TestExpectations:
+
 2014-01-16  Alexey Proskuryakov  <ap@apple.com>
 
         REGRESSION(r162145): media/video-controls-visible-audio-only.html fails

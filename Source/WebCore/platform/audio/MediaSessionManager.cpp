@@ -41,6 +41,11 @@ MediaSessionManager& MediaSessionManager::sharedManager()
 MediaSessionManager::MediaSessionManager()
     : m_interruptions(0)
 {
+    resetRestrictions();
+}
+
+void MediaSessionManager::resetRestrictions()
+{
     m_restrictions[MediaSession::Video] = NoRestrictions;
     m_restrictions[MediaSession::Audio] = NoRestrictions;
     m_restrictions[MediaSession::WebAudio] = NoRestrictions;

@@ -1362,5 +1362,3 @@ webkit.org/b/126899 svg/custom/masking-clipping-hidpi.svg
 
 # Subpixel: misplaced zoomed svg content.
 webkit.org/b/126900 svg/zoom/page/zoom-zoom-coords.xhtml
-
-webkit.org/b/127147 media/video-controls-visible-audio-only.html [ Pass Failure ]

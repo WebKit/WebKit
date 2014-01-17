@@ -42,6 +42,8 @@ public:
 private:
     friend class MediaSessionManager;
 
+    virtual void resetRestrictions() override;
+
     MediaSessionManageriOS();
     RetainPtr<WebMediaSessionHelper> m_objcObserver;
 };

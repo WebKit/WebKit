@@ -39,6 +39,7 @@ class MediaSession;
 class MediaSessionManager {
 public:
     static MediaSessionManager& sharedManager();
+    virtual ~MediaSessionManager() { }
 
     bool has(MediaSession::MediaType) const;
     int count(MediaSession::MediaType) const;
@@ -56,6 +57,7 @@ public:
     void addRestriction(MediaSession::MediaType, SessionRestrictions);
     void removeRestriction(MediaSession::MediaType, SessionRestrictions);
     SessionRestrictions restrictions(MediaSession::MediaType);
+    virtual void resetRestrictions();
 
     void sessionWillBeginPlayback(const MediaSession&) const;
     bool sessionRestrictsInlineVideoPlayback(const MediaSession&) const;
