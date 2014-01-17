@@ -39,7 +39,7 @@ public:
 private:
     TextDocument(Frame*, const URL&);
     
-    virtual PassRefPtr<DocumentParser> createParser();
+    virtual PassRefPtr<DocumentParser> createParser() override;
 };
 
 }

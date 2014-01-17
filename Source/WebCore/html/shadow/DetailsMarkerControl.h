@@ -46,8 +46,8 @@ private:
     DetailsMarkerControl(Document&);
 
     virtual RenderPtr<RenderElement> createElementRenderer(PassRef<RenderStyle>) override;
-    virtual bool rendererIsNeeded(const RenderStyle&);
-    virtual const AtomicString& shadowPseudoId() const;
+    virtual bool rendererIsNeeded(const RenderStyle&) override;
+    virtual const AtomicString& shadowPseudoId() const override;
 
     HTMLSummaryElement* summaryElement();
 };

@@ -74,10 +74,10 @@ private:
     virtual void collectStyleForPresentationAttribute(const QualifiedName&, const AtomicString&, MutableStyleProperties&) override;
 
     virtual void willAttachRenderers() override;
-    virtual bool rendererIsNeeded(const RenderStyle&);
+    virtual bool rendererIsNeeded(const RenderStyle&) override;
     virtual RenderPtr<RenderElement> createElementRenderer(PassRef<RenderStyle>) override;
     
-    virtual void defaultEventHandler(Event*);
+    virtual void defaultEventHandler(Event*) override;
 
     virtual bool willRecalcStyle(Style::Change) override;
 

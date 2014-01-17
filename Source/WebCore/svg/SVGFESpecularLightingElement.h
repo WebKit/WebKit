@@ -40,9 +40,9 @@ private:
     
     bool isSupportedAttribute(const QualifiedName&);
     virtual void parseAttribute(const QualifiedName&, const AtomicString&) override;
-    virtual bool setFilterEffectAttribute(FilterEffect*, const QualifiedName&);
-    virtual void svgAttributeChanged(const QualifiedName&);
-    virtual PassRefPtr<FilterEffect> build(SVGFilterBuilder*, Filter*);
+    virtual bool setFilterEffectAttribute(FilterEffect*, const QualifiedName&) override;
+    virtual void svgAttributeChanged(const QualifiedName&) override;
+    virtual PassRefPtr<FilterEffect> build(SVGFilterBuilder*, Filter*) override;
 
     static const AtomicString& kernelUnitLengthXIdentifier();
     static const AtomicString& kernelUnitLengthYIdentifier();

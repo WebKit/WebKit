@@ -38,15 +38,15 @@ public:
     static PassRefPtr<SVGFilter> create(const AffineTransform&, const FloatRect&, const FloatRect&, const FloatRect&, bool);
 
     FloatRect filterRegionInUserSpace() const { return m_filterRegion; }
-    virtual FloatRect filterRegion() const { return m_absoluteFilterRegion; }
+    virtual FloatRect filterRegion() const override { return m_absoluteFilterRegion; }
 
-    virtual FloatPoint mapAbsolutePointToLocalPoint(const FloatPoint& point) const { return m_absoluteTransform.inverse().mapPoint(point); }
+    virtual FloatPoint mapAbsolutePointToLocalPoint(const FloatPoint& point) const override { return m_absoluteTransform.inverse().mapPoint(point); }
     const AffineTransform& absoluteTransform() const { return m_absoluteTransform; }
 
-    virtual float applyHorizontalScale(float value) const;
-    virtual float applyVerticalScale(float value) const;
+    virtual float applyHorizontalScale(float value) const override;
+    virtual float applyVerticalScale(float value) const override;
 
-    virtual FloatRect sourceImageRect() const { return m_absoluteSourceDrawingRegion; }
+    virtual FloatRect sourceImageRect() const override { return m_absoluteSourceDrawingRegion; }
     FloatRect targetBoundingBox() const { return m_targetBoundingBox; }
 
     virtual bool isSVGFilter() const override final { return true; }

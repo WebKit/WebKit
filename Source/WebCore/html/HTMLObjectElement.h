@@ -41,16 +41,16 @@ public:
 
     bool containsJavaApplet() const;
 
-    virtual bool useFallbackContent() const { return m_useFallbackContent; }
+    virtual bool useFallbackContent() const override { return m_useFallbackContent; }
     void renderFallbackContent();
 
     // Implementations of FormAssociatedElement
     HTMLFormElement* form() const { return FormAssociatedElement::form(); }
 
-    virtual bool isFormControlElement() const { return false; }
+    virtual bool isFormControlElement() const override { return false; }
 
-    virtual bool isEnumeratable() const { return true; }
-    virtual bool appendFormData(FormDataList&, bool);
+    virtual bool isEnumeratable() const override { return true; }
+    virtual bool appendFormData(FormDataList&, bool) override;
 
     // Implementations of constraint validation API.
     // Note that the object elements are always barred from constraint validation.
@@ -61,7 +61,7 @@ public:
     using Node::ref;
     using Node::deref;
 
-    virtual bool canContainRangeEndPoint() const { return useFallbackContent(); }
+    virtual bool canContainRangeEndPoint() const override { return useFallbackContent(); }
 
     bool hasFallbackContent() const;
 
@@ -82,11 +82,11 @@ private:
     virtual bool isURLAttribute(const Attribute&) const override;
     virtual const AtomicString& imageSourceURL() const override;
 
-    virtual RenderWidget* renderWidgetForJSBindings() const;
+    virtual RenderWidget* renderWidgetForJSBindings() const override;
 
-    virtual void addSubresourceAttributeURLs(ListHashSet<URL>&) const;
+    virtual void addSubresourceAttributeURLs(ListHashSet<URL>&) const override;
 
-    virtual void updateWidget(PluginCreationOption);
+    virtual void updateWidget(PluginCreationOption) override;
     void updateDocNamedItem();
 
     // FIXME: This function should not deal with url or serviceType
@@ -96,9 +96,9 @@ private:
     bool shouldAllowQuickTimeClassIdQuirk();
     bool hasValidClassId();
 
-    virtual void refFormAssociatedElement() { ref(); }
-    virtual void derefFormAssociatedElement() { deref(); }
-    virtual HTMLFormElement* virtualForm() const;
+    virtual void refFormAssociatedElement() override { ref(); }
+    virtual void derefFormAssociatedElement() override { deref(); }
+    virtual HTMLFormElement* virtualForm() const override;
 
     virtual FormNamedItem* asFormNamedItem() override final { return this; }
     virtual HTMLObjectElement& asHTMLElement() override final { return *this; }

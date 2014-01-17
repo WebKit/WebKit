@@ -40,8 +40,8 @@ private:
     {
     }
 
-    virtual unsigned short pathSegType() const { return PATHSEG_MOVETO_ABS; }
-    virtual String pathSegTypeAsLetter() const { return "M"; }
+    virtual unsigned short pathSegType() const override { return PATHSEG_MOVETO_ABS; }
+    virtual String pathSegTypeAsLetter() const override { return "M"; }
 };
 
 } // namespace WebCore

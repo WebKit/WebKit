@@ -38,7 +38,7 @@ private:
 
     bool isSupportedAttribute(const QualifiedName&);
     virtual void parseAttribute(const QualifiedName&, const AtomicString&) override;
-    virtual void svgAttributeChanged(const QualifiedName&);
+    virtual void svgAttributeChanged(const QualifiedName&) override;
 
     virtual bool isGradientStop() const override { return true; }
 

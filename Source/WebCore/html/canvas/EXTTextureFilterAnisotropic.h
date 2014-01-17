@@ -36,7 +36,7 @@ public:
     static OwnPtr<EXTTextureFilterAnisotropic> create(WebGLRenderingContext*);
 
     virtual ~EXTTextureFilterAnisotropic();
-    virtual ExtensionName getName() const;
+    virtual ExtensionName getName() const override;
 
 private:
     EXTTextureFilterAnisotropic(WebGLRenderingContext*);

@@ -45,7 +45,7 @@ public:
         return adoptPtr(new DispatchCallbackTask(callback, data));
     }
 
-    virtual void performTask(ScriptExecutionContext*)
+    virtual void performTask(ScriptExecutionContext*) override
     {
         m_callback->handleEvent(m_data);
     }

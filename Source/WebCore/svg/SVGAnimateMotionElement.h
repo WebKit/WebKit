@@ -36,20 +36,20 @@ public:
 private:
     SVGAnimateMotionElement(const QualifiedName&, Document&);
 
-    virtual bool hasValidAttributeType();
-    virtual bool hasValidAttributeName();
+    virtual bool hasValidAttributeType() override;
+    virtual bool hasValidAttributeName() override;
 
     bool isSupportedAttribute(const QualifiedName&);
     virtual void parseAttribute(const QualifiedName&, const AtomicString&) override;
 
-    virtual void resetAnimatedType();
-    virtual void clearAnimatedType(SVGElement* targetElement);
-    virtual bool calculateToAtEndOfDurationValue(const String& toAtEndOfDurationString);
-    virtual bool calculateFromAndToValues(const String& fromString, const String& toString);
-    virtual bool calculateFromAndByValues(const String& fromString, const String& byString);
-    virtual void calculateAnimatedValue(float percentage, unsigned repeatCount, SVGSMILElement* resultElement);
-    virtual void applyResultsToTarget();
-    virtual float calculateDistance(const String& fromString, const String& toString);
+    virtual void resetAnimatedType() override;
+    virtual void clearAnimatedType(SVGElement* targetElement) override;
+    virtual bool calculateToAtEndOfDurationValue(const String& toAtEndOfDurationString) override;
+    virtual bool calculateFromAndToValues(const String& fromString, const String& toString) override;
+    virtual bool calculateFromAndByValues(const String& fromString, const String& byString) override;
+    virtual void calculateAnimatedValue(float percentage, unsigned repeatCount, SVGSMILElement* resultElement) override;
+    virtual void applyResultsToTarget() override;
+    virtual float calculateDistance(const String& fromString, const String& toString) override;
 
     enum RotateMode {
         RotateAngle,

@@ -60,7 +60,7 @@ namespace WebCore {
         String attrName() const { return m_attrName; }
         unsigned short attrChange() const { return m_attrChange; }
 
-        virtual EventInterface eventInterface() const;
+        virtual EventInterface eventInterface() const override;
 
     private:
         MutationEvent();

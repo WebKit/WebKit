@@ -47,7 +47,7 @@ public:
 private:
     SVGMPathElement(const QualifiedName&, Document&);
 
-    void buildPendingResource();
+    void buildPendingResource() override;
     void clearResourceReferences();
     virtual InsertionNotificationRequest insertedInto(ContainerNode&) override;
     virtual void removedFrom(ContainerNode&) override;

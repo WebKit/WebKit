@@ -48,7 +48,7 @@ protected:
     MeterShadowElement(Document&);
 
 private:
-    virtual bool rendererIsNeeded(const RenderStyle&);
+    virtual bool rendererIsNeeded(const RenderStyle&) override;
 };
 
 class MeterInnerElement final : public MeterShadowElement {

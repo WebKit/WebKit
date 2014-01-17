@@ -60,7 +60,7 @@ public:
             : 0;
     }
 
-    virtual bool operator==(const EventListener& other);
+    virtual bool operator==(const EventListener& other) override;
 
 private:
     ImageEventListener(ImageDocument* document)
@@ -69,7 +69,7 @@ private:
     {
     }
 
-    virtual void handleEvent(ScriptExecutionContext*, Event*);
+    virtual void handleEvent(ScriptExecutionContext*, Event*) override;
 
     ImageDocument* m_doc;
 };
@@ -92,8 +92,8 @@ private:
     {
     }
 
-    virtual void appendBytes(DocumentWriter&, const char*, size_t);
-    virtual void finish();
+    virtual void appendBytes(DocumentWriter&, const char*, size_t) override;
+    virtual void finish() override;
 };
 
 class ImageDocumentElement final : public HTMLImageElement {

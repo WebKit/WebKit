@@ -38,7 +38,7 @@ private:
     virtual void removedFrom(ContainerNode&) override;
     virtual void childrenChanged(const ChildChange&) override;
 
-    virtual bool rendererIsNeeded(const RenderStyle&) { return false; }
+    virtual bool rendererIsNeeded(const RenderStyle&) override { return false; }
 };
 
 NODE_TYPE_CASTS(SVGTitleElement)

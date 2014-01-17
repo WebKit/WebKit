@@ -36,7 +36,7 @@ public:
 private:
     SVGDefsElement(const QualifiedName&, Document&);
 
-    virtual bool isValid() const;
+    virtual bool isValid() const override;
 
     virtual RenderPtr<RenderElement> createElementRenderer(PassRef<RenderStyle>) override;
 

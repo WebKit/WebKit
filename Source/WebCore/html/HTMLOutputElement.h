@@ -40,7 +40,7 @@ class HTMLOutputElement final : public HTMLFormControlElement {
 public:
     static PassRefPtr<HTMLOutputElement> create(const QualifiedName&, Document&, HTMLFormElement*);
 
-    virtual bool willValidate() const { return false; }
+    virtual bool willValidate() const override { return false; }
 
     String value() const;
     void setValue(const String&);
@@ -49,18 +49,18 @@ public:
     void setFor(const String&);
     DOMSettableTokenList* htmlFor() const;
     
-    virtual bool canContainRangeEndPoint() const { return false; }
+    virtual bool canContainRangeEndPoint() const override { return false; }
 
 private:
     HTMLOutputElement(const QualifiedName&, Document&, HTMLFormElement*);
 
     virtual void parseAttribute(const QualifiedName&, const AtomicString&) override;
-    virtual const AtomicString& formControlType() const;
-    virtual bool isEnumeratable() const { return true; }
+    virtual const AtomicString& formControlType() const override;
+    virtual bool isEnumeratable() const override { return true; }
     virtual bool supportLabels() const override { return true; }
     virtual bool supportsFocus() const override;
     virtual void childrenChanged(const ChildChange&) override;
-    virtual void reset();
+    virtual void reset() override;
 
     void setTextContentInternal(const String&);
 

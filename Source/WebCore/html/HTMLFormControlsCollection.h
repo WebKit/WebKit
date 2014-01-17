@@ -41,7 +41,7 @@ public:
 
     virtual ~HTMLFormControlsCollection();
 
-    virtual Node* namedItem(const AtomicString& name) const;
+    virtual Node* namedItem(const AtomicString& name) const override;
 
 private:
     explicit HTMLFormControlsCollection(ContainerNode&);

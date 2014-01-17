@@ -45,7 +45,7 @@ private:
     virtual bool isPresentationAttribute(const QualifiedName&) const override;
     virtual void collectStyleForPresentationAttribute(const QualifiedName&, const AtomicString&, MutableStyleProperties&) override;
 
-    virtual bool rendererIsNeeded(const RenderStyle&);
+    virtual bool rendererIsNeeded(const RenderStyle&) override;
     virtual RenderPtr<RenderElement> createElementRenderer(PassRef<RenderStyle>) override;
 
     virtual void didRecalcStyle(Style::Change) override;

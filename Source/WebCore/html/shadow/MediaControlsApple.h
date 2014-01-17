@@ -45,7 +45,7 @@ public:
             : 0;
     }
 
-    virtual bool operator==(const EventListener& other);
+    virtual bool operator==(const EventListener& other) override;
 
 private:
     MediaControlsAppleEventListener(MediaControlsApple* mediaControls)
@@ -54,7 +54,7 @@ private:
     {
     }
 
-    virtual void handleEvent(ScriptExecutionContext*, Event*);
+    virtual void handleEvent(ScriptExecutionContext*, Event*) override;
 
     MediaControlsApple* m_mediaControls;
 };

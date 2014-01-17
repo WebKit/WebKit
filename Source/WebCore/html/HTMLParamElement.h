@@ -40,7 +40,7 @@ private:
     HTMLParamElement(const QualifiedName&, Document&);
 
     virtual bool isURLAttribute(const Attribute&) const override;
-    virtual void addSubresourceAttributeURLs(ListHashSet<URL>&) const;
+    virtual void addSubresourceAttributeURLs(ListHashSet<URL>&) const override;
 };
 
 NODE_TYPE_CASTS(HTMLParamElement)

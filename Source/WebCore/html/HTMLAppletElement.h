@@ -39,7 +39,7 @@ private:
     virtual bool rendererIsNeeded(const RenderStyle&) override;
     virtual RenderPtr<RenderElement> createElementRenderer(PassRef<RenderStyle>) override;
 
-    virtual RenderWidget* renderWidgetForJSBindings() const;
+    virtual RenderWidget* renderWidgetForJSBindings() const override;
     virtual void updateWidget(PluginCreationOption) override;
 
     bool canEmbedJava() const;

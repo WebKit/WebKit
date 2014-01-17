@@ -36,7 +36,7 @@ public:
     static OwnPtr<OESStandardDerivatives> create(WebGLRenderingContext*);
 
     virtual ~OESStandardDerivatives();
-    virtual ExtensionName getName() const;
+    virtual ExtensionName getName() const override;
 
 private:
     OESStandardDerivatives(WebGLRenderingContext*);

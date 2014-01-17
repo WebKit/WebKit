@@ -92,10 +92,10 @@ protected:
 
     bool isSupportedAttribute(const QualifiedName&);
     virtual void parseAttribute(const QualifiedName&, const AtomicString&) override;
-    virtual void svgAttributeChanged(const QualifiedName&);
+    virtual void svgAttributeChanged(const QualifiedName&) override;
 
 private:
-    virtual bool needsPendingResourceHandling() const { return false; }
+    virtual bool needsPendingResourceHandling() const override { return false; }
 
     virtual void childrenChanged(const ChildChange&) override;
 

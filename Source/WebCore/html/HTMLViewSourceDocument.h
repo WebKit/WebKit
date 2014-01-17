@@ -46,7 +46,7 @@ private:
     HTMLViewSourceDocument(Frame*, const URL&, const String& mimeType);
 
     // Returns HTMLViewSourceParser or TextDocumentParser based on m_type.
-    virtual PassRefPtr<DocumentParser> createParser();
+    virtual PassRefPtr<DocumentParser> createParser() override;
 
     void processDoctypeToken(const String& source, HTMLToken&);
     void processTagToken(const String& source, HTMLToken&);

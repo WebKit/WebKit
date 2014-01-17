@@ -59,8 +59,8 @@ public:
     virtual EventTarget* relatedTarget() const override final { return m_relatedTarget.get(); }
     void setRelatedTarget(PassRefPtr<EventTarget> relatedTarget) { m_relatedTarget = relatedTarget; }
 
-    virtual EventInterface eventInterface() const;
-    virtual bool isFocusEvent() const;
+    virtual EventInterface eventInterface() const override;
+    virtual bool isFocusEvent() const override;
 
 private:
     FocusEvent();

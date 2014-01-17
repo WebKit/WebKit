@@ -60,7 +60,7 @@ public:
         return adoptPtr(new ProcessMessagesSoonTask);
     }
 
-    virtual void performTask(ScriptExecutionContext* context)
+    virtual void performTask(ScriptExecutionContext* context) override
     {
         context->dispatchMessagePortEvents();
     }

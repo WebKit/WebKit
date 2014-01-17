@@ -37,8 +37,8 @@ private:
 
     bool isSupportedAttribute(const QualifiedName&);
     virtual void parseAttribute(const QualifiedName&, const AtomicString&) override;
-    virtual void svgAttributeChanged(const QualifiedName&);
-    virtual PassRefPtr<FilterEffect> build(SVGFilterBuilder*, Filter*);
+    virtual void svgAttributeChanged(const QualifiedName&) override;
+    virtual PassRefPtr<FilterEffect> build(SVGFilterBuilder*, Filter*) override;
 
     BEGIN_DECLARE_ANIMATED_PROPERTIES(SVGFEOffsetElement)
         DECLARE_ANIMATED_STRING(In1, in1)

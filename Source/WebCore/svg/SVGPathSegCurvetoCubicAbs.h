@@ -40,8 +40,8 @@ private:
     {
     }
 
-    virtual unsigned short pathSegType() const { return PATHSEG_CURVETO_CUBIC_ABS; }
-    virtual String pathSegTypeAsLetter() const { return "C"; }
+    virtual unsigned short pathSegType() const override { return PATHSEG_CURVETO_CUBIC_ABS; }
+    virtual String pathSegTypeAsLetter() const override { return "C"; }
 };
 
 } // namespace WebCore

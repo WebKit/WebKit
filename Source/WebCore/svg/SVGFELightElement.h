@@ -43,7 +43,7 @@ protected:
 private:
     bool isSupportedAttribute(const QualifiedName&);
     virtual void parseAttribute(const QualifiedName&, const AtomicString&) override;
-    virtual void svgAttributeChanged(const QualifiedName&);
+    virtual void svgAttributeChanged(const QualifiedName&) override;
     virtual void childrenChanged(const ChildChange&) override;
 
     BEGIN_DECLARE_ANIMATED_PROPERTIES(SVGFELightElement)

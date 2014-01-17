@@ -46,7 +46,7 @@ public:
     void setValue(const String&);
 
 protected:
-    virtual bool nodeMatches(Element*) const;
+    virtual bool nodeMatches(Element*) const override;
 
 private:
     RadioNodeList(ContainerNode&, const AtomicString& name);

@@ -38,7 +38,7 @@ public:
     static bool supported(WebGLRenderingContext*);
 
     virtual ~EXTDrawBuffers();
-    virtual ExtensionName getName() const;
+    virtual ExtensionName getName() const override;
 
     void drawBuffersEXT(const Vector<GC3Denum>& buffers);
 

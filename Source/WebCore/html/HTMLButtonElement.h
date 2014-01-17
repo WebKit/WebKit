@@ -43,7 +43,7 @@ private:
 
     enum Type { SUBMIT, RESET, BUTTON };
 
-    virtual const AtomicString& formControlType() const;
+    virtual const AtomicString& formControlType() const override;
 
     virtual RenderPtr<RenderElement> createElementRenderer(PassRef<RenderStyle>) override;
 
@@ -52,24 +52,24 @@ private:
 
     virtual void parseAttribute(const QualifiedName&, const AtomicString&) override;
     virtual bool isPresentationAttribute(const QualifiedName&) const override;
-    virtual void defaultEventHandler(Event*);
+    virtual void defaultEventHandler(Event*) override;
 
-    virtual bool appendFormData(FormDataList&, bool);
+    virtual bool appendFormData(FormDataList&, bool) override;
 
-    virtual bool isEnumeratable() const { return true; } 
+    virtual bool isEnumeratable() const override { return true; }
     virtual bool supportLabels() const override { return true; }
 
-    virtual bool isSuccessfulSubmitButton() const;
-    virtual bool isActivatedSubmit() const;
-    virtual void setActivatedSubmit(bool flag);
+    virtual bool isSuccessfulSubmitButton() const override;
+    virtual bool isActivatedSubmit() const override;
+    virtual void setActivatedSubmit(bool flag) override;
 
-    virtual void accessKeyAction(bool sendMouseEvents);
+    virtual void accessKeyAction(bool sendMouseEvents) override;
     virtual bool isURLAttribute(const Attribute&) const override;
 
-    virtual bool canStartSelection() const { return false; }
+    virtual bool canStartSelection() const override { return false; }
 
-    virtual bool isOptionalFormControl() const { return true; }
-    virtual bool recalcWillValidate() const;
+    virtual bool isOptionalFormControl() const override { return true; }
+    virtual bool recalcWillValidate() const override;
 
     Type m_type;
     bool m_isActivatedSubmit;

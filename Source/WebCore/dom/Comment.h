@@ -35,10 +35,10 @@ public:
 private:
     Comment(Document&, const String&);
 
-    virtual String nodeName() const;
-    virtual NodeType nodeType() const;
-    virtual PassRefPtr<Node> cloneNode(bool deep);
-    virtual bool childTypeAllowed(NodeType) const;
+    virtual String nodeName() const override;
+    virtual NodeType nodeType() const override;
+    virtual PassRefPtr<Node> cloneNode(bool deep) override;
+    virtual bool childTypeAllowed(NodeType) const override;
 };
 
 inline bool isComment(const Node& node) { return node.nodeType() == Node::COMMENT_NODE; }

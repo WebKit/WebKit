@@ -79,10 +79,10 @@ public:
 
     HTMLTokenizer* tokenizer() const { return m_tokenizer.get(); }
 
-    virtual TextPosition textPosition() const;
+    virtual TextPosition textPosition() const override;
 
-    virtual void suspendScheduledTasks();
-    virtual void resumeScheduledTasks();
+    virtual void suspendScheduledTasks() override;
+    virtual void resumeScheduledTasks() override;
 
 #if ENABLE(THREADED_HTML_PARSER)
     struct ParsedChunk {
@@ -131,12 +131,12 @@ private:
     // HTMLScriptRunnerHost
     virtual void watchForLoad(CachedResource*) override;
     virtual void stopWatchingForLoad(CachedResource*) override;
-    virtual HTMLInputStream& inputStream() { return m_input; }
-    virtual bool hasPreloadScanner() const { return m_preloadScanner.get() && !shouldUseThreading(); }
+    virtual HTMLInputStream& inputStream() override { return m_input; }
+    virtual bool hasPreloadScanner() const override { return m_preloadScanner.get() && !shouldUseThreading(); }
     virtual void appendCurrentInputStreamToPreloadScannerAndScan() override;
 
     // CachedResourceClient
-    virtual void notifyFinished(CachedResource*);
+    virtual void notifyFinished(CachedResource*) override;
 
 #if ENABLE(THREADED_HTML_PARSER)
     void startBackgroundParser();

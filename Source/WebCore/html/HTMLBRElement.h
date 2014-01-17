@@ -33,7 +33,7 @@ public:
     static PassRefPtr<HTMLBRElement> create(Document&);
     static PassRefPtr<HTMLBRElement> create(const QualifiedName&, Document&);
 
-    virtual bool canContainRangeEndPoint() const { return false; }
+    virtual bool canContainRangeEndPoint() const override { return false; }
 
 private:
     HTMLBRElement(const QualifiedName&, Document&);

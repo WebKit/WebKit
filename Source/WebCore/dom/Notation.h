@@ -36,10 +36,10 @@ public:
 private:
     Notation(Document&, const String& name, const String& publicId, const String& systemId);
 
-    virtual String nodeName() const;
-    virtual NodeType nodeType() const;
-    virtual PassRefPtr<Node> cloneNode(bool deep);
-    virtual bool childTypeAllowed(NodeType) const;
+    virtual String nodeName() const override;
+    virtual NodeType nodeType() const override;
+    virtual PassRefPtr<Node> cloneNode(bool deep) override;
+    virtual bool childTypeAllowed(NodeType) const override;
 
     String m_name;
     String m_publicId;

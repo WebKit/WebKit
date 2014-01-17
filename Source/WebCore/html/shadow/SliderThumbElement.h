@@ -121,7 +121,7 @@ public:
     void updateAppearance(RenderStyle* parentStyle);
 
 private:
-    virtual bool isSliderThumb() const;
+    virtual bool isSliderThumb() const override;
 };
 
 // --------------------------------
@@ -133,7 +133,7 @@ public:
 private:
     SliderContainerElement(Document&);
     virtual RenderPtr<RenderElement> createElementRenderer(PassRef<RenderStyle>) override;
-    virtual const AtomicString& shadowPseudoId() const;
+    virtual const AtomicString& shadowPseudoId() const override;
 };
 
 }

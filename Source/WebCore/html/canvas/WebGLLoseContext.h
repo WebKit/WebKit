@@ -38,7 +38,7 @@ public:
     static OwnPtr<WebGLLoseContext> create(WebGLRenderingContext*);
 
     virtual ~WebGLLoseContext();
-    virtual ExtensionName getName() const;
+    virtual ExtensionName getName() const override;
 
     void loseContext();
     void restoreContext();

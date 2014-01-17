@@ -41,7 +41,7 @@ public:
     static OwnPtr<WebGLDebugRendererInfo> create(WebGLRenderingContext*);
 
     virtual ~WebGLDebugRendererInfo();
-    virtual ExtensionName getName() const;
+    virtual ExtensionName getName() const override;
 
 private:
     WebGLDebugRendererInfo(WebGLRenderingContext*);

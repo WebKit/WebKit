@@ -39,7 +39,7 @@ public:
     // DOM Functions
 
     void start();
-    void stop();
+    void stop() override;
     
     int scrollAmount() const;
     void setScrollAmount(int, ExceptionCode&);
@@ -57,9 +57,9 @@ private:
     virtual void collectStyleForPresentationAttribute(const QualifiedName&, const AtomicString&, MutableStyleProperties&) override;
 
     // ActiveDOMObject
-    virtual bool canSuspend() const;
-    virtual void suspend(ReasonForSuspension);
-    virtual void resume();
+    virtual bool canSuspend() const override;
+    virtual void suspend(ReasonForSuspension) override;
+    virtual void resume() override;
 
     RenderMarquee* renderMarquee() const;
 };

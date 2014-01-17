@@ -55,7 +55,7 @@ public:
 
     void scheduleLoad(const URL&);
 
-    virtual void clearClient();
+    virtual void clearClient() override;
 
     virtual AtomicString id() const override;
 
@@ -69,10 +69,10 @@ public:
 
 private:
     // TextTrackLoaderClient
-    virtual bool shouldLoadCues(TextTrackLoader*) { return true; }
-    virtual void newCuesAvailable(TextTrackLoader*);
-    virtual void cueLoadingStarted(TextTrackLoader*);
-    virtual void cueLoadingCompleted(TextTrackLoader*, bool loadingFailed);
+    virtual bool shouldLoadCues(TextTrackLoader*) override { return true; }
+    virtual void newCuesAvailable(TextTrackLoader*) override;
+    virtual void cueLoadingStarted(TextTrackLoader*) override;
+    virtual void cueLoadingCompleted(TextTrackLoader*, bool loadingFailed) override;
 #if ENABLE(WEBVTT_REGIONS)
     virtual void newRegionsAvailable(TextTrackLoader*);
 #endif

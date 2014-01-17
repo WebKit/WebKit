@@ -38,7 +38,7 @@ private:
 
     virtual RenderPtr<RenderElement> createElementRenderer(PassRef<RenderStyle>) override;
     virtual bool childShouldCreateRenderer(const Node&) const override;
-    virtual void defaultEventHandler(Event*);
+    virtual void defaultEventHandler(Event*) override;
 
     virtual void didAddUserAgentShadowRoot(ShadowRoot*) override;
     HTMLDetailsElement* detailsElement() const;

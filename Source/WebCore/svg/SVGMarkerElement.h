@@ -123,17 +123,17 @@ public:
 private:
     SVGMarkerElement(const QualifiedName&, Document&);
 
-    virtual bool needsPendingResourceHandling() const { return false; }
+    virtual bool needsPendingResourceHandling() const override { return false; }
 
     bool isSupportedAttribute(const QualifiedName&);
     virtual void parseAttribute(const QualifiedName&, const AtomicString&) override;
-    virtual void svgAttributeChanged(const QualifiedName&);
+    virtual void svgAttributeChanged(const QualifiedName&) override;
     virtual void childrenChanged(const ChildChange&) override;
 
     virtual RenderPtr<RenderElement> createElementRenderer(PassRef<RenderStyle>) override;
-    virtual bool rendererIsNeeded(const RenderStyle&) { return true; }
+    virtual bool rendererIsNeeded(const RenderStyle&) override { return true; }
 
-    virtual bool selfHasRelativeLengths() const;
+    virtual bool selfHasRelativeLengths() const override;
 
     void synchronizeOrientType();
 

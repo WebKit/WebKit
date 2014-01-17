@@ -51,7 +51,7 @@ public:
 private:
     ClassNodeList(ContainerNode& rootNode, const String& classNames);
 
-    virtual bool nodeMatches(Element*) const;
+    virtual bool nodeMatches(Element*) const override;
 
     SpaceSplitString m_classNames;
     String m_originalClassNames;

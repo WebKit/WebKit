@@ -38,7 +38,7 @@ public:
     static bool supported(GraphicsContext3D*);
 
     virtual ~WebGLDepthTexture();
-    virtual ExtensionName getName() const;
+    virtual ExtensionName getName() const override;
 
 private:
     WebGLDepthTexture(WebGLRenderingContext*);

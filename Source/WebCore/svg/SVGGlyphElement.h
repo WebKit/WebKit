@@ -52,7 +52,7 @@ private:
     virtual InsertionNotificationRequest insertedInto(ContainerNode&) override;
     virtual void removedFrom(ContainerNode&) override;
 
-    virtual bool rendererIsNeeded(const RenderStyle&) { return false; }
+    virtual bool rendererIsNeeded(const RenderStyle&) override { return false; }
 
     void invalidateGlyphCache();
 };

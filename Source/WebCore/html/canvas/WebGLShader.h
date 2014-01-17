@@ -49,9 +49,9 @@ public:
 private:
     WebGLShader(WebGLRenderingContext*, GC3Denum);
 
-    virtual void deleteObjectImpl(GraphicsContext3D*, Platform3DObject);
+    virtual void deleteObjectImpl(GraphicsContext3D*, Platform3DObject) override;
 
-    virtual bool isShader() const { return true; }
+    virtual bool isShader() const override { return true; }
 
     GC3Denum m_type;
     String m_source;

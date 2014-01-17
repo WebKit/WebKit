@@ -58,7 +58,7 @@ private:
     {
     }
 
-    virtual void appendBytes(DocumentWriter&, const char*, size_t);
+    virtual void appendBytes(DocumentWriter&, const char*, size_t) override;
 
     void createDocumentStructure();
 

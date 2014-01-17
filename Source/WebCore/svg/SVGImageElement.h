@@ -41,14 +41,14 @@ public:
 private:
     SVGImageElement(const QualifiedName&, Document&);
     
-    virtual bool isValid() const { return SVGTests::isValid(); }
+    virtual bool isValid() const override { return SVGTests::isValid(); }
     virtual bool supportsFocus() const override { return true; }
 
     bool isSupportedAttribute(const QualifiedName&);
     virtual void parseAttribute(const QualifiedName&, const AtomicString&) override;
     virtual bool isPresentationAttribute(const QualifiedName&) const override;
     virtual void collectStyleForPresentationAttribute(const QualifiedName&, const AtomicString&, MutableStyleProperties&) override;
-    virtual void svgAttributeChanged(const QualifiedName&);
+    virtual void svgAttributeChanged(const QualifiedName&) override;
 
     virtual void didAttachRenderers() override;
     virtual InsertionNotificationRequest insertedInto(ContainerNode&) override;
@@ -56,11 +56,11 @@ private:
     virtual RenderPtr<RenderElement> createElementRenderer(PassRef<RenderStyle>) override;
 
     virtual const AtomicString& imageSourceURL() const override;
-    virtual void addSubresourceAttributeURLs(ListHashSet<URL>&) const;
+    virtual void addSubresourceAttributeURLs(ListHashSet<URL>&) const override;
 
-    virtual bool haveLoadedRequiredResources();
+    virtual bool haveLoadedRequiredResources() override;
 
-    virtual bool selfHasRelativeLengths() const;
+    virtual bool selfHasRelativeLengths() const override;
     virtual void didMoveToNewDocument(Document* oldDocument) override;
 
     BEGIN_DECLARE_ANIMATED_PROPERTIES(SVGImageElement)

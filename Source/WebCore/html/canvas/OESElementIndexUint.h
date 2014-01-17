@@ -36,7 +36,7 @@ public:
     static OwnPtr<OESElementIndexUint> create(WebGLRenderingContext*);
 
     virtual ~OESElementIndexUint();
-    virtual ExtensionName getName() const;
+    virtual ExtensionName getName() const override;
 
 private:
     OESElementIndexUint(WebGLRenderingContext*);

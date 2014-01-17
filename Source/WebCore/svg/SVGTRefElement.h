@@ -42,11 +42,11 @@ private:
 
     bool isSupportedAttribute(const QualifiedName&);
     virtual void parseAttribute(const QualifiedName&, const AtomicString&) override;
-    virtual void svgAttributeChanged(const QualifiedName&);
+    virtual void svgAttributeChanged(const QualifiedName&) override;
 
     virtual RenderPtr<RenderElement> createElementRenderer(PassRef<RenderStyle>) override;
     virtual bool childShouldCreateRenderer(const Node&) const override;
-    virtual bool rendererIsNeeded(const RenderStyle&);
+    virtual bool rendererIsNeeded(const RenderStyle&) override;
 
     virtual InsertionNotificationRequest insertedInto(ContainerNode&) override;
     virtual void removedFrom(ContainerNode&) override;
@@ -55,7 +55,7 @@ private:
 
     void detachTarget();
 
-    virtual void buildPendingResource();
+    virtual void buildPendingResource() override;
 
     BEGIN_DECLARE_ANIMATED_PROPERTIES(SVGTRefElement)
         DECLARE_ANIMATED_STRING(Href, href)

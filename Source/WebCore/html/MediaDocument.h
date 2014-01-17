@@ -45,9 +45,9 @@ public:
 private:
     MediaDocument(Frame*, const URL&);
 
-    virtual PassRefPtr<DocumentParser> createParser();
+    virtual PassRefPtr<DocumentParser> createParser() override;
 
-    virtual void defaultEventHandler(Event*);
+    virtual void defaultEventHandler(Event*) override;
 
     void replaceMediaElementTimerFired(Timer<MediaDocument>&);
 

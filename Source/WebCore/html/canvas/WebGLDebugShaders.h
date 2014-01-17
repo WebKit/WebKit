@@ -40,7 +40,7 @@ public:
     static OwnPtr<WebGLDebugShaders> create(WebGLRenderingContext*);
 
     virtual ~WebGLDebugShaders();
-    virtual ExtensionName getName() const;
+    virtual ExtensionName getName() const override;
 
     String getTranslatedShaderSource(WebGLShader*, ExceptionCode&);
 

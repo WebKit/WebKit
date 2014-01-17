@@ -36,7 +36,7 @@ public:
     static OwnPtr<OESTextureHalfFloatLinear> create(WebGLRenderingContext*);
 
     virtual ~OESTextureHalfFloatLinear();
-    virtual ExtensionName getName() const;
+    virtual ExtensionName getName() const override;
 
 private:
     OESTextureHalfFloatLinear(WebGLRenderingContext*);

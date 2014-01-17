@@ -49,7 +49,7 @@ public:
     virtual bool isShader() const { return false; }
     virtual bool isTexture() const { return false; }
 
-    virtual bool validate(const WebGLContextGroup* contextGroup, const WebGLRenderingContext*) const
+    virtual bool validate(const WebGLContextGroup* contextGroup, const WebGLRenderingContext*) const override
     {
         return contextGroup == m_contextGroup;
     }
@@ -59,12 +59,12 @@ public:
 protected:
     WebGLSharedObject(WebGLRenderingContext*);
 
-    virtual bool hasGroupOrContext() const
+    virtual bool hasGroupOrContext() const override
     {
         return m_contextGroup;
     }
 
-    virtual GraphicsContext3D* getAGraphicsContext3D() const;
+    virtual GraphicsContext3D* getAGraphicsContext3D() const override;
 
 private:
     WebGLContextGroup* m_contextGroup;

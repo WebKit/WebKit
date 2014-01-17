@@ -53,7 +53,7 @@ public:
         return adoptRef(new TrackEvent(type, initializer));
     }
 
-    virtual EventInterface eventInterface() const;
+    virtual EventInterface eventInterface() const override;
 
     TrackBase* track() const { return m_track.get(); }
 

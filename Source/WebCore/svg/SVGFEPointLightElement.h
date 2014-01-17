@@ -32,7 +32,7 @@ public:
 private:
     SVGFEPointLightElement(const QualifiedName&, Document&);
 
-    virtual PassRefPtr<LightSource> lightSource() const;
+    virtual PassRefPtr<LightSource> lightSource() const override;
 };
 
 NODE_TYPE_CASTS(SVGFEPointLightElement)

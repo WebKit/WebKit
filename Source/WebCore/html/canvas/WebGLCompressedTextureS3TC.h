@@ -40,7 +40,7 @@ public:
     static bool supported(WebGLRenderingContext*);
 
     virtual ~WebGLCompressedTextureS3TC();
-    virtual ExtensionName getName() const;
+    virtual ExtensionName getName() const override;
 
 private:
     WebGLCompressedTextureS3TC(WebGLRenderingContext*);

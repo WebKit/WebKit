@@ -39,25 +39,25 @@ public:
 private:
     SVGAElement(const QualifiedName&, Document&);
 
-    virtual bool isValid() const { return SVGTests::isValid(); }
+    virtual bool isValid() const override { return SVGTests::isValid(); }
     
-    virtual String title() const;
-    virtual String target() const { return svgTarget(); }
+    virtual String title() const override;
+    virtual String target() const override { return svgTarget(); }
 
     bool isSupportedAttribute(const QualifiedName&);
     virtual void parseAttribute(const QualifiedName&, const AtomicString&) override;
-    virtual void svgAttributeChanged(const QualifiedName&);
+    virtual void svgAttributeChanged(const QualifiedName&) override;
 
     virtual RenderPtr<RenderElement> createElementRenderer(PassRef<RenderStyle>) override;
     virtual bool childShouldCreateRenderer(const Node&) const override;
 
-    virtual void defaultEventHandler(Event*);
+    virtual void defaultEventHandler(Event*) override;
     
     virtual bool supportsFocus() const override;
     virtual bool isMouseFocusable() const override;
     virtual bool isKeyboardFocusable(KeyboardEvent*) const override;
     virtual bool isFocusable() const override;
-    virtual bool isURLAttribute(const Attribute&) const;
+    virtual bool isURLAttribute(const Attribute&) const override;
 
     virtual bool willRespondToMouseClickEvents() override;
 

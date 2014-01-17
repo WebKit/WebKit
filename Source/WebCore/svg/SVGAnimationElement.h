@@ -80,7 +80,7 @@ public:
 
     static bool isTargetAttributeCSSProperty(SVGElement*, const QualifiedName&);
 
-    virtual bool isAdditive() const;
+    virtual bool isAdditive() const override;
     bool isAccumulated() const;
     AnimationMode animationMode() const { return m_animationMode; }
     CalcMode calcMode() const { return m_calcMode; }
@@ -229,9 +229,9 @@ private:
     END_DECLARE_ANIMATED_PROPERTIES
 
     // SVGTests
-    virtual void synchronizeRequiredFeatures() { SVGTests::synchronizeRequiredFeatures(this); }
-    virtual void synchronizeRequiredExtensions() { SVGTests::synchronizeRequiredExtensions(this); }
-    virtual void synchronizeSystemLanguage() { SVGTests::synchronizeSystemLanguage(this); }
+    virtual void synchronizeRequiredFeatures() override { SVGTests::synchronizeRequiredFeatures(this); }
+    virtual void synchronizeRequiredExtensions() override { SVGTests::synchronizeRequiredExtensions(this); }
+    virtual void synchronizeSystemLanguage() override { SVGTests::synchronizeSystemLanguage(this); }
 
     void setCalcMode(const AtomicString&);
 

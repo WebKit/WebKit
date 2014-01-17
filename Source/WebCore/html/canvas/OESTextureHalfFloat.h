@@ -36,7 +36,7 @@ public:
     static OwnPtr<OESTextureHalfFloat> create(WebGLRenderingContext*);
 
     virtual ~OESTextureHalfFloat();
-    virtual ExtensionName getName() const;
+    virtual ExtensionName getName() const override;
 
 private:
     OESTextureHalfFloat(WebGLRenderingContext*);

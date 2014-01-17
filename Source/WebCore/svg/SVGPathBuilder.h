@@ -39,23 +39,23 @@ public:
     void setCurrentPath(Path* path) { m_path = path; }
 
 private:
-    virtual void incrementPathSegmentCount() { }
-    virtual bool continueConsuming() { return true; }
-    virtual void cleanup() { m_path = 0; }
+    virtual void incrementPathSegmentCount() override { }
+    virtual bool continueConsuming() override { return true; }
+    virtual void cleanup() override { m_path = 0; }
 
     // Used in UnalteredParsing/NormalizedParsing modes.
-    virtual void moveTo(const FloatPoint&, bool closed, PathCoordinateMode);
-    virtual void lineTo(const FloatPoint&, PathCoordinateMode);
-    virtual void curveToCubic(const FloatPoint&, const FloatPoint&, const FloatPoint&, PathCoordinateMode);
-    virtual void closePath();
+    virtual void moveTo(const FloatPoint&, bool closed, PathCoordinateMode) override;
+    virtual void lineTo(const FloatPoint&, PathCoordinateMode) override;
+    virtual void curveToCubic(const FloatPoint&, const FloatPoint&, const FloatPoint&, PathCoordinateMode) override;
+    virtual void closePath() override;
 
     // Only used in UnalteredParsing mode.
-    virtual void lineToHorizontal(float, PathCoordinateMode) { ASSERT_NOT_REACHED(); }
-    virtual void lineToVertical(float, PathCoordinateMode) { ASSERT_NOT_REACHED(); }
-    virtual void curveToCubicSmooth(const FloatPoint&, const FloatPoint&, PathCoordinateMode) { ASSERT_NOT_REACHED(); }
-    virtual void curveToQuadratic(const FloatPoint&, const FloatPoint&, PathCoordinateMode) { ASSERT_NOT_REACHED(); }
-    virtual void curveToQuadraticSmooth(const FloatPoint&, PathCoordinateMode) { ASSERT_NOT_REACHED(); }
-    virtual void arcTo(float, float, float, bool, bool, const FloatPoint&, PathCoordinateMode) { ASSERT_NOT_REACHED(); }
+    virtual void lineToHorizontal(float, PathCoordinateMode) override { ASSERT_NOT_REACHED(); }
+    virtual void lineToVertical(float, PathCoordinateMode) override { ASSERT_NOT_REACHED(); }
+    virtual void curveToCubicSmooth(const FloatPoint&, const FloatPoint&, PathCoordinateMode) override { ASSERT_NOT_REACHED(); }
+    virtual void curveToQuadratic(const FloatPoint&, const FloatPoint&, PathCoordinateMode) override { ASSERT_NOT_REACHED(); }
+    virtual void curveToQuadraticSmooth(const FloatPoint&, PathCoordinateMode) override { ASSERT_NOT_REACHED(); }
+    virtual void arcTo(float, float, float, bool, bool, const FloatPoint&, PathCoordinateMode) override { ASSERT_NOT_REACHED(); }
 
     Path* m_path;
     FloatPoint m_current;

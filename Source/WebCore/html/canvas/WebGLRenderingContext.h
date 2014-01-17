@@ -86,8 +86,8 @@ public:
     static OwnPtr<WebGLRenderingContext> create(HTMLCanvasElement*, WebGLContextAttributes*);
     virtual ~WebGLRenderingContext();
 
-    virtual bool is3d() const { return true; }
-    virtual bool isAccelerated() const { return true; }
+    virtual bool is3d() const override { return true; }
+    virtual bool isAccelerated() const override { return true; }
 
     int drawingBufferWidth() const;
     int drawingBufferHeight() const;
@@ -309,13 +309,13 @@ public:
     GraphicsContext3D* graphicsContext3D() const { return m_context.get(); }
     WebGLContextGroup* contextGroup() const { return m_contextGroup.get(); }
 #if USE(ACCELERATED_COMPOSITING)
-    virtual PlatformLayer* platformLayer() const;
+    virtual PlatformLayer* platformLayer() const override;
 #endif
 
     void reshape(int width, int height);
 
     void markLayerComposited();
-    virtual void paintRenderingResultsToCanvas();
+    virtual void paintRenderingResultsToCanvas() override;
     virtual PassRefPtr<ImageData> paintRenderingResultsToImageData();
 
     void removeSharedObject(WebGLSharedObject*);

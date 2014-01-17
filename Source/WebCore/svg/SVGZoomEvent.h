@@ -46,7 +46,7 @@ public:
 
     SVGPoint newTranslate() const;
 
-    virtual EventInterface eventInterface() const;
+    virtual EventInterface eventInterface() const override;
 
 private:
     SVGZoomEvent();

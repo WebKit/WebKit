@@ -54,7 +54,7 @@ private:
     bool isSupportedAttribute(const QualifiedName&);
     virtual void parseAttribute(const QualifiedName&, const AtomicString&) override;
 
-    virtual bool rendererIsNeeded(const RenderStyle&) { return false; }
+    virtual bool rendererIsNeeded(const RenderStyle&) override { return false; }
 
     BEGIN_DECLARE_ANIMATED_PROPERTIES(SVGViewElement)
         DECLARE_ANIMATED_BOOLEAN(ExternalResourcesRequired, externalResourcesRequired)

@@ -42,7 +42,7 @@ public:
     static OwnPtr<OESVertexArrayObject> create(WebGLRenderingContext*);
 
     virtual ~OESVertexArrayObject();
-    virtual ExtensionName getName() const;
+    virtual ExtensionName getName() const override;
     
     PassRefPtr<WebGLVertexArrayObjectOES> createVertexArrayOES();
     void deleteVertexArrayOES(WebGLVertexArrayObjectOES*);

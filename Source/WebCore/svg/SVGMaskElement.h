@@ -41,17 +41,17 @@ public:
 private:
     SVGMaskElement(const QualifiedName&, Document&);
 
-    virtual bool isValid() const { return SVGTests::isValid(); }
-    virtual bool needsPendingResourceHandling() const { return false; }
+    virtual bool isValid() const override { return SVGTests::isValid(); }
+    virtual bool needsPendingResourceHandling() const override { return false; }
 
     bool isSupportedAttribute(const QualifiedName&);
     virtual void parseAttribute(const QualifiedName&, const AtomicString&) override;
-    virtual void svgAttributeChanged(const QualifiedName&);
+    virtual void svgAttributeChanged(const QualifiedName&) override;
     virtual void childrenChanged(const ChildChange&) override;
 
     virtual RenderPtr<RenderElement> createElementRenderer(PassRef<RenderStyle>) override;
 
-    virtual bool selfHasRelativeLengths() const;
+    virtual bool selfHasRelativeLengths() const override;
 
     BEGIN_DECLARE_ANIMATED_PROPERTIES(SVGMaskElement)
         DECLARE_ANIMATED_ENUMERATION(MaskUnits, maskUnits, SVGUnitTypes::SVGUnitType)
@@ -64,9 +64,9 @@ private:
     END_DECLARE_ANIMATED_PROPERTIES
 
     // SVGTests
-    virtual void synchronizeRequiredFeatures() { SVGTests::synchronizeRequiredFeatures(this); }
-    virtual void synchronizeRequiredExtensions() { SVGTests::synchronizeRequiredExtensions(this); }
-    virtual void synchronizeSystemLanguage() { SVGTests::synchronizeSystemLanguage(this); }
+    virtual void synchronizeRequiredFeatures() override { SVGTests::synchronizeRequiredFeatures(this); }
+    virtual void synchronizeRequiredExtensions() override { SVGTests::synchronizeRequiredExtensions(this); }
+    virtual void synchronizeSystemLanguage() override { SVGTests::synchronizeSystemLanguage(this); }
 };
 
 NODE_TYPE_CASTS(SVGMaskElement)

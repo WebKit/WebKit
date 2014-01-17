@@ -112,7 +112,7 @@ class MediaControls : public HTMLDivElement {
 protected:
     explicit MediaControls(Document&);
 
-    virtual void defaultEventHandler(Event*);
+    virtual void defaultEventHandler(Event*) override;
 
     virtual bool containsRelatedTarget(Event*);
 
@@ -142,9 +142,9 @@ protected:
     bool m_isMouseOverControls;
 
 private:
-    virtual bool isMediaControls() const { return true; }
+    virtual bool isMediaControls() const override { return true; }
 
-    virtual const AtomicString& shadowPseudoId() const;
+    virtual const AtomicString& shadowPseudoId() const override;
 };
 
 inline MediaControls* toMediaControls(Node* node)

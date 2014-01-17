@@ -66,10 +66,10 @@ public:
 protected:
     WebGLBuffer(WebGLRenderingContext*);
 
-    virtual void deleteObjectImpl(GraphicsContext3D*, Platform3DObject);
+    virtual void deleteObjectImpl(GraphicsContext3D*, Platform3DObject) override;
 
 private:
-    virtual bool isBuffer() const { return true; }
+    virtual bool isBuffer() const override { return true; }
 
     GC3Denum m_target;
 

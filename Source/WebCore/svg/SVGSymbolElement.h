@@ -44,10 +44,10 @@ private:
 
     bool isSupportedAttribute(const QualifiedName&);
     virtual void parseAttribute(const QualifiedName&, const AtomicString&) override;
-    virtual void svgAttributeChanged(const QualifiedName&);
+    virtual void svgAttributeChanged(const QualifiedName&) override;
     virtual RenderPtr<RenderElement> createElementRenderer(PassRef<RenderStyle>) override;
 
-    virtual bool selfHasRelativeLengths() const;
+    virtual bool selfHasRelativeLengths() const override;
 
     BEGIN_DECLARE_ANIMATED_PROPERTIES(SVGSymbolElement)
         DECLARE_ANIMATED_BOOLEAN(ExternalResourcesRequired, externalResourcesRequired)

@@ -48,7 +48,7 @@ public:
 
     DeviceOrientationData* orientation() const { return m_orientation.get(); }
 
-    virtual EventInterface eventInterface() const;
+    virtual EventInterface eventInterface() const override;
 
 private:
     DeviceOrientationEvent();

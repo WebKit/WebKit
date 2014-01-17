@@ -53,7 +53,7 @@ public:
 private:
     UploadButtonElement(Document&);
 
-    virtual const AtomicString& shadowPseudoId() const;
+    virtual const AtomicString& shadowPseudoId() const override;
 };
 
 PassRefPtr<UploadButtonElement> UploadButtonElement::create(Document& document)

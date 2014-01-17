@@ -49,10 +49,10 @@ public:
 private:
     DocumentType(Document&, const String& name, const String& publicId, const String& systemId);
 
-    virtual URL baseURI() const;
-    virtual String nodeName() const;
-    virtual NodeType nodeType() const;
-    virtual PassRefPtr<Node> cloneNode(bool deep);
+    virtual URL baseURI() const override;
+    virtual String nodeName() const override;
+    virtual NodeType nodeType() const override;
+    virtual PassRefPtr<Node> cloneNode(bool deep) override;
 
     OwnPtr<NamedNodeMap> m_entities;
     OwnPtr<NamedNodeMap> m_notations;

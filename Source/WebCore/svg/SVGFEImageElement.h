@@ -48,16 +48,16 @@ private:
 
     bool isSupportedAttribute(const QualifiedName&);
     virtual void parseAttribute(const QualifiedName&, const AtomicString&) override;
-    virtual void svgAttributeChanged(const QualifiedName&);
-    virtual void notifyFinished(CachedResource*);
+    virtual void svgAttributeChanged(const QualifiedName&) override;
+    virtual void notifyFinished(CachedResource*) override;
 
-    virtual void addSubresourceAttributeURLs(ListHashSet<URL>&) const;
-    virtual PassRefPtr<FilterEffect> build(SVGFilterBuilder*, Filter*);
+    virtual void addSubresourceAttributeURLs(ListHashSet<URL>&) const override;
+    virtual PassRefPtr<FilterEffect> build(SVGFilterBuilder*, Filter*) override;
 
     void clearResourceReferences();
     void requestImageResource();
 
-    virtual void buildPendingResource();
+    virtual void buildPendingResource() override;
     virtual InsertionNotificationRequest insertedInto(ContainerNode&) override;
     virtual void removedFrom(ContainerNode&) override;
 

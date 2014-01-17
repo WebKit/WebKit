@@ -119,19 +119,19 @@ private:
 
     void clearResourceReferences();
 
-    virtual void buildPendingResource();
+    virtual void buildPendingResource() override;
     virtual InsertionNotificationRequest insertedInto(ContainerNode&) override;
     virtual void removedFrom(ContainerNode&) override;
 
     bool isSupportedAttribute(const QualifiedName&);
     virtual void parseAttribute(const QualifiedName&, const AtomicString&) override;
-    virtual void svgAttributeChanged(const QualifiedName&);
+    virtual void svgAttributeChanged(const QualifiedName&) override;
 
     virtual RenderPtr<RenderElement> createElementRenderer(PassRef<RenderStyle>) override;
     virtual bool childShouldCreateRenderer(const Node&) const override;
-    virtual bool rendererIsNeeded(const RenderStyle&);
+    virtual bool rendererIsNeeded(const RenderStyle&) override;
 
-    virtual bool selfHasRelativeLengths() const;
+    virtual bool selfHasRelativeLengths() const override;
  
     BEGIN_DECLARE_ANIMATED_PROPERTIES(SVGTextPathElement)
         DECLARE_ANIMATED_LENGTH(StartOffset, startOffset)

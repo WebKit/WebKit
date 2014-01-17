@@ -58,7 +58,7 @@ protected:
     }
 
 private:
-    virtual PassRefPtr<Element> cloneElementWithoutAttributesAndChildren()
+    virtual PassRefPtr<Element> cloneElementWithoutAttributesAndChildren() override
     {
         return create(document());
     }

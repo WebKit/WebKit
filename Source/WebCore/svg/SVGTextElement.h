@@ -30,7 +30,7 @@ class SVGTextElement final : public SVGTextPositioningElement {
 public:
     static PassRefPtr<SVGTextElement> create(const QualifiedName&, Document&);
 
-    virtual AffineTransform animatedLocalTransform() const;
+    virtual AffineTransform animatedLocalTransform() const override;
 
 private:
     SVGTextElement(const QualifiedName&, Document&);

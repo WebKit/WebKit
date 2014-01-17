@@ -43,8 +43,8 @@ public:
 protected:
     SVGAnimateElement(const QualifiedName&, Document&);
 
-    virtual void resetAnimatedType();
-    virtual void clearAnimatedType(SVGElement* targetElement);
+    virtual void resetAnimatedType() override;
+    virtual void clearAnimatedType(SVGElement* targetElement) override;
 
     virtual bool calculateToAtEndOfDurationValue(const String& toAtEndOfDurationString) override;
     virtual bool calculateFromAndToValues(const String& fromString, const String& toString) override;

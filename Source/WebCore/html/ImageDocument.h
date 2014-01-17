@@ -50,7 +50,7 @@ public:
 private:
     ImageDocument(Frame*, const URL&);
 
-    virtual PassRefPtr<DocumentParser> createParser();
+    virtual PassRefPtr<DocumentParser> createParser() override;
     
     void createDocumentStructure();
     void resizeImageToFit();

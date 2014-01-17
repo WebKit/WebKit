@@ -56,14 +56,14 @@ private:
     virtual void removedFrom(ContainerNode&) override;
     virtual void childrenChanged(const ChildChange&) override;
 
-    virtual void finishParsingChildren();
+    virtual void finishParsingChildren() override;
 
     virtual bool isLoading() const { return m_styleSheetOwner.isLoading(); }
-    virtual bool sheetLoaded() { return m_styleSheetOwner.sheetLoaded(document()); }
-    virtual void notifyLoadedSheetAndAllCriticalSubresources(bool errorOccurred);
-    virtual void startLoadingDynamicSheet() { m_styleSheetOwner.startLoadingDynamicSheet(document()); }
+    virtual bool sheetLoaded() override { return m_styleSheetOwner.sheetLoaded(document()); }
+    virtual void notifyLoadedSheetAndAllCriticalSubresources(bool errorOccurred) override;
+    virtual void startLoadingDynamicSheet() override { m_styleSheetOwner.startLoadingDynamicSheet(document()); }
 
-    virtual void addSubresourceAttributeURLs(ListHashSet<URL>&) const;
+    virtual void addSubresourceAttributeURLs(ListHashSet<URL>&) const override;
 
     InlineStyleSheetOwner m_styleSheetOwner;
     bool m_firedLoad;

@@ -41,7 +41,7 @@ private:
 
     virtual void didAttachRenderers() override;
 
-    virtual bool rendererIsNeeded(const RenderStyle&);
+    virtual bool rendererIsNeeded(const RenderStyle&) override;
     virtual RenderPtr<RenderElement> createElementRenderer(PassRef<RenderStyle>) override;
     
     virtual void parseAttribute(const QualifiedName&, const AtomicString&) override;

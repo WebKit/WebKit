@@ -44,7 +44,7 @@ public:
     const AtomicString& media() const;
     void setMedia(const AtomicString&, ExceptionCode&);
 
-    String title() const;
+    String title() const override;
     void setTitle(const AtomicString&, ExceptionCode&);
 
 private:
@@ -58,7 +58,7 @@ private:
 
     virtual bool rendererIsNeeded(const RenderStyle&) override { return false; }
 
-    virtual void finishParsingChildren();
+    virtual void finishParsingChildren() override;
 
     virtual bool isLoading() const { return m_styleSheetOwner.isLoading(); }
     virtual bool sheetLoaded() override { return m_styleSheetOwner.sheetLoaded(document()); }

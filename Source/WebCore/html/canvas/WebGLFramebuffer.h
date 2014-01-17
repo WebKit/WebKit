@@ -103,7 +103,7 @@ public:
 protected:
     WebGLFramebuffer(WebGLRenderingContext*);
 
-    virtual void deleteObjectImpl(GraphicsContext3D*, Platform3DObject);
+    virtual void deleteObjectImpl(GraphicsContext3D*, Platform3DObject) override;
 
 private:
     virtual bool isFramebuffer() const { return true; }

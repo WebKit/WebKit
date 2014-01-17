@@ -87,7 +87,7 @@ public:
 private:
     WebGLVertexArrayObjectOES(WebGLRenderingContext*, VaoType);
 
-    virtual void deleteObjectImpl(GraphicsContext3D*, Platform3DObject);
+    virtual void deleteObjectImpl(GraphicsContext3D*, Platform3DObject) override;
 
     virtual bool isVertexArray() const { return true; }
     

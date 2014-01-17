@@ -39,7 +39,7 @@ public:
     static PassRefPtr<SVGScriptElement> create(const QualifiedName&, Document&, bool wasInsertedByParser);
 
 #ifndef NDEBUG
-    virtual bool isAnimatableAttribute(const QualifiedName&) const;
+    virtual bool isAnimatableAttribute(const QualifiedName&) const override;
 #endif
 
 private:
@@ -50,33 +50,33 @@ private:
     virtual InsertionNotificationRequest insertedInto(ContainerNode&) override;
     virtual void childrenChanged(const ChildChange&) override;
 
-    virtual void svgAttributeChanged(const QualifiedName&);
+    virtual void svgAttributeChanged(const QualifiedName&) override;
     virtual bool isURLAttribute(const Attribute&) const override;
-    virtual void finishParsingChildren();
+    virtual void finishParsingChildren() override;
 
-    virtual void addSubresourceAttributeURLs(ListHashSet<URL>&) const;
+    virtual void addSubresourceAttributeURLs(ListHashSet<URL>&) const override;
 
-    virtual bool haveLoadedRequiredResources() { return SVGExternalResourcesRequired::haveLoadedRequiredResources(); }
+    virtual bool haveLoadedRequiredResources() override { return SVGExternalResourcesRequired::haveLoadedRequiredResources(); }
 
-    virtual String sourceAttributeValue() const;
-    virtual String charsetAttributeValue() const;
-    virtual String typeAttributeValue() const;
-    virtual String languageAttributeValue() const;
-    virtual String forAttributeValue() const;
-    virtual String eventAttributeValue() const;
-    virtual bool asyncAttributeValue() const;
-    virtual bool deferAttributeValue() const;
-    virtual bool hasSourceAttribute() const;
+    virtual String sourceAttributeValue() const override;
+    virtual String charsetAttributeValue() const override;
+    virtual String typeAttributeValue() const override;
+    virtual String languageAttributeValue() const override;
+    virtual String forAttributeValue() const override;
+    virtual String eventAttributeValue() const override;
+    virtual bool asyncAttributeValue() const override;
+    virtual bool deferAttributeValue() const override;
+    virtual bool hasSourceAttribute() const override;
 
-    virtual void dispatchLoadEvent() { SVGExternalResourcesRequired::dispatchLoadEvent(this); }
+    virtual void dispatchLoadEvent() override { SVGExternalResourcesRequired::dispatchLoadEvent(this); }
 
-    virtual PassRefPtr<Element> cloneElementWithoutAttributesAndChildren();
+    virtual PassRefPtr<Element> cloneElementWithoutAttributesAndChildren() override;
     virtual bool rendererIsNeeded(const RenderStyle&) override { return false; }
 
     // SVGExternalResourcesRequired
-    virtual void setHaveFiredLoadEvent(bool haveFiredLoadEvent) { ScriptElement::setHaveFiredLoadEvent(haveFiredLoadEvent); }
-    virtual bool isParserInserted() const { return ScriptElement::isParserInserted(); }
-    virtual bool haveFiredLoadEvent() const { return ScriptElement::haveFiredLoadEvent(); }
+    virtual void setHaveFiredLoadEvent(bool haveFiredLoadEvent) override { ScriptElement::setHaveFiredLoadEvent(haveFiredLoadEvent); }
+    virtual bool isParserInserted() const override { return ScriptElement::isParserInserted(); }
+    virtual bool haveFiredLoadEvent() const override { return ScriptElement::haveFiredLoadEvent(); }
     virtual Timer<SVGElement>* svgLoadEventTimer() override { return &m_svgLoadEventTimer; }
 
     BEGIN_DECLARE_ANIMATED_PROPERTIES(SVGScriptElement)

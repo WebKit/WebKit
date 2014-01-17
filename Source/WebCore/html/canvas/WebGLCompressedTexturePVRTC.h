@@ -38,7 +38,7 @@ public:
     static bool supported(WebGLRenderingContext*);
 
     virtual ~WebGLCompressedTexturePVRTC();
-    virtual ExtensionName getName() const;
+    virtual ExtensionName getName() const override;
 
 private:
     WebGLCompressedTexturePVRTC(WebGLRenderingContext*);

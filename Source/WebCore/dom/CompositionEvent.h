@@ -60,7 +60,7 @@ public:
 
     String data() const { return m_data; }
 
-    virtual EventInterface eventInterface() const;
+    virtual EventInterface eventInterface() const override;
 
 private:
     CompositionEvent();

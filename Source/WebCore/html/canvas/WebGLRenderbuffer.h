@@ -67,10 +67,10 @@ public:
 protected:
     WebGLRenderbuffer(WebGLRenderingContext*);
 
-    virtual void deleteObjectImpl(GraphicsContext3D*, Platform3DObject);
+    virtual void deleteObjectImpl(GraphicsContext3D*, Platform3DObject) override;
 
 private:
-    virtual bool isRenderbuffer() const { return true; }
+    virtual bool isRenderbuffer() const override { return true; }
 
     GC3Denum m_internalFormat;
     bool m_initialized;
