@@ -77,7 +77,7 @@ private:
 
     OpaqueJSString(const String& string)
         : m_string(string.isolatedCopy())
-        , m_characters(m_string.is8Bit() ? nullptr : const_cast<UChar*>(m_string.characters16()))
+        , m_characters(m_string.impl() && m_string.is8Bit() ? nullptr : const_cast<UChar*>(m_string.characters16()))
     {
     }
 
@@ -89,7 +89,7 @@ private:
 
     OpaqueJSString(const UChar* characters, unsigned length)
         : m_string(characters, length)
-        , m_characters(m_string.is8Bit() ? nullptr : const_cast<UChar*>(m_string.characters16()))
+        , m_characters(m_string.impl() && m_string.is8Bit() ? nullptr : const_cast<UChar*>(m_string.characters16()))
     {
     }
 

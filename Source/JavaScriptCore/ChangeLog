@@ -1,5 +1,12 @@
 2014-01-17  Anders Carlsson  <andersca@apple.com>
 
+        String::is8Bit() crashes if m_impl is null, handle this.
+
+        * API/OpaqueJSString.h:
+        (OpaqueJSString::OpaqueJSString):
+
+2014-01-17  Anders Carlsson  <andersca@apple.com>
+
         Try to fix the Windows build.
 
         * API/OpaqueJSString.cpp:
