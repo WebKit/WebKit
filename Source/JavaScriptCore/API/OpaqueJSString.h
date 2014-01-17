@@ -52,8 +52,7 @@ struct OpaqueJSString : public ThreadSafeRefCounted<OpaqueJSString> {
     }
 
     JS_EXPORT_PRIVATE static PassRefPtr<OpaqueJSString> create(const String&);
-
-    ~OpaqueJSString();
+    JS_EXPORT_PRIVATE ~OpaqueJSString();
 
     bool is8Bit() { return this ? m_string.is8Bit() : false; }
     const LChar* characters8() { return this ? m_string.characters8() : nullptr; }

@@ -1,5 +1,11 @@
 2014-01-16  Anders Carlsson  <andersca@apple.com>
 
+        Export OpaqueJSString destructor.
+
+        * API/OpaqueJSString.h:
+
+2014-01-16  Anders Carlsson  <andersca@apple.com>
+
         Build fix.
 
         * API/OpaqueJSString.h:
