@@ -87,6 +87,8 @@ void MediaSessionManageriOS::resetRestrictions()
     addRestriction(MediaSession::Video, ConcurrentPlaybackNotPermitted);
 }
 
+} // namespace WebCore
+
 @implementation WebMediaSessionHelper
 
 - (id)initWithCallback:(MediaSessionManageriOS*)callback
