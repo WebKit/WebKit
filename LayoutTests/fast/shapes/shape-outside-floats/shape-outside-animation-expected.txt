@@ -22,6 +22,6 @@ PASS - "webkitShapeOutside" property for "circle-to-topleft-box" element at 1s s
 PASS - "webkitShapeOutside" property for "circle-to-bottomright-using-keyword-box" element at 1s saw something close to: circle(35% at 75% 75%)
 PASS - "webkitShapeOutside" property for "circle-to-bottomright-using-keyword-box" element at 1s saw something close to: circle(35% at 75% 75%)
 PASS - "webkitShapeOutside" property for "circle-to-bottomright-extended-box" element at 1s saw something close to: circle(35% at 75% 75%)
-PASS - "webkitShapeOutside" property for "circle-to-bottomright-extended-using-keyword-box" element at 1s saw something close to: circle(35% at 70% 70%)
-PASS - "webkitShapeOutside" property for "circle-to-bottomright-extended-using-keyword-2-box" element at 1s saw something close to: circle(35% at 70% 70%)
+PASS - "webkitShapeOutside" property for "circle-to-bottomright-extended-using-keyword-box" element at 1s saw something close to: circle(35% at calc((50% * 0.5) + ((100% - 10%) * 0.5)) calc((50% * 0.5) + ((100% - 20px) * 0.5)))
+PASS - "webkitShapeOutside" property for "circle-to-bottomright-extended-using-keyword-2-box" element at 1s saw something close to: circle(35% at calc((50% * 0.5) + ((100% - 10%) * 0.5)) calc((50% * 0.5) + ((100% - 10px) * 0.5)))
 

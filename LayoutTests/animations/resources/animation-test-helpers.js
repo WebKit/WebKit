@@ -238,10 +238,15 @@ function parseBasicShape(s)
 
     // Normalize percentage values.
     for (; i < matches.length; ++i) {
-        var param = matches[i];
-        matches[i] = parseFloat(matches[i]);
-        if (param.indexOf('%') != -1)
-            matches[i] = matches[i] / 100;
+        var param = parseFloat(matches[i]);
+
+        if (isNaN(param))
+            continue;
+
+        if (matches[i].indexOf('%') != -1)
+            matches[i] = param / 100;
+        else
+            matches[i] = param;
     }
 
     return {"shape": shapeFunction[1], "params": matches};
@@ -313,14 +318,11 @@ function basicShapeParametersMatch(paramList1, paramList2, tolerance)
         || paramList1.params.length != paramList2.params.length)
         return false;
     var i = 0;
-    if (paramList1.shape == "polygon") {
-        if (paramList1.params[0] != paramList2.params[0])
-            return false; // fill-rule's don't match
-        i++;
-    }
     for (; i < paramList1.params.length; ++i) {
         var param1 = paramList1.params[i], 
             param2 = paramList2.params[i];
+        if (param1 === param2)
+            continue;
         var match = isCloseEnough(param1, param2, tolerance);
         if (!match)
             return false;

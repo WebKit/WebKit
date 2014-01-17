@@ -32,12 +32,30 @@
 #include "BasicShapes.h"
 
 #include "BasicShapeFunctions.h"
+#include "CalculationValue.h"
 #include "FloatRect.h"
 #include "LengthFunctions.h"
 #include "Path.h"
 #include "RenderBox.h"
 
 namespace WebCore {
+
+void BasicShapeCenterCoordinate::updateComputedLength()
+{
+    if (m_direction == TopLeft) {
+        m_computedLength = m_length.isUndefined() ? Length(0, Fixed) : m_length;
+        return;
+    }
+    if (m_length.isUndefined()) {
+        m_computedLength = Length(100, Percent);
+        return;
+    }
+
+    OwnPtr<CalcExpressionLength> lhs = adoptPtr(new CalcExpressionLength(Length(100, Percent)));
+    OwnPtr<CalcExpressionLength> rhs = adoptPtr(new CalcExpressionLength(m_length));
+    OwnPtr<CalcExpressionBinaryOperation> op = adoptPtr(new CalcExpressionBinaryOperation(lhs.release(), rhs.release(), CalcSubtract));
+    m_computedLength = Length(CalculationValue::create(op.release(), CalculationRangeAll));
+}
 
 bool BasicShape::canBlend(const BasicShape* other) const
 {
@@ -73,37 +91,6 @@ bool BasicShape::canBlend(const BasicShape* other) const
         && thisEllipse->radiusY().canBlend(otherEllipse->radiusY()));
 }
 
-FloatSize BasicShape::referenceBoxSize(const RenderBox& renderer) const
-{
-    switch (layoutBox()) {
-    case ContentBox:
-        return renderer.contentBoxRect().size();
-    case PaddingBox:
-        return renderer.paddingBoxRect().size();
-    case BorderBox:
-        return renderer.size();
-    case BoxMissing: // If <box> is not supplied, then the reference box defaults to margin-box.
-    case MarginBox:
-        return FloatSize(renderer.marginLeft() + renderer.width() + renderer.marginRight(),
-            renderer.marginTop() + renderer.height() + renderer.marginBottom());
-    case BoundingBox:
-        break;
-    }
-
-    ASSERT_NOT_REACHED();
-    return FloatSize();
-}
-
-Length BasicShapeCenterCoordinate::lengthForBlending(const FloatSize& boxSize) const
-{
-    Length length = this->length();
-    if (keyword() == Right)
-        return Length(100 - (length.isPercent() ? length.percent() : 100.f * (length.value() / boxSize.width())), Percent);
-    if (keyword() == Bottom)
-        return Length(100 - (length.isPercent() ? length.percent() : 100.f * (length.value() / boxSize.height())), Percent);
-    return length;
-}
-
 void BasicShapeRectangle::path(Path& path, const FloatRect& boundingBox)
 {
     ASSERT(path.isEmpty());
@@ -121,7 +108,7 @@ void BasicShapeRectangle::path(Path& path, const FloatRect& boundingBox)
     );
 }
 
-PassRefPtr<BasicShape> BasicShapeRectangle::blend(const BasicShape* other, double progress, const RenderBox&) const
+PassRefPtr<BasicShape> BasicShapeRectangle::blend(const BasicShape* other, double progress) const
 {
     ASSERT(type() == other->type());
 
@@ -151,7 +138,7 @@ void DeprecatedBasicShapeCircle::path(Path& path, const FloatRect& boundingBox)
     ));
 }
 
-PassRefPtr<BasicShape> DeprecatedBasicShapeCircle::blend(const BasicShape* other, double progress, const RenderBox&) const
+PassRefPtr<BasicShape> DeprecatedBasicShapeCircle::blend(const BasicShape* other, double progress) const
 {
     ASSERT(type() == other->type());
 
@@ -193,15 +180,14 @@ void BasicShapeCircle::path(Path& path, const FloatRect& boundingBox)
     ));
 }
 
-PassRefPtr<BasicShape> BasicShapeCircle::blend(const BasicShape* other, double progress, const RenderBox& renderer) const
+PassRefPtr<BasicShape> BasicShapeCircle::blend(const BasicShape* other, double progress) const
 {
     ASSERT(type() == other->type());
     const BasicShapeCircle* o = static_cast<const BasicShapeCircle*>(other);
     RefPtr<BasicShapeCircle> result =  BasicShapeCircle::create();
 
-    FloatSize boxSize = referenceBoxSize(renderer);
-    result->setCenterX(m_centerX.blend(o->centerX(), progress, boxSize));
-    result->setCenterY(m_centerY.blend(o->centerY(), progress, boxSize));
+    result->setCenterX(m_centerX.blend(o->centerX(), progress));
+    result->setCenterY(m_centerY.blend(o->centerY(), progress));
     result->setRadius(m_radius.blend(o->radius(), progress));
     return result.release();
 }
@@ -221,7 +207,7 @@ void DeprecatedBasicShapeEllipse::path(Path& path, const FloatRect& boundingBox)
     ));
 }
 
-PassRefPtr<BasicShape> DeprecatedBasicShapeEllipse::blend(const BasicShape* other, double progress, const RenderBox&) const
+PassRefPtr<BasicShape> DeprecatedBasicShapeEllipse::blend(const BasicShape* other, double progress) const
 {
     ASSERT(type() == other->type());
 
@@ -261,7 +247,7 @@ void BasicShapeEllipse::path(Path& path, const FloatRect& boundingBox)
         radiusY * 2));
 }
 
-PassRefPtr<BasicShape> BasicShapeEllipse::blend(const BasicShape* other, double progress, const RenderBox& renderer) const
+PassRefPtr<BasicShape> BasicShapeEllipse::blend(const BasicShape* other, double progress) const
 {
     ASSERT(type() == other->type());
     const BasicShapeEllipse* o = static_cast<const BasicShapeEllipse*>(other);
@@ -276,9 +262,8 @@ PassRefPtr<BasicShape> BasicShapeEllipse::blend(const BasicShape* other, double 
         return result;
     }
 
-    FloatSize boxSize = referenceBoxSize(renderer);
-    result->setCenterX(m_centerX.blend(o->centerX(), progress, boxSize));
-    result->setCenterY(m_centerY.blend(o->centerY(), progress, boxSize));
+    result->setCenterX(m_centerX.blend(o->centerX(), progress));
+    result->setCenterY(m_centerY.blend(o->centerY(), progress));
     result->setRadiusX(m_radiusX.blend(o->radiusX(), progress));
     result->setRadiusY(m_radiusY.blend(o->radiusY(), progress));
     return result.release();
@@ -302,7 +287,7 @@ void BasicShapePolygon::path(Path& path, const FloatRect& boundingBox)
     path.closeSubpath();
 }
 
-PassRefPtr<BasicShape> BasicShapePolygon::blend(const BasicShape* other, double progress, const RenderBox&) const
+PassRefPtr<BasicShape> BasicShapePolygon::blend(const BasicShape* other, double progress) const
 {
     ASSERT(type() == other->type());
 
@@ -344,7 +329,7 @@ void BasicShapeInsetRectangle::path(Path& path, const FloatRect& boundingBox)
     );
 }
 
-PassRefPtr<BasicShape> BasicShapeInsetRectangle::blend(const BasicShape* other, double progress, const RenderBox&) const
+PassRefPtr<BasicShape> BasicShapeInsetRectangle::blend(const BasicShape* other, double progress) const
 {
     ASSERT(type() == other->type());
 
@@ -390,7 +375,7 @@ void BasicShapeInset::path(Path& path, const FloatRect& boundingBox)
     );
 }
 
-PassRefPtr<BasicShape> BasicShapeInset::blend(const BasicShape* other, double progress, const RenderBox&) const
+PassRefPtr<BasicShape> BasicShapeInset::blend(const BasicShape* other, double progress) const
 {
     ASSERT(type() == other->type());
 

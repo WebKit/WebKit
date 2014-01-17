@@ -63,7 +63,7 @@ public:
 
     virtual void path(Path&, const FloatRect&) = 0;
     virtual WindRule windRule() const { return RULE_NONZERO; }
-    virtual PassRefPtr<BasicShape> blend(const BasicShape*, double, const RenderBox&) const = 0;
+    virtual PassRefPtr<BasicShape> blend(const BasicShape*, double) const = 0;
 
     virtual Type type() const = 0;
 
@@ -75,8 +75,6 @@ protected:
         : m_layoutBox(BoxMissing)
     {
     }
-
-    FloatSize referenceBoxSize(const RenderBox&) const;
 
 private:
     LayoutBox m_layoutBox;
@@ -109,7 +107,7 @@ public:
     }
 
     virtual void path(Path&, const FloatRect&) override;
-    virtual PassRefPtr<BasicShape> blend(const BasicShape*, double, const RenderBox&) const override;
+    virtual PassRefPtr<BasicShape> blend(const BasicShape*, double) const override;
 
     virtual Type type() const override { return BasicShapeRectangleType; }
 private:
@@ -125,30 +123,47 @@ private:
 
 class BasicShapeCenterCoordinate {
 public:
-    enum Keyword {
-        None,
-        Top,
-        Right,
-        Bottom,
-        Left
+    enum Direction {
+        TopLeft,
+        BottomRight
     };
-    BasicShapeCenterCoordinate() : m_keyword(None), m_length(Undefined) { }
-    explicit BasicShapeCenterCoordinate(Length length) : m_keyword(None), m_length(length) { }
-    BasicShapeCenterCoordinate(Keyword keyword, Length length) : m_keyword(keyword), m_length(length) { }
-    BasicShapeCenterCoordinate(const BasicShapeCenterCoordinate& other) : m_keyword(other.keyword()), m_length(other.length()) { }
 
-    Keyword keyword() const { return m_keyword; }
-    const Length& length() const { return m_length; }
-    Length lengthForBlending(const FloatSize&) const;
-
-    BasicShapeCenterCoordinate blend(const BasicShapeCenterCoordinate& other, double progress, const FloatSize& boxSize) const
+    BasicShapeCenterCoordinate()
+        : m_direction(TopLeft)
+        , m_length(Undefined)
     {
-        return BasicShapeCenterCoordinate(lengthForBlending(boxSize).blend(other.lengthForBlending(boxSize), progress));
+        updateComputedLength();
+    }
+
+    BasicShapeCenterCoordinate(Direction direction, Length length)
+        : m_direction(direction)
+        , m_length(length)
+    {
+        updateComputedLength();
+    }
+
+    BasicShapeCenterCoordinate(const BasicShapeCenterCoordinate& other)
+        : m_direction(other.direction())
+        , m_length(other.length())
+        , m_computedLength(other.m_computedLength)
+    {
+    }
+
+    Direction direction() const { return m_direction; }
+    const Length& length() const { return m_length; }
+    const Length& computedLength() const { return m_computedLength; }
+
+    BasicShapeCenterCoordinate blend(const BasicShapeCenterCoordinate& other, double progress) const
+    {
+        return BasicShapeCenterCoordinate(TopLeft, m_computedLength.blend(other.m_computedLength, progress));
     }
 
 private:
-    Keyword m_keyword;
+    Direction m_direction;
     Length m_length;
+    Length m_computedLength;
+
+    void updateComputedLength();
 };
 
 class BasicShapeRadius {
@@ -200,7 +215,7 @@ public:
     void setRadius(BasicShapeRadius radius) { m_radius = std::move(radius); }
 
     virtual void path(Path&, const FloatRect&) override;
-    virtual PassRefPtr<BasicShape> blend(const BasicShape*, double, const RenderBox&) const override;
+    virtual PassRefPtr<BasicShape> blend(const BasicShape*, double) const override;
 
     virtual Type type() const override { return BasicShapeCircleType; }
 private:
@@ -224,7 +239,7 @@ public:
     void setRadius(Length radius) { m_radius = std::move(radius); }
 
     virtual void path(Path&, const FloatRect&) override;
-    virtual PassRefPtr<BasicShape> blend(const BasicShape*, double, const RenderBox&) const override;
+    virtual PassRefPtr<BasicShape> blend(const BasicShape*, double) const override;
 
     virtual Type type() const override { return DeprecatedBasicShapeCircleType; }
 private:
@@ -251,7 +266,7 @@ public:
     void setRadiusY(BasicShapeRadius radiusY) { m_radiusY = std::move(radiusY); }
 
     virtual void path(Path&, const FloatRect&) override;
-    virtual PassRefPtr<BasicShape> blend(const BasicShape*, double, const RenderBox&) const override;
+    virtual PassRefPtr<BasicShape> blend(const BasicShape*, double) const override;
 
     virtual Type type() const override { return BasicShapeEllipseType; }
 private:
@@ -278,7 +293,7 @@ public:
     void setRadiusY(Length radiusY) { m_radiusY = std::move(radiusY); }
 
     virtual void path(Path&, const FloatRect&) override;
-    virtual PassRefPtr<BasicShape> blend(const BasicShape*, double, const RenderBox&) const override;
+    virtual PassRefPtr<BasicShape> blend(const BasicShape*, double) const override;
 
     virtual Type type() const override { return DeprecatedBasicShapeEllipseType; }
 private:
@@ -302,7 +317,7 @@ public:
     void appendPoint(Length x, Length y) { m_values.append(std::move(x)); m_values.append(std::move(y)); }
 
     virtual void path(Path&, const FloatRect&) override;
-    virtual PassRefPtr<BasicShape> blend(const BasicShape*, double, const RenderBox&) const override;
+    virtual PassRefPtr<BasicShape> blend(const BasicShape*, double) const override;
 
     virtual WindRule windRule() const override { return m_windRule; }
 
@@ -343,7 +358,7 @@ public:
     }
 
     virtual void path(Path&, const FloatRect&) override;
-    virtual PassRefPtr<BasicShape> blend(const BasicShape*, double, const RenderBox&) const override;
+    virtual PassRefPtr<BasicShape> blend(const BasicShape*, double) const override;
 
     virtual Type type() const override { return BasicShapeInsetRectangleType; }
 private:
@@ -382,7 +397,7 @@ public:
     void setBottomLeftRadius(LengthSize radius) { m_bottomLeftRadius = std::move(radius); }
 
     virtual void path(Path&, const FloatRect&) override;
-    virtual PassRefPtr<BasicShape> blend(const BasicShape*, double, const RenderBox&) const override;
+    virtual PassRefPtr<BasicShape> blend(const BasicShape*, double) const override;
 
     virtual Type type() const override { return BasicShapeInsetType; }
 private:

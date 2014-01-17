@@ -39,25 +39,12 @@
 
 namespace WebCore {
 
-static PassRefPtr<CSSPrimitiveValue> valueForCenterCoordinate(CSSValuePool& pool, const RenderStyle* style, const BasicShapeCenterCoordinate& center)
+static PassRefPtr<CSSPrimitiveValue> valueForCenterCoordinate(CSSValuePool& pool, const RenderStyle* style, const BasicShapeCenterCoordinate& center, EBoxOrient orientation)
 {
-    CSSValueID keyword = CSSValueInvalid;
-    switch (center.keyword()) {
-    case BasicShapeCenterCoordinate::None:
+    if (center.direction() == BasicShapeCenterCoordinate::TopLeft)
         return pool.createValue(center.length(), style);
-    case BasicShapeCenterCoordinate::Top:
-        keyword = CSSValueTop;
-        break;
-    case BasicShapeCenterCoordinate::Right:
-        keyword = CSSValueRight;
-        break;
-    case BasicShapeCenterCoordinate::Bottom:
-        keyword = CSSValueBottom;
-        break;
-    case BasicShapeCenterCoordinate::Left:
-        keyword = CSSValueLeft;
-        break;
-    }
+
+    CSSValueID keyword = orientation == HORIZONTAL ? CSSValueRight : CSSValueBottom;
 
     return pool.createValue(Pair::create(pool.createIdentifierValue(keyword), pool.createValue(center.length(), style)));
 }
@@ -112,8 +99,8 @@ PassRefPtr<CSSValue> valueForBasicShape(const RenderStyle* style, const BasicSha
         const BasicShapeCircle* circle = static_cast<const BasicShapeCircle*>(basicShape);
         RefPtr<CSSBasicShapeCircle> circleValue = CSSBasicShapeCircle::create();
 
-        circleValue->setCenterX(valueForCenterCoordinate(pool, style, circle->centerX()));
-        circleValue->setCenterY(valueForCenterCoordinate(pool, style, circle->centerY()));
+        circleValue->setCenterX(valueForCenterCoordinate(pool, style, circle->centerX(), HORIZONTAL));
+        circleValue->setCenterY(valueForCenterCoordinate(pool, style, circle->centerY(), VERTICAL));
         circleValue->setRadius(basicShapeRadiusToCSSValue(style, pool, circle->radius()));
         basicShapeValue = circleValue.release();
         break;
@@ -134,8 +121,8 @@ PassRefPtr<CSSValue> valueForBasicShape(const RenderStyle* style, const BasicSha
         const BasicShapeEllipse* ellipse = static_cast<const BasicShapeEllipse*>(basicShape);
         RefPtr<CSSBasicShapeEllipse> ellipseValue = CSSBasicShapeEllipse::create();
 
-        ellipseValue->setCenterX(valueForCenterCoordinate(pool, style, ellipse->centerX()));
-        ellipseValue->setCenterY(valueForCenterCoordinate(pool, style, ellipse->centerY()));
+        ellipseValue->setCenterX(valueForCenterCoordinate(pool, style, ellipse->centerX(), HORIZONTAL));
+        ellipseValue->setCenterY(valueForCenterCoordinate(pool, style, ellipse->centerY(), VERTICAL));
         ellipseValue->setRadiusX(basicShapeRadiusToCSSValue(style, pool, ellipse->radiusX()));
         ellipseValue->setRadiusY(basicShapeRadiusToCSSValue(style, pool, ellipse->radiusY()));
         basicShapeValue = ellipseValue.release();
@@ -201,29 +188,40 @@ static Length convertToLength(const RenderStyle* style, const RenderStyle* rootS
 
 static BasicShapeCenterCoordinate convertToCenterCoordinate(const RenderStyle* style, const RenderStyle* rootStyle, CSSPrimitiveValue* value)
 {
-    if (Pair* pair = value->getPairValue()) {
-        BasicShapeCenterCoordinate::Keyword keyword = BasicShapeCenterCoordinate::None;
-        switch (pair->first()->getValueID()) {
-        case CSSValueTop:
-            keyword = BasicShapeCenterCoordinate::Top;
-            break;
-        case CSSValueRight:
-            keyword = BasicShapeCenterCoordinate::Right;
-            break;
-        case CSSValueBottom:
-            keyword = BasicShapeCenterCoordinate::Bottom;
-            break;
-        case CSSValueLeft:
-            keyword = BasicShapeCenterCoordinate::Left;
-            break;
-        default:
-            ASSERT_NOT_REACHED();
-            break;
-        }
-        return BasicShapeCenterCoordinate(keyword, convertToLength(style, rootStyle, pair->second()));
+    BasicShapeCenterCoordinate::Direction direction;
+    Length offset = Length(0, Fixed);
+
+    CSSValueID keyword = CSSValueTop;
+    if (!value)
+        keyword = CSSValueCenter;
+    else if (value->isValueID())
+        keyword = value->getValueID();
+    else if (Pair* pair = value->getPairValue()) {
+        keyword = pair->first()->getValueID();
+        offset = convertToLength(style, rootStyle, pair->second());
+    } else
+        offset = convertToLength(style, rootStyle, value);
+
+    switch (keyword) {
+    case CSSValueTop:
+    case CSSValueLeft:
+        direction = BasicShapeCenterCoordinate::TopLeft;
+        break;
+    case CSSValueRight:
+    case CSSValueBottom:
+        direction = BasicShapeCenterCoordinate::BottomRight;
+        break;
+    case CSSValueCenter:
+        direction = BasicShapeCenterCoordinate::TopLeft;
+        offset = Length(50, Percent);
+        break;
+    default:
+        ASSERT_NOT_REACHED();
+        direction = BasicShapeCenterCoordinate::TopLeft;
+        break;
     }
 
-    return BasicShapeCenterCoordinate(convertToLength(style, rootStyle, value));
+    return BasicShapeCenterCoordinate(direction, offset);
 }
 
 static BasicShapeRadius cssValueToBasicShapeRadius(const RenderStyle* style, const RenderStyle* rootStyle, PassRefPtr<CSSPrimitiveValue> radius)
@@ -288,13 +286,8 @@ PassRefPtr<BasicShape> basicShapeForValue(const RenderStyle* style, const Render
         const CSSBasicShapeCircle* circleValue = static_cast<const CSSBasicShapeCircle *>(basicShapeValue);
         RefPtr<BasicShapeCircle> circle = BasicShapeCircle::create();
 
-        if (circleValue->centerX() && circleValue->centerY()) {
-            circle->setCenterX(convertToCenterCoordinate(style, rootStyle, circleValue->centerX()));
-            circle->setCenterY(convertToCenterCoordinate(style, rootStyle, circleValue->centerY()));
-        } else {
-            circle->setCenterX(BasicShapeCenterCoordinate(Length(50, Percent)));
-            circle->setCenterY(BasicShapeCenterCoordinate(Length(50, Percent)));
-        }
+        circle->setCenterX(convertToCenterCoordinate(style, rootStyle, circleValue->centerX()));
+        circle->setCenterY(convertToCenterCoordinate(style, rootStyle, circleValue->centerY()));
         circle->setRadius(cssValueToBasicShapeRadius(style, rootStyle, circleValue->radius()));
 
         basicShape = circle.release();
@@ -316,13 +309,9 @@ PassRefPtr<BasicShape> basicShapeForValue(const RenderStyle* style, const Render
         const CSSBasicShapeEllipse* ellipseValue = static_cast<const CSSBasicShapeEllipse *>(basicShapeValue);
         RefPtr<BasicShapeEllipse> ellipse = BasicShapeEllipse::create();
 
-        if (ellipseValue->centerX() && ellipseValue->centerY()) {
-            ellipse->setCenterX(convertToCenterCoordinate(style, rootStyle, ellipseValue->centerX()));
-            ellipse->setCenterY(convertToCenterCoordinate(style, rootStyle, ellipseValue->centerY()));
-        } else {
-            ellipse->setCenterX(BasicShapeCenterCoordinate(Length(50, Percent)));
-            ellipse->setCenterY(BasicShapeCenterCoordinate(Length(50, Percent)));
-        }
+        ellipse->setCenterX(convertToCenterCoordinate(style, rootStyle, ellipseValue->centerX()));
+        ellipse->setCenterY(convertToCenterCoordinate(style, rootStyle, ellipseValue->centerY()));
+
         ellipse->setRadiusX(cssValueToBasicShapeRadius(style, rootStyle, ellipseValue->radiusX()));
         ellipse->setRadiusY(cssValueToBasicShapeRadius(style, rootStyle, ellipseValue->radiusY()));
 
@@ -428,19 +417,9 @@ PassRefPtr<BasicShape> basicShapeForValue(const RenderStyle* style, const Render
 float floatValueForCenterCoordinate(const BasicShapeCenterCoordinate& center, float boxDimension)
 {
     float offset = floatValueForLength(center.length(), boxDimension);
-    switch (center.keyword()) {
-    case BasicShapeCenterCoordinate::None:
+    if (center.direction() == BasicShapeCenterCoordinate::TopLeft)
         return offset;
-    case BasicShapeCenterCoordinate::Top:
-    case BasicShapeCenterCoordinate::Left:
-        return offset;
-    case BasicShapeCenterCoordinate::Bottom:
-    case BasicShapeCenterCoordinate::Right:
-        return boxDimension - offset;
-    }
-
-    ASSERT_NOT_REACHED();
-    return 0;
+    return boxDimension - offset;
 }
 
 }

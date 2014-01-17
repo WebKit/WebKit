@@ -1,3 +1,46 @@
+2014-01-17  Bear Travis  <betravis@adobe.com>
+
+        [CSS Shapes] Basic shapes' computed position should be a horizontal and vertical offset
+        https://bugs.webkit.org/show_bug.cgi?id=127010
+
+        Reviewed by Rob Buis.
+
+        This patch updates the computed position values used for blending to be a horizontal
+        left offset and a vertical top offset. When positions include a center, bottom, or
+        right position offset, it is converted to the appropriate top/left coordinate as
+        a calc expression. Serialized values still use the original bottom/right directions
+        when present, and also omit the top/left keywords where possible.
+
+        Updated parsing and animation tests.
+
+        * css/BasicShapeFunctions.cpp:
+        (WebCore::valueForCenterCoordinate): Use the simplified BasicShapeCenterCoordinate,
+        which includes an offset and whether the direction is from the top/left or bottom/right.
+        (WebCore::valueForBasicShape): Ditto.
+        (WebCore::convertToCenterCoordinate): Ditto.
+        (WebCore::basicShapeForValue): Ditto.
+        (WebCore::floatValueForCenterCoordinate): Ditto.
+        * page/animation/CSSPropertyAnimation.cpp:
+        (WebCore::blendFunc): Remove the RenderBox parameter, which is no longer needed.
+        * rendering/style/BasicShapes.cpp:
+        (WebCore::BasicShapeCenterCoordinate::updateComputedLength): Calculate the computed
+        position offset for this center coordinate.
+        (WebCore::BasicShapeRectangle::blend): Remove the RenderBox parameter.
+        (WebCore::DeprecatedBasicShapeCircle::blend): Ditto.
+        (WebCore::BasicShapeCircle::blend): Ditto.
+        (WebCore::DeprecatedBasicShapeEllipse::blend): Ditto.
+        (WebCore::BasicShapeEllipse::blend): Ditto.
+        (WebCore::BasicShapePolygon::blend): Ditto.
+        (WebCore::BasicShapeInsetRectangle::blend): Ditto.
+        (WebCore::BasicShapeInset::blend): Ditto.
+        * rendering/style/BasicShapes.h:
+        (WebCore::BasicShapeCenterCoordinate::BasicShapeCenterCoordinate): Simplify
+        BasicShapeCenterCoordinate to contain an offset and a direction. Also add a
+        computed length, which is an offset from the top/left direction.
+        (WebCore::BasicShapeCenterCoordinate::direction):
+        (WebCore::BasicShapeCenterCoordinate::computedLength):
+        (WebCore::BasicShapeCenterCoordinate::blend):
+
 2014-01-17  Alexey Proskuryakov  <ap@apple.com>
 
         More non-Mac build fix.
