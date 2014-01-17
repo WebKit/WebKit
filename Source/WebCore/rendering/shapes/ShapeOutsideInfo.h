@@ -45,6 +45,7 @@ class ShapeOutsideInfo final : public ShapeInfo<RenderBox>, public MappedInfo<Re
 public:
     ShapeOutsideInfo(const RenderBox& renderer)
         : ShapeInfo<RenderBox>(renderer)
+        , m_lineOverlapsShape(false)
     {
     }
 
@@ -52,6 +53,7 @@ public:
 
     LayoutUnit leftMarginBoxDelta() const { return m_leftMarginBoxDelta; }
     LayoutUnit rightMarginBoxDelta() const { return m_rightMarginBoxDelta; }
+    bool lineOverlapsShape() const { return m_lineOverlapsShape; }
 
     void updateDeltasForContainingBlockLine(const RenderBlockFlow&, const FloatingObject&, LayoutUnit lineTop, LayoutUnit lineHeight);
 
@@ -84,6 +86,7 @@ private:
     LayoutUnit m_leftMarginBoxDelta;
     LayoutUnit m_rightMarginBoxDelta;
     LayoutUnit m_lineTop;
+    bool m_lineOverlapsShape;
 };
 
 }
