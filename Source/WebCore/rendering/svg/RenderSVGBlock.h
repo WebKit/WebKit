@@ -40,7 +40,7 @@ protected:
     virtual void willBeDestroyed() override;
 
 private:
-    void element() const WTF_DELETED_FUNCTION;
+    void element() const = delete;
 
     virtual void updateFromStyle() override final;
 

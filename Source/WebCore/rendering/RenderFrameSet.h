@@ -73,7 +73,7 @@ public:
     void notifyFrameEdgeInfoChanged();
 
 private:
-    void element() const WTF_DELETED_FUNCTION;
+    void element() const = delete;
 
     static const int noSplit = -1;
 

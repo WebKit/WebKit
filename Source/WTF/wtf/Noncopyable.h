@@ -25,7 +25,7 @@
 
 #define WTF_MAKE_NONCOPYABLE(ClassName) \
     private: \
-        ClassName(const ClassName&) WTF_DELETED_FUNCTION; \
-        ClassName& operator=(const ClassName&) WTF_DELETED_FUNCTION; \
+        ClassName(const ClassName&) = delete; \
+        ClassName& operator=(const ClassName&) = delete; \
 
 #endif // WTF_Noncopyable_h

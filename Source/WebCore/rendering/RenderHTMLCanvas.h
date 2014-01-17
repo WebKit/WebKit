@@ -41,7 +41,7 @@ public:
     void canvasSizeChanged();
 
 private:
-    void element() const WTF_DELETED_FUNCTION;
+    void element() const = delete;
     virtual bool requiresLayer() const override;
     virtual bool isCanvas() const override { return true; }
     virtual const char* renderName() const override { return "RenderHTMLCanvas"; }

@@ -59,7 +59,7 @@ public:
     virtual void setNeedsTransformUpdate() { m_needsTransformUpdate = true; }
 
 private:
-    void graphicsElement() const WTF_DELETED_FUNCTION;
+    void graphicsElement() const = delete;
     virtual const char* renderName() const override { return "RenderSVGForeignObject"; }
 
     virtual void updateLogicalWidth() override;

@@ -55,7 +55,7 @@ public:
     virtual bool shouldDisplayVideo() const;
 
 private:
-    void mediaElement() const WTF_DELETED_FUNCTION;
+    void mediaElement() const = delete;
 
     virtual void updateFromElement();
 

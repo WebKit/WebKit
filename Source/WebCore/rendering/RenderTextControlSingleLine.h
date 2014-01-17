@@ -48,7 +48,7 @@ protected:
     HTMLInputElement& inputElement() const;
 
 private:
-    void textFormControlElement() const WTF_DELETED_FUNCTION;
+    void textFormControlElement() const = delete;
 
     virtual bool hasControlClip() const override;
     virtual LayoutRect controlClipRect(const LayoutPoint&) const override;

@@ -55,7 +55,7 @@ public:
 protected:
     RenderSVGResourceGradient(SVGGradientElement&, PassRef<RenderStyle>);
 
-    void element() const WTF_DELETED_FUNCTION;
+    void element() const = delete;
 
     void addStops(GradientData*, const Vector<Gradient::ColorStop>&) const;
 

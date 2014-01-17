@@ -296,7 +296,7 @@ public:
 
 private:
     virtual bool isInlineFlowBox() const override final { return true; }
-    void boxModelObject() const WTF_DELETED_FUNCTION;
+    void boxModelObject() const = delete;
 
     void addBoxShadowVisualOverflow(LayoutRect& logicalVisualOverflow);
     void addBorderOutsetVisualOverflow(LayoutRect& logicalVisualOverflow);

@@ -1,3 +1,14 @@
+2014-01-17  Peter Molnar  <pmolnar.u-szeged@partner.samsung.com>
+
+        Remove workaround for compilers not supporting deleted functions
+        https://bugs.webkit.org/show_bug.cgi?id=127166
+
+        Reviewed by Andreas Kling.
+
+        * wtf/Compiler.h:
+        * wtf/Noncopyable.h:
+        * wtf/PassRefPtr.h:
+
 2014-01-16  Benjamin Poulain  <bpoulain@apple.com>
 
         Remove Nix from WTF

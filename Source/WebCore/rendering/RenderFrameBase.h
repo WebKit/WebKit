@@ -44,7 +44,7 @@ public:
     void layoutWithFlattening(bool fixedWidth, bool fixedHeight);
 
 private:
-    void widget() const WTF_DELETED_FUNCTION;
+    void widget() const = delete;
 };
 
 } // namespace WebCore

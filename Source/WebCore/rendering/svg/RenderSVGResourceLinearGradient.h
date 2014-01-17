@@ -47,7 +47,7 @@ public:
     FloatPoint endPoint(const LinearGradientAttributes&) const;
 
 private:
-    void gradientElement() const WTF_DELETED_FUNCTION;
+    void gradientElement() const = delete;
 
     virtual const char* renderName() const override { return "RenderSVGResourceLinearGradient"; }
 

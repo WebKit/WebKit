@@ -38,7 +38,7 @@ public:
     FrameEdgeInfo edgeInfo() const;
 
 private:
-    void frameOwnerElement() const WTF_DELETED_FUNCTION;
+    void frameOwnerElement() const = delete;
 
     virtual const char* renderName() const override { return "RenderFrame"; }
     virtual bool isFrame() const override { return true; }

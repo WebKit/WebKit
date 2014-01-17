@@ -67,7 +67,7 @@ public:
     }
 
 protected:
-    void element() const WTF_DELETED_FUNCTION;
+    void element() const = delete;
 
     virtual void updateShapeFromElement();
     virtual bool isEmpty() const override;

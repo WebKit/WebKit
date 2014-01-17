@@ -53,7 +53,7 @@ public:
     virtual void absoluteQuads(Vector<FloatQuad>&, bool* wasFixed) const override;
 
 private:
-    void node() const WTF_DELETED_FUNCTION;
+    void node() const = delete;
 
     virtual bool canHaveChildren() const override { return false; }
     virtual void paint(PaintInfo&, const LayoutPoint&) override final { }

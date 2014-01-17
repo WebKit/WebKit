@@ -177,11 +177,11 @@ protected:
     bool renderInlineAlwaysCreatesLineBoxes() const { return m_renderInlineAlwaysCreatesLineBoxes; }
 
 private:
-    void node() const WTF_DELETED_FUNCTION;
-    void nonPseudoNode() const WTF_DELETED_FUNCTION;
-    void generatingNode() const WTF_DELETED_FUNCTION;
-    void isText() const WTF_DELETED_FUNCTION;
-    void isRenderElement() const WTF_DELETED_FUNCTION;
+    void node() const = delete;
+    void nonPseudoNode() const = delete;
+    void generatingNode() const = delete;
+    void isText() const = delete;
+    void isRenderElement() const = delete;
 
     virtual RenderObject* firstChildSlow() const override final { return firstChild(); }
     virtual RenderObject* lastChildSlow() const override final { return lastChild(); }

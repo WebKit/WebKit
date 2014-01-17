@@ -57,7 +57,7 @@ public:
         static_cast<RenderSVGResourceFilter*>(filter)->primitiveAttributeChanged(this, attribute);
     }
 private:
-    void element() const WTF_DELETED_FUNCTION;
+    void element() const = delete;
 };
 
 } // namespace WebCore

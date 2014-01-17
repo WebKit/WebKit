@@ -47,7 +47,7 @@ public:
     virtual void paint(PaintInfo&, const LayoutPoint&) override;
 
 private:
-    void element() const WTF_DELETED_FUNCTION;
+    void element() const = delete;
 
     virtual bool isSVGViewportContainer() const { return true; }
     virtual const char* renderName() const { return "RenderSVGViewportContainer"; }

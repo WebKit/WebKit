@@ -182,7 +182,7 @@ private:
             | (expansion() && nextLeafChild() ? TextRun::AllowTrailingExpansion : TextRun::ForbidTrailingExpansion);
     }
 
-    void behavesLikeText() const WTF_DELETED_FUNCTION;
+    void behavesLikeText() const = delete;
 
     InlineTextBox* m_prevTextBox; // The previous box that also uses our RenderObject
     InlineTextBox* m_nextTextBox; // The next box that also uses our RenderObject

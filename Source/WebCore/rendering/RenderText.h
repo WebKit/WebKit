@@ -185,7 +185,7 @@ private:
 
     void secureText(UChar mask);
 
-    void node() const WTF_DELETED_FUNCTION;
+    void node() const = delete;
 
     // We put the bitfield first to minimize padding on 64-bit.
     bool m_hasBreakableChar : 1; // Whether or not we can be broken into multiple lines.

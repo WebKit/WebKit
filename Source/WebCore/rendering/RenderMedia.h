@@ -45,7 +45,7 @@ protected:
     virtual void layout();
 
 private:
-    void element() const WTF_DELETED_FUNCTION;
+    void element() const = delete;
 
     virtual bool canHaveChildren() const override final { return true; }
 

@@ -284,8 +284,8 @@ private:
     unsigned parseRowSpanFromDOM() const;
     unsigned parseColSpanFromDOM() const;
 
-    void nextSibling() const WTF_DELETED_FUNCTION;
-    void previousSibling() const WTF_DELETED_FUNCTION;
+    void nextSibling() const = delete;
+    void previousSibling() const = delete;
 
     // Note MSVC will only pack members if they have identical types, hence we use unsigned instead of bool here.
     unsigned m_column : 29;

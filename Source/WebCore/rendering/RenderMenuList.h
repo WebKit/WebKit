@@ -61,7 +61,7 @@ public:
     String text() const;
 
 private:
-    void element() const WTF_DELETED_FUNCTION;
+    void element() const = delete;
 
     virtual bool isMenuList() const override { return true; }
 

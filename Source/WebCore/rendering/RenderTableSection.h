@@ -279,8 +279,8 @@ private:
 
     void setLogicalPositionForCell(RenderTableCell*, unsigned effectiveColumn) const;
 
-    void firstChild() const WTF_DELETED_FUNCTION;
-    void lastChild() const WTF_DELETED_FUNCTION;
+    void firstChild() const = delete;
+    void lastChild() const = delete;
 
     Vector<RowStruct> m_grid;
     Vector<int> m_rowPos;

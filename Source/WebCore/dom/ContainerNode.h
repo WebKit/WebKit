@@ -169,7 +169,7 @@ private:
 
     void updateTreeAfterInsertion(Node& child);
 
-    bool isContainerNode() const WTF_DELETED_FUNCTION;
+    bool isContainerNode() const = delete;
 
     Node* m_firstChild;
     Node* m_lastChild;

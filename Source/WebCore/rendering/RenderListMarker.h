@@ -46,7 +46,7 @@ public:
     void updateMarginsAndContent();
 
 private:
-    void element() const WTF_DELETED_FUNCTION;
+    void element() const = delete;
 
     virtual const char* renderName() const override { return "RenderListMarker"; }
     virtual void computePreferredLogicalWidths() override;

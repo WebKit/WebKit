@@ -42,7 +42,7 @@ public:
     SVGRectElement& rectElement() const;
 
 private:
-    void graphicsElement() const WTF_DELETED_FUNCTION;
+    void graphicsElement() const = delete;
 
     virtual const char* renderName() const { return "RenderSVGRect"; }
 

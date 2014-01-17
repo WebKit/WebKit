@@ -54,7 +54,7 @@ public:
     void paintForeground(PaintInfo&);
 
 private:
-    void element() const WTF_DELETED_FUNCTION;
+    void element() const = delete;
 
     virtual const char* renderName() const { return "RenderSVGImage"; }
     virtual bool isSVGImage() const override { return true; }

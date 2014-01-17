@@ -42,7 +42,7 @@ public:
     bool isSeamless() const;
 
 private:
-    void frameOwnerElement() const WTF_DELETED_FUNCTION;
+    void frameOwnerElement() const = delete;
 
     virtual LayoutUnit minPreferredLogicalWidth() const override;
     virtual LayoutUnit maxPreferredLogicalWidth() const override;

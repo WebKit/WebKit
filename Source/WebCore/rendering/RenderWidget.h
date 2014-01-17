@@ -89,7 +89,7 @@ protected:
 #endif
 
 private:
-    void element() const WTF_DELETED_FUNCTION;
+    void element() const = delete;
 
     virtual bool isWidget() const override final { return true; }
 

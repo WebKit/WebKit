@@ -88,7 +88,7 @@ public:
 
     FloatRect drawingRegion(RenderObject*) const;
 private:
-    void element() const WTF_DELETED_FUNCTION;
+    void element() const = delete;
 
     virtual const char* renderName() const override { return "RenderSVGResourceFilter"; }
     virtual bool isSVGResourceFilter() const override { return true; }

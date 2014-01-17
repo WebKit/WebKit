@@ -56,7 +56,7 @@ public:
     static RenderSVGResourceType s_resourceType;
 
 private:
-    void element() const WTF_DELETED_FUNCTION;
+    void element() const = delete;
     virtual const char* renderName() const override { return "RenderSVGResourcePattern"; }
 
     bool buildTileImageTransform(RenderObject*, const PatternAttributes&, const SVGPatternElement&, FloatRect& patternBoundaries, AffineTransform& tileImageTransform) const;

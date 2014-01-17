@@ -36,7 +36,7 @@ public:
     HTMLTextAreaElement& textAreaElement() const;
 
 private:
-    void element() const WTF_DELETED_FUNCTION;
+    void element() const = delete;
 
     virtual bool isTextArea() const { return true; }
 

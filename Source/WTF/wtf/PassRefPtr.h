@@ -70,7 +70,7 @@ namespace WTF {
         friend PassRefPtr adoptRef<T>(T*);
 
     private:
-        PassRefPtr& operator=(const PassRefPtr&) WTF_DELETED_FUNCTION;
+        PassRefPtr& operator=(const PassRefPtr&) = delete;
 
         enum AdoptTag { Adopt };
         PassRefPtr(T* ptr, AdoptTag) : m_ptr(ptr) { }

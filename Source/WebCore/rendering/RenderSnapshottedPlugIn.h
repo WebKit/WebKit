@@ -46,7 +46,7 @@ public:
     void handleEvent(Event*);
 
 private:
-    void frameOwnerElement() const WTF_DELETED_FUNCTION;
+    void frameOwnerElement() const = delete;
     virtual const char* renderName() const { return "RenderSnapshottedPlugIn"; }
 
     virtual CursorDirective getCursor(const LayoutPoint&, Cursor&) const override final;

@@ -42,7 +42,7 @@ public:
     HTMLInputElement& inputElement() const;
     
 private:
-    void element() const WTF_DELETED_FUNCTION;
+    void element() const = delete;
 
     virtual bool isFileUploadControl() const override { return true; }
 

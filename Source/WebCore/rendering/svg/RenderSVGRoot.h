@@ -69,7 +69,7 @@ public:
     void setHasSVGShadow(bool hasShadow) { m_hasSVGShadow = hasShadow; }
 
 private:
-    void element() const WTF_DELETED_FUNCTION;
+    void element() const = delete;
 
     virtual bool isSVGRoot() const override { return true; }
     virtual const char* renderName() const override { return "RenderSVGRoot"; }

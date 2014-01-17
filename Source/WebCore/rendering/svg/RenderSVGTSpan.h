@@ -37,7 +37,7 @@ public:
     SVGTextPositioningElement& textPositioningElement() const { return static_cast<SVGTextPositioningElement&>(RenderSVGInline::graphicsElement()); }
 
 private:
-    void graphicsElement() const WTF_DELETED_FUNCTION;
+    void graphicsElement() const = delete;
     virtual const char* renderName() const { return "RenderSVGTSpan"; }
 };
 }

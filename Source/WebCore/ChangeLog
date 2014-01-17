@@ -1,3 +1,64 @@
+2014-01-17  Peter Molnar  <pmolnar.u-szeged@partner.samsung.com>
+
+        Remove workaround for compilers not supporting deleted functions
+        https://bugs.webkit.org/show_bug.cgi?id=127166
+
+        Reviewed by Andreas Kling.
+
+        * bindings/js/JSLazyEventListener.h:
+        * dom/ContainerNode.h:
+        * dom/Document.h:
+        * dom/Element.h:
+        * rendering/InlineFlowBox.h:
+        * rendering/InlineTextBox.h:
+        * rendering/RenderButton.h:
+        * rendering/RenderCombineText.h:
+        * rendering/RenderElement.h:
+        * rendering/RenderFieldset.h:
+        * rendering/RenderFileUploadControl.h:
+        * rendering/RenderFrame.h:
+        * rendering/RenderFrameBase.h:
+        * rendering/RenderFrameSet.h:
+        * rendering/RenderHTMLCanvas.h:
+        * rendering/RenderIFrame.h:
+        * rendering/RenderLineBreak.h:
+        * rendering/RenderListBox.h:
+        * rendering/RenderListMarker.h:
+        * rendering/RenderMedia.h:
+        * rendering/RenderMenuList.h:
+        * rendering/RenderSnapshottedPlugIn.h:
+        * rendering/RenderTableCell.h:
+        * rendering/RenderTableRow.h:
+        * rendering/RenderTableSection.h:
+        * rendering/RenderText.h:
+        * rendering/RenderTextControl.h:
+        * rendering/RenderTextControlMultiLine.h:
+        * rendering/RenderTextControlSingleLine.h:
+        * rendering/RenderVideo.h:
+        * rendering/RenderWidget.h:
+        * rendering/svg/RenderSVGBlock.h:
+        * rendering/svg/RenderSVGForeignObject.h:
+        * rendering/svg/RenderSVGImage.h:
+        * rendering/svg/RenderSVGInline.h:
+        * rendering/svg/RenderSVGRect.h:
+        * rendering/svg/RenderSVGResourceClipper.h:
+        * rendering/svg/RenderSVGResourceFilter.h:
+        * rendering/svg/RenderSVGResourceFilterPrimitive.h:
+        * rendering/svg/RenderSVGResourceGradient.h:
+        * rendering/svg/RenderSVGResourceLinearGradient.h:
+        * rendering/svg/RenderSVGResourceMarker.h:
+        * rendering/svg/RenderSVGResourceMasker.h:
+        * rendering/svg/RenderSVGResourcePattern.h:
+        * rendering/svg/RenderSVGResourceRadialGradient.h:
+        * rendering/svg/RenderSVGRoot.h:
+        * rendering/svg/RenderSVGShape.h:
+        * rendering/svg/RenderSVGTSpan.h:
+        * rendering/svg/RenderSVGText.h:
+        * rendering/svg/RenderSVGTextPath.h:
+        * rendering/svg/RenderSVGTransformableContainer.h:
+        * rendering/svg/RenderSVGViewportContainer.h:
+        * xml/XPathValue.h:
+
 2014-01-17  Zan Dobersek  <zdobersek@igalia.com>
 
         [ATK] Modernize the for loops in ATK AX code

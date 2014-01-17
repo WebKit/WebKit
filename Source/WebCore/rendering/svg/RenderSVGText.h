@@ -60,7 +60,7 @@ public:
     void subtreeTextDidChange(RenderSVGInlineText*);
 
 private:
-    void graphicsElement() const WTF_DELETED_FUNCTION;
+    void graphicsElement() const = delete;
 
     virtual const char* renderName() const { return "RenderSVGText"; }
     virtual bool isSVGText() const { return true; }

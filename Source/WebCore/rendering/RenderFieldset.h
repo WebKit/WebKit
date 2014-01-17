@@ -41,7 +41,7 @@ public:
     HTMLFieldSetElement& fieldSetElement() const { return toHTMLFieldSetElement(nodeForNonAnonymous()); }
 
 private:
-    void element() const WTF_DELETED_FUNCTION;
+    void element() const = delete;
 
     virtual const char* renderName() const override { return "RenderFieldSet"; }
     virtual bool isFieldset() const override { return true; }

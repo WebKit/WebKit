@@ -72,7 +72,7 @@ protected:
     virtual RenderObject* layoutSpecialExcludedChild(bool relayoutChildren) override;
 
 private:
-    void element() const WTF_DELETED_FUNCTION;
+    void element() const = delete;
 
     virtual const char* renderName() const override { return "RenderTextControl"; }
     virtual bool isTextControl() const override final { return true; }

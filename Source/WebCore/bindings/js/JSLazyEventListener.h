@@ -43,7 +43,7 @@ namespace WebCore {
         virtual JSC::JSObject* initializeJSFunction(ScriptExecutionContext*) const override;
         virtual bool wasCreatedFromMarkup() const override { return true; }
 
-        static void create() WTF_DELETED_FUNCTION;
+        static void create() = delete;
 
         mutable String m_functionName;
         mutable String m_eventParameterName;

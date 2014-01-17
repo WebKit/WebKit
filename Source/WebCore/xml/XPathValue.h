@@ -65,7 +65,7 @@ namespace WebCore {
 
         private:
             // This constructor creates ambiguity so that we don't accidentally call the boolean overload for pointer types.
-            Value(void*) WTF_DELETED_FUNCTION;
+            Value(void*) = delete;
 
             struct Data : public RefCounted<Data> {
                 static PassRefPtr<Data> create() { return adoptRef(new Data); }

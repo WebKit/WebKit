@@ -38,7 +38,7 @@ public:
     bool stretchMethod() const;
 
 private:
-    void graphicsElement() const WTF_DELETED_FUNCTION;
+    void graphicsElement() const = delete;
 
     virtual bool isSVGTextPath() const override { return true; }
     virtual const char* renderName() const override { return "RenderSVGTextPath"; }

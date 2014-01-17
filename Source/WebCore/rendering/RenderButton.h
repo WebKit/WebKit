@@ -62,7 +62,7 @@ public:
 #endif
 
 private:
-    void element() const WTF_DELETED_FUNCTION;
+    void element() const = delete;
 
     virtual const char* renderName() const override { return "RenderButton"; }
     virtual bool isRenderButton() const override { return true; }

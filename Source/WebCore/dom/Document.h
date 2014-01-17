@@ -1235,8 +1235,8 @@ private:
 
     void commonTeardown();
 
-    RenderObject* renderer() const WTF_DELETED_FUNCTION;
-    void setRenderer(RenderObject*) WTF_DELETED_FUNCTION;
+    RenderObject* renderer() const = delete;
+    void setRenderer(RenderObject*) = delete;
 
     void createRenderTree();
     void detachParser();

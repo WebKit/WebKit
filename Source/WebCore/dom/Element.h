@@ -674,7 +674,7 @@ private:
     bool isJavaScriptURLAttribute(const Attribute&) const;
 
     // Anyone thinking of using this should call document instead of ownerDocument.
-    void ownerDocument() const WTF_DELETED_FUNCTION;
+    void ownerDocument() const = delete;
 
     QualifiedName m_tagName;
     RefPtr<ElementData> m_elementData;
