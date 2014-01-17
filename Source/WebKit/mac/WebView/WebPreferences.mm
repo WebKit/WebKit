@@ -49,6 +49,10 @@
 #import <wtf/RetainPtr.h>
 #import <wtf/RunLoop.h>
 
+enum {
+    NSHTTPCookieAcceptPolicyExclusivelyFromMainDocumentDomain = 3
+};
+
 using namespace WebCore;
 
 #if PLATFORM(IOS)
@@ -2312,6 +2316,8 @@ static NSString *classIBCreatorID = nil;
 
 - (void)_synchronizeWebStoragePolicyWithCookiePolicy
 {
+    // FIXME: This should be done in clients, WebKit shouldn't be making such policy decisions.
+
     NSHTTPCookieAcceptPolicy cookieAcceptPolicy = [[NSHTTPCookieStorage sharedHTTPCookieStorage] cookieAcceptPolicy];
     WebStorageBlockingPolicy storageBlockingPolicy;
     switch (cookieAcceptPolicy) {
@@ -2319,6 +2325,7 @@ static NSString *classIBCreatorID = nil;
         storageBlockingPolicy = WebAllowAllStorage;
         break;
     case NSHTTPCookieAcceptPolicyOnlyFromMainDocumentDomain:
+    case NSHTTPCookieAcceptPolicyExclusivelyFromMainDocumentDomain:
         storageBlockingPolicy = WebBlockThirdPartyStorage;
         break;
     case NSHTTPCookieAcceptPolicyNever:

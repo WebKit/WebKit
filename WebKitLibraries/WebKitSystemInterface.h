@@ -172,7 +172,7 @@ bool WKGetVerticalGlyphsForCharacters(CTFontRef, const UniChar[], CGGlyph[], siz
 
 CTLineRef WKCreateCTLineWithUniCharProvider(const UniChar* (*provide)(CFIndex stringIndex, CFIndex* charCount, CFDictionaryRef* attributes, void*), void (*dispose)(const UniChar* chars, void*), void*);
 
-#if MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
+#if TARGET_OS_IPHONE || MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
 enum {
     WKCTFontTransformApplyShaping = (1 << 0),
     WKCTFontTransformApplyPositioning = (1 << 1)
@@ -181,13 +181,13 @@ enum {
 typedef int WKCTFontTransformOptions;
 
 bool WKCTFontTransformGlyphs(CTFontRef font, CGGlyph glyphs[], CGSize advances[], CFIndex count, WKCTFontTransformOptions options);
-#endif
+#endif // TARGET_OS_IPHONE || MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
 
 CTTypesetterRef WKCreateCTTypesetterWithUniCharProviderAndOptions(const UniChar* (*provide)(CFIndex stringIndex, CFIndex* charCount, CFDictionaryRef* attributes, void*), void (*dispose)(const UniChar* chars, void*), void*, CFDictionaryRef options);
 
 CGSize WKCTRunGetInitialAdvance(CTRunRef);
 
-#if !TARGET_IPHONE_SIMULATOR
+#if (TARGET_OS_IPHONE && TARGET_OS_EMBEDDED) || MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
 CGContextRef WKIOSurfaceContextCreate(IOSurfaceRef, unsigned width, unsigned height, CGColorSpaceRef);
 CGImageRef WKIOSurfaceContextCreateImage(CGContextRef context);
 #endif
@@ -275,7 +275,7 @@ CFHTTPCookieStorageRef WKCopyHTTPCookieStorage(CFURLStorageSessionRef);
 unsigned WKGetHTTPCookieAcceptPolicy(CFHTTPCookieStorageRef);
 void WKSetHTTPCookieAcceptPolicy(CFHTTPCookieStorageRef, unsigned policy);
 NSArray *WKHTTPCookies(CFHTTPCookieStorageRef);
-NSArray *WKHTTPCookiesForURL(CFHTTPCookieStorageRef, NSURL *);
+NSArray *WKHTTPCookiesForURL(CFHTTPCookieStorageRef, NSURL *, NSURL *);
 void WKSetHTTPCookiesForURL(CFHTTPCookieStorageRef, NSArray *, NSURL *, NSURL *);
 void WKDeleteAllHTTPCookies(CFHTTPCookieStorageRef);
 void WKDeleteHTTPCookie(CFHTTPCookieStorageRef, NSHTTPCookie *);
@@ -535,7 +535,7 @@ bool WKEnableWindowOcclusionNotifications(NSInteger windowID, bool *outCurrentOc
 
 void WKCFNetworkSetOverrideSystemProxySettings(CFDictionaryRef);
 
-#if MAC_OS_X_VERSION_MIN_REQUIRED >= 1080
+#if TARGET_OS_IPHONE || MAC_OS_X_VERSION_MIN_REQUIRED >= 1080
 bool WKIsPublicSuffix(NSString *domain);
 
 CFArrayRef WKCFURLCacheCopyAllHostNamesInPersistentStoreForPartition(CFStringRef partition);

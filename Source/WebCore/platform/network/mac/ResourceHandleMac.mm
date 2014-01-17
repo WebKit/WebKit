@@ -386,7 +386,6 @@ void ResourceHandle::platformLoadResourceSynchronously(NetworkingContext* contex
     handle->createNSURLConnection(
         handle->delegate(), // A synchronous request cannot turn into a download, so there is no need to proxy the delegate.
         storedCredentials == AllowStoredCredentials,
-        shouldRelaxThirdPartyCookiePolicy(context, request.url()),
         handle->shouldContentSniff() || (context && context->localFileContentSniffingEnabled()),
         SchedulingBehavior::Synchronous,
         (NSDictionary *)handle->client()->connectionProperties(handle.get()));

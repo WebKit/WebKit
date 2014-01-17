@@ -32,6 +32,7 @@ enum {
     HTTPCookieAcceptPolicyAlways = 0,
     HTTPCookieAcceptPolicyNever = 1,
     HTTPCookieAcceptPolicyOnlyFromMainDocumentDomain = 2,
+    HTTPCookieAcceptPolicyExclusivelyFromMainDocumentDomain = 3,
 };
 typedef unsigned HTTPCookieAcceptPolicy;
 

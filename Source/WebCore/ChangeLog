@@ -1,3 +1,37 @@
+2014-01-16  Alexey Proskuryakov  <ap@apple.com>
+
+        [Mac] [iOS] Add support for CFHTTPCookieStorageAcceptPolicyExclusivelyFromMainDocumentDomain
+        https://bugs.webkit.org/show_bug.cgi?id=127139
+
+        Reviewed by Brady Eidson.
+
+        * platform/ios/WebCoreSystemInterfaceIOS.mm:
+        * platform/mac/WebCoreSystemInterface.h:
+        * platform/mac/WebCoreSystemInterface.mm:
+        Pass first party URL down, because reading cookies depends on it when this policy
+        in in action.
+
+        * platform/network/cf/CookieJarCFNet.cpp:
+        (WebCore::copyCookiesForURLWithFirstPartyURL):
+        (WebCore::cookiesForDOM):
+        (WebCore::cookieRequestHeaderFieldValue):
+        (WebCore::cookiesEnabled):
+        (WebCore::getRawCookies):
+        Use a new CFNetwork API that takes first party URL.
+
+        * platform/network/mac/CookieJarMac.mm:
+        (WebCore::cookiesForDOM):
+        (WebCore::cookieRequestHeaderFieldValue):
+        (WebCore::cookiesEnabled):
+        (WebCore::getRawCookies):
+        (WebCore::deleteCookie):
+        Pass first party URL (and null in deleteCookie, as there is none).
+
+        * platform/network/mac/ResourceHandleMac.mm:
+        (WebCore::ResourceHandle::platformLoadResourceSynchronously):
+        Removed a call to shouldRelaxThirdPartyCookiePolicy(), which no longer exists
+        in trunk.
+
 2014-01-16  Andy Estes  <aestes@apple.com>
 
         Fix the iOS build after r162150.

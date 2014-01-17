@@ -1,3 +1,17 @@
+2014-01-16  Alexey Proskuryakov  <ap@apple.com>
+
+        [Mac] [iOS] Add support for CFHTTPCookieStorageAcceptPolicyExclusivelyFromMainDocumentDomain
+        https://bugs.webkit.org/show_bug.cgi?id=127139
+
+        Reviewed by Brady Eidson.
+
+        * Shared/HTTPCookieAcceptPolicy.h:
+        * UIProcess/API/C/WKAPICast.h:
+        (WebKit::toHTTPCookieAcceptPolicy):
+        (WebKit::toAPI):
+        * UIProcess/API/C/WKCookieManager.h:
+        Added the policy to appropriate switches and enums.
+
 2014-01-16  Jeffrey Pfau  <jpfau@apple.com>
 
         Fix build after r162161. One FINAL was still present.

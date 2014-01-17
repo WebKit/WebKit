@@ -35,7 +35,8 @@ extern "C" {
 enum {
     kWKHTTPCookieAcceptPolicyAlways = 0,
     kWKHTTPCookieAcceptPolicyNever = 1,
-    kWKHTTPCookieAcceptPolicyOnlyFromMainDocumentDomain = 2
+    kWKHTTPCookieAcceptPolicyOnlyFromMainDocumentDomain = 2,
+    kWKHTTPCookieAcceptPolicyExclusivelyFromMainDocumentDomain = 3
 };
 typedef uint32_t WKHTTPCookieAcceptPolicy;
 
