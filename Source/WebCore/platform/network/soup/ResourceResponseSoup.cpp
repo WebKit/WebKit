@@ -29,8 +29,6 @@
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/WTFString.h>
 
-using namespace std;
-
 namespace WebCore {
 
 SoupMessage* ResourceResponse::toSoupMessage() const

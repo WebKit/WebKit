@@ -28,8 +28,6 @@
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
 
-using namespace std;
-
 namespace WebCore {
 
 void ResourceRequest::updateSoupMessageMembers(SoupMessage* soupMessage) const
