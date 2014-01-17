@@ -256,9 +256,6 @@ EwkView::EwkView(WKViewRef view, Evas_Object* evasObject)
     , m_evasObject(evasObject)
     , m_context(EwkContext::findOrCreateWrapper(WKPageGetContext(wkPage())))
     , m_pageGroup(EwkPageGroup::findOrCreateWrapper(WKPageGetPageGroup(wkPage())))
-#if USE(ACCELERATED_COMPOSITING)
-    , m_pendingSurfaceResize(false)
-#endif
     , m_pageLoadClient(std::make_unique<PageLoadClientEfl>(this))
     , m_pagePolicyClient(std::make_unique<PagePolicyClientEfl>(this))
     , m_pageUIClient(std::make_unique<PageUIClientEfl>(this))
@@ -300,6 +297,8 @@ EwkView::EwkView(WKViewRef view, Evas_Object* evasObject)
         WARN("Failed to create Evas_GL, falling back to software mode.");
         m_isAccelerated = false;
     }
+
+    m_pendingSurfaceResize = m_isAccelerated;
 #endif
     WKViewInitialize(wkView());
 
@@ -1218,7 +1217,9 @@ void EwkView::handleEvasObjectShow(Evas_Object* evasObject)
     Ewk_View_Smart_Data* smartData = toSmartData(evasObject);
     ASSERT(smartData);
 
-    if (!toEwkView(smartData)->m_isAccelerated)
+#if USE(ACCELERATED_COMPOSITING)
+    if (!toEwkView(smartData)->m_pendingSurfaceResize)
+#endif
         showEvasObjectsIfNeeded(smartData);
 }
 

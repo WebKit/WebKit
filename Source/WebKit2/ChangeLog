@@ -1,3 +1,21 @@
+2014-01-16  Eunmi Lee  <eunmi15.lee@samsung.com>
+
+        [EFL][WK2] EwkView can not be shown without re-sizing once it is hidden.
+        https://bugs.webkit.org/show_bug.cgi?id=127084
+
+        Reviewed by Gyuyoung Kim.
+
+        Visibility of EwkView can not be controlled by evas_object_show/hide
+        because EwkView can be shown only if re-sizing is requested, so modify
+        codes to show EwkView directly if we do not wait for re-sizing.
+        Additionally, we have to set default value of m_pendingSurfaceResize
+        to true for accelerated mode to prevent to show black empty view for
+        the first request to show.
+
+        * UIProcess/API/efl/EwkView.cpp:
+        (EwkView::EwkView):
+        (EwkView::handleEvasObjectShow):
+
 2014-01-16  Andy Estes  <aestes@apple.com>
 
         Build Fix: Use standard architectures when building for iOS
