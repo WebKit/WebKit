@@ -1523,7 +1523,7 @@ void GraphicsContext::drawLinesForText(const FloatPoint& point, const DashArray&
     Color color(strokeColor());
     
     bool shouldAntialiasLine;
-    FloatRect rect = computeLineBoundsAndAntialiasingModeForText(*this, point, width, printing, shouldAntialiasLine, color);
+    FloatRect rect = computeLineBoundsAndAntialiasingModeForText(*this, point, widths.last(), printing, shouldAntialiasLine, color);
     
     Vector<CGRect, 4> dashBounds;
     ASSERT(!(widths.size() % 2));

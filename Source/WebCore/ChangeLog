@@ -1,3 +1,10 @@
+2014-01-16  Andy Estes  <aestes@apple.com>
+
+        Fix the iOS build after r162150.
+
+        * platform/graphics/cg/GraphicsContextCG.cpp:
+        (WebCore::GraphicsContext::platformInit):
+
 2014-01-16  Dean Jackson  <dino@apple.com>
 
         glReadPixels should use UNSIGNED_BYTE on iOS
