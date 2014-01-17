@@ -61,7 +61,6 @@ class TestRunner:
     TEST_DIRS = [ "WebKit2Gtk", "WebKitGtk", "WebKit2", "JavaScriptCore", "WTF", "WebCore",  "WebCoreGtk" ]
 
     SKIPPED = [
-        SkippedTest("WebKitGtk/testdownload", "/webkit/download/not-found", "Test fails in GTK Linux 64-bit Release bot", 82329),
         SkippedTest("WebKitGtk/testwebinspector", "/webkit/webinspector/close-and-inspect", "Test is flaky in GTK Linux 32-bit Release bot", 82869),
         SkippedTest("WebKitGtk/testwebresource", "/webkit/webresource/loading", "Test fails", 104689),
         SkippedTest("WebKitGtk/testwebresource", "/webkit/webresource/sub_resource_loading", "Test fails in GTK Linux 64-bit Release bot", 82330),
