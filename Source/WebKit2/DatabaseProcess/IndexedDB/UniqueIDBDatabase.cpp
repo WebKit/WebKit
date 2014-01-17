@@ -321,6 +321,11 @@ void UniqueIDBDatabase::didCreateObjectStore(uint64_t requestID, bool success)
     didCompleteBoolRequest(requestID, success);
 }
 
+void UniqueIDBDatabase::didDeleteObjectStore(uint64_t requestID, bool success)
+{
+    didCompleteBoolRequest(requestID, success);
+}
+
 void UniqueIDBDatabase::didCompleteBoolRequest(uint64_t requestID, bool success)
 {
     RefPtr<AsyncRequest> request = m_pendingDatabaseTasks.take(requestID);
@@ -355,6 +360,33 @@ void UniqueIDBDatabase::createObjectStore(const IDBTransactionIdentifier& identi
     m_pendingDatabaseTasks.add(requestID, request.release());
 
     postDatabaseTask(createAsyncTask(*this, &UniqueIDBDatabase::createObjectStoreInBackingStore, requestID, identifier, metadata));
+}
+
+void UniqueIDBDatabase::deleteObjectStore(const IDBTransactionIdentifier& identifier, int64_t objectStoreID, std::function<void(bool)> successCallback)
+{
+    ASSERT(isMainThread());
+
+    if (!m_acceptingNewRequests) {
+        successCallback(false);
+        return;
+    }
+
+    ASSERT(m_metadata->objectStores.contains(objectStoreID));
+    IDBObjectStoreMetadata metadata = m_metadata->objectStores.take(objectStoreID);
+
+    RefPtr<AsyncRequest> request = AsyncRequestImpl<bool>::create([this, metadata, successCallback](bool success) {
+        if (!success)
+            m_metadata->objectStores.set(metadata.id, metadata);
+        successCallback(success);
+    }, [this, metadata, successCallback]() {
+        m_metadata->objectStores.set(metadata.id, metadata);
+        successCallback(false);
+    });
+
+    uint64_t requestID = request->requestID();
+    m_pendingDatabaseTasks.add(requestID, request.release());
+
+    postDatabaseTask(createAsyncTask(*this, &UniqueIDBDatabase::deleteObjectStoreInBackingStore, requestID, identifier, objectStoreID));
 }
 
 void UniqueIDBDatabase::openBackingStoreTransaction(const IDBTransactionIdentifier& identifier, const Vector<int64_t>& objectStoreIDs, WebCore::IndexedDB::TransactionMode mode)
@@ -425,6 +457,16 @@ void UniqueIDBDatabase::createObjectStoreInBackingStore(uint64_t requestID, cons
     bool success = m_backingStore->createObjectStore(identifier, metadata);
 
     postMainThreadTask(createAsyncTask(*this, &UniqueIDBDatabase::didCreateObjectStore, requestID, success));
+}
+
+void UniqueIDBDatabase::deleteObjectStoreInBackingStore(uint64_t requestID, const IDBTransactionIdentifier& identifier, int64_t objectStoreID)
+{
+    ASSERT(!isMainThread());
+    ASSERT(m_backingStore);
+
+    bool success = m_backingStore->deleteObjectStore(identifier, objectStoreID);
+
+    postMainThreadTask(createAsyncTask(*this, &UniqueIDBDatabase::didDeleteObjectStore, requestID, success));
 }
 
 String UniqueIDBDatabase::absoluteDatabaseDirectory() const

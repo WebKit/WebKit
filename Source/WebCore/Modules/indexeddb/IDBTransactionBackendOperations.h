@@ -65,6 +65,7 @@ public:
     }
     virtual void perform(std::function<void()> successCallback) override final;
 
+    IDBTransactionBackend* transaction() const { return m_transaction.get(); }
     const IDBObjectStoreMetadata& objectStoreMetadata() const { return m_objectStoreMetadata; }
 
 private:

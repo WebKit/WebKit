@@ -166,6 +166,17 @@ void DatabaseProcessIDBConnection::createObjectStore(uint64_t requestID, int64_t
     });
 }
 
+void DatabaseProcessIDBConnection::deleteObjectStore(uint64_t requestID, int64_t transactionID, int64_t objectStoreID)
+{
+    ASSERT(m_uniqueIDBDatabase);
+
+    LOG(IDB, "DatabaseProcess deleteObjectStore request ID %llu, object store id %lli", requestID, objectStoreID);
+    RefPtr<DatabaseProcessIDBConnection> connection(this);
+    m_uniqueIDBDatabase->deleteObjectStore(IDBTransactionIdentifier(*this, transactionID), objectStoreID, [connection, requestID](bool success) {
+        connection->send(Messages::WebIDBServerConnection::DidDeleteObjectStore(requestID, success));
+    });
+}
+
 IPC::Connection* DatabaseProcessIDBConnection::messageSenderConnection()
 {
     return m_connection->connection();

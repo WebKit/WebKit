@@ -34,6 +34,7 @@ messages -> DatabaseProcessIDBConnection LegacyReceiver {
     
     ChangeDatabaseVersion(uint64_t requestID, int64_t transactionID, uint64_t newVersion)
     CreateObjectStore(uint64_t requestID, int64_t transactionID, WebCore::IDBObjectStoreMetadata objectStoreMetadata)
+    DeleteObjectStore(uint64_t requestID, int64_t transactionID, int64_t objectStoreID)
 }
 
 #endif // ENABLE(INDEXED_DATABASE) && ENABLE(DATABASE_PROCESS)

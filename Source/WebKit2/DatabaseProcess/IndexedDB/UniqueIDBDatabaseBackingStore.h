@@ -54,6 +54,7 @@ public:
 
     virtual bool changeDatabaseVersion(const IDBTransactionIdentifier&, uint64_t newVersion) = 0;
     virtual bool createObjectStore(const IDBTransactionIdentifier&, const WebCore::IDBObjectStoreMetadata&) = 0;
+    virtual bool deleteObjectStore(const IDBTransactionIdentifier&, int64_t objectStoreID) = 0;
 };
 
 } // namespace WebKit

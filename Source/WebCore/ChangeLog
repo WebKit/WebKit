@@ -1,3 +1,13 @@
+2014-01-16  Brady Eidson  <beidson@apple.com>
+
+        IDB: delete object store support
+        <rdar://problem/15779641> and https://bugs.webkit.org/show_bug.cgi?id=127123
+
+        Reviewed by Alexey Proskuryakov.
+
+        * Modules/indexeddb/IDBTransactionBackendOperations.h:
+        (WebCore::DeleteObjectStoreOperation::transaction):
+
 2014-01-16  Alexey Proskuryakov  <ap@apple.com>
 
         More non-Mac build fix.

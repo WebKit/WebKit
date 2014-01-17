@@ -62,6 +62,7 @@ public:
 
     virtual bool changeDatabaseVersion(const IDBTransactionIdentifier&, uint64_t newVersion) override;
     virtual bool createObjectStore(const IDBTransactionIdentifier&, const WebCore::IDBObjectStoreMetadata&) override;
+    virtual bool deleteObjectStore(const IDBTransactionIdentifier&, int64_t objectStoreID) override;
 
 private:
     UniqueIDBDatabaseBackingStoreSQLite(const UniqueIDBDatabaseIdentifier&, const String& databaseDirectory);

@@ -325,7 +325,7 @@ bool UniqueIDBDatabaseBackingStoreSQLite::changeDatabaseVersion(const IDBTransac
 
     SQLiteIDBTransaction* transaction = m_transactions.get(identifier);
     if (!transaction || !transaction->inProgress()) {
-        LOG_ERROR("Attempt to change database version with an establish, in-progress transaction");
+        LOG_ERROR("Attempt to change database version with an established, in-progress transaction");
         return false;
     }
     if (transaction->mode() != IndexedDB::TransactionMode::VersionChange) {
@@ -354,7 +354,7 @@ bool UniqueIDBDatabaseBackingStoreSQLite::createObjectStore(const IDBTransaction
 
     SQLiteIDBTransaction* transaction = m_transactions.get(identifier);
     if (!transaction || !transaction->inProgress()) {
-        LOG_ERROR("Attempt to change database version with an establish, in-progress transaction");
+        LOG_ERROR("Attempt to change database version with an established, in-progress transaction");
         return false;
     }
     if (transaction->mode() != IndexedDB::TransactionMode::VersionChange) {
@@ -376,12 +376,45 @@ bool UniqueIDBDatabaseBackingStoreSQLite::createObjectStore(const IDBTransaction
         || sql.bindInt(4, metadata.autoIncrement) != SQLResultOk
         || sql.bindInt64(5, metadata.maxIndexId) != SQLResultOk
         || sql.step() != SQLResultDone) {
-        LOG_ERROR("Could not add object store '%s' to in ObjectStoreInfo table (%i) - %s", metadata.name.utf8().data(), m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg());
+        LOG_ERROR("Could not add object store '%s' to ObjectStoreInfo table (%i) - %s", metadata.name.utf8().data(), m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg());
         return false;
     }
 
     return true;
 }
+
+bool UniqueIDBDatabaseBackingStoreSQLite::deleteObjectStore(const IDBTransactionIdentifier& identifier, int64_t objectStoreID)
+{
+    ASSERT(!isMainThread());
+    ASSERT(m_sqliteDB);
+    ASSERT(m_sqliteDB->isOpen());
+
+    SQLiteIDBTransaction* transaction = m_transactions.get(identifier);
+    if (!transaction || !transaction->inProgress()) {
+        LOG_ERROR("Attempt to change database version with an established, in-progress transaction");
+        return false;
+    }
+    if (transaction->mode() != IndexedDB::TransactionMode::VersionChange) {
+        LOG_ERROR("Attempt to change database version during a non version-change transaction");
+        return false;
+    }
+
+    {
+        SQLiteStatement sql(*m_sqliteDB, ASCIILiteral("DELETE FROM ObjectStoreInfo WHERE id = ?;"));
+        if (sql.prepare() != SQLResultOk
+            || sql.bindInt64(1, objectStoreID) != SQLResultOk
+            || sql.step() != SQLResultDone) {
+            LOG_ERROR("Could not delete object store id %lli from ObjectStoreInfo table (%i) - %s", objectStoreID, m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg());
+            return false;
+        }
+    }
+    {
+        // FIXME: Execute SQL here to drop all records and indexes related to this object store.
+    }
+
+    return true;
+}
+
 
 } // namespace WebKit
 
