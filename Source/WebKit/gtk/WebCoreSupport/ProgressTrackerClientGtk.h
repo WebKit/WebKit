@@ -25,7 +25,7 @@ typedef struct _WebKitWebView WebKitWebView;
 
 namespace WebKit {
 
-class ProgressTrackerClient FINAL : public WebCore::ProgressTrackerClient {
+class ProgressTrackerClient final : public WebCore::ProgressTrackerClient {
 public:
     explicit ProgressTrackerClient(WebKitWebView*);
 

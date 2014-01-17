@@ -1,3 +1,11 @@
+2014-01-16  Jaehun Lim  <ljaehun.lim@samsung.com>
+
+        Use final instead of FINAL
+
+        Unreviewed build fix.
+
+        * WebCoreSupport/ProgressTrackerClientGtk.h:
+
 2014-01-16  Peter Molnar  <pmolnar.u-szeged@partner.samsung.com>
 
         Remove workaround for compilers not supporting explicit override control

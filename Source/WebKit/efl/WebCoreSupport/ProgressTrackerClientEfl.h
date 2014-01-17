@@ -36,7 +36,7 @@ typedef struct _Evas_Object Evas_Object;
 
 namespace WebCore {
 
-class ProgressTrackerClientEfl FINAL : public WebCore::ProgressTrackerClient {
+class ProgressTrackerClientEfl final : public WebCore::ProgressTrackerClient {
 public:
     explicit ProgressTrackerClientEfl(Evas_Object*);
     
