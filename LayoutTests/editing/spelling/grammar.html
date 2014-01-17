@@ -11,24 +11,15 @@
 <script src=../editing.js language="JavaScript" type="text/JavaScript" ></script>
 
 <script>
-function log(msg) {
-    document.getElementById("console").innerHTML += (msg + "\n");
-}
-
 function editingTest() {
-    if (window.testRunner)
-        testRunner.dumpAsText();
-
     document.getElementById("root").focus();
-    
     document.execCommand("InsertText", false, "I have a issue.");
 
-    if (window.testRunner) {
-        if (internals.hasGrammarMarker(7, 1))
-            log("PASS");
-        else
-            log("FAIL");
-        document.getElementById("root").style.display = "none";
+    if (window.internals) {
+        shouldBecomeEqual('internals.hasGrammarMarker(7, 1)', 'true', function() {
+            document.getElementById("root").style.display = "none";
+            finishJSTest();
+        });
     }
 }
 
@@ -37,13 +28,22 @@ function editingTest() {
 <title>Editing Test</title> 
 </head> 
 <body>
-<div>You should see the text 'I have a issue'. 'a' should have a grammar suggestion marking.</div>
-<div contenteditable id="root" class="editing">
-</div>
-<pre id="console"></pre>
+<script src="../../resources/js-test-pre.js"></script>
+<div contenteditable id="root" class="editing"></div>
 <script>
+description("This tests whether the grammatically-incorrect phrase "
+    + "'I have a issue' has grammar marker on 'a'.");
+
+jsTestIsAsync = true;
+
+if (window.internals) {
+    internals.settings.setUnifiedTextCheckerEnabled(true);
+    internals.settings.setAsynchronousSpellCheckingEnabled(true);
+}
+
 editingTest();
 </script>
 
+<script src="../../resources/js-test-post.js"></script>
 </body>
 </html>

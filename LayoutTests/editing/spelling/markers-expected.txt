@@ -1,16 +1,30 @@
-Grammar Error Only
-PASS internals.markerCountForNode(e.firstChild, "spelling") is 0
-PASS internals.markerCountForNode(e.firstChild, "grammar") is 1
+Tests spelling and grammar markers for misspellings.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Checking grammar issue on 'I have a issue.'
+PASS internals.markerRangeForNode(element.firstChild, nextMisspellingData.marker, 0) became different from null
 PASS range.toString() is "a"
-Spelling Error Only
-PASS internals.markerCountForNode(e.firstChild, "spelling") is 1
+
+Checking spelling issue on 'zz.'
+PASS internals.markerRangeForNode(element.firstChild, nextMisspellingData.marker, 0) became different from null
 PASS range.toString() is "zz"
-PASS internals.markerCountForNode(e.firstChild, "grammar") is 0
-Grammar and Spelling Error
-PASS internals.markerCountForNode(e.firstChild, "spelling") is 1
+
+Checking spelling issue on 'orange,zz,apple.'
+PASS internals.markerRangeForNode(element.firstChild, nextMisspellingData.marker, 0) became different from null
 PASS range.toString() is "zz"
-PASS internals.markerCountForNode(e.firstChild, "grammar") is 1
+
+Checking grammar issue on 'orange,zz,apple.'
+PASS internals.markerRangeForNode(element.firstChild, nextMisspellingData.marker, 0) became different from null
 PASS range.toString() is "orange,zz,apple."
+
+Checking spelling issue on 'I have a issue.'
+PASS internals.markerCountForNode(element.firstChild, oppositeMarker) became 0
+
+Checking grammar issue on 'zz.'
+PASS internals.markerCountForNode(element.firstChild, oppositeMarker) became 0
+
 PASS successfullyParsed is true
 
 TEST COMPLETE

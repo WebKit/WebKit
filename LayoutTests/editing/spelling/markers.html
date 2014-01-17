@@ -9,23 +9,26 @@
 }
 </style>
 <script src="../editing.js" language="JavaScript" type="text/JavaScript" ></script>
-<script src="../../resources/js-test-pre.js"></script>
 </head>
 <body>
-<pre id="description"></pre>
-<pre id="console"></pre>
-<div id="container">
-</div>
+<script src="../../resources/js-test-pre.js"></script>
+
+<div id="container"></div>
 
 <script>
-if (window.testRunner)
-    testRunner.dumpAsText();
+description("Tests spelling and grammar markers for misspellings.");
 
-function createEditableElement(id, parent) {
+jsTestIsAsync = true;
+
+if (window.internals) {
+    internals.settings.setUnifiedTextCheckerEnabled(true);
+    internals.settings.setAsynchronousSpellCheckingEnabled(true);
+}
+
+function createEditableElement(parent) {
     var e = document.createElement('div');
     e.setAttribute("contentEditable", "true");
     e.className = 'editing';
-    e.id = id;
 
     parent.appendChild(e);
     return e;
@@ -33,50 +36,88 @@ function createEditableElement(id, parent) {
 
 function typeText(elem, text) {
     elem.focus();
-    for (var i = 0; i < text.length; ++i) {
+    for (var i = 0; i < text.length; ++i)
         typeCharacterCommand(text[i]);
-    }
 }
 
 var container = document.getElementById('container');
-var range;
 
-debug("Grammar Error Only");
-var id = 'id1'
-var e = createEditableElement(id, container);
-typeText(e, 'I have a issue.');
-if (window.internals) {
-    shouldBe('internals.markerCountForNode(e.firstChild, "spelling")', '0');
-    shouldBe('internals.markerCountForNode(e.firstChild, "grammar")', '1');
-    range = internals.markerRangeForNode(e.firstChild, "grammar", 0);
-    shouldBe("range.toString()", '"a"');
+var elementWithGrammarIssue = createEditableElement(container);
+typeText(elementWithGrammarIssue, 'I have a issue.');
+
+var elementWithSpellingIssue  = createEditableElement(container);
+typeText(elementWithSpellingIssue, 'zz.');
+
+var elementWithGrammarAndSpellingIssue = createEditableElement(container);
+typeText(elementWithGrammarAndSpellingIssue, 'orange,zz,apple.');
+
+var misspellings = [
+    { marker:'grammar',  issue:'a' },
+    { marker:'spelling', issue:'zz' },
+    { marker:'grammar',  issue:'orange,zz,apple.' }
+];
+
+var tests = [
+    function() { verifyDesiredMarkers(elementWithGrammarIssue, misspellings.slice(0, 1)) },
+    function() { verifyDesiredMarkers(elementWithSpellingIssue, misspellings.slice(1, 2)) },
+    function() { verifyDesiredMarkers(elementWithGrammarAndSpellingIssue, misspellings.slice(1, 3)) },
+
+    // Those expect to have only one kind of markers either spelling or grammar.
+    function() { verifyUnexpectedMarkers(elementWithGrammarIssue, misspellings.slice(0, 1)) },
+    function() { verifyUnexpectedMarkers(elementWithSpellingIssue, misspellings.slice(1, 2)) },
+];
+
+var element;
+var nextMisspellingData;
+
+function verifyDesiredMarkers(e, misspellings)
+{
+    if (!window.internals)
+        return done();
+
+    element = e;
+    nextMisspellingData = misspellings.shift();
+    if (!nextMisspellingData)
+        return done();
+
+    debug("Checking " + nextMisspellingData.marker + " issue on '" + element.firstChild.nodeValue + "'");
+
+    shouldBecomeDifferent('internals.markerRangeForNode(element.firstChild, nextMisspellingData.marker, 0)', "null", function() {
+        range = internals.markerRangeForNode(element.firstChild, nextMisspellingData.marker, 0);
+        shouldBeEqualToString('range.toString()', nextMisspellingData.issue);
+        debug("");
+        verifyDesiredMarkers(element, misspellings);
+    });
 }
 
-debug("Spelling Error Only");
-var id = 'id2'
-var e = createEditableElement(id, container);
-typeText(e, 'zz.');
-if (window.internals) {
-    shouldBe('internals.markerCountForNode(e.firstChild, "spelling")', '1');
-    range = internals.markerRangeForNode(e.firstChild, "spelling", 0);
-    shouldBe('range.toString()', '"zz"');
-    shouldBe('internals.markerCountForNode(e.firstChild, "grammar")', '0');
+var oppositeMarker;
+function verifyUnexpectedMarkers(e, misspellings)
+{
+    element = e;
+    nextMisspellingData = misspellings.shift();
+
+    if (nextMisspellingData.marker == 'grammar')
+        oppositeMarker = 'spelling';
+    else if (nextMisspellingData.marker == 'spelling')
+        oppositeMarker = 'grammar';
+
+    debug("Checking " + oppositeMarker + " issue on '" + element.firstChild.nodeValue + "'");
+
+    shouldBecomeEqual('internals.markerCountForNode(element.firstChild, oppositeMarker)', '0', function() {
+        debug("");
+        done();
+    });
 }
 
-debug("Grammar and Spelling Error");
-var id = 'id3'
-var e = createEditableElement(id, container);
-typeText(e, 'orange,zz,apple.');
-if (window.internals) {
-    shouldBe('internals.markerCountForNode(e.firstChild, "spelling")', '1');
-    range = internals.markerRangeForNode(e.firstChild, "spelling", 0);
-    shouldBe('range.toString()', '"zz"');
-    shouldBe('internals.markerCountForNode(e.firstChild, "grammar")', '1');
-    range = internals.markerRangeForNode(e.firstChild, "grammar", 0);
-    shouldBe('range.toString()', '"orange,zz,apple."');
-}
+function done()
+{
+    var next = tests.shift();
+    if (next)
+        return window.setTimeout(next, 0);
 
-var successfullyParsed = true;
+    finishJSTest();
+}
+done();
 </script>
 <script src="../../resources/js-test-post.js"></script>
 </body>

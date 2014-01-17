@@ -134,6 +134,7 @@ webkit.org/b/105616 editing/spelling/spelling-with-punctuation-selection.html
 webkit.org/b/105616 editing/spelling/spelling-with-whitespace-selection.html
 webkit.org/b/105616 editing/spelling/spellcheck-input-search-crash.html
 webkit.org/b/105616 editing/spelling/grammar.html
+webkit.org/b/105616 editing/spelling/markers.html
 webkit.org/b/105616 platform/mac/editing/spelling/removing-underline-after-accepting-autocorrection-using-punctuation.html [ Failure ]
 webkit.org/b/105616 platform/mac/editing/spelling/click-autocorrected-word.html
 webkit.org/b/105616 platform/mac/editing/spelling/move-cursor-to-beginning-of-autocorrected-word.html

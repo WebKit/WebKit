@@ -1,3 +1,27 @@
+2014-01-17  Grzegorz Czajkowski  <g.czajkowski@samsung.com>
+
+        Allow grammar checking tests to be able to run asynchronously
+        https://bugs.webkit.org/show_bug.cgi?id=127099
+
+        Reviewed by Ryosuke Niwa.
+
+        Some grammar checking tests have already used asynchronous text checking path.
+        Due to WebKit tends to use asynchronous spell checking, this patch adapts grammar
+        checking tests that used synchronous path to be able to run asynchronously.
+
+        Additionally, the tests description was fixed.
+
+        * editing/spelling/grammar-edit-word-expected.txt:
+        * editing/spelling/grammar-edit-word.html:
+        * editing/spelling/grammar-expected.txt:
+        * editing/spelling/grammar-markers.html:
+        * editing/spelling/grammar.html:
+        * editing/spelling/markers-expected.txt:
+        * editing/spelling/markers.html:
+
+        * platform/mac-wk2/TestExpectations:
+        Marking markers.html as failing for mac-wk2 due to bug 125690.
+
 2014-01-16  Jer Noble  <jer.noble@apple.com>
 
         REGRESSION(r162145): media/video-controls-visible-audio-only.html fails
