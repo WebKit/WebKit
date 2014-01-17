@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>DoYouEvenBench</title>
+<script>
+
+(function () {
+    var values = [];
+    var pre = null;
+    var iterationNumber = 0;
+    window.benchmarkClient = {
+        didRunSuites: function (measuredValues) {
+            if (!pre) {
+                pre = document.createElement('pre');
+                pre.style.paddingTop = '600px';
+                document.body.appendChild(pre);
+            }
+            values.push(measuredValues.total);
+            iterationNumber++;
+            pre.appendChild(document.createTextNode('Iteration ' + iterationNumber + ': ' + measuredValues.total + ' ms\n'));
+        },
+        didFinishLastIteration: function () {
+            var sum = 0;
+            for (var i = 0; i < values.length; i++)
+                sum += values[i];
+            pre.appendChild(document.createTextNode('Average: ' + (sum / iterationNumber)  + ' ms\n'));
+            pre.style.paddingTop = 0;
+        }
+    }
+})();
+
+function startTest() {
+    var iterationCount = 5;
+    var runner = new BenchmarkRunner(Suites, benchmarkClient);
+    runner.runMultipleIterations(iterationCount);
+}
+
+</script>
+<script src="https://svn.webkit.org/repository/webkit/trunk/PerformanceTests/DoYouEvenBench/resources/benchmark-runner.js"></script>
+<script src="https://svn.webkit.org/repository/webkit/trunk/PerformanceTests/DoYouEvenBench/resources/benchmark-report.js"></script>
+<script src="https://svn.webkit.org/repository/webkit/trunk/PerformanceTests/DoYouEvenBench/resources/tests.js"></script>
+</head>
+<body onload="startTest()">
+</body>
+</html>

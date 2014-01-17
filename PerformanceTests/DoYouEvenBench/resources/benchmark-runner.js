@@ -163,13 +163,18 @@ BenchmarkState.prototype.isFirstTest = function () {
     return !this._testIndex;
 }
 
+BenchmarkState._containingDirectory = (function () {
+    var src = document.currentScript.src;
+    return src.substring(0, src.lastIndexOf('/')) + '/';
+})();
+
 BenchmarkState.prototype.prepareCurrentSuite = function (runner, frame) {
     var suite = this.currentSuite();
     var promise = new SimplePromise;
     frame.onload = function () {
         suite.prepare(runner, frame.contentWindow, frame.contentDocument).then(function (result) { promise.resolve(result); });
     }
-    frame.src = 'resources/' + suite.url;
+    frame.src = BenchmarkState._containingDirectory + suite.url;
     return promise;
 }
 
