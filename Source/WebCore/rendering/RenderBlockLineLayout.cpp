@@ -355,10 +355,36 @@ RootInlineBox* RenderBlockFlow::constructLine(BidiRunList<BidiRun>& bidiRuns, co
 ETextAlign RenderBlockFlow::textAlignmentForLine(bool endsWithSoftBreak) const
 {
     ETextAlign alignment = style().textAlign();
-    if (!endsWithSoftBreak && alignment == JUSTIFY)
-        alignment = TASTART;
+    if (endsWithSoftBreak)
+        return alignment;
 
+#if !ENABLE(CSS3_TEXT)
+    return (alignment == JUSTIFY) ? TASTART : alignment;
+#else
+    if (alignment != JUSTIFY)
+        return alignment;
+
+    TextAlignLast alignmentLast = style().textAlignLast();
+    switch (alignmentLast) {
+    case TextAlignLastStart:
+        return TASTART;
+    case TextAlignLastEnd:
+        return TAEND;
+    case TextAlignLastLeft:
+        return LEFT;
+    case TextAlignLastRight:
+        return RIGHT;
+    case TextAlignLastCenter:
+        return CENTER;
+    case TextAlignLastJustify:
+        return JUSTIFY;
+    case TextAlignLastAuto:
+        if (style().textJustify() == TextJustifyDistribute)
+            return JUSTIFY;
+        return TASTART;
+    }
     return alignment;
+#endif
 }
 
 static void updateLogicalWidthForLeftAlignedBlock(bool isLeftToRightDirection, BidiRun* trailingSpaceRun, float& logicalLeft, float& totalLogicalWidth, float availableLogicalWidth)

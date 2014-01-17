@@ -1,3 +1,21 @@
+2014-01-17  Zoltan Horvath  <zoltan@webkit.org>
+
+        [CSS3] Add rendering support for -webkit-text-align-last
+        https://bugs.webkit.org/show_bug.cgi?id=99584
+
+        Reviewed by David Hyatt.
+
+        Add support for the text-align-last CSS3 property, according to the latest specification:
+        http://dev.w3.org/csswg/css-text-3/#text-align-last-property
+
+        Tests: fast/css3-text/css3-text-align-last/text-align-last-with-text-align-justify.html
+               fast/css3-text/css3-text-align-last/text-align-last-with-text-align-non-justify.html
+
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::RenderBlockFlow::textAlignmentForLine):
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::changeRequiresLayout):
+
 2014-01-17  Daniel Bates  <dabates@apple.com>
 
         Fix the iOS build after <http://trac.webkit.org/changeset/162208>

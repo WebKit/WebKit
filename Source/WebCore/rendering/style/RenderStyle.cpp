@@ -502,6 +502,7 @@ bool RenderStyle::changeRequiresLayout(const RenderStyle* other, unsigned& chang
         if (rareInheritedData->highlight != other->rareInheritedData->highlight
             || rareInheritedData->indent != other->rareInheritedData->indent
 #if ENABLE(CSS3_TEXT)
+            || rareInheritedData->m_textAlignLast != other->rareInheritedData->m_textAlignLast
             || rareInheritedData->m_textIndentLine != other->rareInheritedData->m_textIndentLine
 #endif
             || rareInheritedData->m_effectiveZoom != other->rareInheritedData->m_effectiveZoom
