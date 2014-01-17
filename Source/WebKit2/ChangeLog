@@ -1,3 +1,16 @@
+2014-01-16  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Remove the weak pointer added to the web view in WebKitPrintOperation
+        https://bugs.webkit.org/show_bug.cgi?id=127098
+
+        Reviewed by Martin Robinson.
+
+        If the print operation finishes and the web view is still alive,
+        the weak pointer added to the view should be removed.
+
+        * UIProcess/API/gtk/WebKitPrintOperation.cpp:
+        (_WebKitPrintOperationPrivate::~_WebKitPrintOperationPrivate):
+
 2014-01-15  Sam Weinig  <sam@webkit.org>
 
         TextBreakIterator's should support Latin-1 for all iterator types (Part 3)
