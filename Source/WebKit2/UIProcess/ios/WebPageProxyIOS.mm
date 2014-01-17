@@ -405,6 +405,7 @@ void WebPageProxy::didFinishScrolling(const WebCore::FloatPoint& contentOffset)
 
 void WebPageProxy::didFinishZooming(float newScale)
 {
+    m_pageScaleFactor = newScale;
     process().send(Messages::WebPage::DidFinishZooming(newScale), m_pageID);
 }
 

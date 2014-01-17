@@ -1,3 +1,23 @@
+2014-01-16  Tim Horton  <timothy_horton@apple.com>
+
+        On iOS, zooming in with a TileController-backed main frame makes hundreds of tiles
+        https://bugs.webkit.org/show_bug.cgi?id=126531
+        <rdar://problem/15745862>
+
+        Reviewed by Anders Carlsson.
+
+        * platform/graphics/ca/mac/TileController.h:
+        * platform/graphics/ca/mac/TileController.mm:
+        (WebCore::TileController::tilesWouldChangeForVisibleRect):
+        (WebCore::TileController::scaledExposedRect):
+        (WebCore::TileController::computeTileCoverageRect):
+        (WebCore::TileController::revalidateTiles):
+        (WebCore::TileController::updateTileCoverageMap):
+        Scale the FrameView-space exposedRect into document space, to match the visibleRect.
+
+        Flipping on WKView's clipsToExposedRect now works correctly even in Safari
+        or MiniBrowser with zooming.
+
 2014-01-15  Sam Weinig  <sam@webkit.org>
 
         TextBreakIterator's should support Latin-1 for all iterator types (Part 3)

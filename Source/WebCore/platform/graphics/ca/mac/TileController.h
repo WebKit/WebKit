@@ -195,6 +195,8 @@ private:
 
     PlatformCALayerClient* owningGraphicsLayer() const { return m_tileCacheLayer->owner(); }
 
+    FloatRect scaledExposedRect() const;
+
     PlatformCALayer* m_tileCacheLayer;
     RefPtr<PlatformCALayer> m_tileContainerLayer;
     RefPtr<PlatformCALayer> m_tiledScrollingIndicatorLayer; // Used for coverage visualization.

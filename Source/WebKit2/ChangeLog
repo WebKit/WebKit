@@ -1,3 +1,24 @@
+2014-01-16  Tim Horton  <timothy_horton@apple.com>
+
+        On iOS, zooming in with a TileController-backed main frame makes hundreds of tiles
+        https://bugs.webkit.org/show_bug.cgi?id=126531
+        <rdar://problem/15745862>
+
+        Reviewed by Anders Carlsson.
+
+        * UIProcess/API/ios/WKContentView.mm:
+        (-[WKContentView _updateViewExposedRect]):
+        (-[WKContentView setViewportSize:]):
+        (-[WKContentView didFinishScrollTo:]):
+        (-[WKContentView didScrollTo:]):
+        (-[WKContentView didZoomToScale:]):
+        Because zooming is performed by the UIScrollView, we need to transform
+        the exposedRect's offset in order to get it in FrameView-relative coordinates.
+
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::didFinishZooming):
+        Save the pageScaleFactor when it changes.
+
 2014-01-16  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Remove the weak pointer added to the web view in WebKitPrintOperation
