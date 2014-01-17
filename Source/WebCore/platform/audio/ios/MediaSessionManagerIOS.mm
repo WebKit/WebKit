@@ -73,7 +73,7 @@ MediaSessionManageriOS::MediaSessionManageriOS()
     :MediaSessionManager()
     , m_objcObserver(adoptNS([[WebMediaSessionHelper alloc] initWithCallback:this]))
 {
-    DEFINE_STATIC_LOCAL(wkDeviceClass, deviceClass, iosDeviceClass());
+    DEFINE_STATIC_LOCAL(wkDeviceClass, deviceClass, (iosDeviceClass()));
 
     if (deviceClass == wkDeviceClassiPhone || deviceClass == wkDeviceClassiPod)
         addRestriction(MediaSession::Video, InlineVideoPlaybackRestricted);

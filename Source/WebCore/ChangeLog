@@ -1,3 +1,10 @@
+2014-01-16  Andy Estes  <aestes@apple.com>
+
+        Another iOS build fix.
+
+        * platform/audio/ios/MediaSessionManagerIOS.mm:
+        (WebCore::m_objcObserver):
+
 2014-01-16  Alexey Proskuryakov  <ap@apple.com>
 
         [Mac] [iOS] Add support for CFHTTPCookieStorageAcceptPolicyExclusivelyFromMainDocumentDomain
