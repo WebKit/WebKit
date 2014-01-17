@@ -1,3 +1,9 @@
+2014-01-16  Alexey Proskuryakov  <ap@apple.com>
+
+        Build fix.
+
+        * platform/network/cf/CookieJarCFNet.cpp: Remove a spurious semicolon.
+
 2014-01-16  Andy Estes  <aestes@apple.com>
 
         Another iOS build fix.

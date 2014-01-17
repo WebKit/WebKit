@@ -42,7 +42,7 @@
 #endif
 
 enum {
-    CFHTTPCookieStorageAcceptPolicyExclusivelyFromMainDocumentDomain = 3;
+    CFHTTPCookieStorageAcceptPolicyExclusivelyFromMainDocumentDomain = 3
 };
 
 namespace WebCore {
