@@ -169,7 +169,7 @@ BenchmarkState.prototype.prepareCurrentSuite = function (runner, frame) {
     frame.onload = function () {
         suite.prepare(runner, frame.contentWindow, frame.contentDocument).then(function (result) { promise.resolve(result); });
     }
-    frame.src = suite.url;
+    frame.src = 'resources/' + suite.url;
     return promise;
 }
 
