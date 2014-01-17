@@ -65,7 +65,6 @@ class TestRunner:
         SkippedTest("WebKitGtk/testwebinspector", "/webkit/webinspector/close-and-inspect", "Test is flaky in GTK Linux 32-bit Release bot", 82869),
         SkippedTest("WebKitGtk/testwebresource", "/webkit/webresource/loading", "Test fails", 104689),
         SkippedTest("WebKitGtk/testwebresource", "/webkit/webresource/sub_resource_loading", "Test fails in GTK Linux 64-bit Release bot", 82330),
-        SkippedTest("WebKitGtk/testwebview", "/webkit/webview/icon-uri", "Test times out in GTK Linux 64-bit Release bot", 82328),
         SkippedTest("WebKit2Gtk/TestUIClient", "/webkit2/WebKitWebView/mouse-target", "Test times out after r150890", 117689),
         SkippedTest("WebKit2Gtk/TestContextMenu", SkippedTest.ENTIRE_SUITE, "Test times out after r150890", 117689),
         SkippedTest("WebKit2Gtk/TestWebKitWebView", "/webkit2/WebKitWebView/snapshot", "Test fails", 120404),
