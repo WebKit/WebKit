@@ -36,10 +36,26 @@
 #include "ScriptController.h"
 
 #if PLATFORM(IOS)
+#include "AudioSession.h"
 #include "RuntimeApplicationChecksIOS.h"
 #endif
 
 namespace WebCore {
+
+static void initializeAudioSession()
+{
+#if PLATFORM(IOS)
+    static bool wasAudioSessionInitialized;
+    if (wasAudioSessionInitialized)
+        return;
+
+    wasAudioSessionInitialized = true;
+    if (!WebCore::applicationIsMobileSafari())
+        return;
+
+    AudioSession::sharedSession().setCategory(AudioSession::MediaPlayback);
+#endif
+}
 
 std::unique_ptr<HTMLMediaSession> HTMLMediaSession::create(MediaSessionClient& client)
 {
@@ -50,6 +66,7 @@ HTMLMediaSession::HTMLMediaSession(MediaSessionClient& client)
     : MediaSession(client)
     , m_restrictions(NoRestrictions)
 {
+    initializeAudioSession();
 }
 
 void HTMLMediaSession::addBehaviorRestriction(BehaviorRestrictions restriction)
@@ -99,7 +116,7 @@ bool HTMLMediaSession::pageAllowsDataLoading(const HTMLMediaElement& element) co
         LOG(Media, "HTMLMediaSession::pageAllowsDataLoading - returning FALSE");
         return false;
     }
-    
+
     return true;
 }
 
@@ -110,7 +127,7 @@ bool HTMLMediaSession::pageAllowsPlaybackAfterResuming(const HTMLMediaElement& e
         LOG(Media, "HTMLMediaSession::pageAllowsPlaybackAfterResuming - returning FALSE");
         return false;
     }
-    
+
     return true;
 }
 
@@ -121,7 +138,7 @@ bool HTMLMediaSession::showingPlaybackTargetPickerPermitted(const HTMLMediaEleme
         LOG(Media, "HTMLMediaSession::showingPlaybackTargetPickerPermitted - returning FALSE");
         return false;
     }
-    
+
     return true;
 }
 #endif
