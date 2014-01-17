@@ -37,6 +37,8 @@ list(APPEND WebKit2_SOURCES
 
     Shared/Downloads/soup/DownloadSoup.cpp
 
+    Shared/Network/CustomProtocols/soup/CustomProtocolManagerSoup.cpp
+
     Shared/Plugins/Netscape/x11/NetscapePluginModuleX11.cpp
 
     Shared/cairo/ShareableBitmapCairo.cpp
@@ -232,6 +234,8 @@ list(APPEND WebKit2_SOURCES
     UIProcess/InspectorServer/soup/WebSocketServerSoup.cpp
 
     UIProcess/Launcher/gtk/ProcessLauncherGtk.cpp
+
+    UIProcess/Network/CustomProtocols/soup/CustomProtocolManagerProxySoup.cpp
 
     UIProcess/Plugins/unix/PluginInfoStoreUnix.cpp
     UIProcess/Plugins/unix/PluginProcessProxyUnix.cpp

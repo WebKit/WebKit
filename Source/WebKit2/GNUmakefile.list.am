@@ -54,6 +54,8 @@ webkit2_built_sources += \
 	DerivedSources/WebKit2/AuthenticationManagerMessages.h \
 	DerivedSources/WebKit2/CustomProtocolManagerProxyMessageReceiver.cpp \
 	DerivedSources/WebKit2/CustomProtocolManagerProxyMessages.h \
+	DerivedSources/WebKit2/CustomProtocolManagerMessageReceiver.cpp \
+	DerivedSources/WebKit2/CustomProtocolManagerMessages.h \
 	DerivedSources/WebKit2/DownloadProxyMessageReceiver.cpp \
 	DerivedSources/WebKit2/DownloadProxyMessages.h \
 	DerivedSources/WebKit2/DrawingAreaMessageReceiver.cpp \
@@ -401,6 +403,7 @@ webkit2_sources += \
 	Source/WebKit2/Shared/NativeWebMouseEvent.h \
 	Source/WebKit2/Shared/NativeWebWheelEvent.h \
 	Source/WebKit2/Shared/Network/CustomProtocols/CustomProtocolManager.h \
+	Source/WebKit2/Shared/Network/CustomProtocols/soup/CustomProtocolManagerSoup.cpp \
 	Source/WebKit2/Shared/Network/NetworkProcessCreationParameters.cpp \
 	Source/WebKit2/Shared/Network/NetworkProcessCreationParameters.h \
 	Source/WebKit2/Shared/Network/NetworkProcessSupplement.h \
@@ -832,6 +835,8 @@ webkit2_sources += \
 	Source/WebKit2/UIProcess/Launcher/gtk/ProcessLauncherGtk.cpp \
 	Source/WebKit2/UIProcess/Launcher/ProcessLauncher.cpp \
 	Source/WebKit2/UIProcess/Launcher/ProcessLauncher.h \
+	Source/WebKit2/UIProcess/Network/CustomProtocols/CustomProtocolManagerProxy.h \
+	Source/WebKit2/UIProcess/Network/CustomProtocols/soup/CustomProtocolManagerProxySoup.cpp \
 	Source/WebKit2/UIProcess/Network/NetworkProcessProxy.cpp \
 	Source/WebKit2/UIProcess/Network/NetworkProcessProxy.h \
 	Source/WebKit2/UIProcess/Network/soup/NetworkProcessProxySoup.cpp \

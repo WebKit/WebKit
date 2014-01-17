@@ -1,3 +1,35 @@
+2014-01-16  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [SOUP] Add stubs for CustomProtocol classes
+        https://bugs.webkit.org/show_bug.cgi?id=126343
+
+        Reviewed by Gustavo Noronha Silva.
+
+        * CMakeLists.txt:
+        * GNUmakefile.am:
+        * GNUmakefile.list.am:
+        * PlatformGTK.cmake:
+        * Shared/Network/CustomProtocols/soup/CustomProtocolManagerSoup.cpp: Added.
+        (WebKit::generateCustomProtocolID):
+        (WebKit::WebSoupRequestAsyncData::WebSoupRequestAsyncData):
+        (WebKit::WebSoupRequestAsyncData::~WebSoupRequestAsyncData):
+        (WebKit::WebSoupRequestAsyncData::requestFailed):
+        (WebKit::WebSoupRequestAsyncData::releaseTask):
+        (WebKit::CustomProtocolManager::supplementName):
+        (WebKit::CustomProtocolManager::CustomProtocolManager):
+        (WebKit::CustomProtocolManager::initializeConnection):
+        (WebKit::CustomProtocolManager::initialize):
+        * Shared/Network/NetworkProcessCreationParameters.cpp:
+        (WebKit::NetworkProcessCreationParameters::encode): Move
+        urlSchemesRegisteredForCustomProtocols encoding out of platform
+        ifdefs, since it's already guarded by ENABLE(CUSTOM_PROTOCOLS).
+        (WebKit::NetworkProcessCreationParameters::decode): Ditto.
+        * Shared/Network/NetworkProcessCreationParameters.h: Ditto.
+        * UIProcess/Network/CustomProtocols/soup/CustomProtocolManagerProxySoup.cpp: Added.
+        (WebKit::CustomProtocolManagerProxy::CustomProtocolManagerProxy):
+        (WebKit::CustomProtocolManagerProxy::startLoading):
+        (WebKit::CustomProtocolManagerProxy::stopLoading):
+
 2014-01-16  Tim Horton  <timothy_horton@apple.com>
 
         On iOS, zooming in with a TileController-backed main frame makes hundreds of tiles

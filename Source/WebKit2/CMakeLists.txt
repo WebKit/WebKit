@@ -31,6 +31,7 @@ set(WebKit2_INCLUDE_DIRECTORIES
     "${WEBKIT2_DIR}/UIProcess/InspectorServer"
     "${WEBKIT2_DIR}/UIProcess/Launcher"
     "${WEBKIT2_DIR}/UIProcess/Network"
+    "${WEBKIT2_DIR}/UIProcess/Network/CustomProtocols"
     "${WEBKIT2_DIR}/UIProcess/Notifications"
     "${WEBKIT2_DIR}/UIProcess/Plugins"
     "${WEBKIT2_DIR}/UIProcess/Storage"
@@ -588,6 +589,8 @@ set(WebKit2_MESSAGES_IN_FILES
     Shared/Authentication/AuthenticationManager.messages.in
 
     Shared/Plugins/NPObjectMessageReceiver.messages.in
+
+    Shared/Network/CustomProtocols/CustomProtocolManager.messages.in
 
     UIProcess/DrawingAreaProxy.messages.in
     UIProcess/WebApplicationCacheManagerProxy.messages.in

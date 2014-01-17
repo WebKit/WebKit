@@ -43,14 +43,14 @@ void NetworkProcessCreationParameters::encode(IPC::ArgumentEncoder& encoder) con
     encoder << diskCacheDirectory;
     encoder << diskCacheDirectoryExtensionHandle;
     encoder << shouldUseTestingNetworkSession;
+#if ENABLE(CUSTOM_PROTOCOLS)
+    encoder << urlSchemesRegisteredForCustomProtocols;
+#endif
 #if PLATFORM(MAC)
     encoder << parentProcessName;
     encoder << uiProcessBundleIdentifier;
     encoder << nsURLCacheMemoryCapacity;
     encoder << nsURLCacheDiskCapacity;
-#if ENABLE(CUSTOM_PROTOCOLS)
-    encoder << urlSchemesRegisteredForCustomProtocols;
-#endif
     encoder << httpProxy;
     encoder << httpsProxy;
 #endif
@@ -75,6 +75,10 @@ bool NetworkProcessCreationParameters::decode(IPC::ArgumentDecoder& decoder, Net
         return false;
     if (!decoder.decode(result.shouldUseTestingNetworkSession))
         return false;
+#if ENABLE(CUSTOM_PROTOCOLS)
+    if (!decoder.decode(result.urlSchemesRegisteredForCustomProtocols))
+        return false;
+#endif
 #if PLATFORM(MAC)
     if (!decoder.decode(result.parentProcessName))
         return false;
@@ -84,10 +88,6 @@ bool NetworkProcessCreationParameters::decode(IPC::ArgumentDecoder& decoder, Net
         return false;
     if (!decoder.decode(result.nsURLCacheDiskCapacity))
         return false;
-#if ENABLE(CUSTOM_PROTOCOLS)
-    if (!decoder.decode(result.urlSchemesRegisteredForCustomProtocols))
-        return false;
-#endif
     if (!decoder.decode(result.httpProxy))
         return false;
     if (!decoder.decode(result.httpsProxy))

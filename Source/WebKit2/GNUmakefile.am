@@ -121,6 +121,7 @@ libwebkit2gtk_@WEBKITGTK_API_MAJOR_VERSION@_@WEBKITGTK_API_MINOR_VERSION@_la_CPP
 	-I$(srcdir)/Source/WebKit2/UIProcess/Launcher \
 	-I$(srcdir)/Source/WebKit2/UIProcess/Launcher/gtk \
 	-I$(srcdir)/Source/WebKit2/UIProcess/Network \
+	-I$(srcdir)/Source/WebKit2/UIProcess/Network/CustomProtocols \
 	-I$(srcdir)/Source/WebKit2/UIProcess/Notifications \
 	-I$(srcdir)/Source/WebKit2/UIProcess/Plugins \
 	-I$(srcdir)/Source/WebKit2/UIProcess/Plugins/unix \
@@ -414,6 +415,7 @@ vpath %.messages.in = \
 	$(WebKit2)/PluginProcess \
 	$(WebKit2)/Shared \
 	$(WebKit2)/Shared/Authentication \
+	$(WebKit2)/Shared/Network/CustomProtocols \
 	$(WebKit2)/Shared/Plugins \
 	$(WebKit2)/UIProcess \
 	$(WebKit2)/UIProcess/ApplicationCache \
