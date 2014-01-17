@@ -221,7 +221,7 @@ if (window.testRunner) {
             if (currentTest.description)
                 PerfTestRunner.log("Description: " + currentTest.description);
             metric = {'fps': 'FrameRate', 'runs/s': 'Runs', 'ms': 'Time'}[PerfTestRunner.unit];
-            var suffix = currentTest.aggregation ? ':' + currentTest.aggregation : '';
+            var suffix = currentTest.aggregator ? ':' + currentTest.aggregator : '';
             PerfTestRunner.logStatistics(results, PerfTestRunner.unit, prefix + ":" + metric + suffix);
             if (jsHeapResults.length) {
                 PerfTestRunner.logStatistics(jsHeapResults, "bytes", prefix + ":JSHeap");

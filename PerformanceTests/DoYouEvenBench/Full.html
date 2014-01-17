@@ -17,13 +17,13 @@
             }
             values.push(measuredValues.total);
             iterationNumber++;
-            pre.appendChild(document.createTextNode('Iteration ' + iterationNumber + ': ' + measuredValues.total + 'ms\n'));
+            pre.appendChild(document.createTextNode('Iteration ' + iterationNumber + ': ' + measuredValues.total + ' ms\n'));
         },
         didFinishLastIteration: function () {
             var sum = 0;
             for (var i = 0; i < values.length; i++)
                 sum += values[i];
-            pre.appendChild(document.createTextNode('Average: ' + (sum / iterationNumber)  + 'ms\n'));
+            pre.appendChild(document.createTextNode('Average: ' + (sum / iterationNumber)  + ' ms\n'));
             pre.style.paddingTop = 0;
         }
     }

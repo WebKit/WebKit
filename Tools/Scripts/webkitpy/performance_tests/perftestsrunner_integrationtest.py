@@ -98,6 +98,8 @@ Finished: 0.1 s
 
 class TestWithSubtestsData:
     text = """subtest:Time -> [1, 2, 3, 4, 5] ms
+total-test:Time:Total -> [1, 2, 3, 4, 5] ms
+total-test/subsubtest:Time -> [1, 2, 3, 4, 5] ms
 :Time -> [1080, 1120, 1095, 1101, 1104] ms
 """
 
@@ -113,7 +115,14 @@ Finished: 0.1 s
         'tests': {
             'subtest': {
                 'url': 'http://trac.webkit.org/browser/trunk/PerformanceTests/Parser/test-with-subtests.html',
-                'metrics': {'Time': {'current': [[1.0, 2.0, 3.0, 4.0, 5.0]] * 4}}}}}
+                'metrics': {'Time': {'current': [[1.0, 2.0, 3.0, 4.0, 5.0]] * 4}}},
+            'total-test': {
+                'url': 'http://trac.webkit.org/browser/trunk/PerformanceTests/Parser/test-with-subtests.html',
+                'metrics': {'Time': {'current': [[1.0, 2.0, 3.0, 4.0, 5.0]] * 4, "aggregators": ["Total"]}},
+                'tests': {
+                    'subsubtest':
+                        {'url': 'http://trac.webkit.org/browser/trunk/PerformanceTests/Parser/test-with-subtests.html',
+                        'metrics': {'Time': {'current': [[1.0, 2.0, 3.0, 4.0, 5.0]] * 4}}}}}}}
 
 
 class TestDriver:

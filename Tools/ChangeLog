@@ -1,3 +1,29 @@
+2014-01-16  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Automate DoYouEvenBench
+        https://bugs.webkit.org/show_bug.cgi?id=124497
+
+        Reviewed by Geoffrey Garen.
+
+        * Scripts/webkitpy/performance_tests/perftest.py:
+        (PerfTestMetric.__init__): Added the aggregator name as an argument.
+        (PerfTestMetric.aggregator): Added.
+        (PerfTest._metrics_regex): Made the subtest name match non-greedy so that the metric names will be
+        won't be eagerly parsed as a part of the subtest name. e.g. "Time" and "Total" in "a:Time:Total"
+        should be parsed as the metric and the aggregator respectively.
+        (PerfTest._run_with_driver): Pass in the aggregator name.
+        (PerfTest._ensure_metrics): Ditto. Also split the subtest name by / as required by DoYouEvenBench
+        which generates subtests of subtests within a single test file.
+
+        * Scripts/webkitpy/performance_tests/perftest_unittest.py:
+        (test_parse_output_with_subtests_and_total): Added.
+
+        * Scripts/webkitpy/performance_tests/perftestsrunner.py:
+        (_generate_results_dict): Add the aggregator name to the JSON when one is available.
+
+        * Scripts/webkitpy/performance_tests/perftestsrunner_integrationtest.py:
+        (TestWithSubtestsData): Added a sub test with an aggregator and a sub-sub test.
+
 2014-01-16  Chris Fleizach  <cfleizach@apple.com>
 
         platform/mac/accessibility/aria-multiline.html sometimes asserts in AccessibilityController::removeNotificationListener

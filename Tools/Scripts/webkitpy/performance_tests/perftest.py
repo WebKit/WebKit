@@ -50,16 +50,20 @@ _log = logging.getLogger(__name__)
 
 
 class PerfTestMetric(object):
-    def __init__(self, path, test_file_name, metric, unit=None, iterations=None):
+    def __init__(self, path, test_file_name, metric, unit=None, aggregator=None, iterations=None):
         # FIXME: Fix runner.js to report correct metric names
         self._iterations = iterations or []
         self._unit = unit or self.metric_to_unit(metric)
+        self._aggregator = aggregator
         self._metric = self.time_unit_to_metric(self._unit) if metric == 'Time' else metric
         self._path = path
         self._test_file_name = test_file_name
 
     def name(self):
         return self._metric
+
+    def aggregator(self):
+        return self._aggregator
 
     def path(self):
         return self._path
@@ -168,7 +172,7 @@ class PerfTest(object):
             (median, unit, stdev, unit, sorted_values[0], unit, sorted_values[-1], unit))
 
     _description_regex = re.compile(r'^Description: (?P<description>.*)$', re.IGNORECASE)
-    _metrics_regex = re.compile(r'^(?P<subtest>[A-Za-z0-9\(\[].+)?:(?P<metric>[A-Z][A-Za-z]+)(:(?P<aggregator>[A-Z][A-Za-z]+))? -> \[(?P<values>(\d+(\.\d+)?)(, \d+(\.\d+)?)+)\] (?P<unit>[a-z/]+)?$')
+    _metrics_regex = re.compile(r'^(?P<subtest>[A-Za-z0-9\(\[].+?)?:(?P<metric>[A-Z][A-Za-z]+)(:(?P<aggregator>[A-Z][A-Za-z]+))? -> \[(?P<values>(\d+(\.\d+)?)(, \d+(\.\d+)?)+)\] (?P<unit>[a-z/]+)?$')
 
     def _run_with_driver(self, driver, time_out_ms):
         output = self.run_single(driver, self.test_path(), time_out_ms)
@@ -188,12 +192,12 @@ class PerfTest(object):
                 _log.error('ERROR: ' + line)
                 return False
 
-            metric = self._ensure_metrics(metric_match.group('metric'), metric_match.group('subtest'), metric_match.group('unit'))
+            metric = self._ensure_metrics(metric_match.group('metric'), metric_match.group('subtest'), metric_match.group('unit'), metric_match.group('aggregator'))
             metric.append_group(map(lambda value: float(value), metric_match.group('values').split(', ')))
 
         return True
 
-    def _ensure_metrics(self, metric_name, subtest_name='', unit=None):
+    def _ensure_metrics(self, metric_name, subtest_name='', unit=None, aggregator=None):
         try:
             subtest = next(subtest for subtest in self._metrics if subtest['name'] == subtest_name)
         except StopIteration:
@@ -205,8 +209,8 @@ class PerfTest(object):
         except StopIteration:
             path = self.test_name_without_file_extension().split('/')
             if subtest_name:
-                path += [subtest_name]
-            metric = PerfTestMetric(path, self._test_name, metric_name, unit)
+                path += subtest_name.split('/')
+            metric = PerfTestMetric(path, self._test_name, metric_name, unit, aggregator)
             subtest['metrics'].append(metric)
             return metric
 

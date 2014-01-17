@@ -1,3 +1,18 @@
+2014-01-16  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Automate DoYouEvenBench
+        https://bugs.webkit.org/show_bug.cgi?id=124497
+
+        Reviewed by Geoffrey Garen.
+
+        Enable DoYouEvenBench/Full.html on perf bots by default.
+
+        Put a space between the time and ms, and fixed a typo in runner.js so that the aggregator name will be reported.
+
+        * DoYouEvenBench/Full.html:
+        * Skipped:
+        * resources/runner.js:
+
 2014-01-15  Manuel Rego Casasnovas  <rego@igalia.com>
 
         [CSS Regions] Add performance tests for selection with mixed content

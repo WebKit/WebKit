@@ -211,6 +211,55 @@ RESULT some-dir: some-test: Time= 1100.0 ms
 median= 1101.0 ms, stdev= 13.3140211016 ms, min= 1080.0 ms, max= 1120.0 ms
 """)
 
+    def test_parse_output_with_subtests_and_total(self):
+        output = DriverOutput("""
+:Time:Total -> [2324, 2328, 2345, 2314, 2312] ms
+EmberJS-TodoMVC:Time:Total -> [1462, 1473, 1490, 1465, 1458] ms
+EmberJS-TodoMVC/a:Time -> [1, 2, 3, 4, 5] ms
+BackboneJS-TodoMVC:Time -> [862, 855, 855, 849, 854] ms
+""", image=None, image_hash=None, audio=None)
+        output_capture = OutputCapture()
+        output_capture.capture_output()
+        try:
+            test = PerfTest(MockPort(), 'some-dir/some-test', '/path/some-dir/some-test')
+            test.run_single = lambda driver, path, time_out_ms: output
+            self.assertTrue(test.run(10))
+        finally:
+            actual_stdout, actual_stderr, actual_logs = output_capture.restore_output()
+
+        subtests = test._metrics
+        self.assertEqual(map(lambda test: test['name'], subtests), [None, 'EmberJS-TodoMVC', 'EmberJS-TodoMVC/a', 'BackboneJS-TodoMVC'])
+
+        main_metrics = subtests[0]['metrics']
+        self.assertEqual(map(lambda metric: metric.name(), main_metrics), ['Time'])
+        self.assertEqual(main_metrics[0].aggregator(), 'Total')
+        self.assertEqual(main_metrics[0].path(), ['some-dir', 'some-test'])
+        self.assertEqual(main_metrics[0].flattened_iteration_values(), [2324, 2328, 2345, 2314, 2312] * 4)
+
+        some_test_metrics = subtests[1]['metrics']
+        self.assertEqual(map(lambda metric: metric.name(), some_test_metrics), ['Time'])
+        self.assertEqual(some_test_metrics[0].aggregator(), 'Total')
+        self.assertEqual(some_test_metrics[0].path(), ['some-dir', 'some-test', 'EmberJS-TodoMVC'])
+        self.assertEqual(some_test_metrics[0].flattened_iteration_values(), [1462, 1473, 1490, 1465, 1458] * 4)
+
+        some_test_metrics = subtests[2]['metrics']
+        self.assertEqual(map(lambda metric: metric.name(), some_test_metrics), ['Time'])
+        self.assertEqual(some_test_metrics[0].aggregator(), None)
+        self.assertEqual(some_test_metrics[0].path(), ['some-dir', 'some-test', 'EmberJS-TodoMVC', 'a'])
+        self.assertEqual(some_test_metrics[0].flattened_iteration_values(), [1, 2, 3, 4, 5] * 4)
+
+        some_test_metrics = subtests[3]['metrics']
+        self.assertEqual(map(lambda metric: metric.name(), some_test_metrics), ['Time'])
+        self.assertEqual(some_test_metrics[0].aggregator(), None)
+        self.assertEqual(some_test_metrics[0].path(), ['some-dir', 'some-test', 'BackboneJS-TodoMVC'])
+        self.assertEqual(some_test_metrics[0].flattened_iteration_values(), [862, 855, 855, 849, 854] * 4)
+
+        self.assertEqual(actual_stdout, '')
+        self.assertEqual(actual_stderr, '')
+        self.assertEqual(actual_logs, """RESULT some-dir: some-test: Time= 2324.6 ms
+median= 2324.0 ms, stdev= 12.1326007105 ms, min= 2312.0 ms, max= 2345.0 ms
+""")
+
 
 class TestSingleProcessPerfTest(unittest.TestCase):
     def test_use_only_one_process(self):

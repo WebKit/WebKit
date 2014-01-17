@@ -269,7 +269,10 @@ class PerfTestsRunner(object):
                     current_test['url'] = view_source_url('PerformanceTests/' + metric.test_file_name())
                     current_test.setdefault('metrics', {})
                     assert metric.name() not in current_test['metrics']
-                    current_test['metrics'][metric.name()] = {'current': metric.grouped_iteration_values()}
+                    test_results = {'current': metric.grouped_iteration_values()}
+                    if metric.aggregator():
+                        test_results['aggregators'] = [metric.aggregator()]
+                    current_test['metrics'][metric.name()] = test_results
                 else:
                     current_test.setdefault('tests', {})
                     tests = current_test['tests']
