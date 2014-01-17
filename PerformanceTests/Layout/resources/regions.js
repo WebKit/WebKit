@@ -103,39 +103,6 @@
         };
     }
 
-    function performSelection(paragraphCount) {
-        var paragraphs = document.getElementsByClassName("contentParagraph");
-        var selection = getSelection();
-
-        selection.collapse(paragraphs[0], 0);
-
-        for (var i = 1; i < paragraphCount; i++)
-            selection.extend(paragraphs[i], 0);
-    }
-
-    function createRegionsSelectionTest(regionCount) {
-        var article = createArticle(regionCount, 1);
-        article.className = "articleInFlow";
-        var regions = createRegions("600px", "auto", regionCount, "auto");
-        document.body.appendChild(article);
-        document.body.appendChild(regions);
-        return {
-            description: "Testing selection with " + regionCount + " regions. Select text from first region to last one passing through all the regions.",
-            run: function() {
-                performSelection(regionCount);
-            },
-            setup: function() {
-                window.getSelection().removeAllRanges();
-            },
-            done: function() {
-                document.body.removeChild(article);
-                document.body.removeChild(regions);
-                templateParagraph = null;
-                templateRegion = null;
-            }
-        };
-    }
-
     function createMixedContent(regionCount) {
         var container = document.createElement("div");
         for (var i = 0; i < regionCount; ++i) {
@@ -146,8 +113,8 @@
     }
 
     window.createRegionsTest = createRegionsTest;
-    window.createRegionsSelectionTest = createRegionsSelectionTest;
     window.createArticle = createArticle;
+    window.createRegions = createRegions;
     window.createMixedContent = createMixedContent;
 
 })();
