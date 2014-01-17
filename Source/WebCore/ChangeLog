@@ -1,5 +1,29 @@
 2014-01-17  Anders Carlsson  <andersca@apple.com>
 
+        Remove another unused FrameLoaderClient callback
+        https://bugs.webkit.org/show_bug.cgi?id=127192
+
+        Reviewed by Dan Bernstein.
+
+        FrameLoaderClient::dispatchDocumentElementAvailable() was only used by the Chromium port, so remove it.
+
+        * html/ImageDocument.cpp:
+        (WebCore::ImageDocument::createDocumentStructure):
+        * html/MediaDocument.cpp:
+        (WebCore::MediaDocumentParser::createDocumentStructure):
+        * html/PluginDocument.cpp:
+        (WebCore::PluginDocumentParser::createDocumentStructure):
+        * html/parser/HTMLConstructionSite.cpp:
+        (WebCore::HTMLConstructionSite::dispatchDocumentElementAvailableIfNeeded):
+        * loader/EmptyClients.h:
+        * loader/FrameLoader.cpp:
+        * loader/FrameLoader.h:
+        * loader/FrameLoaderClient.h:
+        * xml/parser/XMLDocumentParserLibxml2.cpp:
+        (WebCore::XMLDocumentParser::startElementNs):
+
+2014-01-17  Anders Carlsson  <andersca@apple.com>
+
         Remove FrameLoaderClient::didPerformFirstNavigation()
         https://bugs.webkit.org/show_bug.cgi?id=127191
 

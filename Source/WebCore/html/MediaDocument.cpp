@@ -79,8 +79,8 @@ void MediaDocumentParser::createDocumentStructure()
     toHTMLHtmlElement(rootElement.get())->insertedByParser();
 
     if (document()->frame())
-        document()->frame()->loader().dispatchDocumentElementAvailable();
-        
+        document()->frame()->injectUserScripts(InjectAtDocumentStart);
+
     RefPtr<Element> body = document()->createElement(bodyTag, false);
     rootElement->appendChild(body, IGNORE_EXCEPTION);
 

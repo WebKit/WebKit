@@ -216,7 +216,6 @@ public:
 
     void dispatchDidClearWindowObjectInWorld(DOMWrapperWorld&);
     void dispatchDidClearWindowObjectsInAllWorlds();
-    void dispatchDocumentElementAvailable();
 
     // The following sandbox flags will be forced, regardless of changes to
     // the sandbox attribute of any parent frames.

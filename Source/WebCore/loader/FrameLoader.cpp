@@ -3331,12 +3331,6 @@ String FrameLoader::referrer() const
     return m_documentLoader ? m_documentLoader->request().httpReferrer() : "";
 }
 
-void FrameLoader::dispatchDocumentElementAvailable()
-{
-    m_frame.injectUserScripts(InjectAtDocumentStart);
-    m_client.documentElementAvailable();
-}
-
 void FrameLoader::dispatchDidClearWindowObjectsInAllWorlds()
 {
     if (!m_frame.script().canExecuteScripts(NotAboutToExecuteScript))

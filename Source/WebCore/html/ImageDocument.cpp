@@ -198,8 +198,8 @@ void ImageDocument::createDocumentStructure()
     toHTMLHtmlElement(rootElement.get())->insertedByParser();
 
     if (frame())
-        frame()->loader().dispatchDocumentElementAvailable();
-    
+        frame()->injectUserScripts(InjectAtDocumentStart);
+
     RefPtr<Element> body = Document::createElement(bodyTag, false);
     body->setAttribute(styleAttr, "margin: 0px;");
     

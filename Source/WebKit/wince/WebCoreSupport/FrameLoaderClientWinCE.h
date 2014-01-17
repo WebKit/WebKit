@@ -112,7 +112,6 @@ public:
     virtual PassRefPtr<WebCore::Widget> createJavaAppletWidget(const WebCore::IntSize&, WebCore::HTMLAppletElement*, const WebCore::URL& baseURL, const WTF::Vector<WTF::String>& paramNames, const WTF::Vector<WTF::String>& paramValues) override;
     virtual WTF::String overrideMediaType() const override;
     virtual void dispatchDidClearWindowObjectInWorld(WebCore::DOMWrapperWorld&) override;
-    virtual void documentElementAvailable() override;
 
     virtual void registerForIconNotification(bool) override;
 

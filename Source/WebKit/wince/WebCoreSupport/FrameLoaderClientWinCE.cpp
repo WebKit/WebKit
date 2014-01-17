@@ -203,11 +203,6 @@ void FrameLoaderClientWinCE::dispatchDidClearWindowObjectInWorld(DOMWrapperWorld
     notImplemented();
 }
 
-void FrameLoaderClientWinCE::documentElementAvailable()
-{
-    notImplemented();
-}
-
 void FrameLoaderClientWinCE::registerForIconNotification(bool)
 {
     notImplemented();

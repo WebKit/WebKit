@@ -855,7 +855,7 @@ void XMLDocumentParser::startElementNs(const xmlChar* xmlLocalName, const xmlCha
         toHTMLHtmlElement(newElement.get())->insertedByParser();
 
     if (!m_parsingFragment && isFirstElement && document()->frame())
-        document()->frame()->loader().dispatchDocumentElementAvailable();
+        document()->frame()->injectUserScripts(InjectAtDocumentStart);
 }
 
 void XMLDocumentParser::endElementNs()

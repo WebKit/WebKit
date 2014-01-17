@@ -2333,9 +2333,6 @@ String WebFrameLoaderClient::overrideMediaType() const
     return String();
 }
 
-void WebFrameLoaderClient::documentElementAvailable() {
-}
-
 void WebFrameLoaderClient::dispatchDidClearWindowObjectInWorld(DOMWrapperWorld& world)
 {
     WebView *webView = getWebView(m_webFrame.get());

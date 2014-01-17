@@ -190,7 +190,6 @@ public:
     virtual WTF::String overrideMediaType() const override;
 
     virtual void dispatchDidClearWindowObjectInWorld(WebCore::DOMWrapperWorld&) override;
-    virtual void documentElementAvailable() override;
 
     COMPtr<WebFramePolicyListener> setUpPolicyListener(WebCore::FramePolicyFunction);
     void receivedPolicyDecision(WebCore::PolicyAction);

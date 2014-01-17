@@ -72,7 +72,7 @@ void PluginDocumentParser::createDocumentStructure()
     toHTMLHtmlElement(rootElement.get())->insertedByParser();
 
     if (document()->frame())
-        document()->frame()->loader().dispatchDocumentElementAvailable();
+        document()->frame()->injectUserScripts(InjectAtDocumentStart);
 
 #if PLATFORM(IOS)
     // Should not be able to zoom into standalone plug-in documents.

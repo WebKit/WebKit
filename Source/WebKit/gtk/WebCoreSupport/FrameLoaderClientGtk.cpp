@@ -572,10 +572,6 @@ void FrameLoaderClient::dispatchDidClearWindowObjectInWorld(DOMWrapperWorld& wor
     // The Win port has an example of how we might do this.
 }
 
-void FrameLoaderClient::documentElementAvailable()
-{
-}
-
 void FrameLoaderClient::registerForIconNotification(bool shouldRegister)
 {
     webkitWebViewRegisterForIconNotification(getViewFromFrame(m_frame), shouldRegister);

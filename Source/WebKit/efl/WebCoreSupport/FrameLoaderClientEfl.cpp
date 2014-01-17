@@ -458,11 +458,6 @@ void FrameLoaderClientEfl::dispatchDidClearWindowObjectInWorld(DOMWrapperWorld& 
 #endif
 }
 
-void FrameLoaderClientEfl::documentElementAvailable()
-{
-    return;
-}
-
 void FrameLoaderClientEfl::registerForIconNotification(bool)
 {
     notImplemented();
