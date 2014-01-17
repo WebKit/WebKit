@@ -34,5 +34,6 @@ Dashboard = {
         LinuxQt: { name : "linux-qt", readableName: "Linux Qt", order: 70 },
         LinuxGTK: { name : "linux-gtk", readableName: "Linux GTK", order: 80 },
         LinuxEFL: { name: "linux-efl", readableName: "Linux EFL", order : 90 }
-    }
+    },
+    Branch: {}
 };
