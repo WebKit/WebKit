@@ -278,6 +278,8 @@ BuildbotIteration.prototype = {
                             item.crash = true;
                         if (value.actual.contains("TIMEOUT"))
                             item.timeout = true;
+                        if (value.has_stderr)
+                            item.has_stderr = true;
                         result.push(item);
                     }
 

@@ -167,7 +167,7 @@ BuildbotTesterQueueView.prototype = {
                 var failureKindElement = document.createElement("a");
                 failureKindElement.className = "failure-kind-indicator"
                 failureKindElement.textContent = "crash";
-                failureKindElement.href = iteration.queue.buildbot.layoutTestCrashLogForIteration(iteration, test.path);
+                failureKindElement.href = iteration.queue.buildbot.layoutTestCrashLogURLForIteration(iteration, test.path);
                 failureKindElement.target = "_blank";
                 rowElement.appendChild(failureKindElement);
             }
@@ -177,6 +177,15 @@ BuildbotTesterQueueView.prototype = {
                 failureKindElement.className = "failure-kind-indicator"
                 failureKindElement.textContent = "timeout";
                 rowElement.appendChild(failureKindElement);
+            }
+
+            if (test.has_stderr) {
+                var stderrElement = document.createElement("a");
+                stderrElement.className = "additional-link"
+                stderrElement.textContent = "stderr";
+                stderrElement.href = iteration.queue.buildbot.layoutTestStderrURLForIteration(iteration, test.path);
+                stderrElement.target = "_blank";
+                rowElement.appendChild(stderrElement);
             }
 
             if (hasTestHistory) {

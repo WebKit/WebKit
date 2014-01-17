@@ -1,3 +1,25 @@
+2014-01-16  Alexey Proskuryakov  <ap@apple.com>
+
+        Test results popovers at http://build.webkit.org/dashboard should link to stderr
+        https://bugs.webkit.org/show_bug.cgi?id=126929
+
+        Reviewed by Timothy Hatcher.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/Buildbot.js:
+        (Buildbot.prototype.layoutTestCrashLogURLForIteration): Renamed for consistency.
+        (Buildbot.prototype.layoutTestStderrURLForIteration): Added.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/BuildbotIteration.js:
+        (BuildbotIteration.prototype.loadLayoutTestResults): Store has_stderr attribute.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/BuildbotTesterQueueView.js:
+        (BuildbotTesterQueueView.prototype._popoverContentForLayoutTestRegressions):
+        Add a link to stderr output if present.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Styles/QueueView.css:
+        (.test-results-popover .additional-link): Style with light grey (will use the same style
+        for diff links).
+
 2014-01-16  Ryosuke Niwa  <rniwa@webkit.org>
 
         Automate DoYouEvenBench

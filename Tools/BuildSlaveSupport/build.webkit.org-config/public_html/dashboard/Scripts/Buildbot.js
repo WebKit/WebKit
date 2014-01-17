@@ -101,9 +101,15 @@ Buildbot.prototype = {
         return this.layoutTestResultsDirectoryURLForIteration(iteration) + "/full_results.json";
     },
 
-    layoutTestCrashLogForIteration: function(iteration, testPath)
+    layoutTestCrashLogURLForIteration: function(iteration, testPath)
     {
         var crashLogPath = testPath.replace(/^(.*)\.(?:.*)$/, "$1-crash-log.txt");
+        return this.layoutTestResultsDirectoryURLForIteration(iteration) + "/" + crashLogPath;
+    },
+
+    layoutTestStderrURLForIteration: function(iteration, testPath)
+    {
+        var crashLogPath = testPath.replace(/^(.*)\.(?:.*)$/, "$1-stderr.txt");
         return this.layoutTestResultsDirectoryURLForIteration(iteration) + "/" + crashLogPath;
     }
 };
