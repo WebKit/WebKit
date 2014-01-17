@@ -402,11 +402,15 @@ z-index
 -webkit-text-decorations-in-effect [Inherited]
 -webkit-text-emphasis [Inherited]
 -epub-text-emphasis = -webkit-text-emphasis
+text-emphasis = -webkit-text-emphasis
 -webkit-text-emphasis-color [Inherited]
 -epub-text-emphasis-color = -webkit-text-emphasis-color
+text-emphasis-color = -webkit-text-emphasis-color
 -webkit-text-emphasis-position [Inherited]
+text-emphasis-position = -webkit-text-emphasis-position
 -webkit-text-emphasis-style [Inherited]
 -epub-text-emphasis-style = -webkit-text-emphasis-style
+text-emphasis-style = -webkit-text-emphasis-style
 -webkit-text-fill-color [Inherited]
 -webkit-text-security [Inherited]
 -webkit-text-stroke [Inherited]
