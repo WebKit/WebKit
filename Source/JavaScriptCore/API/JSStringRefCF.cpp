@@ -40,26 +40,28 @@ JSStringRef JSStringCreateWithCFString(CFStringRef string)
     // We cannot use CFIndex here since CFStringGetLength can return values larger than
     // it can hold.  (<rdar://problem/6806478>)
     size_t length = CFStringGetLength(string);
-    if (length) {
-        Vector<LChar, 1024> lcharBuffer(length);
-        CFIndex usedBufferLength;
-        CFIndex convertedSize = CFStringGetBytes(string, CFRangeMake(0, length), kCFStringEncodingISOLatin1, 0, false, lcharBuffer.data(), length, &usedBufferLength);
-        if (static_cast<size_t>(convertedSize) == length && static_cast<size_t>(usedBufferLength) == length)
-            return OpaqueJSString::create(lcharBuffer.data(), length).leakRef();
+    if (!length)
+        return OpaqueJSString::create(reinterpret_cast<const LChar*>(""), 0).leakRef();
 
-        auto buffer = std::make_unique<UniChar[]>(length);
-        CFStringGetCharacters(string, CFRangeMake(0, length), buffer.get());
-        COMPILE_ASSERT(sizeof(UniChar) == sizeof(UChar), unichar_and_uchar_must_be_same_size);
-        return OpaqueJSString::create(reinterpret_cast<UChar*>(buffer.get()), length).leakRef();
-    }
-    
-    return OpaqueJSString::create(reinterpret_cast<const LChar*>(""), 0).leakRef();
+    Vector<LChar, 1024> lcharBuffer(length);
+    CFIndex usedBufferLength;
+    CFIndex convertedSize = CFStringGetBytes(string, CFRangeMake(0, length), kCFStringEncodingISOLatin1, 0, false, lcharBuffer.data(), length, &usedBufferLength);
+    if (static_cast<size_t>(convertedSize) == length && static_cast<size_t>(usedBufferLength) == length)
+        return OpaqueJSString::create(lcharBuffer.data(), length).leakRef();
+
+    auto buffer = std::make_unique<UniChar[]>(length);
+    CFStringGetCharacters(string, CFRangeMake(0, length), buffer.get());
+    static_assert(sizeof(UniChar) == sizeof(UChar), "UniChar and UChar must be same size");
+    return OpaqueJSString::create(reinterpret_cast<UChar*>(buffer.get()), length).leakRef();
 }
 
-CFStringRef JSStringCopyCFString(CFAllocatorRef alloc, JSStringRef string)
+CFStringRef JSStringCopyCFString(CFAllocatorRef allocator, JSStringRef string)
 {
     if (!string->length())
         return CFSTR("");
 
-    return CFStringCreateWithCharacters(alloc, reinterpret_cast<const UniChar*>(string->deprecatedCharacters()), string->length());
+    if (string->is8Bit())
+        return CFStringCreateWithBytes(allocator, reinterpret_cast<const UInt8*>(string->characters8()), string->length(), kCFStringEncodingISOLatin1, false);
+
+    return CFStringCreateWithCharacters(allocator, reinterpret_cast<const UniChar*>(string->characters16()), string->length());
 }

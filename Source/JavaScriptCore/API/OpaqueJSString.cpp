@@ -36,7 +36,15 @@ PassRefPtr<OpaqueJSString> OpaqueJSString::create(const String& string)
 {
     if (!string.isNull())
         return adoptRef(new OpaqueJSString(string));
-    return 0;
+    return nullptr;
+}
+
+OpaqueJSString::~OpaqueJSString()
+{
+    if (UChar* characters = m_characters) {
+        // m_characters is put in a local here to avoid an extra atomic load.
+        fastFree(static_cast<void*>(characters));
+    }
 }
 
 String OpaqueJSString::string() const
@@ -61,3 +69,43 @@ Identifier OpaqueJSString::identifier(VM* vm) const
 
     return Identifier(vm, m_string.characters16(), m_string.length());
 }
+
+const UChar* OpaqueJSString::characters()
+{
+    if (!this)
+        return nullptr;
+
+    // m_characters is put in a local here to avoid an extra atomic load.
+    UChar* characters = m_characters;
+    if (characters)
+        return characters;
+
+    unsigned length = m_string.length();
+    UChar* newCharacters = static_cast<UChar*>(fastMalloc(length * sizeof(UChar)));
+
+    if (m_string.is8Bit()) {
+        for (size_t i = 0; i < length; ++i)
+            newCharacters[i] = m_string.characters8()[i];
+    } else
+        memcpy(newCharacters, m_string.characters16(), length * sizeof(UChar));
+
+    if (!m_characters.compare_exchange_strong(characters, newCharacters)) {
+        fastFree(newCharacters);
+        return characters;
+    }
+
+    return newCharacters;
+}
+
+bool OpaqueJSString::equal(const OpaqueJSString* a, const OpaqueJSString* b)
+{
+    if (a == b)
+        return true;
+
+    if (!a || !b)
+        return false;
+
+    return a->m_string == b->m_string;
+}
+
+
