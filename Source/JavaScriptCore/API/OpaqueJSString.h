@@ -26,6 +26,7 @@
 #ifndef OpaqueJSString_h
 #define OpaqueJSString_h
 
+#include <atomic>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/text/WTFString.h>
 
