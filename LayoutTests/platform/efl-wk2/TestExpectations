@@ -139,8 +139,8 @@ webkit.org/b/108355 js/caller-property.html [ Crash Pass ]
 webkit.org/b/108355 storage/websql/close-during-stress-test.html [ Crash Pass ]
 webkit.org/b/108355 storage/websql/sql-error-codes.html [ Crash Pass ]
 
-webkit.org/b/127109 media/video-object-fit-change.html [ Failure Pass ]
-webkit.org/b/127109 media/video-object-fit.html [ Failure Pass ]
+webkit.org/b/127109 media/video-object-fit-change.html [ ImageOnlyFailure Pass ]
+webkit.org/b/127109 media/video-object-fit.html [ ImageOnlyFailure Pass ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # PASSING TESTS WITH INCORRECT EXPECTATIONS
