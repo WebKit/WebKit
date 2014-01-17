@@ -1,3 +1,13 @@
+2014-01-17  Daniel Bates  <dabates@apple.com>
+
+        Fix the iOS build after <http://trac.webkit.org/changeset/162208>
+        (https://bugs.webkit.org/show_bug.cgi?id=127139)
+
+        __MAC_OS_X_VERSION_MIN_REQUIRED isn't defined when building for iOS. Instead, explicitly
+        check that we're not PLATFORM(IOS) to avoid defining the enum value CFHTTPCookieStorageAcceptPolicyExclusivelyFromMainDocumentDomain.
+
+        * platform/network/cf/CookieJarCFNet.cpp:
+
 2014-01-17  Bear Travis  <betravis@adobe.com>
 
         [CSS Shapes] Basic shapes' computed position should be a horizontal and vertical offset
