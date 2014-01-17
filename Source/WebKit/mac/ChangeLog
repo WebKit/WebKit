@@ -1,3 +1,12 @@
+2014-01-16  Daniel Bates  <dabates@apple.com>
+
+        [iOS] MobileSafari build fix. Declare iOS-specific method mainFrameIconURL
+
+        For now, add mainFrameIconURL() to WebView.h. We should further investigate its
+        usage and API/SPI status.
+
+        * WebView/WebView.h:
+
 2014-01-16  Alexey Proskuryakov  <ap@apple.com>
 
         [Mac] [iOS] Add support for CFHTTPCookieStorageAcceptPolicyExclusivelyFromMainDocumentDomain
