@@ -147,6 +147,9 @@ static void webKitSettingsConstructed(GObject* object)
 
     WebPreferences* prefs = WEBKIT_SETTINGS(object)->priv->preferences.get();
     ExperimentalFeatures features;
+    bool cssGridLayoutEnabled = features.isEnabled(ExperimentalFeatures::CSSGridLayout);
+    if (prefs->cssGridLayoutEnabled() != cssGridLayoutEnabled)
+        prefs->setCSSGridLayoutEnabled(cssGridLayoutEnabled);
     bool regionBasedColumnsEnabled = features.isEnabled(ExperimentalFeatures::RegionBasedColumns);
     if (prefs->regionBasedColumnsEnabled() != regionBasedColumnsEnabled)
         prefs->setRegionBasedColumnsEnabled(regionBasedColumnsEnabled);
