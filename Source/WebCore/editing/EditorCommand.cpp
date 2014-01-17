@@ -1633,10 +1633,6 @@ static const CommandMap& createCommandMap()
 #if PLATFORM(IOS)
         { "ClearText", { executeClearText, supported, enabledClearText, stateNone, valueNull, notTextInsertion, allowExecutionWhenDisabled } },
 #endif
-
-#if PLATFORM(GTK)
-        { "PasteGlobalSelection", { executePasteGlobalSelection, supportedFromMenuOrKeyBinding, enabledPaste, stateNone, valueNull, notTextInsertion, allowExecutionWhenDisabled } },
-#endif
     };
 
     // These unsupported commands are listed here since they appear in the Microsoft
