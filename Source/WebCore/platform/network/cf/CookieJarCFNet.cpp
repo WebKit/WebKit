@@ -102,11 +102,11 @@ static RetainPtr<CFArrayRef> copyCookiesForURLWithFirstPartyURL(const NetworkSto
     bool secure = url.protocolIs("https");
 
 #if PLATFORM(IOS) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 10100)
-    RetainPtr<CFArrayRef> cookiesCF = adoptCF(_CFHTTPCookieStorageCopyCookiesForURLWithMainDocumentURL(session.cookieStorage().get(), url.createCFURL().get(), firstParty.createCFURL().get(), secure));
+    return adoptCF(_CFHTTPCookieStorageCopyCookiesForURLWithMainDocumentURL(session.cookieStorage().get(), url.createCFURL().get(), firstParty.createCFURL().get(), secure));
 #else
     // _CFHTTPCookieStorageCopyCookiesForURLWithMainDocumentURL is not available on other platforms.
     UNUSED_PARAM(firstParty);
-    RetainPtr<CFArrayRef> cookiesCF = adoptCF(CFHTTPCookieStorageCopyCookiesForURL(session.cookieStorage().get(), url.createCFURL().get(), secure));
+    return adoptCF(CFHTTPCookieStorageCopyCookiesForURL(session.cookieStorage().get(), url.createCFURL().get(), secure));
 #endif
 }
 

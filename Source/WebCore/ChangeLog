@@ -1,5 +1,12 @@
 2014-01-16  Alexey Proskuryakov  <ap@apple.com>
 
+        More non-Mac build fix.
+
+        * platform/network/cf/CookieJarCFNet.cpp:
+        (WebCore::copyCookiesForURLWithFirstPartyURL):
+
+2014-01-16  Alexey Proskuryakov  <ap@apple.com>
+
         Build fix.
 
         * platform/network/cf/CookieJarCFNet.cpp: Remove a spurious semicolon.
