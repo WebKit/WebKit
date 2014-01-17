@@ -1,3 +1,9 @@
+2014-01-17  Alexey Proskuryakov  <ap@apple.com>
+
+        More non-Mac build fix.
+
+        * platform/network/cf/CookieJarCFNet.cpp:
+
 2014-01-16  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Unprefix text-emphasis CSS properties
