@@ -26,6 +26,7 @@
 #ifndef OpaqueJSString_h
 #define OpaqueJSString_h
 
+#include <atomic>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/text/WTFString.h>
 
@@ -35,8 +36,7 @@ namespace JSC {
 }
 
 struct OpaqueJSString : public ThreadSafeRefCounted<OpaqueJSString> {
-
-    static PassRefPtr<OpaqueJSString> create() // null
+    static PassRefPtr<OpaqueJSString> create()
     {
         return adoptRef(new OpaqueJSString);
     }
@@ -53,36 +53,50 @@ struct OpaqueJSString : public ThreadSafeRefCounted<OpaqueJSString> {
 
     JS_EXPORT_PRIVATE static PassRefPtr<OpaqueJSString> create(const String&);
 
-    const UChar* characters() { return deprecatedCharacters(); } // FIXME: Delete this.
-    const UChar* deprecatedCharacters() { return this ? m_string.deprecatedCharacters() : nullptr; }
+    JS_EXPORT_PRIVATE ~OpaqueJSString();
+
+    bool is8Bit() { return this ? m_string.is8Bit() : false; }
+    const LChar* characters8() { return this ? m_string.characters8() : nullptr; }
+    const UChar* characters16() { return this ? m_string.characters16() : nullptr; }
     unsigned length() { return this ? m_string.length() : 0; }
+
+    const UChar* characters();
 
     JS_EXPORT_PRIVATE String string() const;
     JSC::Identifier identifier(JSC::VM*) const;
+
+    static bool equal(const OpaqueJSString*, const OpaqueJSString*);
 
 private:
     friend class WTF::ThreadSafeRefCounted<OpaqueJSString>;
 
     OpaqueJSString()
+        : m_characters(static_cast<const UChar*>(nullptr))
     {
     }
 
     OpaqueJSString(const String& string)
         : m_string(string.isolatedCopy())
+        , m_characters(m_string.is8Bit() ? nullptr : m_string.characters16())
     {
     }
 
     OpaqueJSString(const LChar* characters, unsigned length)
         : m_string(characters, length)
+        , m_characters(nullptr)
     {
     }
 
     OpaqueJSString(const UChar* characters, unsigned length)
         : m_string(characters, length)
+        , m_characters(m_string.is8Bit() ? nullptr : m_string.characters16())
     {
     }
 
     String m_string;
+
+    // This will be initialized on demand when characters() is called.
+    std::atomic<const UChar*> m_characters;
 };
 
 #endif
