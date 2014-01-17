@@ -2,6 +2,15 @@
 
         Unreviewed EFL gardening
 
+        * platform/efl/js/dom/dom-static-property-for-in-iteration-expected.txt: Rebaseline after r153772 and r154057.
+        * platform/efl/js/dom/global-constructors-attributes-dedicated-worker-expected.txt: Rebaseline after r153772 and r154127.
+        * platform/efl/js/dom/global-constructors-attributes-expected.txt: Ditto.
+        * platform/efl/js/dom/global-constructors-attributes-shared-worker-expected.txt: Ditto.
+
+2014-01-17  Michał Pakuła vel Rutka  <m.pakula@samsung.com>
+
+        Unreviewed EFL gardening
+
         Fix wrong test expectations added in r162128.
 
         * platform/efl-wk2/TestExpectations:
