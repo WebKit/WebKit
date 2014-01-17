@@ -382,8 +382,6 @@ void WebPage::selectWithGesture(const IntPoint& point, uint32_t granularity, uin
 {
     Frame& frame = m_page->focusController().focusedOrMainFrame();
     FloatPoint adjustedPoint(point);
-    Node* node = frame.nodeRespondingToClickEvents(FloatPoint(point), adjustedPoint);
-    ASSERT(!node || node && node == m_assistedNode.get());
 
     IntPoint constrainedPoint = constrainPoint(point, &frame, m_assistedNode.get());
     VisiblePosition position = frame.visiblePositionForPoint(constrainedPoint);
