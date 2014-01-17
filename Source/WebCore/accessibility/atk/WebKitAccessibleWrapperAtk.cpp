@@ -321,15 +321,13 @@ static AtkObject* webkitAccessibleGetParent(AtkObject* object)
 static gint getNChildrenForTable(AccessibilityObject* coreObject)
 {
     const AccessibilityObject::AccessibilityChildrenVector& tableChildren = coreObject->children();
-    size_t tableChildrenCount = tableChildren.size();
     size_t cellsCount = 0;
 
     // Look for the actual index of the cell inside the table.
-    for (unsigned i = 0; i < tableChildrenCount; ++i) {
-        if (tableChildren[i]->isTableRow()) {
-            const AccessibilityObject::AccessibilityChildrenVector& rowChildren = tableChildren[i]->children();
-            cellsCount += rowChildren.size();
-        } else
+    for (const auto& tableChild : tableChildren) {
+        if (tableChild->isTableRow())
+            cellsCount += tableChild->children().size();
+        else
             cellsCount++;
     }
 
@@ -354,20 +352,19 @@ static gint webkitAccessibleGetNChildren(AtkObject* object)
 static AccessibilityObject* getChildForTable(AccessibilityObject* coreObject, gint index)
 {
     const AccessibilityObject::AccessibilityChildrenVector& tableChildren = coreObject->children();
-    size_t tableChildrenCount = tableChildren.size();
     size_t cellsCount = 0;
 
     // Look for the actual index of the cell inside the table.
     size_t current = static_cast<size_t>(index);
-    for (unsigned i = 0; i < tableChildrenCount; ++i) {
-        if (tableChildren[i]->isTableRow()) {
-            const AccessibilityObject::AccessibilityChildrenVector& rowChildren = tableChildren[i]->children();
+    for (const auto& tableChild : tableChildren) {
+        if (tableChild->isTableRow()) {
+            const AccessibilityObject::AccessibilityChildrenVector& rowChildren = tableChild->children();
             size_t rowChildrenCount = rowChildren.size();
             if (current < cellsCount + rowChildrenCount)
                 return rowChildren.at(current - cellsCount).get();
             cellsCount += rowChildrenCount;
         } else if (cellsCount == current)
-            return tableChildren[i].get();
+            return tableChild.get();
         else
             cellsCount++;
     }
@@ -419,18 +416,17 @@ static gint getIndexInParentForCellInRow(AccessibilityObject* coreObject)
         return -1;
 
     const AccessibilityObject::AccessibilityChildrenVector& rows = grandParent->children();
-    size_t rowsCount = rows.size();
     size_t previousCellsCount = 0;
 
     // Look for the actual index of the cell inside the table.
-    for (unsigned i = 0; i < rowsCount; ++i) {
-        if (!rows[i]->isTableRow())
+    for (const auto& row : rows) {
+        if (!row->isTableRow())
             continue;
 
-        const AccessibilityObject::AccessibilityChildrenVector& cells = rows[i]->children();
+        const AccessibilityObject::AccessibilityChildrenVector& cells = row->children();
         size_t cellsCount = cells.size();
 
-        if (rows[i] == parent) {
+        if (row == parent) {
             for (unsigned j = 0; j < cellsCount; ++j) {
                 if (cells[j] == coreObject)
                     return previousCellsCount + j;
