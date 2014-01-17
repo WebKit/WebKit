@@ -121,6 +121,10 @@ bool AccessibilityController::addNotificationListener(JSObjectRef functionCallba
     return false;
 }
 
+void AccessibilityController::platformResetToConsistentState()
+{
+}
+
 void AccessibilityController::removeNotificationListener()
 {
 }

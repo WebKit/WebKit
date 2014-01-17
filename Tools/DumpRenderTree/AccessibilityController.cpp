@@ -174,5 +174,6 @@ void AccessibilityController::resetToConsistentState()
     setLogValueChangeEvents(false);
     setLogScrollingStartEvents(false);
     setLogAccessibilityEvents(false);
+    platformResetToConsistentState();
 }
 #endif // HAVE(ACCESSIBILITY)

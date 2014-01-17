@@ -247,6 +247,10 @@ void AccessibilityController::setLogFocusEvents(bool logFocusEvents)
     ASSERT(m_focusEventHook);
 }
 
+void AccessibilityController::platformResetToConsistentState()
+{
+}
+
 void AccessibilityController::setLogValueChangeEvents(bool logValueChangeEvents)
 {
     if (!!m_valueChangeEventHook == logValueChangeEvents)

@@ -44,7 +44,8 @@ AccessibilityController::AccessibilityController()
 
 AccessibilityController::~AccessibilityController()
 {
-    m_globalNotificationHandler.clear();
+    // ResetToConsistentState should have cleared this already.
+    ASSERT(!m_globalNotificationHandler);
 }
 
 AccessibilityUIElement AccessibilityController::elementAtPoint(int x, int y)
@@ -118,6 +119,11 @@ void AccessibilityController::setLogAccessibilityEvents(bool)
 {
 }
 
+void AccessibilityController::platformResetToConsistentState()
+{
+    m_globalNotificationHandler.clear();
+}
+
 bool AccessibilityController::addNotificationListener(JSObjectRef functionCallback)
 {
     if (!functionCallback)
@@ -136,9 +142,7 @@ bool AccessibilityController::addNotificationListener(JSObjectRef functionCallba
 
 void AccessibilityController::removeNotificationListener()
 {
-    // Mac programmers should not be trying to remove a listener that's already removed.
-    ASSERT(m_globalNotificationHandler);
-    m_globalNotificationHandler.clear();
+    // No longer a need to cleanup for tests, since resetToConsistentState will remove the listener.
 }
 
 JSRetainPtr<JSStringRef> AccessibilityController::platformName() const

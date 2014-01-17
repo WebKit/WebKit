@@ -52,6 +52,9 @@ AccessibilityUIElement AccessibilityController::elementAtPoint(int x, int y)
     return nullptr;
 }
 
+void AccessibilityController::platformResetToConsistentState()
+{
+}
 
 void AccessibilityController::setLogFocusEvents(bool)
 {

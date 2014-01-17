@@ -96,6 +96,8 @@ private:
 #if HAVE(ACCESSIBILITY) && (PLATFORM(GTK) || PLATFORM(EFL))
     RefPtr<AccessibilityNotificationHandler> m_globalNotificationHandler;
 #endif
+    
+    void platformResetToConsistentState();
 };
 
 #endif // AccessibilityController_h

@@ -1,3 +1,26 @@
+2014-01-17  Chris Fleizach  <cfleizach@apple.com>
+
+        platform/mac/accessibility/aria-multiline.html sometimes asserts in AccessibilityController::removeNotificationListener
+        https://bugs.webkit.org/show_bug.cgi?id=127141
+
+        Reviewed by Alexey Proskuryakov.
+
+        Make sure to reset the notification handler each time.
+
+        * DumpRenderTree/AccessibilityController.cpp:
+        (AccessibilityController::resetToConsistentState):
+        * DumpRenderTree/AccessibilityController.h:
+        * DumpRenderTree/atk/AccessibilityControllerAtk.cpp:
+        (AccessibilityController::platformResetToConsistentState):
+        * DumpRenderTree/ios/AccessibilityControllerIOS.mm:
+        (AccessibilityController::platformResetToConsistentState):
+        * DumpRenderTree/mac/AccessibilityControllerMac.mm:
+        (AccessibilityController::~AccessibilityController):
+        (AccessibilityController::platformResetToConsistentState):
+        (AccessibilityController::removeNotificationListener):
+        * DumpRenderTree/win/AccessibilityControllerWin.cpp:
+        (AccessibilityController::platformResetToConsistentState):
+
 2014-01-17  Alberto Garcia  <berto@igalia.com>
 
         [GTK] Test /webkit/download/not-found fails in GTK Linux 64-bit Release bot
