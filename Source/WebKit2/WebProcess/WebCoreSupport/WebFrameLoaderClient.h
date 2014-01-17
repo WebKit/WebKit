@@ -208,8 +208,6 @@ private:
     virtual void dispatchDidReconnectDOMWindowExtensionToGlobalObject(WebCore::DOMWindowExtension*) override;
     virtual void dispatchWillDestroyGlobalObjectForDOMWindowExtension(WebCore::DOMWindowExtension*) override;
 
-    virtual void documentElementAvailable() override;
-
     virtual void registerForIconNotification(bool listen = true) override;
     
 #if PLATFORM(MAC)

@@ -1502,11 +1502,6 @@ void WebFrameLoaderClient::dispatchWillDestroyGlobalObjectForDOMWindowExtension(
     webPage->injectedBundleLoaderClient().willDestroyGlobalObjectForDOMWindowExtension(webPage, extension);
 }
 
-void WebFrameLoaderClient::documentElementAvailable()
-{
-    notImplemented();
-}
-
 void WebFrameLoaderClient::registerForIconNotification(bool /*listen*/)
 {
     notImplemented();

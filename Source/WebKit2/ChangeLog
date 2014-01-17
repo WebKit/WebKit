@@ -1,5 +1,12 @@
 2014-01-17  Anders Carlsson  <andersca@apple.com>
 
+        Fix build.
+
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.h:
+
+2014-01-17  Anders Carlsson  <andersca@apple.com>
+
         Remove FrameLoaderClient::didPerformFirstNavigation()
         https://bugs.webkit.org/show_bug.cgi?id=127191
 
