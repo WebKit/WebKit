@@ -73,10 +73,12 @@ using namespace WebCore;
 
 namespace WebKit {
 
+#if ENABLE(NETWORK_PROCESS)
 static uint64_t legacySessionID(const NetworkStorageSession &session)
 {
     return session.isPrivateBrowsingSession() ? SessionTracker::legacyPrivateSessionID : SessionTracker::defaultSessionID;
 }
+#endif
 
 void WebPlatformStrategies::initialize()
 {
