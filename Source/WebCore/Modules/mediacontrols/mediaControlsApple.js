@@ -834,7 +834,7 @@ Controller.prototype = {
         var absTime = Math.abs(time);
         var intSeconds = Math.floor(absTime % 60).toFixed(0);
         var intMinutes = Math.floor(absTime / 60).toFixed(0);
-        return (time < 0 ? '-' : '' ) + String('00' + intMinutes).slice(-2) + ":" + String('00' + intSeconds).slice(-2)
+        return (time < 0 ? '-' : String()) + String('00' + intMinutes).slice(-2) + ":" + String('00' + intSeconds).slice(-2)
     },
 
     updatePlaying: function()
