@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2009, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2008, 2009, 2013, 2014 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Cameron Zwarich <cwzwarich@uwaterloo.ca>
  *
  * Redistribution and use in source and binary forms, with or without
@@ -185,7 +185,7 @@ namespace JSC {
     macro(op_throw, 2) \
     macro(op_throw_static_error, 3) \
     \
-    macro(op_debug, 2) \
+    macro(op_debug, 3) \
     macro(op_profile_will_call, 2) \
     macro(op_profile_did_call, 2) \
     \

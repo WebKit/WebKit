@@ -1,4 +1,4 @@
-# Copyright (C) 2011, 2012, 2013 Apple Inc. All rights reserved.
+# Copyright (C) 2011, 2012, 2013, 2014 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -844,7 +844,7 @@ _llint_op_debug:
 
     callSlowPath(_llint_slow_path_debug)
 .opDebugDone:                    
-    dispatch(2)
+    dispatch(3)
 
 
 _llint_native_call_trampoline:

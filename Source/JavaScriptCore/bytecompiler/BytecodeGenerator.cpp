@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2009, 2012, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2008, 2009, 2012, 2013, 2014 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Cameron Zwarich <cwzwarich@uwaterloo.ca>
  * Copyright (C) 2012 Igalia, S.L.
  *
@@ -1950,6 +1950,7 @@ void BytecodeGenerator::emitDebugHook(DebugHookID debugHookID, unsigned line, un
     emitExpressionInfo(divot, divot, divot);
     emitOpcode(op_debug);
     instructions().append(debugHookID);
+    instructions().append(false);
 }
 
 void BytecodeGenerator::pushFinallyContext(StatementNode* finallyBlock)
