@@ -1558,7 +1558,7 @@ CodeBlock::CodeBlock(ScriptExecutable* ownerExecutable, UnlinkedCodeBlock* unlin
     setConstantRegisters(unlinkedCodeBlock->constantRegisters());
     if (unlinkedCodeBlock->usesGlobalObject())
         m_constantRegisters[unlinkedCodeBlock->globalObjectRegister().offset()].set(*m_vm, ownerExecutable, m_globalObject.get());
-    m_functionDecls.grow(unlinkedCodeBlock->numberOfFunctionDecls());
+    m_functionDecls.resizeToFit(unlinkedCodeBlock->numberOfFunctionDecls());
     for (size_t count = unlinkedCodeBlock->numberOfFunctionDecls(), i = 0; i < count; ++i) {
         UnlinkedFunctionExecutable* unlinkedExecutable = unlinkedCodeBlock->functionDecl(i);
         unsigned lineCount = unlinkedExecutable->lineCount();
@@ -1574,7 +1574,7 @@ CodeBlock::CodeBlock(ScriptExecutable* ownerExecutable, UnlinkedCodeBlock* unlin
         m_functionDecls[i].set(*m_vm, ownerExecutable, executable);
     }
 
-    m_functionExprs.grow(unlinkedCodeBlock->numberOfFunctionExprs());
+    m_functionExprs.resizeToFit(unlinkedCodeBlock->numberOfFunctionExprs());
     for (size_t count = unlinkedCodeBlock->numberOfFunctionExprs(), i = 0; i < count; ++i) {
         UnlinkedFunctionExecutable* unlinkedExecutable = unlinkedCodeBlock->functionExpr(i);
         unsigned lineCount = unlinkedExecutable->lineCount();
@@ -2590,8 +2590,6 @@ void CodeBlock::shrinkToFit(ShrinkMode shrinkMode)
     m_specialFastCaseProfiles.shrinkToFit();
     
     if (shrinkMode == EarlyShrink) {
-        m_functionDecls.shrinkToFit();
-        m_functionExprs.shrinkToFit();
         m_constantRegisters.shrinkToFit();
         
         if (m_rareData) {

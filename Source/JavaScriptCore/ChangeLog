@@ -1,5 +1,22 @@
 2014-01-18  Andreas Kling  <akling@apple.com>
 
+        CodeBlock: Size m_function{Exprs,Decls} to fit from creation.
+        <https://webkit.org/b/127238>
+
+        Reviewed by Anders Carlsson.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::CodeBlock):
+
+            Use resizeToFit() instead of grow() for m_functionExprs and
+            m_functionDecls since we know they will never change size.
+
+        (JSC::CodeBlock::shrinkToFit):
+
+            No need to shrink them here anymore.
+
+2014-01-18  Andreas Kling  <akling@apple.com>
+
         Remove unused CodeBlock::m_additionalIdentifiers member.
         <https://webkit.org/b/127237>
 
