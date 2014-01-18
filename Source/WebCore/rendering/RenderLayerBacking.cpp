@@ -144,8 +144,7 @@ RenderLayerBacking::RenderLayerBacking(RenderLayer& layer)
         if (m_isMainFrameRenderViewLayer) {
             tiledBacking->setExposedRect(renderer().frame().view()->exposedRect());
             tiledBacking->setUnparentsOffscreenTiles(true);
-            if (page->settings().backgroundShouldExtendBeyondPage())
-                tiledBacking->setTileMargins(512, 512, 512, 512);
+            setTiledBackingHasMargins(page->settings().backgroundShouldExtendBeyondPage());
         }
 
         tiledBacking->setScrollingPerformanceLoggingEnabled(page->settings().scrollingPerformanceLoggingEnabled());
@@ -252,6 +251,15 @@ void RenderLayerBacking::adjustTiledBackingCoverage()
 
     TiledBacking::TileCoverage tileCoverage = computeTileCoverage(this);
     tiledBacking()->setTileCoverage(tileCoverage);
+}
+
+void RenderLayerBacking::setTiledBackingHasMargins(bool extendBackground)
+{
+    if (!m_usingTiledCacheLayer)
+        return;
+
+    int marginSize = extendBackground ? 512 : 0;
+    tiledBacking()->setTileMargins(marginSize, marginSize, marginSize, marginSize);
 }
 
 void RenderLayerBacking::updateDebugIndicators(bool showBorder, bool showRepaintCounter)

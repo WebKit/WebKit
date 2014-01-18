@@ -235,6 +235,9 @@ public:
     void setTiledBackingStoreEnabled(bool);
     bool tiledBackingStoreEnabled() const { return m_tiledBackingStoreEnabled; }
 
+    void setBackgroundShouldExtendBeyondPage(bool);
+    bool backgroundShouldExtendBeyondPage() const { return m_backgroundShouldExtendBeyondPage; }
+
 #if USE(AVFOUNDATION)
     static void setAVFoundationEnabled(bool flag);
     static bool isAVFoundationEnabled() { return gAVFoundationEnabled; }
@@ -357,6 +360,7 @@ private:
 #endif
     bool m_showTiledScrollingIndicator : 1;
     bool m_tiledBackingStoreEnabled : 1;
+    bool m_backgroundShouldExtendBeyondPage : 1;
     bool m_dnsPrefetchingEnabled : 1;
 
 #if ENABLE(TOUCH_EVENTS)

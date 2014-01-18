@@ -1,0 +1,17 @@
+(GraphicsLayer
+  (bounds 1208.00 2021.00)
+  (visible rect 0.00, 0.00 785.00 x 585.00)
+  (contentsScale 1.00)
+  (children 1
+    (GraphicsLayer
+      (bounds 1208.00 2021.00)
+      (contentsOpaque 1)
+      (visible rect 0.00, 0.00 785.00 x 585.00)
+      (contentsScale 1.00)
+      (tile cache coverage -512, -512 2048 x 2048)
+      (tile size 512 x 512)
+      (top left tile -1, -1 tiles grid 4 x 4)
+    )
+  )
+)
+

@@ -157,6 +157,7 @@ public:
     bool tiledBackingHasMargin() const;
     TiledBacking* tiledBacking() const;
     void adjustTiledBackingCoverage();
+    void setTiledBackingHasMargins(bool);
     
     void updateDebugIndicators(bool showBorder, bool showRepaintCounter);
 

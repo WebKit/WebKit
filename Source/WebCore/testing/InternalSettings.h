@@ -135,6 +135,8 @@ public:
     void setAutoscrollForDragAndDropEnabled(bool enabled, ExceptionCode&);
     void setFontFallbackPrefersPictographs(bool preferPictographs, ExceptionCode&);
     void setPluginReplacementEnabled(bool);
+    void setBackgroundShouldExtendBeyondPage(bool hasExtendedBackground, ExceptionCode&);
+
 
 private:
     explicit InternalSettings(Page*);

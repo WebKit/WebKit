@@ -2678,6 +2678,21 @@ IntRect FrameView::extendedBackgroundRect() const
 #endif
 }
 
+#if USE(ACCELERATED_COMPOSITING)
+void FrameView::setBackgroundExtendsBeyondPage(bool extendBackground)
+{
+    RenderView* renderView = this->renderView();
+    if (!renderView)
+        return;
+
+    RenderLayerBacking* backing = renderView->layer()->backing();
+    if (!backing)
+        return;
+
+    backing->setTiledBackingHasMargins(extendBackground);
+}
+#endif
+
 bool FrameView::shouldUpdateWhileOffscreen() const
 {
     return m_shouldUpdateWhileOffscreen;

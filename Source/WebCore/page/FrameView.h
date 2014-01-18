@@ -196,6 +196,10 @@ public:
     // extendedBackgroundRect() is in the viewport's coordinate space. 
     bool hasExtendedBackground() const;
     IntRect extendedBackgroundRect() const;
+    
+#if USE(ACCELERATED_COMPOSITING)
+    void setBackgroundExtendsBeyondPage(bool);
+#endif
 
     bool shouldUpdateWhileOffscreen() const;
     void setShouldUpdateWhileOffscreen(bool);

@@ -521,4 +521,10 @@ void InternalSettings::setPluginReplacementEnabled(bool enabled)
     RuntimeEnabledFeatures::sharedFeatures().setPluginReplacementEnabled(enabled);
 }
 
+void InternalSettings::setBackgroundShouldExtendBeyondPage(bool hasExtendedBackground, ExceptionCode& ec)
+{
+    InternalSettingsGuardForSettings();
+    settings()->setBackgroundShouldExtendBeyondPage(hasExtendedBackground);
+}
+
 }

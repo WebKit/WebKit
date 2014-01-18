@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <style>
+        body {
+            width: 1200px;
+            height: 2000px;
+        }
+    </style>
+    <script>
+        if (window.testRunner)
+            testRunner.dumpAsText();
+        
+        if (window.internals)
+            window.internals.settings.setBackgroundShouldExtendBeyondPage(true);
+
+        function doTest()
+        {
+            if (window.internals) {
+                document.getElementById('layers').innerText = internals.layerTreeAsText(document,
+                    internals.LAYER_TREE_INCLUDES_VISIBLE_RECTS | internals.LAYER_TREE_INCLUDES_TILE_CACHES);
+            }
+        }
+        window.addEventListener('load', doTest, false);
+    </script>
+</head>
+<body>
+<pre id="layers">Layer tree goes here</p>
+</body>
+</html>

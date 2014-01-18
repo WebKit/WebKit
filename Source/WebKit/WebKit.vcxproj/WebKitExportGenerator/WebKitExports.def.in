@@ -280,6 +280,7 @@ EXPORTS
         symbolWithPointer(?setFantasyFontFamily@Settings@WebCore@@QAEXABVAtomicString@WTF@@W4UScriptCode@@@Z, ?setFantasyFontFamily@Settings@WebCore@@QEAAXAEBVAtomicString@WTF@@W4UScriptCode@@@Z)
         symbolWithPointer(?setFixedFontFamily@Settings@WebCore@@QAEXABVAtomicString@WTF@@W4UScriptCode@@@Z, ?setFixedFontFamily@Settings@WebCore@@QEAAXAEBVAtomicString@WTF@@W4UScriptCode@@@Z)
         symbolWithPointer(?setFontFallbackPrefersPictographs@Settings@WebCore@@QAEX_N@Z, ?setFontFallbackPrefersPictographs@Settings@WebCore@@QEAAX_N@Z)
+        symbolWithPointer(?setBackgroundShouldExtendBeyondPage@Settings@WebCore@@QAEX_N@Z, ?setBackgroundShouldExtendBeyondPage@InternalSettings@WebCore@@QAEX_NAAH@Z)
         symbolWithPointer(?setFooterHeight@FrameView@WebCore@@QAEXH@Z, ?setFooterHeight@FrameView@WebCore@@QEAAXH@Z)
         symbolWithPointer(?setHeaderHeight@FrameView@WebCore@@QAEXH@Z, ?setHeaderHeight@FrameView@WebCore@@QEAAXH@Z)
         symbolWithPointer(?setImagesEnabled@Settings@WebCore@@QAEX_N@Z, ?setImagesEnabled@Settings@WebCore@@QEAAX_N@Z)

@@ -1067,6 +1067,8 @@ void TileController::setTileMargins(int marginTop, int marginBottom, int marginL
     m_marginBottom = marginBottom;
     m_marginLeft = marginLeft;
     m_marginRight = marginRight;
+
+    setNeedsRevalidateTiles();
 }
 
 bool TileController::hasMargins() const
