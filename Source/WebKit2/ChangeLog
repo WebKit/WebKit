@@ -1,3 +1,26 @@
+2014-01-18  Yongjun Zhang  <yongjun_zhang@apple.com>
+
+        Make WKRenderingProgressEvents a shareable API.
+        https://bugs.webkit.org/show_bug.cgi?id=127213
+
+        Reviewed by Dan Bernstein.
+
+        Move WKRenderingProgressEvents from UIProcess to Shared, so that an inject bundle
+        could also use this enum when listening to layout milestones.
+
+        * Shared/API/Cocoa/WKRenderingProgressEvents.h: Added.
+        (NS_OPTIONS):
+        * Shared/API/Cocoa/WKRenderingProgressEventsInternal.h: Added.
+        (renderingProgressEvents):
+        * UIProcess/API/Cocoa/WKBrowsingContextController.h: Move WKRenderingProgressEvents to Shared/API/Cocoa/WKRenderingProgressEvents.h.
+        * UIProcess/API/Cocoa/WKBrowsingContextController.mm: Move renderingProgressEvents() to WKRenderingProgressEventsInternal.h.
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInLoadDelegate.h: Add
+            webProcessPlugInBrowserContextController:renderingProgressDidChange: to load delegate.
+        * WebProcess/InjectedBundle/API/mac/WKWebProcessPlugInBrowserContextController.mm:
+        (didLayout):
+        (setUpPageLoaderClient): Also listen to didLayout callback for layout milestones.
+
 2014-01-17  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r162237 and r162241.

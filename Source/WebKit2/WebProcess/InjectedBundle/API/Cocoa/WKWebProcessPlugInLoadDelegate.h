@@ -23,6 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 #import <Foundation/Foundation.h>
+#import <WebKit2/WKRenderingProgressEvents.h>
 
 @class WKWebProcessPlugInBrowsingContextController;
 @class WKWebProcessPlugInFrame;
@@ -43,6 +44,7 @@
 
 // Layout
 - (void)webProcessPlugInBrowserContextController:(WKWebProcessPlugInBrowserContextController*)controller didLayoutForFrame:(WKWebProcessPlugInFrame *)frame;
+- (void)webProcessPlugInBrowserContextController:(WKWebProcessPlugInBrowserContextController*)controller renderingProgressDidChange:(WKRenderingProgressEvents)events;
 
 // Resource loading
 

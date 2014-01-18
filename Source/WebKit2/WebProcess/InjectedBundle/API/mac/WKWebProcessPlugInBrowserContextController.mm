@@ -37,6 +37,7 @@
 #import "WKDOMInternals.h"
 #import "WKNSError.h"
 #import "WKRemoteObjectRegistryInternal.h"
+#import "WKRenderingProgressEventsInternal.h"
 #import "WKRetainPtr.h"
 #import "WKURLRequestNS.h"
 #import "WKWebProcessPluginFrameInternal.h"
@@ -132,6 +133,15 @@ static void didLayoutForFrame(WKBundlePageRef page, WKBundleFrameRef frame, cons
         [loadDelegate webProcessPlugInBrowserContextController:pluginContextController didLayoutForFrame:wrapper(*toImpl(frame))];
 }
 
+static void didLayout(WKBundlePageRef page, WKLayoutMilestones milestones, WKTypeRef* userData, const void *clientInfo)
+{
+    WKWebProcessPlugInBrowserContextController *pluginContextController = (WKWebProcessPlugInBrowserContextController *)clientInfo;
+    auto loadDelegate = pluginContextController->_loadDelegate.get();
+
+    if ([loadDelegate respondsToSelector:@selector(webProcessPlugInBrowserContextController:renderingProgressDidChange:)])
+        [loadDelegate webProcessPlugInBrowserContextController:pluginContextController renderingProgressDidChange:renderingProgressEvents(milestones)];
+}
+
 static void setUpPageLoaderClient(WKWebProcessPlugInBrowserContextController *contextController, WebPage& page)
 {
     WKBundlePageLoaderClientV7 client;
@@ -148,6 +158,7 @@ static void setUpPageLoaderClient(WKWebProcessPlugInBrowserContextController *co
     client.globalObjectIsAvailableForFrame = globalObjectIsAvailableForFrame;
 
     client.didLayoutForFrame = didLayoutForFrame;
+    client.didLayout = didLayout;
 
     page.initializeInjectedBundleLoaderClient(&client.base);
 }

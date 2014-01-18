@@ -49,6 +49,7 @@
 #import "WKNSURLProtectionSpace.h"
 #import "WKProcessGroupInternal.h"
 #import "WKRemoteObjectRegistryInternal.h"
+#import "WKRenderingProgressEventsInternal.h"
 #import "WKRetainPtr.h"
 #import "WKURLRequestNS.h"
 #import "WKURLResponseNS.h"
@@ -593,19 +594,6 @@ static void processDidCrash(WKPageRef page, const void* clientInfo)
 
     if ([loadDelegate respondsToSelector:@selector(browsingContextControllerWebProcessDidCrash:)])
         [(id <WKBrowsingContextLoadDelegatePrivate>)loadDelegate browsingContextControllerWebProcessDidCrash:browsingContext];
-}
-
-static inline WKRenderingProgressEvents renderingProgressEvents(WKLayoutMilestones milestones)
-{
-    WKRenderingProgressEvents events = 0;
-
-    if (milestones & kWKDidFirstLayout)
-        events |= WKRenderingProgressEventFirstLayout;
-
-    if (milestones & kWKDidHitRelevantRepaintedObjectsAreaThreshold)
-        events |= WKRenderingProgressEventFirstPaintWithSignificantArea;
-
-    return events;
 }
 
 static void didLayout(WKPageRef page, WKLayoutMilestones milestones, WKTypeRef userData, const void* clientInfo)

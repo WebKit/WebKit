@@ -27,6 +27,7 @@
 #import <WebKit2/WKBrowsingContextGroup.h>
 #import <WebKit2/WKFoundation.h>
 #import <WebKit2/WKProcessGroup.h>
+#import <WebKit2/WKRenderingProgressEvents.h>
 
 #if WK_API_ENABLED
 
@@ -35,11 +36,6 @@
 @protocol WKBrowsingContextHistoryDelegate;
 @protocol WKBrowsingContextLoadDelegate;
 @protocol WKBrowsingContextPolicyDelegate;
-
-typedef NS_OPTIONS(NSUInteger, WKRenderingProgressEvents) {
-    WKRenderingProgressEventFirstLayout = 1 << 0,
-    WKRenderingProgressEventFirstPaintWithSignificantArea = 1 << 2,
-};
 
 WK_API_CLASS
 @interface WKBrowsingContextController : NSObject
