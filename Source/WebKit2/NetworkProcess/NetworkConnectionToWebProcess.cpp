@@ -37,6 +37,7 @@
 #include "NetworkResourceLoader.h"
 #include "NetworkResourceLoaderMessages.h"
 #include "RemoteNetworkingContext.h"
+#include "SessionTracker.h"
 #include <WebCore/BlobData.h>
 #include <WebCore/PlatformCookieJar.h>
 #include <WebCore/ResourceLoaderOptions.h>
@@ -147,10 +148,10 @@ void NetworkConnectionToWebProcess::setSerialLoadingEnabled(bool enabled)
     m_serialLoadingEnabled = enabled;
 }
 
-static NetworkStorageSession& storageSession(bool privateBrowsingEnabled)
+static NetworkStorageSession& storageSession(uint64_t sessionID)
 {
-    if (privateBrowsingEnabled) {
-        NetworkStorageSession* privateSession = RemoteNetworkingContext::privateBrowsingSession();
+    if (SessionTracker::isEphemeralID(sessionID)) {
+        NetworkStorageSession* privateSession = SessionTracker::session(sessionID).get();
         if (privateSession)
             return *privateSession;
         // Some requests with private browsing mode requested may still be coming shortly after NetworkProcess was told to destroy its session.
@@ -160,9 +161,9 @@ static NetworkStorageSession& storageSession(bool privateBrowsingEnabled)
     return NetworkStorageSession::defaultStorageSession();
 }
 
-void NetworkConnectionToWebProcess::startDownload(bool privateBrowsingEnabled, uint64_t downloadID, const ResourceRequest& request)
+void NetworkConnectionToWebProcess::startDownload(uint64_t sessionID, uint64_t downloadID, const ResourceRequest& request)
 {
-    // FIXME: Do something with the private browsing flag.
+    // FIXME: Do something with the session ID.
     NetworkProcess::shared().downloadManager().startDownload(downloadID, request);
 }
 
@@ -182,34 +183,34 @@ void NetworkConnectionToWebProcess::convertMainResourceLoadToDownload(uint64_t m
     loader->didConvertHandleToDownload();
 }
 
-void NetworkConnectionToWebProcess::cookiesForDOM(bool privateBrowsingEnabled, const URL& firstParty, const URL& url, String& result)
+void NetworkConnectionToWebProcess::cookiesForDOM(uint64_t sessionID, const URL& firstParty, const URL& url, String& result)
 {
-    result = WebCore::cookiesForDOM(storageSession(privateBrowsingEnabled), firstParty, url);
+    result = WebCore::cookiesForDOM(storageSession(sessionID), firstParty, url);
 }
 
-void NetworkConnectionToWebProcess::setCookiesFromDOM(bool privateBrowsingEnabled, const URL& firstParty, const URL& url, const String& cookieString)
+void NetworkConnectionToWebProcess::setCookiesFromDOM(uint64_t sessionID, const URL& firstParty, const URL& url, const String& cookieString)
 {
-    WebCore::setCookiesFromDOM(storageSession(privateBrowsingEnabled), firstParty, url, cookieString);
+    WebCore::setCookiesFromDOM(storageSession(sessionID), firstParty, url, cookieString);
 }
 
-void NetworkConnectionToWebProcess::cookiesEnabled(bool privateBrowsingEnabled, const URL& firstParty, const URL& url, bool& result)
+void NetworkConnectionToWebProcess::cookiesEnabled(uint64_t sessionID, const URL& firstParty, const URL& url, bool& result)
 {
-    result = WebCore::cookiesEnabled(storageSession(privateBrowsingEnabled), firstParty, url);
+    result = WebCore::cookiesEnabled(storageSession(sessionID), firstParty, url);
 }
 
-void NetworkConnectionToWebProcess::cookieRequestHeaderFieldValue(bool privateBrowsingEnabled, const URL& firstParty, const URL& url, String& result)
+void NetworkConnectionToWebProcess::cookieRequestHeaderFieldValue(uint64_t sessionID, const URL& firstParty, const URL& url, String& result)
 {
-    result = WebCore::cookieRequestHeaderFieldValue(storageSession(privateBrowsingEnabled), firstParty, url);
+    result = WebCore::cookieRequestHeaderFieldValue(storageSession(sessionID), firstParty, url);
 }
 
-void NetworkConnectionToWebProcess::getRawCookies(bool privateBrowsingEnabled, const URL& firstParty, const URL& url, Vector<Cookie>& result)
+void NetworkConnectionToWebProcess::getRawCookies(uint64_t sessionID, const URL& firstParty, const URL& url, Vector<Cookie>& result)
 {
-    WebCore::getRawCookies(storageSession(privateBrowsingEnabled), firstParty, url, result);
+    WebCore::getRawCookies(storageSession(sessionID), firstParty, url, result);
 }
 
-void NetworkConnectionToWebProcess::deleteCookie(bool privateBrowsingEnabled, const URL& url, const String& cookieName)
+void NetworkConnectionToWebProcess::deleteCookie(uint64_t sessionID, const URL& url, const String& cookieName)
 {
-    WebCore::deleteCookie(storageSession(privateBrowsingEnabled), url, cookieName);
+    WebCore::deleteCookie(storageSession(sessionID), url, cookieName);
 }
 
 void NetworkConnectionToWebProcess::registerBlobURL(const URL& url, const BlobRegistrationData& data)

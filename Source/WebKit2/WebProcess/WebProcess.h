@@ -165,9 +165,9 @@ public:
 
     void setCacheModel(uint32_t);
 
-    void ensurePrivateBrowsingSession();
-    void destroyPrivateBrowsingSession();
-    
+    void ensurePrivateBrowsingSession(uint64_t sessionID);
+    void destroyPrivateBrowsingSession(uint64_t sessionID);
+
     void pageDidEnterWindow(uint64_t pageID);
     void pageWillLeaveWindow(uint64_t pageID);
 

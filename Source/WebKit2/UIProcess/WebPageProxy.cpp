@@ -228,12 +228,12 @@ static const char* webKeyboardEventTypeString(WebEvent::Type type)
 }
 #endif // !LOG_DISABLED
 
-PassRefPtr<WebPageProxy> WebPageProxy::create(PageClient& pageClient, WebProcessProxy& process, WebPageGroup& pageGroup, uint64_t pageID)
+PassRefPtr<WebPageProxy> WebPageProxy::create(PageClient& pageClient, WebProcessProxy& process, WebPageGroup& pageGroup, API::Session& session, uint64_t pageID)
 {
-    return adoptRef(new WebPageProxy(pageClient, process, pageGroup, pageID));
+    return adoptRef(new WebPageProxy(pageClient, process, pageGroup, session, pageID));
 }
 
-WebPageProxy::WebPageProxy(PageClient& pageClient, WebProcessProxy& process, WebPageGroup& pageGroup, uint64_t pageID)
+WebPageProxy::WebPageProxy(PageClient& pageClient, WebProcessProxy& process, WebPageGroup& pageGroup, API::Session& session, uint64_t pageID)
     : m_pageClient(pageClient)
     , m_process(process)
     , m_pageGroup(pageGroup)
@@ -279,6 +279,7 @@ WebPageProxy::WebPageProxy(PageClient& pageClient, WebProcessProxy& process, Web
     , m_needTouchEvents(false)
 #endif
     , m_pageID(pageID)
+    , m_session(session)
     , m_isPageSuspended(false)
 #if PLATFORM(MAC)
     , m_isSmartInsertDeleteEnabled(TextChecker::isSmartInsertDeleteEnabled())

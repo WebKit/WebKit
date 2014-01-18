@@ -39,9 +39,9 @@ public:
         return adoptRef(new WebFrameNetworkingContext(frame));
     }
 
-    static void setPrivateBrowsingStorageSessionIdentifierBase(const String&);
-    static void ensurePrivateBrowsingSession();
-    static void destroyPrivateBrowsingSession();
+    // FIXME: remove platform-specific code and use SessionTracker
+    static void ensurePrivateBrowsingSession(uint64_t sessionID);
+
     static void setCookieAcceptPolicyForAllContexts(HTTPCookieAcceptPolicy);
 
     WebFrameLoaderClient* webFrameLoaderClient() const;
