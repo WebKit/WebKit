@@ -30,7 +30,11 @@
 # SOFTWARE.
 # */
 
-from StringIO import StringIO
+# Import StringIO from either the StringIO module (Python 2.x) or the io module (Python 3.x).
+try:
+    from StringIO import StringIO
+except ImportError:
+    from io import StringIO
 
 def jsmin(js):
     ins = StringIO(js)

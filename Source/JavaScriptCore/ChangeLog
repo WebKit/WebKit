@@ -1,3 +1,14 @@
+2014-01-18  Zan Dobersek  <zdobersek@igalia.com>
+
+        Inspector scripts are not compatible with Python v3
+        https://bugs.webkit.org/show_bug.cgi?id=127128
+
+        Reviewed by Benjamin Poulain.
+
+        * inspector/scripts/generate-combined-inspector-json.py: Turn print statements into print function calls.
+        * inspector/scripts/jsmin.py: Try importing the StringIO class from the StringIO module (which will work for
+        Python v2) or, on import error, import the class from the io module (which will work for Python v3).
+
 2014-01-17  Anders Carlsson  <andersca@apple.com>
 
         String::is8Bit() crashes if m_impl is null, handle this.

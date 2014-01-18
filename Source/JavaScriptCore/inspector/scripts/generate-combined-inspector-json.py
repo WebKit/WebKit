@@ -29,7 +29,7 @@ import os
 import sys
 
 if len(sys.argv) < 2:
-    print "usage: %s [json files or directory of json files ...]" % os.path.basename(sys.argv[0])
+    print("usage: %s [json files or directory of json files ...]" % os.path.basename(sys.argv[0]))
     sys.exit(1)
 
 files = []
@@ -47,12 +47,12 @@ files.sort()
 # Validate each file is valid JSON and that there is a "domain" key.
 
 first = True
-print "{\"domains\":["
+print("{\"domains\":[")
 for file in files:
     if first:
         first = False
     else:
-        print ","
+        print(",")
 
     string = open(file).read()
 
@@ -64,5 +64,5 @@ for file in files:
         sys.stderr.write("File \"%s\" does not contain valid JSON:\n" % file)
         raise
 
-    print string.rstrip()
-print "]}"
+    print(string.rstrip())
+print("]}")
