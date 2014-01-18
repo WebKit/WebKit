@@ -1,5 +1,19 @@
 2014-01-18  Andreas Kling  <akling@apple.com>
 
+        Remove unused CodeBlock::m_additionalIdentifiers member.
+        <https://webkit.org/b/127237>
+
+        Reviewed by Anders Carlsson.
+
+        * bytecode/CodeBlock.h:
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::CodeBlock):
+        (JSC::CodeBlock::shrinkToFit):
+
+            Remove m_additionalIdentifiers, nothing uses it.
+
+2014-01-18  Andreas Kling  <akling@apple.com>
+
         Remove two unused CodeBlock functions.
         <https://webkit.org/b/127235>
 

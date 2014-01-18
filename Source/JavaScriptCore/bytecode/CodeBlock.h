@@ -1053,7 +1053,6 @@ private:
     Vector<ObjectAllocationProfile> m_objectAllocationProfiles;
 
     // Constant Pool
-    Vector<Identifier> m_additionalIdentifiers;
     COMPILE_ASSERT(sizeof(Register) == sizeof(WriteBarrier<Unknown>), Register_must_be_same_size_as_WriteBarrier_Unknown);
     // TODO: This could just be a pointer to m_unlinkedCodeBlock's data, but the DFG mutates
     // it, so we're stuck with it for now.

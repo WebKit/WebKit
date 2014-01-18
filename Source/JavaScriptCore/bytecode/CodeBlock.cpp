@@ -1480,7 +1480,6 @@ CodeBlock::CodeBlock(CopyParsedBlockTag, CodeBlock& other)
     , m_sourceOffset(other.m_sourceOffset)
     , m_firstLineColumnOffset(other.m_firstLineColumnOffset)
     , m_codeType(other.m_codeType)
-    , m_additionalIdentifiers(other.m_additionalIdentifiers)
     , m_constantRegisters(other.m_constantRegisters)
     , m_functionDecls(other.m_functionDecls)
     , m_functionExprs(other.m_functionExprs)
@@ -2591,7 +2590,6 @@ void CodeBlock::shrinkToFit(ShrinkMode shrinkMode)
     m_specialFastCaseProfiles.shrinkToFit();
     
     if (shrinkMode == EarlyShrink) {
-        m_additionalIdentifiers.shrinkToFit();
         m_functionDecls.shrinkToFit();
         m_functionExprs.shrinkToFit();
         m_constantRegisters.shrinkToFit();
