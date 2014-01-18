@@ -179,6 +179,24 @@ BuildbotTesterQueueView.prototype = {
                 rowElement.appendChild(failureKindElement);
             }
 
+            if (test.has_diff) {
+                var diffElement = document.createElement("a");
+                diffElement.className = "additional-link"
+                diffElement.textContent = "diff";
+                diffElement.href = iteration.queue.buildbot.layoutTestDiffURLForIteration(iteration, test.path);
+                diffElement.target = "_blank";
+                rowElement.appendChild(diffElement);
+
+                if (iteration.hasPrettyPatch) {
+                    var prettyDiffElement = document.createElement("a");
+                    prettyDiffElement.className = "additional-link"
+                    prettyDiffElement.textContent = "pretty\xa0diff";
+                    prettyDiffElement.href = iteration.queue.buildbot.layoutTestPrettyDiffURLForIteration(iteration, test.path);
+                    prettyDiffElement.target = "_blank";
+                    rowElement.appendChild(prettyDiffElement);
+                }
+            }
+
             if (test.has_stderr) {
                 var stderrElement = document.createElement("a");
                 stderrElement.className = "additional-link"
