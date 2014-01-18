@@ -26,6 +26,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+body {
+    margin: 0
+}
+
 div.header {
     border-bottom: 2px solid black;
     padding-bottom: 5px;
@@ -48,7 +52,25 @@ div.collapsible > div.hidden {
 }
 
 .comment {
+    /* Keep this in sync with inspector.css (.webkit-html-comment) */
+    color: rgb(35, 110, 37);
+
     white-space: pre;
+}
+
+.tag {
+    /* Keep this in sync with inspector.css (.webkit-html-tag) */
+    color: rgb(136, 18, 128);
+}
+
+.attribute-name {
+    /* Keep this in sync with inspector.css (.webkit-html-attribute-name) */
+    color: rgb(153, 69, 0);
+}
+
+.attribute-value {
+    /* Keep this in sync with inspector.css (.webkit-html-attribute-value) */
+    color: rgb(26, 26, 166);
 }
 
 .button {

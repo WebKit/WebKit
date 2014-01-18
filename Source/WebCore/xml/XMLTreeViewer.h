@@ -38,13 +38,12 @@ class Document;
 
 class XMLTreeViewer {
 public:
-    explicit XMLTreeViewer(Document*);
-    virtual ~XMLTreeViewer() {};
+    explicit XMLTreeViewer(Document&);
 
     void transformDocumentToTreeView();
 
 private:
-    Document* m_document;
+    Document& m_document;
 };
 
 } // namespace WebCore

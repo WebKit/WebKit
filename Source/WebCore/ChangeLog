@@ -1,3 +1,25 @@
+2014-01-18  Anders Carlsson  <andersca@apple.com>
+
+        XMLTreeViewer shouldn't use the view source mode
+        https://bugs.webkit.org/show_bug.cgi?id=127229
+
+        Reviewed by Andreas Kling.
+
+        Add the relevant styles from view-source.css to XMLViewer.css.
+
+        * xml/XMLTreeViewer.cpp:
+        (WebCore::XMLTreeViewer::transformDocumentToTreeView):
+        * xml/XMLViewer.css:
+        (body):
+        (.comment):
+        (.tag):
+        (.attribute-name):
+        (.attribute-value):
+        * xml/XMLViewer.js:
+        (createComment):
+        (createTag):
+        (createAttribute):
+
 2014-01-18  Andreas Kling  <akling@apple.com>
 
         Remove unused "touchDragDropEnabled" setting.

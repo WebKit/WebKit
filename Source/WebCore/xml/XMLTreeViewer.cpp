@@ -38,6 +38,7 @@
 #include "Frame.h"
 #include "ScriptController.h"
 #include "ScriptSourceCode.h"
+#include "SecurityOrigin.h"
 #include "Text.h"
 #include "XMLViewerCSS.h"
 #include "XMLViewerJS.h"
@@ -45,23 +46,24 @@
 
 namespace WebCore {
 
-XMLTreeViewer::XMLTreeViewer(Document* document)
+XMLTreeViewer::XMLTreeViewer(Document& document)
     : m_document(document)
 {
 }
 
 void XMLTreeViewer::transformDocumentToTreeView()
 {
-    m_document->setIsViewSource(true);
-    String scriptString(reinterpret_cast<const char*>(XMLViewer_js), sizeof(XMLViewer_js));
-    m_document->frame()->script().evaluate(ScriptSourceCode(scriptString));
-    String noStyleMessage("This XML file does not appear to have any style information associated with it. The document tree is shown below.");
-    m_document->frame()->script().evaluate(ScriptSourceCode("prepareWebKitXMLViewer('" + noStyleMessage + "');"));
+    m_document.setSecurityOrigin(SecurityOrigin::createUnique());
 
-    String cssString(reinterpret_cast<const char*>(XMLViewer_css), sizeof(XMLViewer_css));
-    RefPtr<Text> text = m_document->createTextNode(cssString);
-    m_document->getElementById("xml-viewer-style")->appendChild(text, IGNORE_EXCEPTION);
-    m_document->styleResolverChanged(RecalcStyleImmediately);
+    String scriptString = StringImpl::createWithoutCopying(XMLViewer_js, sizeof(XMLViewer_js));
+    m_document.frame()->script().evaluate(ScriptSourceCode(scriptString));
+    String noStyleMessage("This XML file does not appear to have any style information associated with it. The document tree is shown below.");
+    m_document.frame()->script().evaluate(ScriptSourceCode("prepareWebKitXMLViewer('" + noStyleMessage + "');"));
+
+    String cssString = StringImpl::createWithoutCopying(XMLViewer_css, sizeof(XMLViewer_css));
+    RefPtr<Text> text = m_document.createTextNode(cssString);
+    m_document.getElementById("xml-viewer-style")->appendChild(text, IGNORE_EXCEPTION);
+    m_document.styleResolverChanged(RecalcStyleImmediately);
 }
 
 } // namespace WebCore
