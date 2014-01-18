@@ -1,3 +1,50 @@
+2014-01-18  Anders Carlsson  <andersca@apple.com>
+
+        Remove support for the viewsource attribute
+        https://bugs.webkit.org/show_bug.cgi?id=127232
+
+        Reviewed by Andreas Kling.
+
+        * .gitattributes:
+        * fast/frames/resources/viewsource-fake-image-file.png: Removed.
+        * fast/frames/resources/viewsource-frame-1.html: Removed.
+        * fast/frames/resources/viewsource-frame-2.html: Removed.
+        * fast/frames/resources/viewsource-frame-3.html: Removed.
+        * fast/frames/resources/viewsource-frame-4.html: Removed.
+        * fast/frames/resources/viewsource-frame-5.html: Removed.
+        * fast/frames/resources/viewsource-frame-unfinished-script.html: Removed.
+        * fast/frames/resources/viewsource-frame-unfinished-textarea.html: Removed.
+        * fast/frames/viewsource-attribute.html: Removed.
+        * fast/frames/viewsource-empty-attribute-value-expected.txt: Removed.
+        * fast/frames/viewsource-empty-attribute-value.html: Removed.
+        * fast/frames/viewsource-linebreak-expected.txt: Removed.
+        * fast/frames/viewsource-linebreak.html: Removed.
+        * fast/frames/viewsource-link-on-href-value-expected.txt: Removed.
+        * fast/frames/viewsource-link-on-href-value.html: Removed.
+        * fast/frames/viewsource-on-image-file.html: Removed.
+        * fast/frames/viewsource-plain-text-tags-expected.txt: Removed.
+        * fast/frames/viewsource-plain-text-tags.html: Removed.
+        * fast/frames/viewsource-unfinished-tags-expected.txt: Removed.
+        * fast/frames/viewsource-unfinished-tags.html: Removed.
+        * fast/frames/viewsource-xml-expected.txt: Removed.
+        * fast/frames/viewsource-xml.html: Removed.
+        * http/tests/security/resources/view-source-no-refresh.php: Removed.
+        * http/tests/security/view-source-javascript-url-in-document-expected.txt: Removed.
+        * http/tests/security/view-source-javascript-url-in-document.html: Removed.
+        * http/tests/security/view-source-no-javascript-url-expected.txt: Removed.
+        * http/tests/security/view-source-no-javascript-url.html: Removed.
+        * http/tests/security/view-source-no-refresh-expected.txt: Removed.
+        * http/tests/security/view-source-no-refresh.html: Removed.
+        * platform/efl/fast/frames/viewsource-attribute-expected.png: Removed.
+        * platform/efl/fast/frames/viewsource-attribute-expected.txt: Removed.
+        * platform/efl/fast/frames/viewsource-on-image-file-expected.png: Removed.
+        * platform/efl/fast/frames/viewsource-on-image-file-expected.txt: Removed.
+        * platform/mac/fast/frames/viewsource-attribute-expected.png: Removed.
+        * platform/mac/fast/frames/viewsource-attribute-expected.txt: Removed.
+        * platform/mac/fast/frames/viewsource-on-image-file-expected.png: Removed.
+        * platform/mac/fast/frames/viewsource-on-image-file-expected.txt: Removed.
+        * platform/win/TestExpectations:
+
 2014-01-18  Alexey Proskuryakov  <ap@apple.com>
 
         media/video-size.html is flaky

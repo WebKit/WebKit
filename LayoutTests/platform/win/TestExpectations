@@ -377,9 +377,6 @@ http/tests/navigation/reload-subframe-object.html
 fast/encoding/frame-default-enc.html
 http/tests/misc/frame-default-enc-same-domain.html
 
-#<rdar://problem/5829328> REGRESSION: fast/frames/viewsource-empty-attribute-value.html fails on Windows intermittently
-fast/frames/viewsource-empty-attribute-value.html
-
 # <rdar://problem/5539822> REGRESSION (Leopard): svg/custom/stroke-width-click.svg test failing
 svg/custom/stroke-width-click.svg
 
@@ -2030,8 +2027,6 @@ fast/block/margin-collapse/057.html
 fast/css/acid2.html
 fast/css/acid2-pixel.html
 fast/css/border-height.html
-fast/frames/viewsource-attribute.html
-fast/frames/viewsource-on-image-file.html
 fast/inline/inline-padding-disables-text-quirk.html
 fast/inline/inline-text-quirk-bpm.html
 fast/layers/scroll-rect-to-visible.html

@@ -1,5 +1,14 @@
 2014-01-18  Anders Carlsson  <andersca@apple.com>
 
+        Remove support for the viewsource attribute
+        https://bugs.webkit.org/show_bug.cgi?id=127232
+
+        Reviewed by Andreas Kling.
+
+        * wtf/FeatureDefines.h:
+
+2014-01-18  Anders Carlsson  <andersca@apple.com>
+
         Remove ENABLE_THREADED_HTML_PARSER defines everywhere
         https://bugs.webkit.org/show_bug.cgi?id=127225
 

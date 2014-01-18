@@ -1,5 +1,21 @@
 2014-01-18  Anders Carlsson  <andersca@apple.com>
 
+        Remove support for the viewsource attribute
+        https://bugs.webkit.org/show_bug.cgi?id=127232
+
+        Reviewed by Andreas Kling.
+
+        The 'viewsource' attribute on frames is nonstandard, not used by anyone (the inspector has
+        its own syntax highlighting) and not audited.
+
+        This patch removes parsing of the viewsource attribute and the associated tests. A subsequent
+        patch will remove the code as well.
+
+        * html/HTMLFrameElementBase.cpp:
+        (WebCore::HTMLFrameElementBase::parseAttribute):
+
+2014-01-18  Anders Carlsson  <andersca@apple.com>
+
         XMLTreeViewer shouldn't use the view source mode
         https://bugs.webkit.org/show_bug.cgi?id=127229
 

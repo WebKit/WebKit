@@ -119,12 +119,6 @@ void HTMLFrameElementBase::parseAttribute(const QualifiedName& name, const Atomi
         else if (equalIgnoringCase(value, "no"))
             m_scrolling = ScrollbarAlwaysOff;
         // FIXME: If we are already attached, this has no effect.
-#if ENABLE(VIEWSOURCE_ATTRIBUTE)
-    } else if (name == viewsourceAttr) {
-        m_viewSource = !value.isNull();
-        if (contentFrame())
-            contentFrame()->setInViewSourceMode(viewSourceMode());
-#endif
     } else if (name == onbeforeloadAttr)
         setAttributeEventListener(eventNames().beforeloadEvent, name, value);
     else if (name == onbeforeunloadAttr) {

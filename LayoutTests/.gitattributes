@@ -104,7 +104,6 @@ fast/frames/iframe-scroll-page-up-down.html-disabled -crlf
 fast/frames/javascript-url-as-framesrc-crash.html -crlf
 fast/frames/resources/iframe-scroll-page-up-down-1.html -crlf
 fast/frames/resources/iframe-scroll-page-up-down-2.html -crlf
-fast/frames/viewsource-attribute.html -crlf
 fast/inline/inline-padding-disables-text-quirk.html -crlf
 fast/loader/submit-form-while-parsing-1.xhtml -crlf
 fast/overflow/dynamic-hidden.html -crlf

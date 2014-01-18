@@ -1,4 +1,0 @@
-ALERT: PASS: Function called.
-Adding 'viewsource' to a frame after a document has loaded should not block JavaScript URL execution in the already-loaded document.
-
-
