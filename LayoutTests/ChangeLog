@@ -1,5 +1,14 @@
 2014-01-18  Alexey Proskuryakov  <ap@apple.com>
 
+        media/video-size.html is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=124932
+
+        * platform/efl/TestExpectations:
+        * platform/TestExpectations:
+        Moving flakiness expectation to cross-platform file, as it also fails on Mac in the same way.
+
+2014-01-18  Alexey Proskuryakov  <ap@apple.com>
+
         media/video-display-aspect-ratio.html fails
         https://bugs.webkit.org/show_bug.cgi?id=35297
 

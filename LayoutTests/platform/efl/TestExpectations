@@ -687,8 +687,6 @@ webkit.org/b/124929 http/tests/w3c/webperf/approved/navigation-timing/html/test_
 
 webkit.org/b/124931 media/track/audio/audio-track-mkv-vorbis-enabled.html [ Failure Pass ]
 
-webkit.org/b/124932 media/video-size.html [ Failure Pass ]
-
 webkit.org/b/124933 svg/animations/getCurrentTime-pause-unpause.html [ Failure Pass ]
 
 webkit.org/b/124934 svg/animations/svglengthlist-animation-3.html [ Failure Pass ]

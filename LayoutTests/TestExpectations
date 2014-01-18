@@ -69,3 +69,5 @@ fast/mediastream/MediaStream-clone.html [ Skip ]
 webkit.org/b/124660 inspector-protocol/model/highlight-shape-outside.html [ Failure ]
 
 webkit.org/b/126142 css3/calc/transitions-dependent.html [ Pass Failure ]
+
+webkit.org/b/124932 media/video-size.html [ Pass Failure ]
