@@ -77,7 +77,7 @@ DrawingArea::~DrawingArea()
 {
 }
 
-void DrawingArea::dispatchAfterEnsuringUpdatedScrollPosition(const Function<void ()>& function)
+void DrawingArea::dispatchAfterEnsuringUpdatedScrollPosition(std::function<void ()> function)
 {
     // Scroll position updates are synchronous by default so we can just call the function right away here.
     function();

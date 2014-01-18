@@ -84,7 +84,7 @@ private:
 
     virtual void didChangeScrollOffsetForAnyFrame() override;
 
-    virtual void dispatchAfterEnsuringUpdatedScrollPosition(const Function<void()>&) override;
+    virtual void dispatchAfterEnsuringUpdatedScrollPosition(std::function<void ()>) override;
 
     virtual bool shouldUseTiledBackingForFrameView(const WebCore::FrameView*) override;
 

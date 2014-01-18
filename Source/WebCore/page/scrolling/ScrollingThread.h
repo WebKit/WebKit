@@ -28,7 +28,9 @@
 
 #if ENABLE(ASYNC_SCROLLING)
 
-#include <wtf/Functional.h>
+#include <condition_variable>
+#include <functional>
+#include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/Threading.h>
 #include <wtf/Vector.h>
@@ -44,13 +46,15 @@ class ScrollingThread {
 
 public:
     static bool isCurrentThread();
-    static void dispatch(const Function<void()>&);
+    static void dispatch(std::function<void ()>);
 
     // Will dispatch the given function on the main thread once all pending functions
     // on the scrolling thread have finished executing. Used for synchronization purposes.
-    static void dispatchBarrier(const Function<void()>&);
+    static void dispatchBarrier(std::function<void ()>);
 
 private:
+    friend NeverDestroyed<ScrollingThread>;
+
     ScrollingThread();
 
     static ScrollingThread& shared();
@@ -70,11 +74,11 @@ private:
 
     ThreadIdentifier m_threadIdentifier;
 
-    ThreadCondition m_initializeRunLoopCondition;
-    Mutex m_initializeRunLoopConditionMutex;
+    std::condition_variable m_initializeRunLoopConditionVariable;
+    std::mutex m_initializeRunLoopMutex;
 
-    Mutex m_functionsMutex;
-    Vector<Function<void()>> m_functions;
+    std::mutex m_functionsMutex;
+    Vector<std::function<void ()>> m_functions;
 
 #if PLATFORM(MAC)
     // FIXME: We should use WebCore::RunLoop here.

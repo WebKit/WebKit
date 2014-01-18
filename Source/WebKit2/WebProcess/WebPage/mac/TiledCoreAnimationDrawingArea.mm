@@ -300,10 +300,8 @@ void TiledCoreAnimationDrawingArea::updateIntrinsicContentSizeTimerFired(Timer<T
     m_webPage->send(Messages::DrawingAreaProxy::IntrinsicContentSizeDidChange(contentSize));
 }
 
-void TiledCoreAnimationDrawingArea::dispatchAfterEnsuringUpdatedScrollPosition(const Function<void ()>& functionRef)
+void TiledCoreAnimationDrawingArea::dispatchAfterEnsuringUpdatedScrollPosition(std::function<void ()> function)
 {
-    Function<void ()> function = functionRef;
-
 #if ENABLE(ASYNC_SCROLLING)
     if (!m_webPage->corePage()->scrollingCoordinator()) {
         function();

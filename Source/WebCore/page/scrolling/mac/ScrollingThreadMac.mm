@@ -34,7 +34,7 @@ void ScrollingThread::initializeRunLoop()
 {
     // Initialize the run loop.
     {
-        MutexLocker locker(m_initializeRunLoopConditionMutex);
+        std::lock_guard<std::mutex> lock(m_initializeRunLoopMutex);
 
         m_threadRunLoop = CFRunLoopGetCurrent();
 
@@ -42,7 +42,7 @@ void ScrollingThread::initializeRunLoop()
         m_threadRunLoopSource = adoptCF(CFRunLoopSourceCreate(0, 0, &context));
         CFRunLoopAddSource(CFRunLoopGetCurrent(), m_threadRunLoopSource.get(), kCFRunLoopDefaultMode);
 
-        m_initializeRunLoopCondition.broadcast();
+        m_initializeRunLoopConditionVariable.notify_all();
     }
 
     ASSERT(isCurrentThread());

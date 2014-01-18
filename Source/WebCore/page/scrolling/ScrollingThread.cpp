@@ -29,6 +29,7 @@
 #if ENABLE(ASYNC_SCROLLING)
 
 #include <wtf/MainThread.h>
+#include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
 
@@ -45,32 +46,29 @@ bool ScrollingThread::isCurrentThread()
     return currentThread() == shared().m_threadIdentifier;
 }
 
-void ScrollingThread::dispatch(const Function<void()>& function)
+void ScrollingThread::dispatch(std::function<void ()> function)
 {
     shared().createThreadIfNeeded();
 
     {
-        MutexLocker locker(shared().m_functionsMutex);
+        std::lock_guard<std::mutex> lock(shared().m_functionsMutex);
         shared().m_functions.append(function);
     }
 
     shared().wakeUpRunLoop();
 }
 
-static void callFunctionOnMainThread(const Function<void()>* function)
+void ScrollingThread::dispatchBarrier(std::function<void ()> function)
 {
-    callOnMainThread(*function);
-    delete function;
-}
-
-void ScrollingThread::dispatchBarrier(const Function<void()>& function)
-{
-    dispatch(bind(callFunctionOnMainThread, new Function<void()>(function)));
+    dispatch([function]{
+        callOnMainThread(std::move(function));
+    });
 }
 
 ScrollingThread& ScrollingThread::shared()
 {
-    DEFINE_STATIC_LOCAL(ScrollingThread, scrollingThread, ());
+    static NeverDestroyed<ScrollingThread> scrollingThread;
+
     return scrollingThread;
 }
 
@@ -81,13 +79,12 @@ void ScrollingThread::createThreadIfNeeded()
 
     // Wait for the thread to initialize the run loop.
     {
-        MutexLocker locker(m_initializeRunLoopConditionMutex);
+        std::unique_lock<std::mutex> lock(m_initializeRunLoopMutex);
 
         m_threadIdentifier = createThread(threadCallback, this, "WebCore: Scrolling");
         
 #if PLATFORM(MAC)
-        while (!m_threadRunLoop)
-            m_initializeRunLoopCondition.wait(m_initializeRunLoopConditionMutex);
+        m_initializeRunLoopConditionVariable.wait(lock, [this]{ return m_threadRunLoop; });
 #endif
     }
 }
@@ -106,15 +103,15 @@ void ScrollingThread::dispatchFunctionsFromScrollingThread()
 {
     ASSERT(isCurrentThread());
 
-    Vector<Function<void()>> functions;
+    Vector<std::function<void ()>> functions;
     
     {
-        MutexLocker locker(m_functionsMutex);
-        m_functions.swap(functions);
+        std::lock_guard<std::mutex> lock(m_functionsMutex);
+        functions = std::move(m_functions);
     }
-    
-    for (size_t i = 0; i < functions.size(); ++i)
-        functions[i]();
+
+    for (auto& function : functions)
+        function();
 }
 
 } // namespace WebCore

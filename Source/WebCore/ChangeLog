@@ -1,5 +1,23 @@
 2014-01-18  Anders Carlsson  <andersca@apple.com>
 
+        Replace a couple of uses of WTF::Function with std::function
+        https://bugs.webkit.org/show_bug.cgi?id=127218
+
+        Reviewed by Andreas Kling.
+
+        * WebCore.exp.in:
+        * page/scrolling/ScrollingThread.cpp:
+        (WebCore::ScrollingThread::dispatch):
+        (WebCore::ScrollingThread::dispatchBarrier):
+        (WebCore::ScrollingThread::shared):
+        (WebCore::ScrollingThread::createThreadIfNeeded):
+        (WebCore::ScrollingThread::dispatchFunctionsFromScrollingThread):
+        * page/scrolling/ScrollingThread.h:
+        * page/scrolling/mac/ScrollingThreadMac.mm:
+        (WebCore::ScrollingThread::initializeRunLoop):
+
+2014-01-18  Anders Carlsson  <andersca@apple.com>
+
         Modernize HTML parser code
         https://bugs.webkit.org/show_bug.cgi?id=127236
 

@@ -44,21 +44,18 @@ ChildProcess::~ChildProcess()
 {
 }
 
-NO_RETURN static void watchdogCallback()
-{
-    // We use _exit here since the watchdog callback is called from another thread and we don't want 
-    // global destructors or atexit handlers to be called from this thread while the main thread is busy
-    // doing its thing.
-    _exit(EXIT_FAILURE);
-}
-
 static void didCloseOnConnectionWorkQueue(IPC::Connection*)
 {
     // If the connection has been closed and we haven't responded in the main thread for 10 seconds
     // the process will exit forcibly.
-    const double watchdogDelay = 10;
+    auto watchdogDelay = std::chrono::seconds(10);
 
-    WorkQueue::create("com.apple.WebKit.ChildProcess.WatchDogQueue")->dispatchAfterDelay(bind(static_cast<void(*)()>(watchdogCallback)), watchdogDelay);
+    WorkQueue::create("com.apple.WebKit.ChildProcess.WatchDogQueue")->dispatchAfter(watchdogDelay, []{
+        // We use _exit here since the watchdog callback is called from another thread and we don't want
+        // global destructors or atexit handlers to be called from this thread while the main thread is busy
+        // doing its thing.
+        _exit(EXIT_FAILURE);
+    });
 }
 
 void ChildProcess::initialize(const ChildProcessInitializationParameters& parameters)

@@ -1,3 +1,27 @@
+2014-01-18  Anders Carlsson  <andersca@apple.com>
+
+        Replace a couple of uses of WTF::Function with std::function
+        https://bugs.webkit.org/show_bug.cgi?id=127218
+
+        Reviewed by Andreas Kling.
+
+        * Platform/IPC/mac/ConnectionMac.cpp:
+        (IPC::createDataAvailableSource):
+        * Platform/WorkQueue.h:
+        * Platform/mac/WorkQueueMac.cpp:
+        (WorkQueue::dispatch):
+        (WorkQueue::dispatchAfter):
+        * Shared/ChildProcess.cpp:
+        (WebKit::didCloseOnConnectionWorkQueue):
+        * UIProcess/Storage/LocalStorageDatabase.cpp:
+        (WebKit::LocalStorageDatabase::scheduleDatabaseUpdate):
+        * WebProcess/WebPage/DrawingArea.cpp:
+        (WebKit::DrawingArea::dispatchAfterEnsuringUpdatedScrollPosition):
+        * WebProcess/WebPage/DrawingArea.h:
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.h:
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.mm:
+        (WebKit::TiledCoreAnimationDrawingArea::dispatchAfterEnsuringUpdatedScrollPosition):
+
 2014-01-18  Martin Hock  <mhock@apple.com>
 
         Flesh out session APIs (still not enabled at API level).

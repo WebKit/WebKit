@@ -26,26 +26,20 @@
 #include "config.h"
 #include "WorkQueue.h"
 
-void WorkQueue::dispatch(const Function<void()>& function)
+void WorkQueue::dispatch(std::function<void ()> function)
 {
-    Function<void()> functionCopy = function;
-
     ref();
     dispatch_async(m_dispatchQueue, ^{
-        functionCopy();
+        function();
         deref();
     });
 }
 
-void WorkQueue::dispatchAfterDelay(const Function<void()>& function, double delay)
+void WorkQueue::dispatchAfter(std::chrono::nanoseconds duration, std::function<void ()> function)
 {
-    dispatch_time_t delayTime = dispatch_time(DISPATCH_TIME_NOW, delay * NSEC_PER_SEC);
-
-    Function<void()> functionCopy = function;
-
     ref();
-    dispatch_after(delayTime, m_dispatchQueue, ^{
-        functionCopy();
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, duration.count()), m_dispatchQueue, ^{
+        function();
         deref();
     });
 }

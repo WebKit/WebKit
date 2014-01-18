@@ -101,10 +101,13 @@ void Connection::platformInitialize(Identifier identifier)
         xpc_retain(m_xpcConnection);
 }
 
-static dispatch_source_t createDataAvailableSource(mach_port_t receivePort, WorkQueue* workQueue, const Function<void()>& function)
+static dispatch_source_t createDataAvailableSource(mach_port_t receivePort, WorkQueue* workQueue, std::function<void ()> function)
 {
     dispatch_source_t source = dispatch_source_create(DISPATCH_SOURCE_TYPE_MACH_RECV, receivePort, 0, workQueue->dispatchQueue());
-    dispatch_source_set_event_handler(source, function);
+    dispatch_source_set_event_handler(source, ^{
+        function();
+    });
+
     dispatch_source_set_cancel_handler(source, ^{
         mach_port_mod_refs(mach_task_self(), receivePort, MACH_PORT_RIGHT_RECEIVE, -1);
     });

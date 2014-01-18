@@ -39,7 +39,7 @@
 
 using namespace WebCore;
 
-static const double databaseUpdateIntervalInSeconds = 1.0;
+static const auto databaseUpdateInterval = std::chrono::seconds(1);
 
 static const int maximumItemsToUpdate = 100;
 
@@ -241,7 +241,7 @@ void LocalStorageDatabase::scheduleDatabaseUpdate()
         return;
 
     m_didScheduleDatabaseUpdate = true;
-    m_queue->dispatchAfterDelay(bind(&LocalStorageDatabase::updateDatabase, this), databaseUpdateIntervalInSeconds);
+    m_queue->dispatchAfter(databaseUpdateInterval, bind(&LocalStorageDatabase::updateDatabase, this));
 }
 
 void LocalStorageDatabase::updateDatabase()

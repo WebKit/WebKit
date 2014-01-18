@@ -31,6 +31,7 @@
 #include <WebCore/FloatRect.h>
 #include <WebCore/IntRect.h>
 #include <WebCore/ViewState.h>
+#include <functional>
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
 
@@ -108,7 +109,7 @@ public:
     virtual void didReceiveCoordinatedLayerTreeHostMessage(IPC::Connection*, IPC::MessageDecoder&) = 0;
 #endif
 
-    virtual void dispatchAfterEnsuringUpdatedScrollPosition(const Function<void ()>&);
+    virtual void dispatchAfterEnsuringUpdatedScrollPosition(std::function<void ()>);
 
     virtual void viewStateDidChange(WebCore::ViewState::Flags) { }
     virtual void setLayerHostingMode(LayerHostingMode) { }
