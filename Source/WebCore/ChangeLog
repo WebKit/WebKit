@@ -1,3 +1,12 @@
+2014-01-18  Andreas Kling  <akling@apple.com>
+
+        Remove unused "touchDragDropEnabled" setting.
+        <https://webkit.org/b/127227>
+
+        Reviewed by Sam Weinig.
+
+        * page/Settings.in:
+
 2014-01-18  Brian Burg  <bburg@apple.com>
 
         Web Inspector: Page should use std::unique_ptr for InspectorController
