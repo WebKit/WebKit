@@ -5853,12 +5853,10 @@ void Document::decrementActiveParserCount()
     --m_activeParserCount;
     if (!frame())
         return;
-    // FIXME: This should always be enabled, but it seems to cause
-    // http/tests/security/feed-urls-from-remote.html to timeout on Mac WK1
-    // see http://webkit.org/b/110554 and http://webkit.org/b/110401
-#if ENABLE(THREADED_HTML_PARSER)
-    loader()->checkLoadComplete();
-#endif
+
+    // FIXME: We should call loader()->checkLoadComplete() as well here,
+    // but it seems to cause http/tests/security/feed-urls-from-remote.html
+    // to timeout on Mac WK1; see http://webkit.org/b/110554 and http://webkit.org/b/110401.
     frame()->loader().checkLoadComplete();
 }
 

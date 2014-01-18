@@ -290,13 +290,6 @@ bool threadSafeMatch(const QualifiedName& a, const QualifiedName& b)
     return threadSafeEqual(a.localName().impl(), b.localName().impl());
 }
 
-#if ENABLE(THREADED_HTML_PARSER)
-bool threadSafeMatch(const HTMLIdentifier& localName, const QualifiedName& qName)
-{
-    return threadSafeEqual(localName.asStringImpl(), qName.localName().impl());
-}
-#endif
-
 struct ImageWithScale {
     unsigned imageURLStart;
     unsigned imageURLLength;

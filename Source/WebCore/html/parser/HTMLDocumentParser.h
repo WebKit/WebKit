@@ -81,19 +81,6 @@ public:
     virtual void suspendScheduledTasks() override;
     virtual void resumeScheduledTasks() override;
 
-#if ENABLE(THREADED_HTML_PARSER)
-    struct ParsedChunk {
-        OwnPtr<CompactHTMLTokenStream> tokens;
-        PreloadRequestStream preloads;
-        XSSInfoStream xssInfos;
-        HTMLTokenizer::State tokenizerState;
-        HTMLTreeBuilderSimulator::State treeBuilderState;
-        HTMLInputCheckpoint inputCheckpoint;
-        TokenPreloadScannerCheckpoint preloadScannerCheckpoint;
-    };
-    void didReceiveParsedChunkFromBackgroundParser(OwnPtr<ParsedChunk>);
-#endif
-
 protected:
     virtual void insert(const SegmentedString&) override;
     virtual void append(PassRefPtr<StringImpl>) override;
@@ -132,15 +119,6 @@ private:
     // CachedResourceClient
     virtual void notifyFinished(CachedResource*) override;
 
-#if ENABLE(THREADED_HTML_PARSER)
-    void startBackgroundParser();
-    void stopBackgroundParser();
-    void validateSpeculations(OwnPtr<ParsedChunk> lastChunk);
-    void discardSpeculationsAndResumeFrom(OwnPtr<ParsedChunk> lastChunk, OwnPtr<HTMLToken>, OwnPtr<HTMLTokenizer>);
-    void processParsedChunkFromBackgroundParser(OwnPtr<ParsedChunk>);
-    void pumpPendingSpeculations();
-#endif
-
     Document* contextForParsingSession();
 
     enum SynchronousMode {
@@ -151,9 +129,6 @@ private:
     void pumpTokenizer(SynchronousMode);
     void pumpTokenizerIfPossible(SynchronousMode);
     void constructTreeFromHTMLToken(HTMLToken&);
-#if ENABLE(THREADED_HTML_PARSER)
-    void constructTreeFromCompactHTMLToken(const CompactHTMLToken&);
-#endif
 
     void runScriptsForPausedTreeBuilder();
     void resumeParsingAfterScriptExecution();
@@ -185,14 +160,6 @@ private:
     XSSAuditor m_xssAuditor;
     XSSAuditorDelegate m_xssAuditorDelegate;
 
-#if ENABLE(THREADED_HTML_PARSER)
-    // FIXME: m_lastChunkBeforeScript, m_tokenizer, m_token, and m_input should be combined into a single state object
-    // so they can be set and cleared together and passed between threads together.
-    OwnPtr<ParsedChunk> m_lastChunkBeforeScript;
-    Deque<OwnPtr<ParsedChunk>> m_speculations;
-    WeakPtrFactory<HTMLDocumentParser> m_weakFactory;
-    WeakPtr<BackgroundHTMLParser> m_backgroundParser;
-#endif
     OwnPtr<HTMLResourcePreloader> m_preloader;
 
     bool m_endWasDelayed;

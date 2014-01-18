@@ -98,16 +98,6 @@ inline bool isHTMLSpaceButNotLineBreak(UChar character)
 }
 
 bool threadSafeMatch(const QualifiedName&, const QualifiedName&);
-#if ENABLE(THREADED_HTML_PARSER)
-bool threadSafeMatch(const HTMLIdentifier&, const QualifiedName&);
-inline bool threadSafeHTMLNamesMatch(const HTMLIdentifier& tagName, const QualifiedName& qName)
-{
-    // When the QualifiedName is known to HTMLIdentifier,
-    // all we have to do is a pointer compare.
-    ASSERT(HTMLIdentifier::hasIndex(qName.localName().impl()));
-    return tagName.asStringImpl() == qName.localName().impl();
-}
-#endif
 
 String bestFitSourceForImageAttributes(float deviceScaleFactor, const String& srcAttribute, const String& sourceSetAttribute);
 

@@ -1,5 +1,38 @@
 2014-01-18  Anders Carlsson  <andersca@apple.com>
 
+        Remove the remaining threaded parser code
+        https://bugs.webkit.org/show_bug.cgi?id=127224
+
+        Reviewed by Andreas Kling.
+
+        * dom/Document.cpp:
+        (WebCore::Document::decrementActiveParserCount):
+        * html/parser/AtomicHTMLToken.h:
+        * html/parser/HTMLDocumentParser.cpp:
+        (WebCore::HTMLDocumentParser::HTMLDocumentParser):
+        (WebCore::HTMLDocumentParser::detach):
+        (WebCore::HTMLDocumentParser::stopParsing):
+        (WebCore::HTMLDocumentParser::prepareToStopParsing):
+        (WebCore::HTMLDocumentParser::resumeParsingAfterYield):
+        (WebCore::HTMLDocumentParser::forcePlaintextForTextDocument):
+        (WebCore::HTMLDocumentParser::insert):
+        (WebCore::HTMLDocumentParser::append):
+        (WebCore::HTMLDocumentParser::end):
+        (WebCore::HTMLDocumentParser::finish):
+        (WebCore::HTMLDocumentParser::textPosition):
+        (WebCore::HTMLDocumentParser::resumeParsingAfterScriptExecution):
+        * html/parser/HTMLDocumentParser.h:
+        * html/parser/HTMLParserIdioms.cpp:
+        * html/parser/HTMLParserIdioms.h:
+        * html/parser/HTMLTokenizer.cpp:
+        * html/parser/HTMLTokenizer.h:
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::isLoading):
+        (WebCore::DocumentLoader::checkLoadComplete):
+        * page/Settings.in:
+
+2014-01-18  Anders Carlsson  <andersca@apple.com>
+
         Remove threaded parser code from the preload scanners
         https://bugs.webkit.org/show_bug.cgi?id=127222
 

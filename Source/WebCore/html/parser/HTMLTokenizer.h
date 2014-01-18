@@ -121,33 +121,6 @@ public:
         CDATASectionDoubleRightSquareBracketState,
     };
 
-#if ENABLE(THREADED_HTML_PARSER)
-
-    struct Checkpoint {
-        HTMLParserOptions options;
-        State state;
-        UChar additionalAllowedCharacter;
-        bool skipNextNewLine;
-        bool forceNullCharacterReplacement;
-        bool shouldAllowCDATA;
-
-        Checkpoint()
-            : options(0)
-            , state()
-            , additionalAllowedCharacter('\0')
-            , skipNextNewLine(false)
-            , forceNullCharacterReplacement(false)
-            , shouldAllowCDATA(false)
-        {
-        }
-    };
-
-    bool canCreateCheckpoint() const;
-    void createCheckpoint(Checkpoint&) const;
-    void restoreFromCheckpoint(const Checkpoint&);
-
-#endif
-
     // This function returns true if it emits a token. Otherwise, callers
     // must provide the same (in progress) token on the next call (unless
     // they call reset() first).
