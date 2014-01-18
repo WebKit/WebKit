@@ -51,7 +51,7 @@ namespace WebCore {
         void add(PassRefPtr<HistoryItem>, Page&); // Prunes if capacity() is exceeded.
         void remove(HistoryItem*);
         CachedPage* get(HistoryItem* item);
-        PassOwnPtr<CachedPage> take(HistoryItem*);
+        std::unique_ptr<CachedPage> take(HistoryItem*);
 
         int pageCount() const { return m_size; }
         int frameCount() const;

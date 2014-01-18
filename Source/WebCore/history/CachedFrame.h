@@ -29,7 +29,6 @@
 #include "DOMWindow.h"
 #include "URL.h"
 #include "ScriptCachedFrameData.h"
-#include <wtf/PassOwnPtr.h>
 #include <wtf/RefPtr.h>
 
 namespace WebCore {
@@ -59,25 +58,25 @@ protected:
     RefPtr<FrameView> m_view;
     RefPtr<Node> m_mousePressNode;
     URL m_url;
-    OwnPtr<ScriptCachedFrameData> m_cachedFrameScriptData;
-    OwnPtr<CachedFramePlatformData> m_cachedFramePlatformData;
+    std::unique_ptr<ScriptCachedFrameData> m_cachedFrameScriptData;
+    std::unique_ptr<CachedFramePlatformData> m_cachedFramePlatformData;
     bool m_isMainFrame;
 #if USE(ACCELERATED_COMPOSITING)
     bool m_isComposited;
 #endif
     
-    Vector<OwnPtr<CachedFrame>> m_childFrames;
+    Vector<std::unique_ptr<CachedFrame>> m_childFrames;
 };
 
 class CachedFrame : private CachedFrameBase {
 public:
-    static PassOwnPtr<CachedFrame> create(Frame& frame) { return adoptPtr(new CachedFrame(frame)); }
+    explicit CachedFrame(Frame&);
 
     void open();
     void clear();
     void destroy();
 
-    void setCachedFramePlatformData(PassOwnPtr<CachedFramePlatformData>);
+    void setCachedFramePlatformData(std::unique_ptr<CachedFramePlatformData>);
     CachedFramePlatformData* cachedFramePlatformData();
 
     using CachedFrameBase::document;
@@ -87,9 +86,6 @@ public:
     Node* mousePressNode() const { return m_mousePressNode.get(); }
 
     int descendantFrameCount() const;
-
-private:
-    explicit CachedFrame(Frame&);
 };
 
 } // namespace WebCore

@@ -98,7 +98,7 @@ public:
     const String& urlString() const;
     const String& title() const;
     
-    bool isInPageCache() const { return m_cachedPage; }
+    bool isInPageCache() const { return m_cachedPage.get(); }
     bool hasCachedPageExpired() const;
     
     double lastVisitedTime() const;
@@ -287,7 +287,7 @@ private:
     // PageCache controls these fields.
     HistoryItem* m_next;
     HistoryItem* m_prev;
-    OwnPtr<CachedPage> m_cachedPage;
+    std::unique_ptr<CachedPage> m_cachedPage;
 
 #if PLATFORM(IOS)
     float m_scale;

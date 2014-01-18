@@ -1772,7 +1772,7 @@ void FrameLoader::commitProvisionalLoad()
     RefPtr<DocumentLoader> pdl = m_provisionalDocumentLoader;
     Ref<Frame> protect(m_frame);
 
-    OwnPtr<CachedPage> cachedPage;
+    std::unique_ptr<CachedPage> cachedPage;
     if (m_loadingFromCachedPage)
         cachedPage = pageCache()->take(history().provisionalItem());
 

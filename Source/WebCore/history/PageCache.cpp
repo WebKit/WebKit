@@ -472,19 +472,19 @@ void PageCache::add(PassRefPtr<HistoryItem> prpItem, Page& page)
     if (item->m_cachedPage)
         remove(item);
 
-    item->m_cachedPage = CachedPage::create(page);
+    item->m_cachedPage = std::make_unique<CachedPage>(page);
     addToLRUList(item);
     ++m_size;
     
     prune();
 }
 
-PassOwnPtr<CachedPage> PageCache::take(HistoryItem* item)
+std::unique_ptr<CachedPage> PageCache::take(HistoryItem* item)
 {
     if (!item)
         return nullptr;
 
-    OwnPtr<CachedPage> cachedPage = item->m_cachedPage.release();
+    std::unique_ptr<CachedPage> cachedPage = std::move(item->m_cachedPage);
 
     removeFromLRUList(item);
     --m_size;
@@ -499,7 +499,7 @@ PassOwnPtr<CachedPage> PageCache::take(HistoryItem* item)
         return nullptr;
     }
 
-    return cachedPage.release();
+    return cachedPage;
 }
 
 CachedPage* PageCache::get(HistoryItem* item)
@@ -523,7 +523,7 @@ void PageCache::remove(HistoryItem* item)
     if (!item || !item->m_cachedPage)
         return;
 
-    item->m_cachedPage.clear();
+    item->m_cachedPage = nullptr;
     removeFromLRUList(item);
     --m_size;
 

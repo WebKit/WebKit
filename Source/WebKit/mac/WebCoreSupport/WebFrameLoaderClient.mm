@@ -1410,8 +1410,7 @@ void WebFrameLoaderClient::setTitle(const StringWithDirection& title, const URL&
 
 void WebFrameLoaderClient::savePlatformDataToCachedFrame(CachedFrame* cachedFrame)
 {
-    OwnPtr<WebCachedFramePlatformData> webPlatformData = adoptPtr(new WebCachedFramePlatformData([m_webFrame->_private->webFrameView documentView]));
-    cachedFrame->setCachedFramePlatformData(webPlatformData.release());
+    cachedFrame->setCachedFramePlatformData(std::make_unique<WebCachedFramePlatformData>(m_webFrame->_private->webFrameView.documentView));
 
 #if PLATFORM(IOS)
     // At this point we know this frame is going to be cached. Stop all plugins.
@@ -1422,7 +1421,7 @@ void WebFrameLoaderClient::savePlatformDataToCachedFrame(CachedFrame* cachedFram
 
 void WebFrameLoaderClient::transitionToCommittedFromCachedFrame(CachedFrame* cachedFrame)
 {
-    WebCachedFramePlatformData* platformData = reinterpret_cast<WebCachedFramePlatformData*>(cachedFrame->cachedFramePlatformData());
+    WebCachedFramePlatformData* platformData = static_cast<WebCachedFramePlatformData*>(cachedFrame->cachedFramePlatformData());
     NSView <WebDocumentView> *cachedView = platformData->webDocumentView();
     ASSERT(cachedView != nil);
     ASSERT(cachedFrame->documentLoader());
