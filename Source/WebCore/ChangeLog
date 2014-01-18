@@ -1,5 +1,26 @@
 2014-01-18  Anders Carlsson  <andersca@apple.com>
 
+        Remove DocumentParser::pinToMainThread() and related code
+        https://bugs.webkit.org/show_bug.cgi?id=127221
+
+        Reviewed by Andreas Kling.
+
+        * dom/Document.cpp:
+        (WebCore::Document::setContent):
+        * dom/DocumentParser.h:
+        * html/parser/HTMLDocumentParser.cpp:
+        (WebCore::HTMLDocumentParser::HTMLDocumentParser):
+        * html/parser/HTMLDocumentParser.h:
+        * html/parser/HTMLParserOptions.cpp:
+        (WebCore::HTMLParserOptions::HTMLParserOptions):
+        * html/parser/HTMLParserOptions.h:
+        * html/parser/HTMLTreeBuilder.cpp:
+        (WebCore::HTMLTreeBuilder::processEndTag):
+        * loader/DocumentWriter.cpp:
+        (WebCore::DocumentWriter::replaceDocument):
+
+2014-01-18  Anders Carlsson  <andersca@apple.com>
+
         Remove HTMLParserThread
         https://bugs.webkit.org/show_bug.cgi?id=127220
 

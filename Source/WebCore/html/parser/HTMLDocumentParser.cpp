@@ -70,8 +70,8 @@ static HTMLTokenizer::State tokenizerStateForContextElement(Element* contextElem
 HTMLDocumentParser::HTMLDocumentParser(HTMLDocument& document)
     : ScriptableDocumentParser(document)
     , m_options(document)
-    , m_token(m_options.useThreading ? nullptr : adoptPtr(new HTMLToken))
-    , m_tokenizer(m_options.useThreading ? nullptr : HTMLTokenizer::create(m_options))
+    , m_token(adoptPtr(new HTMLToken))
+    , m_tokenizer(HTMLTokenizer::create(m_options))
     , m_scriptRunner(HTMLScriptRunner::create(document, *this))
     , m_treeBuilder(HTMLTreeBuilder::create(*this, document, parserContentPolicy(), m_options))
     , m_parserScheduler(HTMLParserScheduler::create(*this))
@@ -80,12 +80,12 @@ HTMLDocumentParser::HTMLDocumentParser(HTMLDocument& document)
     , m_weakFactory(this)
 #endif
     , m_preloader(adoptPtr(new HTMLResourcePreloader(document)))
-    , m_isPinnedToMainThread(false)
     , m_endWasDelayed(false)
     , m_haveBackgroundParser(false)
     , m_pumpSessionNestingLevel(0)
 {
-    ASSERT(shouldUseThreading() || (m_token && m_tokenizer));
+    ASSERT(m_token);
+    ASSERT(m_tokenizer);
 }
 
 // FIXME: Member variables should be grouped into self-initializing structs to
@@ -100,12 +100,10 @@ HTMLDocumentParser::HTMLDocumentParser(DocumentFragment& fragment, Element* cont
 #if ENABLE(THREADED_HTML_PARSER)
     , m_weakFactory(this)
 #endif
-    , m_isPinnedToMainThread(true)
     , m_endWasDelayed(false)
     , m_haveBackgroundParser(false)
     , m_pumpSessionNestingLevel(0)
 {
-    ASSERT(!shouldUseThreading());
     bool reportErrors = false; // For now document fragment parsing never reports errors.
     m_tokenizer->setState(tokenizerStateForContextElement(contextElement, reportErrors, m_options));
     m_xssAuditor.initForFragment();
@@ -119,20 +117,6 @@ HTMLDocumentParser::~HTMLDocumentParser()
     ASSERT(!m_insertionPreloadScanner);
     ASSERT(!m_haveBackgroundParser);
 }
-
-#if ENABLE(THREADED_HTML_PARSER)
-void HTMLDocumentParser::pinToMainThread()
-{
-    ASSERT(!m_haveBackgroundParser);
-    ASSERT(!m_isPinnedToMainThread);
-    m_isPinnedToMainThread = true;
-    if (!m_tokenizer) {
-        ASSERT(!m_token);
-        m_token = adoptPtr(new HTMLToken);
-        m_tokenizer = HTMLTokenizer::create(m_options);
-    }
-}
-#endif
 
 void HTMLDocumentParser::detach()
 {

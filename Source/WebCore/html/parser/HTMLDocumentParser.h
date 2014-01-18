@@ -113,9 +113,6 @@ private:
     }
 
     // DocumentParser
-#if ENABLE(THREADED_HTML_PARSER)
-    virtual void pinToMainThread() override;
-#endif
     virtual void detach() override;
     virtual bool hasInsertionPoint() override;
     virtual bool processingData() const override;
@@ -129,7 +126,7 @@ private:
     virtual void watchForLoad(CachedResource*) override;
     virtual void stopWatchingForLoad(CachedResource*) override;
     virtual HTMLInputStream& inputStream() override { return m_input; }
-    virtual bool hasPreloadScanner() const override { return m_preloadScanner.get() && !shouldUseThreading(); }
+    virtual bool hasPreloadScanner() const override { return m_preloadScanner.get(); }
     virtual void appendCurrentInputStreamToPreloadScannerAndScan() override;
 
     // CachedResourceClient
@@ -166,8 +163,6 @@ private:
     void attemptToRunDeferredScriptsAndEnd();
     void end();
 
-    bool shouldUseThreading() const { return m_options.useThreading && !m_isPinnedToMainThread; }
-
     bool isParsingFragment() const;
     bool isScheduledForResume() const;
     bool inPumpSession() const { return m_pumpSessionNestingLevel > 0; }
@@ -200,7 +195,6 @@ private:
 #endif
     OwnPtr<HTMLResourcePreloader> m_preloader;
 
-    bool m_isPinnedToMainThread;
     bool m_endWasDelayed;
     bool m_haveBackgroundParser;
     unsigned m_pumpSessionNestingLevel;

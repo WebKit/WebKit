@@ -1350,7 +1350,6 @@ void Document::setContent(const String& content)
     // not implemented for the XML parser as it's normally synonymous with
     // document.write(). append() will end up yielding, but close() will
     // pump the tokenizer syncrhonously and finish the parse.
-    m_parser->pinToMainThread();
     m_parser->append(content.impl());
     close();
 }

@@ -2212,7 +2212,7 @@ void HTMLTreeBuilder::processEndTag(AtomicHTMLToken* token)
                 // self-closing script tag was encountered and pre-HTML5 parser
                 // quirks are enabled. We must set the tokenizer's state to
                 // DataState explicitly if the tokenizer didn't have a chance to.
-                ASSERT(m_parser.tokenizer()->state() == HTMLTokenizer::DataState || m_options.usePreHTML5ParserQuirks || m_options.useThreading);
+                ASSERT(m_parser.tokenizer()->state() == HTMLTokenizer::DataState || m_options.usePreHTML5ParserQuirks);
                 m_parser.tokenizer()->setState(HTMLTokenizer::DataState);
             }
             return;
