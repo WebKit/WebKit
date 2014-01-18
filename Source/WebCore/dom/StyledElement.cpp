@@ -121,8 +121,8 @@ static PresentationAttributeCacheCleaner& presentationAttributeCacheCleaner()
 void StyledElement::synchronizeStyleAttributeInternal() const
 {
     ASSERT(elementData());
-    ASSERT(elementData()->m_styleAttributeIsDirty);
-    elementData()->m_styleAttributeIsDirty = false;
+    ASSERT(elementData()->styleAttributeIsDirty());
+    elementData()->setStyleAttributeIsDirty(false);
     if (const StyleProperties* inlineStyle = this->inlineStyle())
         const_cast<StyledElement*>(this)->setSynchronizedLazyAttribute(styleAttr, inlineStyle->asText());
 }
@@ -154,7 +154,7 @@ void StyledElement::attributeChanged(const QualifiedName& name, const AtomicStri
     if (name == styleAttr)
         styleAttributeChanged(newValue, reason);
     else if (isPresentationAttribute(name)) {
-        elementData()->m_presentationAttributeStyleIsDirty = true;
+        elementData()->setPresentationAttributeStyleIsDirty(true);
         setNeedsStyleRecalc(InlineStyleChange);
     }
 
@@ -204,7 +204,7 @@ void StyledElement::styleAttributeChanged(const AtomicString& newStyleString, At
     } else if (reason == ModifiedByCloning || document().contentSecurityPolicy()->allowInlineStyle(document().url(), startLineNumber))
         setInlineStyleFromString(newStyleString);
 
-    elementData()->m_styleAttributeIsDirty = false;
+    elementData()->setStyleAttributeIsDirty(false);
 
     setNeedsStyleRecalc(InlineStyleChange);
     InspectorInstrumentation::didInvalidateStyleAttr(&document(), this);
@@ -214,7 +214,7 @@ void StyledElement::inlineStyleChanged()
 {
     setNeedsStyleRecalc(InlineStyleChange);
     ASSERT(elementData());
-    elementData()->m_styleAttributeIsDirty = true;
+    elementData()->setStyleAttributeIsDirty(true);
     InspectorInstrumentation::didInvalidateStyleAttr(&document(), this);
 }
     
@@ -345,7 +345,7 @@ void StyledElement::rebuildPresentationAttributeStyle()
     // ShareableElementData doesn't store presentation attribute style, so make sure we have a UniqueElementData.
     UniqueElementData& elementData = ensureUniqueElementData();
 
-    elementData.m_presentationAttributeStyleIsDirty = false;
+    elementData.setPresentationAttributeStyleIsDirty(false);
     elementData.m_presentationAttributeStyle = style->isEmpty() ? 0 : style;
 
     if (!cacheHash || cacheIterator->value)

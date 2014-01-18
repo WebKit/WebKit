@@ -93,14 +93,14 @@ private:
 inline void StyledElement::invalidateStyleAttribute()
 {
     ASSERT(elementData());
-    elementData()->m_styleAttributeIsDirty = true;
+    elementData()->setStyleAttributeIsDirty(true);
 }
 
 inline const StyleProperties* StyledElement::presentationAttributeStyle()
 {
     if (!elementData())
         return 0;
-    if (elementData()->m_presentationAttributeStyleIsDirty)
+    if (elementData()->presentationAttributeStyleIsDirty())
         rebuildPresentationAttributeStyle();
     return elementData()->presentationAttributeStyle();
 }

@@ -733,13 +733,13 @@ void SVGElement::attributeChanged(const QualifiedName& name, const AtomicString&
 
 void SVGElement::synchronizeAnimatedSVGAttribute(const QualifiedName& name) const
 {
-    if (!elementData() || !elementData()->m_animatedSVGAttributesAreDirty)
+    if (!elementData() || !elementData()->animatedSVGAttributesAreDirty())
         return;
 
     SVGElement* nonConstThis = const_cast<SVGElement*>(this);
     if (name == anyQName()) {
         nonConstThis->localAttributeToPropertyMap().synchronizeProperties(nonConstThis);
-        elementData()->m_animatedSVGAttributesAreDirty = false;
+        elementData()->setAnimatedSVGAttributesAreDirty(false);
     } else
         nonConstThis->localAttributeToPropertyMap().synchronizeProperty(nonConstThis, name);
 }

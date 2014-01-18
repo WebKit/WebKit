@@ -1,3 +1,54 @@
+2014-01-18  Benjamin Poulain  <benjamin@webkit.org>
+
+        Make ElementData JIT friendly
+        https://bugs.webkit.org/show_bug.cgi?id=127209
+
+        Reviewed by Geoffrey Garen.
+
+        The offsets of ElementData's flags were not accessible by the JIT. This patch
+        refactor ElementData to use explicit flags so that they can be used from
+        the code generators.
+
+        * dom/Element.cpp:
+        (WebCore::Element::synchronizeAllAttributes):
+        (WebCore::Element::synchronizeAttribute):
+        (WebCore::Element::attributeChanged):
+        (WebCore::Element::removeAttribute):
+        * dom/ElementData.cpp:
+        (WebCore::ElementData::destroy):
+        (WebCore::ElementData::ElementData):
+        (WebCore::ShareableElementData::ShareableElementData):
+        (WebCore::ShareableElementData::~ShareableElementData):
+        (WebCore::ElementData::arraySizeAndFlagsFromOther):
+        * dom/ElementData.h:
+        (WebCore::ElementData::hasName):
+        (WebCore::ElementData::isUnique):
+        (WebCore::ElementData::updateFlag):
+        (WebCore::ElementData::arraySize):
+        (WebCore::ElementData::setHasNameAttribute):
+        (WebCore::ElementData::styleAttributeIsDirty):
+        (WebCore::ElementData::setStyleAttributeIsDirty):
+        (WebCore::ElementData::presentationAttributeStyleIsDirty):
+        (WebCore::ElementData::setPresentationAttributeStyleIsDirty):
+        (WebCore::ElementData::animatedSVGAttributesAreDirty):
+        (WebCore::ElementData::setAnimatedSVGAttributesAreDirty):
+        (WebCore::ElementData::length):
+        (WebCore::ElementData::attributeBase):
+        (WebCore::ElementData::presentationAttributeStyle):
+        * dom/StyledElement.cpp:
+        (WebCore::StyledElement::synchronizeStyleAttributeInternal):
+        (WebCore::StyledElement::attributeChanged):
+        (WebCore::StyledElement::styleAttributeChanged):
+        (WebCore::StyledElement::inlineStyleChanged):
+        (WebCore::StyledElement::rebuildPresentationAttributeStyle):
+        * dom/StyledElement.h:
+        (WebCore::StyledElement::invalidateStyleAttribute):
+        (WebCore::StyledElement::presentationAttributeStyle):
+        * svg/SVGElement.cpp:
+        (WebCore::SVGElement::synchronizeAnimatedSVGAttribute):
+        * svg/SVGElement.h:
+        (WebCore::SVGElement::invalidateSVGAttributes):
+
 2014-01-18  Zalan Bujtas  <zalan@apple.com>
 
         Subpixel layout: IntRect::infiniteRect() overflows when subpixel layout is enabled.
