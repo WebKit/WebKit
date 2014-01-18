@@ -1,3 +1,12 @@
+2014-01-18  Lauro Neto  <lauro.neto@openbossa.org>
+
+        Remove Nix files from WebCore
+        https://bugs.webkit.org/show_bug.cgi?id=127176
+
+        Reviewed by Anders Carlsson.
+
+        * Source/cmake/OptionsNix.cmake: Removed.
+
 2014-01-18  Zan Dobersek  <zdobersek@igalia.com>
 
         [GTK] Bump the minimum required Clang version to 3.3

@@ -1,3 +1,47 @@
+2014-01-18  Lauro Neto  <lauro.neto@openbossa.org>
+
+        Remove Nix files from WebCore
+        https://bugs.webkit.org/show_bug.cgi?id=127176
+
+        Reviewed by Anders Carlsson.
+
+        * PlatformNix.cmake: Removed.
+        * css/mediaControlsNix.css: Removed.
+        * css/mediaControlsNixFullscreen.css: Removed.
+        * editing/nix/EditorNix.cpp: Removed.
+        * page/nix/EventHandlerNix.cpp: Removed.
+        * platform/audio/nix/AudioBusNix.cpp: Removed.
+        * platform/audio/nix/AudioDestinationNix.cpp: Removed.
+        * platform/audio/nix/AudioDestinationNix.h: Removed.
+        * platform/audio/nix/FFTFrameNix.cpp: Removed.
+        * platform/graphics/nix/IconNix.cpp: Removed.
+        * platform/graphics/nix/ImageNix.cpp: Removed.
+        * platform/nix/CursorNix.cpp: Removed.
+        * platform/nix/DragDataNix.cpp: Removed.
+        * platform/nix/DragImageNix.cpp: Removed.
+        * platform/nix/ErrorsNix.cpp: Removed.
+        * platform/nix/ErrorsNix.h: Removed.
+        * platform/nix/FileSystemNix.cpp: Removed.
+        * platform/nix/GamepadsNix.cpp: Removed.
+        * platform/nix/LanguageNix.cpp: Removed.
+        * platform/nix/LocalizedStringsNix.cpp: Removed.
+        * platform/nix/MIMETypeRegistryNix.cpp: Removed.
+        * platform/nix/NixKeyboardUtilities.cpp: Removed.
+        * platform/nix/NixKeyboardUtilities.h: Removed.
+        * platform/nix/PasteboardNix.cpp: Removed.
+        * platform/nix/PlatformKeyboardEventNix.cpp: Removed.
+        * platform/nix/PlatformScreenNix.cpp: Removed.
+        * platform/nix/RenderThemeNix.cpp: Removed.
+        * platform/nix/RenderThemeNix.h: Removed.
+        * platform/nix/ScrollbarThemeNix.cpp: Removed.
+        * platform/nix/ScrollbarThemeNix.h: Removed.
+        * platform/nix/SharedTimerNix.cpp: Removed.
+        * platform/nix/SoundNix.cpp: Removed.
+        * platform/nix/TemporaryLinkStubs.cpp: Removed.
+        * platform/nix/WidgetNix.cpp: Removed.
+        * platform/nix/support/MultiChannelPCMData.cpp: Removed.
+        * platform/text/nix/TextBreakIteratorInternalICUNix.cpp: Removed.
+
 2014-01-18  Anders Carlsson  <andersca@apple.com>
 
         Remove DocumentParser::pinToMainThread() and related code
