@@ -1,7 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
- * Portions Copyright (c) 2010 Motorola Mobility, Inc.  All rights reserved.
- * Copyright (C) 2012 Igalia S.L.
+ * Copyright (C) 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,36 +23,29 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebFrameNetworkingContext_h
-#define WebFrameNetworkingContext_h
+#ifndef SessionTracker_h
+#define SessionTracker_h
 
-#include <WebCore/FrameNetworkingContext.h>
+#include <WebCore/NetworkStorageSession.h>
+#include <wtf/HashMap.h>
+#include <wtf/Noncopyable.h>
+#include <wtf/text/CString.h>
 
 namespace WebKit {
 
-class WebFrame;
-class WebFrameLoaderClient;
-
-class WebFrameNetworkingContext : public WebCore::FrameNetworkingContext {
+class SessionTracker {
+    WTF_MAKE_NONCOPYABLE(SessionTracker);
 public:
-    static PassRefPtr<WebFrameNetworkingContext> create(WebFrame* frame)
-    {
-        return adoptRef(new WebFrameNetworkingContext(frame));
-    }
-
-    static void ensurePrivateBrowsingSession(uint64_t sessionID);
-
-    WebFrameLoaderClient* webFrameLoaderClient() const;
-
-private:
-    WebFrameNetworkingContext(WebFrame*);
-
-    virtual WebCore::NetworkStorageSession& storageSession() const;
-    virtual uint64_t initiatingPageID() const;
-
-    uint64_t m_initiatingPageID;
+    static const uint64_t defaultSessionID = 1;
+    static const uint64_t legacyPrivateSessionID = 2;
+    static bool isEphemeralID(uint64_t sessionID) { return sessionID != SessionTracker::defaultSessionID; }
+    static const HashMap<uint64_t, std::unique_ptr<WebCore::NetworkStorageSession>>& getSessionMap();
+    static const String& getIdentifierBase();
+    static std::unique_ptr<WebCore::NetworkStorageSession>& session(uint64_t sessionID);
+    static void destroySession(uint64_t sessionID);
+    static void setIdentifierBase(const String&);
 };
 
-}
+} // namespace WebKit
 
-#endif // WebFrameNetworkingContext_h
+#endif // SessionTracker_h

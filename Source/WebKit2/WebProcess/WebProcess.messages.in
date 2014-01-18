@@ -51,9 +51,9 @@ messages -> WebProcess LegacyReceiver {
     SetIgnoreTLSErrors(bool ignoreTLSErrors)
 #endif
 
-    // Private browsing session is per process. Individual pages or page groups may use the private session or the default one as appropriate.
-    EnsurePrivateBrowsingSession()
-    DestroyPrivateBrowsingSession()
+    // Legacy private browsing session is per process. Individual pages or page groups may use the private session or the default one as appropriate.
+    EnsurePrivateBrowsingSession(uint64_t sessionID)
+    DestroyPrivateBrowsingSession(uint64_t sessionID)
 
     # Plug-ins.
     DidAddPlugInAutoStartOriginHash(uint32_t hash, double expirationTime)

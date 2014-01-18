@@ -33,6 +33,7 @@
 #include "InjectedBundleUserMessageCoders.h"
 #include "Logging.h"
 #include "PluginProcessConnectionManager.h"
+#include "SessionTracker.h"
 #include "StatisticsData.h"
 #include "UserData.h"
 #include "WebApplicationCacheManager.h"
@@ -335,7 +336,7 @@ void WebProcess::initializeWebProcess(const WebProcessCreationParameters& parame
         setShouldUseFontSmoothing(true);
 
 #if PLATFORM(MAC) || USE(CFNETWORK)
-    WebFrameNetworkingContext::setPrivateBrowsingStorageSessionIdentifierBase(parameters.uiProcessBundleIdentifier);
+    SessionTracker::setIdentifierBase(parameters.uiProcessBundleIdentifier);
 #endif
 
     if (parameters.shouldUseTestingNetworkSession)
@@ -452,17 +453,17 @@ void WebProcess::fullKeyboardAccessModeChanged(bool fullKeyboardAccessEnabled)
     m_fullKeyboardAccessEnabled = fullKeyboardAccessEnabled;
 }
 
-void WebProcess::ensurePrivateBrowsingSession()
+void WebProcess::ensurePrivateBrowsingSession(uint64_t sessionID)
 {
 #if PLATFORM(MAC) || USE(CFNETWORK) || USE(SOUP)
-    WebFrameNetworkingContext::ensurePrivateBrowsingSession();
+    WebFrameNetworkingContext::ensurePrivateBrowsingSession(sessionID);
 #endif
 }
 
-void WebProcess::destroyPrivateBrowsingSession()
+void WebProcess::destroyPrivateBrowsingSession(uint64_t sessionID)
 {
 #if PLATFORM(MAC) || USE(CFNETWORK) || USE(SOUP)
-    WebFrameNetworkingContext::destroyPrivateBrowsingSession();
+    SessionTracker::destroySession(sessionID);
 #endif
 }
 

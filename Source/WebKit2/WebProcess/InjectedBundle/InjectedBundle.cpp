@@ -32,6 +32,7 @@
 #include "InjectedBundleUserMessageCoders.h"
 #include "LayerTreeHost.h"
 #include "NotificationPermissionRequestManager.h"
+#include "SessionTracker.h"
 #include "WKAPICast.h"
 #include "WKBundleAPICast.h"
 #include "WebApplicationCacheManager.h"
@@ -299,9 +300,9 @@ void InjectedBundle::setPrivateBrowsingEnabled(WebPageGroupProxy* pageGroup, boo
     // FIXME (NetworkProcess): This test-only function doesn't work with NetworkProcess, <https://bugs.webkit.org/show_bug.cgi?id=115274>.
 #if PLATFORM(MAC) || USE(CFNETWORK) || USE(SOUP)
     if (enabled)
-        WebFrameNetworkingContext::ensurePrivateBrowsingSession();
+        WebFrameNetworkingContext::ensurePrivateBrowsingSession(SessionTracker::legacyPrivateSessionID);
     else
-        WebFrameNetworkingContext::destroyPrivateBrowsingSession();
+        SessionTracker::destroySession(SessionTracker::legacyPrivateSessionID);
 #endif
     const HashSet<Page*>& pages = PageGroup::pageGroup(pageGroup->identifier())->pages();
     for (HashSet<Page*>::iterator iter = pages.begin(); iter != pages.end(); ++iter)

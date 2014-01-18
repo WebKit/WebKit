@@ -39,11 +39,8 @@ public:
     }
     virtual ~RemoteNetworkingContext();
 
-    static void setPrivateBrowsingStorageSessionIdentifierBase(const String&);
-    static void ensurePrivateBrowsingSession();
-    static void destroyPrivateBrowsingSession();
-
-    static WebCore::NetworkStorageSession* privateBrowsingSession();
+    // FIXME: remove platform-specific code and use SessionTracker
+    static void ensurePrivateBrowsingSession(uint64_t sessionID);
 
     virtual bool shouldClearReferrerOnHTTPSToHTTPRedirect() const override { return m_shouldClearReferrerOnHTTPSToHTTPRedirect; }
 

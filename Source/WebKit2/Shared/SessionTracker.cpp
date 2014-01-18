@@ -1,7 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
- * Portions Copyright (c) 2010 Motorola Mobility, Inc.  All rights reserved.
- * Copyright (C) 2012 Igalia S.L.
+ * Copyright (C) 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,36 +23,59 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebFrameNetworkingContext_h
-#define WebFrameNetworkingContext_h
+#include "config.h"
+#include "SessionTracker.h"
 
-#include <WebCore/FrameNetworkingContext.h>
+#include <wtf/MainThread.h>
+#include <wtf/NeverDestroyed.h>
+
+using namespace WebCore;
 
 namespace WebKit {
 
-class WebFrame;
-class WebFrameLoaderClient;
+static HashMap<uint64_t, std::unique_ptr<NetworkStorageSession>>& sessionMap()
+{
+    ASSERT(isMainThread());
 
-class WebFrameNetworkingContext : public WebCore::FrameNetworkingContext {
-public:
-    static PassRefPtr<WebFrameNetworkingContext> create(WebFrame* frame)
-    {
-        return adoptRef(new WebFrameNetworkingContext(frame));
-    }
-
-    static void ensurePrivateBrowsingSession(uint64_t sessionID);
-
-    WebFrameLoaderClient* webFrameLoaderClient() const;
-
-private:
-    WebFrameNetworkingContext(WebFrame*);
-
-    virtual WebCore::NetworkStorageSession& storageSession() const;
-    virtual uint64_t initiatingPageID() const;
-
-    uint64_t m_initiatingPageID;
-};
-
+    static NeverDestroyed<HashMap<uint64_t, std::unique_ptr<NetworkStorageSession>>> map;
+    return map.get();
 }
 
-#endif // WebFrameNetworkingContext_h
+static String& identifierBase()
+{
+    ASSERT(isMainThread());
+
+    static NeverDestroyed<String> base;
+    return base;
+}
+
+const HashMap<uint64_t, std::unique_ptr<NetworkStorageSession>>& SessionTracker::getSessionMap()
+{
+    return sessionMap();
+}
+
+const String& SessionTracker::getIdentifierBase()
+{
+    return identifierBase();
+}
+
+std::unique_ptr<NetworkStorageSession>& SessionTracker::session(uint64_t sessionID)
+{
+    return sessionMap().add(sessionID, nullptr).iterator->value;
+}
+
+void SessionTracker::destroySession(uint64_t sessionID)
+{
+    ASSERT(isMainThread());
+
+    sessionMap().remove(sessionID);
+}
+
+void SessionTracker::setIdentifierBase(const String& identifier)
+{
+    ASSERT(isMainThread());
+
+    identifierBase() = identifier;
+}
+
+} // namespace WebKit

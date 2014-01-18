@@ -1,3 +1,94 @@
+2014-01-17  Martin Hock  <mhock@apple.com>
+
+        Flesh out session APIs (still not enabled at API level).
+        https://bugs.webkit.org/show_bug.cgi?id=126918
+
+        Reviewed by Alexey Proskuryakov.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+        (WebKit::storageSession):
+        (WebKit::NetworkConnectionToWebProcess::startDownload):
+        (WebKit::NetworkConnectionToWebProcess::cookiesForDOM):
+        (WebKit::NetworkConnectionToWebProcess::setCookiesFromDOM):
+        (WebKit::NetworkConnectionToWebProcess::cookiesEnabled):
+        (WebKit::NetworkConnectionToWebProcess::cookieRequestHeaderFieldValue):
+        (WebKit::NetworkConnectionToWebProcess::getRawCookies):
+        (WebKit::NetworkConnectionToWebProcess::deleteCookie):
+        * NetworkProcess/NetworkConnectionToWebProcess.h:
+        * NetworkProcess/NetworkConnectionToWebProcess.messages.in:
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::initializeNetworkProcess):
+        (WebKit::NetworkProcess::ensurePrivateBrowsingSession):
+        (WebKit::NetworkProcess::destroyPrivateBrowsingSession):
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/NetworkProcess.messages.in:
+        * NetworkProcess/RemoteNetworkingContext.h:
+        * NetworkProcess/mac/RemoteNetworkingContext.mm:
+        (WebKit::RemoteNetworkingContext::storageSession):
+        (WebKit::RemoteNetworkingContext::ensurePrivateBrowsingSession):
+        * NetworkProcess/soup/RemoteNetworkingContextSoup.cpp:
+        (WebKit::RemoteNetworkingContext::ensurePrivateBrowsingSession):
+        * Shared/SessionTracker.cpp: Copied from Source/WebKit2/UIProcess/APISession.cpp.
+        (WebKit::sessionMap):
+        (WebKit::identifierBase):
+        (WebKit::SessionTracker::getSessionMap):
+        (WebKit::SessionTracker::getIdentifierBase):
+        (WebKit::SessionTracker::session):
+        (WebKit::SessionTracker::destroySession):
+        (WebKit::SessionTracker::setIdentifierBase):
+        * Shared/SessionTracker.h: Copied from Source/WebKit2/UIProcess/APISession.h.
+        (WebKit::SessionTracker::isEphemeralID):
+        * UIProcess/APISession.cpp:
+        (API::generateID):
+        (API::Session::defaultSession):
+        (API::Session::legacyPrivateSession):
+        (API::Session::Session):
+        (API::Session::create):
+        (API::Session::isEphemeral):
+        (API::Session::getID):
+        * UIProcess/APISession.h:
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::setAnyPageGroupMightHavePrivateBrowsingEnabled):
+        (WebKit::WebContext::createNewWebProcess):
+        (WebKit::WebContext::createWebPage):
+        * UIProcess/WebContext.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::create):
+        (WebKit::WebPageProxy::WebPageProxy):
+        * UIProcess/WebPageProxy.h:
+        (WebKit::WebPageProxy::sessionID):
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::createWebPage):
+        * UIProcess/WebProcessProxy.h:
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/InjectedBundle/InjectedBundle.cpp:
+        (WebKit::InjectedBundle::setPrivateBrowsingEnabled):
+        * WebProcess/WebCoreSupport/WebPlatformStrategies.cpp:
+        (WebKit::legacySessionID):
+        (WebKit::WebPlatformStrategies::cookiesForDOM):
+        (WebKit::WebPlatformStrategies::setCookiesFromDOM):
+        (WebKit::WebPlatformStrategies::cookiesEnabled):
+        (WebKit::WebPlatformStrategies::cookieRequestHeaderFieldValue):
+        (WebKit::WebPlatformStrategies::getRawCookies):
+        (WebKit::WebPlatformStrategies::deleteCookie):
+        * WebProcess/WebCoreSupport/mac/WebFrameNetworkingContext.h:
+        * WebProcess/WebCoreSupport/mac/WebFrameNetworkingContext.mm:
+        (WebKit::WebFrameNetworkingContext::ensurePrivateBrowsingSession):
+        (WebKit::WebFrameNetworkingContext::setCookieAcceptPolicyForAllContexts):
+        (WebKit::WebFrameNetworkingContext::storageSession):
+        * WebProcess/WebCoreSupport/soup/WebFrameNetworkingContext.cpp:
+        (WebKit::WebFrameNetworkingContext::ensurePrivateBrowsingSession):
+        (WebKit::WebFrameNetworkingContext::storageSession):
+        * WebProcess/WebCoreSupport/soup/WebFrameNetworkingContext.h:
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::initializeWebProcess):
+        (WebKit::WebProcess::ensurePrivateBrowsingSession):
+        (WebKit::WebProcess::destroyPrivateBrowsingSession):
+        * WebProcess/WebProcess.h:
+        * WebProcess/WebProcess.messages.in:
+
 2014-01-17  Andreas Kling  <akling@apple.com>
 
         Remove unused TOUCH_ADJUSTMENT code.

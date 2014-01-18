@@ -785,6 +785,8 @@
 		6EE849C81368D9390038D481 /* WKInspectorPrivateMac.h in Headers */ = {isa = PBXBuildFile; fileRef = 6EE849C61368D92D0038D481 /* WKInspectorPrivateMac.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		728E86F11795188C0087879E /* WebColorPickerMac.h in Headers */ = {isa = PBXBuildFile; fileRef = 728E86EF1795188C0087879E /* WebColorPickerMac.h */; };
 		728E86F21795188C0087879E /* WebColorPickerMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 728E86F01795188C0087879E /* WebColorPickerMac.mm */; };
+		753E3E0D1887398500188496 /* SessionTracker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 753E3E0B1887397300188496 /* SessionTracker.cpp */; };
+		753E3E0E1887398900188496 /* SessionTracker.h in Headers */ = {isa = PBXBuildFile; fileRef = 753E3E091887394B00188496 /* SessionTracker.h */; };
 		755422BD18062BB20046F6A8 /* WKOriginDataManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 755422B918062B9C0046F6A8 /* WKOriginDataManager.cpp */; };
 		755422C418062BF90046F6A8 /* WebOriginDataManagerProxy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 755422BE18062BE40046F6A8 /* WebOriginDataManagerProxy.cpp */; };
 		755422CB180650020046F6A8 /* WebOriginDataManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 755422C618064FFC0046F6A8 /* WebOriginDataManager.cpp */; };
@@ -2464,6 +2466,8 @@
 		6EE849C61368D92D0038D481 /* WKInspectorPrivateMac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WKInspectorPrivateMac.h; path = mac/WKInspectorPrivateMac.h; sourceTree = "<group>"; };
 		728E86EF1795188C0087879E /* WebColorPickerMac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebColorPickerMac.h; sourceTree = "<group>"; };
 		728E86F01795188C0087879E /* WebColorPickerMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebColorPickerMac.mm; sourceTree = "<group>"; };
+		753E3E091887394B00188496 /* SessionTracker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SessionTracker.h; sourceTree = "<group>"; };
+		753E3E0B1887397300188496 /* SessionTracker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SessionTracker.cpp; sourceTree = "<group>"; };
 		755422B918062B9C0046F6A8 /* WKOriginDataManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKOriginDataManager.cpp; sourceTree = "<group>"; };
 		755422BA18062B9C0046F6A8 /* WKOriginDataManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKOriginDataManager.h; sourceTree = "<group>"; };
 		755422BE18062BE40046F6A8 /* WebOriginDataManagerProxy.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebOriginDataManagerProxy.cpp; sourceTree = "<group>"; };
@@ -3724,6 +3728,8 @@
 				33152974130D0CB200ED2483 /* SecurityOriginData.h */,
 				518D2CC812D51DFB003BB93B /* SessionState.cpp */,
 				518D2CC912D51DFB003BB93B /* SessionState.h */,
+				753E3E0B1887397300188496 /* SessionTracker.cpp */,
+				753E3E091887394B00188496 /* SessionTracker.h */,
 				1A6420E212DCE2FF00CAAE2C /* ShareableBitmap.cpp */,
 				1A6420E312DCE2FF00CAAE2C /* ShareableBitmap.h */,
 				5121745E164C20E30037A5C1 /* ShareableResource.cpp */,
@@ -6645,6 +6651,7 @@
 				BC40761C124FF0370068F20A /* WKURLCF.h in Headers */,
 				BC40760C124FF0270068F20A /* WKURLRequest.h in Headers */,
 				BC407629124FF0400068F20A /* WKURLRequestNS.h in Headers */,
+				753E3E0E1887398900188496 /* SessionTracker.h in Headers */,
 				BC40760E124FF0270068F20A /* WKURLResponse.h in Headers */,
 				759CCD5A1808F6160078E8A8 /* WebOriginDataManagerProxy.h in Headers */,
 				BC40762B124FF0400068F20A /* WKURLResponseNS.h in Headers */,
@@ -7903,6 +7910,7 @@
 				BCD25F1811D6BDE100169B0E /* WKBundleFrame.cpp in Sources */,
 				BC498630124D18C100D834E1 /* WKBundleHitTestResult.cpp in Sources */,
 				6501BD1A12F1243400E9F248 /* WKBundleInspector.cpp in Sources */,
+				753E3E0D1887398500188496 /* SessionTracker.cpp in Sources */,
 				BC7043CD12F75EE0006472B9 /* WKBundleNavigationAction.cpp in Sources */,
 				BC4BEFE2120A1A4C00FBA0C7 /* WKBundleNodeHandle.cpp in Sources */,
 				BC20528211C94284008F3375 /* WKBundlePage.cpp in Sources */,
