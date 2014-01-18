@@ -56,6 +56,7 @@ list(APPEND WebKit_SOURCES
     gtk/WebCoreSupport/InspectorClientGtk.cpp
     gtk/WebCoreSupport/NavigatorContentUtilsClientGtk.cpp
     gtk/WebCoreSupport/PlatformStrategiesGtk.cpp
+    gtk/WebCoreSupport/ProgressTrackerClientGtk.cpp
     gtk/WebCoreSupport/TextCheckerClientGtk.cpp
     gtk/WebCoreSupport/UserMediaClientGtk.cpp
     gtk/WebCoreSupport/WebViewInputMethodFilter.cpp

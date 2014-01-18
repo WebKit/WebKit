@@ -1,3 +1,9 @@
+2014-01-17  Martin Robinson  <mrobinson@igalia.com>
+
+        Build fix for the CMake GTK+ build
+
+        * PlatformGTK.cmake: We need to include ProgressTrackerClientGtk in the source list.
+
 2014-01-17  Beth Dakin  <bdakin@apple.com>
 
         Need a way to test the tile cache with margins enabled
