@@ -3601,8 +3601,6 @@ webcore_sources += \
 	Source/WebCore/html/parser/HTMLParserOptions.h \
 	Source/WebCore/html/parser/HTMLParserScheduler.cpp \
 	Source/WebCore/html/parser/HTMLParserScheduler.h \
-	Source/WebCore/html/parser/HTMLParserThread.cpp \
-	Source/WebCore/html/parser/HTMLParserThread.h \
 	Source/WebCore/html/parser/HTMLPreloadScanner.cpp \
 	Source/WebCore/html/parser/HTMLPreloadScanner.h \
 	Source/WebCore/html/parser/HTMLResourcePreloader.cpp \

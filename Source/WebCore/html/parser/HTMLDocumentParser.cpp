@@ -31,7 +31,6 @@
 #include "DocumentLoader.h"
 #include "Frame.h"
 #include "HTMLParserScheduler.h"
-#include "HTMLParserThread.h"
 #include "HTMLScriptRunner.h"
 #include "HTMLTreeBuilder.h"
 #include "HTMLDocument.h"

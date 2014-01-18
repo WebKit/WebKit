@@ -1548,7 +1548,6 @@ set(WebCore_SOURCES
     html/parser/HTMLParserIdioms.cpp
     html/parser/HTMLParserOptions.cpp
     html/parser/HTMLParserScheduler.cpp
-    html/parser/HTMLParserThread.cpp
     html/parser/HTMLPreloadScanner.cpp
     html/parser/HTMLResourcePreloader.cpp
     html/parser/HTMLScriptRunner.cpp

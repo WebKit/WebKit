@@ -3312,7 +3312,6 @@
 		973E325710883B7C005BC493 /* ResourceLoadNotifier.h in Headers */ = {isa = PBXBuildFile; fileRef = 973E325510883B7C005BC493 /* ResourceLoadNotifier.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		973F418A169B95FF0006BF60 /* HTMLParserOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = 973F4188169B95EF0006BF60 /* HTMLParserOptions.h */; };
 		973F418B169B96030006BF60 /* HTMLParserOptions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 973F4187169B95EF0006BF60 /* HTMLParserOptions.cpp */; };
-		974187D416A7932900FA77A7 /* HTMLParserThread.h in Headers */ = {isa = PBXBuildFile; fileRef = 974187D116A7932200FA77A7 /* HTMLParserThread.h */; };
 		9746AF2114F4DDE6003E7A71 /* Coordinates.h in Headers */ = {isa = PBXBuildFile; fileRef = 9746AF1114F4DDE6003E7A70 /* Coordinates.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		9746AF2114F4DDE6003E7A72 /* Coordinates.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9746AF1114F4DDE6003E7A72 /* Coordinates.cpp */; };
 		9746AF2314F4DDE6003E7A70 /* Geolocation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9746AF1314F4DDE6003E7A70 /* Geolocation.cpp */; };
@@ -10291,7 +10290,6 @@
 		973E325510883B7C005BC493 /* ResourceLoadNotifier.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ResourceLoadNotifier.h; sourceTree = "<group>"; };
 		973F4187169B95EF0006BF60 /* HTMLParserOptions.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = HTMLParserOptions.cpp; path = parser/HTMLParserOptions.cpp; sourceTree = "<group>"; };
 		973F4188169B95EF0006BF60 /* HTMLParserOptions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HTMLParserOptions.h; path = parser/HTMLParserOptions.h; sourceTree = "<group>"; };
-		974187D116A7932200FA77A7 /* HTMLParserThread.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HTMLParserThread.h; path = parser/HTMLParserThread.h; sourceTree = "<group>"; };
 		9746AF1114F4DDE6003E7A70 /* Coordinates.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Coordinates.h; sourceTree = "<group>"; };
 		9746AF1114F4DDE6003E7A72 /* Coordinates.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Coordinates.cpp; sourceTree = "<group>"; };
 		9746AF1214F4DDE6003E7A70 /* Coordinates.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Coordinates.idl; sourceTree = "<group>"; };
@@ -17932,7 +17930,6 @@
 				973F4188169B95EF0006BF60 /* HTMLParserOptions.h */,
 				977B3857122883E900B81FF8 /* HTMLParserScheduler.cpp */,
 				977B3858122883E900B81FF8 /* HTMLParserScheduler.h */,
-				974187D116A7932200FA77A7 /* HTMLParserThread.h */,
 				977B3859122883E900B81FF8 /* HTMLPreloadScanner.cpp */,
 				977B385A122883E900B81FF8 /* HTMLPreloadScanner.h */,
 				A8D223FB16B52E4E00157288 /* HTMLResourcePreloader.cpp */,
@@ -24012,7 +24009,6 @@
 				449B19F50FA72ECE0015CA4A /* HTMLParserQuirks.h in Headers */,
 				073BE34B17D17E7A002BD431 /* JSNavigatorUserMediaErrorCallback.h in Headers */,
 				977B3871122883E900B81FF8 /* HTMLParserScheduler.h in Headers */,
-				974187D416A7932900FA77A7 /* HTMLParserThread.h in Headers */,
 				A871D4560A127CBC00B12A68 /* HTMLPlugInElement.h in Headers */,
 				4415292E0E1AE8A000C4A2D0 /* HTMLPlugInImageElement.h in Headers */,
 				A8EA7CB00A192B9C00A8EF5F /* HTMLPreElement.h in Headers */,

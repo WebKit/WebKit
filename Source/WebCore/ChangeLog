@@ -1,3 +1,19 @@
+2014-01-18  Anders Carlsson  <andersca@apple.com>
+
+        Remove HTMLParserThread
+        https://bugs.webkit.org/show_bug.cgi?id=127220
+
+        Reviewed by Andreas Kling.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.vcxproj/WebCore.vcxproj.filters:
+        * WebCore.xcodeproj/project.pbxproj:
+        * html/parser/HTMLDocumentParser.cpp:
+        * html/parser/HTMLParserThread.cpp: Removed.
+        * html/parser/HTMLParserThread.h: Removed.
+
 2014-01-17  Andreas Kling  <akling@apple.com>
 
         GC soon after responding to fake memory pressure.

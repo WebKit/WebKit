@@ -4155,9 +4155,6 @@
     <ClCompile Include="..\html\parser\HTMLParserScheduler.cpp">
       <Filter>html\parser</Filter>
     </ClCompile>
-    <ClCompile Include="..\html\parser\HTMLParserThread.cpp">
-      <Filter>html\parser</Filter>
-    </ClCompile>
     <ClCompile Include="..\html\parser\HTMLPreloadScanner.cpp">
       <Filter>html\parser</Filter>
     </ClCompile>
@@ -11274,9 +11271,6 @@
       <Filter>html\parser</Filter>
     </ClInclude>
     <ClInclude Include="..\html\parser\HTMLParserScheduler.h">
-      <Filter>html\parser</Filter>
-    </ClInclude>
-    <ClInclude Include="..\html\parser\HTMLParserThread.h">
       <Filter>html\parser</Filter>
     </ClInclude>
     <ClInclude Include="..\html\parser\HTMLPreloadScanner.h">
