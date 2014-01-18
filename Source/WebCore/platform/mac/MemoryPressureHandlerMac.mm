@@ -79,8 +79,13 @@ void MemoryPressureHandler::install()
         }
     });
 
-    notify_register_dispatch("org.WebKit.lowMemory", &_notifyToken,
-         dispatch_get_main_queue(), ^(int) { memoryPressureHandler().respondToMemoryPressure();});
+    // Allow simulation of memory pressure with "notifyutil -p org.WebKit.lowMemory"
+    // Note that we also ask JSC to garbage collect some time soon, unlike the real memory pressure path.
+    // This is to get more stable numbers in memory benchmarks using this mechanism.
+    notify_register_dispatch("org.WebKit.lowMemory", &_notifyToken, dispatch_get_main_queue(), ^(int) {
+        memoryPressureHandler().respondToMemoryPressure();
+        gcController().garbageCollectSoon();
+    });
 
     m_installed = true;
 }
