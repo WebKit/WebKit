@@ -603,7 +603,7 @@ double jsRound(double d)
 
 }
 
-#if CPU(X86_64) && COMPILER(GCC) && (PLATFORM(MAC) || OS(LINUX))
+#if CPU(X86_64) && COMPILER(GCC) && (OS(DARWIN) || OS(LINUX))
 
 #define defineUnaryDoubleOpWrapper(function) \
     asm( \
@@ -619,7 +619,7 @@ double jsRound(double d)
     } \
     static MathThunk UnaryDoubleOpWrapper(function) = &function##Thunk;
 
-#elif CPU(X86) && COMPILER(GCC) && (PLATFORM(MAC) || OS(LINUX))
+#elif CPU(X86) && COMPILER(GCC) && (OS(DARWIN) || OS(LINUX))
 #define defineUnaryDoubleOpWrapper(function) \
     asm( \
         ".text\n" \

@@ -1,3 +1,15 @@
+2014-01-18  Alberto Garcia  <berto@igalia.com>
+
+        JavaScriptCore uses PLATFORM(MAC) when it means OS(DARWIN)
+        https://bugs.webkit.org/show_bug.cgi?id=99683
+
+        Reviewed by Anders Carlsson.
+
+        * jit/ThunkGenerators.cpp:
+        * tools/CodeProfile.cpp:
+        (JSC::symbolName):
+        (JSC::CodeProfile::sample):
+
 2014-01-18  Anders Carlsson  <andersca@apple.com>
 
         Remove ENABLE_THREADED_HTML_PARSER defines everywhere
