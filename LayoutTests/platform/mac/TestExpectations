@@ -1357,9 +1357,6 @@ webkit.org/b/126897 mathml/presentation/bug95015.html
 # Subpixel: -webkit-flex off-by-one px
 webkit.org/b/126898 css3/flexbox/image-percent-max-height.html
 
-# Subpixel: missing text between svg contents
-webkit.org/b/126899 svg/custom/masking-clipping-hidpi.svg
-
 # Subpixel: misplaced zoomed svg content.
 webkit.org/b/126900 svg/zoom/page/zoom-zoom-coords.xhtml
 

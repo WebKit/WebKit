@@ -27,6 +27,7 @@
 #define IntRect_h
 
 #include "IntPoint.h"
+#include "LayoutUnit.h"
 #include <wtf/Vector.h>
 
 #if USE(CG)
@@ -236,7 +237,7 @@ inline bool operator!=(const IntRect& a, const IntRect& b)
 
 inline IntRect IntRect::infiniteRect()
 {
-    static IntRect infiniteRect(-std::numeric_limits<int>::max() / 2, -std::numeric_limits<int>::max() / 2, std::numeric_limits<int>::max(), std::numeric_limits<int>::max());
+    static IntRect infiniteRect(-LayoutUnit::max() / 2, -LayoutUnit::max() / 2, LayoutUnit::max(), LayoutUnit::max());
     return infiniteRect;
 }
 
