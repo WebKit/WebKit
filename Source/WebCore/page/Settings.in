@@ -151,11 +151,6 @@ requestAnimationFrameEnabled initial=true
 deviceSupportsTouch initial=false
 deviceSupportsMouse initial=true
 
-# For touch adjustment to apply, the compile option TOUCH_ADJUSTMENT must also be enabled.
-# This setting adds a means to dynamically disable the feature at runtime on systems with
-# support for touch adjustment.
-touchAdjustmentEnabled initial=true
-
 fixedPositionCreatesStackingContext initial=defaultFixedPositionCreatesStackingContext
 syncXHRInDocumentsEnabled initial=true
 cookieEnabled initial=true

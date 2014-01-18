@@ -114,13 +114,6 @@
     [RaisesException] DOMString rangeAsText(Range range);
 
     [RaisesException] void setDelegatesScrolling(boolean enabled);
-#if defined(ENABLE_TOUCH_ADJUSTMENT) && ENABLE_TOUCH_ADJUSTMENT
-    [RaisesException] WebKitPoint touchPositionAdjustedToBestClickableNode(long x, long y, long width, long height);
-    [RaisesException] Node touchNodeAdjustedToBestClickableNode(long x, long y, long width, long height);
-    [RaisesException] WebKitPoint touchPositionAdjustedToBestContextMenuNode(long x, long y, long width, long height);
-    [RaisesException] Node touchNodeAdjustedToBestContextMenuNode(long x, long y, long width, long height);
-    [RaisesException] ClientRect bestZoomableAreaForTouchPoint(long x, long y, long width, long height);
-#endif
 
     [RaisesException] long lastSpellCheckRequestSequence();
     [RaisesException] long lastSpellCheckProcessedSequence();

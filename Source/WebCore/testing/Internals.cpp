@@ -118,10 +118,6 @@
 #include "DeviceProximityController.h"
 #endif
 
-#if ENABLE(TOUCH_ADJUSTMENT)
-#include "WebKitPoint.h"
-#endif
-
 #if ENABLE(MOUSE_CURSOR_SCALE)
 #include <wtf/dtoa.h>
 #endif
@@ -1033,105 +1029,6 @@ void Internals::setDelegatesScrolling(bool enabled, ExceptionCode& ec)
 
     document->view()->setDelegatesScrolling(enabled);
 }
-
-#if ENABLE(TOUCH_ADJUSTMENT)
-PassRefPtr<WebKitPoint> Internals::touchPositionAdjustedToBestClickableNode(long x, long y, long width, long height, ExceptionCode& ec)
-{
-    Document* document = contextDocument();
-    if (!document || !document->frame()) {
-        ec = INVALID_ACCESS_ERR;
-        return 0;
-    }
-
-    IntSize radius(width / 2, height / 2);
-    IntPoint point(x + radius.width(), y + radius.height());
-
-    Node* targetNode;
-    IntPoint adjustedPoint;
-
-    bool foundNode = document->frame()->eventHandler().bestClickableNodeForTouchPoint(point, radius, adjustedPoint, targetNode);
-    if (foundNode)
-        return WebKitPoint::create(adjustedPoint.x(), adjustedPoint.y());
-
-    return 0;
-}
-
-Node* Internals::touchNodeAdjustedToBestClickableNode(long x, long y, long width, long height, ExceptionCode& ec)
-{
-    Document* document = contextDocument();
-    if (!document || !document->frame()) {
-        ec = INVALID_ACCESS_ERR;
-        return 0;
-    }
-
-    IntSize radius(width / 2, height / 2);
-    IntPoint point(x + radius.width(), y + radius.height());
-
-    Node* targetNode;
-    IntPoint adjustedPoint;
-    document->frame()->eventHandler().bestClickableNodeForTouchPoint(point, radius, adjustedPoint, targetNode);
-    return targetNode;
-}
-
-PassRefPtr<WebKitPoint> Internals::touchPositionAdjustedToBestContextMenuNode(long x, long y, long width, long height, ExceptionCode& ec)
-{
-    Document* document = contextDocument();
-    if (!document || !document->frame()) {
-        ec = INVALID_ACCESS_ERR;
-        return 0;
-    }
-
-    IntSize radius(width / 2, height / 2);
-    IntPoint point(x + radius.width(), y + radius.height());
-
-    Node* targetNode = 0;
-    IntPoint adjustedPoint;
-
-    bool foundNode = document->frame()->eventHandler().bestContextMenuNodeForTouchPoint(point, radius, adjustedPoint, targetNode);
-    if (foundNode)
-        return WebKitPoint::create(adjustedPoint.x(), adjustedPoint.y());
-
-    return WebKitPoint::create(x, y);
-}
-
-Node* Internals::touchNodeAdjustedToBestContextMenuNode(long x, long y, long width, long height, ExceptionCode& ec)
-{
-    Document* document = contextDocument();
-    if (!document || !document->frame()) {
-        ec = INVALID_ACCESS_ERR;
-        return 0;
-    }
-
-    IntSize radius(width / 2, height / 2);
-    IntPoint point(x + radius.width(), y + radius.height());
-
-    Node* targetNode = 0;
-    IntPoint adjustedPoint;
-    document->frame()->eventHandler().bestContextMenuNodeForTouchPoint(point, radius, adjustedPoint, targetNode);
-    return targetNode;
-}
-
-PassRefPtr<ClientRect> Internals::bestZoomableAreaForTouchPoint(long x, long y, long width, long height, ExceptionCode& ec)
-{
-    Document* document = contextDocument();
-    if (!document || !document->frame()) {
-        ec = INVALID_ACCESS_ERR;
-        return 0;
-    }
-
-    IntSize radius(width / 2, height / 2);
-    IntPoint point(x + radius.width(), y + radius.height());
-
-    Node* targetNode;
-    IntRect zoomableArea;
-    bool foundNode = document->frame()->eventHandler().bestZoomableAreaForTouchPoint(point, radius, zoomableArea, targetNode);
-    if (foundNode)
-        return ClientRect::create(zoomableArea);
-
-    return 0;
-}
-#endif
-
 
 int Internals::lastSpellCheckRequestSequence(ExceptionCode& ec)
 {
