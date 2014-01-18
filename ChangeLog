@@ -1,3 +1,16 @@
+2014-01-18  Anders Carlsson  <andersca@apple.com>
+
+        Remove ENABLE_THREADED_HTML_PARSER defines everywhere
+        https://bugs.webkit.org/show_bug.cgi?id=127225
+
+        Reviewed by Andreas Kling.
+
+        This concludes the removal of over 8.8 million lines of threaded parser code.
+
+        * Source/autotools/SetupWebKitFeatures.m4:
+        * Source/cmake/WebKitFeatures.cmake:
+        * Source/cmakeconfig.h.cmake:
+
 2014-01-18  Lauro Neto  <lauro.neto@openbossa.org>
 
         Remove Nix files from WebCore

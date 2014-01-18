@@ -1,3 +1,14 @@
+2014-01-18  Anders Carlsson  <andersca@apple.com>
+
+        Remove ENABLE_THREADED_HTML_PARSER defines everywhere
+        https://bugs.webkit.org/show_bug.cgi?id=127225
+
+        Reviewed by Andreas Kling.
+
+        This concludes the removal of over 8.8 million lines of threaded parser code.
+
+        * Scripts/webkitperl/FeatureList.pm:
+
 2014-01-17  Alexey Proskuryakov  <ap@apple.com>
 
         build.webkit.org/dashboard should have diff links in test results popovers
