@@ -287,6 +287,12 @@ BuildbotIteration.prototype = {
                         if (value.actual.split(" ")[0].contains("TEXT"))
                             item.has_diff = true;
 
+                        // FIXME (bug 127186): It is particularly unfortunate for image diffs, because we currently only check image results
+                        // on retry (except for reftests), so many times, you will see images on buidbot page, but not on the dashboard.
+                        // FIXME: Find a way to display expected mismatch reftest failures. 
+                        if (value.actual.split(" ")[0].contains("IMAGE") && value.reftest_type != "!=")
+                            item.has_image_diff = true;
+
                         if (value.has_stderr)
                             item.has_stderr = true;
 
