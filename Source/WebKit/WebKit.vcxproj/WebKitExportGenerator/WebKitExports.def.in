@@ -228,7 +228,6 @@ EXPORTS
         symbolWithPointer(?openInNewTab@InspectorFrontendClientLocal@WebCore@@UAEXABVString@WTF@@@Z, ?openInNewTab@InspectorFrontendClientLocal@WebCore@@UEAAXAEBVString@WTF@@@Z)
         symbolWithPointer(?requestSetDockSide@InspectorFrontendClientLocal@WebCore@@UAEXW4DockSide@InspectorFrontendClient@2@@Z, ?requestSetDockSide@InspectorFrontendClientLocal@WebCore@@UEAAXW4DockSide@InspectorFrontendClient@2@@Z)
         symbolWithPointer(?sendMessageToBackend@InspectorFrontendClientLocal@WebCore@@UAEXABVString@WTF@@@Z, ?sendMessageToBackend@InspectorFrontendClientLocal@WebCore@@UEAAXAEBVString@WTF@@@Z)
-        symbolWithPointer(?setInspectorFrontendClient@InspectorController@WebCore@@QAEXV?$PassOwnPtr@VInspectorFrontendClient@WebCore@@@WTF@@@Z, ?setInspectorFrontendClient@InspectorController@WebCore@@QEAAXV?$PassOwnPtr@VInspectorFrontendClient@WebCore@@@WTF@@@Z)
         symbolWithPointer(?setProperty@Settings@InspectorFrontendClientLocal@WebCore@@UAEXABVString@WTF@@0@Z, ?setProperty@Settings@InspectorFrontendClientLocal@WebCore@@UEAAXAEBVString@WTF@@0@Z)
         symbolWithPointer(?windowObjectCleared@InspectorFrontendClientLocal@WebCore@@UAEXXZ, ?windowObjectCleared@InspectorFrontendClientLocal@WebCore@@UEAAXXZ)
         symbolWithPointer(?setResourcesDataSizeLimitsFromInternals@InspectorController@WebCore@@QAEXHH@Z, ?setResourcesDataSizeLimitsFromInternals@InspectorController@WebCore@@QEAAXHH@Z)
