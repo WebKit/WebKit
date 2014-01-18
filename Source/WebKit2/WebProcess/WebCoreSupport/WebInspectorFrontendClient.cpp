@@ -40,7 +40,7 @@ using namespace WebCore;
 namespace WebKit {
 
 WebInspectorFrontendClient::WebInspectorFrontendClient(WebPage* page, WebPage* inspectorPage)
-    : InspectorFrontendClientLocal(page->corePage()->inspectorController(), inspectorPage->corePage(), adoptPtr(new Settings()))
+    : InspectorFrontendClientLocal(&page->corePage()->inspectorController(), inspectorPage->corePage(), adoptPtr(new Settings()))
     , m_page(page)
 {
 }
@@ -57,7 +57,7 @@ void WebInspectorFrontendClient::bringToFront()
 
 void WebInspectorFrontendClient::closeWindow()
 {
-    m_page->corePage()->inspectorController()->disconnectFrontend();
+    m_page->corePage()->inspectorController().disconnectFrontend();
     m_page->inspector()->didClose();
 }
 

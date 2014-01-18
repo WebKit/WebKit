@@ -105,10 +105,7 @@ struct Highlight {
 class InspectorOverlay {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static PassOwnPtr<InspectorOverlay> create(Page* page, InspectorClient* client)
-    {
-        return adoptPtr(new InspectorOverlay(page, client));
-    }
+    InspectorOverlay(Page&, InspectorClient*);
     ~InspectorOverlay();
 
     void update();
@@ -130,8 +127,6 @@ public:
 
     void freePage();
 private:
-    InspectorOverlay(Page*, InspectorClient*);
-
     void drawGutter();
     void drawNodeHighlight();
     void drawQuadHighlight();
@@ -141,7 +136,7 @@ private:
     void evaluateInOverlay(const String& method, const String& argument);
     void evaluateInOverlay(const String& method, PassRefPtr<Inspector::InspectorValue> argument);
 
-    Page* m_page;
+    Page& m_page;
     InspectorClient* m_client;
     String m_pausedInDebuggerMessage;
     RefPtr<Node> m_highlightNode;

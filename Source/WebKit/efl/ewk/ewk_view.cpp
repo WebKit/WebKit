@@ -4662,7 +4662,7 @@ void ewk_view_inspector_show(const Evas_Object* ewkView)
     EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData);
     EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv);
 
-    priv->page->inspectorController()->show();
+    priv->page->inspectorController().show();
 #else
     UNUSED_PARAM(ewkView);
 #endif
@@ -4674,7 +4674,7 @@ void ewk_view_inspector_close(const Evas_Object* ewkView)
     EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData);
     EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv);
 
-    priv->page->inspectorController()->close();
+    priv->page->inspectorController().close();
 #else
     UNUSED_PARAM(ewkView);
 #endif

@@ -2956,7 +2956,7 @@ void FrameLoader::continueLoadAfterNavigationPolicy(const ResourceRequest&, Pass
 #if ENABLE(JAVASCRIPT_DEBUGGER) && ENABLE(INSPECTOR)
     if (Page* page = m_frame.page()) {
         if (m_frame.isMainFrame())
-            page->inspectorController()->resume();
+            page->inspectorController().resume();
     }
 #endif
 
@@ -3351,7 +3351,7 @@ void FrameLoader::dispatchDidClearWindowObjectInWorld(DOMWrapperWorld& world)
 
 #if ENABLE(INSPECTOR)
     if (Page* page = m_frame.page())
-        page->inspectorController()->didClearWindowObjectInWorld(&m_frame, world);
+        page->inspectorController().didClearWindowObjectInWorld(&m_frame, world);
 #endif
 
     InspectorInstrumentation::didClearWindowObjectInWorld(&m_frame, world);

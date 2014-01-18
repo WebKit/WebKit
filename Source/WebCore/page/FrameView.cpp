@@ -2938,7 +2938,7 @@ void FrameView::sendResizeEventIfNeeded()
 #if ENABLE(INSPECTOR)
     Page* page = frame().page();
     if (InspectorInstrumentation::hasFrontends() && isMainFrame) {
-        if (InspectorClient* inspectorClient = page ? page->inspectorController()->inspectorClient() : 0)
+        if (InspectorClient* inspectorClient = page ? page->inspectorController().inspectorClient() : nullptr)
             inspectorClient->didResizeMainFrame(&frame());
     }
 #endif

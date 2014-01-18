@@ -157,7 +157,7 @@ PassOwnPtr<ContextMenu> ContextMenuController::createContextMenu(Event* event)
 void ContextMenuController::showContextMenu(Event* event)
 {
 #if ENABLE(INSPECTOR)
-    if (m_page.inspectorController()->enabled())
+    if (m_page.inspectorController().enabled())
         addInspectElementItem();
 #endif
 
@@ -503,7 +503,7 @@ void ContextMenuController::contextMenuItemSelected(ContextMenuItem* item)
 #if ENABLE(INSPECTOR)
     case ContextMenuItemTagInspectElement:
         if (Page* page = frame->page())
-            page->inspectorController()->inspect(m_hitTestResult.innerNonSharedNode());
+            page->inspectorController().inspect(m_hitTestResult.innerNonSharedNode());
         break;
 #endif
     case ContextMenuItemTagDictationAlternative:
@@ -893,7 +893,7 @@ void ContextMenuController::populate()
 #endif                
             } else {
 #if ENABLE(INSPECTOR)
-                if (!(frame->page() && (frame->page()->inspectorController()->hasInspectorFrontendClient() || frame->page()->inspectorController()->hasRemoteFrontend()))) {
+                if (!(frame->page() && (frame->page()->inspectorController().hasInspectorFrontendClient() || frame->page()->inspectorController().hasRemoteFrontend()))) {
 #endif
 
                 // In GTK+ unavailable items are not hidden but insensitive.
@@ -1099,9 +1099,6 @@ void ContextMenuController::addInspectElementItem()
 
     Page* page = frame->page();
     if (!page)
-        return;
-
-    if (!page->inspectorController())
         return;
 
     ContextMenuItem InspectElementItem(ActionType, ContextMenuItemTagInspectElement, contextMenuItemTagInspectElement());

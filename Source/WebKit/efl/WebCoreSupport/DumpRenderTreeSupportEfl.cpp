@@ -466,8 +466,7 @@ void DumpRenderTreeSupportEfl::evaluateInWebInspector(const Evas_Object* ewkView
 #if ENABLE(INSPECTOR)
     DRT_SUPPRT_PAGE_GET_OR_RETURN(ewkView, page);
 
-    if (page->inspectorController())
-        page->inspectorController()->evaluateForTestInFrontend(callId, script);
+    page->inspectorController().evaluateForTestInFrontend(callId, script);
 #else
     UNUSED_PARAM(ewkView);
     UNUSED_PARAM(callId);

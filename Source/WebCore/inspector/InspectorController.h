@@ -77,18 +77,18 @@ class InspectorController final : public Inspector::InspectorEnvironment {
     WTF_MAKE_NONCOPYABLE(InspectorController);
     WTF_MAKE_FAST_ALLOCATED;
 public:
+    InspectorController(Page&, InspectorClient*);
     virtual ~InspectorController();
 
-    static PassOwnPtr<InspectorController> create(Page*, InspectorClient*);
     void inspectedPageDestroyed();
 
     bool enabled() const;
-    Page* inspectedPage() const;
+    Page& inspectedPage() const;
 
     void show();
     void close();
 
-    void setInspectorFrontendClient(PassOwnPtr<InspectorFrontendClient>);
+    void setInspectorFrontendClient(std::unique_ptr<InspectorFrontendClient>);
     bool hasInspectorFrontendClient() const;
     void didClearWindowObjectInWorld(Frame*, DOMWrapperWorld&);
 
@@ -144,13 +144,11 @@ public:
     virtual void didCallInjectedScriptFunction() override;
 
 private:
-    InspectorController(Page*, InspectorClient*);
-
     friend InstrumentingAgents* instrumentationForPage(Page*);
 
     RefPtr<InstrumentingAgents> m_instrumentingAgents;
     std::unique_ptr<PageInjectedScriptManager> m_injectedScriptManager;
-    OwnPtr<InspectorOverlay> m_overlay;
+    std::unique_ptr<InspectorOverlay> m_overlay;
 
     Inspector::InspectorAgent* m_inspectorAgent;
     InspectorDOMAgent* m_domAgent;
@@ -164,9 +162,9 @@ private:
 #endif
 
     RefPtr<Inspector::InspectorBackendDispatcher> m_inspectorBackendDispatcher;
-    OwnPtr<InspectorFrontendClient> m_inspectorFrontendClient;
+    std::unique_ptr<InspectorFrontendClient> m_inspectorFrontendClient;
     Inspector::InspectorFrontendChannel* m_inspectorFrontendChannel;
-    Page* m_page;
+    Page& m_page;
     InspectorClient* m_inspectorClient;
     Inspector::InspectorAgentRegistry m_agents;
     Vector<InspectorInstrumentationCookie, 2> m_injectedScriptInstrumentationCookies;

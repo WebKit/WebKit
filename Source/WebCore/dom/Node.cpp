@@ -557,7 +557,7 @@ void Node::inspect()
 {
 #if ENABLE(INSPECTOR)
     if (document().page())
-        document().page()->inspectorController()->inspect(this);
+        document().page()->inspectorController().inspect(this);
 #endif
 }
 

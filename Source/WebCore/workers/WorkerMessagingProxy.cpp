@@ -409,7 +409,7 @@ void WorkerMessagingProxy::workerObjectDestroyedInternal(ScriptExecutionContext*
 static void connectToWorkerGlobalScopeInspectorTask(ScriptExecutionContext* context, bool)
 {
     ASSERT_WITH_SECURITY_IMPLICATION(context->isWorkerGlobalScope());
-    static_cast<WorkerGlobalScope*>(context)->workerInspectorController()->connectFrontend();
+    static_cast<WorkerGlobalScope*>(context)->workerInspectorController().connectFrontend();
 }
 #endif
 
@@ -428,7 +428,7 @@ void WorkerMessagingProxy::connectToInspector(WorkerGlobalScopeProxy::PageInspec
 static void disconnectFromWorkerGlobalScopeInspectorTask(ScriptExecutionContext* context, bool)
 {
     ASSERT_WITH_SECURITY_IMPLICATION(context->isWorkerGlobalScope());
-    static_cast<WorkerGlobalScope*>(context)->workerInspectorController()->disconnectFrontend();
+    static_cast<WorkerGlobalScope*>(context)->workerInspectorController().disconnectFrontend();
 }
 #endif
 
@@ -446,7 +446,7 @@ void WorkerMessagingProxy::disconnectFromInspector()
 static void dispatchOnInspectorBackendTask(ScriptExecutionContext* context, const String& message)
 {
     ASSERT_WITH_SECURITY_IMPLICATION(context->isWorkerGlobalScope());
-    static_cast<WorkerGlobalScope*>(context)->workerInspectorController()->dispatchMessageFromFrontend(message);
+    static_cast<WorkerGlobalScope*>(context)->workerInspectorController().dispatchMessageFromFrontend(message);
 }
 #endif
 

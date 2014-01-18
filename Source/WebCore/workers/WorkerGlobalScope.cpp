@@ -88,7 +88,7 @@ WorkerGlobalScope::WorkerGlobalScope(const URL& url, const String& userAgent, st
     , m_script(adoptPtr(new WorkerScriptController(this)))
     , m_thread(thread)
 #if ENABLE(INSPECTOR)
-    , m_workerInspectorController(adoptPtr(new WorkerInspectorController(this)))
+    , m_workerInspectorController(std::make_unique<WorkerInspectorController>(*this))
 #endif
     , m_closing(false)
     , m_eventQueue(*this)
@@ -191,13 +191,6 @@ void WorkerGlobalScope::clearTimeout(int timeoutId)
 {
     DOMTimer::removeById(scriptExecutionContext(), timeoutId);
 }
-
-#if ENABLE(INSPECTOR)
-void WorkerGlobalScope::clearInspector()
-{
-    m_workerInspectorController.clear();
-}
-#endif
 
 int WorkerGlobalScope::setInterval(PassOwnPtr<ScheduledAction> action, int timeout)
 {

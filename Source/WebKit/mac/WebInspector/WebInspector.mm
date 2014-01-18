@@ -66,7 +66,7 @@ NSString *WebInspectorDidStopSearchingForNode = @"WebInspectorDidStopSearchingFo
 - (void)showWindow
 {
     if (Page* page = core(_webView))
-        page->inspectorController()->show();
+        page->inspectorController().show();
 }
 
 - (void)show:(id)sender
@@ -142,7 +142,7 @@ NSString *WebInspectorDidStopSearchingForNode = @"WebInspectorDidStopSearchingFo
 - (BOOL)isJavaScriptProfilingEnabled
 {
     if (Page* page = core(_webView))
-        return page->inspectorController()->profilerEnabled();
+        return page->inspectorController().profilerEnabled();
     return NO;
 }
 
@@ -152,7 +152,7 @@ NSString *WebInspectorDidStopSearchingForNode = @"WebInspectorDidStopSearchingFo
     if (!page)
         return;
 
-    page->inspectorController()->setProfilerEnabled(enabled);
+    page->inspectorController().setProfilerEnabled(enabled);
 }
 
 - (BOOL)isTimelineProfilingEnabled
@@ -169,7 +169,7 @@ NSString *WebInspectorDidStopSearchingForNode = @"WebInspectorDidStopSearchingFo
 - (void)close:(id)sender 
 {
     if (Page* page = core(_webView))
-        page->inspectorController()->close();
+        page->inspectorController().close();
 }
 
 - (void)attach:(id)sender
@@ -185,7 +185,7 @@ NSString *WebInspectorDidStopSearchingForNode = @"WebInspectorDidStopSearchingFo
 - (void)evaluateInFrontend:(id)sender callId:(long)callId script:(NSString *)script
 {
     if (Page* page = core(_webView))
-        page->inspectorController()->evaluateForTestInFrontend(callId, script);
+        page->inspectorController().evaluateForTestInFrontend(callId, script);
 }
 
 - (void)setFrontend:(WebInspectorFrontend *)frontend

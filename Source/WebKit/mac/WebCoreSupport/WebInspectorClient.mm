@@ -145,11 +145,11 @@ InspectorFrontendChannel* WebInspectorClient::openInspectorFrontend(InspectorCon
     [windowController.get() setInspectorClient:this];
 
     m_frontendPage = core([windowController.get() webView]);
-    OwnPtr<WebInspectorFrontendClient> frontendClient = adoptPtr(new WebInspectorFrontendClient(m_webView, windowController.get(), inspectorController, m_frontendPage, createFrontendSettings()));
+    auto frontendClient = std::make_unique<WebInspectorFrontendClient>(m_webView, windowController.get(), inspectorController, m_frontendPage, createFrontendSettings());
     m_frontendClient = frontendClient.get();
     RetainPtr<WebInspectorFrontend> webInspectorFrontend = adoptNS([[WebInspectorFrontend alloc] initWithFrontendClient:frontendClient.get()]);
     [[m_webView inspector] setFrontend:webInspectorFrontend.get()];
-    m_frontendPage->inspectorController()->setInspectorFrontendClient(frontendClient.release());
+    m_frontendPage->inspectorController().setInspectorFrontendClient(std::move(frontendClient));
     return this;
 }
 
@@ -693,7 +693,7 @@ void WebInspectorFrontendClient::append(const String& suggestedURL, const String
 
     if (notifyInspectorController) {
         if (Page* inspectedPage = [_inspectedWebView.get() page])
-            inspectedPage->inspectorController()->disconnectFrontend();
+            inspectedPage->inspectorController().disconnectFrontend();
     }
 
     RetainPtr<WebInspectorWindowController> protect(self);

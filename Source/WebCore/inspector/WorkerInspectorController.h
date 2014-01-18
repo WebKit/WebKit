@@ -40,7 +40,6 @@
 #include <wtf/FastMalloc.h>
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
-#include <wtf/OwnPtr.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
 
@@ -60,7 +59,7 @@ class WorkerInspectorController final : public Inspector::InspectorEnvironment {
     WTF_MAKE_NONCOPYABLE(WorkerInspectorController);
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    WorkerInspectorController(WorkerGlobalScope*);
+    explicit WorkerInspectorController(WorkerGlobalScope&);
     ~WorkerInspectorController();
 
     void connectFrontend();
@@ -80,12 +79,12 @@ public:
 private:
     friend InstrumentingAgents* instrumentationForWorkerGlobalScope(WorkerGlobalScope*);
 
-    WorkerGlobalScope* m_workerGlobalScope;
+    WorkerGlobalScope& m_workerGlobalScope;
     RefPtr<InstrumentingAgents> m_instrumentingAgents;
     std::unique_ptr<PageInjectedScriptManager> m_injectedScriptManager;
     InspectorRuntimeAgent* m_runtimeAgent;
     Inspector::InspectorAgentRegistry m_agents;
-    OwnPtr<InspectorFrontendChannel> m_frontendChannel;
+    std::unique_ptr<InspectorFrontendChannel> m_frontendChannel;
     RefPtr<Inspector::InspectorBackendDispatcher> m_backendDispatcher;
     Vector<InspectorInstrumentationCookie, 2> m_injectedScriptInstrumentationCookies;
 };

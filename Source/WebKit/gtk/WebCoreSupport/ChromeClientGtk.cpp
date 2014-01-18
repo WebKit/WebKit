@@ -567,7 +567,7 @@ static void paintWebView(WebKitWebView* webView, Frame* frame, const Region& dir
 
     gc.save();
     gc.clip(dirtyRegion.bounds());
-    frame->page()->inspectorController()->drawHighlight(gc);
+    frame->page()->inspectorController().drawHighlight(gc);
     gc.restore();
 }
 

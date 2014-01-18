@@ -109,9 +109,9 @@ InspectorFrontendChannel* InspectorClient::openInspectorFrontend(InspectorContro
     gtk_widget_show(GTK_WIDGET(inspectorWebView));
 
     m_frontendPage = core(inspectorWebView);
-    OwnPtr<InspectorFrontendClient> frontendClient = adoptPtr(new InspectorFrontendClient(m_inspectedWebView, inspectorWebView, webInspector, m_frontendPage, this));
+    auto frontendClient = std::make_unique<InspectorFrontendClient>(m_inspectedWebView, inspectorWebView, webInspector, m_frontendPage, this);
     m_frontendClient = frontendClient.get();
-    m_frontendPage->inspectorController()->setInspectorFrontendClient(frontendClient.release());
+    m_frontendPage->inspectorController().setInspectorFrontendClient(std::move(frontendClient));
 
     // The inspector must be in it's own PageGroup to avoid deadlock while debugging.
     m_frontendPage->setGroupName("");
@@ -156,7 +156,7 @@ bool InspectorClient::sendMessageToFrontend(const String& message)
 }
 
 InspectorFrontendClient::InspectorFrontendClient(WebKitWebView* inspectedWebView, WebKitWebView* inspectorWebView, WebKitWebInspector* webInspector, Page* inspectorPage, InspectorClient* inspectorClient)
-    : InspectorFrontendClientLocal(core(inspectedWebView)->inspectorController(), inspectorPage, adoptPtr(new InspectorFrontendSettingsGtk()))
+    : InspectorFrontendClientLocal(&core(inspectedWebView)->inspectorController(), inspectorPage, adoptPtr(new InspectorFrontendSettingsGtk()))
     , m_inspectorWebView(inspectorWebView)
     , m_inspectedWebView(inspectedWebView)
     , m_webInspector(webInspector)
@@ -189,7 +189,7 @@ void InspectorFrontendClient::destroyInspectorWindow(bool notifyInspectorControl
     }
 
     if (notifyInspectorController)
-        core(m_inspectedWebView)->inspectorController()->disconnectFrontend();
+        core(m_inspectedWebView)->inspectorController().disconnectFrontend();
 
     if (m_inspectorClient)
         m_inspectorClient->releaseFrontendPage();

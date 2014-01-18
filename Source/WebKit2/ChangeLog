@@ -1,3 +1,36 @@
+2014-01-18  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: Page should use std::unique_ptr for InspectorController
+        https://bugs.webkit.org/show_bug.cgi?id=127068
+
+        Reviewed by Joseph Pecoraro.
+
+        Convert call sites to use a InspectorController reference.
+
+        * WebProcess/WebCoreSupport/WebInspectorClient.cpp:
+        (WebKit::WebInspectorClient::drawRect):
+        * WebProcess/WebCoreSupport/WebInspectorFrontendClient.cpp:
+        (WebKit::WebInspectorFrontendClient::WebInspectorFrontendClient):
+        (WebKit::WebInspectorFrontendClient::closeWindow):
+        * WebProcess/WebPage/WebInspector.cpp:
+        (WebKit::WebInspector::createInspectorPage):
+        (WebKit::WebInspector::show):
+        (WebKit::WebInspector::close):
+        (WebKit::WebInspector::evaluateScriptForTest):
+        (WebKit::WebInspector::showConsole):
+        (WebKit::WebInspector::showResources):
+        (WebKit::WebInspector::showMainResourceForFrame):
+        (WebKit::WebInspector::startJavaScriptDebugging):
+        (WebKit::WebInspector::stopJavaScriptDebugging):
+        (WebKit::WebInspector::setJavaScriptProfilingEnabled):
+        (WebKit::WebInspector::startJavaScriptProfiling):
+        (WebKit::WebInspector::stopJavaScriptProfiling):
+        (WebKit::WebInspector::startPageProfiling):
+        (WebKit::WebInspector::stopPageProfiling):
+        (WebKit::WebInspector::dispatchMessageFromRemoteFrontend):
+        (WebKit::WebInspector::remoteFrontendConnected):
+        (WebKit::WebInspector::remoteFrontendDisconnected):
+
 2014-01-18  Anders Carlsson  <andersca@apple.com>
 
         Remove ENABLE_THREADED_HTML_PARSER defines everywhere

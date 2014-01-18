@@ -1,3 +1,102 @@
+2014-01-18  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: Page should use std::unique_ptr for InspectorController
+        https://bugs.webkit.org/show_bug.cgi?id=127068
+
+        Reviewed by Joseph Pecoraro.
+
+        Make Page and WorkerGlobalScope keep a std::unique_ptr to InspectorController
+        and WorkerInspectorController. Store page references and return controller
+        references where possible.
+
+        Convert call sites to use an InspectorController reference.
+        Convert instantiations of InspectorFrontendClient to use std::unique_ptr.
+        Convert InspectorOverlay to keep Page references.
+
+        * WebCore.exp.in:
+        * bindings/js/JSDOMWindowBase.cpp:
+        (WebCore::JSDOMWindowBase::supportsProfiling):
+        (WebCore::JSDOMWindowBase::supportsRichSourceInfo):
+        * dom/Node.cpp:
+        (WebCore::Node::inspect):
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::InspectorController):
+        (WebCore::InspectorController::inspectedPageDestroyed):
+        (WebCore::InspectorController::setInspectorFrontendClient):
+        (WebCore::InspectorController::hasInspectorFrontendClient):
+        (WebCore::InspectorController::connectFrontend):
+        (WebCore::InspectorController::disconnectFrontend):
+        (WebCore::InspectorController::inspectedPage):
+        (WebCore::InspectorController::developerExtrasEnabled):
+        * inspector/InspectorController.h:
+        * inspector/InspectorFrontendClientLocal.cpp:
+        (WebCore::InspectorFrontendClientLocal::canAttachWindow):
+        (WebCore::InspectorFrontendClientLocal::changeAttachedWindowHeight):
+        (WebCore::InspectorFrontendClientLocal::changeAttachedWindowWidth):
+        (WebCore::InspectorFrontendClientLocal::openInNewTab):
+        (WebCore::InspectorFrontendClientLocal::restoreAttachedWindowHeight):
+        * inspector/InspectorOverlay.cpp:
+        (WebCore::InspectorOverlay::InspectorOverlay):
+        (WebCore::InspectorOverlay::getHighlight):
+        (WebCore::InspectorOverlay::highlightQuad):
+        (WebCore::InspectorOverlay::update):
+        (WebCore::InspectorOverlay::buildObjectForHighlightedNode):
+        (WebCore::InspectorOverlay::drawQuadHighlight):
+        (WebCore::InspectorOverlay::overlayPage):
+        (WebCore::InspectorOverlay::reset):
+        * inspector/InspectorOverlay.h:
+        * inspector/InstrumentingAgents.cpp:
+        (WebCore::instrumentationForPage): remove null checks.
+        (WebCore::instrumentationForWorkerGlobalScope): remove null checks.
+        * inspector/WorkerInspectorController.cpp:
+        (WebCore::WorkerInspectorController::WorkerInspectorController):
+        (WebCore::WorkerInspectorController::connectFrontend):
+        (WebCore::WorkerInspectorController::disconnectFrontend):
+        * inspector/WorkerInspectorController.h:
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::continueLoadAfterNavigationPolicy):
+        (WebCore::FrameLoader::dispatchDidClearWindowObjectInWorld):
+        * page/ContextMenuController.cpp:
+        (WebCore::ContextMenuController::showContextMenu):
+        (WebCore::ContextMenuController::contextMenuItemSelected):
+        (WebCore::ContextMenuController::populate):
+        (WebCore::ContextMenuController::addInspectElementItem):
+        * page/FrameView.cpp:
+        (WebCore::FrameView::sendResizeEventIfNeeded):
+        * page/Page.cpp:
+        (WebCore::Page::Page):
+        * page/Page.h:
+        (WebCore::Page::inspectorController):
+        * page/PageDebuggable.cpp:
+        (WebCore::PageDebuggable::hasLocalDebugger):
+        (WebCore::PageDebuggable::parentProcessIdentifier):
+        (WebCore::PageDebuggable::connect):
+        (WebCore::PageDebuggable::disconnect):
+        (WebCore::PageDebuggable::dispatchMessageFromRemoteFrontend):
+        (WebCore::PageDebuggable::setIndicating):
+        * platform/graphics/texmap/coordinated/CompositingCoordinator.cpp:
+        (WebCore::CompositingCoordinator::syncDisplayState):
+        * testing/Internals.cpp:
+        (WebCore::Internals::resetToConsistentState):
+        (WebCore::Internals::inspectorHighlightRects):
+        (WebCore::Internals::inspectorHighlightObject):
+        (WebCore::Internals::emitInspectorDidBeginFrame):
+        (WebCore::Internals::emitInspectorDidCancelFrame):
+        (WebCore::Internals::openDummyInspectorFrontend):
+        (WebCore::Internals::closeDummyInspectorFrontend):
+        (WebCore::Internals::setInspectorResourcesDataSizeLimits):
+        (WebCore::Internals::setJavaScriptProfilingEnabled):
+        * workers/WorkerGlobalScope.cpp:
+        (WebCore::WorkerGlobalScope::WorkerGlobalScope):
+        * workers/WorkerGlobalScope.h: remove clearInspector(). 
+        (WebCore::WorkerGlobalScope::workerInspectorController):
+        * workers/WorkerMessagingProxy.cpp:
+        (WebCore::connectToWorkerGlobalScopeInspectorTask):
+        (WebCore::disconnectFromWorkerGlobalScopeInspectorTask):
+        (WebCore::dispatchOnInspectorBackendTask):
+        * workers/WorkerThread.cpp:
+        (WebCore::WorkerThreadShutdownFinishTask::performTask):
+
 2014-01-18  Anders Carlsson  <andersca@apple.com>
 
         Remove ENABLE_THREADED_HTML_PARSER defines everywhere

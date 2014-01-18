@@ -109,7 +109,7 @@ HRESULT STDMETHODCALLTYPE WebInspector::show()
 {
     if (m_webView)
         if (Page* page = m_webView->page())
-            page->inspectorController()->show();
+            page->inspectorController().show();
 
     return S_OK;
 }
@@ -131,7 +131,7 @@ HRESULT STDMETHODCALLTYPE WebInspector::close()
 {
     if (m_webView)
         if (Page* page = m_webView->page())
-            page->inspectorController()->close();
+            page->inspectorController().close();
 
     return S_OK;
 }
@@ -219,7 +219,7 @@ HRESULT STDMETHODCALLTYPE WebInspector::isJavaScriptProfilingEnabled(BOOL* isPro
     if (!page)
         return S_OK;
 
-    *isProfilingEnabled = page->inspectorController()->profilerEnabled();
+    *isProfilingEnabled = page->inspectorController().profilerEnabled();
     return S_OK;
 }
 
@@ -232,7 +232,7 @@ HRESULT STDMETHODCALLTYPE WebInspector::setJavaScriptProfilingEnabled(BOOL enabl
     if (!page)
         return S_OK;
 
-    page->inspectorController()->setProfilerEnabled(enabled);
+    page->inspectorController().setProfilerEnabled(enabled);
 
     return S_OK;
 }
@@ -247,7 +247,7 @@ HRESULT STDMETHODCALLTYPE  WebInspector::evaluateInFrontend(ULONG callId, BSTR b
         return S_OK;
 
     String script(bScript, SysStringLen(bScript));
-    page->inspectorController()->evaluateForTestInFrontend(callId, script);
+    page->inspectorController().evaluateForTestInFrontend(callId, script);
     return S_OK;
 }
 

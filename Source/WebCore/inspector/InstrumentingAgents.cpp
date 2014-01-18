@@ -105,16 +105,12 @@ void InstrumentingAgents::reset()
 InstrumentingAgents* instrumentationForPage(Page* page)
 {
     ASSERT(isMainThread());
-    if (InspectorController* controller = page->inspectorController())
-        return controller->m_instrumentingAgents.get();
-    return 0;
+    return page ? page->inspectorController().m_instrumentingAgents.get() : nullptr;
 }
 
 InstrumentingAgents* instrumentationForWorkerGlobalScope(WorkerGlobalScope* workerGlobalScope)
 {
-    if (WorkerInspectorController* controller = workerGlobalScope->workerInspectorController())
-        return controller->m_instrumentingAgents.get();
-    return 0;
+    return workerGlobalScope ? workerGlobalScope->workerInspectorController().m_instrumentingAgents.get() : nullptr;
 }
 
 } // namespace WebCore

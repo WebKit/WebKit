@@ -170,9 +170,9 @@ WebCore::InspectorFrontendChannel* WebInspectorClient::openInspectorFrontend(Ins
         return 0;
 
     m_frontendPage = core(frontendWebView.get());
-    OwnPtr<WebInspectorFrontendClient> frontendClient = adoptPtr(new WebInspectorFrontendClient(m_inspectedWebView, m_inspectedWebViewHwnd, frontendHwnd, frontendWebView, frontendWebViewHwnd, this, createFrontendSettings()));
+    auto frontendClient = std::make_unique<WebInspectorFrontendClient>(m_inspectedWebView, m_inspectedWebViewHwnd, frontendHwnd, frontendWebView, frontendWebViewHwnd, this, createFrontendSettings());
     m_frontendClient = frontendClient.get();
-    m_frontendPage->inspectorController()->setInspectorFrontendClient(frontendClient.release());
+    m_frontendPage->inspectorController().setInspectorFrontendClient(std::move(frontendClient));
     m_frontendHwnd = frontendHwnd;
     return this;
 }
@@ -224,7 +224,7 @@ void WebInspectorClient::releaseFrontend()
 }
 
 WebInspectorFrontendClient::WebInspectorFrontendClient(WebView* inspectedWebView, HWND inspectedWebViewHwnd, HWND frontendHwnd, const COMPtr<WebView>& frontendWebView, HWND frontendWebViewHwnd, WebInspectorClient* inspectorClient, PassOwnPtr<Settings> settings)
-    : InspectorFrontendClientLocal(inspectedWebView->page()->inspectorController(),  core(frontendWebView.get()), settings)
+    : InspectorFrontendClientLocal(&inspectedWebView->page()->inspectorController(),  core(frontendWebView.get()), settings)
     , m_inspectedWebView(inspectedWebView)
     , m_inspectedWebViewHwnd(inspectedWebViewHwnd)
     , m_inspectorClient(inspectorClient)
@@ -438,7 +438,7 @@ void WebInspectorFrontendClient::destroyInspectorView(bool notifyInspectorContro
     closeWindowWithoutNotifications();
 
     if (notifyInspectorController) {
-        m_inspectedWebView->page()->inspectorController()->disconnectFrontend();
+        m_inspectedWebView->page()->inspectorController().disconnectFrontend();
         m_inspectorClient->updateHighlight();
     }
     ::DestroyWindow(m_frontendHwnd);
@@ -472,7 +472,7 @@ LRESULT WebInspectorFrontendClient::onSize(WPARAM, LPARAM)
 LRESULT WebInspectorFrontendClient::onClose(WPARAM, LPARAM)
 {
     ::ShowWindow(m_frontendHwnd, SW_HIDE);
-    m_inspectedWebView->page()->inspectorController()->close();
+    m_inspectedWebView->page()->inspectorController().close();
 
     return 0;
 }

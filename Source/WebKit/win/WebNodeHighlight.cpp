@@ -165,8 +165,8 @@ void WebNodeHighlight::update()
 
     GraphicsContext context(hdc.get());
 #if ENABLE(INSPECTOR)
-    m_inspectedWebView->page()->inspectorController()->drawHighlight(context);
-#endif // ENABLE(INSPECTOR)
+    m_inspectedWebView->page()->inspectorController().drawHighlight(context);
+#endif
 
     BLENDFUNCTION bf;
     bf.BlendOp = AC_SRC_OVER;

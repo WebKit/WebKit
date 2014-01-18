@@ -73,9 +73,6 @@ namespace WebCore {
 
         WorkerScriptController* script() { return m_script.get(); }
         void clearScript() { m_script.clear(); }
-#if ENABLE(INSPECTOR)
-        void clearInspector();
-#endif
 
         WorkerThread* thread() const { return m_thread; }
 
@@ -106,7 +103,7 @@ namespace WebCore {
         virtual bool isJSExecutionForbidden() const override;
 
 #if ENABLE(INSPECTOR)
-        WorkerInspectorController* workerInspectorController() { return m_workerInspectorController.get(); }
+        WorkerInspectorController& workerInspectorController() { return *m_workerInspectorController; }
 #endif
         // These methods are used for GC marking. See JSWorkerGlobalScope::visitChildrenVirtual(SlotVisitor&) in
         // JSWorkerGlobalScopeCustom.cpp.
@@ -168,7 +165,7 @@ namespace WebCore {
         WorkerThread* m_thread;
 
 #if ENABLE(INSPECTOR)
-        OwnPtr<WorkerInspectorController> m_workerInspectorController;
+        const std::unique_ptr<WorkerInspectorController> m_workerInspectorController;
 #endif
         bool m_closing;
 

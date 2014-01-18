@@ -66,7 +66,7 @@
         return; // Skip the highlight if we have no window (e.g. hidden tab).
     
     if (!_currentHighlight) {
-        _currentHighlight = [[WebNodeHighlight alloc] initWithTargetView:view inspectorController:[_inspectedWebView page]->inspectorController()];
+        _currentHighlight = [[WebNodeHighlight alloc] initWithTargetView:view inspectorController:&[_inspectedWebView page]->inspectorController()];
         [_currentHighlight setDelegate:self];
         [_currentHighlight attach];
     } else {
