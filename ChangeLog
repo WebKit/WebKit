@@ -1,3 +1,14 @@
+2014-01-18  Zan Dobersek  <zdobersek@igalia.com>
+
+        [GTK] Bump the minimum required Clang version to 3.3
+        https://bugs.webkit.org/show_bug.cgi?id=127178
+
+        Reviewed by Martin Robinson.
+
+        * Source/autotools/CheckSystemAndBasicDependencies.m4: Require Clang 3.3 or later when using the Clang compiler to
+        build the GTK port. Building with Clang 3.2 doesn't work anymore and there's no point in fixing that, as we should
+        support the latest two versions of Clang (3.3 and 3.4), just like we do with GCC (4.7 and 4.8).
+
 2014-01-14  Dan Bernstein  <mitz@apple.com>
 
         Only use color in make output when it’s going to a terminal.

@@ -92,14 +92,14 @@ AC_COMPILE_IFELSE([AC_LANG_PROGRAM([
 #endif
 ])], [c_compiler="gcc"], [])
 AC_COMPILE_IFELSE([AC_LANG_PROGRAM([
-#if !(defined(__clang__) && __clang_major__ >= 3 && __clang_minor__ >= 2)
+#if !(defined(__clang__) && __clang_major__ >= 3 && __clang_minor__ >= 3)
 #error Not a supported Clang compiler
 #endif
 ])], [c_compiler="clang"], [])
 AC_LANG_POP([C])
 
 if test "$c_compiler" = "unknown"; then
-    AC_MSG_ERROR([Compiler GCC >= 4.7 or Clang >= 3.2 is required for C compilation])
+    AC_MSG_ERROR([Compiler GCC >= 4.7 or Clang >= 3.3 is required for C compilation])
 fi
 
 # Check that an appropriate C++ compiler is available.
@@ -111,14 +111,14 @@ AC_COMPILE_IFELSE([AC_LANG_PROGRAM([
 #endif
 ])], [cxx_compiler="g++"], [])
 AC_COMPILE_IFELSE([AC_LANG_PROGRAM([
-#if !(defined(__clang__) && __clang_major__ >= 3 && __clang_minor__ >= 2)
+#if !(defined(__clang__) && __clang_major__ >= 3 && __clang_minor__ >= 3)
 #error Not a supported Clang++ compiler
 #endif
 ])], [cxx_compiler="clang++"], [])
 AC_LANG_POP([C++])
 
 if test "$cxx_compiler" = "unknown"; then
-    AC_MSG_ERROR([Compiler GCC >= 4.7 or Clang >= 3.2 is required for C++ compilation])
+    AC_MSG_ERROR([Compiler GCC >= 4.7 or Clang >= 3.3 is required for C++ compilation])
 fi
 
 # C/C++ Headers
