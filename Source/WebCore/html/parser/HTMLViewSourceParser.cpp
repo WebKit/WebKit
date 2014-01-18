@@ -33,7 +33,7 @@ namespace WebCore {
 
 HTMLViewSourceParser::HTMLViewSourceParser(HTMLViewSourceDocument& document)
     : DecodedDataDocumentParser(document)
-    , m_tokenizer(HTMLTokenizer::create(HTMLParserOptions(document)))
+    , m_tokenizer(std::make_unique<HTMLTokenizer>(HTMLParserOptions(document)))
 {
 }
 

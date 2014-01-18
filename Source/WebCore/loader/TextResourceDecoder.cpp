@@ -543,7 +543,7 @@ bool TextResourceDecoder::checkForHeadCharset(const char* data, size_t len, bool
     if (m_contentType == XML)
         return true;
 
-    m_charsetParser = HTMLMetaCharsetParser::create();
+    m_charsetParser = std::make_unique<HTMLMetaCharsetParser>();
     return checkForMetaCharset(data, len);
 }
 
@@ -553,7 +553,7 @@ bool TextResourceDecoder::checkForMetaCharset(const char* data, size_t length)
         return false;
 
     setEncoding(m_charsetParser->encoding(), EncodingFromMetaTag);
-    m_charsetParser.clear();
+    m_charsetParser = nullptr;
     m_checkedForHeadCharset = true;
     return true;
 }

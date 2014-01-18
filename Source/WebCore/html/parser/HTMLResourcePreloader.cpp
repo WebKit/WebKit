@@ -61,13 +61,10 @@ CachedResourceRequest PreloadRequest::resourceRequest(Document& document)
     return request;
 }
 
-void HTMLResourcePreloader::takeAndPreload(PreloadRequestStream& r)
+void HTMLResourcePreloader::preload(PreloadRequestStream requests)
 {
-    PreloadRequestStream requests;
-    requests.swap(r);
-
-    for (PreloadRequestStream::iterator it = requests.begin(); it != requests.end(); ++it)
-        preload(it->release());
+    for (auto& request : requests)
+        preload(std::move(request));
 }
 
 static bool mediaAttributeMatches(Frame* frame, RenderStyle* renderStyle, const String& attributeValue)
@@ -77,7 +74,7 @@ static bool mediaAttributeMatches(Frame* frame, RenderStyle* renderStyle, const 
     return mediaQueryEvaluator.eval(mediaQueries.get());
 }
 
-void HTMLResourcePreloader::preload(OwnPtr<PreloadRequest> preload)
+void HTMLResourcePreloader::preload(std::unique_ptr<PreloadRequest> preload)
 {
     ASSERT(m_document.frame());
     ASSERT(m_document.renderView());

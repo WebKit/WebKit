@@ -28,7 +28,6 @@
 
 #include "PendingScript.h"
 #include <wtf/Deque.h>
-#include <wtf/PassOwnPtr.h>
 #include <wtf/text/TextPosition.h>
 
 namespace WebCore {
@@ -44,10 +43,7 @@ class ScriptSourceCode;
 class HTMLScriptRunner {
     WTF_MAKE_NONCOPYABLE(HTMLScriptRunner); WTF_MAKE_FAST_ALLOCATED;
 public:
-    static OwnPtr<HTMLScriptRunner> create(Document& document, HTMLScriptRunnerHost& host)
-    {
-        return adoptPtr(new HTMLScriptRunner(document, host));
-    }
+    HTMLScriptRunner(Document&, HTMLScriptRunnerHost&);
     ~HTMLScriptRunner();
 
     void detach();
@@ -64,8 +60,6 @@ public:
     bool isExecutingScript() const { return !!m_scriptNestingLevel; }
 
 private:
-    HTMLScriptRunner(Document&, HTMLScriptRunnerHost&);
-
     Frame* frame() const;
 
     void executeParsingBlockingScript();

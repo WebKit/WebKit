@@ -1,3 +1,63 @@
+2014-01-18  Anders Carlsson  <andersca@apple.com>
+
+        Modernize HTML parser code
+        https://bugs.webkit.org/show_bug.cgi?id=127236
+
+        Reviewed by Andreas Kling.
+
+        * html/parser/AtomicHTMLToken.h:
+        * html/parser/CSSPreloadScanner.cpp:
+        (WebCore::CSSPreloadScanner::emitRule):
+        * html/parser/HTMLDocumentParser.cpp:
+        (WebCore::HTMLDocumentParser::HTMLDocumentParser):
+        (WebCore::HTMLDocumentParser::detach):
+        (WebCore::HTMLDocumentParser::stopParsing):
+        (WebCore::HTMLDocumentParser::pumpTokenizer):
+        (WebCore::HTMLDocumentParser::insert):
+        (WebCore::HTMLDocumentParser::append):
+        (WebCore::HTMLDocumentParser::resumeParsingAfterScriptExecution):
+        * html/parser/HTMLDocumentParser.h:
+        * html/parser/HTMLElementStack.cpp:
+        (WebCore::HTMLElementStack::ElementRecord::ElementRecord):
+        (WebCore::HTMLElementStack::insertAbove):
+        (WebCore::HTMLElementStack::pushCommon):
+        * html/parser/HTMLElementStack.h:
+        (WebCore::HTMLElementStack::ElementRecord::releaseNext):
+        (WebCore::HTMLElementStack::ElementRecord::setNext):
+        * html/parser/HTMLMetaCharsetParser.cpp:
+        (WebCore::HTMLMetaCharsetParser::HTMLMetaCharsetParser):
+        * html/parser/HTMLMetaCharsetParser.h:
+        * html/parser/HTMLParserScheduler.h:
+        * html/parser/HTMLPreloadScanner.cpp:
+        (WebCore::TokenPreloadScanner::StartTagScanner::createPreloadRequest):
+        (WebCore::TokenPreloadScanner::scan):
+        (WebCore::HTMLPreloadScanner::HTMLPreloadScanner):
+        * html/parser/HTMLPreloadScanner.h:
+        * html/parser/HTMLResourcePreloader.cpp:
+        (WebCore::HTMLResourcePreloader::takeAndPreload):
+        (WebCore::HTMLResourcePreloader::preload):
+        * html/parser/HTMLResourcePreloader.h:
+        (WebCore::PreloadRequest::PreloadRequest):
+        * html/parser/HTMLScriptRunner.h:
+        * html/parser/HTMLToken.h:
+        (WebCore::HTMLToken::beginDOCTYPE):
+        (WebCore::HTMLToken::releaseDoctypeData):
+        * html/parser/HTMLTokenizer.h:
+        * html/parser/HTMLTreeBuilder.h:
+        * html/parser/HTMLViewSourceParser.cpp:
+        (WebCore::HTMLViewSourceParser::HTMLViewSourceParser):
+        * html/parser/HTMLViewSourceParser.h:
+        * html/parser/XSSAuditor.cpp:
+        (WebCore::XSSAuditor::init):
+        (WebCore::XSSAuditor::filterToken):
+        * html/parser/XSSAuditor.h:
+        * html/parser/XSSAuditorDelegate.h:
+        (WebCore::XSSInfo::XSSInfo):
+        * loader/TextResourceDecoder.cpp:
+        (WebCore::TextResourceDecoder::checkForHeadCharset):
+        (WebCore::TextResourceDecoder::checkForMetaCharset):
+        * loader/TextResourceDecoder.h:
+
 2014-01-18  Benjamin Poulain  <benjamin@webkit.org>
 
         Make ElementData JIT friendly

@@ -202,7 +202,7 @@ private:
     bool m_isAll8BitData;
 
     // For DOCTYPE
-    OwnPtr<DoctypeData> m_doctypeData;
+    std::unique_ptr<DoctypeData> m_doctypeData;
 
     // For StartTag and EndTag
     bool m_selfClosing;

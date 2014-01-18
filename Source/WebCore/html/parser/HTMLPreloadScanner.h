@@ -132,7 +132,7 @@ private:
     TokenPreloadScanner m_scanner;
     SegmentedString m_source;
     HTMLToken m_token;
-    OwnPtr<HTMLTokenizer> m_tokenizer;
+    std::unique_ptr<HTMLTokenizer> m_tokenizer;
 };
 
 }

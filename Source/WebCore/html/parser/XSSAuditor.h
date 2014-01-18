@@ -61,7 +61,7 @@ public:
     void init(Document*, XSSAuditorDelegate*);
     void initForFragment();
 
-    OwnPtr<XSSInfo> filterToken(const FilterTokenRequest&);
+    std::unique_ptr<XSSInfo> filterToken(const FilterTokenRequest&);
     bool isSafeToSendToAnotherThread() const;
 
 private:
@@ -113,7 +113,7 @@ private:
 
     String m_decodedURL;
     String m_decodedHTTPBody;
-    OwnPtr<SuffixTree<ASCIICodebook>> m_decodedHTTPBodySuffixTree;
+    std::unique_ptr<SuffixTree<ASCIICodebook>> m_decodedHTTPBodySuffixTree;
 
     State m_state;
     String m_cachedDecodedSnippet;

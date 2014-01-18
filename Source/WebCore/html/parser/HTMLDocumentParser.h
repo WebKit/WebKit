@@ -40,7 +40,6 @@
 #include "XSSAuditor.h"
 #include "XSSAuditorDelegate.h"
 #include <wtf/Deque.h>
-#include <wtf/OwnPtr.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/text/TextPosition.h>
 
@@ -148,19 +147,19 @@ private:
     HTMLParserOptions m_options;
     HTMLInputStream m_input;
 
-    OwnPtr<HTMLToken> m_token;
-    OwnPtr<HTMLTokenizer> m_tokenizer;
-    OwnPtr<HTMLScriptRunner> m_scriptRunner;
-    OwnPtr<HTMLTreeBuilder> m_treeBuilder;
-    OwnPtr<HTMLPreloadScanner> m_preloadScanner;
-    OwnPtr<HTMLPreloadScanner> m_insertionPreloadScanner;
-    OwnPtr<HTMLParserScheduler> m_parserScheduler;
+    std::unique_ptr<HTMLToken> m_token;
+    std::unique_ptr<HTMLTokenizer> m_tokenizer;
+    std::unique_ptr<HTMLScriptRunner> m_scriptRunner;
+    std::unique_ptr<HTMLTreeBuilder> m_treeBuilder;
+    std::unique_ptr<HTMLPreloadScanner> m_preloadScanner;
+    std::unique_ptr<HTMLPreloadScanner> m_insertionPreloadScanner;
+    std::unique_ptr<HTMLParserScheduler> m_parserScheduler;
     HTMLSourceTracker m_sourceTracker;
     TextPosition m_textPosition;
     XSSAuditor m_xssAuditor;
     XSSAuditorDelegate m_xssAuditorDelegate;
 
-    OwnPtr<HTMLResourcePreloader> m_preloader;
+    std::unique_ptr<HTMLResourcePreloader> m_preloader;
 
     bool m_endWasDelayed;
     bool m_haveBackgroundParser;

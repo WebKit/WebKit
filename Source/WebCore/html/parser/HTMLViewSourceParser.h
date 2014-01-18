@@ -71,7 +71,7 @@ private:
     HTMLInputStream m_input;
     HTMLToken m_token;
     HTMLSourceTracker m_sourceTracker;
-    OwnPtr<HTMLTokenizer> m_tokenizer;
+    std::unique_ptr<HTMLTokenizer> m_tokenizer;
 };
 
 }

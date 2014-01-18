@@ -70,13 +70,13 @@ static HTMLTokenizer::State tokenizerStateForContextElement(Element* contextElem
 HTMLDocumentParser::HTMLDocumentParser(HTMLDocument& document)
     : ScriptableDocumentParser(document)
     , m_options(document)
-    , m_token(adoptPtr(new HTMLToken))
-    , m_tokenizer(HTMLTokenizer::create(m_options))
-    , m_scriptRunner(HTMLScriptRunner::create(document, *this))
-    , m_treeBuilder(HTMLTreeBuilder::create(*this, document, parserContentPolicy(), m_options))
-    , m_parserScheduler(HTMLParserScheduler::create(*this))
+    , m_token(std::make_unique<HTMLToken>())
+    , m_tokenizer(std::make_unique<HTMLTokenizer>(m_options))
+    , m_scriptRunner(std::make_unique<HTMLScriptRunner>(document, static_cast<HTMLScriptRunnerHost&>(*this)))
+    , m_treeBuilder(std::make_unique<HTMLTreeBuilder>(*this, document, parserContentPolicy(), m_options))
+    , m_parserScheduler(std::make_unique<HTMLParserScheduler>(*this))
     , m_xssAuditorDelegate(document)
-    , m_preloader(adoptPtr(new HTMLResourcePreloader(document)))
+    , m_preloader(std::make_unique<HTMLResourcePreloader>(document))
     , m_endWasDelayed(false)
     , m_haveBackgroundParser(false)
     , m_pumpSessionNestingLevel(0)
@@ -90,9 +90,9 @@ HTMLDocumentParser::HTMLDocumentParser(HTMLDocument& document)
 HTMLDocumentParser::HTMLDocumentParser(DocumentFragment& fragment, Element* contextElement, ParserContentPolicy parserContentPolicy)
     : ScriptableDocumentParser(fragment.document(), parserContentPolicy)
     , m_options(fragment.document())
-    , m_token(adoptPtr(new HTMLToken))
-    , m_tokenizer(HTMLTokenizer::create(m_options))
-    , m_treeBuilder(HTMLTreeBuilder::create(*this, fragment, contextElement, this->parserContentPolicy(), m_options))
+    , m_token(std::make_unique<HTMLToken>())
+    , m_tokenizer(std::make_unique<HTMLTokenizer>(m_options))
+    , m_treeBuilder(std::make_unique<HTMLTreeBuilder>(*this, fragment, contextElement, this->parserContentPolicy(), m_options))
     , m_xssAuditorDelegate(fragment.document())
     , m_endWasDelayed(false)
     , m_haveBackgroundParser(false)
@@ -121,15 +121,15 @@ void HTMLDocumentParser::detach()
     m_treeBuilder->detach();
     // FIXME: It seems wrong that we would have a preload scanner here.
     // Yet during fast/dom/HTMLScriptElement/script-load-events.html we do.
-    m_preloadScanner.clear();
-    m_insertionPreloadScanner.clear();
-    m_parserScheduler.clear(); // Deleting the scheduler will clear any timers.
+    m_preloadScanner = nullptr;
+    m_insertionPreloadScanner = nullptr;
+    m_parserScheduler = nullptr; // Deleting the scheduler will clear any timers.
 }
 
 void HTMLDocumentParser::stopParsing()
 {
     DocumentParser::stopParsing();
-    m_parserScheduler.clear(); // Deleting the scheduler will clear any timers.
+    m_parserScheduler = nullptr; // Deleting the scheduler will clear any timers.
 }
 
 // This kicks off "Once the user agent stops parsing" as described by:
@@ -302,7 +302,7 @@ void HTMLDocumentParser::pumpTokenizer(SynchronousMode mode)
 
             // We do not XSS filter innerHTML, which means we (intentionally) fail
             // http/tests/security/xssAuditor/dom-write-innerHTML.html
-            if (OwnPtr<XSSInfo> xssInfo = m_xssAuditor.filterToken(FilterTokenRequest(token(), m_sourceTracker, m_tokenizer->shouldAllowCDATA())))
+            if (auto xssInfo = m_xssAuditor.filterToken(FilterTokenRequest(token(), m_sourceTracker, m_tokenizer->shouldAllowCDATA())))
                 m_xssAuditorDelegate.didBlockScript(*xssInfo);
         }
 
@@ -323,7 +323,7 @@ void HTMLDocumentParser::pumpTokenizer(SynchronousMode mode)
     if (isWaitingForScripts()) {
         ASSERT(m_tokenizer->state() == HTMLTokenizer::DataState);
         if (!m_preloadScanner) {
-            m_preloadScanner = adoptPtr(new HTMLPreloadScanner(m_options, document()->url(), document()->deviceScaleFactor()));
+            m_preloadScanner = std::make_unique<HTMLPreloadScanner>(m_options, document()->url(), document()->deviceScaleFactor());
             m_preloadScanner->appendToEnd(m_input.current());
         }
         m_preloadScanner->scan(m_preloader.get(), document()->baseElementURL());
@@ -385,7 +385,7 @@ void HTMLDocumentParser::insert(const SegmentedString& source)
         // Check the document.write() output with a separate preload scanner as
         // the main scanner can't deal with insertions.
         if (!m_insertionPreloadScanner) {
-            m_insertionPreloadScanner = adoptPtr(new HTMLPreloadScanner(m_options, document()->url(), document()->deviceScaleFactor()));
+            m_insertionPreloadScanner = std::make_unique<HTMLPreloadScanner>(m_options, document()->url(), document()->deviceScaleFactor());
         }
         m_insertionPreloadScanner->appendToEnd(source);
         m_insertionPreloadScanner->scan(m_preloader.get(), document()->baseElementURL());
@@ -408,7 +408,7 @@ void HTMLDocumentParser::append(PassRefPtr<StringImpl> inputSource)
         if (m_input.current().isEmpty() && !isWaitingForScripts()) {
             // We have parsed until the end of the current input and so are now moving ahead of the preload scanner.
             // Clear the scanner so we know to scan starting from the current input point if we block again.
-            m_preloadScanner.clear();
+            m_preloadScanner = nullptr;
         } else {
             m_preloadScanner->appendToEnd(source);
             if (isWaitingForScripts())
@@ -527,7 +527,7 @@ void HTMLDocumentParser::resumeParsingAfterScriptExecution()
     ASSERT(!isExecutingScript());
     ASSERT(!isWaitingForScripts());
 
-    m_insertionPreloadScanner.clear();
+    m_insertionPreloadScanner = nullptr;
     pumpTokenizerIfPossible(AllowYield);
     endIfDelayed();
 }

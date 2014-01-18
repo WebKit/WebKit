@@ -57,14 +57,8 @@ class HTMLDocumentParser;
 class HTMLTreeBuilder {
     WTF_MAKE_NONCOPYABLE(HTMLTreeBuilder); WTF_MAKE_FAST_ALLOCATED;
 public:
-    static OwnPtr<HTMLTreeBuilder> create(HTMLDocumentParser& parser, HTMLDocument& document, ParserContentPolicy parserContentPolicy, const HTMLParserOptions& options)
-    {
-        return adoptPtr(new HTMLTreeBuilder(parser, document, parserContentPolicy, options));
-    }
-    static OwnPtr<HTMLTreeBuilder> create(HTMLDocumentParser& parser, DocumentFragment& fragment, Element* contextElement, ParserContentPolicy parserContentPolicy, const HTMLParserOptions& options)
-    {
-        return adoptPtr(new HTMLTreeBuilder(parser, fragment, contextElement, parserContentPolicy, options));
-    }
+    HTMLTreeBuilder(HTMLDocumentParser&, HTMLDocument&, ParserContentPolicy, const HTMLParserOptions&);
+    HTMLTreeBuilder(HTMLDocumentParser&, DocumentFragment&, Element* contextElement, ParserContentPolicy, const HTMLParserOptions&);
     ~HTMLTreeBuilder();
 
     const HTMLElementStack* openElements() const { return m_tree.openElements(); }
@@ -119,9 +113,6 @@ private:
         AfterAfterBodyMode,
         AfterAfterFramesetMode,
     };
-
-    HTMLTreeBuilder(HTMLDocumentParser&, HTMLDocument&, ParserContentPolicy, const HTMLParserOptions&);
-    HTMLTreeBuilder(HTMLDocumentParser&, DocumentFragment&, Element* contextElement, ParserContentPolicy, const HTMLParserOptions&);
 
 #if PLATFORM(IOS)
     void insertPhoneNumberLink(const String&);

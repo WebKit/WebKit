@@ -30,8 +30,6 @@
 #include "HTMLStackItem.h"
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
-#include <wtf/OwnPtr.h>
-#include <wtf/PassOwnPtr.h>
 #include <wtf/RefPtr.h>
 
 namespace WebCore {
@@ -52,7 +50,8 @@ public:
     class ElementRecord {
         WTF_MAKE_NONCOPYABLE(ElementRecord); WTF_MAKE_FAST_ALLOCATED;
     public:
-        ~ElementRecord(); // Public for ~PassOwnPtr()
+        ElementRecord(PassRefPtr<HTMLStackItem>, std::unique_ptr<ElementRecord>);
+        ~ElementRecord();
     
         Element* element() const { return m_item->element(); }
         ContainerNode* node() const { return m_item->node(); }
@@ -66,13 +65,11 @@ public:
     private:
         friend class HTMLElementStack;
 
-        ElementRecord(PassRefPtr<HTMLStackItem>, OwnPtr<ElementRecord>);
-
-        OwnPtr<ElementRecord> releaseNext() { return m_next.release(); }
-        void setNext(OwnPtr<ElementRecord> next) { m_next = std::move(next); }
+        std::unique_ptr<ElementRecord> releaseNext() { return std::move(m_next); }
+        void setNext(std::unique_ptr<ElementRecord> next) { m_next = std::move(next); }
 
         RefPtr<HTMLStackItem> m_item;
-        OwnPtr<ElementRecord> m_next;
+        std::unique_ptr<ElementRecord> m_next;
     };
 
     unsigned stackDepth() const { return m_stackDepth; }
@@ -171,7 +168,7 @@ private:
     void popCommon();
     void removeNonTopCommon(Element*);
 
-    OwnPtr<ElementRecord> m_top;
+    std::unique_ptr<ElementRecord> m_top;
 
     // We remember the root node, <head> and <body> as they are pushed. Their
     // ElementRecords keep them alive. The root node is never popped.

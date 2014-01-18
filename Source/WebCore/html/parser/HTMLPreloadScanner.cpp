@@ -109,15 +109,16 @@ public:
         }
     }
 
-    OwnPtr<PreloadRequest> createPreloadRequest(const URL& predictedBaseURL)
+    std::unique_ptr<PreloadRequest> createPreloadRequest(const URL& predictedBaseURL)
     {
         if (!shouldPreload())
             return nullptr;
 
-        OwnPtr<PreloadRequest> request = PreloadRequest::create(initiatorFor(m_tagId), m_urlToLoad, predictedBaseURL, resourceType(), m_mediaAttribute);
+        auto request = std::make_unique<PreloadRequest>(initiatorFor(m_tagId), m_urlToLoad, predictedBaseURL, resourceType(), m_mediaAttribute);
+
         request->setCrossOriginModeAllowsCookies(crossOriginModeAllowsCookies());
         request->setCharset(charset());
-        return request.release();
+        return request;
     }
 
     static bool match(const AtomicString& name, const QualifiedName& qName)
@@ -261,7 +262,7 @@ void TokenPreloadScanner::rewindTo(TokenPreloadScannerCheckpoint checkpointIndex
     m_checkpoints.clear();
 }
 
-void TokenPreloadScanner::scan(const HTMLToken& token, Vector<OwnPtr<PreloadRequest>>& requests)
+void TokenPreloadScanner::scan(const HTMLToken& token, Vector<std::unique_ptr<PreloadRequest>>& requests)
 {
     switch (token.type()) {
     case HTMLToken::Character:
@@ -313,8 +314,8 @@ void TokenPreloadScanner::scan(const HTMLToken& token, Vector<OwnPtr<PreloadRequ
 
         StartTagScanner scanner(tagId, m_deviceScaleFactor);
         scanner.processAttributes(token.attributes());
-        if (OwnPtr<PreloadRequest> request = scanner.createPreloadRequest(m_predictedBaseElementURL))
-            requests.append(request.release());
+        if (auto request = scanner.createPreloadRequest(m_predictedBaseElementURL))
+            requests.append(std::move(request));
         return;
     }
 
@@ -333,7 +334,7 @@ void TokenPreloadScanner::updatePredictedBaseURL(const Token& token)
 
 HTMLPreloadScanner::HTMLPreloadScanner(const HTMLParserOptions& options, const URL& documentURL, float deviceScaleFactor)
     : m_scanner(documentURL, deviceScaleFactor)
-    , m_tokenizer(HTMLTokenizer::create(options))
+    , m_tokenizer(std::make_unique<HTMLTokenizer>(options))
 {
 }
 
@@ -363,7 +364,7 @@ void HTMLPreloadScanner::scan(HTMLResourcePreloader* preloader, const URL& start
         m_token.clear();
     }
 
-    preloader->takeAndPreload(requests);
+    preloader->preload(std::move(requests));
 }
 
 }

@@ -38,7 +38,7 @@ class HTMLTokenizer {
     WTF_MAKE_NONCOPYABLE(HTMLTokenizer);
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static OwnPtr<HTMLTokenizer> create(const HTMLParserOptions& options) { return adoptPtr(new HTMLTokenizer(options)); }
+    explicit HTMLTokenizer(const HTMLParserOptions&);
     ~HTMLTokenizer();
 
     void reset();
@@ -173,8 +173,6 @@ public:
     }
 
 private:
-    explicit HTMLTokenizer(const HTMLParserOptions&);
-
     inline bool processEntity(SegmentedString&);
 
     inline void parseError();

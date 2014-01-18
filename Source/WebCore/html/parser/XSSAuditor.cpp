@@ -305,7 +305,7 @@ void XSSAuditor::init(Document* document, XSSAuditorDelegate* auditorDelegate)
                 if (m_decodedHTTPBody.find(isRequiredForInjection) == notFound)
                     m_decodedHTTPBody = String();
                 if (m_decodedHTTPBody.length() >= minimumLengthForSuffixTree)
-                    m_decodedHTTPBodySuffixTree = adoptPtr(new SuffixTree<ASCIICodebook>(m_decodedHTTPBody, suffixTreeDepth));
+                    m_decodedHTTPBodySuffixTree = std::make_unique<SuffixTree<ASCIICodebook>>(m_decodedHTTPBody, suffixTreeDepth);
             }
         }
     }
@@ -316,7 +316,7 @@ void XSSAuditor::init(Document* document, XSSAuditorDelegate* auditorDelegate)
     }
 }
 
-OwnPtr<XSSInfo> XSSAuditor::filterToken(const FilterTokenRequest& request)
+std::unique_ptr<XSSInfo> XSSAuditor::filterToken(const FilterTokenRequest& request)
 {
     ASSERT(m_state == Initialized);
     if (!m_isEnabled || m_xssProtection == ContentSecurityPolicy::AllowReflectedXSS)
@@ -332,12 +332,11 @@ OwnPtr<XSSInfo> XSSAuditor::filterToken(const FilterTokenRequest& request)
             filterEndToken(request);
     }
 
-    if (didBlockScript) {
-        bool didBlockEntirePage = (m_xssProtection == ContentSecurityPolicy::BlockReflectedXSS);
-        OwnPtr<XSSInfo> xssInfo = XSSInfo::create(didBlockEntirePage, m_didSendValidXSSProtectionHeader, m_didSendValidCSPHeader);
-        return xssInfo.release();
-    }
-    return nullptr;
+    if (!didBlockScript)
+        return nullptr;
+
+    bool didBlockEntirePage = (m_xssProtection == ContentSecurityPolicy::BlockReflectedXSS);
+    return std::make_unique<XSSInfo>(didBlockEntirePage, m_didSendValidXSSProtectionHeader, m_didSendValidCSPHeader);
 }
 
 bool XSSAuditor::filterStartToken(const FilterTokenRequest& request)

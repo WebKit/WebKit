@@ -64,10 +64,7 @@ public:
 class HTMLParserScheduler {
     WTF_MAKE_NONCOPYABLE(HTMLParserScheduler); WTF_MAKE_FAST_ALLOCATED;
 public:
-    static OwnPtr<HTMLParserScheduler> create(HTMLDocumentParser& parser)
-    {
-        return adoptPtr(new HTMLParserScheduler(parser));
-    }
+    explicit HTMLParserScheduler(HTMLDocumentParser&);
     ~HTMLParserScheduler();
 
     // Inline as this is called after every token in the parser.
@@ -101,8 +98,6 @@ public:
     void resume();
 
 private:
-    HTMLParserScheduler(HTMLDocumentParser&);
-
     void continueNextChunkTimerFired(Timer<HTMLParserScheduler>&);
 
     HTMLDocumentParser& m_parser;

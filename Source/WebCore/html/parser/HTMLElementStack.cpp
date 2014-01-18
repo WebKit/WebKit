@@ -125,7 +125,7 @@ inline bool isSelectScopeMarker(HTMLStackItem* item)
 
 }
 
-HTMLElementStack::ElementRecord::ElementRecord(PassRefPtr<HTMLStackItem> item, OwnPtr<ElementRecord> next)
+HTMLElementStack::ElementRecord::ElementRecord(PassRefPtr<HTMLStackItem> item, std::unique_ptr<ElementRecord> next)
     : m_item(item)
     , m_next(std::move(next))
 {
@@ -359,7 +359,7 @@ void HTMLElementStack::insertAbove(PassRefPtr<HTMLStackItem> item, ElementRecord
     ASSERT(!item->hasTagName(HTMLNames::headTag));
     ASSERT(!item->hasTagName(HTMLNames::bodyTag));
     ASSERT(m_rootNode);
-    if (recordBelow == m_top) {
+    if (recordBelow == m_top.get()) {
         push(item);
         return;
     }
@@ -369,7 +369,7 @@ void HTMLElementStack::insertAbove(PassRefPtr<HTMLStackItem> item, ElementRecord
             continue;
 
         m_stackDepth++;
-        recordAbove->setNext(adoptPtr(new ElementRecord(item, recordAbove->releaseNext())));
+        recordAbove->setNext(std::make_unique<ElementRecord>(item, recordAbove->releaseNext()));
         recordAbove->next()->element()->beginParsingChildren();
         return;
     }
@@ -567,7 +567,7 @@ void HTMLElementStack::pushCommon(PassRefPtr<HTMLStackItem> item)
     ASSERT(m_rootNode);
 
     m_stackDepth++;
-    m_top = adoptPtr(new ElementRecord(item, m_top.release()));
+    m_top = std::make_unique<ElementRecord>(item, std::move(m_top));
 }
 
 void HTMLElementStack::popCommon()

@@ -39,23 +39,17 @@ class FormData;
 
 class XSSInfo {
 public:
-    static OwnPtr<XSSInfo> create(bool didBlockEntirePage, bool didSendXSSProtectionHeader, bool didSendCSPHeader)
-    {
-        return adoptPtr(new XSSInfo(didBlockEntirePage, didSendXSSProtectionHeader, didSendCSPHeader));
-    }
-
-    bool m_didBlockEntirePage;
-    bool m_didSendXSSProtectionHeader;
-    bool m_didSendCSPHeader;
-    TextPosition m_textPosition;
-
-private:
     XSSInfo(bool didBlockEntirePage, bool didSendXSSProtectionHeader, bool didSendCSPHeader)
         : m_didBlockEntirePage(didBlockEntirePage)
         , m_didSendXSSProtectionHeader(didSendXSSProtectionHeader)
         , m_didSendCSPHeader(didSendCSPHeader)
     {
     }
+
+    bool m_didBlockEntirePage;
+    bool m_didSendXSSProtectionHeader;
+    bool m_didSendCSPHeader;
+    TextPosition m_textPosition;
 };
 
 class XSSAuditorDelegate {
@@ -73,8 +67,6 @@ private:
     bool m_didSendNotifications;
     URL m_reportURL;
 };
-
-typedef Vector<OwnPtr<XSSInfo>> XSSInfoStream;
 
 }
 
