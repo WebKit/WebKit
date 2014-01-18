@@ -117,7 +117,7 @@ MODULES = JavaScriptCore JavaScriptGlue WebCore WebKit WebKitTools
 all:
 EOF
 
-my $mockDir = File::Temp->tempdir("parseDiffXXXX", CLEANUP => 1);
+my $mockDir = File::Temp::tempdir("parseDiffXXXX", CLEANUP => 1);
 writeToFile(File::Spec->catfile($mockDir, "MakefileWithUnixEOL"), $MakefileContents);
 writeToFile(File::Spec->catfile($mockDir, "MakefileWithWindowsEOL"), toWindowsLineEndings($MakefileContents));
 writeToFile(File::Spec->catfile($mockDir, "MakefileWithMacEOL"), toMacLineEndings($MakefileContents));
