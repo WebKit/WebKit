@@ -10,25 +10,25 @@ layer at (0,0) size 800x446
           text run at (507,0) width 5: ")"
       RenderBlock {DIV} at (0,34) size 784x0
         RenderBlock (floating) {P} at (16,16) size 177x166 [bgcolor=#FFFFCC] [border: (3px solid #000000)]
-          RenderInline {SPAN} at (0,0) size 150x36 [color=#000080] [border: (3px solid #000080) none (3px solid #000080)]
+          RenderInline {SPAN} at (0,0) size 150x38 [color=#000080] [border: (3px solid #000080) none (3px solid #000080)]
             RenderText {#text} at (30,26) size 131x18
               text run at (30,26) width 131: "aaa bbb ccc  ddd eee"
           RenderBR {BR} at (161,26) size 0x18
-          RenderInline {SPAN} at (0,0) size 38x36 [color=#000080] [border: (3px solid #000080) none]
+          RenderInline {SPAN} at (0,0) size 38x38 [color=#000080] [border: (3px solid #000080) none]
             RenderText {#text} at (11,74) size 19x18
               text run at (11,74) width 19: "fff "
           RenderText {#text} at (49,74) size 72x18
             text run at (49,74) width 72: "ggg hhh iii "
-          RenderInline {SPAN} at (0,0) size 31x36 [color=#FFA500] [border: (3px solid #FFA500) none (3px solid #FFA500)]
+          RenderInline {SPAN} at (0,0) size 31x38 [color=#FFA500] [border: (3px solid #FFA500) none (3px solid #FFA500)]
             RenderText {#text} at (140,74) size 12x18
               text run at (140,74) width 12: "jjj"
           RenderBR {BR} at (152,74) size 0x18
-          RenderInline {SPAN} at (0,0) size 155x36 [color=#FFA500] [border: (3px solid #FFA500) none]
+          RenderInline {SPAN} at (0,0) size 155x38 [color=#FFA500] [border: (3px solid #FFA500) none]
             RenderText {#text} at (11,122) size 136x18
               text run at (11,122) width 136: "kkk lll mmm nnn ooo"
           RenderText {#text} at (0,0) size 0x0
         RenderBlock (floating) {P} at (16,214) size 181x166 [bgcolor=#FFFFCC] [border: (3px solid #000000)]
-          RenderInline {SPAN} at (0,0) size 154x84 [color=#000080] [border: (3px solid #000080)]
+          RenderInline {SPAN} at (0,0) size 154x86 [color=#000080] [border: (3px solid #000080)]
             RenderText {#text} at (30,26) size 135x18
               text run at (30,26) width 25: "aaa "
               text run at (55,26) width 28: "bbb "
@@ -42,7 +42,7 @@ layer at (0,0) size 800x446
             text run at (49,74) width 28: "ggg "
             text run at (77,74) width 28: "hhh "
             text run at (105,74) width 16: "iii "
-          RenderInline {SPAN} at (0,0) size 159x84 [color=#FFA500] [border: (3px solid #FFA500)]
+          RenderInline {SPAN} at (0,0) size 159x86 [color=#FFA500] [border: (3px solid #FFA500)]
             RenderText {#text} at (140,74) size 16x18
               text run at (140,74) width 16: "jjj "
             RenderBR {BR} at (0,0) size 0x0

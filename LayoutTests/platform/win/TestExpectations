@@ -2868,3 +2868,16 @@ media/media-source [ Failure ]
 
 # isIndeterminate is not implemented in mac
 webkit.org/b/125855 accessibility/aria-checked-mixed-value.html [ Skip ]
+
+# Subpixel failures
+# webkit.org/b/124784 needs revisiting.
+webkit.org/b/124784 fast/shapes/shape-inside/shape-inside-subpixel-rectangle-top.html [ Skip ]
+
+# Subpixel: off-by-1 pixel rendering on mathml
+webkit.org/b/126897 mathml/presentation/bug95015.html [ Skip ]
+
+# Subpixel: misplaced zoomed svg content.
+webkit.org/b/126900 svg/zoom/page/zoom-zoom-coords.xhtml [ Skip ]
+
+# Subpixel: incorrect caret position
+webkit.org/b/126283 editing/selection/mixed-editability-10.html [ Skip ]
