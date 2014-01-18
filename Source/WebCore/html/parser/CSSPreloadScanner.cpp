@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2010, 2013 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2008, 2010, 2013, 2014 Apple Inc. All Rights Reserved.
  * Copyright (C) 2009 Torch Mobile, Inc. http://www.torchmobile.com/
  * Copyright (C) 2010 Google Inc. All Rights Reserved.
  *
@@ -29,12 +29,13 @@
 #include "CSSPreloadScanner.h"
 
 #include "HTMLParserIdioms.h"
+#include <wtf/TemporaryChange.h>
 
 namespace WebCore {
 
 CSSPreloadScanner::CSSPreloadScanner()
     : m_state(Initial)
-    , m_requests(0)
+    , m_requests(nullptr)
 {
 }
 
@@ -49,33 +50,18 @@ void CSSPreloadScanner::reset()
     m_ruleValue.clear();
 }
 
-template<typename Char>
-void CSSPreloadScanner::scanCommon(const Char* begin, const Char* end, PreloadRequestStream& requests)
-{
-    m_requests = &requests;
-    for (const Char* it = begin; it != end && m_state != DoneParsingImportRules; ++it)
-        tokenize(*it);
-    m_requests = 0;
-}
-
 void CSSPreloadScanner::scan(const HTMLToken::DataVector& data, PreloadRequestStream& requests)
 {
-    scanCommon(data.data(), data.data() + data.size(), requests);
-}
+    ASSERT(!m_requests);
+    TemporaryChange<PreloadRequestStream*> change(m_requests, &requests);
 
-#if ENABLE(THREADED_HTML_PARSER)
-void CSSPreloadScanner::scan(const HTMLIdentifier& identifier, PreloadRequestStream& requests)
-{
-    const StringImpl* data = identifier.asStringImpl();
-    if (data->is8Bit()) {
-        const LChar* begin = data->characters8();
-        scanCommon(begin, begin + data->length(), requests);
-        return;
+    for (UChar c : data) {
+        tokenize(c);
+
+        if (m_state == DoneParsingImportRules)
+            break;
     }
-    const UChar* begin = data->characters16();
-    scanCommon(begin, begin + data->length(), requests);
 }
-#endif
 
 inline void CSSPreloadScanner::tokenize(UChar c)
 {
