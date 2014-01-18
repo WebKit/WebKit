@@ -721,9 +721,6 @@ public:
     };
     void shrinkToFit(ShrinkMode);
 
-    void copyPostParseDataFrom(CodeBlock* alternative);
-    void copyPostParseDataFromAlternative();
-
     // Functions for controlling when JITting kicks in, in a mixed mode
     // execution world.
 

@@ -1,5 +1,18 @@
 2014-01-18  Andreas Kling  <akling@apple.com>
 
+        Remove two unused CodeBlock functions.
+        <https://webkit.org/b/127235>
+
+        Kill copyPostParseDataFrom() and copyPostParseDataFromAlternative()
+        since they are not used.
+
+        Reviewed by Anders Carlsson.
+
+        * bytecode/CodeBlock.cpp:
+        * bytecode/CodeBlock.h:
+
+2014-01-18  Andreas Kling  <akling@apple.com>
+
         CodeBlock: Size m_exceptionHandlers to fit from creation.
         <https://webkit.org/b/127234>
 
