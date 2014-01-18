@@ -32,7 +32,6 @@
 #include "Logging.h"
 #include "MutableDictionary.h"
 #include "SandboxExtension.h"
-#include "SessionTracker.h"
 #include "StatisticsData.h"
 #include "TextChecker.h"
 #include "WKContextPrivate.h"
@@ -468,16 +467,16 @@ void WebContext::setAnyPageGroupMightHavePrivateBrowsingEnabled(bool privateBrow
 #if ENABLE(NETWORK_PROCESS)
     if (usesNetworkProcess() && networkProcess()) {
         if (privateBrowsingEnabled)
-            networkProcess()->send(Messages::NetworkProcess::EnsurePrivateBrowsingSession(SessionTracker::legacyPrivateSessionID), 0);
+            networkProcess()->send(Messages::NetworkProcess::EnsurePrivateBrowsingSession(), 0);
         else
-            networkProcess()->send(Messages::NetworkProcess::DestroyPrivateBrowsingSession(SessionTracker::legacyPrivateSessionID), 0);
+            networkProcess()->send(Messages::NetworkProcess::DestroyPrivateBrowsingSession(), 0);
     }
 #endif // ENABLED(NETWORK_PROCESS)
 
     if (privateBrowsingEnabled)
-        sendToAllProcesses(Messages::WebProcess::EnsurePrivateBrowsingSession(SessionTracker::legacyPrivateSessionID));
+        sendToAllProcesses(Messages::WebProcess::EnsurePrivateBrowsingSession());
     else
-        sendToAllProcesses(Messages::WebProcess::DestroyPrivateBrowsingSession(SessionTracker::legacyPrivateSessionID));
+        sendToAllProcesses(Messages::WebProcess::DestroyPrivateBrowsingSession());
 }
 
 void (*s_invalidMessageCallback)(WKStringRef messageName);
@@ -598,7 +597,7 @@ WebProcessProxy& WebContext::createNewWebProcess()
     process->send(Messages::WebProcess::InitializeWebProcess(parameters, WebContextUserMessageEncoder(injectedBundleInitializationUserData.get(), *process)), 0);
 
     if (WebPreferences::anyPageGroupsAreUsingPrivateBrowsing())
-        process->send(Messages::WebProcess::EnsurePrivateBrowsingSession(SessionTracker::legacyPrivateSessionID), 0);
+        process->send(Messages::WebProcess::EnsurePrivateBrowsingSession(), 0);
 
     m_processes.append(process);
 
@@ -741,7 +740,7 @@ WebProcessProxy& WebContext::createNewWebProcessRespectingProcessCountLimit()
     return *result;
 }
 
-PassRefPtr<WebPageProxy> WebContext::createWebPage(PageClient& pageClient, WebPageGroup* pageGroup, API::Session& session, WebPageProxy* relatedPage)
+PassRefPtr<WebPageProxy> WebContext::createWebPage(PageClient& pageClient, WebPageGroup* pageGroup, WebPageProxy* relatedPage)
 {
     RefPtr<WebProcessProxy> process;
     if (m_processModel == ProcessModelSharedSecondaryProcess) {
@@ -757,12 +756,7 @@ PassRefPtr<WebPageProxy> WebContext::createWebPage(PageClient& pageClient, WebPa
             process = &createNewWebProcessRespectingProcessCountLimit();
     }
 
-    return process->createWebPage(pageClient, pageGroup ? *pageGroup : m_defaultPageGroup.get(), session);
-}
-
-PassRefPtr<WebPageProxy> WebContext::createWebPage(PageClient& pageClient, WebPageGroup* pageGroup, WebPageProxy* relatedPage)
-{
-    return createWebPage(pageClient, pageGroup, pageGroup->preferences()->privateBrowsingEnabled() ? API::Session::legacyPrivateSession() : API::Session::defaultSession(), relatedPage);
+    return process->createWebPage(pageClient, pageGroup ? *pageGroup : m_defaultPageGroup.get());
 }
 
 DownloadProxy* WebContext::download(WebPageProxy* initiatingPage, const ResourceRequest& request)

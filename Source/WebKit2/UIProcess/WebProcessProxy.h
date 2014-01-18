@@ -26,7 +26,6 @@
 #ifndef WebProcessProxy_h
 #define WebProcessProxy_h
 
-#include "APISession.h"
 #include "ChildProcessProxy.h"
 #include "MessageReceiverMap.h"
 #include "PlatformProcessIdentifier.h"
@@ -78,7 +77,7 @@ public:
     WebContext& context() { return m_context.get(); }
 
     static WebPageProxy* webPage(uint64_t pageID);
-    PassRefPtr<WebPageProxy> createWebPage(PageClient&, WebPageGroup&, API::Session&);
+    PassRefPtr<WebPageProxy> createWebPage(PageClient&, WebPageGroup&);
     void addExistingWebPage(WebPageProxy*, uint64_t pageID);
     void removeWebPage(uint64_t pageID);
     Vector<WebPageProxy*> pages() const;

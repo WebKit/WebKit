@@ -24,8 +24,6 @@
  */
 
 #include "config.h"
-
-#include "SessionTracker.h"
 #include "WebCookieManager.h"
 #include "WebFrameNetworkingContext.h"
 #include <WebCore/Frame.h>
@@ -36,23 +34,52 @@
 #include <WebCore/ResourceError.h>
 #include <WebCore/Settings.h>
 #include <WebKitSystemInterface.h>
+#include <wtf/NeverDestroyed.h>
 
 using namespace WebCore;
 
 namespace WebKit {
-    
-void WebFrameNetworkingContext::ensurePrivateBrowsingSession(uint64_t sessionID)
+
+static std::unique_ptr<NetworkStorageSession>& privateSession()
 {
-    if (SessionTracker::session(sessionID))
+    static NeverDestroyed<std::unique_ptr<NetworkStorageSession>> session;
+    return session;
+}
+
+static String& identifierBase()
+{
+    static NeverDestroyed<String> base;
+    return base;
+}
+    
+void WebFrameNetworkingContext::setPrivateBrowsingStorageSessionIdentifierBase(const String& base)
+{
+    ASSERT(isMainThread());
+
+    identifierBase() = base;
+}
+
+void WebFrameNetworkingContext::ensurePrivateBrowsingSession()
+{
+    ASSERT(isMainThread());
+
+    if (privateSession())
         return;
 
     String base;
-    if (SessionTracker::getIdentifierBase().isNull())
+    if (identifierBase().isNull())
         base = [[NSBundle mainBundle] bundleIdentifier];
     else
-        base = SessionTracker::getIdentifierBase();
+        base = identifierBase();
 
-    SessionTracker::session(sessionID) = NetworkStorageSession::createPrivateBrowsingSession(base + '.' + String::number(sessionID));
+    privateSession() = NetworkStorageSession::createPrivateBrowsingSession(base);
+}
+
+void WebFrameNetworkingContext::destroyPrivateBrowsingSession()
+{
+    ASSERT(isMainThread());
+
+    privateSession() = nullptr;
 }
 
 void WebFrameNetworkingContext::setCookieAcceptPolicyForAllContexts(HTTPCookieAcceptPolicy policy)
@@ -62,10 +89,8 @@ void WebFrameNetworkingContext::setCookieAcceptPolicyForAllContexts(HTTPCookieAc
     if (RetainPtr<CFHTTPCookieStorageRef> cookieStorage = NetworkStorageSession::defaultStorageSession().cookieStorage())
         WKSetHTTPCookieAcceptPolicy(cookieStorage.get(), policy);
 
-    for (const auto& session : SessionTracker::getSessionMap().values()) {
-        if (session)
-            WKSetHTTPCookieAcceptPolicy(session->cookieStorage().get(), policy);
-    }
+    if (privateSession())
+        WKSetHTTPCookieAcceptPolicy(privateSession()->cookieStorage().get(), policy);
 }
     
 bool WebFrameNetworkingContext::needsSiteSpecificQuirks() const
@@ -100,10 +125,11 @@ NetworkStorageSession& WebFrameNetworkingContext::storageSession() const
     ASSERT(isMainThread());
 
     if (frame() && frame()->settings().privateBrowsingEnabled())
-        return *SessionTracker::session(SessionTracker::legacyPrivateSessionID);
+        return *privateSession();
 
     return NetworkStorageSession::defaultStorageSession();
 }
+    
 WebFrameLoaderClient* WebFrameNetworkingContext::webFrameLoaderClient() const
 {
     if (!frame())

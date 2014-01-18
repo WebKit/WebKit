@@ -442,8 +442,6 @@ webkit2_sources += \
 	Source/WebKit2/Shared/SecurityOriginData.cpp \
 	Source/WebKit2/Shared/SessionState.cpp \
 	Source/WebKit2/Shared/SessionState.h \
-	Source/WebKit2/Shared/SessionTracker.cpp \
-	Source/WebKit2/Shared/SessionTracker.h \
 	Source/WebKit2/Shared/StatisticsData.cpp \
 	Source/WebKit2/Shared/StatisticsData.h \
 	Source/WebKit2/Shared/soup/SoupCookiePersistentStorageType.h \

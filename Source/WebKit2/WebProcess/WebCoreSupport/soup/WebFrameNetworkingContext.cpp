@@ -27,7 +27,6 @@
 #include "config.h"
 #include "WebFrameNetworkingContext.h"
 
-#include "SessionTracker.h"
 #include "WebFrame.h"
 #include "WebPage.h"
 #include <WebCore/Settings.h>
@@ -37,14 +36,27 @@ using namespace WebCore;
 
 namespace WebKit {
 
-void WebFrameNetworkingContext::ensurePrivateBrowsingSession(uint64_t sessionID)
+static std::unique_ptr<NetworkStorageSession>& privateSession()
+{
+    static NeverDestroyed<std::unique_ptr<NetworkStorageSession>> session;
+    return session;
+}
+
+void WebFrameNetworkingContext::ensurePrivateBrowsingSession()
 {
     ASSERT(isMainThread());
 
-    if (SessionTracker::session(sessionID))
+    if (privateSession())
         return;
 
-    SessionTracker::session(sessionID) = NetworkStorageSession::createPrivateBrowsingSession(String::number(sessionID));
+    privateSession() = NetworkStorageSession::createPrivateBrowsingSession();
+}
+
+void WebFrameNetworkingContext::destroyPrivateBrowsingSession()
+{
+    ASSERT(isMainThread());
+
+    privateSession() = nullptr;
 }
 
 WebFrameNetworkingContext::WebFrameNetworkingContext(WebFrame* frame)
@@ -58,7 +70,7 @@ WebFrameNetworkingContext::WebFrameNetworkingContext(WebFrame* frame)
 NetworkStorageSession& WebFrameNetworkingContext::storageSession() const
 {
     if (frame() && frame()->settings().privateBrowsingEnabled())
-        return *SessionTracker::session(SessionTracker::legacyPrivateSessionID);
+        return *privateSession();
 
     return NetworkStorageSession::defaultStorageSession();
 }

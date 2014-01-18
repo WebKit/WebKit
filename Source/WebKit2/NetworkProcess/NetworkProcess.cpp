@@ -39,7 +39,6 @@
 #include "NetworkProcessProxyMessages.h"
 #include "NetworkResourceLoader.h"
 #include "RemoteNetworkingContext.h"
-#include "SessionTracker.h"
 #include "StatisticsData.h"
 #include "WebContextMessages.h"
 #include "WebCookieManager.h"
@@ -158,12 +157,11 @@ void NetworkProcess::initializeNetworkProcess(const NetworkProcessCreationParame
     setCacheModel(static_cast<uint32_t>(parameters.cacheModel));
 
 #if PLATFORM(MAC) || USE(CFNETWORK)
-    SessionTracker::setIdentifierBase(parameters.uiProcessBundleIdentifier);
+    RemoteNetworkingContext::setPrivateBrowsingStorageSessionIdentifierBase(parameters.uiProcessBundleIdentifier);
 #endif
 
-    // FIXME: instead of handling this here, a message should be sent later (scales to multiple sessions)
     if (parameters.privateBrowsingEnabled)
-        RemoteNetworkingContext::ensurePrivateBrowsingSession(SessionTracker::legacyPrivateSessionID);
+        RemoteNetworkingContext::ensurePrivateBrowsingSession();
 
     if (parameters.shouldUseTestingNetworkSession)
         NetworkStorageSession::switchToNewTestingSession();
@@ -214,14 +212,14 @@ void NetworkProcess::createNetworkConnectionToWebProcess()
 #endif
 }
 
-void NetworkProcess::ensurePrivateBrowsingSession(uint64_t sessionID)
+void NetworkProcess::ensurePrivateBrowsingSession()
 {
-    RemoteNetworkingContext::ensurePrivateBrowsingSession(sessionID);
+    RemoteNetworkingContext::ensurePrivateBrowsingSession();
 }
 
-void NetworkProcess::destroyPrivateBrowsingSession(uint64_t sessionID)
+void NetworkProcess::destroyPrivateBrowsingSession()
 {
-    SessionTracker::destroySession(sessionID);
+    RemoteNetworkingContext::destroyPrivateBrowsingSession();
 }
 
 void NetworkProcess::downloadRequest(uint64_t downloadID, const ResourceRequest& request)

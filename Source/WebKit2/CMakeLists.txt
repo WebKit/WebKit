@@ -204,7 +204,6 @@ set(WebKit2_SOURCES
     Shared/PrintInfo.cpp
     Shared/SecurityOriginData.cpp
     Shared/SessionState.cpp
-    Shared/SessionTracker.cpp
     Shared/ShareableBitmap.cpp
     Shared/ShareableResource.cpp
     Shared/StatisticsData.cpp
@@ -294,7 +293,6 @@ set(WebKit2_SOURCES
     Shared/Plugins/Netscape/PluginInformation.cpp
 
     UIProcess/APINavigationData.cpp
-    UIProcess/APISession.cpp
     UIProcess/BackingStore.cpp
     UIProcess/DrawingAreaProxy.cpp
     UIProcess/FindIndicator.cpp

@@ -26,7 +26,6 @@
 #import "config.h"
 #import "RemoteNetworkingContext.h"
 
-#import "SessionTracker.h"
 #import "WebErrors.h"
 #import <WebCore/ResourceError.h>
 #import <WebKitSystemInterface.h>
@@ -37,6 +36,12 @@ using namespace WebCore;
 
 namespace WebKit {
 
+static std::unique_ptr<NetworkStorageSession>& privateBrowsingStorageSession()
+{
+    ASSERT(isMainThread());
+    static NeverDestroyed<std::unique_ptr<NetworkStorageSession>> session;
+    return session;
+}
 
 RemoteNetworkingContext::~RemoteNetworkingContext()
 {
@@ -60,7 +65,7 @@ bool RemoteNetworkingContext::localFileContentSniffingEnabled() const
 NetworkStorageSession& RemoteNetworkingContext::storageSession() const
 {
     if (m_privateBrowsingEnabled) {
-        NetworkStorageSession* privateSession = SessionTracker::session(SessionTracker::legacyPrivateSessionID).get();
+        NetworkStorageSession* privateSession = privateBrowsingStorageSession().get();
         if (privateSession)
             return *privateSession;
         // Some requests with private browsing mode requested may still be coming shortly after NetworkProcess was told to destroy its session.
@@ -69,6 +74,11 @@ NetworkStorageSession& RemoteNetworkingContext::storageSession() const
     }
 
     return NetworkStorageSession::defaultStorageSession();
+}
+
+NetworkStorageSession* RemoteNetworkingContext::privateBrowsingSession()
+{
+    return privateBrowsingStorageSession().get();
 }
 
 RetainPtr<CFDataRef> RemoteNetworkingContext::sourceApplicationAuditData() const
@@ -81,13 +91,32 @@ ResourceError RemoteNetworkingContext::blockedError(const ResourceRequest& reque
     return WebKit::blockedError(request);
 }
 
-void RemoteNetworkingContext::ensurePrivateBrowsingSession(uint64_t sessionID)
+static String& privateBrowsingStorageSessionIdentifierBase()
 {
-    if (SessionTracker::session(sessionID))
+    ASSERT(isMainThread());
+    static NeverDestroyed<String> base;
+    return base;
+}
+
+void RemoteNetworkingContext::setPrivateBrowsingStorageSessionIdentifierBase(const String& identifier)
+{
+    privateBrowsingStorageSessionIdentifierBase() = identifier;
+}
+
+void RemoteNetworkingContext::ensurePrivateBrowsingSession()
+{
+    if (privateBrowsingStorageSession())
         return;
 
-    ASSERT(!SessionTracker::getIdentifierBase().isNull());
-    SessionTracker::session(sessionID) = NetworkStorageSession::createPrivateBrowsingSession(SessionTracker::getIdentifierBase() + '.' + String::number(sessionID));
+    ASSERT(!privateBrowsingStorageSessionIdentifierBase().isNull());
+    RetainPtr<CFStringRef> cfIdentifier = String(privateBrowsingStorageSessionIdentifierBase() + ".PrivateBrowsing").createCFString();
+
+    privateBrowsingStorageSession() = std::move(NetworkStorageSession::createPrivateBrowsingSession(privateBrowsingStorageSessionIdentifierBase()));
+}
+
+void RemoteNetworkingContext::destroyPrivateBrowsingSession()
+{
+    privateBrowsingStorageSession() = nullptr;
 }
 
 }

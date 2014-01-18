@@ -104,8 +104,8 @@ private:
     void didReceiveNetworkProcessMessage(IPC::Connection*, IPC::MessageDecoder&);
     void initializeNetworkProcess(const NetworkProcessCreationParameters&);
     void createNetworkConnectionToWebProcess();
-    void ensurePrivateBrowsingSession(uint64_t sessionID);
-    void destroyPrivateBrowsingSession(uint64_t sessionID);
+    void ensurePrivateBrowsingSession();
+    void destroyPrivateBrowsingSession();
     void downloadRequest(uint64_t downloadID, const WebCore::ResourceRequest&);
     void cancelDownload(uint64_t downloadID);
     void setCacheModel(uint32_t);

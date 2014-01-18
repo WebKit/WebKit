@@ -149,7 +149,6 @@ public:
 
     StorageManager& storageManager() const { return *m_storageManager; }
 
-    PassRefPtr<WebPageProxy> createWebPage(PageClient&, WebPageGroup*, API::Session&, WebPageProxy* relatedPage = 0);
     PassRefPtr<WebPageProxy> createWebPage(PageClient&, WebPageGroup*, WebPageProxy* relatedPage = 0);
 
     const String& injectedBundlePath() const { return m_injectedBundlePath; }
@@ -292,8 +291,6 @@ public:
 
     static void willStartUsingPrivateBrowsing();
     static void willStopUsingPrivateBrowsing();
-
-    static bool isEphemeralSession(uint64_t sessionID);
 
 #if USE(SOUP)
     void setIgnoreTLSErrors(bool);

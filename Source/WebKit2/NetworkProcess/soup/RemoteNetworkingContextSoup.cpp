@@ -52,14 +52,29 @@ uint64_t RemoteNetworkingContext::initiatingPageID() const
     return 0;
 }
 
-void RemoteNetworkingContext::ensurePrivateBrowsingSession(uint64_t sessionID)
+void RemoteNetworkingContext::setPrivateBrowsingStorageSessionIdentifierBase(const String&)
 {
     notImplemented();
+}
+
+void RemoteNetworkingContext::ensurePrivateBrowsingSession()
+{
+    notImplemented();
+}
+
+void RemoteNetworkingContext::destroyPrivateBrowsingSession()
+{
 }
 
 NetworkStorageSession& RemoteNetworkingContext::storageSession() const
 {
     return NetworkStorageSession::defaultStorageSession();
+}
+
+NetworkStorageSession* RemoteNetworkingContext::privateBrowsingSession()
+{
+    notImplemented();
+    return &NetworkStorageSession::defaultStorageSession();
 }
 
 }

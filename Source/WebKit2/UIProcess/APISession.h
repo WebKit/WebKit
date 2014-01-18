@@ -27,7 +27,6 @@
 #define APISession_h
 
 #include "APIObject.h"
-#include "SessionTracker.h"
 #include <wtf/PassRefPtr.h>
 
 namespace API {
@@ -35,17 +34,12 @@ namespace API {
 class Session : public API::ObjectImpl<API::Object::Type::Session> {
 public:
     static PassRefPtr<Session> create(bool isEphemeral);
-    static Session& defaultSession();
-    static Session& legacyPrivateSession();
-    bool isEphemeral() const;
-    uint64_t getID() const;
+    bool isEphemeral();
     virtual ~Session();
 
 private:
     explicit Session(bool isEphemeral);
-    Session(bool isEphemeral, uint64_t sessionID);
     bool m_isEphemeral;
-    uint64_t m_sessionID;
 };
 
 } // namespace API

@@ -26,61 +26,21 @@
 #include "config.h"
 #include "APISession.h"
 
-#include <wtf/MainThread.h>
-
 namespace API {
-
-static uint64_t generateID(bool isEphemeral)
-{
-    ASSERT(isMainThread());
-
-    static uint64_t uniqueSessionID = WebKit::SessionTracker::legacyPrivateSessionID;
-    ASSERT(isEphemeral);
-    return ++uniqueSessionID;
-}
-
-Session& Session::defaultSession()
-{
-    ASSERT(isMainThread());
-
-    static Session* defaultSession = new Session(false, WebKit::SessionTracker::defaultSessionID);
-    return *defaultSession;
-}
-
-Session& Session::legacyPrivateSession()
-{
-    ASSERT(isMainThread());
-
-    static Session* legacyPrivateSession = new Session(true, WebKit::SessionTracker::legacyPrivateSessionID);
-    return *legacyPrivateSession;
-}
 
 Session::Session(bool isEphemeral)
     : m_isEphemeral(isEphemeral)
-    , m_sessionID(generateID(isEphemeral))
-{
-}
-
-Session::Session(bool isEphemeral, uint64_t sessionID)
-    : m_isEphemeral(isEphemeral)
-    , m_sessionID(sessionID)
 {
 }
 
 PassRefPtr<Session> Session::create(bool isEphemeral)
 {
-    // FIXME: support creation of non-default, non-ephemeral sessions
     return adoptRef(new Session(isEphemeral));
 }
 
-bool Session::isEphemeral() const
+bool Session::isEphemeral()
 {
     return m_isEphemeral;
-}
-
-uint64_t Session::getID() const
-{
-    return m_sessionID;
 }
 
 Session::~Session()
