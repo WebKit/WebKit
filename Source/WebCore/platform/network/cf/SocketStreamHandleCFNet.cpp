@@ -38,6 +38,8 @@
 #include "ProtectionSpace.h"
 #include "SocketStreamError.h"
 #include "SocketStreamHandleClient.h"
+#include <condition_variable>
+#include <mutex>
 #include <wtf/MainThread.h>
 #include <wtf/text/WTFString.h>
 
@@ -125,6 +127,30 @@ CFStringRef SocketStreamHandle::copyPACExecutionDescription(void*)
     return CFSTR("WebSocket proxy PAC file execution");
 }
 
+static void callOnMainThreadAndWait(std::function<void ()> function)
+{
+    if (isMainThread()) {
+        function();
+        return;
+    }
+
+    std::mutex mutex;
+    std::condition_variable conditionVariable;
+
+    bool isFinished = false;
+
+    callOnMainThread([&] {
+        function();
+
+        std::lock_guard<std::mutex> lock(mutex);
+        isFinished = true;
+        conditionVariable.notify_one();
+    });
+
+    std::unique_lock<std::mutex> lock(mutex);
+    conditionVariable.wait(lock, [&] { return isFinished; });
+}
+
 struct MainThreadPACCallbackInfo {
     MainThreadPACCallbackInfo(SocketStreamHandle* handle, CFArrayRef proxyList) : handle(handle), proxyList(proxyList) { }
     RefPtr<SocketStreamHandle> handle;
@@ -134,21 +160,16 @@ struct MainThreadPACCallbackInfo {
 void SocketStreamHandle::pacExecutionCallback(void* client, CFArrayRef proxyList, CFErrorRef)
 {
     SocketStreamHandle* handle = static_cast<SocketStreamHandle*>(client);
-    MainThreadPACCallbackInfo info(handle, proxyList);
-    // If we're already on main thread (e.g. on Mac), callOnMainThreadAndWait() will be just a function call.
-    callOnMainThreadAndWait(pacExecutionCallbackMainThread, &info);
-}
 
-void SocketStreamHandle::pacExecutionCallbackMainThread(void* invocation)
-{
-    MainThreadPACCallbackInfo* info = static_cast<MainThreadPACCallbackInfo*>(invocation);
-    ASSERT(info->handle->m_connectingSubstate == ExecutingPACFile);
-    // This time, the array won't have PAC as a first entry.
-    if (info->handle->m_state != Connecting)
-        return;
-    info->handle->chooseProxyFromArray(info->proxyList);
-    info->handle->createStreams();
-    info->handle->scheduleStreams();
+    callOnMainThreadAndWait([&] {
+        ASSERT(handle->m_connectingSubstate == ExecutingPACFile);
+        // This time, the array won't have PAC as a first entry.
+        if (handle->m_state != Connecting)
+            return;
+        handle->chooseProxyFromArray(proxyList);
+        handle->createStreams();
+        handle->scheduleStreams();
+    });
 }
 
 void SocketStreamHandle::executePACFileURL(CFURLRef pacFileURL)
@@ -399,19 +420,14 @@ CFStringRef SocketStreamHandle::copyCFStreamDescription(void* info)
     return String("WebKit socket stream, " + handle->m_url.string()).createCFString().leakRef();
 }
 
-struct MainThreadEventCallbackInfo {
-    MainThreadEventCallbackInfo(CFStreamEventType type, SocketStreamHandle* handle) : type(type), handle(handle) { }
-    CFStreamEventType type;
-    RefPtr<SocketStreamHandle> handle;
-};
-
 void SocketStreamHandle::readStreamCallback(CFReadStreamRef stream, CFStreamEventType type, void* clientCallBackInfo)
 {
     SocketStreamHandle* handle = static_cast<SocketStreamHandle*>(clientCallBackInfo);
     ASSERT_UNUSED(stream, stream == handle->m_readStream.get());
 #if PLATFORM(WIN)
-    MainThreadEventCallbackInfo info(type, handle);
-    callOnMainThreadAndWait(readStreamCallbackMainThread, &info);
+    callOnMainThreadAndWait([&] {
+        handle->readStreamCallback(type);
+    });
 #else
     ASSERT(isMainThread());
     handle->readStreamCallback(type);
@@ -423,27 +439,14 @@ void SocketStreamHandle::writeStreamCallback(CFWriteStreamRef stream, CFStreamEv
     SocketStreamHandle* handle = static_cast<SocketStreamHandle*>(clientCallBackInfo);
     ASSERT_UNUSED(stream, stream == handle->m_writeStream.get());
 #if PLATFORM(WIN)
-    MainThreadEventCallbackInfo info(type, handle);
-    callOnMainThreadAndWait(writeStreamCallbackMainThread, &info);
+    callOnMainThreadAndWait([&] {
+        handle->writeStreamCallback(type);
+    });
 #else
     ASSERT(isMainThread());
     handle->writeStreamCallback(type);
 #endif
 }
-
-#if PLATFORM(WIN)
-void SocketStreamHandle::readStreamCallbackMainThread(void* invocation)
-{
-    MainThreadEventCallbackInfo* info = static_cast<MainThreadEventCallbackInfo*>(invocation);
-    info->handle->readStreamCallback(info->type);
-}
-
-void SocketStreamHandle::writeStreamCallbackMainThread(void* invocation)
-{
-    MainThreadEventCallbackInfo* info = static_cast<MainThreadEventCallbackInfo*>(invocation);
-    info->handle->writeStreamCallback(info->type);
-}
-#endif // PLATFORM(WIN)
 
 void SocketStreamHandle::readStreamCallback(CFStreamEventType type)
 {

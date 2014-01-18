@@ -194,24 +194,6 @@ void callOnMainThread(MainThreadFunction* function, void* context)
         scheduleDispatchFunctionsOnMainThread();
 }
 
-void callOnMainThreadAndWait(MainThreadFunction* function, void* context)
-{
-    ASSERT(function);
-
-    if (isMainThread()) {
-        function(context);
-        return;
-    }
-
-    ThreadCondition syncFlag;
-    Mutex& functionQueueMutex = mainThreadFunctionQueueMutex();
-    MutexLocker locker(functionQueueMutex);
-    functionQueue().append(FunctionWithContext(function, context, &syncFlag));
-    if (functionQueue().size() == 1)
-        scheduleDispatchFunctionsOnMainThread();
-    syncFlag.wait(functionQueueMutex);
-}
-
 void cancelCallOnMainThread(MainThreadFunction* function, void* context)
 {
     ASSERT(function);

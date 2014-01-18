@@ -66,7 +66,6 @@ private:
     void removePACRunLoopSource();
     RetainPtr<CFRunLoopSourceRef> m_pacRunLoopSource;
     static void pacExecutionCallback(void* client, CFArrayRef proxyList, CFErrorRef error);
-    static void pacExecutionCallbackMainThread(void*);
     static CFStringRef copyPACExecutionDescription(void*);
 
     bool shouldUseSSL() const { return m_url.protocolIs("wss"); }
@@ -79,10 +78,6 @@ private:
     static CFStringRef copyCFStreamDescription(void*);
     static void readStreamCallback(CFReadStreamRef, CFStreamEventType, void*);
     static void writeStreamCallback(CFWriteStreamRef, CFStreamEventType, void*);
-#if PLATFORM(WIN)
-    static void readStreamCallbackMainThread(void*);
-    static void writeStreamCallbackMainThread(void*);
-#endif
     void readStreamCallback(CFStreamEventType);
     void writeStreamCallback(CFStreamEventType);
 

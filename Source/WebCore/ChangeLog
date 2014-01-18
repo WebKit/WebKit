@@ -1,5 +1,23 @@
 2014-01-17  Anders Carlsson  <andersca@apple.com>
 
+        Add a callOnMainThreadAndWait variant in SocketStreamHandle
+        https://bugs.webkit.org/show_bug.cgi?id=127180
+
+        Reviewed by Geoffrey Garen.
+
+        WTF::callOnMainThreadAndWait was only used inside SocketStreamHandleCFNet.cpp, 
+        so add an improved version there which is implemented in terms of callOnMainThread and
+        with the bonus of handling spurious wake-ups correctly (the old version didn't).
+
+        * platform/network/cf/SocketStreamHandle.h:
+        * platform/network/cf/SocketStreamHandleCFNet.cpp:
+        (WebCore::callOnMainThreadAndWait):
+        (WebCore::SocketStreamHandle::pacExecutionCallback):
+        (WebCore::SocketStreamHandle::readStreamCallback):
+        (WebCore::SocketStreamHandle::writeStreamCallback):
+
+2014-01-17  Anders Carlsson  <andersca@apple.com>
+
         Clean up PageCache classes
         https://bugs.webkit.org/show_bug.cgi?id=127202
 
