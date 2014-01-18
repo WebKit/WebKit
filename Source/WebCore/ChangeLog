@@ -1,3 +1,37 @@
+2014-01-18  Alberto Garcia  <berto@igalia.com>
+
+        [CodeGeneratorJS] Sort output of StructureFlags and function parameters
+
+        https://bugs.webkit.org/show_bug.cgi?id=127226
+
+        Reviewed by Alexey Proskuryakov.
+
+        The order of the keys in a hash is undefined and subject to change
+        between different Perl versions, so we have to sort them to make
+        sure that the output is always the same.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateHeader):
+        (GenerateParametersCheckExpression):
+        * bindings/scripts/test/JS/JSTestActiveDOMObject.h:
+        * bindings/scripts/test/JS/JSTestCustomNamedGetter.h:
+        * bindings/scripts/test/JS/JSTestEventConstructor.h:
+        * bindings/scripts/test/JS/JSTestEventTarget.h:
+        * bindings/scripts/test/JS/JSTestException.h:
+        * bindings/scripts/test/JS/JSTestGenerateIsReachable.h:
+        * bindings/scripts/test/JS/JSTestInterface.h:
+        * bindings/scripts/test/JS/JSTestMediaQueryListListener.h:
+        * bindings/scripts/test/JS/JSTestNamedConstructor.h:
+        * bindings/scripts/test/JS/JSTestNode.h:
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        (WebCore::jsTestObjPrototypeFunctionOverloadedMethod):
+        * bindings/scripts/test/JS/JSTestObj.h:
+        * bindings/scripts/test/JS/JSTestOverloadedConstructors.h:
+        * bindings/scripts/test/JS/JSTestSerializedScriptValueInterface.h:
+        * bindings/scripts/test/JS/JSTestTypedefs.h:
+        * bindings/scripts/test/JS/JSattribute.h:
+        * bindings/scripts/test/JS/JSreadonly.h:
+
 2014-01-18  Anders Carlsson  <andersca@apple.com>
 
         Replace a couple of uses of WTF::Function with std::function

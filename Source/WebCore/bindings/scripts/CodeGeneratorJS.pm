@@ -969,7 +969,7 @@ sub GenerateHeader
 
     # structure flags
     push(@headerContent, "    static const unsigned StructureFlags = ");
-    foreach my $structureFlag (keys %structureFlags) {
+    foreach my $structureFlag (sort (keys %structureFlags)) {
         push(@headerContent, $structureFlag . " | ");
     }
     push(@headerContent, "Base::StructureFlags;\n");
@@ -1085,7 +1085,7 @@ sub GenerateHeader
     # structure flags
     push(@headerContent, "protected:\n");
     push(@headerContent, "    static const unsigned StructureFlags = ");
-    foreach my $structureFlag (keys %structureFlags) {
+    foreach my $structureFlag (sort (keys %structureFlags)) {
         push(@headerContent, $structureFlag . " | ");
     }
     push(@headerContent, "Base::StructureFlags;\n");
@@ -1297,7 +1297,7 @@ sub GenerateParametersCheckExpression
     }
     my $res = join(" && ", @andExpression);
     $res = "($res)" if @andExpression > 1;
-    return ($res, keys %usedArguments);
+    return ($res, sort {$a <=> $b} (keys %usedArguments));
 }
 
 # As per Web IDL specification, the length of a function Object is
