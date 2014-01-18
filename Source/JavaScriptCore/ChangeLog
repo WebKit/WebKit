@@ -1,3 +1,64 @@
+2014-01-18  Mark Lam  <mark.lam@apple.com>
+
+        Adding UnlinkedCodeBlock::opDebugBytecodeOffsetForLineAndColumn()..
+        https://bugs.webkit.org/show_bug.cgi?id=127127.
+
+        Reviewed by Geoffrey Garen.
+
+        In order to implement bytecode level breakpoints, we need a mechanism
+        for computing the best fit op_debug bytecode offset for any valid given
+        line and column value in the source. The "best fit" op_debug bytecode
+        in this case is defined below in the comment for
+        UnlinkedCodeBlock::opDebugBytecodeOffsetForLineAndColumn().
+
+        * GNUmakefile.list.am:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj.filters:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::opDebugBytecodeOffsetForLineAndColumn):
+        - Convert the line and column to unlinked line and column values and
+          pass them to UnlinkedCodeBlock::opDebugBytecodeOffsetForLineAndColumn()
+          to do the real work.
+
+        * bytecode/CodeBlock.h:
+        * bytecode/LineColumnInfo.h: Added.
+        (JSC::LineColumnInfo::operator <):
+        (JSC::LineColumnInfo::LineColumnPair::LineColumnPair):
+        (JSC::LineColumnInfo::operator ==):
+        (JSC::LineColumnInfo::operator !=):
+        (JSC::LineColumnInfo::operator <=):
+        (JSC::LineColumnInfo::operator >):
+        (JSC::LineColumnInfo::operator >=):
+        * bytecode/LineInfo.h: Removed.
+
+        * bytecode/UnlinkedCodeBlock.cpp:
+        (JSC::UnlinkedCodeBlock::decodeExpressionRangeLineAndColumn):
+        - Factored this out of expressionRangeForBytecodeOffset() so that it can
+          be called from multiple places.
+        (JSC::dumpLineColumnEntry):
+        (JSC::UnlinkedCodeBlock::dumpExpressionRangeInfo):
+        (JSC::UnlinkedCodeBlock::dumpOpDebugLineColumnInfoList):
+        - Some dumpers for debugging use only.
+        (JSC::UnlinkedCodeBlock::expressionRangeForBytecodeOffset):
+        (JSC::UnlinkedCodeBlock::opDebugBytecodeOffsetForLineAndColumn):
+        - Finds the earliest op_debug bytecode whose line and column matches the
+          specified line and column values. If an exact match is not found, then
+          finds the nearest op_debug bytecode that precedes the specified line
+          and column values. If there are more than one op_debug at that preceding
+          line and column value, then the earliest of those op_debug bytecodes will
+          be be selected. The offset of the selected bytecode will be returned.
+
+          We want the earliest one because when we have multiple op_debug bytecodes
+          that map to a given line and column, a debugger user would expect to break
+          on the first one and step through the rest thereafter if needed.
+
+        (JSC::compareLineColumnInfo):
+        (JSC::UnlinkedCodeBlock::opDebugLineColumnInfoList):
+        - Creates the sorted opDebugLineColumnInfoList on demand. This list is
+          stored in the UnlinkedCodeBlock's rareData.
+        * bytecode/UnlinkedCodeBlock.h:
+
 2014-01-18  Zan Dobersek  <zdobersek@igalia.com>
 
         Inspector scripts are not compatible with Python v3

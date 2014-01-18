@@ -1502,7 +1502,7 @@
     <ClInclude Include="..\bytecode\LazyOperandValueProfile.h">
       <Filter>bytecode</Filter>
     </ClInclude>
-    <ClInclude Include="..\bytecode\LineInfo.h">
+    <ClInclude Include="..\bytecode\LineColumnInfo.h">
       <Filter>bytecode</Filter>
     </ClInclude>
     <ClInclude Include="..\bytecode\LLIntCallLinkInfo.h">

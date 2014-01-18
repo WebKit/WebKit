@@ -33,7 +33,7 @@
 #include "Identifier.h"
 #include "JSCell.h"
 #include "JSString.h"
-#include "LineInfo.h"
+#include "LineColumnInfo.h"
 #include "ParserModes.h"
 #include "RegExp.h"
 #include "SpecialPointer.h"
@@ -42,6 +42,7 @@
 
 #include <wtf/Compression.h>
 #include <wtf/RefCountedArray.h>
+#include <wtf/StdLibExtras.h>
 #include <wtf/Vector.h>
 
 namespace JSC {
@@ -444,6 +445,7 @@ public:
 
     void expressionRangeForBytecodeOffset(unsigned bytecodeOffset, int& divot,
         int& startOffset, int& endOffset, unsigned& line, unsigned& column);
+    unsigned opDebugBytecodeOffsetForLineAndColumn(unsigned& line, unsigned& column);
 
     void recordParse(CodeFeatures features, bool hasCapturedVariables, unsigned firstLine, unsigned lineCount, unsigned endColumn)
     {
@@ -461,6 +463,9 @@ public:
     unsigned lineCount() const { return m_lineCount; }
     ALWAYS_INLINE unsigned startColumn() const { return 0; }
     unsigned endColumn() const { return m_endColumn; }
+
+    void dumpExpressionRangeInfo(); // For debugging purpose only.
+    void dumpOpDebugLineColumnInfoList(); // For debugging purpose only.
 
 protected:
     UnlinkedCodeBlock(VM*, Structure*, CodeType, const ExecutableInfo&);
@@ -481,6 +486,11 @@ private:
         if (!m_rareData)
             m_rareData = adoptPtr(new RareData);
     }
+
+    void getLineAndColumn(ExpressionRangeInfo&, unsigned& line, unsigned& column);
+
+    typedef Vector<LineColumnInfo> LineColumnInfoList;
+    LineColumnInfoList& opDebugLineColumnInfoList();
 
     RefCountedArray<UnlinkedInstruction> m_unlinkedInstructions;
 
@@ -546,6 +556,7 @@ public:
         Vector<UnlinkedStringJumpTable> m_stringSwitchJumpTables;
 
         Vector<ExpressionRangeInfo::FatPosition> m_expressionInfoFatPositions;
+        std::unique_ptr<LineColumnInfoList> m_opDebugLineColumnInfoList;
     };
 
 private:

@@ -37,6 +37,7 @@
 #include "SourceProvider.h"
 #include "Structure.h"
 #include "SymbolTable.h"
+#include <wtf/DataLog.h>
 
 namespace JSC {
 
@@ -256,6 +257,74 @@ int UnlinkedCodeBlock::lineNumberForBytecodeOffset(unsigned bytecodeOffset)
     return line;
 }
 
+inline void UnlinkedCodeBlock::getLineAndColumn(ExpressionRangeInfo& info,
+    unsigned& line, unsigned& column)
+{
+    switch (info.mode) {
+    case ExpressionRangeInfo::FatLineMode:
+        info.decodeFatLineMode(line, column);
+        break;
+    case ExpressionRangeInfo::FatColumnMode:
+        info.decodeFatColumnMode(line, column);
+        break;
+    case ExpressionRangeInfo::FatLineAndColumnMode: {
+        unsigned fatIndex = info.position;
+        ExpressionRangeInfo::FatPosition& fatPos = m_rareData->m_expressionInfoFatPositions[fatIndex];
+        line = fatPos.line;
+        column = fatPos.column;
+        break;
+    }
+    } // switch
+}
+
+#ifndef NDEBUG
+static void dumpLineColumnEntry(size_t index, const RefCountedArray<UnlinkedInstruction>& instructions, unsigned instructionOffset, unsigned line, unsigned column)
+{
+    OpcodeID opcode = instructions[instructionOffset].u.opcode;
+    const char* event = "";
+    if (opcode == op_debug) {
+        switch (instructions[instructionOffset + 1].u.operand) {
+        case WillExecuteProgram: event = " WillExecuteProgram"; break;
+        case DidExecuteProgram: event = " DidExecuteProgram"; break;
+        case DidEnterCallFrame: event = " DidEnterCallFrame"; break;
+        case DidReachBreakpoint: event = " DidReachBreakpoint"; break;
+        case WillLeaveCallFrame: event = " WillLeaveCallFrame"; break;
+        case WillExecuteStatement: event = " WillExecuteStatement"; break;
+        }
+    }
+    dataLogF("  [%zu] pc %u @ line %u col %u : %s%s\n", index, instructionOffset, line, column, opcodeNames[opcode], event);
+}
+
+void UnlinkedCodeBlock::dumpExpressionRangeInfo()
+{
+    Vector<ExpressionRangeInfo>& expressionInfo = m_expressionInfo;
+
+    size_t size = m_expressionInfo.size();
+    dataLogF("UnlinkedCodeBlock %p expressionRangeInfo[%zu] {\n", this, size);
+    for (size_t i = 0; i < size; i++) {
+        ExpressionRangeInfo& info = expressionInfo[i];
+        unsigned line;
+        unsigned column;
+        getLineAndColumn(info, line, column);
+        dumpLineColumnEntry(i, instructions(), info.instructionOffset, line, column);
+    }
+    dataLog("}\n");
+}
+
+void UnlinkedCodeBlock::dumpOpDebugLineColumnInfoList()
+{
+    LineColumnInfoList& infoList = this->opDebugLineColumnInfoList();
+    size_t size = infoList.size();
+
+    dataLogF("UnlinkedCodeBlock %p opDebugLineColumnInfoList[%zu] {\n", this, size);
+    for (size_t i = 0; i < size; i++) {
+        LineColumnInfo& info = infoList[i];
+        dumpLineColumnEntry(i, instructions(), info.instructionOffset, info.line, info.column);
+    }
+    dataLog("}\n");
+}
+#endif
+
 void UnlinkedCodeBlock::expressionRangeForBytecodeOffset(unsigned bytecodeOffset,
     int& divot, int& startOffset, int& endOffset, unsigned& line, unsigned& column)
 {
@@ -289,22 +358,78 @@ void UnlinkedCodeBlock::expressionRangeForBytecodeOffset(unsigned bytecodeOffset
     startOffset = info.startOffset;
     endOffset = info.endOffset;
     divot = info.divotPoint;
+    getLineAndColumn(info, line, column);
+}
 
-    switch (info.mode) {
-    case ExpressionRangeInfo::FatLineMode:
-        info.decodeFatLineMode(line, column);
-        break;
-    case ExpressionRangeInfo::FatColumnMode:
-        info.decodeFatColumnMode(line, column);
-        break;
-    case ExpressionRangeInfo::FatLineAndColumnMode: {
-        unsigned fatIndex = info.position;
-        ExpressionRangeInfo::FatPosition& fatPos = m_rareData->m_expressionInfoFatPositions[fatIndex];
-        line = fatPos.line;
-        column = fatPos.column;
-        break;
+unsigned UnlinkedCodeBlock::opDebugBytecodeOffsetForLineAndColumn(unsigned& line, unsigned& column)
+{
+    if (!m_expressionInfo.size())
+        return static_cast<unsigned>(WTF::notFound);
+
+    LineColumnInfo::LineColumnPair target(line, column);
+    LineColumnInfoList& list = opDebugLineColumnInfoList();
+
+    // Find the earliest op_debug bytecode whose line and column matches the
+    // target line and column values. If an exact match is not found, then
+    // find the nearest op_debug bytecode that precedes the target line and
+    // column values. If there are more than one op_debug at that preceding
+    // line and column value, then select the earliest of those.
+    //
+    // We want the earliest one because when we have multiple op_debug bytecodes
+    // that map to a given line and column, a debugger user would expect to break
+    // on the first one and step through the rest thereafter if needed.
+
+    LineColumnInfoList::iterator it = std::lower_bound(list.begin(), list.end(), target);
+    if (it == list.end() || *it > target)
+        --it;
+    ASSERT(it >= list.begin() && it < list.end() && *it <= target);
+    ASSERT(it == list.begin() || *(it - 1) < *it);
+
+    line = it->line;
+    column = it->column;
+
+    unsigned offset = it->instructionOffset;
+    ASSERT(instructions()[offset].u.opcode == op_debug);
+
+    return offset;
+}
+
+static bool compareLineColumnInfo(const LineColumnInfo& first, const LineColumnInfo& second)
+{
+    return first < second;
+}
+
+UnlinkedCodeBlock::LineColumnInfoList& UnlinkedCodeBlock::opDebugLineColumnInfoList()
+{
+    createRareDataIfNecessary();
+
+    if (m_rareData->m_opDebugLineColumnInfoList) {
+        ASSERT(m_rareData->m_opDebugLineColumnInfoList->size() <= m_expressionInfo.size());
+        return *m_rareData->m_opDebugLineColumnInfoList;
     }
-    } // switch
+
+    Vector<ExpressionRangeInfo>& expressionInfo = m_expressionInfo;
+    size_t size = m_expressionInfo.size();
+
+    m_rareData->m_opDebugLineColumnInfoList = std::make_unique<LineColumnInfoList>();
+    LineColumnInfoList& infoList = *m_rareData->m_opDebugLineColumnInfoList;
+
+    for (size_t src = 0; src < size; src++) {
+        ExpressionRangeInfo& exprInfo = expressionInfo[src];
+        unsigned instructionOffset = exprInfo.instructionOffset;
+        OpcodeID opcode = instructions()[instructionOffset].u.opcode;
+        if (opcode == op_debug) {
+            LineColumnInfo info;
+            info.instructionOffset = instructionOffset;
+            getLineAndColumn(exprInfo, info.line, info.column);
+            infoList.append(info);
+        }
+    }
+    infoList.shrinkToFit();
+
+    std::sort(infoList.begin(), infoList.end(), compareLineColumnInfo);
+
+    return *m_rareData->m_opDebugLineColumnInfoList.get();
 }
 
 void UnlinkedCodeBlock::addExpressionInfo(unsigned instructionOffset,

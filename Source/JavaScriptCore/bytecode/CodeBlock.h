@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2009, 2010, 2011, 2012, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2008, 2009, 2010, 2011, 2012, 2013, 2014 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Cameron Zwarich <cwzwarich@uwaterloo.ca>
  *
  * Redistribution and use in source and binary forms, with or without
@@ -65,7 +65,6 @@
 #include "JumpTable.h"
 #include "LLIntCallLinkInfo.h"
 #include "LazyOperandValueProfile.h"
-#include "LineInfo.h"
 #include "ProfilerCompilation.h"
 #include "RegExpObject.h"
 #include "StructureStubInfo.h"
@@ -175,6 +174,7 @@ public:
     unsigned columnNumberForBytecodeOffset(unsigned bytecodeOffset);
     void expressionRangeForBytecodeOffset(unsigned bytecodeOffset, int& divot,
                                           int& startOffset, int& endOffset, unsigned& line, unsigned& column);
+    unsigned opDebugBytecodeOffsetForLineAndColumn(unsigned& line, unsigned& column);
 
 #if ENABLE(JIT)
     StructureStubInfo* addStubInfo();

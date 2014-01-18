@@ -152,7 +152,7 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/bytecode/LLIntCallLinkInfo.h \
 	Source/JavaScriptCore/bytecode/LazyOperandValueProfile.cpp \
 	Source/JavaScriptCore/bytecode/LazyOperandValueProfile.h \
-	Source/JavaScriptCore/bytecode/LineInfo.h \
+	Source/JavaScriptCore/bytecode/LineColumnInfo.h \
 	Source/JavaScriptCore/bytecode/MethodOfGettingAValueProfile.cpp \
 	Source/JavaScriptCore/bytecode/MethodOfGettingAValueProfile.h \
 	Source/JavaScriptCore/bytecode/ObjectAllocationProfile.h \

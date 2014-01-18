@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2009, 2010, 2012, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2008, 2009, 2010, 2012, 2013, 2014 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Cameron Zwarich <cwzwarich@uwaterloo.ca>
  *
  * Redistribution and use in source and binary forms, with or without
@@ -2563,6 +2563,23 @@ void CodeBlock::expressionRangeForBytecodeOffset(unsigned bytecodeOffset, int& d
     divot += m_sourceOffset;
     column += line ? 1 : firstLineColumnOffset();
     line += m_ownerExecutable->lineNo();
+}
+
+unsigned CodeBlock::opDebugBytecodeOffsetForLineAndColumn(unsigned& line, unsigned& column)
+{
+    unsigned lineAdjustment = m_ownerExecutable->lineNo();
+    ASSERT(line >= lineAdjustment);
+    unsigned unlinkedLine = line - lineAdjustment;
+    unsigned columnAdjustment = unlinkedLine ? 1 : firstLineColumnOffset();
+    ASSERT(column >= columnAdjustment);
+    unsigned unlinkedColumn = column - columnAdjustment;
+
+    unsigned bytecodeOffset = m_unlinkedCode->opDebugBytecodeOffsetForLineAndColumn(unlinkedLine, unlinkedColumn);
+    if (bytecodeOffset != static_cast<unsigned>(WTF::notFound)) {
+        line = unlinkedLine + lineAdjustment;
+        column = unlinkedColumn + (unlinkedLine ? 1 : firstLineColumnOffset());
+    }
+    return bytecodeOffset;
 }
 
 void CodeBlock::shrinkToFit(ShrinkMode shrinkMode)

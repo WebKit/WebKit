@@ -65,7 +65,6 @@
 		0F0B83A714BCF50700885B4F /* CodeType.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F0B83A514BCF50400885B4F /* CodeType.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F0B83A914BCF56200885B4F /* HandlerInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F0B83A814BCF55E00885B4F /* HandlerInfo.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F0B83AB14BCF5BB00885B4F /* ExpressionRangeInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F0B83AA14BCF5B900885B4F /* ExpressionRangeInfo.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		0F0B83AD14BCF60400885B4F /* LineInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F0B83AC14BCF60200885B4F /* LineInfo.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F0B83B014BCF71600885B4F /* CallLinkInfo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F0B83AE14BCF71400885B4F /* CallLinkInfo.cpp */; };
 		0F0B83B114BCF71800885B4F /* CallLinkInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F0B83AF14BCF71400885B4F /* CallLinkInfo.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F0B83B914BCF95F00885B4F /* CallReturnOffsetToBytecodeOffset.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F0B83B814BCF95B00885B4F /* CallReturnOffsetToBytecodeOffset.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -1313,6 +1312,7 @@
 		E49DC16D12EF295300184A1F /* SourceProviderCacheItem.h in Headers */ = {isa = PBXBuildFile; fileRef = E49DC14912EF261A00184A1F /* SourceProviderCacheItem.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FE20CE9D15F04A9500DF3430 /* LLIntCLoop.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FE20CE9B15F04A9500DF3430 /* LLIntCLoop.cpp */; };
 		FE20CE9E15F04A9500DF3430 /* LLIntCLoop.h in Headers */ = {isa = PBXBuildFile; fileRef = FE20CE9C15F04A9500DF3430 /* LLIntCLoop.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		FE37DD56183C1E880018B2F0 /* LineColumnInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = FE37DD55183C1E880018B2F0 /* LineColumnInfo.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FE4A331F15BD2E07006F54F3 /* VMInspector.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FE4A331D15BD2E07006F54F3 /* VMInspector.cpp */; };
 		FE4A332015BD2E07006F54F3 /* VMInspector.h in Headers */ = {isa = PBXBuildFile; fileRef = FE4A331E15BD2E07006F54F3 /* VMInspector.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FE5932A7183C5A2600A1ECCC /* VMEntryScope.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FE5932A5183C5A2600A1ECCC /* VMEntryScope.cpp */; };
@@ -1435,7 +1435,6 @@
 		0F0B83A514BCF50400885B4F /* CodeType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CodeType.h; sourceTree = "<group>"; };
 		0F0B83A814BCF55E00885B4F /* HandlerInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HandlerInfo.h; sourceTree = "<group>"; };
 		0F0B83AA14BCF5B900885B4F /* ExpressionRangeInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ExpressionRangeInfo.h; sourceTree = "<group>"; };
-		0F0B83AC14BCF60200885B4F /* LineInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LineInfo.h; sourceTree = "<group>"; };
 		0F0B83AE14BCF71400885B4F /* CallLinkInfo.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CallLinkInfo.cpp; sourceTree = "<group>"; };
 		0F0B83AF14BCF71400885B4F /* CallLinkInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CallLinkInfo.h; sourceTree = "<group>"; };
 		0F0B83B814BCF95B00885B4F /* CallReturnOffsetToBytecodeOffset.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CallReturnOffsetToBytecodeOffset.h; sourceTree = "<group>"; };
@@ -2723,6 +2722,7 @@
 		F692A8870255597D01FF60F7 /* JSCJSValue.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSCJSValue.cpp; sourceTree = "<group>"; tabWidth = 8; };
 		FE20CE9B15F04A9500DF3430 /* LLIntCLoop.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = LLIntCLoop.cpp; path = llint/LLIntCLoop.cpp; sourceTree = "<group>"; };
 		FE20CE9C15F04A9500DF3430 /* LLIntCLoop.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LLIntCLoop.h; path = llint/LLIntCLoop.h; sourceTree = "<group>"; };
+		FE37DD55183C1E880018B2F0 /* LineColumnInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LineColumnInfo.h; sourceTree = "<group>"; };
 		FE4A331D15BD2E07006F54F3 /* VMInspector.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VMInspector.cpp; sourceTree = "<group>"; };
 		FE4A331E15BD2E07006F54F3 /* VMInspector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VMInspector.h; sourceTree = "<group>"; };
 		FE5932A5183C5A2600A1ECCC /* VMEntryScope.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VMEntryScope.cpp; sourceTree = "<group>"; };
@@ -4230,6 +4230,7 @@
 		969A078F0ED1D3AE00F1F681 /* bytecode */ = {
 			isa = PBXGroup;
 			children = (
+				FE37DD55183C1E880018B2F0 /* LineColumnInfo.h */,
 				0F8335B41639C1E3001443B5 /* ArrayAllocationProfile.cpp */,
 				0F8335B51639C1E3001443B5 /* ArrayAllocationProfile.h */,
 				0F63945115D07051006A597C /* ArrayProfile.cpp */,
@@ -4280,7 +4281,6 @@
 				BCFD8C910EEB2EE700283848 /* JumpTable.h */,
 				0FB5467814F5C468002C2989 /* LazyOperandValueProfile.cpp */,
 				0FB5467614F59AD1002C2989 /* LazyOperandValueProfile.h */,
-				0F0B83AC14BCF60200885B4F /* LineInfo.h */,
 				0F0FC45814BD15F100B81154 /* LLIntCallLinkInfo.h */,
 				0FB5467C14F5CFD3002C2989 /* MethodOfGettingAValueProfile.cpp */,
 				0FB5467A14F5C7D4002C2989 /* MethodOfGettingAValueProfile.h */,
@@ -4471,6 +4471,7 @@
 				C2FCAE1117A9C24E0034C735 /* BytecodeBasicBlock.h in Headers */,
 				A532439418569709002ED692 /* generate-combined-inspector-json.py in Headers */,
 				C2FCAE1317A9C24E0034C735 /* BytecodeLivenessAnalysis.h in Headers */,
+				FE37DD56183C1E880018B2F0 /* LineColumnInfo.h in Headers */,
 				0F8335B81639C1EA001443B5 /* ArrayAllocationProfile.h in Headers */,
 				A5840E29187CA5E600843B10 /* inline-and-minify-stylesheets-and-scripts.py in Headers */,
 				A5840E2B187CA75B00843B10 /* jsmin.py in Headers */,
@@ -4936,7 +4937,6 @@
 				BC18C4310E16F5CD00B34460 /* Lexer.h in Headers */,
 				BC18C52E0E16FCE100B34460 /* Lexer.lut.h in Headers */,
 				A513E5CB185F9624007E95AD /* InjectedScriptManager.h in Headers */,
-				0F0B83AD14BCF60400885B4F /* LineInfo.h in Headers */,
 				86D3B3C310159D7F002865E7 /* LinkBuffer.h in Headers */,
 				0F431738146BAC69007E3890 /* ListableHandler.h in Headers */,
 				A7E2EA6B0FB460CF00601F06 /* LiteralParser.h in Headers */,
