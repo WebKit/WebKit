@@ -4119,12 +4119,6 @@
     <ClCompile Include="..\html\forms\FileIconLoader.cpp">
       <Filter>html\forms</Filter>
     </ClCompile>
-    <ClCompile Include="..\html\parser\BackgroundHTMLInputStream.cpp">
-      <Filter>html\parser</Filter>
-    </ClCompile>
-    <ClCompile Include="..\html\parser\BackgroundHTMLParser.cpp">
-      <Filter>html\parser</Filter>
-    </ClCompile>
     <ClCompile Include="..\html\parser\CompactHTMLToken.cpp">
       <Filter>html\parser</Filter>
     </ClCompile>
@@ -5196,9 +5190,6 @@
     </ClCompile>
     <ClCompile Include="..\rendering\HitTestLocation.cpp">
       <Filter>rendering</Filter>
-    </ClCompile>
-    <ClCompile Include="..\html\parser\HTMLIdentifier.cpp">
-      <Filter>html\parser</Filter>
     </ClCompile>
     <ClCompile Include="..\Modules\quota\NavigatorStorageQuota.cpp">
       <Filter>Modules\quota</Filter>
@@ -11244,9 +11235,6 @@
       <Filter>html\forms</Filter>
     </ClInclude>
     <ClInclude Include="..\html\parser\AtomicHTMLToken.h">
-      <Filter>html\parser</Filter>
-    </ClInclude>
-    <ClInclude Include="..\html\parser\BackgroundHTMLParser.h">
       <Filter>html\parser</Filter>
     </ClInclude>
     <ClInclude Include="..\html\parser\CompactHTMLToken.h">

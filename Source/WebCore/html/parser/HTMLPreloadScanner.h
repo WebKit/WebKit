@@ -28,7 +28,6 @@
 #define HTMLPreloadScanner_h
 
 #include "CSSPreloadScanner.h"
-#include "CompactHTMLToken.h"
 #include "HTMLToken.h"
 #include "SegmentedString.h"
 #include <wtf/Vector.h>

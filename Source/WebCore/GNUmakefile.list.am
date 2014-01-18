@@ -3577,14 +3577,8 @@ webcore_sources += \
 	Source/WebCore/html/NumberInputType.cpp \
 	Source/WebCore/html/NumberInputType.h \
 	Source/WebCore/html/parser/AtomicHTMLToken.h \
-	Source/WebCore/html/parser/BackgroundHTMLInputStream.cpp \
-	Source/WebCore/html/parser/BackgroundHTMLInputStream.h \
-	Source/WebCore/html/parser/BackgroundHTMLParser.cpp \
-	Source/WebCore/html/parser/BackgroundHTMLParser.h \
 	Source/WebCore/html/parser/CSSPreloadScanner.cpp \
 	Source/WebCore/html/parser/CSSPreloadScanner.h \
-	Source/WebCore/html/parser/CompactHTMLToken.cpp \
-	Source/WebCore/html/parser/CompactHTMLToken.h \
 	Source/WebCore/html/parser/HTMLConstructionSite.cpp \
 	Source/WebCore/html/parser/HTMLConstructionSite.h \
 	Source/WebCore/html/parser/HTMLDocumentParser.cpp \
@@ -3598,8 +3592,6 @@ webcore_sources += \
 	Source/WebCore/html/parser/HTMLEntityTable.h \
 	Source/WebCore/html/parser/HTMLFormattingElementList.cpp \
 	Source/WebCore/html/parser/HTMLFormattingElementList.h \
-	Source/WebCore/html/parser/HTMLIdentifier.cpp \
-	Source/WebCore/html/parser/HTMLIdentifier.h \
 	Source/WebCore/html/parser/HTMLInputStream.h \
 	Source/WebCore/html/parser/HTMLMetaCharsetParser.cpp \
 	Source/WebCore/html/parser/HTMLMetaCharsetParser.h \
@@ -3626,8 +3618,6 @@ webcore_sources += \
 	Source/WebCore/html/parser/HTMLTokenizer.h \
 	Source/WebCore/html/parser/HTMLTreeBuilder.cpp \
 	Source/WebCore/html/parser/HTMLTreeBuilder.h \
-	Source/WebCore/html/parser/HTMLTreeBuilderSimulator.cpp \
-	Source/WebCore/html/parser/HTMLTreeBuilderSimulator.h \
 	Source/WebCore/html/parser/HTMLViewSourceParser.cpp \
 	Source/WebCore/html/parser/HTMLViewSourceParser.h \
 	Source/WebCore/html/parser/InputStreamPreprocessor.h \

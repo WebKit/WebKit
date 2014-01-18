@@ -6578,7 +6578,6 @@
     <ClCompile Include="..\html\canvas\WebGLTexture.cpp" />
     <ClCompile Include="..\html\canvas\WebGLUniformLocation.cpp" />
     <ClCompile Include="..\html\canvas\WebGLVertexArrayObjectOES.cpp" />
-    <ClCompile Include="..\html\parser\HTMLIdentifier.cpp" />
     <ClCompile Include="..\html\track\AudioTrack.cpp" />
     <ClCompile Include="..\html\track\AudioTrackList.cpp" />
     <ClCompile Include="..\html\track\TextTrackCueGeneric.cpp" />
@@ -15699,9 +15698,6 @@
     <ClCompile Include="..\html\ValidationMessage.cpp" />
     <ClCompile Include="..\html\WeekInputType.cpp" />
     <ClCompile Include="..\html\forms\FileIconLoader.cpp" />
-    <ClCompile Include="..\html\parser\BackgroundHTMLInputStream.cpp" />
-    <ClCompile Include="..\html\parser\BackgroundHTMLParser.cpp" />
-    <ClCompile Include="..\html\parser\CompactHTMLToken.cpp" />
     <ClCompile Include="..\html\parser\CSSPreloadScanner.cpp" />
     <ClCompile Include="..\html\parser\HTMLConstructionSite.cpp" />
     <ClCompile Include="..\html\parser\HTMLDocumentParser.cpp" />
@@ -20573,8 +20569,6 @@
     <ClInclude Include="..\html\WeekInputType.h" />
     <ClInclude Include="..\html\forms\FileIconLoader.h" />
     <ClInclude Include="..\html\parser\AtomicHTMLToken.h" />
-    <ClInclude Include="..\html\parser\BackgroundHTMLParser.h" />
-    <ClInclude Include="..\html\parser\CompactHTMLToken.h" />
     <ClInclude Include="..\html\parser\CSSPreloadScanner.h" />
     <ClInclude Include="..\html\parser\HTMLConstructionSite.h" />
     <ClInclude Include="..\html\parser\HTMLDocumentParser.h" />

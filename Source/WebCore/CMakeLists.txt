@@ -1537,17 +1537,13 @@ set(WebCore_SOURCES
 
     html/forms/FileIconLoader.cpp
 
-    html/parser/BackgroundHTMLInputStream.cpp
-    html/parser/BackgroundHTMLParser.cpp
     html/parser/CSSPreloadScanner.cpp
-    html/parser/CompactHTMLToken.cpp
     html/parser/HTMLConstructionSite.cpp
     html/parser/HTMLDocumentParser.cpp
     html/parser/HTMLElementStack.cpp
     html/parser/HTMLEntityParser.cpp
     html/parser/HTMLEntitySearch.cpp
     html/parser/HTMLFormattingElementList.cpp
-    html/parser/HTMLIdentifier.cpp
     html/parser/HTMLMetaCharsetParser.cpp
     html/parser/HTMLParserIdioms.cpp
     html/parser/HTMLParserOptions.cpp
@@ -1559,7 +1555,6 @@ set(WebCore_SOURCES
     html/parser/HTMLSourceTracker.cpp
     html/parser/HTMLTokenizer.cpp
     html/parser/HTMLTreeBuilder.cpp
-    html/parser/HTMLTreeBuilderSimulator.cpp
     html/parser/HTMLViewSourceParser.cpp
     html/parser/TextDocumentParser.cpp
     html/parser/TextViewSourceParser.cpp

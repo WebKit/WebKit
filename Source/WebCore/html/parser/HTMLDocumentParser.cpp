@@ -26,7 +26,6 @@
 #include "config.h"
 #include "HTMLDocumentParser.h"
 
-#include "BackgroundHTMLParser.h"
 #include "ContentSecurityPolicy.h"
 #include "DocumentFragment.h"
 #include "DocumentLoader.h"

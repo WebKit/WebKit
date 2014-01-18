@@ -26,9 +26,7 @@
 #ifndef HTMLDocumentParser_h
 #define HTMLDocumentParser_h
 
-#include "BackgroundHTMLInputStream.h"
 #include "CachedResourceClient.h"
-#include "CompactHTMLToken.h"
 #include "FragmentScriptingPermission.h"
 #include "HTMLInputStream.h"
 #include "HTMLParserOptions.h"
@@ -37,7 +35,6 @@
 #include "HTMLSourceTracker.h"
 #include "HTMLToken.h"
 #include "HTMLTokenizer.h"
-#include "HTMLTreeBuilderSimulator.h"
 #include "ScriptableDocumentParser.h"
 #include "SegmentedString.h"
 #include "XSSAuditor.h"
