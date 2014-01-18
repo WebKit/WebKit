@@ -1,3 +1,27 @@
+2014-01-18  Andreas Kling  <akling@apple.com>
+
+        CodeBlock: Size m_exceptionHandlers to fit from creation.
+        <https://webkit.org/b/127234>
+
+        Avoid allocation churn for CodeBlock::m_exceptionHandlers.
+
+        Reviewed by Anders Carlsson.
+
+        * bytecode/CodeBlock.h:
+
+            Removed unused CodeBlock::allocateHandlers() function.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::CodeBlock):
+
+            Use resizeToFit() instead of grow() for m_exceptionHandlers
+            since we know it's never going to change size.
+
+        (JSC::CodeBlock::shrinkToFit):
+
+            No need to shrink m_exceptionHandlers here since it's already
+            the perfect size.
+
 2014-01-18  Mark Lam  <mark.lam@apple.com>
 
         Add a hasBreakpointFlag arg to the op_debug bytecode.

@@ -1601,7 +1601,7 @@ CodeBlock::CodeBlock(ScriptExecutable* ownerExecutable, UnlinkedCodeBlock* unlin
             }
         }
         if (size_t count = unlinkedCodeBlock->numberOfExceptionHandlers()) {
-            m_rareData->m_exceptionHandlers.grow(count);
+            m_rareData->m_exceptionHandlers.resizeToFit(count);
             size_t nonLocalScopeDepth = scope->depth();
             for (size_t i = 0; i < count; i++) {
                 const UnlinkedHandlerInfo& handler = unlinkedCodeBlock->exceptionHandler(i);
@@ -2601,9 +2601,6 @@ void CodeBlock::shrinkToFit(ShrinkMode shrinkMode)
             m_rareData->m_stringSwitchJumpTables.shrinkToFit();
         }
     } // else don't shrink these, because we would have already pointed pointers into these tables.
-
-    if (m_rareData)
-        m_rareData->m_exceptionHandlers.shrinkToFit();
 }
 
 void CodeBlock::createActivation(CallFrame* callFrame)

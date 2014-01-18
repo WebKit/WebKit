@@ -545,21 +545,6 @@ public:
     // Exception handling support
 
     size_t numberOfExceptionHandlers() const { return m_rareData ? m_rareData->m_exceptionHandlers.size() : 0; }
-    void allocateHandlers(const Vector<UnlinkedHandlerInfo>& unlinkedHandlers)
-    {
-        size_t count = unlinkedHandlers.size();
-        if (!count)
-            return;
-        createRareDataIfNecessary();
-        m_rareData->m_exceptionHandlers.resize(count);
-        for (size_t i = 0; i < count; ++i) {
-            m_rareData->m_exceptionHandlers[i].start = unlinkedHandlers[i].start;
-            m_rareData->m_exceptionHandlers[i].end = unlinkedHandlers[i].end;
-            m_rareData->m_exceptionHandlers[i].target = unlinkedHandlers[i].target;
-            m_rareData->m_exceptionHandlers[i].scopeDepth = unlinkedHandlers[i].scopeDepth;
-        }
-
-    }
     HandlerInfo& exceptionHandler(int index) { RELEASE_ASSERT(m_rareData); return m_rareData->m_exceptionHandlers[index]; }
 
     bool hasExpressionInfo() { return m_unlinkedCode->hasExpressionInfo(); }
