@@ -1213,9 +1213,9 @@ static Eina_Bool _ewk_view_smart_repaints_process(Ewk_View_Smart_Data* smartData
 #if ENABLE(INSPECTOR)
     WebCore::Page* page = EWKPrivate::corePage(smartData->self);
     if (page) {
-        WebCore::InspectorController* controller = page->inspectorController();
-        if (controller->highlightedNode())
-            controller->drawHighlight(*context->graphicContext);
+        WebCore::InspectorController& controller = page->inspectorController();
+        if (controller.highlightedNode())
+            controller.drawHighlight(*context->graphicContext);
     }
 #endif
 

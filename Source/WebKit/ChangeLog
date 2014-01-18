@@ -1,5 +1,11 @@
 2014-01-18  Brian Burg  <bburg@apple.com>
 
+        Another build fix attempt for Windows and EFL WebKit1.
+
+        * WebKit.vcxproj/WebKitExportGenerator/WebKitExports.def.in:
+
+2014-01-18  Brian Burg  <bburg@apple.com>
+
         Unreviewed build fix attempt for Windows.
 
         * WebKit.vcxproj/WebKitExportGenerator/WebKitExports.def.in:

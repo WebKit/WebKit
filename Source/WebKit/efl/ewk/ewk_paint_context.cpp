@@ -194,9 +194,9 @@ void ewk_paint_context_paint_contents(Ewk_Paint_Context* context, WebCore::Frame
 #if ENABLE(INSPECTOR)
     WebCore::Page* page = view->frame().page();
     if (page) {
-        WebCore::InspectorController* controller = page->inspectorController();
-        if (controller->highlightedNode())
-            controller->drawHighlight(*context->graphicContext);
+        WebCore::InspectorController& controller = page->inspectorController();
+        if (controller.highlightedNode())
+            controller.drawHighlight(*context->graphicContext);
     }
 #endif
 }

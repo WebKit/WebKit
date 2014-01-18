@@ -1,5 +1,14 @@
 2014-01-18  Brian Burg  <bburg@apple.com>
 
+        Another build fix attempt for Windows and EFL WebKit1.
+
+        * ewk/ewk_paint_context.cpp:
+        (ewk_paint_context_paint_contents):
+        * ewk/ewk_view.cpp:
+        (_ewk_view_smart_repaints_process):
+
+2014-01-18  Brian Burg  <bburg@apple.com>
+
         Web Inspector: Page should use std::unique_ptr for InspectorController
         https://bugs.webkit.org/show_bug.cgi?id=127068
 
