@@ -1,3 +1,18 @@
+2014-01-17  Andreas Kling  <akling@apple.com>
+
+        Micro-optimize RenderBoxModelObject::computedCSSPadding().
+        <https://webkit.org/b/127208>
+
+        Make computedCSSPadding() take the Length as a const reference
+        to avoid creating a temporary copy. This was showing up (0.2%)
+        on DoYouEvenBench.
+
+        Reviewed by Anders Carlsson.
+
+        * rendering/RenderBoxModelObject.h:
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::computedCSSPadding):
+
 2014-01-17  Anders Carlsson  <andersca@apple.com>
 
         Add a callOnMainThreadAndWait variant in SocketStreamHandle
