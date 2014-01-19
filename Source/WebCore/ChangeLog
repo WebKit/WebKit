@@ -1,3 +1,20 @@
+2014-01-18  Andy Estes  <aestes@apple.com>
+
+        [iOS] Rename GestureEventIOS.{cpp,h} to GestureEvent.{cpp,h} to fix the build
+
+        InFilesCompiler.pm assumes that <interface name>.h exists for each
+        interface it processes. We renamed GestureEvent.h to GestureEventIOS.h
+        but kept the interface named GestureEvent, so a non-existant file was
+        being referenced by InFilesCompiler.pm (this was hard to detect since
+        GestureEvent.h still existed in the SDK due to not having submitted
+        WebKitAdditions recently).
+
+        Since we cannot rename the GestureEvent interface, and since there is
+        no conflicting GestureEvent in open source, we can just rename
+        GestureEventIOS.{cpp,h} back to GestureEvent.{cpp,h}.
+
+        * dom/ios/TouchEvents.cpp: Updated to include GestureEvent.cpp.
+
 2014-01-18  Alexey Proskuryakov  <ap@apple.com>
 
         Memory leak in JSSubtleCrypto::wrapKey
