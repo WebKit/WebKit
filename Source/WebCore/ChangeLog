@@ -1,3 +1,9 @@
+2014-01-18  Andy Estes  <aestes@apple.com>
+
+        Fix the iOS Production build.
+
+        * Configurations/WebCore.xcconfig:
+
 2014-01-18  Alberto Garcia  <berto@igalia.com>
 
         [CodeGeneratorJS] Sort output of StructureFlags and function parameters
