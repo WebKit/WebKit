@@ -1,3 +1,14 @@
+2014-01-19  Alberto Garcia  <berto@igalia.com>
+
+        Does not build with SVG disabled
+        https://bugs.webkit.org/show_bug.cgi?id=127248
+
+        Reviewed by Sam Weinig.
+
+        Add missing #if ENABLE(SVG) guard.
+
+        * dom/ElementData.h:
+
 2014-01-19  Anders Carlsson  <andersca@apple.com>
 
         Use a strong enum for HTMLTreeBuilder::InsertionMode
