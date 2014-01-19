@@ -2,6 +2,60 @@
 
         Unreviewed Apple Windows port gardering.
 
+        Add missing newlines.
+
+        * platform/win/css1/box_properties/margin_right-expected.txt:
+        * platform/win/css1/box_properties/padding-expected.txt:
+        * platform/win/css1/box_properties/padding_left-expected.txt:
+        * platform/win/css1/box_properties/padding_right-expected.txt:
+        * platform/win/css1/box_properties/padding_top-expected.txt:
+        * platform/win/css1/font_properties/font-expected.txt:
+        * platform/win/css1/formatting_model/vertical_formatting-expected.txt:
+        * platform/win/css2.1/t080301-c411-vt-mrgn-00-b-expected.txt:
+        * platform/win/css2.1/t0804-c5507-padn-r-00-c-ag-expected.txt:
+        * platform/win/css2.1/t0804-c5509-padn-l-00-b-ag-expected.txt:
+        * platform/win/css2.1/t0804-c5510-padn-00-b-ag-expected.txt:
+        * platform/win/css2.1/t0905-c414-flt-wrap-00-e-expected.txt:
+        * platform/win/css2.1/t0905-c5525-fltwidth-00-c-g-expected.txt:
+        * platform/win/editing/selection/vertical-lr-ltr-extend-line-backward-br-expected.txt:
+        * platform/win/editing/selection/vertical-lr-ltr-extend-line-forward-br-expected.txt:
+        * platform/win/editing/selection/vertical-rl-ltr-extend-line-backward-br-expected.txt:
+        * platform/win/editing/selection/vertical-rl-ltr-extend-line-backward-p-expected.txt:
+        * platform/win/editing/selection/vertical-rl-ltr-extend-line-forward-br-expected.txt:
+        * platform/win/editing/selection/vertical-rl-ltr-extend-line-forward-p-expected.txt:
+        * platform/win/editing/selection/vertical-rl-rtl-extend-line-backward-br-expected.txt:
+        * platform/win/editing/selection/vertical-rl-rtl-extend-line-backward-p-expected.txt:
+        * platform/win/editing/selection/vertical-rl-rtl-extend-line-forward-br-expected.txt:
+        * platform/win/editing/selection/vertical-rl-rtl-extend-line-forward-p-expected.txt:
+        * platform/win/fast/borders/bidi-012-expected.txt:
+        * platform/win/fast/css/empty-pseudo-class-expected.txt:
+        * platform/win/fast/css/fieldset-display-row-expected.txt:
+        * platform/win/fast/css/first-child-pseudo-class-expected.txt:
+        * platform/win/fast/css/last-child-pseudo-class-expected.txt:
+        * platform/win/fast/css/only-child-pseudo-class-expected.txt:
+        * platform/win/fast/forms/file/file-input-disabled-expected.txt:
+        * platform/win/fast/inline/inline-box-background-expected.txt:
+        * platform/win/fast/inline/inline-box-background-long-image-expected.txt:
+        * platform/win/fast/inline/inline-box-background-repeat-x-expected.txt:
+        * platform/win/fast/inline/inline-box-background-repeat-y-expected.txt:
+        * platform/win/fast/lists/003-vertical-expected.txt:
+        * platform/win/fast/multicol/vertical-rl/float-multicol-expected.txt:
+        * platform/win/fast/multicol/vertical-rl/nested-columns-expected.txt:
+        * platform/win/scrollbars/custom-scrollbar-with-incomplete-style-expected.txt:
+        * platform/win/svg/batik/filters/feTile-expected.txt:
+        * platform/win/svg/batik/masking/maskRegions-expected.txt:
+        * platform/win/svg/batik/paints/gradientLimit-expected.txt:
+        * platform/win/svg/batik/text/textDecoration-expected.txt:
+        * platform/win/svg/batik/text/textEffect-expected.txt:
+        * platform/win/svg/batik/text/textLength-expected.txt:
+        * platform/win/svg/batik/text/textPosition-expected.txt:
+        * platform/win/svg/batik/text/verticalText-expected.txt:
+        * platform/win/transforms/2d/hindi-rotated-expected.txt:
+
+2014-01-18  Zalan Bujtas  <zalan@apple.com>
+
+        Unreviewed Apple Windows port gardering.
+
         Rebaseline subpixel layout results.
 
         * platform/win/TestExpectations:
