@@ -1,3 +1,12 @@
+2014-01-19  Zalan Bujtas  <zalan@apple.com>
+
+        Unreviewed Apple Windows port gardering.
+
+        A few more missing newlines.
+
+        * platform/win/svg/batik/masking/maskRegions-expected.txt:
+        * platform/win/svg/batik/text/textPosition-expected.txt:
+
 2014-01-18  Zalan Bujtas  <zalan@apple.com>
 
         Unreviewed Apple Windows port gardering.
