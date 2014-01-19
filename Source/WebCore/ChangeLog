@@ -1,5 +1,41 @@
 2014-01-19  Anders Carlsson  <andersca@apple.com>
 
+        Use a strong enum for HTMLTreeBuilder::InsertionMode
+        https://bugs.webkit.org/show_bug.cgi?id=127252
+
+        Reviewed by Antti Koivisto.
+
+        * html/parser/HTMLTreeBuilder.cpp:
+        (WebCore::HTMLTreeBuilder::HTMLTreeBuilder):
+        (WebCore::HTMLTreeBuilder::constructTree):
+        (WebCore::HTMLTreeBuilder::processDoctypeToken):
+        (WebCore::HTMLTreeBuilder::processStartTagForInBody):
+        (WebCore::HTMLTreeBuilder::processTemplateStartTag):
+        (WebCore::HTMLTreeBuilder::processColgroupEndTagForInColumnGroup):
+        (WebCore::HTMLTreeBuilder::closeTheCell):
+        (WebCore::HTMLTreeBuilder::processStartTagForInTable):
+        (WebCore::HTMLTreeBuilder::processStartTag):
+        (WebCore::HTMLTreeBuilder::processBodyEndTagForInBody):
+        (WebCore::HTMLTreeBuilder::resetInsertionModeAppropriately):
+        (WebCore::HTMLTreeBuilder::processEndTagForInTableBody):
+        (WebCore::HTMLTreeBuilder::processEndTagForInRow):
+        (WebCore::HTMLTreeBuilder::processEndTagForInCell):
+        (WebCore::HTMLTreeBuilder::processCaptionEndTagForInCaption):
+        (WebCore::HTMLTreeBuilder::processTrEndTagForInRow):
+        (WebCore::HTMLTreeBuilder::processEndTag):
+        (WebCore::HTMLTreeBuilder::processComment):
+        (WebCore::HTMLTreeBuilder::processCharacterBuffer):
+        (WebCore::HTMLTreeBuilder::processEndOfFile):
+        (WebCore::HTMLTreeBuilder::defaultForInitial):
+        (WebCore::HTMLTreeBuilder::defaultForBeforeHTML):
+        (WebCore::HTMLTreeBuilder::processStartTagForInHead):
+        (WebCore::HTMLTreeBuilder::processGenericRCDATAStartTag):
+        (WebCore::HTMLTreeBuilder::processGenericRawTextStartTag):
+        (WebCore::HTMLTreeBuilder::processScriptStartTag):
+        * html/parser/HTMLTreeBuilder.h:
+
+2014-01-19  Anders Carlsson  <andersca@apple.com>
+
         Convert LoaderRunLoopCF.cpp and WebCoreThreadRun.cpp over to modern threading primitives
         https://bugs.webkit.org/show_bug.cgi?id=127251
 
