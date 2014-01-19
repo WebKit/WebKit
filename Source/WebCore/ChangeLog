@@ -1,3 +1,19 @@
+2014-01-19  Anders Carlsson  <andersca@apple.com>
+
+        Modernize ReverbConvolver
+        https://bugs.webkit.org/show_bug.cgi?id=127250
+
+        Reviewed by Andreas Kling.
+
+        Use std::unique_ptr instead of OwnPtr and the STL threading primitives instead of the WTF ones.
+
+        * platform/audio/ReverbConvolver.cpp:
+        (WebCore::ReverbConvolver::ReverbConvolver):
+        (WebCore::ReverbConvolver::~ReverbConvolver):
+        (WebCore::ReverbConvolver::backgroundThreadEntry):
+        (WebCore::ReverbConvolver::process):
+        * platform/audio/ReverbConvolver.h:
+
 2014-01-18  Andy Estes  <aestes@apple.com>
 
         [iOS] Rename GestureEventIOS.{cpp,h} to GestureEvent.{cpp,h} to fix the build

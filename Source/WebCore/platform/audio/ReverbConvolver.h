@@ -35,7 +35,8 @@
 #include "ReverbAccumulationBuffer.h"
 #include "ReverbConvolverStage.h"
 #include "ReverbInputBuffer.h"
-#include <wtf/OwnPtr.h>
+#include <condition_variable>
+#include <mutex>
 #include <wtf/RefCounted.h>
 #include <wtf/Threading.h>
 #include <wtf/Vector.h>
@@ -65,8 +66,8 @@ public:
 
     size_t latencyFrames() const;
 private:
-    Vector<OwnPtr<ReverbConvolverStage>> m_stages;
-    Vector<OwnPtr<ReverbConvolverStage>> m_backgroundStages;
+    Vector<std::unique_ptr<ReverbConvolverStage>> m_stages;
+    Vector<std::unique_ptr<ReverbConvolverStage>> m_backgroundStages;
     size_t m_impulseResponseLength;
 
     ReverbAccumulationBuffer m_accumulationBuffer;
@@ -86,8 +87,8 @@ private:
     ThreadIdentifier m_backgroundThread;
     bool m_wantsToExit;
     bool m_moreInputBuffered;
-    mutable Mutex m_backgroundThreadLock;
-    mutable ThreadCondition m_backgroundThreadCondition;
+    mutable std::mutex m_backgroundThreadMutex;
+    mutable std::condition_variable m_backgroundThreadConditionVariable;
 };
 
 } // namespace WebCore
