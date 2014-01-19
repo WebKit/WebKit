@@ -1,5 +1,25 @@
 2014-01-18  Andreas Kling  <akling@apple.com>
 
+        CodeBlock: Size m_callLinkInfos and m_byValInfos to fit earlier.
+        <https://webkit.org/b/127239>
+
+        Reviewed by Anders Carlsson.
+
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::setNumberOfByValInfos):
+        (JSC::CodeBlock::setNumberOfCallLinkInfos):
+
+            Use resizeToFit() instead of grow() for these vectors, since
+            we know the final size here.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::shrinkToFit):
+
+            No need to shrink here anymore. We were not even shrinking
+            m_byValInfo before!
+
+2014-01-18  Andreas Kling  <akling@apple.com>
+
         CodeBlock: Size m_function{Exprs,Decls} to fit from creation.
         <https://webkit.org/b/127238>
 

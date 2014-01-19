@@ -2583,9 +2583,6 @@ unsigned CodeBlock::opDebugBytecodeOffsetForLineAndColumn(unsigned& line, unsign
 
 void CodeBlock::shrinkToFit(ShrinkMode shrinkMode)
 {
-#if ENABLE(JIT)
-    m_callLinkInfos.shrinkToFit();
-#endif
     m_rareCaseProfiles.shrinkToFit();
     m_specialFastCaseProfiles.shrinkToFit();
     

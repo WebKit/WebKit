@@ -401,11 +401,11 @@ public:
     String nameForRegister(VirtualRegister);
 
 #if ENABLE(JIT)
-    void setNumberOfByValInfos(size_t size) { m_byValInfos.grow(size); }
+    void setNumberOfByValInfos(size_t size) { m_byValInfos.resizeToFit(size); }
     size_t numberOfByValInfos() const { return m_byValInfos.size(); }
     ByValInfo& byValInfo(size_t index) { return m_byValInfos[index]; }
 
-    void setNumberOfCallLinkInfos(size_t size) { m_callLinkInfos.grow(size); }
+    void setNumberOfCallLinkInfos(size_t size) { m_callLinkInfos.resizeToFit(size); }
     size_t numberOfCallLinkInfos() const { return m_callLinkInfos.size(); }
     CallLinkInfo& callLinkInfo(int index) { return m_callLinkInfos[index]; }
 #endif
