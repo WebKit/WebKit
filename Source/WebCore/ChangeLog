@@ -1,5 +1,21 @@
 2014-01-19  Anders Carlsson  <andersca@apple.com>
 
+        Convert LoaderRunLoopCF.cpp and WebCoreThreadRun.cpp over to modern threading primitives
+        https://bugs.webkit.org/show_bug.cgi?id=127251
+
+        Reviewed by Antti Koivisto.
+
+        Also add a condition to the loaderRunLoop() function to protect against spurious wake-ups.
+
+        * platform/ios/wak/WebCoreThreadRun.cpp:
+        * platform/network/cf/LoaderRunLoopCF.cpp:
+        (WebCore::loaderRunLoopMutex):
+        (WebCore::loaderRunLoopConditionVariable):
+        (WebCore::runLoaderThread):
+        (WebCore::loaderRunLoop):
+
+2014-01-19  Anders Carlsson  <andersca@apple.com>
+
         Modernize ReverbConvolver
         https://bugs.webkit.org/show_bug.cgi?id=127250
 
