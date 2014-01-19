@@ -1,3 +1,14 @@
+2014-01-18  Alexey Proskuryakov  <ap@apple.com>
+
+        Add robots.txt to http://webkit-queues.appspot.com
+        https://bugs.webkit.org/show_bug.cgi?id=127240
+
+        Reviewed by Ryosuke Niwa.
+
+        * QueueStatusServer/app.yaml: Added robots.txt as a static file. Updated version.
+
+        * QueueStatusServer/robots.txt: Added.
+
 2014-01-18  Alberto Garcia  <berto@igalia.com>
 
         Tools/Scripts/test-webkitperl fails: 'tempdir' can't be called as a method

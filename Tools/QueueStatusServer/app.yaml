@@ -1,5 +1,5 @@
 application: webkit-queues
-version: 161098 # Bugzilla bug ID of last major change
+version: 162287 # Bugzilla bug ID of last major change
 runtime: python
 api_version: 1
 
@@ -10,6 +10,9 @@ builtins:
 handlers:
 - url: /stylesheets
   static_dir: stylesheets
+
+- url: /robots.txt
+  static_files: robots.txt
 
 - url: /.*
   script: main.py
