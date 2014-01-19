@@ -662,10 +662,14 @@ JSValue JSSubtleCrypto::wrapKey(ExecState* exec)
     CryptoAlgorithmParameters* parametersPtr = parameters.release();
 
     auto exportSuccessCallback = [keyFormat, algorithmPtr, parametersPtr, wrappingKey, wrapper](const Vector<uint8_t>& exportedKeyData) mutable {
-        auto encryptSuccessCallback = [wrapper](const Vector<uint8_t>& encryptedData) mutable {
+        auto encryptSuccessCallback = [wrapper, algorithmPtr, parametersPtr](const Vector<uint8_t>& encryptedData) mutable {
+            delete algorithmPtr;
+            delete parametersPtr;
             wrapper.resolve(encryptedData);
         };
-        auto encryptFailureCallback = [wrapper]() mutable {
+        auto encryptFailureCallback = [wrapper, algorithmPtr, parametersPtr]() mutable {
+            delete algorithmPtr;
+            delete parametersPtr;
             wrapper.reject(nullptr);
         };
         ExceptionCode ec = 0;

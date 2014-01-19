@@ -1,3 +1,13 @@
+2014-01-18  Alexey Proskuryakov  <ap@apple.com>
+
+        Memory leak in JSSubtleCrypto::wrapKey
+        https://bugs.webkit.org/show_bug.cgi?id=127241
+
+        Reviewed by Sam Weinig.
+
+        * bindings/js/JSSubtleCryptoCustom.cpp: (WebCore::JSSubtleCrypto::wrapKey):
+        Delete algorithmPtr and parametersPtr that aren't smart pointers because of lambdas.
+
 2014-01-18  Andy Estes  <aestes@apple.com>
 
         Fix the iOS Production build.
