@@ -52,15 +52,15 @@ PassOwnPtr<AudioDSPKernel> WaveShaperProcessor::createKernel()
 void WaveShaperProcessor::setCurve(Float32Array* curve)
 {
     // This synchronizes with process().
-    MutexLocker processLocker(m_processLock);
-    
+    std::lock_guard<std::mutex> lock(m_processMutex);
+
     m_curve = curve;
 }
 
 void WaveShaperProcessor::setOversample(OverSampleType oversample)
 {
     // This synchronizes with process().
-    MutexLocker processLocker(m_processLock);
+    std::lock_guard<std::mutex> lock(m_processMutex);
 
     m_oversample = oversample;
 
@@ -84,16 +84,17 @@ void WaveShaperProcessor::process(const AudioBus* source, AudioBus* destination,
     if (!channelCountMatches)
         return;
 
-    // The audio thread can't block on this lock, so we call tryLock() instead.
-    MutexTryLocker tryLocker(m_processLock);
-    if (tryLocker.locked()) {        
-        // For each channel of our input, process using the corresponding WaveShaperDSPKernel into the output channel.
-        for (unsigned i = 0; i < m_kernels.size(); ++i)
-            m_kernels[i]->process(source->channel(i)->data(), destination->channel(i)->mutableData(), framesToProcess);
-    } else {
-        // Too bad - the tryLock() failed. We must be in the middle of a setCurve() call.
+    // The audio thread can't block on this lock, so we use std::try_to_lock instead.
+    std::unique_lock<std::mutex> lock(m_processMutex, std::try_to_lock);
+    if (!lock.owns_lock()) {
+        // Too bad - the try_lock() failed. We must be in the middle of a setCurve() call.
         destination->zero();
+        return;
     }
+
+    // For each channel of our input, process using the corresponding WaveShaperDSPKernel into the output channel.
+    for (unsigned i = 0; i < m_kernels.size(); ++i)
+        m_kernels[i]->process(source->channel(i)->data(), destination->channel(i)->mutableData(), framesToProcess);
 }
 
 } // namespace WebCore

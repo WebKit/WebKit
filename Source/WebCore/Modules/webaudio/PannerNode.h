@@ -33,6 +33,7 @@
 #include "Distance.h"
 #include "FloatPoint3D.h"
 #include "Panner.h"
+#include <mutex>
 #include <wtf/OwnPtr.h>
 
 namespace WebCore {
@@ -156,7 +157,7 @@ private:
     unsigned m_connectionCount;
 
     // Synchronize process() and setPanningModel() which can change the panner.
-    mutable Mutex m_pannerLock;
+    mutable std::mutex m_pannerMutex;
 };
 
 } // namespace WebCore

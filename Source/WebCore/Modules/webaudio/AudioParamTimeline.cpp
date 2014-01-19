@@ -80,7 +80,7 @@ void AudioParamTimeline::insertEvent(const ParamEvent& event)
     if (!isValid)
         return;
         
-    MutexLocker locker(m_eventsLock);
+    std::lock_guard<std::mutex> lock(m_eventsMutex);
     
     unsigned i = 0;
     float insertTime = event.time();
@@ -100,7 +100,7 @@ void AudioParamTimeline::insertEvent(const ParamEvent& event)
 
 void AudioParamTimeline::cancelScheduledValues(float startTime)
 {
-    MutexLocker locker(m_eventsLock);
+    std::lock_guard<std::mutex> lock(m_eventsMutex);
 
     // Remove all events starting at startTime.
     for (unsigned i = 0; i < m_events.size(); ++i) {
@@ -116,8 +116,8 @@ float AudioParamTimeline::valueForContextTime(AudioContext* context, float defau
     ASSERT(context);
 
     {
-        MutexTryLocker tryLocker(m_eventsLock);
-        if (!tryLocker.locked() || !context || !m_events.size() || context->currentTime() < m_events[0].time()) {
+        std::unique_lock<std::mutex> lock(m_eventsMutex, std::try_to_lock);
+        if (!lock.owns_lock() || !context || !m_events.size() || context->currentTime() < m_events[0].time()) {
             hasValue = false;
             return defaultValue;
         }
@@ -135,18 +135,11 @@ float AudioParamTimeline::valueForContextTime(AudioContext* context, float defau
     return value;
 }
 
-float AudioParamTimeline::valuesForTimeRange(
-    double startTime,
-    double endTime,
-    float defaultValue,
-    float* values,
-    unsigned numberOfValues,
-    double sampleRate,
-    double controlRate)
+float AudioParamTimeline::valuesForTimeRange(double startTime, double endTime, float defaultValue, float* values, unsigned numberOfValues, double sampleRate, double controlRate)
 {
     // We can't contend the lock in the realtime audio thread.
-    MutexTryLocker tryLocker(m_eventsLock);
-    if (!tryLocker.locked()) {
+    std::unique_lock<std::mutex> lock(m_eventsMutex, std::try_to_lock);
+    if (!lock.owns_lock()) {
         if (values) {
             for (unsigned i = 0; i < numberOfValues; ++i)
                 values[i] = defaultValue;
@@ -159,14 +152,7 @@ float AudioParamTimeline::valuesForTimeRange(
     return value;
 }
 
-float AudioParamTimeline::valuesForTimeRangeImpl(
-    double startTime,
-    double endTime,
-    float defaultValue,
-    float* values,
-    unsigned numberOfValues,
-    double sampleRate,
-    double controlRate)
+float AudioParamTimeline::valuesForTimeRangeImpl(double startTime, double endTime, float defaultValue, float* values, unsigned numberOfValues, double sampleRate, double controlRate)
 {
     ASSERT(values);
     if (!values)

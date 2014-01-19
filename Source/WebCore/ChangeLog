@@ -1,3 +1,52 @@
+2014-01-19  Anders Carlsson  <andersca@apple.com>
+
+        Stop using MutexTryLocker in WebCore
+        https://bugs.webkit.org/show_bug.cgi?id=127254
+
+        Reviewed by Andreas Kling.
+
+        Instead use std::mutex and std::unique_lock with the std::try_to_lock constructor.
+
+        * Modules/webaudio/AudioBufferSourceNode.cpp:
+        (WebCore::AudioBufferSourceNode::process):
+        (WebCore::AudioBufferSourceNode::setBuffer):
+        * Modules/webaudio/AudioBufferSourceNode.h:
+        * Modules/webaudio/AudioParamTimeline.cpp:
+        (WebCore::AudioParamTimeline::insertEvent):
+        (WebCore::AudioParamTimeline::cancelScheduledValues):
+        (WebCore::AudioParamTimeline::valueForContextTime):
+        (WebCore::AudioParamTimeline::valuesForTimeRange):
+        (WebCore::AudioParamTimeline::valuesForTimeRangeImpl):
+        * Modules/webaudio/AudioParamTimeline.h:
+        * Modules/webaudio/ConvolverNode.cpp:
+        (WebCore::ConvolverNode::process):
+        (WebCore::ConvolverNode::reset):
+        (WebCore::ConvolverNode::setBuffer):
+        * Modules/webaudio/ConvolverNode.h:
+        * Modules/webaudio/MediaElementAudioSourceNode.cpp:
+        (WebCore::MediaElementAudioSourceNode::setFormat):
+        (WebCore::MediaElementAudioSourceNode::process):
+        (WebCore::MediaElementAudioSourceNode::lock):
+        (WebCore::MediaElementAudioSourceNode::unlock):
+        * Modules/webaudio/MediaElementAudioSourceNode.h:
+        * Modules/webaudio/MediaStreamAudioSourceNode.cpp:
+        (WebCore::MediaStreamAudioSourceNode::setFormat):
+        (WebCore::MediaStreamAudioSourceNode::process):
+        * Modules/webaudio/MediaStreamAudioSourceNode.h:
+        * Modules/webaudio/OscillatorNode.cpp:
+        (WebCore::OscillatorNode::process):
+        (WebCore::OscillatorNode::setPeriodicWave):
+        * Modules/webaudio/OscillatorNode.h:
+        * Modules/webaudio/PannerNode.cpp:
+        (WebCore::PannerNode::process):
+        (WebCore::PannerNode::setPanningModel):
+        * Modules/webaudio/PannerNode.h:
+        * Modules/webaudio/WaveShaperProcessor.cpp:
+        (WebCore::WaveShaperProcessor::setCurve):
+        (WebCore::WaveShaperProcessor::setOversample):
+        (WebCore::WaveShaperProcessor::process):
+        * Modules/webaudio/WaveShaperProcessor.h:
+
 2014-01-19  Alberto Garcia  <berto@igalia.com>
 
         Does not build with SVG disabled

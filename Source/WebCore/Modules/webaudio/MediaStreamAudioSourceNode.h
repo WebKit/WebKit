@@ -31,9 +31,9 @@
 #include "AudioSourceProvider.h"
 #include "AudioSourceProviderClient.h"
 #include "MediaStream.h"
+#include <mutex>
 #include <wtf/OwnPtr.h>
 #include <wtf/PassRefPtr.h>
-#include <wtf/Threading.h>
 
 namespace WebCore {
 
@@ -69,7 +69,7 @@ private:
     RefPtr<MediaStreamTrack> m_audioTrack;
     AudioSourceProvider* m_audioSourceProvider;
 
-    Mutex m_processLock;
+    std::mutex m_processMutex;
 
     unsigned m_sourceNumberOfChannels;
 };

@@ -107,28 +107,29 @@ void PannerNode::process(size_t framesToProcess)
         return;
     }
 
-    // The audio thread can't block on this lock, so we call tryLock() instead.
-    MutexTryLocker tryLocker(m_pannerLock);
-    if (tryLocker.locked()) {
-        // Apply the panning effect.
-        double azimuth;
-        double elevation;
-        getAzimuthElevation(&azimuth, &elevation);
-        m_panner->pan(azimuth, elevation, source, destination, framesToProcess);
-
-        // Get the distance and cone gain.
-        double totalGain = distanceConeGain();
-
-        // Snap to desired gain at the beginning.
-        if (m_lastGain == -1.0)
-            m_lastGain = totalGain;
-        
-        // Apply gain in-place with de-zippering.
-        destination->copyWithGainFrom(*destination, &m_lastGain, totalGain);
-    } else {
-        // Too bad - The tryLock() failed. We must be in the middle of changing the panner.
+    // The audio thread can't block on this lock, so we use std::try_to_lock instead.
+    std::unique_lock<std::mutex> lock(m_pannerMutex, std::try_to_lock);
+    if (!lock.owns_lock()) {
+        // Too bad - The try_lock() failed. We must be in the middle of changing the panner.
         destination->zero();
+        return;
     }
+
+    // Apply the panning effect.
+    double azimuth;
+    double elevation;
+    getAzimuthElevation(&azimuth, &elevation);
+    m_panner->pan(azimuth, elevation, source, destination, framesToProcess);
+
+    // Get the distance and cone gain.
+    double totalGain = distanceConeGain();
+
+    // Snap to desired gain at the beginning.
+    if (m_lastGain == -1.0)
+        m_lastGain = totalGain;
+
+    // Apply gain in-place with de-zippering.
+    destination->copyWithGainFrom(*destination, &m_lastGain, totalGain);
 }
 
 void PannerNode::reset()
@@ -196,8 +197,8 @@ bool PannerNode::setPanningModel(unsigned model)
     case HRTF:
         if (!m_panner.get() || model != m_panningModel) {
             // This synchronizes with process().
-            MutexLocker processLocker(m_pannerLock);
-            
+            std::lock_guard<std::mutex> lock(m_pannerMutex);
+
             OwnPtr<Panner> newPanner = Panner::create(model, sampleRate(), context()->hrtfDatabaseLoader());
             m_panner = newPanner.release();
             m_panningModel = model;

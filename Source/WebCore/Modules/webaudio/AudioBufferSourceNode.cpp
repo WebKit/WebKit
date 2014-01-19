@@ -93,52 +93,50 @@ void AudioBufferSourceNode::process(size_t framesToProcess)
         return;
     }
 
-    // The audio thread can't block on this lock, so we call tryLock() instead.
-    MutexTryLocker tryLocker(m_processLock);
-    if (tryLocker.locked()) {
-        if (!buffer()) {
-            outputBus->zero();
-            return;
-        }
-
-        // After calling setBuffer() with a buffer having a different number of channels, there can in rare cases be a slight delay
-        // before the output bus is updated to the new number of channels because of use of tryLocks() in the context's updating system.
-        // In this case, if the the buffer has just been changed and we're not quite ready yet, then just output silence.
-        if (numberOfChannels() != buffer()->numberOfChannels()) {
-            outputBus->zero();
-            return;
-        }
-
-        size_t quantumFrameOffset;
-        size_t bufferFramesToProcess;
-
-        updateSchedulingInfo(framesToProcess,
-                             outputBus,
-                             quantumFrameOffset,
-                             bufferFramesToProcess);
-                             
-        if (!bufferFramesToProcess) {
-            outputBus->zero();
-            return;
-        }
-
-        for (unsigned i = 0; i < outputBus->numberOfChannels(); ++i)
-            m_destinationChannels[i] = outputBus->channel(i)->mutableData();
-
-        // Render by reading directly from the buffer.
-        if (!renderFromBuffer(outputBus, quantumFrameOffset, bufferFramesToProcess)) {
-            outputBus->zero();
-            return;
-        }
-
-        // Apply the gain (in-place) to the output bus.
-        float totalGain = gain()->value() * m_buffer->gain();
-        outputBus->copyWithGainFrom(*outputBus, &m_lastGain, totalGain);
-        outputBus->clearSilentFlag();
-    } else {
-        // Too bad - the tryLock() failed.  We must be in the middle of changing buffers and were already outputting silence anyway.
+    // The audio thread can't block on this lock, so we use std::try_to_lock instead.
+    std::unique_lock<std::mutex> lock(m_processMutex, std::try_to_lock);
+    if (!lock.owns_lock()) {
+        // Too bad - the try_lock() failed. We must be in the middle of changing buffers and were already outputting silence anyway.
         outputBus->zero();
+        return;
     }
+
+    if (!buffer()) {
+        outputBus->zero();
+        return;
+    }
+
+    // After calling setBuffer() with a buffer having a different number of channels, there can in rare cases be a slight delay
+    // before the output bus is updated to the new number of channels because of use of tryLocks() in the context's updating system.
+    // In this case, if the the buffer has just been changed and we're not quite ready yet, then just output silence.
+    if (numberOfChannels() != buffer()->numberOfChannels()) {
+        outputBus->zero();
+        return;
+    }
+
+    size_t quantumFrameOffset;
+    size_t bufferFramesToProcess;
+
+    updateSchedulingInfo(framesToProcess, outputBus, quantumFrameOffset, bufferFramesToProcess);
+
+    if (!bufferFramesToProcess) {
+        outputBus->zero();
+        return;
+    }
+
+    for (unsigned i = 0; i < outputBus->numberOfChannels(); ++i)
+        m_destinationChannels[i] = outputBus->channel(i)->mutableData();
+
+    // Render by reading directly from the buffer.
+    if (!renderFromBuffer(outputBus, quantumFrameOffset, bufferFramesToProcess)) {
+        outputBus->zero();
+        return;
+    }
+
+    // Apply the gain (in-place) to the output bus.
+    float totalGain = gain()->value() * m_buffer->gain();
+    outputBus->copyWithGainFrom(*outputBus, &m_lastGain, totalGain);
+    outputBus->clearSilentFlag();
 }
 
 // Returns true if we're finished.
@@ -343,7 +341,7 @@ bool AudioBufferSourceNode::setBuffer(AudioBuffer* buffer)
     AudioContext::AutoLocker contextLocker(*context());
     
     // This synchronizes with process().
-    MutexLocker processLocker(m_processLock);
+    std::lock_guard<std::mutex> lock(m_processMutex);
     
     if (buffer) {
         // Do any necesssary re-configuration to the buffer's number of channels.

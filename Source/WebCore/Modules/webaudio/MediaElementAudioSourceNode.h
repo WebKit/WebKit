@@ -31,9 +31,9 @@
 #include "AudioSourceProviderClient.h"
 #include "HTMLMediaElement.h"
 #include "MultiChannelResampler.h"
+#include <mutex>
 #include <wtf/OwnPtr.h>
 #include <wtf/PassRefPtr.h>
-#include <wtf/Threading.h>
 
 namespace WebCore {
 
@@ -67,7 +67,7 @@ private:
     virtual bool propagatesSilence() const override { return false; }
 
     RefPtr<HTMLMediaElement> m_mediaElement;
-    Mutex m_processLock;
+    std::mutex m_processMutex;
 
     unsigned m_sourceNumberOfChannels;
     double m_sourceSampleRate;

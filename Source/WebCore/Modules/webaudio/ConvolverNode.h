@@ -26,9 +26,9 @@
 #define ConvolverNode_h
 
 #include "AudioNode.h"
+#include <mutex>
 #include <wtf/OwnPtr.h>
 #include <wtf/RefPtr.h>
-#include <wtf/Threading.h>
 
 namespace WebCore {
 
@@ -67,7 +67,7 @@ private:
     RefPtr<AudioBuffer> m_buffer;
 
     // This synchronizes dynamic changes to the convolution impulse response with process().
-    mutable Mutex m_processLock;
+    mutable std::mutex m_processMutex;
 
     // Normalize the impulse response or not. Must default to true.
     bool m_normalize;

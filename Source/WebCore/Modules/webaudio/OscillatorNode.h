@@ -28,9 +28,9 @@
 #include "AudioBus.h"
 #include "AudioParam.h"
 #include "AudioScheduledSourceNode.h"
+#include <mutex>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
-#include <wtf/Threading.h>
 
 namespace WebCore {
 
@@ -96,7 +96,7 @@ private:
     double m_virtualReadIndex;
 
     // This synchronizes process().
-    mutable Mutex m_processLock;
+    mutable std::mutex m_processMutex;
 
     // Stores sample-accurate values calculated according to frequency and detune.
     AudioFloatArray m_phaseIncrements;
