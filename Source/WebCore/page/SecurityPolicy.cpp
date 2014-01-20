@@ -71,6 +71,9 @@ String SecurityPolicy::generateReferrerHeader(ReferrerPolicy referrerPolicy, con
     if (referrer.isEmpty())
         return String();
 
+    if (!protocolIs(referrer, "http") && !protocolIs(referrer, "https"))
+        return String();
+
     switch (referrerPolicy) {
     case ReferrerPolicyNever:
         return String();

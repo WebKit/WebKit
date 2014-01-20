@@ -1,3 +1,19 @@
+2014-01-20  Jochen Eisinger  <jochen@chromium.org>
+
+        Never send a non-http(s) referrer header even with a referrer policy
+        https://bugs.webkit.org/show_bug.cgi?id=127172
+
+        Reviewed by Alexey Proskuryakov.
+
+        This mirrors the code SecurityPolicy::shouldHideReferrer which is used
+        for ReferrerPolicyDefault.
+
+        No new tests, only affects an embedder that registers other schemes,
+        e.g. chrome://
+
+        * page/SecurityPolicy.cpp:
+        (WebCore::SecurityPolicy::generateReferrerHeader):
+
 2014-01-20  Mihai Tica  <mitica@adobe.com>
 
         [CSS Background Blending] Background layer with -webkit-cross-fade doesn't blend
