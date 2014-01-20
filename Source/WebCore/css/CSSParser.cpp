@@ -1795,7 +1795,7 @@ bool CSSParser::parseValue(CSSPropertyID propId, bool important)
     
     CSSValueID id = value->id;
 
-    int num = inShorthand() ? 1 : m_valueList->size();
+    unsigned num = inShorthand() ? 1 : m_valueList->size();
 
     if (id == CSSValueInherit) {
         if (num != 1)
@@ -3496,7 +3496,7 @@ bool CSSParser::parse4Values(CSSPropertyID propId, const CSSPropertyID *properti
      * right, bottom, and left, respectively.
      */
 
-    int num = inShorthand() ? 1 : m_valueList->size();
+    unsigned num = inShorthand() ? 1 : m_valueList->size();
 
     ShorthandScope scope(this, propId);
 

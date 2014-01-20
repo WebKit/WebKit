@@ -1,3 +1,13 @@
+2014-01-19  Jinwoo Song  <jinwoo7.song@samsung.com>
+
+        Use unsigned type for the size of CSSParserValueList
+        https://bugs.webkit.org/show_bug.cgi?id=127211
+
+        Reviewed by Andreas Kling.
+
+        * css/CSSParser.cpp: Changed variable type from int to unsigned.
+        (WebCore::CSSParser::parseValue):
+
 2014-01-19  Jaehun Lim  <ljaehun.lim@samsung.com>
 
         Unreviewed build fix after r162293
