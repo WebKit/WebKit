@@ -29,7 +29,7 @@
 #include "GCActivityCallback.h"
 #include "HeapBlock.h"
 #include "Region.h"
-#include <mutex>
+#include <condition_variable>
 #include <wtf/DoublyLinkedList.h>
 #include <wtf/Forward.h>
 #include <wtf/PageAllocationAligned.h>
