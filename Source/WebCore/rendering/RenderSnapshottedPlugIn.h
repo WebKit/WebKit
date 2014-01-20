@@ -59,7 +59,7 @@ private:
 
     virtual void layout() override;
 
-    OwnPtr<RenderImageResource> m_snapshotResource;
+    std::unique_ptr<RenderImageResource> m_snapshotResource;
     bool m_isPotentialMouseActivation;
 };
 

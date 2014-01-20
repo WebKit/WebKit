@@ -222,11 +222,8 @@ RenderPtr<RenderElement> HTMLPlugInImageElement::createElementRenderer(PassRef<R
     if (useFallbackContent())
         return RenderElement::createFor(*this, std::move(style));
 
-    if (isImageType()) {
-        auto image = createRenderer<RenderImage>(*this, std::move(style));
-        image->setImageResource(RenderImageResource::create());
-        return std::move(image);
-    }
+    if (isImageType())
+        return createRenderer<RenderImage>(*this, std::move(style));
 
 #if PLATFORM(IOS)
     if (ShadowRoot* shadowRoot = this->shadowRoot()) {

@@ -49,13 +49,9 @@ std::unique_ptr<ContentData> ContentData::clone() const
 
 RenderPtr<RenderObject> ImageContentData::createContentRenderer(Document& document, const RenderStyle& pseudoStyle) const
 {
-    auto image = createRenderer<RenderImage>(document, RenderImage::createStyleInheritingFromPseudoStyle(pseudoStyle));
+    auto image = createRenderer<RenderImage>(document, RenderImage::createStyleInheritingFromPseudoStyle(pseudoStyle), m_image.get());
     image->initializeStyle();
     image->setAltText(altText());
-    if (m_image)
-        image->setImageResource(RenderImageResourceStyleImage::create(*m_image));
-    else
-        image->setImageResource(RenderImageResource::create());
     return std::move(image);
 }
 

@@ -179,9 +179,7 @@ RenderPtr<RenderElement> HTMLImageElement::createElementRenderer(PassRef<RenderS
     if (style.get().hasContent())
         return RenderElement::createFor(*this, std::move(style));
 
-    auto image = createRenderer<RenderImage>(*this, std::move(style));
-    image->setImageResource(RenderImageResource::create());
-    return std::move(image);
+    return createRenderer<RenderImage>(*this, std::move(style));
 }
 
 bool HTMLImageElement::canStartSelection() const
@@ -199,14 +197,14 @@ void HTMLImageElement::didAttachRenderers()
     if (m_imageLoader.hasPendingBeforeLoadEvent())
         return;
     RenderImage* renderImage = toRenderImage(renderer());
-    RenderImageResource* renderImageResource = renderImage->imageResource();
-    if (renderImageResource->hasImage())
+    RenderImageResource& renderImageResource = renderImage->imageResource();
+    if (renderImageResource.hasImage())
         return;
-    renderImageResource->setCachedImage(m_imageLoader.image());
+    renderImageResource.setCachedImage(m_imageLoader.image());
 
     // If we have no image at all because we have no src attribute, set
     // image height and width for the alt text instead.
-    if (!m_imageLoader.image() && !renderImageResource->cachedImage())
+    if (!m_imageLoader.image() && !renderImageResource.cachedImage())
         renderImage->setImageSizeForAltText();
 }
 

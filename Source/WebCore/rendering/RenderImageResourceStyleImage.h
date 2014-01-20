@@ -34,14 +34,10 @@ namespace WebCore {
 
 class RenderElement;
 
-class RenderImageResourceStyleImage : public RenderImageResource {
+class RenderImageResourceStyleImage final : public RenderImageResource {
 public:
+    explicit RenderImageResourceStyleImage(StyleImage&);
     virtual ~RenderImageResourceStyleImage();
-
-    static PassOwnPtr<RenderImageResource> create(StyleImage& styleImage)
-    {
-        return adoptPtr(new RenderImageResourceStyleImage(styleImage));
-    }
 
 private:
     virtual void initialize(RenderElement*) override;
@@ -60,7 +56,6 @@ private:
 
     virtual WrappedImagePtr imagePtr() const override { return m_styleImage->data(); }
 
-    explicit RenderImageResourceStyleImage(StyleImage&);
     Ref<StyleImage> m_styleImage;
 };
 

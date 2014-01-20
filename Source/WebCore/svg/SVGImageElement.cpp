@@ -195,10 +195,10 @@ bool SVGImageElement::haveLoadedRequiredResources()
 void SVGImageElement::didAttachRenderers()
 {
     if (RenderSVGImage* imageObj = toRenderSVGImage(renderer())) {
-        if (imageObj->imageResource()->hasImage())
+        if (imageObj->imageResource().hasImage())
             return;
 
-        imageObj->imageResource()->setCachedImage(m_imageLoader.image());
+        imageObj->imageResource().setCachedImage(m_imageLoader.image());
     }
 }
 

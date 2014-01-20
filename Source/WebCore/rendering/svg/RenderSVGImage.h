@@ -47,8 +47,8 @@ public:
     virtual bool needsBoundariesUpdate() override { return m_needsBoundariesUpdate; }
     virtual void setNeedsTransformUpdate() { m_needsTransformUpdate = true; }
 
-    RenderImageResource* imageResource() { return m_imageResource.get(); }
-    const RenderImageResource* imageResource() const { return m_imageResource.get(); }
+    RenderImageResource& imageResource() { return *m_imageResource; }
+    const RenderImageResource& imageResource() const { return *m_imageResource; }
 
     // Note: Assumes the PaintInfo context has had all local transforms applied.
     void paintForeground(PaintInfo&);
@@ -87,8 +87,7 @@ private:
     FloatRect m_objectBoundingBox;
     FloatRect m_repaintBoundingBox;
     FloatRect m_repaintBoundingBoxExcludingShadow;
-    OwnPtr<RenderImageResource> m_imageResource;
-
+    std::unique_ptr<RenderImageResource> m_imageResource;
     std::unique_ptr<ImageBuffer> m_bufferedForeground;
 };
 

@@ -89,7 +89,7 @@ void HTMLVideoElement::didAttachRenderers()
                 m_imageLoader = adoptPtr(new HTMLImageLoader(this));
             m_imageLoader->updateFromElement();
             if (renderer())
-                toRenderImage(renderer())->imageResource()->setCachedImage(m_imageLoader->image()); 
+                toRenderImage(renderer())->imageResource().setCachedImage(m_imageLoader->image());
         }
 #if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
     }
@@ -129,7 +129,7 @@ void HTMLVideoElement::parseAttribute(const QualifiedName& name, const AtomicStr
             m_imageLoader->updateFromElementIgnoringPreviousError();
         } else {
             if (renderer())
-                toRenderImage(renderer())->imageResource()->setCachedImage(0); 
+                toRenderImage(renderer())->imageResource().setCachedImage(0);
         }
     }
 #if ENABLE(IOS_AIRPLAY)

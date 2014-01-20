@@ -49,14 +49,14 @@ RenderSVGImage::RenderSVGImage(SVGImageElement& element, PassRef<RenderStyle> st
     : RenderSVGModelObject(element, std::move(style))
     , m_needsBoundariesUpdate(true)
     , m_needsTransformUpdate(true)
-    , m_imageResource(RenderImageResource::create())
+    , m_imageResource(std::make_unique<RenderImageResource>())
 {
-    m_imageResource->initialize(this);
+    imageResource().initialize(this);
 }
 
 RenderSVGImage::~RenderSVGImage()
 {
-    m_imageResource->shutdown();
+    imageResource().shutdown();
 }
 
 SVGImageElement& RenderSVGImage::imageElement() const
@@ -74,7 +74,7 @@ bool RenderSVGImage::updateImageViewport()
     if (oldBoundaries == m_objectBoundingBox)
         return false;
 
-    m_imageResource->setContainerSizeForRenderer(enclosingIntRect(m_objectBoundingBox).size());
+    imageResource().setContainerSizeForRenderer(enclosingIntRect(m_objectBoundingBox).size());
     m_needsBoundariesUpdate = true;
     return true;
 }
@@ -117,7 +117,7 @@ void RenderSVGImage::layout()
 
 void RenderSVGImage::paint(PaintInfo& paintInfo, const LayoutPoint&)
 {
-    if (paintInfo.context->paintingDisabled() || style().visibility() == HIDDEN || !m_imageResource->hasImage())
+    if (paintInfo.context->paintingDisabled() || style().visibility() == HIDDEN || !imageResource().hasImage())
         return;
 
     FloatRect boundingBox = repaintRectInLocalCoordinates();
@@ -148,7 +148,7 @@ void RenderSVGImage::paint(PaintInfo& paintInfo, const LayoutPoint&)
 
 void RenderSVGImage::paintForeground(PaintInfo& paintInfo)
 {
-    RefPtr<Image> image = m_imageResource->image();
+    RefPtr<Image> image = imageResource().image();
     FloatRect destRect = m_objectBoundingBox;
     FloatRect srcRect(0, 0, image->width(), image->height());
 

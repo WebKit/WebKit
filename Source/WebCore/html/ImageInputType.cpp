@@ -103,9 +103,7 @@ void ImageInputType::handleDOMActivateEvent(Event* event)
 
 RenderPtr<RenderElement> ImageInputType::createInputRenderer(PassRef<RenderStyle> style)
 {
-    auto image = createRenderer<RenderImage>(element(), std::move(style));
-    image->setImageResource(RenderImageResource::create());
-    return std::move(image);
+    return createRenderer<RenderImage>(element(), std::move(style));
 }
 
 void ImageInputType::altAttributeChanged()
@@ -137,12 +135,12 @@ void ImageInputType::attach()
     if (imageLoader->hasPendingBeforeLoadEvent())
         return;
 
-    RenderImageResource* imageResource = renderer->imageResource();
-    imageResource->setCachedImage(imageLoader->image()); 
+    auto& imageResource = renderer->imageResource();
+    imageResource.setCachedImage(imageLoader->image());
 
     // If we have no image at all because we have no src attribute, set
     // image height and width for the alt text instead.
-    if (!imageLoader->image() && !imageResource->cachedImage())
+    if (!imageLoader->image() && !imageResource.cachedImage())
         renderer->setImageSizeForAltText();
 }
 

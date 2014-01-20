@@ -1,3 +1,73 @@
+2014-01-20  Andreas Kling  <akling@apple.com>
+
+        Let RenderImage construct its RenderImageResource.
+        <https://webkit.org/b/127290>
+
+        Everyone who creates a RenderImage immediately follows up with
+        creating a RenderImageResource and assigning it to the image.
+
+        Let the RenderImage constructor do this instead, and make the
+        imageResource() accessors return references. This exposed a
+        number of unnecessary null checks.
+
+        Also modernized the touched code with std::unique_ptr.
+
+        Reviewed by Antti Koivisto.
+
+        * html/HTMLImageElement.cpp:
+        (WebCore::HTMLImageElement::createElementRenderer):
+        (WebCore::HTMLImageElement::didAttachRenderers):
+        * html/HTMLPlugInImageElement.cpp:
+        (WebCore::HTMLPlugInImageElement::createElementRenderer):
+        * html/HTMLVideoElement.cpp:
+        (WebCore::HTMLVideoElement::didAttachRenderers):
+        (WebCore::HTMLVideoElement::parseAttribute):
+        * html/ImageInputType.cpp:
+        (WebCore::ImageInputType::createInputRenderer):
+        (WebCore::ImageInputType::attach):
+        * loader/ImageLoader.cpp:
+        (WebCore::ImageLoader::renderImageResource):
+        * rendering/RenderElement.cpp:
+        (WebCore::RenderElement::createFor):
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::RenderImage):
+        (WebCore::RenderImage::~RenderImage):
+        (WebCore::RenderImage::styleDidChange):
+        (WebCore::RenderImage::imageChanged):
+        (WebCore::RenderImage::updateIntrinsicSizeIfNeeded):
+        (WebCore::RenderImage::updateInnerContentRect):
+        (WebCore::RenderImage::imageDimensionsChanged):
+        (WebCore::RenderImage::notifyFinished):
+        (WebCore::RenderImage::paintReplaced):
+        (WebCore::RenderImage::paintIntoRect):
+        (WebCore::RenderImage::foregroundIsKnownToBeOpaqueInRect):
+        (WebCore::RenderImage::minimumReplacedHeight):
+        (WebCore::RenderImage::computeIntrinsicRatioInformation):
+        (WebCore::RenderImage::embeddedContentBox):
+        * rendering/RenderImage.h:
+        (WebCore::RenderImage::imageResource):
+        (WebCore::RenderImage::cachedImage):
+        * rendering/RenderImageResource.h:
+        * rendering/RenderImageResourceStyleImage.h:
+        * rendering/RenderMedia.cpp:
+        (WebCore::RenderMedia::RenderMedia):
+        * rendering/RenderSnapshottedPlugIn.cpp:
+        (WebCore::RenderSnapshottedPlugIn::RenderSnapshottedPlugIn):
+        * rendering/RenderSnapshottedPlugIn.h:
+        * rendering/RenderVideo.cpp:
+        (WebCore::RenderVideo::calculateIntrinsicSize):
+        * rendering/style/ContentData.cpp:
+        (WebCore::ImageContentData::createContentRenderer):
+        * rendering/svg/RenderSVGImage.cpp:
+        (WebCore::RenderSVGImage::RenderSVGImage):
+        (WebCore::RenderSVGImage::~RenderSVGImage):
+        (WebCore::RenderSVGImage::updateImageViewport):
+        (WebCore::RenderSVGImage::paint):
+        (WebCore::RenderSVGImage::paintForeground):
+        * rendering/svg/RenderSVGImage.h:
+        * svg/SVGImageElement.cpp:
+        (WebCore::SVGImageElement::didAttachRenderers):
+
 2014-01-20  Antti Koivisto  <antti@apple.com>
 
         Update overlay scrollbars in single pass

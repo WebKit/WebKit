@@ -35,18 +35,16 @@ class HTMLMapElement;
 
 class RenderImage : public RenderReplaced {
 public:
-    explicit RenderImage(Element&, PassRef<RenderStyle>);
-    explicit RenderImage(Document&, PassRef<RenderStyle>);
+    RenderImage(Element&, PassRef<RenderStyle>, StyleImage* = nullptr);
+    RenderImage(Document&, PassRef<RenderStyle>, StyleImage* = nullptr);
     virtual ~RenderImage();
 
     // Create a RenderStyle for generated content by inheriting from a pseudo style.
     static PassRef<RenderStyle> createStyleInheritingFromPseudoStyle(const RenderStyle&);
 
-    void setImageResource(PassOwnPtr<RenderImageResource>);
-
-    RenderImageResource* imageResource() { return m_imageResource.get(); }
-    const RenderImageResource* imageResource() const { return m_imageResource.get(); }
-    CachedImage* cachedImage() const { return m_imageResource ? m_imageResource->cachedImage() : 0; }
+    RenderImageResource& imageResource() { return *m_imageResource; }
+    const RenderImageResource& imageResource() const { return *m_imageResource; }
+    CachedImage* cachedImage() const { return imageResource().cachedImage(); }
 
     bool setImageSizeForAltText(CachedImage* newImage = 0);
 
@@ -84,8 +82,7 @@ protected:
 
     virtual void intrinsicSizeChanged() override
     {
-        if (m_imageResource)
-            imageChanged(m_imageResource->imagePtr());
+        imageChanged(imageResource().imagePtr());
     }
 
 private:
@@ -115,7 +112,7 @@ private:
 
     // Text to display as long as the image isn't available.
     String m_altText;
-    OwnPtr<RenderImageResource> m_imageResource;
+    std::unique_ptr<RenderImageResource> m_imageResource;
     bool m_needsToSetSizeForAltText;
     bool m_didIncrementVisuallyNonEmptyPixelCount;
     bool m_isGeneratedContent;

@@ -113,7 +113,7 @@ LayoutSize RenderVideo::calculateIntrinsicSize()
             return size;
     }
 
-    if (videoElement().shouldDisplayPosterImage() && !m_cachedImageSize.isEmpty() && !imageResource()->errorOccurred())
+    if (videoElement().shouldDisplayPosterImage() && !m_cachedImageSize.isEmpty() && !imageResource().errorOccurred())
         return m_cachedImageSize;
 
     // <video> in standalone media documents should not use the default 300x150
