@@ -33,7 +33,6 @@
 #include "AudioDestination.h"
 #include "MediaSession.h"
 #include <AudioUnit/AudioUnit.h>
-#include <wtf/OwnPtr.h>
 #include <wtf/RefPtr.h>
 
 namespace WebCore {

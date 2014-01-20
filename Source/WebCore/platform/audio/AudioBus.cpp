@@ -39,8 +39,6 @@
 #include <algorithm>
 #include <assert.h>
 #include <math.h>
-#include <wtf/OwnPtr.h>
-#include <wtf/PassOwnPtr.h>
 
 namespace WebCore {
 
@@ -66,8 +64,8 @@ AudioBus::AudioBus(unsigned numberOfChannels, size_t length, bool allocate)
     m_channels.reserveInitialCapacity(numberOfChannels);
 
     for (unsigned i = 0; i < numberOfChannels; ++i) {
-        PassOwnPtr<AudioChannel> channel = allocate ? adoptPtr(new AudioChannel(length)) : adoptPtr(new AudioChannel(0, length));
-        m_channels.append(channel);
+        auto channel = allocate ? std::make_unique<AudioChannel>(length) : std::make_unique<AudioChannel>(nullptr, length);
+        m_channels.append(std::move(channel));
     }
 
     m_layout = LayoutCanonical; // for now this is the only layout we define
@@ -464,7 +462,7 @@ void AudioBus::copyWithGainFrom(const AudioBus &sourceBus, float* lastMixGain, f
 
     if (framesToDezipper) {
         if (!m_dezipperGainValues.get() || m_dezipperGainValues->size() < framesToDezipper)
-            m_dezipperGainValues = adoptPtr(new AudioFloatArray(framesToDezipper));
+            m_dezipperGainValues = std::make_unique<AudioFloatArray>(framesToDezipper);
 
         float* gainValues = m_dezipperGainValues->data();
         for (unsigned i = 0; i < framesToDezipper; ++i) {

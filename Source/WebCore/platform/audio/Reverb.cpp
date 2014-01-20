@@ -38,8 +38,6 @@
 #include "VectorMath.h"
 #include <math.h>
 #include <wtf/MathExtras.h>
-#include <wtf/OwnPtr.h>
-#include <wtf/PassOwnPtr.h>
 
 namespace WebCore {
 
@@ -119,8 +117,7 @@ void Reverb::initialize(AudioBus* impulseResponseBuffer, size_t renderSliceSize,
     for (size_t i = 0; i < numResponseChannels; ++i) {
         AudioChannel* channel = impulseResponseBuffer->channel(i);
 
-        OwnPtr<ReverbConvolver> convolver = adoptPtr(new ReverbConvolver(channel, renderSliceSize, maxFFTSize, convolverRenderPhase, useBackgroundThreads));
-        m_convolvers.append(convolver.release());
+        m_convolvers.append(std::make_unique<ReverbConvolver>(channel, renderSliceSize, maxFFTSize, convolverRenderPhase, useBackgroundThreads));
 
         convolverRenderPhase += renderSliceSize;
     }

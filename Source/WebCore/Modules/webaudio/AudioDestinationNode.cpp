@@ -40,7 +40,7 @@ AudioDestinationNode::AudioDestinationNode(AudioContext* context, float sampleRa
     : AudioNode(context, sampleRate)
     , m_currentSampleFrame(0)
 {
-    addInput(adoptPtr(new AudioNodeInput(this)));
+    addInput(std::make_unique<AudioNodeInput>(this));
     
     setNodeType(NodeTypeDestination);
 }

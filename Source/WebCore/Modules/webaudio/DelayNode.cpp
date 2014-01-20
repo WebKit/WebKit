@@ -39,7 +39,7 @@ DelayNode::DelayNode(AudioContext* context, float sampleRate, double maxDelayTim
         ec = NOT_SUPPORTED_ERR;
         return;
     }
-    m_processor = adoptPtr(new DelayProcessor(context, sampleRate, 1, maxDelayTime));
+    m_processor = std::make_unique<DelayProcessor>(context, sampleRate, 1, maxDelayTime);
     setNodeType(NodeTypeDelay);
 }
 

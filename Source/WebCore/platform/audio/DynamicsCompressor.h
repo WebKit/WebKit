@@ -99,8 +99,8 @@ protected:
     } ZeroPoleFilterPack4;
 
     // Per-channel emphasis filters.
-    Vector<OwnPtr<ZeroPoleFilterPack4>> m_preFilterPacks;
-    Vector<OwnPtr<ZeroPoleFilterPack4>> m_postFilterPacks;
+    Vector<std::unique_ptr<ZeroPoleFilterPack4>> m_preFilterPacks;
+    Vector<std::unique_ptr<ZeroPoleFilterPack4>> m_postFilterPacks;
 
     std::unique_ptr<const float*[]> m_sourceChannels;
     std::unique_ptr<float*[]> m_destinationChannels;

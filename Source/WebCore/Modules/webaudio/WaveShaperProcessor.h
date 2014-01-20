@@ -28,6 +28,7 @@
 #include "AudioDSPKernel.h"
 #include "AudioDSPKernelProcessor.h"
 #include "AudioNode.h"
+#include <memory>
 #include <mutex>
 #include <runtime/Float32Array.h>
 #include <wtf/RefPtr.h>
@@ -48,7 +49,7 @@ public:
 
     virtual ~WaveShaperProcessor();
 
-    virtual PassOwnPtr<AudioDSPKernel> createKernel() override;
+    virtual std::unique_ptr<AudioDSPKernel> createKernel() override;
 
     virtual void process(const AudioBus* source, AudioBus* destination, size_t framesToProcess) override;
 

@@ -30,8 +30,8 @@
 #define PeriodicWave_h
 
 #include "AudioArray.h"
+#include <memory>
 #include <runtime/Float32Array.h>
-#include <wtf/OwnPtr.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
@@ -89,7 +89,7 @@ private:
 
     // Creates tables based on numberOfComponents Fourier coefficients.
     void createBandLimitedTables(const float* real, const float* imag, unsigned numberOfComponents);
-    Vector<OwnPtr<AudioFloatArray>> m_bandLimitedTables;
+    Vector<std::unique_ptr<AudioFloatArray>> m_bandLimitedTables;
 };
 
 } // namespace WebCore

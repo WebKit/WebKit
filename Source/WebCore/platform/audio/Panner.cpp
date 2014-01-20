@@ -34,21 +34,20 @@
 
 #include "EqualPowerPanner.h"
 #include "HRTFPanner.h"
-#include <wtf/OwnPtr.h>
 
 namespace WebCore {
 
-PassOwnPtr<Panner> Panner::create(PanningModel model, float sampleRate, HRTFDatabaseLoader* databaseLoader)
+std::unique_ptr<Panner> Panner::create(PanningModel model, float sampleRate, HRTFDatabaseLoader* databaseLoader)
 {
-    OwnPtr<Panner> panner;
+    std::unique_ptr<Panner> panner;
 
     switch (model) {
     case PanningModelEqualPower:
-        panner = adoptPtr(new EqualPowerPanner(sampleRate));
+        panner = std::make_unique<EqualPowerPanner>(sampleRate);
         break;
 
     case PanningModelHRTF:
-        panner = adoptPtr(new HRTFPanner(sampleRate, databaseLoader));
+        panner = std::make_unique<HRTFPanner>(sampleRate, databaseLoader);
         break;
 
     // FIXME: sound field panning is not yet implemented...
@@ -58,7 +57,7 @@ PassOwnPtr<Panner> Panner::create(PanningModel model, float sampleRate, HRTFData
         return nullptr;
     }
 
-    return panner.release();
+    return panner;
 }
 
 } // namespace WebCore

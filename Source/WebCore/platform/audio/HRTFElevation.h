@@ -30,9 +30,8 @@
 #define HRTFElevation_h
 
 #include "HRTFKernel.h"
+#include <memory>
 #include <wtf/Noncopyable.h>
-#include <wtf/OwnPtr.h>
-#include <wtf/PassOwnPtr.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
@@ -46,14 +45,22 @@ namespace WebCore {
 class HRTFElevation {
     WTF_MAKE_NONCOPYABLE(HRTFElevation);
 public:
+    HRTFElevation(std::unique_ptr<HRTFKernelList> kernelListL, std::unique_ptr<HRTFKernelList> kernelListR, int elevation, float sampleRate)
+        : m_kernelListL(std::move(kernelListL))
+        , m_kernelListR(std::move(kernelListR))
+        , m_elevationAngle(elevation)
+        , m_sampleRate(sampleRate)
+    {
+    }
+
     // Loads and returns an HRTFElevation with the given HRTF database subject name and elevation from browser (or WebKit.framework) resources.
     // Normally, there will only be a single HRTF database set, but this API supports the possibility of multiple ones with different names.
     // Interpolated azimuths will be generated based on InterpolationFactor.
     // Valid values for elevation are -45 -> +90 in 15 degree increments.
-    static PassOwnPtr<HRTFElevation> createForSubject(const String& subjectName, int elevation, float sampleRate);
+    static std::unique_ptr<HRTFElevation> createForSubject(const String& subjectName, int elevation, float sampleRate);
 
     // Given two HRTFElevations, and an interpolation factor x: 0 -> 1, returns an interpolated HRTFElevation.
-    static PassOwnPtr<HRTFElevation> createByInterpolatingSlices(HRTFElevation* hrtfElevation1, HRTFElevation* hrtfElevation2, float x, float sampleRate);
+    static std::unique_ptr<HRTFElevation> createByInterpolatingSlices(HRTFElevation* hrtfElevation1, HRTFElevation* hrtfElevation2, float x, float sampleRate);
 
     // Returns the list of left or right ear HRTFKernels for all the azimuths going from 0 to 360 degrees.
     HRTFKernelList* kernelListL() { return m_kernelListL.get(); }
@@ -93,16 +100,8 @@ public:
                                                              RefPtr<HRTFKernel>& kernelL, RefPtr<HRTFKernel>& kernelR);
 
 private:
-    HRTFElevation(PassOwnPtr<HRTFKernelList> kernelListL, PassOwnPtr<HRTFKernelList> kernelListR, int elevation, float sampleRate)
-        : m_kernelListL(kernelListL)
-        , m_kernelListR(kernelListR)
-        , m_elevationAngle(elevation)
-        , m_sampleRate(sampleRate)
-    {
-    }
-
-    OwnPtr<HRTFKernelList> m_kernelListL;
-    OwnPtr<HRTFKernelList> m_kernelListR;
+    std::unique_ptr<HRTFKernelList> m_kernelListL;
+    std::unique_ptr<HRTFKernelList> m_kernelListR;
     double m_elevationAngle;
     float m_sampleRate;
 };

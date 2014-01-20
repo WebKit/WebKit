@@ -49,8 +49,8 @@ ConvolverNode::ConvolverNode(AudioContext* context, float sampleRate)
     : AudioNode(context, sampleRate)
     , m_normalize(true)
 {
-    addInput(adoptPtr(new AudioNodeInput(this)));
-    addOutput(adoptPtr(new AudioNodeOutput(this, 2)));
+    addInput(std::make_unique<AudioNodeInput>(this));
+    addOutput(std::make_unique<AudioNodeOutput>(this, 2));
 
     // Node-specific default mixing rules.
     m_channelCount = 2;
@@ -111,7 +111,7 @@ void ConvolverNode::uninitialize()
     if (!isInitialized())
         return;
 
-    m_reverb.clear();
+    m_reverb.reset();
     AudioNode::uninitialize();
 }
 
@@ -141,12 +141,12 @@ void ConvolverNode::setBuffer(AudioBuffer* buffer)
 
     // Create the reverb with the given impulse response.
     bool useBackgroundThreads = !context()->isOfflineContext();
-    OwnPtr<Reverb> reverb = adoptPtr(new Reverb(bufferBus.get(), AudioNode::ProcessingSizeInFrames, MaxFFTSize, 2, useBackgroundThreads, m_normalize));
+    auto reverb = std::make_unique<Reverb>(bufferBus.get(), AudioNode::ProcessingSizeInFrames, MaxFFTSize, 2, useBackgroundThreads, m_normalize);
 
     {
         // Synchronize with process().
         std::lock_guard<std::mutex> lock(m_processMutex);
-        m_reverb = reverb.release();
+        m_reverb = std::move(reverb);
         m_buffer = buffer;
     }
 }

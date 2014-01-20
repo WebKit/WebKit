@@ -77,7 +77,7 @@ HRTFDatabaseLoader::~HRTFDatabaseLoader()
     ASSERT(isMainThread());
 
     waitForLoaderThreadCompletion();
-    m_hrtfDatabase.clear();
+    m_hrtfDatabase.reset();
 
     // Remove ourself from the map.
     loaderMap().remove(m_databaseSampleRate);
@@ -96,7 +96,7 @@ void HRTFDatabaseLoader::load()
     ASSERT(!isMainThread());
     if (!m_hrtfDatabase.get()) {
         // Load the default HRTF database.
-        m_hrtfDatabase = HRTFDatabase::create(m_databaseSampleRate);
+        m_hrtfDatabase = std::make_unique<HRTFDatabase>(m_databaseSampleRate);
     }
 }
 

@@ -28,7 +28,7 @@
 #include "AudioBus.h"
 #include "AudioResamplerKernel.h"
 #include "AudioSourceProvider.h"
-#include <wtf/OwnPtr.h>
+#include <memory>
 #include <wtf/Vector.h>
 
 namespace WebCore {
@@ -59,7 +59,7 @@ public:
 
 private:
     double m_rate;
-    Vector<OwnPtr<AudioResamplerKernel>> m_kernels;
+    Vector<std::unique_ptr<AudioResamplerKernel>> m_kernels;
     RefPtr<AudioBus> m_sourceBus;
 };
 

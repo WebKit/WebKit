@@ -30,7 +30,6 @@
 #include "AudioBasicInspectorNode.h"
 #include "AudioBus.h"
 #include "MediaStream.h"
-#include <wtf/OwnPtr.h>
 #include <wtf/PassRefPtr.h>
 
 namespace WebCore {

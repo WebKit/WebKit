@@ -30,8 +30,8 @@
 #define AudioBus_h
 
 #include "AudioChannel.h"
+#include <memory>
 #include <wtf/Noncopyable.h>
-#include <wtf/PassOwnPtr.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/Vector.h>
 
@@ -158,10 +158,10 @@ protected:
     void speakersSumFrom5_1_ToMono(const AudioBus&);
 
     size_t m_length;
-    Vector<OwnPtr<AudioChannel>> m_channels;
+    Vector<std::unique_ptr<AudioChannel>> m_channels;
     int m_layout;
     float m_busGain;
-    OwnPtr<AudioFloatArray> m_dezipperGainValues;
+    std::unique_ptr<AudioFloatArray> m_dezipperGainValues;
     bool m_isFirstTime;
     float m_sampleRate; // 0.0 if unknown or N/A
 };

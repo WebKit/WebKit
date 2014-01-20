@@ -30,8 +30,7 @@
 #define HRTFKernel_h
 
 #include "FFTFrame.h"
-#include <wtf/OwnPtr.h>
-#include <wtf/PassOwnPtr.h>
+#include <memory>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
@@ -56,9 +55,9 @@ public:
         return adoptRef(new HRTFKernel(channel, fftSize, sampleRate));
     }
 
-    static PassRefPtr<HRTFKernel> create(PassOwnPtr<FFTFrame> fftFrame, float frameDelay, float sampleRate)
+    static PassRefPtr<HRTFKernel> create(std::unique_ptr<FFTFrame> fftFrame, float frameDelay, float sampleRate)
     {
-        return adoptRef(new HRTFKernel(fftFrame, frameDelay, sampleRate));
+        return adoptRef(new HRTFKernel(std::forward<std::unique_ptr<FFTFrame>>(fftFrame), frameDelay, sampleRate));
     }
 
     // Given two HRTFKernels, and an interpolation factor x: 0 -> 1, returns an interpolated HRTFKernel.
@@ -73,20 +72,20 @@ public:
     double nyquist() const { return 0.5 * sampleRate(); }
 
     // Converts back into impulse-response form.
-    PassOwnPtr<AudioChannel> createImpulseResponse();
+    std::unique_ptr<AudioChannel> createImpulseResponse();
 
 private:
     // Note: this is destructive on the passed in AudioChannel.
     HRTFKernel(AudioChannel*, size_t fftSize, float sampleRate);
     
-    HRTFKernel(PassOwnPtr<FFTFrame> fftFrame, float frameDelay, float sampleRate)
-        : m_fftFrame(fftFrame)
+    HRTFKernel(std::unique_ptr<FFTFrame> fftFrame, float frameDelay, float sampleRate)
+        : m_fftFrame(std::move(fftFrame))
         , m_frameDelay(frameDelay)
         , m_sampleRate(sampleRate)
     {
     }
     
-    OwnPtr<FFTFrame> m_fftFrame;
+    std::unique_ptr<FFTFrame> m_fftFrame;
     float m_frameDelay;
     float m_sampleRate;
 };

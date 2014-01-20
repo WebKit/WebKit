@@ -31,7 +31,6 @@
 #import "SoftLinking.h"
 #import <AVFoundation/AVAudioSession.h>
 #import <objc/runtime.h>
-#import <wtf/PassOwnPtr.h>
 #import <wtf/RetainPtr.h>
 
 SOFT_LINK_FRAMEWORK(AVFoundation)
@@ -119,7 +118,7 @@ AudioSessionPrivate::AudioSessionPrivate(AudioSession* session)
 }
 
 AudioSession::AudioSession()
-    : m_private(adoptPtr(new AudioSessionPrivate(this)))
+    : m_private(std::make_unique<AudioSessionPrivate>(this))
 {
 }
 

@@ -27,7 +27,7 @@
 
 #include "AudioDestination.h"
 #include "AudioDestinationNode.h"
-#include <wtf/OwnPtr.h>
+#include <memory>
 
 namespace WebCore {
 
@@ -56,7 +56,7 @@ private:
     explicit DefaultAudioDestinationNode(AudioContext*);
     void createDestination();
 
-    OwnPtr<AudioDestination> m_destination;
+    std::unique_ptr<AudioDestination> m_destination;
     String m_inputDeviceId;
     unsigned m_numberOfInputChannels;
 };

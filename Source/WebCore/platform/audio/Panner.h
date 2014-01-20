@@ -29,7 +29,7 @@
 #ifndef Panner_h
 #define Panner_h
 
-#include <wtf/PassOwnPtr.h>
+#include <memory>
 
 namespace WebCore {
 
@@ -48,7 +48,7 @@ public:
     
     typedef unsigned PanningModel;
 
-    static PassOwnPtr<Panner> create(PanningModel, float sampleRate, HRTFDatabaseLoader*);
+    static std::unique_ptr<Panner> create(PanningModel, float sampleRate, HRTFDatabaseLoader*);
 
     virtual ~Panner() { };
 

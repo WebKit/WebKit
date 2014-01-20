@@ -41,8 +41,8 @@ GainNode::GainNode(AudioContext* context, float sampleRate)
 {
     m_gain = AudioParam::create(context, "gain", 1.0, 0.0, 1.0);
 
-    addInput(adoptPtr(new AudioNodeInput(this)));
-    addOutput(adoptPtr(new AudioNodeOutput(this, 1)));
+    addInput(std::make_unique<AudioNodeInput>(this));
+    addOutput(std::make_unique<AudioNodeOutput>(this, 1));
 
     setNodeType(NodeTypeGain);
 

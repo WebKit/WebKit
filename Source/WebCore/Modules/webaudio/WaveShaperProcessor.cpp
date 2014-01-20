@@ -44,9 +44,9 @@ WaveShaperProcessor::~WaveShaperProcessor()
         uninitialize();
 }
 
-PassOwnPtr<AudioDSPKernel> WaveShaperProcessor::createKernel()
+std::unique_ptr<AudioDSPKernel> WaveShaperProcessor::createKernel()
 {
-    return adoptPtr(new WaveShaperDSPKernel(this));
+    return std::make_unique<WaveShaperDSPKernel>(this);
 }
 
 void WaveShaperProcessor::setCurve(Float32Array* curve)

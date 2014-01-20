@@ -30,7 +30,7 @@
 #define MultiChannelResampler_h
 
 #include "SincResampler.h"
-#include <wtf/OwnPtr.h>
+#include <memory>
 
 namespace WebCore {
 
@@ -49,7 +49,7 @@ private:
     // https://bugs.webkit.org/show_bug.cgi?id=75118
     
     // Each channel will be resampled using a high-quality SincResampler.
-    Vector<OwnPtr<SincResampler>> m_kernels;
+    Vector<std::unique_ptr<SincResampler>> m_kernels;
     
     unsigned m_numberOfChannels;
 };

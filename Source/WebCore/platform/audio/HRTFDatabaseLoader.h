@@ -30,6 +30,7 @@
 #define HRTFDatabaseLoader_h
 
 #include "HRTFDatabase.h"
+#include <memory>
 #include <wtf/HashMap.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
@@ -72,7 +73,7 @@ private:
     // This must be called from the main thread.
     void loadAsynchronously();
 
-    OwnPtr<HRTFDatabase> m_hrtfDatabase;
+    std::unique_ptr<HRTFDatabase> m_hrtfDatabase;
 
     // Holding a m_threadLock is required when accessing m_databaseLoaderThread.
     Mutex m_threadLock;

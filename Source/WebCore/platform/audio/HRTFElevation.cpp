@@ -40,8 +40,6 @@
 #include "HRTFPanner.h"
 #include <algorithm>
 #include <math.h>
-#include <wtf/OwnPtr.h>
-
 
 namespace WebCore {
 
@@ -238,15 +236,15 @@ static int maxElevations[] = {
     45 //  345 
 };
 
-PassOwnPtr<HRTFElevation> HRTFElevation::createForSubject(const String& subjectName, int elevation, float sampleRate)
+std::unique_ptr<HRTFElevation> HRTFElevation::createForSubject(const String& subjectName, int elevation, float sampleRate)
 {
     bool isElevationGood = elevation >= -45 && elevation <= 90 && (elevation / 15) * 15 == elevation;
     ASSERT(isElevationGood);
     if (!isElevationGood)
         return nullptr;
         
-    OwnPtr<HRTFKernelList> kernelListL = adoptPtr(new HRTFKernelList(NumberOfTotalAzimuths));
-    OwnPtr<HRTFKernelList> kernelListR = adoptPtr(new HRTFKernelList(NumberOfTotalAzimuths));
+    auto kernelListL = std::make_unique<HRTFKernelList>(NumberOfTotalAzimuths);
+    auto kernelListR = std::make_unique<HRTFKernelList>(NumberOfTotalAzimuths);
 
     // Load convolution kernels from HRTF files.
     int interpolatedIndex = 0;
@@ -275,11 +273,10 @@ PassOwnPtr<HRTFElevation> HRTFElevation::createForSubject(const String& subjectN
         }
     }
     
-    OwnPtr<HRTFElevation> hrtfElevation = adoptPtr(new HRTFElevation(kernelListL.release(), kernelListR.release(), elevation, sampleRate));
-    return hrtfElevation.release();
+    return std::make_unique<HRTFElevation>(std::move(kernelListL), std::move(kernelListR), elevation, sampleRate);
 }
 
-PassOwnPtr<HRTFElevation> HRTFElevation::createByInterpolatingSlices(HRTFElevation* hrtfElevation1, HRTFElevation* hrtfElevation2, float x, float sampleRate)
+std::unique_ptr<HRTFElevation> HRTFElevation::createByInterpolatingSlices(HRTFElevation* hrtfElevation1, HRTFElevation* hrtfElevation2, float x, float sampleRate)
 {
     ASSERT(hrtfElevation1 && hrtfElevation2);
     if (!hrtfElevation1 || !hrtfElevation2)
@@ -287,8 +284,8 @@ PassOwnPtr<HRTFElevation> HRTFElevation::createByInterpolatingSlices(HRTFElevati
         
     ASSERT(x >= 0.0 && x < 1.0);
     
-    OwnPtr<HRTFKernelList> kernelListL = adoptPtr(new HRTFKernelList(NumberOfTotalAzimuths));
-    OwnPtr<HRTFKernelList> kernelListR = adoptPtr(new HRTFKernelList(NumberOfTotalAzimuths));
+    auto kernelListL = std::make_unique<HRTFKernelList>(NumberOfTotalAzimuths);
+    auto kernelListR = std::make_unique<HRTFKernelList>(NumberOfTotalAzimuths);
 
     HRTFKernelList* kernelListL1 = hrtfElevation1->kernelListL();
     HRTFKernelList* kernelListR1 = hrtfElevation1->kernelListR();
@@ -304,8 +301,7 @@ PassOwnPtr<HRTFElevation> HRTFElevation::createByInterpolatingSlices(HRTFElevati
     // Interpolate elevation angle.
     double angle = (1.0 - x) * hrtfElevation1->elevationAngle() + x * hrtfElevation2->elevationAngle();
     
-    OwnPtr<HRTFElevation> hrtfElevation = adoptPtr(new HRTFElevation(kernelListL.release(), kernelListR.release(), static_cast<int>(angle), sampleRate));
-    return hrtfElevation.release();  
+    return std::make_unique<HRTFElevation>(std::move(kernelListL), std::move(kernelListR), static_cast<int>(angle), sampleRate);
 }
 
 void HRTFElevation::getKernelsFromAzimuth(double azimuthBlend, unsigned azimuthIndex, HRTFKernel* &kernelL, HRTFKernel* &kernelR, double& frameDelayL, double& frameDelayR)

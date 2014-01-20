@@ -32,8 +32,6 @@
 #include "AudioBufferCallback.h"
 #include <runtime/ArrayBuffer.h>
 #include <wtf/MainThread.h>
-#include <wtf/OwnPtr.h>
-#include <wtf/PassOwnPtr.h>
 
 namespace WebCore {
 

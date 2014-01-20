@@ -41,8 +41,8 @@ namespace WebCore {
 DynamicsCompressorNode::DynamicsCompressorNode(AudioContext* context, float sampleRate)
     : AudioNode(context, sampleRate)
 {
-    addInput(adoptPtr(new AudioNodeInput(this)));
-    addOutput(adoptPtr(new AudioNodeOutput(this, defaultNumberOfOutputChannels)));
+    addInput(std::make_unique<AudioNodeInput>(this));
+    addOutput(std::make_unique<AudioNodeOutput>(this, defaultNumberOfOutputChannels));
 
     setNodeType(NodeTypeDynamicsCompressor);
 
@@ -95,7 +95,7 @@ void DynamicsCompressorNode::initialize()
         return;
 
     AudioNode::initialize();    
-    m_dynamicsCompressor = adoptPtr(new DynamicsCompressor(sampleRate(), defaultNumberOfOutputChannels));
+    m_dynamicsCompressor = std::make_unique<DynamicsCompressor>(sampleRate(), defaultNumberOfOutputChannels);
 }
 
 void DynamicsCompressorNode::uninitialize()
@@ -103,7 +103,7 @@ void DynamicsCompressorNode::uninitialize()
     if (!isInitialized())
         return;
 
-    m_dynamicsCompressor.clear();
+    m_dynamicsCompressor.reset();
     AudioNode::uninitialize();
 }
 

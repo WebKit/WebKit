@@ -52,8 +52,8 @@ PannerNode::PannerNode(AudioContext* context, float sampleRate)
     , m_lastGain(-1.0)
     , m_connectionCount(0)
 {
-    addInput(adoptPtr(new AudioNodeInput(this)));
-    addOutput(adoptPtr(new AudioNodeOutput(this, 2)));
+    addInput(std::make_unique<AudioNodeInput>(this));
+    addOutput(std::make_unique<AudioNodeOutput>(this, 2));
 
     // Node-specific default mixing rules.
     m_channelCount = 2;
@@ -154,7 +154,7 @@ void PannerNode::uninitialize()
     if (!isInitialized())
         return;
         
-    m_panner.clear();
+    m_panner.reset();
     AudioNode::uninitialize();
 }
 
@@ -199,8 +199,7 @@ bool PannerNode::setPanningModel(unsigned model)
             // This synchronizes with process().
             std::lock_guard<std::mutex> lock(m_pannerMutex);
 
-            OwnPtr<Panner> newPanner = Panner::create(model, sampleRate(), context()->hrtfDatabaseLoader());
-            m_panner = newPanner.release();
+            m_panner = Panner::create(model, sampleRate(), context()->hrtfDatabaseLoader());
             m_panningModel = model;
         }
         break;

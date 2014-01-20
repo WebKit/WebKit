@@ -33,8 +33,8 @@
 #include "Distance.h"
 #include "FloatPoint3D.h"
 #include "Panner.h"
+#include <memory>
 #include <mutex>
-#include <wtf/OwnPtr.h>
 
 namespace WebCore {
 
@@ -140,7 +140,7 @@ private:
     // This is in order to handle the pitch change necessary for the doppler shift.
     void notifyAudioSourcesConnectedToNode(AudioNode*);
 
-    OwnPtr<Panner> m_panner;
+    std::unique_ptr<Panner> m_panner;
     unsigned m_panningModel;
 
     FloatPoint3D m_position;

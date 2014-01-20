@@ -42,7 +42,7 @@ gboolean messageCallback(GstBus*, GstMessage* message, AudioDestinationGStreamer
     return destination->handleMessage(message);
 }
 
-PassOwnPtr<AudioDestination> AudioDestination::create(AudioIOCallback& callback, const String&, unsigned numberOfInputChannels, unsigned numberOfOutputChannels, float sampleRate)
+std::unique_ptr<AudioDestination> AudioDestination::create(AudioIOCallback& callback, const String&, unsigned numberOfInputChannels, unsigned numberOfOutputChannels, float sampleRate)
 {
     // FIXME: make use of inputDeviceId as appropriate.
 
@@ -54,7 +54,7 @@ PassOwnPtr<AudioDestination> AudioDestination::create(AudioIOCallback& callback,
     if (numberOfOutputChannels != 2)
         LOG(Media, "AudioDestination::create(%u, %u, %f) - unhandled output channels", numberOfInputChannels, numberOfOutputChannels, sampleRate);
 
-    return adoptPtr(new AudioDestinationGStreamer(callback, sampleRate));
+    return std::make_unique<AudioDestinationGStreamer>(callback, sampleRate);
 }
 
 float AudioDestination::hardwareSampleRate()

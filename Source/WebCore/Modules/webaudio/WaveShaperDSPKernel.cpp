@@ -49,12 +49,12 @@ void WaveShaperDSPKernel::lazyInitializeOversampling()
     ASSERT(isMainThread());
 
     if (!m_tempBuffer) {
-        m_tempBuffer = adoptPtr(new AudioFloatArray(RenderingQuantum * 2));
-        m_tempBuffer2 = adoptPtr(new AudioFloatArray(RenderingQuantum * 4));
-        m_upSampler = adoptPtr(new UpSampler(RenderingQuantum));
-        m_downSampler = adoptPtr(new DownSampler(RenderingQuantum * 2));
-        m_upSampler2 = adoptPtr(new UpSampler(RenderingQuantum * 2));
-        m_downSampler2 = adoptPtr(new DownSampler(RenderingQuantum * 4));
+        m_tempBuffer = std::make_unique<AudioFloatArray>(RenderingQuantum * 2);
+        m_tempBuffer2 = std::make_unique<AudioFloatArray>(RenderingQuantum * 4);
+        m_upSampler = std::make_unique<UpSampler>(RenderingQuantum);
+        m_downSampler = std::make_unique<DownSampler>(RenderingQuantum * 2);
+        m_upSampler2 = std::make_unique<UpSampler>(RenderingQuantum * 2);
+        m_downSampler2 = std::make_unique<DownSampler>(RenderingQuantum * 4);
     }
 }
 

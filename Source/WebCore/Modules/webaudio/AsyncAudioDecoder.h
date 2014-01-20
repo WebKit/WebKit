@@ -25,9 +25,9 @@
 #ifndef AsyncAudioDecoder_h
 #define AsyncAudioDecoder_h
 
+#include <memory>
 #include <wtf/Forward.h>
 #include <wtf/MessageQueue.h>
-#include <wtf/PassOwnPtr.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Threading.h>

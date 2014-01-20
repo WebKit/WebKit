@@ -1,3 +1,161 @@
+2014-01-20  Zan Dobersek  <zdobersek@igalia.com>
+
+        Move WebAudio source code to std::unique_ptr
+        https://bugs.webkit.org/show_bug.cgi?id=127274
+
+        Reviewed by Eric Carlson.
+
+        Move from using OwnPtr and PassOwnPtr to using std::unique_ptr and move semantics
+        in the WebAudio module and the WebAudio code in the platform layer.
+
+        * Modules/webaudio/AsyncAudioDecoder.cpp:
+        * Modules/webaudio/AsyncAudioDecoder.h:
+        * Modules/webaudio/AudioBasicInspectorNode.cpp:
+        (WebCore::AudioBasicInspectorNode::AudioBasicInspectorNode):
+        * Modules/webaudio/AudioBasicProcessorNode.cpp:
+        (WebCore::AudioBasicProcessorNode::AudioBasicProcessorNode):
+        * Modules/webaudio/AudioBasicProcessorNode.h:
+        * Modules/webaudio/AudioBufferSourceNode.cpp:
+        (WebCore::AudioBufferSourceNode::AudioBufferSourceNode):
+        * Modules/webaudio/AudioContext.cpp:
+        * Modules/webaudio/AudioContext.h:
+        * Modules/webaudio/AudioDestinationNode.cpp:
+        (WebCore::AudioDestinationNode::AudioDestinationNode):
+        * Modules/webaudio/AudioNode.cpp:
+        (WebCore::AudioNode::addInput):
+        (WebCore::AudioNode::addOutput):
+        (WebCore::AudioNode::checkNumberOfChannelsForInput):
+        * Modules/webaudio/AudioNode.h:
+        * Modules/webaudio/BiquadFilterNode.cpp:
+        (WebCore::BiquadFilterNode::BiquadFilterNode):
+        * Modules/webaudio/BiquadProcessor.cpp:
+        (WebCore::BiquadProcessor::createKernel):
+        (WebCore::BiquadProcessor::getFrequencyResponse):
+        * Modules/webaudio/BiquadProcessor.h:
+        * Modules/webaudio/ChannelMergerNode.cpp:
+        (WebCore::ChannelMergerNode::ChannelMergerNode):
+        * Modules/webaudio/ChannelSplitterNode.cpp:
+        (WebCore::ChannelSplitterNode::ChannelSplitterNode):
+        * Modules/webaudio/ConvolverNode.cpp:
+        (WebCore::ConvolverNode::ConvolverNode):
+        (WebCore::ConvolverNode::uninitialize):
+        (WebCore::ConvolverNode::setBuffer):
+        * Modules/webaudio/ConvolverNode.h:
+        * Modules/webaudio/DefaultAudioDestinationNode.h:
+        * Modules/webaudio/DelayNode.cpp:
+        (WebCore::DelayNode::DelayNode):
+        * Modules/webaudio/DelayProcessor.cpp:
+        (WebCore::DelayProcessor::createKernel):
+        * Modules/webaudio/DelayProcessor.h:
+        * Modules/webaudio/DynamicsCompressorNode.cpp:
+        (WebCore::DynamicsCompressorNode::DynamicsCompressorNode):
+        (WebCore::DynamicsCompressorNode::initialize):
+        (WebCore::DynamicsCompressorNode::uninitialize):
+        * Modules/webaudio/DynamicsCompressorNode.h:
+        * Modules/webaudio/GainNode.cpp:
+        (WebCore::GainNode::GainNode):
+        * Modules/webaudio/MediaElementAudioSourceNode.cpp:
+        (WebCore::MediaElementAudioSourceNode::MediaElementAudioSourceNode):
+        (WebCore::MediaElementAudioSourceNode::setFormat):
+        * Modules/webaudio/MediaElementAudioSourceNode.h:
+        * Modules/webaudio/MediaStreamAudioDestinationNode.h:
+        * Modules/webaudio/MediaStreamAudioSource.cpp:
+        * Modules/webaudio/MediaStreamAudioSourceNode.cpp:
+        (WebCore::MediaStreamAudioSourceNode::MediaStreamAudioSourceNode):
+        * Modules/webaudio/MediaStreamAudioSourceNode.h:
+        * Modules/webaudio/OscillatorNode.cpp:
+        (WebCore::OscillatorNode::OscillatorNode):
+        * Modules/webaudio/PannerNode.cpp:
+        (WebCore::PannerNode::PannerNode):
+        (WebCore::PannerNode::uninitialize):
+        (WebCore::PannerNode::setPanningModel):
+        * Modules/webaudio/PannerNode.h:
+        * Modules/webaudio/PeriodicWave.cpp:
+        (WebCore::PeriodicWave::createBandLimitedTables):
+        * Modules/webaudio/PeriodicWave.h:
+        * Modules/webaudio/RealtimeAnalyser.cpp:
+        (WebCore::RealtimeAnalyser::RealtimeAnalyser):
+        (WebCore::RealtimeAnalyser::setFftSize):
+        * Modules/webaudio/RealtimeAnalyser.h:
+        * Modules/webaudio/ScriptProcessorNode.cpp:
+        (WebCore::ScriptProcessorNode::ScriptProcessorNode):
+        * Modules/webaudio/WaveShaperDSPKernel.cpp:
+        (WebCore::WaveShaperDSPKernel::lazyInitializeOversampling):
+        * Modules/webaudio/WaveShaperDSPKernel.h:
+        * Modules/webaudio/WaveShaperNode.cpp:
+        (WebCore::WaveShaperNode::WaveShaperNode):
+        * Modules/webaudio/WaveShaperProcessor.cpp:
+        (WebCore::WaveShaperProcessor::createKernel):
+        * Modules/webaudio/WaveShaperProcessor.h:
+        * platform/audio/AudioBus.cpp:
+        (WebCore::AudioBus::AudioBus):
+        (WebCore::AudioBus::copyWithGainFrom):
+        * platform/audio/AudioBus.h:
+        * platform/audio/AudioChannel.cpp:
+        * platform/audio/AudioChannel.h:
+        (WebCore::AudioChannel::AudioChannel):
+        (WebCore::AudioChannel::set):
+        * platform/audio/AudioDSPKernelProcessor.h:
+        * platform/audio/AudioDestination.h:
+        * platform/audio/AudioResampler.cpp:
+        (WebCore::AudioResampler::AudioResampler):
+        (WebCore::AudioResampler::configureChannels):
+        * platform/audio/AudioResampler.h:
+        * platform/audio/AudioSession.h:
+        * platform/audio/DynamicsCompressor.cpp:
+        (WebCore::DynamicsCompressor::setNumberOfChannels):
+        * platform/audio/DynamicsCompressor.h:
+        * platform/audio/DynamicsCompressorKernel.cpp:
+        (WebCore::DynamicsCompressorKernel::setNumberOfChannels):
+        * platform/audio/DynamicsCompressorKernel.h:
+        * platform/audio/FFTFrame.cpp:
+        (WebCore::FFTFrame::createInterpolatedFrame):
+        * platform/audio/FFTFrame.h:
+        * platform/audio/HRTFDatabase.cpp:
+        (WebCore::HRTFDatabase::HRTFDatabase):
+        * platform/audio/HRTFDatabase.h:
+        * platform/audio/HRTFDatabaseLoader.cpp:
+        (WebCore::HRTFDatabaseLoader::~HRTFDatabaseLoader):
+        (WebCore::HRTFDatabaseLoader::load):
+        * platform/audio/HRTFDatabaseLoader.h:
+        * platform/audio/HRTFElevation.cpp:
+        (WebCore::HRTFElevation::createForSubject):
+        (WebCore::HRTFElevation::createByInterpolatingSlices):
+        * platform/audio/HRTFElevation.h:
+        (WebCore::HRTFElevation::HRTFElevation):
+        * platform/audio/HRTFKernel.cpp:
+        (WebCore::HRTFKernel::HRTFKernel):
+        (WebCore::HRTFKernel::createImpulseResponse):
+        (WebCore::HRTFKernel::createInterpolatedKernel):
+        * platform/audio/HRTFKernel.h:
+        (WebCore::HRTFKernel::create):
+        (WebCore::HRTFKernel::HRTFKernel):
+        * platform/audio/MultiChannelResampler.cpp:
+        (WebCore::MultiChannelResampler::MultiChannelResampler):
+        * platform/audio/MultiChannelResampler.h:
+        * platform/audio/Panner.cpp:
+        (WebCore::Panner::create):
+        * platform/audio/Panner.h:
+        * platform/audio/Reverb.cpp:
+        (WebCore::Reverb::initialize):
+        * platform/audio/Reverb.h:
+        * platform/audio/ReverbConvolver.h:
+        * platform/audio/ReverbConvolverStage.cpp:
+        (WebCore::ReverbConvolverStage::ReverbConvolverStage):
+        * platform/audio/ReverbConvolverStage.h:
+        * platform/audio/gstreamer/AudioDestinationGStreamer.cpp:
+        (WebCore::AudioDestination::create):
+        * platform/audio/gstreamer/AudioFileReaderGStreamer.cpp:
+        * platform/audio/ios/AudioDestinationIOS.cpp:
+        (WebCore::AudioDestination::create):
+        * platform/audio/ios/AudioSessionIOS.mm:
+        (WebCore::AudioSession::AudioSession):
+        * platform/audio/mac/AudioDestinationMac.cpp:
+        (WebCore::AudioDestination::create):
+        * platform/audio/mac/AudioDestinationMac.h:
+        * platform/audio/mac/AudioSessionMac.cpp:
+        (WebCore::AudioSession::AudioSession):
+
 2014-01-20  Morten Stenshorne  <mstensho@opera.com>
 
         Region based multicol: support explicit column breaks

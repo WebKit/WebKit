@@ -26,8 +26,8 @@
 #define ConvolverNode_h
 
 #include "AudioNode.h"
+#include <memory>
 #include <mutex>
-#include <wtf/OwnPtr.h>
 #include <wtf/RefPtr.h>
 
 namespace WebCore {
@@ -63,7 +63,7 @@ private:
     virtual double tailTime() const override;
     virtual double latencyTime() const override;
 
-    OwnPtr<Reverb> m_reverb;
+    std::unique_ptr<Reverb> m_reverb;
     RefPtr<AudioBuffer> m_buffer;
 
     // This synchronizes dynamic changes to the convolution impulse response with process().

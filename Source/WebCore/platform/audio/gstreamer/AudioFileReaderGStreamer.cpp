@@ -30,7 +30,6 @@
 #include <gst/gst.h>
 #include <gst/pbutils/pbutils.h>
 #include <wtf/Noncopyable.h>
-#include <wtf/PassOwnPtr.h>
 #include <wtf/gobject/GOwnPtr.h>
 #include <wtf/gobject/GRefPtr.h>
 

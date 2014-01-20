@@ -31,8 +31,8 @@
 #include "AudioSourceProviderClient.h"
 #include "HTMLMediaElement.h"
 #include "MultiChannelResampler.h"
+#include <memory>
 #include <mutex>
-#include <wtf/OwnPtr.h>
 #include <wtf/PassRefPtr.h>
 
 namespace WebCore {
@@ -72,7 +72,7 @@ private:
     unsigned m_sourceNumberOfChannels;
     double m_sourceSampleRate;
 
-    OwnPtr<MultiChannelResampler> m_multiChannelResampler;
+    std::unique_ptr<MultiChannelResampler> m_multiChannelResampler;
 };
 
 } // namespace WebCore

@@ -26,11 +26,11 @@
 #define RealtimeAnalyser_h
 
 #include "AudioArray.h"
+#include <memory>
 #include <runtime/Float32Array.h>
 #include <runtime/Uint8Array.h>
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
-#include <wtf/OwnPtr.h>
 
 namespace WebCore {
 
@@ -81,7 +81,7 @@ private:
     unsigned m_writeIndex;
     
     size_t m_fftSize;
-    OwnPtr<FFTFrame> m_analysisFrame;
+    std::unique_ptr<FFTFrame> m_analysisFrame;
     void doFFTAnalysis();
     
     // doFFTAnalysis() stores the floating-point magnitude analysis data here.

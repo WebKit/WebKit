@@ -31,7 +31,6 @@
 
 #include "NotImplemented.h"
 #include "UUID.h"
-#include <wtf/PassOwnPtr.h>
 
 namespace WebCore {
 

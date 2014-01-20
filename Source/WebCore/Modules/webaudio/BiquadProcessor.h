@@ -30,6 +30,7 @@
 #include "AudioNode.h"
 #include "AudioParam.h"
 #include "Biquad.h"
+#include <memory>
 #include <wtf/RefPtr.h>
 
 namespace WebCore {
@@ -53,7 +54,7 @@ public:
 
     virtual ~BiquadProcessor();
     
-    virtual PassOwnPtr<AudioDSPKernel> createKernel() override;
+    virtual std::unique_ptr<AudioDSPKernel> createKernel() override;
         
     virtual void process(const AudioBus* source, AudioBus* destination, size_t framesToProcess) override;
 

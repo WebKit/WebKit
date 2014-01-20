@@ -49,7 +49,7 @@ const float kLowThreshold = -1;
 const float kHighThreshold = 1;
 
 // Factory method: Mac-implementation
-PassOwnPtr<AudioDestination> AudioDestination::create(AudioIOCallback& callback, const String&, unsigned numberOfInputChannels, unsigned numberOfOutputChannels, float sampleRate)
+std::unique_ptr<AudioDestination> AudioDestination::create(AudioIOCallback& callback, const String&, unsigned numberOfInputChannels, unsigned numberOfOutputChannels, float sampleRate)
 {
     // FIXME: make use of inputDeviceId as appropriate.
 
@@ -61,7 +61,7 @@ PassOwnPtr<AudioDestination> AudioDestination::create(AudioIOCallback& callback,
     if (numberOfOutputChannels != 2)
         LOG(Media, "AudioDestination::create(%u, %u, %f) - unhandled output channels", numberOfInputChannels, numberOfOutputChannels, sampleRate);
 
-    return adoptPtr(new AudioDestinationMac(callback, sampleRate));
+    return std::make_unique<AudioDestinationMac>(callback, sampleRate);
 }
 
 float AudioDestination::hardwareSampleRate()

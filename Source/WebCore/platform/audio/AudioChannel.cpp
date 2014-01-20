@@ -35,7 +35,6 @@
 #include "VectorMath.h"
 #include <algorithm>
 #include <math.h>
-#include <wtf/OwnPtr.h>
 
 namespace WebCore {
 

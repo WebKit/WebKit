@@ -54,9 +54,9 @@ ChannelMergerNode::ChannelMergerNode(AudioContext* context, float sampleRate, un
 {
     // Create the requested number of inputs.
     for (unsigned i = 0; i < numberOfInputs; ++i)
-        addInput(adoptPtr(new AudioNodeInput(this)));
+        addInput(std::make_unique<AudioNodeInput>(this));
 
-    addOutput(adoptPtr(new AudioNodeOutput(this, 1)));
+    addOutput(std::make_unique<AudioNodeOutput>(this, 1));
     
     setNodeType(NodeTypeChannelMerger);
     

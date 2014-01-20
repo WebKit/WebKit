@@ -32,7 +32,6 @@
 #include "AudioSourceProviderClient.h"
 #include "MediaStream.h"
 #include <mutex>
-#include <wtf/OwnPtr.h>
 #include <wtf/PassRefPtr.h>
 
 namespace WebCore {

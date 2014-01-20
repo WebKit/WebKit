@@ -97,7 +97,7 @@ MultiChannelResampler::MultiChannelResampler(double scaleFactor, unsigned number
 {
     // Create each channel's resampler.
     for (unsigned channelIndex = 0; channelIndex < numberOfChannels; ++channelIndex)
-        m_kernels.append(adoptPtr(new SincResampler(scaleFactor)));
+        m_kernels.append(std::make_unique<SincResampler>(scaleFactor));
 }
 
 void MultiChannelResampler::process(AudioSourceProvider* provider, AudioBus* destination, size_t framesToProcess)

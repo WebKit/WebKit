@@ -27,9 +27,8 @@
 
 #include "AudioBus.h"
 #include "EventTarget.h"
+#include <memory>
 #include <wtf/Forward.h>
-#include <wtf/OwnPtr.h>
-#include <wtf/PassOwnPtr.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
 
@@ -185,8 +184,8 @@ public:
 
 protected:
     // Inputs and outputs must be created before the AudioNode is initialized.
-    void addInput(PassOwnPtr<AudioNodeInput>);
-    void addOutput(PassOwnPtr<AudioNodeOutput>);
+    void addInput(std::unique_ptr<AudioNodeInput>);
+    void addOutput(std::unique_ptr<AudioNodeOutput>);
     
     // Called by processIfNecessary() to cause all parts of the rendering graph connected to us to process.
     // Each rendering quantum, the audio data for each of the AudioNode's inputs will be available after this method is called.
@@ -201,8 +200,8 @@ private:
     NodeType m_nodeType;
     RefPtr<AudioContext> m_context;
     float m_sampleRate;
-    Vector<OwnPtr<AudioNodeInput>> m_inputs;
-    Vector<OwnPtr<AudioNodeOutput>> m_outputs;
+    Vector<std::unique_ptr<AudioNodeInput>> m_inputs;
+    Vector<std::unique_ptr<AudioNodeOutput>> m_outputs;
 
     double m_lastProcessingTime;
     double m_lastNonSilentTime;
