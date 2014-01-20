@@ -1,3 +1,18 @@
+2014-01-19  Eunmi Lee  <eunmi15.lee@samsung.com>
+
+        [EFL][WK2] Add touch events option to MiniBrowser.
+        https://bugs.webkit.org/show_bug.cgi?id=127262
+
+        Reviewed by Gyuyoung Kim.
+
+        As a default, touch events are disabled and mouse events are enabled.
+        If touch events option sets to true, touch events are enabled and mouse
+        events are disabled.
+
+        * MiniBrowser/efl/main.c:
+        (window_create):
+        (elm_main):
+
 2014-01-19  Zalan Bujtas  <zalan@apple.com>
 
         Pretty print LayoutUnit, LayoutPoint, and LayoutSize in lldb and gdb.
