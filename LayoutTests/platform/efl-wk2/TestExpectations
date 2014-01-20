@@ -59,13 +59,11 @@ webkit.org/b/102651 [ Debug ] networkinformation/basic-operation.html [ Crash ]
 
 # WebGL test cases crashing in WebCore::GraphicsContext3D::readPixels().
 webkit.org/b/109417 webgl/conformance/textures/texture-attachment-formats.html [ Crash Failure ]
-webkit.org/b/109941 webgl/conformance/textures/origin-clean-conformance.html [ Crash ]
 webkit.org/b/109945 webgl/conformance/glsl/misc/shader-uniform-packing-restrictions.html [ Crash ]
 webkit.org/b/109945 webgl/conformance/uniforms/gl-uniform-arrays.html [ Crash Failure ]
 webkit.org/b/109945 webgl/conformance/uniforms/uniform-default-values.html [ Crash ]
 
 # Known WebGL conformance test failures, fails on Intel and AMD hardware
-webgl/1.0.1/conformance/textures/origin-clean-conformance.html [ Crash ]
 webgl/1.0.2/conformance/glsl/misc/shader-uniform-packing-restrictions.html [ Crash ]
 webgl/1.0.2/conformance/uniforms/uniform-default-values.html [ Crash ]
 
@@ -406,3 +404,12 @@ webkit.org/b/127118 compositing/regions/fixed-in-named-flow-from-abs-in-named-fl
 webkit.org/b/127118 compositing/regions/fixed-in-named-flow-from-outflow.html [ Failure ]
 webkit.org/b/127118 compositing/regions/fixed-in-named-flow-lost-transformed-parent.html [ Failure ]
 webkit.org/b/127118 compositing/regions/fixed-in-named-flow.html [ Failure ]
+
+webkit.org/b/127277 fast/canvas/webgl/glsl-conformance.html [ Failure ]
+
+webkit.org/b/127279 fast/canvas/webgl/webgl-compressed-texture-size-limit.html [ Failure ]
+
+webkit.org/b/127286 webgl/conformance/typedarrays/data-view-test.html [ Failure ]
+
+webkit.org/b/109941 webgl/conformance/textures/origin-clean-conformance.html [ Failure ]
+webkit.org/b/109941 webgl/1.0.1/conformance/textures/origin-clean-conformance.html [ Failure ]
