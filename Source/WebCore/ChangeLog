@@ -1,3 +1,18 @@
+2014-01-20  Zalan Bujtas  <zalan@apple.com>
+
+        Subpixel layout: setSimpleLineLayoutEnabled() produces different layout when line position has CSS px fractions.
+        https://bugs.webkit.org/show_bug.cgi?id=126892
+
+        Reviewed by Antti Koivisto.
+
+        SimpleLineLayout needs to copy normal linebox layout's subpixel rounding strategy to produce
+        the same layout.
+
+        Covered by existing tests.
+
+        * rendering/SimpleLineLayoutFunctions.cpp:
+        (WebCore::SimpleLineLayout::paintFlow):
+
 2014-01-20  Gurpreet Kaur  <k.gurpreet@samsung.com>
 
         Col width is not honored when dynamically updated and it would make table narrower
