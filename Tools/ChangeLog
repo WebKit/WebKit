@@ -1,3 +1,10 @@
+2014-01-20  Alexey Proskuryakov  <ap@apple.com>
+
+        Fix webkitpy tests.
+
+        * Scripts/webkitpy/common/net/web_mock.py: (MockBrowser.set_handle_robots):
+        Added a mock implementation, as we now call this function.
+
 2014-01-20  Darin Adler  <darin@apple.com>
 
         Update style checker and tests to deal with override instead of OVERRIDE

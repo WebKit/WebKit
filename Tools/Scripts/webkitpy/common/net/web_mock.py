@@ -56,3 +56,6 @@ class MockBrowser(object):
 
     def submit(self):
         return StringIO.StringIO()
+
+    def set_handle_robots(self, value):
+        pass
