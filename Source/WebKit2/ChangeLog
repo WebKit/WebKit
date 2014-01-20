@@ -1,3 +1,17 @@
+2013-12-30  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [SOUP] willSendRequest doesn't work after a redirect
+        https://bugs.webkit.org/show_bug.cgi?id=126290
+
+        Reviewed by Martin Robinson.
+
+        Add test cases to test send-request signal in case of
+        redirection.
+
+        * UIProcess/API/gtk/tests/TestResources.cpp:
+        (testWebResourceSendRequest):
+        (serverCallback):
+
 2014-01-04  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Move all GTK/GObject unit tests to Tools/TestWebKitAPI

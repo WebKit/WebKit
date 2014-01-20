@@ -492,20 +492,24 @@ static void doRedirect(ResourceHandle* handle)
 
         // TODO: We are losing any username and password specified in the redirect URL, as this is the 
         // same behavior as the CFNet port. We should investigate if this is really what we want.
-    } else
-        applyAuthenticationToRequest(handle, newRequest, true);
+    }
 
     cleanupSoupRequestOperation(handle);
+
+    d->client()->willSendRequest(handle, newRequest, d->m_response);
+
+    // willSendRequest might cancel the load.
+    if (handle->cancelledOrClientless())
+        return;
+
+    if (!crossOrigin)
+        applyAuthenticationToRequest(handle, newRequest, true);
+
     if (!createSoupRequestAndMessageForHandle(handle, newRequest, true)) {
         d->client()->cannotShowURL(handle);
         return;
     }
 
-    // If we sent credentials with this request's URL, we don't want the response to carry them to
-    // the WebKit layer. They were only placed in the URL for the benefit of libsoup.
-    newRequest.removeCredentials();
-
-    d->client()->willSendRequest(handle, newRequest, d->m_response);
     handle->sendPendingRequest();
 }
 
