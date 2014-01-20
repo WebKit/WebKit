@@ -8422,14 +8422,15 @@ bool CSSParser::parseRadialGradient(CSSParserValueList* valueList, RefPtr<CSSVal
             return false;
 
         parseFillPosition(args, centerX, centerY);
-        ASSERT(centerX->isPrimitiveValue());
-        ASSERT(centerY->isPrimitiveValue());
         if (!(centerX && centerY))
             return false;
 
         a = args->current();
         if (!a)
             return false;
+
+        ASSERT(centerX->isPrimitiveValue());
+        ASSERT(centerY->isPrimitiveValue());
         result->setFirstX(toCSSPrimitiveValue(centerX.get()));
         result->setFirstY(toCSSPrimitiveValue(centerY.get()));
         // Right now, CSS radial gradients have the same start and end centers.

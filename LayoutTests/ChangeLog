@@ -1,3 +1,16 @@
+2013-11-22  Sergio Villar Senin  <svillar@igalia.com>
+
+        Null-pointer dereference in WebCore::CSSValue::isPrimitiveValue
+        https://bugs.webkit.org/show_bug.cgi?id=124769
+
+        Reviewed by Andreas Kling.
+
+        Checks that invalid position declarations (like skiping the comma
+        separator) do not make the engine crash.
+
+        * fast/gradients/crash-on-no-position-separator-expected.txt: Added.
+        * fast/gradients/crash-on-no-position-separator.html: Added.
+
 2014-01-20  Mihai Tica  <mitica@adobe.com>
 
         Background-blend-mode doesn't work for an element with an

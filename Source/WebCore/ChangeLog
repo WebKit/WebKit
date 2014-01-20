@@ -1,3 +1,20 @@
+2013-11-22  Sergio Villar Senin  <svillar@igalia.com>
+
+        Null-pointer dereference in WebCore::CSSValue::isPrimitiveValue
+        https://bugs.webkit.org/show_bug.cgi?id=124769
+
+        Reviewed by Andreas Kling.
+
+        Test: fast/gradients/crash-on-no-position-separator.html
+
+        The function parseFillPosition() may not return valid values for
+        centerX and centerY if the input data is malformed. We need to
+        check that we get a valid pair of positions before checking that
+        they're actually valid primitive values in the assertions.
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseRadialGradient):
+
 2014-01-20  Mihai Tica  <mitica@adobe.com>
 
         Background-blend-mode doesn't work for an element with an
