@@ -1,3 +1,10 @@
+2014-01-20  Alexey Proskuryakov  <ap@apple.com>
+
+        svg/dom/SVGPolygonElement-baseVal-list-removal-crash.html is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=127316
+
+        * platform/mac-wk2/TestExpectations: Marked as such.
+
 2014-01-20  Zalan Bujtas  <zalan@apple.com>
 
         Subpixel layout: 100000px overflows while calculating layout positions.
