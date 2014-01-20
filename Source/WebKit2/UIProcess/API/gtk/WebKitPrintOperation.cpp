@@ -65,6 +65,12 @@ enum {
 };
 
 struct _WebKitPrintOperationPrivate {
+    ~_WebKitPrintOperationPrivate()
+    {
+        if (webView)
+            g_object_remove_weak_pointer(G_OBJECT(webView), reinterpret_cast<void**>(&webView));
+    }
+
     WebKitWebView* webView;
     PrintInfo::PrintMode printMode;
 
@@ -78,13 +84,10 @@ WEBKIT_DEFINE_TYPE(WebKitPrintOperation, webkit_print_operation, G_TYPE_OBJECT)
 
 static void webkitPrintOperationConstructed(GObject* object)
 {
-    WebKitPrintOperation* printOperation = WEBKIT_PRINT_OPERATION(object);
-    WebKitPrintOperationPrivate* priv = printOperation->priv;
+    G_OBJECT_CLASS(webkit_print_operation_parent_class)->constructed(object);
 
-    if (G_OBJECT_CLASS(webkit_print_operation_parent_class)->constructed)
-        G_OBJECT_CLASS(webkit_print_operation_parent_class)->constructed(object);
-
-    g_object_add_weak_pointer(G_OBJECT(priv->webView), (gpointer*)&priv->webView);
+    WebKitPrintOperationPrivate* priv = WEBKIT_PRINT_OPERATION(object)->priv;
+    g_object_add_weak_pointer(G_OBJECT(priv->webView), reinterpret_cast<void**>(&priv->webView));
 }
 
 static void webkitPrintOperationGetProperty(GObject* object, guint propId, GValue* value, GParamSpec* paramSpec)
