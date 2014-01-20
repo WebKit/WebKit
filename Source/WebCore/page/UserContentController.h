@@ -26,18 +26,31 @@
 #ifndef UserContentController_h
 #define UserContentController_h
 
+#include <wtf/HashMap.h>
+#include <wtf/HashSet.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
+#include <wtf/Vector.h>
 
 namespace WebCore {
+
+class DOMWrapperWorld;
+class Page;
+class URL;
+class UserScript;
 
 class UserContentController : public RefCounted<UserContentController> {
 public:
     static RefPtr<UserContentController> create();
     ~UserContentController();
 
+    void addPage(Page&);
+    void removePage(Page&);
+
 private:
     UserContentController();
+
+    HashSet<Page*> m_pages;
 };
 
 } // namespace WebCore

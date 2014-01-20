@@ -42,6 +42,7 @@ namespace WebCore {
     class Page;
     class SecurityOrigin;
     class StorageNamespace;
+    class UserContentController;
 
 #if ENABLE(VIDEO_TRACK)
     class CaptionPreferencesChangedListener;
@@ -123,6 +124,7 @@ namespace WebCore {
         RefPtr<StorageNamespace> m_localStorage;
         HashMap<RefPtr<SecurityOrigin>, RefPtr<StorageNamespace>> m_transientLocalStorageMap;
 
+        RefPtr<UserContentController> m_userContentController;
         std::unique_ptr<UserScriptMap> m_userScripts;
         std::unique_ptr<UserStyleSheetMap> m_userStyleSheets;
 

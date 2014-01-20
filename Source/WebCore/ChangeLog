@@ -1,3 +1,31 @@
+2014-01-20  Anders Carlsson  <andersca@apple.com>
+
+        Give each page a UserContentController
+        https://bugs.webkit.org/show_bug.cgi?id=127315
+
+        Reviewed by Andreas Kling.
+
+        Add a UserContentController object to PageGroup and have the page group set it on any
+        pages that are added to the page group.
+
+        This is another step towards moving handling of user content away from PageGroup and make it
+        possible for each page to have different user content.
+
+        * page/Page.cpp:
+        (WebCore::Page::~Page):
+        (WebCore::Page::setUserContentController):
+        * page/Page.h:
+        (WebCore::Page::userContentController):
+        * page/PageGroup.cpp:
+        (WebCore::PageGroup::PageGroup):
+        (WebCore::PageGroup::addPage):
+        (WebCore::PageGroup::removePage):
+        * page/PageGroup.h:
+        * page/UserContentController.cpp:
+        (WebCore::UserContentController::addPage):
+        (WebCore::UserContentController::removePage):
+        * page/UserContentController.h:
+
 2014-01-20  Jeremy Jones  <jeremyj@apple.com>
 
         Add AVKit fullscreen video interface.

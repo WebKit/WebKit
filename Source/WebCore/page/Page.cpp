@@ -82,6 +82,7 @@
 #include "StyleResolver.h"
 #include "SubframeLoader.h"
 #include "TextResourceDecoder.h"
+#include "UserContentController.h"
 #include "VisitedLinkState.h"
 #include "VoidCallback.h"
 #include "Widget.h"
@@ -240,6 +241,9 @@ Page::~Page()
 #ifndef NDEBUG
     pageCounter.decrement();
 #endif
+
+    if (m_userContentController)
+        m_userContentController->removePage(*this);
 }
 
 uint64_t Page::renderTreeSize() const
@@ -1575,6 +1579,17 @@ void Page::decrementFrameHandlingBeforeUnloadEventCount()
 bool Page::isAnyFrameHandlingBeforeUnloadEvent()
 {
     return m_framesHandlingBeforeUnloadEvent;
+}
+
+void Page::setUserContentController(UserContentController* userContentController)
+{
+    if (m_userContentController)
+        m_userContentController->removePage(*this);
+
+    m_userContentController = userContentController;
+
+    if (m_userContentController)
+        m_userContentController->addPage(*this);
 }
 
 Page::PageClients::PageClients()

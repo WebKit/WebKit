@@ -38,6 +38,7 @@
 #include "SecurityOrigin.h"
 #include "Settings.h"
 #include "StorageNamespace.h"
+#include "UserContentController.h"
 #include <wtf/StdLibExtras.h>
 
 #if ENABLE(VIDEO_TRACK)
@@ -64,6 +65,7 @@ PageGroup::PageGroup(const String& name)
     : m_name(name)
     , m_visitedLinksPopulated(false)
     , m_identifier(getUniqueIdentifier())
+    , m_userContentController(UserContentController::create())
     , m_groupSettings(std::make_unique<GroupSettings>())
 {
 }
@@ -169,12 +171,16 @@ void PageGroup::addPage(Page& page)
 {
     ASSERT(!m_pages.contains(&page));
     m_pages.add(&page);
+
+    page.setUserContentController(m_userContentController.get());
 }
 
 void PageGroup::removePage(Page& page)
 {
     ASSERT(m_pages.contains(&page));
     m_pages.remove(&page);
+
+    page.setUserContentController(nullptr);
 }
 
 bool PageGroup::isLinkVisited(LinkHash visitedLinkHash)

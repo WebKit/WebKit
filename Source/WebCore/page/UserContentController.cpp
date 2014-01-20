@@ -26,6 +26,9 @@
 #include "config.h"
 #include "UserContentController.h"
 
+#include "DOMWrapperWorld.h"
+#include "UserScript.h"
+
 namespace WebCore {
 
 RefPtr<UserContentController> UserContentController::create()
@@ -39,6 +42,18 @@ UserContentController::UserContentController()
 
 UserContentController::~UserContentController()
 {
+}
+
+void UserContentController::addPage(Page& page)
+{
+    ASSERT(!m_pages.contains(&page));
+    m_pages.add(&page);
+}
+
+void UserContentController::removePage(Page& page)
+{
+    ASSERT(m_pages.contains(&page));
+    m_pages.remove(&page);
 }
 
 } // namespace WebCore

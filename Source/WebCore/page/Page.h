@@ -101,6 +101,7 @@ class ScrollableArea;
 class ScrollingCoordinator;
 class Settings;
 class StorageNamespace;
+class UserContentController;
 class ValidationMessageClient;
 
 typedef uint64_t LinkHash;
@@ -418,6 +419,9 @@ public:
     void setLastSpatialNavigationCandidateCount(unsigned count) { m_lastSpatialNavigationCandidatesCount = count; }
     unsigned lastSpatialNavigationCandidateCount() const { return m_lastSpatialNavigationCandidatesCount; }
 
+    void setUserContentController(UserContentController*);
+    UserContentController* userContentController() { return m_userContentController.get(); }
+
 private:
     void initGroup();
 
@@ -556,6 +560,8 @@ private:
 
     unsigned m_lastSpatialNavigationCandidatesCount;
     unsigned m_framesHandlingBeforeUnloadEvent;
+
+    RefPtr<UserContentController> m_userContentController;
 };
 
 inline PageGroup& Page::group()
