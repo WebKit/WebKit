@@ -41,118 +41,37 @@ if (window.testRunner)
 <div class="grid gridWithMinMax" id="gridWithMinMax"></div>
 <div class="grid gridWithFixedMultiple" id="gridWithFixedMultiple"></div>
 <div class="grid gridWithPercentageSameStringMultipleTimes" id="gridWithPercentageSameStringMultipleTimes"></div>
+<script src="resources/grid-definitions-parsing-utils.js"></script>
 <script>
     description('Test that setting and getting grid-definition-columns and grid-definition-rows works as expected');
 
-    function testValue(gridElement, namedGridColumns, namedGridRows)
-    {
-        this.gridElement = gridElement;
-        shouldBeEqualToString("getComputedStyle(gridElement, '').getPropertyValue('-webkit-grid-definition-columns')", namedGridColumns);
-        shouldBeEqualToString("getComputedStyle(gridElement, '').getPropertyValue('-webkit-grid-definition-rows')", namedGridRows);
-    }
-
-    function testCSSValue(gridElementId, namedGridColumns, namedGridRows)
-    {
-        testValue(document.getElementById(gridElementId), namedGridColumns, namedGridRows);
-    }
-
     debug("Test getting -webkit-grid-definition-columns and -webkit-grid-definition-rows set through CSS");
-    testCSSValue("gridWithFixedElement", "first 10px", "first 15px");
-    testCSSValue("gridWithPercentElement", "53% last", "27% last");
-    testCSSValue("gridWithAutoElement", "first auto", "auto last");
-    testCSSValue("gridWithMinMax", "first minmax(10%, 15px)", "minmax(20px, 50%) last");
-    testCSSValue("gridWithFixedMultiple", "nav first 10px last", "nav first 15px last");
-    testCSSValue("gridWithPercentageSameStringMultipleTimes", "nav first 10% nav 15% last", "first nav2 25% nav2 75% last");
+    testGridDefinitionsValues(document.getElementById("gridWithFixedElement"), "first 10px", "first 15px");
+    testGridDefinitionsValues(document.getElementById("gridWithPercentElement"), "53% last", "27% last");
+    testGridDefinitionsValues(document.getElementById("gridWithAutoElement"), "first auto", "auto last");
+    testGridDefinitionsValues(document.getElementById("gridWithMinMax"), "first minmax(10%, 15px)", "minmax(20px, 50%) last");
+    testGridDefinitionsValues(document.getElementById("gridWithFixedMultiple"), "nav first 10px last", "nav first 15px last");
+    testGridDefinitionsValues(document.getElementById("gridWithPercentageSameStringMultipleTimes"), "nav first 10% nav 15% last", "first nav2 25% nav2 75% last");
 
     debug("");
     debug("Test getting and setting -webkit-grid-definition-columns and -webkit-grid-definition-rows through JS");
-    var element = document.createElement("div");
-    document.body.appendChild(element);
-    element.style.webkitGridDefinitionColumns = "'first' 18px";
-    element.style.webkitGridDefinitionRows = "66px 'last'";
-    testValue(element, "first 18px", "66px last");
-
-    element = document.createElement("div");
-    document.body.appendChild(element);
-    element.style.webkitGridDefinitionColumns = "'first' 55%";
-    element.style.webkitGridDefinitionRows = "40% 'last'";
-    testValue(element, "first 55%", "40% last");
-
-    element = document.createElement("div");
-    document.body.appendChild(element);
-    element.style.webkitGridDefinitionColumns = "'first' auto";
-    element.style.webkitGridDefinitionRows = "auto 'last'";
-    testValue(element, "first auto", "auto last");
-
-    element = document.createElement("div");
-    document.body.appendChild(element);
-    element.style.webkitGridDefinitionColumns = "'first' -webkit-min-content";
-    element.style.webkitGridDefinitionRows = "-webkit-min-content 'last'";
-    testValue(element, "first -webkit-min-content", "-webkit-min-content last");
-
-    element = document.createElement("div");
-    document.body.appendChild(element);
-    element.style.webkitGridDefinitionColumns = "'first' -webkit-max-content";
-    element.style.webkitGridDefinitionRows = "-webkit-max-content 'last'";
-    testValue(element, "first -webkit-max-content", "-webkit-max-content last");
-
-    element = document.createElement("div");
-    document.body.appendChild(element);
-    element.style.webkitGridDefinitionColumns = "'first' minmax(55%, 45px)";
-    element.style.webkitGridDefinitionRows = "minmax(30px, 40%) 'last'";
-    testValue(element, "first minmax(55%, 45px)", "minmax(30px, 40%) last");
-
-    element = document.createElement("div");
-    document.body.appendChild(element);
-    element.style.font = "10px Ahem";
-    element.style.webkitGridDefinitionColumns = "'first' minmax(22em, -webkit-max-content)";
-    element.style.webkitGridDefinitionRows = "minmax(-webkit-max-content, 5em) 'last'";
-    testValue(element, "first minmax(220px, -webkit-max-content)", "minmax(-webkit-max-content, 50px) last");
-
-    element = document.createElement("div");
-    document.body.appendChild(element);
-    element.style.font = "10px Ahem";
-    element.style.webkitGridDefinitionColumns = "'first' minmax(22em, -webkit-max-content)";
-    element.style.webkitGridDefinitionRows = "minmax(-webkit-max-content, 5em) 'last'";
-    testValue(element, "first minmax(220px, -webkit-max-content)", "minmax(-webkit-max-content, 50px) last");
-
-    element = document.createElement("div");
-    document.body.appendChild(element);
-    element.style.webkitGridDefinitionColumns = "'first' minmax(-webkit-min-content, -webkit-max-content)";
-    element.style.webkitGridDefinitionRows = "minmax(-webkit-max-content, -webkit-min-content) 'last'";
-    testValue(element, "first minmax(-webkit-min-content, -webkit-max-content)", "minmax(-webkit-max-content, -webkit-min-content) last");
-
-    element = document.createElement("div");
-    document.body.appendChild(element);
-    element.style.webkitGridDefinitionColumns = "'first' 'nav' minmax(-webkit-min-content, -webkit-max-content) 'last'";
-    element.style.webkitGridDefinitionRows = "'first' 'nav' minmax(-webkit-max-content, -webkit-min-content) 'last'";
-    testValue(element, "nav first minmax(-webkit-min-content, -webkit-max-content) last", "nav first minmax(-webkit-max-content, -webkit-min-content) last");
-
-    element = document.createElement("div");
-    document.body.appendChild(element);
-    element.style.webkitGridDefinitionColumns = "'first' 'nav' minmax(-webkit-min-content, -webkit-max-content) 'nav' auto 'last'";
-    element.style.webkitGridDefinitionRows = "'first' 'nav2' minmax(-webkit-max-content, -webkit-min-content) 'nav2' minmax(10px, 15px) 'last'";
-    testValue(element, "nav first minmax(-webkit-min-content, -webkit-max-content) nav auto last", "first nav2 minmax(-webkit-max-content, -webkit-min-content) nav2 minmax(10px, 15px) last");
-
-    element = document.createElement("div");
-    document.body.appendChild(element);
-    element.style.webkitGridDefinitionColumns = "'foo' 'bar' auto 'foo' auto 'bar'";
-    element.style.webkitGridDefinitionRows = "'foo' 'bar' auto 'foo' auto 'bar'";
-    testValue(element, "foo bar auto foo auto bar", "foo bar auto foo auto bar");
+    testGridDefinitionsSetJSValues("'first' 18px", "66px 'last'", "first 18px", "66px last");
+    testGridDefinitionsSetJSValues("'first' 55%", "40% 'last'", "first 55%", "40% last");
+    testGridDefinitionsSetJSValues("'first' auto", "auto 'last'", "first auto", "auto last");
+    testGridDefinitionsSetJSValues("'first' -webkit-min-content", "-webkit-min-content 'last'", "first -webkit-min-content", "-webkit-min-content last");
+    testGridDefinitionsSetJSValues("'first' -webkit-max-content", "-webkit-max-content 'last'", "first -webkit-max-content", "-webkit-max-content last");
+    testGridDefinitionsSetJSValues("'first' minmax(55%, 45px)", "minmax(30px, 40%) 'last'", "first minmax(55%, 45px)", "minmax(30px, 40%) last");
+    testGridDefinitionsSetJSValues("'first' minmax(22em, -webkit-max-content)", "minmax(-webkit-max-content, 5em) 'last'", "first minmax(220px, -webkit-max-content)" ,"minmax(-webkit-max-content, 50px) last");
+    testGridDefinitionsSetJSValues("'first' minmax(22em, -webkit-min-content)", "minmax(-webkit-min-content, 5em) 'last'", "first minmax(220px, -webkit-min-content)", "minmax(-webkit-min-content, 50px) last");
+    testGridDefinitionsSetJSValues("'first' minmax(-webkit-min-content, -webkit-max-content)", "minmax(-webkit-max-content, -webkit-min-content) 'last'", "first minmax(-webkit-min-content, -webkit-max-content)", "minmax(-webkit-max-content, -webkit-min-content) last");
+    testGridDefinitionsSetJSValues("'first' 'nav' minmax(-webkit-min-content, -webkit-max-content) 'last'", "'first' 'nav' minmax(-webkit-max-content, -webkit-min-content) 'last'", "nav first minmax(-webkit-min-content, -webkit-max-content) last", "nav first minmax(-webkit-max-content, -webkit-min-content) last");
+    testGridDefinitionsSetJSValues("'first' 'nav' minmax(-webkit-min-content, -webkit-max-content) 'nav' auto 'last'", "'first' 'nav2' minmax(-webkit-max-content, -webkit-min-content) 'nav2' minmax(10px, 15px) 'last'", "nav first minmax(-webkit-min-content, -webkit-max-content) nav auto last", "first nav2 minmax(-webkit-max-content, -webkit-min-content) nav2 minmax(10px, 15px) last");
+    testGridDefinitionsSetJSValues("'foo' 'bar' auto 'foo' auto 'bar'", "'foo' 'bar' auto 'foo' auto 'bar'", "foo bar auto foo auto bar", "foo bar auto foo auto bar");
 
     debug("");
     debug("Test getting and setting invalid -webkit-grid-definition-columns and -webkit-grid-definition-rows through JS");
-    element = document.createElement("div");
-    document.body.appendChild(element);
-    element.style.webkitGridDefinitionColumns = "'foo'";
-    element.style.webkitGridDefinitionRows = "'bar";
-    testValue(element, "none", "none");
-
-    element = document.createElement("div");
-    document.body.appendChild(element);
-    element.style.webkitGridDefinitionColumns = "'foo' 'bar'";
-    element.style.webkitGridDefinitionRows = "'bar' 'foo'";
-    testValue(element, "none", "none");
+    testGridDefinitionsSetBadJSValues("foo", "bar");
+    testGridDefinitionsSetBadJSValues("foo bar", "bar foo");
 </script>
 <script src="../../resources/js-test-post.js"></script>
 </body>

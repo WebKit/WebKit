@@ -4,100 +4,98 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 
 Test getting -webkit-grid-definition-columns and -webkit-grid-definition-rows set through CSS
-PASS getComputedStyle(gridWithNoneElement, '').getPropertyValue('-webkit-grid-definition-columns') is 'none'
-PASS getComputedStyle(gridWithNoneElement, '').getPropertyValue('-webkit-grid-definition-rows') is 'none'
-PASS getComputedStyle(gridWithFixedElement, '').getPropertyValue('-webkit-grid-definition-columns') is '10px'
-PASS getComputedStyle(gridWithFixedElement, '').getPropertyValue('-webkit-grid-definition-rows') is '15px'
-PASS getComputedStyle(gridWithPercentElement, '').getPropertyValue('-webkit-grid-definition-columns') is '53%'
-PASS getComputedStyle(gridWithPercentElement, '').getPropertyValue('-webkit-grid-definition-rows') is '27%'
-PASS getComputedStyle(gridWithAutoElement, '').getPropertyValue('-webkit-grid-definition-columns') is 'auto'
-PASS getComputedStyle(gridWithAutoElement, '').getPropertyValue('-webkit-grid-definition-rows') is 'auto'
-PASS getComputedStyle(gridWithEMElement, '').getPropertyValue('-webkit-grid-definition-columns') is '100px'
-PASS getComputedStyle(gridWithEMElement, '').getPropertyValue('-webkit-grid-definition-rows') is '150px'
-PASS getComputedStyle(gridWithViewPortPercentageElement, '').getPropertyValue('-webkit-grid-definition-columns') is '64px'
-PASS getComputedStyle(gridWithViewPortPercentageElement, '').getPropertyValue('-webkit-grid-definition-rows') is '60px'
-PASS getComputedStyle(gridWithMinMax, '').getPropertyValue('-webkit-grid-definition-columns') is 'minmax(10%, 15px)'
-PASS getComputedStyle(gridWithMinMax, '').getPropertyValue('-webkit-grid-definition-rows') is 'minmax(20px, 50%)'
-PASS getComputedStyle(gridWithMinContent, '').getPropertyValue('-webkit-grid-definition-columns') is '-webkit-min-content'
-PASS getComputedStyle(gridWithMinContent, '').getPropertyValue('-webkit-grid-definition-rows') is '-webkit-min-content'
-PASS getComputedStyle(gridWithMaxContent, '').getPropertyValue('-webkit-grid-definition-columns') is '-webkit-max-content'
-PASS getComputedStyle(gridWithMaxContent, '').getPropertyValue('-webkit-grid-definition-rows') is '-webkit-max-content'
-PASS getComputedStyle(gridWithFraction, '').getPropertyValue('-webkit-grid-definition-columns') is '1fr'
-PASS getComputedStyle(gridWithFraction, '').getPropertyValue('-webkit-grid-definition-rows') is '2fr'
+PASS window.getComputedStyle(gridWithNoneElement, '').getPropertyValue('-webkit-grid-definition-columns') is "none"
+PASS window.getComputedStyle(gridWithNoneElement, '').getPropertyValue('-webkit-grid-definition-rows') is "none"
+PASS window.getComputedStyle(gridWithFixedElement, '').getPropertyValue('-webkit-grid-definition-columns') is "10px"
+PASS window.getComputedStyle(gridWithFixedElement, '').getPropertyValue('-webkit-grid-definition-rows') is "15px"
+PASS window.getComputedStyle(gridWithPercentElement, '').getPropertyValue('-webkit-grid-definition-columns') is "53%"
+PASS window.getComputedStyle(gridWithPercentElement, '').getPropertyValue('-webkit-grid-definition-rows') is "27%"
+PASS window.getComputedStyle(gridWithAutoElement, '').getPropertyValue('-webkit-grid-definition-columns') is "auto"
+PASS window.getComputedStyle(gridWithAutoElement, '').getPropertyValue('-webkit-grid-definition-rows') is "auto"
+PASS window.getComputedStyle(gridWithEMElement, '').getPropertyValue('-webkit-grid-definition-columns') is "100px"
+PASS window.getComputedStyle(gridWithEMElement, '').getPropertyValue('-webkit-grid-definition-rows') is "150px"
+PASS window.getComputedStyle(gridWithViewPortPercentageElement, '').getPropertyValue('-webkit-grid-definition-columns') is "64px"
+PASS window.getComputedStyle(gridWithViewPortPercentageElement, '').getPropertyValue('-webkit-grid-definition-rows') is "60px"
+PASS window.getComputedStyle(gridWithMinMax, '').getPropertyValue('-webkit-grid-definition-columns') is "minmax(10%, 15px)"
+PASS window.getComputedStyle(gridWithMinMax, '').getPropertyValue('-webkit-grid-definition-rows') is "minmax(20px, 50%)"
+PASS window.getComputedStyle(gridWithMinContent, '').getPropertyValue('-webkit-grid-definition-columns') is "-webkit-min-content"
+PASS window.getComputedStyle(gridWithMinContent, '').getPropertyValue('-webkit-grid-definition-rows') is "-webkit-min-content"
+PASS window.getComputedStyle(gridWithMaxContent, '').getPropertyValue('-webkit-grid-definition-columns') is "-webkit-max-content"
+PASS window.getComputedStyle(gridWithMaxContent, '').getPropertyValue('-webkit-grid-definition-rows') is "-webkit-max-content"
+PASS window.getComputedStyle(gridWithFraction, '').getPropertyValue('-webkit-grid-definition-columns') is "1fr"
+PASS window.getComputedStyle(gridWithFraction, '').getPropertyValue('-webkit-grid-definition-rows') is "2fr"
 
 Test getting wrong values for -webkit-grid-definition-columns and -webkit-grid-definition-rows through CSS (they should resolve to the default: 'none')
-PASS getComputedStyle(gridWithFitContentElement, '').getPropertyValue('-webkit-grid-definition-columns') is 'none'
-PASS getComputedStyle(gridWithFitContentElement, '').getPropertyValue('-webkit-grid-definition-rows') is 'none'
-PASS getComputedStyle(gridWithFitAvailableElement, '').getPropertyValue('-webkit-grid-definition-columns') is 'none'
-PASS getComputedStyle(gridWithFitAvailableElement, '').getPropertyValue('-webkit-grid-definition-rows') is 'none'
+PASS window.getComputedStyle(gridWithFitContentElement, '').getPropertyValue('-webkit-grid-definition-columns') is "none"
+PASS window.getComputedStyle(gridWithFitContentElement, '').getPropertyValue('-webkit-grid-definition-rows') is "none"
+PASS window.getComputedStyle(gridWithFitAvailableElement, '').getPropertyValue('-webkit-grid-definition-columns') is "none"
+PASS window.getComputedStyle(gridWithFitAvailableElement, '').getPropertyValue('-webkit-grid-definition-rows') is "none"
 
 Test the initial value
-PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-definition-columns') is 'none'
-PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-definition-rows') is 'none'
+PASS window.getComputedStyle(element, '').getPropertyValue('-webkit-grid-definition-columns') is "none"
+PASS window.getComputedStyle(element, '').getPropertyValue('-webkit-grid-definition-rows') is "none"
 
 Test getting and setting -webkit-grid-definition-columns and -webkit-grid-definition-rows through JS
-PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-definition-columns') is '18px'
-PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-definition-rows') is '66px'
-PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-definition-columns') is '55%'
-PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-definition-rows') is '40%'
-PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-definition-columns') is 'auto'
-PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-definition-rows') is 'auto'
-PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-definition-columns') is '80px'
-PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-definition-rows') is '150px'
-PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-definition-columns') is '-webkit-min-content'
-PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-definition-rows') is '-webkit-min-content'
-PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-definition-columns') is '-webkit-max-content'
-PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-definition-rows') is '-webkit-max-content'
+PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-definition-columns') is "18px"
+PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-definition-rows') is "66px"
+PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-definition-columns') is "55%"
+PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-definition-rows') is "40%"
+PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-definition-columns') is "auto"
+PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-definition-rows') is "auto"
+PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-definition-columns') is "80px"
+PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-definition-rows') is "150px"
+PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-definition-columns') is "-webkit-min-content"
+PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-definition-rows') is "-webkit-min-content"
+PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-definition-columns') is "-webkit-max-content"
+PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-definition-rows') is "-webkit-max-content"
 
 Test getting and setting -webkit-grid-definition-columns and -webkit-grid-definition-rows to minmax() values through JS
-PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-definition-columns') is 'minmax(55%, 45px)'
-PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-definition-rows') is 'minmax(30px, 40%)'
-PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-definition-columns') is 'minmax(220px, 48px)'
-PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-definition-rows') is 'minmax(80px, 50px)'
-PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-definition-columns') is 'minmax(-webkit-min-content, 48px)'
-PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-definition-rows') is 'minmax(80px, -webkit-min-content)'
-PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-definition-columns') is 'minmax(220px, -webkit-max-content)'
-PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-definition-rows') is 'minmax(-webkit-max-content, 50px)'
-PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-definition-columns') is 'minmax(220px, -webkit-max-content)'
-PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-definition-rows') is 'minmax(-webkit-max-content, 50px)'
-PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-definition-columns') is 'minmax(-webkit-min-content, -webkit-max-content)'
-PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-definition-rows') is 'minmax(-webkit-max-content, -webkit-min-content)'
-PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-definition-columns') is '3600fr'
-PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-definition-rows') is '154fr'
-PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-definition-columns') is '3.1459fr'
-PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-definition-rows') is '2.718fr'
-PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-definition-columns') is '3fr'
-PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-definition-rows') is '4fr'
+PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-definition-columns') is "minmax(55%, 45px)"
+PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-definition-rows') is "minmax(30px, 40%)"
+PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-definition-columns') is "minmax(220px, 48px)"
+PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-definition-rows') is "minmax(80px, 50px)"
+PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-definition-columns') is "minmax(-webkit-min-content, 48px)"
+PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-definition-rows') is "minmax(80px, -webkit-min-content)"
+PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-definition-columns') is "minmax(220px, -webkit-max-content)"
+PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-definition-rows') is "minmax(-webkit-max-content, 50px)"
+PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-definition-columns') is "minmax(-webkit-min-content, -webkit-max-content)"
+PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-definition-rows') is "minmax(-webkit-max-content, -webkit-min-content)"
+PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-definition-columns') is "3600fr"
+PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-definition-rows') is "154fr"
+PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-definition-columns') is "3.1459fr"
+PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-definition-rows') is "2.718fr"
+PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-definition-columns') is "3fr"
+PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-definition-rows') is "4fr"
 
 Test setting grid-definition-columns and grid-definition-rows to bad values through JS
-PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-definition-columns') is 'none'
-PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-definition-rows') is 'none'
-PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-definition-columns') is 'none'
-PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-definition-rows') is 'none'
-PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-definition-columns') is 'none'
-PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-definition-rows') is 'none'
-PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-definition-columns') is 'none'
-PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-definition-rows') is 'none'
-PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-definition-columns') is 'none'
-PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-definition-rows') is 'none'
-PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-definition-columns') is 'none'
-PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-definition-rows') is 'none'
-PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-definition-columns') is 'none'
-PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-definition-rows') is 'none'
-PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-definition-columns') is 'none'
-PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-definition-rows') is 'none'
-PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-definition-columns') is 'none'
-PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-definition-rows') is 'none'
-PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-definition-columns') is 'none'
-PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-definition-rows') is 'none'
-PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-definition-columns') is 'none'
-PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-definition-rows') is 'none'
+PASS window.getComputedStyle(element, '').getPropertyValue('-webkit-grid-definition-columns') is "none"
+PASS window.getComputedStyle(element, '').getPropertyValue('-webkit-grid-definition-rows') is "none"
+PASS window.getComputedStyle(element, '').getPropertyValue('-webkit-grid-definition-columns') is "none"
+PASS window.getComputedStyle(element, '').getPropertyValue('-webkit-grid-definition-rows') is "none"
+PASS window.getComputedStyle(element, '').getPropertyValue('-webkit-grid-definition-columns') is "none"
+PASS window.getComputedStyle(element, '').getPropertyValue('-webkit-grid-definition-rows') is "none"
+PASS window.getComputedStyle(element, '').getPropertyValue('-webkit-grid-definition-columns') is "none"
+PASS window.getComputedStyle(element, '').getPropertyValue('-webkit-grid-definition-rows') is "none"
+PASS window.getComputedStyle(element, '').getPropertyValue('-webkit-grid-definition-columns') is "none"
+PASS window.getComputedStyle(element, '').getPropertyValue('-webkit-grid-definition-rows') is "none"
+PASS window.getComputedStyle(element, '').getPropertyValue('-webkit-grid-definition-columns') is "none"
+PASS window.getComputedStyle(element, '').getPropertyValue('-webkit-grid-definition-rows') is "none"
+PASS window.getComputedStyle(element, '').getPropertyValue('-webkit-grid-definition-columns') is "none"
+PASS window.getComputedStyle(element, '').getPropertyValue('-webkit-grid-definition-rows') is "none"
+PASS window.getComputedStyle(element, '').getPropertyValue('-webkit-grid-definition-columns') is "none"
+PASS window.getComputedStyle(element, '').getPropertyValue('-webkit-grid-definition-rows') is "none"
+PASS window.getComputedStyle(element, '').getPropertyValue('-webkit-grid-definition-columns') is "none"
+PASS window.getComputedStyle(element, '').getPropertyValue('-webkit-grid-definition-rows') is "none"
+PASS window.getComputedStyle(element, '').getPropertyValue('-webkit-grid-definition-columns') is "none"
+PASS window.getComputedStyle(element, '').getPropertyValue('-webkit-grid-definition-rows') is "none"
+PASS window.getComputedStyle(element, '').getPropertyValue('-webkit-grid-definition-columns') is "none"
+PASS window.getComputedStyle(element, '').getPropertyValue('-webkit-grid-definition-rows') is "none"
 
 Test setting grid-definition-columns and grid-definition-rows back to 'none' through JS
-PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-definition-columns') is '18px'
-PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-definition-rows') is '66px'
-PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-definition-columns') is 'none'
-PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-definition-rows') is 'none'
+PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-definition-columns') is "18px"
+PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-definition-rows') is "66px"
+PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-definition-columns') is "none"
+PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-definition-rows') is "none"
 
 Test setting grid-definition-columns and grid-definition-rows to 'inherit' through JS
 PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-definition-columns') is '50px last'

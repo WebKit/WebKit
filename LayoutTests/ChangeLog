@@ -1,3 +1,31 @@
+2014-01-16  Sergio Villar Senin  <svillar@igalia.com>
+
+        [CSS Grid Layout] Simplify grid-columns-rows-get-set{-multiple}.html tests
+        https://bugs.webkit.org/show_bug.cgi?id=127055
+
+        Reviewed by Andreas Kling.
+
+        The testing code was refactored in 4 new functions that allow us
+        to write each test case in a single line significantly reducing
+        the amount of boilerplate and improving maintenance.
+
+        * fast/css-grid-layout/grid-columns-rows-get-set-expected.txt:
+        * fast/css-grid-layout/grid-columns-rows-get-set-multiple-expected.txt:
+        * fast/css-grid-layout/grid-columns-rows-get-set-multiple.html:
+        * fast/css-grid-layout/grid-columns-rows-get-set.html:
+        * fast/css-grid-layout/named-grid-line-get-set-expected.txt:
+        * fast/css-grid-layout/named-grid-line-get-set.html:
+        * fast/css-grid-layout/resources/grid-columns-rows-get-set-multiple.js:
+        (testInherit):
+        (testInitial):
+        * fast/css-grid-layout/resources/grid-columns-rows-get-set.js:
+        * fast/css-grid-layout/resources/grid-definitions-parsing-utils.js: Added.
+        (testGridDefinitionsValues):
+        (testGridDefinitionsSetJSValues):
+        (testNonGridDefinitionsSetJSValues):
+        (checkGridDefinitionsSetJSValues): Helper function for testGridDefinitions*.
+        (testGridDefinitionsSetBadJSValues):
+
 2013-11-22  Sergio Villar Senin  <svillar@igalia.com>
 
         Null-pointer dereference in WebCore::CSSValue::isPrimitiveValue
