@@ -57,6 +57,8 @@ static bool getSymbolInfo(ShHandle compiler, ShShaderInfo symbolType, Vector<ANG
     case SH_ACTIVE_UNIFORMS:
         symbolMaxNameLengthType = SH_ACTIVE_UNIFORM_MAX_LENGTH;
         break;
+    case SH_VARYINGS:
+        symbolMaxNameLengthType = SH_VARYING_MAX_LENGTH;
     default:
         ASSERT_NOT_REACHED();
         return false;
@@ -90,6 +92,10 @@ static bool getSymbolInfo(ShHandle compiler, ShShaderInfo symbolType, Vector<ANG
             symbol.symbolType = SHADER_SYMBOL_TYPE_UNIFORM;
             ShGetVariableInfo(compiler, symbolType, i, &nameLength, &symbol.size, &symbol.dataType, &precision, &staticUse, nameBuffer.data(), mappedNameBuffer.data());
             break;
+        case SH_VARYINGS:
+            symbol.symbolType = SHADER_SYMBOL_TYPE_VARYING;
+            ShGetVariableInfo(compiler, symbolType, i, &nameLength, &symbol.size, &symbol.dataType, &precision, &staticUse, nameBuffer.data(), mappedNameBuffer.data());
+            break;
         default:
             ASSERT_NOT_REACHED();
             return false;
@@ -117,6 +123,8 @@ static bool getSymbolInfo(ShHandle compiler, ShShaderInfo symbolType, Vector<ANG
 
         symbol.name = name;
         symbol.mappedName = mappedName;
+        symbol.precision = precision;
+        symbol.staticUse = staticUse;
         symbols.append(symbol);
     
         if (symbol.isArray) {

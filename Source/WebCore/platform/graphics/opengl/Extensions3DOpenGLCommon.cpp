@@ -184,7 +184,7 @@ String Extensions3DOpenGLCommon::getTranslatedShaderSourceANGLE(Platform3DObject
     size_t numSymbols = symbols.size();
     for (size_t i = 0; i < numSymbols; ++i) {
         ANGLEShaderSymbol shaderSymbol = symbols[i];
-        GraphicsContext3D::SymbolInfo symbolInfo(shaderSymbol.dataType, shaderSymbol.size, shaderSymbol.mappedName);
+        GraphicsContext3D::SymbolInfo symbolInfo(shaderSymbol.dataType, shaderSymbol.size, shaderSymbol.mappedName, shaderSymbol.precision, shaderSymbol.staticUse);
         entry.symbolMap(shaderSymbol.symbolType).set(shaderSymbol.name, symbolInfo);
     }
 
