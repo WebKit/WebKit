@@ -103,7 +103,7 @@ void DynamicsCompressorNode::uninitialize()
     if (!isInitialized())
         return;
 
-    m_dynamicsCompressor.reset();
+    m_dynamicsCompressor = nullptr;
     AudioNode::uninitialize();
 }
 

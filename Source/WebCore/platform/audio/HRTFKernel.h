@@ -57,7 +57,7 @@ public:
 
     static PassRefPtr<HRTFKernel> create(std::unique_ptr<FFTFrame> fftFrame, float frameDelay, float sampleRate)
     {
-        return adoptRef(new HRTFKernel(std::forward<std::unique_ptr<FFTFrame>>(fftFrame), frameDelay, sampleRate));
+        return adoptRef(new HRTFKernel(std::move(fftFrame), frameDelay, sampleRate));
     }
 
     // Given two HRTFKernels, and an interpolation factor x: 0 -> 1, returns an interpolated HRTFKernel.

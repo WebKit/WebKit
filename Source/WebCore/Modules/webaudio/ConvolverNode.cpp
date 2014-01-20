@@ -111,7 +111,7 @@ void ConvolverNode::uninitialize()
     if (!isInitialized())
         return;
 
-    m_reverb.reset();
+    m_reverb = nullptr;
     AudioNode::uninitialize();
 }
 

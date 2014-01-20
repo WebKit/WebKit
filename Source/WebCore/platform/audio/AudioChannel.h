@@ -70,7 +70,7 @@ public:
     // storage represents external memory not managed by this object.
     void set(float* storage, size_t length)
     {
-        m_memBuffer.reset(); // cleanup managed storage
+        m_memBuffer = nullptr; // cleanup managed storage
         m_rawPointer = storage;
         m_length = length;
         m_silent = false;

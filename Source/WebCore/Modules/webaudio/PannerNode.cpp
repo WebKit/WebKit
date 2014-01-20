@@ -154,7 +154,7 @@ void PannerNode::uninitialize()
     if (!isInitialized())
         return;
         
-    m_panner.reset();
+    m_panner = nullptr;
     AudioNode::uninitialize();
 }
 

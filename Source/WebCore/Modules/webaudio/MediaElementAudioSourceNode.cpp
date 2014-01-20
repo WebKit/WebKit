@@ -87,7 +87,7 @@ void MediaElementAudioSourceNode::setFormat(size_t numberOfChannels, float sourc
             m_multiChannelResampler = std::make_unique<MultiChannelResampler>(scaleFactor, numberOfChannels);
         } else {
             // Bypass resampling.
-            m_multiChannelResampler.reset();
+            m_multiChannelResampler = nullptr;
         }
 
         {

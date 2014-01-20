@@ -1,3 +1,29 @@
+2014-01-20  Zan Dobersek  <zdobersek@igalia.com>
+
+        Replace uses of std::forward<T>(), std::unique_ptr<T>::clear() that landed in r162368
+        https://bugs.webkit.org/show_bug.cgi?id=127306
+
+        Reviewed by Darin Adler.
+
+        Address the post-landing reviews of the r162368 commit that moved WebAudio source code to using std::unique_ptr.
+        std::move() should be used instead of std::forward<T>() in HRTFKernel::create().
+        Instead of calling std::unique_ptr<T>::reset(), nullptr should be assigned to that smart pointer to reset it.
+
+        * Modules/webaudio/ConvolverNode.cpp:
+        (WebCore::ConvolverNode::uninitialize):
+        * Modules/webaudio/DynamicsCompressorNode.cpp:
+        (WebCore::DynamicsCompressorNode::uninitialize):
+        * Modules/webaudio/MediaElementAudioSourceNode.cpp:
+        (WebCore::MediaElementAudioSourceNode::setFormat):
+        * Modules/webaudio/PannerNode.cpp:
+        (WebCore::PannerNode::uninitialize):
+        * platform/audio/AudioChannel.h:
+        (WebCore::AudioChannel::set):
+        * platform/audio/HRTFDatabaseLoader.cpp:
+        (WebCore::HRTFDatabaseLoader::~HRTFDatabaseLoader):
+        * platform/audio/HRTFKernel.h:
+        (WebCore::HRTFKernel::create):
+
 2014-01-20  Joseph Pecoraro  <pecoraro@apple.com>
 
         Modernize WebCore/inspector with nullptr

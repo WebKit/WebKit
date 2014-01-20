@@ -77,7 +77,7 @@ HRTFDatabaseLoader::~HRTFDatabaseLoader()
     ASSERT(isMainThread());
 
     waitForLoaderThreadCompletion();
-    m_hrtfDatabase.reset();
+    m_hrtfDatabase = nullptr;
 
     // Remove ourself from the map.
     loaderMap().remove(m_databaseSampleRate);
