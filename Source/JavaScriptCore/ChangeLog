@@ -1,3 +1,25 @@
+2014-01-19  Anders Carlsson  <andersca@apple.com>
+
+        Convert GCThreadSharedData over to STL threading primitives
+        https://bugs.webkit.org/show_bug.cgi?id=127256
+
+        Reviewed by Andreas Kling.
+
+        * heap/GCThread.cpp:
+        (JSC::GCThread::waitForNextPhase):
+        (JSC::GCThread::gcThreadMain):
+        * heap/GCThreadSharedData.cpp:
+        (JSC::GCThreadSharedData::GCThreadSharedData):
+        (JSC::GCThreadSharedData::~GCThreadSharedData):
+        (JSC::GCThreadSharedData::startNextPhase):
+        (JSC::GCThreadSharedData::endCurrentPhase):
+        (JSC::GCThreadSharedData::didStartMarking):
+        (JSC::GCThreadSharedData::didFinishMarking):
+        * heap/GCThreadSharedData.h:
+        * heap/SlotVisitor.cpp:
+        (JSC::SlotVisitor::donateKnownParallel):
+        (JSC::SlotVisitor::drainFromShared):
+
 2014-01-18  Andreas Kling  <akling@apple.com>
 
         CodeBlock: Size m_callLinkInfos and m_byValInfos to fit earlier.

@@ -118,15 +118,15 @@ void SlotVisitor::donateKnownParallel()
 
     // If we're contending on the lock, be conservative and assume that another
     // thread is already donating.
-    MutexTryLocker locker(m_shared.m_markingLock);
-    if (!locker.locked())
+    std::unique_lock<std::mutex> lock(m_shared.m_markingMutex, std::try_to_lock);
+    if (!lock.owns_lock())
         return;
 
     // Otherwise, assume that a thread will go idle soon, and donate.
     m_stack.donateSomeCellsTo(m_shared.m_sharedMarkStack);
 
     if (m_shared.m_numberOfActiveParallelMarkers < Options::numberOfGCMarkers())
-        m_shared.m_markingCondition.broadcast();
+        m_shared.m_markingConditionVariable.notify_all();
 }
 
 void SlotVisitor::drain()
@@ -181,12 +181,12 @@ void SlotVisitor::drainFromShared(SharedDrainMode sharedDrainMode)
     
 #if ENABLE(PARALLEL_GC)
     {
-        MutexLocker locker(m_shared.m_markingLock);
+        std::lock_guard<std::mutex> lock(m_shared.m_markingMutex);
         m_shared.m_numberOfActiveParallelMarkers++;
     }
     while (true) {
         {
-            MutexLocker locker(m_shared.m_markingLock);
+            std::unique_lock<std::mutex> lock(m_shared.m_markingMutex);
             m_shared.m_numberOfActiveParallelMarkers--;
 
             // How we wait differs depending on drain mode.
@@ -197,7 +197,7 @@ void SlotVisitor::drainFromShared(SharedDrainMode sharedDrainMode)
                     // Did we reach termination?
                     if (!m_shared.m_numberOfActiveParallelMarkers && m_shared.m_sharedMarkStack.isEmpty()) {
                         // Let any sleeping slaves know it's time for them to return;
-                        m_shared.m_markingCondition.broadcast();
+                        m_shared.m_markingConditionVariable.notify_all();
                         return;
                     }
                     
@@ -206,17 +206,16 @@ void SlotVisitor::drainFromShared(SharedDrainMode sharedDrainMode)
                         break;
                     
                     // Otherwise wait.
-                    m_shared.m_markingCondition.wait(m_shared.m_markingLock);
+                    m_shared.m_markingConditionVariable.wait(lock);
                 }
             } else {
                 ASSERT(sharedDrainMode == SlaveDrain);
                 
                 // Did we detect termination? If so, let the master know.
                 if (!m_shared.m_numberOfActiveParallelMarkers && m_shared.m_sharedMarkStack.isEmpty())
-                    m_shared.m_markingCondition.broadcast();
-                
-                while (m_shared.m_sharedMarkStack.isEmpty() && !m_shared.m_parallelMarkersShouldExit)
-                    m_shared.m_markingCondition.wait(m_shared.m_markingLock);
+                    m_shared.m_markingConditionVariable.notify_all();
+
+                m_shared.m_markingConditionVariable.wait(lock, [this] { return !m_shared.m_sharedMarkStack.isEmpty() || m_shared.m_parallelMarkersShouldExit; });
                 
                 // Is the current phase done? If so, return from this function.
                 if (m_shared.m_parallelMarkersShouldExit)

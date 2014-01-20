@@ -83,7 +83,7 @@ GCThreadSharedData::GCThreadSharedData(VM* vm)
     m_copyLock.Init();
 #if ENABLE(PARALLEL_GC)
     // Grab the lock so the new GC threads can be properly initialized before they start running.
-    MutexLocker locker(m_phaseLock);
+    std::unique_lock<std::mutex> lock(m_phaseMutex);
     for (unsigned i = 1; i < Options::numberOfGCMarkers(); ++i) {
         m_numberOfActiveGCThreads++;
         SlotVisitor* slotVisitor = new SlotVisitor(*this);
@@ -95,8 +95,7 @@ GCThreadSharedData::GCThreadSharedData(VM* vm)
     }
 
     // Wait for all the GCThreads to get to the right place.
-    while (m_numberOfActiveGCThreads)
-        m_activityCondition.wait(m_phaseLock);
+    m_activityConditionVariable.wait(lock, [this] { return !m_numberOfActiveGCThreads; });
 #endif
 }
 
@@ -105,13 +104,13 @@ GCThreadSharedData::~GCThreadSharedData()
 #if ENABLE(PARALLEL_GC)    
     // Destroy our marking threads.
     {
-        MutexLocker markingLocker(m_markingLock);
-        MutexLocker phaseLocker(m_phaseLock);
+        std::lock_guard<std::mutex> markingLock(m_markingMutex);
+        std::lock_guard<std::mutex> phaseLock(m_phaseMutex);
         ASSERT(m_currentPhase == NoPhase);
         m_parallelMarkersShouldExit = true;
         m_gcThreadsShouldWait = false;
         m_currentPhase = Exit;
-        m_phaseCondition.broadcast();
+        m_phaseConditionVariable.notify_all();
     }
     for (unsigned i = 0; i < m_gcThreads.size(); ++i) {
         waitForThreadCompletion(m_gcThreads[i]->threadID());
@@ -139,28 +138,27 @@ void GCThreadSharedData::reset()
 
 void GCThreadSharedData::startNextPhase(GCPhase phase)
 {
-    MutexLocker phaseLocker(m_phaseLock);
+    std::lock_guard<std::mutex> lock(m_phaseMutex);
     ASSERT(!m_gcThreadsShouldWait);
     ASSERT(m_currentPhase == NoPhase);
     m_gcThreadsShouldWait = true;
     m_currentPhase = phase;
-    m_phaseCondition.broadcast();
+    m_phaseConditionVariable.notify_all();
 }
 
 void GCThreadSharedData::endCurrentPhase()
 {
     ASSERT(m_gcThreadsShouldWait);
-    MutexLocker locker(m_phaseLock);
+    std::unique_lock<std::mutex> lock(m_phaseMutex);
     m_currentPhase = NoPhase;
     m_gcThreadsShouldWait = false;
-    m_phaseCondition.broadcast();
-    while (m_numberOfActiveGCThreads)
-        m_activityCondition.wait(m_phaseLock);
+    m_phaseConditionVariable.notify_all();
+    m_activityConditionVariable.wait(lock, [this] { return !m_numberOfActiveGCThreads; });
 }
 
 void GCThreadSharedData::didStartMarking()
 {
-    MutexLocker markingLocker(m_markingLock);
+    std::lock_guard<std::mutex> lock(m_markingMutex);
     m_parallelMarkersShouldExit = false;
     startNextPhase(Mark);
 }
@@ -168,9 +166,9 @@ void GCThreadSharedData::didStartMarking()
 void GCThreadSharedData::didFinishMarking()
 {
     {
-        MutexLocker markingLocker(m_markingLock);
+        std::lock_guard<std::mutex> lock(m_markingMutex);
         m_parallelMarkersShouldExit = true;
-        m_markingCondition.broadcast();
+        m_markingConditionVariable.notify_all();
     }
 
     ASSERT(m_currentPhase == Mark);
