@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>balancing fixed-height multicol</title>
+        <script>
+            if (window.internals)
+                internals.settings.setRegionBasedColumnsEnabled(true);
+        </script>
+    </head>
+    <body style="overflow:hidden;">
+        <p>There should be three identical blue rectangles below.</p>
+        <div style="-webkit-columns:3; -webkit-column-gap:1em; columns:3; column-gap:1em; line-height:2em; height:3.9em; width:20em;">
+            <div style="background:blue;"><br><br><br></div>
+        </div>
+    </body>
+</html>

@@ -110,4 +110,15 @@ void RenderMultiColumnFlowThread::updateMinimumPageHeight(const RenderBlock* blo
         multicolSet->updateMinimumColumnHeight(minHeight);
 }
 
+bool RenderMultiColumnFlowThread::addForcedRegionBreak(const RenderBlock* block, LayoutUnit offset, RenderBox* /*breakChild*/, bool /*isBefore*/, LayoutUnit* offsetBreakAdjustment)
+{
+    if (RenderMultiColumnSet* multicolSet = toRenderMultiColumnSet(regionAtBlockOffset(block, offset))) {
+        multicolSet->addForcedBreak(offset);
+        if (offsetBreakAdjustment)
+            *offsetBreakAdjustment = pageLogicalHeightForOffset(offset) ? pageRemainingLogicalHeightForOffset(offset, IncludePageBoundary) : LayoutUnit(0);
+        return true;
+    }
+    return false;
+}
+
 }

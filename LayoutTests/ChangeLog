@@ -1,3 +1,23 @@
+2014-01-20  Morten Stenshorne  <mstensho@opera.com>
+
+        Region based multicol: support explicit column breaks
+        https://bugs.webkit.org/show_bug.cgi?id=123993
+
+        Reviewed by David Hyatt.
+
+        * fast/multicol/newmulticol/break-after-expected.html: Added.
+        * fast/multicol/newmulticol/break-after.html: Added.
+        * fast/multicol/newmulticol/break-before-expected.html: Added.
+        * fast/multicol/newmulticol/break-before.html: Added.
+        * fast/multicol/newmulticol/breaks-2-columns-3-expected.html: Added.
+        * fast/multicol/newmulticol/breaks-2-columns-3-no-balancing-expected.html: Added.
+        * fast/multicol/newmulticol/breaks-2-columns-3-no-balancing.html: Added.
+        * fast/multicol/newmulticol/breaks-2-columns-3.html: Added.
+        * fast/multicol/newmulticol/breaks-3-columns-3-expected.html: Added.
+        * fast/multicol/newmulticol/breaks-3-columns-3.html: Added.
+        * fast/multicol/newmulticol/fixed-height-fill-balance-2-expected.html: Added.
+        * fast/multicol/newmulticol/fixed-height-fill-balance-2.html: Added.
+
 2014-01-20  Eric Carlson  <eric.carlson@apple.com>
 
         Allow MediaSessionManager to restrict 'preload' behavior

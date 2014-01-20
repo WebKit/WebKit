@@ -40,6 +40,7 @@ RenderMultiColumnBlock::RenderMultiColumnBlock(Element& element, PassRef<RenderS
     , m_columnWidth(0)
     , m_columnHeightAvailable(0)
     , m_inBalancingPass(false)
+    , m_needsRebalancing(false)
 {
 }
 
@@ -96,8 +97,9 @@ void RenderMultiColumnBlock::checkForPaginationLogicalHeightChange(LayoutUnit& /
 
 bool RenderMultiColumnBlock::relayoutForPagination(bool, LayoutUnit, LayoutStateMaintainer& statePusher)
 {
-    if (m_inBalancingPass || !requiresBalancing())
+    if (m_inBalancingPass || !m_needsRebalancing)
         return false;
+    m_needsRebalancing = false;
     m_inBalancingPass = true; // Prevent re-entering this method (and recursion into layout).
 
     bool needsRelayout;
@@ -113,7 +115,7 @@ bool RenderMultiColumnBlock::relayoutForPagination(bool, LayoutUnit, LayoutState
         for (RenderBox* childBox = firstChildBox(); childBox; childBox = childBox->nextSiblingBox())
             if (childBox != m_flowThread && childBox->isRenderMultiColumnSet()) {
                 RenderMultiColumnSet* multicolSet = toRenderMultiColumnSet(childBox);
-                if (multicolSet->calculateBalancedHeight(firstPass)) {
+                if (multicolSet->recalculateBalancedHeight(firstPass)) {
                     multicolSet->setChildNeedsLayout(MarkOnlyThis);
                     needsRelayout = true;
                 }
@@ -170,6 +172,18 @@ RenderObject* RenderMultiColumnBlock::layoutSpecialExcludedChild(bool relayoutCh
     if (relayoutChildren)
         m_flowThread->setChildNeedsLayout(MarkOnlyThis);
     
+    if (requiresBalancing()) {
+        // At the end of multicol layout, relayoutForPagination() is called unconditionally, but if
+        // no children are to be laid out (e.g. fixed width with layout already being up-to-date),
+        // we want to prevent it from doing any work, so that the column balancing machinery doesn't
+        // kick in and trigger additional unnecessary layout passes. Actually, it's not just a good
+        // idea in general to not waste time on balancing content that hasn't been re-laid out; we
+        // are actually required to guarantee this. The calculation of implicit breaks needs to be
+        // preceded by a proper layout pass, since it's layout that sets up content runs, and the
+        // runs get deleted right after every pass.
+        m_needsRebalancing = shouldInvalidateRegions || m_flowThread->needsLayout();
+    }
+
     setLogicalTopForChild(*m_flowThread, borderAndPaddingBefore());
     m_flowThread->layoutIfNeeded();
     determineLogicalLeftPositionForChild(*m_flowThread);

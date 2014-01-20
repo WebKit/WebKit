@@ -1,3 +1,80 @@
+2014-01-20  Morten Stenshorne  <mstensho@opera.com>
+
+        Region based multicol: support explicit column breaks
+        https://bugs.webkit.org/show_bug.cgi?id=123993
+
+        Reviewed by David Hyatt.
+
+        Merely supporting insertion of explicit (forced) column breaks in
+        the region based multicol implementation is really simple: just
+        hook up with what the CSS regions code is already doing.
+
+        However, there is one complication: column balancing. In order to
+        balance columns as nicely as possible when there are explicit
+        breaks, we need to figure out between which explicit breaks the
+        implicit breaks will occur (if there's room for any at all).
+
+        Tests: fast/multicol/newmulticol/break-after.html
+               fast/multicol/newmulticol/break-before.html
+               fast/multicol/newmulticol/breaks-2-columns-3-no-balancing.html
+               fast/multicol/newmulticol/breaks-2-columns-3.html
+               fast/multicol/newmulticol/breaks-3-columns-3.html
+               fast/multicol/newmulticol/fixed-height-fill-balance-2.html
+
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::applyBeforeBreak):
+        (WebCore::RenderBlockFlow::applyAfterBreak): Use the already
+        existing region breaking code when inserting breaks in region
+        based multicol.
+        * rendering/RenderFlowThread.h:
+        * rendering/RenderMultiColumnBlock.cpp:
+        (WebCore::RenderMultiColumnBlock::RenderMultiColumnBlock):
+        (WebCore::RenderMultiColumnBlock::relayoutForPagination): Avoid
+        re-balancing if the multicol's contents were not laid out. Apart
+        from being good for performance, this is now necessary because of
+        how explicit breaks are implemented.
+        (WebCore::RenderMultiColumnBlock::layoutSpecialExcludedChild):
+        Detect if the contents are going to be laid out, or skipped, so
+        that we can tell if we need to (re-)balance the columns
+        afterwards.
+        * rendering/RenderMultiColumnBlock.h:
+        * rendering/RenderMultiColumnFlowThread.cpp:
+        (WebCore::RenderMultiColumnFlowThread::addForcedRegionBreak):
+        Locate the appropriate multi-column set and call its
+        addForcedBreak().
+        * rendering/RenderMultiColumnFlowThread.h:
+        * rendering/RenderMultiColumnSet.cpp:
+        (WebCore::RenderMultiColumnSet::RenderMultiColumnSet):
+        (WebCore::RenderMultiColumnSet::findRunWithTallestColumns):
+        (WebCore::RenderMultiColumnSet::distributeImplicitBreaks): Figure
+        out how many implicit breaks each single "content run" should
+        contain. The taller the content run, the more implicit breaks.
+        (WebCore::RenderMultiColumnSet::calculateBalancedHeight): This is
+        now a const method that only does half of what the old
+        calculateBalancedHeight() did. The rest (such as actually storing
+        the new column height) is done by recalculateBalancedHeight().
+        (WebCore::RenderMultiColumnSet::clearForcedBreaks): Needs to be
+        called between each layout pass, to clear the list of "content
+        runs".
+        (WebCore::RenderMultiColumnSet::addForcedBreak): Only useful when
+        columns are to be balanced. It receives explicit (forced) breaks
+        and stores them as "content runs". When layout is done, we'll go
+        through the list of content runs, and see where implicit breaks
+        should be inserted (if there's room for any). The goal is to
+        insert implicit breaks in such a way that the final columns become
+        as short as possible.
+        (WebCore::RenderMultiColumnSet::recalculateBalancedHeight):
+        Calculates and sets a new balanced column height. This used to be
+        done directly in calculateBalancedHeight(), but that method is now
+        const and it now only calculates the new height and returns it.
+        (WebCore::RenderMultiColumnSet::prepareForLayout):
+        * rendering/RenderMultiColumnSet.h: Remove old data members
+        intended for forced breaks (they were unused), and introduce a
+        "content run" vector instead. A new content run is triggered by an
+        explicit break. This is only used when column balancing is
+        enabled. When not balanced, RenderMultiColumnSet doesn't need to
+        do anything when explicit breaks are inserted.
+
 2014-01-20  Eric Carlson  <eric.carlson@apple.com>
 
         Allow MediaSessionManager to restrict 'preload' behavior

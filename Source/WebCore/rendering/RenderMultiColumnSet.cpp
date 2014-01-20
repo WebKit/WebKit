@@ -41,9 +41,6 @@ RenderMultiColumnSet::RenderMultiColumnSet(RenderFlowThread& flowThread, PassRef
     , m_maxColumnHeight(LayoutUnit::max())
     , m_minSpaceShortage(LayoutUnit::max())
     , m_minimumColumnHeight(0)
-    , m_forcedBreaksCount(0)
-    , m_maximumDistanceBetweenForcedBreaks(0)
-    , m_forcedBreakOffset(0)
 {
 }
 
@@ -71,45 +68,122 @@ void RenderMultiColumnSet::setAndConstrainColumnHeight(LayoutUnit newHeight)
     // FIXME: the height may also be affected by the enclosing pagination context, if any.
 }
 
-bool RenderMultiColumnSet::calculateBalancedHeight(bool initial)
+unsigned RenderMultiColumnSet::findRunWithTallestColumns() const
 {
-    ASSERT(toRenderMultiColumnBlock(parent())->requiresBalancing());
-    LayoutUnit oldColumnHeight = m_computedColumnHeight;
-    LayoutUnit currentMinSpaceShortage = m_minSpaceShortage;
-    m_minSpaceShortage = LayoutUnit::max();
+    unsigned indexWithLargestHeight = 0;
+    LayoutUnit largestHeight;
+    LayoutUnit previousOffset;
+    size_t runCount = m_contentRuns.size();
+    ASSERT(runCount);
+    for (size_t i = 0; i < runCount; i++) {
+        const ContentRun& run = m_contentRuns[i];
+        LayoutUnit height = run.columnLogicalHeight(previousOffset);
+        if (largestHeight < height) {
+            largestHeight = height;
+            indexWithLargestHeight = i;
+        }
+        previousOffset = run.breakOffset();
+    }
+    return indexWithLargestHeight;
+}
 
+void RenderMultiColumnSet::distributeImplicitBreaks()
+{
+    unsigned breakCount = forcedBreaksCount();
+
+#ifndef NDEBUG
+    // There should be no implicit breaks assumed at this point.
+    for (unsigned i = 0; i < breakCount; i++)
+        ASSERT(!m_contentRuns[i].assumedImplicitBreaks());
+#endif // NDEBUG
+
+    // There will always be at least one break, since the flow thread reports a "forced break" at
+    // end of content.
+    ASSERT(breakCount >= 1);
+
+    // If there is room for more breaks (to reach the used value of column-count), imagine that we
+    // insert implicit breaks at suitable locations. At any given time, the content run with the
+    // currently tallest columns will get another implicit break "inserted", which will increase its
+    // column count by one and shrink its columns' height. Repeat until we have the desired total
+    // number of breaks. The largest column height among the runs will then be the initial column
+    // height for the balancer to use.
+    while (breakCount < m_computedColumnCount) {
+        unsigned index = findRunWithTallestColumns();
+        m_contentRuns[index].assumeAnotherImplicitBreak();
+        breakCount++;
+    }
+}
+
+LayoutUnit RenderMultiColumnSet::calculateBalancedHeight(bool initial) const
+{
     if (initial) {
         // Start with the lowest imaginable column height.
-        LayoutUnit logicalHeightGuess = ceilf(float(flowThread()->logicalHeight()) / float(m_computedColumnCount));
-        logicalHeightGuess = std::max(logicalHeightGuess, m_minimumColumnHeight);
-        setAndConstrainColumnHeight(logicalHeightGuess);
-
-        // The multicol container now typically needs at least one more layout pass with a new
-        // column height, but if height was specified, we only need to do this if we found that we
-        // might need less space than that. On the other hand, if we determined that the columns
-        // need to be as tall as the specified height of the container, we have already laid it out
-        // correctly, and there's no need for another pass.
-        return m_computedColumnHeight != oldColumnHeight;
+        unsigned index = findRunWithTallestColumns();
+        LayoutUnit startOffset = index > 0 ? m_contentRuns[index - 1].breakOffset() : LayoutUnit(0);
+        return std::max<LayoutUnit>(m_contentRuns[index].columnLogicalHeight(startOffset), m_minimumColumnHeight);
     }
 
-    if (columnCount() <= computedColumnCount())
+    if (columnCount() <= computedColumnCount()) {
         // With the current column height, the content fits without creating overflowing columns. We're done.
-        return false;
+        return m_computedColumnHeight;
+    }
+
+    if (forcedBreaksCount() > 1 && forcedBreaksCount() >= computedColumnCount()) {
+        // Too many forced breaks to allow any implicit breaks. Initial balancing should already
+        // have set a good height. There's nothing more we should do.
+        return m_computedColumnHeight;
+    }
 
     // If the initial guessed column height wasn't enough, stretch it now. Stretch by the lowest
     // amount of space shortage found during layout.
 
-    ASSERT(currentMinSpaceShortage != LayoutUnit::max()); // If this can actually happen, we probably have a bug.
-    if (currentMinSpaceShortage == LayoutUnit::max())
-        return false; // So bail out rather than looping infinitely.
+    ASSERT(m_minSpaceShortage > 0); // We should never _shrink_ the height!
+    ASSERT(m_minSpaceShortage != LayoutUnit::max()); // If this happens, we probably have a bug.
+    if (m_minSpaceShortage == LayoutUnit::max())
+        return m_computedColumnHeight; // So bail out rather than looping infinitely.
 
-    setAndConstrainColumnHeight(m_computedColumnHeight + currentMinSpaceShortage);
+    return m_computedColumnHeight + m_minSpaceShortage;
+}
 
-    // If we reach the maximum column height (typically set by the height or max-height property),
-    // we may not be allowed to stretch further. Return true only if stretching
-    // succeeded. Otherwise, we're done.
-    ASSERT(m_computedColumnHeight >= oldColumnHeight); // We shouldn't be able to shrink the height!
-    return m_computedColumnHeight > oldColumnHeight;
+void RenderMultiColumnSet::clearForcedBreaks()
+{
+    m_contentRuns.clear();
+}
+
+void RenderMultiColumnSet::addForcedBreak(LayoutUnit offsetFromFirstPage)
+{
+    if (!toRenderMultiColumnBlock(parent())->requiresBalancing())
+        return;
+    if (!m_contentRuns.isEmpty() && offsetFromFirstPage <= m_contentRuns.last().breakOffset())
+        return;
+    // Append another item as long as we haven't exceeded used column count. What ends up in the
+    // overflow area shouldn't affect column balancing.
+    if (m_contentRuns.size() < m_computedColumnCount)
+        m_contentRuns.append(ContentRun(offsetFromFirstPage));
+}
+
+bool RenderMultiColumnSet::recalculateBalancedHeight(bool initial)
+{
+    ASSERT(toRenderMultiColumnBlock(parent())->requiresBalancing());
+
+    LayoutUnit oldColumnHeight = m_computedColumnHeight;
+    if (initial)
+        distributeImplicitBreaks();
+    LayoutUnit newColumnHeight = calculateBalancedHeight(initial);
+    setAndConstrainColumnHeight(newColumnHeight);
+
+    // After having calculated an initial column height, the multicol container typically needs at
+    // least one more layout pass with a new column height, but if a height was specified, we only
+    // need to do this if we think that we need less space than specified. Conversely, if we
+    // determined that the columns need to be as tall as the specified height of the container, we
+    // have already laid it out correctly, and there's no need for another pass.
+
+    if (m_computedColumnHeight == oldColumnHeight)
+        return false; // No change. We're done.
+
+    m_minSpaceShortage = LayoutUnit::max();
+    clearForcedBreaks();
+    return true; // Need another pass.
 }
 
 void RenderMultiColumnSet::recordSpaceShortage(LayoutUnit spaceShortage)
@@ -172,6 +246,8 @@ void RenderMultiColumnSet::prepareForLayout()
         m_computedColumnHeight = 0; // Restart balancing.
     } else
         setAndConstrainColumnHeight(heightAdjustedForSetOffset(multicolBlock->columnHeightAvailable()));
+
+    clearForcedBreaks();
 
     // Nuke previously stored minimum column height. Contents may have changed for all we know.
     m_minimumColumnHeight = 0;

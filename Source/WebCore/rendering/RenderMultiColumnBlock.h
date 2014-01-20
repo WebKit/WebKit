@@ -71,6 +71,7 @@ private:
                               // These values will be cached (eventually) for multi-column blocks.
     LayoutUnit m_columnHeightAvailable; // Total height available to columns, or 0 if auto.
     bool m_inBalancingPass; // Set when relayouting for column balancing.
+    bool m_needsRebalancing;
 };
 
 RENDER_OBJECT_TYPE_CASTS(RenderMultiColumnBlock, isRenderMultiColumnBlock())
