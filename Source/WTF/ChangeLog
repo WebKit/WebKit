@@ -1,3 +1,17 @@
+2014-01-19  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GLIB] GVariant floating references are not correctly handled by GRefPtr
+        https://bugs.webkit.org/show_bug.cgi?id=127246
+
+        Reviewed by Martin Robinson.
+
+        GRefPtr should always use g_variant_ref_sink to deal with GVariant
+        floating references. In case of full references,
+        g_variant_ref_sink calls g_variant_ref, so it's safe to use it always.
+
+        * wtf/gobject/GRefPtr.cpp:
+        (WTF::refGPtr): Use g_variant_ref_sink().
+
 2014-01-18  Anders Carlsson  <andersca@apple.com>
 
         Remove support for the viewsource attribute

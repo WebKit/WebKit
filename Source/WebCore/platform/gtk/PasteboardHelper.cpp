@@ -197,7 +197,7 @@ void PasteboardHelper::fillSelectionData(GtkSelectionData* selectionData, guint 
             g_variant_builder_add_parsed(&builder, dictItem.get());
         }
 
-        GRefPtr<GVariant> variant = adoptGRef(g_variant_builder_end(&builder));
+        GRefPtr<GVariant> variant = g_variant_builder_end(&builder);
         GOwnPtr<gchar> serializedVariant(g_variant_print(variant.get(), TRUE));
         gtk_selection_data_set(selectionData, unknownAtom, 1, reinterpret_cast<const guchar*>(serializedVariant.get()), strlen(serializedVariant.get()));
     }
@@ -256,7 +256,7 @@ void PasteboardHelper::fillDataObjectFromDropData(GtkSelectionData* data, guint 
         if (pieces.size() > 1)
             dataObject->setText(pieces[1]);
     } else if (target == unknownAtom) {
-        GRefPtr<GVariant> variant = adoptGRef(g_variant_new_parsed(reinterpret_cast<const char*>(gtk_selection_data_get_data(data))));
+        GRefPtr<GVariant> variant = g_variant_new_parsed(reinterpret_cast<const char*>(gtk_selection_data_get_data(data)));
 
         GOwnPtr<gchar> key;
         GOwnPtr<gchar> value;

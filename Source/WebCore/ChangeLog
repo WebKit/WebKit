@@ -1,3 +1,17 @@
+2014-01-19  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GLIB] GVariant floating references are not correctly handled by GRefPtr
+        https://bugs.webkit.org/show_bug.cgi?id=127246
+
+        Reviewed by Martin Robinson.
+
+        Do not adopt GVariant floating references, they will be converted
+        to a full reference by GRefPtr.
+
+        * platform/gtk/PasteboardHelper.cpp:
+        (WebCore::PasteboardHelper::fillSelectionData):
+        (WebCore::PasteboardHelper::fillDataObjectFromDropData):
+
 2014-01-19  Jinwoo Song  <jinwoo7.song@samsung.com>
 
         Use unsigned type for the size of CSSParserValueList

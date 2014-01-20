@@ -98,7 +98,7 @@ template <> void derefGPtr(GBytes* ptr)
 template <> GVariant* refGPtr(GVariant* ptr)
 {
     if (ptr)
-        g_variant_ref(ptr);
+        g_variant_ref_sink(ptr);
     return ptr;
 }
 
