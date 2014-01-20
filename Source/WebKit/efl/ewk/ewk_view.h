@@ -498,8 +498,7 @@ enum _Ewk_Editor_Command {
 typedef enum _Ewk_Editor_Command Ewk_Editor_Command;
 
 /**
- * Sets the smart class api without any backing store, enabling view
- * to be inherited.
+ * Sets the smart class api, enabling view to be inherited.
  *
  * @param api class definition to set, all members with the
  *        exception of @a Evas_Smart_Class->data may be overridden, must
@@ -512,30 +511,8 @@ typedef enum _Ewk_Editor_Command Ewk_Editor_Command;
  *
  * @return @c EINA_TRUE on success or @c EINA_FALSE on failure (probably
  *         version mismatch)
- *
- * @see ewk_view_single_smart_set()
  */
-EAPI Eina_Bool    ewk_view_base_smart_set(Ewk_View_Smart_Class *api);
-
-/**
- * Sets the smart class api using single backing store, enabling view
- * to be inherited.
- *
- * @param api class definition to set, all members with the
- *        exception of @a Evas_Smart_Class->data may be overridden, must
- *        @b not be @c NULL
- *
- * @note @a Evas_Smart_Class->data is used to implement type checking and
- *       is not supposed to be changed/overridden. If you need extra
- *       data for your smart class to work, just extend
- *       @a Ewk_View_Smart_Class instead.
- *
- * @return @c EINA_TRUE on success or @c EINA_FALSE on failure (probably
- *         version mismatch)
- *
- * @see ewk_view_base_smart_set()
- */
-EAPI Eina_Bool    ewk_view_single_smart_set(Ewk_View_Smart_Class *api);
+EAPI Eina_Bool    ewk_view_smart_set(Ewk_View_Smart_Class *api);
 
 /**
  * Creates a new EFL WebKit View object.
@@ -553,7 +530,7 @@ EAPI Eina_Bool    ewk_view_single_smart_set(Ewk_View_Smart_Class *api);
  *
  * @see ewk_view_uri_set()
  */
-EAPI Evas_Object *ewk_view_single_add(Evas *e);
+EAPI Evas_Object *ewk_view_add(Evas *e);
 
 /**
  * Sets a fixed layout size to be used, dissociating it from viewport size.
@@ -2653,8 +2630,6 @@ EAPI Eina_Bool ewk_view_setting_enable_fullscreen_get(const Evas_Object *o);
  * @oaram enable Enable or Disable WebCore's tiled backing store for given View
  *
  * @return true on success, or false on failure
- *
- * @note this is not for general use. It should be used for single view only.
  */
 EAPI Eina_Bool ewk_view_setting_tiled_backing_store_enabled_set(Evas_Object *o, Eina_Bool enable);
 

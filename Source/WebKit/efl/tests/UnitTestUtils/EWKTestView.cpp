@@ -42,7 +42,7 @@ bool EWKTestView::init(int width, int height)
     if (!evas)
         return false;
 
-    m_webView = adoptRef(ewk_view_single_add(evas));
+    m_webView = adoptRef(ewk_view_add(evas));
     if (!m_webView)
         return false;
 

@@ -1519,7 +1519,7 @@ static const char* _ewk_view_editor_command_string_get(Ewk_View_Private_Data*, E
     return reinterpret_cast<const char*>(eina_hash_find(editorCommandHash.get(), &ewkCommand));
 }
 
-Eina_Bool ewk_view_base_smart_set(Ewk_View_Smart_Class* api)
+Eina_Bool ewk_view_smart_set(Ewk_View_Smart_Class* api)
 {
     EINA_SAFETY_ON_NULL_RETURN_VAL(api, false);
 
@@ -1577,27 +1577,22 @@ Eina_Bool ewk_view_base_smart_set(Ewk_View_Smart_Class* api)
     return true;
 }
 
-Eina_Bool ewk_view_single_smart_set(Ewk_View_Smart_Class* api)
+static inline Evas_Smart* _ewk_view_smart_class_new()
 {
-    return ewk_view_base_smart_set(api);
-}
-
-static inline Evas_Smart* _ewk_view_single_smart_class_new(void)
-{
-    static Ewk_View_Smart_Class api = EWK_VIEW_SMART_CLASS_INIT_NAME_VERSION(ewkViewSingleName);
+    static Ewk_View_Smart_Class api = EWK_VIEW_SMART_CLASS_INIT_NAME_VERSION(ewkViewTypeString);
     static Evas_Smart* smart = 0;
 
     if (EINA_UNLIKELY(!smart)) {
-        ewk_view_base_smart_set(&api);
+        ewk_view_smart_set(&api);
         smart = evas_smart_class_new(&api.sc);
     }
 
     return smart;
 }
 
-Evas_Object* ewk_view_single_add(Evas* canvas)
+Evas_Object* ewk_view_add(Evas* canvas)
 {
-    return evas_object_smart_add(canvas, _ewk_view_single_smart_class_new());
+    return evas_object_smart_add(canvas, _ewk_view_smart_class_new());
 }
 
 void ewk_view_fixed_layout_size_set(Evas_Object* ewkView, Evas_Coord width, Evas_Coord height)

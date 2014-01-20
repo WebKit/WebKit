@@ -77,12 +77,6 @@ static Eina_List *windows = NULL;
 
 static char *themePath = NULL;
 
-static const char *backingStores[] = {
-    "tiled",
-    "single",
-    NULL
-};
-
 typedef struct _Window_Properties {
     Eina_Bool toolbarsVisible:1;
     Eina_Bool statusbarVisible:1;
@@ -127,7 +121,7 @@ static const Ecore_Getopt options = {
         ECORE_GETOPT_STORE_STR
             ('t', "theme", "path to read the theme file from."),
         ECORE_GETOPT_STORE_DEF_BOOL
-            ('T', "tiled-backing-store", "enable/disable WebCore's tiled backingstore(ewk_view_single only)", 0),
+            ('T', "tiled-backing-store", "enable/disable WebCore's tiled backingstore", 0),
         ECORE_GETOPT_STORE_STR
             ('U', "user-agent", "custom user agent string to use."),
         ECORE_GETOPT_COUNT
@@ -846,7 +840,7 @@ windowCreate(User_Arguments *userArgs)
         return NULL;
     }
 
-    app->browser = ewk_view_single_add(app->evas);
+    app->browser = ewk_view_add(app->evas);
     ewk_view_setting_tiled_backing_store_enabled_set(app->browser, userArgs->enableTiledBackingStore);
 
     ewk_view_theme_set(app->browser, themePath);

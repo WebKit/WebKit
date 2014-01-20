@@ -1,3 +1,23 @@
+2014-01-19  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        [EFL][WK1] Remove and refactor the APIs which use single and base keyword
+        https://bugs.webkit.org/show_bug.cgi?id=127214
+
+        Reviewed by Gyuyoung Kim.
+
+        Since removed ewk_vie_tiled, we don't need to use single or base in the API name.
+        Removed them and clean up the code.
+
+        * ewk/ewk_view.cpp:
+        (ewk_view_smart_set):
+        (_ewk_view_smart_class_new):
+        (ewk_view_add):
+        * ewk/ewk_view.h:
+        * ewk/ewk_view_private.h:
+        Removed the class names and macro to distinguish single or tiled.
+        * tests/UnitTestUtils/EWKTestView.cpp:
+        (EWKUnitTests::EWKTestView::init):
+
 2014-01-18  Brian Burg  <bburg@apple.com>
 
         Another build fix attempt for Windows and EFL WebKit1.

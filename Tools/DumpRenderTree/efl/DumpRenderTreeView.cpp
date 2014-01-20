@@ -216,11 +216,11 @@ Evas_Object* drtViewAdd(Evas* evas)
 {
     static Ewk_View_Smart_Class api = EWK_VIEW_SMART_CLASS_INIT_NAME_VERSION("DRT_View");
 
-    if (!ewk_view_single_smart_set(&api))
+    if (!ewk_view_smart_set(&api))
         return 0;
 
     if (EINA_UNLIKELY(!gParentSmartClass.sc.add))
-        ewk_view_base_smart_set(&gParentSmartClass);
+        ewk_view_smart_set(&gParentSmartClass);
 
     api.add_console_message = onConsoleMessage;
     api.run_javascript_alert = onJavaScriptAlert;
