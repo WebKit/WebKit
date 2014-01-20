@@ -1773,6 +1773,7 @@ set(WebCore_SOURCES
     page/SpeechInputResult.cpp
     page/SpeechInputResultList.cpp
     page/SuspendableTimer.cpp
+    page/UserContentController.cpp
     page/UserContentURLPattern.cpp
     page/WindowFeatures.cpp
     page/WindowFocusAllowedIndicator.cpp

@@ -783,6 +783,9 @@
     <ClCompile Include="..\page\SuspendableTimer.cpp">
       <Filter>page</Filter>
     </ClCompile>
+    <ClCompile Include="..\page\UserContentController.cpp">
+      <Filter>page</Filter>
+    </ClCompile>
     <ClCompile Include="..\page\UserContentURLPattern.cpp">
       <Filter>page</Filter>
     </ClCompile>
@@ -7695,6 +7698,9 @@
       <Filter>page</Filter>
     </ClInclude>
     <ClInclude Include="..\page\SuspendableTimer.h">
+      <Filter>page</Filter>
+    </ClInclude>
+    <ClInclude Include="..\page\UserContentController.h">
       <Filter>page</Filter>
     </ClInclude>
     <ClInclude Include="..\page\UserContentURLPattern.h">

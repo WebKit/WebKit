@@ -7069,6 +7069,7 @@
     <ClCompile Include="..\page\SpatialNavigation.cpp" />
     <ClCompile Include="..\page\SpeechInput.cpp" />
     <ClCompile Include="..\page\SuspendableTimer.cpp" />
+    <ClCompile Include="..\page\UserContentController.cpp" />
     <ClCompile Include="..\page\UserContentURLPattern.cpp" />
     <ClCompile Include="..\fileapi\WebKitBlobBuilder.cpp" />
     <ClCompile Include="..\page\WindowFeatures.cpp" />
@@ -18930,6 +18931,7 @@
     <ClInclude Include="..\page\SpeechInputClient.h" />
     <ClInclude Include="..\page\SpeechInputListener.h" />
     <ClInclude Include="..\page\SuspendableTimer.h" />
+    <ClInclude Include="..\page\UserContentController.h" />
     <ClInclude Include="..\page\UserContentURLPattern.h" />
     <ClInclude Include="..\page\UserScript.h" />
     <ClInclude Include="..\page\UserScriptTypes.h" />

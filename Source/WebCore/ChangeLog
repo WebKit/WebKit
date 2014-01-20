@@ -1,3 +1,25 @@
+2014-01-20  Anders Carlsson  <andersca@apple.com>
+
+        Add empty UserContentController class
+        https://bugs.webkit.org/show_bug.cgi?id=127300
+        <rdar://problem/15861296>
+
+        Reviewed by Dan Bernstein.
+
+        This is the first step towards moving handling of user scripts and style sheets from
+        the page group to a separate objects and ultimately make them be settable per page instead of per page group.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.vcxproj/WebCore.vcxproj.filters:
+        * WebCore.xcodeproj/project.pbxproj:
+        * page/UserContentController.cpp: Added.
+        (WebCore::UserContentController::create):
+        (WebCore::UserContentController::UserContentController):
+        (WebCore::UserContentController::~UserContentController):
+        * page/UserContentController.h: Added.
+
 2014-01-20  Joseph Pecoraro  <pecoraro@apple.com>
 
         Run clang-modernize and let it add a bunch of missing overrides in WebCore/inspector

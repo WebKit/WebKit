@@ -4231,6 +4231,8 @@ webcore_sources += \
 	Source/WebCore/page/SpeechInputResultList.h \
 	Source/WebCore/page/SuspendableTimer.cpp \
 	Source/WebCore/page/SuspendableTimer.h \
+	Source/WebCore/page/UserContentController.cpp \
+	Source/WebCore/page/UserContentController.h \
 	Source/WebCore/page/UserContentTypes.h \
 	Source/WebCore/page/UserContentURLPattern.cpp \
 	Source/WebCore/page/UserContentURLPattern.h \

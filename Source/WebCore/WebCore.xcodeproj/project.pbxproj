@@ -860,6 +860,8 @@
 		1AE2AE5C0A1D26F200B42B25 /* JSHTMLMenuElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AE2AE5A0A1D26F200B42B25 /* JSHTMLMenuElement.h */; };
 		1AE2AEC70A1D297B00B42B25 /* JSHTMLQuoteElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AE2AEC30A1D297B00B42B25 /* JSHTMLQuoteElement.cpp */; };
 		1AE2AEC80A1D297B00B42B25 /* JSHTMLQuoteElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AE2AEC40A1D297B00B42B25 /* JSHTMLQuoteElement.h */; };
+		1AE79D42188DB61F002239C2 /* UserContentController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AE79D40188DB61F002239C2 /* UserContentController.cpp */; };
+		1AE79D43188DB61F002239C2 /* UserContentController.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AE79D41188DB61F002239C2 /* UserContentController.h */; };
 		1AE82F8F0CAAFA9D002237AE /* JSDatabase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AE82F8D0CAAFA9D002237AE /* JSDatabase.cpp */; };
 		1AE82F900CAAFA9D002237AE /* JSDatabase.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AE82F8E0CAAFA9D002237AE /* JSDatabase.h */; };
 		1AE82FEC0CAB07EE002237AE /* JSSQLResultSet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AE82FEA0CAB07EE002237AE /* JSSQLResultSet.cpp */; };
@@ -7711,6 +7713,8 @@
 		1AE2AEA30A1D28E800B42B25 /* HTMLQuoteElement.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = HTMLQuoteElement.idl; sourceTree = "<group>"; };
 		1AE2AEC30A1D297B00B42B25 /* JSHTMLQuoteElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLQuoteElement.cpp; sourceTree = "<group>"; };
 		1AE2AEC40A1D297B00B42B25 /* JSHTMLQuoteElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSHTMLQuoteElement.h; sourceTree = "<group>"; };
+		1AE79D40188DB61F002239C2 /* UserContentController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UserContentController.cpp; sourceTree = "<group>"; };
+		1AE79D41188DB61F002239C2 /* UserContentController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UserContentController.h; sourceTree = "<group>"; };
 		1AE82F8D0CAAFA9D002237AE /* JSDatabase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSDatabase.cpp; sourceTree = "<group>"; };
 		1AE82F8E0CAAFA9D002237AE /* JSDatabase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSDatabase.h; sourceTree = "<group>"; };
 		1AE82FEA0CAB07EE002237AE /* JSSQLResultSet.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSSQLResultSet.cpp; sourceTree = "<group>"; };
@@ -16296,6 +16300,8 @@
 				75415AFC12958D5E003AD669 /* SpeechInputResultList.idl */,
 				62C1217A11AB9E76003C462C /* SuspendableTimer.cpp */,
 				62C1217B11AB9E77003C462C /* SuspendableTimer.h */,
+				1AE79D40188DB61F002239C2 /* UserContentController.cpp */,
+				1AE79D41188DB61F002239C2 /* UserContentController.h */,
 				003F1FE911E6AB43008258D9 /* UserContentTypes.h */,
 				BCACF3BA1072921A00C0C8A3 /* UserContentURLPattern.cpp */,
 				BCACF3BB1072921A00C0C8A3 /* UserContentURLPattern.h */,
@@ -25864,6 +25870,7 @@
 				0B90561C0F2578BF0095FF6A /* ThreadableLoaderClient.h in Headers */,
 				1A7E3C291710997300367935 /* ThreadableLoaderClientWrapper.h in Headers */,
 				97AABD1714FA09D5007457AE /* ThreadableWebSocketChannel.h in Headers */,
+				1AE79D43188DB61F002239C2 /* UserContentController.h in Headers */,
 				97AABD1914FA09D5007457AE /* ThreadableWebSocketChannelClientWrapper.h in Headers */,
 				51DF6D7E0B92A16D00C2DC85 /* ThreadCheck.h in Headers */,
 				E1FF57A30F01255B00891EBB /* ThreadGlobalData.h in Headers */,
@@ -27970,6 +27977,7 @@
 				B2CB92460B5BD97B009BAA78 /* JSSVGElementInstanceList.cpp in Sources */,
 				8542A79A0AE5C94400DF58DF /* JSSVGElementWrapperFactory.cpp in Sources */,
 				B2FA3D680AB75A6F000E5AC4 /* JSSVGEllipseElement.cpp in Sources */,
+				1AE79D42188DB61F002239C2 /* UserContentController.cpp in Sources */,
 				B266CD4D0C3AEC6500EB08D2 /* JSSVGException.cpp in Sources */,
 				B2FA3D6A0AB75A6F000E5AC4 /* JSSVGFEBlendElement.cpp in Sources */,
 				B2FA3D6C0AB75A6F000E5AC4 /* JSSVGFEColorMatrixElement.cpp in Sources */,
