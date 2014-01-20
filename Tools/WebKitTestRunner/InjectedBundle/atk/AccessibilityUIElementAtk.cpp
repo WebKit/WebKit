@@ -180,6 +180,8 @@ static const gchar* roleToString(AtkRole role)
     switch (role) {
     case ATK_ROLE_ALERT:
         return "AXAlert";
+    case ATK_ROLE_DIALOG:
+        return "AXDialog";
     case ATK_ROLE_CANVAS:
         return "AXCanvas";
     case ATK_ROLE_CHECK_BOX:
@@ -189,6 +191,8 @@ static const gchar* roleToString(AtkRole role)
     case ATK_ROLE_COMBO_BOX:
         return "AXComboBox";
     case ATK_ROLE_DOCUMENT_FRAME:
+        return "AXDocument";
+    case ATK_ROLE_DOCUMENT_WEB:
         return "AXWebArea";
     case ATK_ROLE_ENTRY:
         return "AXTextField";
@@ -250,6 +254,8 @@ static const gchar* roleToString(AtkRole role)
         return "AXSlider";
     case ATK_ROLE_SPIN_BUTTON:
         return "AXSpinButton";
+    case ATK_ROLE_STATUSBAR:
+        return "AXStatusBar";
     case ATK_ROLE_TABLE:
         return "AXTable";
     case ATK_ROLE_TABLE_CELL:
