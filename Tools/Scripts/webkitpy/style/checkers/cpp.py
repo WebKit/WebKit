@@ -2363,12 +2363,12 @@ def check_braces(clean_lines, line_number, error):
         # ')', or ') const' and doesn't begin with 'if|for|while|switch|else'.
         # We also allow '#' for #endif and '=' for array initialization.
         previous_line = get_previous_non_blank_line(clean_lines, line_number)[0]
-        if ((not search(r'[;:}{)=]\s*$|\)\s*((const|OVERRIDE)\s*)?(->\s*\S+)?\s*$', previous_line)
+        if ((not search(r'[;:}{)=]\s*$|\)\s*((const|override)\s*)?(->\s*\S+)?\s*$', previous_line)
              or search(r'\b(if|for|foreach|while|switch|else|NS_ENUM)\b', previous_line))
             and previous_line.find('#') < 0):
             error(line_number, 'whitespace/braces', 4,
                   'This { should be at the end of the previous line')
-    elif (search(r'\)\s*(((const|OVERRIDE)\s*)*\s*)?{\s*$', line)
+    elif (search(r'\)\s*(((const|override)\s*)*\s*)?{\s*$', line)
           and line.count('(') == line.count(')')
           and not search(r'\b(if|for|foreach|while|switch|NS_ENUM)\b', line)
           and not match(r'\s+[A-Z_][A-Z_0-9]+\b', line)):

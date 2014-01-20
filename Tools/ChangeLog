@@ -1,3 +1,15 @@
+2014-01-20  Darin Adler  <darin@apple.com>
+
+        Update style checker and tests to deal with override instead of OVERRIDE
+        https://bugs.webkit.org/show_bug.cgi?id=127175
+
+        Reviewed by Anders Carlsson.
+
+        * Scripts/webkitpy/style/checkers/cpp.py:
+        (check_braces): Use override instead of OVERRIDE.
+        * Scripts/webkitpy/style/checkers/cpp_unittest.py:
+        (CppStyleTest.test_brace_at_begin_of_line): Ditto.
+
 2014-01-20  Alexey Proskuryakov  <ap@apple.com>
 
         EWS should provide better information to Dashboard via JSON
