@@ -313,7 +313,6 @@ class Bugzilla(object):
             self.setdefaulttimeout(600)
             from webkitpy.thirdparty.autoinstalled.mechanize import Browser
             self._browser = Browser()
-            # Ignore bugs.webkit.org/robots.txt until we fix it to allow this script.
             self._browser.set_handle_robots(False)
         return self._browser
 

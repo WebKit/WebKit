@@ -1,3 +1,17 @@
+2014-01-20  Alexey Proskuryakov  <ap@apple.com>
+
+        Make uploading results to EWS work despite robots.txt
+        https://bugs.webkit.org/show_bug.cgi?id=127296
+
+        Reviewed by Ryosuke Niwa.
+
+        * Scripts/webkitpy/common/net/statusserver.py: (StatusServer.__init__): Disable
+        checking robots.txt.
+
+        * Scripts/webkitpy/common/net/bugzilla/bugzilla.py: (Bugzilla._get_browser):
+        Removed a comment saying that we would want to stop doing this. Not checking
+        robots.txt is more efficient than checking it.
+
 2014-01-19  Ryuan Choi  <ryuan.choi@samsung.com>
 
         [EFL][WK1] Remove and refactor the APIs which use single and base keyword

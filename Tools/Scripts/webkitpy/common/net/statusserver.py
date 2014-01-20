@@ -43,6 +43,7 @@ class StatusServer:
         self.set_host(host)
         from webkitpy.thirdparty.autoinstalled.mechanize import Browser
         self._browser = browser or Browser()
+        self._browser.set_handle_robots(False)
         self.set_bot_id(bot_id)
 
     def set_host(self, host):
