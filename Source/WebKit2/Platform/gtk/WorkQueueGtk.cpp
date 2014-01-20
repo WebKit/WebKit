@@ -63,7 +63,7 @@ public:
     }
 
 private:
-    Function<void()> m_function;
+    std::function<void ()> m_function;
     RefPtr<WorkQueue> m_workQueue;
 };
 
@@ -204,7 +204,7 @@ void WorkQueue::unregisterSocketEventHandler(int fileDescriptor)
     }
 }
 
-void WorkQueue::dispatchOnSource(GSource* dispatchSource, const Function<void()>& function, GSourceFunc sourceCallback)
+void WorkQueue::dispatchOnSource(GSource* dispatchSource, const std::function<void ()>& function, GSourceFunc sourceCallback)
 {
     g_source_set_callback(dispatchSource, sourceCallback, new EventSource(function, this),
         reinterpret_cast<GDestroyNotify>(&WorkQueue::EventSource::deleteEventSource));
@@ -212,15 +212,15 @@ void WorkQueue::dispatchOnSource(GSource* dispatchSource, const Function<void()>
     g_source_attach(dispatchSource, m_eventContext.get());
 }
 
-void WorkQueue::dispatch(const Function<void()>& function)
+void WorkQueue::dispatch(const std::function<void ()>& function)
 {
     GRefPtr<GSource> dispatchSource = adoptGRef(g_idle_source_new());
     g_source_set_priority(dispatchSource.get(), G_PRIORITY_DEFAULT);
     dispatchOnSource(dispatchSource.get(), function, reinterpret_cast<GSourceFunc>(&WorkQueue::EventSource::performWorkOnce));
 }
 
-void WorkQueue::dispatchAfterDelay(const Function<void()>& function, double delay)
+void WorkQueue::dispatchAfter(std::chrono::nanoseconds duration, const std::function<void ()>& function)
 {
-    GRefPtr<GSource> dispatchSource = adoptGRef(g_timeout_source_new(static_cast<guint>(delay * 1000)));
+    GRefPtr<GSource> dispatchSource = adoptGRef(g_timeout_source_new(static_cast<guint>(std::chrono::milliseconds(duration).count())));
     dispatchOnSource(dispatchSource.get(), function, reinterpret_cast<GSourceFunc>(&WorkQueue::EventSource::performWorkOnce));
 }

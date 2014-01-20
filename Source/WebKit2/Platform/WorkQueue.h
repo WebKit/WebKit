@@ -85,7 +85,7 @@ private:
 
     static void startWorkQueueThread(WorkQueue*);
     void workQueueThreadBody();
-    void dispatchOnSource(GSource*, const Function<void()>&, GSourceFunc);
+    void dispatchOnSource(GSource*, const std::function<void ()>&, GSourceFunc);
 
     ThreadIdentifier m_workQueueThread;
     GRefPtr<GMainContext> m_eventContext;

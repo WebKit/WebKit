@@ -1,3 +1,15 @@
+2014-01-19  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed GTK build fix after r162276.
+
+        Updating the WorkQueue implementation to use std::function and std::chrono.
+
+        * Platform/WorkQueue.h:
+        * Platform/gtk/WorkQueueGtk.cpp:
+        (WorkQueue::dispatchOnSource):
+        (WorkQueue::dispatch):
+        (WorkQueue::dispatchAfter):
+
 2014-01-19  Jinwoo Song  <jinwoo7.song@samsung.com>
 
         Unreviewed debug build fix on EFL port after r162300.
