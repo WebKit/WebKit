@@ -28,6 +28,7 @@
 
 #include "HTMLNames.h"
 #include "HTMLTableColElement.h"
+#include "RenderIterator.h"
 #include "RenderTable.h"
 #include "RenderTableCell.h"
 
@@ -53,6 +54,20 @@ void RenderTableCol::styleDidChange(StyleDifference diff, const RenderStyle* old
         RenderTable* table = this->table();
         if (table && !table->selfNeedsLayout() && !table->normalChildNeedsLayout() && oldStyle && oldStyle->border() != style().border())
             table->invalidateCollapsedBorders();
+        else if (oldStyle->width() != style().width()) {
+            for (auto& section : childrenOfType<RenderTableSection>(*table)) {
+                unsigned nEffCols = table->numEffCols();
+                for (unsigned j = 0; j < nEffCols; j++) {
+                    unsigned rowCount = section.numRows();
+                    for (unsigned i = 0; i < rowCount; i++) {
+                        RenderTableCell* cell = section.primaryCellAt(i, j);
+                        if (!cell)
+                            continue;
+                        cell->setPreferredLogicalWidthsDirty(true);
+                    }
+                }
+            }
+        }
     }
 }
 

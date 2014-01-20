@@ -1,3 +1,24 @@
+2014-01-20  Gurpreet Kaur  <k.gurpreet@samsung.com>
+
+        Col width is not honored when dynamically updated and it would make table narrower
+        https://bugs.webkit.org/show_bug.cgi?id=104711
+
+        Reviewed by Antti Koivisto.
+
+        Increasing the table width by increasing the colgroup width
+        was working but decreasing the table width by decreasing the
+        colgroup width is not working.
+
+        Test: fast/dom/HTMLTableColElement/resize-table-width-using-col-width.html
+
+        * rendering/RenderTableCol.cpp:
+        (WebCore::RenderTableCol::styleDidChange):
+        When colgroup width is defined table cell should adjust according to
+        that. On decreasing colgroup width the cells maxPreferredLogicalWidth
+        was still set to the earlier value. Setting the
+        setPreferredLogicalWidthsDirty to true so that cells pref width is
+        calculated again.
+
 2014-01-20  Edit Balint  <edbalint@inf.u-szeged.hu>
 
         [CoordinatedGraphics] Segmentation fault at  CoordinatedGraphicsScene::clearImageBackingContents

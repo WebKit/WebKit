@@ -1,3 +1,15 @@
+2014-01-20  Gurpreet Kaur  <k.gurpreet@samsung.com>
+
+        Col width is not honored when dynamically updated and it would make table narrower
+        https://bugs.webkit.org/show_bug.cgi?id=104711
+
+        Reviewed by Antti Koivisto.
+
+        * fast/dom/HTMLTableColElement/resize-table-width-using-col-width-expected.txt: Added.
+        * fast/dom/HTMLTableColElement/resize-table-width-using-col-width.html: Added.
+        Added new test case to verify that table cell width decreases by
+        decreasing the colgroup width.
+
 2014-01-20  Zan Dobersek  <zdobersek@igalia.com>
 
         Unreviewed GTK gardening.
