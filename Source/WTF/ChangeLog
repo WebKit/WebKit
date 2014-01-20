@@ -1,3 +1,14 @@
+2014-01-20  Anders Carlsson  <andersca@apple.com>
+
+        Remove MutexTryLocker
+        https://bugs.webkit.org/show_bug.cgi?id=127294
+
+        Reviewed by Antti Koivisto.
+
+        MutexTryLocker has been replaced with std::unique_lock with std::try_to_lock everywhere now.
+
+        * wtf/ThreadingPrimitives.h:
+
 2014-01-19  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GLIB] GVariant floating references are not correctly handled by GRefPtr
