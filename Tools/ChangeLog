@@ -1,3 +1,20 @@
+2013-11-07  Nick Diego Yamane  <nick.yamane@openbossa.org>
+
+        [Gtk] Disable LTO when building cairo
+        https://bugs.webkit.org/show_bug.cgi?id=123954
+
+        Reviewed by Martin Robinson.
+
+        Cairo always uses LTO, when it detects compiler support.
+        LTO is buggy in many/all versions of GCC and shouldn't be enabled by
+        default. This patch disables LTO when building cairo library.
+        - See: https://bugs.freedesktop.org/show_bug.cgi?id=60852
+
+        With gcc 4.7.3, for example, the build fails with the following message:
+        'lto1: fatal error: LTO_tags out of range: Range is 0 to 361, value is 15872'
+
+        * gtk/jhbuild.modules:
+
 2013-08-28  Allan Sandfeld Jensen  <allan.jensen@digia.com>
 
         Http tests fails on Debian with Apache 2.4

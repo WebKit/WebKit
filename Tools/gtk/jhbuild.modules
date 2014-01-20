@@ -67,7 +67,8 @@
   </autotools>
 
   <autotools id="cairo" autogen-sh="configure"
-             autogenargs="--enable-gl=yes --enable-egl=yes --enable-glx=yes">
+             autogenargs="--enable-gl=yes --enable-egl=yes --enable-glx=yes"
+             makeargs="CFLAGS=-fno-lto CXXFLAGS=-fno-lto LDFLAGS=-fno-lto">
     <dependencies>
       <dep package="fontconfig"/>
       <dep package="pixman"/>
