@@ -1,5 +1,23 @@
 2014-01-20  Alexey Proskuryakov  <ap@apple.com>
 
+        EWS should provide better information to Dashboard via JSON
+        https://bugs.webkit.org/show_bug.cgi?id=127265
+
+        Reviewed by Ryosuke Niwa.
+
+        * QueueStatusServer/app.yaml: Updated version.
+
+        * QueueStatusServer/main.py:
+        * QueueStatusServer/handlers/queuelengthjson.py:
+        Added a way to cheaply get only the queue length, which is all the dashboard
+        needs unless a popover is opened.
+
+        * QueueStatusServer/handlers/queuestatusjson.py: Updated to return more information
+        that we will need. Changed some field names to be more meaningful. Fixed bot listing
+        to understand that a bot can be reprurposed and used in a different queue.
+
+2014-01-20  Alexey Proskuryakov  <ap@apple.com>
+
         Make uploading results to EWS work despite robots.txt
         https://bugs.webkit.org/show_bug.cgi?id=127296
 

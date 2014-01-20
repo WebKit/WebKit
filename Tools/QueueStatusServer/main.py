@@ -40,6 +40,7 @@ from handlers.nextpatch import NextPatch
 from handlers.patch import Patch
 from handlers.patchstatus import PatchStatus
 from handlers.queuecharts import QueueCharts
+from handlers.queuelengthjson import QueueLengthJSON
 from handlers.queuestatus import QueueStatus
 from handlers.queuestatusjson import QueueStatusJSON
 from handlers.recentstatus import QueuesOverview
@@ -68,6 +69,7 @@ routes = [
     (r'/status-bubble/(.*)', StatusBubble),
     (r'/svn-revision/(.*)', SVNRevision),
     (r'/queue-charts/(.*)', QueueCharts),
+    (r'/queue-length-json/(.*)', QueueLengthJSON),
     (r'/queue-status/(.*)/bots/(.*)', QueueStatus),
     (r'/queue-status/(.*)', QueueStatus),
     (r'/queue-status-json/(.*)', QueueStatusJSON),
