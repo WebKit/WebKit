@@ -1,5 +1,22 @@
 2014-01-14  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GTK] UI process crashes when closing the window right after printing with javascript
+        https://bugs.webkit.org/show_bug.cgi?id=126981
+
+        Reviewed by Gustavo Noronha Silva.
+
+        The UI process crashes because when the page is closed, the web
+        view is destroyed before the print operation has actually
+        finished. Use a weak pointer to make sure the web view pointer is
+        set to NULL when the it's destroyed and emit the finished callback
+        always so that the user can clean up the operation even when the
+        web view has been closed.
+
+        * UIProcess/API/gtk/WebKitPrintOperation.cpp:
+        (drawPagesForPrintingCompleted):
+
+2014-01-14  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK] UI process crashes when the web process crashes while printing
         https://bugs.webkit.org/show_bug.cgi?id=126977
 
