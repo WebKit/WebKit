@@ -1,3 +1,42 @@
+2013-12-30  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Split WebKit2APITests/TestWebKitWebView
+        https://bugs.webkit.org/show_bug.cgi?id=126284
+
+        Reviewed by Philippe Normand.
+
+        WebKitWebView test is too big already making more difficult to
+        handle timeouts and skipped tests. Split it in 3 by moving
+        UIClient and auth tests to their own files.
+
+        * UIProcess/API/gtk/tests/GNUmakefile.am:
+        * UIProcess/API/gtk/tests/TestAuthentication.cpp: Added.
+        (testWebViewAuthenticationRequest):
+        (testWebViewAuthenticationCancel):
+        (testWebViewAuthenticationLoadCancelled):
+        (testWebViewAuthenticationFailure):
+        (testWebViewAuthenticationNoCredential):
+        (testWebViewAuthenticationStorage):
+        (testWebViewAuthenticationSuccess):
+        (serverCallback):
+        (beforeAll):
+        (afterAll):
+        * UIProcess/API/gtk/tests/TestUIClient.cpp: Added.
+        (testWebViewCreateReadyClose):
+        (checkMimeTypeForFilter):
+        (testWebViewAllowModalDialogs):
+        (testWebViewDisallowModalDialogs):
+        (testWebViewJavaScriptDialogs):
+        (testWebViewWindowProperties):
+        (testWebViewMouseTarget):
+        (testWebViewPermissionRequests):
+        (testWebViewFileChooserRequest):
+        (beforeAll):
+        (afterAll):
+        * UIProcess/API/gtk/tests/TestWebKitWebView.cpp:
+        (beforeAll):
+        (afterAll):
+
 2013-10-25  Anton Obzhirov  <a.obzhirov@samsung.com>
 
         [GTK] [WebKit2] CanHandleRequest API test fails

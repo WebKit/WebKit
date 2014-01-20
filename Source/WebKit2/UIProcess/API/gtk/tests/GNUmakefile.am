@@ -2,6 +2,7 @@ if ENABLE_WEBKIT2
 
 TEST_PROGS += \
 	Programs/WebKit2APITests/InspectorTestServer \
+	Programs/WebKit2APITests/TestAuthentication \
 	Programs/WebKit2APITests/TestBackForwardList \
 	Programs/WebKit2APITests/TestContextMenu \
 	Programs/WebKit2APITests/TestCookieManager \
@@ -14,6 +15,7 @@ TEST_PROGS += \
 	Programs/WebKit2APITests/TestPrinting \
 	Programs/WebKit2APITests/TestResources \
 	Programs/WebKit2APITests/TestSSL \
+	Programs/WebKit2APITests/TestUIClient \
 	Programs/WebKit2APITests/TestWebExtensions \
 	Programs/WebKit2APITests/TestWebKitVersion \
 	Programs/WebKit2APITests/TestWebKitFaviconDatabase \
@@ -309,5 +311,17 @@ Programs_WebKit2APITests_TestFrame_SOURCES = \
 Programs_WebKit2APITests_TestFrame_CPPFLAGS = $(webkit2_tests_cppflags)
 Programs_WebKit2APITests_TestFrame_LDADD = $(webkit2_tests_ldadd)
 Programs_WebKit2APITests_TestFrame_LDFLAGS = $(webkit2_tests_ldflags)
+
+Programs_WebKit2APITests_TestAuthentication_SOURCES = \
+        Source/WebKit2/UIProcess/API/gtk/tests/TestAuthentication.cpp
+Programs_WebKit2APITests_TestAuthentication_CPPFLAGS = $(webkit2_tests_cppflags)
+Programs_WebKit2APITests_TestAuthentication_LDADD = $(webkit2_tests_ldadd)
+Programs_WebKit2APITests_TestAuthentication_LDFLAGS = $(webkit2_tests_ldflags)
+
+Programs_WebKit2APITests_TestUIClient_SOURCES = \
+        Source/WebKit2/UIProcess/API/gtk/tests/TestUIClient.cpp
+Programs_WebKit2APITests_TestUIClient_CPPFLAGS = $(webkit2_tests_cppflags)
+Programs_WebKit2APITests_TestUIClient_LDADD = $(webkit2_tests_ldadd)
+Programs_WebKit2APITests_TestUIClient_LDFLAGS = $(webkit2_tests_ldflags)
 
 endif # ENABLE_WEBKIT2
