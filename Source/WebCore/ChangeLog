@@ -1,3 +1,21 @@
+2014-01-20  Mihai Tica  <mitica@adobe.com>
+
+        Background-blend-mode doesn't work for an element with an
+        SVG image as background and border-style or padding set.
+        The problem consisted in the drawing path using the default
+        blending parameter at all times.
+        https://bugs.webkit.org/show_bug.cgi?id=118894
+
+        Reviewed by Dirk Schulze.
+
+        Test: css3/compositing/background-blend-mode-data-uri-svg-image.html
+
+        * svg/graphics/SVGImage.cpp:
+        (WebCore::SVGImage::drawPatternForContainer): Pass blendMode to Image::drawPattern.
+        * svg/graphics/SVGImage.h: Add a blendMode parameter to drawPatternForContainer.
+        * svg/graphics/SVGImageForContainer.cpp:
+        (WebCore::SVGImageForContainer::drawPattern): Pass blendMode to drawPatternForContainer call.
+
 2014-01-20  Zalan Bujtas  <zalan@apple.com>
 
         Subpixel layout: setSimpleLineLayoutEnabled() produces different layout when line position has CSS px fractions.

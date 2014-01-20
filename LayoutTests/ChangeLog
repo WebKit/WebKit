@@ -1,3 +1,17 @@
+2014-01-20  Mihai Tica  <mitica@adobe.com>
+
+        Background-blend-mode doesn't work for an element with an
+        SVG image as background and border-style or padding set.
+        Tests now use rectangles instead of circles for SVGs.
+        https://bugs.webkit.org/show_bug.cgi?id=118894
+
+        Reviewed by Dirk Schulze.
+
+        * css3/compositing/background-blend-mode-data-uri-svg-image-expected.html:
+        * css3/compositing/background-blend-mode-data-uri-svg-image.html:
+        * platform/efl/TestExpectations: pass tests for efl, blendMode is not implemented.
+        * platform/mac/TestExpectations: marking test as ImageOnlyFailure due to slight pixel inconsistencies between the result and the formula.
+
 2014-01-20  Zalan Bujtas  <zalan@apple.com>
 
         Subpixel layout: setSimpleLineLayoutEnabled() produces different layout when line position has CSS px fractions.

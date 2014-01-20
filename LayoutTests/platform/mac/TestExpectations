@@ -615,6 +615,9 @@ compositing/overflow/textarea-scroll-touch.html
 compositing/overflow/updating-scrolling-content.html
 compositing/overflow/scrolling-without-painting.html
 
+# Blend mode result is slightly different than the applied formula.
+css3/compositing/background-blend-mode-data-uri-svg-image-expected.html [ ImageOnlyFailure Pass ]
+
 # https://bugs.webkit.org/show_bug.cgi?id=110871
 compositing/overlap-blending/reflection-opacity-huge.html
 
