@@ -68,7 +68,7 @@ void PageDebuggerAgent::enable()
 void PageDebuggerAgent::disable()
 {
     InspectorDebuggerAgent::disable();
-    m_instrumentingAgents->setPageDebuggerAgent(0);
+    m_instrumentingAgents->setPageDebuggerAgent(nullptr);
 }
 
 void PageDebuggerAgent::startListeningScriptDebugServer()

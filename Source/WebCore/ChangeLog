@@ -1,3 +1,154 @@
+2014-01-20  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Modernize WebCore/inspector with nullptr
+        https://bugs.webkit.org/show_bug.cgi?id=127303
+
+        Reviewed by Anders Carlsson.
+
+        Ran clang-modernize -use-nullptr over WebCore/inspector.
+
+        * inspector/ConsoleMessage.cpp:
+        (WebCore::ConsoleMessage::ConsoleMessage):
+        * inspector/ConsoleMessage.h:
+        * inspector/ContentSearchUtils.cpp:
+        (WebCore::ContentSearchUtils::findMagicComment):
+        * inspector/DOMEditor.cpp:
+        (WebCore::DOMEditor::SetOuterHTMLAction::SetOuterHTMLAction):
+        * inspector/DOMPatchSupport.cpp:
+        (WebCore::DOMPatchSupport::patchDocument):
+        (WebCore::DOMPatchSupport::patchNode):
+        (WebCore::DOMPatchSupport::diff):
+        (WebCore::DOMPatchSupport::innerPatchChildren):
+        * inspector/InspectorApplicationCacheAgent.cpp:
+        (WebCore::InspectorApplicationCacheAgent::willDestroyFrontendAndBackend):
+        (WebCore::InspectorApplicationCacheAgent::assertFrameWithDocumentLoader):
+        * inspector/InspectorCanvasAgent.cpp:
+        (WebCore::InspectorCanvasAgent::disable):
+        (WebCore::InspectorCanvasAgent::notifyRenderingContextWasWrapped):
+        (WebCore::InspectorCanvasAgent::frameNavigated):
+        * inspector/InspectorConsoleAgent.cpp:
+        (WebCore::InspectorConsoleAgent::InspectorConsoleAgent):
+        (WebCore::InspectorConsoleAgent::~InspectorConsoleAgent):
+        (WebCore::InspectorConsoleAgent::clearMessages):
+        (WebCore::InspectorConsoleAgent::didFinishXHRLoading):
+        (WebCore::InspectorConsoleAgent::didReceiveResponse):
+        (WebCore::InspectorConsoleAgent::didFailLoading):
+        * inspector/InspectorConsoleAgent.h:
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::inspectedPageDestroyed):
+        * inspector/InspectorDOMDebuggerAgent.cpp:
+        (WebCore::InspectorDOMDebuggerAgent::disable):
+        (WebCore::InspectorDOMDebuggerAgent::discardAgent):
+        * inspector/InspectorDOMStorageAgent.cpp:
+        (WebCore::InspectorDOMStorageAgent::~InspectorDOMStorageAgent):
+        (WebCore::InspectorDOMStorageAgent::setDOMStorageItem):
+        (WebCore::InspectorDOMStorageAgent::removeDOMStorageItem):
+        (WebCore::InspectorDOMStorageAgent::findStorageArea):
+        * inspector/InspectorDatabaseAgent.cpp:
+        (WebCore::InspectorDatabaseAgent::~InspectorDatabaseAgent):
+        (WebCore::InspectorDatabaseAgent::findByFileName):
+        (WebCore::InspectorDatabaseAgent::databaseForId):
+        * inspector/InspectorDebuggerAgent.cpp:
+        (WebCore::InspectorDebuggerAgent::addMessageToConsole):
+        (WebCore::InspectorDebuggerAgent::resolveBreakpoint):
+        (WebCore::InspectorDebuggerAgent::didParseSource):
+        (WebCore::InspectorDebuggerAgent::didContinue):
+        (WebCore::InspectorDebuggerAgent::clearBreakDetails):
+        * inspector/InspectorFrontendHost.cpp:
+        (WebCore::FrontendMenuProvider::disconnect):
+        (WebCore::InspectorFrontendHost::InspectorFrontendHost):
+        (WebCore::InspectorFrontendHost::disconnectClient):
+        * inspector/InspectorHeapProfilerAgent.cpp:
+        (WebCore::InspectorHeapProfilerAgent::~InspectorHeapProfilerAgent):
+        * inspector/InspectorIndexedDBAgent.cpp:
+        (WebCore::assertDocument):
+        (WebCore::assertIDBFactory):
+        (WebCore::InspectorIndexedDBAgent::requestData):
+        * inspector/InspectorInstrumentation.cpp:
+        (WebCore::frameForScriptExecutionContext):
+        (WebCore::InspectorInstrumentation::willDispatchEventOnWindowImpl):
+        (WebCore::InspectorInstrumentation::didReceiveResourceResponseButCanceledImpl):
+        (WebCore::InspectorInstrumentation::consoleAgentEnabled):
+        (WebCore::InspectorInstrumentation::unregisterInstrumentingAgents):
+        (WebCore::InspectorInstrumentation::retrieveTimelineAgent):
+        (WebCore::InspectorInstrumentation::instrumentingAgentsForPage):
+        (WebCore::InspectorInstrumentation::instrumentingAgentsForWorkerGlobalScope):
+        (WebCore::InspectorInstrumentation::instrumentingAgentsForNonDocumentContext):
+        * inspector/InspectorInstrumentation.h:
+        (WebCore::InspectorInstrumentation::instrumentingAgentsForContext):
+        (WebCore::InspectorInstrumentation::instrumentingAgentsForFrame):
+        (WebCore::InspectorInstrumentation::instrumentingAgentsForDocument):
+        * inspector/InspectorLayerTreeAgent.cpp:
+        (WebCore::InspectorLayerTreeAgent::disable):
+        * inspector/InspectorNodeFinder.cpp:
+        (WebCore::InspectorNodeFinder::searchUsingXPath):
+        * inspector/InspectorOverlay.cpp:
+        (WebCore::buildObjectForElementInfo):
+        * inspector/InspectorPageAgent.cpp:
+        (WebCore::InspectorPageAgent::cachedResourceContent):
+        (WebCore::InspectorPageAgent::sharedBufferContent):
+        (WebCore::InspectorPageAgent::disable):
+        (WebCore::InspectorPageAgent::frameForId):
+        (WebCore::InspectorPageAgent::findFrameWithSecurityOrigin):
+        * inspector/InspectorProfilerAgent.cpp:
+        (WebCore::InspectorProfilerAgent::~InspectorProfilerAgent):
+        * inspector/InspectorProfilerAgent.h:
+        * inspector/InspectorResourceAgent.cpp:
+        (WebCore::buildObjectForResourceResponse):
+        (WebCore::InspectorResourceAgent::willSendRequest):
+        (WebCore::InspectorResourceAgent::didReceiveResponse):
+        (WebCore::InspectorResourceAgent::didFinishLoading):
+        (WebCore::InspectorResourceAgent::didFailLoading):
+        (WebCore::InspectorResourceAgent::didLoadResourceFromMemoryCache):
+        (WebCore::InspectorResourceAgent::disable):
+        * inspector/InspectorRuntimeAgent.cpp:
+        (WebCore::InspectorRuntimeAgent::InspectorRuntimeAgent):
+        * inspector/InspectorStyleSheet.cpp:
+        (ParsedStyleSheet::ruleSourceDataAt):
+        (WebCore::buildSourceRangeObject):
+        (WebCore::asCSSRuleList):
+        (WebCore::fillMediaListChain):
+        (WebCore::InspectorStyle::setPropertyText):
+        (WebCore::InspectorStyle::populateAllProperties):
+        (WebCore::InspectorStyle::extractSourceData):
+        (WebCore::InspectorStyle::newLineAndWhitespaceDelimiters):
+        (WebCore::InspectorStyleSheet::addRule):
+        (WebCore::InspectorStyleSheet::ruleForId):
+        (WebCore::InspectorStyleSheet::buildObjectForStyleSheet):
+        (WebCore::InspectorStyleSheet::buildObjectForStyleSheetInfo):
+        (WebCore::InspectorStyleSheet::buildObjectForRule):
+        (WebCore::InspectorStyleSheet::styleForId):
+        (WebCore::InspectorStyleSheet::inspectorStyleForId):
+        (WebCore::InspectorStyleSheetForInlineStyle::InspectorStyleSheetForInlineStyle):
+        * inspector/InspectorStyleSheet.h:
+        (WebCore::InspectorCSSId::asProtocolValue):
+        * inspector/InspectorTimelineAgent.cpp:
+        (WebCore::InspectorTimelineAgent::stop):
+        (WebCore::InspectorTimelineAgent::willComposite):
+        (WebCore::InspectorTimelineAgent::page):
+        * inspector/InspectorWorkerAgent.cpp:
+        (WebCore::InspectorWorkerAgent::~InspectorWorkerAgent):
+        * inspector/InstrumentingAgents.cpp:
+        (WebCore::InstrumentingAgents::InstrumentingAgents):
+        (WebCore::InstrumentingAgents::reset):
+        * inspector/NetworkResourcesData.cpp:
+        (WebCore::NetworkResourcesData::ResourceData::ResourceData):
+        (WebCore::NetworkResourcesData::xhrReplayData):
+        (WebCore::NetworkResourcesData::removeCachedResource):
+        (WebCore::NetworkResourcesData::resourceDataForRequestId):
+        * inspector/PageConsoleAgent.cpp:
+        (WebCore::PageConsoleAgent::~PageConsoleAgent):
+        * inspector/PageDebuggerAgent.cpp:
+        (WebCore::PageDebuggerAgent::disable):
+        * inspector/PageRuntimeAgent.cpp:
+        (WebCore::PageRuntimeAgent::~PageRuntimeAgent):
+        (WebCore::PageRuntimeAgent::didCreateMainWorldContext):
+        (WebCore::PageRuntimeAgent::reportExecutionContextCreation):
+        * inspector/ScriptArguments.cpp:
+        (WebCore::ScriptArguments::globalState):
+        * inspector/WorkerRuntimeAgent.cpp:
+        (WebCore::WorkerRuntimeAgent::~WorkerRuntimeAgent):
+
 2014-01-20  Anders Carlsson  <andersca@apple.com>
 
         Add empty UserContentController class

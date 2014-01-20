@@ -62,7 +62,7 @@ PageRuntimeAgent::PageRuntimeAgent(InstrumentingAgents* instrumentingAgents, Inj
 
 PageRuntimeAgent::~PageRuntimeAgent()
 {
-    m_instrumentingAgents->setPageRuntimeAgent(0);
+    m_instrumentingAgents->setPageRuntimeAgent(nullptr);
 }
 
 void PageRuntimeAgent::didCreateFrontendAndBackend(Inspector::InspectorFrontendChannel* frontendChannel, InspectorBackendDispatcher* backendDispatcher)
@@ -111,7 +111,7 @@ void PageRuntimeAgent::didCreateMainWorldContext(Frame* frame)
     ASSERT(m_frontendDispatcher);
     String frameId = m_pageAgent->frameId(frame);
     JSC::ExecState* scriptState = mainWorldExecState(frame);
-    notifyContextCreated(frameId, scriptState, 0, true);
+    notifyContextCreated(frameId, scriptState, nullptr, true);
 }
 
 void PageRuntimeAgent::didCreateIsolatedContext(Frame* frame, JSC::ExecState* scriptState, SecurityOrigin* origin)
@@ -158,7 +158,7 @@ void PageRuntimeAgent::reportExecutionContextCreation()
         String frameId = m_pageAgent->frameId(frame);
 
         JSC::ExecState* scriptState = mainWorldExecState(frame);
-        notifyContextCreated(frameId, scriptState, 0, true);
+        notifyContextCreated(frameId, scriptState, nullptr, true);
         frame->script().collectIsolatedContexts(isolatedContexts);
         if (isolatedContexts.isEmpty())
             continue;

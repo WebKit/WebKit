@@ -82,7 +82,7 @@ ConsoleMessage::ConsoleMessage(bool, MessageSource source, MessageType type, Mes
     , m_type(type)
     , m_level(level)
     , m_message(message)
-    , m_arguments(0)
+    , m_arguments(nullptr)
     , m_line(0)
     , m_column(0)
     , m_repeatCount(1)

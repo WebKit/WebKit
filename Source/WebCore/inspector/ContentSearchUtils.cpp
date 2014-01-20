@@ -181,7 +181,7 @@ static String stylesheetCommentPattern(const String& name)
 
 static String findMagicComment(const String& content, const String& patternString)
 {
-    const char* error = 0;
+    const char* error = nullptr;
     JSC::Yarr::YarrPattern pattern(patternString, false, true, &error);
     ASSERT(!error);
     BumpPointerAllocator regexAllocator;

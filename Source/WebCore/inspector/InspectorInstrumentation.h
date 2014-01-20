@@ -205,11 +205,11 @@ public:
     // FIXME: Remove once we no longer generate stacks outside of Inspector.
     static void addMessageToConsole(Page*, MessageSource, MessageType, MessageLevel, const String& message, PassRefPtr<ScriptCallStack>, unsigned long requestIdentifier = 0);
     static void addMessageToConsole(Page*, MessageSource, MessageType, MessageLevel, const String& message, JSC::ExecState*, PassRefPtr<ScriptArguments>, unsigned long requestIdentifier = 0);
-    static void addMessageToConsole(Page*, MessageSource, MessageType, MessageLevel, const String& message, const String& scriptID, unsigned lineNumber, unsigned columnNumber, JSC::ExecState* = 0, unsigned long requestIdentifier = 0);
+    static void addMessageToConsole(Page*, MessageSource, MessageType, MessageLevel, const String& message, const String& scriptID, unsigned lineNumber, unsigned columnNumber, JSC::ExecState* = nullptr, unsigned long requestIdentifier = 0);
 
     // FIXME: Convert to ScriptArguments to match non-worker context.
     static void addMessageToConsole(WorkerGlobalScope*, MessageSource, MessageType, MessageLevel, const String& message, PassRefPtr<ScriptCallStack>, unsigned long requestIdentifier = 0);
-    static void addMessageToConsole(WorkerGlobalScope*, MessageSource, MessageType, MessageLevel, const String& message, const String& scriptID, unsigned lineNumber, unsigned columnNumber, JSC::ExecState* = 0, unsigned long requestIdentifier = 0);
+    static void addMessageToConsole(WorkerGlobalScope*, MessageSource, MessageType, MessageLevel, const String& message, const String& scriptID, unsigned lineNumber, unsigned columnNumber, JSC::ExecState* = nullptr, unsigned long requestIdentifier = 0);
 
     static void consoleCount(Page*, JSC::ExecState*, PassRefPtr<ScriptArguments>);
     static void startConsoleTiming(Frame*, const String& title);
@@ -1884,7 +1884,7 @@ inline void InspectorInstrumentation::pseudoElementDestroyed(Page* page, PseudoE
 inline InstrumentingAgents* InspectorInstrumentation::instrumentingAgentsForContext(ScriptExecutionContext* context)
 {
     if (!context)
-        return 0;
+        return nullptr;
     if (context->isDocument())
         return instrumentingAgentsForPage(toDocument(context)->page());
     return instrumentingAgentsForNonDocumentContext(context);
@@ -1894,7 +1894,7 @@ inline InstrumentingAgents* InspectorInstrumentation::instrumentingAgentsForFram
 {
     if (frame)
         return instrumentingAgentsForPage(frame->page());
-    return 0;
+    return nullptr;
 }
 
 inline InstrumentingAgents* InspectorInstrumentation::instrumentingAgentsForDocument(Document* document)
@@ -1907,7 +1907,7 @@ inline InstrumentingAgents* InspectorInstrumentation::instrumentingAgentsForDocu
 #endif
         return instrumentingAgentsForPage(page);
     }
-    return 0;
+    return nullptr;
 }
 #endif
 

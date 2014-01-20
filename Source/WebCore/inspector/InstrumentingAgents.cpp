@@ -45,61 +45,61 @@ namespace WebCore {
 
 InstrumentingAgents::InstrumentingAgents(InspectorEnvironment& environment)
     : m_environment(environment)
-    , m_inspectorAgent(0)
-    , m_inspectorPageAgent(0)
-    , m_inspectorCSSAgent(0)
+    , m_inspectorAgent(nullptr)
+    , m_inspectorPageAgent(nullptr)
+    , m_inspectorCSSAgent(nullptr)
 #if USE(ACCELERATED_COMPOSITING)
-    , m_inspectorLayerTreeAgent(0)
+    , m_inspectorLayerTreeAgent(nullptr)
 #endif
-    , m_inspectorConsoleAgent(0)
-    , m_inspectorDOMAgent(0)
-    , m_inspectorResourceAgent(0)
-    , m_pageRuntimeAgent(0)
-    , m_workerRuntimeAgent(0)
-    , m_inspectorTimelineAgent(0)
-    , m_inspectorDOMStorageAgent(0)
+    , m_inspectorConsoleAgent(nullptr)
+    , m_inspectorDOMAgent(nullptr)
+    , m_inspectorResourceAgent(nullptr)
+    , m_pageRuntimeAgent(nullptr)
+    , m_workerRuntimeAgent(nullptr)
+    , m_inspectorTimelineAgent(nullptr)
+    , m_inspectorDOMStorageAgent(nullptr)
 #if ENABLE(SQL_DATABASE)
-    , m_inspectorDatabaseAgent(0)
+    , m_inspectorDatabaseAgent(nullptr)
 #endif
-    , m_inspectorApplicationCacheAgent(0)
+    , m_inspectorApplicationCacheAgent(nullptr)
 #if ENABLE(JAVASCRIPT_DEBUGGER)
-    , m_inspectorDebuggerAgent(0)
-    , m_pageDebuggerAgent(0)
-    , m_inspectorDOMDebuggerAgent(0)
-    , m_inspectorProfilerAgent(0)
+    , m_inspectorDebuggerAgent(nullptr)
+    , m_pageDebuggerAgent(nullptr)
+    , m_inspectorDOMDebuggerAgent(nullptr)
+    , m_inspectorProfilerAgent(nullptr)
 #endif
-    , m_inspectorWorkerAgent(0)
-    , m_inspectorCanvasAgent(0)
+    , m_inspectorWorkerAgent(nullptr)
+    , m_inspectorCanvasAgent(nullptr)
 {
 }
 
 void InstrumentingAgents::reset()
 {
-    m_inspectorAgent = 0;
-    m_inspectorPageAgent = 0;
-    m_inspectorCSSAgent = 0;
+    m_inspectorAgent = nullptr;
+    m_inspectorPageAgent = nullptr;
+    m_inspectorCSSAgent = nullptr;
 #if USE(ACCELERATED_COMPOSITING)
-    m_inspectorLayerTreeAgent = 0;
+    m_inspectorLayerTreeAgent = nullptr;
 #endif
-    m_inspectorConsoleAgent = 0;
-    m_inspectorDOMAgent = 0;
-    m_inspectorResourceAgent = 0;
-    m_pageRuntimeAgent = 0;
-    m_workerRuntimeAgent = 0;
-    m_inspectorTimelineAgent = 0;
-    m_inspectorDOMStorageAgent = 0;
+    m_inspectorConsoleAgent = nullptr;
+    m_inspectorDOMAgent = nullptr;
+    m_inspectorResourceAgent = nullptr;
+    m_pageRuntimeAgent = nullptr;
+    m_workerRuntimeAgent = nullptr;
+    m_inspectorTimelineAgent = nullptr;
+    m_inspectorDOMStorageAgent = nullptr;
 #if ENABLE(SQL_DATABASE)
-    m_inspectorDatabaseAgent = 0;
+    m_inspectorDatabaseAgent = nullptr;
 #endif
-    m_inspectorApplicationCacheAgent = 0;
+    m_inspectorApplicationCacheAgent = nullptr;
 #if ENABLE(JAVASCRIPT_DEBUGGER)
-    m_inspectorDebuggerAgent = 0;
-    m_pageDebuggerAgent = 0;
-    m_inspectorDOMDebuggerAgent = 0;
-    m_inspectorProfilerAgent = 0;
+    m_inspectorDebuggerAgent = nullptr;
+    m_pageDebuggerAgent = nullptr;
+    m_inspectorDOMDebuggerAgent = nullptr;
+    m_inspectorProfilerAgent = nullptr;
 #endif
-    m_inspectorWorkerAgent = 0;
-    m_inspectorCanvasAgent = 0;
+    m_inspectorWorkerAgent = nullptr;
+    m_inspectorCanvasAgent = nullptr;
 }
 
 InstrumentingAgents* instrumentationForPage(Page* page)

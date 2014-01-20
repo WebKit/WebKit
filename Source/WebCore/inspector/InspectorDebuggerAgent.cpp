@@ -157,7 +157,7 @@ bool InspectorDebuggerAgent::isPaused()
 void InspectorDebuggerAgent::addMessageToConsole(MessageSource source, MessageType type)
 {
     if (scriptDebugServer().pauseOnExceptionsState() != ScriptDebugServer::DontPauseOnExceptions && source == ConsoleAPIMessageSource && type == AssertMessageType)
-        breakProgram(InspectorDebuggerFrontendDispatcher::Reason::Assert, 0);
+        breakProgram(InspectorDebuggerFrontendDispatcher::Reason::Assert, nullptr);
 }
 
 static PassRefPtr<InspectorObject> buildObjectForBreakpointCookie(const String& url, int lineNumber, int columnNumber, const String& condition, RefPtr<InspectorArray>& actions, bool isRegex, bool autoContinue)
@@ -387,16 +387,16 @@ PassRefPtr<Inspector::TypeBuilder::Debugger::Location> InspectorDebuggerAgent::r
 {
     ScriptsMap::iterator scriptIterator = m_scripts.find(sourceID);
     if (scriptIterator == m_scripts.end())
-        return 0;
+        return nullptr;
     Script& script = scriptIterator->value;
     if (breakpoint.lineNumber < script.startLine || script.endLine < breakpoint.lineNumber)
-        return 0;
+        return nullptr;
 
     unsigned actualLineNumber;
     unsigned actualColumnNumber;
     JSC::BreakpointID debugServerBreakpointID = scriptDebugServer().setBreakpoint(sourceID, breakpoint, &actualLineNumber, &actualColumnNumber);
     if (debugServerBreakpointID == JSC::noBreakpointID)
-        return 0;
+        return nullptr;
 
     BreakpointIdentifierToDebugServerBreakpointIDsMap::iterator debugServerBreakpointIDsIterator = m_breakpointIdentifierToDebugServerBreakpointIDs.find(breakpointIdentifier);
     if (debugServerBreakpointIDsIterator == m_breakpointIdentifierToDebugServerBreakpointIDs.end())
@@ -604,9 +604,9 @@ void InspectorDebuggerAgent::didParseSource(JSC::SourceID sourceID, const Script
 
     bool hasSourceURL = !script.sourceURL.isEmpty();
     String scriptURL = hasSourceURL ? script.sourceURL : script.url;
-    bool* hasSourceURLParam = hasSourceURL ? &hasSourceURL : 0;
-    String* sourceMapURLParam = script.sourceMappingURL.isNull() ? 0 : &script.sourceMappingURL;
-    const bool* isContentScript = script.isContentScript ? &script.isContentScript : 0;
+    bool* hasSourceURLParam = hasSourceURL ? &hasSourceURL : nullptr;
+    String* sourceMapURLParam = script.sourceMappingURL.isNull() ? nullptr : &script.sourceMappingURL;
+    const bool* isContentScript = script.isContentScript ? &script.isContentScript : nullptr;
     String scriptIDStr = String::number(sourceID);
     m_frontendDispatcher->scriptParsed(scriptIDStr, scriptURL, script.startLine, script.startColumn, script.endLine, script.endColumn, isContentScript, sourceMapURLParam, hasSourceURLParam);
 
@@ -690,7 +690,7 @@ void InspectorDebuggerAgent::didSampleProbe(JSC::ExecState* scriptState, int pro
 
 void InspectorDebuggerAgent::didContinue()
 {
-    m_pausedScriptState = 0;
+    m_pausedScriptState = nullptr;
     m_currentCallStack = Deprecated::ScriptValue();
     clearBreakDetails();
     m_frontendDispatcher->resumed();
@@ -735,7 +735,7 @@ bool InspectorDebuggerAgent::assertPaused(ErrorString* errorString)
 void InspectorDebuggerAgent::clearBreakDetails()
 {
     m_breakReason = InspectorDebuggerFrontendDispatcher::Reason::Other;
-    m_breakAuxData = 0;
+    m_breakAuxData = nullptr;
 }
 
 void InspectorDebuggerAgent::didClearGlobalObject()

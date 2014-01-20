@@ -91,14 +91,14 @@ static const char* const clearTimerEventName = "clearTimer";
 static const char* const timerFiredEventName = "timerFired";
 
 namespace {
-static HashSet<InstrumentingAgents*>* instrumentingAgentsSet = 0;
+static HashSet<InstrumentingAgents*>* instrumentingAgentsSet = nullptr;
 }
 
 int InspectorInstrumentation::s_frontendCounter = 0;
 
 static Frame* frameForScriptExecutionContext(ScriptExecutionContext* context)
 {
-    Frame* frame = 0;
+    Frame* frame = nullptr;
     if (context->isDocument())
         frame = toDocument(context)->frame();
     return frame;
@@ -391,7 +391,7 @@ InspectorInstrumentationCookie InspectorInstrumentation::willDispatchEventOnWind
     int timelineAgentId = 0;
     InspectorTimelineAgent* timelineAgent = instrumentingAgents->inspectorTimelineAgent();
     if (timelineAgent && window->hasEventListeners(event.type())) {
-        timelineAgent->willDispatchEvent(event, window ? window->frame() : 0);
+        timelineAgent->willDispatchEvent(event, window ? window->frame() : nullptr);
         timelineAgentId = timelineAgent->id();
     }
     return InspectorInstrumentationCookie(instrumentingAgents, timelineAgentId);
@@ -626,7 +626,7 @@ void InspectorInstrumentation::didReceiveResourceResponseImpl(const InspectorIns
 void InspectorInstrumentation::didReceiveResourceResponseButCanceledImpl(Frame* frame, DocumentLoader* loader, unsigned long identifier, const ResourceResponse& r)
 {
     InspectorInstrumentationCookie cookie = InspectorInstrumentation::willReceiveResourceResponse(frame, identifier, r);
-    InspectorInstrumentation::didReceiveResourceResponse(cookie, identifier, loader, r, 0);
+    InspectorInstrumentation::didReceiveResourceResponse(cookie, identifier, loader, r, nullptr);
 }
 
 void InspectorInstrumentation::continueAfterXFrameOptionsDeniedImpl(Frame* frame, DocumentLoader* loader, unsigned long identifier, const ResourceResponse& r)
@@ -1093,7 +1093,7 @@ bool InspectorInstrumentation::canvasAgentEnabled(ScriptExecutionContext* script
 bool InspectorInstrumentation::consoleAgentEnabled(ScriptExecutionContext* scriptExecutionContext)
 {
     InstrumentingAgents* instrumentingAgents = instrumentingAgentsForContext(scriptExecutionContext);
-    InspectorConsoleAgent* consoleAgent = instrumentingAgents ? instrumentingAgents->inspectorConsoleAgent() : 0;
+    InspectorConsoleAgent* consoleAgent = instrumentingAgents ? instrumentingAgents->inspectorConsoleAgent() : nullptr;
     return consoleAgent && consoleAgent->enabled();
 }
 
@@ -1167,24 +1167,24 @@ void InspectorInstrumentation::unregisterInstrumentingAgents(InstrumentingAgents
     instrumentingAgentsSet->remove(instrumentingAgents);
     if (instrumentingAgentsSet->isEmpty()) {
         delete instrumentingAgentsSet;
-        instrumentingAgentsSet = 0;
+        instrumentingAgentsSet = nullptr;
     }
 }
 
 InspectorTimelineAgent* InspectorInstrumentation::retrieveTimelineAgent(const InspectorInstrumentationCookie& cookie)
 {
     if (!cookie.instrumentingAgents())
-        return 0;
+        return nullptr;
     InspectorTimelineAgent* timelineAgent = cookie.instrumentingAgents()->inspectorTimelineAgent();
     if (timelineAgent && cookie.hasMatchingTimelineAgentId(timelineAgent->id()))
         return timelineAgent;
-    return 0;
+    return nullptr;
 }
 
 InstrumentingAgents* InspectorInstrumentation::instrumentingAgentsForPage(Page* page)
 {
     if (!page)
-        return 0;
+        return nullptr;
     return instrumentationForPage(page);
 }
 
@@ -1196,7 +1196,7 @@ InstrumentingAgents* InspectorInstrumentation::instrumentingAgentsForRenderer(Re
 InstrumentingAgents* InspectorInstrumentation::instrumentingAgentsForWorkerGlobalScope(WorkerGlobalScope* workerGlobalScope)
 {
     if (!workerGlobalScope)
-        return 0;
+        return nullptr;
     return instrumentationForWorkerGlobalScope(workerGlobalScope);
 }
 
@@ -1204,7 +1204,7 @@ InstrumentingAgents* InspectorInstrumentation::instrumentingAgentsForNonDocument
 {
     if (context->isWorkerGlobalScope())
         return instrumentationForWorkerGlobalScope(static_cast<WorkerGlobalScope*>(context));
-    return 0;
+    return nullptr;
 }
 
 #if USE(ACCELERATED_COMPOSITING)

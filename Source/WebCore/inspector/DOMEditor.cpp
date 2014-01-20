@@ -207,7 +207,7 @@ public:
         , m_node(node)
         , m_nextSibling(node.nextSibling())
         , m_html(html)
-        , m_newNode(0)
+        , m_newNode(nullptr)
         , m_history(adoptPtr(new InspectorHistory()))
         , m_domEditor(adoptPtr(new DOMEditor(m_history.get())))
     {

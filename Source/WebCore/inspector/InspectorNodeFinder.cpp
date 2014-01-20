@@ -134,7 +134,7 @@ bool InspectorNodeFinder::matchesElement(const Element& element)
 void InspectorNodeFinder::searchUsingXPath(Node* parentNode)
 {
     ExceptionCode ec = 0;
-    RefPtr<XPathResult> result = parentNode->document().evaluate(m_whitespaceTrimmedQuery, parentNode, 0, XPathResult::ORDERED_NODE_SNAPSHOT_TYPE, 0, ec);
+    RefPtr<XPathResult> result = parentNode->document().evaluate(m_whitespaceTrimmedQuery, parentNode, nullptr, XPathResult::ORDERED_NODE_SNAPSHOT_TYPE, nullptr, ec);
     if (ec || !result)
         return;
 

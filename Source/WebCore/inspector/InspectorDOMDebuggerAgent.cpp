@@ -103,7 +103,7 @@ void InspectorDOMDebuggerAgent::didPause()
 
 void InspectorDOMDebuggerAgent::disable()
 {
-    m_instrumentingAgents->setInspectorDOMDebuggerAgent(0);
+    m_instrumentingAgents->setInspectorDOMDebuggerAgent(nullptr);
     clear();
 }
 
@@ -121,8 +121,8 @@ void InspectorDOMDebuggerAgent::willDestroyFrontendAndBackend()
 
 void InspectorDOMDebuggerAgent::discardAgent()
 {
-    m_debuggerAgent->setListener(0);
-    m_debuggerAgent = 0;
+    m_debuggerAgent->setListener(nullptr);
+    m_debuggerAgent = nullptr;
 }
 
 void InspectorDOMDebuggerAgent::discardBindings()

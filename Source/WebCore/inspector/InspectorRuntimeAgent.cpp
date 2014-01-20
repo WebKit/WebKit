@@ -64,7 +64,7 @@ InspectorRuntimeAgent::InspectorRuntimeAgent(InstrumentingAgents* instrumentingA
     , m_enabled(false)
     , m_injectedScriptManager(injectedScriptManager)
 #if ENABLE(JAVASCRIPT_DEBUGGER)
-    , m_scriptDebugServer(0)
+    , m_scriptDebugServer(nullptr)
 #endif
 {
 }

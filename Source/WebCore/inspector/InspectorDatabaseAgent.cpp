@@ -64,7 +64,7 @@ void reportTransactionFailed(ExecuteSQLCallback* requestCallback, SQLError* erro
     RefPtr<Inspector::TypeBuilder::Database::Error> errorObject = Inspector::TypeBuilder::Database::Error::create()
         .setMessage(error->message())
         .setCode(error->code());
-    requestCallback->sendSuccess(0, 0, errorObject.release());
+    requestCallback->sendSuccess(nullptr, nullptr, errorObject.release());
 }
 
 class StatementCallback : public SQLStatementCallback {
@@ -95,7 +95,7 @@ public:
             case SQLValue::NullValue: values->addItem(InspectorValue::null()); break;
             }
         }
-        m_requestCallback->sendSuccess(columnNames.release(), values.release(), 0);
+        m_requestCallback->sendSuccess(columnNames.release(), values.release(), nullptr);
         return true;
     }
 
@@ -219,7 +219,7 @@ InspectorDatabaseAgent::InspectorDatabaseAgent(InstrumentingAgents* instrumentin
 
 InspectorDatabaseAgent::~InspectorDatabaseAgent()
 {
-    m_instrumentingAgents->setInspectorDatabaseAgent(0);
+    m_instrumentingAgents->setInspectorDatabaseAgent(nullptr);
 }
 
 void InspectorDatabaseAgent::didCreateFrontendAndBackend(Inspector::InspectorFrontendChannel* frontendChannel, InspectorBackendDispatcher* backendDispatcher)
@@ -308,14 +308,14 @@ InspectorDatabaseResource* InspectorDatabaseAgent::findByFileName(const String& 
         if (it->value->database()->fileName() == fileName)
             return it->value.get();
     }
-    return 0;
+    return nullptr;
 }
 
 Database* InspectorDatabaseAgent::databaseForId(const String& databaseId)
 {
     DatabaseResourcesMap::iterator it = m_resources.find(databaseId);
     if (it == m_resources.end())
-        return 0;
+        return nullptr;
     return it->value->database();
 }
 

@@ -89,7 +89,7 @@ void InspectorLayerTreeAgent::enable(ErrorString*)
 
 void InspectorLayerTreeAgent::disable(ErrorString*)
 {
-    m_instrumentingAgents->setInspectorLayerTreeAgent(0);
+    m_instrumentingAgents->setInspectorLayerTreeAgent(nullptr);
 }
 
 void InspectorLayerTreeAgent::layerTreeDidChange()

@@ -60,7 +60,7 @@ JSC::ExecState* ScriptArguments::globalState() const
 {
     if (m_globalObject)
         return const_cast<JSC::JSGlobalObject*>(m_globalObject.get())->globalExec();
-    return 0;
+    return nullptr;
 }
 
 bool ScriptArguments::getFirstArgumentAsString(String& result, bool checkForNullOrUndefined)

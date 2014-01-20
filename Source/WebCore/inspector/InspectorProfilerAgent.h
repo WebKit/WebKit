@@ -79,8 +79,8 @@ public:
 
     virtual void enable(ErrorString*) override;
     virtual void disable(ErrorString*) override;
-    virtual void start(ErrorString* = 0) override;
-    virtual void stop(ErrorString* = 0) override;
+    virtual void start(ErrorString* = nullptr) override;
+    virtual void stop(ErrorString* = nullptr) override;
 
     void disable();
     void enable(bool skipRecompile);

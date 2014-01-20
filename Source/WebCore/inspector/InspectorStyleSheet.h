@@ -89,7 +89,7 @@ public:
     PassRefPtr<ID> asProtocolValue() const
     {
         if (isEmpty())
-            return 0;
+            return nullptr;
 
         RefPtr<ID> result = ID::create()
             .setStyleSheetId(m_styleSheetId)

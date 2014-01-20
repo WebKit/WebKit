@@ -216,7 +216,7 @@ static PassRefPtr<IDBTransaction> transactionForDatabase(ScriptExecutionContext*
     ExceptionCode ec = 0;
     RefPtr<IDBTransaction> idbTransaction = idbDatabase->transaction(scriptExecutionContext, objectStoreName, mode, ec);
     if (ec)
-        return 0;
+        return nullptr;
     return idbTransaction;
 }
 
@@ -225,7 +225,7 @@ static PassRefPtr<IDBObjectStore> objectStoreForTransaction(IDBTransaction* idbT
     ExceptionCode ec = 0;
     RefPtr<IDBObjectStore> idbObjectStore = idbTransaction->objectStore(objectStoreName, ec);
     if (ec)
-        return 0;
+        return nullptr;
     return idbObjectStore;
 }
 
@@ -234,7 +234,7 @@ static PassRefPtr<IDBIndex> indexForObjectStore(IDBObjectStore* idbObjectStore, 
     ExceptionCode ec = 0;
     RefPtr<IDBIndex> idbIndex = idbObjectStore->index(indexName, ec);
     if (ec)
-        return 0;
+        return nullptr;
     return idbIndex;
 }
 
@@ -336,7 +336,7 @@ static PassRefPtr<IDBKey> idbKeyFromInspectorObject(InspectorObject* key)
 
     String type;
     if (!key->getString("type", &type))
-        return 0;
+        return nullptr;
 
     DEFINE_STATIC_LOCAL(String, number, (ASCIILiteral("number")));
     DEFINE_STATIC_LOCAL(String, string, (ASCIILiteral("string")));
@@ -346,17 +346,17 @@ static PassRefPtr<IDBKey> idbKeyFromInspectorObject(InspectorObject* key)
     if (type == number) {
         double number;
         if (!key->getNumber("number", &number))
-            return 0;
+            return nullptr;
         idbKey = IDBKey::createNumber(number);
     } else if (type == string) {
         String string;
         if (!key->getString("string", &string))
-            return 0;
+            return nullptr;
         idbKey = IDBKey::createString(string);
     } else if (type == date) {
         double date;
         if (!key->getNumber("date", &date))
-            return 0;
+            return nullptr;
         idbKey = IDBKey::createDate(date);
     } else if (type == array) {
         IDBKey::KeyArray keyArray;
@@ -365,12 +365,12 @@ static PassRefPtr<IDBKey> idbKeyFromInspectorObject(InspectorObject* key)
             RefPtr<InspectorValue> value = array->get(i);
             RefPtr<InspectorObject> object;
             if (!value->asObject(&object))
-                return 0;
+                return nullptr;
             keyArray.append(idbKeyFromInspectorObject(object.get()));
         }
         idbKey = IDBKey::createArray(keyArray);
     } else
-        return 0;
+        return nullptr;
 
     return idbKey.release();
 }
@@ -378,23 +378,23 @@ static PassRefPtr<IDBKey> idbKeyFromInspectorObject(InspectorObject* key)
 static PassRefPtr<IDBKeyRange> idbKeyRangeFromKeyRange(InspectorObject* keyRange)
 {
     RefPtr<InspectorObject> lower = keyRange->getObject("lower");
-    RefPtr<IDBKey> idbLower = lower ? idbKeyFromInspectorObject(lower.get()) : 0;
+    RefPtr<IDBKey> idbLower = lower ? idbKeyFromInspectorObject(lower.get()) : nullptr;
     if (lower && !idbLower)
-        return 0;
+        return nullptr;
 
     RefPtr<InspectorObject> upper = keyRange->getObject("upper");
-    RefPtr<IDBKey> idbUpper = upper ? idbKeyFromInspectorObject(upper.get()) : 0;
+    RefPtr<IDBKey> idbUpper = upper ? idbKeyFromInspectorObject(upper.get()) : nullptr;
     if (upper && !idbUpper)
-        return 0;
+        return nullptr;
 
     bool lowerOpen;
     if (!keyRange->getBoolean("lowerOpen", &lowerOpen))
-        return 0;
+        return nullptr;
     IDBKeyRange::LowerBoundType lowerBoundType = lowerOpen ? IDBKeyRange::LowerBoundOpen : IDBKeyRange::LowerBoundClosed;
 
     bool upperOpen;
     if (!keyRange->getBoolean("upperOpen", &upperOpen))
-        return 0;
+        return nullptr;
     IDBKeyRange::UpperBoundType upperBoundType = upperOpen ? IDBKeyRange::UpperBoundOpen : IDBKeyRange::UpperBoundClosed;
 
     RefPtr<IDBKeyRange> idbKeyRange = IDBKeyRange::create(idbLower, idbUpper, lowerBoundType, upperBoundType);
@@ -457,7 +457,7 @@ public:
         }
 
         // Continue cursor before making injected script calls, otherwise transaction might be finished.
-        idbCursor->continueFunction(0, ec);
+        idbCursor->continueFunction(nullptr, ec);
         if (ec) {
             m_requestCallback->sendFailure("Could not continue cursor.");
             return;
@@ -591,7 +591,7 @@ void InspectorIndexedDBAgent::disable(ErrorString*)
 
 static Document* assertDocument(ErrorString* errorString, Frame* frame)
 {
-    Document* document = frame ? frame->document() : 0;
+    Document* document = frame ? frame->document() : nullptr;
 
     if (!document)
         *errorString = "No document for given frame found";
@@ -604,7 +604,7 @@ static IDBFactory* assertIDBFactory(ErrorString* errorString, Document* document
     DOMWindow* domWindow = document->domWindow();
     if (!domWindow) {
         *errorString = "No IndexedDB factory for given frame found";
-        return 0;
+        return nullptr;
     }
     IDBFactory* idbFactory = DOMWindowIndexedDatabase::indexedDB(domWindow);
 
@@ -659,7 +659,7 @@ void InspectorIndexedDBAgent::requestData(ErrorString* errorString, const String
 
     InjectedScript injectedScript = m_injectedScriptManager->injectedScriptFor(mainWorldExecState(frame));
 
-    RefPtr<IDBKeyRange> idbKeyRange = keyRange ? idbKeyRangeFromKeyRange(keyRange->get()) : 0;
+    RefPtr<IDBKeyRange> idbKeyRange = keyRange ? idbKeyRangeFromKeyRange(keyRange->get()) : nullptr;
     if (keyRange && !idbKeyRange) {
         *errorString = "Can not parse key range.";
         return;

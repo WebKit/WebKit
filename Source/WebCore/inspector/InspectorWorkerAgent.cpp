@@ -113,7 +113,7 @@ InspectorWorkerAgent::InspectorWorkerAgent(InstrumentingAgents* instrumentingAge
 
 InspectorWorkerAgent::~InspectorWorkerAgent()
 {
-    m_instrumentingAgents->setInspectorWorkerAgent(0);
+    m_instrumentingAgents->setInspectorWorkerAgent(nullptr);
 }
 
 void InspectorWorkerAgent::didCreateFrontendAndBackend(Inspector::InspectorFrontendChannel* frontendChannel, InspectorBackendDispatcher* backendDispatcher)

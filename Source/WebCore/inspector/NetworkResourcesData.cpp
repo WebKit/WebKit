@@ -77,7 +77,7 @@ NetworkResourcesData::ResourceData::ResourceData(const String& requestId, const 
     , m_base64Encoded(false)
     , m_isContentEvicted(false)
     , m_type(InspectorPageAgent::OtherResource)
-    , m_cachedResource(0)
+    , m_cachedResource(nullptr)
 {
 }
 
@@ -282,7 +282,7 @@ XHRReplayData* NetworkResourcesData::xhrReplayData(const String& requestId)
 
     ResourceData* resourceData = resourceDataForRequestId(requestId);
     if (!resourceData)
-        return 0;
+        return nullptr;
     return resourceData->xhrReplayData();
 }
 
@@ -323,7 +323,7 @@ Vector<String> NetworkResourcesData::removeCachedResource(CachedResource* cached
     for (it = m_requestIdToResourceDataMap.begin(); it != end; ++it) {
         ResourceData* resourceData = it->value;
         if (resourceData->cachedResource() == cachedResource) {
-            resourceData->setCachedResource(0);
+            resourceData->setCachedResource(nullptr);
             result.append(it->key);
         }
     }
@@ -362,7 +362,7 @@ void NetworkResourcesData::setResourcesDataSizeLimits(size_t maximumResourcesCon
 NetworkResourcesData::ResourceData* NetworkResourcesData::resourceDataForRequestId(const String& requestId)
 {
     if (requestId.isNull())
-        return 0;
+        return nullptr;
     return m_requestIdToResourceDataMap.get(requestId);
 }
 

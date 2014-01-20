@@ -138,7 +138,7 @@ InspectorProfilerAgent::InspectorProfilerAgent(InstrumentingAgents* instrumentin
 
 InspectorProfilerAgent::~InspectorProfilerAgent()
 {
-    m_instrumentingAgents->setInspectorProfilerAgent(0);
+    m_instrumentingAgents->setInspectorProfilerAgent(nullptr);
 }
 
 void InspectorProfilerAgent::addProfile(PassRefPtr<ScriptProfile> prpProfile, unsigned lineNumber, unsigned columnNumber, const String& sourceURL)

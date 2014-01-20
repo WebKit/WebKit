@@ -193,7 +193,7 @@ bool InspectorPageAgent::cachedResourceContent(CachedResource* cachedResource, S
         }
         default:
             ResourceBuffer* buffer = cachedResource->resourceBuffer();
-            return decodeBuffer(buffer ? buffer->data() : 0, buffer ? buffer->size() : 0, cachedResource->encoding(), result);
+            return decodeBuffer(buffer ? buffer->data() : nullptr, buffer ? buffer->size() : 0, cachedResource->encoding(), result);
         }
     }
     return false;
@@ -212,7 +212,7 @@ bool InspectorPageAgent::mainResourceContent(Frame* frame, bool withBase64Encode
 // static
 bool InspectorPageAgent::sharedBufferContent(PassRefPtr<SharedBuffer> buffer, const String& textEncodingName, bool withBase64Encode, String* result)
 {
-    return dataContent(buffer ? buffer->data() : 0, buffer ? buffer->size() : 0, textEncodingName, withBase64Encode, result);
+    return dataContent(buffer ? buffer->data() : nullptr, buffer ? buffer->size() : 0, textEncodingName, withBase64Encode, result);
 }
 
 bool InspectorPageAgent::dataContent(const char* data, unsigned size, const String& textEncodingName, bool withBase64Encode, String* result)
@@ -387,14 +387,14 @@ void InspectorPageAgent::disable(ErrorString*)
 {
     m_enabled = false;
     m_scriptsToEvaluateOnLoad.clear();
-    m_instrumentingAgents->setInspectorPageAgent(0);
+    m_instrumentingAgents->setInspectorPageAgent(nullptr);
 
-    setScriptExecutionDisabled(0, m_originalScriptExecutionDisabled);
-    setShowPaintRects(0, false);
-    setShowDebugBorders(0, false);
-    setShowFPSCounter(0, false);
-    setEmulatedMedia(0, "");
-    setContinuousPaintingEnabled(0, false);
+    setScriptExecutionDisabled(nullptr, m_originalScriptExecutionDisabled);
+    setShowPaintRects(nullptr, false);
+    setShowDebugBorders(nullptr, false);
+    setShowFPSCounter(nullptr, false);
+    setEmulatedMedia(nullptr, "");
+    setContinuousPaintingEnabled(nullptr, false);
 }
 
 void InspectorPageAgent::addScriptToEvaluateOnLoad(ErrorString*, const String& source, String* identifier)
@@ -801,7 +801,7 @@ Frame* InspectorPageAgent::mainFrame()
 
 Frame* InspectorPageAgent::frameForId(const String& frameId)
 {
-    return frameId.isEmpty() ? 0 : m_identifierToFrame.get(frameId);
+    return frameId.isEmpty() ? nullptr : m_identifierToFrame.get(frameId);
 }
 
 String InspectorPageAgent::frameId(Frame* frame)
@@ -841,7 +841,7 @@ Frame* InspectorPageAgent::findFrameWithSecurityOrigin(const String& originRawSt
         if (documentOrigin->toRawString() == originRawString)
             return frame;
     }
-    return 0;
+    return nullptr;
 }
 
 Frame* InspectorPageAgent::assertFrame(ErrorString* errorString, const String& frameId)

@@ -200,7 +200,7 @@ void InspectorController::inspectedPageDestroyed()
     disconnectFrontend();
     m_injectedScriptManager->disconnect();
     m_inspectorClient->inspectorDestroyed();
-    m_inspectorClient = 0;
+    m_inspectorClient = nullptr;
 }
 
 void InspectorController::setInspectorFrontendClient(std::unique_ptr<InspectorFrontendClient> inspectorFrontendClient)

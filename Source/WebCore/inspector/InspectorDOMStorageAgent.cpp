@@ -66,8 +66,8 @@ InspectorDOMStorageAgent::InspectorDOMStorageAgent(InstrumentingAgents* instrume
 
 InspectorDOMStorageAgent::~InspectorDOMStorageAgent()
 {
-    m_instrumentingAgents->setInspectorDOMStorageAgent(0);
-    m_instrumentingAgents = 0;
+    m_instrumentingAgents->setInspectorDOMStorageAgent(nullptr);
+    m_instrumentingAgents = nullptr;
 }
 
 void InspectorDOMStorageAgent::didCreateFrontendAndBackend(Inspector::InspectorFrontendChannel* frontendChannel, InspectorBackendDispatcher* backendDispatcher)
@@ -122,7 +122,7 @@ void InspectorDOMStorageAgent::getDOMStorageItems(ErrorString* errorString, cons
 void InspectorDOMStorageAgent::setDOMStorageItem(ErrorString* errorString, const RefPtr<InspectorObject>& storageId, const String& key, const String& value)
 {
     Frame* frame;
-    RefPtr<StorageArea> storageArea = findStorageArea(0, storageId, frame);
+    RefPtr<StorageArea> storageArea = findStorageArea(nullptr, storageId, frame);
     if (!storageArea) {
         *errorString = "Storage not found";
         return;
@@ -137,7 +137,7 @@ void InspectorDOMStorageAgent::setDOMStorageItem(ErrorString* errorString, const
 void InspectorDOMStorageAgent::removeDOMStorageItem(ErrorString* errorString, const RefPtr<InspectorObject>& storageId, const String& key)
 {
     Frame* frame;
-    RefPtr<StorageArea> storageArea = findStorageArea(0, storageId, frame);
+    RefPtr<StorageArea> storageArea = findStorageArea(nullptr, storageId, frame);
     if (!storageArea) {
         *errorString = "Storage not found";
         return;
@@ -192,15 +192,15 @@ PassRefPtr<StorageArea> InspectorDOMStorageAgent::findStorageArea(ErrorString* e
     if (!success) {
         if (errorString)
             *errorString = "Invalid storageId format";
-        targetFrame = 0;
-        return 0;
+        targetFrame = nullptr;
+        return nullptr;
     }
 
     targetFrame = m_pageAgent->findFrameWithSecurityOrigin(securityOrigin);
     if (!targetFrame) {
         if (errorString)
             *errorString = "Frame not found for the given security origin";
-        return 0;
+        return nullptr;
     }
 
     Page* page = m_pageAgent->page();

@@ -56,7 +56,7 @@ InspectorHeapProfilerAgent::InspectorHeapProfilerAgent(InstrumentingAgents* inst
 
 InspectorHeapProfilerAgent::~InspectorHeapProfilerAgent()
 {
-    m_instrumentingAgents->setInspectorHeapProfilerAgent(0);
+    m_instrumentingAgents->setInspectorHeapProfilerAgent(nullptr);
 }
 
 void InspectorHeapProfilerAgent::resetState()

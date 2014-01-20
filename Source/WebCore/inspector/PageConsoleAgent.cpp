@@ -51,7 +51,7 @@ PageConsoleAgent::PageConsoleAgent(InstrumentingAgents* instrumentingAgents, Pag
 
 PageConsoleAgent::~PageConsoleAgent()
 {
-    m_inspectorDOMAgent = 0;
+    m_inspectorDOMAgent = nullptr;
 }
 
 void PageConsoleAgent::clearMessages(ErrorString* errorString)

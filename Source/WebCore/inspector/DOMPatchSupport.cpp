@@ -89,12 +89,12 @@ void DOMPatchSupport::patchDocument(const String& markup)
 {
     RefPtr<Document> newDocument;
     if (m_document->isHTMLDocument())
-        newDocument = HTMLDocument::create(0, URL());
+        newDocument = HTMLDocument::create(nullptr, URL());
     else if (m_document->isXHTMLDocument())
-        newDocument = HTMLDocument::createXHTML(0, URL());
+        newDocument = HTMLDocument::createXHTML(nullptr, URL());
 #if ENABLE(SVG)
     else if (m_document->isSVGDocument())
-        newDocument = Document::create(0, URL());
+        newDocument = Document::create(nullptr, URL());
 #endif
 
     ASSERT(newDocument);
@@ -102,12 +102,12 @@ void DOMPatchSupport::patchDocument(const String& markup)
     if (newDocument->isHTMLDocument())
         parser = HTMLDocumentParser::create(static_cast<HTMLDocument&>(*newDocument));
     else
-        parser = XMLDocumentParser::create(*newDocument, 0);
+        parser = XMLDocumentParser::create(*newDocument, nullptr);
     parser->insert(markup); // Use insert() so that the parser will not yield.
     parser->finish();
     parser->detach();
 
-    OwnPtr<Digest> oldInfo = createDigest(m_document->documentElement(), 0);
+    OwnPtr<Digest> oldInfo = createDigest(m_document->documentElement(), nullptr);
     OwnPtr<Digest> newInfo = createDigest(newDocument->documentElement(), &m_unusedNodesMap);
 
     if (!innerPatchNode(oldInfo.get(), newInfo.get(), IGNORE_EXCEPTION)) {
@@ -122,7 +122,7 @@ Node* DOMPatchSupport::patchNode(Node& node, const String& markup, ExceptionCode
     // Don't parse <html> as a fragment.
     if (node.isDocumentNode() || (node.parentNode() && node.parentNode()->isDocumentNode())) {
         patchDocument(markup);
-        return 0;
+        return nullptr;
     }
 
     Node* previousSibling = node.previousSibling();
@@ -137,13 +137,13 @@ Node* DOMPatchSupport::patchNode(Node& node, const String& markup, ExceptionCode
     ContainerNode* parentNode = node.parentNode();
     Vector<OwnPtr<Digest>> oldList;
     for (Node* child = parentNode->firstChild(); child; child = child->nextSibling())
-        oldList.append(createDigest(child, 0));
+        oldList.append(createDigest(child, nullptr));
 
     // Compose the new list.
     String markupCopy = markup.lower();
     Vector<OwnPtr<Digest>> newList;
     for (Node* child = parentNode->firstChild(); child != &node; child = child->nextSibling())
-        newList.append(createDigest(child, 0));
+        newList.append(createDigest(child, nullptr));
     for (Node* child = fragment->firstChild(); child; child = child->nextSibling()) {
         if (child->hasTagName(headTag) && !child->firstChild() && markupCopy.find("</head>") == notFound)
             continue; // HTML5 parser inserts empty <head> tag whenever it parses <body>
@@ -152,13 +152,13 @@ Node* DOMPatchSupport::patchNode(Node& node, const String& markup, ExceptionCode
         newList.append(createDigest(child, &m_unusedNodesMap));
     }
     for (Node* child = node.nextSibling(); child; child = child->nextSibling())
-        newList.append(createDigest(child, 0));
+        newList.append(createDigest(child, nullptr));
 
     if (!innerPatchChildren(parentNode, oldList, newList, ec)) {
         // Fall back to total replace.
         ec = 0;
         if (!m_domEditor->replaceChild(parentNode, fragment.release(), &node, ec))
-            return 0;
+            return nullptr;
     }
     return previousSibling ? previousSibling->nextSibling() : parentNode->firstChild();
 }
@@ -218,12 +218,12 @@ DOMPatchSupport::diff(const Vector<OwnPtr<Digest>>& oldList, const Vector<OwnPtr
     ResultMap oldMap(oldList.size());
 
     for (size_t i = 0; i < oldMap.size(); ++i) {
-        oldMap[i].first = 0;
+        oldMap[i].first = nullptr;
         oldMap[i].second = 0;
     }
 
     for (size_t i = 0; i < newMap.size(); ++i) {
-        newMap[i].first = 0;
+        newMap[i].first = nullptr;
         newMap[i].second = 0;
     }
 
@@ -305,8 +305,8 @@ bool DOMPatchSupport::innerPatchChildren(ContainerNode* parentNode, const Vector
     ResultMap& oldMap = resultMaps.first;
     ResultMap& newMap = resultMaps.second;
 
-    Digest* oldHead = 0;
-    Digest* oldBody = 0;
+    Digest* oldHead = nullptr;
+    Digest* oldBody = nullptr;
 
     // 1. First strip everything except for the nodes that retain. Collect pending merges.
     HashMap<Digest*, Digest*> merges;
@@ -317,7 +317,7 @@ bool DOMPatchSupport::innerPatchChildren(ContainerNode* parentNode, const Vector
                 usedNewOrdinals.add(oldMap[i].second);
                 continue;
             }
-            oldMap[i].first = 0;
+            oldMap[i].first = nullptr;
             oldMap[i].second = 0;
         }
 
@@ -356,7 +356,7 @@ bool DOMPatchSupport::innerPatchChildren(ContainerNode* parentNode, const Vector
         size_t oldOrdinal = newMap[i].second;
         if (usedOldOrdinals.contains(oldOrdinal)) {
             // Do not map node more than once
-            newMap[i].first = 0;
+            newMap[i].first = nullptr;
             newMap[i].second = 0;
             continue;
         }

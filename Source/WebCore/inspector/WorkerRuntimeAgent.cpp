@@ -56,7 +56,7 @@ WorkerRuntimeAgent::WorkerRuntimeAgent(InstrumentingAgents* instrumentingAgents,
 
 WorkerRuntimeAgent::~WorkerRuntimeAgent()
 {
-    m_instrumentingAgents->setWorkerRuntimeAgent(0);
+    m_instrumentingAgents->setWorkerRuntimeAgent(nullptr);
 }
 
 void WorkerRuntimeAgent::didCreateFrontendAndBackend(Inspector::InspectorFrontendChannel*, InspectorBackendDispatcher* backendDispatcher)

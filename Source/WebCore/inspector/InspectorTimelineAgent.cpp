@@ -107,7 +107,7 @@ void InspectorTimelineAgent::stop(ErrorString*)
         return;
 
     m_weakFactory.revokeAll();
-    m_instrumentingAgents->setInspectorTimelineAgent(0);
+    m_instrumentingAgents->setInspectorTimelineAgent(nullptr);
 
     clearRecordStack();
 
@@ -234,7 +234,7 @@ void InspectorTimelineAgent::didScroll()
 
 void InspectorTimelineAgent::willComposite()
 {
-    pushCurrentRecord(InspectorObject::create(), TimelineRecordType::CompositeLayers, false, 0);
+    pushCurrentRecord(InspectorObject::create(), TimelineRecordType::CompositeLayers, false, nullptr);
 }
 
 void InspectorTimelineAgent::didComposite()
@@ -651,7 +651,7 @@ double InspectorTimelineAgent::timestamp()
 
 Page* InspectorTimelineAgent::page()
 {
-    return m_pageAgent ? m_pageAgent->page() : 0;
+    return m_pageAgent ? m_pageAgent->page() : nullptr;
 }
 
 } // namespace WebCore
