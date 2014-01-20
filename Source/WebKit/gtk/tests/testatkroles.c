@@ -45,7 +45,7 @@
 #define HTML_RADIO_BUTTON "<html><body><input type='radio' />This is a test.</body></html>"
 
 typedef struct {
-    AtkObject* documentFrame;
+    AtkObject* document;
     AtkObject* obj;
     AtkRole role;
     GtkWidget* webView;
@@ -64,12 +64,12 @@ static gboolean finish_loading(AtkRolesFixture* fixture)
     // bug 72390 for more details on this change.
     // https://bugs.webkit.org/show_bug.cgi?id=72390
     AtkObject* rootObject = gtk_widget_get_accessible(fixture->webView);
-    fixture->documentFrame = atk_object_ref_accessible_child(rootObject, 0);
-    g_assert(fixture->documentFrame);
+    fixture->document = atk_object_ref_accessible_child(rootObject, 0);
+    g_assert(fixture->document);
 
     // Remove the reference added by ref_accessible_child() and
     // return, since we don't need to keep that extra ref at all.
-    g_object_unref(fixture->documentFrame);
+    g_object_unref(fixture->document);
     return FALSE;
 }
 
@@ -110,24 +110,24 @@ static void get_child_and_test_role(AtkObject* obj, gint pos, AtkRole role)
 
 static void test_webkit_atk_get_role_document_frame(AtkRolesFixture* fixture, gconstpointer data)
 {
-    fixture->role = atk_object_get_role(fixture->documentFrame);
-    g_assert(fixture->role == ATK_ROLE_DOCUMENT_FRAME);
+    fixture->role = atk_object_get_role(fixture->document);
+    g_assert(fixture->role == ATK_ROLE_DOCUMENT_WEB);
 }
 
 static void test_webkit_atk_get_role_heading(AtkRolesFixture* fixture, gconstpointer data)
 {
-    get_child_and_test_role(fixture->documentFrame, 0, ATK_ROLE_HEADING);
-    get_child_and_test_role(fixture->documentFrame, 1, ATK_ROLE_HEADING);
-    get_child_and_test_role(fixture->documentFrame, 2, ATK_ROLE_HEADING);
-    get_child_and_test_role(fixture->documentFrame, 3, ATK_ROLE_HEADING);
-    get_child_and_test_role(fixture->documentFrame, 4, ATK_ROLE_HEADING);
-    get_child_and_test_role(fixture->documentFrame, 5, ATK_ROLE_HEADING);
+    get_child_and_test_role(fixture->document, 0, ATK_ROLE_HEADING);
+    get_child_and_test_role(fixture->document, 1, ATK_ROLE_HEADING);
+    get_child_and_test_role(fixture->document, 2, ATK_ROLE_HEADING);
+    get_child_and_test_role(fixture->document, 3, ATK_ROLE_HEADING);
+    get_child_and_test_role(fixture->document, 4, ATK_ROLE_HEADING);
+    get_child_and_test_role(fixture->document, 5, ATK_ROLE_HEADING);
 }
 
 static void test_webkit_atk_get_role_image(AtkRolesFixture* fixture, gconstpointer data)
 {
     // This is an extraneous object of ATK_ROLE_PANEL which we should get rid of.
-    fixture->obj = atk_object_ref_accessible_child(fixture->documentFrame, 0);
+    fixture->obj = atk_object_ref_accessible_child(fixture->document, 0);
     g_assert(fixture->obj);
 
     get_child_and_test_role(fixture->obj, 0, ATK_ROLE_IMAGE);
@@ -138,7 +138,7 @@ static void test_webkit_atk_get_role_image(AtkRolesFixture* fixture, gconstpoint
 static void test_webkit_atk_get_role_link(AtkRolesFixture* fixture, gconstpointer data)
 {
     // This is an extraneous object of ATK_ROLE_PANEL which we should get rid of.
-    fixture->obj = atk_object_ref_accessible_child(fixture->documentFrame, 0);
+    fixture->obj = atk_object_ref_accessible_child(fixture->document, 0);
     g_assert(fixture->obj);
 
     get_child_and_test_role(fixture->obj, 0, ATK_ROLE_LINK);
@@ -150,7 +150,7 @@ static void test_webkit_atk_get_role_list_and_item(AtkRolesFixture* fixture, gco
 {
     AtkObject* listObj;
 
-    listObj = atk_object_ref_accessible_child(fixture->documentFrame, 0);
+    listObj = atk_object_ref_accessible_child(fixture->document, 0);
     g_assert(listObj);
     fixture->role = atk_object_get_role(listObj);
     g_assert(fixture->role == ATK_ROLE_LIST);
@@ -159,7 +159,7 @@ static void test_webkit_atk_get_role_list_and_item(AtkRolesFixture* fixture, gco
     get_child_and_test_role(listObj, 1, ATK_ROLE_LIST_ITEM);
     g_object_unref(listObj);
 
-    listObj = atk_object_ref_accessible_child(fixture->documentFrame, 1);
+    listObj = atk_object_ref_accessible_child(fixture->document, 1);
     g_assert(listObj);
     fixture->role = atk_object_get_role(listObj);
     g_assert(fixture->role == ATK_ROLE_LIST);
@@ -171,23 +171,23 @@ static void test_webkit_atk_get_role_list_and_item(AtkRolesFixture* fixture, gco
 
 static void test_webkit_atk_get_role_paragraph(AtkRolesFixture* fixture, gconstpointer data)
 {
-    get_child_and_test_role(fixture->documentFrame, 0, ATK_ROLE_PARAGRAPH);
+    get_child_and_test_role(fixture->document, 0, ATK_ROLE_PARAGRAPH);
 }
 
 static void test_webkit_atk_get_role_section(AtkRolesFixture* fixture, gconstpointer data)
 {
-    get_child_and_test_role(fixture->documentFrame, 0, ATK_ROLE_SECTION);
+    get_child_and_test_role(fixture->document, 0, ATK_ROLE_SECTION);
 }
 
 // Does not yet test table cells because of bug 30895.
 static void test_webkit_atk_get_role_table(AtkRolesFixture* fixture, gconstpointer data)
 {
-    get_child_and_test_role(fixture->documentFrame, 0, ATK_ROLE_TABLE);
+    get_child_and_test_role(fixture->document, 0, ATK_ROLE_TABLE);
 }
 
 static void test_webkit_atk_get_role_separator(AtkRolesFixture *fixture, gconstpointer data)
 {
-    get_child_and_test_role(fixture->documentFrame, 0, ATK_ROLE_SEPARATOR);
+    get_child_and_test_role(fixture->document, 0, ATK_ROLE_SEPARATOR);
 }
 
 static void test_webkit_atk_get_role_combobox(AtkRolesFixture *fixture, gconstpointer data)
@@ -195,7 +195,7 @@ static void test_webkit_atk_get_role_combobox(AtkRolesFixture *fixture, gconstpo
     AtkObject* comboboxMenu;
 
     // This is an extraneous object of ATK_ROLE_PANEL which we should get rid of.
-    fixture->obj = atk_object_ref_accessible_child(fixture->documentFrame, 0);
+    fixture->obj = atk_object_ref_accessible_child(fixture->document, 0);
     g_assert(fixture->obj);
 
     fixture->obj = atk_object_ref_accessible_child(fixture->obj, 0);
@@ -219,13 +219,13 @@ static void test_webkit_atk_get_role_combobox(AtkRolesFixture *fixture, gconstpo
 /* Form roles */
 static void test_webkit_atk_get_role_form(AtkRolesFixture *fixture, gconstpointer data)
 {
-    get_child_and_test_role(fixture->documentFrame, 0, ATK_ROLE_FORM);
+    get_child_and_test_role(fixture->document, 0, ATK_ROLE_FORM);
 }
 
 static void test_webkit_atk_get_role_check_box(AtkRolesFixture* fixture, gconstpointer data)
 {
     // This is an extraneous object of ATK_ROLE_PANEL which we should get rid of.
-    fixture->obj = atk_object_ref_accessible_child(fixture->documentFrame, 0);
+    fixture->obj = atk_object_ref_accessible_child(fixture->document, 0);
     g_assert(fixture->obj);
 
     get_child_and_test_role(fixture->obj, 0, ATK_ROLE_CHECK_BOX);
@@ -236,7 +236,7 @@ static void test_webkit_atk_get_role_check_box(AtkRolesFixture* fixture, gconstp
 static void test_webkit_atk_get_role_entry(AtkRolesFixture* fixture, gconstpointer data)
 {
     // This is an extraneous object of ATK_ROLE_PANEL which we should get rid of.
-    fixture->obj = atk_object_ref_accessible_child(fixture->documentFrame, 0);
+    fixture->obj = atk_object_ref_accessible_child(fixture->document, 0);
     g_assert(fixture->obj);
 
     get_child_and_test_role(fixture->obj, 1, ATK_ROLE_ENTRY);
@@ -247,7 +247,7 @@ static void test_webkit_atk_get_role_entry(AtkRolesFixture* fixture, gconstpoint
 static void test_webkit_atk_get_role_label(AtkRolesFixture* fixture, gconstpointer data)
 {
     // This is an extraneous object of ATK_ROLE_PANEL which we should get rid of.
-    fixture->obj = atk_object_ref_accessible_child(fixture->documentFrame, 0);
+    fixture->obj = atk_object_ref_accessible_child(fixture->document, 0);
     g_assert(fixture->obj);
 
     get_child_and_test_role(fixture->obj, 0, ATK_ROLE_LABEL);
@@ -259,7 +259,7 @@ static void test_webkit_atk_get_role_listbox(AtkRolesFixture* fixture, gconstpoi
 {
     AtkObject* listboxObj;
     // This is an extraneous object of ATK_ROLE_PANEL which we should get rid of.
-    fixture->obj = atk_object_ref_accessible_child(fixture->documentFrame, 0);
+    fixture->obj = atk_object_ref_accessible_child(fixture->document, 0);
     g_assert(fixture->obj);
 
     listboxObj = atk_object_ref_accessible_child(fixture->obj, 0);
@@ -278,7 +278,7 @@ static void test_webkit_atk_get_role_listbox(AtkRolesFixture* fixture, gconstpoi
 static void test_webkit_atk_get_role_password_text(AtkRolesFixture* fixture, gconstpointer data)
 {
     // This is an extraneous object of ATK_ROLE_PANEL which we should get rid of.
-    fixture->obj = atk_object_ref_accessible_child(fixture->documentFrame, 0);
+    fixture->obj = atk_object_ref_accessible_child(fixture->document, 0);
     g_assert(fixture->obj);
 
     get_child_and_test_role(fixture->obj, 0, ATK_ROLE_PASSWORD_TEXT);
@@ -289,7 +289,7 @@ static void test_webkit_atk_get_role_password_text(AtkRolesFixture* fixture, gco
 static void test_webkit_atk_get_role_push_button(AtkRolesFixture* fixture, gconstpointer data)
 {
     // This is an extraneous object of ATK_ROLE_PANEL which we should get rid of.
-    fixture->obj = atk_object_ref_accessible_child(fixture->documentFrame, 0);
+    fixture->obj = atk_object_ref_accessible_child(fixture->document, 0);
     g_assert(fixture->obj);
 
     get_child_and_test_role(fixture->obj, 0, ATK_ROLE_PUSH_BUTTON);
@@ -300,7 +300,7 @@ static void test_webkit_atk_get_role_push_button(AtkRolesFixture* fixture, gcons
 static void test_webkit_atk_get_role_radio_button(AtkRolesFixture* fixture, gconstpointer data)
 {
     // This is an extraneous object of ATK_ROLE_PANEL which we should get rid of.
-    fixture->obj = atk_object_ref_accessible_child(fixture->documentFrame, 0);
+    fixture->obj = atk_object_ref_accessible_child(fixture->document, 0);
     g_assert(fixture->obj);
 
     get_child_and_test_role(fixture->obj, 0, ATK_ROLE_RADIO_BUTTON);

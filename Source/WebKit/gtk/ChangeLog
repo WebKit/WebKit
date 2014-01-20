@@ -1,3 +1,31 @@
+2013-12-07  Gustavo Noronha Silva  <gns@gnome.org>
+
+        Fix API test expectation following 160220.
+
+        Rubber-stamped by Martin Robinson.
+
+        * tests/testatkroles.c:
+        (finish_loading): rename variable documentFrame -> document.
+        (test_webkit_atk_get_role_document_frame): check for ATK_ROLE_DOCUMENT_WEB instead of
+        ATK_ROLE_DOCUMENT_FRAME.
+        (test_webkit_atk_get_role_heading): rename variable documentFrame -> document.
+        (test_webkit_atk_get_role_image): ditto.
+        (test_webkit_atk_get_role_link): ditto.
+        (test_webkit_atk_get_role_list_and_item): ditto.
+        (test_webkit_atk_get_role_paragraph): ditto.
+        (test_webkit_atk_get_role_section): ditto.
+        (test_webkit_atk_get_role_table): ditto.
+        (test_webkit_atk_get_role_separator): ditto.
+        (test_webkit_atk_get_role_combobox): ditto.
+        (test_webkit_atk_get_role_form): ditto.
+        (test_webkit_atk_get_role_check_box): ditto.
+        (test_webkit_atk_get_role_entry): ditto.
+        (test_webkit_atk_get_role_label): ditto.
+        (test_webkit_atk_get_role_listbox): ditto.
+        (test_webkit_atk_get_role_password_text): ditto.
+        (test_webkit_atk_get_role_push_button): ditto.
+        (test_webkit_atk_get_role_radio_button): ditto.
+
 2013-12-04  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Update NEWS and Versions.m4 for 2.2.3 release.
