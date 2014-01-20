@@ -1,3 +1,57 @@
+2014-01-19  Zalan Bujtas  <zalan@apple.com>
+
+        Pretty print LayoutUnit, LayoutPoint, and LayoutSize in lldb and gdb.
+        https://bugs.webkit.org/show_bug.cgi?id=126080
+
+        Reviewed by Sam Weinig.
+
+        This changes the output of printing LayoutUnits to be in px but it also
+        preserves the original LayoutUnit value.
+
+        This will lead to lldb output like: (and it works even when subpixel is disabled)
+
+        (const WebCore::LayoutRect) $0 = {
+            m_location = { x = 2.25px (144), y = 1px (64)}
+            m_size = { width = 13.75px (880), height = 20px (1280) }
+
+
+        And gdb output like:
+
+        m_frameRect = {
+            m_location = LayoutPoint(0px (0), 0px(0)),
+            m_size = LayoutSize(8px (512), 5px (320))
+        }
+
+        This patch is based on patch by bjonesbe@adobe.com and for Blink by cbiesinger@chromium.org.
+
+        * gdb/webkit.py:
+        (WebCoreLayoutUnitPrinter):
+        (WebCoreLayoutUnitPrinter.__init__):
+        (WebCoreLayoutUnitPrinter.to_string):
+        (WebCoreLayoutSizePrinter):
+        (WebCoreLayoutSizePrinter.__init__):
+        (WebCoreLayoutSizePrinter.to_string):
+        (WebCoreLayoutPointPrinter):
+        (WebCoreLayoutPointPrinter.__init__):
+        (WebCoreLayoutPointPrinter.to_string):
+        (add_pretty_printers):
+        * lldb/lldb_webkit.py:
+        (__lldb_init_module):
+        (WebCoreLayoutUnit_SummaryProvider):
+        (WebCoreLayoutSize_SummaryProvider):
+        (WebCoreLayoutPoint_SummaryProvider):
+        (WebCoreLayoutUnitProvider):
+        (WebCoreLayoutUnitProvider.__init__):
+        (WebCoreLayoutUnitProvider.to_string):
+        (WebCoreLayoutSizeProvider):
+        (WebCoreLayoutSizeProvider.__init__):
+        (WebCoreLayoutSizeProvider.get_width):
+        (WebCoreLayoutSizeProvider.get_height):
+        (WebCoreLayoutPointProvider):
+        (WebCoreLayoutPointProvider.__init__):
+        (WebCoreLayoutPointProvider.get_x):
+        (WebCoreLayoutPointProvider.get_y):
+
 2014-01-18  Alexey Proskuryakov  <ap@apple.com>
 
         Add robots.txt to http://webkit-queues.appspot.com
