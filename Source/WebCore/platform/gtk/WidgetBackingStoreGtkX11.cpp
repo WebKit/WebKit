@@ -51,6 +51,8 @@ WidgetBackingStoreGtkX11::WidgetBackingStoreGtkX11(GtkWidget* widget, const IntS
 
 WidgetBackingStoreGtkX11::~WidgetBackingStoreGtkX11()
 {
+    // The pixmap needs to exist when the surface is destroyed, so begin by clearing it.
+    m_surface.clear();
     XFreePixmap(m_display, m_pixmap);
     XFreeGC(m_display, m_gc);
 }
