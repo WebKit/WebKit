@@ -1,3 +1,40 @@
+2014-01-09  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [SOUP] Partial file left on disk after a download fails or is cancelled in WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=126686
+
+        Reviewed by Martin Robinson.
+
+        We are currently writing the downloads directly into the
+        destination, and when a download fails or is cancelled after the
+        destination has been decided, the partial file is left on the
+        disk. Deleting the final file is not safe because there might be a
+        race condition, so we can use an intermediate file like other
+        browsers do, a file in the same directory than the target
+        destination but with .wkdownload suffix, that is removed when the
+        download fails or is cancelled. If the download finishes
+        successfully the intermediate file is renamed to the final
+        destination.
+
+        * Shared/Downloads/soup/DownloadSoup.cpp:
+        (WebKit::DownloadClient::deleteIntermediateFileInNeeded): Delete
+        the intermdiate file if it's been created already.
+        (WebKit::DownloadClient::downloadFailed): Call deleteIntermediateFileInNeeded.
+        (WebKit::DownloadClient::didReceiveResponse): Do not create a
+        SoupMessage for the given ResourceResponse that is not used, cache
+        the ResourceResponse instead. Create the intermediate file and use
+        it instead of the final destination.
+        (WebKit::DownloadClient::didReceiveData): Use the cached
+        ResourceResponse directly.
+        (WebKit::DownloadClient::didFinishLoading): Rename the
+        intermediate file to the final destination and write the metadata
+        in the final target destination.
+        (WebKit::DownloadClient::cancel): Handle the download cancellation
+        here, removing the intermediate file is needed and cancelling the
+        ResourceHandle and the download.
+        (WebKit::DownloadClient::handleResponseLater):
+        (WebKit::Download::cancel): Let the client handle the cancellation.
+
 2013-12-30  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [SOUP] willSendRequest doesn't work after a redirect

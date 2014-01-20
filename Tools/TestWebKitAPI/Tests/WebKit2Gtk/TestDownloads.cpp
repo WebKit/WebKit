@@ -223,13 +223,14 @@ public:
     void receivedResponse(WebKitDownload* download)
     {
         DownloadTest::receivedResponse(download);
-        if (m_expectedError == WEBKIT_DOWNLOAD_ERROR_CANCELLED_BY_USER)
-            webkit_download_cancel(download);
     }
 
     void createdDestination(WebKitDownload* download, const char* destination)
     {
-        g_assert_not_reached();
+        if (m_expectedError == WEBKIT_DOWNLOAD_ERROR_CANCELLED_BY_USER)
+            webkit_download_cancel(download);
+        else
+            g_assert_not_reached();
     }
 
     void failed(WebKitDownload* download, GError* error)
@@ -297,10 +298,38 @@ static void testDownloadLocalFileError(DownloadErrorTest* test, gconstpointer)
 static WebKitTestServer* kServer;
 static const char* kServerSuggestedFilename = "webkit-downloaded-file";
 
+static void addContentDispositionHTTPHeaderToResponse(SoupMessage* message)
+{
+    GOwnPtr<char> contentDisposition(g_strdup_printf("filename=%s", kServerSuggestedFilename));
+    soup_message_headers_append(message->response_headers, "Content-Disposition", contentDisposition.get());
+}
+
+static gboolean writeNextChunkIdle(SoupMessage* message)
+{
+    soup_message_body_append(message->response_body, SOUP_MEMORY_STATIC, "chunk", 5);
+    return FALSE;
+}
+
+static void writeNextChunk(SoupMessage* message)
+{
+    g_timeout_add(100, reinterpret_cast<GSourceFunc>(writeNextChunkIdle), message);
+}
+
 static void serverCallback(SoupServer* server, SoupMessage* message, const char* path, GHashTable*, SoupClientContext*, gpointer)
 {
     if (message->method != SOUP_METHOD_GET) {
         soup_message_set_status(message, SOUP_STATUS_NOT_IMPLEMENTED);
+        return;
+    }
+
+    soup_message_set_status(message, SOUP_STATUS_OK);
+
+    if (g_str_equal(path, "/cancel-after-destination")) {
+        // Use an infinite message to make sure it's cancelled before it finishes.
+        soup_message_headers_set_encoding(message->response_headers, SOUP_ENCODING_CHUNKED);
+        addContentDispositionHTTPHeaderToResponse(message);
+        g_signal_connect(message, "wrote_headers", G_CALLBACK(writeNextChunk), nullptr);
+        g_signal_connect(message, "wrote_chunk", G_CALLBACK(writeNextChunk), nullptr);
         return;
     }
 
@@ -313,10 +342,7 @@ static void serverCallback(SoupServer* server, SoupMessage* message, const char*
         return;
     }
 
-    soup_message_set_status(message, SOUP_STATUS_OK);
-
-    GOwnPtr<char> contentDisposition(g_strdup_printf("filename=%s", kServerSuggestedFilename));
-    soup_message_headers_append(message->response_headers, "Content-Disposition", contentDisposition.get());
+    addContentDispositionHTTPHeaderToResponse(message);
     soup_message_body_append(message->response_body, SOUP_MEMORY_TAKE, contents, contentsLength);
 
     soup_message_body_complete(message->response_body);
@@ -376,7 +402,7 @@ static void testDownloadRemoteFileError(DownloadErrorTest* test, gconstpointer)
     test->checkDestinationAndDeleteFile(download.get(), "bar");
 
     test->m_expectedError = WEBKIT_DOWNLOAD_ERROR_CANCELLED_BY_USER;
-    download = adoptGRef(test->downloadURIAndWaitUntilFinishes(kServer->getURIForPath("/test.pdf")));
+    download = adoptGRef(test->downloadURIAndWaitUntilFinishes(kServer->getURIForPath("/cancel-after-destination")));
     g_assert(!webkit_download_get_web_view(download.get()));
 
     g_assert_cmpint(events.size(), ==, 4);
@@ -386,7 +412,10 @@ static void testDownloadRemoteFileError(DownloadErrorTest* test, gconstpointer)
     g_assert_cmpint(events[3], ==, DownloadTest::Finished);
     events.clear();
     g_assert_cmpfloat(webkit_download_get_estimated_progress(download.get()), <, 1);
-    test->checkDestinationAndDeleteFile(download.get(), kServerSuggestedFilename);
+    // Check the intermediate file is deleted when the download is cancelled.
+    GOwnPtr<char> intermediateURI(g_strdup_printf("%s.wkdownload", webkit_download_get_destination(download.get())));
+    GRefPtr<GFile> intermediateFile = adoptGRef(g_file_new_for_uri(intermediateURI.get()));
+    g_assert(!g_file_query_exists(intermediateFile.get(), nullptr));
 }
 
 class WebViewDownloadTest: public WebViewTest {
