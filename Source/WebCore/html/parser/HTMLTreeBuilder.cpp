@@ -1034,7 +1034,7 @@ void HTMLTreeBuilder::processStartTagForInTable(AtomicHTMLToken* token)
     }
     if (token->name() == colTag) {
         processFakeStartTag(colgroupTag);
-        ASSERT(InsertionMode::InColumnGroup);
+        ASSERT(insertionMode() == InsertionMode::InColumnGroup);
         processStartTag(token);
         return;
     }

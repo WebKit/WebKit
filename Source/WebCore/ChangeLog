@@ -1,3 +1,22 @@
+2014-01-19  Jaehun Lim  <ljaehun.lim@samsung.com>
+
+        Unreviewed build fix after r162293
+
+        Fix debug build.
+
+        [ 13%] Building CXX object Source/WebCore/CMakeFiles/WebCore.dir/html/parser/HTMLTreeBuilder.cpp.o
+        /source/WebKit/Source/WebCore/html/parser/HTMLTreeBuilder.cpp: In member function ‘void WebCore::HTMLTreeBuilder::processStartTagForInTable(WebCore::AtomicHTMLToken*)’:
+        /source/WebKit/Source/WebCore/html/parser/HTMLTreeBuilder.cpp:1037:40: error: no match for ‘operator!’ in ‘!(WebCore::HTMLTreeBuilder::InsertionMode)12’
+        /source/WebKit/Source/WebCore/html/parser/HTMLTreeBuilder.cpp:1037:40: note: candidate is:
+        /source/WebKit/Source/WebCore/html/parser/HTMLTreeBuilder.cpp:1037:40: note: operator!(bool) <built-in>
+        /source/WebKit/Source/WebCore/html/parser/HTMLTreeBuilder.cpp:1037:40: note:   no known conversion for argument 1 from ‘WebCore::HTMLTreeBuilder::InsertionMode’ to ‘bool’
+        make[2]: *** [Source/WebCore/CMakeFiles/WebCore.dir/html/parser/HTMLTreeBuilder.cpp.o] Error 1
+        make[1]: *** [Source/WebCore/CMakeFiles/WebCore.dir/all] Error 2
+        make: *** [all] Error 2
+
+        * html/parser/HTMLTreeBuilder.cpp:
+        (WebCore::HTMLTreeBuilder::processStartTagForInTable): Fix ASSERT.
+
 2014-01-19  Anders Carlsson  <andersca@apple.com>
 
         Stop using MutexTryLocker in WebCore
