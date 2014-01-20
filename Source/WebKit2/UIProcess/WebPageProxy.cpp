@@ -1595,6 +1595,7 @@ void WebPageProxy::scalePage(double scale, const IntPoint& origin)
     if (!isValid())
         return;
 
+    m_pageScaleFactor = scale;
     m_process->send(Messages::WebPage::ScalePage(scale, origin), m_pageID);
 }
 

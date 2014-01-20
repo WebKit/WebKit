@@ -1,3 +1,18 @@
+2014-01-20  Thiago de Barros Lacerda  <thiago.lacerda@openbossa.org>
+
+        [WK2] Setting m_pageScaleFactor directly in WebPageProxy::scalePage
+        https://bugs.webkit.org/show_bug.cgi?id=127090
+
+        Reviewed by Simon Fraser.
+
+        When the client side sets the scale factor, the UIProcess will send the message to WebProcess and only after
+        WebPageProxy::pageScaleFactorDidChange is called the desired scale factor is returned correctly by
+        WebPageProxy::pageScaleFactor.
+        This will avoid the client side retrieve a wrong scale factor while UIProcess and WebProcess gets synchronized.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::scalePage):
+
 2014-01-20  Zan Dobersek  <zdobersek@igalia.com>
 
         [GTK][WK2] Move the rest of GTK's WorkQueue implementation to std::function
