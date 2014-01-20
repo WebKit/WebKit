@@ -124,11 +124,7 @@ WebInspector.FrameContentView.prototype = {
         if (!resourceContentView)
             return null;
 
-        var responseContentView = resourceContentView.showResponse();
-        if (typeof responseContentView.revealPosition === "function")
-            responseContentView.revealPosition(positionToReveal, textRangeToSelect, forceUnformatted);
-
-        return resourceContentView;
+        return resourceContentView.showResponse(positionToReveal, textRangeToSelect, forceUnformatted);
     },
 
     showDOMTree: function(domNodeToSelect, preventFocusChange)

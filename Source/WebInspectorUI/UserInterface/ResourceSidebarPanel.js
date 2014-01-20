@@ -158,10 +158,8 @@ WebInspector.ResourceSidebarPanel.prototype = {
         if (representedObject instanceof WebInspector.Resource && representedObject.isMainResource())
             representedObject = representedObject.parentFrame;
 
-        var newContentView = WebInspector.contentBrowser.contentViewForRepresentedObject(representedObject);
         var cookie = positionToReveal ? {lineNumber: positionToReveal.lineNumber, columnNumber: positionToReveal.columnNumber} : {};
-
-        WebInspector.contentBrowser.showContentView(newContentView, cookie);
+        WebInspector.contentBrowser.showContentViewForRepresentedObject(representedObject, cookie);
     },
 
     showSourceCodeLocation: function(sourceCodeLocation)
