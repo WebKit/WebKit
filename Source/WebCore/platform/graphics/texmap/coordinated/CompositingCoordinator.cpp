@@ -235,6 +235,10 @@ void CompositingCoordinator::removeImageBacking(CoordinatedImageBackingID imageI
     m_imageBackings.remove(imageID);
 
     m_state.imagesToRemove.append(imageID);
+
+    size_t imageIDPosition = m_state.imagesToClear.find(imageID);
+    if (imageIDPosition != notFound)
+        m_state.imagesToClear.remove(imageIDPosition);
 }
 
 void CompositingCoordinator::flushPendingImageBackingChanges()
