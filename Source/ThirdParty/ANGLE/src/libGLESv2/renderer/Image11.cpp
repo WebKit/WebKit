@@ -50,8 +50,8 @@ void Image11::generateMipmap(Image11 *dest, Image11 *src)
     ASSERT(src->getHeight() == 1 || src->getHeight() / 2 == dest->getHeight());
 
     D3D11_MAPPED_SUBRESOURCE destMapped, srcMapped;
-    dest->map(&destMapped);
-    src->map(&srcMapped);
+    dest->map(D3D11_MAP_WRITE, &destMapped);
+    src->map(D3D11_MAP_READ, &srcMapped);
 
     const unsigned char *sourceData = reinterpret_cast<const unsigned char*>(srcMapped.pData);
     unsigned char *destData = reinterpret_cast<unsigned char*>(destMapped.pData);
@@ -171,7 +171,7 @@ void Image11::loadData(GLint xoffset, GLint yoffset, GLsizei width, GLsizei heig
                        GLint unpackAlignment, const void *input)
 {
     D3D11_MAPPED_SUBRESOURCE mappedImage;
-    HRESULT result = map(&mappedImage);
+    HRESULT result = map(D3D11_MAP_WRITE, &mappedImage);
     if (FAILED(result))
     {
         ERR("Could not map image for loading.");
@@ -194,7 +194,7 @@ void Image11::loadData(GLint xoffset, GLint yoffset, GLsizei width, GLsizei heig
         loadAlphaFloatDataToRGBA(width, height, inputPitch, input, mappedImage.RowPitch, offsetMappedData);
         break;
       case GL_LUMINANCE32F_EXT:
-        loadLuminanceFloatDataToRGB(width, height, inputPitch, input, mappedImage.RowPitch, offsetMappedData);
+        loadLuminanceFloatDataToRGBA(width, height, inputPitch, input, mappedImage.RowPitch, offsetMappedData);
         break;
       case GL_ALPHA16F_EXT:
         loadAlphaHalfFloatDataToRGBA(width, height, inputPitch, input, mappedImage.RowPitch, offsetMappedData);
@@ -230,7 +230,7 @@ void Image11::loadData(GLint xoffset, GLint yoffset, GLsizei width, GLsizei heig
         loadBGRADataToBGRA(width, height, inputPitch, input, mappedImage.RowPitch, offsetMappedData);
         break;
       case GL_RGB32F_EXT:
-        loadRGBFloatDataToNative(width, height, inputPitch, input, mappedImage.RowPitch, offsetMappedData);
+        loadRGBFloatDataToRGBA(width, height, inputPitch, input, mappedImage.RowPitch, offsetMappedData);
         break;
       case GL_RGB16F_EXT:
         loadRGBHalfFloatDataToRGBA(width, height, inputPitch, input, mappedImage.RowPitch, offsetMappedData);
@@ -254,7 +254,7 @@ void Image11::loadCompressedData(GLint xoffset, GLint yoffset, GLsizei width, GL
     ASSERT(yoffset % 4 == 0);
 
     D3D11_MAPPED_SUBRESOURCE mappedImage;
-    HRESULT result = map(&mappedImage);
+    HRESULT result = map(D3D11_MAP_WRITE, &mappedImage);
     if (FAILED(result))
     {
         ERR("Could not map image for loading.");
@@ -344,8 +344,8 @@ void Image11::copy(GLint xoffset, GLint yoffset, GLint x, GLint y, GLsizei width
     {
         // This format requires conversion, so we must copy the texture to staging and manually convert via readPixels
         D3D11_MAPPED_SUBRESOURCE mappedImage;
-        HRESULT result = map(&mappedImage);
-            
+        HRESULT result = map(D3D11_MAP_WRITE, &mappedImage);
+
         // determine the offset coordinate into the destination buffer
         GLsizei rowOffset = gl::ComputePixelSize(mActualFormat) * xoffset;
         void *dataOffset = static_cast<unsigned char*>(mappedImage.pData) + mappedImage.RowPitch * yoffset + rowOffset;
@@ -402,7 +402,7 @@ void Image11::createStagingTexture()
         desc.SampleDesc.Quality = 0;
         desc.Usage = D3D11_USAGE_STAGING;
         desc.BindFlags = 0;
-        desc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+        desc.CPUAccessFlags = D3D11_CPU_ACCESS_READ | D3D11_CPU_ACCESS_WRITE;
         desc.MiscFlags = 0;
 
         HRESULT result = device->CreateTexture2D(&desc, NULL, &newTexture);
@@ -420,7 +420,7 @@ void Image11::createStagingTexture()
     mDirty = false;
 }
 
-HRESULT Image11::map(D3D11_MAPPED_SUBRESOURCE *map)
+HRESULT Image11::map(D3D11_MAP mapType, D3D11_MAPPED_SUBRESOURCE *map)
 {
     createStagingTexture();
 
@@ -429,7 +429,7 @@ HRESULT Image11::map(D3D11_MAPPED_SUBRESOURCE *map)
     if (mStagingTexture)
     {
         ID3D11DeviceContext *deviceContext = mRenderer->getDeviceContext();
-        result = deviceContext->Map(mStagingTexture, mStagingSubresource, D3D11_MAP_WRITE, 0, map);
+        result = deviceContext->Map(mStagingTexture, mStagingSubresource, mapType, 0, map);
 
         // this can fail if the device is removed (from TDR)
         if (d3d11::isDeviceLostError(result))

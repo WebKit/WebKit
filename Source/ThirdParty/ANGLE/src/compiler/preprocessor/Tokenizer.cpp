@@ -680,16 +680,6 @@ static void yy_flex_strncpy (char *,yyconst char *,int ,yyscan_t yyscanner);
 static int yy_flex_strlen (yyconst char * ,yyscan_t yyscanner);
 #endif
 
-#ifndef YY_NO_INPUT
-
-#ifdef __cplusplus
-static int yyinput (yyscan_t yyscanner );
-#else
-static int input (yyscan_t yyscanner );
-#endif
-
-#endif
-
 /* Amount of stuff to slurp up with each read. */
 #ifndef YY_READ_BUF_SIZE
 #define YY_READ_BUF_SIZE 8192
@@ -1490,81 +1480,6 @@ static int yy_get_next_buffer (yyscan_t yyscanner)
 	return yy_is_jam ? 0 : yy_current_state;
 }
 
-#ifndef YY_NO_INPUT
-#ifdef __cplusplus
-    static int yyinput (yyscan_t yyscanner)
-#else
-    static int input  (yyscan_t yyscanner)
-#endif
-
-{
-	int c;
-    struct yyguts_t * yyg = (struct yyguts_t*)yyscanner;
-
-	*yyg->yy_c_buf_p = yyg->yy_hold_char;
-
-	if ( *yyg->yy_c_buf_p == YY_END_OF_BUFFER_CHAR )
-		{
-		/* yy_c_buf_p now points to the character we want to return.
-		 * If this occurs *before* the EOB characters, then it's a
-		 * valid NUL; if not, then we've hit the end of the buffer.
-		 */
-		if ( yyg->yy_c_buf_p < &YY_CURRENT_BUFFER_LVALUE->yy_ch_buf[yyg->yy_n_chars] )
-			/* This was really a NUL. */
-			*yyg->yy_c_buf_p = '\0';
-
-		else
-			{ /* need more input */
-			yy_size_t offset = yyg->yy_c_buf_p - yyg->yytext_ptr;
-			++yyg->yy_c_buf_p;
-
-			switch ( yy_get_next_buffer( yyscanner ) )
-				{
-				case EOB_ACT_LAST_MATCH:
-					/* This happens because yy_g_n_b()
-					 * sees that we've accumulated a
-					 * token and flags that we need to
-					 * try matching the token before
-					 * proceeding.  But for input(),
-					 * there's no matching to consider.
-					 * So convert the EOB_ACT_LAST_MATCH
-					 * to EOB_ACT_END_OF_FILE.
-					 */
-
-					/* Reset buffer status. */
-					pprestart(yyin ,yyscanner);
-
-					/*FALLTHROUGH*/
-
-				case EOB_ACT_END_OF_FILE:
-					{
-					if ( ppwrap(yyscanner ) )
-						return 0;
-
-					if ( ! yyg->yy_did_buffer_switch_on_eof )
-						YY_NEW_FILE;
-#ifdef __cplusplus
-					return yyinput(yyscanner);
-#else
-					return input(yyscanner);
-#endif
-					}
-
-				case EOB_ACT_CONTINUE_SCAN:
-					yyg->yy_c_buf_p = yyg->yytext_ptr + offset;
-					break;
-				}
-			}
-		}
-
-	c = *(unsigned char *) yyg->yy_c_buf_p;	/* cast for 8-bit char's */
-	*yyg->yy_c_buf_p = '\0';	/* preserve yytext */
-	yyg->yy_hold_char = *++yyg->yy_c_buf_p;
-
-	return c;
-}
-#endif	/* ifndef YY_NO_INPUT */
-
 /** Immediately switch to a different input stream.
  * @param input_file A readable stream.
  * @param yyscanner The scanner object.
@@ -2300,11 +2215,9 @@ void ppfree (void * ptr , yyscan_t yyscanner)
 
 namespace pp {
 
-// TODO(alokp): Maximum token length should ideally be specified by
-// the preprocessor client, i.e., the compiler.
-const size_t Tokenizer::kMaxTokenLength = 256;
-
-Tokenizer::Tokenizer(Diagnostics* diagnostics) : mHandle(0)
+Tokenizer::Tokenizer(Diagnostics* diagnostics)
+    : mHandle(0),
+      mMaxTokenLength(256)
 {
     mContext.diagnostics = diagnostics;
 }
@@ -2337,11 +2250,11 @@ void Tokenizer::setLineNumber(int line)
 void Tokenizer::lex(Token* token)
 {
     token->type = pplex(&token->text,&token->location,mHandle);
-    if (token->text.size() > kMaxTokenLength)
+    if (token->text.size() > mMaxTokenLength)
     {
         mContext.diagnostics->report(Diagnostics::TOKEN_TOO_LONG,
                                      token->location, token->text);
-        token->text.erase(kMaxTokenLength);
+        token->text.erase(mMaxTokenLength);
     }
 
     token->flags = 0;

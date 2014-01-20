@@ -275,6 +275,7 @@ EGLint SwapChain11::resetOffscreenTexture(int backbufferWidth, int backbufferHei
             else
             {
                 result = offscreenTextureResource->GetSharedHandle(&mShareHandle);
+                offscreenTextureResource->Release();
 
                 if (FAILED(result))
                 {
@@ -464,18 +465,6 @@ EGLint SwapChain11::reset(int backbufferWidth, int backbufferHeight, EGLint swap
 
     if (mWindow)
     {
-        // We cannot create a swap chain for an HWND that is owned by a different process
-        DWORD currentProcessId = GetCurrentProcessId();
-        DWORD wndProcessId;
-        GetWindowThreadProcessId(mWindow, &wndProcessId);
-
-        if (currentProcessId != wndProcessId)
-        {
-            ERR("Could not create swap chain, window owned by different process");
-            release();
-            return EGL_BAD_NATIVE_WINDOW;
-        }
-
         IDXGIFactory *factory = mRenderer->getDxgiFactory();
 
         DXGI_SWAP_CHAIN_DESC swapChainDesc = {0};
@@ -507,7 +496,21 @@ EGLint SwapChain11::reset(int backbufferWidth, int backbufferHeight, EGLint swap
             }
             else
             {
-                return EGL_BAD_ALLOC;
+                // We cannot create a swap chain for an HWND that is owned by a different process on some versions of
+                // windows
+                DWORD currentProcessId = GetCurrentProcessId();
+                DWORD wndProcessId;
+                GetWindowThreadProcessId(mWindow, &wndProcessId);
+
+                if (currentProcessId != wndProcessId)
+                {
+                    ERR("Could not create swap chain, window owned by different process");
+                    return EGL_BAD_NATIVE_WINDOW;
+                }
+                else
+                {
+                    return EGL_BAD_ALLOC;
+                }
             }
         }
 
@@ -667,7 +670,12 @@ EGLint SwapChain11::swapRect(EGLint x, EGLint y, EGLint width, EGLint height)
 
     // Draw
     deviceContext->Draw(4, 0);
+
+#if ANGLE_FORCE_VSYNC_OFF
+    result = mSwapChain->Present(0, 0);
+#else
     result = mSwapChain->Present(mSwapInterval, 0);
+#endif
 
     if (result == DXGI_ERROR_DEVICE_REMOVED)
     {

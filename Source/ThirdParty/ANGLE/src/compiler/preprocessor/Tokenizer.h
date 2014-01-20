@@ -32,13 +32,13 @@ class Tokenizer : public Lexer
         bool leadingSpace;
         bool lineStart;
     };
-    static const std::size_t kMaxTokenLength;
 
     Tokenizer(Diagnostics* diagnostics);
     ~Tokenizer();
 
     bool init(size_t count, const char* const string[], const int length[]);
 
+    void setMaxTokenLength(size_t maxLength) { mMaxTokenLength = maxLength; }
     void setFileNumber(int file);
     void setLineNumber(int line);
 
@@ -51,6 +51,7 @@ class Tokenizer : public Lexer
 
     void* mHandle;  // Scanner handle.
     Context mContext;  // Scanner extra.
+    size_t mMaxTokenLength;
 };
 
 }  // namespace pp

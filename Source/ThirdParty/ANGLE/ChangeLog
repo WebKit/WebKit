@@ -1,3 +1,542 @@
+2013-12-05  Matthew Hanson  <matthew_hanson@apple.com>
+
+        Fix ANGLE build failures by re-comitting the changes in http://trac.webkit.org/changeset/154223
+        on top of the library updates introduced by http://trac.webkit.org/changeset/159533.
+
+        Rubber-stamped by Babak Shafiei.
+
+        * src/compiler/glslang.l:
+        * src/compiler/glslang_lex.cpp:
+        * src/compiler/preprocessor/Tokenizer.cpp:
+        * src/compiler/preprocessor/Tokenizer.l:
+
+2013-11-20  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix GTK build.
+
+        * GNUmakefile.am: Remove duplicated entries.
+
+2013-11-20  Sergio Correia  <sergio.correia@openbossa.org>
+
+        ANGLE doesn't build with bison 3.0
+        https://bugs.webkit.org/show_bug.cgi?id=124642
+
+        Reviewed by Gyuyoung Kim.
+
+        This is a reedition of r154109, now that ANGLE source has been updated
+        in r159533.
+
+        * src/compiler/glslang.y: Use %lex-param to set YYLEX_PARAM and stop
+        using the deprecated YYID macro.
+
+2013-11-19  Roger Fong  <roger_fong@apple.com>
+
+        Unreviewed. Build fix for Mac.
+
+        * src/compiler/glslang_tab.cpp:
+        (yysyntax_error):
+        (yyerror):
+        * src/compiler/glslang_tab.h:
+        * src/compiler/preprocessor/ExpressionParser.cpp:
+        (yysyntax_error):
+
+2013-11-19  Martin Robinson  <mrobinson@igalia.com>
+
+        Fix the GTK+ build after the ANGLE update in r159533
+
+        * GNUmakefile.am: Update the source list.
+
+2013-11-19  Roger Fong  <roger_fong@apple.com>
+
+        Unreviewed. Prospective build fix for GTK port following r159533.
+
+        * GNUmakefile.am:
+
+2013-11-19  Roger Fong  <roger_fong@apple.com>
+
+        Update ANGLE sources.
+        https://bugs.webkit.org/show_bug.cgi?id=124615.
+
+        Reviewed by Dean Jackson.
+
+        Update ANGLE to checkout a60e0805721f62c28a55faf2df74472cc5fc91fc.
+        Modify xcodeproj files as necessary, update plist.
+        Stop using DerivedSources.make and just use the generated sources that are checked into ANGLE.
+        Add a note to bison generated files indicating that Apple elects to distribute said files under the BSD license: 
+        ExpressionParser.cpp, glslang_tab.cpp, glslang_tab.h.
+
+        * ANGLE.plist:
+        * ANGLE.xcodeproj/project.pbxproj:
+        * DerivedSources.make: Removed.
+        * include/EGL/egl.h:
+        * include/EGL/eglsoftlinking.h: Removed.
+        * include/GLES2/gl2.h:
+        * include/GLES2/gl2softlinking.h: Removed.
+        * include/GLSLANG/ShaderLang.h:
+        * include/KHR/khrplatform.h:
+        * src/ANGLE.sln: Added.
+        * src/build_angle.gypi:
+        * src/common/debug.h:
+        * src/common/event_tracer.cpp: Added.
+        (gl::TraceGetTraceCategoryEnabledFlag):
+        (gl::TraceAddTraceEvent):
+        * src/common/event_tracer.h: Added.
+        * src/common/version.h:
+        * src/compiler/CodeGen.cpp: Added.
+        (ConstructCompiler):
+        (DeleteCompiler):
+        * src/compiler/CodeGenGLSL.cpp: Removed.
+        * src/compiler/CodeGenHLSL.cpp: Removed.
+        * src/compiler/Common.h:
+        (NewPoolTString):
+        * src/compiler/Compiler.cpp:
+        (TCompiler::Init):
+        (TCompiler::compile):
+        (TCompiler::InitBuiltInSymbolTable):
+        (TCompiler::clearResults):
+        (TCompiler::collectVariables):
+        * src/compiler/ConstantUnion.h:
+        * src/compiler/DetectDiscontinuity.cpp:
+        * src/compiler/InfoSink.h:
+        * src/compiler/InitializeDll.cpp:
+        (InitProcess):
+        (DetachProcess):
+        * src/compiler/InitializeDll.h:
+        * src/compiler/InitializeGLPosition.cpp: Added.
+        (InitializeGLPosition::visitAggregate):
+        (InitializeGLPosition::insertCode):
+        * src/compiler/InitializeGLPosition.h: Added.
+        (InitializeGLPosition::InitializeGLPosition):
+        (InitializeGLPosition::visitBinary):
+        (InitializeGLPosition::visitUnary):
+        (InitializeGLPosition::visitSelection):
+        (InitializeGLPosition::visitLoop):
+        (InitializeGLPosition::visitBranch):
+        * src/compiler/InitializeGlobals.h:
+        * src/compiler/InitializeParseContext.cpp:
+        (InitializeParseContextIndex):
+        (FreeParseContextIndex):
+        (SetGlobalParseContext):
+        (GetGlobalParseContext):
+        * src/compiler/InitializeParseContext.h:
+        * src/compiler/IntermTraverse.cpp:
+        (TIntermSymbol::traverse):
+        (TIntermConstantUnion::traverse):
+        (TIntermBinary::traverse):
+        (TIntermUnary::traverse):
+        (TIntermAggregate::traverse):
+        (TIntermSelection::traverse):
+        (TIntermLoop::traverse):
+        (TIntermBranch::traverse):
+        * src/compiler/Intermediate.cpp:
+        (GetHigherPrecision):
+        (getOperatorString):
+        (TIntermLoop::replaceChildNode):
+        (TIntermBranch::replaceChildNode):
+        (TIntermBinary::replaceChildNode):
+        (TIntermUnary::replaceChildNode):
+        (TIntermAggregate::replaceChildNode):
+        (TIntermSelection::replaceChildNode):
+        (TIntermOperator::isAssignment):
+        (TIntermediate::promoteConstantUnion):
+        * src/compiler/MapLongVariableNames.cpp:
+        * src/compiler/MapLongVariableNames.h:
+        * src/compiler/NodeSearch.h: Added.
+        (sh::NodeSearchTraverser::NodeSearchTraverser):
+        (sh::NodeSearchTraverser::found):
+        (sh::NodeSearchTraverser::search):
+        (sh::FindDiscard::visitBranch):
+        (sh::FindSideEffectRewriting::visitBinary):
+        * src/compiler/OutputGLSLBase.cpp:
+        (TOutputGLSLBase::visitSelection):
+        (TOutputGLSLBase::visitAggregate):
+        (TOutputGLSLBase::visitLoop):
+        * src/compiler/OutputGLSLBase.h:
+        * src/compiler/OutputHLSL.cpp:
+        (sh::OutputHLSL::OutputHLSL):
+        (sh::OutputHLSL::header):
+        (sh::OutputHLSL::visitBinary):
+        (sh::OutputHLSL::visitSelection):
+        (sh::OutputHLSL::visitBranch):
+        (sh::OutputHLSL::handleExcessiveLoop):
+        (sh::OutputHLSL::addConstructor):
+        * src/compiler/OutputHLSL.h:
+        * src/compiler/ParseContext.cpp: Added.
+        (TParseContext::parseVectorFields):
+        (TParseContext::parseMatrixFields):
+        (TParseContext::recover):
+        (TParseContext::error):
+        (TParseContext::warning):
+        (TParseContext::trace):
+        (TParseContext::assignError):
+        (TParseContext::unaryOpError):
+        (TParseContext::binaryOpError):
+        (TParseContext::precisionErrorCheck):
+        (TParseContext::lValueErrorCheck):
+        (TParseContext::constErrorCheck):
+        (TParseContext::integerErrorCheck):
+        (TParseContext::globalErrorCheck):
+        (TParseContext::reservedErrorCheck):
+        (TParseContext::constructorErrorCheck):
+        (TParseContext::voidErrorCheck):
+        (TParseContext::boolErrorCheck):
+        (TParseContext::samplerErrorCheck):
+        (TParseContext::structQualifierErrorCheck):
+        (TParseContext::parameterSamplerErrorCheck):
+        (TParseContext::containsSampler):
+        (TParseContext::arraySizeErrorCheck):
+        (TParseContext::arrayQualifierErrorCheck):
+        (TParseContext::arrayTypeErrorCheck):
+        (TParseContext::arrayErrorCheck):
+        (TParseContext::nonInitConstErrorCheck):
+        (TParseContext::nonInitErrorCheck):
+        (TParseContext::paramErrorCheck):
+        (TParseContext::extensionErrorCheck):
+        (TParseContext::supportsExtension):
+        (TParseContext::isExtensionEnabled):
+        (TParseContext::findFunction):
+        (TParseContext::executeInitializer):
+        (TParseContext::areAllChildConst):
+        (TParseContext::addConstructor):
+        (TParseContext::foldConstConstructor):
+        (TParseContext::constructBuiltIn):
+        (TParseContext::constructStruct):
+        (TParseContext::addConstVectorNode):
+        (TParseContext::addConstMatrixNode):
+        (TParseContext::addConstArrayNode):
+        (TParseContext::addConstStruct):
+        (TParseContext::enterStructDeclaration):
+        (TParseContext::exitStructDeclaration):
+        (TParseContext::structNestingErrorCheck):
+        (TParseContext::addIndexExpression):
+        (PaParseStrings):
+        * src/compiler/ParseContext.h: Added.
+        (TParseContext::TParseContext):
+        (TParseContext::numErrors):
+        (TParseContext::infoSink):
+        (TParseContext::pragma):
+        (TParseContext::extensionBehavior):
+        * src/compiler/ParseHelper.cpp: Removed.
+        * src/compiler/ParseHelper.h: Removed.
+        * src/compiler/PoolAlloc.cpp:
+        (InitializePoolIndex):
+        (FreePoolIndex):
+        (GetGlobalPoolAllocator):
+        (SetGlobalPoolAllocator):
+        * src/compiler/PoolAlloc.h:
+        (pool_allocator::pool_allocator):
+        * src/compiler/SearchSymbol.h:
+        * src/compiler/ShHandle.h:
+        (TCompiler::getVaryings):
+        * src/compiler/ShaderLang.cpp:
+        (checkVariableMaxLengths):
+        (ShInitialize):
+        (ShFinalize):
+        (ShConstructCompiler):
+        (ShCompile):
+        (ShGetInfo):
+        (ShGetVariableInfo):
+        (ShCheckVariablesWithinPackingLimits):
+        * src/compiler/SymbolTable.cpp:
+        (TSymbolTable::~TSymbolTable):
+        * src/compiler/SymbolTable.h:
+        (TSymbol::TSymbol):
+        (TSymbolTableLevel::insert):
+        (TSymbolTable::push):
+        (TSymbolTable::pop):
+        (TSymbolTable::findBuiltIn):
+        (TSymbolTable::relateToExtension):
+        (TSymbolTable::setDefaultPrecision):
+        (TSymbolTable::getDefaultPrecision):
+        (TSymbolTable::supportsPrecision):
+        * src/compiler/Types.h:
+        (NewPoolTFieldList):
+        (TType::TType):
+        (TType::setNominalSize):
+        (TPublicType::setAggregate):
+        * src/compiler/UnfoldShortCircuit.cpp:
+        (sh::UnfoldShortCircuit::visitBinary):
+        (sh::UnfoldShortCircuit::visitSelection):
+        * src/compiler/UnfoldShortCircuit.h:
+        * src/compiler/UnfoldShortCircuitAST.cpp: Added.
+        (UnfoldShortCircuitAST::visitBinary):
+        (UnfoldShortCircuitAST::updateTree):
+        * src/compiler/UnfoldShortCircuitAST.h: Added.
+        (UnfoldShortCircuitAST::UnfoldShortCircuitAST):
+        (UnfoldShortCircuitAST::NodeUpdateEntry::NodeUpdateEntry):
+        * src/compiler/Uniform.cpp:
+        (sh::Uniform::Uniform):
+        * src/compiler/Uniform.h:
+        * src/compiler/ValidateLimitations.cpp:
+        (ValidateLimitations::validateFunctionCall):
+        (ValidateLimitations::validateOperation):
+        * src/compiler/VariableInfo.cpp:
+        (TVariableInfo::TVariableInfo):
+        (CollectVariables::CollectVariables):
+        (CollectVariables::visitSymbol):
+        (CollectVariables::visitAggregate):
+        * src/compiler/VariableInfo.h:
+        * src/compiler/debug.cpp:
+        * src/compiler/depgraph/DependencyGraph.cpp:
+        * src/compiler/depgraph/DependencyGraphBuilder.cpp:
+        (TDependencyGraphBuilder::visitBinary):
+        * src/compiler/generate_parser.sh:
+        * src/compiler/glslang.l:
+        * src/compiler/glslang.y:
+        * src/compiler/glslang_lex.cpp:
+        (input):
+        (yyerror):
+        (int_constant):
+        (float_constant):
+        (glslang_scan):
+        * src/compiler/glslang_tab.cpp:
+        (yysyntax_error):
+        (glslang_parse):
+        * src/compiler/glslang_tab.h:
+        * src/compiler/intermediate.h:
+        (TIntermSymbol::hasSideEffects):
+        (TIntermSymbol::replaceChildNode):
+        (TIntermConstantUnion::hasSideEffects):
+        (TIntermConstantUnion::getIConst):
+        (TIntermConstantUnion::getFConst):
+        (TIntermConstantUnion::getBConst):
+        (TIntermConstantUnion::replaceChildNode):
+        (TIntermOperator::hasSideEffects):
+        (TIntermBinary::hasSideEffects):
+        (TIntermUnary::hasSideEffects):
+        (TIntermAggregate::hasSideEffects):
+        (TIntermSelection::hasSideEffects):
+        (TIntermTraverser::~TIntermTraverser):
+        (TIntermTraverser::incrementDepth):
+        (TIntermTraverser::decrementDepth):
+        (TIntermTraverser::getParentNode):
+        * src/compiler/localintermediate.h:
+        * src/compiler/parseConst.cpp:
+        * src/compiler/preprocessor/ExpressionParser.cpp:
+        (yy_symbol_print):
+        (yy_stack_print):
+        (yy_reduce_print):
+        (yystrlen):
+        (yystpcpy):
+        (yytnamerr):
+        (yysyntax_error):
+        (yydestruct):
+        (yyparse):
+        * src/compiler/preprocessor/ExpressionParser.y:
+        * src/compiler/preprocessor/Preprocessor.cpp:
+        (pp::Preprocessor::setMaxTokenLength):
+        (pp::Preprocessor::lex):
+        * src/compiler/preprocessor/Preprocessor.h:
+        * src/compiler/preprocessor/Tokenizer.cpp:
+        (pp::Tokenizer::Tokenizer):
+        (pp::Tokenizer::lex):
+        * src/compiler/preprocessor/Tokenizer.h:
+        (pp::Tokenizer::setMaxTokenLength):
+        * src/compiler/preprocessor/Tokenizer.l:
+        * src/compiler/preprocessor/generate_parser.sh:
+        * src/compiler/preprocessor/preprocessor.vcxproj: Added.
+        * src/compiler/preprocessor/preprocessor.vcxproj.filters: Added.
+        * src/compiler/timing/RestrictFragmentShaderTiming.cpp:
+        * src/compiler/translator.vcxproj: Added.
+        * src/compiler/translator.vcxproj.filters: Added.
+        * src/compiler/util.cpp:
+        (atof_clamp):
+        (atoi_clamp):
+        * src/compiler/util.h:
+        * src/libEGL/Surface.cpp:
+        (egl::Surface::checkForOutOfDateSwapChain):
+        * src/libEGL/libEGL.cpp:
+        * src/libEGL/libEGL.rc:
+        * src/libEGL/libEGL.vcxproj: Added.
+        * src/libEGL/libEGL.vcxproj.filters: Added.
+        * src/libGLESv2/Buffer.cpp:
+        (gl::Buffer::bufferData):
+        (gl::Buffer::bufferSubData):
+        (gl::Buffer::size):
+        (gl::Buffer::getIndexRangeCache):
+        * src/libGLESv2/Buffer.h:
+        * src/libGLESv2/Context.cpp:
+        (gl::Context::applyTextures):
+        (gl::Context::getBoundFramebufferTextureSerials):
+        * src/libGLESv2/Context.h:
+        (gl::Context::getRenderer):
+        * src/libGLESv2/Framebuffer.h:
+        * src/libGLESv2/ProgramBinary.cpp:
+        (gl::DiscardWorkaround):
+        (gl::ProgramBinary::load):
+        (gl::ProgramBinary::link):
+        (gl::ProgramBinary::linkAttributes):
+        (gl::AttributeSorter::AttributeSorter):
+        (gl::ProgramBinary::initAttributesByLayout):
+        (gl::ProgramBinary::sortAttributesByLayout):
+        * src/libGLESv2/ProgramBinary.h:
+        * src/libGLESv2/Renderbuffer.cpp:
+        (gl::RenderbufferTexture2D::getTextureSerial):
+        (gl::RenderbufferTextureCubeMap::getTextureSerial):
+        (gl::Renderbuffer::getTextureSerial):
+        * src/libGLESv2/Renderbuffer.h:
+        (gl::RenderbufferStorage::getTextureSerial):
+        * src/libGLESv2/Shader.cpp:
+        (gl::Shader::parseVaryings):
+        (gl::Shader::uncompile):
+        * src/libGLESv2/Shader.h:
+        * src/libGLESv2/Texture.cpp:
+        (gl::TextureCubeMap::storage):
+        * src/libGLESv2/Uniform.cpp:
+        (gl::Uniform::Uniform):
+        (gl::Uniform::~Uniform):
+        (gl::Uniform::isArray):
+        (gl::Uniform::elementCount):
+        * src/libGLESv2/Uniform.h:
+        * src/libGLESv2/constants.h: Removed.
+        * src/libGLESv2/libGLESv2.def:
+        * src/libGLESv2/libGLESv2.rc:
+        * src/libGLESv2/libGLESv2.vcxproj: Added.
+        * src/libGLESv2/libGLESv2.vcxproj.filters: Added.
+        * src/libGLESv2/precompiled.h:
+        * src/libGLESv2/renderer/Image11.cpp:
+        (rx::Image11::generateMipmap):
+        (rx::Image11::loadData):
+        (rx::Image11::loadCompressedData):
+        (rx::Image11::copy):
+        (rx::Image11::createStagingTexture):
+        (rx::Image11::map):
+        * src/libGLESv2/renderer/Image11.h:
+        * src/libGLESv2/renderer/IndexBuffer.cpp:
+        (rx::IndexBufferInterface::mapBuffer):
+        (rx::StaticIndexBufferInterface::getIndexRangeCache):
+        * src/libGLESv2/renderer/IndexBuffer.h:
+        * src/libGLESv2/renderer/IndexBuffer11.cpp:
+        (rx::IndexBuffer11::mapBuffer):
+        * src/libGLESv2/renderer/IndexDataManager.cpp:
+        (rx::IndexDataManager::prepareIndexData):
+        (rx::IndexDataManager::getCountingIndices):
+        * src/libGLESv2/renderer/IndexRangeCache.cpp: Added.
+        (rx::IndexRangeCache::addRange):
+        (rx::IndexRangeCache::invalidateRange):
+        (rx::IndexRangeCache::findRange):
+        (rx::IndexRangeCache::clear):
+        (rx::IndexRangeCache::IndexRange::IndexRange):
+        (rx::IndexRangeCache::IndexRange::operator<):
+        (rx::IndexRangeCache::IndexBounds::IndexBounds):
+        * src/libGLESv2/renderer/IndexRangeCache.h: Added.
+        * src/libGLESv2/renderer/InputLayoutCache.cpp:
+        (rx::InputLayoutCache::InputLayoutCache):
+        (rx::InputLayoutCache::clear):
+        (rx::InputLayoutCache::markDirty):
+        (rx::InputLayoutCache::applyVertexBuffers):
+        (rx::InputLayoutCache::hashInputLayout):
+        (rx::InputLayoutCache::compareInputLayouts):
+        * src/libGLESv2/renderer/InputLayoutCache.h:
+        (rx::InputLayoutCache::InputLayoutKey::begin):
+        (rx::InputLayoutCache::InputLayoutKey::end):
+        * src/libGLESv2/renderer/RenderTarget11.cpp:
+        (rx::RenderTarget11::getTexture):
+        (rx::RenderTarget11::getRenderTargetView):
+        (rx::RenderTarget11::getDepthStencilView):
+        (rx::RenderTarget11::getShaderResourceView):
+        * src/libGLESv2/renderer/RenderTarget11.h:
+        * src/libGLESv2/renderer/Renderer.cpp:
+        (rx::Renderer::initializeCompiler):
+        * src/libGLESv2/renderer/Renderer.h:
+        * src/libGLESv2/renderer/Renderer11.cpp:
+        (rx::Renderer11::initialize):
+        (rx::Renderer11::applyPrimitiveType):
+        (rx::Renderer11::applyRenderTarget):
+        (rx::Renderer11::drawLineLoop):
+        (rx::Renderer11::drawTriangleFan):
+        (rx::Renderer11::applyUniforms):
+        (rx::Renderer11::clear):
+        (rx::Renderer11::markAllStateDirty):
+        (rx::Renderer11::copyImage):
+        (rx::Renderer11::compileToExecutable):
+        (rx::Renderer11::getRenderTargetResource):
+        (rx::Renderer11::blitRenderbufferRect):
+        * src/libGLESv2/renderer/Renderer11.h:
+        * src/libGLESv2/renderer/Renderer9.cpp:
+        (rx::Renderer9::initialize):
+        (rx::Renderer9::setViewport):
+        (rx::Renderer9::drawLineLoop):
+        (rx::Renderer9::compileToExecutable):
+        * src/libGLESv2/renderer/Renderer9.h:
+        * src/libGLESv2/renderer/SwapChain.h:
+        * src/libGLESv2/renderer/SwapChain11.cpp:
+        (rx::SwapChain11::resetOffscreenTexture):
+        (rx::SwapChain11::reset):
+        (rx::SwapChain11::swapRect):
+        * src/libGLESv2/renderer/SwapChain9.cpp:
+        (rx::convertInterval):
+        * src/libGLESv2/renderer/TextureStorage11.cpp:
+        (rx::TextureStorage11::IsTextureFormatRenderable):
+        (rx::TextureStorage11::generateMipmapLayer):
+        (rx::TextureStorage11_Cube::getRenderTarget):
+        * src/libGLESv2/renderer/VertexBuffer.cpp:
+        (rx::VertexBufferInterface::storeVertexAttributes):
+        (rx::VertexBufferInterface::storeRawData):
+        (rx::VertexBufferInterface::reserveVertexSpace):
+        (rx::StaticVertexBufferInterface::lookupAttribute):
+        (rx::StaticVertexBufferInterface::storeVertexAttributes):
+        * src/libGLESv2/renderer/VertexBuffer.h:
+        * src/libGLESv2/renderer/VertexBuffer11.cpp:
+        (rx::VertexBuffer11::getSpaceRequired):
+        * src/libGLESv2/renderer/VertexBuffer11.h:
+        * src/libGLESv2/renderer/VertexBuffer9.cpp:
+        (rx::VertexBuffer9::storeVertexAttributes):
+        (rx::VertexBuffer9::getSpaceRequired):
+        (rx::VertexBuffer9::requiresConversion):
+        (rx::VertexBuffer9::getVertexSize):
+        (rx::VertexBuffer9::spaceRequired):
+        * src/libGLESv2/renderer/VertexBuffer9.h:
+        * src/libGLESv2/renderer/VertexDataManager.cpp:
+        (rx::elementsInBuffer):
+        (rx::StreamingBufferElementCount):
+        (rx::VertexDataManager::prepareVertexData):
+        * src/libGLESv2/renderer/VertexDataManager.h:
+        * src/libGLESv2/renderer/renderer11_utils.cpp:
+        (gl_d3d11::ConvertTextureFormat):
+        * src/libGLESv2/renderer/shaders/compiled/clear11vs.h:
+        * src/libGLESv2/renderer/shaders/compiled/clearmultiple11ps.h:
+        * src/libGLESv2/renderer/shaders/compiled/clearsingle11ps.h:
+        * src/libGLESv2/renderer/shaders/compiled/componentmaskps.h:
+        * src/libGLESv2/renderer/shaders/compiled/flipyvs.h:
+        * src/libGLESv2/renderer/shaders/compiled/luminanceps.h:
+        * src/libGLESv2/renderer/shaders/compiled/passthrough11vs.h:
+        * src/libGLESv2/renderer/shaders/compiled/passthroughlum11ps.h:
+        * src/libGLESv2/renderer/shaders/compiled/passthroughlumalpha11ps.h:
+        * src/libGLESv2/renderer/shaders/compiled/passthroughps.h:
+        * src/libGLESv2/renderer/shaders/compiled/passthroughrgb11ps.h:
+        * src/libGLESv2/renderer/shaders/compiled/passthroughrgba11ps.h:
+        * src/libGLESv2/renderer/shaders/compiled/standardvs.h:
+        * src/libGLESv2/renderer/shaders/generate_shaders.bat:
+        * src/libGLESv2/utilities.cpp:
+        (gl::ComputeTypeSize):
+        * src/libGLESv2/utilities.h:
+        * src/third_party/murmurhash/MurmurHash3.cpp:
+        (rotl32):
+        (rotl64):
+        (getblock):
+        (fmix):
+        (MurmurHash3_x86_32):
+        (MurmurHash3_x86_128):
+        (MurmurHash3_x64_128):
+        * src/third_party/murmurhash/MurmurHash3.h:
+        * src/third_party/trace_event: Added.
+        * src/third_party/trace_event/trace_event.h: Added.
+        (gl::TraceEvent::TraceID::TraceID):
+        (gl::TraceEvent::TraceID::data):
+        (gl::TraceEvent::TraceStringWithCopy::TraceStringWithCopy):
+        (gl::TraceEvent::TraceStringWithCopy::operator const char* ):
+        (gl::TraceEvent::setTraceValue):
+        (gl::TraceEvent::addTraceEvent):
+        (gl::TraceEvent::TraceEndOnScopeClose::TraceEndOnScopeClose):
+        (gl::TraceEvent::TraceEndOnScopeClose::~TraceEndOnScopeClose):
+        (gl::TraceEvent::TraceEndOnScopeClose::initialize):
+        (gl::TraceEvent::TraceEndOnScopeClose::addEventIfEnabled):
+        (gl::TraceEvent::SamplingStateScope::SamplingStateScope):
+        (gl::TraceEvent::SamplingStateScope::~SamplingStateScope):
+        (gl::TraceEvent::SamplingStateScope::current):
+        (gl::TraceEvent::SamplingStateScope::set):
+
 2013-11-06  Dean Jackson  <dino@apple.com>
 
         kTraceBufferLen is unused in default builds

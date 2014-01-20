@@ -48,7 +48,6 @@ public:
     MapLongVariableNames(LongNameMap* globalMap);
 
     virtual void visitSymbol(TIntermSymbol*);
-    virtual bool visitLoop(Visit, TIntermLoop*);
 
 private:
     TString mapGlobalLongName(const TString& name);

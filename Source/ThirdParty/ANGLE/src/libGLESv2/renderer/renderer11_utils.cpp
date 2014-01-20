@@ -356,7 +356,7 @@ DXGI_FORMAT ConvertTextureFormat(GLenum internalformat)
         return DXGI_FORMAT_R32G32B32A32_FLOAT;
       case GL_RGB32F_EXT:
       case GL_LUMINANCE32F_EXT:
-        return DXGI_FORMAT_R32G32B32_FLOAT;
+        return DXGI_FORMAT_R32G32B32A32_FLOAT;
       case GL_RGBA16F_EXT:
       case GL_ALPHA16F_EXT:
       case GL_LUMINANCE_ALPHA16F_EXT:

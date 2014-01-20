@@ -219,14 +219,8 @@ private:
 // different times.  But a simple use is to have a global pop
 // with everyone using the same global allocator.
 //
-extern TPoolAllocator& GetGlobalPoolAllocator();
+extern TPoolAllocator* GetGlobalPoolAllocator();
 extern void SetGlobalPoolAllocator(TPoolAllocator* poolAllocator);
-#define GlobalPoolAllocator GetGlobalPoolAllocator()
-
-struct TThreadGlobalPools
-{
-    TPoolAllocator* globalPoolAllocator;
-};
 
 //
 // This STL compatible allocator is intended to be used as the allocator
@@ -253,7 +247,7 @@ public:
     pointer address(reference x) const { return &x; }
     const_pointer address(const_reference x) const { return &x; }
 
-    pool_allocator() : allocator(&GlobalPoolAllocator) { }
+    pool_allocator() : allocator(GetGlobalPoolAllocator()) { }
     pool_allocator(TPoolAllocator& a) : allocator(&a) { }
     pool_allocator(const pool_allocator<T>& p) : allocator(p.allocator) { }
 

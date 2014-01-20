@@ -14,6 +14,7 @@
 #include "libGLESv2/renderer/Renderer9.h"
 #include "libGLESv2/renderer/Renderer11.h"
 #include "libGLESv2/utilities.h"
+#include "third_party/trace_event/trace_event.h"
 
 #if !defined(ANGLE_ENABLE_D3D11)
 // Enables use of the Direct3D 11 API for a default display, when available
@@ -40,6 +41,7 @@ Renderer::~Renderer()
 
 bool Renderer::initializeCompiler()
 {
+    TRACE_EVENT0("gpu", "initializeCompiler");
 #if defined(ANGLE_PRELOADED_D3DCOMPILER_MODULE_NAMES)
     // Find a D3DCompiler module that had already been loaded based on a predefined list of versions.
     static TCHAR* d3dCompilerNames[] = ANGLE_PRELOADED_D3DCOMPILER_MODULE_NAMES;
@@ -51,10 +53,13 @@ bool Renderer::initializeCompiler()
             break;
         }
     }
-#else
-    // Load the version of the D3DCompiler DLL associated with the Direct3D version ANGLE was built with.
-    mD3dCompilerModule = LoadLibrary(D3DCOMPILER_DLL);
 #endif  // ANGLE_PRELOADED_D3DCOMPILER_MODULE_NAMES
+
+    if (!mD3dCompilerModule)
+    {
+        // Load the version of the D3DCompiler DLL associated with the Direct3D version ANGLE was built with.
+        mD3dCompilerModule = LoadLibrary(D3DCOMPILER_DLL);
+    }
 
     if (!mD3dCompilerModule)
     {

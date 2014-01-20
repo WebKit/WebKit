@@ -12,6 +12,7 @@
 #include "compiler/InfoSink.h"
 #include "compiler/SearchSymbol.h"
 #include "compiler/UnfoldShortCircuit.h"
+#include "compiler/NodeSearch.h"
 
 #include <algorithm>
 #include <cfloat>
@@ -68,22 +69,11 @@ OutputHLSL::OutputHLSL(TParseContext &context, const ShBuiltInResources& resourc
     mUsesFaceforward2 = false;
     mUsesFaceforward3 = false;
     mUsesFaceforward4 = false;
-    mUsesEqualMat2 = false;
-    mUsesEqualMat3 = false;
-    mUsesEqualMat4 = false;
-    mUsesEqualVec2 = false;
-    mUsesEqualVec3 = false;
-    mUsesEqualVec4 = false;
-    mUsesEqualIVec2 = false;
-    mUsesEqualIVec3 = false;
-    mUsesEqualIVec4 = false;
-    mUsesEqualBVec2 = false;
-    mUsesEqualBVec3 = false;
-    mUsesEqualBVec4 = false;
     mUsesAtan2_1 = false;
     mUsesAtan2_2 = false;
     mUsesAtan2_3 = false;
     mUsesAtan2_4 = false;
+    mUsesDiscardRewriting = false;
 
     mNumRenderTargets = resources.EXT_draw_buffers ? resources.MaxDrawBuffers : 1;
 
@@ -206,6 +196,11 @@ void OutputHLSL::header()
         const TString &name = attribute->second->getSymbol();
 
         attributes += "static " + typeString(type) + " " + decorate(name) + arrayString(type) + " = " + initializer(type) + ";\n";
+    }
+
+    if (mUsesDiscardRewriting)
+    {
+        out << "#define ANGLE_USES_DISCARD_REWRITING" << "\n";
     }
 
     if (shaderType == SH_FRAGMENT_SHADER)
@@ -996,108 +991,6 @@ void OutputHLSL::header()
                "\n";
     }
 
-    if (mUsesEqualMat2)
-    {
-        out << "bool equal(float2x2 m, float2x2 n)\n"
-               "{\n"
-               "    return m[0][0] == n[0][0] && m[0][1] == n[0][1] &&\n"
-               "           m[1][0] == n[1][0] && m[1][1] == n[1][1];\n"
-               "}\n";
-    }
-
-    if (mUsesEqualMat3)
-    {
-        out << "bool equal(float3x3 m, float3x3 n)\n"
-               "{\n"
-               "    return m[0][0] == n[0][0] && m[0][1] == n[0][1] && m[0][2] == n[0][2] &&\n"
-               "           m[1][0] == n[1][0] && m[1][1] == n[1][1] && m[1][2] == n[1][2] &&\n"
-               "           m[2][0] == n[2][0] && m[2][1] == n[2][1] && m[2][2] == n[2][2];\n"
-               "}\n";
-    }
-
-    if (mUsesEqualMat4)
-    {
-        out << "bool equal(float4x4 m, float4x4 n)\n"
-               "{\n"
-               "    return m[0][0] == n[0][0] && m[0][1] == n[0][1] && m[0][2] == n[0][2] && m[0][3] == n[0][3] &&\n"
-               "           m[1][0] == n[1][0] && m[1][1] == n[1][1] && m[1][2] == n[1][2] && m[1][3] == n[1][3] &&\n"
-               "           m[2][0] == n[2][0] && m[2][1] == n[2][1] && m[2][2] == n[2][2] && m[2][3] == n[2][3] &&\n"
-               "           m[3][0] == n[3][0] && m[3][1] == n[3][1] && m[3][2] == n[3][2] && m[3][3] == n[3][3];\n"
-               "}\n";
-    }
-
-    if (mUsesEqualVec2)
-    {
-        out << "bool equal(float2 v, float2 u)\n"
-               "{\n"
-               "    return v.x == u.x && v.y == u.y;\n"
-               "}\n";
-    }
-
-    if (mUsesEqualVec3)
-    {
-        out << "bool equal(float3 v, float3 u)\n"
-               "{\n"
-               "    return v.x == u.x && v.y == u.y && v.z == u.z;\n"
-               "}\n";
-    }
-
-    if (mUsesEqualVec4)
-    {
-        out << "bool equal(float4 v, float4 u)\n"
-               "{\n"
-               "    return v.x == u.x && v.y == u.y && v.z == u.z && v.w == u.w;\n"
-               "}\n";
-    }
-
-    if (mUsesEqualIVec2)
-    {
-        out << "bool equal(int2 v, int2 u)\n"
-               "{\n"
-               "    return v.x == u.x && v.y == u.y;\n"
-               "}\n";
-    }
-
-    if (mUsesEqualIVec3)
-    {
-        out << "bool equal(int3 v, int3 u)\n"
-               "{\n"
-               "    return v.x == u.x && v.y == u.y && v.z == u.z;\n"
-               "}\n";
-    }
-
-    if (mUsesEqualIVec4)
-    {
-        out << "bool equal(int4 v, int4 u)\n"
-               "{\n"
-               "    return v.x == u.x && v.y == u.y && v.z == u.z && v.w == u.w;\n"
-               "}\n";
-    }
-
-    if (mUsesEqualBVec2)
-    {
-        out << "bool equal(bool2 v, bool2 u)\n"
-               "{\n"
-               "    return v.x == u.x && v.y == u.y;\n"
-               "}\n";
-    }
-
-    if (mUsesEqualBVec3)
-    {
-        out << "bool equal(bool3 v, bool3 u)\n"
-               "{\n"
-               "    return v.x == u.x && v.y == u.y && v.z == u.z;\n"
-               "}\n";
-    }
-
-    if (mUsesEqualBVec4)
-    {
-        out << "bool equal(bool4 v, bool4 u)\n"
-               "{\n"
-               "    return v.x == u.x && v.y == u.y && v.z == u.z && v.w == u.w;\n"
-               "}\n";
-    }
-
     if (mUsesAtan2_1)
     {
         out << "float atanyx(float y, float x)\n"
@@ -1391,59 +1284,15 @@ bool OutputHLSL::visitBinary(Visit visit, TIntermBinary *node)
         }
         else
         {
-            if (node->getLeft()->isMatrix())
-            {
-                switch (node->getLeft()->getNominalSize())
-                {
-                  case 2: mUsesEqualMat2 = true; break;
-                  case 3: mUsesEqualMat3 = true; break;
-                  case 4: mUsesEqualMat4 = true; break;
-                  default: UNREACHABLE();
-                }
-            }
-            else if (node->getLeft()->isVector())
-            {
-                switch (node->getLeft()->getBasicType())
-                {
-                  case EbtFloat:
-                    switch (node->getLeft()->getNominalSize())
-                    {
-                      case 2: mUsesEqualVec2 = true; break;
-                      case 3: mUsesEqualVec3 = true; break;
-                      case 4: mUsesEqualVec4 = true; break;
-                      default: UNREACHABLE();
-                    }
-                    break;
-                  case EbtInt:
-                    switch (node->getLeft()->getNominalSize())
-                    {
-                      case 2: mUsesEqualIVec2 = true; break;
-                      case 3: mUsesEqualIVec3 = true; break;
-                      case 4: mUsesEqualIVec4 = true; break;
-                      default: UNREACHABLE();
-                    }
-                    break;
-                  case EbtBool:
-                    switch (node->getLeft()->getNominalSize())
-                    {
-                      case 2: mUsesEqualBVec2 = true; break;
-                      case 3: mUsesEqualBVec3 = true; break;
-                      case 4: mUsesEqualBVec4 = true; break;
-                      default: UNREACHABLE();
-                    }
-                    break;
-                  default: UNREACHABLE();
-                }
-            }
-            else UNREACHABLE();
+            ASSERT(node->getLeft()->isMatrix() || node->getLeft()->isVector());
 
             if (node->getOp() == EOpEqual)
             {
-                outputTriplet(visit, "equal(", ", ", ")");
+                outputTriplet(visit, "all(", " == ", ")");
             }
             else
             {
-                outputTriplet(visit, "!equal(", ", ", ")");
+                outputTriplet(visit, "!all(", " == ", ")");
             }
         }
         break;
@@ -1457,15 +1306,31 @@ bool OutputHLSL::visitBinary(Visit visit, TIntermBinary *node)
       case EOpMatrixTimesVector: outputTriplet(visit, "mul(transpose(", "), ", ")"); break;
       case EOpMatrixTimesMatrix: outputTriplet(visit, "transpose(mul(transpose(", "), transpose(", ")))"); break;
       case EOpLogicalOr:
-        out << "s" << mUnfoldShortCircuit->getNextTemporaryIndex();
-        return false;
+        if (node->getRight()->hasSideEffects())
+        {
+            out << "s" << mUnfoldShortCircuit->getNextTemporaryIndex();
+            return false;
+        }
+        else
+        {
+           outputTriplet(visit, "(", " || ", ")");
+           return true;
+        }
       case EOpLogicalXor:
         mUsesXor = true;
         outputTriplet(visit, "xor(", ", ", ")");
         break;
       case EOpLogicalAnd:
-        out << "s" << mUnfoldShortCircuit->getNextTemporaryIndex();
-        return false;
+        if (node->getRight()->hasSideEffects())
+        {
+            out << "s" << mUnfoldShortCircuit->getNextTemporaryIndex();
+            return false;
+        }
+        else
+        {
+           outputTriplet(visit, "(", " && ", ")");
+           return true;
+        }
       default: UNREACHABLE();
     }
 
@@ -2102,7 +1967,7 @@ bool OutputHLSL::visitSelection(Visit visit, TIntermSelection *node)
     {
         mUnfoldShortCircuit->traverse(node->getCondition());
 
-        out << "if(";
+        out << "if (";
 
         node->getCondition()->traverse(this);
 
@@ -2111,9 +1976,14 @@ bool OutputHLSL::visitSelection(Visit visit, TIntermSelection *node)
         outputLineDirective(node->getLine().first_line);
         out << "{\n";
 
+        bool discard = false;
+
         if (node->getTrueBlock())
         {
             traverseStatements(node->getTrueBlock());
+
+            // Detect true discard
+            discard = (discard || FindDiscard::search(node->getTrueBlock()));
         }
 
         outputLineDirective(node->getLine().first_line);
@@ -2131,6 +2001,15 @@ bool OutputHLSL::visitSelection(Visit visit, TIntermSelection *node)
 
             outputLineDirective(node->getFalseBlock()->getLine().first_line);
             out << ";\n}\n";
+
+            // Detect false discard
+            discard = (discard || FindDiscard::search(node->getFalseBlock()));
+        }
+
+        // ANGLE issue 486: Detect problematic conditional discard
+        if (discard && FindSideEffectRewriting::search(node))
+        {
+            mUsesDiscardRewriting = true;
         }
     }
 
@@ -2228,7 +2107,9 @@ bool OutputHLSL::visitBranch(Visit visit, TIntermBranch *node)
 
     switch (node->getFlowOp())
     {
-      case EOpKill:     outputTriplet(visit, "discard;\n", "", "");  break;
+      case EOpKill:
+        outputTriplet(visit, "discard;\n", "", "");
+        break;
       case EOpBreak:
         if (visit == PreVisit)
         {
@@ -2451,7 +2332,7 @@ bool OutputHLSL::handleExcessiveLoop(TIntermLoop *node)
 
                 if (!firstLoopFragment)
                 {
-                    out << "if(!Break";
+                    out << "if (!Break";
                     index->traverse(this);
                     out << ") {\n";
                 }
@@ -2863,7 +2744,7 @@ void OutputHLSL::addConstructor(const TType &type, const TString &name, const TI
             const size_t parameterSize = parameter.getObjectSize();
             bool moreParameters = parameterIndex + 1 < ctorParameters.size();
 
-            constructor += "x" + str(parameterIndex);
+            constructor += "x" + str(static_cast<int>(parameterIndex));
 
             if (parameter.isScalar())
             {

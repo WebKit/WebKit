@@ -246,10 +246,6 @@ typedef void *EGLClientBuffer;
 
 /* EGL Functions */
 
-#if defined(_MSC_VER) && !defined(ANGLE_WEBKIT_WIN)
-#include <EGL/eglsoftlinking.h>
-#else
-
 EGLAPI EGLint EGLAPIENTRY eglGetError(void);
 
 EGLAPI EGLDisplay EGLAPIENTRY eglGetDisplay(EGLNativeDisplayType display_id);
@@ -325,8 +321,6 @@ typedef void (*__eglMustCastToProperFunctionPointerType)(void);
 /* Now, define eglGetProcAddress using the generic function ptr. type */
 EGLAPI __eglMustCastToProperFunctionPointerType EGLAPIENTRY
        eglGetProcAddress(const char *procname);
-
-#endif
 
 #ifdef __cplusplus
 }

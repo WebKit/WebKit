@@ -24,14 +24,14 @@ struct TSourceLoc {
 //
 // Put POOL_ALLOCATOR_NEW_DELETE in base classes to make them use this scheme.
 //
-#define POOL_ALLOCATOR_NEW_DELETE(A)                                  \
-    void* operator new(size_t s) { return (A).allocate(s); }          \
-    void* operator new(size_t, void *_Where) { return (_Where);	}     \
-    void operator delete(void*) { }                                   \
-    void operator delete(void *, void *) { }                          \
-    void* operator new[](size_t s) { return (A).allocate(s); }        \
-    void* operator new[](size_t, void *_Where) { return (_Where);	} \
-    void operator delete[](void*) { }                                 \
+#define POOL_ALLOCATOR_NEW_DELETE()                                                  \
+    void* operator new(size_t s) { return GetGlobalPoolAllocator()->allocate(s); }   \
+    void* operator new(size_t, void *_Where) { return (_Where); }                    \
+    void operator delete(void*) { }                                                  \
+    void operator delete(void *, void *) { }                                         \
+    void* operator new[](size_t s) { return GetGlobalPoolAllocator()->allocate(s); } \
+    void* operator new[](size_t, void *_Where) { return (_Where); }                  \
+    void operator delete[](void*) { }                                                \
     void operator delete[](void *, void *) { }
 
 //
@@ -42,7 +42,7 @@ typedef std::basic_string <char, std::char_traits<char>, TStringAllocator> TStri
 typedef std::basic_ostringstream<char, std::char_traits<char>, TStringAllocator> TStringStream;
 inline TString* NewPoolTString(const char* s)
 {
-	void* memory = GlobalPoolAllocator.allocate(sizeof(TString));
+	void* memory = GetGlobalPoolAllocator()->allocate(sizeof(TString));
 	return new(memory) TString(s);
 }
 

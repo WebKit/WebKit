@@ -7,15 +7,14 @@
 #ifndef COMPILER_UTIL_H
 #define COMPILER_UTIL_H
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+// atof_clamp is like atof but
+//   1. it forces C locale, i.e. forcing '.' as decimal point.
+//   2. it clamps the value to -FLT_MAX or FLT_MAX if overflow happens.
+// Return false if overflow happens.
+extern bool atof_clamp(const char *str, float *value);
 
-// atof_dot is like atof but forcing C locale, i.e. forcing '.' as decimal point.
-double atof_dot(const char *str);
-
-#ifdef __cplusplus
-} // end extern "C"
-#endif
+// If overflow happens, clamp the value to INT_MIN or INT_MAX.
+// Return false if overflow happens.
+extern bool atoi_clamp(const char *str, int *value);
 
 #endif // COMPILER_UTIL_H

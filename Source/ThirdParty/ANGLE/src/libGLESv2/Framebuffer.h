@@ -12,7 +12,7 @@
 
 #include "common/angleutils.h"
 #include "common/RefCountObject.h"
-#include "constants.h"
+#include "Constants.h"
 
 namespace rx
 {

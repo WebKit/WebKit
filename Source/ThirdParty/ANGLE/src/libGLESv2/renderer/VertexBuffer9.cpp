@@ -95,7 +95,14 @@ bool VertexBuffer9::storeVertexAttributes(const gl::VertexAttribute &attrib, GLi
         DWORD lockFlags = mDynamicUsage ? D3DLOCK_NOOVERWRITE : 0;
 
         void *mapPtr = NULL;
-        HRESULT result = mVertexBuffer->Lock(offset, spaceRequired(attrib, count, instances), &mapPtr, lockFlags);
+
+        unsigned int mapSize;
+        if (!spaceRequired(attrib, count, instances, &mapSize))
+        {
+            return false;
+        }
+
+        HRESULT result = mVertexBuffer->Lock(offset, mapSize, &mapPtr, lockFlags);
 
         if (FAILED(result))
         {
@@ -167,19 +174,21 @@ bool VertexBuffer9::storeRawData(const void* data, unsigned int size, unsigned i
     }
 }
 
-unsigned int VertexBuffer9::getSpaceRequired(const gl::VertexAttribute &attrib, GLsizei count, GLsizei instances) const
+bool VertexBuffer9::getSpaceRequired(const gl::VertexAttribute &attrib, GLsizei count, GLsizei instances,
+                                     unsigned int *outSpaceRequired) const
 {
-    return spaceRequired(attrib, count, instances);
+    return spaceRequired(attrib, count, instances, outSpaceRequired);
 }
 
 bool VertexBuffer9::requiresConversion(const gl::VertexAttribute &attrib) const
 {
-    return formatConverter(attrib).identity;
+    return !formatConverter(attrib).identity;
 }
 
 unsigned int VertexBuffer9::getVertexSize(const gl::VertexAttribute &attrib) const
 {
-    return spaceRequired(attrib, 1, 0);
+    unsigned int spaceRequired;
+    return getSpaceRequired(attrib, 1, 0, &spaceRequired) ? spaceRequired : 0;
 }
 
 D3DDECLTYPE VertexBuffer9::getDeclType(const gl::VertexAttribute &attrib) const
@@ -469,17 +478,52 @@ const VertexBuffer9::FormatConverter &VertexBuffer9::formatConverter(const gl::V
     return mFormatConverters[typeIndex(attribute.mType)][attribute.mNormalized][attribute.mSize - 1];
 }
 
-unsigned int VertexBuffer9::spaceRequired(const gl::VertexAttribute &attrib, std::size_t count, GLsizei instances)
+bool VertexBuffer9::spaceRequired(const gl::VertexAttribute &attrib, std::size_t count, GLsizei instances,
+                                  unsigned int *outSpaceRequired)
 {
     unsigned int elementSize = formatConverter(attrib).outputElementSize;
 
-    if (instances == 0 || attrib.mDivisor == 0)
+    if (attrib.mArrayEnabled)
     {
-        return elementSize * count;
+        unsigned int elementCount = 0;
+        if (instances == 0 || attrib.mDivisor == 0)
+        {
+            elementCount = count;
+        }
+        else
+        {
+            if (static_cast<unsigned int>(instances) < std::numeric_limits<unsigned int>::max() - (attrib.mDivisor - 1))
+            {
+                // Round up
+                elementCount = (static_cast<unsigned int>(instances) + (attrib.mDivisor - 1)) / attrib.mDivisor;
+            }
+            else
+            {
+                elementCount = static_cast<unsigned int>(instances) / attrib.mDivisor;
+            }
+        }
+
+        if (elementSize <= std::numeric_limits<unsigned int>::max() / elementCount)
+        {
+            if (outSpaceRequired)
+            {
+                *outSpaceRequired = elementSize * elementCount;
+            }
+            return true;
+        }
+        else
+        {
+            return false;
+        }
     }
     else
     {
-        return elementSize * ((instances + attrib.mDivisor - 1) / attrib.mDivisor);
+        const unsigned int elementSize = 4;
+        if (outSpaceRequired)
+        {
+            *outSpaceRequired = elementSize * 4;
+        }
+        return true;
     }
 }
 

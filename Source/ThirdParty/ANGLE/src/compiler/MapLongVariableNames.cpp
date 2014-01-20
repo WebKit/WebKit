@@ -102,13 +102,6 @@ void MapLongVariableNames::visitSymbol(TIntermSymbol* symbol)
     }
 }
 
-bool MapLongVariableNames::visitLoop(Visit, TIntermLoop* node)
-{
-    if (node->getInit())
-        node->getInit()->traverse(this);
-    return true;
-}
-
 TString MapLongVariableNames::mapGlobalLongName(const TString& name)
 {
     ASSERT(mGlobalMap);

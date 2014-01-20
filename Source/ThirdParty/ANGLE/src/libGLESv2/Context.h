@@ -18,6 +18,7 @@
 
 #include <string>
 #include <map>
+#include <set>
 #ifdef _MSC_VER
 #include <hash_map>
 #else
@@ -37,7 +38,6 @@ class Renderer;
 
 namespace egl
 {
-class Display;
 class Surface;
 }
 
@@ -398,6 +398,8 @@ class Context
                          GLint dstX0, GLint dstY0, GLint dstX1, GLint dstY1,
                          GLbitfield mask);
 
+    rx::Renderer *getRenderer() { return mRenderer; }
+
   private:
     DISALLOW_COPY_AND_ASSIGN(Context);
 
@@ -418,6 +420,9 @@ class Context
 
     void initExtensionString();
     void initRendererString();
+
+    typedef std::set<unsigned> FramebufferTextureSerialSet;
+    FramebufferTextureSerialSet getBoundFramebufferTextureSerials();
 
     rx::Renderer *const mRenderer;
 

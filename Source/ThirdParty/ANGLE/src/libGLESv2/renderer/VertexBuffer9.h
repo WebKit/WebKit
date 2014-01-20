@@ -29,7 +29,7 @@ class VertexBuffer9 : public VertexBuffer
                                        unsigned int offset);
     virtual bool storeRawData(const void* data, unsigned int size, unsigned int offset);
 
-    virtual unsigned int getSpaceRequired(const gl::VertexAttribute &attrib, GLsizei count, GLsizei instances) const;
+    virtual bool getSpaceRequired(const gl::VertexAttribute &attrib, GLsizei count, GLsizei instances, unsigned int *outSpaceRequired) const;
 
     virtual bool requiresConversion(const gl::VertexAttribute &attrib) const;
 
@@ -82,7 +82,8 @@ class VertexBuffer9 : public VertexBuffer
     static unsigned int typeIndex(GLenum type);
     static const FormatConverter &formatConverter(const gl::VertexAttribute &attribute);
 
-    static unsigned int spaceRequired(const gl::VertexAttribute &attrib, std::size_t count, GLsizei instances);
+    static bool spaceRequired(const gl::VertexAttribute &attrib, std::size_t count, GLsizei instances,
+                              unsigned int *outSpaceRequired);
 };
 
 }

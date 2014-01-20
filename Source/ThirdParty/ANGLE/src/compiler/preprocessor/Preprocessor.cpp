@@ -81,6 +81,11 @@ void Preprocessor::predefineMacro(const char* name, int value)
     mImpl->macroSet[name] = macro;
 }
 
+void Preprocessor::setMaxTokenLength(size_t maxLength)
+{
+    mImpl->tokenizer.setMaxTokenLength(maxLength);
+}
+
 void Preprocessor::lex(Token* token)
 {
     bool validToken = false;
@@ -95,34 +100,6 @@ void Preprocessor::lex(Token* token)
           case Token::PP_HASH:
             assert(false);
             break;
-          case Token::CONST_INT:
-          {
-            int val = 0;
-            if (!token->iValue(&val))
-            {
-                // Do not mark the token as invalid.
-                // Just emit the diagnostic and reset value to 0.
-                mImpl->diagnostics->report(Diagnostics::INTEGER_OVERFLOW,
-                                           token->location, token->text);
-                token->text.assign("0");
-            }
-            validToken = true;
-            break;
-          }
-          case Token::CONST_FLOAT:
-          {
-            float val = 0;
-            if (!token->fValue(&val))
-            {
-                // Do not mark the token as invalid.
-                // Just emit the diagnostic and reset value to 0.0.
-                mImpl->diagnostics->report(Diagnostics::FLOAT_OVERFLOW,
-                                           token->location, token->text);
-                token->text.assign("0.0");
-            }
-            validToken = true;
-            break;
-          }
           case Token::PP_NUMBER:
             mImpl->diagnostics->report(Diagnostics::INVALID_NUMBER,
                                        token->location, token->text);

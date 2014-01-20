@@ -31,6 +31,14 @@ bool UnfoldShortCircuit::visitBinary(Visit visit, TIntermBinary *node)
 {
     TInfoSinkBase &out = mOutputHLSL->getBodyStream();
 
+    // If our right node doesn't have side effects, we know we don't need to unfold this
+    // expression: there will be no short-circuiting side effects to avoid
+    // (note: unfolding doesn't depend on the left node -- it will always be evaluated)
+    if (!node->getRight()->hasSideEffects())
+    {
+        return true;
+    }
+
     switch (node->getOp())
     {
       case EOpLogicalOr:
@@ -49,7 +57,7 @@ bool UnfoldShortCircuit::visitBinary(Visit visit, TIntermBinary *node)
             mTemporaryIndex = i + 1;
             node->getLeft()->traverse(mOutputHLSL);
             out << ";\n";
-            out << "if(!s" << i << ")\n"
+            out << "if (!s" << i << ")\n"
                    "{\n";
             mTemporaryIndex = i + 1;
             node->getRight()->traverse(this);
@@ -80,7 +88,7 @@ bool UnfoldShortCircuit::visitBinary(Visit visit, TIntermBinary *node)
             mTemporaryIndex = i + 1;
             node->getLeft()->traverse(mOutputHLSL);
             out << ";\n";
-            out << "if(s" << i << ")\n"
+            out << "if (s" << i << ")\n"
                    "{\n";
             mTemporaryIndex = i + 1;
             node->getRight()->traverse(this);
@@ -115,7 +123,7 @@ bool UnfoldShortCircuit::visitSelection(Visit visit, TIntermSelection *node)
 
         mTemporaryIndex = i + 1;
         node->getCondition()->traverse(this);
-        out << "if(";
+        out << "if (";
         mTemporaryIndex = i + 1;
         node->getCondition()->traverse(mOutputHLSL);
         out << ")\n"

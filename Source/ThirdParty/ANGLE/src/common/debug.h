@@ -99,8 +99,10 @@ namespace gl
     #define UNREACHABLE() ERR("\t! Unreachable reached: %s(%d)\n", __FUNCTION__, __LINE__)
 #endif
 
-// A macro that determines whether an object has a given runtime type.
-#if !defined(NDEBUG) && (!defined(_MSC_VER) || defined(_CPPRTTI))
+// A macro that determines whether an object has a given runtime type. MSVC uses _CPPRTTI.
+// GCC uses __GXX_RTTI, but the macro was introduced in version 4.3, so we assume that all older
+// versions support RTTI.
+#if !defined(NDEBUG) && (!defined(_MSC_VER) || defined(_CPPRTTI)) && (!defined(__GNUC__) || __GNUC__ < 4 || (__GNUC__ == 4 && __GNUC_MINOR__ < 3) || defined(__GXX_RTTI))
 #define HAS_DYNAMIC_TYPE(type, obj) (dynamic_cast<type >(obj) != NULL)
 #else
 #define HAS_DYNAMIC_TYPE(type, obj) true

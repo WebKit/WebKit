@@ -33,6 +33,10 @@
    This special exception was added by the Free Software Foundation in
    version 2.2 of Bison.  */
 
+#define YYLTYPE TSourceLoc
+#define YYLTYPE_IS_DECLARED 1
+#define SH_MAX_TOKEN_LENGTH 256  // WebGL spec.
+
 /* Tokens.  */
 #ifndef YYTOKENTYPE
 # define YYTOKENTYPE
@@ -266,10 +270,11 @@ typedef union YYSTYPE
 }
 /* Line 1529 of yacc.c.  */
 
-	YYSTYPE;
+    YYSTYPE;
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
 # define YYSTYPE_IS_DECLARED 1
 # define YYSTYPE_IS_TRIVIAL 1
+
 #endif
 
 

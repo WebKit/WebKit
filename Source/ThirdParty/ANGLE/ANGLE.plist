@@ -10,9 +10,9 @@
 		<key>OpenSourceWebsiteURL</key>
 		<string>http://code.google.com/p/angleproject/</string>
 		<key>OpenSourceSCM</key>
-		<string>git clone https://code.google.com/p/angleproject/ && cd angleproject && git checkout 047373aa3eb408be62be52ade840fa5f11e72337</string>
+		<string>git clone https://code.google.com/p/angleproject/ && cd angleproject && git checkout a60e0805721f62c28a55faf2df74472cc5fc91fc</string>
 		<key>OpenSourceImportDate</key>
-		<string>2013-07-22</string>
+		<string>2013-11-07</string>
 		<key>OpenSourceLicense</key>
 		<string>BSD</string>
 		<key>OpenSourceLicenseFile</key>

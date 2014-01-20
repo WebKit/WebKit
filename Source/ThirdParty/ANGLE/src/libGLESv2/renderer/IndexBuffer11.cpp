@@ -75,7 +75,8 @@ bool IndexBuffer11::mapBuffer(unsigned int offset, unsigned int size, void** out
 {
     if (mBuffer)
     {
-        if (offset + size > mBufferSize)
+        // Check for integer overflows and out-out-bounds map requests
+        if (offset + size < offset || offset + size > mBufferSize)
         {
             ERR("Index buffer map range is not inside the buffer.");
             return false;

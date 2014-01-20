@@ -4,30 +4,25 @@
 // found in the LICENSE file.
 //
 
-#include <math.h>
-#include <stdlib.h>
+#include "compiler/util.h"
 
-#include "util.h"
+#include <limits>
 
-#ifdef _MSC_VER
-    #include <locale.h>
-#else
-    #include <sstream>
-#endif
+#include "compiler/preprocessor/numeric_lex.h"
 
-double atof_dot(const char *str)
+bool atof_clamp(const char *str, float *value)
 {
-#ifdef _MSC_VER
-    _locale_t l = _create_locale(LC_NUMERIC, "C");
-    double result = _atof_l(str, l);
-    _free_locale(l);
-    return result;
-#else
-    double result;
-    std::istringstream s(str);
-    std::locale l("C");
-    s.imbue(l);
-    s >> result;
-    return result;
-#endif
+    bool success = pp::numeric_lex_float(str, value);
+    if (!success)
+        *value = std::numeric_limits<float>::max();
+    return success;
 }
+
+bool atoi_clamp(const char *str, int *value)
+{
+    bool success = pp::numeric_lex_int(str, value);
+    if (!success)
+        *value = std::numeric_limits<int>::max();
+    return success;
+}
+

@@ -27,16 +27,9 @@ class RenderTarget11 : public RenderTarget
 
     static RenderTarget11 *makeRenderTarget11(RenderTarget *renderTarget);
 
-    // Adds reference, caller must call Release
     ID3D11Texture2D *getTexture() const;
-
-    // Adds reference, caller must call Release
     ID3D11RenderTargetView *getRenderTargetView() const;
-
-    // Adds reference, caller must call Release
     ID3D11DepthStencilView *getDepthStencilView() const;
-
-    // Adds reference, caller must call Release
     ID3D11ShaderResourceView *getShaderResourceView() const;
 
     unsigned int getSubresourceIndex() const;

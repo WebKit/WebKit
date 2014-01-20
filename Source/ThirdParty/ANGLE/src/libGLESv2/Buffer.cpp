@@ -40,6 +40,7 @@ Buffer::~Buffer()
 void Buffer::bufferData(const void *data, GLsizeiptr size, GLenum usage)
 {
     mBufferStorage->clear();
+    mIndexRangeCache.clear();
     mBufferStorage->setData(data, size, 0);
 
     mUsage = usage;
@@ -56,6 +57,7 @@ void Buffer::bufferData(const void *data, GLsizeiptr size, GLenum usage)
 void Buffer::bufferSubData(const void *data, GLsizeiptr size, GLintptr offset)
 {
     mBufferStorage->setData(data, size, offset);
+    mIndexRangeCache.invalidateRange(offset, size);
 
     if ((mStaticVertexBuffer && mStaticVertexBuffer->getBufferSize() != 0) || (mStaticIndexBuffer && mStaticIndexBuffer->getBufferSize() != 0))
     {
@@ -70,7 +72,7 @@ rx::BufferStorage *Buffer::getStorage() const
     return mBufferStorage;
 }
 
-unsigned int Buffer::size()
+unsigned int Buffer::size() const
 {
     return mBufferStorage->getSize();
 }
@@ -114,6 +116,11 @@ void Buffer::promoteStaticUsage(int dataSize)
             mStaticIndexBuffer = new rx::StaticIndexBufferInterface(mRenderer);
         }
     }
+}
+
+rx::IndexRangeCache *Buffer::getIndexRangeCache()
+{
+    return &mIndexRangeCache;
 }
 
 }

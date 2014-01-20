@@ -307,6 +307,7 @@ void Shader::parseVaryings()
         mUsesPointCoord = strstr(mHlsl, "GL_USES_POINT_COORD") != NULL;
         mUsesDepthRange = strstr(mHlsl, "GL_USES_DEPTH_RANGE") != NULL;
         mUsesFragDepth = strstr(mHlsl, "GL_USES_FRAG_DEPTH") != NULL;
+        mUsesDiscardRewriting = strstr(mHlsl, "ANGLE_USES_DISCARD_REWRITING") != NULL;
     }
 }
 
@@ -340,6 +341,7 @@ void Shader::uncompile()
     mUsesPointCoord = false;
     mUsesDepthRange = false;
     mUsesFragDepth = false;
+    mUsesDiscardRewriting = false;
 
     mActiveUniforms.clear();
 }

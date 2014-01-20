@@ -435,7 +435,7 @@ bool TOutputGLSLBase::visitSelection(Visit visit, TIntermSelection* node)
         node->getCondition()->traverse(this);
         out << ")\n";
 
-        incrementDepth();
+        incrementDepth(node);
         visitCodeBlock(node->getTrueBlock());
 
         if (node->getFalseBlock())
@@ -460,7 +460,7 @@ bool TOutputGLSLBase::visitAggregate(Visit visit, TIntermAggregate* node)
             // Scope the sequences except when at the global scope.
             if (depth > 0) out << "{\n";
 
-            incrementDepth();
+            incrementDepth(node);
             const TIntermSequence& sequence = node->getSequence();
             for (TIntermSequence::const_iterator iter = sequence.begin();
                  iter != sequence.end(); ++iter)
@@ -498,7 +498,7 @@ bool TOutputGLSLBase::visitAggregate(Visit visit, TIntermAggregate* node)
             writeVariableType(node->getType());
             out << " " << hashFunctionName(node->getName());
 
-            incrementDepth();
+            incrementDepth(node);
             // Function definition node contains one or two children nodes
             // representing function parameters and function body. The latter
             // is not present in case of empty function bodies.
@@ -638,7 +638,7 @@ bool TOutputGLSLBase::visitLoop(Visit visit, TIntermLoop* node)
 {
     TInfoSinkBase& out = objSink();
 
-    incrementDepth();
+    incrementDepth(node);
     // Loop header.
     TLoopType loopType = node->getType();
     if (loopType == ELoopFor)  // for loop

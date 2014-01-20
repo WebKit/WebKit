@@ -1,3 +1,16 @@
+2013-11-19  Roger Fong  <roger_fong@apple.com>
+
+        Update ANGLE sources.
+        https://bugs.webkit.org/show_bug.cgi?id=124615.
+
+        Reviewed by Dean Jackson.
+
+        Tests covered by Khronos WebGL conformance tests.
+
+        * platform/graphics/ANGLEWebKitBridge.cpp: Resolve a build error that resulted from updating ANGLE.
+        (WebCore::getSymbolInfo):
+        (WebCore::ANGLEWebKitBridge::compileShaderSource):
+
 2013-12-07  Gustavo Noronha Silva  <gns@gnome.org>
 
         ubuntu software center hits _XReadEvents() error

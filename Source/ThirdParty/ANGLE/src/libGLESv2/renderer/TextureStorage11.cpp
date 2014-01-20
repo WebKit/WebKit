@@ -69,7 +69,6 @@ bool TextureStorage11::IsTextureFormatRenderable(DXGI_FORMAT format)
       case DXGI_FORMAT_R8G8B8A8_UNORM:
       case DXGI_FORMAT_A8_UNORM:
       case DXGI_FORMAT_R32G32B32A32_FLOAT:
-      case DXGI_FORMAT_R32G32B32_FLOAT:
       case DXGI_FORMAT_R16G16B16A16_FLOAT:
       case DXGI_FORMAT_B8G8R8A8_UNORM:
       case DXGI_FORMAT_R8_UNORM:
@@ -80,6 +79,7 @@ bool TextureStorage11::IsTextureFormatRenderable(DXGI_FORMAT format)
       case DXGI_FORMAT_BC1_UNORM:
       case DXGI_FORMAT_BC2_UNORM: 
       case DXGI_FORMAT_BC3_UNORM:
+      case DXGI_FORMAT_R32G32B32_FLOAT: // not renderable on all devices
         return false;
       default:
         UNREACHABLE();
@@ -186,15 +186,6 @@ void TextureStorage11::generateMipmapLayer(RenderTarget11 *source, RenderTarget1
             mRenderer->copyTexture(sourceSRV, sourceArea, source->getWidth(), source->getHeight(),
                                    destRTV, destArea, dest->getWidth(), dest->getHeight(),
                                    GL_RGBA);
-        }
-
-        if (sourceSRV)
-        {
-            sourceSRV->Release();
-        }
-        if (destRTV)
-        {
-            destRTV->Release();
         }
     }
 }
@@ -558,7 +549,7 @@ RenderTarget *TextureStorage11_Cube::getRenderTarget(GLenum faceTarget, int leve
 
             D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc;
             srvDesc.Format = mShaderResourceFormat;
-            srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURECUBE;
+            srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2DARRAY; // Will be used with Texture2D sampler, not TextureCube
             srvDesc.Texture2DArray.MostDetailedMip = level;
             srvDesc.Texture2DArray.MipLevels = 1;
             srvDesc.Texture2DArray.FirstArraySlice = faceIdx;

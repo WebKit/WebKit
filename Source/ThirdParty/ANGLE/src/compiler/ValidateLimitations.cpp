@@ -7,7 +7,7 @@
 #include "compiler/ValidateLimitations.h"
 #include "compiler/InfoSink.h"
 #include "compiler/InitializeParseContext.h"
-#include "compiler/ParseHelper.h"
+#include "compiler/ParseContext.h"
 
 namespace {
 bool IsLoopIndex(const TIntermSymbol* symbol, const TLoopStack& stack) {
@@ -435,7 +435,7 @@ bool ValidateLimitations::validateFunctionCall(TIntermAggregate* node)
         return true;
 
     bool valid = true;
-    TSymbolTable& symbolTable = GlobalParseContext->symbolTable;
+    TSymbolTable& symbolTable = GetGlobalParseContext()->symbolTable;
     TSymbol* symbol = symbolTable.find(node->getName());
     ASSERT(symbol && symbol->isFunction());
     TFunction* function = static_cast<TFunction*>(symbol);
@@ -457,7 +457,7 @@ bool ValidateLimitations::validateFunctionCall(TIntermAggregate* node)
 bool ValidateLimitations::validateOperation(TIntermOperator* node,
                                             TIntermNode* operand) {
     // Check if loop index is modified in the loop body.
-    if (!withinLoopBody() || !node->modifiesState())
+    if (!withinLoopBody() || !node->isAssignment())
         return true;
 
     const TIntermSymbol* symbol = operand->getAsSymbolNode();

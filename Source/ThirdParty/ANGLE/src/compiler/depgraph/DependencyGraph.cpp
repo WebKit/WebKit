@@ -4,9 +4,7 @@
 // found in the LICENSE file.
 //
 
-#if defined(_MSC_VER)
 #pragma warning(disable: 4718)
-#endif
 
 #include "compiler/depgraph/DependencyGraph.h"
 #include "compiler/depgraph/DependencyGraphBuilder.h"
