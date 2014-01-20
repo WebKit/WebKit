@@ -22,6 +22,7 @@
 #include "WebProcessTest.h"
 #include <gio/gio.h>
 #include <webkit2/webkit-web-extension.h>
+#include <wtf/gobject/GOwnPtr.h>
 
 class WebKitDOMNodeTest : public WebProcessTest {
 public:
@@ -169,12 +170,36 @@ private:
         return true;
     }
 
+    bool testTagNames(WebKitWebExtension* extension, GVariant* args)
+    {
+        static const char* expectedTagNames[] = { "HTML", "HEAD", "BODY", "VIDEO", "SOURCE", "VIDEO", "SOURCE", "INPUT" };
+
+        WebKitWebPage* page = webkit_web_extension_get_page(extension, webPageFromArgs(args));
+        g_assert(WEBKIT_IS_WEB_PAGE(page));
+        WebKitDOMDocument* document = webkit_web_page_get_dom_document(page);
+        g_assert(WEBKIT_DOM_IS_DOCUMENT(document));
+
+        WebKitDOMNodeList* list = webkit_dom_document_get_elements_by_tag_name(document, "*");
+        gulong nodeCount = webkit_dom_node_list_get_length(list);
+        g_assert_cmpuint(nodeCount, ==, G_N_ELEMENTS(expectedTagNames));
+        for (unsigned i = 0; i < nodeCount; i++) {
+            WebKitDOMNode* node = webkit_dom_node_list_item(list, i);
+            g_assert(WEBKIT_DOM_IS_NODE(node));
+            GOwnPtr<char> tagName(webkit_dom_node_get_node_name(node));
+            g_assert_cmpstr(tagName.get(), ==, expectedTagNames[i]);
+        }
+
+        return true;
+    }
+
     virtual bool runTest(const char* testName, WebKitWebExtension* extension, GVariant* args)
     {
         if (!strcmp(testName, "hierarchy-navigation"))
             return testHierarchyNavigation(extension, args);
         if (!strcmp(testName, "insertion"))
             return testInsertion(extension, args);
+        if (!strcmp(testName, "tag-names"))
+            return testTagNames(extension, args);
 
         g_assert_not_reached();
         return false;
@@ -185,6 +210,7 @@ static void __attribute__((constructor)) registerTests()
 {
     REGISTER_TEST(WebKitDOMNodeTest, "WebKitDOMNode/hierarchy-navigation");
     REGISTER_TEST(WebKitDOMNodeTest, "WebKitDOMNode/insertion");
+    REGISTER_TEST(WebKitDOMNodeTest, "WebKitDOMNode/tag-names");
 }
 
 
