@@ -1,3 +1,10 @@
+2014-01-20  Alexey Proskuryakov  <ap@apple.com>
+
+        svg/filters/feComponentTransfer-style-crash.xhtml is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=127310
+
+        * platform/mac/TestExpectations: Marked it as such.
+
 2014-01-20  Morten Stenshorne  <mstensho@opera.com>
 
         Region based multicol: support explicit column breaks

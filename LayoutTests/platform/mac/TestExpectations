@@ -1354,3 +1354,5 @@ webkit.org/b/126898 css3/flexbox/image-percent-max-height.html
 webkit.org/b/126900 svg/zoom/page/zoom-zoom-coords.xhtml
 
 webkit.org/b/35297 media/video-display-aspect-ratio.html [ Pass Failure ]
+
+webkit.org/b/127310 svg/filters/feComponentTransfer-style-crash.xhtml [ Pass Failure Timeout ]
