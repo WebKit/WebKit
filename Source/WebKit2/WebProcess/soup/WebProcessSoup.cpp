@@ -98,6 +98,7 @@ void WebProcess::platformSetCacheModel(CacheModel cacheModel)
                         cacheTotalCapacity, cacheMinDeadCapacity, cacheMaxDeadCapacity, deadDecodedDataDeletionInterval,
                         pageCacheCapacity, urlCacheMemoryCapacity, urlCacheDiskCapacity);
 
+    WebCore::memoryCache()->setDisabled(cacheModel == CacheModelDocumentViewer);
     WebCore::memoryCache()->setCapacities(cacheMinDeadCapacity, cacheMaxDeadCapacity, cacheTotalCapacity);
     WebCore::memoryCache()->setDeadDecodedDataDeletionInterval(deadDecodedDataDeletionInterval);
     WebCore::pageCache()->setCapacity(pageCacheCapacity);
