@@ -1222,7 +1222,7 @@ class Port(object):
             if self._is_redhat_based():
                 return 'fedora-httpd-' + self._apache_version() + '.conf'
             if self._is_debian_based():
-                return 'apache2-debian-httpd.conf'
+                return 'debian-httpd-' + self._apache_version() + '.conf'
             if self._is_arch_based():
                 return 'archlinux-httpd.conf'
         # All platforms use apache2 except for CYGWIN (and Mac OS X Tiger and prior, which we no longer support).
