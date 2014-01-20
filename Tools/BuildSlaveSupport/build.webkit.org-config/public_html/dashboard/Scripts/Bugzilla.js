@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,40 +23,21 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-EWS = function()
+Bugzilla = function()
 {
-    const queueInfo = {
-        "mac": {platform: Dashboard.Platform.MacOSXMountainLion, title: "WebKit1 Release Tests"},
-        "mac-wk2": {platform: Dashboard.Platform.MacOSXMountainLion, title: "WebKit2 Release Tests"},
-        "win": {platform: Dashboard.Platform.Windows7, title: "WebKit1 Release Build"},
-        "gtk": {platform: Dashboard.Platform.LinuxGTK, title: "WebKit1 Release Build"},
-        "gtk-wk2": {platform: Dashboard.Platform.LinuxGTK, title: "WebKit2 Release Build"},
-        "efl": {platform: Dashboard.Platform.LinuxEFL, title: "WebKit1 Release Build"},
-        "efl-wk2": {platform: Dashboard.Platform.LinuxEFL, title: "WebKit2 Release Build"}
-    };
-
     BaseObject.call(this);
 
-    this.baseURL = "http://webkit-queues.appspot.com/";
-    this.queues = {};
-
-    for (var id in queueInfo)
-        this.queues[id] = new EWSQueue(this, id, queueInfo[id]);
+    this.baseURL = "https://bugs.webkit.org/";
 };
 
-BaseObject.addConstructorFunctions(EWS);
+BaseObject.addConstructorFunctions(Bugzilla);
 
-EWS.prototype = {
-    constructor: EWS,
+Bugzilla.prototype = {
+    constructor: Bugzilla,
     __proto__: BaseObject.prototype,
 
-    jsonQueueLengthURL: function(queueID)
+    detailsURLForAttachment: function(attachmentID)
     {
-        return this.baseURL + "queue-length-json/" + encodeURIComponent(queueID) + "-ews";
-    },
-
-    jsonQueueStatusURL: function(queueID)
-    {
-        return this.baseURL + "queue-status-json/" + encodeURIComponent(queueID) + "-ews";
+        return this.baseURL + "attachment.cgi?id=" + encodeURIComponent(attachmentID) + "&action=edit";
     },
 };

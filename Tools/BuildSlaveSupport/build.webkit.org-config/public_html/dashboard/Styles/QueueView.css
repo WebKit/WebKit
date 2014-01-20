@@ -75,14 +75,6 @@
     padding: 1px 6px 1px 6px;
 }
 
-.build-logs-popover {
-    font-family: "HelveticaNeue-Light", "Helvetica Neue", sans-serif;
-    color: rgb(145, 135, 95);
-    font-size: 12px;
-    text-align: left;
-    padding: 1px 6px 1px 6px;
-}
-
 .build-logs-popover .build-logs-heading {
     display: inline;
 }
@@ -115,15 +107,42 @@
 
 .test-results-popover .failure-kind-indicator {
     color: rgb(191, 67, 41);
-    padding: 0px 0px 0px 7px;
+    padding-left: 7px;
 }
 
 .test-results-popover .test-history-link {
     color: rgb(145, 135, 95);
-    padding: 0px 0px 0px 7px;
+    padding-left: 7px;
 }
 
 .test-results-popover .additional-link {
     color: rgb(145, 135, 95);
-    padding: 0px 0px 0px 7px;
+    padding-left: 7px;
+}
+
+.ews-popover {
+    font-family: "HelveticaNeue-Light", "Helvetica Neue", sans-serif;
+    color: rgb(145, 135, 95);
+    font-size: 12px;
+    text-align: left;
+    padding: 1px 6px 1px 6px;
+}
+
+.ews-popover .popover-queue-heading .queue-status-link,
+.ews-popover .popover-queue-heading .queue-charts-link {
+    color: rgb(145, 135, 95);
+    padding-left: 7px;
+}
+
+.ews-popover .latest-status-with-link,
+.ews-popover .latest-status-no-link {
+    color: black;
+    padding-left: 7px;
+}
+
+.ews-popover .failure-count,
+.ews-popover .time-since-message,
+.ews-popover .bugzilla-link,
+.ews-popover .bot-status-description {
+    padding-left: 7px;
 }

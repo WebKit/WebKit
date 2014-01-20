@@ -1,5 +1,55 @@
 2014-01-20  Alexey Proskuryakov  <ap@apple.com>
 
+        build.webkit.org/dashboard should display information about patches in EWS
+        https://bugs.webkit.org/show_bug.cgi?id=127006
+
+        Reviewed by Ryosuke Niwa.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/index.html:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/Bugzilla.js: Added.
+        (Bugzilla.prototype.detailsURLForAttachment):
+        Added a class for Bugzilla. So far, the only thing it can do is build patch URLs,
+        which is needed when one wants to do something with a patch EWS is stuck on.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/Initialization.js:
+        Create a Bugzilla instance.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/EWS.js:
+        (EWS.prototype.jsonQueueLengthURL):
+        (EWS.prototype.jsonQueueStatusURL):
+        Build JSON ULRs here, not in EWSQueue, as this is how other classes are structured.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/EWSQueue.js:
+        (EWSQueue.prototype.get statusPageURL): Changed to use a URL provided by EWS instead
+        of second guessing.
+        (EWSQueue.prototype.get chartsPageURL): Added.
+        (EWSQueue.prototype.get loadedDetailedStatus): Tells whether we currently have
+        additional data already loaded (it's reset with every update).
+        (EWSQueue.prototype.get patches): Get patch queue.
+        (EWSQueue.prototype.get bots): Get bots.
+        (EWSQueue.prototype.update): Changed to use a specialized cheaper URL.
+        (EWSQueue.prototype.loadDetailedStatus): Load and transform detailed status JSON.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/EWSQueueView.js:
+        (EWSQueueView.prototype.update.appendQueue): Add a popover is there are any patches
+        in the queue.
+        (EWSQueueView.prototype.addLinkToRow): A helper to build the popover.
+        (EWSQueueView.prototype.addTextToRow): Ditto.
+        (EWSQueueView.prototype._addQueueHeadingToPopover): Ditto.
+        (EWSQueueView.prototype._addBotsHeadingToPopover): Ditto.
+        (EWSQueueView.prototype._addDividerToPopover): Ditto.
+        (EWSQueueView.prototype._timeIntervalString): A helper to format a timestamp into a
+        relative string.
+        (EWSQueueView.prototype._popoverContentForEWSQueue): Build the popover.
+        (EWSQueueView.prototype._presentPopoverForEWSQueue): Start loading data, and present
+        it when done.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Styles/QueueView.css:
+        Added rules for EWS popover. Removed a duplicate rule for build-logs-popover.
+        Changed a few difficult to read padding styles to padding-left.
+
+2014-01-20  Alexey Proskuryakov  <ap@apple.com>
+
         Fix webkitpy tests.
 
         * Scripts/webkitpy/common/net/web_mock.py: (MockBrowser.set_handle_robots):
