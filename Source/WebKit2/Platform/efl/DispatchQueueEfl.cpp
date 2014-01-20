@@ -170,7 +170,7 @@ void DispatchQueue::performTimerWork()
         m_timerWorkItems.swap(timerWorkItems);
     }
 
-    double currentTimeSeconds = currentTime();
+    double currentTimeSeconds = monotonicallyIncreasingTime();
 
     for (size_t i = 0; i < timerWorkItems.size(); ++i) {
         if (!timerWorkItems[i]->hasExpired(currentTimeSeconds)) {
@@ -241,7 +241,7 @@ timeval* DispatchQueue::getNextTimeOut() const
     static timeval timeValue;
     timeValue.tv_sec = 0;
     timeValue.tv_usec = 0;
-    double timeOut = m_timerWorkItems[0]->expirationTimeSeconds() - currentTime();
+    double timeOut = m_timerWorkItems[0]->expirationTimeSeconds() - monotonicallyIncreasingTime();
     if (timeOut > 0) {
         timeValue.tv_sec = static_cast<long>(timeOut);
         timeValue.tv_usec = static_cast<long>((timeOut - timeValue.tv_sec) * microSecondsPerSecond);
