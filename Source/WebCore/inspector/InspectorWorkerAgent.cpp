@@ -83,7 +83,7 @@ public:
 
 private:
     // WorkerGlobalScopeProxy::PageInspector implementation
-    virtual void dispatchMessageFromWorker(const String& message)
+    virtual void dispatchMessageFromWorker(const String& message) override
     {
         RefPtr<InspectorValue> value = InspectorValue::parseJSON(message);
         if (!value)

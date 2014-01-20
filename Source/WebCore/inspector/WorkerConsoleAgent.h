@@ -47,7 +47,7 @@ public:
     virtual bool isWorkerAgent() override { return true; }
 
 private:
-    virtual void addInspectedNode(ErrorString*, int nodeId);
+    virtual void addInspectedNode(ErrorString*, int nodeId) override;
 };
 
 } // namespace WebCore

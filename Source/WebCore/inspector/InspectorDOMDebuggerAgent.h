@@ -62,14 +62,14 @@ public:
     virtual ~InspectorDOMDebuggerAgent();
 
     // DOMDebugger API
-    virtual void setXHRBreakpoint(ErrorString*, const String& url);
-    virtual void removeXHRBreakpoint(ErrorString*, const String& url);
-    virtual void setEventListenerBreakpoint(ErrorString*, const String& eventName);
-    virtual void removeEventListenerBreakpoint(ErrorString*, const String& eventName);
-    virtual void setInstrumentationBreakpoint(ErrorString*, const String& eventName);
-    virtual void removeInstrumentationBreakpoint(ErrorString*, const String& eventName);
-    virtual void setDOMBreakpoint(ErrorString*, int nodeId, const String& type);
-    virtual void removeDOMBreakpoint(ErrorString*, int nodeId, const String& type);
+    virtual void setXHRBreakpoint(ErrorString*, const String& url) override;
+    virtual void removeXHRBreakpoint(ErrorString*, const String& url) override;
+    virtual void setEventListenerBreakpoint(ErrorString*, const String& eventName) override;
+    virtual void removeEventListenerBreakpoint(ErrorString*, const String& eventName) override;
+    virtual void setInstrumentationBreakpoint(ErrorString*, const String& eventName) override;
+    virtual void removeInstrumentationBreakpoint(ErrorString*, const String& eventName) override;
+    virtual void setDOMBreakpoint(ErrorString*, int nodeId, const String& type) override;
+    virtual void removeDOMBreakpoint(ErrorString*, int nodeId, const String& type) override;
 
     // InspectorInstrumentation API
     void willInsertDOMNode(Node* parent);
@@ -83,14 +83,14 @@ public:
 
     virtual void didCreateFrontendAndBackend(Inspector::InspectorFrontendChannel*, Inspector::InspectorBackendDispatcher*) override;
     virtual void willDestroyFrontendAndBackend() override;
-    virtual void discardAgent();
+    virtual void discardAgent() override;
 
 private:
     // InspectorDebuggerAgent::Listener implementation.
-    virtual void debuggerWasEnabled();
-    virtual void debuggerWasDisabled();
-    virtual void stepInto();
-    virtual void didPause();
+    virtual void debuggerWasEnabled() override;
+    virtual void debuggerWasDisabled() override;
+    virtual void stepInto() override;
+    virtual void didPause() override;
     void disable();
 
     void descriptionForDOMEvent(Node* target, int breakpointType, bool insertion, Inspector::InspectorObject* description);

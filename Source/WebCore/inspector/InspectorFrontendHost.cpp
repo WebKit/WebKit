@@ -90,13 +90,13 @@ private:
         contextMenuCleared();
     }
     
-    virtual void populateContextMenu(ContextMenu* menu)
+    virtual void populateContextMenu(ContextMenu* menu) override
     {
         for (size_t i = 0; i < m_items.size(); ++i)
             menu->appendItem(m_items[i]);
     }
     
-    virtual void contextMenuItemSelected(ContextMenuItem* item)
+    virtual void contextMenuItemSelected(ContextMenuItem* item) override
     {
         if (m_frontendHost) {
             UserGestureIndicator gestureIndicator(DefinitelyProcessingUserGesture);
@@ -108,7 +108,7 @@ private:
         }
     }
     
-    virtual void contextMenuCleared()
+    virtual void contextMenuCleared() override
     {
         if (m_frontendHost) {
             Deprecated::ScriptFunctionCall function(m_frontendApiObject, "contextMenuCleared", WebCore::functionCallHandlerFromAnyThread);

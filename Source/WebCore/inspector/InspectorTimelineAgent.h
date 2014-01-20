@@ -134,10 +134,10 @@ public:
     virtual void didCreateFrontendAndBackend(Inspector::InspectorFrontendChannel*, Inspector::InspectorBackendDispatcher*) override;
     virtual void willDestroyFrontendAndBackend() override;
 
-    virtual void start(ErrorString*, const int* maxCallStackDepth, const bool* includeDomCounters);
-    virtual void stop(ErrorString*);
-    virtual void canMonitorMainThread(ErrorString*, bool*);
-    virtual void supportsFrameInstrumentation(ErrorString*, bool*);
+    virtual void start(ErrorString*, const int* maxCallStackDepth, const bool* includeDomCounters) override;
+    virtual void stop(ErrorString*) override;
+    virtual void canMonitorMainThread(ErrorString*, bool*) override;
+    virtual void supportsFrameInstrumentation(ErrorString*, bool*) override;
 
     int id() const { return m_id; }
 

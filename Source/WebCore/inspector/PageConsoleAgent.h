@@ -49,8 +49,8 @@ public:
     virtual bool isWorkerAgent() override { return false; }
 
 private:
-    virtual void clearMessages(ErrorString*);
-    virtual void addInspectedNode(ErrorString*, int nodeId);
+    virtual void clearMessages(ErrorString*) override;
+    virtual void addInspectedNode(ErrorString*, int nodeId) override;
 
     InspectorDOMAgent* m_inspectorDOMAgent;
 };

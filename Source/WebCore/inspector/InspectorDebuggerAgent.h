@@ -77,24 +77,24 @@ public:
     void addMessageToConsole(MessageSource, MessageType);
 
     // Part of the protocol.
-    virtual void enable(ErrorString*);
-    virtual void disable(ErrorString*);
-    virtual void setBreakpointsActive(ErrorString*, bool active);
+    virtual void enable(ErrorString*) override;
+    virtual void disable(ErrorString*) override;
+    virtual void setBreakpointsActive(ErrorString*, bool active) override;
 
-    virtual void setBreakpointByUrl(ErrorString*, int lineNumber, const String* optionalURL, const String* optionalURLRegex, const int* optionalColumnNumber, const RefPtr<Inspector::InspectorObject>* options, Inspector::TypeBuilder::Debugger::BreakpointId*, RefPtr<Inspector::TypeBuilder::Array<Inspector::TypeBuilder::Debugger::Location>>& locations, RefPtr<Inspector::TypeBuilder::Array<Inspector::TypeBuilder::Debugger::BreakpointActionIdentifier>>& breakpointActionIdentifiers);
-    virtual void setBreakpoint(ErrorString*, const RefPtr<Inspector::InspectorObject>& location, const RefPtr<Inspector::InspectorObject>* options, Inspector::TypeBuilder::Debugger::BreakpointId*, RefPtr<Inspector::TypeBuilder::Debugger::Location>& actualLocation, RefPtr<Inspector::TypeBuilder::Array<Inspector::TypeBuilder::Debugger::BreakpointActionIdentifier>>& breakpointActionIdentifiers);
-    virtual void removeBreakpoint(ErrorString*, const String& breakpointIdentifier);
-    virtual void continueToLocation(ErrorString*, const RefPtr<Inspector::InspectorObject>& location);
+    virtual void setBreakpointByUrl(ErrorString*, int lineNumber, const String* optionalURL, const String* optionalURLRegex, const int* optionalColumnNumber, const RefPtr<Inspector::InspectorObject>* options, Inspector::TypeBuilder::Debugger::BreakpointId*, RefPtr<Inspector::TypeBuilder::Array<Inspector::TypeBuilder::Debugger::Location>>& locations, RefPtr<Inspector::TypeBuilder::Array<Inspector::TypeBuilder::Debugger::BreakpointActionIdentifier>>& breakpointActionIdentifiers) override;
+    virtual void setBreakpoint(ErrorString*, const RefPtr<Inspector::InspectorObject>& location, const RefPtr<Inspector::InspectorObject>* options, Inspector::TypeBuilder::Debugger::BreakpointId*, RefPtr<Inspector::TypeBuilder::Debugger::Location>& actualLocation, RefPtr<Inspector::TypeBuilder::Array<Inspector::TypeBuilder::Debugger::BreakpointActionIdentifier>>& breakpointActionIdentifiers) override;
+    virtual void removeBreakpoint(ErrorString*, const String& breakpointIdentifier) override;
+    virtual void continueToLocation(ErrorString*, const RefPtr<Inspector::InspectorObject>& location) override;
 
-    virtual void searchInContent(ErrorString*, const String& scriptID, const String& query, const bool* optionalCaseSensitive, const bool* optionalIsRegex, RefPtr<Inspector::TypeBuilder::Array<Inspector::TypeBuilder::GenericTypes::SearchMatch>>&);
-    virtual void getScriptSource(ErrorString*, const String& scriptID, String* scriptSource);
-    virtual void getFunctionDetails(ErrorString*, const String& functionId, RefPtr<Inspector::TypeBuilder::Debugger::FunctionDetails>&);
-    virtual void pause(ErrorString*);
-    virtual void resume(ErrorString*);
-    virtual void stepOver(ErrorString*);
-    virtual void stepInto(ErrorString*);
-    virtual void stepOut(ErrorString*);
-    virtual void setPauseOnExceptions(ErrorString*, const String& pauseState);
+    virtual void searchInContent(ErrorString*, const String& scriptID, const String& query, const bool* optionalCaseSensitive, const bool* optionalIsRegex, RefPtr<Inspector::TypeBuilder::Array<Inspector::TypeBuilder::GenericTypes::SearchMatch>>&) override;
+    virtual void getScriptSource(ErrorString*, const String& scriptID, String* scriptSource) override;
+    virtual void getFunctionDetails(ErrorString*, const String& functionId, RefPtr<Inspector::TypeBuilder::Debugger::FunctionDetails>&) override;
+    virtual void pause(ErrorString*) override;
+    virtual void resume(ErrorString*) override;
+    virtual void stepOver(ErrorString*) override;
+    virtual void stepInto(ErrorString*) override;
+    virtual void stepOut(ErrorString*) override;
+    virtual void setPauseOnExceptions(ErrorString*, const String& pauseState) override;
     virtual void evaluateOnCallFrame(ErrorString*,
                              const String& callFrameId,
                              const String& expression,
@@ -104,8 +104,8 @@ public:
                              const bool* returnByValue,
                              const bool* generatePreview,
                              RefPtr<Inspector::TypeBuilder::Runtime::RemoteObject>& result,
-                             Inspector::TypeBuilder::OptOutput<bool>* wasThrown);
-    virtual void setOverlayMessage(ErrorString*, const String*);
+                             Inspector::TypeBuilder::OptOutput<bool>* wasThrown) override;
+    virtual void setOverlayMessage(ErrorString*, const String*) override;
 
     void schedulePauseOnNextStatement(Inspector::InspectorDebuggerFrontendDispatcher::Reason::Enum breakReason, PassRefPtr<Inspector::InspectorObject> data);
     void cancelPauseOnNextStatement();
@@ -136,8 +136,8 @@ protected:
 
     virtual void enable();
     virtual void disable();
-    virtual void didPause(JSC::ExecState*, const Deprecated::ScriptValue& callFrames, const Deprecated::ScriptValue& exception);
-    virtual void didContinue();
+    virtual void didPause(JSC::ExecState*, const Deprecated::ScriptValue& callFrames, const Deprecated::ScriptValue& exception) override;
+    virtual void didContinue() override;
     void didClearGlobalObject();
 
 private:

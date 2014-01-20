@@ -276,7 +276,7 @@ public:
 
     virtual ~DatabaseLoader() { }
 
-    virtual void execute(PassRefPtr<IDBDatabase> prpDatabase)
+    virtual void execute(PassRefPtr<IDBDatabase> prpDatabase) override
     {
 #if PLATFORM(MAC)
         ASSERT_UNUSED(prpDatabase, prpDatabase);
@@ -322,7 +322,7 @@ public:
 #endif // PLATFORM(MAC)
     }
 
-    virtual RequestCallback* requestCallback() { return m_requestCallback.get(); }
+    virtual RequestCallback* requestCallback() override { return m_requestCallback.get(); }
 private:
     DatabaseLoader(ScriptExecutionContext* context, PassRefPtr<RequestDatabaseCallback> requestCallback)
         : ExecutableWithDatabase(context)
@@ -504,7 +504,7 @@ public:
 
     virtual ~DataLoader() { }
 
-    virtual void execute(PassRefPtr<IDBDatabase> prpDatabase)
+    virtual void execute(PassRefPtr<IDBDatabase> prpDatabase) override
     {
         RefPtr<IDBDatabase> idbDatabase = prpDatabase;
         if (!requestCallback()->isActive())
@@ -537,7 +537,7 @@ public:
         idbRequest->addEventListener(eventNames().successEvent, openCursorCallback, false);
     }
 
-    virtual RequestCallback* requestCallback() { return m_requestCallback.get(); }
+    virtual RequestCallback* requestCallback() override { return m_requestCallback.get(); }
     DataLoader(ScriptExecutionContext* scriptExecutionContext, PassRefPtr<RequestDataCallback> requestCallback, const InjectedScript& injectedScript, const String& objectStoreName, const String& indexName, PassRefPtr<IDBKeyRange> idbKeyRange, int skipCount, unsigned pageSize)
         : ExecutableWithDatabase(scriptExecutionContext)
         , m_requestCallback(requestCallback)
@@ -720,7 +720,7 @@ public:
     {
     }
 
-    virtual void execute(PassRefPtr<IDBDatabase> prpDatabase)
+    virtual void execute(PassRefPtr<IDBDatabase> prpDatabase) override
     {
         RefPtr<IDBDatabase> idbDatabase = prpDatabase;
         if (!requestCallback()->isActive())
@@ -746,7 +746,7 @@ public:
         idbTransaction->addEventListener(eventNames().completeEvent, ClearObjectStoreListener::create(m_requestCallback), false);
     }
 
-    virtual RequestCallback* requestCallback() { return m_requestCallback.get(); }
+    virtual RequestCallback* requestCallback() override { return m_requestCallback.get(); }
 private:
     const String m_objectStoreName;
     RefPtr<ClearObjectStoreCallback> m_requestCallback;

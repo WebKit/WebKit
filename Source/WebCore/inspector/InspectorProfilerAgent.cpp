@@ -71,17 +71,17 @@ public:
     virtual ~PageProfilerAgent() { }
 
 private:
-    virtual void recompileScript()
+    virtual void recompileScript() override
     {
         PageScriptDebugServer::shared().recompileAllJSFunctionsSoon();
     }
 
-    virtual void startProfiling(const String& title)
+    virtual void startProfiling(const String& title) override
     {
         ScriptProfiler::startForPage(m_inspectedPage, title);
     }
 
-    virtual PassRefPtr<ScriptProfile> stopProfiling(const String& title)
+    virtual PassRefPtr<ScriptProfile> stopProfiling(const String& title) override
     {
         return ScriptProfiler::stopForPage(m_inspectedPage, title);
     }
@@ -101,14 +101,14 @@ public:
     virtual ~WorkerProfilerAgent() { }
 
 private:
-    virtual void recompileScript() { }
+    virtual void recompileScript() override { }
 
-    virtual void startProfiling(const String& title)
+    virtual void startProfiling(const String& title) override
     {
         ScriptProfiler::startForWorkerGlobalScope(m_workerGlobalScope, title);
     }
 
-    virtual PassRefPtr<ScriptProfile> stopProfiling(const String& title)
+    virtual PassRefPtr<ScriptProfile> stopProfiling(const String& title) override
     {
         return ScriptProfiler::stopForWorkerGlobalScope(m_workerGlobalScope, title);
     }
@@ -257,8 +257,8 @@ class OutputStream : public ScriptHeapSnapshot::OutputStream {
 public:
     OutputStream(InspectorProfilerFrontendDispatcher* frontend, unsigned uid)
         : m_frontendDispatcher(frontend), m_uid(uid) { }
-    void Write(const String& chunk) { m_frontendDispatcher->addHeapSnapshotChunk(m_uid, chunk); }
-    void Close() { m_frontendDispatcher->finishHeapSnapshot(m_uid); }
+    void Write(const String& chunk) override { m_frontendDispatcher->addHeapSnapshotChunk(m_uid, chunk); }
+    void Close() override { m_frontendDispatcher->finishHeapSnapshot(m_uid); }
 private:
     InspectorProfilerFrontendDispatcher* m_frontendDispatcher;
     int m_uid;
@@ -376,16 +376,16 @@ class HeapSnapshotProgress: public ScriptProfiler::HeapSnapshotProgress {
 public:
     explicit HeapSnapshotProgress(InspectorProfilerFrontendDispatcher* frontend)
         : m_frontendDispatcher(frontend) { }
-    void Start(int totalWork)
+    void Start(int totalWork) override
     {
         m_totalWork = totalWork;
     }
-    void Worked(int workDone)
+    void Worked(int workDone) override
     {
         if (m_frontendDispatcher)
             m_frontendDispatcher->reportHeapSnapshotProgress(workDone, m_totalWork);
     }
-    void Done() { }
+    void Done() override { }
     bool isCanceled() { return false; }
 private:
     InspectorProfilerFrontendDispatcher* m_frontendDispatcher;

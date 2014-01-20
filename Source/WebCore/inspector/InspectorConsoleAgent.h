@@ -59,9 +59,9 @@ public:
     InspectorConsoleAgent(InstrumentingAgents*, PageInjectedScriptManager*);
     virtual ~InspectorConsoleAgent();
 
-    virtual void enable(ErrorString*);
-    virtual void disable(ErrorString*);
-    virtual void clearMessages(ErrorString*);
+    virtual void enable(ErrorString*) override;
+    virtual void disable(ErrorString*) override;
+    virtual void clearMessages(ErrorString*) override;
     bool enabled() const { return m_enabled; }
     void reset();
 
@@ -89,9 +89,9 @@ public:
     void addProfileFinishedMessageToConsole(PassRefPtr<ScriptProfile>, unsigned lineNumber, unsigned columnNumber, const String& sourceURL);
     void addStartProfilingMessageToConsole(const String& title, unsigned lineNumber, unsigned columnNumber, const String& sourceURL);
 #endif
-    virtual void setMonitoringXHREnabled(ErrorString*, bool enabled);
+    virtual void setMonitoringXHREnabled(ErrorString*, bool enabled) override;
     virtual void addInspectedNode(ErrorString*, int nodeId) = 0;
-    virtual void addInspectedHeapObject(ErrorString*, int inspectedHeapObjectId);
+    virtual void addInspectedHeapObject(ErrorString*, int inspectedHeapObjectId) override;
 
     virtual bool isWorkerAgent() = 0;
 

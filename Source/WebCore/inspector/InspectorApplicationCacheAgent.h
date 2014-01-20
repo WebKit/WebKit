@@ -62,10 +62,10 @@ public:
     void updateApplicationCacheStatus(Frame*);
     void networkStateChanged();
 
-    virtual void enable(ErrorString*);
-    virtual void getFramesWithManifests(ErrorString*, RefPtr<Inspector::TypeBuilder::Array<Inspector::TypeBuilder::ApplicationCache::FrameWithManifest>>& result);
-    virtual void getManifestForFrame(ErrorString*, const String& frameId, String* manifestURL);
-    virtual void getApplicationCacheForFrame(ErrorString*, const String& frameId, RefPtr<Inspector::TypeBuilder::ApplicationCache::ApplicationCache>&);
+    virtual void enable(ErrorString*) override;
+    virtual void getFramesWithManifests(ErrorString*, RefPtr<Inspector::TypeBuilder::Array<Inspector::TypeBuilder::ApplicationCache::FrameWithManifest>>& result) override;
+    virtual void getManifestForFrame(ErrorString*, const String& frameId, String* manifestURL) override;
+    virtual void getApplicationCacheForFrame(ErrorString*, const String& frameId, RefPtr<Inspector::TypeBuilder::ApplicationCache::ApplicationCache>&) override;
 
 private:
     PassRefPtr<Inspector::TypeBuilder::ApplicationCache::ApplicationCache> buildObjectForApplicationCache(const ApplicationCacheHost::ResourceInfoList&, const ApplicationCacheHost::CacheInfo&);

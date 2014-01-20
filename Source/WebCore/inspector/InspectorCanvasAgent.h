@@ -79,17 +79,17 @@ public:
 #endif
 
     // Called from the front-end.
-    virtual void enable(ErrorString*);
-    virtual void disable(ErrorString*);
-    virtual void dropTraceLog(ErrorString*, const Inspector::TypeBuilder::Canvas::TraceLogId&);
-    virtual void hasUninstrumentedCanvases(ErrorString*, bool*);
-    virtual void captureFrame(ErrorString*, const Inspector::TypeBuilder::Network::FrameId*, Inspector::TypeBuilder::Canvas::TraceLogId*);
-    virtual void startCapturing(ErrorString*, const Inspector::TypeBuilder::Network::FrameId*, Inspector::TypeBuilder::Canvas::TraceLogId*);
-    virtual void stopCapturing(ErrorString*, const Inspector::TypeBuilder::Canvas::TraceLogId&);
-    virtual void getTraceLog(ErrorString*, const Inspector::TypeBuilder::Canvas::TraceLogId&, const int*, const int*, RefPtr<Inspector::TypeBuilder::Canvas::TraceLog>&);
-    virtual void replayTraceLog(ErrorString*, const Inspector::TypeBuilder::Canvas::TraceLogId&, int, RefPtr<Inspector::TypeBuilder::Canvas::ResourceState>&);
-    virtual void getResourceInfo(ErrorString*, const Inspector::TypeBuilder::Canvas::ResourceId&, RefPtr<Inspector::TypeBuilder::Canvas::ResourceInfo>&);
-    virtual void getResourceState(ErrorString*, const Inspector::TypeBuilder::Canvas::TraceLogId&, const Inspector::TypeBuilder::Canvas::ResourceId&, RefPtr<Inspector::TypeBuilder::Canvas::ResourceState>&);
+    virtual void enable(ErrorString*) override;
+    virtual void disable(ErrorString*) override;
+    virtual void dropTraceLog(ErrorString*, const Inspector::TypeBuilder::Canvas::TraceLogId&) override;
+    virtual void hasUninstrumentedCanvases(ErrorString*, bool*) override;
+    virtual void captureFrame(ErrorString*, const Inspector::TypeBuilder::Network::FrameId*, Inspector::TypeBuilder::Canvas::TraceLogId*) override;
+    virtual void startCapturing(ErrorString*, const Inspector::TypeBuilder::Network::FrameId*, Inspector::TypeBuilder::Canvas::TraceLogId*) override;
+    virtual void stopCapturing(ErrorString*, const Inspector::TypeBuilder::Canvas::TraceLogId&) override;
+    virtual void getTraceLog(ErrorString*, const Inspector::TypeBuilder::Canvas::TraceLogId&, const int*, const int*, RefPtr<Inspector::TypeBuilder::Canvas::TraceLog>&) override;
+    virtual void replayTraceLog(ErrorString*, const Inspector::TypeBuilder::Canvas::TraceLogId&, int, RefPtr<Inspector::TypeBuilder::Canvas::ResourceState>&) override;
+    virtual void getResourceInfo(ErrorString*, const Inspector::TypeBuilder::Canvas::ResourceId&, RefPtr<Inspector::TypeBuilder::Canvas::ResourceInfo>&) override;
+    virtual void getResourceState(ErrorString*, const Inspector::TypeBuilder::Canvas::TraceLogId&, const Inspector::TypeBuilder::Canvas::ResourceId&, RefPtr<Inspector::TypeBuilder::Canvas::ResourceState>&) override;
 
 private:
     InjectedScriptCanvasModule injectedScriptCanvasModule(ErrorString*, JSC::ExecState*);

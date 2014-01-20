@@ -69,7 +69,7 @@ public:
         : m_workerGlobalScope(workerGlobalScope) { }
     virtual ~PageInspectorProxy() { }
 private:
-    virtual bool sendMessageToFrontend(const String& message)
+    virtual bool sendMessageToFrontend(const String& message) override
     {
         m_workerGlobalScope.thread()->workerReportingProxy().postMessageToPageInspector(message);
         return true;

@@ -53,18 +53,18 @@ public:
     void didClearMainFrameWindowObject();
 
 protected:
-    virtual void enable();
-    virtual void disable();
+    virtual void enable() override;
+    virtual void disable() override;
 
 private:
-    virtual void startListeningScriptDebugServer();
-    virtual void stopListeningScriptDebugServer();
-    virtual PageScriptDebugServer& scriptDebugServer();
-    virtual void muteConsole();
-    virtual void unmuteConsole();
+    virtual void startListeningScriptDebugServer() override;
+    virtual void stopListeningScriptDebugServer() override;
+    virtual PageScriptDebugServer& scriptDebugServer() override;
+    virtual void muteConsole() override;
+    virtual void unmuteConsole() override;
 
-    virtual Inspector::InjectedScript injectedScriptForEval(ErrorString*, const int* executionContextId);
-    virtual void setOverlayMessage(ErrorString*, const String*);
+    virtual Inspector::InjectedScript injectedScriptForEval(ErrorString*, const int* executionContextId) override;
+    virtual void setOverlayMessage(ErrorString*, const String*) override;
 
     InspectorPageAgent* m_pageAgent;
     InspectorOverlay* m_overlay;

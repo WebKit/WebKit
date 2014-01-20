@@ -125,18 +125,18 @@ public:
     void setResourcesDataSizeLimitsFromInternals(int maximumResourcesContentSize, int maximumSingleResourceContentSize);
 
     // Called from frontend
-    virtual void enable(ErrorString*);
-    virtual void disable(ErrorString*);
-    virtual void setExtraHTTPHeaders(ErrorString*, const RefPtr<Inspector::InspectorObject>&);
-    virtual void getResponseBody(ErrorString*, const String& requestId, String* content, bool* base64Encoded);
+    virtual void enable(ErrorString*) override;
+    virtual void disable(ErrorString*) override;
+    virtual void setExtraHTTPHeaders(ErrorString*, const RefPtr<Inspector::InspectorObject>&) override;
+    virtual void getResponseBody(ErrorString*, const String& requestId, String* content, bool* base64Encoded) override;
 
-    virtual void replayXHR(ErrorString*, const String& requestId);
+    virtual void replayXHR(ErrorString*, const String& requestId) override;
 
-    virtual void canClearBrowserCache(ErrorString*, bool*);
-    virtual void clearBrowserCache(ErrorString*);
-    virtual void canClearBrowserCookies(ErrorString*, bool*);
-    virtual void clearBrowserCookies(ErrorString*);
-    virtual void setCacheDisabled(ErrorString*, bool cacheDisabled);
+    virtual void canClearBrowserCache(ErrorString*, bool*) override;
+    virtual void clearBrowserCache(ErrorString*) override;
+    virtual void canClearBrowserCookies(ErrorString*, bool*) override;
+    virtual void clearBrowserCookies(ErrorString*) override;
+    virtual void setCacheDisabled(ErrorString*, bool cacheDisabled) override;
 
 private:
     void enable();

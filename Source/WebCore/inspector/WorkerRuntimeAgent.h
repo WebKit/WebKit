@@ -49,16 +49,16 @@ public:
     virtual void willDestroyFrontendAndBackend() override;
 
     // Protocol commands.
-    virtual void run(ErrorString*);
+    virtual void run(ErrorString*) override;
 
 #if ENABLE(JAVASCRIPT_DEBUGGER)
     void pauseWorkerGlobalScope(WorkerGlobalScope*);
 #endif // ENABLE(JAVASCRIPT_DEBUGGER)
 
 private:
-    virtual Inspector::InjectedScript injectedScriptForEval(ErrorString*, const int* executionContextId);
-    virtual void muteConsole();
-    virtual void unmuteConsole();
+    virtual Inspector::InjectedScript injectedScriptForEval(ErrorString*, const int* executionContextId) override;
+    virtual void muteConsole() override;
+    virtual void unmuteConsole() override;
     WorkerGlobalScope* m_workerGlobalScope;
     RefPtr<Inspector::InspectorRuntimeBackendDispatcher> m_backendDispatcher;
     bool m_paused;

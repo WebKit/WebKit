@@ -1,3 +1,51 @@
+2014-01-20  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Run clang-modernize and let it add a bunch of missing overrides in WebCore/inspector
+        https://bugs.webkit.org/show_bug.cgi?id=127206
+
+        Reviewed by Anders Carlsson.
+
+        Let clang-modernize add overrides.
+
+        * inspector/DOMEditor.cpp:
+        * inspector/InspectorApplicationCacheAgent.h:
+        * inspector/InspectorCSSAgent.h:
+        * inspector/InspectorCanvasAgent.h:
+        * inspector/InspectorConsoleAgent.h:
+        * inspector/InspectorDOMAgent.h:
+        * inspector/InspectorDOMDebuggerAgent.h:
+        * inspector/InspectorDOMStorageAgent.h:
+        * inspector/InspectorDatabaseAgent.cpp:
+        * inspector/InspectorDatabaseAgent.h:
+        * inspector/InspectorDebuggerAgent.h:
+        * inspector/InspectorFrontendHost.cpp:
+        * inspector/InspectorHeapProfilerAgent.cpp:
+        (WebCore::InspectorHeapProfilerAgent::getHeapSnapshot):
+        (WebCore::InspectorHeapProfilerAgent::takeHeapSnapshot):
+        * inspector/InspectorHeapProfilerAgent.h:
+        * inspector/InspectorHistory.cpp:
+        * inspector/InspectorIndexedDBAgent.cpp:
+        * inspector/InspectorIndexedDBAgent.h:
+        * inspector/InspectorInputAgent.h:
+        * inspector/InspectorLayerTreeAgent.h:
+        * inspector/InspectorMemoryAgent.h:
+        * inspector/InspectorPageAgent.h:
+        * inspector/InspectorProfilerAgent.cpp:
+        * inspector/InspectorProfilerAgent.h:
+        * inspector/InspectorResourceAgent.h:
+        * inspector/InspectorRuntimeAgent.h:
+        * inspector/InspectorStyleSheet.h:
+        * inspector/InspectorTimelineAgent.h:
+        * inspector/InspectorWorkerAgent.cpp:
+        * inspector/InspectorWorkerAgent.h:
+        * inspector/PageConsoleAgent.h:
+        * inspector/PageDebuggerAgent.h:
+        * inspector/PageRuntimeAgent.h:
+        * inspector/WorkerConsoleAgent.h:
+        * inspector/WorkerDebuggerAgent.cpp:
+        * inspector/WorkerInspectorController.cpp:
+        * inspector/WorkerRuntimeAgent.h:
+
 2014-01-20  Zan Dobersek  <zdobersek@igalia.com>
 
         Move WebAudio source code to std::unique_ptr

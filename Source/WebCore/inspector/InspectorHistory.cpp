@@ -45,13 +45,13 @@ class UndoableStateMark : public InspectorHistory::Action {
 public:
     UndoableStateMark() : InspectorHistory::Action("[UndoableState]") { }
 
-    virtual bool perform(ExceptionCode&) { return true; }
+    virtual bool perform(ExceptionCode&) override { return true; }
 
-    virtual bool undo(ExceptionCode&) { return true; }
+    virtual bool undo(ExceptionCode&) override { return true; }
 
-    virtual bool redo(ExceptionCode&) { return true; }
+    virtual bool redo(ExceptionCode&) override { return true; }
 
-    virtual bool isUndoableStateMark() { return true; }
+    virtual bool isUndoableStateMark() override { return true; }
 };
 
 }

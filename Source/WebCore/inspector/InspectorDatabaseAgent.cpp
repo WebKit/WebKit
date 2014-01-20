@@ -76,7 +76,7 @@ public:
 
     virtual ~StatementCallback() { }
 
-    virtual bool handleEvent(SQLTransaction*, SQLResultSet* resultSet)
+    virtual bool handleEvent(SQLTransaction*, SQLResultSet* resultSet) override
     {
         SQLResultSetRowList* rowList = resultSet->rows();
 
@@ -114,7 +114,7 @@ public:
 
     virtual ~StatementErrorCallback() { }
 
-    virtual bool handleEvent(SQLTransaction*, SQLError* error)
+    virtual bool handleEvent(SQLTransaction*, SQLError* error) override
     {
         reportTransactionFailed(m_requestCallback.get(), error);
         return true;  
@@ -135,7 +135,7 @@ public:
 
     virtual ~TransactionCallback() { }
 
-    virtual bool handleEvent(SQLTransaction* transaction)
+    virtual bool handleEvent(SQLTransaction* transaction) override
     {
         if (!m_requestCallback->isActive())
             return true;
@@ -163,7 +163,7 @@ public:
 
     virtual ~TransactionErrorCallback() { }
 
-    virtual bool handleEvent(SQLError* error)
+    virtual bool handleEvent(SQLError* error) override
     {
         reportTransactionFailed(m_requestCallback.get(), error);
         return true;
@@ -183,7 +183,7 @@ public:
 
     virtual ~TransactionSuccessCallback() { }
 
-    virtual bool handleEvent() { return false; }
+    virtual bool handleEvent() override { return false; }
 
 private:
     TransactionSuccessCallback() { }

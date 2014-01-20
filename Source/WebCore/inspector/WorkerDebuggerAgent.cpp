@@ -75,7 +75,7 @@ public:
         : m_thread(thread)
         , m_workerGlobalScope(workerGlobalScope) { }
     virtual ~RunInspectorCommandsTask() { }
-    virtual void run()
+    virtual void run() override
     {
         // Process all queued debugger commands. It is safe to use m_workerGlobalScope here
         // because it is alive if RunWorkerLoop is not terminated, otherwise it will

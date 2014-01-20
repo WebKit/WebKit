@@ -56,23 +56,23 @@ public:
     InspectorHeapProfilerAgent(InstrumentingAgents*, PageInjectedScriptManager*);
     virtual ~InspectorHeapProfilerAgent();
 
-    virtual void collectGarbage(ErrorString*);
-    virtual void clearProfiles(ErrorString*) { resetState(); }
+    virtual void collectGarbage(ErrorString*) override;
+    virtual void clearProfiles(ErrorString*) override { resetState(); }
     void resetState();
 
-    virtual void hasHeapProfiler(ErrorString*, bool*);
+    virtual void hasHeapProfiler(ErrorString*, bool*) override;
 
-    virtual void getProfileHeaders(ErrorString*, RefPtr<Inspector::TypeBuilder::Array<Inspector::TypeBuilder::HeapProfiler::ProfileHeader>>&);
-    virtual void getHeapSnapshot(ErrorString*, int uid);
-    virtual void removeProfile(ErrorString*, int uid);
+    virtual void getProfileHeaders(ErrorString*, RefPtr<Inspector::TypeBuilder::Array<Inspector::TypeBuilder::HeapProfiler::ProfileHeader>>&) override;
+    virtual void getHeapSnapshot(ErrorString*, int uid) override;
+    virtual void removeProfile(ErrorString*, int uid) override;
 
     virtual void didCreateFrontendAndBackend(Inspector::InspectorFrontendChannel*, Inspector::InspectorBackendDispatcher*) override;
     virtual void willDestroyFrontendAndBackend() override;
 
-    virtual void takeHeapSnapshot(ErrorString*, const bool* reportProgress);
+    virtual void takeHeapSnapshot(ErrorString*, const bool* reportProgress) override;
 
-    virtual void getObjectByHeapObjectId(ErrorString*, const String& heapSnapshotObjectId, const String* objectGroup, RefPtr<Inspector::TypeBuilder::Runtime::RemoteObject>& result);
-    virtual void getHeapObjectId(ErrorString*, const String& objectId, String* heapSnapshotObjectId);
+    virtual void getObjectByHeapObjectId(ErrorString*, const String& heapSnapshotObjectId, const String* objectGroup, RefPtr<Inspector::TypeBuilder::Runtime::RemoteObject>& result) override;
+    virtual void getHeapObjectId(ErrorString*, const String& objectId, String* heapSnapshotObjectId) override;
 
 private:
     typedef HashMap<unsigned, RefPtr<ScriptHeapSnapshot>> IdToHeapSnapshotMap;

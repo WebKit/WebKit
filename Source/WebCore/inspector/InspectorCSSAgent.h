@@ -97,9 +97,9 @@ public:
     bool forcePseudoState(Element*, CSSSelector::PseudoType);
     virtual void didCreateFrontendAndBackend(Inspector::InspectorFrontendChannel*, Inspector::InspectorBackendDispatcher*) override;
     virtual void willDestroyFrontendAndBackend() override;
-    virtual void discardAgent();
-    virtual void enable(ErrorString*);
-    virtual void disable(ErrorString*);
+    virtual void discardAgent() override;
+    virtual void enable(ErrorString*) override;
+    virtual void disable(ErrorString*) override;
     void reset();
     void mediaQueryResultChanged();
     void didCreateNamedFlow(Document*, WebKitNamedFlow*);
@@ -111,21 +111,21 @@ public:
     void didRegisterNamedFlowContentElement(Document*, WebKitNamedFlow*, Node* contentElement, Node* nextContentElement = nullptr);
     void didUnregisterNamedFlowContentElement(Document*, WebKitNamedFlow*, Node* contentElement);
 
-    virtual void getComputedStyleForNode(ErrorString*, int nodeId, RefPtr<Inspector::TypeBuilder::Array<Inspector::TypeBuilder::CSS::CSSComputedStyleProperty>>&);
-    virtual void getInlineStylesForNode(ErrorString*, int nodeId, RefPtr<Inspector::TypeBuilder::CSS::CSSStyle>& inlineStyle, RefPtr<Inspector::TypeBuilder::CSS::CSSStyle>& attributes);
-    virtual void getMatchedStylesForNode(ErrorString*, int nodeId, const bool* includePseudo, const bool* includeInherited, RefPtr<Inspector::TypeBuilder::Array<Inspector::TypeBuilder::CSS::RuleMatch>>& matchedCSSRules, RefPtr<Inspector::TypeBuilder::Array<Inspector::TypeBuilder::CSS::PseudoIdMatches>>& pseudoIdMatches, RefPtr<Inspector::TypeBuilder::Array<Inspector::TypeBuilder::CSS::InheritedStyleEntry>>& inheritedEntries);
-    virtual void getAllStyleSheets(ErrorString*, RefPtr<Inspector::TypeBuilder::Array<Inspector::TypeBuilder::CSS::CSSStyleSheetHeader>>& styleSheetInfos);
-    virtual void getStyleSheet(ErrorString*, const String& styleSheetId, RefPtr<Inspector::TypeBuilder::CSS::CSSStyleSheetBody>& result);
-    virtual void getStyleSheetText(ErrorString*, const String& styleSheetId, String* result);
-    virtual void setStyleSheetText(ErrorString*, const String& styleSheetId, const String& text);
-    virtual void setStyleText(ErrorString*, const RefPtr<Inspector::InspectorObject>& styleId, const String& text, RefPtr<Inspector::TypeBuilder::CSS::CSSStyle>& result);
-    virtual void setPropertyText(ErrorString*, const RefPtr<Inspector::InspectorObject>& styleId, int propertyIndex, const String& text, bool overwrite, RefPtr<Inspector::TypeBuilder::CSS::CSSStyle>& result);
-    virtual void toggleProperty(ErrorString*, const RefPtr<Inspector::InspectorObject>& styleId, int propertyIndex, bool disable, RefPtr<Inspector::TypeBuilder::CSS::CSSStyle>& result);
-    virtual void setRuleSelector(ErrorString*, const RefPtr<Inspector::InspectorObject>& ruleId, const String& selector, RefPtr<Inspector::TypeBuilder::CSS::CSSRule>& result);
-    virtual void addRule(ErrorString*, int contextNodeId, const String& selector, RefPtr<Inspector::TypeBuilder::CSS::CSSRule>& result);
-    virtual void getSupportedCSSProperties(ErrorString*, RefPtr<Inspector::TypeBuilder::Array<Inspector::TypeBuilder::CSS::CSSPropertyInfo>>& result);
-    virtual void forcePseudoState(ErrorString*, int nodeId, const RefPtr<Inspector::InspectorArray>& forcedPseudoClasses);
-    virtual void getNamedFlowCollection(ErrorString*, int documentNodeId, RefPtr<Inspector::TypeBuilder::Array<Inspector::TypeBuilder::CSS::NamedFlow>>& result);
+    virtual void getComputedStyleForNode(ErrorString*, int nodeId, RefPtr<Inspector::TypeBuilder::Array<Inspector::TypeBuilder::CSS::CSSComputedStyleProperty>>&) override;
+    virtual void getInlineStylesForNode(ErrorString*, int nodeId, RefPtr<Inspector::TypeBuilder::CSS::CSSStyle>& inlineStyle, RefPtr<Inspector::TypeBuilder::CSS::CSSStyle>& attributes) override;
+    virtual void getMatchedStylesForNode(ErrorString*, int nodeId, const bool* includePseudo, const bool* includeInherited, RefPtr<Inspector::TypeBuilder::Array<Inspector::TypeBuilder::CSS::RuleMatch>>& matchedCSSRules, RefPtr<Inspector::TypeBuilder::Array<Inspector::TypeBuilder::CSS::PseudoIdMatches>>& pseudoIdMatches, RefPtr<Inspector::TypeBuilder::Array<Inspector::TypeBuilder::CSS::InheritedStyleEntry>>& inheritedEntries) override;
+    virtual void getAllStyleSheets(ErrorString*, RefPtr<Inspector::TypeBuilder::Array<Inspector::TypeBuilder::CSS::CSSStyleSheetHeader>>& styleSheetInfos) override;
+    virtual void getStyleSheet(ErrorString*, const String& styleSheetId, RefPtr<Inspector::TypeBuilder::CSS::CSSStyleSheetBody>& result) override;
+    virtual void getStyleSheetText(ErrorString*, const String& styleSheetId, String* result) override;
+    virtual void setStyleSheetText(ErrorString*, const String& styleSheetId, const String& text) override;
+    virtual void setStyleText(ErrorString*, const RefPtr<Inspector::InspectorObject>& styleId, const String& text, RefPtr<Inspector::TypeBuilder::CSS::CSSStyle>& result) override;
+    virtual void setPropertyText(ErrorString*, const RefPtr<Inspector::InspectorObject>& styleId, int propertyIndex, const String& text, bool overwrite, RefPtr<Inspector::TypeBuilder::CSS::CSSStyle>& result) override;
+    virtual void toggleProperty(ErrorString*, const RefPtr<Inspector::InspectorObject>& styleId, int propertyIndex, bool disable, RefPtr<Inspector::TypeBuilder::CSS::CSSStyle>& result) override;
+    virtual void setRuleSelector(ErrorString*, const RefPtr<Inspector::InspectorObject>& ruleId, const String& selector, RefPtr<Inspector::TypeBuilder::CSS::CSSRule>& result) override;
+    virtual void addRule(ErrorString*, int contextNodeId, const String& selector, RefPtr<Inspector::TypeBuilder::CSS::CSSRule>& result) override;
+    virtual void getSupportedCSSProperties(ErrorString*, RefPtr<Inspector::TypeBuilder::Array<Inspector::TypeBuilder::CSS::CSSPropertyInfo>>& result) override;
+    virtual void forcePseudoState(ErrorString*, int nodeId, const RefPtr<Inspector::InspectorArray>& forcedPseudoClasses) override;
+    virtual void getNamedFlowCollection(ErrorString*, int documentNodeId, RefPtr<Inspector::TypeBuilder::Array<Inspector::TypeBuilder::CSS::NamedFlow>>& result) override;
 
 private:
     class StyleSheetAction;
@@ -162,12 +162,12 @@ private:
     PassRefPtr<Inspector::TypeBuilder::CSS::NamedFlow> buildObjectForNamedFlow(ErrorString*, WebKitNamedFlow*, int documentNodeId);
 
     // InspectorDOMAgent::DOMListener implementation
-    virtual void didRemoveDocument(Document*);
-    virtual void didRemoveDOMNode(Node*);
-    virtual void didModifyDOMAttr(Element*);
+    virtual void didRemoveDocument(Document*) override;
+    virtual void didRemoveDOMNode(Node*) override;
+    virtual void didModifyDOMAttr(Element*) override;
 
     // InspectorCSSAgent::Listener implementation
-    virtual void styleSheetChanged(InspectorStyleSheet*);
+    virtual void styleSheetChanged(InspectorStyleSheet*) override;
 
     void resetPseudoStates();
 

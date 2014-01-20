@@ -56,18 +56,18 @@ public:
     {
     }
 
-    virtual bool perform(ExceptionCode& ec)
+    virtual bool perform(ExceptionCode& ec) override
     {
         m_anchorNode = m_node->nextSibling();
         return redo(ec);
     }
 
-    virtual bool undo(ExceptionCode& ec)
+    virtual bool undo(ExceptionCode& ec) override
     {
         return m_parentNode->insertBefore(m_node.get(), m_anchorNode.get(), ec);
     }
 
-    virtual bool redo(ExceptionCode& ec)
+    virtual bool redo(ExceptionCode& ec) override
     {
         return m_parentNode->removeChild(m_node.get(), ec);
     }
@@ -89,7 +89,7 @@ public:
     {
     }
 
-    virtual bool perform(ExceptionCode& ec)
+    virtual bool perform(ExceptionCode& ec) override
     {
         if (m_node->parentNode()) {
             m_removeChildAction = adoptPtr(new RemoveChildAction(m_node->parentNode(), m_node.get()));
@@ -99,7 +99,7 @@ public:
         return m_parentNode->insertBefore(m_node.get(), m_anchorNode.get(), ec);
     }
 
-    virtual bool undo(ExceptionCode& ec)
+    virtual bool undo(ExceptionCode& ec) override
     {
         if (!m_parentNode->removeChild(m_node.get(), ec))
             return false;
@@ -108,7 +108,7 @@ public:
         return true;
     }
 
-    virtual bool redo(ExceptionCode& ec)
+    virtual bool redo(ExceptionCode& ec) override
     {
         if (m_removeChildAction && !m_removeChildAction->redo(ec))
             return false;
@@ -132,19 +132,19 @@ public:
     {
     }
 
-    virtual bool perform(ExceptionCode& ec)
+    virtual bool perform(ExceptionCode& ec) override
     {
         m_value = m_element->getAttribute(m_name);
         return redo(ec);
     }
 
-    virtual bool undo(ExceptionCode& ec)
+    virtual bool undo(ExceptionCode& ec) override
     {
         m_element->setAttribute(m_name, m_value, ec);
         return true;
     }
 
-    virtual bool redo(ExceptionCode&)
+    virtual bool redo(ExceptionCode&) override
     {
         m_element->removeAttribute(m_name);
         return true;
@@ -168,7 +168,7 @@ public:
     {
     }
 
-    virtual bool perform(ExceptionCode& ec)
+    virtual bool perform(ExceptionCode& ec) override
     {
         m_hadAttribute = m_element->hasAttribute(m_name);
         if (m_hadAttribute)
@@ -176,7 +176,7 @@ public:
         return redo(ec);
     }
 
-    virtual bool undo(ExceptionCode& ec)
+    virtual bool undo(ExceptionCode& ec) override
     {
         if (m_hadAttribute)
             m_element->setAttribute(m_name, m_oldValue, ec);
@@ -185,7 +185,7 @@ public:
         return true;
     }
 
-    virtual bool redo(ExceptionCode& ec)
+    virtual bool redo(ExceptionCode& ec) override
     {
         m_element->setAttribute(m_name, m_value, ec);
         return true;
@@ -213,7 +213,7 @@ public:
     {
     }
 
-    virtual bool perform(ExceptionCode& ec)
+    virtual bool perform(ExceptionCode& ec) override
     {
         m_oldHTML = createMarkup(m_node.get());
         DOMPatchSupport domPatchSupport(m_domEditor.get(), &m_node->document());
@@ -221,12 +221,12 @@ public:
         return !ec;
     }
 
-    virtual bool undo(ExceptionCode& ec)
+    virtual bool undo(ExceptionCode& ec) override
     {
         return m_history->undo(ec);
     }
 
-    virtual bool redo(ExceptionCode& ec)
+    virtual bool redo(ExceptionCode& ec) override
     {
         return m_history->redo(ec);
     }
@@ -256,19 +256,19 @@ public:
     {
     }
 
-    virtual bool perform(ExceptionCode& ec)
+    virtual bool perform(ExceptionCode& ec) override
     {
         m_oldText = m_textNode->wholeText();
         return redo(ec);
     }
 
-    virtual bool undo(ExceptionCode& ec)
+    virtual bool undo(ExceptionCode& ec) override
     {
         m_textNode->replaceWholeText(m_oldText, ec);
         return true;
     }
 
-    virtual bool redo(ExceptionCode& ec)
+    virtual bool redo(ExceptionCode& ec) override
     {
         m_textNode->replaceWholeText(m_text, ec);
         return true;
@@ -291,17 +291,17 @@ public:
     {
     }
 
-    virtual bool perform(ExceptionCode& ec)
+    virtual bool perform(ExceptionCode& ec) override
     {
         return redo(ec);
     }
 
-    virtual bool undo(ExceptionCode& ec)
+    virtual bool undo(ExceptionCode& ec) override
     {
         return m_parentNode->replaceChild(m_oldNode, m_newNode.get(), ec);
     }
 
-    virtual bool redo(ExceptionCode& ec)
+    virtual bool redo(ExceptionCode& ec) override
     {
         return m_parentNode->replaceChild(m_newNode, m_oldNode.get(), ec);
     }
@@ -322,19 +322,19 @@ public:
     {
     }
 
-    virtual bool perform(ExceptionCode& ec)
+    virtual bool perform(ExceptionCode& ec) override
     {
         m_oldValue = m_node->nodeValue();
         return redo(ec);
     }
 
-    virtual bool undo(ExceptionCode& ec)
+    virtual bool undo(ExceptionCode& ec) override
     {
         m_node->setNodeValue(m_oldValue, ec);
         return !ec;
     }
 
-    virtual bool redo(ExceptionCode& ec)
+    virtual bool redo(ExceptionCode& ec) override
     {
         m_node->setNodeValue(m_value, ec);
         return !ec;

@@ -262,23 +262,23 @@ public:
     static PassRefPtr<InspectorStyleSheetForInlineStyle> create(InspectorPageAgent*, const String& id, PassRefPtr<Element>, Inspector::TypeBuilder::CSS::StyleSheetOrigin::Enum, Listener*);
 
     void didModifyElementAttribute();
-    virtual bool getText(String* result) const;
-    virtual CSSStyleDeclaration* styleForId(const InspectorCSSId& id) const { ASSERT_UNUSED(id, !id.ordinal()); return inlineStyle(); }
+    virtual bool getText(String* result) const override;
+    virtual CSSStyleDeclaration* styleForId(const InspectorCSSId& id) const override { ASSERT_UNUSED(id, !id.ordinal()); return inlineStyle(); }
 
 protected:
     InspectorStyleSheetForInlineStyle(InspectorPageAgent*, const String& id, PassRefPtr<Element>, Inspector::TypeBuilder::CSS::StyleSheetOrigin::Enum, Listener*);
 
-    virtual Document* ownerDocument() const;
-    virtual RefPtr<CSSRuleSourceData> ruleSourceDataFor(CSSStyleDeclaration* style) const { ASSERT_UNUSED(style, style == inlineStyle()); return m_ruleSourceData; }
-    virtual unsigned ruleIndexByStyle(CSSStyleDeclaration*) const { return 0; }
-    virtual bool ensureParsedDataReady();
-    virtual PassRefPtr<InspectorStyle> inspectorStyleForId(const InspectorCSSId&);
-    virtual void rememberInspectorStyle(RefPtr<InspectorStyle>) { }
-    virtual void forgetInspectorStyle(CSSStyleDeclaration*) { }
+    virtual Document* ownerDocument() const override;
+    virtual RefPtr<CSSRuleSourceData> ruleSourceDataFor(CSSStyleDeclaration* style) const override { ASSERT_UNUSED(style, style == inlineStyle()); return m_ruleSourceData; }
+    virtual unsigned ruleIndexByStyle(CSSStyleDeclaration*) const override { return 0; }
+    virtual bool ensureParsedDataReady() override;
+    virtual PassRefPtr<InspectorStyle> inspectorStyleForId(const InspectorCSSId&) override;
+    virtual void rememberInspectorStyle(RefPtr<InspectorStyle>) override { }
+    virtual void forgetInspectorStyle(CSSStyleDeclaration*) override { }
 
     // Also accessed by friend class InspectorStyle.
-    virtual bool setStyleText(CSSStyleDeclaration*, const String&, ExceptionCode&);
-    virtual PassOwnPtr<Vector<size_t>> lineEndings() const;
+    virtual bool setStyleText(CSSStyleDeclaration*, const String&, ExceptionCode&) override;
+    virtual PassOwnPtr<Vector<size_t>> lineEndings() const override;
 
 private:
     CSSStyleDeclaration* inlineStyle() const;
