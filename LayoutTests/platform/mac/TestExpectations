@@ -661,6 +661,9 @@ fast/canvas/canvas-quadratic-same-endpoint.html
 css3/filters/composited-during-transition-layertree.html
 webkit.org/b/95622 css3/filters/composited-during-animation-layertree.html [ Pass Failure ]
 
+# Blending result is slightly different than the formula.
+webkit.org/b/126887 css3/compositing/background-blend-mode-crossfade-image.html [ ImageOnlyFailure Pass ]
+
 # --- Custom Filters ---
 # The following 5 tests are currently skipped on Mac for slight color differences,
 # please see the relevant bug: http://webkit.org/b/107487

@@ -1,3 +1,18 @@
+2014-01-20  Mihai Tica  <mitica@adobe.com>
+
+        Reapply:
+        [CSS Background Blending] Background layer with -webkit-cross-fade doesn't blend
+        when having -webkit-background-blending applied. Tests now use SVG rects, instead
+        of circles.
+
+        https://bugs.webkit.org/show_bug.cgi?id=126887
+        Reviewed by Dirk Schulze.
+
+        * css3/compositing/background-blend-mode-crossfade-image-expected.html:
+        * css3/compositing/background-blend-mode-crossfade-image.html:
+        * platform/efl/TestExpectations: Pass efl as blendMode is not implemented.
+        * platform/mac/TestExpectations: Mark added test as ImageOnlyFailure due to slight differences between the result and the blending formula.
+
 2014-01-16  Sergio Villar Senin  <svillar@igalia.com>
 
         [CSS Grid Layout] Simplify grid-columns-rows-get-set{-multiple}.html tests

@@ -1,3 +1,18 @@
+2014-01-20  Mihai Tica  <mitica@adobe.com>
+
+        [CSS Background Blending] Background layer with -webkit-cross-fade doesn't blend
+        when having -webkit-background-blending applied. Turns out the problem was
+        the blending parameter not being passed to WebCore::CrossfadeGeneratedImage::draw
+
+        https://bugs.webkit.org/show_bug.cgi?id=126887
+
+        Reviewed by Dirk Schulze.
+
+        Test: css3/compositing/background-blend-mode-crossfade-image.html
+
+        * platform/graphics/CrossfadeGeneratedImage.cpp:
+        (WebCore::CrossfadeGeneratedImage::draw): set blendMode on context.
+
 2013-11-22  Sergio Villar Senin  <svillar@igalia.com>
 
         Null-pointer dereference in WebCore::CSSValue::isPrimitiveValue
