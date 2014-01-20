@@ -498,7 +498,7 @@ webkit.org/b/99200 css3/compositing/blend-mode-overflow.html [ Skip ]
 webkit.org/b/99200 css3/compositing/blend-mode-reflection.html [ Skip ]
 webkit.org/b/99200 css3/compositing/blend-mode-simple.html [ Skip ]
 webkit.org/b/99200 css3/compositing/blend-mode-should-not-have-compositing-layer.html [ Skip ]
-webkit.org/b/118894 css3/compositing/background-blend-mode-data-uri-svg-image-expected.html [ Skip ]
+webkit.org/b/118894 css3/compositing/background-blend-mode-data-uri-svg-image.html [ Skip ]
 
 # No concept of secure text input
 editing/secure-input [ Failure ]
