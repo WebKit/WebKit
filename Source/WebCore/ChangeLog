@@ -1,3 +1,20 @@
+2014-01-20  Morten Stenshorne  <mstensho@opera.com>
+
+        Region based multicol: tall line causes taller multicol container than necessary
+        https://bugs.webkit.org/show_bug.cgi?id=122550
+
+        Detect and report all column breaks, also when there's no pagination strut involved.
+
+        This may end up becoming the overall smallest space shortage in some cases,
+        so we need to report it, to avoid column height over-stretching.
+
+        Reviewed by David Hyatt.
+
+        Test: fast/multicol/newmulticol/balance10.html
+
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::adjustLinePositionForPagination):
+
 2014-01-19  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GLIB] GVariant floating references are not correctly handled by GRefPtr

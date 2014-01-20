@@ -1557,8 +1557,13 @@ void RenderBlockFlow::adjustLinePositionForPagination(RootInlineBox* lineBox, La
             lineBox->setPaginationStrut(remainingLogicalHeight);
             lineBox->setIsFirstAfterPageBreak(true);
         }
-    } else if (remainingLogicalHeight == pageLogicalHeight && lineBox != firstRootBox())
-        lineBox->setIsFirstAfterPageBreak(true);
+    } else if (remainingLogicalHeight == pageLogicalHeight) {
+        // We're at the very top of a page or column.
+        if (lineBox != firstRootBox())
+            lineBox->setIsFirstAfterPageBreak(true);
+        if (lineBox != firstRootBox() || offsetFromLogicalTopOfFirstPage())
+            setPageBreak(logicalOffset, lineHeight);
+    }
 }
 
 void RenderBlockFlow::setBreakAtLineToAvoidWidow(int lineToBreak)
