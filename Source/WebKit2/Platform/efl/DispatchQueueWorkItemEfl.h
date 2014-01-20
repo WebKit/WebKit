@@ -56,7 +56,7 @@ class TimerWorkItem : public WorkItem {
 public:
     static std::unique_ptr<TimerWorkItem> create(PassRefPtr<WorkQueue> workQueue, std::function<void ()> function, std::chrono::nanoseconds delay)
     {
-        ASSERT(delaySeconds >= 0);
+        ASSERT(delay.count() >= 0);
         return std::unique_ptr<TimerWorkItem>(new TimerWorkItem(workQueue, std::move(function), monotonicallyIncreasingTime() + delay.count() / 1000000000ULL));
     }
     double expirationTimeSeconds() const { return m_expirationTimeSeconds; }
