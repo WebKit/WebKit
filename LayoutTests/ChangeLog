@@ -1,3 +1,12 @@
+2014-01-20  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed GTK gardening.
+
+        Marked media/audio-concurrent-supported.html as flaky.
+        Marked js/dom/string-replacement-outofmemory.html as slow on the release configuration as well.
+
+        * platform/gtk/TestExpectations:
+
 2014-01-20  Morten Stenshorne  <mstensho@opera.com>
 
         Region based multicol: tall line causes taller multicol container than necessary

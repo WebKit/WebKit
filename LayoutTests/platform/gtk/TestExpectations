@@ -755,6 +755,8 @@ webkit.org/b/126432 http/tests/misc/acid2.html [ Failure Pass ]
 
 webkit.org/b/126523 perf/accessibility-title-ui-element.html [ Failure Pass ]
 
+webkit.org/b/127280 media/audio-concurrent-supported.html [ Failure Pass ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Flaky tests
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -798,7 +800,7 @@ Bug(GTK) [ Debug ] js/dfg-uint32array-overflow-values.html [ Pass Slow ]
 Bug(GTK) [ Debug ] js/dfg-uint8array.html [ Pass Slow ]
 Bug(GTK) [ Debug ] js/dfg-uint8clampedarray.html [ Pass Slow ]
 Bug(GTK) [ Debug ] js/dom/random-array-gc-stress.html [ Pass Slow ]
-Bug(GTK) [ Debug ] js/dom/string-replacement-outofmemory.html [ Pass Slow ]
+Bug(GTK) js/dom/string-replacement-outofmemory.html [ Pass Slow ]
 Bug(GTK) [ Debug ] js/dom/toString-and-valueOf-override.html [ Pass Slow ]
 Bug(GTK) [ Debug ] js/regress/method-on-number.html [ Pass Slow ]
 Bug(GTK) [ Debug ] fast/frames/lots-of-iframes.html [ Pass Slow ]
