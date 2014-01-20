@@ -992,7 +992,6 @@ Bug(EFL) fast/replaced/pdf-as-image.html
 
 # Started failing after sub-pixel layout was enabled.
 Bug(EFL) fast/regions/overflow-last-region-vert-lr.html [ ImageOnlyFailure Pass ]
-Bug(EFL) fast/spatial-navigation/snav-unit-overflow-and-scroll-in-direction.html [ Failure ]
 
 # Missing showModalDialog implementation
 webkit.org/b/84589 fast/events/show-modal-dialog-onblur-onfocus.html [ Failure ]

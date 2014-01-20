@@ -1,3 +1,17 @@
+2014-01-20  Zalan Bujtas  <zalan@apple.com>
+
+        Subpixel layout: 100000px overflows while calculating layout positions.
+        https://bugs.webkit.org/show_bug.cgi?id=126896
+
+        Reviewed by Simon Fraser.
+
+        Test case is adjusted to subpixel layout.
+
+        * fast/spatial-navigation/snav-unit-overflow-and-scroll-in-direction.html:
+        * platform/efl/TestExpectations:
+        * platform/gtk/fast/spatial-navigation/snav-unit-overflow-and-scroll-in-direction-expected.txt: Removed.
+        * platform/mac/TestExpectations:
+
 2014-01-20  Alexey Proskuryakov  <ap@apple.com>
 
         svg/filters/feComponentTransfer-style-crash.xhtml is flaky

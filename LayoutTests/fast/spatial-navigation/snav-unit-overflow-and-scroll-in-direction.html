@@ -5,7 +5,8 @@
 
     1) There is no unit overflow in the Spatial Navigation algorithm while
        calculating the best node candidate to move focus to. To test that this
-       page positions some elements 10000000 pixels far from each other (distance
+       page positions some elements 33554309 pixels (subpixel overflow limitation)
+       far from each other (distance
        that can considered large enough for most of the Web Pages on the
        Internet).
 
@@ -92,7 +93,7 @@
   </head>
   <body id="some-content" xmlns="http://www.w3.org/1999/xhtml">
     <a id="start" href="a">Start</a>
-    <div style='margin-top:100000000px'>
+    <div style='margin-top:33554309px'>
         <a id="end" href="a">End</a>
     </div>
     <div id="console"></div>
