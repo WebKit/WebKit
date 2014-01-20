@@ -1,3 +1,17 @@
+2014-01-20  Anders Carlsson  <andersca@apple.com>
+
+        Stop using ThreadCondition in BlockAllocator
+        https://bugs.webkit.org/show_bug.cgi?id=126313
+
+        Reviewed by Sam Weinig.
+
+        * heap/BlockAllocator.cpp:
+        (JSC::BlockAllocator::~BlockAllocator):
+        (JSC::BlockAllocator::waitForDuration):
+        (JSC::BlockAllocator::blockFreeingThreadMain):
+        * heap/BlockAllocator.h:
+        (JSC::BlockAllocator::deallocate):
+
 2014-01-19  Anders Carlsson  <andersca@apple.com>
 
         Convert GCThreadSharedData over to STL threading primitives
