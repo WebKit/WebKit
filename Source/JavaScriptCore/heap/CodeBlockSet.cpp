@@ -102,7 +102,7 @@ void CodeBlockSet::traceMarked(SlotVisitor& visitor)
         CodeBlock* codeBlock = *iter;
         if (!codeBlock->m_mayBeExecuting)
             continue;
-        codeBlock->ownerExecutable()->methodTable()->visitChildren(codeBlock->ownerExecutable(), visitor);
+        codeBlock->visitAggregate(visitor);
     }
 }
 

@@ -1,3 +1,16 @@
+2014-01-20  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        CodeBlockSet::traceMarked doesn't need to visit the ownerExecutable
+        https://bugs.webkit.org/show_bug.cgi?id=127301
+
+        Reviewed by Oliver Hunt.
+
+        We used to just call CodeBlock::visitAggregate, but now we call visitChildren 
+        on the ownerExecutable, which is unnecessary. 
+
+        * heap/CodeBlockSet.cpp:
+        (JSC::CodeBlockSet::traceMarked):
+
 2014-01-20  Anders Carlsson  <andersca@apple.com>
 
         Fix build.
