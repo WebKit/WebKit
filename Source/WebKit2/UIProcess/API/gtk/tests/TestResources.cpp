@@ -677,6 +677,7 @@ static void serverCallback(SoupServer* server, SoupMessage* message, const char*
     } else if (g_str_equal(path, "/style.css")) {
         soup_message_body_append(message->response_body, SOUP_MEMORY_STATIC, kStyleCSS, strlen(kStyleCSS));
         addCacheHTTPHeadersToResponse(message);
+        soup_message_headers_append(message->response_headers, "Content-Type", "text/css");
     } else if (g_str_equal(path, "/javascript.js")) {
         soup_message_body_append(message->response_body, SOUP_MEMORY_STATIC, kJavascript, strlen(kJavascript));
         soup_message_headers_append(message->response_headers, "Content-Type", "text/javascript");
@@ -694,6 +695,7 @@ static void serverCallback(SoupServer* server, SoupMessage* message, const char*
         g_file_get_contents(filePath.get(), &contents, &contentsLength, 0);
         soup_message_body_append(message->response_body, SOUP_MEMORY_TAKE, contents, contentsLength);
         addCacheHTTPHeadersToResponse(message);
+        soup_message_headers_append(message->response_headers, "Content-Type", "image/vnd.microsoft.icon");
     } else if (g_str_equal(path, "/simple-style.css")) {
         static const char* simpleCSS =
             "body {"
