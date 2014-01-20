@@ -1,3 +1,14 @@
+2014-01-20  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed. Additional build fixes after r162276 and r163304.
+
+        * Platform/WorkQueue.h:
+        * Platform/gtk/WorkQueueGtk.cpp:
+        (WorkQueue::EventSource::EventSource):
+        (WorkQueue::dispatchOnSource):
+        (WorkQueue::dispatch):
+        (WorkQueue::dispatchAfter):
+
 2014-01-19  Zan Dobersek  <zdobersek@igalia.com>
 
         Unreviewed GTK build fix after r162276.

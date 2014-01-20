@@ -35,8 +35,8 @@
 // WorkQueue::EventSource
 class WorkQueue::EventSource {
 public:
-    EventSource(const Function<void()>& function, WorkQueue* workQueue)
-        : m_function(function)
+    EventSource(std::function<void()> function, WorkQueue* workQueue)
+        : m_function(std::move(function))
         , m_workQueue(workQueue)
     {
         ASSERT(workQueue);
@@ -204,23 +204,26 @@ void WorkQueue::unregisterSocketEventHandler(int fileDescriptor)
     }
 }
 
-void WorkQueue::dispatchOnSource(GSource* dispatchSource, const std::function<void ()>& function, GSourceFunc sourceCallback)
+void WorkQueue::dispatchOnSource(GSource* dispatchSource, std::function<void ()> function, GSourceFunc sourceCallback)
 {
-    g_source_set_callback(dispatchSource, sourceCallback, new EventSource(function, this),
+    g_source_set_callback(dispatchSource, sourceCallback, new EventSource(std::forward<std::function<void ()>>(function), this),
         reinterpret_cast<GDestroyNotify>(&WorkQueue::EventSource::deleteEventSource));
 
     g_source_attach(dispatchSource, m_eventContext.get());
 }
 
-void WorkQueue::dispatch(const std::function<void ()>& function)
+void WorkQueue::dispatch(std::function<void ()> function)
 {
     GRefPtr<GSource> dispatchSource = adoptGRef(g_idle_source_new());
     g_source_set_priority(dispatchSource.get(), G_PRIORITY_DEFAULT);
-    dispatchOnSource(dispatchSource.get(), function, reinterpret_cast<GSourceFunc>(&WorkQueue::EventSource::performWorkOnce));
+    dispatchOnSource(dispatchSource.get(), std::forward<std::function<void ()>>(function),
+        reinterpret_cast<GSourceFunc>(&WorkQueue::EventSource::performWorkOnce));
 }
 
-void WorkQueue::dispatchAfter(std::chrono::nanoseconds duration, const std::function<void ()>& function)
+void WorkQueue::dispatchAfter(std::chrono::nanoseconds duration, std::function<void ()> function)
 {
-    GRefPtr<GSource> dispatchSource = adoptGRef(g_timeout_source_new(static_cast<guint>(std::chrono::milliseconds(duration).count())));
-    dispatchOnSource(dispatchSource.get(), function, reinterpret_cast<GSourceFunc>(&WorkQueue::EventSource::performWorkOnce));
+    GRefPtr<GSource> dispatchSource = adoptGRef(g_timeout_source_new(
+        static_cast<guint>(std::chrono::duration_cast<std::chrono::milliseconds>(duration).count())));
+    dispatchOnSource(dispatchSource.get(), std::forward<std::function<void ()>>(function),
+        reinterpret_cast<GSourceFunc>(&WorkQueue::EventSource::performWorkOnce));
 }
