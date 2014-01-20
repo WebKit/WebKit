@@ -141,7 +141,7 @@ String WebPage::cachedResponseMIMETypeForURL(const KURL&)
 bool WebPage::platformCanHandleRequest(const ResourceRequest&)
 {
     notImplemented();
-    return true;
+    return false;
 }
 
 String WebPage::cachedSuggestedFilenameForURL(const KURL&)
