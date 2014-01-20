@@ -1,5 +1,17 @@
 2014-01-20  Anders Carlsson  <andersca@apple.com>
 
+        Remove an unused member variable
+        https://bugs.webkit.org/show_bug.cgi?id=127295
+
+        Reviewed by Antti Koivisto.
+
+        * wtf/MainThread.cpp:
+        (WTF::FunctionWithContext::FunctionWithContext):
+        (WTF::FunctionWithContext::operator == ):
+        (WTF::dispatchFunctionsFromMainThread):
+
+2014-01-20  Anders Carlsson  <andersca@apple.com>
+
         Remove MutexTryLocker
         https://bugs.webkit.org/show_bug.cgi?id=127294
 
