@@ -307,7 +307,7 @@ class TestRunner:
         return not return_code_from_exit_status(status)
 
     def _run_test_glib(self, test_program):
-        tester_command = ['gtester']
+        tester_command = ['gtester', '-k']
         if self._options.verbose:
             tester_command.append('--verbose')
         for test_case in self._test_cases_to_skip(test_program):

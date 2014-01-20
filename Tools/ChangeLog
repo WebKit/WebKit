@@ -1,3 +1,17 @@
+2013-12-23  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] run-gtk-tests should always run glib tests with -k option
+        https://bugs.webkit.org/show_bug.cgi?id=126132
+
+        Reviewed by Philippe Normand.
+
+        With -k command line option, gtester continues running all other
+        test cases after a failure.
+
+        * Scripts/run-gtk-tests:
+        (TestRunner._run_test_glib): Use -k option when runing glib tests
+        to not stop on failure.
+
 2013-10-25  Anton Obzhirov  <a.obzhirov@samsung.com>
 
         [GTK] [WebKit2] CanHandleRequest API test fails
