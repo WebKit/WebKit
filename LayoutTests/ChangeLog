@@ -1,3 +1,15 @@
+2014-01-20  Eric Carlson  <eric.carlson@apple.com>
+
+        Allow MediaSessionManager to restrict 'preload' behavior
+        https://bugs.webkit.org/show_bug.cgi?id=127297
+
+        Reviewed by Jer Noble.
+
+        * media/video-restricted-no-preload-auto-expected.txt: Added.
+        * media/video-restricted-no-preload-auto.html: Added.
+        * media/video-restricted-no-preload-metadata-expected.txt: Added.
+        * media/video-restricted-no-preload-metadata.html: Added.
+
 2014-01-20  Mihai Tica  <mitica@adobe.com>
 
         Fix test expectations for css3/compositing/background-blend-mode-data-uri-svg-image.html

@@ -424,6 +424,8 @@ public:
     RefPtr<VideoPlaybackQuality> getVideoPlaybackQuality();
 #endif
 
+    MediaPlayer::Preload preloadValue() const { return m_preload; }
+
 protected:
     HTMLMediaElement(const QualifiedName&, Document&, bool);
     virtual ~HTMLMediaElement();

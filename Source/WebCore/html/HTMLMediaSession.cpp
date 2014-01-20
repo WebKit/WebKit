@@ -143,6 +143,22 @@ bool HTMLMediaSession::showingPlaybackTargetPickerPermitted(const HTMLMediaEleme
 }
 #endif
 
+MediaPlayer::Preload HTMLMediaSession::effectivePreloadForElement(const HTMLMediaElement& element) const
+{
+    MediaSessionManager::SessionRestrictions restrictions = MediaSessionManager::sharedManager().restrictions(mediaType());
+    MediaPlayer::Preload preload = element.preloadValue();
+
+    if ((restrictions & MediaSessionManager::MetadataPreloadingNotPermitted) == MediaSessionManager::MetadataPreloadingNotPermitted)
+        return MediaPlayer::None;
+
+    if ((restrictions & MediaSessionManager::AutoPreloadingNotPermitted) == MediaSessionManager::AutoPreloadingNotPermitted) {
+        if (preload > MediaPlayer::MetaData)
+            return MediaPlayer::MetaData;
+    }
+
+    return preload;
+}
+
 void HTMLMediaSession::clientWillBeginPlayback() const
 {
     MediaSessionManager::sharedManager().sessionWillBeginPlayback(*this);

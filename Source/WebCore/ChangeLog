@@ -1,3 +1,31 @@
+2014-01-20  Eric Carlson  <eric.carlson@apple.com>
+
+        Allow MediaSessionManager to restrict 'preload' behavior
+        https://bugs.webkit.org/show_bug.cgi?id=127297
+
+        Reviewed by Jer Noble.
+
+        Tests: media/video-restricted-no-preload-auto.html
+               media/video-restricted-no-preload-metadata.html
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::parseAttribute): Apply restrictions to preload attribute before
+            passing to media engine.
+        (WebCore::HTMLMediaElement::loadResource): Ditto.
+
+        * html/HTMLMediaSession.cpp:
+        (WebCore::HTMLMediaSession::effectivePreloadForElement): New, limit preload according to restrictions.
+        * html/HTMLMediaSession.h:
+
+        * platform/audio/MediaSessionManager.h:
+        * platform/audio/ios/MediaSessionManagerIOS.mm:
+        (WebCore::MediaSessionManageriOS::resetRestrictions): Limit preload to metadata only. Drive-by
+            static deviceClass initialization cleanup.
+
+        * testing/Internals.cpp:
+        (WebCore::Internals::setMediaSessionRestrictions): Support MetadataPreloadingNotPermitted and
+            AutoPreloadingNotPermitted.
+
 2014-01-20  Andreas Kling  <akling@apple.com>
 
         Let RenderImage construct its RenderImageResource.

@@ -1,0 +1,62 @@
+<html>
+    <head>
+        <script src="media-file.js"></script>
+        <script src="video-test.js"></script>
+        <script>
+            var playCalled = false;
+
+            function canplaythrough()
+            {
+                consoleWrite("");
+                if (!playCalled)
+                    consoleWrite("*** FAIL: media data loaded before play() was called ***<br>");
+
+                endTest();
+            }
+
+            function play()
+            {
+                consoleWrite("** 250ms timer fired");
+                testExpected("video.readyState", HTMLMediaElement.HAVE_CURRENT_DATA, "<");
+                testExpected("video.buffered.length", 0, "==");
+                playCalled = true;
+                run("video.play()");
+                consoleWrite("");
+            }
+
+            function loadedmetadata()
+            {
+                testExpected("video.readyState", HTMLMediaElement.HAVE_CURRENT_DATA, "<");
+
+                // Wait 250ms before play()ing to make sure setting src did not kick off the load.
+                consoleWrite("** Pausing...<br>");
+                setTimeout(play, 250);
+                consoleWrite("");
+            }
+
+            function start()
+            {
+                if (!window.internals) {
+                    failTest('This test requires window.internals.');
+                    return;
+                }
+
+                findMediaElement();
+                consoleWrite("** setting video.src");
+                video.src = findMediaFile("video", "content/test");
+
+                testExpected("video.preload", "auto");
+                waitForEvent('loadedmetadata', loadedmetadata);
+                waitForEvent('canplaythrough', canplaythrough);
+                failTestIn(2000);
+                run("internals.setMediaSessionRestrictions('video', 'AutoPreloadingNotPermitted')");
+                consoleWrite("");
+            }
+        </script>
+    </head>
+
+    <body onload="start()">
+        <video controls preload=auto></video>
+        <p>Test that "no auto-loading restriction" only allows metadata to load in spite of preload='auto'.</p>
+    </body>
+</html>

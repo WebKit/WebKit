@@ -79,12 +79,15 @@ void MediaSessionManageriOS::resetRestrictions()
 {
     MediaSessionManager::resetRestrictions();
 
-    DEFINE_STATIC_LOCAL(wkDeviceClass, deviceClass, (iosDeviceClass()));
-
+    static wkDeviceClass deviceClass = iosDeviceClass();
     if (deviceClass == wkDeviceClassiPhone || deviceClass == wkDeviceClassiPod)
         addRestriction(MediaSession::Video, InlineVideoPlaybackRestricted);
 
     addRestriction(MediaSession::Video, ConcurrentPlaybackNotPermitted);
+    removeRestriction(MediaSession::Audio, MetadataPreloadingNotPermitted);
+    removeRestriction(MediaSession::Video, MetadataPreloadingNotPermitted);
+    addRestriction(MediaSession::Audio, AutoPreloadingNotPermitted);
+    addRestriction(MediaSession::Video, AutoPreloadingNotPermitted);
 }
 
 } // namespace WebCore

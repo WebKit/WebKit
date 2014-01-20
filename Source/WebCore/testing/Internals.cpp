@@ -2211,7 +2211,11 @@ void Internals::setMediaSessionRestrictions(const String& mediaTypeString, const
         restrictions = MediaSessionManager::ConcurrentPlaybackNotPermitted;
     if (equalIgnoringCase(restrictionsString, "InlineVideoPlaybackRestricted"))
         restrictions += MediaSessionManager::InlineVideoPlaybackRestricted;
-    
+    if (equalIgnoringCase(restrictionsString, "MetadataPreloadingNotPermitted"))
+        restrictions += MediaSessionManager::MetadataPreloadingNotPermitted;
+    if (equalIgnoringCase(restrictionsString, "AutoPreloadingNotPermitted"))
+        restrictions += MediaSessionManager::AutoPreloadingNotPermitted;
+
     MediaSessionManager::sharedManager().addRestriction(mediaType, restrictions);
 }
 

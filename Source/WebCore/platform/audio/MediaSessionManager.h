@@ -50,7 +50,9 @@ public:
     enum SessionRestrictionFlags {
         NoRestrictions = 0,
         ConcurrentPlaybackNotPermitted = 1 << 0,
-        InlineVideoPlaybackRestricted = 1 << 0,
+        InlineVideoPlaybackRestricted = 1 << 1,
+        MetadataPreloadingNotPermitted = 1 << 2,
+        AutoPreloadingNotPermitted = 1 << 3,
     };
     typedef unsigned SessionRestrictions;
     

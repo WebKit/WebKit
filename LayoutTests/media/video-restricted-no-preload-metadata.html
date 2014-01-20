@@ -1,0 +1,54 @@
+<html>
+    <head>
+        <script src="media-file.js"></script>
+        <script src="video-test.js"></script>
+        <script>
+            var loadCalled = false;
+
+            function loadedmetadata()
+            {
+                consoleWrite("");
+                if (!loadCalled)
+                    consoleWrite("*** FAIL: media data loaded before load() was called ***<br>");
+
+                endTest();
+            }
+
+            function load()
+            {
+                consoleWrite("** 250ms timer fired");
+                testExpected("video.readyState", HTMLMediaElement.HAVE_NOTHING);
+                testExpected("video.buffered.length", 0, "==");
+                loadCalled = true;
+                run("video.load()");
+                consoleWrite("");
+            }
+
+            function start()
+            {
+                if (!window.internals) {
+                    failTest('This test requires window.internals.');
+                    return;
+                }
+
+                findMediaElement();
+                consoleWrite("** setting video.src");
+                video.src = findMediaFile("video", "content/test");
+
+                testExpected("video.preload", "auto");
+                waitForEvent('loadedmetadata', loadedmetadata);
+                run("internals.setMediaSessionRestrictions('video', 'MetadataPreloadingNotPermitted')");
+
+                // Wait 250ms before load()ing to make sure setting src did not kick off the load.
+                consoleWrite("** Pausing...<br>");
+                setTimeout(load, 250);
+                failTestIn(2000);
+            }
+        </script>
+    </head>
+
+    <body onload="start()">
+        <video controls preload=auto></video>
+        <p>Test that "no preloading restriction" disables preloading in spite of preload='auto'.</p>
+    </body>
+</html>

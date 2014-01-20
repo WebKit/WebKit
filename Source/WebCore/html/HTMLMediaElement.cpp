@@ -546,7 +546,7 @@ void HTMLMediaElement::parseAttribute(const QualifiedName& name, const AtomicStr
 
         // The attribute must be ignored if the autoplay attribute is present
         if (!autoplay() && m_player)
-            m_player->setPreload(m_preload);
+            m_player->setPreload(m_mediaSession->effectivePreloadForElement(*this));
 
     } else if (name == mediagroupAttr)
         setMediaGroup(value);
@@ -987,12 +987,13 @@ void HTMLMediaElement::prepareForLoad()
     // The spec doesn't say to block the load event until we actually run the asynchronous section
     // algorithm, but do it now because we won't start that until after the timer fires and the 
     // event may have already fired by then.
-    if (m_preload != MediaPlayer::None)
+    MediaPlayer::Preload effectivePreload = m_mediaSession->effectivePreloadForElement(*this);
+    if (effectivePreload != MediaPlayer::None)
         setShouldDelayLoadEvent(true);
 
 #if PLATFORM(IOS)
     Settings* settings = document().settings();
-    if (m_preload != MediaPlayer::None && settings && settings->mediaDataLoadsAutomatically())
+    if (effectivePreload != MediaPlayer::None && settings && settings->mediaDataLoadsAutomatically())
         prepareToPlay();
 #endif
 
@@ -1211,7 +1212,7 @@ void HTMLMediaElement::loadResource(const URL& initialURL, ContentType& contentT
     setDisplayMode(Unknown);
 
     if (!autoplay())
-        m_player->setPreload(m_preload);
+        m_player->setPreload(m_mediaSession->effectivePreloadForElement(*this));
     m_player->setPreservesPitch(m_webkitPreservesPitch);
 
     if (fastHasAttribute(mutedAttr))

@@ -28,6 +28,7 @@
 
 #if ENABLE(VIDEO)
 
+#include "MediaPlayer.h"
 #include "MediaSession.h"
 
 namespace WebCore {
@@ -52,6 +53,7 @@ public:
     bool showingPlaybackTargetPickerPermitted(const HTMLMediaElement&) const;
 #endif
     bool requiresFullscreenForVideoPlayback(const HTMLMediaElement&) const;
+    MediaPlayer::Preload effectivePreloadForElement(const HTMLMediaElement&) const;
 
     // Restrictions to modify default behaviors.
     enum BehaviorRestrictionFlags {
