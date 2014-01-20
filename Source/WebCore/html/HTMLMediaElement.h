@@ -132,6 +132,10 @@ public:
     PlatformMedia platformMedia() const;
 #if USE(ACCELERATED_COMPOSITING)
     PlatformLayer* platformLayer() const;
+#if PLATFORM(IOS)
+    PlatformLayer* borrowPlatformLayer();
+    void returnPlatformLayer(PlatformLayer*);
+#endif
 #endif
 
     enum DelayedActionType {
@@ -777,6 +781,7 @@ private:
 
 #if PLATFORM(IOS)
     bool m_requestingPlay : 1;
+    bool m_platformLayerBorrowed : 1;
 #endif
 
     bool m_resumePlaybackAfterInterruption : 1;

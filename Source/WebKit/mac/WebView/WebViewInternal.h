@@ -236,7 +236,7 @@ OBJC_CLASS NSTextAlternatives;
 
 - (void)_preferencesChanged:(WebPreferences *)preferences;
 
-#if ENABLE(VIDEO) && !PLATFORM(IOS) && defined(__cplusplus)
+#if ENABLE(VIDEO) && defined(__cplusplus)
 - (void)_enterFullscreenForNode:(WebCore::Node*)node;
 - (void)_exitFullscreen;
 #endif

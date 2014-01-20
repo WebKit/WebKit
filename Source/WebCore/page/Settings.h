@@ -307,6 +307,9 @@ public:
 
     static void setNetworkInterfaceName(const String&);
     static const String& networkInterfaceName();
+
+    static void setAVKitEnabled(bool flag) { gAVKitEnabled = flag; }
+    static bool avKitEnabled() { return gAVKitEnabled; }
 #endif
 
 private:
@@ -405,6 +408,7 @@ private:
     static bool gShouldRespectPriorityInCSSAttributeSetters;
 #if PLATFORM(IOS)
     static bool gNetworkDataUsageTrackingEnabled;
+    static bool gAVKitEnabled;
 #endif
 
     static double gHiddenPageDOMTimerAlignmentInterval;

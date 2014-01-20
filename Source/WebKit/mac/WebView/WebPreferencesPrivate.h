@@ -259,6 +259,9 @@ extern NSString *WebPreferencesCacheModelChangedInternalNotification;
 - (unsigned)audioSessionCategoryOverride;
 - (void)setAudioSessionCategoryOverride:(unsigned)override;
 
+- (BOOL)avKitEnabled;
+- (void)setAVKitEnabled:(bool)flag;
+
 // WARNING: this affect network performance. This must not be enabled for production use.
 // Enabling this makes WebCore reports the network data usage.
 // This is a global setting.

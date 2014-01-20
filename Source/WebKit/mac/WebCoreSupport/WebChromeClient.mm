@@ -967,10 +967,14 @@ void WebChromeClient::scheduleCompositingLayerFlush()
 
 #endif
 
-#if ENABLE(VIDEO) && !PLATFORM(IOS)
+#if ENABLE(VIDEO)
 
 bool WebChromeClient::supportsFullscreenForNode(const Node* node)
 {
+#if PLATFORM(IOS)
+    if (!Settings::avKitEnabled())
+        return false;
+#endif
     return isHTMLVideoElement(node);
 }
 

@@ -4846,11 +4846,12 @@ void HTMLMediaElement::enterFullscreen()
     if (hasMediaControls())
         mediaControls()->enteredFullscreen();
     if (document().page()) {
-#if !PLATFORM(IOS)
-        document().page()->chrome().client().enterFullscreenForNode(this);
-        scheduleEvent(eventNames().webkitbeginfullscreenEvent);
-#else
-        if (m_player)
+        if (document().page()->chrome().client().supportsFullscreenForNode(this)) {
+            document().page()->chrome().client().enterFullscreenForNode(this);
+            scheduleEvent(eventNames().webkitbeginfullscreenEvent);
+        }
+#if PLATFORM(IOS)
+        else if (m_player)
             m_player->enterFullscreen();
 #endif
     }
@@ -4874,11 +4875,13 @@ void HTMLMediaElement::exitFullscreen()
     if (document().page()) {
         if (document().page()->chrome().requiresFullscreenForVideoPlayback())
             pauseInternal();
-#if !PLATFORM(IOS)
-        document().page()->chrome().client().exitFullscreenForNode(this);
-        scheduleEvent(eventNames().webkitendfullscreenEvent);
-#else
-        if (m_player)
+
+        if (document().page()->chrome().client().supportsFullscreenForNode(this)) {
+            document().page()->chrome().client().exitFullscreenForNode(this);
+            scheduleEvent(eventNames().webkitendfullscreenEvent);
+        }
+#if PLATFORM(IOS)
+        else if (m_player)
             m_player->exitFullscreen();
 #endif
     }
@@ -4904,8 +4907,31 @@ PlatformMedia HTMLMediaElement::platformMedia() const
 #if USE(ACCELERATED_COMPOSITING)
 PlatformLayer* HTMLMediaElement::platformLayer() const
 {
-    return m_player ? m_player->platformLayer() : 0;
+#if PLATFORM(IOS)
+    if (m_platformLayerBorrowed)
+        return nullptr;
+#endif
+    return m_player ? m_player->platformLayer() : nullptr;
 }
+
+#if PLATFORM(IOS)
+PlatformLayer* HTMLMediaElement::borrowPlatformLayer()
+{
+    ASSERT(!m_platformLayerBorrowed);
+    m_platformLayerBorrowed = true;
+    if (renderer())
+        renderer()->updateFromElement();
+    return m_player ? m_player->platformLayer() : nullptr;
+}
+
+void HTMLMediaElement::returnPlatformLayer(PlatformLayer* platformLayer)
+{
+    ASSERT(m_platformLayerBorrowed && platformLayer == (m_player ? m_player->platformLayer() : nullptr));
+    m_platformLayerBorrowed = false;
+    if (renderer())
+        renderer()->updateFromElement();
+}
+#endif
 #endif
 
 bool HTMLMediaElement::hasClosedCaptions() const

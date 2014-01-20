@@ -38,6 +38,7 @@
 #include "URL.h"
 #include "Logging.h"
 #include "PlatformLayer.h"
+#include "Settings.h"
 #include "SoftLinking.h"
 #include "TimeRanges.h"
 #include <CoreMedia/CoreMedia.h>
@@ -474,6 +475,10 @@ bool MediaPlayerPrivateAVFoundation::supportsFullscreen() const
     return true;
 #else
     // FIXME: WebVideoFullscreenController assumes a QTKit/QuickTime media engine
+#if PLATFORM(IOS)
+    if (Settings::avKitEnabled())
+        return true;
+#endif
     return false;
 #endif
 }

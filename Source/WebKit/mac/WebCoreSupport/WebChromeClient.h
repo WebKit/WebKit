@@ -185,7 +185,7 @@ public:
     }
 #endif
 
-#if ENABLE(VIDEO) && !PLATFORM(IOS)
+#if ENABLE(VIDEO)
     virtual bool supportsFullscreenForNode(const WebCore::Node*) override;
     virtual void enterFullscreenForNode(WebCore::Node*) override;
     virtual void exitFullscreenForNode(WebCore::Node*) override;

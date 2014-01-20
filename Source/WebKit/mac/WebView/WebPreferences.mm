@@ -531,6 +531,7 @@ public:
         [NSNumber numberWithBool:NO],   WebKitMediaPlaybackAllowsInlinePreferenceKey,
         [NSNumber numberWithBool:YES],  WebKitMediaPlaybackAllowsAirPlayPreferenceKey,
         [NSNumber numberWithUnsignedInt:AudioSession::None],  WebKitAudioSessionCategoryOverride,
+        [NSNumber numberWithBool:NO],   WebKitAVKitEnabled,
         [NSNumber numberWithLongLong:WebCore::ApplicationCacheStorage::noQuota()], WebKitApplicationCacheTotalQuota,
 
         // Per-Origin Quota on iOS is 25MB. When the quota is reached for a particular origin
@@ -2216,6 +2217,16 @@ static NSString *classIBCreatorID = nil;
     }
 
     [self _setUnsignedIntValue:override forKey:WebKitAudioSessionCategoryOverride];
+}
+
+- (BOOL)avKitEnabled
+{
+    return [self _boolValueForKey:WebKitAVKitEnabled];
+}
+
+- (void)setAVKitEnabled:(bool)flag
+{
+    [self _setBoolValue:flag forKey:WebKitAVKitEnabled];
 }
 
 - (BOOL)networkDataUsageTrackingEnabled

@@ -133,6 +133,7 @@
 #if TARGET_OS_IPHONE
 #define WebKitMediaPlaybackAllowsAirPlayPreferenceKey @"WebKitMediaPlaybackAllowsAirPlay"
 #define WebKitAudioSessionCategoryOverride @"WebKitAudioSessionCategoryOverride"
+#define WebKitAVKitEnabled @"WebKitAVKitEnabled"
 #endif
 #define WebKitRegionBasedColumnsEnabledKey @"WebKitRegionBasedColumnsEnabled"
 #define WebKitShouldRespectImageOrientationKey @"WebKitShouldRespectImageOrientation"

@@ -1,3 +1,28 @@
+2014-01-20  Jeremy Jones  <jeremyj@apple.com>
+
+        Add AVKit fullscreen video interface.
+        https://bugs.webkit.org/show_bug.cgi?id=126818
+
+        Reviewed by Eric Carlson.
+
+        * WebCoreSupport/WebChromeClient.h:
+        * WebCoreSupport/WebChromeClient.mm:
+        (WebChromeClient::supportsFullscreenForNode):
+        Enable *FullscreenForNode for HTMLMediaElement for iOS
+
+        * WebView/WebPreferenceKeysPrivate.h:
+        * WebView/WebPreferences.mm:
+        (+[WebPreferences initialize]):
+        (-[WebPreferences mediaPlaybackFullscreenAVKit]):
+        (-[WebPreferences setMediaPlaybackFullscreenAVKit:]):
+        * WebView/WebPreferencesPrivate.h:
+        * WebView/WebView.mm:
+        (-[WebView _preferencesChanged:]):
+        (-[WebView _enterFullscreenForNode:WebCore::]):
+        * WebView/WebViewInternal.h:
+        Add a disabled pref mediaPlaybackFullscreenAVKit.
+        Use WebVideoFullscreenControllerAVKit on iOS
+
 2014-01-18  Brian Burg  <bburg@apple.com>
 
         Web Inspector: Page should use std::unique_ptr for InspectorController

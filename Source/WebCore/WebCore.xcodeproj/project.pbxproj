@@ -1301,6 +1301,8 @@
 		3F2B33ED165AF15600E3987C /* DOMWebKitCSSViewportRuleInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 3F2B33E8165AF15500E3987C /* DOMWebKitCSSViewportRuleInternal.h */; };
 		3F2B33EE165AF15600E3987C /* JSWebKitCSSViewportRule.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3F2B33E9165AF15500E3987C /* JSWebKitCSSViewportRule.cpp */; };
 		3F2B33EF165AF15600E3987C /* JSWebKitCSSViewportRule.h in Headers */ = {isa = PBXBuildFile; fileRef = 3F2B33EA165AF15500E3987C /* JSWebKitCSSViewportRule.h */; };
+		3F42B31D1881191B00278AAC /* WebVideoFullscreenControllerAVKit.h in Headers */ = {isa = PBXBuildFile; fileRef = 3F42B31B1881191B00278AAC /* WebVideoFullscreenControllerAVKit.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		3F42B31E1881191B00278AAC /* WebVideoFullscreenControllerAVKit.mm in Sources */ = {isa = PBXBuildFile; fileRef = 3F42B31C1881191B00278AAC /* WebVideoFullscreenControllerAVKit.mm */; };
 		3FFFF9A8159D9A550020BBD5 /* WebKitCSSViewportRule.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3FFFF9A6159D9A550020BBD5 /* WebKitCSSViewportRule.cpp */; };
 		3FFFF9A9159D9A550020BBD5 /* WebKitCSSViewportRule.h in Headers */ = {isa = PBXBuildFile; fileRef = 3FFFF9A7159D9A550020BBD5 /* WebKitCSSViewportRule.h */; };
 		3FFFF9AD159D9B060020BBD5 /* ViewportStyleResolver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3FFFF9AB159D9B060020BBD5 /* ViewportStyleResolver.cpp */; };
@@ -8184,6 +8186,8 @@
 		3F2B33E8165AF15500E3987C /* DOMWebKitCSSViewportRuleInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMWebKitCSSViewportRuleInternal.h; sourceTree = "<group>"; };
 		3F2B33E9165AF15500E3987C /* JSWebKitCSSViewportRule.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWebKitCSSViewportRule.cpp; sourceTree = "<group>"; };
 		3F2B33EA165AF15500E3987C /* JSWebKitCSSViewportRule.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWebKitCSSViewportRule.h; sourceTree = "<group>"; };
+		3F42B31B1881191B00278AAC /* WebVideoFullscreenControllerAVKit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebVideoFullscreenControllerAVKit.h; path = ios/WebVideoFullscreenControllerAVKit.h; sourceTree = "<group>"; };
+		3F42B31C1881191B00278AAC /* WebVideoFullscreenControllerAVKit.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WebVideoFullscreenControllerAVKit.mm; path = ios/WebVideoFullscreenControllerAVKit.mm; sourceTree = "<group>"; };
 		3FFFF9A6159D9A550020BBD5 /* WebKitCSSViewportRule.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebKitCSSViewportRule.cpp; sourceTree = "<group>"; };
 		3FFFF9A7159D9A550020BBD5 /* WebKitCSSViewportRule.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebKitCSSViewportRule.h; sourceTree = "<group>"; };
 		3FFFF9AB159D9B060020BBD5 /* ViewportStyleResolver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ViewportStyleResolver.cpp; sourceTree = "<group>"; };
@@ -18075,6 +18079,8 @@
 				FE0D84EA1048436E001A179E /* WebEvent.mm */,
 				A502C5DD13049B3500FC7D53 /* WebSafeGCActivityCallbackIOS.h */,
 				C2C4CB1D161A131200D214DA /* WebSafeIncrementalSweeperIOS.h */,
+				3F42B31B1881191B00278AAC /* WebVideoFullscreenControllerAVKit.h */,
+				3F42B31C1881191B00278AAC /* WebVideoFullscreenControllerAVKit.mm */,
 				E453903C0EAFD637003695C8 /* WidgetIOS.mm */,
 			);
 			name = ios;
@@ -25040,6 +25046,7 @@
 				A9C6E4F40D745E48006442E9 /* PluginData.h in Headers */,
 				97205ABC1239292700B17380 /* PluginDocument.h in Headers */,
 				1ADA14110E1AE5D900023EE5 /* PluginMainThreadScheduler.h in Headers */,
+				3F42B31D1881191B00278AAC /* WebVideoFullscreenControllerAVKit.h in Headers */,
 				71E2183A17359FB8006E6E4D /* PlugInsResources.h in Headers */,
 				1AA8799011CBE846003C664F /* PluginStrategy.h in Headers */,
 				0AFDAC3D10F5448C00E1F3D2 /* PluginViewBase.h in Headers */,
@@ -29027,6 +29034,7 @@
 				B2227A900D00BF220071B782 /* SVGPolygonElement.cpp in Sources */,
 				B2227A930D00BF220071B782 /* SVGPolylineElement.cpp in Sources */,
 				B543B85717EB758F003BE93A /* SVGPropertyInfo.cpp in Sources */,
+				3F42B31E1881191B00278AAC /* WebVideoFullscreenControllerAVKit.mm in Sources */,
 				B2227A960D00BF220071B782 /* SVGPreserveAspectRatio.cpp in Sources */,
 				B2227A990D00BF220071B782 /* SVGRadialGradientElement.cpp in Sources */,
 				B2227A9D0D00BF220071B782 /* SVGRectElement.cpp in Sources */,

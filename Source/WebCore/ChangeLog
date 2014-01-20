@@ -1,3 +1,51 @@
+2014-01-20  Jeremy Jones  <jeremyj@apple.com>
+
+        Add AVKit fullscreen video interface.
+        https://bugs.webkit.org/show_bug.cgi?id=126818
+
+        Reviewed by Eric Carlson.
+
+        No new tests, no observable change in functionality.
+
+        * WebCore.exp.in:
+        * WebCore.xcodeproj/project.pbxproj:
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::parseAttribute):
+        * html/HTMLMediaElement.h:
+        Add ability for fullscreen to borrow the AVPlayerLayer.
+        * page/Settings.cpp:
+        * page/Settings.h:
+        (WebCore::Settings::setMediaPlaybackFullscreenAVKit):
+        (WebCore::Settings::mediaPlaybackFullscreenAVKit):
+        Add a disabled setting.
+        * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundation.cpp:
+        (WebCore::MediaPlayerPrivateAVFoundation::supportsFullscreen):
+        Enabled fullscreen for iOS.
+        * platform/ios/WebVideoFullscreenControllerAVKit.h: Added.
+        * platform/ios/WebVideoFullscreenControllerAVKit.mm: Added.
+        (-[WebAVPlayerController init]):
+        (-[WebAVPlayerController dealloc]):
+        (-[WebAVPlayerController forwardingTargetForSelector:]):
+        (-[WebAVPlayerController shouldDismissForDone]):
+        (-[WebAVPlayerController play:]):
+        (-[WebAVPlayerController pause:]):
+        (-[WebAVPlayerController togglePlayback:]):
+        (-[WebAVPlayerController isPlaying]):
+        (-[WebAVPlayerController setPlaying:]):
+        (+[WebAVPlayerController keyPathsForValuesAffectingPlaying]):
+        (-[WebAVPlayerController seekToTime:]):
+        (-[WebAVPlayerController updateTimingWithCurrentTime:]):
+        (-[WebAVPlayerController effectiveRate]):
+        (-[WebAVPlayerController setMediaElement:]):
+        (-[WebAVPlayerController handleEvent:]):
+        (-[WebVideoFullscreenController init]):
+        (-[WebVideoFullscreenController dealloc]):
+        (-[WebVideoFullscreenController setMediaElement:]):
+        (-[WebVideoFullscreenController mediaElement]):
+        (-[WebVideoFullscreenController enterFullscreen:]):
+        (-[WebVideoFullscreenController exitFullscreen]):
+        Add WebAVPlayerController for HTMLMediaElememt to interface with AVPlayerViewController.
+
 2014-01-20  Zan Dobersek  <zdobersek@igalia.com>
 
         Replace uses of std::forward<T>(), std::unique_ptr<T>::clear() that landed in r162368

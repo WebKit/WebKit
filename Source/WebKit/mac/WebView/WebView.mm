@@ -242,6 +242,7 @@
 #import <WebCore/WebCoreThreadMessage.h>
 #import <WebCore/WebCoreThreadRun.h>
 #import <WebCore/WebEvent.h>
+#import <WebCore/WebVideoFullscreenControllerAVKit.h>
 #import <dispatch/private.h>
 #import <wtf/FastMalloc.h>
 
@@ -2354,6 +2355,7 @@ static bool needsSelfRetainWhileLoadingQuirk()
     settings.setAudioSessionCategoryOverride([preferences audioSessionCategoryOverride]);
     settings.setNetworkDataUsageTrackingEnabled([preferences networkDataUsageTrackingEnabled]);
     settings.setNetworkInterfaceName([preferences networkInterfaceName]);
+    settings.setAVKitEnabled([preferences avKitEnabled]);
 #endif
     settings.setMediaPlaybackRequiresUserGesture([preferences mediaPlaybackRequiresUserGesture]);
     settings.setMediaPlaybackAllowsInline([preferences mediaPlaybackAllowsInline]);
@@ -8467,7 +8469,7 @@ bool LayerFlushController::flushLayers()
 
 #endif
 
-#if ENABLE(VIDEO) && !PLATFORM(IOS)
+#if ENABLE(VIDEO)
 - (void)_enterFullscreenForNode:(WebCore::Node*)node
 {
     ASSERT(isHTMLVideoElement(node));
@@ -8490,7 +8492,11 @@ bool LayerFlushController::flushLayers()
     if (!_private->fullscreenController) {
         _private->fullscreenController = [[WebVideoFullscreenController alloc] init];
         [_private->fullscreenController setMediaElement:videoElement];
-        [_private->fullscreenController enterFullscreen:[[self window] screen]];        
+#if PLATFORM(IOS)
+        [_private->fullscreenController enterFullscreen:nil];
+#else
+        [_private->fullscreenController enterFullscreen:[[self window] screen]];
+#endif
     }
     else
         [_private->fullscreenController setMediaElement:videoElement];
