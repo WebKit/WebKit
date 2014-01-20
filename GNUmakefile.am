@@ -57,7 +57,6 @@ noinst_HEADERS :=
 noinst_LTLIBRARIES :=
 lib_LTLIBRARIES :=
 IDL_BINDINGS :=
-TEST_PROGS :=
 POFILES :=
 PO_LINGUAS :=
 USER_LINGUAS :=
@@ -204,7 +203,6 @@ include Source/WebKit/gtk/GNUmakefile.am
 include Tools/GNUmakefile.am
 
 include Source/WebKit2/GNUmakefile.am
-include Source/WebKit2/UIProcess/API/gtk/tests/GNUmakefile.am
 include Tools/MiniBrowser/gtk/GNUmakefile.am
 include Tools/WebKitTestRunner/GNUmakefile.am
 include Source/ThirdParty/ANGLE/GNUmakefile.am

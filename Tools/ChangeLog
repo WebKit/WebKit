@@ -1,3 +1,103 @@
+2014-01-04  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Move all GTK/GObject unit tests to Tools/TestWebKitAPI
+        https://bugs.webkit.org/show_bug.cgi?id=126342
+
+        Reviewed by Gustavo Noronha Silva.
+
+        * CMakeLists.txt: Include the new unit tests subdirectories.
+        * Scripts/run-gtk-tests: Update to refer to the new build locations.
+        * Scripts/webkitpy/style/checker.py: Update the style checker.
+        * Scripts/webkitpy/style/checker_unittest.py:
+        * TestWebKitAPI/GNUmakefile.am:
+        * TestWebKitAPI/Tests/WebKit2Gtk/AccessibilityTestServer.cpp: Renamed from Source/WebKit2/UIProcess/API/gtk/tests/AccessibilityTestServer.cpp.
+        * TestWebKitAPI/Tests/WebKit2Gtk/CMakeLists.txt: Added.
+        * TestWebKitAPI/Tests/WebKit2Gtk/DOMDOMWindowTest.cpp: Added.
+        * TestWebKitAPI/Tests/WebKit2Gtk/DOMNodeTest.cpp: Renamed from Source/WebKit2/UIProcess/API/gtk/tests/DOMNodeTest.cpp.
+        * TestWebKitAPI/Tests/WebKit2Gtk/FrameTest.cpp: Renamed from Source/WebKit2/UIProcess/API/gtk/tests/FrameTest.cpp.
+        * TestWebKitAPI/Tests/WebKit2Gtk/InspectorTestServer.cpp: Renamed from Source/WebKit2/UIProcess/API/gtk/tests/InspectorTestServer.cpp.
+        * TestWebKitAPI/Tests/WebKit2Gtk/LoadTrackingTest.cpp: Renamed from Source/WebKit2/UIProcess/API/gtk/tests/LoadTrackingTest.cpp.
+        * TestWebKitAPI/Tests/WebKit2Gtk/LoadTrackingTest.h: Renamed from Source/WebKit2/UIProcess/API/gtk/tests/LoadTrackingTest.h.
+        * TestWebKitAPI/Tests/WebKit2Gtk/TestAuthentication.cpp: Renamed from Source/WebKit2/UIProcess/API/gtk/tests/TestAuthentication.cpp.
+        * TestWebKitAPI/Tests/WebKit2Gtk/TestBackForwardList.cpp: Renamed from Source/WebKit2/UIProcess/API/gtk/tests/TestBackForwardList.cpp.
+        * TestWebKitAPI/Tests/WebKit2Gtk/TestContextMenu.cpp: Renamed from Source/WebKit2/UIProcess/API/gtk/tests/TestContextMenu.cpp.
+        * TestWebKitAPI/Tests/WebKit2Gtk/TestCookieManager.cpp: Renamed from Source/WebKit2/UIProcess/API/gtk/tests/TestCookieManager.cpp.
+        * TestWebKitAPI/Tests/WebKit2Gtk/TestDOMDOMWindow.cpp: Added.
+        * TestWebKitAPI/Tests/WebKit2Gtk/TestDOMNode.cpp: Renamed from Source/WebKit2/UIProcess/API/gtk/tests/TestDOMNode.cpp.
+        * TestWebKitAPI/Tests/WebKit2Gtk/TestDownloads.cpp: Renamed from Source/WebKit2/UIProcess/API/gtk/tests/TestDownloads.cpp.
+        * TestWebKitAPI/Tests/WebKit2Gtk/TestFrame.cpp: Renamed from Source/WebKit2/UIProcess/API/gtk/tests/TestFrame.cpp.
+        * TestWebKitAPI/Tests/WebKit2Gtk/TestInspector.cpp: Renamed from Source/WebKit2/UIProcess/API/gtk/tests/TestInspector.cpp.
+        * TestWebKitAPI/Tests/WebKit2Gtk/TestInspectorServer.cpp: Renamed from Source/WebKit2/UIProcess/API/gtk/tests/TestInspectorServer.cpp.
+        * TestWebKitAPI/Tests/WebKit2Gtk/TestLoaderClient.cpp: Renamed from Source/WebKit2/UIProcess/API/gtk/tests/TestLoaderClient.cpp.
+        * TestWebKitAPI/Tests/WebKit2Gtk/TestMain.cpp: Renamed from Source/WebKit2/UIProcess/API/gtk/tests/TestMain.cpp.
+        * TestWebKitAPI/Tests/WebKit2Gtk/TestMain.h: Renamed from Source/WebKit2/UIProcess/API/gtk/tests/TestMain.h.
+        * TestWebKitAPI/Tests/WebKit2Gtk/TestPrinting.cpp: Renamed from Source/WebKit2/UIProcess/API/gtk/tests/TestPrinting.cpp.
+        * TestWebKitAPI/Tests/WebKit2Gtk/TestResources.cpp: Renamed from Source/WebKit2/UIProcess/API/gtk/tests/TestResources.cpp.
+        * TestWebKitAPI/Tests/WebKit2Gtk/TestSSL.cpp: Renamed from Source/WebKit2/UIProcess/API/gtk/tests/TestSSL.cpp.
+        * TestWebKitAPI/Tests/WebKit2Gtk/TestUIClient.cpp: Renamed from Source/WebKit2/UIProcess/API/gtk/tests/TestUIClient.cpp.
+        * TestWebKitAPI/Tests/WebKit2Gtk/TestWebExtensions.cpp: Renamed from Source/WebKit2/UIProcess/API/gtk/tests/TestWebExtensions.cpp.
+        * TestWebKitAPI/Tests/WebKit2Gtk/TestWebKitAccessibility.cpp: Renamed from Source/WebKit2/UIProcess/API/gtk/tests/TestWebKitAccessibility.cpp.
+        * TestWebKitAPI/Tests/WebKit2Gtk/TestWebKitFaviconDatabase.cpp: Renamed from Source/WebKit2/UIProcess/API/gtk/tests/TestWebKitFaviconDatabase.cpp.
+        * TestWebKitAPI/Tests/WebKit2Gtk/TestWebKitFindController.cpp: Renamed from Source/WebKit2/UIProcess/API/gtk/tests/TestWebKitFindController.cpp.
+        * TestWebKitAPI/Tests/WebKit2Gtk/TestWebKitPolicyClient.cpp: Renamed from Source/WebKit2/UIProcess/API/gtk/tests/TestWebKitPolicyClient.cpp.
+        * TestWebKitAPI/Tests/WebKit2Gtk/TestWebKitSettings.cpp: Renamed from Source/WebKit2/UIProcess/API/gtk/tests/TestWebKitSettings.cpp.
+        * TestWebKitAPI/Tests/WebKit2Gtk/TestWebKitVersion.cpp: Renamed from Source/WebKit2/UIProcess/API/gtk/tests/TestWebKitVersion.cpp.
+        * TestWebKitAPI/Tests/WebKit2Gtk/TestWebKitWebContext.cpp: Renamed from Source/WebKit2/UIProcess/API/gtk/tests/TestWebKitWebContext.cpp.
+        * TestWebKitAPI/Tests/WebKit2Gtk/TestWebKitWebView.cpp: Renamed from Source/WebKit2/UIProcess/API/gtk/tests/TestWebKitWebView.cpp.
+        * TestWebKitAPI/Tests/WebKit2Gtk/TestWebKitWebViewGroup.cpp: Renamed from Source/WebKit2/UIProcess/API/gtk/tests/TestWebKitWebViewGroup.cpp.
+        * TestWebKitAPI/Tests/WebKit2Gtk/TestWebViewEditor.cpp: Renamed from Source/WebKit2/UIProcess/API/gtk/tests/TestWebViewEditor.cpp.
+        * TestWebKitAPI/Tests/WebKit2Gtk/WebExtensionTest.cpp: Renamed from Source/WebKit2/UIProcess/API/gtk/tests/WebExtensionTest.cpp.
+        * TestWebKitAPI/Tests/WebKit2Gtk/WebKitTestBus.cpp: Renamed from Source/WebKit2/UIProcess/API/gtk/tests/WebKitTestBus.cpp.
+        * TestWebKitAPI/Tests/WebKit2Gtk/WebKitTestBus.h: Renamed from Source/WebKit2/UIProcess/API/gtk/tests/WebKitTestBus.h.
+        * TestWebKitAPI/Tests/WebKit2Gtk/WebKitTestServer.cpp: Renamed from Source/WebKit2/UIProcess/API/gtk/tests/WebKitTestServer.cpp.
+        * TestWebKitAPI/Tests/WebKit2Gtk/WebKitTestServer.h: Renamed from Source/WebKit2/UIProcess/API/gtk/tests/WebKitTestServer.h.
+        * TestWebKitAPI/Tests/WebKit2Gtk/WebProcessTest.cpp: Renamed from Source/WebKit2/UIProcess/API/gtk/tests/WebProcessTest.cpp.
+        * TestWebKitAPI/Tests/WebKit2Gtk/WebProcessTest.h: Renamed from Source/WebKit2/UIProcess/API/gtk/tests/WebProcessTest.h.
+        * TestWebKitAPI/Tests/WebKit2Gtk/WebProcessTestRunner.cpp: Renamed from Source/WebKit2/UIProcess/API/gtk/tests/WebProcessTestRunner.cpp.
+        * TestWebKitAPI/Tests/WebKit2Gtk/WebProcessTestRunner.h: Renamed from Source/WebKit2/UIProcess/API/gtk/tests/WebProcessTestRunner.h.
+        * TestWebKitAPI/Tests/WebKit2Gtk/WebViewTest.cpp: Renamed from Source/WebKit2/UIProcess/API/gtk/tests/WebViewTest.cpp.
+        * TestWebKitAPI/Tests/WebKit2Gtk/WebViewTest.h: Renamed from Source/WebKit2/UIProcess/API/gtk/tests/WebViewTest.h.
+        * TestWebKitAPI/Tests/WebKit2Gtk/resources/link-title.js: Renamed from Source/WebKit2/UIProcess/API/gtk/tests/resources/link-title.js.
+        * TestWebKitAPI/Tests/WebKit2Gtk/resources/test-cert.pem: Renamed from Source/WebKit2/UIProcess/API/gtk/tests/resources/test-cert.pem.
+        * TestWebKitAPI/Tests/WebKit2Gtk/resources/test-key.pem: Renamed from Source/WebKit2/UIProcess/API/gtk/tests/resources/test-key.pem.
+        * TestWebKitAPI/Tests/WebKit2Gtk/resources/webkit2gtk-tests.gresource.xml: Renamed from Source/WebKit2/UIProcess/API/gtk/tests/resources/webkit2gtk-tests.gresource.xml.
+        * TestWebKitAPI/Tests/WebKitGtk/CMakeLists.txt: Added.
+        * TestWebKitAPI/Tests/WebKitGtk/resources/blank.ico: Renamed from Source/WebKit/gtk/tests/resources/blank.ico.
+        * TestWebKitAPI/Tests/WebKitGtk/resources/test.html: Renamed from Source/WebKit/gtk/tests/resources/test.html.
+        * TestWebKitAPI/Tests/WebKitGtk/resources/test.ogg: Renamed from Source/WebKit/gtk/tests/resources/test.ogg.
+        * TestWebKitAPI/Tests/WebKitGtk/resources/test.pdf: Renamed from Source/WebKit/gtk/tests/resources/test.pdf.
+        * TestWebKitAPI/Tests/WebKitGtk/resources/test.txt: Renamed from Source/WebKit/gtk/tests/resources/test.txt.
+        * TestWebKitAPI/Tests/WebKitGtk/test_utils.c: Renamed from Source/WebKit/gtk/tests/test_utils.c.
+        * TestWebKitAPI/Tests/WebKitGtk/test_utils.h: Renamed from Source/WebKit/gtk/tests/test_utils.h.
+        * TestWebKitAPI/Tests/WebKitGtk/testapplicationcache.c: Renamed from Source/WebKit/gtk/tests/testapplicationcache.c.
+        * TestWebKitAPI/Tests/WebKitGtk/testatk.c: Renamed from Source/WebKit/gtk/tests/testatk.c.
+        * TestWebKitAPI/Tests/WebKitGtk/testatkroles.c: Renamed from Source/WebKit/gtk/tests/testatkroles.c.
+        * TestWebKitAPI/Tests/WebKitGtk/testcontextmenu.c: Renamed from Source/WebKit/gtk/tests/testcontextmenu.c.
+        * TestWebKitAPI/Tests/WebKitGtk/testcopyandpaste.c: Renamed from Source/WebKit/gtk/tests/testcopyandpaste.c.
+        * TestWebKitAPI/Tests/WebKitGtk/testdomdocument.c: Renamed from Source/WebKit/gtk/tests/testdomdocument.c.
+        * TestWebKitAPI/Tests/WebKitGtk/testdomdomwindow.c: Renamed from Source/WebKit/gtk/tests/testdomdomwindow.c.
+        * TestWebKitAPI/Tests/WebKitGtk/testdomnode.c: Renamed from Source/WebKit/gtk/tests/testdomnode.c.
+        * TestWebKitAPI/Tests/WebKitGtk/testdownload.c: Renamed from Source/WebKit/gtk/tests/testdownload.c.
+        * TestWebKitAPI/Tests/WebKitGtk/testfavicondatabase.c: Renamed from Source/WebKit/gtk/tests/testfavicondatabase.c.
+        * TestWebKitAPI/Tests/WebKitGtk/testglobals.c: Renamed from Source/WebKit/gtk/tests/testglobals.c.
+        * TestWebKitAPI/Tests/WebKitGtk/testhittestresult.c: Renamed from Source/WebKit/gtk/tests/testhittestresult.c.
+        * TestWebKitAPI/Tests/WebKitGtk/testhttpbackend.c: Renamed from Source/WebKit/gtk/tests/testhttpbackend.c.
+        * TestWebKitAPI/Tests/WebKitGtk/testkeyevents.c: Renamed from Source/WebKit/gtk/tests/testkeyevents.c.
+        * TestWebKitAPI/Tests/WebKitGtk/testloading.c: Renamed from Source/WebKit/gtk/tests/testloading.c.
+        * TestWebKitAPI/Tests/WebKitGtk/testmimehandling.c: Renamed from Source/WebKit/gtk/tests/testmimehandling.c.
+        * TestWebKitAPI/Tests/WebKitGtk/testnetworkrequest.c: Renamed from Source/WebKit/gtk/tests/testnetworkrequest.c.
+        * TestWebKitAPI/Tests/WebKitGtk/testnetworkresponse.c: Renamed from Source/WebKit/gtk/tests/testnetworkresponse.c.
+        * TestWebKitAPI/Tests/WebKitGtk/testwebbackforwardlist.c: Renamed from Source/WebKit/gtk/tests/testwebbackforwardlist.c.
+        * TestWebKitAPI/Tests/WebKitGtk/testwebdatasource.c: Renamed from Source/WebKit/gtk/tests/testwebdatasource.c.
+        * TestWebKitAPI/Tests/WebKitGtk/testwebframe.c: Renamed from Source/WebKit/gtk/tests/testwebframe.c.
+        * TestWebKitAPI/Tests/WebKitGtk/testwebhistoryitem.c: Renamed from Source/WebKit/gtk/tests/testwebhistoryitem.c.
+        * TestWebKitAPI/Tests/WebKitGtk/testwebinspector.c: Renamed from Source/WebKit/gtk/tests/testwebinspector.c.
+        * TestWebKitAPI/Tests/WebKitGtk/testwebplugindatabase.c: Renamed from Source/WebKit/gtk/tests/testwebplugindatabase.c.
+        * TestWebKitAPI/Tests/WebKitGtk/testwebresource.c: Renamed from Source/WebKit/gtk/tests/testwebresource.c.
+        * TestWebKitAPI/Tests/WebKitGtk/testwebsettings.c: Renamed from Source/WebKit/gtk/tests/testwebsettings.c.
+        * TestWebKitAPI/Tests/WebKitGtk/testwebview.c: Renamed from Source/WebKit/gtk/tests/testwebview.c.
+        * TestWebKitAPI/Tests/WebKitGtk/testwindow.c: Renamed from Source/WebKit/gtk/tests/testwindow.c.
+
 2013-12-06  Lukasz Gajowy  <l.gajowy@samsung.com>
 
         [ATK] Missing aria roles mappings

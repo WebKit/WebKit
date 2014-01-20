@@ -52,9 +52,9 @@ public:
     void selectAll();
     const char* mainResourceData(size_t& mainResourceDataSize);
 
-    void mouseMoveTo(int x, int y, unsigned int mouseModifiers = 0);
-    void clickMouseButton(int x, int y, unsigned int button = 1, unsigned int mouseModifiers = 0);
-    void keyStroke(unsigned int keyVal, unsigned int keyModifiers = 0);
+    void mouseMoveTo(int x, int y, unsigned mouseModifiers = 0);
+    void clickMouseButton(int x, int y, unsigned button = 1, unsigned mouseModifiers = 0);
+    void keyStroke(unsigned keyVal, unsigned keyModifiers = 0);
 
     WebKitJavascriptResult* runJavaScriptAndWaitUntilFinished(const char* javascript, GError**);
     WebKitJavascriptResult* runJavaScriptFromGResourceAndWaitUntilFinished(const char* resource, GError**);
@@ -80,7 +80,7 @@ public:
     cairo_surface_t* m_surface;
 
 private:
-    void doMouseButtonEvent(GdkEventType, int, int, unsigned int, unsigned int);
+    void doMouseButtonEvent(GdkEventType, int, int, unsigned, unsigned);
 };
 
 #endif // WebViewTest_h

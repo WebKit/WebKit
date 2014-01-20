@@ -87,7 +87,7 @@ static void startTestServerMonitor()
 static void startTestServer()
 {
     // Prepare argv[] for spawning the server process.
-    GOwnPtr<char> testServerPath(g_build_filename(WEBKIT_EXEC_PATH, "WebKit2APITests", kTestServerAppName, NULL));
+    GOwnPtr<char> testServerPath(g_build_filename(WEBKIT_EXEC_PATH, "TestWebKitAPI", "WebKit2Gtk", kTestServerAppName, NULL));
 
     char* testServerArgv[2];
     testServerArgv[0] = testServerPath.get();
@@ -96,8 +96,7 @@ static void startTestServer()
     // Spawn the server, getting its stdout file descriptor to set a
     // communication channel, so we know when it's ready.
     int childStdout = 0;
-    if (!g_spawn_async_with_pipes(0, testServerArgv, 0, static_cast<GSpawnFlags>(0), 0, 0,
-                                  &kChildProcessPid, 0, &childStdout, 0, 0)) {
+    if (!g_spawn_async_with_pipes(0, testServerArgv, 0, static_cast<GSpawnFlags>(0), 0, 0, &kChildProcessPid, 0, &childStdout, 0, 0)) {
         close(childStdout);
         return;
     }

@@ -120,7 +120,7 @@ public:
     }
 
     GRefPtr<WebKitPrintOperation> m_printOperation;
-    unsigned int m_expectedError;
+    unsigned m_expectedError;
 };
 
 static void testPrintOperationPrint(PrintTest* test, gconstpointer)
@@ -147,7 +147,7 @@ static void testPrintOperationPrint(PrintTest* test, gconstpointer)
     test->waitUntilPrintFinished();
 
     GRefPtr<GFileInfo> fileInfo = adoptGRef(g_file_query_info(outputFile.get(), G_FILE_ATTRIBUTE_STANDARD_SIZE "," G_FILE_ATTRIBUTE_STANDARD_CONTENT_TYPE,
-                                                              static_cast<GFileQueryInfoFlags>(0), 0, 0));
+        static_cast<GFileQueryInfoFlags>(0), 0, 0));
     g_assert(fileInfo.get());
     g_assert_cmpint(g_file_info_get_size(fileInfo.get()), >, 0);
     g_assert_cmpstr(g_file_info_get_content_type(fileInfo.get()), ==, "application/pdf");

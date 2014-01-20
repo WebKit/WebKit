@@ -242,7 +242,7 @@ const char* WebViewTest::mainResourceData(size_t& mainResourceDataSize)
     return m_resourceData.get();
 }
 
-void WebViewTest::mouseMoveTo(int x, int y, unsigned int mouseModifiers)
+void WebViewTest::mouseMoveTo(int x, int y, unsigned mouseModifiers)
 {
     g_assert(m_parentWindow);
     GtkWidget* viewWidget = GTK_WIDGET(m_webView);
@@ -266,13 +266,13 @@ void WebViewTest::mouseMoveTo(int x, int y, unsigned int mouseModifiers)
     gtk_main_do_event(event.get());
 }
 
-void WebViewTest::clickMouseButton(int x, int y, unsigned int button, unsigned int mouseModifiers)
+void WebViewTest::clickMouseButton(int x, int y, unsigned button, unsigned mouseModifiers)
 {
     doMouseButtonEvent(GDK_BUTTON_PRESS, x, y, button, mouseModifiers);
     doMouseButtonEvent(GDK_BUTTON_RELEASE, x, y, button, mouseModifiers);
 }
 
-void WebViewTest::keyStroke(unsigned int keyVal, unsigned int keyModifiers)
+void WebViewTest::keyStroke(unsigned keyVal, unsigned keyModifiers)
 {
     g_assert(m_parentWindow);
     GtkWidget* viewWidget = GTK_WIDGET(m_webView);
@@ -298,7 +298,7 @@ void WebViewTest::keyStroke(unsigned int keyVal, unsigned int keyModifiers)
     gtk_main_do_event(event.get());
 }
 
-void WebViewTest::doMouseButtonEvent(GdkEventType eventType, int x, int y, unsigned int button, unsigned int mouseModifiers)
+void WebViewTest::doMouseButtonEvent(GdkEventType eventType, int x, int y, unsigned button, unsigned mouseModifiers)
 {
     g_assert(m_parentWindow);
     GtkWidget* viewWidget = GTK_WIDGET(m_webView);

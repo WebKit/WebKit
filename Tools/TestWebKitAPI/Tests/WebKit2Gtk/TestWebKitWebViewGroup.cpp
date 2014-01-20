@@ -81,7 +81,7 @@ static void testWebViewGroupSettings(Test* test, gconstpointer)
 {
     GRefPtr<WebKitWebViewGroup> viewGroup1 = adoptGRef(webkit_web_view_group_new("TestGroup1"));
     test->assertObjectIsDeletedWhenTestFinishes(G_OBJECT(viewGroup1.get()));
-    GRefPtr<WebKitSettings> newSettings = adoptGRef(webkit_settings_new_with_settings("enable-javascript", FALSE, NULL));
+    GRefPtr<WebKitSettings> newSettings = adoptGRef(webkit_settings_new_with_settings("enable-javascript", FALSE, nullptr));
     test->assertObjectIsDeletedWhenTestFinishes(G_OBJECT(newSettings.get()));
     webkit_web_view_group_set_settings(viewGroup1.get(), newSettings.get());
     g_assert(webkit_web_view_group_get_settings(viewGroup1.get()) == newSettings.get());

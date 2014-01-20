@@ -135,7 +135,7 @@ static void testWebExtensionIsolatedWorld(WebViewTest* test, gconstpointer)
     GOwnPtr<char> result;
     gulong scriptDialogID = g_signal_connect(test->m_webView, "script-dialog", G_CALLBACK(scriptDialogCallback), &result.outPtr());
 
-    static const char *mainWorldScript =
+    static const char* mainWorldScript =
         "top.foo = 'Foo';\n"
         "document.getElementById('console').innerHTML = top.foo;\n"
         "window.open = function () { alert('Main World'); }\n"
@@ -149,7 +149,7 @@ static void testWebExtensionIsolatedWorld(WebViewTest* test, gconstpointer)
     GOwnPtr<char> valueString(WebViewTest::javascriptResultToCString(javascriptResult));
     g_assert_cmpstr(valueString.get(), ==, "Foo");
 
-    static const char *isolatedWorldScript =
+    static const char* isolatedWorldScript =
         "document.getElementById('console').innerHTML = top.foo;\n"
         "window.open = function () { alert('Isolated World'); }\n"
         "document.open(1, 2, 3);";

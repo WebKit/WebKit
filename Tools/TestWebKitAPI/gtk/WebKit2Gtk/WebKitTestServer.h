@@ -33,7 +33,7 @@ public:
         ServerHTTPS
     };
 
-    WebKitTestServer(ServerType type = ServerHTTP);
+    WebKitTestServer(ServerType = ServerHTTP);
     virtual ~WebKitTestServer();
 
     SoupURI* baseURI() { return m_baseURI; }

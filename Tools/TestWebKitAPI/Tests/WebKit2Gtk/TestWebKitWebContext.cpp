@@ -400,10 +400,10 @@ static void testWebContextSecurityPolicy(SecurityPolicyTest* test, gconstpointer
     test->verifyThatSchemeMatchesPolicy("foo", SecurityPolicyTest::Local | SecurityPolicyTest::NoAccess | SecurityPolicyTest::DisplayIsolated | SecurityPolicyTest::Secure);
     webkit_security_manager_register_uri_scheme_as_cors_enabled(test->m_manager, "foo");
     test->verifyThatSchemeMatchesPolicy("foo", SecurityPolicyTest::Local | SecurityPolicyTest::NoAccess | SecurityPolicyTest::DisplayIsolated | SecurityPolicyTest::Secure
-                | SecurityPolicyTest::CORSEnabled);
+        | SecurityPolicyTest::CORSEnabled);
     webkit_security_manager_register_uri_scheme_as_empty_document(test->m_manager, "foo");
     test->verifyThatSchemeMatchesPolicy("foo", SecurityPolicyTest::Local | SecurityPolicyTest::NoAccess | SecurityPolicyTest::DisplayIsolated | SecurityPolicyTest::Secure
-                | SecurityPolicyTest::CORSEnabled | SecurityPolicyTest::EmptyDocument);
+        | SecurityPolicyTest::CORSEnabled | SecurityPolicyTest::EmptyDocument);
 }
 
 void beforeAll()

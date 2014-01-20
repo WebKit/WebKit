@@ -256,7 +256,7 @@ public:
         : ResourcesTest()
         , m_resourceDataReceived(0)
     {
-         m_resourcesToLoad = 2;
+        m_resourcesToLoad = 2;
     }
 
     void resourceLoadStarted(WebKitWebResource* resource, WebKitURIRequest* request)
