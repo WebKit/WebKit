@@ -1,5 +1,25 @@
 2014-01-20  Zan Dobersek  <zdobersek@igalia.com>
 
+        [GTK][WK2] Move the rest of GTK's WorkQueue implementation to std::function
+        https://bugs.webkit.org/show_bug.cgi?id=127273
+
+        Reviewed by Anders Carlsson.
+
+        Move to using std::function and move semantics in WorkQueue::registerSocketEventHandler
+        and WorkQueue::SocketEventSource.
+
+        * Platform/IPC/unix/ConnectionUnix.cpp:
+        (IPC::Connection::open):
+        * Platform/WorkQueue.h:
+        * Platform/gtk/WorkQueueGtk.cpp:
+        (WorkQueue::SocketEventSource::SocketEventSource):
+        (WorkQueue::registerSocketEventHandler):
+        (WorkQueue::dispatchOnSource): Use std::move instead of std::forward<T>.
+        (WorkQueue::dispatch): Ditto.
+        (WorkQueue::dispatchAfter): Ditto.
+
+2014-01-20  Zan Dobersek  <zdobersek@igalia.com>
+
         Unreviewed. Additional build fixes after r162276 and r163304.
 
         * Platform/WorkQueue.h:
