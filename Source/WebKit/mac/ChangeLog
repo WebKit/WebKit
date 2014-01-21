@@ -1,3 +1,22 @@
+2014-01-21  Gavin Barraclough  <barraclough@apple.com>
+
+        Change Page, FocusController to use ViewState
+        https://bugs.webkit.org/show_bug.cgi?id=126533
+
+        Reviewed by Tim Horton.
+
+        These classes currently maintain a set of separate fields to represent the view state;
+        combine these into a single field, and allow WebPage to send the combined update rather
+        than individual changes.
+
+        Maintain existing interface for WebKit1 clients.
+
+        * WebView/WebView.mm:
+        (-[WebView _windowWillOrderOnScreen:]):
+        (-[WebView _windowWillOrderOffScreen:]):
+            - remove calls to FocusController::setContentIsVisible, these are redundant
+              (this is handled when page visibility is set).
+
 2014-01-20  Jeremy Jones  <jeremyj@apple.com>
 
         Add AVKit fullscreen video interface.

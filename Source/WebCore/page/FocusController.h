@@ -28,6 +28,7 @@
 
 #include "FocusDirection.h"
 #include "LayoutRect.h"
+#include "ViewState.h"
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/RefPtr.h>
@@ -62,7 +63,7 @@ private:
 class FocusController {
     WTF_MAKE_NONCOPYABLE(FocusController); WTF_MAKE_FAST_ALLOCATED;
 public:
-    explicit FocusController(Page&);
+    explicit FocusController(Page&, ViewState::Flags);
 
     void setFocusedFrame(PassRefPtr<Frame>);
     Frame* focusedFrame() const { return m_focusedFrame.get(); }
@@ -73,19 +74,25 @@ public:
 
     bool setFocusedElement(Element*, PassRefPtr<Frame>, FocusDirection = FocusDirectionNone);
 
+    void setViewState(ViewState::Flags);
+
     void setActive(bool);
-    bool isActive() const { return m_isActive; }
+    bool isActive() const { return m_viewState & ViewState::WindowIsActive; }
 
     void setFocused(bool);
-    bool isFocused() const { return m_isFocused; }
+    bool isFocused() const { return m_viewState & ViewState::IsFocused; }
 
-    void setContentIsVisible(bool);
+    bool contentIsVisible() const { return m_viewState & ViewState::IsVisible; }
 
     // These methods are used in WebCore/bindings/objc/DOM.mm.
     Element* nextFocusableElement(FocusNavigationScope, Node* start, KeyboardEvent*);
     Element* previousFocusableElement(FocusNavigationScope, Node* start, KeyboardEvent*);
 
 private:
+    void setActiveInternal(bool);
+    void setFocusedInternal(bool);
+    void setIsVisibleInternal(bool);
+
     bool advanceFocusDirectionally(FocusDirection, KeyboardEvent*);
     bool advanceFocusInDocumentOrder(FocusDirection, KeyboardEvent*, bool initialFocus);
 
@@ -111,11 +118,8 @@ private:
 
     Page& m_page;
     RefPtr<Frame> m_focusedFrame;
-    bool m_isActive;
-    bool m_isFocused;
     bool m_isChangingFocusedFrame;
-    bool m_contentIsVisible;
-
+    ViewState::Flags m_viewState;
 };
 
 } // namespace WebCore

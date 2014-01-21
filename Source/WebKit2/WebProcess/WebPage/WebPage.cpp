@@ -373,17 +373,8 @@ WebPage::WebPage(uint64_t pageID, const WebPageCreationParameters& parameters)
 
     setMemoryCacheMessagesEnabled(parameters.areMemoryCacheClientCallsEnabled);
 
-    setActive(parameters.viewState & ViewState::WindowIsActive);
-    setFocused(parameters.viewState & ViewState::IsFocused);
-
-    // Page defaults to in-window, but setIsInWindow depends on it being a valid indicator of actually having been put into a window.
-    bool isInWindow = parameters.viewState & ViewState::IsInWindow;
-    if (!isInWindow)
-        m_page->setIsInWindow(false);
-    else
-        WebProcess::shared().pageDidEnterWindow(m_pageID);
-
-    setIsInWindow(isInWindow);
+    m_page->setViewState(m_viewState, true);
+    updateIsInWindow(true);
 
     setMinimumLayoutSize(parameters.minimumLayoutSize);
     setAutoSizingShouldExpandToViewHeight(parameters.autoSizingShouldExpandToViewHeight);
@@ -427,9 +418,6 @@ WebPage::WebPage(uint64_t pageID, const WebPageCreationParameters& parameters)
     if (m_useAsyncScrolling)
         WebProcess::shared().eventDispatcher().addScrollingTreeForPage(this);
 #endif
-
-    m_page->setIsVisible(m_viewState & ViewState::IsVisible, true);
-    setIsVisuallyIdle(m_viewState & ViewState::IsVisuallyIdle);
 }
 
 void WebPage::reinitializeWebPage(const WebPageCreationParameters& parameters)
@@ -1924,18 +1912,6 @@ void WebPage::centerSelectionInVisibleArea()
     m_findController.showFindIndicatorInSelection();
 }
 
-void WebPage::setActive(bool isActive)
-{
-    m_page->focusController().setActive(isActive);
-}
-
-void WebPage::setViewIsVisible(bool isVisible)
-{
-    corePage()->focusController().setContentIsVisible(isVisible);
-
-    m_page->setIsVisible(m_viewState & ViewState::IsVisible, false);
-}
-
 void WebPage::setDrawsBackground(bool drawsBackground)
 {
     if (m_drawsBackground == drawsBackground)
@@ -1989,11 +1965,6 @@ void WebPage::viewWillEndLiveResize()
     Frame& frame = m_page->focusController().focusedOrMainFrame();
     if (FrameView* view = frame.view())
         view->willEndLiveResize();
-}
-
-void WebPage::setFocused(bool isFocused)
-{
-    m_page->focusController().setFocused(isFocused);
 }
 
 void WebPage::setInitialFocus(bool forward, bool isKeyboardEventValid, const WebKeyboardEvent& event)
@@ -2050,15 +2021,16 @@ inline bool WebPage::canHandleUserEvents() const
     return true;
 }
 
-void WebPage::setIsInWindow(bool isInWindow)
+void WebPage::updateIsInWindow(bool isInitialState)
 {
-    bool pageWasInWindow = m_page->isInWindow();
-    
+    bool isInWindow = m_viewState & WebCore::ViewState::IsInWindow;
+
     if (!isInWindow) {
         m_setCanStartMediaTimer.stop();
         m_page->setCanStartMedia(false);
         
-        if (pageWasInWindow)
+        // The WebProcess does not yet know about this page; no need to tell it we're leaving the window.
+        if (!isInitialState)
             WebProcess::shared().pageWillLeaveWindow(m_pageID);
     } else {
         // Defer the call to Page::setCanStartMedia() since it ends up sending a synchronous message to the UI process
@@ -2067,11 +2039,8 @@ void WebPage::setIsInWindow(bool isInWindow)
         if (m_mayStartMediaWhenInWindow)
             m_setCanStartMediaTimer.startOneShot(0);
 
-        if (!pageWasInWindow)
-            WebProcess::shared().pageDidEnterWindow(m_pageID);
+        WebProcess::shared().pageDidEnterWindow(m_pageID);
     }
-
-    m_page->setIsInWindow(isInWindow);
 
     if (isInWindow)
         layoutIfNeeded();
@@ -2091,24 +2060,12 @@ void WebPage::setViewStateInternal(ViewState::Flags viewState, bool isInitialSta
     m_viewState = viewState;
 
     m_drawingArea->viewStateDidChange(changed);
-
-    // We want to make sure to update the active state while hidden, so if the view is hidden then update the active state
-    // early (in case it becomes visible), and if the view was visible then update active state later (in case it hides).
-    if (changed & ViewState::IsFocused)
-        setFocused(viewState & ViewState::IsFocused);
-    if (changed & ViewState::WindowIsActive && !(m_viewState & ViewState::IsVisible))
-        setActive(viewState & ViewState::WindowIsActive);
-    if (changed & ViewState::IsVisible)
-        setViewIsVisible(viewState & ViewState::IsVisible);
-    if (changed & ViewState::WindowIsActive && m_viewState & ViewState::IsVisible)
-        setActive(viewState & ViewState::WindowIsActive);
-    if (changed & ViewState::IsInWindow)
-         setIsInWindow(viewState & ViewState::IsInWindow);
-    if (changed & ViewState::IsVisuallyIdle)
-        setIsVisuallyIdle(viewState & ViewState::IsVisuallyIdle);
-
+    m_page->setViewState(viewState, isInitialState);
     for (auto* pluginView : m_pluginViews)
         pluginView->viewStateDidChange(changed);
+
+    if (changed & ViewState::IsInWindow)
+        updateIsInWindow();
 }
 
 void WebPage::setLayerHostingMode(unsigned layerHostingMode)
@@ -3710,11 +3667,6 @@ void WebPage::setVisibilityStatePrerender()
 {
     if (m_page)
         m_page->setIsPrerender();
-}
-
-void WebPage::setIsVisuallyIdle(bool isVisuallyIdle)
-{
-    m_page->setIsVisuallyIdle(isVisuallyIdle);
 }
 
 void WebPage::setScrollingPerformanceLoggingEnabled(bool enabled)

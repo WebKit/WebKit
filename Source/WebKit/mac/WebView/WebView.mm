@@ -5371,10 +5371,8 @@ static NSString * const backingPropertyOldScaleFactorKey = @"NSBackingPropertyOl
     // Send a change screen to make sure the initial displayID is set
     [self doWindowDidChangeScreen];
 
-    if (_private && _private->page) {
+    if (_private && _private->page)
         _private->page->resumeScriptedAnimations();
-        _private->page->focusController().setContentIsVisible(true);
-    }
 }
 
 - (void)_windowDidChangeScreen:(NSNotification *)notification
@@ -5384,10 +5382,8 @@ static NSString * const backingPropertyOldScaleFactorKey = @"NSBackingPropertyOl
 
 - (void)_windowWillOrderOffScreen:(NSNotification *)notification
 {
-    if (_private && _private->page) {
+    if (_private && _private->page)
         _private->page->suspendScriptedAnimations();
-        _private->page->focusController().setContentIsVisible(false);
-    }
 }
 
 - (void)_windowVisibilityChanged:(NSNotification *)notification
