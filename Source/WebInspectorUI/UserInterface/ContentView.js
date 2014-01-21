@@ -39,6 +39,9 @@ WebInspector.ContentView = function(representedObject)
         if (representedObject instanceof WebInspector.Script)
             return new WebInspector.ScriptContentView(representedObject);
 
+        if (representedObject instanceof WebInspector.TimelineRecording)
+            return new WebInspector.TimelineContentView(representedObject);
+
         if (representedObject instanceof WebInspector.DOMStorageObject)
             return new WebInspector.DOMStorageContentView(representedObject);
 
@@ -100,6 +103,8 @@ WebInspector.ContentView.isViewable = function(representedObject)
     if (representedObject instanceof WebInspector.Resource)
         return true;
     if (representedObject instanceof WebInspector.Script)
+        return true;
+    if (representedObject instanceof WebInspector.TimelineRecording)
         return true;
     if (representedObject instanceof WebInspector.DOMStorageObject)
         return true;

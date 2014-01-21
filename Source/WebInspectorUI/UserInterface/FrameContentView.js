@@ -63,11 +63,6 @@ WebInspector.FrameContentView.prototype = {
         return this._frame;
     },
 
-    get allowedNavigationSidebarPanels()
-    {
-        return ["resource", "debugger"];
-    },
-
     get selectionPathComponents()
     {
         if (!this._contentViewContainer.currentContentView)

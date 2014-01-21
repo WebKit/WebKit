@@ -319,6 +319,9 @@ WebInspector.sidebarPanelForRepresentedObject = function(representedObject)
         representedObject instanceof WebInspector.ApplicationCacheFrame)
         return this.resourceSidebarPanel;
 
+    if (representedObject instanceof WebInspector.TimelineRecording)
+        return this.timelineSidebarPanel;
+
     // The console does not have a sidebar.
     if (representedObject instanceof WebInspector.LogObject)
         return null;
@@ -855,6 +858,9 @@ WebInspector._revealAndSelectRepresentedObjectInNavigationSidebar = function(rep
         treeElement.revealAndSelect(true, false, true, true);
     else if (selectedSidebarPanel.contentTreeOutline.selectedTreeElement)
         selectedSidebarPanel.contentTreeOutline.selectedTreeElement.deselect(true);
+
+    if (!selectedSidebarPanel.contentTreeOutline.selectedTreeElement)
+        selectedSidebarPanel.showDefaultContentView();
 }
 
 WebInspector._updateNavigationSidebarForCurrentContentView = function()

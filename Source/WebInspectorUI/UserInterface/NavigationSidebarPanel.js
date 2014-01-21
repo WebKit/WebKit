@@ -94,7 +94,6 @@ WebInspector.NavigationSidebarPanel.StyleClassName = "navigation";
 WebInspector.NavigationSidebarPanel.OverflowShadowElementStyleClassName = "overflow-shadow";
 WebInspector.NavigationSidebarPanel.TopOverflowShadowElementStyleClassName = "top";
 WebInspector.NavigationSidebarPanel.ContentElementStyleClassName = "content";
-WebInspector.NavigationSidebarPanel.ContentElementHiddenStyleClassName = "hidden";
 WebInspector.NavigationSidebarPanel.ContentTreeOutlineElementHiddenStyleClassName = "hidden";
 WebInspector.NavigationSidebarPanel.ContentTreeOutlineElementStyleClassName = "navigation-sidebar-panel-content-tree-outline";
 WebInspector.NavigationSidebarPanel.HideDisclosureButtonsStyleClassName = "hide-disclosure-buttons";
@@ -153,7 +152,7 @@ WebInspector.NavigationSidebarPanel.prototype = {
         return this._filterBar;
     },
 
-    createContentTreeOutline: function(dontHideByDefault)
+    createContentTreeOutline: function(dontHideByDefault, suppressFiltering)
     {
         var contentTreeOutlineElement = document.createElement("ol");
         contentTreeOutlineElement.className = WebInspector.NavigationSidebarPanel.ContentTreeOutlineElementStyleClassName;
@@ -162,11 +161,14 @@ WebInspector.NavigationSidebarPanel.prototype = {
         this._contentElement.appendChild(contentTreeOutlineElement);
 
         var contentTreeOutline = new TreeOutline(contentTreeOutlineElement);
-        contentTreeOutline.onadd = this._treeElementAddedOrChanged.bind(this);
-        contentTreeOutline.onchange = this._treeElementAddedOrChanged.bind(this);
-        contentTreeOutline.onexpand = this._treeElementExpandedOrCollapsed.bind(this);
-        contentTreeOutline.oncollapse = this._treeElementExpandedOrCollapsed.bind(this);
         contentTreeOutline.allowsRepeatSelection = true;
+
+        if (!suppressFiltering) {
+            contentTreeOutline.onadd = this._treeElementAddedOrChanged.bind(this);
+            contentTreeOutline.onchange = this._treeElementAddedOrChanged.bind(this);
+            contentTreeOutline.onexpand = this._treeElementExpandedOrCollapsed.bind(this);
+            contentTreeOutline.oncollapse = this._treeElementExpandedOrCollapsed.bind(this);
+        }
 
         if (dontHideByDefault)
             this._visibleContentTreeOutlines.add(contentTreeOutline);
@@ -177,6 +179,11 @@ WebInspector.NavigationSidebarPanel.prototype = {
     treeElementForRepresentedObject: function(representedObject)
     {
         return this._contentTreeOutline.getCachedTreeElement(representedObject);
+    },
+
+    showDefaultContentView: function()
+    {
+        // Implemneted by subclasses if needed to show a content view when no existing tree element is selected.
     },
 
     showContentViewForCurrentSelection: function()
@@ -238,7 +245,6 @@ WebInspector.NavigationSidebarPanel.prototype = {
     {
         console.assert(message);
 
-        this._contentElement.classList.add(WebInspector.NavigationSidebarPanel.ContentElementHiddenStyleClassName);
         this._emptyContentPlaceholderMessageElement.textContent = message;
         this.element.appendChild(this._emptyContentPlaceholderElement);
 
@@ -249,7 +255,6 @@ WebInspector.NavigationSidebarPanel.prototype = {
 
     hideEmptyContentPlaceholder: function()
     {
-        this._contentElement.classList.remove(WebInspector.NavigationSidebarPanel.ContentElementHiddenStyleClassName);
         if (this._emptyContentPlaceholderElement.parentNode)
             this._emptyContentPlaceholderElement.parentNode.removeChild(this._emptyContentPlaceholderElement);
 
@@ -269,6 +274,11 @@ WebInspector.NavigationSidebarPanel.prototype = {
             // There are tree elements, and not all of them are hidden by the filter.
             this.hideEmptyContentPlaceholder();
         }
+    },
+
+    updateCustomContentOverflow: function()
+    {
+        // Implemented by subclasses if needed.
     },
 
     applyFiltersToTreeElement: function(treeElement)
@@ -374,6 +384,8 @@ WebInspector.NavigationSidebarPanel.prototype = {
 
     _updateContentOverflowShadowVisibility: function()
     {
+        this.updateCustomContentOverflow();
+
         var scrollHeight = this._contentElement.scrollHeight;
         var offsetHeight = this._contentElement.offsetHeight;
 

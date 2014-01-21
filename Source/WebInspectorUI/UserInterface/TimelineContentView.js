@@ -23,22 +23,40 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-.network-icon .icon {
-    content: -webkit-image-set(url(Images/Network.png) 1x, url(Images/Network@2x.png) 2x);
-}
+WebInspector.TimelineContentView = function(recording)
+{
+    WebInspector.ContentView.call(this, recording);
 
-.colors-icon .icon {
-    content: -webkit-image-set(url(Images/Colors.png) 1x, url(Images/Colors@2x.png) 2x);
-}
+    this.element.classList.add(WebInspector.TimelineContentView.StyleClassName);
+};
 
-.script-icon .icon {
-    content: -webkit-image-set(url(Images/Script.png) 1x, url(Images/Script@2x.png) 2x);
-}
+WebInspector.TimelineContentView.StyleClassName = "timeline";
+WebInspector.TimelineContentView.ViewContainerStyleClassName = "view-container";
 
-.stopwatch-icon .icon {
-    content: -webkit-image-set(url(Images/Stopwatch.png) 1x, url(Images/Stopwatch@2x.png) 2x);
-}
+WebInspector.TimelineContentView.prototype = {
+    constructor: WebInspector.TimelineContentView,
+    __proto__: WebInspector.ContentView.prototype,
 
-.profile-icon .icon {
-    content: -webkit-image-set(url(Images/Profile.png) 1x, url(Images/Profile@2x.png) 2x);
-}
+    // Public
+
+    showOverviewTimelineView: function()
+    {
+        // FIXME: Implement.
+    },
+
+    showTimelineView: function(identifier)
+    {
+        // FIXME: Implement.
+    },
+
+    get allowedNavigationSidebarPanels()
+    {
+        return ["timeline"];
+    },
+
+    get supportsSplitContentBrowser()
+    {
+        // The layout of the overview and split content browser don't work well.
+        return false;
+    }
+};

@@ -1,3 +1,59 @@
+2013-11-07  Timothy Hatcher  <timothy@apple.com>
+
+        Start fleshing out the new TimelineSidebarPanel and TimelineContentView.
+
+        https://bugs.webkit.org/show_bug.cgi?id=124003
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/ContentView.js:
+        (WebInspector.ContentView):
+        (WebInspector.ContentView.isViewable):
+        * UserInterface/FrameContentView.js:
+        * UserInterface/Images/CloseTimeline.png: Added.
+        * UserInterface/Images/CloseTimeline@2x.png: Added.
+        * UserInterface/Images/ColorsLarge.png: Added.
+        * UserInterface/Images/ColorsLarge@2x.png: Added.
+        * UserInterface/Images/NetworkLarge.png: Added.
+        * UserInterface/Images/NetworkLarge@2x.png: Added.
+        * UserInterface/Images/ScriptLarge.png: Added.
+        * UserInterface/Images/ScriptLarge@2x.png: Added.
+        * UserInterface/Main.html:
+        * UserInterface/Main.js:
+        (WebInspector.sidebarPanelForRepresentedObject):
+        (WebInspector._revealAndSelectRepresentedObjectInNavigationSidebar):
+        * UserInterface/NavigationSidebarPanel.js:
+        (WebInspector.NavigationSidebarPanel.prototype.showDefaultContentView):
+        * UserInterface/ResourceClusterContentView.js:
+        * UserInterface/TimelineContentView.css: Added.
+        (.content-view.timeline > .view-container):
+        * UserInterface/TimelineContentView.js: Added.
+        (WebInspector.TimelineContentView):
+        * UserInterface/TimelineIcons.css: Renamed from Source/WebInspectorUI/UserInterface/InstrumentIcons.css.
+        (.network-icon.large .icon): Added.
+        (.colors-icon.large .icon): Added.
+        (.script-icon.large .icon): Added.
+        * UserInterface/TimelineSidebarPanel.css:
+        (.sidebar > .panel.timeline > .navigation-bar):
+        (.sidebar > .panel.timeline > .title-bar):
+        (.sidebar > .panel.timeline > .title-bar.timelines):
+        (.sidebar > .panel.timeline > .title-bar.timeline-events):
+        (.sidebar > .panel.timeline > .timelines-content):
+        (.sidebar > .panel.timeline > .timelines-content .close-button):
+        (.sidebar > .panel.timeline > .timelines-content li.item.selected .close-button):
+        (.sidebar > .panel.timeline > .timelines-content .close-button:active):
+        (.sidebar > .panel.timeline > .content):
+        * UserInterface/TimelineSidebarPanel.js:
+        (WebInspector.TimelineSidebarPanel.createTimelineTreeElement):
+        (WebInspector.TimelineSidebarPanel):
+        (WebInspector.TimelineSidebarPanel.prototype.showDefaultContentView):
+        (WebInspector.TimelineSidebarPanel.prototype.treeElementForRepresentedObject):
+        (WebInspector.TimelineSidebarPanel.prototype.get contentTreeOutlineLabel):
+        (WebInspector.TimelineSidebarPanel.prototype.set contentTreeOutlineLabel):
+        (WebInspector.TimelineSidebarPanel.prototype.showTimelineOverview):
+        (WebInspector.TimelineSidebarPanel.prototype.showTimelineView):
+        (WebInspector.TimelineSidebarPanel.prototype._timelinesTreeElementSelected):
+
 2014-01-08  Timothy Hatcher  <timothy@apple.com>
 
         Correctly track time bounds of WebInspector.Timeline and WebInspector.TimelineRecording.

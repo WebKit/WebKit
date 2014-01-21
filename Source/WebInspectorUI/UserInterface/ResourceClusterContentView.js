@@ -64,11 +64,6 @@ WebInspector.ResourceClusterContentView.prototype = {
         return this._resource;
     },
 
-    get allowedNavigationSidebarPanels()
-    {
-        return ["resource", "debugger"];
-    },
-
     get responseContentView()
     {
         if (this._responseContentView)
