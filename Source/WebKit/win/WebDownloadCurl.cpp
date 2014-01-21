@@ -57,11 +57,9 @@ using namespace WebCore;
 
 void WebDownload::init(ResourceHandle* handle, const ResourceRequest& request, const ResourceResponse& response, IWebDownloadDelegate* delegate)
 {
-    if (!handle)
-        return;
-
     // Stop previous request
-    handle->setDefersLoading(true);
+    if (handle)
+        handle->setDefersLoading(true);
 
     m_request.adoptRef(WebMutableURLRequest::createInstance(request));
 

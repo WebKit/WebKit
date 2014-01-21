@@ -1,3 +1,15 @@
+2014-01-21  peavo@outlook.com  <peavo@outlook.com>
+
+        [WinCairo][Curl] Download request has incorrect user agent string.
+        https://bugs.webkit.org/show_bug.cgi?id=127110
+
+        Reviewed by Brent Fulgham.
+
+        * WebDownloadCurl.cpp:
+        (WebDownload::init): Set user agent string in download request.
+        * WebView.cpp:
+        (WebView::downloadURL): Avoid early return if no ResourceHandle is provided.
+
 2014-01-18  Brian Burg  <bburg@apple.com>
 
         Web Inspector: Page should use std::unique_ptr for InspectorController

@@ -6554,7 +6554,14 @@ void WebView::downloadURL(const URL& url)
 {
     // It's the delegate's job to ref the WebDownload to keep it alive - otherwise it will be
     // destroyed when this function returns.
+#if USE(CURL)
+    // For Curl we need to set the user agent, otherwise the download request gets the default Curl user agent string.
+    ResourceRequest request(url);
+    request.setHTTPUserAgent(userAgentForKURL(url));
+    COMPtr<WebDownload> download(AdoptCOM, WebDownload::createInstance(0, request, ResourceResponse(), m_downloadDelegate.get()));
+#else
     COMPtr<WebDownload> download(AdoptCOM, WebDownload::createInstance(url, m_downloadDelegate.get()));
+#endif
     download->start();
 }
 
