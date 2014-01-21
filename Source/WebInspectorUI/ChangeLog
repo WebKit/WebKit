@@ -1,3 +1,16 @@
+2014-01-08  Timothy Hatcher  <timothy@apple.com>
+
+        Improve scroll performance of WebInspector.TreeOutlineDataGridSynchronizer.
+
+        https://bugs.webkit.org/show_bug.cgi?id=126660
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/TreeOutlineDataGridSynchronizer.js:
+        (WebInspector.TreeOutlineDataGridSynchronizer.prototype._treeOutlineScrolled):
+        (WebInspector.TreeOutlineDataGridSynchronizer.prototype._dataGridScrolled):
+        Ignore scroll events triggered by our internal use of setting scrollTop.
+
 2013-11-15  Timothy Hatcher  <timothy@apple.com>
 
         Add a synchronized DataGrid to the OverviewTimelineView.

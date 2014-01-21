@@ -112,11 +112,23 @@ WebInspector.TreeOutlineDataGridSynchronizer.prototype = {
 
     _treeOutlineScrolled: function(event)
     {
+        if (this._ignoreNextTreeOutlineScrollEvent) {
+            delete this._ignoreNextTreeOutlineScrollEvent;
+            return;
+        }
+
+        this._ignoreNextDataGridScrollEvent = true;
         this._dataGrid.scrollContainer.scrollTop = this._treeOutline.element.parentNode.scrollTop;
     },
 
     _dataGridScrolled: function(event)
     {
+        if (this._ignoreNextDataGridScrollEvent) {
+            delete this._ignoreNextDataGridScrollEvent;
+            return;
+        }
+
+        this._ignoreNextTreeOutlineScrollEvent = true;
         this._treeOutline.element.parentNode.scrollTop = this._dataGrid.scrollContainer.scrollTop;
     },
 
