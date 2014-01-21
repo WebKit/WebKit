@@ -209,9 +209,9 @@ class WebCoreLayoutUnitProvider:
     def to_string(self):
         layoutUnitValue = self.valobj.GetChildMemberWithName('m_value').GetValueAsSigned(0)
         # figure out the layout unit denominator by checking infinite IntRect's value. It ensures that this function works even when subpixel is off.
-        infiniteSize = self.valobj.GetFrame().EvaluateExpression('IntRect::infiniteRect()').GetChildMemberWithName('m_size').GetChildMemberWithName('m_width').GetValueAsSigned(0)
+        infiniteWidth = self.valobj.GetFrame().EvaluateExpression('IntRect::infiniteRect()').GetChildMemberWithName('m_size').GetChildMemberWithName('m_width').GetValueAsSigned(0)
         # denominator = maxint / current infinite width value
-        denominator = int(2147483647 / infiniteSize)
+        denominator = int(2147483647 / infiniteWidth) if infiniteWidth else 64
         return "%gpx (%d)" % (float(layoutUnitValue) / denominator, layoutUnitValue)
 
 

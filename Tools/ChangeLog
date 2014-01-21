@@ -1,3 +1,12 @@
+2014-01-21  Zalan Bujtas  <zalan@apple.com>
+
+        Use 64 as the default value for the subpixel denominator.
+
+        Reviewed by Simon Fraser.
+
+        * lldb/lldb_webkit.py:
+        (WebCoreLayoutUnitProvider.to_string):
+
 2014-01-21  ChangSeok Oh  <changseok.oh@collabora.com>
 
         [GTK] Fix a c++11 compliance issue for fontconfig
