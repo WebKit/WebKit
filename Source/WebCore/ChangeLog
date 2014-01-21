@@ -1,3 +1,26 @@
+2014-01-20  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Do refactor in collectGradientAttributes() and renderStyleForLengthResolve()
+        https://bugs.webkit.org/show_bug.cgi?id=126869
+
+        Reviewed by Dirk Schulze.
+
+        Some SVG functions have done a first iteration by using a boolean flag. This is
+        one of poor implementations. This patch fix it by extracting a logic into a new method.
+        Additionally it would be good to use do-while() loop instead of using while() in
+        renderStyleForLengthResolving() because a first condition is always true.
+
+        Merge r165358 from blink.
+
+        * svg/SVGLengthContext.cpp:
+        (WebCore::renderStyleForLengthResolving):
+        * svg/SVGLinearGradientElement.cpp:
+        (WebCore::setGradientAttributes):
+        (WebCore::SVGLinearGradientElement::collectGradientAttributes):
+        * svg/SVGRadialGradientElement.cpp:
+        (WebCore::setGradientAttributes):
+        (WebCore::SVGRadialGradientElement::collectGradientAttributes):
+
 2014-01-20  Anders Carlsson  <andersca@apple.com>
 
         UserContentController should keep track of user scripts

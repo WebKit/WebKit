@@ -123,70 +123,75 @@ RenderPtr<RenderElement> SVGLinearGradientElement::createElementRenderer(PassRef
     return createRenderer<RenderSVGResourceLinearGradient>(*this, std::move(style));
 }
 
+static void setGradientAttributes(SVGGradientElement& element, LinearGradientAttributes& attributes, bool isLinear = true)
+{
+    if (!attributes.hasSpreadMethod() && element.hasAttribute(SVGNames::spreadMethodAttr))
+        attributes.setSpreadMethod(element.spreadMethod());
+
+    if (!attributes.hasGradientUnits() && element.hasAttribute(SVGNames::gradientUnitsAttr))
+        attributes.setGradientUnits(element.gradientUnits());
+
+    if (!attributes.hasGradientTransform() && element.hasAttribute(SVGNames::gradientTransformAttr)) {
+        AffineTransform transform;
+        element.gradientTransform().concatenate(transform);
+        attributes.setGradientTransform(transform);
+    }
+
+    if (!attributes.hasStops()) {
+        const Vector<Gradient::ColorStop>& stops(element.buildStops());
+        if (!stops.isEmpty())
+            attributes.setStops(stops);
+    }
+
+    if (isLinear) {
+        SVGLinearGradientElement* linear = toSVGLinearGradientElement(&element);
+
+        if (!attributes.hasX1() && element.hasAttribute(SVGNames::x1Attr))
+            attributes.setX1(linear->x1());
+
+        if (!attributes.hasY1() && element.hasAttribute(SVGNames::y1Attr))
+            attributes.setY1(linear->y1());
+
+        if (!attributes.hasX2() && element.hasAttribute(SVGNames::x2Attr))
+            attributes.setX2(linear->x2());
+
+        if (!attributes.hasY2() && element.hasAttribute(SVGNames::y2Attr))
+            attributes.setY2(linear->y2());
+    }
+}
+
 bool SVGLinearGradientElement::collectGradientAttributes(LinearGradientAttributes& attributes)
 {
-    HashSet<SVGGradientElement*> processedGradients;
+    if (!renderer())
+        return false;
 
-    bool isLinear = true;
+    HashSet<SVGGradientElement*> processedGradients;
     SVGGradientElement* current = this;
 
-    while (current) {
-        if (!current->renderer())
-            return false;
+    setGradientAttributes(*current, attributes);
+    processedGradients.add(current);
 
-        if (!attributes.hasSpreadMethod() && current->hasAttribute(SVGNames::spreadMethodAttr))
-            attributes.setSpreadMethod(current->spreadMethod());
-
-        if (!attributes.hasGradientUnits() && current->hasAttribute(SVGNames::gradientUnitsAttr))
-            attributes.setGradientUnits(current->gradientUnits());
-
-        if (!attributes.hasGradientTransform() && current->hasAttribute(SVGNames::gradientTransformAttr)) {
-            AffineTransform transform;
-            current->gradientTransform().concatenate(transform);
-            attributes.setGradientTransform(transform);
-        }
-
-        if (!attributes.hasStops()) {
-            const Vector<Gradient::ColorStop>& stops(current->buildStops());
-            if (!stops.isEmpty())
-                attributes.setStops(stops);
-        }
-
-        if (isLinear) {
-            SVGLinearGradientElement* linear = toSVGLinearGradientElement(current);
-
-            if (!attributes.hasX1() && current->hasAttribute(SVGNames::x1Attr))
-                attributes.setX1(linear->x1());
-
-            if (!attributes.hasY1() && current->hasAttribute(SVGNames::y1Attr))
-                attributes.setY1(linear->y1());
-
-            if (!attributes.hasX2() && current->hasAttribute(SVGNames::x2Attr))
-                attributes.setX2(linear->x2());
-
-            if (!attributes.hasY2() && current->hasAttribute(SVGNames::y2Attr))
-                attributes.setY2(linear->y2());
-        }
-
-        processedGradients.add(current);
-
+    while (true) {
         // Respect xlink:href, take attributes from referenced element
         Node* refNode = SVGURIReference::targetElementFromIRIString(current->href(), document());
-        if (refNode && (refNode->hasTagName(SVGNames::linearGradientTag) || refNode->hasTagName(SVGNames::radialGradientTag))) {
+        if (refNode && isSVGGradientElement(*refNode)) {
             current = toSVGGradientElement(refNode);
 
             // Cycle detection
-            if (processedGradients.contains(current)) {
-                current = 0;
-                break;
-            }
+            if (processedGradients.contains(current))
+                return true;
 
-            isLinear = current->hasTagName(SVGNames::linearGradientTag);
+            if (!current->renderer())
+                return false;
+
+            setGradientAttributes(*current, attributes, current->hasTagName(SVGNames::linearGradientTag));
+            processedGradients.add(current);
         } else
-            current = 0;
+            return true;
     }
 
-    return true;
+    ASSERT_NOT_REACHED();
+    return false;
 }
 
 bool SVGLinearGradientElement::selfHasRelativeLengths() const
