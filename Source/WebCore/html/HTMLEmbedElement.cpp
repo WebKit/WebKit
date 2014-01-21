@@ -120,8 +120,7 @@ void HTMLEmbedElement::parametersForPlugin(Vector<String>& paramNames, Vector<St
     if (!hasAttributes())
         return;
 
-    for (unsigned i = 0; i < attributeCount(); ++i) {
-        const Attribute& attribute = attributeAt(i);
+    for (const Attribute& attribute : attributesIterator()) {
         paramNames.append(attribute.localName().string());
         paramValues.append(attribute.value().string());
     }

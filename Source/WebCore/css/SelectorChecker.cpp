@@ -342,9 +342,7 @@ static bool attributeValueMatches(const Attribute& attribute, CSSSelector::Match
 static bool anyAttributeMatches(Element* element, const CSSSelector* selector, const QualifiedName& selectorAttr, bool caseSensitive)
 {
     ASSERT(element->hasAttributesWithoutUpdate());
-    for (size_t i = 0, count = element->attributeCount(); i < count; ++i) {
-        const Attribute& attribute = element->attributeAt(i);
-
+    for (const Attribute& attribute : element->attributesIterator()) {
         if (!attribute.matches(selectorAttr.prefix(), element->isHTMLElement() ? selector->attributeCanonicalLocalName() : selectorAttr.localName(), selectorAttr.namespaceURI()))
             continue;
 

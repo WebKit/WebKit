@@ -2314,8 +2314,8 @@ void Element::normalizeAttributes()
 {
     if (!hasAttributes())
         return;
-    for (unsigned i = 0; i < attributeCount(); ++i) {
-        if (RefPtr<Attr> attr = attrIfExists(attributeAt(i).name()))
+    for (const Attribute& attribute : attributesIterator()) {
+        if (RefPtr<Attr> attr = attrIfExists(attribute.name()))
             attr->normalize();
     }
 }
@@ -2916,8 +2916,7 @@ void Element::detachAllAttrNodesFromElement()
     AttrNodeList* attrNodeList = attrNodeListForElement(this);
     ASSERT(attrNodeList);
 
-    for (unsigned i = 0; i < attributeCount(); ++i) {
-        const Attribute& attribute = attributeAt(i);
+    for (const Attribute& attribute : attributesIterator()) {
         if (RefPtr<Attr> attrNode = findAttrNodeInList(*attrNodeList, attribute.name()))
             attrNode->detachFromElementWithValue(attribute.value());
     }
@@ -3038,9 +3037,7 @@ void Element::cloneAttributesFromElement(const Element& other)
     else
         m_elementData = other.m_elementData->makeUniqueCopy();
 
-    unsigned length = m_elementData->length();
-    for (unsigned i = 0; i < length; ++i) {
-        const Attribute& attribute = const_cast<const ElementData*>(m_elementData.get())->attributeAt(i);
+    for (const Attribute& attribute : attributesIterator()) {
         attributeChanged(attribute.name(), attribute.value(), ModifiedByCloning);
     }
 }

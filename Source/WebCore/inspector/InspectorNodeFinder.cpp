@@ -122,9 +122,8 @@ bool InspectorNodeFinder::matchesElement(const Element& element)
     if (!element.hasAttributes())
         return false;
 
-    unsigned numAttrs = element.attributeCount();
-    for (unsigned i = 0; i < numAttrs; ++i) {
-        if (matchesAttribute(element.attributeAt(i)))
+    for (const Attribute& attribute : element.attributesIterator()) {
+        if (matchesAttribute(attribute))
             return true;
     }
 

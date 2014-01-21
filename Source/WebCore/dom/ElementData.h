@@ -37,6 +37,41 @@ class ShareableElementData;
 class StyleProperties;
 class UniqueElementData;
 
+class AttributeConstIterator {
+public:
+    AttributeConstIterator(const Attribute* array, unsigned offset)
+        : m_array(array)
+        , m_offset(offset)
+    {
+    }
+
+    const Attribute& operator*() const { return m_array[m_offset]; }
+    const Attribute* operator->() const { return &m_array[m_offset]; }
+    AttributeConstIterator& operator++() { ++m_offset; return *this; }
+
+    bool operator==(const AttributeConstIterator& other) const { return m_offset == other.m_offset; }
+    bool operator!=(const AttributeConstIterator& other) const { return !(*this == other); }
+
+private:
+    const Attribute* m_array;
+    unsigned m_offset;
+};
+
+class AttributeIteratorAccessor {
+public:
+    AttributeIteratorAccessor(const Attribute* array, unsigned size)
+        : m_array(array)
+        , m_size(size)
+    {
+    }
+
+    AttributeConstIterator begin() const { return AttributeConstIterator(m_array, 0); }
+    AttributeConstIterator end() const { return AttributeConstIterator(m_array, m_size); }
+private:
+    const Attribute* m_array;
+    unsigned m_size;
+};
+
 class ElementData : public RefCounted<ElementData> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
@@ -61,6 +96,7 @@ public:
     unsigned length() const;
     bool isEmpty() const { return !length(); }
 
+    AttributeIteratorAccessor attributesIterator() const;
     const Attribute& attributeAt(unsigned index) const;
     const Attribute* findAttributeByName(const QualifiedName&) const;
     unsigned findAttributeIndexByName(const QualifiedName&) const;
@@ -206,6 +242,15 @@ inline const StyleProperties* ElementData::presentationAttributeStyle() const
     if (!isUnique())
         return 0;
     return static_cast<const UniqueElementData*>(this)->m_presentationAttributeStyle.get();
+}
+
+inline AttributeIteratorAccessor ElementData::attributesIterator() const
+{
+    if (isUnique()) {
+        const Vector<Attribute, 4>& attributeVector = static_cast<const UniqueElementData*>(this)->m_attributeVector;
+        return AttributeIteratorAccessor(attributeVector.data(), attributeVector.size());
+    }
+    return AttributeIteratorAccessor(static_cast<const ShareableElementData*>(this)->m_attributeArray, arraySize());
 }
 
 inline const Attribute* ElementData::findAttributeByName(const AtomicString& name, bool shouldIgnoreAttributeCase) const

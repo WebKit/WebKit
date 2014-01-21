@@ -628,8 +628,7 @@ XMLDocumentParser::XMLDocumentParser(DocumentFragment& fragment, Element* parent
     for (; !elemStack.isEmpty(); elemStack.removeLast()) {
         Element* element = elemStack.last();
         if (element->hasAttributes()) {
-            for (unsigned i = 0; i < element->attributeCount(); i++) {
-                const Attribute& attribute = element->attributeAt(i);
+            for (const Attribute& attribute : element->attributesIterator()) {
                 if (attribute.localName() == xmlnsAtom)
                     m_defaultNamespaceURI = attribute.value();
                 else if (attribute.prefix() == xmlnsAtom)

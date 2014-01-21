@@ -1133,9 +1133,7 @@ bool Node::isDefaultNamespace(const AtomicString& namespaceURIMaybeEmpty) const
                 return elem->namespaceURI() == namespaceURI;
 
             if (elem->hasAttributes()) {
-                for (unsigned i = 0; i < elem->attributeCount(); i++) {
-                    const Attribute& attribute = elem->attributeAt(i);
-                    
+                for (const Attribute& attribute : elem->attributesIterator()) {
                     if (attribute.localName() == xmlnsAtom)
                         return attribute.value() == namespaceURI;
                 }
@@ -1217,8 +1215,7 @@ String Node::lookupNamespaceURI(const String &prefix) const
                 return elem->namespaceURI();
             
             if (elem->hasAttributes()) {
-                for (unsigned i = 0; i < elem->attributeCount(); i++) {
-                    const Attribute& attribute = elem->attributeAt(i);
+                for (const Attribute& attribute : elem->attributesIterator()) {
                     
                     if (attribute.prefix() == xmlnsAtom && attribute.localName() == prefix) {
                         if (!attribute.value().isEmpty())
@@ -1273,9 +1270,7 @@ String Node::lookupNamespacePrefix(const AtomicString &_namespaceURI, const Elem
     ASSERT(isElementNode());
     const Element* thisElement = toElement(this);
     if (thisElement->hasAttributes()) {
-        for (unsigned i = 0; i < thisElement->attributeCount(); i++) {
-            const Attribute& attribute = thisElement->attributeAt(i);
-            
+        for (const Attribute& attribute : thisElement->attributesIterator()) {
             if (attribute.prefix() == xmlnsAtom && attribute.value() == _namespaceURI
                 && originalElement->lookupNamespaceURI(attribute.localName()) == _namespaceURI)
                 return attribute.localName();
@@ -1426,14 +1421,12 @@ unsigned short Node::compareDocumentPosition(Node* otherNode)
         // We are comparing two attributes on the same node. Crawl our attribute map and see which one we hit first.
         Element* owner1 = attr1->ownerElement();
         owner1->synchronizeAllAttributes();
-        unsigned length = owner1->attributeCount();
-        for (unsigned i = 0; i < length; ++i) {
-            // If neither of the two determining nodes is a child node and nodeType is the same for both determining nodes, then an 
+        for (const Attribute& attribute : owner1->attributesIterator()) {
+            // If neither of the two determining nodes is a child node and nodeType is the same for both determining nodes, then an
             // implementation-dependent order between the determining nodes is returned. This order is stable as long as no nodes of
             // the same nodeType are inserted into or removed from the direct container. This would be the case, for example, 
             // when comparing two attributes of the same element, and inserting or removing additional attributes might change 
             // the order between existing attributes.
-            const Attribute& attribute = owner1->attributeAt(i);
             if (attr1->qualifiedName() == attribute.name())
                 return DOCUMENT_POSITION_IMPLEMENTATION_SPECIFIC | DOCUMENT_POSITION_FOLLOWING;
             if (attr2->qualifiedName() == attribute.name())

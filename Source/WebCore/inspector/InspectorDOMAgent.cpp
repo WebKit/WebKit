@@ -679,10 +679,8 @@ void InspectorDOMAgent::setAttributesAsText(ErrorString* errorString, int elemen
     }
 
     bool foundOriginalAttribute = false;
-    unsigned numAttrs = childElement->attributeCount();
-    for (unsigned i = 0; i < numAttrs; ++i) {
+    for (const Attribute& attribute : childElement->attributesIterator()) {
         // Add attribute pair
-        const Attribute& attribute = childElement->attributeAt(i);
         foundOriginalAttribute = foundOriginalAttribute || (name && attribute.name().toString() == *name);
         if (!m_domEditor->setAttribute(element, attribute.name().toString(), attribute.value(), errorString))
             return;
@@ -1322,10 +1320,8 @@ PassRefPtr<Inspector::TypeBuilder::Array<String>> InspectorDOMAgent::buildArrayF
     // Go through all attributes and serialize them.
     if (!element->hasAttributes())
         return attributesValue.release();
-    unsigned numAttrs = element->attributeCount();
-    for (unsigned i = 0; i < numAttrs; ++i) {
+    for (const Attribute& attribute : element->attributesIterator()) {
         // Add attribute pair
-        const Attribute& attribute = element->attributeAt(i);
         attributesValue->addItem(attribute.name().toString());
         attributesValue->addItem(attribute.value());
     }

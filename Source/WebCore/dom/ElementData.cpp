@@ -163,12 +163,10 @@ bool ElementData::isEquivalent(const ElementData* other) const
     if (!other)
         return isEmpty();
 
-    unsigned len = length();
-    if (len != other->length())
+    if (length() != other->length())
         return false;
 
-    for (unsigned i = 0; i < len; i++) {
-        const Attribute& attribute = attributeAt(i);
+    for (const Attribute& attribute : attributesIterator()) {
         const Attribute* otherAttr = other->findAttributeByName(attribute.name());
         if (!otherAttr || attribute.value() != otherAttr->value())
             return false;
@@ -180,8 +178,10 @@ bool ElementData::isEquivalent(const ElementData* other) const
 unsigned ElementData::findAttributeIndexByNameSlowCase(const AtomicString& name, bool shouldIgnoreAttributeCase) const
 {
     // Continue to checking case-insensitively and/or full namespaced names if necessary:
-    for (unsigned i = 0; i < length(); ++i) {
-        const Attribute& attribute = attributeAt(i);
+    const Attribute* attributes = attributeBase();
+    unsigned length = this->length();
+    for (unsigned i = 0; i < length; ++i) {
+        const Attribute& attribute = attributes[i];
         if (!attribute.name().hasPrefix()) {
             if (shouldIgnoreAttributeCase && equalIgnoringCase(name, attribute.localName()))
                 return i;

@@ -1,3 +1,85 @@
+2014-01-20  Benjamin Poulain  <benjamin@webkit.org>
+
+        Add a nicer way to iterate over all the attributes of an element
+        https://bugs.webkit.org/show_bug.cgi?id=127266
+
+        Reviewed by Geoffrey Garen.
+
+        When using Element::attributeAt() in a loop, the compiler had to generate two kinds of
+        accessor:
+        -If the element data is unique, the length and data comes from the attribute Vector.
+        -If the element data is shared, the data comes from the tail of elementData itself.
+
+        The choice was done for every access, which caused the assembly to be a little
+        hard to follow.
+        This patch unify the data access by doing everything as a array pointer with offset (getting
+        that data from Vector when necessary).
+
+        To make it easier to do the right thing, a new iterator was added so that range-based loops
+        can replace all the faulty cases.
+
+        * css/SelectorChecker.cpp:
+        (WebCore::anyAttributeMatches):
+        * css/SelectorChecker.h:
+        (WebCore::SelectorChecker::checkExactAttribute):
+        * dom/DatasetDOMStringMap.cpp:
+        (WebCore::DatasetDOMStringMap::getNames):
+        (WebCore::DatasetDOMStringMap::item):
+        (WebCore::DatasetDOMStringMap::contains):
+        * dom/Element.cpp:
+        (WebCore::Element::normalizeAttributes):
+        (WebCore::Element::detachAllAttrNodesFromElement):
+        (WebCore::Element::cloneAttributesFromElement):
+        * dom/Element.h:
+        (WebCore::Element::attributesIterator):
+        * dom/ElementData.cpp:
+        (WebCore::ElementData::isEquivalent):
+        (WebCore::ElementData::findAttributeIndexByNameSlowCase):
+        * dom/ElementData.h:
+        (WebCore::AttributeConstIterator::AttributeConstIterator):
+        (WebCore::AttributeConstIterator::operator*):
+        (WebCore::AttributeConstIterator::operator->):
+        (WebCore::AttributeConstIterator::operator++):
+        (WebCore::AttributeConstIterator::operator==):
+        (WebCore::AttributeConstIterator::operator!=):
+        (WebCore::AttributeIteratorAccessor::AttributeIteratorAccessor):
+        (WebCore::AttributeIteratorAccessor::begin):
+        (WebCore::AttributeIteratorAccessor::end):
+        (WebCore::ElementData::attributesIterator):
+        * dom/Node.cpp:
+        (WebCore::Node::isDefaultNamespace):
+        (WebCore::Node::lookupNamespaceURI):
+        (WebCore::Node::lookupNamespacePrefix):
+        (WebCore::Node::compareDocumentPosition):
+        * dom/StyledElement.cpp:
+        (WebCore::StyledElement::makePresentationAttributeCacheKey):
+        (WebCore::StyledElement::rebuildPresentationAttributeStyle):
+        * editing/MarkupAccumulator.cpp:
+        (WebCore::MarkupAccumulator::appendElement):
+        * editing/markup.cpp:
+        (WebCore::completeURLs):
+        (WebCore::StyledMarkupAccumulator::appendElement):
+        * html/HTMLEmbedElement.cpp:
+        (WebCore::HTMLEmbedElement::parametersForPlugin):
+        * html/HTMLObjectElement.cpp:
+        (WebCore::HTMLObjectElement::parametersForPlugin):
+        * inspector/DOMPatchSupport.cpp:
+        (WebCore::DOMPatchSupport::innerPatchNode):
+        (WebCore::DOMPatchSupport::createDigest):
+        * inspector/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::setAttributesAsText):
+        (WebCore::InspectorDOMAgent::buildArrayForElementAttributes):
+        * inspector/InspectorNodeFinder.cpp:
+        (WebCore::InspectorNodeFinder::matchesElement):
+        * page/PageSerializer.cpp:
+        (WebCore::isCharsetSpecifyingNode):
+        * xml/XPathNodeSet.cpp:
+        (WebCore::XPath::NodeSet::traversalSort):
+        * xml/XPathStep.cpp:
+        (WebCore::XPath::Step::nodesInAxis):
+        * xml/parser/XMLDocumentParserLibxml2.cpp:
+        (WebCore::XMLDocumentParser::XMLDocumentParser):
+
 2014-01-20  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Do refactor in collectGradientAttributes() and renderStyleForLengthResolve()

@@ -186,6 +186,7 @@ public:
 
     // Internal methods that assume the existence of attribute storage, one should use hasAttributes()
     // before calling them.
+    AttributeIteratorAccessor attributesIterator() const { return elementData()->attributesIterator(); }
     unsigned attributeCount() const;
     const Attribute& attributeAt(unsigned index) const;
     const Attribute* findAttributeByName(const QualifiedName&) const;

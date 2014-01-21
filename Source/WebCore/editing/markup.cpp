@@ -102,9 +102,7 @@ static void completeURLs(DocumentFragment* fragment, const String& baseURL)
     for (auto& element : descendantsOfType<Element>(*fragment)) {
         if (!element.hasAttributes())
             continue;
-        unsigned length = element.attributeCount();
-        for (unsigned i = 0; i < length; i++) {
-            const Attribute& attribute = element.attributeAt(i);
+        for (const Attribute& attribute : element.attributesIterator()) {
             if (element.isURLAttribute(attribute) && !attribute.value().isEmpty())
                 changes.append(AttributeChange(&element, attribute.name(), URL(parsedBaseURL, attribute.value()).string()));
         }
@@ -290,15 +288,15 @@ void StyledMarkupAccumulator::appendElement(StringBuilder& out, const Element& e
     const bool documentIsHTML = element.document().isHTMLDocument();
     appendOpenTag(out, element, 0);
 
-    const unsigned length = element.hasAttributes() ? element.attributeCount() : 0;
     const bool shouldAnnotateOrForceInline = element.isHTMLElement() && (shouldAnnotate() || addDisplayInline);
     const bool shouldOverrideStyleAttr = shouldAnnotateOrForceInline || shouldApplyWrappingStyle(element);
-    for (unsigned i = 0; i < length; ++i) {
-        const Attribute& attribute = element.attributeAt(i);
-        // We'll handle the style attribute separately, below.
-        if (attribute.name() == styleAttr && shouldOverrideStyleAttr)
-            continue;
-        appendAttribute(out, element, attribute, 0);
+    if (element.hasAttributes()) {
+        for (const Attribute& attribute : element.attributesIterator()) {
+            // We'll handle the style attribute separately, below.
+            if (attribute.name() == styleAttr && shouldOverrideStyleAttr)
+                continue;
+            appendAttribute(out, element, attribute, 0);
+        }
     }
 
     if (shouldOverrideStyleAttr) {

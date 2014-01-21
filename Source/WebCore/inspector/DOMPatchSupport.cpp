@@ -197,9 +197,7 @@ bool DOMPatchSupport::innerPatchNode(Digest* oldDigest, Digest* newDigest, Excep
 
         // FIXME: Create a function in Element for copying properties. cloneDataFromElement() is close but not enough for this case.
         if (newElement->hasAttributesWithoutUpdate()) {
-            size_t numAttrs = newElement->attributeCount();
-            for (size_t i = 0; i < numAttrs; ++i) {
-                const Attribute& attribute = newElement->attributeAt(i);
+            for (const Attribute& attribute : newElement->attributesIterator()) {
                 if (!m_domEditor->setAttribute(oldElement, attribute.name().localName(), attribute.value(), ec))
                     return false;
             }
@@ -433,10 +431,8 @@ PassOwnPtr<DOMPatchSupport::Digest> DOMPatchSupport::createDigest(Node* node, Un
         Element* element = toElement(node);
 
         if (element->hasAttributesWithoutUpdate()) {
-            size_t numAttrs = element->attributeCount();
             SHA1 attrsSHA1;
-            for (size_t i = 0; i < numAttrs; ++i) {
-                const Attribute& attribute = element->attributeAt(i);
+            for (const Attribute& attribute : element->attributesIterator()) {
                 addStringToSHA1(attrsSHA1, attribute.name().toString());
                 addStringToSHA1(attrsSHA1, attribute.value());
             }

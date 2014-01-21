@@ -202,8 +202,7 @@ void HTMLObjectElement::parametersForPlugin(Vector<String>& paramNames, Vector<S
     
     // Turn the attributes of the <object> element into arrays, but don't override <param> values.
     if (hasAttributes()) {
-        for (unsigned i = 0; i < attributeCount(); ++i) {
-            const Attribute& attribute = attributeAt(i);
+        for (const Attribute& attribute : attributesIterator()) {
             const AtomicString& name = attribute.name().localName();
             if (!uniqueParamNames.contains(name.impl())) {
                 paramNames.append(name.string());

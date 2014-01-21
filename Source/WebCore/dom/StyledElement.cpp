@@ -285,9 +285,7 @@ void StyledElement::makePresentationAttributeCacheKey(PresentationAttributeCache
     // Interpretation of the size attributes on <input> depends on the type attribute.
     if (hasTagName(inputTag))
         return;
-    unsigned size = attributeCount();
-    for (unsigned i = 0; i < size; ++i) {
-        const Attribute& attribute = attributeAt(i);
+    for (const Attribute& attribute : attributesIterator()) {
         if (!isPresentationAttribute(attribute.name()))
             continue;
         if (!attribute.namespaceURI().isNull())
@@ -335,11 +333,8 @@ void StyledElement::rebuildPresentationAttributeStyle()
         presentationAttributeCacheCleaner().didHitPresentationAttributeCache();
     } else {
         style = MutableStyleProperties::create(isSVGElement() ? SVGAttributeMode : CSSQuirksMode);
-        unsigned size = attributeCount();
-        for (unsigned i = 0; i < size; ++i) {
-            const Attribute& attribute = attributeAt(i);
+        for (const Attribute& attribute : attributesIterator())
             collectStyleForPresentationAttribute(attribute.name(), attribute.value(), static_cast<MutableStyleProperties&>(*style));
-        }
     }
 
     // ShareableElementData doesn't store presentation attribute style, so make sure we have a UniqueElementData.
