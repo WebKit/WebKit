@@ -1,3 +1,61 @@
+2013-12-13  Timothy Hatcher  <timothy@apple.com>
+
+        Clean up and refactor TimelineDecorations into TimelineRuler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=125709
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Main.html:
+        * UserInterface/OverviewTimelineView.css:
+        (.timeline-view.overview > .timeline-ruler):
+        (.timeline-view.overview > .timeline-ruler > .header):
+        (.timeline-view.overview > .timeline-ruler > .event-markers):
+        Updated class names and border sides.
+
+        * UserInterface/OverviewTimelineView.js:
+        (WebInspector.OverviewTimelineView):
+        (WebInspector.OverviewTimelineView.prototype.updateLayout):
+        Call updateLayout on the TimelineRuler.
+
+        * UserInterface/TimelineRuler.css: Renamed from Source/WebInspectorUI/UserInterface/TimelineDecorations.css.
+        (.timeline-ruler):
+        (.timeline-ruler > .header):
+        (.timeline-ruler > .header > .divider):
+        (.timeline-ruler > .header > .divider > .label):
+        (.timeline-ruler > .event-markers):
+        (.timeline-ruler > .event-markers > .event-marker-tooltip):
+        (.timeline-ruler > .event-markers > .event-marker):
+        (.timeline-ruler > .event-markers > .event-marker.load-event):
+        (.timeline-ruler > .event-markers > .event-marker.dom-content-event):
+        (.timeline-ruler > .event-markers > .event-marker.timestamp):
+        Updated class names and border sides.
+
+        * UserInterface/TimelineRuler.js: Renamed from Source/WebInspectorUI/UserInterface/TimelineDecorations.js.
+        (WebInspector.TimelineRuler):
+        (WebInspector.TimelineRuler.prototype.get element):
+        (WebInspector.TimelineRuler.prototype.get headerElement):
+        (WebInspector.TimelineRuler.prototype.get allowsClippedLabels):
+        (WebInspector.TimelineRuler.prototype.set allowsClippedLabels):
+        (WebInspector.TimelineRuler.prototype.get zeroTime):
+        (WebInspector.TimelineRuler.prototype.set zeroTime):
+        (WebInspector.TimelineRuler.prototype.get startTime):
+        (WebInspector.TimelineRuler.prototype.set startTime):
+        (WebInspector.TimelineRuler.prototype.get duration):
+        (WebInspector.TimelineRuler.prototype.set duration):
+        (WebInspector.TimelineRuler.prototype.get endTime):
+        (WebInspector.TimelineRuler.prototype.set endTime):
+        (WebInspector.TimelineRuler.prototype.get secondsPerPixel):
+        (WebInspector.TimelineRuler.prototype.set secondsPerPixel):
+        (WebInspector.TimelineRuler.prototype.updateLayout.removeDividerAndSelectNext):
+        (WebInspector.TimelineRuler.prototype.updateLayout):
+        (WebInspector.TimelineRuler.prototype._needsLayout):
+        (WebInspector.TimelineRuler.prototype._recalculate):
+        Refactor so the times are stored on TimelineRuler and not passed in each time an update is needed.
+        Support dividers that don't always start at the zero position, allowing a sliding time ruler.
+        Support for a non-pinned ruler where the end time is not fixed and the scale is specified in
+        seconds-per-pixel.
+
 2014-01-08  Timothy Hatcher  <timothy@apple.com>
 
         Improve scroll performance of WebInspector.TreeOutlineDataGridSynchronizer.

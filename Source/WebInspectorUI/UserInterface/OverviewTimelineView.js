@@ -34,8 +34,8 @@ WebInspector.OverviewTimelineView = function()
 
     this._treeOutlineDataGridSynchronizer = new WebInspector.TreeOutlineDataGridSynchronizer(this._contentTreeOutline, this._dataGrid);
 
-    this._timelineDecorations = new WebInspector.TimelineDecorations;
-    this.element.appendChild(this._timelineDecorations.element);
+    this._timelineRuler = new WebInspector.TimelineRuler;
+    this.element.appendChild(this._timelineRuler.element);
 
     this.element.classList.add(WebInspector.OverviewTimelineView.StyleClassName);
     this.element.appendChild(this._dataGrid.element);
@@ -69,6 +69,11 @@ WebInspector.OverviewTimelineView.prototype = {
     shown: function()
     {
         this._treeOutlineDataGridSynchronizer.synchronize();
+    },
+
+    updateLayout: function()
+    {
+        this._timelineRuler.updateLayout();
     },
 
     // Private

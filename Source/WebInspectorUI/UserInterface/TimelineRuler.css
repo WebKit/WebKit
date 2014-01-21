@@ -23,47 +23,39 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-.timeline-decorations {
+.timeline-ruler {
     position: relative;
     pointer-events: none;
 }
 
-.timeline-decorations > .header {
-    border-top: 1px solid rgb(200, 200, 200);
+.timeline-ruler > .header {
+    border-bottom: 1px solid rgb(200, 200, 200);
 
     height: 22px;
 
     position: relative;
 }
 
-.timeline-decorations > .header > .divider {
+.timeline-ruler > .header > .divider {
     position: absolute;
     width: 1px;
     top: 0;
     bottom: 0;
-    background-image: -webkit-linear-gradient(top, rgba(200, 200, 200, 1), rgba(200, 200, 200, 0) 85%);
+    -webkit-transform: translateX(-1px);
+    background-image: -webkit-linear-gradient(bottom, rgba(200, 200, 200, 1), rgba(200, 200, 200, 0) 85%);
 }
 
-.timeline-decorations > .header > .divider:first-child,
-.timeline-decorations > .header > .divider:last-child {
-    background-image: none;
-}
-
-.timeline-decorations > .header > .divider > .label {
+.timeline-ruler > .header > .divider > .label {
     position: absolute;
-    top: 3px;
-    right: 4px;
+    top: 5px;
+    right: 5px;
     font-size: 9px;
     font-family: "Lucida Grande", sans-serif;
     color: rgb(128, 128, 128);
     white-space: nowrap;
 }
 
-.timeline-decorations > .header > .divider:first-child > .label {
-    display: none;
-}
-
-.timeline-decorations > .event-markers {
+.timeline-ruler > .event-markers {
     position: absolute;
     top: 22px;
     left: 0;
@@ -71,7 +63,7 @@
     bottom: 0;
 }
 
-.timeline-decorations > .event-markers > .event-marker-tooltip {
+.timeline-ruler > .event-markers > .event-marker-tooltip {
     position: absolute;
     top: 0;
     bottom: 0;
@@ -81,7 +73,7 @@
     pointer-events: auto;
 }
 
-.timeline-decorations > .event-markers > .event-marker {
+.timeline-ruler > .event-markers > .event-marker {
     position: absolute;
     top: 0;
     bottom: 0;
@@ -93,14 +85,14 @@
     border-left-color: rgba(128, 128, 128, 0.5);
 }
 
-.timeline-decorations > .event-markers > .event-marker.load-event {
+.timeline-ruler > .event-markers > .event-marker.load-event {
     border-left-color: rgba(255, 0, 0, 0.5);
 }
 
-.timeline-decorations > .event-markers > .event-marker.dom-content-event {
+.timeline-ruler > .event-markers > .event-marker.dom-content-event {
     border-left-color: rgba(0, 0, 255, 0.5);
 }
 
-.timeline-decorations > .event-markers > .event-marker.timestamp {
+.timeline-ruler > .event-markers > .event-marker.timestamp {
     border-left-color: rgba(0, 110, 0, 0.5);
 }

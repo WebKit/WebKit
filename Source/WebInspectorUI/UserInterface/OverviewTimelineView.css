@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-.timeline-view.overview > .timeline-decorations {
+.timeline-view.overview > .timeline-ruler {
     position: absolute;
     top: 0;
     left: 0;
@@ -31,12 +31,12 @@
     bottom: 0;
 }
 
-.timeline-view.overview > .timeline-decorations > .header {
-    border-bottom: 1px solid rgb(200, 200, 200);
+.timeline-view.overview > .timeline-ruler > .header {
+    border-top: 1px solid rgb(200, 200, 200);
     height: 23px;
 }
 
-.timeline-view.overview > .timeline-decorations > .event-markers {
+.timeline-view.overview > .timeline-ruler > .event-markers {
     top: 23px;
 }
 
