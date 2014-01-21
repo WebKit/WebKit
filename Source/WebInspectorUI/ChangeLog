@@ -1,5 +1,35 @@
 2013-10-25  Timothy Hatcher  <timothy@apple.com>
 
+        Implement TimelineRecording and per-call-site timelines.
+
+        Keep track of timeline records per global timeline and per source code location.
+        This will be used to display them in the UI in later patches.
+
+        https://bugs.webkit.org/show_bug.cgi?id=123367
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Main.html:
+        * UserInterface/SourceCodeTimeline.js: Added.
+        (WebInspector.SourceCodeTimeline):
+        (WebInspector.SourceCodeTimeline.prototype.get sourceCode):
+        (WebInspector.SourceCodeTimeline.prototype.get sourceCodeLocation):
+        (WebInspector.SourceCodeTimeline.prototype.get recordType):
+        (WebInspector.SourceCodeTimeline.prototype.get recordEventType):
+        * UserInterface/Timeline.js: Added.
+        (WebInspector.Timeline):
+        (WebInspector.Timeline.prototype.get records):
+        (WebInspector.Timeline.prototype.addRecord):
+        * UserInterface/TimelineRecording.js:
+        (WebInspector.TimelineRecording):
+        (WebInspector.TimelineRecording.prototype.get timelines): Added.
+        (WebInspector.TimelineRecording.prototype.sourceCodeTimelinesForSourceCode): Added.
+        (WebInspector.TimelineRecording.prototype.addEventMarker): Implemented.
+        (WebInspector.TimelineRecording.prototype.addRecord): Implemented.
+        (WebInspector.TimelineRecording.prototype._keyForRecord): Added.
+
+2013-10-25  Timothy Hatcher  <timothy@apple.com>
+
         Add support for multiple Timeline recordings.
 
         We also don't explicitly add ResourceTimelineRecords anymore. These will be tracked automatically in a later patch.

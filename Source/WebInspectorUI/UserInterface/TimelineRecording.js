@@ -26,6 +26,13 @@
 WebInspector.TimelineRecording = function()
 {
     WebInspector.Object.call(this);
+
+    this.reset(true);
+};
+
+WebInspector.TimelineRecording.Event = {
+    Reset: "timeline-recording-reset",
+    SourceCodeTimelineAdded: "timeline-recording-source-code-timeline-added"
 };
 
 WebInspector.TimelineRecording.prototype = {
@@ -34,13 +41,91 @@ WebInspector.TimelineRecording.prototype = {
 
     // Public
 
+    get timelines()
+    {
+        return this._timelines;
+    },
+
+    reset: function(newObject)
+    {
+        this._timelines = new Map;
+        this._timelines.set(WebInspector.TimelineRecord.Type.Network, new WebInspector.Timeline);
+        this._timelines.set(WebInspector.TimelineRecord.Type.Script, new WebInspector.Timeline);
+        this._timelines.set(WebInspector.TimelineRecord.Type.Layout, new WebInspector.Timeline);
+
+        this._sourceCodeTimelinesMap = new Map;
+        this._eventMarkers = [];
+
+        if (!newObject)
+            this.dispatchEventToListeners(WebInspector.TimelineRecording.Event.Reset);
+    },
+
+    sourceCodeTimelinesForSourceCode: function(sourceCode)
+    {
+        var timelines = this._sourceCodeTimelinesMap.get(sourceCode);
+        if (!timelines)
+            return [];
+
+        var result = [];
+
+        // FIXME: This could use a for..of loop once they are supported on Maps.
+        timelines.forEach(function(sourceCodeTimeline) {
+            result.push(sourceCodeTimeline);
+        });
+
+        return result;
+    },
+
     addEventMarker: function(eventMarker)
     {
-        // FIXME: Implement.
+        this._eventMarkers.push(eventMarker);
     },
 
     addRecord: function(record)
     {
-        // FIXME: Implement.
+        // Add the record to the global timeline by type.
+        this._timelines.get(record.type).addRecord(record);
+
+        // Netowrk records don't have source code timelines.
+        if (record.type === WebInspector.TimelineRecord.Type.Network)
+            return;
+
+        // Add the record to the source code timelines.
+        var activeMainResource = WebInspector.frameResourceManager.mainFrame.provisionalMainResource || WebInspector.frameResourceManager.mainFrame.mainResource;
+        var sourceCode = record.sourceCodeLocation ? record.sourceCodeLocation.sourceCode : activeMainResource;
+
+        var sourceCodeTimelines = this._sourceCodeTimelinesMap.get(sourceCode);
+        if (!sourceCodeTimelines) {
+            sourceCodeTimelines = new Map;
+            this._sourceCodeTimelinesMap.set(sourceCode, sourceCodeTimelines);
+        }
+
+        var newTimeline = false;
+        var key = this._keyForRecord(record);
+        var sourceCodeTimeline = sourceCodeTimelines.get(key);
+        if (!sourceCodeTimeline) {
+            sourceCodeTimeline = new WebInspector.SourceCodeTimeline(sourceCode, record.sourceCodeLocation, record.type, record.eventType);
+            sourceCodeTimelines.set(key, sourceCodeTimeline);
+            newTimeline = true;
+        }
+
+        sourceCodeTimeline.addRecord(record);
+
+        if (newTimeline)
+            this.dispatchEventToListeners(WebInspector.TimelineRecording.Event.SourceCodeTimelineAdded, {sourceCodeTimeline: sourceCodeTimeline});
+    },
+
+    // Private
+
+    _keyForRecord: function(record)
+    {
+        var key = record.type;
+        if (record instanceof WebInspector.ScriptTimelineRecord || record instanceof WebInspector.LayoutTimelineRecord)
+            key += ":" + record.eventType;
+        if (record instanceof WebInspector.ScriptTimelineRecord && record.eventType === WebInspector.ScriptTimelineRecord.EventType.EventDispatched)
+            key += ":" + record.details;
+        if (record.sourceCodeLocation)
+            key += ":" + record.sourceCodeLocation.lineNumber + ":" + record.sourceCodeLocation.columnNumber;
+        return key;
     }
 };
