@@ -1,3 +1,37 @@
+2014-01-21  Bear Travis  <betravis@adobe.com>
+
+        [CSS Shapes] Preserve box-shape order when serializing shape values
+        https://bugs.webkit.org/show_bug.cgi?id=127200
+
+        Reviewed by Dirk Schulze.
+
+        Convert the parsed shape-box pair to a CSSValueList rather than directly
+        adding the box value to BasicShape. The CSSValueList preserves the
+        shape-box ordering, and cleans up a little bit of the code shared between
+        clip and shape values.
+
+        Modifying existing parsing tests.
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::shapePropertyValue): Factor out code common to generating shape
+        values.
+        (WebCore::ComputedStyleExtractor::propertyValue): Generate a CSSValueList when
+        you have both a shape and a box.
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseBasicShapeAndOrBox): Factor out code common to clip
+        paths and shape properties that parses the [basic-shape || box] syntax from
+        the CSS Shapes spec.
+        (WebCore::CSSParser::parseShapeProperty): Parse shape-box pairs as a CSSValueList.
+        * css/DeprecatedStyleBuilder.cpp:
+        (WebCore::ApplyPropertyShape::applyValue): Use the CSSValueList for shape-box pairs.
+        * css/CSSValueList.h:
+        (WebCore::CSSValueList::itemWithoutBoundsCheck): Add a const version.
+        * page/animation/CSSPropertyAnimation.cpp:
+        (WebCore::blendFunc): Specify a box when blending.
+        * rendering/style/ShapeValue.h:
+        (WebCore::ShapeValue::createShapeValue): Add a box parameter.
+        (WebCore::ShapeValue::ShapeValue): Ditto.
+
 2014-01-21  Daniel Bates  <dabates@apple.com>
 
         Fix the iOS Simulator release build

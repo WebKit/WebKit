@@ -5843,7 +5843,7 @@ PassRefPtr<CSSBasicShape> CSSParser::parseBasicShapePolygon(CSSParserValueList* 
     return shape;
 }
 
-static bool isBoxValue(CSSValueID valueId)
+static bool isBoxValue(CSSValueID valueId, CSSPropertyID propId)
 {
     switch (valueId) {
     case CSSValueContentBox:
@@ -5851,10 +5851,46 @@ static bool isBoxValue(CSSValueID valueId)
     case CSSValueBorderBox:
     case CSSValueMarginBox:
         return true;
+    case CSSValueBoundingBox:
+        return propId == CSSPropertyWebkitClipPath;
     default: break;
     }
 
     return false;
+}
+
+PassRefPtr<CSSValue> CSSParser::parseBasicShapeAndOrBox(CSSPropertyID propId)
+{
+    CSSParserValue* value = m_valueList->current();
+
+    bool shapeFound = false;
+    bool boxFound = false;
+    CSSValueID valueId;
+
+    RefPtr<CSSValueList> list = CSSValueList::createSpaceSeparated();
+    for (unsigned i = 0; i < 2; ++i) {
+        if (!value)
+            break;
+        valueId = value->id;
+        if (value->unit == CSSParserValue::Function && !shapeFound) {
+            // parseBasicShape already asks for the next value list item.
+            RefPtr<CSSPrimitiveValue> shapeValue = parseBasicShape();
+            if (!shapeValue)
+                return nullptr;
+            list->append(shapeValue.release());
+            shapeFound = true;
+        } else if (isBoxValue(valueId, propId) && !boxFound) {
+            list->append(parseValidPrimitive(valueId, value));
+            boxFound = true;
+            m_valueList->next();
+        } else
+            return nullptr;
+        value = m_valueList->current();
+    }
+
+    if (m_valueList->current())
+        return nullptr;
+    return list.release();
 }
 
 #if ENABLE(CSS_SHAPES)
@@ -5881,33 +5917,7 @@ PassRefPtr<CSSValue> CSSParser::parseShapeProperty(CSSPropertyID propId)
         return imageValue.release();
     }
 
-    if (value->unit == CSSParserValue::Function) {
-        shapeValue = parseBasicShape();
-    } else if (isBoxValue(valueId)) {
-        keywordValue = parseValidPrimitive(valueId, value);
-        m_valueList->next();
-    } else
-        return nullptr;
-
-    value = m_valueList->current();
-
-    if (value) {
-        valueId = value->id;
-        if (keywordValue && value->unit == CSSParserValue::Function) {
-            shapeValue = parseBasicShape();
-        } else if (shapeValue && isBoxValue(valueId)) {
-            keywordValue = parseValidPrimitive(valueId, value);
-            m_valueList->next();
-        } else
-            return nullptr;
-    }
-
-    ASSERT(!shapeValue || shapeValue->isShape());
-
-    if (shapeValue && keywordValue)
-        shapeValue->getShapeValue()->setLayoutBox(keywordValue.release());
-
-    return shapeValue ? shapeValue.release() : keywordValue.release();
+    return parseBasicShapeAndOrBox(propId);
 }
 #endif
 
@@ -5927,31 +5937,7 @@ PassRefPtr<CSSValue> CSSParser::parseClipPath()
     }
 #endif
 
-    bool shapeFound = false;
-    bool boxFound = false;
-    RefPtr<CSSValueList> list = CSSValueList::createSpaceSeparated();
-    for (unsigned i = 0; i < 2; ++i) {
-        if (!value)
-            break;
-        valueId = value->id;
-        if (value->unit == CSSParserValue::Function && !shapeFound) {
-            // parseBasicShape already asks for the next value list item.
-            RefPtr<CSSPrimitiveValue> shapeValue = parseBasicShape();
-            if (!shapeValue)
-                return nullptr;
-            list->append(shapeValue.release());
-            shapeFound = true;
-        } else if ((isBoxValue(valueId) || valueId == CSSValueBoundingBox) && !boxFound) {
-            list->append(parseValidPrimitive(valueId, value));
-            boxFound = true;
-            m_valueList->next();
-        } else
-            return nullptr;
-        value = m_valueList->current();
-    }
-    if (value)
-        return nullptr;
-    return list.release();
+    return parseBasicShapeAndOrBox(CSSPropertyWebkitClipPath);
 }
 
 // FIXME This function is temporary to allow for an orderly transition between

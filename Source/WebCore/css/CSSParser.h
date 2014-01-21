@@ -179,6 +179,7 @@ public:
     PassRefPtr<CSSValue> parseShapeProperty(CSSPropertyID);
 #endif
 
+    PassRefPtr<CSSValue> parseBasicShapeAndOrBox(CSSPropertyID propId);
     PassRefPtr<CSSPrimitiveValue> parseBasicShape();
     PassRefPtr<CSSPrimitiveValue> parseShapeRadius(CSSParserValue*);
     PassRefPtr<CSSBasicShape> parseBasicShapeRectangle(CSSParserValueList*);

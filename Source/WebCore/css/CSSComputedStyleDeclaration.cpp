@@ -1763,6 +1763,31 @@ static inline PassRefPtr<RenderStyle> computeRenderStyleForProperty(Node* styled
     return styledNode->computedStyle(styledNode->isPseudoElement() ? NOPSEUDO : pseudoElementSpecifier);
 }
 
+#if ENABLE(CSS_SHAPES)
+static PassRefPtr<CSSValue> shapePropertyValue(const RenderStyle* style, const ShapeValue* shapeValue)
+{
+    if (!shapeValue)
+        return cssValuePool().createIdentifierValue(CSSValueNone);
+
+    if (shapeValue->type() == ShapeValue::Outside)
+        return cssValuePool().createIdentifierValue(CSSValueOutsideShape);
+
+    if (shapeValue->type() == ShapeValue::Box)
+        return cssValuePool().createValue(shapeValue->layoutBox());
+
+    if (shapeValue->type() == ShapeValue::Image)
+        return shapeValue->image() ? shapeValue->image()->cssValue() : cssValuePool().createIdentifierValue(CSSValueNone);
+
+    ASSERT(shapeValue->type() == ShapeValue::Shape);
+
+    RefPtr<CSSValueList> list = CSSValueList::createSpaceSeparated();
+    list->append(valueForBasicShape(style, shapeValue->shape()));
+    if (shapeValue->layoutBox() != BoxMissing)
+        list->append(cssValuePool().createValue(shapeValue->layoutBox()));
+    return list.release();
+}
+#endif
+
 PassRefPtr<CSSValue> ComputedStyleExtractor::propertyValue(CSSPropertyID propertyID, EUpdateLayout updateLayout) const
 {
     Node* styledNode = this->styledNode();
@@ -2938,31 +2963,9 @@ PassRefPtr<CSSValue> ComputedStyleExtractor::propertyValue(CSSPropertyID propert
         case CSSPropertyWebkitShapeImageThreshold:
             return cssValuePool().createValue(style->shapeImageThreshold(), CSSPrimitiveValue::CSS_NUMBER);
         case CSSPropertyWebkitShapeInside:
-            if (!style->shapeInside())
-                return cssValuePool().createIdentifierValue(CSSValueNone);
-            if (style->shapeInside()->type() == ShapeValue::Box)
-                return cssValuePool().createValue(style->shapeInside()->layoutBox());
-            if (style->shapeInside()->type() == ShapeValue::Outside)
-                return cssValuePool().createIdentifierValue(CSSValueOutsideShape);
-            if (style->shapeInside()->type() == ShapeValue::Image) {
-                if (style->shapeInside()->image())
-                    return style->shapeInside()->image()->cssValue();
-                return cssValuePool().createIdentifierValue(CSSValueNone);
-            }
-            ASSERT(style->shapeInside()->type() == ShapeValue::Shape);
-            return valueForBasicShape(style.get(), style->shapeInside()->shape());
+            return shapePropertyValue(style.get(), style->shapeInside());
         case CSSPropertyWebkitShapeOutside:
-            if (!style->shapeOutside())
-                return cssValuePool().createIdentifierValue(CSSValueNone);
-            if (style->shapeOutside()->type() == ShapeValue::Box)
-                return cssValuePool().createValue(style->shapeOutside()->layoutBox());
-            if (style->shapeOutside()->type() == ShapeValue::Image) {
-                if (style->shapeOutside()->image())
-                    return style->shapeOutside()->image()->cssValue();
-                return cssValuePool().createIdentifierValue(CSSValueNone);
-            }
-            ASSERT(style->shapeOutside()->type() == ShapeValue::Shape);
-            return valueForBasicShape(style.get(), style->shapeOutside()->shape());
+            return shapePropertyValue(style.get(), style->shapeOutside());
 #endif
 #if ENABLE(CSS_FILTERS)
         case CSSPropertyWebkitFilter:

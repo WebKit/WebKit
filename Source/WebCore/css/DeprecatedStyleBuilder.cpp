@@ -2182,23 +2182,36 @@ public:
             CSSPrimitiveValue* primitiveValue = toCSSPrimitiveValue(value);
             if (primitiveValue->getValueID() == CSSValueAuto)
                 setValue(styleResolver->style(), 0);
-            else if (primitiveValue->getValueID() == CSSValueContentBox
-                || primitiveValue->getValueID() == CSSValueBorderBox
-                || primitiveValue->getValueID() == CSSValuePaddingBox
-                || primitiveValue->getValueID() == CSSValueMarginBox)
-                setValue(styleResolver->style(), ShapeValue::createLayoutBoxValue(LayoutBox(*primitiveValue)));
             else if (primitiveValue->getValueID() == CSSValueOutsideShape)
                 setValue(styleResolver->style(), ShapeValue::createOutsideValue());
-            else if (primitiveValue->isShape()) {
-                RefPtr<ShapeValue> shape = ShapeValue::createShapeValue(basicShapeForValue(styleResolver->style(), styleResolver->rootElementStyle(), primitiveValue->getShapeValue()));
-                setValue(styleResolver->style(), shape.release());
-            }
         } else if (value->isImageValue() || value->isImageSetValue()) {
             RefPtr<ShapeValue> shape = ShapeValue::createImageValue(styleResolver->styleImage(property, value));
             setValue(styleResolver->style(), shape.release());
-        }
+        } else if (value->isValueList()) {
+            RefPtr<BasicShape> shape;
+            LayoutBox layoutBox = BoxMissing;
+            CSSValueList* valueList = toCSSValueList(value);
+            for (unsigned i = 0; i < valueList->length(); ++i) {
+                CSSPrimitiveValue* primitiveValue = toCSSPrimitiveValue(valueList->itemWithoutBoundsCheck(i));
+                if (primitiveValue->isShape())
+                    shape = basicShapeForValue(styleResolver->style(), styleResolver->rootElementStyle(), primitiveValue->getShapeValue());
+                else if (primitiveValue->getValueID() == CSSValueContentBox
+                    || primitiveValue->getValueID() == CSSValueBorderBox
+                    || primitiveValue->getValueID() == CSSValuePaddingBox
+                    || primitiveValue->getValueID() == CSSValueMarginBox)
+                    layoutBox = LayoutBox(*primitiveValue);
+                else
+                    return;
+            }
 
+            if (shape)
+                setValue(styleResolver->style(), ShapeValue::createShapeValue(shape.release(), layoutBox));
+            else if (layoutBox != BoxMissing)
+                setValue(styleResolver->style(), ShapeValue::createLayoutBoxValue(layoutBox));
+
+        }
     }
+
     static PropertyHandler createHandler()
     {
         PropertyHandler handler = ApplyPropertyDefaultBase<ShapeValue*, getterFunction, PassRefPtr<ShapeValue>, setterFunction, ShapeValue*, initialFunction>::createHandler();

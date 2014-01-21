@@ -52,6 +52,7 @@ public:
     CSSValue* item(size_t index) { return index < m_values.size() ? m_values[index].get() : 0; }
     const CSSValue* item(size_t index) const { return index < m_values.size() ? m_values[index].get() : 0; }
     CSSValue* itemWithoutBoundsCheck(size_t index) { return m_values[index].get(); }
+    const CSSValue* itemWithoutBoundsCheck(size_t index) const { ASSERT(index < m_values.size()); return m_values[index].get(); }
 
     void append(PassRefPtr<CSSValue> value) { m_values.append(value); }
     void prepend(PassRefPtr<CSSValue> value) { m_values.insert(0, value); }

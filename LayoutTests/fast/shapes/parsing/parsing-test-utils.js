@@ -67,10 +67,10 @@ var validShapeValues = [
     "polygon(nonzero, 0px 0px, 10px 10px, 10px 0px) border-box",
     "polygon(nonzero, 0px 0px, 10px 10px, 10px 0px) margin-box",
 
-    ["content-box polygon(nonzero, 0px 0px, 10px 10px, 10px 0px)", "polygon(nonzero, 0px 0px, 10px 10px, 10px 0px) content-box"],
-    ["padding-box polygon(nonzero, 0px 0px, 10px 10px, 10px 0px)", "polygon(nonzero, 0px 0px, 10px 10px, 10px 0px) padding-box"],
-    ["border-box polygon(nonzero, 0px 0px, 10px 10px, 10px 0px)", "polygon(nonzero, 0px 0px, 10px 10px, 10px 0px) border-box"],
-    ["margin-box polygon(nonzero, 0px 0px, 10px 10px, 10px 0px)", "polygon(nonzero, 0px 0px, 10px 10px, 10px 0px) margin-box"]
+    ["content-box polygon(nonzero, 0px 0px, 10px 10px, 10px 0px)", "content-box polygon(nonzero, 0px 0px, 10px 10px, 10px 0px)", "polygon(nonzero, 0px 0px, 10px 10px, 10px 0px) content-box"],
+    ["padding-box polygon(nonzero, 0px 0px, 10px 10px, 10px 0px)", "padding-box polygon(nonzero, 0px 0px, 10px 10px, 10px 0px)", "polygon(nonzero, 0px 0px, 10px 10px, 10px 0px) padding-box"],
+    ["border-box polygon(nonzero, 0px 0px, 10px 10px, 10px 0px)", "border-box polygon(nonzero, 0px 0px, 10px 10px, 10px 0px)", "polygon(nonzero, 0px 0px, 10px 10px, 10px 0px) border-box"],
+    ["margin-box polygon(nonzero, 0px 0px, 10px 10px, 10px 0px)", "margin-box polygon(nonzero, 0px 0px, 10px 10px, 10px 0px)", "polygon(nonzero, 0px 0px, 10px 10px, 10px 0px) margin-box"]
 ];
 
 // Invalid values for both shape-inside and shape-outside. When an invalid shape value is specified, the 
