@@ -69,11 +69,11 @@ DYLIB_INSTALL_NAME_BASE_iphonesimulator =  $(SDKROOT)$(DYLIB_INSTALL_NAME_BASE_i
 INSTALLHDRS_COPY_PHASE = YES;
 INSTALLHDRS_SCRIPT_PHASE = YES;
 PRODUCT_NAME = WebCore;
-OTHER_LDFLAGS_BASE = -lsqlite3 -lobjc -lANGLE -allowable_client WebCoreTestSupport;
+OTHER_LDFLAGS_BASE = -lsqlite3 -lobjc -lANGLE;
 OTHER_LDFLAGS = $(inherited) $(OTHER_LDFLAGS_$(PLATFORM_NAME));
 OTHER_LDFLAGS_iphoneos = $(OTHER_LDFLAGS_iphonesimulator) -framework IOSurface;
-OTHER_LDFLAGS_iphonesimulator = $(OTHER_LDFLAGS_BASE) -framework CFNetwork -framework CoreGraphics -framework CoreText -framework Foundation -framework GraphicsServices -framework ImageIO -framework OpenGLES -lMobileGestalt -allowable_client WebKit2 -allowable_client WebKit -allowable_client UIKit;
-OTHER_LDFLAGS_macosx = $(OTHER_LDFLAGS_BASE) -sub_library libobjc -umbrella WebKit -allowable_client WebKit2 -framework ApplicationServices -framework AudioUnit -framework Carbon -framework Cocoa -framework IOSurface -framework OpenGL;
+OTHER_LDFLAGS_iphonesimulator = $(OTHER_LDFLAGS_BASE) -framework CFNetwork -framework CoreGraphics -framework CoreText -framework Foundation -framework GraphicsServices -framework ImageIO -framework OpenGLES -lMobileGestalt;
+OTHER_LDFLAGS_macosx = $(OTHER_LDFLAGS_BASE) -sub_library libobjc -umbrella WebKit -allowable_client WebCoreTestSupport -allowable_client WebKit2 -framework ApplicationServices -framework AudioUnit -framework Carbon -framework Cocoa -framework IOSurface -framework OpenGL;
 
 NORMAL_WEBCORE_FRAMEWORKS_DIR = $(NORMAL_WEBCORE_FRAMEWORKS_DIR_$(PLATFORM_NAME));
 NORMAL_WEBCORE_FRAMEWORKS_DIR_iphoneos = $(PRODUCTION_FRAMEWORKS_DIR);

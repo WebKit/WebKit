@@ -1,3 +1,12 @@
+2014-01-21  Andy Estes  <aestes@apple.com>
+
+        [iOS] Allow all clients to link against WebCore
+        https://bugs.webkit.org/show_bug.cgi?id=127372
+        
+        Reviewed by Dan Bernstein.
+
+        * Configurations/WebCore.xcconfig:
+
 2014-01-21  Bear Travis  <betravis@adobe.com>
 
         [CSS Shapes] Preserve box-shape order when serializing shape values
