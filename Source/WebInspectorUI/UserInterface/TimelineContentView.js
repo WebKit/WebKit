@@ -42,7 +42,7 @@ WebInspector.TimelineContentView = function(recording)
 
     this._overviewTimelineView = new WebInspector.OverviewTimelineView;
     this._discreteTimelineViewMap = {
-        [WebInspector.TimelineRecord.Type.Network]: new WebInspector.TimelineView,
+        [WebInspector.TimelineRecord.Type.Network]: new WebInspector.NetworkTimelineView,
         [WebInspector.TimelineRecord.Type.Layout]: new WebInspector.TimelineView,
         [WebInspector.TimelineRecord.Type.Script]: new WebInspector.TimelineView
     };
@@ -151,6 +151,9 @@ WebInspector.TimelineContentView.prototype = {
 
     matchTreeElementAgainstCustomFilters: function(treeElement)
     {
+        if (this._currentTimelineView && !this._currentTimelineView.matchTreeElementAgainstCustomFilters(treeElement))
+            return false;
+
         var startTime = this._timelineOverview.selectionStartTime;
         var endTime = this._timelineOverview.selectionStartTime + this._timelineOverview.selectionDuration;
         var currentTime = this._currentTimeMarker.time || WebInspector.timelineManager.recording.startTime;

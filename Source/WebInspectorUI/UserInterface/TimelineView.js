@@ -151,6 +151,12 @@ WebInspector.TimelineView.prototype = {
         this._visible = false;
     },
 
+    matchTreeElementAgainstCustomFilters: function(treeElement)
+    {
+        // Implemented by sub-classes if needed.
+        return true;
+    },
+
     updateLayout: function()
     {
         if (this._scheduledLayoutUpdateIdentifier) {

@@ -1,3 +1,107 @@
+2014-01-14  Timothy Hatcher  <timothy@apple.com>
+
+        Implement the discrete Network timeline view.
+
+        https://bugs.webkit.org/show_bug.cgi?id=127022
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/DataGrid.js:
+        (WebInspector.DataGrid): Align the labels of the column headers to match the data.
+        (WebInspector.DataGridNode.prototype.get selectable): Prevent selection when hidden.
+
+        * UserInterface/DetailsSection.css:
+        (.details-section > .header): Bump the font size to match data grid header sizes.
+
+        * UserInterface/Main.html: Add new files.
+
+        * UserInterface/NetworkTimelineView.css: Added.
+        (.timeline-view.network > .data-grid):
+        (.sidebar > .panel.timeline.timeline-content-view-showing > .content .item.resource .subtitle):
+        Hide the domain subtitle when the content view is showing which also has the domain.
+
+        * UserInterface/NetworkTimelineView.js: Added.
+        (WebInspector.NetworkTimelineView):
+        (WebInspector.NetworkTimelineView.prototype.get navigationSidebarTreeOutlineLabel):
+        (WebInspector.NetworkTimelineView.prototype.shown):
+        (WebInspector.NetworkTimelineView.prototype.hidden):
+        (WebInspector.NetworkTimelineView.prototype.updateLayout):
+        (WebInspector.NetworkTimelineView.prototype.matchTreeElementAgainstCustomFilters):
+        (WebInspector.NetworkTimelineView.prototype._networkTimelineRecordAdded):
+        (WebInspector.NetworkTimelineView.prototype._dataGridFiltersDidChange):
+        (WebInspector.NetworkTimelineView.prototype._treeElementSelected):
+
+        * UserInterface/ResourceTimelineDataGridNode.js:
+        (WebInspector.ResourceTimelineDataGridNode.prototype._needsRefresh):
+        Call dataGridNodeNeedsRefresh on the TimelineDataGrid so things can be batched with
+        one request animation frame.
+
+        * UserInterface/TimelineContentView.js:
+        (WebInspector.TimelineContentView): Create a NetworkTimelineView.
+        (WebInspector.TimelineContentView.prototype.matchTreeElementAgainstCustomFilters):
+
+        * UserInterface/TimelineDataGrid.css:
+        (.data-grid.timeline table):
+        (.data-grid.timeline th):
+        (.data-grid.timeline th:not(:last-child)):
+        (.data-grid.timeline th.sortable:active):
+        (.data-grid.timeline th.sort-descending):
+        (.data-grid.timeline .data-container):
+        (.data-grid.timeline td):
+        (.data-grid.timeline td:last-child):
+        (.data-grid.timeline td:not(:last-child)):
+        (.data-grid.timeline:focus tr.selected td:not(:last-child)):
+        (.data-grid.timeline th.sort-descending > div:first-child):
+        (.data-grid.timeline th.sort-descending > div:first-child::after):
+        (.data-grid.timeline td.error):
+        (.data-grid.timeline tr.selected td.error):
+        (.data-grid.timeline > .navigation-bar-container):
+        (.data-grid.timeline:hover > .navigation-bar-container):
+        (.data-grid.timeline > .navigation-bar-container > .navigation-bar):
+
+        * UserInterface/TimelineDataGrid.js:
+        (WebInspector.TimelineDataGrid):
+        (WebInspector.TimelineDataGrid.createColumnScopeBar):
+        (WebInspector.TimelineDataGrid.prototype.reset):
+        (WebInspector.TimelineDataGrid.prototype.shown):
+        (WebInspector.TimelineDataGrid.prototype.hidden):
+        (WebInspector.TimelineDataGrid.prototype.callFramePopoverAnchorElement):
+        (WebInspector.TimelineDataGrid.prototype.updateLayout):
+        (WebInspector.TimelineDataGrid.prototype.treeElementMatchesActiveScopeFilters):
+        (WebInspector.TimelineDataGrid.prototype.addRowInSortOrder):
+        (WebInspector.TimelineDataGrid.prototype.shouldIgnoreSelectionEvent):
+        (WebInspector.TimelineDataGrid.prototype.dataGridNodeNeedsRefresh):
+        (WebInspector.TimelineDataGrid.prototype._refreshDirtyDataGridNodes):
+        (WebInspector.TimelineDataGrid.prototype._sort):
+        (WebInspector.TimelineDataGrid.prototype._sortComparator):
+        Add support for sorting, batch refresh and managing of a TreeOutlineDataGridSynchronizer.
+
+        * UserInterface/TimelineSidebarPanel.css:
+        (.sidebar > .panel.timeline > .title-bar): Bump the font size to match data grid header sizes.
+
+        * UserInterface/TimelineView.js:
+        (WebInspector.TimelineView.prototype.matchTreeElementAgainstCustomFilters): Added stub.
+
+        * UserInterface/TreeOutlineDataGridSynchronizer.js:
+        (WebInspector.TreeOutlineDataGridSynchronizer.prototype.get treeOutline):
+        (WebInspector.TreeOutlineDataGridSynchronizer.prototype.get dataGrid):
+        (WebInspector.TreeOutlineDataGridSynchronizer.prototype.get enabled):
+        (WebInspector.TreeOutlineDataGridSynchronizer.prototype.set enabled):
+        (WebInspector.TreeOutlineDataGridSynchronizer.prototype.treeElementForDataGridNode):
+        (WebInspector.TreeOutlineDataGridSynchronizer.prototype.dataGridNodeForTreeElement):
+        (WebInspector.TreeOutlineDataGridSynchronizer.prototype._treeOutlineScrolled):
+        (WebInspector.TreeOutlineDataGridSynchronizer.prototype._dataGridScrolled):
+        (WebInspector.TreeOutlineDataGridSynchronizer.prototype._dataGridNodeSelected):
+        (WebInspector.TreeOutlineDataGridSynchronizer.prototype._dataGridNodeExpanded):
+        (WebInspector.TreeOutlineDataGridSynchronizer.prototype._dataGridNodeCollapsed):
+        (WebInspector.TreeOutlineDataGridSynchronizer.prototype._treeElementSelected):
+        (WebInspector.TreeOutlineDataGridSynchronizer.prototype._treeElementAdded):
+        (WebInspector.TreeOutlineDataGridSynchronizer.prototype._treeElementRemoved):
+        (WebInspector.TreeOutlineDataGridSynchronizer.prototype._treeElementExpanded):
+        (WebInspector.TreeOutlineDataGridSynchronizer.prototype._treeElementCollapsed):
+        (WebInspector.TreeOutlineDataGridSynchronizer.prototype._treeElementHiddenChanged):
+        Added support for disabling the synchronizer when the client can do a better job.
+
 2014-01-13  Timothy Hatcher  <timothy@apple.com>
 
         Filter the Timeline overview graph and sidebar based on the current time selection.

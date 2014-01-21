@@ -23,6 +23,118 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+.data-grid.timeline {
+    border: none;
+}
+
+.data-grid.timeline table {
+    font-size: 11px;
+}
+
+.data-grid.timeline th {
+    height: 22px;
+
+    font-size: 11px;
+    font-family: "Lucida Grande", sans-serif;
+
+    background-image: none;
+    background-color: white;
+
+    border-top: 1px solid rgb(179, 179, 179) !important;
+    border-bottom: 1px solid rgb(179, 179, 179) !important;
+}
+
+.data-grid.timeline th:not(:last-child) {
+    border-right: 1px solid rgb(179, 179, 179);
+}
+
+.data-grid.timeline th.sortable:active {
+    background-image: none !important;
+    background-color: rgb(210, 210, 210);
+}
+
+.data-grid.timeline th.sort-ascending,
+.data-grid.timeline th.sort-descending {
+    background-image: none !important;
+    background-color: rgb(230, 230, 230);
+}
+
+.data-grid.timeline .data-container {
+    top: 23px;
+}
+
+.data-grid.timeline th,
+.data-grid.timeline td {
+    padding-left: 6px;
+    padding-right: 6px;
+}
+
+.data-grid.timeline td:last-child {
+    padding-right: 12px;
+}
+
+.data-grid.timeline td {
+    padding-top: 2px;
+    padding-bottom: 2px;
+    line-height: 17px;
+}
+
+.data-grid.timeline td:not(:last-child) {
+    border-right: 1px solid rgb(179, 179, 179);
+}
+
+.data-grid.timeline:focus tr.selected td:not(:last-child) {
+    border-right-color: rgb(53, 109, 189);
+}
+
+.data-grid.timeline th.sort-ascending > div:first-child,
+.data-grid.timeline th.sort-descending > div:first-child {
+    padding-right: 13px;
+}
+
+.data-grid.timeline th.sort-ascending > div:first-child::after,
+.data-grid.timeline th.sort-descending > div:first-child::after {
+    top: 1px;
+}
+
+.data-grid.timeline td.error {
+    color: rgb(224, 16, 16);
+}
+
+.data-grid.timeline tr.selected td.error {
+    color: inherit;
+}
+
+.data-grid.timeline > .navigation-bar-container {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 32px;
+
+    pointer-events: none;
+    visibility: hidden;
+}
+
+.data-grid.timeline:hover > .navigation-bar-container {
+    pointer-events: all;
+    visibility: visible;
+}
+
+.data-grid.timeline > .navigation-bar-container > .navigation-bar {
+    position: absolute;
+    top: 10px;
+    left: 0;
+    right: 0;
+    height: 22px;
+
+    border-bottom: none;
+    border-top: 1px solid rgb(200, 200, 200);
+    box-shadow: none;
+
+    background-color: white;
+}
+
 .timeline-data-grid-tree-outline {
     position: relative;
     padding: 0;

@@ -29,6 +29,7 @@ WebInspector.TreeOutlineDataGridSynchronizer = function(treeOutline, dataGrid)
 
     this._treeOutline = treeOutline;
     this._dataGrid = dataGrid;
+    this._enabled = true;
 
     this._treeOutline.element.parentNode.addEventListener("scroll", this._treeOutlineScrolled.bind(this));
     this._dataGrid.scrollContainer.addEventListener("scroll", this._dataGridScrolled.bind(this));
@@ -90,6 +91,26 @@ WebInspector.TreeOutlineDataGridSynchronizer.prototype = {
 
     // Public
 
+    get treeOutline()
+    {
+        return this._treeOutline;
+    },
+
+    get dataGrid()
+    {
+        return this._dataGrid;
+    },
+
+    get enabled()
+    {
+        return this._enabled;
+    },
+
+    set enabled(x)
+    {
+        this._enabled = x || false;
+    },
+
     associate: function(treeElement, dataGridNode)
     {
         console.assert(treeElement);
@@ -108,10 +129,23 @@ WebInspector.TreeOutlineDataGridSynchronizer.prototype = {
             this._dataGrid.selectedNode.deselect(true);
     },
 
+    treeElementForDataGridNode: function(dataGridNode)
+    {
+        return dataGridNode.__treeElement || null;
+    },
+
+    dataGridNodeForTreeElement: function(treeElement)
+    {
+        return treeElement.__dataGridNode || null;
+    },
+
     // Private
 
     _treeOutlineScrolled: function(event)
     {
+        if (!this._enabled)
+            return;
+
         if (this._ignoreNextTreeOutlineScrollEvent) {
             delete this._ignoreNextTreeOutlineScrollEvent;
             return;
@@ -123,6 +157,9 @@ WebInspector.TreeOutlineDataGridSynchronizer.prototype = {
 
     _dataGridScrolled: function(event)
     {
+        if (!this._enabled)
+            return;
+
         if (this._ignoreNextDataGridScrollEvent) {
             delete this._ignoreNextDataGridScrollEvent;
             return;
@@ -134,6 +171,9 @@ WebInspector.TreeOutlineDataGridSynchronizer.prototype = {
 
     _dataGridNodeSelected: function(event)
     {
+        if (!this._enabled)
+            return;
+
         var dataGridNode = this._dataGrid.selectedNode;
         if (dataGridNode)
             dataGridNode.__treeElement.select(true, true, true, true);
@@ -141,6 +181,9 @@ WebInspector.TreeOutlineDataGridSynchronizer.prototype = {
 
     _dataGridNodeExpanded: function(event)
     {
+        if (!this._enabled)
+            return;
+
         var dataGridNode = event.data.dataGridNode;
         console.assert(dataGridNode);
 
@@ -150,6 +193,9 @@ WebInspector.TreeOutlineDataGridSynchronizer.prototype = {
 
     _dataGridNodeCollapsed: function(event)
     {
+        if (!this._enabled)
+            return;
+
         var dataGridNode = event.data.dataGridNode;
         console.assert(dataGridNode);
 
@@ -159,6 +205,9 @@ WebInspector.TreeOutlineDataGridSynchronizer.prototype = {
 
     _treeElementSelected: function(treeElement, selectedByUser)
     {
+        if (!this._enabled)
+            return;
+
         var dataGridNode = treeElement.__dataGridNode;
         console.assert(dataGridNode);
 
@@ -167,6 +216,9 @@ WebInspector.TreeOutlineDataGridSynchronizer.prototype = {
 
     _treeElementAdded: function(treeElement)
     {
+        if (!this._enabled)
+            return;
+
         var dataGridNode = treeElement.__dataGridNode;
         console.assert(dataGridNode);
 
@@ -181,14 +233,21 @@ WebInspector.TreeOutlineDataGridSynchronizer.prototype = {
 
     _treeElementRemoved: function(treeElement)
     {
+        if (!this._enabled)
+            return;
+
         var dataGridNode = treeElement.__dataGridNode;
         console.assert(dataGridNode);
 
-        dataGridNode.parent.removeChild(dataGridNode);
+        if (dataGridNode.parent)
+            dataGridNode.parent.removeChild(dataGridNode);
     },
 
     _treeElementExpanded: function(treeElement)
     {
+        if (!this._enabled)
+            return;
+
         var dataGridNode = treeElement.__dataGridNode;
         console.assert(dataGridNode);
 
@@ -198,6 +257,9 @@ WebInspector.TreeOutlineDataGridSynchronizer.prototype = {
 
     _treeElementCollapsed: function(treeElement)
     {
+        if (!this._enabled)
+            return;
+
         var dataGridNode = treeElement.__dataGridNode;
         console.assert(dataGridNode);
 
@@ -207,13 +269,13 @@ WebInspector.TreeOutlineDataGridSynchronizer.prototype = {
 
     _treeElementHiddenChanged: function(treeElement, hidden)
     {
+        if (!this._enabled)
+            return;
+
         var dataGridNode = treeElement.__dataGridNode;
         console.assert(dataGridNode);
 
-        if (hidden)
-            dataGridNode.element.classList.add("hidden");
-        else
-            dataGridNode.element.classList.remove("hidden");
+        dataGridNode.element.classList.toggle("hidden", hidden);
     }
 }
 

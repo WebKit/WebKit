@@ -87,6 +87,8 @@ WebInspector.DataGrid = function(columns, editCallback, deleteCallback)
         var cell = document.createElement("th");
         cell.className = columnIdentifier + "-column";
         cell.columnIdentifier = columnIdentifier;
+        if (column.aligned)
+            cell.classList.add(column.aligned);
         this._headerTableHeaders[columnIdentifier] = cell;
 
         var div = document.createElement("div");
@@ -1313,7 +1315,10 @@ WebInspector.DataGridNode = function(data, hasChildren)
 }
 
 WebInspector.DataGridNode.prototype = {
-    selectable: true,
+    get selectable()
+    {
+        return !this._element || !this._element.classList.contains("hidden");
+    },
 
     get element()
     {

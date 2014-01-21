@@ -168,6 +168,11 @@ WebInspector.ResourceTimelineDataGridNode.prototype = {
 
     _needsRefresh: function()
     {
+        if (this.dataGrid instanceof WebInspector.TimelineDataGrid) {
+            this.dataGrid.dataGridNodeNeedsRefresh(this);
+            return;
+        }
+
         if (this._scheduledRefreshIdentifier)
             return;
 
