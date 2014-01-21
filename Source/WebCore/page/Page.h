@@ -31,7 +31,6 @@
 #include "PlatformScreen.h"
 #include "Region.h"
 #include "Supplementable.h"
-#include "ViewState.h"
 #include "ViewportArguments.h"
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
@@ -298,18 +297,18 @@ public:
     unsigned pageCount() const;
 
     // Notifications when the Page starts and stops being presented via a native window.
-    void setViewState(ViewState::Flags, bool isInitial = false);
     void setIsVisible(bool isVisible, bool isInitial);
     void setIsPrerender();
-    bool isVisible() const { return m_viewState & ViewState::IsVisible; }
+    bool isVisible() const { return m_isVisible; }
 
     // Notification that this Page was moved into or out of a native window.
     void setIsInWindow(bool);
-    bool isInWindow() const { return m_viewState & ViewState::IsInWindow; }
+    bool isInWindow() const { return m_isInWindow; }
 
     void suspendScriptedAnimations();
     void resumeScriptedAnimations();
     bool scriptedAnimationsSuspended() const { return m_scriptedAnimationsSuspended; }
+    void setIsVisuallyIdle(bool);
 
     void userStyleSheetLocationChanged();
     const String& userStyleSheet() const;
@@ -426,10 +425,6 @@ public:
 private:
     void initGroup();
 
-    void setIsInWindowInternal(bool);
-    void setIsVisibleInternal(bool isVisible, bool isInitial);
-    void setIsVisuallyIdleInternal(bool);
-
 #if ASSERT_DISABLED
     void checkSubframeCountConsistency() const { }
 #else
@@ -533,8 +528,9 @@ private:
     double m_timerAlignmentInterval;
 
     bool m_isEditable;
+    bool m_isInWindow;
+    bool m_isVisible;
     bool m_isPrerender;
-    ViewState::Flags m_viewState;
 
     LayoutMilestones m_requestedLayoutMilestones;
 
