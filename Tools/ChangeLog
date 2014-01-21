@@ -1,3 +1,11 @@
+2014-01-21  Siddharth Mathur  <s.mathur@ieee.org>
+
+        Change my email address in contributors.json.
+
+        Unreviewed.
+
+        * Scripts/webkitpy/common/config/contributors.json:
+
 2014-01-21  Krzysztof Czech  <k.czech@samsung.com>
 
         [ATK] Expose aria-flowto through ATK_RELATION_FLOWS_TO
