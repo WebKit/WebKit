@@ -37,6 +37,7 @@ list(APPEND WebKit2_SOURCES
 
     Shared/Downloads/soup/DownloadSoup.cpp
 
+    Shared/Network/CustomProtocols/soup/CustomProtocolManagerImpl.cpp
     Shared/Network/CustomProtocols/soup/CustomProtocolManagerSoup.cpp
 
     Shared/Plugins/Netscape/x11/NetscapePluginModuleX11.cpp
@@ -78,6 +79,7 @@ list(APPEND WebKit2_SOURCES
     UIProcess/API/C/soup/WKContextSoup.cpp
     UIProcess/API/C/soup/WKCookieManagerSoup.cpp
     UIProcess/API/C/soup/WKSoupRequestManager.cpp
+    UIProcess/API/C/soup/WKSoupCustomProtocolRequestManager.cpp
 
     UIProcess/API/gtk/PageClientImpl.cpp
     UIProcess/API/gtk/PageClientImpl.h
@@ -236,6 +238,8 @@ list(APPEND WebKit2_SOURCES
     UIProcess/Launcher/gtk/ProcessLauncherGtk.cpp
 
     UIProcess/Network/CustomProtocols/soup/CustomProtocolManagerProxySoup.cpp
+    UIProcess/Network/CustomProtocols/soup/WebSoupCustomProtocolRequestManagerClient.cpp
+    UIProcess/Network/CustomProtocols/soup/WebSoupCustomProtocolRequestManager.cpp
 
     UIProcess/Plugins/unix/PluginInfoStoreUnix.cpp
     UIProcess/Plugins/unix/PluginProcessProxyUnix.cpp
@@ -397,6 +401,7 @@ list(APPEND WebKit2_INCLUDE_DIRECTORIES
     "${WEBKIT2_DIR}/UIProcess/API/C/soup"
     "${WEBKIT2_DIR}/UIProcess/API/cpp/gtk"
     "${WEBKIT2_DIR}/UIProcess/API/gtk"
+    "${WEBKIT2_DIR}/UIProcess/Network/CustomProtocols/soup"
     "${WEBKIT2_DIR}/UIProcess/gtk"
     "${WEBKIT2_DIR}/UIProcess/soup"
     "${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk"

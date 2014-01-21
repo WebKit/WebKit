@@ -1,3 +1,109 @@
+2014-01-21  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [SOUP] Implement CUSTOM PROTOCOLS
+        https://bugs.webkit.org/show_bug.cgi?id=125583
+
+        Reviewed by Anders Carlsson.
+
+        Add new classes to implement CustomProtocols for soup. The
+        implementation is the same, but using the CustomProtocol API and
+        messages. The current implementation can be removed once all ports
+        using soup switch to using CustomProtocols.
+
+        * GNUmakefile.am: Add new include paths.
+        * GNUmakefile.list.am: Add new files to compilation.
+        * PlatformGTK.cmake: Add new files to compilation.
+        * Shared/API/c/soup/WKBaseSoup.h:
+        * Shared/APIObject.h:
+        * Shared/Network/CustomProtocols/CustomProtocolManager.h:
+        * Shared/Network/CustomProtocols/soup/CustomProtocolManagerImpl.cpp: Added.
+        (WebKit::generateCustomProtocolID):
+        (WebKit::WebSoupRequestAsyncData::WebSoupRequestAsyncData):
+        (WebKit::WebSoupRequestAsyncData::~WebSoupRequestAsyncData):
+        (WebKit::WebSoupRequestAsyncData::requestFailed):
+        (WebKit::WebSoupRequestAsyncData::releaseTask):
+        (WebKit::CustomProtocolManagerImpl::CustomProtocolManagerImpl):
+        (WebKit::CustomProtocolManagerImpl::~CustomProtocolManagerImpl):
+        (WebKit::CustomProtocolManagerImpl::registerScheme):
+        (WebKit::CustomProtocolManagerImpl::supportsScheme):
+        (WebKit::CustomProtocolManagerImpl::didFailWithError):
+        (WebKit::CustomProtocolManagerImpl::didLoadData):
+        (WebKit::CustomProtocolManagerImpl::didReceiveResponse):
+        (WebKit::CustomProtocolManagerImpl::didFinishLoading):
+        (WebKit::CustomProtocolManagerImpl::send):
+        (WebKit::CustomProtocolManagerImpl::finish):
+        * Shared/Network/CustomProtocols/soup/CustomProtocolManagerImpl.h: Added.
+        * Shared/Network/CustomProtocols/soup/CustomProtocolManagerSoup.cpp:
+        (WebKit::CustomProtocolManager::CustomProtocolManager):
+        (WebKit::CustomProtocolManager::initialize):
+        (WebKit::CustomProtocolManager::registerScheme):
+        (WebKit::CustomProtocolManager::supportsScheme):
+        (WebKit::CustomProtocolManager::didFailWithError):
+        (WebKit::CustomProtocolManager::didLoadData):
+        (WebKit::CustomProtocolManager::didReceiveResponse):
+        (WebKit::CustomProtocolManager::didFinishLoading):
+        * Shared/WebProcessCreationParameters.cpp:
+        (WebKit::WebProcessCreationParameters::encode):
+        (WebKit::WebProcessCreationParameters::decode):
+        * Shared/WebProcessCreationParameters.h:
+        * UIProcess/API/C/soup/WKAPICastSoup.h:
+        * UIProcess/API/C/soup/WKSoupCustomProtocolRequestManager.cpp: Copied from Source/WebKit2/UIProcess/soup/WebContextSoup.cpp.
+        (WKSoupCustomProtocolRequestManagerGetTypeID):
+        (WKSoupCustomProtocolRequestManagerSetClient):
+        * UIProcess/API/C/soup/WKSoupCustomProtocolRequestManager.h: Added.
+        * UIProcess/Network/CustomProtocols/CustomProtocolManagerProxy.h:
+        * UIProcess/Network/CustomProtocols/mac/CustomProtocolManagerProxyMac.mm:
+        (WebKit::CustomProtocolManagerProxy::CustomProtocolManagerProxy):
+        * UIProcess/Network/CustomProtocols/soup/CustomProtocolManagerProxySoup.cpp:
+        (WebKit::CustomProtocolManagerProxy::CustomProtocolManagerProxy):
+        (WebKit::CustomProtocolManagerProxy::startLoading):
+        (WebKit::CustomProtocolManagerProxy::stopLoading):
+        * UIProcess/Network/CustomProtocols/soup/WebSoupCustomProtocolRequestManager.cpp: Added.
+        (WebKit::WebSoupCustomProtocolRequestManager::supplementName):
+        (WebKit::WebSoupCustomProtocolRequestManager::create):
+        (WebKit::WebSoupCustomProtocolRequestManager::WebSoupCustomProtocolRequestManager):
+        (WebKit::WebSoupCustomProtocolRequestManager::~WebSoupCustomProtocolRequestManager):
+        (WebKit::WebSoupCustomProtocolRequestManager::initializeClient):
+        (WebKit::WebSoupCustomProtocolRequestManager::contextDestroyed):
+        (WebKit::WebSoupCustomProtocolRequestManager::processDidClose):
+        (WebKit::WebSoupCustomProtocolRequestManager::refWebContextSupplement):
+        (WebKit::WebSoupCustomProtocolRequestManager::derefWebContextSupplement):
+        (WebKit::WebSoupCustomProtocolRequestManager::registerSchemeForCustomProtocol):
+        (WebKit::WebSoupCustomProtocolRequestManager::unregisterSchemeForCustomProtocol):
+        (WebKit::WebSoupCustomProtocolRequestManager::startLoading):
+        (WebKit::WebSoupCustomProtocolRequestManager::stopLoading):
+        (WebKit::WebSoupCustomProtocolRequestManager::didReceiveResponse):
+        (WebKit::WebSoupCustomProtocolRequestManager::didLoadData):
+        (WebKit::WebSoupCustomProtocolRequestManager::didFailWithError):
+        (WebKit::WebSoupCustomProtocolRequestManager::didFinishLoading):
+        * UIProcess/Network/CustomProtocols/soup/WebSoupCustomProtocolRequestManager.h: Added.
+        (WebKit::WebSoupCustomProtocolRequestManager::registeredSchemesForCustomProtocols):
+        * UIProcess/Network/CustomProtocols/soup/WebSoupCustomProtocolRequestManagerClient.cpp: Added.
+        (WebKit::WebSoupCustomProtocolRequestManagerClient::startLoading):
+        (WebKit::WebSoupCustomProtocolRequestManagerClient::stopLoading):
+        * UIProcess/Network/CustomProtocols/soup/WebSoupCustomProtocolRequestManagerClient.h: Added.
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::NetworkProcessProxy):
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::WebContext):
+        * UIProcess/WebPageProxy.cpp:
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::WebProcessProxy):
+        * UIProcess/gtk/WebContextGtk.cpp:
+        (WebKit::WebContext::platformInitializeWebProcess):
+        * UIProcess/soup/WebContextSoup.cpp:
+        (WebKit::WebContext::platformInitializeNetworkProcess):
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::WebProcess):
+        * WebProcess/soup/WebKitSoupRequestGeneric.cpp:
+        (webkitSoupRequestGenericSendAsync):
+        (webkitSoupRequestGenericSendFinish):
+        * WebProcess/soup/WebKitSoupRequestGeneric.h:
+        * WebProcess/soup/WebProcessSoup.cpp:
+        (WebKit::WebProcess::platformInitializeWebProcess):
+
 2014-01-21  Adrian Perez de Castro  <aperez@igalia.com>
 
         [GTK] Allow passing extra data to web extensions

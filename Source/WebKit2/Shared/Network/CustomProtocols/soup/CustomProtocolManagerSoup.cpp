@@ -23,15 +23,10 @@
 #if ENABLE(CUSTOM_PROTOCOLS)
 
 #include "ChildProcess.h"
+#include "CustomProtocolManagerImpl.h"
 #include "CustomProtocolManagerMessages.h"
-#include "CustomProtocolManagerProxyMessages.h"
-#include "WebCoreArgumentCoders.h"
 #include "WebProcessCreationParameters.h"
 #include <WebCore/NotImplemented.h>
-#include <WebCore/ResourceError.h>
-#include <WebCore/ResourceRequest.h>
-#include <WebCore/ResourceResponse.h>
-#include <WebCore/URL.h>
 
 #if ENABLE(NETWORK_PROCESS)
 #include "NetworkProcessCreationParameters.h"
@@ -47,6 +42,7 @@ const char* CustomProtocolManager::supplementName()
 CustomProtocolManager::CustomProtocolManager(ChildProcess* childProcess)
     : m_childProcess(childProcess)
     , m_messageQueue(WorkQueue::create("com.apple.WebKit.CustomProtocolManager"))
+    , m_impl(std::make_unique<CustomProtocolManagerImpl>(childProcess))
 {
 }
 
@@ -55,19 +51,31 @@ void CustomProtocolManager::initializeConnection(IPC::Connection* connection)
     connection->addWorkQueueMessageReceiver(Messages::CustomProtocolManager::messageReceiverName(), m_messageQueue.get(), this);
 }
 
-void CustomProtocolManager::initialize(const WebProcessCreationParameters&)
+void CustomProtocolManager::initialize(const WebProcessCreationParameters& parameters)
 {
+#if ENABLE(NETWORK_PROCESS)
+    ASSERT(parameters.urlSchemesRegisteredForCustomProtocols.isEmpty() || !parameters.usesNetworkProcess);
+    if (parameters.usesNetworkProcess) {
+        m_childProcess->parentProcessConnection()->removeWorkQueueMessageReceiver(Messages::CustomProtocolManager::messageReceiverName());
+        m_messageQueue = nullptr;
+        return;
+    }
+#endif
+    for (size_t i = 0; i < parameters.urlSchemesRegisteredForCustomProtocols.size(); ++i)
+        registerScheme(parameters.urlSchemesRegisteredForCustomProtocols[i]);
 }
 
 #if ENABLE(NETWORK_PROCESS)
-void CustomProtocolManager::initialize(const NetworkProcessCreationParameters&)
+void CustomProtocolManager::initialize(const NetworkProcessCreationParameters& parameters)
 {
+    for (size_t i = 0; i < parameters.urlSchemesRegisteredForCustomProtocols.size(); ++i)
+        registerScheme(parameters.urlSchemesRegisteredForCustomProtocols[i]);
 }
 #endif
 
-void CustomProtocolManager::registerScheme(const String&)
+void CustomProtocolManager::registerScheme(const String& scheme)
 {
-    notImplemented();
+    m_impl->registerScheme(scheme);
 }
 
 void CustomProtocolManager::unregisterScheme(const String&)
@@ -75,30 +83,29 @@ void CustomProtocolManager::unregisterScheme(const String&)
     notImplemented();
 }
 
-bool CustomProtocolManager::supportsScheme(const String&)
+bool CustomProtocolManager::supportsScheme(const String& scheme)
 {
-    notImplemented();
-    return false;
+    return m_impl->supportsScheme(scheme);
 }
 
-void CustomProtocolManager::didFailWithError(uint64_t, const WebCore::ResourceError&)
+void CustomProtocolManager::didFailWithError(uint64_t customProtocolID, const WebCore::ResourceError& error)
 {
-    notImplemented();
+    m_impl->didFailWithError(customProtocolID, error);
 }
 
-void CustomProtocolManager::didLoadData(uint64_t, const IPC::DataReference&)
+void CustomProtocolManager::didLoadData(uint64_t customProtocolID, const IPC::DataReference& dataReference)
 {
-    notImplemented();
+    m_impl->didLoadData(customProtocolID, dataReference);
 }
 
-void CustomProtocolManager::didReceiveResponse(uint64_t, const WebCore::ResourceResponse&, uint32_t)
+void CustomProtocolManager::didReceiveResponse(uint64_t customProtocolID, const WebCore::ResourceResponse& response, uint32_t)
 {
-    notImplemented();
+    m_impl->didReceiveResponse(customProtocolID, response);
 }
 
-void CustomProtocolManager::didFinishLoading(uint64_t)
+void CustomProtocolManager::didFinishLoading(uint64_t customProtocolID)
 {
-    notImplemented();
+    m_impl->didFinishLoading(customProtocolID);
 }
 
 } // namespace WebKit

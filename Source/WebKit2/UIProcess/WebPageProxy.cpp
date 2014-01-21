@@ -106,7 +106,7 @@
 #include "ArgumentCodersGtk.h"
 #endif
 
-#if USE(SOUP)
+#if USE(SOUP) && !ENABLE(CUSTOM_PROTOCOLS)
 #include "WebSoupRequestManagerProxy.h"
 #endif
 
@@ -4357,7 +4357,7 @@ void WebPageProxy::dictationAlternatives(uint64_t dictationContext, Vector<Strin
 
 #endif // PLATFORM(MAC)
 
-#if USE(SOUP)
+#if USE(SOUP) && !ENABLE(CUSTOM_PROTOCOLS)
 void WebPageProxy::didReceiveURIRequest(String uriString, uint64_t requestID)
 {
     m_process->context().supplement<WebSoupRequestManagerProxy>()->didReceiveURIRequest(uriString, this, requestID);

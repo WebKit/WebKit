@@ -403,6 +403,8 @@ webkit2_sources += \
 	Source/WebKit2/Shared/NativeWebMouseEvent.h \
 	Source/WebKit2/Shared/NativeWebWheelEvent.h \
 	Source/WebKit2/Shared/Network/CustomProtocols/CustomProtocolManager.h \
+	Source/WebKit2/Shared/Network/CustomProtocols/soup/CustomProtocolManagerImpl.h \
+	Source/WebKit2/Shared/Network/CustomProtocols/soup/CustomProtocolManagerImpl.cpp \
 	Source/WebKit2/Shared/Network/CustomProtocols/soup/CustomProtocolManagerSoup.cpp \
 	Source/WebKit2/Shared/Network/NetworkProcessCreationParameters.cpp \
 	Source/WebKit2/Shared/Network/NetworkProcessCreationParameters.h \
@@ -523,6 +525,8 @@ webkit2_sources += \
 	Source/WebKit2/UIProcess/API/C/soup/WKContextSoup.h \
 	Source/WebKit2/UIProcess/API/C/soup/WKSoupRequestManager.cpp \
 	Source/WebKit2/UIProcess/API/C/soup/WKSoupRequestManager.h \
+	Source/WebKit2/UIProcess/API/C/soup/WKSoupCustomProtocolRequestManager.cpp \
+	Source/WebKit2/UIProcess/API/C/soup/WKSoupCustomProtocolRequestManager.h \
 	Source/WebKit2/UIProcess/API/C/WebKit2_C.h \
 	Source/WebKit2/UIProcess/API/C/WKAPICast.h \
 	Source/WebKit2/UIProcess/API/C/WKApplicationCacheManager.h \
@@ -839,6 +843,10 @@ webkit2_sources += \
 	Source/WebKit2/UIProcess/Launcher/ProcessLauncher.h \
 	Source/WebKit2/UIProcess/Network/CustomProtocols/CustomProtocolManagerProxy.h \
 	Source/WebKit2/UIProcess/Network/CustomProtocols/soup/CustomProtocolManagerProxySoup.cpp \
+	Source/WebKit2/UIProcess/Network/CustomProtocols/soup/WebSoupCustomProtocolRequestManagerClient.cpp \
+	Source/WebKit2/UIProcess/Network/CustomProtocols/soup/WebSoupCustomProtocolRequestManagerClient.h \
+	Source/WebKit2/UIProcess/Network/CustomProtocols/soup/WebSoupCustomProtocolRequestManager.cpp \
+	Source/WebKit2/UIProcess/Network/CustomProtocols/soup/WebSoupCustomProtocolRequestManager.h \
 	Source/WebKit2/UIProcess/Network/NetworkProcessProxy.cpp \
 	Source/WebKit2/UIProcess/Network/NetworkProcessProxy.h \
 	Source/WebKit2/UIProcess/Network/soup/NetworkProcessProxySoup.cpp \

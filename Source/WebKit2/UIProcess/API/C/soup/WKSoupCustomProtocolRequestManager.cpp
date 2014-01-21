@@ -1,5 +1,5 @@
 /*
- * Portions Copyright (c) 2012 Igalia S.L.
+ * Copyright (C) 2013 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,24 +23,29 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WKAPICastSoup_h
-#define WKAPICastSoup_h
+#include "config.h"
+#include "WKSoupCustomProtocolRequestManager.h"
 
-#ifndef WKAPICast_h
-#error "Please #include \"WKAPICast.h\" instead of this file directly."
-#endif
+#include "WKAPICast.h"
+#include "WebSoupCustomProtocolRequestManager.h"
 
-namespace WebKit {
+using namespace WebKit;
 
-class WebSoupCustomProtocolRequestManager;
-class WebSoupRequestManagerProxy;
-
+WKTypeID WKSoupCustomProtocolRequestManagerGetTypeID()
+{
 #if ENABLE(CUSTOM_PROTOCOLS)
-WK_ADD_API_MAPPING(WKSoupCustomProtocolRequestManagerRef, WebSoupCustomProtocolRequestManager)
+    return toAPI(WebSoupCustomProtocolRequestManager::APIType);
 #else
-WK_ADD_API_MAPPING(WKSoupRequestManagerRef, WebSoupRequestManagerProxy)
+    return 0;
 #endif
-
 }
 
-#endif // WKAPICastSoup_h
+void WKSoupCustomProtocolRequestManagerSetClient(WKSoupCustomProtocolRequestManagerRef soupRequestManagerRef, const WKSoupCustomProtocolRequestManagerClientBase* wkClient)
+{
+#if ENABLE(CUSTOM_PROTOCOLS)
+    toImpl(soupRequestManagerRef)->initializeClient(wkClient);
+#else
+    UNUSED_PARAM(soupRequestManagerRef);
+    UNUSED_PARAM(wkClient);
+#endif
+}

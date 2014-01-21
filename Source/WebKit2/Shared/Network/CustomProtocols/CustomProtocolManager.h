@@ -32,13 +32,13 @@
 #include "NetworkProcessSupplement.h"
 #include "WebProcessSupplement.h"
 #include "WorkQueue.h"
-#include <wtf/HashSet.h>
-#include <wtf/Threading.h>
 #include <wtf/text/WTFString.h>
 
 #if PLATFORM(MAC)
 #include <wtf/HashMap.h>
+#include <wtf/HashSet.h>
 #include <wtf/RetainPtr.h>
+#include <wtf/Threading.h>
 OBJC_CLASS WKCustomProtocol;
 #endif
 
@@ -55,6 +55,7 @@ class ResourceResponse;
 namespace WebKit {
 
 class ChildProcess;
+class CustomProtocolManagerImpl;
 struct NetworkProcessCreationParameters;
 
 class CustomProtocolManager : public WebProcessSupplement, public NetworkProcessSupplement, public IPC::Connection::WorkQueueMessageReceiver {
@@ -95,12 +96,13 @@ private:
     void didReceiveResponse(uint64_t customProtocolID, const WebCore::ResourceResponse&, uint32_t cacheStoragePolicy);
     void didFinishLoading(uint64_t customProtocolID);
 
-    HashSet<String> m_registeredSchemes;
-    Mutex m_registeredSchemesMutex;
     ChildProcess* m_childProcess;
     RefPtr<WorkQueue> m_messageQueue;
 
 #if PLATFORM(MAC)
+    HashSet<String> m_registeredSchemes;
+    Mutex m_registeredSchemesMutex;
+
     typedef HashMap<uint64_t, RetainPtr<WKCustomProtocol>> CustomProtocolMap;
     CustomProtocolMap m_customProtocolMap;
     Mutex m_customProtocolMapMutex;
@@ -108,6 +110,9 @@ private:
     // WKCustomProtocol objects can be removed from the m_customProtocolMap from multiple threads.
     // We return a RetainPtr here because it is unsafe to return a raw pointer since the object might immediately be destroyed from a different thread.
     RetainPtr<WKCustomProtocol> protocolForID(uint64_t customProtocolID);
+#else
+    // FIXME: Move mac specific code to CustomProtocolManagerImpl.
+    std::unique_ptr<CustomProtocolManagerImpl> m_impl;
 #endif
 };
 

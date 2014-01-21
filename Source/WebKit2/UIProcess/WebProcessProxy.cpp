@@ -89,7 +89,7 @@ WebProcessProxy::WebProcessProxy(WebContext& context)
     , m_context(context)
     , m_mayHaveUniversalFileReadSandboxExtension(false)
 #if ENABLE(CUSTOM_PROTOCOLS)
-    , m_customProtocolManagerProxy(this)
+    , m_customProtocolManagerProxy(this, context)
 #endif
 #if PLATFORM(MAC)
     , m_processSuppressionEnabled(false)

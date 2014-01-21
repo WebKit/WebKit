@@ -31,5 +31,6 @@
 #endif
 
 typedef const struct OpaqueWKSoupRequestManager* WKSoupRequestManagerRef;
+typedef const struct OpaqueWKSoupCustomProtocolRequestManager* WKSoupCustomProtocolRequestManagerRef;
 
 #endif /* WKBaseSoup_h */

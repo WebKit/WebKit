@@ -34,7 +34,6 @@
 #include "CertificateInfo.h"
 #include "WebCookieManager.h"
 #include "WebProcessCreationParameters.h"
-#include "WebSoupRequestManager.h"
 #include <WebCore/FileSystem.h>
 #include <WebCore/Language.h>
 #include <WebCore/MemoryCache.h>
@@ -44,6 +43,10 @@
 #include <libsoup/soup.h>
 #include <wtf/gobject/GOwnPtr.h>
 #include <wtf/gobject/GRefPtr.h>
+
+#if !ENABLE(CUSTOM_PROTOCOLS)
+#include "WebSoupRequestManager.h"
+#endif
 
 namespace WebKit {
 
@@ -163,8 +166,10 @@ void WebProcess::platformInitializeWebProcess(const WebProcessCreationParameters
     if (!parameters.languages.isEmpty())
         setSoupSessionAcceptLanguage(parameters.languages);
 
+#if !ENABLE(CUSTOM_PROTOCOLS)
     for (size_t i = 0; i < parameters.urlSchemesRegistered.size(); i++)
         supplement<WebSoupRequestManager>()->registerURIScheme(parameters.urlSchemesRegistered[i]);
+#endif
 
     setIgnoreTLSErrors(parameters.ignoreTLSErrors);
 

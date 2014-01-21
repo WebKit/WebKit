@@ -1136,7 +1136,7 @@ private:
     void notifyRevealedSelection();
 #endif // PLATFORM(IOS)
 
-#if USE(SOUP)
+#if USE(SOUP) && !ENABLE(CUSTOM_PROTOCOLS)
     void didReceiveURIRequest(String uriString, uint64_t requestID);
 #endif
 

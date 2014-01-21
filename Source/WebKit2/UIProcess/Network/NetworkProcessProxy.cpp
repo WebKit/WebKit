@@ -56,7 +56,7 @@ NetworkProcessProxy::NetworkProcessProxy(WebContext& webContext)
     : m_webContext(webContext)
     , m_numPendingConnectionRequests(0)
 #if ENABLE(CUSTOM_PROTOCOLS)
-    , m_customProtocolManagerProxy(this)
+    , m_customProtocolManagerProxy(this, webContext)
 #endif
 {
     connect();

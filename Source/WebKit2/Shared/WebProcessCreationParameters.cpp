@@ -73,7 +73,9 @@ void WebProcessCreationParameters::encode(IPC::ArgumentEncoder& encoder) const
     encoder << urlSchemesRegisteredForCustomProtocols;
 #endif
 #if USE(SOUP)
+#if !ENABLE(CUSTOM_PROTOCOLS)
     encoder << urlSchemesRegistered;
+#endif
     encoder << cookiePersistentStoragePath;
     encoder << cookiePersistentStorageType;
     encoder.encodeEnum(cookieAcceptPolicy);
@@ -163,8 +165,10 @@ bool WebProcessCreationParameters::decode(IPC::ArgumentDecoder& decoder, WebProc
         return false;
 #endif
 #if USE(SOUP)
+#if !ENABLE(CUSTOM_PROTOCOLS)
     if (!decoder.decode(parameters.urlSchemesRegistered))
         return false;
+#endif
     if (!decoder.decode(parameters.cookiePersistentStoragePath))
         return false;
     if (!decoder.decode(parameters.cookiePersistentStorageType))

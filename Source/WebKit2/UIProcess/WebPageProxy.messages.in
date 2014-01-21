@@ -321,8 +321,10 @@ messages -> WebPageProxy {
     LoadRecentSearches(String name) -> (Vector<String> result)
 
 #if USE(SOUP)
+#if !ENABLE(CUSTOM_PROTOCOLS)
     # Soup custom URI request messages
     DidReceiveURIRequest(String uriString, uint64_t requestID);
+#endif
 #endif
 
     SavePDFToFileInDownloadsFolder(String suggestedFilename, String originatingURLString, IPC::DataReference data)

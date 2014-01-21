@@ -25,26 +25,28 @@
 #include "ChildProcessProxy.h"
 #include "CustomProtocolManagerMessages.h"
 #include "CustomProtocolManagerProxyMessages.h"
-#include <WebCore/NotImplemented.h>
+#include "WebContext.h"
+#include "WebSoupCustomProtocolRequestManager.h"
 #include <WebCore/ResourceRequest.h>
 
 namespace WebKit {
 
-CustomProtocolManagerProxy::CustomProtocolManagerProxy(ChildProcessProxy* childProcessProxy)
+CustomProtocolManagerProxy::CustomProtocolManagerProxy(ChildProcessProxy* childProcessProxy, WebContext& webContext)
     : m_childProcessProxy(childProcessProxy)
+    , m_webContext(webContext)
 {
     ASSERT(m_childProcessProxy);
     m_childProcessProxy->addMessageReceiver(Messages::CustomProtocolManagerProxy::messageReceiverName(), *this);
 }
 
-void CustomProtocolManagerProxy::startLoading(uint64_t, const WebCore::ResourceRequest&)
+void CustomProtocolManagerProxy::startLoading(uint64_t customProtocolID, const WebCore::ResourceRequest& request)
 {
-    notImplemented();
+    m_webContext.supplement<WebSoupCustomProtocolRequestManager>()->startLoading(customProtocolID, request);
 }
 
-void CustomProtocolManagerProxy::stopLoading(uint64_t)
+void CustomProtocolManagerProxy::stopLoading(uint64_t customProtocolID)
 {
-    notImplemented();
+    m_webContext.supplement<WebSoupCustomProtocolRequestManager>()->stopLoading(customProtocolID);
 }
 
 } // namespace WebKit

@@ -128,7 +128,7 @@
 #include "WebResourceLoadScheduler.h"
 #endif
 
-#if USE(SOUP)
+#if USE(SOUP) && !ENABLE(CUSTOM_PROTOCOLS)
 #include "WebSoupRequestManager.h"
 #endif
 
@@ -201,7 +201,7 @@ WebProcess::WebProcess()
 #if ENABLE(NETWORK_INFO)
     addSupplement<WebNetworkInfoManager>();
 #endif
-#if USE(SOUP)
+#if USE(SOUP) && !ENABLE(CUSTOM_PROTOCOLS)
     addSupplement<WebSoupRequestManager>();
 #endif
 }

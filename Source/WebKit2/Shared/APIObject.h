@@ -158,6 +158,7 @@ public:
         View,
 #if USE(SOUP)
         SoupRequestManager,
+        SoupCustomProtocolRequestManager,
 #endif
 #if PLATFORM(EFL)
         PopupMenuItem,
