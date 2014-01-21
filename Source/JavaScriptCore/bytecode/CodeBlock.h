@@ -174,7 +174,6 @@ public:
     unsigned columnNumberForBytecodeOffset(unsigned bytecodeOffset);
     void expressionRangeForBytecodeOffset(unsigned bytecodeOffset, int& divot,
                                           int& startOffset, int& endOffset, unsigned& line, unsigned& column);
-    unsigned opDebugBytecodeOffsetForLineAndColumn(unsigned& line, unsigned& column);
 
 #if ENABLE(JIT)
     StructureStubInfo* addStubInfo();

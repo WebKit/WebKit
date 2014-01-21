@@ -2564,23 +2564,6 @@ void CodeBlock::expressionRangeForBytecodeOffset(unsigned bytecodeOffset, int& d
     line += m_ownerExecutable->lineNo();
 }
 
-unsigned CodeBlock::opDebugBytecodeOffsetForLineAndColumn(unsigned& line, unsigned& column)
-{
-    unsigned lineAdjustment = m_ownerExecutable->lineNo();
-    ASSERT(line >= lineAdjustment);
-    unsigned unlinkedLine = line - lineAdjustment;
-    unsigned columnAdjustment = unlinkedLine ? 1 : firstLineColumnOffset();
-    ASSERT(column >= columnAdjustment);
-    unsigned unlinkedColumn = column - columnAdjustment;
-
-    unsigned bytecodeOffset = m_unlinkedCode->opDebugBytecodeOffsetForLineAndColumn(unlinkedLine, unlinkedColumn);
-    if (bytecodeOffset != static_cast<unsigned>(WTF::notFound)) {
-        line = unlinkedLine + lineAdjustment;
-        column = unlinkedColumn + (unlinkedLine ? 1 : firstLineColumnOffset());
-    }
-    return bytecodeOffset;
-}
-
 void CodeBlock::shrinkToFit(ShrinkMode shrinkMode)
 {
     m_rareCaseProfiles.shrinkToFit();

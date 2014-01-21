@@ -1,3 +1,26 @@
+2014-01-20  Mark Lam  <mark.lam@apple.com>
+
+        Removing CodeBlock::opDebugBytecodeOffsetForLineAndColumn() and friends.
+        <https://webkit.org/b/127321>
+
+        Reviewed by Geoffrey Garen.
+
+        We're changing plans and will be going with CodeBlock level breakpoints
+        instead of bytecode level breakpoints. As a result, we no longer need
+        the services of CodeBlock::opDebugBytecodeOffsetForLineAndColumn() (and
+        friends). This patch will remove that unused code.
+
+        * GNUmakefile.list.am:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj.filters:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * bytecode/CodeBlock.cpp:
+        * bytecode/CodeBlock.h:
+        * bytecode/LineColumnInfo.h: Removed.
+        * bytecode/UnlinkedCodeBlock.cpp:
+        (JSC::UnlinkedCodeBlock::dumpExpressionRangeInfo):
+        * bytecode/UnlinkedCodeBlock.h:
+
 2014-01-20  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         CodeBlockSet::traceMarked doesn't need to visit the ownerExecutable
