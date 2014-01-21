@@ -1,5 +1,18 @@
 2014-01-21  Daniel Bates  <dabates@apple.com>
 
+        [iOS] Tools/Makefile shouldn't build modules DumpRenderTree, gtest, or TestWebKitAPI
+        https://bugs.webkit.org/show_bug.cgi?id=127368
+
+        Reviewed by Tim Horton.
+
+        Similar to the build-webkit change in <https://bugs.webkit.org/show_bug.cgi?id=127364>,
+        we don't want to build DumpRenderTree, gtest, or TestWebKitAPI when running make in
+        Tools.
+
+        * Makefile:
+
+2014-01-21  Daniel Bates  <dabates@apple.com>
+
         [iOS] Don't build DumpRenderTree, gtest, or TestWebKitAPI
         https://bugs.webkit.org/show_bug.cgi?id=127364
 
