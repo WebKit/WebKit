@@ -36,8 +36,6 @@
 
 namespace WebCore {
 
-static const uint32_t gSearchTimeoutMs = 1000;
-
 PopupMenuGtk::PopupMenuGtk(PopupMenuClient* client)
     : m_popupClient(client)
 {

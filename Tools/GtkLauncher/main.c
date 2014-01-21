@@ -327,7 +327,7 @@ static GtkWidget* createWindow(WebKitWebView** outWebView)
 #else
     vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
 #endif
-    statusbar = createStatusbar(webView);
+    statusbar = createStatusbar();
     gtk_box_pack_start(GTK_BOX(vbox), createToolbar(window, uriEntry, webView), FALSE, FALSE, 0);
     gtk_box_pack_start(GTK_BOX(vbox), createBrowser(window, uriEntry, statusbar, webView, vbox), TRUE, TRUE, 0);
     gtk_box_pack_start(GTK_BOX(vbox), statusbar, FALSE, FALSE, 0);

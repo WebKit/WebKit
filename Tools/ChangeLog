@@ -1,3 +1,14 @@
+2014-01-08  Alberto Garcia  <berto@igalia.com>
+
+        Fix some compilation warnings
+        https://bugs.webkit.org/show_bug.cgi?id=126635
+
+        Reviewed by Csaba Osztrogonác.
+
+        * GtkLauncher/main.c:
+        (createWindow): This function is not supposed to receive any
+        parameter, yet we are passing one.
+
 2014-01-15  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Web process sometimes crashes when printing in synchronous mode
