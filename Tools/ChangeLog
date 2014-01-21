@@ -1,3 +1,17 @@
+2014-01-21  Krzysztof Czech  <k.czech@samsung.com>
+
+        [ATK] Expose aria-flowto through ATK_RELATION_FLOWS_TO
+        https://bugs.webkit.org/show_bug.cgi?id=127291
+
+        Reviewed by Mario Sanchez Prada.
+
+        Implemented AccessibilityUIElement::ariaFlowToElementAtIndex method.
+
+        * DumpRenderTree/atk/AccessibilityUIElementAtk.cpp:
+        (AccessibilityUIElement::ariaFlowToElementAtIndex):
+        * WebKitTestRunner/InjectedBundle/atk/AccessibilityUIElementAtk.cpp:
+        (WTR::AccessibilityUIElement::ariaFlowToElementAtIndex):
+
 2014-01-20  Zalan Bujtas  <zalan@apple.com>
 
         Force float division when calculating CSS px value.

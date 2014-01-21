@@ -1315,7 +1315,25 @@ AccessibilityUIElement AccessibilityUIElement::ariaOwnsElementAtIndex(unsigned i
 
 AccessibilityUIElement AccessibilityUIElement::ariaFlowToElementAtIndex(unsigned index)
 {
-    return nullptr;
+    if (!ATK_IS_OBJECT(m_element))
+        return nullptr;
+
+    AtkRelationSet* relationSet = atk_object_ref_relation_set(ATK_OBJECT(m_element));
+    if (!relationSet)
+        return nullptr;
+
+    AtkRelation* relation = atk_relation_set_get_relation_by_type(relationSet, ATK_RELATION_FLOWS_TO);
+    if (!relation)
+        return nullptr;
+
+    GPtrArray* targetList = atk_relation_get_target(relation);
+    if (!targetList || !targetList->len || index >= targetList->len)
+        return nullptr;
+
+    g_object_unref(relationSet);
+
+    AtkObject* target = static_cast<AtkObject*>(g_ptr_array_index(targetList, index));
+    return target ? AccessibilityUIElement(target) : nullptr;
 }
 
 AccessibilityUIElement AccessibilityUIElement::selectedRowAtIndex(unsigned index)

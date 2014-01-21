@@ -1,3 +1,15 @@
+2014-01-21  Krzysztof Czech  <k.czech@samsung.com>
+
+        [ATK] Expose aria-flowto through ATK_RELATION_FLOWS_TO
+        https://bugs.webkit.org/show_bug.cgi?id=127291
+
+        Reviewed by Mario Sanchez Prada.
+
+        Share aria-flowto.html with other ports. It passes on GTK and EFL.
+
+        * accessibility/aria-flowto-expected.txt: Renamed from LayoutTests/platform/mac/accessibility/aria-flowto-expected.txt.
+        * accessibility/aria-flowto.html: Renamed from LayoutTests/platform/mac/accessibility/aria-flowto.html.
+
 2014-01-20  Zalan Bujtas  <zalan@apple.com>
 
         Change image failures from [ Failure ] to [ ImageOnlyFailure ] where needed.

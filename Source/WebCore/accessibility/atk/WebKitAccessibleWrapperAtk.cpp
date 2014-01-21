@@ -236,6 +236,15 @@ static void setAtkRelationSetFromCoreObject(AccessibilityObject* coreObject, Atk
         if (control)
             atk_relation_set_add_relation_by_type(relationSet, ATK_RELATION_LABEL_FOR, control->wrapper());
     }
+
+    // Check whether object supports aria-flowto
+    if (coreObject->supportsARIAFlowTo()) {
+        removeAtkRelationByType(relationSet, ATK_RELATION_FLOWS_TO);
+        AccessibilityObject::AccessibilityChildrenVector ariaFlowToElements;
+        coreObject->ariaFlowToElements(ariaFlowToElements);
+        for (const auto& accessibilityObject : ariaFlowToElements)
+            atk_relation_set_add_relation_by_type(relationSet, ATK_RELATION_FLOWS_TO, accessibilityObject->wrapper());
+    }
 }
 
 static gpointer webkitAccessibleParentClass = 0;

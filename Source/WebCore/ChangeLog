@@ -1,3 +1,18 @@
+2014-01-21  Krzysztof Czech  <k.czech@samsung.com>
+
+        [ATK] Expose aria-flowto through ATK_RELATION_FLOWS_TO
+        https://bugs.webkit.org/show_bug.cgi?id=127291
+
+        Reviewed by Mario Sanchez Prada.
+
+        Test: accessibility/aria-flowto.html
+
+        Expose aria-flowto through ATK_RELATION_FLOWS_TO according to
+        http://www.w3.org/TR/wai-aria-implementation/#mapping_state-property
+
+        * accessibility/atk/WebKitAccessibleWrapperAtk.cpp:
+        (setAtkRelationSetFromCoreObject):
+
 2014-01-20  Ryuan Choi  <ryuan.choi@samsung.com>
 
         [CMAKE] Remove Nix from CMake scripts
