@@ -1,5 +1,12 @@
 2014-01-21  Tim Horton  <timothy_horton@apple.com>
 
+        Sort headers after the rename that happened in r162454.
+
+        * UIProcess/mac/RemoteLayerTreeHost.mm:
+        * WebProcess/WebPage/mac/PlatformCALayerRemoteCustom.mm:
+
+2014-01-21  Tim Horton  <timothy_horton@apple.com>
+
         Address late review naming comments after r162453.
 
         * UIProcess/API/mac/WKView.mm:

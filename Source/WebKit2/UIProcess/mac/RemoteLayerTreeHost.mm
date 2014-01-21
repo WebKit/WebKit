@@ -32,8 +32,8 @@
 #import "ShareableBitmap.h"
 #import "WebPageProxy.h"
 #import "WebProcessProxy.h"
-#import <WebCore/WebCoreCALayerExtras.h>
 #import <WebCore/PlatformLayer.h>
+#import <WebCore/WebCoreCALayerExtras.h>
 #import <WebKitSystemInterface.h>
 
 #import <QuartzCore/QuartzCore.h>
