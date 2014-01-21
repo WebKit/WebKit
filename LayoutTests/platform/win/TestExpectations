@@ -2871,13 +2871,13 @@ webkit.org/b/125855 accessibility/aria-checked-mixed-value.html [ Skip ]
 
 # Subpixel failures
 # webkit.org/b/124784 needs revisiting.
-webkit.org/b/124784 fast/shapes/shape-inside/shape-inside-subpixel-rectangle-top.html [ Skip ]
+webkit.org/b/124784 fast/shapes/shape-inside/shape-inside-subpixel-rectangle-top.html [ Failure ]
 
 # Subpixel: off-by-1 pixel rendering on mathml
-webkit.org/b/126897 mathml/presentation/bug95015.html [ Skip ]
+webkit.org/b/126897 mathml/presentation/bug95015.html [ Failure ]
 
 # Subpixel: misplaced zoomed svg content.
-webkit.org/b/126900 svg/zoom/page/zoom-zoom-coords.xhtml [ Skip ]
+webkit.org/b/126900 svg/zoom/page/zoom-zoom-coords.xhtml [ Failure ]
 
 # Subpixel: incorrect caret position
-webkit.org/b/126283 editing/selection/mixed-editability-10.html [ Skip ]
+webkit.org/b/126283 editing/selection/mixed-editability-10.html [ Failure ]

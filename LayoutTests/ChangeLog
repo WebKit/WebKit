@@ -1,3 +1,9 @@
+2014-01-20  Zalan Bujtas  <zalan@apple.com>
+
+        Add missing expectations to subpixel failures.
+
+        * platform/mac/TestExpectations:
+
 2014-01-20  Alexey Proskuryakov  <ap@apple.com>
 
         platform/mac/accessibility/iframe-aria-hidden.html is flaky

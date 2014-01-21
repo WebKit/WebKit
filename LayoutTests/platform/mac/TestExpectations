@@ -1332,23 +1332,23 @@ webkit.org/b/117756 media/track/media-element-enqueue-event-crash.html [ Skip ]
 
 # Subpixel failures
 # Subpixel: position dependent size: snapSizeToPixel()
-webkit.org/b/126889 fast/forms/input-widths.html
-webkit.org/b/126889 fast/forms/number/number-size.html
+webkit.org/b/126889 fast/forms/input-widths.html [ Failure ]
+webkit.org/b/126889 fast/forms/number/number-size.html [ Failure ]
 
 # Subpixel: regions with different widths.
-webkit.org/b/127212 fast/regions/overflow-moving-below-floats-in-variable-width-regions.html
+webkit.org/b/127212 fast/regions/overflow-moving-below-floats-in-variable-width-regions.html [ Failure ]
 
 # webkit.org/b/124784 needs revisiting.
-webkit.org/b/124784 fast/shapes/shape-inside/shape-inside-subpixel-rectangle-top.html
+webkit.org/b/124784 fast/shapes/shape-inside/shape-inside-subpixel-rectangle-top.html [ Failure ]
 
 # Subpixel: off-by-1 pixel rendering on mathml
-webkit.org/b/126897 mathml/presentation/bug95015.html
+webkit.org/b/126897 mathml/presentation/bug95015.html [ Failure ]
 
 # Subpixel: -webkit-flex off-by-one px
-webkit.org/b/126898 css3/flexbox/image-percent-max-height.html
+webkit.org/b/126898 css3/flexbox/image-percent-max-height.html [ Failure ]
 
 # Subpixel: misplaced zoomed svg content.
-webkit.org/b/126900 svg/zoom/page/zoom-zoom-coords.xhtml
+webkit.org/b/126900 svg/zoom/page/zoom-zoom-coords.xhtml [ Failure ]
 
 webkit.org/b/35297 media/video-display-aspect-ratio.html [ Pass Failure ]
 
