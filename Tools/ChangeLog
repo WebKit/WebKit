@@ -1,3 +1,17 @@
+2014-01-21  Daniel Bates  <dabates@apple.com>
+
+        [iOS] Don't build DumpRenderTree, gtest, or TestWebKitAPI
+        https://bugs.webkit.org/show_bug.cgi?id=127364
+
+        Reviewed by Simon Fraser.
+
+        For now, don't build DumpRenderTree and TestWebKitAPI for iOS as these
+        projects fail to build because we need to upstream the relevant iOS changes.
+        Also, don't build gtest, which is a dependency of TestWebKitAPI since we
+        aren't building TestWebKitAPI.
+
+        * Scripts/build-webkit:
+
 2014-01-21  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
 
         Unreviewed, remove myself from some watchlist entries.

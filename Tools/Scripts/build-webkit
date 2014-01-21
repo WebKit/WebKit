@@ -269,7 +269,7 @@ if (isAppleMacWebKit()) {
 
         # Build Tools needed for Apple ports
         # FIXME: <rdar://problem/11784024> WebKitTestRunner should build for iOS
-        push @projects, ("Tools/DumpRenderTree", "Source/ThirdParty/gtest", "Tools/TestWebKitAPI");
+        # FIXME: Build projects Tools/DumpRenderTree, Source/ThirdParty/gtest, and Tools/TestWebKitAPI
     }
 } elsif (isWinCairo()) {
     (system("perl Tools/Scripts/update-webkit-wincairo-libs") == 0) or die;
