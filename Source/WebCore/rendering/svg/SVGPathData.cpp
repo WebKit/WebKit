@@ -115,8 +115,8 @@ static void updatePathFromRectElement(SVGElement* element, Path& path)
         return;
     float x = rect->x().value(lengthContext);
     float y = rect->y().value(lengthContext);
-    bool hasRx = rect->hasAttribute(SVGNames::rxAttr);
-    bool hasRy = rect->hasAttribute(SVGNames::ryAttr);
+    bool hasRx = rect->rx().value(lengthContext) > 0;
+    bool hasRy = rect->ry().value(lengthContext) > 0;
     if (hasRx || hasRy) {
         float rx = rect->rx().value(lengthContext);
         float ry = rect->ry().value(lengthContext);

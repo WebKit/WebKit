@@ -1,3 +1,15 @@
+2014-01-21  Peter Molnar  <pmolnar.u-szeged@partner.samsung.com>
+
+        Fix SVG animations which set rx or ry attributes
+        https://bugs.webkit.org/show_bug.cgi?id=127337
+
+        Reviewed by Dirk Schulze.
+
+        Merged from Blink: https://src.chromium.org/viewvc/blink?revision=152376&view=revision
+
+        * svg/stroke/animated-non-scaling-rxry-expected.html: Added.
+        * svg/stroke/animated-non-scaling-rxry.html: Added.
+
 2014-01-21  Krzysztof Czech  <k.czech@samsung.com>
 
         [ATK] Expose aria-flowto through ATK_RELATION_FLOWS_TO
