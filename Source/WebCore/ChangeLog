@@ -1,3 +1,29 @@
+2014-01-21  Simon Fraser  <simon.fraser@apple.com>
+
+        Remove #if PLATFORM(IOS) in various places around customFixedPositionLayoutRect() code
+        https://bugs.webkit.org/show_bug.cgi?id=127373
+
+        Reviewed by Beth Dakin.
+
+        Instead of PLATFORM(IOS) #idefs at every call site for viewportConstrainedVisibleContentRect(),
+        move the #ifdef inside viewportConstrainedVisibleContentRect().
+        
+        The one call site that needs special handling is RenderLayerBacking::updateCompositedBounds(),
+        which needs to avoid clipping fixed layers to the custom fixed position rect, but instead to
+        visibleContentRect() (which is really the document bounds on iOS). This ensures that the
+        fixed layers aren't clipped when zooming out.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::viewportConstrainedVisibleContentRect):
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::stickyPositionOffset):
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::updateCompositedBounds):
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::requiresCompositingForPosition):
+        (WebCore::RenderLayerCompositor::computeFixedViewportConstraints):
+        (WebCore::RenderLayerCompositor::computeStickyViewportConstraints):
+
 2014-01-21  Andy Estes  <aestes@apple.com>
 
         [iOS] Allow all clients to link against WebCore

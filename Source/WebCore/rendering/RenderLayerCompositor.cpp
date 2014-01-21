@@ -2557,11 +2557,7 @@ bool RenderLayerCompositor::requiresCompositingForPosition(RenderLayerModelObjec
     }
 
     // Fixed position elements that are invisible in the current view don't get their own layer.
-#if PLATFORM(IOS)
-    LayoutRect viewBounds = m_renderView.frameView().customFixedPositionLayoutRect();
-#else
     LayoutRect viewBounds = m_renderView.frameView().viewportConstrainedVisibleContentRect();
-#endif
     LayoutRect layerBounds = layer.calculateLayerBounds(&layer, 0, RenderLayer::UseLocalClipRectIfPossible | RenderLayer::IncludeLayerFilterOutsets | RenderLayer::UseFragmentBoxes
         | RenderLayer::ExcludeHiddenDescendants | RenderLayer::DontConstrainForMask | RenderLayer::IncludeCompositedDescendants);
     // Map to m_renderView to ignore page scale.
@@ -3385,16 +3381,10 @@ FixedPositionViewportConstraints RenderLayerCompositor::computeFixedViewportCons
 {
     ASSERT(layer.isComposited());
 
-#if PLATFORM(IOS)
-    LayoutRect viewportRect = m_renderView.frameView().customFixedPositionLayoutRect();
-#else
+    GraphicsLayer* graphicsLayer = layer.backing()->graphicsLayer();
     LayoutRect viewportRect = m_renderView.frameView().viewportConstrainedVisibleContentRect();
-#endif
 
     FixedPositionViewportConstraints constraints;
-
-    GraphicsLayer* graphicsLayer = layer.backing()->graphicsLayer();
-
     constraints.setLayerPositionAtLastLayout(graphicsLayer->position());
     constraints.setViewportRectAtLastLayout(viewportRect);
 
@@ -3431,12 +3421,7 @@ StickyPositionViewportConstraints RenderLayerCompositor::computeStickyViewportCo
     ASSERT(!layer.enclosingOverflowClipLayer(ExcludeSelf));
 #endif
 
-#if PLATFORM(IOS)
-    LayoutRect viewportRect = m_renderView.frameView().customFixedPositionLayoutRect();
-#else
     LayoutRect viewportRect = m_renderView.frameView().viewportConstrainedVisibleContentRect();
-#endif
-
     RenderBoxModelObject& renderer = toRenderBoxModelObject(layer.renderer());
 
     StickyPositionViewportConstraints constraints;
