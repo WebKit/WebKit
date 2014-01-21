@@ -1,5 +1,12 @@
 2014-01-20  Alexey Proskuryakov  <ap@apple.com>
 
+        platform/mac/accessibility/iframe-aria-hidden.html is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=127323
+
+        * platform/mac-wk2/TestExpectations: Marked as such.
+
+2014-01-20  Alexey Proskuryakov  <ap@apple.com>
+
         Fix an erroneous paste in TestExpectations.
 
         * platform/mac-wk2/TestExpectations:
