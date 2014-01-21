@@ -86,6 +86,10 @@ if $numProcessors == 0
     $numProcessors = 1
 end
 
+if ENV["WEBKIT_TEST_CHILD_PROCESSES"]
+    $numProcessors = ENV["WEBKIT_TEST_CHILD_PROCESSES"].to_i
+end
+
 $jscPath = nil
 $enableFTL = false
 $outputDir = Pathname.new("results")
@@ -111,6 +115,7 @@ def usage
     puts "--shell-runner              Uses the shell-based test runner instead of the default make-based runner."
     puts "                            In general the shell runner is slower than the make runner."
     puts "--remote                    Specify a remote host on which to run tests."
+    puts "--child-processes    (-c)   Specify the number of child processes."
     puts "--help               (-h)   Print this message."
     exit 1
 end
@@ -124,6 +129,7 @@ GetoptLong.new(['--help', '-h', GetoptLong::NO_ARGUMENT],
                ['--force-vm-copy', GetoptLong::NO_ARGUMENT],
                ['--shell-runner', GetoptLong::NO_ARGUMENT],
                ['--remote', GetoptLong::REQUIRED_ARGUMENT],
+               ['--child-processes', '-c', GetoptLong::REQUIRED_ARGUMENT],
                ['--verbose', '-v', GetoptLong::NO_ARGUMENT]).each {
     | opt, arg |
     case opt
@@ -153,6 +159,8 @@ GetoptLong.new(['--help', '-h', GetoptLong::NO_ARGUMENT],
         $remote = true
         uri = URI("ftp://" + arg)
         $remoteUser, $remoteHost, $remotePort = uri.user, uri.host, uri.port
+    when '--child-processes'
+        $numProcessors = arg.to_i
     end
 }
 

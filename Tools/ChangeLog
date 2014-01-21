@@ -1,3 +1,13 @@
+2014-01-21  Peter Molnar  <pmolnar.u-szeged@partner.samsung.com>
+
+        run-jsc-stress-tests should accept --child-processes option and WEBKIT_TEST_CHILD_PROCESSES env.var
+        like run_webkit_test does
+        https://bugs.webkit.org/show_bug.cgi?id=127349
+
+        Reviewed by Csaba Osztrogonác.
+
+        * Scripts/run-jsc-stress-tests:
+
 2014-01-21  Adrian Perez de Castro  <aperez@igalia.com>
 
         [GTK] Allow passing extra data to web extensions
