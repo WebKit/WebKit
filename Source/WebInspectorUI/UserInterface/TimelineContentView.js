@@ -192,7 +192,13 @@ WebInspector.TimelineContentView.prototype = {
 
         this._currentTimeMarker.time = currentTime;
 
-        this._timelineOverview.startTime = startTime;
+        if (this._startTimeNeedsReset && !isNaN(startTime)) {
+            var selectionOffset = this._timelineOverview.selectionStartTime - this._timelineOverview.startTime;
+            this._timelineOverview.startTime = startTime;
+            this._timelineOverview.selectionStartTime = startTime + selectionOffset;
+            delete this._startTimeNeedsReset;
+        }
+
         this._timelineOverview.endTime = Math.max(endTime, currentTime);
 
         // Force a layout now since we are already in an animation frame and don't need to delay it until the next.
@@ -233,6 +239,7 @@ WebInspector.TimelineContentView.prototype = {
 
     _recordingReset: function(event)
     {
+        this._startTimeNeedsReset = true;
         this._currentTimeMarker.time = 0;
 
         this._overviewTimelineView.reset();

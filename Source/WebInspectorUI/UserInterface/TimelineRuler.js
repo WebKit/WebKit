@@ -43,8 +43,11 @@ WebInspector.TimelineRuler = function()
     this._endTime = 0;
     this._duration = NaN;
     this._secondsPerPixel = 0;
+    this._selectionStartTime = 0;
+    this._selectionEndTime = Infinity;
     this._endTimePinned = false;
     this._allowsClippedLabels = false;
+    this._allowsTimeRangeSelection = false;
 
     this._markerElementMap = new Map;
 }
@@ -53,12 +56,23 @@ WebInspector.TimelineRuler.MinimumLeftDividerSpacing = 48;
 WebInspector.TimelineRuler.MinimumDividerSpacing = 64;
 
 WebInspector.TimelineRuler.StyleClassName = "timeline-ruler";
+WebInspector.TimelineRuler.AllowsTimeRangeSelectionStyleClassName = "allows-time-range-selection";
 WebInspector.TimelineRuler.HeaderElementStyleClassName = "header";
 WebInspector.TimelineRuler.DividerElementStyleClassName = "divider";
 WebInspector.TimelineRuler.DividerLabelElementStyleClassName = "label";
 
 WebInspector.TimelineRuler.MarkersElementStyleClassName = "markers";
 WebInspector.TimelineRuler.BaseMarkerElementStyleClassName = "marker";
+WebInspector.TimelineRuler.ShadedAreaElementStyleClassName = "shaded-area";
+WebInspector.TimelineRuler.SelectionDragElementStyleClassName = "selection-drag";
+WebInspector.TimelineRuler.SelectionHandleElementStyleClassName = "selection-handle";
+WebInspector.TimelineRuler.LeftSelectionElementStyleClassName = "left";
+WebInspector.TimelineRuler.RightSelectionElementStyleClassName = "right";
+WebInspector.TimelineRuler.MinimumSelectionTimeRange = 0.1;
+
+WebInspector.TimelineRuler.Event = {
+    TimeRangeSelectionChanged: "time-ruler-time-range-selection-changed"
+};
 
 WebInspector.TimelineRuler.prototype = {
     constructor: WebInspector.TimelineRuler,
@@ -68,11 +82,6 @@ WebInspector.TimelineRuler.prototype = {
     get element()
     {
         return this._element;
-    },
-
-    get headerElement()
-    {
-        return this._headerElement;
     },
 
     get allowsClippedLabels()
@@ -88,6 +97,62 @@ WebInspector.TimelineRuler.prototype = {
         this._allowsClippedLabels = x || false;
 
         this._needsLayout();
+    },
+
+    get allowsTimeRangeSelection()
+    {
+        return this._allowsTimeRangeSelection;
+    },
+
+    set allowsTimeRangeSelection(x)
+    {
+        if (this._allowsTimeRangeSelection === x)
+            return;
+
+        this._allowsTimeRangeSelection = x || false;
+
+        if (x) {
+            this._mouseDownEventListener = this._handleMouseDown.bind(this);
+            this._element.addEventListener("mousedown", this._mouseDownEventListener);
+
+            this._leftShadedAreaElement = document.createElement("div");
+            this._leftShadedAreaElement.classList.add(WebInspector.TimelineRuler.ShadedAreaElementStyleClassName);
+            this._leftShadedAreaElement.classList.add(WebInspector.TimelineRuler.LeftSelectionElementStyleClassName);
+
+            this._rightShadedAreaElement = document.createElement("div");
+            this._rightShadedAreaElement.classList.add(WebInspector.TimelineRuler.ShadedAreaElementStyleClassName);
+            this._rightShadedAreaElement.classList.add(WebInspector.TimelineRuler.RightSelectionElementStyleClassName);
+
+            this._leftSelectionHandleElement = document.createElement("div");
+            this._leftSelectionHandleElement.classList.add(WebInspector.TimelineRuler.SelectionHandleElementStyleClassName);
+            this._leftSelectionHandleElement.classList.add(WebInspector.TimelineRuler.LeftSelectionElementStyleClassName);
+            this._leftSelectionHandleElement.addEventListener("mousedown", this._handleSelectionHandleMouseDown.bind(this));
+
+            this._rightSelectionHandleElement = document.createElement("div");
+            this._rightSelectionHandleElement.classList.add(WebInspector.TimelineRuler.SelectionHandleElementStyleClassName);
+            this._rightSelectionHandleElement.classList.add(WebInspector.TimelineRuler.RightSelectionElementStyleClassName);
+            this._rightSelectionHandleElement.addEventListener("mousedown", this._handleSelectionHandleMouseDown.bind(this));
+
+            this._selectionDragElement = document.createElement("div");
+            this._selectionDragElement.classList.add(WebInspector.TimelineRuler.SelectionDragElementStyleClassName);
+
+            this._needsSelectionLayout();
+        } else {
+            this._element.removeEventListener("mousedown", this._mouseDownEventListener);
+            delete this._mouseDownEventListener;
+
+            this._leftShadedAreaElement.remove();
+            this._rightShadedAreaElement.remove();
+            this._leftSelectionHandleElement.remove();
+            this._rightSelectionHandleElement.remove();
+            this._selectionDragElement.remove();
+
+            delete this._leftShadedAreaElement;
+            delete this._rightShadedAreaElement;
+            delete this._leftSelectionHandleElement;
+            delete this._rightSelectionHandleElement;
+            delete this._selectionDragElement;
+        }
     },
 
     get zeroTime()
@@ -181,6 +246,38 @@ WebInspector.TimelineRuler.prototype = {
         this._currentSliceTime = 0;
 
         this._needsLayout();
+    },
+
+    get selectionStartTime()
+    {
+        return this._selectionStartTime;
+    },
+
+    set selectionStartTime(x)
+    {
+        if (this._selectionStartTime === x)
+            return;
+
+        this._selectionStartTime = x || 0;
+        this._timeRangeSelectionChanged = true;
+
+        this._needsSelectionLayout();
+    },
+
+    get selectionEndTime()
+    {
+        return this._selectionEndTime;
+    },
+
+    set selectionEndTime(x)
+    {
+        if (this._selectionEndTime === x)
+            return;
+
+        this._selectionEndTime = x || 0;
+        this._timeRangeSelectionChanged = true;
+
+        this._needsSelectionLayout();
     },
 
     addMarker: function(marker)
@@ -292,8 +389,8 @@ WebInspector.TimelineRuler.prototype = {
                     continue;
             }
 
-            this._updateLeftPositionOfElement(dividerElement, newLeftPosition, visibleWidth);
-            this._updateLeftPositionOfElement(markerDividerElement, newLeftPosition, visibleWidth);
+            this._updatePositionOfElement(dividerElement, newLeftPosition, visibleWidth);
+            this._updatePositionOfElement(markerDividerElement, newLeftPosition, visibleWidth);
 
             dividerElement._labelElement.textContent = isNaN(dividerTime) ? "" : Number.secondsToString(dividerTime - this._zeroTime, true);
             dividerElement = dividerElement.nextSibling;
@@ -310,6 +407,7 @@ WebInspector.TimelineRuler.prototype = {
             markerDividers[i].remove();
 
         this._updateMarkers(visibleWidth, duration);
+        this._updateSelection(visibleWidth, duration);
     },
 
     // Private
@@ -322,6 +420,11 @@ WebInspector.TimelineRuler.prototype = {
         if (this._scheduledMarkerLayoutUpdateIdentifier) {
             cancelAnimationFrame(this._scheduledMarkerLayoutUpdateIdentifier);
             delete this._scheduledMarkerLayoutUpdateIdentifier;
+        }
+
+        if (this._scheduledSelectionLayoutUpdateIdentifier) {
+            cancelAnimationFrame(this._scheduledSelectionLayoutUpdateIdentifier);
+            delete this._scheduledSelectionLayoutUpdateIdentifier;
         }
 
         this._scheduledLayoutUpdateIdentifier = requestAnimationFrame(this.updateLayout.bind(this));
@@ -340,7 +443,7 @@ WebInspector.TimelineRuler.prototype = {
         {
             delete this._scheduledMarkerLayoutUpdateIdentifier;
 
-            var visibleWidth = this._headerElement.clientWidth;
+            var visibleWidth = this._element.clientWidth;
             if (visibleWidth <= 0)
                 return;
 
@@ -350,9 +453,35 @@ WebInspector.TimelineRuler.prototype = {
         this._scheduledMarkerLayoutUpdateIdentifier = requestAnimationFrame(update.bind(this));
     },
 
+    _needsSelectionLayout: function()
+    {
+        if (!this._allowsTimeRangeSelection)
+            return;
+
+        // If layout is scheduled, abort since the selection will be updated when layout happens.
+        if (this._scheduledLayoutUpdateIdentifier)
+            return;
+
+        if (this._scheduledSelectionLayoutUpdateIdentifier)
+            return;
+
+        function update()
+        {
+            delete this._scheduledSelectionLayoutUpdateIdentifier;
+
+            var visibleWidth = this._element.clientWidth;
+            if (visibleWidth <= 0)
+                return;
+
+            this._updateSelection(visibleWidth, this.duration);
+        }
+
+        this._scheduledSelectionLayoutUpdateIdentifier = requestAnimationFrame(update.bind(this));
+    },
+
     _recalculate: function()
     {
-        var visibleWidth = this._headerElement.clientWidth;
+        var visibleWidth = this._element.clientWidth;
         if (visibleWidth <= 0)
             return 0;
 
@@ -369,31 +498,235 @@ WebInspector.TimelineRuler.prototype = {
         return visibleWidth;
     },
 
-    _updateLeftPositionOfElement: function(element, newLeftPosition, visibleWidth)
+    _updatePositionOfElement: function(element, newPosition, visibleWidth, property)
     {
-        newLeftPosition *= this._endTimePinned ? 100 : visibleWidth;
-        newLeftPosition = newLeftPosition.toFixed(2);
+        property = property || "left";
 
-        var currentLeftPosition = parseFloat(element.style.left).toFixed(2);
-        if (currentLeftPosition !== newLeftPosition)
-            element.style.left = newLeftPosition + (this._endTimePinned ? "%" : "px");
+        newPosition *= this._endTimePinned ? 100 : visibleWidth;
+        newPosition = newPosition.toFixed(2);
+
+        var currentPosition = parseFloat(element.style[property]).toFixed(2);
+        if (currentPosition !== newPosition)
+            element.style[property] = newPosition + (this._endTimePinned ? "%" : "px");
     },
 
     _updateMarkers: function(visibleWidth, duration)
     {
+        if (this._scheduledMarkerLayoutUpdateIdentifier) {
+            cancelAnimationFrame(this._scheduledMarkerLayoutUpdateIdentifier);
+            delete this._scheduledMarkerLayoutUpdateIdentifier;
+        }
+
         this._markerElementMap.forEach(function(markerElement, marker) {
             var newLeftPosition = (marker.time - this._startTime) / duration;
 
-            this._updateLeftPositionOfElement(markerElement, newLeftPosition, visibleWidth);
+            this._updatePositionOfElement(markerElement, newLeftPosition, visibleWidth);
 
             if (!markerElement.parentNode)
                 this._markersElement.appendChild(markerElement);
         }, this);
     },
 
+    _updateSelection: function(visibleWidth, duration)
+    {
+        if (this._scheduledSelectionLayoutUpdateIdentifier) {
+            cancelAnimationFrame(this._scheduledSelectionLayoutUpdateIdentifier);
+            delete this._scheduledSelectionLayoutUpdateIdentifier;
+        }
+
+        this._element.classList.toggle(WebInspector.TimelineRuler.AllowsTimeRangeSelectionStyleClassName, this._allowsTimeRangeSelection);
+
+        if (!this._allowsTimeRangeSelection)
+            return;
+
+        var newLeftPosition = Math.max(0, (this._selectionStartTime - this._startTime) / duration);
+        this._updatePositionOfElement(this._leftShadedAreaElement, newLeftPosition, visibleWidth, "width");
+        this._updatePositionOfElement(this._leftSelectionHandleElement, newLeftPosition, visibleWidth, "left");
+        this._updatePositionOfElement(this._selectionDragElement, newLeftPosition, visibleWidth, "left");
+
+        var newRightPosition = 1 - Math.min((this._selectionEndTime - this._startTime) / duration, 1);
+        this._updatePositionOfElement(this._rightShadedAreaElement, newRightPosition, visibleWidth, "width");
+        this._updatePositionOfElement(this._rightSelectionHandleElement, newRightPosition, visibleWidth, "right");
+        this._updatePositionOfElement(this._selectionDragElement, newRightPosition, visibleWidth, "right");
+
+        if (!this._selectionDragElement.parentNode) {
+            this._element.appendChild(this._selectionDragElement);
+            this._element.appendChild(this._leftShadedAreaElement);
+            this._element.appendChild(this._leftSelectionHandleElement);
+            this._element.appendChild(this._rightShadedAreaElement);
+            this._element.appendChild(this._rightSelectionHandleElement);
+        }
+
+        if (this._timeRangeSelectionChanged)
+            this._dispatchTimeRangeSelectionChangedEvent();
+    },
+
+    _dispatchTimeRangeSelectionChangedEvent: function()
+    {
+        delete this._timeRangeSelectionChanged;
+
+        if (this._suppressTimeRangeSelectionChangedEvent)
+            return;
+
+        this.dispatchEventToListeners(WebInspector.TimelineRuler.Event.TimeRangeSelectionChanged);
+    },
+
     _timelineMarkerTimeChanged: function()
     {
         this._needsMarkerLayout();
+    },
+
+    _handleMouseDown: function(event)
+    {
+        // Only handle left mouse clicks.
+        if (event.button !== 0 || event.ctrlKey)
+            return;
+
+        this._selectionIsMove = event.target === this._selectionDragElement;
+        this._suppressTimeRangeSelectionChangedEvent = !this._selectionIsMove;
+
+        if (this._selectionIsMove)
+            this._lastMousePosition = event.pageX;
+        else
+            this._mouseDownPosition = event.pageX - this._element.totalOffsetLeft;
+
+        this._mouseMoveEventListener = this._handleMouseMove.bind(this);
+        this._mouseUpEventListener = this._handleMouseUp.bind(this);
+
+        // Register these listeners on the document so we can track the mouse if it leaves the ruler.
+        document.addEventListener("mousemove", this._mouseMoveEventListener);
+        document.addEventListener("mouseup", this._mouseUpEventListener);
+
+        event.preventDefault();
+        event.stopPropagation();
+    },
+
+    _handleMouseMove: function(event)
+    {
+        console.assert(event.button === 0);
+
+        if (this._selectionIsMove) {
+            var currentMousePosition = event.pageX;
+
+            var offsetTime = (currentMousePosition - this._lastMousePosition) * this.secondsPerPixel;
+            var selectionDuration = this.selectionEndTime - this.selectionStartTime;
+
+            this.selectionStartTime = Math.max(this.startTime, Math.min(this.selectionStartTime + offsetTime, this.endTime - selectionDuration));
+            this.selectionEndTime = this.selectionStartTime + selectionDuration;
+
+            this._lastMousePosition = currentMousePosition;
+        } else {
+            var currentMousePosition = event.pageX - this._element.totalOffsetLeft;
+
+            this.selectionStartTime = Math.max(this.startTime, this.startTime + (Math.min(currentMousePosition, this._mouseDownPosition) * this.secondsPerPixel));
+            this.selectionEndTime = Math.min(this.startTime + (Math.max(currentMousePosition, this._mouseDownPosition) * this.secondsPerPixel), this.endTime);
+        }
+
+        this._updateSelection(this._element.clientWidth, this.duration);
+
+        event.preventDefault();
+        event.stopPropagation();
+    },
+
+    _handleMouseUp: function(event)
+    {
+        console.assert(event.button === 0);
+
+        if (!this._selectionIsMove && this.selectionEndTime - this.selectionStartTime < WebInspector.TimelineRuler.MinimumSelectionTimeRange) {
+            // The section is smaller than allowed, grow in the direction of the drag to meet the minumum.
+            var currentMousePosition = event.pageX - this._element.totalOffsetLeft;
+            if (currentMousePosition > this._mouseDownPosition) {
+                this.selectionEndTime = Math.min(this.selectionStartTime + WebInspector.TimelineRuler.MinimumSelectionTimeRange, this.endTime);
+                this.selectionStartTime = this.selectionEndTime - WebInspector.TimelineRuler.MinimumSelectionTimeRange;
+            } else {
+                this.selectionStartTime = Math.max(this.startTime, this.selectionEndTime - WebInspector.TimelineRuler.MinimumSelectionTimeRange);
+                this.selectionEndTime = this.selectionStartTime + WebInspector.TimelineRuler.MinimumSelectionTimeRange
+            }
+        }
+
+        delete this._suppressTimeRangeSelectionChangedEvent;
+
+        this._dispatchTimeRangeSelectionChangedEvent();
+
+        document.removeEventListener("mousemove", this._mouseMoveEventListener);
+        document.removeEventListener("mouseup", this._mouseUpEventListener);
+
+        delete this._mouseMovedEventListener;
+        delete this._mouseUpEventListener;
+        delete this._mouseDownPosition;
+        delete this._lastMousePosition;
+        delete this._selectionIsMove;
+
+        event.preventDefault();
+        event.stopPropagation();
+    },
+
+    _handleSelectionHandleMouseDown: function(event)
+    {
+        // Only handle left mouse clicks.
+        if (event.button !== 0 || event.ctrlKey)
+            return;
+
+        this._dragHandleIsStartTime = event.target === this._leftSelectionHandleElement;
+        this._mouseDownPosition = event.pageX - this._element.totalOffsetLeft;
+
+        this._selectionHandleMouseMoveEventListener = this._handleSelectionHandleMouseMove.bind(this);
+        this._selectionHandleMouseUpEventListener = this._handleSelectionHandleMouseUp.bind(this);
+
+        // Register these listeners on the document so we can track the mouse if it leaves the ruler.
+        document.addEventListener("mousemove", this._selectionHandleMouseMoveEventListener);
+        document.addEventListener("mouseup", this._selectionHandleMouseUpEventListener);
+
+        event.preventDefault();
+        event.stopPropagation();
+    },
+
+    _handleSelectionHandleMouseMove: function(event)
+    {
+        console.assert(event.button === 0);
+
+        var currentMousePosition = event.pageX - this._element.totalOffsetLeft;
+        var currentTime = this.startTime + (currentMousePosition * this.secondsPerPixel);
+
+        if (event.altKey && !event.ctrlKey && !event.metaKey && !event.shiftKey) {
+            // Resize the selection on both sides when the Option keys is held down.
+            if (this._dragHandleIsStartTime) {
+                var timeDifference = currentTime - this.selectionStartTime;
+                this.selectionStartTime = Math.max(this.startTime, Math.min(currentTime, this.selectionEndTime - WebInspector.TimelineRuler.MinimumSelectionTimeRange));
+                this.selectionEndTime = Math.min(Math.max(this.selectionStartTime + WebInspector.TimelineRuler.MinimumSelectionTimeRange, this.selectionEndTime - timeDifference), this.endTime);
+            } else {
+                var timeDifference = currentTime - this.selectionEndTime;
+                this.selectionEndTime = Math.min(Math.max(this.selectionStartTime + WebInspector.TimelineRuler.MinimumSelectionTimeRange, currentTime), this.endTime);
+                this.selectionStartTime = Math.max(this.startTime, Math.min(this.selectionStartTime - timeDifference, this.selectionEndTime - WebInspector.TimelineRuler.MinimumSelectionTimeRange));
+            }
+        } else {
+            // Resize the selection on side being dragged.
+            if (this._dragHandleIsStartTime)
+                this.selectionStartTime = Math.max(this.startTime, Math.min(currentTime, this.selectionEndTime - WebInspector.TimelineRuler.MinimumSelectionTimeRange));
+            else
+                this.selectionEndTime = Math.min(Math.max(this.selectionStartTime + WebInspector.TimelineRuler.MinimumSelectionTimeRange, currentTime), this.endTime);
+        }
+
+        this._updateSelection(this._element.clientWidth, this.duration);
+
+        event.preventDefault();
+        event.stopPropagation();
+    },
+
+    _handleSelectionHandleMouseUp: function(event)
+    {
+        console.assert(event.button === 0);
+
+        document.removeEventListener("mousemove", this._selectionHandleMouseMoveEventListener);
+        document.removeEventListener("mouseup", this._selectionHandleMouseUpEventListener);
+
+        delete this._selectionHandleMouseMoveEventListener;
+        delete this._selectionHandleMouseUpEventListener;
+        delete this._dragHandleIsStartTime;
+        delete this._mouseDownPosition;
+
+        event.preventDefault();
+        event.stopPropagation();
     }
 }
 

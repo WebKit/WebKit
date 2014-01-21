@@ -1,3 +1,66 @@
+2013-12-19  Timothy Hatcher  <timothy@apple.com>
+
+        Implement time range selection for TimelineOverview and TimelineRuler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=126035
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/TimelineContentView.js:
+        (WebInspector.TimelineContentView.prototype._update):
+        (WebInspector.TimelineContentView.prototype._recordingReset):
+        Properly update start time and the selection start time on reset.
+
+        * UserInterface/TimelineOverview.js:
+        (WebInspector.TimelineOverview):
+        (WebInspector.TimelineOverview.prototype.get selectionStartTime):
+        (WebInspector.TimelineOverview.prototype.set selectionStartTime):
+        (WebInspector.TimelineOverview.prototype.get selectionDuration):
+        (WebInspector.TimelineOverview.prototype.set selectionDuration):
+        Added selection getters and setters.
+
+        * UserInterface/TimelineRuler.css:
+        (.timeline-ruler.allows-time-range-selection):
+        (.timeline-ruler > *):
+        (.timeline-ruler > .header):
+        (.timeline-ruler > .selection-drag):
+        (.timeline-ruler > .selection-drag:active):
+        (.timeline-ruler > .selection-handle):
+        (.timeline-ruler > .selection-handle.left):
+        (.timeline-ruler > .selection-handle.right):
+        (.timeline-ruler > .shaded-area):
+        (.timeline-ruler > .shaded-area.left):
+        (.timeline-ruler > .shaded-area.right):
+        Added styles for the selection elements and tweaked pointer-events to allow
+        events on elements we expect.
+
+        * UserInterface/TimelineRuler.js:
+        (WebInspector.TimelineRuler):
+        (WebInspector.TimelineRuler.prototype.get allowsTimeRangeSelection): Added.
+        (WebInspector.TimelineRuler.prototype.set allowsTimeRangeSelection): Added.
+        (WebInspector.TimelineRuler.prototype.get selectionStartTime): Added.
+        (WebInspector.TimelineRuler.prototype.set selectionStartTime): Added.
+        (WebInspector.TimelineRuler.prototype.get selectionEndTime): Added.
+        (WebInspector.TimelineRuler.prototype.set selectionEndTime): Added.
+        (WebInspector.TimelineRuler.prototype.updateLayout):
+        (WebInspector.TimelineRuler.prototype._needsMarkerLayout.update):
+        (WebInspector.TimelineRuler.prototype._needsMarkerLayout):
+        (WebInspector.TimelineRuler.prototype._needsSelectionLayout.update):
+        (WebInspector.TimelineRuler.prototype._needsSelectionLayout):
+        (WebInspector.TimelineRuler.prototype._recalculate):
+        (WebInspector.TimelineRuler.prototype._updatePositionOfElement):
+        (WebInspector.TimelineRuler.prototype._updateMarkers):
+        (WebInspector.TimelineRuler.prototype._updateSelection): Added.
+        (WebInspector.TimelineRuler.prototype._dispatchTimeRangeSelectionChangedEvent):
+        (WebInspector.TimelineRuler.prototype._timelineMarkerTimeChanged):
+        (WebInspector.TimelineRuler.prototype._handleMouseDown): Added.
+        (WebInspector.TimelineRuler.prototype._handleMouseMove): Added.
+        (WebInspector.TimelineRuler.prototype._handleMouseUp): Added.
+        (WebInspector.TimelineRuler.prototype._handleSelectionHandleMouseDown): Added.
+        (WebInspector.TimelineRuler.prototype._handleSelectionHandleMouseMove): Added.
+        (WebInspector.TimelineRuler.prototype._handleSelectionHandleMouseUp): Added.
+        Create selection elements and handle mouse events for drag and move.
+
 2013-12-17  Timothy Hatcher  <timothy@apple.com>
 
         Support scroll to zoom in TimelineOverview.

@@ -28,12 +28,22 @@
     pointer-events: none;
 }
 
+.timeline-ruler.allows-time-range-selection {
+    pointer-events: all;
+}
+
+.timeline-ruler > * {
+    pointer-events: none;
+}
+
 .timeline-ruler > .header {
     border-bottom: 1px solid rgb(200, 200, 200);
 
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
     height: 22px;
-
-    position: relative;
 }
 
 .timeline-ruler > .header > .divider {
@@ -114,4 +124,51 @@
 
 .timeline-ruler > .markers > .marker.timestamp {
     border-left-color: rgba(0, 110, 0, 0.5);
+}
+
+.timeline-ruler > .selection-drag {
+    position: absolute;
+    top: 0;
+    height: 22px;
+    cursor: -webkit-grab;
+    pointer-events: all;
+}
+
+.timeline-ruler > .selection-drag:active {
+    cursor: -webkit-grabbing;
+}
+
+.timeline-ruler > .selection-handle {
+    position: absolute;
+    top: 0;
+    width: 8px;
+    height: 21px;
+    border-radius: 5px;
+    background-color: rgb(164, 164, 164);
+    border: 1px solid white;
+    cursor: col-resize;
+    pointer-events: all;
+}
+
+.timeline-ruler > .selection-handle.left {
+    -webkit-transform: translateX(-4px);
+}
+
+.timeline-ruler > .selection-handle.right {
+    -webkit-transform: translateX(4px);
+}
+
+.timeline-ruler > .shaded-area {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.1);
+}
+
+.timeline-ruler > .shaded-area.left {
+    left: 0;
+}
+
+.timeline-ruler > .shaded-area.right {
+    right: 0;
 }

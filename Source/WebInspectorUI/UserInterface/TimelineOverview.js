@@ -38,12 +38,14 @@ WebInspector.TimelineOverview = function()
 
     this._timelineRuler = new WebInspector.TimelineRuler;
     this._timelineRuler.allowsClippedLabels = true;
+    this._timelineRuler.allowsTimeRangeSelection = true;
     this._scrollContainer.appendChild(this._timelineRuler.element);
 
     this._endTime = 0;
 
     this.startTime = 0;
     this.secondsPerPixel = 0.0025;
+    this.selectionDuration = 5;
 };
 
 WebInspector.TimelineOverview.StyleClassName = "timeline-overview";
@@ -106,6 +108,31 @@ WebInspector.TimelineOverview.prototype = {
         this._endTime = x || 0;
 
         this._needsLayout();
+    },
+
+    get selectionStartTime()
+    {
+        return this._timelineRuler.selectionStartTime;
+    },
+
+    set selectionStartTime(x)
+    {
+        x = x || 0;
+
+        var selectionDuration = this.selectionDuration;
+        this._timelineRuler.selectionStartTime = x;
+        this._timelineRuler.selectionEndTime = x + selectionDuration;
+    },
+
+    get selectionDuration()
+    {
+        return this._timelineRuler.selectionEndTime - this._timelineRuler.selectionStartTime;
+    },
+
+    set selectionDuration(x)
+    {
+        x = Math.max(WebInspector.TimelineRuler.MinimumSelectionTimeRange, x);
+        this._timelineRuler.selectionEndTime = this._timelineRuler.selectionStartTime + x;
     },
 
     addMarker: function(marker)
