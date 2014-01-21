@@ -1815,9 +1815,11 @@ CodeBlock::CodeBlock(ScriptExecutable* ownerExecutable, UnlinkedCodeBlock* unlin
             
         case op_captured_mov:
         case op_new_captured_func: {
-            StringImpl* uid = pc[i + 3].u.uid;
-            if (!uid)
+            if (pc[i + 3].u.index == UINT_MAX) {
+                instructions[i + 3].u.watchpointSet = 0;
                 break;
+            }
+            StringImpl* uid = identifier(pc[i + 3].u.index).impl();
             RELEASE_ASSERT(didCloneSymbolTable);
             ConcurrentJITLocker locker(m_symbolTable->m_lock);
             SymbolTable::Map::iterator iter = m_symbolTable->find(locker, uid);

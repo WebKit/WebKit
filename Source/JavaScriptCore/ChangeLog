@@ -1,3 +1,25 @@
+2014-01-20  Filip Pizlo  <fpizlo@apple.com>
+
+        op_captured_mov and op_new_captured_func in UnlinkedCodeBlocks should use the IdentifierMap instead of the strings directly
+        https://bugs.webkit.org/show_bug.cgi?id=127311
+        <rdar://problem/15853958>
+
+        Reviewed by Andreas Kling.
+        
+        This makes UnlinkedCodeBlocks use 32-bit instruction streams again.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::CodeBlock):
+        * bytecode/UnlinkedCodeBlock.h:
+        (JSC::UnlinkedInstruction::UnlinkedInstruction):
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::addVar):
+        (JSC::BytecodeGenerator::emitInitLazyRegister):
+        (JSC::BytecodeGenerator::createArgumentsIfNecessary):
+        * bytecompiler/BytecodeGenerator.h:
+        (JSC::BytecodeGenerator::watchableVariable):
+        (JSC::BytecodeGenerator::hasWatchableVariable):
+
 2014-01-20  Mark Lam  <mark.lam@apple.com>
 
         Removing CodeBlock::opDebugBytecodeOffsetForLineAndColumn() and friends.

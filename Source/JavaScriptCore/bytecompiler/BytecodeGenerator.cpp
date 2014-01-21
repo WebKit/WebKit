@@ -132,8 +132,8 @@ bool BytecodeGenerator::addVar(
     
     if (watchMode == IsWatchable) {
         while (m_watchableVariables.size() < static_cast<size_t>(m_codeBlock->m_numVars))
-            m_watchableVariables.append(nullptr);
-        m_watchableVariables.append(ident.impl());
+            m_watchableVariables.append(Identifier());
+        m_watchableVariables.append(ident);
     }
     
     r0 = addVar();
@@ -469,7 +469,7 @@ RegisterID* BytecodeGenerator::emitInitLazyRegister(RegisterID* reg)
 {
     emitOpcode(op_init_lazy_reg);
     instructions().append(reg->index());
-    ASSERT(!watchableVariable(reg->index()));
+    ASSERT(!hasWatchableVariable(reg->index()));
     return reg;
 }
 
@@ -1628,7 +1628,7 @@ void BytecodeGenerator::createArgumentsIfNecessary()
 
     emitOpcode(op_create_arguments);
     instructions().append(m_codeBlock->argumentsRegister().offset());
-    ASSERT(!watchableVariable(m_codeBlock->argumentsRegister().offset()));
+    ASSERT(!hasWatchableVariable(m_codeBlock->argumentsRegister().offset()));
 }
 
 void BytecodeGenerator::createActivationIfNecessary()

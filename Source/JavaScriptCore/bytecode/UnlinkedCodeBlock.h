@@ -228,11 +228,10 @@ struct UnlinkedInstruction {
     UnlinkedInstruction() { u.operand = 0; }
     UnlinkedInstruction(OpcodeID opcode) { u.opcode = opcode; }
     UnlinkedInstruction(int operand) { u.operand = operand; }
-    UnlinkedInstruction(StringImpl* uid) { u.uid = uid; }
     union {
         OpcodeID opcode;
         int32_t operand;
-        StringImpl* uid;
+        unsigned index;
     } u;
 };
 

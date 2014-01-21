@@ -591,14 +591,22 @@ namespace JSC {
         void createActivationIfNecessary();
         RegisterID* createLazyRegisterIfNecessary(RegisterID*);
         
-        StringImpl* watchableVariable(int operand)
+        unsigned watchableVariable(int operand)
         {
             VirtualRegister reg(operand);
             if (!reg.isLocal())
-                return 0;
+                return UINT_MAX;
             if (static_cast<size_t>(reg.toLocal()) >= m_watchableVariables.size())
-                return 0;
-            return m_watchableVariables[reg.toLocal()];
+                return UINT_MAX;
+            Identifier& ident = m_watchableVariables[reg.toLocal()];
+            if (ident.isNull())
+                return UINT_MAX;
+            return addConstant(ident);
+        }
+        
+        bool hasWatchableVariable(int operand)
+        {
+            return watchableVariable(operand) != UINT_MAX;
         }
         
         Vector<UnlinkedInstruction, 0, UnsafeVectorOverflow> m_instructions;
@@ -620,7 +628,7 @@ namespace JSC {
         RegisterID* m_activationRegister;
         RegisterID* m_emptyValueRegister;
         RegisterID* m_globalObjectRegister;
-        Vector<StringImpl*, 16> m_watchableVariables;
+        Vector<Identifier, 16> m_watchableVariables;
         SegmentedVector<RegisterID, 32> m_constantPoolRegisters;
         SegmentedVector<RegisterID, 32> m_calleeRegisters;
         SegmentedVector<RegisterID, 32> m_parameters;
