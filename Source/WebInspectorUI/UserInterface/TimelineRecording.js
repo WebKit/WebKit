@@ -56,7 +56,7 @@ WebInspector.TimelineRecording.prototype = {
         }
 
         this._timelines = new Map;
-        this._timelines.set(WebInspector.TimelineRecord.Type.Network, new WebInspector.Timeline);
+        this._timelines.set(WebInspector.TimelineRecord.Type.Network, new WebInspector.NetworkTimeline);
         this._timelines.set(WebInspector.TimelineRecord.Type.Script, new WebInspector.Timeline);
         this._timelines.set(WebInspector.TimelineRecord.Type.Layout, new WebInspector.Timeline);
 

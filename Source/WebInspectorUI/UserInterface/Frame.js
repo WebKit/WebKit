@@ -60,6 +60,7 @@ WebInspector.Frame.Event = {
     ProvisionalLoadStarted: "frame-provisional-load-started",
     ProvisionalLoadCommitted: "frame-provisional-load-committed",
     ProvisionalLoadCleared: "frame-provisional-load-cleared",
+    ProvisionalResourceWasAdded: "frame-provisional-resource-was-added",
     ResourceWasAdded: "frame-resource-was-added",
     ResourceWasRemoved: "frame-resource-was-removed",
     AllResourcesRemoved: "frame-all-resources-removed",
@@ -425,7 +426,7 @@ WebInspector.Frame.prototype = {
 
         if (this._isProvisionalResource(resource)) {
             this._provisionalResourceCollection.addResource(resource);
-            // Provisional resources don't fire the ResourceWasAdded event.
+            this.dispatchEventToListeners(WebInspector.Frame.Event.ProvisionalResourceWasAdded, {resource: resource});
         } else {
             this._resourceCollection.addResource(resource);
             this.dispatchEventToListeners(WebInspector.Frame.Event.ResourceWasAdded, {resource: resource});

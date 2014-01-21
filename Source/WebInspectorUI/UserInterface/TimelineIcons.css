@@ -54,3 +54,31 @@
 .profile-icon .icon {
     content: -webkit-image-set(url(Images/Profile.png) 1x, url(Images/Profile@2x.png) 2x);
 }
+
+.style-record .icon {
+    content: url(Images/TimelineRecordStyle.svg);
+}
+
+.layout-record .icon {
+    content: url(Images/TimelineRecordLayout.svg);
+}
+
+.paint-record .icon {
+    content: url(Images/TimelineRecordPaint.svg);
+}
+
+.evaluated-record .icon {
+    content: url(Images/TimelineRecordScriptEvaluated.svg);
+}
+
+.event-record .icon {
+    content: url(Images/TimelineRecordEvent.svg);
+}
+
+.timer-record .icon {
+    content: url(Images/TimelineRecordTimer.svg);
+}
+
+.animation-record .icon {
+    content: url(Images/TimelineRecordAnimation.svg);
+}

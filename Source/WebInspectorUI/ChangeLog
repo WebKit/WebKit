@@ -1,5 +1,70 @@
 2013-11-07  Timothy Hatcher  <timothy@apple.com>
 
+        Start fleshing out the Overview Timeline view.
+
+        This gets the overview populating in the Timeline sidebar. The graph side is still empty.
+
+        https://bugs.webkit.org/show_bug.cgi?id=124005
+
+        Reviewed by Joseph Pecoraro.
+
+        * Localizations/en.lproj/localizedStrings.js: Updated.
+        * UserInterface/Frame.js:
+        (WebInspector.Frame.prototype.addResource):
+        * UserInterface/Images/TimelineRecordAnimation.svg: Added.
+        * UserInterface/Images/TimelineRecordEvent.svg: Added.
+        * UserInterface/Images/TimelineRecordLayout.svg: Added.
+        * UserInterface/Images/TimelineRecordPaint.svg: Added.
+        * UserInterface/Images/TimelineRecordScriptEvaluated.svg: Added.
+        * UserInterface/Images/TimelineRecordStyle.svg: Added.
+        * UserInterface/Images/TimelineRecordTimer.svg: Added.
+        * UserInterface/Main.html:
+        * UserInterface/OverviewTimelineView.js: Added.
+        (WebInspector.OverviewTimelineView):
+        (WebInspector.OverviewTimelineView.prototype.get navigationSidebarTreeOutlineLabel):
+        (WebInspector.OverviewTimelineView.prototype._childFrameWasAdded):
+        (WebInspector.OverviewTimelineView.prototype._mainResourceDidChange):
+        (WebInspector.OverviewTimelineView.prototype._provisionalResourceWasAdded):
+        (WebInspector.OverviewTimelineView.prototype._resourceWasAdded):
+        (WebInspector.OverviewTimelineView.prototype._compareTreeElementsByDetails):
+        (WebInspector.OverviewTimelineView.prototype._compareTreeElementsByStartTime):
+        (WebInspector.OverviewTimelineView.prototype._insertTreeElement):
+        (WebInspector.OverviewTimelineView.prototype._addResourceToTreeIfNeeded):
+        (WebInspector.OverviewTimelineView.prototype._sourceCodeTimelineAdded):
+        (WebInspector.OverviewTimelineView.prototype._treeElementSelected):
+        * UserInterface/SourceCodeTimelineTreeElement.js: Added.
+        (WebInspector.SourceCodeTimelineTreeElement):
+        (WebInspector.SourceCodeTimelineTreeElement.prototype.get sourceCodeTimeline):
+        * UserInterface/TimelineContentView.js:
+        (WebInspector.TimelineContentView.createPathComponent):
+        (WebInspector.TimelineContentView):
+        (WebInspector.TimelineContentView.prototype.showOverviewTimelineView):
+        (WebInspector.TimelineContentView.prototype.showTimelineView):
+        (WebInspector.TimelineContentView.prototype.get supportsSplitContentBrowser):
+        (WebInspector.TimelineContentView.prototype.get selectionPathComponents):
+        (WebInspector.TimelineContentView.prototype._pathComponentSelected):
+        (WebInspector.TimelineContentView.prototype._showTimelineView):
+        (WebInspector.TimelineContentView.prototype._recordingReset):
+        * UserInterface/TimelineIcons.css:
+        (.style-record .icon): Added.
+        (.layout-record .icon): Added.
+        (.paint-record .icon): Added.
+        (.evaluated-record .icon): Added.
+        (.event-record .icon): Added.
+        (.timer-record .icon): Added.
+        (.animation-record .icon): Added.
+        * UserInterface/TimelineView.css: Added.
+        (.timeline-view):
+        * UserInterface/TimelineView.js: Added.
+        (WebInspector.TimelineView):
+        (WebInspector.TimelineView.prototype.get navigationSidebarTreeOutline):
+        (WebInspector.TimelineView.prototype.get navigationSidebarTreeOutlineLabel):
+        (WebInspector.TimelineView.prototype.reset):
+        (WebInspector.TimelineView.prototype.shown):
+        (WebInspector.TimelineView.prototype.hidden):
+
+2013-11-07  Timothy Hatcher  <timothy@apple.com>
+
         Start fleshing out the new TimelineSidebarPanel and TimelineContentView.
 
         https://bugs.webkit.org/show_bug.cgi?id=124003

@@ -28,6 +28,46 @@ WebInspector.TimelineContentView = function(recording)
     WebInspector.ContentView.call(this, recording);
 
     this.element.classList.add(WebInspector.TimelineContentView.StyleClassName);
+
+    this._viewContainer = document.createElement("div");
+    this._viewContainer.classList.add(WebInspector.TimelineContentView.ViewContainerStyleClassName);
+    this.element.appendChild(this._viewContainer);
+
+    this._overviewTimelineView = new WebInspector.OverviewTimelineView;
+    this._discreteTimelineViewMap = {
+        [WebInspector.TimelineRecord.Type.Network]: new WebInspector.TimelineView,
+        [WebInspector.TimelineRecord.Type.Layout]: new WebInspector.TimelineView,
+        [WebInspector.TimelineRecord.Type.Script]: new WebInspector.TimelineView
+    };
+
+    function createPathComponent(displayName, className, representedObject)
+    {
+        var pathComponent = new WebInspector.HierarchicalPathComponent(displayName, className, representedObject);
+        pathComponent.addEventListener(WebInspector.HierarchicalPathComponent.Event.SiblingWasSelected, this._pathComponentSelected, this);
+        return pathComponent;
+    }
+
+    var networkPathComponent = createPathComponent.call(this, WebInspector.UIString("Network Requests"), WebInspector.TimelineSidebarPanel.NetworkIconStyleClass, WebInspector.TimelineRecord.Type.Network);
+    var layoutPathComponent = createPathComponent.call(this, WebInspector.UIString("Layout & Rendering"), WebInspector.TimelineSidebarPanel.ColorsIconStyleClass, WebInspector.TimelineRecord.Type.Layout);
+    var scriptPathComponent = createPathComponent.call(this, WebInspector.UIString("JavaScript & Events"), WebInspector.TimelineSidebarPanel.ScriptIconStyleClass, WebInspector.TimelineRecord.Type.Script);
+
+    networkPathComponent.nextSibling = layoutPathComponent;
+    layoutPathComponent.previousSibling = networkPathComponent;
+    layoutPathComponent.nextSibling = scriptPathComponent;
+    scriptPathComponent.previousSibling = layoutPathComponent;
+
+    this._pathComponentMap = {
+        [WebInspector.TimelineRecord.Type.Network]: networkPathComponent,
+        [WebInspector.TimelineRecord.Type.Layout]: layoutPathComponent,
+        [WebInspector.TimelineRecord.Type.Script]: scriptPathComponent
+    };
+
+    this._currentTimelineView = null;
+    this._currentTimelineViewIdentifier = null;
+
+    WebInspector.timelineManager.recording.addEventListener(WebInspector.TimelineRecording.Event.Reset, this._recordingReset, this);
+
+    this.showOverviewTimelineView();
 };
 
 WebInspector.TimelineContentView.StyleClassName = "timeline";
@@ -41,12 +81,16 @@ WebInspector.TimelineContentView.prototype = {
 
     showOverviewTimelineView: function()
     {
-        // FIXME: Implement.
+        this._showTimelineView(this._overviewTimelineView);
     },
 
     showTimelineView: function(identifier)
     {
-        // FIXME: Implement.
+        console.assert(identifier in this._discreteTimelineViewMap);
+        if (!(identifier in this._discreteTimelineViewMap))
+            return;
+
+        this._showTimelineView(this._discreteTimelineViewMap[identifier], identifier);
     },
 
     get allowedNavigationSidebarPanels()
@@ -58,5 +102,77 @@ WebInspector.TimelineContentView.prototype = {
     {
         // The layout of the overview and split content browser don't work well.
         return false;
+    },
+
+    get selectionPathComponents()
+    {
+        if (!this._currentTimelineViewIdentifier)
+            return [];
+        return [this._pathComponentMap[this._currentTimelineViewIdentifier]];
+    },
+
+    shown: function()
+    {
+        if (!this._currentTimelineView)
+            return;
+
+        this._currentTimelineView.shown();
+    },
+
+    hidden: function()
+    {
+        if (!this._currentTimelineView)
+            return;
+
+        this._currentTimelineView.hidden();
+    },
+
+    updateLayout: function()
+    {
+        if (!this._currentTimelineView)
+            return;
+
+        this._currentTimelineView.updateLayout();
+    },
+
+    // Private
+
+    _pathComponentSelected: function(event)
+    {
+        WebInspector.timelineSidebarPanel.showTimelineView(event.data.pathComponent.representedObject);
+    },
+
+    _showTimelineView: function(timelineView, identifier)
+    {
+        console.assert(timelineView instanceof WebInspector.TimelineView);
+
+        if (this._currentTimelineView === timelineView)
+            return;
+
+        if (this._currentTimelineView) {
+            this._currentTimelineView.hidden();
+            this._currentTimelineView.element.remove();
+        }
+
+        this._currentTimelineView = timelineView;
+        this._currentTimelineViewIdentifier = identifier || null;
+
+        WebInspector.timelineSidebarPanel.contentTreeOutline = timelineView && timelineView.navigationSidebarTreeOutline;
+        WebInspector.timelineSidebarPanel.contentTreeOutlineLabel = timelineView && timelineView.navigationSidebarTreeOutlineLabel;
+
+        if (this._currentTimelineView) {
+            this._viewContainer.appendChild(this._currentTimelineView.element);
+            this._currentTimelineView.shown();
+        }
+
+        this.dispatchEventToListeners(WebInspector.ContentView.Event.SelectionPathComponentsDidChange);
+    },
+
+    _recordingReset: function(event)
+    {
+        this._overviewTimelineView.reset();
+
+        for (var identifier in this._discreteTimelineViewMap)
+            this._discreteTimelineViewMap[identifier].reset();
     }
 };
