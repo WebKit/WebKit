@@ -83,6 +83,8 @@ WebInspector.TimelineSidebarPanel = function()
     this._stripeBackgroundElement.className = WebInspector.TimelineSidebarPanel.StripeBackgroundStyleClass;
     this.contentElement.insertBefore(this._stripeBackgroundElement, this.contentElement.firstChild);
 
+    WebInspector.contentBrowser.addEventListener(WebInspector.ContentBrowser.Event.CurrentContentViewDidChange, this._contentBrowserCurrentContentViewDidChange, this);
+
     function delayedWork()
     {
         // Prime the creation of the singleton TimelineContentCiew since it needs to listen for events.
@@ -104,6 +106,7 @@ WebInspector.TimelineSidebarPanel.StopwatchIconStyleClass = "stopwatch-icon";
 WebInspector.TimelineSidebarPanel.NetworkIconStyleClass = "network-icon";
 WebInspector.TimelineSidebarPanel.ColorsIconStyleClass = "colors-icon";
 WebInspector.TimelineSidebarPanel.ScriptIconStyleClass = "script-icon";
+WebInspector.TimelineSidebarPanel.TimelineContentViewShowingStyleClass = "timeline-content-view-showing";
 
 WebInspector.TimelineSidebarPanel.prototype = {
     constructor: WebInspector.TimelineSidebarPanel,
@@ -180,5 +183,13 @@ WebInspector.TimelineSidebarPanel.prototype = {
     {
         console.assert(this._timelineTreeElementMap[treeElement.representedObject] === treeElement);
         this.showTimelineView(treeElement.representedObject);
+    },
+
+    _contentBrowserCurrentContentViewDidChange: function(event)
+    {
+        if (WebInspector.contentBrowser.currentContentView instanceof WebInspector.TimelineContentView)
+            this.element.classList.add(WebInspector.TimelineSidebarPanel.TimelineContentViewShowingStyleClass);
+        else
+            this.element.classList.remove(WebInspector.TimelineSidebarPanel.TimelineContentViewShowingStyleClass);
     }
 };

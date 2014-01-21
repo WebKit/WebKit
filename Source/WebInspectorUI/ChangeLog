@@ -1,3 +1,82 @@
+2013-11-15  Timothy Hatcher  <timothy@apple.com>
+
+        Add a synchronized DataGrid to the OverviewTimelineView.
+
+        The DataGrid is synchronized with the sidebar TreeOutline to appear as one when the view
+        and sidebar are both showing. The two scroll, expand and collapse in sync when the view
+        is showing. When the view is not showing the sidebar can scroll independently.
+
+        https://bugs.webkit.org/show_bug.cgi?id=124429
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/DataGrid.js:
+        (WebInspector.DataGrid):
+        (WebInspector.DataGrid.createSortableDataGrid):
+        (WebInspector.DataGrid.prototype._copyTextForDataGridNode):
+        (WebInspector.DataGridNode.prototype.createCellContent):
+        Handle undefined/null cells better by substituting empty strings.
+
+        (WebInspector.DataGridNode.prototype.collapse):
+        (WebInspector.DataGridNode.prototype.expand):
+        Fire events on the DataGrid for expand and collapse.
+
+        * UserInterface/Main.html: Include TreeOutlineDataGridSynchronizer.js.
+
+        * UserInterface/NavigationSidebarPanel.css:
+        (.sidebar > .panel.navigation > .content): Shorten by 1px to match the content view height.
+        Needed to keep scrolling in sync. The clipping looks better too.
+
+        * UserInterface/OverviewTimelineView.css:
+        (.timeline-view.overview > .data-grid):
+        (.timeline-view.overview > .data-grid table.header):
+        (.timeline-view.overview > .data-grid .data-container):
+        Style the DataGrid to to not have a header.
+
+        * UserInterface/OverviewTimelineView.js:
+        (WebInspector.OverviewTimelineView):
+        (WebInspector.OverviewTimelineView.prototype.shown):
+        (WebInspector.OverviewTimelineView.prototype._addResourceToTreeIfNeeded):
+        (WebInspector.OverviewTimelineView.prototype._sourceCodeTimelineAdded):
+        Create the DataGrid and some placeholder nodes. Hook up TreeOutlineDataGridSynchronizer.
+
+        * UserInterface/TimelineContentView.css:
+        (.content-view.timeline > .view-container > .timeline-view > .data-grid td):
+        (.content-view.timeline > .view-container > .timeline-view > .data-grid table.data):
+        Style the DataGrid to match the height of TreeElements in the sidebar.
+
+        * UserInterface/TimelineSidebarPanel.css:
+        (.sidebar > .panel.timeline.timeline-content-view-showing > .content):
+        Hide the scrollbar off the right when the view is showing. The view will show the scrollbar.
+
+        * UserInterface/TimelineSidebarPanel.js:
+        (WebInspector.TimelineSidebarPanel):
+        (WebInspector.TimelineSidebarPanel.prototype._timelinesTreeElementSelected):
+        (WebInspector.TimelineSidebarPanel.prototype._contentBrowserCurrentContentViewDidChange):
+
+        * UserInterface/TreeOutline.js:
+        (TreeOutline.prototype.removeChildAtIndex):
+        (TreeOutline.prototype.removeChildren):
+        (TreeOutline.prototype.removeChildrenRecursive):
+        (TreeElement.prototype.set hidden):
+        Add event callbacks for onhidden and onremove.
+
+        * UserInterface/TreeOutlineDataGridSynchronizer.js: Added.
+        (WebInspector.TreeOutlineDataGridSynchronizer):
+        (WebInspector.TreeOutlineDataGridSynchronizer.prototype.associate):
+        (WebInspector.TreeOutlineDataGridSynchronizer.prototype.synchronize):
+        (WebInspector.TreeOutlineDataGridSynchronizer.prototype._treeOutlineScrolled):
+        (WebInspector.TreeOutlineDataGridSynchronizer.prototype._dataGridScrolled):
+        (WebInspector.TreeOutlineDataGridSynchronizer.prototype._dataGridNodeSelected):
+        (WebInspector.TreeOutlineDataGridSynchronizer.prototype._dataGridNodeExpanded):
+        (WebInspector.TreeOutlineDataGridSynchronizer.prototype._dataGridNodeCollapsed):
+        (WebInspector.TreeOutlineDataGridSynchronizer.prototype._treeElementSelected):
+        (WebInspector.TreeOutlineDataGridSynchronizer.prototype._treeElementAdded):
+        (WebInspector.TreeOutlineDataGridSynchronizer.prototype._treeElementRemoved):
+        (WebInspector.TreeOutlineDataGridSynchronizer.prototype._treeElementExpanded):
+        (WebInspector.TreeOutlineDataGridSynchronizer.prototype._treeElementCollapsed):
+        (WebInspector.TreeOutlineDataGridSynchronizer.prototype._treeElementHiddenChanged):
+
 2013-11-07  Timothy Hatcher  <timothy@apple.com>
 
         Start fleshing out the Overview Timeline view.

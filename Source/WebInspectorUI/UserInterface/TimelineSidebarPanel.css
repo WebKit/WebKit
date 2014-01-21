@@ -122,6 +122,12 @@
     top: 175px;
 }
 
+.sidebar > .panel.timeline.timeline-content-view-showing > .content {
+ /* This hides the scrollbar. The view shows a scrollbar, we don't need two. */
+    padding-right: 16px;
+    right: -16px;
+}
+
 .sidebar > .panel.timeline > .content > .stripe-background {
     position: absolute;
     top: 0;

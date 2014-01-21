@@ -29,10 +29,16 @@ WebInspector.OverviewTimelineView = function()
 
     this.navigationSidebarTreeOutline.onselect = this._treeElementSelected.bind(this);
 
+    var columns = {"graph": {width: "100%"}};
+    this._dataGrid = new WebInspector.DataGrid(columns);
+
+    this._treeOutlineDataGridSynchronizer = new WebInspector.TreeOutlineDataGridSynchronizer(this._contentTreeOutline, this._dataGrid);
+
     this._timelineDecorations = new WebInspector.TimelineDecorations;
     this.element.appendChild(this._timelineDecorations.element);
 
     this.element.classList.add(WebInspector.OverviewTimelineView.StyleClassName);
+    this.element.appendChild(this._dataGrid.element);
 
     WebInspector.timelineManager.recording.addEventListener(WebInspector.TimelineRecording.Event.SourceCodeTimelineAdded, this._sourceCodeTimelineAdded, this);
 };
@@ -58,6 +64,11 @@ WebInspector.OverviewTimelineView.prototype = {
         console.assert(this._networkTimeline);
 
         this._networkTimeline.addEventListener(WebInspector.Timeline.Event.RecordAdded, this._networkTimelineRecordAdded, this);
+    },
+
+    shown: function()
+    {
+        this._treeOutlineDataGridSynchronizer.synchronize();
     },
 
     // Private
@@ -144,6 +155,10 @@ WebInspector.OverviewTimelineView.prototype = {
         var resourceTreeElement = new WebInspector.ResourceTreeElement(resource);
         resourceTreeElement.expand();
 
+        // FIXME: This is just a placeholder DataGridNode.
+        var resourceDataGridNode = new WebInspector.DataGridNode;
+        this._treeOutlineDataGridSynchronizer.associate(resourceTreeElement, resourceDataGridNode);
+
         var parentTreeElement = this.navigationSidebarTreeOutline;
         if (parentFrame) {
             // Find the parent main resource, adding it if needed, to append this resource as a child.
@@ -184,6 +199,10 @@ WebInspector.OverviewTimelineView.prototype = {
             return;
 
         var sourceCodeTimelineTreeElement = new WebInspector.SourceCodeTimelineTreeElement(sourceCodeTimeline);
+
+        // FIXME: This is just a placeholder DataGridNode.
+        var sourceCodeTimelineDataGridNode = new WebInspector.DataGridNode;
+        this._treeOutlineDataGridSynchronizer.associate(sourceCodeTimelineTreeElement, sourceCodeTimelineDataGridNode);
 
         this._insertTreeElement(sourceCodeTimelineTreeElement, parentTreeElement);
     },

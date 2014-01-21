@@ -39,3 +39,20 @@
 .timeline-view.overview > .timeline-decorations > .event-markers {
     top: 23px;
 }
+
+.timeline-view.overview > .data-grid {
+    position: absolute;
+    top: 23px;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    border: none;
+}
+
+.timeline-view.overview > .data-grid table.header {
+    display: none;
+}
+
+.timeline-view.overview > .data-grid .data-container {
+    top: 0;
+}
