@@ -1,3 +1,25 @@
+2014-01-20  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        [EFL][WK2] Move isEwkViewEvasObject back to ewk_view.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=127261
+
+        Reviewed by Gyuyoung Kim.
+
+        isEwkViewEvasObject is general check routine of EFL and mainly used in
+        ewk_view.cpp but it was in EwkView.cpp since separated EwkView.cpp from ewk_view.cpp
+
+        This patch moves it to EwkView.h as inline function with small refactoring.
+        In addition, this patch added EINA_UNLIKELY keyword in cold paths.
+
+        * UIProcess/API/efl/EwkView.cpp:
+        (defaultSmartClassInstance):
+        (toSmartData):
+        (toEwkView): Moved it from bottom not to expose it to header file.
+        * UIProcess/API/efl/EwkView.h:
+        * UIProcess/API/efl/ewk_view.cpp:
+        (isEwkViewEvasObject):
+        (toEwkViewChecked):
+
 2014-01-20  Eunmi Lee  <eunmi15.lee@samsung.com>
 
         [EFL][WK2] Amount of scrolling is different from movement of touch when device pixel ratio is not 1.

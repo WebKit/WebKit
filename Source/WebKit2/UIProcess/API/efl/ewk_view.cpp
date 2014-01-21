@@ -63,7 +63,7 @@ using namespace WebKit;
 static inline EwkView* toEwkViewChecked(const Evas_Object* evasObject)
 {
     EINA_SAFETY_ON_NULL_RETURN_VAL(evasObject, nullptr);
-    if (!isEwkViewEvasObject(evasObject))
+    if (EINA_UNLIKELY(!isEwkViewEvasObject(evasObject)))
         return 0;
 
     Ewk_View_Smart_Data* smartData = static_cast<Ewk_View_Smart_Data*>(evas_object_smart_data_get(evasObject));
@@ -75,7 +75,7 @@ static inline EwkView* toEwkViewChecked(const Evas_Object* evasObject)
 #define EWK_VIEW_IMPL_GET_OR_RETURN(ewkView, impl, ...)                        \
     EwkView* impl = toEwkViewChecked(ewkView);                                 \
     do {                                                                       \
-        if (!impl) {                                                           \
+        if (EINA_UNLIKELY(!impl)) {                                            \
             EINA_LOG_CRIT("no private data for object %p", ewkView);           \
             return __VA_ARGS__;                                                \
         }                                                                      \

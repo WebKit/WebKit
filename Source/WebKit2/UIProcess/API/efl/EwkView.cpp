@@ -62,7 +62,6 @@
 #include "ewk_private.h"
 #include "ewk_security_origin_private.h"
 #include "ewk_settings_private.h"
-#include "ewk_view.h"
 #include "ewk_window_features_private.h"
 #include <Ecore_Evas.h>
 #include <Ecore_X.h>
@@ -91,10 +90,11 @@ using namespace EwkViewCallbacks;
 using namespace WebCore;
 using namespace WebKit;
 
-static const char smartClassName[] = "EWK2_View";
 static const int defaultCursorSize = 16;
 
 // Auxiliary functions.
+
+const char EwkView::smartClassName[] = "EWK2_View";
 
 static inline void smartDataChanged(Ewk_View_Smart_Data* smartData)
 {
@@ -109,7 +109,7 @@ static inline void smartDataChanged(Ewk_View_Smart_Data* smartData)
 
 static Evas_Smart* defaultSmartClassInstance()
 {
-    static Ewk_View_Smart_Class api = EWK_VIEW_SMART_CLASS_INIT_NAME_VERSION(smartClassName);
+    static Ewk_View_Smart_Class api = EWK_VIEW_SMART_CLASS_INIT_NAME_VERSION(EwkView::smartClassName);
     static Evas_Smart* smart = 0;
 
     if (!smart) {
@@ -134,6 +134,14 @@ static inline EwkView* toEwkView(const Ewk_View_Smart_Data* smartData)
     ASSERT(smartData->priv);
 
     return smartData->priv;
+}
+
+static inline EwkView* toEwkView(const Evas_Object* evasObject)
+{
+    ASSERT(evasObject);
+    ASSERT(isEwkViewEvasObject(evasObject));
+
+    return toEwkView(static_cast<Ewk_View_Smart_Data*>(evas_object_smart_data_get(evasObject)));
 }
 
 static inline void showEvasObjectsIfNeeded(const Ewk_View_Smart_Data* smartData)
@@ -1432,38 +1440,3 @@ bool EwkView::scrollBy(const IntSize& offset)
 
 Evas_Smart_Class EwkView::parentSmartClass = EVAS_SMART_CLASS_INIT_NULL;
 
-// Free Ewk View functions.
-
-EwkView* toEwkView(const Evas_Object* evasObject)
-{
-    ASSERT(evasObject);
-    ASSERT(isEwkViewEvasObject(evasObject));
-
-    return toEwkView(static_cast<Ewk_View_Smart_Data*>(evas_object_smart_data_get(evasObject)));
-}
-
-bool isEwkViewEvasObject(const Evas_Object* evasObject)
-{
-    ASSERT(evasObject);
-
-    const char* evasObjectType = evas_object_type_get(evasObject);
-    const Evas_Smart* evasSmart = evas_object_smart_smart_get(evasObject);
-    if (!evasSmart) {
-        EINA_LOG_CRIT("%p (%s) is not a smart object!", evasObject, evasObjectType ? evasObjectType : "(null)");
-        return false;
-    }
-
-    const Evas_Smart_Class* smartClass = evas_smart_class_get(evasSmart);
-    if (!smartClass) {
-        EINA_LOG_CRIT("%p (%s) is not a smart class object!", evasObject, evasObjectType ? evasObjectType : "(null)");
-        return false;
-    }
-
-    if (smartClass->data != smartClassName) {
-        EINA_LOG_CRIT("%p (%s) is not of an ewk_view (need %p, got %p)!", evasObject, evasObjectType ? evasObjectType : "(null)",
-            smartClassName, smartClass->data);
-        return false;
-    }
-
-    return true;
-}
