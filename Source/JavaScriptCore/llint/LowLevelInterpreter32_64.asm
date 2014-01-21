@@ -494,14 +494,14 @@ end
 macro writeBarrierOnOperand(cellOperand)
     if GGC
         loadisFromInstruction(cellOperand, t1)
-        loadConstantOrVariablePayload(t1, CellTag, t0, .writeBarrierDone)
-        checkMarkByte(t0, t1, t2, 
+        loadConstantOrVariablePayload(t1, CellTag, t2, .writeBarrierDone)
+        checkMarkByte(t2, t1, t3, 
             macro(marked)
                 btbz marked, .writeBarrierDone
                 push cfr, PC
                 # We make two extra slots because cCall2 will poke.
                 subp 8, sp
-                cCall2(_llint_write_barrier_slow, cfr, t0)
+                cCall2(_llint_write_barrier_slow, cfr, t2)
                 addp 8, sp
                 pop PC, cfr
             end
@@ -526,15 +526,15 @@ macro writeBarrierOnGlobalObject(valueOperand)
         loadisFromInstruction(valueOperand, t1)
         bineq t0, CellTag, .writeBarrierDone
     
-        loadp CodeBlock[cfr], t0
-        loadp CodeBlock::m_globalObject[t0], t0
-        checkMarkByte(t0, t1, t2,
+        loadp CodeBlock[cfr], t3
+        loadp CodeBlock::m_globalObject[t3], t3
+        checkMarkByte(t3, t1, t2,
             macro(marked)
                 btbz marked, .writeBarrierDone
                 push cfr, PC
                 # We make two extra slots because cCall2 will poke.
                 subp 8, sp
-                cCall2(_llint_write_barrier_slow, cfr, t0)
+                cCall2(_llint_write_barrier_slow, cfr, t3)
                 addp 8, sp
                 pop PC, cfr
             end

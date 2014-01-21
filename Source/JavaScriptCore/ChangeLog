@@ -1,3 +1,16 @@
+2014-01-21  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Registers used in writeBarrierOnOperand can cause clobbering on some platforms
+        https://bugs.webkit.org/show_bug.cgi?id=127357
+
+        Reviewed by Filip Pizlo.
+
+        Some platforms use t0 and t1 for their first two arguments, so using those to load the 
+        cell for the write barrier is a bad idea because it will get clobbered.
+
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+
 2014-01-21  Mark Rowe  <mrowe@apple.com>
 
         Mac production build fix.
