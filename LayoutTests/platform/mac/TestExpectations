@@ -617,6 +617,8 @@ compositing/overflow/scrolling-without-painting.html
 
 # Blend mode result is slightly different than the applied formula.
 css3/compositing/background-blend-mode-data-uri-svg-image.html [ ImageOnlyFailure Pass ]
+css3/compositing/background-blend-mode-tiled-layers.html [ ImageOnlyFailure Pass ]
+css3/compositing/background-blend-mode-crossfade-image.html [ ImageOnlyFailure Pass ]
 
 # https://bugs.webkit.org/show_bug.cgi?id=110871
 compositing/overlap-blending/reflection-opacity-huge.html
@@ -660,9 +662,6 @@ fast/canvas/canvas-quadratic-same-endpoint.html
 # --- Compositing ----
 css3/filters/composited-during-transition-layertree.html
 webkit.org/b/95622 css3/filters/composited-during-animation-layertree.html [ Pass Failure ]
-
-# Blending result is slightly different than the formula.
-webkit.org/b/126887 css3/compositing/background-blend-mode-crossfade-image.html [ ImageOnlyFailure Pass ]
 
 # --- Custom Filters ---
 # The following 5 tests are currently skipped on Mac for slight color differences,

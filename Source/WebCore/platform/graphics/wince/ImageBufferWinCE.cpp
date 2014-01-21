@@ -56,7 +56,7 @@ void BufferedImage::draw(GraphicsContext* ctxt, const FloatRect& dstRect, const 
 }
 
 void BufferedImage::drawPattern(GraphicsContext* ctxt, const FloatRect& tileRectIn, const AffineTransform& patternTransform,
-                             const FloatPoint& phase, ColorSpace styleColorSpace, CompositeOperator op, const FloatRect& destRect)
+    const FloatPoint& phase, ColorSpace styleColorSpace, CompositeOperator op, const FloatRect& destRect, BlendMode)
 {
     m_data->m_bitmap->drawPattern(ctxt, tileRectIn, patternTransform, phase, styleColorSpace, op, destRect, size());
 }

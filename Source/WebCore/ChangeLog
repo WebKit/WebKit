@@ -1,3 +1,27 @@
+2014-01-21  Mihai Tica  <mitica@adobe.com>
+
+        If you set a tiled cross-faded-image or a tiled gradient as
+        a background layer, -webkit-background-blend-mode doesn't work.
+        The problem consists in the blendMode parameter not being set
+        for these specific drawing paths.
+
+        https://bugs.webkit.org/show_bug.cgi?id=126888
+        Reviewed by Dirk Schulze.
+
+        Test: css3/compositing/background-blend-mode-tiled-layers.html
+
+        * platform/graphics/CrossfadeGeneratedImage.cpp:
+        (WebCore::CrossfadeGeneratedImage::drawPattern): Add the blendMode parameter and pass it to ImageBuffer::drawPattern.
+        * platform/graphics/GradientImage.cpp:
+        (WebCore::GradientImage::drawPattern): Add the blendMode parameter and pass it to ImageBuffer::drawPattern.
+        * platform/graphics/ImageBuffer.h: Add a BlendMode parameter to the drawPattern method.
+        * platform/graphics/cairo/ImageBufferCairo.cpp:
+        (WebCore::ImageBuffer::drawPattern): Add the default BlendMode parameter to the method declaration.
+        * platform/graphics/cg/ImageBufferCG.cpp:
+        (WebCore::ImageBuffer::drawPattern): Add and use the blendMode parameter for all the code paths.
+        * platform/graphics/wince/ImageBufferWinCE.cpp:
+        (WebCore::BufferedImage::drawPattern): Add the default BlendMode parameter to the method declaration.
+
 2014-01-21  Gurpreet Kaur  <k.gurpreet@samsung.com>
 
         The WebCore.vcxproj.filters doesnot apply

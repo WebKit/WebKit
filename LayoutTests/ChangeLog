@@ -1,3 +1,16 @@
+2014-01-21  Mihai Tica  <mitica@adobe.com>
+
+        If you set a tiled cross-faded-image or a tiled gradient as
+        a background layer, -webkit-background-blend-mode doesn't work.
+        https://bugs.webkit.org/show_bug.cgi?id=126888
+
+        Reviewed by Dirk Schulze.
+
+        * css3/compositing/background-blend-mode-tiled-layers-expected.html: Added.
+        * css3/compositing/background-blend-mode-tiled-layers.html: Added.
+        * platform/efl/TestExpectations: Skip test for efl, blendModes are not implemented.
+        * platform/mac/TestExpectations: Mark added test as ImageOnlyFailure due to slight differences between the actual result and the blending formula.
+
 2014-01-21  Peter Molnar  <pmolnar.u-szeged@partner.samsung.com>
 
         Fix SVG animations which set rx or ry attributes

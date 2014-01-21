@@ -1,0 +1,56 @@
+<!DOCTYPE HTML>
+
+<!-- Test background blend mode with several tiled layers. Test passes if you can see 6 lime squares. -->
+
+<style>
+    div {
+        margin: 5px;
+        width: 100px;
+        height: 100px;
+        -webkit-background-blend-mode: difference, normal;
+        float: left;
+    }
+
+    .tiledSVG {
+        background: url('data:image/svg+xml;utf8, \
+            <svg xmlns="http://www.w3.org/2000/svg" width="100" height="100"> \
+                <rect width="100" height="100" fill="#F00"/> \
+            </svg>'
+            ) 0 0 /50% 50%, #FF0;
+    }
+
+    .tiledGradient {
+        background: linear-gradient(to right, #F00 0%, #F00 100%) 0 0 /50% 50%, #FF0;
+    }
+
+    .tiledCrossfadeImage {
+        background: -webkit-cross-fade(url('data:image/svg+xml;utf8, \
+            <svg xmlns="http://www.w3.org/2000/svg" width="100px" height="100px"> \
+                <rect width="100" height="100" fill="#F00"/> \
+            </svg>'
+            ), url('data:image/svg+xml;utf8, \
+            <svg xmlns="http://www.w3.org/2000/svg" width="100px" height="100px"> \
+                <rect width="100" height="100" fill="#F00"/> \
+            </svg>'
+            ), 100%) 0 0 /50% 50%, #FF0;
+    }
+
+    .accelerated {
+        -webkit-transform: translateZ(0);
+    }
+
+</style>
+
+<script type="text/javascript">
+    if (window.testRunner)
+        window.testRunner.overridePreference("WebKitAcceleratedCompositingEnabled", "1");
+</script>
+
+<div class="tiledSVG"></div>
+<div class="tiledSVG accelerated"></div>
+
+<div class="tiledGradient"></div>
+<div class="tiledGradient accelerated"></div>
+
+<div class="tiledCrossfadeImage"></div>
+<div class="tiledCrossfadeImage accelerated"></div>
