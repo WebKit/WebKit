@@ -745,7 +745,7 @@
    low-level interpreter. */
 #if !defined(ENABLE_LLINT) \
     && ENABLE(JIT) \
-    && (OS(DARWIN) || OS(LINUX)) \
+    && (OS(DARWIN) || OS(LINUX) || OS(FREEBSD)) \
     && (PLATFORM(MAC) || PLATFORM(IOS) || PLATFORM(GTK) || PLATFORM(QT)) \
     && (CPU(X86) || CPU(X86_64) || CPU(ARM_THUMB2) || CPU(ARM_TRADITIONAL) || CPU(MIPS) || CPU(SH4))
 #define ENABLE_LLINT 1
