@@ -1,5 +1,11 @@
 2014-01-21  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        Unreviewed. Update NEWS and Versions.m4 for 2.2.4 release.
+
+        * NEWS: Add release notes.
+
+2014-01-21  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         Unreviewed. Fix make distcheck.
 
         * GNUmakefile.am: Remove non existent files from EXTRA_DIST.

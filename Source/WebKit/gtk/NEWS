@@ -1,4 +1,24 @@
 =================
+WebKitGTK+  2.2.4
+=================
+
+What's new in WebKitGTK+ 2.2.4?
+
+  - Disable MemoryCache when the DOCUMENT_VIEWER cache model is set.
+  - Remove the partial file downloaded when the download operation
+    fails or is cancelled.
+  - Enable Web Audio by default in configure.
+  - Add missing mappings from ARIA roles to ATK roles.
+  - Fix several crashes when printing via JavaScript.
+  - Fix an X11 error when the backing store surface is destroyed.
+  - Fix the user agent string to correctly pretend to be Mac OS X to
+    fix several web sites that depen on the user agent like yahoo.
+  - Fix the build with wayland support disabled.
+  - Fix the build in FreeBSD.
+  - Fix the build in Mac/Darwin.
+  - Fix the build with GCC in i386.
+
+=================
 WebKitGTK+  2.2.3
 =================
 
