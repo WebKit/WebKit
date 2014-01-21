@@ -406,7 +406,6 @@ private:
 
     ChromeClient* chromeClient() const;
 
-    void startInitialLayerFlushTimerIfNeeded();
 #endif
 
     void addViewportConstrainedLayer(RenderLayer&);
@@ -430,6 +429,7 @@ private:
 
     void scheduleLayerFlushNow();
     bool isThrottlingLayerFlushes() const;
+    void startInitialLayerFlushTimerIfNeeded();
     void startLayerFlushTimerIfNeeded();
     void layerFlushTimerFired(Timer<RenderLayerCompositor>&);
 

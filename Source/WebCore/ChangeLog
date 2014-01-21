@@ -1,3 +1,23 @@
+2014-01-21  Antti Koivisto  <antti@apple.com>
+
+        Delay initial layer flush during loading on all platforms
+        https://bugs.webkit.org/show_bug.cgi?id=127347
+
+        Reviewed by Andreas Kling.
+
+        To reduce unnecessary repaints enable the same behaviour as iOS already has.
+
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::RenderLayerCompositor):
+        
+            Set the initial state of m_layerFlushThrottlingEnabled correctly.
+
+        (WebCore::RenderLayerCompositor::scheduleLayerFlush):
+        (WebCore::RenderLayerCompositor::startInitialLayerFlushTimerIfNeeded):
+        * rendering/RenderLayerCompositor.h:
+        
+            Enable initial layer flush delay on all platforms.
+
 2014-01-21  Mihai Tica  <mitica@adobe.com>
 
         If you set a tiled cross-faded-image or a tiled gradient as

@@ -45,6 +45,7 @@
 #include "Logging.h"
 #include "NodeList.h"
 #include "Page.h"
+#include "ProgressTracker.h"
 #include "RenderEmbeddedObject.h"
 #include "RenderFlowThread.h"
 #include "RenderFullScreen.h"
@@ -98,6 +99,7 @@ static const int canvasAreaThresholdRequiringCompositing = 50 * 100;
 static const double throttledLayerFlushInitialDelay = .5;
 static const double throttledLayerFlushDelay = 1.5;
 #else
+static const double throttledLayerFlushInitialDelay = .5;
 static const double throttledLayerFlushDelay = .5;
 #endif
 
@@ -248,7 +250,7 @@ RenderLayerCompositor::RenderLayerCompositor(RenderView& renderView)
     , m_layersWithTiledBackingCount(0)
     , m_rootLayerAttachment(RootLayerUnattached)
     , m_layerFlushTimer(this, &RenderLayerCompositor::layerFlushTimerFired)
-    , m_layerFlushThrottlingEnabled(false)
+    , m_layerFlushThrottlingEnabled(page() && page()->progress().isMainLoadProgressing())
     , m_layerFlushThrottlingTemporarilyDisabledForInteraction(false)
     , m_hasPendingLayerFlush(false)
     , m_paintRelatedMilestonesTimer(this, &RenderLayerCompositor::paintRelatedMilestonesTimerFired)
@@ -374,10 +376,8 @@ void RenderLayerCompositor::scheduleLayerFlush(bool canThrottle)
 {
     ASSERT(!m_flushingLayers);
 
-#if PLATFORM(IOS)
     if (canThrottle)
         startInitialLayerFlushTimerIfNeeded();
-#endif
 
     if (canThrottle && isThrottlingLayerFlushes()) {
         m_hasPendingLayerFlush = true;
@@ -3677,7 +3677,6 @@ void RenderLayerCompositor::startLayerFlushTimerIfNeeded()
     m_layerFlushTimer.startOneShot(throttledLayerFlushDelay);
 }
 
-#if PLATFORM(IOS)
 void RenderLayerCompositor::startInitialLayerFlushTimerIfNeeded()
 {
     if (!m_layerFlushThrottlingEnabled)
@@ -3686,7 +3685,6 @@ void RenderLayerCompositor::startInitialLayerFlushTimerIfNeeded()
         return;
     m_layerFlushTimer.startOneShot(throttledLayerFlushInitialDelay);
 }
-#endif
 
 void RenderLayerCompositor::layerFlushTimerFired(Timer<RenderLayerCompositor>&)
 {
