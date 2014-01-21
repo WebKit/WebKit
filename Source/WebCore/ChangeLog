@@ -1,3 +1,15 @@
+2014-01-21  Daniel Bates  <dabates@apple.com>
+
+        Fix the iOS Simulator release build
+
+        Substitute ASSERT_UNUSED() for ASSERT() to resolve a compiler warning
+        that the argument platformLayer is unused. The argument platformLayer
+        is only used in the asserted condition, which isn't compiled in a
+        release build; => the argument is unused in a release build.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::parseAttribute):
+
 2014-01-21  Zoltan Horvath  <zoltan@webkit.org>
 
         Since MidpointState is a class, it should behave like a class

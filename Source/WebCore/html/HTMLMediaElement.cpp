@@ -4926,7 +4926,7 @@ PlatformLayer* HTMLMediaElement::borrowPlatformLayer()
 
 void HTMLMediaElement::returnPlatformLayer(PlatformLayer* platformLayer)
 {
-    ASSERT(m_platformLayerBorrowed && platformLayer == (m_player ? m_player->platformLayer() : nullptr));
+    ASSERT_UNUSED(platformLayer, m_platformLayerBorrowed && platformLayer == (m_player ? m_player->platformLayer() : nullptr));
     m_platformLayerBorrowed = false;
     if (renderer())
         renderer()->updateFromElement();
