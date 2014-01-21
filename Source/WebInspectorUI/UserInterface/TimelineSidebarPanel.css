@@ -23,11 +23,70 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-.sidebar > .panel.timeline > .navigation-bar {
+.sidebar > .panel.timeline > .status-bar {
     position: absolute;
     top: 0;
     left: 0;
     right: 0;
+    height: 22px;
+    border-bottom: 1px solid rgb(179, 179, 179);
+}
+
+.sidebar > .panel.timeline > .status-bar > .record-glyph {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 21px;
+    height: 21px;
+    padding: 0;
+    border: none;
+    outline: none;
+    color: transparent;
+    overflow: hidden;
+
+    -webkit-appearance: none;
+
+    background-color: transparent;
+    background-image: -webkit-image-set(url(Images/RecordingStopped.png) 1x, url(Images/RecordingStopped@2x.png) 2x);
+    background-repeat: no-repeat;
+    background-size: 21px 21px;
+}
+
+.sidebar > .panel.timeline > .status-bar > .record-glyph.recording {
+    background-image: -webkit-image-set(url(Images/Recording.png) 1x, url(Images/Recording@2x.png) 2x);
+}
+
+.sidebar > .panel.timeline > .status-bar > .record-glyph:hover {
+    background-image: -webkit-image-set(url(Images/RecordingHovered.png) 1x, url(Images/RecordingHovered@2x.png) 2x);
+}
+
+.sidebar > .panel.timeline > .status-bar > .record-glyph.recording:hover {
+    background-image: -webkit-image-set(url(Images/RecordingStopped.png) 1x, url(Images/RecordingStopped@2x.png) 2x);
+}
+
+.sidebar > .panel.timeline > .status-bar > .record-glyph.forced {
+    background-image: -webkit-image-set(url(Images/RecordingStopped.png) 1x, url(Images/RecordingStopped@2x.png) 2x) !important;
+}
+
+.sidebar > .panel.timeline > .status-bar > .record-glyph.recording.forced {
+    background-image: -webkit-image-set(url(Images/Recording.png) 1x, url(Images/Recording@2x.png) 2x) !important;
+}
+
+.sidebar > .panel.timeline > .status-bar > .record-status {
+    position: absolute;
+    top: 0;
+    right: 21px;
+    left: 21px;
+
+    text-align: center;
+
+    line-height: 20px;
+    font-size: 11px;
+    font-family: "Lucida Grande", sans-serif;
+    font-weight: bold;
+
+    color: rgb(76, 76, 76);
+    text-shadow: rgba(255, 255, 255, 0.5) 0 1px 0;
 }
 
 .sidebar > .panel.timeline > .title-bar {

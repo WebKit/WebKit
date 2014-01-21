@@ -44,6 +44,9 @@ WebInspector.TimelineContentView = function(recording)
     this._viewContainer.classList.add(WebInspector.TimelineContentView.ViewContainerStyleClassName);
     this.element.appendChild(this._viewContainer);
 
+    this._clearTimelineNavigationItem = new WebInspector.ButtonNavigationItem("clear-timeline", WebInspector.UIString("Clear Timeline"), "Images/NavigationItemTrash.svg", 16, 16);
+    this._clearTimelineNavigationItem.addEventListener(WebInspector.ButtonNavigationItem.Event.Clicked, this._clearTimeline, this);
+
     this._overviewTimelineView = new WebInspector.OverviewTimelineView(recording);
 
     this._discreteTimelineViewMap = new Map;
@@ -77,7 +80,9 @@ WebInspector.TimelineContentView = function(recording)
     this._currentTimelineViewIdentifier = null;
 
     this._updating = false;
+    this._currentTime = NaN;
     this._lastUpdateTimestamp = NaN;
+    this._startTimeNeedsReset = true;
 
     recording.addEventListener(WebInspector.TimelineRecording.Event.Reset, this._recordingReset, this);
 
@@ -126,6 +131,11 @@ WebInspector.TimelineContentView.prototype = {
         if (!this._currentTimelineViewIdentifier)
             return [];
         return [this._pathComponentMap.get(this._currentTimelineViewIdentifier)];
+    },
+
+    get navigationItems()
+    {
+        return [this._clearTimelineNavigationItem];
     },
 
     shown: function()
@@ -241,6 +251,11 @@ WebInspector.TimelineContentView.prototype = {
 
     _update: function(timestamp)
     {
+        if (this._waitingToResetCurrentTime) {
+            requestAnimationFrame(this._updateCallback);
+            return;
+        }
+
         var startTime = this._recording.startTime;
         var currentTime = this._currentTime || startTime;
         var endTime = this._recording.endTime;
@@ -248,6 +263,21 @@ WebInspector.TimelineContentView.prototype = {
 
         currentTime += timespanSinceLastUpdate;
 
+        this._updateTimes(startTime, currentTime, endTime);
+
+        // Only stop updating if the current time is greater than the end time.
+        if (!this._updating && currentTime >= endTime) {
+            this._lastUpdateTimestamp = NaN;
+            return;
+        }
+
+        this._lastUpdateTimestamp = timestamp;
+
+        requestAnimationFrame(this._updateCallback);
+    },
+
+    _updateTimes: function(startTime, currentTime, endTime)
+    {
         if (this._startTimeNeedsReset && !isNaN(startTime)) {
             var selectionOffset = this._timelineOverview.selectionStartTime - this._timelineOverview.startTime;
 
@@ -270,16 +300,6 @@ WebInspector.TimelineContentView.prototype = {
         // Force a layout now since we are already in an animation frame and don't need to delay it until the next.
         this._timelineOverview.updateLayoutIfNeeded();
         this._currentTimelineView.updateLayoutIfNeeded();
-
-        // Only stop updating if the current time is greater than the end time.
-        if (!this._updating && currentTime >= endTime) {
-            this._lastUpdateTimestamp = NaN;
-            return;
-        }
-
-        this._lastUpdateTimestamp = timestamp;
-
-        requestAnimationFrame(this._updateCallback);
     },
 
     _startUpdatingCurrentTime: function()
@@ -287,6 +307,13 @@ WebInspector.TimelineContentView.prototype = {
         console.assert(!this._updating);
         if (this._updating)
             return;
+
+        if (!isNaN(this._currentTime)) {
+            // We have a current time already, so we likely need to jump into the future to a better current time.
+            // This happens when you stop and later restart recording.
+            this._waitingToResetCurrentTime = true;
+            this._recording.addEventListener(WebInspector.TimelineRecording.Event.TimesUpdated, this._recordingTimesUpdated, this);
+        }
 
         this._updating = true;
 
@@ -312,10 +339,47 @@ WebInspector.TimelineContentView.prototype = {
         this._stopUpdatingCurrentTime();
     },
 
+    _recordingTimesUpdated: function(event)
+    {
+        if (!this._waitingToResetCurrentTime)
+            return;
+
+        // Make the current time be the start time of the last added record. This is the best way
+        // currently to jump to the right period of time after recording starts.
+        // FIXME: If no activity is happening we can sit for a while until a record is added.
+        // We might want to have the backend send a "start" record to get current time moving.
+
+        for (var timeline of this._recording.timelines.values()) {
+            var lastRecord = timeline.records.lastValue;
+            if (!lastRecord)
+                continue;
+            this._currentTime = Math.max(this._currentTime, lastRecord.startTime);
+        }
+
+        this._recording.removeEventListener(WebInspector.TimelineRecording.Event.TimesUpdated, this._recordingTimesUpdated, this);
+        delete this._waitingToResetCurrentTime;
+    },
+
+    _clearTimeline: function(event)
+    {
+        this._recording.reset();
+    },
+
     _recordingReset: function(event)
     {
-        this._startTimeNeedsReset = true;
         this._currentTime = NaN;
+
+        if (!this._updating) {
+            // Force the time ruler and views to reset to 0.
+            this._startTimeNeedsReset = true;
+            this._updateTimes(0, 0, 0);
+        }
+
+        this._lastUpdateTimestamp = NaN;
+        this._startTimeNeedsReset = true;
+
+        this._recording.removeEventListener(WebInspector.TimelineRecording.Event.TimesUpdated, this._recordingTimesUpdated, this);
+        delete this._waitingToResetCurrentTime;
 
         this._overviewTimelineView.reset();
         for (var timelineView of this._discreteTimelineViewMap.values())

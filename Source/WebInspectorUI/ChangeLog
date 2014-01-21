@@ -1,5 +1,45 @@
 2014-01-20  Timothy Hatcher  <timothy@apple.com>
 
+        Add the recording button back to the Timelines sidebar.
+
+        https://bugs.webkit.org/show_bug.cgi?id=127314
+
+        Reviewed by Joseph Pecoraro.
+
+        * Localizations/en.lproj/localizedStrings.js: Updated.
+
+        * UserInterface/TimelineContentView.js:
+        (WebInspector.TimelineContentView.prototype.get navigationItems):
+        (WebInspector.TimelineContentView.prototype._update):
+        (WebInspector.TimelineContentView.prototype._updateTimes):
+        (WebInspector.TimelineContentView.prototype._startUpdatingCurrentTime):
+        (WebInspector.TimelineContentView.prototype._recordingTimesUpdated):
+        (WebInspector.TimelineContentView.prototype._clearTimeline):
+        (WebInspector.TimelineContentView.prototype._recordingReset):
+        Add a clear button and reset the time ruler and views when the recording resets.
+
+        * UserInterface/TimelineSidebarPanel.css:
+        (.sidebar > .panel.timeline > .status-bar):
+        (.sidebar > .panel.timeline > .status-bar > .record-glyph):
+        (.sidebar > .panel.timeline > .status-bar > .record-glyph.recording):
+        (.sidebar > .panel.timeline > .status-bar > .record-glyph:hover):
+        (.sidebar > .panel.timeline > .status-bar > .record-glyph.recording:hover):
+        (.sidebar > .panel.timeline > .status-bar > .record-glyph.forced):
+        (.sidebar > .panel.timeline > .status-bar > .record-glyph.recording.forced):
+        (.sidebar > .panel.timeline > .status-bar > .record-status):
+        Add styles for the recording button and status message.
+
+        * UserInterface/TimelineSidebarPanel.js:
+        (WebInspector.TimelineSidebarPanel.prototype._contentBrowserCurrentContentViewDidChange):
+        (WebInspector.TimelineSidebarPanel.prototype._recordingStarted):
+        (WebInspector.TimelineSidebarPanel.prototype._recordingStopped):
+        (WebInspector.TimelineSidebarPanel.prototype._recordGlyphMousedOver):
+        (WebInspector.TimelineSidebarPanel.prototype._recordGlyphMousedOut):
+        (WebInspector.TimelineSidebarPanel.prototype._recordGlyphClicked):
+        Add support for the recording button and status message.
+
+2014-01-20  Timothy Hatcher  <timothy@apple.com>
+
         Make the TimelineRecordTreeElement location subtitle live.
 
         https://bugs.webkit.org/show_bug.cgi?id=127270

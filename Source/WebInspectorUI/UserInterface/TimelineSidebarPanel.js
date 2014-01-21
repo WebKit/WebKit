@@ -49,8 +49,20 @@ WebInspector.TimelineSidebarPanel = function()
     timelinesTitleBarElement.classList.add(WebInspector.TimelineSidebarPanel.TimelinesTitleBarStyleClass);
     this.element.insertBefore(timelinesTitleBarElement, this.element.firstChild);
 
-    this._navigationBar = new WebInspector.NavigationBar;
-    this.element.insertBefore(this._navigationBar.element, this.element.firstChild);
+    var statusBarElement = document.createElement("div");
+    statusBarElement.classList.add(WebInspector.TimelineSidebarPanel.StatusBarStyleClass);
+    this.element.insertBefore(statusBarElement, this.element.firstChild);
+
+    this._recordGlyphElement = document.createElement("div");
+    this._recordGlyphElement.className = WebInspector.TimelineSidebarPanel.RecordGlyphStyleClass;
+    this._recordGlyphElement.addEventListener("mouseover", this._recordGlyphMousedOver.bind(this));
+    this._recordGlyphElement.addEventListener("mouseout", this._recordGlyphMousedOut.bind(this));
+    this._recordGlyphElement.addEventListener("click", this._recordGlyphClicked.bind(this));
+    statusBarElement.appendChild(this._recordGlyphElement);
+
+    this._recordStatusElement = document.createElement("div");
+    this._recordStatusElement.className = WebInspector.TimelineSidebarPanel.RecordStatusStyleClass;
+    statusBarElement.appendChild(this._recordStatusElement);
 
     function createTimelineTreeElement(label, iconClass, identifier)
     {
@@ -78,6 +90,8 @@ WebInspector.TimelineSidebarPanel = function()
     this.contentElement.insertBefore(this._stripeBackgroundElement, this.contentElement.firstChild);
 
     WebInspector.contentBrowser.addEventListener(WebInspector.ContentBrowser.Event.CurrentContentViewDidChange, this._contentBrowserCurrentContentViewDidChange, this);
+    WebInspector.timelineManager.addEventListener(WebInspector.TimelineManager.Event.RecordingStarted, this._recordingStarted, this);
+    WebInspector.timelineManager.addEventListener(WebInspector.TimelineManager.Event.RecordingStopped, this._recordingStopped, this);
 
     function delayedWork()
     {
@@ -89,6 +103,11 @@ WebInspector.TimelineSidebarPanel = function()
     setTimeout(delayedWork.bind(this), 0);
 };
 
+WebInspector.TimelineSidebarPanel.StatusBarStyleClass = "status-bar";
+WebInspector.TimelineSidebarPanel.RecordGlyphStyleClass = "record-glyph";
+WebInspector.TimelineSidebarPanel.RecordGlyphRecordingStyleClass = "recording";
+WebInspector.TimelineSidebarPanel.RecordGlyphRecordingForcedStyleClass = "forced";
+WebInspector.TimelineSidebarPanel.RecordStatusStyleClass = "record-status";
 WebInspector.TimelineSidebarPanel.TitleBarStyleClass = "title-bar";
 WebInspector.TimelineSidebarPanel.TimelinesTitleBarStyleClass = "timelines";
 WebInspector.TimelineSidebarPanel.TimelineEventsTitleBarStyleClass = "timeline-events";
@@ -288,5 +307,48 @@ WebInspector.TimelineSidebarPanel.prototype = {
             this.element.classList.add(WebInspector.TimelineSidebarPanel.TimelineContentViewShowingStyleClass);
         else
             this.element.classList.remove(WebInspector.TimelineSidebarPanel.TimelineContentViewShowingStyleClass);
+    },
+
+    _recordingStarted: function(event)
+    {
+        this._recordStatusElement.textContent = WebInspector.UIString("Recording");
+        this._recordGlyphElement.classList.add(WebInspector.TimelineSidebarPanel.RecordGlyphRecordingStyleClass);
+    },
+
+    _recordingStopped: function(event)
+    {
+        this._recordStatusElement.textContent = "";
+        this._recordGlyphElement.classList.remove(WebInspector.TimelineSidebarPanel.RecordGlyphRecordingStyleClass);
+    },
+
+    _recordGlyphMousedOver: function(event)
+    {
+        this._recordGlyphElement.classList.remove(WebInspector.TimelineSidebarPanel.RecordGlyphRecordingForcedStyleClass);
+
+        if (WebInspector.timelineManager.recordingEnabled)
+            this._recordStatusElement.textContent = WebInspector.UIString("Stop Recording");
+        else
+            this._recordStatusElement.textContent = WebInspector.UIString("Start Recording");
+    },
+
+    _recordGlyphMousedOut: function(event)
+    {
+        this._recordGlyphElement.classList.remove(WebInspector.TimelineSidebarPanel.RecordGlyphRecordingForcedStyleClass);
+
+        if (WebInspector.timelineManager.recordingEnabled)
+            this._recordStatusElement.textContent = WebInspector.UIString("Recording");
+        else
+            this._recordStatusElement.textContent = "";
+    },
+
+    _recordGlyphClicked: function(event)
+    {
+        // Add forced class to prevent the glyph from showing a confusing status after click.
+        this._recordGlyphElement.classList.add(WebInspector.TimelineSidebarPanel.RecordGlyphRecordingForcedStyleClass);
+
+        if (WebInspector.timelineManager.recordingEnabled)
+            WebInspector.timelineManager.stopRecording();
+        else
+            WebInspector.timelineManager.startRecording();
     }
 };
