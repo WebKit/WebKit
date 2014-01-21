@@ -1,3 +1,36 @@
+2014-01-21  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [GTK] Allow passing extra data to web extensions
+        https://bugs.webkit.org/show_bug.cgi?id=125990
+
+        Reviewed by Carlos Garcia Campos.
+
+        Allow passing additional information to the injected bundle. On top
+        of the string containing the path to the web extensions directory,
+        a GVariant can be set with additional data using
+        webkit_web_context_set_web_extensions_initialization_user_data().
+        Also, a new initialize-web-extensions signal is emitted before
+        launching a new WebProcess to allow setting different user data
+        for each process. The GVariant is serialized as a string, passed
+        to the injected bundle, and the injected bundle deserializes back
+        the data, which is passed to web extensions which define the
+        webkit_web_extension_initialize_with_user_data() function (for
+        backwards compatibility, webkit_web_extension_initialize() is
+        used as a fallback.)
+
+        * TestWebKitAPI/Tests/WebKit2Gtk/TestWebExtensions.cpp:
+        (initializeWebExtensions): Handles the initialize-web-extensions
+        signal, and sets the web extensions directory and the initialization
+        user data.
+        (testWebExtensionInitializationUserData): New test case for checking
+        the user data passed on initialization to web extensions.
+        * TestWebKitAPI/Tests/WebKit2Gtk/WebExtensionTest.cpp:
+        (methodCallCallback): Added implementation for the
+        GetInitializationUserData D-Bus method, used by
+        testWebExtensionInitializationUserData().
+        (webkit_web_extension_initialize_with_user_data): Define the
+        initialization function with the additional user data parameter.
+
 2014-01-21  Siddharth Mathur  <s.mathur@ieee.org>
 
         Change my email address in contributors.json.

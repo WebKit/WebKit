@@ -45,12 +45,18 @@ static const char introspectionXML[] =
     "   <arg type='t' name='pageID' direction='in'/>"
     "   <arg type='s' name='script' direction='in'/>"
     "  </method>"
+    "  <method name='GetInitializationUserData'>"
+    "   <arg type='s' name='userData' direction='out'/>"
+    "  </method>"
     "  <signal name='DocumentLoaded'/>"
     "  <signal name='URIChanged'>"
     "   <arg type='s' name='uri' direction='out'/>"
     "  </signal>"
     " </interface>"
     "</node>";
+
+static GRefPtr<GVariant> initializationUserData;
+
 
 typedef enum {
     DocumentLoadedSignal,
@@ -210,8 +216,14 @@ static void methodCallCallback(GDBusConnection* connection, const char* sender, 
         JSRetainPtr<JSStringRef> jsScript(Adopt, JSStringCreateWithUTF8CString(script));
         JSEvaluateScript(jsContext, jsScript.get(), 0, 0, 0, 0);
         g_dbus_method_invocation_return_value(invocation, 0);
-    } else if (!g_strcmp0(methodName, "AbortProcess"))
+    } else if (!g_strcmp0(methodName, "AbortProcess")) {
         abort();
+    } else if (!g_strcmp0(methodName, "GetInitializationUserData")) {
+        g_assert(initializationUserData);
+        g_assert(g_variant_is_of_type(initializationUserData.get(), G_VARIANT_TYPE_STRING));
+        g_dbus_method_invocation_return_value(invocation, g_variant_new("(s)",
+            g_variant_get_string(initializationUserData.get(), nullptr)));
+    }
 }
 
 static const GDBusInterfaceVTable interfaceVirtualTable = {
@@ -250,8 +262,10 @@ static void busAcquiredCallback(GDBusConnection* connection, const char* name, g
     }
 }
 
-extern "C" void webkit_web_extension_initialize(WebKitWebExtension* extension)
+extern "C" void webkit_web_extension_initialize_with_user_data(WebKitWebExtension* extension, GVariant* userData)
 {
+    initializationUserData = userData;
+
     g_signal_connect(extension, "page-created", G_CALLBACK(pageCreatedCallback), extension);
     g_signal_connect(webkit_script_world_get_default(), "window-object-cleared", G_CALLBACK(windowObjectCleared), 0);
 

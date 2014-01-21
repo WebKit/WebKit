@@ -46,6 +46,7 @@ private:
     WebGtkExtensionManager();
 
     void scanModules(const String&, Vector<String>&);
+    bool initializeWebExtension(Module* extensionModule, GVariant* userData);
 
     Vector<Module*> m_extensionModules;
     GRefPtr<WebKitWebExtension> m_extension;

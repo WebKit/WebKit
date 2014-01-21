@@ -196,6 +196,11 @@ webkit_web_context_set_web_extensions_directory     (WebKitWebContext           
                                                      const gchar                   *directory);
 
 WEBKIT_API void
+webkit_web_context_set_web_extensions_initialization_user_data
+                                                    (WebKitWebContext              *context,
+                                                     GVariant                      *user_data);
+
+WEBKIT_API void
 webkit_web_context_prefetch_dns                     (WebKitWebContext              *context,
                                                      const gchar                   *hostname);
 

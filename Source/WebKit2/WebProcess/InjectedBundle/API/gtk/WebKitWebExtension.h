@@ -50,6 +50,21 @@ typedef struct _WebKitWebExtensionPrivate WebKitWebExtensionPrivate;
  */
 typedef void (* WebKitWebExtensionInitializeFunction) (WebKitWebExtension *extension);
 
+/**
+ * WebKitWebExtensionInitializeWithUserDataFunction:
+ * @extension: a #WebKitWebExtension
+ * @user_data: a #GVariant
+ *
+ * Type definition for a function that will be called to initialize
+ * the web extensions when the web process starts, and which receives
+ * as additional argument the user data set with
+ * webkit_web_context_set_web_extensions_initialization_user_data().
+ *
+ * Since: 2.4
+ */
+typedef void (* WebKitWebExtensionInitializeWithUserDataFunction) (WebKitWebExtension *extension,
+                                                                   const GVariant     *user_data);
+
 struct _WebKitWebExtension {
     GObject parent;
 

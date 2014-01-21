@@ -84,6 +84,7 @@ using namespace WebKit;
 
 enum {
     DOWNLOAD_STARTED,
+    INITIALIZE_WEB_EXTENSIONS,
 
     LAST_SIGNAL
 };
@@ -153,6 +154,9 @@ struct _WebKitWebContextPrivate {
 
     HashMap<uint64_t, WebKitWebView*> webViews;
     GRefPtr<WebKitWebViewGroup> defaultWebViewGroup;
+
+    CString webExtensionsDirectory;
+    GRefPtr<GVariant> webExtensionsInitializationUserData;
 };
 
 static guint signals[LAST_SIGNAL] = { 0, };
@@ -178,6 +182,25 @@ static void webkit_web_context_class_init(WebKitWebContextClass* webContextClass
                      g_cclosure_marshal_VOID__OBJECT,
                      G_TYPE_NONE, 1,
                      WEBKIT_TYPE_DOWNLOAD);
+
+    /**
+     * WebKitWebContext::initialize-web-extensions:
+     * @context: the #WebKitWebContext
+     *
+     * This signal is emitted when a new web process is about to be
+     * launched. It signals the most appropriate moment to use
+     * webkit_web_context_set_web_extensions_initialization_user_data()
+     * and webkit_web_context_set_web_extensions_directory().
+     *
+     * Since: 2.4
+     */
+    signals[INITIALIZE_WEB_EXTENSIONS] =
+        g_signal_new("initialize-web-extensions",
+            G_TYPE_FROM_CLASS(gObjectClass),
+            G_SIGNAL_RUN_LAST,
+            0, nullptr, nullptr,
+            g_cclosure_marshal_VOID__VOID,
+            G_TYPE_NONE, 0);
 }
 
 static CString injectedBundleDirectory()
@@ -775,16 +798,40 @@ WebKitTLSErrorsPolicy webkit_web_context_get_tls_errors_policy(WebKitWebContext*
  * @directory: the directory to add
  *
  * Set the directory where WebKit will look for Web Extensions.
- * This method must be called before loading anything in this context, otherwise
- * it will not have any effect.
+ * This method must be called before loading anything in this context,
+ * otherwise it will not have any effect. You can connect to
+ * #WebKitWebContext::initialize-web-extensions to call this method
+ * before anything is loaded.
  */
 void webkit_web_context_set_web_extensions_directory(WebKitWebContext* context, const char* directory)
 {
     g_return_if_fail(WEBKIT_IS_WEB_CONTEXT(context));
     g_return_if_fail(directory);
 
-    // We pass the additional web extensions directory to the injected bundle as initialization user data.
-    context->priv->context->setInjectedBundleInitializationUserData(API::String::create(WebCore::filenameToString(directory)));
+    context->priv->webExtensionsDirectory = directory;
+}
+
+/**
+ * webkit_web_context_set_web_extensions_initialization_user_data:
+ * @context: a #WebKitWebContext
+ * @user_data: a #GVariant
+ *
+ * Set user data to be passed to Web Extensions on initialization.
+ * The data will be passed to the
+ * #WebKitWebExtensionInitializeWithUserDataFunction.
+ * This method must be called before loading anything in this context,
+ * otherwise it will not have any effect. You can connect to
+ * #WebKitWebContext::initialize-web-extensions to call this method
+ * before anything is loaded.
+ *
+ * Since: 2.4
+ */
+void webkit_web_context_set_web_extensions_initialization_user_data(WebKitWebContext* context, GVariant* userData)
+{
+    g_return_if_fail(WEBKIT_IS_WEB_CONTEXT(context));
+    g_return_if_fail(userData);
+
+    context->priv->webExtensionsInitializationUserData = userData;
 }
 
 /**
@@ -870,6 +917,14 @@ void webkitWebContextRemoveDownload(DownloadProxy* downloadProxy)
 void webkitWebContextDownloadStarted(WebKitWebContext* context, WebKitDownload* download)
 {
     g_signal_emit(context, signals[DOWNLOAD_STARTED], 0, download);
+}
+
+GVariant* webkitWebContextInitializeWebExtensions(WebKitWebContext* context)
+{
+    g_signal_emit(context, signals[INITIALIZE_WEB_EXTENSIONS], 0);
+    return g_variant_new("(msmv)",
+        context->priv->webExtensionsDirectory.data(),
+        context->priv->webExtensionsInitializationUserData.get());
 }
 
 WebContext* webkitWebContextGetContext(WebKitWebContext* context)

@@ -23,6 +23,7 @@
 #include "WebViewTest.h"
 #include <wtf/gobject/GRefPtr.h>
 
+static const char* webExtensionsUserData = "Web Extensions user data";
 static WebKitTestBus* bus;
 
 static void testWebExtensionGetTitle(WebViewTest* test, gconstpointer)
@@ -175,13 +176,44 @@ static void testWebExtensionIsolatedWorld(WebViewTest* test, gconstpointer)
     g_signal_handler_disconnect(test->m_webView, scriptDialogID);
 }
 
+static void testWebExtensionInitializationUserData(WebViewTest* test, gconstpointer)
+{
+    test->loadHtml("<html></html>", 0);
+    test->waitUntilLoadFinished();
+
+    GRefPtr<GDBusProxy> proxy = adoptGRef(bus->createProxy("org.webkit.gtk.WebExtensionTest",
+        "/org/webkit/gtk/WebExtensionTest", "org.webkit.gtk.WebExtensionTest", test->m_mainLoop));
+
+    GRefPtr<GVariant> result = adoptGRef(g_dbus_proxy_call_sync(
+        proxy.get(),
+        "GetInitializationUserData",
+        nullptr,
+        G_DBUS_CALL_FLAGS_NONE,
+        -1, 0, 0));
+    g_assert(result);
+
+    const gchar* userData = nullptr;
+    g_variant_get(result.get(), "(&s)", &userData);
+    g_assert_cmpstr(userData, ==, webExtensionsUserData);
+}
+
+static void initializeWebExtensions(WebKitWebContext* context, gpointer)
+{
+    webkit_web_context_set_web_extensions_directory(context, WEBKIT_TEST_WEB_EXTENSIONS_DIR);
+    webkit_web_context_set_web_extensions_initialization_user_data(context,
+        g_variant_new("&s", webExtensionsUserData));
+}
+
 void beforeAll()
 {
-    webkit_web_context_set_web_extensions_directory(webkit_web_context_get_default(), WEBKIT_TEST_WEB_EXTENSIONS_DIR);
+    g_signal_connect(webkit_web_context_get_default(),
+        "initialize-web-extensions", G_CALLBACK(initializeWebExtensions), nullptr);
+
     bus = new WebKitTestBus();
     if (!bus->run())
         return;
 
+    WebViewTest::add("WebKitWebContext", "initialization-user-data", testWebExtensionInitializationUserData);
     WebViewTest::add("WebKitWebExtension", "dom-document-title", testWebExtensionGetTitle);
     WebViewTest::add("WebKitWebExtension", "document-loaded-signal", testDocumentLoadedSignal);
     WebViewTest::add("WebKitWebView", "web-process-crashed", testWebKitWebViewProcessCrashed);

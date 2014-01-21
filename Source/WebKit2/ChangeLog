@@ -1,3 +1,53 @@
+2014-01-21  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [GTK] Allow passing extra data to web extensions
+        https://bugs.webkit.org/show_bug.cgi?id=125990
+
+        Reviewed by Carlos Garcia Campos.
+
+        Allow passing additional information to the injected bundle. On top
+        of the string containing the path to the web extensions directory,
+        a GVariant can be set with additional data using
+        webkit_web_context_set_web_extensions_initialization_user_data().
+        Also, a new initialize-web-extensions signal is emitted before
+        launching a new WebProcess to allow setting different user data
+        for each process. The GVariant is serialized as a string, passed
+        to the injected bundle, and the injected bundle deserializes back
+        the data, which is passed to web extensions which define the
+        webkit_web_extension_initialize_with_user_data() function (for
+        backwards compatibility, webkit_web_extension_initialize() is
+        used as a fallback.)
+
+        * UIProcess/API/gtk/WebKitInjectedBundleClient.cpp:
+        (getInjectedBundleInitializationUserData): Define new callback
+        function which causes emission of the initialize-web-extensions
+        signal, and serializes the data to be passed to the web process.
+        (attachInjectedBundleClientToContext): Set the
+        getInjectedBundleInitializationUserData() callback.
+        * UIProcess/API/gtk/WebKitWebContext.cpp:
+        (webkit_web_context_class_init): Define the
+        initialize-web-extensions signal.
+        (webkit_web_context_set_web_extensions_directory):
+        Web extensions directory as now member of WebKitWebContextPrivate,
+        to be able to retrieve it later.
+        (webkit_web_context_set_web_extensions_initialization_user_data):
+        New API method to set the user data passed to the web extensions
+        when initialized.
+        (webkitWebContextInitializeWebExtensions): Private function used
+        to trigger emission of the initialize-web-extensions signal.
+        * UIProcess/API/gtk/WebKitWebContext.h:
+        Added prototype for new API method
+        webkit_web_context_set_web_extensions_initialization_user_data().
+        * UIProcess/API/gtk/WebKitWebContextPrivate.h:
+        Prototype of the new private function.
+        * UIProcess/API/gtk/docs/webkit2gtk-sections.txt:
+        Add new public API bits to the documentation.
+        * WebProcess/gtk/WebGtkExtensionManager.cpp:
+        (WebKit::WebGtkExtensionManager::initialize):
+        Deserialize the data received from the UI process and pass it to
+        webkit_web_extension_initialize_with_user_data() if available,
+        keeping webkit_web_extension_initialize() as fallback.
+
 2014-01-20  Ryuan Choi  <ryuan.choi@samsung.com>
 
         [EFL][WK2] Move isEwkViewEvasObject back to ewk_view.cpp

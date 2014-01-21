@@ -118,16 +118,23 @@ static void didReceiveMessageFromInjectedBundle(WKContextRef, WKStringRef messag
         ASSERT_NOT_REACHED();
 }
 
+static WKTypeRef getInjectedBundleInitializationUserData(WKContextRef, const void* clientInfo)
+{
+    GRefPtr<GVariant> data = webkitWebContextInitializeWebExtensions(WEBKIT_WEB_CONTEXT(clientInfo));
+    GOwnPtr<gchar> dataString(g_variant_print(data.get(), TRUE));
+    return static_cast<WKTypeRef>(WKStringCreateWithUTF8CString(dataString.get()));
+}
+
 void attachInjectedBundleClientToContext(WebKitWebContext* webContext)
 {
     WKContextInjectedBundleClientV1 wkInjectedBundleClient = {
         {
-            0, // version
+            1, // version
             webContext, // clientInfo
         },
         didReceiveMessageFromInjectedBundle,
         0, // didReceiveSynchronousMessageFromInjectedBundle
-        0 // getInjectedBundleInitializationUserData
+        getInjectedBundleInitializationUserData
     };
     WKContextSetInjectedBundleClient(toAPI(webkitWebContextGetContext(webContext)), &wkInjectedBundleClient.base);
 }

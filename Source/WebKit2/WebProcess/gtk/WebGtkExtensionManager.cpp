@@ -22,11 +22,13 @@
 
 #include "InjectedBundle.h"
 #include "WKBundleAPICast.h"
+#include "WKDictionary.h"
 #include "WKString.h"
 #include "WKType.h"
 #include "WebKitWebExtensionPrivate.h"
 #include <WebCore/FileSystem.h>
 #include <wtf/OwnPtr.h>
+#include <wtf/text/CString.h>
 
 namespace WebKit {
 
@@ -49,18 +51,55 @@ void WebGtkExtensionManager::scanModules(const String& webExtensionsDirectory, V
     }
 }
 
-void WebGtkExtensionManager::initialize(WKBundleRef bundle, WKTypeRef userData)
+static void parseUserData(WKTypeRef userData, String& webExtensionsDirectory, GRefPtr<GVariant>& initializationUserData)
 {
-    m_extension = adoptGRef(webkitWebExtensionCreate(toImpl(bundle)));
+    ASSERT(userData);
+    ASSERT(WKGetTypeID(userData) == WKStringGetTypeID());
 
-    String webExtensionsDirectory;
-    if (userData) {
-        ASSERT(WKGetTypeID(userData) == WKStringGetTypeID());
-        webExtensionsDirectory = toImpl(static_cast<WKStringRef>(userData))->string();
+    CString userDataString = toImpl(static_cast<WKStringRef>(userData))->string().utf8();
+    GRefPtr<GVariant> variant = g_variant_parse(nullptr, userDataString.data(),
+        userDataString.data() + userDataString.length(), nullptr, nullptr);
+
+    ASSERT(variant);
+    ASSERT(g_variant_check_format_string(variant.get(), "(m&smv)", FALSE));
+
+    const char* directory = nullptr;
+    GVariant* data = nullptr;
+    g_variant_get(variant.get(), "(m&smv)", &directory, &data);
+
+    webExtensionsDirectory = WebCore::filenameToString(directory);
+    initializationUserData = adoptGRef(data);
+}
+
+bool WebGtkExtensionManager::initializeWebExtension(Module* extensionModule, GVariant* userData)
+{
+    WebKitWebExtensionInitializeWithUserDataFunction initializeWithUserDataFunction =
+        extensionModule->functionPointer<WebKitWebExtensionInitializeWithUserDataFunction>("webkit_web_extension_initialize_with_user_data");
+    if (initializeWithUserDataFunction) {
+        initializeWithUserDataFunction(m_extension.get(), userData);
+        return true;
     }
+
+    WebKitWebExtensionInitializeFunction initializeFunction =
+        extensionModule->functionPointer<WebKitWebExtensionInitializeFunction>("webkit_web_extension_initialize");
+    if (initializeFunction) {
+        initializeFunction(m_extension.get());
+        return true;
+    }
+
+    return false;
+}
+
+void WebGtkExtensionManager::initialize(WKBundleRef bundle, WKTypeRef userDataString)
+{
+    String webExtensionsDirectory;
+    GRefPtr<GVariant> userData;
+    parseUserData(userDataString, webExtensionsDirectory, userData);
 
     if (webExtensionsDirectory.isNull())
         return;
+
+    m_extension = adoptGRef(webkitWebExtensionCreate(toImpl(bundle)));
 
     Vector<String> modulePaths;
     scanModules(webExtensionsDirectory, modulePaths);
@@ -69,14 +108,8 @@ void WebGtkExtensionManager::initialize(WKBundleRef bundle, WKTypeRef userData)
         OwnPtr<Module> module = adoptPtr(new Module(modulePaths[i]));
         if (!module->load())
             continue;
-
-        WebKitWebExtensionInitializeFunction initializeFunction =
-            module->functionPointer<WebKitWebExtensionInitializeFunction>("webkit_web_extension_initialize");
-        if (!initializeFunction)
-            continue;
-
-        m_extensionModules.append(module.leakPtr());
-        initializeFunction(m_extension.get());
+        if (initializeWebExtension(module.get(), userData.get()))
+            m_extensionModules.append(module.leakPtr());
     }
 }
 
