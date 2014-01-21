@@ -1,3 +1,9 @@
+2014-01-21  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
+
+        Unreviewed, remove myself from some watchlist entries.
+
+        * Scripts/webkitpy/common/config/watchlist:
+
 2014-01-21  Zalan Bujtas  <zalan@apple.com>
 
         Use 64 as the default value for the subpixel denominator.
