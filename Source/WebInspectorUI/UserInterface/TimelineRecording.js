@@ -32,7 +32,8 @@ WebInspector.TimelineRecording = function()
 
 WebInspector.TimelineRecording.Event = {
     Reset: "timeline-recording-reset",
-    SourceCodeTimelineAdded: "timeline-recording-source-code-timeline-added"
+    SourceCodeTimelineAdded: "timeline-recording-source-code-timeline-added",
+    TimesUpdated: "timeline-recording-times-updated"
 };
 
 WebInspector.TimelineRecording.prototype = {
@@ -48,10 +49,20 @@ WebInspector.TimelineRecording.prototype = {
 
     reset: function(newObject)
     {
+        if (this._timelines) {
+            this._timelines.forEach(function(timeline) {
+                timeline.removeEventListener(null, null, this);
+            }, this);
+        }
+
         this._timelines = new Map;
         this._timelines.set(WebInspector.TimelineRecord.Type.Network, new WebInspector.Timeline);
         this._timelines.set(WebInspector.TimelineRecord.Type.Script, new WebInspector.Timeline);
         this._timelines.set(WebInspector.TimelineRecord.Type.Layout, new WebInspector.Timeline);
+
+        this._timelines.forEach(function(timeline) {
+            timeline.addEventListener(WebInspector.Timeline.Event.TimesUpdated, this._timelineTimesUpdated, this);
+        }, this);
 
         this._sourceCodeTimelinesMap = new Map;
         this._eventMarkers = [];
@@ -127,5 +138,24 @@ WebInspector.TimelineRecording.prototype = {
         if (record.sourceCodeLocation)
             key += ":" + record.sourceCodeLocation.lineNumber + ":" + record.sourceCodeLocation.columnNumber;
         return key;
+    },
+
+    _timelineTimesUpdated: function(event)
+    {
+        var timeline = event.target;
+        var changed = false;
+
+        if (isNaN(this._startTime) || timeline.startTime < this._startTime) {
+            this._startTime = timeline.startTime;
+            changed = true;
+        }
+
+        if (isNaN(this._endTime) || this._endTime < timeline.endTime) {
+            this._endTime = timeline.endTime;
+            changed = true;
+        }
+
+        if (changed)
+            this.dispatchEventToListeners(WebInspector.TimelineRecording.Event.TimesUpdated);
     }
 };

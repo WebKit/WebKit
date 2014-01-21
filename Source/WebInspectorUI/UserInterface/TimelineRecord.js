@@ -61,11 +61,19 @@ WebInspector.TimelineRecord.prototype = {
 
     get startTime()
     {
+        // Implemented by subclasses if needed.
+        return this._startTime;
+    },
+
+    get activeStartTime()
+    {
+        // Implemented by subclasses if needed.
         return this._startTime;
     },
 
     get endTime()
     {
+        // Implemented by subclasses if needed.
         return this._endTime;
     },
 
@@ -75,16 +83,28 @@ WebInspector.TimelineRecord.prototype = {
         return this.endTime - this.startTime;
     },
 
-    get waitingDuration()
+    get inactiveDuration()
     {
-        // Implemented by subclasses if needed.
-        return NaN;
+        // Use the getters instead of the properties so this works for subclasses that override the getters.
+        return this.activeStartTime - this.startTime;
     },
 
     get activeDuration()
     {
+        // Use the getters instead of the properties so this works for subclasses that override the getters.
+        return this.endTime - this.activeStartTime;
+    },
+
+    get updatesDynamically()
+    {
         // Implemented by subclasses if needed.
-        return this.duration;
+        return false;
+    },
+
+    get usesActiveStartTime()
+    {
+        // Implemented by subclasses if needed.
+        return false;
     },
 
     get callFrames()

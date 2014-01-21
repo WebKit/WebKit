@@ -28,6 +28,13 @@ WebInspector.Timeline = function()
     WebInspector.Object.call(this);
 
     this._records = [];
+    this._startTime = NaN;
+    this._endTime = NaN;
+};
+
+WebInspector.Timeline.Event = {
+    RecordAdded: "timeline-record-added",
+    TimesUpdated: "timeline-times-updated"
 };
 
 WebInspector.Timeline.prototype = {
@@ -36,6 +43,16 @@ WebInspector.Timeline.prototype = {
 
     // Public
 
+    get startTime()
+    {
+        return this._startTime;
+    },
+
+    get endTime()
+    {
+        return this._endTime;
+    },
+
     get records()
     {
         return this._records;
@@ -43,6 +60,38 @@ WebInspector.Timeline.prototype = {
 
     addRecord: function(record)
     {
+        if (record.updatesDynamically)
+            record.addEventListener(WebInspector.TimelineRecord.Event.Updated, this._recordUpdated, this);
+
         this._records.push(record);
+
+        this._updateTimesIfNeeded(record);
+
+        this.dispatchEventToListeners(WebInspector.Timeline.Event.RecordAdded, {record: record});
+    },
+
+    // Private
+
+    _updateTimesIfNeeded: function(record)
+    {
+        var changed = false;
+
+        if (isNaN(this._startTime) || record.startTime < this._startTime) {
+            this._startTime = record.startTime;
+            changed = true;
+        }
+
+        if (isNaN(this._endTime) || this._endTime < record.endTime) {
+            this._endTime = record.endTime;
+            changed = true;
+        }
+
+        if (changed)
+            this.dispatchEventToListeners(WebInspector.Timeline.Event.TimesUpdated);
+    },
+
+    _recordUpdated: function(event)
+    {
+        this._updateTimesIfNeeded(event.target);
     }
 };

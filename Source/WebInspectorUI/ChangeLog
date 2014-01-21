@@ -1,3 +1,42 @@
+2014-01-08  Timothy Hatcher  <timothy@apple.com>
+
+        Correctly track time bounds of WebInspector.Timeline and WebInspector.TimelineRecording.
+
+        The startTime and endTime were not correct when Network timeline needed to be taken into
+        account (due to its dynamic loading nature.) This creates a network Timeline for the purposes
+        of tracking the ResourceTimelineRecords and getting accurate start and end times.
+
+        Also changes the way TimelineRecord tracks the inactive portion of time, needed for later
+        work on the timeline graphs.
+
+        https://bugs.webkit.org/show_bug.cgi?id=126676
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/ResourceTimelineRecord.js:
+        (WebInspector.ResourceTimelineRecord.prototype.get updatesDynamically):
+        (WebInspector.ResourceTimelineRecord.prototype.get usesActiveStartTime):
+        (WebInspector.ResourceTimelineRecord.prototype.get startTime):
+        (WebInspector.ResourceTimelineRecord.prototype.get activeStartTime):
+        (WebInspector.ResourceTimelineRecord.prototype.get endTime):
+        * UserInterface/Timeline.js:
+        (WebInspector.Timeline):
+        (WebInspector.Timeline.prototype.get startTime):
+        (WebInspector.Timeline.prototype.get endTime):
+        (WebInspector.Timeline.prototype.addRecord):
+        (WebInspector.Timeline.prototype._updateTimesIfNeeded):
+        (WebInspector.Timeline.prototype._recordUpdated):
+        * UserInterface/TimelineRecord.js:
+        (WebInspector.TimelineRecord.prototype.get startTime):
+        (WebInspector.TimelineRecord.prototype.get activeStartTime):
+        (WebInspector.TimelineRecord.prototype.get endTime):
+        (WebInspector.TimelineRecord.prototype.get inactiveDuration):
+        (WebInspector.TimelineRecord.prototype.get activeDuration):
+        (WebInspector.TimelineRecord.prototype.get updatesDynamically):
+        (WebInspector.TimelineRecord.prototype.get usesActiveStartTime):
+        * UserInterface/TimelineRecording.js:
+        (WebInspector.TimelineRecording.prototype._timelineTimesUpdated):
+
 2013-10-25  Timothy Hatcher  <timothy@apple.com>
 
         Implement TimelineRecording and per-call-site timelines.

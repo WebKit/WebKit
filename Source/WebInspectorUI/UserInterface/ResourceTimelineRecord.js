@@ -41,24 +41,29 @@ WebInspector.ResourceTimelineRecord.prototype = {
         return this._resource;
     },
 
+    get updatesDynamically()
+    {
+        return true;
+    },
+
+    get usesActiveStartTime()
+    {
+        return true;
+    },
+
     get startTime()
     {
-        return this._resource.firstTimestamp;
+        return this._resource.requestSentTimestamp;
+    },
+
+    get activeStartTime()
+    {
+        return this._resource.responseReceivedTimestamp;
     },
 
     get endTime()
     {
-        return this._resource.lastTimestamp;
-    },
-
-    get waitingDuration()
-    {
-        return this._resource.latency;
-    },
-
-    get activeDuration()
-    {
-        return this._resource.receiveDuration;
+        return this._resource.finishedOrFailedTimestamp;
     },
 
     // Private
