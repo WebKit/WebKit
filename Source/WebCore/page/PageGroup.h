@@ -66,8 +66,6 @@ namespace WebCore {
         // DumpRenderTree helper that triggers a StorageArea sync.
         static void syncLocalStorage();
 
-        static unsigned numberOfPageGroups();
-
         const HashSet<Page*>& pages() const { return m_pages; }
 
         void addPage(Page&);

@@ -160,14 +160,6 @@ void PageGroup::syncLocalStorage()
     }
 }
 
-unsigned PageGroup::numberOfPageGroups()
-{
-    if (!pageGroups)
-        return 0;
-
-    return pageGroups->size();
-}
-
 void PageGroup::addPage(Page& page)
 {
     ASSERT(!m_pages.contains(&page));
