@@ -1,5 +1,12 @@
 2014-01-20  Zalan Bujtas  <zalan@apple.com>
 
+        Change image failures from [ Failure ] to [ ImageOnlyFailure ] where needed.
+
+        * platform/mac/TestExpectations:
+        * platform/win/TestExpectations:
+
+2014-01-20  Zalan Bujtas  <zalan@apple.com>
+
         Add missing expectations to subpixel failures.
 
         * platform/mac/TestExpectations:
