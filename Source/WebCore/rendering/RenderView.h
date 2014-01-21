@@ -68,6 +68,9 @@ public:
     int viewLogicalWidth() const { return style().isHorizontalWritingMode() ? viewWidth() : viewHeight(); }
     int viewLogicalHeight() const;
 
+    LayoutUnit clientLogicalWidthForFixedPosition() const;
+    LayoutUnit clientLogicalHeightForFixedPosition() const;
+
     float zoomFactor() const;
 
     FrameView& frameView() const { return m_frameView; }

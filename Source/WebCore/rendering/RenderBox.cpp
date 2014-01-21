@@ -2952,33 +2952,6 @@ LayoutUnit RenderBox::availableLogicalHeight(AvailableLogicalHeightType heightTy
     return constrainLogicalHeightByMinMax(availableLogicalHeightUsing(style().logicalHeight(), heightType));
 }
 
-#if PLATFORM(IOS)
-static inline int customContainingBlockWidth(const RenderView& view, const RenderBox& containingBlockBox)
-{
-    return view.frameView().customFixedPositionLayoutRect().width() - containingBlockBox.borderLeft() - containingBlockBox.borderRight() - containingBlockBox.verticalScrollbarWidth();
-}
-
-static inline int customContainingBlockHeight(const RenderView& view, const RenderBox& containingBlockBox)
-{
-    return view.frameView().customFixedPositionLayoutRect().height() - containingBlockBox.borderTop() - containingBlockBox.borderBottom() - containingBlockBox.horizontalScrollbarHeight();
-}
-
-static int customContainingBlockLogicalWidth(const RenderStyle& style, const RenderView& view, const RenderBox& containingBlockBox)
-{
-    return style.isHorizontalWritingMode() ? customContainingBlockWidth(view, containingBlockBox) : customContainingBlockHeight(view, containingBlockBox);
-}
-
-static int customContainingBlockLogicalHeight(const RenderStyle& style, const RenderView& view, const RenderBox& containingBlockBox)
-{
-    return style.isHorizontalWritingMode() ? customContainingBlockHeight(view, containingBlockBox) : customContainingBlockWidth(view, containingBlockBox);
-}
-
-static inline int customContainingBlockAvailableLogicalHeight(const RenderStyle& style, const RenderView& view)
-{
-    return style.isHorizontalWritingMode() ? view.frameView().customFixedPositionLayoutRect().height() : view.frameView().customFixedPositionLayoutRect().width();
-}
-#endif
-
 LayoutUnit RenderBox::availableLogicalHeightUsing(const Length& h, AvailableLogicalHeightType heightType) const
 {
     // We need to stop here, since we don't want to increase the height of the table
@@ -2991,21 +2964,9 @@ LayoutUnit RenderBox::availableLogicalHeightUsing(const Length& h, AvailableLogi
     }
 
     if (h.isPercent() && isOutOfFlowPositioned() && !isRenderFlowThread()) {
-#if PLATFORM(IOS)
-        RenderBlock* containingBlock = this->containingBlock();
-        // If we're fixed, and our container is the RenderView, use the custom fixed position rect for sizing.
-        if (containingBlock->isRenderView()) {
-            RenderView& view = toRenderView(*containingBlock);
-            if (view.hasCustomFixedPosition(*this))
-                return adjustContentBoxLogicalHeightForBoxSizing(valueForLength(h, customContainingBlockAvailableLogicalHeight(containingBlock->style(), view)));
-        }
-
-        return adjustContentBoxLogicalHeightForBoxSizing(valueForLength(h, containingBlock->availableLogicalHeight(heightType)));
-#else
         // FIXME: This is wrong if the containingBlock has a perpendicular writing mode.
         LayoutUnit availableHeight = containingBlockLogicalHeightForPositioned(containingBlock());
         return adjustContentBoxLogicalHeightForBoxSizing(valueForLength(h, availableHeight));
-#endif
     }
 
     LayoutUnit heightIncludingScrollbar = computeContentAndScrollbarLogicalHeightUsing(h);
@@ -3060,27 +3021,21 @@ void RenderBox::computeAndSetBlockDirectionMargins(const RenderBlock* containing
 
 LayoutUnit RenderBox::containingBlockLogicalWidthForPositioned(const RenderBoxModelObject* containingBlock, RenderRegion* region, bool checkForPerpendicularWritingMode) const
 {
-    // Container for position:fixed is the frame.
-    const FrameView& frameView = view().frameView();
-    if (fixedElementLaysOutRelativeToFrame(frameView))
-        return (view().isHorizontalWritingMode() ? frameView.visibleWidth() : frameView.visibleHeight()) / frameView.frame().frameScaleFactor();
-
     if (checkForPerpendicularWritingMode && containingBlock->isHorizontalWritingMode() != isHorizontalWritingMode())
         return containingBlockLogicalHeightForPositioned(containingBlock, false);
 
     if (containingBlock->isBox()) {
+        bool isFixedPosition = style().position() == FixedPosition;
+
         RenderFlowThread* flowThread = flowThreadContainingBlock();
         if (!flowThread) {
-#if PLATFORM(IOS)
-            if (view().hasCustomFixedPosition(*this)) {
-                const RenderBox& containingBlockBox = toRenderBox(*containingBlock);
-                return customContainingBlockLogicalWidth(containingBlockBox.style(), view(), containingBlockBox);
-            }
-#endif
+            if (isFixedPosition && containingBlock->isRenderView())
+                return toRenderView(containingBlock)->clientLogicalWidthForFixedPosition();
+
             return toRenderBox(containingBlock)->clientLogicalWidth();
         }
 
-        if (containingBlock->isRenderNamedFlowThread() && style().position() == FixedPosition)
+        if (isFixedPosition && containingBlock->isRenderNamedFlowThread())
             return containingBlock->view().clientLogicalWidth();
 
         const RenderBlock* cb = toRenderBlock(containingBlock);
@@ -3126,23 +3081,20 @@ LayoutUnit RenderBox::containingBlockLogicalWidthForPositioned(const RenderBoxMo
 
 LayoutUnit RenderBox::containingBlockLogicalHeightForPositioned(const RenderBoxModelObject* containingBlock, bool checkForPerpendicularWritingMode) const
 {
-    const FrameView& frameView = view().frameView();
-    if (fixedElementLaysOutRelativeToFrame(frameView))
-        return (view().isHorizontalWritingMode() ? frameView.visibleHeight() : frameView.visibleWidth()) / frameView.frame().frameScaleFactor();
-
     if (checkForPerpendicularWritingMode && containingBlock->isHorizontalWritingMode() != isHorizontalWritingMode())
         return containingBlockLogicalWidthForPositioned(containingBlock, 0, false);
 
     if (containingBlock->isBox()) {
-#if PLATFORM(IOS)
-        if (view().hasCustomFixedPosition(*this))
-            return customContainingBlockLogicalHeight(style(), view(), toRenderBox(*containingBlock));
-#endif
+        bool isFixedPosition = style().position() == FixedPosition;
+
+        if (isFixedPosition && containingBlock->isRenderView())
+            return toRenderView(containingBlock)->clientLogicalHeightForFixedPosition();
+
         const RenderBlock* cb = toRenderBlock(containingBlock);
         LayoutUnit result = cb->clientLogicalHeight();
         RenderFlowThread* flowThread = flowThreadContainingBlock();
         if (flowThread && containingBlock->isRenderFlowThread() && flowThread->isHorizontalWritingMode() == containingBlock->isHorizontalWritingMode()) {
-            if (containingBlock->isRenderNamedFlowThread() && style().position() == FixedPosition)
+            if (containingBlock->isRenderNamedFlowThread() && isFixedPosition)
                 return containingBlock->view().clientLogicalHeight();
             return toRenderFlowThread(containingBlock)->contentLogicalHeightOfFirstRegion();
         }

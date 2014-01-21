@@ -1,3 +1,26 @@
+2014-01-21  Simon Fraser  <simon.fraser@apple.com>
+
+        Clean up PLATFORM(IOS) code related to the custom fixed position layout rect
+        https://bugs.webkit.org/show_bug.cgi?id=127362
+
+        Reviewed by Dave Hyatt.
+
+        Various platforms customize the rect used to layout position:fixed elements,
+        and each modified RenderBox::availableLogicalHeight/WidthUsing() in different
+        ways.
+        
+        Clean this up by adding RenderView::clientLogicalWidth/HeightForFixedPosition(),
+        and moving the platform hacks into it.
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::availableLogicalHeightUsing):
+        (WebCore::RenderBox::containingBlockLogicalWidthForPositioned):
+        (WebCore::RenderBox::containingBlockLogicalHeightForPositioned):
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::clientLogicalWidthForFixedPosition):
+        (WebCore::RenderView::clientLogicalHeightForFixedPosition):
+        * rendering/RenderView.h:
+
 2014-01-21  Tamas Gergely  <tgergely.u-szeged@partner.samsung.com>
 
         ASSERT(time.isFinite()) in SVGSMILElement::createInstanceTimesFromSyncbase
