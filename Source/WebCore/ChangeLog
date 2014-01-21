@@ -1,3 +1,14 @@
+2014-01-21  Gurpreet Kaur  <k.gurpreet@samsung.com>
+
+        The WebCore.vcxproj.filters doesnot apply
+        https://bugs.webkit.org/show_bug.cgi?id=127338
+
+        Reviewed by Csaba Osztrogonác.
+
+        * WebCore.vcxproj/WebCore.vcxproj.filters:
+        Modified the WebCore.vcxproj.filters so that it is applied when loading
+        WebCore.vcxproj file.
+
 2014-01-21  Peter Molnar  <pmolnar.u-szeged@partner.samsung.com>
 
         Fix SVG animations which set rx or ry attributes

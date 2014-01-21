@@ -12268,7 +12268,7 @@
     </ClInclude>
     <ClInclude Include="..\ForwardingHeaders\inspector\InspectorEnvironment.h">
       <Filter>ForwardingHeaders\inspector</Filter>
-    </ClInclude
+    </ClInclude>
     <ClInclude Include="..\ForwardingHeaders\inspector\InspectorFrontendChannel.h">
       <Filter>ForwardingHeaders\inspector</Filter>
     </ClInclude>
