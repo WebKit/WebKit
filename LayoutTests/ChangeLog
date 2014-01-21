@@ -1,3 +1,15 @@
+2014-01-20  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Test that text-decoration-skip: ink inherits as expected
+        https://bugs.webkit.org/show_bug.cgi?id=127329
+
+        Reviewed by Dean Jackson.
+
+        Adding a test for text-decoration-skip: ink inheriting
+
+        * fast/css3-text/css3-text-decoration/text-decoration-skip/text-decoration-skip-ink-inherit-expected.html: Added.
+        * fast/css3-text/css3-text-decoration/text-decoration-skip/text-decoration-skip-ink-inherit.html: Added.
+
 2014-01-21  Eric Carlson  <eric.carlson@apple.com>
 
         Add &lrm; &rlm; and &nbsp; to WebVTT parser
