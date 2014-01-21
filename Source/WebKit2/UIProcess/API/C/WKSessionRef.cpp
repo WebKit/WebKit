@@ -36,7 +36,7 @@ WKTypeID WKSessionGetTypeID()
     return toAPI(API::Session::APIType);
 }
 
-bool WKSessionGetEphemeral(WKSessionRef sessionRef)
+bool WKSessionIsEphemeral(WKSessionRef sessionRef)
 {
     return toAPI(toImpl(sessionRef)->isEphemeral());
 }

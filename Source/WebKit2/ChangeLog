@@ -1,3 +1,14 @@
+2014-01-21  Martin Hock  <mhock@apple.com>
+
+        Trivial Session API cleanup.
+        https://bugs.webkit.org/show_bug.cgi?id=127356
+
+        Reviewed by Alexey Proskuryakov.
+
+        * UIProcess/API/C/WKSessionRef.cpp:
+        (WKSessionIsEphemeral):
+        * UIProcess/API/C/WKSessionRef.h:
+
 2014-01-16  Simon Fraser  <simon.fraser@apple.com>
 
         Log an error for a common cause of WebProcess early launch crashing in misconfigured development builds

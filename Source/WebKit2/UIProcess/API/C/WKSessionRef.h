@@ -34,7 +34,7 @@ extern "C" {
 
 WK_EXPORT WKTypeID WKSessionGetTypeID();
 
-WK_EXPORT bool WKSessionGetEphemeral(WKSessionRef session);
+WK_EXPORT bool WKSessionIsEphemeral(WKSessionRef session);
 
 #ifdef __cplusplus
 }
