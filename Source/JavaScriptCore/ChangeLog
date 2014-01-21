@@ -1,3 +1,26 @@
+2014-01-21  Mark Rowe  <mrowe@apple.com>
+
+        Mac production build fix.
+
+        Move the shell script build phase to copy jsc into JavaScriptCore.framework
+        out of the jsc target and in to the All target so that it's not run during
+        production builds. Xcode appears to the parent directories of paths referenced
+        in the Output Files of the build phase, which leads to problems when the
+        SYMROOT for the JavaScriptCore framework and the jsc executables are later merged.
+
+        I've also fixed the path to the Resources folder in the script while I'm here.
+        On iOS the framework bundle is shallow so the correct destination is Resources/
+        rather than Versions/A/Resources. This is handled by tweaking the
+        JAVASCRIPTCORE_RESOURCES_DIR configuration setting to be relative rather than
+        a complete path so we can reuse it in the script. The references in JSC.xcconfig
+        and ToolExecutable.xcconfig are updated to prepend JAVASCRIPTCORE_FRAMEWORKS_DIR
+        to preserve their former values.
+
+        * Configurations/Base.xcconfig:
+        * Configurations/JSC.xcconfig:
+        * Configurations/ToolExecutable.xcconfig:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+
 2014-01-19  Andreas Kling  <akling@apple.com>
 
         JSC Parser: Shrink BindingNode.

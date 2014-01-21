@@ -46,6 +46,7 @@
 			isa = PBXAggregateTarget;
 			buildConfigurationList = 149C276C08902AFE008A9EFC /* Build configuration list for PBXAggregateTarget "All" */;
 			buildPhases = (
+				5DF7E1CC188E6B87003F9A46 /* Copy jsc into JavaScriptCore.framework */,
 			);
 			dependencies = (
 				932F5BE70822A1C700736975 /* PBXTargetDependency */,
@@ -5308,7 +5309,6 @@
 			buildPhases = (
 				932F5BDC0822A1C700736975 /* Sources */,
 				932F5BDE0822A1C700736975 /* Frameworks */,
-				5D5D8ABF0E0D0B0300F9C692 /* Copy Into Framework */,
 			);
 			buildRules = (
 			);
@@ -5472,22 +5472,6 @@
 			shellPath = /bin/sh;
 			shellScript = "TRACING_D=\"$SRCROOT/runtime/Tracing.d\";\nTRACING_H=\"$BUILT_PRODUCTS_DIR/DerivedSources/JavaScriptCore/TracingDtrace.h\";\n\nif [[ \"$HAVE_DTRACE\" = \"1\" && \"$TRACING_D\" -nt \"$TRACING_H\" ]];\nthen\n\tdtrace -h -o \"$TRACING_H\" -s \"$TRACING_D\";\nfi;\n";
 		};
-		5D5D8ABF0E0D0B0300F9C692 /* Copy Into Framework */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-				"$(BUILT_PRODUCTS_DIR)/jsc",
-			);
-			name = "Copy Into Framework";
-			outputPaths = (
-				"$(BUILT_PRODUCTS_DIR)/JavaScriptCore.framework/Resources/jsc",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "# Skip for Production builds.\nif [[ ${CONFIGURATION:=Debug} == \"Production\" ]]; then\n    exit\nfi\n\n# Copy and update the jsc binary to refer to JavaScriptCore.framework relative to its location.\nditto \"${BUILT_PRODUCTS_DIR}/jsc\" \"${BUILT_PRODUCTS_DIR}/JavaScriptCore.framework/Resources/jsc\"\ninstall_name_tool -change \"${BUILT_PRODUCTS_DIR}/JavaScriptCore.framework/Versions/A/JavaScriptCore\" \"@loader_path/../JavaScriptCore\" \"${BUILT_PRODUCTS_DIR}/JavaScriptCore.framework/Resources/jsc\"\n";
-		};
 		5DAFD6CD146B6B6E00FBEFB4 /* Install Support Script */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 8;
@@ -5503,6 +5487,22 @@
 			runOnlyForDeploymentPostprocessing = 1;
 			shellPath = /bin/sh;
 			shellScript = "if [[ \"${SKIP_INSTALL}\" == \"NO\" ]]; then\n    cp \"${SRCROOT}/API/tests/testapi.js\" \"${DSTROOT}${INSTALL_PATH}/testapi.js\"\nfi\n";
+		};
+		5DF7E1CC188E6B87003F9A46 /* Copy jsc into JavaScriptCore.framework */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"$(BUILT_PRODUCTS_DIR)/jsc",
+			);
+			name = "Copy jsc into JavaScriptCore.framework";
+			outputPaths = (
+				"$(BUILT_PRODUCTS_DIR)/$(JAVASCRIPTCORE_RESOURCES_DIR)/jsc",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Skip for Production builds.\nif [[ ${CONFIGURATION:=Debug} == \"Production\" ]]; then\n    exit\nfi\n\n# Copy and update the jsc binary to refer to JavaScriptCore.framework relative to its location.\nditto \"${BUILT_PRODUCTS_DIR}/jsc\" \"${BUILT_PRODUCTS_DIR}/${JAVASCRIPTCORE_RESOURCES_DIR}/jsc\"\ninstall_name_tool -change \"${JAVASCRIPTCORE_FRAMEWORKS_DIR}/JavaScriptCore.framework/Versions/A/JavaScriptCore\" \"@loader_path/../JavaScriptCore\" \"${BUILT_PRODUCTS_DIR}/${JAVASCRIPTCORE_RESOURCES_DIR}/jsc\"\n";
 		};
 		65FB3F6509D11E9100F49DEB /* Generate Derived Sources */ = {
 			isa = PBXShellScriptBuildPhase;

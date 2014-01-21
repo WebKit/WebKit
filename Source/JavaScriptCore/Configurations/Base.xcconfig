@@ -101,9 +101,9 @@ JAVASCRIPTCORE_FRAMEWORKS_DIR_macosx_USE_STAGING_INSTALL_PATH_NO = $(NORMAL_JAVA
 JAVASCRIPTCORE_FRAMEWORKS_DIR_macosx_USE_STAGING_INSTALL_PATH_YES = $(SYSTEM_LIBRARY_DIR)/StagedFrameworks/Safari;
 
 JAVASCRIPTCORE_RESOURCES_DIR = $(JAVASCRIPTCORE_RESOURCES_DIR_$(PLATFORM_NAME));
-JAVASCRIPTCORE_RESOURCES_DIR_iphoneos = $(JAVASCRIPTCORE_FRAMEWORKS_DIR)/JavaScriptCore.framework/Resources;
+JAVASCRIPTCORE_RESOURCES_DIR_iphoneos = JavaScriptCore.framework/Resources;
 JAVASCRIPTCORE_RESOURCES_DIR_iphonesimulator = $(JAVASCRIPTCORE_RESOURCES_DIR_iphoneos);
-JAVASCRIPTCORE_RESOURCES_DIR_macosx = $(JAVASCRIPTCORE_FRAMEWORKS_DIR)/JavaScriptCore.framework/Versions/A/Resources;
+JAVASCRIPTCORE_RESOURCES_DIR_macosx = JavaScriptCore.framework/Versions/A/Resources;
 
 // DEBUG_DEFINES, GCC_OPTIMIZATION_LEVEL, STRIP_INSTALLED_PRODUCT and DEAD_CODE_STRIPPING vary between the debug and normal variants.
 // We set up the values for each variant here, and have the Debug configuration in the Xcode project use the _debug variant.
