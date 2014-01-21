@@ -27,6 +27,14 @@ WebInspector.TimelineRecording = function()
 {
     WebInspector.Object.call(this);
 
+    this._timelines = new Map;
+    this._timelines.set(WebInspector.TimelineRecord.Type.Network, new WebInspector.NetworkTimeline);
+    this._timelines.set(WebInspector.TimelineRecord.Type.Script, new WebInspector.Timeline);
+    this._timelines.set(WebInspector.TimelineRecord.Type.Layout, new WebInspector.Timeline);
+
+    for (var timeline of this._timelines.values())
+        timeline.addEventListener(WebInspector.Timeline.Event.TimesUpdated, this._timelineTimesUpdated, this);
+
     this.reset(true);
 };
 
@@ -57,30 +65,20 @@ WebInspector.TimelineRecording.prototype = {
         return this._endTime;
     },
 
-    reset: function(newObject)
+    reset: function(suppressEvents)
     {
-        if (this._timelines) {
-            this._timelines.forEach(function(timeline) {
-                timeline.removeEventListener(null, null, this);
-            }, this);
-        }
-
-        this._timelines = new Map;
-        this._timelines.set(WebInspector.TimelineRecord.Type.Network, new WebInspector.NetworkTimeline);
-        this._timelines.set(WebInspector.TimelineRecord.Type.Script, new WebInspector.Timeline);
-        this._timelines.set(WebInspector.TimelineRecord.Type.Layout, new WebInspector.Timeline);
-
-        this._timelines.forEach(function(timeline) {
-            timeline.addEventListener(WebInspector.Timeline.Event.TimesUpdated, this._timelineTimesUpdated, this);
-        }, this);
-
         this._sourceCodeTimelinesMap = new Map;
         this._eventMarkers = [];
         this._startTime = NaN;
         this._endTime = NaN;
 
-        if (!newObject)
+        for (var timeline of this._timelines.values())
+            timeline.reset(suppressEvents);
+
+        if (!suppressEvents) {
             this.dispatchEventToListeners(WebInspector.TimelineRecording.Event.Reset);
+            this.dispatchEventToListeners(WebInspector.TimelineRecording.Event.TimesUpdated);
+        }
     },
 
     sourceCodeTimelinesForSourceCode: function(sourceCode)
@@ -88,15 +86,7 @@ WebInspector.TimelineRecording.prototype = {
         var timelines = this._sourceCodeTimelinesMap.get(sourceCode);
         if (!timelines)
             return [];
-
-        var result = [];
-
-        // FIXME: This could use a for..of loop once they are supported on Maps.
-        timelines.forEach(function(sourceCodeTimeline) {
-            result.push(sourceCodeTimeline);
-        });
-
-        return result;
+        return timelines.values();
     },
 
     addEventMarker: function(eventMarker)

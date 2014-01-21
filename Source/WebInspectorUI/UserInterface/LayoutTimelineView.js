@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.LayoutTimelineView = function()
+WebInspector.LayoutTimelineView = function(recording)
 {
     WebInspector.TimelineView.call(this);
 
@@ -64,6 +64,9 @@ WebInspector.LayoutTimelineView = function()
 
     this.element.classList.add(WebInspector.LayoutTimelineView.StyleClassName);
     this.element.appendChild(this._dataGrid.element);
+
+    var layoutTimeline = recording.timelines.get(WebInspector.TimelineRecord.Type.Layout);
+    layoutTimeline.addEventListener(WebInspector.Timeline.Event.RecordAdded, this._layoutTimelineRecordAdded, this);
 
     this._pendingRecords = [];
 };
@@ -115,14 +118,6 @@ WebInspector.LayoutTimelineView.prototype = {
         WebInspector.TimelineView.prototype.reset.call(this);
 
         this._dataGrid.reset();
-
-        if (this._layoutTimeline)
-            this._layoutTimeline.removeEventListener(null, null, this);
-
-        this._layoutTimeline = WebInspector.timelineManager.recording.timelines.get(WebInspector.TimelineRecord.Type.Layout);
-        console.assert(this._layoutTimeline);
-
-        this._layoutTimeline.addEventListener(WebInspector.Timeline.Event.RecordAdded, this._layoutTimelineRecordAdded, this);
     },
 
     // Private

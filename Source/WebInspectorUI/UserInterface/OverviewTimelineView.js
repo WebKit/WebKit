@@ -23,9 +23,11 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.OverviewTimelineView = function()
+WebInspector.OverviewTimelineView = function(recording)
 {
     WebInspector.TimelineView.call(this);
+
+    this._recording = recording;
 
     this.navigationSidebarTreeOutline.onselect = this._treeElementSelected.bind(this);
 
@@ -44,9 +46,12 @@ WebInspector.OverviewTimelineView = function()
     this.element.classList.add(WebInspector.OverviewTimelineView.StyleClassName);
     this.element.appendChild(this._dataGrid.element);
 
-    this._pendingRepresentedObjects = [];
+    this._networkTimeline = recording.timelines.get(WebInspector.TimelineRecord.Type.Network);
+    this._networkTimeline.addEventListener(WebInspector.Timeline.Event.RecordAdded, this._networkTimelineRecordAdded, this);
 
-    WebInspector.timelineManager.recording.addEventListener(WebInspector.TimelineRecording.Event.SourceCodeTimelineAdded, this._sourceCodeTimelineAdded, this);
+    recording.addEventListener(WebInspector.TimelineRecording.Event.SourceCodeTimelineAdded, this._sourceCodeTimelineAdded, this);
+
+    this._pendingRepresentedObjects = [];
 };
 
 WebInspector.OverviewTimelineView.StyleClassName = "overview";
@@ -60,16 +65,6 @@ WebInspector.OverviewTimelineView.prototype = {
     get navigationSidebarTreeOutlineLabel()
     {
         return WebInspector.UIString("Timeline Events");
-    },
-
-    reset: function()
-    {
-        WebInspector.TimelineView.prototype.reset.call(this);
-
-        this._networkTimeline = WebInspector.timelineManager.recording.timelines.get(WebInspector.TimelineRecord.Type.Network);
-        console.assert(this._networkTimeline);
-
-        this._networkTimeline.addEventListener(WebInspector.Timeline.Event.RecordAdded, this._networkTimelineRecordAdded, this);
     },
 
     shown: function()
@@ -256,7 +251,7 @@ WebInspector.OverviewTimelineView.prototype = {
         this.needsLayout();
 
         // We don't expect to have any source code timelines yet. Those should be added with _sourceCodeTimelineAdded.
-        console.assert(!WebInspector.timelineManager.recording.sourceCodeTimelinesForSourceCode(resourceTimelineRecord.resource).length);
+        console.assert(!this._recording.sourceCodeTimelinesForSourceCode(resourceTimelineRecord.resource).length);
     },
 
     _sourceCodeTimelineAdded: function(event)

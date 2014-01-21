@@ -27,6 +27,8 @@ WebInspector.TimelineContentView = function(recording)
 {
     WebInspector.ContentView.call(this, recording);
 
+    this._recording = recording;
+
     this.element.classList.add(WebInspector.TimelineContentView.StyleClassName);
 
     this._timelineOverview = new WebInspector.TimelineOverview;
@@ -40,12 +42,12 @@ WebInspector.TimelineContentView = function(recording)
     this._viewContainer.classList.add(WebInspector.TimelineContentView.ViewContainerStyleClassName);
     this.element.appendChild(this._viewContainer);
 
-    this._overviewTimelineView = new WebInspector.OverviewTimelineView;
-    this._discreteTimelineViewMap = {
-        [WebInspector.TimelineRecord.Type.Network]: new WebInspector.NetworkTimelineView,
-        [WebInspector.TimelineRecord.Type.Layout]: new WebInspector.LayoutTimelineView,
-        [WebInspector.TimelineRecord.Type.Script]: new WebInspector.ScriptTimelineView
-    };
+    this._overviewTimelineView = new WebInspector.OverviewTimelineView(recording);
+
+    this._discreteTimelineViewMap = new Map;
+    this._discreteTimelineViewMap.set(WebInspector.TimelineRecord.Type.Network, new WebInspector.NetworkTimelineView(recording));
+    this._discreteTimelineViewMap.set(WebInspector.TimelineRecord.Type.Layout, new WebInspector.LayoutTimelineView(recording));
+    this._discreteTimelineViewMap.set(WebInspector.TimelineRecord.Type.Script, new WebInspector.ScriptTimelineView(recording));
 
     function createPathComponent(displayName, className, representedObject)
     {
@@ -54,20 +56,20 @@ WebInspector.TimelineContentView = function(recording)
         return pathComponent;
     }
 
-    var networkPathComponent = createPathComponent.call(this, WebInspector.UIString("Network Requests"), WebInspector.TimelineSidebarPanel.NetworkIconStyleClass, WebInspector.TimelineRecord.Type.Network);
-    var layoutPathComponent = createPathComponent.call(this, WebInspector.UIString("Layout & Rendering"), WebInspector.TimelineSidebarPanel.ColorsIconStyleClass, WebInspector.TimelineRecord.Type.Layout);
-    var scriptPathComponent = createPathComponent.call(this, WebInspector.UIString("JavaScript & Events"), WebInspector.TimelineSidebarPanel.ScriptIconStyleClass, WebInspector.TimelineRecord.Type.Script);
+    this._pathComponentMap = new Map;
+    this._pathComponentMap.set(WebInspector.TimelineRecord.Type.Network, createPathComponent.call(this, WebInspector.UIString("Network Requests"), WebInspector.TimelineSidebarPanel.NetworkIconStyleClass, WebInspector.TimelineRecord.Type.Network));
+    this._pathComponentMap.set(WebInspector.TimelineRecord.Type.Layout, createPathComponent.call(this, WebInspector.UIString("Layout & Rendering"), WebInspector.TimelineSidebarPanel.ColorsIconStyleClass, WebInspector.TimelineRecord.Type.Layout));
+    this._pathComponentMap.set(WebInspector.TimelineRecord.Type.Script, createPathComponent.call(this, WebInspector.UIString("JavaScript & Events"), WebInspector.TimelineSidebarPanel.ScriptIconStyleClass, WebInspector.TimelineRecord.Type.Script));
 
-    networkPathComponent.nextSibling = layoutPathComponent;
-    layoutPathComponent.previousSibling = networkPathComponent;
-    layoutPathComponent.nextSibling = scriptPathComponent;
-    scriptPathComponent.previousSibling = layoutPathComponent;
+    var previousPathComponent = null;
+    for (var pathComponent of this._pathComponentMap.values()) {
+        if (previousPathComponent) {
+            previousPathComponent.nextSibling = pathComponent;
+            pathComponent.previousSibling = previousPathComponent;
+        }
 
-    this._pathComponentMap = {
-        [WebInspector.TimelineRecord.Type.Network]: networkPathComponent,
-        [WebInspector.TimelineRecord.Type.Layout]: layoutPathComponent,
-        [WebInspector.TimelineRecord.Type.Script]: scriptPathComponent
-    };
+        previousPathComponent = pathComponent;
+    }
 
     this._currentTimelineView = null;
     this._currentTimelineViewIdentifier = null;
@@ -75,7 +77,8 @@ WebInspector.TimelineContentView = function(recording)
     this._updating = false;
     this._lastUpdateTimestamp = NaN;
 
-    WebInspector.timelineManager.recording.addEventListener(WebInspector.TimelineRecording.Event.Reset, this._recordingReset, this);
+    recording.addEventListener(WebInspector.TimelineRecording.Event.Reset, this._recordingReset, this);
+
     WebInspector.timelineManager.addEventListener(WebInspector.TimelineManager.Event.RecordingStarted, this._recordingStarted, this);
     WebInspector.timelineManager.addEventListener(WebInspector.TimelineManager.Event.RecordingStopped, this._recordingStopped, this);
 
@@ -98,11 +101,11 @@ WebInspector.TimelineContentView.prototype = {
 
     showTimelineView: function(identifier)
     {
-        console.assert(identifier in this._discreteTimelineViewMap);
-        if (!(identifier in this._discreteTimelineViewMap))
+        console.assert(this._discreteTimelineViewMap.has(identifier));
+        if (!this._discreteTimelineViewMap.has(identifier))
             return;
 
-        this._showTimelineView(this._discreteTimelineViewMap[identifier], identifier);
+        this._showTimelineView(this._discreteTimelineViewMap.get(identifier), identifier);
     },
 
     get allowedNavigationSidebarPanels()
@@ -120,7 +123,7 @@ WebInspector.TimelineContentView.prototype = {
     {
         if (!this._currentTimelineViewIdentifier)
             return [];
-        return [this._pathComponentMap[this._currentTimelineViewIdentifier]];
+        return [this._pathComponentMap.get(this._currentTimelineViewIdentifier)];
     },
 
     shown: function()
@@ -156,7 +159,7 @@ WebInspector.TimelineContentView.prototype = {
 
         var startTime = this._timelineOverview.selectionStartTime;
         var endTime = this._timelineOverview.selectionStartTime + this._timelineOverview.selectionDuration;
-        var currentTime = this._currentTimeMarker.time || WebInspector.timelineManager.recording.startTime;
+        var currentTime = this._currentTimeMarker.time || this._recording.startTime;
 
         function checkTimeBounds(itemStartTime, itemEndTime)
         {
@@ -236,9 +239,9 @@ WebInspector.TimelineContentView.prototype = {
 
     _update: function(timestamp)
     {
-        var startTime = WebInspector.timelineManager.recording.startTime;
+        var startTime = this._recording.startTime;
         var currentTime = this._currentTimeMarker.time || startTime;
-        var endTime = WebInspector.timelineManager.recording.endTime;
+        var endTime = this._recording.endTime;
         var timespanSinceLastUpdate = (timestamp - this._lastUpdateTimestamp) / 1000 || 0;
 
         currentTime += timespanSinceLastUpdate;
@@ -250,8 +253,8 @@ WebInspector.TimelineContentView.prototype = {
             this._timelineOverview.selectionStartTime = startTime + selectionOffset;
 
             this._overviewTimelineView.zeroTime = startTime;
-            for (var identifier in this._discreteTimelineViewMap)
-                this._discreteTimelineViewMap[identifier].zeroTime = startTime;
+            for (var timelineView of this._discreteTimelineViewMap.values())
+                timelineView.zeroTime = startTime;
 
             delete this._startTimeNeedsReset;
         }
@@ -314,8 +317,8 @@ WebInspector.TimelineContentView.prototype = {
         this._currentTimeMarker.time = 0;
 
         this._overviewTimelineView.reset();
-        for (var identifier in this._discreteTimelineViewMap)
-            this._discreteTimelineViewMap[identifier].reset();
+        for (var timelineView of this._discreteTimelineViewMap.values())
+            timelineView.reset();
     },
 
     _timeRangeSelectionChanged: function(event)

@@ -26,8 +26,6 @@
 WebInspector.NetworkTimeline = function()
 {
     WebInspector.Timeline.call(this);
-
-    this._resourceRecordMap = new Map;
 };
 
 WebInspector.NetworkTimeline.prototype = {
@@ -41,6 +39,13 @@ WebInspector.NetworkTimeline.prototype = {
         console.assert(resource instanceof WebInspector.Resource);
 
         return this._resourceRecordMap.get(resource) || null;
+    },
+
+    reset: function(suppressEvents)
+    {
+        this._resourceRecordMap = new Map;
+
+        WebInspector.Timeline.prototype.reset.call(this, suppressEvents);
     },
 
     addRecord: function(record)

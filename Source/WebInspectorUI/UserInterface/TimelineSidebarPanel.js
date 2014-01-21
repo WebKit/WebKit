@@ -62,19 +62,13 @@ WebInspector.TimelineSidebarPanel = function()
         return treeElement;
     }
 
-    var networkTimelineTreeElement = createTimelineTreeElement.call(this, WebInspector.UIString("Network Requests"), WebInspector.TimelineSidebarPanel.NetworkIconStyleClass, WebInspector.TimelineRecord.Type.Network);
-    var layoutTimelineTreeElement = createTimelineTreeElement.call(this, WebInspector.UIString("Layout & Rendering"), WebInspector.TimelineSidebarPanel.ColorsIconStyleClass, WebInspector.TimelineRecord.Type.Layout);
-    var scriptTimelineTreeElement = createTimelineTreeElement.call(this, WebInspector.UIString("JavaScript & Events"), WebInspector.TimelineSidebarPanel.ScriptIconStyleClass, WebInspector.TimelineRecord.Type.Script);
+    this._timelineTreeElementMap = new Map;
+    this._timelineTreeElementMap.set(WebInspector.TimelineRecord.Type.Network, createTimelineTreeElement.call(this, WebInspector.UIString("Network Requests"), WebInspector.TimelineSidebarPanel.NetworkIconStyleClass, WebInspector.TimelineRecord.Type.Network));
+    this._timelineTreeElementMap.set(WebInspector.TimelineRecord.Type.Layout, createTimelineTreeElement.call(this, WebInspector.UIString("Layout & Rendering"), WebInspector.TimelineSidebarPanel.ColorsIconStyleClass, WebInspector.TimelineRecord.Type.Layout));
+    this._timelineTreeElementMap.set(WebInspector.TimelineRecord.Type.Script, createTimelineTreeElement.call(this, WebInspector.UIString("JavaScript & Events"), WebInspector.TimelineSidebarPanel.ScriptIconStyleClass, WebInspector.TimelineRecord.Type.Script));
 
-    this._timelinesTreeOutline.appendChild(networkTimelineTreeElement);
-    this._timelinesTreeOutline.appendChild(layoutTimelineTreeElement);
-    this._timelinesTreeOutline.appendChild(scriptTimelineTreeElement);
-
-    this._timelineTreeElementMap = {
-        [WebInspector.TimelineRecord.Type.Network]: networkTimelineTreeElement,
-        [WebInspector.TimelineRecord.Type.Layout]: layoutTimelineTreeElement,
-        [WebInspector.TimelineRecord.Type.Script]: scriptTimelineTreeElement
-    };
+    for (var timelineTreeElement of this._timelineTreeElementMap.values())
+        this._timelinesTreeOutline.appendChild(timelineTreeElement);
 
     this._timelineOverviewTreeElement = new WebInspector.GeneralTreeElement(WebInspector.TimelineSidebarPanel.StopwatchIconStyleClass, WebInspector.UIString("Timelines"), null, WebInspector.timelineManager.recording);
     this._timelineOverviewTreeElement.addEventListener(WebInspector.HierarchicalPathComponent.Event.SiblingWasSelected, this.showTimelineOverview, this);
@@ -202,10 +196,11 @@ WebInspector.TimelineSidebarPanel.prototype = {
 
     showTimelineView: function(identifier)
     {
-        if (!this._timelineTreeElementMap[identifier])
+        console.assert(this._timelineTreeElementMap.has(identifier));
+        if (!this._timelineTreeElementMap.has(identifier))
             return;
 
-        this._timelineTreeElementMap[identifier].select(true, false, true, true);
+        this._timelineTreeElementMap.get(identifier).select(true, false, true, true);
 
         this._timelineContentView.showTimelineView(identifier);
         WebInspector.contentBrowser.showContentView(this._timelineContentView);
@@ -283,7 +278,7 @@ WebInspector.TimelineSidebarPanel.prototype = {
 
     _timelinesTreeElementSelected: function(treeElement, selectedByUser)
     {
-        console.assert(this._timelineTreeElementMap[treeElement.representedObject] === treeElement);
+        console.assert(this._timelineTreeElementMap.get(treeElement.representedObject) === treeElement);
         this.showTimelineView(treeElement.representedObject);
     },
 

@@ -1,5 +1,39 @@
 2014-01-16  Timothy Hatcher  <timothy@apple.com>
 
+        Clean up Timelines code by using ES6 features and less global access of TimelineRecording.
+        Also don't recreate Timeline objects when TimelineRecording is reset, reset them instead.
+
+        https://bugs.webkit.org/show_bug.cgi?id=127157
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/LayoutTimelineView.js:
+        (WebInspector.LayoutTimelineView.prototype.reset):
+        * UserInterface/NetworkTimeline.js:
+        (WebInspector.NetworkTimeline):
+        (WebInspector.NetworkTimeline.prototype.reset):
+        * UserInterface/NetworkTimelineView.js:
+        (WebInspector.NetworkTimelineView.prototype.reset):
+        * UserInterface/OverviewTimelineView.js:
+        (WebInspector.OverviewTimelineView.prototype._networkTimelineRecordAdded):
+        * UserInterface/ScriptTimelineView.js:
+        (WebInspector.ScriptTimelineView.prototype.reset):
+        * UserInterface/Timeline.js:
+        (WebInspector.Timeline):
+        (WebInspector.Timeline.prototype.reset):
+        * UserInterface/TimelineContentView.js:
+        (WebInspector.TimelineContentView.set createPathComponent):
+        (WebInspector.TimelineContentView.set var):
+        (WebInspector.TimelineContentView.prototype.showOverviewTimelineView):
+        (WebInspector.TimelineContentView.prototype.showTimelineView):
+        (WebInspector.TimelineContentView.prototype._showTimelineView):
+        (WebInspector.TimelineContentView.prototype._update):
+        (WebInspector.TimelineContentView.prototype._recordingReset):
+        * UserInterface/TimelineRecording.js:
+        (WebInspector.TimelineRecording.prototype.reset):
+
+2014-01-16  Timothy Hatcher  <timothy@apple.com>
+
         Improve WebInspector.TimelineOverview by not putting WebInspector.TimelineRuler in a scroll area.
 
         https://bugs.webkit.org/show_bug.cgi?id=127145

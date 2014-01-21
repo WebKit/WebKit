@@ -27,12 +27,11 @@ WebInspector.Timeline = function()
 {
     WebInspector.Object.call(this);
 
-    this._records = [];
-    this._startTime = NaN;
-    this._endTime = NaN;
+    this.reset(true);
 };
 
 WebInspector.Timeline.Event = {
+    Reset: "timeline-reset",
     RecordAdded: "timeline-record-added",
     TimesUpdated: "timeline-times-updated"
 };
@@ -56,6 +55,18 @@ WebInspector.Timeline.prototype = {
     get records()
     {
         return this._records;
+    },
+
+    reset: function(suppressEvents)
+    {
+        this._records = [];
+        this._startTime = NaN;
+        this._endTime = NaN;
+
+        if (!suppressEvents) {
+            this.dispatchEventToListeners(WebInspector.Timeline.Event.Reset);
+            this.dispatchEventToListeners(WebInspector.Timeline.Event.TimesUpdated);
+        }
     },
 
     addRecord: function(record)
