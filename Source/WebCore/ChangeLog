@@ -1,5 +1,17 @@
 2014-01-21  Simon Fraser  <simon.fraser@apple.com>
 
+        Export systemTotalMemory() and systemMemoryLevel() for MobileSafari
+        https://bugs.webkit.org/show_bug.cgi?id=127360
+
+        Reviewed by Andy Estes.
+        
+        MobileSafari inappropriately calls these WebCore functions directly,
+        so export them.
+
+        * WebCore.exp.in:
+
+2014-01-21  Simon Fraser  <simon.fraser@apple.com>
+
         Clean up PLATFORM(IOS) code related to the custom fixed position layout rect
         https://bugs.webkit.org/show_bug.cgi?id=127362
 
