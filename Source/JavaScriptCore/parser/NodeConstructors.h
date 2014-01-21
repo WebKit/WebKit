@@ -888,14 +888,15 @@ inline ResolveNode::ResolveNode(const JSTokenLocation& location, const Identifie
         return adoptRef(new ObjectPatternNode(vm));
     }
 
-    inline PassRefPtr<BindingNode> BindingNode::create(VM* vm, const Identifier& boundProperty, const JSTextPosition& divot, const JSTextPosition& start, const JSTextPosition& end)
+    inline PassRefPtr<BindingNode> BindingNode::create(VM* vm, const Identifier& boundProperty, const JSTextPosition& start, const JSTextPosition& end)
     {
-        return adoptRef(new BindingNode(vm, boundProperty, divot, start, end));
+        return adoptRef(new BindingNode(vm, boundProperty, start, end));
     }
     
-    inline BindingNode::BindingNode(VM* vm, const Identifier& boundProperty, const JSTextPosition& divot, const JSTextPosition& start, const JSTextPosition& end)
+    inline BindingNode::BindingNode(VM* vm, const Identifier& boundProperty, const JSTextPosition& start, const JSTextPosition& end)
         : DeconstructionPatternNode(vm)
-        , ThrowableExpressionData(divot, start, end)
+        , m_divotStart(start)
+        , m_divotEnd(end)
         , m_boundProperty(boundProperty)
     {
     }

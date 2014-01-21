@@ -2475,9 +2475,9 @@ void BindingNode::bindValue(BytecodeGenerator& generator, RegisterID* value) con
         return;
     }
     if (generator.isStrictMode())
-        generator.emitExpressionInfo(divot(), divotStart(), divotEnd());
+        generator.emitExpressionInfo(divotEnd(), divotStart(), divotEnd());
     RegisterID* scope = generator.emitResolveScope(generator.newTemporary(), m_boundProperty);
-    generator.emitExpressionInfo(divot(), divotStart(), divotEnd());
+    generator.emitExpressionInfo(divotEnd(), divotStart(), divotEnd());
     generator.emitPutToScope(scope, m_boundProperty, value, generator.isStrictMode() ? ThrowIfNotFound : DoNotThrowIfNotFound);
     return;
 }

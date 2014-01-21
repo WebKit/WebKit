@@ -674,9 +674,9 @@ public:
         node->appendEntry(location, identifier, wasString, pattern.get());
     }
     
-    BindingPattern createBindingLocation(const JSTokenLocation&, const Identifier& boundProperty, const JSTextPosition& divot, const JSTextPosition& start, const JSTextPosition& end)
+    BindingPattern createBindingLocation(const JSTokenLocation&, const Identifier& boundProperty, const JSTextPosition& start, const JSTextPosition& end)
     {
-        return BindingNode::create(m_vm, boundProperty, divot, start, end);
+        return BindingNode::create(m_vm, boundProperty, start, end);
     }
     
 private:

@@ -1,3 +1,30 @@
+2014-01-19  Andreas Kling  <akling@apple.com>
+
+        JSC Parser: Shrink BindingNode.
+        <https://webkit.org/b/127253>
+
+        The "divot" and "end" source locations are always identical for
+        BindingNodes, so store only "start" and "end" instead.
+
+        1.19 MB progression on Membuster3.
+
+        Reviewed by Geoff Garen.
+
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::BindingNode::bindValue):
+        * parser/ASTBuilder.h:
+        (JSC::ASTBuilder::createBindingLocation):
+        * parser/NodeConstructors.h:
+        (JSC::BindingNode::create):
+        (JSC::BindingNode::BindingNode):
+        * parser/Nodes.h:
+        (JSC::BindingNode::divotStart):
+        (JSC::BindingNode::divotEnd):
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::createBindingPattern):
+        * parser/SyntaxChecker.h:
+        (JSC::SyntaxChecker::operatorStackPop):
+
 2014-01-20  Filip Pizlo  <fpizlo@apple.com>
 
         op_captured_mov and op_new_captured_func in UnlinkedCodeBlocks should use the IdentifierMap instead of the strings directly

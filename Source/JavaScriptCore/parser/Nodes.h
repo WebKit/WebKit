@@ -1641,20 +1641,25 @@ namespace JSC {
         Vector<Entry> m_targetPatterns;
     };
 
-    class BindingNode : public DeconstructionPatternNode, ThrowableExpressionData {
+    class BindingNode : public DeconstructionPatternNode {
     public:
-        static PassRefPtr<BindingNode> create(VM*, const Identifier& boundProperty, const JSTextPosition& divot, const JSTextPosition& start, const JSTextPosition& end);
+        static PassRefPtr<BindingNode> create(VM*, const Identifier& boundProperty, const JSTextPosition& start, const JSTextPosition& end);
         const Identifier& boundProperty() const { return m_boundProperty; }
+
+        const JSTextPosition& divotStart() const { return m_divotStart; }
+        const JSTextPosition& divotEnd() const { return m_divotEnd; }
         
     private:
-        BindingNode(VM*, const Identifier& boundProperty, const JSTextPosition& divot, const JSTextPosition& start, const JSTextPosition& end);
+        BindingNode(VM*, const Identifier& boundProperty, const JSTextPosition& start, const JSTextPosition& end);
 
         virtual void collectBoundIdentifiers(Vector<Identifier>&) const override;
         virtual void bindValue(BytecodeGenerator&, RegisterID*) const override;
         virtual void toString(StringBuilder&) const override;
         
         virtual bool isBindingNode() const override { return true; }
-        
+
+        JSTextPosition m_divotStart;
+        JSTextPosition m_divotEnd;
         Identifier m_boundProperty;
     };
 
