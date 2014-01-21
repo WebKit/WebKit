@@ -449,7 +449,7 @@ fast/dom/Window/mozilla-focus-blur.html [ Failure ]
 
 webkit.org/b/126962 plugins/plugin-document-load-prevented-userscript.html [ Crash Pass Timeout ]
 
-webkit.org/b/127316 svg/dom/SVGPolygonElement-baseVal-list-removal-crash.html is flaky [ Pass Timeout ]
+webkit.org/b/127316 svg/dom/SVGPolygonElement-baseVal-list-removal-crash.html [ Pass Timeout ]
 
 ### END OF (3) Unclassified failures
 ########################################
