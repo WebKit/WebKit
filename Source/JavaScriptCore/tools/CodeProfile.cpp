@@ -33,7 +33,7 @@
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
-#if PLATFORM(MAC)
+#if OS(DARWIN)
 #include <cxxabi.h>
 #include <dlfcn.h>
 #include <execinfo.h>
@@ -56,7 +56,7 @@ const char* CodeProfile::s_codeTypeNames[CodeProfile::NumberOfCodeTypes] = {
 // Helper function, find the symbol name for a pc in JSC.
 static const char* symbolName(void* address)
 {
-#if PLATFORM(MAC)
+#if OS(DARWIN)
     Dl_info info;
     if (!dladdr(address, &info) || !info.dli_sname)
         return "<unknown>";
@@ -123,7 +123,7 @@ void CodeProfile::sample(void* pc, void** framePointer)
         if (type != EngineFrame)
             return;
 
-#if PLATFORM(MAC) && CPU(X86_64)
+#if OS(DARWIN) && CPU(X86_64)
         // Walk up the stack.
         pc = framePointer[1];
         framePointer = reinterpret_cast<void**>(*framePointer);
