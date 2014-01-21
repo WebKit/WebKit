@@ -35,7 +35,7 @@ WebInspector.TimelineRuler = function()
     this._element.appendChild(this._headerElement);
 
     this._markersElement = document.createElement("div");
-    this._markersElement.className = WebInspector.TimelineRuler.EventMarkersElementStyleClassName;
+    this._markersElement.className = WebInspector.TimelineRuler.MarkersElementStyleClassName;
     this._element.appendChild(this._markersElement);
 
     this._zeroTime = 0;
@@ -45,6 +45,8 @@ WebInspector.TimelineRuler = function()
     this._secondsPerPixel = 0;
     this._endTimePinned = false;
     this._allowsClippedLabels = false;
+
+    this._markerElementMap = new Map;
 }
 
 WebInspector.TimelineRuler.MinimumLeftDividerSpacing = 48;
@@ -55,9 +57,8 @@ WebInspector.TimelineRuler.HeaderElementStyleClassName = "header";
 WebInspector.TimelineRuler.DividerElementStyleClassName = "divider";
 WebInspector.TimelineRuler.DividerLabelElementStyleClassName = "label";
 
-WebInspector.TimelineRuler.EventMarkersElementStyleClassName = "event-markers";
-WebInspector.TimelineRuler.EventMarkerTooltipElementStyleClassName = "event-marker-tooltip";
-WebInspector.TimelineRuler.BaseEventMarkerElementStyleClassName = "event-marker";
+WebInspector.TimelineRuler.MarkersElementStyleClassName = "markers";
+WebInspector.TimelineRuler.BaseMarkerElementStyleClassName = "marker";
 
 WebInspector.TimelineRuler.prototype = {
     constructor: WebInspector.TimelineRuler,
@@ -182,6 +183,29 @@ WebInspector.TimelineRuler.prototype = {
         this._needsLayout();
     },
 
+    addMarker: function(marker)
+    {
+        console.assert(marker instanceof WebInspector.TimelineMarker);
+
+        if (this._markerElementMap.has(marker))
+            return;
+
+        marker.addEventListener(WebInspector.TimelineMarker.Event.TimeChanged, this._timelineMarkerTimeChanged, this);
+
+        var markerElement = document.createElement("div");
+        markerElement.classList.add(WebInspector.TimelineRuler.BaseMarkerElementStyleClassName);
+        markerElement.classList.add(marker.type);
+
+        this._markerElementMap.set(marker, markerElement);
+
+        this._needsMarkerLayout();
+    },
+
+    elementForMarker: function(marker)
+    {
+        return this._markerElementMap.get(marker) || null;
+    },
+
     updateLayout: function()
     {
         if (this._scheduledLayoutUpdateIdentifier) {
@@ -227,6 +251,8 @@ WebInspector.TimelineRuler.prototype = {
         if (!this._endTimePinned)
             ++dividerCount;
 
+        var markerDividers = this._markersElement.querySelectorAll("." + WebInspector.TimelineRuler.DividerElementStyleClassName);
+
         var dividerElement = this._headerElement.firstChild;
 
         for (var i = 0; i <= dividerCount; ++i) {
@@ -239,6 +265,13 @@ WebInspector.TimelineRuler.prototype = {
                 labelElement.className = WebInspector.TimelineRuler.DividerLabelElementStyleClassName;
                 dividerElement._labelElement = labelElement;
                 dividerElement.appendChild(labelElement);
+            }
+
+            var markerDividerElement = markerDividers[i];
+            if (!markerDividerElement) {
+                markerDividerElement = document.createElement("div");
+                markerDividerElement.className = WebInspector.TimelineRuler.DividerElementStyleClassName;
+                this._markersElement.appendChild(markerDividerElement);
             }
 
             var dividerTime = firstDividerTime + (sliceTime * i);
@@ -259,18 +292,10 @@ WebInspector.TimelineRuler.prototype = {
                     continue;
             }
 
-            if (this._endTimePinned)
-                newLeftPosition *= 100;
-            else
-                newLeftPosition *= visibleWidth;
+            this._updateLeftPositionOfElement(dividerElement, newLeftPosition, visibleWidth);
+            this._updateLeftPositionOfElement(markerDividerElement, newLeftPosition, visibleWidth);
 
-            newLeftPosition = newLeftPosition.toFixed(2);
-
-            var currentLeftPosition = parseFloat(dividerElement.style.left).toFixed(2);
-            if (currentLeftPosition !== newLeftPosition)
-                dividerElement.style.left = newLeftPosition + (this._endTimePinned ? "%" : "px");
-
-            dividerElement._labelElement.textContent = isNaN(dividerTime) ? "" : Number.secondsToString(dividerTime, true);
+            dividerElement._labelElement.textContent = isNaN(dividerTime) ? "" : Number.secondsToString(dividerTime - this._zeroTime, true);
             dividerElement = dividerElement.nextSibling;
         }
 
@@ -280,6 +305,11 @@ WebInspector.TimelineRuler.prototype = {
             dividerElement.remove();
             dividerElement = nextDividerElement;
         }
+
+        for (; i < markerDividers.length; ++i)
+            markerDividers[i].remove();
+
+        this._updateMarkers(visibleWidth, duration);
     },
 
     // Private
@@ -288,7 +318,36 @@ WebInspector.TimelineRuler.prototype = {
     {
         if (this._scheduledLayoutUpdateIdentifier)
             return;
+
+        if (this._scheduledMarkerLayoutUpdateIdentifier) {
+            cancelAnimationFrame(this._scheduledMarkerLayoutUpdateIdentifier);
+            delete this._scheduledMarkerLayoutUpdateIdentifier;
+        }
+
         this._scheduledLayoutUpdateIdentifier = requestAnimationFrame(this.updateLayout.bind(this));
+    },
+
+    _needsMarkerLayout: function()
+    {
+        // If layout is scheduled, abort since markers will be updated when layout happens.
+        if (this._scheduledLayoutUpdateIdentifier)
+            return;
+
+        if (this._scheduledMarkerLayoutUpdateIdentifier)
+            return;
+
+        function update()
+        {
+            delete this._scheduledMarkerLayoutUpdateIdentifier;
+
+            var visibleWidth = this._headerElement.clientWidth;
+            if (visibleWidth <= 0)
+                return;
+
+            this._updateMarkers(visibleWidth, this.duration);
+        }
+
+        this._scheduledMarkerLayoutUpdateIdentifier = requestAnimationFrame(update.bind(this));
     },
 
     _recalculate: function()
@@ -308,6 +367,33 @@ WebInspector.TimelineRuler.prototype = {
             this._endTime = this._startTime + (visibleWidth * this._secondsPerPixel);
 
         return visibleWidth;
+    },
+
+    _updateLeftPositionOfElement: function(element, newLeftPosition, visibleWidth)
+    {
+        newLeftPosition *= this._endTimePinned ? 100 : visibleWidth;
+        newLeftPosition = newLeftPosition.toFixed(2);
+
+        var currentLeftPosition = parseFloat(element.style.left).toFixed(2);
+        if (currentLeftPosition !== newLeftPosition)
+            element.style.left = newLeftPosition + (this._endTimePinned ? "%" : "px");
+    },
+
+    _updateMarkers: function(visibleWidth, duration)
+    {
+        this._markerElementMap.forEach(function(markerElement, marker) {
+            var newLeftPosition = (marker.time - this._startTime) / duration;
+
+            this._updateLeftPositionOfElement(markerElement, newLeftPosition, visibleWidth);
+
+            if (!markerElement.parentNode)
+                this._markersElement.appendChild(markerElement);
+        }, this);
+    },
+
+    _timelineMarkerTimeChanged: function()
+    {
+        this._needsMarkerLayout();
     }
 }
 

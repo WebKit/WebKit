@@ -1,3 +1,71 @@
+2013-12-17  Timothy Hatcher  <timothy@apple.com>
+
+        Add the start of the TimelineOverview class.
+
+        TimelineOverview currently has a time ruler and tracks the current recording time.
+
+        https://bugs.webkit.org/show_bug.cgi?id=125878
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Main.html:
+        * UserInterface/TimelineContentView.css:
+        (.content-view.timeline > .timeline-overview):
+        * UserInterface/TimelineContentView.js:
+        (WebInspector.TimelineContentView):
+        (WebInspector.TimelineContentView.prototype.updateLayout):
+        (WebInspector.TimelineContentView.prototype._update):
+        (WebInspector.TimelineContentView.prototype._recordingStarted):
+        (WebInspector.TimelineContentView.prototype._recordingStopped):
+        (WebInspector.TimelineContentView.prototype._recordingReset):
+        * UserInterface/TimelineManager.js:
+        (WebInspector.TimelineManager.prototype.eventRecorded.processRecord):
+        (WebInspector.TimelineManager.prototype.eventRecorded):
+        * UserInterface/TimelineMarker.js: Renamed from Source/WebInspectorUI/UserInterface/TimelineEventMarker.js.
+        (WebInspector.TimelineMarker):
+        (WebInspector.TimelineMarker.prototype.get time):
+        (WebInspector.TimelineMarker.prototype.set time):
+        (WebInspector.TimelineMarker.prototype.get type):
+        * UserInterface/TimelineOverview.css: Added.
+        (.timeline-overview > .scroll-container):
+        (.timeline-overview > .scroll-container > .timeline-ruler):
+        * UserInterface/TimelineOverview.js: Added.
+        (WebInspector.TimelineOverview):
+        (WebInspector.TimelineOverview.prototype.get element):
+        (WebInspector.TimelineOverview.prototype.get startTime):
+        (WebInspector.TimelineOverview.prototype.set startTime):
+        (WebInspector.TimelineOverview.prototype.get secondsPerPixel):
+        (WebInspector.TimelineOverview.prototype.set secondsPerPixel):
+        (WebInspector.TimelineOverview.prototype.get endTime):
+        (WebInspector.TimelineOverview.prototype.set endTime):
+        (WebInspector.TimelineOverview.prototype.addMarker):
+        (WebInspector.TimelineOverview.prototype.revealMarker):
+        (WebInspector.TimelineOverview.prototype.updateLayout):
+        (WebInspector.TimelineOverview.prototype._updateElementWidth):
+        (WebInspector.TimelineOverview.prototype._needsLayout):
+        * UserInterface/TimelineRecording.js:
+        (WebInspector.TimelineRecording.prototype.get startTime):
+        (WebInspector.TimelineRecording.prototype.get endTime):
+        (WebInspector.TimelineRecording.prototype.reset):
+        * UserInterface/TimelineRuler.css:
+        (.timeline-ruler > .markers):
+        (.timeline-ruler > .markers > .marker):
+        (.timeline-ruler > .markers > .marker.current-time):
+        (.timeline-ruler > .markers > .marker.current-time::before):
+        (.timeline-ruler > .markers > .marker.load-event):
+        (.timeline-ruler > .markers > .marker.dom-content-event):
+        (.timeline-ruler > .markers > .marker.timestamp):
+        * UserInterface/TimelineRuler.js:
+        (WebInspector.TimelineRuler):
+        (WebInspector.TimelineRuler.prototype.updateLayout):
+        (WebInspector.TimelineRuler.prototype._needsLayout):
+        (WebInspector.TimelineRuler.prototype._needsMarkerLayout.update):
+        (WebInspector.TimelineRuler.prototype._needsMarkerLayout):
+        (WebInspector.TimelineRuler.prototype._recalculate):
+        (WebInspector.TimelineRuler.prototype._updateLeftPositionOfElement):
+        (WebInspector.TimelineRuler.prototype._updateMarkers):
+        (WebInspector.TimelineRuler.prototype._timelineMarkerTimeChanged):
+
 2013-12-13  Timothy Hatcher  <timothy@apple.com>
 
         Clean up and refactor TimelineDecorations into TimelineRuler.

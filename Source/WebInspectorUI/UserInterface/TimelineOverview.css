@@ -23,29 +23,21 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-.content-view.timeline > .timeline-overview {
+.timeline-overview > .scroll-container {
     position: absolute;
     top: 0;
     left: 0;
     right: 0;
-    height: 130px;
-}
-
-.content-view.timeline > .view-container {
-    position: absolute;
-    top: 130px;
-    left: 0;
-    right: 0;
     bottom: 0;
+    overflow-x: auto;
+    overflow-y: hidden;
+}
+
+.timeline-overview > .scroll-container > .timeline-ruler {
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    min-width: 100%;
     overflow: hidden;
-}
-
-.content-view.timeline > .view-container > .timeline-view > .data-grid td {
-    height: 16px;
-    line-height: 16px;
-}
-
-.content-view.timeline > .view-container > .timeline-view > .data-grid table.data {
-    background-image: -webkit-linear-gradient(top, white, white 50%, rgb(243, 243, 243) 50%, rgb(243, 243, 243));
-    background-size: 100% 40px;
 }

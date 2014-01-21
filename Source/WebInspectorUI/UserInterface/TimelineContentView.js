@@ -29,6 +29,12 @@ WebInspector.TimelineContentView = function(recording)
 
     this.element.classList.add(WebInspector.TimelineContentView.StyleClassName);
 
+    this._timelineOverview = new WebInspector.TimelineOverview;
+    this.element.appendChild(this._timelineOverview.element);
+
+    this._currentTimeMarker = new WebInspector.TimelineMarker(0, WebInspector.TimelineMarker.Type.CurrentTime);
+    this._timelineOverview.addMarker(this._currentTimeMarker);
+
     this._viewContainer = document.createElement("div");
     this._viewContainer.classList.add(WebInspector.TimelineContentView.ViewContainerStyleClassName);
     this.element.appendChild(this._viewContainer);
@@ -65,7 +71,12 @@ WebInspector.TimelineContentView = function(recording)
     this._currentTimelineView = null;
     this._currentTimelineViewIdentifier = null;
 
+    this._updating = false;
+    this._lastUpdateTimestamp = NaN;
+
     WebInspector.timelineManager.recording.addEventListener(WebInspector.TimelineRecording.Event.Reset, this._recordingReset, this);
+    WebInspector.timelineManager.addEventListener(WebInspector.TimelineManager.Event.RecordingStarted, this._recordingStarted, this);
+    WebInspector.timelineManager.addEventListener(WebInspector.TimelineManager.Event.RecordingStopped, this._recordingStopped, this);
 
     this.showOverviewTimelineView();
 };
@@ -129,6 +140,8 @@ WebInspector.TimelineContentView.prototype = {
 
     updateLayout: function()
     {
+        this._timelineOverview.updateLayout();
+
         if (!this._currentTimelineView)
             return;
 
@@ -168,8 +181,60 @@ WebInspector.TimelineContentView.prototype = {
         this.dispatchEventToListeners(WebInspector.ContentView.Event.SelectionPathComponentsDidChange);
     },
 
+    _update: function(timestamp)
+    {
+        var startTime = WebInspector.timelineManager.recording.startTime;
+        var currentTime = this._currentTimeMarker.time || startTime;
+        var endTime = WebInspector.timelineManager.recording.endTime;
+        var timespanSinceLastUpdate = (timestamp - this._lastUpdateTimestamp) / 1000 || 0;
+
+        currentTime += timespanSinceLastUpdate;
+
+        this._currentTimeMarker.time = currentTime;
+
+        this._timelineOverview.startTime = startTime;
+        this._timelineOverview.endTime = Math.max(endTime, currentTime);
+
+        // Force a layout now since we are already in an animation frame and don't need to delay it until the next.
+        this._timelineOverview.updateLayout();
+
+        this._timelineOverview.revealMarker(this._currentTimeMarker);
+
+        // Only stop updating if the current time is greater than the end time.
+        if (!this._updating && currentTime >= endTime) {
+            this._lastUpdateTimestamp = NaN;
+            return;
+        }
+
+        this._lastUpdateTimestamp = timestamp;
+
+        requestAnimationFrame(this._updateCallback);
+    },
+
+    _recordingStarted: function(event)
+    {
+        console.assert(!this._updating);
+        if (this._updating)
+            return;
+
+        this._updating = true;
+
+        if (!this._updateCallback)
+            this._updateCallback = this._update.bind(this);
+
+        requestAnimationFrame(this._updateCallback);
+    },
+
+    _recordingStopped: function(event)
+    {
+        console.assert(this._updating);
+        this._updating = false;
+    },
+
     _recordingReset: function(event)
     {
+        this._currentTimeMarker.time = 0;
+
         this._overviewTimelineView.reset();
 
         for (var identifier in this._discreteTimelineViewMap)

@@ -135,7 +135,7 @@ WebInspector.TimelineManager.prototype = {
                 if (!frame.isMainFrame())
                     break;
 
-                var eventMarker = new WebInspector.TimelineEventMarker(startTime, WebInspector.TimelineEventMarker.Type.LoadEvent);
+                var eventMarker = new WebInspector.TimelineMarker(startTime, WebInspector.TimelineMarker.Type.LoadEvent);
                 this._recording.addEventMarker(eventMarker);
 
                 this._stopAutoRecordingSoon();
@@ -154,7 +154,7 @@ WebInspector.TimelineManager.prototype = {
                 if (!frame.isMainFrame())
                     break;
 
-                var eventMarker = new WebInspector.TimelineEventMarker(startTime, WebInspector.TimelineEventMarker.Type.DOMContentEvent);
+                var eventMarker = new WebInspector.TimelineMarker(startTime, WebInspector.TimelineMarker.Type.DOMContentEvent);
                 this._recording.addEventMarker(eventMarker);
                 break;
 
@@ -219,7 +219,7 @@ WebInspector.TimelineManager.prototype = {
                 break;
 
             case TimelineAgent.EventType.TimeStamp:
-                var eventMarker = new WebInspector.TimelineEventMarker(startTime, WebInspector.TimelineEventMarker.Type.TimeStamp);
+                var eventMarker = new WebInspector.TimelineMarker(startTime, WebInspector.TimelineMarker.Type.TimeStamp);
                 this._recording.addEventMarker(eventMarker);
                 break;
 

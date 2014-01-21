@@ -47,6 +47,16 @@ WebInspector.TimelineRecording.prototype = {
         return this._timelines;
     },
 
+    get startTime()
+    {
+        return this._startTime;
+    },
+
+    get endTime()
+    {
+        return this._endTime;
+    },
+
     reset: function(newObject)
     {
         if (this._timelines) {
@@ -66,6 +76,8 @@ WebInspector.TimelineRecording.prototype = {
 
         this._sourceCodeTimelinesMap = new Map;
         this._eventMarkers = [];
+        this._startTime = NaN;
+        this._endTime = NaN;
 
         if (!newObject)
             this.dispatchEventToListeners(WebInspector.TimelineRecording.Event.Reset);

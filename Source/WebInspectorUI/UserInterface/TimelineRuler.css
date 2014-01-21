@@ -55,44 +55,63 @@
     white-space: nowrap;
 }
 
-.timeline-ruler > .event-markers {
+.timeline-ruler > .markers {
     position: absolute;
     top: 22px;
     left: 0;
     right: 0;
     bottom: 0;
+    z-index: 1;
 }
 
-.timeline-ruler > .event-markers > .event-marker-tooltip {
+.timeline-ruler > .markers > .divider {
+    position: absolute;
+    width: 1px;
+    top: 1px;
+    bottom: 0;
+    -webkit-transform: translateX(-1px);
+    background-color: rgba(0, 0, 0, 0.05);
+}
+
+.timeline-ruler > .markers > .marker {
     position: absolute;
     top: 0;
     bottom: 0;
 
-    width: 9px;
-
-    pointer-events: auto;
-}
-
-.timeline-ruler > .event-markers > .event-marker {
-    position: absolute;
-    top: 0;
-    bottom: 0;
-
-    margin-left: 4px;
+    -webkit-transform: translateX(-1px);
 
     border-left-width: 1px;
     border-left-style: dashed;
     border-left-color: rgba(128, 128, 128, 0.5);
 }
 
-.timeline-ruler > .event-markers > .event-marker.load-event {
+.timeline-ruler > .markers > .marker.current-time {
+    border-left-color: red;
+    border-left-style: solid;
+}
+
+.timeline-ruler > .markers > .marker.current-time::before {
+    position: absolute;
+    top: -5px;
+    left: -5px;
+
+    width: 9px;
+    height: 9px;
+    border-radius: 5px;
+
+    background-color: red;
+
+    content: "";
+}
+
+.timeline-ruler > .markers > .marker.load-event {
     border-left-color: rgba(255, 0, 0, 0.5);
 }
 
-.timeline-ruler > .event-markers > .event-marker.dom-content-event {
+.timeline-ruler > .markers > .marker.dom-content-event {
     border-left-color: rgba(0, 0, 255, 0.5);
 }
 
-.timeline-ruler > .event-markers > .event-marker.timestamp {
+.timeline-ruler > .markers > .marker.timestamp {
     border-left-color: rgba(0, 110, 0, 0.5);
 }
