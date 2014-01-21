@@ -33,7 +33,7 @@
 #import "RemoteLayerTreeContext.h"
 #import "RemoteLayerTreePropertyApplier.h"
 #import "WebProcess.h"
-#import <WebCore/CALayerWebAdditions.h>
+#import <WebCore/WebCoreCALayerExtras.h>
 #import <WebCore/GraphicsLayerCA.h>
 #import <WebCore/PlatformCALayerMac.h>
 #import <WebCore/SoftLinking.h>

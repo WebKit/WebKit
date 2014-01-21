@@ -1,5 +1,17 @@
 2014-01-21  Tim Horton  <timothy_horton@apple.com>
 
+        Address late review naming comments after r162453.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/graphics/ca/mac/PlatformCALayerMac.mm:
+        * platform/graphics/mac/CALayerWebAdditions.h: Removed.
+        * platform/graphics/mac/CALayerWebAdditions.mm: Removed.
+        * platform/graphics/mac/WebCoreCALayerExtras.h: Added.
+        * platform/graphics/mac/WebCoreCALayerExtras.mm: Added.
+        (-[CALayer web_disableAllActions]):
+
+2014-01-21  Tim Horton  <timothy_horton@apple.com>
+
         Keep CALayer implicit animation disabling code in a single place
         https://bugs.webkit.org/show_bug.cgi?id=127355
 

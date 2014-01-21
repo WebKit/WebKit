@@ -23,15 +23,36 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef CALayerWebAdditions_h
-#define CALayerWebAdditions_h
+#include "config.h"
 
-#import <QuartzCore/QuartzCore.h>
+#import "WebCoreCALayerExtras.h"
 
-@interface CALayer (WebAdditions)
+@implementation CALayer (WebCoreCALayerExtras)
 
-- (void)web_disableAllActions;
+- (void)web_disableAllActions
+{
+    NSNull *nullValue = [NSNull null];
+    self.style = @{
+        @"actions" : @{
+            @"anchorPoint" : nullValue,
+            @"anchorPointZ" : nullValue,
+            @"backgroundColor" : nullValue,
+            @"borderColor" : nullValue,
+            @"borderWidth" : nullValue,
+            @"bounds" : nullValue,
+            @"contents" : nullValue,
+            @"contentsRect" : nullValue,
+            @"contentsScale" : nullValue,
+            @"cornerRadius" : nullValue,
+            @"opacity" : nullValue,
+            @"position" : nullValue,
+            @"shadowColor" : nullValue,
+            @"sublayerTransform" : nullValue,
+            @"sublayers" : nullValue,
+            @"transform" : nullValue,
+            @"zPosition" : nullValue
+        }
+    };
+}
 
 @end
-
-#endif // CALayerWebAdditions_h

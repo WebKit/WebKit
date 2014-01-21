@@ -31,7 +31,6 @@
 
 #import "AnimationUtilities.h"
 #import "BlockExceptions.h"
-#import "CALayerWebAdditions.h"
 #import "GraphicsContext.h"
 #import "GraphicsLayerCA.h"
 #import "LengthFunctions.h"
@@ -41,6 +40,7 @@
 #import "SoftLinking.h"
 #import "TiledBacking.h"
 #import "TileController.h"
+#import "WebCoreCALayerExtras.h"
 #import "WebLayer.h"
 #import "WebTiledBackingLayer.h"
 #import <objc/objc-auto.h>
