@@ -118,7 +118,8 @@
     opacity: 0.8;
 }
 
-.sidebar > .panel.timeline > .content {
+.sidebar > .panel.timeline > .content,
+.sidebar > .panel.timeline > .empty-content-placeholder {
     top: 175px;
 }
 

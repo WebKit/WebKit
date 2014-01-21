@@ -149,6 +149,44 @@ WebInspector.TimelineContentView.prototype = {
         this._currentTimelineView.updateLayout();
     },
 
+    matchTreeElementAgainstCustomFilters: function(treeElement)
+    {
+        var startTime = this._timelineOverview.selectionStartTime;
+        var endTime = this._timelineOverview.selectionStartTime + this._timelineOverview.selectionDuration;
+        var currentTime = this._currentTimeMarker.time || WebInspector.timelineManager.recording.startTime;
+
+        function checkTimeBounds(itemStartTime, itemEndTime)
+        {
+            itemStartTime = itemStartTime || currentTime;
+            itemEndTime = itemEndTime || currentTime;
+
+            return startTime <= itemEndTime && itemStartTime <= endTime;
+        }
+
+        if (treeElement instanceof WebInspector.ResourceTreeElement) {
+            var resource = treeElement.resource;
+            return checkTimeBounds(resource.requestSentTimestamp, resource.finishedOrFailedTimestamp);
+        }
+
+        if (treeElement instanceof WebInspector.SourceCodeTimelineTreeElement) {
+            var sourceCodeTimeline = treeElement.sourceCodeTimeline;
+
+            // Do a quick check of the timeline bounds before we check each record.
+            if (!checkTimeBounds(sourceCodeTimeline.startTime, sourceCodeTimeline.endTime))
+                return false;
+
+            for (var record of sourceCodeTimeline.records) {
+                if (checkTimeBounds(record.startTime, record.endTime))
+                    return true;
+            }
+
+            return false;
+        }
+
+        console.error("Unknown TreeElement, can't filter by time.");
+        return true;
+    },
+
     // Private
 
     _pathComponentSelected: function(event)
@@ -273,5 +311,8 @@ WebInspector.TimelineContentView.prototype = {
         this._currentTimelineView.zeroTime = this._timelineOverview.startTime;
         this._currentTimelineView.startTime = this._timelineOverview.selectionStartTime;
         this._currentTimelineView.endTime = this._timelineOverview.selectionStartTime + this._timelineOverview.selectionDuration;
+
+        // Delay until the next frame to stay in sync with the current timeline view's time-based layout changes.
+        requestAnimationFrame(function() { WebInspector.timelineSidebarPanel.updateFilter(true); });
     }
 };

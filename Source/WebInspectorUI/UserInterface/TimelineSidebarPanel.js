@@ -180,6 +180,19 @@ WebInspector.TimelineSidebarPanel.prototype = {
             this._stripeBackgroundElement.style.height = contentHeight + "px";
     },
 
+    hasCustomFilters: function()
+    {
+        return true;
+    },
+
+    matchTreeElementAgainstCustomFilters: function(treeElement)
+    {
+        if (!this._timelineContentView)
+            return true;
+
+        return this._timelineContentView.matchTreeElementAgainstCustomFilters(treeElement);
+    },
+
     canShowDifferentContentView: function()
     {
         return !this.restoringState || !this._restoredShowingTimelineContentView;

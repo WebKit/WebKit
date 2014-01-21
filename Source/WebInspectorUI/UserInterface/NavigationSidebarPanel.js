@@ -54,7 +54,7 @@ WebInspector.NavigationSidebarPanel = function(identifier, displayName, image, k
     this._contentTreeOutline = this.createContentTreeOutline(true);
 
     this._filterBar = new WebInspector.FilterBar();
-    this._filterBar.addEventListener(WebInspector.FilterBar.Event.TextFilterDidChange, this._updateFilter, this);
+    this._filterBar.addEventListener(WebInspector.FilterBar.Event.TextFilterDidChange, this._textFilterDidChange, this);
     this.element.appendChild(this._filterBar.element);
 
     this._bottomOverflowShadowElement = document.createElement("div");
@@ -292,9 +292,26 @@ WebInspector.NavigationSidebarPanel.prototype = {
         // Implemented by subclasses if needed.
     },
 
-    applyFiltersToTreeElement: function(treeElement)
+    updateFilter: function(dontExpandOnMatch)
     {
-        if (!this._filterBar.hasActiveFilters()) {
+        this._updateFilter(dontExpandOnMatch);
+    },
+
+    hasCustomFilters: function()
+    {
+        // Implemented by subclasses if needed.
+        return false;
+    },
+
+    matchTreeElementAgainstCustomFilters: function(treeElement)
+    {
+        // Implemented by subclasses if needed.
+        return true;
+    },
+
+    applyFiltersToTreeElement: function(treeElement, dontExpandOnMatch)
+    {
+        if (!this._filterBar.hasActiveFilters() && !this.hasCustomFilters()) {
             // No filters, so make everything visible.
             treeElement.hidden = false;
 
@@ -307,26 +324,23 @@ WebInspector.NavigationSidebarPanel.prototype = {
             return;
         }
 
-        // Get the filterable data from the tree element.
-        var filterableData = treeElement.filterableData;
-        if (!filterableData)
-            return;
+        var filterableData = treeElement.filterableData || {};
 
         var self = this;
-        function matchTextFilter(input)
+        function matchTextFilter(inputs)
         {
-            if (!self._textFilterRegex)
+            if (!inputs || !self._textFilterRegex)
                 return true;
 
             // Convert to a single item array if needed.
-            if (!(input instanceof Array))
-                input = [input];
+            if (!(inputs instanceof Array))
+                inputs = [inputs];
 
             // Loop over all the inputs and try to match them.
-            for (var i = 0; i < input.length; ++i) {
-                if (!input[i])
+            for (var input of inputs) {
+                if (!input)
                     continue;
-                if (self._textFilterRegex.test(input[i]))
+                if (self._textFilterRegex.test(input))
                     return true;
             }
 
@@ -344,7 +358,7 @@ WebInspector.NavigationSidebarPanel.prototype = {
             while (currentAncestor && !currentAncestor.root) {
                 currentAncestor.hidden = false;
 
-                if (!currentAncestor.expanded) {
+                if (!currentAncestor.expanded && !dontExpandOnMatch) {
                     currentAncestor.__wasExpandedDuringFiltering = true;
                     currentAncestor.expand();
                 }
@@ -353,7 +367,7 @@ WebInspector.NavigationSidebarPanel.prototype = {
             }
         }
 
-        if (matchTextFilter(filterableData.text)) {
+        if (matchTextFilter(filterableData.text) && this.matchTreeElementAgainstCustomFilters(treeElement)) {
             // Make this element visible since it matches.
             makeVisible();
             return;
@@ -449,7 +463,12 @@ WebInspector.NavigationSidebarPanel.prototype = {
         this._emptyFilterResults = true;
     },
 
-    _updateFilter: function()
+    _textFilterDidChange: function()
+    {
+        this._updateFilter();
+    },
+
+    _updateFilter: function(dontExpandOnMatch)
     {
         var filters = this._filterBar.filters;
         this._textFilterRegex = simpleGlobStringToRegExp(filters.text, "i");
@@ -458,7 +477,7 @@ WebInspector.NavigationSidebarPanel.prototype = {
         // Update the whole tree.
         var currentTreeElement = this._contentTreeOutline.children[0];
         while (currentTreeElement && !currentTreeElement.root) {
-            this.applyFiltersToTreeElement(currentTreeElement);
+            this.applyFiltersToTreeElement(currentTreeElement, dontExpandOnMatch);
             currentTreeElement = currentTreeElement.traverseNextTreeElement(false, null, false);
         }
 
