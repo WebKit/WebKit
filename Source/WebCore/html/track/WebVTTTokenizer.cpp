@@ -35,6 +35,7 @@
 #include "WebVTTTokenizer.h"
 
 #include "MarkupTokenizerInlines.h"
+#include <wtf/unicode/CharacterNames.h>
 
 namespace WebCore {
 
@@ -107,6 +108,12 @@ bool WebVTTTokenizer::nextToken(SegmentedString& source, WebVTTToken& token)
                 bufferCharacter('<');
             else if (vectorEqualsString(m_buffer, "&gt"))
                 bufferCharacter('>');
+            else if (vectorEqualsString(m_buffer, "&lrm"))
+                bufferCharacter(leftToRightMark);
+            else if (vectorEqualsString(m_buffer, "&rlm"))
+                bufferCharacter(rightToLeftMark);
+            else if (vectorEqualsString(m_buffer, "&nbsp"))
+                bufferCharacter(noBreakSpace);
             else {
                 m_buffer.append(static_cast<LChar>(cc));
                 m_token->appendToCharacter(m_buffer);

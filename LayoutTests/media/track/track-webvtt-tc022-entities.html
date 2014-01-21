@@ -24,14 +24,19 @@
                 findMediaElement();
                 var expected = 
                 {
-                    length : 3,
+                    length : 6,
                     tests:
                     [
                         {
                             property : "getCueAsHTML().textContent",
-                            values : ["This cue has an amp & character.",
-                                      "This cue has a less than < character.",
-                                      "This cue has a greater than > character."],
+                            values : [
+                                        "This cue has an amp character: \u0026",
+                                        "This cue has a less than character: \u003C",
+                                        "This cue has a greater than character: \u003E",
+                                        "This cue has a right-to-left mark (RLM): \u200f",
+                                        "This cue has a left-to-right mark (LRM): \u200e",
+                                        "This cue has a non-breakable space (NBSP): \u00a0"
+                                     ],
                         },
                     ],
                 };

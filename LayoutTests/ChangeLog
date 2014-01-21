@@ -1,3 +1,14 @@
+2014-01-21  Eric Carlson  <eric.carlson@apple.com>
+
+        Add &lrm; &rlm; and &nbsp; to WebVTT parser
+        https://bugs.webkit.org/show_bug.cgi?id=85112
+
+        Reviewed by Jer Noble.
+
+        * media/track/captions-webvtt/tc022-entities.vtt:
+        * media/track/track-webvtt-tc022-entities-expected.txt:
+        * media/track/track-webvtt-tc022-entities.html:
+
 2014-01-21  Mihai Tica  <mitica@adobe.com>
 
         If you set a tiled cross-faded-image or a tiled gradient as

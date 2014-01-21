@@ -3,10 +3,13 @@ Tests special characters &, <, and > in the cue text.
 
 
 *** Testing text track 0
-EXPECTED (cues.length == '3') OK
-EXPECTED (cues[0].getCueAsHTML().textContent == 'This cue has an amp & character.') OK
-EXPECTED (cues[1].getCueAsHTML().textContent == 'This cue has a less than < character.') OK
-EXPECTED (cues[2].getCueAsHTML().textContent == 'This cue has a greater than > character.') OK
+EXPECTED (cues.length == '6') OK
+EXPECTED (cues[0].getCueAsHTML().textContent == 'This cue has an amp character: &') OK
+EXPECTED (cues[1].getCueAsHTML().textContent == 'This cue has a less than character: <') OK
+EXPECTED (cues[2].getCueAsHTML().textContent == 'This cue has a greater than character: >') OK
+EXPECTED (cues[3].getCueAsHTML().textContent == 'This cue has a right-to-left mark (RLM): ‏') OK
+EXPECTED (cues[4].getCueAsHTML().textContent == 'This cue has a left-to-right mark (LRM): ‎') OK
+EXPECTED (cues[5].getCueAsHTML().textContent == 'This cue has a non-breakable space (NBSP):  ') OK
 
 *** Testing text track 1
 EXPECTED (cues.length == '3') OK

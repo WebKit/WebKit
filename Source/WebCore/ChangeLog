@@ -1,3 +1,15 @@
+2014-01-21  Eric Carlson  <eric.carlson@apple.com>
+
+        Add &lrm; &rlm; and &nbsp; to WebVTT parser
+        https://bugs.webkit.org/show_bug.cgi?id=85112
+
+        Reviewed by Jer Noble.
+
+        No new tests, track-webvtt-tc022-entities.html was updated to test this.
+
+        * html/track/WebVTTTokenizer.cpp:
+        (WebCore::WebVTTTokenizer::nextToken): Support RLM, LRM, and NBSP entities.
+
 2014-01-21  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r162354.
