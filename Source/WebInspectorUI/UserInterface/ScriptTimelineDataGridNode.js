@@ -64,7 +64,7 @@ WebInspector.ScriptTimelineDataGridNode.prototype = {
 
         switch (columnIdentifier) {
         case "eventType":
-            return WebInspector.ScriptTimelineRecord.EventType.displayName(value);
+            return WebInspector.ScriptTimelineRecord.EventType.displayName(value, this._record.details);
 
         case "details":
             return value ? value : emptyValuePlaceholderString;

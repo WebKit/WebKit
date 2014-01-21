@@ -31,7 +31,7 @@ WebInspector.ScriptTimelineView = function(recording)
     this.navigationSidebarTreeOutline.element.classList.add(WebInspector.NavigationSidebarPanel.HideDisclosureButtonsStyleClassName);
     this.navigationSidebarTreeOutline.element.classList.add(WebInspector.ScriptTimelineView.TreeOutlineStyleClassName);
 
-    var columns = {eventType: {}, location: {}, details: {}, startTime: {}, duration: {}};
+    var columns = {eventType: {}, location: {}, startTime: {}, duration: {}};
 
     columns.eventType.title = WebInspector.UIString("Type");
     columns.eventType.width = "15%";
@@ -40,9 +40,6 @@ WebInspector.ScriptTimelineView = function(recording)
 
     columns.location.title = WebInspector.UIString("Location");
     columns.location.width = "15%";
-
-    columns.details.title = WebInspector.UIString("Details");
-    columns.details.width = "15%";
 
     columns.startTime.title = WebInspector.UIString("Start Time");
     columns.startTime.width = "10%";
@@ -125,7 +122,7 @@ WebInspector.ScriptTimelineView.prototype = {
             return;
 
         for (var scriptTimelineRecord of this._pendingRecords) {
-            var treeElement = new WebInspector.TimelineRecordTreeElement(scriptTimelineRecord, true);
+            var treeElement = new WebInspector.TimelineRecordTreeElement(scriptTimelineRecord, true, true);
             var dataGridNode = new WebInspector.ScriptTimelineDataGridNode(scriptTimelineRecord, this.zeroTime);
 
             this._dataGrid.addRowInSortOrder(treeElement, dataGridNode);

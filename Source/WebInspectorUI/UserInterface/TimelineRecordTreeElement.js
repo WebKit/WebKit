@@ -23,12 +23,12 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.TimelineRecordTreeElement = function(timelineRecord, showFullLocationSubtitle, sourceCodeLocation, representedObject)
+WebInspector.TimelineRecordTreeElement = function(timelineRecord, showFullLocationSubtitle, includeTimerIdentifierInMainTitle, sourceCodeLocation, representedObject)
 {
     console.assert(timelineRecord);
 
     this._record = timelineRecord;
-    this._sourceCodeLocation = sourceCodeLocation || timelineRecord.sourceCodeLocation;
+    this._sourceCodeLocation = sourceCodeLocation || timelineRecord.sourceCodeLocation || null;
 
     var title = "";
     var subtitle = "";
@@ -49,25 +49,18 @@ WebInspector.TimelineRecordTreeElement = function(timelineRecord, showFullLocati
 
     switch (timelineRecord.type) {
     case WebInspector.TimelineRecord.Type.Layout:
+        title = WebInspector.LayoutTimelineRecord.EventType.displayName(timelineRecord.eventType);
+
         switch (timelineRecord.eventType) {
         case WebInspector.LayoutTimelineRecord.EventType.InvalidateStyles:
-            title = WebInspector.UIString("Styles Invalidated");
-            iconStyleClass = WebInspector.TimelineRecordTreeElement.StyleRecordIconStyleClass;
-            break;
         case WebInspector.LayoutTimelineRecord.EventType.RecalculateStyles:
-            title = WebInspector.UIString("Styles Recalculated");
             iconStyleClass = WebInspector.TimelineRecordTreeElement.StyleRecordIconStyleClass;
             break;
         case WebInspector.LayoutTimelineRecord.EventType.InvalidateLayout:
-            title = WebInspector.UIString("Layout Invalidated");
-            iconStyleClass = WebInspector.TimelineRecordTreeElement.LayoutRecordIconStyleClass;
-            break;
         case WebInspector.LayoutTimelineRecord.EventType.Layout:
-            title = WebInspector.UIString("Layout");
             iconStyleClass = WebInspector.TimelineRecordTreeElement.LayoutRecordIconStyleClass;
             break;
         case WebInspector.LayoutTimelineRecord.EventType.Paint:
-            title = WebInspector.UIString("Paint");
             iconStyleClass = WebInspector.TimelineRecordTreeElement.PaintRecordIconStyleClass;
             break;
         default:
@@ -77,31 +70,23 @@ WebInspector.TimelineRecordTreeElement = function(timelineRecord, showFullLocati
         break;
 
     case WebInspector.TimelineRecord.Type.Script:
+        title = WebInspector.ScriptTimelineRecord.EventType.displayName(timelineRecord.eventType, timelineRecord.details, includeTimerIdentifierInMainTitle);
+
         switch (timelineRecord.eventType) {
         case WebInspector.ScriptTimelineRecord.EventType.ScriptEvaluated:
-            title = WebInspector.UIString("Script Evaluated");
             iconStyleClass = WebInspector.TimelineRecordTreeElement.EvaluatedRecordIconStyleClass;
             break;
         case WebInspector.ScriptTimelineRecord.EventType.EventDispatched:
-            title = WebInspector.UIString("Event Dispatched");
-            if (timelineRecord.details)
-                subtitle += " \u2014 " + timelineRecord.details;
             iconStyleClass = WebInspector.TimelineRecordTreeElement.EventRecordIconStyleClass;
             break;
         case WebInspector.ScriptTimelineRecord.EventType.TimerFired:
-            title = WebInspector.UIString("Timer Fired");
-            iconStyleClass = WebInspector.TimelineRecordTreeElement.TimerRecordIconStyleClass;
-            break;
         case WebInspector.ScriptTimelineRecord.EventType.TimerInstalled:
-            title = WebInspector.UIString("Timer Installed");
-            iconStyleClass = WebInspector.TimelineRecordTreeElement.TimerRecordIconStyleClass;
-            break;
         case WebInspector.ScriptTimelineRecord.EventType.TimerRemoved:
-            title = WebInspector.UIString("Timer Removed");
             iconStyleClass = WebInspector.TimelineRecordTreeElement.TimerRecordIconStyleClass;
             break;
         case WebInspector.ScriptTimelineRecord.EventType.AnimationFrameFired:
-            title = WebInspector.UIString("Animation Frame Fired");
+        case WebInspector.ScriptTimelineRecord.EventType.AnimationFrameRequested:
+        case WebInspector.ScriptTimelineRecord.EventType.AnimationFrameCanceled:
             iconStyleClass = WebInspector.TimelineRecordTreeElement.AnimationRecordIconStyleClass;
             break;
         default:

@@ -52,11 +52,11 @@ WebInspector.LayoutTimelineRecord.EventType.displayName = function(eventType)
 {
     switch(eventType) {
     case WebInspector.LayoutTimelineRecord.EventType.InvalidateStyles:
-        return WebInspector.UIString("Invalidate Styles");
+        return WebInspector.UIString("Styles Invalidated");
     case WebInspector.LayoutTimelineRecord.EventType.RecalculateStyles:
-        return WebInspector.UIString("Recalculate Styles");
+        return WebInspector.UIString("Styles Recalculated");
     case WebInspector.LayoutTimelineRecord.EventType.InvalidateLayout:
-        return WebInspector.UIString("Invalidate Layout");
+        return WebInspector.UIString("Layout Invalidated");
     case WebInspector.LayoutTimelineRecord.EventType.Layout:
         return WebInspector.UIString("Layout");
     case WebInspector.LayoutTimelineRecord.EventType.Paint:

@@ -23,13 +23,13 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.SourceCodeTimelineTreeElement = function(sourceCodeTimeline, showFullLocationSubtitle)
+WebInspector.SourceCodeTimelineTreeElement = function(sourceCodeTimeline, showFullLocationSubtitle, includeTimerIdentifierInMainTitle)
 {
     console.assert(sourceCodeTimeline);
 
     this._sourceCodeTimeline = sourceCodeTimeline;
 
-    WebInspector.TimelineRecordTreeElement.call(this, sourceCodeTimeline.records[0], showFullLocationSubtitle, sourceCodeTimeline.sourceCodeLocation, sourceCodeTimeline);
+    WebInspector.TimelineRecordTreeElement.call(this, sourceCodeTimeline.records[0], showFullLocationSubtitle, includeTimerIdentifierInMainTitle, sourceCodeTimeline.sourceCodeLocation, sourceCodeTimeline);
 };
 
 WebInspector.SourceCodeTimelineTreeElement.prototype = {

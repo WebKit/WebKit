@@ -1,5 +1,45 @@
 2014-01-19  Timothy Hatcher  <timothy@apple.com>
 
+        Generate better display names for timer and event Timeline records.
+
+        Also support AnimationFrameRequested and AnimationFrameCanceled.
+
+        https://bugs.webkit.org/show_bug.cgi?id=127258
+
+        Reviewed by Joseph Pecoraro.
+
+        * Localizations/en.lproj/localizedStrings.js: Updated.
+
+        * UserInterface/LayoutTimelineRecord.js:
+        (WebInspector.LayoutTimelineRecord.EventType.displayName):
+        Generate past tense names that better match other names.
+
+        * UserInterface/ScriptTimelineDataGridNode.js:
+        (WebInspector.ScriptTimelineDataGridNode.prototype.createCellContent):
+        Pass the details to displayName.
+
+        * UserInterface/ScriptTimelineRecord.js:
+        (WebInspector.ScriptTimelineRecord.EventType.displayName):
+        Generate better names for timer and event records. Also add missing animation frame types.
+
+        * UserInterface/ScriptTimelineView.js:
+        (WebInspector.ScriptTimelineView.prototype._processPendingRecords):
+        Pass true to WebInspector.TimelineRecordTreeElement to include timer identifiers in the title.
+
+        * UserInterface/SourceCodeTimelineTreeElement.js:
+        (WebInspector.SourceCodeTimelineTreeElement):
+        Pass includeTimerIdentifierInMainTitle through to TimelineRecordTreeElement.
+
+        * UserInterface/TimelineManager.js:
+        (WebInspector.TimelineManager.prototype.eventRecorded.processRecord):
+        Include AnimationFrameRequested and AnimationFrameCanceled.
+
+        * UserInterface/TimelineRecordTreeElement.js:
+        (WebInspector.TimelineRecordTreeElement):
+        Use displayName functions instead and support includeTimerIdentifierInMainTitle.
+
+2014-01-19  Timothy Hatcher  <timothy@apple.com>
+
         Implement basic versions of the TimelineOverview graphs.
 
         https://bugs.webkit.org/show_bug.cgi?id=127184

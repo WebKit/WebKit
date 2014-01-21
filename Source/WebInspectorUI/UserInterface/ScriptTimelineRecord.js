@@ -42,24 +42,194 @@ WebInspector.ScriptTimelineRecord.EventType = {
     TimerFired: "script-timeline-record-timer-fired",
     TimerInstalled: "script-timeline-record-timer-installed",
     TimerRemoved: "script-timeline-record-timer-removed",
-    AnimationFrameFired: "script-timeline-record-animation-frame-fired"
+    AnimationFrameFired: "script-timeline-record-animation-frame-fired",
+    AnimationFrameRequested: "script-timeline-record-animation-frame-requested",
+    AnimationFrameCanceled: "script-timeline-record-animation-frame-canceled"
 };
 
-WebInspector.ScriptTimelineRecord.EventType.displayName = function(eventType)
+WebInspector.ScriptTimelineRecord.EventType.displayName = function(eventType, details, includeTimerIdentifierInMainTitle)
 {
+    if (details && !WebInspector.ScriptTimelineRecord._eventDisplayNames) {
+        // These display names are not localized because they closely represent
+        // the real API name, just with word spaces and Title Case.
+
+        var nameMap = new Map;
+        nameMap.set("DOMActivate", "DOM Activate");
+        nameMap.set("DOMCharacterDataModified", "DOM Character Data Modified");
+        nameMap.set("DOMContentLoaded", "DOM Content Loaded");
+        nameMap.set("DOMFocusIn", "DOM Focus In");
+        nameMap.set("DOMFocusOut", "DOM Focus Out");
+        nameMap.set("DOMNodeInserted", "DOM Node Inserted");
+        nameMap.set("DOMNodeInsertedIntoDocument", "DOM Node Inserted Into Document");
+        nameMap.set("DOMNodeRemoved", "DOM Node Removed");
+        nameMap.set("DOMNodeRemovedFromDocument", "DOM Node Removed From Document");
+        nameMap.set("DOMSubtreeModified", "DOM Sub-Tree Modified");
+        nameMap.set("addsourcebuffer", "Add Source Buffer");
+        nameMap.set("addstream", "Add Stream");
+        nameMap.set("addtrack", "Add Track");
+        nameMap.set("audioend", "Audio End");
+        nameMap.set("audioprocess", "Audio Process");
+        nameMap.set("audiostart", "Audio Start");
+        nameMap.set("beforecopy", "Before Copy");
+        nameMap.set("beforecut", "Before Cut");
+        nameMap.set("beforeload", "Before Load");
+        nameMap.set("beforepaste", "Before Paste");
+        nameMap.set("beforeunload", "Before Unload");
+        nameMap.set("canplay", "Can Play");
+        nameMap.set("canplaythrough", "Can Play Through");
+        nameMap.set("chargingchange", "Charging Change");
+        nameMap.set("chargingtimechange", "Charging Time Change");
+        nameMap.set("compositionend", "Composition End");
+        nameMap.set("compositionstart", "Composition Start");
+        nameMap.set("compositionupdate", "Composition Update");
+        nameMap.set("contextmenu", "Context Menu");
+        nameMap.set("cuechange", "Cue Change");
+        nameMap.set("datachannel", "Data Channel");
+        nameMap.set("dblclick", "Double Click");
+        nameMap.set("devicemotion", "Device Motion");
+        nameMap.set("deviceorientation", "Device Orientation");
+        nameMap.set("dischargingtimechange", "Discharging Time Change");
+        nameMap.set("dragend", "Drag End");
+        nameMap.set("dragenter", "Drag Enter");
+        nameMap.set("dragleave", "Drag Leave");
+        nameMap.set("dragover", "Drag Over");
+        nameMap.set("dragstart", "Drag Start");
+        nameMap.set("durationchange", "Duration Change");
+        nameMap.set("focusin", "Focus In");
+        nameMap.set("focusout", "Focus Out");
+        nameMap.set("gesturechange", "Gesture Change");
+        nameMap.set("gestureend", "Gesture End");
+        nameMap.set("gesturescrollend", "Gesture Scroll End");
+        nameMap.set("gesturescrollstart", "Gesture Scroll Start");
+        nameMap.set("gesturescrollupdate", "Gesture Scroll Update");
+        nameMap.set("gesturestart", "Gesture Start");
+        nameMap.set("gesturetap", "Gesture Tap");
+        nameMap.set("gesturetapdown", "Gesture Tap Down");
+        nameMap.set("hashchange", "Hash Change");
+        nameMap.set("icecandidate", "ICE Candidate");
+        nameMap.set("iceconnectionstatechange", "ICE Connection State Change");
+        nameMap.set("keydown", "Key Down");
+        nameMap.set("keypress", "Key Press");
+        nameMap.set("keyup", "Key Up");
+        nameMap.set("levelchange", "Level Change");
+        nameMap.set("loadeddata", "Loaded Data");
+        nameMap.set("loadedmetadata", "Loaded Metadata");
+        nameMap.set("loadend", "Load End");
+        nameMap.set("loadingdone", "Loading Done");
+        nameMap.set("loadstart", "Load Start");
+        nameMap.set("mousedown", "Mouse Down");
+        nameMap.set("mouseenter", "Mouse Enter");
+        nameMap.set("mouseleave", "Mouse Leave");
+        nameMap.set("mousemove", "Mouse Move");
+        nameMap.set("mouseout", "Mouse Out");
+        nameMap.set("mouseover", "Mouse Over");
+        nameMap.set("mouseup", "Mouse Up");
+        nameMap.set("mousewheel", "Mouse Wheel");
+        nameMap.set("negotiationneeded", "Negotiation Needed");
+        nameMap.set("nomatch", "No Match");
+        nameMap.set("noupdate", "No Update");
+        nameMap.set("orientationchange", "Orientation Change");
+        nameMap.set("overflowchanged", "Overflow Changed");
+        nameMap.set("pagehide", "Page Hide");
+        nameMap.set("pageshow", "Page Show");
+        nameMap.set("popstate", "Pop State");
+        nameMap.set("ratechange", "Rate Change");
+        nameMap.set("readystatechange", "Ready State Change");
+        nameMap.set("removesourcebuffer", "Remove Source Buffer");
+        nameMap.set("removestream", "Remove Stream");
+        nameMap.set("removetrack", "Remove Track");
+        nameMap.set("securitypolicyviolation", "Security Policy Violation");
+        nameMap.set("selectionchange", "Selection Change");
+        nameMap.set("selectstart", "Select Start");
+        nameMap.set("signalingstatechange", "Signaling State Change");
+        nameMap.set("soundend", "Sound End");
+        nameMap.set("soundstart", "Sound Start");
+        nameMap.set("sourceclose", "Source Close");
+        nameMap.set("sourceended", "Source Ended");
+        nameMap.set("sourceopen", "Source Open");
+        nameMap.set("speechend", "Speech End");
+        nameMap.set("speechstart", "Speech Start");
+        nameMap.set("textInput", "Text Input");
+        nameMap.set("timeupdate", "Time Update");
+        nameMap.set("tonechange", "Tone Change");
+        nameMap.set("touchcancel", "Touch Cancel");
+        nameMap.set("touchend", "Touch End");
+        nameMap.set("touchmove", "Touch Move");
+        nameMap.set("touchstart", "Touch Start");
+        nameMap.set("transitionend", "Transition End");
+        nameMap.set("updateend", "Update End");
+        nameMap.set("updateready", "Update Ready");
+        nameMap.set("updatestart", "Update Start");
+        nameMap.set("upgradeneeded", "Upgrade Needed");
+        nameMap.set("versionchange", "Version Change");
+        nameMap.set("visibilitychange", "Visibility Change");
+        nameMap.set("volumechange", "Volume Change");
+        nameMap.set("webglcontextcreationerror", "WebGL Context Creation Error");
+        nameMap.set("webglcontextlost", "WebGL Context Lost");
+        nameMap.set("webglcontextrestored", "WebGL Context Restored");
+        nameMap.set("webkitAnimationEnd", "Animation End");
+        nameMap.set("webkitAnimationIteration", "Animation Iteration");
+        nameMap.set("webkitAnimationStart", "Animation Start");
+        nameMap.set("webkitBeforeTextInserted", "Before Text Inserted");
+        nameMap.set("webkitEditableContentChanged", "Editable Content Changed");
+        nameMap.set("webkitTransitionEnd", "Transition End");
+        nameMap.set("webkitaddsourcebuffer", "Add Source Buffer");
+        nameMap.set("webkitbeginfullscreen", "Begin Fullscreen");
+        nameMap.set("webkitcurrentplaybacktargetiswirelesschanged", "Current Playback Target Is Wireless Changed");
+        nameMap.set("webkitdeviceproximity", "Device Proximity");
+        nameMap.set("webkitendfullscreen", "End Fullscreen");
+        nameMap.set("webkitfullscreenchange", "Fullscreen Change");
+        nameMap.set("webkitfullscreenerror", "Fullscreen Error");
+        nameMap.set("webkitkeyadded", "Key Added");
+        nameMap.set("webkitkeyerror", "Key Error");
+        nameMap.set("webkitkeymessage", "Key Message");
+        nameMap.set("webkitneedkey", "Need Key");
+        nameMap.set("webkitnetworkinfochange", "Network Info Change");
+        nameMap.set("webkitplaybacktargetavailabilitychanged", "Playback Target Availability Changed");
+        nameMap.set("webkitpointerlockchange", "Pointer Lock Change");
+        nameMap.set("webkitpointerlockerror", "Pointer Lock Error");
+        nameMap.set("webkitregionlayoutupdate", "Region Layout Update");
+        nameMap.set("webkitregionoversetchange", "Region Overset Change");
+        nameMap.set("webkitremovesourcebuffer", "Remove Source Buffer");
+        nameMap.set("webkitresourcetimingbufferfull", "Resource Timing Buffer Full");
+        nameMap.set("webkitsourceclose", "Source Close");
+        nameMap.set("webkitsourceended", "Source Ended");
+        nameMap.set("webkitsourceopen", "Source Open");
+        nameMap.set("webkitspeechchange", "Speech Change");
+        nameMap.set("writeend", "Write End");
+        nameMap.set("writestart", "Write Start");
+
+        WebInspector.ScriptTimelineRecord._eventDisplayNames = nameMap;
+    }
+
     switch(eventType) {
     case WebInspector.ScriptTimelineRecord.EventType.ScriptEvaluated:
         return WebInspector.UIString("Script Evaluated");
     case WebInspector.ScriptTimelineRecord.EventType.EventDispatched:
+        if (details && (details instanceof String || typeof details === "string")) {
+            var eventDisplayName = WebInspector.ScriptTimelineRecord._eventDisplayNames.get(details) || details.capitalize();
+            return WebInspector.UIString("%s Event Dispatched").format(eventDisplayName);
+        }
+
         return WebInspector.UIString("Event Dispatched");
     case WebInspector.ScriptTimelineRecord.EventType.TimerFired:
+        if (details && includeTimerIdentifierInMainTitle)
+            return WebInspector.UIString("Timer %s Fired").format(details);
         return WebInspector.UIString("Timer Fired");
     case WebInspector.ScriptTimelineRecord.EventType.TimerInstalled:
+        if (details && includeTimerIdentifierInMainTitle)
+            return WebInspector.UIString("Timer %s Installed").format(details);
         return WebInspector.UIString("Timer Installed");
     case WebInspector.ScriptTimelineRecord.EventType.TimerRemoved:
+        if (details && includeTimerIdentifierInMainTitle)
+            return WebInspector.UIString("Timer %s Removed").format(details);
         return WebInspector.UIString("Timer Removed");
     case WebInspector.ScriptTimelineRecord.EventType.AnimationFrameFired:
         return WebInspector.UIString("Animation Frame Fired");
+    case WebInspector.ScriptTimelineRecord.EventType.AnimationFrameRequested:
+        return WebInspector.UIString("Animation Frame Requested");
+    case WebInspector.ScriptTimelineRecord.EventType.AnimationFrameCanceled:
+        return WebInspector.UIString("Animation Frame Canceled");
     }
 };
 

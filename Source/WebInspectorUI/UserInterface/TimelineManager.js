@@ -274,6 +274,20 @@ WebInspector.TimelineManager.prototype = {
                 // Pass the startTime as the endTime since this record type has no duration.
                 this._addRecord(new WebInspector.ScriptTimelineRecord(WebInspector.ScriptTimelineRecord.EventType.TimerRemoved, startTime, startTime, callFrames, sourceCodeLocation, recordPayload.data.timerId));
                 break;
+
+            case TimelineAgent.EventType.RequestAnimationFrame:
+                console.assert(isNaN(endTime));
+
+                // Pass the startTime as the endTime since this record type has no duration.
+                this._addRecord(new WebInspector.ScriptTimelineRecord(WebInspector.ScriptTimelineRecord.EventType.AnimationFrameRequested, startTime, startTime, callFrames, sourceCodeLocation, recordPayload.data.timerId));
+                break;
+
+            case TimelineAgent.EventType.CancelAnimationFrame:
+                console.assert(isNaN(endTime));
+
+                // Pass the startTime as the endTime since this record type has no duration.
+                this._addRecord(new WebInspector.ScriptTimelineRecord(WebInspector.ScriptTimelineRecord.EventType.AnimationFrameCanceled, startTime, startTime, callFrames, sourceCodeLocation, recordPayload.data.timerId));
+                break;
             }
         }
 
