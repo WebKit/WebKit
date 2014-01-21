@@ -56,11 +56,6 @@ WebInspector.TimelineManager.prototype = {
         return this._recording;
     },
 
-    get mainFrameLoadEventTime()
-    {
-        return this._loadEventTime;
-    },
-
     startRecording: function()
     {
         if (this._recording)
@@ -113,13 +108,17 @@ WebInspector.TimelineManager.prototype = {
 
             switch (record.type) {
             case TimelineAgent.EventType.MarkLoad:
-                var mainFrame = WebInspector.frameResourceManager.mainFrame;
-                console.assert(mainFrame);
+                console.assert(isNaN(endTime));
 
-                if (!mainFrame || record.frameId !== mainFrame.id)
+                var frame = WebInspector.frameResourceManager.frameForIdentifier(recordPayload.frameId);
+                console.assert(frame);
+                if (!frame)
                     break;
 
-                this._loadEventTime = startTime;
+                frame.markLoadEvent(startTime);
+
+                if (!frame.isMainFrame())
+                    break;
 
                 var eventMarker = new WebInspector.TimelineEventMarker(startTime, WebInspector.TimelineEventMarker.Type.LoadEvent);
                 this._eventMarkers.push(eventMarker);
@@ -128,10 +127,16 @@ WebInspector.TimelineManager.prototype = {
                 break;
 
             case TimelineAgent.EventType.MarkDOMContent:
-                var mainFrame = WebInspector.frameResourceManager.mainFrame;
-                console.assert(mainFrame);
+                console.assert(isNaN(endTime));
 
-                if (!mainFrame || record.frameId !== mainFrame.id)
+                var frame = WebInspector.frameResourceManager.frameForIdentifier(recordPayload.frameId);
+                console.assert(frame);
+                if (!frame)
+                    break;
+
+                frame.markDOMContentReadyEvent(startTime);
+
+                if (!frame.isMainFrame())
                     break;
 
                 var eventMarker = new WebInspector.TimelineEventMarker(startTime, WebInspector.TimelineEventMarker.Type.DOMContentEvent);
@@ -278,8 +283,8 @@ WebInspector.TimelineManager.prototype = {
 
     pageDidLoad: function(timestamp)
     {
-        if (isNaN(this._loadEventTime))
-            this._loadEventTime = timestamp;
+        if (isNaN(WebInspector.frameResourceManager.mainFrame.loadEventTimestamp))
+            WebInspector.frameResourceManager.mainFrame.markLoadEvent(timestamp);
     },
 
     // Private
@@ -320,7 +325,7 @@ WebInspector.TimelineManager.prototype = {
         // FIXME: Implement.
 
         // Only worry about dead time after the load event.
-        if (!isNaN(this._loadEventTime))
+        if (!isNaN(WebInspector.frameResourceManager.mainFrame.loadEventTimestamp))
             this._resetAutoRecordingDeadTimeTimeout();
     },
 

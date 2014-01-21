@@ -135,16 +135,16 @@ WebInspector.DashboardManager.prototype = {
             this._timeIntervalIdentifier = setInterval(this._updateTime.bind(this), this._timeIntervalDelay);
         }
 
-        var timelineManager = WebInspector.timelineManager;
-        var mainFrameLoadEventTime = timelineManager.mainFrameLoadEventTime;
+        var mainFrame = WebInspector.frameResourceManager.mainFrame;
+        var mainFrameStartTime = mainFrame.mainResource.firstTimestamp;
+        var mainFrameLoadEventTime = mainFrame.loadEventTimestamp;
 
-        if (isNaN(mainFrameLoadEventTime)) {
-            this._view.time = (Date.now() - this._timelineBaseTime) / 1000;
+        if (isNaN(mainFrameStartTime) || isNaN(mainFrameLoadEventTime)) {
+            this._view.time = duration / 1000;
             return;
         }
 
-        var networkRecords = timelineManager.recordsWithType(WebInspector.TimelineRecord.Type.Network);
-        this._view.time = mainFrameLoadEventTime - networkRecords[0].startTime;
+        this._view.time = mainFrameLoadEventTime - mainFrameStartTime;
 
         this._stopUpdatingTime();
     },
