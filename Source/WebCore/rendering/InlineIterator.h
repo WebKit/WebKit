@@ -497,9 +497,9 @@ public:
         // For now, if we enter an isolate between midpoints, we increment our current midpoint or else
         // we'll leave the isolate and ignore the content that follows.
         MidpointState<InlineIterator>& midpointState = resolver.midpointState();
-        if (midpointState.betweenMidpoints && midpointState.midpoints[midpointState.currentMidpoint].renderer() == &obj) {
-            midpointState.betweenMidpoints = false;
-            ++midpointState.currentMidpoint;
+        if (midpointState.betweenMidpoints() && midpointState.midpoints()[midpointState.currentMidpoint()].renderer() == &obj) {
+            midpointState.setBetweenMidpoints(false);
+            midpointState.incrementCurrentMidpoint();
         }
     }
 

@@ -36,24 +36,24 @@ void TrailingObjects::updateMidpointsForTrailingBoxes(LineMidpointState& lineMid
 
     // This object is either going to be part of the last midpoint, or it is going to be the actual endpoint.
     // In both cases we just decrease our pos by 1 level to exclude the space, allowing it to - in effect - collapse into the newline.
-    if (lineMidpointState.numMidpoints % 2) {
+    if (lineMidpointState.numMidpoints() % 2) {
         // Find the trailing space object's midpoint.
-        int trailingSpaceMidpoint = lineMidpointState.numMidpoints - 1;
-        for ( ; trailingSpaceMidpoint > 0 && lineMidpointState.midpoints[trailingSpaceMidpoint].renderer() != m_whitespace; --trailingSpaceMidpoint) { }
+        int trailingSpaceMidpoint = lineMidpointState.numMidpoints() - 1;
+        for ( ; trailingSpaceMidpoint > 0 && lineMidpointState.midpoints()[trailingSpaceMidpoint].renderer() != m_whitespace; --trailingSpaceMidpoint) { }
         ASSERT(trailingSpaceMidpoint >= 0);
         if (collapseFirstSpace == CollapseFirstSpace)
-            lineMidpointState.midpoints[trailingSpaceMidpoint].setOffset(lineMidpointState.midpoints[trailingSpaceMidpoint].offset() -1);
+            lineMidpointState.midpoints()[trailingSpaceMidpoint].setOffset(lineMidpointState.midpoints()[trailingSpaceMidpoint].offset() -1);
 
         // Now make sure every single trailingPositionedBox following the trailingSpaceMidpoint properly stops and starts
         // ignoring spaces.
         size_t currentMidpoint = trailingSpaceMidpoint + 1;
         for (size_t i = 0; i < m_boxes.size(); ++i) {
-            if (currentMidpoint >= lineMidpointState.numMidpoints) {
+            if (currentMidpoint >= lineMidpointState.numMidpoints()) {
                 // We don't have a midpoint for this box yet.
                 lineMidpointState.ensureLineBoxInsideIgnoredSpaces(m_boxes[i]);
             } else {
-                ASSERT(lineMidpointState.midpoints[currentMidpoint].renderer() == m_boxes[i]);
-                ASSERT(lineMidpointState.midpoints[currentMidpoint + 1].renderer() == m_boxes[i]);
+                ASSERT(lineMidpointState.midpoints()[currentMidpoint].renderer() == m_boxes[i]);
+                ASSERT(lineMidpointState.midpoints()[currentMidpoint + 1].renderer() == m_boxes[i]);
             }
             currentMidpoint += 2;
         }

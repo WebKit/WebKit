@@ -83,18 +83,18 @@ void RenderBlockFlow::appendRunsForObject(BidiRunList<BidiRun>& runs, int start,
         return;
 
     LineMidpointState& lineMidpointState = resolver.midpointState();
-    bool haveNextMidpoint = (lineMidpointState.currentMidpoint < lineMidpointState.numMidpoints);
+    bool haveNextMidpoint = (lineMidpointState.currentMidpoint() < lineMidpointState.numMidpoints());
     InlineIterator nextMidpoint;
     if (haveNextMidpoint)
-        nextMidpoint = lineMidpointState.midpoints[lineMidpointState.currentMidpoint];
-    if (lineMidpointState.betweenMidpoints) {
+        nextMidpoint = lineMidpointState.midpoints()[lineMidpointState.currentMidpoint()];
+    if (lineMidpointState.betweenMidpoints()) {
         if (!(haveNextMidpoint && nextMidpoint.renderer() == obj))
             return;
         // This is a new start point. Stop ignoring objects and
         // adjust our start.
-        lineMidpointState.betweenMidpoints = false;
+        lineMidpointState.setBetweenMidpoints(false);
         start = nextMidpoint.offset();
-        lineMidpointState.currentMidpoint++;
+        lineMidpointState.incrementCurrentMidpoint();
         if (start < end)
             return appendRunsForObject(runs, start, end, obj, resolver);
     } else {
@@ -106,8 +106,8 @@ void RenderBlockFlow::appendRunsForObject(BidiRunList<BidiRun>& runs, int start,
         // An end midpoint has been encountered within our object.  We
         // need to go ahead and append a run with our endpoint.
         if (static_cast<int>(nextMidpoint.offset() + 1) <= end) {
-            lineMidpointState.betweenMidpoints = true;
-            lineMidpointState.currentMidpoint++;
+            lineMidpointState.setBetweenMidpoints(true);
+            lineMidpointState.incrementCurrentMidpoint();
             if (nextMidpoint.offset() != UINT_MAX) { // UINT_MAX means stop at the object and don't include any of it.
                 if (static_cast<int>(nextMidpoint.offset() + 1) > start)
                     runs.addRun(createRun(start, nextMidpoint.offset() + 1, obj, resolver));
@@ -964,7 +964,7 @@ static inline void constructBidiRunsForLine(const RenderBlockFlow* block, Inline
             segmentMarker->m_startsSegment = true;
             bidiRuns.addRun(segmentMarker);
             // Do not collapse midpoints between segments
-            topResolver.midpointState().betweenMidpoints = false;
+            topResolver.midpointState().setBetweenMidpoints(false);
         }
         if (segmentStart == segmentEnd)
             continue;

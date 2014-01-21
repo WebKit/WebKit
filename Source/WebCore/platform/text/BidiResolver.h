@@ -42,29 +42,21 @@ public:
     
     void reset()
     {
-        numMidpoints = 0;
-        currentMidpoint = 0;
-        betweenMidpoints = false;
+        m_numMidpoints = 0;
+        m_currentMidpoint = 0;
+        m_betweenMidpoints = false;
     }
     
-    // The goal is to reuse the line state across multiple
-    // lines so we just keep an array around for midpoints and never clear it across multiple
-    // lines.  We track the number of items and position using the two other variables.
-    Vector<Iterator> midpoints;
-    unsigned numMidpoints;
-    unsigned currentMidpoint;
-    bool betweenMidpoints;
-
     void startIgnoringSpaces(const Iterator& midpoint)
     {
-        ASSERT(!(numMidpoints % 2));
-        deprecatedAddMidpoint(midpoint);
+        ASSERT(!(m_numMidpoints % 2));
+        addMidpoint(midpoint);
     }
 
     void stopIgnoringSpaces(const Iterator& midpoint)
     {
-        ASSERT(numMidpoints % 2);
-        deprecatedAddMidpoint(midpoint);
+        ASSERT(m_numMidpoints % 2);
+        addMidpoint(midpoint);
     }
 
     // When ignoring spaces, this needs to be called for objects that need line boxes such as RenderInlines or
@@ -75,14 +67,30 @@ public:
         stopIgnoringSpaces(midpoint);
         startIgnoringSpaces(midpoint);
     }
-private:
-    void deprecatedAddMidpoint(const Iterator& midpoint)
-    {
-        if (midpoints.size() <= numMidpoints)
-            midpoints.grow(numMidpoints + 10);
 
-        Iterator* midpointsIterator = midpoints.data();
-        midpointsIterator[numMidpoints++] = midpoint;
+    Vector<Iterator>& midpoints() { return m_midpoints; }
+    const unsigned& numMidpoints() const { return m_numMidpoints; }
+    const unsigned& currentMidpoint() const { return m_currentMidpoint; }
+    void incrementCurrentMidpoint() { ++m_currentMidpoint; }
+    void decreaseNumMidpoints() { --m_numMidpoints; }
+    const bool& betweenMidpoints() const { return m_betweenMidpoints; }
+    void setBetweenMidpoints(bool betweenMidpoint) { m_betweenMidpoints = betweenMidpoint; }
+private:
+    // The goal is to reuse the line state across multiple
+    // lines so we just keep an array around for midpoints and never clear it across multiple
+    // lines. We track the number of items and position using the two other variables.
+    Vector<Iterator> m_midpoints;
+    unsigned m_numMidpoints;
+    unsigned m_currentMidpoint;
+    bool m_betweenMidpoints;
+
+    void addMidpoint(const Iterator& midpoint)
+    {
+        if (m_midpoints.size() <= m_numMidpoints)
+            m_midpoints.grow(m_numMidpoints + 10);
+
+        Iterator* midpointsIterator = m_midpoints.data();
+        midpointsIterator[m_numMidpoints++] = midpoint;
     }
 };
 
