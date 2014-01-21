@@ -94,13 +94,12 @@ namespace WebCore {
 
         void addUserScriptToWorld(DOMWrapperWorld&, const String& source, const URL&, const Vector<String>& whitelist, const Vector<String>& blacklist, UserScriptInjectionTime, UserContentInjectedFrames);
         void addUserStyleSheetToWorld(DOMWrapperWorld&, const String& source, const URL&, const Vector<String>& whitelist, const Vector<String>& blacklist, UserContentInjectedFrames, UserStyleLevel = UserStyleUserLevel, UserStyleInjectionTime = InjectInExistingDocuments);
-        void removeUserScriptFromWorld(DOMWrapperWorld&, const URL&);
         void removeUserStyleSheetFromWorld(DOMWrapperWorld&, const URL&);
+        void removeUserScriptFromWorld(DOMWrapperWorld&, const URL&);
         void removeUserScriptsFromWorld(DOMWrapperWorld&);
         void removeUserStyleSheetsFromWorld(DOMWrapperWorld&);
         void removeAllUserContent();
 
-        const UserScriptMap* userScripts() const { return m_userScripts.get(); }
         const UserStyleSheetMap* userStyleSheets() const { return m_userStyleSheets.get(); }
 
         GroupSettings& groupSettings() const { return *m_groupSettings; }
@@ -125,7 +124,6 @@ namespace WebCore {
         HashMap<RefPtr<SecurityOrigin>, RefPtr<StorageNamespace>> m_transientLocalStorageMap;
 
         RefPtr<UserContentController> m_userContentController;
-        std::unique_ptr<UserScriptMap> m_userScripts;
         std::unique_ptr<UserStyleSheetMap> m_userStyleSheets;
 
         const std::unique_ptr<GroupSettings> m_groupSettings;

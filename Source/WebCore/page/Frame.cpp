@@ -92,6 +92,7 @@
 #include "TextIterator.h"
 #include "TextNodeTraversal.h"
 #include "TextResourceDecoder.h"
+#include "UserContentController.h"
 #include "UserContentURLPattern.h"
 #include "UserTypingGestureIndicator.h"
 #include "VisibleUnits.h"
@@ -703,13 +704,17 @@ void Frame::injectUserScripts(UserScriptInjectionTime injectionTime)
     if (loader().stateMachine()->creatingInitialEmptyDocument() && !settings().shouldInjectUserScriptsInInitialEmptyDocument())
         return;
 
+    UserContentController* userContentController = m_page->userContentController();
+    if (!userContentController)
+        return;
+
     // Walk the hashtable. Inject by world.
-    const UserScriptMap* userScripts = m_page->group().userScripts();
+    const UserScriptMap* userScripts = userContentController->userScripts();
     if (!userScripts)
         return;
 
-    for (auto it = userScripts->begin(), end = userScripts->end(); it != end; ++it)
-        injectUserScriptsForWorld(*it->key.get(), *it->value, injectionTime);
+    for (const auto& worldAndUserScript : *userScripts)
+        injectUserScriptsForWorld(*worldAndUserScript.key, *worldAndUserScript.value, injectionTime);
 }
 
 void Frame::injectUserScriptsForWorld(DOMWrapperWorld& world, const UserScriptVector& userScripts, UserScriptInjectionTime injectionTime)

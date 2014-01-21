@@ -73,6 +73,7 @@ PageGroup::PageGroup(const String& name)
 PageGroup::PageGroup(Page& page)
     : m_visitedLinksPopulated(false)
     , m_identifier(getUniqueIdentifier())
+    , m_userContentController(UserContentController::create())
     , m_groupSettings(std::make_unique<GroupSettings>())
 {
     addPage(page);
@@ -279,12 +280,7 @@ StorageNamespace* PageGroup::transientLocalStorage(SecurityOrigin* topOrigin)
 void PageGroup::addUserScriptToWorld(DOMWrapperWorld& world, const String& source, const URL& url, const Vector<String>& whitelist, const Vector<String>& blacklist, UserScriptInjectionTime injectionTime, UserContentInjectedFrames injectedFrames)
 {
     auto userScript = std::make_unique<UserScript>(source, url, whitelist, blacklist, injectionTime, injectedFrames);
-    if (!m_userScripts)
-        m_userScripts = std::make_unique<UserScriptMap>();
-    std::unique_ptr<UserScriptVector>& scriptsInWorld = m_userScripts->add(&world, nullptr).iterator->value;
-    if (!scriptsInWorld)
-        scriptsInWorld = std::make_unique<UserScriptVector>();
-    scriptsInWorld->append(std::move(userScript));
+    m_userContentController->addUserScript(world, std::move(userScript));
 }
 
 void PageGroup::addUserStyleSheetToWorld(DOMWrapperWorld& world, const String& source, const URL& url, const Vector<String>& whitelist, const Vector<String>& blacklist, UserContentInjectedFrames injectedFrames, UserStyleLevel level, UserStyleInjectionTime injectionTime)
@@ -303,21 +299,7 @@ void PageGroup::addUserStyleSheetToWorld(DOMWrapperWorld& world, const String& s
 
 void PageGroup::removeUserScriptFromWorld(DOMWrapperWorld& world, const URL& url)
 {
-    if (!m_userScripts)
-        return;
-
-    auto it = m_userScripts->find(&world);
-    if (it == m_userScripts->end())
-        return;
-    
-    auto scripts = it->value.get();
-    for (int i = scripts->size() - 1; i >= 0; --i) {
-        if (scripts->at(i)->url() == url)
-            scripts->remove(i);
-    }
-    
-    if (scripts->isEmpty())
-        m_userScripts->remove(it);
+    m_userContentController->removeUserScript(world, url);
 }
 
 void PageGroup::removeUserStyleSheetFromWorld(DOMWrapperWorld& world, const URL& url)
@@ -349,10 +331,7 @@ void PageGroup::removeUserStyleSheetFromWorld(DOMWrapperWorld& world, const URL&
 
 void PageGroup::removeUserScriptsFromWorld(DOMWrapperWorld& world)
 {
-    if (!m_userScripts)
-        return;
-
-    m_userScripts->remove(&world);
+    m_userContentController->removeUserScripts(world);
 }
 
 void PageGroup::removeUserStyleSheetsFromWorld(DOMWrapperWorld& world)
@@ -368,7 +347,7 @@ void PageGroup::removeUserStyleSheetsFromWorld(DOMWrapperWorld& world)
 
 void PageGroup::removeAllUserContent()
 {
-    m_userScripts = nullptr;
+    m_userContentController->removeAllUserContent();
 
     if (m_userStyleSheets) {
         m_userStyleSheets = nullptr;

@@ -26,11 +26,10 @@
 #ifndef UserContentController_h
 #define UserContentController_h
 
-#include <wtf/HashMap.h>
+#include "UserScriptTypes.h"
 #include <wtf/HashSet.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
-#include <wtf/Vector.h>
 
 namespace WebCore {
 
@@ -47,10 +46,20 @@ public:
     void addPage(Page&);
     void removePage(Page&);
 
+    const UserScriptMap* userScripts() const { return m_userScripts.get(); }
+
+    void addUserScript(DOMWrapperWorld&, std::unique_ptr<UserScript>);
+    void removeUserScript(DOMWrapperWorld&, const URL&);
+    void removeUserScripts(DOMWrapperWorld&);
+
+    void removeAllUserContent();
+
 private:
     UserContentController();
 
     HashSet<Page*> m_pages;
+
+    std::unique_ptr<UserScriptMap> m_userScripts;
 };
 
 } // namespace WebCore

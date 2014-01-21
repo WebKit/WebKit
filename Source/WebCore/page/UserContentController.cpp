@@ -56,4 +56,47 @@ void UserContentController::removePage(Page& page)
     m_pages.remove(&page);
 }
 
+void UserContentController::addUserScript(DOMWrapperWorld& world, std::unique_ptr<UserScript> userScript)
+{
+    if (!m_userScripts)
+        m_userScripts = std::make_unique<UserScriptMap>();
+
+    auto& scriptsInWorld = m_userScripts->add(&world, nullptr).iterator->value;
+    if (!scriptsInWorld)
+        scriptsInWorld = std::make_unique<UserScriptVector>();
+    scriptsInWorld->append(std::move(userScript));
+}
+
+void UserContentController::removeUserScript(DOMWrapperWorld& world, const URL& url)
+{
+    if (!m_userScripts)
+        return;
+
+    auto it = m_userScripts->find(&world);
+    if (it == m_userScripts->end())
+        return;
+
+    auto scripts = it->value.get();
+    for (int i = scripts->size() - 1; i >= 0; --i) {
+        if (scripts->at(i)->url() == url)
+            scripts->remove(i);
+    }
+
+    if (scripts->isEmpty())
+        m_userScripts->remove(it);
+}
+
+void UserContentController::removeUserScripts(DOMWrapperWorld& world)
+{
+    if (!m_userScripts)
+        return;
+
+    m_userScripts->remove(&world);
+}
+
+void UserContentController::removeAllUserContent()
+{
+    m_userScripts = nullptr;
+}
+
 } // namespace WebCore
