@@ -128,7 +128,7 @@ WebInspector.LayoutTimelineView.prototype = {
             return;
 
         for (var layoutTimelineRecord of this._pendingRecords) {
-            var treeElement = new WebInspector.TimelineRecordTreeElement(layoutTimelineRecord, true);
+            var treeElement = new WebInspector.TimelineRecordTreeElement(layoutTimelineRecord, WebInspector.SourceCodeLocation.NameStyle.Short);
             var dataGridNode = new WebInspector.LayoutTimelineDataGridNode(layoutTimelineRecord, this.zeroTime);
 
             this._dataGrid.addRowInSortOrder(treeElement, dataGridNode);

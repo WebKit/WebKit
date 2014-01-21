@@ -1,3 +1,28 @@
+2014-01-20  Timothy Hatcher  <timothy@apple.com>
+
+        Make the TimelineRecordTreeElement location subtitle live.
+
+        https://bugs.webkit.org/show_bug.cgi?id=127270
+
+        Reviewed by Joseph Pecoraro.
+
+        * Localizations/en.lproj/localizedStrings.js: Updated.
+
+        * UserInterface/SourceCodeLocation.js:
+        (WebInspector.SourceCodeLocation.prototype.originalLocationString):
+        (WebInspector.SourceCodeLocation.prototype.formattedLocationString):
+        (WebInspector.SourceCodeLocation.prototype.displayLocationString):
+        (WebInspector.SourceCodeLocation.prototype.updateDisplayString):
+        (WebInspector.SourceCodeLocation.prototype._locationString):
+        Support for a new nameStyle enum and a prefix for the location string.
+        Passing the prefix here lets it be italicized with the line number.
+        Support column number for SourceCode's without a URL too.
+
+        * UserInterface/TimelineRecordTreeElement.js:
+        (WebInspector.TimelineRecordTreeElement):
+        (WebInspector.TimelineRecordTreeElement.prototype.onattach):
+        Create a subtitle span to update the location inside. Update the tooltip on attach.
+
 2014-01-19  Timothy Hatcher  <timothy@apple.com>
 
         Generate better display names for timer and event Timeline records.

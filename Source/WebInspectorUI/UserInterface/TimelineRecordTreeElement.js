@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.TimelineRecordTreeElement = function(timelineRecord, showFullLocationSubtitle, includeTimerIdentifierInMainTitle, sourceCodeLocation, representedObject)
+WebInspector.TimelineRecordTreeElement = function(timelineRecord, subtitleNameStyle, includeTimerIdentifierInMainTitle, sourceCodeLocation, representedObject)
 {
     console.assert(timelineRecord);
 
@@ -34,15 +34,12 @@ WebInspector.TimelineRecordTreeElement = function(timelineRecord, showFullLocati
     var subtitle = "";
 
     if (this._sourceCodeLocation) {
-        // FIXME: This needs to live update the subtitle in response to the WebInspector.SourceCodeLocation.Event.DisplayLocationChanged event.
+        subtitle = document.createElement("span");
 
-        if (showFullLocationSubtitle) {
-            subtitle = this._sourceCodeLocation.displayLocationString(WebInspector.SourceCodeLocation.ColumnStyle.OnlyIfLarge);
-        } else {
-            subtitle = WebInspector.UIString("line ") + (this._sourceCodeLocation.displayLineNumber + 1); // The user visible line number is 1-based.
-            if (this._sourceCodeLocation.displayColumnNumber > WebInspector.SourceCodeLocation.LargeColumnNumber)
-                subtitle += ":" + (this._sourceCodeLocation.displayColumnNumber + 1); // The user visible column number is 1-based.
-        }
+        if (subtitleNameStyle !== WebInspector.SourceCodeLocation.NameStyle.None)
+            this._sourceCodeLocation.populateLiveDisplayLocationString(subtitle, "textContent", null, subtitleNameStyle);
+        else
+            this._sourceCodeLocation.populateLiveDisplayLocationString(subtitle, "textContent", null, WebInspector.SourceCodeLocation.NameStyle.None, WebInspector.UIString("line "));
     }
 
     var iconStyleClass = null;
@@ -102,6 +99,9 @@ WebInspector.TimelineRecordTreeElement = function(timelineRecord, showFullLocati
     WebInspector.GeneralTreeElement.call(this, [iconStyleClass], title, subtitle, representedObject || timelineRecord, false);
 
     this.small = true;
+
+    if (this._sourceCodeLocation)
+        this.tooltipHandledSeparately = true;
 };
 
 WebInspector.TimelineRecordTreeElement.StyleRecordIconStyleClass = "style-record";
@@ -127,5 +127,20 @@ WebInspector.TimelineRecordTreeElement.prototype = {
     {
         var url = this._sourceCodeLocation ? this._sourceCodeLocation.sourceCode.url : "";
         return {text: [this.mainTitle, url || "", this._record.details || ""]};
+    },
+
+    // Protected
+
+    onattach: function()
+    {
+        WebInspector.GeneralTreeElement.prototype.onattach.call(this);
+
+        console.assert(this.element);
+
+        if (!this.tooltipHandledSeparately)
+            return;
+
+        var tooltipPrefix = this.mainTitle + "\n";
+        this._sourceCodeLocation.populateLiveDisplayLocationTooltip(this.element, tooltipPrefix);
     }
 };

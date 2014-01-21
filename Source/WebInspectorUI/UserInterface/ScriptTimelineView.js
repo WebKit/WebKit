@@ -122,7 +122,7 @@ WebInspector.ScriptTimelineView.prototype = {
             return;
 
         for (var scriptTimelineRecord of this._pendingRecords) {
-            var treeElement = new WebInspector.TimelineRecordTreeElement(scriptTimelineRecord, true, true);
+            var treeElement = new WebInspector.TimelineRecordTreeElement(scriptTimelineRecord, WebInspector.SourceCodeLocation.NameStyle.Short, true);
             var dataGridNode = new WebInspector.ScriptTimelineDataGridNode(scriptTimelineRecord, this.zeroTime);
 
             this._dataGrid.addRowInSortOrder(treeElement, dataGridNode);
