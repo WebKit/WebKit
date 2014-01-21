@@ -71,7 +71,7 @@
     left: 0;
     right: 0;
     bottom: 0;
-    z-index: 1;
+    z-index: 10;
 }
 
 .timeline-ruler > .markers > .divider {
@@ -148,6 +148,7 @@
     border: 1px solid white;
     cursor: col-resize;
     pointer-events: all;
+    z-index: 15;
 }
 
 .timeline-ruler > .selection-handle.left {
@@ -163,6 +164,7 @@
     top: 0;
     bottom: 0;
     background-color: rgba(0, 0, 0, 0.1);
+    z-index: 15;
 }
 
 .timeline-ruler > .shaded-area.left {

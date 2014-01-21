@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,59 +23,44 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-.timeline-overview > .scroll-container {
+.timeline-overview-graph.network {
+    padding-top: 2px
+}
+
+.timeline-overview-graph.network > .graph-row {
+    position: relative;
+    height: 5px;
+}
+
+.timeline-overview-graph.network > .graph-row > .bar {
     position: absolute;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    height: 16px;
-    overflow-x: auto;
-    overflow-y: hidden;
-    opacity: 0;
+    height: 4px;
+    background-color: rgb(120, 176, 225);
+    border: 1px solid rgb(61, 147, 200);
+    border-radius: 2px;
+    margin-top: 1px;
+    min-width: 3px;
 }
 
-.timeline-overview:hover > .scroll-container {
-    opacity: 0.75;
+.timeline-overview-graph.network > .graph-row > .bar.inactive {
+    background-color: rgb(167, 204, 237);
+    border-color: rgb(127, 185, 220);
 }
 
-.timeline-overview > .scroll-container:hover {
-    opacity: 1;
+.timeline-overview-graph.network > .graph-row > .bar.inactive,
+.timeline-overview-graph.network > .graph-row > .bar.unfinished {
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+    border-right: none;
 }
 
-.timeline-overview > .timeline-ruler {
-    position: absolute;
-    top: 0;
-    left: 0;
-    bottom: 0;
-    right: 0;
+.timeline-overview-graph.network > .graph-row > .bar:not(.inactive) {
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+    z-index: 1;
+    box-shadow: white 1px 0 0;
 }
 
-.timeline-overview > .graphs-container {
-    position: absolute;
-    top: 22px;
-    left: 0;
-    bottom: 0;
-    right: 0;
-}
-
-.timeline-overview > .graphs-container > .timeline-overview-graph {
-    height: 36px;
-}
-
-.timeline-overview > .graphs-container > .timeline-overview-graph:nth-child(even) {
-    background-color: rgb(247, 247, 247);
-    background-clip: padding-box;
-}
-
-.timeline-overview > .graphs-container > .timeline-overview-graph:not(:first-child) {
-    border-top: 1px solid rgba(0, 0, 0, 0.09);
-}
-
-.timeline-overview > .scroll-container > .scroll-width-sizer {
-    position: absolute;
-    top: 0;
-    left: 0;
-    height: 1px;
-    visibility: hidden;
-    pointer-events: none;
+.timeline-overview-graph.network:nth-child(even) > .graph-row > .bar:not(.inactive) {
+    box-shadow: rgb(247, 247, 247) 1px 0 0;
 }

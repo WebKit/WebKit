@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.TimelineOverview = function()
+WebInspector.TimelineOverview = function(timelineOverviewGraphsMap)
 {
     WebInspector.Object.call(this);
 
@@ -31,11 +31,23 @@ WebInspector.TimelineOverview = function()
     this._element.className = WebInspector.TimelineOverview.StyleClassName;
     this._element.addEventListener("wheel", this._handleWheelEvent.bind(this));
 
+    this._graphsContainer = document.createElement("div");
+    this._graphsContainer.className = WebInspector.TimelineOverview.GraphsContainerStyleClassName;
+    this._element.appendChild(this._graphsContainer);
+
+    this._timelineOverviewGraphsMap = timelineOverviewGraphsMap;
+
+    for (var timelineOverviewGraph of this._timelineOverviewGraphsMap.values())
+        this._graphsContainer.appendChild(timelineOverviewGraph.element);
+
     this._timelineRuler = new WebInspector.TimelineRuler;
     this._timelineRuler.allowsClippedLabels = true;
     this._timelineRuler.allowsTimeRangeSelection = true;
     this._timelineRuler.addEventListener(WebInspector.TimelineRuler.Event.TimeRangeSelectionChanged, this._timeRangeSelectionChanged, this);
     this._element.appendChild(this._timelineRuler.element);
+
+    this._currentTimeMarker = new WebInspector.TimelineMarker(0, WebInspector.TimelineMarker.Type.CurrentTime);
+    this._timelineRuler.addMarker(this._currentTimeMarker);
 
     this._scrollContainer = document.createElement("div");
     this._scrollContainer.className = WebInspector.TimelineOverview.ScrollContainerStyleClassName;
@@ -47,6 +59,7 @@ WebInspector.TimelineOverview = function()
     this._scrollContainer.appendChild(this._scrollWidthSizer);
 
     this._startTime = 0;
+    this._currentTime = 0;
     this._endTime = 0;
     this._secondsPerPixel = 0.0025;
     this._scrollStartTime = 0;
@@ -56,6 +69,7 @@ WebInspector.TimelineOverview = function()
 };
 
 WebInspector.TimelineOverview.StyleClassName = "timeline-overview";
+WebInspector.TimelineOverview.GraphsContainerStyleClassName = "graphs-container";
 WebInspector.TimelineOverview.ScrollContainerStyleClassName = "scroll-container";
 WebInspector.TimelineOverview.ScrollWidthSizerStyleClassName = "scroll-width-sizer";
 WebInspector.TimelineOverview.MinimumSecondsPerPixel = 0.001;
@@ -86,7 +100,23 @@ WebInspector.TimelineOverview.prototype = {
         if (this._startTime === x)
             return;
 
-        this._startTime = x;
+        this._startTime = x || 0;
+
+        this._needsLayout();
+    },
+
+    get currentTime()
+    {
+        return this._currentTime;
+    },
+
+    set currentTime(x)
+    {
+        if (this._currentTime === x)
+            return;
+
+        this._currentTime = x || 0;
+        this._revealCurrentTime = true;
 
         this._needsLayout();
     },
@@ -192,6 +222,13 @@ WebInspector.TimelineOverview.prototype = {
         // Update all relevant elements to the new required width.
         this._updateElementWidth(this._scrollWidthSizer, newWidth);
 
+        this._currentTimeMarker.time = this._currentTime;
+
+        if (this._revealCurrentTime) {
+            this.revealMarker(this._currentTimeMarker);
+            delete this._revealCurrentTime;
+        }
+
         // Clamp the scroll start time to match what the scroll bar would allow.
         var scrollStartTime = Math.min(this._scrollStartTime, this._endTime - this.visibleDuration);
         scrollStartTime = Math.max(this._startTime, scrollStartTime);
@@ -206,15 +243,27 @@ WebInspector.TimelineOverview.prototype = {
         }
 
         this._timelineRuler.updateLayout();
+
+        for (var timelineOverviewGraph of this._timelineOverviewGraphsMap.values()) {
+            timelineOverviewGraph.zeroTime = this._startTime;
+            timelineOverviewGraph.startTime = scrollStartTime;
+            timelineOverviewGraph.currentTime = this._currentTime;
+            timelineOverviewGraph.endTime = scrollStartTime + this.visibleDuration;
+            timelineOverviewGraph.updateLayout();
+        }
     },
 
     updateLayoutIfNeeded: function()
     {
+        if (this._scheduledLayoutUpdateIdentifier) {
+            this.updateLayout();
+            return;
+        }
+
         this._timelineRuler.updateLayoutIfNeeded();
 
-        if (!this._scheduledLayoutUpdateIdentifier)
-            return;
-        this.updateLayout();
+        for (var timelineOverviewGraph of this._timelineOverviewGraphsMap.values())
+            timelineOverviewGraph.updateLayoutIfNeeded();
     },
 
     // Private

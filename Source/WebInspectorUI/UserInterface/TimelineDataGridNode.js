@@ -32,7 +32,7 @@ WebInspector.TimelineDataGridNode = function(graphOnly, graphDataSource)
 
     if (graphDataSource) {
         this._graphContainerElement = document.createElement("div");
-        this._timelineRecordBarMap = new Map;
+        this._timelineRecordBars = [];
     }
 };
 
@@ -198,20 +198,89 @@ WebInspector.TimelineDataGridNode.prototype = {
             delete this._scheduledGraphRefreshIdentifier;
         }
 
-        var records = this.records || [];
-        for (var record of records) {
-            var timelineRecordBar = this._timelineRecordBarMap.get(record);
-            if (!timelineRecordBar) {
-                timelineRecordBar = new WebInspector.TimelineRecordBar(record);
-                this._timelineRecordBarMap.set(record, timelineRecordBar);
+        var records = this.records;
+        if (!records || !records.length)
+            return;
+
+        // Fast path for single records.
+        if (records.length === 1) {
+            var record = records[0];
+            var timelineRecordBar = this._timelineRecordBars[0];
+
+            if (timelineRecordBar && timelineRecordBar.record !== record) {
+                timelineRecordBar.element.remove();
+                timelineRecordBar = null;
             }
+
+            if (!timelineRecordBar)
+                timelineRecordBar = this._timelineRecordBars[0] = new WebInspector.TimelineRecordBar(record);
 
             if (timelineRecordBar.refresh(this._graphDataSource)) {
                 if (!timelineRecordBar.element.parentNode)
                     this._graphContainerElement.appendChild(timelineRecordBar.element);
-            } else {
+            } else
                 timelineRecordBar.element.remove();
+
+            return;
+        }
+
+        // Multiple records attempt to share a bar if their time is close to prevent overlapping bars.
+        var startTime = this._graphDataSource.startTime;
+        var currentTime = this._graphDataSource.currentTime;
+        var endTime = this._graphDataSource.endTime;
+        var duration = endTime - startTime;
+        var visibleWidth = this._graphContainerElement.offsetWidth;
+        var secondsPerPixel = duration / visibleWidth;
+
+        var recordBarIndex = 0;
+        var barRecords = [];
+
+        function createBar(barRecords)
+        {
+            var timelineRecordBar = this._timelineRecordBars[recordBarIndex];
+            if (!timelineRecordBar)
+                timelineRecordBar = this._timelineRecordBars[recordBarIndex] = new WebInspector.TimelineRecordBar;
+            timelineRecordBar.records = barRecords;
+            timelineRecordBar.refresh(this._graphDataSource);
+            if (!timelineRecordBar.element.parentNode)
+                this._graphContainerElement.appendChild(timelineRecordBar.element);
+            ++recordBarIndex;
+        }
+
+        for (var record of records) {
+            // Combining multiple record bars is not supported with records that have inactive time.
+            // ResourceTimelineRecord is the only one right, and it is always a single record handled above.
+            console.assert(!record.usesActiveStartTime);
+
+            if (isNaN(record.startTime))
+                continue;
+
+            // If this bar is completely before the bounds of the graph, skip this record.
+            if (record.endTime < startTime)
+                continue;
+
+            // If this record is completely after the current time or end time, break out now.
+            // Records are sorted, so all records after this will be beyond the current or end time too.
+            if (record.startTime > currentTime || record.startTime > endTime)
+                break;
+
+            // Check if the previous record can be combined with the current record, if not make a new bar.
+            if (barRecords.length && WebInspector.TimelineRecordBar.recordsCannotBeCombined(barRecords, record, secondsPerPixel)) {
+                createBar.call(this, barRecords);
+                barRecords = [];
             }
+
+            barRecords.push(record);
+        }
+
+        // Create the bar for the last record if needed.
+        if (barRecords.length)
+            createBar.call(this, barRecords);
+
+        // Remove the remaining unused TimelineRecordBars.
+        for (; recordBarIndex < this._timelineRecordBars.length; ++recordBarIndex) {
+            this._timelineRecordBars[recordBarIndex].records = null;
+            this._timelineRecordBars[recordBarIndex].element.remove();
         }
     },
 

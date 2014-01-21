@@ -23,31 +23,18 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.TimelineRecordBar = function(record)
+WebInspector.TimelineRecordBar = function(records)
 {
     WebInspector.Object.call(this);
 
-    console.assert(record);
-
-    this._record = record;
-
     this._element = document.createElement("div");
     this._element.classList.add(WebInspector.TimelineRecordBar.StyleClassName);
-    this._element.classList.add(record.type);
-
-    if (record.usesActiveStartTime) {
-        this._inactiveBarElement = document.createElement("div");
-        this._inactiveBarElement.classList.add(WebInspector.TimelineRecordBar.BarSegmentStyleClassName);
-        this._inactiveBarElement.classList.add(WebInspector.TimelineRecordBar.InactiveStyleClassName);
-        this._element.classList.add(WebInspector.TimelineRecordBar.HasInactiveSegmentStyleClassName);
-    }
 
     this._activeBarElement = document.createElement("div");
     this._activeBarElement.classList.add(WebInspector.TimelineRecordBar.BarSegmentStyleClassName);
-
-    if (this._inactiveBarElement)
-        this._element.appendChild(this._inactiveBarElement);
     this._element.appendChild(this._activeBarElement);
+
+    this.records = records;
 };
 
 WebInspector.Object.addConstructorFunctions(WebInspector.TimelineRecordBar);
@@ -57,6 +44,35 @@ WebInspector.TimelineRecordBar.BarSegmentStyleClassName = "segment";
 WebInspector.TimelineRecordBar.InactiveStyleClassName = "inactive";
 WebInspector.TimelineRecordBar.UnfinishedStyleClassName = "unfinished";
 WebInspector.TimelineRecordBar.HasInactiveSegmentStyleClassName = "has-inactive-segment";
+WebInspector.TimelineRecordBar.MinimumWidthPixels = 4;
+WebInspector.TimelineRecordBar.MinimumMarginPixels = 1;
+
+WebInspector.TimelineRecordBar.recordsCannotBeCombined = function(records, candidateRecord, secondsPerPixel)
+{
+    console.assert(records instanceof Array || records instanceof WebInspector.TimelineRecord);
+    console.assert(candidateRecord instanceof WebInspector.TimelineRecord);
+
+    if (records instanceof WebInspector.TimelineRecord)
+        records = [records];
+
+    if (!records.length)
+        return true;
+
+    var lastRecord = records.lastValue;
+    if (lastRecord.type !== candidateRecord.type)
+        return true;
+
+    if (isNaN(candidateRecord.startTime))
+        return true;
+
+    var firstRecord = records[0];
+    var totalDuration = lastRecord.endTime - firstRecord.startTime;
+
+    var minimumMargin = WebInspector.TimelineRecordBar.MinimumMarginPixels * secondsPerPixel;
+    var minimumDuration = WebInspector.TimelineRecordBar.MinimumWidthPixels * secondsPerPixel;
+
+    return firstRecord.startTime + Math.max(minimumDuration, totalDuration) + minimumMargin <= candidateRecord.startTime;
+};
 
 WebInspector.TimelineRecordBar.prototype = {
     constructor: WebInspector.TimelineRecordBar,
@@ -69,9 +85,52 @@ WebInspector.TimelineRecordBar.prototype = {
         return this._element;
     },
 
+    get records()
+    {
+        return this._records;
+    },
+
+    set records(records)
+    {
+        if (this._records && this._records.length)
+            this._element.classList.remove(this._records[0].type);
+
+        records = records || [];
+
+        if (!(records instanceof Array))
+            records = [records];
+
+        this._records = records;
+
+        // Combining multiple record bars is not supported with records that have inactive time.
+        console.assert(this._records.length <= 1 || !this._records[0].usesActiveStartTime);
+
+        // Inactive time is only supported with one record.
+        if (this._records.length === 1 && this._records[0].usesActiveStartTime) {
+            if (!this._inactiveBarElement) {
+                this._inactiveBarElement = document.createElement("div");
+                this._inactiveBarElement.classList.add(WebInspector.TimelineRecordBar.BarSegmentStyleClassName);
+                this._inactiveBarElement.classList.add(WebInspector.TimelineRecordBar.InactiveStyleClassName);
+                this._element.classList.add(WebInspector.TimelineRecordBar.HasInactiveSegmentStyleClassName);
+                this._element.insertBefore(this._inactiveBarElement, this._activeBarElement);
+            }
+        } else if (this._inactiveBarElement) {
+            this._inactiveBarElement.remove();
+            delete this._inactiveBarElement;
+        }
+
+        // Assume all records are the same type.
+        if (this._records.length)
+            this._element.classList.add(this._records[0].type);
+    },
+
     refresh: function(graphDataSource)
     {
-        var barStartTime = this._record.startTime;
+        if (!this._records || !this._records.length)
+            return;
+
+        var firstRecord = this._records[0];
+        var barStartTime = firstRecord.startTime;
 
         // If this bar has no time info, return early.
         if (isNaN(barStartTime))
@@ -81,13 +140,14 @@ WebInspector.TimelineRecordBar.prototype = {
         var graphEndTime = graphDataSource.endTime;
         var graphCurrentTime = graphDataSource.currentTime;
 
-        var barEndTime = this._record.endTime;
+        var lastRecord = this._records.lastValue;
+        var barEndTime = lastRecord.endTime;
 
-        // If this bar is completly after the current time, return early.
+        // If this bar is completely after the current time, return early.
         if (barStartTime > graphCurrentTime)
             return false;
 
-        // If this bar is completly before or after the bounds of the graph, return early.
+        // If this bar is completely before or after the bounds of the graph, return early.
         if (barEndTime < graphStartTime || barStartTime > graphEndTime)
             return false;
 
@@ -105,10 +165,12 @@ WebInspector.TimelineRecordBar.prototype = {
         var newBarWidth = ((barEndTime - graphStartTime) / graphDuration) - newBarLeftPosition;
         this._updateElementPosition(this._element, newBarWidth, "width");
 
-        if (!this._record.usesActiveStartTime)
+        if (!this._inactiveBarElement)
             return true;
 
-        var barActiveStartTime = Math.max(barStartTime, Math.min(this._record.activeStartTime, barEndTime));
+        console.assert(firstRecord === lastRecord);
+
+        var barActiveStartTime = Math.max(barStartTime, Math.min(firstRecord.activeStartTime, barEndTime));
         var barDuration = barEndTime - barStartTime;
 
         var inactiveUnfinished = isNaN(barActiveStartTime) || barActiveStartTime >= graphCurrentTime;

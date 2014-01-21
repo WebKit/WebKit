@@ -30,7 +30,7 @@
 
 .timeline-record-bar > .segment {
     position: absolute;
-    height: 12px;
+    height: 100%;
     background-color: rgb(225, 225, 225);
     border: 1px solid rgb(200, 200, 200);
     border-radius: 3px;
@@ -44,14 +44,14 @@
 
 .timeline-record-bar > .segment.inactive,
 .timeline-record-bar.unfinished > .segment {
-    border-top-right-radius: 0;
-    border-bottom-right-radius: 0;
+    border-top-right-radius: 0 !important;
+    border-bottom-right-radius: 0 !important;
     border-right: none;
 }
 
 .timeline-record-bar > .segment.inactive + .segment {
-    border-top-left-radius: 0;
-    border-bottom-left-radius: 0;
+    border-top-left-radius: 0 !important;
+    border-bottom-left-radius: 0 !important;
 }
 
 :focus .selected .timeline-record-bar > .segment {
@@ -59,13 +59,14 @@
     border-color: white !important;
 }
 
-.timeline-record-bar > .segment.inactive {
-    opacity: 0.5;
-}
-
 .timeline-record-bar.timeline-record-type-network > .segment {
     background-color: rgb(120, 176, 225);
     border-color: rgb(61, 147, 200);
+}
+
+.timeline-record-bar.timeline-record-type-network > .segment.inactive {
+    background-color: rgb(167, 204, 237);
+    border-color: rgb(127, 185, 220);
 }
 
 .timeline-record-bar.timeline-record-type-layout > .segment {

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,59 +23,11 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-.timeline-overview > .scroll-container {
-    position: absolute;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    height: 16px;
-    overflow-x: auto;
-    overflow-y: hidden;
-    opacity: 0;
+.timeline-overview-graph.layout > .timeline-record-bar {
+    margin-top: 8px;
+    height: 20px;
 }
 
-.timeline-overview:hover > .scroll-container {
-    opacity: 0.75;
-}
-
-.timeline-overview > .scroll-container:hover {
-    opacity: 1;
-}
-
-.timeline-overview > .timeline-ruler {
-    position: absolute;
-    top: 0;
-    left: 0;
-    bottom: 0;
-    right: 0;
-}
-
-.timeline-overview > .graphs-container {
-    position: absolute;
-    top: 22px;
-    left: 0;
-    bottom: 0;
-    right: 0;
-}
-
-.timeline-overview > .graphs-container > .timeline-overview-graph {
-    height: 36px;
-}
-
-.timeline-overview > .graphs-container > .timeline-overview-graph:nth-child(even) {
-    background-color: rgb(247, 247, 247);
-    background-clip: padding-box;
-}
-
-.timeline-overview > .graphs-container > .timeline-overview-graph:not(:first-child) {
-    border-top: 1px solid rgba(0, 0, 0, 0.09);
-}
-
-.timeline-overview > .scroll-container > .scroll-width-sizer {
-    position: absolute;
-    top: 0;
-    left: 0;
-    height: 1px;
-    visibility: hidden;
-    pointer-events: none;
+.timeline-overview-graph.layout > .timeline-record-bar > .segment {
+    border-radius: 2px;
 }

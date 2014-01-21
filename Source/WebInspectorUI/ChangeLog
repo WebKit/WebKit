@@ -1,3 +1,111 @@
+2014-01-19  Timothy Hatcher  <timothy@apple.com>
+
+        Implement basic versions of the TimelineOverview graphs.
+
+        https://bugs.webkit.org/show_bug.cgi?id=127184
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/LayoutTimelineOverviewGraph.css: Added.
+        (.timeline-overview-graph.layout > .timeline-record-bar):
+        (.timeline-overview-graph.layout > .timeline-record-bar > .segment):
+
+        * UserInterface/LayoutTimelineOverviewGraph.js: Added.
+        (WebInspector.LayoutTimelineOverviewGraph.prototype.reset):
+        (WebInspector.LayoutTimelineOverviewGraph.prototype.updateLayout):
+        (WebInspector.LayoutTimelineOverviewGraph.prototype._layoutTimelineRecordAdded):
+
+        * UserInterface/Main.html: Added new files.
+
+        * UserInterface/NetworkTimelineOverviewGraph.css: Added.
+        (.timeline-overview-graph.network):
+        (.timeline-overview-graph.network > .graph-row):
+        (.timeline-overview-graph.network > .graph-row > .bar):
+        (.timeline-overview-graph.network > .graph-row > .bar.inactive):
+        (.timeline-overview-graph.network > .graph-row > .bar.unfinished):
+        (.timeline-overview-graph.network > .graph-row > .bar:not(.inactive)):
+        (.timeline-overview-graph.network:nth-child(even) > .graph-row > .bar:not(.inactive)):
+
+        * UserInterface/NetworkTimelineOverviewGraph.js: Added.
+        (WebInspector.NetworkTimelineOverviewGraph.prototype.reset):
+        (WebInspector.NetworkTimelineOverviewGraph.prototype.updateLayout.updateElementPosition):
+        (WebInspector.NetworkTimelineOverviewGraph.prototype.updateLayout.createBar):
+        (WebInspector.NetworkTimelineOverviewGraph.prototype.updateLayout):
+        (WebInspector.NetworkTimelineOverviewGraph.prototype._networkTimelineRecordAdded.compareByStartTime):
+        (WebInspector.NetworkTimelineOverviewGraph.prototype._networkTimelineRecordAdded.insertObjectIntoSortedArray):
+        (WebInspector.NetworkTimelineOverviewGraph.prototype._networkTimelineRecordAdded):
+
+        * UserInterface/ScriptTimelineOverviewGraph.css: Added.
+        (.timeline-overview-graph.script > .timeline-record-bar):
+        (.timeline-overview-graph.script > .timeline-record-bar > .segment):
+
+        * UserInterface/ScriptTimelineOverviewGraph.js: Added.
+        (WebInspector.ScriptTimelineOverviewGraph.prototype.reset):
+        (WebInspector.ScriptTimelineOverviewGraph.prototype.updateLayout):
+        (WebInspector.ScriptTimelineOverviewGraph.prototype._scriptTimelineRecordAdded):
+
+        * UserInterface/TimelineContentView.js:
+        (WebInspector.TimelineContentView.prototype._showTimelineView):
+        (WebInspector.TimelineContentView.prototype._update):
+        (WebInspector.TimelineContentView.prototype._recordingReset):
+        Create and keep the graphs informed.
+
+        * UserInterface/TimelineDataGridNode.js:
+        (WebInspector.TimelineDataGridNode):
+        (WebInspector.TimelineDataGridNode.prototype.refreshGraph):
+        Combine records that might overlap.
+
+        * UserInterface/TimelineOverview.css:
+        (.timeline-overview > .graphs-container):
+        (.timeline-overview > .graphs-container > .timeline-overview-graph):
+        (.timeline-overview > .graphs-container > .timeline-overview-graph:nth-child(even)):
+        (.timeline-overview > .graphs-container > .timeline-overview-graph:not(:first-child)):
+        Add the graph rows with alternating stripe.
+
+        * UserInterface/TimelineOverview.js:
+        (WebInspector.TimelineOverview):
+        (WebInspector.TimelineOverview.prototype.set startTime):
+        (WebInspector.TimelineOverview.prototype.get currentTime):
+        (WebInspector.TimelineOverview.prototype.set currentTime):
+        (WebInspector.TimelineOverview.prototype.updateLayout):
+        (WebInspector.TimelineOverview.prototype.updateLayoutIfNeeded):
+        Track currentTime in a member variable and let TimelineOverview manage the current time marker.
+
+        * UserInterface/TimelineOverviewGraph.js: Added.
+        (WebInspector.TimelineOverviewGraph):
+        (WebInspector.TimelineOverviewGraph.prototype.get zeroTime):
+        (WebInspector.TimelineOverviewGraph.prototype.set zeroTime):
+        (WebInspector.TimelineOverviewGraph.prototype.get startTime):
+        (WebInspector.TimelineOverviewGraph.prototype.set startTime):
+        (WebInspector.TimelineOverviewGraph.prototype.get endTime):
+        (WebInspector.TimelineOverviewGraph.prototype.set endTime):
+        (WebInspector.TimelineOverviewGraph.prototype.get currentTime):
+        (WebInspector.TimelineOverviewGraph.prototype.set currentTime):
+        (WebInspector.TimelineOverviewGraph.prototype.reset):
+        (WebInspector.TimelineOverviewGraph.prototype.updateLayout):
+        (WebInspector.TimelineOverviewGraph.prototype.updateLayoutIfNeeded):
+        (WebInspector.TimelineOverviewGraph.prototype.needsLayout):
+
+        * UserInterface/TimelineRecordBar.css:
+        (.timeline-record-bar > .segment):
+        (.timeline-record-bar.unfinished > .segment):
+        (.timeline-record-bar > .segment.inactive + .segment):
+        (.timeline-record-bar.timeline-record-type-network > .segment.inactive):
+
+        * UserInterface/TimelineRecordBar.js:
+        (WebInspector.TimelineRecordBar):
+        (WebInspector.TimelineRecordBar.recordsCannotBeCombined):
+        (WebInspector.TimelineRecordBar.prototype.get records):
+        (WebInspector.TimelineRecordBar.prototype.set records):
+        (WebInspector.TimelineRecordBar.prototype.refresh):
+        Make TimelineRecordBar support multiple records.
+
+        * UserInterface/TimelineRuler.css:
+        (.timeline-ruler > .markers):
+        (.timeline-ruler > .selection-handle):
+        (.timeline-ruler > .shaded-area):
+        Add some z-index values to stay above graph elements.
+
 2014-01-16  Timothy Hatcher  <timothy@apple.com>
 
         Clean up Timelines code by using ES6 features and less global access of TimelineRecording.

@@ -78,3 +78,8 @@ function insertionIndexForObjectInListSortedByFunction(anObject, aList, aFunctio
         return index;
     }
 }
+
+function insertObjectIntoSortedArray(value, array, compareFunction)
+{
+   array.splice(insertionIndexForObjectInListSortedByFunction(value, array, compareFunction), 0, value);
+}

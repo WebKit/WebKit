@@ -31,12 +31,14 @@ WebInspector.TimelineContentView = function(recording)
 
     this.element.classList.add(WebInspector.TimelineContentView.StyleClassName);
 
-    this._timelineOverview = new WebInspector.TimelineOverview;
+    this._discreteTimelineOverviewGraphMap = new Map;
+    this._discreteTimelineOverviewGraphMap.set(WebInspector.TimelineRecord.Type.Network, new WebInspector.NetworkTimelineOverviewGraph(recording));
+    this._discreteTimelineOverviewGraphMap.set(WebInspector.TimelineRecord.Type.Layout, new WebInspector.LayoutTimelineOverviewGraph(recording));
+    this._discreteTimelineOverviewGraphMap.set(WebInspector.TimelineRecord.Type.Script, new WebInspector.ScriptTimelineOverviewGraph(recording));
+
+    this._timelineOverview = new WebInspector.TimelineOverview(this._discreteTimelineOverviewGraphMap);
     this._timelineOverview.addEventListener(WebInspector.TimelineOverview.Event.TimeRangeSelectionChanged, this._timeRangeSelectionChanged, this);
     this.element.appendChild(this._timelineOverview.element);
-
-    this._currentTimeMarker = new WebInspector.TimelineMarker(0, WebInspector.TimelineMarker.Type.CurrentTime);
-    this._timelineOverview.addMarker(this._currentTimeMarker);
 
     this._viewContainer = document.createElement("div");
     this._viewContainer.classList.add(WebInspector.TimelineContentView.ViewContainerStyleClassName);
@@ -159,7 +161,7 @@ WebInspector.TimelineContentView.prototype = {
 
         var startTime = this._timelineOverview.selectionStartTime;
         var endTime = this._timelineOverview.selectionStartTime + this._timelineOverview.selectionDuration;
-        var currentTime = this._currentTimeMarker.time || this._recording.startTime;
+        var currentTime = this._currentTime || this._recording.startTime;
 
         function checkTimeBounds(itemStartTime, itemEndTime)
         {
@@ -228,7 +230,7 @@ WebInspector.TimelineContentView.prototype = {
 
             this._currentTimelineView.startTime = this._timelineOverview.selectionStartTime;
             this._currentTimelineView.endTime = this._timelineOverview.selectionStartTime + this._timelineOverview.selectionDuration;
-            this._currentTimelineView.currentTime = this._currentTimeMarker.time;
+            this._currentTimelineView.currentTime = this._currentTime;
 
             this._currentTimelineView.shown();
             this._currentTimelineView.updateLayout();
@@ -240,7 +242,7 @@ WebInspector.TimelineContentView.prototype = {
     _update: function(timestamp)
     {
         var startTime = this._recording.startTime;
-        var currentTime = this._currentTimeMarker.time || startTime;
+        var currentTime = this._currentTime || startTime;
         var endTime = this._recording.endTime;
         var timespanSinceLastUpdate = (timestamp - this._lastUpdateTimestamp) / 1000 || 0;
 
@@ -261,10 +263,9 @@ WebInspector.TimelineContentView.prototype = {
 
         this._timelineOverview.endTime = Math.max(endTime, currentTime);
 
-        this._currentTimeMarker.time = currentTime;
+        this._currentTime = currentTime;
+        this._timelineOverview.currentTime = currentTime;
         this._currentTimelineView.currentTime = currentTime;
-
-        this._timelineOverview.revealMarker(this._currentTimeMarker);
 
         // Force a layout now since we are already in an animation frame and don't need to delay it until the next.
         this._timelineOverview.updateLayoutIfNeeded();
@@ -314,11 +315,14 @@ WebInspector.TimelineContentView.prototype = {
     _recordingReset: function(event)
     {
         this._startTimeNeedsReset = true;
-        this._currentTimeMarker.time = 0;
+        this._currentTime = NaN;
 
         this._overviewTimelineView.reset();
         for (var timelineView of this._discreteTimelineViewMap.values())
             timelineView.reset();
+
+        for (var timelineOverviewGraph of this._discreteTimelineOverviewGraphMap.values())
+            timelineOverviewGraph.reset();
     },
 
     _timeRangeSelectionChanged: function(event)
