@@ -1,3 +1,16 @@
+2014-01-21  ChangSeok Oh  <changseok.oh@collabora.com>
+
+        [GTK] Fix a c++11 compliance issue for fontconfig
+        https://bugs.webkit.org/show_bug.cgi?id=127283
+
+        Reviewed by Martin Robinson.
+
+        fontconfig-2.8.0 is not compliant with C++11. So I propose to apply a
+        hotfix until bumping fontconfig up.
+
+        * gtk/jhbuild.modules:
+        * gtk/patches/fontconfig-C-11-requires-a-space-between-literal-and-identifier.patch: Added.
+
 2014-01-21  Peter Molnar  <pmolnar.u-szeged@partner.samsung.com>
 
         run-jsc-stress-tests should accept --child-processes option and WEBKIT_TEST_CHILD_PROCESSES env.var
