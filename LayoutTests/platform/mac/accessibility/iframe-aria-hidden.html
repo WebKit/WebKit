@@ -14,24 +14,29 @@ var successfullyParsed = false;
 <div id="console"></div>
 
 <script>
+description("This tests that aria-hidden will affect the visibility of the web area and scroll view.");
 
-    description("This tests that aria-hidden will affect the visibility of the web area and scroll view.");
+if (window.accessibilityController) {
+    jsTestIsAsync = true;
 
-    if (window.accessibilityController) {
+    // Get the iframe reference.
+    document.getElementById("body").focus();
+    var body = accessibilityController.focusedElement;
 
-        document.getElementById("body").focus();
-
-        // Get the iframe reference.
-        var body = accessibilityController.focusedElement;
+    window.onload = function() {
         shouldBe("body.childrenCount", "3");
         shouldBe("body.childAtIndex(0).childrenCount", "0");
 
         document.getElementById("iframe").setAttribute("aria-hidden", "false");
         shouldBe("body.childrenCount", "4");
         shouldBe("body.childAtIndex(0).childAtIndex(0).childAtIndex(0).role", "'AXRole: AXWebArea'");
-    }
 
-    successfullyParsed = true;
+        finishJSTest();
+    }
+} else
+    testFailed("This test relies on accessibilityController, please use run-webkit-tests to run it.")
+
+successfullyParsed = true;
 </script>
 
 <script src="../../../resources/js-test-post.js"></script>

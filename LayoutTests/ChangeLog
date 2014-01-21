@@ -1,3 +1,18 @@
+2014-01-21  Alexey Proskuryakov  <ap@apple.com>
+
+        platform/mac/accessibility/iframe-aria-hidden.html is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=127323
+
+        Reviewed by Chris Fleizach.
+
+        This test got de-flaked on bots by rolling out r162354. But there was still
+        a potential race in it, which this change fixes.
+
+        * platform/mac-wk2/TestExpectations: Removed expectation.
+
+        * platform/mac/accessibility/iframe-aria-hidden.html: Run the test in onload, as
+        frames load asynchronously.
+
 2014-01-21  Chris Fleizach  <cfleizach@apple.com>
 
         AX: Mac: Expose the visible text of a password field to AX
