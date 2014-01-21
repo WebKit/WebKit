@@ -25,19 +25,36 @@
 
 .timeline-overview > .scroll-container {
     position: absolute;
-    top: 0;
     left: 0;
     right: 0;
     bottom: 0;
+    height: 16px;
     overflow-x: auto;
     overflow-y: hidden;
+    opacity: 0;
 }
 
-.timeline-overview > .scroll-container > .timeline-ruler {
+.timeline-overview:hover > .scroll-container {
+    opacity: 0.75;
+}
+
+.timeline-overview > .scroll-container:hover {
+    opacity: 1;
+}
+
+.timeline-overview > .timeline-ruler {
     position: absolute;
     top: 0;
     left: 0;
     bottom: 0;
-    min-width: 100%;
-    overflow: hidden;
+    right: 0;
+}
+
+.timeline-overview > .scroll-container > .scroll-width-sizer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 1px;
+    visibility: hidden;
+    pointer-events: none;
 }

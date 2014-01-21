@@ -1,3 +1,31 @@
+2014-01-16  Timothy Hatcher  <timothy@apple.com>
+
+        Improve WebInspector.TimelineOverview by not putting WebInspector.TimelineRuler in a scroll area.
+
+        https://bugs.webkit.org/show_bug.cgi?id=127145
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/TimelineOverview.css:
+        (.timeline-overview > .scroll-container):
+        (.timeline-overview > .timeline-ruler):
+        (.timeline-overview > .scroll-container > .scroll-width-sizer):
+        * UserInterface/TimelineOverview.js:
+        (WebInspector.TimelineOverview):
+        (WebInspector.TimelineOverview.prototype.get startTime):
+        (WebInspector.TimelineOverview.prototype.set startTime):
+        (WebInspector.TimelineOverview.prototype.get secondsPerPixel):
+        (WebInspector.TimelineOverview.prototype.set secondsPerPixel):
+        (WebInspector.TimelineOverview.prototype.get scrollStartTime):
+        (WebInspector.TimelineOverview.prototype.set scrollStartTime):
+        (WebInspector.TimelineOverview.prototype.get visibleDuration):
+        (WebInspector.TimelineOverview.prototype.revealMarker):
+        (WebInspector.TimelineOverview.prototype.updateLayout):
+        (WebInspector.TimelineOverview.prototype._handleScrollEvent):
+        (WebInspector.TimelineOverview.prototype._handleWheelEvent):
+        * UserInterface/TimelineRuler.js:
+        (WebInspector.TimelineRuler.MinimumSelectionTimeRange): Reduce to 10ms now that super zoom has no performance impact.
+
 2014-01-15  Timothy Hatcher  <timothy@apple.com>
 
         Implement the discrete Script and Layout timeline views.

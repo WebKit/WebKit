@@ -261,11 +261,11 @@ WebInspector.TimelineContentView.prototype = {
         this._currentTimeMarker.time = currentTime;
         this._currentTimelineView.currentTime = currentTime;
 
+        this._timelineOverview.revealMarker(this._currentTimeMarker);
+
         // Force a layout now since we are already in an animation frame and don't need to delay it until the next.
         this._timelineOverview.updateLayoutIfNeeded();
         this._currentTimelineView.updateLayoutIfNeeded();
-
-        this._timelineOverview.revealMarker(this._currentTimeMarker);
 
         // Only stop updating if the current time is greater than the end time.
         if (!this._updating && currentTime >= endTime) {

@@ -68,7 +68,7 @@ WebInspector.TimelineRuler.SelectionDragElementStyleClassName = "selection-drag"
 WebInspector.TimelineRuler.SelectionHandleElementStyleClassName = "selection-handle";
 WebInspector.TimelineRuler.LeftSelectionElementStyleClassName = "left";
 WebInspector.TimelineRuler.RightSelectionElementStyleClassName = "right";
-WebInspector.TimelineRuler.MinimumSelectionTimeRange = 0.1;
+WebInspector.TimelineRuler.MinimumSelectionTimeRange = 0.01;
 
 WebInspector.TimelineRuler.Event = {
     TimeRangeSelectionChanged: "time-ruler-time-range-selection-changed"

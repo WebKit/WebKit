@@ -29,28 +29,35 @@ WebInspector.TimelineOverview = function()
 
     this._element = document.createElement("div");
     this._element.className = WebInspector.TimelineOverview.StyleClassName;
-
     this._element.addEventListener("wheel", this._handleWheelEvent.bind(this));
-
-    this._scrollContainer = document.createElement("div");
-    this._scrollContainer.className = WebInspector.TimelineOverview.ScrollContainerStyleClassName;
-    this._element.appendChild(this._scrollContainer);
 
     this._timelineRuler = new WebInspector.TimelineRuler;
     this._timelineRuler.allowsClippedLabels = true;
     this._timelineRuler.allowsTimeRangeSelection = true;
     this._timelineRuler.addEventListener(WebInspector.TimelineRuler.Event.TimeRangeSelectionChanged, this._timeRangeSelectionChanged, this);
-    this._scrollContainer.appendChild(this._timelineRuler.element);
+    this._element.appendChild(this._timelineRuler.element);
 
+    this._scrollContainer = document.createElement("div");
+    this._scrollContainer.className = WebInspector.TimelineOverview.ScrollContainerStyleClassName;
+    this._scrollContainer.addEventListener("scroll", this._handleScrollEvent.bind(this));
+    this._element.appendChild(this._scrollContainer);
+
+    this._scrollWidthSizer = document.createElement("div");
+    this._scrollWidthSizer.className = WebInspector.TimelineOverview.ScrollWidthSizerStyleClassName;
+    this._scrollContainer.appendChild(this._scrollWidthSizer);
+
+    this._startTime = 0;
     this._endTime = 0;
+    this._secondsPerPixel = 0.0025;
+    this._scrollStartTime = 0;
 
-    this.startTime = 0;
-    this.secondsPerPixel = 0.0025;
+    this.selectionStartTime = 0;
     this.selectionDuration = 3;
 };
 
 WebInspector.TimelineOverview.StyleClassName = "timeline-overview";
 WebInspector.TimelineOverview.ScrollContainerStyleClassName = "scroll-container";
+WebInspector.TimelineOverview.ScrollWidthSizerStyleClassName = "scroll-width-sizer";
 WebInspector.TimelineOverview.MinimumSecondsPerPixel = 0.001;
 WebInspector.TimelineOverview.ScrollDeltaDenominator = 500;
 
@@ -71,31 +78,32 @@ WebInspector.TimelineOverview.prototype = {
 
     get startTime()
     {
-        return this._timelineRuler.startTime;
+        return this._startTime;
     },
 
     set startTime(x)
     {
-        if (this._timelineRuler.startTime === x)
+        if (this._startTime === x)
             return;
 
-        this._timelineRuler.zeroTime = x;
-        this._timelineRuler.startTime = x;
+        this._startTime = x;
 
         this._needsLayout();
     },
 
     get secondsPerPixel()
     {
-        return this._timelineRuler.secondsPerPixel;
+        return this._secondsPerPixel;
     },
 
     set secondsPerPixel(x)
     {
-        if (this._timelineRuler.secondsPerPixel === x)
+        x = Math.max(WebInspector.TimelineOverview.MinimumSecondsPerPixel, x);
+
+        if (this._secondsPerPixel === x)
             return;
 
-        this._timelineRuler.secondsPerPixel = Math.max(WebInspector.TimelineOverview.MinimumSecondsPerPixel, x);
+        this._secondsPerPixel = x;
 
         this._needsLayout();
     },
@@ -113,6 +121,26 @@ WebInspector.TimelineOverview.prototype = {
         this._endTime = x || 0;
 
         this._needsLayout();
+    },
+
+    get scrollStartTime()
+    {
+        return this._scrollStartTime;
+    },
+
+    set scrollStartTime(x)
+    {
+        if (this._scrollStartTime === x)
+            return;
+
+        this._scrollStartTime = x || 0;
+
+        this._needsLayout();
+    },
+
+    get visibleDuration()
+    {
+        return this._scrollContainer.offsetWidth * this._secondsPerPixel;
     },
 
     get selectionStartTime()
@@ -147,10 +175,7 @@ WebInspector.TimelineOverview.prototype = {
 
     revealMarker: function(marker)
     {
-        var markerElement = this._timelineRuler.elementForMarker(marker);
-        if (!markerElement)
-            return;
-        markerElement.scrollIntoViewIfNeeded(true);
+        this.scrollStartTime = marker.time - (this.visibleDuration / 2);
     },
 
     updateLayout: function()
@@ -161,13 +186,25 @@ WebInspector.TimelineOverview.prototype = {
         }
 
         // Calculate the required width based on the duration and seconds per pixel.
-        var duration = this.endTime - this.startTime;
-        var newWidth = Math.ceil(duration / this.secondsPerPixel);
+        var duration = this._endTime - this._startTime;
+        var newWidth = Math.ceil(duration / this._secondsPerPixel);
 
         // Update all relevant elements to the new required width.
-        this._updateElementWidth(this._timelineRuler.element, newWidth);
+        this._updateElementWidth(this._scrollWidthSizer, newWidth);
 
-        // Update the time ruler layout now that its width has changed.
+        // Clamp the scroll start time to match what the scroll bar would allow.
+        var scrollStartTime = Math.min(this._scrollStartTime, this._endTime - this.visibleDuration);
+        scrollStartTime = Math.max(this._startTime, scrollStartTime);
+
+        this._timelineRuler.zeroTime = this._startTime;
+        this._timelineRuler.startTime = scrollStartTime;
+        this._timelineRuler.secondsPerPixel = this._secondsPerPixel;
+
+        if (!this._dontUpdateScrollLeft) {
+            this._ignoreNextScrollEvent = true;
+            this._scrollContainer.scrollLeft = Math.ceil((scrollStartTime - this._startTime) / this._secondsPerPixel);
+        }
+
         this._timelineRuler.updateLayout();
     },
 
@@ -196,26 +233,50 @@ WebInspector.TimelineOverview.prototype = {
         this._scheduledLayoutUpdateIdentifier = requestAnimationFrame(this.updateLayout.bind(this));
     },
 
+    _handleScrollEvent: function(event)
+    {
+        if (this._ignoreNextScrollEvent) {
+            delete this._ignoreNextScrollEvent;
+            return;
+        }
+
+        this._dontUpdateScrollLeft = true;
+
+        var scrollOffset = this._scrollContainer.scrollLeft;
+        this.scrollStartTime = this._startTime + (scrollOffset * this._secondsPerPixel);
+
+        // Force layout so we can update with the scroll position synchronously.
+        this.updateLayoutIfNeeded();
+
+        delete this._dontUpdateScrollLeft;
+    },
+
     _handleWheelEvent: function(event)
     {
-        // Require twice the vertical delta to overcome horizontal scrolling. This prevents most
-        // cases of inadvertent zooming for slightly diagonal scrolls.
-        if (Math.abs(event.deltaX) >= Math.abs(event.deltaY) * 0.5)
+        // Ignore cloned events that come our way, we already handled the original.
+        if (event.__cloned)
             return;
 
+        // Require twice the vertical delta to overcome horizontal scrolling. This prevents most
+        // cases of inadvertent zooming for slightly diagonal scrolls.
+        if (Math.abs(event.deltaX) >= Math.abs(event.deltaY) * 0.5) {
+            // Clone the event to dispatch it on the scroll container. Mark it as cloned so we don't get into a loop.
+            var newWheelEvent = new event.constructor(event.type, event);
+            newWheelEvent.__cloned = true;
+
+            this._scrollContainer.dispatchEvent(newWheelEvent);
+            return;
+        }
+
         // Remember the mouse position in time.
-        var mouseOffset = event.pageX - this._scrollContainer.totalOffsetLeft;
-        var scrollOffset = this._scrollContainer.scrollLeft;
-        var mousePositionTime = (scrollOffset + mouseOffset) * this.secondsPerPixel;
+        var mouseOffset = event.pageX - this._element.totalOffsetLeft;
+        var mousePositionTime = this._scrollStartTime + (mouseOffset * this._secondsPerPixel);
         var deviceDirection = event.webkitDirectionInvertedFromDevice ? 1 : -1;
 
         this.secondsPerPixel += event.deltaY * (this._secondsPerPixel / WebInspector.TimelineOverview.ScrollDeltaDenominator) * deviceDirection;
 
-        // Force layout so we can update the scroll position synchronously.
-        this.updateLayoutIfNeeded();
-
         // Center the zoom around the mouse based on the remembered mouse position time.
-        this._scrollContainer.scrollLeft = Math.max(0, Math.round((mousePositionTime / this.secondsPerPixel) - mouseOffset));
+        this.scrollStartTime = mousePositionTime - (mouseOffset * this._secondsPerPixel);
 
         event.preventDefault();
         event.stopPropagation();
