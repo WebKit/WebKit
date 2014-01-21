@@ -1,3 +1,22 @@
+2014-01-21  Tim Horton  <timothy_horton@apple.com>
+
+        Keep CALayer implicit animation disabling code in a single place
+        https://bugs.webkit.org/show_bug.cgi?id=127355
+
+        Reviewed by Simon Fraser.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        Add CALayerWebAdditions.{h,mm}.
+
+        * platform/graphics/ca/mac/PlatformCALayerMac.mm:
+        (PlatformCALayerMac::commonInit):
+        Remove nullActionsDictionary() and use [CALayer(WebAdditions) web_disableAllActions] instead.
+
+        * platform/graphics/mac/CALayerWebAdditions.h: Added.
+        * platform/graphics/mac/CALayerWebAdditions.mm: Added.
+        (-[CALayer web_disableAllActions]):
+        Added. Disable all implicit actions on the layer.
+
 2014-01-21  Gavin Barraclough  <barraclough@apple.com>
 
         Change Page, FocusController to use ViewState

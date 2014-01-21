@@ -1,3 +1,32 @@
+2014-01-21  Tim Horton  <timothy_horton@apple.com>
+
+        Keep CALayer implicit animation disabling code in a single place
+        https://bugs.webkit.org/show_bug.cgi?id=127355
+
+        Reviewed by Simon Fraser.
+
+        * Shared/mac/RemoteLayerTreePropertyApplier.h:
+        * Shared/mac/RemoteLayerTreePropertyApplier.mm:
+        Remove disableActionsForLayer.
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView _rootLayer]):
+        Disable actions on the root layer. It doesn't need them, and currently
+        isn't affected by implicit animations, but future patches which animate
+        the root layer will benefit from this.
+
+        * UIProcess/mac/RemoteLayerTreeHost.mm:
+        (WebKit::RemoteLayerTreeHost::createLayer):
+        Use web_disableAllActions instead of disableActionsForLayer.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/WebPage/mac/PlatformCALayerRemoteCustom.mm: Renamed from Source/WebKit2/WebProcess/WebPage/mac/PlatformCALayerRemoteCustom.cpp.
+        (PlatformCALayerRemoteCustom::PlatformCALayerRemoteCustom):
+        (PlatformCALayerRemoteCustom::~PlatformCALayerRemoteCustom):
+        (PlatformCALayerRemoteCustom::hostingContextID):
+        Use web_disableAllActions instead of disableActionsForLayer.
+        This requires making this file Obj-C++ but that's OK since it's Mac/iOS only.
+
 2014-01-21  Gavin Barraclough  <barraclough@apple.com>
 
         Change Page, FocusController to use ViewState

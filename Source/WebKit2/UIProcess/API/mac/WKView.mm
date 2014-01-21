@@ -2476,13 +2476,14 @@ static NSString * const backingPropertyOldScaleFactorKey = @"NSBackingPropertyOl
         if (!_data->_layerHostingView) {
             // Create an NSView that will host our layer tree.
             _data->_layerHostingView = adoptNS([[WKFlippedView alloc] initWithFrame:[self bounds]]);
-            [_data->_layerHostingView.get() setAutoresizingMask:NSViewWidthSizable | NSViewHeightSizable];
+            [_data->_layerHostingView setAutoresizingMask:NSViewWidthSizable | NSViewHeightSizable];
 
 
             [self addSubview:_data->_layerHostingView.get() positioned:NSWindowBelow relativeTo:nil];
 
             // Create a root layer that will back the NSView.
             RetainPtr<CALayer> layer = adoptNS([[CALayer alloc] init]);
+            [layer web_disableAllActions];
 #ifndef NDEBUG
             [layer setName:@"Hosting root layer"];
 #endif

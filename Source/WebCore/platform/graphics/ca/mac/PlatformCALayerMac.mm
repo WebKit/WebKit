@@ -31,6 +31,7 @@
 
 #import "AnimationUtilities.h"
 #import "BlockExceptions.h"
+#import "CALayerWebAdditions.h"
 #import "GraphicsContext.h"
 #import "GraphicsLayerCA.h"
 #import "LengthFunctions.h"
@@ -153,31 +154,6 @@ void PlatformCALayerMac::setOwner(PlatformCALayerClient* owner)
         [static_cast<WebAnimationDelegate*>(m_delegate.get()) setOwner:this];        
 }
 
-static NSDictionary *nullActionsDictionary()
-{
-    NSNull *nullValue = [NSNull null];
-    NSDictionary *actions = [NSDictionary dictionaryWithObjectsAndKeys:
-                             nullValue, @"anchorPoint",
-                             nullValue, @"anchorPointZ",
-                             nullValue, @"backgroundColor",
-                             nullValue, @"borderColor",
-                             nullValue, @"borderWidth",
-                             nullValue, @"bounds",
-                             nullValue, @"contents",
-                             nullValue, @"contentsRect",
-                             nullValue, @"contentsScale",
-                             nullValue, @"cornerRadius",
-                             nullValue, @"opacity",
-                             nullValue, @"position",
-                             nullValue, @"shadowColor",
-                             nullValue, @"sublayerTransform",
-                             nullValue, @"sublayers",
-                             nullValue, @"transform",
-                             nullValue, @"zPosition",
-                             nil];
-    return actions;
-}
-
 static NSString *toCAFilterType(PlatformCALayer::FilterType type)
 {
     switch (type) {
@@ -243,7 +219,7 @@ void PlatformCALayerMac::commonInit()
     [m_layer.get() setValue:[NSValue valueWithPointer:this] forKey:platformCALayerPointer];
     
     // Clear all the implicit animations on the CALayer
-    [m_layer.get() setStyle:[NSDictionary dictionaryWithObject:nullActionsDictionary() forKey:@"actions"]];
+    [m_layer web_disableAllActions];
 
     // So that the scrolling thread's performance logging code can find all the tiles, mark this as being a tile.
     if (m_layerType == LayerTypeTiledBackingTileLayer)

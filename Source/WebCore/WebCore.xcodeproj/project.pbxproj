@@ -1063,6 +1063,8 @@
 		2D9A247515B9C2E300D34527 /* DOMDOMSecurityPolicyInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D9A247115B9C29500D34527 /* DOMDOMSecurityPolicyInternal.h */; };
 		2D9A247615B9C2F400D34527 /* DOMDOMSecurityPolicy.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = 2D9A247015B9C29500D34527 /* DOMDOMSecurityPolicy.h */; };
 		2D9F0E1314FF1CBF00BA0FF7 /* linearSRGB.icc in Resources */ = {isa = PBXBuildFile; fileRef = 2D9F0E1214FF1CBF00BA0FF7 /* linearSRGB.icc */; };
+		2DBADE0B188E5915004D7981 /* CALayerWebAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DBADE09188E5915004D7981 /* CALayerWebAdditions.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		2DBADE0C188E5915004D7981 /* CALayerWebAdditions.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2DBADE0A188E5915004D7981 /* CALayerWebAdditions.mm */; };
 		2DF2E9D5166E39750035BEF2 /* ConsoleAPITypes.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DF2E9D4166E39740035BEF2 /* ConsoleAPITypes.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		2E0888D41148848A00AF4265 /* JSDOMFormData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2E0888D21148848A00AF4265 /* JSDOMFormData.cpp */; };
 		2E0888D51148848A00AF4265 /* JSDOMFormData.h in Headers */ = {isa = PBXBuildFile; fileRef = 2E0888D31148848A00AF4265 /* JSDOMFormData.h */; };
@@ -7927,6 +7929,8 @@
 		2D9A247115B9C29500D34527 /* DOMDOMSecurityPolicyInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMDOMSecurityPolicyInternal.h; sourceTree = "<group>"; };
 		2D9A247215B9C2C700D34527 /* DOMDOMSecurityPolicy.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DOMDOMSecurityPolicy.mm; sourceTree = "<group>"; };
 		2D9F0E1214FF1CBF00BA0FF7 /* linearSRGB.icc */ = {isa = PBXFileReference; lastKnownFileType = file; path = linearSRGB.icc; sourceTree = "<group>"; };
+		2DBADE09188E5915004D7981 /* CALayerWebAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CALayerWebAdditions.h; sourceTree = "<group>"; };
+		2DBADE0A188E5915004D7981 /* CALayerWebAdditions.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = CALayerWebAdditions.mm; sourceTree = "<group>"; };
 		2DF2E9D4166E39740035BEF2 /* ConsoleAPITypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ConsoleAPITypes.h; sourceTree = "<group>"; };
 		2E0888C3114883A900AF4265 /* DOMFormData.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = DOMFormData.idl; sourceTree = "<group>"; };
 		2E0888D21148848A00AF4265 /* JSDOMFormData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSDOMFormData.cpp; sourceTree = "<group>"; };
@@ -19868,6 +19872,8 @@
 		B27535490B053814002CE64F /* mac */ = {
 			isa = PBXGroup;
 			children = (
+				2DBADE09188E5915004D7981 /* CALayerWebAdditions.h */,
+				2DBADE0A188E5915004D7981 /* CALayerWebAdditions.mm */,
 				EDE3A4FF0C7A430600956A37 /* ColorMac.h */,
 				B275354A0B053814002CE64F /* ColorMac.mm */,
 				37C2360E1097EE7700EF9F72 /* ComplexTextController.cpp */,
@@ -24393,6 +24399,7 @@
 				AB4CB4EB0B8BDA3D009F40B0 /* JSHTMLSelectElementCustom.h in Headers */,
 				E446143C0CD689CC00FADA75 /* JSHTMLSourceElement.h in Headers */,
 				078E093F17D16E1C00420AA1 /* RTCDTMFSenderHandlerClient.h in Headers */,
+				2DBADE0B188E5915004D7981 /* CALayerWebAdditions.h in Headers */,
 				9752D38E1413104B003305BD /* JSHTMLSpanElement.h in Headers */,
 				A80E7B0E0A19D606007FB8C5 /* JSHTMLStyleElement.h in Headers */,
 				BCA169A30BFD55B40019CA76 /* JSHTMLTableCaptionElement.h in Headers */,
@@ -27900,6 +27907,7 @@
 				598365E41355F604001B185D /* JSPositionCallback.cpp in Sources */,
 				FE80DA710E9C472F000D6F75 /* JSPositionError.cpp in Sources */,
 				598365E61355F60D001B185D /* JSPositionErrorCallback.cpp in Sources */,
+				2DBADE0C188E5915004D7981 /* CALayerWebAdditions.mm in Sources */,
 				65DF31FF09D1CC60000BE325 /* JSProcessingInstruction.cpp in Sources */,
 				E44613ED0CD681BA00FADA75 /* JSProgressEvent.cpp in Sources */,
 				B658FFA11522EF3A00DD5595 /* JSRadioNodeList.cpp in Sources */,

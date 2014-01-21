@@ -187,30 +187,4 @@ void RemoteLayerTreePropertyApplier::applyPropertiesToLayer(CALayer *layer, Remo
         updateCustomAppearance(layer, properties.customAppearance);
 }
 
-void RemoteLayerTreePropertyApplier::disableActionsForLayer(CALayer *layer)
-{
-    NSNull *nullValue = [NSNull null];
-    layer.style = @{
-        @"actions" : @{
-            @"anchorPoint" : nullValue,
-            @"anchorPointZ" : nullValue,
-            @"backgroundColor" : nullValue,
-            @"borderColor" : nullValue,
-            @"borderWidth" : nullValue,
-            @"bounds" : nullValue,
-            @"contents" : nullValue,
-            @"contentsRect" : nullValue,
-            @"contentsScale" : nullValue,
-            @"cornerRadius" : nullValue,
-            @"opacity" : nullValue,
-            @"position" : nullValue,
-            @"shadowColor" : nullValue,
-            @"sublayerTransform" : nullValue,
-            @"sublayers" : nullValue,
-            @"transform" : nullValue,
-            @"zPosition" : nullValue
-        }
-    };
-}
-
 } // namespace WebKit

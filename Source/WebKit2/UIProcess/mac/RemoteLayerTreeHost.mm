@@ -32,6 +32,7 @@
 #import "ShareableBitmap.h"
 #import "WebPageProxy.h"
 #import "WebProcessProxy.h"
+#import <WebCore/CALayerWebAdditions.h>
 #import <WebCore/PlatformLayer.h>
 #import <WebKitSystemInterface.h>
 
@@ -121,7 +122,7 @@ CALayer *RemoteLayerTreeHost::createLayer(RemoteLayerTreeTransaction::LayerCreat
         ASSERT_NOT_REACHED();
     }
 
-    RemoteLayerTreePropertyApplier::disableActionsForLayer(layer.get());
+    [layer web_disableAllActions];
 
     return layer.get();
 }
