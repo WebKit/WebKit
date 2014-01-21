@@ -51,7 +51,7 @@ InspectorFrontendAPI = {
 
     isTimelineProfilingEnabled: function()
     {
-        return WebInspector.timelineManager.recording;
+        return WebInspector.timelineManager.recordingEnabled;
     },
 
     setTimelineProfilingEnabled: function(enabled)

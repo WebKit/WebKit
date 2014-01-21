@@ -61,7 +61,7 @@ WebInspector.DashboardManager.prototype = {
         this._view.resourcesSize = WebInspector.frameResourceManager.mainFrame.mainResource.size || 0;
 
         // Only update the time if we are recording the timeline.
-        if (!WebInspector.timelineManager.recording) {
+        if (!WebInspector.timelineManager.recordingEnabled) {
             this._view.time = 0;
             return;
         }

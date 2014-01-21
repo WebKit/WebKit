@@ -1,5 +1,39 @@
 2013-10-25  Timothy Hatcher  <timothy@apple.com>
 
+        Add support for multiple Timeline recordings.
+
+        We also don't explicitly add ResourceTimelineRecords anymore. These will be tracked automatically in a later patch.
+
+        https://bugs.webkit.org/show_bug.cgi?id=123366
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/DashboardManager.js:
+        (WebInspector.DashboardManager.prototype._mainResourceDidChange): Check for currentRecording.
+        * UserInterface/InspectorFrontendAPI.js:
+        (InspectorFrontendAPI.isTimelineProfilingEnabled): Check for currentRecording.
+        * UserInterface/Main.html:
+        * UserInterface/TimelineManager.js:
+        (WebInspector.TimelineManager):
+        (WebInspector.TimelineManager.prototype.get currentRecording): Added.
+        (WebInspector.TimelineManager.prototype.startRecording): Make a new recording and push it onto the recording array.
+        Add the current recording to the event.
+        (WebInspector.TimelineManager.prototype.stopRecording): Add the current recording to the event.
+        (WebInspector.TimelineManager.prototype.eventRecorded.processRecord): Check for currentRecording. Add the markers
+        to the current recording.
+        (WebInspector.TimelineManager.prototype._addRecord): Add the record to the current recording.
+        (WebInspector.TimelineManager.prototype._startAutoRecording): Clean up. Don't add ResourceTimelineRecord. Clear recordings.
+        (WebInspector.TimelineManager.prototype._stopAutoRecordingSoon): Check for _currentRecording.
+        (WebInspector.TimelineManager.prototype._resetAutoRecordingDeadTimeTimeout): Ditto.
+        (WebInspector.TimelineManager.prototype._mainResourceDidChange): Don't add ResourceTimelineRecord anymore.
+        (WebInspector.TimelineManager.prototype._resourceWasAdded): Removed.
+        * UserInterface/TimelineRecording.js: Added.
+        (WebInspector.TimelineRecording): Added.
+        (WebInspector.TimelineRecording.prototype.addEventMarker): Added.
+        (WebInspector.TimelineRecording.prototype.addRecord): Added.
+
+2013-10-25  Timothy Hatcher  <timothy@apple.com>
+
         Track callFrames and sourceCodeLocation per TimelineRecord.
 
         https://bugs.webkit.org/show_bug.cgi?id=123359
