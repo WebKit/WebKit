@@ -1,3 +1,13 @@
+2014-01-21  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: Mac: Expose the visible text of a password field to AX
+        https://bugs.webkit.org/show_bug.cgi?id=127353
+
+        Reviewed by Brent Fulgham.
+
+        * accessibility/password-field-value-expected.txt: Added.
+        * accessibility/password-field-value.html: Added.
+
 2014-01-21  Tamas Gergely  <tgergely.u-szeged@partner.samsung.com>
 
         ASSERT(time.isFinite()) in SVGSMILElement::createInstanceTimesFromSyncbase

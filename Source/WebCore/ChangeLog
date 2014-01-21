@@ -1,3 +1,18 @@
+2014-01-21  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: Mac: Expose the visible text of a password field to AX
+        https://bugs.webkit.org/show_bug.cgi?id=127353
+
+        Reviewed by Brent Fulgham.
+
+        The Mac platform should now expose the rendered value of password fields through AX.
+
+        Test: accessibility/password-field-value.html
+
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::textLength):
+        (WebCore::AccessibilityRenderObject::passwordFieldValue):
+
 2014-01-21  Robert Sipka  <sipka@inf.u-szeged.hu>
 
         Support SSL error handling in case of synchronous job.
