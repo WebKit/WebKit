@@ -1,3 +1,70 @@
+2014-01-11  Timothy Hatcher  <timothy@apple.com>
+
+        Implement bar graph rendering for WebInspector.OverviewTimelineView.
+
+        https://bugs.webkit.org/show_bug.cgi?id=126831
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Main.html: Added new files.
+
+        * UserInterface/OverviewTimelineView.css:
+        (.timeline-view.overview > .data-grid td.graph-column):
+        (.timeline-view.overview > .data-grid td.graph-column > div):
+        (.timeline-view.overview > .data-grid td.graph-column .timeline-record-bar):
+        Position the bars in the DataGrid cells.
+
+        * UserInterface/OverviewTimelineView.js:
+        (WebInspector.OverviewTimelineView.prototype.updateLayout):
+        (WebInspector.OverviewTimelineView.prototype._addResourceToTreeIfNeeded):
+        (WebInspector.OverviewTimelineView.prototype._sourceCodeTimelineAdded):
+        Create the proper DataGridNodes for resources and source code timelines.
+
+        * UserInterface/ResourceTimelineDataGridNode.js:
+        (WebInspector.ResourceTimelineDataGridNode):
+        (WebInspector.ResourceTimelineDataGridNode.prototype.get records):
+        (WebInspector.ResourceTimelineDataGridNode.prototype.get resource):
+        (WebInspector.ResourceTimelineDataGridNode.prototype.get data):
+        (WebInspector.ResourceTimelineDataGridNode.prototype.createCellContent):
+        (WebInspector.ResourceTimelineDataGridNode.prototype.refresh):
+        (WebInspector.ResourceTimelineDataGridNode.prototype._needsRefresh):
+        (WebInspector.ResourceTimelineDataGridNode.prototype._goToResource):
+        Simplify by deferring the graph logic to the new TimelineDataGridNode base class.
+
+        * UserInterface/SourceCodeTimelineTimelineDataGridNode.js: Added.
+        (WebInspector.SourceCodeTimelineTimelineDataGridNode):
+        (WebInspector.SourceCodeTimelineTimelineDataGridNode.prototype.get records):
+        (WebInspector.SourceCodeTimelineTimelineDataGridNode.prototype.get sourceCodeTimeline):
+        (WebInspector.SourceCodeTimelineTimelineDataGridNode.prototype.get data):
+
+        * UserInterface/TimelineDataGridNode.js: Added.
+        (WebInspector.TimelineDataGridNode):
+        (WebInspector.TimelineDataGridNode.prototype.get records):
+        (WebInspector.TimelineDataGridNode.prototype.get data):
+        (WebInspector.TimelineDataGridNode.prototype.createCellContent):
+        (WebInspector.TimelineDataGridNode.prototype.refresh):
+        (WebInspector.TimelineDataGridNode.prototype.refreshGraph):
+        (WebInspector.TimelineDataGridNode.prototype.needsGraphRefresh):
+        Handles the graph column and manages the records and their bars.
+
+        * UserInterface/TimelineRecordBar.css: Added.
+        (.timeline-record-bar):
+        (.timeline-record-bar > .segment):
+        (.timeline-record-bar:not(.has-inactive-segment) > .segment):
+        (.timeline-record-bar.unfinished > .segment):
+        (.timeline-record-bar > .segment.inactive + .segment):
+        (:focus .selected .timeline-record-bar > .segment):
+        (.timeline-record-bar > .segment.inactive):
+        (.timeline-record-bar.timeline-record-type-network > .segment):
+        (.timeline-record-bar.timeline-record-type-layout > .segment):
+        (.timeline-record-bar.timeline-record-type-script > .segment):
+
+        * UserInterface/TimelineRecordBar.js: Added.
+        (WebInspector.TimelineRecordBar):
+        (WebInspector.TimelineRecordBar.prototype.get element):
+        (WebInspector.TimelineRecordBar.prototype.refresh):
+        (WebInspector.TimelineRecordBar.prototype._updateElementPosition):
+
 2014-01-08  Timothy Hatcher  <timothy@apple.com>
 
         Update the current WebInspector.TimelineView when time range changes.

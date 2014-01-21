@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,49 +23,34 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-.timeline-view.overview > .timeline-ruler {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-}
+WebInspector.SourceCodeTimelineTimelineDataGridNode = function(sourceCodeTimeline, graphDataSource)
+{
+    WebInspector.TimelineDataGridNode.call(this, true, graphDataSource);
 
-.timeline-view.overview > .timeline-ruler > .header {
-    border-top: 1px solid rgb(200, 200, 200);
-    height: 23px;
-}
+    this._sourceCodeTimeline = sourceCodeTimeline;
+    this._sourceCodeTimeline.addEventListener(WebInspector.Timeline.Event.RecordAdded, this.needsGraphRefresh, this);
+};
 
-.timeline-view.overview > .timeline-ruler > .event-markers {
-    top: 23px;
-}
+WebInspector.Object.addConstructorFunctions(WebInspector.SourceCodeTimelineTimelineDataGridNode);
 
-.timeline-view.overview > .data-grid {
-    position: absolute;
-    top: 23px;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    border: none;
-}
+WebInspector.SourceCodeTimelineTimelineDataGridNode.prototype = {
+    constructor: WebInspector.SourceCodeTimelineTimelineDataGridNode,
+    __proto__: WebInspector.TimelineDataGridNode.prototype,
 
-.timeline-view.overview > .data-grid table.header {
-    display: none;
-}
+    // Public
 
-.timeline-view.overview > .data-grid .data-container {
-    top: 0;
-}
+    get records()
+    {
+        return this._sourceCodeTimeline.records;
+    },
 
-.timeline-view.overview > .data-grid td.graph-column {
-    padding: 2px 0;
-}
+    get sourceCodeTimeline()
+    {
+        return this._sourceCodeTimeline;
+    },
 
-.timeline-view.overview > .data-grid td.graph-column > div {
-    position: relative;
-    height: 16px;
-}
-
-.timeline-view.overview > .data-grid td.graph-column .timeline-record-bar {
-    top: 2px;
-}
+    get data()
+    {
+        return {graph: this._sourceCodeTimeline.startTime};
+    }
+};

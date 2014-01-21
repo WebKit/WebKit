@@ -44,6 +44,8 @@ WebInspector.OverviewTimelineView = function()
     this.element.classList.add(WebInspector.OverviewTimelineView.StyleClassName);
     this.element.appendChild(this._dataGrid.element);
 
+    this._pendingRepresentedObjects = [];
+
     WebInspector.timelineManager.recording.addEventListener(WebInspector.TimelineRecording.Event.SourceCodeTimelineAdded, this._sourceCodeTimelineAdded, this);
 };
 
@@ -72,6 +74,8 @@ WebInspector.OverviewTimelineView.prototype = {
 
     shown: function()
     {
+        WebInspector.TimelineView.prototype.shown.call(this);
+
         this._treeOutlineDataGridSynchronizer.synchronize();
     },
 
@@ -79,12 +83,29 @@ WebInspector.OverviewTimelineView.prototype = {
     {
         WebInspector.TimelineView.prototype.updateLayout.call(this);
 
+        var oldZeroTime = this._timelineRuler.zeroTime;
+        var oldStartTime = this._timelineRuler.startTime;
+        var oldEndTime = this._timelineRuler.endTime;
+        var oldCurrentTime = this._currentTimeMarker.time;
+
         this._timelineRuler.zeroTime = this.zeroTime;
         this._timelineRuler.startTime = this.startTime;
         this._timelineRuler.endTime = this.endTime;
         this._currentTimeMarker.time = this.currentTime;
 
+        // The TimelineDataGridNode graphs are positioned with percentages, so they auto resize with the view.
+        // We only need to refresh the graphs when the any of the times change.
+        if (this.zeroTime !== oldZeroTime || this.startTime !== oldStartTime || this.endTime !== oldEndTime || this.currentTime !== oldCurrentTime) {
+            var item = this._dataGrid.children[0];
+            while (item) {
+                item.refreshGraph();
+                item = item.traverseNextNode(false, null, true);
+            }
+        }
+
         this._timelineRuler.updateLayout();
+
+        this._processPendingRepresentedObjects();
     },
 
     // Private
@@ -171,8 +192,11 @@ WebInspector.OverviewTimelineView.prototype = {
         var resourceTreeElement = new WebInspector.ResourceTreeElement(resource);
         resourceTreeElement.expand();
 
-        // FIXME: This is just a placeholder DataGridNode.
-        var resourceDataGridNode = new WebInspector.DataGridNode;
+        var resourceTimelineRecord = this._networkTimeline ? this._networkTimeline.recordForResource(resource) : null;
+        if (!resourceTimelineRecord)
+            resourceTimelineRecord = new WebInspector.ResourceTimelineRecord(resource);
+
+        var resourceDataGridNode = new WebInspector.ResourceTimelineDataGridNode(resourceTimelineRecord, true, this);
         this._treeOutlineDataGridSynchronizer.associate(resourceTreeElement, resourceDataGridNode);
 
         var parentTreeElement = this.navigationSidebarTreeOutline;
@@ -191,12 +215,45 @@ WebInspector.OverviewTimelineView.prototype = {
         return resourceTreeElement;
     },
 
+    _addSourceCodeTimeline: function(sourceCodeTimeline)
+    {
+        var parentTreeElement = sourceCodeTimeline.sourceCodeLocation ? this._addResourceToTreeIfNeeded(sourceCodeTimeline.sourceCode) : this.navigationSidebarTreeOutline;
+        console.assert(parentTreeElement);
+        if (!parentTreeElement)
+            return;
+
+        var sourceCodeTimelineTreeElement = new WebInspector.SourceCodeTimelineTreeElement(sourceCodeTimeline);
+        var sourceCodeTimelineDataGridNode = new WebInspector.SourceCodeTimelineTimelineDataGridNode(sourceCodeTimeline, this);
+
+        this._treeOutlineDataGridSynchronizer.associate(sourceCodeTimelineTreeElement, sourceCodeTimelineDataGridNode);
+        this._insertTreeElement(sourceCodeTimelineTreeElement, parentTreeElement);
+    },
+
+    _processPendingRepresentedObjects: function()
+    {
+        if (!this._pendingRepresentedObjects || !this._pendingRepresentedObjects.length)
+            return;
+
+        for (var representedObject of this._pendingRepresentedObjects) {
+            if (representedObject instanceof WebInspector.Resource)
+                this._addResourceToTreeIfNeeded(representedObject);
+            else if (representedObject instanceof WebInspector.SourceCodeTimeline)
+                this._addSourceCodeTimeline(representedObject);
+            else
+                console.error("Unknown represented object");
+        }
+
+        this._pendingRepresentedObjects = [];
+    },
+
     _networkTimelineRecordAdded: function(event)
     {
         var resourceTimelineRecord = event.data.record;
         console.assert(resourceTimelineRecord instanceof WebInspector.ResourceTimelineRecord);
 
-        this._addResourceToTreeIfNeeded(resourceTimelineRecord.resource);
+        this._pendingRepresentedObjects.push(resourceTimelineRecord.resource);
+
+        this.needsLayout();
 
         // We don't expect to have any source code timelines yet. Those should be added with _sourceCodeTimelineAdded.
         console.assert(!WebInspector.timelineManager.recording.sourceCodeTimelinesForSourceCode(resourceTimelineRecord.resource).length);
@@ -209,18 +266,9 @@ WebInspector.OverviewTimelineView.prototype = {
         if (!sourceCodeTimeline)
             return;
 
-        var parentTreeElement = sourceCodeTimeline.sourceCodeLocation ? this._addResourceToTreeIfNeeded(sourceCodeTimeline.sourceCode) : this.navigationSidebarTreeOutline;
-        console.assert(parentTreeElement);
-        if (!parentTreeElement)
-            return;
+        this._pendingRepresentedObjects.push(sourceCodeTimeline);
 
-        var sourceCodeTimelineTreeElement = new WebInspector.SourceCodeTimelineTreeElement(sourceCodeTimeline);
-
-        // FIXME: This is just a placeholder DataGridNode.
-        var sourceCodeTimelineDataGridNode = new WebInspector.DataGridNode;
-        this._treeOutlineDataGridSynchronizer.associate(sourceCodeTimelineTreeElement, sourceCodeTimelineDataGridNode);
-
-        this._insertTreeElement(sourceCodeTimelineTreeElement, parentTreeElement);
+        this.needsLayout();
     },
 
     _treeElementSelected: function(treeElement, selectedByUser)
