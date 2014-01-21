@@ -1415,7 +1415,8 @@ bool EwkView::scrollBy(const IntSize& offset)
     WKPoint oldPosition = WKViewGetContentPosition(wkView());
     float contentScale = WKViewGetContentScaleFactor(wkView());
 
-    FloatPoint newPosition(oldPosition.x + offset.width() / contentScale, oldPosition.y + offset.height() / contentScale);
+    float effectiveScale = contentScale * deviceScaleFactor();
+    FloatPoint newPosition(oldPosition.x + offset.width() / effectiveScale, oldPosition.y + offset.height() / effectiveScale);
 
     // Update new position to the PageViewportController.
     newPosition = m_pageViewportController.boundContentsPositionAtScale(newPosition, contentScale);
