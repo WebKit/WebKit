@@ -212,7 +212,7 @@ class WebCoreLayoutUnitProvider:
         infiniteSize = self.valobj.GetFrame().EvaluateExpression('IntRect::infiniteRect()').GetChildMemberWithName('m_size').GetChildMemberWithName('m_width').GetValueAsSigned(0)
         # denominator = maxint / current infinite width value
         denominator = int(2147483647 / infiniteSize)
-        return "%gpx (%d)" % (layoutUnitValue / denominator, layoutUnitValue)
+        return "%gpx (%d)" % (float(layoutUnitValue) / denominator, layoutUnitValue)
 
 
 class WebCoreLayoutSizeProvider:

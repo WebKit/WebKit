@@ -1,3 +1,14 @@
+2014-01-20  Zalan Bujtas  <zalan@apple.com>
+
+        Force float division when calculating CSS px value.
+
+        Reviewed by Simon Fraser.
+
+        Note that in Python 3, this is the default behavior.
+
+        * lldb/lldb_webkit.py:
+        (WebCoreLayoutUnitProvider.to_string):
+
 2014-01-20  Alexey Proskuryakov  <ap@apple.com>
 
         build.webkit.org/dashboard should display information about patches in EWS
