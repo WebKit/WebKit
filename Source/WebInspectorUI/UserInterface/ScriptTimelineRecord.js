@@ -63,6 +63,10 @@ WebInspector.ScriptTimelineRecord.EventType.displayName = function(eventType)
     }
 };
 
+WebInspector.ScriptTimelineRecord.TypeIdentifier = "script-timeline-record";
+WebInspector.ScriptTimelineRecord.EventTypeCookieKey = "script-timeline-record-event-type";
+WebInspector.ScriptTimelineRecord.DetailsCookieKey = "script-timeline-record-details";
+
 WebInspector.ScriptTimelineRecord.prototype = {
     constructor: WebInspector.ScriptTimelineRecord,
 
@@ -76,6 +80,14 @@ WebInspector.ScriptTimelineRecord.prototype = {
     get details()
     {
         return this._details;
+    },
+
+    saveIdentityToCookie: function(cookie)
+    {
+        WebInspector.TimelineRecord.prototype.saveIdentityToCookie.call(this, cookie);
+
+        cookie[WebInspector.ScriptTimelineRecord.EventTypeCookieKey] = this._eventType;
+        cookie[WebInspector.ScriptTimelineRecord.DetailsCookieKey] = this._details;
     }
 };
 

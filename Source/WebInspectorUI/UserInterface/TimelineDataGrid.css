@@ -105,6 +105,41 @@
     color: inherit;
 }
 
+.data-grid.timeline td .icon {
+    display: inline-block;
+    vertical-align: top;
+
+    width: 16px;
+    height: 16px;
+
+    margin-right: 2px;
+}
+
+.data-grid.timeline td .go-to-arrow {
+    float: right;
+
+    visibility: hidden;
+
+    margin-left: 2px;
+}
+
+.data-grid.timeline tr.selected .go-to-arrow,
+.data-grid.timeline tr:hover .go-to-arrow {
+    visibility: visible;
+}
+
+.data-grid.timeline td .subtitle {
+    color: rgba(0, 0, 0, 0.7);
+}
+
+.data-grid.timeline td .subtitle::before {
+    content: " — ";
+}
+
+.data-grid.timeline:focus tr.selected td .subtitle {
+    color: rgba(255, 255, 255, 0.9);
+}
+
 .data-grid.timeline > .navigation-bar-container {
     position: absolute;
     bottom: 0;

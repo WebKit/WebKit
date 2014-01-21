@@ -131,7 +131,51 @@ WebInspector.TimelineSidebarPanel.prototype = {
         if (representedObject instanceof WebInspector.Frame)
             representedObject = representedObject.mainResource;
 
-        return this.contentTreeOutline.getCachedTreeElement(representedObject);
+        var foundTreeElement = this.contentTreeOutline.getCachedTreeElement(representedObject);
+        if (foundTreeElement)
+            return foundTreeElement;
+
+        // Look for TreeElements loosely based on represented objects that can contain the represented
+        // object we are really looking for. This allows a SourceCodeTimelineTreeElement or a
+        // TimelineRecordTreeElement to stay selected when the Resource it represents is showing.
+
+        function looselyCompareRepresentedObjects(candidateTreeElement)
+        {
+            if (!candidateTreeElement)
+                return false;
+
+            var candidateRepresentedObject = candidateTreeElement.representedObject;
+            if (candidateRepresentedObject instanceof WebInspector.SourceCodeTimeline) {
+                if (candidateRepresentedObject.sourceCode === representedObject)
+                    return true;
+                return false;
+            }
+
+            if (candidateRepresentedObject instanceof WebInspector.TimelineRecord) {
+                if (!candidateRepresentedObject.sourceCodeLocation)
+                    return false;
+                if (candidateRepresentedObject.sourceCodeLocation.sourceCode === representedObject)
+                    return true;
+                return false;
+            }
+
+            console.error("Unknown TreeElement");
+            return false;
+        }
+
+        // Check the selected tree element first so we don't need to do a longer search and it is
+        // likely to be the best candidate for the current view.
+        if (looselyCompareRepresentedObjects(this.contentTreeOutline.selectedTreeElement))
+            return this.contentTreeOutline.selectedTreeElement;
+
+        var currentTreeElement = this._contentTreeOutline.children[0];
+        while (currentTreeElement && !currentTreeElement.root) {
+            if (looselyCompareRepresentedObjects(currentTreeElement))
+                return currentTreeElement;
+            currentTreeElement = currentTreeElement.traverseNextTreeElement(false, null, false);
+        }
+
+        return null;
     },
 
     get contentTreeOutlineLabel()

@@ -64,6 +64,9 @@ WebInspector.LayoutTimelineRecord.EventType.displayName = function(eventType)
     }
 };
 
+WebInspector.LayoutTimelineRecord.TypeIdentifier = "layout-timeline-record";
+WebInspector.LayoutTimelineRecord.EventTypeCookieKey = "layout-timeline-record-event-type";
+
 WebInspector.LayoutTimelineRecord.prototype = {
     constructor: WebInspector.LayoutTimelineRecord,
 
@@ -109,6 +112,13 @@ WebInspector.LayoutTimelineRecord.prototype = {
     get quad()
     {
         return this._quad;
+    },
+
+    saveIdentityToCookie: function(cookie)
+    {
+        WebInspector.TimelineRecord.prototype.saveIdentityToCookie.call(this, cookie);
+
+        cookie[WebInspector.LayoutTimelineRecord.EventTypeCookieKey] = this._eventType;
     }
 };
 

@@ -1,3 +1,97 @@
+2014-01-15  Timothy Hatcher  <timothy@apple.com>
+
+        Implement the discrete Script and Layout timeline views.
+
+        https://bugs.webkit.org/show_bug.cgi?id=127063
+
+        Reviewed by Joseph Pecoraro.
+
+        * Localizations/en.lproj/localizedStrings.js: Updated.
+
+        * UserInterface/DataGrid.js:
+        (WebInspector.DataGrid): Support hidden columns by default.
+        (WebInspector.DataGrid.prototype.updateLayout): Set the column width to zero for hidden columns.
+
+        * UserInterface/LayoutTimelineDataGrid.js:
+        (WebInspector.LayoutTimelineDataGrid): Pass the right parameters to the superclass.
+
+        * UserInterface/LayoutTimelineRecord.js:
+        (WebInspector.LayoutTimelineRecord.prototype.saveIdentityToCookie): Added.
+
+        * UserInterface/LayoutTimelineView.css: Copied from Source/WebInspectorUI/UserInterface/ScriptTimelineDataGrid.js.
+        (.timeline-view.layout > .data-grid):
+        (.timeline-view.layout > .data-grid .eventType-column):
+        (.sidebar > .panel.timeline.timeline-content-view-showing .navigation-sidebar-panel-content-tree-outline.layout .item .subtitle):
+
+        * UserInterface/LayoutTimelineView.js: Added.
+        (WebInspector.LayoutTimelineView):
+        (WebInspector.LayoutTimelineView.prototype.get navigationSidebarTreeOutlineLabel):
+        (WebInspector.LayoutTimelineView.prototype.shown):
+        (WebInspector.LayoutTimelineView.prototype.hidden):
+        (WebInspector.LayoutTimelineView.prototype.updateLayout):
+        (WebInspector.LayoutTimelineView.prototype.matchTreeElementAgainstCustomFilters):
+        (WebInspector.LayoutTimelineView.prototype._layoutTimelineRecordAdded):
+        (WebInspector.LayoutTimelineView.prototype._dataGridFiltersDidChange):
+        (WebInspector.LayoutTimelineView.prototype._treeElementSelected):
+
+        * UserInterface/Main.html: Added new files.
+
+        * UserInterface/ScriptTimelineDataGrid.js:
+        (WebInspector.ScriptTimelineDataGrid): Pass the right parameters to the superclass.
+
+        * UserInterface/ScriptTimelineDataGridNode.js:
+        (WebInspector.ScriptTimelineDataGridNode.prototype.createCellContent): Fix up how we create the link.
+
+        * UserInterface/ScriptTimelineRecord.js:
+        (WebInspector.ScriptTimelineRecord.prototype.saveIdentityToCookie): Added.
+
+        * UserInterface/ScriptTimelineView.css: Copied from Source/WebInspectorUI/UserInterface/ScriptTimelineDataGrid.js.
+        (.timeline-view.script > .data-grid):
+        (.timeline-view.script > .data-grid .eventType-column):
+        (.sidebar > .panel.timeline.timeline-content-view-showing .navigation-sidebar-panel-content-tree-outline.script .item .subtitle):
+
+        * UserInterface/ScriptTimelineView.js: Added.
+        (WebInspector.ScriptTimelineView):
+        (WebInspector.ScriptTimelineView.prototype.get navigationSidebarTreeOutlineLabel):
+        (WebInspector.ScriptTimelineView.prototype.shown):
+        (WebInspector.ScriptTimelineView.prototype.hidden):
+        (WebInspector.ScriptTimelineView.prototype.updateLayout):
+        (WebInspector.ScriptTimelineView.prototype.matchTreeElementAgainstCustomFilters):
+        (WebInspector.ScriptTimelineView.prototype._scriptTimelineRecordAdded):
+        (WebInspector.ScriptTimelineView.prototype._dataGridFiltersDidChange):
+        (WebInspector.ScriptTimelineView.prototype._treeElementSelected):
+
+        * UserInterface/SourceCodeTimelineTreeElement.js:
+        (WebInspector.SourceCodeTimelineTreeElement):
+        Moved code to TimelineRecordTreeElement. Subclass from it.
+
+        * UserInterface/TimelineContentView.js:
+        (WebInspector.TimelineContentView.prototype.matchTreeElementAgainstCustomFilters): Support TimelineRecordTreeElement.
+        (WebInspector.TimelineContentView.prototype._timeRangeSelectionChanged): Update zeroTime for all views.
+
+        * UserInterface/TimelineDataGrid.css:
+        (.data-grid.timeline td .icon):
+        (.data-grid.timeline td .go-to-arrow):
+        (.data-grid.timeline tr:hover .go-to-arrow):
+        (.data-grid.timeline td .subtitle):
+        (.data-grid.timeline td .subtitle::before):
+        (.data-grid.timeline:focus tr.selected td .subtitle):
+
+        * UserInterface/TimelineRecord.js:
+        (WebInspector.TimelineRecord.prototype.saveIdentityToCookie): Added.
+
+        * UserInterface/TimelineRecordTreeElement.js: Added.
+        (WebInspector.TimelineRecordTreeElement):
+        (WebInspector.TimelineRecordTreeElement.prototype.get record):
+        (WebInspector.TimelineRecordTreeElement.prototype.get filterableData):
+        Factored out from SourceCodeTimelineTreeElement.
+
+        * UserInterface/TimelineSidebarPanel.js:
+        (WebInspector.TimelineSidebarPanel.prototype.treeElementForRepresentedObject.looslyCompareRepresentedObjects):
+        (WebInspector.TimelineSidebarPanel.prototype.treeElementForRepresentedObject):
+        Find TreeElements via a loose lookup based on represented objects that might contain the represented object we are
+        really looking for.
+
 2014-01-14  Timothy Hatcher  <timothy@apple.com>
 
         Implement the discrete Network timeline view.

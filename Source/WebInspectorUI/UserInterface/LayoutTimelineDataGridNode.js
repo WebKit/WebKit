@@ -25,7 +25,7 @@
 
 WebInspector.LayoutTimelineDataGridNode = function(layoutTimelineRecord, baseStartTime)
 {
-    WebInspector.DataGridNode.call(this, {});
+    WebInspector.TimelineDataGridNode.call(this, false, null);
 
     this._record = layoutTimelineRecord;
     this._baseStartTime = baseStartTime || 0;
@@ -38,12 +38,18 @@ WebInspector.LayoutTimelineDataGridNode.SubtitleStyleClassName = "subtitle";
 
 WebInspector.LayoutTimelineDataGridNode.prototype = {
     constructor: WebInspector.LayoutTimelineDataGridNode,
+    __proto__: WebInspector.TimelineDataGridNode.prototype,
 
     // Public
 
     get record()
     {
         return this._record;
+    },
+
+    get records()
+    {
+        return [this._record];
     },
 
     get data()
@@ -60,77 +66,6 @@ WebInspector.LayoutTimelineDataGridNode.prototype = {
         case "eventType":
             return WebInspector.LayoutTimelineRecord.EventType.displayName(value);
 
-        case "initiatorCallFrame":
-            var callFrame = value;
-            if (!callFrame)
-                return emptyValuePlaceholderString;
-
-            var isAnonymousFunction = false;
-            var functionName = callFrame.functionName;
-            if (!functionName) {
-                functionName = WebInspector.UIString("(anonymous function)");
-                isAnonymousFunction = true;
-            }
-
-            cell.classList.add(WebInspector.CallFrameTreeElement.FunctionIconStyleClassName);
-
-            var fragment = document.createDocumentFragment();
-
-            if (callFrame.sourceCodeLocation && callFrame.sourceCodeLocation.sourceCode) {
-
-                // Give the whole cell a tooltip and keep it up to date.
-                callFrame.sourceCodeLocation.populateLiveDisplayLocationTooltip(cell);
-
-                var goToArrowButtonLink = WebInspector.createSourceCodeLocationLink(callFrame.sourceCodeLocation, false, true);
-                fragment.appendChild(goToArrowButtonLink);
-
-                var icon = document.createElement("div");
-                icon.className = WebInspector.LayoutTimelineDataGridNode.IconStyleClassName;
-                fragment.appendChild(icon);
-
-                if (isAnonymousFunction) {
-                    // For anonymous functions we show the resource or script icon and name.
-                    if (callFrame.sourceCodeLocation.sourceCode instanceof WebInspector.Resource) {
-                        cell.classList.add(WebInspector.ResourceTreeElement.ResourceIconStyleClassName);
-                        cell.classList.add(callFrame.sourceCodeLocation.sourceCode.type);
-                    } else if (callFrame.sourceCodeLocation.sourceCode instanceof WebInspector.Script) {
-                        if (callFrame.sourceCodeLocation.sourceCode.url) {
-                            cell.classList.add(WebInspector.ResourceTreeElement.ResourceIconStyleClassName);
-                            cell.classList.add(WebInspector.Resource.Type.Script);
-                        } else
-                            cell.classList.add(WebInspector.ScriptTreeElement.AnonymousScriptIconStyleClassName);
-                    } else {
-                        console.error("Unknown SourceCode subclass.");
-                    }
-
-                    var titleElement = document.createElement("span");
-                    callFrame.sourceCodeLocation.populateLiveDisplayLocationString(titleElement, "textContent");
-
-                    fragment.appendChild(titleElement);
-                } else {
-                    // Show the function name and icon.
-                    cell.classList.add(WebInspector.CallFrameTreeElement.FunctionIconStyleClassName);
-
-                    fragment.appendChild(document.createTextNode(functionName));
-
-                    var subtitleElement = document.createElement("span");
-                    subtitleElement.className = WebInspector.LayoutTimelineDataGridNode.SubtitleStyleClassName;
-                    callFrame.sourceCodeLocation.populateLiveDisplayLocationString(subtitleElement, "textContent");
-
-                    fragment.appendChild(subtitleElement);
-                }
-
-                return fragment;
-            }
-
-            var icon = document.createElement("div");
-            icon.className = WebInspector.LayoutTimelineDataGridNode.IconStyleClassName;
-            fragment.appendChild(icon);
-
-            fragment.appendChild(document.createTextNode(functionName));
-
-            return fragment;
-
         case "width":
         case "height":
             return isNaN(value) ? emptyValuePlaceholderString : WebInspector.UIString("%fpx").format(value);
@@ -145,8 +80,6 @@ WebInspector.LayoutTimelineDataGridNode.prototype = {
             return isNaN(value) ? emptyValuePlaceholderString : Number.secondsToString(value);
         }
 
-        return WebInspector.DataGridNode.prototype.createCellContent.call(this, columnIdentifier);
+        return WebInspector.TimelineDataGridNode.prototype.createCellContent.call(this, columnIdentifier, cell);
     }
-}
-
-WebInspector.LayoutTimelineDataGridNode.prototype.__proto__ = WebInspector.DataGridNode.prototype;
+};

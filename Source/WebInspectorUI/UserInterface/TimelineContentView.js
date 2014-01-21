@@ -43,8 +43,8 @@ WebInspector.TimelineContentView = function(recording)
     this._overviewTimelineView = new WebInspector.OverviewTimelineView;
     this._discreteTimelineViewMap = {
         [WebInspector.TimelineRecord.Type.Network]: new WebInspector.NetworkTimelineView,
-        [WebInspector.TimelineRecord.Type.Layout]: new WebInspector.TimelineView,
-        [WebInspector.TimelineRecord.Type.Script]: new WebInspector.TimelineView
+        [WebInspector.TimelineRecord.Type.Layout]: new WebInspector.LayoutTimelineView,
+        [WebInspector.TimelineRecord.Type.Script]: new WebInspector.ScriptTimelineView
     };
 
     function createPathComponent(displayName, className, representedObject)
@@ -186,6 +186,11 @@ WebInspector.TimelineContentView.prototype = {
             return false;
         }
 
+        if (treeElement instanceof WebInspector.TimelineRecordTreeElement) {
+            var record = treeElement.record;
+            return checkTimeBounds(record.startTime, record.endTime);
+        }
+
         console.error("Unknown TreeElement, can't filter by time.");
         return true;
     },
@@ -218,7 +223,6 @@ WebInspector.TimelineContentView.prototype = {
         if (this._currentTimelineView) {
             this._viewContainer.appendChild(this._currentTimelineView.element);
 
-            this._currentTimelineView.zeroTime = this._timelineOverview.startTime;
             this._currentTimelineView.startTime = this._timelineOverview.selectionStartTime;
             this._currentTimelineView.endTime = this._timelineOverview.selectionStartTime + this._timelineOverview.selectionDuration;
             this._currentTimelineView.currentTime = this._currentTimeMarker.time;
@@ -241,8 +245,14 @@ WebInspector.TimelineContentView.prototype = {
 
         if (this._startTimeNeedsReset && !isNaN(startTime)) {
             var selectionOffset = this._timelineOverview.selectionStartTime - this._timelineOverview.startTime;
+
             this._timelineOverview.startTime = startTime;
             this._timelineOverview.selectionStartTime = startTime + selectionOffset;
+
+            this._overviewTimelineView.zeroTime = startTime;
+            for (var identifier in this._discreteTimelineViewMap)
+                this._discreteTimelineViewMap[identifier].zeroTime = startTime;
+
             delete this._startTimeNeedsReset;
         }
 
@@ -304,14 +314,12 @@ WebInspector.TimelineContentView.prototype = {
         this._currentTimeMarker.time = 0;
 
         this._overviewTimelineView.reset();
-
         for (var identifier in this._discreteTimelineViewMap)
             this._discreteTimelineViewMap[identifier].reset();
     },
 
     _timeRangeSelectionChanged: function(event)
     {
-        this._currentTimelineView.zeroTime = this._timelineOverview.startTime;
         this._currentTimelineView.startTime = this._timelineOverview.selectionStartTime;
         this._currentTimelineView.endTime = this._timelineOverview.selectionStartTime + this._timelineOverview.selectionDuration;
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,25 +23,18 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.SourceCodeTimelineTreeElement = function(sourceCodeTimeline, showFullLocationSubtitle)
-{
-    console.assert(sourceCodeTimeline);
+.timeline-view.script > .data-grid {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+}
 
-    this._sourceCodeTimeline = sourceCodeTimeline;
+.timeline-view.script > .data-grid .eventType-column {
+    border-right: none;
+}
 
-    WebInspector.TimelineRecordTreeElement.call(this, sourceCodeTimeline.records[0], showFullLocationSubtitle, sourceCodeTimeline.sourceCodeLocation, sourceCodeTimeline);
-};
-
-WebInspector.SourceCodeTimelineTreeElement.prototype = {
-    constructor: WebInspector.SourceCodeTimelineTreeElement,
-    __proto__: WebInspector.TimelineRecordTreeElement.prototype,
-
-    // Public
-
-    record: undefined,
-
-    get sourceCodeTimeline()
-    {
-        return this._sourceCodeTimeline;
-    }
-};
+.sidebar > .panel.timeline.timeline-content-view-showing .navigation-sidebar-panel-content-tree-outline.script .item .subtitle {
+    display: none;
+}

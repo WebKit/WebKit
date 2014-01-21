@@ -165,6 +165,7 @@ WebInspector.DataGrid = function(columns, editCallback, deleteCallback)
 
     this.columns = columns || {};
     this._columnsArray = [];
+
     for (var columnIdentifier in columns) {
         columns[columnIdentifier].ordinal = this._columnsArray.length;
         columns[columnIdentifier].identifier = columnIdentifier;
@@ -186,6 +187,11 @@ WebInspector.DataGrid = function(columns, editCallback, deleteCallback)
     this.indentWidth = 15;
     this.resizers = [];
     this._columnWidthsInitialized = false;
+
+    for (var columnIdentifier in columns) {
+        if (columns[columnIdentifier].hidden)
+            this._hideColumn(columnIdentifier);
+    }
 
     this._generateSortIndicatorImagesIfNeeded();
 }
@@ -545,13 +551,21 @@ WebInspector.DataGrid.prototype = {
             var tableWidth = this._dataTable.offsetWidth;
             var numColumns = headerTableColumns.length;
             for (var i = 0; i < numColumns; i++) {
-                var columnWidth = this.headerTableBody.rows[0].cells[i].offsetWidth;
-                var percentWidth = ((columnWidth / tableWidth) * 100) + "%";
-                this._headerTableColumnGroup.children[i].style.width = percentWidth;
-                this._dataTableColumnGroup.children[i].style.width = percentWidth;
+                var headerCell = this.headerTableBody.rows[0].cells[i]
+                if (this._isColumnVisible(headerCell.columnIdentifier)) {
+                    var columnWidth = headerCell.offsetWidth;
+                    var percentWidth = ((columnWidth / tableWidth) * 100) + "%";
+                    this._headerTableColumnGroup.children[i].style.width = percentWidth;
+                    this._dataTableColumnGroup.children[i].style.width = percentWidth;
+                } else {
+                    this._headerTableColumnGroup.children[i].style.width = 0;
+                    this._dataTableColumnGroup.children[i].style.width = 0;
+                }
             }
+
             this._columnWidthsInitialized = true;
         }
+
         this._positionResizers();
         this.dispatchEventToListeners(WebInspector.DataGrid.Event.DidLayout);
     },

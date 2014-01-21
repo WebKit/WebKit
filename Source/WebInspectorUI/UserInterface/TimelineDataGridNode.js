@@ -57,15 +57,122 @@ WebInspector.TimelineDataGridNode.prototype = {
 
     get data()
     {
+        if (!this._graphDataSource)
+            return {};
+
         var records = this.records || [];
         return {graph: records.length ? records[0].startTime : 0};
     },
 
     createCellContent: function(columnIdentifier, cell)
     {
-        if (columnIdentifier === "graph") {
+        if (columnIdentifier === "graph" && this._graphDataSource) {
             this.refreshGraph();
             return this._graphContainerElement;
+        }
+
+        var value = this.data[columnIdentifier];
+        if (!value)
+            return "\u2014";
+
+        if (value instanceof WebInspector.SourceCodeLocation) {
+            if (value.sourceCode instanceof WebInspector.Resource) {
+                cell.classList.add(WebInspector.ResourceTreeElement.ResourceIconStyleClassName);
+                cell.classList.add(value.sourceCode.type);
+            } else if (value.sourceCode instanceof WebInspector.Script) {
+                if (value.sourceCode.url) {
+                    cell.classList.add(WebInspector.ResourceTreeElement.ResourceIconStyleClassName);
+                    cell.classList.add(WebInspector.Resource.Type.Script);
+                } else
+                    cell.classList.add(WebInspector.ScriptTreeElement.AnonymousScriptIconStyleClassName);
+            } else
+                console.error("Unknown SourceCode subclass.");
+
+            // Give the whole cell a tooltip and keep it up to date.
+            value.populateLiveDisplayLocationTooltip(cell);
+
+            var fragment = document.createDocumentFragment();
+
+            var goToArrowButtonLink = WebInspector.createSourceCodeLocationLink(value, false, true);
+            fragment.appendChild(goToArrowButtonLink);
+
+            var icon = document.createElement("div");
+            icon.className = WebInspector.ScriptTimelineDataGridNode.IconStyleClassName;
+            fragment.appendChild(icon);
+
+            var titleElement = document.createElement("span");
+            value.populateLiveDisplayLocationString(titleElement, "textContent");
+            fragment.appendChild(titleElement);
+
+            return fragment;
+        }
+
+        if (value instanceof WebInspector.CallFrame) {
+            var callFrame = value;
+
+            var isAnonymousFunction = false;
+            var functionName = callFrame.functionName;
+            if (!functionName) {
+                functionName = WebInspector.UIString("(anonymous function)");
+                isAnonymousFunction = true;
+            }
+
+            cell.classList.add(WebInspector.CallFrameTreeElement.FunctionIconStyleClassName);
+
+            var fragment = document.createDocumentFragment();
+
+            if (callFrame.sourceCodeLocation && callFrame.sourceCodeLocation.sourceCode) {
+                // Give the whole cell a tooltip and keep it up to date.
+                callFrame.sourceCodeLocation.populateLiveDisplayLocationTooltip(cell);
+
+                var goToArrowButtonLink = WebInspector.createSourceCodeLocationLink(callFrame.sourceCodeLocation, false, true);
+                fragment.appendChild(goToArrowButtonLink);
+
+                var icon = document.createElement("div");
+                icon.className = WebInspector.LayoutTimelineDataGridNode.IconStyleClassName;
+                fragment.appendChild(icon);
+
+                if (isAnonymousFunction) {
+                    // For anonymous functions we show the resource or script icon and name.
+                    if (callFrame.sourceCodeLocation.sourceCode instanceof WebInspector.Resource) {
+                        cell.classList.add(WebInspector.ResourceTreeElement.ResourceIconStyleClassName);
+                        cell.classList.add(callFrame.sourceCodeLocation.sourceCode.type);
+                    } else if (callFrame.sourceCodeLocation.sourceCode instanceof WebInspector.Script) {
+                        if (callFrame.sourceCodeLocation.sourceCode.url) {
+                            cell.classList.add(WebInspector.ResourceTreeElement.ResourceIconStyleClassName);
+                            cell.classList.add(WebInspector.Resource.Type.Script);
+                        } else
+                            cell.classList.add(WebInspector.ScriptTreeElement.AnonymousScriptIconStyleClassName);
+                    } else
+                        console.error("Unknown SourceCode subclass.");
+
+                    var titleElement = document.createElement("span");
+                    callFrame.sourceCodeLocation.populateLiveDisplayLocationString(titleElement, "textContent");
+
+                    fragment.appendChild(titleElement);
+                } else {
+                    // Show the function name and icon.
+                    cell.classList.add(WebInspector.CallFrameTreeElement.FunctionIconStyleClassName);
+
+                    fragment.appendChild(document.createTextNode(functionName));
+
+                    var subtitleElement = document.createElement("span");
+                    subtitleElement.className = WebInspector.LayoutTimelineDataGridNode.SubtitleStyleClassName;
+                    callFrame.sourceCodeLocation.populateLiveDisplayLocationString(subtitleElement, "textContent");
+
+                    fragment.appendChild(subtitleElement);
+                }
+
+                return fragment;
+            }
+
+            var icon = document.createElement("div");
+            icon.className = WebInspector.LayoutTimelineDataGridNode.IconStyleClassName;
+            fragment.appendChild(icon);
+
+            fragment.appendChild(document.createTextNode(functionName));
+
+            return fragment;
         }
 
         return WebInspector.DataGridNode.prototype.createCellContent.call(this, columnIdentifier, cell);
@@ -73,7 +180,7 @@ WebInspector.TimelineDataGridNode.prototype = {
 
     refresh: function()
     {
-        if (this._graphOnly) {
+        if (this._graphDataSource && this._graphOnly) {
             this.refreshGraph();
             return;
         }
@@ -83,6 +190,9 @@ WebInspector.TimelineDataGridNode.prototype = {
 
     refreshGraph: function()
     {
+        if (!this._graphDataSource)
+            return;
+
         if (this._scheduledGraphRefreshIdentifier) {
             cancelAnimationFrame(this._scheduledGraphRefreshIdentifier);
             delete this._scheduledGraphRefreshIdentifier;
@@ -107,7 +217,7 @@ WebInspector.TimelineDataGridNode.prototype = {
 
     needsGraphRefresh: function()
     {
-        if (this._scheduledGraphRefreshIdentifier)
+        if (!this._graphDataSource || this._scheduledGraphRefreshIdentifier)
             return;
 
         this._scheduledGraphRefreshIdentifier = requestAnimationFrame(this.refreshGraph.bind(this));

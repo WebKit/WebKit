@@ -25,7 +25,7 @@
 
 WebInspector.ScriptTimelineDataGridNode = function(scriptTimelineRecord, baseStartTime)
 {
-    WebInspector.DataGridNode.call(this, {});
+    WebInspector.TimelineDataGridNode.call(this, false, null);
 
     this._record = scriptTimelineRecord;
     this._baseStartTime = baseStartTime || 0;
@@ -37,6 +37,7 @@ WebInspector.ScriptTimelineDataGridNode.IconStyleClassName = "icon";
 
 WebInspector.ScriptTimelineDataGridNode.prototype = {
     constructor: WebInspector.ScriptTimelineDataGridNode,
+    __proto__: WebInspector.TimelineDataGridNode.prototype,
 
     // Public
 
@@ -45,9 +46,15 @@ WebInspector.ScriptTimelineDataGridNode.prototype = {
         return this._record;
     },
 
+    get records()
+    {
+        return [this._record];
+    },
+
     get data()
     {
-        return this._record;
+        var callFrameOrSourceCodeLocation = this._record.initiatorCallFrame || this._record.sourceCodeLocation;
+        return {eventType: this._record.eventType, details: this._record.details, startTime: this._record.startTime, duration: this._record.duration, location: callFrameOrSourceCodeLocation};
     },
 
     createCellContent: function(columnIdentifier, cell)
@@ -62,34 +69,6 @@ WebInspector.ScriptTimelineDataGridNode.prototype = {
         case "details":
             return value ? value : emptyValuePlaceholderString;
 
-        case "resource":
-            if (!value)
-                return emptyValuePlaceholderString;
-
-            console.assert(this.data.sourceCodeLocation);
-
-            cell.classList.add(WebInspector.ResourceTreeElement.ResourceIconStyleClassName);
-            cell.classList.add(value.type);
-
-            // Give the whole cell a tooltip and keep it up to date.
-            var sourceCodeLocation = this.data.sourceCodeLocation;
-            sourceCodeLocation.populateLiveDisplayLocationTooltip(cell);
-
-            var fragment = document.createDocumentFragment();
-
-            var goToArrowButtonLink = WebInspector.createSourceCodeLocationLink(sourceCodeLocation, false, true);
-            fragment.appendChild(goToArrowButtonLink);
-
-            var icon = document.createElement("div");
-            icon.className = WebInspector.ScriptTimelineDataGridNode.IconStyleClassName;
-            fragment.appendChild(icon);
-
-            var titleElement = document.createElement("span");
-            sourceCodeLocation.populateLiveDisplayLocationString(titleElement, "textContent");
-            fragment.appendChild(titleElement);
-
-            return fragment;
-
         case "startTime":
             return isNaN(value) ? emptyValuePlaceholderString : Number.secondsToString(value - this._baseStartTime);
 
@@ -97,8 +76,6 @@ WebInspector.ScriptTimelineDataGridNode.prototype = {
             return isNaN(value) ? emptyValuePlaceholderString : Number.secondsToString(value);
         }
 
-        return WebInspector.DataGridNode.prototype.createCellContent.call(this, columnIdentifier);
+        return WebInspector.TimelineDataGridNode.prototype.createCellContent.call(this, columnIdentifier, cell);
     }
-}
-
-WebInspector.ScriptTimelineDataGridNode.prototype.__proto__ = WebInspector.DataGridNode.prototype;
+};

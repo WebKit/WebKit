@@ -23,9 +23,9 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.LayoutTimelineDataGrid = function(columns)
+WebInspector.LayoutTimelineDataGrid = function(treeOutline, columns, editCallback, deleteCallback)
 {
-    WebInspector.TimelineDataGrid.call(this, columns);
+    WebInspector.TimelineDataGrid.call(this, treeOutline, columns, editCallback, deleteCallback);
 
     this._showingHighlight = false;
 

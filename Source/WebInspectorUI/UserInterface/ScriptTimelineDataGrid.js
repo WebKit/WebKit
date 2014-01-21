@@ -23,9 +23,9 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.ScriptTimelineDataGrid = function(columns)
+WebInspector.ScriptTimelineDataGrid = function(treeOutline, columns, editCallback, deleteCallback)
 {
-    WebInspector.TimelineDataGrid.call(this, columns);
+    WebInspector.TimelineDataGrid.call(this, treeOutline, columns, editCallback, deleteCallback);
 }
 
 WebInspector.ScriptTimelineDataGrid.prototype = {
@@ -35,7 +35,7 @@ WebInspector.ScriptTimelineDataGrid.prototype = {
 
     callFramePopoverAnchorElement: function()
     {
-        return this.selectedNode.elementWithColumnIdentifier("resource");
+        return this.selectedNode.elementWithColumnIdentifier("location");
     }
 }
 

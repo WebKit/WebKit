@@ -49,6 +49,13 @@ WebInspector.TimelineRecord.Type = {
     Script: "timeline-record-type-script"
 };
 
+WebInspector.TimelineRecord.TypeIdentifier = "timeline-record";
+WebInspector.TimelineRecord.SourceCodeURLCookieKey = "timeline-record-source-code-url";
+WebInspector.TimelineRecord.SourceCodeLocationLineCookieKey = "timeline-record-source-code-location-line";
+WebInspector.TimelineRecord.SourceCodeLocationColumnCookieKey = "timeline-record-source-code-location-column";
+WebInspector.TimelineRecord.SourceCodeURLCookieKey = "timeline-record-source-code-url";
+WebInspector.TimelineRecord.TypeCookieKey = "timeline-record-type";
+
 WebInspector.TimelineRecord.prototype = {
     constructor: WebInspector.TimelineRecord,
 
@@ -130,6 +137,14 @@ WebInspector.TimelineRecord.prototype = {
     get sourceCodeLocation()
     {
         return this._sourceCodeLocation;
+    },
+
+    saveIdentityToCookie: function(cookie)
+    {
+        cookie[WebInspector.TimelineRecord.SourceCodeURLCookieKey] = this._sourceCodeLocation ? this._sourceCodeLocation.sourceCode.url ? this._sourceCodeLocation.sourceCode.url.hash : null : null;
+        cookie[WebInspector.TimelineRecord.SourceCodeLocationLineCookieKey] = this._sourceCodeLocation ? this._sourceCodeLocation.lineNumber : null;
+        cookie[WebInspector.TimelineRecord.SourceCodeLocationColumnCookieKey] = this._sourceCodeLocation ? this._sourceCodeLocation.columnNumber : null;
+        cookie[WebInspector.TimelineRecord.TypeCookieKey] = this._type || null;
     }
 };
 
