@@ -54,7 +54,7 @@ namespace WebCore {
     String contextMenuItemTagOpenImageInNewWindow();
     String contextMenuItemTagDownloadImageToDisk();
     String contextMenuItemTagCopyImageToClipboard();
-#if PLATFORM(GTK) || PLATFORM(EFL) || PLATFORM(NIX)
+#if PLATFORM(GTK) || PLATFORM(EFL)
     String contextMenuItemTagCopyImageUrlToClipboard();
 #endif
     String contextMenuItemTagOpenFrameInNewWindow();
@@ -80,7 +80,7 @@ namespace WebCore {
     String contextMenuItemTagUnicodeInsertZWJMark();
     String contextMenuItemTagUnicodeInsertZWNJMark();
 #endif
-#if PLATFORM(GTK) || PLATFORM(EFL) || PLATFORM(NIX)
+#if PLATFORM(GTK) || PLATFORM(EFL)
     String contextMenuItemTagSelectAll();
 #endif
     String contextMenuItemTagNoGuessesFound();

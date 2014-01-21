@@ -191,7 +191,7 @@ String encodeForFileName(const String&);
 RetainPtr<CFURLRef> pathAsURL(const String&);
 #endif
 
-#if PLATFORM(GTK) || PLATFORM(NIX)
+#if PLATFORM(GTK)
 String filenameToString(const char*);
 String filenameForDisplay(const String&);
 CString applicationDirectoryPath();

@@ -67,10 +67,6 @@ struct RDFTContext;
 #include <ipps.h>
 #endif // USE(WEBAUDIO_IPP)
 
-#if PLATFORM(NIX)
-#include <public/FFTFrame.h>
-#endif
-
 #include <memory>
 #include <wtf/Forward.h>
 #include <wtf/Threading.h>
@@ -181,10 +177,6 @@ private:
     AudioFloatArray m_realData;
     AudioFloatArray m_imagData;
 #endif // USE(WEBAUDIO_IPP)
-
-#if PLATFORM(NIX)
-    OwnPtr<Nix::FFTFrame> m_fftFrame;
-#endif // PLATFORM(NIX)
 
 #if USE(WEBAUDIO_OPENMAX_DL_FFT)
     static OMXFFTSpec_R_F32* contextForSize(unsigned log2FFTSize);

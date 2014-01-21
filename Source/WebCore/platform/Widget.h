@@ -59,10 +59,6 @@ typedef struct _GtkContainer GtkContainer;
 typedef GtkWidget* PlatformWidget;
 #endif
 
-#if PLATFORM(NIX)
-typedef void* PlatformWidget;
-#endif
-
 #if PLATFORM(EFL)
 #if USE(EO)
 typedef struct _Eo_Opaque Evas_Object;

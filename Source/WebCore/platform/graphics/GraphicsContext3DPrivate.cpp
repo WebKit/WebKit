@@ -26,10 +26,6 @@
 #include "NotImplemented.h"
 #include <wtf/StdLibExtras.h>
 
-#if PLATFORM(NIX) && USE(EGL)
-#include "GLContextFromCurrentEGL.h"
-#endif
-
 #if USE(CAIRO)
 #include "PlatformContextCairo.h"
 #endif
@@ -63,9 +59,6 @@ GraphicsContext3DPrivate::GraphicsContext3DPrivate(GraphicsContext3D* context, G
         m_glContext = GLContext::createOffscreenContext(GLContext::sharingContext());
         break;
     case GraphicsContext3D::RenderToCurrentGLContext:
-#if PLATFORM(NIX) && USE(EGL)
-        m_glContext = GLContextFromCurrentEGL::createFromCurrentGLContext();
-#endif
         break;
     case GraphicsContext3D::RenderDirectlyToHostWindow:
         ASSERT_NOT_REACHED();

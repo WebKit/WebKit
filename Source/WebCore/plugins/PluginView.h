@@ -354,7 +354,7 @@ namespace WebCore {
         bool m_haveUpdatedPluginWidget;
 #endif
 
-#if (PLATFORM(GTK) && OS(WINDOWS)) || PLATFORM(EFL) || PLATFORM(NIX)
+#if (PLATFORM(GTK) && OS(WINDOWS)) || PLATFORM(EFL)
         // On Mac OSX and Qt/Windows the plugin does not have its own native widget,
         // but is using the containing window as its reference for positioning/painting.
         PlatformPluginWidget m_window;

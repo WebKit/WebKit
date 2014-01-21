@@ -366,10 +366,6 @@ public:
     virtual void AXFinishFrameLoad() = 0;
 #endif
 
-#if PLATFORM(NIX)
-    virtual FloatRect screenRect() const = 0;
-#endif
-
 #if ENABLE(TOUCH_EVENTS)
     virtual void needTouchEvents(bool) = 0;
 #endif

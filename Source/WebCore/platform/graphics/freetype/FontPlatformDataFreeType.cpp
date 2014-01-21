@@ -33,7 +33,7 @@
 #include FT_TRUETYPE_TABLES_H
 #include <wtf/text/WTFString.h>
 
-#if !PLATFORM(EFL) && !PLATFORM(NIX)
+#if !PLATFORM(EFL)
 #include <gdk/gdk.h>
 #endif
 

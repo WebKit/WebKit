@@ -25,7 +25,7 @@
 #include <wtf/Noncopyable.h>
 #include <wtf/PassOwnPtr.h>
 
-#if USE(EGL) && !PLATFORM(GTK) && !PLATFORM(NIX)
+#if USE(EGL) && !PLATFORM(GTK)
 #include "eglplatform.h"
 typedef EGLNativeWindowType GLNativeWindowType;
 #else

@@ -563,7 +563,7 @@ String Editor::plainTextFromPasteboard(const PasteboardPlainText& text)
 
 #endif
 
-#if !PLATFORM(MAC) && !PLATFORM(EFL) && !PLATFORM(NIX)
+#if !PLATFORM(MAC) && !PLATFORM(EFL)
 void Editor::pasteWithPasteboard(Pasteboard* pasteboard, bool allowPlainText)
 {
     RefPtr<Range> range = selectedRange();
@@ -1283,7 +1283,7 @@ void Editor::cut()
         if (enclosingTextFormControl(m_frame.selection().start()))
             Pasteboard::createForCopyAndPaste()->writePlainText(selectedTextForClipboard(), canSmartCopyOrDelete() ? Pasteboard::CanSmartReplace : Pasteboard::CannotSmartReplace);
         else {
-#if PLATFORM(MAC) || PLATFORM(EFL) || PLATFORM(NIX)
+#if PLATFORM(MAC) || PLATFORM(EFL)
             writeSelectionToPasteboard(*Pasteboard::createForCopyAndPaste());
 #else
             // FIXME: Convert all other platforms to match Mac and delete this.
@@ -1310,13 +1310,13 @@ void Editor::copy()
             canSmartCopyOrDelete() ? Pasteboard::CanSmartReplace : Pasteboard::CannotSmartReplace);
     } else {
         if (HTMLImageElement* imageElement = imageElementFromImageDocument(document())) {
-#if PLATFORM(MAC) || PLATFORM(EFL) || PLATFORM(NIX)
+#if PLATFORM(MAC) || PLATFORM(EFL)
             writeImageToPasteboard(*Pasteboard::createForCopyAndPaste(), *imageElement, document().url(), document().title());
 #else
             Pasteboard::createForCopyAndPaste()->writeImage(*imageElement, document().url(), document().title());
 #endif
         } else {
-#if PLATFORM(MAC) || PLATFORM(EFL) || PLATFORM(NIX)
+#if PLATFORM(MAC) || PLATFORM(EFL)
             writeSelectionToPasteboard(*Pasteboard::createForCopyAndPaste());
 #else
             // FIXME: Convert all other platforms to match Mac and delete this.
@@ -1420,7 +1420,7 @@ void Editor::copyImage(const HitTestResult& result)
     if (url.isEmpty())
         url = result.absoluteImageURL();
 
-#if PLATFORM(MAC) || PLATFORM(EFL) || PLATFORM(NIX)
+#if PLATFORM(MAC) || PLATFORM(EFL)
     writeImageToPasteboard(*Pasteboard::createForCopyAndPaste(), *element, url, result.altDisplayString());
 #else
     Pasteboard::createForCopyAndPaste()->writeImage(*element, url, result.altDisplayString());

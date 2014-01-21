@@ -68,7 +68,7 @@
 #include "OpenGLESShims.h"
 #elif PLATFORM(MAC)
 #include <OpenGL/gl.h>
-#elif PLATFORM(GTK) || PLATFORM(EFL) || PLATFORM(WIN) || PLATFORM(NIX)
+#elif PLATFORM(GTK) || PLATFORM(EFL) || PLATFORM(WIN)
 #include "OpenGLShims.h"
 #endif
 #endif
@@ -271,7 +271,7 @@ void GraphicsContext3D::reshape(int width, int height)
 
     markContextChanged();
 
-#if (PLATFORM(EFL) || PLATFORM(NIX)) && USE(GRAPHICS_SURFACE)
+#if PLATFORM(EFL) && USE(GRAPHICS_SURFACE)
     ::glFlush(); // Make sure all GL calls have been committed before resizing.
     createGraphicsSurfaces(IntSize(width, height));
 #endif

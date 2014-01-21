@@ -1,3 +1,68 @@
+2014-01-21  Lauro Neto  <lauro.neto@openbossa.org>
+
+        Remove PLATFORM(NIX) from WebCore
+        https://bugs.webkit.org/show_bug.cgi?id=127299
+
+        Reviewed by Anders Carlsson.
+
+        * editing/Editor.cpp:
+        (WebCore::Editor::cut):
+        (WebCore::Editor::copy):
+        (WebCore::Editor::copyImage):
+        * editing/Editor.h:
+        * html/HTMLCanvasElement.h:
+        * loader/EmptyClients.h:
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::defaultObjectContentType):
+        * page/ChromeClient.h:
+        * page/DragController.cpp:
+        (WebCore::DragController::startDrag):
+        * platform/Cursor.h:
+        * platform/DragData.h:
+        * platform/DragImage.h:
+        * platform/FileSystem.h:
+        * platform/LocalizedStrings.h:
+        * platform/Widget.h:
+        * platform/audio/FFTFrame.h:
+        * platform/audio/HRTFElevation.cpp:
+        * platform/cairo/WidgetBackingStore.h:
+        * platform/graphics/ANGLEWebKitBridge.h:
+        * platform/graphics/FontPlatformData.h:
+        * platform/graphics/GLContext.cpp:
+        (WebCore::GLContext::createContextForWindow):
+        * platform/graphics/GLContext.h:
+        * platform/graphics/GraphicsContext3D.h:
+        * platform/graphics/GraphicsContext3DPrivate.cpp:
+        (WebCore::GraphicsContext3DPrivate::GraphicsContext3DPrivate):
+        * platform/graphics/OpenGLESShims.h:
+        * platform/graphics/OpenGLShims.cpp:
+        (WebCore::getProcAddress):
+        * platform/graphics/OpenGLShims.h:
+        * platform/graphics/PlatformLayer.h:
+        * platform/graphics/freetype/FontPlatformDataFreeType.cpp:
+        * platform/graphics/opengl/Extensions3DOpenGL.cpp:
+        (WebCore::Extensions3DOpenGL::createVertexArrayOES):
+        (WebCore::Extensions3DOpenGL::deleteVertexArrayOES):
+        (WebCore::Extensions3DOpenGL::isVertexArrayOES):
+        (WebCore::Extensions3DOpenGL::bindVertexArrayOES):
+        (WebCore::Extensions3DOpenGL::supportsExtension):
+        * platform/graphics/opengl/Extensions3DOpenGL.h:
+        * platform/graphics/opengl/Extensions3DOpenGLCommon.cpp:
+        * platform/graphics/opengl/Extensions3DOpenGLES.h:
+        * platform/graphics/opengl/GraphicsContext3DOpenGL.cpp:
+        * platform/graphics/opengl/GraphicsContext3DOpenGLCommon.cpp:
+        (WebCore::GraphicsContext3D::reshape):
+        * platform/graphics/opengl/TemporaryOpenGLSetting.cpp:
+        * platform/graphics/texmap/TextureMapper.h:
+        * platform/network/ResourceHandle.h:
+        * plugins/PluginPackage.cpp:
+        * plugins/PluginView.cpp:
+        (WebCore::PluginView::PluginView):
+        * plugins/PluginView.h:
+        * plugins/PluginViewNone.cpp:
+        * rendering/SimpleLineLayout.cpp:
+        (WebCore::SimpleLineLayout::canUseFor):
+
 2014-01-21  Eric Carlson  <eric.carlson@apple.com>
 
         Add &lrm; &rlm; and &nbsp; to WebVTT parser

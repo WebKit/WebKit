@@ -768,7 +768,7 @@ bool DragController::startDrag(Frame& src, const DragState& state, DragOperation
             if (enclosingTextFormControl(src.selection().start()))
                 clipboard.pasteboard().writePlainText(src.editor().selectedTextForClipboard(), Pasteboard::CannotSmartReplace);
             else {
-#if PLATFORM(MAC) || PLATFORM(EFL) || PLATFORM(NIX)
+#if PLATFORM(MAC) || PLATFORM(EFL)
                 src.editor().writeSelectionToPasteboard(clipboard.pasteboard());
 #else
                 // FIXME: Convert all other platforms to match Mac and delete this.

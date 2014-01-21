@@ -150,7 +150,7 @@ public:
 
 #endif // USE(CFNETWORK)
 
-#if (PLATFORM(WIN) || PLATFORM(NIX)) && USE(CURL)
+#if PLATFORM(WIN) && USE(CURL)
     static void setHostAllowsAnyHTTPSCertificate(const String&);
 #endif
 #if PLATFORM(WIN) && USE(CURL) && USE(CF)

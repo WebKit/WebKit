@@ -60,7 +60,7 @@
 #include <wtf/RetainPtr.h>
 OBJC_CLASS CALayer;
 OBJC_CLASS WebGLLayer;
-#elif PLATFORM(GTK) || PLATFORM(EFL) || PLATFORM(NIX)
+#elif PLATFORM(GTK) || PLATFORM(EFL)
 typedef unsigned int GLuint;
 #endif
 
@@ -987,7 +987,7 @@ private:
 
     bool reshapeFBOs(const IntSize&);
     void resolveMultisamplingIfNecessary(const IntRect& = IntRect());
-#if (PLATFORM(EFL) || PLATFORM(NIX)) && USE(GRAPHICS_SURFACE)
+#if PLATFORM(EFL) && USE(GRAPHICS_SURFACE)
     void createGraphicsSurfaces(const IntSize&);
 #endif
 
@@ -1092,7 +1092,7 @@ private:
 
     OwnPtr<ShaderNameHash> nameHashMapForShaders;
 
-#if ((PLATFORM(GTK) || PLATFORM(EFL) || PLATFORM(WIN) || PLATFORM(NIX)) && USE(OPENGL_ES_2))
+#if ((PLATFORM(GTK) || PLATFORM(EFL) || PLATFORM(WIN)) && USE(OPENGL_ES_2))
     friend class Extensions3DOpenGLES;
     OwnPtr<Extensions3DOpenGLES> m_extensions;
 #else

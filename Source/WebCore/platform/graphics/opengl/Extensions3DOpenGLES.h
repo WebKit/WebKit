@@ -57,11 +57,6 @@ typedef void (GL_APIENTRYP PFNGLGETNUNIFORMFVEXTPROC) (GLuint program, GLint loc
 typedef void (GL_APIENTRYP PFNGLGETNUNIFORMIVEXTPROC) (GLuint program, GLint location, GC3Dsizei bufSize, GLint *params);
 #endif
 
-#if PLATFORM(NIX) && USE(OPENGL_ES_2) && !GL_IMG_multisampled_render_to_texture
-// on rPi, PFNGLFRAMEBUFFERTEXTURE2DMULTISAMPLEIMG is called PFNGLCLIPPLANEXIMG.
-typedef PFNGLCLIPPLANEXIMG PFNGLFRAMEBUFFERTEXTURE2DMULTISAMPLEIMG;
-#endif
-
 namespace WebCore {
 
 class Extensions3DOpenGLES : public Extensions3DOpenGLCommon {

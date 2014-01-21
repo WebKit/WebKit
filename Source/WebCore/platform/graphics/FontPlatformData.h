@@ -25,7 +25,7 @@
 // FIXME: This is temporary until all ports switch to using this file.
 #if USE(WINGDI)
 #include "wince/FontPlatformData.h"
-#elif PLATFORM(EFL) || PLATFORM(GTK) || PLATFORM(NIX)
+#elif PLATFORM(EFL) || PLATFORM(GTK)
 #include "freetype/FontPlatformData.h"
 #else
 
