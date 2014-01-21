@@ -43,7 +43,7 @@ struct SameSizeAsStyleRareInheritedData : public RefCounted<SameSizeAsStyleRareI
     float secondFloat;
     unsigned m_bitfields[2];
 #if ENABLE(CSS3_TEXT_DECORATION) && ENABLE(CSS_IMAGE_ORIENTATION)
-    unsigned m_bitfieldsExtra[2];
+    unsigned m_bitfieldsExtra;
 #endif
     short pagedMediaShorts[2];
     unsigned unsigneds[1];
