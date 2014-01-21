@@ -66,6 +66,11 @@ static int BootstrapMain(int argc, char** argv)
     BootstrapMainFunction bootstrapMainFunction;
     @autoreleasepool {
         NSString *entryPointFunctionName = (NSString *)CFBundleGetValueForInfoDictionaryKey(CFBundleGetMainBundle(), CFSTR("WebKitEntryPoint"));
+        if (![entryPointFunctionName length]) {
+            NSLog(@"Failed to get value for \"WebKitEntryPoint\" from bundle dictionary %@", CFBundleGetLocalInfoDictionary(CFBundleGetMainBundle()));
+            return EXIT_FAILURE;
+        }
+
         bootstrapMainFunction = reinterpret_cast<BootstrapMainFunction>(dlsym(frameworkLibrary, [entryPointFunctionName UTF8String]));
         if (!bootstrapMainFunction) {
             NSLog(@"Unable to find entry point '%s' in WebKit2.framework: %s\n", [entryPointFunctionName UTF8String], dlerror());

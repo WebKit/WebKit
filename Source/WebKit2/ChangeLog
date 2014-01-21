@@ -1,3 +1,17 @@
+2014-01-16  Simon Fraser  <simon.fraser@apple.com>
+
+        Log an error for a common cause of WebProcess early launch crashing in misconfigured development builds
+        https://bugs.webkit.org/show_bug.cgi?id=127121
+
+        Reviewed by Anders Carlsson.
+        
+        A common cause of early WebProcess crashes during development is a null return
+        from CFBundleGetValueForInfoDictionaryKey(), so log and return an error in
+        this case rather than passing a null C string to dlsym().
+
+        * Shared/EntryPointUtilities/mac/LegacyProcess/ChildProcessMain.mm:
+        (WebKit::BootstrapMain):
+
 2014-01-21  Tim Horton  <timothy_horton@apple.com>
 
         Sort headers after the rename that happened in r162454.
