@@ -32,11 +32,6 @@ WebInspector.TimelineManager = function()
     WebInspector.Frame.addEventListener(WebInspector.Frame.Event.ResourceWasAdded, this._resourceWasAdded, this);
 
     this._recording = false;
-    this._records = [];
-    this._typeRecords = {};
-    this._loadEventTime = NaN;
-    this._eventMarkers = [];
-    this._timelinesObject = new WebInspector.TimelinesObject;
 };
 
 WebInspector.TimelineManager.Event = {
@@ -66,32 +61,10 @@ WebInspector.TimelineManager.prototype = {
         return this._loadEventTime;
     },
 
-    get timelineEventMarkers()
-    {
-        return this._eventMarkers;
-    },
-
-    get records()
-    {
-        return this._records;
-    },
-
-    get timelines()
-    {
-        return this._timelinesObject;
-    },
-
-    recordsWithType: function(type)
-    {
-        return this._typeRecords[type] || [];
-    },
-
     startRecording: function()
     {
         if (this._recording)
             return;
-
-        this._clear();
 
         this._recording = true;
 
@@ -153,6 +126,7 @@ WebInspector.TimelineManager.prototype = {
                 this.dispatchEventToListeners(WebInspector.TimelineManager.Event.RecordedEventMarker, {eventMarker: eventMarker});
                 this._stopAutoRecordingSoon();
                 break;
+
             case TimelineAgent.EventType.MarkDOMContent:
                 var mainFrame = WebInspector.frameResourceManager.mainFrame;
                 console.assert(mainFrame);
@@ -164,19 +138,23 @@ WebInspector.TimelineManager.prototype = {
                 this._eventMarkers.push(eventMarker);
                 this.dispatchEventToListeners(WebInspector.TimelineManager.Event.RecordedEventMarker, {eventMarker: eventMarker});
                 break;
+
             case TimelineAgent.EventType.ScheduleStyleRecalculation:
                 console.assert(isNaN(endTime));
                 // Pass the startTime as the endTime since this record type has no duration.
                 this._addRecord(new WebInspector.LayoutTimelineRecord(WebInspector.LayoutTimelineRecord.EventType.InvalidateStyles, startTime, startTime, callFrames));
                 break;
+
             case TimelineAgent.EventType.RecalculateStyles:
                 this._addRecord(new WebInspector.LayoutTimelineRecord(WebInspector.LayoutTimelineRecord.EventType.RecalculateStyles, startTime, endTime, callFrames));
                 break;
+
             case TimelineAgent.EventType.InvalidateLayout:
                 console.assert(isNaN(endTime));
                 // Pass the startTime as the endTime since this record type has no duration.
                 this._addRecord(new WebInspector.LayoutTimelineRecord(WebInspector.LayoutTimelineRecord.EventType.InvalidateLayout, startTime, startTime, callFrames));
                 break;
+
             case TimelineAgent.EventType.Layout:
                 // COMPATIBILITY (iOS 6): Layout records did not contain area properties. This is not exposed via a quad "root".
                 var quad = record.data.root ? new WebInspector.Quad(record.data.root) : null;
@@ -185,6 +163,7 @@ WebInspector.TimelineManager.prototype = {
                 else
                     this._addRecord(new WebInspector.LayoutTimelineRecord(WebInspector.LayoutTimelineRecord.EventType.Layout, startTime, endTime, callFrames));
                 break;
+
             case TimelineAgent.EventType.Paint:
                 // COMPATIBILITY (iOS 6): Paint records data contained x, y, width, height properties. This became a quad "clip".
                 var quad = record.data.clip ? new WebInspector.Quad(record.data.clip) : null;
@@ -193,6 +172,7 @@ WebInspector.TimelineManager.prototype = {
                 else
                     this._addRecord(new WebInspector.LayoutTimelineRecord(WebInspector.LayoutTimelineRecord.EventType.Paint, startTime, endTime, callFrames, record.data.x, record.data.y, record.data.width, record.data.height));
                 break;
+
             case TimelineAgent.EventType.EvaluateScript:
                 var resource = WebInspector.frameResourceManager.resourceForURL(record.data.url);
 
@@ -209,11 +189,13 @@ WebInspector.TimelineManager.prototype = {
                 }
 
                 break;
+
             case TimelineAgent.EventType.TimeStamp:
                 var eventMarker = new WebInspector.TimelineEventMarker(startTime, WebInspector.TimelineEventMarker.Type.TimeStamp);
                 this._eventMarkers.push(eventMarker);
                 this.dispatchEventToListeners(WebInspector.TimelineManager.Event.RecordedEventMarker, {eventMarker: eventMarker});
                 break;
+
             case TimelineAgent.EventType.FunctionCall:
                 // FunctionCall always happens as a child of another record, and since the FunctionCall record
                 // has useful info we just make the timeline record here (combining the data from both records).
@@ -244,6 +226,7 @@ WebInspector.TimelineManager.prototype = {
                 }
 
                 break;
+
             case TimelineAgent.EventType.TimerInstall:
             case TimelineAgent.EventType.TimerRemove:
                 // COMPATIBILITY (iOS 6): TimerInstall and TimerRemove did not have a stack trace.
@@ -301,16 +284,6 @@ WebInspector.TimelineManager.prototype = {
 
     // Private
 
-    _clear: function()
-    {
-        this._records = [];
-        this._typeRecords = {};
-        this._loadEventTime = NaN;
-        this._eventMarkers = [];
-
-        this.dispatchEventToListeners(WebInspector.TimelineManager.Event.RecordsCleared);
-    },
-
     _callFramesFromPayload: function(payload)
     {
         if (!payload)
@@ -344,13 +317,7 @@ WebInspector.TimelineManager.prototype = {
 
     _addRecord: function(record)
     {
-        this._records.push(record);
-
-        if (!this._typeRecords[record.type])
-            this._typeRecords[record.type] = [];
-        this._typeRecords[record.type].push(record);
-
-        this.dispatchEventToListeners(WebInspector.TimelineManager.Event.RecordAdded, {record: record});
+        // FIXME: Implement.
 
         // Only worry about dead time after the load event.
         if (!isNaN(this._loadEventTime))

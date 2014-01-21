@@ -23,41 +23,14 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-.network-timeline-decorations {
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    left: 0; /* Changed by JavaScript */
-    right: 0;
-}
+WebInspector.TimelineSidebarPanel = function()
+{
+    WebInspector.NavigationSidebarPanel.call(this, "timeline", WebInspector.UIString("Timelines"), "Images/NavigationItemStopwatch.svg", "2");
 
-.network-timeline-decorations > .header {
-    border-top: 0;
-}
+    this.filterBar.placeholder = WebInspector.UIString("Filter Timeline List");
+};
 
-.network-timeline-decorations > .header > .divider:first-child,
-.network-timeline-decorations > .header > .divider:last-child,
-.network-timeline-decorations > .header > .divider {
-    background-image: -webkit-linear-gradient(bottom, rgba(0, 0, 0, 0.2), transparent 85%);
-}
-
-.network-timeline-decorations:not(.sort-active) > .header > .divider:last-child {
-    background-image: none;
-}
-
-.network-timeline-decorations > .header > .divider > .label {
-    top: 6px;
-}
-
-.network-timeline-decorations > .event-markers > .event-marker {
-    z-index: 100; /* Display under the timeline pills. */
-}
-
-.network-datagrid tr > td.timeline-column {
-    position: relative;
-    z-index: 200; /* Display timeline pills over event-markers. */
-}
-
-.network-timeline-decorations > .event-markers > .event-marker-tooltip {
-    z-index: 300; /* Display the tooltip div over everything so tooltips work. */
-}
+WebInspector.TimelineSidebarPanel.prototype = {
+    constructor: WebInspector.TimelineSidebarPanel,
+    __proto__: WebInspector.NavigationSidebarPanel.prototype,
+};

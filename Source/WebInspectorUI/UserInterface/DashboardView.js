@@ -191,8 +191,7 @@ WebInspector.DashboardView.prototype = {
 
     _networkItemWasClicked: function()
     {
-        WebInspector.navigationSidebar.selectedSidebarPanel = WebInspector.instrumentSidebarPanel;
-        WebInspector.instrumentSidebarPanel.showTimelineForRecordType(WebInspector.TimelineRecord.Type.Network);
+        WebInspector.navigationSidebar.selectedSidebarPanel = WebInspector.timelineSidebarPanel;
     },
 
     _consoleItemWasClicked: function(scope)

@@ -217,15 +217,15 @@ WebInspector.contentLoaded = function()
     this.toolbar.addToolbarItem(this.undockButtonNavigationItem, WebInspector.Toolbar.Section.Control);
 
     this.resourceSidebarPanel = new WebInspector.ResourceSidebarPanel;
-    this.instrumentSidebarPanel = new WebInspector.InstrumentSidebarPanel;
+    this.timelineSidebarPanel = new WebInspector.TimelineSidebarPanel;
     this.debuggerSidebarPanel = new WebInspector.DebuggerSidebarPanel;
 
     this.navigationSidebar.addSidebarPanel(this.resourceSidebarPanel);
-    this.navigationSidebar.addSidebarPanel(this.instrumentSidebarPanel);
+    this.navigationSidebar.addSidebarPanel(this.timelineSidebarPanel);
     this.navigationSidebar.addSidebarPanel(this.debuggerSidebarPanel);
 
     this.toolbar.addToolbarItem(this.resourceSidebarPanel.toolbarItem, WebInspector.Toolbar.Section.Left);
-    this.toolbar.addToolbarItem(this.instrumentSidebarPanel.toolbarItem, WebInspector.Toolbar.Section.Left);
+    this.toolbar.addToolbarItem(this.timelineSidebarPanel.toolbarItem, WebInspector.Toolbar.Section.Left);
     this.toolbar.addToolbarItem(this.debuggerSidebarPanel.toolbarItem, WebInspector.Toolbar.Section.Left);
 
     // The toolbar button for the console.
@@ -322,9 +322,6 @@ WebInspector.sidebarPanelForRepresentedObject = function(representedObject)
     // The console does not have a sidebar.
     if (representedObject instanceof WebInspector.LogObject)
         return null;
-
-    if (representedObject instanceof WebInspector.TimelinesObject || representedObject instanceof WebInspector.ProfileObject)
-        return this.instrumentSidebarPanel;
 
     console.error("Unknown representedObject: ", representedObject);
     return null;
@@ -460,7 +457,7 @@ WebInspector.openURL = function(url, frame, alwaysOpenExternally, lineNumber)
         console.assert(profileTitle[0] === '/');
         profileTitle = profileTitle.substring(1);
 
-        this.instrumentSidebarPanel.showProfile(profileType, profileTitle);
+        this.timelineSidebarPanel.showProfile(profileType, profileTitle);
         return;
     }
 

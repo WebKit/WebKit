@@ -1,3 +1,44 @@
+2013-10-25  Timothy Hatcher  <timothy@apple.com>
+
+        Remove a lot of the current Timelines code to make room for a new implementation.
+
+        https://bugs.webkit.org/show_bug.cgi?id=123368
+
+        Reviewed by Joseph Pecoraro.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        * UserInterface/ContentView.js:
+        (WebInspector.ContentView):
+        (WebInspector.ContentView.isViewable):
+        * UserInterface/DashboardView.js:
+        (WebInspector.DashboardView.prototype._networkItemWasClicked):
+        * UserInterface/InspectorFrontendAPI.js:
+        (InspectorFrontendAPI.setTimelineProfilingEnabled):
+        (InspectorFrontendAPI.stopProfilingJavaScript):
+        * UserInterface/InstrumentSidebarPanel.js: Removed.
+        * UserInterface/Main.html:
+        * UserInterface/Main.js:
+        (WebInspector.contentLoaded):
+        (WebInspector.sidebarPanelForRepresentedObject):
+        (WebInspector.openURL):
+        * UserInterface/Object.js:
+        (WebInspector.Object.addEventListener):
+        * UserInterface/TimelineManager.js:
+        (WebInspector.TimelineManager):
+        (WebInspector.TimelineManager.prototype.startRecording):
+        (WebInspector.TimelineManager.prototype.eventRecorded.processRecord):
+        (WebInspector.TimelineManager.prototype.eventRecorded):
+        (WebInspector.TimelineManager.prototype.objectForCookie):
+        (WebInspector.TimelineManager.prototype._addRecord):
+        * UserInterface/TimelinesObject.js: Removed.
+        * UserInterface/TimelineOverview.css: Removed.
+        * UserInterface/TimelineOverview.js: Removed.
+        * UserInterface/TimelineSidebarPanel.css: Added.
+        * UserInterface/TimelineSidebarPanel.js: Added.
+        (WebInspector.TimelineSidebarPanel):
+        * UserInterface/TimelinesContentView.css: Removed.
+        * UserInterface/TimelinesContentView.js: Removed.
+
 2014-01-20  Timothy Hatcher  <timothy@apple.com>
 
         Fix jumping to a text position when showing a resource.

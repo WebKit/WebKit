@@ -23,12 +23,5 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.TimelinesObject = function()
-{
-};
-
-WebInspector.TimelinesObject.prototype = {
-    constructor: WebInspector.TimelinesObject
-};
-
-WebInspector.TimelinesObject.prototype.__proto__ = WebInspector.Object.prototype;
+.sidebar > .panel.timeline {
+}

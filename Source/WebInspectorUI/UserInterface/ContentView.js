@@ -60,9 +60,6 @@ WebInspector.ContentView = function(representedObject)
         if (representedObject instanceof WebInspector.LogObject)
             return new WebInspector.LogContentView(representedObject);
 
-        if (representedObject instanceof WebInspector.TimelinesObject)
-            return new WebInspector.TimelinesContentView(representedObject);
-
         if (representedObject instanceof WebInspector.JavaScriptProfileObject)
             return new WebInspector.JavaScriptProfileView(representedObject);
 
@@ -117,8 +114,6 @@ WebInspector.ContentView.isViewable = function(representedObject)
     if (representedObject instanceof WebInspector.DOMTree)
         return true;
     if (representedObject instanceof WebInspector.LogObject)
-        return true;
-    if (representedObject instanceof WebInspector.TimelinesObject)
         return true;
     if (representedObject instanceof WebInspector.JavaScriptProfileObject)
         return true;
