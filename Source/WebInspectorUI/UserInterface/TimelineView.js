@@ -31,6 +31,11 @@ WebInspector.TimelineView = function()
 
     this.element = document.createElement("div");
     this.element.classList.add(WebInspector.TimelineView.StyleClassName);
+
+    this._zeroTime = 0;
+    this._startTime = 0;
+    this._endTime = 5;
+    this._currentTime = 0;
 };
 
 WebInspector.TimelineView.StyleClassName = "timeline-view";
@@ -52,6 +57,81 @@ WebInspector.TimelineView.prototype = {
         return null;
     },
 
+    get zeroTime()
+    {
+        return this._zeroTime;
+    },
+
+    set zeroTime(x)
+    {
+        if (this._zeroTime === x)
+            return;
+
+        this._zeroTime = x || 0;
+
+        this.needsLayout();
+    },
+
+    get startTime()
+    {
+        return this._startTime;
+    },
+
+    set startTime(x)
+    {
+        if (this._startTime === x)
+            return;
+
+        this._startTime = x || 0;
+
+        this.needsLayout();
+    },
+
+    get endTime()
+    {
+        return this._endTime;
+    },
+
+    set endTime(x)
+    {
+        if (this._endTime === x)
+            return;
+
+        this._endTime = x || 0;
+
+        this.needsLayout();
+    },
+
+    get currentTime()
+    {
+        return this._currentTime;
+    },
+
+    set currentTime(x)
+    {
+        if (this._currentTime === x)
+            return;
+
+        var oldCurrentTime = this._currentTime;
+
+        this._currentTime = x || 0;
+
+        function checkIfLayoutIsNeeded(currentTime)
+        {
+            // Include some wiggle room since the current time markers can be clipped off the ends a bit and still partially visible.
+            const wiggleTime = 0.05; // 50ms
+            return this._startTime - wiggleTime <= currentTime && currentTime <= this._endTime + wiggleTime;
+        }
+
+        if (checkIfLayoutIsNeeded.call(this, oldCurrentTime) || checkIfLayoutIsNeeded.call(this, this._currentTime))
+            this.needsLayout();
+    },
+
+    get visible()
+    {
+        return this._visible;
+    },
+
     reset: function()
     {
         this._contentTreeOutline.removeChildren();
@@ -59,16 +139,45 @@ WebInspector.TimelineView.prototype = {
 
     shown: function()
     {
+        this._visible = true;
+
         // Implemented by sub-classes if needed.
     },
 
     hidden: function()
     {
         // Implemented by sub-classes if needed.
+
+        this._visible = false;
     },
 
     updateLayout: function()
     {
+        if (this._scheduledLayoutUpdateIdentifier) {
+            cancelAnimationFrame(this._scheduledLayoutUpdateIdentifier);
+            delete this._scheduledLayoutUpdateIdentifier;
+        }
+
         // Implemented by sub-classes if needed.
+    },
+
+    updateLayoutIfNeeded: function()
+    {
+        if (!this._scheduledLayoutUpdateIdentifier)
+            return;
+        this.updateLayout();
+    },
+
+    // Protected
+
+    needsLayout: function()
+    {
+        if (!this._visible)
+            return;
+
+        if (this._scheduledLayoutUpdateIdentifier)
+            return;
+
+        this._scheduledLayoutUpdateIdentifier = requestAnimationFrame(this.updateLayout.bind(this));
     }
 };

@@ -39,19 +39,24 @@ WebInspector.TimelineOverview = function()
     this._timelineRuler = new WebInspector.TimelineRuler;
     this._timelineRuler.allowsClippedLabels = true;
     this._timelineRuler.allowsTimeRangeSelection = true;
+    this._timelineRuler.addEventListener(WebInspector.TimelineRuler.Event.TimeRangeSelectionChanged, this._timeRangeSelectionChanged, this);
     this._scrollContainer.appendChild(this._timelineRuler.element);
 
     this._endTime = 0;
 
     this.startTime = 0;
     this.secondsPerPixel = 0.0025;
-    this.selectionDuration = 5;
+    this.selectionDuration = 3;
 };
 
 WebInspector.TimelineOverview.StyleClassName = "timeline-overview";
 WebInspector.TimelineOverview.ScrollContainerStyleClassName = "scroll-container";
 WebInspector.TimelineOverview.MinimumSecondsPerPixel = 0.001;
 WebInspector.TimelineOverview.ScrollDeltaDenominator = 500;
+
+WebInspector.TimelineOverview.Event = {
+    TimeRangeSelectionChanged: "timeline-overview-time-range-selection-changed"
+};
 
 WebInspector.TimelineOverview.prototype = {
     constructor: WebInspector.TimelineOverview,
@@ -166,11 +171,20 @@ WebInspector.TimelineOverview.prototype = {
         this._timelineRuler.updateLayout();
     },
 
+    updateLayoutIfNeeded: function()
+    {
+        this._timelineRuler.updateLayoutIfNeeded();
+
+        if (!this._scheduledLayoutUpdateIdentifier)
+            return;
+        this.updateLayout();
+    },
+
     // Private
 
     _updateElementWidth: function(element, newWidth)
     {
-        var currentWidth = parseFloat(element.style.width).toFixed(0);
+        var currentWidth = parseInt(element.style.width);
         if (currentWidth !== newWidth)
             element.style.width = newWidth + "px";
     },
@@ -198,12 +212,17 @@ WebInspector.TimelineOverview.prototype = {
         this.secondsPerPixel += event.deltaY * (this._secondsPerPixel / WebInspector.TimelineOverview.ScrollDeltaDenominator) * deviceDirection;
 
         // Force layout so we can update the scroll position synchronously.
-        this.updateLayout();
+        this.updateLayoutIfNeeded();
 
         // Center the zoom around the mouse based on the remembered mouse position time.
         this._scrollContainer.scrollLeft = Math.max(0, Math.round((mousePositionTime / this.secondsPerPixel) - mouseOffset));
 
         event.preventDefault();
         event.stopPropagation();
+    },
+
+    _timeRangeSelectionChanged: function(event)
+    {
+        this.dispatchEventToListeners(WebInspector.TimelineOverview.Event.TimeRangeSelectionChanged);
     }
 };

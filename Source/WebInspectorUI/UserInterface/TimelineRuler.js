@@ -410,6 +410,26 @@ WebInspector.TimelineRuler.prototype = {
         this._updateSelection(visibleWidth, duration);
     },
 
+    updateLayoutIfNeeded: function()
+    {
+        // If there is a main layout scheduled we can just update layout and return, since that
+        // will update markers and the selection at the same time.
+        if (this._scheduledLayoutUpdateIdentifier) {
+            this.updateLayout();
+            return;
+        }
+
+        var visibleWidth = this._element.clientWidth;
+        if (visibleWidth <= 0)
+            return;
+
+        if (this._scheduledMarkerLayoutUpdateIdentifier)
+            this._updateMarkers(visibleWidth, this.duration);
+
+        if (this._scheduledSelectionLayoutUpdateIdentifier)
+            this._updateSelection(visibleWidth, this.duration);
+    },
+
     // Private
 
     _needsLayout: function()

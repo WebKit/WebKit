@@ -1,3 +1,44 @@
+2014-01-08  Timothy Hatcher  <timothy@apple.com>
+
+        Update the current WebInspector.TimelineView when time range changes.
+
+        https://bugs.webkit.org/show_bug.cgi?id=126667
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/TimelineContentView.js:
+        (WebInspector.TimelineContentView.prototype._showTimelineView):
+        (WebInspector.TimelineContentView.prototype._update):
+        (WebInspector.TimelineContentView.prototype._startUpdatingCurrentTime):
+        (WebInspector.TimelineContentView.prototype._stopUpdatingCurrentTime):
+        (WebInspector.TimelineContentView.prototype._recordingStarted):
+        (WebInspector.TimelineContentView.prototype._recordingStopped):
+        (WebInspector.TimelineContentView.prototype._recordingReset):
+        (WebInspector.TimelineContentView.prototype._timeRangeSelectionChanged):
+        * UserInterface/TimelineOverview.js:
+        (WebInspector.TimelineOverview):
+        (WebInspector.TimelineOverview.prototype.updateLayout):
+        (WebInspector.TimelineOverview.prototype.updateLayoutIfNeeded):
+        (WebInspector.TimelineOverview.prototype._updateElementWidth):
+        (WebInspector.TimelineOverview.prototype._handleWheelEvent):
+        (WebInspector.TimelineOverview.prototype._timeRangeSelectionChanged):
+        * UserInterface/TimelineRuler.js:
+        (WebInspector.TimelineRuler.prototype.updateLayoutIfNeeded):
+        * UserInterface/TimelineView.js:
+        (WebInspector.TimelineView):
+        (WebInspector.TimelineView.prototype.get zeroTime):
+        (WebInspector.TimelineView.prototype.set zeroTime):
+        (WebInspector.TimelineView.prototype.get startTime):
+        (WebInspector.TimelineView.prototype.set startTime):
+        (WebInspector.TimelineView.prototype.get endTime):
+        (WebInspector.TimelineView.prototype.set endTime):
+        (WebInspector.TimelineView.prototype.get currentTime):
+        (WebInspector.TimelineView.prototype.set currentTime.checkIfLayoutIsNeeded):
+        (WebInspector.TimelineView.prototype.set currentTime):
+        (WebInspector.TimelineView.prototype.updateLayout):
+        (WebInspector.TimelineView.prototype.updateLayoutIfNeeded):
+        (WebInspector.TimelineView.prototype.needsLayout):
+
 2013-12-19  Timothy Hatcher  <timothy@apple.com>
 
         Implement time range selection for TimelineOverview and TimelineRuler.

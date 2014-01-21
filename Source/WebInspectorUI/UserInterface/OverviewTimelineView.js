@@ -35,7 +35,11 @@ WebInspector.OverviewTimelineView = function()
     this._treeOutlineDataGridSynchronizer = new WebInspector.TreeOutlineDataGridSynchronizer(this._contentTreeOutline, this._dataGrid);
 
     this._timelineRuler = new WebInspector.TimelineRuler;
+    this._timelineRuler.allowsClippedLabels = true;
     this.element.appendChild(this._timelineRuler.element);
+
+    this._currentTimeMarker = new WebInspector.TimelineMarker(0, WebInspector.TimelineMarker.Type.CurrentTime);
+    this._timelineRuler.addMarker(this._currentTimeMarker);
 
     this.element.classList.add(WebInspector.OverviewTimelineView.StyleClassName);
     this.element.appendChild(this._dataGrid.element);
@@ -73,6 +77,13 @@ WebInspector.OverviewTimelineView.prototype = {
 
     updateLayout: function()
     {
+        WebInspector.TimelineView.prototype.updateLayout.call(this);
+
+        this._timelineRuler.zeroTime = this.zeroTime;
+        this._timelineRuler.startTime = this.startTime;
+        this._timelineRuler.endTime = this.endTime;
+        this._currentTimeMarker.time = this.currentTime;
+
         this._timelineRuler.updateLayout();
     },
 
