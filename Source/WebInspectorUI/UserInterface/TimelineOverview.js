@@ -30,6 +30,8 @@ WebInspector.TimelineOverview = function()
     this._element = document.createElement("div");
     this._element.className = WebInspector.TimelineOverview.StyleClassName;
 
+    this._element.addEventListener("wheel", this._handleWheelEvent.bind(this));
+
     this._scrollContainer = document.createElement("div");
     this._scrollContainer.className = WebInspector.TimelineOverview.ScrollContainerStyleClassName;
     this._element.appendChild(this._scrollContainer);
@@ -46,6 +48,8 @@ WebInspector.TimelineOverview = function()
 
 WebInspector.TimelineOverview.StyleClassName = "timeline-overview";
 WebInspector.TimelineOverview.ScrollContainerStyleClassName = "scroll-container";
+WebInspector.TimelineOverview.MinimumSecondsPerPixel = 0.001;
+WebInspector.TimelineOverview.ScrollDeltaDenominator = 500;
 
 WebInspector.TimelineOverview.prototype = {
     constructor: WebInspector.TimelineOverview,
@@ -84,7 +88,7 @@ WebInspector.TimelineOverview.prototype = {
         if (this._timelineRuler.secondsPerPixel === x)
             return;
 
-        this._timelineRuler.secondsPerPixel = x;
+        this._timelineRuler.secondsPerPixel = Math.max(WebInspector.TimelineOverview.MinimumSecondsPerPixel, x);
 
         this._needsLayout();
     },
@@ -149,5 +153,30 @@ WebInspector.TimelineOverview.prototype = {
         if (this._scheduledLayoutUpdateIdentifier)
             return;
         this._scheduledLayoutUpdateIdentifier = requestAnimationFrame(this.updateLayout.bind(this));
+    },
+
+    _handleWheelEvent: function(event)
+    {
+        // Require twice the vertical delta to overcome horizontal scrolling. This prevents most
+        // cases of inadvertent zooming for slightly diagonal scrolls.
+        if (Math.abs(event.deltaX) >= Math.abs(event.deltaY) * 0.5)
+            return;
+
+        // Remember the mouse position in time.
+        var mouseOffset = event.pageX - this._scrollContainer.totalOffsetLeft;
+        var scrollOffset = this._scrollContainer.scrollLeft;
+        var mousePositionTime = (scrollOffset + mouseOffset) * this.secondsPerPixel;
+        var deviceDirection = event.webkitDirectionInvertedFromDevice ? 1 : -1;
+
+        this.secondsPerPixel += event.deltaY * (this._secondsPerPixel / WebInspector.TimelineOverview.ScrollDeltaDenominator) * deviceDirection;
+
+        // Force layout so we can update the scroll position synchronously.
+        this.updateLayout();
+
+        // Center the zoom around the mouse based on the remembered mouse position time.
+        this._scrollContainer.scrollLeft = Math.max(0, Math.round((mousePositionTime / this.secondsPerPixel) - mouseOffset));
+
+        event.preventDefault();
+        event.stopPropagation();
     }
 };
