@@ -1,3 +1,15 @@
+2014-01-21  Tamas Gergely  <tgergely.u-szeged@partner.samsung.com>
+
+        ASSERT(time.isFinite()) in SVGSMILElement::createInstanceTimesFromSyncbase
+        <https://webkit.org/b/108184>
+
+        Reviewed by Philip Rogers.
+
+        Test checks whether valid self-dependency is accidentally broken.
+
+        * svg/animations/smil-syncbase-self-dependency-expected.txt: Added.
+        * svg/animations/smil-syncbase-self-dependency.svg: Added.
+
 2014-01-20  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Test that text-decoration-skip: ink inherits as expected

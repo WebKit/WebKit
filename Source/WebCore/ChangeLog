@@ -1,3 +1,20 @@
+2014-01-21  Tamas Gergely  <tgergely.u-szeged@partner.samsung.com>
+
+        ASSERT(time.isFinite()) in SVGSMILElement::createInstanceTimesFromSyncbase
+        <https://webkit.org/b/108184>
+
+        Reviewed by Philip Rogers.
+
+        In the case a SMILElement timing had a syncbase dependency on an indefinite value
+        the assert were raised. The assert has been removed and a check has been added
+        instead that prevents the addition of indefinite times to the time list.
+
+        Test: svg/animations/smil-syncbase-self-dependency.svg
+
+        * svg/animation/SVGSMILElement.cpp:
+        (WebCore::SVGSMILElement::createInstanceTimesFromSyncbase):
+          ASSERT removed.
+
 2014-01-21  Tim Horton  <timothy_horton@apple.com>
 
         Address late review naming comments after r162453.
