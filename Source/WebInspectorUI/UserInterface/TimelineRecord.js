@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.TimelineRecord = function(type, startTime, endTime)
+WebInspector.TimelineRecord = function(type, startTime, endTime, callFrames, sourceCodeLocation)
 {
     WebInspector.Object.call(this);
 
@@ -35,6 +35,8 @@ WebInspector.TimelineRecord = function(type, startTime, endTime)
     this._type = type;
     this._startTime = startTime || NaN;
     this._endTime = endTime || NaN;
+    this._callFrames = callFrames || null;
+    this._sourceCodeLocation = sourceCodeLocation || null;
 };
 
 WebInspector.TimelineRecord.Event = {
@@ -83,6 +85,31 @@ WebInspector.TimelineRecord.prototype = {
     {
         // Implemented by subclasses if needed.
         return this.duration;
+    },
+
+    get callFrames()
+    {
+        return this._callFrames;
+    },
+
+    get initiatorCallFrame()
+    {
+        if (!this._callFrames || !this._callFrames.length)
+            return null;
+
+        // Return the first non-native code call frame as the initiator.
+        for (var i = 0; i < this._callFrames.length; ++i) {
+            if (this._callFrames[i].nativeCode)
+                continue;
+            return this._callFrames[i];
+        }
+
+        return null;
+    },
+
+    get sourceCodeLocation()
+    {
+        return this._sourceCodeLocation;
     }
 };
 

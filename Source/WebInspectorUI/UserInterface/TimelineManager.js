@@ -91,22 +91,34 @@ WebInspector.TimelineManager.prototype = {
         this.dispatchEventToListeners(WebInspector.TimelineManager.Event.RecordingStopped);
     },
 
-    eventRecorded: function(originalRecord)
+    eventRecorded: function(originalRecordPayload)
     {
         // Called from WebInspector.TimelineObserver.
 
         if (!this._recording)
             return;
 
-        function processRecord(record, parentRecord)
+        function processRecord(recordPayload, parentRecordPayload)
         {
             // Convert the timestamps to seconds to match the resource timestamps.
-            var startTime = record.startTime / 1000;
-            var endTime = record.endTime / 1000;
+            var startTime = recordPayload.startTime / 1000;
+            var endTime = recordPayload.endTime / 1000;
 
-            var callFrames = this._callFramesFromPayload(record.stackTrace);
+            var callFrames = this._callFramesFromPayload(recordPayload.stackTrace);
 
-            switch (record.type) {
+            var significantCallFrame = null;
+            if (callFrames) {
+                for (var i = 0; i < callFrames.length; ++i) {
+                    if (callFrames[i].nativeCode)
+                        continue;
+                    significantCallFrame = callFrames[i];
+                    break;
+                }
+            }
+
+            var sourceCodeLocation = significantCallFrame && significantCallFrame.sourceCodeLocation;
+
+            switch (recordPayload.type) {
             case TimelineAgent.EventType.MarkLoad:
                 console.assert(isNaN(endTime));
 
@@ -146,50 +158,58 @@ WebInspector.TimelineManager.prototype = {
 
             case TimelineAgent.EventType.ScheduleStyleRecalculation:
                 console.assert(isNaN(endTime));
+
                 // Pass the startTime as the endTime since this record type has no duration.
-                this._addRecord(new WebInspector.LayoutTimelineRecord(WebInspector.LayoutTimelineRecord.EventType.InvalidateStyles, startTime, startTime, callFrames));
+                this._addRecord(new WebInspector.LayoutTimelineRecord(WebInspector.LayoutTimelineRecord.EventType.InvalidateStyles, startTime, startTime, callFrames, sourceCodeLocation));
                 break;
 
             case TimelineAgent.EventType.RecalculateStyles:
-                this._addRecord(new WebInspector.LayoutTimelineRecord(WebInspector.LayoutTimelineRecord.EventType.RecalculateStyles, startTime, endTime, callFrames));
+                this._addRecord(new WebInspector.LayoutTimelineRecord(WebInspector.LayoutTimelineRecord.EventType.RecalculateStyles, startTime, endTime, callFrames, sourceCodeLocation));
                 break;
 
             case TimelineAgent.EventType.InvalidateLayout:
                 console.assert(isNaN(endTime));
+
                 // Pass the startTime as the endTime since this record type has no duration.
-                this._addRecord(new WebInspector.LayoutTimelineRecord(WebInspector.LayoutTimelineRecord.EventType.InvalidateLayout, startTime, startTime, callFrames));
+                this._addRecord(new WebInspector.LayoutTimelineRecord(WebInspector.LayoutTimelineRecord.EventType.InvalidateLayout, startTime, startTime, callFrames, sourceCodeLocation));
                 break;
 
             case TimelineAgent.EventType.Layout:
                 // COMPATIBILITY (iOS 6): Layout records did not contain area properties. This is not exposed via a quad "root".
-                var quad = record.data.root ? new WebInspector.Quad(record.data.root) : null;
+                var quad = recordPayload.data.root ? new WebInspector.Quad(recordPayload.data.root) : null;
                 if (quad)
-                    this._addRecord(new WebInspector.LayoutTimelineRecord(WebInspector.LayoutTimelineRecord.EventType.Layout, startTime, endTime, callFrames, quad.points[0].x, quad.points[0].y, quad.width, quad.height, quad));
+                    this._addRecord(new WebInspector.LayoutTimelineRecord(WebInspector.LayoutTimelineRecord.EventType.Layout, startTime, endTime, callFrames, sourceCodeLocation, quad.points[0].x, quad.points[0].y, quad.width, quad.height, quad));
                 else
-                    this._addRecord(new WebInspector.LayoutTimelineRecord(WebInspector.LayoutTimelineRecord.EventType.Layout, startTime, endTime, callFrames));
+                    this._addRecord(new WebInspector.LayoutTimelineRecord(WebInspector.LayoutTimelineRecord.EventType.Layout, startTime, endTime, callFrames, sourceCodeLocation));
                 break;
 
             case TimelineAgent.EventType.Paint:
                 // COMPATIBILITY (iOS 6): Paint records data contained x, y, width, height properties. This became a quad "clip".
-                var quad = record.data.clip ? new WebInspector.Quad(record.data.clip) : null;
+                var quad = recordPayload.data.clip ? new WebInspector.Quad(recordPayload.data.clip) : null;
                 if (quad)
-                    this._addRecord(new WebInspector.LayoutTimelineRecord(WebInspector.LayoutTimelineRecord.EventType.Paint, startTime, endTime, callFrames, null, null, quad.width, quad.height, quad));
+                    this._addRecord(new WebInspector.LayoutTimelineRecord(WebInspector.LayoutTimelineRecord.EventType.Paint, startTime, endTime, callFrames, sourceCodeLocation, null, null, quad.width, quad.height, quad));
                 else
-                    this._addRecord(new WebInspector.LayoutTimelineRecord(WebInspector.LayoutTimelineRecord.EventType.Paint, startTime, endTime, callFrames, record.data.x, record.data.y, record.data.width, record.data.height));
+                    this._addRecord(new WebInspector.LayoutTimelineRecord(WebInspector.LayoutTimelineRecord.EventType.Paint, startTime, endTime, callFrames, sourceCodeLocation, recordPayload.data.x, recordPayload.data.y, recordPayload.data.width, recordPayload.data.height));
                 break;
 
             case TimelineAgent.EventType.EvaluateScript:
-                var resource = WebInspector.frameResourceManager.resourceForURL(record.data.url);
+                if (!sourceCodeLocation) {
+                    var mainFrame = WebInspector.frameResourceManager.mainFrame;
+                    var scriptResource = mainFrame.url === recordPayload.data.url ? mainFrame.mainResource : mainFrame.resourceForURL(recordPayload.data.url, true);
+                    if (scriptResource) {
+                        // The lineNumber is 1-based, but we expect 0-based.
+                        var lineNumber = recordPayload.data.lineNumber - 1;
 
-                // The lineNumber is 1-based, but we expect 0-based.
-                var lineNumber = record.data.lineNumber - 1;
+                        sourceCodeLocation = scriptResource.createSourceCodeLocation(lineNumber, 0);
+                    }
+                }
 
-                switch (parent ? parent.type : null) {
+                switch (parentRecordPayload && parentRecordPayload.type) {
                 case TimelineAgent.EventType.TimerFire:
-                    this._addRecord(new WebInspector.ScriptTimelineRecord(WebInspector.ScriptTimelineRecord.EventType.TimerFired, startTime, endTime, parent.data.timerId, resource, lineNumber, callFrames));
+                    this._addRecord(new WebInspector.ScriptTimelineRecord(WebInspector.ScriptTimelineRecord.EventType.TimerFired, startTime, endTime, callFrames, sourceCodeLocation, parentRecordPayload.data.timerId));
                     break;
                 default:
-                    this._addRecord(new WebInspector.ScriptTimelineRecord(WebInspector.ScriptTimelineRecord.EventType.ScriptEvaluated, startTime, endTime, null, resource, lineNumber, callFrames));
+                    this._addRecord(new WebInspector.ScriptTimelineRecord(WebInspector.ScriptTimelineRecord.EventType.ScriptEvaluated, startTime, endTime, callFrames, sourceCodeLocation, null));
                     break;
                 }
 
@@ -204,29 +224,24 @@ WebInspector.TimelineManager.prototype = {
             case TimelineAgent.EventType.FunctionCall:
                 // FunctionCall always happens as a child of another record, and since the FunctionCall record
                 // has useful info we just make the timeline record here (combining the data from both records).
-                if (!parent)
+                if (!parentRecordPayload)
                     break;
 
-                var resource = WebInspector.frameResourceManager.resourceForURL(record.data.scriptName);
-
-                // The scriptLine is 1-based, but we expect 0-based.
-                var lineNumber = record.data.scriptLine - 1;
-
-                switch (parent.type) {
+                switch (parentRecordPayload.type) {
                 case TimelineAgent.EventType.TimerFire:
-                    this._addRecord(new WebInspector.ScriptTimelineRecord(WebInspector.ScriptTimelineRecord.EventType.TimerFired, startTime, endTime, parent.data.timerId, resource, lineNumber, callFrames));
+                    this._addRecord(new WebInspector.ScriptTimelineRecord(WebInspector.ScriptTimelineRecord.EventType.TimerFired, startTime, endTime, callFrames, sourceCodeLocation, parentRecordPayload.data.timerId));
                     break;
                 case TimelineAgent.EventType.EventDispatch:
-                    this._addRecord(new WebInspector.ScriptTimelineRecord(WebInspector.ScriptTimelineRecord.EventType.EventDispatched, startTime, endTime, parent.data.type, resource, lineNumber, callFrames));
+                    this._addRecord(new WebInspector.ScriptTimelineRecord(WebInspector.ScriptTimelineRecord.EventType.EventDispatched, startTime, endTime, callFrames, sourceCodeLocation, parentRecordPayload.data.type));
                     break;
                 case TimelineAgent.EventType.XHRLoad:
-                    this._addRecord(new WebInspector.ScriptTimelineRecord(WebInspector.ScriptTimelineRecord.EventType.EventDispatched, startTime, endTime, "load", resource, lineNumber, callFrames));
+                    this._addRecord(new WebInspector.ScriptTimelineRecord(WebInspector.ScriptTimelineRecord.EventType.EventDispatched, startTime, endTime, callFrames, sourceCodeLocation, "load"));
                     break;
                 case TimelineAgent.EventType.XHRReadyStateChange:
-                    this._addRecord(new WebInspector.ScriptTimelineRecord(WebInspector.ScriptTimelineRecord.EventType.EventDispatched, startTime, endTime, "readystatechange", resource, lineNumber, callFrames));
+                    this._addRecord(new WebInspector.ScriptTimelineRecord(WebInspector.ScriptTimelineRecord.EventType.EventDispatched, startTime, endTime, callFrames, sourceCodeLocation, "readystatechange"));
                     break;
                 case TimelineAgent.EventType.FireAnimationFrame:
-                    this._addRecord(new WebInspector.ScriptTimelineRecord(WebInspector.ScriptTimelineRecord.EventType.AnimationFrameFired, startTime, endTime, parent.data.id, resource, lineNumber, callFrames));
+                    this._addRecord(new WebInspector.ScriptTimelineRecord(WebInspector.ScriptTimelineRecord.EventType.AnimationFrameFired, startTime, endTime, callFrames, sourceCodeLocation, parentRecordPayload.data.id));
                     break;
                 }
 
@@ -234,47 +249,30 @@ WebInspector.TimelineManager.prototype = {
 
             case TimelineAgent.EventType.TimerInstall:
             case TimelineAgent.EventType.TimerRemove:
-                // COMPATIBILITY (iOS 6): TimerInstall and TimerRemove did not have a stack trace.
-                var callFrame = null;
-                if (callFrames) {
-                    for (var i = 0; i < callFrames.length; ++i) {
-                        if (callFrames[i].nativeCode)
-                            continue;
-                        callFrame = callFrames[i];
-                        break;
-                    }
-                }
-
-                var sourceCodeLocation = callFrame && callFrame.sourceCodeLocation;
-                var resource = sourceCodeLocation ? sourceCodeLocation.sourceCode : null;
-                var lineNumber = sourceCodeLocation ? sourceCodeLocation.lineNumber : null;
-
-                if (record.type === TimelineAgent.EventType.TimerInstall)
-                    this._addRecord(new WebInspector.ScriptTimelineRecord(WebInspector.ScriptTimelineRecord.EventType.TimerInstalled, startTime, endTime, record.data.timerId, resource, lineNumber, callFrames));
+                if (recordPayload.type === TimelineAgent.EventType.TimerInstall)
+                    this._addRecord(new WebInspector.ScriptTimelineRecord(WebInspector.ScriptTimelineRecord.EventType.TimerInstalled, startTime, endTime, callFrames, sourceCodeLocation, recordPayload.data.timerId));
                 else
-                    this._addRecord(new WebInspector.ScriptTimelineRecord(WebInspector.ScriptTimelineRecord.EventType.TimerRemoved, startTime, endTime, record.data.timerId, resource, lineNumber, callFrames));
+                    this._addRecord(new WebInspector.ScriptTimelineRecord(WebInspector.ScriptTimelineRecord.EventType.TimerRemoved, startTime, endTime, callFrames, sourceCodeLocation, recordPayload.data.timerId));
 
                 break;
             }
-
-            return null;
         }
 
         // Iterate over the records tree using a stack. Doing this recursively has
         // been known to cause a call stack overflow. https://webkit.org/b/79106
-        var stack = [{array: [originalRecord], parent: null, index: 0}];
+        var stack = [{array: [originalRecordPayload], parent: null, index: 0}];
         while (stack.length) {
             var entry = stack.lastValue;
-            var records = entry.array;
-            var parent = entry.parent;
+            var recordPayloads = entry.array;
+            var parentRecordPayload = entry.parent;
 
-            if (entry.index < records.length) {
-                var record = records[entry.index];
+            if (entry.index < recordPayloads.length) {
+                var recordPayload = recordPayloads[entry.index];
 
-                processRecord.call(this, record, parent);
+                processRecord.call(this, recordPayload, parentRecordPayload);
 
-                if (record.children)
-                    stack.push({array: record.children, parent: record, index: 0});
+                if (recordPayload.children)
+                    stack.push({array: recordPayload.children, parent: recordPayload, index: 0});
                 ++entry.index;
             } else
                 stack.pop();

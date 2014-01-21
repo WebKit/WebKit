@@ -1,5 +1,27 @@
 2013-10-25  Timothy Hatcher  <timothy@apple.com>
 
+        Track callFrames and sourceCodeLocation per TimelineRecord.
+
+        https://bugs.webkit.org/show_bug.cgi?id=123359
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/LayoutTimelineRecord.js:
+        (WebInspector.LayoutTimelineRecord): Pass callFrames and sourceCodeLocation to superclass.
+        * UserInterface/ScriptTimelineRecord.js:
+        (WebInspector.ScriptTimelineRecord): Pass callFrames and sourceCodeLocation to superclass.
+        * UserInterface/TimelineManager.js:
+        (WebInspector.TimelineManager.prototype.eventRecorded.processRecord): Add "Payload" suffix to better track what is a protocol object.
+        Pass the callFrames and sourceCodeLocation to all the new TimelineRecords.
+        (WebInspector.TimelineManager.prototype.eventRecorded): Add "Payload" suffix.
+        * UserInterface/TimelineRecord.js:
+        (WebInspector.TimelineRecord):
+        (WebInspector.TimelineRecord.prototype.get callFrames): Added.
+        (WebInspector.TimelineRecord.prototype.get initiatorCallFrame): Added.
+        (WebInspector.TimelineRecord.prototype.get sourceCodeLocation): Added.
+
+2013-10-25  Timothy Hatcher  <timothy@apple.com>
+
         Change how the load and content ready event timestamps are tracked.
 
         https://bugs.webkit.org/show_bug.cgi?id=123356

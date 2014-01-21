@@ -23,9 +23,9 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.LayoutTimelineRecord = function(eventType, startTime, endTime, callFrames, x, y, width, height, quad)
+WebInspector.LayoutTimelineRecord = function(eventType, startTime, endTime, callFrames, sourceCodeLocation, x, y, width, height, quad)
 {
-    WebInspector.TimelineRecord.call(this, WebInspector.TimelineRecord.Type.Layout, startTime, endTime);
+    WebInspector.TimelineRecord.call(this, WebInspector.TimelineRecord.Type.Layout, startTime, endTime, callFrames, sourceCodeLocation);
 
     console.assert(eventType);
 
@@ -33,7 +33,6 @@ WebInspector.LayoutTimelineRecord = function(eventType, startTime, endTime, call
         eventType = WebInspector.LayoutTimelineRecord.EventType[eventType];
 
     this._eventType = eventType;
-    this._callFrames = callFrames || [];
     this._x = typeof x === "number" ? x : NaN;
     this._y = typeof y === "number" ? y : NaN;
     this._width = typeof width === "number" ? width : NaN;
@@ -73,26 +72,6 @@ WebInspector.LayoutTimelineRecord.prototype = {
     get eventType()
     {
         return this._eventType;
-    },
-
-    get callFrames()
-    {
-        return this._callFrames;
-    },
-
-    get initiatorCallFrame()
-    {
-        if (!this._callFrames || !this._callFrames.length)
-            return null;
-
-        // Return the first non-native code call frame as the initiator.
-        for (var i = 0; i < this._callFrames.length; ++i) {
-            if (this._callFrames[i].nativeCode)
-                continue;
-            return this._callFrames[i];
-        }
-
-        return null;
     },
 
     get x()

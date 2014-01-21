@@ -23,9 +23,9 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.ScriptTimelineRecord = function(eventType, startTime, endTime, details, resource, lineNumber, callFrames)
+WebInspector.ScriptTimelineRecord = function(eventType, startTime, endTime, callFrames, sourceCodeLocation, details)
 {
-    WebInspector.TimelineRecord.call(this, WebInspector.TimelineRecord.Type.Script, startTime, endTime);
+    WebInspector.TimelineRecord.call(this, WebInspector.TimelineRecord.Type.Script, startTime, endTime, callFrames, sourceCodeLocation);
 
     console.assert(eventType);
 
@@ -34,9 +34,6 @@ WebInspector.ScriptTimelineRecord = function(eventType, startTime, endTime, deta
 
     this._eventType = eventType;
     this._details = details || "";
-    this._resource = resource || null;
-    this._lineNumber = lineNumber || NaN;
-    this._callFrames = callFrames || null;
 };
 
 WebInspector.ScriptTimelineRecord.EventType = {
@@ -79,53 +76,6 @@ WebInspector.ScriptTimelineRecord.prototype = {
     get details()
     {
         return this._details;
-    },
-
-    get resource()
-    {
-        return this._resource;
-    },
-
-    get lineNumber()
-    {
-        return this._lineNumber;
-    },
-
-    get callFrames()
-    {
-        return this._callFrames;
-    },
-
-    get sourceCodeLocation()
-    {
-        if ("_sourceCodeLocation" in this)
-            return this._sourceCodeLocation;
-
-        if (!this._resource) {
-            this._sourceCodeLocation = null;
-            return this._sourceCodeLocation;
-        }
-
-        // FIXME: Script Timeline Events with a location should always contain a call stack
-        // or a complete (url:line:column) triplet.
-
-        if (this._callFrames) {
-            for (var i = 0; i < this._callFrames.length; ++i) {
-                var callFrame = this._callFrames[i];
-                if (callFrame.nativeCode)
-                    continue;
-
-                if (!callFrame.sourceCodeLocation)
-                    break;
-
-                this._sourceCodeLocation = callFrame.sourceCodeLocation;
-                return this._sourceCodeLocation;
-            }
-        }
-
-        var lineNumber = isNaN(this._lineNumber) ? 0 : this._lineNumber;
-        this._sourceCodeLocation = this._resource.createSourceCodeLocation(lineNumber, 0);
-        return this._sourceCodeLocation;
     }
 };
 
