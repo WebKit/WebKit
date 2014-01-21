@@ -5,10 +5,6 @@ add_subdirectory(WTF)
 
 add_subdirectory(JavaScriptCore)
 
-if ("${PORT}" STREQUAL "Nix")
-    add_subdirectory(Platform)
-endif ()
-
 if (ENABLE_API_TESTS)
     add_subdirectory(cmake/gtest)
 endif ()
@@ -30,13 +26,6 @@ WEBKIT_INCLUDE_CONFIG_FILES_IF_EXISTS()
 # -----------------------------------------------------------------------------
 # Set compiler flags for all targets
 # -----------------------------------------------------------------------------
-if ("${PORT}" STREQUAL "Nix")
-    if (NOT DISABLE_STRICT_BUILD)
-        set(ADDITIONAL_FLAGS ENABLE_WERROR)
-    endif ()
-    WEBKIT_SET_EXTRA_COMPILER_FLAGS(Platform ${ADDITIONAL_FLAGS})
-endif ()
-
 if (${PORT} STREQUAL "Efl")
     set(ADDITIONAL_FLAGS ENABLE_WERROR)
 endif ()

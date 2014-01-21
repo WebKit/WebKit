@@ -1,3 +1,15 @@
+2014-01-20  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        [CMAKE] Remove Nix from CMake scripts
+        https://bugs.webkit.org/show_bug.cgi?id=127264
+
+        Reviewed by Anders Carlsson.
+
+        * CMakeLists.txt:
+        * Source/CMakeLists.txt:
+        * Source/cmake/FindEGL.cmake:
+        * Source/cmake/OptionsCommon.cmake:
+
 2014-01-18  Anders Carlsson  <andersca@apple.com>
 
         Remove ENABLE_THREADED_HTML_PARSER defines everywhere
