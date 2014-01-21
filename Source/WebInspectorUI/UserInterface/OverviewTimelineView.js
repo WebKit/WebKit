@@ -273,6 +273,9 @@ WebInspector.OverviewTimelineView.prototype = {
 
     _treeElementSelected: function(treeElement, selectedByUser)
     {
+        if (!WebInspector.timelineSidebarPanel.canShowDifferentContentView())
+            return;
+
         if (treeElement instanceof WebInspector.FolderTreeElement)
             return;
 

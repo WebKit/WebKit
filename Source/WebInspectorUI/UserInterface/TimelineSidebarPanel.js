@@ -107,6 +107,9 @@ WebInspector.TimelineSidebarPanel.NetworkIconStyleClass = "network-icon";
 WebInspector.TimelineSidebarPanel.ColorsIconStyleClass = "colors-icon";
 WebInspector.TimelineSidebarPanel.ScriptIconStyleClass = "script-icon";
 WebInspector.TimelineSidebarPanel.TimelineContentViewShowingStyleClass = "timeline-content-view-showing";
+WebInspector.TimelineSidebarPanel.ShowingTimelineContentViewCookieKey = "timeline-sidebar-panel-showing-timeline-content-view";
+WebInspector.TimelineSidebarPanel.SelectedTimelineViewIdentifierCookieKey = "timeline-sidebar-panel-selected-timeline-view-identifier";
+WebInspector.TimelineSidebarPanel.OverviewTimelineIdentifierCookieValue = "overview";
 
 WebInspector.TimelineSidebarPanel.prototype = {
     constructor: WebInspector.TimelineSidebarPanel,
@@ -175,6 +178,48 @@ WebInspector.TimelineSidebarPanel.prototype = {
         var currentHeight = parseInt(this._stripeBackgroundElement.style.height);
         if (currentHeight !== contentHeight)
             this._stripeBackgroundElement.style.height = contentHeight + "px";
+    },
+
+    canShowDifferentContentView: function()
+    {
+        return !this.restoringState || !this._restoredShowingTimelineContentView;
+    },
+
+    saveStateToCookie: function(cookie)
+    {
+        console.assert(cookie);
+
+        cookie[WebInspector.timelineSidebarPanel.ShowingTimelineContentViewCookieKey] = WebInspector.contentBrowser.currentContentView instanceof WebInspector.TimelineContentView;
+
+        var selectedTreeElement = this._timelinesTreeOutline.selectedTreeElement;
+        if (selectedTreeElement)
+            cookie[WebInspector.TimelineSidebarPanel.SelectedTimelineViewIdentifierCookieKey] = selectedTreeElement.representedObject;
+        else
+            cookie[WebInspector.TimelineSidebarPanel.SelectedTimelineViewIdentifierCookieKey] = WebInspector.TimelineSidebarPanel.OverviewTimelineIdentifierCookieValue;
+
+        WebInspector.NavigationSidebarPanel.prototype.saveStateToCookie.call(this, cookie);
+    },
+
+    restoreStateFromCookie: function(cookie, relaxedMatchDelay)
+    {
+        console.assert(cookie);
+
+        // The _timelineContentView is not ready on initial load, so delay the restore.
+        // This matches the delayed work in the WebInspector.TimelineSidebarPanel constructor.
+        if (!this._timelineContentView) {
+            setTimeout(this.restoreStateFromCookie.bind(this, cookie, relaxedMatchDelay), 0);
+            return;
+        }
+
+        this._restoredShowingTimelineContentView = cookie[WebInspector.timelineSidebarPanel.ShowingTimelineContentViewCookieKey];
+
+        var selectedTimelineViewIdentifier = cookie[WebInspector.TimelineSidebarPanel.SelectedTimelineViewIdentifierCookieKey];
+        if (selectedTimelineViewIdentifier === WebInspector.TimelineSidebarPanel.OverviewTimelineIdentifierCookieValue)
+            this.showTimelineOverview();
+        else
+            this.showTimelineView(selectedTimelineViewIdentifier);
+
+        WebInspector.NavigationSidebarPanel.prototype.restoreStateFromCookie.call(this, cookie, relaxedMatchDelay);
     },
 
     // Private

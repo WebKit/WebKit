@@ -78,6 +78,10 @@ WebInspector.loaded = function()
     WebInspector.CSSCompletions.requestCSSNameCompletions();
     this._generateDisclosureTriangleImages();
 
+    // Listen for the ProvisionalLoadStarted event before registering for events so our code gets called before any managers or sidebars.
+    // This lets us save a state cookie before any managers or sidebars do any resets that would affect state (namely TimelineManager).
+    WebInspector.Frame.addEventListener(WebInspector.Frame.Event.ProvisionalLoadStarted, this._provisionalLoadStarted, this);
+
     // Create the singleton managers next, before the user interface elements, so the user interface can register
     // as event listeners on these managers.
     this.branchManager = new WebInspector.BranchManager;
@@ -106,7 +110,6 @@ WebInspector.loaded = function()
     this.frameResourceManager.addEventListener(WebInspector.FrameResourceManager.Event.MainFrameDidChange, this._mainFrameDidChange, this);
 
     WebInspector.Frame.addEventListener(WebInspector.Frame.Event.MainResourceDidChange, this._mainResourceDidChange, this);
-    WebInspector.Frame.addEventListener(WebInspector.Frame.Event.ProvisionalLoadCommitted, this._provisionalLoadCommitted, this);
 
     document.addEventListener("DOMContentLoaded", this.contentLoaded.bind(this));
 
@@ -721,7 +724,7 @@ WebInspector._mainResourceDidChange = function(event)
     this.updateWindowTitle();
 }
 
-WebInspector._provisionalLoadCommitted = function(event)
+WebInspector._provisionalLoadStarted = function(event)
 {
     if (!event.target.isMainFrame())
         return;

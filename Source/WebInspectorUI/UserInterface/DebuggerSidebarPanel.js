@@ -158,7 +158,7 @@ WebInspector.DebuggerSidebarPanel.prototype = {
         WebInspector.NavigationSidebarPanel.prototype.saveStateToCookie.call(this, cookie);
     },
 
-    restoreStateFromCookie: function(cookie)
+    restoreStateFromCookie: function(cookie, relaxedMatchDelay)
     {
         console.assert(cookie);
 
@@ -168,7 +168,7 @@ WebInspector.DebuggerSidebarPanel.prototype = {
         else if (cookie[WebInspector.DebuggerSidebarPanel.SelectedAllUncaughtExceptionsCookieKey])
             this._allUncaughtExceptionsBreakpointTreeElement.revealAndSelect();
         else
-            WebInspector.NavigationSidebarPanel.prototype.restoreStateFromCookie.call(this, cookie);
+            WebInspector.NavigationSidebarPanel.prototype.restoreStateFromCookie.call(this, cookie, relaxedMatchDelay);
     },
 
     // Private

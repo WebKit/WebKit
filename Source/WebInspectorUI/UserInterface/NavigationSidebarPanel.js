@@ -152,6 +152,11 @@ WebInspector.NavigationSidebarPanel.prototype = {
         return this._filterBar;
     },
 
+    get restoringState()
+    {
+        return this._restoringState;
+    },
+
     createContentTreeOutline: function(dontHideByDefault, suppressFiltering)
     {
         var contentTreeOutlineElement = document.createElement("ol");
@@ -224,6 +229,7 @@ WebInspector.NavigationSidebarPanel.prototype = {
     restoreStateFromCookie: function(cookie, relaxedMatchDelay)
     {
         this._pendingViewStateCookie = cookie;
+        this._restoringState = true;
 
         // Check if any existing tree elements in any outline match the cookie.
         this._checkOutlinesForPendingViewStateCookie();
@@ -231,10 +237,15 @@ WebInspector.NavigationSidebarPanel.prototype = {
         if (this._finalAttemptToRestoreViewStateTimeout)
             clearTimeout(this._finalAttemptToRestoreViewStateTimeout);
 
-        var finalAttemptToRestoreViewStateFromCookie = function() {
+        function finalAttemptToRestoreViewStateFromCookie()
+        {
             delete this._finalAttemptToRestoreViewStateTimeout;
+
             this._checkOutlinesForPendingViewStateCookie(true);
-        };
+
+            delete this._pendingViewStateCookie;
+            delete this._restoringState;
+        }
 
         // If the specific tree element wasn't found, we may need to wait for the resources
         // to be registered. We try one last time (match type only) after an arbitrary amount of timeout.
@@ -563,7 +574,9 @@ WebInspector.NavigationSidebarPanel.prototype = {
     _isTreeElementWithoutRepresentedObject: function(treeElement)
     {
         return treeElement instanceof WebInspector.FolderTreeElement
-            || treeElement instanceof WebInspector.DatabaseHostTreeElement;
+            || treeElement instanceof WebInspector.DatabaseHostTreeElement
+            || typeof treeElement.representedObject === "string"
+            || treeElement.representedObject instanceof String;
     },
 
     _checkOutlinesForPendingViewStateCookie: function(matchTypeOnly)
@@ -627,10 +640,20 @@ WebInspector.NavigationSidebarPanel.prototype = {
         }, this);
 
         if (matchedElement) {
-            matchedElement.revealAndSelect();
+            matchedElement.revealAndSelect(true, false);
+
             delete this._pendingViewStateCookie;
-            if (this._finalAttemptToRestoreViewStateTimeout)
+
+            // Delay clearing the restoringState flag until the next runloop so listeners
+            // checking for it in this runloop still know state was being restored.
+            setTimeout(function() {
+                delete this._restoringState;
+            }.bind(this));
+
+            if (this._finalAttemptToRestoreViewStateTimeout) {
                 clearTimeout(this._finalAttemptToRestoreViewStateTimeout);
+                delete this._finalAttemptToRestoreViewStateTimeout;
+            }
         }
     }
 };

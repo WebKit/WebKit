@@ -276,6 +276,8 @@ TreeOutline.prototype._rememberTreeElement = function(element)
 
 TreeOutline.prototype._forgetTreeElement = function(element)
 {
+    if (this.selectedTreeElement === element)
+        this.selectedTreeElement = null;
     if (this._knownTreeElements[element.identifier])
         this._knownTreeElements[element.identifier].remove(element, true);
 }

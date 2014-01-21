@@ -1,3 +1,50 @@
+2014-01-13  Timothy Hatcher  <timothy@apple.com>
+
+        Implement state cookie support for WebInspector.TimelineSidebarPanel.
+
+        https://bugs.webkit.org/show_bug.cgi?id=126921
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/DebuggerSidebarPanel.js:
+        (WebInspector.DebuggerSidebarPanel.prototype.restoreStateFromCookie):
+        Drive-by fix to pass along relaxedMatchDelay to the superclass. 
+
+        * UserInterface/Main.js:
+        (WebInspector.loaded):
+        (WebInspector._provisionalLoadStarted):
+        Listen for ProvisionalLoadStarted instead of ProvisionalLoadCommitted to save the cookie
+        before the TimelineRecording is reset and clears the UI.
+
+        * UserInterface/NavigationSidebarPanel.js:
+        (WebInspector.NavigationSidebarPanel.prototype.get restoringState): Added.
+        (WebInspector.NavigationSidebarPanel.prototype.restoreStateFromCookie.finalAttemptToRestoreViewStateFromCookie):
+        Delete _pendingViewStateCookie since this was the final attempt.
+        (WebInspector.NavigationSidebarPanel.prototype.restoreStateFromCookie):
+        (WebInspector.NavigationSidebarPanel.prototype._isTreeElementWithoutRepresentedObject): Block string represented objects.
+        (WebInspector.NavigationSidebarPanel.prototype._checkElementsForPendingViewStateCookie):
+
+        * UserInterface/OverviewTimelineView.js:
+        (WebInspector.OverviewTimelineView.prototype._treeElementSelected):
+
+        * UserInterface/ResourceSidebarPanel.js:
+        (WebInspector.ResourceSidebarPanel.prototype.treeElementForRepresentedObject):
+        Drive-by fix to null check parentFrame since it can be null. Was causing an exception while working on this.
+
+        * UserInterface/SourceCodeTimeline.js:
+        (WebInspector.SourceCodeTimeline):
+        (WebInspector.SourceCodeTimeline.prototype.saveIdentityToCookie):
+
+        * UserInterface/TimelineSidebarPanel.js:
+        (WebInspector.TimelineSidebarPanel.prototype.canShowDifferentContentView):
+        (WebInspector.TimelineSidebarPanel.prototype.saveStateToCookie):
+        (WebInspector.TimelineSidebarPanel.prototype.restoreStateFromCookie):
+
+        * UserInterface/TreeOutline.js:
+        (TreeOutline.prototype._forgetTreeElement):
+        Drive-by fix to clear selectedTreeElement if it is removed from the tree. Was causing removed TreeElements to be
+        saved as a cookie since it was still the selected item.
+
 2014-01-11  Timothy Hatcher  <timothy@apple.com>
 
         Implement bar graph rendering for WebInspector.OverviewTimelineView.

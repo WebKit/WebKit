@@ -217,7 +217,7 @@ WebInspector.ResourceSidebarPanel.prototype = {
         // A custom implementation is needed for this since the frames are populated lazily.
 
         // The Frame is used as the representedObject instead of the main resource in our tree.
-        if (representedObject instanceof WebInspector.Resource && representedObject.parentFrame.mainResource === representedObject)
+        if (representedObject instanceof WebInspector.Resource && representedObject.parentFrame && representedObject.parentFrame.mainResource === representedObject)
             representedObject = representedObject.parentFrame;
 
         function isAncestor(ancestor, resourceOrFrame)
