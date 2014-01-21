@@ -1,3 +1,9 @@
+2014-01-21  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix make distcheck.
+
+        * GNUmakefile.am: Remove non existent files from EXTRA_DIST.
+
 2013-12-05  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Fix GObject introspection warnings in webkitspellchecker
