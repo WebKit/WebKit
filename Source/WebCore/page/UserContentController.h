@@ -27,6 +27,7 @@
 #define UserContentController_h
 
 #include "UserScriptTypes.h"
+#include "UserStyleSheetTypes.h"
 #include <wtf/HashSet.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
@@ -37,6 +38,7 @@ class DOMWrapperWorld;
 class Page;
 class URL;
 class UserScript;
+class UserStyleSheet;
 
 class UserContentController : public RefCounted<UserContentController> {
 public:
@@ -52,14 +54,23 @@ public:
     void removeUserScript(DOMWrapperWorld&, const URL&);
     void removeUserScripts(DOMWrapperWorld&);
 
+    const UserStyleSheetMap* userStyleSheets() const { return m_userStyleSheets.get(); }
+
+    void addUserStyleSheet(DOMWrapperWorld&, std::unique_ptr<UserStyleSheet>, UserStyleInjectionTime);
+    void removeUserStyleSheet(DOMWrapperWorld&, const URL&);
+    void removeUserStyleSheets(DOMWrapperWorld&);
+
     void removeAllUserContent();
 
 private:
     UserContentController();
 
+    void invalidateInjectedStyleSheetCacheInAllFrames();
+
     HashSet<Page*> m_pages;
 
     std::unique_ptr<UserScriptMap> m_userScripts;
+    std::unique_ptr<UserStyleSheetMap> m_userStyleSheets;
 };
 
 } // namespace WebCore

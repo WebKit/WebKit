@@ -286,15 +286,8 @@ void PageGroup::addUserScriptToWorld(DOMWrapperWorld& world, const String& sourc
 void PageGroup::addUserStyleSheetToWorld(DOMWrapperWorld& world, const String& source, const URL& url, const Vector<String>& whitelist, const Vector<String>& blacklist, UserContentInjectedFrames injectedFrames, UserStyleLevel level, UserStyleInjectionTime injectionTime)
 {
     auto userStyleSheet = std::make_unique<UserStyleSheet>(source, url, whitelist, blacklist, injectedFrames, level);
-    if (!m_userStyleSheets)
-        m_userStyleSheets = std::make_unique<UserStyleSheetMap>();
-    std::unique_ptr<UserStyleSheetVector>& styleSheetsInWorld = m_userStyleSheets->add(&world, nullptr).iterator->value;
-    if (!styleSheetsInWorld)
-        styleSheetsInWorld = std::make_unique<UserStyleSheetVector>();
-    styleSheetsInWorld->append(std::move(userStyleSheet));
+    m_userContentController->addUserStyleSheet(world, std::move(userStyleSheet), injectionTime);
 
-    if (injectionTime == InjectInExistingDocuments)
-        invalidateInjectedStyleSheetCacheInAllFrames();
 }
 
 void PageGroup::removeUserScriptFromWorld(DOMWrapperWorld& world, const URL& url)
@@ -304,29 +297,7 @@ void PageGroup::removeUserScriptFromWorld(DOMWrapperWorld& world, const URL& url
 
 void PageGroup::removeUserStyleSheetFromWorld(DOMWrapperWorld& world, const URL& url)
 {
-    if (!m_userStyleSheets)
-        return;
-
-    auto it = m_userStyleSheets->find(&world);
-    bool sheetsChanged = false;
-    if (it == m_userStyleSheets->end())
-        return;
-    
-    auto stylesheets = it->value.get();
-    for (int i = stylesheets->size() - 1; i >= 0; --i) {
-        if (stylesheets->at(i)->url() == url) {
-            stylesheets->remove(i);
-            sheetsChanged = true;
-        }
-    }
-        
-    if (!sheetsChanged)
-        return;
-
-    if (stylesheets->isEmpty())
-        m_userStyleSheets->remove(it);
-
-    invalidateInjectedStyleSheetCacheInAllFrames();
+    m_userContentController->removeUserStyleSheet(world, url);
 }
 
 void PageGroup::removeUserScriptsFromWorld(DOMWrapperWorld& world)
@@ -336,34 +307,12 @@ void PageGroup::removeUserScriptsFromWorld(DOMWrapperWorld& world)
 
 void PageGroup::removeUserStyleSheetsFromWorld(DOMWrapperWorld& world)
 {
-    if (!m_userStyleSheets)
-        return;
-
-    if (!m_userStyleSheets->remove(&world))
-        return;
-
-    invalidateInjectedStyleSheetCacheInAllFrames();
+    m_userContentController->removeUserStyleSheets(world);
 }
 
 void PageGroup::removeAllUserContent()
 {
     m_userContentController->removeAllUserContent();
-
-    if (m_userStyleSheets) {
-        m_userStyleSheets = nullptr;
-        invalidateInjectedStyleSheetCacheInAllFrames();
-    }
-}
-
-void PageGroup::invalidateInjectedStyleSheetCacheInAllFrames()
-{
-    // Clear our cached sheets and have them just reparse.
-    for (auto it = m_pages.begin(), end = m_pages.end(); it != end; ++it) {
-        for (Frame* frame = &(*it)->mainFrame(); frame; frame = frame->tree().traverseNext()) {
-            frame->document()->styleSheetCollection().invalidateInjectedStyleSheetCache();
-            frame->document()->styleResolverChanged(DeferRecalcStyle);
-        }
-    }
 }
 
 #if ENABLE(VIDEO_TRACK)

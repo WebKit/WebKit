@@ -704,7 +704,7 @@ void Frame::injectUserScripts(UserScriptInjectionTime injectionTime)
     if (loader().stateMachine()->creatingInitialEmptyDocument() && !settings().shouldInjectUserScriptsInInitialEmptyDocument())
         return;
 
-    UserContentController* userContentController = m_page->userContentController();
+    const auto* userContentController = m_page->userContentController();
     if (!userContentController)
         return;
 

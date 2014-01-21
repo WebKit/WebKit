@@ -100,8 +100,6 @@ namespace WebCore {
         void removeUserStyleSheetsFromWorld(DOMWrapperWorld&);
         void removeAllUserContent();
 
-        const UserStyleSheetMap* userStyleSheets() const { return m_userStyleSheets.get(); }
-
         GroupSettings& groupSettings() const { return *m_groupSettings; }
 
 #if ENABLE(VIDEO_TRACK)
@@ -111,7 +109,6 @@ namespace WebCore {
 
     private:
         void addVisitedLink(LinkHash);
-        void invalidateInjectedStyleSheetCacheInAllFrames();
 
         String m_name;
         HashSet<Page*> m_pages;
@@ -124,7 +121,6 @@ namespace WebCore {
         HashMap<RefPtr<SecurityOrigin>, RefPtr<StorageNamespace>> m_transientLocalStorageMap;
 
         RefPtr<UserContentController> m_userContentController;
-        std::unique_ptr<UserStyleSheetMap> m_userStyleSheets;
 
         const std::unique_ptr<GroupSettings> m_groupSettings;
 

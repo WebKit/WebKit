@@ -27,7 +27,11 @@
 #include "UserContentController.h"
 
 #include "DOMWrapperWorld.h"
+#include "Document.h"
+#include "MainFrame.h"
+#include "Page.h"
 #include "UserScript.h"
+#include "UserStyleSheet.h"
 
 namespace WebCore {
 
@@ -94,9 +98,77 @@ void UserContentController::removeUserScripts(DOMWrapperWorld& world)
     m_userScripts->remove(&world);
 }
 
+void UserContentController::addUserStyleSheet(DOMWrapperWorld& world, std::unique_ptr<UserStyleSheet> userStyleSheet, UserStyleInjectionTime injectionTime)
+{
+    if (!m_userStyleSheets)
+        m_userStyleSheets = std::make_unique<UserStyleSheetMap>();
+
+    auto& styleSheetsInWorld = m_userStyleSheets->add(&world, nullptr).iterator->value;
+    if (!styleSheetsInWorld)
+        styleSheetsInWorld = std::make_unique<UserStyleSheetVector>();
+    styleSheetsInWorld->append(std::move(userStyleSheet));
+
+    if (injectionTime == InjectInExistingDocuments)
+        invalidateInjectedStyleSheetCacheInAllFrames();
+}
+
+void UserContentController::removeUserStyleSheet(DOMWrapperWorld& world, const URL& url)
+{
+    if (!m_userStyleSheets)
+        return;
+
+    auto it = m_userStyleSheets->find(&world);
+    if (it == m_userStyleSheets->end())
+        return;
+
+    auto& stylesheets = *it->value;
+
+    bool sheetsChanged = false;
+    for (int i = stylesheets.size() - 1; i >= 0; --i) {
+        if (stylesheets[i]->url() == url) {
+            stylesheets.remove(i);
+            sheetsChanged = true;
+        }
+    }
+
+    if (!sheetsChanged)
+        return;
+
+    if (stylesheets.isEmpty())
+        m_userStyleSheets->remove(it);
+
+    invalidateInjectedStyleSheetCacheInAllFrames();
+}
+
+void UserContentController::removeUserStyleSheets(DOMWrapperWorld& world)
+{
+    if (!m_userStyleSheets)
+        return;
+
+    if (!m_userStyleSheets->remove(&world))
+        return;
+
+    invalidateInjectedStyleSheetCacheInAllFrames();
+}
+
 void UserContentController::removeAllUserContent()
 {
     m_userScripts = nullptr;
+
+    if (m_userStyleSheets) {
+        m_userStyleSheets = nullptr;
+        invalidateInjectedStyleSheetCacheInAllFrames();
+    }
+}
+
+void UserContentController::invalidateInjectedStyleSheetCacheInAllFrames()
+{
+    for (auto& page : m_pages) {
+        for (Frame* frame = &page->mainFrame(); frame; frame = frame->tree().traverseNext()) {
+            frame->document()->styleSheetCollection().invalidateInjectedStyleSheetCache();
+            frame->document()->styleResolverChanged(DeferRecalcStyle);
+        }
+    }
 }
 
 } // namespace WebCore

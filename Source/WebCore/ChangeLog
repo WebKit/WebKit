@@ -1,3 +1,28 @@
+2014-01-20  Anders Carlsson  <andersca@apple.com>
+
+        Move user style sheet handling to UserContentController
+        https://bugs.webkit.org/show_bug.cgi?id=127322
+        <rdar://problem/15861296>
+
+        Reviewed by Andreas Kling.
+
+        * dom/DocumentStyleSheetCollection.cpp:
+        (WebCore::DocumentStyleSheetCollection::updateInjectedStyleSheetCache):
+        * page/PageGroup.cpp:
+        (WebCore::PageGroup::addUserStyleSheetToWorld):
+        (WebCore::PageGroup::removeUserStyleSheetFromWorld):
+        (WebCore::PageGroup::removeUserStyleSheetsFromWorld):
+        (WebCore::PageGroup::removeAllUserContent):
+        * page/PageGroup.h:
+        * page/UserContentController.cpp:
+        (WebCore::UserContentController::addUserStyleSheet):
+        (WebCore::UserContentController::removeUserStyleSheet):
+        (WebCore::UserContentController::removeUserStyleSheets):
+        (WebCore::UserContentController::removeAllUserContent):
+        (WebCore::UserContentController::invalidateInjectedStyleSheetCacheInAllFrames):
+        * page/UserContentController.h:
+        (WebCore::UserContentController::userStyleSheets):
+
 2014-01-20  Benjamin Poulain  <benjamin@webkit.org>
 
         Add a nicer way to iterate over all the attributes of an element
