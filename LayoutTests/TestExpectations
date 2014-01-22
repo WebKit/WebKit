@@ -71,3 +71,15 @@ webkit.org/b/124660 inspector-protocol/model/highlight-shape-outside.html [ Fail
 webkit.org/b/126142 css3/calc/transitions-dependent.html [ Pass Failure ]
 
 webkit.org/b/124932 media/video-size.html [ Pass Failure ]
+
+webkit.org/b/126166 [ Debug ] js/dfg-int32array.html [ Skip ]
+webkit.org/b/126166 [ Debug ] js/dfg-uint16array.html [ Skip ]
+webkit.org/b/126166 [ Debug ] js/dfg-float32array.html [ Skip ]
+webkit.org/b/126166 [ Debug ] js/dfg-uint8clampedarray.html [ Skip ]
+webkit.org/b/126166 [ Debug ] js/dfg-int8array.html [ Skip ]
+webkit.org/b/126166 [ Debug ] js/dfg-float64array.html [ Skip ]
+webkit.org/b/126166 [ Debug ] js/dfg-uint8array.html [ Skip ]
+webkit.org/b/126166 [ Debug ] js/dfg-int16array.html [ Skip ]
+webkit.org/b/126166 [ Debug ] js/dfg-int32array-overflow-values.html [ Skip ]
+webkit.org/b/126166 [ Debug ] js/dfg-uint32array.html [ Skip ]
+webkit.org/b/126166 [ Debug ] js/dfg-uint32array-overflow-values.html [ Skip ]
