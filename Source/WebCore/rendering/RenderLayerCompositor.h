@@ -375,6 +375,8 @@ private:
 
     void updateOverflowControlsLayers();
 
+    void updateScrollLayerPosition();
+
     void notifyIFramesOfCompositingChange();
 
     bool isFlushingLayers() const { return m_flushingLayers; }

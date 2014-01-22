@@ -1,3 +1,23 @@
+2014-01-22  Antti Koivisto  <antti@apple.com>
+
+        Avoid unthrottled layer flushes triggered by RenderLayerCompositor::ensureRootLayer
+        https://bugs.webkit.org/show_bug.cgi?id=127426
+
+        Reviewed by Anders Carlsson.
+        
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::updateScrollLayerPosition):
+        (WebCore::RenderLayerCompositor::frameViewDidScroll):
+
+            Factor scroll layer position update to a function.
+
+        (WebCore::RenderLayerCompositor::ensureRootLayer):
+        
+            Stop calling frameViewDidChangeSize/frameViewDidScroll. Instead call the relevent functions
+            directly. This avoid unthrottled layer flush that is done when the view actually scrolls.
+
+        * rendering/RenderLayerCompositor.h:
+
 2014-01-22  Mihai Tica  <mitica@adobe.com>
 
         [CSS Background Blending] -webkit-background-blend-mode fails for certain SVG files

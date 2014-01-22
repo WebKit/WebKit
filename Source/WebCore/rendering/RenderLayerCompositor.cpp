@@ -1496,18 +1496,9 @@ bool RenderLayerCompositor::hasCoordinatedScrolling() const
     return scrollingCoordinator && scrollingCoordinator->coordinatesScrollingForFrameView(&m_renderView.frameView());
 }
 
-void RenderLayerCompositor::frameViewDidScroll()
+void RenderLayerCompositor::updateScrollLayerPosition()
 {
-    if (!m_scrollLayer)
-        return;
-
-    // If there's a scrolling coordinator that manages scrolling for this frame view,
-    // it will also manage updating the scroll layer position.
-    if (hasCoordinatedScrolling()) {
-        // We have to schedule a flush in order for the main TiledBacking to update its tile coverage.
-        scheduleLayerFlushNow();
-        return;
-    }
+    ASSERT(m_scrollLayer);
 
     FrameView& frameView = m_renderView.frameView();
     IntPoint scrollPosition = frameView.scrollPosition();
@@ -1522,6 +1513,22 @@ void RenderLayerCompositor::frameViewDidScroll()
 
     if (GraphicsLayer* fixedBackgroundLayer = fixedRootBackgroundLayer())
         fixedBackgroundLayer->setPosition(IntPoint(frameView.scrollOffsetForFixedPosition()));
+}
+
+void RenderLayerCompositor::frameViewDidScroll()
+{
+    if (!m_scrollLayer)
+        return;
+
+    // If there's a scrolling coordinator that manages scrolling for this frame view,
+    // it will also manage updating the scroll layer position.
+    if (hasCoordinatedScrolling()) {
+        // We have to schedule a flush in order for the main TiledBacking to update its tile coverage.
+        scheduleLayerFlushNow();
+        return;
+    }
+
+    updateScrollLayerPosition();
 }
 
 void RenderLayerCompositor::frameViewDidAddOrRemoveScrollbars()
@@ -3135,8 +3142,14 @@ void RenderLayerCompositor::ensureRootLayer()
             m_clipLayer->addChild(m_scrollLayer.get());
             m_scrollLayer->addChild(m_rootContentLayer.get());
 
-            frameViewDidChangeSize();
-            frameViewDidScroll();
+            m_clipLayer->setSize(m_renderView.frameView().unscaledVisibleContentSize());
+
+            updateOverflowControlsLayers();
+
+            if (hasCoordinatedScrolling())
+                scheduleLayerFlush(true);
+            else
+                updateScrollLayerPosition();
         }
     } else {
         if (m_overflowControlsHostLayer) {
