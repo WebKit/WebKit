@@ -28,9 +28,16 @@
 #if WK_API_ENABLED
 
 #import <Foundation/Foundation.h>
+#import <JavaScriptCore/JavaScriptCore.h>
+
+@class WKWebProcessPlugInFrame;
 
 WK_API_CLASS
 @interface WKWebProcessPlugInNodeHandle : NSObject
+
++ (WKWebProcessPlugInNodeHandle *)nodeHandleWithJSValue:(JSValue *)value inContext:(JSContext *)context;
+- (WKWebProcessPlugInFrame *)htmlIFrameElementContentFrame;
+
 @end
 
 #endif // WK_API_ENABLED

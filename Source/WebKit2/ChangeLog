@@ -1,3 +1,18 @@
+2014-01-22  Yongjun Zhang  <yongjun_zhang@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=127380
+        Add more methods to WKWebProcessPlugInNodeHandle.
+
+        Reviewed by Sam Weinig.
+
+        Add a static method that creates a WKWebProcessPlugInNodeHandle from a JSValue* and a JSContext*.  Also
+        add a method to return the iframe's content frame from a WKWebProcessPlugInNodeHandle.
+ 
+        * WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInNodeHandle.h:
+        * WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInNodeHandle.mm:
+        (+[WKWebProcessPlugInNodeHandle nodeHandleWithJSValue:inContext:]):
+        (-[WKWebProcessPlugInNodeHandle htmlIFrameElementContentFrame]):
+
 2014-01-22  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Fix GTK+ build with CUSTOM_PROTOCOL enabled after r162449.

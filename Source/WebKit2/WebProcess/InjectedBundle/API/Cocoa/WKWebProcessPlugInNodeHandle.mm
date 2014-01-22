@@ -26,6 +26,8 @@
 #import "config.h"
 #import "WKWebProcessPlugInNodeHandleInternal.h"
 
+#import "WKWebProcessPlugInFrameInternal.h"
+
 #if WK_API_ENABLED
 
 using namespace WebKit;
@@ -38,6 +40,21 @@ using namespace WebKit;
 {
     _nodeHandle->~InjectedBundleNodeHandle();
     [super dealloc];
+}
+
++ (WKWebProcessPlugInNodeHandle *)nodeHandleWithJSValue:(JSValue *)value inContext:(JSContext *)context
+{
+    JSContextRef contextRef = [context JSGlobalContextRef];
+    JSObjectRef objectRef = JSValueToObject(contextRef, [value JSValueRef], 0);
+    RefPtr<InjectedBundleNodeHandle> nodeHandle = InjectedBundleNodeHandle::getOrCreate(contextRef, objectRef);
+
+    return wrapper(*nodeHandle.release().leakRef());
+}
+
+- (WKWebProcessPlugInFrame *)htmlIFrameElementContentFrame
+{
+    RefPtr<WebFrame> frame = _nodeHandle->htmlIFrameElementContentFrame();
+    return wrapper(*frame.release().leakRef());
 }
 
 #pragma mark WKObject protocol implementation
