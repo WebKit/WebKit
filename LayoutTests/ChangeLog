@@ -1,3 +1,13 @@
+2014-01-22  Mihnea Ovidenie  <mihnea@adobe.com>
+
+        [CSSRegions] Incorrect layout of a region pseudo children
+        https://bugs.webkit.org/show_bug.cgi?id=126146
+
+        Reviewed by David Hyatt.
+
+        * fast/regions/collapse-anonymous-region-expected.html: Added.
+        * fast/regions/collapse-anonymous-region.html: Added.
+
 2014-01-21  Ryuan Choi  <ryuan.choi@samsung.com>
 
         Remove unused "acceleratedCompositingForScrollableFramesEnabled" setting

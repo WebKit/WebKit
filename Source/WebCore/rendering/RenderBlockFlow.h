@@ -266,6 +266,7 @@ public:
     }
     void layoutLineGridBox();
 
+    virtual bool canCollapseAnonymousBlockChild() const override { return !renderNamedFlowFragment(); }
     RenderNamedFlowFragment* renderNamedFlowFragment() const { return hasRareBlockFlowData() ? rareBlockFlowData()->m_renderNamedFlowFragment : nullptr; }
     void setRenderNamedFlowFragment(RenderNamedFlowFragment*);
 
