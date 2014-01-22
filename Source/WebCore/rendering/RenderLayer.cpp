@@ -6937,7 +6937,7 @@ void RenderLayer::filterNeedsRepaint()
 
 void RenderLayer::paintNamedFlowThreadInsideRegion(GraphicsContext* context, RenderNamedFlowFragment* region, LayoutRect paintDirtyRect, LayoutPoint paintOffset, PaintBehavior paintBehavior, PaintLayerFlags paintFlags)
 {
-    LayoutRect regionContentBox = toRenderBox(region->layerOwner())->contentBoxRect();
+    LayoutRect regionContentBox = toRenderBox(region->layerOwner()).contentBoxRect();
     LayoutSize moveOffset = region->flowThreadPortionLocation() - (paintOffset + regionContentBox.location());
     IntPoint adjustedPaintOffset = roundedIntPoint(-moveOffset);
     paintDirtyRect.move(moveOffset);

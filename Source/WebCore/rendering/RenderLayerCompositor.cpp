@@ -1288,7 +1288,7 @@ void RenderLayerCompositor::computeRegionCompositingRequirements(RenderNamedFlow
     }
 
     if (overlapMap)
-        overlapMap->geometryMap().popMappingsToAncestor(region->layerOwner());
+        overlapMap->geometryMap().popMappingsToAncestor(&region->layerOwner());
 }
 
 void RenderLayerCompositor::setCompositingParent(RenderLayer& childLayer, RenderLayer* parentLayer)

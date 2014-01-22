@@ -65,9 +65,8 @@ public:
     // When the content inside the region requires the region to have a layer, the layer will be created on the region's
     // parent renderer instead.
     // This method returns that renderer holding the layer.
-    // The return value may be null.
-    RenderLayerModelObject* layerOwner() const { return parent() && parent()->isRenderLayerModelObject() ? toRenderLayerModelObject(parent())
-        : nullptr; }
+    // The return value cannot be null because CSS Regions create Stacking Contexts (which means they create layers).
+    RenderLayerModelObject& layerOwner() const { return *toRenderLayerModelObject(parent()); }
 
     bool hasCustomRegionStyle() const { return m_hasCustomRegionStyle; }
     void setHasCustomRegionStyle(bool hasCustomRegionStyle) { m_hasCustomRegionStyle = hasCustomRegionStyle; }

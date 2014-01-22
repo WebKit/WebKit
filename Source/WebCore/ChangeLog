@@ -1,3 +1,25 @@
+2014-01-22  Mihai Maerean  <mmaerean@adobe.com>
+
+        [CSS Regions] layerOwner in RenderNamedFlowFragment cannot return null
+        https://bugs.webkit.org/show_bug.cgi?id=127343
+
+        Reviewed by Sam Weinig.
+
+        RenderNamedFlowFragment::layerOwner cannot return null because regions create stacking
+        contexts which create layers.
+
+        No new tests, no functional change.
+
+        * rendering/RenderFlowThread.cpp:
+        (WebCore::RenderFlowThread::hasCompositingRegionDescendant):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::calculateClipRects):
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::adjustAncestorCompositingBoundsForFlowThread):
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::computeRegionCompositingRequirements):
+        * rendering/RenderNamedFlowFragment.h:
+
 2014-01-22  Antti Koivisto  <antti@apple.com>
 
         Avoid unthrottled layer flushes triggered by RenderLayerCompositor::ensureRootLayer
