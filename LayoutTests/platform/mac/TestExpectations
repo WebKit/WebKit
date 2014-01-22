@@ -1334,9 +1334,6 @@ webkit.org/b/117756 media/track/media-element-enqueue-event-crash.html [ Skip ]
 webkit.org/b/126889 fast/forms/input-widths.html [ Failure ]
 webkit.org/b/126889 fast/forms/number/number-size.html [ Failure ]
 
-# webkit.org/b/124784 needs revisiting.
-webkit.org/b/124784 fast/shapes/shape-inside/shape-inside-subpixel-rectangle-top.html [ ImageOnlyFailure ]
-
 # Subpixel: off-by-1 pixel rendering on mathml
 webkit.org/b/126897 mathml/presentation/bug95015.html [ ImageOnlyFailure ]
 

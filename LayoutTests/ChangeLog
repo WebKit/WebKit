@@ -1,5 +1,22 @@
 2014-01-22  Zalan Bujtas  <zalan@apple.com>
 
+        [CSS Shapes] shape-inside rectangle layout can fail
+        https://bugs.webkit.org/show_bug.cgi?id=124784
+
+        Reviewed by Darin Adler.
+
+        Early subpixel rounding/flooring/ceiling can have unwanted
+        side effect on the final pixel value. Delay pixel
+        conversions as much as possible.
+
+        Existing test is changed to reflect subpixel functionality.
+
+        * fast/shapes/shape-inside/shape-inside-subpixel-rectangle-top-expected.html:
+        * platform/mac/TestExpectations:
+        * platform/win/TestExpectations:
+
+2014-01-22  Zalan Bujtas  <zalan@apple.com>
+
         Subpixel Layout: SimpleLineLayout needs more position rounding to match InlineFlowBox layout.
         https://bugs.webkit.org/show_bug.cgi?id=127404
 

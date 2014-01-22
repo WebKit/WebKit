@@ -2870,9 +2870,6 @@ media/media-source [ Failure ]
 webkit.org/b/125855 accessibility/aria-checked-mixed-value.html [ Skip ]
 
 # Subpixel failures
-# webkit.org/b/124784 needs revisiting.
-webkit.org/b/124784 fast/shapes/shape-inside/shape-inside-subpixel-rectangle-top.html [ ImageOnlyFailure ]
-
 # Subpixel: off-by-1 pixel rendering on mathml
 webkit.org/b/126897 mathml/presentation/bug95015.html [ ImageOnlyFailure ]
 

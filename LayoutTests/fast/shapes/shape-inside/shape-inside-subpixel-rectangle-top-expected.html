@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
+<script src="../resources/subpixel-utils.js"></script>
 <style>
     #shape-inside {
         font: 100px/1 Ahem, sans-serif;
@@ -8,12 +9,19 @@
         color: green;
         background-color: grey;
         width: 200px;
-        height: 198px;
-        padding-top: 2px;
+        height: 198.7px;
+        padding-top: 1.3px;
     }
 </style>
 </head>
 <body>
     <div id="shape-inside">X</div>
+<script>
+    if (!SubPixelLayout.isEnabled()) {
+        var divX = document.getElementById("shape-inside");
+        divX.style.paddingTop = "2px";
+        divX.offsetHeight;
+        }
+</script>
 </body>
 </html>
