@@ -101,6 +101,16 @@ using namespace WebKit;
     WKPreferencesSetPluginsEnabled(WKPageGroupGetPreferences(toAPI(_pageGroup.get())), allowsPlugIns);
 }
 
+- (BOOL)privateBrowsingEnabled
+{
+    return WKPreferencesGetPrivateBrowsingEnabled(WKPageGroupGetPreferences(toAPI(_pageGroup.get())));
+}
+
+- (void)setPrivateBrowsingEnabled:(BOOL)enablePrivateBrowsing
+{
+    WKPreferencesSetPrivateBrowsingEnabled(WKPageGroupGetPreferences(toAPI(_pageGroup.get())), enablePrivateBrowsing);
+}
+
 static WKRetainPtr<WKArrayRef> createWKArray(NSArray *array)
 {
     NSUInteger count = [array count];

@@ -1,3 +1,17 @@
+2014-01-22  Alice Barraclough  <alice.liu@apple.com>
+
+        [WK2] add cocoa API for private browsing setting
+        https://bugs.webkit.org/show_bug.cgi?id=127391
+
+        Reviewed by Sam Weinig.
+
+        * UIProcess/API/Cocoa/WKBrowsingContextGroup.h:
+        * UIProcess/API/Cocoa/WKBrowsingContextGroup.mm:
+        (-[WKBrowsingContextGroup privateBrowsingEnabled]):
+        (-[WKBrowsingContextGroup setPrivateBrowsingEnabled:]):
+        Adding some API for the private Browsing setting. Reaches through
+        to the WKPageGroup's preferences.
+
 2014-01-22  Anders Carlsson  <andersca@apple.com>
 
         Add WKProcessClass class

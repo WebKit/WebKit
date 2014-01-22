@@ -56,6 +56,11 @@ WK_API_CLASS
 */
 @property BOOL allowsPlugIns;
 
+/* Setting to control whether private browsing is enabled.
+ Default: NO
+ */
+@property BOOL privateBrowsingEnabled;
+
 @end
 
 #endif // WK_API_ENABLED
