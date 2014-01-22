@@ -224,7 +224,7 @@ CanvasRenderingContext* HTMLCanvasElement::getContext(const String& type, Canvas
 
         if (is3dType(type)) {
             if (m_context && !m_context->is3d())
-                return 0;
+                return nullptr;
             if (!m_context) {
                 Page* page = document().page();
                 if (page && !document().url().isLocalFile()) {
@@ -625,13 +625,13 @@ void HTMLCanvasElement::createImageBuffer() const
 
 GraphicsContext* HTMLCanvasElement::drawingContext() const
 {
-    return buffer() ? m_imageBuffer->context() : 0;
+    return buffer() ? m_imageBuffer->context() : nullptr;
 }
 
 GraphicsContext* HTMLCanvasElement::existingDrawingContext() const
 {
     if (!m_hasCreatedImageBuffer)
-        return 0;
+        return nullptr;
 
     return drawingContext();
 }

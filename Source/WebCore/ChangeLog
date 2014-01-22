@@ -1,3 +1,15 @@
+2014-01-21  Jae Hyun Park  <jae.park@company100.net>
+
+        Use nullptr in HTMLCanvasElement
+        https://bugs.webkit.org/show_bug.cgi?id=127388
+
+        Reviewed by Gyuyoung Kim.
+
+        * html/HTMLCanvasElement.cpp:
+        (WebCore::HTMLCanvasElement::getContext):
+        (WebCore::HTMLCanvasElement::drawingContext):
+        (WebCore::HTMLCanvasElement::existingDrawingContext):
+
 2014-01-21  László Langó  <llango.u-szeged@partner.samsung.com>
 
         Assertion failure in Range::nodeWillBeRemoved
