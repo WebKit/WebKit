@@ -63,7 +63,7 @@ void Download::start()
     m_nsURLDownload = adoptNS([[NSURLDownload alloc] initWithRequest:m_request.nsURLRequest(UpdateHTTPBody) delegate:m_delegate.get()]);
 
     // FIXME: Allow this to be changed by the client.
-    [m_nsURLDownload.get() setDeletesFileUponFailure:NO];
+    [m_nsURLDownload setDeletesFileUponFailure:NO];
 }
 
 void Download::startWithHandle(ResourceHandle* handle, const ResourceResponse& response)
@@ -79,15 +79,15 @@ void Download::startWithHandle(ResourceHandle* handle, const ResourceResponse& r
                                                                proxy:nil];
 
     // FIXME: Allow this to be changed by the client.
-    [m_nsURLDownload.get() setDeletesFileUponFailure:NO];
+    [m_nsURLDownload setDeletesFileUponFailure:NO];
 }
 
 void Download::cancel()
 {
-    [m_nsURLDownload.get() cancel];
+    [m_nsURLDownload cancel];
 
-    RetainPtr<NSData> resumeData = [m_nsURLDownload.get() resumeData];
-    didCancel(IPC::DataReference(reinterpret_cast<const uint8_t*>([resumeData.get() bytes]), [resumeData.get() length]));
+    RetainPtr<NSData> resumeData = [m_nsURLDownload resumeData];
+    didCancel(IPC::DataReference(reinterpret_cast<const uint8_t*>([resumeData bytes]), [resumeData length]));
 }
 
 void Download::platformInvalidate()
@@ -95,7 +95,7 @@ void Download::platformInvalidate()
     ASSERT(m_nsURLDownload);
     ASSERT(m_delegate);
 
-    [m_delegate.get() invalidate];
+    [m_delegate invalidate];
     m_delegate = nullptr;
     m_nsURLDownload = nullptr;
 }
@@ -263,7 +263,7 @@ static void dispatchOnMainThread(void (^block)())
             return;
 
         RetainPtr<NSData> resumeData = [download resumeData];
-        IPC::DataReference dataReference(reinterpret_cast<const uint8_t*>([resumeData.get() bytes]), [resumeData.get() length]);
+        IPC::DataReference dataReference(reinterpret_cast<const uint8_t*>([resumeData bytes]), [resumeData length]);
 
         _download->didFail(error, dataReference);
     });

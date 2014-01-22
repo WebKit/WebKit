@@ -76,14 +76,14 @@ static BOOL isForcingPreviewUpdate;
 
 - (void)_setAutodisplay:(BOOL)newState
 {
-    if (!newState && [[_wkView.get() window] isAutodisplay])
-        [_wkView.get() displayIfNeeded];
+    if (!newState && [[_wkView window] isAutodisplay])
+        [_wkView displayIfNeeded];
     
-    [[_wkView.get() window] setAutodisplay:newState];
+    [[_wkView window] setAutodisplay:newState];
 
     // For some reason, painting doesn't happen for a long time without this call, <rdar://problem/8975229>.
     if (newState)
-        [_wkView.get() displayIfNeeded];
+        [_wkView displayIfNeeded];
 }
 
 

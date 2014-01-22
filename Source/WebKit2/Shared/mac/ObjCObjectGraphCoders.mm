@@ -193,7 +193,7 @@ public:
                 if (!decoder.decode(messageCoder))
                     return false;
 
-                [array.get() addObject:value.get()];
+                [array addObject:value.get()];
             }
 
             coder.m_root = array;
@@ -217,7 +217,7 @@ public:
                 if (!decoder.decode(valueMessageCoder))
                     return false;
 
-                [dictionary.get() setObject:value.get() forKey:key.get()];
+                [dictionary setObject:value.get() forKey:key.get()];
             }
 
             coder.m_root = dictionary;

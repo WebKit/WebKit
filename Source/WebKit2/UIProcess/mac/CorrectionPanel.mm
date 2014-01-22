@@ -118,7 +118,7 @@ void CorrectionPanel::handleAcceptedReplacement(NSString* acceptedReplacement, N
         return;
 
     NSSpellChecker* spellChecker = [NSSpellChecker sharedSpellChecker];
-    NSInteger documentTag = [m_view.get() spellCheckerDocumentTag];
+    NSInteger documentTag = [m_view spellCheckerDocumentTag];
     
     switch (correctionIndicatorType) {
     case NSCorrectionIndicatorTypeDefault:
@@ -141,7 +141,7 @@ void CorrectionPanel::handleAcceptedReplacement(NSString* acceptedReplacement, N
         break;
     }
 
-    [m_view.get() handleAcceptedAlternativeText:acceptedReplacement];
+    [m_view handleAcceptedAlternativeText:acceptedReplacement];
     m_view.clear();
     if (acceptedReplacement)
         m_resultForDismissal = adoptNS([acceptedReplacement copy]);

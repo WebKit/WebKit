@@ -344,8 +344,8 @@ void WebInspectorProxy::createInspectorWindow()
     m_dockBottomButton.get().hidden = !canAttach();
     m_dockRightButton.get().hidden = !canAttach();
 
-    [m_inspectorView.get() setFrame:[contentView bounds]];
-    [m_inspectorView.get() setAutoresizingMask:NSViewWidthSizable | NSViewHeightSizable];
+    [m_inspectorView setFrame:[contentView bounds]];
+    [m_inspectorView setAutoresizingMask:NSViewWidthSizable | NSViewHeightSizable];
     [contentView addSubview:m_inspectorView.get()];
 
     // Center the window if the saved frame was empty.
@@ -361,7 +361,7 @@ void WebInspectorProxy::updateInspectorWindowTitle() const
         return;
 
     NSString *title = [NSString stringWithFormat:WEB_UI_STRING("Web Inspector — %@", "Web Inspector window title"), (NSString *)m_urlString];
-    [m_inspectorWindow.get() setTitle:title];
+    [m_inspectorWindow setTitle:title];
 }
 
 WebPageProxy* WebInspectorProxy::platformCreateInspectorPage()
@@ -393,7 +393,7 @@ WebPageProxy* WebInspectorProxy::platformCreateInspectorPage()
     m_inspectorView = adoptNS([[WKWebInspectorWKView alloc] initWithFrame:initialRect contextRef:toAPI(&page()->process().context()) pageGroupRef:toAPI(inspectorPageGroup()) relatedToPage:toAPI(m_page)]);
     ASSERT(m_inspectorView);
 
-    [m_inspectorView.get() setDrawsBackground:NO];
+    [m_inspectorView setDrawsBackground:NO];
 
     m_inspectorProxyObjCAdapter = adoptNS([[WKWebInspectorProxyObjCAdapter alloc] initWithWebInspectorProxy:this]);
 
@@ -467,14 +467,14 @@ void WebInspectorProxy::platformOpen()
 void WebInspectorProxy::platformDidClose()
 {
     if (m_inspectorWindow) {
-        [m_inspectorWindow.get() setDelegate:nil];
-        [m_inspectorWindow.get() orderOut:nil];
+        [m_inspectorWindow setDelegate:nil];
+        [m_inspectorWindow orderOut:nil];
         m_inspectorWindow = 0;
     }
 
     m_inspectorView = 0;
 
-    [m_inspectorProxyObjCAdapter.get() close];
+    [m_inspectorProxyObjCAdapter close];
     m_inspectorProxyObjCAdapter = 0;
 }
 
@@ -486,8 +486,8 @@ void WebInspectorProxy::platformHide()
     }
 
     if (m_inspectorWindow) {
-        [m_inspectorWindow.get() setDelegate:nil];
-        [m_inspectorWindow.get() orderOut:nil];
+        [m_inspectorWindow setDelegate:nil];
+        [m_inspectorWindow orderOut:nil];
         m_inspectorWindow = 0;
     }
 }
@@ -623,7 +623,7 @@ void WebInspectorProxy::inspectedViewFrameDidChange(CGFloat currentDimension)
     switch (m_attachmentSide) {
         case AttachmentSideBottom: {
             if (!currentDimension)
-                currentDimension = NSHeight([m_inspectorView.get() frame]);
+                currentDimension = NSHeight([m_inspectorView frame]);
 
             CGFloat parentHeight = NSHeight(parentBounds);
             CGFloat inspectorHeight = InspectorFrontendClientLocal::constrainedAttachedWindowHeight(currentDimension, parentHeight);
@@ -636,7 +636,7 @@ void WebInspectorProxy::inspectedViewFrameDidChange(CGFloat currentDimension)
 
         case AttachmentSideRight: {
             if (!currentDimension)
-                currentDimension = NSWidth([m_inspectorView.get() frame]);
+                currentDimension = NSWidth([m_inspectorView frame]);
 
             CGFloat parentWidth = NSWidth(parentBounds);
             CGFloat inspectorWidth = InspectorFrontendClientLocal::constrainedAttachedWindowWidth(currentDimension, parentWidth);
@@ -676,14 +676,14 @@ void WebInspectorProxy::platformAttach()
     [[NSNotificationCenter defaultCenter] addObserver:m_inspectorProxyObjCAdapter.get() selector:@selector(inspectedViewFrameDidChange:) name:NSViewFrameDidChangeNotification object:inspectedView];
 
     if (m_inspectorWindow) {
-        [m_inspectorWindow.get() setDelegate:nil];
-        [m_inspectorWindow.get() orderOut:nil];
+        [m_inspectorWindow setDelegate:nil];
+        [m_inspectorWindow orderOut:nil];
         m_inspectorWindow = 0;
     }
 
-    [m_inspectorView.get() removeFromSuperview];
+    [m_inspectorView removeFromSuperview];
 
-    [m_inspectorView.get() setAutoresizingMask:NSViewWidthSizable | NSViewMaxYMargin];
+    [m_inspectorView setAutoresizingMask:NSViewWidthSizable | NSViewMaxYMargin];
 
     CGFloat currentDimension;
 
@@ -708,7 +708,7 @@ void WebInspectorProxy::platformDetach()
     WKView *inspectedView = m_page->wkView();
     [[NSNotificationCenter defaultCenter] removeObserver:m_inspectorProxyObjCAdapter.get() name:NSViewFrameDidChangeNotification object:inspectedView];
 
-    [m_inspectorView.get() removeFromSuperview];
+    [m_inspectorView removeFromSuperview];
 
     // Make sure that we size the inspected view's frame after detaching so that it takes up the space that the
     // attached inspector used to. Preserve the top position of the inspected view so banners in Safari still work.

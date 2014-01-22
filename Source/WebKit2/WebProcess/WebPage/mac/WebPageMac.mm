@@ -596,7 +596,7 @@ void WebPage::performDictionaryLookupForRange(Frame* frame, Range* range, NSDict
             [scaledAttributes setObject:font forKey:NSFontAttributeName];
         }
 
-        [scaledNSAttributedString.get() addAttributes:scaledAttributes.get() range:range];
+        [scaledNSAttributedString addAttributes:scaledAttributes.get() range:range];
     }];
 
     AttributedString attributedString;
@@ -732,7 +732,7 @@ bool WebPage::platformHasLocalDataForURL(const WebCore::URL& url)
 static NSCachedURLResponse *cachedResponseForURL(WebPage* webPage, const URL& url)
 {
     RetainPtr<NSMutableURLRequest> request = adoptNS([[NSMutableURLRequest alloc] initWithURL:url]);
-    [request.get() setValue:(NSString *)webPage->userAgent() forHTTPHeaderField:@"User-Agent"];
+    [request setValue:(NSString *)webPage->userAgent() forHTTPHeaderField:@"User-Agent"];
 
     if (CFURLStorageSessionRef storageSession = webPage->corePage()->mainFrame().loader().networkingContext()->storageSession().platformSession())
         return WKCachedResponseForRequest(storageSession, request.get());
@@ -839,8 +839,8 @@ void WebPage::computePagesForPrintingPDFDocument(uint64_t frameID, const PrintIn
     WebFrame* frame = WebProcess::shared().webFrame(frameID);
     Frame* coreFrame = frame ? frame->coreFrame() : 0;
     RetainPtr<PDFDocument> pdfDocument = coreFrame ? pdfDocumentForPrintingFrame(coreFrame) : 0;
-    if ([pdfDocument.get() allowsPrinting]) {
-        NSUInteger pageCount = [pdfDocument.get() pageCount];
+    if ([pdfDocument allowsPrinting]) {
+        NSUInteger pageCount = [pdfDocument pageCount];
         IntRect pageRect(0, 0, ceilf(printInfo.availablePaperWidth), ceilf(printInfo.availablePaperHeight));
         for (NSUInteger i = 1; i <= pageCount; ++i) {
             resultPageRects.append(pageRect);

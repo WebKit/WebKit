@@ -150,15 +150,15 @@ void FindIndicatorWindow::setFindIndicator(PassRefPtr<FindIndicator> findIndicat
                                                                 backing:NSBackingStoreBuffered
                                                                   defer:NO]);
 
-    [m_findIndicatorWindow.get() setBackgroundColor:[NSColor clearColor]];
-    [m_findIndicatorWindow.get() setOpaque:NO];
-    [m_findIndicatorWindow.get() setIgnoresMouseEvents:YES];
+    [m_findIndicatorWindow setBackgroundColor:[NSColor clearColor]];
+    [m_findIndicatorWindow setOpaque:NO];
+    [m_findIndicatorWindow setIgnoresMouseEvents:YES];
 
     RetainPtr<WKFindIndicatorView> findIndicatorView = adoptNS([[WKFindIndicatorView alloc] _initWithFindIndicator:m_findIndicator]);
-    [m_findIndicatorWindow.get() setContentView:findIndicatorView.get()];
+    [m_findIndicatorWindow setContentView:findIndicatorView.get()];
 
     [[m_wkView window] addChildWindow:m_findIndicatorWindow.get() ordered:NSWindowAbove];
-    [m_findIndicatorWindow.get() setReleasedWhenClosed:NO];
+    [m_findIndicatorWindow setReleasedWhenClosed:NO];
 
     if (animate) {
         // Start the bounce animation.
@@ -167,7 +167,7 @@ void FindIndicatorWindow::setFindIndicator(PassRefPtr<FindIndicator> findIndicat
                                                                                     animationDuration:bounceAnimationDuration
                                                                             animationProgressCallback:&FindIndicatorWindow::bounceAnimationCallback
                                                                               animationDidEndCallback:&FindIndicatorWindow::bounceAnimationDidEnd]);
-        [m_bounceAnimation.get() startAnimation];
+        [m_bounceAnimation startAnimation];
     }
 
     if (fadeOut)
@@ -182,20 +182,20 @@ void FindIndicatorWindow::closeWindow()
     m_startFadeOutTimer.stop();
 
     if (m_fadeOutAnimation) {
-        [m_fadeOutAnimation.get() stopAnimation];
+        [m_fadeOutAnimation stopAnimation];
         m_fadeOutAnimation = nullptr;
     }
 
     if (m_bounceAnimation) {
-        [m_bounceAnimation.get() stopAnimation];
+        [m_bounceAnimation stopAnimation];
         m_bounceAnimation = nullptr;
     }
 
     if (m_bounceAnimationContext)
         WKWindowBounceAnimationContextDestroy(m_bounceAnimationContext);
     
-    [[m_findIndicatorWindow.get() parentWindow] removeChildWindow:m_findIndicatorWindow.get()];
-    [m_findIndicatorWindow.get() close];
+    [[m_findIndicatorWindow parentWindow] removeChildWindow:m_findIndicatorWindow.get()];
+    [m_findIndicatorWindow close];
     m_findIndicatorWindow = nullptr;
 }
 
@@ -207,14 +207,14 @@ void FindIndicatorWindow::startFadeOutTimerFired()
                                                                                    animationDuration:fadeOutAnimationDuration
                                                                            animationProgressCallback:&FindIndicatorWindow::fadeOutAnimationCallback
                                                                              animationDidEndCallback:&FindIndicatorWindow::fadeOutAnimationDidEnd]);
-    [m_fadeOutAnimation.get() startAnimation];
+    [m_fadeOutAnimation startAnimation];
 }
                         
 void FindIndicatorWindow::fadeOutAnimationCallback(double progress)
 {
     ASSERT(m_fadeOutAnimation);
 
-    [m_findIndicatorWindow.get() setAlphaValue:1.0 - progress];
+    [m_findIndicatorWindow setAlphaValue:1.0 - progress];
 }
 
 void FindIndicatorWindow::fadeOutAnimationDidEnd()

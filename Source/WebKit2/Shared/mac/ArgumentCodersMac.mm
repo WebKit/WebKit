@@ -249,7 +249,7 @@ bool decode(ArgumentDecoder& decoder, RetainPtr<NSAttributedString>& result)
     if (!IPC::decode(decoder, plainString))
         return false;
 
-    NSUInteger stringLength = [plainString.get() length];
+    NSUInteger stringLength = [plainString length];
 
     RetainPtr<NSMutableAttributedString> resultString = adoptNS([[NSMutableAttributedString alloc] initWithString:plainString.get()]);
 
@@ -273,7 +273,7 @@ bool decode(ArgumentDecoder& decoder, RetainPtr<NSAttributedString>& result)
 
         if (!IPC::decode(decoder, attributes))
             return false;
-        [resultString.get() addAttributes:attributes.get() range:NSMakeRange(rangeLocation, rangeLength)];
+        [resultString addAttributes:attributes.get() range:NSMakeRange(rangeLocation, rangeLength)];
     }
 
     result = adoptNS(resultString.leakRef());
@@ -340,7 +340,7 @@ bool decode(ArgumentDecoder& decoder, RetainPtr<NSDictionary>& result)
         if (!decode(decoder, value))
             return false;
 
-        [dictionary.get() setObject:value.get() forKey:key.get()];
+        [dictionary setObject:value.get() forKey:key.get()];
     }
 
     result = adoptNS(dictionary.leakRef());
@@ -425,7 +425,7 @@ bool decode(ArgumentDecoder& decoder, RetainPtr<NSArray>& result)
         if (!decode(decoder, value))
             return false;
 
-        [array.get() addObject:value.get()];
+        [array addObject:value.get()];
     }
 
     result = adoptNS(array.leakRef());

@@ -109,7 +109,7 @@ struct GeolocationRequestData {
         return;
 
     if (_requestsWaitingForCoreLocationStart.isEmpty() && _requestsInWarmUp.isEmpty()) {
-        [_coreLocationProvider.get() stop];
+        [_coreLocationProvider stop];
         _lastActivePosition.clear();
     }
 }
@@ -118,7 +118,7 @@ struct GeolocationRequestData {
 -(void)_startUpdating
 {
     _isWebCoreGeolocationActive = YES;
-    [_coreLocationProvider.get() start];
+    [_coreLocationProvider start];
 
     // If we have the last position, it is from the initialization or warm up. It is the last known
     // good position so we can return it directly.
@@ -134,7 +134,7 @@ struct GeolocationRequestData {
 
 -(void)_setEnableHighAccuracy:(BOOL)enableHighAccuracy
 {
-    [_coreLocationProvider.get() setEnableHighAccuracy:enableHighAccuracy];
+    [_coreLocationProvider setEnableHighAccuracy:enableHighAccuracy];
 }
 
 #pragma mark - Public API implementation.
@@ -172,7 +172,7 @@ struct GeolocationRequestData {
     geolocationRequestData.permissionRequest = toImpl(permissionRequest);
     geolocationRequestData.window = window;
     _requestsWaitingForCoreLocationStart.append(geolocationRequestData);
-    [_coreLocationProvider.get() start];
+    [_coreLocationProvider start];
 }
 @end
 
@@ -263,7 +263,7 @@ struct GeolocationRequestData {
 
 - (void)deny
 {
-    [_provider.get() permissionDenied:_permissionRequestProxy.get()];
+    [_provider permissionDenied:_permissionRequestProxy.get()];
     _permissionRequestProxy->deny();
 }
 

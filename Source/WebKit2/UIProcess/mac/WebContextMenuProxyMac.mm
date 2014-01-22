@@ -113,7 +113,7 @@ WebContextMenuProxyMac::WebContextMenuProxyMac(WKView* webView, WebPageProxy* pa
 WebContextMenuProxyMac::~WebContextMenuProxyMac()
 {
     if (m_popup)
-        [m_popup.get() setControlView:nil];
+        [m_popup setControlView:nil];
 }
 
 void WebContextMenuProxyMac::contextMenuItemSelected(const WebContextMenuItemData& item)
@@ -186,14 +186,14 @@ static Vector<RetainPtr<NSMenuItem>> nsMenuItemVector(const Vector<WebContextMen
 void WebContextMenuProxyMac::populate(const Vector<WebContextMenuItemData>& items)
 {
     if (m_popup)
-        [m_popup.get() removeAllItems];
+        [m_popup removeAllItems];
     else {
         m_popup = adoptNS([[NSPopUpButtonCell alloc] initTextCell:@"" pullsDown:NO]);
-        [m_popup.get() setUsesItemFromMenu:NO];
-        [m_popup.get() setAutoenablesItems:NO];
+        [m_popup setUsesItemFromMenu:NO];
+        [m_popup setAutoenablesItems:NO];
     }
 
-    NSMenu* menu = [m_popup.get() menu];
+    NSMenu* menu = [m_popup menu];
     populateNSMenu(menu, nsMenuItemVector(items));
 }
 
@@ -207,12 +207,12 @@ void WebContextMenuProxyMac::showContextMenu(const IntPoint& menuLocation, const
     
     NSRect menuRect = NSMakeRect(menuLocation.x(), menuLocation.y(), 0, 0);
     
-    [m_popup.get() attachPopUpWithFrame:menuRect inView:m_webView];
+    [m_popup attachPopUpWithFrame:menuRect inView:m_webView];
 
-    NSMenu* menu = [m_popup.get() menu];
+    NSMenu* menu = [m_popup menu];
 
     // These values were borrowed from AppKit to match their placement of the menu.
-    NSRect titleFrame = [m_popup.get()  titleRectForBounds:menuRect];
+    NSRect titleFrame = [m_popup  titleRectForBounds:menuRect];
     if (titleFrame.size.width <= 0 || titleFrame.size.height <= 0)
         titleFrame = menuRect;
     float vertOffset = roundf((NSMaxY(menuRect) - NSMaxY(titleFrame)) + NSHeight(titleFrame));
@@ -226,12 +226,12 @@ void WebContextMenuProxyMac::showContextMenu(const IntPoint& menuLocation, const
 
     WKPopupContextMenu(menu, location);
 
-    [m_popup.get() dismissPopUp];
+    [m_popup dismissPopUp];
 }
 
 void WebContextMenuProxyMac::hideContextMenu()
 {
-    [m_popup.get() dismissPopUp];
+    [m_popup dismissPopUp];
 }
 
 } // namespace WebKit

@@ -49,32 +49,32 @@ WebPopupMenuProxyMac::WebPopupMenuProxyMac(WKView *webView, WebPopupMenuProxy::C
 WebPopupMenuProxyMac::~WebPopupMenuProxyMac()
 {
     if (m_popup)
-        [m_popup.get() setControlView:nil];
+        [m_popup setControlView:nil];
 }
 
 void WebPopupMenuProxyMac::populate(const Vector<WebPopupItem>& items, NSFont *font, TextDirection menuTextDirection)
 {
     if (m_popup)
-        [m_popup.get() removeAllItems];
+        [m_popup removeAllItems];
     else {
         m_popup = adoptNS([[NSPopUpButtonCell alloc] initTextCell:@"" pullsDown:NO]);
-        [m_popup.get() setUsesItemFromMenu:NO];
-        [m_popup.get() setAutoenablesItems:NO];
+        [m_popup setUsesItemFromMenu:NO];
+        [m_popup setAutoenablesItems:NO];
     }
 
     int size = items.size();
 
     for (int i = 0; i < size; i++) {
         if (items[i].m_type == WebPopupItem::Separator)
-            [[m_popup.get() menu] addItem:[NSMenuItem separatorItem]];
+            [[m_popup menu] addItem:[NSMenuItem separatorItem]];
         else {
-            [m_popup.get() addItemWithTitle:@""];
-            NSMenuItem *menuItem = [m_popup.get() lastItem];
+            [m_popup addItemWithTitle:@""];
+            NSMenuItem *menuItem = [m_popup lastItem];
 
             RetainPtr<NSMutableParagraphStyle> paragraphStyle = adoptNS([[NSParagraphStyle defaultParagraphStyle] mutableCopy]);
             NSWritingDirection writingDirection = items[i].m_textDirection == LTR ? NSWritingDirectionLeftToRight : NSWritingDirectionRightToLeft;
-            [paragraphStyle.get() setBaseWritingDirection:writingDirection];
-            [paragraphStyle.get() setAlignment:menuTextDirection == LTR ? NSLeftTextAlignment : NSRightTextAlignment];
+            [paragraphStyle setBaseWritingDirection:writingDirection];
+            [paragraphStyle setAlignment:menuTextDirection == LTR ? NSLeftTextAlignment : NSRightTextAlignment];
             RetainPtr<NSMutableDictionary> attributes = adoptNS([[NSMutableDictionary alloc] initWithObjectsAndKeys:
                 paragraphStyle.get(), NSParagraphStyleAttributeName,
                 font, NSFontAttributeName,
@@ -82,14 +82,14 @@ void WebPopupMenuProxyMac::populate(const Vector<WebPopupItem>& items, NSFont *f
             if (items[i].m_hasTextDirectionOverride) {
                 RetainPtr<NSNumber> writingDirectionValue = adoptNS([[NSNumber alloc] initWithInteger:writingDirection + NSTextWritingDirectionOverride]);
                 RetainPtr<NSArray> writingDirectionArray = adoptNS([[NSArray alloc] initWithObjects:writingDirectionValue.get(), nil]);
-                [attributes.get() setObject:writingDirectionArray.get() forKey:NSWritingDirectionAttributeName];
+                [attributes setObject:writingDirectionArray.get() forKey:NSWritingDirectionAttributeName];
             }
             RetainPtr<NSAttributedString> string = adoptNS([[NSAttributedString alloc] initWithString:nsStringFromWebCoreString(items[i].m_text) attributes:attributes.get()]);
 
             [menuItem setAttributedTitle:string.get()];
             // We set the title as well as the attributed title here. The attributed title will be displayed in the menu,
             // but typeahead will use the non-attributed string that doesn't contain any leading or trailing whitespace.
-            [menuItem setTitle:[[string.get() string] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]]];
+            [menuItem setTitle:[[string string] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]]];
             [menuItem setEnabled:items[i].m_isEnabled];
             [menuItem setToolTip:nsStringFromWebCoreString(items[i].m_toolTip)];
         }
@@ -107,11 +107,11 @@ void WebPopupMenuProxyMac::showPopupMenu(const IntRect& rect, TextDirection text
 
     populate(items, font, textDirection);
 
-    [m_popup.get() attachPopUpWithFrame:rect inView:m_webView];
-    [m_popup.get() selectItemAtIndex:selectedIndex];
-    [m_popup.get() setUserInterfaceLayoutDirection:textDirection == LTR ? NSUserInterfaceLayoutDirectionLeftToRight : NSUserInterfaceLayoutDirectionRightToLeft];
+    [m_popup attachPopUpWithFrame:rect inView:m_webView];
+    [m_popup selectItemAtIndex:selectedIndex];
+    [m_popup setUserInterfaceLayoutDirection:textDirection == LTR ? NSUserInterfaceLayoutDirectionLeftToRight : NSUserInterfaceLayoutDirectionRightToLeft];
 
-    NSMenu *menu = [m_popup.get() menu];
+    NSMenu *menu = [m_popup menu];
 
     // These values were borrowed from AppKit to match their placement of the menu.
     const int popOverHorizontalAdjust = -10;
@@ -122,7 +122,7 @@ void WebPopupMenuProxyMac::showPopupMenu(const IntRect& rect, TextDirection text
     // Menus that pop-under are offset underneath it.
     NSPoint location;
     if (data.shouldPopOver) {
-        NSRect titleFrame = [m_popup.get()  titleRectForBounds:rect];
+        NSRect titleFrame = [m_popup  titleRectForBounds:rect];
         if (titleFrame.size.width <= 0 || titleFrame.size.height <= 0)
             titleFrame = rect;
         float vertOffset = roundf((NSMaxY(rect) - NSMaxY(titleFrame)) + NSHeight(titleFrame));
@@ -132,17 +132,17 @@ void WebPopupMenuProxyMac::showPopupMenu(const IntRect& rect, TextDirection text
 
     RetainPtr<NSView> dummyView = adoptNS([[NSView alloc] initWithFrame:rect]);
     [m_webView addSubview:dummyView.get()];
-    location = [dummyView.get() convertPoint:location fromView:m_webView];
+    location = [dummyView convertPoint:location fromView:m_webView];
 
     WKPopupMenu(menu, location, roundf(NSWidth(rect)), dummyView.get(), selectedIndex, font);
 
-    [m_popup.get() dismissPopUp];
-    [dummyView.get() removeFromSuperview];
+    [m_popup dismissPopUp];
+    [dummyView removeFromSuperview];
     
     if (!m_client)
         return;
     
-    m_client->valueChangedForPopupMenu(this, [m_popup.get() indexOfSelectedItem]);
+    m_client->valueChangedForPopupMenu(this, [m_popup indexOfSelectedItem]);
     
     // <https://bugs.webkit.org/show_bug.cgi?id=57904> This code is adopted from EventHandler::sendFakeEventsAfterWidgetTracking().
     if (!m_client->currentlyProcessedMouseDownEvent())
@@ -180,7 +180,7 @@ void WebPopupMenuProxyMac::showPopupMenu(const IntRect& rect, TextDirection text
 
 void WebPopupMenuProxyMac::hidePopupMenu()
 {
-    [m_popup.get() dismissPopUp];
+    [m_popup dismissPopUp];
 }
 
 } // namespace WebKit

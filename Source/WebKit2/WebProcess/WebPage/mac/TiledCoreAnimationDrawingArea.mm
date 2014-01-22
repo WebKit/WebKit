@@ -402,7 +402,7 @@ void TiledCoreAnimationDrawingArea::suspendPainting()
     ASSERT(!m_isPaintingSuspended);
     m_isPaintingSuspended = true;
 
-    [m_rootLayer.get() setValue:(id)kCFBooleanTrue forKey:@"NSCAViewRenderPaused"];
+    [m_rootLayer setValue:(id)kCFBooleanTrue forKey:@"NSCAViewRenderPaused"];
     [[NSNotificationCenter defaultCenter] postNotificationName:@"NSCAViewRenderDidPauseNotification" object:nil userInfo:[NSDictionary dictionaryWithObject:m_rootLayer.get() forKey:@"layer"]];
 }
 
@@ -415,7 +415,7 @@ void TiledCoreAnimationDrawingArea::resumePainting()
     }
     m_isPaintingSuspended = false;
 
-    [m_rootLayer.get() setValue:(id)kCFBooleanFalse forKey:@"NSCAViewRenderPaused"];
+    [m_rootLayer setValue:(id)kCFBooleanFalse forKey:@"NSCAViewRenderPaused"];
     [[NSNotificationCenter defaultCenter] postNotificationName:@"NSCAViewRenderDidResumeNotification" object:nil userInfo:[NSDictionary dictionaryWithObject:m_rootLayer.get() forKey:@"layer"]];
 }
 
@@ -570,7 +570,7 @@ void TiledCoreAnimationDrawingArea::setRootCompositingLayer(CALayer *layer)
         m_layerHostingContext->setRootLayer(m_hasRootCompositingLayer ? m_rootLayer.get() : 0);
 
     for (PageOverlayLayerMap::iterator it = m_pageOverlayLayers.begin(), end = m_pageOverlayLayers.end(); it != end; ++it)
-        [m_rootLayer.get() addSublayer:it->value->platformLayer()];
+        [m_rootLayer addSublayer:it->value->platformLayer()];
 
     if (TiledBacking* tiledBacking = mainFrameTiledBacking())
         tiledBacking->setAggressivelyRetainsTiles(m_webPage->corePage()->settings().aggressiveTileRetentionEnabled());
@@ -596,7 +596,7 @@ void TiledCoreAnimationDrawingArea::createPageOverlayLayer(PageOverlay* pageOver
     [CATransaction begin];
     [CATransaction setDisableActions:YES];
 
-    [m_rootLayer.get() addSublayer:layer->platformLayer()];
+    [m_rootLayer addSublayer:layer->platformLayer()];
 
     [CATransaction commit];
 
@@ -631,8 +631,8 @@ void TiledCoreAnimationDrawingArea::didCommitChangesForLayer(const GraphicsLayer
     [CATransaction begin];
     [CATransaction setDisableActions:YES];
 
-    [m_rootLayer.get() insertSublayer:layer->platformLayer() above:oldPlatformLayer.get()];
-    [oldPlatformLayer.get() removeFromSuperlayer];
+    [m_rootLayer insertSublayer:layer->platformLayer() above:oldPlatformLayer.get()];
+    [oldPlatformLayer removeFromSuperlayer];
 
     [CATransaction commit];
 
@@ -655,12 +655,12 @@ void TiledCoreAnimationDrawingArea::updateDebugInfoLayer(bool showLayer)
 
         if (m_debugInfoLayer) {
 #ifndef NDEBUG
-            [m_debugInfoLayer.get() setName:@"Debug Info"];
+            [m_debugInfoLayer setName:@"Debug Info"];
 #endif
-            [m_rootLayer.get() addSublayer:m_debugInfoLayer.get()];
+            [m_rootLayer addSublayer:m_debugInfoLayer.get()];
         }
     } else if (m_debugInfoLayer) {
-        [m_debugInfoLayer.get() removeFromSuperlayer];
+        [m_debugInfoLayer removeFromSuperlayer];
         m_debugInfoLayer = nullptr;
     }
 }

@@ -123,7 +123,7 @@ void PageBanner::showIfHidden()
 void PageBanner::didChangeDeviceScaleFactor(float scaleFactor)
 {
     m_layer.get().contentsScale = scaleFactor;
-    [m_layer.get() setNeedsDisplay];
+    [m_layer setNeedsDisplay];
 }
 
 bool PageBanner::mouseEvent(const WebMouseEvent& mouseEvent)

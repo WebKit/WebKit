@@ -307,13 +307,13 @@ static FloatQuad inflateQuad(const FloatQuad& quad, float inflateSize)
     const CGFloat UIWebViewMinimumHighlightRadius = 2.0;
     if (!_highlightView) {
         _highlightView = adoptNS([[_UIHighlightView alloc] initWithFrame:CGRectZero]);
-        [_highlightView.get() setOpaque:NO];
-        [_highlightView.get() setCornerRadius:UIWebViewMinimumHighlightRadius];
+        [_highlightView setOpaque:NO];
+        [_highlightView setCornerRadius:UIWebViewMinimumHighlightRadius];
     }
     [self addSubview:_highlightView.get()];
 
     RetainPtr<UIColor> highlightUIKitColor = adoptNS([[UIColor alloc] initWithRed:(color.red() / 255.0) green:(color.green() / 255.0) blue:(color.blue() / 255.0) alpha:(color.alpha() / 255.0)]);
-    [_highlightView.get() setColor:highlightUIKitColor.get()];
+    [_highlightView setColor:highlightUIKitColor.get()];
 
     bool allHighlightRectsAreRectilinear = true;
     const size_t quadCount = highlightedQuads.size();
@@ -333,31 +333,31 @@ static FloatQuad inflateQuad(const FloatQuad& quad, float inflateSize)
     // FIXME: WebKit1 uses the visibleRect. Using the whole frame from the page seems overkill.
     CGRect boundaryRect = [self frame];
     if (allHighlightRectsAreRectilinear)
-        [_highlightView.get() setFrames:rects.get() boundaryRect:boundaryRect];
+        [_highlightView setFrames:rects.get() boundaryRect:boundaryRect];
     else {
         RetainPtr<NSMutableArray> quads = adoptNS([[NSMutableArray alloc] initWithCapacity:static_cast<const NSUInteger>(quadCount)]);
         for (size_t i = 0; i < quadCount; ++i) {
             const FloatQuad& quad = highlightedQuads[i];
             FloatQuad extendedQuad = inflateQuad(quad, UIWebViewMinimumHighlightRadius);
-            [quads.get() addObject:[NSValue valueWithCGPoint:extendedQuad.p1()]];
-            [quads.get() addObject:[NSValue valueWithCGPoint:extendedQuad.p2()]];
-            [quads.get() addObject:[NSValue valueWithCGPoint:extendedQuad.p3()]];
-            [quads.get() addObject:[NSValue valueWithCGPoint:extendedQuad.p4()]];
+            [quads addObject:[NSValue valueWithCGPoint:extendedQuad.p1()]];
+            [quads addObject:[NSValue valueWithCGPoint:extendedQuad.p2()]];
+            [quads addObject:[NSValue valueWithCGPoint:extendedQuad.p3()]];
+            [quads addObject:[NSValue valueWithCGPoint:extendedQuad.p4()]];
         }
-        [_highlightView.get() setQuads:quads.get() boundaryRect:boundaryRect];
+        [_highlightView setQuads:quads.get() boundaryRect:boundaryRect];
     }
 
     RetainPtr<NSMutableArray> borderRadii = adoptNS([[NSMutableArray alloc] initWithCapacity:4]);
-    [borderRadii.get() addObject:[NSValue valueWithCGSize:CGSizeMake(topLeftRadius.width() + UIWebViewMinimumHighlightRadius, topLeftRadius.height() + UIWebViewMinimumHighlightRadius)]];
-    [borderRadii.get() addObject:[NSValue valueWithCGSize:CGSizeMake(topRightRadius.width() + UIWebViewMinimumHighlightRadius, topRightRadius.height() + UIWebViewMinimumHighlightRadius)]];
-    [borderRadii.get() addObject:[NSValue valueWithCGSize:CGSizeMake(bottomLeftRadius.width() + UIWebViewMinimumHighlightRadius, bottomLeftRadius.height() + UIWebViewMinimumHighlightRadius)]];
-    [borderRadii.get() addObject:[NSValue valueWithCGSize:CGSizeMake(bottomRightRadius.width() + UIWebViewMinimumHighlightRadius, bottomRightRadius.height() + UIWebViewMinimumHighlightRadius)]];
-    [_highlightView.get() setCornerRadii:borderRadii.get()];
+    [borderRadii addObject:[NSValue valueWithCGSize:CGSizeMake(topLeftRadius.width() + UIWebViewMinimumHighlightRadius, topLeftRadius.height() + UIWebViewMinimumHighlightRadius)]];
+    [borderRadii addObject:[NSValue valueWithCGSize:CGSizeMake(topRightRadius.width() + UIWebViewMinimumHighlightRadius, topRightRadius.height() + UIWebViewMinimumHighlightRadius)]];
+    [borderRadii addObject:[NSValue valueWithCGSize:CGSizeMake(bottomLeftRadius.width() + UIWebViewMinimumHighlightRadius, bottomLeftRadius.height() + UIWebViewMinimumHighlightRadius)]];
+    [borderRadii addObject:[NSValue valueWithCGSize:CGSizeMake(bottomRightRadius.width() + UIWebViewMinimumHighlightRadius, bottomRightRadius.height() + UIWebViewMinimumHighlightRadius)]];
+    [_highlightView setCornerRadii:borderRadii.get()];
 }
 
 - (void)_cancelLongPressGestureRecognizer
 {
-    [_highlightLongPressGestureRecognizer.get() cancel];
+    [_highlightLongPressGestureRecognizer cancel];
 }
 
 - (void)_didScroll
@@ -499,7 +499,7 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
 - (void)_cancelInteraction
 {
     _isTapHighlightIDValid = NO;
-    [_highlightView.get() removeFromSuperview];
+    [_highlightView removeFromSuperview];
 }
 
 - (BOOL)hasSelectablePositionAtPoint:(CGPoint)point

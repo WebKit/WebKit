@@ -211,7 +211,7 @@ String WebContext::platformDefaultDiskCacheDirectory() const
     if (!cachePath)
         cachePath = @"~/Library/Caches/com.apple.WebKit2.WebProcess";
 
-    return [cachePath.get() stringByStandardizingPath];
+    return [cachePath stringByStandardizingPath];
 }
 
 String WebContext::platformDefaultCookieStorageDirectory() const

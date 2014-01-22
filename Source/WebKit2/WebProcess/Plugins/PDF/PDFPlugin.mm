@@ -524,8 +524,8 @@ PDFPlugin::PDFPlugin(WebFrame* frame)
     m_accessibilityObject.get().pdfLayerController = m_pdfLayerController.get();
     m_accessibilityObject.get().parent = webFrame()->page()->accessibilityRemoteObject();
 
-    [m_containerLayer.get() addSublayer:m_contentLayer.get()];
-    [m_containerLayer.get() addSublayer:m_scrollCornerLayer.get()];
+    [m_containerLayer addSublayer:m_contentLayer.get()];
+    [m_containerLayer addSublayer:m_scrollCornerLayer.get()];
 }
 
 PDFPlugin::~PDFPlugin()
@@ -613,17 +613,17 @@ void PDFPlugin::updateScrollbars()
     
     if (m_verticalScrollbarLayer) {
         m_verticalScrollbarLayer.get().frame = verticalScrollbar()->frameRect();
-        [m_verticalScrollbarLayer.get() setNeedsDisplay];
+        [m_verticalScrollbarLayer setNeedsDisplay];
     }
     
     if (m_horizontalScrollbarLayer) {
         m_horizontalScrollbarLayer.get().frame = horizontalScrollbar()->frameRect();
-        [m_horizontalScrollbarLayer.get() setNeedsDisplay];
+        [m_horizontalScrollbarLayer setNeedsDisplay];
     }
     
     if (m_scrollCornerLayer) {
         m_scrollCornerLayer.get().frame = scrollCornerRect();
-        [m_scrollCornerLayer.get() setNeedsDisplay];
+        [m_scrollCornerLayer setNeedsDisplay];
     }
 }
 
@@ -642,10 +642,10 @@ PassRefPtr<Scrollbar> PDFPlugin::createScrollbar(ScrollbarOrientation orientatio
     RefPtr<Scrollbar> widget = Scrollbar::createNativeScrollbar(this, orientation, RegularScrollbar);
     if (orientation == HorizontalScrollbar) {
         m_horizontalScrollbarLayer = adoptNS([[WKPDFPluginScrollbarLayer alloc] initWithPDFPlugin:this]);
-        [m_containerLayer.get() addSublayer:m_horizontalScrollbarLayer.get()];
+        [m_containerLayer addSublayer:m_horizontalScrollbarLayer.get()];
     } else {
         m_verticalScrollbarLayer = adoptNS([[WKPDFPluginScrollbarLayer alloc] initWithPDFPlugin:this]);
-        [m_containerLayer.get() addSublayer:m_verticalScrollbarLayer.get()];
+        [m_containerLayer addSublayer:m_verticalScrollbarLayer.get()];
     }
     didAddScrollbar(widget.get(), orientation);
     pluginView()->frame()->view()->addChild(widget.get());
@@ -664,10 +664,10 @@ void PDFPlugin::destroyScrollbar(ScrollbarOrientation orientation)
     scrollbar = 0;
 
     if (orientation == HorizontalScrollbar) {
-        [m_horizontalScrollbarLayer.get() removeFromSuperlayer];
+        [m_horizontalScrollbarLayer removeFromSuperlayer];
         m_horizontalScrollbarLayer = 0;
     } else {
-        [m_verticalScrollbarLayer.get() removeFromSuperlayer];
+        [m_verticalScrollbarLayer removeFromSuperlayer];
         m_verticalScrollbarLayer = 0;
     }
 }
@@ -896,20 +896,20 @@ void PDFPlugin::pdfDocumentDidLoad()
 
     updatePageAndDeviceScaleFactors();
 
-    [m_pdfLayerController.get() setFrameSize:size()];
+    [m_pdfLayerController setFrameSize:size()];
     m_pdfLayerController.get().document = document.get();
 
     if (handlesPageScaleFactor())
-        pluginView()->setPageScaleFactor([m_pdfLayerController.get() contentScaleFactor], IntPoint());
+        pluginView()->setPageScaleFactor([m_pdfLayerController contentScaleFactor], IntPoint());
 
-    notifyScrollPositionChanged(IntPoint([m_pdfLayerController.get() scrollPosition]));
+    notifyScrollPositionChanged(IntPoint([m_pdfLayerController scrollPosition]));
 
     calculateSizes();
     updateScrollbars();
 
     runScriptsInPDFDocument();
 
-    if ([document.get() isLocked])
+    if ([document isLocked])
         createPasswordEntryForm();
 }
 
@@ -978,7 +978,7 @@ void PDFPlugin::manualStreamDidFail(bool)
 void PDFPlugin::runScriptsInPDFDocument()
 {
     Vector<RetainPtr<CFStringRef>> scripts;
-    getAllScriptsInPDFDocument([m_pdfDocument.get() documentRef], scripts);
+    getAllScriptsInPDFDocument([m_pdfDocument documentRef], scripts);
 
     size_t scriptCount = scripts.size();
     if (!scriptCount)
@@ -1020,7 +1020,7 @@ void PDFPlugin::updatePageAndDeviceScaleFactors()
     if (!handlesPageScaleFactor())
         newScaleFactor *= webFrame()->page()->pageScaleFactor();
 
-    [m_pdfLayerController.get() setDeviceScaleFactor:newScaleFactor];
+    [m_pdfLayerController setDeviceScaleFactor:newScaleFactor];
 }
 
 void PDFPlugin::contentsScaleFactorChanged(float)
@@ -1030,9 +1030,9 @@ void PDFPlugin::contentsScaleFactorChanged(float)
 
 void PDFPlugin::computePageBoxes()
 {
-    size_t pageCount = CGPDFDocumentGetNumberOfPages([m_pdfDocument.get() documentRef]);
+    size_t pageCount = CGPDFDocumentGetNumberOfPages([m_pdfDocument documentRef]);
     for (size_t i = 0; i < pageCount; ++i) {
-        CGPDFPageRef pdfPage = CGPDFDocumentGetPage([m_pdfDocument.get() documentRef], i + 1);
+        CGPDFPageRef pdfPage = CGPDFDocumentGetPage([m_pdfDocument documentRef], i + 1);
         ASSERT(pdfPage);
 
         CGRect box = CGPDFPageGetBoxRect(pdfPage, kCGPDFCropBox);
@@ -1052,7 +1052,7 @@ void PDFPlugin::calculateSizes()
     // FIXME: This should come straight from PDFKit.
     computePageBoxes();
 
-    setPDFDocumentSize(IntSize([m_pdfLayerController.get() contentSizeRespectingZoom]));
+    setPDFDocumentSize(IntSize([m_pdfLayerController contentSizeRespectingZoom]));
 }
 
 bool PDFPlugin::initialize(const Parameters& parameters)
@@ -1080,8 +1080,8 @@ void PDFPlugin::destroy()
     destroyScrollbar(HorizontalScrollbar);
     destroyScrollbar(VerticalScrollbar);
     
-    [m_scrollCornerLayer.get() removeFromSuperlayer];
-    [m_contentLayer.get() removeFromSuperlayer];
+    [m_scrollCornerLayer removeFromSuperlayer];
+    [m_contentLayer removeFromSuperlayer];
 }
 
 void PDFPlugin::updateControlTints(GraphicsContext* graphicsContext)
@@ -1138,7 +1138,7 @@ PassRefPtr<ShareableBitmap> PDFPlugin::snapshot()
     context->scale(FloatSize(contentsScaleFactor, -contentsScaleFactor));
     context->translate(0, -size().height());
 
-    [m_pdfLayerController.get() snapshotInContext:context->platformContext()];
+    [m_pdfLayerController snapshotInContext:context->platformContext()];
 
     return bitmap.release();
 }
@@ -1191,12 +1191,12 @@ IntRect PDFPlugin::boundsOnScreen() const
 
 void PDFPlugin::geometryDidChange(const IntSize& pluginSize, const IntRect&, const AffineTransform& pluginToRootViewTransform)
 {
-    if (size() == pluginSize && pluginView()->pageScaleFactor() == [m_pdfLayerController.get() contentScaleFactor])
+    if (size() == pluginSize && pluginView()->pageScaleFactor() == [m_pdfLayerController contentScaleFactor])
         return;
 
     m_size = pluginSize;
     m_rootViewToPluginTransform = pluginToRootViewTransform.inverse();
-    [m_pdfLayerController.get() setFrameSize:pluginSize];
+    [m_pdfLayerController setFrameSize:pluginSize];
 
     [CATransaction begin];
     [CATransaction setDisableActions:YES];
@@ -1204,11 +1204,11 @@ void PDFPlugin::geometryDidChange(const IntSize& pluginSize, const IntRect&, con
     transform = CATransform3DTranslate(transform, 0, -pluginSize.height(), 0);
     
     if (handlesPageScaleFactor()) {
-        CGFloat magnification = pluginView()->pageScaleFactor() - [m_pdfLayerController.get() contentScaleFactor];
+        CGFloat magnification = pluginView()->pageScaleFactor() - [m_pdfLayerController contentScaleFactor];
 
         // FIXME: Instead of m_lastMousePositionInPluginCoordinates, we should use the zoom origin from PluginView::setPageScaleFactor.
         if (magnification)
-            [m_pdfLayerController.get() magnifyWithMagnification:magnification atPoint:convertFromPluginToPDFView(m_lastMousePositionInPluginCoordinates) immediately:NO];
+            [m_pdfLayerController magnifyWithMagnification:magnification atPoint:convertFromPluginToPDFView(m_lastMousePositionInPluginCoordinates) immediately:NO];
     } else {
         // If we don't handle page scale ourselves, we need to respect our parent page's
         // scale, which may have changed.
@@ -1221,7 +1221,7 @@ void PDFPlugin::geometryDidChange(const IntSize& pluginSize, const IntRect&, con
     if (m_activeAnnotation)
         m_activeAnnotation->updateGeometry();
 
-    [m_contentLayer.get() setSublayerTransform:transform];
+    [m_contentLayer setSublayerTransform:transform];
     [CATransaction commit];
 }
 
@@ -1319,7 +1319,7 @@ void PDFPlugin::updateCursor(const WebMouseEvent& event, UpdateCursorMode mode)
 {
     HitTestResult hitTestResult = None;
 
-    PDFSelection *selectionUnderMouse = [m_pdfLayerController.get() getSelectionForWordAtPoint:convertFromPluginToPDFView(event.position())];
+    PDFSelection *selectionUnderMouse = [m_pdfLayerController getSelectionForWordAtPoint:convertFromPluginToPDFView(event.position())];
     if (selectionUnderMouse && [[selectionUnderMouse string] length])
         hitTestResult = Text;
 
@@ -1386,13 +1386,13 @@ bool PDFPlugin::handleMouseEvent(const WebMouseEvent& event)
 
         switch (event.button()) {
         case WebMouseEvent::LeftButton:
-            [m_pdfLayerController.get() mouseDragged:nsEvent];
+            [m_pdfLayerController mouseDragged:nsEvent];
             return true;
         case WebMouseEvent::RightButton:
         case WebMouseEvent::MiddleButton:
             return false;
         case WebMouseEvent::NoButton:
-            [m_pdfLayerController.get() mouseMoved:nsEvent];
+            [m_pdfLayerController mouseMoved:nsEvent];
             return true;
         }
     case WebEvent::MouseDown:
@@ -1401,10 +1401,10 @@ bool PDFPlugin::handleMouseEvent(const WebMouseEvent& event)
             if (targetScrollbar)
                 return targetScrollbar->mouseDown(platformEvent);
 
-            [m_pdfLayerController.get() mouseDown:nsEvent];
+            [m_pdfLayerController mouseDown:nsEvent];
             return true;
         case WebMouseEvent::RightButton:
-            [m_pdfLayerController.get() rightMouseDown:nsEvent];
+            [m_pdfLayerController rightMouseDown:nsEvent];
             return true;
         case WebMouseEvent::MiddleButton:
         case WebMouseEvent::NoButton:
@@ -1416,7 +1416,7 @@ bool PDFPlugin::handleMouseEvent(const WebMouseEvent& event)
             if (targetScrollbar)
                 return targetScrollbar->mouseUp(platformEvent);
 
-            [m_pdfLayerController.get() mouseUp:nsEvent];
+            [m_pdfLayerController mouseUp:nsEvent];
             return true;
         case WebMouseEvent::RightButton:
         case WebMouseEvent::MiddleButton:
@@ -1456,7 +1456,7 @@ bool PDFPlugin::handleContextMenuEvent(const WebMouseEvent& event)
     FrameView* frameView = webFrame()->coreFrame()->view();
     IntPoint point = frameView->contentsToScreen(IntRect(frameView->windowToContents(event.position()), IntSize())).location();
     
-    if (NSMenu *nsMenu = [m_pdfLayerController.get() menuForEvent:nsEventForWebMouseEvent(event)]) {
+    if (NSMenu *nsMenu = [m_pdfLayerController menuForEvent:nsEventForWebMouseEvent(event)]) {
         WKPopupContextMenu(nsMenu, point);
         return true;
     }
@@ -1477,7 +1477,7 @@ bool PDFPlugin::handleKeyboardEvent(const WebKeyboardEvent& event)
     
     switch (event.type()) {
     case WebEvent::KeyDown:
-        return [m_pdfLayerController.get() keyDown:fakeEvent];
+        return [m_pdfLayerController keyDown:fakeEvent];
     default:
         return false;
     }
@@ -1516,7 +1516,7 @@ void PDFPlugin::setScrollOffset(const IntPoint& offset)
     m_scrollOffset = IntSize(offset.x(), offset.y());
 
     [CATransaction begin];
-    [m_pdfLayerController.get() setScrollPosition:offset];
+    [m_pdfLayerController setScrollPosition:offset];
 
     if (m_activeAnnotation)
         m_activeAnnotation->updateGeometry();
@@ -1527,14 +1527,14 @@ void PDFPlugin::setScrollOffset(const IntPoint& offset)
 void PDFPlugin::invalidateScrollbarRect(Scrollbar* scrollbar, const IntRect& rect)
 {
     if (scrollbar == horizontalScrollbar())
-        [m_horizontalScrollbarLayer.get() setNeedsDisplay];
+        [m_horizontalScrollbarLayer setNeedsDisplay];
     else if (scrollbar == verticalScrollbar())
-        [m_verticalScrollbarLayer.get() setNeedsDisplay];
+        [m_verticalScrollbarLayer setNeedsDisplay];
 }
 
 void PDFPlugin::invalidateScrollCornerRect(const IntRect& rect)
 {
-    [m_scrollCornerLayer.get() setNeedsDisplay];
+    [m_scrollCornerLayer setNeedsDisplay];
 }
 
 bool PDFPlugin::isFullFramePlugin()
@@ -1702,7 +1702,7 @@ unsigned PDFPlugin::countFindMatches(const String& target, WebCore::FindOptions 
 
     int nsOptions = (options & FindOptionsCaseInsensitive) ? NSCaseInsensitiveSearch : 0;
 
-    return [[pdfDocument().get() findString:target withOptions:nsOptions] count];
+    return [[pdfDocument() findString:target withOptions:nsOptions] count];
 }
 
 PDFSelection *PDFPlugin::nextMatchForString(const String& target, BOOL searchForward, BOOL caseSensitive, BOOL wrapSearch, PDFSelection *initialSelection, BOOL startInSelection)
@@ -1764,22 +1764,22 @@ bool PDFPlugin::findString(const String& target, WebCore::FindOptions options, u
     }
 
     if (target.isEmpty()) {
-        PDFSelection* searchSelection = [m_pdfLayerController.get() searchSelection];
-        [m_pdfLayerController.get() findString:target caseSensitive:caseSensitive highlightMatches:YES];
-        [m_pdfLayerController.get() setSearchSelection:searchSelection];
+        PDFSelection* searchSelection = [m_pdfLayerController searchSelection];
+        [m_pdfLayerController findString:target caseSensitive:caseSensitive highlightMatches:YES];
+        [m_pdfLayerController setSearchSelection:searchSelection];
         m_lastFoundString = emptyString();
         return false;
     }
 
     if (m_lastFoundString == target) {
-        PDFSelection *selection = nextMatchForString(target, searchForward, caseSensitive, wrapSearch, [m_pdfLayerController.get() searchSelection], NO);
+        PDFSelection *selection = nextMatchForString(target, searchForward, caseSensitive, wrapSearch, [m_pdfLayerController searchSelection], NO);
         if (!selection)
             return false;
 
-        [m_pdfLayerController.get() setSearchSelection:selection];
-        [m_pdfLayerController.get() gotoSelection:selection];
+        [m_pdfLayerController setSearchSelection:selection];
+        [m_pdfLayerController gotoSelection:selection];
     } else {
-        [m_pdfLayerController.get() findString:target caseSensitive:caseSensitive highlightMatches:YES];
+        [m_pdfLayerController findString:target caseSensitive:caseSensitive highlightMatches:YES];
         m_lastFoundString = target;
     }
 
@@ -1788,22 +1788,22 @@ bool PDFPlugin::findString(const String& target, WebCore::FindOptions options, u
 
 bool PDFPlugin::performDictionaryLookupAtLocation(const WebCore::FloatPoint& point)
 {
-    PDFSelection* lookupSelection = [m_pdfLayerController.get() getSelectionForWordAtPoint:convertFromPluginToPDFView(roundedIntPoint(point))];
+    PDFSelection* lookupSelection = [m_pdfLayerController getSelectionForWordAtPoint:convertFromPluginToPDFView(roundedIntPoint(point))];
 
     if ([[lookupSelection string] length])
-        [m_pdfLayerController.get() searchInDictionaryWithSelection:lookupSelection];
+        [m_pdfLayerController searchInDictionaryWithSelection:lookupSelection];
 
     return true;
 }
 
 void PDFPlugin::focusNextAnnotation()
 {
-    [m_pdfLayerController.get() activateNextAnnotation:false];
+    [m_pdfLayerController activateNextAnnotation:false];
 }
 
 void PDFPlugin::focusPreviousAnnotation()
 {
-    [m_pdfLayerController.get() activateNextAnnotation:true];
+    [m_pdfLayerController activateNextAnnotation:true];
 }
 
 void PDFPlugin::notifySelectionChanged(PDFSelection *)
@@ -1813,7 +1813,7 @@ void PDFPlugin::notifySelectionChanged(PDFSelection *)
 
 String PDFPlugin::getSelectionString() const
 {
-    return [[m_pdfLayerController.get() currentSelection] string];
+    return [[m_pdfLayerController currentSelection] string];
 }
 
 void PDFPlugin::performWebSearch(NSString *string)
@@ -1828,14 +1828,14 @@ void PDFPlugin::performSpotlightSearch(NSString *string)
 
 bool PDFPlugin::handleWheelEvent(const WebWheelEvent& event)
 {
-    PDFDisplayMode displayMode = [m_pdfLayerController.get() displayMode];
+    PDFDisplayMode displayMode = [m_pdfLayerController displayMode];
 
     if (displayMode == kPDFDisplaySinglePageContinuous || displayMode == kPDFDisplayTwoUpContinuous)
         return ScrollableArea::handleWheelEvent(platform(event));
 
-    NSUInteger currentPageIndex = [m_pdfLayerController.get() currentPageIndex];
+    NSUInteger currentPageIndex = [m_pdfLayerController currentPageIndex];
     bool inFirstPage = currentPageIndex == 0;
-    bool inLastPage = [m_pdfLayerController.get() lastPageIndex] == currentPageIndex;
+    bool inLastPage = [m_pdfLayerController lastPageIndex] == currentPageIndex;
 
     bool atScrollTop = scrollPosition().y() == 0;
     bool atScrollBottom = scrollPosition().y() == maximumScrollPosition().y();
@@ -1850,12 +1850,12 @@ bool PDFPlugin::handleWheelEvent(const WebWheelEvent& event)
 
     if (atScrollBottom && !inLastPage && event.delta().height() < 0) {
         if (event.delta().height() <= -scrollMagnitudeThresholdForPageFlip && !inMomentumScroll)
-            [m_pdfLayerController.get() gotoNextPage];
+            [m_pdfLayerController gotoNextPage];
         return true;
     } else if (atScrollTop && !inFirstPage && event.delta().height() > 0) {
         if (event.delta().height() >= scrollMagnitudeThresholdForPageFlip && !inMomentumScroll) {
             [CATransaction begin];
-            [m_pdfLayerController.get() gotoPreviousPage];
+            [m_pdfLayerController gotoPreviousPage];
             scrollToOffsetWithoutAnimation(maximumScrollPosition());
             [CATransaction commit];
         }
@@ -1873,7 +1873,7 @@ NSData *PDFPlugin::liveData() const
     // Save data straight from the resource instead of PDFKit if the document is
     // untouched by the user, so that PDFs which PDFKit can't display will still be downloadable.
     if (m_pdfDocumentWasMutated)
-        return [m_pdfDocument.get() dataRepresentation];
+        return [m_pdfDocument dataRepresentation];
     else
         return rawData();
 }

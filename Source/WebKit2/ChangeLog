@@ -1,3 +1,15 @@
+2014-01-21  Tim Horton  <timothy_horton@apple.com>
+
+        [wk2] De-.get()ify receivers of Objective-C messages
+        https://bugs.webkit.org/show_bug.cgi?id=127398
+
+        Reviewed by Sam Weinig.
+
+        RetainPtr does the right thing when you use it as the
+        receiver of an Obj-C message, so we don't need .get().
+
+        Long and useless file list elided.
+
 2014-01-21  Brady Eidson  <beidson@apple.com>
 
         The IDB backing store put() method shouldn't call IDB callbacks directly

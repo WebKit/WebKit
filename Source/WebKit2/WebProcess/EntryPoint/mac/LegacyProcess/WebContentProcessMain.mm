@@ -154,7 +154,7 @@ public:
         RetainPtr<NSURL> clientExecutableURL = adoptNS([[NSURL alloc] initFileURLWithPath:nsStringFromWebCoreString(clientExecutable)]);
         RetainPtr<CFURLRef> clientBundleURL = adoptCF(WKCopyBundleURLForExecutableURL((CFURLRef)clientExecutableURL.get()));
         RetainPtr<NSBundle> clientBundle = adoptNS([[NSBundle alloc] initWithURL:(NSURL *)clientBundleURL.get()]);
-        clientIdentifier = [clientBundle.get() bundleIdentifier];
+        clientIdentifier = [clientBundle bundleIdentifier];
         if (clientIdentifier.isEmpty())
             return false;
         return true;

@@ -418,7 +418,7 @@ void TextChecker::updateSpellingUIWithGrammarString(int64_t, const String& badGr
     RetainPtr<NSMutableArray> corrections = adoptNS([[NSMutableArray alloc] init]);
     for (size_t i = 0; i < grammarDetail.guesses.size(); ++i) {
         NSString *guess = grammarDetail.guesses[i];
-        [corrections.get() addObject:guess];
+        [corrections addObject:guess];
     }
 
     NSRange grammarRange = NSMakeRange(grammarDetail.location, grammarDetail.length);
