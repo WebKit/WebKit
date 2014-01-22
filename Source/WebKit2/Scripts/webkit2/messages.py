@@ -177,6 +177,7 @@ def struct_or_class(namespace, type):
         'WebCore::FileChooserSettings',
         'WebCore::GrammarDetail',
         'WebCore::IDBDatabaseMetadata',
+        'WebCore::IDBKeyData',
         'WebCore::IDBObjectStoreMetadata',
         'WebCore::IdentityTransformOperation',
         'WebCore::KeypressCommand',

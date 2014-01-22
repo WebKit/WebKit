@@ -106,7 +106,8 @@ void PutOperation::perform(std::function<void()> completionCallback)
     RefPtr<PutOperation> operation(this);
     STANDARD_DATABASE_ERROR_CALLBACK;
 
-    m_transaction->database().serverConnection().put(*m_transaction, *this, [this, operation, operationCallback](PassRefPtr<IDBKey> key, PassRefPtr<IDBDatabaseError> error) {
+    m_transaction->database().serverConnection().put(*m_transaction, *this, [this, operation, operationCallback](PassRefPtr<IDBKey> key, PassRefPtr<IDBDatabaseError> prpError) {
+        RefPtr<IDBDatabaseError> error = prpError;
         if (key) {
             ASSERT(!error);
             m_callbacks->onSuccess(key);
@@ -114,6 +115,7 @@ void PutOperation::perform(std::function<void()> completionCallback)
             ASSERT(error);
             m_callbacks->onError(error);
         }
+        operationCallback(error.release());
     });
 }
 

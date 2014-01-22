@@ -66,6 +66,7 @@ struct DragSession;
 struct FileChooserSettings;
 struct IDBDatabaseMetadata;
 struct IDBIndexMetadata;
+struct IDBKeyData;
 struct IDBObjectStoreMetadata;
 struct Length;
 struct GrammarDetail;
@@ -362,6 +363,11 @@ template<> struct ArgumentCoder<WebCore::IDBDatabaseMetadata> {
 template<> struct ArgumentCoder<WebCore::IDBIndexMetadata> {
     static void encode(ArgumentEncoder&, const WebCore::IDBIndexMetadata&);
     static bool decode(ArgumentDecoder&, WebCore::IDBIndexMetadata&);
+};
+
+template<> struct ArgumentCoder<WebCore::IDBKeyData> {
+    static void encode(ArgumentEncoder&, const WebCore::IDBKeyData&);
+    static bool decode(ArgumentDecoder&, WebCore::IDBKeyData&);
 };
 
 template<> struct ArgumentCoder<WebCore::IDBKeyPath> {

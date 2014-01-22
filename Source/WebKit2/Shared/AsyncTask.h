@@ -116,6 +116,50 @@ std::unique_ptr<AsyncTask> createAsyncTask(
         WebCore::CrossThreadCopier<P3>::copy(parameter3));
 }
 
+template<typename T, typename P1, typename MP1, typename P2, typename MP2, typename P3, typename MP3, typename P4, typename MP4>
+std::unique_ptr<AsyncTask> createAsyncTask(
+    T& callee,
+    void (T::*method)(MP1, MP2, MP3, MP4),
+    const P1& parameter1,
+    const P2& parameter2,
+    const P3& parameter3,
+    const P4& parameter4)
+{
+    return std::make_unique<AsyncTaskImpl<T, MP1, MP2, MP3, MP4>>(
+        &callee,
+        method,
+        WebCore::CrossThreadCopier<P1>::copy(parameter1),
+        WebCore::CrossThreadCopier<P2>::copy(parameter2),
+        WebCore::CrossThreadCopier<P3>::copy(parameter3),
+        WebCore::CrossThreadCopier<P4>::copy(parameter4));
+}
+
+template<typename T, typename P1, typename MP1, typename P2, typename MP2, typename P3, typename MP3, typename P4, typename MP4, typename P5, typename MP5, typename P6, typename MP6, typename P7, typename MP7, typename P8, typename MP8>
+std::unique_ptr<AsyncTask> createAsyncTask(
+    T& callee,
+    void (T::*method)(MP1, MP2, MP3, MP4, MP5, MP6, MP7, MP8),
+    const P1& parameter1,
+    const P2& parameter2,
+    const P3& parameter3,
+    const P4& parameter4,
+    const P5& parameter5,
+    const P6& parameter6,
+    const P7& parameter7,
+    const P8& parameter8)
+{
+    return std::make_unique<AsyncTaskImpl<T, MP1, MP2, MP3, MP4, MP5, MP6, MP7, MP8>>(
+        &callee,
+        method,
+        WebCore::CrossThreadCopier<P1>::copy(parameter1),
+        WebCore::CrossThreadCopier<P2>::copy(parameter2),
+        WebCore::CrossThreadCopier<P3>::copy(parameter3),
+        WebCore::CrossThreadCopier<P4>::copy(parameter4),
+        WebCore::CrossThreadCopier<P5>::copy(parameter5),
+        WebCore::CrossThreadCopier<P6>::copy(parameter6),
+        WebCore::CrossThreadCopier<P7>::copy(parameter7),
+        WebCore::CrossThreadCopier<P8>::copy(parameter8));
+}
+
 } // namespace WebKit
 
 #endif // AsyncTask_h

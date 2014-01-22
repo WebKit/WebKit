@@ -1779,6 +1779,8 @@
 		510D4A38103165EE0049EA54 /* SocketStreamHandleClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 510D4A32103165EE0049EA54 /* SocketStreamHandleClient.h */; };
 		5112935F3D54B4B52FAF973F /* InspectorHeapProfilerAgent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 511293613D6DB4B52FAF973F /* InspectorHeapProfilerAgent.cpp */; };
 		511293603D60B4B52FAF973F /* InspectorHeapProfilerAgent.h in Headers */ = {isa = PBXBuildFile; fileRef = 511293623D85B4B52FAF973F /* InspectorHeapProfilerAgent.h */; };
+		511EC1A6188DACA400BA3EB6 /* IDBKeyData.h in Headers */ = {isa = PBXBuildFile; fileRef = 511EC1A5188DACA400BA3EB6 /* IDBKeyData.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		511EC1A8188DAE7B00BA3EB6 /* IDBKeyData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 511EC1A7188DAE7B00BA3EB6 /* IDBKeyData.cpp */; };
 		511EF2C017F0FD3500E4FA16 /* JSIDBAny.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 511EF2A817F0FC4800E4FA16 /* JSIDBAny.cpp */; };
 		511EF2C117F0FD3500E4FA16 /* JSIDBCursor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 511EF2A917F0FC4800E4FA16 /* JSIDBCursor.cpp */; };
 		511EF2C217F0FD3500E4FA16 /* JSIDBCursorWithValue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 511EF2AA17F0FC4800E4FA16 /* JSIDBCursorWithValue.cpp */; };
@@ -8730,6 +8732,8 @@
 		510D4A32103165EE0049EA54 /* SocketStreamHandleClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SocketStreamHandleClient.h; sourceTree = "<group>"; };
 		511293613D6DB4B52FAF973F /* InspectorHeapProfilerAgent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InspectorHeapProfilerAgent.cpp; sourceTree = "<group>"; };
 		511293623D85B4B52FAF973F /* InspectorHeapProfilerAgent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InspectorHeapProfilerAgent.h; sourceTree = "<group>"; };
+		511EC1A5188DACA400BA3EB6 /* IDBKeyData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDBKeyData.h; sourceTree = "<group>"; };
+		511EC1A7188DAE7B00BA3EB6 /* IDBKeyData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IDBKeyData.cpp; sourceTree = "<group>"; };
 		511EF2A817F0FC4800E4FA16 /* JSIDBAny.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = JSIDBAny.cpp; sourceTree = "<group>"; };
 		511EF2A917F0FC4800E4FA16 /* JSIDBCursor.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = JSIDBCursor.cpp; sourceTree = "<group>"; };
 		511EF2AA17F0FC4800E4FA16 /* JSIDBCursorWithValue.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = JSIDBCursorWithValue.cpp; sourceTree = "<group>"; };
@@ -17704,6 +17708,8 @@
 				51ABB5B6186D0ED1008391A1 /* IDBIndexMetadata.h */,
 				51D71991181106E00016DC51 /* IDBKey.cpp */,
 				51D71992181106E00016DC51 /* IDBKey.h */,
+				511EC1A7188DAE7B00BA3EB6 /* IDBKeyData.cpp */,
+				511EC1A5188DACA400BA3EB6 /* IDBKeyData.h */,
 				51D71993181106E00016DC51 /* IDBKeyPath.cpp */,
 				51D71994181106E00016DC51 /* IDBKeyPath.h */,
 				51D71995181106E00016DC51 /* IDBKeyRange.cpp */,
@@ -24001,6 +24007,7 @@
 				CD8B5A49180E138B008B8E65 /* TextTrackMediaSource.h in Headers */,
 				A8EA7CAF0A192B9C00A8EF5F /* HTMLHRElement.h in Headers */,
 				A871DE270A152AC800B12A68 /* HTMLHtmlElement.h in Headers */,
+				511EC1A6188DACA400BA3EB6 /* IDBKeyData.h in Headers */,
 				07969DB417D14151007FF842 /* JSRTCPeerConnectionErrorCallback.h in Headers */,
 				A871DE2A0A152AC800B12A68 /* HTMLIFrameElement.h in Headers */,
 				A8EA7D2D0A19385500A8EF5F /* HTMLImageElement.h in Headers */,
@@ -28813,6 +28820,7 @@
 				51771C8E182DB4B7008E781E /* IDBDatabaseBackend.cpp in Sources */,
 				1A22464B0CC98DDB00C05240 /* SQLiteStatement.cpp in Sources */,
 				1A22464D0CC98DDB00C05240 /* SQLiteTransaction.cpp in Sources */,
+				511EC1A8188DAE7B00BA3EB6 /* IDBKeyData.cpp in Sources */,
 				97BC6A411505F081001B74AC /* SQLResultSet.cpp in Sources */,
 				97BC6A441505F081001B74AC /* SQLResultSetRowList.cpp in Sources */,
 				97BC6A471505F081001B74AC /* SQLStatement.cpp in Sources */,

@@ -30,6 +30,7 @@
 #if ENABLE(INDEXED_DATABASE) && ENABLE(DATABASE_PROCESS)
 
 #include "AsyncRequest.h"
+#include "DataReference.h"
 #include "DatabaseProcessIDBConnectionMessages.h"
 #include "DatabaseToWebProcessConnectionMessages.h"
 #include "Logging.h"
@@ -300,8 +301,45 @@ void WebIDBServerConnection::get(IDBTransactionBackend&, const GetOperation&, st
 {
 }
 
-void WebIDBServerConnection::put(IDBTransactionBackend&, const PutOperation&, std::function<void(PassRefPtr<IDBKey>, PassRefPtr<IDBDatabaseError>)> completionCallback)
+void WebIDBServerConnection::put(IDBTransactionBackend& transaction, const PutOperation& operation, std::function<void(PassRefPtr<IDBKey>, PassRefPtr<IDBDatabaseError>)> completionCallback)
 {
+    RefPtr<AsyncRequest> serverRequest = AsyncRequestImpl<PassRefPtr<IDBKey>, PassRefPtr<IDBDatabaseError>>::create(completionCallback);
+
+    serverRequest->setAbortHandler([completionCallback]() {
+        completionCallback(nullptr, IDBDatabaseError::create(IDBDatabaseException::UnknownError, "Unknown error occured putting record"));
+    });
+
+    uint64_t requestID = serverRequest->requestID();
+    ASSERT(!m_serverRequests.contains(requestID));
+    m_serverRequests.add(requestID, serverRequest.release());
+
+    LOG(IDB, "WebProcess put request ID %llu", requestID);
+
+    ASSERT(operation.key());
+    ASSERT(operation.value());
+
+    IPC::DataReference value(reinterpret_cast<const uint8_t*>(operation.value()->data()), operation.value()->size());
+
+    Vector<Vector<IDBKeyData>> indexKeys;
+    for (auto keys : operation.indexKeys()) {
+        indexKeys.append(Vector<IDBKeyData>());
+        for (auto key : keys)
+            indexKeys.last().append(IDBKeyData(key.get()));
+    }
+
+    send(Messages::DatabaseProcessIDBConnection::PutRecord(requestID, transaction.id(), operation.objectStore().id, IDBKeyData(operation.key()), value, operation.putMode(), operation.indexIDs(), indexKeys));
+}
+
+void WebIDBServerConnection::didPutRecord(uint64_t requestID, const WebCore::IDBKeyData& resultKey, uint32_t errorCode, const String& errorMessage)
+{
+    LOG(IDB, "WebProcess didPutRecord request ID %llu (error - %s)", requestID, errorMessage.utf8().data());
+
+    RefPtr<AsyncRequest> serverRequest = m_serverRequests.take(requestID);
+
+    if (!serverRequest)
+        return;
+
+    serverRequest->completeRequest(resultKey.isNull ? nullptr : resultKey.maybeCreateIDBKey(), errorCode ? IDBDatabaseError::create(errorCode, errorMessage) : nullptr);
 }
 
 void WebIDBServerConnection::openCursor(IDBTransactionBackend&, const OpenCursorOperation&, std::function<void(PassRefPtr<IDBDatabaseError>)> completionCallback)

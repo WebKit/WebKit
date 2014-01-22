@@ -42,6 +42,7 @@
 #include <WebCore/GraphicsContext.h>
 #include <WebCore/GraphicsLayer.h>
 #include <WebCore/IDBDatabaseMetadata.h>
+#include <WebCore/IDBKeyData.h>
 #include <WebCore/IDBKeyPath.h>
 #include <WebCore/Image.h>
 #include <WebCore/Length.h>
@@ -1618,6 +1619,68 @@ bool ArgumentCoder<IDBIndexMetadata>::decode(ArgumentDecoder& decoder, IDBIndexM
 
     if (!decoder.decode(metadata.multiEntry))
         return false;
+
+    return true;
+}
+
+void ArgumentCoder<IDBKeyData>::encode(ArgumentEncoder& encoder, const IDBKeyData& keyData)
+{
+    encoder << keyData.isNull;
+    if (keyData.isNull)
+        return;
+
+    encoder.encodeEnum(keyData.type);
+
+    switch (keyData.type) {
+    case IDBKey::InvalidType:
+        break;
+    case IDBKey::ArrayType:
+        encoder << keyData.arrayValue;
+        break;
+    case IDBKey::StringType:
+        encoder << keyData.stringValue;
+        break;
+    case IDBKey::DateType:
+    case IDBKey::NumberType:
+        encoder << keyData.numberValue;
+        break;
+    case IDBKey::MinType:
+        ASSERT_NOT_REACHED();
+        break;
+    }
+}
+
+bool ArgumentCoder<IDBKeyData>::decode(ArgumentDecoder& decoder, IDBKeyData& keyData)
+{
+    if (!decoder.decode(keyData.isNull))
+        return false;
+
+    if (keyData.isNull)
+        return true;
+
+    if (!decoder.decodeEnum(keyData.type))
+        return false;
+
+    switch (keyData.type) {
+    case IDBKey::InvalidType:
+        break;
+    case IDBKey::ArrayType:
+        if (!decoder.decode(keyData.arrayValue))
+            return false;
+        break;
+    case IDBKey::StringType:
+        if (!decoder.decode(keyData.stringValue))
+            return false;
+        break;
+    case IDBKey::DateType:
+    case IDBKey::NumberType:
+        if (!decoder.decode(keyData.numberValue))
+            return false;
+        break;
+    case IDBKey::MinType:
+        ASSERT_NOT_REACHED();
+        return false;
+    }
 
     return true;
 }

@@ -6614,6 +6614,7 @@
     <ClCompile Include="..\Modules\indexeddb\IDBFactoryBackendInterface.cpp" />
     <ClCompile Include="..\Modules\indexeddb\IDBIndex.cpp" />
     <ClCompile Include="..\Modules\indexeddb\IDBKey.cpp" />
+    <ClCompile Include="..\Modules\indexeddb\IDBKeyData.cpp" />
     <ClCompile Include="..\Modules\indexeddb\IDBKeyRange.cpp" />
     <ClCompile Include="..\Modules\indexeddb\IDBObjectStore.cpp" />
     <ClCompile Include="..\Modules\indexeddb\IDBRequest.cpp" />

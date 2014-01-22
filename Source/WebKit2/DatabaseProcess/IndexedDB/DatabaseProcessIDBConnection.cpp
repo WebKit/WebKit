@@ -177,6 +177,18 @@ void DatabaseProcessIDBConnection::deleteObjectStore(uint64_t requestID, int64_t
     });
 }
 
+void DatabaseProcessIDBConnection::putRecord(uint64_t requestID, int64_t transactionID, int64_t objectStoreID, const WebCore::IDBKeyData& key, const IPC::DataReference& value, int64_t putMode, const Vector<int64_t>& indexIDs, const Vector<Vector<WebCore::IDBKeyData>>& indexKeys)
+{
+    ASSERT(m_uniqueIDBDatabase);
+
+    LOG(IDB, "DatabaseProcess putRecord request ID %llu, object store id %lli", requestID, objectStoreID);
+    RefPtr<DatabaseProcessIDBConnection> connection(this);
+    m_uniqueIDBDatabase->putRecord(IDBTransactionIdentifier(*this, transactionID), objectStoreID, key, value, putMode, indexIDs, indexKeys, [connection, requestID](const IDBKeyData& keyData, uint32_t errorCode, const String& errorMessage) {
+        connection->send(Messages::WebIDBServerConnection::DidPutRecord(requestID, keyData, errorCode, errorMessage));
+    });
+}
+
+
 IPC::Connection* DatabaseProcessIDBConnection::messageSenderConnection()
 {
     return m_connection->connection();

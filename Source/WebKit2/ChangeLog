@@ -1,3 +1,64 @@
+2014-01-21  Brady Eidson  <beidson@apple.com>
+
+        IDB: "Put" support
+        <rdar://problem/15779643> and https://bugs.webkit.org/show_bug.cgi?id=127401
+
+        Reviewed by Alexey Proskuryakov.
+
+        Ship putRecord requests over to the DatabaseProcess, and listen for completion from the DatabaseProcess:
+        * WebProcess/Databases/IndexedDB/WebIDBServerConnection.cpp:
+        (WebKit::WebIDBServerConnection::put):
+        (WebKit::WebIDBServerConnection::didPutRecord):
+        * WebProcess/Databases/IndexedDB/WebIDBServerConnection.h:
+        * WebProcess/Databases/IndexedDB/WebIDBServerConnection.messages.in:
+
+        Pass off the putRecord request to the Unique IDBDatabase:
+        * DatabaseProcess/IndexedDB/DatabaseProcessIDBConnection.cpp:
+        (WebKit::DatabaseProcessIDBConnection::putRecord):
+        * DatabaseProcess/IndexedDB/DatabaseProcessIDBConnection.h:
+        * DatabaseProcess/IndexedDB/DatabaseProcessIDBConnection.messages.in:
+
+        Pass off the putRecord request to the backing store:
+        * DatabaseProcess/IndexedDB/UniqueIDBDatabase.cpp:
+        (WebKit::UniqueIDBDatabase::putRecord):
+        (WebKit::UniqueIDBDatabase::putRecordInBackingStore):
+        (WebKit::UniqueIDBDatabase::didPutRecordInBackingStore):
+        * DatabaseProcess/IndexedDB/UniqueIDBDatabase.h:
+
+        Add backing store methods related to putRecord, though only one is critical right now:
+        * DatabaseProcess/IndexedDB/UniqueIDBDatabaseBackingStore.h:
+        * DatabaseProcess/IndexedDB/sqlite/UniqueIDBDatabaseBackingStoreSQLite.cpp:
+        (WebKit::UniqueIDBDatabaseBackingStoreSQLite::createAndPopulateInitialMetadata):
+        (WebKit::UniqueIDBDatabaseBackingStoreSQLite::generateKey):
+        (WebKit::UniqueIDBDatabaseBackingStoreSQLite::keyExistsInObjectStore):
+        (WebKit::UniqueIDBDatabaseBackingStoreSQLite::putRecord):
+        (WebKit::UniqueIDBDatabaseBackingStoreSQLite::updateKeyGenerator):
+        * DatabaseProcess/IndexedDB/sqlite/UniqueIDBDatabaseBackingStoreSQLite.h:
+
+        Add the IDBKeyData type to IPC:
+        * Scripts/webkit2/messages.py:
+        (struct_or_class):
+
+        * Shared/WebCoreArgumentCoders.cpp:
+        (IPC::ArgumentCoder<IDBKeyData>::encode):
+        (IPC::ArgumentCoder<IDBKeyData>::decode):
+        * Shared/WebCoreArgumentCoders.h:
+
+        * DatabaseProcess/IndexedDB/IDBSerialization.cpp:
+        (WebKit::serializeIDBKey):
+        * DatabaseProcess/IndexedDB/IDBSerialization.h:
+
+        Implement more cross-thread copying:
+        * Shared/WebCrossThreadCopier.cpp:
+        (WebCore::Vector<uint8_t>>::copy):
+        (WebCore::Vector<Vector<IDBKeyData>>>::copy):
+        (WebCore::ASCIILiteral>::copy):
+        * Shared/WebCrossThreadCopier.h:
+
+        Implement more numbers of generic AsyncTask templates:
+        * Shared/AsyncTask.h:
+        (WebKit::createAsyncTask):
+
 2014-01-22  Anders Carlsson  <andersca@apple.com>
 
         WKProcessClass should create a WebContext

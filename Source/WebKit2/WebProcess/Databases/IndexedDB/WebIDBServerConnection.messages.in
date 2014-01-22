@@ -34,6 +34,7 @@ messages -> WebIDBServerConnection LegacyReceiver {
     DidChangeDatabaseVersion(uint64_t requestID, bool success)
     DidCreateObjectStore(uint64_t requestID, bool success)
     DidDeleteObjectStore(uint64_t requestID, bool success)
+    DidPutRecord(uint64_t requestID, WebCore::IDBKeyData resultKey, uint32_t errorCode, String errorMessage)
 }
 
 #endif // ENABLE(INDEXED_DATABASE) && ENABLE(DATABASE_PROCESS)

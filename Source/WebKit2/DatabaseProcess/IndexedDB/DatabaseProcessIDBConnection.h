@@ -34,6 +34,10 @@
 #include "UniqueIDBDatabaseIdentifier.h"
 #include <wtf/text/WTFString.h>
 
+namespace WebCore {
+struct IDBKeyData;
+}
+
 namespace WebKit {
 
 class DatabaseToWebProcessConnection;
@@ -71,6 +75,7 @@ private:
     void changeDatabaseVersion(uint64_t requestID, int64_t transactionID, uint64_t newVersion);
     void createObjectStore(uint64_t requestID, int64_t transactionID, WebCore::IDBObjectStoreMetadata);
     void deleteObjectStore(uint64_t requestID, int64_t transactionID, int64_t objectStoreID);
+    void putRecord(uint64_t requestID, int64_t transactionID, int64_t objectStoreID, const WebCore::IDBKeyData&, const IPC::DataReference& value, int64_t putMode, const Vector<int64_t>& indexIDs, const Vector<Vector<WebCore::IDBKeyData>>& indexKeys);
 
     Ref<DatabaseToWebProcessConnection> m_connection;
     uint64_t m_serverConnectionIdentifier;

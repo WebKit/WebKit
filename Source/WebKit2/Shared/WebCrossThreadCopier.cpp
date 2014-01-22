@@ -29,6 +29,7 @@
 
 #include "IDBTransactionIdentifier.h"
 #include "UniqueIDBDatabaseIdentifier.h"
+#include <WebCore/IDBKeyData.h>
 
 using namespace WebKit;
 
@@ -49,6 +50,31 @@ Vector<int64_t> CrossThreadCopierBase<false, false, Vector<int64_t>>::copy(const
     Vector<int64_t> result;
     result.appendVector(vector);
     return result;
+}
+
+Vector<uint8_t> CrossThreadCopierBase<false, false, Vector<uint8_t>>::copy(const Vector<uint8_t>& vector)
+{
+    Vector<uint8_t> result;
+    result.appendVector(vector);
+    return result;
+}
+
+Vector<Vector<IDBKeyData>> CrossThreadCopierBase<false, false, Vector<Vector<IDBKeyData>>>::copy(const Vector<Vector<IDBKeyData>>& vector)
+{
+    Vector<Vector<IDBKeyData>> result;
+
+    for (auto keys : vector) {
+        result.append(Vector<IDBKeyData>());
+        for (auto key : keys)
+            result.last().append(WebCore::CrossThreadCopier<IDBKeyData>::copy(key));
+    }
+
+    return result;
+}
+
+ASCIILiteral CrossThreadCopierBase<false, false, ASCIILiteral>::copy(const ASCIILiteral& literal)
+{
+    return literal;
 }
 
 } // namespace WebCore

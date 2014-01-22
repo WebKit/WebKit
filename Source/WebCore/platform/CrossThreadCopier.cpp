@@ -42,6 +42,7 @@
 
 #if ENABLE(INDEXED_DATABASE)
 #include "IDBDatabaseMetadata.h"
+#include "IDBKeyData.h"
 #endif
 
 namespace WebCore {
@@ -96,6 +97,11 @@ CrossThreadCopierBase<false, false, IDBDatabaseMetadata>::Type CrossThreadCopier
 CrossThreadCopierBase<false, false, IDBIndexMetadata>::Type CrossThreadCopierBase<false, false, IDBIndexMetadata>::copy(const IDBIndexMetadata& metadata)
 {
     return metadata.isolatedCopy();
+}
+
+CrossThreadCopierBase<false, false, IDBKeyData>::Type CrossThreadCopierBase<false, false, IDBKeyData>::copy(const IDBKeyData& keyData)
+{
+    return keyData.isolatedCopy();
 }
 
 CrossThreadCopierBase<false, false, IDBObjectStoreMetadata>::Type CrossThreadCopierBase<false, false, IDBObjectStoreMetadata>::copy(const IDBObjectStoreMetadata& metadata)

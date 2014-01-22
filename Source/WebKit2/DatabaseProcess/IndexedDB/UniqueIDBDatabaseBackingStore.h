@@ -32,6 +32,8 @@
 #include <wtf/RefCounted.h>
 
 namespace WebCore {
+class IDBKey;
+
 struct IDBDatabaseMetadata;
 struct IDBObjectStoreMetadata;
 }
@@ -55,6 +57,13 @@ public:
     virtual bool changeDatabaseVersion(const IDBTransactionIdentifier&, uint64_t newVersion) = 0;
     virtual bool createObjectStore(const IDBTransactionIdentifier&, const WebCore::IDBObjectStoreMetadata&) = 0;
     virtual bool deleteObjectStore(const IDBTransactionIdentifier&, int64_t objectStoreID) = 0;
+
+    virtual PassRefPtr<WebCore::IDBKey> generateKey(const IDBTransactionIdentifier&, int64_t objectStoreID) = 0;
+    virtual bool keyExistsInObjectStore(const IDBTransactionIdentifier&, int64_t objectStoreID, const WebCore::IDBKey&, bool& keyExists) = 0;
+    virtual bool putRecord(const IDBTransactionIdentifier&, int64_t objectStoreID, const WebCore::IDBKey&, const uint8_t* valueBuffer, size_t valueSize) = 0;
+    virtual bool updateKeyGenerator(const IDBTransactionIdentifier&, int64_t objectStoreId, const WebCore::IDBKey&, bool checkCurrent) = 0;
+
+
 };
 
 } // namespace WebKit

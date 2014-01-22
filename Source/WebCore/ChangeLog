@@ -1,3 +1,31 @@
+2014-01-21  Brady Eidson  <beidson@apple.com>
+
+        IDB: "Put" support
+        <rdar://problem/15779643> and https://bugs.webkit.org/show_bug.cgi?id=127401
+
+        Reviewed by Alexey Proskuryakov.
+
+        Add persistent encode/decode for storage to the database:
+        * Modules/indexeddb/IDBKey.cpp:
+        (WebCore::IDBKey::encode):
+        (WebCore::IDBKey::decode):
+        * Modules/indexeddb/IDBKey.h:
+
+        Add a data class to represent IDBKey suitable for crossing IPC:
+        * Modules/indexeddb/IDBKeyData.cpp: Added.
+        (WebCore::IDBKeyData::IDBKeyData):
+        (WebCore::IDBKeyData::maybeCreateIDBKey):
+        (WebCore::IDBKeyData::isolatedCopy):
+        * Modules/indexeddb/IDBKeyData.h: Added.
+        (WebCore::IDBKeyData::IDBKeyData):
+
+        * platform/CrossThreadCopier.cpp:
+        (WebCore::IDBKeyData>::copy):
+        * platform/CrossThreadCopier.h:
+
+        * WebCore.exp.in:
+        * WebCore.xcodeproj/project.pbxproj:
+
 2014-01-22  Dean Jackson  <dino@apple.com>
 
         [WebGL] Implement ANGLE_instanced_arrays

@@ -64,6 +64,11 @@ public:
     virtual bool createObjectStore(const IDBTransactionIdentifier&, const WebCore::IDBObjectStoreMetadata&) override;
     virtual bool deleteObjectStore(const IDBTransactionIdentifier&, int64_t objectStoreID) override;
 
+    virtual PassRefPtr<WebCore::IDBKey> generateKey(const IDBTransactionIdentifier&, int64_t objectStoreID) override;
+    virtual bool keyExistsInObjectStore(const IDBTransactionIdentifier&, int64_t objectStoreID, const WebCore::IDBKey&, bool& keyExists) override;
+    virtual bool putRecord(const IDBTransactionIdentifier&, int64_t objectStoreID, const WebCore::IDBKey&, const uint8_t* valueBuffer, size_t valueSize) override;
+    virtual bool updateKeyGenerator(const IDBTransactionIdentifier&, int64_t objectStoreId, const WebCore::IDBKey&, bool checkCurrent) override;
+
 private:
     UniqueIDBDatabaseBackingStoreSQLite(const UniqueIDBDatabaseIdentifier&, const String& databaseDirectory);
 

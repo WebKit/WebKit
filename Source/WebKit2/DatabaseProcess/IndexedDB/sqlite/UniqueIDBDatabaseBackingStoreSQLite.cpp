@@ -33,6 +33,7 @@
 #include "SQLiteIDBTransaction.h"
 #include <WebCore/FileSystem.h>
 #include <WebCore/IDBDatabaseMetadata.h>
+#include <WebCore/IDBKeyData.h>
 #include <WebCore/SQLiteDatabase.h>
 #include <WebCore/SQLiteStatement.h>
 #include <wtf/MainThread.h>
@@ -85,6 +86,12 @@ std::unique_ptr<WebCore::IDBDatabaseMetadata> UniqueIDBDatabaseBackingStoreSQLit
 
     if (!m_sqliteDB->executeCommand("CREATE TABLE IndexInfo (id INTEGER PRIMARY KEY NOT NULL ON CONFLICT FAIL, name TEXT NOT NULL ON CONFLICT FAIL UNIQUE ON CONFLICT FAIL, objectStoreID INTEGER NOT NULL ON CONFLICT FAIL, keyPath BLOB NOT NULL ON CONFLICT FAIL, isUnique INTEGER NOT NULL ON CONFLICT FAIL, multiEntry INTEGER NOT NULL ON CONFLICT FAIL);")) {
         LOG_ERROR("Could not create IndexInfo table in database (%i) - %s", m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg());
+        m_sqliteDB = nullptr;
+        return nullptr;
+    }
+
+    if (!m_sqliteDB->executeCommand("CREATE TABLE Records (objectStoreID INTEGER NOT NULL ON CONFLICT FAIL, key BLOB NOT NULL ON CONFLICT FAIL UNIQUE ON CONFLICT REPLACE, value BLOB NOT NULL ON CONFLICT FAIL);")) {
+        LOG_ERROR("Could not create Records table in database (%i) - %s", m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg());
         m_sqliteDB = nullptr;
         return nullptr;
     }
@@ -413,6 +420,60 @@ bool UniqueIDBDatabaseBackingStoreSQLite::deleteObjectStore(const IDBTransaction
     }
 
     return true;
+}
+
+PassRefPtr<IDBKey> UniqueIDBDatabaseBackingStoreSQLite::generateKey(const IDBTransactionIdentifier&, int64_t objectStoreID)
+{
+    // FIXME (<rdar://problem/15877909>): Implement
+    return nullptr;
+}
+
+bool UniqueIDBDatabaseBackingStoreSQLite::keyExistsInObjectStore(const IDBTransactionIdentifier&, int64_t objectStoreID, const IDBKey&, bool& keyExists)
+{
+    // FIXME: When Get support is implemented, we need to implement this also (<rdar://problem/15779644>)
+    return false;
+}
+
+bool UniqueIDBDatabaseBackingStoreSQLite::putRecord(const IDBTransactionIdentifier& identifier, int64_t objectStoreID, const IDBKey& key, const uint8_t* valueBuffer, size_t valueSize)
+{
+    ASSERT(!isMainThread());
+    ASSERT(m_sqliteDB);
+    ASSERT(m_sqliteDB->isOpen());
+
+    SQLiteIDBTransaction* transaction = m_transactions.get(identifier);
+    if (!transaction || !transaction->inProgress()) {
+        LOG_ERROR("Attempt to put a record into database without an established, in-progress transaction");
+        return false;
+    }
+    if (transaction->mode() == IndexedDB::TransactionMode::ReadOnly) {
+        LOG_ERROR("Attempt to put a record into database during read-only transaction");
+        return false;
+    }
+
+    RefPtr<SharedBuffer> keyBuffer = serializeIDBKey(key);
+    if (!keyBuffer) {
+        LOG_ERROR("Unable to serialize IDBKey to be stored in the database");
+        return false;
+    }
+    {
+        SQLiteStatement sql(*m_sqliteDB, ASCIILiteral("INSERT INTO Records VALUES (?, ?, ?);"));
+        if (sql.prepare() != SQLResultOk
+            || sql.bindInt64(1, objectStoreID) != SQLResultOk
+            || sql.bindBlob(2, keyBuffer->data(), keyBuffer->size()) != SQLResultOk
+            || sql.bindBlob(3, valueBuffer, valueSize) != SQLResultOk
+            || sql.step() != SQLResultDone) {
+            LOG_ERROR("Could not put record for object store %lli in Records table (%i) - %s", objectStoreID, m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg());
+            return false;
+        }
+    }
+
+    return true;
+}
+
+bool UniqueIDBDatabaseBackingStoreSQLite::updateKeyGenerator(const IDBTransactionIdentifier&, int64_t objectStoreId, const IDBKey&, bool checkCurrent)
+{
+    // FIXME (<rdar://problem/15877909>): Implement
+    return false;
 }
 
 

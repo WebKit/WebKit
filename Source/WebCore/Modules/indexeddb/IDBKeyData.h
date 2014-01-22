@@ -22,45 +22,38 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
-#include "config.h"
-#include "IDBSerialization.h"
+
+#ifndef IDBKeyData_h
+#define IDBKeyData_h
 
 #if ENABLE(INDEXED_DATABASE)
 
-#include "ArgumentEncoder.h"
-#include "KeyedDecoder.h"
-#include "KeyedEncoder.h"
-#include <WebCore/IDBKey.h>
-#include <WebCore/IDBKeyPath.h>
+#include "IDBKey.h"
 
-using namespace WebCore;
+namespace WebCore {
 
-namespace WebKit {
+struct IDBKeyData {
+    IDBKeyData()
+        : type(IDBKey::InvalidType)
+        , numberValue(0)
+        , isNull(true)
+    {
+    }
 
-RefPtr<SharedBuffer> serializeIDBKeyPath(const IDBKeyPath& keyPath)
-{
-    KeyedEncoder encoder;
-    keyPath.encode(encoder);
-    return encoder.finishEncoding();
-}
+    IDBKeyData(IDBKey*);
 
-std::unique_ptr<WebCore::IDBKeyPath> deserializeIDBKeyPath(const uint8_t* data, size_t size)
-{
-    KeyedDecoder decoder(data, size);
-    std::unique_ptr<IDBKeyPath> result = std::make_unique<IDBKeyPath>();
-    if (!IDBKeyPath::decode(decoder, *result))
-        return nullptr;
+    PassRefPtr<IDBKey> maybeCreateIDBKey() const;
 
-    return result;
-}
+    IDBKeyData isolatedCopy() const;
 
-RefPtr<WebCore::SharedBuffer> serializeIDBKey(const IDBKey& key)
-{
-    KeyedEncoder encoder;
-    key.encode(encoder);
-    return encoder.finishEncoding();
-}
+    IDBKey::Type type;
+    Vector<IDBKeyData> arrayValue;
+    String stringValue;
+    double numberValue;
+    bool isNull;
+};
 
-} // namespace WebKit
+} // namespace WebCore
 
 #endif // ENABLE(INDEXED_DATABASE)
+#endif // IDBKeyData_h

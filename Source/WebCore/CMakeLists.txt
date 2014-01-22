@@ -811,6 +811,7 @@ set(WebCore_SOURCES
     Modules/indexeddb/IDBFactoryBackendInterface.cpp
     Modules/indexeddb/IDBIndex.cpp
     Modules/indexeddb/IDBKey.cpp
+    Modules/indexeddb/IDBKeyData.cpp
     Modules/indexeddb/IDBKeyPath.cpp
     Modules/indexeddb/IDBKeyRange.cpp
     Modules/indexeddb/IDBObjectStore.cpp

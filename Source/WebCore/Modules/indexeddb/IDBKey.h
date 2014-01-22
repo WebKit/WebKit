@@ -35,6 +35,9 @@
 
 namespace WebCore {
 
+class KeyedDecoder;
+class KeyedEncoder;
+
 class IDBKey : public RefCounted<IDBKey> {
 public:
     typedef Vector<RefPtr<IDBKey>> KeyArray;
@@ -146,6 +149,9 @@ public:
 
     using RefCounted<IDBKey>::ref;
     using RefCounted<IDBKey>::deref;
+
+    void encode(KeyedEncoder&) const;
+    static bool decode(KeyedDecoder&, IDBKey&);
 
 private:
     IDBKey() : m_type(InvalidType), m_number(0), m_sizeEstimate(OverheadSize) { }

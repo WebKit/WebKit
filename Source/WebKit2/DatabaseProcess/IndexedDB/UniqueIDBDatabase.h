@@ -40,6 +40,7 @@
 
 namespace WebCore {
 struct IDBDatabaseMetadata;
+struct IDBKeyData;
 }
 
 namespace WebKit {
@@ -76,6 +77,7 @@ public:
     void changeDatabaseVersion(const IDBTransactionIdentifier&, uint64_t newVersion, std::function<void(bool)> successCallback);
     void createObjectStore(const IDBTransactionIdentifier&, const WebCore::IDBObjectStoreMetadata&, std::function<void(bool)> successCallback);
     void deleteObjectStore(const IDBTransactionIdentifier&, int64_t objectStoreID, std::function<void(bool)> successCallback);
+    void putRecord(const IDBTransactionIdentifier&, int64_t objectStoreID, const WebCore::IDBKeyData&, const IPC::DataReference& value, int64_t putMode, const Vector<int64_t>& indexIDs, const Vector<Vector<WebCore::IDBKeyData>>& indexKeys, std::function<void(const WebCore::IDBKeyData&, uint32_t, const String&)> callback);
 
 private:
     UniqueIDBDatabase(const UniqueIDBDatabaseIdentifier&);
@@ -117,6 +119,8 @@ private:
     void changeDatabaseVersionInBackingStore(uint64_t requestID, const IDBTransactionIdentifier&, uint64_t newVersion);
     void createObjectStoreInBackingStore(uint64_t requestID, const IDBTransactionIdentifier&, const WebCore::IDBObjectStoreMetadata&);
     void deleteObjectStoreInBackingStore(uint64_t requestID, const IDBTransactionIdentifier&, int64_t objectStoreID);
+    void putRecordInBackingStore(uint64_t requestID, const IDBTransactionIdentifier&, const WebCore::IDBObjectStoreMetadata&, const WebCore::IDBKeyData&, const Vector<uint8_t>& value, int64_t putMode, const Vector<int64_t>& indexIDs, const Vector<Vector<WebCore::IDBKeyData>>& indexKeys);
+
 
     void shutdownBackingStore();
 
@@ -127,6 +131,7 @@ private:
     void didChangeDatabaseVersion(uint64_t requestID, bool success);
     void didCreateObjectStore(uint64_t requestID, bool success);
     void didDeleteObjectStore(uint64_t requestID, bool success);
+    void didPutRecordInBackingStore(uint64_t requestID, const WebCore::IDBKeyData&, uint32_t errorCode, const String& errorMessage);
     void didShutdownBackingStore();
     void didCompleteBoolRequest(uint64_t requestID, bool success);
 
