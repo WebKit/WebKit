@@ -1,3 +1,9 @@
+2014-01-22  Dan Bernstein  <mitz@apple.com>
+
+        Build fix for iOS clients of WebUIDelegatePrivate.h.
+
+        * WebView/WebUIDelegatePrivate.h: Ensure that ENABLE_DASHBOARD_SUPPORT is defined on iOS.
+
 2014-01-21  Dan Bernstein  <mitz@apple.com>
 
         Added a method declaration that was missed in r161185.

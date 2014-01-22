@@ -29,9 +29,11 @@
 #import <WebKit/WebAllowDenyPolicyListener.h>
 #import <WebKit/WebUIDelegate.h>
 
-#if !TARGET_OS_IPHONE
 #if !defined(ENABLE_DASHBOARD_SUPPORT)
+#if !TARGET_OS_IPHONE
 #define ENABLE_DASHBOARD_SUPPORT 1
+#else
+#define ENABLE_DASHBOARD_SUPPORT 0
 #endif
 #endif
 
