@@ -221,7 +221,9 @@ MediaPlayer::SupportsType MediaPlayerPrivateMediaSourceAVFObjC::supportsType(con
 
 void MediaPlayerPrivateMediaSourceAVFObjC::load(const String&)
 {
-    ASSERT_NOT_REACHED();
+    // This media engine only supports MediaSource URLs.
+    m_networkState = MediaPlayer::FormatError;
+    m_player->networkStateChanged();
 }
 
 void MediaPlayerPrivateMediaSourceAVFObjC::load(const String& url, PassRefPtr<HTMLMediaSource> source)

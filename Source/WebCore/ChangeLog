@@ -1,3 +1,18 @@
+2014-01-22  Jer Noble  <jer.noble@apple.com>
+
+        [Mac] MediaPlayerPrivateMediaSourceAVFObjC::load ASSERTs on lots of tests
+        https://bugs.webkit.org/show_bug.cgi?id=127430
+
+        Reviewed by Eric Carlson.
+
+        When other registered media engines cannot load a URL, the engine selection
+        will eventually pick MediaPlayerPrivateMediaSourceAVFObjC and ask it to load
+        the URL. Instead of ASSERTing here, simply reject the URL by setting the
+        network state to FormatError.
+
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaSourceAVFObjC.mm:
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::load):
+
 2014-01-22  Thiago de Barros Lacerda  <thiago.lacerda@openbossa.org>
 
         [EFL][GTK] Get EFL and GTK compiling with ACCESSIBILITY disabled
