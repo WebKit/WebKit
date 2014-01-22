@@ -1,3 +1,12 @@
+2014-01-21  Alexey Proskuryakov  <ap@apple.com>
+
+        AX: Mac: Expose the visible text of a password field to AX
+        https://bugs.webkit.org/show_bug.cgi?id=127353
+
+        Test landed with this fix was filing everywhere, trying to fix it.
+
+        * accessibility/password-field-value.html: Fix paths in the test, and clean it up a little.
+
 2014-01-21  Bear Travis  <betravis@adobe.com>
 
         [CSS Shapes] Preserve box-shape order when serializing shape values
