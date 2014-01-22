@@ -1,3 +1,34 @@
+2014-01-22  Jinwoo Song  <jinwoo7.song@samsung.com>
+
+        Remove Nix files from Tools
+        https://bugs.webkit.org/show_bug.cgi?id=127418
+
+        Reviewed by Csaba Osztrogonác.
+
+        * Scripts/build-webkit:
+        * Scripts/update-webkit-libs-jhbuild:
+        * Scripts/webkitdirs.pm:
+        (determineArchitecture):
+        (argumentsForConfiguration):
+        (jscProductDir):
+        (builtDylibPathForName):
+        (isAppleWebKit):
+        (launcherPath):
+        (launcherName):
+        (checkRequiredSystemConfig):
+        (copyInspectorFrontendFiles):
+        (jhbuildWrapperPrefixIfNeeded):
+        (buildCMakeProjectOrExit):
+        (cmakeBasedPortName):
+        * Scripts/webkitpy/common/config/ports.py:
+        (DeprecatedPort.port):
+        (EflWK2Port.build_webkit_command):
+        * Scripts/webkitpy/port/factory.py:
+        (platform_options):
+        (PortFactory):
+        * Scripts/webkitpy/port/nix.py: Removed.
+        * Scripts/webkitpy/port/nix_unittest.py: Removed.
+
 2014-01-21  Benjamin Poulain  <benjamin@webkit.org>
 
         Add Ian and Ricky to the contributor list

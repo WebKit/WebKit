@@ -24,26 +24,21 @@ use Getopt::Long qw(:config pass_through);
 
 my $platformEfl = 0;
 my $platformGtk = 0;
-my $platformNix = 0;
 
 my $getOptionsResult = GetOptions(
     'efl' => \$platformEfl,
     'gtk' => \$platformGtk,
-    'nix' => \$platformNix
     );
 
 my $platform = "";
 if (!$getOptionsResult) {
-    die "No platform specified for " . basename($0) .". Use --gtk, --efl or --nix.\n";
+    die "No platform specified for " . basename($0) .". Use --gtk or --efl.\n";
 } else {
     if ($platformEfl) {
         $platform = "efl";
     }
     if ($platformGtk) {
         $platform = "gtk";
-    }
-    if ($platformNix) {
-        $platform = "nix";
     }
 }
 
@@ -126,7 +121,7 @@ delete $ENV{AR_FLAGS} if exists $ENV{AR_FLAGS};
 
 chdir(relativeScriptsDir() . "/../jhbuild") or die $!;
 
-my %prettyPlatform = ( "efl" => "EFL", "gtk" => "GTK+", "nix" => "Nix" );
+my %prettyPlatform = ( "efl" => "EFL", "gtk" => "GTK+" );
 
 if (-e getJhbuildPath() && jhbuildConfigurationChanged()) {
     cleanJhbuild();

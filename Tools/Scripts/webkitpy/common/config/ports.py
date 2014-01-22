@@ -71,7 +71,6 @@ class DeprecatedPort(object):
             "qt-wk2": QtWK2Port,
             "efl": EflPort,
             "efl-wk2": EflWK2Port,
-            "nix": NixPort,
         }
         default_port = {
             "Windows": WinPort,
@@ -231,15 +230,4 @@ class EflWK2Port(DeprecatedPort):
         command.append("--update-efl")
         command.append("--no-webkit1")
         command.append(super(EflWK2Port, self).makeArgs())
-        return command
-
-
-class NixPort(DeprecatedPort):
-    port_flag_name = "nix"
-
-    def build_webkit_command(self, build_style=None):
-        command = super(NixPort, self).build_webkit_command(build_style=build_style)
-        command.append("--nix")
-        command.append("--update-nix")
-        command.append(super(NixPort, self).makeArgs())
         return command

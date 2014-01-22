@@ -47,8 +47,6 @@ def platform_options(use_globs=False):
         optparse.make_option('--efl', action='store_const', dest='platform',
             const=('efl*' if use_globs else 'efl'),
             help=('Alias for --platform=efl*' if use_globs else 'Alias for --platform=efl')),
-        optparse.make_option('--nix', action='store_const', dest='platform',
-            const=('nix'), help=('Alias for --platform=nix')),
         optparse.make_option('--gtk', action='store_const', dest='platform',
             const=('gtk*' if use_globs else 'gtk'),
             help=('Alias for --platform=gtk*' if use_globs else 'Alias for --platform=gtk')),
@@ -78,7 +76,6 @@ def _builder_options(builder_name):
 class PortFactory(object):
     PORT_CLASSES = (
         'efl.EflPort',
-        'nix.NixPort',
         'gtk.GtkPort',
         'mac.MacPort',
         'mock_drt.MockDRTPort',
