@@ -1,3 +1,10 @@
+2014-01-22  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix GTK+ build with CUSTOM_PROTOCOL enabled after r162449.
+
+        * UIProcess/Network/CustomProtocols/soup/WebSoupCustomProtocolRequestManager.h:
+        Use override instead of OVERRIDE.
+
 2014-01-22  Koop Mast <kwm@FreeBSD.org>
 
         Build fixes for FreeBSD.

@@ -72,10 +72,10 @@ private:
     WebSoupCustomProtocolRequestManager(WebContext*);
 
     // WebContextSupplement
-    virtual void contextDestroyed() OVERRIDE;
-    virtual void processDidClose(WebProcessProxy*) OVERRIDE;
-    virtual void refWebContextSupplement() OVERRIDE;
-    virtual void derefWebContextSupplement() OVERRIDE;
+    virtual void contextDestroyed() override;
+    virtual void processDidClose(WebProcessProxy*) override;
+    virtual void refWebContextSupplement() override;
+    virtual void derefWebContextSupplement() override;
 
     WebSoupCustomProtocolRequestManagerClient m_client;
     Vector<String> m_registeredSchemes;
