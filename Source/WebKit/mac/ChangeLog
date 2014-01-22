@@ -1,3 +1,11 @@
+2014-01-21  Dan Bernstein  <mitz@apple.com>
+
+        Added a method declaration that was missed in r161185.
+
+        Reviewed by Sam Weinig.
+
+        * WebView/WebViewPrivate.h: Declared -removeVisitedLink:.
+
 2014-01-21  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r162452.

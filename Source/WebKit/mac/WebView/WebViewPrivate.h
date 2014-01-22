@@ -287,7 +287,9 @@ typedef enum {
 
 // Add visited links
 - (void)addVisitedLinks:(NSArray *)visitedLinks;
-
+#if TARGET_OS_IPHONE
+- (void)removeVisitedLink:(NSURL *)url;
+#endif
 @end
 
 @interface WebView (WebPrivate)
