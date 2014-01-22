@@ -1,3 +1,15 @@
+2014-01-21  Daniel Bates  <dabates@apple.com>
+
+        Break up single assertion into two assertions in HTMLMediaElement::returnPlatformLayer()
+
+        Following up after <http://trac.webkit.org/changeset/162473>, we should break up
+        the assertion into two assertions as suggested by Darin Adler. Separating the single
+        assertion into two assertions makes it straightforward to determine the conjunct that
+        failed among other benefits.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::parseAttribute):
+
 2014-01-21  Brady Eidson  <beidson@apple.com>
 
         The IDB backing store put() method shouldn't call IDB callbacks directly
