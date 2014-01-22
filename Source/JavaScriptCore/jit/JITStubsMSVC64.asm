@@ -23,7 +23,6 @@
 ; OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ;*/
 
-EXTERN cti_vm_throw : near
 PUBLIC ctiTrampoline
 PUBLIC ctiVMThrowTrampoline
 PUBLIC ctiOpThrowNotCaught
