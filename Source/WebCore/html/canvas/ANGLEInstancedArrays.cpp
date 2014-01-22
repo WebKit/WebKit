@@ -65,7 +65,7 @@ void ANGLEInstancedArrays::drawArraysInstancedANGLE(GC3Denum mode, GC3Dint first
     m_context->drawArraysInstanced(mode, first, count, primcount);
 }
 
-void ANGLEInstancedArrays::drawElementsInstancedANGLE(GC3Denum mode, GC3Dsizei count, GC3Denum type, GC3Dintptr offset, GC3Dsizei primcount)
+void ANGLEInstancedArrays::drawElementsInstancedANGLE(GC3Denum mode, GC3Dsizei count, GC3Denum type, long long offset, GC3Dsizei primcount)
 {
     if (m_context->isContextLost())
         return;

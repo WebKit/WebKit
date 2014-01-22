@@ -6179,7 +6179,7 @@ void WebGLRenderingContext::drawArraysInstanced(GC3Denum mode, GC3Dint first, GC
     cleanupAfterGraphicsCall(true);
 }
 
-void WebGLRenderingContext::drawElementsInstanced(GC3Denum mode, GC3Dsizei count, GC3Denum type, GC3Dintptr offset, GC3Dsizei primcount)
+void WebGLRenderingContext::drawElementsInstanced(GC3Denum mode, GC3Dsizei count, GC3Denum type, long long offset, GC3Dsizei primcount)
 {
     unsigned numElements = 0;
     if (!validateDrawElements("drawElementsInstanced", mode, count, type, offset, numElements))

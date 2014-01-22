@@ -326,7 +326,7 @@ public:
 
     // ANGLE_instanced_arrays extension functions.
     void drawArraysInstanced(GC3Denum mode, GC3Dint first, GC3Dsizei count, GC3Dsizei primcount);
-    void drawElementsInstanced(GC3Denum mode, GC3Dsizei count, GC3Denum type, GC3Dintptr offset, GC3Dsizei primcount);
+    void drawElementsInstanced(GC3Denum mode, GC3Dsizei count, GC3Denum type, long long offset, GC3Dsizei primcount);
     void vertexAttribDivisor(GC3Duint index, GC3Duint divisor);
 
 private:

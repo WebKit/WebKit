@@ -1,3 +1,16 @@
+2014-01-22  Dean Jackson  <dino@apple.com>
+
+        Unreviewed attempt to fix 32-bit builds.
+
+        Use long long rather than GC3Dintptr.
+
+        * html/canvas/ANGLEInstancedArrays.cpp:
+        (WebCore::ANGLEInstancedArrays::drawElementsInstancedANGLE):
+        * html/canvas/ANGLEInstancedArrays.h:
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore::WebGLRenderingContext::drawElementsInstanced):
+        * html/canvas/WebGLRenderingContext.h:
+
 2014-01-21  Brady Eidson  <beidson@apple.com>
 
         IDB: "Put" support
