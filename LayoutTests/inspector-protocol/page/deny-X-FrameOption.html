@@ -20,12 +20,16 @@ function test()
 }
 </script>
 </head>
-<body onload="runTest()">
+<body onload="startTest()">
   <iframe id=foo></iframe>
   <script>
+  function startTest()
+  {
     var fooFrame = document.getElementById('foo');
     var fooDoc = fooFrame.contentWindow.document;
     fooDoc.write('<meta http-equiv="X-Frame-Options" content="deny"/>');
+    runTest();
+  }
   </script>
 </body>
 </html>
