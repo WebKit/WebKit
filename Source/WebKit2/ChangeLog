@@ -1,3 +1,17 @@
+2014-01-21  Anders Carlsson  <andersca@apple.com>
+
+        Add a WKProcessClassConfiguration class
+        https://bugs.webkit.org/show_bug.cgi?id=127378
+        <rdar://problem/15875413>
+
+        Reviewed by Dan Bernstein.
+
+        * UIProcess/API/Cocoa/WKProcessClassConfiguration.h: Added.
+        * UIProcess/API/Cocoa/WKProcessClassConfiguration.mm: Added.
+        (-[WKProcessClassConfiguration copyWithZone:]):
+        * UIProcess/API/Cocoa/WKProcessClassConfigurationPrivate.h: Added.
+        * WebKit2.xcodeproj/project.pbxproj:
+
 2014-01-21  Tim Horton  <timothy_horton@apple.com>
 
         Make ViewGestureController Obj-C++
