@@ -3,7 +3,7 @@ make:
 	if errorlevel 1 exit 1
 	echo XXWebCoreGeneratedXX > "%ConfigurationBuildDir%\buildfailed"
 
-	bash build-generated-files.sh "%ConfigurationBuildDir%" "%WebKit_Libraries%" windows %PlatformArchitecture%
+	bash build-generated-files.sh "%ConfigurationBuildDir%" "%WebKit_Libraries%" windows "%PlatformArchitecture%"
 	bash migrate-scripts.sh "%ConfigurationBuildDir%\obj%PlatformArchitecture%\WebCore\scripts"
 	cmd /C copyForwardingHeaders.cmd cg cf
 	cmd /C copyWebCoreResourceFiles.cmd
