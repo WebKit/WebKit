@@ -1660,8 +1660,8 @@ sub runAutogenForAutotoolsProjectIfNecessary($@)
         }
 
         # Run autogen.sh again if either the features overrided by build-webkit or build arguments have changed.
-        if (!mustReRunAutogen($sourceDir, "WebKitFeatureOverrides.txt", $joinedOverridableFeatures)
-            && !mustReRunAutogen($sourceDir, "previous-autogen-arguments.txt", $joinedBuildArgs)) {
+        if (!isCachedArgumentfileOutOfDate("WebKitFeatureOverrides.txt", $joinedOverridableFeatures)
+            && !isCachedArgumentfileOutOfDate("previous-autogen-arguments.txt", $joinedBuildArgs)) {
             return;
         }
     }
@@ -1711,9 +1711,9 @@ sub getJhbuildPath()
     return File::Spec->catdir(@jhbuildPath);
 }
 
-sub mustReRunAutogen($@)
+sub isCachedArgumentfileOutOfDate($@)
 {
-    my ($sourceDir, $filename, $currentContents) = @_;
+    my ($filename, $currentContents) = @_;
 
     if (! -e $filename) {
         return 1;
@@ -1723,10 +1723,6 @@ sub mustReRunAutogen($@)
     chomp(my $previousContents = <CONTENTS_FILE>);
     close(CONTENTS_FILE);
 
-    # We only care about the WebKit2 argument when we are building WebKit itself.
-    # build-jsc never passes --enable-webkit2, so if we didn't do this, autogen.sh
-    # would run for every single build on the bots, since it runs both build-webkit
-    # and build-jsc.
     if ($previousContents ne $currentContents) {
         print "Contents for file $filename have changed.\n";
         print "Previous contents were: $previousContents\n\n";
@@ -1873,10 +1869,59 @@ sub jhbuildWrapperPrefixIfNeeded()
     return ();
 }
 
-sub removeCMakeCache()
+sub cmakeCachePath()
 {
-    my $cacheFilePath = File::Spec->catdir(baseProductDir(), configuration(), "CMakeCache.txt");
-    unlink($cacheFilePath) if -e $cacheFilePath;
+    return File::Spec->catdir(baseProductDir(), configuration(), "CMakeCache.txt");
+}
+
+sub shouldRemoveCMakeCache(@)
+{
+    my ($cacheFilePath, @buildArgs) = @_;
+    if (isWinCE()) {
+        return 0;
+    }
+
+    if (!isGtk()) {
+        return 1;
+    }
+
+    # We check this first, because we always want to create this file for a fresh build.
+    my $optionsCache = File::Spec->catdir(baseProductDir(), configuration(), "build-webkit-options.txt");
+    my $joinedBuildArgs = join(" ", @buildArgs);
+    if (isCachedArgumentfileOutOfDate($optionsCache, $joinedBuildArgs)) {
+        open(CACHED_ARGUMENTS, ">", $optionsCache);
+        print CACHED_ARGUMENTS $joinedBuildArgs;
+        close(CACHED_ARGUMENTS);
+
+        return 1;
+    }
+
+    my $cmakeCache = cmakeCachePath();
+    unless (-e $cmakeCache) {
+        return 0;
+    }
+
+    my $cacheFileModifiedTime = stat($cmakeCache)->mtime;
+    my $platformConfiguration = File::Spec->catdir(sourceDir(), "Source", "cmake", "Options" . cmakeBasedPortName() . ".cmake");
+    if ($cacheFileModifiedTime < stat($platformConfiguration)->mtime) {
+        return 1;
+    }
+
+    my $globalConfiguration = File::Spec->catdir(sourceDir(), "Source", "cmake", "OptionsCommon.cmake");
+    if ($cacheFileModifiedTime < stat($globalConfiguration)->mtime) {
+        return 1;
+    }
+
+    return 0;
+}
+
+sub removeCMakeCache(@)
+{
+    my (@buildArgs) = @_;
+    if (shouldRemoveCMakeCache(@buildArgs)) {
+        my $cmakeCache = cmakeCachePath();
+        unlink($cmakeCache) if -e $cmakeCache;
+    }
 }
 
 sub generateBuildSystemFromCMakeProject
@@ -1887,6 +1932,11 @@ sub generateBuildSystemFromCMakeProject
     File::Path::mkpath($buildPath) unless -d $buildPath;
     my $originalWorkingDirectory = getcwd();
     chdir($buildPath) or die;
+
+    # For GTK+ we try to be smart about when to rerun cmake, so that we can have faster incremental builds.
+    if (isGtk() && -e cmakeCachePath()) {
+        return 0;
+    }
 
     my @args;
     push @args, "-DPORT=\"$port\"";
@@ -1978,6 +2028,11 @@ sub cmakeBasedPortName()
     return "WinCE" if isWinCE();
     return "GTK" if isGtkCMake();
     return "";
+}
+
+sub isCMakeBuild()
+{
+    return isEfl() || isWinCE() || isGtkCMake();
 }
 
 sub promptUser

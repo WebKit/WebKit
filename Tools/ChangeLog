@@ -1,3 +1,25 @@
+2014-01-15  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK][CMake] build-webkit should try harder to avoid re-running cmake
+        https://bugs.webkit.org/show_bug.cgi?id=127073
+
+        Reviewed by Daniel Bates.
+
+        * Scripts/build-webkit: Unify all the ports that call buildCMakeProjectOrExit with
+        the new isCMakeBuild conditional. This allows us to share more code between ports.
+        Pass the build arguments to the removeCMakeCache function.
+        * Scripts/webkitdirs.pm:
+        (runAutogenForAutotoolsProjectIfNecessary): Renamed mustReRunAutogen to cachedArgumentFileOutOfDate
+        because it's now shared with the CMake build.
+        (cachedArgumentFileOutOfDate): Renamed.
+        (cmakeCachePath): Added this helper which gets the CMakeCache.txt path.
+        (shouldRemoveCMakeCache): Tries to preserve current behavior for all ports, 
+        except GTK+ which examines the OptionsGTK.cmake and OptionsCommon.cmake file
+        as well as checking if build-webkit has been run with different arguments.
+        (removeCMakeCache): Call shouldRemoveCMakeCache now.
+        (generateBuildSystemFromCMakeProject): Exit early if CMakeCache.txt exists for GTK+.
+        (isCMakeBuild): Added.
+
 2014-01-22  Thiago de Barros Lacerda  <thiago.lacerda@openbossa.org>
 
         [EFL][GTK] Get EFL and GTK compiling with ACCESSIBILITY disabled
