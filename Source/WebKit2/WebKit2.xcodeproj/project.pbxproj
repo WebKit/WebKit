@@ -142,6 +142,8 @@
 		1A30EAC6115D7DA30053E937 /* ConnectionMac.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A30EAC5115D7DA30053E937 /* ConnectionMac.cpp */; };
 		1A334DED16DE8F88006A8E38 /* StorageAreaMapMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A334DEB16DE8F88006A8E38 /* StorageAreaMapMessageReceiver.cpp */; };
 		1A334DEE16DE8F88006A8E38 /* StorageAreaMapMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A334DEC16DE8F88006A8E38 /* StorageAreaMapMessages.h */; };
+		1A3CC16618906ACF001E6ED8 /* WKWebView.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1A3CC16418906ACF001E6ED8 /* WKWebView.mm */; };
+		1A3CC16718906ACF001E6ED8 /* WKWebView.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A3CC16518906ACF001E6ED8 /* WKWebView.h */; };
 		1A3D610113A7CC2A00F95D4E /* PluginModuleInfo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3D60FF13A7CC2A00F95D4E /* PluginModuleInfo.cpp */; };
 		1A3D610213A7CC2A00F95D4E /* PluginModuleInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A3D610013A7CC2A00F95D4E /* PluginModuleInfo.h */; };
 		1A3D610513A7F03A00F95D4E /* ArgumentCoders.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3D610413A7F03A00F95D4E /* ArgumentCoders.cpp */; };
@@ -1759,6 +1761,8 @@
 		1A334DEA16DE8B68006A8E38 /* StorageAreaMap.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = StorageAreaMap.messages.in; sourceTree = "<group>"; };
 		1A334DEB16DE8F88006A8E38 /* StorageAreaMapMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StorageAreaMapMessageReceiver.cpp; sourceTree = "<group>"; };
 		1A334DEC16DE8F88006A8E38 /* StorageAreaMapMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StorageAreaMapMessages.h; sourceTree = "<group>"; };
+		1A3CC16418906ACF001E6ED8 /* WKWebView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKWebView.mm; sourceTree = "<group>"; };
+		1A3CC16518906ACF001E6ED8 /* WKWebView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKWebView.h; sourceTree = "<group>"; };
 		1A3D60FF13A7CC2A00F95D4E /* PluginModuleInfo.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PluginModuleInfo.cpp; sourceTree = "<group>"; };
 		1A3D610013A7CC2A00F95D4E /* PluginModuleInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PluginModuleInfo.h; sourceTree = "<group>"; };
 		1A3D610413A7F03A00F95D4E /* ArgumentCoders.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ArgumentCoders.cpp; sourceTree = "<group>"; };
@@ -4220,6 +4224,8 @@
 				1A43E828188F3CDC009E4D30 /* WKProcessClassConfiguration.h */,
 				1A43E827188F3CDC009E4D30 /* WKProcessClassConfiguration.mm */,
 				1A43E82B188F3CF5009E4D30 /* WKProcessClassConfigurationPrivate.h */,
+				1A3CC16518906ACF001E6ED8 /* WKWebView.h */,
+				1A3CC16418906ACF001E6ED8 /* WKWebView.mm */,
 				1ADF59191890528E0043C145 /* WKWebViewConfiguration.h */,
 				1ADF59181890528E0043C145 /* WKWebViewConfiguration.mm */,
 			);
@@ -6442,6 +6448,7 @@
 				51D02F6C132EC73700BEAA96 /* WebIconDatabaseProxyMessages.h in Headers */,
 				BCCF6ABD12C91EF9008F9C35 /* WebImage.h in Headers */,
 				1C8E28201275D15400BC7BD0 /* WebInspector.h in Headers */,
+				1A3CC16718906ACF001E6ED8 /* WKWebView.h in Headers */,
 				BC032D8210F4378D0058C15A /* WebInspectorClient.h in Headers */,
 				1C8E25A91270E3BC00BC7BD0 /* WebInspectorFrontendClient.h in Headers */,
 				1C8E2A361277852400BC7BD0 /* WebInspectorMessages.h in Headers */,
@@ -7642,6 +7649,7 @@
 				7C135AAC173B0CFF00586AE2 /* PluginInformationMac.mm in Sources */,
 				1AEFCC1311D01F96008219D3 /* PluginInfoStore.cpp in Sources */,
 				1AEFCCBD11D02C5E008219D3 /* PluginInfoStoreMac.mm in Sources */,
+				1A3CC16618906ACF001E6ED8 /* WKWebView.mm in Sources */,
 				1A3D610113A7CC2A00F95D4E /* PluginModuleInfo.cpp in Sources */,
 				1A043977124D034800FFBFB5 /* PluginProcess.cpp in Sources */,
 				1A0EC907124C0AB8007EF4A5 /* PluginProcessConnection.cpp in Sources */,
