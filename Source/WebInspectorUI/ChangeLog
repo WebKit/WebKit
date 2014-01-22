@@ -1,5 +1,31 @@
 2014-01-22  Timothy Hatcher  <timothy@apple.com>
 
+        Don't include a hidden Timeline selection in the navigation path components.
+
+        https://bugs.webkit.org/show_bug.cgi?id=127443
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/GeneralTreeElementPathComponent.js:
+        (WebInspector.GeneralTreeElementPathComponent.prototype.get previousSibling):
+        (WebInspector.GeneralTreeElementPathComponent.prototype.get nextSibling):
+        Skip hidden siblings.
+
+        * UserInterface/OverviewTimelineView.js:
+        (WebInspector.OverviewTimelineView.prototype.updateLayout):
+        (WebInspector.OverviewTimelineView.prototype.get selectionPathComponents):
+        Don't include hidden selection and dispatch SelectionPathComponentsDidChange event if hidden changes.
+
+        * UserInterface/TimelineContentView.js:
+        (WebInspector.TimelineContentView.prototype._timeRangeSelectionChanged):
+        Dispatch SelectionPathComponentsDidChange event if hidden changes on the selected tree element.
+
+        * UserInterface/TimelineView.js:
+        (WebInspector.TimelineView.prototype.get selectionPathComponents):
+        Don't include hidden selection.
+
+2014-01-22  Timothy Hatcher  <timothy@apple.com>
+
         Support collapsing call site records into the resource timeline.
 
         Also fix some filtering and graph issues.

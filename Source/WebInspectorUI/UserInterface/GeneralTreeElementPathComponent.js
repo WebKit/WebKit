@@ -42,16 +42,26 @@ WebInspector.GeneralTreeElementPathComponent.prototype = {
 
     get previousSibling()
     {
-        if (!this._generalTreeElement.previousSibling)
+        var previousSibling = this._generalTreeElement.previousSibling;
+        while (previousSibling && previousSibling.hidden)
+            previousSibling = previousSibling.previousSibling;
+
+        if (!previousSibling)
             return null;
-        return new WebInspector.GeneralTreeElementPathComponent(this._generalTreeElement.previousSibling);
+
+        return new WebInspector.GeneralTreeElementPathComponent(previousSibling);
     },
 
     get nextSibling()
     {
-        if (!this._generalTreeElement.nextSibling)
+        var nextSibling = this._generalTreeElement.nextSibling;
+        while (nextSibling && nextSibling.hidden)
+            nextSibling = nextSibling.nextSibling;
+
+        if (!nextSibling)
             return null;
-        return new WebInspector.GeneralTreeElementPathComponent(this._generalTreeElement.nextSibling);
+
+        return new WebInspector.GeneralTreeElementPathComponent(nextSibling);
     },
     
     // Private

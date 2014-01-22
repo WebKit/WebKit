@@ -63,7 +63,7 @@ WebInspector.TimelineView.prototype = {
 
     get selectionPathComponents()
     {
-        if (!this._contentTreeOutline.selectedTreeElement)
+        if (!this._contentTreeOutline.selectedTreeElement || this._contentTreeOutline.selectedTreeElement.hidden)
             return null;
 
         var pathComponent = new WebInspector.GeneralTreeElementPathComponent(this._contentTreeOutline.selectedTreeElement);

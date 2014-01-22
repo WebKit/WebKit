@@ -101,8 +101,14 @@ WebInspector.OverviewTimelineView.prototype = {
         }
 
         if (!this.currentTime !== oldCurrentTime) {
+            var selectedTreeElement = this.navigationSidebarTreeOutline.selectedTreeElement;
+            var selectionWasHidden = selectedTreeElement && selectedTreeElement.hidden;
+
             // Check the filters again since the current time change might have revealed this node. Start and end time changes are handled by TimelineContentView.
             WebInspector.timelineSidebarPanel.updateFilter();
+
+            if (selectedTreeElement && selectedTreeElement.hidden !== selectionWasHidden)
+                this.dispatchEventToListeners(WebInspector.TimelineView.Event.SelectionPathComponentsDidChange);
         }
 
         this._timelineRuler.updateLayout();
@@ -123,6 +129,9 @@ WebInspector.OverviewTimelineView.prototype = {
             console.assert(treeElement);
             if (!treeElement)
                 break;
+
+            if (treeElement.hidden)
+                return null;
 
             var pathComponent = new WebInspector.GeneralTreeElementPathComponent(treeElement);
             pathComponent.addEventListener(WebInspector.HierarchicalPathComponent.Event.SiblingWasSelected, this.treeElementPathComponentSelected, this);

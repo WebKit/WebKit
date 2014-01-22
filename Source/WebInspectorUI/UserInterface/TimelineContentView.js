@@ -404,6 +404,14 @@ WebInspector.TimelineContentView.prototype = {
         this._currentTimelineView.endTime = this._timelineOverview.selectionStartTime + this._timelineOverview.selectionDuration;
 
         // Delay until the next frame to stay in sync with the current timeline view's time-based layout changes.
-        requestAnimationFrame(function() { WebInspector.timelineSidebarPanel.updateFilter(); });
+        requestAnimationFrame(function() {
+            var selectedTreeElement = this._currentTimelineView && this._currentTimelineView.navigationSidebarTreeOutline ? this._currentTimelineView.navigationSidebarTreeOutline.selectedTreeElement : null;
+            var selectionWasHidden = selectedTreeElement && selectedTreeElement.hidden;
+
+            WebInspector.timelineSidebarPanel.updateFilter();
+
+            if (selectedTreeElement && selectedTreeElement.hidden !== selectionWasHidden)
+                this.dispatchEventToListeners(WebInspector.ContentView.Event.SelectionPathComponentsDidChange);
+        }.bind(this));
     }
 };
