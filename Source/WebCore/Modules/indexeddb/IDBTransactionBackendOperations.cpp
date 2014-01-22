@@ -106,7 +106,15 @@ void PutOperation::perform(std::function<void()> completionCallback)
     RefPtr<PutOperation> operation(this);
     STANDARD_DATABASE_ERROR_CALLBACK;
 
-    m_transaction->database().serverConnection().put(*m_transaction, *this, operationCallback);
+    m_transaction->database().serverConnection().put(*m_transaction, *this, [this, operation, operationCallback](PassRefPtr<IDBKey> key, PassRefPtr<IDBDatabaseError> error) {
+        if (key) {
+            ASSERT(!error);
+            m_callbacks->onSuccess(key);
+        } else {
+            ASSERT(error);
+            m_callbacks->onError(error);
+        }
+    });
 }
 
 void SetIndexesReadyOperation::perform(std::function<void()> completionCallback)

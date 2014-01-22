@@ -78,7 +78,7 @@ public:
     virtual void createIndex(IDBTransactionBackend&, const CreateIndexOperation&, std::function<void(PassRefPtr<IDBDatabaseError>)> completionCallback) = 0;
     virtual void deleteIndex(IDBTransactionBackend&, const DeleteIndexOperation&, std::function<void(PassRefPtr<IDBDatabaseError>)> completionCallback) = 0;
     virtual void get(IDBTransactionBackend&, const GetOperation&, std::function<void(PassRefPtr<IDBDatabaseError>)> completionCallback) = 0;
-    virtual void put(IDBTransactionBackend&, const PutOperation&, std::function<void(PassRefPtr<IDBDatabaseError>)> completionCallback) = 0;
+    virtual void put(IDBTransactionBackend&, const PutOperation&, std::function<void(PassRefPtr<IDBKey>, PassRefPtr<IDBDatabaseError>)> completionCallback) = 0;
     virtual void openCursor(IDBTransactionBackend&, const OpenCursorOperation&, std::function<void(PassRefPtr<IDBDatabaseError>)> completionCallback) = 0;
     virtual void count(IDBTransactionBackend&, const CountOperation&, std::function<void(PassRefPtr<IDBDatabaseError>)> completionCallback) = 0;
     virtual void deleteRange(IDBTransactionBackend&, const DeleteRangeOperation&, std::function<void(PassRefPtr<IDBDatabaseError>)> completionCallback) = 0;

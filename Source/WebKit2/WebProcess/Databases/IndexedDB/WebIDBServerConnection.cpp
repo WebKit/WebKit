@@ -300,7 +300,7 @@ void WebIDBServerConnection::get(IDBTransactionBackend&, const GetOperation&, st
 {
 }
 
-void WebIDBServerConnection::put(IDBTransactionBackend&, const PutOperation&, std::function<void(PassRefPtr<IDBDatabaseError>)> completionCallback)
+void WebIDBServerConnection::put(IDBTransactionBackend&, const PutOperation&, std::function<void(PassRefPtr<IDBKey>, PassRefPtr<IDBDatabaseError>)> completionCallback)
 {
 }
 

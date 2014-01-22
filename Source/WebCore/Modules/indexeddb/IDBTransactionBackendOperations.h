@@ -305,7 +305,6 @@ public:
     IDBKey* key() const { return m_key.get(); }
     const Vector<int64_t>& indexIDs() const { return m_indexIDs; }
     const Vector<IndexKeys>& indexKeys() const { return m_indexKeys; }
-    IDBCallbacks* callbacks() const { return m_callbacks.get(); }
     SharedBuffer* value() const { return m_value.get(); }
 
 private:
