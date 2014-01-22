@@ -674,6 +674,10 @@ set(WebProcess_LIBRARIES
     WebKit2
 )
 
+set(NetworkProcess_LIBRARIES
+    WebKit2
+)
+
 set(WebKit2_LIBRARIES
     JavaScriptCore
     WTF
@@ -711,6 +715,17 @@ set_target_properties(WebProcess PROPERTIES FOLDER "WebKit")
 
 if (WebKit2_WebProcess_OUTPUT_NAME)
     set_target_properties(WebProcess PROPERTIES OUTPUT_NAME ${WebKit2_WebProcess_OUTPUT_NAME})
+endif ()
+
+if (ENABLE_NETWORK_PROCESS)
+    add_executable(NetworkProcess ${NetworkProcess_SOURCES})
+    target_link_libraries(NetworkProcess ${NetworkProcess_LIBRARIES})
+    set_target_properties(NetworkProcess PROPERTIES FOLDER "WebKit")
+    install(TARGETS NetworkProcess DESTINATION "${LIBEXEC_INSTALL_DIR}")
+
+    if (WebKit2_NetworkProcess_OUTPUT_NAME)
+        set_target_properties(NetworkProcess PROPERTIES OUTPUT_NAME ${WebKit2_NetworkProcess_OUTPUT_NAME})
+    endif ()
 endif ()
 
 POPULATE_LIBRARY_VERSION(WEBKIT2)

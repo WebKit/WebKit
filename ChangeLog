@@ -1,3 +1,13 @@
+2014-01-22  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK][CMake] Add support for building the NetworkProcess
+        https://bugs.webkit.org/show_bug.cgi?id=127195
+
+        Reviewed by Daniel Bates.
+
+        * Source/cmake/OptionsGTK.cmake: Turn on the network process and give it
+        a name like the WebProcess.
+
 2014-01-20  Ryuan Choi  <ryuan.choi@samsung.com>
 
         [CMAKE] Remove Nix from CMake scripts

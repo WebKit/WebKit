@@ -18,6 +18,12 @@ list(APPEND WebKit2_SOURCES
     ${DERIVED_SOURCES_WEBKIT2GTK_API_DIR}/WebKitEnumTypes.cpp
     ${DERIVED_SOURCES_WEBKIT2GTK_API_DIR}/WebKitMarshal.cpp
 
+    NetworkProcess/soup/NetworkProcessSoup.cpp
+    NetworkProcess/soup/NetworkResourceLoadSchedulerSoup.cpp
+    NetworkProcess/soup/RemoteNetworkingContextSoup.cpp
+
+    NetworkProcess/unix/NetworkProcessMainUnix.cpp
+
     Platform/IPC/unix/AttachmentUnix.cpp
     Platform/IPC/unix/ConnectionUnix.cpp
 
@@ -260,6 +266,8 @@ list(APPEND WebKit2_SOURCES
     UIProcess/gtk/WebPreferencesGtk.cpp
     UIProcess/gtk/WebProcessProxyGtk.cpp
 
+    UIProcess/Network/soup/NetworkProcessProxySoup.cpp
+    UIProcess/soup/WebContextSoup.cpp
     UIProcess/soup/WebCookieManagerProxySoup.cpp
     UIProcess/soup/WebSoupRequestManagerClient.cpp
     UIProcess/soup/WebSoupRequestManagerProxy.cpp
@@ -396,6 +404,7 @@ list(APPEND WebKit2_INCLUDE_DIRECTORIES
     "${WEBKIT2_DIR}/Shared/Downloads/soup"
     "${WEBKIT2_DIR}/Shared/gtk"
     "${WEBKIT2_DIR}/Shared/soup"
+    "${WEBKIT2_DIR}/NetworkProcess/unix"
     "${WEBKIT2_DIR}/UIProcess/API/C/cairo"
     "${WEBKIT2_DIR}/UIProcess/API/C/gtk"
     "${WEBKIT2_DIR}/UIProcess/API/C/soup"
@@ -429,6 +438,10 @@ list(APPEND WebKit2_INCLUDE_DIRECTORIES
 
 list(APPEND WebProcess_SOURCES
     gtk/MainGtk.cpp
+)
+
+list(APPEND NetworkProcess_SOURCES
+    unix/NetworkMainUnix.cpp
 )
 
 set(SharedWebKit2Libraries

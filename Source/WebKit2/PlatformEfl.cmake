@@ -400,27 +400,6 @@ if (ENABLE_PLUGIN_PROCESS)
     install(TARGETS PluginProcess DESTINATION "${EXEC_INSTALL_DIR}")
 endif () # ENABLE_PLUGIN_PROCESS
 
-if (ENABLE_NETWORK_PROCESS)
-    set(NetworkProcess_EXECUTABLE_NAME NetworkProcess)
-    list(APPEND NetworkProcess_INCLUDE_DIRECTORIES
-        "${WEBKIT2_DIR}/NetworkProcess"
-    )
-
-    include_directories(${NetworkProcess_INCLUDE_DIRECTORIES})
-
-    list(APPEND NetworkProcess_SOURCES
-        ${WEBKIT2_DIR}/unix/NetworkMainUnix.cpp
-    )
-
-    set(NetworkProcess_LIBRARIES
-        WebKit2
-    )
-
-    add_executable(${NetworkProcess_EXECUTABLE_NAME} ${NetworkProcess_SOURCES})
-    target_link_libraries(${NetworkProcess_EXECUTABLE_NAME} ${NetworkProcess_LIBRARIES})
-    install(TARGETS ${NetworkProcess_EXECUTABLE_NAME} DESTINATION "${EXEC_INSTALL_DIR}")
-endif ()
-
 include_directories(${THIRDPARTY_DIR}/gtest/include)
 
 set(EWK2UnitTests_LIBRARIES
