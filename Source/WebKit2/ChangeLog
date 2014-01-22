@@ -1,3 +1,11 @@
+2014-01-21  Tim Horton  <timothy_horton@apple.com>
+
+        Don't copy ViewGestureGeometryCollector.messages.in into the WebProcess bundle.
+
+        Reviewed by Simon Fraser.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+
 2014-01-21  Anders Carlsson  <andersca@apple.com>
 
         Add a WKProcessClassConfiguration class
