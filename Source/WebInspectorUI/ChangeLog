@@ -1,5 +1,21 @@
 2014-01-22  Timothy Hatcher  <timothy@apple.com>
 
+        Improve collapsing of TimelineDataGridNode graphs up to ancestors.
+
+        https://bugs.webkit.org/show_bug.cgi?id=127440
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/TimelineDataGridNode.js:
+        (WebInspector.TimelineDataGridNode.prototype.collapse):
+        (WebInspector.TimelineDataGridNode.prototype.createCellContent):
+        (WebInspector.TimelineDataGridNode.prototype.refresh):
+        (WebInspector.TimelineDataGridNode.prototype.needsGraphRefresh):
+        Notify the next visible ancestor it needs to refresh. Use needsGraphRefresh so ancestors
+        are notified instead of directly calling refreshGraph in some places.
+
+2014-01-22  Timothy Hatcher  <timothy@apple.com>
+
         Don't include a hidden Timeline selection in the navigation path components.
 
         https://bugs.webkit.org/show_bug.cgi?id=127443

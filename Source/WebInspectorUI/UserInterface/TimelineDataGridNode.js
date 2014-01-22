@@ -68,6 +68,9 @@ WebInspector.TimelineDataGridNode.prototype = {
     {
         WebInspector.DataGridNode.prototype.collapse.call(this);
 
+        if (!this.revealed)
+            return;
+
         // Refresh to show child bars in our graph now that we collapsed.
         this.refreshGraph();
     },
@@ -94,7 +97,7 @@ WebInspector.TimelineDataGridNode.prototype = {
     createCellContent: function(columnIdentifier, cell)
     {
         if (columnIdentifier === "graph" && this._graphDataSource) {
-            this.refreshGraph();
+            this.needsGraphRefresh();
             return this._graphContainerElement;
         }
 
@@ -208,7 +211,7 @@ WebInspector.TimelineDataGridNode.prototype = {
     refresh: function()
     {
         if (this._graphDataSource && this._graphOnly) {
-            this.refreshGraph();
+            this.needsGraphRefresh();
             return;
         }
 
@@ -225,21 +228,11 @@ WebInspector.TimelineDataGridNode.prototype = {
             delete this._scheduledGraphRefreshIdentifier;
         }
 
-        if (!this.revealed) {
-            // We are not visible, but an ancestor will be drawing our graph.
-            // Notify the next visible ancestor to refresh their graph.
-            var ancestor = this;
-            while (ancestor && !ancestor.root) {
-                if (ancestor.revealed && ancestor instanceof WebInspector.TimelineDataGridNode) {
-                    ancestor.refreshGraph();
-                    return;
-                }
-
-                ancestor = ancestor.parent;
-            }
-
+        // We are not visible, but an ancestor will draw our graph.
+        // They need notified by using our needsGraphRefresh.
+        console.assert(this.revealed);
+        if (!this.revealed)
             return;
-        }
 
         var startTime = this._graphDataSource.startTime;
         var currentTime = this._graphDataSource.currentTime;
@@ -336,6 +329,22 @@ WebInspector.TimelineDataGridNode.prototype = {
 
     needsGraphRefresh: function()
     {
+        if (!this.revealed) {
+            // We are not visible, but an ancestor will be drawing our graph.
+            // Notify the next visible ancestor that their graph needs to refresh.
+            var ancestor = this;
+            while (ancestor && !ancestor.root) {
+                if (ancestor.revealed && ancestor instanceof WebInspector.TimelineDataGridNode) {
+                    ancestor.needsGraphRefresh();
+                    return;
+                }
+
+                ancestor = ancestor.parent;
+            }
+
+            return;
+        }
+
         if (!this._graphDataSource || this._scheduledGraphRefreshIdentifier)
             return;
 
