@@ -1,3 +1,13 @@
+2014-01-22  Antti Koivisto  <antti@apple.com>
+
+        Update overlay scrollbars in single pass
+        https://bugs.webkit.org/show_bug.cgi?id=127289
+
+        * platform/mac/accessibility/iframe-aria-hidden.html: 
+        
+            Try to keep this non-flaky by forcing layout. Real fix would probably be in the
+            accessibility test framework.
+
 2014-01-22  ChangSeok Oh  <changseok.oh@collabora.com>
 
         Unreviewed GTK gardening

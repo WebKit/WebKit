@@ -28,6 +28,10 @@ if (window.accessibilityController) {
         shouldBe("body.childAtIndex(0).childrenCount", "0");
 
         document.getElementById("iframe").setAttribute("aria-hidden", "false");
+    
+        document.getElementById("iframe").contentWindow.document.body.offsetWidth;
+        document.body.offsetWidth;
+
         shouldBe("body.childrenCount", "4");
         shouldBe("body.childAtIndex(0).childAtIndex(0).childAtIndex(0).role", "'AXRole: AXWebArea'");
 
