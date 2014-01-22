@@ -1,3 +1,16 @@
+2014-01-21  Alex Christensen  <achristensen@webkit.org>
+
+        Compile fix for using libsoup on Windows.
+        https://bugs.webkit.org/show_bug.cgi?id=127377
+
+        Reviewed by Daniel Bates.
+
+        * platform/network/soup/ProxyResolverSoup.cpp:
+        (soupProxyResolverWkSetProperty):
+        (soupProxyResolverWkGetProperty):
+        (soupProxyResolverWkGetProxyURISync):
+        Replaced uint with unsigned.
+
 2014-01-21  Daniel Bates  <dabates@apple.com>
 
         Break up single assertion into two assertions in HTMLMediaElement::returnPlatformLayer()
