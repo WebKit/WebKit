@@ -32,7 +32,9 @@ WebInspector.OverviewTimelineView = function(recording)
     this.navigationSidebarTreeOutline.onselect = this._treeElementSelected.bind(this);
 
     var columns = {"graph": {width: "100%"}};
+
     this._dataGrid = new WebInspector.DataGrid(columns);
+    this._dataGrid.addEventListener(WebInspector.DataGrid.Event.SelectedNodeChanged, this._dataGridNodeSelected, this);
 
     this._treeOutlineDataGridSynchronizer = new WebInspector.TreeOutlineDataGridSynchronizer(this._contentTreeOutline, this._dataGrid);
 
@@ -101,6 +103,39 @@ WebInspector.OverviewTimelineView.prototype = {
         this._timelineRuler.updateLayout();
 
         this._processPendingRepresentedObjects();
+    },
+
+    get selectionPathComponents()
+    {
+        var dataGridNode = this._dataGrid.selectedNode;
+        if (!dataGridNode)
+            return null;
+
+        var pathComponents = [];
+
+        while (dataGridNode && !dataGridNode.root) {
+            var treeElement = this._treeOutlineDataGridSynchronizer.treeElementForDataGridNode(dataGridNode);
+            console.assert(treeElement);
+            if (!treeElement)
+                break;
+
+            var pathComponent = new WebInspector.GeneralTreeElementPathComponent(treeElement);
+            pathComponent.addEventListener(WebInspector.HierarchicalPathComponent.Event.SiblingWasSelected, this.treeElementPathComponentSelected, this);
+            pathComponents.unshift(pathComponent);
+            dataGridNode = dataGridNode.parent;
+        }
+
+        return pathComponents;
+    },
+
+    // Protected
+
+    treeElementPathComponentSelected: function(event)
+    {
+        var dataGridNode = this._treeOutlineDataGridSynchronizer.dataGridNodeForTreeElement(event.data.pathComponent.generalTreeElement);
+        if (!dataGridNode)
+            return;
+        dataGridNode.revealAndSelect();
     },
 
     // Private
@@ -264,6 +299,11 @@ WebInspector.OverviewTimelineView.prototype = {
         this._pendingRepresentedObjects.push(sourceCodeTimeline);
 
         this.needsLayout();
+    },
+
+    _dataGridNodeSelected: function(event)
+    {
+        this.dispatchEventToListeners(WebInspector.TimelineView.Event.SelectionPathComponentsDidChange);
     },
 
     _treeElementSelected: function(treeElement, selectedByUser)

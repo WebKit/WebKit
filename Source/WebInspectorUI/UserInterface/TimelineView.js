@@ -40,6 +40,10 @@ WebInspector.TimelineView = function()
 
 WebInspector.TimelineView.StyleClassName = "timeline-view";
 
+WebInspector.TimelineView.Event = {
+    SelectionPathComponentsDidChange: "timeline-view-selection-path-components-did-change"
+};
+
 WebInspector.TimelineView.prototype = {
     constructor: WebInspector.TimelineView,
     __proto__: WebInspector.Object.prototype,
@@ -55,6 +59,16 @@ WebInspector.TimelineView.prototype = {
     {
         // Implemented by sub-classes if needed.
         return null;
+    },
+
+    get selectionPathComponents()
+    {
+        if (!this._contentTreeOutline.selectedTreeElement)
+            return null;
+
+        var pathComponent = new WebInspector.GeneralTreeElementPathComponent(this._contentTreeOutline.selectedTreeElement);
+        pathComponent.addEventListener(WebInspector.HierarchicalPathComponent.Event.SiblingWasSelected, this.treeElementPathComponentSelected, this);
+        return [pathComponent];
     },
 
     get zeroTime()
@@ -175,6 +189,11 @@ WebInspector.TimelineView.prototype = {
     },
 
     // Protected
+
+    treeElementPathComponentSelected: function(event)
+    {
+        // Implemented by sub-classes if needed.
+    },
 
     needsLayout: function()
     {

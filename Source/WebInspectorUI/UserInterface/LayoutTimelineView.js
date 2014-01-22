@@ -61,6 +61,7 @@ WebInspector.LayoutTimelineView = function(recording)
 
     this._dataGrid = new WebInspector.LayoutTimelineDataGrid(this.navigationSidebarTreeOutline, columns);
     this._dataGrid.addEventListener(WebInspector.TimelineDataGrid.Event.FiltersDidChange, this._dataGridFiltersDidChange, this);
+    this._dataGrid.addEventListener(WebInspector.DataGrid.Event.SelectedNodeChanged, this._dataGridNodeSelected, this);
 
     this.element.classList.add(WebInspector.LayoutTimelineView.StyleClassName);
     this.element.appendChild(this._dataGrid.element);
@@ -120,6 +121,16 @@ WebInspector.LayoutTimelineView.prototype = {
         this._dataGrid.reset();
     },
 
+    // Protected
+
+    treeElementPathComponentSelected: function(event)
+    {
+        var dataGridNode = this._dataGrid.dataGridNodeForTreeElement(event.data.pathComponent.generalTreeElement);
+        if (!dataGridNode)
+            return;
+        dataGridNode.revealAndSelect();
+    },
+
     // Private
 
     _processPendingRecords: function()
@@ -150,6 +161,11 @@ WebInspector.LayoutTimelineView.prototype = {
     _dataGridFiltersDidChange: function(event)
     {
         WebInspector.timelineSidebarPanel.updateFilter();
+    },
+
+    _dataGridNodeSelected: function(event)
+    {
+        this.dispatchEventToListeners(WebInspector.TimelineView.Event.SelectionPathComponentsDidChange);
     },
 
     _treeElementSelected: function(treeElement, selectedByUser)

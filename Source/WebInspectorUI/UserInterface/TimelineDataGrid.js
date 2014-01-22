@@ -119,6 +119,16 @@ WebInspector.TimelineDataGrid.prototype = {
         this._hidePopover();
     },
 
+    treeElementForDataGridNode: function(dataGridNode)
+    {
+        return this._treeOutlineDataGridSynchronizer.treeElementForDataGridNode(dataGridNode);
+    },
+
+    dataGridNodeForTreeElement: function(treeElement)
+    {
+        return this._treeOutlineDataGridSynchronizer.dataGridNodeForTreeElement(treeElement);
+    },
+
     callFramePopoverAnchorElement: function()
     {
         // Implemented by subclasses.

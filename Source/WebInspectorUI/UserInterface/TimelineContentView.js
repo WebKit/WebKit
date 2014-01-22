@@ -128,9 +128,9 @@ WebInspector.TimelineContentView.prototype = {
 
     get selectionPathComponents()
     {
-        if (!this._currentTimelineViewIdentifier)
-            return [];
-        return [this._pathComponentMap.get(this._currentTimelineViewIdentifier)];
+        var pathComponents = this._currentTimelineViewIdentifier ? [this._pathComponentMap.get(this._currentTimelineViewIdentifier)] : [];
+        pathComponents = pathComponents.concat(this._currentTimelineView.selectionPathComponents || []);
+        return pathComponents;
     },
 
     get navigationItems()
@@ -217,6 +217,11 @@ WebInspector.TimelineContentView.prototype = {
         WebInspector.timelineSidebarPanel.showTimelineView(event.data.pathComponent.representedObject);
     },
 
+    _timelineViewSelectionPathComponentsDidChange: function()
+    {
+        this.dispatchEventToListeners(WebInspector.ContentView.Event.SelectionPathComponentsDidChange);
+    },
+
     _showTimelineView: function(timelineView, identifier)
     {
         console.assert(timelineView instanceof WebInspector.TimelineView);
@@ -225,6 +230,8 @@ WebInspector.TimelineContentView.prototype = {
             return;
 
         if (this._currentTimelineView) {
+            this._currentTimelineView.removeEventListener(WebInspector.TimelineView.Event.SelectionPathComponentsDidChange, this._timelineViewSelectionPathComponentsDidChange, this);
+
             this._currentTimelineView.hidden();
             this._currentTimelineView.element.remove();
         }
@@ -236,6 +243,8 @@ WebInspector.TimelineContentView.prototype = {
         WebInspector.timelineSidebarPanel.contentTreeOutlineLabel = timelineView && timelineView.navigationSidebarTreeOutlineLabel;
 
         if (this._currentTimelineView) {
+            this._currentTimelineView.addEventListener(WebInspector.TimelineView.Event.SelectionPathComponentsDidChange, this._timelineViewSelectionPathComponentsDidChange, this);
+
             this._viewContainer.appendChild(this._currentTimelineView.element);
 
             this._currentTimelineView.startTime = this._timelineOverview.selectionStartTime;
