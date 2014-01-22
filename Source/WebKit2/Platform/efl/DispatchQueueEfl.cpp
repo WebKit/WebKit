@@ -33,6 +33,7 @@
 #include <wtf/Threading.h>
 
 static const int microSecondsPerSecond = 1000000;
+static const int nanoSecondsPerSecond = 1000000000;
 static const int invalidSocketDescriptor = -1;
 static const char wakeUpThreadMessage = 'W';
 
@@ -170,10 +171,10 @@ void DispatchQueue::performTimerWork()
         m_timerWorkItems.swap(timerWorkItems);
     }
 
-    double currentTimeSeconds = monotonicallyIncreasingTime();
+    double currentTimeNanoSeconds = monotonicallyIncreasingTime() * nanoSecondsPerSecond;
 
     for (size_t i = 0; i < timerWorkItems.size(); ++i) {
-        if (!timerWorkItems[i]->hasExpired(currentTimeSeconds)) {
+        if (!timerWorkItems[i]->hasExpired(currentTimeNanoSeconds)) {
             insertTimerWorkItem(std::move(timerWorkItems[i]));
             continue;
         }
@@ -210,7 +211,7 @@ void DispatchQueue::insertTimerWorkItem(std::unique_ptr<TimerWorkItem> item)
     MutexLocker locker(m_timerWorkItemsLock);
     // The items should be ordered by expire time.
     for (; position < m_timerWorkItems.size(); ++position)
-        if (item->expirationTimeSeconds() < m_timerWorkItems[position]->expirationTimeSeconds())
+        if (item->expirationTimeNanoSeconds() < m_timerWorkItems[position]->expirationTimeNanoSeconds())
             break;
 
     m_timerWorkItems.insert(position, std::move(item));
@@ -241,10 +242,10 @@ timeval* DispatchQueue::getNextTimeOut() const
     static timeval timeValue;
     timeValue.tv_sec = 0;
     timeValue.tv_usec = 0;
-    double timeOut = m_timerWorkItems[0]->expirationTimeSeconds() - monotonicallyIncreasingTime();
-    if (timeOut > 0) {
-        timeValue.tv_sec = static_cast<long>(timeOut);
-        timeValue.tv_usec = static_cast<long>((timeOut - timeValue.tv_sec) * microSecondsPerSecond);
+    double timeOutSeconds = (m_timerWorkItems[0]->expirationTimeNanoSeconds() - monotonicallyIncreasingTime() * nanoSecondsPerSecond) / nanoSecondsPerSecond;
+    if (timeOutSeconds > 0) {
+        timeValue.tv_sec = static_cast<long>(timeOutSeconds);
+        timeValue.tv_usec = static_cast<long>((timeOutSeconds - timeValue.tv_sec) * microSecondsPerSecond);
     }
 
     return &timeValue;

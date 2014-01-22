@@ -1,3 +1,23 @@
+2014-01-21  Jinwoo Song  <jinwoo7.song@samsung.com>
+
+        [EFL][WK2] Use nanoseconds in TimerWorkItem class consistently
+        https://bugs.webkit.org/show_bug.cgi?id=127263
+
+        Reviewed by Gyuyoung Kim.
+
+        After r162276 and r162300, TimerWorkItem is getting nanoseconds as parameter.
+        So it would be better to use nanoseconds in TimerWorkItem for consistency.
+
+        * Platform/efl/DispatchQueueEfl.cpp:
+        (DispatchQueue::performTimerWork):
+        (DispatchQueue::insertTimerWorkItem):
+        (DispatchQueue::getNextTimeOut):
+        * Platform/efl/DispatchQueueWorkItemEfl.h:
+        (TimerWorkItem::create):
+        (TimerWorkItem::expirationTimeNanoSeconds):
+        (TimerWorkItem::hasExpired):
+        (TimerWorkItem::TimerWorkItem):
+
 2014-01-21  Tim Horton  <timothy_horton@apple.com>
 
         Don't copy ViewGestureGeometryCollector.messages.in into the WebProcess bundle.
