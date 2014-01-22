@@ -115,11 +115,11 @@ static void updatePathFromRectElement(SVGElement* element, Path& path)
         return;
     float x = rect->x().value(lengthContext);
     float y = rect->y().value(lengthContext);
-    bool hasRx = rect->rx().value(lengthContext) > 0;
-    bool hasRy = rect->ry().value(lengthContext) > 0;
+    float rx = rect->rx().value(lengthContext);
+    float ry = rect->ry().value(lengthContext);
+    bool hasRx = rx > 0;
+    bool hasRy = ry > 0;
     if (hasRx || hasRy) {
-        float rx = rect->rx().value(lengthContext);
-        float ry = rect->ry().value(lengthContext);
         if (!hasRx)
             rx = ry;
         else if (!hasRy)

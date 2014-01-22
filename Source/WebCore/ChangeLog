@@ -1,3 +1,15 @@
+2014-01-22  Peter Molnar  <pmolnar.u-szeged@partner.samsung.com>
+
+        Refactor calculation of hasRx and hasRy values in SVGPathData
+        https://bugs.webkit.org/show_bug.cgi?id=127423
+
+        Reviewed by Darin Adler.
+
+        This is a follow-up on https://bugs.webkit.org/show_bug.cgi?id=127337
+
+        * rendering/svg/SVGPathData.cpp:
+        (WebCore::updatePathFromRectElement):
+
 2014-01-21  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Remove recompileAllJSFunctions timer in ScriptDebugServer
