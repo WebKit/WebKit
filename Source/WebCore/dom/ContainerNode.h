@@ -171,6 +171,8 @@ private:
 
     bool isContainerNode() const = delete;
 
+    void willRemoveChild(Node& child);
+
     Node* m_firstChild;
     Node* m_lastChild;
 };

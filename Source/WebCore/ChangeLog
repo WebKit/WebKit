@@ -1,3 +1,22 @@
+2014-01-21  László Langó  <llango.u-szeged@partner.samsung.com>
+
+        Assertion failure in Range::nodeWillBeRemoved
+        https://bugs.webkit.org/show_bug.cgi?id=121694
+
+        Reviewed by Ryosuke Niwa.
+
+        Based on Blink a change: https://chromium.googlesource.com/chromium/blink/+/407c1d7b2c45974aa614b3f847ffe9e8fce205fa
+
+        This patch fix an assertion failure. Range::nodeWillBeRemoved() might
+        be called with removed node in ContainerNode, when DOMNodeRemovedFromDocument
+        event handler calls removeChild(), for node being removed.
+
+        Test: fast/dom/Range/remove-twice-crash.html
+
+        * dom/ContainerNode.cpp:
+        (WebCore::ContainerNode::willRemoveChild):
+        * dom/ContainerNode.h:
+
 2014-01-21  Tim Horton  <timothy_horton@apple.com>
 
         REGRESSION (r161580): Some PDFs render outside their <img>

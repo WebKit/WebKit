@@ -1,3 +1,13 @@
+2014-01-21  László Langó  <llango.u-szeged@partner.samsung.com>
+
+        Assertion failure in Range::nodeWillBeRemoved
+        https://bugs.webkit.org/show_bug.cgi?id=121694
+
+        Reviewed by Ryosuke Niwa.
+
+        * fast/dom/Range/remove-twice-crash-expected.txt: Added.
+        * fast/dom/Range/remove-twice-crash.html: Added.
+
 2014-01-21  Alexey Proskuryakov  <ap@apple.com>
 
         AX: Mac: Expose the visible text of a password field to AX

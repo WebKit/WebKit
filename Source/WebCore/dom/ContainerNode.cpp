@@ -480,13 +480,17 @@ bool ContainerNode::replaceChild(PassRefPtr<Node> newChild, Node* oldChild, Exce
     return true;
 }
 
-static void willRemoveChild(Node& child)
+void ContainerNode::willRemoveChild(Node& child)
 {
     ASSERT(child.parentNode());
 
     ChildListMutationScope(*child.parentNode()).willRemoveChild(child);
     child.notifyMutationObserversNodeWillDetach();
     dispatchChildRemovalEvents(child);
+
+    if (child.parentNode() != this)
+        return;
+
     child.document().nodeWillBeRemoved(&child); // e.g. mutation event listener can create a new range.
     if (child.isContainerNode())
         disconnectSubframesIfNeeded(toContainerNode(child), RootAndDescendants);
