@@ -1,3 +1,16 @@
+2014-01-22  Anders Carlsson  <andersca@apple.com>
+
+        Add WKWebViewConfiguration class
+        https://bugs.webkit.org/show_bug.cgi?id=127436
+        <rdar://problem/15882923>
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/API/Cocoa/WKWebViewConfiguration.h: Added.
+        * UIProcess/API/Cocoa/WKWebViewConfiguration.mm: Added.
+        (-[WKWebViewConfiguration copyWithZone:]):
+        * WebKit2.xcodeproj/project.pbxproj:
+
 2014-01-22  Alice Barraclough  <alice.liu@apple.com>
 
         [WK2] add cocoa API for private browsing setting

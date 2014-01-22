@@ -312,6 +312,8 @@
 		1AD25E96167AB08100EA9BCD /* DownloadProxyMap.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AD25E94167AB08100EA9BCD /* DownloadProxyMap.h */; };
 		1AD3306E16B1D991004F60E7 /* StorageAreaImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AD3306C16B1D991004F60E7 /* StorageAreaImpl.cpp */; };
 		1AD3306F16B1D991004F60E7 /* StorageAreaImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AD3306D16B1D991004F60E7 /* StorageAreaImpl.h */; };
+		1ADF591A1890528E0043C145 /* WKWebViewConfiguration.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1ADF59181890528E0043C145 /* WKWebViewConfiguration.mm */; };
+		1ADF591B1890528E0043C145 /* WKWebViewConfiguration.h in Headers */ = {isa = PBXBuildFile; fileRef = 1ADF59191890528E0043C145 /* WKWebViewConfiguration.h */; };
 		1AE00D4C182D6EB000087DD7 /* WKBrowsingContextHandle.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1AE00D4A182D6EB000087DD7 /* WKBrowsingContextHandle.mm */; };
 		1AE00D4D182D6EB000087DD7 /* WKBrowsingContextHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AE00D4B182D6EB000087DD7 /* WKBrowsingContextHandle.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1AE00D4F182D6F5000087DD7 /* WKBrowsingContextHandleInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AE00D4E182D6F5000087DD7 /* WKBrowsingContextHandleInternal.h */; };
@@ -1948,6 +1950,8 @@
 		1AD25E94167AB08100EA9BCD /* DownloadProxyMap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DownloadProxyMap.h; sourceTree = "<group>"; };
 		1AD3306C16B1D991004F60E7 /* StorageAreaImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StorageAreaImpl.cpp; sourceTree = "<group>"; };
 		1AD3306D16B1D991004F60E7 /* StorageAreaImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StorageAreaImpl.h; sourceTree = "<group>"; };
+		1ADF59181890528E0043C145 /* WKWebViewConfiguration.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKWebViewConfiguration.mm; sourceTree = "<group>"; };
+		1ADF59191890528E0043C145 /* WKWebViewConfiguration.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKWebViewConfiguration.h; sourceTree = "<group>"; };
 		1AE00D4A182D6EB000087DD7 /* WKBrowsingContextHandle.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKBrowsingContextHandle.mm; sourceTree = "<group>"; };
 		1AE00D4B182D6EB000087DD7 /* WKBrowsingContextHandle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKBrowsingContextHandle.h; sourceTree = "<group>"; };
 		1AE00D4E182D6F5000087DD7 /* WKBrowsingContextHandleInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKBrowsingContextHandleInternal.h; sourceTree = "<group>"; };
@@ -4216,6 +4220,8 @@
 				1A43E828188F3CDC009E4D30 /* WKProcessClassConfiguration.h */,
 				1A43E827188F3CDC009E4D30 /* WKProcessClassConfiguration.mm */,
 				1A43E82B188F3CF5009E4D30 /* WKProcessClassConfigurationPrivate.h */,
+				1ADF59191890528E0043C145 /* WKWebViewConfiguration.h */,
+				1ADF59181890528E0043C145 /* WKWebViewConfiguration.mm */,
 			);
 			path = Cocoa;
 			sourceTree = "<group>";
@@ -6482,6 +6488,7 @@
 				1AC8702D130B49A2002C1257 /* WebPluginSiteDataManager.h in Headers */,
 				BCB9F8B01124E07700A137E0 /* WebPolicyClient.h in Headers */,
 				518353DB1885BF8C00D9FE44 /* IDBSerialization.h in Headers */,
+				1ADF591B1890528E0043C145 /* WKWebViewConfiguration.h in Headers */,
 				BC5744F012638FB3006F0F12 /* WebPopupItem.h in Headers */,
 				51D54A73185BAC42000CAED2 /* IDBTransactionIdentifier.h in Headers */,
 				D3B9484711FF4B6500032B39 /* WebPopupMenu.h in Headers */,
@@ -8040,6 +8047,7 @@
 				7CD5EBBE1746B04C000C1C45 /* WKTypeRefWrapper.mm in Sources */,
 				2DA944881884E3B500ED86DB /* PageClientImplIOS.mm in Sources */,
 				51BA24461858F55D00EA2811 /* WebCrossThreadCopier.cpp in Sources */,
+				1ADF591A1890528E0043C145 /* WKWebViewConfiguration.mm in Sources */,
 				BC407609124FF0270068F20A /* WKURL.cpp in Sources */,
 				BC40761B124FF0370068F20A /* WKURLCF.mm in Sources */,
 				1AC1338518590C4600F3EC05 /* RemoteObjectRegistryMessageReceiver.cpp in Sources */,
