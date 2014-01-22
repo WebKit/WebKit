@@ -1,3 +1,36 @@
+2014-01-22  Zalan Bujtas  <zalan@apple.com>
+
+        Subpixel Layout: SimpleLineLayout needs more position rounding to match InlineFlowBox layout.
+        https://bugs.webkit.org/show_bug.cgi?id=127404
+
+        Reviewed by Antti Koivisto.
+
+        In order to produce a CSS pixel perfect layout, SimpleLineLayout needs to
+        round line positions to CSS (integral) position similarly to InlineFlowBox.
+
+        * platform/mac/css1/box_properties/padding-expected.txt:
+        * platform/mac/css1/box_properties/padding_top-expected.txt:
+        * platform/mac/css1/formatting_model/vertical_formatting-expected.txt:
+        * platform/mac/css2.1/t080301-c411-vt-mrgn-00-b-expected.txt:
+        * platform/mac/css2.1/t0804-c5510-padn-00-b-ag-expected.txt:
+        * platform/mac/css2.1/t0905-c414-flt-wrap-00-e-expected.txt:
+        * platform/mac/fast/css/empty-pseudo-class-expected.txt:
+        * platform/mac/fast/css/fieldset-display-row-expected.txt:
+        * platform/mac/fast/css/first-child-pseudo-class-expected.txt:
+        * platform/mac/fast/css/last-child-pseudo-class-expected.txt:
+        * platform/mac/fast/css/only-child-pseudo-class-expected.txt:
+        * platform/mac/fast/repaint/reflection-redraw-expected.txt:
+        * platform/mac/fast/shapes/shape-inside/shape-inside-subpixel-rectangle-top-expected.png: Removed.
+        * platform/mac/fast/table/dynamic-caption-add-remove-before-child-expected.txt:
+        * platform/mac/fast/table/multiple-captions-display-expected.txt:
+        * platform/mac/tables/mozilla/marvin/body_col-expected.txt:
+        * platform/mac/tables/mozilla/marvin/x_th_valign_baseline-expected.txt:
+        * platform/mac/tables/mozilla/other/body_col-expected.txt:
+        * platform/mac/tables/mozilla_expected_failures/bugs/bug10140-expected.txt:
+        * platform/mac/tables/mozilla_expected_failures/bugs/bug10216-expected.txt:
+        * platform/mac/tables/mozilla_expected_failures/core/captions3-expected.txt:
+        * platform/mac/tables/mozilla_expected_failures/other/test4-expected.txt:
+
 2014-01-22  Alexey Proskuryakov  <ap@apple.com>
 
         REGRESSION: fast/js/dfg-* typed array tests frequently time out on debug bots

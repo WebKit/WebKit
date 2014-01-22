@@ -1,3 +1,19 @@
+2014-01-22  Zalan Bujtas  <zalan@apple.com>
+
+        Subpixel Layout: SimpleLineLayout needs more position rounding to match InlineFlowBox layout.
+        https://bugs.webkit.org/show_bug.cgi?id=127404
+
+        Reviewed by Antti Koivisto.
+
+        In order to produce a CSS pixel perfect layout, SimpleLineLayout needs to
+        round line positions to CSS (integral) position similarly to InlineFlowBox.
+
+        Existing tests cover it.
+
+        * rendering/SimpleLineLayoutResolver.h:
+        (WebCore::SimpleLineLayout::RunResolver::Run::rect):
+        (WebCore::SimpleLineLayout::RunResolver::Run::baseline):
+
 2014-01-22  Joseph Pecoraro  <pecoraro@apple.com>
 
         Unreviewed rollout of r162534, this caused inspector test failures.

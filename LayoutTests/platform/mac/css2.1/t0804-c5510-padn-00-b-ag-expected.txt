@@ -28,5 +28,5 @@ layer at (0,0) size 800x390
           RenderText {#text} at (24,24) size 90x10
             text run at (24,24) width 90: "x x x x x"
         RenderBlock {P} at (0,272) size 138x58 [bgcolor=#FFFF00]
-          RenderText {#text} at (23,23) size 91x11
-            text run at (23,23) width 91: "x x x x x"
+          RenderText {#text} at (23,24) size 91x10
+            text run at (23,24) width 91: "x x x x x"

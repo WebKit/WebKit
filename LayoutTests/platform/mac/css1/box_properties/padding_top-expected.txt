@@ -40,7 +40,7 @@ layer at (0,0) size 785x1464
           text run at (590,80) width 104: "Both the content"
           text run at (0,98) width 356: "background and the padding should be aqua (light blue)."
       RenderBlock {P} at (0,498) size 769x229 [bgcolor=#00FFFF]
-        RenderText {#text} at (0,192) size 763x37
+        RenderText {#text} at (0,192) size 763x36
           text run at (0,192) width 732: "This element should have a top padding of 25%, which is calculated with respect to the width of the parent element. "
           text run at (732,192) width 31: "Both"
           text run at (0,210) width 433: "the content background and the padding should be aqua (light blue). "
@@ -81,10 +81,10 @@ layer at (0,0) size 785x1464
                   text run at (590,80) width 104: "Both the content"
                   text run at (0,98) width 356: "background and the padding should be aqua (light blue)."
               RenderBlock {P} at (4,347) size 747x223 [bgcolor=#00FFFF]
-                RenderText {#text} at (0,186) size 732x37
-                  text run at (0,186) width 728: "This element should have a top padding of 25%, which is calculated with respect to the width of the parent element."
-                  text run at (0,204) width 468: "Both the content background and the padding should be aqua (light blue). "
-                  text run at (468,204) width 264: "This will require extra text in order to test."
+                RenderText {#text} at (0,187) size 732x36
+                  text run at (0,187) width 728: "This element should have a top padding of 25%, which is calculated with respect to the width of the parent element."
+                  text run at (0,205) width 468: "Both the content background and the padding should be aqua (light blue). "
+                  text run at (468,205) width 264: "This will require extra text in order to test."
               RenderBlock {P} at (4,585) size 747x37 [bgcolor=#00FFFF]
                 RenderText {#text} at (0,0) size 669x36
                   text run at (0,0) width 565: "This element should have no top padding, since negative padding values are not allowed. "

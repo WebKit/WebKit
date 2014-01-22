@@ -185,7 +185,7 @@ layer at (0,0) size 785x2817
                 text run at (1,1) width 30: "Data"
       RenderTable {TABLE} at (0,1196) size 90x127 [border: (10px solid #008000)]
         RenderBlock {CAPTION} at (20,0) size 70x60 [border: (3px solid #800080)]
-          RenderText {#text} at (22,3) size 50x54
+          RenderText {#text} at (22,3) size 51x54
             text run at (22,3) width 26: "The"
             text run at (15,21) width 40: "table's"
             text run at (10,39) width 50: "caption."
@@ -206,7 +206,7 @@ layer at (0,0) size 785x2817
                 text run at (1,1) width 30: "Data"
       RenderTable {TABLE} at (0,1322) size 90x127 [border: (10px solid #008000)]
         RenderBlock {CAPTION} at (20,0) size 70x60 [border: (3px solid #800080)]
-          RenderText {#text} at (22,3) size 50x54
+          RenderText {#text} at (22,3) size 51x54
             text run at (22,3) width 26: "The"
             text run at (15,21) width 40: "table's"
             text run at (10,39) width 50: "caption."
@@ -355,7 +355,7 @@ layer at (0,0) size 785x2817
                 text run at (1,1) width 30: "Data"
       RenderTable {TABLE} at (0,2290) size 90x127 [border: (10px solid #008000)]
         RenderBlock {CAPTION} at (0,0) size 70x60 [border: (3px solid #800080)]
-          RenderText {#text} at (22,3) size 50x54
+          RenderText {#text} at (22,3) size 51x54
             text run at (22,3) width 26: "The"
             text run at (15,21) width 40: "table's"
             text run at (10,39) width 50: "caption."
@@ -376,7 +376,7 @@ layer at (0,0) size 785x2817
                 text run at (1,1) width 30: "Data"
       RenderTable {TABLE} at (15,2416) size 90x127 [border: (10px solid #008000)]
         RenderBlock {CAPTION} at (0,0) size 70x60 [border: (3px solid #800080)]
-          RenderText {#text} at (22,3) size 50x54
+          RenderText {#text} at (22,3) size 51x54
             text run at (22,3) width 26: "The"
             text run at (15,21) width 40: "table's"
             text run at (10,39) width 50: "caption."

@@ -82,9 +82,9 @@ layer at (0,0) size 785x2487
           text run at (0,0) width 726: "There should be two centimeters between this paragraph and the one below, because negative margins collapse to a"
           text run at (0,18) width 456: "negative margin with the largest absolute value of the margins collapsed."
       RenderBlock {P} at (0,1042) size 769x75
-        RenderText {#text} at (0,37) size 765x37
-          text run at (0,37) width 765: "This is a paragraph, which I should make very long so that you can easily see how much space there is between it and the"
-          text run at (0,55) width 181: "one below it and to the right."
+        RenderText {#text} at (0,38) size 765x36
+          text run at (0,38) width 765: "This is a paragraph, which I should make very long so that you can easily see how much space there is between it and the"
+          text run at (0,56) width 181: "one below it and to the right."
       RenderBlock (floating) {P} at (0,1192) size 385x55
         RenderText {#text} at (0,0) size 382x54
           text run at (0,0) width 382: "There should be two centimeters between this paragraph and"
@@ -101,8 +101,8 @@ layer at (0,0) size 785x2487
           text run at (555,0) width 195: "Padding does not collapse, and"
           text run at (0,18) width 234: "there is 1cm of padding on each side."
       RenderBlock {P} at (0,1336) size 769x56
-        RenderText {#text} at (0,37) size 167x19
-          text run at (0,37) width 167: "This is the next paragraph."
+        RenderText {#text} at (0,38) size 167x18
+          text run at (0,38) width 167: "This is the next paragraph."
       RenderTable {TABLE} at (0,1407) size 769x1064 [border: (1px outset #808080)]
         RenderTableSection {TBODY} at (1,1) size 767x1061
           RenderTableRow {TR} at (0,0) size 767x26
@@ -149,9 +149,9 @@ layer at (0,0) size 785x2487
                   text run at (0,0) width 726: "There should be two centimeters between this paragraph and the one below, because negative margins collapse to a"
                   text run at (0,18) width 456: "negative margin with the largest absolute value of the margins collapsed."
               RenderBlock {P} at (4,681) size 747x75
-                RenderText {#text} at (0,37) size 742x37
-                  text run at (0,37) width 742: "This is a paragraph, which I should make very long so that you can easily see how much space there is between it and"
-                  text run at (0,55) width 204: "the one below it and to the right."
+                RenderText {#text} at (0,38) size 742x36
+                  text run at (0,38) width 742: "This is a paragraph, which I should make very long so that you can easily see how much space there is between it and"
+                  text run at (0,56) width 204: "the one below it and to the right."
               RenderBlock (floating) {P} at (4,831) size 374x55
                 RenderText {#text} at (0,0) size 355x54
                   text run at (0,0) width 355: "There should be two centimeters between this paragraph"
@@ -168,5 +168,5 @@ layer at (0,0) size 785x2487
                   text run at (555,0) width 168: "Padding does not collapse,"
                   text run at (0,18) width 261: "and there is 1cm of padding on each side."
               RenderBlock {P} at (4,975) size 747x56
-                RenderText {#text} at (0,37) size 167x19
-                  text run at (0,37) width 167: "This is the next paragraph."
+                RenderText {#text} at (0,38) size 167x18
+                  text run at (0,38) width 167: "This is the next paragraph."
