@@ -832,13 +832,6 @@ void GraphicsContext::clip(const FloatRect& rect)
     m_data->clip(rect);
 }
 
-#if PLATFORM(WIN)
-static bool wkCGContextIsPDFContext(CGContextRef context)
-{
-    return CGContextGetType(context) == kCGContextTypePDF;
-}
-#endif
-
 void GraphicsContext::clipOut(const IntRect& rect)
 {
     if (paintingDisabled())

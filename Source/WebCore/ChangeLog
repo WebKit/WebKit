@@ -1,5 +1,14 @@
 2014-01-22  Brent Fulgham  <bfulgham@apple.com>
 
+        Unreviewed build fix for branch.
+
+        * WebCore.vcxproj/WebCore.vcxproj: Correct merged files.
+        * WebCore.vcxproj/WebCore.vcxproj.filters: Ditto.
+        * platform/graphics/cg/GraphicsContextCG.cpp: Remove work-around implementation (from branch)
+        now that WKSI provides the method.
+
+2014-01-22  Brent Fulgham  <bfulgham@apple.com>
+
         Merge r154526
 
     2014-01-22  Brent Fulgham  <bfulgham@apple.com>
