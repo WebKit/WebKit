@@ -1,3 +1,14 @@
+2014-01-21  David Farler  <dfarler@apple.com>
+
+        Upstream package-root for iOS
+
+        Reviewed by Daniel bates.
+
+        * Scripts/package-root: Added.
+        (usage):
+        * Scripts/webkitdirs.pm:
+        (XcodeSDKPath): Added function.
+
 2014-01-21  Daniel Bates  <dabates@apple.com>
 
         [iOS] Tools/Makefile shouldn't build modules DumpRenderTree, gtest, or TestWebKitAPI

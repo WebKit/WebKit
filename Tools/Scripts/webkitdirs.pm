@@ -414,6 +414,20 @@ sub xcodeSDKPlatformName()
     die "Couldn't determine platform name from Xcode SDK";
 }
 
+sub XcodeSDKPath
+{
+    determineXcodeSDK();
+
+    die "Can't find the SDK path because no Xcode SDK was specified" if not $xcodeSDK;
+
+    my $sdkPath = `xcrun --sdk $xcodeSDK --show-sdk-path` if $xcodeSDK;
+    die 'Failed to get SDK path from xcrun' if $?;
+    chomp $sdkPath;
+
+    return $sdkPath;
+}
+
+
 sub programFilesPath
 {
     return $programFilesPath if defined $programFilesPath;
