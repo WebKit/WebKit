@@ -34,12 +34,12 @@ void WorkQueue::platformInvalidate()
     dispatchQueue->stopThread();
 }
 
-void WorkQueue::registerSocketEventHandler(int fileDescriptor, const Function<void()>& function)
+void WorkQueue::registerSocketEventHandler(int fileDescriptor, std::function<void ()> function)
 {
     if (!m_dispatchQueue)
         return;
 
-    m_dispatchQueue->setSocketEventHandler(fileDescriptor, function);
+    m_dispatchQueue->setSocketEventHandler(fileDescriptor, std::move(function));
 }
 
 void WorkQueue::unregisterSocketEventHandler(int fileDescriptor)

@@ -115,12 +115,12 @@ void DispatchQueue::stopThread()
     wakeUpThread();
 }
 
-void DispatchQueue::setSocketEventHandler(int fileDescriptor, const Function<void()>& function)
+void DispatchQueue::setSocketEventHandler(int fileDescriptor, std::function<void ()> function)
 {
     ASSERT(m_socketDescriptor == invalidSocketDescriptor);
 
     m_socketDescriptor = fileDescriptor;
-    m_socketEventHandler = function;
+    m_socketEventHandler = std::move(function);
 
     if (fileDescriptor > m_maxFileDescriptor)
         m_maxFileDescriptor = fileDescriptor;

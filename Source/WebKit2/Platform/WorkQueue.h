@@ -66,7 +66,7 @@ public:
     void registerSocketEventHandler(int, std::function<void ()>, std::function<void ()>);
     void unregisterSocketEventHandler(int);
 #elif PLATFORM(EFL)
-    void registerSocketEventHandler(int, const Function<void()>&);
+    void registerSocketEventHandler(int, std::function<void ()>);
     void unregisterSocketEventHandler(int);
 #endif
 

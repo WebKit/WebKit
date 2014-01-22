@@ -42,7 +42,7 @@ public:
     void dispatch(std::unique_ptr<WorkItem>);
     void dispatch(std::unique_ptr<TimerWorkItem>);
     void stopThread();
-    void setSocketEventHandler(int, const Function<void()>&);
+    void setSocketEventHandler(int, std::function<void ()>);
     void clearSocketEventHandler();
 
 private:
@@ -67,7 +67,7 @@ private:
     bool m_isThreadRunning;
 
     int m_socketDescriptor;
-    Function<void()> m_socketEventHandler;
+    std::function<void ()> m_socketEventHandler;
 
     Vector<std::unique_ptr<WorkItem>> m_workItems;
     Mutex m_workItemsLock;
