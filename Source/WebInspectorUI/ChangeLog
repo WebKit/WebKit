@@ -1,5 +1,18 @@
 2014-01-21  Timothy Hatcher  <timothy@apple.com>
 
+        Remember the Timeline Overview zoom and selection between sessions.
+
+        https://bugs.webkit.org/show_bug.cgi?id=127369
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/TimelineOverview.js:
+        (WebInspector.TimelineOverview):
+        (WebInspector.TimelineOverview.prototype.set secondsPerPixel):
+        (WebInspector.TimelineOverview.prototype._timeRangeSelectionChanged):
+
+2014-01-21  Timothy Hatcher  <timothy@apple.com>
+
         Show the Resource and Record selection path in the navigation bar for Timeline views.
 
         https://bugs.webkit.org/show_bug.cgi?id=127367

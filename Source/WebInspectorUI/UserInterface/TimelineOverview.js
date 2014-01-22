@@ -58,14 +58,18 @@ WebInspector.TimelineOverview = function(timelineOverviewGraphsMap)
     this._scrollWidthSizer.className = WebInspector.TimelineOverview.ScrollWidthSizerStyleClassName;
     this._scrollContainer.appendChild(this._scrollWidthSizer);
 
+    this._secondsPerPixelSetting = new WebInspector.Setting("timeline-overview-seconds-per-pixel", 0.01);
+    this._selectionStartTimeSetting = new WebInspector.Setting("timeline-overview-selection-start-time", 0);
+    this._selectionDurationSetting = new WebInspector.Setting("timeline-overview-selection-duration", 5);
+
     this._startTime = 0;
     this._currentTime = 0;
     this._endTime = 0;
-    this._secondsPerPixel = 0.0025;
+    this._secondsPerPixel = this._secondsPerPixelSetting.value;
     this._scrollStartTime = 0;
 
-    this.selectionStartTime = 0;
-    this.selectionDuration = 3;
+    this.selectionStartTime = this._selectionStartTimeSetting.value;
+    this.selectionDuration = this._selectionDurationSetting.value;
 };
 
 WebInspector.TimelineOverview.StyleClassName = "timeline-overview";
@@ -134,6 +138,7 @@ WebInspector.TimelineOverview.prototype = {
             return;
 
         this._secondsPerPixel = x;
+        this._secondsPerPixelSetting.value = x;
 
         this._needsLayout();
     },
@@ -333,6 +338,9 @@ WebInspector.TimelineOverview.prototype = {
 
     _timeRangeSelectionChanged: function(event)
     {
+        this._selectionStartTimeSetting.value = this.selectionStartTime - this._startTime;
+        this._selectionDurationSetting.value = this.selectionDuration;
+
         this.dispatchEventToListeners(WebInspector.TimelineOverview.Event.TimeRangeSelectionChanged);
     }
 };
