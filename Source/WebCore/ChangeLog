@@ -1,3 +1,15 @@
+2014-01-21  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        Remove unused "acceleratedCompositingForScrollableFramesEnabled" setting
+        https://bugs.webkit.org/show_bug.cgi?id=127402
+
+        Reviewed by Anders Carlsson.
+
+        compositing/iframes/iframe-composited-scrolling.html is updated because
+        there are no usages in WebCore.
+
+        * page/Settings.in:
+
 2014-01-21  Alex Christensen  <achristensen@webkit.org>
 
         Compile fix for using libsoup on Windows.

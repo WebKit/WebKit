@@ -99,7 +99,6 @@ acceleratedCompositingForFixedPositionEnabled initial=false
 acceleratedCompositingForOverflowScrollEnabled initial=false
 
 # Works only in conjunction with forceCompositingMode.
-acceleratedCompositingForScrollableFramesEnabled initial=false
 compositedScrollingForFramesEnabled initial=false
 
 experimentalNotificationsEnabled initial=false

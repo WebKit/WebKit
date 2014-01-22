@@ -1,3 +1,14 @@
+2014-01-21  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        Remove unused "acceleratedCompositingForScrollableFramesEnabled" setting
+        https://bugs.webkit.org/show_bug.cgi?id=127402
+
+        Reviewed by Anders Carlsson.
+
+        * compositing/iframes/iframe-composited-scrolling.html:
+        Removed acceleratedCompositingForScrollableFramesEnabled changes because
+        it is dead code in WebCore side.
+
 2014-01-21  Zalan Bujtas  <zalan@apple.com>
 
         Subpixel Layout: Off-by-one pixel text when multiple regions with different widths are present.
