@@ -64,6 +64,33 @@ WebInspector.TimelineDataGridNode.prototype = {
         return {graph: records.length ? records[0].startTime : 0};
     },
 
+    collapse: function()
+    {
+        WebInspector.DataGridNode.prototype.collapse.call(this);
+
+        // Refresh to show child bars in our graph now that we collapsed.
+        this.refreshGraph();
+    },
+
+    expand: function()
+    {
+        WebInspector.DataGridNode.prototype.expand.call(this);
+
+        if (!this.revealed)
+            return;
+
+        // Refresh to remove child bars from our graph now that we expanded.
+        this.refreshGraph();
+
+        // Refresh child graphs since they haven't been updating while we were collapsed.
+        var childNode = this.children[0];
+        while (childNode) {
+            if (childNode instanceof WebInspector.TimelineDataGridNode)
+                childNode.refreshGraph();
+            childNode = childNode.traverseNextNode(true, this);
+        }
+    },
+
     createCellContent: function(columnIdentifier, cell)
     {
         if (columnIdentifier === "graph" && this._graphDataSource) {
@@ -198,42 +225,29 @@ WebInspector.TimelineDataGridNode.prototype = {
             delete this._scheduledGraphRefreshIdentifier;
         }
 
-        var records = this.records;
-        if (!records || !records.length)
-            return;
+        if (!this.revealed) {
+            // We are not visible, but an ancestor will be drawing our graph.
+            // Notify the next visible ancestor to refresh their graph.
+            var ancestor = this;
+            while (ancestor && !ancestor.root) {
+                if (ancestor.revealed && ancestor instanceof WebInspector.TimelineDataGridNode) {
+                    ancestor.refreshGraph();
+                    return;
+                }
 
-        // Fast path for single records.
-        if (records.length === 1) {
-            var record = records[0];
-            var timelineRecordBar = this._timelineRecordBars[0];
-
-            if (timelineRecordBar && timelineRecordBar.record !== record) {
-                timelineRecordBar.element.remove();
-                timelineRecordBar = null;
+                ancestor = ancestor.parent;
             }
-
-            if (!timelineRecordBar)
-                timelineRecordBar = this._timelineRecordBars[0] = new WebInspector.TimelineRecordBar(record);
-
-            if (timelineRecordBar.refresh(this._graphDataSource)) {
-                if (!timelineRecordBar.element.parentNode)
-                    this._graphContainerElement.appendChild(timelineRecordBar.element);
-            } else
-                timelineRecordBar.element.remove();
 
             return;
         }
 
-        // Multiple records attempt to share a bar if their time is close to prevent overlapping bars.
         var startTime = this._graphDataSource.startTime;
         var currentTime = this._graphDataSource.currentTime;
         var endTime = this._graphDataSource.endTime;
         var duration = endTime - startTime;
         var visibleWidth = this._graphContainerElement.offsetWidth;
         var secondsPerPixel = duration / visibleWidth;
-
         var recordBarIndex = 0;
-        var barRecords = [];
 
         function createBar(barRecords)
         {
@@ -247,35 +261,71 @@ WebInspector.TimelineDataGridNode.prototype = {
             ++recordBarIndex;
         }
 
-        for (var record of records) {
-            // Combining multiple record bars is not supported with records that have inactive time.
-            // ResourceTimelineRecord is the only one right, and it is always a single record handled above.
-            console.assert(!record.usesActiveStartTime);
+        function createBarsForRecords(records)
+        {
+            var barRecords = [];
 
-            if (isNaN(record.startTime))
-                continue;
+            for (var record of records) {
+                if (isNaN(record.startTime))
+                    continue;
 
-            // If this bar is completely before the bounds of the graph, skip this record.
-            if (record.endTime < startTime)
-                continue;
+                // If this bar is completely before the bounds of the graph, skip this record.
+                if (record.endTime < startTime)
+                    continue;
 
-            // If this record is completely after the current time or end time, break out now.
-            // Records are sorted, so all records after this will be beyond the current or end time too.
-            if (record.startTime > currentTime || record.startTime > endTime)
-                break;
+                // If this record is completely after the current time or end time, break out now.
+                // Records are sorted, so all records after this will be beyond the current or end time too.
+                if (record.startTime > currentTime || record.startTime > endTime)
+                    break;
 
-            // Check if the previous record can be combined with the current record, if not make a new bar.
-            if (barRecords.length && WebInspector.TimelineRecordBar.recordsCannotBeCombined(barRecords, record, secondsPerPixel)) {
-                createBar.call(this, barRecords);
-                barRecords = [];
+                // Check if the previous record can be combined with the current record, if not make a new bar.
+                if (barRecords.length && WebInspector.TimelineRecordBar.recordsCannotBeCombined(barRecords, record, secondsPerPixel)) {
+                    createBar.call(this, barRecords);
+                    barRecords = [];
+                }
+
+                barRecords.push(record);
             }
 
-            barRecords.push(record);
+            // Create the bar for the last record if needed.
+            if (barRecords.length)
+                createBar.call(this, barRecords);
         }
 
-        // Create the bar for the last record if needed.
-        if (barRecords.length)
-            createBar.call(this, barRecords);
+        if (this.expanded) {
+            // When expanded just use the records for this node.
+            createBarsForRecords.call(this, this.records);
+        } else {
+            // When collapsed use the records for this node and its descendants.
+            // To share bars better, group records by type.
+
+            var recordTypeMap = new Map;
+
+            function collectRecordsByType(records)
+            {
+                for (var record of records) {
+                    var typedRecords = recordTypeMap.get(record.type);
+                    if (!typedRecords) {
+                        typedRecords = [];
+                        recordTypeMap.set(record.type, typedRecords);
+                    }
+
+                    typedRecords.push(record);
+                }
+            }
+
+            collectRecordsByType(this.records);
+
+            var childNode = this.children[0];
+            while (childNode) {
+                if (childNode instanceof WebInspector.TimelineDataGridNode)
+                    collectRecordsByType(childNode.records);
+                childNode = childNode.traverseNextNode(false, this);
+            }
+
+            for (var records of recordTypeMap.values())
+                createBarsForRecords.call(this, records);
+        }
 
         // Remove the remaining unused TimelineRecordBars.
         for (; recordBarIndex < this._timelineRecordBars.length; ++recordBarIndex) {
@@ -290,5 +340,26 @@ WebInspector.TimelineDataGridNode.prototype = {
             return;
 
         this._scheduledGraphRefreshIdentifier = requestAnimationFrame(this.refreshGraph.bind(this));
+    },
+
+    // Protected
+
+    isRecordVisible: function(record)
+    {
+        if (!this._graphDataSource)
+            return false;
+
+        if (isNaN(record.startTime))
+            return false;
+
+        // If this bar is completely before the bounds of the graph, not visible.
+        if (record.endTime < this.graphDataSource.startTime)
+            return false;
+
+        // If this record is completely after the current time or end time, not visible.
+        if (record.startTime > this.graphDataSource.currentTime || record.startTime > this.graphDataSource.endTime)
+            return false;
+
+        return true;
     }
 };

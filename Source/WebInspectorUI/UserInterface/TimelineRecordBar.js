@@ -58,7 +58,13 @@ WebInspector.TimelineRecordBar.recordsCannotBeCombined = function(records, candi
     if (!records.length)
         return true;
 
+    if (candidateRecord.usesActiveStartTime)
+        return true;
+
     var lastRecord = records.lastValue;
+    if (lastRecord.usesActiveStartTime)
+        return true;
+
     if (lastRecord.type !== candidateRecord.type)
         return true;
 
@@ -112,9 +118,10 @@ WebInspector.TimelineRecordBar.prototype = {
                 this._inactiveBarElement.classList.add(WebInspector.TimelineRecordBar.BarSegmentStyleClassName);
                 this._inactiveBarElement.classList.add(WebInspector.TimelineRecordBar.InactiveStyleClassName);
                 this._element.classList.add(WebInspector.TimelineRecordBar.HasInactiveSegmentStyleClassName);
-                this._element.insertBefore(this._inactiveBarElement, this._activeBarElement);
+                this._element.insertBefore(this._inactiveBarElement, this._element.firstChild);
             }
         } else if (this._inactiveBarElement) {
+            this._element.classList.remove(WebInspector.TimelineRecordBar.HasInactiveSegmentStyleClassName);
             this._inactiveBarElement.remove();
             delete this._inactiveBarElement;
         }
@@ -165,8 +172,15 @@ WebInspector.TimelineRecordBar.prototype = {
         var newBarWidth = ((barEndTime - graphStartTime) / graphDuration) - newBarLeftPosition;
         this._updateElementPosition(this._element, newBarWidth, "width");
 
-        if (!this._inactiveBarElement)
+        if (!this._inactiveBarElement) {
+            // If this TimelineRecordBar is reused and had an inactive bar previously,
+            // we might need to remove some styles and add the active element back.
+            this._activeBarElement.style.removeProperty("left");
+            this._activeBarElement.style.removeProperty("width");
+            if (!this._activeBarElement.parentNode)
+                this._element.appendChild(this._activeBarElement);
             return true;
+        }
 
         console.assert(firstRecord === lastRecord);
 

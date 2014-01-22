@@ -292,9 +292,9 @@ WebInspector.NavigationSidebarPanel.prototype = {
         // Implemented by subclasses if needed.
     },
 
-    updateFilter: function(dontExpandOnMatch)
+    updateFilter: function()
     {
-        this._updateFilter(dontExpandOnMatch);
+        this._updateFilter();
     },
 
     hasCustomFilters: function()
@@ -309,7 +309,7 @@ WebInspector.NavigationSidebarPanel.prototype = {
         return true;
     },
 
-    applyFiltersToTreeElement: function(treeElement, dontExpandOnMatch)
+    applyFiltersToTreeElement: function(treeElement)
     {
         if (!this._filterBar.hasActiveFilters() && !this.hasCustomFilters()) {
             // No filters, so make everything visible.
@@ -326,6 +326,8 @@ WebInspector.NavigationSidebarPanel.prototype = {
 
         var filterableData = treeElement.filterableData || {};
 
+        var matchedBuiltInFilters = false;
+
         var self = this;
         function matchTextFilter(inputs)
         {
@@ -340,8 +342,10 @@ WebInspector.NavigationSidebarPanel.prototype = {
             for (var input of inputs) {
                 if (!input)
                     continue;
-                if (self._textFilterRegex.test(input))
+                if (self._textFilterRegex.test(input)) {
+                    matchedBuiltInFilters = true;
                     return true;
+                }
             }
 
             // No inputs matched.
@@ -358,7 +362,8 @@ WebInspector.NavigationSidebarPanel.prototype = {
             while (currentAncestor && !currentAncestor.root) {
                 currentAncestor.hidden = false;
 
-                if (!currentAncestor.expanded && !dontExpandOnMatch) {
+                // Only expand if the built-in filters matched, not custom filters.
+                if (matchedBuiltInFilters && !currentAncestor.expanded) {
                     currentAncestor.__wasExpandedDuringFiltering = true;
                     currentAncestor.expand();
                 }
@@ -370,6 +375,13 @@ WebInspector.NavigationSidebarPanel.prototype = {
         if (matchTextFilter(filterableData.text) && this.matchTreeElementAgainstCustomFilters(treeElement)) {
             // Make this element visible since it matches.
             makeVisible();
+
+            // If this tree element didn't match a built-in filter and was expanded earlier during filtering, collapse it again.
+            if (!matchedBuiltInFilters && treeElement.expanded && treeElement.__wasExpandedDuringFiltering) {
+                delete treeElement.__wasExpandedDuringFiltering;
+                treeElement.collapse();
+            }
+
             return;
         }
 
@@ -468,7 +480,7 @@ WebInspector.NavigationSidebarPanel.prototype = {
         this._updateFilter();
     },
 
-    _updateFilter: function(dontExpandOnMatch)
+    _updateFilter: function()
     {
         var filters = this._filterBar.filters;
         this._textFilterRegex = simpleGlobStringToRegExp(filters.text, "i");
@@ -477,7 +489,7 @@ WebInspector.NavigationSidebarPanel.prototype = {
         // Update the whole tree.
         var currentTreeElement = this._contentTreeOutline.children[0];
         while (currentTreeElement && !currentTreeElement.root) {
-            this.applyFiltersToTreeElement(currentTreeElement, dontExpandOnMatch);
+            this.applyFiltersToTreeElement(currentTreeElement);
             currentTreeElement = currentTreeElement.traverseNextTreeElement(false, null, false);
         }
 

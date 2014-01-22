@@ -404,6 +404,6 @@ WebInspector.TimelineContentView.prototype = {
         this._currentTimelineView.endTime = this._timelineOverview.selectionStartTime + this._timelineOverview.selectionDuration;
 
         // Delay until the next frame to stay in sync with the current timeline view's time-based layout changes.
-        requestAnimationFrame(function() { WebInspector.timelineSidebarPanel.updateFilter(true); });
+        requestAnimationFrame(function() { WebInspector.timelineSidebarPanel.updateFilter(); });
     }
 };

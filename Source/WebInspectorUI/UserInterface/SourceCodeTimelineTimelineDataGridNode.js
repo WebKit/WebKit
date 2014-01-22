@@ -28,7 +28,7 @@ WebInspector.SourceCodeTimelineTimelineDataGridNode = function(sourceCodeTimelin
     WebInspector.TimelineDataGridNode.call(this, true, graphDataSource);
 
     this._sourceCodeTimeline = sourceCodeTimeline;
-    this._sourceCodeTimeline.addEventListener(WebInspector.Timeline.Event.RecordAdded, this.needsGraphRefresh, this);
+    this._sourceCodeTimeline.addEventListener(WebInspector.Timeline.Event.RecordAdded, this._timelineRecordAdded, this);
 };
 
 WebInspector.Object.addConstructorFunctions(WebInspector.SourceCodeTimelineTimelineDataGridNode);
@@ -52,5 +52,13 @@ WebInspector.SourceCodeTimelineTimelineDataGridNode.prototype = {
     get data()
     {
         return {graph: this._sourceCodeTimeline.startTime};
+    },
+
+    // Private
+
+    _timelineRecordAdded: function(event)
+    {
+        if (this.isRecordVisible(event.data.record))
+            this.needsGraphRefresh();
     }
 };

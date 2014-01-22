@@ -69,3 +69,27 @@
 .timeline-view.overview > .data-grid td.graph-column .timeline-record-bar {
     top: 2px;
 }
+
+.timeline-view.overview > .data-grid tr.parent:not(.expanded) td.graph-column .timeline-record-bar:not(.has-inactive-segment) > .segment {
+    box-shadow: white 0 0 0 1px;
+}
+
+.timeline-view.overview > .data-grid tr.parent:not(.expanded).selected td.graph-column .timeline-record-bar:not(.has-inactive-segment) > .segment {
+    box-shadow: rgb(212, 212, 212) 0 0 0 1px;
+}
+
+.timeline-view.overview > .data-grid:focus tr.parent:not(.expanded).selected td.graph-column .timeline-record-bar:not(.has-inactive-segment) > .segment {
+    box-shadow: rgb(56, 121, 217) 0 0 0 1px;
+}
+
+.timeline-view.overview > .data-grid tr.parent:not(.expanded) td.graph-column .timeline-record-bar.has-inactive-segment > .segment:not(.inactive) {
+    box-shadow: white 1px 0 0;
+}
+
+.timeline-view.overview > .data-grid tr.parent:not(.expanded).selected td.graph-column .timeline-record-bar.has-inactive-segment > .segment:not(.inactive) {
+    box-shadow: rgb(212, 212, 212) 1px 0 0;
+}
+
+.timeline-view.overview > .data-grid:focus tr.parent:not(.expanded).selected td.graph-column .timeline-record-bar.has-inactive-segment > .segment:not(.inactive) {
+    box-shadow: rgb(56, 121, 217) 1px 0 0;
+}

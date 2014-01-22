@@ -35,6 +35,7 @@
     border: 1px solid rgb(200, 200, 200);
     border-radius: 3px;
     min-width: 4px;
+    z-index: 1;
 }
 
 .timeline-record-bar:not(.has-inactive-segment) > .segment {
@@ -42,11 +43,16 @@
     width: 100%;
 }
 
+.timeline-record-bar > .segment.inactive {
+    z-index: 0;
+}
+
 .timeline-record-bar > .segment.inactive,
 .timeline-record-bar.unfinished > .segment {
     border-top-right-radius: 0 !important;
     border-bottom-right-radius: 0 !important;
     border-right: none;
+    margin-right: -1px;
 }
 
 .timeline-record-bar > .segment.inactive + .segment {
@@ -56,7 +62,15 @@
 
 :focus .selected .timeline-record-bar > .segment {
     background-color: white !important;
-    border-color: white !important;
+    border: none !important;
+}
+
+:focus .selected .timeline-record-bar > .segment.inactive {
+    opacity: 0.7;
+}
+
+:focus .selected .timeline-record-bar.has-inactive-segment > .segment:not(.inactive) {
+    border-left: 1px solid rgba(56, 121, 217, 0.7) !important;
 }
 
 .timeline-record-bar.timeline-record-type-network > .segment {

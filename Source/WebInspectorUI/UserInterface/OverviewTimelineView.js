@@ -93,11 +93,16 @@ WebInspector.OverviewTimelineView.prototype = {
         // The TimelineDataGridNode graphs are positioned with percentages, so they auto resize with the view.
         // We only need to refresh the graphs when the any of the times change.
         if (this.zeroTime !== oldZeroTime || this.startTime !== oldStartTime || this.endTime !== oldEndTime || this.currentTime !== oldCurrentTime) {
-            var item = this._dataGrid.children[0];
-            while (item) {
-                item.refreshGraph();
-                item = item.traverseNextNode(false, null, true);
+            var dataGridNode = this._dataGrid.children[0];
+            while (dataGridNode) {
+                dataGridNode.refreshGraph();
+                dataGridNode = dataGridNode.traverseNextNode(true, null, true);
             }
+        }
+
+        if (!this.currentTime !== oldCurrentTime) {
+            // Check the filters again since the current time change might have revealed this node. Start and end time changes are handled by TimelineContentView.
+            WebInspector.timelineSidebarPanel.updateFilter();
         }
 
         this._timelineRuler.updateLayout();
@@ -216,11 +221,15 @@ WebInspector.OverviewTimelineView.prototype = {
         if (!parentFrame)
             return;
 
-        if (parentFrame.mainResource === resource || parentFrame.provisionalMainResource === resource)
+        var expandedByDefault = false;
+        if (parentFrame.mainResource === resource || parentFrame.provisionalMainResource === resource) {
             parentFrame = parentFrame.parentFrame;
+            expandedByDefault = !parentFrame; // Main frame expands by default.
+        }
 
         var resourceTreeElement = new WebInspector.ResourceTreeElement(resource);
-        resourceTreeElement.expand();
+        if (expandedByDefault)
+            resourceTreeElement.expand();
 
         var resourceTimelineRecord = this._networkTimeline ? this._networkTimeline.recordForResource(resource) : null;
         if (!resourceTimelineRecord)

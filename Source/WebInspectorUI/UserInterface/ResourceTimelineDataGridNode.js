@@ -30,7 +30,7 @@ WebInspector.ResourceTimelineDataGridNode = function(resourceTimelineRecord, gra
     this._resource = resourceTimelineRecord.resource;
     this._record = resourceTimelineRecord;
 
-    this._record.addEventListener(WebInspector.TimelineRecord.Event.Updated, graphOnly ? this.needsGraphRefresh : this._needsRefresh, this);
+    this._record.addEventListener(WebInspector.TimelineRecord.Event.Updated, graphOnly ? this._timelineRecordUpdated : this._needsRefresh, this);
 
     if (!graphOnly) {
         this._resource.addEventListener(WebInspector.Resource.Event.URLDidChange, this._needsRefresh, this);
@@ -182,5 +182,11 @@ WebInspector.ResourceTimelineDataGridNode.prototype = {
     _goToResource: function(event)
     {
         WebInspector.resourceSidebarPanel.showSourceCode(this._resource);
+    },
+
+    _timelineRecordUpdated: function(event)
+    {
+        if (this.isRecordVisible(this._record))
+            this.needsGraphRefresh();
     }
 };

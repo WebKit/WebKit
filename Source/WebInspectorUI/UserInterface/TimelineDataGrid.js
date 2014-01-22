@@ -238,6 +238,10 @@ WebInspector.TimelineDataGrid.prototype = {
             treeOutline.insertChild(treeElement, insertionIndex);
             this.insertChild(dataGridNode, insertionIndex);
 
+            // Adding the tree element back to the tree outline subjects it to filters.
+            // Make sure we keep the hidden state in-sync while the synchronizer is disabled.
+            dataGridNode.element.classList.toggle("hidden", treeElement.hidden);
+
             if (dataGridNode === selectedNode) {
                 selectedNode.revealAndSelect();
                 delete this._ignoreSelectionEvent;
@@ -274,6 +278,10 @@ WebInspector.TimelineDataGrid.prototype = {
 
             treeOutline.appendChild(treeElement);
             this.appendChild(dataGridNode);
+
+            // Adding the tree element back to the tree outline subjects it to filters.
+            // Make sure we keep the hidden state in-sync while the synchronizer is disabled.
+            dataGridNode.element.classList.toggle("hidden", treeElement.hidden);
         }
 
         this._treeOutlineDataGridSynchronizer.enabled = true;

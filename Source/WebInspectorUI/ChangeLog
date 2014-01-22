@@ -1,3 +1,79 @@
+2014-01-22  Timothy Hatcher  <timothy@apple.com>
+
+        Support collapsing call site records into the resource timeline.
+
+        Also fix some filtering and graph issues.
+
+        https://bugs.webkit.org/show_bug.cgi?id=127440
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/NavigationSidebarPanel.js:
+        (WebInspector.NavigationSidebarPanel.prototype.updateFilter):
+        (WebInspector.NavigationSidebarPanel.prototype.applyFiltersToTreeElement.matchTextFilter):
+        (WebInspector.NavigationSidebarPanel.prototype.applyFiltersToTreeElement.makeVisible):
+        (WebInspector.NavigationSidebarPanel.prototype.applyFiltersToTreeElement):
+        (WebInspector.NavigationSidebarPanel.prototype._updateFilter):
+        Tweak how filtering happens so custom filters never expand to reveal and auto expanded
+        tree elements will auto-collapse again later even with custom filters.
+
+        * UserInterface/OverviewTimelineView.css:
+        (.timeline-view.overview > .data-grid tr.parent:not(.expanded) td.graph-column .timeline-record-bar:not(.timeline-record-type-network) > .segment):
+        (.timeline-view.overview > .data-grid tr.parent:not(.expanded).selected td.graph-column .timeline-record-bar:not(.timeline-record-type-network) > .segment):
+        (.timeline-view.overview > .data-grid:focus tr.parent:not(.expanded).selected td.graph-column .timeline-record-bar:not(.timeline-record-type-network) > .segment):
+        Add a shadow to provide some negative space between juxtaposed records. Only needed when not expanded.
+
+        * UserInterface/OverviewTimelineView.js:
+        (WebInspector.OverviewTimelineView.prototype.updateLayout):
+        (WebInspector.OverviewTimelineView.prototype._addResourceToTreeIfNeeded):
+        Update the filter when current time changes and only auto expand the main resource.
+
+        * UserInterface/ResourceTimelineDataGridNode.js:
+        (WebInspector.ResourceTimelineDataGridNode):
+        (WebInspector.ResourceTimelineDataGridNode.prototype._timelineRecordUpdated):
+        Don't schedule a refresh of the graph if the record isn't visible.
+
+        * UserInterface/SourceCodeTimelineTimelineDataGridNode.js:
+        (WebInspector.SourceCodeTimelineTimelineDataGridNode):
+        (WebInspector.SourceCodeTimelineTimelineDataGridNode.prototype._timelineRecordAdded):
+        Don't schedule a refresh of the graph if the record isn't visible.
+
+        * UserInterface/TimelineContentView.js:
+        (WebInspector.TimelineContentView.prototype._timeRangeSelectionChanged):
+        Remove the boolean for updateFilter.
+
+        * UserInterface/TimelineDataGrid.js:
+        (WebInspector.TimelineDataGrid.prototype._refreshDirtyDataGridNodes):
+        (WebInspector.TimelineDataGrid.prototype._sort):
+        Keep the hidden state in-sync between node and element.
+
+        * UserInterface/TimelineDataGridNode.js:
+        (WebInspector.TimelineDataGridNode.prototype.collapse):
+        (WebInspector.TimelineDataGridNode.prototype.expand):
+        (WebInspector.TimelineDataGridNode.prototype.appendChild):
+        (WebInspector.TimelineDataGridNode.prototype.insertChild):
+        (WebInspector.TimelineDataGridNode.prototype.removeChild):
+        (WebInspector.TimelineDataGridNode.prototype.removeChildren):
+        (WebInspector.TimelineDataGridNode.prototype.removeChildrenRecursive):
+        (WebInspector.TimelineDataGridNode.prototype.refreshGraph.createBarsForRecords):
+        (WebInspector.TimelineDataGridNode.prototype.refreshGraph.else.collectRecordsByType.get if):
+        (WebInspector.TimelineDataGridNode.prototype.needsGraphRefresh):
+        (WebInspector.TimelineDataGridNode.prototype.isRecordVisible):
+        Support drawing the children records on the parent graph.
+
+        * UserInterface/TimelineRecordBar.css:
+        (.timeline-record-bar.unfinished > .segment):
+        (:focus .selected .timeline-record-bar > .segment):
+        (:focus .selected .timeline-record-bar > .segment.inactive):
+        (:focus .selected .timeline-record-bar.has-inactive-segment > .segment:not(.inactive)):
+        Tweaked styles to look better when selected.
+
+        * UserInterface/TimelineRecordBar.js:
+        (WebInspector.TimelineRecordBar.recordsCannotBeCombined):
+        (WebInspector.TimelineRecordBar.prototype.set records):
+        (WebInspector.TimelineRecordBar.prototype.refresh):
+        Drive-by fixes for some bug with bars being reused.
+
 2014-01-21  Timothy Hatcher  <timothy@apple.com>
 
         Remember the Timeline Overview zoom and selection between sessions.
