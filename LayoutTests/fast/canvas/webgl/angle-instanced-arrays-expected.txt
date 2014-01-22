@@ -1,0 +1,84 @@
+CONSOLE MESSAGE: WebGL: INVALID_ENUM: getVertexAttrib: invalid parameter name
+CONSOLE MESSAGE: WebGL: INVALID_VALUE: vertexAttribDivisor: index out of range
+CONSOLE MESSAGE: WebGL: INVALID_VALUE: drawArraysInstanced: primcount < 0
+CONSOLE MESSAGE: WebGL: INVALID_VALUE: drawArraysInstanced: first or count < 0
+CONSOLE MESSAGE: WebGL: INVALID_OPERATION: drawArraysInstanced: attempt to access out of bounds arrays
+CONSOLE MESSAGE: WebGL: INVALID_ENUM: drawArraysInstanced: invalid draw mode
+CONSOLE MESSAGE: WebGL: INVALID_ENUM: drawArraysInstanced: invalid draw mode
+CONSOLE MESSAGE: WebGL: INVALID_ENUM: drawArraysInstanced: invalid draw mode
+CONSOLE MESSAGE: WebGL: INVALID_VALUE: drawElementsInstanced: primcount < 0
+CONSOLE MESSAGE: WebGL: INVALID_VALUE: drawElementsInstanced: count or offset < 0
+CONSOLE MESSAGE: WebGL: INVALID_OPERATION: drawElementsInstanced: attempt to access out of bounds arrays
+CONSOLE MESSAGE: WebGL: INVALID_ENUM: drawElementsInstanced: invalid draw mode
+CONSOLE MESSAGE: WebGL: INVALID_ENUM: drawElementsInstanced: invalid draw mode
+CONSOLE MESSAGE: WebGL: INVALID_ENUM: drawElementsInstanced: invalid draw mode
+This test verifies the functionality of the ANGLE_instanced_arrays extension, if it is available.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS WebGL context exists
+Testing VERTEX_ATTRIB_ARRAY_DIVISOR_ANGLE with extension disabled
+PASS getError was expected value: INVALID_ENUM : VERTEX_ATTRIB_ARRAY_DIVISOR_ANGLE should not be queryable if extension is disabled
+PASS Successfully enabled ANGLE_instanced_arrays extension
+PASS ANGLE_instanced_arrays listed as supported and getExtension succeeded
+Testing VERTEX_ATTRIB_ARRAY_DIVISOR_ANGLE with extension enabled
+PASS ext.VERTEX_ATTRIB_ARRAY_DIVISOR_ANGLE is 0x88FE
+PASS Vertex attribute 0 must has a default divisor of 0
+PASS Vertex attribute 1 must has a default divisor of 0
+PASS Vertex attribute 2 must has a default divisor of 0
+PASS Vertex attribute 3 must has a default divisor of 0
+PASS Vertex attribute 4 must has a default divisor of 0
+PASS Vertex attribute 5 must has a default divisor of 0
+PASS Vertex attribute 6 must has a default divisor of 0
+PASS Vertex attribute 7 must has a default divisor of 0
+PASS Vertex attribute 8 must has a default divisor of 0
+PASS Vertex attribute 9 must has a default divisor of 0
+PASS Vertex attribute 10 must has a default divisor of 0
+PASS Vertex attribute 11 must has a default divisor of 0
+PASS Vertex attribute 12 must has a default divisor of 0
+PASS Vertex attribute 13 must has a default divisor of 0
+PASS Vertex attribute 14 must has a default divisor of 0
+PASS Vertex attribute 15 must has a default divisor of 0
+PASS getError was expected value: INVALID_VALUE : vertexAttribDivisorANGLE index set greater than or equal to MAX_VERTEX_ATTRIBS should be an invalid value
+PASS getError was expected value: NO_ERROR : vertexAttribDivisorANGLE index set less than MAX_VERTEX_ATTRIBS should succeed
+PASS Set value of VERTEX_ATTRIB_ARRAY_DIVISOR_ANGLE matches expecation
+Testing that getExtension() returns the same object each time
+PASS gl.getExtension("ANGLE_instanced_arrays").myProperty is 2
+Testing various draws for valid built-in function behavior
+Testing drawArraysInstancedANGLE
+PASS Color was 255,0,0,255
+PASS Color was 0,255,0,255
+PASS Color was 0,0,255,255
+PASS Color was 255,255,0,255
+PASS getError was expected value: INVALID_VALUE : drawArraysInstancedANGLE cannot have a primcount less than 0
+PASS getError was expected value: INVALID_VALUE : drawArraysInstancedANGLE cannot have a count less than 0
+PASS getError was expected value: INVALID_OPERATION : There must be at least one vertex attribute with a divisor of zero when calling drawArraysInstancedANGLE
+PASS getError was expected value: NO_ERROR : drawArraysInstancedANGLE with POINTS should succeed
+PASS getError was expected value: NO_ERROR : drawArraysInstancedANGLE with LINES should succeed
+PASS getError was expected value: NO_ERROR : drawArraysInstancedANGLE with LINE_LIST should return succeed
+PASS getError was expected value: NO_ERROR : drawArraysInstancedANGLE with TRIANGLE_LIST should succeed
+PASS getError was expected value: INVALID_ENUM : drawArraysInstancedANGLE with QUAD_STRIP should return INVALID_ENUM
+PASS getError was expected value: INVALID_ENUM : drawArraysInstancedANGLE with QUADS should return INVALID_ENUM
+PASS getError was expected value: INVALID_ENUM : drawArraysInstancedANGLE with POLYGON should return INVALID_ENUM
+Testing drawElementsInstancedANGLE
+PASS Color was 255,0,0,255
+PASS Color was 0,255,0,255
+PASS Color was 0,0,255,255
+PASS Color was 255,255,0,255
+PASS getError was expected value: INVALID_VALUE : drawElementsInstancedANGLE cannot have a primcount less than 0
+PASS getError was expected value: INVALID_VALUE : drawElementsInstancedANGLE cannot have a count less than 0
+PASS getError was expected value: INVALID_OPERATION : There must be at least one vertex attribute with a divisor of zero when calling drawElementsInstancedANGLE
+PASS getError was expected value: NO_ERROR : drawElementsInstancedANGLE with UNSIGNED_BYTE should succeed
+PASS getError was expected value: NO_ERROR : drawElementsInstancedANGLE with POINTS should succeed
+PASS getError was expected value: NO_ERROR : drawElementsInstancedANGLE with LINES should succeed
+PASS getError was expected value: NO_ERROR : drawElementsInstancedANGLE with LINE_LIST should return succeed
+PASS getError was expected value: NO_ERROR : drawElementsInstancedANGLE with TRIANGLE_LIST should succeed
+PASS getError was expected value: INVALID_ENUM : drawElementsInstancedANGLE with QUAD_STRIP should return INVALID_ENUM
+PASS getError was expected value: INVALID_ENUM : drawElementsInstancedANGLE with QUADS should return INVALID_ENUM
+PASS getError was expected value: INVALID_ENUM : drawElementsInstancedANGLE with POLYGON should return INVALID_ENUM
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

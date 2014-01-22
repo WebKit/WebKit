@@ -408,6 +408,7 @@ BINDING_IDLS = \
     $(WebCore)/html/TimeRanges.idl \
     $(WebCore)/html/ValidityState.idl \
     $(WebCore)/html/VoidCallback.idl \
+    $(WebCore)/html/canvas/ANGLEInstancedArrays.idl \
     $(WebCore)/html/canvas/CanvasGradient.idl \
     $(WebCore)/html/canvas/CanvasPattern.idl \
     $(WebCore)/html/canvas/CanvasProxy.idl \

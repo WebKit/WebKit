@@ -1681,6 +1681,9 @@ webgl/conformance/ogles/GL/sin/sin_001_to_006.html [ Failure ]
 webgl/conformance/ogles/GL/vec3/vec3_001_to_008.html [ Failure ]
 webgl/conformance/textures/texture-attachment-formats.html [ Failure ]
 
+# ANGLE_instanced_arrays not implemented on efl
+fast/canvas/webgl/angle-instanced-arrays.html [ Skip ]
+
 # Text rendering is overflowing region
 webkit.org/b/122511 fast/regions/selection/selecting-text-ignoring-region-horiz-bt.html [ ImageOnlyFailure ]
 webkit.org/b/122511 fast/regions/selection/selecting-text-ignoring-region-vert-lr.html [ ImageOnlyFailure ]

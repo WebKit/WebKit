@@ -496,6 +496,7 @@ set(WebCore_IDL_FILES
     html/ValidityState.idl
     html/VoidCallback.idl
 
+    html/canvas/ANGLEInstancedArrays.idl
     html/canvas/CanvasGradient.idl
     html/canvas/CanvasPattern.idl
     html/canvas/CanvasProxy.idl
@@ -1492,6 +1493,7 @@ set(WebCore_SOURCES
     html/ValidationMessage.cpp
     html/WeekInputType.cpp
 
+    html/canvas/ANGLEInstancedArrays.cpp
     html/canvas/CanvasContextAttributes.cpp
     html/canvas/CanvasGradient.cpp
     html/canvas/CanvasPathMethods.cpp
@@ -2664,6 +2666,7 @@ if (ENABLE_WEBGL)
     add_definitions(-DWTF_USE_3D_GRAPHICS=1)
 
     list(APPEND WebCore_SOURCES
+        html/canvas/ANGLEInstancedArrays.cpp
         html/canvas/EXTDrawBuffers.cpp
         html/canvas/EXTTextureFilterAnisotropic.cpp
         html/canvas/OESElementIndexUint.cpp
@@ -2700,6 +2703,7 @@ if (ENABLE_WEBGL)
         html/canvas/WebGLVertexArrayObjectOES.cpp
     )
     list(APPEND WebCore_IDL_FILES
+        html/canvas/ANGLEInstancedArrays.idl
         html/canvas/EXTDrawBuffers.idl
         html/canvas/EXTTextureFilterAnisotropic.idl
         html/canvas/OESElementIndexUint.idl

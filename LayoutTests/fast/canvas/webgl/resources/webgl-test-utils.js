@@ -361,6 +361,125 @@ var setupQuad = function (
 };
 
 /**
+ * Creates a unit quad with only positions of a given resolution.
+ * @param {!WebGLRenderingContext} gl The WebGLRenderingContext to use.
+ * @param {number} gridRes The resolution of the mesh grid,
+ *     expressed in the number of quads across and down.
+ * @param {number} opt_positionLocation The attrib location for position.
+ */
+var setupIndexedQuad = function (
+    gl, gridRes, opt_positionLocation, opt_flipOddTriangles) {
+  return setupIndexedQuadWithOptions(gl,
+    { gridRes: gridRes,
+      positionLocation: opt_positionLocation,
+      flipOddTriangles: opt_flipOddTriangles
+    });
+};
+
+/**
+ * Creates a quad with various options.
+ * @param {!WebGLRenderingContext} gl The WebGLRenderingContext to use.
+ * @param {!Object) options The options. See below.
+ * @return {!Array.<WebGLBuffer>} The created buffers.
+ *     [positions, <colors>, indices]
+ *
+ * Options:
+ *   gridRes: number of quads across and down grid.
+ *   positionLocation: attrib location for position
+ *   flipOddTriangles: reverse order of vertices of every other
+ *       triangle
+ *   positionOffset: offset added to each vertex
+ *   positionMult: multipier for each vertex
+ *   colorLocation: attrib location for vertex colors. If
+ *      undefined no vertex colors will be created.
+ */
+var setupIndexedQuadWithOptions = function (gl, options) {
+  var positionLocation = options.positionLocation || 0;
+  var objects = [];
+
+  var gridRes = options.gridRes || 1;
+  var positionOffset = options.positionOffset || 0;
+  var positionMult = options.positionMult || 1;
+  var vertsAcross = gridRes + 1;
+  var numVerts = vertsAcross * vertsAcross;
+  var positions = new Float32Array(numVerts * 3);
+  var indices = new Uint16Array(6 * gridRes * gridRes);
+  var poffset = 0;
+
+  for (var yy = 0; yy <= gridRes; ++yy) {
+    for (var xx = 0; xx <= gridRes; ++xx) {
+      positions[poffset + 0] = (-1 + 2 * xx / gridRes) * positionMult + positionOffset;
+      positions[poffset + 1] = (-1 + 2 * yy / gridRes) * positionMult + positionOffset;
+      positions[poffset + 2] = 0;
+
+      poffset += 3;
+    }
+  }
+
+  var buf = gl.createBuffer();
+  gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+  gl.bufferData(gl.ARRAY_BUFFER, positions, gl.STATIC_DRAW);
+  gl.enableVertexAttribArray(positionLocation);
+  gl.vertexAttribPointer(positionLocation, 3, gl.FLOAT, false, 0, 0);
+  objects.push(buf);
+
+  if (options.colorLocation !== undefined) {
+    var colors = new Float32Array(numVerts * 4);
+    for (var yy = 0; yy <= gridRes; ++yy) {
+      for (var xx = 0; xx <= gridRes; ++xx) {
+        if (options.color !== undefined) {
+          colors[poffset + 0] = options.color[0];
+          colors[poffset + 1] = options.color[1];
+          colors[poffset + 2] = options.color[2];
+          colors[poffset + 3] = options.color[3];
+        } else {
+          colors[poffset + 0] = xx / gridRes;
+          colors[poffset + 1] = yy / gridRes;
+          colors[poffset + 2] = (xx / gridRes) * (yy / gridRes);
+          colors[poffset + 3] = (yy % 2) * 0.5 + 0.5;
+        }
+        poffset += 4;
+      }
+    }
+
+    var buf = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+    gl.bufferData(gl.ARRAY_BUFFER, colors, gl.STATIC_DRAW);
+    gl.enableVertexAttribArray(options.colorLocation);
+    gl.vertexAttribPointer(options.colorLocation, 4, gl.FLOAT, false, 0, 0);
+    objects.push(buf);
+  }
+
+  var tbase = 0;
+  for (var yy = 0; yy < gridRes; ++yy) {
+    var index = yy * vertsAcross;
+    for (var xx = 0; xx < gridRes; ++xx) {
+      indices[tbase + 0] = index + 0;
+      indices[tbase + 1] = index + 1;
+      indices[tbase + 2] = index + vertsAcross;
+      indices[tbase + 3] = index + vertsAcross;
+      indices[tbase + 4] = index + 1;
+      indices[tbase + 5] = index + vertsAcross + 1;
+
+      if (options.flipOddTriangles) {
+        indices[tbase + 4] = index + vertsAcross + 1;
+        indices[tbase + 5] = index + 1;
+      }
+
+      index += 1;
+      tbase += 6;
+    }
+  }
+
+  var buf = gl.createBuffer();
+  gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, buf);
+  gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, indices, gl.STATIC_DRAW);
+  objects.push(buf);
+
+  return objects;
+};
+
+/**
  * Fills the given texture with a solid color
  * @param {!WebGLContext} gl The WebGLContext to use.
  * @param {!WebGLTexture} tex The texture to fill.
@@ -475,6 +594,128 @@ var drawIndexedQuad = function(gl, gridRes, opt_color) {
 };
 
 /**
+ * Draws a previously setupIndexedQuad
+ * @param {!WebGLRenderingContext} gl The WebGLRenderingContext to use.
+ * @param {number} gridRes Resolution of grid.
+ * @param {!Array.<number>} opt_color The color to fill clear with before
+ *        drawing. A 4 element array where each element is in the range 0 to
+ *        255. Default [255, 255, 255, 255]
+ */
+var clearAndDrawIndexedQuad = function(gl, gridRes, opt_color) {
+  opt_color = opt_color || [255, 255, 255, 255];
+  gl.clearColor(
+      opt_color[0] / 255,
+      opt_color[1] / 255,
+      opt_color[2] / 255,
+      opt_color[3] / 255);
+  gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+  drawIndexedQuad(gl, gridRes);
+};
+
+/**
+ * Clips a range to min, max
+ * (Eg. clipToRange(-5,7,0,20) would return {value:0,extent:2}
+ * @param {number} value start of range
+ * @param {number} extent extent of range
+ * @param {number} min min.
+ * @param {number} max max.
+ * @return {!{value:number,extent:number} The clipped value.
+ */
+var clipToRange = function(value, extent, min, max) {
+  if (value < min) {
+    extent -= min - value;
+    value = min;
+  }
+  var end = value + extent;
+  if (end > max) {
+    extent -= end - max;
+  }
+  if (extent < 0) {
+    value = max;
+    extent = 0;
+  }
+  return {value:value, extent: extent};
+};
+
+/**
+ * Determines if the passed context is an instance of a WebGLRenderingContext
+ * or later variant (like WebGL2RenderingContext)
+ * @param {CanvasRenderingContext} ctx The context to check.
+ */
+var isWebGLContext = function(ctx) {
+  if (ctx instanceof WebGLRenderingContext)
+    return true;
+
+  if ('WebGL2RenderingContext' in window && ctx instanceof WebGL2RenderingContext)
+    return true;
+
+  return false;
+};
+
+/**
+ * Checks that a portion of a canvas is 1 color.
+ * @param {!WebGLRenderingContext|CanvasRenderingContext2D} gl The
+ *         WebGLRenderingContext or 2D context to use.
+ * @param {number} x left corner of region to check.
+ * @param {number} y bottom corner of region to check in case of checking from
+ *        a GL context or top corner in case of checking from a 2D context.
+ * @param {number} width width of region to check.
+ * @param {number} height width of region to check.
+ * @param {!Array.<number>} color The color expected. A 4 element array where
+ *        each element is in the range 0 to 255.
+ * @param {number} opt_errorRange Optional. Acceptable error in
+ *        color checking. 0 by default.
+ * @param {!function()} sameFn Function to call if all pixels
+ *        are the same as color.
+ * @param {!function()} differentFn Function to call if a pixel
+ *        is different than color
+ * @param {!function()} logFn Function to call for logging.
+ */
+var checkCanvasRectColor = function(gl, x, y, width, height, color, opt_errorRange, sameFn, differentFn, logFn) {
+  if (isWebGLContext(gl) && !gl.getParameter(gl.FRAMEBUFFER_BINDING)) {
+    // We're reading the backbuffer so clip.
+    var xr = clipToRange(x, width, 0, gl.canvas.width);
+    var yr = clipToRange(y, height, 0, gl.canvas.height);
+    if (!xr.extent || !yr.extent) {
+      logFn("checking rect: effective width or heigh is zero");
+      sameFn();
+      return;
+    }
+    x = xr.value;
+    y = yr.value;
+    width = xr.extent;
+    height = yr.extent;
+  }
+  var errorRange = opt_errorRange || 0;
+  if (!errorRange.length) {
+    errorRange = [errorRange, errorRange, errorRange, errorRange]
+  }
+  var buf;
+  if (isWebGLContext(gl)) {
+    buf = new Uint8Array(width * height * 4);
+    gl.readPixels(x, y, width, height, gl.RGBA, gl.UNSIGNED_BYTE, buf);
+  } else {
+    buf = gl.getImageData(x, y, width, height).data;
+  }
+  for (var i = 0; i < width * height; ++i) {
+    var offset = i * 4;
+    for (var j = 0; j < color.length; ++j) {
+      if (Math.abs(buf[offset + j] - color[j]) > errorRange[j]) {
+        differentFn();
+        var was = buf[offset + 0].toString();
+        for (j = 1; j < color.length; ++j) {
+          was += "," + buf[offset + j];
+        }
+        logFn('at (' + (x + (i % width)) + ', ' + (y + Math.floor(i / width)) +
+              ') expected: ' + color + ' was ' + was);
+        return;
+      }
+    }
+  }
+  sameFn();
+};
+
+/**
  * Checks that a portion of a canvas is 1 color.
  * @param {!WebGLContext} gl The WebGLContext to use.
  * @param {number} x left corner of region to check.
@@ -505,6 +746,9 @@ var checkCanvasRect = function(gl, x, y, width, height, color, msg, errorRange) 
         return;
       }
     }
+  }
+  if (!msg) {
+      msg = "Color was " + color;
   }
   testPassed(msg);
 };
@@ -1331,11 +1575,13 @@ var waitForComposite = function(gl, callback) {
 
 return {
   cancelAnimFrame: cancelAnimFrame,
+  clipToRange: clipToRange,
   create3DContext: create3DContext,
   create3DContextWithWrapperThatThrowsOnGLError:
-    create3DContextWithWrapperThatThrowsOnGLError,
+  create3DContextWithWrapperThatThrowsOnGLError,
   checkCanvas: checkCanvas,
   checkCanvasRect: checkCanvasRect,
+  checkCanvasRectColor: checkCanvasRectColor,
   createColoredTexture: createColoredTexture,
   drawQuad: drawQuad,
   drawIndexedQuad: drawIndexedQuad,
@@ -1369,6 +1615,8 @@ return {
   setupColorQuad: setupColorQuad,
   setupProgram: setupProgram,
   setupQuad: setupQuad,
+  setupIndexedQuad: setupIndexedQuad,
+  setupIndexedQuadWithOptions: setupIndexedQuadWithOptions,
   setupSimpleTextureFragmentShader: setupSimpleTextureFragmentShader,
   setupSimpleTextureProgram: setupSimpleTextureProgram,
   setupSimpleTextureVertexShader: setupSimpleTextureVertexShader,

@@ -27,6 +27,9 @@
 
 #include "HTMLElementFactory.cpp"
 #include "HTMLEntityTable.cpp"
+#if ENABLE(WEBGL)
+#include "JSANGLEInstancedArrays.cpp"
+#endif
 #include "JSAbstractWorker.cpp"
 #include "JSAttr.cpp"
 #include "JSBarProp.cpp"

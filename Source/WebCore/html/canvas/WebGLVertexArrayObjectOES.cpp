@@ -143,6 +143,12 @@ void WebGLVertexArrayObjectOES::unbindBuffer(PassRefPtr<WebGLBuffer> buffer)
     }
 }
 
+void WebGLVertexArrayObjectOES::setVertexAttribDivisor(GC3Duint index, GC3Duint divisor)
+{
+    VertexAttribState& state = m_vertexAttribState[index];
+    state.divisor = divisor;
+}
+
 }
 
 #endif // ENABLE(WEBGL)

@@ -1,3 +1,23 @@
+2014-01-22  Dean Jackson  <dino@apple.com>
+
+        Implement ANGLE_instanced_arrays
+        https://bugs.webkit.org/show_bug.cgi?id=127257
+
+        Reviewed by Brent Fulgham.
+
+        Copied a slightly modified version of the Khronos instanced
+        arrays test (mostly modified due to the fact this comes from
+        an in-progress update to the test suite).
+
+        * fast/canvas/webgl/angle-instanced-arrays-expected.txt: Added.
+        * fast/canvas/webgl/angle-instanced-arrays.html: Added.
+        * fast/canvas/webgl/resources/webgl-test-utils.js:
+        (WebGLTestUtils): Added some new functions that were missing, and
+        some output to a checkColor test.
+        * platform/efl/TestExpectations: Skip this for EFL.
+        * platform/mac-mountainlion/fast/canvas/webgl/angle-instanced-arrays-expected.txt: Not
+        supported on Mountain Lion.
+
 2014-01-22  Zalan Bujtas  <zalan@apple.com>
 
         Unreviewed Apple Windows port gardering after r162553.

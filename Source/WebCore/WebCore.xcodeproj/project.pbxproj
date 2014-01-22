@@ -1194,6 +1194,9 @@
 		319AE063142D6B24006563A1 /* StyleFilterData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 319AE061142D6B24006563A1 /* StyleFilterData.cpp */; };
 		319AE064142D6B24006563A1 /* StyleFilterData.h in Headers */ = {isa = PBXBuildFile; fileRef = 319AE062142D6B24006563A1 /* StyleFilterData.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		319FBD5F15D2F464009640A6 /* CachedImageClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 319FBD5D15D2F444009640A6 /* CachedImageClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		31A795C61888BADC00382F90 /* JSANGLEInstancedArrays.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 31A795C41888BAD100382F90 /* JSANGLEInstancedArrays.cpp */; };
+		31A795C71888BCB200382F90 /* ANGLEInstancedArrays.h in Headers */ = {isa = PBXBuildFile; fileRef = 31A795C21888B72400382F90 /* ANGLEInstancedArrays.h */; };
+		31A795C81888BCB500382F90 /* ANGLEInstancedArrays.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 31A795C11888B72400382F90 /* ANGLEInstancedArrays.cpp */; };
 		31AB5000122878A2001A7DB0 /* GraphicsContext3DIOS.h in Headers */ = {isa = PBXBuildFile; fileRef = 31AB4FFF122878A2001A7DB0 /* GraphicsContext3DIOS.h */; };
 		31C0FF210E4CEB6E007D6FE5 /* WebKitAnimationEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 31C0FF1B0E4CEB6E007D6FE5 /* WebKitAnimationEvent.cpp */; };
 		31C0FF220E4CEB6E007D6FE5 /* WebKitAnimationEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 31C0FF1C0E4CEB6E007D6FE5 /* WebKitAnimationEvent.h */; };
@@ -8068,6 +8071,11 @@
 		319AE061142D6B24006563A1 /* StyleFilterData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = StyleFilterData.cpp; path = style/StyleFilterData.cpp; sourceTree = "<group>"; };
 		319AE062142D6B24006563A1 /* StyleFilterData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = StyleFilterData.h; path = style/StyleFilterData.h; sourceTree = "<group>"; };
 		319FBD5D15D2F444009640A6 /* CachedImageClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CachedImageClient.h; sourceTree = "<group>"; };
+		31A795C11888B72400382F90 /* ANGLEInstancedArrays.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ANGLEInstancedArrays.cpp; path = canvas/ANGLEInstancedArrays.cpp; sourceTree = "<group>"; };
+		31A795C21888B72400382F90 /* ANGLEInstancedArrays.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ANGLEInstancedArrays.h; path = canvas/ANGLEInstancedArrays.h; sourceTree = "<group>"; };
+		31A795C31888B72400382F90 /* ANGLEInstancedArrays.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = ANGLEInstancedArrays.idl; path = canvas/ANGLEInstancedArrays.idl; sourceTree = "<group>"; };
+		31A795C41888BAD100382F90 /* JSANGLEInstancedArrays.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSANGLEInstancedArrays.cpp; sourceTree = "<group>"; };
+		31A795C51888BAD100382F90 /* JSANGLEInstancedArrays.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSANGLEInstancedArrays.h; sourceTree = "<group>"; };
 		31AB4FFF122878A2001A7DB0 /* GraphicsContext3DIOS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GraphicsContext3DIOS.h; sourceTree = "<group>"; };
 		31C0FF1B0E4CEB6E007D6FE5 /* WebKitAnimationEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebKitAnimationEvent.cpp; sourceTree = "<group>"; };
 		31C0FF1C0E4CEB6E007D6FE5 /* WebKitAnimationEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebKitAnimationEvent.h; sourceTree = "<group>"; };
@@ -15437,6 +15445,9 @@
 		49484FAE102CF01E00187DD3 /* canvas */ = {
 			isa = PBXGroup;
 			children = (
+				31A795C11888B72400382F90 /* ANGLEInstancedArrays.cpp */,
+				31A795C21888B72400382F90 /* ANGLEInstancedArrays.h */,
+				31A795C31888B72400382F90 /* ANGLEInstancedArrays.idl */,
 				6E4E91A710F7FB3100A2779C /* CanvasContextAttributes.cpp */,
 				6E4E91A810F7FB3100A2779C /* CanvasContextAttributes.h */,
 				49484FB3102CF23C00187DD3 /* CanvasGradient.cpp */,
@@ -18192,6 +18203,8 @@
 		A83B79080CCAFF2B000B0825 /* HTML */ = {
 			isa = PBXGroup;
 			children = (
+				31A795C41888BAD100382F90 /* JSANGLEInstancedArrays.cpp */,
+				31A795C51888BAD100382F90 /* JSANGLEInstancedArrays.h */,
 				BE8EF03E171C8FF9009B48C3 /* JSAudioTrack.cpp */,
 				BE8EF03F171C8FF9009B48C3 /* JSAudioTrack.h */,
 				BE8EF040171C8FF9009B48C3 /* JSAudioTrackList.cpp */,
@@ -23664,6 +23677,7 @@
 				498391520F1E76B400C23782 /* DOMWebKitCSSMatrixInternal.h in Headers */,
 				8AD0A59614C88358000D83C5 /* DOMWebKitCSSRegionRule.h in Headers */,
 				8AD0A59814C88358000D83C5 /* DOMWebKitCSSRegionRuleInternal.h in Headers */,
+				31A795C71888BCB200382F90 /* ANGLEInstancedArrays.h in Headers */,
 				31611E610E1C4E1400F6A579 /* DOMWebKitCSSTransformValue.h in Headers */,
 				31611E630E1C4E1400F6A579 /* DOMWebKitCSSTransformValueInternal.h in Headers */,
 				3F2B33EB165AF15600E3987C /* DOMWebKitCSSViewportRule.h in Headers */,
@@ -28844,6 +28858,7 @@
 				9393E604151A9A1800066F06 /* StyleCachedImageSet.cpp in Sources */,
 				5038BE2F1472AD230095E0D1 /* StyleCachedShader.cpp in Sources */,
 				50E18CD816F9285800C65486 /* StyleCustomFilterProgram.cpp in Sources */,
+				31A795C81888BCB500382F90 /* ANGLEInstancedArrays.cpp in Sources */,
 				A5840E24187B8AC200843B10 /* PageInjectedScriptHost.cpp in Sources */,
 				50E18CD916F9285800C65486 /* StyleCustomFilterProgramCache.cpp in Sources */,
 				A8C4A7FE09D563270003AC8D /* StyledElement.cpp in Sources */,
@@ -29289,6 +29304,7 @@
 				AAF5B7B71524B6C50004CB49 /* WebSocketFrame.cpp in Sources */,
 				97AABD2614FA09D5007457AE /* WebSocketHandshake.cpp in Sources */,
 				0F580FA41496939100FB5BD8 /* WebTiledBackingLayer.mm in Sources */,
+				31A795C61888BADC00382F90 /* JSANGLEInstancedArrays.cpp in Sources */,
 				CD82030B1395AB6A00F956C6 /* WebVideoFullscreenController.mm in Sources */,
 				CD82030D1395AB6A00F956C6 /* WebVideoFullscreenHUDWindowController.mm in Sources */,
 				F12171F516A8CED2000053CA /* WebVTTElement.cpp in Sources */,

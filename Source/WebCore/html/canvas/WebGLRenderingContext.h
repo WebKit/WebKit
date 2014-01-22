@@ -41,6 +41,7 @@
 
 namespace WebCore {
 
+class ANGLEInstancedArrays;
 class EXTDrawBuffers;
 class EXTTextureFilterAnisotropic;
 class HTMLImageElement;
@@ -323,6 +324,11 @@ public:
     
     unsigned getMaxVertexAttribs() const { return m_maxVertexAttribs; }
 
+    // ANGLE_instanced_arrays extension functions.
+    void drawArraysInstanced(GC3Denum mode, GC3Dint first, GC3Dsizei count, GC3Dsizei primcount);
+    void drawElementsInstanced(GC3Denum mode, GC3Dsizei count, GC3Denum type, GC3Dintptr offset, GC3Dsizei primcount);
+    void vertexAttribDivisor(GC3Duint index, GC3Duint divisor);
+
 private:
     friend class EXTDrawBuffers;
     friend class WebGLFramebuffer;
@@ -378,10 +384,12 @@ private:
 
     // Precise but slow index validation -- only done if conservative checks fail
     bool validateIndexArrayPrecise(GC3Dsizei count, GC3Denum type, GC3Dintptr offset, unsigned& numElementsRequired);
-    // If numElements <= 0, we only check if each enabled vertex attribute is bound to a buffer.
-    bool validateVertexAttributes(unsigned numElements);
+    bool validateVertexAttributes(unsigned elementCount, unsigned primitiveCount = 0);
 
     bool validateWebGLObject(const char*, WebGLObject*);
+
+    bool validateDrawArrays(const char* functionName, GC3Denum mode, GC3Dint first, GC3Dsizei count, GC3Dsizei primcount);
+    bool validateDrawElements(const char* functionName, GC3Denum mode, GC3Dsizei count, GC3Denum type, long long offset, unsigned& numElements);
 
     // Adds a compressed texture format.
     void addCompressedTextureFormat(GC3Denum);
@@ -540,6 +548,7 @@ private:
     OwnPtr<WebGLCompressedTexturePVRTC> m_webglCompressedTexturePVRTC;
     OwnPtr<WebGLCompressedTextureS3TC> m_webglCompressedTextureS3TC;
     OwnPtr<WebGLDepthTexture> m_webglDepthTexture;
+    OwnPtr<ANGLEInstancedArrays> m_angleInstancedArrays;
 
     // Helpers for getParameter and others
     WebGLGetInfo getBooleanParameter(GC3Denum);

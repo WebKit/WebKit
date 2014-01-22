@@ -6592,6 +6592,9 @@
     <ClCompile Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\WebCore\DerivedSources\JSWebGLVertexArrayObjectOES.cpp">
       <Filter>DerivedSources</Filter>
     </ClCompile>
+    <ClCompile Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\WebCore\DerivedSources\JSANGLEInstancedArrays.cpp">
+      <Filter>DerivedSources</Filter>
+    </ClCompile>
     <ClCompile Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\WebCore\DerivedSources\JSEXTDrawBuffers.cpp">
       <Filter>DerivedSources</Filter>
     </ClCompile>
@@ -6618,6 +6621,9 @@
     </ClCompile>
     <ClCompile Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\WebCore\DerivedSources\JSOESVertexArrayObject.cpp">
       <Filter>DerivedSources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\html\canvas\ANGLEInstancedArrays.cpp">
+      <Filter>html\canvas</Filter>
     </ClCompile>
     <ClCompile Include="..\html\canvas\WebGLBuffer.cpp">
       <Filter>html\canvas</Filter>
@@ -14463,6 +14469,12 @@
     </ClInclude>
     <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\WebCore\DerivedSources\JSOESVertexArrayObject.h">
       <Filter>DerivedSources</Filter>
+    </ClInclude>
+    <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\WebCore\DerivedSources\JSANGLEInstancedArrays.h">
+      <Filter>DerivedSources</Filter>
+    </ClInclude>
+    <ClInclude Include="..\html\canvas\ANGLEInstancedArrays.h">
+      <Filter>html\canvas</Filter>
     </ClInclude>
     <ClInclude Include="..\html\canvas\WebGLActiveInfo.h">
       <Filter>html\canvas</Filter>

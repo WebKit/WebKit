@@ -29,11 +29,13 @@
 
 #include "JSWebGLRenderingContext.h"
 
+#include "ANGLEInstancedArrays.h"
 #include "EXTDrawBuffers.h"
 #include "EXTTextureFilterAnisotropic.h"
 #include "ExceptionCode.h"
 #include "HTMLCanvasElement.h"
 #include "HTMLImageElement.h"
+#include "JSANGLEInstancedArrays.h"
 #include "JSEXTDrawBuffers.h"
 #include "JSEXTTextureFilterAnisotropic.h"
 #include "JSHTMLCanvasElement.h"
@@ -233,6 +235,8 @@ static JSValue toJS(ExecState* exec, JSDOMGlobalObject* globalObject, WebGLExten
         return toJS(exec, globalObject, static_cast<WebGLCompressedTextureS3TC*>(extension));
     case WebGLExtension::WebGLDepthTextureName:
         return toJS(exec, globalObject, static_cast<WebGLDepthTexture*>(extension));
+    case WebGLExtension::ANGLEInstancedArraysName:
+        return toJS(exec, globalObject, static_cast<ANGLEInstancedArrays*>(extension));
     }
     ASSERT_NOT_REACHED();
     return jsNull();

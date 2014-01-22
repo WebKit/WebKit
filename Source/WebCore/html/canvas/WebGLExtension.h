@@ -51,6 +51,7 @@ public:
         OESElementIndexUintName,
         WebGLCompressedTextureATCName,
         WebGLCompressedTexturePVRTCName,
+        ANGLEInstancedArraysName,
     };
 
     void ref() { m_context->ref(); }

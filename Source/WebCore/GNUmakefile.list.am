@@ -28,6 +28,8 @@ webcore_built_sources += \
 	DerivedSources/WebCore/InspectorWebFrontendDispatchers.h \
 	DerivedSources/WebCore/InspectorWebTypeBuilders.cpp \
 	DerivedSources/WebCore/InspectorWebTypeBuilders.h \
+	DerivedSources/WebCore/JSANGLEInstancedArrays.cpp \
+	DerivedSources/WebCore/JSANGLEInstancedArrays.h \
 	DerivedSources/WebCore/JSAbstractWorker.cpp \
 	DerivedSources/WebCore/JSAbstractWorker.h \
 	DerivedSources/WebCore/JSAllAudioCapabilities.cpp \
@@ -1506,6 +1508,7 @@ dom_binding_idls += \
 	$(WebCore)/html/TimeRanges.idl \
 	$(WebCore)/html/ValidityState.idl \
 	$(WebCore)/html/VoidCallback.idl \
+	$(WebCore)/html/canvas/ANGLEInstancedArrays.idl \
 	$(WebCore)/html/canvas/CanvasGradient.idl \
 	$(WebCore)/html/canvas/CanvasPattern.idl \
 	$(WebCore)/html/canvas/CanvasProxy.idl \
@@ -3240,6 +3243,8 @@ webcore_sources += \
 	Source/WebCore/html/BaseTextInputType.h \
 	Source/WebCore/html/ButtonInputType.cpp \
 	Source/WebCore/html/ButtonInputType.h \
+	Source/WebCore/html/canvas/ANGLEInstancedArrays.cpp \
+	Source/WebCore/html/canvas/ANGLEInstancedArrays.h \
 	Source/WebCore/html/canvas/CanvasContextAttributes.cpp \
 	Source/WebCore/html/canvas/CanvasContextAttributes.h \
 	Source/WebCore/html/canvas/CanvasGradient.cpp \

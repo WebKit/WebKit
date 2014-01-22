@@ -1,3 +1,77 @@
+2014-01-22  Dean Jackson  <dino@apple.com>
+
+        [WebGL] Implement ANGLE_instanced_arrays
+        https://bugs.webkit.org/show_bug.cgi?id=127257
+
+        Reviewed by Brent Fulgham.
+
+        Implement the instanced drawing WebGL extension,
+        ANGLE_instanced_arrays. This is currently Mac-only,
+        but should be portable to other platforms if their
+        OpenGL exposes the functions. It's also done in a way
+        that will make exposing it to WebGL2 simple.
+
+        Test: fast/canvas/webgl/angle-instanced-arrays.html
+
+        * CMakeLists.txt:
+        * DerivedSources.cpp:
+        * DerivedSources.make:
+        * GNUmakefile.list.am:
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.vcxproj/WebCore.vcxproj.filters:
+        * WebCore.xcodeproj/project.pbxproj:
+        Add the new files to all the build systems.
+
+        * bindings/js/JSWebGLRenderingContextCustom.cpp:
+        (WebCore::toJS): Link JS side to C++ side.
+
+        * html/canvas/ANGLEInstancedArrays.cpp: Added.
+        (WebCore::ANGLEInstancedArrays::ANGLEInstancedArrays):
+        * html/canvas/ANGLEInstancedArrays.h: Added.
+        * html/canvas/ANGLEInstancedArrays.idl: Added.
+        New boilerplate files that expose the extension methods.
+
+        * html/canvas/WebGLExtension.h: New extension enum.
+
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore::WebGLRenderingContext::validateVertexAttributes): Add an optional
+        parameter representing the number of instance primitives we are asked
+        to draw. Use that for the draw count if looking at an instanced attribute.
+        Also make sure we see at least one non-instanced attribute.
+        (WebCore::WebGLRenderingContext::validateDrawArrays): Update this so it could
+        be used from either drawArrays or drawArraysInstanced.
+        (WebCore::WebGLRenderingContext::drawArrays):
+        (WebCore::WebGLRenderingContext::validateDrawElements): Same here, now can be
+        used by the instanced and non-instanced versions.
+        (WebCore::WebGLRenderingContext::drawElements):
+        (WebCore::WebGLRenderingContext::getExtension): Create and return the new extension.
+        (WebCore::WebGLRenderingContext::getSupportedExtensions): Add new extension to the list.
+        (WebCore::WebGLRenderingContext::getVertexAttrib): Intercept a query to the divisor
+        attribute and return the value we kept in the state.
+        (WebCore::WebGLRenderingContext::drawArraysInstanced): Call the GC3D method.
+        (WebCore::WebGLRenderingContext::drawElementsInstanced): Ditto.
+        (WebCore::WebGLRenderingContext::vertexAttribDivisor): Ditto.
+
+        * html/canvas/WebGLRenderingContext.h: Define the new methods and parameters.
+
+        * html/canvas/WebGLVertexArrayObjectOES.cpp:
+        (WebCore::WebGLVertexArrayObjectOES::setVertexAttribDivisor): Keep a record of the
+        divisor if we set it.
+        * html/canvas/WebGLVertexArrayObjectOES.h:
+        (WebCore::WebGLVertexArrayObjectOES::VertexAttribState::VertexAttribState):
+
+        * platform/graphics/GraphicsContext3D.h: New enum.
+        * platform/graphics/mac/GraphicsContext3DMac.mm:
+        (WebCore::GraphicsContext3D::drawArraysInstanced): The actual calls into OpenGL.
+        (WebCore::GraphicsContext3D::drawElementsInstanced): Ditto.
+        (WebCore::GraphicsContext3D::vertexAttribDivisor): Ditto.
+
+        * platform/graphics/opengl/GraphicsContext3DOpenGL.cpp: Empty implementations
+        for non-mac platforms.
+
+        * platform/graphics/ios/GraphicsContext3DIOS.h: Define the iOS names for the
+        functions.
+
 2014-01-22  Zalan Bujtas  <zalan@apple.com>
 
         [CSS Shapes] shape-inside rectangle layout can fail
