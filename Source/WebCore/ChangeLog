@@ -1,3 +1,36 @@
+2014-01-21  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Remove recompileAllJSFunctions timer in ScriptDebugServer
+        https://bugs.webkit.org/show_bug.cgi?id=127409
+
+        Reviewed by Timothy Hatcher.
+
+        * bindings/js/ScriptDebugServer.h:
+        * bindings/js/ScriptDebugServer.cpp:
+        (WebCore::ScriptDebugServer::ScriptDebugServer):
+        Remove m_recompileTimer and the recompile soon function.
+        We can just recompile immediately in all existing cases.
+
+        * bindings/js/PageScriptDebugServer.h:
+        * bindings/js/PageScriptDebugServer.cpp:
+        (WebCore::PageScriptDebugServer::addListener):
+        (WebCore::PageScriptDebugServer::removeListener):
+        (WebCore::PageScriptDebugServer::recompileAllJSFunctions):
+        (WebCore::PageScriptDebugServer::didAddFirstListener):
+        (WebCore::PageScriptDebugServer::didRemoveLastListener):
+        Add a "didAddFirstListener" to match "didRemoveLastListener".
+        Only recompile functions when we attach the debugger and when
+        we detach the last listener.
+
+        * bindings/js/WorkerScriptDebugServer.cpp:
+        (WebCore::WorkerScriptDebugServer::addListener):
+        (WebCore::WorkerScriptDebugServer::removeListener):
+        (WebCore::WorkerScriptDebugServer::recompileAllJSFunctions):
+        Same thing. Also rearrange the functions to read better.
+
+        * inspector/InspectorProfilerAgent.cpp:
+        Use the direct recompile function instead of the removed "soon" version.
+
 2014-01-22  Robert Sipka  <sipka@inf.u-szeged.hu>
 
         [curl] Improve detecting and handling of SSL client certificate

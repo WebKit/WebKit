@@ -65,6 +65,7 @@ private:
 
     virtual void runEventLoopWhilePaused();
 
+    void didAddFirstListener(Page*);
     void didRemoveLastListener(Page*);
 
     void setJavaScriptPaused(const PageGroup&, bool paused);
