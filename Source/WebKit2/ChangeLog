@@ -1,3 +1,21 @@
+2014-01-22  Anders Carlsson  <andersca@apple.com>
+
+        Add WKProcessClass class
+        https://bugs.webkit.org/show_bug.cgi?id=127433
+        <rdar://problem/15882582>
+
+        Reviewed by Dan Bernstein.
+
+        Add a stubbed out WKProcessClass class.
+
+        * Shared/API/Cocoa/WKFoundation.h:
+        * UIProcess/API/Cocoa/WKProcessClass.h: Added.
+        * UIProcess/API/Cocoa/WKProcessClass.mm: Added.
+        (-[WKProcessClass initWithConfiguration:]):
+        (-[WKProcessClass configuration]):
+        * UIProcess/API/Cocoa/WKProcessClassConfiguration.mm:
+        * WebKit2.xcodeproj/project.pbxproj:
+
 2014-01-22  Thiago de Barros Lacerda  <thiago.lacerda@openbossa.org>
 
         [EFL][GTK] Get EFL and GTK compiling with ACCESSIBILITY disabled

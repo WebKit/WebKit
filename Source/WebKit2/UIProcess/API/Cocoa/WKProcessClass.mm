@@ -24,22 +24,33 @@
  */
 
 #import "config.h"
-#import "WKProcessClassConfigurationPrivate.h"
+#import "WKProcessClass.h"
 
 #if WK_API_ENABLED
 
-@implementation WKProcessClassConfiguration
+#import <wtf/RetainPtr.h>
 
-- (id)copyWithZone:(NSZone *)zone
+@implementation WKProcessClass {
+    RetainPtr<WKProcessClassConfiguration> _configuration;
+}
+
+- (instancetype)initWithConfiguration:(WKProcessClassConfiguration *)configuration
 {
-    WKProcessClassConfiguration *configuration = [[[self class] allocWithZone:zone] init];
+    if (!(self = [super init]))
+        return nil;
 
-    configuration.maximumProcessCount = self.maximumProcessCount;
-    configuration._injectedBundleURL = self._injectedBundleURL;
+    _configuration = adoptNS([configuration copy]);
 
-    return configuration;
+    // FIXME: Create a WebContext.
+
+    return self;
+}
+
+- (WKProcessClassConfiguration *)configuration
+{
+    return [[_configuration copy] autorelease];
 }
 
 @end
 
-#endif
+#endif // WK_API_ENABLED

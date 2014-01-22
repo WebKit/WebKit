@@ -90,6 +90,8 @@
 		1A0F29CC120B37160053D1B9 /* VisitedLinkTable.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A0F29CA120B37160053D1B9 /* VisitedLinkTable.h */; };
 		1A0F29E3120B44420053D1B9 /* VisitedLinkProvider.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A0F29E1120B44420053D1B9 /* VisitedLinkProvider.cpp */; };
 		1A0F29E4120B44420053D1B9 /* VisitedLinkProvider.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A0F29E2120B44420053D1B9 /* VisitedLinkProvider.h */; };
+		1A158419189044F50017616C /* WKProcessClass.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1A158417189044F50017616C /* WKProcessClass.mm */; };
+		1A15841A189044F50017616C /* WKProcessClass.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A158418189044F50017616C /* WKProcessClass.h */; };
 		1A17977F137EE82C00F97D45 /* PluginCreationParameters.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A17977D137EE82C00F97D45 /* PluginCreationParameters.cpp */; };
 		1A179780137EE82C00F97D45 /* PluginCreationParameters.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A17977E137EE82C00F97D45 /* PluginCreationParameters.h */; };
 		1A186EEA12EF7618008E5F37 /* LayerTreeHost.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A186EE812EF7618008E5F37 /* LayerTreeHost.h */; };
@@ -1694,6 +1696,8 @@
 		1A0F29CA120B37160053D1B9 /* VisitedLinkTable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VisitedLinkTable.h; sourceTree = "<group>"; };
 		1A0F29E1120B44420053D1B9 /* VisitedLinkProvider.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VisitedLinkProvider.cpp; sourceTree = "<group>"; };
 		1A0F29E2120B44420053D1B9 /* VisitedLinkProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VisitedLinkProvider.h; sourceTree = "<group>"; };
+		1A158417189044F50017616C /* WKProcessClass.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKProcessClass.mm; sourceTree = "<group>"; };
+		1A158418189044F50017616C /* WKProcessClass.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKProcessClass.h; sourceTree = "<group>"; };
 		1A17635416B1D5D000D88FD6 /* StorageNamespaceImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StorageNamespaceImpl.cpp; sourceTree = "<group>"; };
 		1A17635516B1D5D000D88FD6 /* StorageNamespaceImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StorageNamespaceImpl.h; sourceTree = "<group>"; };
 		1A17977D137EE82C00F97D45 /* PluginCreationParameters.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PluginCreationParameters.cpp; sourceTree = "<group>"; };
@@ -4207,6 +4211,8 @@
 			isa = PBXGroup;
 			children = (
 				1A43E826188F38E2009E4D30 /* Deprecated */,
+				1A158418189044F50017616C /* WKProcessClass.h */,
+				1A158417189044F50017616C /* WKProcessClass.mm */,
 				1A43E828188F3CDC009E4D30 /* WKProcessClassConfiguration.h */,
 				1A43E827188F3CDC009E4D30 /* WKProcessClassConfiguration.mm */,
 				1A43E82B188F3CF5009E4D30 /* WKProcessClassConfigurationPrivate.h */,
@@ -6576,6 +6582,7 @@
 				BCB9E24B1120E15C00A137E0 /* WKContext.h in Headers */,
 				51A555F6128C6C47009ABCEC /* WKContextMenuItem.h in Headers */,
 				51A55601128C6D92009ABCEC /* WKContextMenuItemTypes.h in Headers */,
+				1A15841A189044F50017616C /* WKProcessClass.h in Headers */,
 				1AB8A1EE18400ACB00E9AE69 /* WKPagePolicyClient.h in Headers */,
 				37183D57182F4E700080C811 /* WKNSURLExtras.h in Headers */,
 				BCC938E11180DE440085E5FE /* WKContextPrivate.h in Headers */,
@@ -7790,6 +7797,7 @@
 				BCE469791214F2B4000B98EB /* WebFrameListenerProxy.cpp in Sources */,
 				BC111A5F112F4FBB00337BAB /* WebFrameLoaderClient.cpp in Sources */,
 				9391F2CA121B679A00EBF7E8 /* WebFrameNetworkingContext.mm in Sources */,
+				1A158419189044F50017616C /* WKProcessClass.mm in Sources */,
 				BCB9F6A11123A84B00A137E0 /* WebFramePolicyListenerProxy.cpp in Sources */,
 				BC111B0E112F5E4F00337BAB /* WebFrameProxy.cpp in Sources */,
 				CD73BA53131B645B00EEDED2 /* WebFullScreenManager.cpp in Sources */,

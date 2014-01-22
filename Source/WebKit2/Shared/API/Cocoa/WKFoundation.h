@@ -34,3 +34,5 @@
 #define WK_API_CLASS __attribute__((visibility("default")))
 #endif
 #endif
+
+#define WK_DESIGNATED_INITIALIZER
