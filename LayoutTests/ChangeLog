@@ -1,3 +1,17 @@
+2014-01-21  Zalan Bujtas  <zalan@apple.com>
+
+        Subpixel Layout: Off-by-one pixel text when multiple regions with different widths are present.
+        https://bugs.webkit.org/show_bug.cgi?id=127212
+
+        Reviewed by Simon Fraser.
+
+        Subpixel values accumulate differently when computing the text position inside a 300px wide div
+        vs. multiple 'flow into' regions with 300px, 400px widths. They are both correct. Blink
+        also addressed it by adjusting the test content.
+
+        * fast/regions/overflow-moving-below-floats-in-variable-width-regions.html:
+        * platform/mac/TestExpectations:
+
 2014-01-21  László Langó  <llango.u-szeged@partner.samsung.com>
 
         Assertion failure in Range::nodeWillBeRemoved
