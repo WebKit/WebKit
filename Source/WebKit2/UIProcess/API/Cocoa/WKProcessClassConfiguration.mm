@@ -26,6 +26,8 @@
 #include "config.h"
 #include "WKProcessClassConfigurationPrivate.h"
 
+#if WK_API_ENABLED
+
 @implementation WKProcessClassConfiguration
 
 - (id)copyWithZone:(NSZone *)zone
@@ -39,3 +41,5 @@
 }
 
 @end
+
+#endif
