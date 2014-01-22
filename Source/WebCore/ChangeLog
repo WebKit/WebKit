@@ -1,3 +1,19 @@
+2014-01-22  Mihai Tica  <mitica@adobe.com>
+
+        [CSS Background Blending] -webkit-background-blend-mode fails for certain SVG files
+        https://bugs.webkit.org/show_bug.cgi?id=127350
+
+        Reviewed by Dirk Schulze.
+
+        The graphics context of the SVG inherits the blend mode set
+        on the background layer. Fix consists in drawing the SVG
+        in a transparency layer.
+
+        Test: css3/compositing/background-blend-mode-svg.html
+
+        * svg/graphics/SVGImage.cpp:
+        (WebCore::SVGImage::draw): Begin a transparency layer if a blend mode is set.
+
 2014-01-22  Antti Koivisto  <antti@apple.com>
 
         Update overlay scrollbars in single pass

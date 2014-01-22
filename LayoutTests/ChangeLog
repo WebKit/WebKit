@@ -1,3 +1,13 @@
+2014-01-22  Mihai Tica  <mitica@adobe.com>
+
+        [CSS Background Blending] -webkit-background-blend-mode fails for certain SVG files
+        https://bugs.webkit.org/show_bug.cgi?id=127350
+
+        Reviewed by Dirk Schulze.
+
+        * css3/compositing/background-blend-mode-svg-expected.html: Added.
+        * css3/compositing/background-blend-mode-svg.html: Added.
+
 2014-01-22  Antti Koivisto  <antti@apple.com>
 
         Update overlay scrollbars in single pass
