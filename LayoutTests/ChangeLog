@@ -1,5 +1,16 @@
 2014-01-22  Zalan Bujtas  <zalan@apple.com>
 
+        Unreviewed Apple Windows port gardering after r162553.
+
+        * platform/win/fast/repaint/reflection-redraw-expected.txt: Added.
+        * platform/win/fast/table/dynamic-caption-add-remove-before-child-expected.txt: Added.
+        * platform/win/fast/table/multiple-captions-display-expected.txt: Added.
+        * platform/win/tables/mozilla/marvin/body_col-a-expected.txt: Added.
+        * platform/win/tables/mozilla/marvin/x_th_valign_baseline-expected.txt: Added.
+        * platform/win/tables/mozilla/other/body_col-expected.txt: Added.
+
+2014-01-22  Zalan Bujtas  <zalan@apple.com>
+
         [CSS Shapes] shape-inside rectangle layout can fail
         https://bugs.webkit.org/show_bug.cgi?id=124784
 
