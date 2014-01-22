@@ -373,7 +373,7 @@ sub jscPath($)
 {
     my ($productDir) = @_;
     my $jscName = "jsc";
-    $jscName .= "_debug"  if configurationForVisualStudio() eq "Debug_All";
+    $jscName .= "_debug"  if configuration() eq "Debug_All";
     $jscName .= ".exe" if (isWindows() || isCygwin());
     return "$productDir/$jscName" if -e "$productDir/$jscName";
     return "$productDir/JavaScriptCore.framework/Resources/$jscName";
@@ -388,7 +388,7 @@ sub argumentsForConfiguration()
     push(@args, '--debug') if ($configuration =~ "^Debug");
     push(@args, '--release') if ($configuration =~ "^Release");
     push(@args, '--32-bit') if ($architecture ne "x86_64" and !isWin64());
-    push(@args, '--64-bit') if ($architecture eq "x86_64" or isWin64());
+    push(@args, '--64-bit') if (isWin64());
     push(@args, '--qt') if isQt();
     push(@args, '--gtk') if isGtk();
     push(@args, '--efl') if isEfl();
@@ -440,7 +440,7 @@ sub visualStudioInstallDir
         $vsInstallDir = $ENV{'VSINSTALLDIR'};
         $vsInstallDir =~ s|[\\/]$||;
     } else {
-        $vsInstallDir = File::Spec->catdir(programFilesPath(), "Microsoft Visual Studio 10.0");
+        $vsInstallDir = File::Spec->catdir(programFilesPath(), "Microsoft Visual Studio 12.0");
     }
     chomp($vsInstallDir = `cygpath "$vsInstallDir"`) if isCygwin();
 
@@ -453,7 +453,7 @@ sub visualStudioVersion
 
     my $installDir = visualStudioInstallDir();
 
-    $vsVersion = ($installDir =~ /Microsoft Visual Studio ([0-9]+\.[0-9]*)/) ? $1 : "8";
+    $vsVersion = ($installDir =~ /Microsoft Visual Studio ([0-9]+\.[0-9]*)/) ? $1 : "12";
 
     return $vsVersion;
 }
@@ -463,7 +463,7 @@ sub determineConfigurationForVisualStudio
     return if defined $configurationForVisualStudio;
     determineConfiguration();
     # FIXME: We should detect when Debug_All or Production has been chosen.
-    $configurationForVisualStudio = $configuration . (isWin64() ? "|x64" : "");
+    $configurationForVisualStudio = $configuration . (isWin64() ? "|x64" : "|Win32");
 }
 
 sub usesPerConfigurationBuildDirectory
@@ -615,32 +615,17 @@ sub determinePassedConfiguration
 {
     return if $searchedForPassedConfiguration;
     $searchedForPassedConfiguration = 1;
-
-    for my $i (0 .. $#ARGV) {
-        my $opt = $ARGV[$i];
-        if ($opt =~ /^--debug$/i) {
-            splice(@ARGV, $i, 1);
-            $passedConfiguration = "Debug";
-            $passedConfiguration .= "_WinCairo" if (isWinCairo() && isCygwin());
-            $passedConfiguration .= "|x64" if isWin64();
-            return;
-        }
-        if ($opt =~ /^--release$/i) {
-            splice(@ARGV, $i, 1);
-            $passedConfiguration = "Release";
-            $passedConfiguration .= "_WinCairo" if (isWinCairo() && isCygwin());
-            $passedConfiguration .= "|x64" if isWin64();
-            return;
-        }
-        if ($opt =~ /^--profil(e|ing)$/i) {
-            splice(@ARGV, $i, 1);
-            $passedConfiguration = "Profiling";
-            $passedConfiguration .= "_WinCairo" if (isWinCairo() && isCygwin());
-            $passedConfiguration .= "|x64" if isWin64();
-            return;
-        }
-    }
     $passedConfiguration = undef;
+
+    if (checkForArgumentAndRemoveFromARGV("--debug")) {
+            $passedConfiguration = "Debug";
+    } elsif(checkForArgumentAndRemoveFromARGV("--release")) {
+            $passedConfiguration = "Release";
+    } elsif (checkForArgumentAndRemoveFromARGV("--profile") || checkForArgumentAndRemoveFromARGV("--profiling")) {
+            $passedConfiguration = "Profiling";
+    }
+
+    $passedConfiguration .= "_WinCairo" if (defined($passedConfiguration) && isWinCairo() && isCygwin());
 }
 
 sub passedConfiguration
@@ -670,18 +655,13 @@ sub determinePassedArchitecture
     return if $searchedForPassedArchitecture;
     $searchedForPassedArchitecture = 1;
 
-    for my $i (0 .. $#ARGV) {
-        my $opt = $ARGV[$i];
-        if ($opt =~ /^--32-bit$/i) {
-            splice(@ARGV, $i, 1);
-            if (isAppleMacWebKit()) {
-                $passedArchitecture = `arch`;
-                chomp $passedArchitecture;
-            }
-            return;
+    $passedArchitecture = undef;
+    if (checkForArgumentAndRemoveFromARGV("--32-bit")) {
+        if (isAppleMacWebKit()) {
+            $passedArchitecture = `arch`;
+            chomp $passedArchitecture;
         }
     }
-    $passedArchitecture = undef;
 }
 
 sub passedArchitecture
@@ -771,7 +751,7 @@ sub safariPath
             my $path = "$configurationProductDir/Safari.exe";
             my $debugPath = "$configurationProductDir/Safari_debug.exe";
 
-            if (configurationForVisualStudio() eq "Debug_All" && -x $debugPath) {
+            if (configuration() eq "Debug_All" && -x $debugPath) {
                 $safariBundle = $debugPath;
             } elsif (-x $path) {
                 $safariBundle = $path;
@@ -952,10 +932,19 @@ sub commandExists($)
     return `$command --version 2> $devnull`;
 }
 
-sub checkForArgumentAndRemoveFromARGV
+sub checkForArgumentAndRemoveFromARGV($)
 {
     my $argToCheck = shift;
     return checkForArgumentAndRemoveFromArrayRef($argToCheck, \@ARGV);
+}
+
+sub checkForArgumentAndRemoveFromARGVGettingValue($$)
+{
+    my ($argToCheck, $valueRef) = @_;
+    my @matchingIndices = findMatchingArguments($argToCheck, \@ARGV);
+    return 0 if ($#matchingIndices != 1);
+    splice(@ARGV, $matchingIndices[0], 1);
+    return $$valueRef = splice(@ARGV, $matchingIndices[0], 1);
 }
 
 sub findMatchingArguments($$)
@@ -982,8 +971,9 @@ sub checkForArgumentAndRemoveFromArrayRef
 {
     my ($argToCheck, $arrayRef) = @_;
     my @indicesToRemove = findMatchingArguments($argToCheck, $arrayRef);
+    my $removeOffset = 0;
     foreach my $index (@indicesToRemove) {
-        splice(@$arrayRef, $index, 1);
+        splice(@$arrayRef, $index - $removeOffset++, 1);
     }
     return scalar @indicesToRemove > 0;
 }
@@ -1650,17 +1640,17 @@ sub setupCygwinEnv()
     $vcBuildPath = File::Spec->catfile(visualStudioInstallDir(), qw(Common7 IDE devenv.com));
     if (-e $vcBuildPath) {
         # Visual Studio is installed;
-        if (visualStudioVersion() eq "10") {
+        if (visualStudioVersion() eq "12") {
             $vcBuildPath = File::Spec->catfile(visualStudioInstallDir(), qw(Common7 IDE devenv.exe));
         }
     } else {
         # Visual Studio not found, try VC++ Express
-        $vcBuildPath = File::Spec->catfile(visualStudioInstallDir(), qw(Common7 IDE VCExpress.exe));
+        $vcBuildPath = File::Spec->catfile(visualStudioInstallDir(), qw(Common7 IDE WDExpress.exe));
         if (! -e $vcBuildPath) {
             print "*************************************************************\n";
             print "Cannot find '$vcBuildPath'\n";
             print "Please execute the file 'vcvars32.bat' from\n";
-            print "'$programFilesPath\\Microsoft Visual Studio 8\\VC\\bin\\'\n";
+            print "'$programFilesPath\\Microsoft Visual Studio 12.0\\VC\\bin\\'\n";
             print "to setup the necessary environment variables.\n";
             print "*************************************************************\n";
             die;
