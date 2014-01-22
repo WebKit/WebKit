@@ -35,12 +35,22 @@
 #include "WebCoreArgumentCoders.h"
 #include "WebProcess.h"
 #include <WebCore/URL.h>
+#include <WebCore/SoftLinking.h>
 #include <dlfcn.h>
 #include <wtf/MainThread.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/text/WTFString.h>
 
+typedef const struct _CFURLRequest* CFURLRequestRef;
+
+SOFT_LINK_FRAMEWORK(CFNetwork)
+SOFT_LINK(CFNetwork, CFURLRequestGetURL, CFURLRef, (CFURLRequestRef request), (request))
+
 using namespace WebCore;
+
+@interface WKNSURLSessionLocal : NSObject
+- (CFDictionaryRef) _copyCookiesForRequestUsingAllAppropriateStorageSemantics:(CFURLRequestRef) request;
+@end
 
 namespace WebKit {
 
@@ -69,8 +79,28 @@ void CookieStorageShim::initialize()
     CookieStorageShimInitializeFunc func = reinterpret_cast<CookieStorageShimInitializeFunc>(dlsym(RTLD_DEFAULT, "WebKitCookieStorageShimInitialize"));
     if (func)
         func(callbacks);
+
+    Class __NSURLSessionLocalClass = objc_getClass("__NSURLSessionLocal");
+    if (!__NSURLSessionLocalClass)
+        return;
+
+    Method original = class_getInstanceMethod(__NSURLSessionLocalClass, @selector(_copyCookiesForRequestUsingAllAppropriateStorageSemantics:));
+    if (!original)
+        return;
+
+    Method replacement = class_getInstanceMethod([WKNSURLSessionLocal class], @selector(_copyCookiesForRequestUsingAllAppropriateStorageSemantics:));
+    ASSERT(replacement);
+
+    method_exchangeImplementations(original, replacement);
 }
 
 }
+
+@implementation WKNSURLSessionLocal
+- (CFDictionaryRef)_copyCookiesForRequestUsingAllAppropriateStorageSemantics:(CFURLRequestRef) request
+{
+    return WebKit::webKitCookieStorageCopyRequestHeaderFieldsForURL(nullptr, CFURLRequestGetURL(request));
+}
+@end
 
 #endif // ENABLE(NETWORK_PROCESS)

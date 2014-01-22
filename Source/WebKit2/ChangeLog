@@ -1,3 +1,20 @@
+2014-01-22  Jer Noble  <jer.noble@apple.com>
+
+        [Mac][WK2] Unable to play video protected by session cookies
+        https://bugs.webkit.org/show_bug.cgi?id=127207
+
+        Reviewed by Sam Weinig.
+
+        Recent changes in our underlying media frameworks caused our shimmed methods
+        in CookieStorageShim to stop being called. Insert an objective-c shim in addition
+        to our original shim to intercept pulling cookies out of cookie storage.
+
+        * Shared/mac/CookieStorageShim.mm: Renamed from Source/WebKit2/Shared/mac/CookieStorageShim.cpp.
+        (WebKit::CookieStorageShim::initialize): Insert the shim.
+        (-[WKNSURLSessionLocal _copyCookiesForRequestUsingAllAppropriateStorageSemantics:]):
+            Pass through to webKitCookieStorageCopyRequestHeaderFieldsForURL().
+        * WebKit2.xcodeproj/project.pbxproj: Rename CookieStorageShim.cpp -> .mm.
+
 2014-01-22  Yongjun Zhang  <yongjun_zhang@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=127380
