@@ -948,11 +948,11 @@ private:
 
 #elif HAVE(ACCESSIBILITY) && (PLATFORM(GTK) || PLATFORM(EFL))
     GRefPtr<WebPageAccessibilityObject> m_accessibilityObject;
+#endif
 
-#if USE(TEXTURE_MAPPER_GL)
+#if PLATFORM(GTK) && USE(TEXTURE_MAPPER_GL)
     // Our view's window in the UI process.
     uint64_t m_nativeWindowHandle;
-#endif
 #endif
 
 #if !PLATFORM(IOS)

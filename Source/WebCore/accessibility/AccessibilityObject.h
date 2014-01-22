@@ -924,7 +924,7 @@ protected:
     virtual AccessibilityRole buttonRoleType() const;
     bool isOnscreen() const;
     
-#if PLATFORM(GTK) || (PLATFORM(EFL) && HAVE(ACCESSIBILITY))
+#if (PLATFORM(GTK) || PLATFORM(EFL)) && HAVE(ACCESSIBILITY)
     bool allowsTextRanges() const;
     unsigned getLengthForTextRange() const;
 #else

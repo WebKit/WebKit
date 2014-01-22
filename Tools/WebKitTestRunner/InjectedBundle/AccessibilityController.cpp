@@ -93,6 +93,7 @@ bool AccessibilityController::removeNotificationListener() { return false; }
 PassRefPtr<AccessibilityUIElement> AccessibilityController::accessibleElementById(JSStringRef attribute) { return nullptr; }
 void AccessibilityController::logAccessibilityEvents() { }
 void AccessibilityController::resetToConsistentState() { }
+JSRetainPtr<JSStringRef> AccessibilityController::platformName() { return JSRetainPtr<JSStringRef>(Adopt, JSStringCreateWithUTF8CString("")); }
 #endif
 
 #if !HAVE(ACCESSIBILITY) && (PLATFORM(GTK) || PLATFORM(EFL))

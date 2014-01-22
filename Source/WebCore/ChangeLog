@@ -1,3 +1,18 @@
+2014-01-22  Thiago de Barros Lacerda  <thiago.lacerda@openbossa.org>
+
+        [EFL][GTK] Get EFL and GTK compiling with ACCESSIBILITY disabled
+        https://bugs.webkit.org/show_bug.cgi?id=127119
+
+        Reviewed by Mario Sanchez Prada.
+
+        At build time, the compiler was not able to determine which Timer's constructor to call in AXObjectCache when
+        ACCESSIBILITY is not enabled, fixing that.
+        Also guarding some members in AccessibilityObject that are only being used by EFL and GTK with ACCESSIBILITY.
+
+        * accessibility/AXObjectCache.h:
+        (WebCore::AXObjectCache::AXObjectCache):
+        * accessibility/AccessibilityObject.h:
+
 2014-01-22  Peter Molnar  <pmolnar.u-szeged@partner.samsung.com>
 
         Refactor calculation of hasRx and hasRy values in SVGPathData

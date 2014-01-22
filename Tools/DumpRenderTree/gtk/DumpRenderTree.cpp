@@ -81,7 +81,9 @@ static bool dumpPixelsForCurrentTest;
 static int dumpTree = 1;
 static int useTimeoutWatchdog = 1;
 
+#if HAVE(ACCESSIBILITY)
 AccessibilityController* axController = 0;
+#endif
 RefPtr<TestRunner> gTestRunner;
 static GCController* gcController = 0;
 static WebKitWebView* webView;
@@ -529,8 +531,10 @@ static void resetDefaultsToConsistentValues()
     DumpRenderTreeSupportGtk::setDefersLoading(webView, false);
     DumpRenderTreeSupportGtk::setSerializeHTTPLoads(false);
 
+#if HAVE(ACCESSIBILITY)
     if (axController)
         axController->resetToConsistentState();
+#endif
 
     DumpRenderTreeSupportGtk::clearOpener(mainFrame);
     DumpRenderTreeSupportGtk::setTracksRepaints(mainFrame, false);
@@ -921,8 +925,10 @@ static void webViewWindowObjectCleared(WebKitWebView* view, WebKitWebFrame* fram
     gcController->makeWindowObject(context, windowObject, &exception);
     ASSERT(!exception);
 
+#if HAVE(ACCESSIBILITY)
     axController->makeWindowObject(context, windowObject, &exception);
     ASSERT(!exception);
+#endif
 
     addControllerToWindow(context, windowObject, "eventSender", makeEventSender(context, !webkit_web_frame_get_parent(frame)));
     addControllerToWindow(context, windowObject, "textInputController", makeTextInputController(context));
@@ -1524,7 +1530,9 @@ int main(int argc, char* argv[])
     setDefaultsToConsistentStateValuesForTesting();
 
     gcController = new GCController();
+#if HAVE(ACCESSIBILITY)
     axController = new AccessibilityController();
+#endif
 
     if (useLongRunningServerMode(argc, argv)) {
         printSeparators = true;
@@ -1538,8 +1546,10 @@ int main(int argc, char* argv[])
     delete gcController;
     gcController = 0;
 
+#if HAVE(ACCESSIBILITY)
     delete axController;
     axController = 0;
+#endif
 
     gtk_widget_destroy(window);
 

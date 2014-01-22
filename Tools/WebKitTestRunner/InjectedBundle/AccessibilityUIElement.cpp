@@ -129,6 +129,7 @@ unsigned AccessibilityUIElement::selectedChildrenCount() const { return 0; }
 PassRefPtr<AccessibilityUIElement> AccessibilityUIElement::selectedChildAtIndex(unsigned) const { return 0; }
 bool AccessibilityUIElement::isExpanded() const { return false; }
 bool AccessibilityUIElement::isChecked() const { return false; }
+bool AccessibilityUIElement::isIndeterminate() const { return false; }
 bool AccessibilityUIElement::isVisible() const { return false; }
 bool AccessibilityUIElement::isOffScreen() const { return false; }
 bool AccessibilityUIElement::isCollapsed() const { return false; }

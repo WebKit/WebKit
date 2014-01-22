@@ -1,3 +1,23 @@
+2014-01-22  Thiago de Barros Lacerda  <thiago.lacerda@openbossa.org>
+
+        [EFL][GTK] Get EFL and GTK compiling with ACCESSIBILITY disabled
+        https://bugs.webkit.org/show_bug.cgi?id=127119
+
+        Reviewed by Mario Sanchez Prada.
+
+        Guarding ACCESSIBILITY code in DumpRenderTree and WebKitTestRunner with HAVE(ACCESSIBILITY).
+
+        * DumpRenderTree/efl/DumpRenderTreeChrome.cpp:
+        * DumpRenderTree/gtk/AccessibilityControllerGtk.cpp:
+        * DumpRenderTree/gtk/DumpRenderTree.cpp:
+        (resetDefaultsToConsistentValues):
+        (webViewWindowObjectCleared):
+        (main):
+        * WebKitTestRunner/InjectedBundle/AccessibilityController.cpp:
+        (WTR::AccessibilityController::platformName):
+        * WebKitTestRunner/InjectedBundle/AccessibilityUIElement.cpp:
+        (WTR::AccessibilityUIElement::isIndeterminate):
+
 2014-01-22  Carlos Garcia Campos  <cgarcia@igalia.com>
 
 

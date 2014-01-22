@@ -248,7 +248,7 @@ WebPage::WebPage(uint64_t pageID, const WebPageCreationParameters& parameters)
     , m_hasCachedWindowFrame(false)
     , m_keyboardEventBeingInterpreted(0)
     , m_viewGestureGeometryCollector(*this)
-#elif PLATFORM(GTK)
+#elif PLATFORM(GTK) && HAVE(ACCESSIBILITY)
     , m_accessibilityObject(0)
 #endif
     , m_setCanStartMediaTimer(RunLoop::main(), this, &WebPage::setCanStartMediaTimerFired)

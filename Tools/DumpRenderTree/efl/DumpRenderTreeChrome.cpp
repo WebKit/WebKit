@@ -33,6 +33,7 @@
 #include "EditingCallbacks.h"
 #include "EventSender.h"
 #include "GCController.h"
+#include "JSRetainPtr.h"
 #include "URL.h"
 #include "NotImplemented.h"
 #include "TestRunner.h"

@@ -25,6 +25,9 @@
  */
 
 #include "config.h"
+
+#if HAVE(ACCESSIBILITY)
+
 #include "AccessibilityController.h"
 
 #include "AccessibilityCallbacks.h"
@@ -72,3 +75,5 @@ AccessibilityUIElement AccessibilityController::accessibleElementById(JSStringRe
     return 0;
 
 }
+
+#endif // HAVE(ACCESSIBILITY)

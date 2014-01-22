@@ -1417,6 +1417,7 @@ static gboolean webkit_navigation_request_handled(GSignalInvocationHint* ihint, 
     return TRUE;
 }
 
+#if HAVE(ACCESSIBILITY)
 static AtkObject* webkit_web_view_get_accessible(GtkWidget* widget)
 {
     WebKitWebView* webView = WEBKIT_WEB_VIEW(widget);
@@ -1448,6 +1449,7 @@ static AtkObject* webkit_web_view_get_accessible(GtkWidget* widget)
 
     return axRoot;
 }
+#endif
 
 static double screenDPI(GdkScreen* screen)
 {
@@ -3107,7 +3109,9 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
     widgetClass->grab_focus = webkit_web_view_grab_focus;
     widgetClass->focus_in_event = webkit_web_view_focus_in_event;
     widgetClass->focus_out_event = webkit_web_view_focus_out_event;
+#if HAVE(ACCESSIBILITY)
     widgetClass->get_accessible = webkit_web_view_get_accessible;
+#endif
     widgetClass->screen_changed = webkit_web_view_screen_changed;
 #if ENABLE(DRAG_SUPPORT)
     widgetClass->drag_end = webkit_web_view_drag_end;
