@@ -40,6 +40,8 @@
 #include <wtf/gobject/GOwnPtr.h>
 #endif
 
+#include <sys/wait.h>
+
 using namespace WebCore;
 
 namespace WebKit {
@@ -79,12 +81,14 @@ bool PluginProcessProxy::scanPlugin(const String& pluginPath, RawPluginMetaData&
     // able to return the status.
     // As a consequence, we make sure that the disposition is set to
     // SIG_DFL before calling g_spawn_sync().
+#if defined(SIGCLD)
     struct sigaction action;
     sigaction(SIGCLD, 0, &action);
     if (action.sa_handler == SIG_IGN) {
         action.sa_handler = SIG_DFL;
         sigaction(SIGCLD, &action, 0);
     }
+#endif
 
     if (!g_spawn_sync(0, argv, 0, G_SPAWN_STDERR_TO_DEV_NULL, 0, 0, &stdOut.outPtr(), 0, &status, 0))
         return false;
