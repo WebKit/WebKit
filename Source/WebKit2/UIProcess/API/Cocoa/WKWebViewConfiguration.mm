@@ -26,6 +26,8 @@
 #import "config.h"
 #import "WKWebViewConfiguration.h"
 
+#if WK_API_ENABLED
+
 @implementation WKWebViewConfiguration
 
 - (id)copyWithZone:(NSZone *)zone
@@ -38,3 +40,5 @@
 }
 
 @end
+
+#endif // WK_API_ENABLED
