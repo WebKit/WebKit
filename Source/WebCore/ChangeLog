@@ -1,3 +1,24 @@
+2014-01-22  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Unreviewed rollout of r162534, this caused inspector test failures.
+
+        * bindings/js/PageScriptDebugServer.cpp:
+        (WebCore::PageScriptDebugServer::addListener):
+        (WebCore::PageScriptDebugServer::removeListener):
+        (WebCore::PageScriptDebugServer::recompileAllJSFunctions):
+        (WebCore::PageScriptDebugServer::didRemoveLastListener):
+        * bindings/js/PageScriptDebugServer.h:
+        * bindings/js/ScriptDebugServer.cpp:
+        (WebCore::ScriptDebugServer::ScriptDebugServer):
+        (WebCore::ScriptDebugServer::recompileAllJSFunctionsSoon):
+        (WebCore::ScriptDebugServer::recompileAllJSFunctionsTimerFired):
+        * bindings/js/ScriptDebugServer.h:
+        * bindings/js/WorkerScriptDebugServer.cpp:
+        (WebCore::WorkerScriptDebugServer::addListener):
+        (WebCore::WorkerScriptDebugServer::recompileAllJSFunctions):
+        (WebCore::WorkerScriptDebugServer::removeListener):
+        * inspector/InspectorProfilerAgent.cpp:
+
 2014-01-22  peavo@outlook.com  <peavo@outlook.com>
 
         Crashes in setTextForIterator

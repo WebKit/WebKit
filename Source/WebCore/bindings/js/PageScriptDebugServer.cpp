@@ -94,12 +94,10 @@ void PageScriptDebugServer::addListener(ScriptDebugListener* listener, Page* pag
     OwnPtr<ListenerSet>& listeners = m_pageListenersMap.add(page, nullptr).iterator->value;
     if (!listeners)
         listeners = adoptPtr(new ListenerSet);
-
-    bool wasEmpty = listeners->isEmpty();
     listeners->add(listener);
 
-    if (wasEmpty)
-        didAddFirstListener(page);
+    recompileAllJSFunctionsSoon();
+    page->setDebugger(this);
 }
 
 void PageScriptDebugServer::removeListener(ScriptDebugListener* listener, Page* page)
@@ -113,7 +111,6 @@ void PageScriptDebugServer::removeListener(ScriptDebugListener* listener, Page* 
 
     ListenerSet* listeners = it->value.get();
     listeners->remove(listener);
-
     if (listeners->isEmpty()) {
         m_pageListenersMap.remove(it);
         didRemoveLastListener(page);
@@ -123,7 +120,11 @@ void PageScriptDebugServer::removeListener(ScriptDebugListener* listener, Page* 
 void PageScriptDebugServer::recompileAllJSFunctions()
 {
     JSLockHolder lock(JSDOMWindow::commonVM());
-    Debugger::recompileAllJSFunctions(JSDOMWindow::commonVM());
+    // If JavaScript stack is not empty postpone recompilation.
+    if (JSDOMWindow::commonVM()->entryScope)
+        recompileAllJSFunctionsSoon();
+    else
+        Debugger::recompileAllJSFunctions(JSDOMWindow::commonVM());
 }
 
 ScriptDebugServer::ListenerSet* PageScriptDebugServer::getListenersForGlobalObject(JSGlobalObject* globalObject)
@@ -160,13 +161,6 @@ void PageScriptDebugServer::didContinue(JSC::JSGlobalObject* globalObject)
         setJavaScriptPaused(page->group(), false);
 }
 
-void PageScriptDebugServer::didAddFirstListener(Page* page)
-{
-    // Set debugger before recompiling to get sourceParsed callbacks.
-    page->setDebugger(this);
-    recompileAllJSFunctions();
-}
-
 void PageScriptDebugServer::didRemoveLastListener(Page* page)
 {
     ASSERT(page);
@@ -174,9 +168,8 @@ void PageScriptDebugServer::didRemoveLastListener(Page* page)
     if (m_pausedPage == page)
         m_doneProcessingDebuggerEvents = true;
 
-    // Clear debugger before recompiling because we do not need sourceParsed callbacks.
-    page->setDebugger(nullptr);
-    recompileAllJSFunctions();
+    recompileAllJSFunctionsSoon();
+    page->setDebugger(0);
 }
 
 void PageScriptDebugServer::runEventLoopWhilePaused()

@@ -73,7 +73,7 @@ public:
 private:
     virtual void recompileScript() override
     {
-        PageScriptDebugServer::shared().recompileAllJSFunctions();
+        PageScriptDebugServer::shared().recompileAllJSFunctionsSoon();
     }
 
     virtual void startProfiling(const String& title) override

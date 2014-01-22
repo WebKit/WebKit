@@ -34,6 +34,7 @@
 
 #include "ScriptBreakpoint.h"
 #include "ScriptDebugListener.h"
+#include "Timer.h"
 #include <bindings/ScriptObject.h>
 #include <debugger/Debugger.h>
 #include <wtf/HashMap.h>
@@ -58,6 +59,7 @@ public:
     void removeBreakpoint(JSC::BreakpointID);
     void clearBreakpoints();
 
+    void recompileAllJSFunctionsSoon();
     virtual void recompileAllJSFunctions() = 0;
 
     const Vector<ScriptBreakpointAction>& getActionsForBreakpoint(JSC::BreakpointID);
@@ -107,9 +109,12 @@ private:
     virtual void handlePause(JSC::Debugger::ReasonForPause, JSC::JSGlobalObject*) override final;
     virtual void notifyDoneProcessingDebuggerEvents() override final;
 
+    void recompileAllJSFunctionsTimerFired(Timer<ScriptDebugServer>&);
+
     unsigned m_hitCount;
     bool m_callingListeners;
     BreakpointIDToActionsMap m_breakpointIDToActions;
+    Timer<ScriptDebugServer> m_recompileTimer;
 
     friend class DebuggerCallFrameScope;
 };

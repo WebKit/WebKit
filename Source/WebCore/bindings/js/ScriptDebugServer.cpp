@@ -40,7 +40,6 @@
 #include "JavaScriptCallFrame.h"
 #include "PageConsole.h"
 #include "Sound.h"
-#include "Timer.h"
 #include <bindings/ScriptValue.h>
 #include <debugger/DebuggerCallFrame.h>
 #include <parser/SourceProvider.h>
@@ -58,6 +57,7 @@ ScriptDebugServer::ScriptDebugServer(bool isInWorkerThread)
     : Debugger(isInWorkerThread)
     , m_doneProcessingDebuggerEvents(true)
     , m_callingListeners(false)
+    , m_recompileTimer(this, &ScriptDebugServer::recompileAllJSFunctionsTimerFired)
 {
 }
 
@@ -311,6 +311,16 @@ void ScriptDebugServer::handlePause(Debugger::ReasonForPause, JSGlobalObject* vm
 
     didContinue(vmEntryGlobalObject);
     dispatchFunctionToListeners(&ScriptDebugServer::dispatchDidContinue, vmEntryGlobalObject);
+}
+
+void ScriptDebugServer::recompileAllJSFunctionsSoon()
+{
+    m_recompileTimer.startOneShot(0);
+}
+
+void ScriptDebugServer::recompileAllJSFunctionsTimerFired(Timer<ScriptDebugServer>&)
+{
+    recompileAllJSFunctions();
 }
 
 const Vector<ScriptBreakpointAction>& ScriptDebugServer::getActionsForBreakpoint(JSC::BreakpointID breakpointID)
