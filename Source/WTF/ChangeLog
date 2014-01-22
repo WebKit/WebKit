@@ -1,3 +1,12 @@
+2014-01-22  Jae Hyun Park  <jae.park@company100.net>
+
+        Remove unnecessary include in Noncopyable.h
+        https://bugs.webkit.org/show_bug.cgi?id=127406
+
+        Reviewed by Anders Carlsson.
+
+        * wtf/Noncopyable.h: We don't need Compiler.h as of r162198.
+
 2014-01-22  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Add GUniquePtr
