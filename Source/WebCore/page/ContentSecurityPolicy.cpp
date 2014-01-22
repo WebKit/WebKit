@@ -260,7 +260,7 @@ private:
             String protectedResourceScheme(m_policy->securityOrigin()->protocol());
 #if ENABLE(CSP_NEXT)
             if (equalIgnoringCase("http", protectedResourceScheme))
-                return url.protocolIs("http") || url.protocolIs("https");
+                return url.protocolIsInHTTPFamily();
 #endif
             return equalIgnoringCase(url.protocol(), protectedResourceScheme);
         }

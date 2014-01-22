@@ -1,3 +1,20 @@
+2014-01-22  Jochen Eisinger  <jochen@chromium.org>
+
+        Add protocolIsInHTTPFamily for strings and use it where appropriate
+        https://bugs.webkit.org/show_bug.cgi?id=127336
+
+        Reviewed by Alexey Proskuryakov.
+
+        * html/HTMLAnchorElement.cpp:
+        (WebCore::HTMLAnchorElement::parseAttribute):
+        * page/ContentSecurityPolicy.cpp:
+        (WebCore::CSPSource::schemeMatches):
+        * page/SecurityPolicy.cpp:
+        (WebCore::SecurityPolicy::generateReferrerHeader):
+        * platform/URL.cpp:
+        (WebCore::protocolIsInHTTPFamily):
+        * platform/URL.h:
+
 2014-01-22  Zalan Bujtas  <zalan@apple.com>
 
         Subpixel Layout: SimpleLineLayout needs more position rounding to match InlineFlowBox layout.

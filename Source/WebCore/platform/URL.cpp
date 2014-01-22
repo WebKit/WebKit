@@ -1775,6 +1775,16 @@ bool protocolIsJavaScript(const String& url)
     return protocolIs(url, "javascript");
 }
 
+bool protocolIsInHTTPFamily(const String& url)
+{
+    // Do the comparison without making a new string object.
+    return isLetterMatchIgnoringCase(url[0], 'h')
+        && isLetterMatchIgnoringCase(url[1], 't')
+        && isLetterMatchIgnoringCase(url[2], 't')
+        && isLetterMatchIgnoringCase(url[3], 'p')
+        && (url[4] == ':' || (isLetterMatchIgnoringCase(url[4], 's') && url[5] == ':'));
+}
+
 const URL& blankURL()
 {
     DEFINE_STATIC_LOCAL(URL, staticBlankURL, (ParsedURLString, "about:blank"));

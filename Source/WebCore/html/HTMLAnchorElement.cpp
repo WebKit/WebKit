@@ -251,7 +251,7 @@ void HTMLAnchorElement::parseAttribute(const QualifiedName& name, const AtomicSt
         if (isLink()) {
             String parsedURL = stripLeadingAndTrailingHTMLSpaces(value);
             if (document().isDNSPrefetchEnabled()) {
-                if (protocolIs(parsedURL, "http") || protocolIs(parsedURL, "https") || parsedURL.startsWith("//"))
+                if (protocolIsInHTTPFamily(parsedURL) || parsedURL.startsWith("//"))
                     prefetchDNS(document().completeURL(parsedURL).host());
             }
         }

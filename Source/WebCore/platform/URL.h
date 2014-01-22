@@ -225,6 +225,7 @@ const URL& blankURL();
 
 bool protocolIs(const String& url, const char* protocol);
 bool protocolIsJavaScript(const String& url);
+bool protocolIsInHTTPFamily(const String& url);
 
 bool isDefaultPortForProtocol(unsigned short port, const String& protocol);
 bool portAllowed(const URL&); // Blacklist ports that should never be used for Web resources.
