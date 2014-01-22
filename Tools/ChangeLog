@@ -1,3 +1,10 @@
+2014-01-21  Benjamin Poulain  <benjamin@webkit.org>
+
+        Add Ian and Ricky to the contributor list
+
+        * Scripts/webkitpy/common/config/contributors.json:
+        I am too old to remember all those email addresses :)
+
 2014-01-21  David Farler  <dfarler@apple.com>
 
         Upstream package-root for iOS
