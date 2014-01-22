@@ -40,9 +40,6 @@
 WK_API_CLASS
 @interface WKBrowsingContextController : NSObject
 
-@property (readonly) WKProcessGroup *processGroup;
-@property (readonly) WKBrowsingContextGroup *browsingContextGroup;
-
 #pragma mark Delegates
 
 @property (weak) id <WKBrowsingContextLoadDelegate> loadDelegate;

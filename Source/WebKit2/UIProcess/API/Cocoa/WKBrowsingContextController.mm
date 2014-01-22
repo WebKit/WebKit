@@ -47,7 +47,7 @@
 #import "WKNSURLAuthenticationChallenge.h"
 #import "WKNSURLExtras.h"
 #import "WKNSURLProtectionSpace.h"
-#import "WKProcessGroupInternal.h"
+#import "WKProcessGroupPrivate.h"
 #import "WKRemoteObjectRegistryInternal.h"
 #import "WKRenderingProgressEventsInternal.h"
 #import "WKRetainPtr.h"
@@ -162,16 +162,6 @@ static NSString * const frameErrorKey = @"WKBrowsingContextFrameErrorKey";
 {
     _pageLoadStateObserver = std::make_unique<PageLoadStateObserver>(self);
     _page->pageLoadState().addObserver(*_pageLoadStateObserver);
-}
-
-- (WKProcessGroup *)processGroup
-{
-    return wrapper(_page->process().context());
-}
-
-- (WKBrowsingContextGroup *)browsingContextGroup
-{
-    return wrapper(_page->pageGroup());
 }
 
 #pragma mark Loading

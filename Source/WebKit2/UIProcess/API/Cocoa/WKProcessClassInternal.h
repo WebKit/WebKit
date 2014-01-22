@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "WKProcessGroupPrivate.h"
+#import "WKProcessClass.h"
 
 #if WK_API_ENABLED
 
@@ -32,15 +32,15 @@
 
 namespace WebKit {
 
-inline WKProcessGroup *wrapper(WebContext& context)
+inline WKProcessClass *wrapper(WebContext& context)
 {
-    ASSERT([context.wrapper() isKindOfClass:[WKProcessGroup class]]);
-    return (WKProcessGroup *)context.wrapper();
+    ASSERT([context.wrapper() isKindOfClass:[WKProcessClass class]]);
+    return (WKProcessClass *)context.wrapper();
 }
 
 }
 
-@interface WKProcessGroup () <WKObject>
+@interface WKProcessClass () <WKObject>
 @end
 
 #endif // WK_API_ENABLED

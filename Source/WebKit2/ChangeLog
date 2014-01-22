@@ -1,3 +1,27 @@
+2014-01-22  Anders Carlsson  <andersca@apple.com>
+
+        WKProcessClass should create a WebContext
+        https://bugs.webkit.org/show_bug.cgi?id=127449
+        <rdar://problem/15885582>
+
+        Reviewed by Dan Bernstein.
+
+        * Shared/Cocoa/APIObject.mm:
+        (API::Object::newObject):
+        * UIProcess/API/Cocoa/WKBrowsingContextController.h:
+        * UIProcess/API/Cocoa/WKBrowsingContextController.mm:
+        * UIProcess/API/Cocoa/WKProcessClass.mm:
+        (-[WKProcessClass initWithConfiguration:]):
+        (-[WKProcessClass dealloc]):
+        (-[WKProcessClass API::]):
+        * UIProcess/API/Cocoa/WKProcessClassInternal.h: Renamed from Source/WebKit2/UIProcess/API/Cocoa/WKProcessGroupInternal.h.
+        (WebKit::wrapper):
+        * UIProcess/API/Cocoa/WKProcessGroup.mm:
+        (-[WKProcessGroup initWithInjectedBundleURL:]):
+        * UIProcess/API/ios/WKContentView.mm:
+        (-[WKContentView _decidePolicyForGeolocationRequestFromOrigin:frame:request:]):
+        * WebKit2.xcodeproj/project.pbxproj:
+
 2014-01-22  Tim Horton  <timothy_horton@apple.com>
 
         Crashes in DrawingAreaProxy::setExposedRect (null DrawingAreaProxy)
