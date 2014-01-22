@@ -43,9 +43,11 @@ typedef enum {
 } SSLCertificateFlags;
 
 
+void addAllowedClientCertificate(const String&, const String&, const String&);
 void allowsAnyHTTPSCertificateHosts(const String&);
 bool sslIgnoreHTTPSCertificate(const String&, const String&);
 void setSSLVerifyOptions(ResourceHandle*);
+void setSSLClientCertificate(ResourceHandle*);
 
 }
 

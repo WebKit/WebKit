@@ -27,6 +27,7 @@
 #define ResourceError_h
 
 #include "ResourceErrorBase.h"
+#include <curl/curl.h>
 
 namespace WebCore {
 
@@ -44,6 +45,7 @@ public:
 
     unsigned sslErrors() const { return m_sslErrors; }
     void setSSLErrors(unsigned sslVerifyResult) { m_sslErrors = sslVerifyResult; }
+    bool hasSSLConnectError() const { return errorCode() == CURLE_SSL_CONNECT_ERROR; }
 
 private:
     unsigned m_sslErrors;

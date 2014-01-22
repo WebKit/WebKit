@@ -962,6 +962,7 @@ void ResourceHandleManager::initializeHandle(ResourceHandle* job)
     curl_easy_setopt(d->m_handle, CURLOPT_DNS_CACHE_TIMEOUT, 60 * 5); // 5 minutes
     curl_easy_setopt(d->m_handle, CURLOPT_PROTOCOLS, allowedProtocols);
     curl_easy_setopt(d->m_handle, CURLOPT_REDIR_PROTOCOLS, allowedProtocols);
+    setSSLClientCertificate(job);
 
     if (ignoreSSLErrors)
         curl_easy_setopt(d->m_handle, CURLOPT_SSL_VERIFYPEER, false);

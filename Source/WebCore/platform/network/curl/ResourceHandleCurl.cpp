@@ -30,6 +30,8 @@
 
 #include "CachedResourceLoader.h"
 #include "CredentialStorage.h"
+#include "FileSystem.h"
+#include "Logging.h"
 #include "NetworkingContext.h"
 #include "NotImplemented.h"
 #include "ResourceHandleInternal.h"
@@ -119,6 +121,14 @@ void ResourceHandle::cancel()
 void ResourceHandle::setHostAllowsAnyHTTPSCertificate(const String& host)
 {
     allowsAnyHTTPSCertificateHosts(host.lower());
+}
+
+void ResourceHandle::setClientCertificateInfo(const String& host, const String& certificate, const String& key)
+{
+    if (fileExists(certificate))
+        addAllowedClientCertificate(host, certificate, key);
+    else
+        LOG(Network, "Invalid client certificate file: %s!\n", certificate.latin1().data());
 }
 
 #if PLATFORM(WIN) && USE(CF)

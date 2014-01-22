@@ -152,6 +152,7 @@ public:
 
 #if PLATFORM(WIN) && USE(CURL)
     static void setHostAllowsAnyHTTPSCertificate(const String&);
+    static void setClientCertificateInfo(const String&, const String&, const String&);
 #endif
 #if PLATFORM(WIN) && USE(CURL) && USE(CF)
     static void setClientCertificate(const String& host, CFDataRef);
