@@ -1,3 +1,13 @@
+2014-01-22  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] Avoid a circular dependency when building webkitenumtypes.h
+        https://bugs.webkit.org/show_bug.cgi?id=127199
+
+        Reviewed by Daniel Bates.
+
+        * PlatformGTK.cmake: Create a new list of headers consisting of all installed headers
+        except webkitenumtypes.h. Use this list when generating webkitenumtypes.h.
+
 2014-01-21  Alex Christensen  <achristensen@webkit.org>
 
         Unreviewed build fix for Win64.
