@@ -198,10 +198,6 @@ Bug(GTK) plugins/document-open.html [ Crash Timeout ]
 
 webkit.org/b/82020 plugins/netscape-dom-access-and-reload.html [ Crash Pass ]
 
-Bug(GTK) fast/parser/document-write-basic.html [ Crash ]
-
-Bug(GTK) fast/forms/select-live-pseudo-selectors.html [ Crash ]
-
 webkit.org/b/124556 http/tests/xmlhttprequest/access-control-repeated-failed-preflight-crash.html [ Crash Timeout ]
 
 #////////////////////////////////////////////////////////////////////////////////////////

@@ -1,3 +1,13 @@
+2014-01-22  ChangSeok Oh  <changseok.oh@collabora.com>
+
+        Unreviewed GTK gardening
+
+        Remove test expectations for passed tests.
+        fast/parser/document-write-basic.html is marked crash but passed.
+        fast/forms/select-live-pseudo-selectors.html is marked crash but passed.
+
+        * platform/gtk-wk2/TestExpectations:
+
 2014-01-22  Alexey Proskuryakov  <ap@apple.com>
 
         inspector-protocol/page/deny-X-FrameOption.html is very flaky
