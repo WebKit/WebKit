@@ -480,6 +480,8 @@ inline PluginModuleLoadPolicy toPluginModuleLoadPolicy(WKPluginLoadPolicy plugin
 inline WebCore::WebGLLoadPolicy toWebGLLoadPolicy(WKWebGLLoadPolicy webGLLoadPolicy)
 {
     switch (webGLLoadPolicy) {
+    case kWKWebGLLoadPolicyInactive:
+        return WebCore::WebGLAsk;
     case kWKWebGLLoadPolicyLoadNormally:
         return WebCore::WebGLAllow;
     case kWKWebGLLoadPolicyBlocked:

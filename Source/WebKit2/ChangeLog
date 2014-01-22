@@ -56,14 +56,6 @@
         * UIProcess/mac/ViewGestureController.mm: Renamed from Source/WebKit2/UIProcess/mac/ViewGestureController.cpp.
         * WebKit2.xcodeproj/project.pbxproj:
 
-2014-01-21  Roger Fong  <roger_fong@apple.com>
-
-        Unreviewed. WebGLLoadPolicy::WebGLAsk is an unnecessary value.
-
-        * UIProcess/API/C/WKAPICast.h:
-        (WebKit::toWebGLLoadPolicy):
-        * UIProcess/API/C/WKPageLoaderClient.h:
-
 2014-01-21  Anders Carlsson  <andersca@apple.com>
 
         Make all the WebKit2 headers private and move Cocoa UIProcess API headers to a Deprecated group

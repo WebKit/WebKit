@@ -43,14 +43,6 @@
         of the two original scales when doing so, so that it is absolutely certain
         to fit inside space allocated for the image during layout.
 
-2014-01-21  Roger Fong  <roger_fong@apple.com>
-
-        Unreviewed. WebGLLoadPolicy::WebGLAsk is an unnecessary value.
-
-        * html/HTMLCanvasElement.cpp:
-        (WebCore::HTMLCanvasElement::getContext):
-        * loader/FrameLoaderTypes.h:
-
 2014-01-21  Simon Fraser  <simon.fraser@apple.com>
 
         Remove #if PLATFORM(IOS) in various places around customFixedPositionLayoutRect() code

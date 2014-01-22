@@ -43,8 +43,9 @@ enum {
 typedef uint32_t WKPluginLoadPolicy;
 
 enum {
-    kWKWebGLLoadPolicyBlocked = 0,
+    kWKWebGLLoadPolicyInactive = 0,
     kWKWebGLLoadPolicyLoadNormally,
+    kWKWebGLLoadPolicyBlocked
 };
 typedef uint32_t WKWebGLLoadPolicy;
 
