@@ -142,7 +142,9 @@ using namespace WebKit;
 {
     FloatPoint exposedRectPosition = _currentExposedRectPosition;
     exposedRectPosition.scale(_page->pageScaleFactor(), _page->pageScaleFactor());
-    _page->drawingArea()->setExposedRect(FloatRect(exposedRectPosition, _page->drawingArea()->size()));
+
+    if (auto drawingArea = _page->drawingArea())
+        drawingArea->setExposedRect(FloatRect(exposedRectPosition, _page->drawingArea()->size()));
 }
 
 - (void)setViewportSize:(CGSize)size

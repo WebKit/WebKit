@@ -1,3 +1,16 @@
+2014-01-22  Tim Horton  <timothy_horton@apple.com>
+
+        Crashes in DrawingAreaProxy::setExposedRect (null DrawingAreaProxy)
+        https://bugs.webkit.org/show_bug.cgi?id=127445
+
+        Reviewed by Anders Carlsson.
+
+        * UIProcess/API/ios/WKContentView.mm:
+        (-[WKContentView _updateViewExposedRect]):
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView _updateViewExposedRect]):
+        Null-check.
+
 2014-01-22  Anders Carlsson  <andersca@apple.com>
 
         Add WKWebView class
