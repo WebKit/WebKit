@@ -123,14 +123,17 @@ static void transformContextForPainting(GraphicsContext* context, const FloatRec
     float hScale = dstRect.width() / srcRect.width();
     float vScale = dstRect.height() / srcRect.height();
 
-    float minimumScale = std::max((dstRect.width() - 0.5) / srcRect.width(), (dstRect.height() - 0.5) / srcRect.height());
-    float maximumScale = std::min((dstRect.width() + 0.5) / srcRect.width(), (dstRect.height() + 0.5) / srcRect.height());
+    if (hScale != vScale) {
+        float minimumScale = std::max((dstRect.width() - 0.5) / srcRect.width(), (dstRect.height() - 0.5) / srcRect.height());
+        float maximumScale = std::min((dstRect.width() + 0.5) / srcRect.width(), (dstRect.height() + 0.5) / srcRect.height());
 
-    // If the difference between the two scales is due to integer rounding of image sizes,
-    // use the average scale for both axes.
-    if (minimumScale <= maximumScale) {
-        hScale = (maximumScale + minimumScale) / 2;
-        vScale = hScale;
+        // If the difference between the two scales is due to integer rounding of image sizes,
+        // use the smaller of the two original scales to ensure that the image fits inside the
+        // space originally allocated for it.
+        if (minimumScale <= maximumScale) {
+            hScale = std::min(hScale, vScale);
+            vScale = hScale;
+        }
     }
 
     context->translate(srcRect.x() * hScale, srcRect.y() * vScale);
