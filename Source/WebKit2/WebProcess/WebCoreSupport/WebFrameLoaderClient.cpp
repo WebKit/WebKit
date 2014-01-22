@@ -1551,7 +1551,7 @@ void WebFrameLoaderClient::didChangeScrollOffset()
     if (!m_frame->coreFrame()->view())
         return;
 
-    webPage->didChangeScrollOffsetForMainFrame();
+    webPage->updateMainFrameScrollOffsetPinning();
 }
 
 bool WebFrameLoaderClient::allowScript(bool enabledPerSettings)

@@ -3004,7 +3004,7 @@ void WebPage::clearSelection()
     m_page->focusController().focusedOrMainFrame().selection().clear();
 }
 
-void WebPage::didChangeScrollOffsetForMainFrame()
+void WebPage::updateMainFrameScrollOffsetPinning()
 {
     Frame& frame = m_page->mainFrame();
     IntPoint scrollPosition = frame.view()->scrollPosition();
@@ -3953,6 +3953,8 @@ void WebPage::didCommitLoad(WebFrame* frame)
 #endif
 
     WebProcess::shared().updateActivePages();
+
+    updateMainFrameScrollOffsetPinning();
 }
 
 void WebPage::didFinishLoad(WebFrame* frame)

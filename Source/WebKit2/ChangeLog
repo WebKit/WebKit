@@ -1,3 +1,21 @@
+2014-01-22  Tim Horton  <timothy_horton@apple.com>
+
+        [wk2] Scroll pinning state is wrong until the first scroll event
+        https://bugs.webkit.org/show_bug.cgi?id=127437
+
+        Reviewed by Simon Fraser.
+
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::didChangeScrollOffset):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::updateMainFrameScrollOffsetPinning):
+        (WebKit::WebPage::didCommitLoad):
+        * WebProcess/WebPage/WebPage.h:
+        Rename WebPage::didChangeScrollOffsetForMainFrame to
+        updateMainFrameScrollOffsetPinning, which better describes what it
+        actually does. Call it when a load is committed, so that we have valid
+        pinning state before the first scroll event comes in.
+
 2014-01-22  Anders Carlsson  <andersca@apple.com>
 
         Add WKWebViewConfiguration class

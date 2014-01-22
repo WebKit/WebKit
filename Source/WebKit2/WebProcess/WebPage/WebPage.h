@@ -581,7 +581,7 @@ public:
     void setMediaVolume(float);
     void setMayStartMediaWhenInWindow(bool);
 
-    void didChangeScrollOffsetForMainFrame();
+    void updateMainFrameScrollOffsetPinning();
 
     void mainFrameDidLayout();
 
