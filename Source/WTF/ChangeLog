@@ -1,3 +1,21 @@
+2014-01-22  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Add GUniquePtr
+        https://bugs.webkit.org/show_bug.cgi?id=127170
+
+        Reviewed by Gustavo Noronha Silva.
+
+        The idea is to replace GOwnPtr with a template alias of
+        std:unique_ptr. Not everything can be replaced, though, because
+        GOwnPtr::outPtr() doesn't seem to be possible to implement with
+        unique_ptr. This smart pointer is more flexible than GOwnPtr and
+        allows to transfer the ownership of the pointer using
+        std::move().
+
+        * GNUmakefile.list.am: Add new file to compilation.
+        * wtf/gobject/GUniquePtr.h: Added.
+        (WTF::GPtrDeleter::operator()):
+
 2014-01-20  Anders Carlsson  <andersca@apple.com>
 
         Remove an unused member variable

@@ -1,3 +1,19 @@
+2014-01-22  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+
+        [GTK] Add GUniquePtr
+        https://bugs.webkit.org/show_bug.cgi?id=127170
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Add unit tests for GUniquePtr.
+
+        * TestWebKitAPI/GNUmakefile.am: Add new file to compilation.
+        * TestWebKitAPI/Tests/WTF/gobject/GUniquePtr.cpp: Added.
+        (log):
+        (takeLogStr):
+        (TestWebKitAPI::TEST):
+
 2014-01-22  Jinwoo Song  <jinwoo7.song@samsung.com>
 
         Remove Nix files from Tools
