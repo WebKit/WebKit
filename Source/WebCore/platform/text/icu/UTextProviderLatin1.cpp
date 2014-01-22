@@ -67,7 +67,7 @@ static UText* uTextLatin1Clone(UText* destination, const UText* source, UBool de
     if (U_FAILURE(*status))
         return 0;
 
-    UText* result = utext_setup(destination, sizeof(UChar) * (UTextWithBufferInlineCapacity + 1), status);
+    UText* result = utext_setup(destination, sizeof(UChar) * UTextWithBufferInlineCapacity, status);
     if (U_FAILURE(*status))
         return destination;
     
@@ -82,7 +82,7 @@ static UText* uTextLatin1Clone(UText* destination, const UText* source, UBool de
     result->a = source->a;
     result->pFuncs = &uTextLatin1Funcs;
     result->chunkContents = (UChar*)result->pExtra;
-    memset(const_cast<UChar*>(result->chunkContents), 0, sizeof(UChar) * (UTextWithBufferInlineCapacity + 1));
+    memset(const_cast<UChar*>(result->chunkContents), 0, sizeof(UChar) * UTextWithBufferInlineCapacity);
 
     return result;
 }
@@ -132,7 +132,7 @@ static UBool uTextLatin1Access(UText* uText, int64_t index, UBool forward)
         if (uText->chunkNativeLimit > length)
             uText->chunkNativeLimit = length;
 
-        uText->chunkNativeStart = uText->chunkNativeLimit -  UTextWithBufferInlineCapacity;
+        uText->chunkNativeStart = uText->chunkNativeLimit - UTextWithBufferInlineCapacity;
         if (uText->chunkNativeStart < 0)
             uText->chunkNativeStart = 0;
 
@@ -228,7 +228,7 @@ UText* openLatin1UTextProvider(UTextWithBuffer* utWithBuffer, const LChar* strin
     text->a = length;
     text->pFuncs = &uTextLatin1Funcs;
     text->chunkContents = (UChar*)text->pExtra;
-    memset(const_cast<UChar*>(text->chunkContents), 0, sizeof(UChar) * (UTextWithBufferInlineCapacity + 1));
+    memset(const_cast<UChar*>(text->chunkContents), 0, sizeof(UChar) * UTextWithBufferInlineCapacity);
 
     return text;
 }

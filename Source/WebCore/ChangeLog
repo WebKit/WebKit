@@ -1,3 +1,15 @@
+2014-01-22  peavo@outlook.com  <peavo@outlook.com>
+
+        Crashes in setTextForIterator
+        https://bugs.webkit.org/show_bug.cgi?id=127424
+
+        Reviewed by Brent Fulgham.
+
+        * platform/text/icu/UTextProviderLatin1.cpp:
+        (WebCore::uTextLatin1Clone): Provide correct buffer size in utext_setup function call.
+        (WebCore::uTextLatin1Access): Give correct buffer size to memset call.
+        (WebCore::openLatin1UTextProvider): Ditto.
+
 2014-01-22  Jer Noble  <jer.noble@apple.com>
 
         [Mac] MediaPlayerPrivateMediaSourceAVFObjC::load ASSERTs on lots of tests
