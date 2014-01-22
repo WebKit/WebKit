@@ -1,3 +1,15 @@
+2014-01-22  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        REGRESSION(r162441): [GTK] ResourceLoader is broken when there aren't user extensions
+        https://bugs.webkit.org/show_bug.cgi?id=127422
+
+        Reviewed by Anders Carlsson.
+
+        * WebProcess/gtk/WebGtkExtensionManager.cpp:
+        (WebKit::WebGtkExtensionManager::initialize): Always create the
+        WebKitWebExtension object since it's used internally to implement
+        the ResourceLoader client.
+
 2014-01-22  Jer Noble  <jer.noble@apple.com>
 
         [Mac][WK2] Unable to play video protected by session cookies

@@ -92,14 +92,14 @@ bool WebGtkExtensionManager::initializeWebExtension(Module* extensionModule, GVa
 
 void WebGtkExtensionManager::initialize(WKBundleRef bundle, WKTypeRef userDataString)
 {
+    m_extension = adoptGRef(webkitWebExtensionCreate(toImpl(bundle)));
+
     String webExtensionsDirectory;
     GRefPtr<GVariant> userData;
     parseUserData(userDataString, webExtensionsDirectory, userData);
 
     if (webExtensionsDirectory.isNull())
         return;
-
-    m_extension = adoptGRef(webkitWebExtensionCreate(toImpl(bundle)));
 
     Vector<String> modulePaths;
     scanModules(webExtensionsDirectory, modulePaths);
