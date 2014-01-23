@@ -1,3 +1,15 @@
+2014-01-22  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        ASSERTION FAILED: v.isFixed() in WebCore::RenderStyle::setWordSpacing
+        https://bugs.webkit.org/show_bug.cgi?id=126987
+
+        Reviewed by Simon Fraser.
+
+        When "inherit" is specified and there is no parent, Length values have an "Auto" type
+
+        * fast/css3-text/css3-word-spacing-percentage/word-spacing-crash-expected.txt: Added.
+        * fast/css3-text/css3-word-spacing-percentage/word-spacing-crash.html: Added.
+
 2014-01-22  Samuel White  <samuel_white@apple.com>
 
         AX: Can't always increment web sliders.

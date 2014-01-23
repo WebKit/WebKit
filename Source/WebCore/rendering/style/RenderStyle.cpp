@@ -1453,11 +1453,19 @@ int RenderStyle::computedLineHeight(RenderView* renderView) const
 void RenderStyle::setWordSpacing(Length v)
 {
     float fontWordSpacing;
-    if (v.isPercent())
+    switch (v.type()) {
+    case Auto:
+        fontWordSpacing = 0;
+    case Percent:
         fontWordSpacing = v.getFloatValue() * font().spaceWidth() / 100;
-    else {
-        ASSERT(v.isFixed());
+        break;
+    case Fixed:
         fontWordSpacing = v.getFloatValue();
+        break;
+    default:
+        ASSERT_NOT_REACHED();
+        fontWordSpacing = 0;
+        break;
     }
     inherited.access()->font.setWordSpacing(fontWordSpacing);
     rareInheritedData.access()->wordSpacing = std::move(v);
