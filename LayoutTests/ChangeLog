@@ -1,3 +1,29 @@
+2014-01-22  Jinwoo Song  <jinwoo7.song@samsung.com>
+
+        Unreviewed EFL gardening after r162553.
+
+        * platform/efl/css1/box_properties/padding-expected.txt:
+        * platform/efl/css1/box_properties/padding_top-expected.txt:
+        * platform/efl/css1/formatting_model/vertical_formatting-expected.txt:
+        * platform/efl/css2.1/t080301-c411-vt-mrgn-00-b-expected.txt:
+        * platform/efl/css2.1/t0804-c5510-padn-00-b-ag-expected.txt:
+        * platform/efl/css2.1/t0905-c414-flt-wrap-00-e-expected.txt:
+        * platform/efl/fast/css/empty-pseudo-class-expected.txt:
+        * platform/efl/fast/css/fieldset-display-row-expected.txt:
+        * platform/efl/fast/css/first-child-pseudo-class-expected.txt:
+        * platform/efl/fast/css/last-child-pseudo-class-expected.txt:
+        * platform/efl/fast/css/only-child-pseudo-class-expected.txt:
+        * platform/efl/fast/repaint/reflection-redraw-expected.txt:
+        * platform/efl/fast/table/dynamic-caption-add-remove-before-child-expected.txt:
+        * platform/efl/fast/table/multiple-captions-display-expected.txt:
+        * platform/efl/tables/mozilla/marvin/body_col-expected.txt:
+        * platform/efl/tables/mozilla/marvin/x_th_valign_baseline-expected.txt:
+        * platform/efl/tables/mozilla/other/body_col-expected.txt:
+        * platform/efl/tables/mozilla_expected_failures/bugs/bug10140-expected.txt:
+        * platform/efl/tables/mozilla_expected_failures/bugs/bug10216-expected.txt:
+        * platform/efl/tables/mozilla_expected_failures/core/captions3-expected.txt:
+        * platform/efl/tables/mozilla_expected_failures/other/test4-expected.txt:
+
 2014-01-22  Myles C. Maxfield  <mmaxfield@apple.com>
 
         ASSERTION FAILED: v.isFixed() in WebCore::RenderStyle::setWordSpacing

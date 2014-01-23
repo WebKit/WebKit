@@ -39,8 +39,8 @@ layer at (0,0) size 785x869
                 RenderText {#text} at (0,0) size 5x17
                   text run at (0,0) width 5: "-"
               RenderBlock {P} at (3,542) size 80x57 [bgcolor=#00FF00]
-                RenderText {#text} at (0,37) size 5x18
-                  text run at (0,37) width 5: "-"
+                RenderText {#text} at (0,38) size 5x17
+                  text run at (0,38) width 5: "-"
               RenderBlock (floating) {P} at (3,674) size 40x19 [bgcolor=#FFFFFF]
                 RenderText {#text} at (0,0) size 5x17
                   text run at (0,0) width 5: "-"
@@ -51,8 +51,8 @@ layer at (0,0) size 785x869
                 RenderText {#text} at (0,0) size 5x17
                   text run at (0,0) width 5: "-"
               RenderBlock {P} at (3,748) size 80x56 [bgcolor=#FFFF00]
-                RenderText {#text} at (0,37) size 5x18
-                  text run at (0,37) width 5: "-"
+                RenderText {#text} at (0,38) size 5x17
+                  text run at (0,38) width 5: "-"
             RenderTableCell {TD} at (90,2) size 86x807 [border: (3px solid #000000)] [r=0 c=1 rs=1 cs=1]
               RenderBlock {DIV} at (3,3) size 80x18 [bgcolor=#FFFF00]
                 RenderText {#text} at (0,0) size 5x17

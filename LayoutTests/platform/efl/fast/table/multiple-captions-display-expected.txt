@@ -36,7 +36,7 @@ layer at (0,0) size 800x280
         RenderBlock {caption} at (0,126) size 126x0
 layer at (8,218) size 126x54
   RenderBlock {caption} at (0,210) size 126x54
-    RenderText {#text} at (25,0) size 116x53
+    RenderText {#text} at (25,0) size 117x53
       text run at (25,0) width 76: "PASS: First"
       text run at (5,18) width 116: "Caption aligned to"
       text run at (29,36) width 68: "the bottom"
@@ -46,7 +46,7 @@ layer at (10,156) size 230x18
       text run at (0,0) width 230: "PASS: Caption with a fixed position"
 layer at (8,8) size 126x36
   RenderBlock {caption} at (0,0) size 126x36
-    RenderText {#text} at (14,0) size 102x35
+    RenderText {#text} at (14,0) size 103x35
       text run at (14,0) width 98: "PASS: Caption"
       text run at (12,18) width 102: "with opacity 0.7"
 layer at (10,196) size 331x18
