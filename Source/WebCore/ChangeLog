@@ -1,3 +1,26 @@
+2014-01-23  Mihai Maerean  <mmaerean@adobe.com>
+
+        [CSS Regions] Fix positioning composited layers when the region has overflow:hidden
+        https://bugs.webkit.org/show_bug.cgi?id=124042
+
+        Reviewed by Mihnea Ovidenie.
+
+        If there's a clipping GraphicsLayer on the hierarchy, substract its offset, since it's its
+        parent that positions us.
+
+        Tests: compositing/regions/position-layer-inside-region-overflow-hidden.html
+               compositing/regions/position-layer-inside-overflow-hidden.html
+               compositing/regions/position-layers-inside-region-overflow-hidden.html
+               compositing/regions/position-layers-inside-regions-overflow-hidden.html
+
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::adjustAncestorCompositingBoundsForFlowThread): The position
+        must also be correct when the region has box-shadow that inflates the region's layer. The
+        composited layers from the flow thread should be rendered in the same position whether the
+        associated region has clipping or not.
+        Using the position of the clipping layer instead of the location of the clipbox makes it
+        also work with box-shadow that inflates the region's graphics layer.
+
 2014-01-23  Andrei Bucur  <abucur@adobe.com>
 
         [CSS Regions] Convert regions iterator loops to range-based loops

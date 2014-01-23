@@ -1,3 +1,19 @@
+2014-01-23  Mihai Maerean  <mmaerean@adobe.com>
+
+        [CSS Regions] Fix positioning composited layers when the region has overflow:hidden
+        https://bugs.webkit.org/show_bug.cgi?id=124042
+
+        Reviewed by Mihnea Ovidenie.
+
+        * compositing/regions/position-layer-inside-region-overflow-hidden.html: Added.
+        * compositing/regions/position-layer-inside-region-overflow-hidden-expected.html: Added.
+        * compositing/regions/position-layer-inside-overflow-hidden.html: Added.
+        * compositing/regions/position-layer-inside-overflow-hidden-expected.html: Added.
+        * compositing/regions/position-layers-inside-region-overflow-hidden.html: Added.
+        * compositing/regions/position-layers-inside-region-overflow-hidden-expected.html: Added.
+        * compositing/regions/position-layers-inside-regions-overflow-hidden.html: Added.
+        * compositing/regions/position-layers-inside-regions-overflow-hidden-expected.html: Added.
+
 2014-01-23  Csaba Osztrogonác  <ossy@webkit.org>
 
         Unreviewed gardening.

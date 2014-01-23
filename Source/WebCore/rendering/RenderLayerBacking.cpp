@@ -985,7 +985,6 @@ void RenderLayerBacking::adjustAncestorCompositingBoundsForFlowThread(IntRect& a
 
     RenderLayer* flowThreadLayer = m_owningLayer.isInsideOutOfFlowThread() ? m_owningLayer.stackingContainer() : m_owningLayer.enclosingFlowThreadAncestor();
     if (flowThreadLayer && flowThreadLayer->isRenderFlowThread()) {
-        RenderFlowThread& flowThread = toRenderFlowThread(flowThreadLayer->renderer());
         if (m_owningLayer.isFlowThreadCollectingGraphicsLayersUnderRegions()) {
             // The RenderNamedFlowThread is not composited, as we need it to paint the 
             // background layer of the regions. We need to compensate for that by manually
@@ -996,21 +995,31 @@ void RenderLayerBacking::adjustAncestorCompositingBoundsForFlowThread(IntRect& a
         }
 
         // Move the ancestor position at the top of the region where the composited layer is going to display.
+        RenderFlowThread& flowThread = toRenderFlowThread(flowThreadLayer->renderer());
         RenderNamedFlowFragment* parentRegion = flowThread.cachedRegionForCompositedLayer(m_owningLayer);
-        if (parentRegion) {
-            IntPoint flowDelta;
-            m_owningLayer.convertToPixelSnappedLayerCoords(flowThreadLayer, flowDelta);
-            parentRegion->adjustRegionBoundsFromFlowThreadPortionRect(flowDelta, ancestorCompositingBounds);
-            RenderBoxModelObject& layerOwner = toRenderBoxModelObject(parentRegion->layerOwner());
-            if (layerOwner.layer()->backing()) {
-                // Make sure that the region propagates its borders, paddings, outlines or box-shadows to layers inside it.
-                // Note that the composited bounds of the RenderRegion are already calculated
-                // because RenderLayerCompositor::rebuildCompositingLayerTree will only
-                // iterate on the content of the region after the region itself is computed.
-                ancestorCompositingBounds.moveBy(roundedIntPoint(layerOwner.layer()->backing()->compositedBounds().location()));
-                ancestorCompositingBounds.move(-layerOwner.borderAndPaddingStart(), -layerOwner.borderAndPaddingBefore());
-            }
-        }
+        if (!parentRegion)
+            return;
+
+        IntPoint flowDelta;
+        m_owningLayer.convertToPixelSnappedLayerCoords(flowThreadLayer, flowDelta);
+        parentRegion->adjustRegionBoundsFromFlowThreadPortionRect(flowDelta, ancestorCompositingBounds);
+        RenderBoxModelObject& layerOwner = toRenderBoxModelObject(parentRegion->layerOwner());
+        RenderLayerBacking* layerOwnerBacking = layerOwner.layer()->backing();
+        if (!layerOwnerBacking)
+            return;
+
+        // Make sure that the region propagates its borders, paddings, outlines or box-shadows to layers inside it.
+        // Note that the composited bounds of the RenderRegion are already calculated because
+        // RenderLayerCompositor::rebuildCompositingLayerTree will only iterate on the content of the region after the
+        // region itself is computed.
+        ancestorCompositingBounds.moveBy(roundedIntPoint(layerOwnerBacking->compositedBounds().location()));
+        ancestorCompositingBounds.move(-layerOwner.borderAndPaddingStart(), -layerOwner.borderAndPaddingBefore());
+
+        // If there's a clipping GraphicsLayer on the hierarchy (region graphics layer -> clipping graphics layer ->
+        // composited content graphics layer), substract the offset of the clipping layer, since it's its parent
+        // that positions us (the graphics layer of the region).
+        if (layerOwnerBacking->clippingLayer())
+            ancestorCompositingBounds.moveBy(roundedIntPoint(layerOwnerBacking->clippingLayer()->position()));
     }
 }
 
