@@ -1,3 +1,10 @@
+2014-01-23  Antti Koivisto  <antti@apple.com>
+
+        Rebaseline after r162640.
+
+        * platform/mac-wk2/tiled-drawing/tile-coverage-after-scroll-speculative-expected.txt:
+        * platform/mac-wk2/tiled-drawing/tile-coverage-speculative-expected.txt:
+
 2014-01-23  Max Vujovic  <mvujovic@adobe.com>
 
         Remove CSS Custom Filters code and tests
