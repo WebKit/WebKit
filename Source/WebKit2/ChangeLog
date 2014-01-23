@@ -1,5 +1,11 @@
 2014-01-23  Anders Carlsson  <andersca@apple.com>
 
+        Try to fix the 32-bit build.
+
+        * UIProcess/API/Cocoa/WKPreferences.mm:
+
+2014-01-23  Anders Carlsson  <andersca@apple.com>
+
         Remove an unneeded synchronous back/forward message
         https://bugs.webkit.org/show_bug.cgi?id=127516
 

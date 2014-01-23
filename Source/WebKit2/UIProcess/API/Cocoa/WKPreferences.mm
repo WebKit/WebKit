@@ -26,7 +26,7 @@
 #include "config.h"
 #include "WKPreferences.h"
 
-#ifdef WK_API_ENABLED
+#if WK_API_ENABLED
 
 @implementation WKPreferences
 
