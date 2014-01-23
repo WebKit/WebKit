@@ -244,7 +244,7 @@ void IDBServerConnectionLevelDB::deleteIndex(IDBTransactionBackend& transaction,
     ASYNC_COMPLETION_CALLBACK_WITH_NULL_ARG(completionCallback);
 }
 
-void IDBServerConnectionLevelDB::get(IDBTransactionBackend& transaction, const GetOperation& operation, std::function<void(PassRefPtr<IDBDatabaseError>)> completionCallback)
+void IDBServerConnectionLevelDB::get(IDBTransactionBackend& transaction, const GetOperation& operation, std::function<void(const IDBGetResult&, PassRefPtr<IDBDatabaseError>)> completionCallback)
 {
     IDBBackingStoreTransactionLevelDB* backingStoreTransaction = m_backingStoreTransactions.get(transaction.id());
     ASSERT(backingStoreTransaction);
@@ -272,8 +272,7 @@ void IDBServerConnectionLevelDB::get(IDBTransactionBackend& transaction, const G
         }
 
         if (!backingStoreCursor) {
-            operation.callbacks()->onSuccess();
-            ASYNC_COMPLETION_CALLBACK_WITH_NULL_ARG(completionCallback);
+            ASYNC_COMPLETION_CALLBACK_WITH_TWO_ARGS(completionCallback, IDBGetResult(), nullptr);
             return;
         }
 
@@ -287,45 +286,44 @@ void IDBServerConnectionLevelDB::get(IDBTransactionBackend& transaction, const G
         Vector<char> value;
         ok = m_backingStore->getRecord(*backingStoreTransaction, transaction.database().id(), operation.objectStoreID(), *key, value);
         if (!ok) {
-            operation.callbacks()->onError(IDBDatabaseError::create(IDBDatabaseException::UnknownError, "Internal error in getRecord."));
-            ASYNC_COMPLETION_CALLBACK_WITH_NULL_ARG(completionCallback);
+            ASYNC_COMPLETION_CALLBACK_WITH_TWO_ARGS(completionCallback, IDBGetResult(), IDBDatabaseError::create(IDBDatabaseException::UnknownError, "Internal error in getRecord."));
             return;
         }
 
         if (value.isEmpty()) {
-            operation.callbacks()->onSuccess();
-            ASYNC_COMPLETION_CALLBACK_WITH_NULL_ARG(completionCallback);
+            ASYNC_COMPLETION_CALLBACK_WITH_TWO_ARGS(completionCallback, IDBGetResult(), nullptr);
             return;
         }
 
-        if (operation.autoIncrement() && !operation.keyPath().isNull()) {
-            operation.callbacks()->onSuccess(SharedBuffer::adoptVector(value), key, operation.keyPath());
-            ASYNC_COMPLETION_CALLBACK_WITH_NULL_ARG(completionCallback);
-            return;
-        }
+        IDBGetResult result;
 
-        operation.callbacks()->onSuccess(SharedBuffer::adoptVector(value));
-        ASYNC_COMPLETION_CALLBACK_WITH_NULL_ARG(completionCallback);
+        if (operation.autoIncrement() && !operation.keyPath().isNull())
+            result = IDBGetResult(SharedBuffer::adoptVector(value), key, operation.keyPath());
+        else
+            result = IDBGetResult(SharedBuffer::adoptVector(value));
+
+        callOnMainThread([completionCallback, result]() {
+            completionCallback(result, nullptr);
+        });
         return;
-
     }
 
     // From here we are dealing only with indexes.
     ok = m_backingStore->getPrimaryKeyViaIndex(*backingStoreTransaction, transaction.database().id(), operation.objectStoreID(), operation.indexID(), *key, primaryKey);
     if (!ok) {
-        operation.callbacks()->onError(IDBDatabaseError::create(IDBDatabaseException::UnknownError, "Internal error in getPrimaryKeyViaIndex."));
-        ASYNC_COMPLETION_CALLBACK_WITH_NULL_ARG(completionCallback);
+        ASYNC_COMPLETION_CALLBACK_WITH_TWO_ARGS(completionCallback, IDBGetResult(), IDBDatabaseError::create(IDBDatabaseException::UnknownError, "Internal error in getPrimaryKeyViaIndex."));
         return;
     }
     if (!primaryKey) {
-        operation.callbacks()->onSuccess();
-        ASYNC_COMPLETION_CALLBACK_WITH_NULL_ARG(completionCallback);
+        ASYNC_COMPLETION_CALLBACK_WITH_TWO_ARGS(completionCallback, IDBGetResult(), nullptr);
         return;
     }
     if (operation.cursorType() == IndexedDB::CursorType::KeyOnly) {
         // Index Value Retrieval Operation
-        operation.callbacks()->onSuccess(primaryKey.get());
-        ASYNC_COMPLETION_CALLBACK_WITH_NULL_ARG(completionCallback);
+        IDBGetResult result(primaryKey.release());
+        callOnMainThread([completionCallback, result]() {
+            completionCallback(result, nullptr);
+        });
         return;
     }
 
@@ -333,23 +331,27 @@ void IDBServerConnectionLevelDB::get(IDBTransactionBackend& transaction, const G
     Vector<char> value;
     ok = m_backingStore->getRecord(*backingStoreTransaction, transaction.database().id(), operation.objectStoreID(), *primaryKey, value);
     if (!ok) {
-        operation.callbacks()->onError(IDBDatabaseError::create(IDBDatabaseException::UnknownError, "Internal error in getRecord."));
-        ASYNC_COMPLETION_CALLBACK_WITH_NULL_ARG(completionCallback);
+        ASYNC_COMPLETION_CALLBACK_WITH_TWO_ARGS(completionCallback, IDBGetResult(), IDBDatabaseError::create(IDBDatabaseException::UnknownError, "Internal error in getRecord."));
         return;
     }
 
     if (value.isEmpty()) {
-        operation.callbacks()->onSuccess();
-        ASYNC_COMPLETION_CALLBACK_WITH_NULL_ARG(completionCallback);
+        ASYNC_COMPLETION_CALLBACK_WITH_TWO_ARGS(completionCallback, IDBGetResult(), nullptr);
         return;
     }
     if (operation.autoIncrement() && !operation.keyPath().isNull()) {
-        operation.callbacks()->onSuccess(SharedBuffer::adoptVector(value), primaryKey, operation.keyPath());
-        ASYNC_COMPLETION_CALLBACK_WITH_NULL_ARG(completionCallback);
+        IDBGetResult result(SharedBuffer::adoptVector(value), key, operation.keyPath());
+        callOnMainThread([completionCallback, result]() {
+            completionCallback(result, nullptr);
+        });
+
         return;
     }
-    operation.callbacks()->onSuccess(SharedBuffer::adoptVector(value));
-    ASYNC_COMPLETION_CALLBACK_WITH_NULL_ARG(completionCallback);
+
+    IDBGetResult result(SharedBuffer::adoptVector(value));
+    callOnMainThread([completionCallback, result]() {
+        completionCallback(result, nullptr);
+    });
 }
 
 void IDBServerConnectionLevelDB::put(IDBTransactionBackend& transaction, const PutOperation& operation, std::function<void(PassRefPtr<IDBKey>, PassRefPtr<IDBDatabaseError>)> completionCallback)

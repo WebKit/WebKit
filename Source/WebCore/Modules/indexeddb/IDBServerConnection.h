@@ -46,6 +46,33 @@ class IDBTransactionBackend;
 struct IDBIndexMetadata;
 struct IDBObjectStoreMetadata;
 
+struct IDBGetResult {
+    IDBGetResult()
+    {
+    }
+
+    IDBGetResult(PassRefPtr<SharedBuffer> buffer)
+        : valueBuffer(buffer)
+    {
+    }
+
+    IDBGetResult(PassRefPtr<IDBKey> idbKey)
+        : key(idbKey)
+    {
+    }
+
+    IDBGetResult(PassRefPtr<SharedBuffer> buffer, PassRefPtr<IDBKey> idbKey, const IDBKeyPath& path)
+        : valueBuffer(buffer)
+        , key(idbKey)
+        , keyPath(path)
+    {
+    }
+
+    RefPtr<SharedBuffer> valueBuffer;
+    RefPtr<IDBKey> key;
+    IDBKeyPath keyPath;
+};
+
 // This interface provides a single asynchronous layer between the web-facing frontend
 // and the I/O performing backend of IndexedDatabase.
 // If an operation's completion needs to be confirmed that must be done through use of a callback function.
@@ -77,7 +104,7 @@ public:
     virtual void createObjectStore(IDBTransactionBackend&, const CreateObjectStoreOperation&, std::function<void(PassRefPtr<IDBDatabaseError>)> completionCallback) = 0;
     virtual void createIndex(IDBTransactionBackend&, const CreateIndexOperation&, std::function<void(PassRefPtr<IDBDatabaseError>)> completionCallback) = 0;
     virtual void deleteIndex(IDBTransactionBackend&, const DeleteIndexOperation&, std::function<void(PassRefPtr<IDBDatabaseError>)> completionCallback) = 0;
-    virtual void get(IDBTransactionBackend&, const GetOperation&, std::function<void(PassRefPtr<IDBDatabaseError>)> completionCallback) = 0;
+    virtual void get(IDBTransactionBackend&, const GetOperation&, std::function<void(const IDBGetResult&, PassRefPtr<IDBDatabaseError>)> completionCallback) = 0;
     virtual void put(IDBTransactionBackend&, const PutOperation&, std::function<void(PassRefPtr<IDBKey>, PassRefPtr<IDBDatabaseError>)> completionCallback) = 0;
     virtual void openCursor(IDBTransactionBackend&, const OpenCursorOperation&, std::function<void(PassRefPtr<IDBDatabaseError>)> completionCallback) = 0;
     virtual void count(IDBTransactionBackend&, const CountOperation&, std::function<void(PassRefPtr<IDBDatabaseError>)> completionCallback) = 0;

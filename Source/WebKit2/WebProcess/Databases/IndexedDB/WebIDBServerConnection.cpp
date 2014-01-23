@@ -297,7 +297,7 @@ void WebIDBServerConnection::deleteIndex(IDBTransactionBackend&, const DeleteInd
 {
 }
 
-void WebIDBServerConnection::get(IDBTransactionBackend&, const GetOperation&, std::function<void(PassRefPtr<IDBDatabaseError>)> completionCallback)
+void WebIDBServerConnection::get(IDBTransactionBackend&, const GetOperation&, std::function<void(const IDBGetResult&, PassRefPtr<IDBDatabaseError>)> completionCallback)
 {
 }
 

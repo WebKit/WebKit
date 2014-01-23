@@ -263,7 +263,6 @@ public:
     int64_t indexID() const { return m_indexID; }
     IndexedDB::CursorType cursorType() const { return m_cursorType; }
     IDBKeyRange* keyRange() const { return m_keyRange.get(); }
-    RefPtr<IDBCallbacks> callbacks() const { return m_callbacks.get(); }
     bool autoIncrement() const { return m_autoIncrement; }
     IDBKeyPath keyPath() const { return m_keyPath; }
 

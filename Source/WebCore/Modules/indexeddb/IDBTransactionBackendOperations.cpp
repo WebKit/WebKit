@@ -94,7 +94,27 @@ void GetOperation::perform(std::function<void()> completionCallback)
     RefPtr<GetOperation> operation(this);
     STANDARD_DATABASE_ERROR_CALLBACK;
 
-    m_transaction->database().serverConnection().get(*m_transaction, *this, operationCallback);
+    m_transaction->database().serverConnection().get(*m_transaction, *this, [this, operation, operationCallback](const IDBGetResult& result, PassRefPtr<IDBDatabaseError> prpError) {
+        RefPtr<IDBDatabaseError> error = prpError;
+
+        if (error)
+            m_callbacks->onError(error);
+        else {
+            if (!result.valueBuffer) {
+                if (!result.key)
+                    m_callbacks->onSuccess();
+                else
+                    m_callbacks->onSuccess(result.key.get());
+            } else {
+                if (result.key)
+                    m_callbacks->onSuccess(result.valueBuffer, result.key, result.keyPath);
+                else
+                    m_callbacks->onSuccess(result.valueBuffer.get());
+            }
+        }
+
+        operationCallback(error.release());
+    });
 }
 
 void PutOperation::perform(std::function<void()> completionCallback)

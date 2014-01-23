@@ -1,3 +1,24 @@
+2014-01-22  Brady Eidson  <beidson@apple.com>
+
+        The IDB backing store get() method shouldn't call IDB callbacks directly
+        https://bugs.webkit.org/show_bug.cgi?id=127453
+
+        Reviewed by Beth Dakin.
+
+        * Modules/indexeddb/IDBServerConnection.h:
+        (WebCore::IDBGetResult::IDBGetResult): Add a new structure to hold all of the
+          possible results of a get() call.
+
+        * Modules/indexeddb/leveldb/IDBServerConnectionLevelDB.cpp:
+        (WebCore::IDBServerConnectionLevelDB::get): Don't call IDBCallbacks directly.
+          Instead, return the GetResult to the GetOperation which will make IDBCallbacks.
+        * Modules/indexeddb/leveldb/IDBServerConnectionLevelDB.h:
+
+        * Modules/indexeddb/IDBTransactionBackendOperations.cpp:
+        (WebCore::GetOperation::perform): Get all of the IDBGetResults in the completion callback
+          make the appropriate IDBCallback.
+        * Modules/indexeddb/IDBTransactionBackendOperations.h:
+
 2014-01-22  Dean Jackson  <dino@apple.com>
 
         Unreviewed attempt to fix 32-bit builds.

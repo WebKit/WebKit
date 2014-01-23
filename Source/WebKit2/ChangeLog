@@ -1,3 +1,14 @@
+2014-01-22  Brady Eidson  <beidson@apple.com>
+
+        The IDB backing store get() method shouldn't call IDB callbacks directly
+        https://bugs.webkit.org/show_bug.cgi?id=127453
+        
+        Reviewed by Beth Dakin.
+
+        * WebProcess/Databases/IndexedDB/WebIDBServerConnection.cpp:
+        (WebKit::WebIDBServerConnection::get):
+        * WebProcess/Databases/IndexedDB/WebIDBServerConnection.h:
+
 2014-01-22  Martin Hock  <mhock@apple.com>
 
         Enable Session API.
