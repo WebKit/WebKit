@@ -1,3 +1,15 @@
+2014-01-23  László Langó  <llango.u-szeged@partner.samsung.com>
+
+        Range should be constructable.
+        https://bugs.webkit.org/show_bug.cgi?id=115639
+
+        Reviewed by Ryosuke Niwa.
+
+        * fast/dom/Range/range-constructor-expected.txt: Added.
+        * fast/dom/Range/range-constructor.html: Added.
+        * fast/dom/dom-constructors-expected.txt:
+        * fast/dom/dom-constructors.html:
+
 2014-01-22  Jinwoo Song  <jinwoo7.song@samsung.com>
 
         Unreviewed EFL gardening after r162553.

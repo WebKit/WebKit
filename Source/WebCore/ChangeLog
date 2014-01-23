@@ -1,3 +1,22 @@
+2014-01-23  László Langó  <llango.u-szeged@partner.samsung.com>
+
+        Range should be constructable.
+        https://bugs.webkit.org/show_bug.cgi?id=115639
+
+        Reviewed by Ryosuke Niwa.
+
+        http://www.w3.org/TR/2013/WD-dom-20131107/#interface-range
+        Now we can do `new Range()` instead of `document.createRange()`.
+
+        Backported from Blink: https://chromium.googlesource.com/chromium/blink/+/47ca40efdf58a4787aa33aa75a35778899b1c002%5E%21
+
+        Test: fast/dom/Range/range-constructor.html
+
+        * dom/Range.cpp:
+        (WebCore::Range::create):
+        * dom/Range.h:
+        * dom/Range.idl:
+
 2014-01-23  ChangSeok Oh  <changseok.oh@collabora.com>
 
         Unreviewed build fix for gles after r162565. Add missing definitions.

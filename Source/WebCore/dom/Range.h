@@ -55,6 +55,7 @@ public:
     static PassRefPtr<Range> create(Document&);
     static PassRefPtr<Range> create(Document&, PassRefPtr<Node> startContainer, int startOffset, PassRefPtr<Node> endContainer, int endOffset);
     static PassRefPtr<Range> create(Document&, const Position&, const Position&);
+    static PassRefPtr<Range> create(ScriptExecutionContext&);
 #if PLATFORM(IOS)
     // FIXME: Consider making this a static non-member, non-friend function.
     static PassRefPtr<Range> create(Document&, const VisiblePosition&, const VisiblePosition&);

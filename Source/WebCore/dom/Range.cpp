@@ -104,6 +104,11 @@ PassRefPtr<Range> Range::create(Document& ownerDocument, const Position& start, 
     return adoptRef(new Range(ownerDocument, start.containerNode(), start.computeOffsetInContainerNode(), end.containerNode(), end.computeOffsetInContainerNode()));
 }
 
+PassRefPtr<Range> Range::create(ScriptExecutionContext& context)
+{
+    return adoptRef(new Range(toDocument(context)));
+}
+
 #if PLATFORM(IOS)
 PassRefPtr<Range> Range::create(Document& ownerDocument, const VisiblePosition& visibleStart, const VisiblePosition& visibleEnd)
 {
