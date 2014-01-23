@@ -1,5 +1,23 @@
 2014-01-23  Anders Carlsson  <andersca@apple.com>
 
+        Clean up WKView.mm a little
+        https://bugs.webkit.org/show_bug.cgi?id=127517
+
+        Reviewed by Tim Horton.
+
+        Remove an unused ivar and migrate to API constants that were added in Lion.
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView setFrameSize:]):
+        (-[WKView addWindowObserversForWindow:]):
+        (-[WKView removeWindowObservers]):
+        (-[WKView viewDidMoveToWindow]):
+        (-[WKView _windowDidMiniaturize:]):
+        (-[WKView _windowDidResize:]):
+        (-[WKView _windowDidChangeBackingProperties:]):
+
+2014-01-23  Anders Carlsson  <andersca@apple.com>
+
         Try to fix the 32-bit build.
 
         * UIProcess/API/Cocoa/WKPreferences.mm:

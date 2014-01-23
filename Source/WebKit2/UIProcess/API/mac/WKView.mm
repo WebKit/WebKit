@@ -203,12 +203,6 @@ struct WKViewInterpretKeyEventsParameters {
     BOOL _needsViewFrameInWindowCoordinates;
     BOOL _didScheduleWindowAndViewFrameUpdate;
 
-    // Whether the containing window of the WKView has a valid backing store.
-    // The window server invalidates the backing store whenever the window is resized or minimized.
-    // We use this flag to determine when we need to paint the background (white or clear)
-    // when the web process is unresponsive or takes too long to paint.
-    BOOL _windowHasValidBackingStore;
-
     RetainPtr<NSColorSpace> _colorSpace;
 
     RefPtr<WebCore::Image> _promisedImage;
@@ -404,9 +398,6 @@ struct WKViewInterpretKeyEventsParameters {
 
 - (void)setFrameSize:(NSSize)size
 {
-    if (!NSEqualSizes(size, [self frame].size))
-        _data->_windowHasValidBackingStore = NO;
-
     [super setFrameSize:size];
 
     if (![self frameSizeUpdatesDisabled]) {
@@ -1817,10 +1808,6 @@ static void createSandboxExtensionsForFileUpload(NSPasteboard *pasteboard, Sandb
     return NSMouseInRect(localPoint, visibleThumbRect, [self isFlipped]);
 }
 
-// FIXME: Use AppKit constants for these when they are available.
-static NSString * const windowDidChangeBackingPropertiesNotification = @"NSWindowDidChangeBackingPropertiesNotification";
-static NSString * const backingPropertyOldScaleFactorKey = @"NSBackingPropertyOldScaleFactorKey";
-
 - (void)addWindowObserversForWindow:(NSWindow *)window
 {
     if (window) {
@@ -1841,7 +1828,7 @@ static NSString * const backingPropertyOldScaleFactorKey = @"NSBackingPropertyOl
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_windowDidOrderOnScreen:) 
                                                      name:@"_NSWindowDidBecomeVisible" object:window];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_windowDidChangeBackingProperties:)
-                                                     name:windowDidChangeBackingPropertiesNotification object:window];
+                                                     name:NSWindowDidChangeBackingPropertiesNotification object:window];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_windowDidChangeScreen:)
                                                      name:NSWindowDidChangeScreenNotification object:window];
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
@@ -1866,7 +1853,7 @@ static NSString * const backingPropertyOldScaleFactorKey = @"NSBackingPropertyOl
     [[NSNotificationCenter defaultCenter] removeObserver:self name:@"NSWindowWillOrderOffScreenNotification" object:window];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:@"NSWindowDidOrderOffScreenNotification" object:window];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:@"_NSWindowDidBecomeVisible" object:window];
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:windowDidChangeBackingPropertiesNotification object:window];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:NSWindowDidChangeBackingPropertiesNotification object:window];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:NSWindowDidChangeScreenNotification object:window];
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
     [[NSNotificationCenter defaultCenter] removeObserver:self name:NSWindowDidChangeOcclusionStateNotification object:window];
@@ -1888,7 +1875,6 @@ static NSString * const backingPropertyOldScaleFactorKey = @"NSBackingPropertyOl
 - (void)viewDidMoveToWindow
 {
     if ([self window]) {
-        _data->_windowHasValidBackingStore = NO;
         [self doWindowDidChangeScreen];
 
         ViewState::Flags viewStateChanges = ViewState::WindowIsActive | ViewState::IsVisible;
@@ -1955,7 +1941,6 @@ static NSString * const backingPropertyOldScaleFactorKey = @"NSBackingPropertyOl
 
 - (void)_windowDidMiniaturize:(NSNotification *)notification
 {
-    _data->_windowHasValidBackingStore = NO;
     _data->_page->viewStateDidChange(ViewState::IsVisible);
 }
 
@@ -1971,8 +1956,6 @@ static NSString * const backingPropertyOldScaleFactorKey = @"NSBackingPropertyOl
 
 - (void)_windowDidResize:(NSNotification *)notification
 {
-    _data->_windowHasValidBackingStore = NO;
-
     [self _updateWindowAndViewFrames];
 }
 
@@ -1988,12 +1971,11 @@ static NSString * const backingPropertyOldScaleFactorKey = @"NSBackingPropertyOl
 
 - (void)_windowDidChangeBackingProperties:(NSNotification *)notification
 {
-    CGFloat oldBackingScaleFactor = [[notification.userInfo objectForKey:backingPropertyOldScaleFactorKey] doubleValue];
-    CGFloat newBackingScaleFactor = [self _intrinsicDeviceScaleFactor]; 
+    CGFloat oldBackingScaleFactor = [notification.userInfo[NSBackingPropertyOldScaleFactorKey] doubleValue];
+    CGFloat newBackingScaleFactor = [self _intrinsicDeviceScaleFactor];
     if (oldBackingScaleFactor == newBackingScaleFactor)
         return; 
 
-    _data->_windowHasValidBackingStore = NO;
     _data->_page->setIntrinsicDeviceScaleFactor(newBackingScaleFactor);
 }
 
