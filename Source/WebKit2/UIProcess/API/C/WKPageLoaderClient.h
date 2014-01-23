@@ -71,7 +71,7 @@ typedef void (*WKPageDidChangeBackForwardListCallback)(WKPageRef page, WKBackFor
 typedef bool (*WKPageShouldGoToBackForwardListItemCallback)(WKPageRef page, WKBackForwardListItemRef item, const void *clientInfo);
 typedef void (*WKPageWillGoToBackForwardListItemCallback)(WKPageRef page, WKBackForwardListItemRef item, WKTypeRef userData, const void *clientInfo);
 typedef void (*WKPageDidLayoutCallback)(WKPageRef page, WKLayoutMilestones milestones, WKTypeRef userData, const void *clientInfo);
-typedef WKPluginLoadPolicy (*WKPagePluginLoadPolicyCallback)(WKPageRef page, WKPluginLoadPolicy currentPluginLoadPolicy, WKDictionaryRef pluginInfoDictionary, WKStringRef* unavailabilityDescription, const void* clientInfo);
+typedef WKPluginLoadPolicy (*WKPagePluginLoadPolicyCallback)(WKPageRef page, WKPluginLoadPolicy currentPluginLoadPolicy, WKDictionaryRef pluginInfoDictionary, WKStringRef* unavailabilityDescription, WKStringRef* useBlockedPluginTitle, const void* clientInfo);
 typedef void (*WKPagePluginDidFailCallback)(WKPageRef page, WKErrorCode errorCode, WKDictionaryRef pluginInfoDictionary, const void* clientInfo);
 typedef WKWebGLLoadPolicy (*WKPageWebGLLoadPolicyCallback)(WKPageRef page, WKStringRef url, const void* clientInfo);
 
@@ -79,6 +79,7 @@ typedef WKWebGLLoadPolicy (*WKPageWebGLLoadPolicyCallback)(WKPageRef page, WKStr
 typedef void (*WKPageDidFailToInitializePluginCallback_deprecatedForUseWithV0)(WKPageRef page, WKStringRef mimeType, const void* clientInfo);
 typedef void (*WKPagePluginDidFailCallback_deprecatedForUseWithV1)(WKPageRef page, WKErrorCode errorCode, WKStringRef mimeType, WKStringRef pluginIdentifier, WKStringRef pluginVersion, const void* clientInfo);
 typedef WKPluginLoadPolicy (*WKPagePluginLoadPolicyCallback_deprecatedForUseWithV2)(WKPageRef page, WKPluginLoadPolicy currentPluginLoadPolicy, WKDictionaryRef pluginInfoDictionary, const void* clientInfo);
+typedef WKPluginLoadPolicy (*WKPagePluginLoadPolicyCallback_deprecatedForUseWithV3)(WKPageRef page, WKPluginLoadPolicy currentPluginLoadPolicy, WKDictionaryRef pluginInfoDictionary, WKStringRef* unavailabilityDescription, const void* clientInfo);
 
 typedef struct WKPageLoaderClientBase {
     int                                                                 version;
@@ -271,7 +272,7 @@ typedef struct WKPageLoaderClientV3 {
     WKPagePluginDidFailCallback                                         pluginDidFail;
 
     // Version 3.
-    WKPagePluginLoadPolicyCallback                                      pluginLoadPolicy;
+    WKPagePluginLoadPolicyCallback_deprecatedForUseWithV3               pluginLoadPolicy_deprecatedForUseWithV3;
 } WKPageLoaderClientV3;
 
 typedef struct WKPageLoaderClientV4 {
@@ -327,10 +328,11 @@ typedef struct WKPageLoaderClientV4 {
     WKPagePluginDidFailCallback                                         pluginDidFail;
     
     // Version 3.
-    WKPagePluginLoadPolicyCallback                                      pluginLoadPolicy;
+    WKPagePluginLoadPolicyCallback_deprecatedForUseWithV3               pluginLoadPolicy_deprecatedForUseWithV3;
     
-    // Version 4
+    // Version 4.
     WKPageWebGLLoadPolicyCallback                                       webGLLoadPolicy;
+    WKPagePluginLoadPolicyCallback                                      pluginLoadPolicy;
 } WKPageLoaderClientV4;
 
 // FIXME: These should be deprecated.

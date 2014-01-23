@@ -459,8 +459,9 @@ void TestController::createWebViewWithOptions(WKDictionaryRef options)
         0, // didLayout
         0, // pluginLoadPolicy_deprecatedForUseWithV2
         0, // pluginDidFail
-        pluginLoadPolicy, // pluginLoadPolicy
+        0, // pluginLoadPolicy_deprecatedForUseWithV3
         0, // webGLLoadPolicy
+        pluginLoadPolicy, // pluginLoadPolicy
     };
     WKPageSetPageLoaderClient(m_mainWebView->page(), &pageLoaderClient.base);
 
@@ -1057,12 +1058,12 @@ void TestController::processDidCrash(WKPageRef page, const void* clientInfo)
     static_cast<TestController*>(const_cast<void*>(clientInfo))->processDidCrash();
 }
 
-WKPluginLoadPolicy TestController::pluginLoadPolicy(WKPageRef page, WKPluginLoadPolicy currentPluginLoadPolicy, WKDictionaryRef pluginInformation, WKStringRef* unavailabilityDescription, const void* clientInfo)
+WKPluginLoadPolicy TestController::pluginLoadPolicy(WKPageRef page, WKPluginLoadPolicy currentPluginLoadPolicy, WKDictionaryRef pluginInformation, WKStringRef* unavailabilityDescription, WKStringRef* useBlockedPluginTitle, const void* clientInfo)
 {
-    return static_cast<TestController*>(const_cast<void*>(clientInfo))->pluginLoadPolicy(page, currentPluginLoadPolicy, pluginInformation, unavailabilityDescription);
+    return static_cast<TestController*>(const_cast<void*>(clientInfo))->pluginLoadPolicy(page, currentPluginLoadPolicy, pluginInformation, unavailabilityDescription, useBlockedPluginTitle);
 }
 
-WKPluginLoadPolicy TestController::pluginLoadPolicy(WKPageRef, WKPluginLoadPolicy currentPluginLoadPolicy, WKDictionaryRef pluginInformation, WKStringRef* unavailabilityDescription)
+WKPluginLoadPolicy TestController::pluginLoadPolicy(WKPageRef, WKPluginLoadPolicy currentPluginLoadPolicy, WKDictionaryRef pluginInformation, WKStringRef* unavailabilityDescription, WKStringRef* useBlockedPluginTitle)
 {
     if (m_shouldBlockAllPlugins)
         return kWKPluginLoadPolicyBlocked;

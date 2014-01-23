@@ -313,19 +313,27 @@ void WebLoaderClient::didBlockInsecurePluginVersion(WebPageProxy* page, Immutabl
             m_client.base.clientInfo);
 }
 
-PluginModuleLoadPolicy WebLoaderClient::pluginLoadPolicy(WebPageProxy* page, PluginModuleLoadPolicy currentPluginLoadPolicy, ImmutableDictionary* pluginInformation, String& unavailabilityDescription)
+PluginModuleLoadPolicy WebLoaderClient::pluginLoadPolicy(WebPageProxy* page, PluginModuleLoadPolicy currentPluginLoadPolicy, ImmutableDictionary* pluginInformation, String& unavailabilityDescription, String& useBlockedPluginTitle)
 {
     WKStringRef unavailabilityDescriptionOut = 0;
+    WKStringRef useBlockedPluginTitleOut = 0;
     PluginModuleLoadPolicy loadPolicy = currentPluginLoadPolicy;
 
     if (m_client.pluginLoadPolicy_deprecatedForUseWithV2)
         loadPolicy = toPluginModuleLoadPolicy(m_client.pluginLoadPolicy_deprecatedForUseWithV2(toAPI(page), toWKPluginLoadPolicy(currentPluginLoadPolicy), toAPI(pluginInformation), m_client.base.clientInfo));
+    else if (m_client.pluginLoadPolicy_deprecatedForUseWithV3)
+        loadPolicy = toPluginModuleLoadPolicy(m_client.pluginLoadPolicy_deprecatedForUseWithV3(toAPI(page), toWKPluginLoadPolicy(currentPluginLoadPolicy), toAPI(pluginInformation), &unavailabilityDescriptionOut, m_client.base.clientInfo));
     else if (m_client.pluginLoadPolicy)
-        loadPolicy = toPluginModuleLoadPolicy(m_client.pluginLoadPolicy(toAPI(page), toWKPluginLoadPolicy(currentPluginLoadPolicy), toAPI(pluginInformation), &unavailabilityDescriptionOut, m_client.base.clientInfo));
+        loadPolicy = toPluginModuleLoadPolicy(m_client.pluginLoadPolicy(toAPI(page), toWKPluginLoadPolicy(currentPluginLoadPolicy), toAPI(pluginInformation), &unavailabilityDescriptionOut, &useBlockedPluginTitleOut, m_client.base.clientInfo));
 
     if (unavailabilityDescriptionOut) {
         RefPtr<API::String> webUnavailabilityDescription = adoptRef(toImpl(unavailabilityDescriptionOut));
         unavailabilityDescription = webUnavailabilityDescription->string();
+    }
+
+    if (useBlockedPluginTitleOut) {
+        RefPtr<API::String> webUseBlockedPluginTitle = adoptRef(toImpl(useBlockedPluginTitleOut));
+        useBlockedPluginTitle = webUseBlockedPluginTitle->string();
     }
     
     return loadPolicy;

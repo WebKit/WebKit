@@ -1,3 +1,19 @@
+2014-01-23  Tim Horton  <timothy_horton@apple.com>
+
+        PDFPlugin: Use PDFPlugin even if there's an external plugin installed, if it's blocked
+        https://bugs.webkit.org/show_bug.cgi?id=127415
+        <rdar://problem/12482452>
+
+        Reviewed by Sam Weinig.
+
+        * English.lproj/Localizable.strings:
+        * WebCore.exp.in:
+        * platform/LocalizedStrings.cpp:
+        (WebCore::useBlockedPlugInContextMenuTitle):
+        * platform/LocalizedStrings.h:
+        Add a localizable string for the generic case, where the client
+        didn't provide a more specific string for the context menu item.
+
 2014-01-23  peavo@outlook.com  <peavo@outlook.com>
 
         [Curl] There is no way to specify cache folder.

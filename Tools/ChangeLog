@@ -1,3 +1,18 @@
+2014-01-23  Tim Horton  <timothy_horton@apple.com>
+
+        PDFPlugin: Use PDFPlugin even if there's an external plugin installed, if it's blocked
+        https://bugs.webkit.org/show_bug.cgi?id=127415
+        <rdar://problem/12482452>
+
+        Reviewed by Sam Weinig.
+
+        Adopt the new page loader client plugin load callback.
+
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::createWebViewWithOptions):
+        (WTR::TestController::pluginLoadPolicy):
+        * WebKitTestRunner/TestController.h:
+
 2014-01-23  peavo@outlook.com  <peavo@outlook.com>
 
         [Curl] There is no way to specify cache folder.

@@ -573,16 +573,26 @@ PassRefPtr<Plugin> WebPage::createPlugin(WebFrame* frame, HTMLPlugInElement* plu
     uint64_t pluginProcessToken;
     uint32_t pluginLoadPolicy;
     String unavailabilityDescription;
-    if (!sendSync(Messages::WebPageProxy::FindPlugin(parameters.mimeType, static_cast<uint32_t>(processType), parameters.url.string(), frameURLString, pageURLString, allowOnlyApplicationPlugins), Messages::WebPageProxy::FindPlugin::Reply(pluginProcessToken, newMIMEType, pluginLoadPolicy, unavailabilityDescription))) {
-        return 0;
+    String useBlockedPluginTitle;
+    if (!sendSync(Messages::WebPageProxy::FindPlugin(parameters.mimeType, static_cast<uint32_t>(processType), parameters.url.string(), frameURLString, pageURLString, allowOnlyApplicationPlugins), Messages::WebPageProxy::FindPlugin::Reply(pluginProcessToken, newMIMEType, pluginLoadPolicy, unavailabilityDescription, useBlockedPluginTitle)))
+        return nullptr;
+
+    bool isBlockedPlugin = static_cast<PluginModuleLoadPolicy>(pluginLoadPolicy) == PluginModuleBlocked;
+
+    if (isBlockedPlugin || !pluginProcessToken) {
+#if ENABLE(PDFKIT_PLUGIN)
+        String path = parameters.url.path();
+        if (shouldUsePDFPlugin() && (MIMETypeRegistry::isPDFOrPostScriptMIMEType(parameters.mimeType) || (parameters.mimeType.isEmpty() && (path.endsWith(".pdf", false) || path.endsWith(".ps", false))))) {
+            RefPtr<PDFPlugin> pdfPlugin = PDFPlugin::create(frame);
+            pdfPlugin->setUsedInPlaceOfBlockedPlugin(isBlockedPlugin, useBlockedPluginTitle);
+            return pdfPlugin.release();
+        }
+#else
+        UNUSED_PARAM(frame);
+#endif
     }
 
-    switch (static_cast<PluginModuleLoadPolicy>(pluginLoadPolicy)) {
-    case PluginModuleLoadNormally:
-    case PluginModuleLoadUnsandboxed:
-        break;
-
-    case PluginModuleBlocked:
+    if (isBlockedPlugin) {
         bool replacementObscured = false;
         if (pluginElement->renderer()->isEmbeddedObject()) {
             RenderEmbeddedObject* renderObject = toRenderEmbeddedObject(pluginElement->renderer());
@@ -592,19 +602,11 @@ PassRefPtr<Plugin> WebPage::createPlugin(WebFrame* frame, HTMLPlugInElement* plu
         }
 
         send(Messages::WebPageProxy::DidBlockInsecurePluginVersion(parameters.mimeType, parameters.url.string(), frameURLString, pageURLString, replacementObscured));
-        return 0;
+        return nullptr;
     }
 
-    if (!pluginProcessToken) {
-#if ENABLE(PDFKIT_PLUGIN)
-        String path = parameters.url.path();
-        if (shouldUsePDFPlugin() && (MIMETypeRegistry::isPDFOrPostScriptMIMEType(parameters.mimeType) || (parameters.mimeType.isEmpty() && (path.endsWith(".pdf", false) || path.endsWith(".ps", false)))))
-            return PDFPlugin::create(frame);
-#else
-        UNUSED_PARAM(frame);
-#endif
-        return 0;
-    }
+    if (!pluginProcessToken)
+        return nullptr;
 
     bool isRestartedProcess = (pluginElement->displayState() == HTMLPlugInElement::Restarting || pluginElement->displayState() == HTMLPlugInElement::RestartingWithPendingMouseClick);
     return PluginProxy::create(pluginProcessToken, isRestartedProcess);
@@ -3749,7 +3751,8 @@ bool WebPage::canPluginHandleResponse(const ResourceResponse& response)
     uint64_t pluginProcessToken;
     String newMIMEType;
     String unavailabilityDescription;
-    if (!sendSync(Messages::WebPageProxy::FindPlugin(response.mimeType(), PluginProcessTypeNormal, response.url().string(), response.url().string(), response.url().string(), allowOnlyApplicationPlugins), Messages::WebPageProxy::FindPlugin::Reply(pluginProcessToken, newMIMEType, pluginLoadPolicy, unavailabilityDescription)))
+    String useBlockedPluginTitle;
+    if (!sendSync(Messages::WebPageProxy::FindPlugin(response.mimeType(), PluginProcessTypeNormal, response.url().string(), response.url().string(), response.url().string(), allowOnlyApplicationPlugins), Messages::WebPageProxy::FindPlugin::Reply(pluginProcessToken, newMIMEType, pluginLoadPolicy, unavailabilityDescription, useBlockedPluginTitle)))
         return false;
 
     return pluginLoadPolicy != PluginModuleBlocked && pluginProcessToken;

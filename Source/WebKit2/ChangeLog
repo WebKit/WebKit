@@ -1,5 +1,70 @@
 2014-01-23  Tim Horton  <timothy_horton@apple.com>
 
+        PDFPlugin: Use PDFPlugin even if there's an external plugin installed, if it's blocked
+        https://bugs.webkit.org/show_bug.cgi?id=127415
+        <rdar://problem/12482452>
+
+        Reviewed by Sam Weinig.
+
+        Allow use of PDFPlugin even if an external plugin is installed but blocked.
+        If an external plugin is installed and not blocked, we will continue to use that.
+
+        Inject a context menu item into the PDFPlugin context menu that allows the client
+        to unblock the plugin and reload the page (via the same mechanism that the
+        unavailable plugin button uses).
+
+        * UIProcess/API/C/WKPageLoaderClient.h:
+        * UIProcess/API/Cocoa/WKBrowsingContextController.mm:
+        (setUpPageLoaderClient):
+        * UIProcess/WebLoaderClient.cpp:
+        (WebKit::WebLoaderClient::pluginLoadPolicy):
+        * UIProcess/WebLoaderClient.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::findPlugin):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        Add a new PluginLoadPolicy callback for the V4 client with
+        yet another string out-argument, to allow clients to customize the string
+        that will appear in the PDFPlugin context menu when it is used in place
+        of a blocked plugin.
+
+        * WebProcess/Plugins/PDF/PDFPlugin.h:
+        Add setUsedInPlaceOfBlockedPlugin(), which determines whether or not
+        we should include an item in the PDFPlugin context menu that acts identically
+        to the unavailable plugin button, allowing the client to potentially unblock
+        the plugin.
+
+        * WebProcess/Plugins/PDF/PDFPlugin.mm:
+        (-[WKPDFPluginContextMenuTarget initWithPDFPlugin:WebKit::]):
+        (-[WKPDFPluginContextMenuTarget useBlockedPlugin:]):
+        Added WKPDFPluginContextMenuTarget, which is the Objective-C object that the
+        aforementioned context menu item targets.
+
+        (WebKit::PDFPlugin::PDFPlugin):
+        By default, we won't show the extra context menu item.
+
+        (WebKit::PDFPlugin::handleContextMenuEvent):
+        If we were used in place of a blocked plugin, inject our additional context
+        menu item into the menu. If we were handed a custom string via setUsedInPlaceOfBlockedPlugin,
+        use that. Otherwise, use the generic string from WebCore's localized strings.
+
+        (WebKit::PDFPlugin::openWithPlugin):
+        Pretend that the user clicked the unavailable plugin button when they click
+        the injected context menu item.
+
+        (WebKit::PDFPlugin::setUsedInPlaceOfBlockedPlugin):
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::createPlugin):
+        If we end up with a blocked plugin, but could have used PDFPlugin to display
+        the content, do so instead of showing the unavailable plugin indicator.
+
+        Pass PDFPlugin the custom context menu item title acquired from the client.
+
+        (WebKit::WebPage::canPluginHandleResponse):
+
+2014-01-23  Tim Horton  <timothy_horton@apple.com>
+
         [iOS] [WK2] WKContentView has a black background
         https://bugs.webkit.org/show_bug.cgi?id=127471
         <rdar://problem/12287363>

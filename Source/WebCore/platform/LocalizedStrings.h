@@ -261,6 +261,8 @@ namespace WebCore {
     String snapshottedPlugInLabelTitle();
     String snapshottedPlugInLabelSubtitle();
 
+    String useBlockedPlugInContextMenuTitle();
+
 #define WEB_UI_STRING(string, description) WebCore::localizedString(string)
 #define WEB_UI_STRING_KEY(string, key, description) WebCore::localizedString(key)
 

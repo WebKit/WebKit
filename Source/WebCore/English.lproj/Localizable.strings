@@ -985,3 +985,5 @@
 /* accessibility label for video element controller */
 "video playback" = "video playback";
 
+/* title of the context menu item to show when PDFPlugin was used instead of a blocked plugin */
+"Show in blocked plug-in" = "Show in blocked plug-in";
