@@ -1,5 +1,11 @@
 2014-01-23  Brent Fulgham  <bfulgham@apple.com>
 
+        Unreviewed build correction.
+
+        * WebKit.vcxproj/WebKit/WebKit.vcxproj: Link 32-bit builds against QTMovieWin for the time being.
+
+2014-01-23  Brent Fulgham  <bfulgham@apple.com>
+
         Merge r162621
 
     2014-01-22  Brent Fulgham  <bfulgham@apple.com>

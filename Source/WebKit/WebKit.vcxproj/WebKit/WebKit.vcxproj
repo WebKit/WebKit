@@ -182,6 +182,9 @@
     <Link />
     <ClCompile />
     <Link />
+    <Link>
+      <AdditionalDependencies>QTMovieWin$(DebugSuffix).lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile />
@@ -218,6 +221,9 @@
     <Link />
     <ClCompile />
     <Link />
+    <Link>
+      <AdditionalDependencies>QTMovieWin$(DebugSuffix).lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='DebugSuffix|x64'">
     <ClCompile />
@@ -235,6 +241,9 @@
     <ClCompile />
     <Link />
     <Link />
+    <Link>
+      <AdditionalDependencies>QTMovieWin$(DebugSuffix).lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <Link />
@@ -267,6 +276,9 @@
     <ClCompile />
     <Link />
     <Link />
+    <Link>
+      <AdditionalDependencies>QTMovieWin$(DebugSuffix).lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Production|x64'">
     <Link />
