@@ -1,5 +1,12 @@
 2014-01-23  Anders Carlsson  <andersca@apple.com>
 
+        Another 32-bit build fix.
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView _windowDidChangeBackingProperties:]):
+
+2014-01-23  Anders Carlsson  <andersca@apple.com>
+
         Clean up WKView.mm a little
         https://bugs.webkit.org/show_bug.cgi?id=127517
 
