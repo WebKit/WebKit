@@ -37,6 +37,7 @@
 #include "WebPageCreationParameters.h"
 #include "WebPageGroup.h"
 #include "WebPageProxy.h"
+#include "WebPolicyClient.h"
 #include "WebPreferences.h"
 #include "WebProcessProxy.h"
 #include <WebCore/SchemeRegistry.h>
@@ -449,7 +450,7 @@ void WebInspectorProxy::createInspectorPage(uint64_t& inspectorPageID, WebPageCr
         0, /* decidePolicyForResponse */
     };
 
-    inspectorPage->initializePolicyClient(reinterpret_cast<const WKPagePolicyClientBase*>(&policyClient));
+    inspectorPage->setPolicyClient(std::make_unique<WebPolicyClient>(&policyClient.base));
 
     String url = inspectorPageURL();
 

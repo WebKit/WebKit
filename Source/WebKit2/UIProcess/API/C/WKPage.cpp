@@ -34,6 +34,7 @@
 #include "WKPluginInformation.h"
 #include "WebBackForwardList.h"
 #include "WebPageProxy.h"
+#include "WebPolicyClient.h"
 #include "WebProcessProxy.h"
 #include <WebCore/Page.h>
 
@@ -672,7 +673,7 @@ void WKPageSetPageLoaderClient(WKPageRef pageRef, const WKPageLoaderClientBase* 
 
 void WKPageSetPagePolicyClient(WKPageRef pageRef, const WKPagePolicyClientBase* wkClient)
 {
-    toImpl(pageRef)->initializePolicyClient(wkClient);
+    toImpl(pageRef)->setPolicyClient(std::make_unique<WebPolicyClient>(wkClient));
 }
 
 void WKPageSetPageUIClient(WKPageRef pageRef, const WKPageUIClientBase* wkClient)

@@ -29,15 +29,23 @@
 #include "APIObject.h"
 #include "APIURLRequest.h"
 #include "WKAPICast.h"
+#include "WebFramePolicyListenerProxy.h"
 
 using namespace WebCore;
 
 namespace WebKit {
 
-bool WebPolicyClient::decidePolicyForNavigationAction(WebPageProxy* page, WebFrameProxy* frame, NavigationType type, WebEvent::Modifiers modifiers, WebMouseEvent::Button mouseButton, WebFrameProxy* originatingFrame, const ResourceRequest& originalResourceRequest, const ResourceRequest& resourceRequest, WebFramePolicyListenerProxy* listener, API::Object* userData)
+WebPolicyClient::WebPolicyClient(const WKPagePolicyClientBase* client)
 {
-    if (!m_client.decidePolicyForNavigationAction_deprecatedForUseWithV0 && !m_client.decidePolicyForNavigationAction_deprecatedForUseWithV1 && !m_client.decidePolicyForNavigationAction)
-        return false;
+    initialize(client);
+}
+
+void WebPolicyClient::decidePolicyForNavigationAction(WebPageProxy* page, WebFrameProxy* frame, WebCore::NavigationType type, WebEvent::Modifiers modifiers, WebMouseEvent::Button mouseButton, WebFrameProxy* originatingFrame, const WebCore::ResourceRequest& originalResourceRequest, const WebCore::ResourceRequest& resourceRequest, WebFramePolicyListenerProxy* listener, API::Object* userData)
+{
+    if (!m_client.decidePolicyForNavigationAction_deprecatedForUseWithV0 && !m_client.decidePolicyForNavigationAction_deprecatedForUseWithV1 && !m_client.decidePolicyForNavigationAction) {
+        listener->use();
+        return;
+    }
 
     RefPtr<API::URLRequest> originalRequest = API::URLRequest::create(originalResourceRequest);
     RefPtr<API::URLRequest> request = API::URLRequest::create(resourceRequest);
@@ -48,25 +56,26 @@ bool WebPolicyClient::decidePolicyForNavigationAction(WebPageProxy* page, WebFra
         m_client.decidePolicyForNavigationAction_deprecatedForUseWithV1(toAPI(page), toAPI(frame), toAPI(type), toAPI(modifiers), toAPI(mouseButton), toAPI(originatingFrame), toAPI(request.get()), toAPI(listener), toAPI(userData), m_client.base.clientInfo);
     else
         m_client.decidePolicyForNavigationAction(toAPI(page), toAPI(frame), toAPI(type), toAPI(modifiers), toAPI(mouseButton), toAPI(originatingFrame), toAPI(originalRequest.get()), toAPI(request.get()), toAPI(listener), toAPI(userData), m_client.base.clientInfo);
-
-    return true;
 }
 
-bool WebPolicyClient::decidePolicyForNewWindowAction(WebPageProxy* page, WebFrameProxy* frame, NavigationType type, WebEvent::Modifiers modifiers, WebMouseEvent::Button mouseButton, const ResourceRequest& resourceRequest, const String& frameName, WebFramePolicyListenerProxy* listener, API::Object* userData)
+void WebPolicyClient::decidePolicyForNewWindowAction(WebPageProxy* page, WebFrameProxy* frame, NavigationType type, WebEvent::Modifiers modifiers, WebMouseEvent::Button mouseButton, const ResourceRequest& resourceRequest, const String& frameName, WebFramePolicyListenerProxy* listener, API::Object* userData)
 {
-    if (!m_client.decidePolicyForNewWindowAction)
-        return false;
+    if (!m_client.decidePolicyForNewWindowAction) {
+        listener->use();
+        return;
+    }
 
     RefPtr<API::URLRequest> request = API::URLRequest::create(resourceRequest);
 
     m_client.decidePolicyForNewWindowAction(toAPI(page), toAPI(frame), toAPI(type), toAPI(modifiers), toAPI(mouseButton), toAPI(request.get()), toAPI(frameName.impl()), toAPI(listener), toAPI(userData), m_client.base.clientInfo);
-    return true;
 }
 
-bool WebPolicyClient::decidePolicyForResponse(WebPageProxy* page, WebFrameProxy* frame, const ResourceResponse& resourceResponse, const ResourceRequest& resourceRequest, bool canShowMIMEType, WebFramePolicyListenerProxy* listener, API::Object* userData)
+void WebPolicyClient::decidePolicyForResponse(WebPageProxy* page, WebFrameProxy* frame, const ResourceResponse& resourceResponse, const ResourceRequest& resourceRequest, bool canShowMIMEType, WebFramePolicyListenerProxy* listener, API::Object* userData)
 {
-    if (!m_client.decidePolicyForResponse_deprecatedForUseWithV0 && !m_client.decidePolicyForResponse)
-        return false;
+    if (m_client.decidePolicyForResponse_deprecatedForUseWithV0 && !m_client.decidePolicyForResponse) {
+        listener->use();
+        return;
+    }
 
     RefPtr<API::URLResponse> response = API::URLResponse::create(resourceResponse);
     RefPtr<API::URLRequest> request = API::URLRequest::create(resourceRequest);
@@ -75,8 +84,6 @@ bool WebPolicyClient::decidePolicyForResponse(WebPageProxy* page, WebFrameProxy*
         m_client.decidePolicyForResponse_deprecatedForUseWithV0(toAPI(page), toAPI(frame), toAPI(response.get()), toAPI(request.get()), toAPI(listener), toAPI(userData), m_client.base.clientInfo);
     else
         m_client.decidePolicyForResponse(toAPI(page), toAPI(frame), toAPI(response.get()), toAPI(request.get()), canShowMIMEType, toAPI(listener), toAPI(userData), m_client.base.clientInfo);
-
-    return true;
 }
 
 void WebPolicyClient::unableToImplementPolicy(WebPageProxy* page, WebFrameProxy* frame, const ResourceError& error, API::Object* userData)

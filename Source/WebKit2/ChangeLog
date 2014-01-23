@@ -1,5 +1,37 @@
 2014-01-23  Anders Carlsson  <andersca@apple.com>
 
+        Add API::PolicyClient base class
+        https://bugs.webkit.org/show_bug.cgi?id=127509
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/API/APIPolicyClient.h: Copied from Source/WebKit2/UIProcess/WebPolicyClient.h.
+        (API::PolicyClient::~PolicyClient):
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageSetPagePolicyClient):
+        * UIProcess/API/Cocoa/WKBrowsingContextController.mm:
+        (setUpPagePolicyClient):
+        (-[WKBrowsingContextController setPolicyDelegate:]):
+        * UIProcess/WebInspectorProxy.cpp:
+        (WebKit::WebInspectorProxy::createInspectorPage):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::setPolicyClient):
+        (WebKit::WebPageProxy::close):
+        (WebKit::WebPageProxy::decidePolicyForNavigationAction):
+        (WebKit::WebPageProxy::decidePolicyForNewWindowAction):
+        (WebKit::WebPageProxy::decidePolicyForResponse):
+        (WebKit::WebPageProxy::unableToImplementPolicy):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPolicyClient.cpp:
+        (WebKit::WebPolicyClient::WebPolicyClient):
+        (WebKit::WebPolicyClient::decidePolicyForNavigationAction):
+        (WebKit::WebPolicyClient::decidePolicyForNewWindowAction):
+        (WebKit::WebPolicyClient::decidePolicyForResponse):
+        * UIProcess/WebPolicyClient.h:
+        * WebKit2.xcodeproj/project.pbxproj:
+
+2014-01-23  Anders Carlsson  <andersca@apple.com>
+
         Add init methods that create default configurations
         https://bugs.webkit.org/show_bug.cgi?id=127503
 

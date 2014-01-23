@@ -27,6 +27,7 @@
 #define WebPolicyClient_h
 
 #include "APIClient.h"
+#include "APIPolicyClient.h"
 #include "WKPage.h"
 #include "WKPagePolicyClientInternal.h"
 #include "WebEvent.h"
@@ -41,24 +42,17 @@ template<> struct ClientTraits<WKPagePolicyClientBase> {
 };
 }
 
-namespace WebCore {
-class ResourceError;
-class ResourceRequest;
-class ResourceResponse;
-}
-
 namespace WebKit {
 
-class WebPageProxy;
-class WebFrameProxy;
-class WebFramePolicyListenerProxy;
-
-class WebPolicyClient : public API::Client<WKPagePolicyClientBase> {
+class WebPolicyClient final : public API::Client<WKPagePolicyClientBase>, public API::PolicyClient {
 public:
-    bool decidePolicyForNavigationAction(WebPageProxy*, WebFrameProxy*, WebCore::NavigationType, WebEvent::Modifiers, WebMouseEvent::Button, WebFrameProxy* originatingFrame, const WebCore::ResourceRequest& originalRequest, const WebCore::ResourceRequest&, WebFramePolicyListenerProxy*, API::Object* userData);
-    bool decidePolicyForNewWindowAction(WebPageProxy*, WebFrameProxy*, WebCore::NavigationType, WebEvent::Modifiers, WebMouseEvent::Button, const WebCore::ResourceRequest&, const String& frameName, WebFramePolicyListenerProxy*, API::Object* userData);
-    bool decidePolicyForResponse(WebPageProxy*, WebFrameProxy*, const WebCore::ResourceResponse&, const WebCore::ResourceRequest&, bool canShowMIMEType, WebFramePolicyListenerProxy*, API::Object* userData);
-    void unableToImplementPolicy(WebPageProxy*, WebFrameProxy*, const WebCore::ResourceError&, API::Object* userData);
+    explicit WebPolicyClient(const WKPagePolicyClientBase*);
+
+private:
+    virtual void decidePolicyForNavigationAction(WebPageProxy*, WebFrameProxy*, WebCore::NavigationType, WebEvent::Modifiers, WebMouseEvent::Button, WebFrameProxy* originatingFrame, const WebCore::ResourceRequest& originalRequest, const WebCore::ResourceRequest&, WebFramePolicyListenerProxy*, API::Object* userData) override;
+    virtual void decidePolicyForNewWindowAction(WebKit::WebPageProxy*, WebKit::WebFrameProxy*, WebCore::NavigationType, WebKit::WebEvent::Modifiers, WebKit::WebMouseEvent::Button, const WebCore::ResourceRequest&, const String& frameName, WebKit::WebFramePolicyListenerProxy*, API::Object* userData) override;
+    virtual void decidePolicyForResponse(WebPageProxy*, WebFrameProxy*, const WebCore::ResourceResponse&, const WebCore::ResourceRequest&, bool canShowMIMEType, WebFramePolicyListenerProxy*, API::Object* userData) override;
+    virtual void unableToImplementPolicy(WebPageProxy*, WebFrameProxy*, const WebCore::ResourceError&, API::Object* userData) override;
 };
 
 } // namespace WebKit

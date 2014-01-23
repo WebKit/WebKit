@@ -27,6 +27,7 @@
 #define WebPageProxy_h
 
 #include "APIObject.h"
+#include "APIPolicyClient.h"
 #include "APISession.h"
 #include "AutoCorrectionCallback.h"
 #include "Connection.h"
@@ -57,7 +58,6 @@
 #include "WebPageCreationParameters.h"
 #include <WebCore/AlternativeTextClient.h> // FIXME: Needed by WebPageProxyMessages.h for DICTATION_ALTERNATIVES.
 #include "WebPageProxyMessages.h"
-#include "WebPolicyClient.h"
 #include "WebPopupMenuProxy.h"
 #include "WebUIClient.h"
 #include <WebCore/Color.h>
@@ -368,7 +368,7 @@ public:
     void initializeFindMatchesClient(const WKPageFindMatchesClientBase*);
     void initializeFormClient(const WKPageFormClientBase*);
     void initializeLoaderClient(const WKPageLoaderClientBase*);
-    void initializePolicyClient(const WKPagePolicyClientBase*);
+    void setPolicyClient(std::unique_ptr<API::PolicyClient>);
     void initializeUIClient(const WKPageUIClientBase*);
 #if PLATFORM(EFL)
     void initializeUIPopupMenuClient(const WKPageUIPopupMenuClientBase*);
@@ -1164,7 +1164,7 @@ private:
 
     PageClient& m_pageClient;
     WebLoaderClient m_loaderClient;
-    WebPolicyClient m_policyClient;
+    std::unique_ptr<API::PolicyClient> m_policyClient;
     WebFormClient m_formClient;
     WebUIClient m_uiClient;
 #if PLATFORM(EFL)

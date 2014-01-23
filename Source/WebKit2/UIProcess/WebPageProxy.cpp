@@ -420,9 +420,9 @@ void WebPageProxy::initializeLoaderClient(const WKPageLoaderClientBase* loadClie
     m_process->send(Messages::WebPage::SetWillGoToBackForwardItemCallbackEnabled(loadClient->version > 0), m_pageID);
 }
 
-void WebPageProxy::initializePolicyClient(const WKPagePolicyClientBase* policyClient)
+void WebPageProxy::setPolicyClient(std::unique_ptr<API::PolicyClient> policyClient)
 {
-    m_policyClient.initialize(policyClient);
+    m_policyClient = std::move(policyClient);
 }
 
 void WebPageProxy::initializeFormClient(const WKPageFormClientBase* formClient)
@@ -560,7 +560,7 @@ void WebPageProxy::close()
     resetState();
 
     m_loaderClient.initialize(0);
-    m_policyClient.initialize(0);
+    m_policyClient = nullptr;
     m_formClient.initialize(0);
     m_uiClient.initialize(0);
 #if PLATFORM(EFL)
@@ -2458,9 +2458,11 @@ void WebPageProxy::decidePolicyForNavigationAction(uint64_t frameID, uint32_t op
 
     m_inDecidePolicyForNavigationAction = true;
     m_syncNavigationActionPolicyActionIsValid = false;
-    
-    if (!m_policyClient.decidePolicyForNavigationAction(this, frame, navigationType, modifiers, mouseButton, originatingFrame, originalRequest, request, listener.get(), userData.get()))
+
+    if (!m_policyClient)
         listener->use();
+    else
+        m_policyClient->decidePolicyForNavigationAction(this, frame, navigationType, modifiers, mouseButton, originatingFrame, originalRequest, request, listener.get(), userData.get());
 
     m_inDecidePolicyForNavigationAction = false;
 
@@ -2486,10 +2488,12 @@ void WebPageProxy::decidePolicyForNewWindowAction(uint64_t frameID, uint32_t opa
     NavigationType navigationType = static_cast<NavigationType>(opaqueNavigationType);
     WebEvent::Modifiers modifiers = static_cast<WebEvent::Modifiers>(opaqueModifiers);
     WebMouseEvent::Button mouseButton = static_cast<WebMouseEvent::Button>(opaqueMouseButton);
-
     RefPtr<WebFramePolicyListenerProxy> listener = frame->setUpPolicyListenerProxy(listenerID);
-    if (!m_policyClient.decidePolicyForNewWindowAction(this, frame, navigationType, modifiers, mouseButton, request, frameName, listener.get(), userData.get()))
+
+    if (!m_policyClient)
         listener->use();
+    else
+        m_policyClient->decidePolicyForNewWindowAction(this, frame, navigationType, modifiers, mouseButton, request, frameName, listener.get(), userData.get());
 }
 
 void WebPageProxy::decidePolicyForResponse(uint64_t frameID, const ResourceResponse& response, const ResourceRequest& request, bool canShowMIMEType, uint64_t listenerID, IPC::MessageDecoder& decoder)
@@ -2506,8 +2510,10 @@ void WebPageProxy::decidePolicyForResponse(uint64_t frameID, const ResourceRespo
 
     RefPtr<WebFramePolicyListenerProxy> listener = frame->setUpPolicyListenerProxy(listenerID);
 
-    if (!m_policyClient.decidePolicyForResponse(this, frame, response, request, canShowMIMEType, listener.get(), userData.get()))
+    if (!m_policyClient)
         listener->use();
+    else
+        m_policyClient->decidePolicyForResponse(this, frame, response, request, canShowMIMEType, listener.get(), userData.get());
 }
 
 void WebPageProxy::decidePolicyForResponseSync(uint64_t frameID, const ResourceResponse& response, const ResourceRequest& request, bool canShowMIMEType, uint64_t listenerID, IPC::MessageDecoder& decoder, bool& receivedPolicyAction, uint64_t& policyAction, uint64_t& downloadID)
@@ -2541,7 +2547,8 @@ void WebPageProxy::unableToImplementPolicy(uint64_t frameID, const ResourceError
     WebFrameProxy* frame = m_process->webFrame(frameID);
     MESSAGE_CHECK(frame);
 
-    m_policyClient.unableToImplementPolicy(this, frame, error, userData.get());
+    if (m_policyClient)
+        m_policyClient->unableToImplementPolicy(this, frame, error, userData.get());
 }
 
 // FormClient

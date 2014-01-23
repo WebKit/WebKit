@@ -57,6 +57,7 @@
 #import "WebCertificateInfo.h"
 #import "WebContext.h"
 #import "WebPageProxy.h"
+#import "WebPolicyClient.h"
 
 using namespace WebCore;
 using namespace WebKit;
@@ -712,7 +713,7 @@ static void setUpPagePolicyClient(WKBrowsingContextController *browsingContext, 
             WKFramePolicyListenerUse(listener);
     };
 
-    page.initializePolicyClient(&policyClient.base);
+    page.setPolicyClient(std::make_unique<WebPolicyClient>(&policyClient.base));
 }
 
 - (id <WKBrowsingContextLoadDelegate>)loadDelegate
@@ -742,7 +743,7 @@ static void setUpPagePolicyClient(WKBrowsingContextController *browsingContext, 
     if (policyDelegate)
         setUpPagePolicyClient(self, *_page);
     else
-        _page->initializePolicyClient(nullptr);
+        _page->setPolicyClient(nullptr);
 }
 
 - (id <WKBrowsingContextHistoryDelegate>)historyDelegate
