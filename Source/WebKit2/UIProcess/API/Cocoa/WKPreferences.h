@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,45 +23,20 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebKit2_C_h
-#define WebKit2_C_h
-
-#include <WebKit2/WKBase.h>
-#include <WebKit2/WKType.h>
-
-#include <WebKit2/WKArray.h>
-#include <WebKit2/WKBackForwardListRef.h>
-#include <WebKit2/WKBackForwardListItemRef.h>
-#include <WebKit2/WKConnectionRef.h>
-#include <WebKit2/WKContext.h>
-#include <WebKit2/WKData.h>
-#include <WebKit2/WKDictionary.h>
-#include <WebKit2/WKError.h>
-#include <WebKit2/WKFormSubmissionListener.h>
-#include <WebKit2/WKFrame.h>
-#include <WebKit2/WKFramePolicyListener.h>
-#include <WebKit2/WKGeolocationManager.h>
-#include <WebKit2/WKGeolocationPermissionRequest.h>
-#include <WebKit2/WKGeolocationPosition.h>
-#include <WebKit2/WKHitTestResult.h>
-#include <WebKit2/WKMutableArray.h>
-#include <WebKit2/WKMutableDictionary.h>
-#include <WebKit2/WKNavigationDataRef.h>
-#include <WebKit2/WKNumber.h>
-#include <WebKit2/WKOpenPanelParameters.h>
-#include <WebKit2/WKOpenPanelResultListener.h>
-#include <WebKit2/WKPage.h>
-#include <WebKit2/WKPageGroup.h>
 #include <WebKit2/WKPreferencesRef.h>
-#include <WebKit2/WKString.h>
-#include <WebKit2/WKURL.h>
-#include <WebKit2/WKURLRequest.h>
-#include <WebKit2/WKURLResponse.h>
 
-#if defined(__OBJC__) && __OBJC__
-#import <WebKit2/WKView.h>
-#elif !(defined(__APPLE__) && __APPLE__)
-#include <WebKit2/WKView.h>
-#endif
+#ifdef __OBJC__
 
-#endif /* WebKit2_C_h */
+#import <Foundation/Foundation.h>
+#import <WebKit2/WKFoundation.h>
+
+#if WK_API_ENABLED
+
+WK_API_CLASS
+@interface WKPreferences : NSObject
+
+@end
+
+#endif // WK_API_ENABLED
+
+#endif // defined(__OBJC__)

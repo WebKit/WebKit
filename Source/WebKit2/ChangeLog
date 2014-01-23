@@ -1,3 +1,17 @@
+2014-01-23  Anders Carlsson  <andersca@apple.com>
+
+        Rename WKPreferences.h to WKPreferencesRef.h and add a stubbed out WKPreferences class
+        https://bugs.webkit.org/show_bug.cgi?id=127512
+
+        Reviewed by Dan Bernstein.
+
+        * UIProcess/API/C/WKAPICast.h:
+        * UIProcess/API/C/WKPreferencesRef.h: Renamed from Source/WebKit2/UIProcess/API/C/WKPreferences.h.
+        * UIProcess/API/C/WebKit2_C.h:
+        * UIProcess/API/Cocoa/WKPreferences.h: Added.
+        * UIProcess/API/Cocoa/WKPreferences.mm: Added.
+        * WebKit2.xcodeproj/project.pbxproj:
+
 2014-01-23  Max Vujovic  <mvujovic@adobe.com>
 
         Remove CSS Custom Filters code and tests

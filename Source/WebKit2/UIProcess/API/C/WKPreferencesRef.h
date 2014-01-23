@@ -23,8 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WKPreferences_h
-#define WKPreferences_h
+#ifndef WKPreferencesRef_h
+#define WKPreferencesRef_h
 
 #include <WebKit2/WKBase.h>
 
@@ -256,4 +256,4 @@ WK_EXPORT bool WKPreferencesGetSpatialNavigationEnabled(WKPreferencesRef prefere
 }
 #endif
 
-#endif /* WKPreferences_h */
+#endif /* WKPreferencesRef_h */
