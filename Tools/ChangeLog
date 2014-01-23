@@ -1,3 +1,13 @@
+2014-01-22  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        [EFL] Remove unnecessary smart method since ewk_view_tiled removed
+        https://bugs.webkit.org/show_bug.cgi?id=127417
+
+        Reviewed by Gyuyoung Kim.
+
+        * EWebLauncher/main.c:
+        (on_key_down): Removed shortcut to test pre render.
+
 2014-01-22  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Remove CSS3_TEXT_DECORATION define

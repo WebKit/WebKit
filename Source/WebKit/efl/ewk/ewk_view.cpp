@@ -1147,7 +1147,7 @@ static void _ewk_view_smart_scrolls_process(Ewk_View_Smart_Data* smartData)
     return;
 }
 
-static Eina_Bool _ewk_view_smart_repaints_process(Ewk_View_Smart_Data* smartData)
+static bool _ewk_view_smart_repaints_process(Ewk_View_Smart_Data* smartData)
 {
     EWK_VIEW_PRIV_GET(smartData, priv);
 
@@ -1232,8 +1232,6 @@ static void _ewk_view_smart_calculate(Evas_Object* ewkView)
 {
     EWK_VIEW_SD_GET(ewkView, smartData);
     EWK_VIEW_PRIV_GET(smartData, priv);
-    EINA_SAFETY_ON_NULL_RETURN(smartData->api->contents_resize);
-    EINA_SAFETY_ON_NULL_RETURN(smartData->api->repaints_process);
     Evas_Coord x, y, width, height;
 
     smartData->changed.any = false;
@@ -1276,10 +1274,10 @@ static void _ewk_view_smart_calculate(Evas_Object* ewkView)
     }
     smartData->changed.position = false;
 
-    smartData->api->scrolls_process(smartData);
+    _ewk_view_smart_scrolls_process(smartData);
     _ewk_view_scrolls_flush(priv);
 
-    if (!smartData->api->repaints_process(smartData))
+    if (!_ewk_view_smart_repaints_process(smartData))
         ERR("failed to process repaints.");
 
     if (smartData->changed.frame_rect) {
@@ -1343,31 +1341,6 @@ static void _ewk_view_smart_flush(Ewk_View_Smart_Data* smartData)
     EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv);
     _ewk_view_repaints_flush(priv);
     _ewk_view_scrolls_flush(priv);
-}
-
-static Eina_Bool _ewk_view_smart_pre_render_region(Ewk_View_Smart_Data* smartData, Evas_Coord x, Evas_Coord y, Evas_Coord width, Evas_Coord height, float zoom)
-{
-    WARN("not supported by engine. smartData=%p area=%d,%d+%dx%d, zoom=%f",
-        smartData, x, y, width, height, zoom);
-    return false;
-}
-
-static Eina_Bool _ewk_view_smart_pre_render_relative_radius(Ewk_View_Smart_Data* smartData, unsigned int number, float zoom)
-{
-    WARN("not supported by engine. smartData=%p, n=%u zoom=%f",
-        smartData, number, zoom);
-    return false;
-}
-
-static Eina_Bool _ewk_view_smart_pre_render_start(Ewk_View_Smart_Data* smartData)
-{
-    WARN("not supported by engine. smartData=%p", smartData);
-    return false;
-}
-
-static void _ewk_view_smart_pre_render_cancel(Ewk_View_Smart_Data* smartData)
-{
-    WARN("not supported by engine. smartData=%p", smartData);
 }
 
 static void _ewk_view_zoom_animated_mark_stop(Ewk_View_Smart_Data* smartData)
@@ -1545,16 +1518,10 @@ Eina_Bool ewk_view_smart_set(Ewk_View_Smart_Class* api)
     api->sc.callbacks = _ewk_view_callback_names;
 
     api->contents_resize = _ewk_view_smart_contents_resize;
-    api->scrolls_process = _ewk_view_smart_scrolls_process;
-    api->repaints_process = _ewk_view_smart_repaints_process;
     api->zoom_set = _ewk_view_smart_zoom_set;
     api->zoom_weak_set = _ewk_view_smart_zoom_weak_set;
     api->zoom_weak_smooth_scale_set = _ewk_view_smart_zoom_weak_smooth_scale_set;
     api->flush = _ewk_view_smart_flush;
-    api->pre_render_region = _ewk_view_smart_pre_render_region;
-    api->pre_render_relative_radius = _ewk_view_smart_pre_render_relative_radius;
-    api->pre_render_start = _ewk_view_smart_pre_render_start;
-    api->pre_render_cancel = _ewk_view_smart_pre_render_cancel;
     api->disable_render = _ewk_view_smart_disable_render;
     api->enable_render = _ewk_view_smart_enable_render;
 
@@ -2199,82 +2166,11 @@ Eina_Bool ewk_view_zoom_animated_set(Evas_Object* ewkView, float zoom, float dur
     return true;
 }
 
-Eina_Bool ewk_view_pre_render_region(Evas_Object* ewkView, Evas_Coord x, Evas_Coord y, Evas_Coord width, Evas_Coord height, float zoom)
-{
-    EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData, false);
-    EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv, false);
-    EINA_SAFETY_ON_NULL_RETURN_VAL(smartData->api->pre_render_region, false);
-    Evas_Coord contentsWidth, contentsHeight;
-
-    /* When doing animated zoom it's not possible to call pre-render since it
-     * would screw up parameters that animation is currently using
-     */
-    if (priv->animatedZoom.animator)
-        return false;
-
-    float currentZoom = ewk_frame_page_zoom_get(smartData->main_frame);
-    if (currentZoom < std::numeric_limits<float>::epsilon())
-        return false;
-
-    if (!ewk_frame_contents_size_get(smartData->main_frame, &contentsWidth, &contentsHeight))
-        return false;
-
-    contentsWidth *= zoom / currentZoom;
-    contentsHeight *= zoom / currentZoom;
-    DBG("region %d,%d+%dx%d @ %f contents=%dx%d", x, y, width, height, zoom, contentsWidth, contentsHeight);
-
-    if (x + width > contentsWidth)
-        width = contentsWidth - x;
-
-    if (y + height > contentsHeight)
-        height = contentsHeight - y;
-
-    if (x < 0) {
-        width += x;
-        x = 0;
-    }
-    if (y < 0) {
-        height += y;
-        y = 0;
-    }
-
-    return smartData->api->pre_render_region(smartData, x, y, width, height, zoom);
-}
-
-Eina_Bool ewk_view_pre_render_relative_radius(Evas_Object* ewkView, unsigned int number)
-{
-    EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData, false);
-    EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv, false);
-    EINA_SAFETY_ON_NULL_RETURN_VAL(smartData->api->pre_render_relative_radius, false);
-    float currentZoom;
-
-    if (priv->animatedZoom.animator)
-        return false;
-
-    currentZoom = ewk_frame_page_zoom_get(smartData->main_frame);
-    return smartData->api->pre_render_relative_radius(smartData, number, currentZoom);
-}
-
-Eina_Bool ewk_view_pre_render_start(Evas_Object* ewkView)
-{
-    EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData, false);
-    EINA_SAFETY_ON_NULL_RETURN_VAL(smartData->api->pre_render_start, false);
-
-    return smartData->api->pre_render_start(smartData);
-}
-
 unsigned int ewk_view_imh_get(const Evas_Object* ewkView)
 {
     EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData, 0);
     EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv, 0);
     return priv->imh;
-}
-
-void ewk_view_pre_render_cancel(Evas_Object* ewkView)
-{
-    EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData);
-    EINA_SAFETY_ON_NULL_RETURN(smartData->api->pre_render_cancel);
-    smartData->api->pre_render_cancel(smartData);
 }
 
 Eina_Bool ewk_view_enable_render(const Evas_Object* ewkView)
@@ -3048,7 +2944,7 @@ void ewk_view_scrolls_process(Ewk_View_Smart_Data* smartData)
     EINA_SAFETY_ON_NULL_RETURN(smartData);
     EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv);
 
-    smartData->api->scrolls_process(smartData);
+    _ewk_view_smart_scrolls_process(smartData);
     _ewk_view_scrolls_flush(priv);
 }
 

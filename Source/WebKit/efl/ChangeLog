@@ -1,3 +1,21 @@
+2014-01-22  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        [EFL] Remove unnecessary smart method since ewk_view_tiled removed
+        https://bugs.webkit.org/show_bug.cgi?id=127417
+
+        Reviewed by Gyuyoung Kim.
+
+        pre_render related codes is only for ewk_view_tiled.
+        In addition, we don't have any requirement to override repaints_process
+        and scroll_process now.
+
+        * ewk/ewk_view.cpp:
+        (_ewk_view_smart_repaints_process):
+        (_ewk_view_smart_calculate):
+        (ewk_view_smart_set):
+        (ewk_view_scrolls_process):
+        * ewk/ewk_view.h:
+
 2014-01-19  Ryuan Choi  <ryuan.choi@samsung.com>
 
         [EFL][WK1] Remove and refactor the APIs which use single and base keyword
