@@ -1726,16 +1726,6 @@ msgstr ""
 msgid "Whether media playback allows inline"
 msgstr ""
 
-#: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:991
-#, fuzzy
-msgid "Enable CSS shaders"
-msgstr "XSS 검사 기능 사용"
-
-#: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:992
-#, fuzzy
-msgid "Whether to enable css shaders"
-msgstr "DOM 붙여넣기를 사용할지 여부"
-
 #: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:1007
 msgid "Enable display of insecure content"
 msgstr ""

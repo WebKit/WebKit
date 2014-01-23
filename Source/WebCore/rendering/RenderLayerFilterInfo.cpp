@@ -35,8 +35,6 @@
 
 #include "CachedSVGDocument.h"
 #include "CachedSVGDocumentReference.h"
-#include "CustomFilterOperation.h"
-#include "CustomFilterProgram.h"
 #include "FilterEffectRenderer.h"
 #include "SVGElement.h"
 #include "SVGFilter.h"
@@ -85,9 +83,6 @@ RenderLayer::FilterInfo::FilterInfo(RenderLayer& layer)
 
 RenderLayer::FilterInfo::~FilterInfo()
 {
-#if ENABLE(CSS_SHADERS)
-    removeCustomFilterClients();
-#endif
 #if ENABLE(SVG)
     removeReferenceFilterClients();
 #endif
@@ -145,44 +140,6 @@ void RenderLayer::FilterInfo::removeReferenceFilterClients()
         filter->renderer()->toRenderSVGResourceContainer()->removeClientRenderLayer(&m_layer);
     }
     m_internalSVGReferences.clear();
-}
-
-#endif
-
-#if ENABLE(CSS_SHADERS)
-
-void RenderLayer::FilterInfo::notifyCustomFilterProgramLoaded(CustomFilterProgram*)
-{
-    m_layer.renderer().element()->setNeedsStyleRecalc(SyntheticStyleChange);
-    m_layer.renderer().repaint();
-}
-
-void RenderLayer::FilterInfo::updateCustomFilterClients(const FilterOperations& operations)
-{
-    if (!operations.size()) {
-        removeCustomFilterClients();
-        return;
-    }
-    Vector<RefPtr<CustomFilterProgram>> cachedCustomFilterPrograms;
-    for (size_t i = 0, size = operations.size(); i < size; ++i) {
-        const FilterOperation* filterOperation = operations.operations()[i].get();
-        if (filterOperation->type() != FilterOperation::CUSTOM)
-            continue;
-        const CustomFilterOperation* customFilterOperation = static_cast<const CustomFilterOperation*>(filterOperation);
-        CustomFilterProgram* program = customFilterOperation->program();
-        cachedCustomFilterPrograms.append(program);
-        program->addClient(this);
-    }
-    // Remove the old clients here, after we've added the new ones, so that we don't flicker if some shaders are unchanged.
-    removeCustomFilterClients();
-    m_cachedCustomFilterPrograms.swap(cachedCustomFilterPrograms);
-}
-
-void RenderLayer::FilterInfo::removeCustomFilterClients()
-{
-    for (size_t i = 0, size = m_cachedCustomFilterPrograms.size(); i < size; ++i)
-        m_cachedCustomFilterPrograms[i]->removeClient(this);
-    m_cachedCustomFilterPrograms.clear();
 }
 
 #endif

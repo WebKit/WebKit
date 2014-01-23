@@ -340,13 +340,11 @@ if test "$enable_opcode_stats" = "yes"; then
     fi
 fi
 
-# Enable CSS Filters and Shaders if accelerated_compositing is turned on.
+# Enable CSS Filters if accelerated_compositing is turned on.
 enable_css_filters=no;
-enable_css_shaders=no;
-AC_MSG_CHECKING([whether to enable CSS Filters and Shaders])
+AC_MSG_CHECKING([whether to enable CSS Filters])
 if test "$enable_accelerated_compositing" = "yes" && test "$found_opengl" = "yes"; then
     enable_css_filters=yes;
-    enable_css_shaders=yes;
 fi
 AC_MSG_RESULT([$enable_css_filters])
 

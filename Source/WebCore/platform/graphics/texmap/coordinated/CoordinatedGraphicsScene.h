@@ -47,8 +47,6 @@
 namespace WebCore {
 
 class CoordinatedBackingStore;
-class CustomFilterProgram;
-class CustomFilterProgramInfo;
 
 class CoordinatedGraphicsSceneClient {
 public:
@@ -114,13 +112,6 @@ private:
     void updateImageBacking(CoordinatedImageBackingID, PassRefPtr<CoordinatedSurface>);
     void clearImageBackingContents(CoordinatedImageBackingID);
     void removeImageBacking(CoordinatedImageBackingID);
-
-#if ENABLE(CSS_SHADERS)
-    void syncCustomFilterPrograms(const CoordinatedGraphicsState&);
-    void injectCachedCustomFilterPrograms(const FilterOperations& filters) const;
-    void createCustomFilterProgram(int id, const CustomFilterProgramInfo&);
-    void removeCustomFilterProgram(int id);
-#endif
 
     TextureMapperLayer* layerByID(CoordinatedLayerID id)
     {
@@ -192,11 +183,6 @@ private:
     FloatPoint m_renderedContentsScrollPosition;
     Color m_backgroundColor;
     bool m_setDrawsBackground;
-
-#if ENABLE(CSS_SHADERS)
-    typedef HashMap<int, RefPtr<CustomFilterProgram> > CustomFilterProgramMap;
-    CustomFilterProgramMap m_customFilterPrograms;
-#endif
 
     TextureMapperFPSCounter m_fpsCounter;
 };

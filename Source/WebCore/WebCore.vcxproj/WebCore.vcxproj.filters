@@ -1011,9 +1011,6 @@
     <ClCompile Include="..\loader\cache\CachedScript.cpp">
       <Filter>loader\cache</Filter>
     </ClCompile>
-    <ClCompile Include="..\loader\cache\CachedShader.cpp">
-      <Filter>loader\cache</Filter>
-    </ClCompile>
     <ClCompile Include="..\loader\cache\CachedSVGDocument.cpp">
       <Filter>loader\cache</Filter>
     </ClCompile>
@@ -1635,36 +1632,6 @@
     <ClCompile Include="..\platform\graphics\transforms\TranslateTransformOperation.cpp">
       <Filter>platform\graphics\transforms</Filter>
     </ClCompile>
-    <ClCompile Include="..\platform\graphics\filters\CustomFilterCompiledProgram.cpp">
-      <Filter>platform\graphics\filters</Filter>
-    </ClCompile>
-    <ClCompile Include="..\platform\graphics\filters\CustomFilterGlobalContext.cpp">
-      <Filter>platform\graphics\filters</Filter>
-    </ClCompile>
-    <ClCompile Include="..\platform\graphics\filters\CustomFilterMesh.cpp">
-      <Filter>platform\graphics\filters</Filter>
-    </ClCompile>
-    <ClCompile Include="..\platform\graphics\filters\CustomFilterMeshGenerator.cpp">
-      <Filter>platform\graphics\filters</Filter>
-    </ClCompile>
-    <ClCompile Include="..\platform\graphics\filters\CustomFilterOperation.cpp">
-      <Filter>platform\graphics\filters</Filter>
-    </ClCompile>
-    <ClCompile Include="..\platform\graphics\filters\CustomFilterParameterList.cpp">
-      <Filter>platform\graphics\filters</Filter>
-    </ClCompile>
-    <ClCompile Include="..\platform\graphics\filters\CustomFilterProgram.cpp">
-      <Filter>platform\graphics\filters</Filter>
-    </ClCompile>
-    <ClCompile Include="..\platform\graphics\filters\CustomFilterProgramInfo.cpp">
-      <Filter>platform\graphics\filters</Filter>
-    </ClCompile>
-    <ClCompile Include="..\platform\graphics\filters\CustomFilterRenderer.cpp">
-      <Filter>platform\graphics\filters</Filter>
-    </ClCompile>
-    <ClCompile Include="..\platform\graphics\filters\CustomFilterValidatedProgram.cpp">
-      <Filter>platform\graphics\filters</Filter>
-    </ClCompile>
     <ClCompile Include="..\platform\graphics\filters\DistantLightSource.cpp">
       <Filter>platform\graphics\filters</Filter>
     </ClCompile>
@@ -1681,9 +1648,6 @@
       <Filter>platform\graphics\filters</Filter>
     </ClCompile>
     <ClCompile Include="..\platform\graphics\filters\FEConvolveMatrix.cpp">
-      <Filter>platform\graphics\filters</Filter>
-    </ClCompile>
-    <ClCompile Include="..\platform\graphics\filters\FECustomFilter.cpp">
       <Filter>platform\graphics\filters</Filter>
     </ClCompile>
     <ClCompile Include="..\platform\graphics\filters\FEDiffuseLighting.cpp">
@@ -1744,9 +1708,6 @@
       <Filter>platform\graphics\filters</Filter>
     </ClCompile>
     <ClCompile Include="..\platform\graphics\filters\SpotLightSource.cpp">
-      <Filter>platform\graphics\filters</Filter>
-    </ClCompile>
-    <ClCompile Include="..\platform\graphics\filters\ValidatedCustomFilterOperation.cpp">
       <Filter>platform\graphics\filters</Filter>
     </ClCompile>
     <ClCompile Include="..\platform\graphics\ca\GraphicsLayerCA.cpp">
@@ -2340,9 +2301,6 @@
     <ClCompile Include="..\css\ViewportStyleResolver.cpp">
       <Filter>css</Filter>
     </ClCompile>
-    <ClCompile Include="..\css\WebKitCSSArrayFunctionValue.cpp">
-      <Filter>css</Filter>
-    </ClCompile>
     <ClCompile Include="..\css\WebKitCSSFilterValue.cpp">
       <Filter>css</Filter>
     </ClCompile>
@@ -2355,16 +2313,7 @@
     <ClCompile Include="..\css\WebKitCSSMatrix.cpp">
       <Filter>css</Filter>
     </ClCompile>
-    <ClCompile Include="..\css\WebKitCSSMatFunctionValue.cpp">
-      <Filter>css</Filter>
-    </ClCompile>
-    <ClCompile Include="..\css\WebKitCSSMixFunctionValue.cpp">
-      <Filter>css</Filter>
-    </ClCompile>
     <ClCompile Include="..\css\WebKitCSSRegionRule.cpp">
-      <Filter>css</Filter>
-    </ClCompile>
-    <ClCompile Include="..\css\WebKitCSSShaderValue.cpp">
       <Filter>css</Filter>
     </ClCompile>
     <ClCompile Include="..\css\WebKitCSSTransformValue.cpp">
@@ -2833,9 +2782,6 @@
       <Filter>rendering\style</Filter>
     </ClCompile>
     <ClCompile Include="..\rendering\style\StyleCachedImage.cpp">
-      <Filter>rendering\style</Filter>
-    </ClCompile>
-    <ClCompile Include="..\rendering\style\StyleCachedShader.cpp">
       <Filter>rendering\style</Filter>
     </ClCompile>
     <ClCompile Include="..\rendering\style\StyleDeprecatedFlexibleBoxData.cpp">
@@ -6433,9 +6379,6 @@
     <ClCompile Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSWebKitCSSMatrix.cpp">
       <Filter>DerivedSources</Filter>
     </ClCompile>
-    <ClCompile Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSWebKitCSSMixFunctionValue.cpp">
-      <Filter>DerivedSources</Filter>
-    </ClCompile>
     <ClCompile Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSWebKitCSSRegionRule.cpp">
       <Filter>DerivedSources</Filter>
     </ClCompile>
@@ -7973,9 +7916,6 @@
     <ClInclude Include="..\loader\cache\CachedScript.h">
       <Filter>loader\cache</Filter>
     </ClInclude>
-    <ClInclude Include="..\loader\cache\CachedShader.h">
-      <Filter>loader\cache</Filter>
-    </ClInclude>
     <ClInclude Include="..\loader\cache\CachedStyleSheetClient.h">
       <Filter>loader\cache</Filter>
     </ClInclude>
@@ -8522,57 +8462,6 @@
     <ClInclude Include="..\platform\graphics\transforms\TranslateTransformOperation.h">
       <Filter>platform\graphics\transforms</Filter>
     </ClInclude>
-    <ClInclude Include="..\platform\graphics\filters\CustomFilterArrayParameter.h">
-      <Filter>platform\graphics\filters</Filter>
-    </ClInclude>
-    <ClInclude Include="..\platform\graphics\filters\CustomFilterColorParameter.h">
-      <Filter>platform\graphics\filters</Filter>
-    </ClInclude>
-    <ClInclude Include="..\platform\graphics\filters\CustomFilterCompiledProgram.h">
-      <Filter>platform\graphics\filters</Filter>
-    </ClInclude>
-    <ClInclude Include="..\platform\graphics\filters\CustomFilterConstants.h">
-      <Filter>platform\graphics\filters</Filter>
-    </ClInclude>
-    <ClInclude Include="..\platform\graphics\filters\CustomFilterGlobalContext.h">
-      <Filter>platform\graphics\filters</Filter>
-    </ClInclude>
-    <ClInclude Include="..\platform\graphics\filters\CustomFilterMesh.h">
-      <Filter>platform\graphics\filters</Filter>
-    </ClInclude>
-    <ClInclude Include="..\platform\graphics\filters\CustomFilterMeshGenerator.h">
-      <Filter>platform\graphics\filters</Filter>
-    </ClInclude>
-    <ClInclude Include="..\platform\graphics\filters\CustomFilterNumberParameter.h">
-      <Filter>platform\graphics\filters</Filter>
-    </ClInclude>
-    <ClInclude Include="..\platform\graphics\filters\CustomFilterOperation.h">
-      <Filter>platform\graphics\filters</Filter>
-    </ClInclude>
-    <ClInclude Include="..\platform\graphics\filters\CustomFilterParameter.h">
-      <Filter>platform\graphics\filters</Filter>
-    </ClInclude>
-    <ClInclude Include="..\platform\graphics\filters\CustomFilterParameterList.h">
-      <Filter>platform\graphics\filters</Filter>
-    </ClInclude>
-    <ClInclude Include="..\platform\graphics\filters\CustomFilterProgram.h">
-      <Filter>platform\graphics\filters</Filter>
-    </ClInclude>
-    <ClInclude Include="..\platform\graphics\filters\CustomFilterProgramClient.h">
-      <Filter>platform\graphics\filters</Filter>
-    </ClInclude>
-    <ClInclude Include="..\platform\graphics\filters\CustomFilterProgramInfo.h">
-      <Filter>platform\graphics\filters</Filter>
-    </ClInclude>
-    <ClInclude Include="..\platform\graphics\filters\CustomFilterRenderer.h">
-      <Filter>platform\graphics\filters</Filter>
-    </ClInclude>
-    <ClInclude Include="..\platform\graphics\filters\CustomFilterTransformParameter.h">
-      <Filter>platform\graphics\filters</Filter>
-    </ClInclude>
-    <ClInclude Include="..\platform\graphics\filters\CustomFilterValidatedProgram.h">
-      <Filter>platform\graphics\filters</Filter>
-    </ClInclude>
     <ClInclude Include="..\platform\graphics\filters\DistantLightSource.h">
       <Filter>platform\graphics\filters</Filter>
     </ClInclude>
@@ -8595,9 +8484,6 @@
       <Filter>platform\graphics\filters</Filter>
     </ClInclude>
     <ClInclude Include="..\platform\graphics\filters\FEConvolveMatrix.h">
-      <Filter>platform\graphics\filters</Filter>
-    </ClInclude>
-    <ClInclude Include="..\platform\graphics\filters\FECustomFilter.h">
       <Filter>platform\graphics\filters</Filter>
     </ClInclude>
     <ClInclude Include="..\platform\graphics\filters\FEDiffuseLighting.h">
@@ -8670,9 +8556,6 @@
       <Filter>platform\graphics\filters</Filter>
     </ClInclude>
     <ClInclude Include="..\platform\graphics\filters\SpotLightSource.h">
-      <Filter>platform\graphics\filters</Filter>
-    </ClInclude>
-    <ClInclude Include="..\platform\graphics\filters\ValidatedCustomFilterOperation.h">
       <Filter>platform\graphics\filters</Filter>
     </ClInclude>
     <ClInclude Include="..\platform\graphics\ca\GraphicsLayerCA.h">
@@ -9266,9 +9149,6 @@
     <ClInclude Include="..\css\ViewportStyleResolver.h">
       <Filter>css</Filter>
     </ClInclude>
-    <ClInclude Include="..\css\WebKitCSSArrayFunctionValue.h">
-      <Filter>css</Filter>
-    </ClInclude>
     <ClInclude Include="..\css\WebKitCSSFilterValue.h">
       <Filter>css</Filter>
     </ClInclude>
@@ -9281,16 +9161,7 @@
     <ClInclude Include="..\css\WebKitCSSMatrix.h">
       <Filter>css</Filter>
     </ClInclude>
-    <ClInclude Include="..\css\WebKitCSSMatFunctionValue.h">
-      <Filter>css</Filter>
-    </ClInclude>
-    <ClInclude Include="..\css\WebKitCSSMixFunctionValue.h">
-      <Filter>css</Filter>
-    </ClInclude>
     <ClInclude Include="..\css\WebKitCSSRegionRule.h">
-      <Filter>css</Filter>
-    </ClInclude>
-    <ClInclude Include="..\css\WebKitCSSShaderValue.h">
       <Filter>css</Filter>
     </ClInclude>
     <ClInclude Include="..\css\WebKitCSSTransformValue.h">
@@ -9818,12 +9689,6 @@
     <ClInclude Include="..\rendering\style\StyleCachedImage.h">
       <Filter>rendering\style</Filter>
     </ClInclude>
-    <ClInclude Include="..\rendering\style\StyleCachedShader.h">
-      <Filter>rendering\style</Filter>
-    </ClInclude>
-    <ClInclude Include="..\rendering\style\StyleCustomFilterProgram.h">
-      <Filter>rendering\style</Filter>
-    </ClInclude>
     <ClInclude Include="..\rendering\style\StyleDeprecatedFlexibleBoxData.h">
       <Filter>rendering\style</Filter>
     </ClInclude>
@@ -9857,9 +9722,6 @@
     <ClInclude Include="..\rendering\style\StylePendingImage.h">
       <Filter>rendering\style</Filter>
     </ClInclude>
-    <ClInclude Include="..\rendering\style\StylePendingShader.h">
-      <Filter>rendering\style</Filter>
-    </ClInclude>
     <ClInclude Include="..\rendering\style\StyleRareInheritedData.h">
       <Filter>rendering\style</Filter>
     </ClInclude>
@@ -9867,9 +9729,6 @@
       <Filter>rendering\style</Filter>
     </ClInclude>
     <ClInclude Include="..\rendering\style\StyleReflection.h">
-      <Filter>rendering\style</Filter>
-    </ClInclude>
-    <ClInclude Include="..\rendering\style\StyleShader.h">
       <Filter>rendering\style</Filter>
     </ClInclude>
     <ClInclude Include="..\rendering\style\StyleSurroundData.h">
@@ -14278,9 +14137,6 @@
     <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSWebKitCSSMatrix.h">
       <Filter>DerivedSources</Filter>
     </ClInclude>
-    <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSWebKitCSSMixFunctionValue.h">
-      <Filter>DerivedSources</Filter>
-    </ClInclude>
     <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSWebKitCSSRegionRule.h">
       <Filter>DerivedSources</Filter>
     </ClInclude>
@@ -14855,12 +14711,6 @@
       <Filter>platform\graphics\texmap\coordinated</Filter>
     </ClInclude>
     <ClInclude Include="..\platform\graphics\texmap\coordinated\CoordinatedBackingStore.h">
-      <Filter>platform\graphics\texmap\coordinated</Filter>
-    </ClInclude>
-    <ClInclude Include="..\platform\graphics\texmap\coordinated\CoordinatedCustomFilterOperation.h">
-      <Filter>platform\graphics\texmap\coordinated</Filter>
-    </ClInclude>
-    <ClInclude Include="..\platform\graphics\texmap\coordinated\CoordinatedCustomFilterProgram.h">
       <Filter>platform\graphics\texmap\coordinated</Filter>
     </ClInclude>
     <ClInclude Include="..\platform\graphics\texmap\coordinated\CoordinatedGraphicsLayer.h">

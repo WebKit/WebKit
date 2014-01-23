@@ -664,10 +664,6 @@ bool PlatformCALayerMac::filtersCanBeComposited(const FilterOperations& filters)
         const FilterOperation* filterOperation = filters.at(i);
         switch (filterOperation->type()) {
             case FilterOperation::REFERENCE:
-#if ENABLE(CSS_SHADERS)
-            case FilterOperation::CUSTOM:
-            case FilterOperation::VALIDATED_CUSTOM:
-#endif
                 return false;
             case FilterOperation::DROP_SHADOW:
                 // FIXME: For now we can only handle drop-shadow is if it's last in the list

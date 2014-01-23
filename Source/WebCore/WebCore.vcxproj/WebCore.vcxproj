@@ -6161,20 +6161,6 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Production|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Production|x64'">true</ExcludedFromBuild>
     </ClCompile>
-    <ClCompile Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSWebKitCSSMixFunctionValue.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug_WinCairo|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug_WinCairo|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugSuffix|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugSuffix|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_WinCairo|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_WinCairo|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Production|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Production|x64'">true</ExcludedFromBuild>
-    </ClCompile>
     <ClCompile Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSWebKitCSSRegionRule.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
@@ -7219,7 +7205,6 @@
     <ClCompile Include="..\loader\cache\CachedResourceRequest.cpp" />
     <ClCompile Include="..\loader\cache\CachedResourceRequestInitiators.cpp" />
     <ClCompile Include="..\loader\cache\CachedScript.cpp" />
-    <ClCompile Include="..\loader\cache\CachedShader.cpp" />
     <ClCompile Include="..\loader\cache\CachedSVGDocument.cpp" />
     <ClCompile Include="..\loader\cache\CachedSVGDocumentReference.cpp" />
     <ClCompile Include="..\loader\cache\CachedTextTrack.cpp" />
@@ -8147,23 +8132,12 @@
     <ClCompile Include="..\platform\graphics\transforms\TransformOperations.cpp" />
     <ClCompile Include="..\platform\graphics\transforms\TransformState.cpp" />
     <ClCompile Include="..\platform\graphics\transforms\TranslateTransformOperation.cpp" />
-    <ClCompile Include="..\platform\graphics\filters\CustomFilterCompiledProgram.cpp" />
-    <ClCompile Include="..\platform\graphics\filters\CustomFilterGlobalContext.cpp" />
-    <ClCompile Include="..\platform\graphics\filters\CustomFilterMesh.cpp" />
-    <ClCompile Include="..\platform\graphics\filters\CustomFilterMeshGenerator.cpp" />
-    <ClCompile Include="..\platform\graphics\filters\CustomFilterOperation.cpp" />
-    <ClCompile Include="..\platform\graphics\filters\CustomFilterParameterList.cpp" />
-    <ClCompile Include="..\platform\graphics\filters\CustomFilterProgram.cpp" />
-    <ClCompile Include="..\platform\graphics\filters\CustomFilterProgramInfo.cpp" />
-    <ClCompile Include="..\platform\graphics\filters\CustomFilterRenderer.cpp" />
-    <ClCompile Include="..\platform\graphics\filters\CustomFilterValidatedProgram.cpp" />
     <ClCompile Include="..\platform\graphics\filters\DistantLightSource.cpp" />
     <ClCompile Include="..\platform\graphics\filters\FEBlend.cpp" />
     <ClCompile Include="..\platform\graphics\filters\FEColorMatrix.cpp" />
     <ClCompile Include="..\platform\graphics\filters\FEComponentTransfer.cpp" />
     <ClCompile Include="..\platform\graphics\filters\FEComposite.cpp" />
     <ClCompile Include="..\platform\graphics\filters\FEConvolveMatrix.cpp" />
-    <ClCompile Include="..\platform\graphics\filters\FECustomFilter.cpp" />
     <ClCompile Include="..\platform\graphics\filters\FEDiffuseLighting.cpp" />
     <ClCompile Include="..\platform\graphics\filters\FEDisplacementMap.cpp" />
     <ClCompile Include="..\platform\graphics\filters\FEDropShadow.cpp" />
@@ -8184,7 +8158,6 @@
     <ClCompile Include="..\platform\graphics\filters\SourceAlpha.cpp" />
     <ClCompile Include="..\platform\graphics\filters\SourceGraphic.cpp" />
     <ClCompile Include="..\platform\graphics\filters\SpotLightSource.cpp" />
-    <ClCompile Include="..\platform\graphics\filters\ValidatedCustomFilterOperation.cpp" />
     <ClCompile Include="..\platform\graphics\ca\GraphicsLayerCA.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug_WinCairo|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug_WinCairo|x64'">true</ExcludedFromBuild>
@@ -9565,15 +9538,11 @@
     <ClCompile Include="..\css\SVGCSSStyleSelector.cpp" />
     <ClCompile Include="..\css\TransformFunctions.cpp" />
     <ClCompile Include="..\css\ViewportStyleResolver.cpp" />
-    <ClCompile Include="..\css\WebKitCSSArrayFunctionValue.cpp" />
     <ClCompile Include="..\css\WebKitCSSFilterValue.cpp" />
     <ClCompile Include="..\css\WebKitCSSKeyframeRule.cpp" />
     <ClCompile Include="..\css\WebKitCSSKeyframesRule.cpp" />
     <ClCompile Include="..\css\WebKitCSSMatrix.cpp" />
-    <ClCompile Include="..\css\WebKitCSSMatFunctionValue.cpp" />
-    <ClCompile Include="..\css\WebKitCSSMixFunctionValue.cpp" />
     <ClCompile Include="..\css\WebKitCSSRegionRule.cpp" />
-    <ClCompile Include="..\css\WebKitCSSShaderValue.cpp" />
     <ClCompile Include="..\css\WebKitCSSTransformValue.cpp" />
     <ClCompile Include="..\css\WebKitCSSViewportRule.cpp" />
     <ClCompile Include="..\cssjit\SelectorCompiler.cpp" />
@@ -11443,7 +11412,6 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Production|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Production|x64'">true</ExcludedFromBuild>
     </ClCompile>
-    <ClCompile Include="..\rendering\style\StyleCachedShader.cpp" />
     <ClCompile Include="..\rendering\style\StyleDeprecatedFlexibleBoxData.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
@@ -18533,7 +18501,6 @@
     <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSWebKitCSSKeyframeRule.h" />
     <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSWebKitCSSKeyframesRule.h" />
     <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSWebKitCSSMatrix.h" />
-    <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSWebKitCSSMixFunctionValue.h" />
     <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSWebKitCSSRegionRule.h" />
     <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSWebKitCSSTransformValue.h" />
     <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSWebKitNamedFlow.h" />
@@ -19041,7 +19008,6 @@
     <ClInclude Include="..\loader\cache\CachedResourceRequest.h" />
     <ClInclude Include="..\loader\cache\CachedResourceRequestInitiators.h" />
     <ClInclude Include="..\loader\cache\CachedScript.h" />
-    <ClInclude Include="..\loader\cache\CachedShader.h" />
     <ClInclude Include="..\loader\cache\CachedStyleSheetClient.h" />
     <ClInclude Include="..\loader\cache\CachedSVGDocument.h" />
     <ClInclude Include="..\loader\cache\CachedSVGDocumentReference.h" />
@@ -19135,8 +19101,6 @@
     <ClInclude Include="..\platform\graphics\texmap\coordinated\AreaAllocator.h" />
     <ClInclude Include="..\platform\graphics\texmap\coordinated\CompositingCoordinator.h" />
     <ClInclude Include="..\platform\graphics\texmap\coordinated\CoordinatedBackingStore.h" />
-    <ClInclude Include="..\platform\graphics\texmap\coordinated\CoordinatedCustomFilterOperation.h" />
-    <ClInclude Include="..\platform\graphics\texmap\coordinated\CoordinatedCustomFilterProgram.h" />
     <ClInclude Include="..\platform\graphics\texmap\coordinated\CoordinatedGraphicsLayer.h" />
     <ClInclude Include="..\platform\graphics\texmap\coordinated\CoordinatedGraphicsScene.h" />
     <ClInclude Include="..\platform\graphics\texmap\coordinated\CoordinatedGraphicsState.h" />
@@ -19446,23 +19410,6 @@
     <ClInclude Include="..\platform\graphics\transforms\TransformOperations.h" />
     <ClInclude Include="..\platform\graphics\transforms\TransformState.h" />
     <ClInclude Include="..\platform\graphics\transforms\TranslateTransformOperation.h" />
-    <ClInclude Include="..\platform\graphics\filters\CustomFilterArrayParameter.h" />
-    <ClInclude Include="..\platform\graphics\filters\CustomFilterColorParameter.h" />
-    <ClInclude Include="..\platform\graphics\filters\CustomFilterCompiledProgram.h" />
-    <ClInclude Include="..\platform\graphics\filters\CustomFilterConstants.h" />
-    <ClInclude Include="..\platform\graphics\filters\CustomFilterGlobalContext.h" />
-    <ClInclude Include="..\platform\graphics\filters\CustomFilterMesh.h" />
-    <ClInclude Include="..\platform\graphics\filters\CustomFilterMeshGenerator.h" />
-    <ClInclude Include="..\platform\graphics\filters\CustomFilterNumberParameter.h" />
-    <ClInclude Include="..\platform\graphics\filters\CustomFilterOperation.h" />
-    <ClInclude Include="..\platform\graphics\filters\CustomFilterParameter.h" />
-    <ClInclude Include="..\platform\graphics\filters\CustomFilterParameterList.h" />
-    <ClInclude Include="..\platform\graphics\filters\CustomFilterProgram.h" />
-    <ClInclude Include="..\platform\graphics\filters\CustomFilterProgramClient.h" />
-    <ClInclude Include="..\platform\graphics\filters\CustomFilterProgramInfo.h" />
-    <ClInclude Include="..\platform\graphics\filters\CustomFilterRenderer.h" />
-    <ClInclude Include="..\platform\graphics\filters\CustomFilterTransformParameter.h" />
-    <ClInclude Include="..\platform\graphics\filters\CustomFilterValidatedProgram.h" />
     <ClInclude Include="..\platform\graphics\filters\DistantLightSource.h" />
     <ClInclude Include="..\platform\graphics\filters\FEBlend.h" />
     <ClInclude Include="..\platform\graphics\cpu\arm\filters\FEBlendNEON.h" />
@@ -19471,7 +19418,6 @@
     <ClInclude Include="..\platform\graphics\filters\FEComposite.h" />
     <ClInclude Include="..\platform\graphics\cpu\arm\filters\FECompositeArithmeticNEON.h" />
     <ClInclude Include="..\platform\graphics\filters\FEConvolveMatrix.h" />
-    <ClInclude Include="..\platform\graphics\filters\FECustomFilter.h" />
     <ClInclude Include="..\platform\graphics\filters\FEDiffuseLighting.h" />
     <ClInclude Include="..\platform\graphics\filters\FEDisplacementMap.h" />
     <ClInclude Include="..\platform\graphics\filters\FEDropShadow.h" />
@@ -19496,7 +19442,6 @@
     <ClInclude Include="..\platform\graphics\filters\SourceAlpha.h" />
     <ClInclude Include="..\platform\graphics\filters\SourceGraphic.h" />
     <ClInclude Include="..\platform\graphics\filters\SpotLightSource.h" />
-    <ClInclude Include="..\platform\graphics\filters\ValidatedCustomFilterOperation.h" />
     <ClInclude Include="..\platform\graphics\ca\GraphicsLayerCA.h" />
     <ClInclude Include="..\platform\graphics\ca\PlatformCAAnimation.h" />
     <ClInclude Include="..\platform\graphics\ca\PlatformCALayer.h" />
@@ -19878,15 +19823,11 @@
     <ClInclude Include="..\css\StyleSheetList.h" />
     <ClInclude Include="..\css\TransformFunctions.h" />
     <ClInclude Include="..\css\ViewportStyleResolver.h" />
-    <ClInclude Include="..\css\WebKitCSSArrayFunctionValue.h" />
     <ClInclude Include="..\css\WebKitCSSFilterValue.h" />
     <ClInclude Include="..\css\WebKitCSSKeyframeRule.h" />
     <ClInclude Include="..\css\WebKitCSSKeyframesRule.h" />
     <ClInclude Include="..\css\WebKitCSSMatrix.h" />
-    <ClInclude Include="..\css\WebKitCSSMatFunctionValue.h" />
-    <ClInclude Include="..\css\WebKitCSSMixFunctionValue.h" />
     <ClInclude Include="..\css\WebKitCSSRegionRule.h" />
-    <ClInclude Include="..\css\WebKitCSSShaderValue.h" />
     <ClInclude Include="..\css\WebKitCSSTransformValue.h" />
     <ClInclude Include="..\css\WebKitCSSViewportRule.h" />
     <ClInclude Include="..\cssjit\FunctionCall.h" />
@@ -20096,8 +20037,6 @@
     <ClInclude Include="..\rendering\style\StyleBackgroundData.h" />
     <ClInclude Include="..\rendering\style\StyleBoxData.h" />
     <ClInclude Include="..\rendering\style\StyleCachedImage.h" />
-    <ClInclude Include="..\rendering\style\StyleCachedShader.h" />
-    <ClInclude Include="..\rendering\style\StyleCustomFilterProgram.h" />
     <ClInclude Include="..\rendering\style\StyleDeprecatedFlexibleBoxData.h" />
     <ClInclude Include="..\rendering\style\StyleFilterData.h" />
     <ClInclude Include="..\rendering\style\StyleFlexibleBoxData.h" />
@@ -20109,11 +20048,9 @@
     <ClInclude Include="..\rendering\style\StyleMarqueeData.h" />
     <ClInclude Include="..\rendering\style\StyleMultiColData.h" />
     <ClInclude Include="..\rendering\style\StylePendingImage.h" />
-    <ClInclude Include="..\rendering\style\StylePendingShader.h" />
     <ClInclude Include="..\rendering\style\StyleRareInheritedData.h" />
     <ClInclude Include="..\rendering\style\StyleRareNonInheritedData.h" />
     <ClInclude Include="..\rendering\style\StyleReflection.h" />
-    <ClInclude Include="..\rendering\style\StyleShader.h" />
     <ClInclude Include="..\rendering\style\StyleSurroundData.h" />
     <ClInclude Include="..\rendering\style\StyleTransformData.h" />
     <ClInclude Include="..\rendering\style\StyleVariableData.h" />

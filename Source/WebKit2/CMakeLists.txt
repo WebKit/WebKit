@@ -270,7 +270,6 @@ set(WebKit2_SOURCES
 
     Shared/CoordinatedGraphics/CoordinatedGraphicsArgumentCoders.cpp
     Shared/CoordinatedGraphics/WebCoordinatedSurface.cpp
-    Shared/CoordinatedGraphics/WebCustomFilterProgramProxy.cpp
 
     Shared/Downloads/Download.cpp
     Shared/Downloads/DownloadAuthenticationClient.cpp

@@ -38,9 +38,6 @@
 #include "StyleInheritedData.h"
 #include "StyleScopeResolver.h"
 #include "ViewportStyleResolver.h"
-#if ENABLE(CSS_SHADERS)
-#include "CustomFilterConstants.h"
-#endif
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/RefPtr.h>
@@ -64,11 +61,6 @@ class CSSSelector;
 class CSSStyleSheet;
 class CSSValue;
 class ContainerNode;
-class CustomFilterOperation;
-class CustomFilterParameter;
-class CustomFilterParameterList;
-class CustomFilterProgram;
-struct CustomFilterProgramMixSettings;
 class Document;
 class DeprecatedStyleBuilder;
 class Element;
@@ -84,7 +76,6 @@ class RenderScrollbar;
 class RuleData;
 class RuleSet;
 class Settings;
-class StyleCustomFilterProgramCache;
 class StyleScopeResolver;
 class StyleImage;
 class StyleKeyframe;
@@ -97,13 +88,11 @@ class StyleRuleHost;
 class StyleRuleKeyframes;
 class StyleRulePage;
 class StyleRuleRegion;
-class StyleShader;
 class StyleSheet;
 class StyleSheetList;
 class StyledElement;
 class ViewportStyleResolver;
 class WebKitCSSFilterValue;
-class WebKitCSSShaderValue;
 
 class MediaQueryResult {
     WTF_MAKE_NONCOPYABLE(MediaQueryResult); WTF_MAKE_FAST_ALLOCATED;
@@ -264,22 +253,6 @@ public:
 
 #if ENABLE(CSS_FILTERS)
     bool createFilterOperations(CSSValue* inValue, FilterOperations& outOperations);
-#if ENABLE(CSS_SHADERS)
-    StyleShader* styleShader(CSSValue*);
-    StyleShader* cachedOrPendingStyleShaderFromValue(WebKitCSSShaderValue*);
-    bool parseCustomFilterParameterList(CSSValue*, CustomFilterParameterList&);
-    PassRefPtr<CustomFilterParameter> parseCustomFilterParameter(const String& name, CSSValue*);
-    PassRefPtr<CustomFilterParameter> parseCustomFilterColorParameter(const String& name, CSSValueList*);
-    PassRefPtr<CustomFilterParameter> parseCustomFilterArrayParameter(const String& name, CSSValueList*, bool);
-    PassRefPtr<CustomFilterParameter> parseCustomFilterNumberParameter(const String& name, CSSValueList*);
-    PassRefPtr<CustomFilterParameter> parseCustomFilterTransformParameter(const String& name, CSSValueList*);
-    PassRefPtr<CustomFilterOperation> createCustomFilterOperationWithAtRuleReferenceSyntax(WebKitCSSFilterValue*);
-    PassRefPtr<CustomFilterOperation> createCustomFilterOperationWithInlineSyntax(WebKitCSSFilterValue*);
-    PassRefPtr<CustomFilterOperation> createCustomFilterOperation(WebKitCSSFilterValue*);
-    void loadPendingShaders();
-    PassRefPtr<CustomFilterProgram> lookupCustomFilterProgram(WebKitCSSShaderValue* vertexShader, WebKitCSSShaderValue* fragmentShader, 
-        CustomFilterProgramType, const CustomFilterProgramMixSettings&, CustomFilterMeshType);
-#endif
 #if ENABLE(SVG)
     void loadPendingSVGDocuments();
 #endif
@@ -389,9 +362,6 @@ public:
         , m_elementAffectedByClassRules(false)
         , m_applyPropertyToRegularStyle(true)
         , m_applyPropertyToVisitedLinkStyle(false)
-#if ENABLE(CSS_SHADERS)
-        , m_hasPendingShaders(false)
-#endif
         , m_lineHeightValue(0)
         , m_fontDirty(false)
         , m_hasUAAppearance(false)
@@ -426,10 +396,6 @@ public:
         PendingImagePropertyMap& pendingImageProperties() { return m_pendingImageProperties; }
 #if ENABLE(CSS_FILTERS) && ENABLE(SVG)
         Vector<RefPtr<ReferenceFilterOperation>>& filtersWithPendingSVGDocuments() { return m_filtersWithPendingSVGDocuments; }
-#endif
-#if ENABLE(CSS_SHADERS)
-        void setHasPendingShaders(bool hasPendingShaders) { m_hasPendingShaders = hasPendingShaders; }
-        bool hasPendingShaders() const { return m_hasPendingShaders; }
 #endif
 
         void setLineHeightValue(CSSValue* value) { m_lineHeightValue = value; }
@@ -475,9 +441,6 @@ public:
         bool m_applyPropertyToVisitedLinkStyle;
 
         PendingImagePropertyMap m_pendingImageProperties;
-#if ENABLE(CSS_SHADERS)
-        bool m_hasPendingShaders;
-#endif
 #if ENABLE(CSS_FILTERS) && ENABLE(SVG)
         Vector<RefPtr<ReferenceFilterOperation>> m_filtersWithPendingSVGDocuments;
 #endif
@@ -586,10 +549,6 @@ private:
     InspectorCSSOMWrappers m_inspectorCSSOMWrappers;
 
     State m_state;
-
-#if ENABLE(CSS_SHADERS)
-    OwnPtr<StyleCustomFilterProgramCache> m_customFilterProgramCache;
-#endif
 
     friend class DeprecatedStyleBuilder;
     friend bool operator==(const MatchedProperties&, const MatchedProperties&);

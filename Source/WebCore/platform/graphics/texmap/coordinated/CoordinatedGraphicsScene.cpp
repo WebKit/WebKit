@@ -32,13 +32,6 @@
 #include <wtf/Atomics.h>
 #include <wtf/MainThread.h>
 
-#if ENABLE(CSS_SHADERS)
-#include "CoordinatedCustomFilterOperation.h"
-#include "CoordinatedCustomFilterProgram.h"
-#include "CustomFilterProgram.h"
-#include "CustomFilterProgramInfo.h"
-#endif
-
 namespace WebCore {
 
 void CoordinatedGraphicsScene::dispatchOnMainThread(const Function<void()>& function)
@@ -229,53 +222,9 @@ void CoordinatedGraphicsScene::setLayerFiltersIfNeeded(TextureMapperLayer* layer
     if (!state.filtersChanged)
         return;
 
-#if ENABLE(CSS_SHADERS)
-    injectCachedCustomFilterPrograms(state.filters);
-#endif
     layer->setFilters(state.filters);
 }
 #endif
-
-#if ENABLE(CSS_SHADERS)
-void CoordinatedGraphicsScene::syncCustomFilterPrograms(const CoordinatedGraphicsState& state)
-{
-    for (size_t i = 0; i < state.customFiltersToCreate.size(); ++i)
-        createCustomFilterProgram(state.customFiltersToCreate[i].first, state.customFiltersToCreate[i].second);
-
-    for (size_t i = 0; i < state.customFiltersToRemove.size(); ++i)
-        removeCustomFilterProgram(state.customFiltersToRemove[i]);
-}
-
-void CoordinatedGraphicsScene::injectCachedCustomFilterPrograms(const FilterOperations& filters) const
-{
-    for (size_t i = 0; i < filters.size(); ++i) {
-        FilterOperation* operation = filters.operations().at(i).get();
-        if (operation->type() != FilterOperation::CUSTOM)
-            continue;
-
-        CoordinatedCustomFilterOperation* customOperation = static_cast<CoordinatedCustomFilterOperation*>(operation);
-        ASSERT(!customOperation->program());
-        CustomFilterProgramMap::const_iterator iter = m_customFilterPrograms.find(customOperation->programID());
-        ASSERT(iter != m_customFilterPrograms.end());
-        customOperation->setProgram(iter->value.get());
-    }
-}
-
-void CoordinatedGraphicsScene::createCustomFilterProgram(int id, const CustomFilterProgramInfo& programInfo)
-{
-    ASSERT(!m_customFilterPrograms.contains(id));
-    m_customFilterPrograms.set(id, CoordinatedCustomFilterProgram::create(programInfo.vertexShaderString(), programInfo.fragmentShaderString(), programInfo.programType(), programInfo.mixSettings(), programInfo.meshType()));
-}
-
-void CoordinatedGraphicsScene::removeCustomFilterProgram(int id)
-{
-    CustomFilterProgramMap::iterator iter = m_customFilterPrograms.find(id);
-    ASSERT(iter != m_customFilterPrograms.end());
-    if (m_textureMapper)
-        m_textureMapper->removeCachedCustomFilterProgram(iter->value.get());
-    m_customFilterPrograms.remove(iter);
-}
-#endif // ENABLE(CSS_SHADERS)
 
 void CoordinatedGraphicsScene::setLayerState(CoordinatedLayerID id, const CoordinatedGraphicsLayerState& layerState)
 {
@@ -619,9 +568,6 @@ void CoordinatedGraphicsScene::commitSceneState(const CoordinatedGraphicsState& 
 
     syncImageBackings(state);
     syncUpdateAtlases(state);
-#if ENABLE(CSS_SHADERS)
-    syncCustomFilterPrograms(state);
-#endif
 
     for (size_t i = 0; i < state.layersToUpdate.size(); ++i)
         setLayerState(state.layersToUpdate[i].first, state.layersToUpdate[i].second);
@@ -715,17 +661,6 @@ void CoordinatedGraphicsScene::setLayerAnimationsIfNeeded(TextureMapperLayer* la
     if (!state.animationsChanged)
         return;
 
-#if ENABLE(CSS_SHADERS)
-    for (size_t i = 0; i < state.animations.animations().size(); ++i) {
-        const KeyframeValueList& keyframes = state.animations.animations().at(i).keyframes();
-        if (keyframes.property() != AnimatedPropertyWebkitFilter)
-            continue;
-        for (size_t j = 0; j < keyframes.size(); ++j) {
-            const FilterAnimationValue& filterValue = static_cast<const FilterAnimationValue&>(keyframes.at(j));
-            injectCachedCustomFilterPrograms(filterValue.value());
-        }
-    }
-#endif
     layer->setAnimations(state.animations);
 }
 

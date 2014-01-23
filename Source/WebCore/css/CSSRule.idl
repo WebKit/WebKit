@@ -46,9 +46,6 @@
 #if defined(ENABLE_CSS_REGIONS) && ENABLE_CSS_REGIONS
     const unsigned short WEBKIT_REGION_RULE = 16;
 #endif
-#if defined(ENABLE_CSS_SHADERS) && ENABLE_CSS_SHADERS
-    const unsigned short WEBKIT_FILTER_RULE = 17;
-#endif
 #if defined(ENABLE_SHADOW_DOM) && ENABLE_SHADOW_DOM
     const unsigned short HOST_RULE = 1001;
 #endif

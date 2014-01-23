@@ -1732,14 +1732,6 @@ msgstr "Permitir reprodução de mídia ser embutida"
 msgid "Whether media playback allows inline"
 msgstr "Se a reprodução de mídia deve permitir, ou não, ser embutida"
 
-#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:1003
-msgid "Enable CSS shaders"
-msgstr "Habilitar sombreadores CSS"
-
-#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:1004
-msgid "Whether to enable css shaders"
-msgstr "Se sombreamento CSS deve ou não ser habilitado"
-
 #: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:1019
 msgid "Enable display of insecure content"
 msgstr "Habilitar exibição de conteúdo inseguro"

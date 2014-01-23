@@ -1735,14 +1735,6 @@ msgstr "Inline media afspelen toegestaan"
 msgid "Whether media playback allows inline"
 msgstr "Of het inline afspelen van media is toegestaan"
 
-#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:1003
-msgid "Enable CSS shaders"
-msgstr "CSS-shaders inschakelen"
-
-#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:1004
-msgid "Whether to enable css shaders"
-msgstr "Of CSS-shaders moeten worden ingeschakeld"
-
 #: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:1019
 msgid "Enable display of insecure content"
 msgstr "Weergave van onveilige inhoud inschakelen"

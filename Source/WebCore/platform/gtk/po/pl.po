@@ -1764,14 +1764,6 @@ msgstr "Odtwarzanie multimediów zezwala na wstawianie"
 msgid "Whether media playback allows inline"
 msgstr "Określa, czy odtwarzanie multimediów zezwala na wstawianie"
 
-#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:991
-msgid "Enable CSS shaders"
-msgstr "Włączenie cieniowania CSS"
-
-#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:992
-msgid "Whether to enable css shaders"
-msgstr "Określa, czy włączać cieniowanie CSS"
-
 #: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:1007
 msgid "Enable display of insecure content"
 msgstr "Włączenie wyświetlania niebezpiecznej treści"

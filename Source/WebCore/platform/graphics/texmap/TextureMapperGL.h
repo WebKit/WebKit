@@ -22,7 +22,6 @@
 
 #if USE(ACCELERATED_COMPOSITING) && USE(TEXTURE_MAPPER)
 
-#include "CustomFilterProgramInfo.h"
 #include "FilterOperation.h"
 #include "FloatQuad.h"
 #include "GraphicsContext3D.h"
@@ -32,8 +31,6 @@
 
 namespace WebCore {
 
-class CustomFilterProgram;
-class CustomFilterCompiledProgram;
 class TextureMapperGLData;
 class TextureMapperShaderProgram;
 class FilterOperation;
@@ -72,10 +69,6 @@ public:
 
 #if ENABLE(CSS_FILTERS)
     void drawFiltered(const BitmapTexture& sourceTexture, const BitmapTexture* contentTexture, const FilterOperation&, int pass);
-#endif
-#if ENABLE(CSS_SHADERS)
-    bool drawUsingCustomFilter(BitmapTexture& targetTexture, const BitmapTexture& sourceTexture, const FilterOperation&);
-    virtual void removeCachedCustomFilterProgram(CustomFilterProgram*);
 #endif
 
     void setEnableEdgeDistanceAntialiasing(bool enabled) { m_enableEdgeDistanceAntialiasing = enabled; }
@@ -143,11 +136,6 @@ private:
     TextureMapperGLData* m_data;
     ClipStack m_clipStack;
     bool m_enableEdgeDistanceAntialiasing;
-
-#if ENABLE(CSS_SHADERS)
-    typedef HashMap<CustomFilterProgramInfo, RefPtr<CustomFilterCompiledProgram> > CustomFilterProgramMap;
-    CustomFilterProgramMap m_customFilterPrograms;
-#endif
 
     friend class BitmapTextureGL;
 };

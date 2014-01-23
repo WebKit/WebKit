@@ -1621,14 +1621,6 @@ msgstr "મીડિયા પ્લેયરને ઇનલાઇનની જ
 msgid "Whether media playback allows inline"
 msgstr "શું મીડિયા પ્લેબેકને ઇનલાઇનની પરવાનગી આપેલ છે"
 
-#: ../webkit/webkitwebsettings.cpp:981
-msgid "Enable CSS shaders"
-msgstr "CSS શૅડરને સક્રિય કરો"
-
-#: ../webkit/webkitwebsettings.cpp:982
-msgid "Whether to enable css shaders"
-msgstr "શું css શૅડરને સક્રિય કરવાનું છે"
-
 #: ../webkit/webkitwebsettings.cpp:997
 msgid "Enable display of insecure content"
 msgstr "અસુરક્ષિત સમાવિષ્ટને દર્શાવવા સક્રિય કરો"

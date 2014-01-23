@@ -64,7 +64,6 @@ public:
     String charset;
     CSSParserMode mode;
     bool isHTMLDocument;
-    bool isCSSCustomFilterEnabled;
     bool isCSSStickyPositionEnabled;
     bool isCSSRegionsEnabled;
     bool isCSSCompositingEnabled;

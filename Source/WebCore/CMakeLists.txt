@@ -319,12 +319,10 @@ set(WebCore_IDL_FILES
     css/StyleMedia.idl
     css/StyleSheet.idl
     css/StyleSheetList.idl
-    css/WebKitCSSFilterRule.idl
     css/WebKitCSSFilterValue.idl
     css/WebKitCSSKeyframeRule.idl
     css/WebKitCSSKeyframesRule.idl
     css/WebKitCSSMatrix.idl
-    css/WebKitCSSMixFunctionValue.idl
     css/WebKitCSSRegionRule.idl
     css/WebKitCSSTransformValue.idl
     css/WebKitCSSViewportRule.idl
@@ -1112,16 +1110,11 @@ set(WebCore_SOURCES
     css/StyleSheetList.cpp
     css/TransformFunctions.cpp
     css/ViewportStyleResolver.cpp
-    css/WebKitCSSArrayFunctionValue.cpp
-    css/WebKitCSSFilterRule.cpp
     css/WebKitCSSFilterValue.cpp
     css/WebKitCSSKeyframeRule.cpp
     css/WebKitCSSKeyframesRule.cpp
-    css/WebKitCSSMatFunctionValue.cpp
     css/WebKitCSSMatrix.cpp
-    css/WebKitCSSMixFunctionValue.cpp
     css/WebKitCSSRegionRule.cpp
-    css/WebKitCSSShaderValue.cpp
     css/WebKitCSSTransformValue.cpp
     css/WebKitCSSViewportRule.cpp
 
@@ -1699,7 +1692,6 @@ set(WebCore_SOURCES
     loader/cache/CachedSVGDocument.cpp
     loader/cache/CachedSVGDocumentReference.cpp
     loader/cache/CachedScript.cpp
-    loader/cache/CachedShader.cpp
     loader/cache/CachedXSLStyleSheet.cpp
     loader/cache/MemoryCache.cpp
 
@@ -1942,23 +1934,12 @@ set(WebCore_SOURCES
 
     platform/graphics/cpu/arm/filters/FELightingNEON.cpp
 
-    platform/graphics/filters/CustomFilterCompiledProgram.cpp
-    platform/graphics/filters/CustomFilterGlobalContext.cpp
-    platform/graphics/filters/CustomFilterMesh.cpp
-    platform/graphics/filters/CustomFilterMeshGenerator.cpp
-    platform/graphics/filters/CustomFilterOperation.cpp
-    platform/graphics/filters/CustomFilterParameterList.cpp
-    platform/graphics/filters/CustomFilterProgram.cpp
-    platform/graphics/filters/CustomFilterProgramInfo.cpp
-    platform/graphics/filters/CustomFilterRenderer.cpp
-    platform/graphics/filters/CustomFilterValidatedProgram.cpp
     platform/graphics/filters/DistantLightSource.cpp
     platform/graphics/filters/FEBlend.cpp
     platform/graphics/filters/FEColorMatrix.cpp
     platform/graphics/filters/FEComponentTransfer.cpp
     platform/graphics/filters/FEComposite.cpp
     platform/graphics/filters/FEConvolveMatrix.cpp
-    platform/graphics/filters/FECustomFilter.cpp
     platform/graphics/filters/FEDiffuseLighting.cpp
     platform/graphics/filters/FEDisplacementMap.cpp
     platform/graphics/filters/FEDropShadow.cpp
@@ -1978,9 +1959,6 @@ set(WebCore_SOURCES
     platform/graphics/filters/SourceAlpha.cpp
     platform/graphics/filters/SourceGraphic.cpp
     platform/graphics/filters/SpotLightSource.cpp
-    platform/graphics/filters/ValidatedCustomFilterOperation.cpp
-
-    platform/graphics/filters/texmap/CustomFilterValidatedProgramTextureMapper.cpp
 
     platform/graphics/texmap/TextureMapper.cpp
     platform/graphics/texmap/TextureMapperBackingStore.cpp
@@ -2273,9 +2251,6 @@ set(WebCore_SOURCES
     rendering/style/StyleBoxData.cpp
     rendering/style/StyleCachedImage.cpp
     rendering/style/StyleCachedImageSet.cpp
-    rendering/style/StyleCachedShader.cpp
-    rendering/style/StyleCustomFilterProgram.cpp
-    rendering/style/StyleCustomFilterProgramCache.cpp
     rendering/style/StyleDeprecatedFlexibleBoxData.cpp
     rendering/style/StyleFilterData.cpp
     rendering/style/StyleFlexibleBoxData.cpp

@@ -42,10 +42,6 @@
 #include "FilterOperations.h"
 #endif
 
-#if ENABLE(CSS_FILTERS)
-#include "CustomFilterProgramInfo.h"
-#endif
-
 #if USE(GRAPHICS_SURFACE)
 #include "GraphicsSurface.h"
 #include "GraphicsSurfaceToken.h"
@@ -198,11 +194,6 @@ struct CoordinatedGraphicsState {
 
     Vector<std::pair<uint32_t /* atlasID */, RefPtr<CoordinatedSurface> > > updateAtlasesToCreate;
     Vector<uint32_t /* atlasID */> updateAtlasesToRemove;
-
-#if ENABLE(CSS_SHADERS)
-    Vector<std::pair<uint32_t /* FilterID */, CustomFilterProgramInfo> > customFiltersToCreate;
-    Vector<uint32_t> customFiltersToRemove;
-#endif
 };
 
 } // namespace WebCore

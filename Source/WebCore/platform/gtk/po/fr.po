@@ -1715,14 +1715,6 @@ msgstr "La lecture du média autorise l'intégration"
 msgid "Whether media playback allows inline"
 msgstr "Indique si la lecture du média autorise l'intégration"
 
-#: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:991
-msgid "Enable CSS shaders"
-msgstr "Activer les ombrages CSS"
-
-#: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:992
-msgid "Whether to enable css shaders"
-msgstr "Indique s'il faut activer les ombrages CSS"
-
 #: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:1007
 msgid "Enable display of insecure content"
 msgstr "Activer l'affichage de contenu non sécuritaire"

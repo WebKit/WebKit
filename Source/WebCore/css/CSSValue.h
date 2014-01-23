@@ -96,12 +96,6 @@ public:
 #if ENABLE(CSS_FILTERS)
     bool isFilterImageValue() const { return m_classType == FilterImageClass; }
     bool isWebKitCSSFilterValue() const { return m_classType == WebKitCSSFilterClass; }
-#if ENABLE(CSS_SHADERS)
-    bool isWebKitCSSArrayFunctionValue() const { return m_classType == WebKitCSSArrayFunctionValueClass; }
-    bool isWebKitCSSMatFunctionValue() const { return m_classType == WebKitCSSMatFunctionValueClass; }
-    bool isWebKitCSSMixFunctionValue() const { return m_classType == WebKitCSSMixFunctionValueClass; }
-    bool isWebKitCSSShaderValue() const { return m_classType == WebKitCSSShaderClass; }
-#endif
 #endif // ENABLE(CSS_FILTERS)
     bool isGridTemplateValue() const { return m_classType == GridTemplateClass; }
 #if ENABLE(SVG)
@@ -167,9 +161,6 @@ protected:
         UnicodeRangeClass,
         LineBoxContainClass,
         CalculationClass,
-#if ENABLE(CSS_FILTERS) && ENABLE(CSS_SHADERS)
-        WebKitCSSShaderClass,
-#endif
         GridTemplateClass,
 #if ENABLE(SVG)
         SVGColorClass,
@@ -183,11 +174,6 @@ protected:
 #endif
 #if ENABLE(CSS_FILTERS)
         WebKitCSSFilterClass,
-#if ENABLE(CSS_SHADERS)
-        WebKitCSSArrayFunctionValueClass,
-        WebKitCSSMatFunctionValueClass,
-        WebKitCSSMixFunctionValueClass,
-#endif
 #endif
         WebKitCSSTransformClass,
         // Do not append non-list class types here.

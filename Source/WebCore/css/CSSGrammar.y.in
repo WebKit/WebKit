@@ -291,15 +291,6 @@ static inline bool isCSSTokenAString(int yytype)
 
 #endif
 
-#if ENABLE_CSS_SHADERS
-
-%token WEBKIT_FILTER_RULE_SYM
-
-%type <rule> filter
-%destructor { if ($$) $$->deref(); } filter
-
-#endif
-
 #if ENABLE_SHADOW_DOM
 
 %token HOST_SYM
@@ -421,9 +412,6 @@ valid_rule:
 #if ENABLE_CSS_DEVICE_ADAPTATION
   | viewport
 #endif
-#if ENABLE_CSS_SHADERS
-  | filter
-#endif
   ;
 
 rule:
@@ -471,9 +459,6 @@ block_valid_rule:
 #endif
 #if ENABLE_CSS_DEVICE_ADAPTATION
   | viewport
-#endif
-#if ENABLE_CSS_SHADERS
-  | filter
 #endif
   ;
 
@@ -964,24 +949,6 @@ region:
         }
     }
 ;
-
-#if ENABLE_CSS_SHADERS
-
-before_filter_rule:
-    /* empty */ {
-        parser->markRuleHeaderStart(CSSRuleSourceData::FILTER_RULE);
-        parser->m_inFilterRule = true;
-    }
-    ;
-
-filter:
-    before_filter_rule WEBKIT_FILTER_RULE_SYM maybe_space IDENT at_rule_header_end_maybe_space '{' at_rule_body_start maybe_space_before_declaration declaration_list closing_brace {
-        parser->m_inFilterRule = false;
-        $$ = parser->createFilterRule($4).leakRef();
-    }
-    ;
-
-#endif
 
 combinator:
     '+' maybe_space { $$ = CSSSelector::DirectAdjacent; }

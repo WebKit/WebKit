@@ -67,13 +67,6 @@ class StyleKeyframe;
 class StyleSheetContents;
 class StyledElement;
 
-#if ENABLE(CSS_SHADERS)
-class WebKitCSSArrayFunctionValue;
-class WebKitCSSMatFunctionValue;
-class WebKitCSSMixFunctionValue;
-class WebKitCSSShaderValue;
-#endif
-
 class CSSParser {
     friend inline int cssyylex(void*, CSSParser*);
 
@@ -260,22 +253,6 @@ public:
 
     bool parseFilter(CSSParserValueList*, RefPtr<CSSValue>&);
     PassRefPtr<WebKitCSSFilterValue> parseBuiltinFilterArguments(CSSParserValueList*, WebKitCSSFilterValue::FilterOperationType);
-#if ENABLE(CSS_SHADERS)
-    PassRefPtr<WebKitCSSMatFunctionValue> parseMatValue(CSSParserValue*);
-    PassRefPtr<WebKitCSSMixFunctionValue> parseMixFunction(CSSParserValue*);
-    PassRefPtr<WebKitCSSArrayFunctionValue> parseCustomFilterArrayFunction(CSSParserValue*);
-    PassRefPtr<CSSValueList> parseCustomFilterTransform(CSSParserValueList*);
-    PassRefPtr<CSSValueList> parseCustomFilterParameters(CSSParserValueList*);
-    PassRefPtr<WebKitCSSFilterValue> parseCustomFilterFunctionWithAtRuleReferenceSyntax(CSSParserValue*);
-    PassRefPtr<WebKitCSSFilterValue> parseCustomFilterFunctionWithInlineSyntax(CSSParserValue*);
-    PassRefPtr<WebKitCSSFilterValue> parseCustomFilterFunction(CSSParserValue*);
-    bool parseFilterRuleSrc();
-    bool parseFilterRuleMix();
-    bool parseGeometry(CSSPropertyID, CSSParserValue*, bool);
-    bool parseGridDimensions(CSSParserValueList*, RefPtr<CSSValueList>&); 
-    bool parseFilterRuleParameters();
-    PassRefPtr<WebKitCSSShaderValue> parseFilterRuleSrcUriAndFormat(CSSParserValueList*);
-#endif
 #endif
 
     PassRefPtr<CSSValue> parseClipPath();
@@ -336,9 +313,6 @@ public:
 #if ENABLE(SHADOW_DOM)
     PassRefPtr<StyleRuleBase> createHostRule(RuleList*);
 #endif
-#if ENABLE(CSS_SHADERS)
-    PassRefPtr<StyleRuleBase> createFilterRule(const CSSParserString&);
-#endif
 
     void startDeclarationsForMarginBox();
     void endDeclarationsForMarginBox();
@@ -386,10 +360,6 @@ public:
     bool m_hadSyntacticallyValidCSSRule;
     bool m_logErrors;
     bool m_ignoreErrorsInDeclaration;
-
-#if ENABLE(CSS_SHADERS)
-    bool m_inFilterRule;
-#endif
 
     AtomicString m_defaultNamespace;
 

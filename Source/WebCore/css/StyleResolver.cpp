@@ -141,24 +141,6 @@
 #include "StyleCachedImageSet.h"
 #endif
 
-#if ENABLE(CSS_SHADERS)
-#include "CustomFilterArrayParameter.h"
-#include "CustomFilterColorParameter.h"
-#include "CustomFilterConstants.h"
-#include "CustomFilterNumberParameter.h"
-#include "CustomFilterOperation.h"
-#include "CustomFilterParameter.h"
-#include "CustomFilterProgramInfo.h"
-#include "CustomFilterTransformParameter.h"
-#include "StyleCachedShader.h"
-#include "StyleCustomFilterProgram.h"
-#include "StyleCustomFilterProgramCache.h"
-#include "StylePendingShader.h"
-#include "StyleShader.h"
-#include "WebKitCSSMixFunctionValue.h"
-#include "WebKitCSSShaderValue.h"
-#endif
-
 #if ENABLE(DASHBOARD_SUPPORT)
 #include "DashboardRegion.h"
 #endif
@@ -256,9 +238,6 @@ inline void StyleResolver::State::clear()
     m_parentNode = nullptr;
     m_regionForStyling = nullptr;
     m_pendingImageProperties.clear();
-#if ENABLE(CSS_SHADERS)
-    m_hasPendingShaders = false;
-#endif
 #if ENABLE(CSS_FILTERS) && ENABLE(SVG)
     m_filtersWithPendingSVGDocuments.clear();
 #endif
@@ -3101,10 +3080,6 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue* value)
     case CSSPropertyWebkitWrapFlow:
     case CSSPropertyWebkitWrapThrough:
 #endif
-#if ENABLE(CSS_SHADERS)
-    case CSSPropertyMix:
-    case CSSPropertyParameters:
-#endif
     case CSSPropertyWhiteSpace:
     case CSSPropertyWidows:
     case CSSPropertyWidth:
@@ -3396,10 +3371,6 @@ static FilterOperation::OperationType filterOperationForType(WebKitCSSFilterValu
         return FilterOperation::BLUR;
     case WebKitCSSFilterValue::DropShadowFilterOperation:
         return FilterOperation::DROP_SHADOW;
-#if ENABLE(CSS_SHADERS)
-    case WebKitCSSFilterValue::CustomFilterOperation:
-        return FilterOperation::CUSTOM;
-#endif
     case WebKitCSSFilterValue::UnknownFilterOperation:
         return FilterOperation::NONE;
     }
@@ -3424,340 +3395,6 @@ void StyleResolver::loadPendingSVGDocuments()
 
     state.filtersWithPendingSVGDocuments().clear();
 }
-#endif
-
-#if ENABLE(CSS_SHADERS)
-StyleShader* StyleResolver::styleShader(CSSValue* value)
-{
-    if (value->isWebKitCSSShaderValue())
-        return cachedOrPendingStyleShaderFromValue(toWebKitCSSShaderValue(value));
-    return 0;
-}
-
-StyleShader* StyleResolver::cachedOrPendingStyleShaderFromValue(WebKitCSSShaderValue* value)
-{
-    StyleShader* shader = value->cachedOrPendingShader();
-    if (shader && shader->isPendingShader())
-        m_state.setHasPendingShaders(true);
-    return shader;
-}
-
-PassRefPtr<CustomFilterProgram> StyleResolver::lookupCustomFilterProgram(WebKitCSSShaderValue* vertexShader, WebKitCSSShaderValue* fragmentShader, 
-    CustomFilterProgramType programType, const CustomFilterProgramMixSettings& mixSettings, CustomFilterMeshType meshType)
-{
-    CachedResourceLoader* cachedResourceLoader = m_state.document().cachedResourceLoader();
-    URL vertexShaderURL = vertexShader ? vertexShader->completeURL(cachedResourceLoader) : URL();
-    URL fragmentShaderURL = fragmentShader ? fragmentShader->completeURL(cachedResourceLoader) : URL();
-    RefPtr<StyleCustomFilterProgram> program;
-    if (m_customFilterProgramCache)
-        program = m_customFilterProgramCache->lookup(CustomFilterProgramInfo(vertexShaderURL, fragmentShaderURL, programType, mixSettings, meshType));
-    if (!program) {
-        // Create a new StyleCustomFilterProgram that will be resolved during the loadPendingShaders and added to the cache.
-        program = StyleCustomFilterProgram::create(vertexShaderURL, vertexShader ? styleShader(vertexShader) : 0, 
-            fragmentShaderURL, fragmentShader ? styleShader(fragmentShader) : 0, programType, mixSettings, meshType);
-    }
-    return program.release();
-}
-
-void StyleResolver::loadPendingShaders()
-{
-    // FIXME: We shouldn't have to check that style is non-null. This is a speculative fix for:
-    // https://bugs.webkit.org/show_bug.cgi?id=117665
-    if (!m_state.hasPendingShaders() || !m_state.style() || !m_state.style()->hasFilter())
-        return;
-
-    CachedResourceLoader* cachedResourceLoader = m_state.document().cachedResourceLoader();
-
-    Vector<RefPtr<FilterOperation>>& filterOperations = m_state.style()->mutableFilter().operations();
-    for (unsigned i = 0; i < filterOperations.size(); ++i) {
-        RefPtr<FilterOperation> filterOperation = filterOperations.at(i);
-        if (filterOperation->type() == FilterOperation::CUSTOM) {
-            CustomFilterOperation* customFilter = static_cast<CustomFilterOperation*>(filterOperation.get());
-            ASSERT(customFilter->program());
-            StyleCustomFilterProgram* program = static_cast<StyleCustomFilterProgram*>(customFilter->program());
-            // Note that the StylePendingShaders could be already resolved to StyleCachedShaders. That's because the rule was matched before.
-            // However, the StyleCustomFilterProgram that was initially created could have been removed from the cache in the meanwhile,
-            // meaning that we get a new StyleCustomFilterProgram here that is not yet in the cache, but already has loaded StyleShaders.
-            if (!program->hasPendingShaders() && program->inCache())
-                continue;
-            if (!m_customFilterProgramCache)
-                m_customFilterProgramCache = adoptPtr(new StyleCustomFilterProgramCache());
-            RefPtr<StyleCustomFilterProgram> styleProgram = m_customFilterProgramCache->lookup(program);
-            if (styleProgram.get())
-                customFilter->setProgram(styleProgram.release());
-            else {
-                if (program->vertexShader() && program->vertexShader()->isPendingShader()) {
-                    WebKitCSSShaderValue* shaderValue = static_cast<StylePendingShader*>(program->vertexShader())->cssShaderValue();
-                    program->setVertexShader(shaderValue->cachedShader(cachedResourceLoader));
-                }
-                if (program->fragmentShader() && program->fragmentShader()->isPendingShader()) {
-                    WebKitCSSShaderValue* shaderValue = static_cast<StylePendingShader*>(program->fragmentShader())->cssShaderValue();
-                    program->setFragmentShader(shaderValue->cachedShader(cachedResourceLoader));
-                }
-                m_customFilterProgramCache->add(program);
-            }
-        }
-    }
-    m_state.setHasPendingShaders(false);
-}
-
-static bool sortParametersByNameComparator(const RefPtr<CustomFilterParameter>& a, const RefPtr<CustomFilterParameter>& b)
-{
-    return codePointCompareLessThan(a->name(), b->name());
-}
-
-PassRefPtr<CustomFilterParameter> StyleResolver::parseCustomFilterArrayParameter(const String& name, CSSValueList* values, bool isArray)
-{
-    RefPtr<CustomFilterArrayParameter> arrayParameter = CustomFilterArrayParameter::create(name, isArray ? CustomFilterArrayParameter::ARRAY : CustomFilterArrayParameter::MATRIX);
-    for (unsigned i = 0, length = values->length(); i < length; ++i) {
-        CSSValue* value = values->itemWithoutBoundsCheck(i);
-        if (!value->isPrimitiveValue())
-            return 0;
-        CSSPrimitiveValue* primitiveValue = toCSSPrimitiveValue(value);
-        if (primitiveValue->primitiveType() != CSSPrimitiveValue::CSS_NUMBER)
-            return 0;
-        arrayParameter->addValue(primitiveValue->getDoubleValue());
-    }
-    return arrayParameter.release();
-}
-
-PassRefPtr<CustomFilterParameter> StyleResolver::parseCustomFilterColorParameter(const String& name, CSSValueList* values)
-{
-    ASSERT(values->length());
-    CSSPrimitiveValue* firstPrimitiveValue = toCSSPrimitiveValue(values->itemWithoutBoundsCheck(0));
-    RefPtr<CustomFilterColorParameter> colorParameter = CustomFilterColorParameter::create(name);
-    colorParameter->setColor(Color(firstPrimitiveValue->getRGBA32Value()));
-    return colorParameter.release();
-}
-
-PassRefPtr<CustomFilterParameter> StyleResolver::parseCustomFilterNumberParameter(const String& name, CSSValueList* values)
-{
-    RefPtr<CustomFilterNumberParameter> numberParameter = CustomFilterNumberParameter::create(name);
-    for (unsigned i = 0; i < values->length(); ++i) {
-        CSSValue* value = values->itemWithoutBoundsCheck(i);
-        if (!value->isPrimitiveValue())
-            return 0;
-        CSSPrimitiveValue* primitiveValue = toCSSPrimitiveValue(value);
-        if (primitiveValue->primitiveType() != CSSPrimitiveValue::CSS_NUMBER)
-            return 0;
-        numberParameter->addValue(primitiveValue->getDoubleValue());
-    }
-    return numberParameter.release();
-}
-
-PassRefPtr<CustomFilterParameter> StyleResolver::parseCustomFilterTransformParameter(const String& name, CSSValueList* values)
-{
-    RefPtr<CustomFilterTransformParameter> transformParameter = CustomFilterTransformParameter::create(name);
-    TransformOperations operations;
-    transformsForValue(m_state.style(), m_state.rootElementStyle(), values, operations);
-    transformParameter->setOperations(operations);
-    return transformParameter.release();
-}
-
-PassRefPtr<CustomFilterParameter> StyleResolver::parseCustomFilterParameter(const String& name, CSSValue* parameterValue)
-{
-    // FIXME: Implement other parameters types parsing.
-    // textures: https://bugs.webkit.org/show_bug.cgi?id=71442
-    // mat2, mat3, mat4: https://bugs.webkit.org/show_bug.cgi?id=71444
-    // Number parameters are wrapped inside a CSSValueList and all
-    // the other functions values inherit from CSSValueList.
-    if (!parameterValue->isValueList())
-        return 0;
-
-    CSSValueList* values = toCSSValueList(parameterValue);
-    if (!values->length())
-        return 0;
-
-    if (parameterValue->isWebKitCSSArrayFunctionValue())
-        return parseCustomFilterArrayParameter(name, values, true);
-
-    if (parameterValue->isWebKitCSSMatFunctionValue())
-        return parseCustomFilterArrayParameter(name, values, false);
-
-    // If the first value of the list is a transform function,
-    // then we could safely assume that all the remaining items
-    // are transforms. parseCustomFilterTransformParameter will
-    // return 0 if that assumption is incorrect.
-    if (values->itemWithoutBoundsCheck(0)->isWebKitCSSTransformValue())
-        return parseCustomFilterTransformParameter(name, values);
-
-    // We can only have arrays of colors or numbers, so use the first value to choose between those two.
-    // We need up to 4 values (all booleans or all numbers).
-    if (!values->itemWithoutBoundsCheck(0)->isPrimitiveValue() || values->length() > 4)
-        return 0;
-    
-    CSSPrimitiveValue* firstPrimitiveValue = toCSSPrimitiveValue(values->itemWithoutBoundsCheck(0));
-    if (firstPrimitiveValue->primitiveType() == CSSPrimitiveValue::CSS_NUMBER)
-        return parseCustomFilterNumberParameter(name, values);
-
-    if (firstPrimitiveValue->primitiveType() == CSSPrimitiveValue::CSS_RGBCOLOR)
-        return parseCustomFilterColorParameter(name, values);
-
-    return 0;
-}
-
-bool StyleResolver::parseCustomFilterParameterList(CSSValue* parametersValue, CustomFilterParameterList& parameterList)
-{
-    HashSet<String> knownParameterNames;
-    CSSValueListIterator parameterIterator(parametersValue);
-    for (; parameterIterator.hasMore(); parameterIterator.advance()) {
-        if (!parameterIterator.value()->isValueList())
-            return false;
-        CSSValueListIterator iterator(parameterIterator.value());
-        if (!iterator.isPrimitiveValue())
-            return false;
-        CSSPrimitiveValue* primitiveValue = toCSSPrimitiveValue(iterator.value());
-        if (primitiveValue->primitiveType() != CSSPrimitiveValue::CSS_STRING)
-            return false;
-        
-        String name = primitiveValue->getStringValue();
-        // Do not allow duplicate parameter names.
-        if (knownParameterNames.contains(name))
-            return false;
-        knownParameterNames.add(name);
-        
-        iterator.advance();
-        
-        if (!iterator.hasMore())
-            return false;
-        
-        RefPtr<CustomFilterParameter> parameter = parseCustomFilterParameter(name, iterator.value());
-        if (!parameter)
-            return false;
-        parameterList.append(parameter.release());
-    }
-    
-    // Make sure we sort the parameters before passing them down to the CustomFilterOperation.
-    std::sort(parameterList.begin(), parameterList.end(), sortParametersByNameComparator);
-    
-    return true;
-}
-
-PassRefPtr<CustomFilterOperation> StyleResolver::createCustomFilterOperationWithAtRuleReferenceSyntax(WebKitCSSFilterValue* filterValue)
-{
-    // FIXME: Implement style resolution for the custom filter at-rule reference syntax.
-    UNUSED_PARAM(filterValue);
-    return 0;
-}
-
-PassRefPtr<CustomFilterOperation> StyleResolver::createCustomFilterOperationWithInlineSyntax(WebKitCSSFilterValue* filterValue)
-{
-    CSSValue* shadersValue = filterValue->itemWithoutBoundsCheck(0);
-    ASSERT_WITH_SECURITY_IMPLICATION(shadersValue->isValueList());
-    CSSValueList* shadersList = toCSSValueList(shadersValue);
-
-    unsigned shadersListLength = shadersList->length();
-    ASSERT(shadersListLength);
-
-
-    WebKitCSSShaderValue* vertexShader = 0;
-    WebKitCSSShaderValue* fragmentShader = 0;
-
-    if (shadersList->itemWithoutBoundsCheck(0)->isWebKitCSSShaderValue())
-        vertexShader = toWebKitCSSShaderValue(shadersList->itemWithoutBoundsCheck(0));
-
-    CustomFilterProgramType programType = PROGRAM_TYPE_BLENDS_ELEMENT_TEXTURE;
-    CustomFilterProgramMixSettings mixSettings;
-
-    if (shadersListLength > 1) {
-        CSSValue* fragmentShaderOrMixFunction = shadersList->itemWithoutBoundsCheck(1);
-        if (fragmentShaderOrMixFunction->isWebKitCSSMixFunctionValue()) {
-            WebKitCSSMixFunctionValue* mixFunction = toWebKitCSSMixFunctionValue(fragmentShaderOrMixFunction);
-            CSSValueListIterator iterator(mixFunction);
-
-            ASSERT(mixFunction->length());
-            if (iterator.value()->isWebKitCSSShaderValue())
-                fragmentShader = toWebKitCSSShaderValue(iterator.value());
-
-            iterator.advance();
-
-            ASSERT(mixFunction->length() <= 3);
-            while (iterator.hasMore()) {
-                CSSPrimitiveValue* primitiveValue = toCSSPrimitiveValue(iterator.value());
-                if (CSSParser::isBlendMode(primitiveValue->getValueID()))
-                    mixSettings.blendMode = *primitiveValue;
-                else if (CSSParser::isCompositeOperator(primitiveValue->getValueID()))
-                    mixSettings.compositeOperator = *primitiveValue;
-                else
-                    ASSERT_NOT_REACHED();
-                iterator.advance();
-            }
-        } else {
-            programType = PROGRAM_TYPE_NO_ELEMENT_TEXTURE;
-            if (fragmentShaderOrMixFunction->isWebKitCSSShaderValue())
-                fragmentShader = toWebKitCSSShaderValue(fragmentShaderOrMixFunction);
-        }
-    }
-
-    if (!vertexShader && !fragmentShader)
-        return 0;
-
-    unsigned meshRows = 1;
-    unsigned meshColumns = 1;
-    CustomFilterMeshType meshType = MeshTypeAttached;
-    
-    CSSValue* parametersValue = 0;
-    
-    if (filterValue->length() > 1) {
-        CSSValueListIterator iterator(filterValue->itemWithoutBoundsCheck(1));
-        
-        // The second value might be the mesh box or the list of parameters:
-        // If it starts with a number or any of the mesh-box identifiers it is 
-        // the mesh-box list, if not it means it is the parameters list.
-
-        if (iterator.hasMore() && iterator.isPrimitiveValue()) {
-            CSSPrimitiveValue* primitiveValue = toCSSPrimitiveValue(iterator.value());
-            if (primitiveValue->isNumber()) {
-                // If only one integer value is specified, it will set both
-                // the rows and the columns.
-                meshColumns = meshRows = primitiveValue->getIntValue();
-                iterator.advance();
-                
-                // Try to match another number for the rows.
-                if (iterator.hasMore() && iterator.isPrimitiveValue()) {
-                    CSSPrimitiveValue* primitiveValue = toCSSPrimitiveValue(iterator.value());
-                    if (primitiveValue->isNumber()) {
-                        meshRows = primitiveValue->getIntValue();
-                        iterator.advance();
-                    }
-                }
-            }
-        }
-        
-        if (iterator.hasMore() && iterator.isPrimitiveValue()) {
-            CSSPrimitiveValue* primitiveValue = toCSSPrimitiveValue(iterator.value());
-            if (primitiveValue->getValueID() == CSSValueDetached) {
-                meshType = MeshTypeDetached;
-                iterator.advance();
-            }
-        }
-        
-        if (!iterator.index()) {
-            // If no value was consumed from the mesh value, then it is just a parameter list, meaning that we end up
-            // having just two CSSListValues: list of shaders and list of parameters.
-            ASSERT(filterValue->length() == 2);
-            parametersValue = filterValue->itemWithoutBoundsCheck(1);
-        }
-    }
-    
-    if (filterValue->length() > 2 && !parametersValue)
-        parametersValue = filterValue->itemWithoutBoundsCheck(2);
-    
-    CustomFilterParameterList parameterList;
-    if (parametersValue && !parseCustomFilterParameterList(parametersValue, parameterList))
-        return 0;
-
-    RefPtr<CustomFilterProgram> program = lookupCustomFilterProgram(vertexShader, fragmentShader, programType, mixSettings, meshType);
-    return CustomFilterOperation::create(program.release(), parameterList, meshRows, meshColumns);
-}
-
-PassRefPtr<CustomFilterOperation> StyleResolver::createCustomFilterOperation(WebKitCSSFilterValue* filterValue)
-{
-    ASSERT(filterValue->length());
-    bool isAtRuleReferenceSyntax = filterValue->itemWithoutBoundsCheck(0)->isPrimitiveValue();
-    return isAtRuleReferenceSyntax ? createCustomFilterOperationWithAtRuleReferenceSyntax(filterValue) : createCustomFilterOperationWithInlineSyntax(filterValue);
-}
-
 #endif
 
 bool StyleResolver::createFilterOperations(CSSValue* inValue, FilterOperations& outOperations)
@@ -3789,21 +3426,6 @@ bool StyleResolver::createFilterOperations(CSSValue* inValue, FilterOperations& 
         WebKitCSSFilterValue* filterValue = toWebKitCSSFilterValue(i.value());
         FilterOperation::OperationType operationType = filterOperationForType(filterValue->operationType());
 
-#if ENABLE(CSS_SHADERS)
-        if (operationType == FilterOperation::VALIDATED_CUSTOM) {
-            // ValidatedCustomFilterOperation is not supposed to end up in the RenderStyle.
-            ASSERT_NOT_REACHED();
-            continue;
-        }
-        if (operationType == FilterOperation::CUSTOM) {
-            RefPtr<CustomFilterOperation> operation = createCustomFilterOperation(filterValue);
-            if (!operation)
-                return false;
-            
-            operations.operations().append(operation);
-            continue;
-        }
-#endif
         if (operationType == FilterOperation::REFERENCE) {
 #if ENABLE(SVG)
             if (filterValue->length() != 1)
@@ -4086,11 +3708,6 @@ void StyleResolver::loadPendingResources()
     // Start loading images referenced by this style.
     loadPendingImages();
 
-#if ENABLE(CSS_SHADERS)
-    // Start loading the shaders referenced by this style.
-    loadPendingShaders();
-#endif
-    
 #if ENABLE(CSS_FILTERS) && ENABLE(SVG)
     // Start loading the SVG Documents referenced by this style.
     loadPendingSVGDocuments();

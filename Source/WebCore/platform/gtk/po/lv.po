@@ -1735,15 +1735,6 @@ msgstr ""
 msgid "Whether media playback allows inline"
 msgstr ""
 
-#: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:991
-#, fuzzy
-msgid "Enable CSS shaders"
-msgstr "Aktivizēt skriptus"
-
-#: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:992
-msgid "Whether to enable css shaders"
-msgstr ""
-
 #: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:1007
 msgid "Enable display of insecure content"
 msgstr ""

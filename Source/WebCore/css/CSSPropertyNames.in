@@ -109,9 +109,6 @@ cursor [Inherited]
 empty-cells [Inherited]
 float
 font-stretch
-#if defined(ENABLE_CSS_SHADERS) && ENABLE_CSS_SHADERS
-geometry
-#endif
 height
 #if defined(ENABLE_CSS_IMAGE_ORIENTATION) && ENABLE_CSS_IMAGE_ORIENTATION
 image-orientation [Inherited]
@@ -135,10 +132,6 @@ max-height
 max-width
 min-height
 min-width
-#if defined(ENABLE_CSS_SHADERS) && ENABLE_CSS_SHADERS
-mix
-parameters
-#endif
 object-fit
 opacity
 // Honor -webkit-opacity as a synonym for opacity. This was the only syntax that worked in Safari 1.1,

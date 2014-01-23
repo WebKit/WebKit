@@ -42,9 +42,6 @@ css3/filters/effect-opacity-hw.html
 css3/filters/effect-saturate-hw.html
 css3/filters/effect-sepia-hw.html
 
-# Custom filters not yet supported on Windows
-css3/filters/custom
-
 # Remove from list after enabling CANVAS_PATH
 fast/canvas/canvas-currentPath.html
 fast/canvas/canvas-path-constructors.html
@@ -2443,7 +2440,6 @@ compositing/filters/sw-nested-shadow-overlaps-hw-nested-shadow.html
 compositing/iframes/iframe-size-from-zero.html
 compositing/iframes/overlapped-iframe-iframe.html
 compositing/tiling/tiled-layer-resize.html
-css3/filters/custom-with-at-rule-syntax/parsing-custom-function-valid.html
 editing/input/ime-composition-clearpreedit.html
 fast/canvas/canvas-composite-alpha.html
 fast/canvas/canvas-quadratic-same-endpoint.html
@@ -2478,9 +2474,6 @@ webkit.org/b/61138 http/tests/w3c/webperf/submission/Intel/resource-timing
 # Windows doesn't have a toggle for CC any more, it's based on a menu of choices.
 # https://bugs.webkit.org/show_bug.cgi?id=95428
 webkit.org/b/101670 media/video-controls-captions.html [ Skip ]
-
-# bugs.webkit.org/show_bug.cgi?id=111235
-css3/filters/custom-with-at-rule-syntax
 
 # bugs.webkit.org/show_bug.cgi?id=110447
 editing/spelling/spelling-changed-text.html

@@ -1723,16 +1723,6 @@ msgstr ""
 msgid "Whether media playback allows inline"
 msgstr ""
 
-#: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:991
-#, fuzzy
-msgid "Enable CSS shaders"
-msgstr "Enable XSS Auditor"
-
-#: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:992
-#, fuzzy
-msgid "Whether to enable css shaders"
-msgstr "Whether to enable DOM paste"
-
 #: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:1007
 msgid "Enable display of insecure content"
 msgstr ""

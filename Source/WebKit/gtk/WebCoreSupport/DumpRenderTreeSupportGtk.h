@@ -104,7 +104,6 @@ public:
     static void setPageCacheSupportsPlugins(WebKitWebView*, bool enabled);
     static void setCSSGridLayoutEnabled(WebKitWebView*, bool enabled);
     static void setCSSRegionsEnabled(WebKitWebView*, bool enabled);
-    static void setCSSCustomFilterEnabled(WebKitWebView*, bool enabled);
     static void setExperimentalContentSecurityPolicyFeaturesEnabled(bool);
     static void setSeamlessIFramesEnabled(bool);
     static void setShadowDOMEnabled(bool);

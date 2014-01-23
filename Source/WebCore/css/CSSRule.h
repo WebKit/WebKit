@@ -59,9 +59,6 @@ public:
 #if ENABLE(CSS_REGIONS)
         WEBKIT_REGION_RULE = 16,
 #endif
-#if ENABLE(CSS_SHADERS)
-        WEBKIT_FILTER_RULE = 17,
-#endif
 #if ENABLE(SHADOW_DOM)
         HOST_RULE = 1001,
 #endif

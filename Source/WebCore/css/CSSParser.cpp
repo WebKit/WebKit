@@ -101,13 +101,6 @@
 #include "WebKitCSSFilterValue.h"
 #endif
 
-#if ENABLE(CSS_SHADERS)
-#include "WebKitCSSArrayFunctionValue.h"
-#include "WebKitCSSMatFunctionValue.h"
-#include "WebKitCSSMixFunctionValue.h"
-#include "WebKitCSSShaderValue.h"
-#endif
-
 #if ENABLE(DASHBOARD_SUPPORT)
 #include "DashboardRegion.h"
 #endif
@@ -252,7 +245,6 @@ CSSParserContext::CSSParserContext(CSSParserMode mode, const URL& baseURL)
     : baseURL(baseURL)
     , mode(mode)
     , isHTMLDocument(false)
-    , isCSSCustomFilterEnabled(false)
     , isCSSStickyPositionEnabled(false)
     , isCSSRegionsEnabled(false)
     , isCSSCompositingEnabled(false)
@@ -274,7 +266,6 @@ CSSParserContext::CSSParserContext(Document& document, const URL& baseURL, const
     , charset(charset)
     , mode(document.inQuirksMode() ? CSSQuirksMode : CSSStrictMode)
     , isHTMLDocument(document.isHTMLDocument())
-    , isCSSCustomFilterEnabled(document.settings() ? document.settings()->isCSSCustomFilterEnabled() : false)
     , isCSSStickyPositionEnabled(document.cssStickyPositionEnabled())
     , isCSSRegionsEnabled(document.cssRegionsEnabled())
     , isCSSCompositingEnabled(document.cssCompositingEnabled())
@@ -297,7 +288,6 @@ bool operator==(const CSSParserContext& a, const CSSParserContext& b)
         && a.charset == b.charset
         && a.mode == b.mode
         && a.isHTMLDocument == b.isHTMLDocument
-        && a.isCSSCustomFilterEnabled == b.isCSSCustomFilterEnabled
         && a.isCSSStickyPositionEnabled == b.isCSSStickyPositionEnabled
         && a.isCSSRegionsEnabled == b.isCSSRegionsEnabled
         && a.isCSSCompositingEnabled == b.isCSSCompositingEnabled
@@ -324,9 +314,6 @@ CSSParser::CSSParser(const CSSParserContext& context)
     , m_hadSyntacticallyValidCSSRule(false)
     , m_logErrors(false)
     , m_ignoreErrorsInDeclaration(false)
-#if ENABLE(CSS_SHADERS)
-    , m_inFilterRule(false)
-#endif
     , m_defaultNamespace(starAtom)
     , m_parsedTextPrefixLength(0)
     , m_propertyRange(UINT_MAX, UINT_MAX)
@@ -2288,24 +2275,7 @@ bool CSSParser::parseValue(CSSPropertyID propId, bool important)
         break;
 
     case CSSPropertySrc: // Only used within @font-face and @-webkit-filter, so cannot use inherit | initial or be !important. This is a list of urls or local references.
-#if ENABLE(CSS_SHADERS)
-        if (m_inFilterRule)
-            return parseFilterRuleSrc();
-#endif
         return parseFontFaceSrc();
-
-#if ENABLE(CSS_SHADERS)
-    case CSSPropertyMix:
-        // The mix property is just supported inside of an @filter rule.
-        if (!m_inFilterRule)
-            return false;
-        return parseFilterRuleMix();
-    case CSSPropertyParameters:
-        // The parameters property is just supported inside of an @filter rule.
-        if (!m_inFilterRule)
-            return false;
-        return parseFilterRuleParameters();
-#endif
 
     case CSSPropertyUnicodeRange:
         return parseFontFaceUnicodeRange();
@@ -2890,10 +2860,6 @@ bool CSSParser::parseValue(CSSPropertyID propId, bool important)
         return false;
     case CSSPropertyPage:
         return parsePage(propId, important);
-#if ENABLE(CSS_SHADERS)
-    case CSSPropertyGeometry:
-        return m_inFilterRule ? parseGeometry(propId, value, important) : false;
-#endif
     case CSSPropertyFontStretch:
     case CSSPropertyTextLineThrough:
     case CSSPropertyTextOverline:
@@ -9105,588 +9071,7 @@ static void filterInfoForName(const CSSParserString& name, WebKitCSSFilterValue:
         filterType = WebKitCSSFilterValue::DropShadowFilterOperation;
         maximumArgumentCount = 4;  // x-offset, y-offset, blur-radius, color -- spread and inset style not allowed.
     }
-#if ENABLE(CSS_SHADERS)
-    else if (equalIgnoringCase(name, "custom("))
-        filterType = WebKitCSSFilterValue::CustomFilterOperation;
-#endif
 }
-
-#if ENABLE(CSS_SHADERS)
-static bool acceptCommaOperator(CSSParserValueList* argsList)
-{
-    if (CSSParserValue* arg = argsList->current()) {
-        if (!isComma(arg))
-            return false;
-        argsList->next();
-    }
-    return true;
-}
-
-PassRefPtr<WebKitCSSArrayFunctionValue> CSSParser::parseCustomFilterArrayFunction(CSSParserValue* value)
-{
-    ASSERT(value->unit == CSSParserValue::Function && value->function);
-
-    if (!equalIgnoringCase(value->function->name, "array("))
-        return 0;
-
-    CSSParserValueList* arrayArgsParserValueList = value->function->args.get();
-    if (!arrayArgsParserValueList || !arrayArgsParserValueList->size())
-        return 0;
-
-    // array() values are comma separated.
-    RefPtr<WebKitCSSArrayFunctionValue> arrayFunction = WebKitCSSArrayFunctionValue::create();
-    while (true) {
-        // We parse pairs <Value, Comma> at each step.
-        CSSParserValue* currentParserValue = arrayArgsParserValueList->current();
-        if (!currentParserValue || !validUnit(currentParserValue, FNumber, CSSStrictMode))
-            return 0;
-
-        RefPtr<CSSValue> arrayValue = cssValuePool().createValue(currentParserValue->fValue, CSSPrimitiveValue::CSS_NUMBER);
-        arrayFunction->append(arrayValue.release());
-
-        CSSParserValue* nextParserValue = arrayArgsParserValueList->next();
-        if (!nextParserValue)
-            break;
-
-        if (!isComma(nextParserValue))
-            return 0;
-
-        arrayArgsParserValueList->next();
-    }
-
-    return arrayFunction;
-}
-
-PassRefPtr<WebKitCSSMatFunctionValue> CSSParser::parseMatValue(CSSParserValue* value)
-{
-    if (value->unit != CSSParserValue::Function || !value->function)
-        return 0;
-
-    unsigned numberOfValues = 0;
-    if (equalIgnoringCase(value->function->name, "mat2("))
-        numberOfValues = 4;
-    else if (equalIgnoringCase(value->function->name, "mat3("))
-        numberOfValues = 9;
-    else if (equalIgnoringCase(value->function->name, "mat4("))
-        numberOfValues = 16;
-    else
-        return 0;
-
-    CSSParserValueList* args = value->function->args.get();
-    if (!args || args->size() != (numberOfValues * 2 - 1))
-        return 0;
-
-    RefPtr<WebKitCSSMatFunctionValue> matValueList = WebKitCSSMatFunctionValue::create();
-    CSSParserValue* arg = args->current();
-    while (arg) {
-        if (!validUnit(arg, FNumber, CSSStrictMode))
-            return 0;
-        matValueList->append(cssValuePool().createValue(arg->fValue, CSSPrimitiveValue::CSS_NUMBER));
-        arg = args->next();
-
-        if (!arg)
-            break;
-
-        if (!isComma(arg))
-            return 0;
-
-        arg = args->next();
-    }
-
-    if (!matValueList || matValueList->length() != numberOfValues)
-        return 0;
-
-    return matValueList.release();
-}
-
-PassRefPtr<WebKitCSSMixFunctionValue> CSSParser::parseMixFunction(CSSParserValue* value)
-{
-    ASSERT(value->unit == CSSParserValue::Function && value->function);
-
-    if (!equalIgnoringCase(value->function->name, "mix("))
-        return 0;
-
-    CSSParserValueList* argsList = value->function->args.get();
-    if (!argsList)
-        return 0;
-
-    unsigned numArgs = argsList->size();
-    if (numArgs < 1 || numArgs > 3)
-        return 0;
-    
-    RefPtr<WebKitCSSMixFunctionValue> mixFunction = WebKitCSSMixFunctionValue::create();
-
-    bool hasBlendMode = false;
-    bool hasAlphaCompositing = false;
-
-    for (CSSParserValue* arg = argsList->current(); arg; arg = argsList->next()) {
-        RefPtr<CSSValue> value;
-
-        unsigned argNumber = argsList->currentIndex();
-        if (!argNumber) {
-            if (arg->unit == CSSPrimitiveValue::CSS_URI) {
-                URL shaderURL = completeURL(arg->string);
-                value = WebKitCSSShaderValue::create(shaderURL.string());
-            }
-        } else if (argNumber == 1 || argNumber == 2) {
-            if (!hasBlendMode && isBlendMode(arg->id)) {
-                hasBlendMode = true;
-                value = cssValuePool().createIdentifierValue(arg->id);
-            } else if (!hasAlphaCompositing && isCompositeOperator(arg->id)) {
-                hasAlphaCompositing = true;
-                value = cssValuePool().createIdentifierValue(arg->id);
-            }
-        }
-
-        if (!value)
-            return 0;
-
-        mixFunction->append(value.release());
-    }
-
-    return mixFunction;
-}
-
-PassRefPtr<CSSValueList> CSSParser::parseCustomFilterParameters(CSSParserValueList* argsList)
-{
-    //
-    // params:      [<param-def>[,<param-def>*]]
-    // param-def:   <param-name>wsp<param-value>
-    // param-name:  <ident>
-    // param-value: true|false[wsp+true|false]{0-3} |
-    //              <number>[wsp+<number>]{0-3} |
-    //              <array> |
-    //              <transform> |
-    //              <texture(<uri>)>
-    // array: 'array('<number>[wsp<number>]*')'
-    // css-3d-transform: <transform-function>;[<transform-function>]*
-    // transform:   <css-3d-transform> | <mat>
-    // mat:         'mat2('<number>(,<number>){3}')' | 
-    //              'mat3('<number>(,<number>){8}')' | 
-    //              'mat4('<number>(,<number>){15}')' )
-    //
-
-    RefPtr<CSSValueList> paramList = CSSValueList::createCommaSeparated();
-
-    while (CSSParserValue* arg = argsList->current()) {
-        if (arg->unit != CSSPrimitiveValue::CSS_IDENT)
-            return 0;
-
-        RefPtr<CSSValueList> parameter = CSSValueList::createSpaceSeparated();
-        parameter->append(createPrimitiveStringValue(arg));
-
-        arg = argsList->next();
-        if (!arg)
-            return 0;
-
-        RefPtr<CSSValue> parameterValue;
-
-        if (arg->unit == CSSParserValue::Function && arg->function) {
-            // FIXME: Implement parsing for the other parameter types.
-            // textures: https://bugs.webkit.org/show_bug.cgi?id=71442
-            if (equalIgnoringCase(arg->function->name, "array(")) {
-                parameterValue = parseCustomFilterArrayFunction(arg);
-                // This parsing step only consumes function arguments,
-                // argsList is therefore moved forward explicitely.
-                argsList->next();
-            } else {
-                // Parse mat2, mat3 and mat4 functions.
-                parameterValue = parseMatValue(arg);
-                if (!parameterValue && arg)
-                    parameterValue = parseCustomFilterTransform(argsList);
-                else if (parameterValue)
-                    argsList->next();
-            }
-        } else if (validUnit(arg, FNumber, CSSStrictMode)) {
-            RefPtr<CSSValueList> paramValueList = CSSValueList::createSpaceSeparated();
-            while (arg) {
-                // If we hit a comma, it means that we finished this parameter's values.
-                if (isComma(arg))
-                    break;
-                if (!validUnit(arg, FNumber, CSSStrictMode))
-                    return 0;
-                paramValueList->append(cssValuePool().createValue(arg->fValue, CSSPrimitiveValue::CSS_NUMBER));
-                arg = argsList->next();
-            }
-            if (!paramValueList->length() || paramValueList->length() > 4)
-                return 0;
-            parameterValue = paramValueList.release();
-        }
-        if (!parameterValue && arg) {
-            // All parameter values need to be CSSValueLists.
-            RefPtr<CSSValueList> paramValueList = CSSValueList::createSpaceSeparated();
-            RefPtr<CSSPrimitiveValue> colorValue = parseColor(arg);
-            if (!colorValue)
-                return 0;
-            paramValueList->append(colorValue.release());
-            parameterValue = paramValueList.release();
-            arg = argsList->next();
-        }
-
-        if (!parameterValue || !acceptCommaOperator(argsList))
-            return 0;
-
-        parameter->append(parameterValue.release());
-        paramList->append(parameter.release());
-    }
-
-    return paramList;   
-}
-
-PassRefPtr<WebKitCSSFilterValue> CSSParser::parseCustomFilterFunctionWithAtRuleReferenceSyntax(CSSParserValue* value)
-{
-    //
-    // Custom filter function "at-rule reference" syntax:
-    //
-    // custom(<filter-name>wsp[,wsp<params>])
-    //
-    // filter-name: <filter-name>
-    // params: See the comment in CSSParser::parseCustomFilterParameters.
-    //
-
-    ASSERT(value->function);
-
-    CSSParserValueList* argsList = value->function->args.get();
-    if (!argsList || !argsList->size())
-        return 0;
-
-    // 1. Parse the filter name.
-    CSSParserValue* arg = argsList->current();
-    if (arg->unit != CSSPrimitiveValue::CSS_IDENT)
-        return 0;
-
-    RefPtr<WebKitCSSFilterValue> filterValue = WebKitCSSFilterValue::create(WebKitCSSFilterValue::CustomFilterOperation);
-
-    RefPtr<CSSValue> filterName = createPrimitiveStringValue(arg);
-    filterValue->append(filterName);
-    argsList->next();
-
-    if (!acceptCommaOperator(argsList))
-        return 0;
-
-    // 2. Parse the parameters.
-    RefPtr<CSSValueList> paramList = parseCustomFilterParameters(argsList);
-    if (!paramList)
-        return 0;
-
-    if (paramList->length())
-        filterValue->append(paramList.release());
-
-    return filterValue;
-}
-
-// FIXME: The custom filters "inline" syntax is deprecated. We will remove it eventually.
-PassRefPtr<WebKitCSSFilterValue> CSSParser::parseCustomFilterFunctionWithInlineSyntax(CSSParserValue* value)
-{
-    //
-    // Custom filter function "inline" syntax:
-    //
-    // custom(<vertex-shader>[wsp<fragment-shader>][,<vertex-mesh>][,<params>])
-    //
-    // vertexShader:    <uri> | none
-    // fragmentShader:  <uri> | none | mix(<uri> [ <blend-mode> || <alpha-compositing> ]?)
-    //
-    // blend-mode: normal | multiply | screen | overlay | darken | lighten | color-dodge |
-    //             color-burn | hard-light | soft-light | difference | exclusion | hue |
-    //             saturation | color | luminosity
-    // alpha-compositing: clear | src | dst | src-over | dst-over | src-in | dst-in |
-    //                    src-out | dst-out | src-atop | dst-atop | xor | plus
-    //
-    // vertexMesh:  +<integer>{1,2}[wsp<box>][wsp'detached']
-    // box: filter-box | border-box | padding-box | content-box
-    //
-    // params: See the comment in CSSParser::parseCustomFilterParameters.
-    //
-
-    ASSERT(value->function);
-
-    CSSParserValueList* argsList = value->function->args.get();
-    if (!argsList)
-        return 0;
-
-    RefPtr<WebKitCSSFilterValue> filterValue = WebKitCSSFilterValue::create(WebKitCSSFilterValue::CustomFilterOperation);
-
-    // 1. Parse the shader URLs: <vertex-shader>[wsp<fragment-shader>]
-    RefPtr<CSSValueList> shadersList = CSSValueList::createSpaceSeparated();
-    bool hadAtLeastOneCustomShader = false;
-    CSSParserValue* arg;
-    for (arg = argsList->current(); arg; arg = argsList->next()) {
-        RefPtr<CSSValue> value;
-        if (arg->id == CSSValueNone)
-            value = cssValuePool().createIdentifierValue(CSSValueNone);
-        else if (arg->unit == CSSPrimitiveValue::CSS_URI) {
-            URL shaderURL = completeURL(arg->string);
-            value = WebKitCSSShaderValue::create(shaderURL.string());
-            hadAtLeastOneCustomShader = true;
-        } else if (argsList->currentIndex() == 1 && arg->unit == CSSParserValue::Function) {
-            if (!(value = parseMixFunction(arg)))
-                return 0;
-            hadAtLeastOneCustomShader = true;
-        }
-
-        if (!value)
-            break;
-        shadersList->append(value.release());
-    }
-
-    if (!shadersList->length() || !hadAtLeastOneCustomShader || shadersList->length() > 2 || !acceptCommaOperator(argsList))
-        return 0;
-        
-    filterValue->append(shadersList.release());
-    
-    // 2. Parse the mesh size <vertex-mesh>
-    RefPtr<CSSValueList> meshSizeList = CSSValueList::createSpaceSeparated();
-    
-    for (arg = argsList->current(); arg; arg = argsList->next()) {
-        if (!validUnit(arg, FInteger | FNonNeg, CSSStrictMode))
-            break;
-        int integerValue = clampToInteger(arg->fValue);
-        // According to the specification we can only accept positive non-zero values.
-        if (integerValue < 1)
-            return 0;
-        meshSizeList->append(cssValuePool().createValue(integerValue, CSSPrimitiveValue::CSS_NUMBER));
-    }
-    
-    if (meshSizeList->length() > 2)
-        return 0;
-    
-    // FIXME: For legacy content, we accept the mesh box types. We don't do anything else with them.
-    // Eventually, we'll remove them completely.
-    // https://bugs.webkit.org/show_bug.cgi?id=103778
-    if ((arg = argsList->current()) && (arg->id == CSSValueBorderBox || arg->id == CSSValuePaddingBox
-        || arg->id == CSSValueContentBox || arg->id == CSSValueFilterBox))
-        argsList->next();
-    
-    if ((arg = argsList->current()) && arg->id == CSSValueDetached) {
-        meshSizeList->append(cssValuePool().createIdentifierValue(arg->id));
-        argsList->next();
-    }
-    
-    if (meshSizeList->length()) {
-        if (!acceptCommaOperator(argsList))
-            return 0;
-        filterValue->append(meshSizeList.release());
-    }
-    
-    // 3. Parse the parameters.
-    RefPtr<CSSValueList> paramList = parseCustomFilterParameters(argsList);
-    if (!paramList)
-        return 0;
-
-    if (paramList->length())
-        filterValue->append(paramList.release());
-    
-    return filterValue;
-}
-
-PassRefPtr<WebKitCSSFilterValue> CSSParser::parseCustomFilterFunction(CSSParserValue* value)
-{
-    ASSERT(value->function);
-
-    // Look ahead to determine which syntax the custom function is using.
-    // Both the at-rule reference syntax and the inline syntax require at least one argument.
-    CSSParserValueList* argsList = value->function->args.get();
-    if (!argsList || !argsList->size())
-        return 0;
-
-    // The at-rule reference syntax expects a single ident or an ident followed by a comma. 
-    // e.g. custom(my-filter) or custom(my-filter, ...)
-    // In contrast, when the inline syntax starts with an ident like "none", it expects a uri or a mix function next.
-    // e.g. custom(none url(...)) or custom(none mix(...)
-    bool isAtRuleReferenceSyntax = argsList->valueAt(0)->unit == CSSPrimitiveValue::CSS_IDENT 
-        && (argsList->size() == 1 || isComma(argsList->valueAt(1)));
-    return isAtRuleReferenceSyntax ? parseCustomFilterFunctionWithAtRuleReferenceSyntax(value) : parseCustomFilterFunctionWithInlineSyntax(value);
-}
-
-PassRefPtr<CSSValueList> CSSParser::parseCustomFilterTransform(CSSParserValueList* valueList)
-{
-    if (!valueList)
-        return 0;
-
-    // CSS Shaders' custom() transforms are space separated and comma terminated.
-    RefPtr<CSSValueList> list = CSSValueList::createSpaceSeparated();
-    for (CSSParserValue* value = valueList->current(); value; value = valueList->next()) {
-        if (isComma(value))
-            break;
-
-        RefPtr<CSSValue> parsedTransformValue = parseTransformValue(value);
-        if (!parsedTransformValue)
-            return 0;
-
-        list->append(parsedTransformValue.release());
-    }
-
-    return list.release();
-}
-
-PassRefPtr<WebKitCSSShaderValue> CSSParser::parseFilterRuleSrcUriAndFormat(CSSParserValueList* valueList)
-{
-    CSSParserValue* value = valueList->current();
-    ASSERT(value && value->unit == CSSPrimitiveValue::CSS_URI);
-    RefPtr<WebKitCSSShaderValue> shaderValue = WebKitCSSShaderValue::create(completeURL(value->string));
-
-    value = valueList->next();
-    if (value && value->unit == CSSParserValue::Function && equalIgnoringCase(value->function->name, "format(")) {
-        CSSParserValueList* args = value->function->args.get();
-        if (!args || args->size() != 1)
-            return 0;
-
-        CSSParserValue* arg = args->current();
-        if (arg->unit != CSSPrimitiveValue::CSS_STRING)
-            return 0;
-
-        shaderValue->setFormat(arg->string);
-        valueList->next();
-    }
-
-    return shaderValue.release();
-}
-
-bool CSSParser::parseFilterRuleSrc()
-{
-    RefPtr<CSSValueList> srcList = CSSValueList::createCommaSeparated();
-
-    CSSParserValue* value = m_valueList->current();
-    while (value) {
-        if (value->unit != CSSPrimitiveValue::CSS_URI)
-            return false;
-
-        RefPtr<WebKitCSSShaderValue> shaderValue = parseFilterRuleSrcUriAndFormat(m_valueList.get());
-        if (!shaderValue)
-            return false;
-        srcList->append(shaderValue.release());
-
-        if (!acceptCommaOperator(m_valueList.get()))
-            return false;
-
-        value = m_valueList->current();
-    }
-
-    if (!srcList->length())
-        return false;
-
-    addProperty(CSSPropertySrc, srcList.release(), m_important);
-    return true;
-}
-
-bool CSSParser::parseFilterRuleMix()
-{
-    if (m_valueList->size() > 2)
-        return false;
-
-    RefPtr<CSSValueList> mixList = CSSValueList::createSpaceSeparated();
-
-    bool hasBlendMode = false;
-    bool hasAlphaCompositing = false;
-    CSSParserValue* value = m_valueList->current();
-    while (value) {
-        RefPtr<CSSValue> mixValue;
-        if (!hasBlendMode && isBlendMode(value->id)) {
-            hasBlendMode = true;
-            mixValue = cssValuePool().createIdentifierValue(value->id);
-        } else if (!hasAlphaCompositing && isCompositeOperator(value->id)) {
-            hasAlphaCompositing = true;
-            mixValue = cssValuePool().createIdentifierValue(value->id);
-        }
-
-        if (!mixValue)
-            return false;
-
-        mixList->append(mixValue.release());
-        value = m_valueList->next();
-    }
-
-    addProperty(CSSPropertyMix, mixList.release(), m_important);
-    return true;
-}
-
-bool CSSParser::parseGeometry(CSSPropertyID propId, CSSParserValue* value, bool important)
-{
-    ASSERT(propId == CSSPropertyGeometry);
-
-    // <geometry-shape> = grid(<integer>{1,2} || [ detached | attached ]?)
-    if (value->unit != CSSParserValue::Function || !equalIgnoringCase(value->function->name, "grid("))
-        return false;
-
-    ASSERT(value->function->args);
-
-    // grid() function should have from 1 to 3 arguments.
-    unsigned size = value->function->args->size();
-    if (!size || size > 3)
-        return false;
-
-    CSSParserValueList* gridParserValueList = value->function->args.get();
-    CSSParserValue* gridParserValue = gridParserValueList->current();
-    RefPtr<CSSValueList> geometryList = CSSValueList::createSpaceSeparated();
-
-    bool hasDimensions = false;
-    bool hasConnectivity = false;
-
-    while (gridParserValue) {
-        if (hasDimensions && hasConnectivity) {
-            geometryList.release();
-            return false;
-        }
-
-        if (gridParserValue->id == CSSValueAttached || gridParserValue->id == CSSValueDetached) {
-            hasConnectivity = true;
-            geometryList->append(cssValuePool().createIdentifierValue(gridParserValue->id));
-            gridParserValue = gridParserValueList->next();
-        } else if (!hasDimensions && parseGridDimensions(gridParserValueList, geometryList)) {
-            hasDimensions = true;
-            gridParserValue = gridParserValueList->current();
-        } else {
-            geometryList.release();
-            return false;
-        }
-    }
-
-    addProperty(propId, geometryList.release(), important);
-    return hasDimensions;
-}
-
-bool CSSParser::parseGridDimensions(CSSParserValueList* args, RefPtr<CSSValueList>& gridValueList)
-{
-    ASSERT(args);
-
-    // There must be at least one valid numeric value.
-    CSSParserValue* arg = args->current();
-    if (!arg || !validUnit(arg, FPositiveInteger))
-        return false;
-
-    // A valid numeric value is parsed and then we move on.
-    gridValueList->append(createPrimitiveNumericValue(arg));
-    arg = args->next();
-
-    // If the next argument is not numeric, we are done parsing the grid dimensions.
-    if (!arg || !validUnit(arg, FPositiveInteger))
-        return true;
-
-    // Commit the second numeric value we found.
-    gridValueList->append(createPrimitiveNumericValue(arg));
-    args->next();
-    return true;
-}
-
-bool CSSParser::parseFilterRuleParameters()
-{
-    RefPtr<CSSValueList> paramsList = parseCustomFilterParameters(m_valueList.get());
-    if (!paramsList)
-        return false;
-
-    addProperty(CSSPropertyParameters, paramsList.release(), m_important);
-    return true;
-}
-
-PassRefPtr<StyleRuleBase> CSSParser::createFilterRule(const CSSParserString& filterName)
-{
-    RefPtr<StyleRuleFilter> rule = StyleRuleFilter::create(filterName, createStyleProperties());
-    clearProperties();
-    processAndAddNewRuleToSourceTreeIfNeeded();
-    return rule.release();
-}
-
-#endif // ENABLE(CSS_SHADERS)
 
 PassRefPtr<WebKitCSSFilterValue> CSSParser::parseBuiltinFilterArguments(CSSParserValueList* args, WebKitCSSFilterValue::FilterOperationType filterType)
 {
@@ -9809,19 +9194,6 @@ bool CSSParser::parseFilter(CSSParserValueList* valueList, RefPtr<CSSValue>& res
             if (filterType == WebKitCSSFilterValue::UnknownFilterOperation)
                 return false;
 
-#if ENABLE(CSS_SHADERS)
-            if (filterType == WebKitCSSFilterValue::CustomFilterOperation) {
-                // Make sure parsing fails if custom filters are disabled.
-                if (!m_context.isCSSCustomFilterEnabled)
-                    return false;
-                
-                RefPtr<WebKitCSSFilterValue> filterValue = parseCustomFilterFunction(value);
-                if (!filterValue)
-                    return false;
-                list->append(filterValue.release());
-                continue;
-            }
-#endif
             CSSParserValueList* args = value->function->args.get();
             if (!args)
                 return false;
@@ -11476,16 +10848,8 @@ inline void CSSParser::detectAtToken(int length, bool hasEscape)
                 return;
 
 #if ENABLE(CSS_REGIONS)
-            if (isASCIIAlphaCaselessEqual(name[14], 'n') && isEqualToCSSIdentifier(name + 2, "webkit-regio")) {
+            if (isASCIIAlphaCaselessEqual(name[14], 'n') && isEqualToCSSIdentifier(name + 2, "webkit-regio"))
                 m_token = WEBKIT_REGION_RULE_SYM;
-                return;
-            }
-#endif
-#if ENABLE(CSS_SHADERS)
-            if (isASCIIAlphaCaselessEqual(name[14], 'r') && isEqualToCSSIdentifier(name + 2, "webkit-filte")) {
-                m_token = WEBKIT_FILTER_RULE_SYM;
-                return;
-            }
 #endif
             return;
 

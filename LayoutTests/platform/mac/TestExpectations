@@ -660,15 +660,6 @@ fast/canvas/canvas-quadratic-same-endpoint.html
 css3/filters/composited-during-transition-layertree.html
 webkit.org/b/95622 css3/filters/composited-during-animation-layertree.html [ Pass Failure ]
 
-# --- Custom Filters ---
-# The following 5 tests are currently skipped on Mac for slight color differences,
-# please see the relevant bug: http://webkit.org/b/107487
-webkit.org/b/107487 css3/filters/custom/custom-filter-blend-fractional-destination-alpha.html [ Skip ]
-webkit.org/b/107487 css3/filters/custom/custom-filter-nonseparable-blend-mode-color.html [ Skip ]
-webkit.org/b/107487 css3/filters/custom/custom-filter-nonseparable-blend-mode-luminosity.html [ Skip ]
-webkit.org/b/107487 css3/filters/custom/custom-filter-nonseparable-blend-mode-hue.html [ Skip ]
-webkit.org/b/107487 css3/filters/custom/custom-filter-nonseparable-blend-mode-saturation.html [ Skip ]
-
 # --- Text ---
 fast/forms/text-control-intrinsic-widths.html
 platform/mac/fast/text/combining-character-sequence-fallback.html
@@ -1149,8 +1140,6 @@ webkit.org/b/115292 fast/writing-mode/vertical-font-fallback.html
 # Fails with WebKit1 only.
 editing/secure-input/reset-state-on-navigation.html [ Failure ]
 
-webkit.org/b/116238 css3/filters/custom/filter-fallback-to-software.html [ Pass ImageOnlyFailure ]
-
 webkit.org/b/116244 fast/events/mouse-cursor-image-set.html [ Failure Pass ]
 
 webkit.org/b/116245 canvas/philip/tests/2d.text.draw.fontface.notinpage.html [ Pass Failure ]
@@ -1257,12 +1246,6 @@ webkit.org/b/123220 compositing/regions/floated-region-with-transformed-child.ht
 webkit.org/b/123282 compositing/regions/propagate-region-box-shadow-border-padding-for-video.html  [ Pass ImageOnlyFailure ]
 
 webkit.org/b/123250 plugins/destroy-during-npp-new-object-with-fallback-content.html [ Pass Failure ]
-
-webkit.org/b/123370 [ Mavericks ] css3/filters/custom/composited/custom-filter-blend-modes.html [ Pass ImageOnlyFailure ]
-webkit.org/b/123370 [ Mavericks ] css3/filters/custom/custom-filter-blend-modes.html [ Pass ImageOnlyFailure ]
-webkit.org/b/123370 [ Mavericks ] css3/filters/custom/custom-filter-clamp-css-color-matrix.html [ Pass ImageOnlyFailure ]
-webkit.org/b/123370 [ Mavericks ] css3/filters/custom/custom-filter-composite-fractional-source-alpha.html [ Pass ImageOnlyFailure ]
-webkit.org/b/123370 [ Mavericks ] css3/filters/custom/effect-custom-transform-parameters.html [ Pass ImageOnlyFailure ]
 
 webkit.org/b/123369 svg/css/parent-shadow-offscreen.svg [ ImageOnlyFailure ]
 webkit.org/b/123369 [ MountainLion ] svg/css/parent-shadow-offscreen.svg [ Pass ]

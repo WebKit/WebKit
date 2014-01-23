@@ -52,10 +52,6 @@
 #import "DOMWebKitCSSKeyframesRule.h"
 #import "DOMWebKitCSSTransformValue.h"
 
-#if ENABLE(CSS_SHADERS)
-#import "DOMWebKitCSSFilterRule.h"
-#endif
-
 #if ENABLE(CSS_FILTERS)
 #import "DOMWebKitCSSFilterValue.h"
 #endif
@@ -121,10 +117,6 @@ Class kitClass(WebCore::CSSRule* impl)
 #if ENABLE(SHADOW_DOM)
         case DOM_HOST_RULE:
             return [DOMCSSHostRule class];
-#endif
-#if ENABLE(CSS_SHADERS)
-        case DOM_WEBKIT_FILTER_RULE:
-            return [DOMWebKitCSSFilterRule class];
 #endif
     }
     ASSERT_NOT_REACHED();

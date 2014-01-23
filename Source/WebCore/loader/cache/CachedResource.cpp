@@ -135,10 +135,6 @@ static ResourceLoadPriority defaultPriorityForResourceType(CachedResource::Type 
     case CachedResource::TextTrackResource:
         return ResourceLoadPriorityLow;
 #endif
-#if ENABLE(CSS_SHADERS)
-    case CachedResource::ShaderResource:
-        return ResourceLoadPriorityMedium;
-#endif
     }
     ASSERT_NOT_REACHED();
     return ResourceLoadPriorityLow;

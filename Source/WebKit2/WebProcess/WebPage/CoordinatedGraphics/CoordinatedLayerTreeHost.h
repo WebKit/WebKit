@@ -29,10 +29,6 @@
 #include <WebCore/GraphicsLayerFactory.h>
 #include <wtf/HashSet.h>
 
-#if ENABLE(CSS_SHADERS)
-#include "WebCustomFilterProgramProxy.h"
-#endif
-
 namespace WebCore {
 class CoordinatedSurface;
 }
@@ -42,9 +38,6 @@ namespace WebKit {
 class WebPage;
 
 class CoordinatedLayerTreeHost : public LayerTreeHost, public WebCore::CompositingCoordinator::Client
-#if ENABLE(CSS_SHADERS)
-    , WebCustomFilterProgramProxyClient
-#endif
 {
 public:
     static PassRefPtr<CoordinatedLayerTreeHost> create(WebPage*);
@@ -103,30 +96,15 @@ private:
 
     // CompositingCoordinator::Client
     virtual void didFlushRootLayer() override;
-    virtual void willSyncLayerState(WebCore::CoordinatedGraphicsLayerState&) override;
     virtual void notifyFlushRequired() override { scheduleLayerFlush(); };
     virtual void commitSceneState(const WebCore::CoordinatedGraphicsState&) override;
     virtual void paintLayerContents(const WebCore::GraphicsLayer*, WebCore::GraphicsContext&, const WebCore::IntRect& clipRect) override;
-
-#if ENABLE(CSS_SHADERS)
-    void prepareCustomFilterProxiesForAnimations(WebCore::GraphicsLayerAnimations&);
-
-    // WebCustomFilterProgramProxyClient
-    void removeCustomFilterProgramProxy(WebCustomFilterProgramProxy*);
-
-    void checkCustomFilterProgramProxies(const WebCore::FilterOperations&);
-    void disconnectCustomFilterPrograms();
-#endif
 
     std::unique_ptr<WebCore::CompositingCoordinator> m_coordinator;
 
     // The page overlay layer. Will be null if there's no page overlay.
     std::unique_ptr<WebCore::GraphicsLayer> m_pageOverlayLayer;
     RefPtr<PageOverlay> m_pageOverlay;
-
-#if ENABLE(CSS_SHADERS)
-    HashSet<WebCustomFilterProgramProxy*> m_customFilterPrograms;
-#endif
 
     bool m_notifyAfterScheduledLayerFlush;
     bool m_isValid;

@@ -38,10 +38,6 @@ class RenderQuote;
 class RenderLayerCompositor;
 #endif
 
-#if ENABLE(CSS_SHADERS) && USE(3D_GRAPHICS)
-class CustomFilterGlobalContext;
-#endif
-
 class RenderView final : public RenderBlockFlow {
 public:
     RenderView(Document&, PassRef<RenderStyle>);
@@ -187,10 +183,6 @@ public:
 #if USE(ACCELERATED_COMPOSITING)
     RenderLayerCompositor& compositor();
     bool usesCompositing() const;
-#endif
-
-#if ENABLE(CSS_SHADERS) && USE(3D_GRAPHICS)
-    CustomFilterGlobalContext* customFilterGlobalContext();
 #endif
 
     IntRect unscaledDocumentRect() const;
@@ -340,9 +332,6 @@ private:
     unsigned m_layoutStateDisableCount;
 #if USE(ACCELERATED_COMPOSITING)
     OwnPtr<RenderLayerCompositor> m_compositor;
-#endif
-#if ENABLE(CSS_SHADERS) && USE(3D_GRAPHICS)
-    OwnPtr<CustomFilterGlobalContext> m_customFilterGlobalContext;
 #endif
     OwnPtr<FlowThreadController> m_flowThreadController;
     RefPtr<IntervalArena> m_intervalArena;

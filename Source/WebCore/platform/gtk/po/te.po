@@ -1717,14 +1717,6 @@ msgstr "మాధ్యమ ప్లేబాక్ యిన్‌లైన్ 
 msgid "Whether media playback allows inline"
 msgstr "మాధ్యమ ప్లేబ్యాక్ యిన్‌లైన్ అనుమతించాలా"
 
-#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:991
-msgid "Enable CSS shaders"
-msgstr "CSS షేడర్స్ చేతనంచేయి"
-
-#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:992
-msgid "Whether to enable css shaders"
-msgstr "css షేడర్స్ చేతనం చేయాలా"
-
 #: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:1007
 msgid "Enable display of insecure content"
 msgstr "సురక్షితం కాని విషయ ప్రదర్శనను చేతనంచేయి"

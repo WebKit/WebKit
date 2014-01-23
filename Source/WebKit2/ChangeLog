@@ -1,3 +1,37 @@
+2014-01-23  Max Vujovic  <mvujovic@adobe.com>
+
+        Remove CSS Custom Filters code and tests
+        https://bugs.webkit.org/show_bug.cgi?id=127382
+
+        Reviewed by Simon Fraser.
+
+        * CMakeLists.txt:
+        * Configurations/FeatureDefines.xcconfig:
+        * Shared/CoordinatedGraphics/CoordinatedGraphicsArgumentCoders.cpp:
+        (IPC::ArgumentCoder<WebCore::FilterOperations>::encode):
+        (IPC::ArgumentCoder<WebCore::FilterOperations>::decode):
+        (IPC::ArgumentCoder<CoordinatedGraphicsState>::encode):
+        (IPC::ArgumentCoder<CoordinatedGraphicsState>::decode):
+        * Shared/CoordinatedGraphics/CoordinatedGraphicsArgumentCoders.h:
+        * Shared/CoordinatedGraphics/WebCustomFilterProgramProxy.cpp: Removed.
+        * Shared/CoordinatedGraphics/WebCustomFilterProgramProxy.h: Removed.
+        * Shared/WebCoreArgumentCoders.cpp:
+        (IPC::encodeFilterOperation):
+        (IPC::decodeFilterOperation):
+        * Shared/WebPreferencesStore.h:
+        * Shared/mac/RemoteLayerTreeTransaction.mm:
+        (WebKit::RemoteLayerTreeTextStream::operator<<):
+        * UIProcess/API/C/WKPreferences.cpp:
+        * UIProcess/API/C/WKPreferencesPrivate.h:
+        * WebProcess/InjectedBundle/InjectedBundle.cpp:
+        (WebKit::InjectedBundle::overrideBoolPreferenceForTestRunner):
+        * WebProcess/WebPage/CoordinatedGraphics/CoordinatedLayerTreeHost.cpp:
+        (WebKit::CoordinatedLayerTreeHost::~CoordinatedLayerTreeHost):
+        * WebProcess/WebPage/CoordinatedGraphics/CoordinatedLayerTreeHost.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::updatePreferences):
+        * mac/WebKit2.order:
+
 2014-01-23  Anders Carlsson  <andersca@apple.com>
 
         Add API::PolicyClient base class

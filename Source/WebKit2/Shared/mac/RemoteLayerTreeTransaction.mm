@@ -495,14 +495,6 @@ RemoteLayerTreeTextStream& RemoteLayerTreeTextStream::operator<<(const FilterOpe
         case FilterOperation::DROP_SHADOW:
             ts << "drop shadow";
             break;
-#if ENABLE(CSS_SHADERS)
-        case FilterOperation::CUSTOM:
-            ts << "custom";
-            break;
-        case FilterOperation::VALIDATED_CUSTOM:
-            ts << "custom (validated)";
-            break;
-#endif
         case FilterOperation::PASSTHROUGH:
             ts << "passthrough";
             break;

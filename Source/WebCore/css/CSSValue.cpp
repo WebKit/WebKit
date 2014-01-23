@@ -54,11 +54,7 @@
 #include "CSSValueList.h"
 #include "SVGColor.h"
 #include "SVGPaint.h"
-#include "WebKitCSSArrayFunctionValue.h"
 #include "WebKitCSSFilterValue.h"
-#include "WebKitCSSMatFunctionValue.h"
-#include "WebKitCSSMixFunctionValue.h"
-#include "WebKitCSSShaderValue.h"
 #include "WebKitCSSTransformValue.h"
 
 namespace WebCore {
@@ -222,16 +218,6 @@ bool CSSValue::equals(const CSSValue& other) const
 #if ENABLE(CSS_FILTERS)
         case WebKitCSSFilterClass:
             return compareCSSValues<WebKitCSSFilterValue>(*this, other);
-#if ENABLE(CSS_SHADERS)
-        case WebKitCSSArrayFunctionValueClass:
-            return compareCSSValues<WebKitCSSArrayFunctionValue>(*this, other);
-        case WebKitCSSMatFunctionValueClass:
-            return compareCSSValues<WebKitCSSMatFunctionValue>(*this, other);
-        case WebKitCSSMixFunctionValueClass:
-            return compareCSSValues<WebKitCSSMixFunctionValue>(*this, other);
-        case WebKitCSSShaderClass:
-            return compareCSSValues<WebKitCSSShaderValue>(*this, other);
-#endif
 #endif
 #if ENABLE(SVG)
         case SVGColorClass:
@@ -320,16 +306,6 @@ String CSSValue::cssText() const
 #if ENABLE(CSS_FILTERS)
     case WebKitCSSFilterClass:
         return toWebKitCSSFilterValue(this)->customCSSText();
-#if ENABLE(CSS_SHADERS)
-    case WebKitCSSArrayFunctionValueClass:
-        return toWebKitCSSArrayFunctionValue(this)->customCSSText();
-    case WebKitCSSMatFunctionValueClass:
-        return toWebKitCSSMatFunctionValue(this)->customCSSText();
-    case WebKitCSSMixFunctionValueClass:
-        return toWebKitCSSMixFunctionValue(this)->customCSSText();
-    case WebKitCSSShaderClass:
-        return toWebKitCSSShaderValue(this)->customCSSText();
-#endif
 #endif
 #if ENABLE(SVG)
     case SVGColorClass:
@@ -439,20 +415,6 @@ void CSSValue::destroy()
     case WebKitCSSFilterClass:
         delete toWebKitCSSFilterValue(this);
         return;
-#if ENABLE(CSS_SHADERS)
-    case WebKitCSSArrayFunctionValueClass:
-        delete toWebKitCSSArrayFunctionValue(this);
-        return;
-    case WebKitCSSMatFunctionValueClass:
-        delete toWebKitCSSMatFunctionValue(this);
-        return;
-    case WebKitCSSMixFunctionValueClass:
-        delete toWebKitCSSMixFunctionValue(this);
-        return;
-    case WebKitCSSShaderClass:
-        delete toWebKitCSSShaderValue(this);
-        return;
-#endif
 #endif
 #if ENABLE(SVG)
     case SVGColorClass:
@@ -479,14 +441,6 @@ PassRefPtr<CSSValue> CSSValue::cloneForCSSOM() const
 #if ENABLE(CSS_FILTERS)
     case WebKitCSSFilterClass:
         return toWebKitCSSFilterValue(this)->cloneForCSSOM();
-#if ENABLE(CSS_SHADERS)
-    case WebKitCSSArrayFunctionValueClass:
-        return toWebKitCSSArrayFunctionValue(this)->cloneForCSSOM();
-    case WebKitCSSMatFunctionValueClass:
-        return toWebKitCSSMatFunctionValue(this)->cloneForCSSOM();
-    case WebKitCSSMixFunctionValueClass:
-        return toWebKitCSSMixFunctionValue(this)->cloneForCSSOM();
-#endif
 #endif
     case WebKitCSSTransformClass:
         return toWebKitCSSTransformValue(this)->cloneForCSSOM();

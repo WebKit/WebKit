@@ -1713,14 +1713,6 @@ msgstr "இன்லைனில் மீடியாவை இயக்க ம
 msgid "Whether media playback allows inline"
 msgstr "இன்லைனில் மீடியாவை இயக்க முடியுமா"
 
-#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:991
-msgid "Enable CSS shaders"
-msgstr "CSS ஷேடர்களை செயல்படுத்த வேண்டுமா"
-
-#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:992
-msgid "Whether to enable css shaders"
-msgstr "css ஷேடர்களை செயல்படுத்த வேண்டுமா"
-
 #: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:1007
 msgid "Enable display of insecure content"
 msgstr "பாதுகாப்பற்ற உள்ளடக்கத்தைக் காட்சிப்படுத்துவதைச் செயல்படுத்து"

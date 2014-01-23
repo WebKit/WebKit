@@ -1,3 +1,57 @@
+2014-01-23  Max Vujovic  <mvujovic@adobe.com>
+
+        Remove CSS Custom Filters code and tests
+        https://bugs.webkit.org/show_bug.cgi?id=127382
+
+        Reviewed by Simon Fraser.
+
+        No new tests. Removing functionality.
+
+        * ar.po:
+        * as.po:
+        * bg.po:
+        * cs.po:
+        * de.po:
+        * el.po:
+        * en_CA.po:
+        * en_GB.po:
+        * eo.po:
+        * es.po:
+        * et.po:
+        * eu.po:
+        * fr.po:
+        * gl.po:
+        * gu.po:
+        * he.po:
+        * hi.po:
+        * hu.po:
+        * id.po:
+        * it.po:
+        * kn.po:
+        * ko.po:
+        * lt.po:
+        * lv.po:
+        * ml.po:
+        * mr.po:
+        * nb.po:
+        * nl.po:
+        * or.po:
+        * pa.po:
+        * pl.po:
+        * pt.po:
+        * pt_BR.po:
+        * ro.po:
+        * ru.po:
+        * sl.po:
+        * sr.po:
+        * sr@latin.po:
+        * sv.po:
+        * ta.po:
+        * te.po:
+        * uk.po:
+        * vi.po:
+        * zh_CN.po:
+
 2014-01-08  Enrico Nicoletto  <liverig@gmail.com>
 
         Updated Brazilian Portuguese translation of WebKitGTK+ - December 30, 2013

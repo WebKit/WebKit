@@ -1740,14 +1740,6 @@ msgstr "मिडीया प्लेबॅक इंलाइन स्वी
 msgid "Whether media playback allows inline"
 msgstr "मिडीया प्लेबॅक इंलाइन स्वीकारायचे"
 
-#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:991
-msgid "Enable CSS shaders"
-msgstr "CSS शेडर्स् सुरू करा"
-
-#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:992
-msgid "Whether to enable css shaders"
-msgstr "css शेडर्स् सुरू करायचे"
-
 #: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:1007
 msgid "Enable display of insecure content"
 msgstr "असुरक्षीत अंतर्भुत माहिती दाखवणे समर्थीत करा"

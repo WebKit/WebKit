@@ -222,9 +222,6 @@ fast/dom/StyleSheet/detached-stylesheet-without-wrapper.html
 # All spatial navigation tests fail on Mac WK2
 webkit.org/b/96438 fast/spatial-navigation
 
-# WK2 tests fail image diff
-webkit.org/b/96580 [ Debug ] css3/filters/custom/filter-fallback-to-software.html [ ImageOnlyFailure ]
-
 # Causes next test to crash
 webkit.org/b/98960 fast/parser/document-open-in-unload.html [ Skip ]
 
@@ -320,7 +317,6 @@ webkit.org/b/118925 compositing/backgrounds/fixed-backgrounds.html  [ Pass Image
 webkit.org/b/118925 compositing/geometry/fixed-position-composited-page-scale-smaller-than-viewport.html  [ Pass ImageOnlyFailure ]
 webkit.org/b/118925 compositing/overlap-blending/children-opacity-huge.html  [ Pass ImageOnlyFailure ]
 webkit.org/b/118925 compositing/overlap-blending/children-opacity-no-overlap.html  [ Pass ImageOnlyFailure ]
-webkit.org/b/118925 css3/filters/custom/effect-custom-transform-parameters.html  [ Pass ImageOnlyFailure ]
 webkit.org/b/118925 fast/layers/no-clipping-overflow-hidden-added-after-transition.html  [ Pass ImageOnlyFailure ]
 webkit.org/b/118925 fast/multicol/mixed-opacity-fixed-test.html  [ Pass ImageOnlyFailure ]
 webkit.org/b/118925 fast/regions/fixed-pos-elem-in-region.html  [ Pass ImageOnlyFailure ]
@@ -346,23 +342,6 @@ webkit.org/b/122234 svg/filters/filter-cycle.html [ ImageOnlyFailure ]
 webkit.org/b/122234 css3/filters/null-effect-check.html [ ImageOnlyFailure ]
 webkit.org/b/122234 fast/images/pdf-as-image-with-annotations.html [ Pass ImageOnlyFailure ]
 webkit.org/b/122234 fast/images/pdf-as-image-crop-box.html [ Pass ImageOnlyFailure ]
-webkit.org/b/122234 css3/filters/custom/composited/custom-filter-blend-modes.html [ Pass ImageOnlyFailure ]
-webkit.org/b/122234 css3/filters/custom/custom-filter-a-tex-coord-optional.html [ Pass ImageOnlyFailure ]
-webkit.org/b/122234 css3/filters/custom/custom-filter-array-uniform-indirect-index.html [ Pass ImageOnlyFailure ]
-webkit.org/b/122234 css3/filters/custom/custom-filter-array.html [ Pass ImageOnlyFailure ]
-webkit.org/b/122234 css3/filters/custom/custom-filter-blend-modes.html [ Pass ImageOnlyFailure ]
-webkit.org/b/122234 css3/filters/custom/custom-filter-change-blend-mode.html [ Pass ImageOnlyFailure ]
-webkit.org/b/122234 css3/filters/custom/custom-filter-color.html [ Pass ImageOnlyFailure ]
-webkit.org/b/122234 css3/filters/custom/custom-filter-detached-mesh-with-mesh-box-type.html [ Pass ImageOnlyFailure ]
-webkit.org/b/122234 css3/filters/custom/custom-filter-matN.html [ Pass ImageOnlyFailure ]
-webkit.org/b/122234 css3/filters/custom/custom-filter-mesh-column-row-order.html [ Pass ImageOnlyFailure ]
-webkit.org/b/122234 css3/filters/custom/custom-filter-u-mesh-box.html [ Pass ImageOnlyFailure ]
-webkit.org/b/122234 css3/filters/custom/custom-filter-u-mesh-size.html [ Pass ImageOnlyFailure ]
-webkit.org/b/122234 css3/filters/custom/custom-filter-u-texture-size.html [ Pass ImageOnlyFailure ]
-webkit.org/b/122234 css3/filters/custom/custom-filter-u-tile-size.html [ Pass ImageOnlyFailure ]
-webkit.org/b/122234 css3/filters/custom/custom-filter-unavailable-varying.html [ Pass ImageOnlyFailure ]
-webkit.org/b/122234 css3/filters/custom/custom-filter-clamp-css-color-matrix.html [ Pass ImageOnlyFailure ]
-webkit.org/b/122234 css3/filters/custom/custom-filter-composite-fractional-source-alpha.html [ Pass ImageOnlyFailure ]
 
 # Tiled background images that intersect the tiles are getting weird fringing.
 webkit.org/b/122235 css3/masking/mask-repeat-space-border.html [ ImageOnlyFailure ]

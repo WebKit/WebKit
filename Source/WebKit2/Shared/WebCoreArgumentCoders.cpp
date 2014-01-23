@@ -1466,12 +1466,6 @@ static void encodeFilterOperation(ArgumentEncoder& encoder, const FilterOperatio
         encoder << dropShadowFilter.color();
         break;
     }
-#if ENABLE(CSS_SHADERS)
-    case FilterOperation::CUSTOM:
-    case FilterOperation::VALIDATED_CUSTOM:
-        ASSERT_NOT_REACHED();
-        break;
-#endif
     case FilterOperation::PASSTHROUGH:
     case FilterOperation::NONE:
         break;
@@ -1535,12 +1529,6 @@ static bool decodeFilterOperation(ArgumentDecoder& decoder, RefPtr<FilterOperati
         filter = DropShadowFilterOperation::create(location, stdDeviation, color, type);
         break;
     }
-#if ENABLE(CSS_SHADERS)
-    case FilterOperation::CUSTOM:
-    case FilterOperation::VALIDATED_CUSTOM:
-        ASSERT_NOT_REACHED();
-        break;
-#endif
     case FilterOperation::PASSTHROUGH:
     case FilterOperation::NONE:
         break;

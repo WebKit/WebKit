@@ -48,10 +48,6 @@ struct Length;
 class FilterOperations;
 #endif
 
-#if ENABLE(CSS_SHADERS)
-class CustomFilterProgramInfo;
-#endif
-
 #if USE(GRAPHICS_SURFACE)
 struct GraphicsSurfaceToken;
 #endif
@@ -63,13 +59,6 @@ namespace IPC {
 template<> struct ArgumentCoder<WebCore::FilterOperations> {
     static void encode(ArgumentEncoder&, const WebCore::FilterOperations&);
     static bool decode(ArgumentDecoder&, WebCore::FilterOperations&);
-};
-#endif
-
-#if ENABLE(CSS_SHADERS)
-template<> struct ArgumentCoder<WebCore::CustomFilterProgramInfo> {
-    static void encode(ArgumentEncoder&, const WebCore::CustomFilterProgramInfo&);
-    static bool decode(ArgumentDecoder&, WebCore::CustomFilterProgramInfo&);
 };
 #endif
 

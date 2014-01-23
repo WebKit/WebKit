@@ -793,8 +793,6 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSWebGLVertexArrayObjectOES.h \
 	DerivedSources/WebCore/JSWebKitAnimationEvent.cpp \
 	DerivedSources/WebCore/JSWebKitAnimationEvent.h \
-	DerivedSources/WebCore/JSWebKitCSSFilterRule.cpp \
-	DerivedSources/WebCore/JSWebKitCSSFilterRule.h \
 	DerivedSources/WebCore/JSWebKitCSSFilterValue.cpp \
 	DerivedSources/WebCore/JSWebKitCSSFilterValue.h \
 	DerivedSources/WebCore/JSWebKitCSSKeyframeRule.cpp \
@@ -803,8 +801,6 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSWebKitCSSKeyframesRule.h \
 	DerivedSources/WebCore/JSWebKitCSSMatrix.cpp \
 	DerivedSources/WebCore/JSWebKitCSSMatrix.h \
-	DerivedSources/WebCore/JSWebKitCSSMixFunctionValue.cpp \
-	DerivedSources/WebCore/JSWebKitCSSMixFunctionValue.h \
 	DerivedSources/WebCore/JSWebKitCSSRegionRule.cpp \
 	DerivedSources/WebCore/JSWebKitCSSRegionRule.h \
 	DerivedSources/WebCore/JSWebKitCSSTransformValue.cpp \
@@ -1333,12 +1329,10 @@ dom_binding_idls += \
 	$(WebCore)/css/StyleMedia.idl \
 	$(WebCore)/css/StyleSheet.idl \
 	$(WebCore)/css/StyleSheetList.idl \
-	$(WebCore)/css/WebKitCSSFilterRule.idl \
 	$(WebCore)/css/WebKitCSSFilterValue.idl \
 	$(WebCore)/css/WebKitCSSKeyframeRule.idl \
 	$(WebCore)/css/WebKitCSSKeyframesRule.idl \
 	$(WebCore)/css/WebKitCSSMatrix.idl \
-	$(WebCore)/css/WebKitCSSMixFunctionValue.idl \
 	$(WebCore)/css/WebKitCSSRegionRule.idl \
 	$(WebCore)/css/WebKitCSSTransformValue.idl \
 	$(WebCore)/css/WebKitCSSViewportRule.idl \
@@ -2719,10 +2713,6 @@ webcore_sources += \
 	Source/WebCore/css/TransformFunctions.h \
 	Source/WebCore/css/ViewportStyleResolver.cpp \
 	Source/WebCore/css/ViewportStyleResolver.h \
-	Source/WebCore/css/WebKitCSSArrayFunctionValue.cpp \
-	Source/WebCore/css/WebKitCSSArrayFunctionValue.h \
-	Source/WebCore/css/WebKitCSSFilterRule.cpp \
-	Source/WebCore/css/WebKitCSSFilterRule.h \
 	Source/WebCore/css/WebKitCSSFilterValue.cpp \
 	Source/WebCore/css/WebKitCSSFilterValue.h \
 	Source/WebCore/css/WebKitCSSKeyframeRule.cpp \
@@ -2731,14 +2721,8 @@ webcore_sources += \
 	Source/WebCore/css/WebKitCSSKeyframesRule.h \
 	Source/WebCore/css/WebKitCSSMatrix.cpp \
 	Source/WebCore/css/WebKitCSSMatrix.h \
-	Source/WebCore/css/WebKitCSSMatFunctionValue.cpp \
-	Source/WebCore/css/WebKitCSSMatFunctionValue.h \
-	Source/WebCore/css/WebKitCSSMixFunctionValue.cpp \
-	Source/WebCore/css/WebKitCSSMixFunctionValue.h \
 	Source/WebCore/css/WebKitCSSRegionRule.cpp \
 	Source/WebCore/css/WebKitCSSRegionRule.h \
-	Source/WebCore/css/WebKitCSSShaderValue.cpp \
-	Source/WebCore/css/WebKitCSSShaderValue.h \
 	Source/WebCore/css/WebKitCSSTransformValue.cpp \
 	Source/WebCore/css/WebKitCSSTransformValue.h \
 	Source/WebCore/css/WebKitCSSViewportRule.cpp \
@@ -3948,8 +3932,6 @@ webcore_sources += \
 	Source/WebCore/loader/cache/CachedResourceRequestInitiators.h \
 	Source/WebCore/loader/cache/CachedScript.cpp \
 	Source/WebCore/loader/cache/CachedScript.h \
-	Source/WebCore/loader/cache/CachedShader.cpp \
-	Source/WebCore/loader/cache/CachedShader.h \
 	Source/WebCore/loader/cache/CachedStyleSheetClient.h \
 	Source/WebCore/loader/cache/CachedTextTrack.cpp \
 	Source/WebCore/loader/cache/CachedTextTrack.h \
@@ -4627,12 +4609,6 @@ webcore_sources += \
 	Source/WebCore/rendering/style/StyleCachedImage.h \
 	Source/WebCore/rendering/style/StyleCachedImageSet.cpp \
 	Source/WebCore/rendering/style/StyleCachedImageSet.h \
-	Source/WebCore/rendering/style/StyleCachedShader.cpp \
-	Source/WebCore/rendering/style/StyleCachedShader.h \
-	Source/WebCore/rendering/style/StyleCustomFilterProgram.cpp \
-	Source/WebCore/rendering/style/StyleCustomFilterProgram.h \
-	Source/WebCore/rendering/style/StyleCustomFilterProgramCache.cpp \
-	Source/WebCore/rendering/style/StyleCustomFilterProgramCache.h \
 	Source/WebCore/rendering/style/StyleDashboardRegion.h \
 	Source/WebCore/rendering/style/StyleDeprecatedFlexibleBoxData.cpp \
 	Source/WebCore/rendering/style/StyleDeprecatedFlexibleBoxData.h \
@@ -4654,13 +4630,11 @@ webcore_sources += \
 	Source/WebCore/rendering/style/StyleMultiColData.cpp \
 	Source/WebCore/rendering/style/StyleMultiColData.h \
 	Source/WebCore/rendering/style/StylePendingImage.h \
-	Source/WebCore/rendering/style/StylePendingShader.h \
 	Source/WebCore/rendering/style/StyleRareInheritedData.cpp \
 	Source/WebCore/rendering/style/StyleRareInheritedData.h \
 	Source/WebCore/rendering/style/StyleRareNonInheritedData.cpp \
 	Source/WebCore/rendering/style/StyleRareNonInheritedData.h \
 	Source/WebCore/rendering/style/StyleReflection.h \
-	Source/WebCore/rendering/style/StyleShader.h \
 	Source/WebCore/rendering/style/StyleSurroundData.cpp \
 	Source/WebCore/rendering/style/StyleSurroundData.h \
 	Source/WebCore/rendering/style/StyleTransformData.cpp \
@@ -5653,35 +5627,6 @@ platform_sources += \
 	Source/WebCore/platform/graphics/cpu/arm/filters/FEGaussianBlurNEON.h \
 	Source/WebCore/platform/graphics/cpu/arm/filters/FELightingNEON.cpp \
 	Source/WebCore/platform/graphics/cpu/arm/filters/FELightingNEON.h \
-	Source/WebCore/platform/graphics/filters/CustomFilterArrayParameter.h \
-	Source/WebCore/platform/graphics/filters/CustomFilterColorParameter.h \
-	Source/WebCore/platform/graphics/filters/CustomFilterConstants.h \
-	Source/WebCore/platform/graphics/filters/CustomFilterGlobalContext.cpp \
-	Source/WebCore/platform/graphics/filters/CustomFilterGlobalContext.h \
-	Source/WebCore/platform/graphics/filters/CustomFilterMesh.cpp \
-	Source/WebCore/platform/graphics/filters/CustomFilterMesh.h \
-	Source/WebCore/platform/graphics/filters/CustomFilterMeshGenerator.cpp \
-	Source/WebCore/platform/graphics/filters/CustomFilterMeshGenerator.h \
-	Source/WebCore/platform/graphics/filters/CustomFilterNumberParameter.h \
-	Source/WebCore/platform/graphics/filters/CustomFilterOperation.cpp \
-	Source/WebCore/platform/graphics/filters/CustomFilterOperation.h \
-	Source/WebCore/platform/graphics/filters/ValidatedCustomFilterOperation.cpp \
-	Source/WebCore/platform/graphics/filters/ValidatedCustomFilterOperation.h \
-	Source/WebCore/platform/graphics/filters/CustomFilterParameter.h \
-	Source/WebCore/platform/graphics/filters/CustomFilterParameterList.cpp \
-	Source/WebCore/platform/graphics/filters/CustomFilterParameterList.h \
-	Source/WebCore/platform/graphics/filters/CustomFilterProgram.cpp \
-	Source/WebCore/platform/graphics/filters/CustomFilterProgram.h \
-	Source/WebCore/platform/graphics/filters/CustomFilterProgramClient.h \
-	Source/WebCore/platform/graphics/filters/CustomFilterProgramInfo.cpp \
-	Source/WebCore/platform/graphics/filters/CustomFilterProgramInfo.h \
-	Source/WebCore/platform/graphics/filters/CustomFilterRenderer.cpp \
-	Source/WebCore/platform/graphics/filters/CustomFilterRenderer.h \
-	Source/WebCore/platform/graphics/filters/CustomFilterCompiledProgram.cpp \
-	Source/WebCore/platform/graphics/filters/CustomFilterCompiledProgram.h \
-	Source/WebCore/platform/graphics/filters/CustomFilterTransformParameter.h \
-	Source/WebCore/platform/graphics/filters/CustomFilterValidatedProgram.cpp \
-	Source/WebCore/platform/graphics/filters/CustomFilterValidatedProgram.h \
 	Source/WebCore/platform/graphics/filters/DistantLightSource.cpp \
 	Source/WebCore/platform/graphics/filters/DistantLightSource.h \
 	Source/WebCore/platform/graphics/filters/FEBlend.cpp \
@@ -5694,8 +5639,6 @@ platform_sources += \
 	Source/WebCore/platform/graphics/filters/FEComposite.h \
 	Source/WebCore/platform/graphics/filters/FEConvolveMatrix.cpp \
 	Source/WebCore/platform/graphics/filters/FEConvolveMatrix.h \
-	Source/WebCore/platform/graphics/filters/FECustomFilter.cpp \
-	Source/WebCore/platform/graphics/filters/FECustomFilter.h \
 	Source/WebCore/platform/graphics/filters/FEDiffuseLighting.cpp \
 	Source/WebCore/platform/graphics/filters/FEDiffuseLighting.h \
 	Source/WebCore/platform/graphics/filters/FEDisplacementMap.cpp \
@@ -6409,7 +6352,6 @@ endif
 if USE_ACCELERATED_COMPOSITING
 if USE_TEXTURE_MAPPER_GL
 webcore_sources += \
-	Source/WebCore/platform/graphics/filters/texmap/CustomFilterValidatedProgramTextureMapper.cpp \
 	Source/WebCore/platform/graphics/filters/texmap/TextureMapperPlatformCompiledProgram.h \
 	Source/WebCore/platform/graphics/texmap/TextureMapperGL.cpp \
 	Source/WebCore/platform/graphics/texmap/TextureMapperGL.h \

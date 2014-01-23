@@ -41,11 +41,6 @@ class ShadowData;
 class StyleProperties;
 class StylePropertyShorthand;
 
-#if ENABLE(CSS_SHADERS)
-class CustomFilterNumberParameter;
-class CustomFilterParameter;
-#endif
-
 enum EUpdateLayout { DoNotUpdateLayout = false, UpdateLayout = true };
 
 enum AdjustPixelValuesForComputedStyle { AdjustPixelValues, DoNotAdjustPixelValues };
@@ -64,7 +59,7 @@ public:
     bool propertyMatches(CSSPropertyID, const CSSValue*) const;
 
 #if ENABLE(CSS_FILTERS)
-    static PassRef<CSSValue> valueForFilter(const RenderObject*, const RenderStyle*, const FilterOperations&, AdjustPixelValuesForComputedStyle = AdjustPixelValues);
+    static PassRef<CSSValue> valueForFilter(const RenderStyle*, const FilterOperations&, AdjustPixelValuesForComputedStyle = AdjustPixelValues);
 #endif
 
 private:

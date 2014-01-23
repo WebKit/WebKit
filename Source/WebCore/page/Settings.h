@@ -213,9 +213,6 @@ public:
     void setFontRenderingMode(FontRenderingMode mode);
     FontRenderingMode fontRenderingMode() const;
 
-    void setCSSCustomFilterEnabled(bool enabled) { m_isCSSCustomFilterEnabled = enabled; }
-    bool isCSSCustomFilterEnabled() const { return m_isCSSCustomFilterEnabled; }
-
 #if ENABLE(CSS_STICKY_POSITION)
     void setCSSStickyPositionEnabled(bool enabled) { m_cssStickyPositionEnabled = enabled; }
     bool cssStickyPositionEnabled() const { return m_cssStickyPositionEnabled; }
@@ -347,7 +344,6 @@ private:
     bool m_needsAdobeFrameReloadingQuirk : 1;
     bool m_usesPageCache : 1;
     unsigned m_fontRenderingMode : 1;
-    bool m_isCSSCustomFilterEnabled : 1;
 #if PLATFORM(IOS)
     bool m_standalone : 1;
     bool m_telephoneNumberParsingEnabled : 1;

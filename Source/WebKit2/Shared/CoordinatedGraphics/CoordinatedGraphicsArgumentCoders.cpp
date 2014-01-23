@@ -54,22 +54,6 @@
 #include <WebCore/FilterOperations.h>
 #endif
 
-#if ENABLE(CSS_SHADERS)
-#include "WebCustomFilterProgramProxy.h"
-#include <WebCore/CoordinatedCustomFilterOperation.h>
-#include <WebCore/CoordinatedCustomFilterProgram.h>
-#include <WebCore/CustomFilterArrayParameter.h>
-#include <WebCore/CustomFilterColorParameter.h>
-#include <WebCore/CustomFilterConstants.h>
-#include <WebCore/CustomFilterNumberParameter.h>
-#include <WebCore/CustomFilterOperation.h>
-#include <WebCore/CustomFilterProgram.h>
-#include <WebCore/CustomFilterProgramInfo.h>
-#include <WebCore/CustomFilterTransformParameter.h>
-#include <WebCore/CustomFilterValidatedProgram.h>
-#include <WebCore/ValidatedCustomFilterOperation.h>
-#endif
-
 #if USE(GRAPHICS_SURFACE)
 #include <WebCore/GraphicsSurface.h>
 #endif
@@ -110,67 +94,6 @@ void ArgumentCoder<WebCore::FilterOperations>::encode(ArgumentEncoder& encoder, 
             ArgumentCoder<Color>::encode(encoder, shadow->color());
             break;
         }
-#if ENABLE(CSS_SHADERS)
-        case FilterOperation::CUSTOM:
-            // Custom Filters are converted to VALIDATED_CUSTOM before reaching this point.
-            ASSERT_NOT_REACHED();
-            break;
-        case FilterOperation::VALIDATED_CUSTOM: {
-            const ValidatedCustomFilterOperation* customOperation = static_cast<const ValidatedCustomFilterOperation*>(filter);
-            ASSERT(customOperation->validatedProgram());
-            RefPtr<CustomFilterValidatedProgram> program = customOperation->validatedProgram();
-            ASSERT(program->isInitialized());
-            ASSERT(program->platformCompiledProgram());
-            ASSERT(program->platformCompiledProgram()->client());
-            WebCustomFilterProgramProxy* customFilterProgramProxy = static_cast<WebCustomFilterProgramProxy*>(program->platformCompiledProgram()->client());
-            const CustomFilterProgramInfo& programInfo = program->programInfo();
-            encoder.encodeEnum(programInfo.meshType());
-            encoder << customFilterProgramProxy->id();
-            CustomFilterParameterList parameters = customOperation->parameters();
-            encoder << static_cast<uint32_t>(parameters.size());
-            for (size_t i = 0; i < parameters.size(); ++i) {
-                RefPtr<CustomFilterParameter> parameter = parameters[i];
-                encoder << parameter->name();
-                encoder.encodeEnum(parameter->parameterType());
-
-                switch (parameter->parameterType()) {
-                case CustomFilterParameter::MATRIX:
-                case CustomFilterParameter::ARRAY: {
-                    CustomFilterArrayParameter* arrayParameter = static_cast<CustomFilterArrayParameter*>(parameter.get());
-                    encoder << static_cast<uint32_t>(arrayParameter->size());
-                    for (size_t j = 0; j < arrayParameter->size(); ++j)
-                        encoder << arrayParameter->valueAt(j);
-                    break;
-                }
-                case CustomFilterParameter::COLOR: {
-                    CustomFilterColorParameter* colorParameter = static_cast<CustomFilterColorParameter*>(parameter.get());
-                    encoder << colorParameter->color();
-                    break;
-                }
-                case CustomFilterParameter::NUMBER: {
-                    CustomFilterNumberParameter* nubmerParameter = static_cast<CustomFilterNumberParameter*>(parameter.get());
-                    encoder << static_cast<uint32_t>(nubmerParameter->size());
-                    for (size_t j = 0; j < nubmerParameter->size(); ++j)
-                        encoder << nubmerParameter->valueAt(j);
-                    break;
-                }
-                case CustomFilterParameter::TRANSFORM: {
-                    CustomFilterTransformParameter* transformParameter = static_cast<CustomFilterTransformParameter*>(parameter.get());
-                    ArgumentCoder<TransformOperations>::encode(encoder, transformParameter->operations());
-                    break;
-                }
-                default: {
-                    ASSERT_NOT_REACHED();
-                    break;
-                }
-                }
-            }
-
-            encoder << customOperation->meshRows();
-            encoder << customOperation->meshColumns();
-            break;
-        }
-#endif
         default:
             break;
         }
@@ -232,101 +155,6 @@ bool ArgumentCoder<WebCore::FilterOperations>::decode(ArgumentDecoder& decoder, 
             filter = DropShadowFilterOperation::create(location, stdDeviation, color, type);
             break;
         }
-#if ENABLE(CSS_SHADERS)
-        case FilterOperation::CUSTOM:
-            // Custom Filters are converted to VALIDATED_CUSTOM before reaching this point.
-            ASSERT_NOT_REACHED();
-            break;
-        case FilterOperation::VALIDATED_CUSTOM: {
-            // FIXME: CustomFilterOperation should not need the meshType.
-            // https://bugs.webkit.org/show_bug.cgi?id=102529
-            CustomFilterMeshType meshType;
-            if (!decoder.decodeEnum(meshType))
-                return false;
-            int programID = 0;
-            if (!decoder.decode(programID))
-                return false;
-
-            uint32_t parametersSize;
-            if (!decoder.decode(parametersSize))
-                return false;
-
-            CustomFilterParameterList parameters(parametersSize);
-            for (size_t i = 0; i < parametersSize; ++i) {
-                String name;
-                CustomFilterParameter::ParameterType parameterType;
-                if (!decoder.decode(name))
-                    return false;
-                if (!decoder.decodeEnum(parameterType))
-                    return false;
-
-                switch (parameterType) {
-                case CustomFilterParameter::MATRIX:
-                case CustomFilterParameter::ARRAY: {
-                    RefPtr<CustomFilterArrayParameter> arrayParameter = CustomFilterArrayParameter::create(name, parameterType);
-                    uint32_t arrayParameterSize;
-                    if (!decoder.decode(arrayParameterSize))
-                        return false;
-                    double arrayParameterValue;
-                    for (size_t j = 0; j < arrayParameterSize; ++j) {
-                        if (!decoder.decode(arrayParameterValue))
-                            return false;
-                        arrayParameter->addValue(arrayParameterValue);
-                    }
-                    parameters[i] = arrayParameter.release();
-                    break;
-                }
-                case CustomFilterParameter::COLOR: {
-                    RefPtr<CustomFilterColorParameter> colorParameter = CustomFilterColorParameter::create(name);
-                    Color c;
-                    if (!decoder.decode(c))
-                        return false;
-                    colorParameter->setColor(c);
-                    parameters[i] = colorParameter.release();
-                    break;
-                }
-                case CustomFilterParameter::NUMBER: {
-                    RefPtr<CustomFilterNumberParameter> numberParameter = CustomFilterNumberParameter::create(name);
-                    uint32_t numberParameterSize;
-                    if (!decoder.decode(numberParameterSize))
-                        return false;
-                    double numberParameterValue;
-                    for (size_t j = 0; j < numberParameterSize; ++j) {
-                        if (!decoder.decode(numberParameterValue))
-                            return false;
-                        numberParameter->addValue(numberParameterValue);
-                    }
-                    parameters[i] = numberParameter.release();
-                    break;
-                }
-                case CustomFilterParameter::TRANSFORM: {
-                    RefPtr<CustomFilterTransformParameter> transformParameter = CustomFilterTransformParameter::create(name);
-                    TransformOperations operations;
-                    if (!ArgumentCoder<TransformOperations>::decode(decoder, operations))
-                        return false;
-                    transformParameter->setOperations(operations);
-                    parameters[i] = transformParameter.release();
-                    break;
-                }
-                default: {
-                    ASSERT_NOT_REACHED();
-                    return false;
-                }
-                }
-            }
-
-            unsigned meshRows;
-            unsigned meshColumns;
-            if (!decoder.decode(meshRows))
-                return false;
-            if (!decoder.decode(meshColumns))
-                return false;
-
-            // At this point the Shaders are already validated, so we just use WebCustomFilterOperation for transportation.
-            filter = CoordinatedCustomFilterOperation::create(0, programID, parameters, meshRows, meshColumns);
-            break;
-        }
-#endif
         default:
             break;
         }
@@ -338,42 +166,6 @@ bool ArgumentCoder<WebCore::FilterOperations>::decode(ArgumentDecoder& decoder, 
     return true;
 }
 #endif
-
-#if ENABLE(CSS_SHADERS)
-void ArgumentCoder<WebCore::CustomFilterProgramInfo>::encode(ArgumentEncoder& encoder, const CustomFilterProgramInfo& programInfo)
-{
-    encoder << programInfo.vertexShaderString();
-    encoder << programInfo.fragmentShaderString();
-    encoder.encodeEnum(programInfo.programType());
-    encoder.encodeEnum(programInfo.meshType());
-    const CustomFilterProgramMixSettings& mixSettings = programInfo.mixSettings();
-    encoder.encodeEnum(mixSettings.blendMode);
-    encoder.encodeEnum(mixSettings.compositeOperator);
-}
-
-bool ArgumentCoder<WebCore::CustomFilterProgramInfo>::decode(ArgumentDecoder& decoder, CustomFilterProgramInfo& programInfo)
-{
-    String vertexShaderString;
-    String fragmentShaderString;
-    CustomFilterProgramType programType;
-    CustomFilterMeshType meshType;
-    CustomFilterProgramMixSettings mixSettings;
-    if (!decoder.decode(vertexShaderString))
-        return false;
-    if (!decoder.decode(fragmentShaderString))
-        return false;
-    if (!decoder.decodeEnum(programType))
-        return false;
-    if (!decoder.decodeEnum(meshType))
-        return false;
-    if (!decoder.decodeEnum(mixSettings.blendMode))
-        return false;
-    if (!decoder.decodeEnum(mixSettings.compositeOperator))
-        return false;
-    programInfo = CustomFilterProgramInfo(vertexShaderString, fragmentShaderString, programType, mixSettings, meshType);
-    return true;
-}
-#endif // ENABLE(CSS_SHADERS)
 
 void ArgumentCoder<TransformOperations>::encode(ArgumentEncoder& encoder, const TransformOperations& transformOperations)
 {
@@ -1084,15 +876,6 @@ void ArgumentCoder<CoordinatedGraphicsState>::encode(ArgumentEncoder& encoder, c
         encodeCoordinatedSurface(encoder, state.updateAtlasesToCreate[i].second);
     }
     encoder << state.updateAtlasesToRemove;
-
-#if ENABLE(CSS_SHADERS)
-    encoder << static_cast<uint64_t>(state.customFiltersToCreate.size());
-    for (size_t i = 0; i < state.customFiltersToCreate.size(); ++i) {
-        encoder << state.customFiltersToCreate[i].first;
-        encoder << state.customFiltersToCreate[i].second;
-    }
-    encoder << state.customFiltersToRemove;
-#endif
 }
 
 bool ArgumentCoder<CoordinatedGraphicsState>::decode(ArgumentDecoder& decoder, CoordinatedGraphicsState& state)
@@ -1161,25 +944,6 @@ bool ArgumentCoder<CoordinatedGraphicsState>::decode(ArgumentDecoder& decoder, C
 
     if (!decoder.decode(state.updateAtlasesToRemove))
         return false;
-
-#if ENABLE(CSS_SHADERS)
-    uint64_t sizeOfCustomFiltersToCreate;
-    if (!decoder.decode(sizeOfCustomFiltersToCreate))
-        return false;
-
-    for (uint64_t i = 0; i < sizeOfCustomFiltersToCreate; ++i) {
-        uint32_t filterID;
-        if (!decoder.decode(filterID))
-            return false;
-        CustomFilterProgramInfo filterInfo;
-        if (!decoder.decode(filterInfo))
-            return false;
-        state.customFiltersToCreate.append(std::make_pair(filterID, filterInfo));
-    }
-
-    if (!decoder.decode(state.customFiltersToRemove))
-        return false;
-#endif
 
     return true;
 }

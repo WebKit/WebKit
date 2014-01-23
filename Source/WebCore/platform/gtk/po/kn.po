@@ -1724,14 +1724,6 @@ msgstr "ಮೀಡಿಯ ಪ್ಲೇಬ್ಯಾಕ್ ಸಾಲಿನೊಳಗ�
 msgid "Whether media playback allows inline"
 msgstr "ಮೀಡಿಯ ಪ್ಲೇಬ್ಯಾಕ್ ಸಾಲಿನೊಳಗಿರುವುದಕ್ಕೆ ಅನುಮತಿಸುತ್ತದೆಯೆ"
 
-#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:991
-msgid "Enable CSS shaders"
-msgstr "CSS ಶೇಡರುಗಳನ್ನು ಸಕ್ರಿಯಗೊಳಿಸು"
-
-#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:992
-msgid "Whether to enable css shaders"
-msgstr "CSS ಶೇಡರುಗಳನ್ನು ಸಕ್ರಿಯಗೊಳಿಸಬೇಕೆ"
-
 #: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:1007
 msgid "Enable display of insecure content"
 msgstr "ಅಸುರಕ್ಷಿತ ವಿಷಯವನ್ನು ತೋರಿಸುವುದನ್ನು ಸಕ್ರಿಯಗೊಳಿಸಬೇಕೆ"

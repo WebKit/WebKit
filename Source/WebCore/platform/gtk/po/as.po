@@ -1717,14 +1717,6 @@ msgstr "মাধ্যম প্লেবেকে ইনলাইনৰ অন
 msgid "Whether media playback allows inline"
 msgstr "মাধ্যম প্লেবেকে ইনলাইনৰ অনুমতি দিয়ে নে"
 
-#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:991
-msgid "Enable CSS shaders"
-msgstr "CSS শেইডাৰসমূহ সামৰ্থবান কৰক"
-
-#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:992
-msgid "Whether to enable css shaders"
-msgstr "css শেইডাৰসমূহ সামৰ্থবান কৰা হব নে"
-
 #: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:1007
 msgid "Enable display of insecure content"
 msgstr "অসুৰক্ষিত সমলৰ প্ৰদৰ্শন সামৰ্থবান কৰক"

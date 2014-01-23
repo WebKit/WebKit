@@ -3621,10 +3621,6 @@ static void webkit_web_view_update_settings(WebKitWebView* webView)
     coreSettings.setScrollAnimatorEnabled(settingsPrivate->enableSmoothScrolling);
 #endif
 
-#if ENABLE(CSS_SHADERS)
-    coreSettings.setCSSCustomFilterEnabled(settingsPrivate->enableCSSShaders);
-#endif
-
 #if ENABLE(CSS_REGIONS)
     WebCore::RuntimeEnabledFeatures::sharedFeatures().setCSSRegionsEnabled(true);
 #endif
@@ -3774,11 +3770,6 @@ static void webkit_web_view_settings_notify(WebKitWebSettings* webSettings, GPar
 #if ENABLE(SMOOTH_SCROLLING)
     else if (name == g_intern_string("enable-smooth-scrolling"))
         settings.setScrollAnimatorEnabled(g_value_get_boolean(&value));
-#endif
-
-#if ENABLE(CSS_SHADERS)
-    else if (name == g_intern_string("enable-css-shaders"))
-        settings.setCSSCustomFilterEnabled(g_value_get_boolean(&value));
 #endif
 
 #if ENABLE(MEDIA_SOURCE)

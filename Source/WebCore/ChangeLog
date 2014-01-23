@@ -1,3 +1,182 @@
+2014-01-23  Max Vujovic  <mvujovic@adobe.com>
+
+        Remove CSS Custom Filters code and tests
+        https://bugs.webkit.org/show_bug.cgi?id=127382
+
+        Reviewed by Simon Fraser.
+
+        No new tests. Removing functionality.
+
+        * CMakeLists.txt:
+        * Configurations/FeatureDefines.xcconfig:
+        * DerivedSources.cpp:
+        * DerivedSources.make:
+        * GNUmakefile.list.am:
+        * WebCore.order:
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.vcxproj/WebCore.vcxproj.filters:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSCSSRuleCustom.cpp:
+        (WebCore::toJS):
+        * bindings/js/JSCSSValueCustom.cpp:
+        (WebCore::toJS):
+        * bindings/objc/DOMCSS.mm:
+        (kitClass):
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::ComputedStyleExtractor::valueForFilter):
+        (WebCore::ComputedStyleExtractor::propertyValue):
+        * css/CSSComputedStyleDeclaration.h:
+        * css/CSSGrammar.y.in:
+        * css/CSSParser.cpp:
+        (WebCore::CSSParserContext::CSSParserContext):
+        (WebCore::operator==):
+        (WebCore::CSSParser::CSSParser):
+        (WebCore::CSSParser::parseValue):
+        (WebCore::filterInfoForName):
+        (WebCore::CSSParser::parseFilter):
+        (WebCore::CSSParser::detectAtToken):
+        * css/CSSParser.h:
+        * css/CSSParserMode.h:
+        * css/CSSPropertyNames.in:
+        * css/CSSPropertySourceData.h:
+        * css/CSSRule.h:
+        * css/CSSRule.idl:
+        * css/CSSValue.cpp:
+        (WebCore::CSSValue::equals):
+        (WebCore::CSSValue::cssText):
+        (WebCore::CSSValue::destroy):
+        (WebCore::CSSValue::cloneForCSSOM):
+        * css/CSSValue.h:
+        * css/CSSValueKeywords.in:
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::State::clear):
+        (WebCore::StyleResolver::applyProperty):
+        (WebCore::filterOperationForType):
+        (WebCore::StyleResolver::createFilterOperations):
+        (WebCore::StyleResolver::loadPendingResources):
+        * css/StyleResolver.h:
+        (WebCore::StyleResolver::State::State):
+        * css/StyleRule.cpp:
+        (WebCore::StyleRuleBase::destroy):
+        (WebCore::StyleRuleBase::copy):
+        (WebCore::StyleRuleBase::createCSSOMWrapper):
+        * css/StyleRule.h:
+        * css/StyleSheetContents.cpp:
+        (WebCore::childRulesHaveFailedOrCanceledSubresources):
+        * css/WebKitCSSArrayFunctionValue.cpp: Removed.
+        * css/WebKitCSSArrayFunctionValue.h: Removed.
+        * css/WebKitCSSFilterRule.cpp: Removed.
+        * css/WebKitCSSFilterRule.h: Removed.
+        * css/WebKitCSSFilterRule.idl: Removed.
+        * css/WebKitCSSFilterValue.cpp:
+        (WebCore::WebKitCSSFilterValue::WebKitCSSFilterValue):
+        (WebCore::WebKitCSSFilterValue::customCSSText):
+        * css/WebKitCSSFilterValue.h:
+        * css/WebKitCSSFilterValue.idl:
+        * css/WebKitCSSMatFunctionValue.cpp: Removed.
+        * css/WebKitCSSMatFunctionValue.h: Removed.
+        * css/WebKitCSSMixFunctionValue.cpp: Removed.
+        * css/WebKitCSSMixFunctionValue.h: Removed.
+        * css/WebKitCSSMixFunctionValue.idl: Removed.
+        * css/WebKitCSSShaderValue.cpp: Removed.
+        * css/WebKitCSSShaderValue.h: Removed.
+        * loader/cache/CachedResource.cpp:
+        (WebCore::defaultPriorityForResourceType):
+        * loader/cache/CachedResource.h:
+        * loader/cache/CachedResourceLoader.cpp:
+        (WebCore::createResource):
+        (WebCore::CachedResourceLoader::checkInsecureContent):
+        (WebCore::CachedResourceLoader::canRequest):
+        * loader/cache/CachedResourceLoader.h:
+        * loader/cache/CachedShader.cpp: Removed.
+        * loader/cache/CachedShader.h: Removed.
+        * page/Settings.cpp:
+        (WebCore::Settings::Settings):
+        * page/Settings.h:
+        * page/animation/CSSPropertyAnimation.cpp:
+        (WebCore::blendFilter):
+        * platform/graphics/ca/mac/PlatformCALayerMac.mm:
+        (PlatformCALayerMac::filtersCanBeComposited):
+        * platform/graphics/filters/CustomFilterArrayParameter.h: Removed.
+        * platform/graphics/filters/CustomFilterColorParameter.h: Removed.
+        * platform/graphics/filters/CustomFilterCompiledProgram.cpp: Removed.
+        * platform/graphics/filters/CustomFilterCompiledProgram.h: Removed.
+        * platform/graphics/filters/CustomFilterConstants.h: Removed.
+        * platform/graphics/filters/CustomFilterGlobalContext.cpp: Removed.
+        * platform/graphics/filters/CustomFilterGlobalContext.h: Removed.
+        * platform/graphics/filters/CustomFilterMesh.cpp: Removed.
+        * platform/graphics/filters/CustomFilterMesh.h: Removed.
+        * platform/graphics/filters/CustomFilterMeshGenerator.cpp: Removed.
+        * platform/graphics/filters/CustomFilterMeshGenerator.h: Removed.
+        * platform/graphics/filters/CustomFilterNumberParameter.h: Removed.
+        * platform/graphics/filters/CustomFilterOperation.cpp: Removed.
+        * platform/graphics/filters/CustomFilterOperation.h: Removed.
+        * platform/graphics/filters/CustomFilterParameter.h: Removed.
+        * platform/graphics/filters/CustomFilterParameterList.cpp: Removed.
+        * platform/graphics/filters/CustomFilterParameterList.h: Removed.
+        * platform/graphics/filters/CustomFilterProgram.cpp: Removed.
+        * platform/graphics/filters/CustomFilterProgram.h: Removed.
+        * platform/graphics/filters/CustomFilterProgramClient.h: Removed.
+        * platform/graphics/filters/CustomFilterProgramInfo.cpp: Removed.
+        * platform/graphics/filters/CustomFilterProgramInfo.h: Removed.
+        * platform/graphics/filters/CustomFilterRenderer.cpp: Removed.
+        * platform/graphics/filters/CustomFilterRenderer.h: Removed.
+        * platform/graphics/filters/CustomFilterTransformParameter.h: Removed.
+        * platform/graphics/filters/CustomFilterValidatedProgram.cpp: Removed.
+        * platform/graphics/filters/CustomFilterValidatedProgram.h: Removed.
+        * platform/graphics/filters/FECustomFilter.cpp: Removed.
+        * platform/graphics/filters/FECustomFilter.h: Removed.
+        * platform/graphics/filters/FilterOperation.h:
+        * platform/graphics/filters/FilterOperations.cpp:
+        (WebCore::FilterOperations::outsets):
+        * platform/graphics/filters/FilterOperations.h:
+        * platform/graphics/filters/ValidatedCustomFilterOperation.cpp: Removed.
+        * platform/graphics/filters/ValidatedCustomFilterOperation.h: Removed.
+        * platform/graphics/filters/texmap/CustomFilterValidatedProgramTextureMapper.cpp: Removed.
+        * platform/graphics/filters/texmap/TextureMapperPlatformCompiledProgram.h: Removed.
+        * platform/graphics/gpu/Texture.cpp:
+        * platform/graphics/texmap/TextureMapper.h:
+        * platform/graphics/texmap/TextureMapperGL.cpp:
+        (WebCore::getPassesRequiredForFilter):
+        (WebCore::BitmapTextureGL::applyFilters):
+        * platform/graphics/texmap/TextureMapperGL.h:
+        * platform/graphics/texmap/coordinated/CompositingCoordinator.cpp:
+        (WebCore::CompositingCoordinator::clearPendingStateChanges):
+        (WebCore::CompositingCoordinator::syncLayerState):
+        * platform/graphics/texmap/coordinated/CompositingCoordinator.h:
+        * platform/graphics/texmap/coordinated/CoordinatedCustomFilterOperation.h: Removed.
+        * platform/graphics/texmap/coordinated/CoordinatedCustomFilterProgram.h: Removed.
+        * platform/graphics/texmap/coordinated/CoordinatedGraphicsScene.cpp:
+        (WebCore::CoordinatedGraphicsScene::setLayerFiltersIfNeeded):
+        (WebCore::CoordinatedGraphicsScene::commitSceneState):
+        (WebCore::CoordinatedGraphicsScene::setLayerAnimationsIfNeeded):
+        * platform/graphics/texmap/coordinated/CoordinatedGraphicsScene.h:
+        * platform/graphics/texmap/coordinated/CoordinatedGraphicsState.h:
+        * rendering/FilterEffectRenderer.cpp:
+        (WebCore::FilterEffectRenderer::FilterEffectRenderer):
+        (WebCore::FilterEffectRenderer::build):
+        (WebCore::FilterEffectRenderer::computeSourceImageRectForDirtyRect):
+        * rendering/FilterEffectRenderer.h:
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::setFilterBackendNeedsRepaintingInRect):
+        (WebCore::RenderLayer::calculateClipRects):
+        * rendering/RenderLayer.h:
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::updateFilters):
+        * rendering/RenderLayerFilterInfo.cpp:
+        (WebCore::RenderLayer::FilterInfo::~FilterInfo):
+        * rendering/RenderLayerFilterInfo.h:
+        * rendering/RenderView.cpp:
+        * rendering/RenderView.h:
+        * rendering/style/StyleCachedShader.cpp: Removed.
+        * rendering/style/StyleCachedShader.h: Removed.
+        * rendering/style/StyleCustomFilterProgram.cpp: Removed.
+        * rendering/style/StyleCustomFilterProgram.h: Removed.
+        * rendering/style/StyleCustomFilterProgramCache.cpp: Removed.
+        * rendering/style/StyleCustomFilterProgramCache.h: Removed.
+        * rendering/style/StylePendingShader.h: Removed.
+        * rendering/style/StyleShader.h: Removed.
+
 2014-01-22  Jon Honeycutt  <jhoneycutt@apple.com>
 
         REGRESSION(r161967): Crash in WebCore::CachedSVGDocumentReference::load

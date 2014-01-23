@@ -483,8 +483,6 @@ public:
         [NSNumber numberWithBool:NO],   WebKitJavaScriptCanAccessClipboardPreferenceKey,
         [NSNumber numberWithBool:YES],  WebKitXSSAuditorEnabledPreferenceKey,
         [NSNumber numberWithBool:YES],  WebKitAcceleratedCompositingEnabledPreferenceKey,
-        // CSS Shaders also need WebGL enabled (which is disabled by default), so we can keep it enabled for now.
-        [NSNumber numberWithBool:YES], WebKitCSSCustomFilterEnabledPreferenceKey,
         [NSNumber numberWithBool:YES], WebKitCSSRegionsEnabledPreferenceKey,
         [NSNumber numberWithBool:YES], WebKitCSSCompositingEnabledPreferenceKey,
         [NSNumber numberWithBool:NO],  WebKitCSSGridLayoutEnabledPreferenceKey,
@@ -1872,16 +1870,6 @@ static NSString *classIBCreatorID = nil;
 - (void)setAcceleratedCompositingEnabled:(BOOL)enabled
 {
     [self _setBoolValue:enabled forKey:WebKitAcceleratedCompositingEnabledPreferenceKey];
-}
-
-- (BOOL)cssCustomFilterEnabled
-{
-    return [self _boolValueForKey:WebKitCSSCustomFilterEnabledPreferenceKey];
-}
-
-- (void)setCSSCustomFilterEnabled:(BOOL)enabled
-{
-    [self _setBoolValue:enabled forKey:WebKitCSSCustomFilterEnabledPreferenceKey];
 }
 
 - (BOOL)cssRegionsEnabled

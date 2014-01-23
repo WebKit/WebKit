@@ -1,3 +1,15 @@
+2014-01-23  Max Vujovic  <mvujovic@adobe.com>
+
+        Remove CSS Custom Filters code and tests
+        https://bugs.webkit.org/show_bug.cgi?id=127382
+
+        Reviewed by Simon Fraser.
+
+        * Source/autotools/FindDependencies.m4:
+        * Source/autotools/SetupWebKitFeatures.m4:
+        * Source/cmake/WebKitFeatures.cmake:
+        * Source/cmakeconfig.h.cmake:
+
 2014-01-22  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK][CMake] Add support for building the NetworkProcess

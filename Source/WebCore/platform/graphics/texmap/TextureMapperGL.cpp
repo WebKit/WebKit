@@ -42,15 +42,6 @@
 #include <wtf/text/CString.h>
 #endif
 
-#if ENABLE(CSS_SHADERS)
-#include "CustomFilterCompiledProgram.h"
-#include "CustomFilterOperation.h"
-#include "CustomFilterProgram.h"
-#include "CustomFilterRenderer.h"
-#include "CustomFilterValidatedProgram.h"
-#include "ValidatedCustomFilterOperation.h"
-#endif
-
 #if !USE(TEXMAP_OPENGL_ES_2)
 // FIXME: Move to Extensions3D.h.
 #define GL_UNSIGNED_INT_8_8_8_8_REV 0x8367
@@ -419,10 +410,6 @@ static unsigned getPassesRequiredForFilter(FilterOperation::OperationType type)
     case FilterOperation::BRIGHTNESS:
     case FilterOperation::CONTRAST:
     case FilterOperation::OPACITY:
-#if ENABLE(CSS_SHADERS)
-    case FilterOperation::CUSTOM:
-    case FilterOperation::VALIDATED_CUSTOM:
-#endif
         return 1;
     case FilterOperation::BLUR:
     case FilterOperation::DROP_SHADOW:
@@ -870,65 +857,6 @@ void BitmapTextureGL::updateContents(Image* image, const IntRect& targetRect, co
     updateContents(imageData, targetRect, offset, bytesPerLine, updateContentsFlag);
 }
 
-#if ENABLE(CSS_SHADERS)
-void TextureMapperGL::removeCachedCustomFilterProgram(CustomFilterProgram* program)
-{
-    m_customFilterPrograms.remove(program->programInfo());
-}
-
-bool TextureMapperGL::drawUsingCustomFilter(BitmapTexture& target, const BitmapTexture& source, const FilterOperation& filter)
-{
-    RefPtr<CustomFilterRenderer> renderer;
-    switch (filter.type()) {
-    case FilterOperation::CUSTOM: {
-        // WebKit2 pipeline is using the CustomFilterOperation, that's because of the "de-serialization" that
-        // happens in CoordinatedGraphicsArgumentCoders.
-        const CustomFilterOperation* customFilter = static_cast<const CustomFilterOperation*>(&filter);
-        RefPtr<CustomFilterProgram> program = customFilter->program();
-        renderer = CustomFilterRenderer::create(m_context3D, program->programType(), customFilter->parameters(), 
-            customFilter->meshRows(), customFilter->meshColumns(), customFilter->meshType());
-        CustomFilterProgramMap::AddResult result = m_customFilterPrograms.add(program->programInfo(), nullptr);
-        if (result.isNewEntry)
-            result.iterator->value = CustomFilterCompiledProgram::create(m_context3D, program->vertexShaderString(), program->fragmentShaderString(), program->programType());
-        renderer->setCompiledProgram(result.iterator->value);
-        break;
-    }
-    case FilterOperation::VALIDATED_CUSTOM: {
-        // WebKit1 uses the ValidatedCustomFilterOperation.
-        const ValidatedCustomFilterOperation* customFilter = static_cast<const ValidatedCustomFilterOperation*>(&filter);
-        RefPtr<CustomFilterValidatedProgram> program = customFilter->validatedProgram();
-        renderer = CustomFilterRenderer::create(m_context3D, program->programInfo().programType(), customFilter->parameters(),
-            customFilter->meshRows(), customFilter->meshColumns(), customFilter->meshType());
-        RefPtr<CustomFilterCompiledProgram> compiledProgram;
-        CustomFilterProgramMap::AddResult result = m_customFilterPrograms.add(program->programInfo(), nullptr);
-        if (result.isNewEntry)
-            result.iterator->value = CustomFilterCompiledProgram::create(m_context3D, program->validatedVertexShader(), program->validatedFragmentShader(), program->programInfo().programType());
-        renderer->setCompiledProgram(result.iterator->value);
-        break;
-    }
-    default:
-        ASSERT_NOT_REACHED();
-        return false;
-    }
-    if (!renderer || !renderer->prepareForDrawing())
-        return false;
-    static_cast<BitmapTextureGL&>(target).initializeDepthBuffer();
-    m_context3D->enable(GraphicsContext3D::BLEND);
-    m_context3D->blendFunc(GraphicsContext3D::ONE, GraphicsContext3D::ONE_MINUS_SRC_ALPHA);
-    m_context3D->enable(GraphicsContext3D::DEPTH_TEST);
-    m_context3D->depthFunc(GraphicsContext3D::LESS);
-    m_context3D->clearDepth(1);
-    m_context3D->depthMask(1);
-    m_context3D->clearColor(0, 0, 0, 0);
-    m_context3D->clear(GraphicsContext3D::COLOR_BUFFER_BIT | GraphicsContext3D::DEPTH_BUFFER_BIT);
-    renderer->draw(static_cast<const BitmapTextureGL&>(source).id(), source.size());
-    m_context3D->disable(GraphicsContext3D::DEPTH_TEST);
-    m_context3D->disable(GraphicsContext3D::BLEND);
-    m_context3D->depthMask(0);
-    return true;
-}
-#endif
-
 #if ENABLE(CSS_FILTERS)
 void TextureMapperGL::drawFiltered(const BitmapTexture& sampler, const BitmapTexture* contentTexture, const FilterOperation& filter, int pass)
 {
@@ -940,15 +868,6 @@ void TextureMapperGL::drawFiltered(const BitmapTexture& sampler, const BitmapTex
     prepareFilterProgram(program.get(), filter, pass, sampler.contentSize(), contentTexture ? static_cast<const BitmapTextureGL*>(contentTexture)->id() : 0);
     FloatRect targetRect(IntPoint::zero(), sampler.contentSize());
     drawTexturedQuadWithProgram(program.get(), static_cast<const BitmapTextureGL&>(sampler).id(), 0, IntSize(1, 1), targetRect, TransformationMatrix(), 1);
-}
-
-static bool isCustomFilter(FilterOperation::OperationType type)
-{
-#if ENABLE(CSS_SHADERS)
-    return type == FilterOperation::CUSTOM || type == FilterOperation::VALIDATED_CUSTOM;
-#else
-    return false;
-#endif
 }
 
 PassRefPtr<BitmapTexture> BitmapTextureGL::applyFilters(TextureMapper* textureMapper, const FilterOperations& filters)
@@ -968,24 +887,15 @@ PassRefPtr<BitmapTexture> BitmapTextureGL::applyFilters(TextureMapper* textureMa
         RefPtr<FilterOperation> filter = filters.operations()[i];
         ASSERT(filter);
 
-        bool custom = isCustomFilter(filter->type());
-
         int numPasses = getPassesRequiredForFilter(filter->type());
         for (int j = 0; j < numPasses; ++j) {
             bool last = (i == filters.size() - 1) && (j == numPasses - 1);
-            if (custom || !last) {
+            if (!last) {
                 if (!intermediateSurface)
                     intermediateSurface = texmapGL->acquireTextureFromPool(contentSize());
                 texmapGL->bindSurface(intermediateSurface.get());
             }
 
-#if ENABLE(CSS_SHADERS)
-            if (custom) {
-                if (texmapGL->drawUsingCustomFilter(*intermediateSurface.get(), *resultSurface.get(), *filter))
-                    std::swap(resultSurface, intermediateSurface);
-                continue;
-            }
-#endif
             if (last) {
                 toBitmapTextureGL(resultSurface.get())->m_filterInfo = BitmapTextureGL::FilterInfo(filter, j, spareSurface);
                 break;

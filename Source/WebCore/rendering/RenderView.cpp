@@ -51,10 +51,6 @@
 #include "RenderLayerCompositor.h"
 #endif
 
-#if ENABLE(CSS_SHADERS) && USE(3D_GRAPHICS)
-#include "CustomFilterGlobalContext.h"
-#endif
-
 namespace WebCore {
 
 RenderView::RenderView(Document& document, PassRef<RenderStyle> style)
@@ -1179,15 +1175,6 @@ void RenderView::setIsInWindow(bool isInWindow)
     UNUSED_PARAM(isInWindow);
 #endif
 }
-
-#if ENABLE(CSS_SHADERS) && USE(3D_GRAPHICS)
-CustomFilterGlobalContext* RenderView::customFilterGlobalContext()
-{
-    if (!m_customFilterGlobalContext)
-        m_customFilterGlobalContext = adoptPtr(new CustomFilterGlobalContext());
-    return m_customFilterGlobalContext.get();
-}
-#endif
 
 void RenderView::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
 {
