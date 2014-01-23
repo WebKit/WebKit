@@ -1,3 +1,22 @@
+2014-01-22  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: Do not return an accessible name for an object just because it has tabindex=0
+        https://bugs.webkit.org/show_bug.cgi?id=126914
+
+        Reviewed by Mario Sanchez Prada.
+
+        WebKit has code to return an accessible name for any object that is "generically" focusable (ie. tabindex=0).
+        This behavior, which is not supported in ARIA, has caused many problems for VoiceOver. Often VoiceOver will
+        speak all the text underneath any type of group.
+
+        I think we need to revert this behavior and follow the ARIA spec more closely.
+
+        Test: accessibility/aria-describedby-ensures-visibility.html
+
+        * accessibility/AccessibilityNodeObject.cpp:
+        (WebCore::AccessibilityNodeObject::visibleText):
+        (WebCore::AccessibilityNodeObject::title):
+
 2014-01-22  Brady Eidson  <beidson@apple.com>
 
         The IDB backing store get() method shouldn't call IDB callbacks directly

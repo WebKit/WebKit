@@ -1,3 +1,13 @@
+2014-01-22  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: WebKit concatenates name of all toolbar buttons in the apple.com video player
+        https://bugs.webkit.org/show_bug.cgi?id=126914
+
+        Reviewed by Mario Sanchez Prada.
+
+        * accessibility/focusable-div-expected.txt:
+        * accessibility/focusable-div.html:
+
 2014-01-22  Dean Jackson  <dino@apple.com>
 
         Implement ANGLE_instanced_arrays
