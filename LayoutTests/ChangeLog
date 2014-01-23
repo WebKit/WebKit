@@ -1,3 +1,16 @@
+2014-01-23  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        Unreviewed GTK gardening.
+
+        Remove failure/timeout expectations for the following passed tests:
+
+        * platform/gtk/TestExpectations:
+            http/tests/navigation/redirect-to-random-url-versus-memory-cache.html
+
+        * platform/gtk-wk2/TestExpectations:
+            http/tests/xmlhttprequest/access-control-repeated-failed-preflight-crash.html
+            accessibility/multiselect-list-reports-active-option.html
+
 2014-01-23  Daniel Bates  <dabates@apple.com>
 
         [Win] Mark test mathml/presentation/maction-toggle.html as failing in TestExpectation
