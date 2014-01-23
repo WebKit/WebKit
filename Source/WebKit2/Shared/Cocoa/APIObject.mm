@@ -120,10 +120,6 @@ void* Object::newObject(size_t size, Type type)
         wrapper = [WKNavigationData alloc];
         break;
 
-    case Type::Page:
-        wrapper = [WKBrowsingContextController alloc];
-        break;
-
     case Type::PageGroup:
         wrapper = [WKBrowsingContextGroup alloc];
         break;

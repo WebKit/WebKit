@@ -42,9 +42,6 @@ namespace WebKit {
 
 void WebPageProxy::platformInitialize()
 {
-#if WK_API_ENABLED
-    [WebKit::wrapper(*this) _finishInitialization];
-#endif
 }
 
 static String userVisibleWebKitVersionString()

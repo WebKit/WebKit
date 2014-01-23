@@ -139,7 +139,7 @@ static NSString * const frameErrorKey = @"WKBrowsingContextFrameErrorKey";
 @end
 
 @implementation WKBrowsingContextController {
-    API::ObjectStorage<WebPageProxy> _page;
+    RefPtr<WebPageProxy> _page;
     std::unique_ptr<PageLoadStateObserver> _pageLoadStateObserver;
 
     WeakObjCPtr<id <WKBrowsingContextLoadDelegate>> _loadDelegate;
@@ -156,12 +156,6 @@ static NSString * const frameErrorKey = @"WKBrowsingContextFrameErrorKey";
     [_remoteObjectRegistry _invalidate];
 
     [super dealloc];
-}
-
-- (void)_finishInitialization
-{
-    _pageLoadStateObserver = std::make_unique<PageLoadStateObserver>(self);
-    _page->pageLoadState().addObserver(*_pageLoadStateObserver);
 }
 
 #pragma mark Loading
@@ -795,6 +789,24 @@ static void setUpPagePolicyClient(WKBrowsingContextController *browsingContext, 
 - (API::Object&)_apiObject
 {
     return *reinterpret_cast<API::Object*>(&_page);
+}
+
+- (instancetype)_initWithPageRef:(WKPageRef)pageRef
+{
+    if (!(self = [super init]))
+        return nil;
+
+    _page = toImpl(pageRef);
+
+    _pageLoadStateObserver = std::make_unique<PageLoadStateObserver>(self);
+    _page->pageLoadState().addObserver(*_pageLoadStateObserver);
+
+    return self;
+}
+
++ (WKBrowsingContextController *)_browsingContextControllerForPageRef:(WKPageRef)pageRef
+{
+    return (WKBrowsingContextController *)WebKit::toImpl(pageRef)->loaderClient().client().base.clientInfo;
 }
 
 @end

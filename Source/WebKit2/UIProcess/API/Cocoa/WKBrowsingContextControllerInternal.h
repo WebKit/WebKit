@@ -31,23 +31,15 @@
 #import "WeakObjCPtr.h"
 #import "WebPageProxy.h"
 
-namespace WebKit {
-
-inline WKBrowsingContextController *wrapper(WebPageProxy& page)
-{
-    ASSERT([page.wrapper() isKindOfClass:[WKBrowsingContextController class]]);
-    return (WKBrowsingContextController *)page.wrapper();
-}
-
-}
-
 @interface WKBrowsingContextController () <WKObject> {
 @package
     WebKit::WeakObjCPtr<id <WKBrowsingContextHistoryDelegate>> _historyDelegate;
 }
 
-- (void)_finishInitialization;
 + (NSMutableSet *)customSchemes;
++ (WKBrowsingContextController *)_browsingContextControllerForPageRef:(WKPageRef)pageRef;
+
+- (instancetype)_initWithPageRef:(WKPageRef)pageRef;
 
 @end
 

@@ -145,6 +145,10 @@ struct WKViewInterpretKeyEventsParameters {
     std::unique_ptr<PageClientImpl> _pageClient;
     RefPtr<WebPageProxy> _page;
 
+#if WK_API_ENABLED
+    RetainPtr<WKBrowsingContextController> _browsingContextController;
+#endif
+
     // For ToolTips.
     NSToolTipTag _lastToolTipTag;
     id _trackingRectOwner;
@@ -284,7 +288,10 @@ struct WKViewInterpretKeyEventsParameters {
 
 - (WKBrowsingContextController *)browsingContextController
 {
-    return wrapper(*_data->_page);
+    if (!_data->_browsingContextController)
+        _data->_browsingContextController = [[WKBrowsingContextController alloc] _initWithPageRef:toAPI(_data->_page.get())];
+
+    return _data->_browsingContextController.get();
 }
 
 #endif // WK_API_ENABLED

@@ -1,3 +1,32 @@
+2014-01-22  Anders Carlsson  <andersca@apple.com>
+
+        WKBrowsingContextController should not be an API wrapper around WebPageProxy
+        https://bugs.webkit.org/show_bug.cgi?id=127454
+
+        Reviewed by Dan Bernstein.
+
+        * Shared/Cocoa/APIObject.mm:
+        (API::Object::newObject):
+        * Shared/mac/ObjCObjectGraphCoders.mm:
+        (WebKit::WebContextObjCObjectGraphDecoderImpl::decode):
+        * UIProcess/API/Cocoa/WKBrowsingContextController.mm:
+        (-[WKBrowsingContextController _initWithPageRef:]):
+        (+[WKBrowsingContextController _browsingContextControllerForPageRef:]):
+        * UIProcess/API/Cocoa/WKBrowsingContextControllerInternal.h:
+        * UIProcess/API/Cocoa/WKProcessGroup.mm:
+        (didNavigateWithNavigationData):
+        (didPerformClientRedirect):
+        (didPerformServerRedirect):
+        (didUpdateHistoryTitle):
+        * UIProcess/API/ios/WKContentView.mm:
+        (-[WKContentView browsingContextController]):
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView browsingContextController]):
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::platformInitialize):
+        * UIProcess/mac/WebPageProxyMac.mm:
+        (WebKit::WebPageProxy::platformInitialize):
+
 2014-01-22  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Remove CSS3_TEXT_DECORATION define

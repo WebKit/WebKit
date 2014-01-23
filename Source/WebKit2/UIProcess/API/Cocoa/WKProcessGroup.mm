@@ -115,7 +115,7 @@ static void didNavigateWithNavigationData(WKContextRef, WKPageRef pageRef, WKNav
     if (!toImpl(frameRef)->isMainFrame())
         return;
 
-    WKBrowsingContextController *controller = wrapper(*toImpl(pageRef));
+    WKBrowsingContextController *controller = [WKBrowsingContextController _browsingContextControllerForPageRef:pageRef];
     auto historyDelegate = controller->_historyDelegate.get();
 
     if ([historyDelegate respondsToSelector:@selector(browsingContextController:didNavigateWithNavigationData:)])
@@ -127,7 +127,7 @@ static void didPerformClientRedirect(WKContextRef, WKPageRef pageRef, WKURLRef s
     if (!toImpl(frameRef)->isMainFrame())
         return;
 
-    WKBrowsingContextController *controller = wrapper(*toImpl(pageRef));
+    WKBrowsingContextController *controller = [WKBrowsingContextController _browsingContextControllerForPageRef:pageRef];
     auto historyDelegate = controller->_historyDelegate.get();
 
     if ([historyDelegate respondsToSelector:@selector(browsingContextController:didPerformClientRedirectFromURL:toURL:)])
@@ -139,7 +139,7 @@ static void didPerformServerRedirect(WKContextRef, WKPageRef pageRef, WKURLRef s
     if (!toImpl(frameRef)->isMainFrame())
         return;
 
-    WKBrowsingContextController *controller = wrapper(*toImpl(pageRef));
+    WKBrowsingContextController *controller = [WKBrowsingContextController _browsingContextControllerForPageRef:pageRef];
     auto historyDelegate = controller->_historyDelegate.get();
 
     if ([historyDelegate respondsToSelector:@selector(browsingContextController:didPerformServerRedirectFromURL:toURL:)])
@@ -151,7 +151,7 @@ static void didUpdateHistoryTitle(WKContextRef, WKPageRef pageRef, WKStringRef t
     if (!toImpl(frameRef)->isMainFrame())
         return;
 
-    WKBrowsingContextController *controller = wrapper(*toImpl(pageRef));
+    WKBrowsingContextController *controller = [WKBrowsingContextController _browsingContextControllerForPageRef:pageRef];
     auto historyDelegate = controller->_historyDelegate.get();
 
     if ([historyDelegate respondsToSelector:@selector(browsingContextController:didUpdateHistoryTitle:forURL:)])

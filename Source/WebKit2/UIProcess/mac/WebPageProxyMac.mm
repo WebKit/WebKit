@@ -69,10 +69,6 @@ static bool shouldUseLegacyImplicitRubberBandControl()
 void WebPageProxy::platformInitialize()
 {
     m_useLegacyImplicitRubberBandControl = shouldUseLegacyImplicitRubberBandControl();
-
-#if WK_API_ENABLED
-    [WebKit::wrapper(*this) _finishInitialization];
-#endif
 }
 
 static String userVisibleWebKitVersionString()

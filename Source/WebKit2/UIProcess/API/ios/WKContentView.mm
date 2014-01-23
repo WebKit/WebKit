@@ -49,6 +49,7 @@ using namespace WebKit;
 @implementation WKContentView {
     std::unique_ptr<PageClientImpl> _pageClient;
     RefPtr<WebPageProxy> _page;
+    RetainPtr<WKBrowsingContextController> _browsingContextController;
 
     RetainPtr<UIView> _rootContentView;
     RetainPtr<WKInteractionView> _interactionView;
@@ -116,7 +117,10 @@ using namespace WebKit;
 
 - (WKBrowsingContextController *)browsingContextController
 {
-    return wrapper(*_page);
+    if (!_browsingContextController)
+        _browsingContextController = [[WKBrowsingContextController alloc] _initWithPageRef:toAPI(_page.get())];
+
+    return _browsingContextController.get();
 }
 
 - (WKContentType)contentType
