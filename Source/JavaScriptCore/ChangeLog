@@ -1,3 +1,71 @@
+2014-01-23  Mark Lam  <mark.lam@apple.com>
+
+        Enable DFG for the Debugger and Profiler.
+        <https://webkit.org/b/122847>
+
+        Reviewed by Geoffrey Garen.
+
+        In this patch, we implement DFG op_debug as a series of 3 checks:
+        1. Check if the debugger pointer is non-null. This is needed in case
+           the debugger has been detached but the DFG code is still running
+           on the stack.
+        2. Check if Debugger::m_shouldPause is true.
+        3. Check if CodeBlock::m_numBreakpoints is non-zero.
+
+        These are the same 3 checks done in the LLINT and baselineJIT. But unlike
+        the LLINT and baselineJIT, these DFG checks are implemented as
+        speculationChecks. If the check fails, we OSR exit to the baselineJIT and
+        let it do the work of servicing the op_debug callback.
+
+        Stepping through code in the debugger would work the same way. The top
+        function being debugged has to be a LLINT or baselineJIT function because
+        we would have OSR exited if there is a breakpoint in that function. When
+        we step out of that function to its caller, we expect that the caller will
+        call back to the debugger at the next op_debug. If the caller function is
+        a DFG function, the op_debug site will fail its speculation check on
+        Debugger::m_shouldPause and deopt into a baselineJIT function. Execution
+        continues from there as usual, and the debugger gets its callback.
+
+        For the profile, op_profile_will_call and op_profile_did_call are
+        implemented as simple runtime calls to service the profiler.
+
+        With this patch, Octane performance with the WebInspector open jump from
+        ~2000 to ~2500 (25% progression).
+
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::numBreakpointsAddress):
+        * bytecode/ExitKind.cpp:
+        (JSC::exitKindToString):
+        * bytecode/ExitKind.h:
+        * debugger/Debugger.cpp:
+        (JSC::Debugger::toggleBreakpoint):
+        - removed an obsolete assertion. The debugger can now handle DFG
+          CodeBlocks too.
+        * debugger/Debugger.h:
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGCapabilities.cpp:
+        (JSC::DFG::capabilityLevel):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGNodeType.h:
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        (JSC::DFG::PredictionPropagationPhase::propagate):
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::safeToExecute):
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::callOperation):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::debuggerAddress):
+
 2014-01-23  Max Vujovic  <mvujovic@adobe.com>
 
         Remove CSS Custom Filters code and tests

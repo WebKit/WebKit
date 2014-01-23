@@ -873,6 +873,7 @@ public:
 
     int numBreakpoints() const { return m_numBreakpoints; }
     static ptrdiff_t numBreakpointsOffset() { return OBJECT_OFFSETOF(CodeBlock, m_numBreakpoints); }
+    void* numBreakpointsAddress() { return &m_numBreakpoints; }
 
     void addBreakpoint(int numBreakpoints) { m_numBreakpoints += numBreakpoints; }
     void removeBreakpoint(int numBreakpoints)

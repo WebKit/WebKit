@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -1736,7 +1736,6 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         
     case Flush:
     case PhantomLocal:
-    case Breakpoint:
         break;
             
     case Call:
@@ -1754,11 +1753,14 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
     case InvalidationPoint:
         node->setCanExit(true);
         break;
-            
+
+    case Breakpoint:
     case CheckWatchdogTimer:
         node->setCanExit(true);
         break;
-            
+
+    case ProfileWillCall:
+    case ProfileDidCall:
     case Phantom:
     case Check:
     case CountExecution:

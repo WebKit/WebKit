@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 2007 Eric Seidel <eric@webkit.org>
- *  Copyright (C) 2007, 2008, 2009 Apple Inc. All rights reserved.
+ *  Copyright (C) 2007, 2008, 2009, 2014 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -473,6 +473,7 @@ public:
     Debugger* debugger() const { return m_debugger; }
     void setDebugger(Debugger* debugger) { m_debugger = debugger; }
     static ptrdiff_t debuggerOffset() { return OBJECT_OFFSETOF(JSGlobalObject, m_debugger); }
+    void* debuggerAddress() { return &m_debugger; }
 
     const GlobalObjectMethodTable* globalObjectMethodTable() const { return m_globalObjectMethodTable; }
 

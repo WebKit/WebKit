@@ -211,9 +211,6 @@ void Debugger::unregisterCodeBlock(CodeBlock* codeBlock)
 
 void Debugger::toggleBreakpoint(CodeBlock* codeBlock, Breakpoint& breakpoint, BreakpointState enabledOrNot)
 {
-    ASSERT(codeBlock->jitCode()->jitType() == JITCode::InterpreterThunk
-        || codeBlock->jitCode()->jitType() == JITCode::BaselineJIT);
-
     ScriptExecutable* executable = codeBlock->ownerExecutable();
 
     SourceID sourceID = static_cast<SourceID>(executable->sourceID());

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011, 2012, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2011, 2012, 2013, 2014 Apple Inc. All rights reserved.
  * Copyright (C) 2011 Intel Corporation. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -34,6 +34,7 @@
 #include "DFGCallArrayAllocatorSlowPathGenerator.h"
 #include "DFGOperations.h"
 #include "DFGSlowPathGenerator.h"
+#include "Debugger.h"
 #include "JSActivation.h"
 #include "ObjectPrototype.h"
 #include "Operations.h"
@@ -4231,14 +4232,51 @@ void SpeculativeJIT::compile(Node* node)
     case Flush:
         break;
 
-    case Breakpoint:
-#if ENABLE(DEBUG_WITH_BREAKPOINT)
-        m_jit.breakpoint();
-#else
-        RELEASE_ASSERT_NOT_REACHED();
-#endif
+    case Breakpoint: {
+        JSGlobalObject* globalObject = m_jit.graph().globalObjectFor(m_currentNode->codeOrigin);
+        GPRTemporary temp(this);
+        m_jit.loadPtr(globalObject->debuggerAddress(), temp.gpr());
+        speculationCheck(
+            DebuggerEvent, JSValueRegs(), 0,
+            m_jit.branchTestPtr(JITCompiler::Zero, temp.gpr()));
+
+        ASSERT(globalObject->hasDebugger());
+        speculationCheck(
+            DebuggerEvent, JSValueRegs(), 0,
+            m_jit.branchTest8(
+                JITCompiler::NonZero,
+                JITCompiler::AbsoluteAddress(globalObject->debugger()->shouldPauseAddress())));
+
+        GPRReg numBreakpointsGPR = temp.gpr();
+        m_jit.load32(m_jit.codeBlock()->numBreakpointsAddress(), numBreakpointsGPR);
+        speculationCheck(
+            DebuggerEvent, JSValueRegs(), 0,
+            m_jit.branchTest32(JITCompiler::NonZero, numBreakpointsGPR));
         break;
+    }
         
+    case ProfileWillCall: {
+        JSValueOperand profile(this, node->child1());
+        GPRReg profileTagGPR = profile.tagGPR();
+        GPRReg profilePayloadGPR = profile.payloadGPR();
+        silentSpillAllRegisters(InvalidGPRReg);
+        callOperation(operationProfileWillCall, profileTagGPR, profilePayloadGPR);
+        silentFillAllRegisters(InvalidGPRReg);
+        noResult(node);
+        break;
+    }
+
+    case ProfileDidCall: {
+        JSValueOperand profile(this, node->child1());
+        GPRReg profileTagGPR = profile.tagGPR();
+        GPRReg profilePayloadGPR = profile.payloadGPR();
+        silentSpillAllRegisters(InvalidGPRReg);
+        callOperation(operationProfileWillCall, profileTagGPR, profilePayloadGPR);
+        silentFillAllRegisters(InvalidGPRReg);
+        noResult(node);
+        break;
+    }
+
     case Call:
     case Construct:
         emitCall(node);

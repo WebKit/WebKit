@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -139,7 +139,8 @@ void clobberize(Graph& graph, Node* node, ReadFunctor& read, WriteFunctor& write
     case Flush:
     case PhantomLocal:
     case SetArgument:
-    case Breakpoint:
+    case ProfileWillCall:
+    case ProfileDidCall:
     case PhantomArguments:
     case Jump:
     case Branch:
@@ -619,6 +620,7 @@ void clobberize(Graph& graph, Node* node, ReadFunctor& read, WriteFunctor& write
         clobberizeForAllocation(read, write);
         return;
         
+    case Breakpoint:
     case CountExecution:
     case CheckWatchdogTimer:
         read(InternalState);

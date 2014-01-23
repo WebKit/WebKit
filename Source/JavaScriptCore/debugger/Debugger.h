@@ -50,6 +50,7 @@ public:
 
     bool shouldPause() const { return m_shouldPause; }
     static ptrdiff_t shouldPauseOffset() { return OBJECT_OFFSETOF(Debugger, m_shouldPause); }
+    void* shouldPauseAddress() { return &m_shouldPause; }
 
     JSC::DebuggerCallFrame* currentDebuggerCallFrame() const;
     bool hasHandlerForExceptionCallback() const

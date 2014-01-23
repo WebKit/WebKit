@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2011, 2013, 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -100,9 +100,9 @@ CapabilityLevel capabilityLevel(OpcodeID opcodeID, CodeBlock* codeBlock, Instruc
     case op_mul:
     case op_mod:
     case op_div:
-#if ENABLE(DEBUG_WITH_BREAKPOINT)
     case op_debug:
-#endif
+    case op_profile_will_call:
+    case op_profile_did_call:
     case op_mov:
     case op_captured_mov:
     case op_check_has_instance:
