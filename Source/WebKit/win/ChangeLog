@@ -1,5 +1,15 @@
 2014-01-23  peavo@outlook.com  <peavo@outlook.com>
 
+        [WinCairo] Compile error.
+        https://bugs.webkit.org/show_bug.cgi?id=127500
+
+        Reviewed by Brent Fulgham.
+
+        * WebCache.cpp:
+        (WebCache::cacheFolder): CurlCacheManager::getCacheDirectory() has changed name to cacheDirectory().
+
+2014-01-23  peavo@outlook.com  <peavo@outlook.com>
+
         [Curl] There is no way to specify cache folder.
         https://bugs.webkit.org/show_bug.cgi?id=125028
 

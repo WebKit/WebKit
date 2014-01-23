@@ -238,7 +238,7 @@ HRESULT STDMETHODCALLTYPE WebCache::disabled(
 HRESULT WebCache::cacheFolder(BSTR* location)
 {
 #if USE(CURL)
-    String cacheFolder = WebCore::CurlCacheManager::getInstance().getCacheDirectory();
+    String cacheFolder = WebCore::CurlCacheManager::getInstance().cacheDirectory();
     *location = WebCore::BString(cacheFolder).release();
     return S_OK;
 #else
