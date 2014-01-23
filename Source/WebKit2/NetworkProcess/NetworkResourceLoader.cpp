@@ -59,12 +59,12 @@ NetworkResourceLoader::NetworkResourceLoader(const NetworkResourceLoadParameters
     , m_identifier(parameters.identifier)
     , m_webPageID(parameters.webPageID)
     , m_webFrameID(parameters.webFrameID)
+    , m_sessionID(parameters.sessionID)
     , m_request(parameters.request)
     , m_priority(parameters.priority)
     , m_contentSniffingPolicy(parameters.contentSniffingPolicy)
     , m_allowStoredCredentials(parameters.allowStoredCredentials)
     , m_clientCredentialPolicy(parameters.clientCredentialPolicy)
-    , m_inPrivateBrowsingMode(parameters.inPrivateBrowsingMode)
     , m_shouldClearReferrerOnHTTPSToHTTPRedirect(parameters.shouldClearReferrerOnHTTPSToHTTPRedirect)
     , m_isLoadingMainResource(parameters.isMainResource)
     , m_sandboxExtensionsAreConsumed(false)
@@ -127,7 +127,7 @@ void NetworkResourceLoader::start()
     ref();
 
     // FIXME (NetworkProcess): Set platform specific settings.
-    m_networkingContext = RemoteNetworkingContext::create(m_inPrivateBrowsingMode, m_shouldClearReferrerOnHTTPSToHTTPRedirect);
+    m_networkingContext = RemoteNetworkingContext::create(m_sessionID, m_shouldClearReferrerOnHTTPSToHTTPRedirect);
 
     consumeSandboxExtensions();
 

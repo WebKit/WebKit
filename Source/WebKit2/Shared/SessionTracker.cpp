@@ -33,7 +33,7 @@ using namespace WebCore;
 
 namespace WebKit {
 
-static HashMap<uint64_t, std::unique_ptr<NetworkStorageSession>>& sessionMap()
+static HashMap<uint64_t, std::unique_ptr<NetworkStorageSession>>& staticSessionMap()
 {
     ASSERT(isMainThread());
 
@@ -49,9 +49,9 @@ static String& identifierBase()
     return base;
 }
 
-const HashMap<uint64_t, std::unique_ptr<NetworkStorageSession>>& SessionTracker::getSessionMap()
+const HashMap<uint64_t, std::unique_ptr<NetworkStorageSession>>& SessionTracker::sessionMap()
 {
-    return sessionMap();
+    return staticSessionMap();
 }
 
 const String& SessionTracker::getIdentifierBase()
@@ -59,16 +59,24 @@ const String& SessionTracker::getIdentifierBase()
     return identifierBase();
 }
 
-std::unique_ptr<NetworkStorageSession>& SessionTracker::session(uint64_t sessionID)
+NetworkStorageSession* SessionTracker::session(uint64_t sessionID)
 {
-    return sessionMap().add(sessionID, nullptr).iterator->value;
+    if (sessionID == defaultSessionID)
+        return &NetworkStorageSession::defaultStorageSession();
+    return staticSessionMap().add(sessionID, nullptr).iterator->value.get();
+}
+
+void SessionTracker::setSession(uint64_t sessionID, std::unique_ptr<NetworkStorageSession> session)
+{
+    ASSERT(sessionID != defaultSessionID);
+    staticSessionMap().add(sessionID, nullptr).iterator->value = std::move(session);
 }
 
 void SessionTracker::destroySession(uint64_t sessionID)
 {
     ASSERT(isMainThread());
 
-    sessionMap().remove(sessionID);
+    staticSessionMap().remove(sessionID);
 }
 
 void SessionTracker::setIdentifierBase(const String& identifier)

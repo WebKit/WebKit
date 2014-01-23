@@ -32,6 +32,9 @@
 extern "C" {
 #endif
 
+/* FIXME: We can create sessions on demand, because we hardcode the fact that all sessions but the default one are ephemeral. We'll need to create them explicitly once sessions have more configuration options. */
+WK_EXPORT WKSessionRef WKSessionCreate(bool isEphemeral);
+
 WK_EXPORT WKTypeID WKSessionGetTypeID();
 
 WK_EXPORT bool WKSessionIsEphemeral(WKSessionRef session);

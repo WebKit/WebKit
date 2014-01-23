@@ -1,3 +1,62 @@
+2014-01-22  Martin Hock  <mhock@apple.com>
+
+        Enable Session API.
+        https://bugs.webkit.org/show_bug.cgi?id=127255
+
+        Reviewed by Alexey Proskuryakov.
+
+        * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+        (WebKit::storageSession):
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::NetworkResourceLoader::NetworkResourceLoader):
+        (WebKit::NetworkResourceLoader::start):
+        * NetworkProcess/NetworkResourceLoader.h:
+        * NetworkProcess/RemoteNetworkingContext.h:
+        * NetworkProcess/mac/RemoteNetworkingContext.mm:
+        (WebKit::RemoteNetworkingContext::storageSession):
+        (WebKit::RemoteNetworkingContext::ensurePrivateBrowsingSession):
+        * Shared/Network/NetworkResourceLoadParameters.cpp:
+        (WebKit::NetworkResourceLoadParameters::NetworkResourceLoadParameters):
+        (WebKit::NetworkResourceLoadParameters::encode):
+        (WebKit::NetworkResourceLoadParameters::decode):
+        * Shared/Network/NetworkResourceLoadParameters.h:
+        * Shared/SessionTracker.cpp:
+        (WebKit::staticSessionMap):
+        (WebKit::SessionTracker::sessionMap):
+        (WebKit::SessionTracker::session):
+        (WebKit::SessionTracker::setSession):
+        (WebKit::SessionTracker::destroySession):
+        * Shared/SessionTracker.h:
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageSetSession):
+        * UIProcess/API/C/WKPage.h:
+        * UIProcess/API/C/WKSessionRef.cpp:
+        (WKSessionCreate):
+        * UIProcess/API/C/WKSessionRef.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::WebPageProxy):
+        (WebKit::WebPageProxy::setSession):
+        * UIProcess/WebPageProxy.h:
+        * WebProcess/Network/WebResourceLoadScheduler.cpp:
+        (WebKit::WebResourceLoadScheduler::scheduleLoad):
+        * WebProcess/WebCoreSupport/WebPlatformStrategies.cpp:
+        (WebKit::WebPlatformStrategies::loadResourceSynchronously):
+        * WebProcess/WebCoreSupport/mac/WebFrameNetworkingContext.mm:
+        (WebKit::WebFrameNetworkingContext::ensurePrivateBrowsingSession):
+        (WebKit::WebFrameNetworkingContext::setCookieAcceptPolicyForAllContexts):
+        (WebKit::WebFrameNetworkingContext::storageSession):
+        * WebProcess/WebCoreSupport/soup/WebFrameNetworkingContext.cpp:
+        (WebKit::WebFrameNetworkingContext::ensurePrivateBrowsingSession):
+        * WebProcess/WebPage/WebFrame.cpp:
+        (WebKit::WebFrame::startDownload):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::WebPage):
+        (WebKit::WebPage::sessionID):
+        (WebKit::WebPage::updatePreferences):
+        * WebProcess/WebPage/WebPage.h:
+        (WebKit::WebPage::setSessionID):
+        * WebProcess/WebPage/WebPage.messages.in:
+
 2014-01-21  Brady Eidson  <beidson@apple.com>
 
         IDB: "Put" support

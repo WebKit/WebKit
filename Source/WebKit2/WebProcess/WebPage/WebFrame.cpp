@@ -234,8 +234,7 @@ void WebFrame::startDownload(const WebCore::ResourceRequest& request)
 
 #if ENABLE(NETWORK_PROCESS)
     if (WebProcess::shared().usesNetworkProcess()) {
-        bool privateBrowsingEnabled = m_coreFrame->loader().networkingContext()->storageSession().isPrivateBrowsingSession();
-        WebProcess::shared().networkConnection()->connection()->send(Messages::NetworkConnectionToWebProcess::StartDownload(privateBrowsingEnabled, policyDownloadID, request), 0);
+        WebProcess::shared().networkConnection()->connection()->send(Messages::NetworkConnectionToWebProcess::StartDownload(page()->sessionID(), policyDownloadID, request), 0);
         return;
     }
 #endif

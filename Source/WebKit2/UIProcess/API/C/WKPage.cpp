@@ -680,6 +680,11 @@ void WKPageSetPageUIClient(WKPageRef pageRef, const WKPageUIClientBase* wkClient
     toImpl(pageRef)->initializeUIClient(wkClient);
 }
 
+void WKPageSetSession(WKPageRef pageRef, WKSessionRef session)
+{
+    toImpl(pageRef)->setSession(*toImpl(session));
+}
+
 void WKPageRunJavaScriptInMainFrame(WKPageRef pageRef, WKStringRef scriptRef, void* context, WKPageRunJavaScriptFunction callback)
 {
     toImpl(pageRef)->runJavaScriptInMainFrame(toImpl(scriptRef)->string(), ScriptValueCallback::create(context, callback));

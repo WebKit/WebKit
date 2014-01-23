@@ -174,12 +174,12 @@ private:
     ResourceLoadIdentifier m_identifier;
     uint64_t m_webPageID;
     uint64_t m_webFrameID;
+    uint64_t m_sessionID;
     WebCore::ResourceRequest m_request;
     WebCore::ResourceLoadPriority m_priority;
     WebCore::ContentSniffingPolicy m_contentSniffingPolicy;
     WebCore::StoredCredentials m_allowStoredCredentials;
     WebCore::ClientCredentialPolicy m_clientCredentialPolicy;
-    bool m_inPrivateBrowsingMode;
     bool m_shouldClearReferrerOnHTTPSToHTTPRedirect;
     bool m_isLoadingMainResource;
 

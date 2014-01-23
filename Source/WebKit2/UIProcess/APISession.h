@@ -34,6 +34,7 @@ namespace API {
 
 class Session : public API::ObjectImpl<API::Object::Type::Session> {
 public:
+    // FIXME: We can create sessions on demand, because we hardcode the fact that all sessions but the default one are ephemeral. We'll need to create them explicitly once sessions have more configuration options.
     static PassRefPtr<Session> create(bool isEphemeral);
     static Session& defaultSession();
     static Session& legacyPrivateSession();

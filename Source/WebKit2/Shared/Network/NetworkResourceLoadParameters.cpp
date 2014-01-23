@@ -41,11 +41,11 @@ NetworkResourceLoadParameters::NetworkResourceLoadParameters()
     : identifier(0)
     , webPageID(0)
     , webFrameID(0)
+    , sessionID(0)
     , priority(ResourceLoadPriorityVeryLow)
     , contentSniffingPolicy(SniffContent)
     , allowStoredCredentials(DoNotAllowStoredCredentials)
     , clientCredentialPolicy(DoNotAskClientForAnyCredentials)
-    , inPrivateBrowsingMode(false)
     , shouldClearReferrerOnHTTPSToHTTPRedirect(true)
     , isMainResource(false)
 {
@@ -56,6 +56,7 @@ void NetworkResourceLoadParameters::encode(IPC::ArgumentEncoder& encoder) const
     encoder << identifier;
     encoder << webPageID;
     encoder << webFrameID;
+    encoder << sessionID;
     encoder << request;
 
     encoder << static_cast<bool>(request.httpBody());
@@ -94,7 +95,6 @@ void NetworkResourceLoadParameters::encode(IPC::ArgumentEncoder& encoder) const
     encoder.encodeEnum(contentSniffingPolicy);
     encoder.encodeEnum(allowStoredCredentials);
     encoder.encodeEnum(clientCredentialPolicy);
-    encoder << inPrivateBrowsingMode;
     encoder << shouldClearReferrerOnHTTPSToHTTPRedirect;
     encoder << isMainResource;
 }
@@ -108,6 +108,9 @@ bool NetworkResourceLoadParameters::decode(IPC::ArgumentDecoder& decoder, Networ
         return false;
 
     if (!decoder.decode(result.webFrameID))
+        return false;
+
+    if (!decoder.decode(result.sessionID))
         return false;
 
     if (!decoder.decode(result.request))
@@ -140,8 +143,6 @@ bool NetworkResourceLoadParameters::decode(IPC::ArgumentDecoder& decoder, Networ
     if (!decoder.decodeEnum(result.allowStoredCredentials))
         return false;
     if (!decoder.decodeEnum(result.clientCredentialPolicy))
-        return false;
-    if (!decoder.decode(result.inPrivateBrowsingMode))
         return false;
     if (!decoder.decode(result.shouldClearReferrerOnHTTPSToHTTPRedirect))
         return false;

@@ -223,6 +223,7 @@ PassRefPtr<WebPage> WebPage::create(uint64_t pageID, const WebPageCreationParame
 
 WebPage::WebPage(uint64_t pageID, const WebPageCreationParameters& parameters)
     : m_pageID(pageID)
+    , m_sessionID(0)
     , m_viewSize(parameters.viewSize)
     , m_hasSeenPlugin(false)
     , m_useFixedLayout(false)
@@ -2121,6 +2122,14 @@ void WebPage::setLayerHostingMode(unsigned layerHostingMode)
         pluginView->setLayerHostingMode(m_layerHostingMode);
 }
 
+uint64_t WebPage::sessionID() const
+{
+    if (m_sessionID)
+        return m_sessionID;
+
+    return m_page->settings().privateBrowsingEnabled() ? SessionTracker::legacyPrivateSessionID : SessionTracker::defaultSessionID;
+}
+
 void WebPage::didReceivePolicyDecision(uint64_t frameID, uint64_t listenerID, uint32_t policyAction, uint64_t downloadID)
 {
     WebFrame* frame = WebProcess::shared().webFrame(frameID);
@@ -2423,7 +2432,10 @@ void WebPage::updatePreferences(const WebPreferencesStore& store)
     settings.setLocalStorageEnabled(store.getBoolValueForKey(WebPreferencesKey::localStorageEnabledKey()));
     settings.setXSSAuditorEnabled(store.getBoolValueForKey(WebPreferencesKey::xssAuditorEnabledKey()));
     settings.setFrameFlatteningEnabled(store.getBoolValueForKey(WebPreferencesKey::frameFlatteningEnabledKey()));
-    settings.setPrivateBrowsingEnabled(store.getBoolValueForKey(WebPreferencesKey::privateBrowsingEnabledKey()));
+    if (m_sessionID)
+        settings.setPrivateBrowsingEnabled(SessionTracker::isEphemeralID(m_sessionID));
+    else
+        settings.setPrivateBrowsingEnabled(store.getBoolValueForKey(WebPreferencesKey::privateBrowsingEnabledKey()));
     settings.setDeveloperExtrasEnabled(store.getBoolValueForKey(WebPreferencesKey::developerExtrasEnabledKey()));
     settings.setJavaScriptExperimentsEnabled(store.getBoolValueForKey(WebPreferencesKey::javaScriptExperimentsEnabledKey()));
     settings.setTextAreasAreResizable(store.getBoolValueForKey(WebPreferencesKey::textAreasAreResizableKey()));

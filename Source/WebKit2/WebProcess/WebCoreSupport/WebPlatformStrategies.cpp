@@ -270,12 +270,12 @@ void WebPlatformStrategies::loadResourceSynchronously(NetworkingContext* context
     loadParameters.identifier = resourceLoadIdentifier;
     loadParameters.webPageID = webPage ? webPage->pageID() : 0;
     loadParameters.webFrameID = webFrame ? webFrame->frameID() : 0;
+    loadParameters.sessionID = webPage ? webPage->sessionID() : SessionTracker::defaultSessionID;
     loadParameters.request = request;
     loadParameters.priority = ResourceLoadPriorityHighest;
     loadParameters.contentSniffingPolicy = SniffContent;
     loadParameters.allowStoredCredentials = storedCredentials;
     loadParameters.clientCredentialPolicy = clientCredentialPolicy;
-    loadParameters.inPrivateBrowsingMode = context->storageSession().isPrivateBrowsingSession();
     loadParameters.shouldClearReferrerOnHTTPSToHTTPRedirect = context->shouldClearReferrerOnHTTPSToHTTPRedirect();
 
     data.resize(0);

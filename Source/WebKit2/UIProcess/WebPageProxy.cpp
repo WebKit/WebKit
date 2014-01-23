@@ -118,6 +118,10 @@
 #include <wtf/RefCountedLeakCounter.h>
 #endif
 
+#if ENABLE(NETWORK_PROCESS)
+#include "NetworkProcessMessages.h"
+#endif
+
 // This controls what strategy we use for mouse wheel coalescing.
 #define MERGE_WHEEL_EVENTS 1
 
@@ -341,6 +345,7 @@ WebPageProxy::WebPageProxy(PageClient& pageClient, WebProcessProxy& process, Web
 
     // FIXME: If we ever expose the session storage size as a preference, we need to pass it here.
     m_process->context().storageManager().createSessionStorageNamespace(m_pageID, m_process->isValid() ? m_process->connection() : 0, std::numeric_limits<unsigned>::max());
+    setSession(session);
 }
 
 WebPageProxy::~WebPageProxy()
@@ -495,6 +500,16 @@ void WebPageProxy::reattachToWebProcessWithItem(WebBackForwardListItem* item)
 
     m_process->send(Messages::WebPage::GoToBackForwardItem(item->itemID()), m_pageID);
     m_process->responsivenessTimer()->start();
+}
+
+void WebPageProxy::setSession(API::Session& session)
+{
+    m_session = session;
+    m_process->send(Messages::WebPage::SetSessionID(session.getID()), m_pageID);
+
+#if ENABLE(NETWORK_PROCESS)
+    m_process->context().sendToNetworkingProcess(Messages::NetworkProcess::EnsurePrivateBrowsingSession(session.getID()));
+#endif
 }
 
 void WebPageProxy::initializeWebPage()

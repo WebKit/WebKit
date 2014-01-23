@@ -33,20 +33,20 @@ namespace WebKit {
 
 class RemoteNetworkingContext final : public WebCore::NetworkingContext {
 public:
-    static PassRefPtr<RemoteNetworkingContext> create(bool privateBrowsingEnabled, bool shouldClearReferrerOnHTTPSToHTTPRedirect)
+    static PassRefPtr<RemoteNetworkingContext> create(uint64_t sessionID, bool shouldClearReferrerOnHTTPSToHTTPRedirect)
     {
-        return adoptRef(new RemoteNetworkingContext(privateBrowsingEnabled, shouldClearReferrerOnHTTPSToHTTPRedirect));
+        return adoptRef(new RemoteNetworkingContext(sessionID, shouldClearReferrerOnHTTPSToHTTPRedirect));
     }
     virtual ~RemoteNetworkingContext();
 
-    // FIXME: remove platform-specific code and use SessionTracker
+    // FIXME: Remove platform-specific code and use SessionTracker.
     static void ensurePrivateBrowsingSession(uint64_t sessionID);
 
     virtual bool shouldClearReferrerOnHTTPSToHTTPRedirect() const override { return m_shouldClearReferrerOnHTTPSToHTTPRedirect; }
 
 private:
-    RemoteNetworkingContext(bool privateBrowsingEnabled, bool shouldClearReferrerOnHTTPSToHTTPRedirect)
-        : m_privateBrowsingEnabled(privateBrowsingEnabled)
+    RemoteNetworkingContext(uint64_t sessionID, bool shouldClearReferrerOnHTTPSToHTTPRedirect)
+        : m_sessionID(sessionID)
         , m_shouldClearReferrerOnHTTPSToHTTPRedirect(shouldClearReferrerOnHTTPSToHTTPRedirect)
 #if PLATFORM(MAC)
         , m_needsSiteSpecificQuirks(false)
@@ -70,7 +70,7 @@ private:
     virtual uint64_t initiatingPageID() const;
 #endif
 
-    bool m_privateBrowsingEnabled;
+    uint64_t m_sessionID;
     bool m_shouldClearReferrerOnHTTPSToHTTPRedirect;
 
 #if PLATFORM(MAC)

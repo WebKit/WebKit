@@ -151,7 +151,7 @@ void NetworkConnectionToWebProcess::setSerialLoadingEnabled(bool enabled)
 static NetworkStorageSession& storageSession(uint64_t sessionID)
 {
     if (SessionTracker::isEphemeralID(sessionID)) {
-        NetworkStorageSession* privateSession = SessionTracker::session(sessionID).get();
+        NetworkStorageSession* privateSession = SessionTracker::session(sessionID);
         if (privateSession)
             return *privateSession;
         // Some requests with private browsing mode requested may still be coming shortly after NetworkProcess was told to destroy its session.

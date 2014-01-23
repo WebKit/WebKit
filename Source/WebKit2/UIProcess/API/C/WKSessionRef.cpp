@@ -31,6 +31,12 @@
 
 using namespace WebKit;
 
+WKSessionRef WKSessionCreate(bool isEphemeral)
+{
+    RefPtr<API::Session> session = API::Session::create(isEphemeral);
+    return toAPI(session.release().leakRef());
+}
+
 WKTypeID WKSessionGetTypeID()
 {
     return toAPI(API::Session::APIType);

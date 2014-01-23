@@ -41,6 +41,7 @@
 #include <WebKit2/WKPagePolicyClient.h>
 #include <WebKit2/WKPageUIClient.h>
 #include <WebKit2/WKPageVisibilityTypes.h>
+#include <WebKit2/WKSessionRef.h>
 
 #ifndef __cplusplus
 #include <stdbool.h>
@@ -200,6 +201,8 @@ WK_EXPORT void WKPageSetPageFormClient(WKPageRef page, const WKPageFormClientBas
 WK_EXPORT void WKPageSetPageLoaderClient(WKPageRef page, const WKPageLoaderClientBase* client);
 WK_EXPORT void WKPageSetPagePolicyClient(WKPageRef page, const WKPagePolicyClientBase* client);
 WK_EXPORT void WKPageSetPageUIClient(WKPageRef page, const WKPageUIClientBase* client);
+
+WK_EXPORT void WKPageSetSession(WKPageRef page, WKSessionRef session);
 
 typedef void (*WKPageRunJavaScriptFunction)(WKSerializedScriptValueRef, WKErrorRef, void*);
 WK_EXPORT void WKPageRunJavaScriptInMainFrame(WKPageRef page, WKStringRef script, void* context, WKPageRunJavaScriptFunction function);

@@ -39,9 +39,11 @@ public:
     static const uint64_t defaultSessionID = 1;
     static const uint64_t legacyPrivateSessionID = 2;
     static bool isEphemeralID(uint64_t sessionID) { return sessionID != SessionTracker::defaultSessionID; }
-    static const HashMap<uint64_t, std::unique_ptr<WebCore::NetworkStorageSession>>& getSessionMap();
+    // FIXME: sessionMap()'s returned map does not include default session.
+    static const HashMap<uint64_t, std::unique_ptr<WebCore::NetworkStorageSession>>& sessionMap();
     static const String& getIdentifierBase();
-    static std::unique_ptr<WebCore::NetworkStorageSession>& session(uint64_t sessionID);
+    static WebCore::NetworkStorageSession* session(uint64_t sessionID);
+    static void setSession(uint64_t sessionID, std::unique_ptr<WebCore::NetworkStorageSession>);
     static void destroySession(uint64_t sessionID);
     static void setIdentifierBase(const String&);
 };

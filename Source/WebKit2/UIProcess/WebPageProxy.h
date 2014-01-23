@@ -332,6 +332,8 @@ public:
     static PassRefPtr<WebPageProxy> create(PageClient&, WebProcessProxy&, WebPageGroup&, API::Session&, uint64_t pageID);
     virtual ~WebPageProxy();
 
+    void setSession(API::Session&);
+
     uint64_t pageID() const { return m_pageID; }
     uint64_t sessionID() const { return m_session->getID(); }
 

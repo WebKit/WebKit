@@ -44,7 +44,7 @@ void WebFrameNetworkingContext::ensurePrivateBrowsingSession(uint64_t sessionID)
     if (SessionTracker::session(sessionID))
         return;
 
-    SessionTracker::session(sessionID) = NetworkStorageSession::createPrivateBrowsingSession(String::number(sessionID));
+    SessionTracker::setSession(sessionID, NetworkStorageSession::createPrivateBrowsingSession(String::number(sessionID)));
 }
 
 WebFrameNetworkingContext::WebFrameNetworkingContext(WebFrame* frame)
