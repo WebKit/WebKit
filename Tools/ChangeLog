@@ -17,7 +17,7 @@
         (GtkPort._port_flag_for_scripts): Use --gtkcmake when appropriate.
         (GtkPort.setup_environ_for_server): The way CMake builds libraries differs from GTK+.
         (GtkPort._path_to_driver): Use the new helper.
-        (GtkPort._path_to_image_diff): Use the new Helper.
+        (GtkPort._path_to_image_diff): Use the new helper.
         (GtkPort._path_to_webcore_library): Use the new helper.
         (GtkPort.build_webkit_command): Use --gtkcmake when appropriate.
 
