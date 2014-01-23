@@ -308,14 +308,14 @@ http/tests/multipart/multipart-wait-before-boundary.html [ Timeout ]
 
 # Remaining websocket failures.
 Bug(EFL) http/tests/websocket/tests/hybi/close-on-unload-and-force-gc.html [ Timeout Pass ]
-Bug(EFL) http/tests/websocket/tests/hybi/close.html [ Failure Pass ]
-Bug(EFL) http/tests/websocket/tests/hybi/compressed-control-frame.html [ Timeout ]
-Bug(EFL) http/tests/websocket/tests/hybi/multiple-subprotocols.html [ Timeout Pass ]
 Bug(EFL) http/tests/websocket/tests/hybi/reload-crash.html [ Timeout ]
 Bug(EFL) http/tests/websocket/tests/hybi/zero-length-text.html [ Failure Pass ]
 Bug(EFL) http/tests/websocket/tests/hybi/workers/close-code-and-reason.html [ Failure ]
 Bug(EFL) http/tests/websocket/tests/hybi/workers/close-in-onmessage-crash.html [ Timeout ]
 Bug(EFL) http/tests/websocket/tests/hybi/workers/multiple-subprotocols.html [ Timeout Pass ]
+
+# EFL specific error : (_ecore_main_fd_handlers_bads_rem() No bad fd found)
+webkit.org/b/116587 http/tests/websocket/tests/hybi/compressed-control-frame.html [ Skip ]
 
 # DRT does not implement setAudioResult
 webkit.org/b/105881 webaudio/audiobuffersource-loop-points.html [ Skip ]

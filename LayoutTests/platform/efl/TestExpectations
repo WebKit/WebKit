@@ -1562,18 +1562,10 @@ webkit.org/b/115439 fast/text/complex-initial-advance.html [ ImageOnlyFailure ]
 webkit.org/b/116259 http/tests/cache/willsendrequest-returns-null-for-memory-cache-load.html [ Failure ]
 
 # EFL specific error : (_ecore_main_fd_handlers_bads_rem() No bad fd found).
-webkit.org/b/116587 http/tests/websocket/tests/hybi/broken-utf8.html [ Skip ]
 webkit.org/b/116587 http/tests/websocket/tests/hybi/close.html [ Skip ]
 webkit.org/b/116587 http/tests/websocket/tests/hybi/close-on-navigate-new-location.html [ Skip ]
-webkit.org/b/116587 http/tests/websocket/tests/hybi/close-on-unload-and-force-gc.html [ Skip ]
-webkit.org/b/116587 http/tests/websocket/tests/hybi/extensions.html [ Skip ]
-webkit.org/b/116587 http/tests/websocket/tests/hybi/handshake-challenge-randomness.html [ Skip ]
 webkit.org/b/116587 http/tests/websocket/tests/hybi/multiple-subprotocols.html [ Skip ]
 webkit.org/b/116587 http/tests/websocket/tests/hybi/reload-crash.html [ Skip ]
-webkit.org/b/116587 http/tests/websocket/tests/hybi/simple.html [ Skip ]
-webkit.org/b/116587 http/tests/websocket/tests/hybi/url-with-credential.html [ Skip ]
-webkit.org/b/116587 http/tests/websocket/tests/hybi/workers/multiple-subprotocols.html [ Skip ]
-webkit.org/b/116587 http/tests/websocket/tests/hybi/zero-length-text.html [ Skip ]
 
 # Synthesized italics not supported
 fast/text/international/synthesized-italic-vertical-latin.html [ Skip ]
