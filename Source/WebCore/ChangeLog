@@ -1,4 +1,20 @@
-2014-01-09  Matthew Hanson  <matthew_hanson@apple.com>
+2014-01-22  Matthew Hanson  <matthew_hanson@apple.com>
+
+        Merge r158676: <rdar://problem/15886062>
+
+    2013-11-05  Daniel Bates  <dabates@apple.com>
+
+            XSSAuditor should catch reflected srcdoc properties even without a <frame> tag injection
+
+            From Blink r160615 by <tsepez@chromium.org>
+            https://src.chromium.org/viewvc/blink?view=rev&revision=160615
+
+            Test: http/tests/security/xssAuditor/iframe-srcdoc-property-blocked.html
+
+            * html/parser/XSSAuditor.cpp:
+            (WebCore::XSSAuditor::filterIframeToken):
+
+2014-01-21  Matthew Hanson  <matthew_hanson@apple.com>
 
         Merge r162486: <rdar://problem/15877502>
 
