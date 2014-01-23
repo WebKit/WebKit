@@ -1,3 +1,16 @@
+2014-01-23  Krzysztof Wolanski  <k.wolanski@samsung.com>
+
+        [EFL] Updated test expectations for failing tests
+        https://bugs.webkit.org/show_bug.cgi?id=127478
+
+        Unreviewed EFL gardening
+
+        * platform/efl/TestExpectations:
+        * platform/efl/css2.1/t1604-c542-letter-sp-00-b-a-expected.png:
+        Removed incorrect test expectation for css2.1/t1604-c542-letter-sp-00-b-a.html
+        * platform/efl/css2.1/t1604-c542-letter-sp-00-b-a-expected.txt:
+        Ditto.
+
 2014-01-23  Daniel Bates  <dabates@apple.com>
 
         [Win] Whitespace differences in test results for fast/{css, dom, forms, multicolor, ruinin}
