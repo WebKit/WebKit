@@ -23,57 +23,26 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef IDBGetResult_h
-#define IDBGetResult_h
+#include "config.h"
+#include "IDBKeyRangeData.h"
 
 #if ENABLE(INDEXED_DATABASE)
 
-#include "IDBKey.h"
-#include "IDBKeyData.h"
-#include "IDBKeyPath.h"
-#include "SharedBuffer.h"
-
 namespace WebCore {
 
-struct IDBGetResult {
-    IDBGetResult()
-    {
-    }
+IDBKeyRangeData IDBKeyRangeData::isolatedCopy() const
+{
+    IDBKeyRangeData result;
 
-    IDBGetResult(PassRefPtr<SharedBuffer> buffer)
-        : valueBuffer(buffer)
-    {
-    }
+    result.isNull = isNull;
+    result.lowerKey = lowerKey.isolatedCopy();
+    result.upperKey = upperKey.isolatedCopy();
+    result.lowerOpen = lowerOpen;
+    result.upperOpen = upperOpen;
 
-    IDBGetResult(PassRefPtr<IDBKey> key)
-        : keyData(key.get())
-    {
-    }
-
-    IDBGetResult(PassRefPtr<SharedBuffer> buffer, PassRefPtr<IDBKey> key, const IDBKeyPath& path)
-        : valueBuffer(buffer)
-        , keyData(key.get())
-        , keyPath(path)
-    {
-    }
-
-    IDBGetResult isolatedCopy() const
-    {
-        IDBGetResult result;
-        if (valueBuffer)
-            result.valueBuffer = valueBuffer->copy();
-
-        result.keyData = keyData.isolatedCopy();
-        result.keyPath = keyPath.isolatedCopy();
-        return result;
-    }
-
-    RefPtr<SharedBuffer> valueBuffer;
-    IDBKeyData keyData;
-    IDBKeyPath keyPath;
-};
+    return result;
+}
 
 } // namespace WebCore
 
 #endif // ENABLE(INDEXED_DATABASE)
-#endif // IDBGetResult_h

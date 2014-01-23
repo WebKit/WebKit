@@ -38,7 +38,9 @@
 #include <WebCore/FileSystem.h>
 #include <WebCore/IDBDatabaseBackend.h>
 #include <WebCore/IDBDatabaseMetadata.h>
+#include <WebCore/IDBGetResult.h>
 #include <WebCore/IDBKeyData.h>
+#include <WebCore/IDBKeyRangeData.h>
 #include <wtf/MainThread.h>
 #include <wtf/text/WTFString.h>
 
@@ -416,6 +418,29 @@ void UniqueIDBDatabase::putRecord(const IDBTransactionIdentifier& identifier, in
     postDatabaseTask(createAsyncTask(*this, &UniqueIDBDatabase::putRecordInBackingStore, requestID, identifier, m_metadata->objectStores.get(objectStoreID), keyData, value.vector(), putMode, indexIDs, indexKeys));
 }
 
+void UniqueIDBDatabase::getRecord(const IDBTransactionIdentifier& identifier, int64_t objectStoreID, int64_t indexID, const WebCore::IDBKeyRangeData& keyRangeData, WebCore::IndexedDB::CursorType cursorType, std::function<void(const WebCore::IDBGetResult&, uint32_t, const String&)> callback)
+{
+    ASSERT(isMainThread());
+
+    if (!m_acceptingNewRequests) {
+        callback(IDBGetResult(), INVALID_STATE_ERR, "Unable to get record from database because it has shut down");
+        return;
+    }
+
+    ASSERT(m_metadata->objectStores.contains(objectStoreID));
+
+    RefPtr<AsyncRequest> request = AsyncRequestImpl<const IDBGetResult&, uint32_t, const String&>::create([this, callback](const IDBGetResult& result, uint32_t errorCode, const String& errorMessage) {
+        callback(result, errorCode, errorMessage);
+    }, [this, callback]() {
+        callback(IDBGetResult(), INVALID_STATE_ERR, "Unable to get record from database");
+    });
+
+    uint64_t requestID = request->requestID();
+    m_pendingDatabaseTasks.add(requestID, request.release());
+
+    postDatabaseTask(createAsyncTask(*this, &UniqueIDBDatabase::getRecordFromBackingStore, requestID, identifier, m_metadata->objectStores.get(objectStoreID), indexID, keyRangeData, cursorType));
+}
+
 void UniqueIDBDatabase::openBackingStoreTransaction(const IDBTransactionIdentifier& identifier, const Vector<int64_t>& objectStoreIDs, IndexedDB::TransactionMode mode)
 {
     ASSERT(!isMainThread());
@@ -550,6 +575,21 @@ void UniqueIDBDatabase::didPutRecordInBackingStore(uint64_t requestID, const IDB
     ASSERT(request);
 
     request->completeRequest(keyData, errorCode, errorMessage);
+}
+
+void UniqueIDBDatabase::getRecordFromBackingStore(uint64_t requestID, const IDBTransactionIdentifier&, const WebCore::IDBObjectStoreMetadata&, int64_t indexID, const WebCore::IDBKeyRangeData&, WebCore::IndexedDB::CursorType)
+{
+    // FIXME: Implement (https://bugs.webkit.org/show_bug.cgi?id=127502)
+
+    postMainThreadTask(createAsyncTask(*this, &UniqueIDBDatabase::didGetRecordFromBackingStore, requestID, IDBGetResult(), IDBDatabaseException::UnknownError, ASCIILiteral("'get' support not yet implemented")));
+}
+
+void UniqueIDBDatabase::didGetRecordFromBackingStore(uint64_t requestID, const IDBGetResult& result, uint32_t errorCode, const String& errorMessage)
+{
+    RefPtr<AsyncRequest> request = m_pendingDatabaseTasks.take(requestID);
+    ASSERT(request);
+
+    request->completeRequest(result, errorCode, errorMessage);
 }
 
 String UniqueIDBDatabase::absoluteDatabaseDirectory() const

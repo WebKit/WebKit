@@ -65,8 +65,10 @@ struct DictationAlternative;
 struct DragSession;
 struct FileChooserSettings;
 struct IDBDatabaseMetadata;
+struct IDBGetResult;
 struct IDBIndexMetadata;
 struct IDBKeyData;
+struct IDBKeyRangeData;
 struct IDBObjectStoreMetadata;
 struct Length;
 struct GrammarDetail;
@@ -360,6 +362,11 @@ template<> struct ArgumentCoder<WebCore::IDBDatabaseMetadata> {
     static bool decode(ArgumentDecoder&, WebCore::IDBDatabaseMetadata&);
 };
 
+template<> struct ArgumentCoder<WebCore::IDBGetResult> {
+    static void encode(ArgumentEncoder&, const WebCore::IDBGetResult&);
+    static bool decode(ArgumentDecoder&, WebCore::IDBGetResult&);
+};
+
 template<> struct ArgumentCoder<WebCore::IDBIndexMetadata> {
     static void encode(ArgumentEncoder&, const WebCore::IDBIndexMetadata&);
     static bool decode(ArgumentDecoder&, WebCore::IDBIndexMetadata&);
@@ -373,6 +380,11 @@ template<> struct ArgumentCoder<WebCore::IDBKeyData> {
 template<> struct ArgumentCoder<WebCore::IDBKeyPath> {
     static void encode(ArgumentEncoder&, const WebCore::IDBKeyPath&);
     static bool decode(ArgumentDecoder&, WebCore::IDBKeyPath&);
+};
+
+template<> struct ArgumentCoder<WebCore::IDBKeyRangeData> {
+    static void encode(ArgumentEncoder&, const WebCore::IDBKeyRangeData&);
+    static bool decode(ArgumentDecoder&, WebCore::IDBKeyRangeData&);
 };
 
 template<> struct ArgumentCoder<WebCore::IDBObjectStoreMetadata> {

@@ -107,6 +107,7 @@ private:
     void didCreateObjectStore(uint64_t requestID, bool success);
     void didDeleteObjectStore(uint64_t requestID, bool success);
     void didPutRecord(uint64_t requestID, const WebCore::IDBKeyData&, uint32_t errorCode, const String& errorMessage);
+    void didGetRecord(uint64_t requestID, const WebCore::IDBGetResult&, uint32_t errorCode, const String& errorMessage);
 
     uint64_t m_serverConnectionIdentifier;
 

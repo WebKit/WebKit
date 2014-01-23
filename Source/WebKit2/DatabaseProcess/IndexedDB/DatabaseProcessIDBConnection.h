@@ -36,6 +36,7 @@
 
 namespace WebCore {
 struct IDBKeyData;
+struct IDBKeyRangeData;
 }
 
 namespace WebKit {
@@ -76,6 +77,7 @@ private:
     void createObjectStore(uint64_t requestID, int64_t transactionID, WebCore::IDBObjectStoreMetadata);
     void deleteObjectStore(uint64_t requestID, int64_t transactionID, int64_t objectStoreID);
     void putRecord(uint64_t requestID, int64_t transactionID, int64_t objectStoreID, const WebCore::IDBKeyData&, const IPC::DataReference& value, int64_t putMode, const Vector<int64_t>& indexIDs, const Vector<Vector<WebCore::IDBKeyData>>& indexKeys);
+    void getRecord(uint64_t requestID, int64_t transactionID, int64_t objectStoreID, int64_t indexID, const WebCore::IDBKeyRangeData&, int64_t cursorType);
 
     Ref<DatabaseToWebProcessConnection> m_connection;
     uint64_t m_serverConnectionIdentifier;

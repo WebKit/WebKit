@@ -36,6 +36,7 @@
 #include "WebCoreArgumentCoders.h"
 #include "WebIDBServerConnectionMessages.h"
 #include <WebCore/IDBDatabaseMetadata.h>
+#include <WebCore/IDBServerConnection.h>
 #include <WebCore/IndexedDB.h>
 
 using namespace WebCore;
@@ -188,6 +189,16 @@ void DatabaseProcessIDBConnection::putRecord(uint64_t requestID, int64_t transac
     });
 }
 
+void DatabaseProcessIDBConnection::getRecord(uint64_t requestID, int64_t transactionID, int64_t objectStoreID, int64_t indexID, const IDBKeyRangeData& keyRange, int64_t cursorType)
+{
+    ASSERT(m_uniqueIDBDatabase);
+
+    LOG(IDB, "DatabaseProcess getRecord request ID %llu, object store id %lli", requestID, objectStoreID);
+    RefPtr<DatabaseProcessIDBConnection> connection(this);
+    m_uniqueIDBDatabase->getRecord(IDBTransactionIdentifier(*this, transactionID), objectStoreID, indexID, keyRange, static_cast<IndexedDB::CursorType>(cursorType), [connection, requestID](const IDBGetResult& getResult, uint32_t errorCode, const String& errorMessage) {
+        connection->send(Messages::WebIDBServerConnection::DidGetRecord(requestID, getResult, errorCode, errorMessage));
+    });
+}
 
 IPC::Connection* DatabaseProcessIDBConnection::messageSenderConnection()
 {

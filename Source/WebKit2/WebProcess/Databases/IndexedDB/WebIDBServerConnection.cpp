@@ -38,6 +38,7 @@
 #include "WebProcess.h"
 #include "WebToDatabaseProcessConnection.h"
 #include <WebCore/IDBDatabaseMetadata.h>
+#include <WebCore/IDBKeyRangeData.h>
 #include <WebCore/SecurityOrigin.h>
 
 using namespace WebCore;
@@ -297,8 +298,23 @@ void WebIDBServerConnection::deleteIndex(IDBTransactionBackend&, const DeleteInd
 {
 }
 
-void WebIDBServerConnection::get(IDBTransactionBackend&, const GetOperation&, std::function<void(const IDBGetResult&, PassRefPtr<IDBDatabaseError>)> completionCallback)
+void WebIDBServerConnection::get(IDBTransactionBackend& transaction, const GetOperation& operation, std::function<void(const IDBGetResult&, PassRefPtr<IDBDatabaseError>)> completionCallback)
 {
+    RefPtr<AsyncRequest> serverRequest = AsyncRequestImpl<const IDBGetResult&, PassRefPtr<IDBDatabaseError>>::create(completionCallback);
+
+    serverRequest->setAbortHandler([completionCallback]() {
+        completionCallback(IDBGetResult(), IDBDatabaseError::create(IDBDatabaseException::UnknownError, "Unknown error occured getting record"));
+    });
+
+    uint64_t requestID = serverRequest->requestID();
+    ASSERT(!m_serverRequests.contains(requestID));
+    m_serverRequests.add(requestID, serverRequest.release());
+
+    LOG(IDB, "WebProcess get request ID %llu", requestID);
+
+    ASSERT(operation.keyRange());
+
+    send(Messages::DatabaseProcessIDBConnection::GetRecord(requestID, transaction.id(), operation.objectStoreID(), operation.indexID(), operation.keyRange(), static_cast<int64_t>(operation.cursorType())));
 }
 
 void WebIDBServerConnection::put(IDBTransactionBackend& transaction, const PutOperation& operation, std::function<void(PassRefPtr<IDBKey>, PassRefPtr<IDBDatabaseError>)> completionCallback)
@@ -340,6 +356,18 @@ void WebIDBServerConnection::didPutRecord(uint64_t requestID, const WebCore::IDB
         return;
 
     serverRequest->completeRequest(resultKey.isNull ? nullptr : resultKey.maybeCreateIDBKey(), errorCode ? IDBDatabaseError::create(errorCode, errorMessage) : nullptr);
+}
+
+void WebIDBServerConnection::didGetRecord(uint64_t requestID, const WebCore::IDBGetResult& getResult, uint32_t errorCode, const String& errorMessage)
+{
+    LOG(IDB, "WebProcess didGetRecord request ID %llu (error - %s)", requestID, errorMessage.utf8().data());
+
+    RefPtr<AsyncRequest> serverRequest = m_serverRequests.take(requestID);
+
+    if (!serverRequest)
+        return;
+
+    serverRequest->completeRequest(getResult, errorCode ? IDBDatabaseError::create(errorCode, errorMessage) : nullptr);
 }
 
 void WebIDBServerConnection::openCursor(IDBTransactionBackend&, const OpenCursorOperation&, std::function<void(PassRefPtr<IDBDatabaseError>)> completionCallback)

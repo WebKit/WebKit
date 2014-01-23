@@ -26,6 +26,7 @@
 #include "config.h"
 #include "WebCoreArgumentCoders.h"
 
+#include "DataReference.h"
 #include "ShareableBitmap.h"
 #include <WebCore/AuthenticationChallenge.h>
 #include <WebCore/CertificateInfo.h>
@@ -42,8 +43,10 @@
 #include <WebCore/GraphicsContext.h>
 #include <WebCore/GraphicsLayer.h>
 #include <WebCore/IDBDatabaseMetadata.h>
+#include <WebCore/IDBGetResult.h>
 #include <WebCore/IDBKeyData.h>
 #include <WebCore/IDBKeyPath.h>
+#include <WebCore/IDBKeyRangeData.h>
 #include <WebCore/Image.h>
 #include <WebCore/Length.h>
 #include <WebCore/PluginData.h>
@@ -1623,6 +1626,42 @@ bool ArgumentCoder<IDBIndexMetadata>::decode(ArgumentDecoder& decoder, IDBIndexM
     return true;
 }
 
+void ArgumentCoder<IDBGetResult>::encode(ArgumentEncoder& encoder, const IDBGetResult& result)
+{
+    bool nullData = !result.valueBuffer;
+    encoder << nullData;
+
+    if (!nullData)
+        encoder << DataReference(reinterpret_cast<const uint8_t*>(result.valueBuffer->data()), result.valueBuffer->size());
+
+    encoder << result.keyData << result.keyPath;
+}
+
+bool ArgumentCoder<IDBGetResult>::decode(ArgumentDecoder& decoder, IDBGetResult& result)
+{
+    bool nullData;
+    if (!decoder.decode(nullData))
+        return false;
+
+    if (nullData)
+        result.valueBuffer = nullptr;
+    else {
+        DataReference data;
+        if (!decoder.decode(data))
+            return false;
+
+        result.valueBuffer = SharedBuffer::create(data.data(), data.size());
+    }
+
+    if (!decoder.decode(result.keyData))
+        return false;
+
+    if (!decoder.decode(result.keyPath))
+        return false;
+
+    return true;
+}
+
 void ArgumentCoder<IDBKeyData>::encode(ArgumentEncoder& encoder, const IDBKeyData& keyData)
 {
     encoder << keyData.isNull;
@@ -1733,6 +1772,38 @@ bool ArgumentCoder<IDBKeyPath>::decode(ArgumentDecoder& decoder, IDBKeyPath& key
     default:
         return false;
     }
+}
+
+void ArgumentCoder<IDBKeyRangeData>::encode(ArgumentEncoder& encoder, const IDBKeyRangeData& keyRange)
+{
+    encoder << keyRange.isNull;
+    if (keyRange.isNull)
+        return;
+
+    encoder << keyRange.upperKey << keyRange.lowerKey << keyRange.upperOpen << keyRange.lowerOpen;
+}
+
+bool ArgumentCoder<IDBKeyRangeData>::decode(ArgumentDecoder& decoder, IDBKeyRangeData& keyRange)
+{
+    if (!decoder.decode(keyRange.isNull))
+        return false;
+
+    if (keyRange.isNull)
+        return true;
+
+    if (!decoder.decode(keyRange.upperKey))
+        return false;
+
+    if (!decoder.decode(keyRange.lowerKey))
+        return false;
+
+    if (!decoder.decode(keyRange.upperOpen))
+        return false;
+
+    if (!decoder.decode(keyRange.lowerOpen))
+        return false;
+
+    return true;
 }
 
 void ArgumentCoder<IDBObjectStoreMetadata>::encode(ArgumentEncoder& encoder, const IDBObjectStoreMetadata& metadata)
