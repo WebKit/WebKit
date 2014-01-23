@@ -44,11 +44,11 @@ public:
     ~CurlCacheEntry();
 
     bool isCached();
-    const bool& isInMemory() { return m_headerInMemory; }
-    HTTPHeaderMap& requestHeaders();
+    size_t entrySize();
+    HTTPHeaderMap& requestHeaders() { return m_requestHeaders; }
 
     bool saveCachedData(const char* data, size_t);
-    bool loadCachedData(ResourceHandle*);
+    bool readCachedData(ResourceHandle*);
 
     bool saveResponseHeaders(ResourceResponse&);
     void setResponseFromCachedHeaders(ResourceResponse&);
@@ -64,8 +64,9 @@ private:
     String m_headerFilename;
     String m_contentFilename;
 
+    size_t m_entrySize;
     double m_expireDate;
-    bool m_headerInMemory;
+    bool m_headerParsed;
 
     ResourceResponse m_cachedResponse;
     HTTPHeaderMap m_requestHeaders;

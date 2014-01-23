@@ -31,6 +31,7 @@
 #include "ResourceHandle.h"
 #include "ResourceResponse.h"
 #include <wtf/HashMap.h>
+#include <wtf/ListHashSet.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -40,16 +41,17 @@ class CurlCacheManager {
 public:
     static CurlCacheManager& getInstance();
 
-    const String& getCacheDirectory() { return m_cacheDir; }
     void setCacheDirectory(const String&);
+    const String& cacheDirectory() { return m_cacheDir; }
+    void setStorageSizeLimit(size_t);
 
     bool isCached(const String&);
-    HTTPHeaderMap& requestHeaders(const String&); // load headers
+    HTTPHeaderMap& requestHeaders(const String&); // Load headers
 
     void didReceiveResponse(ResourceHandle*, ResourceResponse&);
-    void didReceiveData(const String&, const char*, size_t); // save data
-    void didFail(const String&);
+    void didReceiveData(const String&, const char*, size_t); // Save data
     void didFinishLoading(const String&);
+    void didFail(const String&);
 
 private:
     CurlCacheManager();
@@ -57,16 +59,21 @@ private:
     CurlCacheManager(CurlCacheManager const&);
     void operator=(CurlCacheManager const&);
 
+    bool m_disabled;
     String m_cacheDir;
     HashMap<String, std::unique_ptr<CurlCacheEntry>> m_index;
-    bool m_disabled;
+
+    ListHashSet<String> m_LRUEntryList;
+    size_t m_currentStorageSize;
+    size_t m_storageSizeLimit;
 
     void saveIndex();
     void loadIndex();
+    void makeRoomForNewEntry();
 
     void saveResponseHeaders(const String&, ResourceResponse&);
     void invalidateCacheEntry(const String&);
-    void loadCachedData(const String&, ResourceHandle*, ResourceResponse&);
+    void readCachedData(const String&, ResourceHandle*, ResourceResponse&);
 };
 
 }
