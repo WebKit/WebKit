@@ -1,3 +1,26 @@
+2014-01-05  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] [CMake] run-webkit-tests should support the CMake build
+        https://bugs.webkit.org/show_bug.cgi?id=126503
+
+        Reviewed by Daniel Bates.
+
+        Update run-launcher and gtk.py to work properly when dealing with the CMake port.
+        run-webkit-tests does not need the --gtkcmake flag, but run-launcher does.
+
+        * Scripts/run-launcher: Work properly with the gtkcmake flag.
+        * Scripts/webkitpy/port/gtk.py:
+        (GtkPort._is_cmake_build): Added this helper which looks for the CMakeCache
+        file to detect a CMake build.
+        (GtkPort._built_executables_path): Added this helper to locate the built executable path.
+        (GtkPort._built_libraries_path): Added this helper to locate the built library path.
+        (GtkPort._port_flag_for_scripts): Use --gtkcmake when appropriate.
+        (GtkPort.setup_environ_for_server): The way CMake builds libraries differs from GTK+.
+        (GtkPort._path_to_driver): Use the new helper.
+        (GtkPort._path_to_image_diff): Use the new Helper.
+        (GtkPort._path_to_webcore_library): Use the new helper.
+        (GtkPort.build_webkit_command): Use --gtkcmake when appropriate.
+
 2014-01-22  Ryuan Choi  <ryuan.choi@samsung.com>
 
         [EFL] Remove unnecessary smart method since ewk_view_tiled removed

@@ -46,10 +46,16 @@ checkFrameworks();
 
 # Set paths according to the build system used
 if (isGtk()) {
-    if (isWK2()) {
-        $launcherPath = catdir($productDir, "Programs", "MiniBrowser");
+    if (isGtkAutotools()) {
+        $launcherPath = catdir($productDir, "Programs");
     } else {
-        $launcherPath = catdir($productDir, "Programs", "GtkLauncher");
+        $launcherPath = catdir($productDir, "bin");
+    }
+
+    if (isWK2()) {
+        $launcherPath = catdir($launcherPath, "MiniBrowser");
+    } else {
+        $launcherPath = catdir($launcherPath, "GtkLauncher");
     }
 }
 
