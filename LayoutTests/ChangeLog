@@ -1,3 +1,12 @@
+2014-01-23  Daniel Bates  <dabates@apple.com>
+
+        [Win] Remove Windows-specific result for test fast/css-generated-content/table-row-group-to-inline.html
+
+        As of the time of writing, the Windows expected results for test fast/css-generated-content/table-row-group-to-inline.html
+        are identical to the results on Mac.
+
+        * platform/win/fast/css-generated-content/table-row-group-to-inline-expected.txt: Removed.
+
 2014-01-23  Krzysztof Wolanski  <k.wolanski@samsung.com>
 
         [EFL] Updated test expectations for failing tests
