@@ -43,6 +43,11 @@
     API::ObjectStorage<WebKit::WebContext> _context;
 }
 
+- (instancetype)init
+{
+    return [self initWithConfiguration:adoptNS([[WKProcessClassConfiguration alloc] init]).get()];
+}
+
 - (instancetype)initWithConfiguration:(WKProcessClassConfiguration *)configuration
 {
     if (!(self = [super init]))

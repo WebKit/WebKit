@@ -28,13 +28,17 @@
 
 #if WK_API_ENABLED
 
+#import "WKWebViewConfiguration.h"
 #import <wtf/RetainPtr.h>
 
 @implementation WKWebView {
     RetainPtr<WKWebViewConfiguration> _configuration;
 }
 
-// FIXME: Add an initWithFrame: overload that creates a default configuration.
+- (instancetype)initWithFrame:(CGRect)frame
+{
+    return [self initWithFrame:frame configuration:adoptNS([[WKWebViewConfiguration alloc] init]).get()];
+}
 
 - (instancetype)initWithFrame:(CGRect)frame configuration:(WKWebViewConfiguration *)configuration
 {

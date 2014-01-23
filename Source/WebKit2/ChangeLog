@@ -1,3 +1,15 @@
+2014-01-23  Anders Carlsson  <andersca@apple.com>
+
+        Add init methods that create default configurations
+        https://bugs.webkit.org/show_bug.cgi?id=127503
+
+        Reviewed by Dan Bernstein.
+
+        * UIProcess/API/Cocoa/WKProcessClass.mm:
+        (-[WKProcessClass init]):
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView initWithFrame:]):
+
 2014-01-23  Brady Eidson  <beidson@apple.com>
 
         IDB: Implement cross-thread and IPC plumbing for 'get' support
