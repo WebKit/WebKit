@@ -118,3 +118,4 @@ sub buildMyProject
 
 buildMyProject("Source/WTF", "WTF");
 buildMyProject("Source/JavaScriptCore", "JavaScriptCore");
+buildMyProject("Tools/jsc-cli", "jsc-cli");
