@@ -59,7 +59,7 @@ class TextFileReader(object):
           processor: A ProcessorBase instance.
 
         """
-        # FIXME: Although TextFileReader requires a FileSystem it circumvents it in two places!
+
         self.filesystem = filesystem
         self._processor = processor
         self.file_count = 0

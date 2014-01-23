@@ -1,3 +1,13 @@
+2014-01-23  László Langó  <llango.u-szeged@partner.samsung.com>
+
+        Remove a FIXME comment that is already fixed.
+        https://bugs.webkit.org/show_bug.cgi?id=127468
+
+        Reviewed by Csaba Osztrogonác.
+
+        * Scripts/webkitpy/style/filereader.py:
+        (TextFileReader.__init__):
+
 2014-01-22  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GLIB] Use GUniquePtr instead of GOwnPtr
