@@ -2319,9 +2319,6 @@
     <ClCompile Include="..\css\MediaQueryList.cpp">
       <Filter>css</Filter>
     </ClCompile>
-    <ClCompile Include="..\css\MediaQueryListListener.cpp">
-      <Filter>css</Filter>
-    </ClCompile>
     <ClCompile Include="..\css\MediaQueryMatcher.cpp">
       <Filter>css</Filter>
     </ClCompile>
@@ -3330,9 +3327,6 @@
     <ClCompile Include="..\dom\MessagePortChannel.cpp">
       <Filter>dom</Filter>
     </ClCompile>
-    <ClCompile Include="..\dom\MicroDataItemList.cpp">
-      <Filter>dom</Filter>
-    </ClCompile>
     <ClCompile Include="..\dom\MouseEvent.cpp">
       <Filter>dom</Filter>
     </ClCompile>
@@ -3412,9 +3406,6 @@
       <Filter>dom</Filter>
     </ClCompile>
     <ClCompile Include="..\dom\ProgressEvent.cpp">
-      <Filter>dom</Filter>
-    </ClCompile>
-    <ClCompile Include="..\dom\PropertyNodeList.cpp">
       <Filter>dom</Filter>
     </ClCompile>
     <ClCompile Include="..\dom\PseudoElement.cpp">
@@ -6061,9 +6052,6 @@
     <ClCompile Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSMetadataCallback.cpp">
       <Filter>DerivedSources</Filter>
     </ClCompile>
-    <ClCompile Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSMicroDataItemValue.cpp">
-      <Filter>DerivedSources</Filter>
-    </ClCompile>
     <ClCompile Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSMouseEvent.cpp">
       <Filter>DerivedSources</Filter>
     </ClCompile>
@@ -6808,7 +6796,9 @@
     <ClCompile Include="..\rendering\style\StyleCachedImageSet.cpp">
       <Filter>rendering\style</Filter>
     </ClCompile>
-    <ClCompile Include="..\dom\StyleElement.cpp" />
+    <ClCompile Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSMediaQueryListListener.cpp" />
+    <ClCompile Include="..\dom\InlineStyleSheetOwner.cpp" />
+    <ClCompile Include="..\dom\TextNodeTraversal.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Modules\filesystem\AsyncFileWriter.h">
@@ -13050,9 +13040,6 @@
     <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSDataTransferItemList.h">
       <Filter>DerivedSources</Filter>
     </ClInclude>
-    <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSDedicatedWorkerContext.h">
-      <Filter>DerivedSources</Filter>
-    </ClInclude>
     <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\WebCore\DerivedSources\JSDeviceMotionEvent.h">
       <Filter>DerivedSources</Filter>
     </ClInclude>
@@ -14290,6 +14277,9 @@
     <ClInclude Include="..\platform\graphics\ca\PlatformCAFilters.h">
       <Filter>platform\graphics\ca</Filter>
     </ClInclude>
+    <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\WebCore\DerivedSources\JSDedicatedWorkerContext.h" />
+    <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSMediaQueryListListener.h" />
+    <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSSVGGraphicsElement.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\css\CSSGrammar.y.in">

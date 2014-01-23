@@ -5,7 +5,7 @@
   </PropertyGroup>
   <ItemDefinitionGroup>
     <Link>
-      <AdditionalDependencies>CFNetwork$(DebugSuffix).lib;CoreFoundation$(DebugSuffix).lib;CoreGraphics$(DebugSuffix).lib;WebKitSystemInterface$(DebugSuffix).lib;QTMovieWin$(DebugSuffix).lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>CFNetwork$(DebugSuffix).lib;CoreFoundation$(DebugSuffix).lib;CoreGraphics$(DebugSuffix).lib;WebKitSystemInterface$(DebugSuffix).lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
 </Project>

@@ -1,3 +1,18 @@
+2014-01-23  Brent Fulgham  <bfulgham@apple.com>
+
+        Merge r162621
+
+    2014-01-22  Brent Fulgham  <bfulgham@apple.com>
+
+            [Win] Update project and solution files for 64-bit builds.
+            https://bugs.webkit.org/show_bug.cgi?id=127457
+
+            Reviewed by Eric Carlson.
+
+            * WTF.vcxproj/WTF.submit.sln: Add x64 targets.
+            * WTF.vcxproj/WTF.vcxproj: Specify v100 target for all builds on this
+            branch.
+
 2014-01-22  Brent Fulgham  <bfulgham@apple.com>
 
         Merge r154520

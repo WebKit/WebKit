@@ -222,10 +222,10 @@ void GraphicsContext::drawLineForDocumentMarker(const FloatPoint& point, float w
     
     // Dash lengths for the top and bottom of the error underline are the same.
     // These are magic.
-    static const float edge_dash_lengths[] = {2.0f, 2.0f};
-    static const float middle_dash_lengths[] = {2.76f, 1.24f};
-    static const float edge_offset = -(edge_dash_lengths[1] - 1.0f) / 2.0f;
-    static const float middle_offset = -(middle_dash_lengths[1] - 1.0f) / 2.0f;
+    static const CGFloat edge_dash_lengths[] = {2.0f, 2.0f};
+    static const CGFloat middle_dash_lengths[] = { 2.76f, 1.24f };
+    static const CGFloat edge_offset = -(edge_dash_lengths[1] - 1.0f) / 2.0f;
+    static const CGFloat middle_offset = -(middle_dash_lengths[1] - 1.0f) / 2.0f;
 
     // Line opacities.  Once again, these are magic.
     const float upperOpacity = 0.33f;

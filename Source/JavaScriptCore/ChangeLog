@@ -1,3 +1,24 @@
+2014-01-23  Brent Fulgham  <bfulgham@apple.com>
+
+        Merge r162621
+
+    2014-01-22  Brent Fulgham  <bfulgham@apple.com>
+
+            [Win] Update project and solution files for 64-bit builds.
+            https://bugs.webkit.org/show_bug.cgi?id=127457
+
+            Reviewed by Eric Carlson.
+
+            * JavaScriptCore.vcxproj/JavaScriptCore.submit.sln: Add 64-bit target.
+            * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj: Specify v100 target
+            for all builds on this branch.
+            * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj.filters: Add missing
+            file from project view.
+            * JavaScriptCore.vcxproj/jsc/jsc.vcxproj: Specify v100 target for
+            all builds on this branch.
+            * JavaScriptCore.vcxproj/testRegExp/testRegExp.vcxproj: Ditto
+            * JavaScriptCore.vcxproj/testapi/testapi.vcxproj: Ditto
+
 2014-01-22  Brent Fulgham  <bfulgham@apple.com>
 
         Merge r157607
