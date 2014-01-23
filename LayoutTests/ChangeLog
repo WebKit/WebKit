@@ -1,3 +1,14 @@
+2014-01-23  Alexey Proskuryakov  <ap@apple.com>
+
+        svg/animations/smil-syncbase-self-dependency.svg is very flaky
+
+        This is a newly landed test for <https://bugs.webkit.org/show_bug.cgi?id=108184>
+        that wasn't actually testing for what the bug fixed. The plan is to add a better
+        test soon, so deleting this one.
+
+        * svg/animations/smil-syncbase-self-dependency-expected.txt: Removed.
+        * svg/animations/smil-syncbase-self-dependency.svg: Removed.
+
 2014-01-23  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         Unreviewed GTK gardening.

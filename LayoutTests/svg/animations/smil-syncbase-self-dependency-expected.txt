@@ -1,1 +1,0 @@
-SMILElement animation time self-dependency is handled.
