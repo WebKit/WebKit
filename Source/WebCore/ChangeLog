@@ -1,5 +1,13 @@
 2014-01-23  Brent Fulgham  <bfulgham@apple.com>
 
+        Unreviewed build fix after last commit. We haven't completely removed
+        QTMovieWin uses.
+
+        * WebCore.vcxproj/QTMovieWin/QTMovieWin.vcxproj: Build for 32-bit.
+        * WebCore.vcxproj/WebCore.submit.sln: Build QTMovieWin for 32-bit.
+
+2014-01-23  Brent Fulgham  <bfulgham@apple.com>
+
         Merge r162621
 
     2014-01-22  Brent Fulgham  <bfulgham@apple.com>
