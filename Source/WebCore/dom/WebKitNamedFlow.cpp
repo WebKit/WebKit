@@ -99,16 +99,15 @@ int WebKitNamedFlow::firstEmptyRegionIndex() const
         return -1;
 
     int countNonPseudoRegions = -1;
-    auto iter = regionList.begin();
-    for (int index = 0; iter != regionList.end(); ++index, ++iter) {
+    for (const auto& renderRegion : regionList) {
+        const RenderNamedFlowFragment* namedFlowFragment = toRenderNamedFlowFragment(renderRegion);
         // FIXME: Pseudo-elements are not included in the list.
         // They will be included when we will properly support the Region interface
         // http://dev.w3.org/csswg/css-regions/#the-region-interface
-        const RenderNamedFlowFragment* renderRegion = toRenderNamedFlowFragment(*iter);
-        if (renderRegion->isPseudoElementRegion())
+        if (namedFlowFragment->isPseudoElementRegion())
             continue;
         countNonPseudoRegions++;
-        if (renderRegion->regionOversetState() == RegionEmpty)
+        if (namedFlowFragment->regionOversetState() == RegionEmpty)
             return countNonPseudoRegions;
     }
     return -1;
@@ -131,16 +130,16 @@ PassRefPtr<NodeList> WebKitNamedFlow::getRegionsByContent(Node* contentNode)
 
     if (inFlowThread(contentNode->renderer(), m_parentFlowThread)) {
         const RenderRegionList& regionList = m_parentFlowThread->renderRegionList();
-        for (auto iter = regionList.begin(), end = regionList.end(); iter != end; ++iter) {
+        for (const auto& renderRegion : regionList) {
+            const RenderNamedFlowFragment* namedFlowFragment = toRenderNamedFlowFragment(renderRegion);
             // FIXME: Pseudo-elements are not included in the list.
             // They will be included when we will properly support the Region interface
             // http://dev.w3.org/csswg/css-regions/#the-region-interface
-            const RenderNamedFlowFragment* renderRegion = toRenderNamedFlowFragment(*iter);
-            if (renderRegion->isPseudoElementRegion())
+            if (namedFlowFragment->isPseudoElementRegion())
                 continue;
-            if (m_parentFlowThread->objectInFlowRegion(contentNode->renderer(), renderRegion)) {
-                ASSERT(renderRegion->generatingElement());
-                regionElements.append(*renderRegion->generatingElement());
+            if (m_parentFlowThread->objectInFlowRegion(contentNode->renderer(), namedFlowFragment)) {
+                ASSERT(namedFlowFragment->generatingElement());
+                regionElements.append(*namedFlowFragment->generatingElement());
             }
         }
     }
@@ -161,15 +160,15 @@ PassRefPtr<NodeList> WebKitNamedFlow::getRegions()
     Vector<Ref<Element>> regionElements;
 
     const RenderRegionList& regionList = m_parentFlowThread->renderRegionList();
-    for (auto iter = regionList.begin(), end = regionList.end(); iter != end; ++iter) {
+    for (const auto& renderRegion : regionList) {
+        const RenderNamedFlowFragment* namedFlowFragment = toRenderNamedFlowFragment(renderRegion);
         // FIXME: Pseudo-elements are not included in the list.
         // They will be included when we will properly support the Region interface
         // http://dev.w3.org/csswg/css-regions/#the-region-interface
-        const RenderNamedFlowFragment* renderRegion = toRenderNamedFlowFragment(*iter);
-        if (renderRegion->isPseudoElementRegion())
+        if (namedFlowFragment->isPseudoElementRegion())
             continue;
-        ASSERT(renderRegion->generatingElement());
-        regionElements.append(*renderRegion->generatingElement());
+        ASSERT(namedFlowFragment->generatingElement());
+        regionElements.append(*namedFlowFragment->generatingElement());
     }
 
     return StaticElementList::adopt(regionElements);
@@ -188,8 +187,7 @@ PassRefPtr<NodeList> WebKitNamedFlow::getContent()
     Vector<Ref<Element>> contentElements;
 
     const NamedFlowContentElements& contentElementsList = m_parentFlowThread->contentElements();
-    for (auto it = contentElementsList.begin(), end = contentElementsList.end(); it != end; ++it) {
-        Element* element = *it;
+    for (auto& element : contentElementsList) {
         ASSERT(element->computedStyle()->flowThread() == m_parentFlowThread->flowThreadName());
         contentElements.append(*element);
     }

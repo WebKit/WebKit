@@ -1,3 +1,55 @@
+2014-01-23  Andrei Bucur  <abucur@adobe.com>
+
+        [CSS Regions] Convert regions iterator loops to range-based loops
+        https://bugs.webkit.org/show_bug.cgi?id=127464
+
+        Reviewed by Antti Koivisto.
+
+        Replace most of the iterator loops in the region implementation with
+        range based for loops. The for loops that iterate only over subsets
+        of collections have not been changed.
+
+        Tests: no new tests, this is a refactoring patch.
+
+        * dom/WebKitNamedFlow.cpp:
+        (WebCore::WebKitNamedFlow::firstEmptyRegionIndex):
+        (WebCore::WebKitNamedFlow::getRegionsByContent):
+        (WebCore::WebKitNamedFlow::getRegions):
+        (WebCore::WebKitNamedFlow::getContent):
+        * inspector/InspectorOverlay.cpp:
+        (WebCore::buildObjectForCSSRegionsHighlight):
+        * rendering/RenderFlowThread.cpp:
+        (WebCore::RenderFlowThread::validateRegions):
+        (WebCore::RenderFlowThread::updateLogicalWidth):
+        (WebCore::RenderFlowThread::computeLogicalHeight):
+        (WebCore::RenderFlowThread::repaintRectangleInRegions):
+        (WebCore::RenderFlowThread::removeRenderBoxRegionInfo):
+        (WebCore::RenderFlowThread::logicalWidthChangedInRegionsForBlock):
+        (WebCore::RenderFlowThread::clearRenderBoxRegionInfoAndCustomStyle):
+        (WebCore::RenderFlowThread::isAutoLogicalHeightRegionsCountConsistent):
+        (WebCore::RenderFlowThread::markAutoLogicalHeightRegionsForLayout):
+        (WebCore::RenderFlowThread::markRegionsForOverflowLayoutIfNeeded):
+        (WebCore::RenderFlowThread::updateRegionsFlowThreadPortionRect):
+        (WebCore::RenderFlowThread::collectLayerFragments):
+        (WebCore::RenderFlowThread::fragmentsBoundingBox):
+        * rendering/RenderNamedFlowFragment.cpp:
+        (WebCore::RenderNamedFlowFragment::setRegionObjectsRegionStyle):
+        (WebCore::RenderNamedFlowFragment::restoreRegionObjectsOriginalStyle):
+        * rendering/RenderNamedFlowThread.cpp:
+        (WebCore::RenderNamedFlowThread::clearContentElements):
+        (WebCore::RenderNamedFlowThread::nextRendererForNode):
+        (WebCore::RenderNamedFlowThread::dependsOn):
+        (WebCore::RenderNamedFlowThread::computeOversetStateForRegions):
+        (WebCore::RenderNamedFlowThread::checkInvalidRegions):
+        (WebCore::RenderNamedFlowThread::pushDependencies):
+        (WebCore::RenderNamedFlowThread::registerNamedFlowContentElement):
+        (WebCore::isContainedInElements):
+        (WebCore::RenderNamedFlowThread::getRanges):
+        (WebCore::RenderNamedFlowThread::checkRegionsWithStyling):
+        (WebCore::RenderNamedFlowThread::clearRenderObjectCustomStyle):
+        * rendering/RenderTreeAsText.cpp:
+        (WebCore::writeRenderRegionList):
+
 2014-01-23  László Langó  <llango.u-szeged@partner.samsung.com>
 
         Range should be constructable.

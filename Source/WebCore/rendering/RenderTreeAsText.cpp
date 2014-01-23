@@ -657,9 +657,7 @@ static void write(TextStream& ts, RenderLayer& l,
 
 static void writeRenderRegionList(const RenderRegionList& flowThreadRegionList, TextStream& ts, int indent)
 {
-    for (RenderRegionList::const_iterator itRR = flowThreadRegionList.begin(); itRR != flowThreadRegionList.end(); ++itRR) {
-        RenderRegion* renderRegion = *itRR;
-
+    for (const auto& renderRegion : flowThreadRegionList) {
         writeIndent(ts, indent);
         ts << static_cast<const RenderObject*>(renderRegion)->renderName();
 

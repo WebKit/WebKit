@@ -434,8 +434,7 @@ static PassRefPtr<InspectorArray> buildObjectForCSSRegionsHighlight(RenderRegion
     RefPtr<InspectorArray> array = InspectorArray::create();
 
     const RenderRegionList& regionList = flowThread->renderRegionList();
-    for (RenderRegionList::const_iterator iter = regionList.begin(); iter != regionList.end(); ++iter) {
-        RenderRegion* iterRegion = *iter;
+    for (auto& iterRegion : regionList) {
         if (!iterRegion->isValid())
             continue;
         RefPtr<InspectorObject> regionHighlightObject = buildObjectForRegionHighlight(mainFrameView, iterRegion);

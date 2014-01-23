@@ -73,9 +73,7 @@ const char* RenderNamedFlowThread::renderName() const
     
 void RenderNamedFlowThread::clearContentElements()
 {
-    for (auto it = m_contentElements.begin(), end = m_contentElements.end(); it != end; ++it) {
-        Element* contentElement = *it;
-        
+    for (auto& contentElement : m_contentElements) {
         ASSERT(contentElement);
         ASSERT(contentElement->inNamedFlow());
         ASSERT(&contentElement->document() == &document());
@@ -102,8 +100,8 @@ void RenderNamedFlowThread::updateWritingMode()
 
 RenderObject* RenderNamedFlowThread::nextRendererForNode(Node* node) const
 {
-    for (auto it = m_flowThreadChildList->begin(), end = m_flowThreadChildList->end(); it != end; ++it) {
-        RenderObject* child = *it;
+    const FlowThreadChildList& childList = *(m_flowThreadChildList.get());
+    for (auto& child : childList) {
         ASSERT(child->node());
         unsigned short position = node->compareDocumentPosition(child->node());
         if (position & Node::DOCUMENT_POSITION_FOLLOWING)
@@ -165,8 +163,8 @@ bool RenderNamedFlowThread::dependsOn(RenderNamedFlowThread* otherRenderFlowThre
         return true;
 
     // Recursively traverse the m_layoutBeforeThreadsSet.
-    for (auto iterator = m_layoutBeforeThreadsSet.begin(), end = m_layoutBeforeThreadsSet.end(); iterator != end; ++iterator) {
-        const RenderNamedFlowThread* beforeFlowThread = (*iterator).key;
+    for (const auto& beforeFlowThreadPair : m_layoutBeforeThreadsSet) {
+        const auto& beforeFlowThread = beforeFlowThreadPair.key;
         if (beforeFlowThread->dependsOn(otherRenderFlowThread))
             return true;
     }
@@ -326,8 +324,7 @@ void RenderNamedFlowThread::computeOversetStateForRegions(LayoutUnit oldClientAf
         height = isHorizontalWritingMode() ? visualOverflowRect().maxY() : visualOverflowRect().maxX();
 
     RenderRegion* lastReg = lastRegion();
-    for (auto iter = m_regionList.begin(), end = m_regionList.end(); iter != end; ++iter) {
-        RenderRegion* region = *iter;
+    for (auto& region : m_regionList) {
         LayoutUnit flowMin = height - (isHorizontalWritingMode() ? region->flowThreadPortionRect().y() : region->flowThreadPortionRect().x());
         LayoutUnit flowMax = height - (isHorizontalWritingMode() ? region->flowThreadPortionRect().maxY() : region->flowThreadPortionRect().maxX());
         RegionOversetState previousState = region->regionOversetState();
@@ -363,8 +360,7 @@ void RenderNamedFlowThread::computeOversetStateForRegions(LayoutUnit oldClientAf
 void RenderNamedFlowThread::checkInvalidRegions()
 {
     Vector<RenderRegion*> newValidRegions;
-    for (auto iter = m_invalidRegionList.begin(), end = m_invalidRegionList.end(); iter != end; ++iter) {
-        RenderRegion* region = *iter;
+    for (auto& region : m_invalidRegionList) {
         // The only reason a region would be invalid is because it has a parent flow thread.
         ASSERT(!region->isValid() && region->parentNamedFlowThread());
         if (region->parentNamedFlowThread()->dependsOn(this))
@@ -373,8 +369,7 @@ void RenderNamedFlowThread::checkInvalidRegions()
         newValidRegions.append(region);
     }
 
-    for (auto iter = newValidRegions.begin(), end = newValidRegions.end(); iter != end; ++iter) {
-        RenderRegion* region = *iter;
+    for (auto& region : newValidRegions) {
         m_invalidRegionList.remove(region);
         region->parentNamedFlowThread()->m_observerThreadsSet.remove(this);
         addRegionToNamedFlowThread(region);
@@ -392,10 +387,8 @@ void RenderNamedFlowThread::checkInvalidRegions()
     Vector<RenderNamedFlowThread*> observers;
     copyToVector(m_observerThreadsSet, observers);
 
-    for (size_t i = 0; i < observers.size(); ++i) {
-        RenderNamedFlowThread* flowThread = observers.at(i);
+    for (auto& flowThread : observers)
         flowThread->checkInvalidRegions();
-    }
 }
 
 void RenderNamedFlowThread::addDependencyOnFlowThread(RenderNamedFlowThread* otherFlowThread)
@@ -418,8 +411,8 @@ void RenderNamedFlowThread::removeDependencyOnFlowThread(RenderNamedFlowThread* 
 
 void RenderNamedFlowThread::pushDependencies(RenderNamedFlowThreadList& list)
 {
-    for (auto iter = m_layoutBeforeThreadsSet.begin(), end = m_layoutBeforeThreadsSet.end(); iter != end; ++iter) {
-        RenderNamedFlowThread* flowThread = (*iter).key;
+    for (auto& flowThreadPair : m_layoutBeforeThreadsSet) {
+        auto& flowThread = flowThreadPair.key;
         if (list.contains(flowThread))
             continue;
         flowThread->pushDependencies(list);
@@ -439,8 +432,7 @@ void RenderNamedFlowThread::registerNamedFlowContentElement(Element& contentElem
     resetMarkForDestruction();
 
     // Find the first content node following the new content node.
-    for (auto it = m_contentElements.begin(), end = m_contentElements.end(); it != end; ++it) {
-        Element* element = *it;
+    for (auto& element : m_contentElements) {
         unsigned short position = contentElement.compareDocumentPosition(element);
         if (position & Node::DOCUMENT_POSITION_FOLLOWING) {
             m_contentElements.insertBefore(element, &contentElement);
@@ -550,8 +542,7 @@ bool RenderNamedFlowThread::isMarkedForDestruction() const
 
 static bool isContainedInElements(const Vector<Element*>& others, Element* element)
 {
-    for (size_t i = 0; i < others.size(); i++) {
-        Element* other = others.at(i);
+    for (auto& other : others) {
         if (other->contains(element))
             return true;
     }
@@ -599,14 +590,12 @@ void RenderNamedFlowThread::getRanges(Vector<RefPtr<Range>>& rangeObjects, const
 
     Vector<Element*> elements;
     // eliminate the contentElements that are descendants of other contentElements
-    for (auto it = contentElements().begin(), end = contentElements().end(); it != end; ++it) {
-        Element* element = *it;
+    for (auto& element : contentElements()) {
         if (!isContainedInElements(elements, element))
             elements.append(element);
     }
 
-    for (size_t i = 0; i < elements.size(); i++) {
-        Element* contentElement = elements.at(i);
+    for (auto& contentElement : elements) {
         if (!contentElement->renderer())
             continue;
 
@@ -744,9 +733,9 @@ bool RenderNamedFlowThread::collectsGraphicsLayersUnderRegions() const
 void RenderNamedFlowThread::checkRegionsWithStyling()
 {
     bool hasRegionsWithStyling = false;
-    for (auto iter = m_regionList.begin(), end = m_regionList.end(); iter != end; ++iter) {
-        RenderNamedFlowFragment* region = toRenderNamedFlowFragment(*iter);
-        if (region->hasCustomRegionStyle()) {
+    for (const auto& region : m_regionList) {
+        const RenderNamedFlowFragment* namedFlowFragment = toRenderNamedFlowFragment(region);
+        if (namedFlowFragment->hasCustomRegionStyle()) {
             hasRegionsWithStyling = true;
             break;
         }
@@ -758,9 +747,9 @@ void RenderNamedFlowThread::clearRenderObjectCustomStyle(const RenderObject* obj
 {
     // Clear the styles for the object in the regions.
     // FIXME: Region styling is not computed only for the region range of the object so this is why we need to walk the whole chain.
-    for (auto iter = m_regionList.begin(), end = m_regionList.end(); iter != end; ++iter) {
-        RenderNamedFlowFragment* region = toRenderNamedFlowFragment(*iter);
-        region->clearObjectStyleInRegion(object);
+    for (auto& region : m_regionList) {
+        RenderNamedFlowFragment* namedFlowFragment = toRenderNamedFlowFragment(region);
+        namedFlowFragment->clearObjectStyleInRegion(object);
     }
 }
 

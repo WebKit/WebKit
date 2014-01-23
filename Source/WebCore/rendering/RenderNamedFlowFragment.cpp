@@ -308,8 +308,7 @@ void RenderNamedFlowFragment::setRegionObjectsRegionStyle()
     const RenderNamedFlowThread& namedFlow = view().flowThreadController().ensureRenderFlowThreadWithName(style().regionThread());
     const NamedFlowContentElements& contentElements = namedFlow.contentElements();
 
-    for (auto iter = contentElements.begin(), end = contentElements.end(); iter != end; ++iter) {
-        const Element* element = *iter;
+    for (const auto& element : contentElements) {
         // The list of content nodes contains also the nodes with display:none.
         if (!element->renderer())
             continue;
@@ -343,14 +342,14 @@ void RenderNamedFlowFragment::restoreRegionObjectsOriginalStyle()
         return;
 
     RenderObjectRegionStyleMap temp;
-    for (auto iter = m_renderObjectRegionStyle.begin(), end = m_renderObjectRegionStyle.end(); iter != end; ++iter) {
-        RenderObject* object = const_cast<RenderObject*>(iter->key);
+    for (auto& objectPair : m_renderObjectRegionStyle) {
+        RenderObject* object = const_cast<RenderObject*>(objectPair.key);
         RefPtr<RenderStyle> objectRegionStyle = &object->style();
-        RefPtr<RenderStyle> objectOriginalStyle = iter->value.style;
+        RefPtr<RenderStyle> objectOriginalStyle = objectPair.value.style;
         if (object->isRenderElement())
             toRenderElement(object)->setStyleInternal(*objectOriginalStyle);
 
-        bool shouldCacheRegionStyle = iter->value.cached;
+        bool shouldCacheRegionStyle = objectPair.value.cached;
         if (!shouldCacheRegionStyle) {
             // Check whether we should cache the computed style in region.
             unsigned changedContextSensitiveProperties = ContextSensitivePropertyNone;
