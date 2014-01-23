@@ -41,7 +41,7 @@ nmake /nologo -f $(ProjectName).make clean</NMakeCleanCommandLine>
       <WarningLevel>Level4</WarningLevel>
       <TreatWarningAsError>false</TreatWarningAsError>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
-      <DisableSpecificWarnings>4018;4068;4099;4100;4127;4138;4146;4180;4189;4201;4244;4251;4267;4275;4288;4291;4305;4344;4355;4389;4396;4481;4503;4505;4510;4512;4530;4610;4702;4706;4800;4819;4951;4952;4996;6011;6031;6211;6246;6255;6387;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <DisableSpecificWarnings>4018;4068;4099;4100;4127;4138;4146;4180;4189;4201;4244;4251;4267;4275;4288;4291;4305;4309;4344;4355;4389;4396;4481;4503;4505;4510;4512;4530;4610;4702;4706;4800;4819;4951;4952;4996;6011;6031;6211;6246;6255;6387;%(DisableSpecificWarnings)</DisableSpecificWarnings>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <FunctionLevelLinking>false</FunctionLevelLinking>
       <FloatingPointExceptions>false</FloatingPointExceptions>
