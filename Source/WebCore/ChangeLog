@@ -1,3 +1,17 @@
+2014-01-23  Jer Noble  <jer.noble@apple.com>
+
+        [MSE][Mac] Adopt new AVStreamDataParser delegate API
+        https://bugs.webkit.org/show_bug.cgi?id=127498
+
+        Reviewed by Eric Carlson.
+
+        Adopt a new delegate API which passes in whether or not the new AVAsset
+        is discontinuous, implying the AVAsset is entirely new rather than
+        just updated with new information.
+
+        * platform/graphics/avfoundation/objc/SourceBufferPrivateAVFObjC.mm:
+        (-[WebAVStreamDataParserListener streamDataParser:didParseStreamDataAsAsset:withDiscontinuity:]):
+
 2014-01-23  Tim Horton  <timothy_horton@apple.com>
 
         PDFPlugin: Use PDFPlugin even if there's an external plugin installed, if it's blocked

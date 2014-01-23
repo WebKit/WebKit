@@ -169,6 +169,16 @@ SOFT_LINK(CoreMedia, CMSetAttachment, void, (CMAttachmentBearerRef target, CFStr
     _parent->didParseStreamDataAsAsset(asset);
 }
 
+- (void)streamDataParser:(AVStreamDataParser *)streamDataParser didParseStreamDataAsAsset:(AVAsset *)asset withDiscontinuity:(BOOL)discontinuity
+{
+    UNUSED_PARAM(discontinuity);
+#if ASSERT_DISABLED
+    UNUSED_PARAM(streamDataParser);
+#endif
+    ASSERT(streamDataParser == _parser);
+    _parent->didParseStreamDataAsAsset(asset);
+}
+
 - (void)streamDataParser:(AVStreamDataParser *)streamDataParser didFailToParseStreamDataWithError:(NSError *)error
 {
 #if ASSERT_DISABLED
