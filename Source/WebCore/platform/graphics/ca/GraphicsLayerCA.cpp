@@ -691,6 +691,11 @@ void GraphicsLayerCA::setContentsRect(const IntRect& rect)
     noteLayerPropertyChanged(ContentsRectChanged);
 }
 
+bool GraphicsLayerCA::shouldRepaintOnSizeChange() const
+{
+    return drawsContent() && !tiledBacking();
+}
+
 bool GraphicsLayerCA::addAnimation(const KeyframeValueList& valueList, const IntSize& boxSize, const Animation* anim, const String& animationName, double timeOffset)
 {
     ASSERT(!animationName.isEmpty());
