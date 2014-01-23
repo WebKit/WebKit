@@ -23,8 +23,6 @@
 
 #include "BaseTarget.xcconfig"
 
-OTHER_LDFLAGS = $(inherited) -l$(WEBKIT_SYSTEM_INTERFACE_LIBRARY)
+OTHER_LDFLAGS = $(inherited) -l$(WEBKIT_SYSTEM_INTERFACE_LIBRARY) -force_load $(BUILT_PRODUCTS_DIR)/libDumpRenderTree.a;
 LD_RUNPATH_SEARCH_PATHS = "@loader_path/.";
-PRODUCT_NAME = DumpRenderTree
-GCC_ENABLE_OBJC_EXCEPTIONS = YES
-GCC_PREFIX_HEADER = DumpRenderTreePrefix.h
+PRODUCT_NAME = DumpRenderTree;

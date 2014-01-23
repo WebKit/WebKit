@@ -927,7 +927,7 @@ void dumpRenderTree(int argc, const char *argv[])
     }
 }
 
-int main(int argc, const char *argv[])
+int DumpRenderTreeMain(int argc, const char *argv[])
 {
     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
 

@@ -1,3 +1,44 @@
+2014-01-22  Andy Estes  <aestes@apple.com>
+
+        [iOS] Prepare for upstreaming DumpRenderTree changes
+        https://bugs.webkit.org/show_bug.cgi?id=127412
+
+        Reviewed by Simon Fraser.
+
+        Unlike on Mac where DumpRenderTree is a command-line tool, on iOS it is
+        an application bundle. Instead of upstreaming a separate target for the
+        app that duplicates the 'Compile Sources' phase of the tool, separate
+        out the compilation into a static library target that both the
+        command-line tool and the app can link against. Also, perform some
+        unrelated cleanup.
+
+        * DumpRenderTree/DumpRenderTree.xcodeproj/project.pbxproj: Updated the
+        project file format from 2.4- to 3.2-compatible. Removed the
+        'Copy Headers' build phase and removed all files from the
+        'Compile Sources' build phase of DumpRenderTree. Added some files that
+        were missing from the project. Created a 'DumpRenderTree (Library)'
+        target for building the static library and made the 'DumpRenderTree'
+        target depend on it. Added a 'Compile Sources' build phase to this
+        target that builds the same files the DumpRenderTree target used to.
+        Created DumpRenderTreeMain.mm as the only source file of the
+        DumpRenderTree target, since targets won't link a binary without at
+        least one source file. Made DumpRenderTree (Library) use
+        DumpRenderTreeLibrary.xcconfig and made LayoutTestHelper use
+        BaseTarget.xcconfig (so that it doesn't try to link libDumpRenderTree.a).
+        * DumpRenderTree/mac/Configurations/BaseTarget.xcconfig: Moved
+        definitions of GCC_ENABLE_OBJC_EXCEPTIONS and GCC_PREFIX_HEADER from
+        DumpRenderTree.xcconfig to here so that LayoutTestHelper can use them.
+        * DumpRenderTree/mac/Configurations/DumpRenderTree.xcconfig: Passed
+        -force_load $(BUILT_PRODUCTS_DIR)libDumpRenderTree.a to OTHER_LDFLAGS.
+        This is needed to correctly link a static library containing an Objective-C
+        category (see <https://developer.apple.com/library/mac/qa/qa1490/_index.html>).
+        * DumpRenderTree/mac/Configurations/DumpRenderTreeLibrary.xcconfig: Added.
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (DumpRenderTreeMain): Renamed from main.
+        * DumpRenderTree/mac/DumpRenderTreeMac.h: Added declaration of DumpRenderTreeMain.
+        * DumpRenderTree/mac/DumpRenderTreeMain.mm: Added.
+        (main): Called DumpRenderTreeMain from main.
+
 2014-01-15  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK][CMake] build-webkit should try harder to avoid re-running cmake

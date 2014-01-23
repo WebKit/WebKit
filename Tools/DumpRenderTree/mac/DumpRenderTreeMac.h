@@ -69,4 +69,6 @@ void setPersistentUserStyleSheetLocation(CFStringRef);
 
 unsigned worldIDForWorld(WebScriptWorld *);
 
+int DumpRenderTreeMain(int, const char *[]);
+
 #endif // DumpRenderTreeMac_h 
