@@ -41,13 +41,18 @@ public:
         : m_view(viewImpl)
     {
         ASSERT(m_view);
+        m_defaultTextEncodingName = preferences()->defaultTextEncodingName().utf8().data();
     }
 
     const WebKit::WebPreferences* preferences() const;
     WebKit::WebPreferences* preferences();
 
+    const char* defaultTextEncodingName() const;
+    void setDefaultTextEncodingName(const char*);
+
 private:
     EwkView* m_view;
+    WKEinaSharedString m_defaultTextEncodingName;
 };
 
 #endif // ewk_settings_private_h

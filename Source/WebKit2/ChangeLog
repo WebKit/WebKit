@@ -1,3 +1,24 @@
+2014-01-22  Jinwoo Song  <jinwoo7.song@samsung.com>
+
+        [EFL][WK2] defaultTextEncodingName should be stored as a member variable of EwkSettings
+        https://bugs.webkit.org/show_bug.cgi?id=127420
+
+        Reviewed by Gyuyoung Kim.
+
+        As the defaultTextEncodingName is returned as a local WKEinaSharedString variable, 
+        the stringshared data is de-refed by eina_stringshare_del().
+        To maintain the reference counter, the defaultTextEncodingName should be stored 
+        as a member variable of EwkSettings class.
+
+        * UIProcess/API/efl/ewk_settings.cpp:
+        (ewk_settings_encoding_detector_enabled_get): Reordering.
+        (ewk_settings_default_text_encoding_name_set):
+        (ewk_settings_default_text_encoding_name_get):
+        (EwkSettings::setDefaultTextEncodingName):
+        (EwkSettings::defaultTextEncodingName):
+        * UIProcess/API/efl/ewk_settings_private.h:
+        (EwkSettings::EwkSettings): Add m_defaultTextEncodingName and setter/getter methods.
+
 2014-01-22  Enrica Casucci  <enrica@apple.com>
 
         Support WebSelections in WK2 on iOS.
