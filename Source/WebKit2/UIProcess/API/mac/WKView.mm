@@ -1971,7 +1971,7 @@ static void createSandboxExtensionsForFileUpload(NSPasteboard *pasteboard, Sandb
 
 - (void)_windowDidChangeBackingProperties:(NSNotification *)notification
 {
-    CGFloat oldBackingScaleFactor = [[notification.userInfo objectForKey:backingPropertyOldScaleFactorKey] doubleValue];
+    CGFloat oldBackingScaleFactor = [[notification.userInfo objectForKey:NSBackingPropertyOldScaleFactorKey] doubleValue];
     CGFloat newBackingScaleFactor = [self _intrinsicDeviceScaleFactor]; 
     if (oldBackingScaleFactor == newBackingScaleFactor)
         return; 
