@@ -1352,8 +1352,9 @@ void CodeBlock::dumpBytecode(PrintStream& out, ExecState* exec, const Instructio
         }
         case op_debug: {
             int debugHookID = (++it)->u.operand;
+            int hasBreakpointFlag = (++it)->u.operand;
             printLocationAndOp(out, exec, location, it, "debug");
-            out.printf("%s", debugHookName(debugHookID));
+            out.printf("%s %d", debugHookName(debugHookID), hasBreakpointFlag);
             break;
         }
         case op_profile_will_call: {
@@ -1468,6 +1469,7 @@ CodeBlock::CodeBlock(CopyParsedBlockTag, CodeBlock& other)
     , m_shouldAlwaysBeInlined(true)
     , m_didFailFTLCompilation(false)
     , m_unlinkedCode(*other.m_vm, other.m_ownerExecutable.get(), other.m_unlinkedCode.get())
+    , m_numBreakpoints(0)
     , m_ownerExecutable(*other.m_vm, other.m_ownerExecutable.get(), other.m_ownerExecutable.get())
     , m_vm(other.m_vm)
     , m_instructions(other.m_instructions)
@@ -1522,6 +1524,7 @@ CodeBlock::CodeBlock(ScriptExecutable* ownerExecutable, UnlinkedCodeBlock* unlin
     , m_shouldAlwaysBeInlined(true)
     , m_didFailFTLCompilation(false)
     , m_unlinkedCode(m_globalObject->vm(), ownerExecutable, unlinkedCodeBlock)
+    , m_numBreakpoints(0)
     , m_ownerExecutable(m_globalObject->vm(), ownerExecutable, ownerExecutable)
     , m_vm(unlinkedCodeBlock->vm())
     , m_thisRegister(unlinkedCodeBlock->thisRegister())
@@ -2564,6 +2567,27 @@ void CodeBlock::expressionRangeForBytecodeOffset(unsigned bytecodeOffset, int& d
     divot += m_sourceOffset;
     column += line ? 1 : firstLineColumnOffset();
     line += m_ownerExecutable->lineNo();
+}
+
+bool CodeBlock::hasOpDebugForLineAndColumn(unsigned line, unsigned column)
+{
+    Interpreter* interpreter = vm()->interpreter;
+    const Instruction* begin = instructions().begin();
+    const Instruction* end = instructions().end();
+    for (const Instruction* it = begin; it != end;) {
+        OpcodeID opcodeID = interpreter->getOpcodeID(it->u.opcode);
+        if (opcodeID == op_debug) {
+            unsigned bytecodeOffset = it - begin;
+            int unused;
+            unsigned opDebugLine;
+            unsigned opDebugColumn;
+            expressionRangeForBytecodeOffset(bytecodeOffset, unused, unused, unused, opDebugLine, opDebugColumn);
+            if (line == opDebugLine && (column == Breakpoint::unspecifiedColumn || column == opDebugColumn))
+                return true;
+        }
+        it += opcodeLengths[opcodeID];
+    }
+    return false;
 }
 
 void CodeBlock::shrinkToFit(ShrinkMode shrinkMode)

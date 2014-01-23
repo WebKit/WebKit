@@ -1,3 +1,168 @@
+2014-01-22  Mark Lam  <mark.lam@apple.com>
+
+        Poor man's fast breakpoints for a 2.3x debugger speedup.
+        <https://webkit.org/b/122836>
+
+        Reviewed by Geoffrey Garen.
+
+        Previously we gained back some performance (run at baseline JIT speeds)
+        when the WebInspector is opened provided no breakpoints are set. This
+        was achieved by simply skipping all op_debug callbacks to the debugger
+        if no breakpoints are set. If any breakpoints are set, the debugger will
+        set a m_needsOpDebugCallbacks flag which causes the callbacks to be
+        called, and we don't get the baseline JIT speeds anymore.
+
+        With this patch, we will now track the number of breakpoints set in the
+        CodeBlock that they are set in. The LLINT and baseline JIT code will
+        check CodeBlock::m_numBreakpoints to determine if the op_debug callbacks
+        need to be called. With this, we will only enable op_debug callbacks for
+        CodeBlocks that need it i.e. those with breakpoints set in them.
+
+        Debugger::m_needsOpDebugCallbacks is now obsoleted. The LLINT and baseline
+        JIT code still needs to check Debugger::m_shouldPause to determine if the
+        debugger is in stepping mode and hence, needs op_debug callbacks enabled
+        for everything until the debugger "continues" the run and exit stepping
+        mode.
+
+        Also in this patch, I fixed a regression in DOM breakpoints which relies
+        Debugger::breakProgram() to pause the debugger.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::dumpBytecode):
+        - Missed accounting for op_debug's new hasBreakpointFlag operand here when
+          it was added.
+        (JSC::CodeBlock::CodeBlock):
+        (JSC::CodeBlock::hasOpDebugForLineAndColumn):
+        - This is needed in Debugger::toggleBreakpoint() to determine if a
+          breakpoint falls within a CodeBlock or not. Simply checking the bounds
+          of the CodeBlock is insufficient. For example, let's say we have the
+          following JS code:
+
+              // begin global scope
+              function f1() {
+                  function f2() {
+                     ... // set breakpoint here.
+                  }
+              }
+              // end global scope
+
+          Using the CodeBlock bounds alone, the breakpoint above will to appear
+          to be in the global program CodeBlock, and the CodeBlocks for function
+          f1() and f2(). With CodeBlock::hasOpDebugForLineAndColumn() we can
+          rule out the global program CodeBlock and f1(), and only apply the
+          breakpoint to f2(0 where it belongs.
+
+          CodeBlock::hasOpDebugForLineAndColumn() works by iterating over all
+          the opcodes in the CodeBlock to look for op_debug's. For each op_debug,
+          it calls CodeBlock::expressionRangeForBytecodeOffset() to do a binary
+          seach to get the line and column info for that op_debug. This is a
+          N * log(N) algorithm. However, a quick hands on test using the
+          WebInspector (with this patch applied) to exercise setting, breaking
+          on, and clearing breakpoints, as well as stepping through some code
+          shows no noticeable degradation of the user experience compared to the
+          baseline without this patch.
+
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::numBreakpoints):
+        (JSC::CodeBlock::numBreakpointsOffset):
+        (JSC::CodeBlock::addBreakpoint):
+        (JSC::CodeBlock::removeBreakpoint):
+        (JSC::CodeBlock::clearAllBreakpoints):
+        * debugger/Breakpoint.h:
+        - defined Breakpoint::unspecifiedColumn so that we can explicitly indicate
+          when the WebInspector was setting a line breakpoint and did not provide
+          a column value. CodeBlock::hasOpDebugForLineAndColumn() needs this
+          information in order to loosen its matching criteria for op_debug
+          bytecodes for the specified breakpoint line and column values provided
+          by the debugger.
+
+          Previously, we just hijack a 0 value column as an unspecified column.
+          However, the WebInspector operates on 0-based ints for column values.
+          Hence, 0 should be a valid column value and should not be hijacked to
+          mean an unspecified column.
+
+        * debugger/Debugger.cpp:
+        (JSC::Debugger::Debugger):
+        - added tracking of the VM that the debugger is used with. This is
+          needed by Debugger::breakProgram().
+
+          The VM pointer is attained from the first JSGlobalObject that the debugger
+          attaches to. When the debugger detaches from the last JSGlobalObject, it
+          will nullify its VM pointer to allow a new one to be set on the next
+          attach.
+
+          We were always only using each debugger instance with one VM. This change
+          makes it explicit with an assert to ensure that all globalObjects that
+          the debugger attaches to beongs to the same VM.
+
+        (JSC::Debugger::attach):
+        (JSC::Debugger::detach):
+        (JSC::Debugger::setShouldPause):
+
+        (JSC::Debugger::registerCodeBlock):
+        (JSC::Debugger::unregisterCodeBlock):
+        - registerCodeBlock() is responsible for applying pre-existing breakpoints
+          to new CodeBlocks being installed. Similarly, unregisterCodeBlock()
+          clears the breakpoints.
+
+        (JSC::Debugger::toggleBreakpoint):
+        - This is the workhorse function that checks if a breakpoint falls within
+          a CodeBlock or not. If it does, then it can either enable or disable
+          said breakpoint in the CodeBlock. In the current implementation,
+          enabling/disabling the breakpoint simply means incrementing/decrementing
+          the CodeBlock's m_numBreakpoints.
+
+        (JSC::Debugger::applyBreakpoints):
+
+        (JSC::Debugger::ToggleBreakpointFunctor::ToggleBreakpointFunctor):
+        (JSC::Debugger::ToggleBreakpointFunctor::operator()):
+        (JSC::Debugger::toggleBreakpoint):
+        - Iterates all relevant CodeBlocks and apply the specified breakpoint
+          if appropriate. This is called when a new breakpoint is being defined
+          by the WebInspector and needs to be applied to an already installed
+          CodeBlock.
+
+        (JSC::Debugger::setBreakpoint):
+        (JSC::Debugger::removeBreakpoint):
+        (JSC::Debugger::hasBreakpoint):
+        (JSC::Debugger::ClearBreakpointsFunctor::ClearBreakpointsFunctor):
+        (JSC::Debugger::ClearBreakpointsFunctor::operator()):
+        (JSC::Debugger::clearBreakpoints):
+
+        (JSC::Debugger::breakProgram):
+        - Fixed a regression that broke DOM breakpoints. The issue is that with
+          the skipping of op_debug callbacks, we don't always have an updated
+          m_currentCallFrame. Normally, m_currentCallFrame is provided as arg
+          in the op_debug callback. In this case, we can get the CallFrame* from
+          m_vm->topCallFrame.
+
+        (JSC::Debugger::updateCallFrameAndPauseIfNeeded):
+        (JSC::Debugger::pauseIfNeeded):
+        (JSC::Debugger::willExecuteProgram):
+        * debugger/Debugger.h:
+        (JSC::Debugger::Debugger):
+        (JSC::Debugger::shouldPause):
+
+        * heap/CodeBlockSet.h:
+        (JSC::CodeBlockSet::iterate):
+        * heap/Heap.h:
+        (JSC::Heap::forEachCodeBlock):
+        - Added utility to iterate all CodeBlocks in the heap / VM.
+
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::debug):
+
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_debug):
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::emit_op_debug):
+        * llint/LowLevelInterpreter.asm:
+        - These now checks CodeBlock::m_numBreakpoints and Debugger::m_shouldPause
+          instead of Debugger::m_needsOpDebugCallbacks.
+
+        * runtime/Executable.cpp:
+        (JSC::ScriptExecutable::installCode):
+
 2014-01-22  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Remove CSS3_TEXT_DECORATION define

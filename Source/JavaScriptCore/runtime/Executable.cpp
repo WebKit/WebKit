@@ -172,6 +172,10 @@ void ScriptExecutable::installCode(CodeBlock* genericCodeBlock)
 
     if (oldCodeBlock)
         oldCodeBlock->unlinkIncomingCalls();
+
+    Debugger* debugger = genericCodeBlock->globalObject()->debugger();
+    if (debugger)
+        debugger->registerCodeBlock(genericCodeBlock);
 }
 
 PassRefPtr<CodeBlock> ScriptExecutable::newCodeBlockFor(

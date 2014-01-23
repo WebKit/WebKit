@@ -869,6 +869,19 @@ public:
 
     unsigned frameRegisterCount();
 
+    bool hasOpDebugForLineAndColumn(unsigned line, unsigned column);
+
+    int numBreakpoints() const { return m_numBreakpoints; }
+    static ptrdiff_t numBreakpointsOffset() { return OBJECT_OFFSETOF(CodeBlock, m_numBreakpoints); }
+
+    void addBreakpoint(int numBreakpoints) { m_numBreakpoints += numBreakpoints; }
+    void removeBreakpoint(int numBreakpoints)
+    {
+        m_numBreakpoints -= numBreakpoints;
+        ASSERT(m_numBreakpoints >= 0);
+    }
+    void clearAllBreakpoints() { m_numBreakpoints = 0; }
+
     // FIXME: Make these remaining members private.
 
     int m_numCalleeRegisters;
@@ -1005,6 +1018,7 @@ private:
 #endif
     WriteBarrier<UnlinkedCodeBlock> m_unlinkedCode;
     int m_numParameters;
+    int m_numBreakpoints;
     WriteBarrier<ScriptExecutable> m_ownerExecutable;
     VM* m_vm;
 

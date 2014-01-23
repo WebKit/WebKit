@@ -1205,8 +1205,9 @@ JSValue Interpreter::execute(EvalExecutable* eval, CallFrame* callFrame, JSValue
 NEVER_INLINE void Interpreter::debug(CallFrame* callFrame, DebugHookID debugHookID)
 {
     Debugger* debugger = callFrame->vmEntryGlobalObject()->debugger();
-    if (!debugger || !debugger->needsOpDebugCallbacks())
+    if (!debugger)
         return;
+    ASSERT(debugger->shouldPause() || callFrame->codeBlock()->numBreakpoints() || callFrame->hadException());
 
     switch (debugHookID) {
         case DidEnterCallFrame:

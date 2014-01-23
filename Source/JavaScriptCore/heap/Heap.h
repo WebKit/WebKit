@@ -174,6 +174,7 @@ namespace JSC {
         
         template<typename Functor> typename Functor::ReturnType forEachProtectedCell(Functor&);
         template<typename Functor> typename Functor::ReturnType forEachProtectedCell();
+        template<typename Functor> inline void forEachCodeBlock(Functor&);
 
         HandleSet* handleSet() { return &m_handleSet; }
         HandleStack* handleStack() { return &m_handleStack; }
@@ -430,6 +431,11 @@ namespace JSC {
     {
         Functor functor;
         return forEachProtectedCell(functor);
+    }
+
+    template<typename Functor> inline void Heap::forEachCodeBlock(Functor& functor)
+    {
+        return m_codeBlocks.iterate<Functor>(functor);
     }
 
     inline void* Heap::allocateWithNormalDestructor(size_t bytes)

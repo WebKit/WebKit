@@ -1,7 +1,7 @@
 /*
  *  Copyright (C) 1999-2001 Harri Porten (porten@kde.org)
  *  Copyright (C) 2001 Peter Kelly (pmk@post.com)
- *  Copyright (C) 2008, 2009, 2013 Apple Inc. All rights reserved.
+ *  Copyright (C) 2008, 2009, 2013, 2014 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -48,8 +48,8 @@ public:
     Debugger(bool isInWorkerThread = false);
     virtual ~Debugger();
 
-    bool needsOpDebugCallbacks() const { return m_needsOpDebugCallbacks; }
-    static ptrdiff_t needsOpDebugCallbacksOffset() { return OBJECT_OFFSETOF(Debugger, m_needsOpDebugCallbacks); }
+    bool shouldPause() const { return m_shouldPause; }
+    static ptrdiff_t shouldPauseOffset() { return OBJECT_OFFSETOF(Debugger, m_shouldPause); }
 
     JSC::DebuggerCallFrame* currentDebuggerCallFrame() const;
     bool hasHandlerForExceptionCallback() const
@@ -104,6 +104,9 @@ public:
 
     void recompileAllJSFunctions(VM*);
 
+    void registerCodeBlock(CodeBlock*);
+    void unregisterCodeBlock(CodeBlock*);
+
 protected:
     virtual bool needPauseHandling(JSGlobalObject*) { return false; }
     virtual void handleBreakpointHit(const Breakpoint&) { }
@@ -128,7 +131,10 @@ private:
 
     typedef Vector<Breakpoint> BreakpointsInLine;
     typedef HashMap<unsigned, BreakpointsInLine, WTF::IntHash<int>, WTF::UnsignedWithZeroKeyHashTraits<int>> LineToBreakpointsMap;
-    typedef HashMap<SourceID, LineToBreakpointsMap> SourceIDToBreakpointsMap;
+    typedef HashMap<SourceID, LineToBreakpointsMap, WTF::IntHash<SourceID>, WTF::UnsignedWithZeroKeyHashTraits<SourceID>> SourceIDToBreakpointsMap;
+
+    class ToggleBreakpointFunctor;
+    class ClearBreakpointsFunctor;
 
     class PauseReasonDeclaration {
     public:
@@ -148,7 +154,6 @@ private:
 
     bool hasBreakpoint(SourceID, const TextPosition&, Breakpoint* hitBreakpoint);
 
-    bool shouldPause() const { return m_shouldPause; }
     void setShouldPause(bool);
     void updateNeedForOpDebugCallbacks();
 
@@ -161,6 +166,15 @@ private:
     void updateCallFrameAndPauseIfNeeded(JSC::CallFrame*);
     void pauseIfNeeded(JSC::CallFrame*);
 
+    enum BreakpointState {
+        BreakpointDisabled,
+        BreakpointEnabled
+    };
+    void toggleBreakpoint(CodeBlock*, Breakpoint&, BreakpointState);
+    void applyBreakpoints(CodeBlock*);
+    void toggleBreakpoint(Breakpoint&, BreakpointState);
+
+    VM* m_vm;
     HashSet<JSGlobalObject*> m_globalObjects;
 
     PauseOnExceptionsState m_pauseOnExceptionsState;
@@ -181,7 +195,6 @@ private:
     BreakpointIDToBreakpointMap m_breakpointIDToBreakpoint;
     SourceIDToBreakpointsMap m_sourceIDToBreakpoints;
 
-    bool m_needsOpDebugCallbacks;
     bool m_shouldPause;
 
     RefPtr<JSC::DebuggerCallFrame> m_currentDebuggerCallFrame;
@@ -195,8 +208,11 @@ private:
 
 class Debugger {
 public:
-    Debugger(bool = false) : m_needsOpDebugCallbacks(false) { }
-    bool needsOpDebugCallbacks() const { return false; }
+    Debugger(bool = false)
+        : m_shouldPause(false)
+    {
+    }
+    bool shouldPause() const { return false; }
     bool needsExceptionCallbacks() const { return false; }
     void detach(JSGlobalObject*) { }
     void sourceParsed(ExecState*, SourceProvider*, int, const WTF::String&) { }
@@ -208,7 +224,8 @@ public:
     void didExecuteProgram(CallFrame*) { }
     void didReachBreakpoint(CallFrame*) { }
 
-    bool m_needsOpDebugCallbacks;
+private:
+    bool m_shouldPause;
 };
 
 #endif // ENABLE(JAVASCRIPT_DEBUGGER)

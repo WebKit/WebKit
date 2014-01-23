@@ -715,13 +715,21 @@ void JIT::emit_op_debug(Instruction* currentInstruction)
     breakpoint();
 #elif ENABLE(JAVASCRIPT_DEBUGGER)
     JSGlobalObject* globalObject = codeBlock()->globalObject();
-    Debugger* debugger = globalObject->debugger();
     char* debuggerAddress = reinterpret_cast<char*>(globalObject) + JSGlobalObject::debuggerOffset();
     Jump noDebugger = branchTestPtr(Zero, AbsoluteAddress(debuggerAddress));
-    char* flagAddress = reinterpret_cast<char*>(debugger) + Debugger::needsOpDebugCallbacksOffset();
-    Jump skipDebugHook = branchTest8(Zero, AbsoluteAddress(flagAddress));
+
+    Debugger* debugger = globalObject->debugger();
+    char* shouldPauseAddress = reinterpret_cast<char*>(debugger) + Debugger::shouldPauseOffset();
+    Jump callbackNeeded = branchTest8(NonZero, AbsoluteAddress(shouldPauseAddress));
+
+    char* numBreakpointsAddress = reinterpret_cast<char*>(codeBlock()) + CodeBlock::numBreakpointsOffset();
+    load32(numBreakpointsAddress, regT0);
+    Jump noBreakpointSet = branchTest32(Zero, regT0);
+
+    callbackNeeded.link(this);
     callOperation(operationDebug, currentInstruction[1].u.operand);
-    skipDebugHook.link(this);
+
+    noBreakpointSet.link(this);
     noDebugger.link(this);
 #else
     UNUSED_PARAM(currentInstruction);

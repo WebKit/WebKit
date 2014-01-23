@@ -59,6 +59,8 @@ struct Breakpoint {
     unsigned column;
     String condition;
     bool autoContinue;
+
+    static const unsigned unspecifiedColumn = UINT_MAX;
 };
 
 } // namespace JSC
