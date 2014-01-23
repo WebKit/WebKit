@@ -1,3 +1,20 @@
+2014-01-22  Benjamin Poulain  <bpoulain@apple.com>
+
+        Add a minimalistic SPI to control the layout size outside of WKView
+        https://bugs.webkit.org/show_bug.cgi?id=127403
+
+        Reviewed by Sam Weinig.
+
+        The API lets a client of WKView force the layout size. Once the size
+        is set this way, default update is disabled and the client needs to
+        update the size systematically as needed. This is done to avoid double
+        layout or flickering.
+
+        * UIProcess/API/Cocoa/WKViewPrivate.h:
+        * UIProcess/API/ios/WKViewIOS.mm:
+        (-[WKView _frameOrBoundsChanged]):
+        (-[WKView overrideMinimumLayoutSize:]):
+
 2014-01-22  Jinwoo Song  <jinwoo7.song@samsung.com>
 
         [EFL][WK2] defaultTextEncodingName should be stored as a member variable of EwkSettings

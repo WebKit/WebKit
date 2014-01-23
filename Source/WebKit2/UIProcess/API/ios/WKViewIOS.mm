@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -49,6 +49,7 @@ static struct _UIWebViewportConfiguration standardViewportConfiguration = { { UI
 
     BOOL _userHasChangedPageScale;
     RetainPtr<_UIWebViewportHandler> _viewportHandler;
+    BOOL _hasStaticMinimumLayoutSize;
 }
 
 - (id)initWithCoder:(NSCoder *)coder
@@ -257,9 +258,11 @@ static struct _UIWebViewportConfiguration standardViewportConfiguration = { { UI
 - (void)_frameOrBoundsChanged
 {
     CGRect bounds = [self bounds];
-    [_viewportHandler update:^{
-        [_viewportHandler setAvailableViewSize:bounds.size];
-    }];
+    if (!_hasStaticMinimumLayoutSize) {
+        [_viewportHandler update:^{
+            [_viewportHandler setAvailableViewSize:bounds.size];
+        }];
+    }
     [_scrollView setFrame:bounds];
     [_contentView setMinimumSize:bounds.size];
 }
@@ -296,6 +299,20 @@ static struct _UIWebViewportConfiguration standardViewportConfiguration = { { UI
 
     [self _commonInitializationWithContextRef:contextRef pageGroupRef:pageGroupRef relatedToPage:relatedPage];
     return self;
+}
+
+- (CGSize)minimumLayoutSizeOverride
+{
+    ASSERT(_hasStaticMinimumLayoutSize);
+    return [_viewportHandler availableViewSize];
+}
+
+- (void)setMinimumLayoutSizeOverride:(CGSize)minimumLayoutSizeOverride
+{
+    _hasStaticMinimumLayoutSize = YES;
+    [_viewportHandler update:^{
+        [_viewportHandler setAvailableViewSize:minimumLayoutSizeOverride];
+    }];
 }
 
 @end
