@@ -382,6 +382,8 @@ webkit.org/b/107286 fast/css/sticky/sticky-writing-mode-horizontal-bt.html [ Ima
 webkit.org/b/107286 fast/css/sticky/sticky-top.html [ ImageOnlyFailure ]
 webkit.org/b/107286 fast/css/sticky/sticky-side-margins.html [ ImageOnlyFailure ]
 webkit.org/b/107286 fast/css/sticky/replaced-sticky.html [ ImageOnlyFailure ]
+webkit.org/b/107286 fast/css/sticky/inline-sticky-abspos-child.html [ ImageOnlyFailure ]
+webkit.org/b/107286 fast/css/sticky/inline-sticky.html [ ImageOnlyFailure ]
 
 # New ruby selection test (in r140613) fails to render correctly, not generating an expected result
 webkit.org/b/108315 fast/ruby/select-ruby.html [ Missing ]

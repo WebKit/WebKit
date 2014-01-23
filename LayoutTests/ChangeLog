@@ -1,3 +1,10 @@
+2014-01-23  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [EFL] Unreviewed gardening
+
+        * platform/efl-wk2/TestExpectations: Skip failing tests only on WK2.
+        * platform/efl/TestExpectations: Unskip now passing tests on WK1.
+
 2014-01-23  Daniel Bates  <dabates@apple.com>
 
         [Win] Remove Windows-specific result for test fast/css-generated-content/table-row-group-to-inline.html

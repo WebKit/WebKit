@@ -427,10 +427,6 @@ editing/style/font-family-with-space.html [ Missing ]
 editing/style/smoosh-styles-001.html [ Missing ]
 editing/style/style-boundary-005.html [ Missing ]
 
-# CSS Sticky (-webkit-sticky) supported by EFL, but these tests fail.
-webkit.org/b/95182 fast/css/sticky/inline-sticky-abspos-child.html [ ImageOnlyFailure ]
-webkit.org/b/95182 fast/css/sticky/inline-sticky.html [ ImageOnlyFailure ]
-
 # Test is failing due to a scrolling problem on second iteration.
 webkit.org/b/106240 fast/events/mouse-cursor-image-set.html [ Failure ]
 
