@@ -28,6 +28,7 @@
 
 #include "IDBCursorBackendOperations.h"
 #include "IDBDatabaseMetadata.h"
+#include "IDBGetResult.h"
 #include "IDBTransactionBackendOperations.h"
 #include "IndexedDB.h"
 #include <functional>
@@ -45,33 +46,6 @@ class IDBTransactionBackend;
 
 struct IDBIndexMetadata;
 struct IDBObjectStoreMetadata;
-
-struct IDBGetResult {
-    IDBGetResult()
-    {
-    }
-
-    IDBGetResult(PassRefPtr<SharedBuffer> buffer)
-        : valueBuffer(buffer)
-    {
-    }
-
-    IDBGetResult(PassRefPtr<IDBKey> idbKey)
-        : key(idbKey)
-    {
-    }
-
-    IDBGetResult(PassRefPtr<SharedBuffer> buffer, PassRefPtr<IDBKey> idbKey, const IDBKeyPath& path)
-        : valueBuffer(buffer)
-        , key(idbKey)
-        , keyPath(path)
-    {
-    }
-
-    RefPtr<SharedBuffer> valueBuffer;
-    RefPtr<IDBKey> key;
-    IDBKeyPath keyPath;
-};
 
 // This interface provides a single asynchronous layer between the web-facing frontend
 // and the I/O performing backend of IndexedDatabase.

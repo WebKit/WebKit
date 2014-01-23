@@ -1798,6 +1798,7 @@
 		511EF2D117F0FDF100E4FA16 /* JSIDBObjectStoreCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 511EF2CE17F0FDF100E4FA16 /* JSIDBObjectStoreCustom.cpp */; };
 		511F23190DC160DA004F0032 /* StorageThread.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 511F23150DC160DA004F0032 /* StorageThread.cpp */; };
 		511F231A0DC160DA004F0032 /* StorageThread.h in Headers */ = {isa = PBXBuildFile; fileRef = 511F23160DC160DA004F0032 /* StorageThread.h */; };
+		5123AF1D18918AE40031CDC9 /* IDBGetResult.h in Headers */ = {isa = PBXBuildFile; fileRef = 5123AF1C18918AE40031CDC9 /* IDBGetResult.h */; };
 		5126E6BB0A2E3B12005C29FA /* IconDatabase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5126E6B90A2E3B12005C29FA /* IconDatabase.cpp */; };
 		5126E6BC0A2E3B12005C29FA /* IconDatabase.h in Headers */ = {isa = PBXBuildFile; fileRef = 5126E6BA0A2E3B12005C29FA /* IconDatabase.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		512DD8E30D91E2B4000F89EE /* SharedBufferCF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 512DD8E20D91E2B4000F89EE /* SharedBufferCF.cpp */; };
@@ -8752,6 +8753,7 @@
 		511EF2CE17F0FDF100E4FA16 /* JSIDBObjectStoreCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSIDBObjectStoreCustom.cpp; sourceTree = "<group>"; };
 		511F23150DC160DA004F0032 /* StorageThread.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StorageThread.cpp; sourceTree = "<group>"; };
 		511F23160DC160DA004F0032 /* StorageThread.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StorageThread.h; sourceTree = "<group>"; };
+		5123AF1C18918AE40031CDC9 /* IDBGetResult.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDBGetResult.h; sourceTree = "<group>"; };
 		5126E6B90A2E3B12005C29FA /* IconDatabase.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = IconDatabase.cpp; sourceTree = "<group>"; };
 		5126E6BA0A2E3B12005C29FA /* IconDatabase.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = IconDatabase.h; sourceTree = "<group>"; };
 		512DD8E20D91E2B4000F89EE /* SharedBufferCF.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SharedBufferCF.cpp; sourceTree = "<group>"; };
@@ -17701,6 +17703,7 @@
 				51D7198A181106DF0016DC51 /* IDBFactory.idl */,
 				51D7198B181106DF0016DC51 /* IDBFactoryBackendInterface.cpp */,
 				51D7198C181106E00016DC51 /* IDBFactoryBackendInterface.h */,
+				5123AF1C18918AE40031CDC9 /* IDBGetResult.h */,
 				51D7198D181106E00016DC51 /* IDBHistograms.h */,
 				51D7198E181106E00016DC51 /* IDBIndex.cpp */,
 				51D7198F181106E00016DC51 /* IDBIndex.h */,
@@ -24876,6 +24879,7 @@
 				E44613AD0CD6331000FADA75 /* MediaError.h in Headers */,
 				4E1959220A39DABA00220FE5 /* MediaFeatureNames.h in Headers */,
 				07A6D1EC1491137700051D0C /* MediaFragmentURIParser.h in Headers */,
+				5123AF1D18918AE40031CDC9 /* IDBGetResult.h in Headers */,
 				E125F82C1822CFEC00D84CD9 /* CryptoAlgorithmSHA1.h in Headers */,
 				A8EA800E0A19516E00A8EF5F /* MediaList.h in Headers */,
 				E44613E40CD681A200FADA75 /* MediaPlayer.h in Headers */,

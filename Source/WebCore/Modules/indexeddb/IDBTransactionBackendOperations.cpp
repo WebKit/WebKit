@@ -101,13 +101,13 @@ void GetOperation::perform(std::function<void()> completionCallback)
             m_callbacks->onError(error);
         else {
             if (!result.valueBuffer) {
-                if (!result.key)
+                if (result.keyData.isNull)
                     m_callbacks->onSuccess();
                 else
-                    m_callbacks->onSuccess(result.key.get());
+                    m_callbacks->onSuccess(result.keyData.maybeCreateIDBKey());
             } else {
-                if (result.key)
-                    m_callbacks->onSuccess(result.valueBuffer, result.key, result.keyPath);
+                if (!result.keyData.isNull)
+                    m_callbacks->onSuccess(result.valueBuffer, result.keyData.maybeCreateIDBKey(), result.keyPath);
                 else
                     m_callbacks->onSuccess(result.valueBuffer.get());
             }
