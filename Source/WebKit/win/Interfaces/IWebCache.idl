@@ -41,4 +41,6 @@ interface IWebCache : IUnknown
     HRESULT empty();
     HRESULT setDisabled([in] BOOL disabled);
     HRESULT disabled([out, retval] BOOL*);
+    HRESULT cacheFolder([out, retval] BSTR* location);
+    HRESULT setCacheFolder([in] BSTR location);
 }

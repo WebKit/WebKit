@@ -29,8 +29,13 @@
 
 #include "CFDictionaryPropertyBag.h"
 #include <WebCore/ApplicationCacheStorage.h>
+#include <WebCore/BString.h>
 #include <WebCore/MemoryCache.h>
 #include <WebCore/CrossOriginPreflightResultCache.h>
+
+#if USE(CURL)
+#include <WebCore/CurlCacheManager.h>
+#endif
 
 // WebCache ---------------------------------------------------------------------------
 
@@ -228,4 +233,26 @@ HRESULT STDMETHODCALLTYPE WebCache::disabled(
         return E_POINTER;
     *disabled = WebCore::memoryCache()->disabled();
     return S_OK;
+}
+
+HRESULT WebCache::cacheFolder(BSTR* location)
+{
+#if USE(CURL)
+    String cacheFolder = WebCore::CurlCacheManager::getInstance().getCacheDirectory();
+    *location = WebCore::BString(cacheFolder).release();
+    return S_OK;
+#else
+    return E_NOTIMPL;
+#endif
+}
+
+HRESULT WebCache::setCacheFolder(BSTR location)
+{
+#if USE(CURL)
+    String cacheFolder(location, SysStringLen(location));
+    WebCore::CurlCacheManager::getInstance().setCacheDirectory(cacheFolder);
+    return S_OK;
+#else
+    return E_NOTIMPL;
+#endif
 }

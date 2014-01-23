@@ -73,7 +73,7 @@ void CurlCacheManager::setCacheDirectory(const String& directory)
     }
 
     if (!fileExists(m_cacheDir)) {
-        if (makeAllDirectories(m_cacheDir)) {
+        if (!makeAllDirectories(m_cacheDir)) {
             LOG(Network, "Cache Error: Could not open or create cache directory! CacheManager disabled.\n");
             m_disabled = true;
             return;

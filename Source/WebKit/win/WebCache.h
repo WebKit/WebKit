@@ -47,13 +47,17 @@ public:
         /* [in][out] */ int* count,
         /* [retval][out] */ IPropertyBag **s);
     
-    virtual HRESULT STDMETHODCALLTYPE empty( void);
+    virtual HRESULT STDMETHODCALLTYPE empty(void);
     
     virtual HRESULT STDMETHODCALLTYPE setDisabled( 
         /* [in] */ BOOL disabled);
 
     virtual HRESULT STDMETHODCALLTYPE disabled(
         /* [out][retval] */ BOOL*);
+
+    virtual HRESULT STDMETHODCALLTYPE cacheFolder(/* [out, retval] */ BSTR* location);
+
+    virtual HRESULT STDMETHODCALLTYPE setCacheFolder(/* [in] */ BSTR location);
 
 protected:
     ULONG m_refCount;

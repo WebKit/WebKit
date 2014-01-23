@@ -1,3 +1,19 @@
+2014-01-23  peavo@outlook.com  <peavo@outlook.com>
+
+        [Curl] There is no way to specify cache folder.
+        https://bugs.webkit.org/show_bug.cgi?id=125028
+
+        Reviewed by Brent Fulgham.
+
+        Added interface methods to set and get cache folder location.
+
+        * Interfaces/IWebCache.idl:
+        * WebCache.cpp:
+        (WebCache::disabled):
+        (WebCache::cacheFolder):
+        (WebCache::setCacheFolder):
+        * WebCache.h:
+
 2014-01-21  peavo@outlook.com  <peavo@outlook.com>
 
         [WinCairo][Curl] Download request has incorrect user agent string.

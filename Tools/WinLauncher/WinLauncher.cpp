@@ -77,6 +77,7 @@ typedef _com_ptr_t<_com_IIID<IWebPreferences, &__uuidof(IWebPreferences)>> IWebP
 typedef _com_ptr_t<_com_IIID<IWebPreferencesPrivate, &__uuidof(IWebPreferencesPrivate)>> IWebPreferencesPrivatePtr;
 typedef _com_ptr_t<_com_IIID<IWebView, &__uuidof(IWebView)>> IWebViewPtr;
 typedef _com_ptr_t<_com_IIID<IWebViewPrivate, &__uuidof(IWebViewPrivate)>> IWebViewPrivatePtr;
+typedef _com_ptr_t<_com_IIID<IWebCache, &__uuidof(IWebCache)>> IWebCachePtr;
 
 // Global Variables:
 HINSTANCE hInst;                                // current instance
@@ -390,6 +391,21 @@ BOOL WINAPI DllMain(HINSTANCE dllInstance, DWORD reason, LPVOID)
     return TRUE;
 }
 
+static bool getAppDataFolder(_bstr_t& directory)
+{
+    wchar_t appDataDirectory[MAX_PATH];
+    if (FAILED(SHGetFolderPathW(0, CSIDL_LOCAL_APPDATA | CSIDL_FLAG_CREATE, 0, 0, appDataDirectory)))
+        return false;
+
+    wchar_t executablePath[MAX_PATH];
+    ::GetModuleFileNameW(0, executablePath, MAX_PATH);
+    ::PathRemoveExtensionW(executablePath);
+
+    directory = _bstr_t(appDataDirectory) + L"\\" + ::PathFindFileNameW(executablePath);
+
+    return true;
+}
+
 static bool setToDefaultPreferences()
 {
     HRESULT hr = gStandardPreferences->QueryInterface(IID_IWebPreferencesPrivate, reinterpret_cast<void**>(&gPrefsPrivate.GetInterfacePtr()));
@@ -416,18 +432,32 @@ static bool setToDefaultPreferences()
     return true;
 }
 
+static bool setCacheFolder()
+{
+    IWebCachePtr webCache;
+
+    HRESULT hr = WebKitCreateInstance(CLSID_WebCache, 0, __uuidof(webCache), reinterpret_cast<void**>(&webCache.GetInterfacePtr()));
+    if (FAILED(hr))
+        return false;
+
+    _bstr_t appDataFolder;
+    if (!getAppDataFolder(appDataFolder))
+        return false;
+
+    appDataFolder += L"\\cache";
+    webCache->setCacheFolder(appDataFolder);
+
+    return true;
+}
+
 void createCrashReport(EXCEPTION_POINTERS* exceptionPointers)
 {
-    wchar_t appDataDirectory[MAX_PATH];
-    if (FAILED(SHGetFolderPathW(0, CSIDL_LOCAL_APPDATA | CSIDL_FLAG_CREATE, 0, 0, appDataDirectory)))
+    _bstr_t directory;
+
+    if (!getAppDataFolder(directory))
         return;
 
-    wchar_t executablePath[MAX_PATH];
-    ::GetModuleFileNameW(0, executablePath, MAX_PATH);
-    ::PathRemoveExtensionW(executablePath);
-
-    std::wstring directory = std::wstring(appDataDirectory) + L"\\" + PathFindFileNameW(executablePath);
-    if (::SHCreateDirectoryEx(0, directory.c_str(), 0) != ERROR_SUCCESS
+    if (::SHCreateDirectoryEx(0, directory, 0) != ERROR_SUCCESS
         && ::GetLastError() != ERROR_FILE_EXISTS
         && ::GetLastError() != ERROR_ALREADY_EXISTS)
         return;
@@ -546,6 +576,9 @@ int WINAPI wWinMain(HINSTANCE, HINSTANCE, PWSTR, int nCmdShow)
 
     hr = WebKitCreateInstance(CLSID_WebHistory, 0, __uuidof(gWebHistory), reinterpret_cast<void**>(&gWebHistory.GetInterfacePtr()));
     if (FAILED(hr))
+        goto exit;
+
+    if (!setCacheFolder())
         goto exit;
 
     gWebHost = new WinLauncherWebHost();

@@ -1,3 +1,18 @@
+2014-01-23  peavo@outlook.com  <peavo@outlook.com>
+
+        [Curl] There is no way to specify cache folder.
+        https://bugs.webkit.org/show_bug.cgi?id=125028
+
+        Reviewed by Brent Fulgham.
+
+        Enable disc cache in WinLauncher by setting cache folder location.
+
+        * WinLauncher/WinLauncher.cpp:
+        (getAppDataFolder): Added function to get app data folder.
+        (setCacheFolder): Added function to set cache folder.
+        (createCrashReport): Use new getAppDataFolder function.
+        (wWinMain): Use function setCacheFolder to set cache folder location.
+
 2014-01-23  Daniel Bates  <dabates@apple.com>
 
         build-webkit --sdk=iphonesimulator doesn't think it's building iOS
