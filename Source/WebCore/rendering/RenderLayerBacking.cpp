@@ -123,7 +123,6 @@ RenderLayerBacking::RenderLayerBacking(RenderLayer& layer)
     , m_canCompositeFilters(false)
 #endif
     , m_backgroundLayerPaintsFixedRootBackground(false)
-    , m_didSwitchToFullTileCoverageDuringLoading(false)
 {
     Page* page = renderer().frame().page();
 
@@ -220,14 +219,7 @@ static TiledBacking::TileCoverage computeTileCoverage(RenderLayerBacking* backin
 
     TiledBacking::TileCoverage tileCoverage = TiledBacking::CoverageForVisibleArea;
     bool useMinimalTilesDuringLiveResize = frameView.inLiveResize();
-    bool useMinimalTilesDuringLoading = false;
-    // Avoid churn.
-    if (!backing->didSwitchToFullTileCoverageDuringLoading()) {
-        useMinimalTilesDuringLoading = !frameView.isVisuallyNonEmpty() || (frameView.frame().page()->progress().isMainLoadProgressing() && !frameView.wasScrolledByUser());
-        if (!useMinimalTilesDuringLoading)
-            backing->setDidSwitchToFullTileCoverageDuringLoading();
-    }
-    if (!(useMinimalTilesDuringLoading || useMinimalTilesDuringLiveResize)) {
+    if (frameView.speculativeTilingEnabled() && !useMinimalTilesDuringLiveResize) {
         bool clipsToExposedRect = !frameView.exposedRect().isInfinite();
         if (frameView.horizontalScrollbarMode() != ScrollbarAlwaysOff || clipsToExposedRect)
             tileCoverage |= TiledBacking::CoverageForHorizontalScrolling;

@@ -269,6 +269,7 @@ public:
 
     void updateLayerFlushThrottlingInAllFrames();
     void adjustTiledBackingCoverage();
+    bool speculativeTilingEnabled() const { return m_speculativeTilingEnabled; }
 
 #if ENABLE(DASHBOARD_SUPPORT) || ENABLE(DRAGGABLE_REGION)
     void updateAnnotatedRegions();
@@ -557,6 +558,9 @@ private:
     void updateDeferredRepaintDelayAfterRepaint();
     double adjustedDeferredRepaintDelay() const;
 
+    void enableSpeculativeTilingIfNeeded();
+    void speculativeTilingEnableTimerFired(Timer<FrameView>&);
+
     bool updateEmbeddedObjects();
     void updateEmbeddedObject(RenderEmbeddedObject&);
     void scrollToAnchor();
@@ -663,6 +667,9 @@ private:
 
     // Renderer to hold our custom scroll corner.
     RenderPtr<RenderScrollbarPart> m_scrollCorner;
+
+    bool m_speculativeTilingEnabled;
+    Timer<FrameView> m_speculativeTilingEnableTimer;
 
 #if PLATFORM(IOS)
     bool m_useCustomFixedPositionLayoutRect;

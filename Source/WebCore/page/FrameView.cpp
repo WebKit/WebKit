@@ -204,6 +204,8 @@ FrameView::FrameView(Frame& frame)
     , m_exposedRect(FloatRect::infiniteRect())
     , m_deferSetNeedsLayouts(0)
     , m_setNeedsLayoutWasDeferred(false)
+    , m_speculativeTilingEnabled(false)
+    , m_speculativeTilingEnableTimer(this, &FrameView::speculativeTilingEnableTimerFired)
 #if PLATFORM(IOS)
     , m_useCustomFixedPositionLayoutRect(false)
 #endif
@@ -2426,6 +2428,9 @@ void FrameView::updateLayerFlushThrottlingInAllFrames()
 
 void FrameView::adjustTiledBackingCoverage()
 {
+    if (!m_speculativeTilingEnabled)
+        enableSpeculativeTilingIfNeeded();
+
 #if USE(ACCELERATED_COMPOSITING)
     RenderView* renderView = this->renderView();
     if (renderView && renderView->layer()->backing())
@@ -2433,8 +2438,37 @@ void FrameView::adjustTiledBackingCoverage()
 #endif
 #if PLATFORM(IOS)
     if (TileCache* tileCache = this->tileCache())
-        tileCache->setSpeculativeTileCreationEnabled(!m_frame->page()->progress().isMainLoadProgressing());
+        tileCache->setSpeculativeTileCreationEnabled(m_speculativeTilingEnabled);
 #endif
+}
+
+static bool shouldEnableSpeculativeTilingDuringLoading(const FrameView& view)
+{
+    return view.isVisuallyNonEmpty() && !view.frame().page()->progress().isMainLoadProgressing();
+}
+
+void FrameView::enableSpeculativeTilingIfNeeded()
+{
+    ASSERT(!m_speculativeTilingEnabled);
+    if (m_wasScrolledByUser) {
+        m_speculativeTilingEnabled = true;
+        return;
+    }
+    if (!shouldEnableSpeculativeTilingDuringLoading(*this))
+        return;
+    if (m_speculativeTilingEnableTimer.isActive())
+        return;
+    // Delay enabling a bit as load completion may trigger further loading from scripts.
+    static const double speculativeTilingEnableDelay = 0.5;
+    m_speculativeTilingEnableTimer.startOneShot(speculativeTilingEnableDelay);
+}
+
+void FrameView::speculativeTilingEnableTimerFired(Timer<FrameView>&)
+{
+    if (m_speculativeTilingEnabled)
+        return;
+    m_speculativeTilingEnabled = shouldEnableSpeculativeTilingDuringLoading(*this);
+    adjustTiledBackingCoverage();
 }
 
 void FrameView::layoutTimerFired(Timer<FrameView>&)

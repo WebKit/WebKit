@@ -1,5 +1,37 @@
 2014-01-23  Antti Koivisto  <antti@apple.com>
 
+        Don't enable speculative tiles immediately after main load stops progressing
+        https://bugs.webkit.org/show_bug.cgi?id=127507
+
+        Reviewed by Andreas Kling.
+
+        It is common for timers and events to trigger more loading after the initial main frame loading
+        has completed. We should delay a bit before enabling speculative tiles and keep them disabled 
+        if loading still continues.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::FrameView):
+        (WebCore::FrameView::adjustTiledBackingCoverage):
+        (WebCore::shouldEnableSpeculativeTilingDuringLoading):
+        (WebCore::FrameView::enableSpeculativeTilingIfNeeded):
+        
+            When load progression stops wait 0.5s before enabling speculative tiles.
+
+        (WebCore::FrameView::speculativeTilingEnableTimerFired):
+        
+            Don't enable speculative tiles if the progression has started again. Instead restart the timer.
+
+        * page/FrameView.h:
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::RenderLayerBacking):
+        (WebCore::computeTileCoverage):
+        
+            Move the FrameView level code to FrameView (so we don't need to add a timer to every RenderLayerBacking).
+
+        * rendering/RenderLayerBacking.h:
+
+2014-01-23  Antti Koivisto  <antti@apple.com>
+
         Loads started soon after main frame completion should be considered part of the main load
         https://bugs.webkit.org/show_bug.cgi?id=127504
 
