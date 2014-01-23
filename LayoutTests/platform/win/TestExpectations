@@ -2883,3 +2883,6 @@ webkit.org/b/127480 fast/dom/gc-attribute-node.html [ Failure ]
 webkit.org/b/127485 platform/win/accessibility/option-element-selection-and-focus-events.html [ Failure ]
 webkit.org/b/127485 platform/win/accessibility/parent-element.html [ Failure ]
 webkit.org/b/127485 platform/win/accessibility/select-element-valuechange-event.html [ Failure ]
+
+# REGRESSION (r159892): Failing JavaScript test
+webkit.org/b/127492 js/dom/date-big-constructor.html [ Failure ]

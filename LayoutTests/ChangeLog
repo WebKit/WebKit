@@ -1,3 +1,16 @@
+2014-01-23  Daniel Bates  <dabates@apple.com>
+
+        [Win] Mark test js/dom/date-big-constructor.html as failing and add Windows expected result
+
+        Mark the test js/dom/date-big-constructor.html as failing while we investigate
+        regression in <https://bugs.webkit.org/show_bug.cgi?id=127492>. Also add Windows expected
+        result for test fast/css/relative-position-replaced-in-table-display-crash.html as the test
+        passes but differs in whitespace. We'll investigate this whitespace difference in
+        <https://bugs.webkit.org/show_bug.cgi?id=127479>.
+
+        * platform/win/TestExpectations:
+        * platform/win/fast/css/relative-position-replaced-in-table-display-crash-expected.txt: Added.
+
 2014-01-23  Michał Pakuła vel Rutka  <m.pakula@samsung.com>
 
         Unreviewed EFL gardening
