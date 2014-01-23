@@ -1,3 +1,14 @@
+2014-01-22  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Remove CSS3_TEXT_DECORATION define
+        https://bugs.webkit.org/show_bug.cgi?id=127333
+
+        Reviewed by Simon Fraser.
+
+        This is required for unprefixing the text-decoration-* CSS properties.
+
+        * Configurations/FeatureDefines.xcconfig:
+
 2014-01-22  Dan Bernstein  <mitz@apple.com>
 
         Build fix for iOS clients of WebUIDelegatePrivate.h.

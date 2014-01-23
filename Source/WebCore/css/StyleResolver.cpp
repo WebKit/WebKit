@@ -1581,14 +1581,12 @@ static bool shouldApplyPropertyInParseOrder(CSSPropertyID propertyID)
     case CSSPropertyBorderImageOutset:
     case CSSPropertyBorderImageRepeat:
     case CSSPropertyBorderImageWidth:
-#if ENABLE(CSS3_TEXT_DECORATION)
     case CSSPropertyWebkitTextDecoration:
     case CSSPropertyWebkitTextDecorationLine:
     case CSSPropertyWebkitTextDecorationStyle:
     case CSSPropertyWebkitTextDecorationColor:
     case CSSPropertyWebkitTextDecorationSkip:
     case CSSPropertyWebkitTextUnderlinePosition:
-#endif
     case CSSPropertyTextDecoration:
         return true;
     default:
@@ -1858,9 +1856,7 @@ inline bool isValidVisitedLinkProperty(CSSPropertyID id)
     case CSSPropertyColor:
     case CSSPropertyOutlineColor:
     case CSSPropertyWebkitColumnRuleColor:
-#if ENABLE(CSS3_TEXT_DECORATION)
     case CSSPropertyWebkitTextDecorationColor:
-#endif
     case CSSPropertyWebkitTextEmphasisColor:
     case CSSPropertyWebkitTextFillColor:
     case CSSPropertyWebkitTextStrokeColor:
@@ -3071,13 +3067,11 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue* value)
     case CSSPropertyWebkitTextAlignLast:
     case CSSPropertyWebkitTextJustify:
 #endif // CSS3_TEXT
-#if ENABLE(CSS3_TEXT_DECORATION)
     case CSSPropertyWebkitTextDecorationLine:
     case CSSPropertyWebkitTextDecorationStyle:
     case CSSPropertyWebkitTextDecorationColor:
     case CSSPropertyWebkitTextDecorationSkip:
     case CSSPropertyWebkitTextUnderlinePosition:
-#endif
     case CSSPropertyWebkitTextEmphasisColor:
     case CSSPropertyWebkitTextEmphasisPosition:
     case CSSPropertyWebkitTextEmphasisStyle:

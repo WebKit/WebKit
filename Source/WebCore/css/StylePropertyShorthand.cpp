@@ -424,7 +424,6 @@ StylePropertyShorthand webkitMaskRepeatShorthand()
     return StylePropertyShorthand(CSSPropertyWebkitMaskRepeat, maskRepeatProperties, WTF_ARRAY_LENGTH(maskRepeatProperties));
 }
 
-#if ENABLE(CSS3_TEXT_DECORATION)
 StylePropertyShorthand webkitTextDecorationShorthand()
 {
     static const CSSPropertyID textDecorationProperties[] = {
@@ -434,7 +433,6 @@ StylePropertyShorthand webkitTextDecorationShorthand()
     };
     return StylePropertyShorthand(CSSPropertyWebkitTextDecoration, textDecorationProperties, WTF_ARRAY_LENGTH(textDecorationProperties));
 }
-#endif
 
 StylePropertyShorthand webkitTextEmphasisShorthand()
 {
@@ -580,10 +578,8 @@ StylePropertyShorthand shorthandForProperty(CSSPropertyID propertyID)
         return webkitTransitionShorthand();
     case CSSPropertyWebkitTransformOrigin:
         return webkitTransformOriginShorthand();
-#if ENABLE(CSS3_TEXT_DECORATION)
     case CSSPropertyWebkitTextDecoration:
         return webkitTextDecorationShorthand();
-#endif
 #if ENABLE(SVG)
     case CSSPropertyMarker:
         return markerShorthand();
@@ -802,12 +798,10 @@ Vector<StylePropertyShorthand> matchingShorthandsForLonghand(CSSPropertyID prope
     case CSSPropertyMinHeight:
     case CSSPropertyMaxHeight:
         return makeVector(heightShorthand());
-#if ENABLE(CSS3_TEXT_DECORATION)
     case CSSPropertyWebkitTextDecorationLine:
     case CSSPropertyWebkitTextDecorationStyle:
     case CSSPropertyWebkitTextDecorationColor:
         return makeVector(webkitTextDecorationShorthand());
-#endif
 #if ENABLE(SVG)
     case CSSPropertyMarkerStart:
     case CSSPropertyMarkerMid:

@@ -1,3 +1,73 @@
+2014-01-22  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Remove CSS3_TEXT_DECORATION define
+        https://bugs.webkit.org/show_bug.cgi?id=127333
+
+        Reviewed by Simon Fraser.
+
+        This is required for unprefixing the text-decoration-* CSS properties.
+
+        No new tests are necessary becase the flag was already on by default.
+
+        * Configurations/FeatureDefines.xcconfig:
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::renderTextDecorationSkipFlagsToCSSValue):
+        (WebCore::ComputedStyleExtractor::propertyValue):
+        * css/CSSParser.cpp:
+        (WebCore::isColorPropertyID):
+        (WebCore::CSSParser::parseValue):
+        (WebCore::CSSParser::addTextDecorationProperty):
+        (WebCore::CSSParser::parseTextUnderlinePosition):
+        * css/CSSParser.h:
+        * css/CSSPrimitiveValueMappings.h:
+        (WebCore::CSSPrimitiveValue::operator TextUnderlinePosition):
+        * css/CSSPropertyNames.in:
+        * css/CSSValueKeywords.in:
+        * css/DeprecatedStyleBuilder.cpp:
+        (WebCore::DeprecatedStyleBuilder::DeprecatedStyleBuilder):
+        * css/StylePropertyShorthand.cpp:
+        (WebCore::webkitTextDecorationShorthand):
+        (WebCore::shorthandForProperty):
+        (WebCore::matchingShorthandsForLonghand):
+        * css/StylePropertyShorthand.h:
+        * css/StyleResolver.cpp:
+        (WebCore::shouldApplyPropertyInParseOrder):
+        (WebCore::isValidVisitedLinkProperty):
+        (WebCore::StyleResolver::applyProperty):
+        * platform/graphics/GraphicsContext.h:
+        * platform/graphics/cairo/GraphicsContextCairo.cpp:
+        (WebCore::GraphicsContext::setPlatformStrokeStyle):
+        * platform/graphics/cg/GraphicsContextCG.cpp:
+        (WebCore::GraphicsContext::platformInit):
+        * platform/graphics/wince/GraphicsContextWinCE.cpp:
+        (WebCore::createPen):
+        * rendering/InlineFlowBox.cpp:
+        (WebCore::InlineFlowBox::computeMaxLogicalTop):
+        * rendering/InlineFlowBox.h:
+        * rendering/InlineTextBox.cpp:
+        (WebCore::textDecorationStyleToStrokeStyle):
+        (WebCore::boundingBoxForAllActiveDecorations):
+        (WebCore::InlineTextBox::paintDecoration):
+        * rendering/RenderObject.cpp:
+        (WebCore::decorationColor):
+        * rendering/RootInlineBox.cpp:
+        (WebCore::RootInlineBox::maxLogicalTop):
+        * rendering/RootInlineBox.h:
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::changeRequiresRepaintIfTextOrBorderOrOutline):
+        (WebCore::RenderStyle::colorIncludingFallback):
+        (WebCore::RenderStyle::visitedDependentColor):
+        * rendering/style/RenderStyle.h:
+        * rendering/style/RenderStyleConstants.h:
+        * rendering/style/StyleRareInheritedData.cpp:
+        (WebCore::StyleRareInheritedData::StyleRareInheritedData):
+        (WebCore::StyleRareInheritedData::operator==):
+        * rendering/style/StyleRareInheritedData.h:
+        * rendering/style/StyleRareNonInheritedData.cpp:
+        (WebCore::StyleRareNonInheritedData::StyleRareNonInheritedData):
+        (WebCore::StyleRareNonInheritedData::operator==):
+        * rendering/style/StyleRareNonInheritedData.h:
+
 2014-01-22  Chris Fleizach  <cfleizach@apple.com>
 
         AX: Do not return an accessible name for an object just because it has tabindex=0

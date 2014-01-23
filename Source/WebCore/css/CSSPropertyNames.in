@@ -391,14 +391,12 @@ z-index
 -webkit-text-align-last [Inherited]
 -webkit-text-justify [Inherited]
 #endif
-#if defined(ENABLE_CSS3_TEXT_DECORATION) && ENABLE_CSS3_TEXT_DECORATION
 -webkit-text-decoration
 -webkit-text-decoration-line
 -webkit-text-decoration-style
 -webkit-text-decoration-color
 -webkit-text-decoration-skip [Inherited]
 -webkit-text-underline-position [Inherited]
-#endif
 -webkit-text-decorations-in-effect [Inherited]
 -webkit-text-emphasis [Inherited]
 -epub-text-emphasis = -webkit-text-emphasis

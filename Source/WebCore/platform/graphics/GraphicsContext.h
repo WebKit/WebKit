@@ -102,10 +102,8 @@ namespace WebCore {
         SolidStroke,
         DottedStroke,
         DashedStroke,
-#if ENABLE(CSS3_TEXT_DECORATION)
         DoubleStroke,
         WavyStroke,
-#endif // CSS3_TEXT_DECORATION
     };
 
     enum InterpolationQuality {

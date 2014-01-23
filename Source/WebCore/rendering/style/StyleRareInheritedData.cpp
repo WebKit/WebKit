@@ -31,7 +31,7 @@
 
 namespace WebCore {
 
-struct SameSizeAsStyleRareInheritedData : public RefCounted<SameSizeAsStyleRareInheritedData> {
+struct GreaterThanOrSameSizeAsStyleRareInheritedData : public RefCounted<GreaterThanOrSameSizeAsStyleRareInheritedData> {
     void* styleImage;
     Color firstColor;
     float firstFloat;
@@ -41,10 +41,7 @@ struct SameSizeAsStyleRareInheritedData : public RefCounted<SameSizeAsStyleRareI
     void* refPtrs[2];
     Length lengths[2];
     float secondFloat;
-    unsigned m_bitfields[2];
-#if ENABLE(CSS3_TEXT_DECORATION) && ENABLE(CSS_IMAGE_ORIENTATION)
-    unsigned m_bitfieldsExtra;
-#endif
+    unsigned m_bitfields[4];
     short pagedMediaShorts[2];
     unsigned unsigneds[1];
     short hyphenationShorts[3];
@@ -65,7 +62,7 @@ struct SameSizeAsStyleRareInheritedData : public RefCounted<SameSizeAsStyleRareI
 #endif
 };
 
-COMPILE_ASSERT(sizeof(StyleRareInheritedData) == sizeof(SameSizeAsStyleRareInheritedData), StyleRareInheritedData_should_bit_pack);
+COMPILE_ASSERT(sizeof(StyleRareInheritedData) <= sizeof(GreaterThanOrSameSizeAsStyleRareInheritedData), StyleRareInheritedData_should_bit_pack);
 
 StyleRareInheritedData::StyleRareInheritedData()
     : listStyleImage(RenderStyle::initialListStyleImage())
@@ -113,10 +110,8 @@ StyleRareInheritedData::StyleRareInheritedData()
     , m_textAlignLast(RenderStyle::initialTextAlignLast())
     , m_textJustify(RenderStyle::initialTextJustify())
 #endif // CSS3_TEXT
-#if ENABLE(CSS3_TEXT_DECORATION)
     , m_textDecorationSkip(RenderStyle::initialTextDecorationSkip())
     , m_textUnderlinePosition(RenderStyle::initialTextUnderlinePosition())
-#endif
     , m_rubyPosition(RenderStyle::initialRubyPosition())
 #if PLATFORM(IOS)
     , touchCalloutEnabled(RenderStyle::initialTouchCalloutEnabled())
@@ -197,10 +192,8 @@ inline StyleRareInheritedData::StyleRareInheritedData(const StyleRareInheritedDa
     , m_textAlignLast(o.m_textAlignLast)
     , m_textJustify(o.m_textJustify)
 #endif // CSS3_TEXT
-#if ENABLE(CSS3_TEXT_DECORATION)
     , m_textDecorationSkip(o.m_textDecorationSkip)
     , m_textUnderlinePosition(o.m_textUnderlinePosition)
-#endif
     , m_rubyPosition(o.m_rubyPosition)
 #if PLATFORM(IOS)
     , touchCalloutEnabled(o.touchCalloutEnabled)
@@ -328,10 +321,8 @@ bool StyleRareInheritedData::operator==(const StyleRareInheritedData& o) const
         && m_textAlignLast == o.m_textAlignLast
         && m_textJustify == o.m_textJustify
 #endif // CSS3_TEXT
-#if ENABLE(CSS3_TEXT_DECORATION)
         && m_textDecorationSkip == o.m_textDecorationSkip
         && m_textUnderlinePosition == o.m_textUnderlinePosition
-#endif
         && m_rubyPosition == o.m_rubyPosition
         && m_lineSnap == o.m_lineSnap
         && m_lineAlign == o.m_lineAlign

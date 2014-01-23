@@ -195,13 +195,11 @@ static const CSSPropertyID computedProperties[] = {
     CSSPropertyWebkitTextAlignLast,
     CSSPropertyWebkitTextJustify,
 #endif // CSS3_TEXT
-#if ENABLE(CSS3_TEXT_DECORATION)
     CSSPropertyWebkitTextDecorationLine,
     CSSPropertyWebkitTextDecorationStyle,
     CSSPropertyWebkitTextDecorationColor,
     CSSPropertyWebkitTextDecorationSkip,
     CSSPropertyWebkitTextUnderlinePosition,
-#endif // CSS3_TEXT_DECORATION
     CSSPropertyTextIndent,
     CSSPropertyTextRendering,
     CSSPropertyTextShadow,
@@ -1429,7 +1427,6 @@ static PassRef<CSSValue> renderTextDecorationFlagsToCSSValue(int textDecoration)
     return list.releaseNonNull();
 }
 
-#if ENABLE(CSS3_TEXT_DECORATION)
 static PassRef<CSSValue> renderTextDecorationStyleFlagsToCSSValue(TextDecorationStyle textDecorationStyle)
 {
     switch (textDecorationStyle) {
@@ -1461,7 +1458,6 @@ static PassRef<CSSValue> renderTextDecorationSkipFlagsToCSSValue(TextDecorationS
     ASSERT_NOT_REACHED();
     return cssValuePool().createExplicitInitialValue();
 }
-#endif // CSS3_TEXT_DECORATION
 
 static PassRef<CSSValue> renderEmphasisPositionFlagsToCSSValue(TextEmphasisPosition textEmphasisPosition)
 {
@@ -2422,7 +2418,6 @@ PassRefPtr<CSSValue> ComputedStyleExtractor::propertyValue(CSSPropertyID propert
         case CSSPropertyWebkitTextJustify:
             return cssValuePool().createValue(style->textJustify());
 #endif // CSS3_TEXT
-#if ENABLE(CSS3_TEXT_DECORATION)
         case CSSPropertyWebkitTextDecoration:
             return getCSSPropertyValuesForShorthandProperties(webkitTextDecorationShorthand());
         case CSSPropertyWebkitTextDecorationLine:
@@ -2435,7 +2430,6 @@ PassRefPtr<CSSValue> ComputedStyleExtractor::propertyValue(CSSPropertyID propert
             return renderTextDecorationSkipFlagsToCSSValue(style->textDecorationSkip());
         case CSSPropertyWebkitTextUnderlinePosition:
             return cssValuePool().createValue(style->textUnderlinePosition());
-#endif
         case CSSPropertyWebkitTextDecorationsInEffect:
             return renderTextDecorationFlagsToCSSValue(style->textDecorationsInEffect());
         case CSSPropertyWebkitTextFillColor:

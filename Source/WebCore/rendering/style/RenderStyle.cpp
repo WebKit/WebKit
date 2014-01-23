@@ -765,11 +765,9 @@ bool RenderStyle::changeRequiresRepaintIfTextOrBorderOrOutline(const RenderStyle
     if (inherited->color != other->inherited->color
         || inherited_flags._text_decorations != other->inherited_flags._text_decorations
         || visual->textDecoration != other->visual->textDecoration
-#if ENABLE(CSS3_TEXT_DECORATION)
         || rareNonInheritedData->m_textDecorationStyle != other->rareNonInheritedData->m_textDecorationStyle
         || rareNonInheritedData->m_textDecorationColor != other->rareNonInheritedData->m_textDecorationColor
         || rareInheritedData->m_textDecorationSkip != other->rareInheritedData->m_textDecorationSkip
-#endif // CSS3_TEXT_DECORATION
         || rareInheritedData->textFillColor != other->rareInheritedData->textFillColor
         || rareInheritedData->textStrokeColor != other->rareInheritedData->textStrokeColor
         || rareInheritedData->textEmphasisColor != other->rareInheritedData->textEmphasisColor
@@ -1597,11 +1595,9 @@ Color RenderStyle::colorIncludingFallback(int colorProperty, bool visitedLink) c
     case CSSPropertyWebkitColumnRuleColor:
         result = visitedLink ? visitedLinkColumnRuleColor() : columnRuleColor();
         break;
-#if ENABLE(CSS3_TEXT_DECORATION)
     case CSSPropertyWebkitTextDecorationColor:
         // Text decoration color fallback is handled in RenderObject::decorationColor.
         return visitedLink ? visitedLinkTextDecorationColor() : textDecorationColor();
-#endif
     case CSSPropertyWebkitTextEmphasisColor:
         result = visitedLink ? visitedLinkTextEmphasisColor() : textEmphasisColor();
         break;
@@ -1633,11 +1629,9 @@ Color RenderStyle::visitedDependentColor(int colorProperty) const
 
     Color visitedColor = colorIncludingFallback(colorProperty, true);
 
-#if ENABLE(CSS3_TEXT_DECORATION)
     // Text decoration color validity is preserved (checked in RenderObject::decorationColor).
     if (colorProperty == CSSPropertyWebkitTextDecorationColor)
         return visitedColor;
-#endif
 
     // FIXME: Technically someone could explicitly specify the color transparent, but for now we'll just
     // assume that if the background color is transparent that it wasn't set. Note that it's weird that

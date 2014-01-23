@@ -113,9 +113,7 @@ StylePropertyShorthand webkitTransitionShorthand();
 StylePropertyShorthand webkitTransformOriginShorthand();
 StylePropertyShorthand widthShorthand();
 
-#if ENABLE(CSS3_TEXT_DECORATION)
 StylePropertyShorthand webkitTextDecorationShorthand();
-#endif
 
 #if ENABLE(SVG)
 StylePropertyShorthand markerShorthand();

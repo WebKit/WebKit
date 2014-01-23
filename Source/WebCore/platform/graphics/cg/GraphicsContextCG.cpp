@@ -355,10 +355,8 @@ void GraphicsContext::drawLine(const IntPoint& point1, const IntPoint& point2)
     switch (strokeStyle()) {
     case NoStroke:
     case SolidStroke:
-#if ENABLE(CSS3_TEXT_DECORATION)
     case DoubleStroke:
     case WavyStroke: // FIXME: https://bugs.webkit.org/show_bug.cgi?id=94112 - Needs platform support.
-#endif // CSS3_TEXT_DECORATION
         break;
     case DottedStroke:
         patWidth = (int)width;
