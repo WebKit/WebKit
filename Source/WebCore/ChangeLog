@@ -1,3 +1,62 @@
+2014-01-22  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        REGRESSION(r161967): Crash in WebCore::CachedSVGDocumentReference::load
+        <https://webkit.org/b/127151>
+        <rdar://problem/15840760>
+
+        There were two issues introduced here; the first is a use-after-free of
+        CachedSVGDocumentReference objects.
+
+        The previous code kept a map from FilterOperation ->
+        RefPtr<WebKitCSSSVGDocumentValue>, which retained the
+        CachedSVGDocument. In r161967, this was changed to use a weak HashSet,
+        which allows stale CachedSVGDocumentReferences in the pending document
+        set if the owning FilterOperation is deleted. To fix this, we'll keep a
+        vector of RefPtr<FilterOperation> with pending SVG documents.
+
+        The second issue is a null deref in CachedSVGDocumentReference::load();
+        CachedResourceLoader::requestSVGDocument() can return 0 if (for
+        example) an invalid URL is passed. r161967 removed a null check as part
+        of the refactoring.
+
+        Reviewed by Dirk Schulze.
+
+        Tests: css3/filters/crash-filter-animation-invalid-url.html
+               css3/filters/crash-invalid-url.html
+
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::State::clear):
+        Use new member var name.
+        (WebCore::StyleResolver::loadPendingSVGDocuments):
+        For each FilterOperation with a pending SVG document, get or create a
+        CachedSVGDocumentReference, and tell it to load. Changed to use new
+        function names.
+        (WebCore::StyleResolver::createFilterOperations):
+        Append the FilterOperation to the list of FilterOperations with
+        unloaded SVG documents.
+
+        * css/StyleResolver.h:
+        Changed from using PendingSVGDocumentSet, a weak set, to
+        a Vector<RefPtr<ReferenceFilterOperation>>.
+        (WebCore::StyleResolver::State::filtersWithPendingSVGDocuments):
+        Return the vector.
+
+        * loader/cache/CachedSVGDocumentReference.cpp:
+        (WebCore::CachedSVGDocumentReference::~CachedSVGDocumentReference):
+        Null check m_document rather than checking m_loadRequested.
+        m_loadRequested may be true when m_document is 0.
+        (WebCore::CachedSVGDocumentReference::load):
+        Null check the result of CachedResourceLoader::requestSVGDocument().
+
+        * platform/graphics/filters/FilterOperation.cpp:
+        (WebCore::ReferenceFilterOperation::getOrCreateCachedSVGDocumentReference):
+        Create, if necessary, and return the CachedSVGDocumentReference.
+
+        * platform/graphics/filters/FilterOperation.h:
+        Replaced createCachedSVGDocumentReference() with
+        getOrCreateCachedSVGDocumentReference(), which makes for slightly
+        cleaner code.
+
 2014-01-23  Antti Koivisto  <antti@apple.com>
 
         Don't enable speculative tiles immediately after main load stops progressing

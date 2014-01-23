@@ -48,9 +48,10 @@ ReferenceFilterOperation::~ReferenceFilterOperation()
 }
 
 #if ENABLE(SVG)
-CachedSVGDocumentReference* ReferenceFilterOperation::createCachedSVGDocumentReference()
+CachedSVGDocumentReference* ReferenceFilterOperation::getOrCreateCachedSVGDocumentReference()
 {
-    m_cachedSVGDocumentReference = std::make_unique<CachedSVGDocumentReference>(m_url);
+    if (!m_cachedSVGDocumentReference)
+        m_cachedSVGDocumentReference = std::make_unique<CachedSVGDocumentReference>(m_url);
     return m_cachedSVGDocumentReference.get();
 }
 #endif

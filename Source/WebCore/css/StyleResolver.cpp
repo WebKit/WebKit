@@ -260,7 +260,7 @@ inline void StyleResolver::State::clear()
     m_hasPendingShaders = false;
 #endif
 #if ENABLE(CSS_FILTERS) && ENABLE(SVG)
-    m_pendingSVGDocuments.clear();
+    m_filtersWithPendingSVGDocuments.clear();
 #endif
 }
 
@@ -3415,13 +3415,14 @@ void StyleResolver::loadPendingSVGDocuments()
     // style is NULL. We don't know exactly why this happens. Our guess is
     // reentering styleForElement().
     ASSERT(state.style());
-    if (!state.style() || !state.style()->hasFilter() || state.pendingSVGDocuments().isEmpty())
+    if (!state.style() || !state.style()->hasFilter() || state.filtersWithPendingSVGDocuments().isEmpty())
         return;
 
     CachedResourceLoader* cachedResourceLoader = state.document().cachedResourceLoader();
-    for (auto pendingDocument : state.pendingSVGDocuments())
-        pendingDocument->load(cachedResourceLoader);
-    state.pendingSVGDocuments().clear();
+    for (auto filterOperation : state.filtersWithPendingSVGDocuments())
+        filterOperation->getOrCreateCachedSVGDocumentReference()->load(cachedResourceLoader);
+
+    state.filtersWithPendingSVGDocuments().clear();
 }
 #endif
 
@@ -3818,7 +3819,8 @@ bool StyleResolver::createFilterOperations(CSSValue* inValue, FilterOperations& 
 
             RefPtr<ReferenceFilterOperation> operation = ReferenceFilterOperation::create(cssUrl, url.fragmentIdentifier(), operationType);
             if (SVGURIReference::isExternalURIReference(cssUrl, m_state.document()))
-                m_state.pendingSVGDocuments().add(operation->createCachedSVGDocumentReference());
+                state.filtersWithPendingSVGDocuments().append(operation);
+
             operations.operations().append(operation);
 #endif
             continue;

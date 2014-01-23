@@ -166,7 +166,7 @@ public:
 
 #if ENABLE(SVG)
     CachedSVGDocumentReference* cachedSVGDocumentReference() const { return m_cachedSVGDocumentReference.get(); }
-    CachedSVGDocumentReference* createCachedSVGDocumentReference();
+    CachedSVGDocumentReference* getOrCreateCachedSVGDocumentReference();
 #endif
 
     FilterEffect* filterEffect() const { return m_filterEffect.get(); }

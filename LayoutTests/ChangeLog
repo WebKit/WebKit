@@ -1,3 +1,16 @@
+2014-01-22  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        REGRESSION(r161967): Crash in WebCore::CachedSVGDocumentReference::load
+        <https://webkit.org/b/127151>
+        <rdar://problem/15840760>
+
+        Reviewed by Dirk Schulze.
+
+        * css3/filters/crash-filter-animation-invalid-url-expected.txt: Added.
+        * css3/filters/crash-filter-animation-invalid-url.html: Added.
+        * css3/filters/crash-invalid-url-expected.txt: Added.
+        * css3/filters/crash-invalid-url.html: Added.
+
 2014-01-23  Alexey Proskuryakov  <ap@apple.com>
 
         svg/animations/smil-syncbase-self-dependency.svg is very flaky

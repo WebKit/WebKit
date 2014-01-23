@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<!-- Test passes if doesn't crash. -->
+<style>
+    a {
+        -webkit-animation-name: n;
+        -webkit-animation-duration: .01s;
+    }
+    @-webkit-keyframes n {
+        from {
+            -webkit-filter: url(z);
+        }
+    }
+</style>
+
+
+WebKit bug #127151. This test passes if it doesn't crash.
+
+<br><br>
+<a href="" id="a">XXX</div>
+
+<script>
+    if (window.testRunner) {
+        window.testRunner.dumpAsText(true);
+        window.testRunner.waitUntilDone();
+    }
+    document.getElementById("a").addEventListener('webkitAnimationStart', function() {
+        window.testRunner.notifyDone();
+    }, false);
+</script>
