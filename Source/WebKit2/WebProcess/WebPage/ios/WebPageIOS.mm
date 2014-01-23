@@ -383,7 +383,7 @@ void WebPage::selectWithGesture(const IntPoint& point, uint32_t granularity, uin
     Frame& frame = m_page->focusController().focusedOrMainFrame();
     FloatPoint adjustedPoint(point);
 
-    IntPoint constrainedPoint = constrainPoint(point, &frame, m_assistedNode.get());
+    IntPoint constrainedPoint = m_assistedNode ? constrainPoint(point, &frame, m_assistedNode.get()) : point;
     VisiblePosition position = frame.visiblePositionForPoint(constrainedPoint);
     if (position.isNull()) {
         send(Messages::WebPageProxy::GestureCallback(point, gestureType, gestureState, 0, callbackID));
@@ -478,7 +478,12 @@ void WebPage::selectWithGesture(const IntPoint& point, uint32_t granularity, uin
         } else
             range = enclosingTextUnitOfGranularity(position, ParagraphGranularity, DirectionForward);
         break;
-        
+
+    case WKGestureMakeWebSelection:
+        // FIXME: Here we should implement the logic for block selections.
+        range = wordRangeFromPosition(position);
+        break;
+
     default:
         break;
     }
@@ -585,9 +590,12 @@ void WebPage::updateSelectionWithTouches(const IntPoint& point, uint32_t touches
             break;
         
         case WKSelectionTouchEnded:
-            result = closestWordBoundaryForPosition(position);
-            if (result.isNotNull())
-                range = Range::create(*frame.document(), result, result);
+            if (frame.selection().isContentEditable()) {
+                result = closestWordBoundaryForPosition(position);
+                if (result.isNotNull())
+                    range = Range::create(*frame.document(), result, result);
+            } else
+                range = rangeForPosition(&frame, position, baseIsStart);
             break;
 
         case WKSelectionTouchEndedMovingForward:

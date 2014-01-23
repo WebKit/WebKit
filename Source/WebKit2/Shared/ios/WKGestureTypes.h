@@ -41,7 +41,8 @@ typedef enum {
     WKGestureOneFingerTripleTap,
     WKGestureTwoFingerSingleTap,
     WKGestureTwoFingerRangedSelectGesture,
-    WKGestureTapOnLinkWithGesture
+    WKGestureTapOnLinkWithGesture,
+    WKGestureMakeWebSelection
 } WKGestureType;
 
 typedef enum {

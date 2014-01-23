@@ -152,7 +152,7 @@ struct WKAutoCorrectionData{
     RetainPtr<UIWKSelectionAssistant> _webSelectionAssistant;
 
     UITextInputTraits *_traits;
-    BOOL _canBeFirstResponder;
+    BOOL _isEditable;
     UIWebFormAccessory *_accessory;
     id <UITextInputDelegate> _inputDelegate;
     BOOL _showingTextStyleOptions;
@@ -241,9 +241,16 @@ struct WKAutoCorrectionData{
     _page = page;
 }
 
+- (BOOL)isEditable
+{
+    return _isEditable;
+}
+
 - (BOOL)canBecomeFirstResponder
 {
-    return _canBeFirstResponder;
+    // We might want to return something else
+    // if we decide to enable/disable interaction programmatically.
+    return YES;
 }
 
 - (BOOL)resignFirstResponder
@@ -515,6 +522,31 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
     return _positionInformation.nodeAtPositionIsAssistedNode;
 }
 
+- (NSArray *)webSelectionRects
+{
+    unsigned size = _page->editorState().selectionRects.size();
+    if (!size)
+        return nil;
+
+    NSMutableArray *webRects = [NSMutableArray arrayWithCapacity:size];
+    for (unsigned i = 0; i < size; i++) {
+        const WebCore::SelectionRect& coreRect = _page->editorState().selectionRects[i];
+        WebSelectionRect *webRect = [WebSelectionRect selectionRect];
+        webRect.rect = coreRect.rect();
+        webRect.writingDirection = coreRect.direction() == LTR ? WKWritingDirectionLeftToRight : WKWritingDirectionRightToLeft;
+        webRect.isLineBreak = coreRect.isLineBreak();
+        webRect.isFirstOnLine = coreRect.isFirstOnLine();
+        webRect.isLastOnLine = coreRect.isLastOnLine();
+        webRect.containsStart = coreRect.containsStart();
+        webRect.containsEnd = coreRect.containsEnd();
+        webRect.isInFixedPosition = coreRect.isInFixedPosition();
+        webRect.isHorizontal = coreRect.isHorizontal();
+        [webRects addObject:webRect];
+    }
+
+    return webRects;
+}
+
 - (void)_highlightLongPressRecognized:(UILongPressGestureRecognizer *)gestureRecognizer
 {
     ASSERT(gestureRecognizer == _highlightLongPressGestureRecognizer);
@@ -525,7 +557,8 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
         _isTapHighlightIDValid = YES;
         break;
     case UIGestureRecognizerStateEnded:
-        [self _attemptClickAtLocation:[gestureRecognizer startPoint]];
+        if (!_positionInformation.clickableElementName.isEmpty())
+            [self _attemptClickAtLocation:[gestureRecognizer startPoint]];
         break;
     case UIGestureRecognizerStateCancelled:
         [self _cancelInteraction];
@@ -556,6 +589,13 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
 
 - (void)_singleTapRecognized:(UITapGestureRecognizer *)gestureRecognizer
 {
+    ASSERT(gestureRecognizer == _singleTapGestureRecognizer);
+
+    if (![_webSelectionAssistant shouldHandleSingleTapAtPoint:gestureRecognizer.location])
+        return;
+
+    [_webSelectionAssistant clearSelection];
+
     [self _attemptClickAtLocation:[gestureRecognizer location]];
 }
 
@@ -618,7 +658,7 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
 
 - (UIView *)inputAccessoryView
 {
-    if (!_canBeFirstResponder)
+    if (!_isEditable)
         return nil;
     
     if (!_accessory) {
@@ -669,8 +709,7 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
 
 - (BOOL)canPerformAction:(SEL)action withSender:(id)sender
 {
-    // FIXME: need to handle hasWebSelection
-    BOOL hasWebSelection = NO;
+    BOOL hasWebSelection = _webSelectionAssistant && !CGRectIsEmpty(_webSelectionAssistant.get().selectionFrame);
 
     if (action == @selector(_showTextStyleOptions:))
         return _page->editorState().isContentRichlyEditable && _page->editorState().selectionIsRange && !_showingTextStyleOptions;
@@ -822,7 +861,10 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
 - (void)_showDictionary:(NSString *)text
 {
     CGRect presentationRect = _page->editorState().selectionRects[0].rect();
-    [(UIWKTextInteractionAssistant *)self.interactionAssistant showDictionaryFor:text fromRect:presentationRect];
+    if (_textSelectionAssistant)
+        [_textSelectionAssistant showDictionaryFor:text fromRect:presentationRect];
+    else
+        [_webSelectionAssistant showDictionaryFor:text fromRect:presentationRect];
 }
 
 static void selectedString(WKStringRef string, WKErrorRef error, void* context)
@@ -874,6 +916,8 @@ static inline WKGestureType toWKGestureType(UIWKGestureType gestureType)
         return WKGestureTwoFingerRangedSelectGesture;
     case UIWKGestureTapOnLinkWithGesture:
         return WKGestureTapOnLinkWithGesture;
+    case UIWKGestureMakeWebSelection:
+        return WKGestureMakeWebSelection;
     }
     ASSERT_NOT_REACHED();
     return WKGestureLoupe;
@@ -908,6 +952,8 @@ static inline UIWKGestureType toUIWKGestureType(WKGestureType gestureType)
         return UIWKGestureTwoFingerRangedSelectGesture;
     case WKGestureTapOnLinkWithGesture:
         return UIWKGestureTapOnLinkWithGesture;
+    case WKGestureMakeWebSelection:
+        return UIWKGestureMakeWebSelection;
     }
 }
 
@@ -994,7 +1040,10 @@ static void selectionChangedWithGesture(const WebCore::IntPoint& point, uint32_t
     WKInteractionView *view = static_cast<WKInteractionView*>(context);
     ASSERT(view);
     // FIXME: need to pass flags to selectionChangedWithGestureAt.
-    [(UIWKTextInteractionAssistant *)[view interactionAssistant] selectionChangedWithGestureAt:(CGPoint)point withGesture:toUIWKGestureType((WKGestureType)gestureType) withState:toUIGestureRecognizerState(static_cast<WKGestureRecognizerState>(gestureState))];
+    if ([view webSelectionAssistant])
+        [(UIWKSelectionAssistant *)[view webSelectionAssistant] selectionChangedWithGestureAt:(CGPoint)point withGesture:toUIWKGestureType((WKGestureType)gestureType) withState:toUIGestureRecognizerState(static_cast<WKGestureRecognizerState>(gestureState))];
+    else
+        [(UIWKTextInteractionAssistant *)[view interactionAssistant] selectionChangedWithGestureAt:(CGPoint)point withGesture:toUIWKGestureType((WKGestureType)gestureType) withState:toUIGestureRecognizerState(static_cast<WKGestureRecognizerState>(gestureState))];
 }
 
 static void selectionChangedWithTouch(const WebCore::IntPoint& point, uint32_t touch, WKErrorRef error, void* context)
@@ -1005,7 +1054,10 @@ static void selectionChangedWithTouch(const WebCore::IntPoint& point, uint32_t t
     }
     WKInteractionView *view = static_cast<WKInteractionView*>(context);
     ASSERT(view);
-    [(UIWKTextInteractionAssistant *)[view interactionAssistant] selectionChangedWithTouchAt:(CGPoint)point withSelectionTouch:toUIWKSelectionTouch((WKSelectionTouch)touch)];
+    if ([view webSelectionAssistant])
+        [(UIWKSelectionAssistant *)[view webSelectionAssistant] selectionChangedWithTouchAt:(CGPoint)point withSelectionTouch:toUIWKSelectionTouch((WKSelectionTouch)touch)];
+    else
+        [(UIWKTextInteractionAssistant *)[view interactionAssistant] selectionChangedWithTouchAt:(CGPoint)point withSelectionTouch:toUIWKSelectionTouch((WKSelectionTouch)touch)];
 }
 
 - (void)changeSelectionWithGestureAt:(CGPoint)point withGesture:(UIWKGestureType)gestureType withState:(UIGestureRecognizerState)state
@@ -1162,29 +1214,12 @@ static void autocorrectionContext(const String& beforeText, const String& marked
 
 - (UITextRange *)selectedTextRange
 {
-    unsigned size = _page->editorState().selectionRects.size();
-    NSMutableArray *webRects = [NSMutableArray arrayWithCapacity:size];
-    for (unsigned i = 0; i < size; i++) {
-        const WebCore::SelectionRect& coreRect = _page->editorState().selectionRects[i];
-        WebSelectionRect *webRect = [WebSelectionRect selectionRect];
-        webRect.rect = coreRect.rect();
-        webRect.writingDirection = coreRect.direction() == LTR ? WKWritingDirectionLeftToRight : WKWritingDirectionRightToLeft;
-        webRect.isLineBreak = coreRect.isLineBreak();
-        webRect.isFirstOnLine = coreRect.isFirstOnLine();
-        webRect.isLastOnLine = coreRect.isLastOnLine();
-        webRect.containsStart = coreRect.containsStart();
-        webRect.containsEnd = coreRect.containsEnd();
-        webRect.isInFixedPosition = coreRect.isInFixedPosition();
-        webRect.isHorizontal = coreRect.isHorizontal();
-        [webRects addObject:webRect];
-    }
-
     return [WKTextRange textRangeWithState:_page->editorState().selectionIsNone
                                    isRange:_page->editorState().selectionIsRange
                                 isEditable:_page->editorState().isContentEditable
                                  startRect:_page->editorState().caretRectAtStart
                                    endRect:_page->editorState().caretRectAtEnd
-                            selectionRects:webRects
+                            selectionRects:[self webSelectionRects]
                         selectedTextLength:_page->editorState().selectedTextLength];
 }
 
@@ -1355,6 +1390,11 @@ static void autocorrectionContext(const String& beforeText, const String& marked
         _textSelectionAssistant = [[UIWKTextInteractionAssistant alloc] initWithView:self];
 
     return _textSelectionAssistant.get();
+}
+
+- (UIWebSelectionAssistant *)webSelectionAssistant
+{
+    return _webSelectionAssistant.get();
 }
 
 
@@ -1630,17 +1670,18 @@ static void autocorrectionContext(const String& beforeText, const String& marked
 
 - (void)_startAssistingNode
 {
-    _canBeFirstResponder = YES;
+    _isEditable = YES;
     if (![self isFirstResponder])
         [self becomeFirstResponder];
 
     [self _startAssistingKeyboard];
+    [self reloadInputViews];
     [self _updateAccessory];
 }
 
 - (void)_stopAssistingNode
 {
-    _canBeFirstResponder = NO;
+    _isEditable = NO;
     if ([self isFirstResponder])
         [self resignFirstResponder];
     
@@ -1651,10 +1692,13 @@ static void autocorrectionContext(const String& beforeText, const String& marked
 
 - (void)_selectionChanged
 {
-    _markedText = (_page->editorState().hasComposition) ? _page->editorState().markedText : String();
     // FIXME: We need to figure out what to do if the selection is changed by Javascript.
-    if (!_showingTextStyleOptions)
-        [_textSelectionAssistant selectionChanged];
+    if (_textSelectionAssistant) {
+        _markedText = (_page->editorState().hasComposition) ? _page->editorState().markedText : String();
+        if (!_showingTextStyleOptions)
+            [_textSelectionAssistant selectionChanged];
+    } else
+        [_webSelectionAssistant selectionChanged];
 }
 
 #pragma mark - Implementation of UIWebTouchEventsGestureRecognizerDelegate.

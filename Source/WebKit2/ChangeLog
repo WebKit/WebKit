@@ -1,3 +1,42 @@
+2014-01-22  Enrica Casucci  <enrica@apple.com>
+
+        Support WebSelections in WK2 on iOS.
+        https://bugs.webkit.org/show_bug.cgi?id=127015
+        <rdar://problem/15211964>
+
+        Reviewed by Benjamin Poulain.
+
+        This change adds support for text only (non block mode)
+        selections in non editable content.
+        The main changes consist in hooking up the new gesture type
+        and touches to handle selection creation and interaction.
+        It also includes changes to the way first responder is handled
+        which includes the implementation of the isEditable method
+        to allow iOS to know when to show the keyboard.
+
+        * Shared/ios/WKGestureTypes.h:
+        * UIProcess/API/ios/WKInteractionView.mm:
+        (-[WKInteractionView isEditable]):
+        (-[WKInteractionView canBecomeFirstResponder]):
+        (-[WKInteractionView webSelectionRects]):
+        (-[WKInteractionView _highlightLongPressRecognized:]):
+        (-[WKInteractionView _singleTapRecognized:]):
+        (-[WKInteractionView inputAccessoryView]):
+        (-[WKInteractionView canPerformAction:withSender:]):
+        (-[WKInteractionView _showDictionary:]):
+        (toWKGestureType):
+        (toUIWKGestureType):
+        (selectionChangedWithGesture):
+        (selectionChangedWithTouch):
+        (-[WKInteractionView selectedTextRange]):
+        (-[WKInteractionView webSelectionAssistant]):
+        (-[WKInteractionView _startAssistingNode]):
+        (-[WKInteractionView _stopAssistingNode]):
+        (-[WKInteractionView _selectionChanged]):
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::selectWithGesture):
+        (WebKit::WebPage::updateSelectionWithTouches):
+
 2014-01-22  Anders Carlsson  <andersca@apple.com>
 
         WKBrowsingContextController should not be an API wrapper around WebPageProxy
