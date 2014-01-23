@@ -1,3 +1,18 @@
+2014-01-22  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Update project and solution files for 64-bit builds.
+        https://bugs.webkit.org/show_bug.cgi?id=127457
+
+        Reviewed by Eric Carlson.
+
+        * JavaScriptCore.vcxproj/JavaScriptCore.submit.sln: Add 64-bit target.
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj: Update for VS2013
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj.filters: Add missing
+        file from project view.
+        * JavaScriptCore.vcxproj/jsc/jsc.vcxproj: Update for VS2013
+        * JavaScriptCore.vcxproj/testRegExp/testRegExp.vcxproj: Ditto
+        * JavaScriptCore.vcxproj/testapi/testapi.vcxproj: Ditto
+
 2014-01-22  Mark Lam  <mark.lam@apple.com>
 
         Poor man's fast breakpoints for a 2.3x debugger speedup.

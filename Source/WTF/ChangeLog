@@ -1,3 +1,13 @@
+2014-01-22  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Update project and solution files for 64-bit builds.
+        https://bugs.webkit.org/show_bug.cgi?id=127457
+
+        Reviewed by Eric Carlson.
+
+        * WTF.vcxproj/WTF.submit.sln: Add x64 targets.
+        * WTF.vcxproj/WTF.vcxproj: Update for VS2013
+
 2014-01-22  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Remove CSS3_TEXT_DECORATION define

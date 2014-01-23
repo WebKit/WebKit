@@ -1,3 +1,19 @@
+2014-01-22  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Update project and solution files for 64-bit builds
+        https://bugs.webkit.org/show_bug.cgi?id=127457
+
+        Reviewed by Eric Carlson.
+
+        * WebKit.vcxproj/Interfaces/Interfaces.vcxproj: Update for VS2013.
+        * WebKit.vcxproj/WebKit.submit.sln: Add 64-bit target.
+        * WebKit.vcxproj/WebKit/WebKit.vcxproj: Update for VS2013
+        * WebKit.vcxproj/WebKit/WebKitApple.props: Remove unused QTMovieWin
+        library dependency.
+        * WebKit.vcxproj/WebKitExportGenerator/WebKitExportGenerator.vcxproj:
+        Update for VS2013.
+        * WebKit.vcxproj/WebKitGUID/WebKitGUID.vcxproj: Ditto
+
 2014-01-22  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] Avoid a circular dependency when building webkitenumtypes.h

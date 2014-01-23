@@ -1,3 +1,36 @@
+2014-01-22  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Update project and solution files for 64-bit builds
+        https://bugs.webkit.org/show_bug.cgi?id=127457
+
+        Reviewed by Eric Carlson.
+
+        * WebCore.vcxproj/QTMovieWin/QTMovieWin.vcxproj: Update for VS2013
+        * WebCore.vcxproj/WebCore.submit.sln: Add x64 targets
+        * WebCore.vcxproj/WebCore.vcxproj: Update for VS2013. Also exclude 32-bit specific
+        assembly when building 64-bit target.
+        * WebCore.vcxproj/WebCore.vcxproj.filters: Update for VS2013
+        * config.h: Handle 64-bit type definitions.
+        * platform/graphics/ca/win/PlatformCAAnimationWin.cpp:
+        (PlatformCAAnimation::setFromValue): Use CGFloat to support 64-bit builds
+        (PlatformCAAnimation::setToValue): Ditto
+        (PlatformCAAnimation::setValues): Ditto
+        * platform/graphics/win/FontCustomPlatformData.cpp:
+        (WebCore::FontCustomPlatformData::fontPlatformData): Add cast to
+        support 32- and 64-bit targets.
+        * platform/graphics/win/GraphicsContextCGWin.cpp:
+        (WebCore::GraphicsContext::drawLineForDocumentMarker): Use CGFloat to
+        support 64-bit builds.
+        * platform/win/PasteboardWin.cpp:
+        (WebCore::Pasteboard::writeURLToDataObject): Specialize std::min to
+        work on 32- and 64-bit code.
+        (WebCore::createGlobalImageFileDescriptor): Ditto
+        * platform/win/StructuredExceptionHandlerSuppressor.cpp:
+        (WebCore::StructuredExceptionHandlerSuppressor::StructuredExceptionHandlerSuppressor):
+        Comment out 32-bit inline assembly.
+        (WebCore::StructuredExceptionHandlerSuppressor::~StructuredExceptionHandlerSuppressor):
+        Ditto
+
 2014-01-23  Brady Eidson  <beidson@apple.com>
 
         Make IDBGetResult work with IDBKeyData instead of IDBKey.
