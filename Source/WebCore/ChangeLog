@@ -1,3 +1,9 @@
+2014-01-23  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix automake warning.
+
+        * GNUmakefile.list.am: Remove trailing whitespaces.
+
 2014-01-23  Mihai Maerean  <mmaerean@adobe.com>
 
         [CSS Regions] Fix positioning composited layers when the region has overflow:hidden

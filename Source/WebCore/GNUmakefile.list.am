@@ -25,7 +25,7 @@ webcore_built_sources += \
 	DerivedSources/WebCore/InspectorWebBackendDispatchers.cpp \
 	DerivedSources/WebCore/InspectorWebBackendDispatchers.h \
 	DerivedSources/WebCore/InspectorWebFrontendDispatchers.cpp \
-	DerivedSources/WebCore/InspectorWebFrontendDispatchers.h \    
+	DerivedSources/WebCore/InspectorWebFrontendDispatchers.h \
 	DerivedSources/WebCore/InspectorWebTypeBuilders.cpp \
 	DerivedSources/WebCore/InspectorWebTypeBuilders.h \
 	DerivedSources/WebCore/JSANGLEInstancedArrays.cpp \
