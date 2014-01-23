@@ -1,5 +1,18 @@
 2014-01-23  Daniel Bates  <dabates@apple.com>
 
+        [Win] Update expected result for test svg/W3C-SVG-1.1/paths-data-03-f.html
+
+        The expected result for the test test svg/W3C-SVG-1.1/paths-data-03-f.html on Windows
+        shows a progression towards matching the Mac expected result. Currently, there are many
+        numerical differences between the expected results for these platforms, described within
+        three diff chunks. After this commit there will be a single numerical difference (described
+        in one diff chunk) between the Mac and Windows results. See <https://bugs.webkit.org/show_bug.cgi?id=127490>
+        for more details.
+
+        * platform/win/svg/W3C-SVG-1.1/paths-data-03-f-expected.txt:
+
+2014-01-23  Daniel Bates  <dabates@apple.com>
+
         [Win] Mark some tests as failing in TestExpectations
 
         Mark test fast/dom/gc-attribute-node.html as failing (see http://webkit.org/b/127480).
