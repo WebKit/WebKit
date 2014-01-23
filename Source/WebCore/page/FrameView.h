@@ -214,7 +214,7 @@ public:
 
     virtual float visibleContentScaleFactor() const override;
 
-#if !PLATFORM(IOS)
+#if USE(TILED_BACKING_STORE)
     virtual void setFixedVisibleContentRect(const IntRect&) override;
 #endif
     virtual void setScrollPosition(const IntPoint&) override;

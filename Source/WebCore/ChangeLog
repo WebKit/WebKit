@@ -1,3 +1,24 @@
+2014-01-22  Simon Fraser  <simon.fraser@apple.com>
+
+        Surround fixedVisibleContentRect code with USE(TILED_BACKING_STORE)
+        https://bugs.webkit.org/show_bug.cgi?id=127461
+
+        Reviewed by Andreas Kling.
+
+        The "fixedVisibleContentRect" code path is only used by platforms
+        which enabled TILED_BACKING_STORE, so to reduce confusion, surround
+        this code with #if USE(TILED_BACKING_STORE).
+
+        * page/Frame.cpp:
+        (WebCore::Frame::createView):
+        * page/FrameView.cpp:
+        * page/FrameView.h:
+        * platform/ScrollView.cpp:
+        (WebCore::ScrollView::unscaledVisibleContentSize):
+        (WebCore::ScrollView::visibleContentRect):
+        * platform/ScrollView.h:
+        (WebCore::ScrollView::visibleSize):
+
 2014-01-22  Myles C. Maxfield  <mmaxfield@apple.com>
 
         ASSERTION FAILED: v.isFixed() in WebCore::RenderStyle::setWordSpacing

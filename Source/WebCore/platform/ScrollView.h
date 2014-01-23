@@ -160,11 +160,13 @@ public:
     // the setFixedVisibleContentRect instead for the mainframe, though this must be updated manually, e.g just before resuming the page
     // which usually will happen when panning, pinching and rotation ends, or when scale or position are changed manually.
     virtual IntRect visibleContentRect(VisibleContentRectIncludesScrollbars = ExcludeScrollbars) const override;
-#if !PLATFORM(IOS)
+    IntSize visibleSize() const { return visibleContentRect().size(); }
+
+#if USE(TILED_BACKING_STORE)
     virtual void setFixedVisibleContentRect(const IntRect& visibleContentRect) { m_fixedVisibleContentRect = visibleContentRect; }
     IntRect fixedVisibleContentRect() const { return m_fixedVisibleContentRect; }
 #endif
-    IntSize visibleSize() const { return visibleContentRect().size(); }
+
 #if PLATFORM(IOS)
     // This is the area that is not covered by UI elements.
     IntRect actualVisibleContentRect() const;

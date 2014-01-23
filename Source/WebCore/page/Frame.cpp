@@ -910,7 +910,7 @@ void Frame::createView(const IntSize& viewportSize, const Color& backgroundColor
     if (isMainFrame) {
         frameView = FrameView::create(*this, viewportSize);
         frameView->setFixedLayoutSize(fixedLayoutSize);
-#if !PLATFORM(IOS)
+#if USE(TILED_BACKING_STORE)
         frameView->setFixedVisibleContentRect(fixedVisibleContentRect);
 #else
         UNUSED_PARAM(fixedVisibleContentRect);

@@ -1978,7 +1978,7 @@ void FrameView::delegatesScrollingDidChange()
 #endif
 }
 
-#if !PLATFORM(IOS)
+#if USE(TILED_BACKING_STORE)
 void FrameView::setFixedVisibleContentRect(const IntRect& visibleContentRect)
 {
     bool visibleContentSizeDidChange = false;
