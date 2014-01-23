@@ -2875,3 +2875,11 @@ webkit.org/b/126900 svg/zoom/page/zoom-zoom-coords.xhtml [ Failure ]
 
 # Subpixel: incorrect caret position
 webkit.org/b/126283 editing/selection/mixed-editability-10.html [ Failure ]
+
+# Expando properties on attribute nodes disappear
+webkit.org/b/127480 fast/dom/gc-attribute-node.html [ Failure ]
+
+# Failing Windows-only accessibility tests
+webkit.org/b/127485 platform/win/accessibility/option-element-selection-and-focus-events.html [ Failure ]
+webkit.org/b/127485 platform/win/accessibility/parent-element.html [ Failure ]
+webkit.org/b/127485 platform/win/accessibility/select-element-valuechange-event.html [ Failure ]

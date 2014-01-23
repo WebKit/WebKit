@@ -1,3 +1,16 @@
+2014-01-23  Daniel Bates  <dabates@apple.com>
+
+        [Win] Mark some tests as failing in TestExpectations
+
+        Mark test fast/dom/gc-attribute-node.html as failing (see http://webkit.org/b/127480).
+        Also mark the following Windows-only tests as failing (see http://webkit.org/b/127485):
+
+        platform/win/accessibility/option-element-selection-and-focus-events.html
+        platform/win/accessibility/parent-element.html
+        platform/win/accessibility/select-element-valuechange-event.html
+
+        * platform/win/TestExpectations:
+
 2014-01-23  Csaba Osztrogonác  <ossy@webkit.org>
 
         [EFL] Unreviewed gardening
