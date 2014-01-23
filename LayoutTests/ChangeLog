@@ -1,3 +1,18 @@
+2014-01-23  Daniel Bates  <dabates@apple.com>
+
+        [Win] Whitespace differences in test results for fast/{css, dom, forms, multicolor, ruinin}
+        https://bugs.webkit.org/show_bug.cgi?id=127479
+
+        Add Windows-specific expected results for some tests that PASS, but differ in whitespace
+        in their output. We should further investigate such whitespace differences.
+
+        * platform/win/fast/css/first-letter-block-form-controls-crash-expected.txt: Added.
+        * platform/win/fast/dom/adopt-node-crash-2-expected.txt: Added.
+        * platform/win/fast/forms/access-key-for-all-elements-expected.txt: Added.
+        * platform/win/fast/forms/form-associated-element-crash3-expected.txt: Added.
+        * platform/win/fast/multicol/renderer-positioned-assert-crash-expected.txt: Added.
+        * platform/win/fast/runin/nonblock-runin-expected.txt: Added.
+
 2014-01-23  Michał Pakuła vel Rutka  <m.pakula@samsung.com>
 
         Unreviewed EFL gardening
