@@ -33,6 +33,7 @@
 #include "FrameLoaderClient.h"
 #include "InspectorInstrumentation.h"
 #include "Logging.h"
+#include "MainFrame.h"
 #include "ProgressTrackerClient.h"
 #include "ResourceResponse.h"
 #include <wtf/text/CString.h>
@@ -88,6 +89,8 @@ ProgressTracker::ProgressTracker(ProgressTrackerClient& client)
     , m_progressHeartbeatTimer(this, &ProgressTracker::progressHeartbeatTimerFired)
     , m_heartbeatsWithNoProgress(0)
     , m_totalBytesReceivedBeforePreviousHeartbeat(0)
+    , m_mainLoadCompletionTimeStamp(0)
+    , m_isMainLoad(false)
 {
 }
 
@@ -133,6 +136,12 @@ void ProgressTracker::progressStarted(Frame& frame)
         m_progressHeartbeatTimer.startRepeating(progressHeartbeatInterval);
         m_originatingProgressFrame->loader().loadProgressingStatusChanged();
 
+        bool isMainFrame = !m_originatingProgressFrame->tree().parent();
+        double elapsedTimeSinceMainLoadComplete = monotonicallyIncreasingTime() - m_mainLoadCompletionTimeStamp;
+
+        static const double subframePartOfMainLoadThreshold = 1;
+        m_isMainLoad = isMainFrame || elapsedTimeSinceMainLoadComplete < subframePartOfMainLoadThreshold;
+
         m_client.progressStarted(*m_originatingProgressFrame);
     }
     m_numProgressTrackedFrames++;
@@ -171,6 +180,9 @@ void ProgressTracker::finalProgressComplete()
     }
 
     reset();
+
+    if (m_isMainLoad)
+        m_mainLoadCompletionTimeStamp = monotonicallyIncreasingTime();
 
     frame->loader().client().setMainFrameDocumentReady(true);
     m_client.progressFinished(*frame);
@@ -291,9 +303,10 @@ bool ProgressTracker::isMainLoadProgressing() const
 {
     if (!m_originatingProgressFrame)
         return false;
-    // See if the load originated from a subframe.
-    if (m_originatingProgressFrame->tree().parent())
+
+    if (!m_isMainLoad)
         return false;
+
     return m_progressValue && m_progressValue < finalProgressValue && m_heartbeatsWithNoProgress < loadStalledHeartbeatCount;
 }
 

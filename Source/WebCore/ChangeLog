@@ -1,3 +1,32 @@
+2014-01-23  Antti Koivisto  <antti@apple.com>
+
+        Loads started soon after main frame completion should be considered part of the main load
+        https://bugs.webkit.org/show_bug.cgi?id=127504
+
+        Reviewed by Andreas Kling.
+
+        ProgressTracker currently decides that main load is complete when the main frame stops loading. 
+        However it is common that timers and onload events trigger more loads immediately (for example 
+        by inserting iframes) and loading continues visually. These should be considered as part of the
+        main load for paint throttling and speculative tiling coverage purposes.
+
+        * loader/ProgressTracker.cpp:
+        (WebCore::ProgressTracker::ProgressTracker):
+        (WebCore::ProgressTracker::progressStarted):
+        
+            Track whether this is considered part of the main load or not with a boolean. 
+            It is set for subframe loads too if they start loading soon (within 1s) after the main frame load completes.
+
+        (WebCore::ProgressTracker::finalProgressComplete):
+        
+            Get a timestamp.
+
+        (WebCore::ProgressTracker::isMainLoadProgressing):
+
+            New definition of "main load".
+
+        * loader/ProgressTracker.h:
+
 2014-01-23  peavo@outlook.com  <peavo@outlook.com>
 
         [WinCairo] Compile error.

@@ -87,6 +87,8 @@ private:
     Timer<ProgressTracker> m_progressHeartbeatTimer;
     unsigned m_heartbeatsWithNoProgress;
     long long m_totalBytesReceivedBeforePreviousHeartbeat;
+    double m_mainLoadCompletionTimeStamp;
+    bool m_isMainLoad;
 };
     
 }
