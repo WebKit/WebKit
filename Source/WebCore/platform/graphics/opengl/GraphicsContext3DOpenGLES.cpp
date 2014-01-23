@@ -206,6 +206,28 @@ void GraphicsContext3D::clearDepth(GC3Dclampf depth)
     ::glClearDepthf(depth);
 }
 
+void GraphicsContext3D::drawArraysInstanced(GC3Denum mode, GC3Dint first, GC3Dsizei count, GC3Dsizei primcount)
+{
+    UNUSED_PARAM(mode);
+    UNUSED_PARAM(first);
+    UNUSED_PARAM(count);
+    UNUSED_PARAM(primcount);
+}
+
+void GraphicsContext3D::drawElementsInstanced(GC3Denum mode, GC3Dsizei count, GC3Denum type, GC3Dintptr offset, GC3Dsizei primcount)
+{
+    UNUSED_PARAM(mode);
+    UNUSED_PARAM(count);
+    UNUSED_PARAM(type);
+    UNUSED_PARAM(offset);
+    UNUSED_PARAM(primcount);
+}
+
+void GraphicsContext3D::vertexAttribDivisor(GC3Duint index, GC3Duint divisor)
+{
+    UNUSED_PARAM(index);
+    UNUSED_PARAM(divisor);
+}
 
 Extensions3D* GraphicsContext3D::getExtensions()
 {

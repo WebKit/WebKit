@@ -1,3 +1,12 @@
+2014-01-23  ChangSeok Oh  <changseok.oh@collabora.com>
+
+        Unreviewed build fix for gles after r162565. Add missing definitions.
+
+        * platform/graphics/opengl/GraphicsContext3DOpenGLES.cpp:
+        (WebCore::GraphicsContext3D::drawArraysInstanced):
+        (WebCore::GraphicsContext3D::drawElementsInstanced):
+        (WebCore::GraphicsContext3D::vertexAttribDivisor):
+
 2014-01-22  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GLIB] Use GUniquePtr instead of GOwnPtr
