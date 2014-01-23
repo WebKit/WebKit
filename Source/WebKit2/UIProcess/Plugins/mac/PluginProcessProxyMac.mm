@@ -463,6 +463,18 @@ void PluginProcessProxy::openFile(const String& fullPath, bool& result)
     [[NSWorkspace sharedWorkspace] openFile:fullPath];
 }
 
+int pluginProcessLatencyQOS()
+{
+    static int qos = [[NSUserDefaults standardUserDefaults] integerForKey:@"WebKitPluginProcessLatencyQOS"];
+    return qos;
+}
+
+int pluginProcessThroughputQOS()
+{
+    static int qos = [[NSUserDefaults standardUserDefaults] integerForKey:@"WebKitPluginProcessThroughputQOS"];
+    return qos;
+}
+
 } // namespace WebKit
 
 #endif // ENABLE(NETSCAPE_PLUGIN_API)

@@ -69,6 +69,7 @@ public:
 
 #if PLATFORM(MAC)
     void setApplicationIsDaemon();
+    void setQOS(int latencyQOS, int throughputQOS);
 #endif
 
     IPC::Connection* parentProcessConnection() const { return m_connection.get(); }

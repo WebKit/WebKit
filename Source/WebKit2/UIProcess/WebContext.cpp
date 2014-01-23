@@ -391,6 +391,10 @@ void WebContext::ensureNetworkProcess()
 
     // Initialize the network process.
     m_networkProcess->send(Messages::NetworkProcess::InitializeNetworkProcess(parameters), 0);
+
+#if PLATFORM(MAC)
+    m_networkProcess->send(Messages::NetworkProcess::SetQOS(networkProcessLatencyQOS(), networkProcessThroughputQOS()), 0);
+#endif
 }
 
 void WebContext::networkProcessCrashed(NetworkProcessProxy* networkProcessProxy)
@@ -604,6 +608,10 @@ WebProcessProxy& WebContext::createNewWebProcess()
     if (!injectedBundleInitializationUserData)
         injectedBundleInitializationUserData = m_injectedBundleInitializationUserData;
     process->send(Messages::WebProcess::InitializeWebProcess(parameters, WebContextUserMessageEncoder(injectedBundleInitializationUserData.get(), *process)), 0);
+
+#if PLATFORM(MAC)
+    process->send(Messages::WebProcess::SetQOS(webProcessLatencyQOS(), webProcessThroughputQOS()), 0);
+#endif
 
     if (WebPreferences::anyPageGroupsAreUsingPrivateBrowsing())
         process->send(Messages::WebProcess::EnsurePrivateBrowsingSession(SessionTracker::legacyPrivateSessionID), 0);

@@ -474,4 +474,28 @@ void WebContext::resetHSTSHosts()
 #endif
 }
 
+int networkProcessLatencyQOS()
+{
+    static int qos = [[NSUserDefaults standardUserDefaults] integerForKey:@"WebKitNetworkProcessLatencyQOS"];
+    return qos;
+}
+
+int networkProcessThroughputQOS()
+{
+    static int qos = [[NSUserDefaults standardUserDefaults] integerForKey:@"WebKitNetworkProcessThroughputQOS"];
+    return qos;
+}
+
+int webProcessLatencyQOS()
+{
+    static int qos = [[NSUserDefaults standardUserDefaults] integerForKey:@"WebKitWebProcessLatencyQOS"];
+    return qos;
+}
+
+int webProcessThroughputQOS()
+{
+    static int qos = [[NSUserDefaults standardUserDefaults] integerForKey:@"WebKitWebProcessThroughputQOS"];
+    return qos;
+}
+
 } // namespace WebKit

@@ -1,3 +1,41 @@
+2014-01-22  Gavin Barraclough  <barraclough@apple.com>
+
+        Debug mechanism to override process QoS on Mac
+        https://bugs.webkit.org/show_bug.cgi?id=127455
+
+        Reviewed by Anders Carlsson.
+
+        * NetworkProcess/NetworkProcess.messages.in:
+            - added message.
+        * PluginProcess/PluginProcess.messages.in:
+            - added message.
+        * Shared/ChildProcess.h:
+        * Shared/mac/ChildProcessMac.mm:
+        (WebKit::ChildProcess::setQOS):
+            - Added implementation of new message.
+        * UIProcess/Plugins/PluginProcessProxy.cpp:
+        (WebKit::PluginProcessProxy::didFinishLaunching):
+            - SetQOS for the PluginProcess.
+        * UIProcess/Plugins/PluginProcessProxy.h:
+        * UIProcess/Plugins/mac/PluginProcessProxyMac.mm:
+        (WebKit::pluginProcessLatencyQOS):
+        (WebKit::pluginProcessThroughputQOS):
+            - read NSUserDefaults.
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::ensureNetworkProcess):
+            - SetQOS for the NetworkProcess.
+        (WebKit::WebContext::createNewWebProcess):
+            - SetQOS for the WebProcess.
+        * UIProcess/WebContext.h:
+        * UIProcess/mac/WebContextMac.mm:
+        (WebKit::networkProcessLatencyQOS):
+        (WebKit::networkProcessThroughputQOS):
+        (WebKit::webProcessLatencyQOS):
+        (WebKit::webProcessThroughputQOS):
+            - read NSUserDefaults.
+        * WebProcess/WebProcess.messages.in:
+            - added message.
+
 2014-01-22  David Farler  <dfarler@apple.com>
 
         ASAN builds are broken - missing flags

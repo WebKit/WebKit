@@ -85,6 +85,13 @@ class WebNetworkInfoManagerProxy;
 struct NetworkProcessCreationParameters;
 #endif
 
+#if PLATFORM(MAC)
+int networkProcessLatencyQOS();
+int networkProcessThroughputQOS();
+int webProcessLatencyQOS();
+int webProcessThroughputQOS();
+#endif
+
 class WebContext : public API::ObjectImpl<API::Object::Type::Context>, private IPC::MessageReceiver
 #if ENABLE(NETSCAPE_PLUGIN_API)
     , private PluginInfoStoreClient

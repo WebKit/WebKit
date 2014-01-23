@@ -42,6 +42,7 @@ messages -> NetworkProcess LegacyReceiver {
 
 #if PLATFORM(MAC)
     SetProcessSuppressionEnabled(bool flag)
+    SetQOS(int latencyQOS, int throughputQOS)
 #endif
 
     AllowSpecificHTTPSCertificateForHost(WebCore::CertificateInfo certificate, String host)

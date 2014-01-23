@@ -80,7 +80,8 @@ messages -> WebProcess LegacyReceiver {
     ReleasePageCache()
 
 #if PLATFORM(MAC)
-    SetProcessSuppressionEnabled(bool flag);
+    SetProcessSuppressionEnabled(bool flag)
+    SetQOS(int latencyQOS, int throughputQOS)
 #endif
 
 #if USE(SOUP)

@@ -63,6 +63,11 @@ struct RawPluginMetaData {
 };
 #endif
 
+#if PLATFORM(MAC)
+int pluginProcessLatencyQOS();
+int pluginProcessThroughputQOS();
+#endif
+
 class PluginProcessProxy : public ChildProcessProxy {
 public:
     static PassRefPtr<PluginProcessProxy> create(PluginProcessManager*, const PluginProcessAttributes&, uint64_t pluginProcessToken);

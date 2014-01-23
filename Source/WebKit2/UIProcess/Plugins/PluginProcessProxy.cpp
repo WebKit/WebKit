@@ -208,6 +208,10 @@ void PluginProcessProxy::didFinishLaunching(ProcessLauncher*, IPC::Connection::I
     // Initialize the plug-in host process.
     m_connection->send(Messages::PluginProcess::InitializePluginProcess(parameters), 0);
 
+#if PLATFORM(MAC)
+    m_connection->send(Messages::PluginProcess::SetQOS(pluginProcessLatencyQOS(), pluginProcessThroughputQOS()), 0);
+#endif
+
     // Send all our pending requests.
     for (size_t i = 0; i < m_pendingGetSitesRequests.size(); ++i)
         m_connection->send(Messages::PluginProcess::GetSitesWithData(m_pendingGetSitesRequests[i]), 0);

@@ -30,6 +30,7 @@
 #import "WebKitSystemInterface.h"
 #import <WebCore/FileSystem.h>
 #import <WebCore/SystemVersionMac.h>
+#import <mach/mach.h>
 #import <mach/task.h>
 #import <pwd.h>
 #import <stdlib.h>
@@ -199,5 +200,23 @@ void ChildProcess::stopNSAppRunLoop()
     [NSApp postEvent:event atStart:true];
 }
 #endif
+
+void ChildProcess::setQOS(int latencyQOS, int throughputQOS)
+{
+#if !PLATFORM(IOS) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
+    if (!latencyQOS && !throughputQOS)
+        return;
+
+    struct task_qos_policy qosinfo = {
+        latencyQOS ? LATENCY_QOS_TIER_0 + latencyQOS - 1 : LATENCY_QOS_TIER_UNSPECIFIED,
+        throughputQOS ? THROUGHPUT_QOS_TIER_0 + throughputQOS - 1 : THROUGHPUT_QOS_TIER_UNSPECIFIED
+    };
+
+    task_policy_set(mach_task_self(), TASK_OVERRIDE_QOS_POLICY, (task_policy_t)&qosinfo, TASK_QOS_POLICY_COUNT);
+#else
+    UNUSED_PARAM(latencyQOS);
+    UNUSED_PARAM(throughputQOS);
+#endif
+}
 
 } // namespace WebKit
