@@ -19,11 +19,12 @@
 #include "config.h"
 #include "GtkInputMethodFilter.h"
 
-#include "GOwnPtrGtk.h"
+#include "GUniquePtrGtk.h"
 #include "GtkVersioning.h"
 #include <gdk/gdkkeysyms.h>
 #include <gtk/gtk.h>
 #include <wtf/MathExtras.h>
+#include <wtf/gobject/GOwnPtr.h>
 
 // The Windows composition key event code is 299 or VK_PROCESSKEY. We need to
 // emit this code for web compatibility reasons when key events trigger
@@ -270,7 +271,7 @@ void GtkInputMethodFilter::updatePreedit()
 
 void GtkInputMethodFilter::sendCompositionAndPreeditWithFakeKeyEvents(ResultsToSend resultsToSend)
 {
-    GOwnPtr<GdkEvent> event(gdk_event_new(GDK_KEY_PRESS));
+    GUniquePtr<GdkEvent> event(gdk_event_new(GDK_KEY_PRESS));
     event->key.time = GDK_CURRENT_TIME;
     event->key.keyval = gCompositionEventKeyCode;
     sendKeyEventWithCompositionResults(&event->key, resultsToSend, EventFaked);

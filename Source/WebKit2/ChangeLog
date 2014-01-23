@@ -1,3 +1,84 @@
+2014-01-22  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GLIB] Use GUniquePtr instead of GOwnPtr
+        https://bugs.webkit.org/show_bug.cgi?id=127431
+
+        Reviewed by Martin Robinson.
+
+        GUniquePtr is a template alias of std::unique_ptr with a custom
+        deleter that replaces GOwnPtr. GOwnPtr is still used for the cases
+        where the output pointer is needed, but it will also be replaced soon.
+
+        * Shared/Downloads/soup/DownloadSoup.cpp:
+        (WebKit::DownloadClient::didReceiveResponse):
+        * Shared/NativeWebKeyboardEvent.h:
+        * Shared/NativeWebMouseEvent.h:
+        * Shared/NativeWebWheelEvent.h:
+        * Shared/gtk/ArgumentCodersGtk.cpp:
+        (IPC::encodeGKeyFile):
+        (IPC::decodeGKeyFile):
+        (IPC::encode):
+        (IPC::decode):
+        * UIProcess/API/gtk/WebKitContextMenuItem.cpp:
+        (webkitContextMenuItemSetSubMenuFromGtkMenu):
+        * UIProcess/API/gtk/WebKitDownload.cpp:
+        (webkitDownloadDecideDestination):
+        (webkitDownloadNotifyProgress):
+        (webkitDownloadFailed):
+        * UIProcess/API/gtk/WebKitFileChooserRequest.cpp:
+        (webkit_file_chooser_request_select_files):
+        * UIProcess/API/gtk/WebKitInjectedBundleClient.cpp:
+        (didReceiveWebViewMessageFromInjectedBundle):
+        (getInjectedBundleInitializationUserData):
+        * UIProcess/API/gtk/WebKitLoaderClient.cpp:
+        (didFailProvisionalLoadWithErrorForFrame):
+        (didFailLoadWithErrorForFrame):
+        * UIProcess/API/gtk/WebKitPrintOperation.cpp:
+        (drawPagesForPrintingCompleted):
+        * UIProcess/API/gtk/WebKitURIRequest.cpp:
+        (webkit_uri_request_get_http_headers):
+        * UIProcess/API/gtk/WebKitURISchemeRequest.cpp:
+        (webkit_uri_scheme_request_get_scheme):
+        (webkit_uri_scheme_request_get_path):
+        * UIProcess/API/gtk/WebKitWebContext.cpp:
+        (injectedBundleFilename):
+        (webkit_web_context_set_favicon_database_directory):
+        * UIProcess/API/gtk/WebKitWebView.cpp:
+        (webkitWebViewLoadFail):
+        (webkitWebViewCreateJavaScriptDialog):
+        (fileChooserDialogResponseCallback):
+        (webkitWebViewLoadChanged):
+        (webkitWebViewLoadFailedWithTLSErrors):
+        (webkitWebViewPopulateContextMenu):
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp:
+        (webkitWebViewBaseButtonPressEvent):
+        (webkitWebViewBaseStartDrag):
+        * UIProcess/InspectorServer/gtk/WebInspectorServerGtk.cpp:
+        (WebKit::WebInspectorServer::platformResourceForPath):
+        * UIProcess/InspectorServer/soup/WebSocketServerSoup.cpp:
+        (WebKit::connectionCallback):
+        * UIProcess/Launcher/gtk/ProcessLauncherGtk.cpp:
+        (WebKit::ProcessLauncher::launchProcess):
+        * UIProcess/gtk/WebContextGtk.cpp:
+        (WebKit::WebContext::platformDefaultApplicationCacheDirectory):
+        (WebKit::WebContext::platformDefaultDatabaseDirectory):
+        (WebKit::WebContext::platformDefaultIconDatabasePath):
+        (WebKit::WebContext::platformDefaultLocalStorageDirectory):
+        (WebKit::WebContext::platformDefaultDiskCacheDirectory):
+        * UIProcess/gtk/WebContextMenuProxyGtk.cpp:
+        (WebKit::contextMenuItemVisibilityChanged):
+        * UIProcess/gtk/WebInspectorProxyGtk.cpp:
+        (WebKit::WebInspectorProxy::platformInspectedURLChanged):
+        * UIProcess/gtk/WebPopupMenuProxyGtk.cpp:
+        (WebKit::WebPopupMenuProxyGtk::createGtkActionForMenuItem):
+        * WebProcess/WebPage/gtk/WebInspectorGtk.cpp:
+        * WebProcess/WebPage/gtk/WebPageGtk.cpp:
+        (WebKit::WebPage::platformInitialize):
+        * WebProcess/WebPage/gtk/WebPrintOperationGtk.cpp:
+        * WebProcess/gtk/WebProcessMainGtk.cpp:
+        * WebProcess/soup/WebSoupRequestManager.cpp:
+        (WebKit::WebSoupRequestManager::send):
+
 2014-01-22  Simon Fraser  <simon.fraser@apple.com>
 
         Surround fixedVisibleContentRect code with USE(TILED_BACKING_STORE)

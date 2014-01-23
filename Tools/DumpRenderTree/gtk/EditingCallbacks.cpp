@@ -33,24 +33,24 @@
 #include "TestRunner.h"
 #include <gtk/gtk.h>
 #include <webkit/webkit.h>
-#include <wtf/gobject/GOwnPtr.h>
+#include <wtf/gobject/GUniquePtr.h>
 #include <wtf/text/CString.h>
 
 static CString dumpNodePath(WebKitDOMNode* node)
 {
-    GOwnPtr<gchar> nodeName(webkit_dom_node_get_node_name(node));
+    GUniquePtr<gchar> nodeName(webkit_dom_node_get_node_name(node));
     GString* path = g_string_new(nodeName.get());
 
     WebKitDOMNode* parent = webkit_dom_node_get_parent_node(node);
     while (parent) {
-        GOwnPtr<gchar> parentName(webkit_dom_node_get_node_name(parent));
+        GUniquePtr<gchar> parentName(webkit_dom_node_get_node_name(parent));
 
         g_string_append(path, " > ");
         g_string_append(path, parentName.get());
         parent = webkit_dom_node_get_parent_node(parent);
     }
 
-    GOwnPtr<gchar> pathBuffer(g_string_free(path, FALSE));
+    GUniquePtr<gchar> pathBuffer(g_string_free(path, FALSE));
     return pathBuffer.get();
 }
 
@@ -59,7 +59,7 @@ static CString dumpRange(WebKitDOMRange* range)
     if (!range)
         return "(null)";
 
-    GOwnPtr<gchar> dump(g_strdup_printf("range from %li of %s to %li of %s",
+    GUniquePtr<gchar> dump(g_strdup_printf("range from %li of %s to %li of %s",
         webkit_dom_range_get_start_offset(range, 0),
         dumpNodePath(webkit_dom_range_get_start_container(range, 0)).data(),
         webkit_dom_range_get_end_offset(range, 0),
@@ -151,7 +151,7 @@ gboolean shouldChangeSelectedRange(WebKitWebView* webView, WebKitDOMRange* fromR
 gboolean shouldApplyStyle(WebKitWebView* webView, WebKitDOMCSSStyleDeclaration* style, WebKitDOMRange* range)
 {
     if (!done && gTestRunner->dumpEditingCallbacks()) {
-        GOwnPtr<gchar> styleText(webkit_dom_css_style_declaration_get_css_text(style));
+        GUniquePtr<gchar> styleText(webkit_dom_css_style_declaration_get_css_text(style));
         printf("EDITING DELEGATE: shouldApplyStyle:%s toElementsInDOMRange:%s\n",
                styleText.get(), dumpRange(range).data());
     }

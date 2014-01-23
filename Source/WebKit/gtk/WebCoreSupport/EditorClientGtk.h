@@ -36,7 +36,6 @@
 #include "TextCheckerClient.h"
 #include <wtf/Deque.h>
 #include <wtf/Forward.h>
-#include <wtf/gobject/GOwnPtr.h>
 #include <wtf/gobject/GRefPtr.h>
 
 #if ENABLE(SPELLCHECK)

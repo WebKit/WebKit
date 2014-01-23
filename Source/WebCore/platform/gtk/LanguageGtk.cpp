@@ -20,8 +20,8 @@
 #include "config.h"
 #include "Language.h"
 
-#include <wtf/gobject/GOwnPtr.h>
 #include <wtf/Vector.h>
+#include <wtf/gobject/GUniquePtr.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
 
@@ -40,7 +40,7 @@ static String platformLanguage()
     if (!localeDefault)
         return String("c");
 
-    GOwnPtr<gchar> normalizedDefault(g_ascii_strdown(localeDefault, -1));
+    GUniquePtr<gchar> normalizedDefault(g_ascii_strdown(localeDefault, -1));
     char* ptr = strchr(normalizedDefault.get(), '_');
 
     if (ptr)

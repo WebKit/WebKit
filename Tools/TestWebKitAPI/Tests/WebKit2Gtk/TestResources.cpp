@@ -168,7 +168,7 @@ public:
         g_assert_cmpint(dataSize, >, 0);
 
         ResourcesTest* test = static_cast<ResourcesTest*>(userData);
-        test->m_resourceData.set(reinterpret_cast<char*>(data));
+        test->m_resourceData.reset(reinterpret_cast<char*>(data));
         test->m_resourceDataSize = dataSize;
         g_main_loop_quit(test->m_mainLoop);
     }
@@ -191,12 +191,12 @@ public:
             g_assert(!strncmp(m_resourceData.get(), kJavascript, m_resourceDataSize));
         } else
             g_assert_not_reached();
-        m_resourceData.clear();
+        m_resourceData.reset();
     }
 
     size_t m_resourcesLoaded;
     size_t m_resourcesToLoad;
-    GOwnPtr<char> m_resourceData;
+    GUniquePtr<char> m_resourceData;
     size_t m_resourceDataSize;
     GList* m_subresources;
 };
@@ -671,12 +671,12 @@ static void addCacheHTTPHeadersToResponse(SoupMessage* message)
 {
     // The actual date doesn't really matter.
     SoupDate* soupDate = soup_date_new_from_now(0);
-    GOwnPtr<char> date(soup_date_to_string(soupDate, SOUP_DATE_HTTP));
+    GUniquePtr<char> date(soup_date_to_string(soupDate, SOUP_DATE_HTTP));
     soup_message_headers_append(message->response_headers, "Last-Modified", date.get());
     soup_date_free(soupDate);
     soup_message_headers_append(message->response_headers, "Cache-control", "public, max-age=31536000");
     soupDate = soup_date_new_from_now(3600);
-    date.set(soup_date_to_string(soupDate, SOUP_DATE_HTTP));
+    date.reset(soup_date_to_string(soupDate, SOUP_DATE_HTTP));
     soup_message_headers_append(message->response_headers, "Expires", date.get());
     soup_date_free(soupDate);
 }
@@ -734,7 +734,7 @@ static void serverCallback(SoupServer* server, SoupMessage* message, const char*
         static const char* javascriptRelativeHTML = "<html><head><script language='javascript' src='/redirected-to-cancel.js'></script></head><body></body></html>";
         soup_message_body_append(message->response_body, SOUP_MEMORY_STATIC, javascriptRelativeHTML, strlen(javascriptRelativeHTML));
     } else if (g_str_equal(path, "/blank.ico")) {
-        GOwnPtr<char> filePath(g_build_filename(Test::getWebKit1TestResoucesDir().data(), path, NULL));
+        GUniquePtr<char> filePath(g_build_filename(Test::getWebKit1TestResoucesDir().data(), path, NULL));
         char* contents;
         gsize contentsLength;
         g_file_get_contents(filePath.get(), &contents, &contentsLength, 0);

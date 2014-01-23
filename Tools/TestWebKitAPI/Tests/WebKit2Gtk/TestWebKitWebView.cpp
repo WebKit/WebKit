@@ -90,19 +90,19 @@ static void testWebViewRunJavaScript(WebViewTest* test, gconstpointer)
     WebKitJavascriptResult* javascriptResult = test->runJavaScriptAndWaitUntilFinished("window.document.getElementById('WebKitLink').title;", &error.outPtr());
     g_assert(javascriptResult);
     g_assert(!error.get());
-    GOwnPtr<char> valueString(WebViewTest::javascriptResultToCString(javascriptResult));
+    GUniquePtr<char> valueString(WebViewTest::javascriptResultToCString(javascriptResult));
     g_assert_cmpstr(valueString.get(), ==, "WebKitGTK+ Title");
 
     javascriptResult = test->runJavaScriptAndWaitUntilFinished("window.document.getElementById('WebKitLink').href;", &error.outPtr());
     g_assert(javascriptResult);
     g_assert(!error.get());
-    valueString.set(WebViewTest::javascriptResultToCString(javascriptResult));
+    valueString.reset(WebViewTest::javascriptResultToCString(javascriptResult));
     g_assert_cmpstr(valueString.get(), ==, "http://www.webkitgtk.org/");
 
     javascriptResult = test->runJavaScriptAndWaitUntilFinished("window.document.getElementById('WebKitLink').textContent", &error.outPtr());
     g_assert(javascriptResult);
     g_assert(!error.get());
-    valueString.set(WebViewTest::javascriptResultToCString(javascriptResult));
+    valueString.reset(WebViewTest::javascriptResultToCString(javascriptResult));
     g_assert_cmpstr(valueString.get(), ==, "WebKitGTK+ Website");
 
     javascriptResult = test->runJavaScriptAndWaitUntilFinished("a = 25;", &error.outPtr());
@@ -138,7 +138,7 @@ static void testWebViewRunJavaScript(WebViewTest* test, gconstpointer)
     javascriptResult = test->runJavaScriptFromGResourceAndWaitUntilFinished("/org/webkit/webkit2gtk/tests/link-title.js", &error.outPtr());
     g_assert(javascriptResult);
     g_assert(!error.get());
-    valueString.set(WebViewTest::javascriptResultToCString(javascriptResult));
+    valueString.reset(WebViewTest::javascriptResultToCString(javascriptResult));
     g_assert_cmpstr(valueString.get(), ==, "WebKitGTK+ Title");
 
     javascriptResult = test->runJavaScriptFromGResourceAndWaitUntilFinished("/wrong/path/to/resource.js", &error.outPtr());
@@ -371,14 +371,14 @@ public:
 
     void saveAndWaitForFile()
     {
-        m_saveDestinationFilePath.set(g_build_filename(m_tempDirectory.get(), "testWebViewSaveResult.mht", NULL));
+        m_saveDestinationFilePath.reset(g_build_filename(m_tempDirectory.get(), "testWebViewSaveResult.mht", NULL));
         m_file = adoptGRef(g_file_new_for_path(m_saveDestinationFilePath.get()));
         webkit_web_view_save_to_file(m_webView, m_file.get(), WEBKIT_SAVE_MODE_MHTML, 0, reinterpret_cast<GAsyncReadyCallback>(webViewSavedToFileCallback), this);
         g_main_loop_run(m_mainLoop);
     }
 
-    GOwnPtr<char> m_tempDirectory;
-    GOwnPtr<char> m_saveDestinationFilePath;
+    GUniquePtr<char> m_tempDirectory;
+    GUniquePtr<char> m_saveDestinationFilePath;
     GRefPtr<GInputStream> m_inputStream;
     GRefPtr<GFile> m_file;
 };
@@ -428,7 +428,7 @@ static void testWebViewMode(WebViewTest* test, gconstpointer)
     test->loadHtml(indexHTML, 0);
     test->waitUntilLoadFinished();
     WebKitJavascriptResult* javascriptResult = test->runJavaScriptAndWaitUntilFinished("window.document.body.textContent;", 0);
-    GOwnPtr<char> valueString(WebViewTest::javascriptResultToCString(javascriptResult));
+    GUniquePtr<char> valueString(WebViewTest::javascriptResultToCString(javascriptResult));
     g_assert_cmpstr(valueString.get(), ==, "Test Web View Mode");
 
     // Source mode.
@@ -436,7 +436,7 @@ static void testWebViewMode(WebViewTest* test, gconstpointer)
     test->loadHtml(indexHTML, 0);
     test->waitUntilLoadFinished();
     javascriptResult = test->runJavaScriptAndWaitUntilFinished("window.document.body.textContent;", 0);
-    valueString.set(WebViewTest::javascriptResultToCString(javascriptResult));
+    valueString.reset(WebViewTest::javascriptResultToCString(javascriptResult));
     g_assert_cmpstr(valueString.get(), ==, indexHTML);
 }
 
@@ -462,7 +462,7 @@ static void testWebViewPageVisibility(WebViewTest* test, gconstpointer)
     WebKitJavascriptResult* javascriptResult = test->runJavaScriptAndWaitUntilFinished("document.visibilityState;", &error.outPtr());
     g_assert(javascriptResult);
     g_assert(!error.get());
-    GOwnPtr<char> valueString(WebViewTest::javascriptResultToCString(javascriptResult));
+    GUniquePtr<char> valueString(WebViewTest::javascriptResultToCString(javascriptResult));
     g_assert_cmpstr(valueString.get(), ==, "hidden");
 
     javascriptResult = test->runJavaScriptAndWaitUntilFinished("document.hidden;", &error.outPtr());
@@ -477,7 +477,7 @@ static void testWebViewPageVisibility(WebViewTest* test, gconstpointer)
     javascriptResult = test->runJavaScriptAndWaitUntilFinished("document.visibilityState;", &error.outPtr());
     g_assert(javascriptResult);
     g_assert(!error.get());
-    valueString.set(WebViewTest::javascriptResultToCString(javascriptResult));
+    valueString.reset(WebViewTest::javascriptResultToCString(javascriptResult));
     g_assert_cmpstr(valueString.get(), ==, "visible");
 
     javascriptResult = test->runJavaScriptAndWaitUntilFinished("document.hidden;", &error.outPtr());
@@ -492,7 +492,7 @@ static void testWebViewPageVisibility(WebViewTest* test, gconstpointer)
     javascriptResult = test->runJavaScriptAndWaitUntilFinished("document.visibilityState;", &error.outPtr());
     g_assert(javascriptResult);
     g_assert(!error.get());
-    valueString.set(WebViewTest::javascriptResultToCString(javascriptResult));
+    valueString.reset(WebViewTest::javascriptResultToCString(javascriptResult));
     g_assert_cmpstr(valueString.get(), ==, "hidden");
 
     javascriptResult = test->runJavaScriptAndWaitUntilFinished("document.hidden;", &error.outPtr());

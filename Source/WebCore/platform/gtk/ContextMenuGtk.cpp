@@ -24,8 +24,8 @@
 #include "ContextMenu.h"
 
 #include <gtk/gtk.h>
-#include <wtf/gobject/GOwnPtr.h>
 #include <wtf/gobject/GRefPtr.h>
+#include <wtf/gobject/GUniquePtr.h>
 
 namespace WebCore {
 
@@ -87,7 +87,7 @@ unsigned ContextMenu::itemCount() const
 {
     ASSERT(m_platformDescription);
 
-    GOwnPtr<GList> children(gtk_container_get_children(GTK_CONTAINER(m_platformDescription)));
+    GUniquePtr<GList> children(gtk_container_get_children(GTK_CONTAINER(m_platformDescription)));
     return g_list_length(children.get());
 }
 
@@ -95,7 +95,7 @@ Vector<ContextMenuItem> contextMenuItemVector(const PlatformMenuDescription menu
 {
     Vector<ContextMenuItem> menuItemVector;
 
-    GOwnPtr<GList> children(gtk_container_get_children(GTK_CONTAINER(menu)));
+    GUniquePtr<GList> children(gtk_container_get_children(GTK_CONTAINER(menu)));
     int itemCount = g_list_length(children.get());
     menuItemVector.reserveCapacity(itemCount);
 

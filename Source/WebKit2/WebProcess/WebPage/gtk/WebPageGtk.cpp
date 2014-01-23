@@ -41,7 +41,7 @@
 #include <WebCore/PasteboardHelper.h>
 #include <WebCore/PlatformKeyboardEvent.h>
 #include <WebCore/Settings.h>
-#include <wtf/gobject/GOwnPtr.h>
+#include <wtf/gobject/GUniquePtr.h>
 
 using namespace WebCore;
 
@@ -55,7 +55,7 @@ void WebPage::platformInitialize()
     // process to connect the two worlds through the accessibility
     // object there specifically placed for that purpose (the socket).
     m_accessibilityObject = adoptGRef(webPageAccessibilityObjectNew(this));
-    GOwnPtr<gchar> plugID(atk_plug_get_id(ATK_PLUG(m_accessibilityObject.get())));
+    GUniquePtr<gchar> plugID(atk_plug_get_id(ATK_PLUG(m_accessibilityObject.get())));
     send(Messages::WebPageProxy::BindAccessibilityTree(String(plugID.get())));
 #endif
 

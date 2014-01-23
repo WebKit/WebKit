@@ -74,7 +74,7 @@ static GtkWidget* inputMethodsMenuItem (WebKitWebView* webView)
 
 static int getUnicodeMenuItemPosition(GtkMenu* menu)
 {
-    GOwnPtr<GList> items(gtk_container_get_children(GTK_CONTAINER(menu)));
+    GUniquePtr<GList> items(gtk_container_get_children(GTK_CONTAINER(menu)));
     int unicodeMenuItemPosition = -1;
     GList* iter;
     int i = 0;

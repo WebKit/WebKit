@@ -31,7 +31,7 @@
 #include <WebCore/ResourceHandle.h>
 #include <WebCore/ResourceRequest.h>
 #include <WebCore/SoupNetworkSession.h>
-#include <wtf/gobject/GOwnPtr.h>
+#include <wtf/gobject/GUniquePtr.h>
 #include <wtf/text/CString.h>
 
 namespace WebKit {
@@ -176,7 +176,7 @@ void WebSoupRequestManager::send(GTask* task)
 {
     WebKitSoupRequestGeneric* request = WEBKIT_SOUP_REQUEST_GENERIC(g_task_get_source_object(task));
     SoupRequest* soupRequest = SOUP_REQUEST(request);
-    GOwnPtr<char> uriString(soup_uri_to_string(soup_request_get_uri(soupRequest), FALSE));
+    GUniquePtr<char> uriString(soup_uri_to_string(soup_request_get_uri(soupRequest), FALSE));
 
     uint64_t requestID = generateSoupRequestID();
     m_requestMap.set(requestID, adoptPtr(new WebSoupRequestAsyncData(task, request)));

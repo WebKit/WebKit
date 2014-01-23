@@ -34,8 +34,8 @@
 #include "InjectedBundleUtilities.h"
 #include <fontconfig/fontconfig.h>
 #include <gtk/gtk.h>
+#include <wtf/gobject/GUniquePtr.h>
 #include <wtf/gobject/GlibUtilities.h>
-#include <wtf/gobject/GOwnPtr.h>
 
 namespace WTR {
 
@@ -61,19 +61,19 @@ CString getOutputDir()
         return webkitOutputDir;
 
     CString topLevelPath = WTR::topLevelPath();
-    GOwnPtr<char> outputDir(g_build_filename(topLevelPath.data(), "WebKitBuild", NULL));
+    GUniquePtr<char> outputDir(g_build_filename(topLevelPath.data(), "WebKitBuild", nullptr));
     return outputDir.get();
 }
 
 static CString getFontsPath()
 {
     CString webkitOutputDir = getOutputDir();
-    GOwnPtr<char> fontsPath(g_build_filename(webkitOutputDir.data(), "Dependencies", "Root", "webkitgtk-test-fonts", NULL));
+    GUniquePtr<char> fontsPath(g_build_filename(webkitOutputDir.data(), "Dependencies", "Root", "webkitgtk-test-fonts", nullptr));
     if (g_file_test(fontsPath.get(), static_cast<GFileTest>(G_FILE_TEST_EXISTS | G_FILE_TEST_IS_DIR)))
         return fontsPath.get();
 
     // Try alternative fonts path.
-    fontsPath.set(g_build_filename(webkitOutputDir.data(), "webkitgtk-test-fonts", NULL));
+    fontsPath.reset(g_build_filename(webkitOutputDir.data(), "webkitgtk-test-fonts", NULL));
     if (g_file_test(fontsPath.get(), static_cast<GFileTest>(G_FILE_TEST_EXISTS | G_FILE_TEST_IS_DIR)))
         return fontsPath.get();
 
@@ -97,7 +97,7 @@ void initializeFontConfigSetting()
     // Load our configuration file, which sets up proper aliases for family
     // names like sans, serif and monospace.
     FcConfig* config = FcConfigCreate();
-    GOwnPtr<gchar> fontConfigFilename(g_build_filename(FONTS_CONF_DIR, "fonts.conf", NULL));
+    GUniquePtr<gchar> fontConfigFilename(g_build_filename(FONTS_CONF_DIR, "fonts.conf", nullptr));
     if (!g_file_test(fontConfigFilename.get(), G_FILE_TEST_IS_REGULAR))
         g_error("Cannot find fonts.conf at %s\n", fontConfigFilename.get());
     if (!FcConfigParseAndLoad(config, reinterpret_cast<FcChar8*>(fontConfigFilename.get()), true))
@@ -107,17 +107,17 @@ void initializeFontConfigSetting()
     if (fontsPath.isNull())
         g_error("Could not locate test fonts at %s. Is WEBKIT_TOP_LEVEL set?", fontsPath.data());
 
-    GOwnPtr<GDir> fontsDirectory(g_dir_open(fontsPath.data(), 0, 0));
+    GUniquePtr<GDir> fontsDirectory(g_dir_open(fontsPath.data(), 0, nullptr));
     while (const char* directoryEntry = g_dir_read_name(fontsDirectory.get())) {
         if (!g_str_has_suffix(directoryEntry, ".ttf") && !g_str_has_suffix(directoryEntry, ".otf"))
             continue;
-        GOwnPtr<gchar> fontPath(g_build_filename(fontsPath.data(), directoryEntry, NULL));
+        GUniquePtr<gchar> fontPath(g_build_filename(fontsPath.data(), directoryEntry, nullptr));
         if (!FcConfigAppFontAddFile(config, reinterpret_cast<const FcChar8*>(fontPath.get())))
             g_error("Could not load font at %s!", fontPath.get());
     }
 
     // Ahem is used by many layout tests.
-    GOwnPtr<gchar> ahemFontFilename(g_build_filename(FONTS_CONF_DIR, "AHEM____.TTF", NULL));
+    GUniquePtr<gchar> ahemFontFilename(g_build_filename(FONTS_CONF_DIR, "AHEM____.TTF", nullptr));
     if (!FcConfigAppFontAddFile(config, reinterpret_cast<FcChar8*>(ahemFontFilename.get())))
         g_error("Could not load font at %s!", ahemFontFilename.get()); 
 
@@ -135,13 +135,13 @@ void initializeFontConfigSetting()
     };
 
     for (size_t i = 0; fontFilenames[i]; ++i) {
-        GOwnPtr<gchar> fontFilename(g_build_filename(FONTS_CONF_DIR, "..", "..", "fonts", fontFilenames[i], NULL));
+        GUniquePtr<gchar> fontFilename(g_build_filename(FONTS_CONF_DIR, "..", "..", "fonts", fontFilenames[i], nullptr));
         if (!FcConfigAppFontAddFile(config, reinterpret_cast<FcChar8*>(fontFilename.get())))
             g_error("Could not load font at %s!", fontFilename.get()); 
     }
 
     // A font with no valid Fontconfig encoding to test https://bugs.webkit.org/show_bug.cgi?id=47452
-    GOwnPtr<gchar> fontWithNoValidEncodingFilename(g_build_filename(FONTS_CONF_DIR, "FontWithNoValidEncoding.fon", NULL));
+    GUniquePtr<gchar> fontWithNoValidEncodingFilename(g_build_filename(FONTS_CONF_DIR, "FontWithNoValidEncoding.fon", nullptr));
     if (!FcConfigAppFontAddFile(config, reinterpret_cast<FcChar8*>(fontWithNoValidEncodingFilename.get())))
         g_error("Could not load font at %s!", fontWithNoValidEncodingFilename.get()); 
 

@@ -27,9 +27,11 @@
 
 #include "BitmapImage.h"
 #include "FileSystem.h"
+#include "GUniquePtrGtk.h"
 #include "GdkCairoUtilities.h"
-#include "GOwnPtrGtk.h"
 #include "SharedBuffer.h"
+#include <wtf/gobject/GOwnPtr.h>
+#include <wtf/gobject/GUniquePtr.h>
 #include <wtf/text/CString.h>
 #include <cairo.h>
 #include <gtk/gtk.h>
@@ -54,7 +56,7 @@ static CString getThemeIconFileName(const char* name, int size)
                                               GTK_STOCK_MISSING_IMAGE, size,
                                               GTK_ICON_LOOKUP_NO_SVG);
     if (iconInfo) {
-        GOwnPtr<GtkIconInfo> info(iconInfo);
+        GUniquePtr<GtkIconInfo> info(iconInfo);
         return CString(gtk_icon_info_get_filename(info.get()));
     }
 
@@ -93,8 +95,8 @@ PassRefPtr<Image> Image::loadPlatformResource(const char* name)
     if (!strcmp("missingImage", name))
         fileName = getThemeIconFileName(GTK_STOCK_MISSING_IMAGE, 16);
     if (fileName.isNull()) {
-        GOwnPtr<gchar> imageName(g_strdup_printf("%s.png", name));
-        GOwnPtr<gchar> glibFileName(getPathToImageResource(imageName.get()));
+        GUniquePtr<gchar> imageName(g_strdup_printf("%s.png", name));
+        GUniquePtr<gchar> glibFileName(getPathToImageResource(imageName.get()));
         fileName = glibFileName.get();
     }
 

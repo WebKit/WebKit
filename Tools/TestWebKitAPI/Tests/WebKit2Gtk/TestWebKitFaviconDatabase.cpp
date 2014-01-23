@@ -24,6 +24,7 @@
 #include <glib/gstdio.h>
 #include <libsoup/soup.h>
 #include <wtf/gobject/GOwnPtr.h>
+#include <wtf/gobject/GUniquePtr.h>
 
 static WebKitTestServer* kServer;
 static char* kTempDirectory;
@@ -118,7 +119,7 @@ serverCallback(SoupServer* server, SoupMessage* message, const char* path, GHash
     char* contents;
     gsize length;
     if (g_str_equal(path, "/icon/favicon.ico")) {
-        GOwnPtr<char> pathToFavicon(g_build_filename(Test::getWebKit1TestResoucesDir().data(), "blank.ico", NULL));
+        GUniquePtr<char> pathToFavicon(g_build_filename(Test::getWebKit1TestResoucesDir().data(), "blank.ico", NULL));
         g_file_get_contents(pathToFavicon.get(), &contents, &length, 0);
         soup_message_body_append(message->response_body, SOUP_MEMORY_TAKE, contents, length);
     } else if (g_str_equal(path, "/nofavicon")) {
@@ -153,7 +154,7 @@ static void testClearDatabase(FaviconDatabaseTest* test)
     WebKitFaviconDatabase* database = webkit_web_context_get_favicon_database(test->m_webContext);
     webkit_favicon_database_clear(database);
 
-    GOwnPtr<char> iconURI(webkit_favicon_database_get_favicon_uri(database, kServer->getURIForPath("/foo").data()));
+    GUniquePtr<char> iconURI(webkit_favicon_database_get_favicon_uri(database, kServer->getURIForPath("/foo").data()));
     g_assert(!iconURI);
 }
 
@@ -203,7 +204,7 @@ static void testGetFaviconURI(FaviconDatabaseTest* test)
     WebKitFaviconDatabase* database = webkit_web_context_get_favicon_database(test->m_webContext);
 
     CString baseURI = kServer->getURIForPath("/foo");
-    GOwnPtr<char> iconURI(webkit_favicon_database_get_favicon_uri(database, baseURI.data()));
+    GUniquePtr<char> iconURI(webkit_favicon_database_get_favicon_uri(database, baseURI.data()));
     ASSERT_CMP_CSTRING(iconURI.get(), ==, kServer->getURIForPath("/icon/favicon.ico"));
 }
 
@@ -257,7 +258,7 @@ static void webkitFaviconDatabaseFinalizedCallback(gpointer, GObject*)
     if (!g_file_test(kTempDirectory, G_FILE_TEST_IS_DIR))
         return;
 
-    GOwnPtr<char> filename(g_build_filename(kTempDirectory, "WebpageIcons.db", NULL));
+    GUniquePtr<char> filename(g_build_filename(kTempDirectory, "WebpageIcons.db", nullptr));
     g_unlink(filename.get());
 
     g_rmdir(kTempDirectory);

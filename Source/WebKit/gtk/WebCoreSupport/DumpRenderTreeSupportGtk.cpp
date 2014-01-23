@@ -487,7 +487,7 @@ void DumpRenderTreeSupportGtk::setValueForUser(JSContextRef context, JSValueRef 
         return;
 
     size_t bufferSize = JSStringGetMaximumUTF8CStringSize(value);
-    GOwnPtr<gchar> valueBuffer(static_cast<gchar*>(g_malloc(bufferSize)));
+    GUniquePtr<gchar> valueBuffer(static_cast<gchar*>(g_malloc(bufferSize)));
     JSStringGetUTF8CString(value, valueBuffer.get(), bufferSize);
     inputElement->setValueForUser(String::fromUTF8(valueBuffer.get()));
 }

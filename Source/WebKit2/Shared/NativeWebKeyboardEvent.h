@@ -34,8 +34,8 @@
 #include <wtf/RetainPtr.h>
 OBJC_CLASS NSView;
 #elif PLATFORM(GTK)
-#include <GOwnPtrGtk.h>
 #include <WebCore/CompositionResults.h>
+#include <WebCore/GUniquePtrGtk.h>
 #include <WebCore/GtkInputMethodFilter.h>
 typedef union _GdkEvent GdkEvent;
 #elif PLATFORM(EFL)
@@ -79,7 +79,7 @@ private:
 #if USE(APPKIT)
     RetainPtr<NSEvent> m_nativeEvent;
 #elif PLATFORM(GTK)
-    GOwnPtr<GdkEvent> m_nativeEvent;
+    GUniquePtr<GdkEvent> m_nativeEvent;
     WebCore::CompositionResults m_compositionResults;
     bool m_fakeEventForComposition;
 #elif PLATFORM(EFL)

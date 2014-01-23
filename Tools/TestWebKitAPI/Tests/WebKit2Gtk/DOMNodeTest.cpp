@@ -22,7 +22,7 @@
 #include "WebProcessTest.h"
 #include <gio/gio.h>
 #include <webkit2/webkit-web-extension.h>
-#include <wtf/gobject/GOwnPtr.h>
+#include <wtf/gobject/GUniquePtr.h>
 
 class WebKitDOMNodeTest : public WebProcessTest {
 public:
@@ -185,7 +185,7 @@ private:
         for (unsigned i = 0; i < nodeCount; i++) {
             WebKitDOMNode* node = webkit_dom_node_list_item(list, i);
             g_assert(WEBKIT_DOM_IS_NODE(node));
-            GOwnPtr<char> tagName(webkit_dom_node_get_node_name(node));
+            GUniquePtr<char> tagName(webkit_dom_node_get_node_name(node));
             g_assert_cmpstr(tagName.get(), ==, expectedTagNames[i]);
         }
 

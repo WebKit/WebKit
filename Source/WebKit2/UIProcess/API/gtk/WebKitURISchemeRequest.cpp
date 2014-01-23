@@ -26,9 +26,10 @@
 #include "WebKitWebView.h"
 #include "WebPageProxy.h"
 #include "WebSoupRequestManagerProxy.h"
-#include <WebCore/GOwnPtrSoup.h>
+#include <WebCore/GUniquePtrSoup.h>
 #include <WebCore/ResourceError.h>
 #include <libsoup/soup.h>
+#include <wtf/gobject/GOwnPtr.h>
 #include <wtf/gobject/GRefPtr.h>
 #include <wtf/text/CString.h>
 
@@ -58,7 +59,7 @@ struct _WebKitURISchemeRequestPrivate {
     RefPtr<WebPageProxy> initiatingPage;
     uint64_t requestID;
     CString uri;
-    GOwnPtr<SoupURI> soupURI;
+    GUniquePtr<SoupURI> soupURI;
 
     GRefPtr<GInputStream> stream;
     uint64_t streamLength;
@@ -109,7 +110,7 @@ const char* webkit_uri_scheme_request_get_scheme(WebKitURISchemeRequest* request
     g_return_val_if_fail(WEBKIT_IS_URI_SCHEME_REQUEST(request), 0);
 
     if (!request->priv->soupURI)
-        request->priv->soupURI.set(soup_uri_new(request->priv->uri.data()));
+        request->priv->soupURI.reset(soup_uri_new(request->priv->uri.data()));
     return request->priv->soupURI->scheme;
 }
 
@@ -141,7 +142,7 @@ const char* webkit_uri_scheme_request_get_path(WebKitURISchemeRequest* request)
     g_return_val_if_fail(WEBKIT_IS_URI_SCHEME_REQUEST(request), 0);
 
     if (!request->priv->soupURI)
-        request->priv->soupURI.set(soup_uri_new(request->priv->uri.data()));
+        request->priv->soupURI.reset(soup_uri_new(request->priv->uri.data()));
     return request->priv->soupURI->path;
 }
 

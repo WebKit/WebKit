@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2010 Igalia S.L.
+ *  Copyright (C) 2014 Igalia S.L
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -17,16 +17,19 @@
  *  Boston, MA 02110-1301, USA.
  */
 
-#ifndef GOwnPtrGtk_h
-#define GOwnPtrGtk_h
+#ifndef GUniquePtrSoup_h
+#define GUniquePtrSoup_h
 
-#include <wtf/gobject/GOwnPtr.h>
+#include <libsoup/soup.h>
+#include <wtf/gobject/GUniquePtr.h>
 
 namespace WTF {
 
-template <> void freeOwnedGPtr<GdkEvent>(GdkEvent*);
-template <> void freeOwnedGPtr<GtkIconInfo>(GtkIconInfo*);
+WTF_DEFINE_GPTR_DELETER(SoupURI, soup_uri_free)
+WTF_DEFINE_GPTR_DELETER(SoupCookie, soup_cookie_free)
+WTF_DEFINE_GPTR_DELETER(SoupMessageHeaders, soup_message_headers_free)
+WTF_DEFINE_GPTR_DELETER(SoupBuffer, soup_buffer_free)
 
-}
+} // namespace WTF
 
 #endif

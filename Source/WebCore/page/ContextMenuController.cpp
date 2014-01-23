@@ -71,10 +71,6 @@
 #include <wtf/unicode/CharacterNames.h>
 #include <wtf/unicode/Unicode.h>
 
-#if PLATFORM(GTK)
-#include <wtf/gobject/GOwnPtr.h>
-#endif
-
 using namespace WTF;
 using namespace Unicode;
 

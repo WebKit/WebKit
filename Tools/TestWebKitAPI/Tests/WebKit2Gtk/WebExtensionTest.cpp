@@ -30,6 +30,7 @@
 #include <wtf/PassOwnPtr.h>
 #include <wtf/gobject/GOwnPtr.h>
 #include <wtf/gobject/GRefPtr.h>
+#include <wtf/gobject/GUniquePtr.h>
 #include <wtf/text/CString.h>
 
 static const char introspectionXML[] =
@@ -131,8 +132,8 @@ static gboolean sendRequestCallback(WebKitWebPage*, WebKitURIRequest* request, W
     g_assert(requestURI);
 
     if (const char* suffix = g_strrstr(requestURI, "/remove-this/javascript.js")) {
-        GOwnPtr<char> prefix(g_strndup(requestURI, strlen(requestURI) - strlen(suffix)));
-        GOwnPtr<char> newURI(g_strdup_printf("%s/javascript.js", prefix.get()));
+        GUniquePtr<char> prefix(g_strndup(requestURI, strlen(requestURI) - strlen(suffix)));
+        GUniquePtr<char> newURI(g_strdup_printf("%s/javascript.js", prefix.get()));
         webkit_uri_request_set_uri(request, newURI.get());
     } else if (g_str_has_suffix(requestURI, "/add-do-not-track-header")) {
         SoupMessageHeaders* headers = webkit_uri_request_get_http_headers(request);
@@ -199,7 +200,7 @@ static void methodCallCallback(GDBusConnection* connection, const char* sender, 
             return;
 
         WebKitDOMDocument* document = webkit_web_page_get_dom_document(page);
-        GOwnPtr<char> title(webkit_dom_document_get_title(document));
+        GUniquePtr<char> title(webkit_dom_document_get_title(document));
         g_dbus_method_invocation_return_value(invocation, g_variant_new("(s)", title.get()));
     } else if (!g_strcmp0(methodName, "RunJavaScriptInIsolatedWorld")) {
         uint64_t pageID;

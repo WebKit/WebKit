@@ -50,7 +50,7 @@
 #include <WebCore/DataObjectGtk.h>
 #include <WebCore/DragData.h>
 #include <WebCore/DragIcon.h>
-#include <WebCore/GOwnPtrGtk.h>
+#include <WebCore/GUniquePtrGtk.h>
 #include <WebCore/GtkClickCounter.h>
 #include <WebCore/GtkDragAndDropHelper.h>
 #include <WebCore/GtkUtilities.h>
@@ -65,7 +65,6 @@
 #include <gdk/gdkx.h>
 #endif
 #include <wtf/HashMap.h>
-#include <wtf/gobject/GOwnPtr.h>
 #include <wtf/gobject/GRefPtr.h>
 #include <wtf/text/CString.h>
 
@@ -108,7 +107,7 @@ struct _WebKitWebViewBasePrivate {
     GtkWidget* inspectorView;
     AttachmentSide inspectorAttachmentSide;
     unsigned inspectorViewSize;
-    GOwnPtr<GdkEvent> contextMenuEvent;
+    GUniquePtr<GdkEvent> contextMenuEvent;
     WebContextMenuProxyGtk* activeContextMenuProxy;
     WebViewBaseInputMethodFilter inputMethodFilter;
 
@@ -667,7 +666,7 @@ static gboolean webkitWebViewBaseButtonPressEvent(GtkWidget* widget, GdkEventBut
 
     // If it's a right click event save it as a possible context menu event.
     if (buttonEvent->button == 3)
-        priv->contextMenuEvent.set(gdk_event_copy(reinterpret_cast<GdkEvent*>(buttonEvent)));
+        priv->contextMenuEvent.reset(gdk_event_copy(reinterpret_cast<GdkEvent*>(buttonEvent)));
     priv->pageProxy->handleMouseEvent(NativeWebMouseEvent(reinterpret_cast<GdkEvent*>(buttonEvent),
                                                      priv->clickCounter.clickCountForGdkButtonEvent(widget, buttonEvent)));
     return TRUE;
@@ -994,7 +993,7 @@ void webkitWebViewBaseStartDrag(WebKitWebViewBase* webViewBase, const DragData& 
 
     RefPtr<DataObjectGtk> dataObject = adoptRef(dragData.platformData());
     GRefPtr<GtkTargetList> targetList = adoptGRef(PasteboardHelper::defaultPasteboardHelper()->targetListForDataObject(dataObject.get()));
-    GOwnPtr<GdkEvent> currentEvent(gtk_get_current_event());
+    GUniquePtr<GdkEvent> currentEvent(gtk_get_current_event());
     GdkDragContext* context = gtk_drag_begin(GTK_WIDGET(webViewBase),
                                              targetList.get(),
                                              dragOperationToGdkDragActions(dragData.draggingSourceOperationMask()),

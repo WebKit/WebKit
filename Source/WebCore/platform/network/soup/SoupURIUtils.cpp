@@ -19,8 +19,8 @@
 #include "config.h"
 #include "SoupURIUtils.h"
 
-#include <wtf/gobject/GOwnPtr.h>
 #include <libsoup/soup.h>
+#include <wtf/gobject/GUniquePtr.h>
 
 namespace WebCore {
 
@@ -31,7 +31,7 @@ namespace WebCore {
 // not want to break compatibility with previous implementations
 URL soupURIToKURL(SoupURI* soupURI)
 {
-    GOwnPtr<gchar> urlString(soup_uri_to_string(soupURI, FALSE));
+    GUniquePtr<gchar> urlString(soup_uri_to_string(soupURI, FALSE));
     URL url(URL(), String::fromUTF8(urlString.get()));
 
     if (!soupURI->password)

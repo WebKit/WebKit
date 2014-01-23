@@ -25,7 +25,6 @@
 #include "webkitfilechooserrequestprivate.h"
 #include "webkitglobalsprivate.h"
 #include <glib/gi18n-lib.h>
-#include <wtf/gobject/GOwnPtr.h>
 #include <wtf/gobject/GRefPtr.h>
 #include <wtf/text/CString.h>
 

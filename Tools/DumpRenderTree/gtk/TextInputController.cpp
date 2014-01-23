@@ -31,7 +31,7 @@
 
 #include "DumpRenderTree.h"
 #include "WebCoreSupport/DumpRenderTreeSupportGtk.h"
-#include <GOwnPtrGtk.h>
+#include <GUniquePtrGtk.h>
 #include <JavaScriptCore/JSObjectRef.h>
 #include <JavaScriptCore/JSRetainPtr.h>
 #include <JavaScriptCore/JSStringRef.h>
@@ -49,7 +49,7 @@ static JSValueRef setMarkedTextCallback(JSContextRef context, JSObjectRef functi
     ASSERT(!exception || !*exception);
 
     size_t bufferSize = JSStringGetMaximumUTF8CStringSize(string);
-    GOwnPtr<gchar> stringBuffer(static_cast<gchar*>(g_malloc(bufferSize)));
+    GUniquePtr<gchar> stringBuffer(static_cast<gchar*>(g_malloc(bufferSize)));
     JSStringGetUTF8CString(string, stringBuffer.get(), bufferSize);
     JSStringRelease(string);
 
@@ -99,7 +99,7 @@ static JSValueRef insertTextCallback(JSContextRef context, JSObjectRef function,
     ASSERT(!exception || !*exception);
 
     size_t bufferSize = JSStringGetMaximumUTF8CStringSize(string);
-    GOwnPtr<gchar> stringBuffer(static_cast<gchar*>(g_malloc(bufferSize)));
+    GUniquePtr<gchar> stringBuffer(static_cast<gchar*>(g_malloc(bufferSize)));
     JSStringGetUTF8CString(string, stringBuffer.get(), bufferSize);
     JSStringRelease(string);
 
@@ -173,7 +173,7 @@ static JSValueRef doCommandCallback(JSContextRef context, JSObjectRef function, 
     ASSERT(!exception || !*exception);
 
     size_t bufferSize = JSStringGetMaximumUTF8CStringSize(string);
-    GOwnPtr<gchar> stringBuffer(static_cast<gchar*>(g_malloc(bufferSize)));
+    GUniquePtr<gchar> stringBuffer(static_cast<gchar*>(g_malloc(bufferSize)));
     JSStringGetUTF8CString(string, stringBuffer.get(), bufferSize);
     JSStringRelease(string);
 

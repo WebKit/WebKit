@@ -26,9 +26,9 @@ namespace WebCore {
 
 SharedBuffer::SharedBuffer(SoupBuffer* soupBuffer)
     : m_size(0)
+    , m_soupBuffer(soupBuffer)
 {
     ASSERT(soupBuffer);
-    m_soupBuffer.set(soupBuffer);
 }
 
 PassRefPtr<SharedBuffer> SharedBuffer::wrapSoupBuffer(SoupBuffer* soupBuffer)
@@ -38,7 +38,7 @@ PassRefPtr<SharedBuffer> SharedBuffer::wrapSoupBuffer(SoupBuffer* soupBuffer)
 
 void SharedBuffer::clearPlatformData()
 {
-    m_soupBuffer.clear();
+    m_soupBuffer.reset();
 }
 
 void SharedBuffer::tryReplaceContentsWithPlatformBuffer(SharedBuffer* newContents)
@@ -55,7 +55,7 @@ void SharedBuffer::maybeTransferPlatformData()
 
     // Hang on to the m_soupBuffer pointer in a local pointer as append() will re-enter maybeTransferPlatformData()
     // and we need to make sure to early return when it does.
-    GOwnPtr<SoupBuffer> soupBuffer;
+    GUniquePtr<SoupBuffer> soupBuffer;
     soupBuffer.swap(m_soupBuffer);
 
     append(soupBuffer->data, soupBuffer->length);
@@ -63,7 +63,7 @@ void SharedBuffer::maybeTransferPlatformData()
 
 bool SharedBuffer::hasPlatformData() const
 {
-    return m_soupBuffer;
+    return m_soupBuffer.get();
 }
 
 const char* SharedBuffer::platformData() const

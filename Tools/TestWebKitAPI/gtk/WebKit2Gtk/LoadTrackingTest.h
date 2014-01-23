@@ -59,7 +59,7 @@ public:
     };
     bool m_runLoadUntilCompletion;
     bool m_loadFailed;
-    GOwnPtr<GError> m_error;
+    GUniquePtr<GError> m_error;
     Vector<LoadEvents> m_loadEvents;
     float m_estimatedProgress;
     CString m_redirectURI;

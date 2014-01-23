@@ -20,7 +20,7 @@
 #include "config.h"
 #include "WebProcessTestRunner.h"
 
-#include <wtf/gobject/GOwnPtr.h>
+#include <wtf/gobject/GUniquePtr.h>
 
 WebProcessTestRunner::WebProcessTestRunner()
     : m_mainLoop(g_main_loop_new(0, TRUE))
@@ -93,7 +93,7 @@ bool WebProcessTestRunner::runTest(const char* suiteName, const char* testName, 
     g_main_loop_run(m_mainLoop);
 
     m_testResult = false;
-    GOwnPtr<char> testPath(g_strdup_printf("%s/%s", suiteName, testName));
+    GUniquePtr<char> testPath(g_strdup_printf("%s/%s", suiteName, testName));
     g_dbus_proxy_call(
         proxy(),
         "RunTest",

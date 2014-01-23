@@ -22,6 +22,7 @@
 #include "markup.h"
 #include <gtk/gtk.h>
 #include <wtf/gobject/GOwnPtr.h>
+#include <wtf/gobject/GUniquePtr.h>
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
@@ -102,7 +103,7 @@ void DataObjectGtk::setURIList(const String& uriListString)
             }
 
             GOwnPtr<GError> error;
-            GOwnPtr<gchar> filename(g_filename_from_uri(line.utf8().data(), 0, &error.outPtr()));
+            GUniquePtr<gchar> filename(g_filename_from_uri(line.utf8().data(), 0, &error.outPtr()));
             if (!error && filename)
                 m_filenames.append(String::fromUTF8(filename.get()));
         }
@@ -123,7 +124,7 @@ void DataObjectGtk::setURL(const URL& url, const String& label)
     markup.append("<a href=\"");
     markup.append(url.string());
     markup.append("\">");
-    GOwnPtr<gchar> escaped(g_markup_escape_text(actualLabel.utf8().data(), -1));
+    GUniquePtr<gchar> escaped(g_markup_escape_text(actualLabel.utf8().data(), -1));
     markup.append(String::fromUTF8(escaped.get()));
     markup.append("</a>");
     setMarkup(markup.toString());

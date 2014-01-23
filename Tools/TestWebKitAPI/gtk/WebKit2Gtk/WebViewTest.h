@@ -75,7 +75,7 @@ public:
     CString m_expectedTitle;
     WebKitJavascriptResult* m_javascriptResult;
     GError** m_javascriptError;
-    GOwnPtr<char> m_resourceData;
+    GUniquePtr<char> m_resourceData;
     size_t m_resourceDataSize;
     cairo_surface_t* m_surface;
 

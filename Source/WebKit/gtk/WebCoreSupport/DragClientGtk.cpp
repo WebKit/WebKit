@@ -28,8 +28,8 @@
 #include "DragController.h"
 #include "Element.h"
 #include "Frame.h"
-#include "GOwnPtrGtk.h"
 #include "GRefPtrGtk.h"
+#include "GUniquePtrGtk.h"
 #include "GtkVersioning.h"
 #include "NotImplemented.h"
 #include "Pasteboard.h"
@@ -81,7 +81,7 @@ void DragClient::startDrag(DragImageRef image, const IntPoint& dragImageOrigin, 
     WebKitWebView* webView = webkit_web_frame_get_web_view(kit(&frame));
     RefPtr<DataObjectGtk> dataObject = clipboard.pasteboard().dataObject();
     GRefPtr<GtkTargetList> targetList = adoptGRef(PasteboardHelper::defaultPasteboardHelper()->targetListForDataObject(dataObject.get()));
-    GOwnPtr<GdkEvent> currentEvent(gtk_get_current_event());
+    GUniquePtr<GdkEvent> currentEvent(gtk_get_current_event());
 
     GdkDragContext* context = gtk_drag_begin(GTK_WIDGET(m_webView), targetList.get(), dragOperationToGdkDragActions(clipboard.sourceOperation()), 1, currentEvent.get());
     webView->priv->dragAndDropHelper.startedDrag(context, dataObject.get());

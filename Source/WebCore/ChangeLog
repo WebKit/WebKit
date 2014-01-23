@@ -1,3 +1,125 @@
+2014-01-22  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GLIB] Use GUniquePtr instead of GOwnPtr
+        https://bugs.webkit.org/show_bug.cgi?id=127431
+
+        Reviewed by Martin Robinson.
+
+        GUniquePtr is a template alias of std::unique_ptr with a custom
+        deleter that replaces GOwnPtr. GOwnPtr is still used for the cases
+        where the output pointer is needed, but it will also be replaced soon.
+
+        * GNUmakefile.list.am:
+        * PlatformGTK.cmake:
+        * accessibility/atk/AXObjectCacheAtk.cpp:
+        * accessibility/atk/WebKitAccessibleInterfaceText.cpp:
+        (getAttributeSetForAccessibilityObject):
+        (accessibilityObjectLength):
+        (textExtents):
+        (webkitAccessibleTextGetChar):
+        (numberOfReplacedElementsBeforeOffset):
+        * page/ContextMenuController.cpp:
+        * platform/SharedBuffer.h:
+        * platform/audio/gstreamer/WebKitWebAudioSourceGStreamer.cpp:
+        (webKitWebAudioSrcConstructed):
+        (webKitWebAudioSrcLoop):
+        * platform/audio/gtk/AudioBusGtk.cpp:
+        (WebCore::AudioBus::loadPlatformResource):
+        * platform/geoclue/GeolocationProviderGeoclue.cpp:
+        * platform/graphics/gstreamer/ImageGStreamerCairo.cpp:
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivateGStreamer::setAudioStreamProperties):
+        (WebCore::MediaPlayerPrivateGStreamer::handleMessage):
+        * platform/graphics/gstreamer/WebKitMediaSourceGStreamer.cpp:
+        (webKitMediaSrcAddSrc):
+        * platform/graphics/gstreamer/WebKitWebSourceGStreamer.cpp:
+        (webKitWebSrcStart):
+        (ResourceHandleStreamingClient::wasBlocked):
+        (ResourceHandleStreamingClient::cannotShowURL):
+        * platform/graphics/gtk/ImageBufferGtk.cpp:
+        (WebCore::encodeImage):
+        (WebCore::ImageBuffer::toDataURL):
+        * platform/graphics/gtk/ImageGtk.cpp:
+        (WebCore::getThemeIconFileName):
+        (WebCore::Image::loadPlatformResource):
+        * platform/gtk/ContextMenuGtk.cpp:
+        (WebCore::ContextMenu::itemCount):
+        (WebCore::contextMenuItemVector):
+        * platform/gtk/ContextMenuItemGtk.cpp:
+        (WebCore::createPlatformMenuItemDescription):
+        * platform/gtk/DataObjectGtk.cpp:
+        (WebCore::DataObjectGtk::setURIList):
+        (WebCore::DataObjectGtk::setURL):
+        * platform/gtk/FileSystemGtk.cpp:
+        (WebCore::filenameToString):
+        (WebCore::fileSystemRepresentation):
+        (WebCore::filenameForDisplay):
+        (WebCore::pathGetFileName):
+        (WebCore::applicationDirectoryPath):
+        (WebCore::sharedResourcesPath):
+        (WebCore::directoryName):
+        (WebCore::listDirectory):
+        (WebCore::openTemporaryFile):
+        * platform/gtk/GOwnPtrGtk.cpp: Removed.
+        * platform/gtk/GOwnPtrGtk.h: Removed.
+        * platform/gtk/GUniquePtrGtk.h: Added.
+        * platform/gtk/GamepadsGtk.cpp:
+        (WebCore::GamepadsGtk::GamepadsGtk):
+        * platform/gtk/GtkClickCounter.cpp:
+        (WebCore::GtkClickCounter::shouldProcessButtonEvent):
+        * platform/gtk/GtkInputMethodFilter.cpp:
+        (WebCore::GtkInputMethodFilter::sendCompositionAndPreeditWithFakeKeyEvents):
+        * platform/gtk/GtkPopupMenu.cpp:
+        (WebCore::GtkPopupMenu::popUp):
+        (WebCore::GtkPopupMenu::typeAheadFind):
+        * platform/gtk/LanguageGtk.cpp:
+        (WebCore::platformLanguage):
+        * platform/gtk/LocalizedStringsGtk.cpp:
+        (WebCore::imageTitle):
+        (WebCore::localizedMediaTimeDescription):
+        * platform/gtk/PasteboardHelper.cpp:
+        (WebCore::selectionDataToUTF8String):
+        (WebCore::PasteboardHelper::getClipboardContents):
+        (WebCore::PasteboardHelper::fillSelectionData):
+        * platform/gtk/PopupMenuGtk.cpp:
+        (WebCore::PopupMenuGtk::createGtkActionForMenuItem):
+        (WebCore::PopupMenuGtk::show):
+        * platform/gtk/WebKitAuthenticationWidget.cpp:
+        (webkitAuthenticationWidgetInitialize):
+        * platform/network/ResourceHandleInternal.h:
+        * platform/network/gtk/CredentialBackingStore.cpp:
+        (WebCore::credentialForChallengeAsyncReadyCallback):
+        * platform/network/soup/CookieJarSoup.cpp:
+        (WebCore::setCookiesFromDOM):
+        (WebCore::cookiesForSession):
+        (WebCore::getRawCookies):
+        (WebCore::deleteCookie):
+        (WebCore::getHostnamesWithCookies):
+        (WebCore::deleteCookiesForHostname):
+        (WebCore::deleteAllCookies):
+        * platform/network/soup/DNSSoup.cpp:
+        * platform/network/soup/GUniquePtrSoup.h: Added.
+        * platform/network/soup/ResourceErrorSoup.cpp:
+        (WebCore::failingURI):
+        * platform/network/soup/ResourceHandleSoup.cpp:
+        (WebCore::ResourceHandle::ensureReadBuffer):
+        (WebCore::cleanupSoupRequestOperation):
+        (WebCore::createSoupRequestAndMessageForHandle):
+        * platform/network/soup/ResourceRequestSoup.cpp:
+        (WebCore::ResourceRequest::updateSoupMessageMembers):
+        (WebCore::ResourceRequest::updateSoupMessage):
+        * platform/network/soup/ResourceResponseSoup.cpp:
+        * platform/network/soup/SoupURIUtils.cpp:
+        (WebCore::soupURIToKURL):
+        * platform/soup/SharedBufferSoup.cpp:
+        (WebCore::SharedBuffer::SharedBuffer):
+        (WebCore::SharedBuffer::clearPlatformData):
+        (WebCore::SharedBuffer::maybeTransferPlatformData):
+        (WebCore::SharedBuffer::hasPlatformData):
+        * plugins/gtk/PluginPackageGtk.cpp:
+        (WebCore::PluginPackage::fetchInfo):
+        (WebCore::PluginPackage::load):
+
 2014-01-22  Simon Fraser  <simon.fraser@apple.com>
 
         Surround fixedVisibleContentRect code with USE(TILED_BACKING_STORE)

@@ -28,8 +28,6 @@
 
 #if ENABLE(GEOLOCATION)
 
-#include <wtf/gobject/GOwnPtr.h>
-
 using namespace WebCore;
 
 static void getPositionCallback(GeocluePosition* position, GeocluePositionFields fields, int timestamp, double latitude, double longitude, double altitude, GeoclueAccuracy* accuracy, GError* error, GeolocationProviderGeoclue* provider)

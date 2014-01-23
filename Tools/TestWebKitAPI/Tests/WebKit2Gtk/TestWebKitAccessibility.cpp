@@ -33,8 +33,8 @@ extern "C" {
 #include <signal.h>
 #include <unistd.h>
 #include <wtf/PassRefPtr.h>
-#include <wtf/gobject/GOwnPtr.h>
 #include <wtf/gobject/GRefPtr.h>
+#include <wtf/gobject/GUniquePtr.h>
 
 // Name of the test server application creating the webView object.
 static const char* kTestServerAppName = "AccessibilityTestServer";
@@ -87,7 +87,7 @@ static void startTestServerMonitor()
 static void startTestServer()
 {
     // Prepare argv[] for spawning the server process.
-    GOwnPtr<char> testServerPath(g_build_filename(WEBKIT_EXEC_PATH, "TestWebKitAPI", "WebKit2Gtk", kTestServerAppName, NULL));
+    GUniquePtr<char> testServerPath(g_build_filename(WEBKIT_EXEC_PATH, "TestWebKitAPI", "WebKit2Gtk", kTestServerAppName, nullptr));
 
     char* testServerArgv[2];
     testServerArgv[0] = testServerPath.get();
@@ -125,7 +125,7 @@ static void checkAtspiAccessible(AtspiAccessible* accessible, const char* target
 {
     g_assert(ATSPI_IS_ACCESSIBLE(accessible));
 
-    GOwnPtr<char> name(atspi_accessible_get_name(accessible, 0));
+    GUniquePtr<char> name(atspi_accessible_get_name(accessible, 0));
     g_assert_cmpstr(targetName, ==, name.get());
     g_assert_cmpint(targetRole, ==, atspi_accessible_get_role(accessible, 0));
 }

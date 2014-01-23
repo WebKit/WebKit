@@ -40,6 +40,7 @@
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
 #include <wtf/gobject/GOwnPtr.h>
+#include <wtf/gobject/GUniquePtr.h>
 #include <wtf/gobject/GlibUtilities.h>
 
 #if OS(UNIX)
@@ -95,7 +96,7 @@ void ProcessLauncher::launchProcess()
     }
 
     realExecutablePath = fileSystemRepresentation(executablePath);
-    GOwnPtr<gchar> socket(g_strdup_printf("%d", sockets[0]));
+    GUniquePtr<gchar> socket(g_strdup_printf("%d", sockets[0]));
 
     unsigned nargs = 4; // size of the argv array for g_spawn_async()
 

@@ -51,7 +51,7 @@
 #include "WebKitAccessibleUtil.h"
 #include "WebKitAccessibleWrapperAtk.h"
 #include "htmlediting.h"
-#include <wtf/gobject/GOwnPtr.h>
+#include <wtf/gobject/GUniquePtr.h>
 #include <wtf/text/CString.h>
 
 using namespace WebCore;
@@ -87,18 +87,18 @@ static AtkAttributeSet* getAttributeSetForAccessibilityObject(const Accessibilit
     RenderStyle* style = &renderer->style();
 
     AtkAttributeSet* result = 0;
-    GOwnPtr<gchar> buffer(g_strdup_printf("%i", style->fontSize()));
+    GUniquePtr<gchar> buffer(g_strdup_printf("%i", style->fontSize()));
     result = addToAtkAttributeSet(result, atk_text_attribute_get_name(ATK_TEXT_ATTR_SIZE), buffer.get());
 
     Color bgColor = style->visitedDependentColor(CSSPropertyBackgroundColor);
     if (bgColor.isValid()) {
-        buffer.set(g_strdup_printf("%i,%i,%i", bgColor.red(), bgColor.green(), bgColor.blue()));
+        buffer.reset(g_strdup_printf("%i,%i,%i", bgColor.red(), bgColor.green(), bgColor.blue()));
         result = addToAtkAttributeSet(result, atk_text_attribute_get_name(ATK_TEXT_ATTR_BG_COLOR), buffer.get());
     }
 
     Color fgColor = style->visitedDependentColor(CSSPropertyColor);
     if (fgColor.isValid()) {
-        buffer.set(g_strdup_printf("%i,%i,%i", fgColor.red(), fgColor.green(), fgColor.blue()));
+        buffer.reset(g_strdup_printf("%i,%i,%i", fgColor.red(), fgColor.green(), fgColor.blue()));
         result = addToAtkAttributeSet(result, atk_text_attribute_get_name(ATK_TEXT_ATTR_FG_COLOR), buffer.get());
     }
 
@@ -120,13 +120,13 @@ static AtkAttributeSet* getAttributeSetForAccessibilityObject(const Accessibilit
     }
 
     if (includeRise) {
-        buffer.set(g_strdup_printf("%i", baselinePosition));
+        buffer.reset(g_strdup_printf("%i", baselinePosition));
         result = addToAtkAttributeSet(result, atk_text_attribute_get_name(ATK_TEXT_ATTR_RISE), buffer.get());
     }
 
     if (!style->textIndent().isUndefined()) {
         int indentation = valueForLength(style->textIndent(), object->size().width(), &renderer->view());
-        buffer.set(g_strdup_printf("%i", indentation));
+        buffer.reset(g_strdup_printf("%i", indentation));
         result = addToAtkAttributeSet(result, atk_text_attribute_get_name(ATK_TEXT_ATTR_INDENT), buffer.get());
     }
 
@@ -166,7 +166,7 @@ static AtkAttributeSet* getAttributeSetForAccessibilityObject(const Accessibilit
         fontWeight = 900;
     }
     if (fontWeight > 0) {
-        buffer.set(g_strdup_printf("%i", fontWeight));
+        buffer.reset(g_strdup_printf("%i", fontWeight));
         result = addToAtkAttributeSet(result, atk_text_attribute_get_name(ATK_TEXT_ATTR_WEIGHT), buffer.get());
     }
 
@@ -261,7 +261,7 @@ static guint accessibilityObjectLength(const AccessibilityObject* object)
     // well known API to always get the text in a consistent way
     AtkObject* atkObj = ATK_OBJECT(object->wrapper());
     if (ATK_IS_TEXT(atkObj)) {
-        GOwnPtr<gchar> text(webkitAccessibleTextGetText(ATK_TEXT(atkObj), 0, -1));
+        GUniquePtr<gchar> text(webkitAccessibleTextGetText(ATK_TEXT(atkObj), 0, -1));
         return g_utf8_strlen(text.get(), -1);
     }
 
@@ -335,7 +335,7 @@ static AtkAttributeSet* getRunAttributesFromAccesibilityObject(const Accessibili
 
 static IntRect textExtents(AtkText* text, gint startOffset, gint length, AtkCoordType coords)
 {
-    GOwnPtr<char> textContent(webkitAccessibleTextGetText(text, startOffset, -1));
+    GUniquePtr<char> textContent(webkitAccessibleTextGetText(text, startOffset, -1));
     gint textLength = g_utf8_strlen(textContent.get(), -1);
 
     // The first case (endOffset of -1) should work, but seems broken for all Gtk+ apps.
@@ -529,7 +529,7 @@ static char* webkitAccessibleTextGetChar(AtkText* text, int offset, GetTextRelat
     else if (textPosition == GetTextPositionAfter)
         actualOffset++;
 
-    GOwnPtr<char> textData(webkitAccessibleTextGetText(text, 0, -1));
+    GUniquePtr<char> textData(webkitAccessibleTextGetText(text, 0, -1));
     int textLength = g_utf8_strlen(textData.get(), -1);
 
     *startOffset = std::max(0, actualOffset);
@@ -637,7 +637,7 @@ static VisibleSelection wordAtPositionForAtkBoundary(const AccessibilityObject* 
 
 static int numberOfReplacedElementsBeforeOffset(AtkText* text, unsigned offset)
 {
-    GOwnPtr<char> textForObject(webkitAccessibleTextGetText(text, 0, offset));
+    GUniquePtr<char> textForObject(webkitAccessibleTextGetText(text, 0, offset));
     String textBeforeOffset = String::fromUTF8(textForObject.get());
 
     int count = 0;

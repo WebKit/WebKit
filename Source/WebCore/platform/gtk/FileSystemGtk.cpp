@@ -30,6 +30,7 @@
 #include <glib/gstdio.h>
 #include <wtf/gobject/GOwnPtr.h>
 #include <wtf/gobject/GRefPtr.h>
+#include <wtf/gobject/GUniquePtr.h>
 #include <wtf/gobject/GlibUtilities.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
@@ -48,7 +49,7 @@ String filenameToString(const char* filename)
 #if OS(WINDOWS)
     return String::fromUTF8(filename);
 #else
-    GOwnPtr<gchar> escapedString(g_uri_escape_string(filename, "/:", false));
+    GUniquePtr<gchar> escapedString(g_uri_escape_string(filename, "/:", false));
     return escapedString.get();
 #endif
 }
@@ -58,7 +59,7 @@ CString fileSystemRepresentation(const String& path)
 #if OS(WINDOWS)
     return path.utf8();
 #else
-    GOwnPtr<gchar> filename(g_uri_unescape_string(path.utf8().data(), 0));
+    GUniquePtr<gchar> filename(g_uri_unescape_string(path.utf8().data(), 0));
     return filename.get();
 #endif
 }
@@ -70,7 +71,7 @@ String filenameForDisplay(const String& string)
     return string;
 #else
     CString filename = fileSystemRepresentation(string);
-    GOwnPtr<gchar> display(g_filename_to_utf8(filename.data(), 0, 0, 0, 0));
+    GUniquePtr<gchar> display(g_filename_to_utf8(filename.data(), 0, 0, 0, 0));
     if (!display)
         return string;
 
@@ -190,7 +191,7 @@ String pathGetFileName(const String& pathName)
         return pathName;
 
     CString tmpFilename = fileSystemRepresentation(pathName);
-    GOwnPtr<gchar> baseName(g_path_get_basename(tmpFilename.data()));
+    GUniquePtr<gchar> baseName(g_path_get_basename(tmpFilename.data()));
     return String::fromUTF8(baseName.get());
 }
 
@@ -201,11 +202,11 @@ CString applicationDirectoryPath()
         return path;
 
     // If the above fails, check the PATH env variable.
-    GOwnPtr<char> currentExePath(g_find_program_in_path(g_get_prgname()));
+    GUniquePtr<char> currentExePath(g_find_program_in_path(g_get_prgname()));
     if (!currentExePath.get())
         return CString();
 
-    GOwnPtr<char> dirname(g_path_get_dirname(currentExePath.get()));
+    GUniquePtr<char> dirname(g_path_get_dirname(currentExePath.get()));
     return dirname.get();
 }
 
@@ -219,10 +220,10 @@ CString sharedResourcesPath()
     HMODULE hmodule = 0;
     GetModuleHandleExA(GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS, reinterpret_cast<char*>(sharedResourcesPath), &hmodule);
 
-    GOwnPtr<gchar> runtimeDir(g_win32_get_package_installation_directory_of_module(hmodule));
-    GOwnPtr<gchar> dataPath(g_build_filename(runtimeDir.get(), "share", "webkitgtk-" WEBKITGTK_API_VERSION_STRING, NULL));
+    GUniquePtr<gchar> runtimeDir(g_win32_get_package_installation_directory_of_module(hmodule));
+    GUniquePtr<gchar> dataPath(g_build_filename(runtimeDir.get(), "share", "webkitgtk-" WEBKITGTK_API_VERSION_STRING, NULL));
 #else
-    GOwnPtr<gchar> dataPath(g_build_filename(DATA_DIR, "webkitgtk-" WEBKITGTK_API_VERSION_STRING, NULL));
+    GUniquePtr<gchar> dataPath(g_build_filename(DATA_DIR, "webkitgtk-" WEBKITGTK_API_VERSION_STRING, NULL));
 #endif
 
     cachedPath = dataPath.get();
@@ -242,7 +243,7 @@ uint64_t getVolumeFreeSizeForPath(const char* path)
 String directoryName(const String& path)
 {
     /* No null checking needed */
-    GOwnPtr<char> dirname(g_path_get_dirname(fileSystemRepresentation(path).data()));
+    GUniquePtr<char> dirname(g_path_get_dirname(fileSystemRepresentation(path).data()));
     return String::fromUTF8(dirname.get());
 }
 
@@ -251,28 +252,26 @@ Vector<String> listDirectory(const String& path, const String& filter)
     Vector<String> entries;
 
     CString filename = fileSystemRepresentation(path);
-    GDir* dir = g_dir_open(filename.data(), 0, 0);
+    GUniquePtr<GDir> dir(g_dir_open(filename.data(), 0, nullptr));
     if (!dir)
         return entries;
 
-    GPatternSpec *pspec = g_pattern_spec_new((filter.utf8()).data());
-    while (const char* name = g_dir_read_name(dir)) {
-        if (!g_pattern_match_string(pspec, name))
+    GUniquePtr<GPatternSpec> pspec(g_pattern_spec_new((filter.utf8()).data()));
+    while (const char* name = g_dir_read_name(dir.get())) {
+        if (!g_pattern_match_string(pspec.get(), name))
             continue;
 
-        GOwnPtr<gchar> entry(g_build_filename(filename.data(), name, NULL));
+        GUniquePtr<gchar> entry(g_build_filename(filename.data(), name, NULL));
         entries.append(filenameToString(entry.get()));
     }
-    g_pattern_spec_free(pspec);
-    g_dir_close(dir);
 
     return entries;
 }
 
 String openTemporaryFile(const String& prefix, PlatformFileHandle& handle)
 {
-    GOwnPtr<gchar> filename(g_strdup_printf("%s%s", prefix.utf8().data(), createCanonicalUUIDString().utf8().data()));
-    GOwnPtr<gchar> tempPath(g_build_filename(g_get_tmp_dir(), filename.get(), NULL));
+    GUniquePtr<gchar> filename(g_strdup_printf("%s%s", prefix.utf8().data(), createCanonicalUUIDString().utf8().data()));
+    GUniquePtr<gchar> tempPath(g_build_filename(g_get_tmp_dir(), filename.get(), NULL));
     GRefPtr<GFile> file = adoptGRef(g_file_new_for_path(tempPath.get()));
 
     handle = g_file_create_readwrite(file.get(), G_FILE_CREATE_NONE, 0, 0);

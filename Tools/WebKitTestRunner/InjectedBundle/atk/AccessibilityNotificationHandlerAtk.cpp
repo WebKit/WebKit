@@ -29,7 +29,7 @@
 #include <WebKit2/WKBundlePage.h>
 #include <WebKit2/WKBundlePagePrivate.h>
 #include <wtf/HashMap.h>
-#include <wtf/gobject/GOwnPtr.h>
+#include <wtf/gobject/GUniquePtr.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
 
@@ -67,8 +67,8 @@ void printAccessibilityEvent(AtkObject* accessible, const char* signalName, cons
     if (!objectName || *objectName == '\0')
         objectName = "(No name)";
 
-    GOwnPtr<char> signalNameAndValue(signalValue ? g_strdup_printf("%s = %s", signalName, signalValue) : g_strdup(signalName));
-    GOwnPtr<char> accessibilityEventString(g_strdup_printf("Accessibility object emitted \"%s\" / Name: \"%s\" / Role: %d\n", signalNameAndValue.get(), objectName, objectRole));
+    GUniquePtr<char> signalNameAndValue(signalValue ? g_strdup_printf("%s = %s", signalName, signalValue) : g_strdup(signalName));
+    GUniquePtr<char> accessibilityEventString(g_strdup_printf("Accessibility object emitted \"%s\" / Name: \"%s\" / Role: %d\n", signalNameAndValue.get(), objectName, objectRole));
     InjectedBundle::shared().outputText(String::fromUTF8(accessibilityEventString.get()));
 }
 
@@ -83,37 +83,37 @@ gboolean axObjectEventListener(GSignalInvocationHint* signalHint, unsigned numPa
         return true;
 
     GSignalQuery signalQuery;
-    GOwnPtr<char> signalName;
-    GOwnPtr<char> signalValue;
+    GUniquePtr<char> signalName;
+    GUniquePtr<char> signalValue;
     const char* notificationName = nullptr;
 
     g_signal_query(signalHint->signal_id, &signalQuery);
 
     if (!g_strcmp0(signalQuery.signal_name, "state-change")) {
-        signalName.set(g_strdup_printf("state-change:%s", g_value_get_string(&paramValues[1])));
-        signalValue.set(g_strdup_printf("%d", g_value_get_boolean(&paramValues[2])));
+        signalName.reset(g_strdup_printf("state-change:%s", g_value_get_string(&paramValues[1])));
+        signalValue.reset(g_strdup_printf("%d", g_value_get_boolean(&paramValues[2])));
         if (!g_strcmp0(g_value_get_string(&paramValues[1]), "checked"))
             notificationName = "CheckedStateChanged";
         else if (!g_strcmp0(g_value_get_string(&paramValues[1]), "invalid-entry"))
             notificationName = "AXInvalidStatusChanged";
     } else if (!g_strcmp0(signalQuery.signal_name, "focus-event")) {
-        signalName.set(g_strdup("focus-event"));
-        signalValue.set(g_strdup_printf("%d", g_value_get_boolean(&paramValues[1])));
+        signalName.reset(g_strdup("focus-event"));
+        signalValue.reset(g_strdup_printf("%d", g_value_get_boolean(&paramValues[1])));
         if (g_value_get_boolean(&paramValues[1]))
             notificationName = "AXFocusedUIElementChanged";
     } else if (!g_strcmp0(signalQuery.signal_name, "children-changed")) {
         const gchar* childrenChangedDetail = g_quark_to_string(signalHint->detail);
-        signalName.set(g_strdup_printf("children-changed:%s", childrenChangedDetail));
-        signalValue.set(g_strdup_printf("%d", g_value_get_uint(&paramValues[1])));
+        signalName.reset(g_strdup_printf("children-changed:%s", childrenChangedDetail));
+        signalValue.reset(g_strdup_printf("%d", g_value_get_uint(&paramValues[1])));
         notificationName = !g_strcmp0(childrenChangedDetail, "add") ? "AXChildrenAdded" : "AXChildrenRemoved";
     } else if (!g_strcmp0(signalQuery.signal_name, "property-change")) {
-        signalName.set(g_strdup_printf("property-change:%s", g_quark_to_string(signalHint->detail)));
+        signalName.reset(g_strdup_printf("property-change:%s", g_quark_to_string(signalHint->detail)));
         if (!g_strcmp0(g_quark_to_string(signalHint->detail), "accessible-value"))
             notificationName = "AXValueChanged";
     } else if (!g_strcmp0(signalQuery.signal_name, "load-complete"))
         notificationName = "AXLoadComplete";
     else
-        signalName.set(g_strdup(signalQuery.signal_name));
+        signalName.reset(g_strdup(signalQuery.signal_name));
 
     if (loggingAccessibilityEvents)
         printAccessibilityEvent(accessible, signalName.get(), signalValue.get());

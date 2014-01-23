@@ -32,7 +32,7 @@
 #include <wtf/RetainPtr.h>
 OBJC_CLASS NSView;
 #elif PLATFORM(GTK)
-#include <GOwnPtrGtk.h>
+#include <WebCore/GUniquePtrGtk.h>
 typedef union _GdkEvent GdkEvent;
 #elif PLATFORM(EFL)
 #include <Evas.h>
@@ -68,7 +68,7 @@ private:
 #if USE(APPKIT)
     RetainPtr<NSEvent> m_nativeEvent;
 #elif PLATFORM(GTK)
-    GOwnPtr<GdkEvent> m_nativeEvent;
+    GUniquePtr<GdkEvent> m_nativeEvent;
 #elif PLATFORM(EFL)
     const void* m_nativeEvent;
 #endif

@@ -28,8 +28,8 @@
 #include <WebCore/ErrorsGtk.h>
 #include <WebCore/ResourceResponse.h>
 #include <glib/gi18n-lib.h>
-#include <wtf/gobject/GOwnPtr.h>
 #include <wtf/gobject/GRefPtr.h>
+#include <wtf/gobject/GUniquePtr.h>
 
 using namespace WebKit;
 using namespace WebCore;
@@ -80,7 +80,7 @@ struct _WebKitDownloadPrivate {
     CString destinationURI;
     guint64 currentSize;
     bool isCancelled;
-    GOwnPtr<GTimer> timer;
+    GUniquePtr<GTimer> timer;
     gdouble lastProgress;
     gdouble lastElapsed;
 };
@@ -113,14 +113,14 @@ static gboolean webkitDownloadDecideDestination(WebKitDownload* download, const 
     if (!download->priv->destinationURI.isNull())
         return FALSE;
 
-    GOwnPtr<char> filename(g_strdelimit(g_strdup(suggestedFilename), G_DIR_SEPARATOR_S, '_'));
+    GUniquePtr<char> filename(g_strdelimit(g_strdup(suggestedFilename), G_DIR_SEPARATOR_S, '_'));
     const gchar *downloadsDir = g_get_user_special_dir(G_USER_DIRECTORY_DOWNLOAD);
     if (!downloadsDir) {
         // If we don't have XDG user dirs info, set just to HOME.
         downloadsDir = g_get_home_dir();
     }
-    GOwnPtr<char> destination(g_build_filename(downloadsDir, filename.get(), NULL));
-    GOwnPtr<char> destinationURI(g_filename_to_uri(destination.get(), 0, 0));
+    GUniquePtr<char> destination(g_build_filename(downloadsDir, filename.get(), NULL));
+    GUniquePtr<char> destinationURI(g_filename_to_uri(destination.get(), 0, 0));
     download->priv->destinationURI = destinationURI.get();
     g_object_notify(G_OBJECT(download), "destination");
     return TRUE;
@@ -313,7 +313,7 @@ void webkitDownloadNotifyProgress(WebKitDownload* download, guint64 bytesReceive
         return;
 
     if (!download->priv->timer)
-        download->priv->timer.set(g_timer_new());
+        download->priv->timer.reset(g_timer_new());
 
     priv->currentSize += bytesReceived;
     g_signal_emit(download, signals[RECEIVED_DATA], 0, bytesReceived);
@@ -339,9 +339,8 @@ void webkitDownloadNotifyProgress(WebKitDownload* download, guint64 bytesReceive
 
 void webkitDownloadFailed(WebKitDownload* download, const ResourceError& resourceError)
 {
-    GOwnPtr<GError> webError(g_error_new_literal(g_quark_from_string(resourceError.domain().utf8().data()),
-                                                 resourceError.errorCode(),
-                                                 resourceError.localizedDescription().utf8().data()));
+    GUniquePtr<GError> webError(g_error_new_literal(g_quark_from_string(resourceError.domain().utf8().data()),
+        resourceError.errorCode(), resourceError.localizedDescription().utf8().data()));
     if (download->priv->timer)
         g_timer_stop(download->priv->timer.get());
 

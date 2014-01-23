@@ -24,8 +24,8 @@
 #include <gtk/gtk.h>
 #include <webkit2/webkit2.h>
 #include <wtf/HashMap.h>
-#include <wtf/gobject/GOwnPtr.h>
 #include <wtf/gobject/GRefPtr.h>
+#include <wtf/gobject/GUniquePtr.h>
 #include <wtf/text/StringHash.h>
 
 static WebKitTestServer* kServer;
@@ -89,7 +89,7 @@ static void testWebContextGetPlugins(PluginsTest* test, gconstpointer)
     }
     g_assert(WEBKIT_IS_PLUGIN(testPlugin.get()));
 
-    GOwnPtr<char> pluginPath(g_build_filename(WEBKIT_TEST_PLUGIN_DIR, "libTestNetscapePlugin.so", NULL));
+    GUniquePtr<char> pluginPath(g_build_filename(WEBKIT_TEST_PLUGIN_DIR, "libTestNetscapePlugin.so", nullptr));
     g_assert_cmpstr(webkit_plugin_get_path(testPlugin.get()), ==, pluginPath.get());
     g_assert_cmpstr(webkit_plugin_get_description(testPlugin.get()), ==, "Simple Netscape® plug-in that handles test content for WebKit");
     GList* mimeInfoList = webkit_plugin_get_mime_info_list(testPlugin.get());
@@ -156,7 +156,7 @@ public:
         g_assert(test->m_handlersMap.contains(String::fromUTF8(scheme)));
 
         if (!g_strcmp0(scheme, "error")) {
-            GOwnPtr<GError> error(g_error_new_literal(g_quark_from_string(errorDomain), errorCode, errorMessage));
+            GUniquePtr<GError> error(g_error_new_literal(g_quark_from_string(errorDomain), errorCode, errorMessage));
             webkit_uri_scheme_request_finish_error(request, error.get());
             return;
         }
@@ -197,7 +197,7 @@ static void testWebContextURIScheme(URISchemeTest* test, gconstpointer)
     test->registerURISchemeHandler("echo", kEchoHTMLFormat, -1, "text/html");
     test->loadURI("echo:hello world");
     test->waitUntilLoadFinished();
-    GOwnPtr<char> echoHTML(g_strdup_printf(kEchoHTMLFormat, webkit_uri_scheme_request_get_path(test->m_uriSchemeRequest.get())));
+    GUniquePtr<char> echoHTML(g_strdup_printf(kEchoHTMLFormat, webkit_uri_scheme_request_get_path(test->m_uriSchemeRequest.get())));
     mainResourceDataSize = 0;
     mainResourceData = test->mainResourceData(mainResourceDataSize);
     g_assert_cmpint(mainResourceDataSize, ==, strlen(echoHTML.get()));

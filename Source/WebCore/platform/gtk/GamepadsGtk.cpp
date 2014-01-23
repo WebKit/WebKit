@@ -37,6 +37,7 @@
 #include <wtf/PassOwnPtr.h>
 #include <wtf/gobject/GOwnPtr.h>
 #include <wtf/gobject/GRefPtr.h>
+#include <wtf/gobject/GUniquePtr.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringHash.h>
 
@@ -123,7 +124,7 @@ GamepadsGtk::GamepadsGtk(unsigned length)
     m_gudevClient = adoptGRef(g_udev_client_new(subsystems));
     g_signal_connect(m_gudevClient.get(), "uevent", G_CALLBACK(onUEventCallback), this);
 
-    GOwnPtr<GList> devicesList(g_udev_client_query_by_subsystem(m_gudevClient.get(), subsystems[0]));
+    GUniquePtr<GList> devicesList(g_udev_client_query_by_subsystem(m_gudevClient.get(), subsystems[0]));
     for (GList* listItem = devicesList.get(); listItem; listItem = g_list_next(listItem)) {
         GUdevDevice* device = G_UDEV_DEVICE(listItem->data);
         String deviceFile = String::fromUTF8(g_udev_device_get_device_file(device));

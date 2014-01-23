@@ -41,6 +41,7 @@
 #include <gtk/gtk.h>
 #include <wtf/Vector.h>
 #include <wtf/gobject/GOwnPtr.h>
+#include <wtf/gobject/GUniquePtr.h>
 
 #ifdef HAVE_GTK_UNIX_PRINTING
 #include "PrinterListGtk.h"
@@ -75,7 +76,7 @@ public:
 
         static int jobNumber = 0;
         const char* applicationName = g_get_application_name();
-        GOwnPtr<char>jobName(g_strdup_printf("%s job #%d", applicationName ? applicationName : "WebKit", ++jobNumber));
+        GUniquePtr<char>jobName(g_strdup_printf("%s job #%d", applicationName ? applicationName : "WebKit", ++jobNumber));
         m_printJob = adoptGRef(gtk_print_job_new(jobName.get(), printer, m_printSettings.get(), m_pageSetup.get()));
 
         GOwnPtr<GError> error;

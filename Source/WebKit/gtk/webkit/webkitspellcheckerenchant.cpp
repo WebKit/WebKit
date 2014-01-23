@@ -25,7 +25,6 @@
 #include "webkitspellchecker.h"
 #include <gtk/gtk.h>
 #include <wtf/OwnPtr.h>
-#include <wtf/gobject/GOwnPtr.h>
 #include <wtf/text/CString.h>
 
 using namespace WebCore;

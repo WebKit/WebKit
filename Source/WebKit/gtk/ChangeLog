@@ -1,3 +1,54 @@
+2014-01-22  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GLIB] Use GUniquePtr instead of GOwnPtr
+        https://bugs.webkit.org/show_bug.cgi?id=127431
+
+        Reviewed by Martin Robinson.
+
+        GUniquePtr is a template alias of std::unique_ptr with a custom
+        deleter that replaces GOwnPtr. GOwnPtr is still used for the cases
+        where the output pointer is needed, but it will also be replaced soon.
+
+        * WebCoreSupport/ContextMenuClientGtk.cpp:
+        (WebKit::getUnicodeMenuItemPosition):
+        * WebCoreSupport/DragClientGtk.cpp:
+        (WebKit::DragClient::startDrag):
+        * WebCoreSupport/DumpRenderTreeSupportGtk.cpp:
+        (DumpRenderTreeSupportGtk::setValueForUser):
+        * WebCoreSupport/EditorClientGtk.h:
+        * WebCoreSupport/FrameLoaderClientGtk.cpp:
+        (WebKit::FrameLoaderClient::userAgent):
+        (WebKit::FrameLoaderClient::dispatchDidReceiveAuthenticationChallenge):
+        (WebKit::FrameLoaderClient::dispatchWillSendRequest):
+        (WebKit::FrameLoaderClient::assignIdentifierToInitialRequest):
+        (WebKit::FrameLoaderClient::dispatchDidReceiveResponse):
+        (WebKit::FrameLoaderClient::dispatchDidReceiveContentLength):
+        (WebKit::FrameLoaderClient::dispatchDidFinishLoading):
+        (WebKit::FrameLoaderClient::dispatchDidFailLoading):
+        (WebKit::FrameLoaderClient::dispatchDidFailLoad):
+        * WebCoreSupport/InspectorClientGtk.h:
+        * webkit/webkitfavicondatabase.cpp:
+        (webkit_favicon_database_set_path):
+        * webkit/webkitfilechooserrequest.cpp:
+        * webkit/webkitglobals.cpp:
+        (webkitInit):
+        * webkit/webkithittestresult.cpp:
+        (WebKit::kit):
+        * webkit/webkiticondatabase.cpp:
+        (webkit_icon_database_set_path):
+        * webkit/webkitspellcheckerenchant.cpp:
+        * webkit/webkitwebplugin.cpp:
+        (webkit_web_plugin_get_path):
+        * webkit/webkitwebpluginprivate.h:
+        * webkit/webkitwebsettings.cpp:
+        (webkit_web_settings_class_init):
+        (webkit_web_settings_copy):
+        * webkit/webkitwebview.cpp:
+        (webkit_web_view_forward_context_menu_event):
+        (fileChooserDialogResponseCallback):
+        (webkit_web_view_drag_end):
+        * webkit/webkitwebviewprivate.h:
+
 2014-01-22  Thiago de Barros Lacerda  <thiago.lacerda@openbossa.org>
 
         [EFL][GTK] Get EFL and GTK compiling with ACCESSIBILITY disabled

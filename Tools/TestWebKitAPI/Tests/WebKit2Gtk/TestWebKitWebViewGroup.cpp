@@ -108,7 +108,7 @@ static bool isStyleSheetInjectedForURLAtPath(WebViewTest* test, const char* path
     g_assert(javascriptResult);
     g_assert(!error.get());
 
-    GOwnPtr<char> resultString(WebViewTest::javascriptResultToCString(javascriptResult));
+    GUniquePtr<char> resultString(WebViewTest::javascriptResultToCString(javascriptResult));
     return !g_strcmp0(resultString.get(), kStyleSheetTestScriptResult);
 }
 

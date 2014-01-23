@@ -31,8 +31,8 @@
 #include <gtk/gtk.h>
 #include <wtf/OwnPtr.h>
 #include <wtf/PassOwnPtr.h>
-#include <wtf/gobject/GOwnPtr.h>
 #include <wtf/gobject/GRefPtr.h>
+#include <wtf/gobject/GUniquePtr.h>
 
 using namespace WebKit;
 using namespace WebCore;
@@ -123,7 +123,7 @@ void webkitContextMenuItemSetSubMenuFromGtkMenu(WebKitContextMenuItem* item, Gtk
     if (!subMenu)
         return;
 
-    GOwnPtr<GList> children(gtk_container_get_children(GTK_CONTAINER(subMenu)));
+    GUniquePtr<GList> children(gtk_container_get_children(GTK_CONTAINER(subMenu)));
     if (!g_list_length(children.get()))
         return;
 

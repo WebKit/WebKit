@@ -1,3 +1,194 @@
+2014-01-22  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GLIB] Use GUniquePtr instead of GOwnPtr
+        https://bugs.webkit.org/show_bug.cgi?id=127431
+
+        Reviewed by Martin Robinson.
+
+        GUniquePtr is a template alias of std::unique_ptr with a custom
+        deleter that replaces GOwnPtr. GOwnPtr is still used for the cases
+        where the output pointer is needed, but it will also be replaced soon.
+
+        * DumpRenderTree/atk/AccessibilityCallbacksAtk.cpp:
+        (printAccessibilityEvent):
+        (axObjectEventListener):
+        * DumpRenderTree/atk/AccessibilityUIElementAtk.cpp:
+        (indexRangeInTable):
+        (AccessibilityUIElement::role):
+        (AccessibilityUIElement::title):
+        (AccessibilityUIElement::description):
+        (AccessibilityUIElement::stringValue):
+        (AccessibilityUIElement::language):
+        (AccessibilityUIElement::lineForIndex):
+        (AccessibilityUIElement::selectedTextRange):
+        (AccessibilityUIElement::url):
+        * DumpRenderTree/efl/AccessibilityControllerEfl.cpp:
+        (AccessibilityController::accessibleElementById):
+        * DumpRenderTree/gtk/AccessibilityControllerGtk.cpp:
+        (AccessibilityController::accessibleElementById):
+        * DumpRenderTree/gtk/DumpRenderTree.cpp:
+        (getOutputDir):
+        (getFontsPath):
+        (initializeFonts):
+        (dumpFramesAsText):
+        (compareHistoryItems):
+        (dumpHistoryItem):
+        (soupURIToStringPreservingPassword):
+        (resetDefaultsToConsistentValues):
+        (temporaryDatabaseDirectory):
+        (webViewTitleChanged):
+        (webFrameLoadStatusNotified):
+        (pathFromSoupURI):
+        (convertWebResourceToURLPath):
+        (urlSuitableForTestResult):
+        (descriptionSuitableForTestResult):
+        (willSendRequestCallback):
+        (frameLoadEventCallback):
+        * DumpRenderTree/gtk/EditingCallbacks.cpp:
+        (dumpNodePath):
+        (dumpRange):
+        (shouldApplyStyle):
+        * DumpRenderTree/gtk/EventSender.cpp:
+        (contextClickCallback):
+        (beginDragWithFilesCallback):
+        * DumpRenderTree/gtk/TestRunnerGtk.cpp:
+        (TestRunner::pathToLocalResource):
+        (TestRunner::queueLoad):
+        (TestRunner::removeOriginAccessWhitelistEntry):
+        (TestRunner::setMockGeolocationPositionUnavailableError):
+        (TestRunner::setIconDatabaseEnabled):
+        (TestRunner::findString):
+        (TestRunner::setDomainRelaxationForbiddenForURLScheme):
+        (TestRunner::overridePreference):
+        (TestRunner::addUserScript):
+        (TestRunner::addUserStyleSheet):
+        (TestRunner::setTextDirection):
+        * DumpRenderTree/gtk/TextInputController.cpp:
+        (setMarkedTextCallback):
+        (insertTextCallback):
+        (doCommandCallback):
+        * DumpRenderTree/gtk/WorkQueueItemGtk.cpp:
+        (LoadHTMLStringItem::invoke):
+        * TestWebKitAPI/PlatformGTK.cmake:
+        * TestWebKitAPI/Tests/WebKit2Gtk/DOMNodeTest.cpp:
+        (WebKitDOMNodeTest::testTagNames):
+        * TestWebKitAPI/Tests/WebKit2Gtk/TestBackForwardList.cpp:
+        (testBackForwardListLimitAndCache):
+        * TestWebKitAPI/Tests/WebKit2Gtk/TestContextMenu.cpp:
+        (testContextMenuSmartSeparators):
+        * TestWebKitAPI/Tests/WebKit2Gtk/TestCookieManager.cpp:
+        * TestWebKitAPI/Tests/WebKit2Gtk/TestDownloads.cpp:
+        (testDownloadLocalFile):
+        (testDownloadLocalFileError):
+        (addContentDispositionHTTPHeaderToResponse):
+        (serverCallback):
+        (testDownloadRemoteFileError):
+        * TestWebKitAPI/Tests/WebKit2Gtk/TestInspectorServer.cpp:
+        (startTestServer):
+        (testInspectorServerPageList):
+        (openRemoteDebuggingSession):
+        * TestWebKitAPI/Tests/WebKit2Gtk/TestPrinting.cpp:
+        (testPrintOperationPrint):
+        * TestWebKitAPI/Tests/WebKit2Gtk/TestResources.cpp:
+        (addCacheHTTPHeadersToResponse):
+        (serverCallback):
+        * TestWebKitAPI/Tests/WebKit2Gtk/TestSSL.cpp:
+        (httpsServerCallback):
+        (httpServerCallback):
+        * TestWebKitAPI/Tests/WebKit2Gtk/TestUIClient.cpp:
+        (testWebViewJavaScriptDialogs):
+        (testWebViewWindowProperties):
+        (testWebViewFileChooserRequest):
+        * TestWebKitAPI/Tests/WebKit2Gtk/TestWebExtensions.cpp:
+        (testWebExtensionWindowObjectCleared):
+        (testWebExtensionIsolatedWorld):
+        * TestWebKitAPI/Tests/WebKit2Gtk/TestWebKitAccessibility.cpp:
+        (startTestServer):
+        (checkAtspiAccessible):
+        * TestWebKitAPI/Tests/WebKit2Gtk/TestWebKitFaviconDatabase.cpp:
+        (serverCallback):
+        (testClearDatabase):
+        (testGetFaviconURI):
+        (webkitFaviconDatabaseFinalizedCallback):
+        * TestWebKitAPI/Tests/WebKit2Gtk/TestWebKitWebContext.cpp:
+        (testWebContextGetPlugins):
+        (testWebContextURIScheme):
+        * TestWebKitAPI/Tests/WebKit2Gtk/TestWebKitWebView.cpp:
+        (testWebViewRunJavaScript):
+        (testWebViewMode):
+        (testWebViewPageVisibility):
+        * TestWebKitAPI/Tests/WebKit2Gtk/TestWebKitWebViewGroup.cpp:
+        (isStyleSheetInjectedForURLAtPath):
+        * TestWebKitAPI/Tests/WebKit2Gtk/TestWebViewEditor.cpp:
+        (testWebViewEditorCutCopyPasteNonEditable):
+        (testWebViewEditorCutCopyPasteEditable):
+        (testWebViewEditorSelectAllNonEditable):
+        (testWebViewEditorSelectAllEditable):
+        * TestWebKitAPI/Tests/WebKit2Gtk/WebExtensionTest.cpp:
+        (sendRequestCallback):
+        (methodCallCallback):
+        * TestWebKitAPI/gtk/PlatformUtilitiesGtk.cpp:
+        (TestWebKitAPI::Util::createInjectedBundlePath):
+        (TestWebKitAPI::Util::createURLForResource):
+        * TestWebKitAPI/gtk/PlatformWebViewGtk.cpp:
+        (TestWebKitAPI::doKeyStroke):
+        (TestWebKitAPI::doMouseButtonEvent):
+        (TestWebKitAPI::PlatformWebView::simulateMouseMove):
+        * TestWebKitAPI/gtk/WebKit2Gtk/LoadTrackingTest.cpp:
+        (loadFailedCallback):
+        (LoadTrackingTest::loadURI):
+        (LoadTrackingTest::loadHtml):
+        (LoadTrackingTest::loadPlainText):
+        (LoadTrackingTest::loadRequest):
+        (LoadTrackingTest::reload):
+        (LoadTrackingTest::goBack):
+        (LoadTrackingTest::goForward):
+        * TestWebKitAPI/gtk/WebKit2Gtk/LoadTrackingTest.h:
+        * TestWebKitAPI/gtk/WebKit2Gtk/TestMain.cpp:
+        (registerGResource):
+        (removeNonEmptyDirectory):
+        (main):
+        * TestWebKitAPI/gtk/WebKit2Gtk/TestMain.h:
+        (Test::getWebKit1TestResoucesDir):
+        (Test::getResourcesDir):
+        * TestWebKitAPI/gtk/WebKit2Gtk/WebKitTestBus.cpp:
+        (WebKitTestBus::run):
+        * TestWebKitAPI/gtk/WebKit2Gtk/WebKitTestServer.cpp:
+        (WebKitTestServer::WebKitTestServer):
+        (WebKitTestServer::getURIForPath):
+        * TestWebKitAPI/gtk/WebKit2Gtk/WebProcessTestRunner.cpp:
+        (WebProcessTestRunner::runTest):
+        * TestWebKitAPI/gtk/WebKit2Gtk/WebViewTest.cpp:
+        (resourceGetDataCallback):
+        (WebViewTest::mainResourceData):
+        (WebViewTest::mouseMoveTo):
+        (WebViewTest::keyStroke):
+        (WebViewTest::doMouseButtonEvent):
+        * TestWebKitAPI/gtk/WebKit2Gtk/WebViewTest.h:
+        * WebKitTestRunner/InjectedBundle/atk/AccessibilityControllerAtk.cpp:
+        (WTR::AccessibilityController::accessibleElementById):
+        * WebKitTestRunner/InjectedBundle/atk/AccessibilityNotificationHandlerAtk.cpp:
+        * WebKitTestRunner/InjectedBundle/atk/AccessibilityUIElementAtk.cpp:
+        (WTR::AccessibilityUIElement::role):
+        (WTR::AccessibilityUIElement::title):
+        (WTR::AccessibilityUIElement::description):
+        (WTR::AccessibilityUIElement::stringValue):
+        (WTR::AccessibilityUIElement::language):
+        (WTR::AccessibilityUIElement::lineForIndex):
+        (WTR::AccessibilityUIElement::selectedTextRange):
+        (WTR::AccessibilityUIElement::url):
+        * WebKitTestRunner/InjectedBundle/gtk/ActivateFontsGtk.cpp:
+        (WTR::getOutputDir):
+        (WTR::getFontsPath):
+        (WTR::initializeFontConfigSetting):
+        * WebKitTestRunner/InjectedBundle/gtk/InjectedBundleUtilities.cpp:
+        (WTR::topLevelPath):
+        * WebKitTestRunner/InjectedBundle/gtk/TestRunnerGtk.cpp:
+        (WTR::TestRunner::pathToLocalResource):
+        * WebKitTestRunner/gtk/TestControllerGtk.cpp:
+        (WTR::TestController::initializeInjectedBundlePath):
+        (WTR::TestController::initializeTestPluginDirectory):
+
 2014-01-05  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] [CMake] run-webkit-tests should support the CMake build

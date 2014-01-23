@@ -59,7 +59,7 @@ static void contextMenuItemVisibilityChanged(GtkAction* action, GParamSpec*, Web
     if (!menu)
         return;
 
-    GOwnPtr<GList> items(gtk_container_get_children(GTK_CONTAINER(menu)));
+    GUniquePtr<GList> items(gtk_container_get_children(GTK_CONTAINER(menu)));
     bool previousVisibleItemIsNotASeparator = false;
     GtkWidget* lastItemVisibleSeparator = 0;
     for (GList* iter = items.get(); iter; iter = g_list_next(iter)) {

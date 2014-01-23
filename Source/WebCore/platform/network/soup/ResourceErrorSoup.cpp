@@ -28,7 +28,7 @@
 
 #include "LocalizedStrings.h"
 #include <libsoup/soup.h>
-#include <wtf/gobject/GOwnPtr.h>
+#include <wtf/gobject/GUniquePtr.h>
 #include <wtf/text/CString.h>
 
 namespace WebCore {
@@ -36,7 +36,7 @@ namespace WebCore {
 static String failingURI(SoupURI* soupURI)
 {
     ASSERT(soupURI);
-    GOwnPtr<char> uri(soup_uri_to_string(soupURI, FALSE));
+    GUniquePtr<char> uri(soup_uri_to_string(soupURI, FALSE));
     return uri.get();
 }
 

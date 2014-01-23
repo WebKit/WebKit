@@ -22,7 +22,7 @@
 #include "WebViewTest.h"
 
 #include <JavaScriptCore/JSRetainPtr.h>
-#include <WebCore/GOwnPtrGtk.h>
+#include <WebCore/GUniquePtrGtk.h>
 
 WebViewTest::WebViewTest()
     : m_webView(WEBKIT_WEB_VIEW(g_object_ref_sink(webkit_web_view_new())))
@@ -223,7 +223,7 @@ static void resourceGetDataCallback(GObject* object, GAsyncResult* result, gpoin
     g_assert(data);
 
     WebViewTest* test = static_cast<WebViewTest*>(userData);
-    test->m_resourceData.set(reinterpret_cast<char*>(data));
+    test->m_resourceData.reset(reinterpret_cast<char*>(data));
     test->m_resourceDataSize = dataSize;
     g_main_loop_quit(test->m_mainLoop);
 }
@@ -231,7 +231,7 @@ static void resourceGetDataCallback(GObject* object, GAsyncResult* result, gpoin
 const char* WebViewTest::mainResourceData(size_t& mainResourceDataSize)
 {
     m_resourceDataSize = 0;
-    m_resourceData.clear();
+    m_resourceData.reset();
     WebKitWebResource* resource = webkit_web_view_get_main_resource(m_webView);
     g_assert(resource);
 
@@ -248,7 +248,7 @@ void WebViewTest::mouseMoveTo(int x, int y, unsigned mouseModifiers)
     GtkWidget* viewWidget = GTK_WIDGET(m_webView);
     g_assert(gtk_widget_get_realized(viewWidget));
 
-    GOwnPtr<GdkEvent> event(gdk_event_new(GDK_MOTION_NOTIFY));
+    GUniquePtr<GdkEvent> event(gdk_event_new(GDK_MOTION_NOTIFY));
     event->motion.x = x;
     event->motion.y = y;
 
@@ -278,7 +278,7 @@ void WebViewTest::keyStroke(unsigned keyVal, unsigned keyModifiers)
     GtkWidget* viewWidget = GTK_WIDGET(m_webView);
     g_assert(gtk_widget_get_realized(viewWidget));
 
-    GOwnPtr<GdkEvent> event(gdk_event_new(GDK_KEY_PRESS));
+    GUniquePtr<GdkEvent> event(gdk_event_new(GDK_KEY_PRESS));
     event->key.keyval = keyVal;
 
     event->key.time = GDK_CURRENT_TIME;
@@ -304,7 +304,7 @@ void WebViewTest::doMouseButtonEvent(GdkEventType eventType, int x, int y, unsig
     GtkWidget* viewWidget = GTK_WIDGET(m_webView);
     g_assert(gtk_widget_get_realized(viewWidget));
 
-    GOwnPtr<GdkEvent> event(gdk_event_new(eventType));
+    GUniquePtr<GdkEvent> event(gdk_event_new(eventType));
     event->button.window = gtk_widget_get_window(viewWidget);
     g_object_ref(event->button.window);
 

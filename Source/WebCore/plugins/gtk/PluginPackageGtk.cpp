@@ -29,13 +29,13 @@
 #include "config.h"
 #include "PluginPackage.h"
 
-#include "GOwnPtrGtk.h"
 #include "GRefPtrGtk.h"
 #include "MIMETypeRegistry.h"
 #include "NotImplemented.h"
 #include "npruntime_impl.h"
 #include "PluginDebug.h"
 #include <gio/gio.h>
+#include <wtf/gobject/GUniquePtr.h>
 #include <wtf/text/CString.h>
 
 namespace WebCore {
@@ -72,7 +72,7 @@ bool PluginPackage::fetchInfo()
 
     gchar** mimeDescs = g_strsplit(types, ";", -1);
     for (int i = 0; mimeDescs[i] && mimeDescs[i][0]; i++) {
-        GOwnPtr<char> mime(g_utf8_strdown(mimeDescs[i], -1));
+        GUniquePtr<char> mime(g_utf8_strdown(mimeDescs[i], -1));
         gchar** mimeData = g_strsplit(mime.get(), ":", 3);
         if (g_strv_length(mimeData) < 3) {
             g_strfreev(mimeData);
@@ -129,22 +129,22 @@ bool PluginPackage::load()
         return true;
     }
 
-    GOwnPtr<gchar> finalPath(g_strdup(m_path.utf8().data()));
+    GUniquePtr<gchar> finalPath(g_strdup(m_path.utf8().data()));
     while (g_file_test(finalPath.get(), G_FILE_TEST_IS_SYMLINK)) {
         GRefPtr<GFile> file = adoptGRef(g_file_new_for_path(finalPath.get()));
         GRefPtr<GFile> dir = adoptGRef(g_file_get_parent(file.get()));
-        GOwnPtr<gchar> linkPath(g_file_read_link(finalPath.get(), 0));
+        GUniquePtr<gchar> linkPath(g_file_read_link(finalPath.get(), 0));
         GRefPtr<GFile> resolvedFile = adoptGRef(g_file_resolve_relative_path(dir.get(), linkPath.get()));
-        finalPath.set(g_file_get_path(resolvedFile.get()));
+        finalPath.reset(g_file_get_path(resolvedFile.get()));
     }
 
     // No joke. If there is a netscape component in the path, go back
     // to the symlink, as flash breaks otherwise.
     // See http://src.chromium.org/viewvc/chrome/trunk/src/webkit/glue/plugins/plugin_list_posix.cc
-    GOwnPtr<gchar> baseName(g_path_get_basename(finalPath.get()));
+    GUniquePtr<gchar> baseName(g_path_get_basename(finalPath.get()));
     if (!g_strcmp0(baseName.get(), "libflashplayer.so")
         && g_strstr_len(finalPath.get(), -1, "/netscape/"))
-        finalPath.set(g_strdup(m_path.utf8().data()));
+        finalPath.reset(g_strdup(m_path.utf8().data()));
 
     m_module = g_module_open(finalPath.get(), G_MODULE_BIND_LOCAL);
 

@@ -35,7 +35,6 @@
 
 #include "DumpRenderTree.h"
 #include "WebCoreSupport/DumpRenderTreeSupportGtk.h"
-#include <GOwnPtrGtk.h>
 #include <GRefPtrGtk.h>
 #include <GtkVersioning.h>
 #include <JavaScriptCore/JSObjectRef.h>
@@ -48,6 +47,8 @@
 #include <webkit/webkitwebview.h>
 #include <wtf/ASCIICType.h>
 #include <wtf/Platform.h>
+#include <wtf/gobject/GOwnPtr.h>
+#include <wtf/gobject/GUniquePtr.h>
 #include <wtf/text/CString.h>
 
 extern "C" {
@@ -220,7 +221,7 @@ static JSValueRef contextClickCallback(JSContextRef context, JSObjectRef functio
     WebKitWebView* view = webkit_web_frame_get_web_view(mainFrame);
     GtkMenu* gtkMenu = webkit_web_view_get_context_menu(view);
     if (gtkMenu) {
-        GOwnPtr<GList> items(gtk_container_get_children(GTK_CONTAINER(gtkMenu)));
+        GUniquePtr<GList> items(gtk_container_get_children(GTK_CONTAINER(gtkMenu)));
         JSValueRef arrayValues[g_list_length(items.get())];
         int index = 0;
         for (GList* item = g_list_first(items.get()); item; item = g_list_next(item)) {
@@ -542,9 +543,9 @@ static JSValueRef beginDragWithFilesCallback(JSContextRef context, JSObjectRef f
     // If this is an HTTP test, we still need to pass a local file path
     // to WebCore. Even though the file doesn't exist, this should be fine
     // for most tests.
-    GOwnPtr<gchar> scheme(g_file_get_uri_scheme(parentDirectory.get()));
+    GUniquePtr<gchar> scheme(g_file_get_uri_scheme(parentDirectory.get()));
     if (g_str_equal(scheme.get(), "http") || g_str_equal(scheme.get(), "https")) {
-        GOwnPtr<gchar> currentDirectory(g_get_current_dir());
+        GUniquePtr<gchar> currentDirectory(g_get_current_dir());
         parentDirectory = adoptGRef(g_file_new_for_path(currentDirectory.get()));
     }
 
@@ -557,7 +558,7 @@ static JSValueRef beginDragWithFilesCallback(JSContextRef context, JSObjectRef f
         JSStringRef filenameString = JSValueToStringCopy(context,
                                                          JSObjectGetPropertyAtIndex(context, filesArray, i, 0), 0);
         size_t bufferSize = JSStringGetMaximumUTF8CStringSize(filenameString);
-        GOwnPtr<gchar> filenameBuffer(static_cast<gchar*>(g_malloc(bufferSize)));
+        GUniquePtr<gchar> filenameBuffer(static_cast<gchar*>(g_malloc(bufferSize)));
         JSStringGetUTF8CString(filenameString, filenameBuffer.get(), bufferSize);
         JSStringRelease(filenameString);
 

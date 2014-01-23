@@ -134,9 +134,9 @@ static void testPrintOperationPrint(PrintTest* test, gconstpointer)
         return;
     }
 
-    GOwnPtr<char> outputFilename(g_build_filename(kTempDirectory, "webkit-print.pdf", NULL));
+    GUniquePtr<char> outputFilename(g_build_filename(kTempDirectory, "webkit-print.pdf", NULL));
     GRefPtr<GFile> outputFile = adoptGRef(g_file_new_for_path(outputFilename.get()));
-    GOwnPtr<char> outputURI(g_file_get_uri(outputFile.get()));
+    GUniquePtr<char> outputURI(g_file_get_uri(outputFile.get()));
 
     GRefPtr<GtkPrintSettings> printSettings = adoptGRef(gtk_print_settings_new());
     gtk_print_settings_set_printer(printSettings.get(), gtk_printer_get_name(printer.get()));
@@ -247,9 +247,9 @@ public:
             return;
         }
 
-        GOwnPtr<char> outputFilename(g_build_filename(kTempDirectory, "webkit-close-after-print.pdf", NULL));
+        GUniquePtr<char> outputFilename(g_build_filename(kTempDirectory, "webkit-close-after-print.pdf", NULL));
         m_outputFile = adoptGRef(g_file_new_for_path(outputFilename.get()));
-        GOwnPtr<char> outputURI(g_file_get_uri(m_outputFile.get()));
+        GUniquePtr<char> outputURI(g_file_get_uri(m_outputFile.get()));
 
         GRefPtr<GtkPrintSettings> printSettings = adoptGRef(gtk_print_settings_new());
         gtk_print_settings_set_printer(printSettings.get(), gtk_printer_get_name(printer.get()));

@@ -34,6 +34,7 @@
 #include <gio/gio.h>
 #include <wtf/gobject/GOwnPtr.h>
 #include <wtf/gobject/GRefPtr.h>
+#include <wtf/gobject/GUniquePtr.h>
 #include <wtf/text/CString.h>
 
 #if PLATFORM(GTK)
@@ -94,7 +95,7 @@ public:
         m_destinationURI = m_download->decideDestinationWithSuggestedFilename(suggestedFilename, overwrite);
         if (m_destinationURI.isEmpty()) {
 #if PLATFORM(GTK)
-            GOwnPtr<char> buffer(g_strdup_printf(_("Cannot determine destination URI for download with suggested filename %s"), suggestedFilename.utf8().data()));
+            GUniquePtr<char> buffer(g_strdup_printf(_("Cannot determine destination URI for download with suggested filename %s"), suggestedFilename.utf8().data()));
             String errorMessage = String::fromUTF8(buffer.get());
 #else
             String errorMessage = makeString("Cannot determine destination URI for download with suggested filename ", suggestedFilename);

@@ -50,8 +50,8 @@
 #include <wtf/OwnPtr.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
-#include <wtf/gobject/GOwnPtr.h>
 #include <wtf/gobject/GRefPtr.h>
+#include <wtf/gobject/GUniquePtr.h>
 #include <wtf/text/CString.h>
 
 using namespace WebKit;
@@ -216,7 +216,7 @@ static CString injectedBundleDirectory()
 
 static CString injectedBundleFilename()
 {
-    GOwnPtr<char> bundleFilename(g_build_filename(injectedBundleDirectory().data(), "libwebkit2gtkinjectedbundle.so", NULL));
+    GUniquePtr<char> bundleFilename(g_build_filename(injectedBundleDirectory().data(), "libwebkit2gtkinjectedbundle.so", NULL));
     return bundleFilename.get();
 }
 
@@ -443,9 +443,8 @@ void webkit_web_context_set_favicon_database_directory(WebKitWebContext* context
         : directoryPath.utf8();
 
     // Build the full path to the icon database file on disk.
-    GOwnPtr<gchar> faviconDatabasePath(g_build_filename(priv->faviconDatabaseDirectory.data(),
-                                                        WebCore::IconDatabase::defaultDatabaseFilename().utf8().data(),
-                                                        NULL));
+    GUniquePtr<gchar> faviconDatabasePath(g_build_filename(priv->faviconDatabaseDirectory.data(),
+        WebCore::IconDatabase::defaultDatabaseFilename().utf8().data(), nullptr));
 
     // Setting the path will cause the icon database to be opened.
     priv->context->setIconDatabasePath(WebCore::filenameToString(faviconDatabasePath.get()));

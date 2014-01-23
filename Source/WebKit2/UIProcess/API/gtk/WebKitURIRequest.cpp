@@ -22,7 +22,7 @@
 
 #include "WebKitPrivate.h"
 #include "WebKitURIRequestPrivate.h"
-#include <WebCore/GOwnPtrSoup.h>
+#include <WebCore/GUniquePtrSoup.h>
 #include <glib/gi18n-lib.h>
 #include <wtf/text/CString.h>
 
@@ -48,7 +48,7 @@ using namespace WebCore;
 struct _WebKitURIRequestPrivate {
     WebCore::ResourceRequest resourceRequest;
     CString uri;
-    GOwnPtr<SoupMessageHeaders> httpHeaders;
+    GUniquePtr<SoupMessageHeaders> httpHeaders;
 };
 
 WEBKIT_DEFINE_TYPE(WebKitURIRequest, webkit_uri_request, G_TYPE_OBJECT)
@@ -166,7 +166,7 @@ SoupMessageHeaders* webkit_uri_request_get_http_headers(WebKitURIRequest* reques
     if (!request->priv->resourceRequest.url().protocolIsInHTTPFamily())
         return 0;
 
-    request->priv->httpHeaders.set(soup_message_headers_new(SOUP_MESSAGE_HEADERS_REQUEST));
+    request->priv->httpHeaders.reset(soup_message_headers_new(SOUP_MESSAGE_HEADERS_REQUEST));
     request->priv->resourceRequest.updateSoupMessageHeaders(request->priv->httpHeaders.get());
     return request->priv->httpHeaders.get();
 }

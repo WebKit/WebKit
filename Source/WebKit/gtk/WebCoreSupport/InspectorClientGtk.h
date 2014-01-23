@@ -35,8 +35,8 @@
 #include "webkitwebinspector.h"
 #include "webkitwebview.h"
 #include <wtf/Forward.h>
-#include <wtf/gobject/GOwnPtr.h>
 #include <wtf/gobject/GRefPtr.h>
+#include <wtf/gobject/GUniquePtr.h>
 
 namespace WebCore {
 class Page;
@@ -71,7 +71,7 @@ private:
     WebKitWebView* m_inspectedWebView;
     WebCore::Page* m_frontendPage;
     InspectorFrontendClient* m_frontendClient;
-    GOwnPtr<gchar> m_inspectorFilesPath;
+    GUniquePtr<gchar> m_inspectorFilesPath;
 };
 
 class InspectorFrontendClient : public WebCore::InspectorFrontendClientLocal {

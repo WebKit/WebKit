@@ -101,7 +101,7 @@ static void testWebViewEditorCutCopyPasteNonEditable(EditorTest* test, gconstpoi
     g_assert(!test->canExecuteEditingCommand(WEBKIT_EDITING_COMMAND_PASTE));
 
     test->copyClipboard();
-    GOwnPtr<char> clipboardText(gtk_clipboard_wait_for_text(test->m_clipboard));
+    GUniquePtr<char> clipboardText(gtk_clipboard_wait_for_text(test->m_clipboard));
     g_assert_cmpstr(clipboardText.get(), ==, "make Jack a dull");
 }
 
@@ -127,7 +127,7 @@ static void testWebViewEditorCutCopyPasteEditable(EditorTest* test, gconstpointe
     g_assert(test->canExecuteEditingCommand(WEBKIT_EDITING_COMMAND_PASTE));
 
     test->copyClipboard();
-    GOwnPtr<char> clipboardText(gtk_clipboard_wait_for_text(test->m_clipboard));
+    GUniquePtr<char> clipboardText(gtk_clipboard_wait_for_text(test->m_clipboard));
     g_assert_cmpstr(clipboardText.get(), ==, "All work and no play make Jack a dull boy.");
 }
 
@@ -147,14 +147,14 @@ static void testWebViewEditorSelectAllNonEditable(EditorTest* test, gconstpointe
     g_assert(test->canExecuteEditingCommand(WEBKIT_EDITING_COMMAND_SELECT_ALL));
 
     test->copyClipboard();
-    GOwnPtr<char> clipboardText(gtk_clipboard_wait_for_text(test->m_clipboard));
+    GUniquePtr<char> clipboardText(gtk_clipboard_wait_for_text(test->m_clipboard));
 
     // Initially only the subspan is selected.
     g_assert_cmpstr(clipboardText.get(), ==, "make Jack a dull");
 
     webkit_web_view_execute_editing_command(test->m_webView, WEBKIT_EDITING_COMMAND_SELECT_ALL);
     test->copyClipboard();
-    clipboardText.set(gtk_clipboard_wait_for_text(test->m_clipboard));
+    clipboardText.reset(gtk_clipboard_wait_for_text(test->m_clipboard));
 
     // The mainspan should be selected after calling SELECT_ALL.
     g_assert_cmpstr(clipboardText.get(), ==, "All work and no play make Jack a dull boy.");
@@ -176,14 +176,14 @@ static void testWebViewEditorSelectAllEditable(EditorTest* test, gconstpointer)
     g_assert(test->canExecuteEditingCommand(WEBKIT_EDITING_COMMAND_SELECT_ALL));
 
     test->copyClipboard();
-    GOwnPtr<char> clipboardText(gtk_clipboard_wait_for_text(test->m_clipboard));
+    GUniquePtr<char> clipboardText(gtk_clipboard_wait_for_text(test->m_clipboard));
 
     // Initially only the subspan is selected.
     g_assert_cmpstr(clipboardText.get(), ==, "make Jack a dull");
 
     webkit_web_view_execute_editing_command(test->m_webView, WEBKIT_EDITING_COMMAND_SELECT_ALL);
     test->copyClipboard();
-    clipboardText.set(gtk_clipboard_wait_for_text(test->m_clipboard));
+    clipboardText.reset(gtk_clipboard_wait_for_text(test->m_clipboard));
 
     // The mainspan should be selected after calling SELECT_ALL.
     g_assert_cmpstr(clipboardText.get(), ==, "All work and no play make Jack a dull boy.");

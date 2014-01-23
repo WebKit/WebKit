@@ -28,7 +28,6 @@
 #include "DNS.h"
 #include "DNSResolveQueue.h"
 
-#include "GOwnPtrSoup.h"
 #include "SoupNetworkSession.h"
 #include <libsoup/soup.h>
 #include <wtf/MainThread.h>

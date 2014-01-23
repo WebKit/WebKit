@@ -161,7 +161,7 @@ public:
         if (m_certificateInfo)
             webkit_certificate_info_free(m_certificateInfo);
         m_certificateInfo = webkit_certificate_info_copy(info);
-        m_host.set(g_strdup(host));
+        m_host.reset(g_strdup(host));
         g_main_loop_quit(m_mainLoop);
     }
 
@@ -182,7 +182,7 @@ public:
 
 private:
     WebKitCertificateInfo* m_certificateInfo;
-    GOwnPtr<char> m_host;
+    GUniquePtr<char> m_host;
 };
 
 static void testLoadFailedWithTLSErrors(TLSErrorsTest* test, gconstpointer)
@@ -225,7 +225,7 @@ static void httpsServerCallback(SoupServer* server, SoupMessage* message, const 
         soup_message_body_append(message->response_body, SOUP_MEMORY_STATIC, indexHTML, strlen(indexHTML));
         soup_message_body_complete(message->response_body);
     } else if (g_str_equal(path, "/insecure-content/")) {
-        GOwnPtr<char> responseHTML(g_strdup_printf(insecureContentHTML, kHttpServer->getURIForPath("/test-script").data(), kHttpServer->getURIForPath("/test-image").data()));
+        GUniquePtr<char> responseHTML(g_strdup_printf(insecureContentHTML, kHttpServer->getURIForPath("/test-script").data(), kHttpServer->getURIForPath("/test-image").data()));
         soup_message_body_append(message->response_body, SOUP_MEMORY_COPY, responseHTML.get(), strlen(responseHTML.get()));
         soup_message_set_status(message, SOUP_STATUS_OK);
         soup_message_body_complete(message->response_body);
@@ -245,7 +245,7 @@ static void httpServerCallback(SoupServer* server, SoupMessage* message, const c
     }
 
     if (g_str_equal(path, "/test-script")) {
-        GOwnPtr<char> pathToFile(g_build_filename(Test::getResourcesDir().data(), "link-title.js", NULL));
+        GUniquePtr<char> pathToFile(g_build_filename(Test::getResourcesDir().data(), "link-title.js", NULL));
         char* contents;
         gsize length;
         g_file_get_contents(pathToFile.get(), &contents, &length, 0);
@@ -254,7 +254,7 @@ static void httpServerCallback(SoupServer* server, SoupMessage* message, const c
         soup_message_set_status(message, SOUP_STATUS_OK);
         soup_message_body_complete(message->response_body);
     } else if (g_str_equal(path, "/test-image")) {
-        GOwnPtr<char> pathToFile(g_build_filename(Test::getWebKit1TestResoucesDir().data(), "blank.ico", NULL));
+        GUniquePtr<char> pathToFile(g_build_filename(Test::getWebKit1TestResoucesDir().data(), "blank.ico", NULL));
         char* contents;
         gsize length;
         g_file_get_contents(pathToFile.get(), &contents, &length, 0);

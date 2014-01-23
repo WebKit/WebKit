@@ -246,7 +246,7 @@ static void testBackForwardListNavigation(BackForwardListTest* test, gconstpoint
 static void testBackForwardListLimitAndCache(BackForwardListTest* test, gconstpointer)
 {
     for (int i = 0; i < kBackForwardListLimit; i++) {
-        GOwnPtr<char> path(g_strdup_printf("/Page%d", i));
+        GUniquePtr<char> path(g_strdup_printf("/Page%d", i));
         test->m_changedFlags = BackForwardListTest::CurrentItem | BackForwardListTest::AddedItem;
         test->loadURI(kServer->getURIForPath(path.get()).data());
         test->waitUntilLoadFinished();
@@ -254,9 +254,9 @@ static void testBackForwardListLimitAndCache(BackForwardListTest* test, gconstpo
 
     g_assert_cmpuint(webkit_back_forward_list_get_length(test->m_list), ==, kBackForwardListLimit);
     WebKitBackForwardListItem* itemPageFirst = webkit_back_forward_list_get_nth_item(test->m_list, -(kBackForwardListLimit - 1));
-    GOwnPtr<GList> removedItems(g_list_prepend(0, itemPageFirst));
+    GUniquePtr<GList> removedItems(g_list_prepend(0, itemPageFirst));
 
-    GOwnPtr<char> path(g_strdup_printf("/Page%d", kBackForwardListLimit));
+    GUniquePtr<char> path(g_strdup_printf("/Page%d", kBackForwardListLimit));
     test->m_changedFlags = BackForwardListTest::CurrentItem | BackForwardListTest::AddedItem | BackForwardListTest::RemovedItems;
     test->loadURI(kServer->getURIForPath(path.get()).data());
     test->waitUntilLoadFinishedAndCheckRemovedItems(removedItems.get());

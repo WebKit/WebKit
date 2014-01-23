@@ -97,6 +97,7 @@
 #include <stdio.h>
 #include <wtf/gobject/GOwnPtr.h>
 #include <wtf/gobject/GRefPtr.h>
+#include <wtf/gobject/GUniquePtr.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringConcatenate.h>
 
@@ -123,7 +124,7 @@ FrameLoaderClient::~FrameLoaderClient()
 String FrameLoaderClient::userAgent(const URL& url)
 {
     WebKitWebSettings* settings = webkit_web_view_get_settings(getViewFromFrame(m_frame));
-    GOwnPtr<gchar> userAgentString(webkitWebSettingsUserAgentForURI(settings, url.string().utf8().data()));
+    GUniquePtr<gchar> userAgentString(webkitWebSettingsUserAgentForURI(settings, url.string().utf8().data()));
     return String::fromUTF8(userAgentString.get());
 }
 
@@ -204,7 +205,7 @@ void FrameLoaderClient::dispatchDidReceiveAuthenticationChallenge(WebCore::Docum
     if (DumpRenderTreeSupportGtk::dumpRenderTreeModeEnabled()) {
         CString username;
         CString password;
-        GOwnPtr<gchar> identifierString(toString(identifier));
+        GUniquePtr<gchar> identifierString(toString(identifier));
         WebKitWebResource* webResource = webkit_web_view_get_resource(view, identifierString.get());
         if (!DumpRenderTreeSupportGtk::s_authenticationCallback || !DumpRenderTreeSupportGtk::s_authenticationCallback(username, password, webResource)) {
             challenge.authenticationClient()->receivedRequestToContinueWithoutCredential(challenge);
@@ -244,7 +245,7 @@ void FrameLoaderClient::dispatchWillSendRequest(WebCore::DocumentLoader* loader,
         networkResponse = adoptGRef(kitNew(redirectResponse));
 
     WebKitWebView* webView = getViewFromFrame(m_frame);
-    GOwnPtr<gchar> identifierString(toString(identifier));
+    GUniquePtr<gchar> identifierString(toString(identifier));
     WebKitWebResource* webResource = webkit_web_view_get_resource(webView, identifierString.get());
     GRefPtr<WebKitNetworkRequest> networkRequest(adoptGRef(kitNew(request)));
 
@@ -270,7 +271,7 @@ void FrameLoaderClient::dispatchWillSendRequest(WebCore::DocumentLoader* loader,
 
 void FrameLoaderClient::assignIdentifierToInitialRequest(unsigned long identifier, WebCore::DocumentLoader* loader, const ResourceRequest& request)
 {
-    GOwnPtr<gchar> identifierString(toString(identifier));
+    GUniquePtr<gchar> identifierString(toString(identifier));
 
     WebKitWebResource* webResource = WEBKIT_WEB_RESOURCE(g_object_new(WEBKIT_TYPE_WEB_RESOURCE, "uri", request.url().string().utf8().data(), 0));
 
@@ -300,7 +301,7 @@ void FrameLoaderClient::dispatchDidReceiveResponse(WebCore::DocumentLoader* load
     m_response = response;
 
     WebKitWebView* webView = getViewFromFrame(m_frame);
-    GOwnPtr<gchar> identifierString(toString(identifier));
+    GUniquePtr<gchar> identifierString(toString(identifier));
     WebKitWebResource* webResource = webkit_web_view_get_resource(webView, identifierString.get());
     GRefPtr<WebKitNetworkResponse> networkResponse(adoptGRef(kitNew(response)));
 
@@ -942,7 +943,7 @@ void FrameLoaderClient::setTitle(const StringWithDirection& title, const URL& ur
 void FrameLoaderClient::dispatchDidReceiveContentLength(WebCore::DocumentLoader*, unsigned long identifier, int dataLength)
 {
     WebKitWebView* webView = getViewFromFrame(m_frame);
-    GOwnPtr<gchar> identifierString(toString(identifier));
+    GUniquePtr<gchar> identifierString(toString(identifier));
     WebKitWebResource* webResource = webkit_web_view_get_resource(webView, identifierString.get());
 
     g_signal_emit_by_name(webResource, "content-length-received", dataLength);
@@ -955,7 +956,7 @@ void FrameLoaderClient::dispatchDidFinishLoading(WebCore::DocumentLoader* loader
     static_cast<WebKit::DocumentLoader*>(loader)->decreaseLoadCount(identifier);
 
     WebKitWebView* webView = getViewFromFrame(m_frame);
-    GOwnPtr<gchar> identifierString(toString(identifier));
+    GUniquePtr<gchar> identifierString(toString(identifier));
     WebKitWebResource* webResource = webkit_web_view_get_resource(webView, identifierString.get());
 
     // A NULL WebResource means the load has been interrupted, and
@@ -988,7 +989,7 @@ void FrameLoaderClient::dispatchDidFailLoading(WebCore::DocumentLoader* loader, 
     static_cast<WebKit::DocumentLoader*>(loader)->decreaseLoadCount(identifier);
 
     WebKitWebView* webView = getViewFromFrame(m_frame);
-    GOwnPtr<gchar> identifierString(toString(identifier));
+    GUniquePtr<gchar> identifierString(toString(identifier));
     WebKitWebResource* webResource = webkit_web_view_get_resource(webView, identifierString.get());
 
     // A NULL WebResource means the load has been interrupted, and
@@ -996,9 +997,8 @@ void FrameLoaderClient::dispatchDidFailLoading(WebCore::DocumentLoader* loader, 
     if (!webResource)
         return;
 
-    GOwnPtr<GError> webError(g_error_new_literal(g_quark_from_string(error.domain().utf8().data()),
-                                                 error.errorCode(),
-                                                 error.localizedDescription().utf8().data()));
+    GUniquePtr<GError> webError(g_error_new_literal(g_quark_from_string(error.domain().utf8().data()),
+        error.errorCode(), error.localizedDescription().utf8().data()));
 
     g_signal_emit_by_name(webResource, "load-failed", webError.get());
     g_signal_emit_by_name(m_frame, "resource-load-failed", webResource, webError.get());
@@ -1026,7 +1026,7 @@ void FrameLoaderClient::dispatchDidFailLoad(const ResourceError& error)
     notifyStatus(m_frame, WEBKIT_LOAD_FAILED);
 
     WebKitWebView* webView = getViewFromFrame(m_frame);
-    GOwnPtr<GError> webError(g_error_new_literal(
+    GUniquePtr<GError> webError(g_error_new_literal(
         g_quark_from_string(error.domain().utf8().data()),
         error.errorCode(),
         error.localizedDescription().utf8().data()));
@@ -1039,7 +1039,7 @@ void FrameLoaderClient::dispatchDidFailLoad(const ResourceError& error)
     m_loadingErrorPage = true;
 
     String content;
-    GOwnPtr<gchar> errorPath(g_build_filename(sharedResourcesPath().data(), "resources", "error.html", NULL));
+    GUniquePtr<gchar> errorPath(g_build_filename(sharedResourcesPath().data(), "resources", "error.html", NULL));
     GRefPtr<GFile> errorFile = adoptGRef(g_file_new_for_path(errorPath.get()));
 
     if (!errorFile)

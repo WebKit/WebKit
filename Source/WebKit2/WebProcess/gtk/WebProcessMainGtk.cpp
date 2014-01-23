@@ -38,7 +38,6 @@
 #include <libsoup/soup.h>
 #include <unistd.h>
 #include <wtf/RunLoop.h>
-#include <wtf/gobject/GOwnPtr.h>
 #include <wtf/gobject/GRefPtr.h>
 
 using namespace WebCore;

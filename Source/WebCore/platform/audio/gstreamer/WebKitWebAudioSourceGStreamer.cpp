@@ -24,11 +24,11 @@
 
 #include "AudioBus.h"
 #include "AudioIOCallback.h"
-#include <wtf/gobject/GOwnPtr.h>
 #include "GRefPtrGStreamer.h"
 #include "GStreamerUtilities.h"
 #include <gst/audio/audio.h>
 #include <gst/pbutils/pbutils.h>
+#include <wtf/gobject/GUniquePtr.h>
 
 using namespace WebCore;
 
@@ -221,7 +221,7 @@ static void webKitWebAudioSrcConstructed(GObject* object)
     // For each channel of the bus create a new upstream branch for interleave, like:
     // queue ! capsfilter ! audioconvert. which is plugged to a new interleave request sinkpad.
     for (unsigned channelIndex = 0; channelIndex < priv->bus->numberOfChannels(); channelIndex++) {
-        GOwnPtr<gchar> queueName(g_strdup_printf("webaudioQueue%u", channelIndex));
+        GUniquePtr<gchar> queueName(g_strdup_printf("webaudioQueue%u", channelIndex));
         GstElement* queue = gst_element_factory_make("queue", queueName.get());
         GstElement* capsfilter = gst_element_factory_make("capsfilter", 0);
         GstElement* audioconvert = gst_element_factory_make("audioconvert", 0);
@@ -356,8 +356,8 @@ static void webKitWebAudioSrcLoop(WebKitWebAudioSrc* src)
         if (priv->newStreamEventPending) {
             GRefPtr<GstElement> queue = adoptGRef(gst_pad_get_parent_element(pad));
             GRefPtr<GstPad> sinkPad = adoptGRef(gst_element_get_static_pad(queue.get(), "sink"));
-            GOwnPtr<gchar> queueName(gst_element_get_name(queue.get()));
-            GOwnPtr<gchar> streamId(g_strdup_printf("webaudio/%s", queueName.get()));
+            GUniquePtr<gchar> queueName(gst_element_get_name(queue.get()));
+            GUniquePtr<gchar> streamId(g_strdup_printf("webaudio/%s", queueName.get()));
             GstEvent* streamStartEvent = gst_event_new_stream_start(streamId.get());
 #if GST_CHECK_VERSION(1, 2, 0)
             gst_event_set_group_id(streamStartEvent, groupId);

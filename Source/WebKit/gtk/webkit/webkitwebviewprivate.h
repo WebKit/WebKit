@@ -33,7 +33,6 @@
 #include "WebViewInputMethodFilter.h"
 #include "WidgetBackingStore.h"
 #include <webkit/webkitwebview.h>
-#include <wtf/gobject/GOwnPtr.h>
 
 #if ENABLE(MEDIA_STREAM)
 #include "UserMediaClientGtk.h"

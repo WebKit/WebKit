@@ -377,20 +377,20 @@ static void testWebViewJavaScriptDialogs(UIClientTest* test, gconstpointer)
     static const char* jsPromptFormat = "alert(prompt('%s', 'default'));";
 
     test->m_scriptDialogType = WEBKIT_SCRIPT_DIALOG_ALERT;
-    GOwnPtr<char> alertDialogMessage(g_strdup_printf(jsAlertFormat, kAlertDialogMessage));
-    GOwnPtr<char> alertHTML(g_strdup_printf(htmlOnLoadFormat, alertDialogMessage.get()));
+    GUniquePtr<char> alertDialogMessage(g_strdup_printf(jsAlertFormat, kAlertDialogMessage));
+    GUniquePtr<char> alertHTML(g_strdup_printf(htmlOnLoadFormat, alertDialogMessage.get()));
     test->loadHtml(alertHTML.get(), 0);
     test->waitUntilMainLoopFinishes();
 
     test->m_scriptDialogType = WEBKIT_SCRIPT_DIALOG_CONFIRM;
-    GOwnPtr<char> confirmDialogMessage(g_strdup_printf(jsConfirmFormat, kConfirmDialogMessage));
-    GOwnPtr<char> confirmHTML(g_strdup_printf(htmlOnLoadFormat, confirmDialogMessage.get()));
+    GUniquePtr<char> confirmDialogMessage(g_strdup_printf(jsConfirmFormat, kConfirmDialogMessage));
+    GUniquePtr<char> confirmHTML(g_strdup_printf(htmlOnLoadFormat, confirmDialogMessage.get()));
     test->loadHtml(confirmHTML.get(), 0);
     test->waitUntilMainLoopFinishes();
 
     test->m_scriptDialogType = WEBKIT_SCRIPT_DIALOG_PROMPT;
-    GOwnPtr<char> promptDialogMessage(g_strdup_printf(jsPromptFormat, kPromptDialogMessage));
-    GOwnPtr<char> promptHTML(g_strdup_printf(htmlOnLoadFormat, promptDialogMessage.get()));
+    GUniquePtr<char> promptDialogMessage(g_strdup_printf(jsPromptFormat, kPromptDialogMessage));
+    GUniquePtr<char> promptHTML(g_strdup_printf(htmlOnLoadFormat, promptDialogMessage.get()));
     test->loadHtml(promptHTML.get(), 0);
     test->waitUntilMainLoopFinishes();
 }
@@ -401,7 +401,7 @@ static void testWebViewWindowProperties(UIClientTest* test, gconstpointer)
     GdkRectangle geometry = { 100, 150, 400, 400 };
     test->setExpectedWindowProperties(UIClientTest::WindowProperties(&geometry, false, false, false, false, false, true, false));
 
-    GOwnPtr<char> htmlString(g_strdup_printf("<html><body onLoad=\"window.open('', '', '%s').close();\"></body></html>", windowProrpertiesString));
+    GUniquePtr<char> htmlString(g_strdup_printf("<html><body onLoad=\"window.open('', '', '%s').close();\"></body></html>", windowProrpertiesString));
     test->loadHtml(htmlString.get(), 0);
     test->waitUntilMainLoopFinishes();
 
@@ -586,7 +586,7 @@ static void testWebViewFileChooserRequest(FileChooserTest* test, gconstpointer)
     static const char* fileChooserHTMLFormat = "<html><body><input style='position:absolute;left:0;top:0;margin:0;padding:0' type='file' %s/></body></html>";
 
     // Multiple selections not allowed, no MIME filtering.
-    GOwnPtr<char> simpleFileUploadHTML(g_strdup_printf(fileChooserHTMLFormat, ""));
+    GUniquePtr<char> simpleFileUploadHTML(g_strdup_printf(fileChooserHTMLFormat, ""));
     test->loadHtml(simpleFileUploadHTML.get(), 0);
     test->waitUntilLoadFinished();
     WebKitFileChooserRequest* fileChooserRequest = test->clickMouseButtonAndWaitForFileChooserRequest(5, 5);
@@ -601,7 +601,7 @@ static void testWebViewFileChooserRequest(FileChooserTest* test, gconstpointer)
     webkit_file_chooser_request_cancel(fileChooserRequest);
 
     // Multiple selections allowed, no MIME filtering, some pre-selected files.
-    GOwnPtr<char> multipleSelectionFileUploadHTML(g_strdup_printf(fileChooserHTMLFormat, "multiple"));
+    GUniquePtr<char> multipleSelectionFileUploadHTML(g_strdup_printf(fileChooserHTMLFormat, "multiple"));
     test->loadHtml(multipleSelectionFileUploadHTML.get(), 0);
     test->waitUntilLoadFinished();
     fileChooserRequest = test->clickMouseButtonAndWaitForFileChooserRequest(5, 5);
@@ -638,7 +638,7 @@ static void testWebViewFileChooserRequest(FileChooserTest* test, gconstpointer)
     webkit_file_chooser_request_cancel(fileChooserRequest);
 
     // Multiple selections not allowed, only accept images, audio and video files..
-    GOwnPtr<char> mimeFilteredFileUploadHTML(g_strdup_printf(fileChooserHTMLFormat, "accept='audio/*,video/*,image/*'"));
+    GUniquePtr<char> mimeFilteredFileUploadHTML(g_strdup_printf(fileChooserHTMLFormat, "accept='audio/*,video/*,image/*'"));
     test->loadHtml(mimeFilteredFileUploadHTML.get(), 0);
     test->waitUntilLoadFinished();
     fileChooserRequest = test->clickMouseButtonAndWaitForFileChooserRequest(5, 5);

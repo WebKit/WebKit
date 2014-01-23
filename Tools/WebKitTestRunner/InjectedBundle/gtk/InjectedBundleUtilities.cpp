@@ -30,7 +30,7 @@
 #include "InjectedBundleUtilities.h"
 
 #include <gtk/gtk.h>
-#include <wtf/gobject/GOwnPtr.h>
+#include <wtf/gobject/GUniquePtr.h>
 #include <wtf/gobject/GlibUtilities.h>
 
 namespace WTR {
@@ -43,9 +43,9 @@ CString topLevelPath()
     // If the environment variable wasn't provided then assume we were built into
     // WebKitBuild/Debug or WebKitBuild/Release. Obviously this will fail if the build
     // directory is non-standard, but we can't do much more about this.
-    GOwnPtr<char> parentPath(g_path_get_dirname(getCurrentExecutablePath().data()));
-    GOwnPtr<char> layoutTestsPath(g_build_filename(parentPath.get(), "..", "..", "..", NULL));
-    GOwnPtr<char> absoluteTopLevelPath(realpath(layoutTestsPath.get(), 0));
+    GUniquePtr<char> parentPath(g_path_get_dirname(getCurrentExecutablePath().data()));
+    GUniquePtr<char> layoutTestsPath(g_build_filename(parentPath.get(), "..", "..", "..", nullptr));
+    GUniquePtr<char> absoluteTopLevelPath(realpath(layoutTestsPath.get(), 0));
     return absoluteTopLevelPath.get();
 }
 

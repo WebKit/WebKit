@@ -30,8 +30,8 @@
 #include "webkitglobals.h"
 #include "webkitglobalsprivate.h"
 #include <glib/gi18n-lib.h>
-#include <wtf/gobject/GOwnPtr.h>
 #include <wtf/gobject/GRefPtr.h>
+#include <wtf/gobject/GUniquePtr.h>
 #include <wtf/text/CString.h>
 
 /**
@@ -283,26 +283,26 @@ namespace WebKit {
 WebKitHitTestResult* kit(const WebCore::HitTestResult& result)
 {
     guint context = WEBKIT_HIT_TEST_RESULT_CONTEXT_DOCUMENT;
-    GOwnPtr<char> linkURI(0);
-    GOwnPtr<char> imageURI(0);
-    GOwnPtr<char> mediaURI(0);
+    GUniquePtr<char> linkURI;
+    GUniquePtr<char> imageURI;
+    GUniquePtr<char> mediaURI;
     WebKitDOMNode* node = 0;
     WebCore::Frame* innerNodeFrame;
     WebCore::IntPoint point;
 
     if (!result.absoluteLinkURL().isEmpty()) {
         context |= WEBKIT_HIT_TEST_RESULT_CONTEXT_LINK;
-        linkURI.set(g_strdup(result.absoluteLinkURL().string().utf8().data()));
+        linkURI.reset(g_strdup(result.absoluteLinkURL().string().utf8().data()));
     }
 
     if (!result.absoluteImageURL().isEmpty()) {
         context |= WEBKIT_HIT_TEST_RESULT_CONTEXT_IMAGE;
-        imageURI.set(g_strdup(result.absoluteImageURL().string().utf8().data()));
+        imageURI.reset(g_strdup(result.absoluteImageURL().string().utf8().data()));
     }
 
     if (!result.absoluteMediaURL().isEmpty()) {
         context |= WEBKIT_HIT_TEST_RESULT_CONTEXT_MEDIA;
-        mediaURI.set(g_strdup(result.absoluteMediaURL().string().utf8().data()));
+        mediaURI.reset(g_strdup(result.absoluteMediaURL().string().utf8().data()));
     }
 
     if (result.isSelected())

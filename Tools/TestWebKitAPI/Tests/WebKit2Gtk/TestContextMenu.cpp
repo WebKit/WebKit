@@ -76,7 +76,7 @@ public:
 
     GtkMenu* getPopupMenu()
     {
-        GOwnPtr<GList> toplevels(gtk_window_list_toplevels());
+        GUniquePtr<GList> toplevels(gtk_window_list_toplevels());
         for (GList* iter = toplevels.get(); iter; iter = g_list_next(iter)) {
             if (!GTK_IS_WINDOW(iter->data))
                 continue;
@@ -432,7 +432,7 @@ public:
 
     GtkMenuItem* getMenuItem(GtkMenu* menu, const gchar* itemLabel)
     {
-        GOwnPtr<GList> items(gtk_container_get_children(GTK_CONTAINER(menu)));
+        GUniquePtr<GList> items(gtk_container_get_children(GTK_CONTAINER(menu)));
         for (GList* iter = items.get(); iter; iter = g_list_next(iter)) {
             GtkMenuItem* child = GTK_MENU_ITEM(iter->data);
             if (g_str_equal(itemLabel, gtk_menu_item_get_label(child)))
@@ -785,7 +785,7 @@ static void testContextMenuSmartSeparators(ContextMenuSmartSeparatorsTest* test,
     g_assert(menu);
 
     // Leading and trailing separators are not added to the context menu.
-    GOwnPtr<GList> menuItems(gtk_container_get_children(GTK_CONTAINER(menu)));
+    GUniquePtr<GList> menuItems(gtk_container_get_children(GTK_CONTAINER(menu)));
     g_assert_cmpuint(g_list_length(menuItems.get()), ==, 6);
     GtkWidget* item = GTK_WIDGET(g_list_nth_data(menuItems.get(), 0));
     g_assert(!GTK_IS_SEPARATOR_MENU_ITEM(item) && gtk_widget_get_visible(item));
@@ -803,7 +803,7 @@ static void testContextMenuSmartSeparators(ContextMenuSmartSeparatorsTest* test,
     // Hiding a menu item between two separators hides the following separator.
     GtkAction* action = gtk_activatable_get_related_action(GTK_ACTIVATABLE(g_list_nth_data(menuItems.get(), 3)));
     gtk_action_set_visible(action, FALSE);
-    menuItems.set(gtk_container_get_children(GTK_CONTAINER(menu)));
+    menuItems.reset(gtk_container_get_children(GTK_CONTAINER(menu)));
     g_assert_cmpuint(g_list_length(menuItems.get()), ==, 6);
     item = GTK_WIDGET(g_list_nth_data(menuItems.get(), 0));
     g_assert(!GTK_IS_SEPARATOR_MENU_ITEM(item) && gtk_widget_get_visible(item));
@@ -836,7 +836,7 @@ static void testContextMenuSmartSeparators(ContextMenuSmartSeparatorsTest* test,
     // Trailing separators are hidden too.
     action = gtk_activatable_get_related_action(GTK_ACTIVATABLE(g_list_nth_data(menuItems.get(), 5)));
     gtk_action_set_visible(action, FALSE);
-    menuItems.set(gtk_container_get_children(GTK_CONTAINER(menu)));
+    menuItems.reset(gtk_container_get_children(GTK_CONTAINER(menu)));
     item = GTK_WIDGET(g_list_nth_data(menuItems.get(), 0));
     g_assert(!GTK_IS_SEPARATOR_MENU_ITEM(item) && gtk_widget_get_visible(item));
     item = GTK_WIDGET(g_list_nth_data(menuItems.get(), 1));

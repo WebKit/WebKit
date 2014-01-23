@@ -196,7 +196,6 @@ list(APPEND WebCorePlatformGTK_SOURCES
     platform/gtk/ErrorsGtk.cpp
     platform/gtk/EventLoopGtk.cpp
     platform/gtk/FileSystemGtk.cpp
-    platform/gtk/GOwnPtrGtk.cpp
     platform/gtk/GRefPtrGtk.cpp
     platform/gtk/GtkClickCounter.cpp
     platform/gtk/GtkDragAndDropHelper.cpp

@@ -26,8 +26,6 @@
 
 #include <cairo.h>
 #include <gst/gst.h>
-#include <wtf/gobject/GOwnPtr.h>
-
 #include <gst/video/gstvideometa.h>
 
 

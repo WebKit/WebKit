@@ -30,7 +30,7 @@
 #include "WebPopupItem.h"
 #include <WebCore/GtkUtilities.h>
 #include <gtk/gtk.h>
-#include <wtf/gobject/GOwnPtr.h>
+#include <wtf/gobject/GUniquePtr.h>
 #include <wtf/text/CString.h>
 
 using namespace WebCore;
@@ -54,7 +54,7 @@ WebPopupMenuProxyGtk::~WebPopupMenuProxyGtk()
 
 GtkAction* WebPopupMenuProxyGtk::createGtkActionForMenuItem(const WebPopupItem& item, int itemIndex)
 {
-    GOwnPtr<char> actionName(g_strdup_printf("popup-menu-action-%d", itemIndex));
+    GUniquePtr<char> actionName(g_strdup_printf("popup-menu-action-%d", itemIndex));
     GtkAction* action = gtk_action_new(actionName.get(), item.m_text.utf8().data(), item.m_toolTip.utf8().data(), 0);
     g_object_set_data(G_OBJECT(action), "popup-menu-action-index", GINT_TO_POINTER(itemIndex));
     g_signal_connect(action, "activate", G_CALLBACK(menuItemActivated), this);

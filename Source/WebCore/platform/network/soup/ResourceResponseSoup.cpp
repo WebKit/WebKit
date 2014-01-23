@@ -21,7 +21,6 @@
 #include "config.h"
 #include "ResourceResponse.h"
 
-#include <wtf/gobject/GOwnPtr.h>
 #include "HTTPParsers.h"
 #include "MIMETypeRegistry.h"
 #include "SoupURIUtils.h"

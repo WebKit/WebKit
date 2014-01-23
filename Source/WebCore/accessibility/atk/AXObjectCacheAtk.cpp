@@ -30,7 +30,6 @@
 #include "Range.h"
 #include "TextIterator.h"
 #include "WebKitAccessibleWrapperAtk.h"
-#include <wtf/gobject/GOwnPtr.h>
 #include <wtf/gobject/GRefPtr.h>
 #include <wtf/text/CString.h>
 

@@ -24,6 +24,7 @@
 #include <glib-object.h>
 #include <wtf/HashSet.h>
 #include <wtf/gobject/GOwnPtr.h>
+#include <wtf/gobject/GUniquePtr.h>
 #include <wtf/text/CString.h>
 
 #define MAKE_GLIB_TEST_FIXTURE(ClassName) \
@@ -37,7 +38,7 @@
     } \
     static void add(const char* suiteName, const char* testName, void (*testFunc)(ClassName*, const void*)) \
     { \
-        GOwnPtr<gchar> testPath(g_strdup_printf("/webkit2/%s/%s", suiteName, testName)); \
+        GUniquePtr<gchar> testPath(g_strdup_printf("/webkit2/%s/%s", suiteName, testName)); \
         g_test_add(testPath.get(), ClassName, 0, ClassName::setUp, testFunc, ClassName::tearDown); \
     }
 
@@ -83,13 +84,13 @@ public:
 
     static CString getWebKit1TestResoucesDir()
     {
-        GOwnPtr<char> resourcesDir(g_build_filename(WEBKIT_SRC_DIR, "Tools", "TestWebKitAPI", "Tests", "WebKitGtk", "resources", NULL));
+        GUniquePtr<char> resourcesDir(g_build_filename(WEBKIT_SRC_DIR, "Tools", "TestWebKitAPI", "Tests", "WebKitGtk", "resources", nullptr));
         return resourcesDir.get();
     }
 
     static CString getResourcesDir()
     {
-        GOwnPtr<char> resourcesDir(g_build_filename(WEBKIT_SRC_DIR, "Tools", "TestWebKitAPI", "Tests", "WebKit2Gtk", "resources", NULL));
+        GUniquePtr<char> resourcesDir(g_build_filename(WEBKIT_SRC_DIR, "Tools", "TestWebKitAPI", "Tests", "WebKit2Gtk", "resources", nullptr));
         return resourcesDir.get();
     }
 

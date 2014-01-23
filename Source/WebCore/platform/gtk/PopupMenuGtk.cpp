@@ -28,11 +28,10 @@
 #include "PopupMenuGtk.h"
 
 #include "FrameView.h"
-#include "GOwnPtrGtk.h"
+#include "GUniquePtrGtk.h"
 #include "GtkUtilities.h"
 #include "HostWindow.h"
 #include <gtk/gtk.h>
-#include <wtf/gobject/GOwnPtr.h>
 #include <wtf/text/CString.h>
 
 namespace WebCore {
@@ -52,7 +51,7 @@ PopupMenuGtk::~PopupMenuGtk()
 
 GtkAction* PopupMenuGtk::createGtkActionForMenuItem(int itemIndex)
 {
-    GOwnPtr<char> actionName(g_strdup_printf("popup-menu-action-%d", itemIndex));
+    GUniquePtr<char> actionName(g_strdup_printf("popup-menu-action-%d", itemIndex));
     GtkAction* action = gtk_action_new(actionName.get(), client()->itemText(itemIndex).utf8().data(), client()->itemToolTip(itemIndex).utf8().data(), 0);
     g_object_set_data(G_OBJECT(action), "popup-menu-action-index", GINT_TO_POINTER(itemIndex));
     g_signal_connect(action, "activate", G_CALLBACK(menuItemActivated), this);
@@ -86,7 +85,7 @@ void PopupMenuGtk::show(const IntRect& rect, FrameView* view, int index)
     IntPoint menuPosition = convertWidgetPointToScreenPoint(GTK_WIDGET(view->hostWindow()->platformPageClient()), view->contentsToWindow(rect.location()));
     menuPosition.move(0, rect.height());
 
-    GOwnPtr<GdkEvent> currentEvent(gtk_get_current_event());
+    GUniquePtr<GdkEvent> currentEvent(gtk_get_current_event());
     m_popup->popUp(rect.size(), menuPosition, size, index, currentEvent.get());
 
     // GTK can refuse to actually open the menu when mouse grabs fails.

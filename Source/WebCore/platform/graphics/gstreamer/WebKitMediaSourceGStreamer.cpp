@@ -30,7 +30,7 @@
 #include <gst/app/gstappsrc.h>
 #include <gst/gst.h>
 #include <gst/pbutils/missing-plugins.h>
-#include <wtf/gobject/GOwnPtr.h>
+#include <wtf/gobject/GUniquePtr.h>
 #include <wtf/text/CString.h>
 
 typedef struct _Source {
@@ -141,7 +141,6 @@ static void webKitMediaSrcAddSrc(WebKitMediaSrc* src, GstElement* element)
 {
     GstPad* ghostPad;
     WebKitMediaSrcPrivate* priv = src->priv;
-    GOwnPtr<gchar> name;
 
     if (!gst_bin_add(GST_BIN(src), element)) {
         GST_DEBUG_OBJECT(src, "Src element not added");
@@ -154,7 +153,7 @@ static void webKitMediaSrcAddSrc(WebKitMediaSrc* src, GstElement* element)
     }
 
     gst_element_sync_state_with_parent(element);
-    name.set(g_strdup_printf("src_%u", priv->nbSource));
+    GUniquePtr<gchar> name(g_strdup_printf("src_%u", priv->nbSource));
     ghostPad = WebCore::webkitGstGhostPadFromStaticTemplate(&srcTemplate, name.get(), targetsrc.get());
     gst_pad_set_active(ghostPad, TRUE);
 

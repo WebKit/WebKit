@@ -62,7 +62,7 @@
 #include "FrameLoaderClientGtk.h"
 #include "FrameLoaderTypes.h"
 #include "FrameView.h"
-#include "GOwnPtrGtk.h"
+#include "GUniquePtrGtk.h"
 #include "GeolocationClientGtk.h"
 #include "GeolocationController.h"
 #include "GraphicsContext.h"
@@ -419,7 +419,7 @@ static gboolean webkit_web_view_forward_context_menu_event(WebKitWebView* webVie
     g_signal_emit(webView, webkit_web_view_signals[POPULATE_POPUP], 0, defaultMenu);
 
     // If the context menu is now empty, don't show it.
-    GOwnPtr<GList> items(gtk_container_get_children(GTK_CONTAINER(defaultMenu)));
+    GUniquePtr<GList> items(gtk_container_get_children(GTK_CONTAINER(defaultMenu)));
     if (!items)
         return FALSE;
 
@@ -1304,7 +1304,7 @@ static void fileChooserDialogResponseCallback(GtkDialog* dialog, gint responseID
 {
     GRefPtr<WebKitFileChooserRequest> adoptedRequest = adoptGRef(request);
     if (responseID == GTK_RESPONSE_ACCEPT) {
-        GOwnPtr<GSList> filesList(gtk_file_chooser_get_filenames(GTK_FILE_CHOOSER(dialog)));
+        GUniquePtr<GSList> filesList(gtk_file_chooser_get_filenames(GTK_FILE_CHOOSER(dialog)));
         GRefPtr<GPtrArray> filesArray = adoptGRef(g_ptr_array_new());
         for (GSList* file = filesList.get(); file; file = g_slist_next(file))
             g_ptr_array_add(filesArray.get(), file->data);
@@ -1514,7 +1514,7 @@ static void webkit_web_view_drag_end(GtkWidget* widget, GdkDragContext* context)
     Frame& frame = core(webView)->focusController().focusedOrMainFrame();
 
     // Synthesize a button release event to send with the drag end action.
-    GOwnPtr<GdkEvent> event(gdk_event_new(GDK_BUTTON_RELEASE));
+    GUniquePtr<GdkEvent> event(gdk_event_new(GDK_BUTTON_RELEASE));
     int x, y, xRoot, yRoot;
     GdkModifierType modifiers = static_cast<GdkModifierType>(0);
 #ifdef GTK_API_VERSION_2

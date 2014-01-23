@@ -29,7 +29,7 @@
 
 #include <gtk/gtk.h>
 #include <wtf/Platform.h>
-#include <wtf/gobject/GOwnPtr.h>
+#include <wtf/gobject/GUniquePtr.h>
 #include <wtf/text/WTFString.h>
 
 namespace WTR {
@@ -88,13 +88,13 @@ static char* getEnvironmentVariableAsUTF8String(const char* variableName)
 
 void TestController::initializeInjectedBundlePath()
 {
-    GOwnPtr<char> utf8BundlePath(getEnvironmentVariableAsUTF8String("TEST_RUNNER_INJECTED_BUNDLE_FILENAME"));
+    GUniquePtr<char> utf8BundlePath(getEnvironmentVariableAsUTF8String("TEST_RUNNER_INJECTED_BUNDLE_FILENAME"));
     m_injectedBundlePath.adopt(WKStringCreateWithUTF8CString(utf8BundlePath.get()));
 }
 
 void TestController::initializeTestPluginDirectory()
 {
-    GOwnPtr<char> testPluginPath(getEnvironmentVariableAsUTF8String("TEST_RUNNER_TEST_PLUGIN_PATH"));
+    GUniquePtr<char> testPluginPath(getEnvironmentVariableAsUTF8String("TEST_RUNNER_TEST_PLUGIN_PATH"));
     m_testPluginDirectory.adopt(WKStringCreateWithUTF8CString(testPluginPath.get()));
 }
 

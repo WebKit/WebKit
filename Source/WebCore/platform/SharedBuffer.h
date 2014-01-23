@@ -38,7 +38,7 @@
 #endif
 
 #if USE(SOUP)
-#include "GOwnPtrSoup.h"
+#include "GUniquePtrSoup.h"
 #endif
 
 #if PLATFORM(MAC)
@@ -211,7 +211,7 @@ private:
 
 #if USE(SOUP)
     explicit SharedBuffer(SoupBuffer*);
-    GOwnPtr<SoupBuffer> m_soupBuffer;
+    GUniquePtr<SoupBuffer> m_soupBuffer;
 #endif
 };
 

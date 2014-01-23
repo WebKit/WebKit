@@ -41,8 +41,8 @@
 #include <gst/pbutils/missing-plugins.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/gobject/GMutexLocker.h>
-#include <wtf/gobject/GOwnPtr.h>
 #include <wtf/gobject/GRefPtr.h>
+#include <wtf/gobject/GUniquePtr.h>
 #include <wtf/text/CString.h>
 
 using namespace WebCore;
@@ -502,9 +502,7 @@ static gboolean webKitWebSrcStart(WebKitWebSrc* src)
         request.setHTTPUserAgent("Quicktime/7.6.6");
 
     if (priv->requestedOffset) {
-        GOwnPtr<gchar> val;
-
-        val.set(g_strdup_printf("bytes=%" G_GUINT64_FORMAT "-", priv->requestedOffset));
+        GUniquePtr<gchar> val(g_strdup_printf("bytes=%" G_GUINT64_FORMAT "-", priv->requestedOffset));
         request.setHTTPHeaderField("Range", val.get());
     }
     priv->offset = priv->requestedOffset;
@@ -1150,12 +1148,12 @@ void ResourceHandleStreamingClient::didFail(ResourceHandle*, const ResourceError
 void ResourceHandleStreamingClient::wasBlocked(ResourceHandle*)
 {
     WebKitWebSrc* src = WEBKIT_WEB_SRC(m_src.get());
-    GOwnPtr<gchar> uri;
+    GUniquePtr<gchar> uri;
 
     GST_ERROR_OBJECT(src, "Request was blocked");
 
     GMutexLocker locker(GST_OBJECT_GET_LOCK(src));
-    uri.set(g_strdup(src->priv->uri));
+    uri.reset(g_strdup(src->priv->uri));
     locker.unlock();
 
     GST_ELEMENT_ERROR(src, RESOURCE, OPEN_READ, ("Access to \"%s\" was blocked", uri.get()), (0));
@@ -1164,12 +1162,12 @@ void ResourceHandleStreamingClient::wasBlocked(ResourceHandle*)
 void ResourceHandleStreamingClient::cannotShowURL(ResourceHandle*)
 {
     WebKitWebSrc* src = WEBKIT_WEB_SRC(m_src.get());
-    GOwnPtr<gchar> uri;
+    GUniquePtr<gchar> uri;
 
     GST_ERROR_OBJECT(src, "Cannot show URL");
 
     GMutexLocker locker(GST_OBJECT_GET_LOCK(src));
-    uri.set(g_strdup(src->priv->uri));
+    uri.reset(g_strdup(src->priv->uri));
     locker.unlock();
 
     GST_ELEMENT_ERROR(src, RESOURCE, OPEN_READ, ("Can't show \"%s\"", uri.get()), (0));

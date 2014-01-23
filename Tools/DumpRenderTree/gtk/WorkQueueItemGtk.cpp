@@ -25,7 +25,7 @@
 #include <JavaScriptCore/JSStringRef.h>
 #include <string.h>
 #include <webkit/webkit.h>
-#include <wtf/gobject/GOwnPtr.h>
+#include <wtf/gobject/GUniquePtr.h>
 
 // Returns a newly allocated UTF-8 character buffer which must be freed with g_free()
 gchar* JSStringCopyUTF8CString(JSStringRef jsString)
@@ -59,11 +59,11 @@ bool LoadItem::invoke() const
 
 bool LoadHTMLStringItem::invoke() const
 {
-    GOwnPtr<gchar> content(JSStringCopyUTF8CString(m_content.get()));
-    GOwnPtr<gchar> baseURL(JSStringCopyUTF8CString(m_baseURL.get()));
+    GUniquePtr<gchar> content(JSStringCopyUTF8CString(m_content.get()));
+    GUniquePtr<gchar> baseURL(JSStringCopyUTF8CString(m_baseURL.get()));
 
     if (m_unreachableURL) {
-        GOwnPtr<gchar> unreachableURL(JSStringCopyUTF8CString(m_unreachableURL.get()));
+        GUniquePtr<gchar> unreachableURL(JSStringCopyUTF8CString(m_unreachableURL.get()));
         webkit_web_frame_load_alternate_string(mainFrame, content.get(), baseURL.get(), unreachableURL.get());
         return true;
     }

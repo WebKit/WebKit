@@ -37,8 +37,8 @@
 #include <JavaScriptCore/OpaqueJSString.h>
 #include <atk/atk.h>
 #include <wtf/Assertions.h>
-#include <wtf/gobject/GOwnPtr.h>
 #include <wtf/gobject/GRefPtr.h>
+#include <wtf/gobject/GUniquePtr.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/WTFString.h>
@@ -97,7 +97,7 @@ const char* landmarkStringSearch = "AXLandmarkSearch";
 String jsStringToWTFString(JSStringRef attribute)
 {
     size_t bufferSize = JSStringGetMaximumUTF8CStringSize(attribute);
-    GOwnPtr<gchar> buffer(static_cast<gchar*>(g_malloc(bufferSize)));
+    GUniquePtr<gchar> buffer(static_cast<gchar*>(g_malloc(bufferSize)));
     JSStringGetUTF8CString(attribute, buffer.get(), bufferSize);
 
     return String::fromUTF8(buffer.get());
@@ -181,7 +181,7 @@ String getAtkAttributeSetAsString(AtkObject* accessible, AtkAttributeType type)
     StringBuilder builder;
     for (AtkAttributeSet* attributes = attributeSet; attributes; attributes = attributes->next) {
         AtkAttribute* attribute = static_cast<AtkAttribute*>(attributes->data);
-        GOwnPtr<gchar> attributeData(g_strconcat(attribute->name, ":", attribute->value, NULL));
+        GUniquePtr<gchar> attributeData(g_strconcat(attribute->name, ":", attribute->value, NULL));
         builder.append(attributeData.get());
         if (attributes->next)
             builder.append(", ");
@@ -202,7 +202,7 @@ bool checkElementState(PlatformUIElement element, AtkStateType stateType)
 
 JSStringRef indexRangeInTable(PlatformUIElement element, bool isRowRange)
 {
-    GOwnPtr<gchar> rangeString(g_strdup("{0, 0}"));
+    GUniquePtr<gchar> rangeString(g_strdup("{0, 0}"));
 
     if (!ATK_IS_OBJECT(element.get()))
         return JSStringCreateWithUTF8CString(rangeString.get());
@@ -232,7 +232,7 @@ JSStringRef indexRangeInTable(PlatformUIElement element, bool isRowRange)
             base = column;
             length = atk_table_get_column_extent_at(ATK_TABLE(axTable), row, column);
         }
-        rangeString.set(g_strdup_printf("{%d, %d}", base, length));
+        rangeString.reset(g_strdup_printf("{%d, %d}", base, length));
     }
 
     return JSStringCreateWithUTF8CString(rangeString.get());
@@ -875,7 +875,7 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::role()
     if (!atk_object_get_role(ATK_OBJECT(m_element.get())))
         return JSStringCreateWithCharacters(0, 0);
 
-    GOwnPtr<char> roleStringWithPrefix(g_strdup_printf("AXRole: %s", roleToString(ATK_OBJECT(m_element.get()))));
+    GUniquePtr<char> roleStringWithPrefix(g_strdup_printf("AXRole: %s", roleToString(ATK_OBJECT(m_element.get()))));
     return JSStringCreateWithUTF8CString(roleStringWithPrefix.get());
 }
 
@@ -897,7 +897,7 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::title()
         return JSStringCreateWithCharacters(0, 0);
 
     const gchar* name = atk_object_get_name(ATK_OBJECT(m_element.get()));
-    GOwnPtr<gchar> axTitle(g_strdup_printf("AXTitle: %s", name ? name : ""));
+    GUniquePtr<gchar> axTitle(g_strdup_printf("AXTitle: %s", name ? name : ""));
 
     return JSStringCreateWithUTF8CString(axTitle.get());
 }
@@ -911,7 +911,7 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::description()
     if (!description)
         return JSStringCreateWithCharacters(0, 0);
 
-    GOwnPtr<gchar> axDesc(g_strdup_printf("AXDescription: %s", description));
+    GUniquePtr<gchar> axDesc(g_strdup_printf("AXDescription: %s", description));
 
     return JSStringCreateWithUTF8CString(axDesc.get());
 }
@@ -938,9 +938,9 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::stringValue()
     if (!ATK_IS_TEXT(m_element.get()))
         return JSStringCreateWithCharacters(0, 0);
 
-    GOwnPtr<gchar> text(atk_text_get_text(ATK_TEXT(m_element.get()), 0, -1));
-    GOwnPtr<gchar> textWithReplacedCharacters(replaceCharactersForResults(text.get()));
-    GOwnPtr<gchar> axValue(g_strdup_printf("AXValue: %s", textWithReplacedCharacters.get()));
+    GUniquePtr<gchar> text(atk_text_get_text(ATK_TEXT(m_element.get()), 0, -1));
+    GUniquePtr<gchar> textWithReplacedCharacters(replaceCharactersForResults(text.get()));
+    GUniquePtr<gchar> axValue(g_strdup_printf("AXValue: %s", textWithReplacedCharacters.get()));
 
     return JSStringCreateWithUTF8CString(axValue.get());
 }
@@ -954,7 +954,7 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::language()
     if (!locale)
         return JSStringCreateWithCharacters(0, 0);
 
-    GOwnPtr<char> axValue(g_strdup_printf("AXLanguage: %s", locale));
+    GUniquePtr<char> axValue(g_strdup_printf("AXLanguage: %s", locale));
     return JSStringCreateWithUTF8CString(axValue.get());
 }
 
@@ -1193,7 +1193,7 @@ int AccessibilityUIElement::lineForIndex(int index)
     if (index < 0 || index > atk_text_get_character_count(ATK_TEXT(m_element.get())))
         return -1;
 
-    GOwnPtr<gchar> text(atk_text_get_text(ATK_TEXT(m_element.get()), 0, index));
+    GUniquePtr<gchar> text(atk_text_get_text(ATK_TEXT(m_element.get()), 0, index));
     int lineNo = 0;
     for (gchar* offset = text.get(); *offset; ++offset) {
         if (*offset == '\n')
@@ -1364,7 +1364,7 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::selectedTextRange()
     gint start, end;
     g_free(atk_text_get_selection(ATK_TEXT(m_element.get()), 0, &start, &end));
 
-    GOwnPtr<gchar> selection(g_strdup_printf("{%d, %d}", start, end - start));
+    GUniquePtr<gchar> selection(g_strdup_printf("{%d, %d}", start, end - start));
     return JSStringCreateWithUTF8CString(selection.get());
 }
 
@@ -1441,7 +1441,7 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::url()
         return JSStringCreateWithCharacters(0, 0);
 
     AtkHyperlink* hyperlink = atk_hyperlink_impl_get_hyperlink(ATK_HYPERLINK_IMPL(m_element.get()));
-    GOwnPtr<char> hyperlinkURI(atk_hyperlink_get_uri(hyperlink, 0));
+    GUniquePtr<char> hyperlinkURI(atk_hyperlink_get_uri(hyperlink, 0));
 
     // Build the result string, stripping the absolute URL paths if present.
     char* localURI = g_strstr_len(hyperlinkURI.get(), -1, "LayoutTests");

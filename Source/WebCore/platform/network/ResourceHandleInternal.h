@@ -49,8 +49,8 @@
 #endif
 
 #if USE(SOUP)
+#include "GUniquePtrSoup.h"
 #include <libsoup/soup.h>
-#include <wtf/gobject/GOwnPtr.h>
 #include <wtf/gobject/GRefPtr.h>
 class Frame;
 #endif
@@ -197,7 +197,7 @@ namespace WebCore {
         GRefPtr<GCancellable> m_cancellable;
         GRefPtr<GAsyncResult> m_deferredResult;
         GRefPtr<GSource> m_timeoutSource;
-        GOwnPtr<SoupBuffer> m_soupBuffer;
+        GUniquePtr<SoupBuffer> m_soupBuffer;
         unsigned long m_bodySize;
         unsigned long m_bodyDataSent;
         SoupSession* soupSession();

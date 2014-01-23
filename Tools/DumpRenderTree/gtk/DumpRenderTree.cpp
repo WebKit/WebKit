@@ -45,7 +45,7 @@
 #include "WorkQueue.h"
 #include "WorkQueueItem.h"
 #include <JavaScriptCore/JavaScript.h>
-#include <WebCore/platform/network/soup/GOwnPtrSoup.h>
+#include <WebCore/platform/network/soup/GUniquePtrSoup.h>
 #include <cassert>
 #include <cstdlib>
 #include <cstring>
@@ -205,19 +205,19 @@ CString getOutputDir()
         return webkitOutputDir;
 
     CString topLevelPath = getTopLevelPath();
-    GOwnPtr<char> outputDir(g_build_filename(topLevelPath.data(), "WebKitBuild", NULL));
+    GUniquePtr<char> outputDir(g_build_filename(topLevelPath.data(), "WebKitBuild", NULL));
     return outputDir.get();
 }
 
 static CString getFontsPath()
 {
     CString webkitOutputDir = getOutputDir();
-    GOwnPtr<char> fontsPath(g_build_filename(webkitOutputDir.data(), "Dependencies", "Root", "webkitgtk-test-fonts", NULL));
+    GUniquePtr<char> fontsPath(g_build_filename(webkitOutputDir.data(), "Dependencies", "Root", "webkitgtk-test-fonts", NULL));
     if (g_file_test(fontsPath.get(), static_cast<GFileTest>(G_FILE_TEST_EXISTS | G_FILE_TEST_IS_DIR)))
         return fontsPath.get();
 
     // Try alternative fonts path.
-    fontsPath.set(g_build_filename(webkitOutputDir.data(), "webkitgtk-test-fonts", NULL));
+    fontsPath.reset(g_build_filename(webkitOutputDir.data(), "webkitgtk-test-fonts", NULL));
     if (g_file_test(fontsPath.get(), static_cast<GFileTest>(G_FILE_TEST_EXISTS | G_FILE_TEST_IS_DIR)))
         return fontsPath.get();
 
@@ -241,7 +241,7 @@ static void initializeFonts(const char* testURL = 0)
     // Load our configuration file, which sets up proper aliases for family
     // names like sans, serif and monospace.
     FcConfig* config = FcConfigCreate();
-    GOwnPtr<gchar> fontConfigFilename(g_build_filename(FONTS_CONF_DIR, "fonts.conf", NULL));
+    GUniquePtr<gchar> fontConfigFilename(g_build_filename(FONTS_CONF_DIR, "fonts.conf", nullptr));
     if (!FcConfigParseAndLoad(config, reinterpret_cast<FcChar8*>(fontConfigFilename.get()), true))
         g_error("Couldn't load font configuration file from: %s", fontConfigFilename.get());
 
@@ -249,30 +249,30 @@ static void initializeFonts(const char* testURL = 0)
     if (fontsPath.isNull())
         g_error("Could not locate test fonts at %s. Is WEBKIT_TOP_LEVEL set?", fontsPath.data());
 
-    GOwnPtr<GDir> fontsDirectory(g_dir_open(fontsPath.data(), 0, 0));
+    GUniquePtr<GDir> fontsDirectory(g_dir_open(fontsPath.data(), 0, nullptr));
     while (const char* directoryEntry = g_dir_read_name(fontsDirectory.get())) {
         if (!g_str_has_suffix(directoryEntry, ".ttf") && !g_str_has_suffix(directoryEntry, ".otf"))
             continue;
-        GOwnPtr<gchar> fontPath(g_build_filename(fontsPath.data(), directoryEntry, NULL));
+        GUniquePtr<gchar> fontPath(g_build_filename(fontsPath.data(), directoryEntry, nullptr));
         if (!FcConfigAppFontAddFile(config, reinterpret_cast<const FcChar8*>(fontPath.get())))
             g_error("Could not load font at %s!", fontPath.get());
 
     }
 
     // Ahem is used by many layout tests.
-    GOwnPtr<gchar> ahemFontFilename(g_build_filename(FONTS_CONF_DIR, "AHEM____.TTF", NULL));
+    GUniquePtr<gchar> ahemFontFilename(g_build_filename(FONTS_CONF_DIR, "AHEM____.TTF", nullptr));
     if (!FcConfigAppFontAddFile(config, reinterpret_cast<FcChar8*>(ahemFontFilename.get())))
         g_error("Could not load font at %s!", ahemFontFilename.get()); 
 
     for (int i = 1; i <= 9; i++) {
-        GOwnPtr<gchar> fontFilename(g_strdup_printf("WebKitWeightWatcher%i00.ttf", i));
-        GOwnPtr<gchar> fontPath(g_build_filename(FONTS_CONF_DIR, "..", "..", "fonts", fontFilename.get(), NULL));
+        GUniquePtr<gchar> fontFilename(g_strdup_printf("WebKitWeightWatcher%i00.ttf", i));
+        GUniquePtr<gchar> fontPath(g_build_filename(FONTS_CONF_DIR, "..", "..", "fonts", fontFilename.get(), nullptr));
         if (!FcConfigAppFontAddFile(config, reinterpret_cast<FcChar8*>(fontPath.get())))
             g_error("Could not load font at %s!", fontPath.get()); 
     }
 
     // A font with no valid Fontconfig encoding to test https://bugs.webkit.org/show_bug.cgi?id=47452
-    GOwnPtr<gchar> fontWithNoValidEncodingFilename(g_build_filename(FONTS_CONF_DIR, "FontWithNoValidEncoding.fon", NULL));
+    GUniquePtr<gchar> fontWithNoValidEncodingFilename(g_build_filename(FONTS_CONF_DIR, "FontWithNoValidEncoding.fon", nullptr));
     if (!FcConfigAppFontAddFile(config, reinterpret_cast<FcChar8*>(fontWithNoValidEncodingFilename.get())))
         g_error("Could not load font at %s!", fontWithNoValidEncodingFilename.get()); 
 
@@ -301,7 +301,7 @@ static gchar* dumpFramesAsText(WebKitWebFrame* frame)
     if (gTestRunner->dumpChildFramesAsText()) {
         GSList* children = DumpRenderTreeSupportGtk::getFrameChildren(frame);
         for (GSList* child = children; child; child = g_slist_next(child)) {
-            GOwnPtr<gchar> childData(dumpFramesAsText(static_cast<WebKitWebFrame*>(child->data)));
+            GUniquePtr<gchar> childData(dumpFramesAsText(static_cast<WebKitWebFrame*>(child->data)));
             appendString(result, childData.get());
         }
         g_slist_free(children);
@@ -312,8 +312,8 @@ static gchar* dumpFramesAsText(WebKitWebFrame* frame)
 
 static gint compareHistoryItems(gpointer* item1, gpointer* item2)
 {
-    GOwnPtr<gchar> firstItemTarget(webkit_web_history_item_get_target(WEBKIT_WEB_HISTORY_ITEM(item1)));
-    GOwnPtr<gchar> secondItemTarget(webkit_web_history_item_get_target(WEBKIT_WEB_HISTORY_ITEM(item2)));
+    GUniquePtr<gchar> firstItemTarget(webkit_web_history_item_get_target(WEBKIT_WEB_HISTORY_ITEM(item1)));
+    GUniquePtr<gchar> secondItemTarget(webkit_web_history_item_get_target(WEBKIT_WEB_HISTORY_ITEM(item2)));
     return g_ascii_strcasecmp(firstItemTarget.get(), secondItemTarget.get());
 }
 
@@ -349,7 +349,7 @@ static void dumpHistoryItem(WebKitWebHistoryItem* item, int indent, bool current
 
     g_free(uriScheme);
 
-    GOwnPtr<gchar> target(webkit_web_history_item_get_target(item));
+    GUniquePtr<gchar> target(webkit_web_history_item_get_target(item));
     if (target.get() && strlen(target.get()) > 0)
         printf(" (in frame \"%s\")", target.get());
     if (webkit_web_history_item_is_target_item(item))
@@ -431,19 +431,19 @@ bool shouldSetWaitToDumpWatchdog()
 CString soupURIToStringPreservingPassword(SoupURI* soupURI)
 {
     if (!soupURI->password) {
-        GOwnPtr<char> uriString(soup_uri_to_string(soupURI, FALSE));
+        GUniquePtr<char> uriString(soup_uri_to_string(soupURI, FALSE));
         return uriString.get();
     }
 
     // soup_uri_to_string does not insert the password into the string, so we need to create the
     // URI string and then reinsert any credentials that were present in the SoupURI. All tests that
     // use URL-embedded credentials use HTTP, so it's safe here.
-    GOwnPtr<char> password(soupURI->password);
-    GOwnPtr<char> user(soupURI->user);
+    GUniquePtr<char> password(soupURI->password);
+    GUniquePtr<char> user(soupURI->user);
     soupURI->password = 0;
     soupURI->user = 0;
 
-    GOwnPtr<char> uriString(soup_uri_to_string(soupURI, FALSE));
+    GUniquePtr<char> uriString(soup_uri_to_string(soupURI, FALSE));
     String absoluteURIWithoutCredentialString = String::fromUTF8(uriString.get());
     String protocolAndCredential = String::format("http://%s:%s@", user ? user.get() : "", password.get());
     return absoluteURIWithoutCredentialString.replace("http://", protocolAndCredential).utf8();
@@ -462,7 +462,7 @@ static void invalidateAnyPreviousWaitToDumpWatchdog()
 static void resetDefaultsToConsistentValues()
 {
     WebKitWebSettings* settings = webkit_web_view_get_settings(webView);
-    GOwnPtr<gchar> localStoragePath(g_build_filename(g_get_user_data_dir(), "DumpRenderTreeGtk", "databases", NULL));
+    GUniquePtr<gchar> localStoragePath(g_build_filename(g_get_user_data_dir(), "DumpRenderTreeGtk", "databases", nullptr));
     g_object_set(G_OBJECT(settings),
         "enable-accelerated-compositing", FALSE,
         "enable-private-browsing", FALSE,
@@ -683,7 +683,7 @@ static CString temporaryDatabaseDirectory()
     const char* directoryFromEnvironment = g_getenv("DUMPRENDERTREE_TEMP");
     if (directoryFromEnvironment)
         return directoryFromEnvironment;
-    GOwnPtr<char> fallback(g_build_filename(g_get_user_data_dir(), "gtkwebkitdrt", "databases", NULL));
+    GUniquePtr<char> fallback(g_build_filename(g_get_user_data_dir(), "gtkwebkitdrt", "databases", NULL));
     return fallback.get();
 }
 
@@ -990,7 +990,7 @@ static gboolean webViewScriptConfirm(WebKitWebView* view, WebKitWebFrame* frame,
 static void webViewTitleChanged(WebKitWebView* view, WebKitWebFrame* frame, const gchar* title, gpointer data)
 {
     if (gTestRunner->dumpFrameLoadCallbacks() && !done) {
-        GOwnPtr<char> frameName(getFrameNameSuitableForTestResult(view, frame));
+        GUniquePtr<char> frameName(getFrameNameSuitableForTestResult(view, frame));
         printf("%s - didReceiveTitle: %s\n", frameName.get(), title ? title : "");
     }
 
@@ -1138,7 +1138,7 @@ static void webFrameLoadStatusNotified(WebKitWebFrame* frame, gpointer user_data
     WebKitLoadStatus loadStatus = webkit_web_frame_get_load_status(frame);
 
     if (gTestRunner->dumpFrameLoadCallbacks()) {
-        GOwnPtr<char> frameName(getFrameNameSuitableForTestResult(webkit_web_frame_get_web_view(frame), frame));
+        GUniquePtr<char> frameName(getFrameNameSuitableForTestResult(webkit_web_frame_get_web_view(frame), frame));
 
         switch (loadStatus) {
         case WEBKIT_LOAD_PROVISIONAL:
@@ -1182,10 +1182,10 @@ static String pathFromSoupURI(SoupURI* uri)
         return soupURIToStringPreservingPassword(uri).data();
 
     String pathString = uri->path;
-    GOwnPtr<gchar> pathBasename(g_path_get_basename(pathString.utf8().data()));
+    GUniquePtr<gchar> pathBasename(g_path_get_basename(pathString.utf8().data()));
 
     WebKitWebFrame* mainFrame = webkit_web_view_get_main_frame(webView);
-    GOwnPtr<SoupURI> mainFrameUri(soup_uri_new(webkit_web_frame_get_uri(mainFrame)));
+    GUniquePtr<SoupURI> mainFrameUri(soup_uri_new(webkit_web_frame_get_uri(mainFrame)));
 
     String mainFrameUriPathString = mainFrameUri.get()->path;
     String basePath = mainFrameUriPathString.substring(0, mainFrameUriPathString.reverseFind('/') + 1);
@@ -1212,7 +1212,7 @@ static CString convertNetworkRequestToURLPath(WebKitNetworkRequest* request)
 
 static CString convertWebResourceToURLPath(WebKitWebResource* webResource)
 {
-    GOwnPtr<SoupURI> uri(soup_uri_new(webkit_web_resource_get_uri(webResource)));
+    GUniquePtr<SoupURI> uri(soup_uri_new(webkit_web_resource_get_uri(webResource)));
     return pathFromSoupURI(uri.get()).utf8();
 }
 
@@ -1221,7 +1221,7 @@ static CString urlSuitableForTestResult(const char* uriString)
     if (!g_str_has_prefix(uriString, "file://"))
         return CString(uriString);
 
-    GOwnPtr<gchar> basename(g_path_get_basename(uriString));
+    GUniquePtr<gchar> basename(g_path_get_basename(uriString));
     return CString(basename.get());
 }
 
@@ -1230,7 +1230,7 @@ static CString descriptionSuitableForTestResult(SoupURI* uri)
     if (!uri)
         return CString("(null)");
 
-    GOwnPtr<char> uriString(soup_uri_to_string(uri, false));
+    GUniquePtr<char> uriString(soup_uri_to_string(uri, false));
     return urlSuitableForTestResult(uriString.get());
 }
 
@@ -1246,7 +1246,7 @@ static CString descriptionSuitableForTestResult(GError* error, WebKitWebResource
         errorDomain = "WebKitErrorDomain";
 
     // TODO: the other ports get the failingURL from the ResourceError
-    GOwnPtr<char> errorString(g_strdup_printf("<NSError domain %s, code %d, failing URL \"%s\">",
+    GUniquePtr<char> errorString(g_strdup_printf("<NSError domain %s, code %d, failing URL \"%s\">",
                                               errorDomain, error->code, resourceURIString.data()));
     return CString(errorString.get());
 }
@@ -1261,7 +1261,7 @@ static CString descriptionSuitableForTestResult(WebKitNetworkRequest* request)
     SoupURI* mainDocumentURI = soup_message_get_first_party(soupMessage);
     CString mainDocumentURIString(descriptionSuitableForTestResult(mainDocumentURI));
     CString path(convertNetworkRequestToURLPath(request));
-    GOwnPtr<char> description(g_strdup_printf("<NSURLRequest URL %s, main document URL %s, http method %s>",
+    GUniquePtr<char> description(g_strdup_printf("<NSURLRequest URL %s, main document URL %s, http method %s>",
         path.data(), mainDocumentURIString.data(), soupMessage->method));
     return CString(description.get());
 }
@@ -1282,7 +1282,7 @@ static CString descriptionSuitableForTestResult(WebKitNetworkResponse* response)
     } else
         path = CString("(null)");
 
-    GOwnPtr<char> description(g_strdup_printf("<NSURLResponse %s, http status code %d>", path.data(), statusCode));
+    GUniquePtr<char> description(g_strdup_printf("<NSURLResponse %s, http status code %d>", path.data(), statusCode));
     return CString(description.get());
 }
 
@@ -1306,7 +1306,7 @@ static void willSendRequestCallback(WebKitWebView* webView, WebKitWebFrame* webF
     SoupURI* uri = soup_uri_new(webkit_network_request_get_uri(request));
 
     if (SOUP_URI_IS_VALID(uri)) {
-        GOwnPtr<char> uriString(soup_uri_to_string(uri, FALSE));
+        GUniquePtr<char> uriString(soup_uri_to_string(uri, FALSE));
 
         if (SOUP_URI_VALID_FOR_HTTP(uri) && g_strcmp0(uri->host, "127.0.0.1")
             && g_strcmp0(uri->host, "255.255.255.255")
@@ -1380,7 +1380,7 @@ static void frameLoadEventCallback(WebKitWebFrame* frame, DumpRenderTreeSupportG
     if (done || !gTestRunner->dumpFrameLoadCallbacks())
         return;
 
-    GOwnPtr<char> frameName(getFrameNameSuitableForTestResult(webkit_web_frame_get_web_view(frame), frame));
+    GUniquePtr<char> frameName(getFrameNameSuitableForTestResult(webkit_web_frame_get_web_view(frame), frame));
     switch (event) {
     case DumpRenderTreeSupportGtk::WillPerformClientRedirectToURL:
         ASSERT(url);

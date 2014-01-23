@@ -21,16 +21,16 @@
 #include "WebKitTestServer.h"
 
 #include "TestMain.h"
-#include <wtf/gobject/GOwnPtr.h>
+#include <wtf/gobject/GUniquePtr.h>
 
 WebKitTestServer::WebKitTestServer(ServerType type)
 {
-    GOwnPtr<char> sslCertificateFile;
-    GOwnPtr<char> sslKeyFile;
+    GUniquePtr<char> sslCertificateFile;
+    GUniquePtr<char> sslKeyFile;
     if (type == ServerHTTPS) {
         CString resourcesDir = Test::getResourcesDir();
-        sslCertificateFile.set(g_build_filename(resourcesDir.data(), "test-cert.pem", NULL));
-        sslKeyFile.set(g_build_filename(resourcesDir.data(), "test-key.pem", NULL));
+        sslCertificateFile.reset(g_build_filename(resourcesDir.data(), "test-cert.pem", NULL));
+        sslKeyFile.reset(g_build_filename(resourcesDir.data(), "test-key.pem", NULL));
     }
 
     GRefPtr<SoupAddress> address = adoptGRef(soup_address_new("127.0.0.1", SOUP_ADDRESS_ANY_PORT));
@@ -57,7 +57,7 @@ void WebKitTestServer::run(SoupServerCallback serverCallback)
 CString WebKitTestServer::getURIForPath(const char* path)
 {
     SoupURI* uri = soup_uri_new_with_base(m_baseURI, path);
-    GOwnPtr<gchar> uriString(soup_uri_to_string(uri, FALSE));
+    GUniquePtr<gchar> uriString(soup_uri_to_string(uri, FALSE));
     soup_uri_free(uri);
     return uriString.get();
 }

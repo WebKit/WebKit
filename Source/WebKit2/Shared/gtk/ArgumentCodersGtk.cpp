@@ -34,7 +34,7 @@
 #include <WebCore/GraphicsContext.h>
 #include <WebCore/GtkVersioning.h>
 #include <WebCore/PlatformContextCairo.h>
-#include <wtf/gobject/GOwnPtr.h>
+#include <wtf/gobject/GUniquePtr.h>
 
 using namespace WebCore;
 using namespace WebKit;
@@ -237,11 +237,11 @@ bool ArgumentCoder<DragData>::decode(ArgumentDecoder& decoder, DragData& dragDat
 static void encodeGKeyFile(ArgumentEncoder& encoder, GKeyFile* keyFile)
 {
     gsize dataSize;
-    GOwnPtr<char> data(g_key_file_to_data(keyFile, &dataSize, 0));
+    GUniquePtr<char> data(g_key_file_to_data(keyFile, &dataSize, 0));
     encoder << DataReference(reinterpret_cast<uint8_t*>(data.get()), dataSize);
 }
 
-static bool decodeGKeyFile(ArgumentDecoder& decoder, GOwnPtr<GKeyFile>& keyFile)
+static bool decodeGKeyFile(ArgumentDecoder& decoder, GUniquePtr<GKeyFile>& keyFile)
 {
     DataReference dataReference;
     if (!decoder.decode(dataReference))
@@ -250,9 +250,9 @@ static bool decodeGKeyFile(ArgumentDecoder& decoder, GOwnPtr<GKeyFile>& keyFile)
     if (!dataReference.size())
         return true;
 
-    keyFile.set(g_key_file_new());
+    keyFile.reset(g_key_file_new());
     if (!g_key_file_load_from_data(keyFile.get(), reinterpret_cast<const gchar*>(dataReference.data()), dataReference.size(), G_KEY_FILE_NONE, 0)) {
-        keyFile.clear();
+        keyFile.reset();
         return false;
     }
 
@@ -261,14 +261,14 @@ static bool decodeGKeyFile(ArgumentDecoder& decoder, GOwnPtr<GKeyFile>& keyFile)
 
 void encode(ArgumentEncoder& encoder, GtkPrintSettings* printSettings)
 {
-    GOwnPtr<GKeyFile> keyFile(g_key_file_new());
+    GUniquePtr<GKeyFile> keyFile(g_key_file_new());
     gtk_print_settings_to_key_file(printSettings, keyFile.get(), "Print Settings");
     encodeGKeyFile(encoder, keyFile.get());
 }
 
 bool decode(ArgumentDecoder& decoder, GRefPtr<GtkPrintSettings>& printSettings)
 {
-    GOwnPtr<GKeyFile> keyFile;
+    GUniquePtr<GKeyFile> keyFile;
     if (!decodeGKeyFile(decoder, keyFile))
         return false;
 
@@ -284,14 +284,14 @@ bool decode(ArgumentDecoder& decoder, GRefPtr<GtkPrintSettings>& printSettings)
 
 void encode(ArgumentEncoder& encoder, GtkPageSetup* pageSetup)
 {
-    GOwnPtr<GKeyFile> keyFile(g_key_file_new());
+    GUniquePtr<GKeyFile> keyFile(g_key_file_new());
     gtk_page_setup_to_key_file(pageSetup, keyFile.get(), "Page Setup");
     encodeGKeyFile(encoder, keyFile.get());
 }
 
 bool decode(ArgumentDecoder& decoder, GRefPtr<GtkPageSetup>& pageSetup)
 {
-    GOwnPtr<GKeyFile> keyFile;
+    GUniquePtr<GKeyFile> keyFile;
     if (!decodeGKeyFile(decoder, keyFile))
         return false;
 

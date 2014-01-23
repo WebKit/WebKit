@@ -27,8 +27,8 @@
 #include "PlatformUtilities.h"
 
 #include <gtk/gtk.h>
-#include <wtf/gobject/GOwnPtr.h>
 #include <wtf/gobject/GRefPtr.h>
+#include <wtf/gobject/GUniquePtr.h>
 
 namespace TestWebKitAPI {
 namespace Util {
@@ -67,18 +67,18 @@ static char* getFilenameFromEnvironmentVariableAsUTF8(const char* variableName)
 
 WKStringRef createInjectedBundlePath()
 {
-    GOwnPtr<char> injectedBundlePath(getFilenameFromEnvironmentVariableAsUTF8("TEST_WEBKIT_API_WEBKIT2_INJECTED_BUNDLE_PATH"));
-    GOwnPtr<char> injectedBundleFilename(g_build_filename(injectedBundlePath.get(), "libTestWebKitAPIInjectedBundle.la", NULL));
+    GUniquePtr<char> injectedBundlePath(getFilenameFromEnvironmentVariableAsUTF8("TEST_WEBKIT_API_WEBKIT2_INJECTED_BUNDLE_PATH"));
+    GUniquePtr<char> injectedBundleFilename(g_build_filename(injectedBundlePath.get(), "libTestWebKitAPIInjectedBundle.la", nullptr));
     return WKStringCreateWithUTF8CString(injectedBundleFilename.get());
 }
 
 WKURLRef createURLForResource(const char* resource, const char* extension)
 {
-    GOwnPtr<char> testResourcesPath(getFilenameFromEnvironmentVariableAsUTF8("TEST_WEBKIT_API_WEBKIT2_RESOURCES_PATH"));
-    GOwnPtr<char> resourceBasename(g_strdup_printf("%s.%s", resource, extension));
-    GOwnPtr<char> resourceFilename(g_build_filename(testResourcesPath.get(), resourceBasename.get(), NULL));
+    GUniquePtr<char> testResourcesPath(getFilenameFromEnvironmentVariableAsUTF8("TEST_WEBKIT_API_WEBKIT2_RESOURCES_PATH"));
+    GUniquePtr<char> resourceBasename(g_strdup_printf("%s.%s", resource, extension));
+    GUniquePtr<char> resourceFilename(g_build_filename(testResourcesPath.get(), resourceBasename.get(), nullptr));
     GRefPtr<GFile> resourceFile = adoptGRef(g_file_new_for_path(resourceFilename.get()));
-    GOwnPtr<char> resourceURI(g_file_get_uri(resourceFile.get()));
+    GUniquePtr<char> resourceURI(g_file_get_uri(resourceFile.get()));
     return WKURLCreateWithUTF8CString(resourceURI.get());
 }
 

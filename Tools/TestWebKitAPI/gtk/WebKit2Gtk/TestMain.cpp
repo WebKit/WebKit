@@ -23,14 +23,14 @@
 #include <glib/gstdio.h>
 #include <gtk/gtk.h>
 #include <webkit2/webkit2.h>
-#include <wtf/gobject/GOwnPtr.h>
+#include <wtf/gobject/GUniquePtr.h>
 
 void beforeAll();
 void afterAll();
 
 static void registerGResource(void)
 {
-    GOwnPtr<char> resourcesPath(g_build_filename(WEBKIT_EXEC_PATH, "TestWebKitAPI", "WebKit2Gtk", "resources", "webkit2gtk-tests-resources.gresource", NULL));
+    GUniquePtr<char> resourcesPath(g_build_filename(WEBKIT_EXEC_PATH, "TestWebKitAPI", "WebKit2Gtk", "resources", "webkit2gtk-tests-resources.gresource", nullptr));
     GResource* resource = g_resource_load(resourcesPath.get(), 0);
     g_assert(resource);
 
@@ -44,7 +44,7 @@ static void removeNonEmptyDirectory(const char* directoryPath)
     g_assert(directory);
     const char* fileName;
     while ((fileName = g_dir_read_name(directory))) {
-        GOwnPtr<char> filePath(g_build_filename(directoryPath, fileName, NULL));
+        GUniquePtr<char> filePath(g_build_filename(directoryPath, fileName, nullptr));
         g_unlink(filePath.get());
     }
     g_dir_close(directory);
@@ -64,7 +64,7 @@ int main(int argc, char** argv)
 
     registerGResource();
 
-    GOwnPtr<char> diskCacheTempDirectory(g_dir_make_tmp("WebKit2TestsDiskCache-XXXXXX", 0));
+    GUniquePtr<char> diskCacheTempDirectory(g_dir_make_tmp("WebKit2TestsDiskCache-XXXXXX", 0));
     g_assert(diskCacheTempDirectory.get());
     webkit_web_context_set_disk_cache_directory(webkit_web_context_get_default(), diskCacheTempDirectory.get());
 

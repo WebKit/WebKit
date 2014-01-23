@@ -47,7 +47,7 @@
 #include <glib.h>
 #include <libsoup/soup.h>
 #include <webkit/webkit.h>
-#include <wtf/gobject/GOwnPtr.h>
+#include <wtf/gobject/GUniquePtr.h>
 #include <wtf/text/WTFString.h>
 
 extern "C" {
@@ -132,19 +132,19 @@ void TestRunner::notifyDone()
 
 JSStringRef TestRunner::pathToLocalResource(JSContextRef context, JSStringRef url)
 {
-    GOwnPtr<char> urlCString(JSStringCopyUTF8CString(url));
+    GUniquePtr<char> urlCString(JSStringCopyUTF8CString(url));
     if (!g_str_has_prefix(urlCString.get(), "file:///tmp/LayoutTests/"))
         return JSStringRetain(url);
 
     const char* layoutTestsSuffix = urlCString.get() + strlen("file:///tmp/");
-    GOwnPtr<char> testPath(g_build_filename(getTopLevelPath().data(), layoutTestsSuffix, NULL));
-    GOwnPtr<char> testURI(g_filename_to_uri(testPath.get(), 0, 0));
+    GUniquePtr<char> testPath(g_build_filename(getTopLevelPath().data(), layoutTestsSuffix, nullptr));
+    GUniquePtr<char> testURI(g_filename_to_uri(testPath.get(), 0, 0));
     return JSStringCreateWithUTF8CString(testURI.get());
 }
 
 void TestRunner::queueLoad(JSStringRef url, JSStringRef target)
 {
-    GOwnPtr<gchar> relativeURL(JSStringCopyUTF8CString(url));
+    GUniquePtr<gchar> relativeURL(JSStringCopyUTF8CString(url));
     SoupURI* baseURI = soup_uri_new(webkit_web_frame_get_uri(mainFrame));
     SoupURI* absoluteURI = soup_uri_new_with_base(baseURI, relativeURL.get());
     soup_uri_free(baseURI);
@@ -219,9 +219,9 @@ void TestRunner::addOriginAccessWhitelistEntry(JSStringRef sourceOrigin, JSStrin
 
 void TestRunner::removeOriginAccessWhitelistEntry(JSStringRef sourceOrigin, JSStringRef protocol, JSStringRef host, bool includeSubdomains)
 {
-    GOwnPtr<gchar> sourceOriginGChar(JSStringCopyUTF8CString(sourceOrigin));
-    GOwnPtr<gchar> protocolGChar(JSStringCopyUTF8CString(protocol));
-    GOwnPtr<gchar> hostGChar(JSStringCopyUTF8CString(host));
+    GUniquePtr<gchar> sourceOriginGChar(JSStringCopyUTF8CString(sourceOrigin));
+    GUniquePtr<gchar> protocolGChar(JSStringCopyUTF8CString(protocol));
+    GUniquePtr<gchar> hostGChar(JSStringCopyUTF8CString(host));
     DumpRenderTreeSupportGtk::removeWhiteListAccessFromOrigin(sourceOriginGChar.get(), protocolGChar.get(), hostGChar.get(), includeSubdomains);
 }
 
@@ -403,7 +403,7 @@ void TestRunner::setMockGeolocationPositionUnavailableError(JSStringRef message)
         view = webkit_web_frame_get_web_view(mainFrame);
     ASSERT(view);
 
-    GOwnPtr<gchar> cMessage(JSStringCopyUTF8CString(message));
+    GUniquePtr<gchar> cMessage(JSStringCopyUTF8CString(message));
     DumpRenderTreeSupportGtk::setMockGeolocationPositionUnavailableError(view, cMessage.get());
 }
 
@@ -450,7 +450,7 @@ void TestRunner::setIconDatabaseEnabled(bool enabled)
 {
     WebKitIconDatabase* database = webkit_get_icon_database();
     if (enabled) {
-        GOwnPtr<gchar> iconDatabasePath(g_build_filename(g_get_tmp_dir(), "DumpRenderTree", "icondatabase", NULL));
+        GUniquePtr<gchar> iconDatabasePath(g_build_filename(g_get_tmp_dir(), "DumpRenderTree", "icondatabase", nullptr));
         webkit_icon_database_set_path(database, iconDatabasePath.get());
     } else
         webkit_icon_database_set_path(database, 0);
@@ -498,7 +498,7 @@ bool TestRunner::findString(JSContextRef context, JSStringRef target, JSObjectRe
     if (!JSValueIsNumber(context, lengthValue))
         return false;
 
-    GOwnPtr<gchar> targetString(JSStringCopyUTF8CString(target));
+    GUniquePtr<gchar> targetString(JSStringCopyUTF8CString(target));
 
     size_t length = static_cast<size_t>(JSValueToNumber(context, lengthValue, 0));
     for (size_t i = 0; i < length; ++i) {
@@ -631,7 +631,7 @@ void TestRunner::syncLocalStorage()
 
 void TestRunner::setDomainRelaxationForbiddenForURLScheme(bool forbidden, JSStringRef scheme)
 {
-    GOwnPtr<gchar> urlScheme(JSStringCopyUTF8CString(scheme));
+    GUniquePtr<gchar> urlScheme(JSStringCopyUTF8CString(scheme));
     DumpRenderTreeSupportGtk::setDomainRelaxationForbiddenForURLScheme(forbidden, urlScheme.get());
 }
 
@@ -659,8 +659,8 @@ static gboolean booleanFromValue(gchar* value)
 
 void TestRunner::overridePreference(JSStringRef key, JSStringRef value)
 {
-    GOwnPtr<gchar> originalName(JSStringCopyUTF8CString(key));
-    GOwnPtr<gchar> valueAsString(JSStringCopyUTF8CString(value));
+    GUniquePtr<gchar> originalName(JSStringCopyUTF8CString(key));
+    GUniquePtr<gchar> valueAsString(JSStringCopyUTF8CString(value));
 
     WebKitWebView* view = webkit_web_frame_get_web_view(mainFrame);
     ASSERT(view);
@@ -734,13 +734,13 @@ void TestRunner::overridePreference(JSStringRef key, JSStringRef value)
 
 void TestRunner::addUserScript(JSStringRef source, bool runAtStart, bool allFrames)
 {
-    GOwnPtr<gchar> sourceCode(JSStringCopyUTF8CString(source));
+    GUniquePtr<gchar> sourceCode(JSStringCopyUTF8CString(source));
     DumpRenderTreeSupportGtk::addUserScript(mainFrame, sourceCode.get(), runAtStart, allFrames);
 }
 
 void TestRunner::addUserStyleSheet(JSStringRef source, bool allFrames)
 {
-    GOwnPtr<gchar> sourceCode(JSStringCopyUTF8CString(source));
+    GUniquePtr<gchar> sourceCode(JSStringCopyUTF8CString(source));
     DumpRenderTreeSupportGtk::addUserStyleSheet(mainFrame, sourceCode.get(), allFrames);
     // FIXME: needs more investigation why userscripts/user-style-top-frame-only.html fails when allFrames is false.
 
@@ -829,7 +829,7 @@ void TestRunner::setSerializeHTTPLoads(bool serialize)
 
 void TestRunner::setTextDirection(JSStringRef direction)
 {
-    GOwnPtr<gchar> writingDirection(JSStringCopyUTF8CString(direction));
+    GUniquePtr<gchar> writingDirection(JSStringCopyUTF8CString(direction));
 
     WebKitWebView* view = webkit_web_frame_get_web_view(mainFrame);
     ASSERT(view);

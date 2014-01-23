@@ -20,11 +20,10 @@
 #include "config.h"
 #include "ResourceRequest.h"
 
-#include "GOwnPtrSoup.h"
+#include "GUniquePtrSoup.h"
 #include "HTTPParsers.h"
 #include "MIMETypeRegistry.h"
 #include "SoupURIUtils.h"
-#include <wtf/gobject/GOwnPtr.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
 
@@ -36,7 +35,7 @@ void ResourceRequest::updateSoupMessageMembers(SoupMessage* soupMessage) const
 
     String firstPartyString = firstPartyForCookies().string();
     if (!firstPartyString.isEmpty()) {
-        GOwnPtr<SoupURI> firstParty(soup_uri_new(firstPartyString.utf8().data()));
+        GUniquePtr<SoupURI> firstParty(soup_uri_new(firstPartyString.utf8().data()));
         soup_message_set_first_party(soupMessage, firstParty.get());
     }
 
@@ -71,7 +70,7 @@ void ResourceRequest::updateSoupMessage(SoupMessage* soupMessage) const
 {
     g_object_set(soupMessage, SOUP_MESSAGE_METHOD, httpMethod().utf8().data(), NULL);
 
-    GOwnPtr<SoupURI> uri(soupURI());
+    GUniquePtr<SoupURI> uri(soupURI());
     soup_message_set_uri(soupMessage, uri.get());
 
     updateSoupMessageMembers(soupMessage);

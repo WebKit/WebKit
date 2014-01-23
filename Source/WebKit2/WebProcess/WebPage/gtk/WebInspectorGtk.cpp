@@ -31,7 +31,6 @@
 
 #include <WebCore/FileSystem.h>
 #include <glib.h>
-#include <wtf/gobject/GOwnPtr.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebKit {

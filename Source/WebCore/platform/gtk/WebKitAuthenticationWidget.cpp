@@ -23,7 +23,7 @@
 #include "CredentialBackingStore.h"
 #include "GtkVersioning.h"
 #include <glib/gi18n-lib.h>
-#include <wtf/gobject/GOwnPtr.h>
+#include <wtf/gobject/GUniquePtr.h>
 #include <wtf/text/CString.h>
 
 using namespace WebCore;
@@ -151,7 +151,7 @@ static void webkitAuthenticationWidgetInitialize(WebKitAuthenticationWidget* aut
     gtk_widget_show(icon);
 
     WebKitAuthenticationWidgetPrivate* priv = authWidget->priv;
-    GOwnPtr<char> prompt(g_strdup_printf(
+    GUniquePtr<char> prompt(g_strdup_printf(
         _("The site %s:%i requests a username and password"),
         priv->challenge.protectionSpace().host().utf8().data(),
         priv->challenge.protectionSpace().port()));

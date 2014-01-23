@@ -29,7 +29,7 @@
 #include "webkitsecurityoriginprivate.h"
 #include "webkitwebframe.h"
 #include <glib/gi18n-lib.h>
-#include <wtf/gobject/GOwnPtr.h>
+#include <wtf/gobject/GUniquePtr.h>
 #include <wtf/text/CString.h>
 
 /**
@@ -80,7 +80,7 @@ static guint webkit_icon_database_signals[LAST_SIGNAL] = { 0, };
 G_DEFINE_TYPE(WebKitIconDatabase, webkit_icon_database, G_TYPE_OBJECT);
 
 struct _WebKitIconDatabasePrivate {
-    GOwnPtr<gchar> path;
+    GUniquePtr<gchar> path;
 };
 
 static void webkit_icon_database_finalize(GObject* object)
@@ -234,12 +234,12 @@ void webkit_icon_database_set_path(WebKitIconDatabase* database, const gchar* pa
         WebCore::iconDatabase().close();
 
     if (!(path && path[0])) {
-        database->priv->path.set(0);
+        database->priv->path.reset();
         WebCore::iconDatabase().setEnabled(false);
         return;
     }
 
-    database->priv->path.set(g_strdup(path));
+    database->priv->path.reset(g_strdup(path));
 
     WebCore::iconDatabase().setEnabled(true);
     WebCore::iconDatabase().open(WebCore::filenameToString(database->priv->path.get()), WebCore::IconDatabase::defaultDatabaseFilename());

@@ -27,9 +27,9 @@
 #include "config.h"
 #include "GtkPopupMenu.h"
 
-#include <wtf/gobject/GOwnPtr.h>
 #include "GtkVersioning.h"
 #include <gtk/gtk.h>
+#include <wtf/gobject/GUniquePtr.h>
 #include <wtf/text/CString.h>
 
 namespace WebCore {
@@ -89,7 +89,7 @@ void GtkPopupMenu::popUp(const IntSize& menuSize, const IntPoint& menuPosition, 
     gtk_widget_set_size_request(m_popup.get(), std::max(menuSize.width(), requisition.width), -1);
 
     if (itemCount) {
-        GOwnPtr<GList> children(gtk_container_get_children(GTK_CONTAINER(m_popup.get())));
+        GUniquePtr<GList> children(gtk_container_get_children(GTK_CONTAINER(m_popup.get())));
         int i;
         GList* child;
         for (i = 0, child = children.get(); i < itemCount; i++, child = g_list_next(child)) {
@@ -159,7 +159,7 @@ bool GtkPopupMenu::typeAheadFind(GdkEventKey* event)
     }
 
     glong charactersWritten;
-    GOwnPtr<gunichar2> utf16String(g_ucs4_to_utf16(&unicodeCharacter, 1, 0, &charactersWritten, 0));
+    GUniquePtr<gunichar2> utf16String(g_ucs4_to_utf16(&unicodeCharacter, 1, 0, &charactersWritten, 0));
     if (!utf16String) {
         resetTypeAheadFindState();
         return false;
@@ -179,7 +179,7 @@ bool GtkPopupMenu::typeAheadFind(GdkEventKey* event)
 
     // Like the Chromium port, we case fold before searching, because 
     // strncmp does not handle non-ASCII characters.
-    GOwnPtr<gchar> searchStringWithCaseFolded(g_utf8_casefold(m_currentSearchString.utf8().data(), -1));
+    GUniquePtr<gchar> searchStringWithCaseFolded(g_utf8_casefold(m_currentSearchString.utf8().data(), -1));
     size_t prefixLength = strlen(searchStringWithCaseFolded.get());
 
     GList* children = gtk_container_get_children(GTK_CONTAINER(m_popup.get()));
@@ -210,7 +210,7 @@ bool GtkPopupMenu::typeAheadFind(GdkEventKey* event)
         if (!currentChild)
             currentChild = children;
 
-        GOwnPtr<gchar> itemText(g_utf8_casefold(gtk_menu_item_get_label(GTK_MENU_ITEM(currentChild->data)), -1));
+        GUniquePtr<gchar> itemText(g_utf8_casefold(gtk_menu_item_get_label(GTK_MENU_ITEM(currentChild->data)), -1));
         if (!strncmp(searchStringWithCaseFolded.get(), itemText.get(), prefixLength)) {
             gtk_menu_shell_select_item(GTK_MENU_SHELL(m_popup.get()), GTK_WIDGET(currentChild->data));
             break;

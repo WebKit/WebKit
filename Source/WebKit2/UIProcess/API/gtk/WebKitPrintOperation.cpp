@@ -27,8 +27,8 @@
 #include <WebCore/GtkUtilities.h>
 #include <WebCore/NotImplemented.h>
 #include <glib/gi18n-lib.h>
-#include <wtf/gobject/GOwnPtr.h>
 #include <wtf/gobject/GRefPtr.h>
+#include <wtf/gobject/GUniquePtr.h>
 #include <wtf/text/CString.h>
 
 #ifdef HAVE_GTK_UNIX_PRINTING
@@ -264,9 +264,8 @@ static void drawPagesForPrintingCompleted(WKErrorRef wkPrintError, WKErrorRef, v
 
     const WebCore::ResourceError& resourceError = wkPrintError ? toImpl(wkPrintError)->platformError() : WebCore::ResourceError();
     if (!resourceError.isNull()) {
-        GOwnPtr<GError> printError(g_error_new_literal(g_quark_from_string(resourceError.domain().utf8().data()),
-                                                     resourceError.errorCode(),
-                                                     resourceError.localizedDescription().utf8().data()));
+        GUniquePtr<GError> printError(g_error_new_literal(g_quark_from_string(resourceError.domain().utf8().data()),
+            resourceError.errorCode(), resourceError.localizedDescription().utf8().data()));
         g_signal_emit(printOperation.get(), signals[FAILED], 0, printError.get());
     }
     g_signal_emit(printOperation.get(), signals[FINISHED], 0, NULL);

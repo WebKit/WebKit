@@ -110,7 +110,7 @@ static void testWebExtensionWindowObjectCleared(WebViewTest* test, gconstpointer
     WebKitJavascriptResult* javascriptResult = test->runJavaScriptAndWaitUntilFinished("window.echo('Foo');", &error.outPtr());
     g_assert(javascriptResult);
     g_assert(!error.get());
-    GOwnPtr<char> valueString(WebViewTest::javascriptResultToCString(javascriptResult));
+    GUniquePtr<char> valueString(WebViewTest::javascriptResultToCString(javascriptResult));
     g_assert_cmpstr(valueString.get(), ==, "Foo");
 }
 
@@ -147,7 +147,7 @@ static void testWebExtensionIsolatedWorld(WebViewTest* test, gconstpointer)
 
     WebKitJavascriptResult* javascriptResult = test->runJavaScriptAndWaitUntilFinished("document.getElementById('console').innerHTML", 0);
     g_assert(javascriptResult);
-    GOwnPtr<char> valueString(WebViewTest::javascriptResultToCString(javascriptResult));
+    GUniquePtr<char> valueString(WebViewTest::javascriptResultToCString(javascriptResult));
     g_assert_cmpstr(valueString.get(), ==, "Foo");
 
     static const char* isolatedWorldScript =
@@ -170,7 +170,7 @@ static void testWebExtensionIsolatedWorld(WebViewTest* test, gconstpointer)
     // Check that 'top.foo' defined in main world is not visible in isolated world.
     javascriptResult = test->runJavaScriptAndWaitUntilFinished("document.getElementById('console').innerHTML", 0);
     g_assert(javascriptResult);
-    valueString.set(WebViewTest::javascriptResultToCString(javascriptResult));
+    valueString.reset(WebViewTest::javascriptResultToCString(javascriptResult));
     g_assert_cmpstr(valueString.get(), ==, "undefined");
 
     g_signal_handler_disconnect(test->m_webView, scriptDialogID);

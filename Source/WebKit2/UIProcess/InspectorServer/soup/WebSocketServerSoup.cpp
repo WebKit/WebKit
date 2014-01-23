@@ -32,7 +32,7 @@
 #include <gio/gio.h>
 #include <glib.h>
 #include <wtf/PassOwnPtr.h>
-#include <wtf/gobject/GOwnPtr.h>
+#include <wtf/gobject/GUniquePtr.h>
 #include <wtf/text/CString.h>
 
 using namespace WebCore;
@@ -43,7 +43,7 @@ static gboolean connectionCallback(GSocketService* /*service*/, GSocketConnectio
 {
 #if !LOG_DISABLED
     GRefPtr<GSocketAddress> socketAddress = adoptGRef(g_socket_connection_get_remote_address(connection, 0));
-    GOwnPtr<gchar> addressString(g_inet_address_to_string(g_inet_socket_address_get_address(G_INET_SOCKET_ADDRESS(socketAddress.get()))));
+    GUniquePtr<gchar> addressString(g_inet_address_to_string(g_inet_socket_address_get_address(G_INET_SOCKET_ADDRESS(socketAddress.get()))));
     LOG(InspectorServer, "New Connection from %s:%d.", addressString.get(), g_inet_socket_address_get_port(G_INET_SOCKET_ADDRESS(socketAddress.get())));
 #endif
 

@@ -56,6 +56,7 @@
 #include <unistd.h>
 #include <wtf/CurrentTime.h>
 #include <wtf/SHA1.h>
+#include <wtf/gobject/GOwnPtr.h>
 #include <wtf/gobject/GRefPtr.h>
 #include <wtf/text/Base64.h>
 #include <wtf/text/CString.h>
@@ -286,9 +287,9 @@ void ResourceHandle::ensureReadBuffer()
     size_t bufferSize;
     char* bufferFromClient = client()->getOrCreateReadBuffer(gDefaultReadBufferSize, bufferSize);
     if (bufferFromClient)
-        d->m_soupBuffer.set(soup_buffer_new(SOUP_MEMORY_TEMPORARY, bufferFromClient, bufferSize));
+        d->m_soupBuffer.reset(soup_buffer_new(SOUP_MEMORY_TEMPORARY, bufferFromClient, bufferSize));
     else
-        d->m_soupBuffer.set(soup_buffer_new(SOUP_MEMORY_TAKE, static_cast<char*>(g_malloc(gDefaultReadBufferSize)), gDefaultReadBufferSize));
+        d->m_soupBuffer.reset(soup_buffer_new(SOUP_MEMORY_TAKE, static_cast<char*>(g_malloc(gDefaultReadBufferSize)), gDefaultReadBufferSize));
 
     ASSERT(d->m_soupBuffer);
 }
@@ -547,7 +548,7 @@ static void cleanupSoupRequestOperation(ResourceHandle* handle, bool isDestroyin
     d->m_inputStream.clear();
     d->m_multipartInputStream.clear();
     d->m_cancellable.clear();
-    d->m_soupBuffer.clear();
+    d->m_soupBuffer.reset();
 
     if (d->m_soupMessage) {
         g_signal_handlers_disconnect_matched(d->m_soupMessage.get(), G_SIGNAL_MATCH_DATA,
@@ -992,7 +993,7 @@ static bool createSoupRequestAndMessageForHandle(ResourceHandle* handle, const R
 
     GOwnPtr<GError> error;
 
-    GOwnPtr<SoupURI> soupURI(request.soupURI());
+    GUniquePtr<SoupURI> soupURI(request.soupURI());
     if (!soupURI)
         return false;
 

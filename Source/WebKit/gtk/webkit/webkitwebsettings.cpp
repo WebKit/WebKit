@@ -35,7 +35,7 @@
 #include "webkitglobalsprivate.h"
 #include "webkitversion.h"
 #include "webkitwebsettingsprivate.h"
-#include <wtf/gobject/GOwnPtr.h>
+#include <wtf/gobject/GUniquePtr.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringConcatenate.h>
 #include <glib/gi18n-lib.h>
@@ -484,7 +484,7 @@ static void webkit_web_settings_class_init(WebKitWebSettingsClass* klass)
     *
     * Since: 1.5.2
     */
-    GOwnPtr<gchar> localStoragePath(g_build_filename(g_get_user_data_dir(), "webkit", "databases", NULL));
+    GUniquePtr<gchar> localStoragePath(g_build_filename(g_get_user_data_dir(), "webkit", "databases", NULL));
     g_object_class_install_property(gobject_class,
                                     PROP_HTML5_LOCAL_STORAGE_DATABASE_PATH,
                                     g_param_spec_string("html5-local-storage-database-path",
@@ -1480,9 +1480,9 @@ WebKitWebSettings* webkit_web_settings_new()
 WebKitWebSettings* webkit_web_settings_copy(WebKitWebSettings* original)
 {
     unsigned numberOfProperties = 0;
-    GOwnPtr<GParamSpec*> properties(g_object_class_list_properties(
+    GUniquePtr<GParamSpec*> properties(g_object_class_list_properties(
         G_OBJECT_CLASS(WEBKIT_WEB_SETTINGS_GET_CLASS(original)), &numberOfProperties));
-    GOwnPtr<GParameter> parameters(g_new0(GParameter, numberOfProperties));
+    GUniquePtr<GParameter> parameters(g_new0(GParameter, numberOfProperties));
 
     for (size_t i = 0; i < numberOfProperties; i++) {
         GParamSpec* property = properties.get()[i];

@@ -24,23 +24,21 @@
 
 #include "AudioFileReader.h"
 #include "FileSystem.h"
-
-#include <wtf/gobject/GOwnPtr.h>
-#include <wtf/text/CString.h>
-
 #include <glib.h>
+#include <wtf/gobject/GUniquePtr.h>
+#include <wtf/text/CString.h>
 
 namespace WebCore {
 
 PassRefPtr<AudioBus> AudioBus::loadPlatformResource(const char* name, float sampleRate)
 {
-    GOwnPtr<gchar> filename(g_strdup_printf("%s.wav", name));
+    GUniquePtr<gchar> filename(g_strdup_printf("%s.wav", name));
     const char* environmentPath = getenv("AUDIO_RESOURCES_PATH");
-    GOwnPtr<gchar> absoluteFilename;
+    GUniquePtr<gchar> absoluteFilename;
     if (environmentPath)
-        absoluteFilename.set(g_build_filename(environmentPath, filename.get(), NULL));
+        absoluteFilename.reset(g_build_filename(environmentPath, filename.get(), NULL));
     else
-        absoluteFilename.set(g_build_filename(sharedResourcesPath().data(), "resources", "audio", filename.get(), NULL));
+        absoluteFilename.reset(g_build_filename(sharedResourcesPath().data(), "resources", "audio", filename.get(), NULL));
     return createBusFromAudioFile(absoluteFilename.get(), false, sampleRate);
 }
 

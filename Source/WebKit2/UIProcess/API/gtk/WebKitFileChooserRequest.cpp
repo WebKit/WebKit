@@ -27,8 +27,8 @@
 #include "WebOpenPanelResultListenerProxy.h"
 #include <WebCore/FileSystem.h>
 #include <glib/gi18n-lib.h>
-#include <wtf/gobject/GOwnPtr.h>
 #include <wtf/gobject/GRefPtr.h>
+#include <wtf/gobject/GUniquePtr.h>
 #include <wtf/text/CString.h>
 
 using namespace WebKit;
@@ -306,7 +306,7 @@ void webkit_file_chooser_request_select_files(WebKitFileChooserRequest* request,
         // Make sure the file path is presented as an URI (escaped
         // string, with the 'file://' prefix) to WebCore otherwise the
         // FileChooser won't actually choose it.
-        GOwnPtr<char> uri(g_file_get_uri(filename.get()));
+        GUniquePtr<char> uri(g_file_get_uri(filename.get()));
         choosenFiles.append(API::URL::create(String::fromUTF8(uri.get())));
 
         // Do not use the URI here because this won't reach WebCore.

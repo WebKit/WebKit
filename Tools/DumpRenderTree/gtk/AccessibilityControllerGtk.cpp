@@ -38,7 +38,7 @@
 #include <atk/atk.h>
 #include <gtk/gtk.h>
 #include <webkit/webkit.h>
-#include <wtf/gobject/GOwnPtr.h>
+#include <wtf/gobject/GUniquePtr.h>
 
 AccessibilityUIElement AccessibilityController::focusedElement()
 {
@@ -65,7 +65,7 @@ AccessibilityUIElement AccessibilityController::accessibleElementById(JSStringRe
         return 0;
 
     size_t bufferSize = JSStringGetMaximumUTF8CStringSize(id);
-    GOwnPtr<gchar> idBuffer(static_cast<gchar*>(g_malloc(bufferSize)));
+    GUniquePtr<gchar> idBuffer(static_cast<gchar*>(g_malloc(bufferSize)));
     JSStringGetUTF8CString(id, idBuffer.get(), bufferSize);
 
     AtkObject* result = childElementById(root, idBuffer.get());

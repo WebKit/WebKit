@@ -30,7 +30,7 @@
 #include "InjectedBundle.h"
 #include "InjectedBundleUtilities.h"
 #include <glib.h>
-#include <wtf/gobject/GOwnPtr.h>
+#include <wtf/gobject/GUniquePtr.h>
 
 namespace WTR {
 
@@ -66,15 +66,15 @@ void TestRunner::initializeWaitToDumpWatchdogTimerIfNeeded()
 JSRetainPtr<JSStringRef> TestRunner::pathToLocalResource(JSStringRef url)
 {
     size_t urlSize = JSStringGetMaximumUTF8CStringSize(url);
-    GOwnPtr<gchar> urlString(static_cast<gchar*>(g_malloc(urlSize)));
+    GUniquePtr<gchar> urlString(static_cast<gchar*>(g_malloc(urlSize)));
     JSStringGetUTF8CString(url, urlString.get(), urlSize);
 
     if (!g_str_has_prefix(urlString.get(), "file:///tmp/LayoutTests/"))
         return JSStringRetain(url);
 
     const gchar* layoutTestsSuffix = urlString.get() + strlen("file:///tmp/");
-    GOwnPtr<gchar> testPath(g_build_filename(WTR::topLevelPath().data(), layoutTestsSuffix, NULL));
-    GOwnPtr<gchar> testURI(g_filename_to_uri(testPath.get(), 0, 0));
+    GUniquePtr<gchar> testPath(g_build_filename(WTR::topLevelPath().data(), layoutTestsSuffix, nullptr));
+    GUniquePtr<gchar> testURI(g_filename_to_uri(testPath.get(), 0, 0));
     return JSStringCreateWithUTF8CString(testURI.get());
 }
 

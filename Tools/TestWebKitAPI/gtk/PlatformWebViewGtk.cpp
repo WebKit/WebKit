@@ -26,7 +26,7 @@
 #include "config.h"
 #include "PlatformWebView.h"
 
-#include <WebCore/GOwnPtrGtk.h>
+#include <WebCore/GUniquePtrGtk.h>
 #include <gtk/gtk.h>
 #include <wtf/gobject/GOwnPtr.h>
 
@@ -58,7 +58,7 @@ void PlatformWebView::resizeTo(unsigned width, unsigned height)
 
 static void doKeyStroke(GtkWidget* viewWidget, unsigned int keyVal)
 {
-    GOwnPtr<GdkEvent> event(gdk_event_new(GDK_KEY_PRESS));
+    GUniquePtr<GdkEvent> event(gdk_event_new(GDK_KEY_PRESS));
     event->key.keyval = keyVal;
     event->key.time = GDK_CURRENT_TIME;
     event->key.state = 0;
@@ -95,7 +95,7 @@ void PlatformWebView::simulateAltKeyPress()
 
 static void doMouseButtonEvent(GtkWidget* viewWidget, GdkEventType eventType, int x, int y, unsigned int button)
 {
-    GOwnPtr<GdkEvent> event(gdk_event_new(eventType));
+    GUniquePtr<GdkEvent> event(gdk_event_new(eventType));
     event->button.x = x;
     event->button.y = y;
     event->button.button = button;
@@ -124,7 +124,7 @@ void PlatformWebView::simulateRightClick(unsigned x, unsigned y)
 
 void PlatformWebView::simulateMouseMove(unsigned x, unsigned y)
 {
-    GOwnPtr<GdkEvent> event(gdk_event_new(GDK_MOTION_NOTIFY));
+    GUniquePtr<GdkEvent> event(gdk_event_new(GDK_MOTION_NOTIFY));
     event->motion.x = x;
     event->motion.y = y;
     event->motion.time = GDK_CURRENT_TIME;

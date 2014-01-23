@@ -34,6 +34,7 @@
 #include <gio/gio.h>
 #include <glib.h>
 #include <wtf/gobject/GOwnPtr.h>
+#include <wtf/gobject/GUniquePtr.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/StringConcatenate.h>
@@ -78,7 +79,7 @@ bool WebInspectorServer::platformResourceForPath(const String& path, Vector<char
     if (!g_input_stream_read_all(G_INPUT_STREAM(inputStream.get()), data.data(), data.size(), 0, 0, 0))
         return false;
 
-    contentType = GOwnPtr<gchar>(g_file_info_get_attribute_as_string(fileInfo.get(), G_FILE_ATTRIBUTE_STANDARD_FAST_CONTENT_TYPE)).get();
+    contentType = GUniquePtr<gchar>(g_file_info_get_attribute_as_string(fileInfo.get(), G_FILE_ATTRIBUTE_STANDARD_FAST_CONTENT_TYPE)).get();
     return true;
 }
 
