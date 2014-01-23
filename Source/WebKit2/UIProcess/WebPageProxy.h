@@ -400,7 +400,6 @@ public:
     void goToBackForwardItem(WebBackForwardListItem*);
     void tryRestoreScrollPosition();
     void didChangeBackForwardList(WebBackForwardListItem* addedItem, Vector<RefPtr<API::Object>>* removedItems);
-    void shouldGoToBackForwardListItem(uint64_t itemID, bool& shouldGoToBackForwardListItem);
     void willGoToBackForwardListItem(uint64_t itemID, IPC::MessageDecoder&);
 
     bool willHandleHorizontalScrollEvents() const;

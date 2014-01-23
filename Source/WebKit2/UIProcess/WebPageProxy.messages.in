@@ -182,7 +182,6 @@ messages -> WebPageProxy {
     BackForwardBackListCount() -> (int32_t count)
     BackForwardForwardListCount() -> (int32_t count)
     BackForwardClear()
-    ShouldGoToBackForwardListItem(uint64_t itemID) -> (bool shouldGoToBackForwardListItem)
     WillGoToBackForwardListItem(uint64_t itemID, WebKit::InjectedBundleUserMessageEncoder userData) Variadic
 
     # Undo/Redo messages

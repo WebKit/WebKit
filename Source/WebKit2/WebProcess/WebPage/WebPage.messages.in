@@ -99,7 +99,6 @@ messages -> WebPage LegacyReceiver {
     RestoreSessionAndNavigateToCurrentItem(WebKit::SessionState state)
 
     DidRemoveBackForwardItem(uint64_t backForwardItemID)
-    SetWillGoToBackForwardItemCallbackEnabled(bool willGoToBackForwardItemEnabled)
 
     DidReceivePolicyDecision(uint64_t frameID, uint64_t listenerID, uint32_t policyAction, uint64_t downloadID)
 

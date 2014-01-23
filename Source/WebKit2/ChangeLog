@@ -1,5 +1,25 @@
 2014-01-23  Anders Carlsson  <andersca@apple.com>
 
+        Remove an unneeded synchronous back/forward message
+        https://bugs.webkit.org/show_bug.cgi?id=127516
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/WebLoaderClient.cpp:
+        * UIProcess/WebLoaderClient.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::initializeLoaderClient):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::shouldGoToHistoryItem):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::WebPage):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+
+2014-01-23  Anders Carlsson  <andersca@apple.com>
+
         Rename WKPreferences.h to WKPreferencesRef.h and add a stubbed out WKPreferences class
         https://bugs.webkit.org/show_bug.cgi?id=127512
 

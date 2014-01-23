@@ -250,17 +250,6 @@ void WebLoaderClient::didChangeBackForwardList(WebPageProxy* page, WebBackForwar
     m_client.didChangeBackForwardList(toAPI(page), toAPI(addedItem), toAPI(removedItemsArray.get()), m_client.base.clientInfo);
 }
 
-bool WebLoaderClient::shouldGoToBackForwardListItem(WebPageProxy* page, WebBackForwardListItem* item)
-{
-    // We should only even considering sending the shouldGoToBackForwardListItem() client callback
-    // for version 0 clients. Later versioned clients should get willGoToBackForwardListItem() instead,
-    // but due to XPC race conditions this one might have been called instead.
-    if (m_client.base.version > 0 || !m_client.shouldGoToBackForwardListItem)
-        return true;
-
-    return m_client.shouldGoToBackForwardListItem(toAPI(page), toAPI(item), m_client.base.clientInfo);
-}
-
 void WebLoaderClient::willGoToBackForwardListItem(WebPageProxy* page, WebBackForwardListItem* item, API::Object* userData)
 {
     if (m_client.willGoToBackForwardListItem)

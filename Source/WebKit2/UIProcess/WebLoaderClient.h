@@ -95,7 +95,6 @@ public:
     void processDidCrash(WebPageProxy*);
 
     void didChangeBackForwardList(WebPageProxy*, WebBackForwardListItem* addedItem, Vector<RefPtr<API::Object>>* removedItems);
-    bool shouldGoToBackForwardListItem(WebPageProxy*, WebBackForwardListItem*);
     void willGoToBackForwardListItem(WebPageProxy*, WebBackForwardListItem*, API::Object*);
 
 #if ENABLE(NETSCAPE_PLUGIN_API)

@@ -942,15 +942,8 @@ bool WebFrameLoaderClient::shouldGoToHistoryItem(HistoryItem* item) const
     if (!shouldGoToBackForwardListItem)
         return false;
     
-    if (webPage->willGoToBackForwardItemCallbackEnabled()) {
-        webPage->send(Messages::WebPageProxy::WillGoToBackForwardListItem(itemID, InjectedBundleUserMessageEncoder(userData.get())));
-        return true;
-    }
-    
-    if (!webPage->sendSync(Messages::WebPageProxy::ShouldGoToBackForwardListItem(itemID), Messages::WebPageProxy::ShouldGoToBackForwardListItem::Reply(shouldGoToBackForwardListItem)))
-        return false;
-    
-    return shouldGoToBackForwardListItem;
+    webPage->send(Messages::WebPageProxy::WillGoToBackForwardListItem(itemID, InjectedBundleUserMessageEncoder(userData.get())));
+    return true;
 }
 
 bool WebFrameLoaderClient::shouldStopLoadingForHistoryItem(HistoryItem*) const

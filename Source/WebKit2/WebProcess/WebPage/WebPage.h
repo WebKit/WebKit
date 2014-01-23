@@ -622,8 +622,6 @@ public:
     void numWheelEventHandlersChanged(unsigned);
     void recomputeShortCircuitHorizontalWheelEventsState();
 
-    bool willGoToBackForwardItemCallbackEnabled() const { return m_willGoToBackForwardItemCallbackEnabled; }
-
     void setVisibilityStatePrerender();
     void updateVisibilityState(bool isInitialState = false);
 
@@ -769,8 +767,6 @@ private:
 
     void didRemoveBackForwardItem(uint64_t);
 
-    void setWillGoToBackForwardItemCallbackEnabled(bool enabled) { m_willGoToBackForwardItemCallbackEnabled = enabled; }
-    
     void setDrawsBackground(bool);
     void setDrawsTransparentBackground(bool);
 
@@ -1039,8 +1035,6 @@ private:
     bool m_isShowingContextMenu;
 #endif
     
-    bool m_willGoToBackForwardItemCallbackEnabled;
-
 #if PLATFORM(IOS)
     RefPtr<WebCore::Node> m_assistedNode;
     RefPtr<WebCore::Range> m_currentWordRange;

@@ -275,7 +275,6 @@ WebPage::WebPage(uint64_t pageID, const WebPageCreationParameters& parameters)
 #if ENABLE(CONTEXT_MENUS)
     , m_isShowingContextMenu(false)
 #endif
-    , m_willGoToBackForwardItemCallbackEnabled(true)
 #if PLATFORM(IOS)
     , m_shouldReturnWordAtSelection(false)
 #endif

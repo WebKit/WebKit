@@ -416,8 +416,6 @@ void WebPageProxy::initializeLoaderClient(const WKPageLoaderClientBase* loadClie
 
     if (milestones)
         m_process->send(Messages::WebPage::ListenForLayoutMilestones(milestones), m_pageID);
-
-    m_process->send(Messages::WebPage::SetWillGoToBackForwardItemCallbackEnabled(loadClient->version > 0), m_pageID);
 }
 
 void WebPageProxy::setPolicyClient(std::unique_ptr<API::PolicyClient> policyClient)
@@ -833,12 +831,6 @@ void WebPageProxy::tryRestoreScrollPosition()
 void WebPageProxy::didChangeBackForwardList(WebBackForwardListItem* added, Vector<RefPtr<API::Object>>* removed)
 {
     m_loaderClient.didChangeBackForwardList(this, added, removed);
-}
-
-void WebPageProxy::shouldGoToBackForwardListItem(uint64_t itemID, bool& shouldGoToBackForwardItem)
-{
-    WebBackForwardListItem* item = m_process->webBackForwardItem(itemID);
-    shouldGoToBackForwardItem = item && m_loaderClient.shouldGoToBackForwardListItem(this, item);
 }
 
 void WebPageProxy::willGoToBackForwardListItem(uint64_t itemID, IPC::MessageDecoder& decoder)
