@@ -45,9 +45,6 @@
 # Expected failures
 #////////////////////////////////////////////////////////////////////////////////////////
 
-# This test verifies that a mismatch reftest will fail as intended if both results are same.
-fast/harness/sample-fail-mismatch-reftest.html [ WontFix ImageOnlyFailure ]
-
 # Color bleeds through; might work with newer cairo (works when running with Fedora 20's system cairo).
 fast/backgrounds/background-opaque-images-over-color.html [ ImageOnlyFailure ]
 

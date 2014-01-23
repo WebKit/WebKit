@@ -402,9 +402,6 @@ fast/events/constructors/media-key-event-constructor.html
 # Font feature settings is not implemented.
 css3/font-feature-settings-rendering.html
 
-# This test verifies that a mismatch reftest will fail as intended if both results are same.
-fast/harness/sample-fail-mismatch-reftest.html [ WontFix ImageOnlyFailure ]
-
 webkit.org/b/67716 media/media-controls-invalid-url.html [ Failure ]
 
 webkit.org/b/68278 http/tests/history/back-with-fragment-change.php [ Failure ]

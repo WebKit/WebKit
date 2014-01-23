@@ -1,3 +1,17 @@
+2014-01-23  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed gardening.
+
+        Move fast/harness/sample-fail-mismatch-reftest.html to the platform
+        independent TestExpectations, since all ports skip it as expected.
+
+        * TestExpectations:
+        * platform/efl/TestExpectations:
+        * platform/gtk/TestExpectations:
+        * platform/mac/TestExpectations:
+        * platform/win/TestExpectations:
+        * platform/wincairo/TestExpectations:
+
 2014-01-23  László Langó  <llango.u-szeged@partner.samsung.com>
 
         Range should be constructable.

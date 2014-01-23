@@ -466,11 +466,6 @@ webkit.org/b/90928 fast/dom/Orientation [ Skip ]
 # EFL port does not implement DeviceMotion
 webkit.org/b/95300 fast/dom/DeviceMotion [ Skip ]
 
-# Taken from Chromium, this test verifies that a mismatch reftest will fail if both results are the
-# same.  Because the whole point is that this test should fail when run, it's
-# not SKIP, just WONTFIX.
-webkit.org/b/66218 fast/harness/sample-fail-mismatch-reftest.html [ WontFix ImageOnlyFailure ]
-
 # CSS Regions tests for region styling and scoped styles, of which the latter are not enabled by default.
 webkit.org/b/82340 fast/regions/style-scoped [ ImageOnlyFailure ]
 
