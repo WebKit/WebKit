@@ -40,7 +40,7 @@ UNEXPORTED_SYMBOL_LDFLAGS = -Wl,-unexported_symbol -Wl,__ZTISt9bad_alloc -Wl,-un
 OTHER_LDFLAGS = $(inherited) $(UNEXPORTED_SYMBOL_LDFLAGS) $(OTHER_LDFLAGS_$(PLATFORM_NAME));
 OTHER_LDFLAGS_iphoneos = $(FRAMEWORK_AND_LIBRARY_LDFLAGS);
 OTHER_LDFLAGS_iphonesimulator = $(OTHER_LDFLAGS_iphoneos);
-OTHER_LDFLAGS_macosx = $(FRAMEWORK_AND_LIBRARY_LDFLAGS);
+OTHER_LDFLAGS_macosx = $(ASAN_OTHER_LDFLAGS) $(FRAMEWORK_AND_LIBRARY_LDFLAGS);
 
 EXCLUDED_SOURCE_FILE_NAMES = $(EXCLUDED_SOURCE_FILE_NAMES_$(PLATFORM_NAME));
 EXCLUDED_SOURCE_FILE_NAMES_iphoneos = BuiltInPDFView.mm DownloadMac.mm FindIndicatorWindow.mm NetworkProcessMac.mm PDFViewController.mm PageBannerMac.mm PageClientImpl.mm PasteboardTypes.mm PluginInfoStoreMac.mm PrintInfoMac.mm SecItemShimMethods.mm TextCheckerMac.mm WKAccessibilityWebPageObject.mm WKFullKeyboardAccessWatcher.mm WKInspector.cpp WKPrintingView.mm UIProcess/API/mac/WKView.mm WKBundlePageBannerMac.mm WebContextMenuProxyMac.mm WebEditorClientMac.mm WebInspectorProxyMac.mm WebPageMac.mm WebPageProxyMac.mm WebPlatformTouchPoint.cpp WebProcessMac.mm WebProcessProxyMac.mm WebTouchEvent.cpp *.pdf com.apple.WebKit.NetworkProcess.sb com.apple.WebProcess.sb;

@@ -25,5 +25,5 @@
 
 #include "Shim.xcconfig"
 
-OTHER_LDFLAGS = $(OTHER_LDFLAGS_$(PLATFORM_NAME));
+OTHER_LDFLAGS = $(ASAN_OTHER_LDFLAGS) $(OTHER_LDFLAGS_$(PLATFORM_NAME));
 OTHER_LDFLAGS_macosx = -framework AppKit -framework Carbon -framework QuartzCore;
