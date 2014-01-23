@@ -859,13 +859,30 @@ sub checkForArgumentAndRemoveFromARGV($)
     return checkForArgumentAndRemoveFromArrayRef($argToCheck, \@ARGV);
 }
 
+sub checkForArgumentAndRemoveFromArrayRefGettingValue($$$)
+{
+    my ($argToCheck, $valueRef, $arrayRef) = @_;
+    my $argumentStartRegEx = qr#^$argToCheck(?:=\S|$)#;
+    my $i = 0;
+    for (; $i < @$arrayRef; ++$i) {
+        last if $arrayRef->[$i] =~ $argumentStartRegEx;
+    }
+    if ($i >= @$arrayRef) {
+        return $$valueRef = undef;
+    }
+    my ($key, $value) = split("=", $arrayRef->[$i]);
+    splice(@$arrayRef, $i, 1);
+    if (defined($value)) {
+        # e.g. --sdk=iphonesimulator
+        return $$valueRef = $value;
+    }
+    return $$valueRef = splice(@$arrayRef, $i, 1); # e.g. --sdk iphonesimulator
+}
+
 sub checkForArgumentAndRemoveFromARGVGettingValue($$)
 {
     my ($argToCheck, $valueRef) = @_;
-    my @matchingIndices = findMatchingArguments($argToCheck, \@ARGV);
-    return 0 if ($#matchingIndices != 1);
-    splice(@ARGV, $matchingIndices[0], 1);
-    return $$valueRef = splice(@ARGV, $matchingIndices[0], 1);
+    return checkForArgumentAndRemoveFromArrayRefGettingValue($argToCheck, $valueRef, \@ARGV);
 }
 
 sub findMatchingArguments($$)

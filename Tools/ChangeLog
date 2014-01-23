@@ -1,3 +1,22 @@
+2014-01-23  Daniel Bates  <dabates@apple.com>
+
+        build-webkit --sdk=iphonesimulator doesn't think it's building iOS
+        https://bugs.webkit.org/show_bug.cgi?id=127379
+
+        Reviewed by Simon Fraser.
+
+        Teach build-webkit to recognize --sdk=X.
+
+        Currently, build-webkit recognizes --sdk X to specify X as the Xcode SDK to use, which is also
+        considered when determining the WebKit port to build. But build-webkit advertises --sdk=X in its
+        help message. We should teach build-webkit to recognize both --sdk X and --sdk=X to make its handling
+        of --sdk more consistent with the handling of other build-webkit options that take a value (e.g. --prefix).
+
+        * Scripts/webkitdirs.pm:
+        (checkForArgumentAndRemoveFromArrayRefGettingValue): Added.
+        (checkForArgumentAndRemoveFromARGVGettingValue): Modified to call checkForArgumentAndRemoveFromArrayRefGettingValue().
+        * Scripts/webkitperl/webkitdirs_unittest/checkForArgumentAndRemoveFromArrayRefGettingValue.pl: Added.
+
 2014-01-23  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r162612.
