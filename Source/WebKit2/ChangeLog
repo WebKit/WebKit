@@ -1,3 +1,16 @@
+2014-01-23  Tim Horton  <timothy_horton@apple.com>
+
+        [iOS] [WK2] WKContentView has a black background
+        https://bugs.webkit.org/show_bug.cgi?id=127471
+        <rdar://problem/12287363>
+
+        Reviewed by Sam Weinig.
+
+        * UIProcess/API/ios/WKContentView.mm:
+        (-[WKContentView _commonInitializationWithContextRef:pageGroupRef:relatedToPage:]):
+        Instead of giving it a (black!) background to make hit-testing work, use CALayer SPI
+        to tell CA that the whole layer should be treated as opaque when it comes to hit-testing.
+
 2014-01-22  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GLIB] Use GUniquePtr instead of GOwnPtr

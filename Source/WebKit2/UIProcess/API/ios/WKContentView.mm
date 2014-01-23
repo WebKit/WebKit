@@ -43,6 +43,14 @@
 #import <WebCore/ViewportArguments.h>
 #import <wtf/RetainPtr.h>
 
+#if __has_include(<QuartzCore/QuartzCorePrivate.h>)
+#import <QuartzCore/QuartzCorePrivate.h>
+#endif
+
+@interface CALayer (Details)
+@property BOOL hitTestsAsOpaque;
+@end
+
 using namespace WebCore;
 using namespace WebKit;
 
@@ -180,10 +188,6 @@ using namespace WebKit;
 
 - (void)_commonInitializationWithContextRef:(WKContextRef)contextRef pageGroupRef:(WKPageGroupRef)pageGroupRef relatedToPage:(WKPageRef)relatedPage
 {
-    // FIXME: This should not be necessary, find why hit testing does not work otherwise.
-    // <rdar://problem/12287363>
-    self.backgroundColor = [UIColor blackColor];
-
     InitializeWebKit2();
     RunLoop::initializeMainRunLoop();
 
@@ -204,6 +208,8 @@ using namespace WebKit;
     _interactionView = adoptNS([[WKInteractionView alloc] init]);
     [_interactionView setPage:_page];
     [self addSubview:_interactionView.get()];
+
+    self.layer.hitTestsAsOpaque = YES;
 }
 
 - (void)_windowDidMoveToScreenNotification:(NSNotification *)notification
