@@ -1,3 +1,17 @@
+2014-01-22  Samuel White  <samuel_white@apple.com>
+
+        AX: Can't always increment web sliders.
+        https://bugs.webkit.org/show_bug.cgi?id=127451
+
+        Reviewed by Chris Fleizach.
+
+        Clamping the decrement/increment amount to one when necessary (if a percent change would result in a change of less than one).
+
+        Test: accessibility/range-alter-by-percent.html
+
+        * accessibility/AccessibilityNodeObject.cpp:
+        (WebCore::AccessibilityNodeObject::changeValueByPercent):
+
 2014-01-22  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Remove CSS3_TEXT_DECORATION define

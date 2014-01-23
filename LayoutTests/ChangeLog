@@ -1,3 +1,15 @@
+2014-01-22  Samuel White  <samuel_white@apple.com>
+
+        AX: Can't always increment web sliders.
+        https://bugs.webkit.org/show_bug.cgi?id=127451
+
+        Reviewed by Chris Fleizach.
+
+        Adding range-alter-by-percent.html to compliment the existing range-alter-by-step.html test.
+
+        * accessibility/range-alter-by-percent-expected.txt: Added.
+        * accessibility/range-alter-by-percent.html: Added.
+
 2014-01-22  Chris Fleizach  <cfleizach@apple.com>
 
         AX: WebKit concatenates name of all toolbar buttons in the apple.com video player
