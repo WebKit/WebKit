@@ -27,6 +27,12 @@
 #define ResourceError_h
 
 #include "ResourceErrorBase.h"
+
+#if PLATFORM(WIN)
+#include <windows.h>
+#include <winsock2.h>
+#endif
+
 #include <curl/curl.h>
 
 namespace WebCore {
