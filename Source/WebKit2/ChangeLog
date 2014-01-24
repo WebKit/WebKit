@@ -1,3 +1,10 @@
+2014-01-23  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        Unreviewed build fix attemp on the EFL and GTK build after r162678
+
+        * CMakeLists.txt: Removed WebPolicyClient.cpp
+        * GNUmakefile.list.am: Removed WebPolicyClient.cpp and WebPolicyClient.h
+
 2014-01-23  Yongjun Zhang  <yongjun_zhang@apple.com>
 
         Support NSInteger argument type for encoding/decoding invocations.

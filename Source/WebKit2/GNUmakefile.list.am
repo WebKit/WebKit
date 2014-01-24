@@ -983,8 +983,6 @@ webkit2_sources += \
 	Source/WebKit2/UIProcess/WebPageGroup.h \
 	Source/WebKit2/UIProcess/WebPageProxy.cpp \
 	Source/WebKit2/UIProcess/WebPageProxy.h \
-	Source/WebKit2/UIProcess/WebPolicyClient.cpp \
-	Source/WebKit2/UIProcess/WebPolicyClient.h \
 	Source/WebKit2/UIProcess/WebPopupMenuProxy.h \
 	Source/WebKit2/UIProcess/WebPreferences.cpp \
 	Source/WebKit2/UIProcess/WebPreferences.h \
