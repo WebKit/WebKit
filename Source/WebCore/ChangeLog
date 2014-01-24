@@ -1,3 +1,27 @@
+2014-01-23  Morten Stenshorne  <mstensho@opera.com>
+
+        Region based multicol: unresolvable percent height results in 1px tall multicol
+        https://bugs.webkit.org/show_bug.cgi?id=122826
+
+        Reviewed by David Hyatt.
+
+        If a box has a percentage height, but the computed height of its
+        containing block is auto, the computed height of the box also becomes
+        auto. computeContentLogicalHeight() returns -1 if the height isn't
+        resolvable, and we need to make sure that such a value doesn't
+        constrain the height of the multicol container.
+
+        Tests: fast/multicol/newmulticol/unresolvable-percent-height-2.html
+               fast/multicol/newmulticol/unresolvable-percent-height.html
+               fast/multicol/newmulticol/unresolvable-percent-max-height-2.html
+               fast/multicol/newmulticol/unresolvable-percent-max-height.html
+
+        * rendering/RenderMultiColumnSet.cpp:
+        (WebCore::RenderMultiColumnSet::RenderMultiColumnSet):
+        (WebCore::RenderMultiColumnSet::calculateBalancedHeight):
+        (WebCore::RenderMultiColumnSet::recalculateBalancedHeight):
+        (WebCore::RenderMultiColumnSet::prepareForLayout):
+
 2014-01-23  Joseph Pecoraro  <pecoraro@apple.com>
 
         Move ContentSearchUtils, ScriptBreakpoint, and ScriptDebugListener into JavaScriptCore for inspector

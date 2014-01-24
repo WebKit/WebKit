@@ -1,3 +1,19 @@
+2014-01-23  Morten Stenshorne  <mstensho@opera.com>
+
+        Region based multicol: unresolvable percent height results in 1px tall multicol
+        https://bugs.webkit.org/show_bug.cgi?id=122826
+
+        Reviewed by David Hyatt.
+
+        * fast/multicol/newmulticol/unresolvable-percent-height-2-expected.html: Added.
+        * fast/multicol/newmulticol/unresolvable-percent-height-2.html: Added.
+        * fast/multicol/newmulticol/unresolvable-percent-height-expected.html: Added.
+        * fast/multicol/newmulticol/unresolvable-percent-height.html: Added.
+        * fast/multicol/newmulticol/unresolvable-percent-max-height-2-expected.html: Added.
+        * fast/multicol/newmulticol/unresolvable-percent-max-height-2.html: Added.
+        * fast/multicol/newmulticol/unresolvable-percent-max-height-expected.html: Added.
+        * fast/multicol/newmulticol/unresolvable-percent-max-height.html: Added.
+
 2014-01-23  ChangSeok Oh  <changseok.oh@collabora.com>
 
         Dragging from inner side of video to outside causes a crash
