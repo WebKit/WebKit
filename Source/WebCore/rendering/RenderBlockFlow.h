@@ -376,7 +376,8 @@ public:
 
     void addChild(RenderObject* newChild, RenderObject* beforeChild = 0) override;
     
-    void createMultiColumnFlowThreadIfNeeded();
+    void createMultiColumnFlowThread();
+    void destroyMultiColumnFlowThread();
     
 protected:
     // A page break is required at some offset due to space shortage in the current fragmentainer.
@@ -431,11 +432,14 @@ protected:
 
     virtual int firstLineBaseline() const override;
     virtual int inlineBlockBaseline(LineDirectionMode) const override;
-    
-    bool updateLogicalWidthAndColumnWidth() override;
 
     virtual bool isMultiColumnBlockFlow() const override { return multiColumnFlowThread(); }
     
+    virtual void setComputedColumnCountAndWidth(int, LayoutUnit) override;
+    
+    virtual LayoutUnit computedColumnWidth() const override;
+    virtual unsigned computedColumnCount() const override;
+
 private:
     // Called to lay out the legend for a fieldset or the ruby text of a ruby run. Also used by multi-column layout to handle
     // the flow thread child.

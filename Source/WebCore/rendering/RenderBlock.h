@@ -416,7 +416,8 @@ protected:
     bool simplifiedLayout();
     virtual void simplifiedNormalFlowLayout();
 
-    void setDesiredColumnCountAndWidth(int, LayoutUnit);
+    // FIXME: Can de-virtualize this once old columns go away.
+    virtual void setComputedColumnCountAndWidth(int, LayoutUnit);
 
 public:
     virtual void computeOverflow(LayoutUnit oldClientAfterEdge, bool recomputeFloats = false);
@@ -542,8 +543,9 @@ private:
     virtual void absoluteRects(Vector<IntRect>&, const LayoutPoint& accumulatedOffset) const override;
     virtual void absoluteQuads(Vector<FloatQuad>&, bool* wasFixed) const override;
 
-    LayoutUnit desiredColumnWidth() const;
-    unsigned desiredColumnCount() const;
+    // FIXME: Can de-virtualize once old columns go away.
+    virtual LayoutUnit computedColumnWidth() const;
+    virtual unsigned computedColumnCount() const;
 
     void paintContinuationOutlines(PaintInfo&, const LayoutPoint&);
 
@@ -554,7 +556,7 @@ private:
     // FIXME-BLOCKFLOW: Remove virtualizaion when all callers have moved to RenderBlockFlow
     virtual VisiblePosition positionForPointWithInlineChildren(const LayoutPoint&);
 
-    virtual void calcColumnWidth();
+    virtual void computeColumnCountAndWidth();
     void makeChildrenAnonymousColumnBlocks(RenderObject* beforeChild, RenderBlock* newBlockBox, RenderObject* newChild);
 
     bool expandsToEncloseOverhangingFloats() const;
@@ -586,9 +588,9 @@ protected:
     // Adjust from painting offsets to the local coords of this renderer
     void offsetForContents(LayoutPoint&) const;
 
-    virtual bool requiresColumns(int desiredColumnCount) const;
+    virtual bool requiresColumns(int computedColumnCount) const;
 
-    virtual bool updateLogicalWidthAndColumnWidth();
+    bool updateLogicalWidthAndColumnWidth();
 
     virtual bool canCollapseAnonymousBlockChild() const { return true; }
 

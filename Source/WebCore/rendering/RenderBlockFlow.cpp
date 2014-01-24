@@ -103,7 +103,6 @@ RenderBlockFlow::RenderBlockFlow(Element& element, PassRef<RenderStyle> style)
 #endif
 {
     setChildrenInline(true);
-    createMultiColumnFlowThreadIfNeeded();
 }
 
 RenderBlockFlow::RenderBlockFlow(Document& document, PassRef<RenderStyle> style)
@@ -114,23 +113,37 @@ RenderBlockFlow::RenderBlockFlow(Document& document, PassRef<RenderStyle> style)
 #endif
 {
     setChildrenInline(true);
-    createMultiColumnFlowThreadIfNeeded();
 }
 
 RenderBlockFlow::~RenderBlockFlow()
 {
 }
 
-void RenderBlockFlow::createMultiColumnFlowThreadIfNeeded()
+void RenderBlockFlow::createMultiColumnFlowThread()
 {
-    if ((style().hasAutoColumnCount() && style().hasAutoColumnWidth()) || !document().regionBasedColumnsEnabled())
-        return;
-    
-    setChildrenInline(false);
     RenderMultiColumnFlowThread* flowThread = new RenderMultiColumnFlowThread(document(), RenderStyle::createAnonymousStyleWithDisplay(&style(), BLOCK));
     flowThread->initializeStyle();
+    moveAllChildrenTo(flowThread, true);
     RenderBlock::addChild(flowThread);
     setMultiColumnFlowThread(flowThread);
+}
+
+void RenderBlockFlow::destroyMultiColumnFlowThread()
+{
+    // Get the flow thread out of our list.
+    multiColumnFlowThread()->removeFromParent();
+    
+    // Destroy all the multicolumn sets.
+    destroyLeftoverChildren();
+    
+    // Move all the children of the flow thread into our block.
+    multiColumnFlowThread()->moveAllChildrenTo(this, true);
+    
+    // Now destroy the flow thread.
+    multiColumnFlowThread()->destroy();
+    
+    // Clear the multi-column flow thread pointer.
+    setMultiColumnFlowThread(nullptr);
 }
 
 void RenderBlockFlow::insertedIntoTree()
@@ -3519,23 +3532,12 @@ RenderObject* RenderBlockFlow::layoutSpecialExcludedChild(bool relayoutChildren)
     return multiColumnFlowThread();
 }
 
-
-bool RenderBlockFlow::updateLogicalWidthAndColumnWidth()
-{
-    bool relayoutChildren = RenderBlock::updateLogicalWidthAndColumnWidth();
-    if (multiColumnFlowThread() && multiColumnFlowThread()->computeColumnCountAndWidth())
-        relayoutChildren = true;
-    return relayoutChildren;
-}
-
-
 void RenderBlockFlow::addChild(RenderObject* newChild, RenderObject* beforeChild)
 {
     if (multiColumnFlowThread())
         return multiColumnFlowThread()->addChild(newChild, beforeChild);
     RenderBlock::addChild(newChild, beforeChild);
 }
-
 
 void RenderBlockFlow::checkForPaginationLogicalHeightChange(LayoutUnit& pageLogicalHeight, bool& pageLogicalHeightChanged, bool& hasSpecifiedPageLogicalHeight)
 {
@@ -3576,6 +3578,43 @@ void RenderBlockFlow::checkForPaginationLogicalHeightChange(LayoutUnit& pageLogi
         pageLogicalHeight = 1; // This is just a hack to always make sure we have a page logical height.
         pageLogicalHeightChanged = toRenderFlowThread(this)->pageLogicalSizeChanged();
     }
+}
+
+void RenderBlockFlow::setComputedColumnCountAndWidth(int count, LayoutUnit width)
+{
+    if (!document().regionBasedColumnsEnabled())
+        return RenderBlock::setComputedColumnCountAndWidth(count, width);
+    
+    bool destroyColumns = !requiresColumns(count);
+    if (destroyColumns) {
+        if (multiColumnFlowThread())
+            destroyMultiColumnFlowThread();
+    } else {
+        if (!multiColumnFlowThread())
+            createMultiColumnFlowThread();
+        multiColumnFlowThread()->setColumnCountAndWidth(count, width);
+    }
+}
+
+LayoutUnit RenderBlockFlow::computedColumnWidth() const
+{
+    if (!document().regionBasedColumnsEnabled())
+        return RenderBlock::computedColumnWidth();
+    
+    if (multiColumnFlowThread())
+        return multiColumnFlowThread()->computedColumnWidth();
+    return contentLogicalWidth();
+}
+
+unsigned RenderBlockFlow::computedColumnCount() const
+{
+    if (!document().regionBasedColumnsEnabled())
+        return RenderBlock::computedColumnCount();
+    
+    if (multiColumnFlowThread())
+        return multiColumnFlowThread()->computedColumnCount();
+    
+    return 1;
 }
 
 }

@@ -65,7 +65,7 @@ static void attachTextRenderer(Text&);
 static void detachRenderTree(Element&, DetachType);
 static void resolveTree(Element&, Change);
 
-Change determineChange(const RenderStyle* s1, const RenderStyle* s2, Settings* settings)
+Change determineChange(const RenderStyle* s1, const RenderStyle* s2)
 {
     if (!s1 || !s2)
         return Detach;
@@ -77,12 +77,6 @@ Change determineChange(const RenderStyle* s1, const RenderStyle* s2, Settings* s
     // typically won't contain much content.
     if (s1->columnSpan() != s2->columnSpan())
         return Detach;
-    if (settings->regionBasedColumnsEnabled()) {
-        bool specifiesColumns1 = !s1->hasAutoColumnCount() || !s1->hasAutoColumnWidth();
-        bool specifiesColumns2 = !s2->hasAutoColumnCount() || !s2->hasAutoColumnWidth();
-        if (specifiesColumns1 != specifiesColumns2)
-            return Detach;
-    }
     if (!s1->contentDataEquivalent(s2))
         return Detach;
     // When text-combine property has been changed, we need to prepare a separate renderer object.
@@ -676,7 +670,7 @@ static Change resolveLocal(Element& current, Change inheritedChange)
     Document& document = current.document();
     if (currentStyle && current.styleChangeType() != ReconstructRenderTree) {
         newStyle = current.styleForRenderer();
-        localChange = determineChange(currentStyle.get(), newStyle.get(), document.settings());
+        localChange = determineChange(currentStyle.get(), newStyle.get());
     }
     if (localChange == Detach) {
         if (current.renderer() || current.inNamedFlow())
@@ -897,7 +891,7 @@ void resolveTree(Document& document, Change change)
                 documentStyle.get().font().update(styleResolver->fontSelector());
         }
 
-        Style::Change documentChange = determineChange(&documentStyle.get(), &document.renderView()->style(), document.settings());
+        Style::Change documentChange = determineChange(&documentStyle.get(), &document.renderView()->style());
         if (documentChange != NoChange)
             document.renderView()->setStyle(std::move(documentStyle));
         else

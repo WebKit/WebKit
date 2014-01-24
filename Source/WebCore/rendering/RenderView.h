@@ -243,7 +243,7 @@ protected:
 private:
     bool initializeLayoutState(LayoutState&);
 
-    virtual void calcColumnWidth() override;
+    virtual void computeColumnCountAndWidth() override;
     virtual ColumnInfo::PaginationUnit paginationUnit() const override;
 
     bool shouldRepaint(const LayoutRect&) const;

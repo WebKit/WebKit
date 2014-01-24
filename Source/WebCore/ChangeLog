@@ -1,3 +1,78 @@
+2014-01-24  David Hyatt  <hyatt@apple.com>
+
+        [New Multicolumn] Don't destroy all the renderers when a multi-column block stops being multi-column (and vice versa)
+        https://bugs.webkit.org/show_bug.cgi?id=127584
+
+        Make the logic for when you need columns and when you don't shared between the
+        old multi-column code and the new multi-column code. Make sure that the flow thread
+        and sets get created lazily and destroyed on-demand when whether or not we should
+        have multiple columns changes.
+
+        Reviewed by Beth Dakin.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::updateLogicalWidthAndColumnWidth):
+        No longer virtual. The new column code now uses this function too.
+
+        (WebCore::RenderBlock::availableLogicalWidth):
+        Renamed desiredColumnWidth() to computedColumnWidth().
+
+        (WebCore::RenderBlock::computeColumnCountAndWidth):
+        Renamed calcColumnWidth to computeColumnCountAndWidth.
+
+        (WebCore::RenderBlock::setComputedColumnCountAndWidth):
+        Rename setDesiredColumnCountAndWidth to computed.
+
+        (WebCore::RenderBlock::computedColumnWidth):
+        (WebCore::RenderBlock::computedColumnCount):
+        Renamed desiredColumnWidth/Count to computedColumnWidth/Count and made them virtual.
+
+        (WebCore::RenderBlock::updateFirstLetterStyle):
+        desired -> computed rename.
+
+        * rendering/RenderBlock.h:
+        Renames and made a few functions virtual so that RenderBlockFlow can override.
+
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::RenderBlockFlow):
+        Don't create the flow thread at construction time any longer.
+
+        (WebCore::RenderBlockFlow::createMultiColumnFlowThread):
+        (WebCore::RenderBlockFlow::destroyMultiColumnFlowThread):
+        The methods to create and destroy flow threads. These work at any time now and will
+        fix up the render tree accordingly.
+
+        (WebCore::RenderBlockFlow::setComputedColumnCountAndWidth):
+        Virtual override that creates/destroys the new multi-column information as needed.
+
+        (WebCore::RenderBlockFlow::computedColumnWidth):
+        (WebCore::RenderBlockFlow::computedColumnCount):
+        Overrides to return the cached column width and count from the flow thread.
+
+        * rendering/RenderBlockFlow.h:
+        Has overrides of the virtual functions needed to turn multi-column state on/off and
+        to hand back computed count/width information.
+
+        * rendering/RenderMultiColumnFlowThread.cpp:
+        * rendering/RenderMultiColumnFlowThread.h:
+        Removed the algorithm to compute column count and width, since this has been combined
+        with the old multi-column layout code.
+
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::computeColumnCountAndWidth):
+        Renamed desired -> computed.
+
+        * rendering/RenderView.h:
+        Renamed desired -> computed.
+
+        * style/StyleResolveTree.cpp:
+        (WebCore::Style::determineChange):
+        (WebCore::Style::resolveLocal):
+        (WebCore::Style::resolveTree):
+        * style/StyleResolveTree.h:
+        The Settings argument is no longer needed now that we don't destroy and re-create
+        the renderer for a block flow if it stops being (or becomes) multi-column.
+
 2014-01-24  Anders Carlsson  <andersca@apple.com>
 
         Fix 32-bit build.

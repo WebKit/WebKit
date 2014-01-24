@@ -45,7 +45,7 @@ void detachTextRenderer(Text&);
 
 void updateTextRendererAfterContentChange(Text&, unsigned offsetOfReplacedData, unsigned lengthOfReplacedData);
 
-Change determineChange(const RenderStyle*, const RenderStyle*, Settings*);
+Change determineChange(const RenderStyle*, const RenderStyle*);
 
 }
 

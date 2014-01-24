@@ -44,12 +44,16 @@ public:
     void setInBalancingPass(bool balancing) { m_inBalancingPass = balancing; }
     bool needsRebalancing() const { return m_needsRebalancing; }
     void setNeedsRebalancing(bool balancing) { m_needsRebalancing = balancing; }
-
-    bool computeColumnCountAndWidth();
     
     bool shouldRelayoutForPagination() const { return !m_inBalancingPass && m_needsRebalancing; }
     
     bool requiresBalancing() const { return !columnHeightAvailable() || parent()->style().columnFill() == ColumnFillBalance; }
+
+    void setColumnCountAndWidth(unsigned count, LayoutUnit width)
+    {
+        m_columnCount = count;
+        m_columnWidth = width;
+    }
 
 private:
     virtual const char* renderName() const override;
