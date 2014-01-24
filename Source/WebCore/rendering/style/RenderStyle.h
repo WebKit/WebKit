@@ -1685,7 +1685,7 @@ public:
     static TextJustify initialTextJustify() { return TextJustifyAuto; }
 #endif // CSS3_TEXT
     static TextDecorationStyle initialTextDecorationStyle() { return TextDecorationStyleSolid; }
-    static TextDecorationSkip initialTextDecorationSkip() { return TextDecorationSkipNone; }
+    static TextDecorationSkip initialTextDecorationSkip() { return TextDecorationSkipInk; }
     static TextUnderlinePosition initialTextUnderlinePosition() { return TextUnderlinePositionAuto; }
     static float initialZoom() { return 1.0f; }
     static int initialOutlineOffset() { return 0; }

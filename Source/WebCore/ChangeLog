@@ -1,3 +1,14 @@
+2014-01-20  Myles C. Maxfield  <mmaxfield@apple.com>
+
+       Turn text-decoration-skip: ink on for all underlines
+       https://bugs.webkit.org/show_bug.cgi?id=127331
+
+       Reviewed by Antti Koivisto.
+
+       No new tests are necessary because tests already exist
+
+       * rendering/style/RenderStyle.h:
+
 2014-01-23  Hans Muller  <hmuller@adobe.com>
 
         [CSS Shapes] Image valued shape size and position should conform to the spec
