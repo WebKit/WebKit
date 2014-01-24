@@ -155,7 +155,7 @@ JSValue RegExpConstructor::getRightContext(ExecState* exec)
     
 bool RegExpConstructor::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
 {
-    return getStaticValueSlot<RegExpConstructor, InternalFunction>(exec, ExecState::regExpConstructorTable(exec), jsCast<RegExpConstructor*>(object), propertyName, slot);
+    return getStaticValueSlot<RegExpConstructor, InternalFunction>(exec, ExecState::regExpConstructorTable(exec->vm()), jsCast<RegExpConstructor*>(object), propertyName, slot);
 }
 
 static inline RegExpConstructor* asRegExpConstructor(EncodedJSValue value)
@@ -236,11 +236,6 @@ EncodedJSValue regExpConstructorLeftContext(ExecState* exec, EncodedJSValue slot
 EncodedJSValue regExpConstructorRightContext(ExecState* exec, EncodedJSValue slotBase, EncodedJSValue, PropertyName)
 {
     return JSValue::encode(asRegExpConstructor(slotBase)->getRightContext(exec));
-}
-
-void RegExpConstructor::put(JSCell* cell, ExecState* exec, PropertyName propertyName, JSValue value, PutPropertySlot& slot)
-{
-    lookupPut<RegExpConstructor, InternalFunction>(exec, propertyName, value, ExecState::regExpConstructorTable(exec), jsCast<RegExpConstructor*>(cell), slot);
 }
 
 void setRegExpConstructorInput(ExecState* exec, EncodedJSValue baseObject, EncodedJSValue value)

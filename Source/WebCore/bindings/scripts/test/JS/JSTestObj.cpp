@@ -158,7 +158,7 @@ static const HashTableValue JSTestObjTableValues[] =
     { 0, 0, NoIntrinsic, 0, 0 }
 };
 
-static const HashTable JSTestObjTable = { 266, 255, JSTestObjTableValues, 0 };
+static const HashTable JSTestObjTable = { 266, 255, true, JSTestObjTableValues, 0 };
 /* Hash table for constructor */
 
 static const HashTableValue JSTestObjConstructorTableValues[] =
@@ -193,7 +193,7 @@ static const HashTableValue JSTestObjConstructorTableValues[] =
     { 0, 0, NoIntrinsic, 0, 0 }
 };
 
-static const HashTable JSTestObjConstructorTable = { 39, 31, JSTestObjConstructorTableValues, 0 };
+static const HashTable JSTestObjConstructorTable = { 39, 31, true, JSTestObjConstructorTableValues, 0 };
 
 #if ENABLE(Condition1)
 COMPILE_ASSERT(0 == TestObj::CONDITIONAL_CONST, TestObjEnumCONDITIONAL_CONSTIsWrongUseDoNotCheckConstants);
@@ -341,7 +341,7 @@ static const HashTableValue JSTestObjPrototypeTableValues[] =
     { 0, 0, NoIntrinsic, 0, 0 }
 };
 
-static const HashTable JSTestObjPrototypeTable = { 267, 255, JSTestObjPrototypeTableValues, 0 };
+static const HashTable JSTestObjPrototypeTable = { 267, 255, true, JSTestObjPrototypeTableValues, 0 };
 const ClassInfo JSTestObjPrototype::s_info = { "TestObjectPrototype", &Base::s_info, &JSTestObjPrototypeTable, 0, CREATE_METHOD_TABLE(JSTestObjPrototype) };
 
 JSObject* JSTestObjPrototype::self(VM& vm, JSGlobalObject* globalObject)
@@ -1315,13 +1315,6 @@ EncodedJSValue jsTestObjConstructor(ExecState* exec, EncodedJSValue thisValue, E
     if (!domObject)
         return throwVMTypeError(exec);
     return JSValue::encode(JSTestObj::getConstructor(exec->vm(), domObject->globalObject()));
-}
-
-void JSTestObj::put(JSCell* cell, ExecState* exec, PropertyName propertyName, JSValue value, PutPropertySlot& slot)
-{
-    JSTestObj* thisObject = jsCast<JSTestObj*>(cell);
-    ASSERT_GC_OBJECT_INHERITS(thisObject, info());
-    lookupPut<JSTestObj, Base>(exec, propertyName, value, JSTestObjTable, thisObject, slot);
 }
 
 void setJSTestObjConstructorStaticStringAttr(ExecState* exec, EncodedJSValue, EncodedJSValue encodedValue)

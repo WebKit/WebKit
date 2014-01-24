@@ -1,3 +1,18 @@
+2014-01-24  Oliver Hunt  <oliver@apple.com>
+
+        Generic JSObject::put should handle static properties in the classinfo hierarchy
+        https://bugs.webkit.org/show_bug.cgi?id=127523
+
+        Reviewed by Geoffrey Garen.
+
+        Yay tests!
+
+        * fast/canvas/webgl/constants.html:
+          Remove incorrect constant
+        * js/script-tests/static-put-in-prototype-chain.js: Added.
+        * js/static-put-in-prototype-chain-expected.txt: Added.
+        * js/static-put-in-prototype-chain.html: Added.
+
 2014-01-24  Andrzej Badowski  <a.badowski@samsung.com>
 
         [EFL] Add expectations for two flaky media layout tests

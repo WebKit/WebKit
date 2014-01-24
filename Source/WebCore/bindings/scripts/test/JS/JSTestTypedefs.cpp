@@ -57,7 +57,7 @@ static const HashTableValue JSTestTypedefsTableValues[] =
     { 0, 0, NoIntrinsic, 0, 0 }
 };
 
-static const HashTable JSTestTypedefsTable = { 18, 15, JSTestTypedefsTableValues, 0 };
+static const HashTable JSTestTypedefsTable = { 18, 15, true, JSTestTypedefsTableValues, 0 };
 /* Hash table for constructor */
 
 static const HashTableValue JSTestTypedefsConstructorTableValues[] =
@@ -66,7 +66,7 @@ static const HashTableValue JSTestTypedefsConstructorTableValues[] =
     { 0, 0, NoIntrinsic, 0, 0 }
 };
 
-static const HashTable JSTestTypedefsConstructorTable = { 1, 0, JSTestTypedefsConstructorTableValues, 0 };
+static const HashTable JSTestTypedefsConstructorTable = { 1, 0, true, JSTestTypedefsConstructorTableValues, 0 };
 EncodedJSValue JSC_HOST_CALL JSTestTypedefsConstructor::constructJSTestTypedefs(ExecState* exec)
 {
     JSTestTypedefsConstructor* castedThis = jsCast<JSTestTypedefsConstructor*>(exec->callee());
@@ -125,7 +125,7 @@ static const HashTableValue JSTestTypedefsPrototypeTableValues[] =
     { 0, 0, NoIntrinsic, 0, 0 }
 };
 
-static const HashTable JSTestTypedefsPrototypeTable = { 33, 31, JSTestTypedefsPrototypeTableValues, 0 };
+static const HashTable JSTestTypedefsPrototypeTable = { 33, 31, false, JSTestTypedefsPrototypeTableValues, 0 };
 const ClassInfo JSTestTypedefsPrototype::s_info = { "TestTypedefsPrototype", &Base::s_info, &JSTestTypedefsPrototypeTable, 0, CREATE_METHOD_TABLE(JSTestTypedefsPrototype) };
 
 JSObject* JSTestTypedefsPrototype::self(VM& vm, JSGlobalObject* globalObject)
@@ -274,13 +274,6 @@ EncodedJSValue jsTestTypedefsConstructor(ExecState* exec, EncodedJSValue thisVal
     if (!domObject)
         return throwVMTypeError(exec);
     return JSValue::encode(JSTestTypedefs::getConstructor(exec->vm(), domObject->globalObject()));
-}
-
-void JSTestTypedefs::put(JSCell* cell, ExecState* exec, PropertyName propertyName, JSValue value, PutPropertySlot& slot)
-{
-    JSTestTypedefs* thisObject = jsCast<JSTestTypedefs*>(cell);
-    ASSERT_GC_OBJECT_INHERITS(thisObject, info());
-    lookupPut<JSTestTypedefs, Base>(exec, propertyName, value, JSTestTypedefsTable, thisObject, slot);
 }
 
 void setJSTestTypedefsUnsignedLongLongAttr(ExecState* exec, EncodedJSValue thisValue, EncodedJSValue encodedValue)

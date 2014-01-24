@@ -63,7 +63,7 @@ void ErrorPrototype::finishCreation(VM& vm, JSGlobalObject*)
 
 bool ErrorPrototype::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot &slot)
 {
-    return getStaticFunctionSlot<ErrorInstance>(exec, ExecState::errorPrototypeTable(exec), jsCast<ErrorPrototype*>(object), propertyName, slot);
+    return getStaticFunctionSlot<ErrorInstance>(exec, ExecState::errorPrototypeTable(exec->vm()), jsCast<ErrorPrototype*>(object), propertyName, slot);
 }
 
 // ------------------------------ Functions ---------------------------

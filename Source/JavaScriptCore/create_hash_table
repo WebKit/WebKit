@@ -42,6 +42,8 @@ my @attrs = ();
 my @values = ();
 my @hashes = ();
 
+my $hasSetter = "false";
+
 my $inside = 0;
 my $name;
 my $pefectHashSize;
@@ -90,7 +92,11 @@ while (<IN>) {
             #printf STDERR "WARNING: Number of arguments missing for $key/$val\n" if (length($param) == 0);
         } elsif (length($att)) {
             my $get = $val;
-            my $put = !($att =~ m/ReadOnly/) ? "set" . jsc_ucfirst($val) : "0";
+            my $put = "0";
+            if (!($att =~ m/ReadOnly/)) {
+                $put = "set" . jsc_ucfirst($val);
+            }
+            $hasSetter = "true";
             push(@values, { "type" => "Property", "get" => $get, "put" => $put });
         } else {
             push(@values, { "type" => "Lexer", "value" => $val });        
@@ -287,6 +293,6 @@ sub output() {
     print "   { 0, 0, NoIntrinsic, 0, 0 }\n";
     print "};\n\n";
     print "extern const struct HashTable $name =\n";
-    print "    \{ $compactSize, $compactHashSizeMask, $nameEntries, 0 \};\n";
+    print "    \{ $compactSize, $compactHashSizeMask, $hasSetter, $nameEntries, 0 \};\n";
     print "} // namespace\n";
 }

@@ -1,3 +1,64 @@
+2014-01-24  Oliver Hunt  <oliver@apple.com>
+
+        Generic JSObject::put should handle static properties in the classinfo hierarchy
+        https://bugs.webkit.org/show_bug.cgi?id=127523
+
+        Reviewed by Geoffrey Garen.
+
+        Update the bindings generator to emit the flag indicating the presence
+        of setters, and remove the many (now unnecessary) put overrides.
+        Tested with run-jsc-benchmarks and shows neutral performance. A few of the
+        micro benchmarks actually get a significant performance increase which
+        is nice.
+
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::JSDOMWindow::put):
+            We still need a custom call to lookupPut here in order
+            to get the magic security semantics of the window object.
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (hashTableAccessor):
+        (prototypeHashTableAccessor):
+        (constructorHashTableAccessor):
+        (GenerateImplementation):
+        (GenerateHashTable):
+        (GenerateConstructorHelperMethods):
+
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::JSDOMWindow::put):
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (hashTableAccessor):
+        (prototypeHashTableAccessor):
+        (constructorHashTableAccessor):
+        (InstanceOverridesPutImplementation):
+        (InstanceOverridesPutDeclaration):
+        (GenerateHeader):
+        (GenerateImplementation):
+        (GenerateHashTable):
+        (GenerateConstructorHelperMethods):
+        * bindings/scripts/test/JS/JSTestActiveDOMObject.cpp:
+        * bindings/scripts/test/JS/JSTestCustomNamedGetter.cpp:
+        * bindings/scripts/test/JS/JSTestEventConstructor.cpp:
+        * bindings/scripts/test/JS/JSTestEventTarget.cpp:
+        * bindings/scripts/test/JS/JSTestException.cpp:
+        * bindings/scripts/test/JS/JSTestGenerateIsReachable.cpp:
+        * bindings/scripts/test/JS/JSTestInterface.cpp:
+        (WebCore::JSTestInterface::put):
+        * bindings/scripts/test/JS/JSTestMediaQueryListListener.cpp:
+        * bindings/scripts/test/JS/JSTestNamedConstructor.cpp:
+        * bindings/scripts/test/JS/JSTestNode.cpp:
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        * bindings/scripts/test/JS/JSTestObj.h:
+        * bindings/scripts/test/JS/JSTestOverloadedConstructors.cpp:
+        * bindings/scripts/test/JS/JSTestSerializedScriptValueInterface.cpp:
+        * bindings/scripts/test/JS/JSTestSerializedScriptValueInterface.h:
+        * bindings/scripts/test/JS/JSTestTypedefs.cpp:
+        * bindings/scripts/test/JS/JSTestTypedefs.h:
+        * bindings/scripts/test/JS/JSattribute.cpp:
+        * bindings/scripts/test/JS/JSreadonly.cpp:
+        * html/canvas/WebGLRenderingContext.idl:
+          Remove bogus attribute, as it has never been in the spec and should not
+          have been added.
+
 2014-01-24  David Hyatt  <hyatt@apple.com>
 
         [New Multicolumn] Eliminate RenderMultiColumnBlock
