@@ -1,3 +1,11 @@
+2014-01-24  Tim Horton  <timothy_horton@apple.com>
+
+        iOS build fix after r162710.
+
+        This is why these sorts of comments are bad.
+
+        * UIProcess/WebPageProxy.cpp:
+
 2014-01-24  Anders Carlsson  <andersca@apple.com>
 
         Use a side table to map WebPageProxy objects to WKBrowsingContextController objects

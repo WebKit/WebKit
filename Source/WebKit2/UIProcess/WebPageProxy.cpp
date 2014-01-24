@@ -4382,12 +4382,14 @@ void WebPageProxy::dictationAlternatives(uint64_t dictationContext, Vector<Strin
 }
 #endif
 
+#endif // !PLATFORM(IOS) && PLATFORM(MAC)
+
+#if PLATFORM(MAC)
 RetainPtr<CGImageRef> WebPageProxy::takeViewSnapshot()
 {
     return m_pageClient.takeViewSnapshot();
 }
-
-#endif // PLATFORM(MAC)
+#endif
 
 #if USE(SOUP) && !ENABLE(CUSTOM_PROTOCOLS)
 void WebPageProxy::didReceiveURIRequest(String uriString, uint64_t requestID)
