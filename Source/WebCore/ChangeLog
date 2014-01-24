@@ -1,5 +1,16 @@
 2014-01-24  Daniel Bates  <dabates@apple.com>
 
+        Fix the Windows build after <http://trac.webkit.org/changeset/162704>
+        (https://bugs.webkit.org/show_bug.cgi?id=127293)
+
+        Only include TargetConditionals.h when building on a Darwin-based OS.
+        Also, check that TARGET_OS_IPHONE is defined before referencing its value
+        since it will be undefined when building on Windows.
+
+        * bindings/objc/PublicDOMInterfaces.h:
+
+2014-01-24  Daniel Bates  <dabates@apple.com>
+
         Bindings generation tests hit an error trying to include wtf/Platform.h after r161638
         https://bugs.webkit.org/show_bug.cgi?id=127293
 

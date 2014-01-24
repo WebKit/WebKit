@@ -26,10 +26,12 @@
 // All public DOM class interfaces, properties and methods need to be in this file.
 // Anything not in the file will be generated into the appropriate private header file.
 
-#include <TargetConditionals.h>
-
 #ifndef OBJC_CODE_GENERATION
 #error Do not include this header, instead include the appropriate DOM header.
+#endif
+
+#ifdef __APPLE__
+#include <TargetConditionals.h>
 #endif
 
 @interface DOMAttr : DOMNode 10_4
@@ -953,10 +955,10 @@
 @property (readonly, strong) DOMCSSPrimitiveValue *green;
 @property (readonly, strong) DOMCSSPrimitiveValue *blue;
 @property (readonly, strong) DOMCSSPrimitiveValue *alpha;
-#if !TARGET_OS_IPHONE
-@property (readonly, copy) NSColor *color WEBKIT_AVAILABLE_MAC(10_5);
-#else
+#if defined(TARGET_OS_IPHONE) && TARGET_OS_IPHONE
 - (CGColorRef)color;
+#else
+@property (readonly, copy) NSColor *color WEBKIT_AVAILABLE_MAC(10_5);
 #endif
 @end
 
@@ -1250,6 +1252,6 @@
 - (NSString *)lookupNamespaceURI:(NSString *)prefix;
 @end
 
-#if TARGET_OS_IPHONE
+#if defined(TARGET_OS_IPHONE) && TARGET_OS_IPHONE
 #include <WebKitAdditions/PublicDOMInterfacesIOS.h>
 #endif
