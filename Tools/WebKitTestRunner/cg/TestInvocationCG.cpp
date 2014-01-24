@@ -35,8 +35,13 @@
 #include <wtf/RetainPtr.h>
 #include <wtf/StringExtras.h>
 
-#if PLATFORM(MAC)
+#if PLATFORM(MAC) && !PLATFORM(IOS)
 #include <LaunchServices/UTCoreTypes.h>
+#endif
+
+#if PLATFORM(IOS)
+// FIXME: get kUTTypePNG from MobileCoreServices on iOS
+static const CFStringRef kUTTypePNG = CFSTR("public.png");
 #endif
 
 namespace WTR {

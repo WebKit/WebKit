@@ -3,7 +3,7 @@ MODULES = DumpRenderTree WebKitTestRunner MiniBrowser ../Source/ThirdParty/gtest
 ifneq (,$(findstring iphone,$(SDKROOT)))
 	# FIXME: Build projects ../Source/ThirdParty/gtest/xcode, TestWebKitAPI for both device and simulator
 	# and build project DumpRenderTree for simulator.
-	MODULES =
+	MODULES = WebKitTestRunner
 endif
 
 all:

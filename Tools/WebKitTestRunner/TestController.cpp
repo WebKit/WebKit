@@ -311,7 +311,7 @@ void TestController::initialize(int argc, const char* argv[])
     m_context.adopt(WKContextCreateWithInjectedBundlePath(injectedBundlePath()));
     m_geolocationProvider = adoptPtr(new GeolocationProviderMock(m_context.get()));
 
-#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED > 1080
+#if PLATFORM(IOS) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED > 1080)
     WKContextSetUsesNetworkProcess(m_context.get(), true);
     WKContextSetProcessModel(m_context.get(), kWKProcessModelMultipleSecondaryProcesses);
 #endif

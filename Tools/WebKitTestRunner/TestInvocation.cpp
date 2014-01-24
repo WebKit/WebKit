@@ -42,7 +42,9 @@
 #include <wtf/text/CString.h>
 
 #if PLATFORM(MAC)
+#if !PLATFORM(IOS)
 #include <Carbon/Carbon.h>
+#endif
 #include <WebKit2/WKPagePrivateMac.h>
 #endif
 
@@ -129,7 +131,7 @@ static bool shouldLogFrameLoadDelegates(const char* pathOrURL)
     return strstr(pathOrURL, "loading/");
 }
 
-#if ENABLE(INSPECTOR)
+#if ENABLE(INSPECTOR) && !PLATFORM(IOS)
 static bool shouldOpenWebInspector(const char* pathOrURL)
 {
     return strstr(pathOrURL, "inspector/") || strstr(pathOrURL, "inspector\\");
@@ -226,7 +228,7 @@ void TestInvocation::invoke()
     if (m_error)
         goto end;
 
-#if ENABLE(INSPECTOR)
+#if ENABLE(INSPECTOR) && !PLATFORM(IOS)
     if (shouldOpenWebInspector(m_pathOrURL.c_str()))
         WKInspectorShow(WKPageGetInspector(TestController::shared().mainWebView()->page()));
 #endif // ENABLE(INSPECTOR)        
@@ -251,7 +253,7 @@ void TestInvocation::invoke()
     dumpResults();
 
 end:
-#if ENABLE(INSPECTOR)
+#if ENABLE(INSPECTOR) && !PLATFORM(IOS)
     if (m_gotInitialResponse)
         WKInspectorClose(WKPageGetInspector(TestController::shared().mainWebView()->page()));
 #endif // ENABLE(INSPECTOR)
@@ -676,7 +678,7 @@ WKRetainPtr<WKTypeRef> TestInvocation::didReceiveSynchronousMessageFromInjectedB
     }
 
     if (WKStringIsEqualToUTF8CString(messageName, "SecureEventInputIsEnabled")) {
-#if PLATFORM(MAC)
+#if PLATFORM(MAC) && !PLATFORM(IOS)
         WKRetainPtr<WKBooleanRef> result(AdoptWK, WKBooleanCreate(IsSecureEventInputEnabled()));
 #else
         WKRetainPtr<WKBooleanRef> result(AdoptWK, WKBooleanCreate(false));

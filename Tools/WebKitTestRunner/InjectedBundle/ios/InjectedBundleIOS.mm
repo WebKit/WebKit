@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,29 +23,25 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifdef __OBJC__
+#import "InjectedBundle.h"
+
 #import <Foundation/Foundation.h>
-#endif
 
-#if defined(BUILDING_GTK__)
-#include "autotoolsconfig.h"
-#endif /* defined (BUILDING_GTK__) */
+@interface NSURLRequest (PrivateThingsWeShouldntReallyUse)
++(void)setAllowsAnyHTTPSCertificate:(BOOL)allow forHost:(NSString *)host;
+@end
 
-#include <wtf/Platform.h>
-#include <WebKit2/WebKit2_C.h>
+namespace WTR {
 
+void InjectedBundle::platformInitialize(WKTypeRef)
+{
+    NSDictionary *dict = [NSDictionary dictionaryWithObjectsAndKeys:
+        nil];
 
-/* When C++ exceptions are disabled, the C++ library defines |try| and |catch|
-* to allow C++ code that expects exceptions to build. These definitions
-* interfere with Objective-C++ uses of Objective-C exception handlers, which
-* use |@try| and |@catch|. As a workaround, undefine these macros. */
+    [[NSUserDefaults standardUserDefaults] setVolatileDomain:dict forName:NSArgumentDomain];
 
-#ifdef __cplusplus
-#include <algorithm> // needed for exception_defines.h
-#endif
+    [NSURLRequest setAllowsAnyHTTPSCertificate:YES forHost:@"localhost"];
+    [NSURLRequest setAllowsAnyHTTPSCertificate:YES forHost:@"127.0.0.1"];
+}
 
-#ifdef __OBJC__
-#undef try
-#undef catch
-#endif
-
+} // namespace WTR

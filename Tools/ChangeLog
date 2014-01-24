@@ -1,3 +1,286 @@
+2014-01-23  David Farler  <dfarler@apple.com>
+
+        Make WebKitTestRunner work with iOS
+        https://bugs.webkit.org/show_bug.cgi?id=127448
+
+        Reviewed by Simon Fraser.
+
+        Combined patch from Simon below with some additional xcconfig cleanups,
+        rebasing and stubbing out a couple of new functions that popped up
+        since then.
+
+        2013-12-03  Simon Fraser  <simon.fraser@apple.com>
+
+                <rdar://problem/15515469> Get WebKitTestRunner working on iOS
+
+                Get WebKitTestRunner limping on iOS. Main parts:
+                - Stub out lots of accessibility-related functions.
+                - Stub out EventSender
+                - Create target to make a bundled app that runs in the simulator,
+                  and copy the injected bundle library into it.
+                - Make a UIWindow and WKView to load tests in
+
+                It runs, load tests, and dumps results to output. More work will be
+                required once we can execute it via the webkitpy scripts.
+
+        * WebKitTestRunner/Configurations/Base.xcconfig:
+        * WebKitTestRunner/Configurations/InjectedBundle.xcconfig:
+        * WebKitTestRunner/Configurations/WebKitTestRunner.xcconfig:
+        * WebKitTestRunner/InjectedBundle/EventSendingController.cpp:
+        * WebKitTestRunner/InjectedBundle/ios/AccessibilityControllerIOS.mm: Added.
+        (WTR::AccessibilityController::addNotificationListener):
+        (WTR::AccessibilityController::removeNotificationListener):
+        (WTR::AccessibilityController::platformName):
+        (WTR::AccessibilityController::logAccessibilityEvents):
+        (WTR::AccessibilityController::resetToConsistentState):
+        (WTR::findAccessibleObjectById):
+        (WTR::AccessibilityController::accessibleElementById):
+        * WebKitTestRunner/InjectedBundle/ios/AccessibilityNotificationHandler.h: Added.
+        * WebKitTestRunner/InjectedBundle/ios/AccessibilityTextMarkerIOS.mm: Copied from Tools/WebKitTestRunner/WebKitTestRunnerPrefix.h.
+        (WTR::AccessibilityTextMarker::isEqual):
+        * WebKitTestRunner/InjectedBundle/ios/AccessibilityUIElementIOS.mm: Added.
+        (WTR::AccessibilityUIElement::AccessibilityUIElement):
+        (WTR::AccessibilityUIElement::~AccessibilityUIElement):
+        (WTR::AccessibilityUIElement::isEqual):
+        (WTR::AccessibilityUIElement::getLinkedUIElements):
+        (WTR::AccessibilityUIElement::getDocumentLinks):
+        (WTR::AccessibilityUIElement::getChildren):
+        (WTR::AccessibilityUIElement::getChildrenWithRange):
+        (WTR::AccessibilityUIElement::childrenCount):
+        (WTR::AccessibilityUIElement::elementAtPoint):
+        (WTR::AccessibilityUIElement::indexOfChild):
+        (WTR::AccessibilityUIElement::childAtIndex):
+        (WTR::AccessibilityUIElement::linkedUIElementAtIndex):
+        (WTR::AccessibilityUIElement::ariaOwnsElementAtIndex):
+        (WTR::AccessibilityUIElement::ariaFlowToElementAtIndex):
+        (WTR::AccessibilityUIElement::disclosedRowAtIndex):
+        (WTR::AccessibilityUIElement::rowAtIndex):
+        (WTR::AccessibilityUIElement::selectedChildAtIndex):
+        (WTR::AccessibilityUIElement::selectedChildrenCount):
+        (WTR::AccessibilityUIElement::selectedRowAtIndex):
+        (WTR::AccessibilityUIElement::titleUIElement):
+        (WTR::AccessibilityUIElement::parentElement):
+        (WTR::AccessibilityUIElement::disclosedByRow):
+        (WTR::AccessibilityUIElement::attributesOfLinkedUIElements):
+        (WTR::AccessibilityUIElement::attributesOfDocumentLinks):
+        (WTR::AccessibilityUIElement::attributesOfChildren):
+        (WTR::AccessibilityUIElement::allAttributes):
+        (WTR::AccessibilityUIElement::stringAttributeValue):
+        (WTR::AccessibilityUIElement::numberAttributeValue):
+        (WTR::AccessibilityUIElement::uiElementArrayAttributeValue):
+        (WTR::AccessibilityUIElement::uiElementAttributeValue):
+        (WTR::AccessibilityUIElement::boolAttributeValue):
+        (WTR::AccessibilityUIElement::isAttributeSettable):
+        (WTR::AccessibilityUIElement::isAttributeSupported):
+        (WTR::AccessibilityUIElement::parameterizedAttributeNames):
+        (WTR::AccessibilityUIElement::role):
+        (WTR::AccessibilityUIElement::subrole):
+        (WTR::AccessibilityUIElement::roleDescription):
+        (WTR::AccessibilityUIElement::title):
+        (WTR::AccessibilityUIElement::description):
+        (WTR::AccessibilityUIElement::orientation):
+        (WTR::AccessibilityUIElement::stringValue):
+        (WTR::AccessibilityUIElement::language):
+        (WTR::AccessibilityUIElement::helpText):
+        (WTR::AccessibilityUIElement::x):
+        (WTR::AccessibilityUIElement::y):
+        (WTR::AccessibilityUIElement::width):
+        (WTR::AccessibilityUIElement::height):
+        (WTR::AccessibilityUIElement::clickPointX):
+        (WTR::AccessibilityUIElement::clickPointY):
+        (WTR::AccessibilityUIElement::intValue):
+        (WTR::AccessibilityUIElement::minValue):
+        (WTR::AccessibilityUIElement::maxValue):
+        (WTR::AccessibilityUIElement::valueDescription):
+        (WTR::AccessibilityUIElement::insertionPointLineNumber):
+        (WTR::AccessibilityUIElement::isPressActionSupported):
+        (WTR::AccessibilityUIElement::isIncrementActionSupported):
+        (WTR::AccessibilityUIElement::isDecrementActionSupported):
+        (WTR::AccessibilityUIElement::isEnabled):
+        (WTR::AccessibilityUIElement::isRequired):
+        (WTR::AccessibilityUIElement::isFocused):
+        (WTR::AccessibilityUIElement::isSelected):
+        (WTR::AccessibilityUIElement::isSelectedOptionActive):
+        (WTR::AccessibilityUIElement::isIndeterminate):
+        (WTR::AccessibilityUIElement::isExpanded):
+        (WTR::AccessibilityUIElement::isChecked):
+        (WTR::AccessibilityUIElement::hierarchicalLevel):
+        (WTR::AccessibilityUIElement::classList):
+        (WTR::AccessibilityUIElement::speak):
+        (WTR::AccessibilityUIElement::ariaIsGrabbed):
+        (WTR::AccessibilityUIElement::ariaDropEffects):
+        (WTR::AccessibilityUIElement::lineForIndex):
+        (WTR::AccessibilityUIElement::rangeForLine):
+        (WTR::AccessibilityUIElement::rangeForPosition):
+        (WTR::AccessibilityUIElement::boundsForRange):
+        (WTR::AccessibilityUIElement::stringForRange):
+        (WTR::AccessibilityUIElement::attributedStringForRange):
+        (WTR::AccessibilityUIElement::attributedStringRangeIsMisspelled):
+        (WTR::uiElementCountForSearchPredicate):
+        (WTR::AccessibilityUIElement::uiElementCountForSearchPredicate):
+        (WTR::AccessibilityUIElement::uiElementForSearchPredicate):
+        (WTR::AccessibilityUIElement::attributesOfColumnHeaders):
+        (WTR::AccessibilityUIElement::attributesOfRowHeaders):
+        (WTR::AccessibilityUIElement::attributesOfColumns):
+        (WTR::AccessibilityUIElement::attributesOfRows):
+        (WTR::AccessibilityUIElement::attributesOfVisibleCells):
+        (WTR::AccessibilityUIElement::attributesOfHeader):
+        (WTR::AccessibilityUIElement::rowCount):
+        (WTR::AccessibilityUIElement::columnCount):
+        (WTR::AccessibilityUIElement::indexInTable):
+        (WTR::AccessibilityUIElement::rowIndexRange):
+        (WTR::AccessibilityUIElement::columnIndexRange):
+        (WTR::AccessibilityUIElement::cellForColumnAndRow):
+        (WTR::AccessibilityUIElement::horizontalScrollbar):
+        (WTR::AccessibilityUIElement::verticalScrollbar):
+        (WTR::AccessibilityUIElement::scrollToMakeVisible):
+        (WTR::AccessibilityUIElement::selectedTextRange):
+        (WTR::AccessibilityUIElement::setSelectedTextRange):
+        (WTR::AccessibilityUIElement::increment):
+        (WTR::AccessibilityUIElement::decrement):
+        (WTR::AccessibilityUIElement::showMenu):
+        (WTR::AccessibilityUIElement::press):
+        (WTR::AccessibilityUIElement::setSelectedChild):
+        (WTR::AccessibilityUIElement::accessibilityValue):
+        (WTR::AccessibilityUIElement::documentEncoding):
+        (WTR::AccessibilityUIElement::documentURI):
+        (WTR::AccessibilityUIElement::url):
+        (WTR::AccessibilityUIElement::addNotificationListener):
+        (WTR::AccessibilityUIElement::removeNotificationListener):
+        (WTR::AccessibilityUIElement::isFocusable):
+        (WTR::AccessibilityUIElement::isSelectable):
+        (WTR::AccessibilityUIElement::isMultiSelectable):
+        (WTR::AccessibilityUIElement::isVisible):
+        (WTR::AccessibilityUIElement::isOffScreen):
+        (WTR::AccessibilityUIElement::isCollapsed):
+        (WTR::AccessibilityUIElement::isIgnored):
+        (WTR::AccessibilityUIElement::hasPopup):
+        (WTR::AccessibilityUIElement::takeFocus):
+        (WTR::AccessibilityUIElement::takeSelection):
+        (WTR::AccessibilityUIElement::addSelection):
+        (WTR::AccessibilityUIElement::removeSelection):
+        (WTR::AccessibilityUIElement::textMarkerRangeForElement):
+        (WTR::AccessibilityUIElement::textMarkerRangeLength):
+        (WTR::AccessibilityUIElement::previousTextMarker):
+        (WTR::AccessibilityUIElement::nextTextMarker):
+        (WTR::AccessibilityUIElement::stringForTextMarkerRange):
+        (WTR::AccessibilityUIElement::textMarkerRangeForMarkers):
+        (WTR::AccessibilityUIElement::startTextMarkerForTextMarkerRange):
+        (WTR::AccessibilityUIElement::endTextMarkerForTextMarkerRange):
+        (WTR::AccessibilityUIElement::endTextMarkerForBounds):
+        (WTR::AccessibilityUIElement::startTextMarkerForBounds):
+        (WTR::AccessibilityUIElement::textMarkerForPoint):
+        (WTR::AccessibilityUIElement::accessibilityElementForTextMarker):
+        (WTR::AccessibilityUIElement::attributedStringForTextMarkerRangeContainsAttribute):
+        (WTR::AccessibilityUIElement::indexForTextMarker):
+        (WTR::AccessibilityUIElement::isTextMarkerValid):
+        (WTR::AccessibilityUIElement::textMarkerForIndex):
+        (WTR::AccessibilityUIElement::startTextMarker):
+        (WTR::AccessibilityUIElement::endTextMarker):
+        (WTR::AccessibilityUIElement::mathPostscriptsDescription):
+        (WTR::AccessibilityUIElement::mathPrescriptsDescription):
+        (WTR::AccessibilityUIElement::pathDescription):
+        (WTR::AccessibilityUIElement::supportedActions):
+        * WebKitTestRunner/InjectedBundle/ios/ActivateFontsIOS.mm: Copied from Tools/WebKitTestRunner/WebKitTestRunnerPrefix.h.
+        (WTR::activateFonts):
+        * WebKitTestRunner/InjectedBundle/ios/EventSenderProxyIOS.mm: Added.
+        (WTR::EventSenderProxy::EventSenderProxy):
+        (WTR::EventSenderProxy::~EventSenderProxy):
+        (WTR::EventSenderProxy::updateClickCountForButton):
+        (WTR::EventSenderProxy::mouseDown):
+        (WTR::EventSenderProxy::mouseUp):
+        (WTR::EventSenderProxy::mouseMoveTo):
+        (WTR::EventSenderProxy::leapForward):
+        (WTR::EventSenderProxy::keyDown):
+        (WTR::EventSenderProxy::mouseScrollBy):
+        (WTR::EventSenderProxy::continuousMouseScrollBy):
+        (WTR::EventSenderProxy::addTouchPoint):
+        (WTR::EventSenderProxy::updateTouchPoint):
+        (WTR::EventSenderProxy::setTouchModifier):
+        (WTR::EventSenderProxy::setTouchPointRadius):
+        (WTR::EventSenderProxy::touchStart):
+        (WTR::EventSenderProxy::touchMove):
+        (WTR::EventSenderProxy::touchEnd):
+        (WTR::EventSenderProxy::touchCancel):
+        (WTR::EventSenderProxy::clearTouchPoints):
+        (WTR::EventSenderProxy::releaseTouchPoint):
+        (WTR::EventSenderProxy::cancelTouchPoint):
+        * WebKitTestRunner/InjectedBundle/ios/InjectedBundleIOS.mm: Copied from Tools/WebKitTestRunner/WebKitTestRunnerPrefix.h.
+        (WTR::InjectedBundle::platformInitialize):
+        * WebKitTestRunner/InjectedBundle/ios/InjectedBundlePageIOS.mm: Copied from Tools/WebKitTestRunner/WebKitTestRunnerPrefix.h.
+        (WTR::InjectedBundlePage::platformDidStartProvisionalLoadForFrame):
+        * WebKitTestRunner/Makefile:
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::initialize):
+        * WebKitTestRunner/TestController.h:
+        * WebKitTestRunner/TestInvocation.cpp:
+        (WTR::TestInvocation::invoke):
+        (WTR::TestInvocation::didReceiveSynchronousMessageFromInjectedBundle):
+        * WebKitTestRunner/WebKitTestRunner.xcodeproj/project.pbxproj:
+        * WebKitTestRunner/WebKitTestRunnerApp/AppDelegate.h: Added.
+        * WebKitTestRunner/WebKitTestRunnerApp/AppDelegate.m: Added.
+        (-[AppDelegate application:didFinishLaunchingWithOptions:]):
+        (-[AppDelegate applicationWillResignActive:]):
+        (-[AppDelegate applicationDidEnterBackground:]):
+        (-[AppDelegate applicationWillEnterForeground:]):
+        (-[AppDelegate applicationDidBecomeActive:]):
+        (-[AppDelegate applicationWillTerminate:]):
+        * WebKitTestRunner/WebKitTestRunnerApp/Images.xcassets/AppIcon.appiconset/Contents.json: Added.
+        * WebKitTestRunner/WebKitTestRunnerApp/Images.xcassets/LaunchImage.launchimage/Contents.json: Added.
+        * WebKitTestRunner/WebKitTestRunnerApp/WebKitTestRunnerApp-Info.plist: Added.
+        * WebKitTestRunner/WebKitTestRunnerApp/WebKitTestRunnerApp-Prefix.pch: Added.
+        * WebKitTestRunner/WebKitTestRunnerApp/en.lproj/InfoPlist.strings: Added.
+        * WebKitTestRunner/WebKitTestRunnerApp/main.m: Added.
+        (main):
+        * WebKitTestRunner/WebKitTestRunnerAppTests-Info.plist: Added.
+        * WebKitTestRunner/WebKitTestRunnerAppTests/WebKitTestRunnerAppTests-Info.plist: Added.
+        * WebKitTestRunner/WebKitTestRunnerAppTests/WebKitTestRunnerAppTests.m: Added.
+        (-[WebKitTestRunnerAppTests setUp]):
+        (-[WebKitTestRunnerAppTests tearDown]):
+        (-[WebKitTestRunnerAppTests testExample]):
+        * WebKitTestRunner/WebKitTestRunnerAppTests/en.lproj/InfoPlist.strings: Added.
+        * WebKitTestRunner/WebKitTestRunnerPrefix.h:
+        * WebKitTestRunner/cg/TestInvocationCG.cpp:
+        * WebKitTestRunner/iOS.xcconfig: Added.
+        * WebKitTestRunner/ios/PlatformWebViewIOS.mm: Added.
+        (-[TestRunnerWKView initWithFrame:contextRef:pageGroupRef:relatedToPage:useTiledDrawing:]):
+        (-[TestRunnerWKView _shouldUseTiledDrawingArea]):
+        (-[WebKitTestRunnerWindow isKeyWindow]):
+        (-[WebKitTestRunnerWindow setFrameOrigin:]):
+        (-[WebKitTestRunnerWindow setFrame:]):
+        (-[WebKitTestRunnerWindow frameRespectingFakeOrigin]):
+        (-[WebKitTestRunnerWindow backingScaleFactor]):
+        (WTR::PlatformWebView::PlatformWebView):
+        (WTR::PlatformWebView::resizeTo):
+        (WTR::PlatformWebView::~PlatformWebView):
+        (WTR::PlatformWebView::page):
+        (WTR::PlatformWebView::focus):
+        (WTR::PlatformWebView::windowFrame):
+        (WTR::PlatformWebView::setWindowFrame):
+        (WTR::PlatformWebView::didInitializeClients):
+        (WTR::PlatformWebView::addChromeInputField):
+        (WTR::PlatformWebView::removeChromeInputField):
+        (WTR::PlatformWebView::makeWebViewFirstResponder):
+        (WTR::PlatformWebView::windowSnapshotImage):
+        (WTR::PlatformWebView::viewSupportsOptions):
+        * WebKitTestRunner/ios/TestControllerIOS.mm: Added.
+        (WTR::TestController::notifyDone):
+        (WTR::TestController::platformInitialize):
+        (WTR::TestController::platformDestroy):
+        (WTR::TestController::initializeInjectedBundlePath):
+        (WTR::TestController::initializeTestPluginDirectory):
+        (WTR::TestController::platformRunUntil):
+        (WTR::TestController::platformInitializeContext):
+        (WTR::TestController::runModal):
+        (WTR::TestController::platformLibraryPathForTesting):
+        * WebKitTestRunner/ios/WebArchiveDumpSupportIOS.mm: Copied from Tools/WebKitTestRunner/WebKitTestRunnerPrefix.h.
+        (createCFURLResponseFromResponseData):
+        (supportedNonImageMIMETypes):
+        * WebKitTestRunner/ios/mainIOS.mm: Copied from Tools/WebKitTestRunner/WebKitTestRunnerPrefix.h.
+        (-[WebKitTestRunnerApp _runTestController]):
+        (-[WebKitTestRunnerApp applicationDidFinishLaunching:]):
+        (main):
+
 2014-01-24  Enrique Ocaña González  <eocanha@igalia.com>
 
         [GTK] Put cache files in XDG_CACHE_HOME

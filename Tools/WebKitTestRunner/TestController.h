@@ -26,9 +26,9 @@
 #ifndef TestController_h
 #define TestController_h
 
+#include "GeolocationProviderMock.h"
 #include "WebNotificationProvider.h"
 #include "WorkQueueManager.h"
-#include <GeolocationProviderMock.h>
 #include <WebKit2/WKRetainPtr.h>
 #include <string>
 #include <vector>

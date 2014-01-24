@@ -51,7 +51,7 @@ struct MenuItemPrivateData {
     WKRetainPtr<WKContextMenuItemRef> m_item;
 };
 
-
+#if ENABLE(CONTEXT_MENUS)
 static JSValueRef menuItemClickCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
     MenuItemPrivateData* privateData = static_cast<MenuItemPrivateData*>(JSObjectGetPrivate(thisObject));
@@ -104,6 +104,7 @@ static JSClassRef getMenuItemClass()
 
     return menuItemClass;
 }
+#endif
 
 static WKEventModifiers parseModifier(JSStringRef modifier)
 {

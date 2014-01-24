@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,29 +23,23 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifdef __OBJC__
-#import <Foundation/Foundation.h>
-#endif
+#import "config.h"
+#import "InjectedBundlePage.h"
 
-#if defined(BUILDING_GTK__)
-#include "autotoolsconfig.h"
-#endif /* defined (BUILDING_GTK__) */
+#import "StringFunctions.h"
+#import <WebKit2/WKBundleFrame.h>
+#import <WebKit2/WKURLCF.h>
+#import <WebKitSystemInterface.h>
+#import <wtf/RetainPtr.h>
+#import <wtf/text/StringBuilder.h>
+#import <wtf/text/WTFString.h>
 
-#include <wtf/Platform.h>
-#include <WebKit2/WebKit2_C.h>
+namespace WTR {
 
+using namespace WTF;
 
-/* When C++ exceptions are disabled, the C++ library defines |try| and |catch|
-* to allow C++ code that expects exceptions to build. These definitions
-* interfere with Objective-C++ uses of Objective-C exception handlers, which
-* use |@try| and |@catch|. As a workaround, undefine these macros. */
+void InjectedBundlePage::platformDidStartProvisionalLoadForFrame(WKBundleFrameRef)
+{
+}
 
-#ifdef __cplusplus
-#include <algorithm> // needed for exception_defines.h
-#endif
-
-#ifdef __OBJC__
-#undef try
-#undef catch
-#endif
-
+} // namespace WTR

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,29 +23,36 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifdef __OBJC__
-#import <Foundation/Foundation.h>
-#endif
+#import "config.h"
 
-#if defined(BUILDING_GTK__)
-#include "autotoolsconfig.h"
-#endif /* defined (BUILDING_GTK__) */
-
-#include <wtf/Platform.h>
-#include <WebKit2/WebKit2_C.h>
+#import "TestController.h"
 
 
-/* When C++ exceptions are disabled, the C++ library defines |try| and |catch|
-* to allow C++ code that expects exceptions to build. These definitions
-* interfere with Objective-C++ uses of Objective-C exception handlers, which
-* use |@try| and |@catch|. As a workaround, undefine these macros. */
+static int _argc;
+static const char **_argv;
 
-#ifdef __cplusplus
-#include <algorithm> // needed for exception_defines.h
-#endif
+@interface WebKitTestRunnerApp : UIApplication
+@end
 
-#ifdef __OBJC__
-#undef try
-#undef catch
-#endif
+@implementation WebKitTestRunnerApp
 
+- (void)_runTestController
+{
+    WTR::TestController controller(_argc, _argv);
+}
+
+- (void)applicationDidFinishLaunching:(NSNotification *)notification
+{
+    [self performSelectorOnMainThread:@selector(_runTestController) withObject:nil waitUntilDone:NO];
+}
+
+@end
+
+int main(int argc, const char* argv[])
+{
+    _argc = argc;
+    _argv = argv;
+
+    UIApplicationMain(argc, (char**)argv, NSStringFromClass([WebKitTestRunnerApp class]), nil);
+    return 0;
+}
