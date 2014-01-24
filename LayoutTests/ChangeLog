@@ -1,3 +1,19 @@
+2014-01-23  Hans Muller  <hmuller@adobe.com>
+
+        [CSS Shapes] Image valued shape size and position should conform to the spec
+        https://bugs.webkit.org/show_bug.cgi?id=123295
+
+        Reviewed by Andreas Kling.
+
+        * fast/shapes/shape-outside-floats/shape-outside-image-fit-001-expected.html: Added.
+        * fast/shapes/shape-outside-floats/shape-outside-image-fit-001.html: Added.
+        * fast/shapes/shape-outside-floats/shape-outside-image-fit-002-expected.html: Added.
+        * fast/shapes/shape-outside-floats/shape-outside-image-fit-002.html: Added.
+        * fast/shapes/shape-outside-floats/shape-outside-image-fit-003-expected.html: Added.
+        * fast/shapes/shape-outside-floats/shape-outside-image-fit-003.html: Added.
+        * fast/shapes/shape-outside-floats/shape-outside-image-fit-004-expected.html: Added.
+        * fast/shapes/shape-outside-floats/shape-outside-image-fit-004.html: Added.
+
 2014-01-23  Antti Koivisto  <antti@apple.com>
 
         Rebaseline after r162640.

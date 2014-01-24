@@ -1,3 +1,38 @@
+2014-01-23  Hans Muller  <hmuller@adobe.com>
+
+        [CSS Shapes] Image valued shape size and position should conform to the spec
+        https://bugs.webkit.org/show_bug.cgi?id=123295
+
+        Reviewed by Andreas Kling.
+
+        Implement image valued shape-outside scaling and translation per the spec,
+        http://dev.w3.org/csswg/css-shapes/#shapes-from-image:
+
+        "The image is sized and positioned as if it were a replaced element whose
+        specified width and height are the same as the element’s used content box size."
+
+        This change doesn't completely fulfill the spec, it's limited to image elements
+        and shape-outside.
+
+        Tests: fast/shapes/shape-outside-floats/shape-outside-image-fit-001.html
+               fast/shapes/shape-outside-floats/shape-outside-image-fit-002.html
+               fast/shapes/shape-outside-floats/shape-outside-image-fit-003.html
+               fast/shapes/shape-outside-floats/shape-outside-image-fit-004.html
+
+        * rendering/shapes/Shape.h:
+        * rendering/shapes/Shape.cpp:
+        (WebCore::Shape::createRasterShape):
+        Added an imageRect parameter which specifies where the shape image is to
+        appear relative to the content box. The imageRect implies both scaling and
+        translation of the shape image.
+
+        * rendering/shapes/ShapeInfo.cpp:
+        (WebCore::ShapeInfo<RenderType>::computedShape):
+        (WebCore::getShapeImageRect):
+        For replaced elements, compute the shape's imageRect with
+        RenderReplaced::replacedContentRect().
+
+
 2014-01-23  Max Vujovic  <mvujovic@adobe.com>
 
         Remove CSS Custom Filters code and tests

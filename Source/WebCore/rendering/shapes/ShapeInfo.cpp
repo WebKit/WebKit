@@ -35,6 +35,7 @@
 #include "LengthFunctions.h"
 #include "RenderBlock.h"
 #include "RenderBox.h"
+#include "RenderImage.h"
 #include "RenderRegion.h"
 #include "RenderStyle.h"
 #include "Shape.h"
@@ -52,6 +53,18 @@ bool checkShapeImageOrigin(Document& document, CachedImage& cachedImage)
     document.addConsoleMessage(SecurityMessageSource, ErrorMessageLevel, "Unsafe attempt to load URL " + urlString + ".");
 
     return false;
+}
+
+static LayoutRect getShapeImageRect(const StyleImage& styleImage, const RenderBox& renderBox)
+{
+    if (renderBox.isRenderImage()) {
+        const RenderImage& renderImage = *toRenderImage(&renderBox);
+        return renderImage.replacedContentRect(renderBox.intrinsicSize());
+    }
+
+    ASSERT(styleImage.cachedImage());
+    ASSERT(styleImage.cachedImage()->hasImage());
+    return LayoutRect(LayoutPoint(), styleImage.cachedImage()->image()->size());
 }
 
 template<class RenderType>
@@ -72,10 +85,12 @@ const Shape& ShapeInfo<RenderType>::computedShape() const
         ASSERT(shapeValue->shape());
         m_shape = Shape::createShape(shapeValue->shape(), m_shapeLogicalSize, writingMode, margin, padding);
         break;
-    case ShapeValue::Image:
+    case ShapeValue::Image: {
         ASSERT(shapeValue->image());
-        m_shape = Shape::createRasterShape(*(shapeValue->image()), shapeImageThreshold, m_shapeLogicalSize, writingMode, margin, padding);
+        const StyleImage& styleImage = *(shapeValue->image());
+        m_shape = Shape::createRasterShape(styleImage, shapeImageThreshold, getShapeImageRect(styleImage, m_renderer), m_shapeLogicalSize, writingMode, margin, padding);
         break;
+    }
     case ShapeValue::Box: {
         const RoundedRect& shapeRect = m_renderer.style().getRoundedBorderFor(LayoutRect(LayoutPoint(), m_shapeLogicalSize), &(m_renderer.view()));
         m_shape = Shape::createLayoutBoxShape(shapeRect, writingMode, margin, padding);

@@ -251,36 +251,36 @@ PassOwnPtr<Shape> Shape::createShape(const BasicShape* basicShape, const LayoutS
     return shape.release();
 }
 
-PassOwnPtr<Shape> Shape::createRasterShape(const StyleImage& styleImage, float threshold, const LayoutSize&, WritingMode writingMode, Length margin, Length padding)
+PassOwnPtr<Shape> Shape::createRasterShape(const StyleImage& styleImage, float threshold, const LayoutRect& imageRect, const LayoutSize&, WritingMode writingMode, Length margin, Length padding)
 {
     ASSERT(styleImage.cachedImage());
     ASSERT(styleImage.cachedImage()->hasImage());
 
-    Image* image = styleImage.cachedImage()->image();
-    const IntSize& imageSize = image->size();
+    IntRect toRect = pixelSnappedIntRect(imageRect);
+    IntSize bufferSize = toRect.size();
+    IntSize rasterSize = IntSize(toRect.maxX(), toRect.maxY());
+    OwnPtr<RasterShapeIntervals> intervals = adoptPtr(new RasterShapeIntervals(rasterSize.height()));
+    std::unique_ptr<ImageBuffer> imageBuffer = ImageBuffer::create(bufferSize);
 
-    OwnPtr<RasterShapeIntervals> intervals = adoptPtr(new RasterShapeIntervals(imageSize.height()));
-
-    std::unique_ptr<ImageBuffer> imageBuffer = ImageBuffer::create(imageSize);
     if (imageBuffer) {
         GraphicsContext* graphicsContext = imageBuffer->context();
-        graphicsContext->drawImage(image, ColorSpaceDeviceRGB, IntPoint());
+        graphicsContext->drawImage(styleImage.cachedImage()->image(), ColorSpaceDeviceRGB, IntRect(IntPoint(), bufferSize));
 
-        RefPtr<Uint8ClampedArray> pixelArray = imageBuffer->getUnmultipliedImageData(IntRect(IntPoint(), imageSize));
+        RefPtr<Uint8ClampedArray> pixelArray = imageBuffer->getUnmultipliedImageData(IntRect(IntPoint(), bufferSize));
         unsigned pixelArrayLength = pixelArray->length();
         unsigned pixelArrayOffset = 3; // Each pixel is four bytes: RGBA.
         uint8_t alphaPixelThreshold = threshold * 255;
 
-        if (static_cast<unsigned>(imageSize.width() * imageSize.height() * 4) == pixelArrayLength) { // sanity check
-            for (int y = 0; y < imageSize.height(); ++y) {
+        if (static_cast<unsigned>(bufferSize.width() * bufferSize.height() * 4) == pixelArrayLength) { // sanity check
+            for (int y = 0; y < bufferSize.height(); ++y) {
                 int startX = -1;
-                for (int x = 0; x < imageSize.width(); ++x, pixelArrayOffset += 4) {
+                for (int x = 0; x < bufferSize.width(); ++x, pixelArrayOffset += 4) {
                     uint8_t alpha = pixelArray->item(pixelArrayOffset);
                     bool alphaAboveThreshold = alpha > alphaPixelThreshold;
                     if (startX == -1 && alphaAboveThreshold) {
                         startX = x;
-                    } else if (startX != -1 && (!alphaAboveThreshold || x == imageSize.width() - 1)) {
-                        intervals->appendInterval(y, startX, x);
+                    } else if (startX != -1 && (!alphaAboveThreshold || x == bufferSize.width() - 1)) {
+                        intervals->appendInterval(y + toRect.y(), startX + toRect.x(), x + toRect.x());
                         startX = -1;
                     }
                 }
@@ -288,7 +288,7 @@ PassOwnPtr<Shape> Shape::createRasterShape(const StyleImage& styleImage, float t
         }
     }
 
-    OwnPtr<RasterShape> rasterShape = adoptPtr(new RasterShape(intervals.release(), imageSize));
+    OwnPtr<RasterShape> rasterShape = adoptPtr(new RasterShape(intervals.release(), rasterSize));
     rasterShape->m_writingMode = writingMode;
     rasterShape->m_margin = floatValueForLength(margin, 0);
     rasterShape->m_padding = floatValueForLength(padding, 0);
