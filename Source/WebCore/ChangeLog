@@ -1,3 +1,69 @@
+2014-01-21  David Hyatt  <hyatt@apple.com>
+
+        [New Multicolumn] Table cells and list items need to work as multicolumn blocks.
+        https://bugs.webkit.org/show_bug.cgi?id=127365
+        
+        This patch is a first step towards eliminating RenderMultiColumnBlock and moving
+        all its functionality into RenderBlockFlow. Doing so will allow table cells, list
+        items and the RenderView to use the new multi-column layout.
+        
+        Reviewed by Simon Fraser.
+
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::setMultiColumnFlowThread):
+        * rendering/RenderBlockFlow.h:
+        (WebCore::RenderBlockFlow::RenderBlockFlowRareData::RenderBlockFlowRareData):
+        (WebCore::RenderBlockFlow::multiColumnFlowThread):
+        Add the flow thread pointer to the multi-column flow thread to RenderBlockFlow's
+        rare data. This lets us use only one pointer in the rare data to point to an object
+        that can hold all of the rest of the multi-column info.
+
+        * rendering/RenderMultiColumnBlock.cpp:
+        (WebCore::RenderMultiColumnBlock::RenderMultiColumnBlock):
+        Move the construction of the flow thread to the constructor. This ensures we
+        never have a null flow thread and lets us avoid having to null check it for
+        empty multi-column blocks.
+
+        (WebCore::RenderMultiColumnBlock::columnHeightAvailable):
+        (WebCore::RenderMultiColumnBlock::columnWidth):
+        (WebCore::RenderMultiColumnBlock::columnCount):
+        (WebCore::RenderMultiColumnBlock::updateLogicalWidthAndColumnWidth):
+        The above functions now call through to the multi-column flow thread for results.
+
+        (WebCore::RenderMultiColumnBlock::checkForPaginationLogicalHeightChange):
+         Set the column height available on the flow thread.
+
+        (WebCore::RenderMultiColumnBlock::relayoutForPagination):
+        The balancing pass and guard is in the multi-column flow thread now.
+
+        (WebCore::RenderMultiColumnBlock::addChild):
+        Don't have to create the flow thread here any longer, since we do it up front
+        in the constructor of RenderMultiColumnBlock.
+
+        (WebCore::RenderMultiColumnBlock::layoutSpecialExcludedChild):
+        Don't need the null check of the flow thread any more.
+
+        * rendering/RenderMultiColumnBlock.h:
+        Change the inlined functions to not be inlined, since they need to call
+        RenderMultiColumnFlowThread functions now.
+
+        * rendering/RenderMultiColumnFlowThread.cpp:
+        (WebCore::RenderMultiColumnFlowThread::RenderMultiColumnFlowThread):
+        Init the new member variables we moved here from RenderMultiColumnBlock.
+
+        (WebCore::RenderMultiColumnFlowThread::computeColumnCountAndWidth):
+        Moved from RenderMultiColumnBlock.
+
+        * rendering/RenderMultiColumnFlowThread.h:
+        Add public getters/setters to the member variables so that RenderMultiColumnBlock can
+        still see them. Move the member variables here from RenderMultiColumnBlock.
+
+        * rendering/RenderMultiColumnSet.cpp:
+        (WebCore::RenderMultiColumnSet::calculateBalancedHeight):
+        (WebCore::RenderMultiColumnSet::prepareForLayout):
+        (WebCore::RenderMultiColumnSet::columnCount):
+        Call through to the flow thread instead.
+
 2014-01-24  Zan Dobersek  <zdobersek@igalia.com>
 
         Unreviewed GTK build fix after r162663.

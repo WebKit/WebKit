@@ -232,7 +232,7 @@ void RenderMultiColumnSet::prepareForLayout()
     // Set box width.
     updateLogicalWidth();
 
-    if (multicolBlock->requiresBalancing()) {
+    if (multicolBlock->multiColumnFlowThread()->requiresBalancing()) {
         // Set maximum column height. We will not stretch beyond this.
         m_maxColumnHeight = RenderFlowThread::maxLogicalHeight();
         if (!multicolStyle.logicalHeight().isAuto()) {
@@ -281,6 +281,9 @@ unsigned RenderMultiColumnSet::columnCount() const
 
     // Our portion rect determines our column count. We have as many columns as needed to fit all the content.
     LayoutUnit logicalHeightInColumns = flowThread()->isHorizontalWritingMode() ? flowThreadPortionRect().height() : flowThreadPortionRect().width();
+    if (!logicalHeightInColumns)
+        return 1;
+    
     unsigned count = ceil(static_cast<float>(logicalHeightInColumns) / computedColumnHeight());
     ASSERT(count >= 1);
     return count;

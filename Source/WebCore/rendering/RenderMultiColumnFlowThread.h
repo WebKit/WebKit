@@ -36,6 +36,21 @@ public:
     RenderMultiColumnFlowThread(Document&, PassRef<RenderStyle>);
     ~RenderMultiColumnFlowThread();
 
+    unsigned columnCount() const { return m_columnCount; }
+    LayoutUnit columnWidth() const { return m_columnWidth; }
+    LayoutUnit columnHeightAvailable() const { return m_columnHeightAvailable; }
+    void setColumnHeightAvailable(LayoutUnit available) { m_columnHeightAvailable = available; }
+    bool inBalancingPass() const { return m_inBalancingPass; }
+    void setInBalancingPass(bool balancing) { m_inBalancingPass = balancing; }
+    bool needsRebalancing() const { return m_needsRebalancing; }
+    void setNeedsRebalancing(bool balancing) { m_needsRebalancing = balancing; }
+
+    bool computeColumnCountAndWidth();
+    
+    bool shouldRelayoutForPagination() const { return !m_inBalancingPass && m_needsRebalancing; }
+    
+    bool requiresBalancing() const { return !columnHeightAvailable() || parent()->style().columnFill() == ColumnFillBalance; }
+
 private:
     virtual const char* renderName() const override;
     virtual void computeLogicalHeight(LayoutUnit logicalHeight, LayoutUnit logicalTop, LogicalExtentComputedValues&) const override;
@@ -44,6 +59,14 @@ private:
     virtual void setPageBreak(const RenderBlock*, LayoutUnit offset, LayoutUnit spaceShortage) override;
     virtual void updateMinimumPageHeight(const RenderBlock*, LayoutUnit offset, LayoutUnit minHeight) override;
     virtual bool addForcedRegionBreak(const RenderBlock*, LayoutUnit, RenderBox* breakChild, bool isBefore, LayoutUnit* offsetBreakAdjustment = 0) override;
+
+private:
+    unsigned m_columnCount;   // The default column count/width that are based off our containing block width. These values represent only the default,
+    LayoutUnit m_columnWidth; // A multi-column block that is split across variable width pages or regions will have different column counts and widths in each.
+                              // These values will be cached (eventually) for multi-column blocks.
+    LayoutUnit m_columnHeightAvailable; // Total height available to columns, or 0 if auto.
+    bool m_inBalancingPass; // Guard to avoid re-entering column balancing.
+    bool m_needsRebalancing;
 };
 
 } // namespace WebCore

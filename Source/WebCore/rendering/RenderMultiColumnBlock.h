@@ -38,15 +38,13 @@ public:
     RenderMultiColumnBlock(Element&, PassRef<RenderStyle>);
     Element& element() const { return toElement(nodeForNonAnonymous()); }
 
-    LayoutUnit columnHeightAvailable() const { return m_columnHeightAvailable; }
+    LayoutUnit columnHeightAvailable() const;
 
-    LayoutUnit columnWidth() const { return m_columnWidth; }
-    unsigned columnCount() const { return m_columnCount; }
+    LayoutUnit columnWidth() const;
+    unsigned columnCount() const;
 
-    RenderMultiColumnFlowThread* flowThread() const { return m_flowThread; }
-
-    bool requiresBalancing() const { return !m_columnHeightAvailable || style().columnFill() == ColumnFillBalance; }
-
+    bool requiresBalancing() const;
+    
 private:
     virtual bool isRenderMultiColumnBlock() const { return true; }
     virtual const char* renderName() const;
@@ -64,14 +62,6 @@ private:
     void computeColumnCountAndWidth();
 
     void ensureColumnSets();
-
-    RenderMultiColumnFlowThread* m_flowThread;
-    unsigned m_columnCount;   // The default column count/width that are based off our containing block width. These values represent only the default,
-    LayoutUnit m_columnWidth; // since a multi-column block that is split across variable width pages or regions will have different column counts and widths in each.
-                              // These values will be cached (eventually) for multi-column blocks.
-    LayoutUnit m_columnHeightAvailable; // Total height available to columns, or 0 if auto.
-    bool m_inBalancingPass; // Set when relayouting for column balancing.
-    bool m_needsRebalancing;
 };
 
 RENDER_OBJECT_TYPE_CASTS(RenderMultiColumnBlock, isRenderMultiColumnBlock())

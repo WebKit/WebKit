@@ -35,6 +35,7 @@ class LayoutStateMaintainer;
 class LineBreaker;
 class LineInfo;
 class LineWidth;
+class RenderMultiColumnFlowThread;
 class RenderNamedFlowFragment;
 class RenderRubyRun;
 
@@ -117,6 +118,7 @@ public:
             : m_margins(positiveMarginBeforeDefault(block), negativeMarginBeforeDefault(block), positiveMarginAfterDefault(block), negativeMarginAfterDefault(block))
             , m_lineBreakToAvoidWidow(-1)
             , m_renderNamedFlowFragment(nullptr)
+            , m_multiColumnFlowThread(nullptr)
             , m_discardMarginBefore(false)
             , m_discardMarginAfter(false)
             , m_didBreakAtLineToAvoidWidow(false)
@@ -149,6 +151,8 @@ public:
         std::unique_ptr<RootInlineBox> m_lineGridBox;
         RenderNamedFlowFragment* m_renderNamedFlowFragment;
 
+        RenderMultiColumnFlowThread* m_multiColumnFlowThread;
+        
         bool m_discardMarginBefore : 1;
         bool m_discardMarginAfter : 1;
         bool m_didBreakAtLineToAvoidWidow : 1;
@@ -270,6 +274,9 @@ public:
     RenderNamedFlowFragment* renderNamedFlowFragment() const { return hasRareBlockFlowData() ? rareBlockFlowData()->m_renderNamedFlowFragment : nullptr; }
     void setRenderNamedFlowFragment(RenderNamedFlowFragment*);
 
+    RenderMultiColumnFlowThread* multiColumnFlowThread() const { return hasRareBlockFlowData() ? rareBlockFlowData()->m_multiColumnFlowThread : nullptr; }
+    void setMultiColumnFlowThread(RenderMultiColumnFlowThread*);
+    
     bool containsFloats() const override { return m_floatingObjects && !m_floatingObjects->set().isEmpty(); }
     bool containsFloat(RenderBox&) const;
 

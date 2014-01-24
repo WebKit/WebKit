@@ -33,6 +33,11 @@ namespace WebCore {
 
 RenderMultiColumnFlowThread::RenderMultiColumnFlowThread(Document& document, PassRef<RenderStyle> style)
     : RenderFlowThread(document, std::move(style))
+    , m_columnCount(1)
+    , m_columnWidth(0)
+    , m_columnHeightAvailable(0)
+    , m_inBalancingPass(false)
+    , m_needsRebalancing(false)
 {
     setFlowThreadState(InsideInFlowThread);
 }
@@ -57,6 +62,40 @@ LayoutUnit RenderMultiColumnFlowThread::initialLogicalWidth() const
 {
     RenderMultiColumnBlock* parentBlock = toRenderMultiColumnBlock(parent());
     return parentBlock->columnWidth();
+}
+
+bool RenderMultiColumnFlowThread::computeColumnCountAndWidth()
+{
+    RenderBlock* columnBlock = toRenderBlock(parent());
+    
+    LayoutUnit oldColumnWidth = m_columnWidth;
+    
+    // Calculate our column width and column count.
+    // FIXME: Can overflow on fast/block/float/float-not-removed-from-next-sibling4.html, see https://bugs.webkit.org/show_bug.cgi?id=68744
+    m_columnCount = 1;
+    m_columnWidth = columnBlock->contentLogicalWidth();
+    
+    const RenderStyle& columnStyle = columnBlock->style();
+    
+    ASSERT(!columnStyle.hasAutoColumnCount() || !columnStyle.hasAutoColumnWidth());
+
+    LayoutUnit availWidth = m_columnWidth;
+    LayoutUnit colGap = columnBlock->columnGap();
+    LayoutUnit colWidth = std::max<LayoutUnit>(1, LayoutUnit(columnStyle.columnWidth()));
+    int colCount = std::max<int>(1, columnStyle.columnCount());
+
+    if (columnStyle.hasAutoColumnWidth() && !columnStyle.hasAutoColumnCount()) {
+        m_columnCount = colCount;
+        m_columnWidth = std::max<LayoutUnit>(0, (availWidth - ((m_columnCount - 1) * colGap)) / m_columnCount);
+    } else if (!columnStyle.hasAutoColumnWidth() && columnStyle.hasAutoColumnCount()) {
+        m_columnCount = std::max<LayoutUnit>(1, (availWidth + colGap) / (colWidth + colGap));
+        m_columnWidth = ((availWidth + colGap) / m_columnCount) - colGap;
+    } else {
+        m_columnCount = std::max<LayoutUnit>(std::min<LayoutUnit>(colCount, (availWidth + colGap) / (colWidth + colGap)), 1);
+        m_columnWidth = ((availWidth + colGap) / m_columnCount) - colGap;
+    }
+    
+    return m_columnWidth != oldColumnWidth;
 }
 
 void RenderMultiColumnFlowThread::autoGenerateRegionsToBlockOffset(LayoutUnit /*offset*/)

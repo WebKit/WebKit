@@ -2890,6 +2890,12 @@ void RenderBlockFlow::setRenderNamedFlowFragment(RenderNamedFlowFragment* flowFr
     rareData.m_renderNamedFlowFragment = flowFragment;
 }
 
+void RenderBlockFlow::setMultiColumnFlowThread(RenderMultiColumnFlowThread* flowThread)
+{
+    RenderBlockFlowRareData& rareData = ensureRareBlockFlowData();
+    rareData.m_multiColumnFlowThread = flowThread;
+}
+
 static bool shouldCheckLines(const RenderBlockFlow& blockFlow)
 {
     return !blockFlow.isFloatingOrOutOfFlowPositioned() && !blockFlow.isRunIn() && blockFlow.style().height().isAuto();
