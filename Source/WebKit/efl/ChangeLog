@@ -1,3 +1,10 @@
+2014-01-23  Simon Fraser  <simon.fraser@apple.com>
+
+        Fix EFL.
+
+        * ewk/ewk_frame.cpp:
+        (ewk_frame_visible_content_geometry_get):
+
 2014-01-22  Ryuan Choi  <ryuan.choi@samsung.com>
 
         [EFL] Remove unnecessary smart method since ewk_view_tiled removed

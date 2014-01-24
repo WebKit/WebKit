@@ -384,7 +384,7 @@ void webkitWebPageDidReceiveMessage(WebKitWebPage* page, const String& messageNa
             WebCore::IntRect snapshotRect;
             switch (region) {
             case SnapshotRegionVisible:
-                snapshotRect = frameView->visibleContentRect(WebCore::ScrollableArea::ExcludeScrollbars);
+                snapshotRect = frameView->visibleContentRect();
                 break;
             case SnapshotRegionFullDocument:
                 snapshotRect = WebCore::IntRect(WebCore::IntPoint(0, 0), frameView->contentsSize());

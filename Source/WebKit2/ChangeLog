@@ -1,3 +1,10 @@
+2014-01-23  Simon Fraser  <simon.fraser@apple.com>
+
+        Fix GTK.
+
+        * WebProcess/InjectedBundle/API/gtk/WebKitWebPage.cpp:
+        (webkitWebPageDidReceiveMessage):
+
 2014-01-23  Anders Carlsson  <andersca@apple.com>
 
         Add an APILoaderClient base class
