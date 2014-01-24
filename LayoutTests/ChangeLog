@@ -1,3 +1,16 @@
+2014-01-23  ChangSeok Oh  <changseok.oh@collabora.com>
+
+        Dragging from inner side of video to outside causes a crash
+        https://bugs.webkit.org/show_bug.cgi?id=126338
+
+        Reviewed by Jer Noble.
+
+        This tests that dragging through timeslider control to outside of video causes a crash.
+        The crash happened on both gtk+ and efl ports not using MEDIA_CONTROL_SCRIPT.
+
+        * media/media-controller-drag-crash-expected.txt: Added.
+        * media/media-controller-drag-crash.html: Added.
+
 2014-01-23  Jon Honeycutt  <jhoneycutt@apple.com>
 
         Assertion failure in WebCore::PseudoElement::didRecalcStyle()

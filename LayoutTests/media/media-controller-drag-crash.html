@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Dragging through timebar test</title>
+    <script src=media-controls.js></script>
+    <script src=media-file.js></script>
+    <script src=video-test.js></script>
+    <script>
+      if (window.testRunner)
+        testRunner.dumpAsText();
+
+      function test()
+      {
+        run('video.play()');
+
+        if (window.eventSender) {
+          consoleWrite("Mouse dragging.");
+
+          var timelineCoordinate;
+          try {
+            timelineCoordinate = mediaControlsButtonCoordinates(video, "timeline");
+          } catch (exception) {
+            failTest(exception.description);
+            return;
+          }
+          var x = timelineCoordinate[0];
+          var y = timelineCoordinate[1];
+
+          eventSender.dragMode = false;
+          eventSender.mouseMoveTo(x, y - 100);
+          eventSender.mouseDown();
+          eventSender.mouseMoveTo(x, y);
+          eventSender.mouseMoveTo(x, y + 100);
+        }
+        window.setTimeout("finish()", 1000);
+      }
+
+      function finish()
+      {
+        consoleWrite("No crash. PASS.")
+        if (window.eventSender)
+          eventSender.mouseUp();
+        endTest();
+      }
+
+      function start()
+      {
+        findMediaElement();
+        waitForEvent('canplaythrough', test);
+        video.src = findMediaFile("video", "content/test");
+      }
+    </script>
+  </head>
+  <body onload="start()">
+    <p>Test that dragging through the timebar causes a crash.</p>
+    <video controls></video>
+  </body>
+</html>
+
