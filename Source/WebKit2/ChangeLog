@@ -1,3 +1,16 @@
+2014-01-23  Yongjun Zhang  <yongjun_zhang@apple.com>
+
+        Support NSInteger argument type for encoding/decoding invocations.
+        https://bugs.webkit.org/show_bug.cgi?id=127522
+
+        Reviewed by Dan Bernstein.
+
+        Add support for NSInteger argument type ('q') for remote invocations.
+
+        * Shared/API/Cocoa/WKRemoteObjectCoder.mm:
+        (encodeInvocation):
+        (decodeInvocationArguments):
+
 2014-01-23  Brady Eidson  <beidson@apple.com>
 
         IDB: Implement SQLite backing store 'get' support
