@@ -25,3 +25,6 @@
 
 PRODUCT_NAME = com.apple.WebKit.WebContent.Development;
 INFOPLIST_FILE = WebProcess/EntryPoint/mac/XPCService/WebContentService.Development/Info.plist;
+
+OTHER_LDFLAGS = $(inherited) $(OTHER_LDFLAGS_VERSIONED_FRAMEWORK_PATH) $(OTHER_LDFLAGS_$(PLATFORM_NAME));
+OTHER_LDFLAGS_macosx = -framework AppKit;

@@ -1,5 +1,21 @@
 2014-01-23  Anders Carlsson  <andersca@apple.com>
 
+        Explicitly link XPC services with AppKit
+        https://bugs.webkit.org/show_bug.cgi?id=127520
+        <rdar://problem/15759718>
+
+        Reviewed by Mark Rowe.
+
+        Explicitly link XPC services that use the _NSApplicationMain run loop type with AppKit.
+
+        * Configurations/PluginService.32.xcconfig:
+        * Configurations/PluginService.64.xcconfig:
+        * Configurations/PluginService.Development.xcconfig:
+        * Configurations/WebContentService.Development.xcconfig:
+        * Configurations/WebContentService.xcconfig:
+
+2014-01-23  Anders Carlsson  <andersca@apple.com>
+
         Fix build again.
 
         * UIProcess/API/mac/WKView.mm:

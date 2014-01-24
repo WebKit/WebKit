@@ -32,3 +32,6 @@ SKIP_INSTALL = $(SKIP_INSTALL_$(PLATFORM_NAME));
 SKIP_INSTALL_macosx = $(inherited);
 SKIP_INSTALL_iphoneos = YES;
 SKIP_INSTALL_iphonesimulator = $(SKIP_INSTALL_iphoneos);
+
+OTHER_LDFLAGS = $(inherited) $(OTHER_LDFLAGS_VERSIONED_FRAMEWORK_PATH) $(OTHER_LDFLAGS_$(PLATFORM_NAME));
+OTHER_LDFLAGS_macosx = -framework AppKit;
