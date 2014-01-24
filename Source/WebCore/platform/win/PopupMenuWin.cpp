@@ -745,14 +745,9 @@ void PopupMenuWin::invalidateScrollbarRect(Scrollbar* scrollbar, const IntRect& 
     ::InvalidateRect(m_popup, &r, false);
 }
 
-int PopupMenuWin::visibleHeight() const
+IntSize PopupMenuWin::visibleSize() const
 {
-    return m_scrollbar ? m_scrollbar->visibleSize() : m_windowRect.height();
-}
-
-int PopupMenuWin::visibleWidth() const
-{
-    return m_windowRect.width();
+    return IntSize(m_windowRect.width(), m_scrollbar ? m_scrollbar->visibleSize() : m_windowRect.height());
 }
 
 IntSize PopupMenuWin::contentsSize() const

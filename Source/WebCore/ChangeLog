@@ -1,5 +1,13 @@
 2014-01-23  Simon Fraser  <simon.fraser@apple.com>
 
+        Try to fix Windows build.
+
+        * platform/win/PopupMenuWin.cpp:
+        (WebCore::PopupMenuWin::visibleSize):
+        * platform/win/PopupMenuWin.h:
+
+2014-01-23  Simon Fraser  <simon.fraser@apple.com>
+
         Make visibleContentRect() return actualVisibleContentRect() on iOS most of the time
         https://bugs.webkit.org/show_bug.cgi?id=127456
         

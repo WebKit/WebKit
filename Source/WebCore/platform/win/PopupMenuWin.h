@@ -98,8 +98,7 @@ private:
     virtual bool isScrollCornerVisible() const override { return false; }
     virtual IntRect scrollCornerRect() const override { return IntRect(); }
     virtual Scrollbar* verticalScrollbar() const override { return m_scrollbar.get(); }
-    virtual int visibleHeight() const override;
-    virtual int visibleWidth() const override;
+    virtual IntSize visibleSize() const override;
     virtual IntSize contentsSize() const override;
     virtual IntRect scrollableAreaBoundingBox() const override;
     virtual bool updatesScrollLayerPositionOnMainThread() const override { return true; }
