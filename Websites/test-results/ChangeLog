@@ -1,3 +1,20 @@
+2014-01-23  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Upstream changes to json-shared.php from the perf dashboard
+        https://bugs.webkit.org/show_bug.cgi?id=127544
+
+        Reviewed by Joseph Pecoraro.
+
+        json-shared.php originated from the perf dashboard.
+        Upstream changes made to the version in the perf. dashboard so that two apps could share the same code.
+
+        * public/include/json-shared.php:
+        (exit_with_error):
+        (echo_success):
+        (exit_with_success):
+        (set_exit_detail):
+        (merge_additional_details):
+
 2013-11-06  Ryosuke Niwa  <rniwa@webkit.org>
 
         New flakiness dashboard should generate JSON in the background process

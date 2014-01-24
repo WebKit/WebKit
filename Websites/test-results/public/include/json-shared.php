@@ -1,6 +1,6 @@
 <?php
 
-require_once('../include/db.php');
+require_once('db.php');
 
 header('Content-type: application/json');
 $maxage = config('jsonCacheMaxAge');
@@ -9,18 +9,37 @@ header("Cache-Control: maxage=$maxage");
 
 function exit_with_error($status, $details = array()) {
     $details['status'] = $status;
+    merge_additional_details($details);
+
     echo json_encode($details);
     exit(1);
 }
 
 function echo_success($details = array()) {
     $details['status'] = 'OK';
+    merge_additional_details($details);
+
     echo json_encode($details);
 }
 
 function exit_with_success($details = array()) {
     echo_success($details);
     exit(0);
+}
+
+$additional_exit_details = array();
+
+function set_exit_detail($name, $value) {
+    global $additional_exit_details;
+    $additional_exit_details[$name] = $value;
+}
+
+function merge_additional_details(&$details) {
+    global $additional_exit_details;
+    foreach ($additional_exit_details as $name => $value) {
+        if (!array_key_exists($name, $details))
+            $details[$name] = $value;
+    }
 }
 
 function connect() {
