@@ -2499,9 +2499,6 @@
     <ClCompile Include="..\rendering\RenderMeter.cpp">
       <Filter>rendering</Filter>
     </ClCompile>
-    <ClCompile Include="..\rendering\RenderMultiColumnBlock.cpp">
-      <Filter>rendering</Filter>
-    </ClCompile>
     <ClCompile Include="..\rendering\RenderMultiColumnFlowThread.cpp">
       <Filter>rendering</Filter>
     </ClCompile>
@@ -9351,9 +9348,6 @@
       <Filter>rendering</Filter>
     </ClInclude>
     <ClInclude Include="..\rendering\RenderMeter.h">
-      <Filter>rendering</Filter>
-    </ClInclude>
-    <ClInclude Include="..\rendering\RenderMultiColumnBlock.h">
       <Filter>rendering</Filter>
     </ClInclude>
     <ClInclude Include="..\rendering\RenderMultiColumnFlowThread.h">

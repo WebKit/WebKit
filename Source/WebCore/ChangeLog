@@ -1,3 +1,75 @@
+2014-01-24  David Hyatt  <hyatt@apple.com>
+
+        [New Multicolumn] Eliminate RenderMultiColumnBlock
+        https://bugs.webkit.org/show_bug.cgi?id=127565
+
+        Reviewed by Antti Koivisto.
+
+        This patch eliminates RenderMultiColumnBlock and folds all of its remaining code
+        back into RenderBlockFlow. This allows all block flows to support multi-column
+        layout, including table cells, list items, and the RenderView itself.
+
+        * CMakeLists.txt:
+        * WebCore.order:
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.vcxproj/WebCore.vcxproj.filters:
+        * WebCore.xcodeproj/project.pbxproj:
+        Remove RenderMultiColumnBlock from the makefiles.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::adjustIntrinsicLogicalWidthsForColumns):
+        Tweak the comment, since it was no longer accurate.
+
+        * rendering/RenderBlock.h:
+        Move some functions down into RenderBlockFlow.
+
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::RenderBlockFlow):
+        (WebCore::RenderBlockFlow::createMultiColumnFlowThreadIfNeeded):
+        (WebCore::RenderBlockFlow::styleDidChange):
+        (WebCore::RenderBlockFlow::relayoutForPagination):
+        (WebCore::RenderBlockFlow::layoutSpecialExcludedChild):
+        (WebCore::RenderBlockFlow::updateLogicalWidthAndColumnWidth):
+        (WebCore::RenderBlockFlow::addChild):
+        (WebCore::RenderBlockFlow::checkForPaginationLogicalHeightChange):
+         * rendering/RenderBlockFlow.h:
+         Move a bunch of functions from RenderMultiColumnBlock up into RenderBlockFlow.
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::isUnsplittableForPagination):
+        Calls isMultiColumnBlockFlow() now instead of testing for a specific renderer type.
+
+        * rendering/RenderElement.cpp:
+        (WebCore::RenderElement::createFor):
+        Remove the multicolumn block creation code, since we always make a block flow now.
+
+        * rendering/RenderMultiColumnBlock.cpp: Removed.
+        * rendering/RenderMultiColumnBlock.h: Removed.
+        Nuke the files.
+
+        * rendering/RenderMultiColumnFlowThread.cpp:
+        (WebCore::RenderMultiColumnFlowThread::initialLogicalWidth):
+        (WebCore::RenderMultiColumnFlowThread::autoGenerateRegionsToBlockOffset):
+        * rendering/RenderMultiColumnSet.cpp:
+        (WebCore::RenderMultiColumnSet::heightAdjustedForSetOffset):
+        (WebCore::RenderMultiColumnSet::addForcedBreak):
+        (WebCore::RenderMultiColumnSet::recalculateBalancedHeight):
+        (WebCore::RenderMultiColumnSet::updateLogicalWidth):
+        (WebCore::RenderMultiColumnSet::prepareForLayout):
+        (WebCore::RenderMultiColumnSet::columnGap):
+        (WebCore::RenderMultiColumnSet::paintColumnRules):
+        Change all of the functions in the multicolumnset and multicolumnflowthread classes
+        to cast the parent to a RenderBlockFlow now instead of a RenderMultiColumnBlock.
+        Change the code to call through to multiColumnFlowThread() for column-specific information
+        for that parent block.
+
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::isMultiColumnBlockFlow):
+        Remove isRenderMultiColumnBlock() and replace with isMultiColumnBlockFlow().
+
+        * rendering/RenderingAllInOne.cpp:
+        Remove RenderMultiColumnBlock include.
+        
 2014-01-24  Brady Eidson  <beidson@apple.com>
 
         IDB: support createIndex/deleteIndex messaging

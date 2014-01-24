@@ -441,7 +441,6 @@ protected:
 
     void updateBlockChildDirtyBitsBeforeLayout(bool relayoutChildren, RenderBox&);
 
-    virtual void checkForPaginationLogicalHeightChange(LayoutUnit& pageLogicalHeight, bool& pageLogicalHeightChanged, bool& hasSpecifiedPageLogicalHeight);
     void prepareShapesAndPaginationBeforeBlockLayout(bool&);
 
 private:
@@ -480,9 +479,6 @@ private:
 
     void insertIntoTrackedRendererMaps(RenderBox& descendant, TrackedDescendantsMap*&, TrackedContainerMap*&);
     static void removeFromTrackedRendererMaps(RenderBox& descendant, TrackedDescendantsMap*&, TrackedContainerMap*&);
-
-    // Called to lay out the legend for a fieldset or the ruby text of a ruby run.
-    virtual RenderObject* layoutSpecialExcludedChild(bool /*relayoutChildren*/) { return 0; }
 
     void createFirstLetterRenderer(RenderObject* firstLetterBlock, RenderText* currentTextChild);
     void updateFirstLetterStyle(RenderObject* firstLetterBlock, RenderObject* firstLetterContainer);

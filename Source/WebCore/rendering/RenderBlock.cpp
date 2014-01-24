@@ -1558,37 +1558,6 @@ bool RenderBlock::updateLogicalWidthAndColumnWidth()
     return oldWidth != logicalWidth() || oldColumnWidth != desiredColumnWidth() || hasBorderOrPaddingLogicalWidthChanged;
 }
 
-void RenderBlock::checkForPaginationLogicalHeightChange(LayoutUnit& pageLogicalHeight, bool& pageLogicalHeightChanged, bool& hasSpecifiedPageLogicalHeight)
-{
-    ColumnInfo* colInfo = columnInfo();
-    if (hasColumns()) {
-        if (!pageLogicalHeight) {
-            // We need to go ahead and set our explicit page height if one exists, so that we can
-            // avoid doing two layout passes.
-            updateLogicalHeight();
-            LayoutUnit columnHeight = isRenderView() ? view().pageOrViewLogicalHeight() : contentLogicalHeight();
-            if (columnHeight > 0) {
-                pageLogicalHeight = columnHeight;
-                hasSpecifiedPageLogicalHeight = true;
-            }
-            setLogicalHeight(0);
-        }
-
-        if (colInfo->columnHeight() != pageLogicalHeight && everHadLayout())
-            pageLogicalHeightChanged = true;
-
-        colInfo->setColumnHeight(pageLogicalHeight);
-        
-        if (!hasSpecifiedPageLogicalHeight && !pageLogicalHeight)
-            colInfo->clearForcedBreaks();
-
-        colInfo->setPaginationUnit(paginationUnit());
-    } else if (isRenderFlowThread()) {
-        pageLogicalHeight = 1; // This is just a hack to always make sure we have a page logical height.
-        pageLogicalHeightChanged = toRenderFlowThread(this)->pageLogicalSizeChanged();
-    }
-}
-
 void RenderBlock::layoutBlock(bool, LayoutUnit)
 {
     ASSERT_NOT_REACHED();
@@ -4112,8 +4081,7 @@ void RenderBlock::computePreferredLogicalWidths()
 
 void RenderBlock::adjustIntrinsicLogicalWidthsForColumns(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const
 {
-    // FIXME: make this method virtual and move the code to RenderMultiColumnBlock once the old
-    // multicol code is gone.
+    // FIXME: Move this code to RenderBlockFlow.
 
     if (!style().hasAutoColumnCount() || !style().hasAutoColumnWidth()) {
         // The min/max intrinsic widths calculated really tell how much space elements need when

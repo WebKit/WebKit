@@ -26,7 +26,6 @@
 #include "config.h"
 #include "RenderMultiColumnFlowThread.h"
 
-#include "RenderMultiColumnBlock.h"
 #include "RenderMultiColumnSet.h"
 
 namespace WebCore {
@@ -60,8 +59,7 @@ void RenderMultiColumnFlowThread::computeLogicalHeight(LayoutUnit logicalHeight,
 
 LayoutUnit RenderMultiColumnFlowThread::initialLogicalWidth() const
 {
-    RenderMultiColumnBlock* parentBlock = toRenderMultiColumnBlock(parent());
-    return parentBlock->columnWidth();
+    return columnWidth();
 }
 
 bool RenderMultiColumnFlowThread::computeColumnCountAndWidth()
@@ -124,7 +122,7 @@ void RenderMultiColumnFlowThread::autoGenerateRegionsToBlockOffset(LayoutUnit /*
     
     invalidateRegions();
 
-    RenderMultiColumnBlock* parentBlock = toRenderMultiColumnBlock(parent());
+    RenderBlockFlow* parentBlock = toRenderBlockFlow(parent());
     firstSet = new RenderMultiColumnSet(*this, RenderStyle::createAnonymousStyleWithDisplay(&parentBlock->style(), BLOCK));
     firstSet->initializeStyle();
     parentBlock->RenderBlock::addChild(firstSet);

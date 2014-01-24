@@ -43,7 +43,6 @@
 #include "RenderLayer.h"
 #include "RenderLineBreak.h"
 #include "RenderListItem.h"
-#include "RenderMultiColumnBlock.h"
 #include "RenderRegion.h"
 #include "RenderRuby.h"
 #include "RenderRubyText.h"
@@ -124,8 +123,6 @@ RenderElement::~RenderElement()
 
 RenderPtr<RenderElement> RenderElement::createFor(Element& element, PassRef<RenderStyle> style)
 {
-    Document& document = element.document();
-
     // Minimal support for content properties replacing an entire element.
     // Works only if we have exactly one piece of content and it's a URL.
     // Otherwise acts as if we didn't support this feature.
@@ -157,8 +154,6 @@ RenderPtr<RenderElement> RenderElement::createFor(Element& element, PassRef<Rend
     case INLINE_BLOCK:
     case RUN_IN:
     case COMPACT:
-        if ((!style.get().hasAutoColumnCount() || !style.get().hasAutoColumnWidth()) && document.regionBasedColumnsEnabled())
-            return createRenderer<RenderMultiColumnBlock>(element, std::move(style));
         return createRenderer<RenderBlockFlow>(element, std::move(style));
     case LIST_ITEM:
         return createRenderer<RenderListItem>(element, std::move(style));

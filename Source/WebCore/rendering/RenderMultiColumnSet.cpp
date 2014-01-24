@@ -28,7 +28,6 @@
 
 #include "PaintInfo.h"
 #include "RenderLayer.h"
-#include "RenderMultiColumnBlock.h"
 #include "RenderMultiColumnFlowThread.h"
 
 namespace WebCore {
@@ -46,7 +45,7 @@ RenderMultiColumnSet::RenderMultiColumnSet(RenderFlowThread& flowThread, PassRef
 
 LayoutUnit RenderMultiColumnSet::heightAdjustedForSetOffset(LayoutUnit height) const
 {
-    RenderMultiColumnBlock* multicolBlock = toRenderMultiColumnBlock(parent());
+    RenderBlockFlow* multicolBlock = toRenderBlockFlow(parent());
     LayoutUnit contentLogicalTop = logicalTop() - multicolBlock->borderAndPaddingBefore();
 
     height -= contentLogicalTop;
@@ -152,7 +151,7 @@ void RenderMultiColumnSet::clearForcedBreaks()
 
 void RenderMultiColumnSet::addForcedBreak(LayoutUnit offsetFromFirstPage)
 {
-    if (!toRenderMultiColumnBlock(parent())->requiresBalancing())
+    if (!toRenderBlockFlow(parent())->multiColumnFlowThread()->requiresBalancing())
         return;
     if (!m_contentRuns.isEmpty() && offsetFromFirstPage <= m_contentRuns.last().breakOffset())
         return;
@@ -164,7 +163,7 @@ void RenderMultiColumnSet::addForcedBreak(LayoutUnit offsetFromFirstPage)
 
 bool RenderMultiColumnSet::recalculateBalancedHeight(bool initial)
 {
-    ASSERT(toRenderMultiColumnBlock(parent())->requiresBalancing());
+    ASSERT(toRenderBlockFlow(parent())->multiColumnFlowThread()->requiresBalancing());
 
     LayoutUnit oldColumnHeight = m_computedColumnHeight;
     if (initial)
@@ -200,8 +199,8 @@ void RenderMultiColumnSet::recordSpaceShortage(LayoutUnit spaceShortage)
 
 void RenderMultiColumnSet::updateLogicalWidth()
 {
-    RenderMultiColumnBlock* parentBlock = toRenderMultiColumnBlock(parent());
-    setComputedColumnWidthAndCount(parentBlock->columnWidth(), parentBlock->columnCount()); // FIXME: This will eventually vary if we are contained inside regions.
+    RenderBlockFlow* parentBlock = toRenderBlockFlow(parent());
+    setComputedColumnWidthAndCount(parentBlock->multiColumnFlowThread()->columnWidth(), parentBlock->multiColumnFlowThread()->columnCount()); // FIXME: This will eventually vary if we are contained inside regions.
     
     // FIXME: When we add regions support, we'll start it off at the width of the multi-column
     // block in that particular region.
@@ -222,7 +221,7 @@ void RenderMultiColumnSet::updateLogicalWidth()
 
 void RenderMultiColumnSet::prepareForLayout()
 {
-    RenderMultiColumnBlock* multicolBlock = toRenderMultiColumnBlock(parent());
+    RenderBlockFlow* multicolBlock = toRenderBlockFlow(parent());
     const RenderStyle& multicolStyle = multicolBlock->style();
 
     // Set box logical top.
@@ -248,7 +247,7 @@ void RenderMultiColumnSet::prepareForLayout()
         m_maxColumnHeight = heightAdjustedForSetOffset(m_maxColumnHeight);
         m_computedColumnHeight = 0; // Restart balancing.
     } else
-        setAndConstrainColumnHeight(heightAdjustedForSetOffset(multicolBlock->columnHeightAvailable()));
+        setAndConstrainColumnHeight(heightAdjustedForSetOffset(multicolBlock->multiColumnFlowThread()->columnHeightAvailable()));
 
     clearForcedBreaks();
 
@@ -266,7 +265,7 @@ LayoutUnit RenderMultiColumnSet::columnGap() const
 {
     // FIXME: Eventually we will cache the column gap when the widths of columns start varying, but for now we just
     // go to the parent block to get the gap.
-    RenderMultiColumnBlock* parentBlock = toRenderMultiColumnBlock(parent());
+    RenderBlockFlow* parentBlock = toRenderBlockFlow(parent());
     if (parentBlock->style().hasNormalColumnGap())
         return parentBlock->style().fontDescription().computedPixelSize(); // "1em" is recommended as the normal gap setting. Matches <p> margins.
     return parentBlock->style().columnGap();
@@ -396,7 +395,7 @@ void RenderMultiColumnSet::paintColumnRules(PaintInfo& paintInfo, const LayoutPo
     if (paintInfo.context->paintingDisabled())
         return;
 
-    const RenderStyle& blockStyle = toRenderMultiColumnBlock(parent())->style();
+    const RenderStyle& blockStyle = parent()->style();
     const Color& ruleColor = blockStyle.visitedDependentColor(CSSPropertyWebkitColumnRuleColor);
     bool ruleTransparent = blockStyle.columnRuleIsTransparent();
     EBorderStyle ruleStyle = blockStyle.columnRuleStyle();

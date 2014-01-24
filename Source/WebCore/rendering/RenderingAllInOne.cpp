@@ -79,7 +79,6 @@
 #include "RenderMediaControls.cpp"
 #include "RenderMenuList.cpp"
 #include "RenderMeter.cpp"
-#include "RenderMultiColumnBlock.cpp"
 #include "RenderMultiColumnFlowThread.cpp"
 #include "RenderMultiColumnSet.cpp"
 #include "RenderObject.cpp"

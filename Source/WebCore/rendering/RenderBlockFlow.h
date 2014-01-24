@@ -374,6 +374,10 @@ public:
     LayoutUnit pageRemainingLogicalHeightForOffset(LayoutUnit offset, PageBoundaryRule = IncludePageBoundary) const;
     bool hasNextPage(LayoutUnit logicalOffset, PageBoundaryRule = ExcludePageBoundary) const;
 
+    void addChild(RenderObject* newChild, RenderObject* beforeChild = 0) override;
+    
+    void createMultiColumnFlowThreadIfNeeded();
+    
 protected:
     // A page break is required at some offset due to space shortage in the current fragmentainer.
     void setPageBreak(LayoutUnit offset, LayoutUnit spaceShortage);
@@ -427,8 +431,18 @@ protected:
 
     virtual int firstLineBaseline() const override;
     virtual int inlineBlockBaseline(LineDirectionMode) const override;
+    
+    bool updateLogicalWidthAndColumnWidth() override;
 
+    virtual bool isMultiColumnBlockFlow() const override { return multiColumnFlowThread(); }
+    
 private:
+    // Called to lay out the legend for a fieldset or the ruby text of a ruby run. Also used by multi-column layout to handle
+    // the flow thread child.
+    virtual RenderObject* layoutSpecialExcludedChild(bool /*relayoutChildren*/);
+
+    void checkForPaginationLogicalHeightChange(LayoutUnit& pageLogicalHeight, bool& pageLogicalHeightChanged, bool& hasSpecifiedPageLogicalHeight);
+    
     virtual void paintInlineChildren(PaintInfo&, const LayoutPoint&) override;
     virtual void paintFloats(PaintInfo&, const LayoutPoint&, bool preservePhase = false) override;
 
