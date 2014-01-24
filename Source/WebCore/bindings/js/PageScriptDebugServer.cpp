@@ -30,10 +30,9 @@
  */
 
 #include "config.h"
+#include "PageScriptDebugServer.h"
 
 #if ENABLE(JAVASCRIPT_DEBUGGER)
-
-#include "PageScriptDebugServer.h"
 
 #include "Document.h"
 #include "EventLoop.h"
@@ -44,7 +43,6 @@
 #include "PageGroup.h"
 #include "PluginView.h"
 #include "ScriptController.h"
-#include "ScriptDebugListener.h"
 #include "Widget.h"
 #include <runtime/JSLock.h>
 #include <wtf/MainThread.h>
@@ -58,6 +56,7 @@
 #endif
 
 using namespace JSC;
+using namespace Inspector;
 
 namespace WebCore {
 

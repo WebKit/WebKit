@@ -51,6 +51,7 @@
 #include <wtf/text/WTFString.h>
 
 using namespace JSC;
+using namespace Inspector;
 
 namespace WebCore {
 

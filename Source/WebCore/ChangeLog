@@ -1,5 +1,48 @@
 2014-01-23  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Move ContentSearchUtils, ScriptBreakpoint, and ScriptDebugListener into JavaScriptCore for inspector
+        https://bugs.webkit.org/show_bug.cgi?id=127537
+
+        Reviewed by Timothy Hatcher.
+
+          - Rename ContentSearchUtils => ContentSearchUtilities and move to JavaScriptCore.
+          - Move ScriptBreakpoint and ScriptDebugListener to JavaScriptCore.
+          - Move them all to namespace Inspector.
+          - Update build files and users to the new names.
+
+        No change in functionality, just moving code.
+
+        * CMakeLists.txt:
+        * ForwardingHeaders/inspector/ContentSearchUtilities.h: Added.
+        * ForwardingHeaders/inspector/ScriptBreakpoint.h: Added.
+        * ForwardingHeaders/inspector/ScriptDebugListener.h: Added.
+        * GNUmakefile.list.am:
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.vcxproj/WebCore.vcxproj.filters:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/PageScriptDebugServer.cpp:
+        * bindings/js/PageScriptDebugServer.h:
+        * bindings/js/ScriptDebugServer.cpp:
+        * bindings/js/ScriptDebugServer.h:
+        * bindings/js/WorkerScriptDebugServer.cpp:
+        * bindings/js/WorkerScriptDebugServer.h:
+        * inspector/InspectorAllInOne.cpp:
+        * inspector/InspectorDebuggerAgent.cpp:
+        (WebCore::InspectorDebuggerAgent::searchInContent):
+        (WebCore::InspectorDebuggerAgent::sourceMapURLForScript):
+        (WebCore::InspectorDebuggerAgent::didParseSource):
+        * inspector/InspectorDebuggerAgent.h:
+        * inspector/InspectorPageAgent.cpp:
+        (WebCore::InspectorPageAgent::sourceMapURLForResource):
+        (WebCore::InspectorPageAgent::searchInResource):
+        (WebCore::InspectorPageAgent::searchInResources):
+        * inspector/InspectorStyleSheet.cpp:
+        (WebCore::buildSourceRangeObject):
+        (WebCore::InspectorStyleSheet::lineEndings):
+        (WebCore::InspectorStyleSheetForInlineStyle::lineEndings):
+
+2014-01-23  Joseph Pecoraro  <pecoraro@apple.com>
+
         Move RegularExpression into JavaScriptCore for inspector
         https://bugs.webkit.org/show_bug.cgi?id=127526
 

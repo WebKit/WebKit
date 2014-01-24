@@ -47,8 +47,8 @@ public:
 
     virtual void recompileAllJSFunctions() override;
 
-    void addListener(ScriptDebugListener*);
-    void removeListener(ScriptDebugListener*, bool skipRecompile);
+    void addListener(Inspector::ScriptDebugListener*);
+    void removeListener(Inspector::ScriptDebugListener*, bool skipRecompile);
 
     void interruptAndRunTask(PassOwnPtr<ScriptDebugServer::Task>);
 

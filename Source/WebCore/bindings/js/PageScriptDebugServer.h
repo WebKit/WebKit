@@ -48,8 +48,8 @@ class PageScriptDebugServer : public ScriptDebugServer {
 public:
     static PageScriptDebugServer& shared();
 
-    void addListener(ScriptDebugListener*, Page*);
-    void removeListener(ScriptDebugListener*, Page*, bool skipRecompile);
+    void addListener(Inspector::ScriptDebugListener*, Page*);
+    void removeListener(Inspector::ScriptDebugListener*, Page*, bool skipRecompile);
 
     virtual void recompileAllJSFunctions() override;
 

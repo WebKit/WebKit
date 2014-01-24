@@ -27,26 +27,23 @@
  */
 
 #include "config.h"
+#include "ContentSearchUtilities.h"
 
 #if ENABLE(INSPECTOR)
 
-#include "ContentSearchUtils.h"
-#include <inspector/InspectorJSTypeBuilders.h>
-#include <inspector/InspectorValues.h>
+#include "InspectorJSTypeBuilders.h"
+#include "InspectorValues.h"
+#include "RegularExpression.h"
+#include "Yarr.h"
 #include <wtf/BumpPointerAllocator.h>
 #include <wtf/StdLibExtras.h>
-#include <yarr/RegularExpression.h>
-#include <yarr/Yarr.h>
 
-using namespace Inspector;
+using namespace JSC::Yarr;
 
-namespace WebCore {
-namespace ContentSearchUtils {
+namespace Inspector {
+namespace ContentSearchUtilities {
 
-namespace {
-// This should be kept the same as the one in front-end/utilities.js
 static const char regexSpecialCharacters[] = "[](){}+-*.,?\\^$|";
-}
 
 static String createSearchRegexSource(const String& text)
 {
@@ -158,7 +155,7 @@ PassRefPtr<Inspector::TypeBuilder::Array<Inspector::TypeBuilder::GenericTypes::S
 {
     RefPtr<Inspector::TypeBuilder::Array<Inspector::TypeBuilder::GenericTypes::SearchMatch>> result = Inspector::TypeBuilder::Array<Inspector::TypeBuilder::GenericTypes::SearchMatch>::create();
 
-    JSC::Yarr::RegularExpression regex = ContentSearchUtils::createSearchRegex(query, caseSensitive, isRegex);
+    JSC::Yarr::RegularExpression regex = ContentSearchUtilities::createSearchRegex(query, caseSensitive, isRegex);
     Vector<std::pair<int, String>> matches = getRegularExpressionMatchesByLines(regex, text);
 
     for (Vector<std::pair<int, String>>::const_iterator it = matches.begin(); it != matches.end(); ++it)
@@ -194,26 +191,27 @@ static String findMagicComment(const String& content, const String& patternStrin
     unsigned result = JSC::Yarr::interpret(bytecodePattern.get(), content, 0, reinterpret_cast<unsigned*>(matches.data()));
     if (result == JSC::Yarr::offsetNoMatch)
         return String();
+
     ASSERT(matches[2] > 0 && matches[3] > 0);
     return content.substring(matches[2], matches[3] - matches[2]);
 }
 
 String findScriptSourceURL(const String& content)
 {
-    return findMagicComment(content, scriptCommentPattern("sourceURL"));
+    return findMagicComment(content, scriptCommentPattern(ASCIILiteral("sourceURL")));
 }
 
 String findScriptSourceMapURL(const String& content)
 {
-    return findMagicComment(content, scriptCommentPattern("sourceMappingURL"));
+    return findMagicComment(content, scriptCommentPattern(ASCIILiteral("sourceMappingURL")));
 }
 
 String findStylesheetSourceMapURL(const String& content)
 {
-    return findMagicComment(content, stylesheetCommentPattern("sourceMappingURL"));
+    return findMagicComment(content, stylesheetCommentPattern(ASCIILiteral("sourceMappingURL")));
 }
 
-} // namespace ContentSearchUtils
+} // namespace ContentSearchUtilities
 } // namespace WebCore
 
 #endif // ENABLE(INSPECTOR)

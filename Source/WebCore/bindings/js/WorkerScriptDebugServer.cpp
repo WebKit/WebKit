@@ -30,9 +30,9 @@
  */
 
 #include "config.h"
+#include "WorkerScriptDebugServer.h"
 
 #if ENABLE(JAVASCRIPT_DEBUGGER)
-#include "WorkerScriptDebugServer.h"
 
 #include "WorkerDebuggerAgent.h"
 #include "WorkerGlobalScope.h"
@@ -40,6 +40,8 @@
 #include "WorkerThread.h"
 #include <runtime/VM.h>
 #include <wtf/PassOwnPtr.h>
+
+using namespace Inspector;
 
 namespace WebCore {
 

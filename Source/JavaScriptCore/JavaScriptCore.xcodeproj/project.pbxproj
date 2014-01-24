@@ -900,6 +900,8 @@
 		A1712B4111C7B235007A5315 /* RegExpKey.h in Headers */ = {isa = PBXBuildFile; fileRef = A1712B4011C7B235007A5315 /* RegExpKey.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A1A009C01831A22D00CF8711 /* MacroAssemblerARM64.h in Headers */ = {isa = PBXBuildFile; fileRef = 8640923C156EED3B00566CB2 /* MacroAssemblerARM64.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A1A009C11831A26E00CF8711 /* ARM64Assembler.h in Headers */ = {isa = PBXBuildFile; fileRef = 8640923B156EED3B00566CB2 /* ARM64Assembler.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		A503FA21188EFF6800110F14 /* ScriptBreakpoint.h in Headers */ = {isa = PBXBuildFile; fileRef = A503FA1F188EFF6800110F14 /* ScriptBreakpoint.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		A503FA22188EFF6800110F14 /* ScriptDebugListener.h in Headers */ = {isa = PBXBuildFile; fileRef = A503FA20188EFF6800110F14 /* ScriptDebugListener.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A51007C0187CC3C600B38879 /* JSGlobalObjectInspectorController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A51007BE187CC3C600B38879 /* JSGlobalObjectInspectorController.cpp */; };
 		A51007C1187CC3C600B38879 /* JSGlobalObjectInspectorController.h in Headers */ = {isa = PBXBuildFile; fileRef = A51007BF187CC3C600B38879 /* JSGlobalObjectInspectorController.h */; };
 		A513E5B7185B8BD3007E95AD /* InjectedScript.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A513E5B5185B8BD3007E95AD /* InjectedScript.cpp */; };
@@ -933,6 +935,8 @@
 		A55D93AC18514F7900400DED /* InspectorTypeBuilder.h in Headers */ = {isa = PBXBuildFile; fileRef = A55D93AB18514F7900400DED /* InspectorTypeBuilder.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A57D23ED1891B5540031C7FA /* RegularExpression.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A57D23EB1891B5540031C7FA /* RegularExpression.cpp */; };
 		A57D23EE1891B5540031C7FA /* RegularExpression.h in Headers */ = {isa = PBXBuildFile; fileRef = A57D23EC1891B5540031C7FA /* RegularExpression.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		A57D23F11891B5B40031C7FA /* ContentSearchUtilities.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A57D23EF1891B5B40031C7FA /* ContentSearchUtilities.cpp */; };
+		A57D23F21891B5B40031C7FA /* ContentSearchUtilities.h in Headers */ = {isa = PBXBuildFile; fileRef = A57D23F01891B5B40031C7FA /* ContentSearchUtilities.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A5840E20187B7B8600843B10 /* InjectedScriptModule.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5840E1E187B7B8600843B10 /* InjectedScriptModule.cpp */; };
 		A5840E21187B7B8600843B10 /* InjectedScriptModule.h in Headers */ = {isa = PBXBuildFile; fileRef = A5840E1F187B7B8600843B10 /* InjectedScriptModule.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A5840E27187C981E00843B10 /* cssmin.py in Headers */ = {isa = PBXBuildFile; fileRef = A5840E26187C980700843B10 /* cssmin.py */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -2286,6 +2290,8 @@
 		A1712B3A11C7B212007A5315 /* RegExpCache.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RegExpCache.cpp; sourceTree = "<group>"; };
 		A1712B3E11C7B228007A5315 /* RegExpCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RegExpCache.h; sourceTree = "<group>"; };
 		A1712B4011C7B235007A5315 /* RegExpKey.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RegExpKey.h; sourceTree = "<group>"; };
+		A503FA1F188EFF6800110F14 /* ScriptBreakpoint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScriptBreakpoint.h; sourceTree = "<group>"; };
+		A503FA20188EFF6800110F14 /* ScriptDebugListener.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScriptDebugListener.h; sourceTree = "<group>"; };
 		A51007BE187CC3C600B38879 /* JSGlobalObjectInspectorController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSGlobalObjectInspectorController.cpp; sourceTree = "<group>"; };
 		A51007BF187CC3C600B38879 /* JSGlobalObjectInspectorController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSGlobalObjectInspectorController.h; sourceTree = "<group>"; };
 		A513E5B5185B8BD3007E95AD /* InjectedScript.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InjectedScript.cpp; sourceTree = "<group>"; };
@@ -2324,6 +2330,8 @@
 		A55D93AB18514F7900400DED /* InspectorTypeBuilder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InspectorTypeBuilder.h; sourceTree = "<group>"; };
 		A57D23EB1891B5540031C7FA /* RegularExpression.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = RegularExpression.cpp; path = yarr/RegularExpression.cpp; sourceTree = "<group>"; };
 		A57D23EC1891B5540031C7FA /* RegularExpression.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RegularExpression.h; path = yarr/RegularExpression.h; sourceTree = "<group>"; };
+		A57D23EF1891B5B40031C7FA /* ContentSearchUtilities.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ContentSearchUtilities.cpp; sourceTree = "<group>"; };
+		A57D23F01891B5B40031C7FA /* ContentSearchUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ContentSearchUtilities.h; sourceTree = "<group>"; };
 		A5840E1E187B7B8600843B10 /* InjectedScriptModule.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InjectedScriptModule.cpp; sourceTree = "<group>"; };
 		A5840E1F187B7B8600843B10 /* InjectedScriptModule.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InjectedScriptModule.h; sourceTree = "<group>"; };
 		A5840E26187C980700843B10 /* cssmin.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = cssmin.py; sourceTree = "<group>"; };
@@ -4372,6 +4380,8 @@
 				A513E5CC185FB992007E95AD /* agents */,
 				A5BA15E01823409D00A82E69 /* remote */,
 				A532438E185696CE002ED692 /* scripts */,
+				A57D23EF1891B5B40031C7FA /* ContentSearchUtilities.cpp */,
+				A57D23F01891B5B40031C7FA /* ContentSearchUtilities.h */,
 				A513E5B5185B8BD3007E95AD /* InjectedScript.cpp */,
 				A513E5B6185B8BD3007E95AD /* InjectedScript.h */,
 				A514B2C0185A684400F3C7CB /* InjectedScriptBase.cpp */,
@@ -4399,6 +4409,8 @@
 				A513E5BB185BFACC007E95AD /* JSInjectedScriptHost.h */,
 				A513E5BC185BFACC007E95AD /* JSInjectedScriptHostPrototype.cpp */,
 				A513E5BD185BFACC007E95AD /* JSInjectedScriptHostPrototype.h */,
+				A503FA1F188EFF6800110F14 /* ScriptBreakpoint.h */,
+				A503FA20188EFF6800110F14 /* ScriptDebugListener.h */,
 			);
 			path = inspector;
 			sourceTree = "<group>";
@@ -4525,6 +4537,7 @@
 				86E116B10FE75AC800B512BC /* CodeLocation.h in Headers */,
 				0FBD7E691447999600481315 /* CodeOrigin.h in Headers */,
 				0F21C27D14BE727A00ADC64B /* CodeSpecializationKind.h in Headers */,
+				A503FA21188EFF6800110F14 /* ScriptBreakpoint.h in Headers */,
 				0F0B83A714BCF50700885B4F /* CodeType.h in Headers */,
 				BC18C3F30E16F5CD00B34460 /* CommonIdentifiers.h in Headers */,
 				0F15F15F14B7A73E005DE37D /* CommonSlowPaths.h in Headers */,
@@ -4968,6 +4981,7 @@
 				86D3B2C610156BDE002865E7 /* MacroAssemblerARM.h in Headers */,
 				86ADD1460FDDEA980006EEC2 /* MacroAssemblerARMv7.h in Headers */,
 				863B23E00FC6118900703AA4 /* MacroAssemblerCodeRef.h in Headers */,
+				A57D23F21891B5B40031C7FA /* ContentSearchUtilities.h in Headers */,
 				A532438A18568335002ED692 /* InspectorJSFrontendDispatchers.h in Headers */,
 				86C568E111A213EE0007F7F0 /* MacroAssemblerMIPS.h in Headers */,
 				86AE64A9135E5E1C00963012 /* MacroAssemblerSH4.h in Headers */,
@@ -4993,6 +5007,7 @@
 				86C568E211A213EE0007F7F0 /* MIPSAssembler.h in Headers */,
 				86EBF3001560F06A008E9222 /* NameConstructor.h in Headers */,
 				A790DD6E182F499700588807 /* SetIteratorPrototype.h in Headers */,
+				A503FA22188EFF6800110F14 /* ScriptDebugListener.h in Headers */,
 				86EBF3021560F06A008E9222 /* NameInstance.h in Headers */,
 				86EBF3041560F06A008E9222 /* NamePrototype.h in Headers */,
 				BC02E9110E1839DB000F9297 /* NativeErrorConstructor.h in Headers */,
@@ -5992,6 +6007,7 @@
 				0FF729B2166AD35C000F5BA3 /* ProfilerDatabase.cpp in Sources */,
 				0FF729B3166AD35C000F5BA3 /* ProfilerOrigin.cpp in Sources */,
 				0FF729B4166AD35C000F5BA3 /* ProfilerOriginStack.cpp in Sources */,
+				A57D23F11891B5B40031C7FA /* ContentSearchUtilities.cpp in Sources */,
 				C2FCAE1017A9C24E0034C735 /* BytecodeBasicBlock.cpp in Sources */,
 				0F666ECC1836B37E00D017F1 /* DFGResurrectionForValidationPhase.cpp in Sources */,
 				0FB1058B1675483100F8AB6E /* ProfilerOSRExit.cpp in Sources */,

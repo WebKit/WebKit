@@ -3765,8 +3765,6 @@ webcore_sources += \
 	Source/WebCore/inspector/ConsoleAPITypes.h \
 	Source/WebCore/inspector/ConsoleMessage.cpp \
 	Source/WebCore/inspector/ConsoleMessage.h \
-	Source/WebCore/inspector/ContentSearchUtils.cpp \
-	Source/WebCore/inspector/ContentSearchUtils.h \
 	Source/WebCore/inspector/DOMEditor.cpp \
 	Source/WebCore/inspector/DOMEditor.h \
 	Source/WebCore/inspector/DOMPatchSupport.cpp \
@@ -3864,12 +3862,10 @@ webcore_sources += \
 	Source/WebCore/inspector/PageRuntimeAgent.h \
 	Source/WebCore/inspector/ScriptArguments.cpp \
 	Source/WebCore/inspector/ScriptArguments.h \
-	Source/WebCore/inspector/ScriptBreakpoint.h \
 	Source/WebCore/inspector/ScriptCallFrame.cpp \
 	Source/WebCore/inspector/ScriptCallFrame.h \
 	Source/WebCore/inspector/ScriptCallStack.cpp \
 	Source/WebCore/inspector/ScriptCallStack.h \
-	Source/WebCore/inspector/ScriptDebugListener.h \
 	Source/WebCore/inspector/TimelineRecordFactory.cpp \
 	Source/WebCore/inspector/TimelineRecordFactory.h \
 	Source/WebCore/inspector/WorkerConsoleAgent.cpp \

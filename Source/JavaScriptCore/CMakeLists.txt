@@ -226,14 +226,15 @@ set(JavaScriptCore_SOURCES
     heap/WriteBarrierBuffer.cpp
     heap/WriteBarrierSupport.cpp
 
-    inspector/InspectorAgentRegistry.cpp
-    inspector/InspectorBackendDispatcher.cpp
-    inspector/InspectorValues.cpp
+    inspector/ContentSearchUtilities.cpp
     inspector/InjectedScript.cpp
     inspector/InjectedScriptBase.cpp
     inspector/InjectedScriptHost.cpp
     inspector/InjectedScriptManager.cpp
     inspector/InjectedScriptModule.cpp
+    inspector/InspectorAgentRegistry.cpp
+    inspector/InspectorBackendDispatcher.cpp
+    inspector/InspectorValues.cpp
     inspector/JSInjectedScriptHost.cpp
     inspector/JSInjectedScriptHostPrototype.cpp
     inspector/agents/InspectorAgent.cpp

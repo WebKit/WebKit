@@ -17584,14 +17584,6 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Production|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Production|x64'">true</ExcludedFromBuild>
     </ClCompile>
-    <ClCompile Include="..\inspector\ContentSearchUtils.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_WinCairo|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_WinCairo|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Production|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Production|x64'">true</ExcludedFromBuild>
-    </ClCompile>
     <ClCompile Include="..\inspector\DOMEditor.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
@@ -20925,7 +20917,6 @@
     <ClInclude Include="..\inspector\CommandLineAPIHost.h" />
     <ClInclude Include="..\inspector\CommandLineAPIModule.h" />
     <ClInclude Include="..\inspector\ConsoleMessage.h" />
-    <ClInclude Include="..\inspector\ContentSearchUtils.h" />
     <ClInclude Include="..\inspector\DOMEditor.h" />
     <ClInclude Include="..\inspector\DOMPatchSupport.h" />
     <ClInclude Include="..\inspector\IdentifiersFactory.h" />
@@ -20978,10 +20969,8 @@
     <ClInclude Include="..\inspector\PageInjectedScriptManager.h" />
     <ClInclude Include="..\inspector\PageRuntimeAgent.h" />
     <ClInclude Include="..\inspector\ScriptArguments.h" />
-    <ClInclude Include="..\inspector\ScriptBreakpoint.h" />
     <ClInclude Include="..\inspector\ScriptCallFrame.h" />
     <ClInclude Include="..\inspector\ScriptCallStack.h" />
-    <ClInclude Include="..\inspector\ScriptDebugListener.h" />
     <ClInclude Include="..\inspector\TimelineRecordFactory.h" />
     <ClInclude Include="..\inspector\WorkerConsoleAgent.h" />
     <ClInclude Include="..\inspector\WorkerDebuggerAgent.h" />

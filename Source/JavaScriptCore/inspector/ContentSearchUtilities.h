@@ -26,12 +26,12 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ContentSearchUtils_h
-#define ContentSearchUtils_h
+#ifndef ContentSearchUtilities_h
+#define ContentSearchUtilities_h
 
 #if ENABLE(INSPECTOR)
 
-#include "InspectorWebTypeBuilders.h"
+#include "InspectorJSTypeBuilders.h"
 #include <wtf/Vector.h>
 #include <wtf/text/TextPosition.h>
 #include <wtf/text/WTFString.h>
@@ -40,23 +40,24 @@ namespace JSC { namespace Yarr {
 class RegularExpression;
 } }
 
-namespace WebCore {
+namespace Inspector {
 
-namespace ContentSearchUtils {
+namespace ContentSearchUtilities {
 
-JSC::Yarr::RegularExpression createSearchRegex(const String& query, bool caseSensitive, bool isRegex);
-int countRegularExpressionMatches(const JSC::Yarr::RegularExpression&, const String&);
-PassRefPtr<Inspector::TypeBuilder::Array<Inspector::TypeBuilder::GenericTypes::SearchMatch>> searchInTextByLines(const String& text, const String& query, const bool caseSensitive, const bool isRegex);
-TextPosition textPositionFromOffset(size_t offset, const Vector<size_t>& lineEndings);
-PassOwnPtr<Vector<size_t>> lineEndings(const String&);
+JS_EXPORT_PRIVATE JSC::Yarr::RegularExpression createSearchRegex(const String& query, bool caseSensitive, bool isRegex);
+JS_EXPORT_PRIVATE int countRegularExpressionMatches(const JSC::Yarr::RegularExpression&, const String&);
+JS_EXPORT_PRIVATE PassRefPtr<Inspector::TypeBuilder::Array<Inspector::TypeBuilder::GenericTypes::SearchMatch>> searchInTextByLines(const String& text, const String& query, const bool caseSensitive, const bool isRegex);
+JS_EXPORT_PRIVATE TextPosition textPositionFromOffset(size_t offset, const Vector<size_t>& lineEndings);
+JS_EXPORT_PRIVATE PassOwnPtr<Vector<size_t>> lineEndings(const String&);
 
-String findScriptSourceURL(const String& content);
-String findScriptSourceMapURL(const String& content);
-String findStylesheetSourceMapURL(const String& content);
+JS_EXPORT_PRIVATE String findScriptSourceURL(const String& content);
+JS_EXPORT_PRIVATE String findScriptSourceMapURL(const String& content);
+JS_EXPORT_PRIVATE String findStylesheetSourceMapURL(const String& content);
 
-} // namespace ContentSearchUtils
-} // namespace WebCore
+} // namespace ContentSearchUtilities
+
+} // namespace Inspector
 
 #endif // ENABLE(INSPECTOR)
 
-#endif // !defined(ContentSearchUtils_h)
+#endif // !defined(ContentSearchUtilities_h)

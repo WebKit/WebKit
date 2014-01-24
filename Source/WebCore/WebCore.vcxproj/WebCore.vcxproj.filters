@@ -4734,9 +4734,6 @@
     <ClCompile Include="..\inspector\ConsoleMessage.cpp">
       <Filter>inspector</Filter>
     </ClCompile>
-    <ClCompile Include="..\inspector\ContentSearchUtils.cpp">
-      <Filter>inspector</Filter>
-    </ClCompile>
     <ClCompile Include="..\inspector\DOMEditor.cpp">
       <Filter>inspector</Filter>
     </ClCompile>
@@ -12269,9 +12266,6 @@
     <ClInclude Include="..\inspector\ConsoleMessage.h">
       <Filter>inspector</Filter>
     </ClInclude>
-    <ClInclude Include="..\inspector\ContentSearchUtils.h">
-      <Filter>inspector</Filter>
-    </ClInclude>
     <ClInclude Include="..\inspector\DOMEditor.h">
       <Filter>inspector</Filter>
     </ClInclude>
@@ -12428,16 +12422,10 @@
     <ClInclude Include="..\inspector\ScriptArguments.h">
       <Filter>inspector</Filter>
     </ClInclude>
-    <ClInclude Include="..\inspector\ScriptBreakpoint.h">
-      <Filter>inspector</Filter>
-    </ClInclude>
     <ClInclude Include="..\inspector\ScriptCallFrame.h">
       <Filter>inspector</Filter>
     </ClInclude>
     <ClInclude Include="..\inspector\ScriptCallStack.h">
-      <Filter>inspector</Filter>
-    </ClInclude>
-    <ClInclude Include="..\inspector\ScriptDebugListener.h">
       <Filter>inspector</Filter>
     </ClInclude>
     <ClInclude Include="..\inspector\TimelineRecordFactory.h">

@@ -33,12 +33,12 @@
 #if ENABLE(JAVASCRIPT_DEBUGGER) && ENABLE(INSPECTOR)
 
 #include "CachedResource.h"
-#include "ContentSearchUtils.h"
 #include "InspectorPageAgent.h"
 #include "InstrumentingAgents.h"
 #include "ScriptDebugServer.h"
 #include <bindings/ScriptObject.h>
 #include <bindings/ScriptValue.h>
+#include <inspector/ContentSearchUtilities.h>
 #include <inspector/InjectedScript.h>
 #include <inspector/InjectedScriptManager.h>
 #include <inspector/InspectorValues.h>
@@ -420,7 +420,7 @@ void InspectorDebuggerAgent::searchInContent(ErrorString* error, const String& s
     JSC::SourceID sourceID = scriptIDStr.toIntPtr();
     ScriptsMap::iterator it = m_scripts.find(sourceID);
     if (it != m_scripts.end())
-        results = ContentSearchUtils::searchInTextByLines(it->value.source, query, caseSensitive, isRegex);
+        results = ContentSearchUtilities::searchInTextByLines(it->value.source, query, caseSensitive, isRegex);
     else
         *error = "No script for id: " + scriptIDStr;
 }
@@ -592,7 +592,7 @@ String InspectorDebuggerAgent::sourceMapURLForScript(const Script& script)
         }
     }
 
-    return ContentSearchUtils::findScriptSourceMapURL(script.source);
+    return ContentSearchUtilities::findScriptSourceMapURL(script.source);
 }
 
 // JavaScriptDebugListener functions
@@ -601,7 +601,7 @@ void InspectorDebuggerAgent::didParseSource(JSC::SourceID sourceID, const Script
 {
     Script script = inScript;
     if (!script.startLine && !script.startColumn)
-        script.sourceURL = ContentSearchUtils::findScriptSourceURL(script.source);
+        script.sourceURL = ContentSearchUtilities::findScriptSourceURL(script.source);
     script.sourceMappingURL = sourceMapURLForScript(script);
 
     bool hasSourceURL = !script.sourceURL.isEmpty();

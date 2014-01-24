@@ -35,12 +35,12 @@
 #include "ConsoleAPITypes.h"
 #include "ConsoleTypes.h"
 #include "InspectorWebAgentBase.h"
-#include "ScriptBreakpoint.h"
-#include "ScriptDebugListener.h"
 #include <bindings/ScriptValue.h>
 #include <debugger/Debugger.h>
 #include <inspector/InspectorJSBackendDispatchers.h>
 #include <inspector/InspectorJSFrontendDispatchers.h>
+#include <inspector/ScriptBreakpoint.h>
+#include <inspector/ScriptDebugListener.h>
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 #include <wtf/PassOwnPtr.h>
@@ -63,7 +63,7 @@ class ScriptDebugServer;
 
 typedef String ErrorString;
 
-class InspectorDebuggerAgent : public InspectorAgentBase, public ScriptDebugListener, public Inspector::InspectorDebuggerBackendDispatcherHandler {
+class InspectorDebuggerAgent : public InspectorAgentBase, public Inspector::ScriptDebugListener, public Inspector::InspectorDebuggerBackendDispatcherHandler {
     WTF_MAKE_NONCOPYABLE(InspectorDebuggerAgent); WTF_MAKE_FAST_ALLOCATED;
 public:
     static const char* backtraceObjectGroup;
@@ -147,12 +147,12 @@ private:
     virtual void failedToParseSource(const String& url, const String& data, int firstLine, int errorLine, const String& errorMessage) override final;
     virtual void didSampleProbe(JSC::ExecState*, int probeIdentifier, int hitCount, const Deprecated::ScriptValue& sample) override final;
 
-    PassRefPtr<Inspector::TypeBuilder::Debugger::Location> resolveBreakpoint(const String& breakpointIdentifier, JSC::SourceID, const ScriptBreakpoint&);
+    PassRefPtr<Inspector::TypeBuilder::Debugger::Location> resolveBreakpoint(const String& breakpointIdentifier, JSC::SourceID, const Inspector::ScriptBreakpoint&);
     bool assertPaused(ErrorString*);
     void clearResolvedBreakpointState();
     void clearBreakDetails();
 
-    bool breakpointActionsFromProtocol(ErrorString*, RefPtr<Inspector::InspectorArray>& actions, Vector<ScriptBreakpointAction>* result);
+    bool breakpointActionsFromProtocol(ErrorString*, RefPtr<Inspector::InspectorArray>& actions, Vector<Inspector::ScriptBreakpointAction>* result);
 
     String sourceMapURLForScript(const Script&);
 

@@ -39,7 +39,6 @@
 #include "CSSStyleRule.h"
 #include "CSSStyleSheet.h"
 #include "CSSSupportsRule.h"
-#include "ContentSearchUtils.h"
 #include "ContentSecurityPolicy.h"
 #include "Document.h"
 #include "Element.h"
@@ -58,6 +57,7 @@
 #include "StyleSheetContents.h"
 #include "StyleSheetList.h"
 #include "WebKitCSSKeyframesRule.h"
+#include <inspector/ContentSearchUtilities.h>
 #include <inspector/InspectorValues.h>
 #include <wtf/OwnPtr.h>
 #include <wtf/PassOwnPtr.h>
@@ -158,8 +158,8 @@ static PassRefPtr<Inspector::TypeBuilder::CSS::SourceRange> buildSourceRangeObje
 {
     if (!lineEndings)
         return nullptr;
-    TextPosition start = ContentSearchUtils::textPositionFromOffset(range.start, *lineEndings);
-    TextPosition end = ContentSearchUtils::textPositionFromOffset(range.end, *lineEndings);
+    TextPosition start = ContentSearchUtilities::textPositionFromOffset(range.start, *lineEndings);
+    TextPosition end = ContentSearchUtilities::textPositionFromOffset(range.end, *lineEndings);
 
     RefPtr<Inspector::TypeBuilder::CSS::SourceRange> result = Inspector::TypeBuilder::CSS::SourceRange::create()
         .setStartLine(start.m_line.zeroBasedInt())
@@ -1225,7 +1225,7 @@ PassOwnPtr<Vector<size_t>> InspectorStyleSheet::lineEndings() const
 {
     if (!m_parsedStyleSheet->hasText())
         return PassOwnPtr<Vector<size_t>>();
-    return ContentSearchUtils::lineEndings(m_parsedStyleSheet->text());
+    return ContentSearchUtilities::lineEndings(m_parsedStyleSheet->text());
 }
 
 unsigned InspectorStyleSheet::ruleIndexByStyle(CSSStyleDeclaration* pageStyle) const
@@ -1492,7 +1492,7 @@ bool InspectorStyleSheetForInlineStyle::setStyleText(CSSStyleDeclaration* style,
 
 PassOwnPtr<Vector<size_t>> InspectorStyleSheetForInlineStyle::lineEndings() const
 {
-    return ContentSearchUtils::lineEndings(elementStyleText());
+    return ContentSearchUtilities::lineEndings(elementStyleText());
 }
 
 Document* InspectorStyleSheetForInlineStyle::ownerDocument() const

@@ -627,6 +627,8 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/icu/unicode/utf_old.h \
 	Source/JavaScriptCore/icu/unicode/utypes.h \
 	Source/JavaScriptCore/icu/unicode/uversion.h \
+	Source/JavaScriptCore/inspector/ContentSearchUtilities.cpp \
+	Source/JavaScriptCore/inspector/ContentSearchUtilities.h \
 	Source/JavaScriptCore/inspector/InjectedScript.cpp \
 	Source/JavaScriptCore/inspector/InjectedScript.h \
 	Source/JavaScriptCore/inspector/InjectedScriptBase.cpp \
@@ -651,6 +653,8 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/inspector/JSInjectedScriptHost.h \
 	Source/JavaScriptCore/inspector/JSInjectedScriptHostPrototype.cpp \
 	Source/JavaScriptCore/inspector/JSInjectedScriptHostPrototype.h \
+	Source/JavaScriptCore/inspector/ScriptBreakpoint.h \
+	Source/JavaScriptCore/inspector/ScriptDebugListener.h \
 	Source/JavaScriptCore/inspector/agents/InspectorAgent.h \
 	Source/JavaScriptCore/inspector/agents/InspectorAgent.cpp \
 	Source/JavaScriptCore/interpreter/AbstractPC.cpp \

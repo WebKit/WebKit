@@ -475,6 +475,7 @@
     <ClCompile Include="..\heap\WeakSet.cpp" />
     <ClCompile Include="..\heap\WriteBarrierBuffer.cpp" />
     <ClCompile Include="..\heap\WriteBarrierSupport.cpp" />
+    <ClCompile Include="..\inspector\ContentSearchUtilities.cpp" />
     <ClCompile Include="..\inspector\InjectedScript.cpp" />
     <ClCompile Include="..\inspector\InjectedScriptBase.cpp" />
     <ClCompile Include="..\inspector\InjectedScriptHost.cpp" />
@@ -1041,6 +1042,7 @@
     <ClInclude Include="..\heap\WeakSetInlines.h" />
     <ClInclude Include="..\heap\WriteBarrierBuffer.h" />
     <ClInclude Include="..\heap\WriteBarrierSupport.h" />
+    <ClInclude Include="..\inspector\ContentSearchUtilities.h" />
     <ClInclude Include="..\inspector\InjectedScript.h" />
     <ClInclude Include="..\inspector\InjectedScriptBase.h" />
     <ClInclude Include="..\inspector\InjectedScriptHost.h" />
@@ -1055,6 +1057,8 @@
     <ClInclude Include="..\inspector\InspectorValues.h" />
     <ClInclude Include="..\inspector\JSInjectedScriptHost.h" />
     <ClInclude Include="..\inspector\JSInjectedScriptHostPrototype.h" />
+    <ClInclude Include="..\inspector\ScriptBreakpoint.h" />
+    <ClInclude Include="..\inspector\ScriptDebugListener.h" />
     <ClInclude Include="..\inspector\agents\InspectorAgent.h" />
     <ClInclude Include="..\interpreter\AbstractPC.h" />
     <ClInclude Include="..\interpreter\CachedCall.h" />

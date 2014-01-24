@@ -28,7 +28,6 @@
 #include "CommandLineAPIHost.cpp"
 #include "CommandLineAPIModule.cpp"
 #include "ConsoleMessage.cpp"
-#include "ContentSearchUtils.cpp"
 #include "DOMEditor.cpp"
 #include "DOMPatchSupport.cpp"
 #include "IdentifiersFactory.cpp"

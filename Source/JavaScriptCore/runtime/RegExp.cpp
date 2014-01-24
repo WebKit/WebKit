@@ -352,8 +352,8 @@ int RegExp::match(VM& vm, const String& s, unsigned startOffset, Vector<int, 32>
     // The offset vector handling needs to change as well.
     // Right now we convert a match where the offsets overflowed into match failure.
     // There are two places in WebCore that call the interpreter directly that need to
-    // have their offsets changed to int as well. They are platform/text/RegularExpression.cpp
-    // and inspector/ContentSearchUtils.cpp.
+    // have their offsets changed to int as well. They are yarr/RegularExpression.cpp
+    // and inspector/ContentSearchUtilities.cpp
     if (s.length() > INT_MAX) {
         bool overflowed = false;
 

@@ -1572,7 +1572,6 @@ set(WebCore_SOURCES
     inspector/CommandLineAPIHost.cpp
     inspector/CommandLineAPIModule.cpp
     inspector/ConsoleMessage.cpp
-    inspector/ContentSearchUtils.cpp
     inspector/DOMEditor.cpp
     inspector/DOMPatchSupport.cpp
     inspector/IdentifiersFactory.cpp

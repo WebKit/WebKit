@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2009 Apple Inc. All rights reserved.
- * Copyright (C) 2009 Google Inc. All rights reserved.
+ * Copyright (C) 2008, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2010 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,63 +27,56 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ScriptBreakpoint_h
-#define ScriptBreakpoint_h
+#ifndef ScriptDebugListener_h
+#define ScriptDebugListener_h
 
-#include <wtf/Vector.h>
+#if ENABLE(JAVASCRIPT_DEBUGGER)
+
+#include "debugger/Debugger.h"
+#include <wtf/Forward.h>
 #include <wtf/text/WTFString.h>
 
-namespace WebCore {
+namespace Deprecated {
+class ScriptValue;
+}
 
-typedef enum {
-    ScriptBreakpointActionTypeLog,
-    ScriptBreakpointActionTypeEvaluate,
-    ScriptBreakpointActionTypeSound,
-    ScriptBreakpointActionTypeProbe
-} ScriptBreakpointActionType;
+namespace Inspector {
 
-struct ScriptBreakpointAction {
-    ScriptBreakpointAction(ScriptBreakpointActionType type, int identifier, const String& data)
-        : type(type)
-        , identifier(identifier)
-        , data(data)
-    {
-    }
+class ScriptDebugListener {
+public:
+    class Script {
+    public:
+        Script()
+            : startLine(0)
+            , startColumn(0)
+            , endLine(0)
+            , endColumn(0)
+            , isContentScript(false)
+        {
+        }
 
-    ScriptBreakpointActionType type;
-    int identifier;
-    String data;
+        String url;
+        String source;
+        String sourceURL;
+        String sourceMappingURL;
+        int startLine;
+        int startColumn;
+        int endLine;
+        int endColumn;
+        bool isContentScript;
+    };
+
+    virtual ~ScriptDebugListener() { }
+
+    virtual void didParseSource(JSC::SourceID, const Script&) = 0;
+    virtual void failedToParseSource(const String& url, const String& data, int firstLine, int errorLine, const String& errorMessage) = 0;
+    virtual void didPause(JSC::ExecState*, const Deprecated::ScriptValue& callFrames, const Deprecated::ScriptValue& exception) = 0;
+    virtual void didSampleProbe(JSC::ExecState*, int probeIdentifier, int hitCount, const Deprecated::ScriptValue& result) = 0;
+    virtual void didContinue() = 0;
 };
 
-struct ScriptBreakpoint {
-    ScriptBreakpoint()
-    {
-    }
+} // namespace Inspector
 
-    ScriptBreakpoint(int lineNumber, int columnNumber, const String& condition, bool autoContinue)
-        : lineNumber(lineNumber)
-        , columnNumber(columnNumber)
-        , condition(condition)
-        , autoContinue(autoContinue)
-    {
-    }
+#endif // ENABLE(JAVASCRIPT_DEBUGGER)
 
-    ScriptBreakpoint(int lineNumber, int columnNumber, const String& condition, Vector<ScriptBreakpointAction>& actions, bool autoContinue)
-        : lineNumber(lineNumber)
-        , columnNumber(columnNumber)
-        , condition(condition)
-        , actions(actions)
-        , autoContinue(autoContinue)
-    {
-    }
-
-    int lineNumber;
-    int columnNumber;
-    String condition;
-    Vector<ScriptBreakpointAction> actions;
-    bool autoContinue;
-};
-
-} // namespace WebCore
-
-#endif // !defined(ScriptBreakpoint_h)
+#endif // ScriptDebugListener_h
