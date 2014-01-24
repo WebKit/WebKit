@@ -1,3 +1,25 @@
+2014-01-23  Brady Eidson  <beidson@apple.com>
+
+        IDB: Implement SQLite backing store 'get' support
+        https://bugs.webkit.org/show_bug.cgi?id=127502
+
+        Reviewed by Tim Horton.
+
+        Get a KeyRange from a KeyRangeData:
+        * Modules/indexeddb/IDBKeyRangeData.cpp:
+        (WebCore::IDBKeyRangeData::maybeCreateIDBKeyRange):
+        * Modules/indexeddb/IDBKeyRangeData.h:
+
+        Add collation function support to SQLiteDatabase:
+        * platform/sql/SQLiteDatabase.cpp:
+        (WebCore::destroyCollationFunction):
+        (WebCore::callCollationFunction):
+        (WebCore::SQLiteDatabase::setCollationFunction):
+        (WebCore::SQLiteDatabase::removeCollationFunction):
+        * platform/sql/SQLiteDatabase.h:
+
+        * WebCore.exp.in:
+
 2014-01-23  Jon Honeycutt  <jhoneycutt@apple.com>
 
         Assertion failure in WebCore::PseudoElement::didRecalcStyle()

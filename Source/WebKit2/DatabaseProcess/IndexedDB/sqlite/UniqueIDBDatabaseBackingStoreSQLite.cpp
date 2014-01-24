@@ -34,8 +34,10 @@
 #include <WebCore/FileSystem.h>
 #include <WebCore/IDBDatabaseMetadata.h>
 #include <WebCore/IDBKeyData.h>
+#include <WebCore/IDBKeyRange.h>
 #include <WebCore/SQLiteDatabase.h>
 #include <WebCore/SQLiteStatement.h>
+#include <WebCore/SharedBuffer.h>
 #include <wtf/MainThread.h>
 
 using namespace WebCore;
@@ -90,7 +92,7 @@ std::unique_ptr<WebCore::IDBDatabaseMetadata> UniqueIDBDatabaseBackingStoreSQLit
         return nullptr;
     }
 
-    if (!m_sqliteDB->executeCommand("CREATE TABLE Records (objectStoreID INTEGER NOT NULL ON CONFLICT FAIL, key BLOB NOT NULL ON CONFLICT FAIL UNIQUE ON CONFLICT REPLACE, value BLOB NOT NULL ON CONFLICT FAIL);")) {
+    if (!m_sqliteDB->executeCommand("CREATE TABLE Records (objectStoreID INTEGER NOT NULL ON CONFLICT FAIL, key BLOB COLLATE IDBKEY NOT NULL ON CONFLICT FAIL UNIQUE ON CONFLICT REPLACE, value BLOB NOT NULL ON CONFLICT FAIL);")) {
         LOG_ERROR("Could not create Records table in database (%i) - %s", m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg());
         m_sqliteDB = nullptr;
         return nullptr;
@@ -246,6 +248,11 @@ std::unique_ptr<IDBDatabaseMetadata> UniqueIDBDatabaseBackingStoreSQLite::getOrE
     m_sqliteDB = openSQLiteDatabaseAtPath(dbFilename);
     if (!m_sqliteDB)
         return nullptr;
+
+    RefPtr<UniqueIDBDatabaseBackingStoreSQLite> protector(this);
+    m_sqliteDB->setCollationFunction("IDBKEY", [this](int aLength, const void* a, int bLength, const void* b) {
+        return collate(aLength, a, bLength, b);
+    });
 
     std::unique_ptr<IDBDatabaseMetadata> metadata = extractExistingMetadata();
     if (!metadata)
@@ -476,6 +483,111 @@ bool UniqueIDBDatabaseBackingStoreSQLite::updateKeyGenerator(const IDBTransactio
     return false;
 }
 
+bool UniqueIDBDatabaseBackingStoreSQLite::getKeyRecordFromObjectStore(const IDBTransactionIdentifier& identifier, int64_t objectStoreID, const WebCore::IDBKey& key, RefPtr<WebCore::SharedBuffer>& result)
+{
+    ASSERT(!isMainThread());
+    ASSERT(m_sqliteDB);
+    ASSERT(m_sqliteDB->isOpen());
+
+    SQLiteIDBTransaction* transaction = m_transactions.get(identifier);
+    if (!transaction || !transaction->inProgress()) {
+        LOG_ERROR("Attempt to put a record into database without an established, in-progress transaction");
+        return false;
+    }
+
+    RefPtr<SharedBuffer> keyBuffer = serializeIDBKey(key);
+    if (!keyBuffer) {
+        LOG_ERROR("Unable to serialize IDBKey to be stored in the database");
+        return false;
+    }
+
+    {
+        SQLiteStatement sql(*m_sqliteDB, ASCIILiteral("SELECT value FROM Records WHERE objectStoreID = ? AND key = ?;"));
+        if (sql.prepare() != SQLResultOk
+            || sql.bindInt64(1, objectStoreID) != SQLResultOk
+            || sql.bindBlob(2, keyBuffer->data(), keyBuffer->size()) != SQLResultOk) {
+            LOG_ERROR("Could not get record from object store %lli from Records table (%i) - %s", objectStoreID, m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg());
+            return false;
+        }
+
+        int sqlResult = sql.step();
+        if (sqlResult == SQLResultOk || sqlResult == SQLResultDone) {
+            // There was no record for the key in the database.
+            return true;
+        }
+        if (sqlResult != SQLResultRow) {
+            // There was an error fetching the record from the database.
+            LOG_ERROR("Could not get record from object store %lli from Records table (%i) - %s", objectStoreID, m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg());
+            return false;
+        }
+
+        Vector<char> buffer;
+        sql.getColumnBlobAsVector(0, buffer);
+        result = SharedBuffer::create(static_cast<const char*>(buffer.data()), buffer.size());
+    }
+
+    return true;
+}
+
+bool UniqueIDBDatabaseBackingStoreSQLite::getKeyRangeRecordFromObjectStore(const IDBTransactionIdentifier& identifier, int64_t objectStoreID, const WebCore::IDBKeyRange& keyRange, RefPtr<WebCore::SharedBuffer>& result, RefPtr<WebCore::IDBKey>& resultKey)
+{
+    ASSERT(!isMainThread());
+    ASSERT(m_sqliteDB);
+    ASSERT(m_sqliteDB->isOpen());
+
+    SQLiteIDBTransaction* transaction = m_transactions.get(identifier);
+    if (!transaction || !transaction->inProgress()) {
+        LOG_ERROR("Attempt to put a record into database without an established, in-progress transaction");
+        return false;
+    }
+
+    RefPtr<SharedBuffer> lowerBuffer = serializeIDBKey(*keyRange.lower());
+    if (!lowerBuffer) {
+        LOG_ERROR("Unable to serialize IDBKey to be stored in the database");
+        return false;
+    }
+
+    RefPtr<SharedBuffer> upperBuffer = serializeIDBKey(*keyRange.upper());
+    if (!upperBuffer) {
+        LOG_ERROR("Unable to serialize IDBKey to be stored in the database");
+        return false;
+    }
+
+    {
+        SQLiteStatement sql(*m_sqliteDB, ASCIILiteral("SELECT value FROM Records WHERE objectStoreID = ? AND key >= ? AND key <= ? ORDER BY key;"));
+        if (sql.prepare() != SQLResultOk
+            || sql.bindInt64(1, objectStoreID) != SQLResultOk
+            || sql.bindBlob(2, lowerBuffer->data(), lowerBuffer->size()) != SQLResultOk
+            || sql.bindBlob(3, upperBuffer->data(), upperBuffer->size()) != SQLResultOk) {
+            LOG_ERROR("Could not get key range record from object store %lli from Records table (%i) - %s", objectStoreID, m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg());
+            return false;
+        }
+
+        int sqlResult = sql.step();
+
+        if (sqlResult == SQLResultOk || sqlResult == SQLResultDone) {
+            // There was no record for the key in the database.
+            return true;
+        }
+        if (sqlResult != SQLResultRow) {
+            // There was an error fetching the record from the database.
+            LOG_ERROR("Could not get record from object store %lli from Records table (%i) - %s", objectStoreID, m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg());
+            return false;
+        }
+
+        Vector<char> buffer;
+        sql.getColumnBlobAsVector(0, buffer);
+        result = SharedBuffer::create(static_cast<const char*>(buffer.data()), buffer.size());
+    }
+
+    return true;
+}
+
+int UniqueIDBDatabaseBackingStoreSQLite::collate(int aLength, const void* a, int bLength, const void* b)
+{
+    // FIXME: Implement
+    return 0;
+}
 
 } // namespace WebKit
 

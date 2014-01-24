@@ -577,11 +577,45 @@ void UniqueIDBDatabase::didPutRecordInBackingStore(uint64_t requestID, const IDB
     request->completeRequest(keyData, errorCode, errorMessage);
 }
 
-void UniqueIDBDatabase::getRecordFromBackingStore(uint64_t requestID, const IDBTransactionIdentifier&, const WebCore::IDBObjectStoreMetadata&, int64_t indexID, const WebCore::IDBKeyRangeData&, WebCore::IndexedDB::CursorType)
+void UniqueIDBDatabase::getRecordFromBackingStore(uint64_t requestID, const IDBTransactionIdentifier& transaction, const WebCore::IDBObjectStoreMetadata& objectStoreMetadata, int64_t indexID, const WebCore::IDBKeyRangeData& keyRangeData, WebCore::IndexedDB::CursorType cursorType)
 {
-    // FIXME: Implement (https://bugs.webkit.org/show_bug.cgi?id=127502)
+    ASSERT(!isMainThread());
+    ASSERT(m_backingStore);
 
-    postMainThreadTask(createAsyncTask(*this, &UniqueIDBDatabase::didGetRecordFromBackingStore, requestID, IDBGetResult(), IDBDatabaseException::UnknownError, ASCIILiteral("'get' support not yet implemented")));
+    RefPtr<IDBKeyRange> keyRange = keyRangeData.maybeCreateIDBKeyRange();
+    ASSERT(keyRange);
+    if (!keyRange) {
+        postMainThreadTask(createAsyncTask(*this, &UniqueIDBDatabase::didGetRecordFromBackingStore, requestID, IDBGetResult(), IDBDatabaseException::UnknownError, ASCIILiteral("Invalid IDBKeyRange requested from backing store")));
+        return;
+    }
+
+    if (indexID == IDBIndexMetadata::InvalidId) {
+        // IDBObjectStore get record
+        RefPtr<SharedBuffer> result;
+
+        if (keyRange->isOnlyKey()) {
+            if (!m_backingStore->getKeyRecordFromObjectStore(transaction, objectStoreMetadata.id, *keyRange->lower(), result))
+                postMainThreadTask(createAsyncTask(*this, &UniqueIDBDatabase::didGetRecordFromBackingStore, requestID, IDBGetResult(), IDBDatabaseException::UnknownError, ASCIILiteral("Failed to get key record from object store in backing store")));
+            else
+                postMainThreadTask(createAsyncTask(*this, &UniqueIDBDatabase::didGetRecordFromBackingStore, requestID, IDBGetResult(result.release()), 0, String(StringImpl::empty())));
+
+            return;
+        }
+
+        RefPtr<IDBKey> resultKey;
+
+        if (!m_backingStore->getKeyRangeRecordFromObjectStore(transaction, objectStoreMetadata.id, *keyRange, result, resultKey))
+            postMainThreadTask(createAsyncTask(*this, &UniqueIDBDatabase::didGetRecordFromBackingStore, requestID, IDBGetResult(), IDBDatabaseException::UnknownError, ASCIILiteral("Failed to get key range record from object store in backing store")));
+        else
+            postMainThreadTask(createAsyncTask(*this, &UniqueIDBDatabase::didGetRecordFromBackingStore, requestID, IDBGetResult(result.release(), resultKey.release(), IDBKeyPath()), 0, String(StringImpl::empty())));
+
+        return;
+    }
+
+    // IDBIndex get record
+
+    // FIXME: Implement index gets (<rdar://problem/15779642>)
+    postMainThreadTask(createAsyncTask(*this, &UniqueIDBDatabase::didGetRecordFromBackingStore, requestID, IDBGetResult(), IDBDatabaseException::UnknownError, ASCIILiteral("'get' from indexes not supported yet")));
 }
 
 void UniqueIDBDatabase::didGetRecordFromBackingStore(uint64_t requestID, const IDBGetResult& result, uint32_t errorCode, const String& errorMessage)

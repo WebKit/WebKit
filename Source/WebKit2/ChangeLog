@@ -1,3 +1,25 @@
+2014-01-23  Brady Eidson  <beidson@apple.com>
+
+        IDB: Implement SQLite backing store 'get' support
+        https://bugs.webkit.org/show_bug.cgi?id=127502
+
+        Reviewed by Tim Horton.
+
+        This makes get of a single IDBKey work, and lays the groundwork for getting an IDBKeyRange.
+
+        * DatabaseProcess/IndexedDB/UniqueIDBDatabase.cpp:
+        (WebKit::UniqueIDBDatabase::getRecordFromBackingStore):
+        * DatabaseProcess/IndexedDB/UniqueIDBDatabaseBackingStore.h:
+
+        * DatabaseProcess/IndexedDB/sqlite/UniqueIDBDatabaseBackingStoreSQLite.cpp:
+        (WebKit::UniqueIDBDatabaseBackingStoreSQLite::createAndPopulateInitialMetadata): Add custom collation
+          to the Records table.
+        (WebKit::UniqueIDBDatabaseBackingStoreSQLite::getOrEstablishMetadata): Install the custom collator.
+        (WebKit::UniqueIDBDatabaseBackingStoreSQLite::getKeyRecordFromObjectStore):
+        (WebKit::UniqueIDBDatabaseBackingStoreSQLite::getKeyRangeRecordFromObjectStore):
+        (WebKit::UniqueIDBDatabaseBackingStoreSQLite::collate): Collation function to be filled in later.
+        * DatabaseProcess/IndexedDB/sqlite/UniqueIDBDatabaseBackingStoreSQLite.h:
+
 2014-01-23  Jon Honeycutt  <jhoneycutt@apple.com>
 
         Assertion failure in WebCore::PseudoElement::didRecalcStyle()

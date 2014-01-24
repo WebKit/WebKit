@@ -57,6 +57,8 @@ struct IDBKeyRangeData {
 
     IDBKeyRangeData isolatedCopy() const;
 
+    PassRefPtr<IDBKeyRange> maybeCreateIDBKeyRange() const;
+
     bool isNull;
 
     IDBKeyData lowerKey;

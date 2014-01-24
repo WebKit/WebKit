@@ -33,6 +33,8 @@
 
 namespace WebCore {
 class IDBKey;
+class IDBKeyRange;
+class SharedBuffer;
 
 struct IDBDatabaseMetadata;
 struct IDBObjectStoreMetadata;
@@ -63,7 +65,8 @@ public:
     virtual bool putRecord(const IDBTransactionIdentifier&, int64_t objectStoreID, const WebCore::IDBKey&, const uint8_t* valueBuffer, size_t valueSize) = 0;
     virtual bool updateKeyGenerator(const IDBTransactionIdentifier&, int64_t objectStoreId, const WebCore::IDBKey&, bool checkCurrent) = 0;
 
-
+    virtual bool getKeyRecordFromObjectStore(const IDBTransactionIdentifier&, int64_t objectStoreID, const WebCore::IDBKey&, RefPtr<WebCore::SharedBuffer>& result) = 0;
+    virtual bool getKeyRangeRecordFromObjectStore(const IDBTransactionIdentifier&, int64_t objectStoreID, const WebCore::IDBKeyRange&, RefPtr<WebCore::SharedBuffer>& result, RefPtr<WebCore::IDBKey>& resultKey) = 0;
 };
 
 } // namespace WebKit

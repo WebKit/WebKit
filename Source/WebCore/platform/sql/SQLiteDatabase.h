@@ -27,6 +27,7 @@
 #ifndef SQLiteDatabase_h
 #define SQLiteDatabase_h
 
+#include <functional>
 #include <wtf/Threading.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
@@ -129,6 +130,9 @@ public:
     //               is called.
     enum AutoVacuumPragma { AutoVacuumNone = 0, AutoVacuumFull = 1, AutoVacuumIncremental = 2 };
     bool turnOnIncrementalAutoVacuum();
+
+    void setCollationFunction(const String& collationName, std::function<int(int, const void*, int, const void*)>);
+    void removeCollationFunction(const String& collationName);
 
     // Set this flag to allow access from multiple threads.  Not all multi-threaded accesses are safe!
     // See http://www.sqlite.org/cvstrac/wiki?p=MultiThreading for more info.

@@ -69,12 +69,17 @@ public:
     virtual bool putRecord(const IDBTransactionIdentifier&, int64_t objectStoreID, const WebCore::IDBKey&, const uint8_t* valueBuffer, size_t valueSize) override;
     virtual bool updateKeyGenerator(const IDBTransactionIdentifier&, int64_t objectStoreId, const WebCore::IDBKey&, bool checkCurrent) override;
 
+    virtual bool getKeyRecordFromObjectStore(const IDBTransactionIdentifier&, int64_t objectStoreID, const WebCore::IDBKey&, RefPtr<WebCore::SharedBuffer>& result) override;
+    virtual bool getKeyRangeRecordFromObjectStore(const IDBTransactionIdentifier&, int64_t objectStoreID, const WebCore::IDBKeyRange&, RefPtr<WebCore::SharedBuffer>& result, RefPtr<WebCore::IDBKey>& resultKey) override;
+
 private:
     UniqueIDBDatabaseBackingStoreSQLite(const UniqueIDBDatabaseIdentifier&, const String& databaseDirectory);
 
     std::unique_ptr<WebCore::SQLiteDatabase> openSQLiteDatabaseAtPath(const String&);
     std::unique_ptr<WebCore::IDBDatabaseMetadata> extractExistingMetadata();
     std::unique_ptr<WebCore::IDBDatabaseMetadata> createAndPopulateInitialMetadata();
+
+    int collate(int aLength, const void* a, int bLength, const void* b);
 
     UniqueIDBDatabaseIdentifier m_identifier;
     String m_absoluteDatabaseDirectory;
