@@ -1,3 +1,17 @@
+2014-01-24  Michael Saboff  <msaboff@apple.com>
+
+        ARM Offline assembler temporary register allocator has duplicate register when building fat binaries
+        https://bugs.webkit.org/show_bug.cgi?id=127545
+
+        Reviewed by Mark Lam.
+
+        Eliminate the conditional addition of r11/r7 from getModifiedListARMCommon as the
+        .concat will add the new register to ARM_EXTRA_GPRS.  If getModifiedListARMCommon is
+        invoked a second time, there will be a second r11 or r7, which messes things up.
+        Instead, r6 was added to ARM_EXTRA_GPRS.  r6 is currently an unused register.
+
+        * offlineasm/arm.rb:
+
 2014-01-23  Joseph Pecoraro  <pecoraro@apple.com>
 
         Move ContentSearchUtils, ScriptBreakpoint, and ScriptDebugListener into JavaScriptCore for inspector
