@@ -1,5 +1,18 @@
 2014-01-23  Anders Carlsson  <andersca@apple.com>
 
+        Only WKPage should know about WebPolicyClient
+        https://bugs.webkit.org/show_bug.cgi?id=127535
+
+        Reviewed by Andreas Kling.
+
+        * UIProcess/API/Cocoa/WKBrowsingContextController.mm:
+        (setUpPagePolicyClient):
+        (-[WKBrowsingContextController setPolicyDelegate:]):
+        * UIProcess/WebInspectorProxy.cpp:
+        (WebKit::WebInspectorProxy::createInspectorPage):
+
+2014-01-23  Anders Carlsson  <andersca@apple.com>
+
         Simplify API::LoaderClient management
         https://bugs.webkit.org/show_bug.cgi?id=127531
 

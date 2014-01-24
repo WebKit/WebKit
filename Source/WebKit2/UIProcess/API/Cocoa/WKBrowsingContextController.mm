@@ -47,6 +47,7 @@
 #import "WKNSURLAuthenticationChallenge.h"
 #import "WKNSURLExtras.h"
 #import "WKNSURLProtectionSpace.h"
+#import "WKPagePolicyClientInternal.h"
 #import "WKProcessGroupPrivate.h"
 #import "WKRemoteObjectRegistryInternal.h"
 #import "WKRenderingProgressEventsInternal.h"
@@ -57,7 +58,6 @@
 #import "WebCertificateInfo.h"
 #import "WebContext.h"
 #import "WebPageProxy.h"
-#import "WebPolicyClient.h"
 
 using namespace WebCore;
 using namespace WebKit;
@@ -713,7 +713,7 @@ static void setUpPagePolicyClient(WKBrowsingContextController *browsingContext, 
             WKFramePolicyListenerUse(listener);
     };
 
-    page.setPolicyClient(std::make_unique<WebPolicyClient>(&policyClient.base));
+    WKPageSetPagePolicyClient(toAPI(&page), &policyClient.base);
 }
 
 - (id <WKBrowsingContextLoadDelegate>)loadDelegate
@@ -743,7 +743,7 @@ static void setUpPagePolicyClient(WKBrowsingContextController *browsingContext, 
     if (policyDelegate)
         setUpPagePolicyClient(self, *_page);
     else
-        _page->setPolicyClient(nullptr);
+        WKPageSetPagePolicyClient(toAPI(_page.get()), nullptr);
 }
 
 - (id <WKBrowsingContextHistoryDelegate>)historyDelegate
