@@ -29,14 +29,15 @@
 
 #include "APIArray.h"
 #include "APIData.h"
+#include "APIPolicyClient.h"
 #include "PrintInfo.h"
 #include "WKAPICast.h"
+#include "WKPagePolicyClientInternal.h"
 #include "WKPluginInformation.h"
 #include "WebBackForwardList.h"
 #include "WebLoaderClient.h"
 #include "WebPageMessages.h"
 #include "WebPageProxy.h"
-#include "WebPolicyClient.h"
 #include "WebProcessProxy.h"
 #include <WebCore/Page.h>
 
@@ -50,6 +51,12 @@
 
 using namespace WebCore;
 using namespace WebKit;
+
+namespace API {
+template<> struct ClientTraits<WKPagePolicyClientBase> {
+    typedef std::tuple<WKPagePolicyClientV0, WKPagePolicyClientV1, WKPagePolicyClientInternal> Versions;
+};
+}
 
 WKTypeID WKPageGetTypeID()
 {
@@ -691,7 +698,70 @@ void WKPageSetPageLoaderClient(WKPageRef pageRef, const WKPageLoaderClientBase* 
 
 void WKPageSetPagePolicyClient(WKPageRef pageRef, const WKPagePolicyClientBase* wkClient)
 {
-    toImpl(pageRef)->setPolicyClient(std::make_unique<WebPolicyClient>(wkClient));
+    class PolicyClient : public API::Client<WKPagePolicyClientBase>, public API::PolicyClient {
+    public:
+        explicit PolicyClient(const WKPagePolicyClientBase* client)
+        {
+            initialize(client);
+        }
+
+    private:
+        virtual void decidePolicyForNavigationAction(WebPageProxy* page, WebFrameProxy* frame, WebCore::NavigationType type, WebEvent::Modifiers modifiers, WebMouseEvent::Button mouseButton, WebFrameProxy* originatingFrame, const WebCore::ResourceRequest& originalResourceRequest, const WebCore::ResourceRequest& resourceRequest, WebFramePolicyListenerProxy* listener, API::Object* userData) override
+        {
+            if (!m_client.decidePolicyForNavigationAction_deprecatedForUseWithV0 && !m_client.decidePolicyForNavigationAction_deprecatedForUseWithV1 && !m_client.decidePolicyForNavigationAction) {
+                listener->use();
+                return;
+            }
+
+            RefPtr<API::URLRequest> originalRequest = API::URLRequest::create(originalResourceRequest);
+            RefPtr<API::URLRequest> request = API::URLRequest::create(resourceRequest);
+
+            if (m_client.decidePolicyForNavigationAction_deprecatedForUseWithV0)
+                m_client.decidePolicyForNavigationAction_deprecatedForUseWithV0(toAPI(page), toAPI(frame), toAPI(type), toAPI(modifiers), toAPI(mouseButton), toAPI(request.get()), toAPI(listener), toAPI(userData), m_client.base.clientInfo);
+            else if (m_client.decidePolicyForNavigationAction_deprecatedForUseWithV1)
+                m_client.decidePolicyForNavigationAction_deprecatedForUseWithV1(toAPI(page), toAPI(frame), toAPI(type), toAPI(modifiers), toAPI(mouseButton), toAPI(originatingFrame), toAPI(request.get()), toAPI(listener), toAPI(userData), m_client.base.clientInfo);
+            else
+                m_client.decidePolicyForNavigationAction(toAPI(page), toAPI(frame), toAPI(type), toAPI(modifiers), toAPI(mouseButton), toAPI(originatingFrame), toAPI(originalRequest.get()), toAPI(request.get()), toAPI(listener), toAPI(userData), m_client.base.clientInfo);
+        }
+
+        virtual void decidePolicyForNewWindowAction(WebPageProxy* page, WebFrameProxy* frame, NavigationType type, WebEvent::Modifiers modifiers, WebMouseEvent::Button mouseButton, const ResourceRequest& resourceRequest, const String& frameName, WebFramePolicyListenerProxy* listener, API::Object* userData) override
+        {
+            if (!m_client.decidePolicyForNewWindowAction) {
+                listener->use();
+                return;
+            }
+
+            RefPtr<API::URLRequest> request = API::URLRequest::create(resourceRequest);
+
+            m_client.decidePolicyForNewWindowAction(toAPI(page), toAPI(frame), toAPI(type), toAPI(modifiers), toAPI(mouseButton), toAPI(request.get()), toAPI(frameName.impl()), toAPI(listener), toAPI(userData), m_client.base.clientInfo);
+        }
+
+        virtual void decidePolicyForResponse(WebPageProxy* page, WebFrameProxy* frame, const ResourceResponse& resourceResponse, const ResourceRequest& resourceRequest, bool canShowMIMEType, WebFramePolicyListenerProxy* listener, API::Object* userData) override
+        {
+            if (!m_client.decidePolicyForResponse_deprecatedForUseWithV0 && !m_client.decidePolicyForResponse) {
+                listener->use();
+                return;
+            }
+
+            RefPtr<API::URLResponse> response = API::URLResponse::create(resourceResponse);
+            RefPtr<API::URLRequest> request = API::URLRequest::create(resourceRequest);
+
+            if (m_client.decidePolicyForResponse_deprecatedForUseWithV0)
+                m_client.decidePolicyForResponse_deprecatedForUseWithV0(toAPI(page), toAPI(frame), toAPI(response.get()), toAPI(request.get()), toAPI(listener), toAPI(userData), m_client.base.clientInfo);
+            else
+                m_client.decidePolicyForResponse(toAPI(page), toAPI(frame), toAPI(response.get()), toAPI(request.get()), canShowMIMEType, toAPI(listener), toAPI(userData), m_client.base.clientInfo);
+        }
+
+        virtual void unableToImplementPolicy(WebPageProxy* page, WebFrameProxy* frame, const ResourceError& error, API::Object* userData) override
+        {
+            if (!m_client.unableToImplementPolicy)
+                return;
+            
+            m_client.unableToImplementPolicy(toAPI(page), toAPI(frame), toAPI(error), toAPI(userData), m_client.base.clientInfo);
+        }
+    };
+
+    toImpl(pageRef)->setPolicyClient(std::make_unique<PolicyClient>(wkClient));
 }
 
 void WKPageSetPageUIClient(WKPageRef pageRef, const WKPageUIClientBase* wkClient)
