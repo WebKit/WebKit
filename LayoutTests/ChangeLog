@@ -1,3 +1,9 @@
+2014-01-24  Jinwoo Song  <jinwoo7.song@samsung.com>
+
+        Unreviewed EFL gardening. Remove failure expectations which are passing now.
+
+        * platform/efl/TestExpectations: fast/css3-text/css3-text-decoration/
+
 2014-01-23  Morten Stenshorne  <mstensho@opera.com>
 
         Region based multicol: unresolvable percent height results in 1px tall multicol

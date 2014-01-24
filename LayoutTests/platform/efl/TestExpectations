@@ -1618,17 +1618,6 @@ webkit.org/b/123561 printing/width-overflow.html [ Missing ]
 # crypto.subtle is not yet enabled
 crypto/subtle [ Skip ]
 
-# css3 text have been failed since r158389
-webkit.org/b/123617 fast/css3-text/css3-text-decoration/getComputedStyle/getComputedStyle-text-decoration-color.html [ Failure ]
-webkit.org/b/123617 fast/css3-text/css3-text-decoration/getComputedStyle/getComputedStyle-text-decoration-line.html [ Failure ]
-webkit.org/b/123617 fast/css3-text/css3-text-decoration/getComputedStyle/getComputedStyle-text-decoration-shorthand-ordering.html [ Failure ]
-webkit.org/b/123617 fast/css3-text/css3-text-decoration/getComputedStyle/getComputedStyle-text-decoration-shorthand.html [ Failure ]
-webkit.org/b/123617 fast/css3-text/css3-text-decoration/getComputedStyle/getComputedStyle-text-decoration-style.html [ Failure ]
-webkit.org/b/123617 fast/css3-text/css3-text-decoration/getComputedStyle/getComputedStyle-text-underline-position.html [ Failure ]
-webkit.org/b/123617 fast/css3-text/css3-text-decoration/text-decoration-color.html [ ImageOnlyFailure ]
-webkit.org/b/123617 fast/css3-text/css3-text-decoration/text-decoration-line.html [ ImageOnlyFailure ]
-webkit.org/b/123617 fast/css3-text/css3-text-decoration/text-decoration-skip/text-decoration-skip-roundtrip.html [ Failure ]
-
 # Known WebGL conformance test failures, fails on Intel and AMD hardware
 webgl/1.0.1/conformance/context/context-lost-restored.html [ Failure ]
 webgl/1.0.1/conformance/context/premultiplyalpha-test.html [ Failure ]
