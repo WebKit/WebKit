@@ -58,50 +58,25 @@ WebInspector.ScriptTimelineOverviewGraph.prototype = {
     {
         WebInspector.TimelineOverviewGraph.prototype.updateLayout.call(this);
 
-        var startTime = this.startTime;
-        var currentTime = this.currentTime;
-        var endTime = this.endTime;
-        var duration = (endTime - startTime);
-
         var visibleWidth = this.element.offsetWidth;
-        var secondsPerPixel = duration / visibleWidth;
-        var recordBarIndex = 0;
-        var barRecords = [];
+        var secondsPerPixel = (this.endTime - this.startTime) / visibleWidth;
 
-        function createBar(barRecords)
+        var recordBarIndex = 0;
+
+        function createBar(records, renderMode)
         {
             var timelineRecordBar = this._timelineRecordBars[recordBarIndex];
             if (!timelineRecordBar)
                 timelineRecordBar = this._timelineRecordBars[recordBarIndex] = new WebInspector.TimelineRecordBar;
-            timelineRecordBar.records = barRecords;
+            timelineRecordBar.renderMode = renderMode;
+            timelineRecordBar.records = records;
             timelineRecordBar.refresh(this);
             if (!timelineRecordBar.element.parentNode)
                 this.element.appendChild(timelineRecordBar.element);
             ++recordBarIndex;
         }
 
-        for (var record of this._scriptTimeline.records) {
-            // If this bar is completely before the bounds of the graph, skip this record.
-            if (record.endTime < startTime)
-                continue;
-
-            // If this record is completely after the current time or end time, break out now.
-            // Records are sorted, so all records after this will be beyond the current or end time too.
-            if (record.startTime > currentTime || record.startTime > endTime)
-                break;
-
-            // Check if the previous record is a different type or far enough away to create the bar.
-            if (barRecords.length && WebInspector.TimelineRecordBar.recordsCannotBeCombined(barRecords, record, secondsPerPixel)) {
-                createBar.call(this, barRecords);
-                barRecords = [];
-            }
-
-            barRecords.push(record);
-        }
-
-        // Create the bar for the last record if needed.
-        if (barRecords.length)
-            createBar.call(this, barRecords);
+        WebInspector.TimelineRecordBar.createCombinedBars(this._scriptTimeline.records, secondsPerPixel, this, createBar.bind(this));
 
         // Remove the remaining unused TimelineRecordBars.
         for (; recordBarIndex < this._timelineRecordBars.length; ++recordBarIndex) {

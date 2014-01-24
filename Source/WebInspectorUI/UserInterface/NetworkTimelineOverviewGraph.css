@@ -24,43 +24,22 @@
  */
 
 .timeline-overview-graph.network {
-    padding-top: 2px
+    padding-top: 3px;
 }
 
 .timeline-overview-graph.network > .graph-row {
-    position: relative;
     height: 5px;
 }
 
-.timeline-overview-graph.network > .graph-row > .bar {
-    position: absolute;
+.timeline-overview-graph.network > .graph-row > .timeline-record-bar {
     height: 4px;
-    background-color: rgb(120, 176, 225);
-    border: 1px solid rgb(61, 147, 200);
-    border-radius: 2px;
     margin-top: 1px;
-    min-width: 3px;
 }
 
-.timeline-overview-graph.network > .graph-row > .bar.inactive {
-    background-color: rgb(167, 204, 237);
-    border-color: rgb(127, 185, 220);
-}
-
-.timeline-overview-graph.network > .graph-row > .bar.inactive,
-.timeline-overview-graph.network > .graph-row > .bar.unfinished {
-    border-top-right-radius: 0;
-    border-bottom-right-radius: 0;
-    border-right: none;
-}
-
-.timeline-overview-graph.network > .graph-row > .bar:not(.inactive) {
-    border-top-left-radius: 0;
-    border-bottom-left-radius: 0;
-    z-index: 1;
+.timeline-overview-graph.network > .graph-row > .timeline-record-bar > .segment:not(.inactive) {
     box-shadow: white 1px 0 0;
 }
 
-.timeline-overview-graph.network:nth-child(even) > .graph-row > .bar:not(.inactive) {
+.timeline-overview-graph.network:nth-child(even) > .graph-row > .timeline-record-bar > .segment:not(.inactive) {
     box-shadow: rgb(247, 247, 247) 1px 0 0;
 }

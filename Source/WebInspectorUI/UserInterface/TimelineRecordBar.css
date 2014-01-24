@@ -52,10 +52,9 @@
     border-top-right-radius: 0 !important;
     border-bottom-right-radius: 0 !important;
     border-right: none;
-    margin-right: -1px;
 }
 
-.timeline-record-bar > .segment.inactive + .segment {
+.timeline-record-bar.has-inactive-segment > .segment:not(.inactive) {
     border-top-left-radius: 0 !important;
     border-bottom-left-radius: 0 !important;
 }
@@ -66,7 +65,7 @@
 }
 
 :focus .selected .timeline-record-bar > .segment.inactive {
-    opacity: 0.7;
+    background-color: rgb(196, 215, 242) !important;
 }
 
 :focus .selected .timeline-record-bar.has-inactive-segment > .segment:not(.inactive) {

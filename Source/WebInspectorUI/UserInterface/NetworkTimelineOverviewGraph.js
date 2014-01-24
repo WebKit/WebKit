@@ -43,7 +43,6 @@ WebInspector.NetworkTimelineOverviewGraph.BarStyleClassName = "bar";
 WebInspector.NetworkTimelineOverviewGraph.InactiveBarStyleClassName = "inactive";
 WebInspector.NetworkTimelineOverviewGraph.UnfinishedStyleClassName = "unfinished";
 WebInspector.NetworkTimelineOverviewGraph.MaximumRowCount = 6;
-WebInspector.NetworkTimelineOverviewGraph.MinimumBarPaddingPixels = 5;
 
 WebInspector.NetworkTimelineOverviewGraph.prototype = {
     constructor: WebInspector.NetworkTimelineOverviewGraph,
@@ -62,144 +61,51 @@ WebInspector.NetworkTimelineOverviewGraph.prototype = {
             this._timelineRecordGridRows.push([]);
 
         this.element.removeChildren();
+
+        for (var rowRecords of this._timelineRecordGridRows) {
+            rowRecords.__element = document.createElement("div");
+            rowRecords.__element.className = WebInspector.NetworkTimelineOverviewGraph.GraphRowStyleClassName;
+            this.element.appendChild(rowRecords.__element);
+
+            rowRecords.__recordBars = [];
+        }
     },
 
     updateLayout: function()
     {
         WebInspector.TimelineOverviewGraph.prototype.updateLayout.call(this);
 
-        var startTime = this.startTime;
-        var currentTime = this.currentTime;
-        var endTime = this.endTime;
-        var duration = (endTime - startTime);
-
         var visibleWidth = this.element.offsetWidth;
-        var secondsPerPixel = duration / visibleWidth;
+        var secondsPerPixel = (this.endTime - this.startTime) / visibleWidth;
 
-        function updateElementPosition(element, newPosition, property)
+        var recordBarIndex = 0;
+
+        function createBar(rowElement, rowRecordBars, records, renderMode)
         {
-            newPosition *= 100;
-            newPosition = newPosition.toFixed(2);
-
-            var currentPosition = parseFloat(element.style[property]).toFixed(2);
-            if (currentPosition !== newPosition)
-                element.style[property] = newPosition + "%";
-        }
-
-        function createBar(barElementCache, rowElement, barStartTime, barEndTime, inactive)
-        {
-            if (barStartTime > currentTime)
-                return;
-
-            var barElement = barElementCache.shift();
-            if (!barElement) {
-                barElement = document.createElement("div");
-                barElement.classList.add(WebInspector.NetworkTimelineOverviewGraph.BarStyleClassName);
-            }
-
-            barElement.classList.toggle(WebInspector.NetworkTimelineOverviewGraph.InactiveBarStyleClassName, inactive);
-
-            if (barEndTime >= currentTime) {
-                barEndTime = currentTime;
-                barElement.classList.add(WebInspector.NetworkTimelineOverviewGraph.UnfinishedStyleClassName);
-            } else
-                barElement.classList.remove(WebInspector.NetworkTimelineOverviewGraph.UnfinishedStyleClassName);
-
-            if (inactive) {
-                var newBarRightPosition = 1 - ((barEndTime - startTime) / duration);
-                updateElementPosition(barElement, newBarRightPosition, "right");
-                barElement.style.removeProperty("left");
-            } else {
-                var newBarLeftPosition = (barStartTime - startTime) / duration;
-                updateElementPosition(barElement, newBarLeftPosition, "left");
-                barElement.style.removeProperty("right");
-            }
-
-            var newBarWidth = ((barEndTime - barStartTime) / duration);
-            updateElementPosition(barElement, newBarWidth, "width");
-
-            if (!barElement.parendNode)
-                rowElement.appendChild(barElement);
+            var timelineRecordBar = rowRecordBars[recordBarIndex];
+            if (!timelineRecordBar)
+                timelineRecordBar = rowRecordBars[recordBarIndex] = new WebInspector.TimelineRecordBar;
+            timelineRecordBar.renderMode = renderMode;
+            timelineRecordBar.records = records;
+            timelineRecordBar.refresh(this);
+            if (!timelineRecordBar.element.parentNode)
+                rowElement.appendChild(timelineRecordBar.element);
+            ++recordBarIndex;
         }
 
         for (var rowRecords of this._timelineRecordGridRows) {
-            var rowElement = rowRecords.__rowElement;
-            if (!rowElement) {
-                rowElement = rowRecords.__rowElement = document.createElement("div");
-                rowElement.className = WebInspector.NetworkTimelineOverviewGraph.GraphRowStyleClassName;
-                this.element.appendChild(rowElement);
+            var rowElement = rowRecords.__element;
+            var rowRecordBars = rowRecords.__recordBars;
+
+            recordBarIndex = 0;
+
+            WebInspector.TimelineRecordBar.createCombinedBars(rowRecords, secondsPerPixel, this, createBar.bind(this, rowElement, rowRecordBars));
+
+            // Remove the remaining unused TimelineRecordBars.
+            for (; recordBarIndex < rowRecordBars.length; ++recordBarIndex) {
+                rowRecordBars[recordBarIndex].records = null;
+                rowRecordBars[recordBarIndex].element.remove();
             }
-
-            if (!rowRecords.length)
-                continue;
-
-            // Save the current bar elements to reuse.
-            var barElementCache = Array.prototype.slice.call(rowElement.childNodes);
-
-            var inactiveStartTime = NaN;
-            var inactiveEndTime = NaN;
-            var activeStartTime = NaN;
-            var activeEndTime = NaN;
-
-            for (var record of rowRecords) {
-                if (isNaN(record.startTime))
-                    continue;
-
-                // If this bar is completely before the bounds of the graph, skip this record.
-                if (record.endTime < startTime)
-                    continue;
-
-                // If this record is completely after the current time or end time, break out now.
-                // Records are sorted, so all records after this will be beyond the current or end time too.
-                if (record.startTime > currentTime || record.startTime > endTime)
-                    break;
-
-                // Check if the previous record is far enough away to create the inactive bar.
-                if (!isNaN(inactiveStartTime) && inactiveEndTime + (secondsPerPixel * WebInspector.NetworkTimelineOverviewGraph.MinimumBarPaddingPixels) <= record.startTime) {
-                    createBar.call(this, barElementCache, rowElement, inactiveStartTime, inactiveEndTime, true);
-                    inactiveStartTime = NaN;
-                    inactiveEndTime = NaN;
-                }
-
-                // If this is a new bar, peg the start time.
-                if (isNaN(inactiveStartTime))
-                    inactiveStartTime = record.startTime;
-
-                // Update the end time to be the maximum we encounter. inactiveEndTime might be NaN, so "|| 0" to prevent Math.max from returning NaN.
-                inactiveEndTime = Math.max(inactiveEndTime || 0, record.activeStartTime);
-
-                // Check if the previous record is far enough away to create the active bar. We also create it now if the current record has no active state time.
-                if (!isNaN(activeStartTime) && (activeEndTime + (secondsPerPixel * WebInspector.NetworkTimelineOverviewGraph.MinimumBarPaddingPixels) <= record.activeStartTime || isNaN(record.activeStartTime))) {
-                    if (!isNaN(activeEndTime)) {
-                        createBar.call(this, barElementCache, rowElement, activeStartTime, activeEndTime);
-                        activeStartTime = NaN;
-                        activeEndTime = NaN;
-                    }
-                }
-
-                if (isNaN(record.activeStartTime))
-                    continue;
-
-                // If this is a new bar, peg the start time.
-                if (isNaN(activeStartTime))
-                    activeStartTime = record.activeStartTime;
-
-                // Update the end time to be the maximum we encounter. activeEndTime might be NaN, so "|| 0" to prevent Math.max from returning NaN.
-                if (!isNaN(record.endTime))
-                    activeEndTime = Math.max(activeEndTime || 0, record.endTime);
-            }
-
-            // Create the inactive bar for the last record if needed.
-            if (!isNaN(inactiveStartTime))
-                createBar.call(this, barElementCache, rowElement, inactiveStartTime, inactiveEndTime || currentTime, true);
-
-            // Create the active bar for the last record if needed.
-            if (!isNaN(activeStartTime))
-                createBar.call(this, barElementCache, rowElement, activeStartTime, activeEndTime || currentTime);
-
-            // Remove any unused bar elements.
-            for (var barElement of barElementCache)
-                barElement.remove();
         }
     },
 

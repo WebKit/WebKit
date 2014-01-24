@@ -242,52 +242,24 @@ WebInspector.TimelineDataGridNode.prototype = {
         var secondsPerPixel = duration / visibleWidth;
         var recordBarIndex = 0;
 
-        function createBar(barRecords)
+        function createBar(records, renderMode)
         {
             var timelineRecordBar = this._timelineRecordBars[recordBarIndex];
             if (!timelineRecordBar)
                 timelineRecordBar = this._timelineRecordBars[recordBarIndex] = new WebInspector.TimelineRecordBar;
-            timelineRecordBar.records = barRecords;
+            timelineRecordBar.renderMode = renderMode;
+            timelineRecordBar.records = records;
             timelineRecordBar.refresh(this._graphDataSource);
             if (!timelineRecordBar.element.parentNode)
                 this._graphContainerElement.appendChild(timelineRecordBar.element);
             ++recordBarIndex;
         }
 
-        function createBarsForRecords(records)
-        {
-            var barRecords = [];
-
-            for (var record of records) {
-                if (isNaN(record.startTime))
-                    continue;
-
-                // If this bar is completely before the bounds of the graph, skip this record.
-                if (record.endTime < startTime)
-                    continue;
-
-                // If this record is completely after the current time or end time, break out now.
-                // Records are sorted, so all records after this will be beyond the current or end time too.
-                if (record.startTime > currentTime || record.startTime > endTime)
-                    break;
-
-                // Check if the previous record can be combined with the current record, if not make a new bar.
-                if (barRecords.length && WebInspector.TimelineRecordBar.recordsCannotBeCombined(barRecords, record, secondsPerPixel)) {
-                    createBar.call(this, barRecords);
-                    barRecords = [];
-                }
-
-                barRecords.push(record);
-            }
-
-            // Create the bar for the last record if needed.
-            if (barRecords.length)
-                createBar.call(this, barRecords);
-        }
+        var boundCreateBar = createBar.bind(this);
 
         if (this.expanded) {
             // When expanded just use the records for this node.
-            createBarsForRecords.call(this, this.records);
+            WebInspector.TimelineRecordBar.createCombinedBars(this.records, secondsPerPixel, this._graphDataSource, boundCreateBar);
         } else {
             // When collapsed use the records for this node and its descendants.
             // To share bars better, group records by type.
@@ -317,7 +289,7 @@ WebInspector.TimelineDataGridNode.prototype = {
             }
 
             for (var records of recordTypeMap.values())
-                createBarsForRecords.call(this, records);
+                WebInspector.TimelineRecordBar.createCombinedBars(records, secondsPerPixel, this._graphDataSource, boundCreateBar);
         }
 
         // Remove the remaining unused TimelineRecordBars.

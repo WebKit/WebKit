@@ -1,3 +1,54 @@
+2014-01-23  Timothy Hatcher  <timothy@apple.com>
+
+        Refactor TimelineRecordBar combining logic into a helper function.
+
+        https://bugs.webkit.org/show_bug.cgi?id=127530
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/LayoutTimelineOverviewGraph.js:
+        (WebInspector.LayoutTimelineOverviewGraph.prototype.updateLayout.createBar):
+        (WebInspector.LayoutTimelineOverviewGraph.prototype.updateLayout):
+        Use TimelineRecordBar.createCombinedBars.
+
+        * UserInterface/NetworkTimelineOverviewGraph.css:
+        (.timeline-overview-graph.network):
+        (.timeline-overview-graph.network > .graph-row > .timeline-record-bar):
+        Cleaned up since we are using TimelineRecordBar.
+
+        * UserInterface/NetworkTimelineOverviewGraph.js:
+        (WebInspector.NetworkTimelineOverviewGraph.prototype.reset):
+        (WebInspector.NetworkTimelineOverviewGraph.prototype.updateLayout.createBar):
+        (WebInspector.NetworkTimelineOverviewGraph.prototype.updateLayout):
+        Use TimelineRecordBar.createCombinedBars.
+
+        * UserInterface/ScriptTimelineOverviewGraph.js:
+        (WebInspector.ScriptTimelineOverviewGraph.prototype.updateLayout.createBar):
+        (WebInspector.ScriptTimelineOverviewGraph.prototype.updateLayout):
+        Use TimelineRecordBar.createCombinedBars.
+
+        * UserInterface/TimelineDataGridNode.js:
+        (WebInspector.TimelineDataGridNode.prototype.refreshGraph.createBar):
+        (WebInspector.TimelineDataGridNode.prototype.refreshGraph):
+        Use TimelineRecordBar.createCombinedBars.
+
+        * UserInterface/TimelineRecordBar.css:
+        (.timeline-record-bar.unfinished > .segment):
+        (.timeline-record-bar.has-inactive-segment > .segment:not(.inactive)):
+        (:focus .selected .timeline-record-bar > .segment.inactive):
+        Improved selected appearance and don't assume .segment.inactive exists.
+
+        * UserInterface/TimelineRecordBar.js:
+        (WebInspector.TimelineRecordBar):
+        (WebInspector.TimelineRecordBar.createCombinedBars.compareByActiveStartTime): Added.
+        (WebInspector.TimelineRecordBar.createCombinedBars): Added.
+        (WebInspector.TimelineRecordBar.prototype.get renderMode): Added.
+        (WebInspector.TimelineRecordBar.prototype.set renderMode): Added.
+        (WebInspector.TimelineRecordBar.prototype.set records):
+        (WebInspector.TimelineRecordBar.prototype.refresh):
+        Lazily create DOM elements. Support rendering one or both segments. Doing this lets
+        combined inactive segments sit behind multiple active segments.
+
 2014-01-22  Timothy Hatcher  <timothy@apple.com>
 
         Improve collapsing of TimelineDataGridNode graphs up to ancestors.
