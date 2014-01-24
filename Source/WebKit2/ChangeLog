@@ -1,3 +1,29 @@
+2014-01-24  Víctor Manuel Jáquez Leal  <vjaquez@igalia.com>
+
+        [GTK] youtube HTML5 videos in fullscreen, after <Esc>, can't go fullscreen again
+        https://bugs.webkit.org/show_bug.cgi?id=127064
+
+        When pressing <Esc> or <f> at full screen, the WebView shall emit the
+        event webkitfullscreenchange, but wk2gtk does not emit it. This is
+        because the WebView manages directly the exit of the full screen.
+
+        With this patch the WebView calls requestExitFullScreen to the full
+        screen manager, instead of managing directly the exit of the full
+        screen, and the event webkitfullscreenchange will be dispatched
+        correctly.
+
+        Reviewed by Martin Robinson.
+
+        No tests are included because there is a bug in WKTR that prevents the
+        execution of a test for this patch. See
+        https://bugs.webkit.org/show_bug.cgi?id=127348
+
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp:
+        (webkitWebViewBaseKeyPressEvent): Call
+        webkitWebViewBaseRequestExitFullScreen.
+        (webkitWebViewBaseRequestExitFullScreen): Added.
+        * UIProcess/API/gtk/WebKitWebViewBasePrivate.h: Ditto.
+
 2014-01-24  Tim Horton  <timothy_horton@apple.com>
 
         iOS build fix after r162710.

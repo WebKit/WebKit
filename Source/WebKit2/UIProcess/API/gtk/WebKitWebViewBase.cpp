@@ -616,7 +616,7 @@ static gboolean webkitWebViewBaseKeyPressEvent(GtkWidget* widget, GdkEventKey* e
         case GDK_KEY_Escape:
         case GDK_KEY_f:
         case GDK_KEY_F:
-            webkitWebViewBaseExitFullScreen(webViewBase);
+            webkitWebViewBaseRequestExitFullScreen(webViewBase);
             return TRUE;
         default:
             break;
@@ -1059,6 +1059,13 @@ void webkitWebViewBaseExitFullScreen(WebKitWebViewBase* webkitWebViewBase)
         gtk_window_unfullscreen(GTK_WINDOW(topLevelWindow));
     fullScreenManagerProxy->didExitFullScreen();
     priv->fullScreenModeActive = false;
+#endif
+}
+
+void webkitWebViewBaseRequestExitFullScreen(WebKitWebViewBase* webkitWebViewBase)
+{
+#if ENABLE(FULLSCREEN_API)
+    webkitWebViewBase->priv->pageProxy->fullScreenManager()->requestExitFullScreen();
 #endif
 }
 
