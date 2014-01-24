@@ -834,8 +834,6 @@ public:
     void endColorPicker();
 #endif
 
-    const API::LoaderClient* loaderClient() { return m_loaderClient.get(); }
-
     WebCore::IntSize minimumLayoutSize() const { return m_minimumLayoutSize; }
     void setMinimumLayoutSize(const WebCore::IntSize&);
 

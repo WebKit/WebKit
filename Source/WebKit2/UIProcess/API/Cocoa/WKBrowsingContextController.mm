@@ -58,6 +58,7 @@
 #import "WebCertificateInfo.h"
 #import "WebContext.h"
 #import "WebPageProxy.h"
+#import <wtf/NeverDestroyed.h>
 
 using namespace WebCore;
 using namespace WebKit;
@@ -149,10 +150,18 @@ static NSString * const frameErrorKey = @"WKBrowsingContextFrameErrorKey";
     RetainPtr<WKRemoteObjectRegistry> _remoteObjectRegistry;
 }
 
+static HashMap<WebPageProxy*, WKBrowsingContextController *>& browsingContextControllerMap()
+{
+    static NeverDestroyed<HashMap<WebPageProxy*, WKBrowsingContextController *>> browsingContextControllerMap;
+    return browsingContextControllerMap;
+}
+
 - (void)dealloc
 {
+    ASSERT(browsingContextControllerMap().get(_page.get()) == self);
+    browsingContextControllerMap().remove(_page.get());
+
     _page->pageLoadState().removeObserver(*_pageLoadStateObserver);
-    _page->~WebPageProxy();
 
     [_remoteObjectRegistry _invalidate];
 
@@ -785,12 +794,6 @@ static void setUpPagePolicyClient(WKBrowsingContextController *browsingContext, 
     return YES;
 }
 
-#pragma mark WKObject protocol implementation
-
-- (API::Object&)_apiObject
-{
-    return *reinterpret_cast<API::Object*>(&_page);
-}
 
 - (instancetype)_initWithPageRef:(WKPageRef)pageRef
 {
@@ -802,12 +805,15 @@ static void setUpPagePolicyClient(WKBrowsingContextController *browsingContext, 
     _pageLoadStateObserver = std::make_unique<PageLoadStateObserver>(self);
     _page->pageLoadState().addObserver(*_pageLoadStateObserver);
 
+    ASSERT(!browsingContextControllerMap().contains(_page.get()));
+    browsingContextControllerMap().set(_page.get(), self);
+
     return self;
 }
 
 + (WKBrowsingContextController *)_browsingContextControllerForPageRef:(WKPageRef)pageRef
 {
-    return (WKBrowsingContextController *)static_cast<const WebLoaderClient*>(WebKit::toImpl(pageRef)->loaderClient())->client().base.clientInfo;
+    return browsingContextControllerMap().get(toImpl(pageRef));
 }
 
 @end

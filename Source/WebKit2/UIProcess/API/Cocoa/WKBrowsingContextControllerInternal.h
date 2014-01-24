@@ -27,11 +27,10 @@
 
 #if WK_API_ENABLED
 
-#import "WKObject.h"
 #import "WeakObjCPtr.h"
 #import "WebPageProxy.h"
 
-@interface WKBrowsingContextController () <WKObject> {
+@interface WKBrowsingContextController () {
 @package
     WebKit::WeakObjCPtr<id <WKBrowsingContextHistoryDelegate>> _historyDelegate;
 }

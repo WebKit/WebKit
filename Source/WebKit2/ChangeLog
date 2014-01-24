@@ -1,3 +1,18 @@
+2014-01-24  Anders Carlsson  <andersca@apple.com>
+
+        Use a side table to map WebPageProxy objects to WKBrowsingContextController objects
+        https://bugs.webkit.org/show_bug.cgi?id=127577
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/API/Cocoa/WKBrowsingContextController.mm:
+        (browsingContextControllerMap):
+        (-[WKBrowsingContextController dealloc]):
+        (-[WKBrowsingContextController _initWithPageRef:]):
+        (+[WKBrowsingContextController _browsingContextControllerForPageRef:]):
+        * UIProcess/API/Cocoa/WKBrowsingContextControllerInternal.h:
+        * UIProcess/WebPageProxy.h:
+
 2014-01-24  Tim Horton  <timothy_horton@apple.com>
 
         iOS build fix after r162710.
