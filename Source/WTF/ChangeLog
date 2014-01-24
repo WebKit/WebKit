@@ -1,3 +1,26 @@
+2014-01-24  Darin Adler  <darin@apple.com>
+
+        Simplify Compiler.h
+        https://bugs.webkit.org/show_bug.cgi?id=127491
+
+        Reviewed by Anders Carlsson.
+
+        * wtf/Assertions.h: Remove COMPILER_SUPPORTS(CXX_STATIC_ASSERT), since
+        we now have that for all compilers that can build WebKit.
+
+        * wtf/Compiler.h: Removed always true feature flags, including:
+        COMPILER_SUPPORTS(CXX_VARIADIC_TEMPLATES), COMPILER_SUPPORTS(CXX_RVALUE_REFERENCES),
+        COMPILER_SUPPORTS(CXX_DELETED_FUNCTIONS), COMPILER_SUPPORTS(CXX_NULLPTR),
+        COMPILER_SUPPORTS(CXX_EXPLICIT_CONVERSIONS), COMPILER_SUPPORTS(CXX_STATIC_ASSERT),
+        COMPILER_SUPPORTS(CXX_OVERRIDE_CONTROL), COMPILER_SUPPORTS(CXX_STRONG_ENUMS), and
+        COMPILER_SUPPORTS(CXX_AUTO_TYPE). Sorted sections alphabetically. Separated out
+        nested #if and #else into separate checks for greater readability. Removed obsolete
+        check for COMPILER(RVCT). Removed unused COMPILER(GCCE) detection.
+
+        * wtf/RefPtr.h: Remove COMPILER_SUPPORTS(CXX_NULLPTR), since we now have
+        that for all compilers that can build WebKit.
+        * wtf/RetainPtr.h: Ditto.
+
 2014-01-23  Max Vujovic  <mvujovic@adobe.com>
 
         Remove CSS Custom Filters code and tests
