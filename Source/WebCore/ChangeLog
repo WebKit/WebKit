@@ -1,3 +1,9 @@
+2014-01-24  Anders Carlsson  <andersca@apple.com>
+
+        Fix 32-bit build.
+
+        * WebCore.exp.in:
+
 2014-01-24  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Convert some NMake files to MSBuild project files
