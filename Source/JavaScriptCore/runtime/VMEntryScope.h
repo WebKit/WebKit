@@ -42,6 +42,8 @@ public:
 
     JSGlobalObject* globalObject() const { return m_globalObject; }
 
+    void setRecompilationNeeded(bool recompileNeeded) { m_recompilationNeeded = recompileNeeded; }
+
 private:
     size_t requiredCapacity() const;
 
@@ -53,6 +55,7 @@ private:
     // m_prev and m_prevStackLimit may belong to a different thread's stack.
     VMEntryScope* m_prev;
     void* m_prevStackLimit;
+    bool m_recompilationNeeded;
 };
 
 } // namespace JSC

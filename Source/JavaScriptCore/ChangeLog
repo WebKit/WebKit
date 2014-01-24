@@ -1,3 +1,24 @@
+2014-01-24  Joseph Pecoraro  <pecoraro@apple.com>
+
+        fast/profiler tests ASSERTing after moving recompileAllJSFunctions off a timer
+        https://bugs.webkit.org/show_bug.cgi?id=127566
+
+        Reviewed by Oliver Hunt.
+
+        Make the VM handle recompilation as soon as possible after it is requested.
+
+        * debugger/Debugger.cpp:
+        (JSC::Debugger::recompileAllJSFunctions):
+        When in a JavaScript stack, mark for recompilation when possible.
+
+        * runtime/VMEntryScope.h:
+        (JSC::VMEntryScope::setRecompilationNeeded):
+        * runtime/VMEntryScope.cpp:
+        (JSC::VMEntryScope::VMEntryScope):
+        (JSC::VMEntryScope::~VMEntryScope):
+        Handle recompilation when the top VMEntryScope is popped.
+        Pass the needs recompilation flag up the stack if needed.
+
 2014-01-24  Oliver Hunt  <oliver@apple.com>
 
         Generic JSObject::put should handle static properties in the classinfo hierarchy

@@ -1,3 +1,17 @@
+2014-01-24  Joseph Pecoraro  <pecoraro@apple.com>
+
+        fast/profiler tests ASSERTing after moving recompileAllJSFunctions off a timer
+        https://bugs.webkit.org/show_bug.cgi?id=127566
+
+        Reviewed by Oliver Hunt.
+
+        Covered by existing tests.
+
+        * testing/Internals.cpp:
+        (WebCore::Internals::closeDummyInspectorFrontend):
+        Now that we don't have to fake that this is a page being destroyed to
+        avoid recompilation. Use the InspectorDestroyed reason.
+
 2014-01-24  Anders Carlsson  <andersca@apple.com>
 
         Get rid of monotonicallyIncreasingTimeMS and start using std::chrono instead

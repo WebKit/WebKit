@@ -1465,8 +1465,7 @@ void Internals::closeDummyInspectorFrontend()
     ASSERT(page);
     ASSERT(m_frontendWindow);
 
-    // Treat this as if the page we are inspecting is closing.
-    page->inspectorController().disconnectFrontend(InspectorDisconnectReason::InspectedTargetDestroyed);
+    page->inspectorController().disconnectFrontend(InspectorDisconnectReason::InspectorDestroyed);
 
     m_frontendChannel.release();
 

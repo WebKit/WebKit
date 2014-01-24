@@ -26,6 +26,7 @@
 #include "config.h"
 #include "VMEntryScope.h"
 
+#include "Debugger.h"
 #include "VM.h"
 #include <wtf/StackBounds.h>
 
@@ -37,6 +38,7 @@ VMEntryScope::VMEntryScope(VM& vm, JSGlobalObject* globalObject)
     , m_globalObject(globalObject)
     , m_prev(vm.entryScope)
     , m_prevStackLimit(vm.stackLimit())
+    , m_recompilationNeeded(false)
 {
     if (!vm.entryScope) {
 #if ENABLE(ASSEMBLER)
@@ -60,6 +62,15 @@ VMEntryScope::~VMEntryScope()
 {
     m_vm.entryScope = m_prev;
     m_vm.setStackLimit(m_prevStackLimit);
+
+    if (m_recompilationNeeded) {
+        if (m_vm.entryScope)
+            m_vm.entryScope->setRecompilationNeeded(true);
+        else {
+            if (Debugger* debugger = m_globalObject->debugger())
+                debugger->recompileAllJSFunctions(&m_vm);
+        }
+    }
 }
 
 size_t VMEntryScope::requiredCapacity() const
@@ -78,8 +89,7 @@ size_t VMEntryScope::requiredCapacity() const
 
     size_t requiredCapacity = interpreter->isInErrorHandlingMode() ? errorModeRequiredStack : requiredStack;
     RELEASE_ASSERT(m_stack.size() >= requiredCapacity);
-    return requiredCapacity; 
+    return requiredCapacity;
 }
 
 } // namespace JSC
-

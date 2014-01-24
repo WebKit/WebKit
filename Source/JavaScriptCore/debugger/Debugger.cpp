@@ -322,10 +322,11 @@ void Debugger::recompileAllJSFunctions(VM* vm)
 {
     // If JavaScript is running, it's not safe to recompile, since we'll end
     // up throwing away code that is live on the stack.
-    ASSERT(!vm->entryScope);
-    if (vm->entryScope)
+    if (vm->entryScope) {
+        vm->entryScope->setRecompilationNeeded(true);
         return;
-    
+    }
+
     vm->prepareToDiscardCode();
 
     Recompiler recompiler(this);
