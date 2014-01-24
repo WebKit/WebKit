@@ -231,8 +231,8 @@ namespace JSC { namespace DFG {
     \
     /* Nodes for misc operations. */\
     macro(Breakpoint, NodeMustGenerate) \
-    macro(ProfileWillCall, NodeMustGenerate | NodeClobbersWorld) \
-    macro(ProfileDidCall, NodeMustGenerate | NodeClobbersWorld) \
+    macro(ProfileWillCall, NodeMustGenerate) \
+    macro(ProfileDidCall, NodeMustGenerate) \
     macro(CheckHasInstance, NodeMustGenerate) \
     macro(InstanceOf, NodeResultBoolean) \
     macro(IsUndefined, NodeResultBoolean) \

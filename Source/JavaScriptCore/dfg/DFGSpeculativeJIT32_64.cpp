@@ -4242,25 +4242,13 @@ void SpeculativeJIT::compile(Node* node)
         break;
     }
 
-    case ProfileWillCall: {
-        JSValueOperand profile(this, node->child1());
-        GPRReg profileTagGPR = profile.tagGPR();
-        GPRReg profilePayloadGPR = profile.payloadGPR();
-        silentSpillAllRegisters(InvalidGPRReg);
-        callOperation(operationProfileWillCall, profileTagGPR, profilePayloadGPR);
-        silentFillAllRegisters(InvalidGPRReg);
-        noResult(node);
-        break;
-    }
-
+    case ProfileWillCall:
     case ProfileDidCall: {
-        JSValueOperand profile(this, node->child1());
-        GPRReg profileTagGPR = profile.tagGPR();
-        GPRReg profilePayloadGPR = profile.payloadGPR();
-        silentSpillAllRegisters(InvalidGPRReg);
-        callOperation(operationProfileWillCall, profileTagGPR, profilePayloadGPR);
-        silentFillAllRegisters(InvalidGPRReg);
-        noResult(node);
+        GPRTemporary temp(this);
+        m_jit.loadPtr(m_jit.vm()->enabledProfilerAddress(), temp.gpr());
+        speculationCheck(
+            DebuggerEvent, JSValueRegs(), 0,
+            m_jit.branchTestPtr(JITCompiler::NonZero, temp.gpr()));
         break;
     }
 

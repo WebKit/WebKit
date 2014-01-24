@@ -100,6 +100,45 @@
 
 2014-01-24  Mark Lam  <mark.lam@apple.com>
 
+        Skip op_profiler callbacks if !VM::m_enabledProfiler.
+        https://bugs.webkit.org/show_bug.cgi?id=127567.
+
+        Reviewed by Geoffrey Garen.
+
+        The profiler may not be always active (recording). When it's not active
+        (as in VM::m_enabledProfiler is null), then we might as well skip the
+        op_profiler callbacks. The callbacks themselves were already previously
+        gated by a VM::enabledProfiler() check. So, this change does not change
+        any profiler behavior.
+
+        For the DFG, we'll turn the op_profiler handling into speculation checks
+        and OSR exit to the baseline JIT if the profiler becomes active.
+
+        This brings the Octane score up to ~3000 from ~2840.
+
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGNodeType.h:
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_profile_will_call):
+        (JSC::JIT::emit_op_profile_did_call):
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::emit_op_profile_will_call):
+        (JSC::JIT::emit_op_profile_did_call):
+        * llint/LowLevelInterpreter.asm:
+        * runtime/VM.h:
+        (JSC::VM::enabledProfilerAddress):
+
+2014-01-24  Mark Lam  <mark.lam@apple.com>
+
         Removing the need for Debugger* and m_shouldPause op_debug check.
         <https://webkit.org/b/127532>
 

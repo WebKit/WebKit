@@ -308,6 +308,7 @@ namespace JSC {
         {
             return m_enabledProfiler;
         }
+        void* enabledProfilerAddress() { return &m_enabledProfiler; }
 
 #if ENABLE(JIT) && ENABLE(LLINT)
         bool canUseJIT() { return m_canUseJIT; }

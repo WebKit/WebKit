@@ -1114,14 +1114,20 @@ void JIT::emitSlow_op_to_this(Instruction* currentInstruction, Vector<SlowCaseEn
 
 void JIT::emit_op_profile_will_call(Instruction* currentInstruction)
 {
+    load32(m_vm->enabledProfilerAddress(), regT0);
+    Jump profilerDone = branchTestPtr(Zero, regT0);
     emitLoad(currentInstruction[1].u.operand, regT1, regT0);
     callOperation(operationProfileWillCall, regT1, regT0);
+    profilerDone.link(this);
 }
 
 void JIT::emit_op_profile_did_call(Instruction* currentInstruction)
 {
+    load32(m_vm->enabledProfilerAddress(), regT0);
+    Jump profilerDone = branchTestPtr(Zero, regT0);
     emitLoad(currentInstruction[1].u.operand, regT1, regT0);
     callOperation(operationProfileDidCall, regT1, regT0);
+    profilerDone.link(this);
 }
 
 void JIT::emit_op_get_arguments_length(Instruction* currentInstruction)

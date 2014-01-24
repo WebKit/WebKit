@@ -4519,25 +4519,14 @@ void SpeculativeJIT::compile(Node* node)
         break;
     }
 
-    case ProfileWillCall: {
-        JSValueOperand profile(this, node->child1());
-        GPRReg profileGPR = profile.gpr();
-        silentSpillAllRegisters(InvalidGPRReg);
-        callOperation(operationProfileWillCall, profileGPR);
-        silentFillAllRegisters(InvalidGPRReg);
-        noResult(node);
+    case ProfileWillCall:
+    case ProfileDidCall:
+        speculationCheck(
+            DebuggerEvent, JSValueRegs(), 0,
+            m_jit.branchTestPtr(
+                JITCompiler::NonZero,
+                JITCompiler::AbsoluteAddress(m_jit.vm()->enabledProfilerAddress())));
         break;
-    }
-
-    case ProfileDidCall: {
-        JSValueOperand profile(this, node->child1());
-        GPRReg profileGPR = profile.gpr();
-        silentSpillAllRegisters(InvalidGPRReg);
-        callOperation(operationProfileDidCall, profileGPR);
-        silentFillAllRegisters(InvalidGPRReg);
-        noResult(node);
-        break;
-    }
 
     case Call:
     case Construct:
