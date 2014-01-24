@@ -710,30 +710,10 @@ void JIT::emit_op_throw_static_error(Instruction* currentInstruction)
 
 void JIT::emit_op_debug(Instruction* currentInstruction)
 {
-#if ENABLE(DEBUG_WITH_BREAKPOINT)
-    UNUSED_PARAM(currentInstruction);
-    breakpoint();
-#elif ENABLE(JAVASCRIPT_DEBUGGER)
-    JSGlobalObject* globalObject = codeBlock()->globalObject();
-    char* debuggerAddress = reinterpret_cast<char*>(globalObject) + JSGlobalObject::debuggerOffset();
-    Jump noDebugger = branchTestPtr(Zero, AbsoluteAddress(debuggerAddress));
-
-    Debugger* debugger = globalObject->debugger();
-    char* shouldPauseAddress = reinterpret_cast<char*>(debugger) + Debugger::shouldPauseOffset();
-    Jump callbackNeeded = branchTest8(NonZero, AbsoluteAddress(shouldPauseAddress));
-
-    char* numBreakpointsAddress = reinterpret_cast<char*>(codeBlock()) + CodeBlock::numBreakpointsOffset();
-    load32(numBreakpointsAddress, regT0);
-    Jump noBreakpointSet = branchTest32(Zero, regT0);
-
-    callbackNeeded.link(this);
+    load32(codeBlock()->debuggerRequestsAddress(), regT0);
+    Jump noDebuggerRequests = branchTest32(Zero, regT0);
     callOperation(operationDebug, currentInstruction[1].u.operand);
-
-    noBreakpointSet.link(this);
-    noDebugger.link(this);
-#else
-    UNUSED_PARAM(currentInstruction);
-#endif
+    noDebuggerRequests.link(this);
 }
 
 void JIT::emit_op_eq_null(Instruction* currentInstruction)

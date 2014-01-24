@@ -871,17 +871,23 @@ public:
 
     bool hasOpDebugForLineAndColumn(unsigned line, unsigned column);
 
-    int numBreakpoints() const { return m_numBreakpoints; }
-    static ptrdiff_t numBreakpointsOffset() { return OBJECT_OFFSETOF(CodeBlock, m_numBreakpoints); }
-    void* numBreakpointsAddress() { return &m_numBreakpoints; }
+    int hasDebuggerRequests() const { return !!m_debuggerRequests; }
+    void* debuggerRequestsAddress() { return &m_debuggerRequests; }
 
-    void addBreakpoint(int numBreakpoints) { m_numBreakpoints += numBreakpoints; }
-    void removeBreakpoint(int numBreakpoints)
+    void addBreakpoint(unsigned numBreakpoints) { m_numBreakpoints += numBreakpoints; }
+    void removeBreakpoint(unsigned numBreakpoints)
     {
+        ASSERT(m_numBreakpoints > numBreakpoints);
         m_numBreakpoints -= numBreakpoints;
-        ASSERT(m_numBreakpoints >= 0);
     }
-    void clearAllBreakpoints() { m_numBreakpoints = 0; }
+
+    enum SteppingMode {
+        SteppingModeDisabled,
+        SteppingModeEnabled
+    };
+    void setSteppingMode(SteppingMode mode) { m_steppingMode = mode; }
+
+    void clearDebuggerRequests() { m_debuggerRequests = 0; }
 
     // FIXME: Make these remaining members private.
 
@@ -1019,7 +1025,13 @@ private:
 #endif
     WriteBarrier<UnlinkedCodeBlock> m_unlinkedCode;
     int m_numParameters;
-    int m_numBreakpoints;
+    union {
+        unsigned m_debuggerRequests;
+        struct {
+            unsigned m_steppingMode : 1;
+            unsigned m_numBreakpoints : 31;
+        };
+    };
     WriteBarrier<ScriptExecutable> m_ownerExecutable;
     VM* m_vm;
 

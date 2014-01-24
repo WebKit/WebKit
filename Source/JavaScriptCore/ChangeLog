@@ -1,3 +1,80 @@
+2014-01-24  Mark Lam  <mark.lam@apple.com>
+
+        Removing the need for Debugger* and m_shouldPause op_debug check.
+        <https://webkit.org/b/127532>
+
+        Reviewed by Geoffrey Garen.
+
+        This patch replaces the checking of the Debugger::m_shouldPause flag
+        with a procedure to set a SteppingMode flag on all CodeBlocks under
+        the management of the debugger. This simplifies the op_debug checking
+        logic in all the execution engines.
+
+        * bytecode/CodeBlock.cpp:
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::hasDebuggerRequests):
+        (JSC::CodeBlock::debuggerRequestsAddress):
+        (JSC::CodeBlock::setSteppingMode):
+        (JSC::CodeBlock::clearDebuggerRequests):
+        - CodeBlock::m_debuggerRequests is a union of m_numBreakpoints and the
+          new m_steppingMode. The debugger can add/remove breakpoints to the
+          CodeBlock as well as set the stepping mode. By having
+          m_debuggerRequests as a union of the 2 bit fields, the op_debug code
+          can now check if any of the 2 requests made on the CodeBlock is still
+          in effect just by testing a single int.
+
+        * debugger/Debugger.cpp:
+        (JSC::Debugger::Debugger):
+        (JSC::Debugger::detach):
+        - This was bug from before where I forgot to clear the CodeBlock
+          breakpoints before detaching. We now take care of it by clearing all
+          debugger requests made to the CodeBlock.
+
+        (JSC::Debugger::SetSteppingModeFunctor::SetSteppingModeFunctor):
+        (JSC::Debugger::SetSteppingModeFunctor::operator()):
+        (JSC::Debugger::setSteppingMode):
+        (JSC::Debugger::ClearCodeBlockDebuggerRequestsFunctor::ClearCodeBlockDebuggerRequestsFunctor):
+        (JSC::Debugger::ClearCodeBlockDebuggerRequestsFunctor::operator()):
+        (JSC::Debugger::clearBreakpoints):
+
+        (JSC::Debugger::ClearDebuggerRequestsFunctor::ClearDebuggerRequestsFunctor):
+        (JSC::Debugger::ClearDebuggerRequestsFunctor::operator()):
+        (JSC::Debugger::clearDebuggerRequests):
+        - We need a distinct clearDebuggerRequests() from clearBreakpoints()
+          because:
+          1. When we detach a globalObject, we only want to clear the debugger
+             requests in CodeBlocks from that global.
+          2. Clearing the debugger requests in the CodeBlocks is not the same
+             as clearing the breakpoints. The breakpoints are still in effect
+             for the next time a globalObject is attached, or for other
+             globalObjects that are still attached.
+
+        (JSC::Debugger::setPauseOnNextStatement):
+        (JSC::Debugger::breakProgram):
+        (JSC::Debugger::stepIntoStatement):
+        (JSC::Debugger::updateCallFrameAndPauseIfNeeded):
+        (JSC::Debugger::pauseIfNeeded):
+        (JSC::Debugger::exception):
+        (JSC::Debugger::willExecuteProgram):
+        (JSC::Debugger::didReachBreakpoint):
+        * debugger/Debugger.h:
+        - We're always going to support the debugger. So, there's no longer
+          a need to check ENABLE(JAVASCRIPT_DEBUGGER). Removed the unneeded code.
+
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::debug):
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_debug):
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::emit_op_debug):
+        * llint/LowLevelInterpreter.asm:
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::setDebugger):
+
 2014-01-24  Michael Saboff  <msaboff@apple.com>
 
         ARM Offline assembler temporary register allocator has duplicate register when building fat binaries

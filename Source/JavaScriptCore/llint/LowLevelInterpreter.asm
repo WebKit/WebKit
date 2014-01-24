@@ -835,18 +835,9 @@ _llint_op_profile_did_call:
 
 _llint_op_debug:
     traceExecution()
-    loadp CodeBlock[cfr], t1
-    loadp CodeBlock::m_globalObject[t1], t0
-    loadp JSGlobalObject::m_debugger[t0], t0
+    loadp CodeBlock[cfr], t0
+    loadi CodeBlock::m_debuggerRequests[t0], t0
     btiz t0, .opDebugDone
-
-    loadb Debugger::m_shouldPause[t0], t0
-    btbnz t0, .opDebugDoCallback
-
-    loadi CodeBlock::m_numBreakpoints[t1], t0
-    btiz t0, .opDebugDone
-
-.opDebugDoCallback:
     callSlowPath(_llint_slow_path_debug)
 .opDebugDone:                    
     dispatch(3)

@@ -4510,29 +4510,15 @@ void SpeculativeJIT::compile(Node* node)
         break;
 
     case Breakpoint: {
-        JSGlobalObject* globalObject = m_jit.graph().globalObjectFor(m_currentNode->codeOrigin);
-        speculationCheck(
-            DebuggerEvent, JSValueRegs(), 0,
-            m_jit.branchTestPtr(
-                JITCompiler::Zero,
-                JITCompiler::AbsoluteAddress(globalObject->debuggerAddress())));
-
-        ASSERT(globalObject->hasDebugger());
-        speculationCheck(
-            DebuggerEvent, JSValueRegs(), 0,
-            m_jit.branchTest8(
-                JITCompiler::NonZero,
-                JITCompiler::AbsoluteAddress(globalObject->debugger()->shouldPauseAddress())));
-
         GPRTemporary temp(this);
-        GPRReg numBreakpointsGPR = temp.gpr();
-        m_jit.load32(m_jit.codeBlock()->numBreakpointsAddress(), numBreakpointsGPR);
+        GPRReg debuggerRequestsGPR = temp.gpr();
+        m_jit.load32(m_jit.codeBlock()->debuggerRequestsAddress(), debuggerRequestsGPR);
         speculationCheck(
             DebuggerEvent, JSValueRegs(), 0,
-            m_jit.branchTest32(JITCompiler::NonZero, numBreakpointsGPR));
+            m_jit.branchTest32(JITCompiler::NonZero, debuggerRequestsGPR));
         break;
     }
-        
+
     case ProfileWillCall: {
         JSValueOperand profile(this, node->child1());
         GPRReg profileGPR = profile.gpr();

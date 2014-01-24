@@ -148,13 +148,13 @@ Debugger::Debugger(bool isInWorkerThread)
     , m_breakpointsActivated(true)
     , m_hasHandlerForExceptionCallback(false)
     , m_isInWorkerThread(isInWorkerThread)
+    , m_steppingMode(SteppingModeDisabled)
     , m_reasonForPause(NotPaused)
     , m_pauseOnCallFrame(0)
     , m_currentCallFrame(0)
     , m_lastExecutedLine(UINT_MAX)
     , m_lastExecutedSourceID(noSourceID)
     , m_topBreakpointID(noBreakpointID)
-    , m_shouldPause(false)
 {
 }
 
@@ -189,24 +189,55 @@ void Debugger::detach(JSGlobalObject* globalObject)
 
     ASSERT(m_globalObjects.contains(globalObject));
     m_globalObjects.remove(globalObject);
+
+    clearDebuggerRequests(globalObject);
     globalObject->setDebugger(0);
     if (!m_globalObjects.size())
         m_vm = nullptr;
 }
 
-void Debugger::setShouldPause(bool value)
+class Debugger::SetSteppingModeFunctor {
+public:
+    SetSteppingModeFunctor(Debugger* debugger, SteppingMode mode)
+        : m_debugger(debugger)
+        , m_mode(mode)
+    {
+    }
+
+    bool operator()(CodeBlock* codeBlock)
+    {
+        if (m_debugger == codeBlock->globalObject()->debugger()) {
+            if (m_mode == SteppingModeEnabled)
+                codeBlock->setSteppingMode(CodeBlock::SteppingModeEnabled);
+            else
+                codeBlock->setSteppingMode(CodeBlock::SteppingModeDisabled);
+        }
+        return false;
+    }
+
+private:
+    Debugger* m_debugger;
+    SteppingMode m_mode;
+};
+
+void Debugger::setSteppingMode(SteppingMode mode)
 {
-    m_shouldPause = value;
+    if (mode == m_steppingMode)
+        return;
+    m_steppingMode = mode;
+
+    if (!m_vm)
+        return;
+    HeapIterationScope iterationScope(m_vm->heap);
+    SetSteppingModeFunctor functor(this, mode);
+    m_vm->heap.forEachCodeBlock(functor);
 }
 
 void Debugger::registerCodeBlock(CodeBlock* codeBlock)
 {
     applyBreakpoints(codeBlock);
-}
-
-void Debugger::unregisterCodeBlock(CodeBlock* codeBlock)
-{
-    codeBlock->clearAllBreakpoints();
+    if (isStepping())
+        codeBlock->setSteppingMode(CodeBlock::SteppingModeEnabled);
 }
 
 void Debugger::toggleBreakpoint(CodeBlock* codeBlock, Breakpoint& breakpoint, BreakpointState enabledOrNot)
@@ -435,17 +466,17 @@ bool Debugger::hasBreakpoint(SourceID sourceID, const TextPosition& position, Br
     return result.toBoolean(m_currentCallFrame);
 }
 
-class Debugger::ClearBreakpointsFunctor {
+class Debugger::ClearCodeBlockDebuggerRequestsFunctor {
 public:
-    ClearBreakpointsFunctor(Debugger* debugger)
+    ClearCodeBlockDebuggerRequestsFunctor(Debugger* debugger)
         : m_debugger(debugger)
     {
     }
 
     bool operator()(CodeBlock* codeBlock)
     {
-        if (codeBlock->numBreakpoints() && m_debugger == codeBlock->globalObject()->debugger())
-            codeBlock->clearAllBreakpoints();
+        if (codeBlock->hasDebuggerRequests() && m_debugger == codeBlock->globalObject()->debugger())
+            codeBlock->clearDebuggerRequests();
         return false;
     }
 
@@ -462,7 +493,33 @@ void Debugger::clearBreakpoints()
     if (!m_vm)
         return;
     HeapIterationScope iterationScope(m_vm->heap);
-    ClearBreakpointsFunctor functor(this);
+    ClearCodeBlockDebuggerRequestsFunctor functor(this);
+    m_vm->heap.forEachCodeBlock(functor);
+}
+
+class Debugger::ClearDebuggerRequestsFunctor {
+public:
+    ClearDebuggerRequestsFunctor(JSGlobalObject* globalObject)
+        : m_globalObject(globalObject)
+    {
+    }
+
+    bool operator()(CodeBlock* codeBlock)
+    {
+        if (codeBlock->hasDebuggerRequests() && m_globalObject == codeBlock->globalObject())
+            codeBlock->clearDebuggerRequests();
+        return false;
+    }
+
+private:
+    JSGlobalObject* m_globalObject;
+};
+
+void Debugger::clearDebuggerRequests(JSGlobalObject* globalObject)
+{
+    ASSERT(m_vm);
+    HeapIterationScope iterationScope(m_vm->heap);
+    ClearDebuggerRequestsFunctor functor(globalObject);
     m_vm->heap.forEachCodeBlock(functor);
 }
 
@@ -480,7 +537,7 @@ void Debugger::setPauseOnNextStatement(bool pause)
 {
     m_pauseOnNextStatement = pause;
     if (pause)
-        setShouldPause(true);
+        setSteppingMode(SteppingModeEnabled);
 }
 
 void Debugger::breakProgram()
@@ -489,7 +546,7 @@ void Debugger::breakProgram()
         return;
 
     m_pauseOnNextStatement = true;
-    setShouldPause(true);
+    setSteppingMode(SteppingModeEnabled);
     m_currentCallFrame = m_vm->topCallFrame;
     ASSERT(m_currentCallFrame);
     pauseIfNeeded(m_currentCallFrame);
@@ -510,7 +567,7 @@ void Debugger::stepIntoStatement()
         return;
 
     m_pauseOnNextStatement = true;
-    setShouldPause(true);
+    setSteppingMode(SteppingModeEnabled);
     notifyDoneProcessingDebuggerEvents();
 }
 
@@ -546,7 +603,7 @@ void Debugger::updateCallFrameAndPauseIfNeeded(CallFrame* callFrame)
 {
     updateCallFrame(callFrame);
     pauseIfNeeded(callFrame);
-    if (!shouldPause())
+    if (!isStepping())
         m_currentCallFrame = 0;
 }
 
@@ -590,7 +647,7 @@ void Debugger::pauseIfNeeded(CallFrame* callFrame)
     handlePause(m_reasonForPause, vmEntryGlobalObject);
 
     if (!m_pauseOnNextStatement && !m_pauseOnCallFrame) {
-        setShouldPause(false);
+        setSteppingMode(SteppingModeDisabled);
         m_currentCallFrame = nullptr;
     }
 }
@@ -603,7 +660,7 @@ void Debugger::exception(CallFrame* callFrame, JSValue exception, bool hasHandle
     PauseReasonDeclaration reason(*this, PausedForException);
     if (m_pauseOnExceptionsState == PauseOnAllExceptions || (m_pauseOnExceptionsState == PauseOnUncaughtExceptions && !hasHandler)) {
         m_pauseOnNextStatement = true;
-        setShouldPause(true);
+        setSteppingMode(SteppingModeEnabled);
     }
 
     m_hasHandlerForExceptionCallback = true;
@@ -661,7 +718,7 @@ void Debugger::willExecuteProgram(CallFrame* callFrame)
     // the debugger implementation to not require callbacks.
     if (!m_isInWorkerThread)
         updateCallFrameAndPauseIfNeeded(callFrame);
-    else if (shouldPause())
+    else if (isStepping())
         updateCallFrame(callFrame);
 }
 
@@ -691,7 +748,7 @@ void Debugger::didReachBreakpoint(CallFrame* callFrame)
 
     PauseReasonDeclaration reason(*this, PausedForBreakpoint);
     m_pauseOnNextStatement = true;
-    setShouldPause(true);
+    setSteppingMode(SteppingModeEnabled);
     updateCallFrameAndPauseIfNeeded(callFrame);
 }
 

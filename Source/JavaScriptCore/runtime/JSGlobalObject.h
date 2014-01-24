@@ -472,8 +472,6 @@ public:
 
     Debugger* debugger() const { return m_debugger; }
     void setDebugger(Debugger* debugger) { m_debugger = debugger; }
-    static ptrdiff_t debuggerOffset() { return OBJECT_OFFSETOF(JSGlobalObject, m_debugger); }
-    void* debuggerAddress() { return &m_debugger; }
 
     const GlobalObjectMethodTable* globalObjectMethodTable() const { return m_globalObjectMethodTable; }
 

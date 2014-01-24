@@ -41,16 +41,10 @@ class VM;
 
 typedef ExecState CallFrame;
 
-#if ENABLE(JAVASCRIPT_DEBUGGER)
-
 class JS_EXPORT_PRIVATE Debugger {
 public:
     Debugger(bool isInWorkerThread = false);
     virtual ~Debugger();
-
-    bool shouldPause() const { return m_shouldPause; }
-    static ptrdiff_t shouldPauseOffset() { return OBJECT_OFFSETOF(Debugger, m_shouldPause); }
-    void* shouldPauseAddress() { return &m_shouldPause; }
 
     JSC::DebuggerCallFrame* currentDebuggerCallFrame() const;
     bool hasHandlerForExceptionCallback() const
@@ -106,7 +100,6 @@ public:
     void recompileAllJSFunctions(VM*);
 
     void registerCodeBlock(CodeBlock*);
-    void unregisterCodeBlock(CodeBlock*);
 
 protected:
     virtual bool needPauseHandling(JSGlobalObject*) { return false; }
@@ -134,8 +127,10 @@ private:
     typedef HashMap<unsigned, BreakpointsInLine, WTF::IntHash<int>, WTF::UnsignedWithZeroKeyHashTraits<int>> LineToBreakpointsMap;
     typedef HashMap<SourceID, LineToBreakpointsMap, WTF::IntHash<SourceID>, WTF::UnsignedWithZeroKeyHashTraits<SourceID>> SourceIDToBreakpointsMap;
 
+    class ClearCodeBlockDebuggerRequestsFunctor;
+    class ClearDebuggerRequestsFunctor;
+    class SetSteppingModeFunctor;
     class ToggleBreakpointFunctor;
-    class ClearBreakpointsFunctor;
 
     class PauseReasonDeclaration {
     public:
@@ -155,7 +150,6 @@ private:
 
     bool hasBreakpoint(SourceID, const TextPosition&, Breakpoint* hitBreakpoint);
 
-    void setShouldPause(bool);
     void updateNeedForOpDebugCallbacks();
 
     // These update functions are only needed because our current breakpoints are
@@ -167,6 +161,13 @@ private:
     void updateCallFrameAndPauseIfNeeded(JSC::CallFrame*);
     void pauseIfNeeded(JSC::CallFrame*);
 
+    enum SteppingMode {
+        SteppingModeDisabled,
+        SteppingModeEnabled
+    };
+    void setSteppingMode(SteppingMode);
+    bool isStepping() const { return m_steppingMode == SteppingModeEnabled; }
+
     enum BreakpointState {
         BreakpointDisabled,
         BreakpointEnabled
@@ -174,6 +175,8 @@ private:
     void toggleBreakpoint(CodeBlock*, Breakpoint&, BreakpointState);
     void applyBreakpoints(CodeBlock*);
     void toggleBreakpoint(Breakpoint&, BreakpointState);
+
+    void clearDebuggerRequests(JSGlobalObject*);
 
     VM* m_vm;
     HashSet<JSGlobalObject*> m_globalObjects;
@@ -184,6 +187,7 @@ private:
     bool m_breakpointsActivated : 1;
     bool m_hasHandlerForExceptionCallback : 1;
     bool m_isInWorkerThread : 1;
+    SteppingMode m_steppingMode : 1;
 
     ReasonForPause m_reasonForPause;
     JSValue m_currentException;
@@ -196,40 +200,12 @@ private:
     BreakpointIDToBreakpointMap m_breakpointIDToBreakpoint;
     SourceIDToBreakpointsMap m_sourceIDToBreakpoints;
 
-    bool m_shouldPause;
-
     RefPtr<JSC::DebuggerCallFrame> m_currentDebuggerCallFrame;
 
     friend class DebuggerCallFrameScope;
     friend class TemporaryPausedState;
     friend class LLIntOffsetsExtractor;
 };
-
-#else // ENABLE(JAVASCRIPT_DEBUGGER)
-
-class Debugger {
-public:
-    Debugger(bool = false)
-        : m_shouldPause(false)
-    {
-    }
-    bool shouldPause() const { return false; }
-    bool needsExceptionCallbacks() const { return false; }
-    void detach(JSGlobalObject*) { }
-    void sourceParsed(ExecState*, SourceProvider*, int, const WTF::String&) { }
-    void exception(CallFrame*, JSValue, bool) { }
-    void atStatement(CallFrame*) { }
-    void callEvent(CallFrame*) { }
-    void returnEvent(CallFrame*) { }
-    void willExecuteProgram(CallFrame*) { }
-    void didExecuteProgram(CallFrame*) { }
-    void didReachBreakpoint(CallFrame*) { }
-
-private:
-    bool m_shouldPause;
-};
-
-#endif // ENABLE(JAVASCRIPT_DEBUGGER)
 
 } // namespace JSC
 

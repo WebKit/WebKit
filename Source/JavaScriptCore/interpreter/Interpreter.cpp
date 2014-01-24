@@ -1207,7 +1207,7 @@ NEVER_INLINE void Interpreter::debug(CallFrame* callFrame, DebugHookID debugHook
     Debugger* debugger = callFrame->vmEntryGlobalObject()->debugger();
     if (!debugger)
         return;
-    ASSERT(debugger->shouldPause() || callFrame->codeBlock()->numBreakpoints() || callFrame->hadException());
+    ASSERT(callFrame->codeBlock()->hasDebuggerRequests() || callFrame->hadException());
 
     switch (debugHookID) {
         case DidEnterCallFrame:
