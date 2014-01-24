@@ -140,10 +140,10 @@ HRESULT STDMETHODCALLTYPE WebHistoryItem::initFromDictionaryRepresentation(void*
         return E_FAIL;
     bool lastVisitWasHTTPNonGet = lastVisitWasHTTPNonGetRef && CFBooleanGetValue(lastVisitWasHTTPNonGetRef);
 
-    OwnPtr<Vector<String> > redirectURLsVector;
+    std::unique_ptr<Vector<String>> redirectURLsVector;
     if (CFArrayRef redirectURLsRef = static_cast<CFArrayRef>(CFDictionaryGetValue(dictionaryRef, redirectURLsKey))) {
         CFIndex size = CFArrayGetCount(redirectURLsRef);
-        redirectURLsVector = adoptPtr(new Vector<String>(size));
+        redirectURLsVector = std::make_unique<Vector<String>>(size);
         for (CFIndex i = 0; i < size; ++i)
             (*redirectURLsVector)[i] = String(static_cast<CFStringRef>(CFArrayGetValueAtIndex(redirectURLsRef, i)));
     }
@@ -190,8 +190,8 @@ HRESULT STDMETHODCALLTYPE WebHistoryItem::initFromDictionaryRepresentation(void*
     if (lastVisitWasHTTPNonGet && (protocolIs(m_historyItem->urlString(), "http") || protocolIs(m_historyItem->urlString(), "https")))
         m_historyItem->setLastVisitWasHTTPNonGet(true);
 
-    if (redirectURLsVector)
-        m_historyItem->setRedirectURLs(redirectURLsVector.release());
+    if (redirectURLsVector.get())
+        m_historyItem->setRedirectURLs(std::move(redirectURLsVector));
 
     if (dailyVector.get())
         m_historyItem->adoptVisitCounts(*dailyVector, *weeklyVector);

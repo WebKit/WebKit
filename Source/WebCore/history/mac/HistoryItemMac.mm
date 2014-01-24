@@ -55,11 +55,11 @@ void HistoryItem::setTransientProperty(const String& key, id value)
         if (m_transientProperties) {
             m_transientProperties->remove(key);
             if (m_transientProperties->isEmpty())
-                m_transientProperties.clear();
+                m_transientProperties = nullptr;
         }
     } else {
         if (!m_transientProperties)
-            m_transientProperties = adoptPtr(new HashMap<String, RetainPtr<id>>);
+            m_transientProperties = std::make_unique<HashMap<String, RetainPtr<id>>>();
         m_transientProperties->set(key, value);
     }
 }

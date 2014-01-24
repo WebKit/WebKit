@@ -1,3 +1,22 @@
+2014-01-24  Zan Dobersek  <zdobersek@igalia.com>
+
+        Move HistoryItem to std::unique_ptr
+        https://bugs.webkit.org/show_bug.cgi?id=127275
+
+        Reviewed by Darin Adler.
+
+        Replace the uses of OwnPtr and PassOwnPtr in the HistoryItem class with std::unique_ptr.
+
+        * history/HistoryItem.cpp:
+        (WebCore::HistoryItem::HistoryItem):
+        (WebCore::HistoryItem::reset):
+        (WebCore::HistoryItem::addRedirectURL):
+        (WebCore::HistoryItem::setRedirectURLs):
+        * history/HistoryItem.h:
+        * history/mac/HistoryItemMac.mm:
+        (WebCore::HistoryItem::setTransientProperty):
+        WebCore.exp.in: Update the symbol.
+
 2014-01-23  Morten Stenshorne  <mstensho@opera.com>
 
         Region based multicol: unresolvable percent height results in 1px tall multicol

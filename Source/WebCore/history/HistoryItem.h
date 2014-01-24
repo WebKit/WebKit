@@ -29,8 +29,7 @@
 
 #include "IntPoint.h"
 #include "SerializedScriptValue.h"
-#include <wtf/OwnPtr.h>
-#include <wtf/PassOwnPtr.h>
+#include <memory>
 #include <wtf/RefCounted.h>
 #include <wtf/text/WTFString.h>
 
@@ -181,7 +180,7 @@ public:
 
     void addRedirectURL(const String&);
     Vector<String>* redirectURLs() const;
-    void setRedirectURLs(PassOwnPtr<Vector<String>>);
+    void setRedirectURLs(std::unique_ptr<Vector<String>>);
 
     bool isCurrentDocument(Document*) const;
     
@@ -264,7 +263,7 @@ private:
     Vector<int> m_dailyVisitCounts;
     Vector<int> m_weeklyVisitCounts;
 
-    OwnPtr<Vector<String>> m_redirectURLs;
+    std::unique_ptr<Vector<String>> m_redirectURLs;
 
     // If two HistoryItems have the same item sequence number, then they are
     // clones of one another.  Traversing history from one such HistoryItem to
@@ -300,7 +299,7 @@ private:
 
 #if PLATFORM(MAC)
     RetainPtr<id> m_viewState;
-    OwnPtr<HashMap<String, RetainPtr<id>>> m_transientProperties;
+    std::unique_ptr<HashMap<String, RetainPtr<id>>> m_transientProperties;
 #endif
 }; //class HistoryItem
 

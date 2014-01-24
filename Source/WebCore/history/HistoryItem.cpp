@@ -193,7 +193,7 @@ inline HistoryItem::HistoryItem(const HistoryItem& item)
         m_children.uncheckedAppend(item.m_children[i]->copy());
 
     if (item.m_redirectURLs)
-        m_redirectURLs = adoptPtr(new Vector<String>(*item.m_redirectURLs));
+        m_redirectURLs = std::make_unique<Vector<String>>(*item.m_redirectURLs);
 }
 
 PassRefPtr<HistoryItem> HistoryItem::copy() const
@@ -222,7 +222,7 @@ void HistoryItem::reset()
     m_dailyVisitCounts.clear();
     m_weeklyVisitCounts.clear();
 
-    m_redirectURLs.clear();
+    m_redirectURLs = nullptr;
 
     m_itemSequenceNumber = generateSequenceNumber();
 
@@ -684,7 +684,7 @@ void HistoryItem::mergeAutoCompleteHints(HistoryItem* otherItem)
 void HistoryItem::addRedirectURL(const String& url)
 {
     if (!m_redirectURLs)
-        m_redirectURLs = adoptPtr(new Vector<String>);
+        m_redirectURLs = std::make_unique<Vector<String>>();
 
     // Our API allows us to store all the URLs in the redirect chain, but for
     // now we only have a use for the final URL.
@@ -697,9 +697,9 @@ Vector<String>* HistoryItem::redirectURLs() const
     return m_redirectURLs.get();
 }
 
-void HistoryItem::setRedirectURLs(PassOwnPtr<Vector<String>> redirectURLs)
+void HistoryItem::setRedirectURLs(std::unique_ptr<Vector<String>> redirectURLs)
 {
-    m_redirectURLs = redirectURLs;
+    m_redirectURLs = std::move(redirectURLs);
 }
 
 void HistoryItem::encodeBackForwardTree(Encoder& encoder) const
