@@ -1,3 +1,14 @@
+2014-01-23  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        Build break after r162650
+        https://bugs.webkit.org/show_bug.cgi?id=127525
+
+        Reviewed by Anders Carlsson.
+
+        WKPreferences.h was renamed to WKPreferencesRef.
+
+        * UIProcess/API/C/WKPreferences.cpp:
+
 2014-01-23  Anders Carlsson  <andersca@apple.com>
 
         Fix a refactoring bug that crept in and is causing the inspector to crash.

@@ -24,8 +24,8 @@
  */
 
 #include "config.h"
-#include "WKPreferences.h"
 #include "WKPreferencesPrivate.h"
+#include "WKPreferencesRef.h"
 
 #include "WKAPICast.h"
 #include "WebContext.h"
