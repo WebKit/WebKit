@@ -1,5 +1,11 @@
 2014-01-23  Simon Fraser  <simon.fraser@apple.com>
 
+        Another Windows fix: include <algorithm> for std::min and std::max.
+        
+        * platform/graphics/IntSize.h:
+
+2014-01-23  Simon Fraser  <simon.fraser@apple.com>
+
         Try to fix Windows build.
 
         * platform/win/PopupMenuWin.cpp:

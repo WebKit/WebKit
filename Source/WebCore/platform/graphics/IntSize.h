@@ -26,6 +26,7 @@
 #ifndef IntSize_h
 #define IntSize_h
 
+#include <algorithm>
 #include <wtf/PrintStream.h>
 
 #if USE(CG)
