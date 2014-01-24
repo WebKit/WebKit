@@ -423,10 +423,13 @@ void MediaPlayerPrivateAVFoundationObjC::destroyImageGenerator()
 
 void MediaPlayerPrivateAVFoundationObjC::createVideoLayer()
 {
-    if (!m_avPlayer)
+    if (!m_avPlayer || m_videoLayer)
         return;
 
-    if (!m_videoLayer) {
+    callOnMainThread([this] {
+        if (!m_avPlayer || m_videoLayer)
+            return;
+
         m_videoLayer = adoptNS([[AVPlayerLayer alloc] init]);
         [m_videoLayer.get() setPlayer:m_avPlayer.get()];
         [m_videoLayer.get() setBackgroundColor:cachedCGColor(Color::black, ColorSpaceDeviceRGB)];
@@ -435,7 +438,9 @@ void MediaPlayerPrivateAVFoundationObjC::createVideoLayer()
 #endif
         updateVideoLayerGravity();
         LOG(Media, "MediaPlayerPrivateAVFoundationObjC::createVideoLayer(%p) - returning %p", this, m_videoLayer.get());
-    }
+
+        player()->mediaPlayerClient()->mediaPlayerRenderingModeChanged(player());
+    });
 }
 
 void MediaPlayerPrivateAVFoundationObjC::destroyVideoLayer()

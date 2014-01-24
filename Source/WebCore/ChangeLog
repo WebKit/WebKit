@@ -1,5 +1,22 @@
 2014-01-23  Jer Noble  <jer.noble@apple.com>
 
+        [iOS] Protect against possbile deadlock by delaying video layer creation
+        https://bugs.webkit.org/show_bug.cgi?id=127505
+
+        Reviewed by Eric Carlson.
+
+        Work around a possible deadlock on iOS when creating a media element
+        backed by AVFoundation by delaying creation of the AVPlayerLayer.
+        The deadlock can occur when the web thread is doing CALayer layout
+        while taking the web thread lock, while CoreMedia is doing property
+        access on an async thread while taking the CM lock, and each is waiting
+        for the other's lock to be released.
+
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::createVideoLayer):
+
+2014-01-23  Jer Noble  <jer.noble@apple.com>
+
         [MSE][Mac] Crash when reloading a page during playback
         https://bugs.webkit.org/show_bug.cgi?id=126903
 
