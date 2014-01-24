@@ -433,7 +433,7 @@ void UniqueIDBDatabase::clearObjectStore(const IDBTransactionIdentifier& identif
     postDatabaseTask(createAsyncTask(*this, &UniqueIDBDatabase::clearObjectStoreInBackingStore, requestID, identifier, objectStoreID));
 }
 
-void UniqueIDBDatabase::createIndex(const IDBTransactionIdentifier& identifier, int64_t objectStoreID, const WebCore::IDBIndexMetadata& indexMetadata, std::function<void(bool)> successCallback)
+void UniqueIDBDatabase::createIndex(const IDBTransactionIdentifier& identifier, int64_t objectStoreID, const WebCore::IDBIndexMetadata& metadata, std::function<void(bool)> successCallback)
 {
     ASSERT(isMainThread());
 
@@ -443,17 +443,28 @@ void UniqueIDBDatabase::createIndex(const IDBTransactionIdentifier& identifier, 
     }
 
     ASSERT(m_metadata->objectStores.contains(objectStoreID));
+    ASSERT(!m_metadata->objectStores.get(objectStoreID).indexes.contains(metadata.id));
+    m_metadata->objectStores.get(objectStoreID).indexes.set(metadata.id, metadata);
+    int64_t addedIndexID = metadata.id;
 
-    RefPtr<AsyncRequest> request = AsyncRequestImpl<bool>::create([this, successCallback](bool success) {
+    RefPtr<AsyncRequest> request = AsyncRequestImpl<bool>::create([this, objectStoreID, addedIndexID, successCallback](bool success) {
+        if (!success) {
+            auto objectStoreFind = m_metadata->objectStores.find(objectStoreID);
+            if (objectStoreFind != m_metadata->objectStores.end())
+                objectStoreFind->value.indexes.remove(addedIndexID);
+        }
         successCallback(success);
-    }, [this, successCallback]() {
+    }, [this, objectStoreID, addedIndexID, successCallback]() {
+        auto objectStoreFind = m_metadata->objectStores.find(objectStoreID);
+        if (objectStoreFind != m_metadata->objectStores.end())
+            objectStoreFind->value.indexes.remove(addedIndexID);
         successCallback(false);
     });
 
     uint64_t requestID = request->requestID();
     m_pendingDatabaseTasks.add(requestID, request.release());
 
-    postDatabaseTask(createAsyncTask(*this, &UniqueIDBDatabase::createIndexInBackingStore, requestID, identifier, objectStoreID, indexMetadata));
+    postDatabaseTask(createAsyncTask(*this, &UniqueIDBDatabase::createIndexInBackingStore, requestID, identifier, objectStoreID, metadata));
 }
 
 void UniqueIDBDatabase::deleteIndex(const IDBTransactionIdentifier& identifier, int64_t objectStoreID, int64_t indexID, std::function<void(bool)> successCallback)
@@ -468,9 +479,19 @@ void UniqueIDBDatabase::deleteIndex(const IDBTransactionIdentifier& identifier, 
     ASSERT(m_metadata->objectStores.contains(objectStoreID));
     ASSERT(m_metadata->objectStores.get(objectStoreID).indexes.contains(indexID));
 
-    RefPtr<AsyncRequest> request = AsyncRequestImpl<bool>::create([this, successCallback](bool success) {
+    IDBIndexMetadata metadata = m_metadata->objectStores.get(objectStoreID).indexes.take(indexID);
+
+    RefPtr<AsyncRequest> request = AsyncRequestImpl<bool>::create([this, objectStoreID, metadata, successCallback](bool success) {
+        if (!success) {
+            auto objectStoreFind = m_metadata->objectStores.find(objectStoreID);
+            if (objectStoreFind != m_metadata->objectStores.end())
+                objectStoreFind->value.indexes.set(metadata.id, metadata);
+        }
         successCallback(success);
-    }, [this, successCallback]() {
+    }, [this, objectStoreID, metadata, successCallback]() {
+        auto objectStoreFind = m_metadata->objectStores.find(objectStoreID);
+        if (objectStoreFind != m_metadata->objectStores.end())
+            objectStoreFind->value.indexes.set(metadata.id, metadata);
         successCallback(false);
     });
 
@@ -616,16 +637,24 @@ void UniqueIDBDatabase::clearObjectStoreInBackingStore(uint64_t requestID, const
     postMainThreadTask(createAsyncTask(*this, &UniqueIDBDatabase::didClearObjectStore, requestID, success));
 }
 
-void UniqueIDBDatabase::createIndexInBackingStore(uint64_t requestID, const IDBTransactionIdentifier&, int64_t objectStoreID, const WebCore::IDBIndexMetadata&)
+void UniqueIDBDatabase::createIndexInBackingStore(uint64_t requestID, const IDBTransactionIdentifier& identifier, int64_t objectStoreID, const WebCore::IDBIndexMetadata& metadata)
 {
-    // FIXME: Actually create in the backing store.
-    postMainThreadTask(createAsyncTask(*this, &UniqueIDBDatabase::didCreateIndex, requestID, false));
+    ASSERT(!isMainThread());
+    ASSERT(m_backingStore);
+
+    bool success = m_backingStore->createIndex(identifier, objectStoreID, metadata);
+
+    postMainThreadTask(createAsyncTask(*this, &UniqueIDBDatabase::didCreateIndex, requestID, success));
 }
 
-void UniqueIDBDatabase::deleteIndexInBackingStore(uint64_t requestID, const IDBTransactionIdentifier&, int64_t objectStoreID, int64_t indexID)
+void UniqueIDBDatabase::deleteIndexInBackingStore(uint64_t requestID, const IDBTransactionIdentifier& identifier, int64_t objectStoreID, int64_t indexID)
 {
-    // FIXME: Actually delete from the backing store.
-    postMainThreadTask(createAsyncTask(*this, &UniqueIDBDatabase::didDeleteIndex, requestID, false));
+    ASSERT(!isMainThread());
+    ASSERT(m_backingStore);
+
+    bool success = m_backingStore->deleteIndex(identifier, objectStoreID, indexID);
+
+    postMainThreadTask(createAsyncTask(*this, &UniqueIDBDatabase::didDeleteIndex, requestID, success));
 }
 
 void UniqueIDBDatabase::putRecordInBackingStore(uint64_t requestID, const IDBTransactionIdentifier& transaction, const IDBObjectStoreMetadata& objectStoreMetadata, const IDBKeyData& keyData, const Vector<uint8_t>& value, int64_t putMode, const Vector<int64_t>& indexIDs, const Vector<Vector<IDBKeyData>>& indexKeys)

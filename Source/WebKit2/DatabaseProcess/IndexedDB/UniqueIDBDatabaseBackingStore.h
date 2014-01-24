@@ -60,6 +60,8 @@ public:
     virtual bool createObjectStore(const IDBTransactionIdentifier&, const WebCore::IDBObjectStoreMetadata&) = 0;
     virtual bool deleteObjectStore(const IDBTransactionIdentifier&, int64_t objectStoreID) = 0;
     virtual bool clearObjectStore(const IDBTransactionIdentifier&, int64_t objectStoreID) = 0;
+    virtual bool createIndex(const IDBTransactionIdentifier&, int64_t objectStoreID, const WebCore::IDBIndexMetadata&) = 0;
+    virtual bool deleteIndex(const IDBTransactionIdentifier&, int64_t objectStoreID, int64_t indexID) = 0;
 
     virtual PassRefPtr<WebCore::IDBKey> generateKey(const IDBTransactionIdentifier&, int64_t objectStoreID) = 0;
     virtual bool keyExistsInObjectStore(const IDBTransactionIdentifier&, int64_t objectStoreID, const WebCore::IDBKey&, bool& keyExists) = 0;

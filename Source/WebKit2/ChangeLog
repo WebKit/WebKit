@@ -1,3 +1,23 @@
+2014-01-24  Brady Eidson  <beidson@apple.com>
+
+        IDB: Support createIndex/deleteIndex
+        <rdar://problem/15779642> and https://bugs.webkit.org/show_bug.cgi?id=127585
+
+        Reviewed by Tim Horton.
+
+        * DatabaseProcess/IndexedDB/UniqueIDBDatabase.cpp:
+        (WebKit::UniqueIDBDatabase::createIndex):
+        (WebKit::UniqueIDBDatabase::deleteIndex):
+        (WebKit::UniqueIDBDatabase::createIndexInBackingStore):
+        (WebKit::UniqueIDBDatabase::deleteIndexInBackingStore):
+
+        * DatabaseProcess/IndexedDB/UniqueIDBDatabaseBackingStore.h:
+        * DatabaseProcess/IndexedDB/sqlite/UniqueIDBDatabaseBackingStoreSQLite.cpp:
+        (WebKit::UniqueIDBDatabaseBackingStoreSQLite::deleteObjectStore): Also drop all associated indexes.
+        (WebKit::UniqueIDBDatabaseBackingStoreSQLite::createIndex):
+        (WebKit::UniqueIDBDatabaseBackingStoreSQLite::deleteIndex):
+        * DatabaseProcess/IndexedDB/sqlite/UniqueIDBDatabaseBackingStoreSQLite.h:
+
 2014-01-24  Víctor Manuel Jáquez Leal  <vjaquez@igalia.com>
 
         [GTK] youtube HTML5 videos in fullscreen, after <Esc>, can't go fullscreen again

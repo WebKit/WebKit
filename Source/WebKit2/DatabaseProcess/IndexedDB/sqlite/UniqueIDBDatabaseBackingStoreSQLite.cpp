@@ -413,6 +413,7 @@ bool UniqueIDBDatabaseBackingStoreSQLite::deleteObjectStore(const IDBTransaction
         return false;
     }
 
+    // Delete the ObjectStore record
     {
         SQLiteStatement sql(*m_sqliteDB, ASCIILiteral("DELETE FROM ObjectStoreInfo WHERE id = ?;"));
         if (sql.prepare() != SQLResultOk
@@ -422,8 +423,34 @@ bool UniqueIDBDatabaseBackingStoreSQLite::deleteObjectStore(const IDBTransaction
             return false;
         }
     }
+
+    // Delete all associated Index records
     {
-        // FIXME: Execute SQL here to drop all records and indexes related to this object store.
+        Vector<int64_t> indexIDs;
+        SQLiteStatement sql(*m_sqliteDB, ASCIILiteral("SELECT id FROM IndexInfo WHERE objectStoreID = ?;"));
+        if (sql.prepare() != SQLResultOk
+            || sql.bindInt64(1, objectStoreID) != SQLResultOk) {
+            LOG_ERROR("Error fetching index ID records for object store id %lli from IndexInfo table (%i) - %s", objectStoreID, m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg());
+            return false;
+        }
+
+        int resultCode;
+        while ((resultCode = sql.step()) == SQLResultRow)
+            indexIDs.append(sql.getColumnInt64(0));
+
+        if (resultCode != SQLResultDone) {
+            LOG_ERROR("Error fetching index ID records for object store id %lli from IndexInfo table (%i) - %s", objectStoreID, m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg());
+            return false;
+        }
+
+        for (auto indexID : indexIDs) {
+            if (!deleteIndex(identifier, objectStoreID, indexID))
+                return false;
+        }
+    }
+
+    {
+        // FIXME: Execute SQL here to drop all records related to this object store.
     }
 
     return true;
@@ -456,6 +483,75 @@ bool UniqueIDBDatabaseBackingStoreSQLite::clearObjectStore(const IDBTransactionI
     }
 
     // FIXME <rdar://problem/15779642>: Once indexes are implemented, drop index records.
+    return true;
+}
+
+bool UniqueIDBDatabaseBackingStoreSQLite::createIndex(const IDBTransactionIdentifier& identifier, int64_t objectStoreID, const WebCore::IDBIndexMetadata& metadata)
+{
+    ASSERT(!isMainThread());
+    ASSERT(m_sqliteDB);
+    ASSERT(m_sqliteDB->isOpen());
+
+    SQLiteIDBTransaction* transaction = m_transactions.get(identifier);
+    if (!transaction || !transaction->inProgress()) {
+        LOG_ERROR("Attempt to create index without an established, in-progress transaction");
+        return false;
+    }
+    if (transaction->mode() != IndexedDB::TransactionMode::VersionChange) {
+        LOG_ERROR("Attempt to create index during a non-version-change transaction");
+        return false;
+    }
+
+    RefPtr<SharedBuffer> keyPathBlob = serializeIDBKeyPath(metadata.keyPath);
+    if (!keyPathBlob) {
+        LOG_ERROR("Unable to serialize IDBKeyPath to save in database");
+        return false;
+    }
+
+    SQLiteStatement sql(*m_sqliteDB, ASCIILiteral("INSERT INTO IndexInfo VALUES (?, ?, ?, ?, ?, ?);"));
+    if (sql.prepare() != SQLResultOk
+        || sql.bindInt64(1, metadata.id) != SQLResultOk
+        || sql.bindText(2, metadata.name) != SQLResultOk
+        || sql.bindInt64(3, objectStoreID) != SQLResultOk
+        || sql.bindBlob(4, keyPathBlob->data(), keyPathBlob->size()) != SQLResultOk
+        || sql.bindInt(5, metadata.unique) != SQLResultOk
+        || sql.bindInt(6, metadata.multiEntry) != SQLResultOk
+        || sql.step() != SQLResultDone) {
+        LOG_ERROR("Could not add index '%s' to IndexInfo table (%i) - %s", metadata.name.utf8().data(), m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg());
+        return false;
+    }
+
+    return true;
+}
+
+bool UniqueIDBDatabaseBackingStoreSQLite::deleteIndex(const IDBTransactionIdentifier& identifier, int64_t objectStoreID, int64_t indexID)
+{
+    ASSERT(!isMainThread());
+    ASSERT(m_sqliteDB);
+    ASSERT(m_sqliteDB->isOpen());
+
+    SQLiteIDBTransaction* transaction = m_transactions.get(identifier);
+    if (!transaction || !transaction->inProgress()) {
+        LOG_ERROR("Attempt to delete index without an established, in-progress transaction");
+        return false;
+    }
+    if (transaction->mode() != IndexedDB::TransactionMode::VersionChange) {
+        LOG_ERROR("Attempt to delete index during a non-version-change transaction");
+        return false;
+    }
+
+    {
+        SQLiteStatement sql(*m_sqliteDB, ASCIILiteral("DELETE FROM IndexInfo WHERE id = ? AND objectStoreID = ?;"));
+        if (sql.prepare() != SQLResultOk
+            || sql.bindInt64(1, indexID) != SQLResultOk
+            || sql.bindInt64(2, objectStoreID) != SQLResultOk
+            || sql.step() != SQLResultDone) {
+            LOG_ERROR("Could not delete index id %lli from IndexInfo table (%i) - %s", objectStoreID, m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg());
+            return false;
+        }
+    }
+
+    // FIXME (<rdar://problem/15905293>) - Once we store records against indexes, delete them here.
     return true;
 }
 
