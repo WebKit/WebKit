@@ -877,7 +877,7 @@ public:
     void addBreakpoint(unsigned numBreakpoints) { m_numBreakpoints += numBreakpoints; }
     void removeBreakpoint(unsigned numBreakpoints)
     {
-        ASSERT(m_numBreakpoints > numBreakpoints);
+        ASSERT(m_numBreakpoints >= numBreakpoints);
         m_numBreakpoints -= numBreakpoints;
     }
 

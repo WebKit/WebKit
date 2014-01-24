@@ -1,3 +1,13 @@
+2014-01-24  Mark Lam  <mark.lam@apple.com>
+
+        Fixed a bad assertion in CodeBlock::removeBreakpoint().
+        <https://webkit.org/b/127581>
+
+        Reviewed by Joseph Pecoraro.
+
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::removeBreakpoint):
+
 2014-01-24  Joseph Pecoraro  <pecoraro@apple.com>
 
         fast/profiler tests ASSERTing after moving recompileAllJSFunctions off a timer
