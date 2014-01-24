@@ -33,6 +33,8 @@
 #include "WKAPICast.h"
 #include "WKPluginInformation.h"
 #include "WebBackForwardList.h"
+#include "WebLoaderClient.h"
+#include "WebPageMessages.h"
 #include "WebPageProxy.h"
 #include "WebPolicyClient.h"
 #include "WebProcessProxy.h"
@@ -668,7 +670,23 @@ void WKPageSetPageFormClient(WKPageRef pageRef, const WKPageFormClientBase* wkCl
 
 void WKPageSetPageLoaderClient(WKPageRef pageRef, const WKPageLoaderClientBase* wkClient)
 {
-    toImpl(pageRef)->initializeLoaderClient(wkClient);
+    WebPageProxy* webPageProxy = toImpl(pageRef);
+
+    auto loaderClient = std::make_unique<WebLoaderClient>(wkClient);
+
+    // It would be nice to get rid of this code and transition all clients to using didLayout instead of
+    // didFirstLayoutInFrame and didFirstVisuallyNonEmptyLayoutInFrame. In the meantime, this is required
+    // for backwards compatibility.
+    WebCore::LayoutMilestones milestones = 0;
+    if (loaderClient->client().didFirstLayoutForFrame)
+        milestones |= WebCore::DidFirstLayout;
+    if (loaderClient->client().didFirstVisuallyNonEmptyLayoutForFrame)
+        milestones |= WebCore::DidFirstVisuallyNonEmptyLayout;
+
+    if (milestones)
+        webPageProxy->process().send(Messages::WebPage::ListenForLayoutMilestones(milestones), webPageProxy->pageID());
+
+    webPageProxy->setLoaderClient(std::move(loaderClient));
 }
 
 void WKPageSetPagePolicyClient(WKPageRef pageRef, const WKPagePolicyClientBase* wkClient)

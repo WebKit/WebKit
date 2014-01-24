@@ -112,6 +112,7 @@
 		1A2328FF162C866A00D82F7A /* MessageEncoder.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A2328FD162C866A00D82F7A /* MessageEncoder.h */; };
 		1A232902162C867300D82F7A /* MessageDecoder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A232900162C867300D82F7A /* MessageDecoder.cpp */; };
 		1A232903162C867300D82F7A /* MessageDecoder.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A232901162C867300D82F7A /* MessageDecoder.h */; };
+		1A2464F31891E45100234C5B /* APILoaderClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A2464F21891E45100234C5B /* APILoaderClient.h */; };
 		1A24B5F211F531E800C38269 /* MachUtilities.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A24B5F011F531E800C38269 /* MachUtilities.cpp */; };
 		1A24B5F311F531E800C38269 /* MachUtilities.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A24B5F111F531E800C38269 /* MachUtilities.h */; };
 		1A24BED5120894D100FBB059 /* SharedMemory.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A24BED3120894D100FBB059 /* SharedMemory.h */; };
@@ -1736,6 +1737,7 @@
 		1A2328FD162C866A00D82F7A /* MessageEncoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MessageEncoder.h; sourceTree = "<group>"; };
 		1A232900162C867300D82F7A /* MessageDecoder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MessageDecoder.cpp; sourceTree = "<group>"; };
 		1A232901162C867300D82F7A /* MessageDecoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MessageDecoder.h; sourceTree = "<group>"; };
+		1A2464F21891E45100234C5B /* APILoaderClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = APILoaderClient.h; sourceTree = "<group>"; };
 		1A24B5F011F531E800C38269 /* MachUtilities.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MachUtilities.cpp; sourceTree = "<group>"; };
 		1A24B5F111F531E800C38269 /* MachUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MachUtilities.h; sourceTree = "<group>"; };
 		1A24BED3120894D100FBB059 /* SharedMemory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SharedMemory.h; sourceTree = "<group>"; };
@@ -5013,6 +5015,7 @@
 				37C4C08318149C2A003688B9 /* Cocoa */,
 				BC8A501311765F4500757573 /* cpp */,
 				BC111B47112F616900337BAB /* mac */,
+				1A2464F21891E45100234C5B /* APILoaderClient.h */,
 				1AFDD3141891B54000153970 /* APIPolicyClient.h */,
 			);
 			path = API;
@@ -6405,6 +6408,7 @@
 				515E772C184008B90007203F /* DatabaseProcessCreationParameters.h in Headers */,
 				33AA1067131F060000D4A575 /* WebCookieManagerProxyClient.h in Headers */,
 				3309344A1315B9220097A7BC /* WebCookieManagerProxyMessages.h in Headers */,
+				1A2464F31891E45100234C5B /* APILoaderClient.h in Headers */,
 				BC1DD7B2114DC396005ADAF3 /* WebCoreArgumentCoders.h in Headers */,
 				512F589B12A8838800629530 /* WebCredential.h in Headers */,
 				51578B831209ECEF00A37C4A /* APIData.h in Headers */,

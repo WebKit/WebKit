@@ -38,6 +38,11 @@ using namespace WebCore;
 
 namespace WebKit {
 
+WebLoaderClient::WebLoaderClient(const WKPageLoaderClientBase* client)
+{
+    initialize(client);
+}
+
 void WebLoaderClient::didStartProvisionalLoadForFrame(WebPageProxy* page, WebFrameProxy* frame, API::Object* userData)
 {
     if (!m_client.didStartProvisionalLoadForFrame)

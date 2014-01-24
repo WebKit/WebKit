@@ -616,7 +616,7 @@ static void setUpPageLoaderClient(WKBrowsingContextController *browsingContext, 
 
     loaderClient.didLayout = didLayout;
 
-    page.initializeLoaderClient(&loaderClient.base);
+    WKPageSetPageLoaderClient(toAPI(&page), &loaderClient.base);
 }
 
 static WKPolicyDecisionHandler makePolicyDecisionBlock(WKFramePolicyListenerRef listener)
@@ -728,7 +728,7 @@ static void setUpPagePolicyClient(WKBrowsingContextController *browsingContext, 
     if (loadDelegate)
         setUpPageLoaderClient(self, *_page);
     else
-        _page->initializeLoaderClient(nullptr);
+        _page->setLoaderClient(nullptr);
 }
 
 - (id <WKBrowsingContextPolicyDelegate>)policyDelegate
@@ -807,7 +807,7 @@ static void setUpPagePolicyClient(WKBrowsingContextController *browsingContext, 
 
 + (WKBrowsingContextController *)_browsingContextControllerForPageRef:(WKPageRef)pageRef
 {
-    return (WKBrowsingContextController *)WebKit::toImpl(pageRef)->loaderClient().client().base.clientInfo;
+    return (WKBrowsingContextController *)static_cast<const WebLoaderClient*>(WebKit::toImpl(pageRef)->loaderClient())->client().base.clientInfo;
 }
 
 @end

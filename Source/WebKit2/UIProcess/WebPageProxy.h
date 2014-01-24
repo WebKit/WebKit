@@ -27,7 +27,6 @@
 #define WebPageProxy_h
 
 #include "APIObject.h"
-#include "APIPolicyClient.h"
 #include "APISession.h"
 #include "AutoCorrectionCallback.h"
 #include "Connection.h"
@@ -100,6 +99,8 @@
 #endif
 
 namespace API {
+class LoaderClient;
+class PolicyClient;
 class URLRequest;
 }
 
@@ -367,7 +368,7 @@ public:
     void initializeFindClient(const WKPageFindClientBase*);
     void initializeFindMatchesClient(const WKPageFindMatchesClientBase*);
     void initializeFormClient(const WKPageFormClientBase*);
-    void initializeLoaderClient(const WKPageLoaderClientBase*);
+    void setLoaderClient(std::unique_ptr<API::LoaderClient>);
     void setPolicyClient(std::unique_ptr<API::PolicyClient>);
     void initializeUIClient(const WKPageUIClientBase*);
 #if PLATFORM(EFL)
@@ -833,7 +834,7 @@ public:
     void endColorPicker();
 #endif
 
-    const WebLoaderClient& loaderClient() { return m_loaderClient; }
+    const API::LoaderClient* loaderClient() { return m_loaderClient.get(); }
 
     WebCore::IntSize minimumLayoutSize() const { return m_minimumLayoutSize; }
     void setMinimumLayoutSize(const WebCore::IntSize&);
@@ -1162,7 +1163,7 @@ private:
 #endif
 
     PageClient& m_pageClient;
-    WebLoaderClient m_loaderClient;
+    std::unique_ptr<API::LoaderClient> m_loaderClient;
     std::unique_ptr<API::PolicyClient> m_policyClient;
     WebFormClient m_formClient;
     WebUIClient m_uiClient;

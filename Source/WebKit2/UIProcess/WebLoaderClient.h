@@ -27,14 +27,8 @@
 #define WebLoaderClient_h
 
 #include "APIClient.h"
-#include "PluginModuleInfo.h"
-#include "SameDocumentNavigationType.h"
-#include "WKPage.h"
-#include <WebCore/FrameLoaderTypes.h>
-#include <WebCore/LayoutMilestones.h>
-#include <wtf/Forward.h>
-#include <wtf/RefPtr.h>
-#include <wtf/Vector.h>
+#include "APILoaderClient.h"
+#include "WKPageLoaderClient.h"
 
 namespace API {
 class Object;
@@ -58,53 +52,56 @@ class WebFrameProxy;
 class WebPageProxy;
 class WebProtectionSpace;
 
-class WebLoaderClient : public API::Client<WKPageLoaderClientBase> {
+class WebLoaderClient : public API::Client<WKPageLoaderClientBase>, public API::LoaderClient {
 public:
-    void didStartProvisionalLoadForFrame(WebPageProxy*, WebFrameProxy*, API::Object*);
-    void didReceiveServerRedirectForProvisionalLoadForFrame(WebPageProxy*, WebFrameProxy*, API::Object*);
-    void didFailProvisionalLoadWithErrorForFrame(WebPageProxy*, WebFrameProxy*, const WebCore::ResourceError&, API::Object*);
-    void didCommitLoadForFrame(WebPageProxy*, WebFrameProxy*, API::Object*);
-    void didFinishDocumentLoadForFrame(WebPageProxy*, WebFrameProxy*, API::Object*);
-    void didFinishLoadForFrame(WebPageProxy*, WebFrameProxy*, API::Object*);
-    void didFailLoadWithErrorForFrame(WebPageProxy*, WebFrameProxy*, const WebCore::ResourceError&, API::Object*);
-    void didSameDocumentNavigationForFrame(WebPageProxy*, WebFrameProxy*, SameDocumentNavigationType, API::Object*);
-    void didReceiveTitleForFrame(WebPageProxy*, const String&, WebFrameProxy*, API::Object*);
-    void didFirstLayoutForFrame(WebPageProxy*, WebFrameProxy*, API::Object*);
+    explicit WebLoaderClient(const WKPageLoaderClientBase*);
+
+private:
+    virtual void didStartProvisionalLoadForFrame(WebPageProxy*, WebFrameProxy*, API::Object*) override;
+    virtual void didReceiveServerRedirectForProvisionalLoadForFrame(WebPageProxy*, WebFrameProxy*, API::Object*);
+    virtual void didFailProvisionalLoadWithErrorForFrame(WebPageProxy*, WebFrameProxy*, const WebCore::ResourceError&, API::Object*) override;
+    virtual void didCommitLoadForFrame(WebPageProxy*, WebFrameProxy*, API::Object*) override;
+    virtual void didFinishDocumentLoadForFrame(WebPageProxy*, WebFrameProxy*, API::Object*) override;
+    virtual void didFinishLoadForFrame(WebPageProxy*, WebFrameProxy*, API::Object*) override;
+    virtual void didFailLoadWithErrorForFrame(WebPageProxy*, WebFrameProxy*, const WebCore::ResourceError&, API::Object*) override;
+    virtual void didSameDocumentNavigationForFrame(WebPageProxy*, WebFrameProxy*, SameDocumentNavigationType, API::Object*) override;
+    virtual void didReceiveTitleForFrame(WebPageProxy*, const WTF::String&, WebFrameProxy*, API::Object*) override;
+    virtual void didFirstLayoutForFrame(WebPageProxy*, WebFrameProxy*, API::Object*) override;
 
     // FIXME: We should consider removing didFirstVisuallyNonEmptyLayoutForFrame since it is replaced by didLayout.
-    void didFirstVisuallyNonEmptyLayoutForFrame(WebPageProxy*, WebFrameProxy*, API::Object*);
+    virtual void didFirstVisuallyNonEmptyLayoutForFrame(WebPageProxy*, WebFrameProxy*, API::Object*) override;
 
-    void didRemoveFrameFromHierarchy(WebPageProxy*, WebFrameProxy*, API::Object*);
-    void didDisplayInsecureContentForFrame(WebPageProxy*, WebFrameProxy*, API::Object*);
-    void didRunInsecureContentForFrame(WebPageProxy*, WebFrameProxy*, API::Object*);
-    void didDetectXSSForFrame(WebPageProxy*, WebFrameProxy*, API::Object*);
+    virtual void didRemoveFrameFromHierarchy(WebPageProxy*, WebFrameProxy*, API::Object*) override;
+    virtual void didDisplayInsecureContentForFrame(WebPageProxy*, WebFrameProxy*, API::Object*) override;
+    virtual void didRunInsecureContentForFrame(WebPageProxy*, WebFrameProxy*, API::Object*) override;
+    virtual void didDetectXSSForFrame(WebPageProxy*, WebFrameProxy*, API::Object*) override;
 
-    void didLayout(WebPageProxy*, WebCore::LayoutMilestones, API::Object*);
+    virtual void didLayout(WebPageProxy*, WebCore::LayoutMilestones, API::Object*) override;
     
-    bool canAuthenticateAgainstProtectionSpaceInFrame(WebPageProxy*, WebFrameProxy*, WebProtectionSpace*);
-    void didReceiveAuthenticationChallengeInFrame(WebPageProxy*, WebFrameProxy*, AuthenticationChallengeProxy*);
+    bool canAuthenticateAgainstProtectionSpaceInFrame(WebPageProxy*, WebFrameProxy*, WebProtectionSpace*) override;
+    virtual void didReceiveAuthenticationChallengeInFrame(WebPageProxy*, WebFrameProxy*, AuthenticationChallengeProxy*) override;
 
-    void didStartProgress(WebPageProxy*);
-    void didChangeProgress(WebPageProxy*);
-    void didFinishProgress(WebPageProxy*);
+    virtual void didStartProgress(WebPageProxy*) override;
+    virtual void didChangeProgress(WebPageProxy*) override;
+    virtual void didFinishProgress(WebPageProxy*) override;
 
     // FIXME: These three functions should not be part of this client.
-    void processDidBecomeUnresponsive(WebPageProxy*);
-    void interactionOccurredWhileProcessUnresponsive(WebPageProxy*);
-    void processDidBecomeResponsive(WebPageProxy*);
-    void processDidCrash(WebPageProxy*);
+    virtual void processDidBecomeUnresponsive(WebPageProxy*) override;
+    virtual void interactionOccurredWhileProcessUnresponsive(WebPageProxy*) override;
+    virtual void processDidBecomeResponsive(WebPageProxy*) override;
+    virtual void processDidCrash(WebPageProxy*) override;
 
-    void didChangeBackForwardList(WebPageProxy*, WebBackForwardListItem* addedItem, Vector<RefPtr<API::Object>>* removedItems);
-    void willGoToBackForwardListItem(WebPageProxy*, WebBackForwardListItem*, API::Object*);
+    virtual void didChangeBackForwardList(WebPageProxy*, WebBackForwardListItem* addedItem, Vector<RefPtr<API::Object>>* removedItems) override;
+    virtual void willGoToBackForwardListItem(WebPageProxy*, WebBackForwardListItem*, API::Object*) override;
 
 #if ENABLE(NETSCAPE_PLUGIN_API)
-    PluginModuleLoadPolicy pluginLoadPolicy(WebPageProxy*, PluginModuleLoadPolicy currentPluginLoadPolicy, ImmutableDictionary*, String& unavailabilityDescription, String& useBlockedPluginTitle);
-    void didFailToInitializePlugin(WebPageProxy*, ImmutableDictionary*);
-    void didBlockInsecurePluginVersion(WebPageProxy*, ImmutableDictionary*);
+    PluginModuleLoadPolicy pluginLoadPolicy(WebPageProxy*, PluginModuleLoadPolicy currentPluginLoadPolicy, ImmutableDictionary*, WTF::String& unavailabilityDescription, WTF::String& useBlockedPluginTitle) override;
+    virtual void didFailToInitializePlugin(WebPageProxy*, ImmutableDictionary*) override;
+    virtual void didBlockInsecurePluginVersion(WebPageProxy*, ImmutableDictionary*) override;
 #endif // ENABLE(NETSCAPE_PLUGIN_API)
 
 #if ENABLE(WEBGL)
-    WebCore::WebGLLoadPolicy webGLLoadPolicy(WebPageProxy*, const String&) const;
+    WebCore::WebGLLoadPolicy webGLLoadPolicy(WebPageProxy*, const WTF::String&) const;
 #endif // ENABLE(WEBGL)
 };
 

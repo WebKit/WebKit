@@ -1,3 +1,59 @@
+2014-01-23  Anders Carlsson  <andersca@apple.com>
+
+        Add an APILoaderClient base class
+        https://bugs.webkit.org/show_bug.cgi?id=127527
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/API/APILoaderClient.h: Added.
+        (API::LoaderClient::~LoaderClient):
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageSetPageLoaderClient):
+        * UIProcess/API/Cocoa/WKBrowsingContextController.mm:
+        (setUpPageLoaderClient):
+        (-[WKBrowsingContextController setLoadDelegate:]):
+        (+[WKBrowsingContextController _browsingContextControllerForPageRef:]):
+        * UIProcess/WebLoaderClient.cpp:
+        (WebKit::WebLoaderClient::WebLoaderClient):
+        * UIProcess/WebLoaderClient.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::setLoaderClient):
+        (WebKit::WebPageProxy::close):
+        (WebKit::WebPageProxy::didChangeBackForwardList):
+        (WebKit::WebPageProxy::willGoToBackForwardListItem):
+        (WebKit::WebPageProxy::findPlugin):
+        (WebKit::WebPageProxy::didStartProgress):
+        (WebKit::WebPageProxy::didChangeProgress):
+        (WebKit::WebPageProxy::didFinishProgress):
+        (WebKit::WebPageProxy::didStartProvisionalLoadForFrame):
+        (WebKit::WebPageProxy::didReceiveServerRedirectForProvisionalLoadForFrame):
+        (WebKit::WebPageProxy::didFailProvisionalLoadForFrame):
+        (WebKit::WebPageProxy::didCommitLoadForFrame):
+        (WebKit::WebPageProxy::didFinishDocumentLoadForFrame):
+        (WebKit::WebPageProxy::didFinishLoadForFrame):
+        (WebKit::WebPageProxy::didFailLoadForFrame):
+        (WebKit::WebPageProxy::didSameDocumentNavigationForFrame):
+        (WebKit::WebPageProxy::didReceiveTitleForFrame):
+        (WebKit::WebPageProxy::didFirstLayoutForFrame):
+        (WebKit::WebPageProxy::didFirstVisuallyNonEmptyLayoutForFrame):
+        (WebKit::WebPageProxy::didLayout):
+        (WebKit::WebPageProxy::didRemoveFrameFromHierarchy):
+        (WebKit::WebPageProxy::didDisplayInsecureContentForFrame):
+        (WebKit::WebPageProxy::didRunInsecureContentForFrame):
+        (WebKit::WebPageProxy::didDetectXSSForFrame):
+        (WebKit::WebPageProxy::webGLPolicyForURL):
+        (WebKit::WebPageProxy::processDidBecomeUnresponsive):
+        (WebKit::WebPageProxy::interactionOccurredWhileProcessUnresponsive):
+        (WebKit::WebPageProxy::processDidBecomeResponsive):
+        (WebKit::WebPageProxy::processDidCrash):
+        (WebKit::WebPageProxy::canAuthenticateAgainstProtectionSpaceInFrame):
+        (WebKit::WebPageProxy::didReceiveAuthenticationChallengeProxy):
+        (WebKit::WebPageProxy::didFailToInitializePlugin):
+        (WebKit::WebPageProxy::didBlockInsecurePluginVersion):
+        * UIProcess/WebPageProxy.h:
+        (WebKit::WebPageProxy::loaderClient):
+        * WebKit2.xcodeproj/project.pbxproj:
+
 2014-01-23  Ryuan Choi  <ryuan.choi@samsung.com>
 
         Build break after r162650
