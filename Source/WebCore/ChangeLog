@@ -1,3 +1,17 @@
+2014-01-23  Dan Bernstein  <mitz@apple.com>
+
+        <rdar://problem/15875326> REGRESSION (r162257): Assertion failure (should not be reached) in CSSPreloadScanner::tokenize()
+        https://bugs.webkit.org/show_bug.cgi?id=127540
+
+        Reviewed by Anders Carlsson.
+
+        No new tests, because I could not reproduce the bug reliably and I don’t know how to trigger
+        it.
+
+        * html/parser/CSSPreloadScanner.cpp:
+        (WebCore::CSSPreloadScanner::scan): Check for the DoneParsingImportRules before tokenizing
+        a character, not after. This restores the logic from before r162257.
+
 2014-01-23  Jer Noble  <jer.noble@apple.com>
 
         [iOS] Protect against possbile deadlock by delaying video layer creation

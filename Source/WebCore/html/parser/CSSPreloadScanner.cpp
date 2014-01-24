@@ -56,10 +56,10 @@ void CSSPreloadScanner::scan(const HTMLToken::DataVector& data, PreloadRequestSt
     TemporaryChange<PreloadRequestStream*> change(m_requests, &requests);
 
     for (UChar c : data) {
-        tokenize(c);
-
         if (m_state == DoneParsingImportRules)
             break;
+
+        tokenize(c);
     }
 }
 
