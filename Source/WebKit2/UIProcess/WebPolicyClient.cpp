@@ -72,7 +72,7 @@ void WebPolicyClient::decidePolicyForNewWindowAction(WebPageProxy* page, WebFram
 
 void WebPolicyClient::decidePolicyForResponse(WebPageProxy* page, WebFrameProxy* frame, const ResourceResponse& resourceResponse, const ResourceRequest& resourceRequest, bool canShowMIMEType, WebFramePolicyListenerProxy* listener, API::Object* userData)
 {
-    if (m_client.decidePolicyForResponse_deprecatedForUseWithV0 && !m_client.decidePolicyForResponse) {
+    if (!m_client.decidePolicyForResponse_deprecatedForUseWithV0 && !m_client.decidePolicyForResponse) {
         listener->use();
         return;
     }
