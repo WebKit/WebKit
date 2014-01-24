@@ -41,7 +41,7 @@
  * the same icon database.
  *
  * The icon database is enabled by default and stored in
- * ~/.local/share/webkit/icondatabase, depending on XDG_DATA_HOME.
+ * ~/.cache/webkit/icondatabase, depending on XDG_CACHE_HOME.
  *
  * WebKit will automatically look for available icons in link elements
  * on opened pages as well as an existing favicon.ico and load the

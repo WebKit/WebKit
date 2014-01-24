@@ -558,7 +558,7 @@ void webkitInit()
 
     PageGroup::setShouldTrackVisitedLinks(true);
 
-    GUniquePtr<gchar> iconDatabasePath(g_build_filename(g_get_user_data_dir(), "webkit", "icondatabase", NULL));
+    GUniquePtr<gchar> iconDatabasePath(g_build_filename(g_get_user_cache_dir(), "webkit", "icondatabase", NULL));
     webkit_icon_database_set_path(webkit_get_icon_database(), iconDatabasePath.get());
 
     WebCore::ResourceHandle::setIgnoreSSLErrors(true);

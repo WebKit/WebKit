@@ -131,7 +131,7 @@ String WebContext::platformDefaultDatabaseDirectory() const
 
 String WebContext::platformDefaultIconDatabasePath() const
 {
-    GUniquePtr<gchar> databaseDirectory(g_build_filename(g_get_user_data_dir(), "webkitgtk", "icondatabase", nullptr));
+    GUniquePtr<gchar> databaseDirectory(g_build_filename(g_get_user_cache_dir(), "webkitgtk", "icondatabase", nullptr));
     return WebCore::filenameToString(databaseDirectory.get());
 }
 

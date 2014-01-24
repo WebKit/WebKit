@@ -239,7 +239,7 @@ static GtkWidget* createBrowser(GtkWidget* window, GtkWidget* uriEntry, GtkWidge
 
     gtk_container_add(GTK_CONTAINER(scrolledWindow), GTK_WIDGET(webView));
 
-    iconDatabasePath = g_build_filename(g_get_user_data_dir(), "webkit", "icondatabase", NULL);
+    iconDatabasePath = g_build_filename(g_get_user_cache_dir(), "GtkLauncher", "icondatabase", NULL);
     webkit_favicon_database_set_path(webkit_get_favicon_database(), iconDatabasePath);
     g_free(iconDatabasePath);
 
