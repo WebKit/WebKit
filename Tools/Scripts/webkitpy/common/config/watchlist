@@ -150,6 +150,15 @@
         "Media": {
             "filename": r"(Source|LayoutTests)/.*([Mm]edia|[Aa]udio|[Vv]ideo)",
         },
+        "Track": {
+            "filename": r"Source/WebCore/html/track/"
+                        r"|Source/WebCore/loader/*Track*.*"
+                        r"|Source/WebCore/html/HTMLMediaElement*"
+                        r"|Source/WebCore/html/HTMLTrackElement*"
+                        r"|Source/WebCore/Modules/mediacontrols*"
+                        r"|Source/WebCore/css/mediaControl*"
+                        r"|LayoutTests/media/track/",
+        },
         "MathML": {
             "filename": r"(Source|LayoutTests|Websites)/.*mathml",
         },
@@ -311,7 +320,8 @@
         "IndexedDB": [ "alecflett@chromium.org", "jsbell@chromium.org" ],
         "Loader": [ "japhet@chromium.org" ],
         "MathML": [ "dbarton@mathscribe.com", "mrobinson@webkit.org", "fred.wang@free.fr" ],
-        "Media": [ "eric.carlson@apple.com", "jer.noble@apple.com", "glenn@skynav.com" ],
+        "Media": [ "eric.carlson@apple.com", "jer.noble@apple.com", "glenn@skynav.com", "philipj@opera.com" ],
+        "Track": [ "eric.carlson@apple.com", "philipj@opera.com" ],
         "MediaStream": [ "tommyw@google.com", "hta@google.com" ],
         "NetworkInfo": [ "gyuyoung.kim@webkit.org", "dchris@gmail.com" ],
         "OpenGL" : [ "noam@webkit.org", "dino@apple.com", "kondapallykalyan@gmail.com", "roger_fong@apple.com" ],

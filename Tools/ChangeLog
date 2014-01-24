@@ -1,3 +1,10 @@
+2014-01-24  Eric Carlson  <eric.carlson@apple.com>
+
+        Unreviewed. Add Philip Jägenstedt to watch and contributor lists.
+
+        * Scripts/webkitpy/common/config/contributors.json:
+        * Scripts/webkitpy/common/config/watchlist:
+
 2014-01-23  David Farler  <dfarler@apple.com>
 
         Make WebKitTestRunner work with iOS
