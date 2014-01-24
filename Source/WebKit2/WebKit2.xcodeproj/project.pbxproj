@@ -1069,7 +1069,6 @@
 		BC5750971268F3C6006F0F12 /* WebPopupMenuProxyMac.h in Headers */ = {isa = PBXBuildFile; fileRef = BC5750951268F3C6006F0F12 /* WebPopupMenuProxyMac.h */; };
 		BC5750981268F3C6006F0F12 /* WebPopupMenuProxyMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC5750961268F3C6006F0F12 /* WebPopupMenuProxyMac.mm */; };
 		BC575613126E0138006F0F12 /* APIError.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC575612126E0138006F0F12 /* APIError.cpp */; };
-		BC59534210FC04520098F82D /* WebLoaderClient.h in Headers */ = {isa = PBXBuildFile; fileRef = BC59534010FC04520098F82D /* WebLoaderClient.h */; };
 		BC59548915C7868500FD1E3E /* WebKit2.h in Headers */ = {isa = PBXBuildFile; fileRef = BC59548815C7868500FD1E3E /* WebKit2.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC597075116591D000551FCA /* ProcessModel.h in Headers */ = {isa = PBXBuildFile; fileRef = BC597074116591D000551FCA /* ProcessModel.h */; };
 		BC5C75C814954DA600BC4775 /* WKConnectionInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = BC5C75C614954DA600BC4775 /* WKConnectionInternal.h */; };
@@ -1191,7 +1190,6 @@
 		BCB9E2441120DACA00A137E0 /* WebContext.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCB9E2421120DACA00A137E0 /* WebContext.cpp */; };
 		BCB9E24B1120E15C00A137E0 /* WKContext.h in Headers */ = {isa = PBXBuildFile; fileRef = BCB9E2491120E15C00A137E0 /* WKContext.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BCB9E24C1120E15C00A137E0 /* WKContext.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCB9E24A1120E15C00A137E0 /* WKContext.cpp */; };
-		BCB9E76211232B9E00A137E0 /* WebLoaderClient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCB9E76111232B9E00A137E0 /* WebLoaderClient.cpp */; };
 		BCB9F6A01123A84B00A137E0 /* WebFramePolicyListenerProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = BCB9F69E1123A84B00A137E0 /* WebFramePolicyListenerProxy.h */; };
 		BCB9F6A11123A84B00A137E0 /* WebFramePolicyListenerProxy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCB9F69F1123A84B00A137E0 /* WebFramePolicyListenerProxy.cpp */; };
 		BCB9F6A51123DD0D00A137E0 /* WKFramePolicyListener.h in Headers */ = {isa = PBXBuildFile; fileRef = BCB9F6A31123DD0D00A137E0 /* WKFramePolicyListener.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -2793,7 +2791,6 @@
 		BC5750951268F3C6006F0F12 /* WebPopupMenuProxyMac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebPopupMenuProxyMac.h; sourceTree = "<group>"; };
 		BC5750961268F3C6006F0F12 /* WebPopupMenuProxyMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebPopupMenuProxyMac.mm; sourceTree = "<group>"; };
 		BC575612126E0138006F0F12 /* APIError.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = APIError.cpp; sourceTree = "<group>"; };
-		BC59534010FC04520098F82D /* WebLoaderClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebLoaderClient.h; sourceTree = "<group>"; };
 		BC59548815C7868500FD1E3E /* WebKit2.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebKit2.h; sourceTree = "<group>"; };
 		BC597074116591D000551FCA /* ProcessModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProcessModel.h; sourceTree = "<group>"; };
 		BC5C75C614954DA600BC4775 /* WKConnectionInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKConnectionInternal.h; sourceTree = "<group>"; };
@@ -2918,7 +2915,6 @@
 		BCB9E2421120DACA00A137E0 /* WebContext.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebContext.cpp; sourceTree = "<group>"; };
 		BCB9E2491120E15C00A137E0 /* WKContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKContext.h; sourceTree = "<group>"; };
 		BCB9E24A1120E15C00A137E0 /* WKContext.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKContext.cpp; sourceTree = "<group>"; };
-		BCB9E76111232B9E00A137E0 /* WebLoaderClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebLoaderClient.cpp; sourceTree = "<group>"; };
 		BCB9F69E1123A84B00A137E0 /* WebFramePolicyListenerProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebFramePolicyListenerProxy.h; sourceTree = "<group>"; };
 		BCB9F69F1123A84B00A137E0 /* WebFramePolicyListenerProxy.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebFramePolicyListenerProxy.cpp; sourceTree = "<group>"; };
 		BCB9F6A31123DD0D00A137E0 /* WKFramePolicyListener.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKFramePolicyListener.h; sourceTree = "<group>"; };
@@ -4969,8 +4965,6 @@
 				1C77C1951288A872006A742F /* WebInspectorProxy.messages.in */,
 				51A9E1021315CCFC009E7031 /* WebKeyValueStorageManager.cpp */,
 				51A9E1031315CCFC009E7031 /* WebKeyValueStorageManager.h */,
-				BCB9E76111232B9E00A137E0 /* WebLoaderClient.cpp */,
-				BC59534010FC04520098F82D /* WebLoaderClient.h */,
 				33D3A3B71339606200709BE4 /* WebMediaCacheManagerProxy.cpp */,
 				33D3A3B81339606200709BE4 /* WebMediaCacheManagerProxy.h */,
 				33D3A3B91339606200709BE4 /* WebMediaCacheManagerProxy.messages.in */,
@@ -6473,7 +6467,6 @@
 				1AE00D611831792100087DD7 /* FrameLoadState.h in Headers */,
 				BCB63478116BF10600603215 /* WebKit2_C.h in Headers */,
 				BC9BA5051697C45300E44616 /* WebKit2Initialize.h in Headers */,
-				BC59534210FC04520098F82D /* WebLoaderClient.h in Headers */,
 				33D3A3C2133960B000709BE4 /* WebMediaCacheManager.h in Headers */,
 				2D125C5E1857EA05003BA3CB /* ViewGestureController.h in Headers */,
 				33D3A3C91339617900709BE4 /* WebMediaCacheManagerMessages.h in Headers */,
@@ -7863,7 +7856,6 @@
 				C0337DD3127A2A0E008FF4F4 /* WebKeyboardEvent.cpp in Sources */,
 				51A9E1051315CCFC009E7031 /* WebKeyValueStorageManager.cpp in Sources */,
 				BC9BA5041697C45300E44616 /* WebKit2Initialize.cpp in Sources */,
-				BCB9E76211232B9E00A137E0 /* WebLoaderClient.cpp in Sources */,
 				33D3A3C1133960B000709BE4 /* WebMediaCacheManager.cpp in Sources */,
 				33D3A3C81339617900709BE4 /* WebMediaCacheManagerMessageReceiver.cpp in Sources */,
 				2DA944B31884E9EC00ED86DB /* WebProcessIOS.mm in Sources */,

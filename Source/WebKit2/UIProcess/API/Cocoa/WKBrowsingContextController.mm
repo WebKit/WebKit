@@ -737,7 +737,7 @@ static void setUpPagePolicyClient(WKBrowsingContextController *browsingContext, 
     if (loadDelegate)
         setUpPageLoaderClient(self, *_page);
     else
-        _page->setLoaderClient(nullptr);
+        WKPageSetPageLoaderClient(toAPI(_page.get()), nullptr);
 }
 
 - (id <WKBrowsingContextPolicyDelegate>)policyDelegate

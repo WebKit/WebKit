@@ -52,7 +52,6 @@
 #include "WebFrameProxy.h"
 #include "WebHistoryClient.h"
 #include "WebHitTestResult.h"
-#include "WebLoaderClient.h"
 #include "WebPageContextMenuClient.h"
 #include "WebPageCreationParameters.h"
 #include <WebCore/AlternativeTextClient.h> // FIXME: Needed by WebPageProxyMessages.h for DICTATION_ALTERNATIVES.

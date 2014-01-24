@@ -1,3 +1,21 @@
+2014-01-24  Anders Carlsson  <andersca@apple.com>
+
+        Get rid of WebLoaderClient
+        https://bugs.webkit.org/show_bug.cgi?id=127587
+
+        Reviewed by Andreas Kling.
+
+        Move WebLoaderClient into WKPage.cpp.
+
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageSetPageLoaderClient):
+        * UIProcess/API/Cocoa/WKBrowsingContextController.mm:
+        (-[WKBrowsingContextController setLoadDelegate:]):
+        * UIProcess/WebLoaderClient.cpp: Removed.
+        * UIProcess/WebLoaderClient.h: Removed.
+        * UIProcess/WebPageProxy.h:
+        * WebKit2.xcodeproj/project.pbxproj:
+
 2014-01-24  Brady Eidson  <beidson@apple.com>
 
         IDB: Support createIndex/deleteIndex
