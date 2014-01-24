@@ -581,6 +581,10 @@ webkit.org/b/68878 webkit.org/b/102993 media/video-playing-and-pause.html [ Fail
 webkit.org/b/98621 webkit.org/b/102993 media/video-controls-rendering.html [ Failure Pass ]
 webkit.org/b/96641 media/video-seek-past-end-playing.html [ Failure Pass ]
 
+# Tests that sometimes fail on the bot (for GTK or Mac ports as well)
+webkit.org/b/127550 media/audio-concurrent-supported.html [ Failure Pass ]
+webkit.org/b/127551 media/video-duration-known-after-eos.html [ Failure Pass ]
+
 # Opera-submitted tests to W3C for <track>, a lot of failures still.
 webkit.org/b/103926 media/track/opera/idl/media-idl-tests.html [ Skip ]
 webkit.org/b/103926 media/track/opera/interfaces/HTMLElement/HTMLMediaElement/crossOrigin.html [ Skip ]
