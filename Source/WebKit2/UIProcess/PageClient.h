@@ -172,6 +172,7 @@ public:
     virtual void notifyInputContextAboutDiscardedComposition() = 0;
     virtual void makeFirstResponder() = 0;
     virtual void setAcceleratedCompositingRootLayer(CALayer *) = 0;
+    virtual RetainPtr<CGImageRef> takeViewSnapshot() = 0;
 #endif
 
 #if USE(APPKIT)

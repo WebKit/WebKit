@@ -50,6 +50,7 @@
 #import "TextCheckerState.h"
 #import "TiledCoreAnimationDrawingAreaProxy.h"
 #import "ViewGestureController.h"
+#import "ViewSnapshotStore.h"
 #import "WKAPICast.h"
 #import "WKFullScreenWindowController.h"
 #import "WKPrintingView.h"
@@ -57,6 +58,7 @@
 #import "WKTextInputWindowController.h"
 #import "WKViewInternal.h"
 #import "WKViewPrivate.h"
+#import "WebBackForwardList.h"
 #import "WebContext.h"
 #import "WebEventFactory.h"
 #import "WebKit2Initialize.h"
@@ -112,6 +114,17 @@
 - (NSRect)_intersectBottomCornersWithRect:(NSRect)viewRect;
 - (void)_maskRoundedBottomCorners:(NSRect)clipRect;
 @end
+
+#if defined(__has_include) && __has_include(<CoreGraphics/CoreGraphicsPrivate.h>)
+#import <CoreGraphics/CoreGraphicsPrivate.h>
+#endif
+
+extern "C" {
+typedef uint32_t CGSConnectionID;
+typedef uint32_t CGSWindowID;
+CGSConnectionID CGSMainConnectionID(void);
+CGError CGSGetScreenRectForWindow(CGSConnectionID cid, CGSWindowID wid, CGRect *rect);
+};
 
 using namespace WebKit;
 using namespace WebCore;
@@ -2497,6 +2510,26 @@ static void createSandboxExtensionsForFileUpload(NSPasteboard *pasteboard, Sandb
     [CATransaction commit];
 }
 
+- (RetainPtr<CGImageRef>)_takeViewSnapshot
+{
+    NSWindow *window = self.window;
+
+    if (![window windowNumber])
+        return nullptr;
+
+    RetainPtr<CGImageRef> windowSnapshotImage = adoptCF(CGWindowListCreateImage(CGRectNull, kCGWindowListOptionIncludingWindow, [window windowNumber], kCGWindowImageBoundsIgnoreFraming | kCGWindowImageShouldBeOpaque));
+
+    NSRect windowCaptureRect = [self convertRect:self.bounds toView:nil];
+    NSRect windowCaptureScreenRect = [window convertRectToScreen:windowCaptureRect];
+    CGRect windowScreenRect;
+    CGSGetScreenRectForWindow(CGSMainConnectionID(), (CGSWindowID)[window windowNumber], &windowScreenRect);
+
+    NSRect croppedImageRect = windowCaptureRect;
+    croppedImageRect.origin.y = windowScreenRect.size.height - windowCaptureScreenRect.size.height - NSMinY(windowCaptureRect);
+
+    return adoptCF(CGImageCreateWithImageInRect(windowSnapshotImage.get(), NSRectToCGRect([window convertRectToBacking:croppedImageRect])));
+}
+
 - (void)_setAccessibilityWebProcessToken:(NSData *)data
 {
     _data->_remoteAccessibilityChild = WKAXRemoteElementForToken(data);
@@ -2812,6 +2845,11 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
 @end
 
 @implementation WKView (Private)
+
+- (void)saveBackForwardSnapshotForCurrentItem
+{
+    _data->_page->recordNavigationSnapshot();
+}
 
 - (void)_registerDraggedTypes
 {

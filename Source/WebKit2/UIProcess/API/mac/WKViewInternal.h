@@ -70,6 +70,8 @@ namespace WebKit {
 
 - (void)_setAcceleratedCompositingModeRootLayer:(CALayer *)rootLayer;
 
+- (RetainPtr<CGImageRef>)_takeViewSnapshot;
+
 - (void)_setAccessibilityWebProcessToken:(NSData *)data;
 
 - (void)_pluginFocusOrWindowFocusChanged:(BOOL)pluginHasFocusAndWindowHasFocus pluginComplexTextInputIdentifier:(uint64_t)pluginComplexTextInputIdentifier;

@@ -113,6 +113,8 @@ private:
     virtual void exitAcceleratedCompositingMode();
     virtual void updateAcceleratedCompositingMode(const LayerTreeContext&);
 
+    virtual RetainPtr<CGImageRef> takeViewSnapshot() override;
+
     virtual void accessibilityWebProcessTokenReceived(const IPC::DataReference&);
 
     virtual void pluginFocusOrWindowFocusChanged(uint64_t pluginComplexTextInputIdentifier, bool pluginHasFocusAndWindowHasFocus);

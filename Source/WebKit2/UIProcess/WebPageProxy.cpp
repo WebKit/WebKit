@@ -124,6 +124,10 @@
 #include "NetworkProcessMessages.h"
 #endif
 
+#if PLATFORM(MAC)
+#include "ViewSnapshotStore.h"
+#endif
+
 // This controls what strategy we use for mouse wheel coalescing.
 #define MERGE_WHEEL_EVENTS 1
 
@@ -309,6 +313,7 @@ WebPageProxy::WebPageProxy(PageClient& pageClient, WebProcessProxy& process, Web
     , m_rubberBandsAtBottom(true)
     , m_backgroundExtendsBeyondPage(false)
     , m_mainFrameInViewSourceMode(false)
+    , m_shouldRecordNavigationSnapshots(false)
     , m_pageCount(0)
     , m_renderTreeSize(0)
     , m_shouldSendEventsSynchronously(false)
@@ -750,6 +755,16 @@ void WebPageProxy::reload(bool reloadFromOrigin)
     m_process->responsivenessTimer()->start();
 }
 
+void WebPageProxy::recordNavigationSnapshot()
+{
+    if (!m_shouldRecordNavigationSnapshots)
+        return;
+
+#if PLATFORM(MAC)
+    ViewSnapshotStore::shared().recordSnapshot(*this);
+#endif
+}
+
 void WebPageProxy::goForward()
 {
     if (isValid() && !canGoForward())
@@ -758,6 +773,8 @@ void WebPageProxy::goForward()
     WebBackForwardListItem* forwardItem = m_backForwardList->forwardItem();
     if (!forwardItem)
         return;
+
+    recordNavigationSnapshot();
 
     auto transaction = m_pageLoadState.transaction();
 
@@ -786,6 +803,8 @@ void WebPageProxy::goBack()
     if (!backItem)
         return;
 
+    recordNavigationSnapshot();
+
     auto transaction = m_pageLoadState.transaction();
 
     m_pageLoadState.setPendingAPIRequestURL(transaction, backItem->url());
@@ -810,6 +829,8 @@ void WebPageProxy::goToBackForwardItem(WebBackForwardListItem* item)
         reattachToWebProcessWithItem(item);
         return;
     }
+
+    recordNavigationSnapshot();
     
     auto transaction = m_pageLoadState.transaction();
 
@@ -2107,8 +2128,10 @@ void WebPageProxy::didStartProvisionalLoadForFrame(uint64_t frameID, const Strin
     MESSAGE_CHECK(frame);
     MESSAGE_CHECK_URL(url);
 
-    if (frame->isMainFrame())
+    if (frame->isMainFrame()) {
+        recordNavigationSnapshot();
         m_pageLoadState.didStartProvisionalLoad(transaction, url, unreachableURL);
+    }
 
     frame->setUnreachableURL(unreachableURL);
     frame->didStartProvisionalLoad(url);
@@ -4358,6 +4381,11 @@ void WebPageProxy::dictationAlternatives(uint64_t dictationContext, Vector<Strin
     result = m_pageClient.dictationAlternatives(dictationContext);
 }
 #endif
+
+RetainPtr<CGImageRef> WebPageProxy::takeViewSnapshot()
+{
+    return m_pageClient.takeViewSnapshot();
+}
 
 #endif // PLATFORM(MAC)
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010, 2011, 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2010, 2011, 2012, 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -58,6 +58,7 @@ static CFStringRef sessionHistoryEntryTitleKey = CFSTR("SessionHistoryEntryTitle
 static CFStringRef sessionHistoryEntryURLKey = CFSTR("SessionHistoryEntryURL");
 static CFStringRef sessionHistoryEntryOriginalURLKey = CFSTR("SessionHistoryEntryOriginalURL");
 static CFStringRef sessionHistoryEntryDataKey = CFSTR("SessionHistoryEntryData");
+static CFStringRef sessionHistoryEntrySnapshotUUIDKey = CFSTR("SessionHistoryEntrySnapshotUUID");
 
 static bool extractBackForwardListEntriesFromArray(CFArrayRef, BackForwardListItemVector&);
 
@@ -104,15 +105,16 @@ CFDictionaryRef WebBackForwardList::createCFDictionaryRepresentation(WebPageProx
         RetainPtr<CFStringRef> url = m_entries[i]->url().createCFString();
         RetainPtr<CFStringRef> title = m_entries[i]->title().createCFString();
         RetainPtr<CFStringRef> originalURL = m_entries[i]->originalURL().createCFString();
+        RetainPtr<CFStringRef> uuid = m_entries[i]->snapshotUUID().createCFString();
 
         // FIXME: This uses the IPC data encoding format, which means that whenever we change the IPC encoding we need to bump the CurrentSessionStateDataVersion
         // constant in WebPageProxyCF.cpp. The IPC data format is meant to be an implementation detail, and not something that should be written to disk.
         RetainPtr<CFDataRef> entryData = adoptCF(CFDataCreate(kCFAllocatorDefault, m_entries[i]->backForwardData().data(), m_entries[i]->backForwardData().size()));
-        
-        const void* keys[4] = { sessionHistoryEntryURLKey, sessionHistoryEntryTitleKey, sessionHistoryEntryOriginalURLKey, sessionHistoryEntryDataKey };
-        const void* values[4] = { url.get(), title.get(), originalURL.get(), entryData.get() };
 
-        RetainPtr<CFDictionaryRef> entryDictionary = adoptCF(CFDictionaryCreate(0, keys, values, 4, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
+        const void* keys[5] = { sessionHistoryEntryURLKey, sessionHistoryEntryTitleKey, sessionHistoryEntryOriginalURLKey, sessionHistoryEntryDataKey, sessionHistoryEntrySnapshotUUIDKey };
+        const void* values[5] = { url.get(), title.get(), originalURL.get(), entryData.get(), uuid.get() };
+
+        RetainPtr<CFDictionaryRef> entryDictionary = adoptCF(CFDictionaryCreate(0, keys, values, 5, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
         CFArrayAppendValue(entries.get(), entryDictionary.get());
     }
         
@@ -309,13 +311,21 @@ static bool extractBackForwardListEntriesFromArray(CFArrayRef cfEntries, BackFor
             return false;
         }
 
+        CFStringRef snapshotUUID = (CFStringRef)CFDictionaryGetValue(entryDictionary, sessionHistoryEntrySnapshotUUIDKey);
+        if (!snapshotUUID || CFGetTypeID(snapshotUUID) != CFStringGetTypeID()) {
+            LOG(SessionState, "WebBackForwardList entry at index %i does not have a valid snapshot UUID", (int)i);
+            return false;
+        }
+
         CFDataRef backForwardData = (CFDataRef)CFDictionaryGetValue(entryDictionary, sessionHistoryEntryDataKey);
         if (!backForwardData || CFGetTypeID(backForwardData) != CFDataGetTypeID()) {
             LOG(SessionState, "WebBackForwardList entry at index %i does not have back/forward data", (int)i);
             return false;
         }
-        
-        entries.append(WebBackForwardListItem::create(originalURL, entryURL, entryTitle, CFDataGetBytePtr(backForwardData), CFDataGetLength(backForwardData), generateWebBackForwardItemID()));
+
+        auto item = WebBackForwardListItem::create(originalURL, entryURL, entryTitle, CFDataGetBytePtr(backForwardData), CFDataGetLength(backForwardData), generateWebBackForwardItemID());
+        item->setSnapshotUUID(snapshotUUID);
+        entries.append(item);
     }
 
     return true;

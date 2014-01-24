@@ -89,6 +89,8 @@
 
 - (void)setMagnification:(double)magnification centeredAtPoint:(NSPoint)point;
 
+- (void)saveBackForwardSnapshotForCurrentItem;
+
 #endif
 
 @end

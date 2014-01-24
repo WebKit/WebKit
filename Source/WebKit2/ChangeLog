@@ -1,3 +1,75 @@
+2014-01-24  Tim Horton  <timothy_horton@apple.com>
+
+        WebKit2 View Gestures (Swipe): Add a simple cache of view snapshots
+        https://bugs.webkit.org/show_bug.cgi?id=127438
+
+        Reviewed by Sam Weinig.
+
+        Add a cache of bitmap snapshots of the WKView, taken via OS X's window server
+        snapshotting mechanism. For now, we store all snapshots; refinements to the
+        caching strategy (or really having one at all) will come in future patches.
+
+        Snapshots are stored in a side map, with a UUID that allows references
+        to be stored inside WebBackForwardListItem (and serialized along with
+        the back-forward list when it is copied).
+
+        * Shared/WebBackForwardListItem.h:
+        (WebKit::WebBackForwardListItem::setSnapshotUUID):
+        (WebKit::WebBackForwardListItem::snapshotUUID):
+        * UIProcess/cf/WebBackForwardListCF.cpp:
+        (WebKit::WebBackForwardList::createCFDictionaryRepresentation):
+        (WebKit::extractBackForwardListEntriesFromArray):
+        Store and serialize a UUID along with each back-forward list item which
+        identifies that item's view snapshot in the ViewSnapshotStore.
+
+        * UIProcess/cf/WebPageProxyCF.cpp:
+        Bump the session state data version, as we changed the WebBackForwardList format.
+
+        * UIProcess/API/Cocoa/WKViewPrivate.h:
+        * UIProcess/API/mac/PageClientImpl.h:
+        * UIProcess/API/mac/PageClientImpl.mm:
+        (WebKit::PageClientImpl::takeViewSnapshot):
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView _takeViewSnapshot]):
+        Add _takeViewSnapshot IPI, which is used by ViewSnapshotStore via the PageClient
+        to take a snapshot of the view.
+
+        (-[WKView saveBackForwardSnapshotForCurrentItem]):
+        Add saveBackForwardSnapshotForCurrentItem SPI, which clients could potentially
+        use when they know they're about to manipulate the view hierarchy in such a way
+        that they want the current back-forward item's snapshot to be up to date.
+
+        * UIProcess/API/mac/WKViewInternal.h:
+        * UIProcess/PageClient.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::WebPageProxy):
+        (WebKit::WebPageProxy::recordNavigationSnapshot):
+        (WebKit::WebPageProxy::goForward):
+        (WebKit::WebPageProxy::goBack):
+        (WebKit::WebPageProxy::goToBackForwardItem):
+        (WebKit::WebPageProxy::didStartProvisionalLoadForFrame):
+        Update the current back-forward item's snapshot immediately before navigating.
+
+        * UIProcess/WebPageProxy.h:
+        (WebKit::WebPageProxy::shouldRecordNavigationSnapshots):
+        (WebKit::WebPageProxy::setShouldRecordNavigationSnapshots):
+        Expose the ability to enable taking view snapshots on every navigation.
+        This is off by default, so we won't be taking any snapshots yet.
+
+        * UIProcess/mac/ViewSnapshotStore.h: Added.
+        (WebKit::ViewSnapshotStore::disableSnapshotting):
+        (WebKit::ViewSnapshotStore::enableSnapshotting):
+        * UIProcess/mac/ViewSnapshotStore.mm: Added.
+        (WebKit::ViewSnapshotStore::ViewSnapshotStore):
+        (WebKit::ViewSnapshotStore::~ViewSnapshotStore):
+        (WebKit::ViewSnapshotStore::shared):
+        (WebKit::ViewSnapshotStore::recordSnapshot):
+        (WebKit::ViewSnapshotStore::snapshotAndRenderTreeSize):
+        * UIProcess/mac/WebPageProxyMac.mm:
+        (WebKit::WebPageProxy::takeViewSnapshot):
+        * WebKit2.xcodeproj/project.pbxproj:
+
 2014-01-24  Brady Eidson  <beidson@apple.com>
 
         IDB: support createIndex/deleteIndex messaging

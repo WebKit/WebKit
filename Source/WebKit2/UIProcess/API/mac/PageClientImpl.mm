@@ -434,6 +434,11 @@ void PageClientImpl::setAcceleratedCompositingRootLayer(CALayer *rootLayer)
     [m_wkView _setAcceleratedCompositingModeRootLayer:rootLayer];
 }
 
+RetainPtr<CGImageRef> PageClientImpl::takeViewSnapshot()
+{
+    return [m_wkView _takeViewSnapshot];
+}
+
 void PageClientImpl::pluginFocusOrWindowFocusChanged(uint64_t pluginComplexTextInputIdentifier, bool pluginHasFocusAndWindowHasFocus)
 {
     [m_wkView _pluginFocusOrWindowFocusChanged:pluginHasFocusAndWindowHasFocus pluginComplexTextInputIdentifier:pluginComplexTextInputIdentifier];

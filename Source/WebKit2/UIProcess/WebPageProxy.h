@@ -858,7 +858,15 @@ public:
         
     void setScrollPinningBehavior(WebCore::ScrollPinningBehavior);
     WebCore::ScrollPinningBehavior scrollPinningBehavior() { return m_scrollPinningBehavior; }
-        
+
+    bool shouldRecordNavigationSnapshots() const { return m_shouldRecordNavigationSnapshots; }
+    void setShouldRecordNavigationSnapshots(bool shouldRecordSnapshots) { m_shouldRecordNavigationSnapshots = shouldRecordSnapshots; }
+    void recordNavigationSnapshot();
+
+#if PLATFORM(MAC)
+    RetainPtr<CGImageRef> takeViewSnapshot();
+#endif
+
 private:
     WebPageProxy(PageClient&, WebProcessProxy&, WebPageGroup&, API::Session&, uint64_t pageID);
     void platformInitialize();
@@ -1359,7 +1367,9 @@ private:
     bool m_backgroundExtendsBeyondPage;
 
     bool m_mainFrameInViewSourceMode;
-        
+
+    bool m_shouldRecordNavigationSnapshots;
+
     unsigned m_pageCount;
 
     WebCore::IntRect m_visibleScrollerThumbRect;

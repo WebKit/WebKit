@@ -60,6 +60,9 @@ public:
     void setBackForwardData(const uint8_t* buffer, size_t size);
     const Vector<uint8_t>& backForwardData() const { return m_backForwardData; }
 
+    void setSnapshotUUID(const String& uuid) { m_snapshotUUID = uuid; }
+    const String& snapshotUUID() const { return m_snapshotUUID; }
+
     void encode(IPC::ArgumentEncoder&) const;
     static PassRefPtr<WebBackForwardListItem> decode(IPC::ArgumentDecoder&);
 
@@ -73,6 +76,7 @@ private:
     String m_title;
     uint64_t m_itemID;
     Vector<uint8_t> m_backForwardData;
+    String m_snapshotUUID;
 };
 
 typedef Vector<RefPtr<WebBackForwardListItem>> BackForwardListItemVector;

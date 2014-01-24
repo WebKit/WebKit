@@ -416,6 +416,8 @@
 		2D429BFD1721E2C700EC681F /* PDFPluginPasswordField.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2D429BFB1721E2BA00EC681F /* PDFPluginPasswordField.mm */; };
 		2D47B56C1810714E003A3AEE /* RemoteLayerBackingStore.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2D47B56A1810714E003A3AEE /* RemoteLayerBackingStore.mm */; };
 		2D47B56D1810714E003A3AEE /* RemoteLayerBackingStore.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D47B56B1810714E003A3AEE /* RemoteLayerBackingStore.h */; };
+		2D6CD119189058A500E5A4A0 /* ViewSnapshotStore.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D6CD117189058A500E5A4A0 /* ViewSnapshotStore.h */; };
+		2D6CD11A189058A500E5A4A0 /* ViewSnapshotStore.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2D6CD118189058A500E5A4A0 /* ViewSnapshotStore.mm */; };
 		2D819B9E18627EE9001F03D1 /* ViewGestureGeometryCollector.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D819B99186275B3001F03D1 /* ViewGestureGeometryCollector.cpp */; };
 		2D819BA11862800E001F03D1 /* ViewGestureGeometryCollectorMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D819B9F1862800E001F03D1 /* ViewGestureGeometryCollectorMessageReceiver.cpp */; };
 		2D819BA21862800E001F03D1 /* ViewGestureGeometryCollectorMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D819BA01862800E001F03D1 /* ViewGestureGeometryCollectorMessages.h */; };
@@ -2070,6 +2072,8 @@
 		2D429BFB1721E2BA00EC681F /* PDFPluginPasswordField.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PDFPluginPasswordField.mm; path = PDF/PDFPluginPasswordField.mm; sourceTree = "<group>"; };
 		2D47B56A1810714E003A3AEE /* RemoteLayerBackingStore.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = RemoteLayerBackingStore.mm; sourceTree = "<group>"; };
 		2D47B56B1810714E003A3AEE /* RemoteLayerBackingStore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RemoteLayerBackingStore.h; sourceTree = "<group>"; };
+		2D6CD117189058A500E5A4A0 /* ViewSnapshotStore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ViewSnapshotStore.h; sourceTree = "<group>"; };
+		2D6CD118189058A500E5A4A0 /* ViewSnapshotStore.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ViewSnapshotStore.mm; sourceTree = "<group>"; };
 		2D819B99186275B3001F03D1 /* ViewGestureGeometryCollector.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ViewGestureGeometryCollector.cpp; sourceTree = "<group>"; };
 		2D819B9A186275B3001F03D1 /* ViewGestureGeometryCollector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ViewGestureGeometryCollector.h; sourceTree = "<group>"; };
 		2D819B9B186275B3001F03D1 /* ViewGestureGeometryCollector.messages.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ViewGestureGeometryCollector.messages.in; sourceTree = "<group>"; };
@@ -5693,6 +5697,8 @@
 				2D125C5C1857EA05003BA3CB /* ViewGestureController.h */,
 				2D125C5D1857EA05003BA3CB /* ViewGestureController.mm */,
 				2D1B5D5A18586599006C6596 /* ViewGestureController.messages.in */,
+				2D6CD117189058A500E5A4A0 /* ViewSnapshotStore.h */,
+				2D6CD118189058A500E5A4A0 /* ViewSnapshotStore.mm */,
 				728E86EF1795188C0087879E /* WebColorPickerMac.h */,
 				728E86F01795188C0087879E /* WebColorPickerMac.mm */,
 				1A1C648611F415B700553C19 /* WebContextMac.mm */,
@@ -6667,6 +6673,7 @@
 				BC857FE612B843D800EDEB2E /* WKOpenPanelParameters.h in Headers */,
 				BC1DFE8F12B31CA8005DF730 /* WKOpenPanelResultListener.h in Headers */,
 				BCD597D7112B56DC00EC8C23 /* WKPage.h in Headers */,
+				2D6CD119189058A500E5A4A0 /* ViewSnapshotStore.h in Headers */,
 				BC7B633712A45ABA00D174A4 /* WKPageGroup.h in Headers */,
 				BC2D021912AC426C00E732A3 /* WKPageLoadTypes.h in Headers */,
 				93BDEB01171DD7AF00BFEE1B /* WKPageLoadTypesPrivate.h in Headers */,
@@ -7497,6 +7504,7 @@
 				BCE81D98131AE02100241910 /* DictionaryPopupInfo.cpp in Sources */,
 				5167EEA1170377BF007681CA /* DiskCacheMonitor.mm in Sources */,
 				2DA9448F1884E3B500ED86DB /* WKGeolocationProviderIOS.mm in Sources */,
+				2D6CD11A189058A500E5A4A0 /* ViewSnapshotStore.mm in Sources */,
 				518E8F0716B2093700E91429 /* Download.cpp in Sources */,
 				2D47B56C1810714E003A3AEE /* RemoteLayerBackingStore.mm in Sources */,
 				518E8F0916B2093700E91429 /* DownloadAuthenticationClient.cpp in Sources */,
