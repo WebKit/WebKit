@@ -1,3 +1,20 @@
+2014-01-23  Jer Noble  <jer.noble@apple.com>
+
+        [MSE][Mac] Crash when reloading a page during playback
+        https://bugs.webkit.org/show_bug.cgi?id=126903
+
+        Reviewed by Eric Carlson.
+
+        Periodic time observers added to AVSampleBufferRenderSynchronizer will execute their
+        callback block even after being removed with -removeTimeObserver:, which is tracked by
+        <rdar://problem/15798050>. Work around this problem by passing a WeakPtr into the block
+        and bail early if the owning media player has been destroyed.
+
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaSourceAVFObjC.h:
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::createWeakPtr):
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaSourceAVFObjC.mm:
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::MediaPlayerPrivateMediaSourceAVFObjC):
+
 2014-01-23  ChangSeok Oh  <changseok.oh@collabora.com>
 
         Dragging from inner side of video to outside causes a crash

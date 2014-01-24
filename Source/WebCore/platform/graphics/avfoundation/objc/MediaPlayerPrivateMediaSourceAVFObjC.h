@@ -32,6 +32,7 @@
 #include "SourceBufferPrivateClient.h"
 #include <wtf/MediaTime.h>
 #include <wtf/Vector.h>
+#include <wtf/WeakPtr.h>
 
 OBJC_CLASS AVAsset;
 OBJC_CLASS AVSampleBufferAudioRenderer;
@@ -151,6 +152,8 @@ private:
     void ensureLayer();
     void destroyLayer();
 
+    WeakPtr<MediaPlayerPrivateMediaSourceAVFObjC> createWeakPtr() { return m_weakPtrFactory.createWeakPtr(); }
+
     // MediaPlayer Factory Methods
     static PassOwnPtr<MediaPlayerPrivateInterface> create(MediaPlayer*);
     static bool isAvailable();
@@ -160,6 +163,7 @@ private:
     friend class MediaSourcePrivateAVFObjC;
 
     MediaPlayer* m_player;
+    WeakPtrFactory<MediaPlayerPrivateMediaSourceAVFObjC> m_weakPtrFactory;
     RefPtr<HTMLMediaSource> m_mediaSource;
     RefPtr<MediaSourcePrivateAVFObjC> m_mediaSourcePrivate;
     RetainPtr<AVAsset> m_asset;
