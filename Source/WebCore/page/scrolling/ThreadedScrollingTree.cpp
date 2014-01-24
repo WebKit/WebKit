@@ -110,7 +110,7 @@ void ThreadedScrollingTree::updateMainFrameScrollPosition(const IntPoint& scroll
     callOnMainThread(bind(&ScrollingCoordinator::scheduleUpdateMainFrameScrollPosition, m_scrollingCoordinator.get(), scrollPosition, isHandlingProgrammaticScroll(), scrollingLayerPositionAction));
 }
 
-#if PLATFORM(MAC)
+#if PLATFORM(MAC) && !PLATFORM(IOS)
 void ThreadedScrollingTree::handleWheelEventPhase(PlatformWheelEventPhase phase)
 {
     if (!m_scrollingCoordinator)

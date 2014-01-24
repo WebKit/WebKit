@@ -1,3 +1,18 @@
+2014-01-24  Simon Fraser  <simon.fraser@apple.com>
+
+        #ifdef out handleWheelEventPhase for iOS
+        https://bugs.webkit.org/show_bug.cgi?id=127583
+
+        Reviewed by Tim Horton.
+
+        handleWheelEventPhase() doesn't make any sense for iOS, which
+        has no wheel events.
+
+        * page/scrolling/ScrollingTree.h:
+        * page/scrolling/ThreadedScrollingTree.cpp:
+        * page/scrolling/ThreadedScrollingTree.h:
+        * page/scrolling/ios/ScrollingTreeIOS.h:
+
 2014-01-24  David Hyatt  <hyatt@apple.com>
 
         [New Multicolumn] Don't destroy all the renderers when a multi-column block stops being multi-column (and vice versa)

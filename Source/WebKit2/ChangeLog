@@ -1,5 +1,18 @@
 2014-01-24  Simon Fraser  <simon.fraser@apple.com>
 
+        #ifdef out handleWheelEventPhase for iOS
+        https://bugs.webkit.org/show_bug.cgi?id=127583
+
+        Reviewed by Tim Horton.
+
+        handleWheelEventPhase() doesn't make any sense for iOS, which
+        has no wheel events.
+
+        * UIProcess/Scrolling/RemoteScrollingTree.cpp:
+        * UIProcess/Scrolling/RemoteScrollingTree.h:
+
+2014-01-24  Simon Fraser  <simon.fraser@apple.com>
+
         Push a custom fixed position rect down to the WebProcess in iOS WK2
         https://bugs.webkit.org/show_bug.cgi?id=127573
 

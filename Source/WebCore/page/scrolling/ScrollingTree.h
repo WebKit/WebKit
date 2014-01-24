@@ -74,7 +74,7 @@ public:
     virtual void updateMainFrameScrollPosition(const IntPoint& scrollPosition, SetOrSyncScrollingLayerPosition = SyncScrollingLayerPosition) = 0;
     IntPoint mainFrameScrollPosition();
 
-#if PLATFORM(MAC)
+#if PLATFORM(MAC) && !PLATFORM(IOS)
     virtual void handleWheelEventPhase(PlatformWheelEventPhase) = 0;
 #endif
 

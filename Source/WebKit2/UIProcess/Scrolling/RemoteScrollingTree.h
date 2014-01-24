@@ -49,7 +49,7 @@ public:
 private:
     explicit RemoteScrollingTree(RemoteScrollingCoordinatorProxy&);
 
-#if PLATFORM(MAC)
+#if PLATFORM(MAC) && !PLATFORM(IOS)
     virtual void handleWheelEventPhase(WebCore::PlatformWheelEventPhase) override;
 #endif
     virtual void updateMainFrameScrollPosition(const WebCore::IntPoint& scrollPosition, WebCore::SetOrSyncScrollingLayerPosition = WebCore::SyncScrollingLayerPosition) override;
