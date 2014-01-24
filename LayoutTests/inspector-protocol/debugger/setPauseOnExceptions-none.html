@@ -6,32 +6,29 @@
 function test()
 {
     InspectorTest.sendCommand("Debugger.enable", {});
-    InspectorTest.sendCommand("Debugger.setBreakpointsActive", {active: true}, function() {
-        InspectorTest.log("Breakpoints Enabled");
-        InspectorTest.sendCommand("Debugger.setPauseOnExceptions", {state: "none"}, function(responseObject) {
-            InspectorTest.checkForError(responseObject);
-            InspectorTest.log("Debugger.setPauseOnExceptions - none");
-            InspectorTest.sendCommand("Runtime.evaluate", {expression: "setTimeout(function() { 1+1; }, 0);"});
-            InspectorTest.sendCommand("Runtime.evaluate", {expression: "setTimeout(function() { noException(); }, 0);"});
-            InspectorTest.sendCommand("Runtime.evaluate", {expression: "setTimeout(function() { catchNested(noException, 7); }, 0);"});
-            InspectorTest.sendCommand("Runtime.evaluate", {expression: "setTimeout(function() { try{ ({}).a.b.c.d } catch (e) { console.log('caught inline: ' + JSON.stringify(e)); } }, 0);"});
-            InspectorTest.sendCommand("Runtime.evaluate", {expression: "setTimeout(function() { catchNested(exceptionBasic, 1); }, 0);"});
-            InspectorTest.sendCommand("Runtime.evaluate", {expression: "setTimeout(function() { catchNested(exceptionDOM, 2); }, 0);"});
-            InspectorTest.sendCommand("Runtime.evaluate", {expression: "setTimeout(function() { catchNested(exceptionInHostFunction, 3); }, 0);"});
-            InspectorTest.sendCommand("Runtime.evaluate", {expression: "setTimeout(function() { catchNested(throwString, 10); }, 0);"});
-            InspectorTest.sendCommand("Runtime.evaluate", {expression: "setTimeout(function() { catchNested(throwParam, 5, new Error('error message')); }, 0);"});
-            InspectorTest.sendCommand("Runtime.evaluate", {expression: "setTimeout(function() { {}.a.b.c.d; }, 0);"});
-            InspectorTest.sendCommand("Runtime.evaluate", {expression: "setTimeout(function() { exceptionBasic(); }, 0);"});
-            InspectorTest.sendCommand("Runtime.evaluate", {expression: "setTimeout(function() { exceptionDOM(); }, 0);"});
-            InspectorTest.sendCommand("Runtime.evaluate", {expression: "setTimeout(function() { exceptionInHostFunction(); }, 0);"});
-            InspectorTest.sendCommand("Runtime.evaluate", {expression: "setTimeout(function() { throwString(); }, 0);"});
-            InspectorTest.sendCommand("Runtime.evaluate", {expression: "setTimeout(function() { throwParam({x:1}); }, 0);"});
-            InspectorTest.sendCommand("Runtime.evaluate", {expression: "setTimeout(function() { throwParam(new Error('error message')); }, 0);"}, function() {
-                setTimeout(function() {
-                    InspectorTest.log("PASS: No pauses");
-                    InspectorTest.completeTest();
-                }, 10);
-            });
+    InspectorTest.sendCommand("Debugger.setPauseOnExceptions", {state: "none"}, function(responseObject) {
+        InspectorTest.checkForError(responseObject);
+        InspectorTest.log("Debugger.setPauseOnExceptions - none");
+        InspectorTest.sendCommand("Runtime.evaluate", {expression: "setTimeout(function() { 1+1; }, 0);"});
+        InspectorTest.sendCommand("Runtime.evaluate", {expression: "setTimeout(function() { noException(); }, 0);"});
+        InspectorTest.sendCommand("Runtime.evaluate", {expression: "setTimeout(function() { catchNested(noException, 7); }, 0);"});
+        InspectorTest.sendCommand("Runtime.evaluate", {expression: "setTimeout(function() { try{ ({}).a.b.c.d } catch (e) { console.log('caught inline: ' + JSON.stringify(e)); } }, 0);"});
+        InspectorTest.sendCommand("Runtime.evaluate", {expression: "setTimeout(function() { catchNested(exceptionBasic, 1); }, 0);"});
+        InspectorTest.sendCommand("Runtime.evaluate", {expression: "setTimeout(function() { catchNested(exceptionDOM, 2); }, 0);"});
+        InspectorTest.sendCommand("Runtime.evaluate", {expression: "setTimeout(function() { catchNested(exceptionInHostFunction, 3); }, 0);"});
+        InspectorTest.sendCommand("Runtime.evaluate", {expression: "setTimeout(function() { catchNested(throwString, 10); }, 0);"});
+        InspectorTest.sendCommand("Runtime.evaluate", {expression: "setTimeout(function() { catchNested(throwParam, 5, new Error('error message')); }, 0);"});
+        InspectorTest.sendCommand("Runtime.evaluate", {expression: "setTimeout(function() { {}.a.b.c.d; }, 0);"});
+        InspectorTest.sendCommand("Runtime.evaluate", {expression: "setTimeout(function() { exceptionBasic(); }, 0);"});
+        InspectorTest.sendCommand("Runtime.evaluate", {expression: "setTimeout(function() { exceptionDOM(); }, 0);"});
+        InspectorTest.sendCommand("Runtime.evaluate", {expression: "setTimeout(function() { exceptionInHostFunction(); }, 0);"});
+        InspectorTest.sendCommand("Runtime.evaluate", {expression: "setTimeout(function() { throwString(); }, 0);"});
+        InspectorTest.sendCommand("Runtime.evaluate", {expression: "setTimeout(function() { throwParam({x:1}); }, 0);"});
+        InspectorTest.sendCommand("Runtime.evaluate", {expression: "setTimeout(function() { throwParam(new Error('error message')); }, 0);"}, function() {
+            setTimeout(function() {
+                InspectorTest.log("PASS: No pauses");
+                InspectorTest.completeTest();
+            }, 10);
         });
     });
 

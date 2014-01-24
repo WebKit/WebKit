@@ -197,7 +197,7 @@ InspectorController::~InspectorController()
 
 void InspectorController::inspectedPageDestroyed()
 {
-    disconnectFrontend();
+    disconnectFrontend(InspectorDisconnectReason::InspectedTargetDestroyed);
     m_injectedScriptManager->disconnect();
     m_inspectorClient->inspectorDestroyed();
     m_inspectorClient = nullptr;
@@ -266,12 +266,12 @@ void InspectorController::connectFrontend(InspectorFrontendChannel* frontendChan
 #endif
 }
 
-void InspectorController::disconnectFrontend()
+void InspectorController::disconnectFrontend(InspectorDisconnectReason reason)
 {
     if (!m_inspectorFrontendChannel)
         return;
 
-    m_agents.willDestroyFrontendAndBackend();
+    m_agents.willDestroyFrontendAndBackend(reason);
 
     m_inspectorBackendDispatcher->clearFrontend();
     m_inspectorBackendDispatcher.clear();
@@ -308,7 +308,7 @@ void InspectorController::close()
 {
     if (!m_inspectorFrontendChannel)
         return;
-    disconnectFrontend();
+    disconnectFrontend(InspectorDisconnectReason::InspectorDestroyed);
     m_inspectorClient->closeInspectorFrontend();
 }
 

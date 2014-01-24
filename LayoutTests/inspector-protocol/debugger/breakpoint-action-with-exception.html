@@ -47,10 +47,6 @@ function test()
     }
 
     InspectorTest.sendCommand("Debugger.enable", {});
-    InspectorTest.sendCommand("Debugger.setBreakpointsActive", {active: true}, function(messageObject) {
-        InspectorTest.checkForError(messageObject);
-        InspectorTest.log("Breakpoints Enabled");
-    });
 }
 </script>
 </head>

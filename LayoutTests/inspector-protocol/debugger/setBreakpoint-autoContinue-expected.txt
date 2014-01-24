@@ -1,6 +1,5 @@
 Debugger.setBreakpoint options.autoContinue
 
-Breakpoints Enabled
 Found breakpoint.js
 Running breakpointAutomaticallyContinue multiple times with automatically continue
 inside breakpointAutomaticallyContinue

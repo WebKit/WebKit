@@ -1,6 +1,5 @@
 Debugger.setBreakpoint options.condition
 
-Breakpoints Enabled
 Found breakpoint.js
 Running breakpointWithCondition multiple times
 inside breakpointWithCondition a:(1) b:(2) a+b:(3)

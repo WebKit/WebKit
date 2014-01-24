@@ -53,7 +53,7 @@ public:
     ~InspectorLayerTreeAgent();
 
     virtual void didCreateFrontendAndBackend(Inspector::InspectorFrontendChannel*, Inspector::InspectorBackendDispatcher*) override;
-    virtual void willDestroyFrontendAndBackend() override;
+    virtual void willDestroyFrontendAndBackend(Inspector::InspectorDisconnectReason) override;
     void reset();
 
     void layerTreeDidChange();

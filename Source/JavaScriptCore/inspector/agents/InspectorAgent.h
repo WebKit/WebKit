@@ -51,7 +51,7 @@ public:
     virtual ~InspectorAgent();
 
     virtual void didCreateFrontendAndBackend(InspectorFrontendChannel*, InspectorBackendDispatcher*) override;
-    virtual void willDestroyFrontendAndBackend() override;
+    virtual void willDestroyFrontendAndBackend(InspectorDisconnectReason reason) override;
 
     virtual void enable(ErrorString*) override;
     virtual void disable(ErrorString*) override;

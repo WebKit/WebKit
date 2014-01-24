@@ -46,7 +46,7 @@ public:
     virtual ~WorkerRuntimeAgent();
 
     virtual void didCreateFrontendAndBackend(Inspector::InspectorFrontendChannel*, Inspector::InspectorBackendDispatcher*) override;
-    virtual void willDestroyFrontendAndBackend() override;
+    virtual void willDestroyFrontendAndBackend(Inspector::InspectorDisconnectReason) override;
 
     // Protocol commands.
     virtual void run(ErrorString*) override;

@@ -53,7 +53,7 @@ public:
     ~JSGlobalObjectInspectorController();
 
     void connectFrontend(InspectorFrontendChannel*);
-    void disconnectFrontend();
+    void disconnectFrontend(InspectorDisconnectReason reason);
     void dispatchMessageFromFrontend(const String&);
 
     virtual bool developerExtrasEnabled() const override { return true; }

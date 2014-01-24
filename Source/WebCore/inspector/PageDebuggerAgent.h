@@ -54,11 +54,11 @@ public:
 
 protected:
     virtual void enable() override;
-    virtual void disable() override;
+    virtual void disable(bool isBeingDestroyed) override;
 
 private:
     virtual void startListeningScriptDebugServer() override;
-    virtual void stopListeningScriptDebugServer() override;
+    virtual void stopListeningScriptDebugServer(bool isBeingDestroyed) override;
     virtual PageScriptDebugServer& scriptDebugServer() override;
     virtual void muteConsole() override;
     virtual void unmuteConsole() override;

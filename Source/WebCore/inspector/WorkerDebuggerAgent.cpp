@@ -122,9 +122,9 @@ void WorkerDebuggerAgent::startListeningScriptDebugServer()
     scriptDebugServer().addListener(this);
 }
 
-void WorkerDebuggerAgent::stopListeningScriptDebugServer()
+void WorkerDebuggerAgent::stopListeningScriptDebugServer(bool isBeingDestroyed)
 {
-    scriptDebugServer().removeListener(this);
+    scriptDebugServer().removeListener(this, isBeingDestroyed);
 }
 
 WorkerScriptDebugServer& WorkerDebuggerAgent::scriptDebugServer()

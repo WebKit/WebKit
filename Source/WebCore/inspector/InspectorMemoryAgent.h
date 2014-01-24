@@ -52,7 +52,7 @@ public:
     virtual ~InspectorMemoryAgent();
 
     virtual void didCreateFrontendAndBackend(Inspector::InspectorFrontendChannel*, Inspector::InspectorBackendDispatcher*) override;
-    virtual void willDestroyFrontendAndBackend() override;
+    virtual void willDestroyFrontendAndBackend(Inspector::InspectorDisconnectReason) override;
 
     virtual void getDOMCounters(ErrorString*, int* documents, int* nodes, int* jsEventListeners) override;
 

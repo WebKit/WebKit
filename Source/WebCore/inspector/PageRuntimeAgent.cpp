@@ -71,7 +71,7 @@ void PageRuntimeAgent::didCreateFrontendAndBackend(Inspector::InspectorFrontendC
     m_backendDispatcher = InspectorRuntimeBackendDispatcher::create(backendDispatcher, this);
 }
 
-void PageRuntimeAgent::willDestroyFrontendAndBackend()
+void PageRuntimeAgent::willDestroyFrontendAndBackend(InspectorDisconnectReason)
 {
     m_frontendDispatcher = nullptr;
     m_backendDispatcher.clear();

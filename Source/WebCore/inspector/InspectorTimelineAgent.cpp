@@ -73,7 +73,7 @@ void InspectorTimelineAgent::didCreateFrontendAndBackend(Inspector::InspectorFro
     m_backendDispatcher = InspectorTimelineBackendDispatcher::create(backendDispatcher, this);
 }
 
-void InspectorTimelineAgent::willDestroyFrontendAndBackend()
+void InspectorTimelineAgent::willDestroyFrontendAndBackend(InspectorDisconnectReason)
 {
     m_frontendDispatcher = nullptr;
     m_backendDispatcher.clear();

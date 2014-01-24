@@ -71,7 +71,7 @@ public:
     virtual ~InspectorDebuggerAgent();
 
     virtual void didCreateFrontendAndBackend(Inspector::InspectorFrontendChannel*, Inspector::InspectorBackendDispatcher*) override;
-    virtual void willDestroyFrontendAndBackend() override;
+    virtual void willDestroyFrontendAndBackend(Inspector::InspectorDisconnectReason) override;
 
     bool isPaused();
     void addMessageToConsole(MessageSource, MessageType);
@@ -128,14 +128,14 @@ protected:
     InspectorDebuggerAgent(InstrumentingAgents*, Inspector::InjectedScriptManager*);
 
     virtual void startListeningScriptDebugServer() = 0;
-    virtual void stopListeningScriptDebugServer() = 0;
+    virtual void stopListeningScriptDebugServer(bool isBeingDestroyed) = 0;
     virtual void muteConsole() = 0;
     virtual void unmuteConsole() = 0;
     Inspector::InjectedScriptManager* injectedScriptManager() const { return m_injectedScriptManager; }
     virtual Inspector::InjectedScript injectedScriptForEval(ErrorString*, const int* executionContextId) = 0;
 
     virtual void enable();
-    virtual void disable();
+    virtual void disable(bool isBeingDestroyed);
     virtual void didPause(JSC::ExecState*, const Deprecated::ScriptValue& callFrames, const Deprecated::ScriptValue& exception) override;
     virtual void didContinue() override;
     void didClearGlobalObject();

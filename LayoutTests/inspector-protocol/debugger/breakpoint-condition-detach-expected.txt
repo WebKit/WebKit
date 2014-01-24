@@ -1,6 +1,5 @@
 Debugger.setBreakpoint with an action that throws an exception should not pause the debugger.
 
-Breakpoints Enabled
 Found breakpoint.js
 inside breakpointWithCondition a:(1) b:(2) a+b:(3)
 Closing the inspector.

@@ -1,3 +1,66 @@
+2014-01-23  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Remove recompileAllJSFunctions timer in ScriptDebugServer
+        https://bugs.webkit.org/show_bug.cgi?id=127409
+
+        Reviewed by Geoffrey Garen.
+
+        Remove "Breakpoints Enabled" output in tests. Breakpoints are already
+        enabled by default in tests. Also since the DebuggerAgent.enable() call
+        now immediately recompiles scripts, sourceParsed events are now sent to
+        the frontend earlier even before the setBreakpointsActive message has
+        been processed, so the "Breakpoints Enabled" output was showing up
+        later, seemingly randomly in tests, and is no longer helpful.
+
+        * inspector-protocol/debugger/breakpoint-action-detach-expected.txt:
+        * inspector-protocol/debugger/breakpoint-action-detach.html:
+        * inspector-protocol/debugger/breakpoint-action-with-exception-expected.txt:
+        * inspector-protocol/debugger/breakpoint-action-with-exception.html:
+        * inspector-protocol/debugger/breakpoint-condition-detach-expected.txt:
+        * inspector-protocol/debugger/breakpoint-condition-detach.html:
+        * inspector-protocol/debugger/breakpoint-condition-with-exception-expected.txt:
+        * inspector-protocol/debugger/breakpoint-condition-with-exception.html:
+        * inspector-protocol/debugger/breakpoint-eval-with-exception-expected.txt:
+        * inspector-protocol/debugger/breakpoint-eval-with-exception.html:
+        * inspector-protocol/debugger/breakpoint-inside-conditons-and-actions-expected.txt:
+        * inspector-protocol/debugger/breakpoint-inside-conditons-and-actions.html:
+        * inspector-protocol/debugger/call-frame-function-name-expected.txt:
+        * inspector-protocol/debugger/call-frame-function-name.html:
+        * inspector-protocol/debugger/call-frame-this-host-expected.txt:
+        * inspector-protocol/debugger/call-frame-this-host.html:
+        * inspector-protocol/debugger/call-frame-this-nonstrict-expected.txt:
+        * inspector-protocol/debugger/call-frame-this-nonstrict.html:
+        * inspector-protocol/debugger/call-frame-this-strict-expected.txt:
+        * inspector-protocol/debugger/call-frame-this-strict.html:
+        * inspector-protocol/debugger/didSampleProbe-multiple-probes-expected.txt:
+        * inspector-protocol/debugger/didSampleProbe-multiple-probes.html:
+        * inspector-protocol/debugger/nested-inspectors-expected.txt:
+        * inspector-protocol/debugger/nested-inspectors.html:
+        * inspector-protocol/debugger/removeBreakpoint-expected.txt:
+        * inspector-protocol/debugger/removeBreakpoint.html:
+        * inspector-protocol/debugger/setBreakpoint-actions-expected.txt:
+        * inspector-protocol/debugger/setBreakpoint-actions.html:
+        * inspector-protocol/debugger/setBreakpoint-autoContinue-expected.txt:
+        * inspector-protocol/debugger/setBreakpoint-autoContinue.html:
+        * inspector-protocol/debugger/setBreakpoint-column-expected.txt:
+        * inspector-protocol/debugger/setBreakpoint-column.html:
+        * inspector-protocol/debugger/setBreakpoint-condition-expected.txt:
+        * inspector-protocol/debugger/setBreakpoint-condition.html:
+        * inspector-protocol/debugger/setBreakpoint-expected.txt:
+        * inspector-protocol/debugger/setBreakpoint-options-exception-expected.txt:
+        * inspector-protocol/debugger/setBreakpoint-options-exception.html:
+        * inspector-protocol/debugger/setBreakpoint.html:
+        * inspector-protocol/debugger/setBreakpointByUrl-sourceURL-expected.txt:
+        * inspector-protocol/debugger/setBreakpointByUrl-sourceURL.html:
+        * inspector-protocol/debugger/setPauseOnExceptions-all-expected.txt:
+        * inspector-protocol/debugger/setPauseOnExceptions-all.html:
+        * inspector-protocol/debugger/setPauseOnExceptions-none-expected.txt:
+        * inspector-protocol/debugger/setPauseOnExceptions-none.html:
+        * inspector-protocol/debugger/setPauseOnExceptions-uncaught-expected.txt:
+        * inspector-protocol/debugger/setPauseOnExceptions-uncaught.html:
+        * inspector-protocol/dom-debugger/node-removed-expected.txt:
+        * inspector-protocol/dom-debugger/node-removed.html:
+
 2014-01-23  Hans Muller  <hmuller@adobe.com>
 
         [CSS Shapes] Image valued shape size and position should conform to the spec

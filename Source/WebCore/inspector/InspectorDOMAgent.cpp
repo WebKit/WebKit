@@ -244,7 +244,7 @@ void InspectorDOMAgent::didCreateFrontendAndBackend(Inspector::InspectorFrontend
         focusNode();
 }
 
-void InspectorDOMAgent::willDestroyFrontendAndBackend()
+void InspectorDOMAgent::willDestroyFrontendAndBackend(InspectorDisconnectReason)
 {
     m_frontendDispatcher = nullptr;
     m_backendDispatcher.clear();

@@ -63,7 +63,7 @@ public:
     ~WorkerInspectorController();
 
     void connectFrontend();
-    void disconnectFrontend();
+    void disconnectFrontend(Inspector::InspectorDisconnectReason);
     void dispatchMessageFromFrontend(const String&);
 #if ENABLE(JAVASCRIPT_DEBUGGER)
     void resume();

@@ -9,15 +9,12 @@ function test()
         // This function runs in the second inspector window. We can use this one to debug the first inspector.
 
         InspectorTest.sendCommand("Debugger.enable", {});
-        InspectorTest.sendCommand("Debugger.setBreakpointsActive", {active: true}, function() {
-            InspectorTest.log("Breakpoints Enabled");
-            InspectorTest.sendCommand("Debugger.setPauseOnExceptions", {state: "all"}, function(responseObject) {
-                InspectorTest.checkForError(responseObject);
-                InspectorTest.log("Debugger.setPauseOnExceptions - all");
+        InspectorTest.sendCommand("Debugger.setPauseOnExceptions", {state: "all"}, function(responseObject) {
+            InspectorTest.checkForError(responseObject);
+            InspectorTest.log("Debugger.setPauseOnExceptions - all");
 
-                // Trigger an exception in the main inspector.
-                InspectorTest.sendCommand("Runtime.evaluate", {expression: "setTimeout(function() { throw new Error('PASS: Expected exception') }, 0);"});
-            });
+            // Trigger an exception in the main inspector.
+            InspectorTest.sendCommand("Runtime.evaluate", {expression: "setTimeout(function() { throw new Error('PASS: Expected exception') }, 0);"});
         });
 
         InspectorTest.eventHandler["Debugger.paused"] = function(messageObject)

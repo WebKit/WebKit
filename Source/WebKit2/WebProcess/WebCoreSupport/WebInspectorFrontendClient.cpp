@@ -33,6 +33,7 @@
 #include <WebCore/InspectorController.h>
 #include <WebCore/NotImplemented.h>
 #include <WebCore/Page.h>
+#include <inspector/InspectorAgentBase.h>
 #include <wtf/text/WTFString.h>
 
 using namespace WebCore;
@@ -57,7 +58,7 @@ void WebInspectorFrontendClient::bringToFront()
 
 void WebInspectorFrontendClient::closeWindow()
 {
-    m_page->corePage()->inspectorController().disconnectFrontend();
+    m_page->corePage()->inspectorController().disconnectFrontend(Inspector::InspectorDisconnectReason::InspectorDestroyed);
     m_page->inspector()->didClose();
 }
 

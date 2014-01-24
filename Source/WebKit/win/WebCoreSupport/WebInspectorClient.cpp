@@ -48,6 +48,7 @@
 #include <WebCore/RenderObject.h>
 #include <WebCore/WindowMessageBroadcaster.h>
 
+#include <inspector/InspectorAgentBase.h>
 #include <wchar.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/text/StringConcatenate.h>
@@ -438,7 +439,7 @@ void WebInspectorFrontendClient::destroyInspectorView(bool notifyInspectorContro
     closeWindowWithoutNotifications();
 
     if (notifyInspectorController) {
-        m_inspectedWebView->page()->inspectorController().disconnectFrontend();
+        m_inspectedWebView->page()->inspectorController().disconnectFrontend(Inspector::InspectorDisconnectReason::InspectorDestroyed);
         m_inspectorClient->updateHighlight();
     }
     ::DestroyWindow(m_frontendHwnd);

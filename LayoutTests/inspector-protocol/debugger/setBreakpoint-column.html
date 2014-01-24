@@ -12,9 +12,6 @@ function test()
     // by running some expressions at that call frame.
 
     InspectorTest.sendCommand("Debugger.enable", {});
-    InspectorTest.sendCommand("Debugger.setBreakpointsActive", {active: true}, function() {
-        InspectorTest.log("Breakpoints Enabled");
-    });
 
     InspectorTest.eventHandler["Debugger.scriptParsed"] = function(messageObject)
     {

@@ -1,6 +1,5 @@
 Debugger.setBreakpoint with multiple probe actions at the same breakpoint. Test Debugger.didSampleProbe events for the probe samples.
 
-Breakpoints Enabled
 Found breakpoint.js
 PASS: Should receive two breakpoint action identifiers on Debugger.setBreakpoint callback.
 Running breakpointActions to trigger probe samples.

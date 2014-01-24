@@ -96,7 +96,7 @@ public:
 
     bool forcePseudoState(Element*, CSSSelector::PseudoType);
     virtual void didCreateFrontendAndBackend(Inspector::InspectorFrontendChannel*, Inspector::InspectorBackendDispatcher*) override;
-    virtual void willDestroyFrontendAndBackend() override;
+    virtual void willDestroyFrontendAndBackend(Inspector::InspectorDisconnectReason) override;
     virtual void discardAgent() override;
     virtual void enable(ErrorString*) override;
     virtual void disable(ErrorString*) override;

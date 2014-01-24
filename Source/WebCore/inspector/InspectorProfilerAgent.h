@@ -82,7 +82,7 @@ public:
     virtual void start(ErrorString* = nullptr) override;
     virtual void stop(ErrorString* = nullptr) override;
 
-    void disable();
+    void disable(bool skipRecompile);
     void enable(bool skipRecompile);
     bool enabled() const { return m_enabled; }
     String getCurrentUserInitiatedProfileName(bool incrementProfileNumber = false);
@@ -92,7 +92,7 @@ public:
     virtual void removeProfile(ErrorString*, const String& type, int uid) override;
 
     virtual void didCreateFrontendAndBackend(Inspector::InspectorFrontendChannel*, Inspector::InspectorBackendDispatcher*) override;
-    virtual void willDestroyFrontendAndBackend() override;
+    virtual void willDestroyFrontendAndBackend(Inspector::InspectorDisconnectReason) override;
 
     virtual void takeHeapSnapshot(ErrorString*, const bool* reportProgress) override;
     void toggleRecordButton(bool isProfiling);

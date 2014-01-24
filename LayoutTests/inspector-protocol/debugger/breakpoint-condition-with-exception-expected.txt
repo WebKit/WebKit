@@ -1,7 +1,6 @@
 CONSOLE MESSAGE: line 1: TypeError: undefined is not an object (evaluating 'this.will.cause')
 The debugger should not pause on exceptions thrown while executing the breakpoint conditions.
 
-Breakpoints Enabled
 Found breakpoint.js
 inside breakpointWithCondition a:(1) b:(2) a+b:(3)
 PASS: The debugger should not pause on the exception inside the condition.

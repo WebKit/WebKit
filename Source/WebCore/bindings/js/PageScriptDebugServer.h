@@ -49,7 +49,7 @@ public:
     static PageScriptDebugServer& shared();
 
     void addListener(ScriptDebugListener*, Page*);
-    void removeListener(ScriptDebugListener*, Page*);
+    void removeListener(ScriptDebugListener*, Page*, bool skipRecompile);
 
     virtual void recompileAllJSFunctions() override;
 
@@ -65,7 +65,8 @@ private:
 
     virtual void runEventLoopWhilePaused();
 
-    void didRemoveLastListener(Page*);
+    void didAddFirstListener(Page*);
+    void didRemoveLastListener(Page*, bool skipRecompile);
 
     void setJavaScriptPaused(const PageGroup&, bool paused);
     void setJavaScriptPaused(Page*, bool paused);

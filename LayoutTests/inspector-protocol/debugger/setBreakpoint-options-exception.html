@@ -9,9 +9,6 @@ function test()
 
     InspectorTest.sendCommand("Console.enable", {});
     InspectorTest.sendCommand("Debugger.enable", {});
-    InspectorTest.sendCommand("Debugger.setBreakpointsActive", {active: true}, function() {
-        InspectorTest.log("Breakpoints Enabled");
-    });
 
     var logsSeen = 0;
     const expectedLogs = 2;

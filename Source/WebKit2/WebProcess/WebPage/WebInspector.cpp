@@ -38,6 +38,7 @@
 #include <WebCore/MainFrame.h>
 #include <WebCore/Page.h>
 #include <WebCore/ScriptController.h>
+#include <inspector/InspectorAgentBase.h>
 #include <bindings/ScriptValue.h>
 #include <wtf/text/StringConcatenate.h>
 
@@ -326,7 +327,7 @@ void WebInspector::remoteFrontendConnected()
 void WebInspector::remoteFrontendDisconnected()
 {
     ASSERT(m_remoteFrontendConnected);
-    m_page->corePage()->inspectorController().disconnectFrontend();
+    m_page->corePage()->inspectorController().disconnectFrontend(Inspector::InspectorDisconnectReason::InspectorDestroyed);
     m_remoteFrontendConnected = false;
 }
 #endif

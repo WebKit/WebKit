@@ -228,7 +228,7 @@ void InspectorDatabaseAgent::didCreateFrontendAndBackend(Inspector::InspectorFro
     m_backendDispatcher = InspectorDatabaseBackendDispatcher::create(backendDispatcher, this);
 }
 
-void InspectorDatabaseAgent::willDestroyFrontendAndBackend()
+void InspectorDatabaseAgent::willDestroyFrontendAndBackend(InspectorDisconnectReason)
 {
     m_frontendDispatcher = nullptr;
     m_backendDispatcher.clear();

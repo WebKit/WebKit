@@ -34,6 +34,7 @@
 #include "InspectorForwarding.h"
 #include "MainFrame.h"
 #include "Page.h"
+#include <inspector/InspectorAgentBase.h>
 
 using namespace Inspector;
 
@@ -84,7 +85,7 @@ void PageDebuggable::connect(Inspector::InspectorFrontendChannel* channel)
 void PageDebuggable::disconnect()
 {
     InspectorController& inspectorController = m_page.inspectorController();
-    inspectorController.disconnectFrontend();
+    inspectorController.disconnectFrontend(InspectorDisconnectReason::InspectorDestroyed);
     inspectorController.setHasRemoteFrontend(false);
 }
 

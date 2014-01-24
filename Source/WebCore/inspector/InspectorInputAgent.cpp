@@ -68,7 +68,7 @@ void InspectorInputAgent::didCreateFrontendAndBackend(Inspector::InspectorFronte
     m_backendDispatcher = InspectorInputBackendDispatcher::create(backendDispatcher, this);
 }
 
-void InspectorInputAgent::willDestroyFrontendAndBackend()
+void InspectorInputAgent::willDestroyFrontendAndBackend(InspectorDisconnectReason)
 {
     m_backendDispatcher.clear();
 }

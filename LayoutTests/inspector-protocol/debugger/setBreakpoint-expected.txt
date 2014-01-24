@@ -1,6 +1,5 @@
 Debugger.setBreakpoint on line:0 in <script src="...">
 
-Breakpoints Enabled
 Found breakpoint.js
 PASS: Received error setting duplicate breakpoint: Breakpoint at specified location already exists.
 Running breakpointBasic

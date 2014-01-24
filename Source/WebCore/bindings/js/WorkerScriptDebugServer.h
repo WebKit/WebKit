@@ -45,20 +45,17 @@ public:
     WorkerScriptDebugServer(WorkerGlobalScope*, const String&);
     ~WorkerScriptDebugServer() { }
 
+    virtual void recompileAllJSFunctions() override;
+
     void addListener(ScriptDebugListener*);
-    void removeListener(ScriptDebugListener*);
+    void removeListener(ScriptDebugListener*, bool skipRecompile);
 
     void interruptAndRunTask(PassOwnPtr<ScriptDebugServer::Task>);
-
-    void recompileAllJSFunctions() override;
 
 private:
     virtual ListenerSet* getListenersForGlobalObject(JSC::JSGlobalObject*) override { return &m_listeners; }
     virtual void didPause(JSC::JSGlobalObject*) override { }
     virtual void didContinue(JSC::JSGlobalObject*) override { }
-
-    virtual bool isContentScript(JSC::ExecState*) override { return false; }
-
     virtual void runEventLoopWhilePaused() override;
 
     WorkerGlobalScope* m_workerGlobalScope;

@@ -102,15 +102,12 @@ function test()
 
 
     InspectorTest.sendCommand("Debugger.enable", {});
-    InspectorTest.sendCommand("Debugger.setBreakpointsActive", {active: true}, function() {
-        InspectorTest.log("Breakpoints Enabled");
-        InspectorTest.sendCommand("Debugger.setPauseOnExceptions", {state: "all"}, function(responseObject) {
-            InspectorTest.checkForError(responseObject);
-            InspectorTest.log("Debugger.setPauseOnExceptions - all");
-            evaluateExpectedNoPauses(function() {
-                expectPause = true;
-                triggerNext();
-            });
+    InspectorTest.sendCommand("Debugger.setPauseOnExceptions", {state: "all"}, function(responseObject) {
+        InspectorTest.checkForError(responseObject);
+        InspectorTest.log("Debugger.setPauseOnExceptions - all");
+        evaluateExpectedNoPauses(function() {
+            expectPause = true;
+            triggerNext();
         });
     });
 

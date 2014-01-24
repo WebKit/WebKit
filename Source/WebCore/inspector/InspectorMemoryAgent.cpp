@@ -73,7 +73,7 @@ void InspectorMemoryAgent::didCreateFrontendAndBackend(Inspector::InspectorFront
     m_backendDispatcher = InspectorMemoryBackendDispatcher::create(backendDispatcher, this);
 }
 
-void InspectorMemoryAgent::willDestroyFrontendAndBackend()
+void InspectorMemoryAgent::willDestroyFrontendAndBackend(InspectorDisconnectReason)
 {
     m_backendDispatcher.clear();
 }

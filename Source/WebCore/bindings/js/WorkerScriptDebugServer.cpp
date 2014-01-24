@@ -55,10 +55,27 @@ void WorkerScriptDebugServer::addListener(ScriptDebugListener* listener)
     if (!listener)
         return;
 
-    if (m_listeners.isEmpty())
-        m_workerGlobalScope->script()->attachDebugger(this);
+    bool wasEmpty = m_listeners.isEmpty();
     m_listeners.add(listener);
-    recompileAllJSFunctions();
+
+    if (wasEmpty) {
+        m_workerGlobalScope->script()->attachDebugger(this);
+        recompileAllJSFunctions();
+    }
+}
+
+void WorkerScriptDebugServer::removeListener(ScriptDebugListener* listener, bool skipRecompile)
+{
+    if (!listener)
+        return;
+
+    m_listeners.remove(listener);
+
+    if (m_listeners.isEmpty()) {
+        m_workerGlobalScope->script()->detachDebugger(this);
+        if (!skipRecompile)
+            recompileAllJSFunctions();
+    }
 }
 
 void WorkerScriptDebugServer::recompileAllJSFunctions()
@@ -66,21 +83,7 @@ void WorkerScriptDebugServer::recompileAllJSFunctions()
     JSC::VM* vm = m_workerGlobalScope->script()->vm();
 
     JSC::JSLockHolder lock(vm);
-    // If JavaScript stack is not empty postpone recompilation.
-    if (vm->entryScope)
-        recompileAllJSFunctionsSoon();
-    else
-        JSC::Debugger::recompileAllJSFunctions(vm);
-}
-
-void WorkerScriptDebugServer::removeListener(ScriptDebugListener* listener)
-{
-    if (!listener)
-        return;
-
-    m_listeners.remove(listener);
-    if (m_listeners.isEmpty())
-        m_workerGlobalScope->script()->detachDebugger(this);
+    JSC::Debugger::recompileAllJSFunctions(vm);
 }
 
 void WorkerScriptDebugServer::runEventLoopWhilePaused()

@@ -1,6 +1,5 @@
 Debugger.setBreakpoint on line:column in <script>
 
-Breakpoints Enabled
 Found <script>
 Running testFunction
 PASS: step 0: type "number" value "2"

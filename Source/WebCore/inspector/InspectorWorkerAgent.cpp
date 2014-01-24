@@ -122,7 +122,7 @@ void InspectorWorkerAgent::didCreateFrontendAndBackend(Inspector::InspectorFront
     m_backendDispatcher = InspectorWorkerBackendDispatcher::create(backendDispatcher, this);
 }
 
-void InspectorWorkerAgent::willDestroyFrontendAndBackend()
+void InspectorWorkerAgent::willDestroyFrontendAndBackend(InspectorDisconnectReason)
 {
     m_shouldPauseDedicatedWorkerOnStart = false;
     disable(nullptr);

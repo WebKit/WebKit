@@ -32,6 +32,10 @@
 #include "RemoteInspectorDebuggable.h"
 #include <wtf/Noncopyable.h>
 
+namespace Inspector {
+enum class InspectorDisconnectReason;
+}
+
 namespace JSC {
 
 class JSGlobalObject;
@@ -52,6 +56,8 @@ public:
     virtual void dispatchMessageFromRemoteFrontend(const String& message) override;
 
 private:
+    void disconnectInternal(Inspector::InspectorDisconnectReason reason);
+
     JSGlobalObject& m_globalObject;
     std::unique_ptr<Inspector::JSGlobalObjectInspectorController> m_inspectorController;
 };

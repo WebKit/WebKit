@@ -8,9 +8,6 @@ function test()
     InspectorTest.importScript("../../../../inspector-protocol/resources/probe-helper.js");
 
     InspectorTest.sendCommand("Debugger.enable", {});
-    InspectorTest.sendCommand("Debugger.setBreakpointsActive", {active: true}, function() {
-        InspectorTest.log("Breakpoints Enabled");
-    });
 
     var samples = [];
     const expectedSampleCount = 2;

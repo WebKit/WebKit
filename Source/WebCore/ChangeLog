@@ -1,3 +1,141 @@
+2014-01-23  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Remove recompileAllJSFunctions timer in ScriptDebugServer
+        https://bugs.webkit.org/show_bug.cgi?id=127409
+
+        Reviewed by Geoffrey Garen.
+
+        Covered by existing tests.
+
+        * bindings/js/ScriptDebugServer.h:
+        * bindings/js/ScriptDebugServer.cpp:
+        (WebCore::ScriptDebugServer::ScriptDebugServer):
+        Remove m_recompileTimer and the recompile soon function.
+        We can just recompile immediately in all existing cases.
+
+        * bindings/js/PageScriptDebugServer.h:
+        * bindings/js/PageScriptDebugServer.cpp:
+        (WebCore::PageScriptDebugServer::addListener):
+        (WebCore::PageScriptDebugServer::removeListener):
+        (WebCore::PageScriptDebugServer::recompileAllJSFunctions):
+        (WebCore::PageScriptDebugServer::didAddFirstListener):
+        (WebCore::PageScriptDebugServer::didRemoveLastListener):
+        Add a "didAddFirstListener" to match "didRemoveLastListener".
+        Only recompile functions when we attach the debugger and when
+        we detach the last listener.
+
+        * bindings/js/WorkerScriptDebugServer.cpp:
+        (WebCore::WorkerScriptDebugServer::addListener):
+        (WebCore::WorkerScriptDebugServer::removeListener):
+        (WebCore::WorkerScriptDebugServer::recompileAllJSFunctions):
+        Same thing. Also rearrange the functions to read better.
+
+        * inspector/InspectorProfilerAgent.cpp:
+        Use the direct recompile function instead of the removed "soon" version.
+
+        * WebCore.exp.in:
+        Update disconnectFrontend symbol.
+
+        * page/PageDebuggable.cpp:
+        (WebCore::PageDebuggable::disconnect):
+        * testing/Internals.cpp:
+        (WebCore::Internals::closeDummyInspectorFrontend):
+        * workers/WorkerMessagingProxy.cpp:
+        (WebCore::disconnectFromWorkerGlobalScopeInspectorTask):
+        Include an InspectorDisconnectReason when calling disconnectFrontend.
+
+        * inspector/InspectorDatabaseAgent.h:
+        * inspector/InspectorDebuggerAgent.cpp:
+        (WebCore::InspectorDebuggerAgent::disable):
+        (WebCore::InspectorDebuggerAgent::willDestroyFrontendAndBackend):
+        If the disconnect reason is the page will be destroyed, don't recompile when disconnecting.
+
+        * inspector/InspectorProfilerAgent.h:
+        * inspector/InspectorProfilerAgent.cpp:
+        (WebCore::InspectorProfilerAgent::enable):
+        (WebCore::InspectorProfilerAgent::disable):
+        (WebCore::InspectorProfilerAgent::willDestroyFrontendAndBackend):
+        If the disconnect reason is the page will be destroyed, don't recompile when disconnecting.
+
+        * inspector/InspectorController.h:
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::inspectedPageDestroyed):
+        (WebCore::InspectorController::disconnectFrontend):
+        (WebCore::InspectorController::close):
+        Pass different reasons for the different disconnect reasons.
+
+        * inspector/WorkerInspectorController.h:
+        * inspector/WorkerInspectorController.cpp:
+        (WebCore::WorkerInspectorController::~WorkerInspectorController):
+        (WebCore::WorkerInspectorController::disconnectFrontend):
+        Pass different reasons for the different disconnect reasons.
+
+        * inspector/InspectorApplicationCacheAgent.cpp:
+        (WebCore::InspectorApplicationCacheAgent::willDestroyFrontendAndBackend):
+        * inspector/InspectorApplicationCacheAgent.h:
+        * inspector/InspectorCSSAgent.cpp:
+        (WebCore::InspectorCSSAgent::willDestroyFrontendAndBackend):
+        * inspector/InspectorCSSAgent.h:
+        * inspector/InspectorCanvasAgent.cpp:
+        (WebCore::InspectorCanvasAgent::willDestroyFrontendAndBackend):
+        * inspector/InspectorCanvasAgent.h:
+        * inspector/InspectorConsoleAgent.cpp:
+        (WebCore::InspectorConsoleAgent::willDestroyFrontendAndBackend):
+        * inspector/InspectorConsoleAgent.h:
+        * inspector/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::willDestroyFrontendAndBackend):
+        * inspector/InspectorDOMAgent.h:
+        * inspector/InspectorDOMDebuggerAgent.cpp:
+        (WebCore::InspectorDOMDebuggerAgent::willDestroyFrontendAndBackend):
+        * inspector/InspectorDOMDebuggerAgent.h:
+        * inspector/InspectorDOMStorageAgent.cpp:
+        (WebCore::InspectorDOMStorageAgent::willDestroyFrontendAndBackend):
+        * inspector/InspectorDOMStorageAgent.h:
+        * inspector/InspectorDatabaseAgent.cpp:
+        (WebCore::InspectorDatabaseAgent::willDestroyFrontendAndBackend):
+        * inspector/InspectorDebuggerAgent.h:
+        * inspector/InspectorHeapProfilerAgent.cpp:
+        (WebCore::InspectorHeapProfilerAgent::willDestroyFrontendAndBackend):
+        * inspector/InspectorHeapProfilerAgent.h:
+        * inspector/InspectorIndexedDBAgent.cpp:
+        (WebCore::InspectorIndexedDBAgent::willDestroyFrontendAndBackend):
+        * inspector/InspectorIndexedDBAgent.h:
+        * inspector/InspectorInputAgent.cpp:
+        (WebCore::InspectorInputAgent::willDestroyFrontendAndBackend):
+        * inspector/InspectorInputAgent.h:
+        * inspector/InspectorLayerTreeAgent.cpp:
+        (WebCore::InspectorLayerTreeAgent::willDestroyFrontendAndBackend):
+        * inspector/InspectorLayerTreeAgent.h:
+        * inspector/InspectorMemoryAgent.cpp:
+        (WebCore::InspectorMemoryAgent::willDestroyFrontendAndBackend):
+        * inspector/InspectorMemoryAgent.h:
+        * inspector/InspectorPageAgent.cpp:
+        (WebCore::InspectorPageAgent::willDestroyFrontendAndBackend):
+        * inspector/InspectorPageAgent.h:
+        * inspector/InspectorResourceAgent.cpp:
+        (WebCore::InspectorResourceAgent::willDestroyFrontendAndBackend):
+        * inspector/InspectorResourceAgent.h:
+        * inspector/InspectorTimelineAgent.cpp:
+        (WebCore::InspectorTimelineAgent::willDestroyFrontendAndBackend):
+        * inspector/InspectorTimelineAgent.h:
+        * inspector/InspectorWorkerAgent.cpp:
+        (WebCore::InspectorWorkerAgent::willDestroyFrontendAndBackend):
+        * inspector/InspectorWorkerAgent.h:
+        * inspector/PageDebuggerAgent.cpp:
+        (WebCore::PageDebuggerAgent::disable):
+        (WebCore::PageDebuggerAgent::stopListeningScriptDebugServer):
+        * inspector/PageDebuggerAgent.h:
+        * inspector/PageRuntimeAgent.cpp:
+        (WebCore::PageRuntimeAgent::willDestroyFrontendAndBackend):
+        * inspector/PageRuntimeAgent.h:
+        * inspector/WorkerDebuggerAgent.cpp:
+        (WebCore::WorkerDebuggerAgent::stopListeningScriptDebugServer):
+        * inspector/WorkerDebuggerAgent.h:
+        * inspector/WorkerRuntimeAgent.cpp:
+        (WebCore::WorkerRuntimeAgent::willDestroyFrontendAndBackend):
+        * inspector/WorkerRuntimeAgent.h:
+        Include InspectorDisconnectReason param.
+
 2014-01-23  Simon Fraser  <simon.fraser@apple.com>
 
         Another Windows fix: include <algorithm> for std::min and std::max.

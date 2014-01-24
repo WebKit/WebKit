@@ -29,6 +29,7 @@
 #if ENABLE(REMOTE_INSPECTOR)
 
 #include "APIShims.h"
+#include "InspectorAgentBase.h"
 #include "InspectorFrontendChannel.h"
 #include "JSGlobalObject.h"
 #include "RemoteInspector.h"
@@ -45,7 +46,7 @@ JSGlobalObjectDebuggable::JSGlobalObjectDebuggable(JSGlobalObject& globalObject)
 JSGlobalObjectDebuggable::~JSGlobalObjectDebuggable()
 {
     if (m_inspectorController)
-        disconnect();
+        disconnectInternal(InspectorDisconnectReason::InspectedTargetDestroyed);
 }
 
 String JSGlobalObjectDebuggable::name() const
@@ -65,9 +66,14 @@ void JSGlobalObjectDebuggable::connect(InspectorFrontendChannel* frontendChannel
 
 void JSGlobalObjectDebuggable::disconnect()
 {
+    disconnectInternal(InspectorDisconnectReason::InspectorDestroyed);
+}
+
+void JSGlobalObjectDebuggable::disconnectInternal(InspectorDisconnectReason reason)
+{
     APIEntryShim entryShim(&m_globalObject.vm());
 
-    m_inspectorController->disconnectFrontend();
+    m_inspectorController->disconnectFrontend(reason);
     m_inspectorController = nullptr;
 }
 

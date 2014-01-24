@@ -34,12 +34,17 @@ namespace Inspector {
 class InspectorBackendDispatcher;
 class InspectorFrontendChannel;
 
+enum class InspectorDisconnectReason {
+    InspectedTargetDestroyed,
+    InspectorDestroyed
+};
+
 class InspectorAgentBase {
 public:
     virtual ~InspectorAgentBase() { }
 
     virtual void didCreateFrontendAndBackend(InspectorFrontendChannel*, InspectorBackendDispatcher*) = 0;
-    virtual void willDestroyFrontendAndBackend() = 0;
+    virtual void willDestroyFrontendAndBackend(InspectorDisconnectReason reason) = 0;
     virtual void discardAgent() { }
 
 protected:

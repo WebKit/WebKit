@@ -132,7 +132,7 @@ public:
     ~InspectorTimelineAgent();
 
     virtual void didCreateFrontendAndBackend(Inspector::InspectorFrontendChannel*, Inspector::InspectorBackendDispatcher*) override;
-    virtual void willDestroyFrontendAndBackend() override;
+    virtual void willDestroyFrontendAndBackend(Inspector::InspectorDisconnectReason) override;
 
     virtual void start(ErrorString*, const int* maxCallStackDepth, const bool* includeDomCounters) override;
     virtual void stop(ErrorString*) override;

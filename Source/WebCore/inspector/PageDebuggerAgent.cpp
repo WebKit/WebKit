@@ -65,9 +65,9 @@ void PageDebuggerAgent::enable()
     m_instrumentingAgents->setPageDebuggerAgent(this);
 }
 
-void PageDebuggerAgent::disable()
+void PageDebuggerAgent::disable(bool isBeingDestroyed)
 {
-    InspectorDebuggerAgent::disable();
+    InspectorDebuggerAgent::disable(isBeingDestroyed);
     m_instrumentingAgents->setPageDebuggerAgent(nullptr);
 }
 
@@ -76,9 +76,9 @@ void PageDebuggerAgent::startListeningScriptDebugServer()
     scriptDebugServer().addListener(this, m_pageAgent->page());
 }
 
-void PageDebuggerAgent::stopListeningScriptDebugServer()
+void PageDebuggerAgent::stopListeningScriptDebugServer(bool isBeingDestroyed)
 {
-    scriptDebugServer().removeListener(this, m_pageAgent->page());
+    scriptDebugServer().removeListener(this, m_pageAgent->page(), isBeingDestroyed);
 }
 
 PageScriptDebugServer& PageDebuggerAgent::scriptDebugServer()

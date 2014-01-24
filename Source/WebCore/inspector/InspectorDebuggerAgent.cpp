@@ -95,12 +95,12 @@ void InspectorDebuggerAgent::enable()
     m_enabled = true;
 }
 
-void InspectorDebuggerAgent::disable()
+void InspectorDebuggerAgent::disable(bool isBeingDestroyed)
 {
     m_javaScriptBreakpoints.clear();
     m_instrumentingAgents->setInspectorDebuggerAgent(nullptr);
 
-    stopListeningScriptDebugServer();
+    stopListeningScriptDebugServer(isBeingDestroyed);
     clearResolvedBreakpointState();
 
     if (m_listener)
@@ -124,7 +124,8 @@ void InspectorDebuggerAgent::disable(ErrorString*)
     if (!m_enabled)
         return;
 
-    disable();
+    bool skipRecompile = false;
+    disable(skipRecompile);
 }
 
 void InspectorDebuggerAgent::didCreateFrontendAndBackend(Inspector::InspectorFrontendChannel* frontendChannel, InspectorBackendDispatcher* backendDispatcher)
@@ -133,12 +134,13 @@ void InspectorDebuggerAgent::didCreateFrontendAndBackend(Inspector::InspectorFro
     m_backendDispatcher = InspectorDebuggerBackendDispatcher::create(backendDispatcher, this);
 }
 
-void InspectorDebuggerAgent::willDestroyFrontendAndBackend()
+void InspectorDebuggerAgent::willDestroyFrontendAndBackend(InspectorDisconnectReason reason)
 {
     m_frontendDispatcher = nullptr;
     m_backendDispatcher.clear();
 
-    disable();
+    bool skipRecompile = reason == InspectorDisconnectReason::InspectedTargetDestroyed;
+    disable(skipRecompile);
 }
 
 void InspectorDebuggerAgent::setBreakpointsActive(ErrorString*, bool active)

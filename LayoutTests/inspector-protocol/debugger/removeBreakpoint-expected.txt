@@ -1,6 +1,5 @@
 Debugger.removeBreakpoint
 
-Breakpoints Enabled
 Found breakpoint.js
 Set Breakpoint, Triggering it
 inside breakpointBasic

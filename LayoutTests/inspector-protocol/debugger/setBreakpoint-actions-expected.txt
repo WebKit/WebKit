@@ -6,7 +6,6 @@ CONSOLE MESSAGE: line 1: eval-action
 CONSOLE MESSAGE: log-action-after
 Debugger.setBreakpoint options.actions
 
-Breakpoints Enabled
 Found breakpoint.js
 Running breakpointActions a few times that should not trigger
 inside breakpointActions a:(1) b:(undefined)

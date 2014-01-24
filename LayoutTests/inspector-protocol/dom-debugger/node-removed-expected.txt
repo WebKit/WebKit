@@ -1,6 +1,5 @@
 Testing that DOM.childNodeRemoved is correctly triggered even when the element is moved while paused in the debugger on a DOMDebugger "node-removed" breakpoint.
 
-Breakpoints Enabled
 Found <script>
 Stopped on DOM breakpoint
 PASS: onChildNodeRemoved called for #target_element

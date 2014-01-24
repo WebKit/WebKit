@@ -48,10 +48,10 @@ void InspectorAgentRegistry::didCreateFrontendAndBackend(InspectorFrontendChanne
         m_agents[i]->didCreateFrontendAndBackend(frontendChannel, backendDispatcher);
 }
 
-void InspectorAgentRegistry::willDestroyFrontendAndBackend()
+void InspectorAgentRegistry::willDestroyFrontendAndBackend(InspectorDisconnectReason reason)
 {
     for (size_t i = 0; i < m_agents.size(); i++)
-        m_agents[i]->willDestroyFrontendAndBackend();
+        m_agents[i]->willDestroyFrontendAndBackend(reason);
 }
 
 void InspectorAgentRegistry::discardAgents()

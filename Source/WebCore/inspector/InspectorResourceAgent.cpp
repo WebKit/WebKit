@@ -83,7 +83,7 @@ void InspectorResourceAgent::didCreateFrontendAndBackend(Inspector::InspectorFro
     m_backendDispatcher = InspectorNetworkBackendDispatcher::create(backendDispatcher, this);
 }
 
-void InspectorResourceAgent::willDestroyFrontendAndBackend()
+void InspectorResourceAgent::willDestroyFrontendAndBackend(InspectorDisconnectReason)
 {
     m_frontendDispatcher = nullptr;
     m_backendDispatcher.clear();

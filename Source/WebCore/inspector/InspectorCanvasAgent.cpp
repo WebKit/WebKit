@@ -80,7 +80,7 @@ void InspectorCanvasAgent::didCreateFrontendAndBackend(Inspector::InspectorFront
     m_backendDispatcher = InspectorCanvasBackendDispatcher::create(backendDispatcher, this);
 }
 
-void InspectorCanvasAgent::willDestroyFrontendAndBackend()
+void InspectorCanvasAgent::willDestroyFrontendAndBackend(InspectorDisconnectReason)
 {
     m_frontendDispatcher = nullptr;
     m_backendDispatcher.clear();

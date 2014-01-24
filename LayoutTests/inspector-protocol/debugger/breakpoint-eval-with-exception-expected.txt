@@ -1,6 +1,5 @@
 While being paused on a breakpoint the debugger should ignore the exceptions from console commands.
 
-Breakpoints Enabled
 Found breakpoint.js
 inside breakpointBasic
 PASS: Paused in debugger: reason = "other"

@@ -515,7 +515,7 @@ void InspectorCSSAgent::didCreateFrontendAndBackend(Inspector::InspectorFrontend
     m_backendDispatcher = InspectorCSSBackendDispatcher::create(backendDispatcher, this);
 }
 
-void InspectorCSSAgent::willDestroyFrontendAndBackend()
+void InspectorCSSAgent::willDestroyFrontendAndBackend(InspectorDisconnectReason)
 {
     m_frontendDispatcher = nullptr;
     m_backendDispatcher.clear();

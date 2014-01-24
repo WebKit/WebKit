@@ -73,7 +73,7 @@ public:
 private:
     virtual void recompileScript() override
     {
-        PageScriptDebugServer::shared().recompileAllJSFunctionsSoon();
+        PageScriptDebugServer::shared().recompileAllJSFunctions();
     }
 
     virtual void startProfiling(const String& title) override
@@ -202,23 +202,22 @@ void InspectorProfilerAgent::hasHeapProfiler(ErrorString*, bool* result)
 
 void InspectorProfilerAgent::enable(ErrorString*)
 {
-    if (enabled())
-        return;
     enable(false);
 }
 
 void InspectorProfilerAgent::disable(ErrorString*)
 {
-    disable();
+    disable(false);
 }
 
-void InspectorProfilerAgent::disable()
+void InspectorProfilerAgent::disable(bool skipRecompile)
 {
     if (!m_enabled)
         return;
     m_enabled = false;
     m_profileHeadersRequested = false;
-    recompileScript();
+    if (!skipRecompile)
+        recompileScript();
 }
 
 void InspectorProfilerAgent::enable(bool skipRecompile)
@@ -333,14 +332,15 @@ void InspectorProfilerAgent::didCreateFrontendAndBackend(Inspector::InspectorFro
     m_backendDispatcher = InspectorProfilerBackendDispatcher::create(backendDispatcher, this);
 }
 
-void InspectorProfilerAgent::willDestroyFrontendAndBackend()
+void InspectorProfilerAgent::willDestroyFrontendAndBackend(InspectorDisconnectReason reason)
 {
     m_frontendDispatcher = nullptr;
     m_backendDispatcher.clear();
 
     stop();
-    ErrorString error;
-    disable(&error);
+
+    bool skipRecompile = reason == InspectorDisconnectReason::InspectedTargetDestroyed;
+    disable(skipRecompile);
 }
 
 void InspectorProfilerAgent::start(ErrorString*)

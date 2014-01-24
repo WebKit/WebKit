@@ -13,7 +13,6 @@ CONSOLE MESSAGE: line 18: [object Object]
 CONSOLE MESSAGE: line 18: Error: error message
 Debugger.setPauseOnExceptions all
 
-Breakpoints Enabled
 Debugger.setPauseOnExceptions - all
 PASS - did not pause on non-exception statements
 Paused!

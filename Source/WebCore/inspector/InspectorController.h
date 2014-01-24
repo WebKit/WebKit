@@ -99,7 +99,7 @@ public:
     bool hasRemoteFrontend() const;
 
     void connectFrontend(Inspector::InspectorFrontendChannel*);
-    void disconnectFrontend();
+    void disconnectFrontend(Inspector::InspectorDisconnectReason);
     void setProcessId(long);
 
 #if ENABLE(REMOTE_INSPECTOR)

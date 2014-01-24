@@ -44,6 +44,7 @@
 #import "WebViewInternal.h"
 #import <algorithm>
 #import <bindings/ScriptValue.h>
+#import <inspector/InspectorAgentBase.h>
 #import <WebCore/InspectorController.h>
 #import <WebCore/InspectorFrontendClient.h>
 #import <WebCore/MainFrame.h>
@@ -693,7 +694,7 @@ void WebInspectorFrontendClient::append(const String& suggestedURL, const String
 
     if (notifyInspectorController) {
         if (Page* inspectedPage = [_inspectedWebView.get() page])
-            inspectedPage->inspectorController().disconnectFrontend();
+            inspectedPage->inspectorController().disconnectFrontend(Inspector::InspectorDisconnectReason::InspectorDestroyed);
     }
 
     RetainPtr<WebInspectorWindowController> protect(self);

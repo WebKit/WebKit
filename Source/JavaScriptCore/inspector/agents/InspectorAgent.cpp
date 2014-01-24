@@ -56,7 +56,7 @@ void InspectorAgent::didCreateFrontendAndBackend(InspectorFrontendChannel* front
     m_backendDispatcher = InspectorInspectorBackendDispatcher::create(backendDispatcher, this);
 }
 
-void InspectorAgent::willDestroyFrontendAndBackend()
+void InspectorAgent::willDestroyFrontendAndBackend(InspectorDisconnectReason)
 {
     m_frontendDispatcher = nullptr;
     m_backendDispatcher.clear();

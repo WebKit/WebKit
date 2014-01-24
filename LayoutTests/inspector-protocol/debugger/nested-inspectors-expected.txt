@@ -1,7 +1,6 @@
 CONSOLE MESSAGE: line 1: Error: PASS: Expected exception
 Checking that the inspector code can be debugged using a second inspector window.
 
-Breakpoints Enabled
 Debugger.setPauseOnExceptions - all
 PASS: Paused!
 PASS: Resumed!

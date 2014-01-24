@@ -6,9 +6,6 @@
 function test()
 {
     InspectorTest.sendCommand("Debugger.enable", {});
-    InspectorTest.sendCommand("Debugger.setBreakpointsActive", {active: true}, function() {
-        InspectorTest.log("Breakpoints Enabled");
-    });
 
     var inBreakpoint = false;
     var breakpointTriggered = 0;

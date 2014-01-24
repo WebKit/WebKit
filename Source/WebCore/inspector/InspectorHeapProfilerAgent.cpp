@@ -85,7 +85,7 @@ void InspectorHeapProfilerAgent::didCreateFrontendAndBackend(Inspector::Inspecto
     m_backendDispatcher = InspectorHeapProfilerBackendDispatcher::create(backendDispatcher, this);
 }
 
-void InspectorHeapProfilerAgent::willDestroyFrontendAndBackend()
+void InspectorHeapProfilerAgent::willDestroyFrontendAndBackend(InspectorDisconnectReason)
 {
     m_frontendDispatcher = nullptr;
     m_backendDispatcher.clear();

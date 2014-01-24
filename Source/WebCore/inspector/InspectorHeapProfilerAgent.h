@@ -67,7 +67,7 @@ public:
     virtual void removeProfile(ErrorString*, int uid) override;
 
     virtual void didCreateFrontendAndBackend(Inspector::InspectorFrontendChannel*, Inspector::InspectorBackendDispatcher*) override;
-    virtual void willDestroyFrontendAndBackend() override;
+    virtual void willDestroyFrontendAndBackend(Inspector::InspectorDisconnectReason) override;
 
     virtual void takeHeapSnapshot(ErrorString*, const bool* reportProgress) override;
 

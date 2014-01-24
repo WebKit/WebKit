@@ -51,7 +51,7 @@ public:
     static void interruptAndDispatchInspectorCommands(WorkerThread*);
 
     virtual void startListeningScriptDebugServer() override;
-    virtual void stopListeningScriptDebugServer() override;
+    virtual void stopListeningScriptDebugServer(bool isBeingDestroyed) override;
     virtual WorkerScriptDebugServer& scriptDebugServer() override;
     virtual Inspector::InjectedScript injectedScriptForEval(ErrorString*, const int* executionContextId) override;
     virtual void muteConsole() override;

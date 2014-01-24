@@ -68,12 +68,12 @@ void JSGlobalObjectInspectorController::connectFrontend(InspectorFrontendChannel
     m_agents.didCreateFrontendAndBackend(frontendChannel, m_inspectorBackendDispatcher.get());
 }
 
-void JSGlobalObjectInspectorController::disconnectFrontend()
+void JSGlobalObjectInspectorController::disconnectFrontend(InspectorDisconnectReason reason)
 {
     if (!m_inspectorFrontendChannel)
         return;
 
-    m_agents.willDestroyFrontendAndBackend();
+    m_agents.willDestroyFrontendAndBackend(reason);
 
     m_inspectorBackendDispatcher->clearFrontend();
     m_inspectorBackendDispatcher.clear();

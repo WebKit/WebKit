@@ -66,7 +66,7 @@ void InspectorLayerTreeAgent::didCreateFrontendAndBackend(Inspector::InspectorFr
     m_backendDispatcher = InspectorLayerTreeBackendDispatcher::create(backendDispatcher, this);
 }
 
-void InspectorLayerTreeAgent::willDestroyFrontendAndBackend()
+void InspectorLayerTreeAgent::willDestroyFrontendAndBackend(InspectorDisconnectReason)
 {
     m_frontendDispatcher = nullptr;
     m_backendDispatcher.clear();

@@ -118,13 +118,10 @@ function test()
         InspectorTest.sendCommand("DOMDebugger.setDOMBreakpoint", {nodeId: targetElementId, type: "node-removed"});
         InspectorTest.sendCommand("DOM.requestChildNodes", {nodeId: finalContainerId});
 
-        InspectorTest.sendCommand("Runtime.evaluate", {"expression": "removeNode()"});        
+        InspectorTest.sendCommand("Runtime.evaluate", {"expression": "removeNode()"});
     }
 
     InspectorTest.sendCommand("Debugger.enable", {});
-    InspectorTest.sendCommand("Debugger.setBreakpointsActive", {active: true}, function() {
-        InspectorTest.log("Breakpoints Enabled");
-    });
 }
 </script>
 </head>

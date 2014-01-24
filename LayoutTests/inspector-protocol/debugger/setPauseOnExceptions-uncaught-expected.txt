@@ -19,7 +19,6 @@ CONSOLE MESSAGE: line 38: catchNested caught exception: "exception string"
 CONSOLE MESSAGE: line 38: catchNested caught exception: {"line":18,"column":12,"sourceURL":"exception.js"}
 Debugger.setPauseOnExceptions uncaught
 
-Breakpoints Enabled
 Debugger.setPauseOnExceptions - uncaught
 PASS - did not pause on non-exception statements or caught exception statements
 Paused!

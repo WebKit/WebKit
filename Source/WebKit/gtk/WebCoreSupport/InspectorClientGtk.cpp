@@ -30,6 +30,7 @@
 #include "webkitwebinspectorprivate.h"
 #include "webkitwebview.h"
 #include "webkitwebviewprivate.h"
+#include <inspector/InspectorAgentBase.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
 
@@ -189,7 +190,7 @@ void InspectorFrontendClient::destroyInspectorWindow(bool notifyInspectorControl
     }
 
     if (notifyInspectorController)
-        core(m_inspectedWebView)->inspectorController().disconnectFrontend();
+        core(m_inspectedWebView)->inspectorController().disconnectFrontend(Inspector::InspectorDisconnectReason::InspectorDestroyed);
 
     if (m_inspectorClient)
         m_inspectorClient->releaseFrontendPage();

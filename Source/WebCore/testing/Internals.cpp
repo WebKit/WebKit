@@ -96,6 +96,7 @@
 #include "ViewportArguments.h"
 #include "WorkerThread.h"
 #include <bytecode/CodeBlock.h>
+#include <inspector/InspectorAgentBase.h>
 #include <inspector/InspectorValues.h>
 #include <runtime/JSCJSValue.h>
 #include <wtf/text/CString.h>
@@ -1464,7 +1465,8 @@ void Internals::closeDummyInspectorFrontend()
     ASSERT(page);
     ASSERT(m_frontendWindow);
 
-    page->inspectorController().disconnectFrontend();
+    // Treat this as if the page we are inspecting is closing.
+    page->inspectorController().disconnectFrontend(InspectorDisconnectReason::InspectedTargetDestroyed);
 
     m_frontendChannel.release();
 

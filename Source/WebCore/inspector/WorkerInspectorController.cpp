@@ -116,7 +116,7 @@ WorkerInspectorController::WorkerInspectorController(WorkerGlobalScope& workerGl
 WorkerInspectorController::~WorkerInspectorController()
 {
     m_instrumentingAgents->reset();
-    disconnectFrontend();
+    disconnectFrontend(InspectorDisconnectReason::InspectedTargetDestroyed);
 }
 
 void WorkerInspectorController::connectFrontend()
@@ -127,11 +127,12 @@ void WorkerInspectorController::connectFrontend()
     m_agents.didCreateFrontendAndBackend(m_frontendChannel.get(), m_backendDispatcher.get());
 }
 
-void WorkerInspectorController::disconnectFrontend()
+void WorkerInspectorController::disconnectFrontend(InspectorDisconnectReason reason)
 {
     if (!m_frontendChannel)
         return;
-    m_agents.willDestroyFrontendAndBackend();
+
+    m_agents.willDestroyFrontendAndBackend(reason);
     m_backendDispatcher->clearFrontend();
     m_backendDispatcher.clear();
     m_frontendChannel = nullptr;

@@ -2,7 +2,6 @@ CONSOLE MESSAGE: line 1: TypeError: undefined is not an object (evaluating 'this
 CONSOLE MESSAGE: line 1: TypeError: undefined is not an object (evaluating 'this.will.cause')
 Debugger.setBreakpoint options.condition or options.action with exception
 
-Breakpoints Enabled
 Found breakpoint.js
 Running breakpointWithCondition to trigger condition exception.
 inside breakpointWithCondition a:(1) b:(2) a+b:(3)

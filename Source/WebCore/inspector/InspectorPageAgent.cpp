@@ -362,7 +362,7 @@ void InspectorPageAgent::didCreateFrontendAndBackend(Inspector::InspectorFronten
     m_backendDispatcher = InspectorPageBackendDispatcher::create(backendDispatcher, this);
 }
 
-void InspectorPageAgent::willDestroyFrontendAndBackend()
+void InspectorPageAgent::willDestroyFrontendAndBackend(InspectorDisconnectReason)
 {
     m_frontendDispatcher = nullptr;
     m_backendDispatcher.clear();

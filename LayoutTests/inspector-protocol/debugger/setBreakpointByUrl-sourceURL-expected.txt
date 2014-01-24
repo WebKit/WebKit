@@ -1,6 +1,5 @@
 Debugger.setBreakpointByUrl in Script named via sourceURL
 
-Breakpoints Enabled
 Found sourceURL-test.js
 Running sourceURLFunction
 Hit Breakpoint!

@@ -34,6 +34,7 @@ namespace Inspector {
 class InspectorAgentBase;
 class InspectorBackendDispatcher;
 class InspectorFrontendChannel;
+enum class InspectorDisconnectReason;
 
 class JS_EXPORT_PRIVATE InspectorAgentRegistry {
 public:
@@ -42,7 +43,7 @@ public:
     void append(std::unique_ptr<InspectorAgentBase>);
 
     void didCreateFrontendAndBackend(InspectorFrontendChannel*, InspectorBackendDispatcher*);
-    void willDestroyFrontendAndBackend();
+    void willDestroyFrontendAndBackend(InspectorDisconnectReason reason);
     void discardAgents();
 
 private:

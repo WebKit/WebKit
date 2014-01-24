@@ -112,7 +112,7 @@ public:
     static String toErrorString(const ExceptionCode&);
 
     virtual void didCreateFrontendAndBackend(Inspector::InspectorFrontendChannel*, Inspector::InspectorBackendDispatcher*) override;
-    virtual void willDestroyFrontendAndBackend() override;
+    virtual void willDestroyFrontendAndBackend(Inspector::InspectorDisconnectReason) override;
 
     Vector<Document*> documents();
     void reset();

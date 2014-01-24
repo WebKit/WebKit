@@ -94,13 +94,15 @@ void PageScriptDebugServer::addListener(ScriptDebugListener* listener, Page* pag
     OwnPtr<ListenerSet>& listeners = m_pageListenersMap.add(page, nullptr).iterator->value;
     if (!listeners)
         listeners = adoptPtr(new ListenerSet);
+
+    bool wasEmpty = listeners->isEmpty();
     listeners->add(listener);
 
-    recompileAllJSFunctionsSoon();
-    page->setDebugger(this);
+    if (wasEmpty)
+        didAddFirstListener(page);
 }
 
-void PageScriptDebugServer::removeListener(ScriptDebugListener* listener, Page* page)
+void PageScriptDebugServer::removeListener(ScriptDebugListener* listener, Page* page, bool skipRecompile)
 {
     ASSERT_ARG(listener, listener);
     ASSERT_ARG(page, page);
@@ -111,20 +113,17 @@ void PageScriptDebugServer::removeListener(ScriptDebugListener* listener, Page* 
 
     ListenerSet* listeners = it->value.get();
     listeners->remove(listener);
+
     if (listeners->isEmpty()) {
         m_pageListenersMap.remove(it);
-        didRemoveLastListener(page);
+        didRemoveLastListener(page, skipRecompile);
     }
 }
 
 void PageScriptDebugServer::recompileAllJSFunctions()
 {
     JSLockHolder lock(JSDOMWindow::commonVM());
-    // If JavaScript stack is not empty postpone recompilation.
-    if (JSDOMWindow::commonVM()->entryScope)
-        recompileAllJSFunctionsSoon();
-    else
-        Debugger::recompileAllJSFunctions(JSDOMWindow::commonVM());
+    Debugger::recompileAllJSFunctions(JSDOMWindow::commonVM());
 }
 
 ScriptDebugServer::ListenerSet* PageScriptDebugServer::getListenersForGlobalObject(JSGlobalObject* globalObject)
@@ -161,15 +160,25 @@ void PageScriptDebugServer::didContinue(JSC::JSGlobalObject* globalObject)
         setJavaScriptPaused(page->group(), false);
 }
 
-void PageScriptDebugServer::didRemoveLastListener(Page* page)
+void PageScriptDebugServer::didAddFirstListener(Page* page)
+{
+    // Set debugger before recompiling to get sourceParsed callbacks.
+    page->setDebugger(this);
+    recompileAllJSFunctions();
+}
+
+void PageScriptDebugServer::didRemoveLastListener(Page* page, bool skipRecompile)
 {
     ASSERT(page);
 
     if (m_pausedPage == page)
         m_doneProcessingDebuggerEvents = true;
 
-    recompileAllJSFunctionsSoon();
-    page->setDebugger(0);
+    // Clear debugger before recompiling because we do not need sourceParsed callbacks.
+    page->setDebugger(nullptr);
+
+    if (!skipRecompile)
+        recompileAllJSFunctions();
 }
 
 void PageScriptDebugServer::runEventLoopWhilePaused()

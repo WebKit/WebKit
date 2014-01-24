@@ -48,6 +48,7 @@
 #include "Worker.h"
 #include "WorkerDebuggerAgent.h"
 #include "WorkerInspectorController.h"
+#include <inspector/InspectorAgentBase.h>
 #include <wtf/MainThread.h>
 
 namespace WebCore {
@@ -428,7 +429,7 @@ void WorkerMessagingProxy::connectToInspector(WorkerGlobalScopeProxy::PageInspec
 static void disconnectFromWorkerGlobalScopeInspectorTask(ScriptExecutionContext* context, bool)
 {
     ASSERT_WITH_SECURITY_IMPLICATION(context->isWorkerGlobalScope());
-    static_cast<WorkerGlobalScope*>(context)->workerInspectorController().disconnectFrontend();
+    static_cast<WorkerGlobalScope*>(context)->workerInspectorController().disconnectFrontend(Inspector::InspectorDisconnectReason::InspectorDestroyed);
 }
 #endif
 

@@ -1,3 +1,34 @@
+2014-01-23  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Remove recompileAllJSFunctions timer in ScriptDebugServer
+        https://bugs.webkit.org/show_bug.cgi?id=127409
+
+        Reviewed by Geoffrey Garen.
+
+        * inspector/InspectorAgentBase.h:
+        When disconnecting agents, provide a InspectorDisconnectReason for
+        the disconnection. It could be that an inspector frontend is just
+        disconnecting or that the inspected object is going away entirely
+        and we can avoid doing some work.
+
+        * runtime/JSGlobalObjectDebuggable.h:
+        * runtime/JSGlobalObjectDebuggable.cpp:
+        (JSC::JSGlobalObjectDebuggable::~JSGlobalObjectDebuggable):
+        (JSC::JSGlobalObjectDebuggable::disconnect):
+        (JSC::JSGlobalObjectDebuggable::disconnectInternal):
+        Pass different reasons for the different disconnects.
+
+        * inspector/InspectorAgentRegistry.cpp:
+        (Inspector::InspectorAgentRegistry::willDestroyFrontendAndBackend):
+        * inspector/InspectorAgentRegistry.h:
+        * inspector/JSGlobalObjectInspectorController.cpp:
+        (Inspector::JSGlobalObjectInspectorController::disconnectFrontend):
+        * inspector/JSGlobalObjectInspectorController.h:
+        * inspector/agents/InspectorAgent.cpp:
+        (Inspector::InspectorAgent::willDestroyFrontendAndBackend):
+        * inspector/agents/InspectorAgent.h:
+        Pass InspectorDisconnectReason around where needed.
+
 2014-01-23  Mark Lam  <mark.lam@apple.com>
 
         Enable DFG for the Debugger and Profiler.

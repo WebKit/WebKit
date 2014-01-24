@@ -574,7 +574,7 @@ void InspectorIndexedDBAgent::didCreateFrontendAndBackend(Inspector::InspectorFr
     m_backendDispatcher = InspectorIndexedDBBackendDispatcher::create(backendDispatcher, this);
 }
 
-void InspectorIndexedDBAgent::willDestroyFrontendAndBackend()
+void InspectorIndexedDBAgent::willDestroyFrontendAndBackend(InspectorDisconnectReason)
 {
     m_backendDispatcher.clear();
 
