@@ -1,3 +1,17 @@
+2014-01-24  Daniel Bates  <dabates@apple.com>
+
+        Bindings generation tests hit an error trying to include wtf/Platform.h after r161638
+        https://bugs.webkit.org/show_bug.cgi?id=127293
+
+        Reviewed by Alexey Proskuryakov.
+
+        Include TargetConditionals.h instead of wtf/Platform.h as the latter isn't available
+        in the public SDK.
+
+        As a side effect of this change, replace usage of PLATFORM(IOS) with TARGET_OS_IPHONE.
+
+        * bindings/objc/PublicDOMInterfaces.h:
+
 2014-01-21  David Hyatt  <hyatt@apple.com>
 
         [New Multicolumn] Table cells and list items need to work as multicolumn blocks.

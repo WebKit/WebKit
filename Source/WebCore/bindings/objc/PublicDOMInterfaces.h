@@ -26,7 +26,7 @@
 // All public DOM class interfaces, properties and methods need to be in this file.
 // Anything not in the file will be generated into the appropriate private header file.
 
-#include <wtf/Platform.h>
+#include <TargetConditionals.h>
 
 #ifndef OBJC_CODE_GENERATION
 #error Do not include this header, instead include the appropriate DOM header.
@@ -953,7 +953,7 @@
 @property (readonly, strong) DOMCSSPrimitiveValue *green;
 @property (readonly, strong) DOMCSSPrimitiveValue *blue;
 @property (readonly, strong) DOMCSSPrimitiveValue *alpha;
-#if !PLATFORM(IOS)
+#if !TARGET_OS_IPHONE
 @property (readonly, copy) NSColor *color WEBKIT_AVAILABLE_MAC(10_5);
 #else
 - (CGColorRef)color;
@@ -1250,6 +1250,6 @@
 - (NSString *)lookupNamespaceURI:(NSString *)prefix;
 @end
 
-#if PLATFORM(IOS)
+#if TARGET_OS_IPHONE
 #include <WebKitAdditions/PublicDOMInterfacesIOS.h>
 #endif
