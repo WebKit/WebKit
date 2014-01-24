@@ -118,6 +118,11 @@ public:
     LayoutUnit(double value) { REPORT_OVERFLOW(isInBounds(value)); m_value = clampTo<int>(value); }
 #endif
 
+    static LayoutUnit fromPixel(int value)
+    {
+        return LayoutUnit(value);
+    }
+
     static LayoutUnit fromFloatCeil(float value)
     {
         LayoutUnit v;

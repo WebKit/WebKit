@@ -2726,7 +2726,7 @@ static int cornerStart(const RenderLayer* layer, int minX, int maxX, int thickne
     return maxX - thickness - layer->renderer().style().borderRightWidth();
 }
 
-static IntRect cornerRect(const RenderLayer* layer, const IntRect& bounds)
+static LayoutRect cornerRect(const RenderLayer* layer, const LayoutRect& bounds)
 {
     int horizontalThickness;
     int verticalThickness;
@@ -2745,7 +2745,7 @@ static IntRect cornerRect(const RenderLayer* layer, const IntRect& bounds)
         horizontalThickness = layer->verticalScrollbar()->width();
         verticalThickness = layer->horizontalScrollbar()->height();
     }
-    return IntRect(cornerStart(layer, bounds.x(), bounds.maxX(), horizontalThickness),
+    return LayoutRect(cornerStart(layer, bounds.x(), bounds.maxX(), horizontalThickness),
         bounds.maxY() - verticalThickness - layer->renderer().style().borderBottomWidth(),
         horizontalThickness, verticalThickness);
 }
@@ -2760,26 +2760,26 @@ IntRect RenderLayer::scrollCornerRect() const
     bool hasVerticalBar = verticalScrollbar();
     bool hasResizer = renderer().style().resize() != RESIZE_NONE;
     if ((hasHorizontalBar && hasVerticalBar) || (hasResizer && (hasHorizontalBar || hasVerticalBar)))
-        return cornerRect(this, renderBox()->pixelSnappedBorderBoxRect());
+        return pixelSnappedIntRect(cornerRect(this, renderBox()->borderBoxRect()));
     return IntRect();
 }
 
-static IntRect resizerCornerRect(const RenderLayer* layer, const IntRect& bounds)
+static LayoutRect resizerCornerRect(const RenderLayer* layer, const LayoutRect& bounds)
 {
     ASSERT(layer->renderer().isBox());
     if (layer->renderer().style().resize() == RESIZE_NONE)
-        return IntRect();
+        return LayoutRect();
     return cornerRect(layer, bounds);
 }
 
-IntRect RenderLayer::scrollCornerAndResizerRect() const
+LayoutRect RenderLayer::scrollCornerAndResizerRect() const
 {
     RenderBox* box = renderBox();
     if (!box)
         return IntRect();
-    IntRect scrollCornerAndResizer = scrollCornerRect();
+    LayoutRect scrollCornerAndResizer = scrollCornerRect();
     if (scrollCornerAndResizer.isEmpty())
-        scrollCornerAndResizer = resizerCornerRect(this, box->pixelSnappedBorderBoxRect());
+        scrollCornerAndResizer = resizerCornerRect(this, box->borderBoxRect());
     return scrollCornerAndResizer;
 }
 
@@ -2900,7 +2900,7 @@ LayoutUnit RenderLayer::horizontalScrollbarStart(int minX) const
     const RenderBox* box = renderBox();
     int x = minX + box->borderLeft();
     if (renderer().style().shouldPlaceBlockDirectionScrollbarOnLogicalLeft())
-        x += m_vBar ? m_vBar->width() : resizerCornerRect(this, box->pixelSnappedBorderBoxRect()).width();
+        x += m_vBar ? m_vBar->width() : roundToInt(resizerCornerRect(this, box->borderBoxRect()).width());
     return x;
 }
 
@@ -3483,7 +3483,7 @@ void RenderLayer::paintScrollCorner(GraphicsContext* context, const IntPoint& pa
         context->fillRect(absRect, Color::white, box->style().colorSpace());
 }
 
-void RenderLayer::drawPlatformResizerImage(GraphicsContext* context, IntRect resizerCornerRect)
+void RenderLayer::drawPlatformResizerImage(GraphicsContext* context, const LayoutRect& resizerCornerRect)
 {
     float deviceScaleFactor = WebCore::deviceScaleFactor(&renderer().frame());
 
@@ -3508,11 +3508,11 @@ void RenderLayer::drawPlatformResizerImage(GraphicsContext* context, IntRect res
         context->restore();
         return;
     }
-    IntRect imageRect(resizerCornerRect.maxXMaxYCorner() - cornerResizerSize, cornerResizerSize);
-    context->drawImage(resizeCornerImage.get(), renderer().style().colorSpace(), imageRect);
+    LayoutRect imageRect(resizerCornerRect.maxXMaxYCorner() - cornerResizerSize, cornerResizerSize);
+    context->drawImage(resizeCornerImage.get(), renderer().style().colorSpace(), pixelSnappedIntRect(imageRect));
 }
 
-void RenderLayer::paintResizer(GraphicsContext* context, const IntPoint& paintOffset, const IntRect& damageRect)
+void RenderLayer::paintResizer(GraphicsContext* context, const LayoutPoint& paintOffset, const LayoutRect& damageRect)
 {
     if (renderer().style().resize() == RESIZE_NONE)
         return;
@@ -3520,7 +3520,7 @@ void RenderLayer::paintResizer(GraphicsContext* context, const IntPoint& paintOf
     RenderBox* box = renderBox();
     ASSERT(box);
 
-    IntRect absRect = resizerCornerRect(this, box->pixelSnappedBorderBoxRect());
+    LayoutRect absRect = resizerCornerRect(this, box->borderBoxRect());
     absRect.moveBy(paintOffset);
     if (!absRect.intersects(damageRect))
         return;
@@ -3542,12 +3542,12 @@ void RenderLayer::paintResizer(GraphicsContext* context, const IntPoint& paintOf
     if (!hasOverlayScrollbars() && (m_vBar || m_hBar)) {
         GraphicsContextStateSaver stateSaver(*context);
         context->clip(absRect);
-        IntRect largerCorner = absRect;
-        largerCorner.setSize(IntSize(largerCorner.width() + 1, largerCorner.height() + 1));
+        LayoutRect largerCorner = absRect;
+        largerCorner.setSize(LayoutSize(largerCorner.width() + LayoutUnit::fromPixel(1), largerCorner.height() + LayoutUnit::fromPixel(1)));
         context->setStrokeColor(Color(makeRGB(217, 217, 217)), ColorSpaceDeviceRGB);
         context->setStrokeThickness(1.0f);
         context->setFillColor(Color::transparent, ColorSpaceDeviceRGB);
-        context->drawRect(largerCorner);
+        context->drawRect(pixelSnappedIntRect(largerCorner));
     }
 }
 
@@ -3575,7 +3575,7 @@ bool RenderLayer::hitTestOverflowControls(HitTestResult& result, const IntPoint&
     
     IntRect resizeControlRect;
     if (renderer().style().resize() != RESIZE_NONE) {
-        resizeControlRect = resizerCornerRect(this, box->pixelSnappedBorderBoxRect());
+        resizeControlRect = pixelSnappedIntRect(resizerCornerRect(this, box->borderBoxRect()));
         if (resizeControlRect.contains(localPoint))
             return true;
     }

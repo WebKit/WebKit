@@ -350,7 +350,7 @@ void RenderListBox::paintScrollbar(PaintInfo& paintInfo, const LayoutPoint& pain
             m_vBar->width(),
             height() - (borderTop() + borderBottom()));
         m_vBar->setFrameRect(scrollRect);
-        m_vBar->paint(paintInfo.context, paintInfo.rect);
+        m_vBar->paint(paintInfo.context, pixelSnappedIntRect(paintInfo.rect));
     }
 }
 

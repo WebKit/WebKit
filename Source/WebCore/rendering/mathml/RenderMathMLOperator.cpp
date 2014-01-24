@@ -329,7 +329,7 @@ void RenderMathMLOperator::fillWithExtensionGlyph(PaintInfo& info, const LayoutP
 
     // Clipping the extender region here allows us to draw the bottom extender glyph into the
     // regions of the bottom glyph without worrying about overdraw (hairy pixels) and simplifies later clipping.
-    IntRect clipBounds = info.rect;
+    LayoutRect clipBounds = info.rect;
     clipBounds.shiftYEdgeTo(from.y());
     clipBounds.shiftMaxYEdgeTo(to.y());
     info.context->clip(clipBounds);

@@ -53,7 +53,7 @@ typedef HashMap<OverlapTestRequestClient*, IntRect> OverlapTestRequestMap;
  * (tx|ty) is the calculated position of the parent
  */
 struct PaintInfo {
-    PaintInfo(GraphicsContext* newContext, const IntRect& newRect, PaintPhase newPhase, PaintBehavior newPaintBehavior,
+    PaintInfo(GraphicsContext* newContext, const LayoutRect& newRect, PaintPhase newPhase, PaintBehavior newPaintBehavior,
         RenderObject* newSubtreePaintRoot = nullptr, RenderRegion* region = nullptr, ListHashSet<RenderInline*>* newOutlineObjects = nullptr,
         OverlapTestRequestMap* overlapTestRequests = nullptr, const RenderLayerModelObject* newPaintContainer = nullptr)
         : context(newContext)
@@ -98,15 +98,17 @@ struct PaintInfo {
 
         context->concatCTM(localToAncestorTransform);
 
-        if (rect.isInfinite())
+        if (rect == LayoutRect::infiniteRect())
             return;
 
-        rect = localToAncestorTransform.inverse().mapRect(rect);
+        FloatRect tranformedRect(localToAncestorTransform.inverse().mapRect(rect));
+        rect.setLocation(LayoutPoint(tranformedRect.location()));
+        rect.setSize(LayoutSize(tranformedRect.size()));
     }
 #endif
 
     GraphicsContext* context;
-    IntRect rect;
+    LayoutRect rect;
     PaintPhase phase;
     PaintBehavior paintBehavior;
     RenderObject* subtreePaintRoot; // used to draw just one element and its visual children

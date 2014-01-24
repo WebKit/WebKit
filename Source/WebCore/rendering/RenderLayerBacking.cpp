@@ -2253,12 +2253,12 @@ void RenderLayerBacking::paintContents(const GraphicsLayer* graphicsLayer, Graph
     } else if (graphicsLayer == layerForVerticalScrollbar()) {
         paintScrollbar(m_owningLayer.verticalScrollbar(), context, clip);
     } else if (graphicsLayer == layerForScrollCorner()) {
-        const IntRect& scrollCornerAndResizer = m_owningLayer.scrollCornerAndResizerRect();
+        const LayoutRect& scrollCornerAndResizer = m_owningLayer.scrollCornerAndResizerRect();
         context.save();
         context.translate(-scrollCornerAndResizer.x(), -scrollCornerAndResizer.y());
-        IntRect transformedClip = clip;
+        LayoutRect transformedClip = clip;
         transformedClip.moveBy(scrollCornerAndResizer.location());
-        m_owningLayer.paintScrollCorner(&context, IntPoint(), transformedClip);
+        m_owningLayer.paintScrollCorner(&context, IntPoint(), pixelSnappedIntRect(transformedClip));
         m_owningLayer.paintResizer(&context, IntPoint(), transformedClip);
         context.restore();
     }

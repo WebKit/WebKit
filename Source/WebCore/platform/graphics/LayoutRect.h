@@ -39,8 +39,6 @@
 
 namespace WebCore {
 
-class FloatRect;
-
 class LayoutRect {
 public:
     LayoutRect() { }

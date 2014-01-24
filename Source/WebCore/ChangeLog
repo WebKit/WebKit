@@ -1,3 +1,43 @@
+2014-01-24  Zalan Bujtas  <zalan@apple.com>
+
+        Subpixel rendering: Make PaintInfo layout unit aware.
+        https://bugs.webkit.org/show_bug.cgi?id=127562
+
+        Reviewed by Simon Fraser.
+
+        Replace PaintInfo's IntRect with LayoutRect to be able to render to
+        subpixel positions.
+
+        No functional changes.
+
+        * platform/graphics/LayoutRect.h:
+        * rendering/PaintInfo.h:
+        (WebCore::PaintInfo::PaintInfo):
+        (WebCore::PaintInfo::applyTransform):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::paint):
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::paintFillLayerExtended):
+        * rendering/RenderLayer.cpp:
+        (WebCore::cornerRect):
+        (WebCore::RenderLayer::scrollCornerRect):
+        (WebCore::resizerCornerRect):
+        (WebCore::RenderLayer::scrollCornerAndResizerRect):
+        (WebCore::RenderLayer::horizontalScrollbarStart):
+        (WebCore::RenderLayer::drawPlatformResizerImage):
+        (WebCore::RenderLayer::paintResizer):
+        (WebCore::RenderLayer::hitTestOverflowControls):
+        * rendering/RenderLayer.h:
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::paintContents):
+        * rendering/RenderListBox.cpp:
+        (WebCore::RenderListBox::paintScrollbar):
+        * rendering/RenderWidget.cpp:
+        (WebCore::RenderWidget::paintContents):
+        * rendering/mathml/RenderMathMLOperator.cpp:
+        (WebCore::RenderMathMLOperator::fillWithExtensionGlyph):
+        * rendering/svg/SVGRenderingContext.h:
+
 2014-01-24  Simon Fraser  <simon.fraser@apple.com>
 
         #ifdef out handleWheelEventPhase for iOS

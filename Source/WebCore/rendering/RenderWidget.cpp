@@ -227,16 +227,16 @@ void RenderWidget::paintContents(PaintInfo& paintInfo, const LayoutPoint& paintO
     IntPoint widgetLocation = m_widget->frameRect().location();
     IntPoint paintLocation(roundToInt(adjustedPaintOffset.x() + borderLeft() + paddingLeft()),
         roundToInt(adjustedPaintOffset.y() + borderTop() + paddingTop()));
-    IntRect paintRect = paintInfo.rect;
+    LayoutRect paintRect = paintInfo.rect;
 
-    IntSize widgetPaintOffset = paintLocation - widgetLocation;
+    LayoutSize widgetPaintOffset = paintLocation - widgetLocation;
     // When painting widgets into compositing layers, tx and ty are relative to the enclosing compositing layer,
     // not the root. In this case, shift the CTM and adjust the paintRect to be root-relative to fix plug-in drawing.
     if (!widgetPaintOffset.isZero()) {
         paintInfo.context->translate(widgetPaintOffset);
         paintRect.move(-widgetPaintOffset);
     }
-    m_widget->paint(paintInfo.context, paintRect);
+    m_widget->paint(paintInfo.context, pixelSnappedIntRect(paintRect));
 
     if (!widgetPaintOffset.isZero())
         paintInfo.context->translate(-widgetPaintOffset);

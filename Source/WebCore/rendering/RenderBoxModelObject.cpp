@@ -720,7 +720,7 @@ void RenderBoxModelObject::paintFillLayerExtended(const PaintInfo& paintInfo, co
         // First figure out how big the mask has to be.  It should be no bigger than what we need
         // to actually render, so we should intersect the dirty rect with the border box of the background.
         maskRect = pixelSnappedIntRect(rect);
-        maskRect.intersect(paintInfo.rect);
+        maskRect.intersect(pixelSnappedIntRect(paintInfo.rect));
 
         // Now create the mask.
         maskImage = context->createCompatibleBuffer(maskRect.size());
@@ -773,7 +773,7 @@ void RenderBoxModelObject::paintFillLayerExtended(const PaintInfo& paintInfo, co
         bool boxShadowShouldBeAppliedToBackground = this->boxShadowShouldBeAppliedToBackground(bleedAvoidance, box);
         if (boxShadowShouldBeAppliedToBackground || !shouldPaintBackgroundImage || !bgLayer->hasOpaqueImage(this) || !bgLayer->hasRepeatXY()) {
             if (!boxShadowShouldBeAppliedToBackground)
-                backgroundRect.intersect(paintInfo.rect);
+                backgroundRect.intersect(pixelSnappedIntRect(paintInfo.rect));
 
             // If we have an alpha and we are painting the root element, go ahead and blend with the base background color.
             Color baseColor;
@@ -805,7 +805,7 @@ void RenderBoxModelObject::paintFillLayerExtended(const PaintInfo& paintInfo, co
     if (shouldPaintBackgroundImage) {
         BackgroundImageGeometry geometry;
         calculateBackgroundImageGeometry(paintInfo.paintContainer, bgLayer, scrolledPaintRect, geometry, backgroundObject);
-        geometry.clip(paintInfo.rect);
+        geometry.clip(pixelSnappedIntRect(paintInfo.rect));
         if (!geometry.destRect().isEmpty()) {
             CompositeOperator compositeOp = op == CompositeSourceOver ? bgLayer->composite() : op;
             auto clientForBackgroundImage = backgroundObject ? backgroundObject : this;
