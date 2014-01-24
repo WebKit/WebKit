@@ -332,6 +332,11 @@ void UniqueIDBDatabase::didDeleteObjectStore(uint64_t requestID, bool success)
     didCompleteBoolRequest(requestID, success);
 }
 
+void UniqueIDBDatabase::didClearObjectStore(uint64_t requestID, bool success)
+{
+    didCompleteBoolRequest(requestID, success);
+}
+
 void UniqueIDBDatabase::didCompleteBoolRequest(uint64_t requestID, bool success)
 {
     RefPtr<AsyncRequest> request = m_pendingDatabaseTasks.take(requestID);
@@ -393,6 +398,29 @@ void UniqueIDBDatabase::deleteObjectStore(const IDBTransactionIdentifier& identi
     m_pendingDatabaseTasks.add(requestID, request.release());
 
     postDatabaseTask(createAsyncTask(*this, &UniqueIDBDatabase::deleteObjectStoreInBackingStore, requestID, identifier, objectStoreID));
+}
+
+void UniqueIDBDatabase::clearObjectStore(const IDBTransactionIdentifier& identifier, int64_t objectStoreID, std::function<void(bool)> successCallback)
+{
+    ASSERT(isMainThread());
+
+    if (!m_acceptingNewRequests) {
+        successCallback(false);
+        return;
+    }
+
+    ASSERT(m_metadata->objectStores.contains(objectStoreID));
+
+    RefPtr<AsyncRequest> request = AsyncRequestImpl<bool>::create([this, successCallback](bool success) {
+        successCallback(success);
+    }, [this, successCallback]() {
+        successCallback(false);
+    });
+
+    uint64_t requestID = request->requestID();
+    m_pendingDatabaseTasks.add(requestID, request.release());
+
+    postDatabaseTask(createAsyncTask(*this, &UniqueIDBDatabase::clearObjectStoreInBackingStore, requestID, identifier, objectStoreID));
 }
 
 void UniqueIDBDatabase::putRecord(const IDBTransactionIdentifier& identifier, int64_t objectStoreID, const IDBKeyData& keyData, const IPC::DataReference& value, int64_t putMode, const Vector<int64_t>& indexIDs, const Vector<Vector<IDBKeyData>>& indexKeys, std::function<void(const IDBKeyData&, uint32_t, const String&)> callback)
@@ -519,6 +547,16 @@ void UniqueIDBDatabase::deleteObjectStoreInBackingStore(uint64_t requestID, cons
     bool success = m_backingStore->deleteObjectStore(identifier, objectStoreID);
 
     postMainThreadTask(createAsyncTask(*this, &UniqueIDBDatabase::didDeleteObjectStore, requestID, success));
+}
+
+void UniqueIDBDatabase::clearObjectStoreInBackingStore(uint64_t requestID, const IDBTransactionIdentifier& identifier, int64_t objectStoreID)
+{
+    ASSERT(!isMainThread());
+    ASSERT(m_backingStore);
+
+    bool success = m_backingStore->clearObjectStore(identifier, objectStoreID);
+
+    postMainThreadTask(createAsyncTask(*this, &UniqueIDBDatabase::didClearObjectStore, requestID, success));
 }
 
 void UniqueIDBDatabase::putRecordInBackingStore(uint64_t requestID, const IDBTransactionIdentifier& transaction, const IDBObjectStoreMetadata& objectStoreMetadata, const IDBKeyData& keyData, const Vector<uint8_t>& value, int64_t putMode, const Vector<int64_t>& indexIDs, const Vector<Vector<IDBKeyData>>& indexKeys)

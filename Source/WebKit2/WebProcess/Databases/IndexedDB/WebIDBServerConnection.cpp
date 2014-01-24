@@ -382,8 +382,33 @@ void WebIDBServerConnection::deleteRange(IDBTransactionBackend&, const DeleteRan
 {
 }
 
-void WebIDBServerConnection::clearObjectStore(IDBTransactionBackend&, const ClearObjectStoreOperation&, std::function<void(PassRefPtr<IDBDatabaseError>)> completionCallback)
+void WebIDBServerConnection::clearObjectStore(IDBTransactionBackend&, const ClearObjectStoreOperation& operation, std::function<void(PassRefPtr<IDBDatabaseError>)> completionCallback)
 {
+    RefPtr<AsyncRequest> serverRequest = AsyncRequestImpl<PassRefPtr<IDBDatabaseError>>::create(completionCallback);
+
+    serverRequest->setAbortHandler([completionCallback]() {
+        completionCallback(IDBDatabaseError::create(IDBDatabaseException::UnknownError, "Unknown error occured clearing object store"));
+    });
+
+    uint64_t requestID = serverRequest->requestID();
+    ASSERT(!m_serverRequests.contains(requestID));
+    m_serverRequests.add(requestID, serverRequest.release());
+
+    LOG(IDB, "WebProcess clearObjectStore request ID %llu", requestID);
+
+    send(Messages::DatabaseProcessIDBConnection::ClearObjectStore(requestID, operation.transaction()->id(), operation.objectStoreID()));
+}
+
+void WebIDBServerConnection::didClearObjectStore(uint64_t requestID, bool success)
+{
+    LOG(IDB, "WebProcess didClearObjectStore request ID %llu", requestID);
+
+    RefPtr<AsyncRequest> serverRequest = m_serverRequests.take(requestID);
+
+    if (!serverRequest)
+        return;
+
+    serverRequest->completeRequest(success ? nullptr : IDBDatabaseError::create(IDBDatabaseException::UnknownError, "Unknown error occured clearing object store"));
 }
 
 void WebIDBServerConnection::deleteObjectStore(IDBTransactionBackend&, const DeleteObjectStoreOperation& operation, std::function<void(PassRefPtr<IDBDatabaseError>)> completionCallback)

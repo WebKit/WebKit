@@ -451,8 +451,8 @@ public:
     }
     virtual void perform(std::function<void()> successCallback) override final;
 
+    IDBTransactionBackend* transaction() const { return m_transaction.get(); }
     int64_t objectStoreID() const { return m_objectStoreID; }
-    IDBCallbacks* callbacks() const { return m_callbacks.get(); }
 
 private:
     ClearObjectStoreOperation(IDBTransactionBackend* transaction, int64_t objectStoreId, PassRefPtr<IDBCallbacks> callbacks)

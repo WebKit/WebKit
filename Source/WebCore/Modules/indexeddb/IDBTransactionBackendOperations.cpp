@@ -184,9 +184,20 @@ void ClearObjectStoreOperation::perform(std::function<void()> completionCallback
     LOG(StorageAPI, "ClearObjectStoreOperation");
 
     RefPtr<ClearObjectStoreOperation> operation(this);
-    STANDARD_DATABASE_ERROR_CALLBACK;
 
-    m_transaction->database().serverConnection().clearObjectStore(*m_transaction, *this, operationCallback);
+    auto clearCallback = [this, operation, completionCallback](PassRefPtr<IDBDatabaseError> prpError) {
+        RefPtr<IDBDatabaseError> error = prpError;
+
+        if (error) {
+            m_callbacks->onError(error);
+            m_transaction->abort(error.release());
+        } else
+            m_callbacks->onSuccess();
+
+        completionCallback();
+    };
+
+    m_transaction->database().serverConnection().clearObjectStore(*m_transaction, *this, clearCallback);
 }
 
 void DeleteObjectStoreOperation::perform(std::function<void()> completionCallback)

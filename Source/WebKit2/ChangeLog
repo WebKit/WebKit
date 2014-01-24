@@ -1,3 +1,37 @@
+2014-01-23  Brady Eidson  <beidson@apple.com>
+
+        IDB: Support IDBObjectStore.clear()
+        https://bugs.webkit.org/show_bug.cgi?id=127541
+
+        Reviewed by Anders Carlsson.
+
+        Make the WebProcess call out to the DatabaseProcess with a clear request, and handle the
+        response from the DatabaseProcess:
+        * WebProcess/Databases/IndexedDB/WebIDBServerConnection.cpp:
+        (WebKit::WebIDBServerConnection::clearObjectStore):
+        (WebKit::WebIDBServerConnection::didClearObjectStore):
+        * WebProcess/Databases/IndexedDB/WebIDBServerConnection.h:
+        * WebProcess/Databases/IndexedDB/WebIDBServerConnection.messages.in:
+
+        Pass the clear request to the appropriate UniqueIDBDatabase:
+        * DatabaseProcess/IndexedDB/DatabaseProcessIDBConnection.cpp:
+        (WebKit::DatabaseProcessIDBConnection::clearObjectStore):
+        * DatabaseProcess/IndexedDB/DatabaseProcessIDBConnection.h:
+        * DatabaseProcess/IndexedDB/DatabaseProcessIDBConnection.messages.in:
+
+        Pass the clear request to the backing store:
+        * DatabaseProcess/IndexedDB/UniqueIDBDatabase.cpp:
+        (WebKit::UniqueIDBDatabase::didClearObjectStore):
+        (WebKit::UniqueIDBDatabase::clearObjectStore):
+        (WebKit::UniqueIDBDatabase::clearObjectStoreInBackingStore):
+        * DatabaseProcess/IndexedDB/UniqueIDBDatabase.h:
+
+        Actually drop the records in the database:
+        * DatabaseProcess/IndexedDB/UniqueIDBDatabaseBackingStore.h:
+        * DatabaseProcess/IndexedDB/sqlite/UniqueIDBDatabaseBackingStoreSQLite.cpp:
+        (WebKit::UniqueIDBDatabaseBackingStoreSQLite::clearObjectStore):
+        * DatabaseProcess/IndexedDB/sqlite/UniqueIDBDatabaseBackingStoreSQLite.h:
+
 2014-01-23  Anders Carlsson  <andersca@apple.com>
 
         Fix crash when opening the inspector

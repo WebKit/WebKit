@@ -1,3 +1,20 @@
+2014-01-23  Brady Eidson  <beidson@apple.com>
+
+        IDB: Support IDBObjectStore.clear()
+        https://bugs.webkit.org/show_bug.cgi?id=127541
+        
+        Reviewed by Anders Carlsson.
+
+        The backing store should never be performing callbacks directly:
+        * Modules/indexeddb/leveldb/IDBServerConnectionLevelDB.cpp:
+        (WebCore::IDBServerConnectionLevelDB::clearObjectStore):
+
+        Instead, the transaction operations should do that themselves:
+        * Modules/indexeddb/IDBTransactionBackendOperations.cpp:
+        (WebCore::ClearObjectStoreOperation::perform):
+        * Modules/indexeddb/IDBTransactionBackendOperations.h:
+        (WebCore::ClearObjectStoreOperation::transaction):
+
 2014-01-23  Dan Bernstein  <mitz@apple.com>
 
         <rdar://problem/15875326> REGRESSION (r162257): Assertion failure (should not be reached) in CSSPreloadScanner::tokenize()

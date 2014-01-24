@@ -63,6 +63,7 @@ public:
     virtual bool changeDatabaseVersion(const IDBTransactionIdentifier&, uint64_t newVersion) override;
     virtual bool createObjectStore(const IDBTransactionIdentifier&, const WebCore::IDBObjectStoreMetadata&) override;
     virtual bool deleteObjectStore(const IDBTransactionIdentifier&, int64_t objectStoreID) override;
+    virtual bool clearObjectStore(const IDBTransactionIdentifier&, int64_t objectStoreID) override;
 
     virtual PassRefPtr<WebCore::IDBKey> generateKey(const IDBTransactionIdentifier&, int64_t objectStoreID) override;
     virtual bool keyExistsInObjectStore(const IDBTransactionIdentifier&, int64_t objectStoreID, const WebCore::IDBKey&, bool& keyExists) override;

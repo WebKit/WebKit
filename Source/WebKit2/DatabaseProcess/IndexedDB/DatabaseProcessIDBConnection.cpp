@@ -178,6 +178,17 @@ void DatabaseProcessIDBConnection::deleteObjectStore(uint64_t requestID, int64_t
     });
 }
 
+void DatabaseProcessIDBConnection::clearObjectStore(uint64_t requestID, int64_t transactionID, int64_t objectStoreID)
+{
+    ASSERT(m_uniqueIDBDatabase);
+
+    LOG(IDB, "DatabaseProcess clearObjectStore request ID %llu, object store id %lli", requestID, objectStoreID);
+    RefPtr<DatabaseProcessIDBConnection> connection(this);
+    m_uniqueIDBDatabase->clearObjectStore(IDBTransactionIdentifier(*this, transactionID), objectStoreID, [connection, requestID](bool success) {
+        connection->send(Messages::WebIDBServerConnection::DidClearObjectStore(requestID, success));
+    });
+}
+
 void DatabaseProcessIDBConnection::putRecord(uint64_t requestID, int64_t transactionID, int64_t objectStoreID, const WebCore::IDBKeyData& key, const IPC::DataReference& value, int64_t putMode, const Vector<int64_t>& indexIDs, const Vector<Vector<WebCore::IDBKeyData>>& indexKeys)
 {
     ASSERT(m_uniqueIDBDatabase);

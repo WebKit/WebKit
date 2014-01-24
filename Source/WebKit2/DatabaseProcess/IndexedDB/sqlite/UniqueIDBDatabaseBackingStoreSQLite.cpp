@@ -429,6 +429,36 @@ bool UniqueIDBDatabaseBackingStoreSQLite::deleteObjectStore(const IDBTransaction
     return true;
 }
 
+bool UniqueIDBDatabaseBackingStoreSQLite::clearObjectStore(const IDBTransactionIdentifier& identifier, int64_t objectStoreID)
+{
+    ASSERT(!isMainThread());
+    ASSERT(m_sqliteDB);
+    ASSERT(m_sqliteDB->isOpen());
+
+    SQLiteIDBTransaction* transaction = m_transactions.get(identifier);
+    if (!transaction || !transaction->inProgress()) {
+        LOG_ERROR("Attempt to change database version with an establish, in-progress transaction");
+        return false;
+    }
+    if (transaction->mode() == IndexedDB::TransactionMode::ReadOnly) {
+        LOG_ERROR("Attempt to change database version during a read-only transaction");
+        return false;
+    }
+
+    {
+        SQLiteStatement sql(*m_sqliteDB, ASCIILiteral("DELETE FROM Records WHERE objectStoreID = ?;"));
+        if (sql.prepare() != SQLResultOk
+            || sql.bindInt64(1, objectStoreID) != SQLResultOk
+            || sql.step() != SQLResultDone) {
+            LOG_ERROR("Could not delete records from object store id %lli (%i) - %s", objectStoreID, m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg());
+            return false;
+        }
+    }
+
+    // FIXME <rdar://problem/15779642>: Once indexes are implemented, drop index records.
+    return true;
+}
+
 PassRefPtr<IDBKey> UniqueIDBDatabaseBackingStoreSQLite::generateKey(const IDBTransactionIdentifier&, int64_t objectStoreID)
 {
     // FIXME (<rdar://problem/15877909>): Implement

@@ -532,13 +532,12 @@ void IDBServerConnectionLevelDB::clearObjectStore(IDBTransactionBackend& transac
     ASSERT(backingStoreTransaction);
 
     if (!m_backingStore->clearObjectStore(*backingStoreTransaction, transaction.database().id(), operation.objectStoreID())) {
-        operation.callbacks()->onError(IDBDatabaseError::create(IDBDatabaseException::UnknownError, "Error clearing object store"));
         callOnMainThread([completionCallback]() {
-            completionCallback(0);
+            completionCallback(IDBDatabaseError::create(IDBDatabaseException::UnknownError, "Error clearing object store"));
         });
         return;
     }
-    operation.callbacks()->onSuccess();
+
     ASYNC_COMPLETION_CALLBACK_WITH_NULL_ARG(completionCallback);
 }
 

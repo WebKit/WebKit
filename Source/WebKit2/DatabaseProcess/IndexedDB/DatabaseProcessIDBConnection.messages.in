@@ -35,6 +35,7 @@ messages -> DatabaseProcessIDBConnection LegacyReceiver {
     ChangeDatabaseVersion(uint64_t requestID, int64_t transactionID, uint64_t newVersion)
     CreateObjectStore(uint64_t requestID, int64_t transactionID, WebCore::IDBObjectStoreMetadata objectStoreMetadata)
     DeleteObjectStore(uint64_t requestID, int64_t transactionID, int64_t objectStoreID)
+    ClearObjectStore(uint64_t requestID, int64_t transactionID, int64_t objectStoreID);
     PutRecord(uint64_t requestID, int64_t transactionID, int64_t objectStoreID, WebCore::IDBKeyData key, IPC::DataReference value, int64_t putMode, Vector<int64_t> indexIDs, Vector<Vector<WebCore::IDBKeyData>> indexKeys)
     GetRecord(uint64_t requestID, int64_t transactionID, int64_t objectStoreID, int64_t indexID, WebCore::IDBKeyRangeData keyRange, int64_t cursorType);
 }
