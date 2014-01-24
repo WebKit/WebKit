@@ -1,5 +1,12 @@
 2014-01-24  Zan Dobersek  <zdobersek@igalia.com>
 
+        Unreviewed GTK build fix after r162663.
+
+        * platform/gtk/ScrollViewGtk.cpp:
+        (WebCore::ScrollView::visibleContentRectInternal): Renamed from visibleContentRect.
+
+2014-01-24  Zan Dobersek  <zdobersek@igalia.com>
+
         Move HistoryItem to std::unique_ptr
         https://bugs.webkit.org/show_bug.cgi?id=127275
 
