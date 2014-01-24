@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project InitialTargets="PreBuild" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <!-- normalize configuration case -->
+  <PropertyGroup Condition="'$(CONFIGURATION)'=='Release'">
+	<CONFIG>Production</CONFIG>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(CONFIGURATION)'=='Debug'">
+	<CONFIG>DebugSuffix</CONFIG>
+  </PropertyGroup>
+
+  <!-- Wrapper to build WebCore for both win32 and x64. -->
+  <PropertyGroup>
+    <OFFICIAL_BUILD>1</OFFICIAL_BUILD>
+    <WebKit_Libraries>$(SRCROOT)\AppleInternal\</WebKit_Libraries>
+    <WebKit_OutputDir>$(OBJROOT)</WebKit_OutputDir>
+    <AppleInternal>$(DSTROOT)\AppleInternal</AppleInternal>
+    <AppleInternalLib32>$(AppleInternal)\lib32</AppleInternalLib32>
+    <AppleInternalLib64>$(AppleInternal)\lib64</AppleInternalLib64>
+    <AppleInternalBin32>$(AppleInternal)\bin32</AppleInternalBin32>
+    <AppleInternalBin64>$(AppleInternal)\bin64</AppleInternalBin64>
+    <AppleInternal32Symbols>$(AppleInternal)\public32\sym</AppleInternal32Symbols>
+    <AppleInternal64Symbols>$(AppleInternal)\public64\sym</AppleInternal64Symbols>
+    <ProgramFilesAAS32>Program Files (x86)\Common Files\Apple\Apple Application Support\</ProgramFilesAAS32>
+    <ProgramFilesAAS64>Program Files\Common Files\Apple\Apple Application Support\</ProgramFilesAAS64>
+    <ConfigurationBuildDir>$(OBJROOT)\$(CONFIG)</ConfigurationBuildDir>  
+    <OutputDirectory>$(DSTROOT)</OutputDirectory>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <WebCore Include="WebCore.submit.sln">
+      <AdditionalProperties>Platform=Win32;WEBKIT_OUTPUTDIR=$(WebKit_OutputDir);WEBKIT_LIBRARIES=$(WebKit_Libraries);OFFICIAL_BUILD=$(OFFICIAL_BUILD)</AdditionalProperties>
+    </WebCore>
+    <WebCore Include="WebCore.submit.sln">
+      <AdditionalProperties>Platform=x64;WEBKIT_OUTPUTDIR=$(WebKit_OutputDir);WEBKIT_LIBRARIES=$(WebKit_Libraries);OFFICIAL_BUILD=$(OFFICIAL_BUILD)</AdditionalProperties>
+    </WebCore>
+  </ItemGroup>
+ 
+  <!-- Prepare for build -->
+  <Target Name="PreBuild" BeforeTargets="Build">
+    <Error Text="DSTROOT property or environment variable must be defined." Condition="'$(DSTROOT)' == ''" />
+    <Error Text="OBJROOT property or environment variable must be defined." Condition="'$(OBJROOT)' == ''" />
+    <Message Text="Copying necessary headers to $(ConfigurationBuildDir)" />
+    <MakeDir Directories="$(DSTROOT);$(OBJROOT);$(ConfigurationBuildDir)\include\private" />
+ 
+    <CreateItem Include="$(WebKit_Libraries)\include\private\**\*.*">
+      <Output TaskParameter="Include" ItemName="PrivateIncFiles" />
+    </CreateItem>
+
+    <Copy SourceFiles="@(PrivateIncFiles)" DestinationFiles="@(PrivateIncFiles->'$(ConfigurationBuildDir)\include\private\%(RecursiveDir)%(Filename)%(Extension)')" />
+    <Message Text="Build output -> $(OBJROOT)" />
+    <Message Text="Final output -> $(DSTROOT)" />
+    <MakeDir Directories="$(AppleInternalLib32);$(AppleInternalLib64);$(AppleInternalBin32);$(AppleInternalBin64);$(AppleInternal32Symbols);$(AppleInternal64Symbols);$(AppleInternal)\include;$(DSTROOT)\$(ProgramFilesAAS32);$(DSTROOT)\$(ProgramFilesAAS64)" />
+    <MakeDir Directories="$(DSTROOT)\AppleInternal\Sources32\WebCore;$(DSTROOT)\AppleInternal\Sources64\WebCore" />
+  </Target>
+
+  <!-- Build WebCore Software -->
+  <Target Name="Build" AfterTargets="PreBuild">
+    <Message Text="Building $(CONFIGURATION) Solution" />
+    <Error Text="DSTROOT property or environment variable must be defined." Condition="'$(DSTROOT)' == ''" />
+    <Message Text="Output=$(WebKit_OutputDir)" />
+    <MSBuild Projects="@(WebCore)" Properties="Configuration=$(CONFIG)" Targets="ReBuild" />
+  </Target>
+
+  <Target Name="PostBuild" AfterTargets="Build">
+    <Error Text="DSTROOT property or environment variable must be defined." Condition="'$(DSTROOT)' == ''" />
+    <Message Text="Moving $(CONFIG) build results to $(DSTROOT)" />
+
+    <!-- Identify the files to copy over -->
+    <CreateItem Include="$(ConfigurationBuildDir)\include\**\*.*">
+      <Output TaskParameter="Include" ItemName="IncFiles" />
+    </CreateItem>
+    <CreateItem Include="$(ConfigurationBuildDir)\bin32\*">
+      <Output TaskParameter="Include" ItemName="Bin32Files" />
+    </CreateItem>
+    <CreateItem Include="$(ConfigurationBuildDir)\bin64\*">
+      <Output TaskParameter="Include" ItemName="Bin64Files" />
+    </CreateItem>
+    <CreateItem Include="$(ConfigurationBuildDir)\bin32\*.pdb">
+      <Output TaskParameter="Include" ItemName="Bin32SymbolFiles" />
+    </CreateItem>
+    <CreateItem Include="$(ConfigurationBuildDir)\bin64\*.pdb">
+      <Output TaskParameter="Include" ItemName="Bin64SymbolFiles" />
+    </CreateItem>
+    <CreateItem Include="$(ConfigurationBuildDir)\lib32\*">
+      <Output TaskParameter="Include" ItemName="Lib32Files" />
+    </CreateItem>
+    <CreateItem Include="$(ConfigurationBuildDir)\lib64\*">
+      <Output TaskParameter="Include" ItemName="Lib64Files" />
+    </CreateItem>
+    <CreateItem Include="$(ConfigurationBuildDir)\obj32\WebCore\DerivedSources\**\*.*">
+      <Output TaskParameter="Include" ItemName="Derived32Sources" />
+    </CreateItem>
+    <CreateItem Include="$(ConfigurationBuildDir)\obj64\WebCore\DerivedSources\**\*.*">
+      <Output TaskParameter="Include" ItemName="Derived64Sources" />
+    </CreateItem>
+
+    <Copy SourceFiles="@(IncFiles)" DestinationFiles="@(IncFiles->'$(DSTROOT)\AppleInternal\include\%(RecursiveDir)%(Filename)%(Extension)')" />
+    <Copy SourceFiles="@(Lib32Files)" DestinationFolder="$(AppleInternalLib32)" />
+    <Copy SourceFiles="@(Lib64Files)" DestinationFolder="$(AppleInternalLib64)" />
+    <Copy SourceFiles="@(Bin32Files)" DestinationFolder="$(AppleInternalBin32)" />
+    <Copy SourceFiles="@(Bin32Files)" DestinationFolder="$(DSTROOT)\$(ProgramFilesAAS32)" />
+    <Copy SourceFiles="@(Bin32SymbolFiles)" DestinationFolder="$(AppleInternal32Symbols)" />
+    <Copy SourceFiles="@(Bin64Files)" DestinationFolder="$(AppleInternalBin64)" />
+    <Copy SourceFiles="@(Bin64Files)" DestinationFolder="$(DSTROOT)\$(ProgramFilesAAS64)" />
+    <Copy SourceFiles="@(Bin64SymbolFiles)" DestinationFolder="$(AppleInternal64Symbols)" />
+    <Copy SourceFiles="@(Derived32Sources)" DestinationFiles="@(Derived32Sources->'$(DSTROOT)\AppleInternal\Sources32\WebCore\%(RecursiveDir)%(Filename)%(Extension)')" />
+    <Copy SourceFiles="@(Derived64Sources)" DestinationFiles="@(Derived64Sources->'$(DSTROOT)\AppleInternal\Sources64\WebCore\%(RecursiveDir)%(Filename)%(Extension)')" />
+  </Target>
+
+</Project>
+

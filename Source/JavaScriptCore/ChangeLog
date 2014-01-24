@@ -1,3 +1,13 @@
+2014-01-24  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Convert some NMake files to MSBuild project files
+        https://bugs.webkit.org/show_bug.cgi?id=127579
+
+        Reviewed by Tim Horton.
+
+        * JavaScriptCore.vcxproj/JavaScriptCore.make: Removed.
+        * JavaScriptCore.vcxproj/JavaScriptCore.proj: Added.
+
 2014-01-24  Mark Lam  <mark.lam@apple.com>
 
         Fixed a bad assertion in CodeBlock::removeBreakpoint().
