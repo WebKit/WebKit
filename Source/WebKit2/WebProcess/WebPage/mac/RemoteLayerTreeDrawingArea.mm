@@ -271,6 +271,17 @@ void RemoteLayerTreeDrawingArea::updateScrolledExposedRect()
     frameView->adjustTiledBackingCoverage();
 }
 
+void RemoteLayerTreeDrawingArea::setCustomFixedPositionRect(const FloatRect& fixedPositionRect)
+{
+#if PLATFORM(IOS)
+    FrameView* frameView = m_webPage->corePage()->mainFrame().view();
+    if (!frameView)
+        return;
+
+    frameView->setCustomFixedPositionLayoutRect(enclosingIntRect(fixedPositionRect));
+#endif
+}
+
 TiledBacking* RemoteLayerTreeDrawingArea::mainFrameTiledBacking() const
 {
     FrameView* frameView = m_webPage->corePage()->mainFrame().view();

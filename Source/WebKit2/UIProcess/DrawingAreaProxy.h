@@ -77,6 +77,8 @@ public:
     void setExposedRect(const WebCore::FloatRect&);
     WebCore::FloatRect exposedRect() const { return m_exposedRect; }
     void exposedRectChangedTimerFired(WebCore::Timer<DrawingAreaProxy>*);
+    
+    void setCustomFixedPositionRect(const WebCore::FloatRect&);
 #endif
 
 protected:

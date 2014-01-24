@@ -75,6 +75,8 @@ private:
     virtual void setExposedRect(const WebCore::FloatRect&) override;
     virtual WebCore::FloatRect exposedRect() const override { return m_scrolledExposedRect; }
 
+    virtual void setCustomFixedPositionRect(const WebCore::FloatRect&) override;
+
     // WebCore::GraphicsLayerClient
     virtual void notifyAnimationStarted(const WebCore::GraphicsLayer*, double time) override { }
     virtual void notifyFlushRequired(const WebCore::GraphicsLayer*) override { }

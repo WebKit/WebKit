@@ -85,6 +85,14 @@ void DrawingAreaProxy::exposedRectChangedTimerFired(Timer<DrawingAreaProxy>*)
     m_webPageProxy->process().send(Messages::DrawingArea::SetExposedRect(m_exposedRect), m_webPageProxy->pageID());
     m_lastSentExposedRect = m_exposedRect;
 }
+
+void DrawingAreaProxy::setCustomFixedPositionRect(const FloatRect& fixedPositionRect)
+{
+    if (!m_webPageProxy->isValid())
+        return;
+
+    m_webPageProxy->process().send(Messages::DrawingArea::SetCustomFixedPositionRect(fixedPositionRect), m_webPageProxy->pageID());
+}
 #endif
 
 } // namespace WebKit

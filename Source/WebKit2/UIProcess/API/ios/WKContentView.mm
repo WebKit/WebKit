@@ -150,6 +150,13 @@ using namespace WebKit;
     _page->drawingArea()->setSize(IntSize(size), IntSize(), IntSize());
 }
 
+- (FloatRect)fixedPositionRectFromExposedRect:(FloatRect)exposedRect scale:(float)scale
+{
+    // FIXME: This should modify the rect based on the scale.
+    UNUSED_PARAM(scale);
+    return exposedRect;
+}
+
 - (void)_updateViewExposedRect
 {
     FloatPoint exposedRectPosition = _currentExposedRectPosition;
@@ -157,6 +164,15 @@ using namespace WebKit;
 
     if (auto drawingArea = _page->drawingArea())
         drawingArea->setExposedRect(FloatRect(exposedRectPosition, _page->drawingArea()->size()));
+}
+
+- (void)_updateFixedPositionRect
+{
+    FloatRect exposedRect(_currentExposedRectPosition, _page->drawingArea()->size());
+    FloatRect fixedPosRect = [self fixedPositionRectFromExposedRect:exposedRect scale:_page->pageScaleFactor()];
+
+    if (auto drawingArea = _page->drawingArea())
+        drawingArea->setCustomFixedPositionRect(fixedPosRect);
 }
 
 - (void)setViewportSize:(CGSize)size
@@ -170,6 +186,7 @@ using namespace WebKit;
     _currentExposedRectPosition = contentOffset;
     _page->didFinishScrolling(contentOffset);
     [self _updateViewExposedRect];
+    [self _updateFixedPositionRect];
 }
 
 - (void)didScrollTo:(CGPoint)contentOffset
@@ -182,6 +199,7 @@ using namespace WebKit;
 {
     _page->didFinishZooming(scale);
     [self _updateViewExposedRect];
+    [self _updateFixedPositionRect];
 }
 
 #pragma mark Internal
