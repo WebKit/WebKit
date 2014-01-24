@@ -1,3 +1,32 @@
+2014-01-23  Tim Horton  <timothy_horton@apple.com>
+
+        [wk2] Page Overlays: Add API to clear the page overlay (and get rid of its backing store)
+        https://bugs.webkit.org/show_bug.cgi?id=127518
+
+        Reviewed by Anders Carlsson.
+
+        Add WKBundlePageOverlayClear, to allow clients of the page overlay API to
+        manually clear the page overlay's backing store, for memory, power, and performance gains.
+
+        * WebProcess/InjectedBundle/API/c/WKBundlePageOverlay.cpp:
+        (WKBundlePageOverlayClear):
+        * WebProcess/InjectedBundle/API/c/WKBundlePageOverlay.h:
+        * WebProcess/WebPage/DrawingArea.h:
+        (WebKit::DrawingArea::clearPageOverlay):
+        * WebProcess/WebPage/PageOverlay.cpp:
+        (WebKit::PageOverlay::clear):
+        * WebProcess/WebPage/PageOverlay.h:
+        Add WKBundlePageOverlayClear and plumb it through PageOverlay to the DrawingArea.
+
+        * WebProcess/WebPage/mac/RemoteLayerTreeDrawingArea.h:
+        * WebProcess/WebPage/mac/RemoteLayerTreeDrawingArea.mm:
+        (WebKit::RemoteLayerTreeDrawingArea::clearPageOverlay):
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.h:
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.mm:
+        (WebKit::TiledCoreAnimationDrawingArea::clearPageOverlay):
+        Set the layer to drawsContent=false and give it 0x0 size, effectively
+        removing its backing store.
+
 2014-01-23  Anders Carlsson  <andersca@apple.com>
 
         Explicitly link XPC services with AppKit

@@ -74,6 +74,7 @@ private:
     virtual void didUninstallPageOverlay(PageOverlay*) override;
     virtual void setPageOverlayNeedsDisplay(PageOverlay*, const WebCore::IntRect&) override;
     virtual void setPageOverlayOpacity(PageOverlay*, float) override;
+    virtual void clearPageOverlay(PageOverlay*) override;
     virtual void updatePreferences(const WebPreferencesStore&) override;
     virtual void mainFrameContentSizeChanged(const WebCore::IntSize&) override;
 

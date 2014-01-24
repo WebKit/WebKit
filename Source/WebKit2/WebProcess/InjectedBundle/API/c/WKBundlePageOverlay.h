@@ -114,6 +114,7 @@ WK_EXPORT WKBundlePageOverlayRef WKBundlePageOverlayCreate(WKBundlePageOverlayCl
 WK_EXPORT void WKBundlePageOverlaySetNeedsDisplay(WKBundlePageOverlayRef bundlePageOverlay, WKRect rect);
 WK_EXPORT float WKBundlePageOverlayFractionFadedIn(WKBundlePageOverlayRef bundlePageOverlay);
 WK_EXPORT void WKBundlePageOverlaySetAccessibilityClient(WKBundlePageOverlayRef bundlePageOverlay, WKBundlePageOverlayAccessibilityClientBase* client);
+WK_EXPORT void WKBundlePageOverlayClear(WKBundlePageOverlayRef bundlePageOverlay);
 
 #ifdef __cplusplus
 }

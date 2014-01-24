@@ -178,3 +178,8 @@ float WKBundlePageOverlayFractionFadedIn(WKBundlePageOverlayRef)
 
     return 1;
 }
+
+void WKBundlePageOverlayClear(WKBundlePageOverlayRef bundlePageOverlayRef)
+{
+    toImpl(bundlePageOverlayRef)->clear();
+}

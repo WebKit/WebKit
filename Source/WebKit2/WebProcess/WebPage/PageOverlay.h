@@ -76,6 +76,8 @@ public:
     void startFadeOutAnimation();
     void stopFadeOutAnimation();
 
+    void clear();
+
     Client* client() const { return m_client; }
     
 protected:

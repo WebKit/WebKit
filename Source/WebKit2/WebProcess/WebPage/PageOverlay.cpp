@@ -191,4 +191,9 @@ void PageOverlay::fadeAnimationTimerFired()
     }
 }
 
+void PageOverlay::clear()
+{
+    m_webPage->drawingArea()->clearPageOverlay(this);
+}
+
 } // namespace WebKit

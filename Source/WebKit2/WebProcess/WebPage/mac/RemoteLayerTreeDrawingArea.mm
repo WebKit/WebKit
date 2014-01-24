@@ -177,6 +177,18 @@ void RemoteLayerTreeDrawingArea::setPageOverlayOpacity(PageOverlay* pageOverlay,
     scheduleCompositingLayerFlush();
 }
 
+void RemoteLayerTreeDrawingArea::clearPageOverlay(PageOverlay* pageOverlay)
+{
+    GraphicsLayer* layer = m_pageOverlayLayers.get(pageOverlay);
+
+    if (!layer)
+        return;
+
+    layer->setDrawsContent(false);
+    layer->setSize(IntSize());
+    scheduleCompositingLayerFlush();
+}
+
 void RemoteLayerTreeDrawingArea::paintContents(const GraphicsLayer* graphicsLayer, GraphicsContext& graphicsContext, GraphicsLayerPaintingPhase, const IntRect& clipRect)
 {
     for (const auto& overlayAndLayer : m_pageOverlayLayers) {
