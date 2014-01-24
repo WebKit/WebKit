@@ -164,7 +164,7 @@ JSGlobalObject::JSGlobalObject(VM& vm, Structure* structure, const GlobalObjectM
 JSGlobalObject::~JSGlobalObject()
 {
     if (m_debugger)
-        m_debugger->detach(this);
+        m_debugger->detach(this, Debugger::GlobalObjectIsDestructing);
 
     if (LegacyProfiler* profiler = vm().enabledProfiler())
         profiler->stopProfiling(this);

@@ -286,7 +286,7 @@ void ScriptController::attachDebugger(JSDOMWindowShell* shell, JSC::Debugger* de
     if (debugger)
         debugger->attach(globalObject);
     else if (JSC::Debugger* currentDebugger = globalObject->debugger())
-        currentDebugger->detach(globalObject);
+        currentDebugger->detach(globalObject, JSC::Debugger::TerminatingDebuggingSession);
 }
 
 void ScriptController::updateDocument()

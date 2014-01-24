@@ -61,7 +61,11 @@ public:
     bool needsExceptionCallbacks() const { return m_pauseOnExceptionsState != DontPauseOnExceptions; }
 
     void attach(JSGlobalObject*);
-    virtual void detach(JSGlobalObject*);
+    enum ReasonForDetach {
+        TerminatingDebuggingSession,
+        GlobalObjectIsDestructing
+    };
+    virtual void detach(JSGlobalObject*, ReasonForDetach);
 
     BreakpointID setBreakpoint(Breakpoint, unsigned& actualLine, unsigned& actualColumn);
     void removeBreakpoint(BreakpointID);

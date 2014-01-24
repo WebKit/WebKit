@@ -200,7 +200,7 @@ void WorkerScriptController::attachDebugger(JSC::Debugger* debugger)
 
 void WorkerScriptController::detachDebugger(JSC::Debugger* debugger)
 {
-    debugger->detach(m_workerGlobalScopeWrapper->globalObject());
+    debugger->detach(m_workerGlobalScopeWrapper->globalObject(), JSC::Debugger::TerminatingDebuggingSession);
 }
 
 } // namespace WebCore

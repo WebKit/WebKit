@@ -1,3 +1,18 @@
+2014-01-24  Mark Lam  <mark.lam@apple.com>
+
+        ASSERT(!m_markedSpace.m_currentDelayedReleaseScope) reloading page in inspector.
+        <https://webkit.org/b/127582>
+
+        Reviewed by Mark Hahnenberg.
+
+        No new tests.
+
+        * bindings/js/ScriptController.cpp:
+        (WebCore::ScriptController::attachDebugger):
+        * bindings/js/WorkerScriptController.cpp:
+        (WebCore::WorkerScriptController::detachDebugger):
+        - Adding reasons for detaching a globalObject from the debugger.
+
 2014-01-24  Zalan Bujtas  <zalan@apple.com>
 
         Subpixel rendering: Make PaintInfo layout unit aware.

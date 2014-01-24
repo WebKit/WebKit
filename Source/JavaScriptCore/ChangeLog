@@ -1,3 +1,35 @@
+2014-01-24  Mark Lam  <mark.lam@apple.com>
+
+        ASSERT(!m_markedSpace.m_currentDelayedReleaseScope) reloading page in inspector.
+        <https://webkit.org/b/127582>
+
+        Reviewed by Mark Hahnenberg.
+
+        1. We should not enter a HeapIterationScope when we iterate the CodeBlocks.
+           Apparently, iterating the CodeBlocks does not count as heap iteration.
+
+        2. If we're detaching the debugger due to the JSGlobalObject destructing,
+           then we don't need to clear the debugger requests in the associated
+           CodeBlocks. The JSGlobalObject destructing would mean that those
+           CodeBlocks would be destructing too, and it may not be safe to access
+           them anyway at this point.
+
+        The assertion failure is because we had entered a HeapIterationScope
+        while the JSGlobalObject is destructing, which in turn means that GC
+        sweeping is in progress. It's not legal to iterate the heap while the GC
+        is sweeping. Once we fixed the above 2 issues, we will no longer have
+        the conditions that manifests this assertion failure.
+
+        * debugger/Debugger.cpp:
+        (JSC::Debugger::detach):
+        (JSC::Debugger::setSteppingMode):
+        (JSC::Debugger::toggleBreakpoint):
+        (JSC::Debugger::clearBreakpoints):
+        (JSC::Debugger::clearDebuggerRequests):
+        * debugger/Debugger.h:
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::~JSGlobalObject):
+
 2014-01-24  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Convert some NMake files to MSBuild project files

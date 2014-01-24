@@ -176,7 +176,7 @@ void Debugger::attach(JSGlobalObject* globalObject)
     m_globalObjects.add(globalObject);
 }
 
-void Debugger::detach(JSGlobalObject* globalObject)
+void Debugger::detach(JSGlobalObject* globalObject, ReasonForDetach reason)
 {
     // If we're detaching from the currently executing global object, manually tear down our
     // stack, since we won't get further debugger callbacks to do so. Also, resume execution,
@@ -190,7 +190,12 @@ void Debugger::detach(JSGlobalObject* globalObject)
     ASSERT(m_globalObjects.contains(globalObject));
     m_globalObjects.remove(globalObject);
 
-    clearDebuggerRequests(globalObject);
+    // If the globalObject is destructing, then its CodeBlocks will also be
+    // destructed. There is no need to do the debugger requests clean up, and
+    // it is not safe to access those CodeBlocks at this time anyway.
+    if (reason != GlobalObjectIsDestructing)
+        clearDebuggerRequests(globalObject);
+
     globalObject->setDebugger(0);
     if (!m_globalObjects.size())
         m_vm = nullptr;
@@ -228,7 +233,6 @@ void Debugger::setSteppingMode(SteppingMode mode)
 
     if (!m_vm)
         return;
-    HeapIterationScope iterationScope(m_vm->heap);
     SetSteppingModeFunctor functor(this, mode);
     m_vm->heap.forEachCodeBlock(functor);
 }
@@ -313,7 +317,6 @@ void Debugger::toggleBreakpoint(Breakpoint& breakpoint, Debugger::BreakpointStat
 {
     if (!m_vm)
         return;
-    HeapIterationScope iterationScope(m_vm->heap);
     ToggleBreakpointFunctor functor(this, breakpoint, enabledOrNot);
     m_vm->heap.forEachCodeBlock(functor);
 }
@@ -493,7 +496,6 @@ void Debugger::clearBreakpoints()
 
     if (!m_vm)
         return;
-    HeapIterationScope iterationScope(m_vm->heap);
     ClearCodeBlockDebuggerRequestsFunctor functor(this);
     m_vm->heap.forEachCodeBlock(functor);
 }
@@ -519,7 +521,6 @@ private:
 void Debugger::clearDebuggerRequests(JSGlobalObject* globalObject)
 {
     ASSERT(m_vm);
-    HeapIterationScope iterationScope(m_vm->heap);
     ClearDebuggerRequestsFunctor functor(globalObject);
     m_vm->heap.forEachCodeBlock(functor);
 }
