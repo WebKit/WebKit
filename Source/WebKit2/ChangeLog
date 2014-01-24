@@ -1,3 +1,26 @@
+2014-01-23  Anders Carlsson  <andersca@apple.com>
+
+        Simplify API::PolicyClient management
+        https://bugs.webkit.org/show_bug.cgi?id=127529
+
+        Reviewed by Tim Horton.
+
+        Add default implementations to API::PolicyClient and change WebPageProxy::setPolicyClient to
+        always create a policy client, even if the policy object set is null. That way we don't have to null
+        check the policy client everywhere.
+
+        * UIProcess/API/APIPolicyClient.h:
+        (API::PolicyClient::decidePolicyForNavigationAction):
+        (API::PolicyClient::decidePolicyForNewWindowAction):
+        (API::PolicyClient::decidePolicyForResponse):
+        (API::PolicyClient::unableToImplementPolicy):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::setPolicyClient):
+        (WebKit::WebPageProxy::decidePolicyForNavigationAction):
+        (WebKit::WebPageProxy::decidePolicyForNewWindowAction):
+        (WebKit::WebPageProxy::decidePolicyForResponse):
+        (WebKit::WebPageProxy::unableToImplementPolicy):
+
 2014-01-23  Simon Fraser  <simon.fraser@apple.com>
 
         Fix GTK.
