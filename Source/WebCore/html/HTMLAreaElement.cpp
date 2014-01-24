@@ -220,7 +220,7 @@ void HTMLAreaElement::setFocus(bool shouldBeFocused)
         return;
 
     auto renderer = imageElement->renderer();
-    if (!renderer || !renderer->isImage())
+    if (!renderer || !renderer->isRenderImage())
         return;
 
     toRenderImage(renderer)->areaElementFocusChanged(this);

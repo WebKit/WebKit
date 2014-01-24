@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+
+<!-- Test passes if it doesn't assert in a debug build. -->
+
+<style>
+    #anchor:after {
+        content: ".";
+        display: block;
+    }
+    span {
+        float: left;
+    }
+    ul {
+        -webkit-animation-name: n;
+        -webkit-animation-duration: .1s;
+    }
+    @-webkit-keyframes n {
+        from { }
+        to { list-style-image: -webkit-repeating-radial-gradient(circle cover, rgb(23,136,16) , rgb(2%,5%,72%) , #373f74); }
+    }
+</style>
+
+<ul id="u">
+    <li>
+        <a id="anchor" href="#"><span id="text">PASSED</span></a>
+    </li>
+</ul>
+
+<script>
+    if (window.testRunner) {
+        window.testRunner.dumpAsText(true);
+        window.testRunner.waitUntilDone();
+
+        document.getElementById("u").addEventListener('webkitAnimationStart', function() {
+            window.testRunner.notifyDone();
+        }, false);
+    }
+</script>

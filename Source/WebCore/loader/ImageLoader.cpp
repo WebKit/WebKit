@@ -325,7 +325,7 @@ RenderImageResource* ImageLoader::renderImageResource()
 
     // We don't return style generated image because it doesn't belong to the ImageLoader.
     // See <https://bugs.webkit.org/show_bug.cgi?id=42840>
-    if (renderer->isImage() && !toRenderImage(*renderer).isGeneratedContent())
+    if (renderer->isRenderImage() && !toRenderImage(*renderer).isGeneratedContent())
         return &toRenderImage(*renderer).imageResource();
 
 #if ENABLE(SVG)

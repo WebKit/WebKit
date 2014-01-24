@@ -366,7 +366,7 @@ void Editor::writeSelectionToPasteboard(Pasteboard& pasteboard)
 static void getImage(Element& imageElement, RefPtr<Image>& image, CachedImage*& cachedImage)
 {
     auto renderer = imageElement.renderer();
-    if (!renderer || !renderer->isImage())
+    if (!renderer || !renderer->isRenderImage())
         return;
 
     CachedImage* tentativeCachedImage = toRenderImage(renderer)->cachedImage();

@@ -1,3 +1,23 @@
+2014-01-23  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        Assertion failure in WebCore::PseudoElement::didRecalcStyle()
+        <https://bugs.webkit.org/show_bug.cgi?id=126761>
+        <rdar://problem/15793540>
+
+        Some areas of code were erroneously checking the value of
+        RenderObject::isImage() rather than RenderObject::isRenderImage()
+        before casting the object to RenderImage.
+
+        This could lead to an assertion failure for RenderListMarkers, which
+        may return true for isImage(), but are not RenderImages.
+
+        Reviewed by Andy Estes.
+
+        * Misc/WebNSPasteboardExtras.mm:
+        (-[NSPasteboard _web_declareAndWriteDragImageForElement:URL:title:archive:source:]):
+        Check isRenderImage() rather than isImage() before casting to
+        RenderImage.
+
 2014-01-23  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Remove recompileAllJSFunctions timer in ScriptDebugServer

@@ -1,3 +1,44 @@
+2014-01-23  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        Assertion failure in WebCore::PseudoElement::didRecalcStyle()
+        <https://bugs.webkit.org/show_bug.cgi?id=126761>
+        <rdar://problem/15793540>
+
+        Reviewed by Andy Estes.
+
+        Test: fast/images/animate-list-item-image-assertion.html
+
+        * dom/PseudoElement.cpp:
+        (WebCore::PseudoElement::didRecalcStyle):
+        Check isRenderImage() rather than isImage() before casting to
+        RenderImage.
+
+        * editing/ios/EditorIOS.mm:
+        (WebCore::getImage):
+        Ditto.
+
+        * editing/mac/EditorMac.mm:
+        (WebCore::getImage):
+        Ditto.
+
+        * html/HTMLImageElement.cpp:
+        (WebCore::HTMLImageElement::parseAttribute):
+        (WebCore::HTMLImageElement::didAttachRenderers):
+        Ditto.
+
+        * loader/ImageLoader.cpp:
+        (WebCore::ImageLoader::renderImageResource):
+        Ditto.
+
+        * page/DragController.cpp:
+        (WebCore::getCachedImage):
+        Ditto.
+
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::isDirectlyCompositedImage):
+        (WebCore::RenderLayerBacking::updateImageContents):
+        Ditto.
+
 2014-01-23  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Remove recompileAllJSFunctions timer in ScriptDebugServer

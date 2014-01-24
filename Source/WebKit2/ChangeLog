@@ -1,3 +1,16 @@
+2014-01-23  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        Assertion failure in WebCore::PseudoElement::didRecalcStyle()
+        <https://bugs.webkit.org/show_bug.cgi?id=126761>
+        <rdar://problem/15793540>
+
+        Reviewed by Andy Estes.
+
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::getPositionInformation):
+        Check isRenderImage() rather than isImage() before casting to
+        RenderImage.
+
 2014-01-23  Anders Carlsson  <andersca@apple.com>
 
         Move policy client into WKPage.cpp and get rid of WebPolicyClient files

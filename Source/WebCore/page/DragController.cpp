@@ -655,7 +655,7 @@ Element* DragController::draggableElement(const Frame* sourceFrame, Element* sta
 static CachedImage* getCachedImage(Element& element)
 {
     RenderObject* renderer = element.renderer();
-    if (!renderer || !renderer->isImage())
+    if (!renderer || !renderer->isRenderImage())
         return 0;
     RenderImage* image = toRenderImage(renderer);
     return image->cachedImage();

@@ -823,7 +823,7 @@ void WebPage::getPositionInformation(const IntPoint& point, InteractionInformati
         if (!element)
             return;
 
-        if (element->renderer() && element->renderer()->isImage()) {
+        if (element->renderer() && element->renderer()->isRenderImage()) {
             URL url = toRenderImage(element->renderer())->cachedImage()->url();
             if (!url.string().isNull())
                 info.url = url.string();

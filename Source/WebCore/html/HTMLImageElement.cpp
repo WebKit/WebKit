@@ -115,7 +115,7 @@ const AtomicString& HTMLImageElement::imageSourceURL() const
 void HTMLImageElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
 {
     if (name == altAttr) {
-        if (renderer() && renderer()->isImage())
+        if (renderer() && renderer()->isRenderImage())
             toRenderImage(renderer())->updateAltText();
     } else if (name == srcAttr || name == srcsetAttr) {
         m_bestFitImageURL = bestFitSourceForImageAttributes(document().deviceScaleFactor(), fastGetAttribute(srcAttr), fastGetAttribute(srcsetAttr));
@@ -192,7 +192,7 @@ bool HTMLImageElement::canStartSelection() const
 
 void HTMLImageElement::didAttachRenderers()
 {
-    if (!renderer() || !renderer()->isImage())
+    if (!renderer() || !renderer()->isRenderImage())
         return;
     if (m_imageLoader.hasPendingBeforeLoadEvent())
         return;
