@@ -1,3 +1,39 @@
+2014-01-24  Brady Eidson  <beidson@apple.com>
+
+        IDB: support createIndex/deleteIndex messaging
+        https://bugs.webkit.org/show_bug.cgi?id=127546
+
+        Reviewed by Tim Horton.
+
+        Message create/delete requests over to the DatabaseProcess, and listen to its replies:
+        * WebProcess/Databases/IndexedDB/WebIDBServerConnection.cpp:
+        (WebKit::WebIDBServerConnection::createIndex):
+        (WebKit::WebIDBServerConnection::didCreateIndex):
+        (WebKit::WebIDBServerConnection::deleteIndex):
+        (WebKit::WebIDBServerConnection::didDeleteIndex):
+        * WebProcess/Databases/IndexedDB/WebIDBServerConnection.h:
+        * WebProcess/Databases/IndexedDB/WebIDBServerConnection.messages.in:
+
+        Pass create/delete requests to the appropriate unique IDB database:
+        * DatabaseProcess/IndexedDB/DatabaseProcessIDBConnection.cpp:
+        (WebKit::DatabaseProcessIDBConnection::createIndex):
+        (WebKit::DatabaseProcessIDBConnection::deleteIndex):
+        * DatabaseProcess/IndexedDB/DatabaseProcessIDBConnection.h:
+        * DatabaseProcess/IndexedDB/DatabaseProcessIDBConnection.messages.in:
+
+        Message the create/delete request to the database thread for the backing store to handle:
+        * DatabaseProcess/IndexedDB/UniqueIDBDatabase.cpp:
+        (WebKit::UniqueIDBDatabase::didCreateIndex):
+        (WebKit::UniqueIDBDatabase::didDeleteIndex):
+        (WebKit::UniqueIDBDatabase::createIndex):
+        (WebKit::UniqueIDBDatabase::deleteIndex):
+        (WebKit::UniqueIDBDatabase::createIndexInBackingStore):
+        (WebKit::UniqueIDBDatabase::deleteIndexInBackingStore):
+        * DatabaseProcess/IndexedDB/UniqueIDBDatabase.h:
+
+        * Scripts/webkit2/messages.py:
+        (struct_or_class):
+
 2014-01-24  Csaba Osztrogonác  <ossy@webkit.org>
 
         [EFL][WK2] Debug buildfix

@@ -189,6 +189,28 @@ void DatabaseProcessIDBConnection::clearObjectStore(uint64_t requestID, int64_t 
     });
 }
 
+void DatabaseProcessIDBConnection::createIndex(uint64_t requestID, int64_t transactionID, int64_t objectStoreID, const WebCore::IDBIndexMetadata& metadata)
+{
+    ASSERT(m_uniqueIDBDatabase);
+
+    LOG(IDB, "DatabaseProcess createIndex request ID %llu, object store id %lli", requestID, objectStoreID);
+    RefPtr<DatabaseProcessIDBConnection> connection(this);
+    m_uniqueIDBDatabase->createIndex(IDBTransactionIdentifier(*this, transactionID), objectStoreID, metadata, [connection, requestID](bool success) {
+        connection->send(Messages::WebIDBServerConnection::DidCreateIndex(requestID, success));
+    });
+}
+
+void DatabaseProcessIDBConnection::deleteIndex(uint64_t requestID, int64_t transactionID, int64_t objectStoreID, int64_t indexID)
+{
+    ASSERT(m_uniqueIDBDatabase);
+
+    LOG(IDB, "DatabaseProcess deleteIndex request ID %llu, object store id %lli", requestID, objectStoreID);
+    RefPtr<DatabaseProcessIDBConnection> connection(this);
+    m_uniqueIDBDatabase->deleteIndex(IDBTransactionIdentifier(*this, transactionID), objectStoreID, indexID, [connection, requestID](bool success) {
+        connection->send(Messages::WebIDBServerConnection::DidDeleteIndex(requestID, success));
+    });
+}
+
 void DatabaseProcessIDBConnection::putRecord(uint64_t requestID, int64_t transactionID, int64_t objectStoreID, const WebCore::IDBKeyData& key, const IPC::DataReference& value, int64_t putMode, const Vector<int64_t>& indexIDs, const Vector<Vector<WebCore::IDBKeyData>>& indexKeys)
 {
     ASSERT(m_uniqueIDBDatabase);

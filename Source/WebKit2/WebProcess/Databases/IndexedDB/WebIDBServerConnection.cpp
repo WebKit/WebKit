@@ -290,12 +290,62 @@ void WebIDBServerConnection::didCreateObjectStore(uint64_t requestID, bool succe
     serverRequest->completeRequest(success ? nullptr : IDBDatabaseError::create(IDBDatabaseException::UnknownError, "Unknown error occured creating object store"));
 }
 
-void WebIDBServerConnection::createIndex(IDBTransactionBackend&, const CreateIndexOperation&, std::function<void(PassRefPtr<IDBDatabaseError>)> completionCallback)
+void WebIDBServerConnection::createIndex(IDBTransactionBackend&transaction, const CreateIndexOperation& operation, std::function<void(PassRefPtr<IDBDatabaseError>)> completionCallback)
 {
+    RefPtr<AsyncRequest> serverRequest = AsyncRequestImpl<PassRefPtr<IDBDatabaseError>>::create(completionCallback);
+
+    serverRequest->setAbortHandler([completionCallback]() {
+        completionCallback(IDBDatabaseError::create(IDBDatabaseException::UnknownError, "Unknown error occured creating index"));
+    });
+
+    uint64_t requestID = serverRequest->requestID();
+    ASSERT(!m_serverRequests.contains(requestID));
+    m_serverRequests.add(requestID, serverRequest.release());
+
+    LOG(IDB, "WebProcess create index request ID %llu", requestID);
+
+    send(Messages::DatabaseProcessIDBConnection::CreateIndex(requestID, transaction.id(), operation.objectStoreID(), operation.idbIndexMetadata()));
 }
 
-void WebIDBServerConnection::deleteIndex(IDBTransactionBackend&, const DeleteIndexOperation&, std::function<void(PassRefPtr<IDBDatabaseError>)> completionCallback)
+void WebIDBServerConnection::didCreateIndex(uint64_t requestID, bool success)
 {
+    LOG(IDB, "WebProcess didCreateIndex request ID %llu", requestID);
+
+    RefPtr<AsyncRequest> serverRequest = m_serverRequests.take(requestID);
+
+    if (!serverRequest)
+        return;
+
+    serverRequest->completeRequest(success ? nullptr : IDBDatabaseError::create(IDBDatabaseException::UnknownError, "Unknown error occured creating index"));
+}
+
+void WebIDBServerConnection::deleteIndex(IDBTransactionBackend&transaction, const DeleteIndexOperation& operation, std::function<void(PassRefPtr<IDBDatabaseError>)> completionCallback)
+{
+    RefPtr<AsyncRequest> serverRequest = AsyncRequestImpl<PassRefPtr<IDBDatabaseError>>::create(completionCallback);
+
+    serverRequest->setAbortHandler([completionCallback]() {
+        completionCallback(IDBDatabaseError::create(IDBDatabaseException::UnknownError, "Unknown error occured deleting index"));
+    });
+
+    uint64_t requestID = serverRequest->requestID();
+    ASSERT(!m_serverRequests.contains(requestID));
+    m_serverRequests.add(requestID, serverRequest.release());
+
+    LOG(IDB, "WebProcess delete index request ID %llu", requestID);
+
+    send(Messages::DatabaseProcessIDBConnection::DeleteIndex(requestID, transaction.id(), operation.objectStoreID(), operation.idbIndexMetadata().id));
+}
+
+void WebIDBServerConnection::didDeleteIndex(uint64_t requestID, bool success)
+{
+    LOG(IDB, "WebProcess didDeleteIndex request ID %llu", requestID);
+
+    RefPtr<AsyncRequest> serverRequest = m_serverRequests.take(requestID);
+
+    if (!serverRequest)
+        return;
+
+    serverRequest->completeRequest(success ? nullptr : IDBDatabaseError::create(IDBDatabaseException::UnknownError, "Unknown error occured deleting index"));
 }
 
 void WebIDBServerConnection::get(IDBTransactionBackend& transaction, const GetOperation& operation, std::function<void(const IDBGetResult&, PassRefPtr<IDBDatabaseError>)> completionCallback)

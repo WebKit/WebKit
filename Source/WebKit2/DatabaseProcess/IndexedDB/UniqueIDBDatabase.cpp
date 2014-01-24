@@ -337,6 +337,16 @@ void UniqueIDBDatabase::didClearObjectStore(uint64_t requestID, bool success)
     didCompleteBoolRequest(requestID, success);
 }
 
+void UniqueIDBDatabase::didCreateIndex(uint64_t requestID, bool success)
+{
+    didCompleteBoolRequest(requestID, success);
+}
+
+void UniqueIDBDatabase::didDeleteIndex(uint64_t requestID, bool success)
+{
+    didCompleteBoolRequest(requestID, success);
+}
+
 void UniqueIDBDatabase::didCompleteBoolRequest(uint64_t requestID, bool success)
 {
     RefPtr<AsyncRequest> request = m_pendingDatabaseTasks.take(requestID);
@@ -421,6 +431,53 @@ void UniqueIDBDatabase::clearObjectStore(const IDBTransactionIdentifier& identif
     m_pendingDatabaseTasks.add(requestID, request.release());
 
     postDatabaseTask(createAsyncTask(*this, &UniqueIDBDatabase::clearObjectStoreInBackingStore, requestID, identifier, objectStoreID));
+}
+
+void UniqueIDBDatabase::createIndex(const IDBTransactionIdentifier& identifier, int64_t objectStoreID, const WebCore::IDBIndexMetadata& indexMetadata, std::function<void(bool)> successCallback)
+{
+    ASSERT(isMainThread());
+
+    if (!m_acceptingNewRequests) {
+        successCallback(false);
+        return;
+    }
+
+    ASSERT(m_metadata->objectStores.contains(objectStoreID));
+
+    RefPtr<AsyncRequest> request = AsyncRequestImpl<bool>::create([this, successCallback](bool success) {
+        successCallback(success);
+    }, [this, successCallback]() {
+        successCallback(false);
+    });
+
+    uint64_t requestID = request->requestID();
+    m_pendingDatabaseTasks.add(requestID, request.release());
+
+    postDatabaseTask(createAsyncTask(*this, &UniqueIDBDatabase::createIndexInBackingStore, requestID, identifier, objectStoreID, indexMetadata));
+}
+
+void UniqueIDBDatabase::deleteIndex(const IDBTransactionIdentifier& identifier, int64_t objectStoreID, int64_t indexID, std::function<void(bool)> successCallback)
+{
+    ASSERT(isMainThread());
+
+    if (!m_acceptingNewRequests) {
+        successCallback(false);
+        return;
+    }
+
+    ASSERT(m_metadata->objectStores.contains(objectStoreID));
+    ASSERT(m_metadata->objectStores.get(objectStoreID).indexes.contains(indexID));
+
+    RefPtr<AsyncRequest> request = AsyncRequestImpl<bool>::create([this, successCallback](bool success) {
+        successCallback(success);
+    }, [this, successCallback]() {
+        successCallback(false);
+    });
+
+    uint64_t requestID = request->requestID();
+    m_pendingDatabaseTasks.add(requestID, request.release());
+
+    postDatabaseTask(createAsyncTask(*this, &UniqueIDBDatabase::deleteIndexInBackingStore, requestID, identifier, objectStoreID, indexID));
 }
 
 void UniqueIDBDatabase::putRecord(const IDBTransactionIdentifier& identifier, int64_t objectStoreID, const IDBKeyData& keyData, const IPC::DataReference& value, int64_t putMode, const Vector<int64_t>& indexIDs, const Vector<Vector<IDBKeyData>>& indexKeys, std::function<void(const IDBKeyData&, uint32_t, const String&)> callback)
@@ -557,6 +614,18 @@ void UniqueIDBDatabase::clearObjectStoreInBackingStore(uint64_t requestID, const
     bool success = m_backingStore->clearObjectStore(identifier, objectStoreID);
 
     postMainThreadTask(createAsyncTask(*this, &UniqueIDBDatabase::didClearObjectStore, requestID, success));
+}
+
+void UniqueIDBDatabase::createIndexInBackingStore(uint64_t requestID, const IDBTransactionIdentifier&, int64_t objectStoreID, const WebCore::IDBIndexMetadata&)
+{
+    // FIXME: Actually create in the backing store.
+    postMainThreadTask(createAsyncTask(*this, &UniqueIDBDatabase::didCreateIndex, requestID, false));
+}
+
+void UniqueIDBDatabase::deleteIndexInBackingStore(uint64_t requestID, const IDBTransactionIdentifier&, int64_t objectStoreID, int64_t indexID)
+{
+    // FIXME: Actually delete from the backing store.
+    postMainThreadTask(createAsyncTask(*this, &UniqueIDBDatabase::didDeleteIndex, requestID, false));
 }
 
 void UniqueIDBDatabase::putRecordInBackingStore(uint64_t requestID, const IDBTransactionIdentifier& transaction, const IDBObjectStoreMetadata& objectStoreMetadata, const IDBKeyData& keyData, const Vector<uint8_t>& value, int64_t putMode, const Vector<int64_t>& indexIDs, const Vector<Vector<IDBKeyData>>& indexKeys)

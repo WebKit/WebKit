@@ -178,6 +178,7 @@ def struct_or_class(namespace, type):
         'WebCore::GrammarDetail',
         'WebCore::IDBDatabaseMetadata',
         'WebCore::IDBGetResult',
+        'WebCore::IDBIndexMetadata',
         'WebCore::IDBKeyData',
         'WebCore::IDBKeyRangeData',
         'WebCore::IDBObjectStoreMetadata',
