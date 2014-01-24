@@ -1,3 +1,10 @@
+2014-01-24  Anders Carlsson  <andersca@apple.com>
+
+        The CXX_EXPLICIT_CONVERSIONS COMPILER_SUPPORTS macro has been removed, and all
+        compilers support explicit conversions now so simply remove the #ifdef.
+
+        * wtf/RetainPtr.h:
+
 2014-01-24  Darin Adler  <darin@apple.com>
 
         Simplify Compiler.h
