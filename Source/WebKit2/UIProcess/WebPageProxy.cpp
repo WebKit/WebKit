@@ -241,6 +241,8 @@ PassRefPtr<WebPageProxy> WebPageProxy::create(PageClient& pageClient, WebProcess
 
 WebPageProxy::WebPageProxy(PageClient& pageClient, WebProcessProxy& process, WebPageGroup& pageGroup, API::Session& session, uint64_t pageID)
     : m_pageClient(pageClient)
+    , m_loaderClient(std::make_unique<API::LoaderClient>())
+    , m_policyClient(std::make_unique<API::PolicyClient>())
     , m_process(process)
     , m_pageGroup(pageGroup)
     , m_mainFrame(nullptr)
