@@ -1,3 +1,12 @@
+2014-01-24  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [EFL][WK2] Debug buildfix
+        https://bugs.webkit.org/show_bug.cgi?id=127496
+
+        Reviewed by Gyuyoung Kim.
+
+        * Shared/SessionTracker.cpp:
+
 2014-01-23  Brady Eidson  <beidson@apple.com>
 
         IDB: Support IDBObjectStore.clear()

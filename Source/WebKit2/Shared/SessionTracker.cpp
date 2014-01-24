@@ -33,6 +33,9 @@ using namespace WebCore;
 
 namespace WebKit {
 
+const uint64_t SessionTracker::defaultSessionID;
+const uint64_t SessionTracker::legacyPrivateSessionID;
+
 static HashMap<uint64_t, std::unique_ptr<NetworkStorageSession>>& staticSessionMap()
 {
     ASSERT(isMainThread());
