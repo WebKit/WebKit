@@ -402,6 +402,11 @@ PassRefPtr<API::Array> WebPageProxy::relatedPages() const
 
 void WebPageProxy::setLoaderClient(std::unique_ptr<API::LoaderClient> loaderClient)
 {
+    if (!loaderClient) {
+        m_loaderClient = std::make_unique<API::LoaderClient>();
+        return;
+    }
+
     m_loaderClient = std::move(loaderClient);
 }
 
@@ -822,8 +827,7 @@ void WebPageProxy::tryRestoreScrollPosition()
 
 void WebPageProxy::didChangeBackForwardList(WebBackForwardListItem* added, Vector<RefPtr<API::Object>>* removed)
 {
-    if (m_loaderClient)
-        m_loaderClient->didChangeBackForwardList(this, added, removed);
+    m_loaderClient->didChangeBackForwardList(this, added, removed);
 }
 
 void WebPageProxy::willGoToBackForwardListItem(uint64_t itemID, IPC::MessageDecoder& decoder)
@@ -833,10 +837,8 @@ void WebPageProxy::willGoToBackForwardListItem(uint64_t itemID, IPC::MessageDeco
     if (!decoder.decode(messageDecoder))
         return;
 
-    if (WebBackForwardListItem* item = m_process->webBackForwardItem(itemID)) {
-        if (m_loaderClient)
-            m_loaderClient->willGoToBackForwardListItem(this, item, userData.get());
-    }
+    if (WebBackForwardListItem* item = m_process->webBackForwardItem(itemID))
+        m_loaderClient->willGoToBackForwardListItem(this, item, userData.get());
 }
 
 bool WebPageProxy::canShowMIMEType(const String& mimeType)
@@ -1331,8 +1333,7 @@ void WebPageProxy::findPlugin(const String& mimeType, uint32_t processType, cons
 
 #if PLATFORM(MAC)
     RefPtr<ImmutableDictionary> pluginInformation = createPluginInformationDictionary(plugin, frameURLString, String(), pageURLString, String(), String());
-    if (m_loaderClient)
-        pluginLoadPolicy = m_loaderClient->pluginLoadPolicy(this, static_cast<PluginModuleLoadPolicy>(pluginLoadPolicy), pluginInformation.get(), unavailabilityDescription, useBlockedPluginTitle);
+    pluginLoadPolicy = m_loaderClient->pluginLoadPolicy(this, static_cast<PluginModuleLoadPolicy>(pluginLoadPolicy), pluginInformation.get(), unavailabilityDescription, useBlockedPluginTitle);
 #else
     UNUSED_PARAM(frameURLString);
     UNUSED_PARAM(pageURLString);
@@ -2068,8 +2069,7 @@ void WebPageProxy::didStartProgress()
     m_pageLoadState.didStartProgress(transaction);
 
     m_pageLoadState.commitChanges();
-    if (m_loaderClient)
-        m_loaderClient->didStartProgress(this);
+    m_loaderClient->didStartProgress(this);
 }
 
 void WebPageProxy::didChangeProgress(double value)
@@ -2078,8 +2078,7 @@ void WebPageProxy::didChangeProgress(double value)
     m_pageLoadState.didChangeProgress(transaction, value);
 
     m_pageLoadState.commitChanges();
-    if (m_loaderClient)
-        m_loaderClient->didChangeProgress(this);
+    m_loaderClient->didChangeProgress(this);
 }
 
 void WebPageProxy::didFinishProgress()
@@ -2088,8 +2087,7 @@ void WebPageProxy::didFinishProgress()
     m_pageLoadState.didFinishProgress(transaction);
 
     m_pageLoadState.commitChanges();
-    if (m_loaderClient)
-        m_loaderClient->didFinishProgress(this);
+    m_loaderClient->didFinishProgress(this);
 }
 
 void WebPageProxy::didStartProvisionalLoadForFrame(uint64_t frameID, const String& url, const String& unreachableURL, IPC::MessageDecoder& decoder)
@@ -2114,8 +2112,7 @@ void WebPageProxy::didStartProvisionalLoadForFrame(uint64_t frameID, const Strin
     frame->didStartProvisionalLoad(url);
 
     m_pageLoadState.commitChanges();
-    if (m_loaderClient)
-        m_loaderClient->didStartProvisionalLoadForFrame(this, frame, userData.get());
+    m_loaderClient->didStartProvisionalLoadForFrame(this, frame, userData.get());
 }
 
 void WebPageProxy::didReceiveServerRedirectForProvisionalLoadForFrame(uint64_t frameID, const String& url, IPC::MessageDecoder& decoder)
@@ -2137,8 +2134,7 @@ void WebPageProxy::didReceiveServerRedirectForProvisionalLoadForFrame(uint64_t f
     frame->didReceiveServerRedirectForProvisionalLoad(url);
 
     m_pageLoadState.commitChanges();
-    if (m_loaderClient)
-        m_loaderClient->didReceiveServerRedirectForProvisionalLoadForFrame(this, frame, userData.get());
+    m_loaderClient->didReceiveServerRedirectForProvisionalLoadForFrame(this, frame, userData.get());
 }
 
 void WebPageProxy::didFailProvisionalLoadForFrame(uint64_t frameID, const ResourceError& error, IPC::MessageDecoder& decoder)
@@ -2159,8 +2155,7 @@ void WebPageProxy::didFailProvisionalLoadForFrame(uint64_t frameID, const Resour
     frame->didFailProvisionalLoad();
 
     m_pageLoadState.commitChanges();
-    if (m_loaderClient)
-        m_loaderClient->didFailProvisionalLoadWithErrorForFrame(this, frame, error, userData.get());
+    m_loaderClient->didFailProvisionalLoadWithErrorForFrame(this, frame, error, userData.get());
 }
 
 void WebPageProxy::clearLoadDependentCallbacks()
@@ -2213,8 +2208,7 @@ void WebPageProxy::didCommitLoadForFrame(uint64_t frameID, const String& mimeTyp
         m_pageScaleFactor = 1;
 
     m_pageLoadState.commitChanges();
-    if (m_loaderClient)
-        m_loaderClient->didCommitLoadForFrame(this, frame, userData.get());
+    m_loaderClient->didCommitLoadForFrame(this, frame, userData.get());
 }
 
 void WebPageProxy::didFinishDocumentLoadForFrame(uint64_t frameID, IPC::MessageDecoder& decoder)
@@ -2227,8 +2221,7 @@ void WebPageProxy::didFinishDocumentLoadForFrame(uint64_t frameID, IPC::MessageD
     WebFrameProxy* frame = m_process->webFrame(frameID);
     MESSAGE_CHECK(frame);
 
-    if (m_loaderClient)
-        m_loaderClient->didFinishDocumentLoadForFrame(this, frame, userData.get());
+    m_loaderClient->didFinishDocumentLoadForFrame(this, frame, userData.get());
 }
 
 void WebPageProxy::didFinishLoadForFrame(uint64_t frameID, IPC::MessageDecoder& decoder)
@@ -2249,8 +2242,7 @@ void WebPageProxy::didFinishLoadForFrame(uint64_t frameID, IPC::MessageDecoder& 
     frame->didFinishLoad();
 
     m_pageLoadState.commitChanges();
-    if (m_loaderClient)
-        m_loaderClient->didFinishLoadForFrame(this, frame, userData.get());
+    m_loaderClient->didFinishLoadForFrame(this, frame, userData.get());
 }
 
 void WebPageProxy::didFailLoadForFrame(uint64_t frameID, const ResourceError& error, IPC::MessageDecoder& decoder)
@@ -2273,8 +2265,7 @@ void WebPageProxy::didFailLoadForFrame(uint64_t frameID, const ResourceError& er
     frame->didFailLoad();
 
     m_pageLoadState.commitChanges();
-    if (m_loaderClient)
-        m_loaderClient->didFailLoadWithErrorForFrame(this, frame, error, userData.get());
+    m_loaderClient->didFailLoadWithErrorForFrame(this, frame, error, userData.get());
 }
 
 void WebPageProxy::didSameDocumentNavigationForFrame(uint64_t frameID, uint32_t opaqueSameDocumentNavigationType, const String& url, IPC::MessageDecoder& decoder)
@@ -2297,8 +2288,7 @@ void WebPageProxy::didSameDocumentNavigationForFrame(uint64_t frameID, uint32_t 
     frame->didSameDocumentNavigation(url);
 
     m_pageLoadState.commitChanges();
-    if (m_loaderClient)
-        m_loaderClient->didSameDocumentNavigationForFrame(this, frame, static_cast<SameDocumentNavigationType>(opaqueSameDocumentNavigationType), userData.get());
+    m_loaderClient->didSameDocumentNavigationForFrame(this, frame, static_cast<SameDocumentNavigationType>(opaqueSameDocumentNavigationType), userData.get());
 }
 
 void WebPageProxy::didReceiveTitleForFrame(uint64_t frameID, const String& title, IPC::MessageDecoder& decoder)
@@ -2319,8 +2309,7 @@ void WebPageProxy::didReceiveTitleForFrame(uint64_t frameID, const String& title
     frame->didChangeTitle(title);
     
     m_pageLoadState.commitChanges();
-    if (m_loaderClient)
-        m_loaderClient->didReceiveTitleForFrame(this, title, frame, userData.get());
+    m_loaderClient->didReceiveTitleForFrame(this, title, frame, userData.get());
 }
 
 void WebPageProxy::didFirstLayoutForFrame(uint64_t frameID, IPC::MessageDecoder& decoder)
@@ -2333,8 +2322,7 @@ void WebPageProxy::didFirstLayoutForFrame(uint64_t frameID, IPC::MessageDecoder&
     WebFrameProxy* frame = m_process->webFrame(frameID);
     MESSAGE_CHECK(frame);
 
-    if (m_loaderClient)
-        m_loaderClient->didFirstLayoutForFrame(this, frame, userData.get());
+    m_loaderClient->didFirstLayoutForFrame(this, frame, userData.get());
 }
 
 void WebPageProxy::didFirstVisuallyNonEmptyLayoutForFrame(uint64_t frameID, IPC::MessageDecoder& decoder)
@@ -2347,8 +2335,7 @@ void WebPageProxy::didFirstVisuallyNonEmptyLayoutForFrame(uint64_t frameID, IPC:
     WebFrameProxy* frame = m_process->webFrame(frameID);
     MESSAGE_CHECK(frame);
 
-    if (m_loaderClient)
-        m_loaderClient->didFirstVisuallyNonEmptyLayoutForFrame(this, frame, userData.get());
+    m_loaderClient->didFirstVisuallyNonEmptyLayoutForFrame(this, frame, userData.get());
 }
 
 void WebPageProxy::didLayout(uint32_t layoutMilestones, IPC::MessageDecoder& decoder)
@@ -2358,8 +2345,7 @@ void WebPageProxy::didLayout(uint32_t layoutMilestones, IPC::MessageDecoder& dec
     if (!decoder.decode(messageDecoder))
         return;
 
-    if (m_loaderClient)
-        m_loaderClient->didLayout(this, static_cast<LayoutMilestones>(layoutMilestones), userData.get());
+    m_loaderClient->didLayout(this, static_cast<LayoutMilestones>(layoutMilestones), userData.get());
 }
 
 void WebPageProxy::didRemoveFrameFromHierarchy(uint64_t frameID, IPC::MessageDecoder& decoder)
@@ -2372,8 +2358,7 @@ void WebPageProxy::didRemoveFrameFromHierarchy(uint64_t frameID, IPC::MessageDec
     WebFrameProxy* frame = m_process->webFrame(frameID);
     MESSAGE_CHECK(frame);
 
-    if (m_loaderClient)
-        m_loaderClient->didRemoveFrameFromHierarchy(this, frame, userData.get());
+    m_loaderClient->didRemoveFrameFromHierarchy(this, frame, userData.get());
 }
 
 void WebPageProxy::didDisplayInsecureContentForFrame(uint64_t frameID, IPC::MessageDecoder& decoder)
@@ -2390,8 +2375,7 @@ void WebPageProxy::didDisplayInsecureContentForFrame(uint64_t frameID, IPC::Mess
     m_pageLoadState.didDisplayOrRunInsecureContent(transaction);
 
     m_pageLoadState.commitChanges();
-    if (m_loaderClient)
-        m_loaderClient->didDisplayInsecureContentForFrame(this, frame, userData.get());
+    m_loaderClient->didDisplayInsecureContentForFrame(this, frame, userData.get());
 }
 
 void WebPageProxy::didRunInsecureContentForFrame(uint64_t frameID, IPC::MessageDecoder& decoder)
@@ -2408,8 +2392,7 @@ void WebPageProxy::didRunInsecureContentForFrame(uint64_t frameID, IPC::MessageD
     m_pageLoadState.didDisplayOrRunInsecureContent(transaction);
 
     m_pageLoadState.commitChanges();
-    if (m_loaderClient)
-        m_loaderClient->didRunInsecureContentForFrame(this, frame, userData.get());
+    m_loaderClient->didRunInsecureContentForFrame(this, frame, userData.get());
 }
 
 void WebPageProxy::didDetectXSSForFrame(uint64_t frameID, IPC::MessageDecoder& decoder)
@@ -2422,8 +2405,7 @@ void WebPageProxy::didDetectXSSForFrame(uint64_t frameID, IPC::MessageDecoder& d
     WebFrameProxy* frame = m_process->webFrame(frameID);
     MESSAGE_CHECK(frame);
 
-    if (m_loaderClient)
-        m_loaderClient->didDetectXSSForFrame(this, frame, userData.get());
+    m_loaderClient->didDetectXSSForFrame(this, frame, userData.get());
 }
 
 void WebPageProxy::frameDidBecomeFrameSet(uint64_t frameID, bool value)
@@ -2704,10 +2686,7 @@ void WebPageProxy::unavailablePluginButtonClicked(uint32_t opaquePluginUnavailab
 #if ENABLE(WEBGL)
 void WebPageProxy::webGLPolicyForURL(const String& url, uint32_t& loadPolicy)
 {
-    if (!m_loaderClient)
-        loadPolicy = WebGLAllow;
-    else
-        loadPolicy = static_cast<uint32_t>(m_loaderClient->webGLLoadPolicy(this, url));
+    loadPolicy = static_cast<uint32_t>(m_loaderClient->webGLLoadPolicy(this, url));
 }
 #endif // ENABLE(WEBGL)
 
@@ -3737,8 +3716,7 @@ void WebPageProxy::processDidBecomeUnresponsive()
 
     updateBackingStoreDiscardableState();
 
-    if (m_loaderClient)
-        m_loaderClient->processDidBecomeUnresponsive(this);
+    m_loaderClient->processDidBecomeUnresponsive(this);
 }
 
 void WebPageProxy::interactionOccurredWhileProcessUnresponsive()
@@ -3746,8 +3724,7 @@ void WebPageProxy::interactionOccurredWhileProcessUnresponsive()
     if (!isValid())
         return;
 
-    if (m_loaderClient)
-        m_loaderClient->interactionOccurredWhileProcessUnresponsive(this);
+    m_loaderClient->interactionOccurredWhileProcessUnresponsive(this);
 }
 
 void WebPageProxy::processDidBecomeResponsive()
@@ -3757,8 +3734,7 @@ void WebPageProxy::processDidBecomeResponsive()
     
     updateBackingStoreDiscardableState();
 
-    if (m_loaderClient)
-        m_loaderClient->processDidBecomeResponsive(this);
+    m_loaderClient->processDidBecomeResponsive(this);
 }
 
 void WebPageProxy::processDidCrash()
@@ -3773,8 +3749,7 @@ void WebPageProxy::processDidCrash()
 
     m_pageClient.processDidCrash();
 
-    if (m_loaderClient)
-        m_loaderClient->processDidCrash(this);
+    m_loaderClient->processDidCrash(this);
 }
 
 void WebPageProxy::resetState()
@@ -3973,10 +3948,7 @@ void WebPageProxy::canAuthenticateAgainstProtectionSpaceInFrame(uint64_t frameID
 
     RefPtr<WebProtectionSpace> protectionSpace = WebProtectionSpace::create(coreProtectionSpace);
 
-    if (!m_loaderClient)
-        canAuthenticate = false;
-    else
-        canAuthenticate = m_loaderClient->canAuthenticateAgainstProtectionSpaceInFrame(this, frame, protectionSpace.get());
+    canAuthenticate = m_loaderClient->canAuthenticateAgainstProtectionSpaceInFrame(this, frame, protectionSpace.get());
 }
 
 void WebPageProxy::didReceiveAuthenticationChallenge(uint64_t frameID, const AuthenticationChallenge& coreChallenge, uint64_t challengeID)
@@ -3992,8 +3964,7 @@ void WebPageProxy::didReceiveAuthenticationChallengeProxy(uint64_t frameID, Pass
     MESSAGE_CHECK(frame);
 
     RefPtr<AuthenticationChallengeProxy> authenticationChallenge = prpAuthenticationChallenge;
-    if (m_loaderClient)
-        m_loaderClient->didReceiveAuthenticationChallengeInFrame(this, frame, authenticationChallenge.get());
+    m_loaderClient->didReceiveAuthenticationChallengeInFrame(this, frame, authenticationChallenge.get());
 }
 
 void WebPageProxy::exceededDatabaseQuota(uint64_t frameID, const String& originIdentifier, const String& databaseName, const String& displayName, uint64_t currentQuota, uint64_t currentOriginUsage, uint64_t currentDatabaseUsage, uint64_t expectedUsage, PassRefPtr<Messages::WebPageProxy::ExceededDatabaseQuota::DelayedReply> reply)
@@ -4151,8 +4122,7 @@ void WebPageProxy::didChangePageCount(unsigned pageCount)
 #if ENABLE(NETSCAPE_PLUGIN_API)
 void WebPageProxy::didFailToInitializePlugin(const String& mimeType, const String& frameURLString, const String& pageURLString)
 {
-    if (m_loaderClient)
-        m_loaderClient->didFailToInitializePlugin(this, createPluginInformationDictionary(mimeType, frameURLString, pageURLString).get());
+    m_loaderClient->didFailToInitializePlugin(this, createPluginInformationDictionary(mimeType, frameURLString, pageURLString).get());
 }
 
 void WebPageProxy::didBlockInsecurePluginVersion(const String& mimeType, const String& pluginURLString, const String& frameURLString, const String& pageURLString, bool replacementObscured)
@@ -4171,8 +4141,7 @@ void WebPageProxy::didBlockInsecurePluginVersion(const String& mimeType, const S
     UNUSED_PARAM(replacementObscured);
 #endif
 
-    if (m_loaderClient)
-        m_loaderClient->didBlockInsecurePluginVersion(this, pluginInformation.get());
+    m_loaderClient->didBlockInsecurePluginVersion(this, pluginInformation.get());
 }
 #endif // ENABLE(NETSCAPE_PLUGIN_API)
 

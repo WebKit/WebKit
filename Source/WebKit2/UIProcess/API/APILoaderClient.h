@@ -53,51 +53,51 @@ class LoaderClient {
 public:
     virtual ~LoaderClient() { }
 
-    virtual void didStartProvisionalLoadForFrame(WebKit::WebPageProxy*, WebKit::WebFrameProxy*, API::Object*) = 0;
-    virtual void didReceiveServerRedirectForProvisionalLoadForFrame(WebKit::WebPageProxy*, WebKit::WebFrameProxy*, API::Object*) = 0;
-    virtual void didFailProvisionalLoadWithErrorForFrame(WebKit::WebPageProxy*, WebKit::WebFrameProxy*, const WebCore::ResourceError&, API::Object*) = 0;
-    virtual void didCommitLoadForFrame(WebKit::WebPageProxy*, WebKit::WebFrameProxy*, API::Object*) = 0;
-    virtual void didFinishDocumentLoadForFrame(WebKit::WebPageProxy*, WebKit::WebFrameProxy*, API::Object*) = 0;
-    virtual void didFinishLoadForFrame(WebKit::WebPageProxy*, WebKit::WebFrameProxy*, API::Object*) = 0;
-    virtual void didFailLoadWithErrorForFrame(WebKit::WebPageProxy*, WebKit::WebFrameProxy*, const WebCore::ResourceError&, API::Object*) = 0;
-    virtual void didSameDocumentNavigationForFrame(WebKit::WebPageProxy*, WebKit::WebFrameProxy*, WebKit::SameDocumentNavigationType, API::Object*) = 0;
-    virtual void didReceiveTitleForFrame(WebKit::WebPageProxy*, const WTF::String&, WebKit::WebFrameProxy*, API::Object*) = 0;
-    virtual void didFirstLayoutForFrame(WebKit::WebPageProxy*, WebKit::WebFrameProxy*, API::Object*) = 0;
+    virtual void didStartProvisionalLoadForFrame(WebKit::WebPageProxy*, WebKit::WebFrameProxy*, API::Object*) { }
+    virtual void didReceiveServerRedirectForProvisionalLoadForFrame(WebKit::WebPageProxy*, WebKit::WebFrameProxy*, API::Object*) { }
+    virtual void didFailProvisionalLoadWithErrorForFrame(WebKit::WebPageProxy*, WebKit::WebFrameProxy*, const WebCore::ResourceError&, API::Object*) { }
+    virtual void didCommitLoadForFrame(WebKit::WebPageProxy*, WebKit::WebFrameProxy*, API::Object*) { }
+    virtual void didFinishDocumentLoadForFrame(WebKit::WebPageProxy*, WebKit::WebFrameProxy*, API::Object*) { }
+    virtual void didFinishLoadForFrame(WebKit::WebPageProxy*, WebKit::WebFrameProxy*, API::Object*) { }
+    virtual void didFailLoadWithErrorForFrame(WebKit::WebPageProxy*, WebKit::WebFrameProxy*, const WebCore::ResourceError&, API::Object*) { }
+    virtual void didSameDocumentNavigationForFrame(WebKit::WebPageProxy*, WebKit::WebFrameProxy*, WebKit::SameDocumentNavigationType, API::Object*) { }
+    virtual void didReceiveTitleForFrame(WebKit::WebPageProxy*, const WTF::String&, WebKit::WebFrameProxy*, API::Object*) { }
+    virtual void didFirstLayoutForFrame(WebKit::WebPageProxy*, WebKit::WebFrameProxy*, API::Object*) { }
 
     // FIXME: We should consider removing didFirstVisuallyNonEmptyLayoutForFrame since it is replaced by didLayout.
-    virtual void didFirstVisuallyNonEmptyLayoutForFrame(WebKit::WebPageProxy*, WebKit::WebFrameProxy*, API::Object*) = 0;
+    virtual void didFirstVisuallyNonEmptyLayoutForFrame(WebKit::WebPageProxy*, WebKit::WebFrameProxy*, API::Object*) { }
 
-    virtual void didRemoveFrameFromHierarchy(WebKit::WebPageProxy*, WebKit::WebFrameProxy*, API::Object*) = 0;
-    virtual void didDisplayInsecureContentForFrame(WebKit::WebPageProxy*, WebKit::WebFrameProxy*, API::Object*) = 0;
-    virtual void didRunInsecureContentForFrame(WebKit::WebPageProxy*, WebKit::WebFrameProxy*, API::Object*) = 0;
-    virtual void didDetectXSSForFrame(WebKit::WebPageProxy*, WebKit::WebFrameProxy*, API::Object*) = 0;
+    virtual void didRemoveFrameFromHierarchy(WebKit::WebPageProxy*, WebKit::WebFrameProxy*, API::Object*) { }
+    virtual void didDisplayInsecureContentForFrame(WebKit::WebPageProxy*, WebKit::WebFrameProxy*, API::Object*) { }
+    virtual void didRunInsecureContentForFrame(WebKit::WebPageProxy*, WebKit::WebFrameProxy*, API::Object*) { }
+    virtual void didDetectXSSForFrame(WebKit::WebPageProxy*, WebKit::WebFrameProxy*, API::Object*) { }
 
-    virtual void didLayout(WebKit::WebPageProxy*, WebCore::LayoutMilestones, API::Object*) = 0;
+    virtual void didLayout(WebKit::WebPageProxy*, WebCore::LayoutMilestones, API::Object*) { }
     
-    virtual bool canAuthenticateAgainstProtectionSpaceInFrame(WebKit::WebPageProxy*, WebKit::WebFrameProxy*, WebKit::WebProtectionSpace*) = 0;
-    virtual void didReceiveAuthenticationChallengeInFrame(WebKit::WebPageProxy*, WebKit::WebFrameProxy*, WebKit::AuthenticationChallengeProxy*) = 0;
+    virtual bool canAuthenticateAgainstProtectionSpaceInFrame(WebKit::WebPageProxy*, WebKit::WebFrameProxy*, WebKit::WebProtectionSpace*) { return false; }
+    virtual void didReceiveAuthenticationChallengeInFrame(WebKit::WebPageProxy*, WebKit::WebFrameProxy*, WebKit::AuthenticationChallengeProxy*) { }
 
-    virtual void didStartProgress(WebKit::WebPageProxy*) = 0;
-    virtual void didChangeProgress(WebKit::WebPageProxy*)= 0;
-    virtual void didFinishProgress(WebKit::WebPageProxy*)= 0;
+    virtual void didStartProgress(WebKit::WebPageProxy*) { }
+    virtual void didChangeProgress(WebKit::WebPageProxy*) { }
+    virtual void didFinishProgress(WebKit::WebPageProxy*) { }
 
     // FIXME: These three functions should not be part of this client.
-    virtual void processDidBecomeUnresponsive(WebKit::WebPageProxy*) = 0;
-    virtual void interactionOccurredWhileProcessUnresponsive(WebKit::WebPageProxy*) = 0;
-    virtual void processDidBecomeResponsive(WebKit::WebPageProxy*) = 0;
-    virtual void processDidCrash(WebKit::WebPageProxy*) = 0;
+    virtual void processDidBecomeUnresponsive(WebKit::WebPageProxy*) { }
+    virtual void interactionOccurredWhileProcessUnresponsive(WebKit::WebPageProxy*) { }
+    virtual void processDidBecomeResponsive(WebKit::WebPageProxy*) { }
+    virtual void processDidCrash(WebKit::WebPageProxy*) { }
 
-    virtual void didChangeBackForwardList(WebKit::WebPageProxy*, WebKit::WebBackForwardListItem* addedItem, Vector<RefPtr<API::Object>>* removedItems) = 0;
-    virtual void willGoToBackForwardListItem(WebKit::WebPageProxy*, WebKit::WebBackForwardListItem*, API::Object*) = 0;
+    virtual void didChangeBackForwardList(WebKit::WebPageProxy*, WebKit::WebBackForwardListItem* addedItem, Vector<RefPtr<API::Object>>* removedItems) { }
+    virtual void willGoToBackForwardListItem(WebKit::WebPageProxy*, WebKit::WebBackForwardListItem*, API::Object*) { }
 
 #if ENABLE(NETSCAPE_PLUGIN_API)
-    virtual WebKit::PluginModuleLoadPolicy pluginLoadPolicy(WebKit::WebPageProxy*, WebKit::PluginModuleLoadPolicy currentPluginLoadPolicy, WebKit::ImmutableDictionary*, WTF::String& unavailabilityDescription, WTF::String& useBlockedPluginTitle) = 0;
-    virtual void didFailToInitializePlugin(WebKit::WebPageProxy*, WebKit::ImmutableDictionary*) = 0;
-    virtual void didBlockInsecurePluginVersion(WebKit::WebPageProxy*, WebKit::ImmutableDictionary*) = 0;
+    virtual WebKit::PluginModuleLoadPolicy pluginLoadPolicy(WebKit::WebPageProxy*, WebKit::PluginModuleLoadPolicy currentPluginLoadPolicy, WebKit::ImmutableDictionary*, WTF::String& unavailabilityDescription, WTF::String& useBlockedPluginTitle) { return currentPluginLoadPolicy; }
+    virtual void didFailToInitializePlugin(WebKit::WebPageProxy*, WebKit::ImmutableDictionary*) { }
+    virtual void didBlockInsecurePluginVersion(WebKit::WebPageProxy*, WebKit::ImmutableDictionary*) { }
 #endif // ENABLE(NETSCAPE_PLUGIN_API)
 
 #if ENABLE(WEBGL)
-    virtual WebCore::WebGLLoadPolicy webGLLoadPolicy(WebKit::WebPageProxy*, const WTF::String&) const = 0;
+    virtual WebCore::WebGLLoadPolicy webGLLoadPolicy(WebKit::WebPageProxy*, const WTF::String&) const { return WebCore::WebGLLoadPolicy::WebGLAllow; }
 #endif // ENABLE(WEBGL)
 };
 

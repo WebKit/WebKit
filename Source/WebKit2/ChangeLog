@@ -1,5 +1,82 @@
 2014-01-23  Anders Carlsson  <andersca@apple.com>
 
+        Simplify API::LoaderClient management
+        https://bugs.webkit.org/show_bug.cgi?id=127531
+
+        Reviewed by Tim Horton.
+
+        Add default implementations to API::LoaderClient and change WebPageProxy::setLoaderClient to
+        always create a policy client, even if the loader client set is null. That way we don't have to null
+        check the loader client everywhere.
+
+        * UIProcess/API/APILoaderClient.h:
+        (API::LoaderClient::didStartProvisionalLoadForFrame):
+        (API::LoaderClient::didReceiveServerRedirectForProvisionalLoadForFrame):
+        (API::LoaderClient::didFailProvisionalLoadWithErrorForFrame):
+        (API::LoaderClient::didCommitLoadForFrame):
+        (API::LoaderClient::didFinishDocumentLoadForFrame):
+        (API::LoaderClient::didFinishLoadForFrame):
+        (API::LoaderClient::didFailLoadWithErrorForFrame):
+        (API::LoaderClient::didSameDocumentNavigationForFrame):
+        (API::LoaderClient::didReceiveTitleForFrame):
+        (API::LoaderClient::didFirstLayoutForFrame):
+        (API::LoaderClient::didFirstVisuallyNonEmptyLayoutForFrame):
+        (API::LoaderClient::didRemoveFrameFromHierarchy):
+        (API::LoaderClient::didDisplayInsecureContentForFrame):
+        (API::LoaderClient::didRunInsecureContentForFrame):
+        (API::LoaderClient::didDetectXSSForFrame):
+        (API::LoaderClient::didLayout):
+        (API::LoaderClient::canAuthenticateAgainstProtectionSpaceInFrame):
+        (API::LoaderClient::didReceiveAuthenticationChallengeInFrame):
+        (API::LoaderClient::didStartProgress):
+        (API::LoaderClient::didChangeProgress):
+        (API::LoaderClient::didFinishProgress):
+        (API::LoaderClient::processDidBecomeUnresponsive):
+        (API::LoaderClient::interactionOccurredWhileProcessUnresponsive):
+        (API::LoaderClient::processDidBecomeResponsive):
+        (API::LoaderClient::processDidCrash):
+        (API::LoaderClient::didChangeBackForwardList):
+        (API::LoaderClient::willGoToBackForwardListItem):
+        (API::LoaderClient::pluginLoadPolicy):
+        (API::LoaderClient::didFailToInitializePlugin):
+        (API::LoaderClient::didBlockInsecurePluginVersion):
+        (API::LoaderClient::webGLLoadPolicy):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::setLoaderClient):
+        (WebKit::WebPageProxy::didChangeBackForwardList):
+        (WebKit::WebPageProxy::willGoToBackForwardListItem):
+        (WebKit::WebPageProxy::findPlugin):
+        (WebKit::WebPageProxy::didStartProgress):
+        (WebKit::WebPageProxy::didChangeProgress):
+        (WebKit::WebPageProxy::didFinishProgress):
+        (WebKit::WebPageProxy::didStartProvisionalLoadForFrame):
+        (WebKit::WebPageProxy::didReceiveServerRedirectForProvisionalLoadForFrame):
+        (WebKit::WebPageProxy::didFailProvisionalLoadForFrame):
+        (WebKit::WebPageProxy::didCommitLoadForFrame):
+        (WebKit::WebPageProxy::didFinishDocumentLoadForFrame):
+        (WebKit::WebPageProxy::didFinishLoadForFrame):
+        (WebKit::WebPageProxy::didFailLoadForFrame):
+        (WebKit::WebPageProxy::didSameDocumentNavigationForFrame):
+        (WebKit::WebPageProxy::didReceiveTitleForFrame):
+        (WebKit::WebPageProxy::didFirstLayoutForFrame):
+        (WebKit::WebPageProxy::didFirstVisuallyNonEmptyLayoutForFrame):
+        (WebKit::WebPageProxy::didLayout):
+        (WebKit::WebPageProxy::didRemoveFrameFromHierarchy):
+        (WebKit::WebPageProxy::didDisplayInsecureContentForFrame):
+        (WebKit::WebPageProxy::didRunInsecureContentForFrame):
+        (WebKit::WebPageProxy::didDetectXSSForFrame):
+        (WebKit::WebPageProxy::webGLPolicyForURL):
+        (WebKit::WebPageProxy::processDidBecomeUnresponsive):
+        (WebKit::WebPageProxy::interactionOccurredWhileProcessUnresponsive):
+        (WebKit::WebPageProxy::processDidBecomeResponsive):
+        (WebKit::WebPageProxy::processDidCrash):
+        (WebKit::WebPageProxy::canAuthenticateAgainstProtectionSpaceInFrame):
+        (WebKit::WebPageProxy::didReceiveAuthenticationChallengeProxy):
+        (WebKit::WebPageProxy::didFailToInitializePlugin):
+        (WebKit::WebPageProxy::didBlockInsecurePluginVersion):
+
+2014-01-23  Anders Carlsson  <andersca@apple.com>
+
         Simplify API::PolicyClient management
         https://bugs.webkit.org/show_bug.cgi?id=127529
 
