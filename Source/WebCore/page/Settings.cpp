@@ -47,7 +47,7 @@
 #include "TextAutosizer.h"
 #include <limits>
 #include <wtf/NeverDestroyed.h>
-
+#include <wtf/StdLibExtras.h>
 
 namespace WebCore {
 
@@ -146,7 +146,7 @@ static const bool defaultSelectTrailingWhitespaceEnabled = false;
 // This amount of time must have elapsed before we will even consider scheduling a layout without a delay.
 // FIXME: For faster machines this value can really be lowered to 200. 250 is adequate, but a little high
 // for dual G5s. :)
-static const int layoutScheduleThreshold = 250;
+static const auto layoutScheduleThreshold = std::chrono::milliseconds(250);
 
 Settings::Settings(Page* page)
     : m_page(0)
@@ -507,7 +507,7 @@ double Settings::domTimerAlignmentInterval() const
     return m_page->timerAlignmentInterval();
 }
 
-void Settings::setLayoutInterval(int layoutInterval)
+void Settings::setLayoutInterval(std::chrono::milliseconds layoutInterval)
 {
     // FIXME: It seems weird that this function may disregard the specified layout interval.
     // We should either expose layoutScheduleThreshold or better communicate this invariant.

@@ -45,6 +45,8 @@
 #define WTF_COMPILER_SUPPORTS_C_STATIC_ASSERT __has_feature(c_static_assert)
 #define WTF_COMPILER_SUPPORTS_CXX_REFERENCE_QUALIFIED_FUNCTIONS __has_feature(cxx_reference_qualified_functions)
 #define WTF_COMPILER_SUPPORTS_CXX_GENERALIZED_INITIALIZERS __has_feature(cxx_generalized_initializers)
+#define WTF_COMPILER_SUPPORTS_CXX_CONSTEXPR __has_feature(cxx_constexpr)
+#define WTF_COMPILER_SUPPORTS_CXX_USER_LITERALS __has_feature(cxx_user_literals)
 #endif
 
 /* COMPILER(GCC) - GNU Compiler Collection */
@@ -55,6 +57,7 @@
 #define WTF_COMPILER_GCC 1
 #define GCC_VERSION (__GNUC__ * 10000 + __GNUC_MINOR__ * 100 + __GNUC_PATCHLEVEL__)
 #define GCC_VERSION_AT_LEAST(major, minor, patch) (GCC_VERSION >= (major * 10000 + minor * 100 + patch))
+
 #endif
 
 /* Define GCC_VERSION_AT_LEAST for all compilers, so we can write things like GCC_VERSION_AT_LEAST(4, 1, 0). */
@@ -65,6 +68,11 @@
 
 #if COMPILER(GCC) && !COMPILER(CLANG) && !GCC_VERSION_AT_LEAST(4, 7, 0)
 #error "Please use a newer version of GCC. WebKit requires GCC 4.7.0 or newer to compile."
+#endif
+
+#if COMPILER(GCC) && !COMPILER(CLANG)
+#define WTF_COMPILER_SUPPORTS_CXX_CONSTEXPR 1
+#define WTF_COMPILER_SUPPORTS_CXX_USER_LITERALS 1
 #endif
 
 #if COMPILER(GCC) && !COMPILER(CLANG) && defined(__STDC_VERSION__) && __STDC_VERSION__ >= 201112L
@@ -254,6 +262,15 @@
 
 #if !defined(WARN_UNUSED_RETURN)
 #define WARN_UNUSED_RETURN
+#endif
+
+/* CONSTEXPR */
+#if !defined(CONSTEXPR) && COMPILER_SUPPORTS(CXX_CONSTEXPR)
+#define CONSTEXPR constexpr
+#endif
+
+#if !defined(CONSTEXPR)
+#define CONSTEXPR
 #endif
 
 #endif /* WTF_Compiler_h */

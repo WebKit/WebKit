@@ -27,6 +27,7 @@
 #ifndef WTF_StdLibExtras_h
 #define WTF_StdLibExtras_h
 
+#include <chrono>
 #include <memory>
 #include <wtf/Assertions.h>
 #include <wtf/CheckedArithmetic.h>
@@ -324,53 +325,71 @@ namespace std {
 namespace std {
 // MSVC 2013 supports std::make_unique already.
 #if !defined(_MSC_VER) || _MSC_VER < 1800
-    template<class T> struct _Unique_if {
-        typedef unique_ptr<T> _Single_object;
-    };
+template<class T> struct _Unique_if {
+    typedef unique_ptr<T> _Single_object;
+};
 
-    template<class T> struct _Unique_if<T[]> {
-        typedef unique_ptr<T[]> _Unknown_bound;
-    };
+template<class T> struct _Unique_if<T[]> {
+    typedef unique_ptr<T[]> _Unknown_bound;
+};
 
-    template<class T, size_t N> struct _Unique_if<T[N]> {
-        typedef void _Known_bound;
-    };
+template<class T, size_t N> struct _Unique_if<T[N]> {
+    typedef void _Known_bound;
+};
 
-    template<class T, class... Args> inline typename _Unique_if<T>::_Single_object
-    make_unique(Args&&... args)
-    {
-        return unique_ptr<T>(new T(std::forward<Args>(args)...));
-    }
+template<class T, class... Args> inline typename _Unique_if<T>::_Single_object
+make_unique(Args&&... args)
+{
+    return unique_ptr<T>(new T(std::forward<Args>(args)...));
+}
 
-    template<class T> inline typename _Unique_if<T>::_Unknown_bound
-    make_unique(size_t n)
-    {
-        typedef typename remove_extent<T>::type U;
-        return unique_ptr<T>(new U[n]());
-    }
-    
-    template<class T, class... Args> typename _Unique_if<T>::_Known_bound
-    make_unique(Args&&...) = delete;
+template<class T> inline typename _Unique_if<T>::_Unknown_bound
+make_unique(size_t n)
+{
+    typedef typename remove_extent<T>::type U;
+    return unique_ptr<T>(new U[n]());
+}
+
+template<class T, class... Args> typename _Unique_if<T>::_Known_bound
+make_unique(Args&&...) = delete;
 #endif
 
-    // Compile-time integer sequences
-    // http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2013/n3658.html
-    // (Note that we only implement index_sequence, and not the more generic integer_sequence).
-    template<size_t... indexes> struct index_sequence {
-        static size_t size() { return sizeof...(indexes); }
-    };
+// Compile-time integer sequences
+// http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2013/n3658.html
+// (Note that we only implement index_sequence, and not the more generic integer_sequence).
+template<size_t... indexes> struct index_sequence {
+    static size_t size() { return sizeof...(indexes); }
+};
 
-    template<size_t currentIndex, size_t...indexes> struct make_index_sequence_helper;
+template<size_t currentIndex, size_t...indexes> struct make_index_sequence_helper;
 
-    template<size_t...indexes> struct make_index_sequence_helper<0, indexes...> {
-        typedef std::index_sequence<indexes...> type;
-    };
+template<size_t...indexes> struct make_index_sequence_helper<0, indexes...> {
+    typedef std::index_sequence<indexes...> type;
+};
 
-    template<size_t currentIndex, size_t...indexes> struct make_index_sequence_helper {
-        typedef typename make_index_sequence_helper<currentIndex - 1, currentIndex - 1, indexes...>::type type;
-    };
+template<size_t currentIndex, size_t...indexes> struct make_index_sequence_helper {
+    typedef typename make_index_sequence_helper<currentIndex - 1, currentIndex - 1, indexes...>::type type;
+};
 
-    template<size_t length> struct make_index_sequence : public make_index_sequence_helper<length>::type { };
+template<size_t length> struct make_index_sequence : public make_index_sequence_helper<length>::type { };
+
+#if COMPILER_SUPPORTS(CXX_USER_LITERALS)
+// These literals are available in C++14, so once we require C++14 compilers we can get rid of them here.
+// (User-literals need to have a leading underscore so we add it here - the "real" literals don't have underscores).
+namespace literals {
+namespace chrono_literals {
+    CONSTEXPR inline chrono::seconds operator"" _s(unsigned long long s)
+    {
+        return chrono::seconds(static_cast<chrono::seconds::rep>(s));
+    }
+
+    CONSTEXPR chrono::milliseconds operator"" _ms(unsigned long long ms)
+    {
+        return chrono::milliseconds(static_cast<chrono::milliseconds::rep>(ms));
+    }
+}
+}
+#endif
 }
 
 using WTF::KB;
@@ -383,5 +402,10 @@ using WTF::tryBinarySearch;
 using WTF::approximateBinarySearch;
 using WTF::bitwise_cast;
 using WTF::safeCast;
+
+#if COMPILER_SUPPORTS(CXX_USER_LITERALS)
+// We normally don't want to bring in entire std namespaces, but literals are an exception.
+using namespace std::literals::chrono_literals;
+#endif
 
 #endif // WTF_StdLibExtras_h

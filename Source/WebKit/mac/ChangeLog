@@ -1,3 +1,14 @@
+2014-01-24  Anders Carlsson  <andersca@apple.com>
+
+        Get rid of monotonicallyIncreasingTimeMS and start using std::chrono instead
+        https://bugs.webkit.org/show_bug.cgi?id=127571
+
+        Reviewed by Antti Koivisto.
+
+        * WebView/WebView.mm:
+        (-[WebView _preferencesChanged:]):
+        Convert the layout interval to std::chrono::milliseconds.
+
 2014-01-24  Zan Dobersek  <zdobersek@igalia.com>
 
         Move HistoryItem to std::unique_ptr

@@ -34,6 +34,7 @@
 #include "SecurityOrigin.h"
 #include "SettingsMacros.h"
 #include "Timer.h"
+#include <chrono>
 #include <wtf/HashMap.h>
 #include <wtf/RefCounted.h>
 #include <wtf/text/AtomicString.h>
@@ -171,9 +172,8 @@ public:
     void setDOMTimerAlignmentInterval(double);
     double domTimerAlignmentInterval() const;
 
-    // FIXME: Change these methods to take/return an unsigned integer after we upstream the iOS port.
-    void setLayoutInterval(int);
-    int layoutInterval() const { return m_layoutInterval; }
+    void setLayoutInterval(std::chrono::milliseconds);
+    std::chrono::milliseconds layoutInterval() const { return m_layoutInterval; }
 
 #if ENABLE(HIDDEN_PAGE_DOM_TIMER_THROTTLING)
     bool hiddenPageDOMTimerThrottlingEnabled() const { return m_hiddenPageDOMTimerThrottlingEnabled; }
@@ -321,7 +321,7 @@ private:
     URL m_userStyleSheetLocation;
     const std::unique_ptr<FontGenericFamilies> m_fontGenericFamilies;
     SecurityOrigin::StorageBlockingPolicy m_storageBlockingPolicy;
-    int m_layoutInterval;
+    std::chrono::milliseconds m_layoutInterval;
 #if PLATFORM(IOS)
     double m_maxParseDuration;
 #endif

@@ -26,6 +26,7 @@
 #ifndef Timer_h
 #define Timer_h
 
+#include <chrono>
 #include <functional>
 #include <wtf/Noncopyable.h>
 #include <wtf/Threading.h>
@@ -52,6 +53,7 @@ public:
 
     void startRepeating(double repeatInterval) { start(repeatInterval, repeatInterval); }
     void startOneShot(double interval) { start(interval, 0); }
+    void startOneShot(std::chrono::milliseconds interval) { startOneShot(interval.count() * 0.001); }
 
     void stop();
     bool isActive() const;

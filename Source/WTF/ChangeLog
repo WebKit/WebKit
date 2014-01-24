@@ -1,5 +1,23 @@
 2014-01-24  Anders Carlsson  <andersca@apple.com>
 
+        Get rid of monotonicallyIncreasingTimeMS and start using std::chrono instead
+        https://bugs.webkit.org/show_bug.cgi?id=127571
+
+        Reviewed by Antti Koivisto.
+
+        * wtf/Compiler.h:
+        Add a CONSTEXPR define so we can still use constexpr on compilers that don't support them (MSVC).
+
+        * wtf/CurrentTime.h:
+        Remove monotonicallyIncreasingTimeMS().
+
+        * wtf/StdLibExtras.h:
+        (std::literals::chrono_literals::operator _s):
+        (std::literals::chrono_literals::operator _ms):
+        Add _s and _ms literals. Once we switch over to C++14, we can drop them and just use the built-in ones.
+
+2014-01-24  Anders Carlsson  <andersca@apple.com>
+
         The CXX_EXPLICIT_CONVERSIONS COMPILER_SUPPORTS macro has been removed, and all
         compilers support explicit conversions now so simply remove the #ifdef.
 

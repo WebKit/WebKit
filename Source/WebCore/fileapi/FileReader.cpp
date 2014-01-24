@@ -46,7 +46,7 @@
 
 namespace WebCore {
 
-static const double progressNotificationIntervalMS = 50;
+static const auto progressNotificationInterval = std::chrono::milliseconds(50);
 
 PassRefPtr<FileReader> FileReader::create(ScriptExecutionContext& context)
 {
@@ -60,7 +60,6 @@ FileReader::FileReader(ScriptExecutionContext& context)
     , m_state(EMPTY)
     , m_aborting(false)
     , m_readType(FileReaderLoader::ReadAsBinaryString)
-    , m_lastProgressNotificationTimeMS(0)
 {
 }
 
@@ -199,12 +198,15 @@ void FileReader::didStartLoading()
 void FileReader::didReceiveData()
 {
     // Fire the progress event at least every 50ms.
-    double now = monotonicallyIncreasingTimeMS();
-    if (!m_lastProgressNotificationTimeMS)
-        m_lastProgressNotificationTimeMS = now;
-    else if (now - m_lastProgressNotificationTimeMS > progressNotificationIntervalMS) {
+    auto now = std::chrono::steady_clock::now();
+    if (!m_lastProgressNotificationTime.time_since_epoch().count()) {
+        m_lastProgressNotificationTime = now;
+        return;
+    }
+
+    if (now - m_lastProgressNotificationTime > progressNotificationInterval) {
         fireEvent(eventNames().progressEvent);
-        m_lastProgressNotificationTimeMS = now;
+        m_lastProgressNotificationTime = now;
     }
 }
 
