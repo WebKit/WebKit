@@ -256,13 +256,24 @@ IntSize ScrollView::unscaledVisibleContentSize(VisibleContentRectIncludesScrollb
             horizontalScrollbarHeight = !horizontalBar->isOverlayScrollbar() ? horizontalBar->height() : 0;
     }
 
-    return IntSize(std::max(0, width() - verticalScrollbarWidth),
-                   std::max(0, height() - horizontalScrollbarHeight));
+    return IntSize(width() - verticalScrollbarWidth, height() - horizontalScrollbarHeight).expandedTo(IntSize());
 }
 
 #if !PLATFORM(GTK)
-IntRect ScrollView::visibleContentRect(VisibleContentRectIncludesScrollbars scollbarInclusion) const
+IntRect ScrollView::visibleContentRectInternal(VisibleContentRectIncludesScrollbars scollbarInclusion, VisibleContentRectBehavior visibleContentRectBehavior) const
 {
+#if PLATFORM(IOS)
+    if (visibleContentRectBehavior == LegacyIOSDocumentViewRect) {
+        if (platformWidget())
+            return platformVisibleContentRect(true /* include scrollbars */);
+    }
+    
+    if (platformWidget())
+        return actualVisibleContentRect();
+#else
+    UNUSED_PARAM(visibleContentRectBehavior);
+#endif
+
     if (platformWidget())
         return platformVisibleContentRect(scollbarInclusion == IncludeScrollbars);
 
@@ -548,7 +559,7 @@ void ScrollView::updateScrollbars(const IntSize& desiredOffset)
         bool sendContentResizedNotification = false;
         
         IntSize docSize = totalContentsSize();
-        IntSize fullVisibleSize = visibleContentRect(IncludeScrollbars).size();
+        IntSize fullVisibleSize = visibleContentRectIncludingScrollbars().size();
 
         if (hScroll == ScrollbarAuto)
             newHasHorizontalScrollbar = docSize.width() > visibleWidth();
@@ -1162,7 +1173,7 @@ void ScrollView::paint(GraphicsContext* context, const IntRect& rect)
     if (!m_scrollbarsSuppressed && (m_horizontalScrollbar || m_verticalScrollbar)) {
         GraphicsContextStateSaver stateSaver(*context);
         IntRect scrollViewDirtyRect = rect;
-        IntRect visibleAreaWithScrollbars(location(), visibleContentRect(IncludeScrollbars).size());
+        IntRect visibleAreaWithScrollbars(location(), visibleContentRectIncludingScrollbars().size());
         scrollViewDirtyRect.intersect(visibleAreaWithScrollbars);
         context->translate(x(), y());
         scrollViewDirtyRect.moveBy(-location());

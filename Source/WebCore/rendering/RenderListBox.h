@@ -118,8 +118,7 @@ private:
     virtual IntPoint convertFromContainingViewToScrollbar(const Scrollbar*, const IntPoint&) const override;
     virtual Scrollbar* verticalScrollbar() const override { return m_vBar.get(); }
     virtual IntSize contentsSize() const override;
-    virtual int visibleHeight() const override;
-    virtual int visibleWidth() const override;
+    virtual IntSize visibleSize() const override { return IntSize(height(), width()); }
     virtual IntPoint lastKnownMousePosition() const override;
     virtual bool isHandlingWheelEvent() const override;
     virtual bool shouldSuspendScrollAnimations() const override;

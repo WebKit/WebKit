@@ -1,3 +1,41 @@
+2014-01-23  Simon Fraser  <simon.fraser@apple.com>
+
+        Make visibleContentRect() return actualVisibleContentRect() on iOS most of the time
+        https://bugs.webkit.org/show_bug.cgi?id=127456
+        
+        Reviewed by Antti Koivisto.
+        
+        On iOS, visibleContentRect() returns the entire document rect for historical
+        reasons, and actualVisibleContentRect() returns what visibleContentRect()
+        returns on other platforms.
+        
+        In addition, actualVisibleContentRect() was returning an empty rect in WK2.
+        
+        Reduce the confusion of #ifdefs by making visibleContentRect() behave like
+        actualVisibleContentRect() by default on iOS. Where it needs the old behavior,
+        an optional parameter, LegacyIOSDocumentVisibleRect, provides this.
+        
+        Achieve this by having the virtual ScrollableArea::visibleContentRectInternal(),
+        which is called by non-virtual visibleContentRect() and visibleContentRectIncludingScrollbars().
+        
+        Similarly clean up visibleHeight/visibleWidth functions by having visibleSize() be virtual,
+        with non-virtual visibleHeight() and visibleWidth().
+        
+        ScrollableArea subclasses override visibleContentRectInternal() and visibleSize() where necessary.
+        
+        Mechanically change all the call sites of actualVisibleContentRect() to
+        use visibleContentRect(), and the call sites of visibleContentRect()
+        to visibleContentRect(..., LegacyIOSDocumentVisibleRect), adding comments
+        where this may not be appropriate.
+        
+        Change callers of visibleContentRect(IncludeScrollbars...) to visibleContentRectIncludingScrollbars().
+        
+        Also add actualScrollPosition(), and clean up some actualScroll* call sites.
+        
+        No behavior change.
+
+        * WebKit.vcxproj/WebKitExportGenerator/WebKitExports.def.in:
+
 2014-01-22  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Update project and solution files for 64-bit builds

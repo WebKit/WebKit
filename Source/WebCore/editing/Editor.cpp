@@ -3267,7 +3267,9 @@ unsigned Editor::countMatchesForText(const String& target, Range* range, FindOpt
         // Do a "fake" paint in order to execute the code that computes the rendered rect for each text match.
         if (m_frame.view() && m_frame.contentRenderer()) {
             document().updateLayout(); // Ensure layout is up to date.
-            LayoutRect visibleRect = m_frame.view()->visibleContentRect();
+            // FIXME: unclear if we need LegacyIOSDocumentVisibleRect.
+            // FIXME: this should probably look at paintsEntireContents()
+            LayoutRect visibleRect = m_frame.view()->visibleContentRect(ScrollableArea::LegacyIOSDocumentVisibleRect);
             if (!visibleRect.isEmpty()) {
                 GraphicsContext context((PlatformGraphicsContext*)0);
                 context.setPaintingDisabled(true);

@@ -480,7 +480,7 @@ void RenderLayerBacking::updateCompositedBounds()
         LayoutRect clippingBounds;
         if (renderer().style().position() == FixedPosition && renderer().container() == &view) {
 #if PLATFORM(IOS)
-            clippingBounds = view.frameView().visibleContentRect();
+            clippingBounds = view.frameView().visibleContentRect(ScrollableArea::LegacyIOSDocumentVisibleRect);
 #else
             clippingBounds = view.frameView().viewportConstrainedVisibleContentRect();
 #endif

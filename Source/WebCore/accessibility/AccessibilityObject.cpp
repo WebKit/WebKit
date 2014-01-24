@@ -1883,7 +1883,8 @@ bool AccessibilityObject::isOnscreen() const
     for (size_t i = levels; i >= 1; i--) {
         const AccessibilityObject* outer = objects[i];
         const AccessibilityObject* inner = objects[i - 1];
-        const IntRect outerRect = i < levels ? pixelSnappedIntRect(outer->boundingBoxRect()) : outer->getScrollableAreaIfScrollable()->visibleContentRect();
+        // FIXME: unclear if we need LegacyIOSDocumentVisibleRect.
+        const IntRect outerRect = i < levels ? pixelSnappedIntRect(outer->boundingBoxRect()) : outer->getScrollableAreaIfScrollable()->visibleContentRect(ScrollableArea::LegacyIOSDocumentVisibleRect);
         const IntRect innerRect = pixelSnappedIntRect(inner->isAccessibilityScrollView() ? inner->parentObject()->boundingBoxRect() : inner->boundingBoxRect());
         
         if (!outerRect.intersects(innerRect)) {
@@ -1915,7 +1916,8 @@ void AccessibilityObject::scrollToMakeVisibleWithSubFocus(const IntRect& subfocu
 
     LayoutRect objectRect = boundingBoxRect();
     IntPoint scrollPosition = scrollableArea->scrollPosition();
-    IntRect scrollVisibleRect = scrollableArea->visibleContentRect();
+    // FIXME: unclear if we need LegacyIOSDocumentVisibleRect.
+    IntRect scrollVisibleRect = scrollableArea->visibleContentRect(ScrollableArea::LegacyIOSDocumentVisibleRect);
 
     int desiredX = computeBestScrollOffset(
         scrollPosition.x(),

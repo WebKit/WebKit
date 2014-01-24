@@ -191,8 +191,7 @@ private:
     virtual WebCore::IntPoint scrollPosition() const override;
     virtual WebCore::IntPoint minimumScrollPosition() const override;
     virtual WebCore::IntPoint maximumScrollPosition() const override;
-    virtual int visibleHeight() const override { return m_size.height(); }
-    virtual int visibleWidth() const override { return m_size.width(); }
+    virtual WebCore::IntSize visibleSize() const override { return m_size; }
     virtual WebCore::IntSize contentsSize() const override { return m_pdfDocumentSize; }
     virtual WebCore::Scrollbar* horizontalScrollbar() const override { return m_horizontalScrollbar.get(); }
     virtual WebCore::Scrollbar* verticalScrollbar() const override { return m_verticalScrollbar.get(); }

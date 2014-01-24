@@ -1153,11 +1153,7 @@ int DOMWindow::innerHeight() const
     if (!view)
         return 0;
 
-#if PLATFORM(IOS)
-    return view->mapFromLayoutToCSSUnits(static_cast<int>(view->actualVisibleContentRect().height()));
-#else
-    return view->mapFromLayoutToCSSUnits(static_cast<int>(view->visibleContentRect(ScrollableArea::IncludeScrollbars).height()));
-#endif
+    return view->mapFromLayoutToCSSUnits(static_cast<int>(view->visibleContentRectIncludingScrollbars().height()));
 }
 
 int DOMWindow::innerWidth() const
@@ -1169,11 +1165,7 @@ int DOMWindow::innerWidth() const
     if (!view)
         return 0;
 
-#if PLATFORM(IOS)
-    return view->mapFromLayoutToCSSUnits(static_cast<int>(view->actualVisibleContentRect().width()));
-#else
-    return view->mapFromLayoutToCSSUnits(static_cast<int>(view->visibleContentRect(ScrollableArea::IncludeScrollbars).width()));
-#endif
+    return view->mapFromLayoutToCSSUnits(static_cast<int>(view->visibleContentRectIncludingScrollbars().width()));
 }
 
 int DOMWindow::screenX() const
@@ -1215,7 +1207,7 @@ int DOMWindow::scrollX() const
     m_frame->document()->updateLayoutIgnorePendingStylesheets();
 
 #if PLATFORM(IOS)
-    return static_cast<int>(view->actualVisibleContentRect().x() / (m_frame->pageZoomFactor() * m_frame->frameScaleFactor()));
+    return static_cast<int>(view->actualScrollX() / (m_frame->pageZoomFactor() * m_frame->frameScaleFactor()));
 #else
     return view->mapFromLayoutToCSSUnits(view->scrollX());
 #endif
@@ -1236,7 +1228,7 @@ int DOMWindow::scrollY() const
     m_frame->document()->updateLayoutIgnorePendingStylesheets();
 
 #if PLATFORM(IOS)
-    return static_cast<int>(view->actualVisibleContentRect().y() / (m_frame->pageZoomFactor() * m_frame->frameScaleFactor()));
+    return static_cast<int>(view->actualScrollY() / (m_frame->pageZoomFactor() * m_frame->frameScaleFactor()));
 #else
     return view->mapFromLayoutToCSSUnits(view->scrollY());
 #endif
@@ -1452,7 +1444,7 @@ void DOMWindow::scrollBy(int x, int y) const
 
     IntSize scaledOffset(view->mapFromCSSToLayoutUnits(x), view->mapFromCSSToLayoutUnits(y));
 #if PLATFORM(IOS)
-    view->setActualScrollPosition(view->actualVisibleContentRect().location() + scaledOffset);
+    view->setActualScrollPosition(view->actualScrollPosition() + scaledOffset);
 #else
     view->scrollBy(scaledOffset);
 #endif

@@ -1,3 +1,116 @@
+2014-01-23  Simon Fraser  <simon.fraser@apple.com>
+
+        Make visibleContentRect() return actualVisibleContentRect() on iOS most of the time
+        https://bugs.webkit.org/show_bug.cgi?id=127456
+        
+        Reviewed by Antti Koivisto.
+        
+        On iOS, visibleContentRect() returns the entire document rect for historical
+        reasons, and actualVisibleContentRect() returns what visibleContentRect()
+        returns on other platforms.
+        
+        In addition, actualVisibleContentRect() was returning an empty rect in WK2.
+        
+        Reduce the confusion of #ifdefs by making visibleContentRect() behave like
+        actualVisibleContentRect() by default on iOS. Where it needs the old behavior,
+        an optional parameter, LegacyIOSDocumentVisibleRect, provides this.
+        
+        Achieve this by having the virtual ScrollableArea::visibleContentRectInternal(),
+        which is called by non-virtual visibleContentRect() and visibleContentRectIncludingScrollbars().
+        
+        Similarly clean up visibleHeight/visibleWidth functions by having visibleSize() be virtual,
+        with non-virtual visibleHeight() and visibleWidth().
+        
+        ScrollableArea subclasses override visibleContentRectInternal() and visibleSize() where necessary.
+        
+        Mechanically change all the call sites of actualVisibleContentRect() to
+        use visibleContentRect(), and the call sites of visibleContentRect()
+        to visibleContentRect(..., LegacyIOSDocumentVisibleRect), adding comments
+        where this may not be appropriate.
+        
+        Change callers of visibleContentRect(IncludeScrollbars...) to visibleContentRectIncludingScrollbars().
+        
+        Also add actualScrollPosition(), and clean up some actualScroll* call sites.
+        
+        No behavior change.
+
+        * WebCore.exp.in:
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::isOnscreen):
+        (WebCore::AccessibilityObject::scrollToMakeVisibleWithSubFocus):
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::isOffScreen):
+        * dom/Document.cpp:
+        (WebCore::Document::adjustFloatQuadsForScrollAndAbsoluteZoomAndFrameScale):
+        (WebCore::Document::adjustFloatRectForScrollAndAbsoluteZoomAndFrameScale):
+        * dom/MouseRelatedEvent.cpp:
+        (WebCore::MouseRelatedEvent::MouseRelatedEvent):
+        * editing/Editor.cpp:
+        (WebCore::Editor::countMatchesForText):
+        * editing/FrameSelection.cpp:
+        (WebCore::FrameSelection::bounds):
+        (WebCore::FrameSelection::getClippedVisibleTextRectangles):
+        * html/HTMLBodyElement.cpp:
+        (WebCore::HTMLBodyElement::scrollLeft):
+        (WebCore::HTMLBodyElement::scrollTop):
+        * html/ImageDocument.cpp:
+        (WebCore::ImageDocument::imageFitsInWindow):
+        (WebCore::ImageDocument::windowSizeChanged):
+        * inspector/InspectorOverlay.cpp:
+        (WebCore::InspectorOverlay::update):
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::innerHeight):
+        (WebCore::DOMWindow::innerWidth):
+        (WebCore::DOMWindow::scrollX):
+        (WebCore::DOMWindow::scrollY):
+        (WebCore::DOMWindow::scrollBy):
+        * page/FrameView.cpp:
+        (WebCore::FrameView::calculateScrollbarModesForLayout):
+        (WebCore::FrameView::layout):
+        (WebCore::FrameView::scrollContentsSlowPath):
+        (WebCore::FrameView::repaintContentRectangle):
+        (WebCore::FrameView::sendResizeEventIfNeeded):
+        (WebCore::FrameView::windowClipRect):
+        (WebCore::FrameView::isScrollable):
+        (WebCore::FrameView::paintControlTints):
+        * page/SpatialNavigation.cpp:
+        (WebCore::canScrollInDirection):
+        * platform/ScrollView.cpp:
+        (WebCore::ScrollView::unscaledVisibleContentSize):
+        (WebCore::ScrollView::visibleContentRectInternal):
+        (WebCore::ScrollView::updateScrollbars):
+        (WebCore::ScrollView::paint):
+        * platform/ScrollView.h:
+        (WebCore::ScrollView::scrollOffset):
+        (WebCore::ScrollView::actualScrollX):
+        (WebCore::ScrollView::actualScrollY):
+        (WebCore::ScrollView::actualScrollPosition):
+        * platform/ScrollableArea.cpp:
+        (WebCore::ScrollableArea::visibleContentRect):
+        (WebCore::ScrollableArea::visibleContentRectIncludingScrollbars):
+        (WebCore::ScrollableArea::visibleContentRectInternal):
+        * platform/ScrollableArea.h:
+        (WebCore::ScrollableArea::visibleWidth):
+        (WebCore::ScrollableArea::visibleHeight):
+        * platform/graphics/IntSize.h:
+        (WebCore::IntSize::expandedTo): Drive-by cleanup.
+        (WebCore::IntSize::shrunkTo):
+        * platform/gtk/ScrollViewGtk.cpp:
+        (WebCore::ScrollView::visibleContentRect):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::scrollRectToVisible):
+        (WebCore::RenderLayer::maximumScrollPosition):
+        (WebCore::RenderLayer::visibleContentRectInternal):
+        (WebCore::RenderLayer::hitTest):
+        * rendering/RenderLayer.h:
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::updateCompositedBounds):
+        * rendering/RenderListBox.cpp:
+        * rendering/RenderListBox.h:
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::viewRect):
+        (WebCore::RenderView::viewportSize):
+
 2014-01-20  Myles C. Maxfield  <mmaxfield@apple.com>
 
        Turn text-decoration-skip: ink on for all underlines

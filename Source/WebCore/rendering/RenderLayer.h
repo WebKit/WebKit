@@ -1062,9 +1062,8 @@ private:
     virtual IntPoint scrollPosition() const override;
     virtual IntPoint minimumScrollPosition() const override;
     virtual IntPoint maximumScrollPosition() const override;
-    virtual IntRect visibleContentRect(VisibleContentRectIncludesScrollbars) const override;
-    virtual int visibleHeight() const override;
-    virtual int visibleWidth() const override;
+    virtual IntRect visibleContentRectInternal(VisibleContentRectIncludesScrollbars, VisibleContentRectBehavior) const override;
+    virtual IntSize visibleSize() const override { return m_layerSize; }
     virtual IntSize contentsSize() const override;
     virtual IntSize overhangAmount() const override;
     virtual IntPoint lastKnownMousePosition() const override;

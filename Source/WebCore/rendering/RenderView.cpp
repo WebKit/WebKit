@@ -1011,7 +1011,7 @@ LayoutRect RenderView::viewRect() const
 {
     if (shouldUsePrintingLayout())
         return LayoutRect(LayoutPoint(), size());
-    return frameView().visibleContentRect();
+    return frameView().visibleContentRect(ScrollableArea::LegacyIOSDocumentVisibleRect);
 }
 
 IntRect RenderView::unscaledDocumentRect() const
@@ -1105,7 +1105,7 @@ bool RenderView::shouldDisableLayoutStateForSubtree(RenderObject* renderer) cons
 
 IntSize RenderView::viewportSize() const
 {
-    return frameView().visibleContentRect(ScrollableArea::IncludeScrollbars).size();
+    return frameView().visibleContentRectIncludingScrollbars(ScrollableArea::LegacyIOSDocumentVisibleRect).size();
 }
 
 void RenderView::updateHitTestResult(HitTestResult& result, const LayoutPoint& point)

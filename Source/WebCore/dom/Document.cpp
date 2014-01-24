@@ -5807,11 +5807,7 @@ void Document::adjustFloatQuadsForScrollAndAbsoluteZoomAndFrameScale(Vector<Floa
     if (frame())
         inverseFrameScale = 1 / frame()->frameScaleFactor();
 
-#if PLATFORM(IOS)
-    LayoutRect visibleContentRect = view()->actualVisibleContentRect();
-#else
     LayoutRect visibleContentRect = view()->visibleContentRect();
-#endif
     for (size_t i = 0; i < quads.size(); ++i) {
         quads[i].move(-visibleContentRect.x(), -visibleContentRect.y());
         if (zoom != 1)
@@ -5831,11 +5827,7 @@ void Document::adjustFloatRectForScrollAndAbsoluteZoomAndFrameScale(FloatRect& r
     if (frame())
         inverseFrameScale = 1 / frame()->frameScaleFactor();
 
-#if PLATFORM(IOS)
-    LayoutRect visibleContentRect = view()->actualVisibleContentRect();
-#else
     LayoutRect visibleContentRect = view()->visibleContentRect();
-#endif
     rect.move(-visibleContentRect.x(), -visibleContentRect.y());
     if (zoom != 1)
         rect.scale(1 / zoom);

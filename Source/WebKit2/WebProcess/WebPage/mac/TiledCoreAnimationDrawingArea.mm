@@ -732,7 +732,7 @@ void TiledCoreAnimationDrawingArea::commitTransientZoom(double scale, FloatPoint
     RenderView* renderView = frameView->renderView();
     PlatformCALayer* renderViewLayer = static_cast<GraphicsLayerCA*>(renderView->layer()->backing()->graphicsLayer())->platformCALayer();
 
-    FloatRect visibleContentRect = frameView->visibleContentRect(ScrollableArea::IncludeScrollbars);
+    FloatRect visibleContentRect = frameView->visibleContentRectIncludingScrollbars();
 
     FloatPoint constrainedOrigin = visibleContentRect.location();
     constrainedOrigin.moveBy(-origin);
@@ -807,7 +807,7 @@ void TiledCoreAnimationDrawingArea::applyTransientZoomToPage(double scale, Float
     shadowLayer->setPosition(shadowLayer->bounds().center());
 
     FloatPoint unscrolledOrigin(origin);
-    FloatRect visibleContentRect = m_webPage->mainFrameView()->visibleContentRect(ScrollableArea::IncludeScrollbars);
+    FloatRect visibleContentRect = m_webPage->mainFrameView()->visibleContentRectIncludingScrollbars();
     unscrolledOrigin.moveBy(-visibleContentRect.location());
     m_webPage->scalePage(scale, roundedIntPoint(-unscrolledOrigin));
     flushLayers();

@@ -713,7 +713,7 @@ void FrameView::calculateScrollbarModesForLayout(ScrollbarMode& hMode, Scrollbar
         hMode = ScrollbarAuto;
         // Seamless documents begin with heights of 0; we special case that here
         // to correctly render documents that don't need scrollbars.
-        IntSize fullVisibleSize = visibleContentRect(IncludeScrollbars).size();
+        IntSize fullVisibleSize = visibleContentRectIncludingScrollbars(LegacyIOSDocumentVisibleRect).size();
         bool isSeamlessDocument = frame().document() && frame().document()->shouldDisplaySeamlesslyWithParent();
         vMode = (isSeamlessDocument && !fullVisibleSize.height()) ? ScrollbarAlwaysOff : ScrollbarAuto;
     } else {
@@ -1264,11 +1264,7 @@ void FrameView::layout(bool allowSubtree)
                     if (useFixedLayout() && !fixedLayoutSize().isEmpty() && delegatesScrolling())
                         m_lastViewportSize = fixedLayoutSize();
                     else
-#if PLATFORM(IOS)
-                        m_lastViewportSize = actualVisibleContentRect().size();
-#else
-                        m_lastViewportSize = visibleContentRect(IncludeScrollbars).size();
-#endif
+                        m_lastViewportSize = visibleContentRectIncludingScrollbars().size();
 
                     m_lastZoomFactor = root->style().zoom();
 
@@ -1778,7 +1774,8 @@ void FrameView::scrollContentsSlowPath(const IntRect& updateRect)
 {
 #if USE(ACCELERATED_COMPOSITING)
     if (contentsInCompositedLayer()) {
-        IntRect updateRect = visibleContentRect();
+        // FIXME: respect paintsEntireContents()?
+        IntRect updateRect = visibleContentRect(LegacyIOSDocumentVisibleRect);
 
         // Make sure to "apply" the scale factor here since we're converting from frame view
         // coordinates to layer backing coordinates.
@@ -2166,7 +2163,7 @@ void FrameView::repaintContentRectangle(const IntRect& r, bool immediate)
     if ((m_deferringRepaints || m_deferredRepaintTimer.isActive() || delay) && !immediate) {
         IntRect paintRect = r;
         if (clipsRepaints() && !paintsEntireContents())
-            paintRect.intersect(visibleContentRect());
+            paintRect.intersect(visibleContentRect(LegacyIOSDocumentVisibleRect));
         if (paintRect.isEmpty())
             return;
         if (m_repaintCount == cRepaintRectUnionThreshold) {
@@ -2938,11 +2935,7 @@ void FrameView::sendResizeEventIfNeeded()
     if (useFixedLayout() && !fixedLayoutSize().isEmpty() && delegatesScrolling())
         currentSize = fixedLayoutSize();
     else
-#if PLATFORM(IOS)
-        currentSize = actualVisibleContentRect().size();
-#else
-        currentSize = visibleContentRect(IncludeScrollbars).size();
-#endif
+        currentSize = visibleContentRectIncludingScrollbars().size();
 
     float currentZoomFactor = renderView->style().zoom();
     bool shouldSendResizeEvent = !m_firstLayout && (currentSize != m_lastViewportSize || currentZoomFactor != m_lastZoomFactor);
@@ -3165,7 +3158,11 @@ IntRect FrameView::windowClipRect(bool clipToContents) const
         return IntRect(IntPoint(), totalContentsSize());
 
     // Set our clip rect to be our contents.
-    IntRect clipRect = contentsToWindow(visibleContentRect(clipToContents ? ExcludeScrollbars : IncludeScrollbars));
+    IntRect clipRect;
+    if (clipToContents)
+        clipRect = contentsToWindow(visibleContentRect(LegacyIOSDocumentVisibleRect));
+    else
+        clipRect = contentsToWindow(visibleContentRectIncludingScrollbars(LegacyIOSDocumentVisibleRect));
     if (!frame().ownerElement())
         return clipRect;
 
@@ -3279,7 +3276,7 @@ bool FrameView::isScrollable()
 
     // Covers #1
     IntSize totalContentsSize = this->totalContentsSize();
-    IntSize visibleContentSize = visibleContentRect().size();
+    IntSize visibleContentSize = visibleContentRect(LegacyIOSDocumentVisibleRect).size();
     if ((totalContentsSize.height() <= visibleContentSize.height() && totalContentsSize.width() <= visibleContentSize.width()))
         return false;
 
@@ -3582,9 +3579,10 @@ void FrameView::paintControlTints()
     PlatformGraphicsContext* const noContext = 0;
     GraphicsContext context(noContext);
     context.setUpdatingControlTints(true);
-    if (platformWidget())
-        paintContents(&context, visibleContentRect());
-    else
+    if (platformWidget()) {
+        // FIXME: consult paintsEntireContents().
+        paintContents(&context, visibleContentRect(LegacyIOSDocumentVisibleRect));
+    } else
         paint(&context, frameRect());
 }
 

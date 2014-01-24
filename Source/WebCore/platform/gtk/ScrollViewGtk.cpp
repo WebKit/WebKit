@@ -63,7 +63,7 @@ PassRefPtr<Scrollbar> ScrollView::createScrollbar(ScrollbarOrientation orientati
     return Scrollbar::createNativeScrollbar(this, orientation, RegularScrollbar);
 }
 
-IntRect ScrollView::visibleContentRect(VisibleContentRectIncludesScrollbars scrollbarInclusion) const
+IntRect ScrollView::visibleContentRect(VisibleContentRectIncludesScrollbars scrollbarInclusion, VisibleContentRectBehavior) const
 {
     bool includeScrollbars = scrollbarInclusion == IncludeScrollbars;
 

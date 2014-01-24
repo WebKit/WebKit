@@ -53,14 +53,14 @@ ViewGestureGeometryCollector::~ViewGestureGeometryCollector()
 
 void ViewGestureGeometryCollector::collectGeometryForMagnificationGesture()
 {
-    FloatRect visibleContentRect = m_webPage.mainFrameView()->visibleContentRect(ScrollableArea::IncludeScrollbars);
+    FloatRect visibleContentRect = m_webPage.mainFrameView()->visibleContentRectIncludingScrollbars();
     bool frameHandlesMagnificationGesture = m_webPage.mainWebFrame()->handlesPageScaleGesture();
     m_webPage.send(Messages::ViewGestureController::DidCollectGeometryForMagnificationGesture(visibleContentRect, frameHandlesMagnificationGesture));
 }
 
 void ViewGestureGeometryCollector::collectGeometryForSmartMagnificationGesture(FloatPoint origin)
 {
-    FloatRect visibleContentRect = m_webPage.mainFrameView()->visibleContentRect(ScrollableArea::IncludeScrollbars);
+    FloatRect visibleContentRect = m_webPage.mainFrameView()->visibleContentRectIncludingScrollbars();
     bool frameHandlesMagnificationGesture = m_webPage.mainWebFrame()->handlesPageScaleGesture();
 
     FloatPoint scrolledOrigin = origin;

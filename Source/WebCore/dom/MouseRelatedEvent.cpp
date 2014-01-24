@@ -77,7 +77,7 @@ MouseRelatedEvent::MouseRelatedEvent(const AtomicString& eventType, bool canBubb
 #if !PLATFORM(IOS)
             scrollPosition = frameView->scrollPosition();
 #else
-            scrollPosition = frameView->actualVisibleContentRect().location();
+            scrollPosition = frameView->actualScrollPosition();
 #endif
             adjustedPageLocation = frameView->windowToContents(windowLocation);
             float scaleFactor = 1 / (frame->pageZoomFactor() * frame->frameScaleFactor());

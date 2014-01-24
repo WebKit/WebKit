@@ -153,9 +153,23 @@ public:
     virtual IntPoint maximumScrollPosition() const;
 
     enum VisibleContentRectIncludesScrollbars { ExcludeScrollbars, IncludeScrollbars };
-    virtual IntRect visibleContentRect(VisibleContentRectIncludesScrollbars = ExcludeScrollbars) const;
-    virtual int visibleHeight() const = 0;
-    virtual int visibleWidth() const = 0;
+    enum VisibleContentRectBehavior {
+        ContentsVisibleRect,
+#if PLATFORM(IOS)
+        LegacyIOSDocumentViewRect,
+        LegacyIOSDocumentVisibleRect = LegacyIOSDocumentViewRect
+#else
+        LegacyIOSDocumentVisibleRect = ContentsVisibleRect
+#endif
+    };
+
+    IntRect visibleContentRect(VisibleContentRectBehavior = ContentsVisibleRect) const;
+    IntRect visibleContentRectIncludingScrollbars(VisibleContentRectBehavior = ContentsVisibleRect) const;
+
+    int visibleWidth() const { return visibleSize().width(); }
+    int visibleHeight() const { return visibleSize().height(); }
+    virtual IntSize visibleSize() const = 0;
+
     virtual IntSize contentsSize() const = 0;
     virtual IntSize overhangAmount() const { return IntSize(); }
     virtual IntPoint lastKnownMousePosition() const { return IntPoint(); }
@@ -241,6 +255,7 @@ protected:
     bool hasLayerForScrollCorner() const;
 
 private:
+    virtual IntRect visibleContentRectInternal(VisibleContentRectIncludesScrollbars, VisibleContentRectBehavior) const;
     void scrollPositionChanged(const IntPoint&);
     
     // NOTE: Only called from the ScrollAnimator.

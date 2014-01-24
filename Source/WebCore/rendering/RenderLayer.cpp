@@ -2432,7 +2432,7 @@ void RenderLayer::scrollRectToVisible(const LayoutRect& rect, const ScrollAlignm
                 frameElementBase = toHTMLFrameElementBase(ownerElement);
 
             if (frameElementAndViewPermitScroll(frameElementBase, &frameView)) {
-                LayoutRect viewRect = frameView.visibleContentRect();
+                LayoutRect viewRect = frameView.visibleContentRect(LegacyIOSDocumentVisibleRect);
                 LayoutRect exposeRect = getRectToExpose(viewRect, viewRect, rect, alignX, alignY);
 
                 int xOffset = roundToInt(exposeRect.x());
@@ -2458,6 +2458,7 @@ void RenderLayer::scrollRectToVisible(const LayoutRect& rect, const ScrollAlignm
             IntSize scrollOffsetRelativeToDocument = frameView.scrollOffsetRelativeToDocument();
             visibleRectRelativeToDocument.setLocation(IntPoint(scrollOffsetRelativeToDocument.width(), scrollOffsetRelativeToDocument.height()));
 #else
+            // FIXME: is this equivalent to the code above?
             LayoutRect viewRect = frameView.actualVisibleContentRect();
             LayoutRect visibleRectRelativeToDocument = viewRect;
 #endif
@@ -2683,10 +2684,10 @@ IntPoint RenderLayer::minimumScrollPosition() const
 IntPoint RenderLayer::maximumScrollPosition() const
 {
     // FIXME: m_scrollSize may not be up-to-date if m_scrollDimensionsDirty is true.
-    return -scrollOrigin() + roundedIntSize(m_scrollSize) - visibleContentRect(IncludeScrollbars).size();
+    return -scrollOrigin() + roundedIntSize(m_scrollSize) - visibleContentRectIncludingScrollbars(ContentsVisibleRect).size();
 }
 
-IntRect RenderLayer::visibleContentRect(VisibleContentRectIncludesScrollbars scrollbarInclusion) const
+IntRect RenderLayer::visibleContentRectInternal(VisibleContentRectIncludesScrollbars scrollbarInclusion, VisibleContentRectBehavior) const
 {
     int verticalScrollbarWidth = 0;
     int horizontalScrollbarHeight = 0;
@@ -2820,16 +2821,6 @@ IntPoint RenderLayer::convertFromContainingViewToScrollbar(const Scrollbar* scro
 IntSize RenderLayer::contentsSize() const
 {
     return IntSize(scrollWidth(), scrollHeight());
-}
-
-int RenderLayer::visibleHeight() const
-{
-    return m_layerSize.height();
-}
-
-int RenderLayer::visibleWidth() const
-{
-    return m_layerSize.width();
 }
 
 bool RenderLayer::shouldSuspendScrollAnimations() const
@@ -4653,7 +4644,7 @@ bool RenderLayer::hitTest(const HitTestRequest& request, const HitTestLocation& 
 
     LayoutRect hitTestArea = isOutOfFlowRenderFlowThread() ? toRenderFlowThread(&renderer())->visualOverflowRect() : renderer().view().documentRect();
     if (!request.ignoreClipping())
-        hitTestArea.intersect(renderer().view().frameView().visibleContentRect());
+        hitTestArea.intersect(renderer().view().frameView().visibleContentRect(LegacyIOSDocumentVisibleRect));
 
     RenderLayer* insideLayer = hitTestLayer(this, 0, request, result, hitTestArea, hitTestLocation, false);
     if (!insideLayer) {

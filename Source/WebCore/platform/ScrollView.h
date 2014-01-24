@@ -159,8 +159,7 @@ public:
     // In the situation the client is responsible for the scrolling (ie. with a tiled backing store) it is possible to use
     // the setFixedVisibleContentRect instead for the mainframe, though this must be updated manually, e.g just before resuming the page
     // which usually will happen when panning, pinching and rotation ends, or when scale or position are changed manually.
-    virtual IntRect visibleContentRect(VisibleContentRectIncludesScrollbars = ExcludeScrollbars) const override;
-    IntSize visibleSize() const { return visibleContentRect().size(); }
+    virtual IntSize visibleSize() const override { return visibleContentRect(LegacyIOSDocumentVisibleRect).size(); }
 
 #if USE(TILED_BACKING_STORE)
     virtual void setFixedVisibleContentRect(const IntRect& visibleContentRect) { m_fixedVisibleContentRect = visibleContentRect; }
@@ -176,8 +175,6 @@ public:
     void setActualScrollPosition(const IntPoint&);
     TileCache* tileCache();
 #endif
-    virtual int visibleWidth() const override { return visibleContentRect().width(); }
-    virtual int visibleHeight() const override { return visibleContentRect().height(); }
 
     // visibleContentRect().size() is computed from unscaledVisibleContentSize() divided by the value of visibleContentScaleFactor.
     // visibleContentScaleFactor is usually 1, except when the setting delegatesPageScaling is true and the
@@ -204,8 +201,8 @@ public:
     virtual void setContentsSize(const IntSize&);
 
     // Functions for querying the current scrolled position (both as a point, a size, or as individual X and Y values).
-    virtual IntPoint scrollPosition() const override { return visibleContentRect().location(); }
-    IntSize scrollOffset() const { return toIntSize(visibleContentRect().location()); } // Gets the scrolled position as an IntSize. Convenient for adding to other sizes.
+    virtual IntPoint scrollPosition() const override { return visibleContentRect(LegacyIOSDocumentVisibleRect).location(); }
+    IntSize scrollOffset() const { return toIntSize(visibleContentRect(LegacyIOSDocumentVisibleRect).location()); } // Gets the scrolled position as an IntSize. Convenient for adding to other sizes.
     virtual IntPoint maximumScrollPosition() const override; // The maximum position we can be scrolled to.
     virtual IntPoint minimumScrollPosition() const override; // The minimum position we can be scrolled to.
     // Adjust the passed in scroll position to keep it between the minimum and maximum positions.
@@ -214,8 +211,10 @@ public:
     int scrollY() const { return scrollPosition().y(); }
 
 #if PLATFORM(IOS)
-    int actualScrollX() const { return actualVisibleContentRect().x(); }
-    int actualScrollY() const { return actualVisibleContentRect().y(); }
+    int actualScrollX() const { return visibleContentRect().x(); }
+    int actualScrollY() const { return visibleContentRect().y(); }
+    // FIXME: maybe fix scrollPosition() on iOS to return the actual scroll position.
+    IntPoint actualScrollPosition() const { return visibleContentRect().location(); }
 #endif
 
     // scrollOffset() anchors its (0,0) point at the top end of the header if this ScrollableArea
@@ -375,6 +374,8 @@ protected:
     void updateScrollbars(const IntSize& desiredOffset);
 
 private:
+    virtual IntRect visibleContentRectInternal(VisibleContentRectIncludesScrollbars, VisibleContentRectBehavior) const override;
+
     RefPtr<Scrollbar> m_horizontalScrollbar;
     RefPtr<Scrollbar> m_verticalScrollbar;
     ScrollbarMode m_horizontalScrollbarMode;
