@@ -1,3 +1,11 @@
+2014-01-24  Tim Horton  <timothy_horton@apple.com>
+
+        iOS build fix after r162710.
+
+        * UIProcess/API/ios/PageClientImplIOS.h:
+        * UIProcess/API/ios/PageClientImplIOS.mm:
+        (WebKit::PageClientImpl::takeViewSnapshot):
+
 2014-01-24  Enrique Ocaña González  <eocanha@igalia.com>
 
         [GTK] Put cache files in XDG_CACHE_HOME

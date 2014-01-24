@@ -96,6 +96,8 @@ private:
     virtual void setAcceleratedCompositingRootLayer(CALayer *rootLayer) override;
 #endif
 
+    virtual RetainPtr<CGImageRef> takeViewSnapshot() override;
+
     virtual void mainDocumentDidReceiveMobileDocType() override;
 
     virtual void didGetTapHighlightGeometries(uint64_t requestID, const WebCore::Color& color, const Vector<WebCore::FloatQuad>& highlightedQuads, const WebCore::IntSize& topLeftRadius, const WebCore::IntSize& topRightRadius, const WebCore::IntSize& bottomLeftRadius, const WebCore::IntSize& bottomRightRadius) override;

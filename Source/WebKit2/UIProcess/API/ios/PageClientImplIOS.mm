@@ -316,6 +316,12 @@ void PageClientImpl::setAcceleratedCompositingRootLayer(CALayer *rootLayer)
 }
 #endif
 
+RetainPtr<CGImageRef> PageClientImpl::takeViewSnapshot()
+{
+    notImplemented();
+    return nullptr;
+}
+
 void PageClientImpl::mainDocumentDidReceiveMobileDocType()
 {
     [m_view _didReceiveMobileDocTypeForMainFrame];
