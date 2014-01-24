@@ -1139,17 +1139,6 @@ static bool shouldUseLegacyBackgroundSizeShorthandBehavior()
     _private->mainFrameDocumentReady = NO;
     _private->drawsBackground = YES;
     _private->backgroundColor = CGColorRetain(cachedCGColor(Color::white, ColorSpaceDeviceRGB));
-
-#if ENABLE(REMOTE_INSPECTOR)
-    // Production installs always disallow debugging simple HTML documents.
-    // Internal installs allow debugging simple HTML documents (TextFields) if the Internal Setting is enabled.
-    if (!isInternalInstall())
-        _private->page->setRemoteInspectionAllowed(false);
-    else {
-        static BOOL textFieldInspectionEnabled = [[NSUserDefaults standardUserDefaults] boolForKey:WebKitTextFieldRemoteInspectionEnabledPreferenceKey];
-        _private->page->setRemoteInspectionAllowed(textFieldInspectionEnabled);
-    }
-#endif
     
     WebFrameView *frameView = nil;
     frameView = [[WebFrameView alloc] initWithFrame: CGRectMake(0,0,frame.size.width,frame.size.height)];
@@ -1195,6 +1184,17 @@ static bool shouldUseLegacyBackgroundSizeShorthandBehavior()
     _private->page->settings().setMinimumFontSize([_private->preferences minimumFontSize]);
 
     _private->page->setGroupName(groupName);
+
+#if ENABLE(REMOTE_INSPECTOR)
+    // Production installs always disallow debugging simple HTML documents.
+    // Internal installs allow debugging simple HTML documents (TextFields) if the Internal Setting is enabled.
+    if (!isInternalInstall())
+        _private->page->setRemoteInspectionAllowed(false);
+    else {
+        static BOOL textFieldInspectionEnabled = [[NSUserDefaults standardUserDefaults] boolForKey:WebKitTextFieldRemoteInspectionEnabledPreferenceKey];
+        _private->page->setRemoteInspectionAllowed(textFieldInspectionEnabled);
+    }
+#endif
 
     [WebFrame _createMainFrameWithSimpleHTMLDocumentWithPage:_private->page frameView:frameView style:style];
     
