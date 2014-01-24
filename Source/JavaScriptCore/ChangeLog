@@ -1,5 +1,35 @@
 2014-01-23  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Move RegularExpression into JavaScriptCore for inspector
+        https://bugs.webkit.org/show_bug.cgi?id=127526
+
+        Reviewed by Geoffrey Garen.
+
+        Move RegularExpression into JavaScriptCore/yarr so it can
+        be used later on by JavaScriptCore/inspector. Convert to
+        the JSC::Yarr namespace.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj.filters:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * yarr/RegularExpression.cpp: Renamed from Source/WebCore/platform/text/RegularExpression.cpp.
+        (JSC::Yarr::RegularExpression::Private::create):
+        (JSC::Yarr::RegularExpression::Private::Private):
+        (JSC::Yarr::RegularExpression::Private::compile):
+        (JSC::Yarr::RegularExpression::RegularExpression):
+        (JSC::Yarr::RegularExpression::~RegularExpression):
+        (JSC::Yarr::RegularExpression::operator=):
+        (JSC::Yarr::RegularExpression::match):
+        (JSC::Yarr::RegularExpression::searchRev):
+        (JSC::Yarr::RegularExpression::matchedLength):
+        (JSC::Yarr::replace):
+        (JSC::Yarr::RegularExpression::isValid):
+        * yarr/RegularExpression.h: Renamed from Source/WebCore/platform/text/RegularExpression.h.
+
+2014-01-23  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Remove recompileAllJSFunctions timer in ScriptDebugServer
         https://bugs.webkit.org/show_bug.cgi?id=127409
 

@@ -50,7 +50,6 @@
 #include "InspectorCSSAgent.h"
 #include "InspectorPageAgent.h"
 #include "Node.h"
-#include "RegularExpression.h"
 #include "SVGNames.h"
 #include "StyleProperties.h"
 #include "StyleResolver.h"
@@ -64,6 +63,7 @@
 #include <wtf/PassOwnPtr.h>
 #include <wtf/Vector.h>
 #include <wtf/text/StringBuilder.h>
+#include <yarr/RegularExpression.h>
 
 using Inspector::TypeBuilder::Array;
 using WebCore::RuleSourceDataList;
@@ -1005,7 +1005,7 @@ PassRefPtr<Inspector::TypeBuilder::CSS::CSSStyleSheetHeader> InspectorStyleSheet
 
 static PassRefPtr<Inspector::TypeBuilder::Array<String>> selectorsFromSource(const CSSRuleSourceData* sourceData, const String& sheetText)
 {
-    DEFINE_STATIC_LOCAL(RegularExpression, comment, ("/\\*[^]*?\\*/", TextCaseSensitive, MultilineEnabled));
+    DEFINE_STATIC_LOCAL(JSC::Yarr::RegularExpression, comment, ("/\\*[^]*?\\*/", TextCaseSensitive, JSC::Yarr::MultilineEnabled));
     RefPtr<Inspector::TypeBuilder::Array<String>> result = Inspector::TypeBuilder::Array<String>::create();
     const SelectorRangeList& ranges = sourceData->selectorRanges;
     for (size_t i = 0, size = ranges.size(); i < size; ++i) {

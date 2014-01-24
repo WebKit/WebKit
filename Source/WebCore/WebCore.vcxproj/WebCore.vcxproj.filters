@@ -1953,9 +1953,6 @@
     <ClCompile Include="..\platform\text\QuotedPrintable.cpp">
       <Filter>platform\text</Filter>
     </ClCompile>
-    <ClCompile Include="..\platform\text\RegularExpression.cpp">
-      <Filter>platform\text</Filter>
-    </ClCompile>
     <ClCompile Include="..\platform\text\SegmentedString.cpp">
       <Filter>platform\text</Filter>
     </ClCompile>
@@ -8774,9 +8771,6 @@
     <ClInclude Include="..\platform\text\QuotedPrintable.h">
       <Filter>platform\text</Filter>
     </ClInclude>
-    <ClInclude Include="..\platform\text\RegularExpression.h">
-      <Filter>platform\text</Filter>
-    </ClInclude>
     <ClInclude Include="..\platform\text\SegmentedString.h">
       <Filter>platform\text</Filter>
     </ClInclude>
@@ -12085,6 +12079,9 @@
     </ClInclude>
     <ClInclude Include="..\ForwardingHeaders\runtime\StringObject.h">
       <Filter>ForwardingHeaders\runtime</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ForwardingHeaders\yarr\RegularExpression.h">
+      <Filter>ForwardingHeaders\yarr</Filter>
     </ClInclude>
     <ClInclude Include="..\ForwardingHeaders\yarr\Yarr.h">
       <Filter>ForwardingHeaders\yarr</Filter>

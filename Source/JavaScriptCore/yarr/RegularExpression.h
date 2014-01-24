@@ -20,7 +20,7 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #ifndef RegularExpression_h
@@ -28,14 +28,14 @@
 
 #include <wtf/text/WTFString.h>
 
-namespace WebCore {
+namespace JSC { namespace Yarr {
 
 enum MultilineMode {
     MultilineDisabled,
     MultilineEnabled
 };
 
-class RegularExpression {
+class JS_EXPORT_PRIVATE RegularExpression {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     RegularExpression(const String&, TextCaseSensitivity, MultilineMode = MultilineDisabled);
@@ -51,12 +51,12 @@ public:
     bool isValid() const;
 
 private:
-    class Private;    
+    class Private;
     RefPtr<Private> d;
 };
 
-void replace(String&, const RegularExpression&, const String&);
+void JS_EXPORT_PRIVATE replace(String&, const RegularExpression&, const String&);
 
-} // namespace WebCore
+} } // namespace JSC::Yarr
 
 #endif // RegularExpression_h

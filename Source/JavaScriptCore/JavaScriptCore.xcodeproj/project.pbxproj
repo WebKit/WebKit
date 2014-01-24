@@ -931,6 +931,8 @@
 		A55D93A5185012A800400DED /* ScriptFunctionCall.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A55D93A3185012A800400DED /* ScriptFunctionCall.cpp */; };
 		A55D93A6185012A800400DED /* ScriptFunctionCall.h in Headers */ = {isa = PBXBuildFile; fileRef = A55D93A4185012A800400DED /* ScriptFunctionCall.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A55D93AC18514F7900400DED /* InspectorTypeBuilder.h in Headers */ = {isa = PBXBuildFile; fileRef = A55D93AB18514F7900400DED /* InspectorTypeBuilder.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		A57D23ED1891B5540031C7FA /* RegularExpression.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A57D23EB1891B5540031C7FA /* RegularExpression.cpp */; };
+		A57D23EE1891B5540031C7FA /* RegularExpression.h in Headers */ = {isa = PBXBuildFile; fileRef = A57D23EC1891B5540031C7FA /* RegularExpression.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A5840E20187B7B8600843B10 /* InjectedScriptModule.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5840E1E187B7B8600843B10 /* InjectedScriptModule.cpp */; };
 		A5840E21187B7B8600843B10 /* InjectedScriptModule.h in Headers */ = {isa = PBXBuildFile; fileRef = A5840E1F187B7B8600843B10 /* InjectedScriptModule.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A5840E27187C981E00843B10 /* cssmin.py in Headers */ = {isa = PBXBuildFile; fileRef = A5840E26187C980700843B10 /* cssmin.py */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -2320,6 +2322,8 @@
 		A55D93A3185012A800400DED /* ScriptFunctionCall.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScriptFunctionCall.cpp; sourceTree = "<group>"; };
 		A55D93A4185012A800400DED /* ScriptFunctionCall.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScriptFunctionCall.h; sourceTree = "<group>"; };
 		A55D93AB18514F7900400DED /* InspectorTypeBuilder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InspectorTypeBuilder.h; sourceTree = "<group>"; };
+		A57D23EB1891B5540031C7FA /* RegularExpression.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = RegularExpression.cpp; path = yarr/RegularExpression.cpp; sourceTree = "<group>"; };
+		A57D23EC1891B5540031C7FA /* RegularExpression.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RegularExpression.h; path = yarr/RegularExpression.h; sourceTree = "<group>"; };
 		A5840E1E187B7B8600843B10 /* InjectedScriptModule.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InjectedScriptModule.cpp; sourceTree = "<group>"; };
 		A5840E1F187B7B8600843B10 /* InjectedScriptModule.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InjectedScriptModule.h; sourceTree = "<group>"; };
 		A5840E26187C980700843B10 /* cssmin.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = cssmin.py; sourceTree = "<group>"; };
@@ -3888,6 +3892,8 @@
 		86EAC48C0F93E8B9008EC948 /* yarr */ = {
 			isa = PBXGroup;
 			children = (
+				A57D23EB1891B5540031C7FA /* RegularExpression.cpp */,
+				A57D23EC1891B5540031C7FA /* RegularExpression.h */,
 				451539B812DC994500EF7AC4 /* Yarr.h */,
 				863C6D981521111200585E4E /* YarrCanonicalizeUCS2.cpp */,
 				863C6D991521111200585E4E /* YarrCanonicalizeUCS2.h */,
@@ -4531,6 +4537,7 @@
 				BC18C3F50E16F5CD00B34460 /* config.h in Headers */,
 				144836E7132DA7BE005BE785 /* ConservativeRoots.h in Headers */,
 				BC18C3F60E16F5CD00B34460 /* ConstructData.h in Headers */,
+				A57D23EE1891B5540031C7FA /* RegularExpression.h in Headers */,
 				C2EAD2FC14F0249800A4B159 /* CopiedAllocator.h in Headers */,
 				C2C8D03014A3CEFC00578E65 /* CopiedBlock.h in Headers */,
 				C2FC9BD316644DFB00810D33 /* CopiedBlockInlines.h in Headers */,
@@ -6074,6 +6081,7 @@
 				863C6D9C1521111A00585E4E /* YarrCanonicalizeUCS2.cpp in Sources */,
 				86704B8412DBA33700A9FE7B /* YarrInterpreter.cpp in Sources */,
 				86704B8612DBA33700A9FE7B /* YarrJIT.cpp in Sources */,
+				A57D23ED1891B5540031C7FA /* RegularExpression.cpp in Sources */,
 				86704B8912DBA33700A9FE7B /* YarrPattern.cpp in Sources */,
 				A593CF86184038CA00BFCE27 /* InspectorAgentRegistry.cpp in Sources */,
 				86704B4212DB8A8100A9FE7B /* YarrSyntaxChecker.cpp in Sources */,

@@ -703,6 +703,7 @@
     <ClCompile Include="..\runtime\WeakMapPrototype.cpp" />
     <ClCompile Include="..\tools\CodeProfile.cpp" />
     <ClCompile Include="..\tools\CodeProfiling.cpp" />
+    <ClCompile Include="..\yarr\RegularExpression.cpp" />
     <ClCompile Include="..\yarr\YarrCanonicalizeUCS2.cpp" />
     <ClCompile Include="..\yarr\YarrInterpreter.cpp" />
     <ClCompile Include="..\yarr\YarrJIT.cpp" />
@@ -1367,6 +1368,7 @@
     <ClInclude Include="..\tools\CodeProfiling.h" />
     <ClInclude Include="..\tools\ProfileTreeNode.h" />
     <ClInclude Include="..\tools\TieredMMapArray.h" />
+    <ClInclude Include="..\yarr\RegularExpression.h" />
     <ClInclude Include="..\yarr\Yarr.h" />
     <ClInclude Include="..\yarr\YarrCanonicalizeUCS2.h" />
     <ClInclude Include="..\yarr\YarrInterpreter.h" />

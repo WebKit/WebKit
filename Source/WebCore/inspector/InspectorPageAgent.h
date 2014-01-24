@@ -61,7 +61,6 @@ class InspectorOverlay;
 class InstrumentingAgents;
 class URL;
 class Page;
-class RegularExpression;
 class SharedBuffer;
 class TextResourceDecoder;
 

@@ -36,7 +36,6 @@
 #include "ContentSearchUtils.h"
 #include "InspectorPageAgent.h"
 #include "InstrumentingAgents.h"
-#include "RegularExpression.h"
 #include "ScriptDebugServer.h"
 #include <bindings/ScriptObject.h>
 #include <bindings/ScriptValue.h>
@@ -44,6 +43,7 @@
 #include <inspector/InjectedScriptManager.h>
 #include <inspector/InspectorValues.h>
 #include <wtf/text/WTFString.h>
+#include <yarr/RegularExpression.h>
 
 using Inspector::TypeBuilder::Array;
 using Inspector::TypeBuilder::Debugger::FunctionDetails;
@@ -180,7 +180,7 @@ static PassRefPtr<InspectorObject> buildObjectForBreakpointCookie(const String& 
 static bool matches(const String& url, const String& pattern, bool isRegex)
 {
     if (isRegex) {
-        RegularExpression regex(pattern, TextCaseSensitive);
+        JSC::Yarr::RegularExpression regex(pattern, TextCaseSensitive);
         return regex.match(url) != -1;
     }
     return url == pattern;

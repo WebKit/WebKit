@@ -31,11 +31,11 @@
 #if ENABLE(INSPECTOR)
 
 #include "ContentSearchUtils.h"
-#include "RegularExpression.h"
 #include <inspector/InspectorJSTypeBuilders.h>
 #include <inspector/InspectorValues.h>
 #include <wtf/BumpPointerAllocator.h>
 #include <wtf/StdLibExtras.h>
+#include <yarr/RegularExpression.h>
 #include <yarr/Yarr.h>
 
 using namespace Inspector;
@@ -79,7 +79,7 @@ TextPosition textPositionFromOffset(size_t offset, const Vector<size_t>& lineEnd
     return TextPosition(OrdinalNumber::fromZeroBasedInt(lineIndex), OrdinalNumber::fromZeroBasedInt(column));
 }
 
-static Vector<std::pair<int, String>> getRegularExpressionMatchesByLines(const RegularExpression& regex, const String& text)
+static Vector<std::pair<int, String>> getRegularExpressionMatchesByLines(const JSC::Yarr::RegularExpression& regex, const String& text)
 {
     Vector<std::pair<int, String>> result;
     if (text.isEmpty())
@@ -129,13 +129,13 @@ static PassRefPtr<Inspector::TypeBuilder::GenericTypes::SearchMatch> buildObject
         .release();
 }
 
-RegularExpression createSearchRegex(const String& query, bool caseSensitive, bool isRegex)
+JSC::Yarr::RegularExpression createSearchRegex(const String& query, bool caseSensitive, bool isRegex)
 {
     String regexSource = isRegex ? query : createSearchRegexSource(query);
-    return RegularExpression(regexSource, caseSensitive ? TextCaseSensitive : TextCaseInsensitive);
+    return JSC::Yarr::RegularExpression(regexSource, caseSensitive ? TextCaseSensitive : TextCaseInsensitive);
 }
 
-int countRegularExpressionMatches(const RegularExpression& regex, const String& content)
+int countRegularExpressionMatches(const JSC::Yarr::RegularExpression& regex, const String& content)
 {
     if (content.isEmpty())
         return 0;
@@ -158,7 +158,7 @@ PassRefPtr<Inspector::TypeBuilder::Array<Inspector::TypeBuilder::GenericTypes::S
 {
     RefPtr<Inspector::TypeBuilder::Array<Inspector::TypeBuilder::GenericTypes::SearchMatch>> result = Inspector::TypeBuilder::Array<Inspector::TypeBuilder::GenericTypes::SearchMatch>::create();
 
-    RegularExpression regex = ContentSearchUtils::createSearchRegex(query, caseSensitive, isRegex);
+    JSC::Yarr::RegularExpression regex = ContentSearchUtils::createSearchRegex(query, caseSensitive, isRegex);
     Vector<std::pair<int, String>> matches = getRegularExpressionMatchesByLines(regex, text);
 
     for (Vector<std::pair<int, String>>::const_iterator it = matches.begin(); it != matches.end(); ++it)

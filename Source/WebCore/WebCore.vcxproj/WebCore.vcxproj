@@ -8479,7 +8479,6 @@
     <ClCompile Include="..\platform\text\LocaleToScriptMappingDefault.cpp" />
     <ClCompile Include="..\platform\text\PlatformLocale.cpp" />
     <ClCompile Include="..\platform\text\QuotedPrintable.cpp" />
-    <ClCompile Include="..\platform\text\RegularExpression.cpp" />
     <ClCompile Include="..\platform\text\SegmentedString.cpp" />
     <ClCompile Include="..\platform\graphics\StringTruncator.cpp" />
     <ClCompile Include="..\platform\graphics\SurrogatePairAwareTextIterator.cpp" />
@@ -19615,7 +19614,6 @@
     <ClInclude Include="..\platform\text\ParserUtilities.h" />
     <ClInclude Include="..\platform\text\PlatformLocale.h" />
     <ClInclude Include="..\platform\text\QuotedPrintable.h" />
-    <ClInclude Include="..\platform\text\RegularExpression.h" />
     <ClInclude Include="..\platform\text\SegmentedString.h" />
     <ClInclude Include="..\platform\text\StringHash.h" />
     <ClInclude Include="..\platform\text\StringImpl.h" />
@@ -20877,6 +20875,7 @@
     <ClInclude Include="..\ForwardingHeaders\runtime\Operations.h" />
     <ClInclude Include="..\ForwardingHeaders\runtime\Protect.h" />
     <ClInclude Include="..\ForwardingHeaders\runtime\StringObject.h" />
+    <ClInclude Include="..\ForwardingHeaders\yarr\RegularExpression.h" />
     <ClInclude Include="..\ForwardingHeaders\yarr\Yarr.h" />
     <ClInclude Include="..\ForwardingHeaders\yarr\YarrInterpreter.h" />
     <ClInclude Include="..\ForwardingHeaders\yarr\YarrPattern.h" />

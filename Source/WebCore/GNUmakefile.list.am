@@ -5950,8 +5950,6 @@ platform_sources += \
 	Source/WebCore/platform/text/PlatformLocale.h \
 	Source/WebCore/platform/text/QuotedPrintable.cpp \
 	Source/WebCore/platform/text/QuotedPrintable.h \
-	Source/WebCore/platform/text/RegularExpression.cpp \
-	Source/WebCore/platform/text/RegularExpression.h \
 	Source/WebCore/platform/text/SegmentedString.cpp \
 	Source/WebCore/platform/text/SegmentedString.h \
 	Source/WebCore/platform/text/StringWithDirection.h \

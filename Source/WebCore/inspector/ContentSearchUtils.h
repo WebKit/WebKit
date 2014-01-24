@@ -36,14 +36,16 @@
 #include <wtf/text/TextPosition.h>
 #include <wtf/text/WTFString.h>
 
-namespace WebCore {
-
+namespace JSC { namespace Yarr {
 class RegularExpression;
+} }
+
+namespace WebCore {
 
 namespace ContentSearchUtils {
 
-RegularExpression createSearchRegex(const String& query, bool caseSensitive, bool isRegex);
-int countRegularExpressionMatches(const RegularExpression&, const String&);
+JSC::Yarr::RegularExpression createSearchRegex(const String& query, bool caseSensitive, bool isRegex);
+int countRegularExpressionMatches(const JSC::Yarr::RegularExpression&, const String&);
 PassRefPtr<Inspector::TypeBuilder::Array<Inspector::TypeBuilder::GenericTypes::SearchMatch>> searchInTextByLines(const String& text, const String& query, const bool caseSensitive, const bool isRegex);
 TextPosition textPositionFromOffset(size_t offset, const Vector<size_t>& lineEndings);
 PassOwnPtr<Vector<size_t>> lineEndings(const String&);

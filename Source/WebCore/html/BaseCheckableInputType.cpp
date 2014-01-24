@@ -37,7 +37,6 @@
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"
 #include "KeyboardEvent.h"
-#include "RegularExpression.h"
 
 namespace WebCore {
 

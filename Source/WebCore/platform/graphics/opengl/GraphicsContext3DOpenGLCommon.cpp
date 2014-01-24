@@ -23,7 +23,7 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #include "config.h"
@@ -47,7 +47,6 @@
 #include "IntSize.h"
 #include "Logging.h"
 #include "NotImplemented.h"
-#include "RegularExpression.h"
 #include "TemporaryOpenGLSetting.h"
 #include <cstring>
 #include <runtime/ArrayBuffer.h>
@@ -57,6 +56,7 @@
 #include <runtime/Uint8Array.h>
 #include <wtf/MainThread.h>
 #include <wtf/text/CString.h>
+#include <yarr/RegularExpression.h>
 
 #if PLATFORM(IOS)
 #import <OpenGLES/ES2/glext.h>
@@ -1307,7 +1307,7 @@ String GraphicsContext3D::getUnmangledInfoLog(Platform3DObject shaders[2], GC3Ds
 {
     LOG(WebGL, "Was: %s", log.utf8().data());
 
-    RegularExpression regExp("webgl_[0123456789abcdefABCDEF]+", TextCaseSensitive);
+    JSC::Yarr::RegularExpression regExp("webgl_[0123456789abcdefABCDEF]+", TextCaseSensitive);
 
     String processedLog;
     

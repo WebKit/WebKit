@@ -1197,6 +1197,8 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/tools/CodeProfiling.h \
 	Source/JavaScriptCore/tools/ProfileTreeNode.h \
 	Source/JavaScriptCore/tools/TieredMMapArray.h \
+	Source/JavaScriptCore/yarr/RegularExpression.h \
+	Source/JavaScriptCore/yarr/RegularExpression.cpp \
 	Source/JavaScriptCore/yarr/Yarr.h \
 	Source/JavaScriptCore/yarr/YarrCanonicalizeUCS2.cpp \
 	Source/JavaScriptCore/yarr/YarrCanonicalizeUCS2.h \

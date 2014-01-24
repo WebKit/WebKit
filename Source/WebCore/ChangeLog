@@ -1,3 +1,55 @@
+2014-01-23  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Move RegularExpression into JavaScriptCore for inspector
+        https://bugs.webkit.org/show_bug.cgi?id=127526
+
+        Reviewed by Geoffrey Garen.
+
+        Update as appropriate for the moved file and namespace
+        change for class RegularExpression.
+
+        * CMakeLists.txt:
+        * ForwardingHeaders/yarr/RegularExpression.h: Added.
+        * GNUmakefile.list.am:
+        * WebCore.exp.in:
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.vcxproj/WebCore.vcxproj.filters:
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/DOMImplementation.h:
+        * html/BaseCheckableInputType.cpp:
+        * html/BaseTextInputType.cpp:
+        (WebCore::BaseTextInputType::patternMismatch):
+        * html/EmailInputType.cpp:
+        (WebCore::isValidEmailAddress):
+        * html/InputType.cpp:
+        * inspector/ContentSearchUtils.cpp:
+        (WebCore::ContentSearchUtils::getRegularExpressionMatchesByLines):
+        (WebCore::ContentSearchUtils::createSearchRegex):
+        (WebCore::ContentSearchUtils::countRegularExpressionMatches):
+        (WebCore::ContentSearchUtils::searchInTextByLines):
+        * inspector/ContentSearchUtils.h:
+        * inspector/InspectorDebuggerAgent.cpp:
+        (WebCore::matches):
+        (WebCore::InspectorDebuggerAgent::breakpointActionLog):
+        (WebCore::InspectorDebuggerAgent::breakpointActionSound):
+        * inspector/InspectorDebuggerAgent.h:
+        * inspector/InspectorPageAgent.cpp:
+        (WebCore::InspectorPageAgent::searchInResources):
+        * inspector/InspectorPageAgent.h:
+        * inspector/InspectorRuntimeAgent.cpp:
+        * inspector/InspectorRuntimeAgent.h:
+        * inspector/InspectorStyleSheet.cpp:
+        (WebCore::selectorsFromSource):
+        * inspector/WorkerDebuggerAgent.cpp:
+        * page/Frame.cpp:
+        (WebCore::createRegExpForLabels):
+        (WebCore::Frame::searchForLabelsAboveCell):
+        (WebCore::Frame::searchForLabelsBeforeElement):
+        (WebCore::matchLabelsAgainstString):
+        * page/Frame.h:
+        * platform/graphics/opengl/GraphicsContext3DOpenGLCommon.cpp:
+        (WebCore::GraphicsContext3D::getUnmangledInfoLog):
+
 2014-01-23  Brady Eidson  <beidson@apple.com>
 
         IDB: Support IDBObjectStore.clear()

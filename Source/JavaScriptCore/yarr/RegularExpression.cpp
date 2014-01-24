@@ -22,17 +22,17 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #include "config.h"
 #include "RegularExpression.h"
 
+#include "Yarr.h"
+#include <wtf/Assertions.h>
 #include <wtf/BumpPointerAllocator.h>
-#include <yarr/Yarr.h>
-#include "Logging.h"
 
-namespace WebCore {
+namespace JSC { namespace Yarr {
 
 class RegularExpression::Private : public RefCounted<RegularExpression::Private> {
 public:
@@ -50,7 +50,7 @@ private:
     Private(const String& pattern, TextCaseSensitivity caseSensitivity, MultilineMode multilineMode)
         : lastMatchLength(-1)
         , m_regExpByteCode(compile(pattern, caseSensitivity, multilineMode))
-        , m_constructionError(0)
+        , m_constructionError(nullptr)
     {
     }
 
@@ -114,7 +114,7 @@ int RegularExpression::match(const String& str, int startFrom, int* matchLength)
     if (str.length() <= INT_MAX)
         result = JSC::Yarr::interpret(d->m_regExpByteCode.get(), str, startFrom, offsetVector);
     else {
-        // This code can't handle unsigned offsets. Limit our processing to strings with offsets that 
+        // This code can't handle unsigned offsets. Limit our processing to strings with offsets that
         // can be represented as ints.
         result = JSC::Yarr::offsetNoMatch;
     }
@@ -172,7 +172,7 @@ void replace(String& string, const RegularExpression& target, const String& repl
         string.replace(index, matchLength, replacement);
         index += replacement.length();
         if (!matchLength)
-            break;  // Avoid infinite loop on 0-length matches, e.g. [a-z]*
+            break; // Avoid infinite loop on 0-length matches, e.g. [a-z]*
     }
 }
 
@@ -181,4 +181,4 @@ bool RegularExpression::isValid() const
     return d->m_regExpByteCode;
 }
 
-} // namespace WebCore
+} } // namespace JSC::Yarr

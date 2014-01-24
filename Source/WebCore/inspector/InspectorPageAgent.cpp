@@ -65,7 +65,6 @@
 #include "MainFrame.h"
 #include "MemoryCache.h"
 #include "Page.h"
-#include "RegularExpression.h"
 #include "ResourceBuffer.h"
 #include "ScriptController.h"
 #include "SecurityOrigin.h"
@@ -80,6 +79,7 @@
 #include <wtf/Vector.h>
 #include <wtf/text/Base64.h>
 #include <wtf/text/StringBuilder.h>
+#include <yarr/RegularExpression.h>
 
 #if ENABLE(WEB_ARCHIVE) && USE(CF)
 #include "LegacyWebArchive.h"
@@ -627,7 +627,7 @@ void InspectorPageAgent::searchInResources(ErrorString*, const String& text, con
 
     bool isRegex = optionalIsRegex ? *optionalIsRegex : false;
     bool caseSensitive = optionalCaseSensitive ? *optionalCaseSensitive : false;
-    RegularExpression regex = ContentSearchUtils::createSearchRegex(text, caseSensitive, isRegex);
+    JSC::Yarr::RegularExpression regex = ContentSearchUtils::createSearchRegex(text, caseSensitive, isRegex);
 
     for (Frame* frame = &m_page->mainFrame(); frame; frame = frame->tree().traverseNext(&m_page->mainFrame())) {
         String content;

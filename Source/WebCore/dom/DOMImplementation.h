@@ -38,7 +38,6 @@ class DocumentType;
 class Frame;
 class HTMLDocument;
 class URL;
-class RegularExpression;
 
 typedef int ExceptionCode;
 

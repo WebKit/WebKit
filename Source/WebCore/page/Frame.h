@@ -61,6 +61,10 @@ OBJC_CLASS NSString;
 typedef struct HBITMAP__* HBITMAP;
 #endif
 
+namespace JSC { namespace Yarr {
+class RegularExpression;
+} }
+
 namespace WebCore {
 
     class AnimationController;
@@ -81,7 +85,6 @@ namespace WebCore {
     class MainFrame;
     class Node;
     class Range;
-    class RegularExpression;
     class RenderLayer;
     class RenderView;
     class RenderWidget;
@@ -237,7 +240,7 @@ namespace WebCore {
         Document* documentAtPoint(const IntPoint& windowPoint);
         PassRefPtr<Range> rangeForPoint(const IntPoint& framePoint);
 
-        String searchForLabelsAboveCell(RegularExpression*, HTMLTableCellElement*, size_t* resultDistanceFromStartOfCell);
+        String searchForLabelsAboveCell(JSC::Yarr::RegularExpression*, HTMLTableCellElement*, size_t* resultDistanceFromStartOfCell);
         String searchForLabelsBeforeElement(const Vector<String>& labels, Element*, size_t* resultDistance, bool* resultIsInCellAbove);
         String matchLabelsAgainstElement(const Vector<String>& labels, Element*);
 

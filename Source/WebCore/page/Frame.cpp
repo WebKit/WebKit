@@ -75,7 +75,6 @@
 #include "Page.h"
 #include "PageCache.h"
 #include "PageGroup.h"
-#include "RegularExpression.h"
 #include "RenderTableCell.h"
 #include "RenderText.h"
 #include "RenderTextControl.h"
@@ -108,6 +107,7 @@
 #include <wtf/PassOwnPtr.h>
 #include <wtf/RefCountedLeakCounter.h>
 #include <wtf/StdLibExtras.h>
+#include <yarr/RegularExpression.h>
 
 #if USE(ACCELERATED_COMPOSITING)
 #include "RenderLayerCompositor.h"
@@ -319,12 +319,12 @@ void Frame::sendOrientationChangeEvent(int orientation)
 }
 #endif // ENABLE(ORIENTATION_EVENTS)
 
-static PassOwnPtr<RegularExpression> createRegExpForLabels(const Vector<String>& labels)
+static PassOwnPtr<JSC::Yarr::RegularExpression> createRegExpForLabels(const Vector<String>& labels)
 {
     // REVIEW- version of this call in FrameMac.mm caches based on the NSArray ptrs being
     // the same across calls.  We can't do that.
 
-    DEFINE_STATIC_LOCAL(RegularExpression, wordRegExp, ("\\w", TextCaseSensitive));
+    DEFINE_STATIC_LOCAL(JSC::Yarr::RegularExpression, wordRegExp, ("\\w", TextCaseSensitive));
     String pattern("(");
     unsigned int numLabels = labels.size();
     unsigned int i;
@@ -350,10 +350,10 @@ static PassOwnPtr<RegularExpression> createRegExpForLabels(const Vector<String>&
             pattern.append("\\b");
     }
     pattern.append(")");
-    return adoptPtr(new RegularExpression(pattern, TextCaseInsensitive));
+    return adoptPtr(new JSC::Yarr::RegularExpression(pattern, TextCaseInsensitive));
 }
 
-String Frame::searchForLabelsAboveCell(RegularExpression* regExp, HTMLTableCellElement* cell, size_t* resultDistanceFromStartOfCell)
+String Frame::searchForLabelsAboveCell(JSC::Yarr::RegularExpression* regExp, HTMLTableCellElement* cell, size_t* resultDistanceFromStartOfCell)
 {
     HTMLTableCellElement* aboveCell = cell->cellAbove();
     if (aboveCell) {
@@ -382,7 +382,7 @@ String Frame::searchForLabelsAboveCell(RegularExpression* regExp, HTMLTableCellE
 
 String Frame::searchForLabelsBeforeElement(const Vector<String>& labels, Element* element, size_t* resultDistance, bool* resultIsInCellAbove)
 {
-    OwnPtr<RegularExpression> regExp(createRegExpForLabels(labels));
+    OwnPtr<JSC::Yarr::RegularExpression> regExp(createRegExpForLabels(labels));
     // We stop searching after we've seen this many chars
     const unsigned int charsSearchedThreshold = 500;
     // This is the absolute max we search.  We allow a little more slop than
@@ -452,10 +452,10 @@ static String matchLabelsAgainstString(const Vector<String>& labels, const Strin
     String mutableStringToMatch = stringToMatch;
 
     // Make numbers and _'s in field names behave like word boundaries, e.g., "address2"
-    replace(mutableStringToMatch, RegularExpression("\\d", TextCaseSensitive), " ");
+    replace(mutableStringToMatch, JSC::Yarr::RegularExpression("\\d", TextCaseSensitive), " ");
     mutableStringToMatch.replace('_', ' ');
     
-    OwnPtr<RegularExpression> regExp(createRegExpForLabels(labels));
+    OwnPtr<JSC::Yarr::RegularExpression> regExp(createRegExpForLabels(labels));
     // Use the largest match we can find in the whole string
     int pos;
     int length;

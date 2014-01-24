@@ -29,9 +29,9 @@
  */
 
 #include "config.h"
+#include "WorkerDebuggerAgent.h"
 
 #if ENABLE(JAVASCRIPT_DEBUGGER) && ENABLE(INSPECTOR)
-#include "WorkerDebuggerAgent.h"
 
 #include "ScriptDebugServer.h"
 #include "WorkerGlobalScope.h"

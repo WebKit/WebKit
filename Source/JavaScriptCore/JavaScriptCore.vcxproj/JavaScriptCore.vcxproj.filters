@@ -789,6 +789,9 @@
     <ClCompile Include="..\tools\CodeProfiling.cpp">
       <Filter>tools</Filter>
     </ClCompile>
+    <ClCompile Include="..\yarr\RegularExpression.cpp">
+      <Filter>yarr</Filter>
+    </ClCompile>
     <ClCompile Include="..\yarr\YarrCanonicalizeUCS2.cpp">
       <Filter>yarr</Filter>
     </ClCompile>
@@ -2412,6 +2415,9 @@
       <Filter>tools</Filter>
     </ClInclude>
     <ClInclude Include="..\yarr\Yarr.h">
+      <Filter>yarr</Filter>
+    </ClInclude>
+    <ClInclude Include="..\yarr\RegularExpression.h">
       <Filter>yarr</Filter>
     </ClInclude>
     <ClInclude Include="..\yarr\YarrCanonicalizeUCS2.h">

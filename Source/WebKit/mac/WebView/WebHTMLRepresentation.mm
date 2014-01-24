@@ -57,15 +57,16 @@
 #import <WebCore/MIMETypeRegistry.h>
 #import <WebCore/NodeTraversal.h>
 #import <WebCore/Range.h>
-#import <WebCore/RegularExpression.h>
 #import <WebCore/RenderElement.h>
 #import <WebCore/TextResourceDecoder.h>
 #import <WebKit/DOMHTMLInputElement.h>
+#import <yarr/RegularExpression.h>
 #import <wtf/Assertions.h>
 #import <wtf/StdLibExtras.h>
 
 using namespace WebCore;
 using namespace HTMLNames;
+using JSC::Yarr::RegularExpression;
 
 @interface WebHTMLRepresentationPrivate : NSObject {
 @public

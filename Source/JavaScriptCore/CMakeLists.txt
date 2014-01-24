@@ -458,6 +458,7 @@ set(JavaScriptCore_SOURCES
     tools/CodeProfile.cpp
     tools/CodeProfiling.cpp
 
+    yarr/RegularExpression.cpp
     yarr/YarrCanonicalizeUCS2.cpp
     yarr/YarrInterpreter.cpp
     yarr/YarrJIT.cpp

@@ -60,7 +60,6 @@
 #include "PasswordInputType.h"
 #include "RadioInputType.h"
 #include "RangeInputType.h"
-#include "RegularExpression.h"
 #include "RenderElement.h"
 #include "RenderTheme.h"
 #include "ResetInputType.h"
