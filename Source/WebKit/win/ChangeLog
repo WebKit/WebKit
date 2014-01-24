@@ -1,3 +1,10 @@
+2014-01-23  Simon Fraser  <simon.fraser@apple.com>
+
+        Another Windows fix.
+
+        * WebFrame.cpp:
+        (WebFrame::frameBounds):
+
 2014-01-23  peavo@outlook.com  <peavo@outlook.com>
 
         [WinCairo] Compile error.
