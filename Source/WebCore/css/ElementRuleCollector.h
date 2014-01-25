@@ -25,6 +25,7 @@
 #include "MediaQueryEvaluator.h"
 #include "SelectorChecker.h"
 #include "StyleResolver.h"
+#include <memory>
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
 
@@ -99,7 +100,7 @@ private:
     SelectorChecker::Mode m_mode;
     bool m_canUseFastReject;
 
-    OwnPtr<Vector<const RuleData*, 32>> m_matchedRules;
+    std::unique_ptr<Vector<const RuleData*, 32>> m_matchedRules;
 
     // Output.
     Vector<RefPtr<StyleRuleBase>> m_matchedRuleList;

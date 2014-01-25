@@ -24,6 +24,7 @@
 #include "CSSParserMode.h"
 #include "CSSRule.h"
 #include "StyleSheet.h"
+#include <memory>
 #include <wtf/HashMap.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/text/AtomicStringHash.h>
@@ -135,7 +136,7 @@ private:
 
     mutable RefPtr<MediaList> m_mediaCSSOMWrapper;
     mutable Vector<RefPtr<CSSRule>> m_childRuleCSSOMWrappers;
-    mutable OwnPtr<CSSRuleList> m_ruleListCSSOMWrapper;
+    mutable std::unique_ptr<CSSRuleList> m_ruleListCSSOMWrapper;
 };
 
 } // namespace

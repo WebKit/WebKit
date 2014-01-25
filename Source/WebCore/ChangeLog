@@ -1,5 +1,26 @@
 2014-01-25  Zan Dobersek  <zdobersek@igalia.com>
 
+        Move CSSGroupingRule, CSSStyleSheet, ElementRuleCollector to std::unique_ptr
+        https://bugs.webkit.org/show_bug.cgi?id=127575
+
+        Reviewed by Andreas Kling.
+
+        Use std::unique_ptr and std::make_unique in place of OwnPtr and adoptPtr
+        in the CSSGroupingRule, CSSStyleSheet and ElementRuleCollector classes.
+
+        * css/CSSFunctionValue.cpp: Remove the unnecessary PassOwnPtr header inclusion.
+        * css/CSSGroupingRule.cpp:
+        (WebCore::CSSGroupingRule::cssRules):
+        * css/CSSGroupingRule.h:
+        * css/CSSStyleSheet.cpp:
+        (WebCore::CSSStyleSheet::cssRules):
+        * css/CSSStyleSheet.h:
+        * css/ElementRuleCollector.cpp:
+        (WebCore::ElementRuleCollector::addMatchedRule):
+        * css/ElementRuleCollector.h:
+
+2014-01-25  Zan Dobersek  <zdobersek@igalia.com>
+
         Move MediaQueryMatcher, SelectorFilter to std::unique_ptr
         https://bugs.webkit.org/show_bug.cgi?id=127574
 

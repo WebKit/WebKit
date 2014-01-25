@@ -28,7 +28,6 @@
 
 #include "CSSParserValues.h"
 #include "CSSValueList.h"
-#include <wtf/PassOwnPtr.h>
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {

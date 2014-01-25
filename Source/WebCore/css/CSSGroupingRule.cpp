@@ -144,7 +144,7 @@ CSSRule* CSSGroupingRule::item(unsigned index) const
 CSSRuleList* CSSGroupingRule::cssRules() const
 {
     if (!m_ruleListCSSOMWrapper)
-        m_ruleListCSSOMWrapper = adoptPtr(new LiveCSSRuleList<CSSGroupingRule>(const_cast<CSSGroupingRule*>(this)));
+        m_ruleListCSSOMWrapper = std::make_unique<LiveCSSRuleList<CSSGroupingRule>>(const_cast<CSSGroupingRule*>(this));
     return m_ruleListCSSOMWrapper.get();
 }
 

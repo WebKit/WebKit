@@ -25,6 +25,7 @@
 
 #include "CSSRule.h"
 #include "StyleRule.h"
+#include <memory>
 #include <wtf/Vector.h>
 
 namespace WebCore {
@@ -53,7 +54,7 @@ protected:
 
     RefPtr<StyleRuleGroup> m_groupRule;
     mutable Vector<RefPtr<CSSRule>> m_childRuleCSSOMWrappers;
-    mutable OwnPtr<CSSRuleList> m_ruleListCSSOMWrapper;
+    mutable std::unique_ptr<CSSRuleList> m_ruleListCSSOMWrapper;
 };
 
 } // namespace WebCore

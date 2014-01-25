@@ -360,7 +360,7 @@ PassRefPtr<CSSRuleList> CSSStyleSheet::cssRules()
     if (!canAccessRules())
         return 0;
     if (!m_ruleListCSSOMWrapper)
-        m_ruleListCSSOMWrapper = adoptPtr(new StyleSheetCSSRuleList(this));
+        m_ruleListCSSOMWrapper = std::make_unique<StyleSheetCSSRuleList>(this);
     return m_ruleListCSSOMWrapper.get();
 }
 

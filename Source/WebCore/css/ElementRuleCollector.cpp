@@ -90,7 +90,7 @@ const Vector<RefPtr<StyleRuleBase>>& ElementRuleCollector::matchedRuleList() con
 inline void ElementRuleCollector::addMatchedRule(const RuleData* rule)
 {
     if (!m_matchedRules)
-        m_matchedRules = adoptPtr(new Vector<const RuleData*, 32>);
+        m_matchedRules = std::make_unique<Vector<const RuleData*, 32>>();
     m_matchedRules->append(rule);
 }
 
