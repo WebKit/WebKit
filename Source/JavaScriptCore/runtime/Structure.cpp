@@ -165,8 +165,8 @@ Structure::Structure(VM& vm, JSGlobalObject* globalObject, JSValue prototype, co
     , m_inlineCapacity(inlineCapacity)
     , m_dictionaryKind(NoneDictionaryKind)
     , m_isPinnedPropertyTable(false)
-    , m_hasGetterSetterProperties(false)
-    , m_hasReadOnlyOrGetterSetterPropertiesExcludingProto(false)
+    , m_hasGetterSetterProperties(classInfo->hasStaticSetterOrReadonlyProperties(vm))
+    , m_hasReadOnlyOrGetterSetterPropertiesExcludingProto(classInfo->hasStaticSetterOrReadonlyProperties(vm))
     , m_hasNonEnumerableProperties(false)
     , m_attributesInPrevious(0)
     , m_specificFunctionThrashCount(0)
@@ -177,6 +177,8 @@ Structure::Structure(VM& vm, JSGlobalObject* globalObject, JSValue prototype, co
     ASSERT(inlineCapacity <= JSFinalObject::maxInlineCapacity());
     ASSERT(static_cast<PropertyOffset>(inlineCapacity) < firstOutOfLineOffset);
     ASSERT(!typeInfo.structureHasRareData());
+    ASSERT(hasReadOnlyOrGetterSetterPropertiesExcludingProto() || !m_classInfo->hasStaticSetterOrReadonlyProperties(vm));
+    ASSERT(hasGetterSetterProperties() || !m_classInfo->hasStaticSetterOrReadonlyProperties(vm));
 }
 
 const ClassInfo Structure::s_info = { "Structure", 0, 0, 0, CREATE_METHOD_TABLE(Structure) };
@@ -192,8 +194,8 @@ Structure::Structure(VM& vm)
     , m_inlineCapacity(0)
     , m_dictionaryKind(NoneDictionaryKind)
     , m_isPinnedPropertyTable(false)
-    , m_hasGetterSetterProperties(false)
-    , m_hasReadOnlyOrGetterSetterPropertiesExcludingProto(false)
+    , m_hasGetterSetterProperties(m_classInfo->hasStaticSetterOrReadonlyProperties(vm))
+    , m_hasReadOnlyOrGetterSetterPropertiesExcludingProto(m_classInfo->hasStaticSetterOrReadonlyProperties(vm))
     , m_hasNonEnumerableProperties(false)
     , m_attributesInPrevious(0)
     , m_specificFunctionThrashCount(0)
@@ -201,6 +203,8 @@ Structure::Structure(VM& vm)
     , m_didTransition(false)
     , m_staticFunctionReified(false)
 {
+    ASSERT(hasReadOnlyOrGetterSetterPropertiesExcludingProto() || !m_classInfo->hasStaticSetterOrReadonlyProperties(vm));
+    ASSERT(hasGetterSetterProperties() || !m_classInfo->hasStaticSetterOrReadonlyProperties(vm));
 }
 
 Structure::Structure(VM& vm, const Structure* previous)
@@ -231,6 +235,8 @@ Structure::Structure(VM& vm, const Structure* previous)
     previous->notifyTransitionFromThisStructure();
     if (previous->m_globalObject)
         m_globalObject.set(vm, this, previous->m_globalObject.get());
+    ASSERT(hasReadOnlyOrGetterSetterPropertiesExcludingProto() || !m_classInfo->hasStaticSetterOrReadonlyProperties(vm));
+    ASSERT(hasGetterSetterProperties() || !m_classInfo->hasStaticSetterOrReadonlyProperties(vm));
 }
 
 void Structure::destroy(JSCell* cell)
@@ -565,6 +571,8 @@ Structure* Structure::freezeTransition(VM& vm, Structure* structure)
             iter->attributes |= iter->attributes & Accessor ? DontDelete : (DontDelete | ReadOnly);
     }
 
+    ASSERT(transition->hasReadOnlyOrGetterSetterPropertiesExcludingProto() || !transition->classInfo()->hasStaticSetterOrReadonlyProperties(vm));
+    ASSERT(transition->hasGetterSetterProperties() || !transition->classInfo()->hasStaticSetterOrReadonlyProperties(vm));
     transition->checkOffsetConsistency();
     return transition;
 }
@@ -1155,5 +1163,16 @@ void Structure::checkConsistency()
 }
 
 #endif // DO_PROPERTYMAP_CONSTENCY_CHECK
+
+bool ClassInfo::hasStaticSetterOrReadonlyProperties(VM& vm) const
+{
+    for (const ClassInfo* ci = this; ci; ci = ci->parentClass) {
+        if (const HashTable* table = ci->propHashTable(vm)) {
+            if (table->hasSetterOrReadonlyProperties)
+                return true;
+        }
+    }
+    return false;
+}
 
 } // namespace JSC

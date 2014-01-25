@@ -97,7 +97,7 @@ bool RegExpObject::getOwnPropertySlot(JSObject* object, ExecState* exec, Propert
         slot.setValue(regExp, attributes, regExp->getLastIndex());
         return true;
     }
-    return getStaticValueSlot<RegExpObject, JSObject>(exec, ExecState::regExpTable(exec), jsCast<RegExpObject*>(object), propertyName, slot);
+    return getStaticValueSlot<RegExpObject, JSObject>(exec, ExecState::regExpTable(exec->vm()), jsCast<RegExpObject*>(object), propertyName, slot);
 }
 
 bool RegExpObject::deleteProperty(JSCell* cell, ExecState* exec, PropertyName propertyName)
@@ -297,7 +297,7 @@ void RegExpObject::put(JSCell* cell, ExecState* exec, PropertyName propertyName,
         asRegExpObject(cell)->setLastIndex(exec, value, slot.isStrictMode());
         return;
     }
-    lookupPut<RegExpObject, JSObject>(exec, propertyName, value, ExecState::regExpTable(exec), jsCast<RegExpObject*>(cell), slot);
+    Base::put(cell, exec, propertyName, value, slot);
 }
 
 JSValue RegExpObject::exec(ExecState* exec, JSString* string)

@@ -48,8 +48,6 @@ namespace JSC {
             return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), info());
         }
 
-        static void put(JSCell*, ExecState*, PropertyName, JSValue, PutPropertySlot&);
-
         static bool getOwnPropertySlot(JSObject*, ExecState*, PropertyName, PropertySlot&);
 
         DECLARE_INFO;

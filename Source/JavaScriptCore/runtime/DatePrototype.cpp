@@ -516,7 +516,7 @@ void DatePrototype::finishCreation(VM& vm, JSGlobalObject*)
 
 bool DatePrototype::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
 {
-    return getStaticFunctionSlot<JSObject>(exec, ExecState::dateTable(exec), jsCast<DatePrototype*>(object), propertyName, slot);
+    return getStaticFunctionSlot<JSObject>(exec, ExecState::dateTable(exec->vm()), jsCast<DatePrototype*>(object), propertyName, slot);
 }
 
 // Functions

@@ -74,12 +74,7 @@ void NumberConstructor::finishCreation(VM& vm, NumberPrototype* numberPrototype)
 
 bool NumberConstructor::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
 {
-    return getStaticValueSlot<NumberConstructor, InternalFunction>(exec, ExecState::numberConstructorTable(exec), jsCast<NumberConstructor*>(object), propertyName, slot);
-}
-
-void NumberConstructor::put(JSCell* cell, ExecState* exec, PropertyName propertyName, JSValue value, PutPropertySlot& slot)
-{
-    lookupPut<NumberConstructor, InternalFunction>(exec, propertyName, value, ExecState::numberConstructorTable(exec), jsCast<NumberConstructor*>(cell), slot);
+    return getStaticValueSlot<NumberConstructor, InternalFunction>(exec, ExecState::numberConstructorTable(exec->vm()), jsCast<NumberConstructor*>(object), propertyName, slot);
 }
 
 static EncodedJSValue numberConstructorNaNValue(ExecState*, EncodedJSValue, EncodedJSValue, PropertyName)

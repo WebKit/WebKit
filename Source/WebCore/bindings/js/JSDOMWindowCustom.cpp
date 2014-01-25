@@ -344,7 +344,7 @@ void JSDOMWindow::put(JSCell* cell, ExecState* exec, PropertyName propertyName, 
         return;
     }
 
-    if (lookupPut(exec, propertyName, value, *s_info.propHashTable(exec), slot))
+    if (lookupPut(exec, propertyName, thisObject, value, *s_info.propHashTable(exec), slot))
         return;
 
     if (BindingSecurity::shouldAllowAccessToDOMWindow(exec, thisObject->impl()))

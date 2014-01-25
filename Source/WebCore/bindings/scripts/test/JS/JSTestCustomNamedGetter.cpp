@@ -40,7 +40,7 @@ static const HashTableValue JSTestCustomNamedGetterTableValues[] =
     { 0, 0, NoIntrinsic, 0, 0 }
 };
 
-static const HashTable JSTestCustomNamedGetterTable = { 2, 1, JSTestCustomNamedGetterTableValues, 0 };
+static const HashTable JSTestCustomNamedGetterTable = { 2, 1, true, JSTestCustomNamedGetterTableValues, 0 };
 /* Hash table for constructor */
 
 static const HashTableValue JSTestCustomNamedGetterConstructorTableValues[] =
@@ -48,7 +48,7 @@ static const HashTableValue JSTestCustomNamedGetterConstructorTableValues[] =
     { 0, 0, NoIntrinsic, 0, 0 }
 };
 
-static const HashTable JSTestCustomNamedGetterConstructorTable = { 1, 0, JSTestCustomNamedGetterConstructorTableValues, 0 };
+static const HashTable JSTestCustomNamedGetterConstructorTable = { 1, 0, false, JSTestCustomNamedGetterConstructorTableValues, 0 };
 const ClassInfo JSTestCustomNamedGetterConstructor::s_info = { "TestCustomNamedGetterConstructor", &Base::s_info, &JSTestCustomNamedGetterConstructorTable, 0, CREATE_METHOD_TABLE(JSTestCustomNamedGetterConstructor) };
 
 JSTestCustomNamedGetterConstructor::JSTestCustomNamedGetterConstructor(Structure* structure, JSDOMGlobalObject* globalObject)
@@ -77,7 +77,7 @@ static const HashTableValue JSTestCustomNamedGetterPrototypeTableValues[] =
     { 0, 0, NoIntrinsic, 0, 0 }
 };
 
-static const HashTable JSTestCustomNamedGetterPrototypeTable = { 2, 1, JSTestCustomNamedGetterPrototypeTableValues, 0 };
+static const HashTable JSTestCustomNamedGetterPrototypeTable = { 2, 1, false, JSTestCustomNamedGetterPrototypeTableValues, 0 };
 const ClassInfo JSTestCustomNamedGetterPrototype::s_info = { "TestCustomNamedGetterPrototype", &Base::s_info, &JSTestCustomNamedGetterPrototypeTable, 0, CREATE_METHOD_TABLE(JSTestCustomNamedGetterPrototype) };
 
 JSObject* JSTestCustomNamedGetterPrototype::self(VM& vm, JSGlobalObject* globalObject)

@@ -41,7 +41,7 @@ static const HashTableValue JSTestActiveDOMObjectTableValues[] =
     { 0, 0, NoIntrinsic, 0, 0 }
 };
 
-static const HashTable JSTestActiveDOMObjectTable = { 4, 3, JSTestActiveDOMObjectTableValues, 0 };
+static const HashTable JSTestActiveDOMObjectTable = { 4, 3, true, JSTestActiveDOMObjectTableValues, 0 };
 /* Hash table for constructor */
 
 static const HashTableValue JSTestActiveDOMObjectConstructorTableValues[] =
@@ -49,7 +49,7 @@ static const HashTableValue JSTestActiveDOMObjectConstructorTableValues[] =
     { 0, 0, NoIntrinsic, 0, 0 }
 };
 
-static const HashTable JSTestActiveDOMObjectConstructorTable = { 1, 0, JSTestActiveDOMObjectConstructorTableValues, 0 };
+static const HashTable JSTestActiveDOMObjectConstructorTable = { 1, 0, false, JSTestActiveDOMObjectConstructorTableValues, 0 };
 const ClassInfo JSTestActiveDOMObjectConstructor::s_info = { "TestActiveDOMObjectConstructor", &Base::s_info, &JSTestActiveDOMObjectConstructorTable, 0, CREATE_METHOD_TABLE(JSTestActiveDOMObjectConstructor) };
 
 JSTestActiveDOMObjectConstructor::JSTestActiveDOMObjectConstructor(Structure* structure, JSDOMGlobalObject* globalObject)
@@ -79,7 +79,7 @@ static const HashTableValue JSTestActiveDOMObjectPrototypeTableValues[] =
     { 0, 0, NoIntrinsic, 0, 0 }
 };
 
-static const HashTable JSTestActiveDOMObjectPrototypeTable = { 4, 3, JSTestActiveDOMObjectPrototypeTableValues, 0 };
+static const HashTable JSTestActiveDOMObjectPrototypeTable = { 4, 3, false, JSTestActiveDOMObjectPrototypeTableValues, 0 };
 const ClassInfo JSTestActiveDOMObjectPrototype::s_info = { "TestActiveDOMObjectPrototype", &Base::s_info, &JSTestActiveDOMObjectPrototypeTable, 0, CREATE_METHOD_TABLE(JSTestActiveDOMObjectPrototype) };
 
 JSObject* JSTestActiveDOMObjectPrototype::self(VM& vm, JSGlobalObject* globalObject)
