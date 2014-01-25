@@ -157,19 +157,11 @@ struct ClassInfo {
     const HashTable* propHashTable(ExecState* exec) const
     {
         if (classPropHashTableGetterFunction)
-            return &classPropHashTableGetterFunction(exec->vm());
+            return &classPropHashTableGetterFunction(exec);
 
         return staticPropHashTable;
     }
-
-    const HashTable* propHashTable(VM& vm) const
-    {
-        if (classPropHashTableGetterFunction)
-            return &classPropHashTableGetterFunction(vm);
-
-        return staticPropHashTable;
-    }
-
+        
     bool isSubClassOf(const ClassInfo* other) const
     {
         for (const ClassInfo* ci = this; ci; ci = ci->parentClass) {
@@ -188,10 +180,8 @@ struct ClassInfo {
         return false;
     }
 
-    bool hasStaticSetterOrReadonlyProperties(VM&) const;
-
     const HashTable* staticPropHashTable;
-    typedef const HashTable& (*ClassPropHashTableGetterFunction)(VM&);
+    typedef const HashTable& (*ClassPropHashTableGetterFunction)(ExecState*);
     const ClassPropHashTableGetterFunction classPropHashTableGetterFunction;
 
     MethodTable methodTable;

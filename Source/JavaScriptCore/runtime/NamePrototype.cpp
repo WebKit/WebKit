@@ -60,7 +60,7 @@ void NamePrototype::finishCreation(VM& vm)
 
 bool NamePrototype::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot &slot)
 {
-    return getStaticFunctionSlot<Base>(exec, ExecState::privateNamePrototypeTable(exec->vm()), jsCast<NamePrototype*>(object), propertyName, slot);
+    return getStaticFunctionSlot<Base>(exec, ExecState::privateNamePrototypeTable(exec), jsCast<NamePrototype*>(object), propertyName, slot);
 }
 
 // ------------------------------ Functions ---------------------------

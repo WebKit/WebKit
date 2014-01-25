@@ -85,7 +85,7 @@ void NumberPrototype::finishCreation(VM& vm, JSGlobalObject*)
 
 bool NumberPrototype::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot &slot)
 {
-    return getStaticFunctionSlot<NumberObject>(exec, ExecState::numberPrototypeTable(exec->vm()), jsCast<NumberPrototype*>(object), propertyName, slot);
+    return getStaticFunctionSlot<NumberObject>(exec, ExecState::numberPrototypeTable(exec), jsCast<NumberPrototype*>(object), propertyName, slot);
 }
 
 // ------------------------------ Functions ---------------------------

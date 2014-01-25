@@ -40,7 +40,7 @@ static const HashTableValue JSTestMediaQueryListListenerTableValues[] =
     { 0, 0, NoIntrinsic, 0, 0 }
 };
 
-static const HashTable JSTestMediaQueryListListenerTable = { 2, 1, true, JSTestMediaQueryListListenerTableValues, 0 };
+static const HashTable JSTestMediaQueryListListenerTable = { 2, 1, JSTestMediaQueryListListenerTableValues, 0 };
 /* Hash table for constructor */
 
 static const HashTableValue JSTestMediaQueryListListenerConstructorTableValues[] =
@@ -48,7 +48,7 @@ static const HashTableValue JSTestMediaQueryListListenerConstructorTableValues[]
     { 0, 0, NoIntrinsic, 0, 0 }
 };
 
-static const HashTable JSTestMediaQueryListListenerConstructorTable = { 1, 0, false, JSTestMediaQueryListListenerConstructorTableValues, 0 };
+static const HashTable JSTestMediaQueryListListenerConstructorTable = { 1, 0, JSTestMediaQueryListListenerConstructorTableValues, 0 };
 const ClassInfo JSTestMediaQueryListListenerConstructor::s_info = { "TestMediaQueryListListenerConstructor", &Base::s_info, &JSTestMediaQueryListListenerConstructorTable, 0, CREATE_METHOD_TABLE(JSTestMediaQueryListListenerConstructor) };
 
 JSTestMediaQueryListListenerConstructor::JSTestMediaQueryListListenerConstructor(Structure* structure, JSDOMGlobalObject* globalObject)
@@ -77,7 +77,7 @@ static const HashTableValue JSTestMediaQueryListListenerPrototypeTableValues[] =
     { 0, 0, NoIntrinsic, 0, 0 }
 };
 
-static const HashTable JSTestMediaQueryListListenerPrototypeTable = { 2, 1, false, JSTestMediaQueryListListenerPrototypeTableValues, 0 };
+static const HashTable JSTestMediaQueryListListenerPrototypeTable = { 2, 1, JSTestMediaQueryListListenerPrototypeTableValues, 0 };
 const ClassInfo JSTestMediaQueryListListenerPrototype::s_info = { "TestMediaQueryListListenerPrototype", &Base::s_info, &JSTestMediaQueryListListenerPrototypeTable, 0, CREATE_METHOD_TABLE(JSTestMediaQueryListListenerPrototype) };
 
 JSObject* JSTestMediaQueryListListenerPrototype::self(VM& vm, JSGlobalObject* globalObject)

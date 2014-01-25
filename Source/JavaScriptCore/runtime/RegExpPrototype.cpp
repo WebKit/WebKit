@@ -67,7 +67,7 @@ RegExpPrototype::RegExpPrototype(VM& vm, Structure* structure, RegExp* regExp)
 
 bool RegExpPrototype::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot &slot)
 {
-    return getStaticFunctionSlot<RegExpObject>(exec, ExecState::regExpPrototypeTable(exec->vm()), jsCast<RegExpPrototype*>(object), propertyName, slot);
+    return getStaticFunctionSlot<RegExpObject>(exec, ExecState::regExpPrototypeTable(exec), jsCast<RegExpPrototype*>(object), propertyName, slot);
 }
 
 // ------------------------------ Functions ---------------------------

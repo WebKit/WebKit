@@ -96,7 +96,7 @@ void ObjectConstructor::finishCreation(VM& vm, ObjectPrototype* objectPrototype)
 
 bool ObjectConstructor::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot &slot)
 {
-    return getStaticFunctionSlot<JSObject>(exec, ExecState::objectConstructorTable(exec->vm()), jsCast<ObjectConstructor*>(object), propertyName, slot);
+    return getStaticFunctionSlot<JSObject>(exec, ExecState::objectConstructorTable(exec), jsCast<ObjectConstructor*>(object), propertyName, slot);
 }
 
 static ALWAYS_INLINE JSObject* constructObject(ExecState* exec)

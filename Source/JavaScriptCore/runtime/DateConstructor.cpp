@@ -88,7 +88,7 @@ void DateConstructor::finishCreation(VM& vm, DatePrototype* datePrototype)
 
 bool DateConstructor::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot &slot)
 {
-    return getStaticFunctionSlot<InternalFunction>(exec, ExecState::dateConstructorTable(exec->vm()), jsCast<DateConstructor*>(object), propertyName, slot);
+    return getStaticFunctionSlot<InternalFunction>(exec, ExecState::dateConstructorTable(exec), jsCast<DateConstructor*>(object), propertyName, slot);
 }
 
 // ECMA 15.9.3

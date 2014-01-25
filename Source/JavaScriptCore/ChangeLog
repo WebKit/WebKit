@@ -1,3 +1,89 @@
+2014-01-24  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r162713.
+        http://trac.webkit.org/changeset/162713
+        https://bugs.webkit.org/show_bug.cgi?id=127593
+
+        broke media/network-no-source-const-shadow (Requested by
+        thorton on #webkit).
+
+        * create_hash_table:
+        * interpreter/CallFrame.h:
+        (JSC::ExecState::arrayConstructorTable):
+        (JSC::ExecState::arrayPrototypeTable):
+        (JSC::ExecState::booleanPrototypeTable):
+        (JSC::ExecState::dataViewTable):
+        (JSC::ExecState::dateTable):
+        (JSC::ExecState::dateConstructorTable):
+        (JSC::ExecState::errorPrototypeTable):
+        (JSC::ExecState::globalObjectTable):
+        (JSC::ExecState::jsonTable):
+        (JSC::ExecState::numberConstructorTable):
+        (JSC::ExecState::numberPrototypeTable):
+        (JSC::ExecState::objectConstructorTable):
+        (JSC::ExecState::privateNamePrototypeTable):
+        (JSC::ExecState::regExpTable):
+        (JSC::ExecState::regExpConstructorTable):
+        (JSC::ExecState::regExpPrototypeTable):
+        (JSC::ExecState::stringConstructorTable):
+        (JSC::ExecState::promisePrototypeTable):
+        (JSC::ExecState::promiseConstructorTable):
+        * runtime/ArrayConstructor.cpp:
+        (JSC::ArrayConstructor::getOwnPropertySlot):
+        * runtime/ArrayPrototype.cpp:
+        (JSC::ArrayPrototype::getOwnPropertySlot):
+        * runtime/BooleanPrototype.cpp:
+        (JSC::BooleanPrototype::getOwnPropertySlot):
+        * runtime/ClassInfo.h:
+        (JSC::ClassInfo::propHashTable):
+        * runtime/DateConstructor.cpp:
+        (JSC::DateConstructor::getOwnPropertySlot):
+        * runtime/DatePrototype.cpp:
+        (JSC::DatePrototype::getOwnPropertySlot):
+        * runtime/ErrorPrototype.cpp:
+        (JSC::ErrorPrototype::getOwnPropertySlot):
+        * runtime/JSDataViewPrototype.cpp:
+        (JSC::JSDataViewPrototype::getOwnPropertySlot):
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::getOwnPropertySlot):
+        * runtime/JSONObject.cpp:
+        (JSC::JSONObject::getOwnPropertySlot):
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::put):
+        (JSC::JSObject::deleteProperty):
+        * runtime/JSPromiseConstructor.cpp:
+        (JSC::JSPromiseConstructor::getOwnPropertySlot):
+        * runtime/JSPromisePrototype.cpp:
+        (JSC::JSPromisePrototype::getOwnPropertySlot):
+        * runtime/Lookup.h:
+        (JSC::HashTable::copy):
+        (JSC::putEntry):
+        (JSC::lookupPut):
+        * runtime/NamePrototype.cpp:
+        (JSC::NamePrototype::getOwnPropertySlot):
+        * runtime/NumberConstructor.cpp:
+        (JSC::NumberConstructor::getOwnPropertySlot):
+        (JSC::NumberConstructor::put):
+        * runtime/NumberConstructor.h:
+        * runtime/NumberPrototype.cpp:
+        (JSC::NumberPrototype::getOwnPropertySlot):
+        * runtime/ObjectConstructor.cpp:
+        (JSC::ObjectConstructor::getOwnPropertySlot):
+        * runtime/RegExpConstructor.cpp:
+        (JSC::RegExpConstructor::getOwnPropertySlot):
+        (JSC::RegExpConstructor::put):
+        * runtime/RegExpConstructor.h:
+        * runtime/RegExpObject.cpp:
+        (JSC::RegExpObject::getOwnPropertySlot):
+        (JSC::RegExpObject::put):
+        * runtime/RegExpPrototype.cpp:
+        (JSC::RegExpPrototype::getOwnPropertySlot):
+        * runtime/StringConstructor.cpp:
+        (JSC::StringConstructor::getOwnPropertySlot):
+        * runtime/Structure.cpp:
+        (JSC::Structure::Structure):
+        (JSC::Structure::freezeTransition):
+
 2014-01-24  Mark Lam  <mark.lam@apple.com>
 
         ASSERT(!m_markedSpace.m_currentDelayedReleaseScope) reloading page in inspector.

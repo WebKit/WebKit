@@ -339,7 +339,7 @@ sub hashTableAccessor
     my $noStaticTables = shift;
     my $className = shift;
     if ($noStaticTables) {
-        return "get${className}Table(exec->vm())";
+        return "get${className}Table(exec)";
     } else {
         return "${className}Table";
     }
@@ -350,7 +350,7 @@ sub prototypeHashTableAccessor
     my $noStaticTables = shift;
     my $className = shift;
     if ($noStaticTables) {
-        return "get${className}PrototypeTable(exec->vm())";
+        return "get${className}PrototypeTable(exec)";
     } else {
         return "${className}PrototypeTable";
     }
@@ -361,7 +361,7 @@ sub constructorHashTableAccessor
     my $noStaticTables = shift;
     my $constructorClassName = shift;
     if ($noStaticTables) {
-        return "get${constructorClassName}Table(exec->vm())";
+        return "get${constructorClassName}Table(exec)";
     } else {
         return "${constructorClassName}Table";
     }
@@ -627,21 +627,6 @@ sub PrototypeOverridesGetOwnPropertySlot
     return $numFunctions > 0 || $numConstants > 0;
 }
 
-sub InstanceOverridesPutImplementation
-{
-    my $interface = shift;
-    return $interface->extendedAttributes->{"CustomNamedSetter"}
-        || $interface->extendedAttributes->{"CustomIndexedSetter"};
-}
-
-sub InstanceOverridesPutDeclaration
-{
-    my $interface = shift;
-    return $interface->extendedAttributes->{"CustomPutFunction"}
-        || $interface->extendedAttributes->{"CustomNamedSetter"}
-        || $interface->extendedAttributes->{"CustomIndexedSetter"};
-}
-
 sub GenerateHeader
 {
     my $object = shift;
@@ -791,12 +776,25 @@ sub GenerateHeader
         $structureFlags{"JSC::InterceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero"} = 1;
     }
 
-    my $overridesPut = InstanceOverridesPutDeclaration($interface);
+    # Check if we have any writable properties
+    my $hasReadWriteProperties = 0;
+    foreach (@{$interface->attributes}) {
+        if (!IsReadonly($_) && !$_->isStatic) {
+            $hasReadWriteProperties = 1;
+        }
+    }
+
+    my $hasComplexSetter =
+        $interface->extendedAttributes->{"CustomPutFunction"}
+        || $interface->extendedAttributes->{"CustomNamedSetter"}
+        || $interface->extendedAttributes->{"CustomIndexedSetter"};
+        
+    my $hasSetter = $hasReadWriteProperties || $hasComplexSetter;
 
     # Getters
-    if ($overridesPut) {
+    if ($hasSetter) {
         push(@headerContent, "    static void put(JSC::JSCell*, JSC::ExecState*, JSC::PropertyName, JSC::JSValue, JSC::PutPropertySlot&);\n");
-        push(@headerContent, "    static void putByIndex(JSC::JSCell*, JSC::ExecState*, unsigned propertyName, JSC::JSValue, bool shouldThrow);\n");
+        push(@headerContent, "    static void putByIndex(JSC::JSCell*, JSC::ExecState*, unsigned propertyName, JSC::JSValue, bool shouldThrow);\n") if ($hasComplexSetter);
         push(@headerContent, "    bool putDelegate(JSC::ExecState*, JSC::PropertyName, JSC::JSValue, JSC::PutPropertySlot&);\n") if $interface->extendedAttributes->{"CustomNamedSetter"};
     }
 
@@ -1744,9 +1742,9 @@ sub GenerateImplementation
                                \%conditionals);
 
     if ($interface->extendedAttributes->{"JSNoStaticTables"}) {
-        push(@implContent, "static const HashTable& get${className}PrototypeTable(VM& vm)\n");
+        push(@implContent, "static const HashTable& get${className}PrototypeTable(ExecState* exec)\n");
         push(@implContent, "{\n");
-        push(@implContent, "    return getHashTableForGlobalData(vm, ${className}PrototypeTable);\n");
+        push(@implContent, "    return getHashTableForGlobalData(exec->vm(), ${className}PrototypeTable);\n");
         push(@implContent, "}\n\n");
         push(@implContent, "const ClassInfo ${className}Prototype::s_info = { \"${visibleInterfaceName}Prototype\", &Base::s_info, 0, get${className}PrototypeTable, CREATE_METHOD_TABLE(${className}Prototype) };\n\n");
     } else {
@@ -1788,9 +1786,9 @@ sub GenerateImplementation
 
     # - Initialize static ClassInfo object
     if ($numAttributes > 0 && $interface->extendedAttributes->{"JSNoStaticTables"}) {
-        push(@implContent, "static const HashTable& get${className}Table(VM& vm)\n");
+        push(@implContent, "static const HashTable& get${className}Table(ExecState* exec)\n");
         push(@implContent, "{\n");
-        push(@implContent, "    return getHashTableForGlobalData(vm, ${className}Table);\n");
+        push(@implContent, "    return getHashTableForGlobalData(exec->vm(), ${className}Table);\n");
         push(@implContent, "}\n\n");
     }
 
@@ -2174,11 +2172,12 @@ sub GenerateImplementation
             $hasReadWriteProperties = 1 if !IsReadonly($attribute) && !$attribute->isStatic;
         }
 
-        my $overridesPutImplementation = InstanceOverridesPutImplementation($interface);
-        my $hasSetter = $hasReadWriteProperties;
+        my $hasSetter = $hasReadWriteProperties
+        || $interface->extendedAttributes->{"CustomNamedSetter"}
+        || $interface->extendedAttributes->{"CustomIndexedSetter"};
 
-        if ($hasSetter || $overridesPutImplementation) {
-            if ($overridesPutImplementation) {
+        if ($hasSetter) {
+            if (!$interface->extendedAttributes->{"CustomPutFunction"}) {
                 push(@implContent, "void ${className}::put(JSCell* cell, ExecState* exec, PropertyName propertyName, JSValue value, PutPropertySlot& slot)\n");
                 push(@implContent, "{\n");
                 push(@implContent, "    ${className}* thisObject = jsCast<${className}*>(cell);\n");
@@ -2195,8 +2194,11 @@ sub GenerateImplementation
                     push(@implContent, "        return;\n");
                 }
 
-                push(@implContent, "    Base::put(thisObject, exec, propertyName, value, slot);\n");
-
+                if ($hasReadWriteProperties) {
+                    push(@implContent, "    lookupPut<$className, Base>(exec, propertyName, value, " . hashTableAccessor($interface->extendedAttributes->{"JSNoStaticTables"}, $className) . ", thisObject, slot);\n");
+                } else {
+                    push(@implContent, "    Base::put(thisObject, exec, propertyName, value, slot);\n");
+                }
                 push(@implContent, "}\n\n");
 
                 if ($interface->extendedAttributes->{"CustomIndexedSetter"} || $interface->extendedAttributes->{"CustomNamedSetter"}) {
@@ -3772,7 +3774,6 @@ sub GenerateHashTable
     # Start outputing the hashtables
     my $nameEntries = "${name}Values";
     $nameEntries =~ s/:/_/g;
-    my $hasSetter = "false";
 
     if (($name =~ /Prototype/) or ($name =~ /Constructor/)) {
         my $type = $name;
@@ -3810,7 +3811,6 @@ sub GenerateHashTable
             $targetType = "static_cast<NativeFunction>";
         } else {
             $targetType = "static_cast<PropertySlot::GetValueFunc>";
-            $hasSetter = "true";
         }
         push(@implContent, "    { \"$key\", @$specials[$i], NoIntrinsic, (intptr_t)" . $targetType . "(@$value1[$i]), (intptr_t)@$value2[$i] },\n");
         push(@implContent, "#endif\n") if $conditional;
@@ -3819,7 +3819,7 @@ sub GenerateHashTable
     push(@implContent, "    { 0, 0, NoIntrinsic, 0, 0 }\n");
     push(@implContent, "};\n\n");
     my $compactSizeMask = $numEntries - 1;
-    push(@implContent, "static const HashTable $name = { $compactSize, $compactSizeMask, $hasSetter, $nameEntries, 0 };\n");
+    push(@implContent, "static const HashTable $name = { $compactSize, $compactSizeMask, $nameEntries, 0 };\n");
 }
 
 sub WriteData
@@ -4249,9 +4249,9 @@ sub GenerateConstructorHelperMethods
         push(@$outputArray, "}\n\n");
     } else {
         if ($interface->extendedAttributes->{"JSNoStaticTables"}) {
-            push(@$outputArray, "static const HashTable& get${constructorClassName}Table(VM& vm)\n");
+            push(@$outputArray, "static const HashTable& get${constructorClassName}Table(ExecState* exec)\n");
             push(@$outputArray, "{\n");
-            push(@$outputArray, "    return getHashTableForGlobalData(vm, ${constructorClassName}Table);\n");
+            push(@$outputArray, "    return getHashTableForGlobalData(exec->vm(), ${constructorClassName}Table);\n");
             push(@$outputArray, "}\n\n");
             push(@$outputArray, "const ClassInfo ${constructorClassName}::s_info = { \"${visibleInterfaceName}Constructor\", &Base::s_info, 0, get${constructorClassName}Table, CREATE_METHOD_TABLE($constructorClassName) };\n\n");
         } else {

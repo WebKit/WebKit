@@ -39,7 +39,7 @@ static const HashTableValue JSTestExceptionTableValues[] =
     { 0, 0, NoIntrinsic, 0, 0 }
 };
 
-static const HashTable JSTestExceptionTable = { 5, 3, true, JSTestExceptionTableValues, 0 };
+static const HashTable JSTestExceptionTable = { 5, 3, JSTestExceptionTableValues, 0 };
 /* Hash table for constructor */
 
 static const HashTableValue JSTestExceptionConstructorTableValues[] =
@@ -47,7 +47,7 @@ static const HashTableValue JSTestExceptionConstructorTableValues[] =
     { 0, 0, NoIntrinsic, 0, 0 }
 };
 
-static const HashTable JSTestExceptionConstructorTable = { 1, 0, false, JSTestExceptionConstructorTableValues, 0 };
+static const HashTable JSTestExceptionConstructorTable = { 1, 0, JSTestExceptionConstructorTableValues, 0 };
 const ClassInfo JSTestExceptionConstructor::s_info = { "TestExceptionConstructor", &Base::s_info, &JSTestExceptionConstructorTable, 0, CREATE_METHOD_TABLE(JSTestExceptionConstructor) };
 
 JSTestExceptionConstructor::JSTestExceptionConstructor(Structure* structure, JSDOMGlobalObject* globalObject)
@@ -75,7 +75,7 @@ static const HashTableValue JSTestExceptionPrototypeTableValues[] =
     { 0, 0, NoIntrinsic, 0, 0 }
 };
 
-static const HashTable JSTestExceptionPrototypeTable = { 1, 0, false, JSTestExceptionPrototypeTableValues, 0 };
+static const HashTable JSTestExceptionPrototypeTable = { 1, 0, JSTestExceptionPrototypeTableValues, 0 };
 const ClassInfo JSTestExceptionPrototype::s_info = { "TestExceptionPrototype", &Base::s_info, &JSTestExceptionPrototypeTable, 0, CREATE_METHOD_TABLE(JSTestExceptionPrototype) };
 
 JSObject* JSTestExceptionPrototype::self(VM& vm, JSGlobalObject* globalObject)

@@ -86,7 +86,7 @@ void JSPromisePrototype::finishCreation(VM& vm, Structure*)
 
 bool JSPromisePrototype::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
 {
-    return getStaticFunctionSlot<JSObject>(exec, ExecState::promisePrototypeTable(exec->vm()), jsCast<JSPromisePrototype*>(object), propertyName, slot);
+    return getStaticFunctionSlot<JSObject>(exec, ExecState::promisePrototypeTable(exec), jsCast<JSPromisePrototype*>(object), propertyName, slot);
 }
 
 EncodedJSValue JSC_HOST_CALL JSPromisePrototypeFuncThen(ExecState* exec)

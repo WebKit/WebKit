@@ -40,7 +40,7 @@ static const HashTableValue JSTestOverloadedConstructorsTableValues[] =
     { 0, 0, NoIntrinsic, 0, 0 }
 };
 
-static const HashTable JSTestOverloadedConstructorsTable = { 2, 1, true, JSTestOverloadedConstructorsTableValues, 0 };
+static const HashTable JSTestOverloadedConstructorsTable = { 2, 1, JSTestOverloadedConstructorsTableValues, 0 };
 /* Hash table for constructor */
 
 static const HashTableValue JSTestOverloadedConstructorsConstructorTableValues[] =
@@ -48,7 +48,7 @@ static const HashTableValue JSTestOverloadedConstructorsConstructorTableValues[]
     { 0, 0, NoIntrinsic, 0, 0 }
 };
 
-static const HashTable JSTestOverloadedConstructorsConstructorTable = { 1, 0, false, JSTestOverloadedConstructorsConstructorTableValues, 0 };
+static const HashTable JSTestOverloadedConstructorsConstructorTable = { 1, 0, JSTestOverloadedConstructorsConstructorTableValues, 0 };
 EncodedJSValue JSC_HOST_CALL JSTestOverloadedConstructorsConstructor::constructJSTestOverloadedConstructors1(ExecState* exec)
 {
     JSTestOverloadedConstructorsConstructor* castedThis = jsCast<JSTestOverloadedConstructorsConstructor*>(exec->callee());
@@ -147,7 +147,7 @@ static const HashTableValue JSTestOverloadedConstructorsPrototypeTableValues[] =
     { 0, 0, NoIntrinsic, 0, 0 }
 };
 
-static const HashTable JSTestOverloadedConstructorsPrototypeTable = { 1, 0, false, JSTestOverloadedConstructorsPrototypeTableValues, 0 };
+static const HashTable JSTestOverloadedConstructorsPrototypeTable = { 1, 0, JSTestOverloadedConstructorsPrototypeTableValues, 0 };
 const ClassInfo JSTestOverloadedConstructorsPrototype::s_info = { "TestOverloadedConstructorsPrototype", &Base::s_info, &JSTestOverloadedConstructorsPrototypeTable, 0, CREATE_METHOD_TABLE(JSTestOverloadedConstructorsPrototype) };
 
 JSObject* JSTestOverloadedConstructorsPrototype::self(VM& vm, JSGlobalObject* globalObject)

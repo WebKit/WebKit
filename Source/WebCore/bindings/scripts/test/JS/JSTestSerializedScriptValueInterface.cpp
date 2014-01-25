@@ -48,7 +48,7 @@ static const HashTableValue JSTestSerializedScriptValueInterfaceTableValues[] =
     { 0, 0, NoIntrinsic, 0, 0 }
 };
 
-static const HashTable JSTestSerializedScriptValueInterfaceTable = { 17, 15, true, JSTestSerializedScriptValueInterfaceTableValues, 0 };
+static const HashTable JSTestSerializedScriptValueInterfaceTable = { 17, 15, JSTestSerializedScriptValueInterfaceTableValues, 0 };
 /* Hash table for constructor */
 
 static const HashTableValue JSTestSerializedScriptValueInterfaceConstructorTableValues[] =
@@ -56,7 +56,7 @@ static const HashTableValue JSTestSerializedScriptValueInterfaceConstructorTable
     { 0, 0, NoIntrinsic, 0, 0 }
 };
 
-static const HashTable JSTestSerializedScriptValueInterfaceConstructorTable = { 1, 0, false, JSTestSerializedScriptValueInterfaceConstructorTableValues, 0 };
+static const HashTable JSTestSerializedScriptValueInterfaceConstructorTable = { 1, 0, JSTestSerializedScriptValueInterfaceConstructorTableValues, 0 };
 const ClassInfo JSTestSerializedScriptValueInterfaceConstructor::s_info = { "TestSerializedScriptValueInterfaceConstructor", &Base::s_info, &JSTestSerializedScriptValueInterfaceConstructorTable, 0, CREATE_METHOD_TABLE(JSTestSerializedScriptValueInterfaceConstructor) };
 
 JSTestSerializedScriptValueInterfaceConstructor::JSTestSerializedScriptValueInterfaceConstructor(Structure* structure, JSDOMGlobalObject* globalObject)
@@ -84,7 +84,7 @@ static const HashTableValue JSTestSerializedScriptValueInterfacePrototypeTableVa
     { 0, 0, NoIntrinsic, 0, 0 }
 };
 
-static const HashTable JSTestSerializedScriptValueInterfacePrototypeTable = { 1, 0, false, JSTestSerializedScriptValueInterfacePrototypeTableValues, 0 };
+static const HashTable JSTestSerializedScriptValueInterfacePrototypeTable = { 1, 0, JSTestSerializedScriptValueInterfacePrototypeTableValues, 0 };
 const ClassInfo JSTestSerializedScriptValueInterfacePrototype::s_info = { "TestSerializedScriptValueInterfacePrototype", &Base::s_info, &JSTestSerializedScriptValueInterfacePrototypeTable, 0, CREATE_METHOD_TABLE(JSTestSerializedScriptValueInterfacePrototype) };
 
 JSObject* JSTestSerializedScriptValueInterfacePrototype::self(VM& vm, JSGlobalObject* globalObject)
@@ -208,6 +208,13 @@ EncodedJSValue jsTestSerializedScriptValueInterfaceConstructor(ExecState* exec, 
     if (!domObject)
         return throwVMTypeError(exec);
     return JSValue::encode(JSTestSerializedScriptValueInterface::getConstructor(exec->vm(), domObject->globalObject()));
+}
+
+void JSTestSerializedScriptValueInterface::put(JSCell* cell, ExecState* exec, PropertyName propertyName, JSValue value, PutPropertySlot& slot)
+{
+    JSTestSerializedScriptValueInterface* thisObject = jsCast<JSTestSerializedScriptValueInterface*>(cell);
+    ASSERT_GC_OBJECT_INHERITS(thisObject, info());
+    lookupPut<JSTestSerializedScriptValueInterface, Base>(exec, propertyName, value, JSTestSerializedScriptValueInterfaceTable, thisObject, slot);
 }
 
 void setJSTestSerializedScriptValueInterfaceValue(ExecState* exec, EncodedJSValue thisValue, EncodedJSValue encodedValue)

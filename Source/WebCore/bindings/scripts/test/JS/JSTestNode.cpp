@@ -39,7 +39,7 @@ static const HashTableValue JSTestNodeTableValues[] =
     { 0, 0, NoIntrinsic, 0, 0 }
 };
 
-static const HashTable JSTestNodeTable = { 2, 1, true, JSTestNodeTableValues, 0 };
+static const HashTable JSTestNodeTable = { 2, 1, JSTestNodeTableValues, 0 };
 /* Hash table for constructor */
 
 static const HashTableValue JSTestNodeConstructorTableValues[] =
@@ -47,7 +47,7 @@ static const HashTableValue JSTestNodeConstructorTableValues[] =
     { 0, 0, NoIntrinsic, 0, 0 }
 };
 
-static const HashTable JSTestNodeConstructorTable = { 1, 0, false, JSTestNodeConstructorTableValues, 0 };
+static const HashTable JSTestNodeConstructorTable = { 1, 0, JSTestNodeConstructorTableValues, 0 };
 EncodedJSValue JSC_HOST_CALL JSTestNodeConstructor::constructJSTestNode(ExecState* exec)
 {
     JSTestNodeConstructor* castedThis = jsCast<JSTestNodeConstructor*>(exec->callee());
@@ -88,7 +88,7 @@ static const HashTableValue JSTestNodePrototypeTableValues[] =
     { 0, 0, NoIntrinsic, 0, 0 }
 };
 
-static const HashTable JSTestNodePrototypeTable = { 1, 0, false, JSTestNodePrototypeTableValues, 0 };
+static const HashTable JSTestNodePrototypeTable = { 1, 0, JSTestNodePrototypeTableValues, 0 };
 const ClassInfo JSTestNodePrototype::s_info = { "TestNodePrototype", &Base::s_info, &JSTestNodePrototypeTable, 0, CREATE_METHOD_TABLE(JSTestNodePrototype) };
 
 JSObject* JSTestNodePrototype::self(VM& vm, JSGlobalObject* globalObject)

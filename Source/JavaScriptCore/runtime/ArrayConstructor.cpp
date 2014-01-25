@@ -68,7 +68,7 @@ void ArrayConstructor::finishCreation(VM& vm, ArrayPrototype* arrayPrototype)
 
 bool ArrayConstructor::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot &slot)
 {
-    return getStaticFunctionSlot<InternalFunction>(exec, ExecState::arrayConstructorTable(exec->vm()), jsCast<ArrayConstructor*>(object), propertyName, slot);
+    return getStaticFunctionSlot<InternalFunction>(exec, ExecState::arrayConstructorTable(exec), jsCast<ArrayConstructor*>(object), propertyName, slot);
 }
 
 // ------------------------------ Functions ---------------------------

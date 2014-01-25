@@ -38,6 +38,8 @@ namespace JSC {
             return constructor;
         }
 
+        static void put(JSCell*, ExecState*, PropertyName, JSValue, PutPropertySlot&);
+
         static bool getOwnPropertySlot(JSObject*, ExecState*, PropertyName, PropertySlot&);
         JSValue getValueProperty(ExecState*, int token) const;
 

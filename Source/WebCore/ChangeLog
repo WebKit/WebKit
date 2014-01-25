@@ -1,3 +1,47 @@
+2014-01-24  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r162713.
+        http://trac.webkit.org/changeset/162713
+        https://bugs.webkit.org/show_bug.cgi?id=127593
+
+        broke media/network-no-source-const-shadow (Requested by
+        thorton on #webkit).
+
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::JSDOMWindow::put):
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (hashTableAccessor):
+        (prototypeHashTableAccessor):
+        (constructorHashTableAccessor):
+        (GenerateHeader):
+        (GenerateImplementation):
+        (GenerateHashTable):
+        (GenerateConstructorHelperMethods):
+        * bindings/scripts/test/JS/JSTestActiveDOMObject.cpp:
+        * bindings/scripts/test/JS/JSTestCustomNamedGetter.cpp:
+        * bindings/scripts/test/JS/JSTestEventConstructor.cpp:
+        * bindings/scripts/test/JS/JSTestEventTarget.cpp:
+        * bindings/scripts/test/JS/JSTestException.cpp:
+        * bindings/scripts/test/JS/JSTestGenerateIsReachable.cpp:
+        * bindings/scripts/test/JS/JSTestInterface.cpp:
+        (WebCore::JSTestInterface::put):
+        * bindings/scripts/test/JS/JSTestMediaQueryListListener.cpp:
+        * bindings/scripts/test/JS/JSTestNamedConstructor.cpp:
+        * bindings/scripts/test/JS/JSTestNode.cpp:
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        (WebCore::JSTestObj::put):
+        * bindings/scripts/test/JS/JSTestObj.h:
+        * bindings/scripts/test/JS/JSTestOverloadedConstructors.cpp:
+        * bindings/scripts/test/JS/JSTestSerializedScriptValueInterface.cpp:
+        (WebCore::JSTestSerializedScriptValueInterface::put):
+        * bindings/scripts/test/JS/JSTestSerializedScriptValueInterface.h:
+        * bindings/scripts/test/JS/JSTestTypedefs.cpp:
+        (WebCore::JSTestTypedefs::put):
+        * bindings/scripts/test/JS/JSTestTypedefs.h:
+        * bindings/scripts/test/JS/JSattribute.cpp:
+        * bindings/scripts/test/JS/JSreadonly.cpp:
+        * html/canvas/WebGLRenderingContext.idl:
+
 2014-01-24  Zalan Bujtas  <zalan@apple.com>
 
         Replace LayoutUnit() calls to a more descriptive LayoutUnit::fromPixel(int).

@@ -87,7 +87,7 @@ bool JSDataViewPrototype::getOwnPropertySlot(
     JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
 {
     return getStaticFunctionSlot<JSObject>(
-        exec, ExecState::dataViewTable(exec->vm()), jsCast<JSDataViewPrototype*>(object),
+        exec, ExecState::dataViewTable(exec), jsCast<JSDataViewPrototype*>(object),
         propertyName, slot);
 }
 

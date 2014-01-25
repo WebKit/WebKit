@@ -144,7 +144,7 @@ void ArrayPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject)
 
 bool ArrayPrototype::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
 {
-    return getStaticFunctionSlot<JSArray>(exec, ExecState::arrayPrototypeTable(exec->vm()), jsCast<ArrayPrototype*>(object), propertyName, slot);
+    return getStaticFunctionSlot<JSArray>(exec, ExecState::arrayPrototypeTable(exec), jsCast<ArrayPrototype*>(object), propertyName, slot);
 }
 
 // ------------------------------ Array Functions ----------------------------

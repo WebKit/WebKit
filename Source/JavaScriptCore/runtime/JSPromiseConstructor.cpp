@@ -161,7 +161,7 @@ CallType JSPromiseConstructor::getCallData(JSCell*, CallData& callData)
 
 bool JSPromiseConstructor::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
 {
-    return getStaticFunctionSlot<InternalFunction>(exec, ExecState::promiseConstructorTable(exec->vm()), jsCast<JSPromiseConstructor*>(object), propertyName, slot);
+    return getStaticFunctionSlot<InternalFunction>(exec, ExecState::promiseConstructorTable(exec), jsCast<JSPromiseConstructor*>(object), propertyName, slot);
 }
 
 EncodedJSValue JSC_HOST_CALL JSPromiseConstructorFuncCast(ExecState* exec)

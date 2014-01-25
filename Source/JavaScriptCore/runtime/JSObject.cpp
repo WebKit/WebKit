@@ -394,13 +394,7 @@ void JSObject::put(JSCell* cell, ExecState* exec, PropertyName propertyName, JSV
             // prototypes it should be replaced, so break here.
             break;
         }
-        const ClassInfo* info = obj->classInfo();
-        if (info->hasStaticSetterOrReadonlyProperties(vm)) {
-            if (const HashEntry* entry = obj->findPropertyHashEntry(exec, propertyName)) {
-                putEntry(exec, entry, obj, propertyName, value, slot);
-                return;
-            }
-        }
+
         prototype = obj->prototype();
         if (prototype.isNull())
             break;
@@ -1275,7 +1269,7 @@ bool JSObject::deleteProperty(JSCell* cell, ExecState* exec, PropertyName proper
             return false; // this builtin property can't be deleted
 
         PutPropertySlot slot(thisObject);
-        putEntry(exec, entry, thisObject, propertyName, jsUndefined(), slot);
+        putEntry(exec, entry, propertyName, jsUndefined(), slot);
     }
 
     return true;

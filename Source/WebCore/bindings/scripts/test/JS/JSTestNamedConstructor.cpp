@@ -39,7 +39,7 @@ static const HashTableValue JSTestNamedConstructorTableValues[] =
     { 0, 0, NoIntrinsic, 0, 0 }
 };
 
-static const HashTable JSTestNamedConstructorTable = { 2, 1, true, JSTestNamedConstructorTableValues, 0 };
+static const HashTable JSTestNamedConstructorTable = { 2, 1, JSTestNamedConstructorTableValues, 0 };
 /* Hash table for constructor */
 
 static const HashTableValue JSTestNamedConstructorConstructorTableValues[] =
@@ -47,7 +47,7 @@ static const HashTableValue JSTestNamedConstructorConstructorTableValues[] =
     { 0, 0, NoIntrinsic, 0, 0 }
 };
 
-static const HashTable JSTestNamedConstructorConstructorTable = { 1, 0, false, JSTestNamedConstructorConstructorTableValues, 0 };
+static const HashTable JSTestNamedConstructorConstructorTable = { 1, 0, JSTestNamedConstructorConstructorTableValues, 0 };
 const ClassInfo JSTestNamedConstructorConstructor::s_info = { "TestNamedConstructorConstructor", &Base::s_info, &JSTestNamedConstructorConstructorTable, 0, CREATE_METHOD_TABLE(JSTestNamedConstructorConstructor) };
 
 JSTestNamedConstructorConstructor::JSTestNamedConstructorConstructor(Structure* structure, JSDOMGlobalObject* globalObject)
@@ -119,7 +119,7 @@ static const HashTableValue JSTestNamedConstructorPrototypeTableValues[] =
     { 0, 0, NoIntrinsic, 0, 0 }
 };
 
-static const HashTable JSTestNamedConstructorPrototypeTable = { 1, 0, false, JSTestNamedConstructorPrototypeTableValues, 0 };
+static const HashTable JSTestNamedConstructorPrototypeTable = { 1, 0, JSTestNamedConstructorPrototypeTableValues, 0 };
 const ClassInfo JSTestNamedConstructorPrototype::s_info = { "TestNamedConstructorPrototype", &Base::s_info, &JSTestNamedConstructorPrototypeTable, 0, CREATE_METHOD_TABLE(JSTestNamedConstructorPrototype) };
 
 JSObject* JSTestNamedConstructorPrototype::self(VM& vm, JSGlobalObject* globalObject)

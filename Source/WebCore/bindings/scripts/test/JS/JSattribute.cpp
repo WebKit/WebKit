@@ -39,7 +39,7 @@ static const HashTableValue JSattributeTableValues[] =
     { 0, 0, NoIntrinsic, 0, 0 }
 };
 
-static const HashTable JSattributeTable = { 4, 3, true, JSattributeTableValues, 0 };
+static const HashTable JSattributeTable = { 4, 3, JSattributeTableValues, 0 };
 /* Hash table for constructor */
 
 static const HashTableValue JSattributeConstructorTableValues[] =
@@ -47,7 +47,7 @@ static const HashTableValue JSattributeConstructorTableValues[] =
     { 0, 0, NoIntrinsic, 0, 0 }
 };
 
-static const HashTable JSattributeConstructorTable = { 1, 0, false, JSattributeConstructorTableValues, 0 };
+static const HashTable JSattributeConstructorTable = { 1, 0, JSattributeConstructorTableValues, 0 };
 const ClassInfo JSattributeConstructor::s_info = { "attributeConstructor", &Base::s_info, &JSattributeConstructorTable, 0, CREATE_METHOD_TABLE(JSattributeConstructor) };
 
 JSattributeConstructor::JSattributeConstructor(Structure* structure, JSDOMGlobalObject* globalObject)
@@ -75,7 +75,7 @@ static const HashTableValue JSattributePrototypeTableValues[] =
     { 0, 0, NoIntrinsic, 0, 0 }
 };
 
-static const HashTable JSattributePrototypeTable = { 1, 0, false, JSattributePrototypeTableValues, 0 };
+static const HashTable JSattributePrototypeTable = { 1, 0, JSattributePrototypeTableValues, 0 };
 const ClassInfo JSattributePrototype::s_info = { "attributePrototype", &Base::s_info, &JSattributePrototypeTable, 0, CREATE_METHOD_TABLE(JSattributePrototype) };
 
 JSObject* JSattributePrototype::self(VM& vm, JSGlobalObject* globalObject)
