@@ -3777,8 +3777,8 @@ void ewk_view_scroll(Evas_Object* ewkView, const WebCore::IntSize& delta, const 
     priv->m_scrollOffsets.append(delta);
 
     for (size_t i = 0; i < priv->repaints.count; ++i) {
-        priv->repaints.array[i].x = delta.width();
-        priv->repaints.array[i].y = delta.height();
+        priv->repaints.array[i].x += delta.width();
+        priv->repaints.array[i].y += delta.height();
     }
 
     _ewk_view_smart_changed(smartData);

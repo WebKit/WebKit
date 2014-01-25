@@ -1,3 +1,16 @@
+2014-01-25  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        [EFL][WK1] Fix broken rendering while navigating history in EWebLauncher
+        https://bugs.webkit.org/show_bug.cgi?id=127601
+
+        Reviewed by Anders Carlsson.
+
+        When scrolled after requested repaints, rendering was broken because scrollDelta
+        changed repaints area.
+
+        * ewk/ewk_view.cpp:
+        (ewk_view_scroll):
+
 2014-01-24  Anders Carlsson  <andersca@apple.com>
 
         Remove back/forward list related functions from Page
