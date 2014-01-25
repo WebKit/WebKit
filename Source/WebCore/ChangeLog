@@ -1,3 +1,23 @@
+2014-01-25  Anders Carlsson  <andersca@apple.com>
+
+        Remove atomicIncrement/atomicDecrement
+        https://bugs.webkit.org/show_bug.cgi?id=127625
+
+        Reviewed by Andreas Kling.
+
+        Replace atomicIncrement/atomicDecrement with std::atomic.
+
+        * Modules/webaudio/AudioContext.cpp:
+        (WebCore::AudioContext::incrementActiveSourceCount):
+        (WebCore::AudioContext::decrementActiveSourceCount):
+        * Modules/webaudio/AudioContext.h:
+        * Modules/webaudio/AudioNode.cpp:
+        (WebCore::AudioNode::~AudioNode):
+        (WebCore::AudioNode::ref):
+        (WebCore::AudioNode::finishDeref):
+        * Modules/webaudio/AudioNode.h:
+        * Modules/webdatabase/OriginLock.h:
+
 2014-01-25  Alex Christensen  <achristensen@webkit.org>
 
         Unreviewed build fix for WinCairo.

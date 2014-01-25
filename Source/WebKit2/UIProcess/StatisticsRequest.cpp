@@ -28,7 +28,6 @@
 
 #include "APIArray.h"
 #include "MutableDictionary.h"
-#include <wtf/Atomics.h>
 
 namespace WebKit {
 
@@ -45,9 +44,9 @@ StatisticsRequest::~StatisticsRequest()
 
 uint64_t StatisticsRequest::addOutstandingRequest()
 {
-    static int64_t uniqueRequestID;
+    static std::atomic<int64_t> uniqueRequestID;
 
-    uint64_t requestID = atomicIncrement(&uniqueRequestID);
+    uint64_t requestID = ++uniqueRequestID;
     m_outstandingRequests.add(requestID);
     return requestID;
 }

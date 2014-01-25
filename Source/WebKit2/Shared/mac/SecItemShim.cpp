@@ -36,6 +36,7 @@
 #include "SecItemShimMessages.h"
 #include "SecItemShimProxyMessages.h"
 #include <Security/Security.h>
+#include <atomic>
 #include <dlfcn.h>
 #include <mutex>
 
@@ -73,8 +74,8 @@ SecItemShim::SecItemShim()
 
 static uint64_t generateSecItemRequestID()
 {
-    static int64_t uniqueSecItemRequestID;
-    return atomicIncrement(&uniqueSecItemRequestID);
+    static std::atomic<int64_t> uniqueSecItemRequestID;
+    return ++uniqueSecItemRequestID;
 }
 
 static std::unique_ptr<SecItemResponseData> sendSecItemRequest(SecItemRequestData::Type requestType, CFDictionaryRef query, CFDictionaryRef attributesToMatch = 0)

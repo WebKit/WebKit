@@ -1,5 +1,25 @@
 2014-01-25  Anders Carlsson  <andersca@apple.com>
 
+        Remove atomicIncrement/atomicDecrement
+        https://bugs.webkit.org/show_bug.cgi?id=127625
+
+        Reviewed by Andreas Kling.
+
+        Replace atomicIncrement/atomicDecrement with std::atomic.
+
+        * wtf/Atomics.h:
+        * wtf/RefCountedLeakCounter.cpp:
+        (WTF::RefCountedLeakCounter::~RefCountedLeakCounter):
+        (WTF::RefCountedLeakCounter::increment):
+        (WTF::RefCountedLeakCounter::decrement):
+        * wtf/RefCountedLeakCounter.h:
+        * wtf/ThreadSafeRefCounted.h:
+        (WTF::ThreadSafeRefCountedBase::ref):
+        (WTF::ThreadSafeRefCountedBase::refCount):
+        (WTF::ThreadSafeRefCountedBase::derefBase):
+
+2014-01-25  Anders Carlsson  <andersca@apple.com>
+
         Modernize HashTable threading code
         https://bugs.webkit.org/show_bug.cgi?id=127621
 

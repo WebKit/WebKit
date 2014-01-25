@@ -32,6 +32,7 @@
 #include "EventListener.h"
 #include "EventTarget.h"
 #include "MediaCanStartListener.h"
+#include <atomic>
 #include <wtf/HashSet.h>
 #include <wtf/MainThread.h>
 #include <wtf/PassRefPtr.h>
@@ -361,7 +362,7 @@ private:
     enum { MaxNumberOfChannels = 32 };
 
     // Number of AudioBufferSourceNodes that are active (playing).
-    int m_activeSourceCount;
+    std::atomic<int> m_activeSourceCount;
 
     BehaviorRestrictions m_restrictions;
 };

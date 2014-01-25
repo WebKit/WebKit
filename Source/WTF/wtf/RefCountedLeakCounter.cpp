@@ -68,7 +68,7 @@ RefCountedLeakCounter::~RefCountedLeakCounter()
     static bool loggedSuppressionReason;
     if (m_count) {
         if (!leakMessageSuppressionReasons || leakMessageSuppressionReasons->isEmpty())
-            LOG(RefCountedLeaks, "LEAK: %u %s", m_count, m_description);
+            LOG(RefCountedLeaks, "LEAK: %u %s", m_count.load(), m_description);
         else if (!loggedSuppressionReason) {
             // This logs only one reason. Later we could change it so we log all the reasons.
             LOG(RefCountedLeaks, "No leak checking done: %s", leakMessageSuppressionReasons->begin()->key);
@@ -79,12 +79,12 @@ RefCountedLeakCounter::~RefCountedLeakCounter()
 
 void RefCountedLeakCounter::increment()
 {
-    atomicIncrement(&m_count);
+    ++m_count;
 }
 
 void RefCountedLeakCounter::decrement()
 {
-    atomicDecrement(&m_count);
+    --m_count;
 }
 
 #endif

@@ -20,32 +20,28 @@
  
 #ifndef RefCountedLeakCounter_h
 #define RefCountedLeakCounter_h
- 
+
+#include <atomic>
 #include <wtf/Assertions.h>
-#include <wtf/Threading.h>
 
 namespace WTF {
     
-    struct RefCountedLeakCounter {
-        WTF_EXPORT_PRIVATE static void suppressMessages(const char*);
-        WTF_EXPORT_PRIVATE static void cancelMessageSuppression(const char*);
-        
-        WTF_EXPORT_PRIVATE explicit RefCountedLeakCounter(const char* description);
-        WTF_EXPORT_PRIVATE ~RefCountedLeakCounter();
+struct RefCountedLeakCounter {
+    WTF_EXPORT_PRIVATE static void suppressMessages(const char*);
+    WTF_EXPORT_PRIVATE static void cancelMessageSuppression(const char*);
+    
+    WTF_EXPORT_PRIVATE explicit RefCountedLeakCounter(const char* description);
+    WTF_EXPORT_PRIVATE ~RefCountedLeakCounter();
 
-        WTF_EXPORT_PRIVATE void increment();
-        WTF_EXPORT_PRIVATE void decrement();
+    WTF_EXPORT_PRIVATE void increment();
+    WTF_EXPORT_PRIVATE void decrement();
 
 #ifndef NDEBUG
-    private:
-#if COMPILER(MINGW) || OS(WINCE)
-        int m_count;
-#else
-        volatile int m_count;
+private:
+    std::atomic<int> m_count;
+    const char* m_description;
 #endif
-        const char* m_description;
-#endif
-    };
+};
 
 }  // namespace WTF
 

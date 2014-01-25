@@ -42,14 +42,14 @@
 #include "OperandsInlines.h"
 #include "Operations.h"
 #include "VirtualRegister.h"
-
+#include <atomic>
 #include <wtf/ProcessID.h>
 
 namespace JSC { namespace FTL {
 
 using namespace DFG;
 
-static int compileCounter;
+static std::atomic<int> compileCounter;
 
 // Using this instead of typeCheck() helps to reduce the load on LLVM, by creating
 // significantly less dead code.
@@ -81,7 +81,7 @@ public:
         CString name;
         if (verboseCompilationEnabled()) {
             name = toCString(
-                "jsBody_", atomicIncrement(&compileCounter), "_", codeBlock()->inferredName(),
+                "jsBody_", ++compileCounter, "_", codeBlock()->inferredName(),
                 "_", codeBlock()->hash());
         } else
             name = "jsBody";

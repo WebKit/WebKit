@@ -33,17 +33,14 @@
 
 namespace JSC { namespace Profiler {
 
-#if COMPILER(MINGW) || COMPILER(MSVC7_OR_LOWER) || OS(WINCE)
-static int databaseCounter;
-#else
-static volatile int databaseCounter;
-#endif
+static std::atomic<int> databaseCounter;
+
 static SpinLock registrationLock = SPINLOCK_INITIALIZER;
-static int didRegisterAtExit;
+static std::atomic<int> didRegisterAtExit;
 static Database* firstDatabase;
 
 Database::Database(VM& vm)
-    : m_databaseID(atomicIncrement(&databaseCounter))
+    : m_databaseID(++databaseCounter)
     , m_vm(vm)
     , m_shouldSaveAtExit(false)
     , m_nextRegisteredDatabase(0)
@@ -138,7 +135,7 @@ void Database::registerToSaveAtExit(const char* filename)
 
 void Database::addDatabaseToAtExit()
 {
-    if (atomicIncrement(&didRegisterAtExit) == 1)
+    if (++didRegisterAtExit == 1)
         atexit(atExitCallback);
     
     TCMalloc_SpinLockHolder holder(&registrationLock);

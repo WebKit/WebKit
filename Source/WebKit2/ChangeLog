@@ -1,5 +1,21 @@
 2014-01-25  Anders Carlsson  <andersca@apple.com>
 
+        Remove atomicIncrement/atomicDecrement
+        https://bugs.webkit.org/show_bug.cgi?id=127625
+
+        Reviewed by Andreas Kling.
+
+        Replace atomicIncrement/atomicDecrement with std::atomic.
+
+        * Platform/IPC/Connection.cpp:
+        (IPC::Connection::createSyncMessageEncoder):
+        * Shared/mac/SecItemShim.cpp:
+        (WebKit::generateSecItemRequestID):
+        * UIProcess/StatisticsRequest.cpp:
+        (WebKit::StatisticsRequest::addOutstandingRequest):
+
+2014-01-25  Anders Carlsson  <andersca@apple.com>
+
         Modernize HashTable threading code
         https://bugs.webkit.org/show_bug.cgi?id=127621
 

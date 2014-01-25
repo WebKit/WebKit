@@ -1,3 +1,19 @@
+2014-01-25  Anders Carlsson  <andersca@apple.com>
+
+        Remove atomicIncrement/atomicDecrement
+        https://bugs.webkit.org/show_bug.cgi?id=127625
+
+        Reviewed by Andreas Kling.
+
+        Replace atomicIncrement/atomicDecrement with std::atomic.
+
+        * bytecode/Watchpoint.h:
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::LowerDFGToLLVM::lower):
+        * profiler/ProfilerDatabase.cpp:
+        (JSC::Profiler::Database::Database):
+        (JSC::Profiler::Database::addDatabaseToAtExit):
+
 2014-01-24  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Move InspectorRuntimeAgent into JavaScriptCore

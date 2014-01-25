@@ -30,6 +30,7 @@
 
 #include "FileSystem.h"
 #include <wtf/ThreadSafeRefCounted.h>
+#include <wtf/ThreadingPrimitives.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {

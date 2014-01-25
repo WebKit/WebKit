@@ -1001,12 +1001,12 @@ void AudioContext::fireCompletionEvent()
 
 void AudioContext::incrementActiveSourceCount()
 {
-    atomicIncrement(&m_activeSourceCount);
+    ++m_activeSourceCount;
 }
 
 void AudioContext::decrementActiveSourceCount()
 {
-    atomicDecrement(&m_activeSourceCount);
+    --m_activeSourceCount;
 }
 
 } // namespace WebCore

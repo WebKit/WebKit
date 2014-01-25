@@ -26,6 +26,7 @@
 #ifndef Watchpoint_h
 #define Watchpoint_h
 
+#include <wtf/Atomics.h>
 #include <wtf/SentinelLinkedList.h>
 #include <wtf/ThreadSafeRefCounted.h>
 

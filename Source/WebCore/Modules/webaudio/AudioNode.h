@@ -207,8 +207,8 @@ private:
     double m_lastNonSilentTime;
 
     // Ref-counting
-    volatile int m_normalRefCount;
-    volatile int m_connectionRefCount;
+    std::atomic<int> m_normalRefCount;
+    std::atomic<int> m_connectionRefCount;
     
     bool m_isMarkedForDeletion;
     bool m_isDisabled;

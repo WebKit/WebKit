@@ -344,7 +344,6 @@ std::unique_ptr<MessageEncoder> Connection::createSyncMessageEncoder(StringRefer
     encoder->setIsSyncMessage(true);
 
     // Encode the sync request ID.
-    COMPILE_ASSERT(sizeof(m_syncRequestID) == sizeof(int64_t), CanUseAtomicIncrement);
     syncRequestID = ++m_syncRequestID;
     *encoder << syncRequestID;
 

@@ -69,7 +69,7 @@ AudioNode::~AudioNode()
 {
 #if DEBUG_AUDIONODE_REFERENCES
     --s_nodeCount[nodeType()];
-    fprintf(stderr, "%p: %d: AudioNode::~AudioNode() %d %d\n", this, nodeType(), m_normalRefCount, m_connectionRefCount);
+    fprintf(stderr, "%p: %d: AudioNode::~AudioNode() %d %d\n", this, nodeType(), m_normalRefCount.load(), m_connectionRefCount);
 #endif
 }
 
@@ -411,10 +411,10 @@ void AudioNode::ref(RefType refType)
 {
     switch (refType) {
     case RefTypeNormal:
-        atomicIncrement(&m_normalRefCount);
+        ++m_normalRefCount;
         break;
     case RefTypeConnection:
-        atomicIncrement(&m_connectionRefCount);
+        ++m_connectionRefCount;
         break;
     default:
         ASSERT_NOT_REACHED();
@@ -473,11 +473,11 @@ void AudioNode::finishDeref(RefType refType)
     switch (refType) {
     case RefTypeNormal:
         ASSERT(m_normalRefCount > 0);
-        atomicDecrement(&m_normalRefCount);
+        --m_normalRefCount;
         break;
     case RefTypeConnection:
         ASSERT(m_connectionRefCount > 0);
-        atomicDecrement(&m_connectionRefCount);
+        --m_connectionRefCount;
         break;
     default:
         ASSERT_NOT_REACHED();
