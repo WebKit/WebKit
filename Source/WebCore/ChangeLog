@@ -1,5 +1,17 @@
 2014-01-25  Tim Horton  <timothy_horton@apple.com>
 
+        Remove an unnecessary platform #if in BitmapImage(CG)::checkForSolidColor()
+        https://bugs.webkit.org/show_bug.cgi?id=127610
+
+        Reviewed by Simon Fraser.
+
+        * platform/graphics/cg/BitmapImageCG.cpp:
+        (WebCore::BitmapImage::checkForSolidColor):
+        Over time, the two sides of this #if !PLATFORM(IOS) converged. Remove the #if
+        and merge the code. We explicitly use kCGBitmapByteOrder32Big to be correct everywhere.
+
+2014-01-25  Tim Horton  <timothy_horton@apple.com>
+
         [cg] Look in the PNG dictionary for image duration information
         https://bugs.webkit.org/show_bug.cgi?id=127611
         <rdar://problem/15408643>

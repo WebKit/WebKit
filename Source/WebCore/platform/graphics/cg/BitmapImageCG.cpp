@@ -144,36 +144,19 @@ void BitmapImage::checkForSolidColor()
 
     // Currently we only check for solid color in the important special case of a 1x1 image.
     if (image && CGImageGetWidth(image) == 1 && CGImageGetHeight(image) == 1) {
-#if !PLATFORM(IOS)
         unsigned char pixel[4]; // RGBA
-        RetainPtr<CGContextRef> bmap = adoptCF(CGBitmapContextCreate(pixel, 1, 1, 8, sizeof(pixel), deviceRGBColorSpaceRef(),
+        RetainPtr<CGContextRef> bitmapContext = adoptCF(CGBitmapContextCreate(pixel, 1, 1, 8, sizeof(pixel), deviceRGBColorSpaceRef(),
             kCGImageAlphaPremultipliedLast | kCGBitmapByteOrder32Big));
-        if (!bmap)
+        if (!bitmapContext)
             return;
-        GraphicsContext(bmap.get()).setCompositeOperation(CompositeCopy);
-        CGRect dst = { {0, 0}, {1, 1} };
-        CGContextDrawImage(bmap.get(), dst, image);
-        if (pixel[3] == 0)
-            m_solidColor = Color(0, 0, 0, 0);
-        else
-            m_solidColor = Color(pixel[0] * 255 / pixel[3], pixel[1] * 255 / pixel[3], pixel[2] * 255 / pixel[3], pixel[3]);
-#else
-        // FIXME: Can we share more code with the Mac port? Formerly the Mac port created a floating point bitmap context,
-        // but such a context wasn't support on iOS (rdar://problem/5106514). So, on iOS we created an integral bitmap
-        // context. Since <https://trac.webkit.org/changeset/23939> the Mac port creates an integral bitmap context.
-        unsigned char pixel[4] = {0, 0, 0, 0}; // RGBA
-        RetainPtr<CGContextRef> bitmap = adoptCF(CGBitmapContextCreate(pixel, 1, 1, 8, sizeof(pixel), deviceRGBColorSpaceRef(),
-            kCGImageAlphaPremultipliedLast));
-        if (!bitmap)
-            return;
-        GraphicsContext(bitmap.get()).setCompositeOperation(CompositeCopy);
-        CGRect destinationRect = { {0, 0}, {1, 1} };
-        CGContextDrawImage(bitmap.get(), destinationRect, image);
+        GraphicsContext(bitmapContext.get()).setCompositeOperation(CompositeCopy);
+        CGRect destinationRect = CGRectMake(0, 0, 1, 1);
+        CGContextDrawImage(bitmapContext.get(), destinationRect, image);
         if (!pixel[3])
             m_solidColor = Color(0, 0, 0, 0);
         else
-            m_solidColor = Color(static_cast<int>(pixel[0]), static_cast<int>(pixel[1]), static_cast<int>(pixel[2]), static_cast<int>(pixel[3]));
-#endif
+            m_solidColor = Color(pixel[0] * 255 / pixel[3], pixel[1] * 255 / pixel[3], pixel[2] * 255 / pixel[3], pixel[3]);
+
         m_isSolidColor = true;
     }
 }
