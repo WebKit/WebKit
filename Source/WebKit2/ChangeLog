@@ -1,3 +1,17 @@
+2014-01-25  Zan Dobersek  <zdobersek@igalia.com>
+
+        [GTK] Remove null check for WebPopupMenuProxy::Client in WebPopupMenuProxyGtk::showPopupMenu
+        https://bugs.webkit.org/show_bug.cgi?id=107036
+
+        Reviewed by Andreas Kling.
+
+        * UIProcess/gtk/WebPopupMenuProxyGtk.cpp:
+        (WebKit::WebPopupMenuProxyGtk::showPopupMenu): Don't perform an early return
+        if the client is not available - it always should be. The client is set to null
+        only when the proxy is invalidated. This happens immediately after this function
+        returns, either with the popup being forced to close or being closed by the user
+        with possibly an item being chosen. Rather than the early return, use an ASSERT.
+
 2014-01-24  Tim Horton  <timothy_horton@apple.com>
 
         WebKit2 View Gestures (Smart Zoom): Can't double-tap zoom-out on the body
