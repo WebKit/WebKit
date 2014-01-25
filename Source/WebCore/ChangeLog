@@ -1,3 +1,24 @@
+2014-01-24  Zalan Bujtas  <zalan@apple.com>
+
+        Subpixel layout: Default style of input type=checkbox/radio (0.5ex) adds 1px extra margin on both left and right.
+        https://bugs.webkit.org/show_bug.cgi?id=125728
+
+        Reviewed by Simon Fraser.
+
+        Using the 0.5ex value to set checkbox/radio left and right margins is a long-standing
+        (khtml) behavior. While it indicates dynamic behavior, in order to get the margins changed,
+        the widget's font size needs to be set, which is rather rare for such input types.
+        It also results in odd layout, where the checkbox's indentation may seem to change randomly.
+
+        '<input style="font-size: 30px;" type="checkbox">foo' changes neither the checkbox
+        nor the text size, but it indents the line by about 15px.
+
+        Other browsers (FF, Opera with Presto) disagree and they set static margins values.
+        2px is the current default computed value.
+
+        * css/html.css:
+        (input[type="radio"], input[type="checkbox"]):
+
 2014-01-24  Oliver Hunt  <oliver@apple.com>
 
         Put functions need to take a base object and a this value, and perform type checks on |this|

@@ -1,3 +1,66 @@
+2014-01-24  Zalan Bujtas  <zalan@apple.com>
+
+        Subpixel layout: Default style of input type=checkbox/radio (0.5ex) adds 1px extra margin on both left and right.
+        https://bugs.webkit.org/show_bug.cgi?id=125728
+
+        Reviewed by Simon Fraser.
+
+        Using the 0.5ex value to set checkbox/radio left and right margins is a long-standing
+        (khtml) behavior. While it indicates dynamic behavior, in order to get the margins changed,
+        the widget's font size needs to be set, which is rather rare for such input types.
+        It also results in odd layout, where the checkbox's indentation may seem to change randomly.
+
+        '<input style="font-size: 30px;" type="checkbox">foo' changes neither the checkbox
+        nor the text size, but it indents the line by about 15px.
+
+        Other browsers (FF, Opera with Presto) disagree and they set static margins values.
+        2px is the current default computed value.
+
+        * platform/mac-mountainlion/fast/block/margin-collapse/103-expected.txt:
+        * platform/mac-mountainlion/fast/forms/basic-inputs-expected.txt:
+        * platform/mac-mountainlion/fast/forms/box-shadow-override-expected.txt:
+        * platform/mac-mountainlion/fast/forms/form-element-geometry-expected.txt:
+        * platform/mac-mountainlion/fast/forms/input-appearance-height-expected.txt:
+        * platform/mac-mountainlion/fast/forms/input-value-expected.txt:
+        * platform/mac-mountainlion/fast/replaced/replaced-breaking-expected.txt:
+        * platform/mac-mountainlion/fast/text/textIteratorNilRenderer-expected.txt:
+        * platform/mac-mountainlion/http/tests/navigation/javascriptlink-frames-expected.txt:
+        * platform/mac-mountainlion/tables/mozilla/bugs/bug4527-expected.txt:
+        * platform/mac/compositing/overflow/theme-affects-visual-overflow-expected.txt:
+        * platform/mac/css1/box_properties/acid_test-expected.txt:
+        * platform/mac/css2.1/t09-c5526c-display-00-e-expected.txt:
+        * platform/mac/css3/selectors3/html/css3-modsel-25-expected.txt:
+        * platform/mac/css3/selectors3/html/css3-modsel-70-expected.txt:
+        * platform/mac/css3/selectors3/xhtml/css3-modsel-25-expected.txt:
+        * platform/mac/css3/selectors3/xhtml/css3-modsel-70-expected.txt:
+        * platform/mac/css3/selectors3/xml/css3-modsel-25-expected.txt:
+        * platform/mac/css3/selectors3/xml/css3-modsel-70-expected.txt:
+        * platform/mac/fast/block/basic/011-expected.txt:
+        * platform/mac/fast/block/margin-collapse/103-expected.txt:
+        * platform/mac/fast/css/non-standard-checkbox-size-expected.txt:
+        * platform/mac/fast/forms/001-expected.txt:
+        * platform/mac/fast/forms/basic-inputs-expected.txt:
+        * platform/mac/fast/forms/box-shadow-override-expected.txt:
+        * platform/mac/fast/forms/file/file-input-disabled-expected.txt:
+        * platform/mac/fast/forms/form-element-geometry-expected.txt:
+        * platform/mac/fast/forms/formmove-expected.txt:
+        * platform/mac/fast/forms/formmove2-expected.txt:
+        * platform/mac/fast/forms/indeterminate-expected.txt:
+        * platform/mac/fast/forms/input-appearance-height-expected.txt:
+        * platform/mac/fast/forms/input-value-expected.txt:
+        * platform/mac/fast/inline/positionedLifetime-expected.txt:
+        * platform/mac/fast/parser/bad-xml-slash-expected.txt:
+        * platform/mac/fast/replaced/replaced-breaking-expected.txt:
+        * platform/mac/fast/replaced/width100percent-checkbox-expected.txt:
+        * platform/mac/fast/replaced/width100percent-radio-expected.txt:
+        * platform/mac/fast/text/textIteratorNilRenderer-expected.txt:
+        * platform/mac/fast/text/whitespace/normal-after-nowrap-breaking-expected.txt:
+        * platform/mac/http/tests/navigation/javascriptlink-frames-expected.txt:
+        * platform/mac/tables/mozilla/bugs/bug1318-expected.txt:
+        * platform/mac/tables/mozilla/bugs/bug4527-expected.txt:
+        * platform/mac/tables/mozilla_expected_failures/core/captions1-expected.txt:
+        * platform/mac/tables/mozilla_expected_failures/core/captions2-expected.txt:
+
 2014-01-24  Oliver Hunt  <oliver@apple.com>
 
         Put functions need to take a base object and a this value, and perform type checks on |this|

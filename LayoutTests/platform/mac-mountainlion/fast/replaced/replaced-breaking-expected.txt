@@ -40,11 +40,11 @@ layer at (0,0) size 800x600
         RenderListBox {SELECT} at (3,235) size 48x57 [bgcolor=#FFFFFF] [border: (1px inset #808080)]
         RenderListBox {SELECT} at (3,296) size 48x57 [bgcolor=#FFFFFF] [border: (1px inset #808080)]
         RenderText {#text} at (0,0) size 0x0
-        RenderBlock {INPUT} at (3,358) size 13x12
-        RenderBlock {INPUT} at (3,376) size 13x12
+        RenderBlock {INPUT} at (3,358) size 12x12
+        RenderBlock {INPUT} at (3,376) size 12x12
         RenderText {#text} at (0,0) size 0x0
-        RenderBlock {INPUT} at (3,394) size 13x13
-        RenderBlock {INPUT} at (3,413) size 13x13
+        RenderBlock {INPUT} at (3,394) size 12x13
+        RenderBlock {INPUT} at (3,413) size 12x13
         RenderText {#text} at (0,0) size 0x0
         RenderIFrame {IFRAME} at (1,429) size 27x27 [border: (1px solid #000000)]
           layer at (0,0) size 25x25

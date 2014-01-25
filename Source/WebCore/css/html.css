@@ -679,7 +679,7 @@ input:-webkit-autofill {
 }
 
 input[type="radio"], input[type="checkbox"] {
-    margin: 3px 0.5ex;
+    margin: 3px 2px;
 #if defined(WTF_PLATFORM_IOS) && WTF_PLATFORM_IOS
     border: 1px solid #4c4c4c;
     box-sizing: border-box;
