@@ -1,3 +1,23 @@
+2014-01-24  Mark Lam  <mark.lam@apple.com>
+
+        DebuggerCallFrame::evaluateWithCallFrame() should not execute a null executable.
+        <https://webkit.org/b/127600>
+
+        Reviewed by Oliver Hunt.
+
+        In DebuggerCallFrame::evaluateWithCallFrame(), if the script string that
+        is passed in is bad, it will fail to create an Executable i.e.
+        EvalExecutable::create() returns a null pointer. However,
+        DebuggerCallFrame::evaluateWithCallFrame() was just clearing the
+        exception and proceeded to execute the null pointer as an Executable.
+        A crash ensues.
+
+        Now, if an exception is detected while creating the Executable, we
+        abort instead.
+
+        * debugger/DebuggerCallFrame.cpp:
+        (JSC::DebuggerCallFrame::evaluateWithCallFrame):
+
 2014-01-24  Oliver Hunt  <oliver@apple.com>
 
         Put functions need to take a base object and a this value, and perform type checks on |this|
