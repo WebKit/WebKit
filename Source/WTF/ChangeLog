@@ -1,3 +1,12 @@
+2014-01-25  Darin Adler  <darin@apple.com>
+
+        Restore alphabetical order in Compiler.h
+        https://bugs.webkit.org/show_bug.cgi?id=127620
+
+        Reviewed by Sam Weinig.
+
+        * wtf/Compiler.h: Resorted some things into alphabetical order
+
 2014-01-24  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Convert some NMake files to MSBuild project files
