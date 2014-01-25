@@ -1,3 +1,13 @@
+2014-01-25  Antti Koivisto  <antti@apple.com>
+
+        REGRESSION(r162744): wsj.com paints white
+        https://bugs.webkit.org/show_bug.cgi?id=127619
+
+        Reviewed by Sam Weinig.
+
+        * fast/css/stylesheet-layout-with-pending-paint-expected.html: Added.
+        * fast/css/stylesheet-layout-with-pending-paint.html: Added.
+
 2014-01-24  Tamas Gergely  <tgergely.u-szeged@partner.samsung.com>
 
         ASSERT(time.isFinite()) in SVGSMILElement::createInstanceTimesFromSyncbase

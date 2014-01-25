@@ -2800,6 +2800,12 @@ void Document::didRemoveAllPendingStylesheet()
 
     styleResolverChanged(DeferRecalcStyleIfNeeded);
 
+    if (m_pendingSheetLayout == DidLayoutWithPendingSheets) {
+        m_pendingSheetLayout = IgnoreLayoutWithPendingSheets;
+        if (renderView())
+            renderView()->repaintViewAndCompositedLayers();
+    }
+
     if (ScriptableDocumentParser* parser = scriptableDocumentParser())
         parser->executeScriptsWaitingForStylesheets();
 
@@ -3230,12 +3236,6 @@ void Document::styleResolverChanged(StyleResolverUpdateFlag updateFlag)
         if (stylesheetChangeRequiresStyleRecalc)
             scheduleForcedStyleRecalc();
         return;
-    }
-
-    if (didLayoutWithPendingStylesheets() && !m_styleSheetCollection.hasPendingSheets()) {
-        m_pendingSheetLayout = IgnoreLayoutWithPendingSheets;
-        if (renderView())
-            renderView()->repaintViewAndCompositedLayers();
     }
 
     if (!stylesheetChangeRequiresStyleRecalc)

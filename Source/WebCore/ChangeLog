@@ -1,3 +1,17 @@
+2014-01-25  Antti Koivisto  <antti@apple.com>
+
+        REGRESSION(r162744): wsj.com paints white
+        https://bugs.webkit.org/show_bug.cgi?id=127619
+
+        Reviewed by Sam Weinig.
+
+        Test: fast/css/stylesheet-layout-with-pending-paint.html
+
+        * dom/Document.cpp:
+        (WebCore::Document::styleResolverChanged):
+        
+            Ensure we switch out from IgnoreLayoutWithPendingSheets state after stylesheet loads complete.
+
 2014-01-24  Dan Bernstein  <mitz@apple.com>
 
         Reverted r162760. It broke more things.
