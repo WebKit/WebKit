@@ -38,6 +38,7 @@
 #include "StyleInheritedData.h"
 #include "StyleScopeResolver.h"
 #include "ViewportStyleResolver.h"
+#include <memory>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/RefPtr.h>
@@ -183,7 +184,7 @@ public:
     {
         ASSERT(RuntimeEnabledFeatures::sharedFeatures().shadowDOMEnabled());
         if (!m_scopeResolver)
-            m_scopeResolver = adoptPtr(new StyleScopeResolver());
+            m_scopeResolver = std::make_unique<StyleScopeResolver>();
         return m_scopeResolver.get();
     }
 #endif
@@ -527,7 +528,7 @@ private:
 
     Timer<StyleResolver> m_matchedPropertiesCacheSweepTimer;
 
-    OwnPtr<MediaQueryEvaluator> m_medium;
+    std::unique_ptr<MediaQueryEvaluator> m_medium;
     RefPtr<RenderStyle> m_rootDefaultStyle;
 
     Document& m_document;
@@ -536,7 +537,7 @@ private:
     bool m_matchAuthorAndUserStyles;
 
     RefPtr<CSSFontSelector> m_fontSelector;
-    Vector<OwnPtr<MediaQueryResult>> m_viewportDependentMediaQueryResults;
+    Vector<std::unique_ptr<MediaQueryResult>> m_viewportDependentMediaQueryResults;
 
 #if ENABLE(CSS_DEVICE_ADAPTATION)
     RefPtr<ViewportStyleResolver> m_viewportStyleResolver;
@@ -544,7 +545,7 @@ private:
 
     const DeprecatedStyleBuilder& m_deprecatedStyleBuilder;
 
-    OwnPtr<StyleScopeResolver> m_scopeResolver;
+    std::unique_ptr<StyleScopeResolver> m_scopeResolver;
     CSSToStyleMap m_styleMap;
     InspectorCSSOMWrappers m_inspectorCSSOMWrappers;
 

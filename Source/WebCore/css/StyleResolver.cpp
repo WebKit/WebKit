@@ -277,15 +277,15 @@ StyleResolver::StyleResolver(Document& document, bool matchAuthorAndUserStyles)
     // is always from the document that owns the style selector
     FrameView* view = m_document.view();
     if (view)
-        m_medium = adoptPtr(new MediaQueryEvaluator(view->mediaType()));
+        m_medium = std::make_unique<MediaQueryEvaluator>(view->mediaType());
     else
-        m_medium = adoptPtr(new MediaQueryEvaluator("all"));
+        m_medium = std::make_unique<MediaQueryEvaluator>("all");
 
     if (root)
         m_rootDefaultStyle = styleForElement(root, 0, DisallowStyleSharing, MatchOnlyUserAgentRules);
 
     if (m_rootDefaultStyle && view)
-        m_medium = adoptPtr(new MediaQueryEvaluator(view->mediaType(), &view->frame(), m_rootDefaultStyle.get()));
+        m_medium = std::make_unique<MediaQueryEvaluator>(view->mediaType(), &view->frame(), m_rootDefaultStyle.get());
 
     m_ruleSets.resetAuthorStyle();
 
@@ -3332,7 +3332,7 @@ Color StyleResolver::colorFromPrimitiveValue(CSSPrimitiveValue* value, bool forV
 
 void StyleResolver::addViewportDependentMediaQueryResult(const MediaQueryExp* expr, bool result)
 {
-    m_viewportDependentMediaQueryResults.append(adoptPtr(new MediaQueryResult(*expr, result)));
+    m_viewportDependentMediaQueryResults.append(std::make_unique<MediaQueryResult>(*expr, result));
 }
 
 bool StyleResolver::affectedByViewportChange() const

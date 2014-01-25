@@ -1,5 +1,26 @@
 2014-01-25  Zan Dobersek  <zdobersek@igalia.com>
 
+        Move StyleProperties, StyleResolver to std::unique_ptr
+        https://bugs.webkit.org/show_bug.cgi?id=127570
+
+        Reviewed by Andreas Kling.
+
+        Move the StyleProperties and StyleResolver classes from using OwnPtr and adoptPtr
+        to using std::unique_ptr and std::make_unique.
+
+        * css/StyleInvalidationAnalysis.h: Remove the PassOwnPtr.h header inclusion.
+        * css/StyleProperties.cpp:
+        (WebCore::MutableStyleProperties::ensureCSSStyleDeclaration):
+        (WebCore::MutableStyleProperties::ensureInlineCSSStyleDeclaration):
+        * css/StyleProperties.h:
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::StyleResolver):
+        (WebCore::StyleResolver::addViewportDependentMediaQueryResult):
+        * css/StyleResolver.h:
+        * css/StyleScopeResolver.h:
+
+2014-01-25  Zan Dobersek  <zdobersek@igalia.com>
+
         Move CSSFontFace, CSSFontSelector to std::unique_ptr
         https://bugs.webkit.org/show_bug.cgi?id=127569
 

@@ -27,6 +27,7 @@
 #include "CSSProperty.h"
 #include "CSSPropertyNames.h"
 #include "CSSValueKeywords.h"
+#include <memory>
 #include <wtf/ListHashSet.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
@@ -230,7 +231,7 @@ private:
 
     bool removeShorthandProperty(CSSPropertyID);
     CSSProperty* findCSSPropertyWithID(CSSPropertyID);
-    OwnPtr<PropertySetCSSStyleDeclaration> m_cssomWrapper;
+    std::unique_ptr<PropertySetCSSStyleDeclaration> m_cssomWrapper;
 
     friend class StyleProperties;
 };
