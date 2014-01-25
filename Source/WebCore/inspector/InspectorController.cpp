@@ -106,6 +106,11 @@ InspectorController::InspectorController(Page& page, InspectorClient* inspectorC
     m_pageAgent = pageAgentPtr.get();
     m_agents.append(std::move(pageAgentPtr));
 
+    auto runtimeAgentPtr = std::make_unique<PageRuntimeAgent>(m_injectedScriptManager.get(), &page, pageAgent);
+    PageRuntimeAgent* runtimeAgent = runtimeAgentPtr.get();
+    m_instrumentingAgents->setPageRuntimeAgent(runtimeAgent);
+    m_agents.append(std::move(runtimeAgentPtr));
+
     auto domAgentPtr = std::make_unique<InspectorDOMAgent>(m_instrumentingAgents.get(), pageAgent, m_injectedScriptManager.get(), m_overlay.get());
     m_domAgent = domAgentPtr.get();
     m_agents.append(std::move(domAgentPtr));
@@ -136,10 +141,6 @@ InspectorController::InspectorController(Page& page, InspectorClient* inspectorC
     auto resourceAgentPtr = std::make_unique<InspectorResourceAgent>(m_instrumentingAgents.get(), pageAgent, inspectorClient);
     m_resourceAgent = resourceAgentPtr.get();
     m_agents.append(std::move(resourceAgentPtr));
-
-    auto runtimeAgentPtr = std::make_unique<PageRuntimeAgent>(m_instrumentingAgents.get(), m_injectedScriptManager.get(), &page, pageAgent);
-    InspectorRuntimeAgent* runtimeAgent = runtimeAgentPtr.get();
-    m_agents.append(std::move(runtimeAgentPtr));
 
     auto consoleAgentPtr = std::make_unique<PageConsoleAgent>(m_instrumentingAgents.get(), m_injectedScriptManager.get(), m_domAgent);
     InspectorConsoleAgent* consoleAgent = consoleAgentPtr.get();

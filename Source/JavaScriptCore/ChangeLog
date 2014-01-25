@@ -1,3 +1,41 @@
+2014-01-24  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Move InspectorRuntimeAgent into JavaScriptCore
+        https://bugs.webkit.org/show_bug.cgi?id=127605
+
+        Reviewed by Timothy Hatcher.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj.filters:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        Add new files to the build.
+
+        * inspector/agents/InspectorRuntimeAgent.h: Renamed from Source/WebCore/inspector/InspectorRuntimeAgent.h.
+        * inspector/agents/InspectorRuntimeAgent.cpp: Renamed from Source/WebCore/inspector/InspectorRuntimeAgent.cpp.
+        (Inspector::InspectorRuntimeAgent::InspectorRuntimeAgent):
+        (Inspector::InspectorRuntimeAgent::parse):
+        (Inspector::InspectorRuntimeAgent::evaluate):
+        (Inspector::InspectorRuntimeAgent::callFunctionOn):
+        (Inspector::InspectorRuntimeAgent::getProperties):
+        - Move the agent into JavaScriptCore.
+        - Modernize and cleanup.
+        - Make globalVM a pure virtual function for subclasses to implement.
+
+        * inspector/agents/JSGlobalObjectRuntimeAgent.h: Added.
+        * inspector/agents/JSGlobalObjectRuntimeAgent.cpp: Added.
+        (Inspector::JSGlobalObjectRuntimeAgent::JSGlobalObjectRuntimeAgent):
+        (Inspector::JSGlobalObjectRuntimeAgent::didCreateFrontendAndBackend):
+        (Inspector::JSGlobalObjectRuntimeAgent::willDestroyFrontendAndBackend):
+        (Inspector::JSGlobalObjectRuntimeAgent::globalVM):
+        (Inspector::JSGlobalObjectRuntimeAgent::injectedScriptForEval):
+        Straightforward JSGlobalObject implementation.
+
+        * inspector/JSGlobalObjectInspectorController.cpp:
+        (Inspector::JSGlobalObjectInspectorController::JSGlobalObjectInspectorController):
+        Add a runtime agent when inspecting a JSContext!
+
 2014-01-23  Joseph Pecoraro  <pecoraro@apple.com>
 
         Move JavaScriptCallFrame and ScriptDebugServer into JavaScriptCore for inspector

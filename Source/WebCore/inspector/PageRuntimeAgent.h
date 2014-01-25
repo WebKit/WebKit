@@ -33,10 +33,13 @@
 
 #if ENABLE(INSPECTOR)
 
-#include "InspectorRuntimeAgent.h"
-#include "InspectorWebFrontendDispatchers.h"
-#include "ScriptState.h"
+#include <inspector/InspectorJSFrontendDispatchers.h>
+#include <inspector/agents/InspectorRuntimeAgent.h>
 #include <wtf/PassOwnPtr.h>
+
+namespace JSC {
+class ExecState;
+}
 
 namespace Inspector {
 class InjectedScriptManager;
@@ -45,13 +48,15 @@ class InjectedScriptManager;
 namespace WebCore {
 
 class InspectorPageAgent;
+class Frame;
 class Page;
 class SecurityOrigin;
+typedef String ErrorString;
 
-class PageRuntimeAgent : public InspectorRuntimeAgent {
+class PageRuntimeAgent final : public Inspector::InspectorRuntimeAgent {
 public:
-    PageRuntimeAgent(InstrumentingAgents*, Inspector::InjectedScriptManager*, Page*, InspectorPageAgent*);
-    virtual ~PageRuntimeAgent();
+    PageRuntimeAgent(Inspector::InjectedScriptManager*, Page*, InspectorPageAgent*);
+    virtual ~PageRuntimeAgent() { }
     
     virtual void didCreateFrontendAndBackend(Inspector::InspectorFrontendChannel*, Inspector::InspectorBackendDispatcher*) override;
     virtual void willDestroyFrontendAndBackend(Inspector::InspectorDisconnectReason) override;
@@ -62,6 +67,7 @@ public:
     void didCreateIsolatedContext(Frame*, JSC::ExecState*, SecurityOrigin*);
 
 private:
+    virtual JSC::VM* globalVM() override;
     virtual Inspector::InjectedScript injectedScriptForEval(ErrorString*, const int* executionContextId) override;
     virtual void muteConsole() override;
     virtual void unmuteConsole() override;

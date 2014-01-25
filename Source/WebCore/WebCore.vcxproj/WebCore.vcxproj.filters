@@ -274,6 +274,9 @@
     <Filter Include="ForwardingHeaders\inspector">
       <UniqueIdentifier>{132bade2-0aab-6274-0adff-ae8aed5aed4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ForwardingHeaders\inspector\agents">
+      <UniqueIdentifier>{132bade2-0aab-6274-0adff-abcdacbdabc}</UniqueIdentifier>
+    </Filter>
     <Filter Include="history">
       <UniqueIdentifier>{6f39dedf-2d3a-414e-83fe-7bf64f911cfb}</UniqueIdentifier>
     </Filter>
@@ -4816,9 +4819,6 @@
       <Filter>inspector</Filter>
     </ClCompile>
     <ClCompile Include="..\inspector\InspectorResourceAgent.cpp">
-      <Filter>inspector</Filter>
-    </ClCompile>
-    <ClCompile Include="..\inspector\InspectorRuntimeAgent.cpp">
       <Filter>inspector</Filter>
     </ClCompile>
     <ClCompile Include="..\inspector\InspectorStyleSheet.cpp">
@@ -12089,9 +12089,6 @@
     <ClInclude Include="..\ForwardingHeaders\inspector\InjectedScriptModule.h">
       <Filter>ForwardingHeaders\inspector</Filter>
     </ClInclude>
-    <ClInclude Include="..\ForwardingHeaders\inspector\InspectorAgent.h">
-      <Filter>ForwardingHeaders\inspector</Filter>
-    </ClInclude>
     <ClInclude Include="..\ForwardingHeaders\inspector\InspectorAgentBase.h">
       <Filter>ForwardingHeaders\inspector</Filter>
     </ClInclude>
@@ -12120,6 +12117,12 @@
       <Filter>ForwardingHeaders\inspector</Filter>
     </ClInclude>
     <ClInclude Include="..\ForwardingHeaders\inspector\InspectorValues.h">
+      <Filter>ForwardingHeaders\inspector</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ForwardingHeaders\inspector\agents\InspectorAgent.h">
+      <Filter>ForwardingHeaders\inspector</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ForwardingHeaders\inspector\agents\InspectorRuntimeAgent.h">
       <Filter>ForwardingHeaders\inspector</Filter>
     </ClInclude>
     <ClInclude Include="..\history\BackForwardClient.h">
@@ -12351,9 +12354,6 @@
       <Filter>inspector</Filter>
     </ClInclude>
     <ClInclude Include="..\inspector\InspectorResourceAgent.h">
-      <Filter>inspector</Filter>
-    </ClInclude>
-    <ClInclude Include="..\inspector\InspectorRuntimeAgent.h">
       <Filter>inspector</Filter>
     </ClInclude>
     <ClInclude Include="..\inspector\InspectorStyleSheet.h">

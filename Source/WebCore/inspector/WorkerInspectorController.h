@@ -50,10 +50,10 @@ class InspectorBackendDispatcher;
 namespace WebCore {
 
 class InspectorInstrumentation;
-class InspectorRuntimeAgent;
 class InstrumentingAgents;
 class PageInjectedScriptManager;
 class WorkerGlobalScope;
+class WorkerRuntimeAgent;
 
 class WorkerInspectorController final : public Inspector::InspectorEnvironment {
     WTF_MAKE_NONCOPYABLE(WorkerInspectorController);
@@ -82,7 +82,7 @@ private:
     WorkerGlobalScope& m_workerGlobalScope;
     RefPtr<InstrumentingAgents> m_instrumentingAgents;
     std::unique_ptr<PageInjectedScriptManager> m_injectedScriptManager;
-    InspectorRuntimeAgent* m_runtimeAgent;
+    WorkerRuntimeAgent* m_runtimeAgent;
     Inspector::InspectorAgentRegistry m_agents;
     std::unique_ptr<InspectorFrontendChannel> m_frontendChannel;
     RefPtr<Inspector::InspectorBackendDispatcher> m_backendDispatcher;

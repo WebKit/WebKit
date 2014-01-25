@@ -910,6 +910,10 @@
 		A503FA22188EFF6800110F14 /* ScriptDebugListener.h in Headers */ = {isa = PBXBuildFile; fileRef = A503FA20188EFF6800110F14 /* ScriptDebugListener.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A503FA25188EFFFD00110F14 /* ScriptDebugServer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A503FA23188EFFFD00110F14 /* ScriptDebugServer.cpp */; };
 		A503FA26188EFFFD00110F14 /* ScriptDebugServer.h in Headers */ = {isa = PBXBuildFile; fileRef = A503FA24188EFFFD00110F14 /* ScriptDebugServer.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		A50E4B6118809DD50068A46D /* InspectorRuntimeAgent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A50E4B5D18809DD50068A46D /* InspectorRuntimeAgent.cpp */; };
+		A50E4B6218809DD50068A46D /* InspectorRuntimeAgent.h in Headers */ = {isa = PBXBuildFile; fileRef = A50E4B5E18809DD50068A46D /* InspectorRuntimeAgent.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		A50E4B6318809DD50068A46D /* JSGlobalObjectRuntimeAgent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A50E4B5F18809DD50068A46D /* JSGlobalObjectRuntimeAgent.cpp */; };
+		A50E4B6418809DD50068A46D /* JSGlobalObjectRuntimeAgent.h in Headers */ = {isa = PBXBuildFile; fileRef = A50E4B6018809DD50068A46D /* JSGlobalObjectRuntimeAgent.h */; };
 		A51007C0187CC3C600B38879 /* JSGlobalObjectInspectorController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A51007BE187CC3C600B38879 /* JSGlobalObjectInspectorController.cpp */; };
 		A51007C1187CC3C600B38879 /* JSGlobalObjectInspectorController.h in Headers */ = {isa = PBXBuildFile; fileRef = A51007BF187CC3C600B38879 /* JSGlobalObjectInspectorController.h */; };
 		A513E5B7185B8BD3007E95AD /* InjectedScript.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A513E5B5185B8BD3007E95AD /* InjectedScript.cpp */; };
@@ -2308,6 +2312,10 @@
 		A503FA20188EFF6800110F14 /* ScriptDebugListener.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScriptDebugListener.h; sourceTree = "<group>"; };
 		A503FA23188EFFFD00110F14 /* ScriptDebugServer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScriptDebugServer.cpp; sourceTree = "<group>"; };
 		A503FA24188EFFFD00110F14 /* ScriptDebugServer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScriptDebugServer.h; sourceTree = "<group>"; };
+		A50E4B5D18809DD50068A46D /* InspectorRuntimeAgent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InspectorRuntimeAgent.cpp; sourceTree = "<group>"; };
+		A50E4B5E18809DD50068A46D /* InspectorRuntimeAgent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InspectorRuntimeAgent.h; sourceTree = "<group>"; };
+		A50E4B5F18809DD50068A46D /* JSGlobalObjectRuntimeAgent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSGlobalObjectRuntimeAgent.cpp; sourceTree = "<group>"; };
+		A50E4B6018809DD50068A46D /* JSGlobalObjectRuntimeAgent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSGlobalObjectRuntimeAgent.h; sourceTree = "<group>"; };
 		A51007BE187CC3C600B38879 /* JSGlobalObjectInspectorController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSGlobalObjectInspectorController.cpp; sourceTree = "<group>"; };
 		A51007BF187CC3C600B38879 /* JSGlobalObjectInspectorController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSGlobalObjectInspectorController.h; sourceTree = "<group>"; };
 		A513E5B5185B8BD3007E95AD /* InjectedScript.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InjectedScript.cpp; sourceTree = "<group>"; };
@@ -4358,6 +4366,10 @@
 			children = (
 				A5CEEE12187F3BAD00E55C99 /* InspectorAgent.cpp */,
 				A5CEEE13187F3BAD00E55C99 /* InspectorAgent.h */,
+				A50E4B5D18809DD50068A46D /* InspectorRuntimeAgent.cpp */,
+				A50E4B5E18809DD50068A46D /* InspectorRuntimeAgent.h */,
+				A50E4B5F18809DD50068A46D /* JSGlobalObjectRuntimeAgent.cpp */,
+				A50E4B6018809DD50068A46D /* JSGlobalObjectRuntimeAgent.h */,
 			);
 			path = agents;
 			sourceTree = "<group>";
@@ -4506,6 +4518,7 @@
 				A532439318569709002ED692 /* CodeGeneratorInspectorStrings.py in Headers */,
 				A532439218569709002ED692 /* CodeGeneratorInspector.py in Headers */,
 				0F24E54F17EE274900ABB217 /* TempRegisterSet.h in Headers */,
+				A50E4B6418809DD50068A46D /* JSGlobalObjectRuntimeAgent.h in Headers */,
 				A7BFF3C0179868940002F462 /* DFGFiltrationResult.h in Headers */,
 				A5840E27187C981E00843B10 /* cssmin.py in Headers */,
 				C2FCAE1117A9C24E0034C735 /* BytecodeBasicBlock.h in Headers */,
@@ -5176,6 +5189,7 @@
 				0F2B670817B6B5AB00A7AE3F /* TypedArrayController.h in Headers */,
 				0F4B94DC17B9F07500DD03A4 /* TypedArrayInlines.h in Headers */,
 				0F2B670917B6B5AB00A7AE3F /* TypedArrays.h in Headers */,
+				A50E4B6218809DD50068A46D /* InspectorRuntimeAgent.h in Headers */,
 				0F2B670B17B6B5AB00A7AE3F /* TypedArrayType.h in Headers */,
 				0FF4274B158EBE91004CB9FF /* udis86.h in Headers */,
 				0FF42741158EBE8D004CB9FF /* udis86_decode.h in Headers */,
@@ -5799,6 +5813,7 @@
 				0F2BDC4A1522809A00CD8910 /* DFGVariableEventStream.cpp in Sources */,
 				0FFFC95F14EF90BB00C72532 /* DFGVirtualRegisterAllocationPhase.cpp in Sources */,
 				0FC97F4118202119002C9B26 /* DFGWatchpointCollectionPhase.cpp in Sources */,
+				A50E4B6318809DD50068A46D /* JSGlobalObjectRuntimeAgent.cpp in Sources */,
 				0FDB2CE7174830A2007B3C1B /* DFGWorklist.cpp in Sources */,
 				0F9D3370165DBB90005AD387 /* Disassembler.cpp in Sources */,
 				A70447ED17A0BD7000F5898E /* DumpContext.cpp in Sources */,
@@ -6000,6 +6015,7 @@
 				14469DDF107EC7E700650446 /* MathObject.cpp in Sources */,
 				90213E3D123A40C200D422F3 /* MemoryStatistics.cpp in Sources */,
 				0FB5467D14F5CFD6002C2989 /* MethodOfGettingAValueProfile.cpp in Sources */,
+				A50E4B6118809DD50068A46D /* InspectorRuntimeAgent.cpp in Sources */,
 				86EBF2FF1560F06A008E9222 /* NameConstructor.cpp in Sources */,
 				86EBF3011560F06A008E9222 /* NameInstance.cpp in Sources */,
 				86EBF3031560F06A008E9222 /* NamePrototype.cpp in Sources */,

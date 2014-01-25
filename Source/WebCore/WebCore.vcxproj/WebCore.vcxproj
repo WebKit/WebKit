@@ -17778,14 +17778,6 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Production|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Production|x64'">true</ExcludedFromBuild>
     </ClCompile>
-    <ClCompile Include="..\inspector\InspectorRuntimeAgent.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_WinCairo|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_WinCairo|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Production|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Production|x64'">true</ExcludedFromBuild>
-    </ClCompile>
     <ClCompile Include="..\inspector\InspectorStyleSheet.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
@@ -18501,7 +18493,6 @@
     <ClInclude Include="..\ForwardingHeaders\inspector\InjectedScriptHost.h" />
     <ClInclude Include="..\ForwardingHeaders\inspector\InjectedScriptManager.h" />
     <ClInclude Include="..\ForwardingHeaders\inspector\InjectedScriptModule.h" />
-    <ClInclude Include="..\ForwardingHeaders\inspector\InspectorAgent.h" />
     <ClInclude Include="..\ForwardingHeaders\inspector\InspectorAgentBase.h" />
     <ClInclude Include="..\ForwardingHeaders\inspector\InspectorAgentRegistry.h" />
     <ClInclude Include="..\ForwardingHeaders\inspector\InspectorBackendDispatcher.h" />
@@ -18512,6 +18503,8 @@
     <ClInclude Include="..\ForwardingHeaders\inspector\InspectorJSTypeBuilders.h" />
     <ClInclude Include="..\ForwardingHeaders\inspector\InspectorTypeBuilder.h" />
     <ClInclude Include="..\ForwardingHeaders\inspector\InspectorValues.h" />
+    <ClInclude Include="..\ForwardingHeaders\inspector\agents\InspectorAgent.h" />
+    <ClInclude Include="..\ForwardingHeaders\inspector\agents\InspectorRuntimeAgent.h" />
     <ClInclude Include="..\ForwardingHeaders\masm\X86Assembler.h" />
     <ClInclude Include="..\ForwardingHeaders\parser\SourceCode.h" />
     <ClInclude Include="..\ForwardingHeaders\parser\SourceProvider.h" />
@@ -20880,7 +20873,6 @@
     <ClInclude Include="..\inspector\InspectorPageAgent.h" />
     <ClInclude Include="..\inspector\InspectorProfilerAgent.h" />
     <ClInclude Include="..\inspector\InspectorResourceAgent.h" />
-    <ClInclude Include="..\inspector\InspectorRuntimeAgent.h" />
     <ClInclude Include="..\inspector\InspectorStyleSheet.h" />
     <ClInclude Include="..\inspector\InspectorStyleTextEditor.h" />
     <ClInclude Include="..\inspector\InspectorTimelineAgent.h" />

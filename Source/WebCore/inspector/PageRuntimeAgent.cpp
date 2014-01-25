@@ -29,18 +29,20 @@
  */
 
 #include "config.h"
+#include "PageRuntimeAgent.h"
 
 #if ENABLE(INSPECTOR)
 
-#include "PageRuntimeAgent.h"
-
 #include "Document.h"
+#include "Frame.h"
 #include "InspectorPageAgent.h"
 #include "InstrumentingAgents.h"
+#include "JSDOMWindowBase.h"
 #include "MainFrame.h"
 #include "Page.h"
 #include "PageConsole.h"
 #include "ScriptController.h"
+#include "ScriptState.h"
 #include "SecurityOrigin.h"
 #include <inspector/InjectedScript.h>
 #include <inspector/InjectedScriptManager.h>
@@ -51,18 +53,12 @@ using namespace Inspector;
 
 namespace WebCore {
 
-PageRuntimeAgent::PageRuntimeAgent(InstrumentingAgents* instrumentingAgents, InjectedScriptManager* injectedScriptManager, Page* page, InspectorPageAgent* pageAgent)
-    : InspectorRuntimeAgent(instrumentingAgents, injectedScriptManager)
+PageRuntimeAgent::PageRuntimeAgent(InjectedScriptManager* injectedScriptManager, Page* page, InspectorPageAgent* pageAgent)
+    : InspectorRuntimeAgent(injectedScriptManager)
     , m_inspectedPage(page)
     , m_pageAgent(pageAgent)
     , m_mainWorldContextCreated(false)
 {
-    m_instrumentingAgents->setPageRuntimeAgent(this);
-}
-
-PageRuntimeAgent::~PageRuntimeAgent()
-{
-    m_instrumentingAgents->setPageRuntimeAgent(nullptr);
 }
 
 void PageRuntimeAgent::didCreateFrontendAndBackend(Inspector::InspectorFrontendChannel* frontendChannel, InspectorBackendDispatcher* backendDispatcher)
@@ -82,7 +78,7 @@ void PageRuntimeAgent::willDestroyFrontendAndBackend(InspectorDisconnectReason)
 
 void PageRuntimeAgent::enable(ErrorString* errorString)
 {
-    if (m_enabled)
+    if (enabled())
         return;
 
     InspectorRuntimeAgent::enable(errorString);
@@ -96,7 +92,7 @@ void PageRuntimeAgent::enable(ErrorString* errorString)
 
 void PageRuntimeAgent::disable(ErrorString* errorString)
 {
-    if (!m_enabled)
+    if (!enabled())
         return;
 
     InspectorRuntimeAgent::disable(errorString);
@@ -106,8 +102,9 @@ void PageRuntimeAgent::didCreateMainWorldContext(Frame* frame)
 {
     m_mainWorldContextCreated = true;
 
-    if (!m_enabled)
+    if (!enabled())
         return;
+
     ASSERT(m_frontendDispatcher);
     String frameId = m_pageAgent->frameId(frame);
     JSC::ExecState* scriptState = mainWorldExecState(frame);
@@ -116,11 +113,17 @@ void PageRuntimeAgent::didCreateMainWorldContext(Frame* frame)
 
 void PageRuntimeAgent::didCreateIsolatedContext(Frame* frame, JSC::ExecState* scriptState, SecurityOrigin* origin)
 {
-    if (!m_enabled)
+    if (!enabled())
         return;
+
     ASSERT(m_frontendDispatcher);
     String frameId = m_pageAgent->frameId(frame);
     notifyContextCreated(frameId, scriptState, origin, false);
+}
+
+JSC::VM* PageRuntimeAgent::globalVM()
+{
+    return JSDOMWindowBase::commonVM();
 }
 
 InjectedScript PageRuntimeAgent::injectedScriptForEval(ErrorString* errorString, const int* executionContextId)

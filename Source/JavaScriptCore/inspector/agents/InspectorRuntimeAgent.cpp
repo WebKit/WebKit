@@ -1,4 +1,5 @@
 /*
+ * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
  * Copyright (C) 2011 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -29,43 +30,39 @@
  */
 
 #include "config.h"
+#include "InspectorRuntimeAgent.h"
 
 #if ENABLE(INSPECTOR)
 
-#include "InspectorRuntimeAgent.h"
-
-#include "JSDOMWindowBase.h"
-#include <inspector/InjectedScript.h>
-#include <inspector/InjectedScriptManager.h>
-#include <inspector/InspectorValues.h>
-#include <parser/ParserError.h>
-#include <parser/SourceCode.h>
-#include <runtime/Completion.h>
-#include <runtime/JSLock.h>
+#include "Completion.h"
+#include "InjectedScript.h"
+#include "InjectedScriptManager.h"
+#include "InspectorValues.h"
+#include "JSLock.h"
+#include "ParserError.h"
+#include "SourceCode.h"
 #include <wtf/PassRefPtr.h>
 
 #if ENABLE(JAVASCRIPT_DEBUGGER)
-#include <inspector/ScriptDebugServer.h>
+#include "ScriptDebugServer.h"
 #endif
 
 using namespace JSC;
 
-using namespace Inspector;
-
-namespace WebCore {
+namespace Inspector {
 
 static bool asBool(const bool* const b)
 {
     return b ? *b : false;
 }
 
-InspectorRuntimeAgent::InspectorRuntimeAgent(InstrumentingAgents* instrumentingAgents, InjectedScriptManager* injectedScriptManager)
-    : InspectorAgentBase(ASCIILiteral("Runtime"), instrumentingAgents)
-    , m_enabled(false)
+InspectorRuntimeAgent::InspectorRuntimeAgent(InjectedScriptManager* injectedScriptManager)
+    : InspectorAgentBase(ASCIILiteral("Runtime"))
     , m_injectedScriptManager(injectedScriptManager)
 #if ENABLE(JAVASCRIPT_DEBUGGER)
     , m_scriptDebugServer(nullptr)
 #endif
+    , m_enabled(false)
 {
 }
 
@@ -94,7 +91,7 @@ static PassRefPtr<Inspector::TypeBuilder::Runtime::ErrorRange> buildErrorRangeOb
 
 void InspectorRuntimeAgent::parse(ErrorString*, const String& expression, Inspector::TypeBuilder::Runtime::SyntaxErrorType::Enum* result, Inspector::TypeBuilder::OptOutput<String>* message, RefPtr<Inspector::TypeBuilder::Runtime::ErrorRange>& range)
 {
-    VM* vm = JSDOMWindowBase::commonVM();
+    VM* vm = globalVM();
     JSLockHolder lock(vm);
 
     ParserError error;
@@ -126,6 +123,7 @@ void InspectorRuntimeAgent::evaluate(ErrorString* errorString, const String& exp
     InjectedScript injectedScript = injectedScriptForEval(errorString, executionContextId);
     if (injectedScript.hasNoValue())
         return;
+
 #if ENABLE(JAVASCRIPT_DEBUGGER)
     ScriptDebugServer::PauseOnExceptionsState previousPauseOnExceptionsState = ScriptDebugServer::DontPauseOnExceptions;
     if (asBool(doNotPauseOnExceptionsAndMuteConsole))
@@ -148,9 +146,10 @@ void InspectorRuntimeAgent::callFunctionOn(ErrorString* errorString, const Strin
 {
     InjectedScript injectedScript = m_injectedScriptManager->injectedScriptForObjectId(objectId);
     if (injectedScript.hasNoValue()) {
-        *errorString = "Inspected frame has gone";
+        *errorString = ASCIILiteral("Inspected frame has gone");
         return;
     }
+
     String arguments;
     if (optionalArguments)
         arguments = (*optionalArguments)->toJSONString();
@@ -177,7 +176,7 @@ void InspectorRuntimeAgent::getProperties(ErrorString* errorString, const String
 {
     InjectedScript injectedScript = m_injectedScriptManager->injectedScriptForObjectId(objectId);
     if (injectedScript.hasNoValue()) {
-        *errorString = "Inspected frame has gone";
+        *errorString = ASCIILiteral("Inspected frame has gone");
         return;
     }
 
@@ -211,13 +210,6 @@ void InspectorRuntimeAgent::run(ErrorString*)
 {
 }
 
-#if ENABLE(JAVASCRIPT_DEBUGGER)
-void InspectorRuntimeAgent::setScriptDebugServer(ScriptDebugServer* scriptDebugServer)
-{
-    m_scriptDebugServer = scriptDebugServer;
-}
-#endif // ENABLE(JAVASCRIPT_DEBUGGER)
-
-} // namespace WebCore
+} // namespace Inspector
 
 #endif // ENABLE(INSPECTOR)

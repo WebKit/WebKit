@@ -60,7 +60,6 @@
 #include "InspectorPageAgent.cpp"
 #include "InspectorProfilerAgent.cpp"
 #include "InspectorResourceAgent.cpp"
-#include "InspectorRuntimeAgent.cpp"
 #include "InspectorStyleSheet.cpp"
 #include "InspectorStyleTextEditor.cpp"
 #include "InspectorTimelineAgent.cpp"

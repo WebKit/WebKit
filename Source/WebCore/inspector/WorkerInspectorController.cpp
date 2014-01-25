@@ -85,8 +85,9 @@ WorkerInspectorController::WorkerInspectorController(WorkerGlobalScope& workerGl
     , m_injectedScriptManager(std::make_unique<PageInjectedScriptManager>(*this, PageInjectedScriptHost::create()))
     , m_runtimeAgent(nullptr)
 {
-    auto runtimeAgent = std::make_unique<WorkerRuntimeAgent>(m_instrumentingAgents.get(), m_injectedScriptManager.get(), &workerGlobalScope);
+    auto runtimeAgent = std::make_unique<WorkerRuntimeAgent>(m_injectedScriptManager.get(), &workerGlobalScope);
     m_runtimeAgent = runtimeAgent.get();
+    m_instrumentingAgents->setWorkerRuntimeAgent(m_runtimeAgent);
     m_agents.append(std::move(runtimeAgent));
 
     auto consoleAgent = std::make_unique<WorkerConsoleAgent>(m_instrumentingAgents.get(), m_injectedScriptManager.get());

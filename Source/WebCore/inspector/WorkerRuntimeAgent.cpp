@@ -34,6 +34,7 @@
 #if ENABLE(INSPECTOR)
 
 #include "InstrumentingAgents.h"
+#include "JSDOMWindowBase.h"
 #include "ScriptState.h"
 #include "WorkerDebuggerAgent.h"
 #include "WorkerGlobalScope.h"
@@ -46,17 +47,11 @@ using namespace Inspector;
 
 namespace WebCore {
 
-WorkerRuntimeAgent::WorkerRuntimeAgent(InstrumentingAgents* instrumentingAgents, InjectedScriptManager* injectedScriptManager, WorkerGlobalScope* workerGlobalScope)
-    : InspectorRuntimeAgent(instrumentingAgents, injectedScriptManager)
+WorkerRuntimeAgent::WorkerRuntimeAgent(InjectedScriptManager* injectedScriptManager, WorkerGlobalScope* workerGlobalScope)
+    : InspectorRuntimeAgent(injectedScriptManager)
     , m_workerGlobalScope(workerGlobalScope)
     , m_paused(false)
 {
-    m_instrumentingAgents->setWorkerRuntimeAgent(this);
-}
-
-WorkerRuntimeAgent::~WorkerRuntimeAgent()
-{
-    m_instrumentingAgents->setWorkerRuntimeAgent(nullptr);
 }
 
 void WorkerRuntimeAgent::didCreateFrontendAndBackend(Inspector::InspectorFrontendChannel*, InspectorBackendDispatcher* backendDispatcher)
@@ -72,9 +67,10 @@ void WorkerRuntimeAgent::willDestroyFrontendAndBackend(InspectorDisconnectReason
 InjectedScript WorkerRuntimeAgent::injectedScriptForEval(ErrorString* error, const int* executionContextId)
 {
     if (executionContextId) {
-        *error = "Execution context id is not supported for workers as there is only one execution context.";
+        *error = ASCIILiteral("Execution context id is not supported for workers as there is only one execution context.");
         return InjectedScript();
     }
+
     JSC::ExecState* scriptState = execStateFromWorkerGlobalScope(m_workerGlobalScope);
     return injectedScriptManager()->injectedScriptFor(scriptState);
 }
@@ -92,6 +88,11 @@ void WorkerRuntimeAgent::unmuteConsole()
 void WorkerRuntimeAgent::run(ErrorString*)
 {
     m_paused = false;
+}
+
+JSC::VM* WorkerRuntimeAgent::globalVM()
+{
+    return JSDOMWindowBase::commonVM();
 }
 
 #if ENABLE(JAVASCRIPT_DEBUGGER)

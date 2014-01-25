@@ -35,6 +35,7 @@
 #include "InspectorBackendDispatcher.h"
 #include "InspectorFrontendChannel.h"
 #include "JSGlobalObject.h"
+#include "JSGlobalObjectRuntimeAgent.h"
 
 using namespace JSC;
 
@@ -46,10 +47,7 @@ JSGlobalObjectInspectorController::JSGlobalObjectInspectorController(JSGlobalObj
     , m_inspectorFrontendChannel(nullptr)
 {
     m_agents.append(std::make_unique<InspectorAgent>());
-
-    // FIXME: Create RuntimeAgent.
-    // FIXME: Create DebuggerAgent.
-    (void)m_globalObject; // Will be used by RuntimeAgent.
+    m_agents.append(std::make_unique<JSGlobalObjectRuntimeAgent>(m_injectedScriptManager.get(), m_globalObject));
 }
 
 JSGlobalObjectInspectorController::~JSGlobalObjectInspectorController()

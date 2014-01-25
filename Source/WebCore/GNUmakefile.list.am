@@ -3826,8 +3826,6 @@ webcore_sources += \
 	Source/WebCore/inspector/InspectorProfilerAgent.h \
 	Source/WebCore/inspector/InspectorResourceAgent.cpp \
 	Source/WebCore/inspector/InspectorResourceAgent.h \
-	Source/WebCore/inspector/InspectorRuntimeAgent.cpp \
-	Source/WebCore/inspector/InspectorRuntimeAgent.h \
 	Source/WebCore/inspector/InspectorStyleSheet.cpp \
 	Source/WebCore/inspector/InspectorStyleSheet.h \
 	Source/WebCore/inspector/InspectorStyleTextEditor.cpp \

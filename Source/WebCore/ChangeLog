@@ -1,3 +1,47 @@
+2014-01-24  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Move InspectorRuntimeAgent into JavaScriptCore
+        https://bugs.webkit.org/show_bug.cgi?id=127605
+
+        Reviewed by Timothy Hatcher.
+
+        Covered by existing tests. No change in functionality.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.vcxproj/WebCore.vcxproj.filters:
+        * WebCore.xcodeproj/project.pbxproj:
+        * inspector/InspectorAllInOne.cpp:
+        Remove WebCore InspectorRuntimeAgent.
+
+        * ForwardingHeaders/inspector/agents/InspectorRuntimeAgent.h: Added.
+        Add JavaScriptCore InspectorRuntimeAgent.
+
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::InspectorController):
+        * inspector/WorkerInspectorController.h:
+        * inspector/WorkerInspectorController.cpp:
+        (WebCore::WorkerInspectorController::WorkerInspectorController):
+        New constructors for the runtime agent.
+
+        * inspector/PageRuntimeAgent.h:
+        * inspector/PageRuntimeAgent.cpp:
+        (WebCore::PageRuntimeAgent::PageRuntimeAgent):
+        (WebCore::PageRuntimeAgent::enable):
+        (WebCore::PageRuntimeAgent::disable):
+        (WebCore::PageRuntimeAgent::didCreateMainWorldContext):
+        (WebCore::PageRuntimeAgent::didCreateIsolatedContext):
+        (WebCore::PageRuntimeAgent::globalVM):
+        Modernize and implement globalVM.
+
+        * inspector/WorkerRuntimeAgent.h:
+        * inspector/WorkerRuntimeAgent.cpp:
+        (WebCore::WorkerRuntimeAgent::WorkerRuntimeAgent):
+        (WebCore::WorkerRuntimeAgent::injectedScriptForEval):
+        (WebCore::WorkerRuntimeAgent::globalVM):
+        Modernize and implement globalVM.
+
 2014-01-25  Diego Pino Garcia  <dpino@igalia.com>
 
         [GTK] Add parameters from 'DOM Object Model Core' spec and 'DOM CSS' spec that can be NULL

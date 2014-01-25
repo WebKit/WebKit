@@ -33,29 +33,30 @@
 
 #if ENABLE(INSPECTOR)
 
-#include "InspectorRuntimeAgent.h"
+#include <inspector/agents/InspectorRuntimeAgent.h>
 #include <wtf/PassOwnPtr.h>
 
 namespace WebCore {
 
 class WorkerGlobalScope;
+typedef String ErrorString;
 
-class WorkerRuntimeAgent : public InspectorRuntimeAgent {
+class WorkerRuntimeAgent final : public Inspector::InspectorRuntimeAgent {
 public:
-    WorkerRuntimeAgent(InstrumentingAgents*, Inspector::InjectedScriptManager*, WorkerGlobalScope*);
-    virtual ~WorkerRuntimeAgent();
+    WorkerRuntimeAgent(Inspector::InjectedScriptManager*, WorkerGlobalScope*);
+    virtual ~WorkerRuntimeAgent() { }
 
     virtual void didCreateFrontendAndBackend(Inspector::InspectorFrontendChannel*, Inspector::InspectorBackendDispatcher*) override;
     virtual void willDestroyFrontendAndBackend(Inspector::InspectorDisconnectReason) override;
 
-    // Protocol commands.
     virtual void run(ErrorString*) override;
 
 #if ENABLE(JAVASCRIPT_DEBUGGER)
     void pauseWorkerGlobalScope(WorkerGlobalScope*);
-#endif // ENABLE(JAVASCRIPT_DEBUGGER)
+#endif
 
 private:
+    virtual JSC::VM* globalVM() override;
     virtual Inspector::InjectedScript injectedScriptForEval(ErrorString*, const int* executionContextId) override;
     virtual void muteConsole() override;
     virtual void unmuteConsole() override;
