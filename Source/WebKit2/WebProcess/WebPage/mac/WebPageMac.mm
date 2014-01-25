@@ -46,6 +46,7 @@
 #import <PDFKit/PDFKit.h>
 #import <QuartzCore/QuartzCore.h>
 #import <WebCore/AXObjectCache.h>
+#import <WebCore/BackForwardController.h>
 #import <WebCore/EventHandler.h>
 #import <WebCore/FocusController.h>
 #import <WebCore/FrameLoader.h>
@@ -637,13 +638,13 @@ bool WebPage::performNonEditingBehaviorForSelector(const String& selector, Keybo
     else if (selector == "moveWordLeft:")
         didPerformAction = scroll(m_page.get(), ScrollLeft, ScrollByPage);
     else if (selector == "moveToLeftEndOfLine:")
-        didPerformAction = m_page->goBack();
+        didPerformAction = m_page->backForward().goBack();
     else if (selector == "moveRight:")
         didPerformAction = scroll(m_page.get(), ScrollRight, ScrollByLine);
     else if (selector == "moveWordRight:")
         didPerformAction = scroll(m_page.get(), ScrollRight, ScrollByPage);
     else if (selector == "moveToRightEndOfLine:")
-        didPerformAction = m_page->goForward();
+        didPerformAction = m_page->backForward().goForward();
 
     return didPerformAction;
 }

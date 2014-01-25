@@ -1993,10 +1993,10 @@ static bool fastDocumentTeardownEnabled()
     // type.  (See behavior matrix at the top of WebFramePrivate.)  So we copy all the items
     // in the back forward list, and go to the current one.
 
-    BackForwardClient* backForwardClient = _private->page->backForwardClient();
+    BackForwardClient* backForwardClient = _private->page->backForward().client();
     ASSERT(!backForwardClient->currentItem()); // destination list should be empty
 
-    BackForwardClient* otherBackForwardClient = otherView->_private->page->backForwardClient();
+    BackForwardClient* otherBackForwardClient = otherView->_private->page->backForward().client();
     if (!otherBackForwardClient->currentItem())
         return; // empty back forward list, bail
     
@@ -5131,7 +5131,7 @@ static bool needsWebViewInitThreadWorkaround()
 
         LOG(Encoding, "FrameName = %@, GroupName = %@, useBackForwardList = %d\n", frameName, groupName, (int)useBackForwardList);
         [result _commonInitializationWithFrameName:frameName groupName:groupName];
-        static_cast<BackForwardList*>([result page]->backForwardClient())->setEnabled(useBackForwardList);
+        static_cast<BackForwardList*>([result page]->backForward().client())->setEnabled(useBackForwardList);
         result->_private->allowsUndo = allowsUndo;
         if (preferences)
             [result setPreferences:preferences];
@@ -5155,7 +5155,7 @@ static bool needsWebViewInitThreadWorkaround()
     // Restore the subviews we set aside.
     _subviews = originalSubviews;
 
-    BOOL useBackForwardList = _private->page && static_cast<BackForwardList*>(_private->page->backForwardClient())->enabled();
+    BOOL useBackForwardList = _private->page && static_cast<BackForwardList*>(_private->page->backForward().client())->enabled();
     if ([encoder allowsKeyedCoding]) {
         [encoder encodeObject:[[self mainFrame] name] forKey:@"FrameName"];
         [encoder encodeObject:[self groupName] forKey:@"GroupName"];
@@ -5617,7 +5617,7 @@ static NSString * const backingPropertyOldScaleFactorKey = @"NSBackingPropertyOl
 {
     if (!_private->page)
         return nil;
-    BackForwardList* list = static_cast<BackForwardList*>(_private->page->backForwardClient());
+    BackForwardList* list = static_cast<BackForwardList*>(_private->page->backForward().client());
     if (!list->enabled())
         return nil;
     return kit(list);
@@ -5627,7 +5627,7 @@ static NSString * const backingPropertyOldScaleFactorKey = @"NSBackingPropertyOl
 {
     if (!_private->page)
         return;
-    static_cast<BackForwardList*>(_private->page->backForwardClient())->setEnabled(flag);
+    static_cast<BackForwardList*>(_private->page->backForward().client())->setEnabled(flag);
 }
 
 - (BOOL)goBack
@@ -5638,10 +5638,10 @@ static NSString * const backingPropertyOldScaleFactorKey = @"NSBackingPropertyOl
 #if PLATFORM(IOS)
     if (WebThreadIsCurrent() || !WebThreadIsEnabled())
 #endif
-    return _private->page->goBack();
+    return _private->page->backForward().goBack();
 #if PLATFORM(IOS)
     WebThreadRun(^{
-        _private->page->goBack();
+        _private->page->backForward().goBack();
     });
     // FIXME: <rdar://problem/9157572> -[WebView goBack] and -goForward always return YES when called from the main thread
     return YES;
@@ -5656,10 +5656,10 @@ static NSString * const backingPropertyOldScaleFactorKey = @"NSBackingPropertyOl
 #if PLATFORM(IOS)
     if (WebThreadIsCurrent() || !WebThreadIsEnabled())
 #endif
-    return _private->page->goForward();
+    return _private->page->backForward().goForward();
 #if PLATFORM(IOS)
     WebThreadRun(^{
-        _private->page->goForward();
+        _private->page->backForward().goForward();
     });
     // FIXME: <rdar://problem/9157572> -[WebView goBack] and -goForward always return YES when called from the main thread
     return YES;
@@ -6381,7 +6381,7 @@ static WebFrame *incrementFrame(WebFrame *frame, WebFindOptions options = 0)
 #endif
         return NO;
 
-    return !!_private->page->backForwardClient()->backItem();
+    return _private->page->backForward().canGoBackOrForward(-1);
 }
 
 - (BOOL)canGoForward
@@ -6394,7 +6394,7 @@ static WebFrame *incrementFrame(WebFrame *frame, WebFindOptions options = 0)
 #endif
         return NO;
 
-    return !!_private->page->backForwardClient()->forwardItem();
+    return !!_private->page->backForward().canGoBackOrForward(1);
 }
 
 - (IBAction)goBack:(id)sender

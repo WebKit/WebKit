@@ -28,6 +28,7 @@
 #include "config.h"
 #include "WebView.h"
 
+#include "BackForwardController.h"
 #include "COMVariantSetter.h"
 #include "DOMCoreClasses.h"
 #include "FullscreenVideoController.h"
@@ -72,6 +73,7 @@
 #include <WebCore/AXObjectCache.h>
 #include <WebCore/ApplicationCacheStorage.h>
 #include <WebCore/BString.h>
+#include <WebCore/BackForwardController.h>
 #include <WebCore/BackForwardList.h>
 #include <WebCore/BitmapInfo.h>
 #include <WebCore/Chrome.h>
@@ -2067,9 +2069,9 @@ bool WebView::keyDown(WPARAM virtualKeyCode, LPARAM keyData, bool systemKeyDown)
     // FIXME: This logic should probably be in EventHandler::defaultArrowEventHandler().
     // FIXME: Should check that other modifiers aren't pressed.
     if (virtualKeyCode == VK_RIGHT && keyEvent.ctrlKey())
-        return m_page->goForward();
+        return m_page->backForward().goForward();
     if (virtualKeyCode == VK_LEFT && keyEvent.ctrlKey())
-        return m_page->goBack();
+        return m_page->backForward().goBack();
 
     // Need to scroll the page if the arrow keys, pgup/dn, or home/end are hit.
     ScrollDirection direction;
@@ -3084,7 +3086,7 @@ HRESULT STDMETHODCALLTYPE WebView::backForwardList(
     if (!m_useBackForwardList)
         return E_FAIL;
  
-    *list = WebBackForwardList::createInstance(static_cast<WebCore::BackForwardList*>(m_page->backForwardClient()));
+    *list = WebBackForwardList::createInstance(static_cast<WebCore::BackForwardList*>(m_page->backForward().client()));
 
     return S_OK;
 }
@@ -3099,14 +3101,14 @@ HRESULT STDMETHODCALLTYPE WebView::setMaintainsBackForwardList(
 HRESULT STDMETHODCALLTYPE WebView::goBack( 
     /* [retval][out] */ BOOL* succeeded)
 {
-    *succeeded = m_page->goBack();
+    *succeeded = m_page->backForward().goBack();
     return S_OK;
 }
 
 HRESULT STDMETHODCALLTYPE WebView::goForward( 
     /* [retval][out] */ BOOL* succeeded)
 {
-    *succeeded = m_page->goForward();
+    *succeeded = m_page->backForward().goForward();
     return S_OK;
 }
 
@@ -3917,7 +3919,7 @@ HRESULT STDMETHODCALLTYPE WebView::canGoBack(
         /* [in] */ IUnknown* /*sender*/,
         /* [retval][out] */ BOOL* result)
 {
-    *result = !!(m_page->backForwardClient()->backItem() && !m_page->defersLoading());
+    *result = !!(m_page->backForward().client()->backItem() && !m_page->defersLoading());
     return S_OK;
 }
     
@@ -3932,7 +3934,7 @@ HRESULT STDMETHODCALLTYPE WebView::canGoForward(
         /* [in] */ IUnknown* /*sender*/,
         /* [retval][out] */ BOOL* result)
 {
-    *result = !!(m_page->backForwardClient()->forwardItem() && !m_page->defersLoading());
+    *result = !!(m_page->backForward().client()->forwardItem() && !m_page->defersLoading());
     return S_OK;
 }
     
@@ -5411,13 +5413,13 @@ HRESULT STDMETHODCALLTYPE WebView::loadBackForwardListFromOtherView(
     // It turns out the right combination of behavior is done with the back/forward load
     // type.  (See behavior matrix at the top of WebFramePrivate.)  So we copy all the items
     // in the back forward list, and go to the current one.
-    BackForwardClient* backForwardClient = m_page->backForwardClient();
+    BackForwardClient* backForwardClient = m_page->backForward().client();
     ASSERT(!backForwardClient->currentItem()); // destination list should be empty
 
     COMPtr<WebView> otherWebView;
     if (FAILED(otherView->QueryInterface(&otherWebView)))
         return E_FAIL;
-    BackForwardClient* otherBackForwardClient = otherWebView->m_page->backForwardClient();
+    BackForwardClient* otherBackForwardClient = otherWebView->m_page->backForward().client();
     if (!otherBackForwardClient->currentItem())
         return S_OK; // empty back forward list, bail
     

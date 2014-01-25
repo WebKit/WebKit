@@ -1,3 +1,19 @@
+2014-01-24  Anders Carlsson  <andersca@apple.com>
+
+        Remove back/forward list related functions from Page
+        https://bugs.webkit.org/show_bug.cgi?id=127596
+
+        Reviewed by Andreas Kling.
+
+        * webkit/webkitwebview.cpp:
+        (webkit_web_view_set_maintains_back_forward_list):
+        (webkit_web_view_get_back_forward_list):
+        (webkit_web_view_go_back):
+        (webkit_web_view_go_back_or_forward):
+        (webkit_web_view_go_forward):
+        (webkit_web_view_can_go_back_or_forward):
+        (webkit_web_view_can_go_forward):
+
 2014-01-24  Enrique Ocaña González  <eocanha@igalia.com>
 
         [GTK] Put cache files in XDG_CACHE_HOME

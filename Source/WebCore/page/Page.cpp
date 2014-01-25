@@ -361,66 +361,6 @@ void Page::setOpenedByDOM()
     m_openedByDOM = true;
 }
 
-BackForwardClient* Page::backForwardClient() const
-{
-    return backForward().client();
-}
-
-bool Page::goBack()
-{
-    HistoryItem* item = backForward().backItem();
-    
-    if (item) {
-        goToItem(item, FrameLoadTypeBack);
-        return true;
-    }
-    return false;
-}
-
-bool Page::goForward()
-{
-    HistoryItem* item = backForward().forwardItem();
-    
-    if (item) {
-        goToItem(item, FrameLoadTypeForward);
-        return true;
-    }
-    return false;
-}
-
-bool Page::canGoBackOrForward(int distance) const
-{
-    if (distance == 0)
-        return true;
-    if (distance > 0 && distance <= backForward().forwardCount())
-        return true;
-    if (distance < 0 && -distance <= backForward().backCount())
-        return true;
-    return false;
-}
-
-void Page::goBackOrForward(int distance)
-{
-    if (distance == 0)
-        return;
-
-    HistoryItem* item = backForward().itemAtIndex(distance);
-    if (!item) {
-        if (distance > 0) {
-            if (int forwardCount = backForward().forwardCount())
-                item = backForward().itemAtIndex(forwardCount);
-        } else {
-            if (int backCount = backForward().backCount())
-                item = backForward().itemAtIndex(-backCount);
-        }
-    }
-
-    if (!item)
-        return;
-
-    goToItem(item, FrameLoadTypeIndexedBackForward);
-}
-
 void Page::goToItem(HistoryItem* item, FrameLoadType type)
 {
     // stopAllLoaders may end up running onload handlers, which could cause further history traversals that may lead to the passed in HistoryItem
@@ -431,11 +371,6 @@ void Page::goToItem(HistoryItem* item, FrameLoadType type)
         m_mainFrame->loader().stopAllLoaders();
 
     m_mainFrame->loader().history().goToItem(item, type);
-}
-
-int Page::getHistoryLength()
-{
-    return backForward().backCount() + 1 + backForward().forwardCount();
 }
 
 void Page::setGroupName(const String& name)

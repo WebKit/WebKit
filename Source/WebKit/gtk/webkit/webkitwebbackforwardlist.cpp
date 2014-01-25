@@ -21,6 +21,7 @@
 #include "config.h"
 #include "webkitwebbackforwardlist.h"
 
+#include "BackForwardController.h"
 #include "BackForwardList.h"
 #include "HistoryItem.h"
 #include "Page.h"
@@ -116,7 +117,7 @@ WebKitWebBackForwardList* webkit_web_back_forward_list_new_with_web_view(WebKitW
     webBackForwardList = WEBKIT_WEB_BACK_FORWARD_LIST(g_object_new(WEBKIT_TYPE_WEB_BACK_FORWARD_LIST, NULL));
     WebKitWebBackForwardListPrivate* priv = webBackForwardList->priv;
 
-    priv->backForwardList = static_cast<WebCore::BackForwardList*>(core(webView)->backForwardClient());
+    priv->backForwardList = static_cast<WebCore::BackForwardList*>(core(webView)->backForward().client());
     priv->backForwardList->setEnabled(TRUE);
 
     return webBackForwardList;

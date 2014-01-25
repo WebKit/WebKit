@@ -1,5 +1,25 @@
 2014-01-24  Anders Carlsson  <andersca@apple.com>
 
+        Remove back/forward list related functions from Page
+        https://bugs.webkit.org/show_bug.cgi?id=127596
+
+        Reviewed by Andreas Kling.
+
+        * WebView/WebFrameView.mm:
+        (-[WebFrameView keyDown:keyDown:]):
+        * WebView/WebView.mm:
+        (-[WebView _loadBackForwardListFromOtherView:]):
+        (-[WebView initWithCoder:]):
+        (-[WebView encodeWithCoder:]):
+        (-[WebView backForwardList]):
+        (-[WebView setMaintainsBackForwardList:]):
+        (-[WebView goBack]):
+        (-[WebView goForward]):
+        (-[WebView canGoBack]):
+        (-[WebView canGoForward]):
+
+2014-01-24  Anders Carlsson  <andersca@apple.com>
+
         Get rid of monotonicallyIncreasingTimeMS and start using std::chrono instead
         https://bugs.webkit.org/show_bug.cgi?id=127571
 

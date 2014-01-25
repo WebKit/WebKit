@@ -167,14 +167,6 @@ public:
     bool openedByDOM() const;
     void setOpenedByDOM();
 
-    // DEPRECATED. Use backForward() instead of the following 6 functions.
-    BackForwardClient* backForwardClient() const;
-    bool goBack();
-    bool goForward();
-    bool canGoBackOrForward(int distance) const;
-    void goBackOrForward(int distance);
-    int getHistoryLength();
-
     void goToItem(HistoryItem*, FrameLoadType);
 
     void setGroupName(const String&);

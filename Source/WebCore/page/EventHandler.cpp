@@ -30,6 +30,7 @@
 
 #include "AXObjectCache.h"
 #include "AutoscrollController.h"
+#include "BackForwardController.h"
 #include "CachedImage.h"
 #include "Chrome.h"
 #include "ChromeClient.h"
@@ -3422,9 +3423,9 @@ void EventHandler::defaultBackspaceEventHandler(KeyboardEvent* event)
     bool handledEvent = false;
 
     if (event->shiftKey())
-        handledEvent = page->goForward();
+        handledEvent = page->backForward().goForward();
     else
-        handledEvent = page->goBack();
+        handledEvent = page->backForward().goBack();
 
     if (handledEvent)
         event->setDefaultHandled();

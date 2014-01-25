@@ -46,22 +46,55 @@ BackForwardController::~BackForwardController()
 
 bool BackForwardController::canGoBackOrForward(int distance) const
 {
-    return m_page.canGoBackOrForward(distance);
+    if (!distance)
+        return true;
+    if (distance > 0 && distance <= forwardCount())
+        return true;
+    if (distance < 0 && -distance <= backCount())
+        return true;
+    return false;
 }
 
 void BackForwardController::goBackOrForward(int distance)
 {
-    m_page.goBackOrForward(distance);
+    if (!distance)
+        return;
+
+    HistoryItem* item = itemAtIndex(distance);
+    if (!item) {
+        if (distance > 0) {
+            if (int forwardCount = this->forwardCount())
+                item = itemAtIndex(forwardCount);
+        } else {
+            if (int backCount = this->backCount())
+                item = itemAtIndex(-backCount);
+        }
+    }
+
+    if (!item)
+        return;
+
+    m_page.goToItem(item, FrameLoadTypeIndexedBackForward);
 }
 
 bool BackForwardController::goBack()
 {
-    return m_page.goBack();
+    HistoryItem* item = backItem();
+    if (!item)
+        return false;
+
+    m_page.goToItem(item, FrameLoadTypeBack);
+    return true;
 }
 
 bool BackForwardController::goForward()
 {
-    return m_page.goForward();
+    HistoryItem* item = forwardItem();
+    if (!item)
+        return false;
+
+    m_page.goToItem(item, FrameLoadTypeForward);
+    return true;
 }
 
 void BackForwardController::addItem(PassRefPtr<HistoryItem> item)
@@ -76,7 +109,7 @@ void BackForwardController::setCurrentItem(HistoryItem* item)
 
 int BackForwardController::count() const
 {
-    return m_page.getHistoryLength();
+    return m_client->backListCount() + 1 + m_client->forwardListCount();
 }
 
 int BackForwardController::backCount() const

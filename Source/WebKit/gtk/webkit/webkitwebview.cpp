@@ -34,6 +34,7 @@
 
 #include "AXObjectCache.h"
 #include "ArchiveResource.h"
+#include "BackForwardController.h"
 #include "BackForwardList.h"
 #include "BatteryClientGtk.h"
 #include "CairoUtilities.h"
@@ -4100,7 +4101,7 @@ void webkit_web_view_set_maintains_back_forward_list(WebKitWebView* webView, gbo
 {
     g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
 
-    static_cast<BackForwardList*>(core(webView)->backForwardClient())->setEnabled(flag);
+    static_cast<BackForwardList*>(core(webView)->backForward().client())->setEnabled(flag);
 }
 
 /**
@@ -4115,7 +4116,7 @@ void webkit_web_view_set_maintains_back_forward_list(WebKitWebView* webView, gbo
 WebKitWebBackForwardList* webkit_web_view_get_back_forward_list(WebKitWebView* webView)
 {
     g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), 0);
-    if (!core(webView) || !static_cast<BackForwardList*>(core(webView)->backForwardClient())->enabled())
+    if (!core(webView) || !static_cast<BackForwardList*>(core(webView)->backForward().client())->enabled())
         return 0;
     return webView->priv->backForwardList.get();
 }
@@ -4152,7 +4153,7 @@ void webkit_web_view_go_back(WebKitWebView* webView)
 {
     g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
 
-    core(webView)->goBack();
+    core(webView)->backForward().goBack();
 }
 
 /**
@@ -4168,7 +4169,7 @@ void webkit_web_view_go_back_or_forward(WebKitWebView* webView, gint steps)
 {
     g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
 
-    core(webView)->goBackOrForward(steps);
+    core(webView)->backForward().goBackOrForward(steps);
 }
 
 /**
@@ -4181,7 +4182,7 @@ void webkit_web_view_go_forward(WebKitWebView* webView)
 {
     g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
 
-    core(webView)->goForward();
+    core(webView)->backForward().goForward();
 }
 
 /**
@@ -4196,7 +4197,7 @@ gboolean webkit_web_view_can_go_back(WebKitWebView* webView)
 {
     g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), FALSE);
 
-    if (!core(webView) || !core(webView)->backForwardClient()->backItem())
+    if (!core(webView) || !core(webView)->backForward().client()->canGoBackOrForward(-1))
         return FALSE;
 
     return TRUE;
@@ -4217,7 +4218,7 @@ gboolean webkit_web_view_can_go_back_or_forward(WebKitWebView* webView, gint ste
 {
     g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), FALSE);
 
-    return core(webView)->canGoBackOrForward(steps);
+    return core(webView)->backForward().canGoBackOrForward(steps);
 }
 
 /**
@@ -4237,7 +4238,7 @@ gboolean webkit_web_view_can_go_forward(WebKitWebView* webView)
     if (!page)
         return FALSE;
 
-    if (!page->backForwardClient()->forwardItem())
+    if (!page->backForward().forwardItem())
         return FALSE;
 
     return TRUE;

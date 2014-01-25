@@ -24,6 +24,7 @@
 #include "config.h"
 #include "ewk_frame.h"
 
+#include "BackForwardController.h"
 #include "DocumentLoader.h"
 #include "DocumentMarkerController.h"
 #include "Editor.h"
@@ -613,9 +614,9 @@ Eina_Bool ewk_frame_navigate(Evas_Object* ewkFrame, int steps)
     EWK_FRAME_SD_GET_OR_RETURN(ewkFrame, smartData, false);
     EINA_SAFETY_ON_NULL_RETURN_VAL(smartData->frame, false);
     WebCore::Page* page = smartData->frame->page();
-    if (!page->canGoBackOrForward(steps))
+    if (!page->backForward().canGoBackOrForward(steps))
         return false;
-    page->goBackOrForward(steps);
+    page->backForward().goBackOrForward(steps);
     return true;
 }
 
@@ -634,7 +635,7 @@ Eina_Bool ewk_frame_navigate_possible(Evas_Object* ewkFrame, int steps)
     EWK_FRAME_SD_GET_OR_RETURN(ewkFrame, smartData, false);
     EINA_SAFETY_ON_NULL_RETURN_VAL(smartData->frame, false);
     WebCore::Page* page = smartData->frame->page();
-    return page->canGoBackOrForward(steps);
+    return page->backForward().canGoBackOrForward(steps);
 }
 
 float ewk_frame_page_zoom_get(const Evas_Object* ewkFrame)

@@ -1,3 +1,22 @@
+2014-01-24  Anders Carlsson  <andersca@apple.com>
+
+        Remove back/forward list related functions from Page
+        https://bugs.webkit.org/show_bug.cgi?id=127596
+
+        Reviewed by Andreas Kling.
+
+        * WebCore.exp.in:
+        * history/BackForwardController.cpp:
+        (WebCore::BackForwardController::canGoBackOrForward):
+        (WebCore::BackForwardController::goBackOrForward):
+        (WebCore::BackForwardController::goBack):
+        (WebCore::BackForwardController::goForward):
+        (WebCore::BackForwardController::count):
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::defaultBackspaceEventHandler):
+        * page/Page.cpp:
+        * page/Page.h:
+
 2014-01-24  Antti Koivisto  <antti@apple.com>
 
         Update style asynchronously after style sheet load
