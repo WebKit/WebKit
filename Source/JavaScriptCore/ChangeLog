@@ -1,5 +1,14 @@
 2014-01-25  Darin Adler  <darin@apple.com>
 
+        Get rid of ICU_UNICODE and WCHAR_UNICODE remnants
+        https://bugs.webkit.org/show_bug.cgi?id=127623
+
+        Reviewed by Anders Carlsson.
+
+        * runtime/DatePrototype.cpp: Removed USE(ICU_UNICODE) checks, since that's always true now.
+
+2014-01-25  Darin Adler  <darin@apple.com>
+
         [Mac] Rewrite locale-specific date formatting code to remove strange string creation
         https://bugs.webkit.org/show_bug.cgi?id=127624
 

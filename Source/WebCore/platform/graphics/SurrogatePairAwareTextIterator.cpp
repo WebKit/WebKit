@@ -23,12 +23,7 @@
 #include "config.h"
 #include "SurrogatePairAwareTextIterator.h"
 
-#if USE(ICU_UNICODE)
 #include <unicode/unorm.h>
-#endif
-
-using namespace WTF;
-using namespace Unicode;
 
 namespace WebCore {
 

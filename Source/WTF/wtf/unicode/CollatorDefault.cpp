@@ -29,7 +29,7 @@
 #include "config.h"
 #include "Collator.h"
 
-#if !USE(ICU_UNICODE) || UCONFIG_NO_COLLATION
+#if UCONFIG_NO_COLLATION
 
 namespace WTF {
 

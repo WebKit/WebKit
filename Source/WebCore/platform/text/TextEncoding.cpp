@@ -30,14 +30,11 @@
 
 #include "TextCodec.h"
 #include "TextEncodingRegistry.h"
+#include <unicode/unorm.h>
 #include <wtf/OwnPtr.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
-
-#if USE(ICU_UNICODE)
-#include <unicode/unorm.h>
-#endif
 
 namespace WebCore {
 
@@ -75,7 +72,6 @@ CString TextEncoding::encode(const UChar* characters, size_t length, Unencodable
     if (!length)
         return "";
 
-#if USE(ICU_UNICODE)
     // FIXME: What's the right place to do normalization?
     // It's a little strange to do it inside the encode function.
     // Perhaps normalization should be an explicit step done before calling encode.
@@ -101,11 +97,6 @@ CString TextEncoding::encode(const UChar* characters, size_t length, Unencodable
         sourceLength = normalizedLength;
     }
     return newTextCodec(*this)->encode(source, sourceLength, handling);
-#elif OS(WINDOWS) && USE(WCHAR_UNICODE)
-    // normalization will be done by Windows CE API
-    OwnPtr<TextCodec> textCodec = newTextCodec(*this);
-    return textCodec.get() ? textCodec->encode(characters, length, handling) : CString();
-#endif
 }
 
 const char* TextEncoding::domName() const

@@ -222,30 +222,19 @@ set(WTF_LIBRARIES
     ${CMAKE_DL_LIBS}
 )
 
-if (WTF_USE_ICU_UNICODE)
-    list(APPEND WTF_HEADERS
-        unicode/icu/UnicodeIcu.h
-    )
-    list(APPEND WTF_SOURCES
-        unicode/icu/CollatorICU.cpp
-    )
-    list(APPEND WTF_INCLUDE_DIRECTORIES
-        ${ICU_INCLUDE_DIRS}
-    )
-    list(APPEND WTF_LIBRARIES
-        ${ICU_I18N_LIBRARIES}
-        ${ICU_LIBRARIES}
-    )
-elseif (WTF_USE_WCHAR_UNICODE)
-    list(APPEND WTF_HEADERS
-        unicode/wchar/UnicodeWchar.h
-    )
-    list(APPEND WTF_SOURCES
-        unicode/CollatorDefault.cpp
-
-        unicode/wchar/UnicodeWchar.cpp
-    )
-endif ()
+list(APPEND WTF_HEADERS
+    unicode/icu/UnicodeIcu.h
+)
+list(APPEND WTF_SOURCES
+    unicode/icu/CollatorICU.cpp
+)
+list(APPEND WTF_INCLUDE_DIRECTORIES
+    ${ICU_INCLUDE_DIRS}
+)
+list(APPEND WTF_LIBRARIES
+    ${ICU_I18N_LIBRARIES}
+    ${ICU_LIBRARIES}
+)
 
 if (WIN32)
     list(APPEND WTF_SOURCES

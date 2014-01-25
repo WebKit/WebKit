@@ -3135,7 +3135,6 @@ webcore_sources += \
 	Source/WebCore/editing/SimplifyMarkupCommand.h \
 	Source/WebCore/editing/SmartReplace.cpp \
 	Source/WebCore/editing/SmartReplace.h \
-	Source/WebCore/editing/SmartReplaceICU.cpp \
 	Source/WebCore/editing/SpellChecker.cpp \
 	Source/WebCore/editing/SpellChecker.h \
 	Source/WebCore/editing/SpellingCorrectionCommand.cpp \

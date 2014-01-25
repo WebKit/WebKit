@@ -34,7 +34,7 @@ list(APPEND WebCore_SOURCES
     accessibility/atk/WebKitAccessibleUtil.cpp
     accessibility/atk/WebKitAccessibleWrapperAtk.cpp
 
-    editing/SmartReplaceICU.cpp
+    editing/SmartReplace.cpp
 
     editing/atk/FrameSelectionAtk.cpp
 

@@ -2769,29 +2769,19 @@ if (ENABLE_QUOTA)
     )
 endif ()
 
-
-if (WTF_USE_ICU_UNICODE)
-    list(APPEND WebCore_SOURCES
-        platform/text/icu/UTextProvider.cpp
-        platform/text/icu/UTextProviderLatin1.cpp
-        platform/text/icu/UTextProviderUTF16.cpp
-        platform/text/TextCodecICU.cpp
-        platform/text/TextEncodingDetectorICU.cpp
-    )
-    list(APPEND WebCore_INCLUDE_DIRECTORIES
-        ${ICU_INCLUDE_DIRS}
-    )
-    list(APPEND WebCore_LIBRARIES
-        ${ICU_LIBRARIES}
-    )
-elseif (WTF_USE_WCHAR_UNICODE)
-    list(APPEND WebCore_SOURCES
-        platform/text/TextEncodingDetectorNone.cpp
-
-        platform/text/wchar/TextBreakIteratorWchar.cpp
-    )
-endif ()
-
+list(APPEND WebCore_SOURCES
+    platform/text/icu/UTextProvider.cpp
+    platform/text/icu/UTextProviderLatin1.cpp
+    platform/text/icu/UTextProviderUTF16.cpp
+    platform/text/TextCodecICU.cpp
+    platform/text/TextEncodingDetectorICU.cpp
+)
+list(APPEND WebCore_INCLUDE_DIRECTORIES
+    ${ICU_INCLUDE_DIRS}
+)
+list(APPEND WebCore_LIBRARIES
+    ${ICU_LIBRARIES}
+)
 
 if (WTF_USE_LEVELDB)
     list(APPEND WebCore_INCLUDE_DIRECTORIES

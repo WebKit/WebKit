@@ -1,5 +1,41 @@
 2014-01-25  Darin Adler  <darin@apple.com>
 
+        Get rid of ICU_UNICODE and WCHAR_UNICODE remnants
+        https://bugs.webkit.org/show_bug.cgi?id=127623
+
+        Reviewed by Anders Carlsson.
+
+        * CMakeLists.txt: Removed SmartReplaceICU.cpp.
+        * GNUmakefile.list.am: Ditto.
+        * PlatformEfl.cmake: Ditto.
+        * PlatformGTK.cmake: Ditto.
+
+        * editing/FrameSelection.cpp:
+        (WebCore::FrameSelection::modifyMovingRight): Ditto.
+        (WebCore::FrameSelection::modifyMovingLeft): Ditto.
+
+        * editing/SmartReplace.cpp: Moved code here from SmartReplaceICU,
+        since we always support ICU now. Added some FIXME comments about
+        bugs and mistakes I spotted in the code as I was moving it.
+        * editing/SmartReplaceICU.cpp: Removed.
+
+        * editing/TextIterator.cpp: Removed unneeded checks.
+        * platform/ThreadGlobalData.cpp:
+        (WebCore::ThreadGlobalData::ThreadGlobalData): Ditto.
+        (WebCore::ThreadGlobalData::destroy): Ditto.
+        * platform/ThreadGlobalData.h: Ditto.
+        * platform/URL.cpp:
+        (WebCore::appendEncodedHostname): Ditto.
+        * platform/graphics/SurrogatePairAwareTextIterator.cpp: Ditto.
+        Also removed unneeded "using namespace".
+        * platform/text/TextCodecICU.cpp: Ditto.
+        * platform/text/TextEncoding.cpp:
+        (WebCore::TextEncoding::encode): Ditto.
+        * platform/text/TextEncodingRegistry.cpp:
+        (WebCore::extendTextCodecMaps): Ditto.
+
+2014-01-25  Darin Adler  <darin@apple.com>
+
         Get rid of UnicodeRange.h/cpp, using ICU instead
         https://bugs.webkit.org/show_bug.cgi?id=127622
 

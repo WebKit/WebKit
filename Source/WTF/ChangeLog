@@ -1,3 +1,20 @@
+2014-01-25  Darin Adler  <darin@apple.com>
+
+        Get rid of ICU_UNICODE and WCHAR_UNICODE remnants
+        https://bugs.webkit.org/show_bug.cgi?id=127623
+
+        Reviewed by Anders Carlsson.
+
+        * wtf/CMakeLists.txt: Removed WTF_USE_ICU_UNICODE and
+        WTF_USE_WCHAR_UNICODE since they are true and false respectively.
+
+        * wtf/Platform.h: Removed code to set WTF_USE_ICU_UNICODE.
+
+        * wtf/unicode/Collator.h: Removed ifdefs.
+        * wtf/unicode/CollatorDefault.cpp: Ditto.
+        * wtf/unicode/Unicode.h: Ditto.
+        * wtf/unicode/icu/CollatorICU.cpp: Ditto.
+
 2014-01-25  Anders Carlsson  <andersca@apple.com>
 
         Remove atomicIncrement/atomicDecrement

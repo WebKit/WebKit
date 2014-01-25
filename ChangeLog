@@ -1,3 +1,14 @@
+2014-01-25  Darin Adler  <darin@apple.com>
+
+        Get rid of ICU_UNICODE and WCHAR_UNICODE remnants
+        https://bugs.webkit.org/show_bug.cgi?id=127623
+
+        Reviewed by Anders Carlsson.
+
+        * Source/cmake/OptionsEfl.cmake: Removed ICU_UNICODE and WCHAR_UNICODE flags.
+        * Source/cmake/OptionsGTK.cmake: Ditto.
+        * Source/cmake/OptionsWinCE.cmake: Ditto.
+
 2014-01-23  Max Vujovic  <mvujovic@adobe.com>
 
         Remove CSS Custom Filters code and tests

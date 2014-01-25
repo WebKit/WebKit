@@ -34,19 +34,19 @@
 #include "Lookup.h"
 #include "ObjectPrototype.h"
 #include "Operations.h"
-
-#if !PLATFORM(MAC) && HAVE(LANGINFO_H)
-#include <langinfo.h>
-#endif
-
 #include <limits.h>
 #include <locale.h>
 #include <math.h>
 #include <stdlib.h>
 #include <time.h>
+#include <unicode/udat.h>
 #include <wtf/Assertions.h>
 #include <wtf/MathExtras.h>
 #include <wtf/StringExtras.h>
+
+#if HAVE(LANGINFO_H)
+#include <langinfo.h>
+#endif
 
 #if HAVE(SYS_PARAM_H)
 #include <sys/param.h>
@@ -60,10 +60,8 @@
 #include <sys/timeb.h>
 #endif
 
-#if OS(DARWIN) && USE(CF)
+#if USE(CF)
 #include <CoreFoundation/CoreFoundation.h>
-#elif USE(ICU_UNICODE)
-#include <unicode/udat.h>
 #endif
 
 using namespace WTF;
@@ -170,7 +168,7 @@ static JSCell* formatLocaleDate(ExecState* exec, DateInstance*, double timeInMil
     return jsNontrivialString(exec, adoptCF(CFDateFormatterCreateStringWithAbsoluteTime(kCFAllocatorDefault, formatter.get(), absoluteTime)).get());
 }
 
-#elif USE(ICU_UNICODE) && !UCONFIG_NO_FORMATTING
+#elif !UCONFIG_NO_FORMATTING
 
 static JSCell* formatLocaleDate(ExecState* exec, DateInstance*, double timeInMilliseconds, LocaleDateTimeFormat format)
 {

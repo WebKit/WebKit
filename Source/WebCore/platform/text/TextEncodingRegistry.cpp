@@ -27,6 +27,7 @@
 #include "config.h"
 #include "TextEncodingRegistry.h"
 
+#include "TextCodecICU.h"
 #include "TextCodecLatin1.h"
 #include "TextCodecUserDefined.h"
 #include "TextCodecUTF16.h"
@@ -41,14 +42,8 @@
 #include <wtf/StdLibExtras.h>
 #include <wtf/StringExtras.h>
 
-#if USE(ICU_UNICODE)
-#include "TextCodecICU.h"
-#endif
 #if PLATFORM(MAC) && !PLATFORM(IOS)
 #include "TextCodecMac.h"
-#endif
-#if OS(WINDOWS) && USE(WCHAR_UNICODE)
-#include "win/TextCodecWin.h"
 #endif
 
 #include <wtf/CurrentTime.h>
@@ -281,19 +276,12 @@ bool shouldShowBackslashAsCurrencySymbolIn(const char* canonicalEncodingName)
 
 static void extendTextCodecMaps()
 {
-#if USE(ICU_UNICODE)
     TextCodecICU::registerEncodingNames(addToTextEncodingNameMap);
     TextCodecICU::registerCodecs(addToTextCodecMap);
-#endif
 
 #if PLATFORM(MAC) && !PLATFORM(IOS)
     TextCodecMac::registerEncodingNames(addToTextEncodingNameMap);
     TextCodecMac::registerCodecs(addToTextCodecMap);
-#endif
-
-#if OS(WINDOWS) && USE(WCHAR_UNICODE)
-    TextCodecWin::registerExtendedEncodingNames(addToTextEncodingNameMap);
-    TextCodecWin::registerExtendedCodecs(addToTextCodecMap);
 #endif
 
     pruneBlacklistedCodecs();

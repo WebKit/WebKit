@@ -30,22 +30,17 @@
 #include "CachedResourceRequestInitiators.h"
 #include "EventNames.h"
 #include "InspectorCounters.h"
+#include "TextCodecICU.h"
 #include "ThreadTimers.h"
 #include <wtf/MainThread.h>
+#include <wtf/ThreadSpecific.h>
+#include <wtf/Threading.h>
 #include <wtf/WTFThreadData.h>
 #include <wtf/text/StringImpl.h>
 
-#if USE(ICU_UNICODE)
-#include "TextCodecICU.h"
+#if PLATFORM(MAC) && !PLATFORM(IOS)
+#include "TextCodeCMac.h"
 #endif
-
-#if PLATFORM(MAC)
-#include "TextCodecMac.h"
-#endif
-
-#include <wtf/Threading.h>
-#include <wtf/ThreadSpecific.h>
-using namespace WTF;
 
 namespace WebCore {
 
@@ -61,9 +56,7 @@ ThreadGlobalData::ThreadGlobalData()
 #ifndef NDEBUG
     , m_isMainThread(isMainThread())
 #endif
-#if USE(ICU_UNICODE)
     , m_cachedConverterICU(adoptPtr(new ICUConverterWrapper))
-#endif
 #if PLATFORM(MAC) && !PLATFORM(IOS)
     , m_cachedConverterTEC(adoptPtr(new TECConverterWrapper))
 #endif
@@ -89,9 +82,7 @@ void ThreadGlobalData::destroy()
     m_cachedConverterTEC.clear();
 #endif
 
-#if USE(ICU_UNICODE)
     m_cachedConverterICU.clear();
-#endif
 
 #if ENABLE(INSPECTOR)
     m_inspectorCounters.clear();

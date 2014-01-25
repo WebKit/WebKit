@@ -25,7 +25,7 @@ list(APPEND WebCore_INCLUDE_DIRECTORIES
 )
 
 list(APPEND WebCore_SOURCES
-    editing/SmartReplaceICU.cpp
+    editing/SmartReplace.cpp
 
     html/shadow/MediaControlsGtk.cpp
 

@@ -470,10 +470,6 @@
 #define WTF_USE_QUERY_PERFORMANCE_COUNTER  1
 #endif
 
-#if !USE(WCHAR_UNICODE)
-#define WTF_USE_ICU_UNICODE 1
-#endif
-
 #if PLATFORM(COCOA)
 
 #define WTF_USE_CF 1

@@ -28,13 +28,7 @@
 // Define platform neutral 8 bit character type (L is for Latin-1).
 typedef unsigned char LChar;
 
-#if USE(ICU_UNICODE)
 #include <wtf/unicode/icu/UnicodeIcu.h>
-#elif USE(WCHAR_UNICODE)
-#include <wtf/unicode/wchar/UnicodeWchar.h>
-#else
-#error "Unknown Unicode implementation"
-#endif
 
 static_assert(sizeof(UChar) == 2, "UChar must be two bytes!");
 

@@ -25,7 +25,6 @@
  */
 
 #include "config.h"
-#if USE(ICU_UNICODE)
 #include "TextCodecICU.h"
 
 #include "TextEncoding.h"
@@ -542,5 +541,3 @@ CString TextCodecICU::encode(const UChar* characters, size_t length, Unencodable
 }
 
 } // namespace WebCore
-#endif
-
