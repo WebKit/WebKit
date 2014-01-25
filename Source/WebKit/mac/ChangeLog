@@ -1,5 +1,11 @@
 2014-01-25  Anders Carlsson  <andersca@apple.com>
 
+        Build fix.
+
+        * WebView/WebViewData.h:
+
+2014-01-25  Anders Carlsson  <andersca@apple.com>
+
         Get rid of BackForwardController::isActive()
         https://bugs.webkit.org/show_bug.cgi?id=127604
 

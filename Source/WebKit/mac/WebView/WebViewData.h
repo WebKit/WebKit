@@ -36,6 +36,7 @@
 #import <wtf/HashMap.h>
 #import <wtf/PassOwnPtr.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/ThreadingPrimitives.h>
 #import <wtf/text/WTFString.h>
 
 #if PLATFORM(IOS)
