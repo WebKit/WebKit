@@ -117,7 +117,7 @@ static PassRefPtr<InspectorValue> jsToInspectorValue(ExecState* scriptState, JSV
         return InspectorBasicValue::create(value.asNumber());
     if (value.isString()) {
         String s = value.getString(scriptState);
-        return InspectorString::create(String(s.characters(), s.length()));
+        return InspectorString::create(String(s.deprecatedCharacters(), s.length()));
     }
 
     if (value.isObject()) {
@@ -144,7 +144,7 @@ static PassRefPtr<InspectorValue> jsToInspectorValue(ExecState* scriptState, JSV
             RefPtr<InspectorValue> inspectorValue = jsToInspectorValue(scriptState, propertyValue, maxDepth);
             if (!inspectorValue)
                 return nullptr;
-            inspectorObject->setValue(String(name.characters(), name.length()), inspectorValue);
+            inspectorObject->setValue(String(name.deprecatedCharacters(), name.length()), inspectorValue);
         }
         return inspectorObject;
     }

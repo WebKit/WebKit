@@ -327,7 +327,7 @@ JSValueRef JSValueMakeFromJSONString(JSContextRef ctx, JSStringRef string)
         LiteralParser<LChar> parser(exec, str.characters8(), length, StrictJSON);
         return toRef(exec, parser.tryLiteralParse());
     }
-    LiteralParser<UChar> parser(exec, str.characters(), length, StrictJSON);
+    LiteralParser<UChar> parser(exec, str.deprecatedCharacters(), length, StrictJSON);
     return toRef(exec, parser.tryLiteralParse());
 }
 

@@ -88,7 +88,7 @@ static int countCharacter(const UChar* data, unsigned length, UChar character)
 std::unique_ptr<Length[]> newCoordsArray(const String& string, int& len)
 {
     unsigned length = string.length();
-    const UChar* data = string.characters();
+    const UChar* data = string.deprecatedCharacters();
     StringBuffer<UChar> spacified(length);
     for (unsigned i = 0; i < length; i++) {
         UChar cc = data[i];

@@ -105,7 +105,7 @@ public:
             }
             upConvert();
         }
-        m_okay &= buffer16.tryAppend(str.characters(), length);
+        m_okay &= buffer16.tryAppend(str.deprecatedCharacters(), length);
     }
 
     void upConvert()

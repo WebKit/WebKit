@@ -1,5 +1,50 @@
 2014-01-25  Darin Adler  <darin@apple.com>
 
+        Call deprecatedCharacters instead of characters at more call sites
+        https://bugs.webkit.org/show_bug.cgi?id=127631
+
+        Reviewed by Sam Weinig.
+
+        * bindings/objc/WebScriptObject.mm:
+        (+[WebScriptObject _convertValueToObjcValue:JSC::originRootObject:rootObject:]):
+        * editing/CompositeEditCommand.cpp:
+        (WebCore::containsOnlyWhitespace):
+        * editing/TypingCommand.cpp:
+        (WebCore::TypingCommand::insertText):
+        * editing/VisibleUnits.cpp:
+        (WebCore::startOfParagraph):
+        (WebCore::endOfParagraph):
+        * html/parser/HTMLParserIdioms.cpp:
+        (WebCore::stripLeadingAndTrailingHTMLSpaces):
+        (WebCore::parseHTMLNonNegativeInteger):
+        * inspector/InspectorStyleSheet.cpp:
+        (WebCore::InspectorStyle::newLineAndWhitespaceDelimiters):
+        * inspector/InspectorStyleTextEditor.cpp:
+        (WebCore::InspectorStyleTextEditor::insertProperty):
+        (WebCore::InspectorStyleTextEditor::internalReplaceProperty):
+        * platform/Length.cpp:
+        (WebCore::newCoordsArray):
+        * platform/LinkHash.cpp:
+        (WebCore::visitedLinkHash):
+        * platform/graphics/Color.cpp:
+        (WebCore::Color::parseHexColor):
+        (WebCore::Color::Color):
+        * platform/graphics/TextRun.h:
+        (WebCore::TextRun::TextRun):
+        * platform/text/TextEncodingRegistry.cpp:
+        (WebCore::atomicCanonicalTextEncodingName):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::constructTextRun):
+        * rendering/RenderCombineText.cpp:
+        (WebCore::RenderCombineText::width):
+        * svg/SVGFontElement.cpp:
+        (WebCore::SVGFontElement::registerLigaturesInGlyphCache):
+        * xml/XPathFunctions.cpp:
+        (WebCore::XPath::FunId::evaluate):
+        Use the new name.
+
+2014-01-25  Darin Adler  <darin@apple.com>
+
         Get rid of ICU_UNICODE and WCHAR_UNICODE remnants
         https://bugs.webkit.org/show_bug.cgi?id=127623
 

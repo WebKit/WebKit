@@ -1146,7 +1146,7 @@ VisiblePosition startOfParagraph(const VisiblePosition& c, EditingBoundaryCrossi
             ASSERT_WITH_SECURITY_IMPLICATION(n->isTextNode());
             type = Position::PositionIsOffsetInAnchor;
             if (style.preserveNewline()) {
-                const UChar* chars = toRenderText(r)->characters();
+                const UChar* chars = toRenderText(r)->deprecatedCharacters();
                 int i = toRenderText(r)->textLength();
                 int o = offset;
                 if (n == startNode && o < i)
@@ -1229,7 +1229,7 @@ VisiblePosition endOfParagraph(const VisiblePosition &c, EditingBoundaryCrossing
             int length = toRenderText(r)->textLength();
             type = Position::PositionIsOffsetInAnchor;
             if (style.preserveNewline()) {
-                const UChar* chars = toRenderText(r)->characters();
+                const UChar* chars = toRenderText(r)->deprecatedCharacters();
                 int o = n == startNode ? offset : 0;
                 for (int i = o; i < length; ++i) {
                     if (chars[i] == '\n')

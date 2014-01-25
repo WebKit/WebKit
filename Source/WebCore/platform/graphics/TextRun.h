@@ -128,7 +128,7 @@ public:
             m_data.characters8 = s.characters8();
             m_is8Bit = true;
         } else {
-            m_data.characters16 = s.characters();
+            m_data.characters16 = s.deprecatedCharacters();
             m_is8Bit = false;
         }
 #else

@@ -472,7 +472,7 @@ inline void doubleQuoteString(const String& str, StringBuilder* dst)
                 //    is also optional.  It would also be a pain to implement here.
                 unsigned int symbol = static_cast<unsigned int>(c);
                 String symbolCode = String::format("\\u%04X", symbol);
-                dst->append(symbolCode.characters(), symbolCode.length());
+                dst->append(symbolCode.deprecatedCharacters(), symbolCode.length());
             } else
                 dst->append(c);
         }

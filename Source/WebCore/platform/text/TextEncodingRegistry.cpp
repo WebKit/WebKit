@@ -341,7 +341,7 @@ const char* atomicCanonicalTextEncodingName(const String& alias)
     if (alias.is8Bit())
         return atomicCanonicalTextEncodingName<LChar>(alias.characters8(), alias.length());
 
-    return atomicCanonicalTextEncodingName<UChar>(alias.characters(), alias.length());
+    return atomicCanonicalTextEncodingName<UChar>(alias.deprecatedCharacters(), alias.length());
 }
 
 bool noExtendedTextEncodingNameUsed()

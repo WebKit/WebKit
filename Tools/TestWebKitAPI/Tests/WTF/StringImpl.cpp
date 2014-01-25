@@ -61,7 +61,7 @@ TEST(WTF, StringImplFromLiteralLoop16BitConversion)
     for (size_t i = 0; i < 10; ++i) {
         RefPtr<StringImpl> string = StringImpl::createFromLiteral("Template Literal");
 
-        ASSERT_EQ(0, memcmp(controlString->characters(), string->characters(), controlString->length() * sizeof(UChar)));
+        ASSERT_EQ(0, memcmp(controlString->deprecatedCharacters(), string->deprecatedCharacters(), controlString->length() * sizeof(UChar)));
         ASSERT_TRUE(string->has16BitShadow());
     }
 }

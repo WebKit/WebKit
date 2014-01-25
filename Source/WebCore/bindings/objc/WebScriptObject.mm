@@ -551,7 +551,7 @@ static void getListFromNSArray(ExecState *exec, NSArray *array, RootObject* root
     if (value.isString()) {
         ExecState* exec = rootObject->globalObject()->globalExec();
         const String& u = asString(value)->value(exec);
-        return [NSString stringWithCharacters:u.characters() length:u.length()];
+        return [NSString stringWithCharacters:u.deprecatedCharacters() length:u.length()];
     }
 
     if (value.isNumber())

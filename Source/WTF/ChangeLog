@@ -1,5 +1,18 @@
 2014-01-25  Darin Adler  <darin@apple.com>
 
+        Call deprecatedCharacters instead of characters at more call sites
+        https://bugs.webkit.org/show_bug.cgi?id=127631
+
+        Reviewed by Sam Weinig.
+
+        * wtf/text/StringImpl.cpp:
+        (WTF::StringImpl::replace):
+        * wtf/text/WTFString.h:
+        (WTF::String::isAllSpecialCharacters):
+        Use the new name.
+
+2014-01-25  Darin Adler  <darin@apple.com>
+
         Add a new separate LChar.h header file, to be used after we remove Unicode.h
         https://bugs.webkit.org/show_bug.cgi?id=127630
 

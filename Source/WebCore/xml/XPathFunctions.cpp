@@ -340,7 +340,7 @@ Value FunId::evaluate() const
 
         // If there are several nodes with the same id, id() should return the first one.
         // In WebKit, getElementById behaves so, too, although its behavior in this case is formally undefined.
-        Node* node = contextScope.getElementById(String(idList.characters() + startPos, endPos - startPos));
+        Node* node = contextScope.getElementById(String(idList.deprecatedCharacters() + startPos, endPos - startPos));
         if (node && resultSet.add(node).isNewEntry)
             result.append(node);
         

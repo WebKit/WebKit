@@ -217,7 +217,7 @@ LinkHash visitedLinkHash(const String& url)
 
     if (length && url.is8Bit())
         return visitedLinkHashInline(url.characters8(), length);
-    return visitedLinkHashInline(url.characters(), length);
+    return visitedLinkHashInline(url.deprecatedCharacters(), length);
 }
 
 LinkHash visitedLinkHash(const UChar* url, unsigned length)

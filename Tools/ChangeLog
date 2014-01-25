@@ -1,3 +1,18 @@
+2014-01-25  Darin Adler  <darin@apple.com>
+
+        Call deprecatedCharacters instead of characters at more call sites
+        https://bugs.webkit.org/show_bug.cgi?id=127631
+
+        Reviewed by Sam Weinig.
+
+        * TestWebKitAPI/Tests/WTF/StringBuilder.cpp:
+        (TestWebKitAPI::expectBuilderContent):
+        (TestWebKitAPI::expectEmpty):
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WTF/StringImpl.cpp:
+        (TestWebKitAPI::TEST):
+        Use the new name.
+
 2014-01-25  Anders Carlsson  <andersca@apple.com>
 
         Modernize HashTable threading code

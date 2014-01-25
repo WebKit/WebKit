@@ -55,7 +55,7 @@ namespace JSC {
         const String& string() const { return m_string; }
         StringImpl* impl() const { return m_string.impl(); }
         
-        const UChar* characters() const { return m_string.characters(); }
+        const UChar* deprecatedCharacters() const { return m_string.deprecatedCharacters(); }
         int length() const { return m_string.length(); }
         
         CString ascii() const { return m_string.ascii(); }

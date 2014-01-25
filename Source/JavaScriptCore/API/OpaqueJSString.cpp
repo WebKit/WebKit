@@ -47,7 +47,7 @@ OpaqueJSString::~OpaqueJSString()
     if (!characters)
         return;
 
-    if (!m_string.is8Bit() && m_string.characters() == characters)
+    if (!m_string.is8Bit() && m_string.deprecatedCharacters() == characters)
         return;
 
     fastFree(characters);

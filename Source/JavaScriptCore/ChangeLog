@@ -1,5 +1,27 @@
 2014-01-25  Darin Adler  <darin@apple.com>
 
+        Call deprecatedCharacters instead of characters at more call sites
+        https://bugs.webkit.org/show_bug.cgi?id=127631
+
+        Reviewed by Sam Weinig.
+
+        * API/JSValueRef.cpp:
+        (JSValueMakeFromJSONString):
+        * API/OpaqueJSString.cpp:
+        (OpaqueJSString::~OpaqueJSString):
+        * bindings/ScriptValue.cpp:
+        (Deprecated::jsToInspectorValue):
+        * inspector/ContentSearchUtilities.cpp:
+        (Inspector::ContentSearchUtilities::createSearchRegexSource):
+        * inspector/InspectorValues.cpp:
+        * runtime/Identifier.h:
+        (JSC::Identifier::deprecatedCharacters):
+        * runtime/JSStringBuilder.h:
+        (JSC::JSStringBuilder::append):
+        Use the new name.
+
+2014-01-25  Darin Adler  <darin@apple.com>
+
         Get rid of ICU_UNICODE and WCHAR_UNICODE remnants
         https://bugs.webkit.org/show_bug.cgi?id=127623
 
