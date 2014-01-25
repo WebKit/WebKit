@@ -31,6 +31,7 @@
 #include "ScrollingCoordinator.h"
 
 #include "ScrollingTree.h"
+#include "Timer.h"
 #include <wtf/OwnPtr.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
@@ -56,6 +57,8 @@ public:
 
     void scrollingStateTreePropertiesChanged();
 
+    void scheduleUpdateScrollPositionAfterAsyncScroll(ScrollingNodeID, const IntPoint&, bool programmaticScroll, SetOrSyncScrollingLayerPosition);
+
 protected:
     AsyncScrollingCoordinator(Page*);
 
@@ -64,6 +67,8 @@ protected:
     ScrollingStateTree* scrollingStateTree() { return m_scrollingStateTree.get(); }
 
     PassRefPtr<ScrollingTree> releaseScrollingTree() { return m_scrollingTree.release(); }
+
+    void updateScrollPositionAfterAsyncScroll(ScrollingNodeID, const IntPoint&, bool programmaticScroll, SetOrSyncScrollingLayerPosition);
 
 private:
     virtual bool isAsyncScrollingCoordinator() const override { return true; }
@@ -106,6 +111,39 @@ private:
     void setScrollBehaviorForFixedElementsForNode(ScrollBehaviorForFixedElements, ScrollingStateScrollingNode*);
     // FIXME: move somewhere else?
     void setScrollbarPaintersFromScrollbarsForNode(Scrollbar* verticalScrollbar, Scrollbar* horizontalScrollbar, ScrollingStateScrollingNode*);
+
+    void updateScrollPositionAfterAsyncScrollTimerFired(Timer<AsyncScrollingCoordinator>*);
+
+    Timer<AsyncScrollingCoordinator> m_updateNodeScrollPositionTimer;
+
+    struct ScheduledScrollUpdate {
+        ScheduledScrollUpdate()
+            : nodeID(0)
+            , isProgrammaticScroll(false)
+            , updateLayerPositionAction(SyncScrollingLayerPosition)
+        { }
+
+        ScheduledScrollUpdate(ScrollingNodeID scrollingNodeID, IntPoint point, bool isProgrammatic, SetOrSyncScrollingLayerPosition udpateAction)
+            : nodeID(scrollingNodeID)
+            , scrollPosition(point)
+            , isProgrammaticScroll(isProgrammatic)
+            , updateLayerPositionAction(udpateAction)
+        { }
+
+        ScrollingNodeID nodeID;
+        IntPoint scrollPosition;
+        bool isProgrammaticScroll;
+        SetOrSyncScrollingLayerPosition updateLayerPositionAction;
+        
+        bool matchesUpdateType(const ScheduledScrollUpdate& other) const
+        {
+            return nodeID == other.nodeID
+                && isProgrammaticScroll == other.isProgrammaticScroll
+                && updateLayerPositionAction == other.updateLayerPositionAction;
+        }
+    };
+
+    ScheduledScrollUpdate m_scheduledScrollUpdate;
 
     OwnPtr<ScrollingStateTree> m_scrollingStateTree;
     RefPtr<ScrollingTree> m_scrollingTree;

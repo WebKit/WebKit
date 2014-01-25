@@ -93,7 +93,7 @@ void RemoteScrollingCoordinator::buildTransaction(RemoteScrollingCoordinatorTran
 // Notification from the UI process that we scrolled.
 void RemoteScrollingCoordinator::scrollPositionChangedForNode(ScrollingNodeID nodeID, const FloatPoint& scrollPosition)
 {
-    scheduleUpdateScrollPositionForNode(nodeID, roundedIntPoint(scrollPosition), false /* FIXME */, SyncScrollingLayerPosition);
+    scheduleUpdateScrollPositionAfterAsyncScroll(nodeID, roundedIntPoint(scrollPosition), false /* FIXME */, SyncScrollingLayerPosition);
 }
 
 } // namespace WebKit

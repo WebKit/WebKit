@@ -1,5 +1,24 @@
 2014-01-24  Simon Fraser  <simon.fraser@apple.com>
 
+        Prepare scrolling tree to handle > 1 scrolling node
+        https://bugs.webkit.org/show_bug.cgi?id=127590
+
+        Reviewed by Tim Horton.
+        
+        Clean up the code path called after the ScrollingTree has scrolled a node,
+        to prepare for multiple scrolling nodes.
+        
+        Change "updateMainFrameScrollPosition" terminology to "updateScrollPositionAfterAsyncScroll",
+        and pass along the ScrollingNodeID that scrolled.
+
+        * UIProcess/Scrolling/RemoteScrollingTree.cpp:
+        (WebKit::RemoteScrollingTree::scrollingTreeNodeDidScroll):
+        * UIProcess/Scrolling/RemoteScrollingTree.h:
+        * WebProcess/Scrolling/RemoteScrollingCoordinator.mm:
+        (WebKit::RemoteScrollingCoordinator::scrollPositionChangedForNode):
+
+2014-01-24  Simon Fraser  <simon.fraser@apple.com>
+
         #ifdef out handleWheelEventPhase for iOS
         https://bugs.webkit.org/show_bug.cgi?id=127583
 

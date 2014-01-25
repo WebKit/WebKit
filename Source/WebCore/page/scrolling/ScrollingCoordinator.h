@@ -31,7 +31,6 @@
 #include "PlatformWheelEvent.h"
 #include "RenderObject.h"
 #include "ScrollTypes.h"
-#include "Timer.h"
 #include <wtf/Forward.h>
 
 #if ENABLE(ASYNC_SCROLLING)
@@ -159,12 +158,6 @@ public:
     // Generated a unique id for scroll layers.
     ScrollingNodeID uniqueScrollLayerID();
 
-    void scheduleUpdateScrollPositionForNode(ScrollingNodeID, const IntPoint&, bool programmaticScroll, SetOrSyncScrollingLayerPosition);
-
-    // Dispatched by the scrolling tree whenever the main frame scroll position changes.
-    void scheduleUpdateMainFrameScrollPosition(const IntPoint&, bool programmaticScroll, SetOrSyncScrollingLayerPosition);
-    void updateMainFrameScrollPosition(const IntPoint&, bool programmaticScroll, SetOrSyncScrollingLayerPosition);
-
     enum MainThreadScrollingReasonFlags {
         ForcedOnMainThread = 1 << 0,
         HasSlowRepaintObjects = 1 << 1,
@@ -210,13 +203,6 @@ private:
     virtual bool hasVisibleSlowRepaintViewportConstrainedObjects(FrameView*) const;
     void updateSynchronousScrollingReasons();
     
-    void updateMainFrameScrollPositionTimerFired(Timer<ScrollingCoordinator>*);
-
-    Timer<ScrollingCoordinator> m_updateMainFrameScrollPositionTimer;
-    IntPoint m_scheduledUpdateScrollPosition;
-    bool m_scheduledUpdateIsProgrammaticScroll;
-    SetOrSyncScrollingLayerPosition m_scheduledScrollingLayerPositionAction;
-
     bool m_forceSynchronousScrollLayerPositionUpdates;
 };
 

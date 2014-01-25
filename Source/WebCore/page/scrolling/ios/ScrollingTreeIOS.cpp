@@ -81,14 +81,15 @@ void ScrollingTreeIOS::commitNewTreeState(PassOwnPtr<ScrollingStateTree> scrolli
     ScrollingTree::commitNewTreeState(scrollingStateTree);
 }
 
-void ScrollingTreeIOS::updateMainFrameScrollPosition(const IntPoint& scrollPosition, SetOrSyncScrollingLayerPosition scrollingLayerPositionAction)
+void ScrollingTreeIOS::scrollingTreeNodeDidScroll(ScrollingNodeID nodeID, const IntPoint& scrollPosition, SetOrSyncScrollingLayerPosition scrollingLayerPositionAction)
 {
     if (!m_scrollingCoordinator)
         return;
 
-    setMainFrameScrollPosition(scrollPosition);
+    if (nodeID == rootNode()->scrollingNodeID())
+        setMainFrameScrollPosition(scrollPosition);
 
-    callOnMainThread(bind(&ScrollingCoordinator::scheduleUpdateMainFrameScrollPosition, m_scrollingCoordinator.get(), scrollPosition, isHandlingProgrammaticScroll(), scrollingLayerPositionAction));
+    callOnMainThread(bind(&AsyncScrollingCoordinator::scheduleUpdateScrollPositionAfterAsyncScroll, m_scrollingCoordinator.get(), nodeID, scrollPosition, isHandlingProgrammaticScroll(), scrollingLayerPositionAction));
 }
 
 PassOwnPtr<ScrollingTreeNode> ScrollingTreeIOS::createNode(ScrollingNodeType nodeType, ScrollingNodeID nodeID)

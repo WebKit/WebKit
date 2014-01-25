@@ -52,7 +52,7 @@ private:
 #if PLATFORM(MAC) && !PLATFORM(IOS)
     virtual void handleWheelEventPhase(WebCore::PlatformWheelEventPhase) override;
 #endif
-    virtual void updateMainFrameScrollPosition(const WebCore::IntPoint& scrollPosition, WebCore::SetOrSyncScrollingLayerPosition = WebCore::SyncScrollingLayerPosition) override;
+    virtual void scrollingTreeNodeDidScroll(WebCore::ScrollingNodeID, const WebCore::IntPoint& scrollPosition, WebCore::SetOrSyncScrollingLayerPosition = WebCore::SyncScrollingLayerPosition) override;
 
     virtual PassOwnPtr<WebCore::ScrollingTreeNode> createNode(WebCore::ScrollingNodeType, WebCore::ScrollingNodeID);
     

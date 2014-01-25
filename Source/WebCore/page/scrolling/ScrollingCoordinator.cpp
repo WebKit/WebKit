@@ -64,9 +64,6 @@ PassRefPtr<ScrollingCoordinator> ScrollingCoordinator::create(Page* page)
 
 ScrollingCoordinator::ScrollingCoordinator(Page* page)
     : m_page(page)
-    , m_updateMainFrameScrollPositionTimer(this, &ScrollingCoordinator::updateMainFrameScrollPositionTimerFired)
-    , m_scheduledUpdateIsProgrammaticScroll(false)
-    , m_scheduledScrollingLayerPositionAction(SyncScrollingLayerPosition)
     , m_forceSynchronousScrollLayerPositionUpdates(false)
 {
 }
@@ -258,92 +255,6 @@ void ScrollingCoordinator::frameViewRootLayerDidChange(FrameView* frameView)
     frameViewLayoutUpdated(frameView);
     recomputeWheelEventHandlerCountForFrameView(frameView);
     updateSynchronousScrollingReasons();
-}
-
-void ScrollingCoordinator::scheduleUpdateScrollPositionForNode(ScrollingNodeID, const IntPoint& scrollPosition, bool programmaticScroll, SetOrSyncScrollingLayerPosition scrollingLayerPositionAction)
-{
-    // FIXME: need to handle non-main nodes.
-    scheduleUpdateMainFrameScrollPosition(scrollPosition, programmaticScroll, scrollingLayerPositionAction);
-}
-
-void ScrollingCoordinator::scheduleUpdateMainFrameScrollPosition(const IntPoint& scrollPosition, bool programmaticScroll, SetOrSyncScrollingLayerPosition scrollingLayerPositionAction)
-{
-    if (m_updateMainFrameScrollPositionTimer.isActive()) {
-        if (m_scheduledUpdateIsProgrammaticScroll == programmaticScroll
-            && m_scheduledScrollingLayerPositionAction == scrollingLayerPositionAction) {
-            m_scheduledUpdateScrollPosition = scrollPosition;
-            return;
-        }
-    
-        // If the parameters don't match what was previosly scheduled, dispatch immediately.
-        m_updateMainFrameScrollPositionTimer.stop();
-        updateMainFrameScrollPosition(m_scheduledUpdateScrollPosition, m_scheduledUpdateIsProgrammaticScroll, m_scheduledScrollingLayerPositionAction);
-        updateMainFrameScrollPosition(scrollPosition, programmaticScroll, scrollingLayerPositionAction);
-        return;
-    }
-
-    m_scheduledUpdateScrollPosition = scrollPosition;
-    m_scheduledUpdateIsProgrammaticScroll = programmaticScroll;
-    m_scheduledScrollingLayerPositionAction = scrollingLayerPositionAction;
-    m_updateMainFrameScrollPositionTimer.startOneShot(0);
-}
-
-void ScrollingCoordinator::updateMainFrameScrollPositionTimerFired(Timer<ScrollingCoordinator>*)
-{
-    updateMainFrameScrollPosition(m_scheduledUpdateScrollPosition, m_scheduledUpdateIsProgrammaticScroll, m_scheduledScrollingLayerPositionAction);
-}
-
-void ScrollingCoordinator::updateMainFrameScrollPosition(const IntPoint& scrollPosition, bool programmaticScroll, SetOrSyncScrollingLayerPosition scrollingLayerPositionAction)
-{
-    ASSERT(isMainThread());
-
-    if (!m_page)
-        return;
-
-    FrameView* frameView = m_page->mainFrame().view();
-    if (!frameView)
-        return;
-
-    bool oldProgrammaticScroll = frameView->inProgrammaticScroll();
-    frameView->setInProgrammaticScroll(programmaticScroll);
-
-    frameView->setConstrainsScrollingToContentEdge(false);
-    frameView->notifyScrollPositionChanged(scrollPosition);
-    frameView->setConstrainsScrollingToContentEdge(true);
-
-    frameView->setInProgrammaticScroll(oldProgrammaticScroll);
-
-#if USE(ACCELERATED_COMPOSITING)
-    if (GraphicsLayer* scrollLayer = scrollLayerForFrameView(frameView)) {
-        GraphicsLayer* counterScrollingLayer = counterScrollingLayerForFrameView(frameView);
-        GraphicsLayer* headerLayer = headerLayerForFrameView(frameView);
-        GraphicsLayer* footerLayer = footerLayerForFrameView(frameView);
-        IntSize scrollOffsetForFixed = frameView->scrollOffsetForFixedPosition();
-
-        if (programmaticScroll || scrollingLayerPositionAction == SetScrollingLayerPosition) {
-            scrollLayer->setPosition(-frameView->scrollPosition());
-            if (counterScrollingLayer)
-                counterScrollingLayer->setPosition(IntPoint(scrollOffsetForFixed));
-            if (headerLayer)
-                headerLayer->setPosition(FloatPoint(scrollOffsetForFixed.width(), 0));
-            if (footerLayer)
-                footerLayer->setPosition(FloatPoint(scrollOffsetForFixed.width(), frameView->totalContentsSize().height() - frameView->footerHeight()));
-        } else {
-            scrollLayer->syncPosition(-frameView->scrollPosition());
-            if (counterScrollingLayer)
-                counterScrollingLayer->syncPosition(IntPoint(scrollOffsetForFixed));
-            if (headerLayer)
-                headerLayer->syncPosition(FloatPoint(scrollOffsetForFixed.width(), 0));
-            if (footerLayer)
-                footerLayer->syncPosition(FloatPoint(scrollOffsetForFixed.width(), frameView->totalContentsSize().height() - frameView->footerHeight()));
-
-            LayoutRect viewportRect = frameView->viewportConstrainedVisibleContentRect();
-            syncChildPositions(viewportRect);
-        }
-    }
-#else
-    UNUSED_PARAM(scrollingLayerPositionAction);
-#endif
 }
 
 #if PLATFORM(MAC)

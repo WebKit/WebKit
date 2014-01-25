@@ -76,10 +76,9 @@ void RemoteScrollingTree::handleWheelEventPhase(PlatformWheelEventPhase phase)
 }
 #endif
 
-void RemoteScrollingTree::updateMainFrameScrollPosition(const IntPoint& scrollPosition, SetOrSyncScrollingLayerPosition)
+void RemoteScrollingTree::scrollingTreeNodeDidScroll(ScrollingNodeID nodeID, const IntPoint& scrollPosition, SetOrSyncScrollingLayerPosition)
 {
-    // FIXME: fix for all scrolling nodes.
-    m_scrollingCoordinatorProxy.scrollPositionChanged(rootNode()->scrollingNodeID(), scrollPosition);
+    m_scrollingCoordinatorProxy.scrollPositionChanged(nodeID, scrollPosition);
 }
 
 PassOwnPtr<ScrollingTreeNode> RemoteScrollingTree::createNode(ScrollingNodeType nodeType, ScrollingNodeID nodeID)

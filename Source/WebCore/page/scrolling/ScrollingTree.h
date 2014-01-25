@@ -71,7 +71,7 @@ public:
 
     void setMainFramePinState(bool pinnedToTheLeft, bool pinnedToTheRight, bool pinnedToTheTop, bool pinnedToTheBottom);
 
-    virtual void updateMainFrameScrollPosition(const IntPoint& scrollPosition, SetOrSyncScrollingLayerPosition = SyncScrollingLayerPosition) = 0;
+    virtual void scrollingTreeNodeDidScroll(ScrollingNodeID, const IntPoint& scrollPosition, SetOrSyncScrollingLayerPosition = SyncScrollingLayerPosition) = 0;
     IntPoint mainFrameScrollPosition();
 
 #if PLATFORM(MAC) && !PLATFORM(IOS)

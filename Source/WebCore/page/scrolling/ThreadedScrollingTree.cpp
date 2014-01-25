@@ -100,14 +100,15 @@ void ThreadedScrollingTree::commitNewTreeState(PassOwnPtr<ScrollingStateTree> sc
     ScrollingTree::commitNewTreeState(scrollingStateTree);
 }
 
-void ThreadedScrollingTree::updateMainFrameScrollPosition(const IntPoint& scrollPosition, SetOrSyncScrollingLayerPosition scrollingLayerPositionAction)
+void ThreadedScrollingTree::scrollingTreeNodeDidScroll(ScrollingNodeID nodeID, const IntPoint& scrollPosition, SetOrSyncScrollingLayerPosition scrollingLayerPositionAction)
 {
     if (!m_scrollingCoordinator)
         return;
 
-    setMainFrameScrollPosition(scrollPosition);
+    if (nodeID == rootNode()->scrollingNodeID())
+        setMainFrameScrollPosition(scrollPosition);
 
-    callOnMainThread(bind(&ScrollingCoordinator::scheduleUpdateMainFrameScrollPosition, m_scrollingCoordinator.get(), scrollPosition, isHandlingProgrammaticScroll(), scrollingLayerPositionAction));
+    callOnMainThread(bind(&AsyncScrollingCoordinator::scheduleUpdateScrollPositionAfterAsyncScroll, m_scrollingCoordinator.get(), nodeID, scrollPosition, isHandlingProgrammaticScroll(), scrollingLayerPositionAction));
 }
 
 #if PLATFORM(MAC) && !PLATFORM(IOS)

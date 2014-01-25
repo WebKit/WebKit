@@ -315,12 +315,12 @@ void ScrollingTreeScrollingNodeMac::setScrollPositionWithoutContentEdgeConstrain
 
     if (shouldUpdateScrollLayerPositionSynchronously()) {
         m_probableMainThreadScrollPosition = scrollPosition;
-        scrollingTree().updateMainFrameScrollPosition(scrollPosition, SetScrollingLayerPosition);
+        scrollingTree().scrollingTreeNodeDidScroll(scrollingNodeID(), scrollPosition, SetScrollingLayerPosition);
         return;
     }
 
     setScrollLayerPosition(scrollPosition);
-    scrollingTree().updateMainFrameScrollPosition(scrollPosition);
+    scrollingTree().scrollingTreeNodeDidScroll(scrollingNodeID(), scrollPosition);
 }
 
 void ScrollingTreeScrollingNodeMac::setScrollLayerPosition(const IntPoint& position)
