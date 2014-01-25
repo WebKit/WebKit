@@ -965,8 +965,6 @@ webkit2_sources += \
 	Source/WebKit2/UIProcess/WebKeyValueStorageManager.h \
 	Source/WebKit2/UIProcess/WebMediaCacheManagerProxy.cpp \
 	Source/WebKit2/UIProcess/WebMediaCacheManagerProxy.h \
-	Source/WebKit2/UIProcess/WebLoaderClient.cpp \
-	Source/WebKit2/UIProcess/WebLoaderClient.h \
 	Source/WebKit2/UIProcess/WebNetworkInfoManagerProxy.cpp \
 	Source/WebKit2/UIProcess/WebNetworkInfoManagerProxy.h \
 	Source/WebKit2/UIProcess/WebNetworkInfoProvider.cpp \
