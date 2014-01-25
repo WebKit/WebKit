@@ -1,3 +1,28 @@
+2014-01-24  Simon Fraser  <simon.fraser@apple.com>
+
+        Add typesafe casts for ScrollingTreeNode classes
+        https://bugs.webkit.org/show_bug.cgi?id=127597
+
+        Reviewed by Tim Horton.
+
+        Add a ScrollingNodeType member to ScrollingTreeNodes and
+        use it for type-safe casting.
+
+        * page/scrolling/ScrollingTreeNode.cpp:
+        (WebCore::ScrollingTreeNode::ScrollingTreeNode):
+        * page/scrolling/ScrollingTreeNode.h:
+        (WebCore::ScrollingTreeNode::nodeType):
+        (WebCore::ScrollingTreeNode::scrollingNodeID):
+        * page/scrolling/ScrollingTreeScrollingNode.cpp:
+        (WebCore::ScrollingTreeScrollingNode::ScrollingTreeScrollingNode):
+        * page/scrolling/ScrollingTreeScrollingNode.h:
+        * page/scrolling/mac/ScrollingTreeFixedNode.h:
+        * page/scrolling/mac/ScrollingTreeFixedNode.mm:
+        (WebCore::ScrollingTreeFixedNode::ScrollingTreeFixedNode):
+        * page/scrolling/mac/ScrollingTreeStickyNode.h:
+        * page/scrolling/mac/ScrollingTreeStickyNode.mm:
+        (WebCore::ScrollingTreeStickyNode::ScrollingTreeStickyNode):
+
 2014-01-24  Anders Carlsson  <andersca@apple.com>
 
         Remove back/forward list related functions from Page

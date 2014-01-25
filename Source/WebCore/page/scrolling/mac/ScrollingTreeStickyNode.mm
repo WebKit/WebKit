@@ -40,7 +40,7 @@ PassOwnPtr<ScrollingTreeStickyNode> ScrollingTreeStickyNode::create(ScrollingTre
 }
 
 ScrollingTreeStickyNode::ScrollingTreeStickyNode(ScrollingTree& scrollingTree, ScrollingNodeID nodeID)
-    : ScrollingTreeNode(scrollingTree, nodeID)
+    : ScrollingTreeNode(scrollingTree, StickyNode, nodeID)
 {
 }
 

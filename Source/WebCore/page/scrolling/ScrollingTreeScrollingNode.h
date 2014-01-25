@@ -100,6 +100,8 @@ private:
     ScrollBehaviorForFixedElements m_behaviorForFixed;
 };
 
+SCROLLING_NODE_TYPE_CASTS(ScrollingTreeScrollingNode, nodeType() == ScrollingNode);
+
 } // namespace WebCore
 
 #endif // ENABLE(ASYNC_SCROLLING)
