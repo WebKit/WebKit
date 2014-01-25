@@ -67,10 +67,10 @@ void CSSFontFace::removedFromSegmentedFontFace(CSSSegmentedFontFace* segmentedFo
     m_segmentedFontFaces.remove(segmentedFontFace);
 }
 
-void CSSFontFace::addSource(PassOwnPtr<CSSFontFaceSource> source)
+void CSSFontFace::addSource(std::unique_ptr<CSSFontFaceSource> source)
 {
     source->setFontFace(this);
-    m_sources.append(source);
+    m_sources.append(std::move(source));
 }
 
 void CSSFontFace::fontLoaded(CSSFontFaceSource* source)

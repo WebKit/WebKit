@@ -30,6 +30,7 @@
 #include "FontSelector.h"
 #include "SimpleFontData.h"
 #include "Timer.h"
+#include <memory>
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
@@ -88,9 +89,9 @@ private:
     void beginLoadTimerFired(Timer<CSSFontSelector>&);
 
     Document* m_document;
-    HashMap<String, OwnPtr<Vector<RefPtr<CSSFontFace>>>, CaseFoldingHash> m_fontFaces;
-    HashMap<String, OwnPtr<Vector<RefPtr<CSSFontFace>>>, CaseFoldingHash> m_locallyInstalledFontFaces;
-    HashMap<String, OwnPtr<HashMap<unsigned, RefPtr<CSSSegmentedFontFace>>>, CaseFoldingHash> m_fonts;
+    HashMap<String, std::unique_ptr<Vector<RefPtr<CSSFontFace>>>, CaseFoldingHash> m_fontFaces;
+    HashMap<String, std::unique_ptr<Vector<RefPtr<CSSFontFace>>>, CaseFoldingHash> m_locallyInstalledFontFaces;
+    HashMap<String, std::unique_ptr<HashMap<unsigned, RefPtr<CSSSegmentedFontFace>>>, CaseFoldingHash> m_fonts;
     HashSet<FontSelectorClient*> m_clients;
 
     Vector<CachedResourceHandle<CachedFont>> m_fontsToBeginLoading;

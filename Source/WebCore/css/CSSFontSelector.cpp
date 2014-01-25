@@ -206,7 +206,7 @@ void CSSFontSelector::addFontFaceRule(const StyleRuleFontFace* fontFaceRule)
     for (int i = 0; i < srcLength; i++) {
         // An item in the list either specifies a string (local font name) or a URL (remote font to download).
         CSSFontFaceSrcValue* item = toCSSFontFaceSrcValue(srcList->itemWithoutBoundsCheck(i));
-        OwnPtr<CSSFontFaceSource> source;
+        std::unique_ptr<CSSFontFaceSource> source;
 
 #if ENABLE(SVG_FONTS)
         foundSVGFont = item->isSVGFontFaceSrc() || item->svgFontFaceElement();
@@ -217,7 +217,7 @@ void CSSFontSelector::addFontFaceRule(const StyleRuleFontFace* fontFaceRule)
             if (allowDownloading && item->isSupportedFormat() && m_document) {
                 CachedFont* cachedFont = item->cachedFont(m_document);
                 if (cachedFont) {
-                    source = adoptPtr(new CSSFontFaceSource(item->resource(), cachedFont));
+                    source = std::make_unique<CSSFontFaceSource>(item->resource(), cachedFont);
 #if ENABLE(SVG_FONTS)
                     if (foundSVGFont)
                         source->setHasExternalSVGFont(true);
@@ -225,7 +225,7 @@ void CSSFontSelector::addFontFaceRule(const StyleRuleFontFace* fontFaceRule)
                 }
             }
         } else {
-            source = adoptPtr(new CSSFontFaceSource(item->resource()));
+            source = std::make_unique<CSSFontFaceSource>(item->resource());
         }
 
         if (!fontFace) {
@@ -242,7 +242,7 @@ void CSSFontSelector::addFontFaceRule(const StyleRuleFontFace* fontFaceRule)
 #if ENABLE(SVG_FONTS)
             source->setSVGFontFaceElement(item->svgFontFaceElement());
 #endif
-            fontFace->addSource(source.release());
+            fontFace->addSource(std::move(source));
         }
     }
 
@@ -296,25 +296,25 @@ void CSSFontSelector::addFontFaceRule(const StyleRuleFontFace* fontFaceRule)
         if (familyName.isEmpty())
             continue;
 
-        OwnPtr<Vector<RefPtr<CSSFontFace>>>& familyFontFaces = m_fontFaces.add(familyName, nullptr).iterator->value;
+        std::unique_ptr<Vector<RefPtr<CSSFontFace>>>& familyFontFaces = m_fontFaces.add(familyName, nullptr).iterator->value;
         if (!familyFontFaces) {
-            familyFontFaces = adoptPtr(new Vector<RefPtr<CSSFontFace>>);
+            familyFontFaces = std::make_unique<Vector<RefPtr<CSSFontFace>>>();
 
             ASSERT(!m_locallyInstalledFontFaces.contains(familyName));
 
             Vector<unsigned> locallyInstalledFontsTraitsMasks;
             fontCache()->getTraitsInFamily(familyName, locallyInstalledFontsTraitsMasks);
             if (unsigned numLocallyInstalledFaces = locallyInstalledFontsTraitsMasks.size()) {
-                OwnPtr<Vector<RefPtr<CSSFontFace>>> familyLocallyInstalledFaces = adoptPtr(new Vector<RefPtr<CSSFontFace>>);
+                auto familyLocallyInstalledFaces = std::make_unique<Vector<RefPtr<CSSFontFace>>>();
 
                 for (unsigned i = 0; i < numLocallyInstalledFaces; ++i) {
                     RefPtr<CSSFontFace> locallyInstalledFontFace = CSSFontFace::create(static_cast<FontTraitsMask>(locallyInstalledFontsTraitsMasks[i]), 0, true);
-                    locallyInstalledFontFace->addSource(adoptPtr(new CSSFontFaceSource(familyName)));
+                    locallyInstalledFontFace->addSource(std::make_unique<CSSFontFaceSource>(familyName));
                     ASSERT(locallyInstalledFontFace->isValid());
                     familyLocallyInstalledFaces->append(locallyInstalledFontFace);
                 }
 
-                m_locallyInstalledFontFaces.set(familyName, familyLocallyInstalledFaces.release());
+                m_locallyInstalledFontFaces.set(familyName, std::move(familyLocallyInstalledFaces));
             }
         }
 
@@ -506,9 +506,9 @@ CSSSegmentedFontFace* CSSFontSelector::getFontFace(const FontDescription& fontDe
     if (!familyFontFaces || familyFontFaces->isEmpty())
         return 0;
 
-    OwnPtr<HashMap<unsigned, RefPtr<CSSSegmentedFontFace>>>& segmentedFontFaceCache = m_fonts.add(family, nullptr).iterator->value;
+    std::unique_ptr<HashMap<unsigned, RefPtr<CSSSegmentedFontFace>>>& segmentedFontFaceCache = m_fonts.add(family, nullptr).iterator->value;
     if (!segmentedFontFaceCache)
-        segmentedFontFaceCache = adoptPtr(new HashMap<unsigned, RefPtr<CSSSegmentedFontFace>>);
+        segmentedFontFaceCache = std::make_unique<HashMap<unsigned, RefPtr<CSSSegmentedFontFace>>>();
 
     FontTraitsMask traitsMask = fontDescription.traitsMask();
 

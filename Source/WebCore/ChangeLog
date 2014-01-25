@@ -1,3 +1,21 @@
+2014-01-25  Zan Dobersek  <zdobersek@igalia.com>
+
+        Move CSSFontFace, CSSFontSelector to std::unique_ptr
+        https://bugs.webkit.org/show_bug.cgi?id=127569
+
+        Reviewed by Andreas Kling.
+
+        Move the CSSFontFace and CSSFontSelector classes from using OwnPtr, PassOwnPtr and adoptPtr
+        to using std::unique_ptr, move semantics and std::make_unique.
+
+        * css/CSSFontFace.cpp:
+        (WebCore::CSSFontFace::addSource):
+        * css/CSSFontFace.h:
+        * css/CSSFontSelector.cpp:
+        (WebCore::CSSFontSelector::addFontFaceRule):
+        (WebCore::CSSFontSelector::getFontFace):
+        * css/CSSFontSelector.h:
+
 2014-01-24  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Move InspectorRuntimeAgent into JavaScriptCore

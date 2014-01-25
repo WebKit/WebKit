@@ -29,6 +29,7 @@
 #include "CSSFontFaceRule.h"
 #include "CSSFontFaceSource.h"
 #include "FontTraitsMask.h"
+#include <memory>
 #include <wtf/Forward.h>
 #include <wtf/HashSet.h>
 #include <wtf/PassRefPtr.h>
@@ -61,7 +62,7 @@ public:
 
     bool isLocalFallback() const { return m_isLocalFallback; }
 
-    void addSource(PassOwnPtr<CSSFontFaceSource>);
+    void addSource(std::unique_ptr<CSSFontFaceSource>);
 
     void fontLoaded(CSSFontFaceSource*);
 
@@ -107,7 +108,7 @@ private:
     FontTraitsMask m_traitsMask;
     Vector<UnicodeRange> m_ranges;
     HashSet<CSSSegmentedFontFace*> m_segmentedFontFaces;
-    Vector<OwnPtr<CSSFontFaceSource>> m_sources;
+    Vector<std::unique_ptr<CSSFontFaceSource>> m_sources;
     CSSFontFaceSource* m_activeSource;
     bool m_isLocalFallback;
 #if ENABLE(FONT_LOAD_EVENTS)
