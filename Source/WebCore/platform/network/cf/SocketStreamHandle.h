@@ -35,6 +35,7 @@
 #include "AuthenticationClient.h"
 #include "SocketStreamHandleBase.h"
 #include <wtf/RetainPtr.h>
+#include <wtf/ThreadSafeRefCounted.h>
 
 typedef struct __CFHTTPMessage* CFHTTPMessageRef;
 

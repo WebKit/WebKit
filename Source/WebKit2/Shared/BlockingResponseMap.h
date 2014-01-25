@@ -28,6 +28,7 @@
 
 #include <condition_variable>
 #include <wtf/HashMap.h>
+#include <wtf/Noncopyable.h>
 
 template<typename T>
 class BlockingResponseMap {

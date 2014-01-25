@@ -36,6 +36,7 @@
 #include <wtf/HashMap.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/ThreadingPrimitives.h>
 #include <CoreFoundation/CoreFoundation.h>
 
 class LocalizedString;

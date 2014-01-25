@@ -22,6 +22,8 @@
 #ifndef WTF_HashTable_h
 #define WTF_HashTable_h
 
+#include <atomic>
+#include <mutex>
 #include <string.h>
 #include <type_traits>
 #include <utility>
@@ -29,14 +31,7 @@
 #include <wtf/FastMalloc.h>
 #include <wtf/HashTraits.h>
 #include <wtf/StdLibExtras.h>
-#include <wtf/Threading.h>
 #include <wtf/ValueCheck.h>
-
-#ifndef NDEBUG
-// Required for CHECK_HASHTABLE_ITERATORS.
-#include <wtf/OwnPtr.h>
-#include <wtf/PassOwnPtr.h>
-#endif
 
 #define DUMP_HASHTABLE_STATS 0
 #define DUMP_HASHTABLE_STATS_PER_TABLE 0
@@ -62,17 +57,17 @@ namespace WTF {
 
     struct HashTableStats {
         // The following variables are all atomically incremented when modified.
-        WTF_EXPORTDATA static int numAccesses;
-        WTF_EXPORTDATA static int numRehashes;
-        WTF_EXPORTDATA static int numRemoves;
-        WTF_EXPORTDATA static int numReinserts;
+        WTF_EXPORTDATA static std::atomic<unsigned> numAccesses;
+        WTF_EXPORTDATA static std::atomic<unsigned> numRehashes;
+        WTF_EXPORTDATA static std::atomic<unsigned> numRemoves;
+        WTF_EXPORTDATA static std::atomic<unsigned> numReinserts;
 
         // The following variables are only modified in the recordCollisionAtCount method within a mutex.
-        WTF_EXPORTDATA static int maxCollisions;
-        WTF_EXPORTDATA static int numCollisions;
-        WTF_EXPORTDATA static int collisionGraph[4096];
+        WTF_EXPORTDATA static unsigned maxCollisions;
+        WTF_EXPORTDATA static unsigned numCollisions;
+        WTF_EXPORTDATA static unsigned collisionGraph[4096];
 
-        WTF_EXPORT_PRIVATE static void recordCollisionAtCount(int count);
+        WTF_EXPORT_PRIVATE static void recordCollisionAtCount(unsigned count);
         WTF_EXPORT_PRIVATE static void dumpStats();
     };
 
@@ -483,12 +478,12 @@ namespace WTF {
         // All access to m_iterators should be guarded with m_mutex.
         mutable const_iterator* m_iterators;
         // Use OwnPtr so HashTable can still be memmove'd or memcpy'ed.
-        mutable std::unique_ptr<Mutex> m_mutex;
+        mutable std::unique_ptr<std::mutex> m_mutex;
 #endif
 
 #if DUMP_HASHTABLE_STATS_PER_TABLE
     public:
-        mutable OwnPtr<Stats> m_stats;
+        mutable std::unique_ptr<Stats> m_stats;
 #endif
     };
 
@@ -539,7 +534,7 @@ namespace WTF {
         , m_deletedCount(0)
 #if CHECK_HASHTABLE_ITERATORS
         , m_iterators(0)
-        , m_mutex(std::make_unique<Mutex>())
+        , m_mutex(std::make_unique<std::mutex>())
 #endif
 #if DUMP_HASHTABLE_STATS_PER_TABLE
         , m_stats(std::make_unique<Stats>())
@@ -599,13 +594,12 @@ namespace WTF {
             return 0;
 
 #if DUMP_HASHTABLE_STATS
-        atomicIncrement(&HashTableStats::numAccesses);
-        int probeCount = 0;
+        ++HashTableStats::numAccesses;
+        unsigned probeCount = 0;
 #endif
 
 #if DUMP_HASHTABLE_STATS_PER_TABLE
         ++m_stats->numAccesses;
-        int perTableProbeCount = 0;
 #endif
 
         while (1) {
@@ -631,8 +625,7 @@ namespace WTF {
 #endif
 
 #if DUMP_HASHTABLE_STATS_PER_TABLE
-            ++perTableProbeCount;
-            m_stats->recordCollisionAtCount(perTableProbeCount);
+            m_stats->recordCollisionAtCount(probeCount);
 #endif
 
             if (k == 0)
@@ -655,13 +648,12 @@ namespace WTF {
         int i = h & sizeMask;
 
 #if DUMP_HASHTABLE_STATS
-        atomicIncrement(&HashTableStats::numAccesses);
+        ++HashTableStats::numAccesses;
         int probeCount = 0;
 #endif
 
 #if DUMP_HASHTABLE_STATS_PER_TABLE
         ++m_stats->numAccesses;
-        int perTableProbeCount = 0;
 #endif
 
         ValueType* deletedEntry = 0;
@@ -694,8 +686,7 @@ namespace WTF {
 #endif
 
 #if DUMP_HASHTABLE_STATS_PER_TABLE
-            ++perTableProbeCount;
-            m_stats->recordCollisionAtCount(perTableProbeCount);
+            m_stats->recordCollisionAtCount(probeCount);
 #endif
 
             if (k == 0)
@@ -718,13 +709,12 @@ namespace WTF {
         int i = h & sizeMask;
 
 #if DUMP_HASHTABLE_STATS
-        atomicIncrement(&HashTableStats::numAccesses);
-        int probeCount = 0;
+        ++HashTableStats::numAccesses;
+        unsigned probeCount = 0;
 #endif
 
 #if DUMP_HASHTABLE_STATS_PER_TABLE
         ++m_stats->numAccesses;
-        int perTableProbeCount = 0;
 #endif
 
         ValueType* deletedEntry = 0;
@@ -757,8 +747,7 @@ namespace WTF {
 #endif
 
 #if DUMP_HASHTABLE_STATS_PER_TABLE
-            ++perTableProbeCount;
-            m_stats->recordCollisionAtCount(perTableProbeCount);
+            m_stats->recordCollisionAtCount(probeCount);
 #endif
 
             if (k == 0)
@@ -814,13 +803,12 @@ namespace WTF {
         int i = h & sizeMask;
 
 #if DUMP_HASHTABLE_STATS
-        atomicIncrement(&HashTableStats::numAccesses);
-        int probeCount = 0;
+        ++HashTableStats::numAccesses;
+        unsigned probeCount = 0;
 #endif
 
 #if DUMP_HASHTABLE_STATS_PER_TABLE
         ++m_stats->numAccesses;
-        int perTableProbeCount = 0;
 #endif
 
         ValueType* deletedEntry = 0;
@@ -853,8 +841,7 @@ namespace WTF {
 #endif
 
 #if DUMP_HASHTABLE_STATS_PER_TABLE
-            ++perTableProbeCount;
-            m_stats->recordCollisionAtCount(perTableProbeCount);
+            m_stats->recordCollisionAtCount(probeCount);
 #endif
 
             if (k == 0)
@@ -924,7 +911,7 @@ namespace WTF {
         ASSERT(!lookupForWriting(Extractor::extract(entry)).second);
         ASSERT(!isDeletedBucket(*(lookupForWriting(Extractor::extract(entry)).first)));
 #if DUMP_HASHTABLE_STATS
-        atomicIncrement(&HashTableStats::numReinserts);
+        ++HashTableStats::numReinserts;
 #endif
 #if DUMP_HASHTABLE_STATS_PER_TABLE
         ++m_stats->numReinserts;
@@ -994,7 +981,7 @@ namespace WTF {
     void HashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits>::remove(ValueType* pos)
     {
 #if DUMP_HASHTABLE_STATS
-        atomicIncrement(&HashTableStats::numRemoves);
+        ++HashTableStats::numRemoves;
 #endif
 #if DUMP_HASHTABLE_STATS_PER_TABLE
         ++m_stats->numRemoves;
@@ -1090,7 +1077,7 @@ namespace WTF {
 
 #if DUMP_HASHTABLE_STATS
         if (oldTableSize != 0)
-            atomicIncrement(&HashTableStats::numRehashes);
+            ++HashTableStats::numRehashes;
 #endif
 
 #if DUMP_HASHTABLE_STATS_PER_TABLE
@@ -1147,7 +1134,7 @@ namespace WTF {
         , m_deletedCount(0)
 #if CHECK_HASHTABLE_ITERATORS
         , m_iterators(0)
-        , m_mutex(std::make_unique<Mutex>())
+        , m_mutex(std::make_unique<std::mutex>())
 #endif
 #if DUMP_HASHTABLE_STATS_PER_TABLE
         , m_stats(std::make_unique<Stats>(*other.m_stats))
@@ -1252,7 +1239,7 @@ namespace WTF {
     template<typename Key, typename Value, typename Extractor, typename HashFunctions, typename Traits, typename KeyTraits>
     void HashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits>::invalidateIterators()
     {
-        MutexLocker lock(*m_mutex);
+        std::lock_guard<std::mutex> lock(*m_mutex);
         const_iterator* next;
         for (const_iterator* p = m_iterators; p; p = next) {
             next = p->m_next;
@@ -1274,7 +1261,7 @@ namespace WTF {
         if (!table) {
             it->m_next = 0;
         } else {
-            MutexLocker lock(*table->m_mutex);
+            std::lock_guard<std::mutex> lock(*table->m_mutex);
             ASSERT(table->m_iterators != it);
             it->m_next = table->m_iterators;
             table->m_iterators = it;
@@ -1296,7 +1283,7 @@ namespace WTF {
             ASSERT(!it->m_next);
             ASSERT(!it->m_previous);
         } else {
-            MutexLocker lock(*it->m_table->m_mutex);
+            std::lock_guard<std::mutex> lock(*it->m_table->m_mutex);
             if (it->m_next) {
                 ASSERT(it->m_next->m_previous == it);
                 it->m_next->m_previous = it->m_previous;

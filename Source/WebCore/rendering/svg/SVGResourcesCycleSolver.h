@@ -22,6 +22,7 @@
 
 #if ENABLE(SVG)
 #include <wtf/HashSet.h>
+#include <wtf/Noncopyable.h>
 
 namespace WebCore {
 

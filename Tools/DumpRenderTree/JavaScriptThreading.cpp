@@ -36,6 +36,8 @@
 #include <stdlib.h>
 #include <wtf/Assertions.h>
 #include <wtf/HashSet.h>
+#include <wtf/Threading.h>
+#include <wtf/ThreadingPrimitives.h>
 #include <wtf/Vector.h>
 
 static const size_t javaScriptThreadsCount = 4;

@@ -30,6 +30,7 @@
 
 #include <memory>
 #include <wtf/HashSet.h>
+#include <wtf/Noncopyable.h>
 
 namespace WebCore {
 

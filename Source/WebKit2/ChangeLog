@@ -1,3 +1,14 @@
+2014-01-25  Anders Carlsson  <andersca@apple.com>
+
+        Modernize HashTable threading code
+        https://bugs.webkit.org/show_bug.cgi?id=127621
+
+        Reviewed by Darin Adler.
+
+        Explicitly include headers that used to be brought in by HashTable.h
+
+        * Shared/BlockingResponseMap.h:
+
 2014-01-25  Zan Dobersek  <zdobersek@igalia.com>
 
         [GTK] Remove null check for WebPopupMenuProxy::Client in WebPopupMenuProxyGtk::showPopupMenu
