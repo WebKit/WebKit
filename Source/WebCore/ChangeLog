@@ -1,3 +1,14 @@
+2014-01-25  Diego Pino Garcia  <dpino@igalia.com>
+
+        [GTK] Add parameters from 'DOM Object Model Core' spec and 'DOM CSS' spec that can be NULL
+
+        https://bugs.webkit.org/show_bug.cgi?id=117536
+
+        Reviewed by Xan Lopez.
+
+        * bindings/scripts/CodeGeneratorGObject.pm:
+        (ParamCanBeNull): Add new pairs (function, parameter) that can be NULL
+
 2014-01-25  Anders Carlsson  <andersca@apple.com>
 
         Get rid of BackForwardController::isActive()

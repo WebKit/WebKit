@@ -47,9 +47,15 @@ my %baseTypeHash = ("Object" => 1, "Node" => 1, "NodeList" => 1, "NamedNodeMap" 
 
 # List of function parameters that are allowed to be NULL
 my $canBeNullParams = {
+    'webkit_dom_document_create_attribute_ns' => ['namespaceURI'],
+    'webkit_dom_document_create_element_ns' => ['namespaceURI'],
+    'webkit_dom_document_create_entity_reference' => ['name'],
     'webkit_dom_document_evaluate' => ['inResult', 'resolver'],
+    'webkit_dom_document_get_override_style' => ['pseudoElement'],
+    'webkit_dom_dom_implementation_create_document' => ['namespaceURI', 'doctype'],
+    'webkit_dom_dom_window_get_computed_style' => ['pseudoElement'],
+    'webkit_dom_element_set_attribute_ns' => ['namespaceURI'],
     'webkit_dom_node_insert_before' => ['refChild'],
-    'webkit_dom_dom_window_get_computed_style' => ['pseudoElement']
 };
 
 # Default constructor
@@ -904,7 +910,7 @@ sub ParamCanBeNull {
     my($functionName, $paramName) = @_;
 
     if (defined($functionName)) {
-        return scalar(grep(/$paramName/, @{$canBeNullParams->{$functionName}}));
+        return scalar(grep {$_ eq $paramName} @{$canBeNullParams->{$functionName}});
     }
     return 0;
 }
