@@ -285,6 +285,7 @@
     <ClInclude Include="..\wtf\text\Base64.h" />
     <ClInclude Include="..\wtf\text\CString.h" />
     <ClInclude Include="..\wtf\text\IntegerToStringConversion.h" />
+    <ClInclude Include="..\wtf\text\LChar.h" />
     <ClInclude Include="..\wtf\text\StringBuffer.h" />
     <ClInclude Include="..\wtf\text\StringBuilder.h" />
     <ClInclude Include="..\wtf\text\StringConcatenate.h" />

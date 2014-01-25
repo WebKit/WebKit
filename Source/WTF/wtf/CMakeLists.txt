@@ -130,6 +130,7 @@ set(WTF_HEADERS
     text/Base64.h
     text/CString.h
     text/IntegerToStringConversion.h
+    text/LChar.h
     text/StringBuffer.h
     text/StringHash.h
     text/StringImpl.h

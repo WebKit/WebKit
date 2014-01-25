@@ -232,6 +232,7 @@ wtf_sources += \
     Source/WTF/wtf/text/CString.cpp \
     Source/WTF/wtf/text/CString.h \
     Source/WTF/wtf/text/IntegerToStringConversion.h \
+    Source/WTF/wtf/text/LChar.h \
     Source/WTF/wtf/text/StringBuffer.h \
     Source/WTF/wtf/text/StringBuilder.cpp \
     Source/WTF/wtf/text/StringBuilder.h \

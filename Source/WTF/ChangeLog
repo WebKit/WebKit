@@ -1,5 +1,19 @@
 2014-01-25  Darin Adler  <darin@apple.com>
 
+        Add a new separate LChar.h header file, to be used after we remove Unicode.h
+        https://bugs.webkit.org/show_bug.cgi?id=127630
+
+        Reviewed by Sam Weinig.
+
+        * GNUmakefile.list.am: Added the new file
+        * WTF.vcxproj/WTF.vcxproj: Ditto.
+        * WTF.vcxproj/WTF.vcxproj.filters: Ditto.
+        * WTF.xcodeproj/project.pbxproj: Ditto.
+        * wtf/CMakeLists.txt: Ditto.
+        * wtf/text/LChar.h: Added.
+
+2014-01-25  Darin Adler  <darin@apple.com>
+
         Get rid of ICU_UNICODE and WCHAR_UNICODE remnants
         https://bugs.webkit.org/show_bug.cgi?id=127623
 

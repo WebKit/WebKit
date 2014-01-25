@@ -300,6 +300,9 @@
     <ClInclude Include="..\wtf\text\IntegerToStringConversion.h">
       <Filter>text</Filter>
     </ClInclude>
+    <ClInclude Include="..\wtf\text\LChar.h">
+      <Filter>text</Filter>
+    </ClInclude>
     <ClInclude Include="..\wtf\text\StringBuffer.h">
       <Filter>text</Filter>
     </ClInclude>
