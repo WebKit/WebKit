@@ -1,3 +1,10 @@
+2014-01-24  Anders Carlsson  <andersca@apple.com>
+
+        Fix GTK+ WebKit2 build.
+
+        * WebProcess/WebPage/gtk/WebPageGtk.cpp:
+        (WebKit::WebPage::performDefaultBehaviorForKeyEvent):
+
 2014-01-24  Simon Fraser  <simon.fraser@apple.com>
 
         Start using the RemoteScrollingCoordinatorProxy on iOS
