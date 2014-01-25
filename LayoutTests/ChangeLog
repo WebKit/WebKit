@@ -1,3 +1,16 @@
+2014-01-24  Tamas Gergely  <tgergely.u-szeged@partner.samsung.com>
+
+        ASSERT(time.isFinite()) in SVGSMILElement::createInstanceTimesFromSyncbase
+        <https://webkit.org/b/108184>
+
+        Reviewed by Philip Rogers.
+
+        Additional test to detect the crash in debug mode. It is merged back
+        from blink commit https://src.chromium.org/viewvc/blink?revision=165498&view=revision
+
+        * svg/animations/self-dependency-crash-expected.txt: Added.
+        * svg/animations/self-dependency-crash.html: Added.
+
 2014-01-24  Zalan Bujtas  <zalan@apple.com>
 
         Unreviewed Apple Windows port gardering.
