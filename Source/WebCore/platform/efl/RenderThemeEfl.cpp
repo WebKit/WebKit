@@ -1028,11 +1028,8 @@ void RenderThemeEfl::systemFont(CSSValueID, FontDescription& fontDescription) co
 {
     // It was called by RenderEmbeddedObject::paintReplaced to render alternative string.
     // To avoid cairo_error while rendering, fontDescription should be passed.
-    DEFINE_STATIC_LOCAL(String, fontFace, (ASCIILiteral("Sans")));
-    float fontSize = defaultFontSize;
-
-    fontDescription.setOneFamily(fontFace);
-    fontDescription.setSpecifiedSize(fontSize);
+    fontDescription.setOneFamily("Sans");
+    fontDescription.setSpecifiedSize(defaultFontSize);
     fontDescription.setIsAbsoluteSize(true);
     fontDescription.setGenericFamily(FontDescription::NoFamily);
     fontDescription.setWeight(FontWeightNormal);

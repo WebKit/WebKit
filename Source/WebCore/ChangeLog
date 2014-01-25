@@ -1,3 +1,20 @@
+2014-01-24  Jinwoo Song  <jinwoo7.song@samsung.com>
+
+        [EFL] Replace usage of DEFINE_STATIC_LOCAL with NeverDestroyed in WebCore/platform/efl
+        https://bugs.webkit.org/show_bug.cgi?id=127607
+
+        Reviewed by Anders Carlsson.
+
+        * platform/efl/EflKeyboardUtilities.cpp:
+        (WebCore::keyMap): Use NeverDestroyed instead of DEFINE_STATIC_LOCAL.
+        (WebCore::windowsKeyMap): Ditto.
+        (WebCore::keyDownCommandsMap): Ditto.
+        (WebCore::keyPressCommandsMap): Ditto.
+        * platform/efl/GamepadsEfl.cpp:
+        (WebCore::sampleGamepads): Ditto.
+        * platform/efl/RenderThemeEfl.cpp:
+        (WebCore::RenderThemeEfl::systemFont): Do not use unnecessary DEFINE_STATIC_LOCAL.
+
 2014-01-23  Joseph Pecoraro  <pecoraro@apple.com>
 
         Move JavaScriptCallFrame and ScriptDebugServer into JavaScriptCore for inspector

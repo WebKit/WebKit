@@ -32,37 +32,34 @@
 #include "WindowsKeyboardCodes.h"
 #include <wtf/HashMap.h>
 #include <wtf/HexNumber.h>
+#include <wtf/NeverDestroyed.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/StringHash.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
-typedef HashMap<String, String> KeyMap;
-typedef HashMap<String, int> WindowsKeyMap;
-typedef HashMap<int, const char*> KeyCommandMap;
-
-static KeyMap& keyMap()
+static HashMap<String, String>& keyMap()
 {
-    DEFINE_STATIC_LOCAL(KeyMap, keyMap, ());
+    static NeverDestroyed<HashMap<String, String>> keyMap;
     return keyMap;
 }
 
-static WindowsKeyMap& windowsKeyMap()
+static HashMap<String, int>& windowsKeyMap()
 {
-    DEFINE_STATIC_LOCAL(WindowsKeyMap, windowsKeyMap, ());
+    static NeverDestroyed<HashMap<String, int>> windowsKeyMap;
     return windowsKeyMap;
 }
 
-static KeyCommandMap& keyDownCommandsMap()
+static HashMap<int, const char*>& keyDownCommandsMap()
 {
-    DEFINE_STATIC_LOCAL(KeyCommandMap, keyDownCommandsMap, ());
+    static NeverDestroyed<HashMap<int, const char*>> keyDownCommandsMap;
     return keyDownCommandsMap;
 }
 
-static KeyCommandMap& keyPressCommandsMap()
+static HashMap<int, const char*>& keyPressCommandsMap()
 {
-    DEFINE_STATIC_LOCAL(KeyCommandMap, keyPressCommandsMap, ());
+    static NeverDestroyed<HashMap<int, const char*>> keyPressCommandsMap;
     return keyPressCommandsMap;
 }
 

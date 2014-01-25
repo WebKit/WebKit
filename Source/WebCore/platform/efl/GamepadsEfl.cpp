@@ -36,6 +36,7 @@
 #include <Eina.h>
 #include <unistd.h>
 #include <wtf/HashMap.h>
+#include <wtf/NeverDestroyed.h>
 #include <wtf/PassOwnPtr.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringHash.h>
@@ -110,6 +111,7 @@ Eina_Bool GamepadDeviceEfl::readCallback(void* userData, Ecore_Fd_Handler* fdHan
 }
 
 class GamepadsEfl {
+    friend class NeverDestroyed<GamepadsEfl>;
 public:
     GamepadsEfl(size_t length);
 
@@ -235,8 +237,8 @@ void GamepadsEfl::updateGamepadList(GamepadList* into)
 
 void sampleGamepads(GamepadList* into)
 {
-    DEFINE_STATIC_LOCAL(GamepadsEfl, gamepadsEfl, (into->length()));
-    gamepadsEfl.updateGamepadList(into);
+    static NeverDestroyed<GamepadsEfl> gamepadsEfl(into->length());
+    gamepadsEfl.get().updateGamepadList(into);
 }
 
 } // namespace WebCore
