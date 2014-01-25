@@ -29,6 +29,7 @@
 #import "InteractionInformationAtPosition.h"
 #import "PageClientImplIOS.h"
 #import "RemoteLayerTreeDrawingAreaProxy.h"
+#import "RemoteScrollingCoordinatorProxy.h"
 #import "WebKit2Initialize.h"
 #import "WKBrowsingContextControllerInternal.h"
 #import "WKBrowsingContextGroupPrivate.h"
@@ -193,6 +194,8 @@ using namespace WebKit;
 {
     _currentExposedRectPosition = contentOffset;
     [self _updateViewExposedRect];
+
+    _page->scrollingCoordinatorProxy()->scrollPositionChangedViaDelegatedScrolling(_page->scrollingCoordinatorProxy()->rootScrollingNodeID(), roundedIntPoint(contentOffset));
 }
 
 - (void)didZoomToScale:(CGFloat)scale

@@ -62,6 +62,8 @@ public:
 
     virtual EventResult tryToHandleWheelEvent(const PlatformWheelEvent&) = 0;
     bool shouldHandleWheelEventSynchronously(const PlatformWheelEvent&);
+    
+    virtual void scrollPositionChangedViaDelegatedScrolling(ScrollingNodeID, const IntPoint&);
 
     void setMainFrameIsRubberBanding(bool);
     bool isRubberBandInProgress();
@@ -106,6 +108,8 @@ private:
     void updateTreeFromStateNode(const ScrollingStateNode*);
 
     virtual PassOwnPtr<ScrollingTreeNode> createNode(ScrollingNodeType, ScrollingNodeID) = 0;
+
+    ScrollingTreeNode* nodeForID(ScrollingNodeID) const;
 
     OwnPtr<ScrollingTreeScrollingNode> m_rootNode;
 

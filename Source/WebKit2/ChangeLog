@@ -1,3 +1,23 @@
+2014-01-24  Simon Fraser  <simon.fraser@apple.com>
+
+        Start using the RemoteScrollingCoordinatorProxy on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=127598
+
+        Reviewed by Tim Horton.
+
+        Add a scrollPositionChangedViaDelegatedScrolling() function to
+        ScrollingTree, allowing the ScrollingTree to be informed about
+        external sources of scrolling.
+        
+        Call it from -[WKContentView didScrollTo:] for the root node.
+
+        * UIProcess/API/ios/WKContentView.mm:
+        (-[WKContentView didScrollTo:]):
+        * UIProcess/Scrolling/RemoteScrollingCoordinatorProxy.cpp:
+        (WebKit::RemoteScrollingCoordinatorProxy::rootScrollingNodeID):
+        (WebKit::RemoteScrollingCoordinatorProxy::scrollPositionChangedViaDelegatedScrolling):
+        * UIProcess/Scrolling/RemoteScrollingCoordinatorProxy.h:
+
 2014-01-24  Anders Carlsson  <andersca@apple.com>
 
         Try to fix the GTK+ build.

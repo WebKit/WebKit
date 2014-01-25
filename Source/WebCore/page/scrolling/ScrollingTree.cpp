@@ -80,6 +80,18 @@ void ScrollingTree::handleWheelEvent(const PlatformWheelEvent& wheelEvent)
         m_rootNode->handleWheelEvent(wheelEvent);
 }
 
+void ScrollingTree::scrollPositionChangedViaDelegatedScrolling(ScrollingNodeID nodeID, const IntPoint& scrollPosition)
+{
+    ScrollingTreeNode* node = nodeForID(nodeID);
+    if (!node)
+        return;
+
+    if (node->nodeType() != ScrollingNode)
+        return;
+
+    toScrollingTreeScrollingNode(node)->setScrollPosition(scrollPosition);
+}
+
 void ScrollingTree::commitNewTreeState(PassOwnPtr<ScrollingStateTree> scrollingStateTree)
 {
     bool rootStateNodeChanged = scrollingStateTree->hasNewRootStateNode();
@@ -171,6 +183,14 @@ void ScrollingTree::removeDestroyedNodes(const ScrollingStateTree& stateTree)
         if (node && node->parent())
             m_rootNode->removeChild(node);
     }
+}
+
+ScrollingTreeNode* ScrollingTree::nodeForID(ScrollingNodeID nodeID) const
+{
+    if (!nodeID)
+        return nullptr;
+
+    return m_nodeMap.get(nodeID);
 }
 
 void ScrollingTree::setMainFramePinState(bool pinnedToTheLeft, bool pinnedToTheRight, bool pinnedToTheTop, bool pinnedToTheBottom)

@@ -39,6 +39,7 @@
 #include "WebPageProxy.h"
 #include "WebProcessProxy.h"
 #include <WebCore/ScrollingStateTree.h>
+#include <WebCore/ScrollingTreeScrollingNode.h>
 
 using namespace WebCore;
 
@@ -52,6 +53,11 @@ RemoteScrollingCoordinatorProxy::RemoteScrollingCoordinatorProxy(WebPageProxy& w
 
 RemoteScrollingCoordinatorProxy::~RemoteScrollingCoordinatorProxy()
 {
+}
+
+WebCore::ScrollingNodeID RemoteScrollingCoordinatorProxy::rootScrollingNodeID() const
+{
+    return m_scrollingTree->rootNode()->scrollingNodeID();
 }
 
 const RemoteLayerTreeHost* RemoteScrollingCoordinatorProxy::layerTreeHost() const
@@ -118,6 +124,11 @@ bool RemoteScrollingCoordinatorProxy::handleWheelEvent(const PlatformWheelEvent&
 {
     ScrollingTree::EventResult result = m_scrollingTree->tryToHandleWheelEvent(event);
     return result == ScrollingTree::DidHandleEvent; // FIXME: handle other values.
+}
+
+void RemoteScrollingCoordinatorProxy::scrollPositionChangedViaDelegatedScrolling(ScrollingNodeID nodeID, const IntPoint& offset)
+{
+    m_scrollingTree->scrollPositionChangedViaDelegatedScrolling(nodeID, offset);
 }
 
 void RemoteScrollingCoordinatorProxy::scrollPositionChanged(WebCore::ScrollingNodeID scrolledNodeID, const WebCore::FloatPoint& newScrollPosition)

@@ -3528,6 +3528,9 @@ void RenderLayerCompositor::registerAllViewportConstrainedLayers()
     if (m_renderView.document().ownerElement())
         return;
 
+    if (scrollingCoordinator())
+        return;
+
     LayerMap layerMap;
     StickyContainerMap stickyContainerMap;
 
@@ -3557,6 +3560,9 @@ void RenderLayerCompositor::unregisterAllViewportConstrainedLayers()
 {
     // Only the main frame should register fixed/sticky layers.
     if (m_renderView.document().ownerElement())
+        return;
+
+    if (scrollingCoordinator())
         return;
 
     if (ChromeClient* client = this->chromeClient()) {
