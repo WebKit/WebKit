@@ -59,8 +59,6 @@ public:
 
     HistoryItem* itemAtIndex(int);
 
-    bool isActive();
-
     void close();
 
     HistoryItem* backItem() { return itemAtIndex(-1); }

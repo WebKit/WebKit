@@ -45,7 +45,7 @@ public:
     virtual ~BackForwardList();
 
     Page* page() { return m_page; }
-    
+
     virtual void addItem(PassRefPtr<HistoryItem>) override;
     void goBack();
     void goForward();
@@ -82,8 +82,6 @@ public:
 
 private:
     explicit BackForwardList(Page*);
-
-    virtual bool isActive() override { return enabled() && capacity(); }
 
     Page* m_page;
     HistoryItemVector m_entries;

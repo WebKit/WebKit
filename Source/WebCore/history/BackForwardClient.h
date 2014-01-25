@@ -49,8 +49,6 @@ public:
     virtual int backListCount() = 0;
     virtual int forwardListCount() = 0;
 
-    virtual bool isActive() = 0;
-
     virtual void close() = 0;
 
 #if PLATFORM(IOS)

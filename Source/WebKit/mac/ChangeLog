@@ -1,3 +1,14 @@
+2014-01-25  Anders Carlsson  <andersca@apple.com>
+
+        Get rid of BackForwardController::isActive()
+        https://bugs.webkit.org/show_bug.cgi?id=127604
+
+        Reviewed by Sam Weinig.
+
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (WebFrameLoaderClient::canCachePage):
+        Move isActive logic here.
+
 2014-01-24  Anders Carlsson  <andersca@apple.com>
 
         Remove back/forward list related functions from Page

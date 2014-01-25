@@ -1,3 +1,22 @@
+2014-01-25  Anders Carlsson  <andersca@apple.com>
+
+        Get rid of BackForwardController::isActive()
+        https://bugs.webkit.org/show_bug.cgi?id=127604
+
+        Reviewed by Sam Weinig.
+
+        BackForwardController::isActive() used to mean "my page maintains a back forward
+        list that has zero capacity". Move that logic into WebKit instead, namely the
+        WebFrameLoaderClient::canCachePage function so we can simplify WebCore.
+
+        * history/BackForwardClient.h:
+        * history/BackForwardController.cpp:
+        * history/BackForwardController.h:
+        * history/BackForwardList.h:
+        * history/PageCache.cpp:
+        (WebCore::logCanCachePageDecision):
+        (WebCore::PageCache::canCache):
+
 2014-01-25  Antti Koivisto  <antti@apple.com>
 
         REGRESSION(r162744): wsj.com paints white

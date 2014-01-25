@@ -80,6 +80,7 @@
 #import <WebCore/AuthenticationCF.h>
 #import <WebCore/AuthenticationMac.h>
 #import <WebCore/BackForwardController.h>
+#import <WebCore/BackForwardList.h>
 #import <WebCore/BlockExceptions.h>
 #import <WebCore/CachedFrame.h>
 #import <WebCore/Chrome.h>
@@ -1632,7 +1633,22 @@ NSDictionary *WebFrameLoaderClient::actionDictionary(const NavigationAction& act
 bool WebFrameLoaderClient::canCachePage() const
 {
     // We can only cache HTML pages right now
-    return [[[m_webFrame.get() _dataSource] representation] isKindOfClass:[WebHTMLRepresentation class]];
+    if (![[[m_webFrame _dataSource] representation] isKindOfClass:[WebHTMLRepresentation class]])
+        return false;
+    
+    // We only cache pages if the back forward list is enabled and has a non-zero capacity.
+    Page* page = core(m_webFrame.get())->page();
+    if (!page)
+        return false;
+    
+    BackForwardList *backForwardList = static_cast<BackForwardList*>(page->backForward().client());
+    if (!backForwardList->enabled())
+        return false;
+    
+    if (!backForwardList->capacity())
+        return false;
+    
+    return true;
 }
 
 PassRefPtr<Frame> WebFrameLoaderClient::createFrame(const URL& url, const String& name, HTMLFrameOwnerElement* ownerElement,

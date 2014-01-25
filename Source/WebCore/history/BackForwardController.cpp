@@ -127,11 +127,6 @@ HistoryItem* BackForwardController::itemAtIndex(int i)
     return m_client->itemAtIndex(i);
 }
 
-bool BackForwardController::isActive()
-{
-    return m_client->isActive();
-}
-
 void BackForwardController::close()
 {
     m_client->close();
