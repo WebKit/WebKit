@@ -1,5 +1,12 @@
 2014-01-25  Darin Adler  <darin@apple.com>
 
+        Try to fix Mac build.
+
+        * runtime/DatePrototype.cpp: Put the include of <unicode/udat.h> inside
+        a conditional since we don't have that header in our Mac build configuration.
+
+2014-01-25  Darin Adler  <darin@apple.com>
+
         Call deprecatedCharacters instead of characters at more call sites
         https://bugs.webkit.org/show_bug.cgi?id=127631
 

@@ -39,7 +39,6 @@
 #include <math.h>
 #include <stdlib.h>
 #include <time.h>
-#include <unicode/udat.h>
 #include <wtf/Assertions.h>
 #include <wtf/MathExtras.h>
 #include <wtf/StringExtras.h>
@@ -58,6 +57,10 @@
 
 #if HAVE(SYS_TIMEB_H)
 #include <sys/timeb.h>
+#endif
+
+#if !(OS(DARWIN) && USE(CF))
+#include <unicode/udat.h>
 #endif
 
 #if USE(CF)
