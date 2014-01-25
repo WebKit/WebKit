@@ -1,3 +1,15 @@
+2014-01-24  Antti Koivisto  <antti@apple.com>
+
+        Update style asynchronously after style sheet load
+        https://bugs.webkit.org/show_bug.cgi?id=127563
+
+        Reviewed by Andreas Kling.
+        
+        Since we don't attach synchronously we don't need to recalc style synchronously either.
+
+        * dom/Document.cpp:
+        (WebCore::Document::didRemoveAllPendingStylesheet):
+
 2014-01-24  Zalan Bujtas  <zalan@apple.com>
 
         Subpixel layout: Default style of input type=checkbox/radio (0.5ex) adds 1px extra margin on both left and right.
