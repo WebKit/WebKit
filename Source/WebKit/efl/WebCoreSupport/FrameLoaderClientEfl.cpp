@@ -538,11 +538,6 @@ bool FrameLoaderClientEfl::shouldGoToHistoryItem(HistoryItem* item) const
     return item;
 }
 
-bool FrameLoaderClientEfl::shouldStopLoadingForHistoryItem(HistoryItem*) const
-{
-    return true;
-}
-
 void FrameLoaderClientEfl::didDisplayInsecureContent()
 {
     ewk_frame_mixed_content_displayed_set(m_frame, true);

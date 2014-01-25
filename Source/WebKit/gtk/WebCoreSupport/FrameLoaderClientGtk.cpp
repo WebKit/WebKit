@@ -621,11 +621,6 @@ bool FrameLoaderClient::shouldGoToHistoryItem(HistoryItem* item) const
     return item != 0;
 }
 
-bool FrameLoaderClient::shouldStopLoadingForHistoryItem(HistoryItem* item) const
-{
-    return true;
-}
-
 void FrameLoaderClient::didDisplayInsecureContent()
 {
     if (!DumpRenderTreeSupportGtk::dumpRenderTreeModeEnabled() || !DumpRenderTreeSupportGtk::s_frameLoadEventCallback)

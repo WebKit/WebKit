@@ -946,11 +946,6 @@ bool WebFrameLoaderClient::shouldGoToHistoryItem(HistoryItem* item) const
     return true;
 }
 
-bool WebFrameLoaderClient::shouldStopLoadingForHistoryItem(HistoryItem*) const
-{
-    return true;
-}
-
 void WebFrameLoaderClient::didDisplayInsecureContent()
 {
     WebPage* webPage = m_frame->page();

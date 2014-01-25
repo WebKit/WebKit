@@ -243,11 +243,6 @@ bool FrameLoaderClientWinCE::shouldGoToHistoryItem(HistoryItem* item) const
     return item;
 }
 
-bool FrameLoaderClientWinCE::shouldStopLoadingForHistoryItem(HistoryItem* item) const
-{
-    return true;
-}
-
 void FrameLoaderClientWinCE::didDisplayInsecureContent()
 {
     notImplemented();

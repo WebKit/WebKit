@@ -1,3 +1,13 @@
+2014-01-25  Anders Carlsson  <andersca@apple.com>
+
+        Remove an unused FrameLoaderClient function
+        https://bugs.webkit.org/show_bug.cgi?id=127628
+
+        Reviewed by Andreas Kling.
+
+        * WebCoreSupport/FrameLoaderClientEfl.cpp:
+        * WebCoreSupport/FrameLoaderClientEfl.h:
+
 2014-01-25  Ryuan Choi  <ryuan.choi@samsung.com>
 
         [EFL][WK1] Fix broken rendering while navigating history in EWebLauncher

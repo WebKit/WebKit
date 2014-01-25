@@ -1,3 +1,18 @@
+2014-01-25  Anders Carlsson  <andersca@apple.com>
+
+        Remove an unused FrameLoaderClient function
+        https://bugs.webkit.org/show_bug.cgi?id=127628
+
+        Reviewed by Andreas Kling.
+
+        All implementations of FrameLoaderClient::shouldStopLoadingForHistoryItem return true and this function
+        was only used by Chromium so we can get rid of it.
+
+        * loader/EmptyClients.h:
+        * loader/FrameLoaderClient.h:
+        * loader/HistoryController.cpp:
+        (WebCore::HistoryController::shouldStopLoadingForHistoryItem):
+
 2014-01-25  Darin Adler  <darin@apple.com>
 
         Call deprecatedCharacters instead of characters at more call sites

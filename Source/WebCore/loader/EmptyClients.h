@@ -366,7 +366,6 @@ public:
     virtual void updateGlobalHistory() override { }
     virtual void updateGlobalHistoryRedirectLinks() override { }
     virtual bool shouldGoToHistoryItem(HistoryItem*) const override { return false; }
-    virtual bool shouldStopLoadingForHistoryItem(HistoryItem*) const override { return false; }
     virtual void updateGlobalHistoryItemForPage() override { }
     virtual void saveViewStateToItem(HistoryItem*) override { }
     virtual bool canCachePage() const override { return false; }

@@ -150,7 +150,6 @@ class FrameLoaderClientEfl : public FrameLoaderClient {
     virtual void updateGlobalHistory();
     virtual void updateGlobalHistoryRedirectLinks();
     virtual bool shouldGoToHistoryItem(HistoryItem*) const;
-    virtual bool shouldStopLoadingForHistoryItem(HistoryItem*) const;
     virtual void didDisplayInsecureContent();
     virtual void didRunInsecureContent(SecurityOrigin*, const URL&);
     virtual void didDetectXSS(const URL&, bool didBlockEntirePage);

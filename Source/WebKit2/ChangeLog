@@ -1,5 +1,15 @@
 2014-01-25  Anders Carlsson  <andersca@apple.com>
 
+        Remove an unused FrameLoaderClient function
+        https://bugs.webkit.org/show_bug.cgi?id=127628
+
+        Reviewed by Andreas Kling.
+
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.h:
+
+2014-01-25  Anders Carlsson  <andersca@apple.com>
+
         Remove atomicIncrement/atomicDecrement
         https://bugs.webkit.org/show_bug.cgi?id=127625
 

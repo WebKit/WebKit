@@ -253,7 +253,7 @@ bool HistoryController::shouldStopLoadingForHistoryItem(HistoryItem* targetItem)
     if (m_currentItem->shouldDoSameDocumentNavigationTo(targetItem))
         return false;
 
-    return m_frame.loader().client().shouldStopLoadingForHistoryItem(targetItem);
+    return true;
 }
 
 // Main funnel for navigating to a previous location (back/forward, non-search snap-back)

@@ -1134,11 +1134,6 @@ bool WebFrameLoaderClient::shouldGoToHistoryItem(HistoryItem* item) const
     return [[view _policyDelegateForwarder] webView:view shouldGoToHistoryItem:webItem];
 }
 
-bool WebFrameLoaderClient::shouldStopLoadingForHistoryItem(HistoryItem* item) const
-{
-    return true;
-}
-
 void WebFrameLoaderClient::updateGlobalHistoryItemForPage()
 {
     HistoryItem* historyItem = 0;

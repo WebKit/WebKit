@@ -137,7 +137,6 @@ namespace WebKit {
         virtual void updateGlobalHistory();
         virtual void updateGlobalHistoryRedirectLinks();
         virtual bool shouldGoToHistoryItem(WebCore::HistoryItem*) const;
-        virtual bool shouldStopLoadingForHistoryItem(WebCore::HistoryItem*) const;
 
         virtual void didDisplayInsecureContent();
         virtual void didRunInsecureContent(WebCore::SecurityOrigin*, const WebCore::URL&);
