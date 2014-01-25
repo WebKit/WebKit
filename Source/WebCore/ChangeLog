@@ -1,3 +1,23 @@
+2014-01-25  Tim Horton  <timothy_horton@apple.com>
+
+        [cg] Look in the PNG dictionary for image duration information
+        https://bugs.webkit.org/show_bug.cgi?id=127611
+        <rdar://problem/15408643>
+
+        Reviewed by Simon Fraser.
+
+        We should look in the PNG properties dictionary for frame duration and loop count data.
+
+        * platform/graphics/cg/ImageSourceCG.cpp:
+        (WebCore::ImageSource::repetitionCount):
+        Mush repetitionCount a bit more to make it easier to read (early returns, etc.)
+        Also, look in the PNG properties dictionary for a loop count.
+
+        (WebCore::ImageSource::frameDurationAtIndex):
+        Look in the PNG properties dictionary for delay time.
+        Get rid of WebCoreCGImagePropertyGIFUnclampedDelayTime; it hasn't
+        been needed since Snow Leopard.
+
 2014-01-25  Anders Carlsson  <andersca@apple.com>
 
         Remove atomicIncrement/atomicDecrement

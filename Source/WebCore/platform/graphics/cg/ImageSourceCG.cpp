@@ -46,13 +46,12 @@
 
 namespace WebCore {
 
+const CFStringRef WebCoreCGImagePropertyAPNGUnclampedDelayTime = CFSTR("UnclampedDelayTime");
+const CFStringRef WebCoreCGImagePropertyAPNGDelayTime = CFSTR("DelayTime");
+const CFStringRef WebCoreCGImagePropertyAPNGLoopCount = CFSTR("LoopCount");
+
 const CFStringRef kCGImageSourceShouldPreferRGB32 = CFSTR("kCGImageSourceShouldPreferRGB32");
 const CFStringRef kCGImageSourceSkipMetadata = CFSTR("kCGImageSourceSkipMetadata");
-
-// kCGImagePropertyGIFUnclampedDelayTime is available in the ImageIO framework headers on some versions
-// of SnowLeopard. It's not possible to detect whether the constant is available so we define our own here
-// that won't conflict with ImageIO's version when it is available.
-const CFStringRef WebCoreCGImagePropertyGIFUnclampedDelayTime = CFSTR("UnclampedDelayTime");
 
 #if PLATFORM(IOS)
 bool ImageSource::s_acceleratedImageDecoding;
@@ -345,26 +344,41 @@ size_t ImageSource::bytesDecodedToDetermineProperties() const
     
 int ImageSource::repetitionCount()
 {
-    int result = cAnimationLoopOnce; // No property means loop once.
     if (!initialized())
-        return result;
+        return cAnimationLoopOnce;
 
     RetainPtr<CFDictionaryRef> properties = adoptCF(CGImageSourceCopyProperties(m_decoder, imageSourceOptions(SkipMetadata)));
-    if (properties) {
-        CFDictionaryRef gifProperties = (CFDictionaryRef)CFDictionaryGetValue(properties.get(), kCGImagePropertyGIFDictionary);
-        if (gifProperties) {
-            CFNumberRef num = (CFNumberRef)CFDictionaryGetValue(gifProperties, kCGImagePropertyGIFLoopCount);
-            if (num) {
-                // A property with value 0 means loop forever.
-                CFNumberGetValue(num, kCFNumberIntType, &result);
-                if (!result)
-                    result = cAnimationLoopInfinite;
-            }
-        } else
-            result = cAnimationNone; // Turns out we're not a GIF after all, so we don't animate.
+    if (!properties)
+        return cAnimationLoopOnce;
+
+    CFDictionaryRef gifProperties = (CFDictionaryRef)CFDictionaryGetValue(properties.get(), kCGImagePropertyGIFDictionary);
+    if (gifProperties) {
+        CFNumberRef num = (CFNumberRef)CFDictionaryGetValue(gifProperties, kCGImagePropertyGIFLoopCount);
+
+        // No property means loop once.
+        if (!num)
+            return cAnimationLoopOnce;
+
+        int loopCount;
+        CFNumberGetValue(num, kCFNumberIntType, &loopCount);
+
+        // A property with value 0 means loop forever.
+        return loopCount ? loopCount : cAnimationLoopInfinite;
     }
-    
-    return result;
+
+    CFDictionaryRef pngProperties = (CFDictionaryRef)CFDictionaryGetValue(properties.get(), kCGImagePropertyPNGDictionary);
+    if (pngProperties) {
+        CFNumberRef num = (CFNumberRef)CFDictionaryGetValue(pngProperties, WebCoreCGImagePropertyAPNGLoopCount);
+        if (!num)
+            return cAnimationLoopOnce;
+
+        int loopCount;
+        CFNumberGetValue(num, kCFNumberIntType, &loopCount);
+        return loopCount ? loopCount : cAnimationLoopInfinite;
+    }
+
+    // Turns out we're not an animated image after all, so we don't animate.
+    return cAnimationNone;
 }
 
 size_t ImageSource::frameCount() const
@@ -451,15 +465,23 @@ float ImageSource::frameDurationAtIndex(size_t index)
     float duration = 0;
     RetainPtr<CFDictionaryRef> properties = adoptCF(CGImageSourceCopyPropertiesAtIndex(m_decoder, index, imageSourceOptions(SkipMetadata)));
     if (properties) {
-        CFDictionaryRef typeProperties = (CFDictionaryRef)CFDictionaryGetValue(properties.get(), kCGImagePropertyGIFDictionary);
-        if (typeProperties) {
-            if (CFNumberRef num = (CFNumberRef)CFDictionaryGetValue(typeProperties, WebCoreCGImagePropertyGIFUnclampedDelayTime)) {
+        CFDictionaryRef gifProperties = (CFDictionaryRef)CFDictionaryGetValue(properties.get(), kCGImagePropertyGIFDictionary);
+        if (gifProperties) {
+            if (CFNumberRef num = (CFNumberRef)CFDictionaryGetValue(gifProperties, kCGImagePropertyGIFUnclampedDelayTime)) {
                 // Use the unclamped frame delay if it exists.
                 CFNumberGetValue(num, kCFNumberFloatType, &duration);
-            } else if (CFNumberRef num = (CFNumberRef)CFDictionaryGetValue(typeProperties, kCGImagePropertyGIFDelayTime)) {
+            } else if (CFNumberRef num = (CFNumberRef)CFDictionaryGetValue(gifProperties, kCGImagePropertyGIFDelayTime)) {
                 // Fall back to the clamped frame delay if the unclamped frame delay does not exist.
                 CFNumberGetValue(num, kCFNumberFloatType, &duration);
             }
+        }
+
+        CFDictionaryRef pngProperties = (CFDictionaryRef)CFDictionaryGetValue(properties.get(), kCGImagePropertyPNGDictionary);
+        if (pngProperties) {
+            if (CFNumberRef num = (CFNumberRef)CFDictionaryGetValue(pngProperties, WebCoreCGImagePropertyAPNGUnclampedDelayTime))
+                CFNumberGetValue(num, kCFNumberFloatType, &duration);
+            else if (CFNumberRef num = (CFNumberRef)CFDictionaryGetValue(pngProperties, WebCoreCGImagePropertyAPNGDelayTime))
+                CFNumberGetValue(num, kCFNumberFloatType, &duration);
         }
     }
 
