@@ -33,11 +33,11 @@
 
 #if ENABLE(JAVASCRIPT_DEBUGGER) && ENABLE(INSPECTOR)
 
-#include "ScriptDebugServer.h"
 #include "WorkerGlobalScope.h"
 #include "WorkerThread.h"
 #include <inspector/InjectedScript.h>
 #include <inspector/InjectedScriptManager.h>
+#include <inspector/ScriptDebugServer.h>
 #include <mutex>
 #include <wtf/MessageQueue.h>
 #include <wtf/NeverDestroyed.h>
@@ -125,6 +125,11 @@ void WorkerDebuggerAgent::startListeningScriptDebugServer()
 void WorkerDebuggerAgent::stopListeningScriptDebugServer(bool isBeingDestroyed)
 {
     scriptDebugServer().removeListener(this, isBeingDestroyed);
+}
+
+void WorkerDebuggerAgent::breakpointActionLog(JSC::ExecState*, const String& message)
+{
+    m_inspectedWorkerGlobalScope->addConsoleMessage(JSMessageSource, LogMessageLevel, message);
 }
 
 WorkerScriptDebugServer& WorkerDebuggerAgent::scriptDebugServer()

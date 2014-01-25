@@ -457,8 +457,6 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSInspectorFrontendHost.h \
 	DerivedSources/WebCore/JSScriptProcessorNode.cpp \
 	DerivedSources/WebCore/JSScriptProcessorNode.h \
-	DerivedSources/WebCore/JSJavaScriptCallFrame.cpp \
-	DerivedSources/WebCore/JSJavaScriptCallFrame.h \
 	DerivedSources/WebCore/JSKeyboardEvent.cpp \
 	DerivedSources/WebCore/JSKeyboardEvent.h \
 	DerivedSources/WebCore/JSLocation.cpp \
@@ -1549,7 +1547,6 @@ dom_binding_idls += \
 	$(WebCore)/html/track/VideoTrackList.idl \
 	$(WebCore)/inspector/CommandLineAPIHost.idl \
 	$(WebCore)/inspector/InspectorFrontendHost.idl \
-	$(WebCore)/inspector/JavaScriptCallFrame.idl \
 	$(WebCore)/inspector/ScriptProfile.idl \
 	$(WebCore)/inspector/ScriptProfileNode.idl \
 	$(WebCore)/loader/appcache/DOMApplicationCache.idl \
@@ -2370,7 +2367,6 @@ webcore_sources += \
 	Source/WebCore/bindings/js/JSImageConstructor.h \
 	Source/WebCore/bindings/js/JSImageDataCustom.cpp \
 	Source/WebCore/bindings/js/JSInspectorFrontendHostCustom.cpp \
-	Source/WebCore/bindings/js/JSJavaScriptCallFrameCustom.cpp \
 	Source/WebCore/bindings/js/JSLazyEventListener.cpp \
 	Source/WebCore/bindings/js/JSLazyEventListener.h \
 	Source/WebCore/bindings/js/JSLocationCustom.cpp \
@@ -2434,8 +2430,6 @@ webcore_sources += \
 	Source/WebCore/bindings/js/JSXMLHttpRequestCustom.cpp \
 	Source/WebCore/bindings/js/JSXPathResultCustom.cpp \
 	Source/WebCore/bindings/js/JSXSLTProcessorCustom.cpp \
-	Source/WebCore/bindings/js/JavaScriptCallFrame.cpp \
-	Source/WebCore/bindings/js/JavaScriptCallFrame.h \
 	Source/WebCore/bindings/js/Dictionary.cpp \
 	Source/WebCore/bindings/js/Dictionary.h \
 	Source/WebCore/bindings/js/PageScriptDebugServer.cpp \
@@ -2448,8 +2442,6 @@ webcore_sources += \
 	Source/WebCore/bindings/js/ScriptCallStackFactory.h \
 	Source/WebCore/bindings/js/ScriptController.cpp \
 	Source/WebCore/bindings/js/ScriptController.h \
-	Source/WebCore/bindings/js/ScriptDebugServer.cpp \
-	Source/WebCore/bindings/js/ScriptDebugServer.h \
 	Source/WebCore/bindings/js/ScriptHeapSnapshot.h \
 	Source/WebCore/bindings/js/ScriptGlobalObject.cpp \
 	Source/WebCore/bindings/js/ScriptGlobalObject.h \

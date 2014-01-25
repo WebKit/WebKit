@@ -133,6 +133,8 @@ namespace WebCore {
 
         virtual SecurityOrigin* topOrigin() const override { return m_topOrigin.get(); }
 
+        virtual void addConsoleMessage(MessageSource, MessageLevel, const String& message, unsigned long requestIdentifier = 0) override;
+
     protected:
         WorkerGlobalScope(const URL&, const String& userAgent, std::unique_ptr<GroupSettings>, WorkerThread*, PassRefPtr<SecurityOrigin> topOrigin);
         void applyContentSecurityPolicyFromString(const String& contentSecurityPolicy, ContentSecurityPolicy::HeaderType);
@@ -148,7 +150,6 @@ namespace WebCore {
         virtual void derefEventTarget() override final { deref(); }
 
         virtual void addMessage(MessageSource, MessageLevel, const String& message, const String& sourceURL, unsigned lineNumber, unsigned columnNumber, PassRefPtr<ScriptCallStack>, JSC::ExecState* = 0, unsigned long requestIdentifier = 0) override;
-        virtual void addConsoleMessage(MessageSource, MessageLevel, const String& message, unsigned long requestIdentifier = 0) override;
 
         virtual EventTarget* errorEventTarget() override;
 

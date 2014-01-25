@@ -24,16 +24,14 @@
  */
 
 #include "config.h"
-
-#if ENABLE(JAVASCRIPT_DEBUGGER)
-
 #include "JavaScriptCallFrame.h"
 
-#include <debugger/DebuggerCallFrame.h>
+#if ENABLE(INSPECTOR)
+#if ENABLE(JAVASCRIPT_DEBUGGER)
 
 using namespace JSC;
 
-namespace WebCore {
+namespace Inspector {
 
 JavaScriptCallFrame::JavaScriptCallFrame(PassRefPtr<DebuggerCallFrame> debuggerCallFrame)
     : m_debuggerCallFrame(debuggerCallFrame)
@@ -47,12 +45,13 @@ JavaScriptCallFrame* JavaScriptCallFrame::caller()
 
     RefPtr<DebuggerCallFrame> debuggerCallerFrame = m_debuggerCallFrame->callerFrame();
     if (!debuggerCallerFrame)
-        return 0;
+        return nullptr;
 
     m_caller = create(debuggerCallerFrame);
     return m_caller.get();
 }
 
-} // namespace WebCore
+} // namespace Inspector
 
 #endif // ENABLE(JAVASCRIPT_DEBUGGER)
+#endif // ENABLE(INSPECTOR)

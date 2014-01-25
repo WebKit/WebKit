@@ -486,6 +486,10 @@
     <ClCompile Include="..\inspector\InspectorValues.cpp" />
     <ClCompile Include="..\inspector\JSInjectedScriptHost.cpp" />
     <ClCompile Include="..\inspector\JSInjectedScriptHostPrototype.cpp" />
+    <ClCompile Include="..\inspector\JSJavaScriptCallFrame.cpp" />
+    <ClCompile Include="..\inspector\JSJavaScriptCallFramePrototype.cpp" />
+    <ClCompile Include="..\inspector\JavaScriptCallFrame.cpp" />
+    <ClCompile Include="..\inspector\ScriptDebugServer.cpp" />
     <ClCompile Include="..\inspector\agents\InspectorAgent.cpp" />
     <ClCompile Include="..\interpreter\AbstractPC.cpp" />
     <ClCompile Include="..\interpreter\CallFrame.cpp" />
@@ -1057,8 +1061,12 @@
     <ClInclude Include="..\inspector\InspectorValues.h" />
     <ClInclude Include="..\inspector\JSInjectedScriptHost.h" />
     <ClInclude Include="..\inspector\JSInjectedScriptHostPrototype.h" />
+    <ClInclude Include="..\inspector\JSJavaScriptCallFrame.h" />
+    <ClInclude Include="..\inspector\JSJavaScriptCallFramePrototype.h" />
+    <ClInclude Include="..\inspector\JavaScriptCallFrame.h" />
     <ClInclude Include="..\inspector\ScriptBreakpoint.h" />
     <ClInclude Include="..\inspector\ScriptDebugListener.h" />
+    <ClInclude Include="..\inspector\ScriptDebugServer.h" />
     <ClInclude Include="..\inspector\agents\InspectorAgent.h" />
     <ClInclude Include="..\interpreter\AbstractPC.h" />
     <ClInclude Include="..\interpreter\CachedCall.h" />

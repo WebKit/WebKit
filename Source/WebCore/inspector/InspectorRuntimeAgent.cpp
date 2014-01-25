@@ -45,7 +45,7 @@
 #include <wtf/PassRefPtr.h>
 
 #if ENABLE(JAVASCRIPT_DEBUGGER)
-#include "ScriptDebugServer.h"
+#include <inspector/ScriptDebugServer.h>
 #endif
 
 using namespace JSC;

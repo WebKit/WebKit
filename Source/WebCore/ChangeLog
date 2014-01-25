@@ -1,3 +1,56 @@
+2014-01-23  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Move JavaScriptCallFrame and ScriptDebugServer into JavaScriptCore for inspector
+        https://bugs.webkit.org/show_bug.cgi?id=127543
+
+        Reviewed by Geoffrey Garen.
+
+        Covered by existing tests.
+
+        * ForwardingHeaders/inspector/ScriptDebugServer.h: Added.
+        * GNUmakefile.list.am:
+        * UseJSC.cmake:
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.vcxproj/WebCore.vcxproj.filters:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSBindingsAllInOne.cpp:
+        * inspector/JavaScriptCallFrame.idl: Removed.
+        Update builds now that ScriptDebugServer moved to JavaScriptCore.
+
+        * bindings/js/PageScriptDebugServer.h:
+        * bindings/js/PageScriptDebugServer.cpp:
+        (WebCore::PageScriptDebugServer::runEventLoopWhilePaused):
+        (WebCore::PageScriptDebugServer::isContentScript):
+        (WebCore::PageScriptDebugServer::reportException):
+        * bindings/js/WorkerScriptDebugServer.h:
+        * bindings/js/WorkerScriptDebugServer.cpp:
+        (WebCore::WorkerScriptDebugServer::runEventLoopWhilePaused):
+        (WebCore::WorkerScriptDebugServer::reportException):
+        Handle ScriptDebugServer functionality depending on WebCore knowledge.
+
+        * inspector/InspectorDebuggerAgent.h:
+        * inspector/InspectorDebuggerAgent.cpp:
+        (WebCore::InspectorDebuggerAgent::breakpointActionSound):
+        Handle ScriptDebugServer functionality that depended on WebCore knowledge.
+        This will eventually be written in a non-WebCore specific way.
+
+        * inspector/InspectorRuntimeAgent.cpp:
+        * inspector/InspectorRuntimeAgent.h:
+        Update ScriptDebugServer type now that it is in namespace Inspector.
+
+        * workers/WorkerGlobalScope.h:
+        Make addConsoleMessage public again so the inspector can call it.
+
+        * inspector/PageDebuggerAgent.cpp:
+        (WebCore::PageDebuggerAgent::breakpointActionLog):
+        * inspector/PageDebuggerAgent.h:
+        * inspector/WorkerDebuggerAgent.cpp:
+        (WebCore::WorkerDebuggerAgent::breakpointActionLog):
+        * inspector/WorkerDebuggerAgent.h:
+        Let each of these handle console logs in their own way. Both of these
+        eventually go through the PageConsole and log through the InspectorConsoleAgent
+        and ChromeClient.
+
 2014-01-24  Brent Fulgham  <bfulgham@apple.com>
 
         Improve latching behavior for wheel events

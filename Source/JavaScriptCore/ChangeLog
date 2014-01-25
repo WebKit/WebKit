@@ -1,3 +1,80 @@
+2014-01-23  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Move JavaScriptCallFrame and ScriptDebugServer into JavaScriptCore for inspector
+        https://bugs.webkit.org/show_bug.cgi?id=127543
+
+        Reviewed by Geoffrey Garen.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        Add new files.
+
+        * inspector/ScriptDebugListener.h:
+        Extract WebCore knowledge from ScriptDebugServer. This will
+        eventually be made to work outside of WebCore.
+
+        * inspector/ScriptDebugServer.h: Renamed from Source/WebCore/bindings/js/ScriptDebugServer.h.
+        * inspector/ScriptDebugServer.cpp: Renamed from Source/WebCore/bindings/js/ScriptDebugServer.cpp.
+        (Inspector::ScriptDebugServer::evaluateBreakpointAction):
+        (Inspector::ScriptDebugServer::dispatchDidPause):
+        (Inspector::ScriptDebugServer::dispatchBreakpointActionLog):
+        (Inspector::ScriptDebugServer::dispatchBreakpointActionSound):
+        (Inspector::ScriptDebugServer::sourceParsed):
+        (Inspector::ScriptDebugServer::dispatchFunctionToListeners):
+        (Inspector::ScriptDebugServer::handlePause):
+        Modernize code, and call the new ScriptDebugListener callbacks where appropriate.
+
+        * inspector/JSJavaScriptCallFrame.cpp: Renamed from Source/WebCore/bindings/js/JSJavaScriptCallFrameCustom.cpp.
+        (Inspector::JSJavaScriptCallFrame::JSJavaScriptCallFrame):
+        (Inspector::JSJavaScriptCallFrame::finishCreation):
+        (Inspector::JSJavaScriptCallFrame::createPrototype):
+        (Inspector::JSJavaScriptCallFrame::destroy):
+        (Inspector::JSJavaScriptCallFrame::releaseImpl):
+        (Inspector::JSJavaScriptCallFrame::~JSJavaScriptCallFrame):
+        (Inspector::JSJavaScriptCallFrame::evaluate):
+        (Inspector::JSJavaScriptCallFrame::scopeType):
+        (Inspector::JSJavaScriptCallFrame::caller):
+        (Inspector::JSJavaScriptCallFrame::sourceID):
+        (Inspector::JSJavaScriptCallFrame::line):
+        (Inspector::JSJavaScriptCallFrame::column):
+        (Inspector::JSJavaScriptCallFrame::functionName):
+        (Inspector::JSJavaScriptCallFrame::scopeChain):
+        (Inspector::JSJavaScriptCallFrame::thisObject):
+        (Inspector::JSJavaScriptCallFrame::type):
+        (Inspector::toJS):
+        (Inspector::toJSJavaScriptCallFrame):
+        * inspector/JSJavaScriptCallFrame.h: Added.
+        (Inspector::JSJavaScriptCallFrame::createStructure):
+        (Inspector::JSJavaScriptCallFrame::create):
+        (Inspector::JSJavaScriptCallFrame::impl):
+        * inspector/JSJavaScriptCallFramePrototype.cpp: Added.
+        (Inspector::JSJavaScriptCallFramePrototype::finishCreation):
+        (Inspector::jsJavaScriptCallFramePrototypeFunctionEvaluate):
+        (Inspector::jsJavaScriptCallFramePrototypeFunctionScopeType):
+        (Inspector::jsJavaScriptCallFrameAttributeCaller):
+        (Inspector::jsJavaScriptCallFrameAttributeSourceID):
+        (Inspector::jsJavaScriptCallFrameAttributeLine):
+        (Inspector::jsJavaScriptCallFrameAttributeColumn):
+        (Inspector::jsJavaScriptCallFrameAttributeFunctionName):
+        (Inspector::jsJavaScriptCallFrameAttributeScopeChain):
+        (Inspector::jsJavaScriptCallFrameAttributeThisObject):
+        (Inspector::jsJavaScriptCallFrameAttributeType):
+        (Inspector::jsJavaScriptCallFrameConstantGLOBAL_SCOPE):
+        (Inspector::jsJavaScriptCallFrameConstantLOCAL_SCOPE):
+        (Inspector::jsJavaScriptCallFrameConstantWITH_SCOPE):
+        (Inspector::jsJavaScriptCallFrameConstantCLOSURE_SCOPE):
+        (Inspector::jsJavaScriptCallFrameConstantCATCH_SCOPE):
+        * inspector/JSJavaScriptCallFramePrototype.h: Added.
+        (Inspector::JSJavaScriptCallFramePrototype::create):
+        (Inspector::JSJavaScriptCallFramePrototype::createStructure):
+        (Inspector::JSJavaScriptCallFramePrototype::JSJavaScriptCallFramePrototype):
+        * inspector/JavaScriptCallFrame.cpp: Renamed from Source/WebCore/bindings/js/JavaScriptCallFrame.cpp.
+        (Inspector::JavaScriptCallFrame::caller):
+        * inspector/JavaScriptCallFrame.h: Renamed from Source/WebCore/bindings/js/JavaScriptCallFrame.h.
+        Port of JavaScriptCallFrame.idl to a set of native JS classes.
+
 2014-01-24  Mark Lam  <mark.lam@apple.com>
 
         DebuggerCallFrame::evaluateWithCallFrame() should not execute a null executable.

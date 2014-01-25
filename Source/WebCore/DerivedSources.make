@@ -727,8 +727,6 @@ all : \
     $(JS_DOM_HEADERS) \
     $(WEB_DOM_HEADERS) \
     \
-    JSJavaScriptCallFrame.h \
-    \
     CSSGrammar.cpp \
     CSSPropertyNames.h \
     CSSValueKeywords.h \
@@ -1085,7 +1083,6 @@ WORKERGLOBALSCOPE_CONSTRUCTORS_FILE = ./WorkerGlobalScopeConstructors.idl
 SHAREDWORKERGLOBALSCOPE_CONSTRUCTORS_FILE = ./SharedWorkerGlobalScopeConstructors.idl
 DEDICATEDWORKERGLOBALSCOPE_CONSTRUCTORS_FILE = ./DedicatedWorkerGlobalScopeConstructors.idl
 IDL_FILES_TMP = ./idl_files.tmp
-ADDITIONAL_IDLS = $(WebCore)/inspector/JavaScriptCallFrame.idl
 IDL_ATTRIBUTES_FILE = $(WebCore)/bindings/scripts/IDLAttributes.txt
 
 # The following two lines get a space character stored in a variable.
@@ -1093,8 +1090,8 @@ IDL_ATTRIBUTES_FILE = $(WebCore)/bindings/scripts/IDLAttributes.txt
 space :=
 space +=
 
-$(SUPPLEMENTAL_MAKEFILE_DEPS) : $(PREPROCESS_IDLS_SCRIPTS) $(BINDING_IDLS) $(ADDITIONAL_IDLS) $(PLATFORM_FEATURE_DEFINES)
-	printf "$(subst $(space),,$(patsubst %,%\n,$(BINDING_IDLS) $(ADDITIONAL_IDLS)))" > $(IDL_FILES_TMP)
+$(SUPPLEMENTAL_MAKEFILE_DEPS) : $(PREPROCESS_IDLS_SCRIPTS) $(BINDING_IDLS) $(PLATFORM_FEATURE_DEFINES)
+	printf "$(subst $(space),,$(patsubst %,%\n,$(BINDING_IDLS)))" > $(IDL_FILES_TMP)
 	$(call preprocess_idls_script, $(PREPROCESS_IDLS_SCRIPTS)) --defines "$(FEATURE_DEFINES) $(ADDITIONAL_IDL_DEFINES) LANGUAGE_JAVASCRIPT" --idlFilesList $(IDL_FILES_TMP) --supplementalDependencyFile $(SUPPLEMENTAL_DEPENDENCY_FILE) --windowConstructorsFile $(WINDOW_CONSTRUCTORS_FILE) --workerGlobalScopeConstructorsFile $(WORKERGLOBALSCOPE_CONSTRUCTORS_FILE) --sharedWorkerGlobalScopeConstructorsFile $(SHAREDWORKERGLOBALSCOPE_CONSTRUCTORS_FILE) --dedicatedWorkerGlobalScopeConstructorsFile $(DEDICATEDWORKERGLOBALSCOPE_CONSTRUCTORS_FILE) --supplementalMakefileDeps $@
 	rm -f $(IDL_FILES_TMP)
 

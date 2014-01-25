@@ -33,13 +33,13 @@
 
 #if ENABLE(JAVASCRIPT_DEBUGGER)
 
-#include "ScriptDebugServer.h"
+#include <inspector/ScriptDebugServer.h>
 
 namespace WebCore {
 
 class WorkerGlobalScope;
 
-class WorkerScriptDebugServer final : public ScriptDebugServer {
+class WorkerScriptDebugServer final : public Inspector::ScriptDebugServer {
     WTF_MAKE_NONCOPYABLE(WorkerScriptDebugServer);
 public:
     WorkerScriptDebugServer(WorkerGlobalScope*, const String&);
@@ -57,6 +57,8 @@ private:
     virtual void didPause(JSC::JSGlobalObject*) override { }
     virtual void didContinue(JSC::JSGlobalObject*) override { }
     virtual void runEventLoopWhilePaused() override;
+    virtual bool isContentScript(JSC::ExecState*) const override { return false; }
+    virtual void reportException(JSC::ExecState*, JSC::JSValue) const override;
 
     WorkerGlobalScope* m_workerGlobalScope;
     ListenerSet m_listeners;

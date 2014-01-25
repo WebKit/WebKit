@@ -46,12 +46,12 @@ class InjectedScriptManager;
 class InspectorArray;
 class InspectorObject;
 class InspectorValue;
+class ScriptDebugServer;
 }
 
 namespace WebCore {
 
 class InstrumentingAgents;
-class ScriptDebugServer;
 class WorkerGlobalScope;
 
 typedef String ErrorString;
@@ -90,7 +90,7 @@ public:
     virtual void run(ErrorString*) override;
 
 #if ENABLE(JAVASCRIPT_DEBUGGER)
-    void setScriptDebugServer(ScriptDebugServer*);
+    void setScriptDebugServer(Inspector::ScriptDebugServer*);
 #endif
 
 protected:
@@ -106,7 +106,7 @@ protected:
 private:
     Inspector::InjectedScriptManager* m_injectedScriptManager;
 #if ENABLE(JAVASCRIPT_DEBUGGER)
-    ScriptDebugServer* m_scriptDebugServer;
+    Inspector::ScriptDebugServer* m_scriptDebugServer;
 #endif
 };
 

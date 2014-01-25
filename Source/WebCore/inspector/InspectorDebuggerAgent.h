@@ -54,12 +54,12 @@ class InjectedScriptManager;
 class InspectorArray;
 class InspectorObject;
 class InspectorValue;
+class ScriptDebugServer;
 }
 
 namespace WebCore {
 
 class InstrumentingAgents;
-class ScriptDebugServer;
 
 typedef String ErrorString;
 
@@ -122,7 +122,7 @@ public:
     };
     void setListener(Listener* listener) { m_listener = listener; }
 
-    virtual ScriptDebugServer& scriptDebugServer() = 0;
+    virtual Inspector::ScriptDebugServer& scriptDebugServer() = 0;
 
 protected:
     InspectorDebuggerAgent(InstrumentingAgents*, Inspector::InjectedScriptManager*);
@@ -146,6 +146,7 @@ private:
     virtual void didParseSource(JSC::SourceID, const Script&) override final;
     virtual void failedToParseSource(const String& url, const String& data, int firstLine, int errorLine, const String& errorMessage) override final;
     virtual void didSampleProbe(JSC::ExecState*, int probeIdentifier, int hitCount, const Deprecated::ScriptValue& sample) override final;
+    virtual void breakpointActionSound() override final;
 
     PassRefPtr<Inspector::TypeBuilder::Debugger::Location> resolveBreakpoint(const String& breakpointIdentifier, JSC::SourceID, const Inspector::ScriptBreakpoint&);
     bool assertPaused(ErrorString*);

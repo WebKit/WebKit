@@ -26,16 +26,18 @@
 #ifndef JavaScriptCallFrame_h
 #define JavaScriptCallFrame_h
 
+#if ENABLE(INSPECTOR)
 #if ENABLE(JAVASCRIPT_DEBUGGER)
 
-#include <debugger/DebuggerCallFrame.h>
-#include <interpreter/CallFrame.h>
+#include "JSCJSValueInlines.h"
+#include "debugger/DebuggerCallFrame.h"
+#include "interpreter/CallFrame.h"
 #include <wtf/Forward.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/text/TextPosition.h>
 
-namespace WebCore {
+namespace Inspector {
 
 class JavaScriptCallFrame : public RefCounted<JavaScriptCallFrame> {
 public:
@@ -57,7 +59,7 @@ public:
 
     JSC::JSValue thisValue() const { return m_debuggerCallFrame->thisValue(); }
     JSC::JSValue evaluate(const String& script, JSC::JSValue& exception) const  { return m_debuggerCallFrame->evaluate(script, exception); }
-    
+
 private:
     JavaScriptCallFrame(PassRefPtr<JSC::DebuggerCallFrame>);
 
@@ -65,8 +67,9 @@ private:
     RefPtr<JavaScriptCallFrame> m_caller;
 };
 
-} // namespace WebCore
+} // namespace Inspector
 
 #endif // ENABLE(JAVASCRIPT_DEBUGGER)
+#endif // ENABLE(INSPECTOR)
 
 #endif // JavaScriptCallFrame_h

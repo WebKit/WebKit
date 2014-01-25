@@ -237,6 +237,10 @@ set(JavaScriptCore_SOURCES
     inspector/InspectorValues.cpp
     inspector/JSInjectedScriptHost.cpp
     inspector/JSInjectedScriptHostPrototype.cpp
+    inspector/JSJavaScriptCallFrame.cpp
+    inspector/JSJavaScriptCallFramePrototype.cpp
+    inspector/JavaScriptCallFrame.cpp
+    inspector/ScriptDebugServer.cpp
     inspector/agents/InspectorAgent.cpp
 
     interpreter/AbstractPC.cpp

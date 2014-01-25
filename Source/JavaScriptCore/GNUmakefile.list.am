@@ -653,8 +653,16 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/inspector/JSInjectedScriptHost.h \
 	Source/JavaScriptCore/inspector/JSInjectedScriptHostPrototype.cpp \
 	Source/JavaScriptCore/inspector/JSInjectedScriptHostPrototype.h \
+	Source/JavaScriptCore/inspector/JSJavaScriptCallFrame.cpp \
+	Source/JavaScriptCore/inspector/JSJavaScriptCallFrame.h \
+	Source/JavaScriptCore/inspector/JSJavaScriptCallFramePrototype.cpp \
+	Source/JavaScriptCore/inspector/JSJavaScriptCallFramePrototype.h \
+	Source/JavaScriptCore/inspector/JavaScriptCallFrame.cpp \
+	Source/JavaScriptCore/inspector/JavaScriptCallFrame.h \
 	Source/JavaScriptCore/inspector/ScriptBreakpoint.h \
 	Source/JavaScriptCore/inspector/ScriptDebugListener.h \
+	Source/JavaScriptCore/inspector/ScriptDebugServer.cpp \
+	Source/JavaScriptCore/inspector/ScriptDebugServer.h \
 	Source/JavaScriptCore/inspector/agents/InspectorAgent.h \
 	Source/JavaScriptCore/inspector/agents/InspectorAgent.cpp \
 	Source/JavaScriptCore/interpreter/AbstractPC.cpp \

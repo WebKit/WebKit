@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,18 +23,18 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef JSInjectedScriptHost_h
-#define JSInjectedScriptHost_h
+#ifndef JSJavaScriptCallFrame_h
+#define JSJavaScriptCallFrame_h
 
 #if ENABLE(INSPECTOR)
+#if ENABLE(JAVASCRIPT_DEBUGGER)
 
 #include "JSDestructibleObject.h"
+#include "JavaScriptCallFrame.h"
 
 namespace Inspector {
 
-class InjectedScriptHost;
-
-class JSInjectedScriptHost : public JSC::JSDestructibleObject {
+class JSJavaScriptCallFrame : public JSC::JSDestructibleObject {
 public:
     typedef JSC::JSDestructibleObject Base;
 
@@ -45,9 +45,9 @@ public:
         return JSC::Structure::create(vm, globalObject, prototype, JSC::TypeInfo(JSC::ObjectType, StructureFlags), info());
     }
 
-    static JSInjectedScriptHost* create(JSC::VM& vm, JSC::Structure* structure, PassRefPtr<InjectedScriptHost> impl)
+    static JSJavaScriptCallFrame* create(JSC::VM& vm, JSC::Structure* structure, PassRefPtr<JavaScriptCallFrame> impl)
     {
-        JSInjectedScriptHost* instance = new (NotNull, JSC::allocateCell<JSInjectedScriptHost>(vm.heap)) JSInjectedScriptHost(vm, structure, impl);
+        JSJavaScriptCallFrame* instance = new (NotNull, JSC::allocateCell<JSJavaScriptCallFrame>(vm.heap)) JSJavaScriptCallFrame(vm, structure, impl);
         instance->finishCreation(vm);
         return instance;
     }
@@ -55,18 +55,29 @@ public:
     static JSC::JSObject* createPrototype(JSC::VM&, JSC::JSGlobalObject*);
     static void destroy(JSC::JSCell*);
 
-    InjectedScriptHost& impl() const { return *m_impl; }
+    JavaScriptCallFrame& impl() const { return *m_impl; }
     void releaseImpl();
 
-    // Attributes.
-    JSC::JSValue evaluate(JSC::ExecState*) const;
-
     // Functions.
-    JSC::JSValue internalConstructorName(JSC::ExecState*);
-    JSC::JSValue isHTMLAllCollection(JSC::ExecState*);
-    JSC::JSValue type(JSC::ExecState*);
-    JSC::JSValue functionDetails(JSC::ExecState*);
-    JSC::JSValue getInternalProperties(JSC::ExecState*);
+    JSC::JSValue evaluate(JSC::ExecState*);
+    JSC::JSValue scopeType(JSC::ExecState*);
+
+    // Attributes.
+    JSC::JSValue caller(JSC::ExecState*) const;
+    JSC::JSValue sourceID(JSC::ExecState*) const;
+    JSC::JSValue line(JSC::ExecState*) const;
+    JSC::JSValue column(JSC::ExecState*) const;
+    JSC::JSValue functionName(JSC::ExecState*) const;
+    JSC::JSValue scopeChain(JSC::ExecState*) const;
+    JSC::JSValue thisObject(JSC::ExecState*) const;
+    JSC::JSValue type(JSC::ExecState*) const;
+
+    // Constants.
+    static const unsigned short GLOBAL_SCOPE = 0;
+    static const unsigned short LOCAL_SCOPE = 1;
+    static const unsigned short WITH_SCOPE = 2;
+    static const unsigned short CLOSURE_SCOPE = 3;
+    static const unsigned short CATCH_SCOPE = 4;
 
 protected:
     static const unsigned StructureFlags = Base::StructureFlags;
@@ -74,17 +85,18 @@ protected:
     void finishCreation(JSC::VM&);
 
 private:
-    JSInjectedScriptHost(JSC::VM&, JSC::Structure*, PassRefPtr<InjectedScriptHost>);
-    ~JSInjectedScriptHost();
+    JSJavaScriptCallFrame(JSC::VM&, JSC::Structure*, PassRefPtr<JavaScriptCallFrame>);
+    ~JSJavaScriptCallFrame();
 
-    InjectedScriptHost* m_impl;
+    JavaScriptCallFrame* m_impl;
 };
 
-JSC::JSValue toJS(JSC::ExecState*, JSC::JSGlobalObject*, InjectedScriptHost*);
-JSInjectedScriptHost* toJSInjectedScriptHost(JSC::JSValue);
+JSC::JSValue toJS(JSC::ExecState*, JSC::JSGlobalObject*, JavaScriptCallFrame*);
+JSJavaScriptCallFrame* toJSJavaScriptCallFrame(JSC::JSValue);
 
 } // namespace Inspector
 
+#endif // ENABLE(JAVASCRIPT_DEBUGGER)
 #endif // ENABLE(INSPECTOR)
 
-#endif // !defined(JSInjectedScriptHost_h)
+#endif // !defined(JSJavaScriptCallFrame_h)

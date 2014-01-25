@@ -40,7 +40,7 @@ namespace WebCore {
 class WorkerGlobalScope;
 class WorkerThread;
 
-class WorkerDebuggerAgent : public InspectorDebuggerAgent {
+class WorkerDebuggerAgent final : public InspectorDebuggerAgent {
     WTF_MAKE_NONCOPYABLE(WorkerDebuggerAgent);
     WTF_MAKE_FAST_ALLOCATED;
 public:
@@ -56,6 +56,8 @@ public:
     virtual Inspector::InjectedScript injectedScriptForEval(ErrorString*, const int* executionContextId) override;
     virtual void muteConsole() override;
     virtual void unmuteConsole() override;
+
+    virtual void breakpointActionLog(JSC::ExecState*, const String&) override;
 
 private:
     WorkerScriptDebugServer m_scriptDebugServer;

@@ -34,6 +34,8 @@
 
 #if ENABLE(JAVASCRIPT_DEBUGGER)
 
+#include "JSDOMBinding.h"
+#include "Timer.h"
 #include "WorkerDebuggerAgent.h"
 #include "WorkerGlobalScope.h"
 #include "WorkerRunLoop.h"
@@ -90,11 +92,18 @@ void WorkerScriptDebugServer::recompileAllJSFunctions()
 
 void WorkerScriptDebugServer::runEventLoopWhilePaused()
 {
+    TimerBase::fireTimersInNestedEventLoop();
+
     MessageQueueWaitResult result;
     do {
         result = m_workerGlobalScope->thread()->runLoop().runInMode(m_workerGlobalScope, m_debuggerTaskMode);
     // Keep waiting until execution is resumed.
     } while (result != MessageQueueTerminated && !m_doneProcessingDebuggerEvents);
+}
+
+void WorkerScriptDebugServer::reportException(JSC::ExecState* exec, JSC::JSValue exception) const
+{
+    WebCore::reportException(exec, exception);
 }
 
 void WorkerScriptDebugServer::interruptAndRunTask(PassOwnPtr<ScriptDebugServer::Task>)

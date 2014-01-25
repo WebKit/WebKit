@@ -43,6 +43,7 @@
 #include "PageGroup.h"
 #include "PluginView.h"
 #include "ScriptController.h"
+#include "Timer.h"
 #include "Widget.h"
 #include <runtime/JSLock.h>
 #include <wtf/MainThread.h>
@@ -193,6 +194,8 @@ void PageScriptDebugServer::runEventLoopWhilePaused()
         WebRunLoopEnableNested();
 #endif
 
+    TimerBase::fireTimersInNestedEventLoop();
+
     EventLoop loop;
     while (!m_doneProcessingDebuggerEvents && !loop.ended())
         loop.cycle();
@@ -202,6 +205,16 @@ void PageScriptDebugServer::runEventLoopWhilePaused()
     }
     ASSERT(WebThreadIsLockedOrDisabled());
 #endif
+}
+
+bool PageScriptDebugServer::isContentScript(ExecState* exec) const
+{
+    return &currentWorld(exec) != &mainThreadNormalWorld();
+}
+
+void PageScriptDebugServer::reportException(ExecState* exec, JSValue exception) const
+{
+    WebCore::reportException(exec, exception);
 }
 
 void PageScriptDebugServer::setJavaScriptPaused(const PageGroup& pageGroup, bool paused)

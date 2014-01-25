@@ -533,7 +533,6 @@ set(WebCore_IDL_FILES
 
     inspector/CommandLineAPIHost.idl
     inspector/InspectorFrontendHost.idl
-    inspector/JavaScriptCallFrame.idl
     inspector/ScriptProfile.idl
     inspector/ScriptProfileNode.idl
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2008, 2013, 2014 Apple Inc. All rights reserved.
  * Copyright (C) 2010-2011 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -32,10 +32,10 @@
 
 #if ENABLE(JAVASCRIPT_DEBUGGER)
 
-#include <bindings/ScriptObject.h>
-#include <debugger/Debugger.h>
-#include <inspector/ScriptBreakpoint.h>
-#include <inspector/ScriptDebugListener.h>
+#include "ScriptBreakpoint.h"
+#include "ScriptDebugListener.h"
+#include "bindings/ScriptObject.h"
+#include "debugger/Debugger.h"
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/RefPtr.h>
@@ -44,23 +44,23 @@
 #include <wtf/text/WTFString.h>
 
 namespace JSC {
-class DebuggerCallFrame;
-class JSGlobalObject;
 class ExecState;
+class JSGlobalObject;
 }
 
-namespace WebCore {
+namespace Inspector {
 
-class ScriptDebugServer : public JSC::Debugger {
-    WTF_MAKE_NONCOPYABLE(ScriptDebugServer); WTF_MAKE_FAST_ALLOCATED;
+class JS_EXPORT_PRIVATE ScriptDebugServer : public JSC::Debugger {
+    WTF_MAKE_NONCOPYABLE(ScriptDebugServer);
+    WTF_MAKE_FAST_ALLOCATED;
 public:
-    JSC::BreakpointID setBreakpoint(JSC::SourceID, const Inspector::ScriptBreakpoint&, unsigned* actualLineNumber, unsigned* actualColumnNumber);
+    JSC::BreakpointID setBreakpoint(JSC::SourceID, const ScriptBreakpoint&, unsigned* actualLineNumber, unsigned* actualColumnNumber);
     void removeBreakpoint(JSC::BreakpointID);
     void clearBreakpoints();
 
     virtual void recompileAllJSFunctions() = 0;
 
-    const Vector<Inspector::ScriptBreakpointAction>& getActionsForBreakpoint(JSC::BreakpointID);
+    const Vector<ScriptBreakpointAction>& getActionsForBreakpoint(JSC::BreakpointID);
 
     class Task {
         WTF_MAKE_FAST_ALLOCATED;
@@ -70,8 +70,8 @@ public:
     };
 
 protected:
-    typedef HashSet<Inspector::ScriptDebugListener*> ListenerSet;
-    typedef void (ScriptDebugServer::*JavaScriptExecutionCallback)(Inspector::ScriptDebugListener*);
+    typedef HashSet<ScriptDebugListener*> ListenerSet;
+    typedef void (ScriptDebugServer::*JavaScriptExecutionCallback)(ScriptDebugListener*);
 
     ScriptDebugServer(bool isInWorkerThread = false);
     ~ScriptDebugServer();
@@ -79,25 +79,26 @@ protected:
     virtual ListenerSet* getListenersForGlobalObject(JSC::JSGlobalObject*) = 0;
     virtual void didPause(JSC::JSGlobalObject*) = 0;
     virtual void didContinue(JSC::JSGlobalObject*) = 0;
-
     virtual void runEventLoopWhilePaused() = 0;
+    virtual bool isContentScript(JSC::ExecState*) const = 0;
+    virtual void reportException(JSC::ExecState*, JSC::JSValue) const = 0;
 
-    virtual bool isContentScript(JSC::ExecState*);
-
-    bool evaluateBreakpointAction(const Inspector::ScriptBreakpointAction&);
+    bool evaluateBreakpointAction(const ScriptBreakpointAction&);
 
     void dispatchFunctionToListeners(JavaScriptExecutionCallback, JSC::JSGlobalObject*);
-    void dispatchFunctionToListeners(const ListenerSet& listeners, JavaScriptExecutionCallback callback);
-    void dispatchDidPause(Inspector::ScriptDebugListener*);
-    void dispatchDidContinue(Inspector::ScriptDebugListener*);
+    void dispatchFunctionToListeners(const ListenerSet& listeners, JavaScriptExecutionCallback);
+    void dispatchDidPause(ScriptDebugListener*);
+    void dispatchDidContinue(ScriptDebugListener*);
     void dispatchDidParseSource(const ListenerSet& listeners, JSC::SourceProvider*, bool isContentScript);
     void dispatchFailedToParseSource(const ListenerSet& listeners, JSC::SourceProvider*, int errorLine, const String& errorMessage);
+    void dispatchBreakpointActionLog(JSC::ExecState*, const String&);
+    void dispatchBreakpointActionSound(JSC::ExecState*);
     void dispatchDidSampleProbe(JSC::ExecState*, int probeIdentifier, const Deprecated::ScriptValue& sample);
 
     bool m_doneProcessingDebuggerEvents;
 
 private:
-    typedef Vector<Inspector::ScriptBreakpointAction> BreakpointActions;
+    typedef Vector<ScriptBreakpointAction> BreakpointActions;
     typedef HashMap<JSC::BreakpointID, BreakpointActions> BreakpointIDToActionsMap;
 
     virtual void sourceParsed(JSC::ExecState*, JSC::SourceProvider*, int errorLine, const String& errorMsg) override final;
@@ -110,11 +111,9 @@ private:
     unsigned m_hitCount;
     bool m_callingListeners;
     BreakpointIDToActionsMap m_breakpointIDToActions;
-
-    friend class DebuggerCallFrameScope;
 };
 
-} // namespace WebCore
+} // namespace Inspector
 
 #endif // ENABLE(JAVASCRIPT_DEBUGGER)
 

@@ -43,7 +43,7 @@ class InspectorPageAgent;
 class Page;
 class PageScriptDebugServer;
 
-class PageDebuggerAgent : public InspectorDebuggerAgent {
+class PageDebuggerAgent final : public InspectorDebuggerAgent {
     WTF_MAKE_NONCOPYABLE(PageDebuggerAgent);
     WTF_MAKE_FAST_ALLOCATED;
 public:
@@ -62,6 +62,8 @@ private:
     virtual PageScriptDebugServer& scriptDebugServer() override;
     virtual void muteConsole() override;
     virtual void unmuteConsole() override;
+
+    virtual void breakpointActionLog(JSC::ExecState*, const String&) override;
 
     virtual Inspector::InjectedScript injectedScriptForEval(ErrorString*, const int* executionContextId) override;
     virtual void setOverlayMessage(ErrorString*, const String*) override;

@@ -29,22 +29,16 @@
  */
 
 #include "config.h"
+#include "ScriptDebugServer.h"
 
 #if ENABLE(JAVASCRIPT_DEBUGGER)
 
-#include "ScriptDebugServer.h"
-
-#include "EventLoop.h"
-#include "JSDOMWindowCustom.h"
+#include "DebuggerCallFrame.h"
 #include "JSJavaScriptCallFrame.h"
+#include "JSLock.h"
 #include "JavaScriptCallFrame.h"
-#include "PageConsole.h"
-#include "Sound.h"
-#include "Timer.h"
-#include <bindings/ScriptValue.h>
-#include <debugger/DebuggerCallFrame.h>
-#include <parser/SourceProvider.h>
-#include <runtime/JSLock.h>
+#include "ScriptValue.h"
+#include "SourceProvider.h"
 #include <wtf/MainThread.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/TemporaryChange.h>
@@ -53,7 +47,7 @@
 using namespace JSC;
 using namespace Inspector;
 
-namespace WebCore {
+namespace Inspector {
 
 ScriptDebugServer::ScriptDebugServer(bool isInWorkerThread)
     : Debugger(isInWorkerThread)
@@ -97,11 +91,10 @@ void ScriptDebugServer::removeBreakpoint(JSC::BreakpointID id)
 bool ScriptDebugServer::evaluateBreakpointAction(const ScriptBreakpointAction& breakpointAction)
 {
     DebuggerCallFrame* debuggerCallFrame = currentDebuggerCallFrame();
+
     switch (breakpointAction.type) {
     case ScriptBreakpointActionTypeLog: {
-        DOMWindow& window = asJSDOMWindow(debuggerCallFrame->vmEntryGlobalObject())->impl();
-        if (PageConsole* console = window.pageConsole())
-            console->addMessage(JSMessageSource, LogMessageLevel, breakpointAction.data);
+        dispatchBreakpointActionLog(debuggerCallFrame->exec(), breakpointAction.data);
         break;
     }
     case ScriptBreakpointActionTypeEvaluate: {
@@ -112,19 +105,21 @@ bool ScriptDebugServer::evaluateBreakpointAction(const ScriptBreakpointAction& b
         break;
     }
     case ScriptBreakpointActionTypeSound:
-        systemBeep();
+        dispatchBreakpointActionSound(debuggerCallFrame->exec());
         break;
     case ScriptBreakpointActionTypeProbe: {
         JSValue exception;
         JSValue result = debuggerCallFrame->evaluate(breakpointAction.data, exception);
         if (exception)
             reportException(debuggerCallFrame->exec(), exception);
-
+        
         JSC::ExecState* state = debuggerCallFrame->scope()->globalObject()->globalExec();
         Deprecated::ScriptValue wrappedResult = Deprecated::ScriptValue(state->vm(), exception ? exception : result);
         dispatchDidSampleProbe(state, breakpointAction.identifier, wrappedResult);
         break;
     }
+    default:
+        ASSERT_NOT_REACHED();
     }
 
     return true;
@@ -143,16 +138,44 @@ void ScriptDebugServer::dispatchDidPause(ScriptDebugListener* listener)
     JSGlobalObject* globalObject = debuggerCallFrame->scope()->globalObject();
     JSC::ExecState* state = globalObject->globalExec();
     RefPtr<JavaScriptCallFrame> javaScriptCallFrame = JavaScriptCallFrame::create(debuggerCallFrame);
-    JSValue jsCallFrame;
-    {
-        if (globalObject->inherits(JSDOMGlobalObject::info())) {
-            JSDOMGlobalObject* domGlobalObject = jsCast<JSDOMGlobalObject*>(globalObject);
-            JSLockHolder lock(state);
-            jsCallFrame = toJS(state, domGlobalObject, javaScriptCallFrame.get());
-        } else
-            jsCallFrame = jsUndefined();
-    }
+    JSValue jsCallFrame = toJS(state, globalObject, javaScriptCallFrame.get());
     listener->didPause(state, Deprecated::ScriptValue(state->vm(), jsCallFrame), Deprecated::ScriptValue());
+}
+
+void ScriptDebugServer::dispatchBreakpointActionLog(ExecState* exec, const String& message)
+{
+    if (m_callingListeners)
+        return;
+
+    ListenerSet* listeners = getListenersForGlobalObject(exec->lexicalGlobalObject());
+    if (!listeners)
+        return;
+    ASSERT(!listeners->isEmpty());
+
+    TemporaryChange<bool> change(m_callingListeners, true);
+
+    Vector<ScriptDebugListener*> listenersCopy;
+    copyToVector(*listeners, listenersCopy);
+    for (auto listener : listenersCopy)
+        listener->breakpointActionLog(exec, message);
+}
+
+void ScriptDebugServer::dispatchBreakpointActionSound(ExecState* exec)
+{
+    if (m_callingListeners)
+        return;
+
+    ListenerSet* listeners = getListenersForGlobalObject(exec->lexicalGlobalObject());
+    if (!listeners)
+        return;
+    ASSERT(!listeners->isEmpty());
+
+    TemporaryChange<bool> change(m_callingListeners, true);
+
+    Vector<ScriptDebugListener*> listenersCopy;
+    copyToVector(*listeners, listenersCopy);
+    for (auto listener : listenersCopy)
+        listener->breakpointActionSound();
 }
 
 void ScriptDebugServer::dispatchDidSampleProbe(ExecState* exec, int identifier, const Deprecated::ScriptValue& sample)
@@ -223,11 +246,6 @@ void ScriptDebugServer::dispatchFailedToParseSource(const ListenerSet& listeners
         copy[i]->failedToParseSource(url, data, firstLine, errorLine, errorMessage);
 }
 
-bool ScriptDebugServer::isContentScript(ExecState* exec)
-{
-    return &currentWorld(exec) != &mainThreadNormalWorld();
-}
-
 void ScriptDebugServer::sourceParsed(ExecState* exec, SourceProvider* sourceProvider, int errorLine, const String& errorMessage)
 {
     if (m_callingListeners)
@@ -238,15 +256,13 @@ void ScriptDebugServer::sourceParsed(ExecState* exec, SourceProvider* sourceProv
         return;
     ASSERT(!listeners->isEmpty());
 
-    m_callingListeners = true;
+    TemporaryChange<bool> change(m_callingListeners, true);
 
     bool isError = errorLine != -1;
     if (isError)
         dispatchFailedToParseSource(*listeners, sourceProvider, errorLine, errorMessage);
     else
         dispatchDidParseSource(*listeners, sourceProvider, isContentScript(exec));
-
-    m_callingListeners = false;
 }
 
 void ScriptDebugServer::dispatchFunctionToListeners(const ListenerSet& listeners, JavaScriptExecutionCallback callback)
@@ -262,14 +278,12 @@ void ScriptDebugServer::dispatchFunctionToListeners(JavaScriptExecutionCallback 
     if (m_callingListeners)
         return;
 
-    m_callingListeners = true;
+    TemporaryChange<bool> change(m_callingListeners, true);
 
     if (ListenerSet* listeners = getListenersForGlobalObject(globalObject)) {
         ASSERT(!listeners->isEmpty());
         dispatchFunctionToListeners(*listeners, callback);
     }
-
-    m_callingListeners = false;
 }
 
 void ScriptDebugServer::notifyDoneProcessingDebuggerEvents()
@@ -305,8 +319,6 @@ void ScriptDebugServer::handlePause(Debugger::ReasonForPause, JSGlobalObject* vm
     dispatchFunctionToListeners(&ScriptDebugServer::dispatchDidPause, vmEntryGlobalObject);
     didPause(vmEntryGlobalObject);
 
-    TimerBase::fireTimersInNestedEventLoop();
-
     m_doneProcessingDebuggerEvents = false;
     runEventLoopWhilePaused();
 
@@ -325,6 +337,6 @@ const Vector<ScriptBreakpointAction>& ScriptDebugServer::getActionsForBreakpoint
     return emptyActionVector;
 }
 
-} // namespace WebCore
+} // namespace Inspector
 
 #endif // ENABLE(JAVASCRIPT_DEBUGGER)

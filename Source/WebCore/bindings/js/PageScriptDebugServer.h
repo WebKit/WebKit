@@ -33,7 +33,7 @@
 
 #if ENABLE(JAVASCRIPT_DEBUGGER)
 
-#include "ScriptDebugServer.h"
+#include <inspector/ScriptDebugServer.h>
 #include <wtf/Forward.h>
 
 namespace WebCore {
@@ -43,7 +43,7 @@ class FrameView;
 class Page;
 class PageGroup;
 
-class PageScriptDebugServer : public ScriptDebugServer {
+class PageScriptDebugServer : public Inspector::ScriptDebugServer {
     WTF_MAKE_NONCOPYABLE(PageScriptDebugServer);
 public:
     static PageScriptDebugServer& shared();
@@ -62,8 +62,10 @@ private:
     virtual ListenerSet* getListenersForGlobalObject(JSC::JSGlobalObject*);
     virtual void didPause(JSC::JSGlobalObject*);
     virtual void didContinue(JSC::JSGlobalObject*);
-
     virtual void runEventLoopWhilePaused();
+    virtual bool isContentScript(JSC::ExecState*) const override;
+    virtual void reportException(JSC::ExecState*, JSC::JSValue) const override;
+
 
     void didAddFirstListener(Page*);
     void didRemoveLastListener(Page*, bool skipRecompile);

@@ -35,13 +35,15 @@
 #include "CachedResource.h"
 #include "InspectorPageAgent.h"
 #include "InstrumentingAgents.h"
-#include "ScriptDebugServer.h"
+#include "ScriptArguments.h"
+#include "Sound.h"
 #include <bindings/ScriptObject.h>
 #include <bindings/ScriptValue.h>
 #include <inspector/ContentSearchUtilities.h>
 #include <inspector/InjectedScript.h>
 #include <inspector/InjectedScriptManager.h>
 #include <inspector/InspectorValues.h>
+#include <inspector/ScriptDebugServer.h>
 #include <wtf/text/WTFString.h>
 #include <yarr/RegularExpression.h>
 
@@ -688,6 +690,12 @@ void InspectorDebuggerAgent::didSampleProbe(JSC::ExecState* scriptState, int pro
         .setPayload(payload.release());
 
     m_frontendDispatcher->didSampleProbe(result.release());
+}
+
+void InspectorDebuggerAgent::breakpointActionSound()
+{
+    // FIXME: We should send a message to the frontend to make the frontend beep.
+    systemBeep();
 }
 
 void InspectorDebuggerAgent::didContinue()

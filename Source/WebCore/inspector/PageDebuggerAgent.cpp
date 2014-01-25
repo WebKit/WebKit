@@ -96,6 +96,11 @@ void PageDebuggerAgent::unmuteConsole()
     PageConsole::unmute();
 }
 
+void PageDebuggerAgent::breakpointActionLog(JSC::ExecState*, const String& message)
+{
+    m_pageAgent->page()->console().addMessage(JSMessageSource, LogMessageLevel, message);
+}
+
 InjectedScript PageDebuggerAgent::injectedScriptForEval(ErrorString* errorString, const int* executionContextId)
 {
     if (!executionContextId) {
