@@ -450,7 +450,7 @@ inline bool ComputeFloatOffsetForFloatLayoutAdapter<FloatingObject::FloatRight>:
 template <FloatingObject::Type FloatTypeValue>
 LayoutUnit ComputeFloatOffsetForFloatLayoutAdapter<FloatTypeValue>::heightRemaining() const
 {
-    return this->m_outermostFloat ? this->m_renderer.logicalBottomForFloat(this->m_outermostFloat) - this->m_lineTop : LayoutUnit(1);
+    return this->m_outermostFloat ? this->m_renderer.logicalBottomForFloat(this->m_outermostFloat) - this->m_lineTop : LayoutUnit::fromPixel(1);
 }
 
 template <FloatingObject::Type FloatTypeValue>

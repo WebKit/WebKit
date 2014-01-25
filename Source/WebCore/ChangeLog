@@ -1,3 +1,33 @@
+2014-01-24  Zalan Bujtas  <zalan@apple.com>
+
+        Replace LayoutUnit() calls to a more descriptive LayoutUnit::fromPixel(int).
+        https://bugs.webkit.org/show_bug.cgi?id=127580
+
+        Reviewed by Simon Fraser.
+
+        LayoutUnit(1) statement is ambiguous. While it is intended to set one (CSS) pixel, it
+        could be interpreted as 1 layout unit (1/64th of a CSS pixel atm).
+
+        No change in behavior.
+
+        * inspector/InspectorOverlay.cpp:
+        (WebCore::buildObjectForRegionHighlight):
+        * rendering/FloatingObjects.cpp:
+        (WebCore::ComputeFloatOffsetForFloatLayoutAdapter<FloatTypeValue>::heightRemaining):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::layoutShapeInsideInfo):
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::collapseMargins):
+        * rendering/RenderFlexibleBox.cpp:
+        (WebCore::RenderFlexibleBox::mainAxisContentExtent):
+        (WebCore::RenderFlexibleBox::preferredMainAxisContentExtentForChild):
+        (WebCore::RenderFlexibleBox::alignChildren):
+        * rendering/RenderMultiColumnFlowThread.cpp:
+        (WebCore::RenderMultiColumnFlowThread::addForcedRegionBreak):
+        * rendering/RenderMultiColumnSet.cpp:
+        (WebCore::RenderMultiColumnSet::heightAdjustedForSetOffset):
+        (WebCore::RenderMultiColumnSet::calculateBalancedHeight):
+
 2014-01-24  Simon Fraser  <simon.fraser@apple.com>
 
         Prepare scrolling tree to handle > 1 scrolling node
