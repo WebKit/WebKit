@@ -234,7 +234,7 @@ EXPORTS
         symbolWithPointer(?setResourcesDataSizeLimitsFromInternals@InspectorController@WebCore@@QAEXHH@Z, ?setResourcesDataSizeLimitsFromInternals@InspectorController@WebCore@@QEAAXHH@Z)
         symbolWithPointer(?pathByAppendingComponent@WebCore@@YA?AVString@WTF@@ABV23@0@Z, ?pathByAppendingComponent@WebCore@@YA?AVString@WTF@@AEBV23@0@Z)
         symbolWithPointer(?setProfilerEnabled@InspectorController@WebCore@@QAEX_N@Z, ?setProfilerEnabled@InspectorController@WebCore@@QEAAX_N@Z)
-        symbolWithPointer(?disconnectFrontend@InspectorController@WebCore@@QAEXW4InspectorDisconnectReason@Inspector@@@Z, ?disconnectFrontend@InspectorController@WebCore@@QAEXW4InspectorDisconnectReason@Inspector@@@Z)
+        symbolWithPointer(?disconnectFrontend@InspectorController@WebCore@@QAEXW4InspectorDisconnectReason@Inspector@@@Z, ?disconnectFrontend@InspectorController@WebCore@@QEAAXW4InspectorDisconnectReason@Inspector@@@Z)
 #endif
         symbolWithPointer(?isActiveInsertionPoint@WebCore@@YA_NPBVNode@1@@Z, ?isActiveInsertionPoint@WebCore@@YA_NPEBVNode@1@@Z)
         symbolWithPointer(?isPreloaded@CachedResourceLoader@WebCore@@QBE_NABVString@WTF@@@Z, ?isPreloaded@CachedResourceLoader@WebCore@@QEBA_NAEBVString@WTF@@@Z)

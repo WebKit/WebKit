@@ -29,6 +29,7 @@
 #include "FileSystem.h"
 #include "ResourceHandle.h"
 #include "ResourceResponse.h"
+#include <wtf/Threading.h>
 
 #if PLATFORM(WIN)
 #include <windows.h>
