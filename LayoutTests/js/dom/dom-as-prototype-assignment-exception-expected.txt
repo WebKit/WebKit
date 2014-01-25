@@ -1,0 +1,12 @@
+Tests to make sure we throw when triggering a custom property with a mismatched this
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS testObject.id threw exception TypeError: Type error.
+PASS testObject.id="foo" threw exception TypeError: Type error.
+PASS testObject.length threw exception TypeError: Type error.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

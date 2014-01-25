@@ -299,7 +299,7 @@ namespace JSC {
             if (JSObject* thisObject = jsDynamicCast<JSObject*>(slot.thisValue()))
                 thisObject->putDirect(exec->vm(), propertyName, value);
         } else if (!(entry->attributes() & ReadOnly)) {
-            entry->propertyPutter()(exec, JSValue::encode(base), JSValue::encode(value));
+            entry->propertyPutter()(exec, base, JSValue::encode(slot.thisValue()), JSValue::encode(value));
             slot.setCustomProperty(base, entry->propertyPutter());
         } else if (slot.isStrictMode())
             throwTypeError(exec, StrictModeReadonlyPropertyWriteError);

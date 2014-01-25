@@ -1,5 +1,22 @@
 2014-01-24  Oliver Hunt  <oliver@apple.com>
 
+        Put functions need to take a base object and a this value, and perform type checks on |this|
+        https://bugs.webkit.org/show_bug.cgi?id=127594
+
+        Reviewed by Geoffrey Garen.
+
+        Change the signature for static setter functions, and update uses
+
+        * create_hash_table:
+        * runtime/Lookup.h:
+        (JSC::putEntry):
+        * runtime/PutPropertySlot.h:
+        * runtime/RegExpConstructor.cpp:
+        (JSC::setRegExpConstructorInput):
+        (JSC::setRegExpConstructorMultiline):
+
+2014-01-24  Oliver Hunt  <oliver@apple.com>
+
         Generic JSObject::put should handle static properties in the classinfo hierarchy
         https://bugs.webkit.org/show_bug.cgi?id=127523
 

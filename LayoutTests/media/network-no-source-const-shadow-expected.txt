@@ -8,7 +8,7 @@ PASS HTMLMediaElement.prototype.NETWORK_NO_SOURCE is 3
 PASS element.NETWORK_NO_SOURCE is 3
 PASS HTMLMediaElement.NETWORK_NO_SOURCE is 3
 PASS HTMLAudioElement.prototype.NETWORK_NO_SOURCE is 3
-FAIL element.NETWORK_NO_SOURCE should be 3. Was 15.
+PASS element.NETWORK_NO_SOURCE is 3
 PASS successfullyParsed is true
 
 TEST COMPLETE

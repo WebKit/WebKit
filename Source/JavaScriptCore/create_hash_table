@@ -261,14 +261,16 @@ sub output() {
     foreach my $key (@keys) {
         my $firstValue = "";
         my $secondValue = "";
-        my $castStr = "";
+        my $firstCastStr = "";
+        my $secondCastStr = "";
 
         if ($values[$i]{"type"} eq "Function") {
-            $castStr = "static_cast<NativeFunction>";
+            $firstCastStr = "static_cast<NativeFunction>";
             $firstValue = $values[$i]{"function"};
             $secondValue = $values[$i]{"params"};
         } elsif ($values[$i]{"type"} eq "Property") {
-            $castStr = "static_cast<PropertySlot::GetValueFunc>";
+            $firstCastStr = "static_cast<PropertySlot::GetValueFunc>";
+            $secondCastStr = "static_cast<PutPropertySlot::PutValueFunc>";
             $firstValue = $values[$i]{"get"};
             $secondValue = $values[$i]{"put"};
         } elsif ($values[$i]{"type"} eq "Lexer") {
@@ -287,7 +289,7 @@ sub output() {
             $intrinsic = "RegExpTestIntrinsic" if ($key eq "test");
         }
 
-        print "   { \"$key\", $attrs[$i], $intrinsic, (intptr_t)" . $castStr . "($firstValue), (intptr_t)$secondValue },\n";
+        print "   { \"$key\", $attrs[$i], $intrinsic, (intptr_t)" . $firstCastStr . "($firstValue), (intptr_t)" . $secondCastStr . "($secondValue) },\n";
         $i++;
     }
     print "   { 0, 0, NoIntrinsic, 0, 0 }\n";

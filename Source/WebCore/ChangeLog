@@ -1,5 +1,110 @@
 2014-01-24  Oliver Hunt  <oliver@apple.com>
 
+        Put functions need to take a base object and a this value, and perform type checks on |this|
+        https://bugs.webkit.org/show_bug.cgi?id=127594
+
+        Reviewed by Geoffrey Garen.
+
+        Update bindings generator to emit setters with correct type, and perform
+        type checks on |this|, instead of the baseObject.
+
+        Test: js/dom/dom-as-prototype-assignment-exception.html
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateHeader):
+        (GenerateImplementation):
+        (GenerateHashTable):
+        * bindings/scripts/test/JS/JSTestActiveDOMObject.cpp:
+        * bindings/scripts/test/JS/JSTestCustomNamedGetter.cpp:
+        * bindings/scripts/test/JS/JSTestEventConstructor.cpp:
+        * bindings/scripts/test/JS/JSTestEventTarget.cpp:
+        * bindings/scripts/test/JS/JSTestException.cpp:
+        * bindings/scripts/test/JS/JSTestGenerateIsReachable.cpp:
+        * bindings/scripts/test/JS/JSTestInterface.cpp:
+        (WebCore::setJSTestInterfaceConstructorImplementsStaticAttr):
+        (WebCore::setJSTestInterfaceImplementsStr2):
+        (WebCore::setJSTestInterfaceImplementsStr3):
+        (WebCore::setJSTestInterfaceImplementsNode):
+        (WebCore::setJSTestInterfaceConstructorSupplementalStaticAttr):
+        (WebCore::setJSTestInterfaceSupplementalStr2):
+        (WebCore::setJSTestInterfaceSupplementalStr3):
+        (WebCore::setJSTestInterfaceSupplementalNode):
+        * bindings/scripts/test/JS/JSTestInterface.h:
+        * bindings/scripts/test/JS/JSTestMediaQueryListListener.cpp:
+        * bindings/scripts/test/JS/JSTestNamedConstructor.cpp:
+        * bindings/scripts/test/JS/JSTestNode.cpp:
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        (WebCore::setJSTestObjConstructorStaticStringAttr):
+        (WebCore::setJSTestObjTestSubObjEnabledBySettingConstructor):
+        (WebCore::setJSTestObjEnumAttr):
+        (WebCore::setJSTestObjByteAttr):
+        (WebCore::setJSTestObjOctetAttr):
+        (WebCore::setJSTestObjShortAttr):
+        (WebCore::setJSTestObjUnsignedShortAttr):
+        (WebCore::setJSTestObjLongAttr):
+        (WebCore::setJSTestObjLongLongAttr):
+        (WebCore::setJSTestObjUnsignedLongLongAttr):
+        (WebCore::setJSTestObjStringAttr):
+        (WebCore::setJSTestObjTestObjAttr):
+        (WebCore::setJSTestObjXMLObjAttr):
+        (WebCore::setJSTestObjCreate):
+        (WebCore::setJSTestObjReflectedStringAttr):
+        (WebCore::setJSTestObjReflectedIntegralAttr):
+        (WebCore::setJSTestObjReflectedUnsignedIntegralAttr):
+        (WebCore::setJSTestObjReflectedBooleanAttr):
+        (WebCore::setJSTestObjReflectedURLAttr):
+        (WebCore::setJSTestObjReflectedCustomIntegralAttr):
+        (WebCore::setJSTestObjReflectedCustomBooleanAttr):
+        (WebCore::setJSTestObjReflectedCustomURLAttr):
+        (WebCore::setJSTestObjTypedArrayAttr):
+        (WebCore::setJSTestObjAttrWithGetterException):
+        (WebCore::setJSTestObjAttrWithSetterException):
+        (WebCore::setJSTestObjStringAttrWithGetterException):
+        (WebCore::setJSTestObjStringAttrWithSetterException):
+        (WebCore::setJSTestObjCustomAttr):
+        (WebCore::setJSTestObjWithScriptStateAttribute):
+        (WebCore::setJSTestObjWithScriptExecutionContextAttribute):
+        (WebCore::setJSTestObjWithScriptStateAttributeRaises):
+        (WebCore::setJSTestObjWithScriptExecutionContextAttributeRaises):
+        (WebCore::setJSTestObjWithScriptExecutionContextAndScriptStateAttribute):
+        (WebCore::setJSTestObjWithScriptExecutionContextAndScriptStateAttributeRaises):
+        (WebCore::setJSTestObjWithScriptExecutionContextAndScriptStateWithSpacesAttribute):
+        (WebCore::setJSTestObjWithScriptArgumentsAndCallStackAttribute):
+        (WebCore::setJSTestObjConditionalAttr1):
+        (WebCore::setJSTestObjConditionalAttr2):
+        (WebCore::setJSTestObjConditionalAttr3):
+        (WebCore::setJSTestObjConditionalAttr4Constructor):
+        (WebCore::setJSTestObjConditionalAttr5Constructor):
+        (WebCore::setJSTestObjConditionalAttr6Constructor):
+        (WebCore::setJSTestObjAnyAttribute):
+        (WebCore::setJSTestObjMutablePoint):
+        (WebCore::setJSTestObjImmutablePoint):
+        (WebCore::setJSTestObjStrawberry):
+        (WebCore::setJSTestObjStrictFloat):
+        (WebCore::setJSTestObjId):
+        (WebCore::setJSTestObjReplaceableAttribute):
+        (WebCore::setJSTestObjNullableLongSettableAttribute):
+        (WebCore::setJSTestObjNullableStringValue):
+        (WebCore::setJSTestObjAttributeWithReservedEnumType):
+        * bindings/scripts/test/JS/JSTestObj.h:
+        * bindings/scripts/test/JS/JSTestOverloadedConstructors.cpp:
+        * bindings/scripts/test/JS/JSTestSerializedScriptValueInterface.cpp:
+        (WebCore::setJSTestSerializedScriptValueInterfaceValue):
+        (WebCore::setJSTestSerializedScriptValueInterfaceCachedValue):
+        * bindings/scripts/test/JS/JSTestSerializedScriptValueInterface.h:
+        * bindings/scripts/test/JS/JSTestTypedefs.cpp:
+        (WebCore::setJSTestTypedefsUnsignedLongLongAttr):
+        (WebCore::setJSTestTypedefsImmutableSerializedScriptValue):
+        (WebCore::setJSTestTypedefsAttrWithGetterException):
+        (WebCore::setJSTestTypedefsAttrWithSetterException):
+        (WebCore::setJSTestTypedefsStringAttrWithGetterException):
+        (WebCore::setJSTestTypedefsStringAttrWithSetterException):
+        * bindings/scripts/test/JS/JSTestTypedefs.h:
+        * bindings/scripts/test/JS/JSattribute.cpp:
+        * bindings/scripts/test/JS/JSreadonly.cpp:
+
+2014-01-24  Oliver Hunt  <oliver@apple.com>
+
         Generic JSObject::put should handle static properties in the classinfo hierarchy
         https://bugs.webkit.org/show_bug.cgi?id=127523
 

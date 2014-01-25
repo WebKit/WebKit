@@ -40,7 +40,7 @@ namespace JSC {
     public:
         enum Type { Uncachable, ExistingProperty, NewProperty, CustomProperty };
         enum Context { UnknownContext, PutById, PutByIdEval };
-        typedef void (*PutValueFunc)(ExecState*, EncodedJSValue base, EncodedJSValue value);
+        typedef void (*PutValueFunc)(ExecState*, JSObject* base, EncodedJSValue thisObject, EncodedJSValue value);
 
         PutPropertySlot(JSValue thisValue, bool isStrictMode = false, Context context = UnknownContext)
             : m_type(Uncachable)
