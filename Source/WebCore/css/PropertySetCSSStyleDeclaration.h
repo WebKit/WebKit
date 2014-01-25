@@ -27,8 +27,8 @@
 #define PropertySetCSSStyleDeclaration_h
 
 #include "CSSStyleDeclaration.h"
+#include <memory>
 #include <wtf/HashMap.h>
-#include <wtf/OwnPtr.h>
 #include <wtf/RefPtr.h>
 
 namespace WebCore {
@@ -78,7 +78,7 @@ protected:
     virtual void didMutate(MutationType) { }
 
     MutableStyleProperties* m_propertySet;
-    OwnPtr<HashMap<CSSValue*, RefPtr<CSSValue>>> m_cssomCSSValueClones;
+    std::unique_ptr<HashMap<CSSValue*, RefPtr<CSSValue>>> m_cssomCSSValueClones;
 };
 
 class StyleRuleCSSStyleDeclaration : public PropertySetCSSStyleDeclaration

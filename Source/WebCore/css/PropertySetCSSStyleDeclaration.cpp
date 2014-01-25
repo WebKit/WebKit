@@ -274,7 +274,7 @@ CSSValue* PropertySetCSSStyleDeclaration::cloneAndCacheForCSSOM(CSSValue* intern
     // The map is here to maintain the object identity of the CSSValues over multiple invocations.
     // FIXME: It is likely that the identity is not important for web compatibility and this code should be removed.
     if (!m_cssomCSSValueClones)
-        m_cssomCSSValueClones = adoptPtr(new HashMap<CSSValue*, RefPtr<CSSValue>>);
+        m_cssomCSSValueClones = std::make_unique<HashMap<CSSValue*, RefPtr<CSSValue>>>();
     
     RefPtr<CSSValue>& clonedValue = m_cssomCSSValueClones->add(internalValue, RefPtr<CSSValue>()).iterator->value;
     if (!clonedValue)
@@ -327,7 +327,7 @@ void StyleRuleCSSStyleDeclaration::willMutate()
 void StyleRuleCSSStyleDeclaration::didMutate(MutationType type)
 {
     if (type == PropertyChanged)
-        m_cssomCSSValueClones.clear();
+        m_cssomCSSValueClones = nullptr;
 
     // Style sheet mutation needs to be signaled even if the change failed. willMutate*/didMutate* must pair.
     if (m_parentRule && m_parentRule->parentStyleSheet())
@@ -351,7 +351,7 @@ void InlineCSSStyleDeclaration::didMutate(MutationType type)
     if (type == NoChanges)
         return;
 
-    m_cssomCSSValueClones.clear();
+    m_cssomCSSValueClones = nullptr;
 
     if (!m_parentElement)
         return;

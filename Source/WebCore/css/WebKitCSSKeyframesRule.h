@@ -28,6 +28,7 @@
 
 #include "CSSRule.h"
 #include "StyleRule.h"
+#include <memory>
 #include <wtf/Forward.h>
 #include <wtf/text/AtomicString.h>
 
@@ -92,7 +93,7 @@ private:
 
     RefPtr<StyleRuleKeyframes> m_keyframesRule;
     mutable Vector<RefPtr<WebKitCSSKeyframeRule>> m_childRuleCSSOMWrappers;
-    mutable OwnPtr<CSSRuleList> m_ruleListCSSOMWrapper;
+    mutable std::unique_ptr<CSSRuleList> m_ruleListCSSOMWrapper;
 };
 
 } // namespace WebCore

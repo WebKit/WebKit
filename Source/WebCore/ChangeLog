@@ -1,5 +1,24 @@
 2014-01-25  Zan Dobersek  <zdobersek@igalia.com>
 
+        Move PropertySetCSSStyleDeclaration, WebKitCSSKeyframesRule to std::unique_ptr
+        https://bugs.webkit.org/show_bug.cgi?id=127572
+
+        Reviewed by Andreas Kling.
+
+        Switch the PropertySetCSSStyleDeclaration and WebKitCSSKeyframesRule classes from using
+        OwnPtr and adoptPtr to using std::unique_ptr and std::make_unique.
+
+        * css/PropertySetCSSStyleDeclaration.cpp:
+        (WebCore::PropertySetCSSStyleDeclaration::cloneAndCacheForCSSOM):
+        (WebCore::StyleRuleCSSStyleDeclaration::didMutate):
+        (WebCore::InlineCSSStyleDeclaration::didMutate):
+        * css/PropertySetCSSStyleDeclaration.h:
+        * css/WebKitCSSKeyframesRule.cpp:
+        (WebCore::WebKitCSSKeyframesRule::cssRules):
+        * css/WebKitCSSKeyframesRule.h:
+
+2014-01-25  Zan Dobersek  <zdobersek@igalia.com>
+
         Move StyleProperties, StyleResolver to std::unique_ptr
         https://bugs.webkit.org/show_bug.cgi?id=127570
 

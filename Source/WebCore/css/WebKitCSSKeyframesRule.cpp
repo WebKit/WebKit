@@ -188,7 +188,7 @@ WebKitCSSKeyframeRule* WebKitCSSKeyframesRule::item(unsigned index) const
 CSSRuleList* WebKitCSSKeyframesRule::cssRules()
 {
     if (!m_ruleListCSSOMWrapper)
-        m_ruleListCSSOMWrapper = adoptPtr(new LiveCSSRuleList<WebKitCSSKeyframesRule>(this));
+        m_ruleListCSSOMWrapper = std::make_unique<LiveCSSRuleList<WebKitCSSKeyframesRule>>(this);
     return m_ruleListCSSOMWrapper.get();
 }
 
