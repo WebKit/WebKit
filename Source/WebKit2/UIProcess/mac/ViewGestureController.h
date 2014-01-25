@@ -69,6 +69,7 @@ private:
     WebCore::FloatPoint m_magnificationOrigin;
 
     WebCore::FloatRect m_lastSmartMagnificationUnscaledTargetRect;
+    bool m_lastSmartMagnificationUnscaledTargetRectIsValid;
 
     ViewGestureType m_activeGestureType;
 

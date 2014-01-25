@@ -49,6 +49,7 @@ namespace WebKit {
 
 ViewGestureController::ViewGestureController(WebPageProxy& webPageProxy)
     : m_webPageProxy(webPageProxy)
+    , m_lastSmartMagnificationUnscaledTargetRectIsValid(false)
     , m_activeGestureType(ViewGestureType::None)
     , m_visibleContentRectIsValid(false)
     , m_frameHandlesMagnificationGesture(false)
@@ -177,7 +178,7 @@ void ViewGestureController::didCollectGeometryForSmartMagnificationGesture(Float
     // Allow panning between elements via double-tap while magnified, unless the target rect is
     // similar to the last one, in which case we'll zoom all the way out.
     if (currentScaleFactor > 1
-        && !m_lastSmartMagnificationUnscaledTargetRect.isEmpty()
+        && m_lastSmartMagnificationUnscaledTargetRectIsValid
         && maximumRectangleComponentDelta(m_lastSmartMagnificationUnscaledTargetRect, unscaledTargetRect) < smartMagnificationPanScrollThreshold)
         targetMagnification = 1;
 
@@ -190,6 +191,7 @@ void ViewGestureController::didCollectGeometryForSmartMagnificationGesture(Float
     m_webPageProxy.drawingArea()->commitTransientZoom(targetMagnification, targetOrigin);
 
     m_lastSmartMagnificationUnscaledTargetRect = unscaledTargetRect;
+    m_lastSmartMagnificationUnscaledTargetRectIsValid = true;
 }
 
 void ViewGestureController::endActiveGesture()

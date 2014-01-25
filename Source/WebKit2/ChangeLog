@@ -1,3 +1,18 @@
+2014-01-24  Tim Horton  <timothy_horton@apple.com>
+
+        WebKit2 View Gestures (Smart Zoom): Can't double-tap zoom-out on the body
+        https://bugs.webkit.org/show_bug.cgi?id=127602
+
+        Reviewed by Anders Carlsson.
+
+        * UIProcess/mac/ViewGestureController.h:
+        * UIProcess/mac/ViewGestureController.mm:
+        (WebKit::ViewGestureController::ViewGestureController):
+        (WebKit::ViewGestureController::didCollectGeometryForSmartMagnificationGesture):
+        Use an explicit boolean instead of the emptiness of the renderRect() to determine
+        whether or not the user has already smart-zoomed. renderRect() can be 0x0
+        if our hit-test hits the body element.
+
 2014-01-24  Jinwoo Song  <jinwoo7.song@samsung.com>
 
         Fix EFL WebKit2 build.
