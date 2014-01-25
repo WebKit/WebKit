@@ -162,33 +162,12 @@ static JSCell* formatLocaleDate(ExecState* exec, DateInstance*, double timeInMil
     else if (format != LocaleDate && !exec->argument(0).isUndefined())
         timeStyle = styleFromArgString(arg0String, timeStyle);
 
-    CFLocaleRef locale = CFLocaleCopyCurrent();
-    CFDateFormatterRef formatter = CFDateFormatterCreate(0, locale, dateStyle, timeStyle);
-    CFRelease(locale);
+    CFAbsoluteTime absoluteTime = floor(timeInMilliseconds / msPerSecond) - kCFAbsoluteTimeIntervalSince1970;
 
-    if (useCustomFormat) {
-        CFStringRef customFormatCFString = CFStringCreateWithCharacters(0, customFormatString.characters(), customFormatString.length());
-        CFDateFormatterSetFormat(formatter, customFormatCFString);
-        CFRelease(customFormatCFString);
-    }
-
-    CFStringRef string = CFDateFormatterCreateStringWithAbsoluteTime(0, formatter, floor(timeInMilliseconds / msPerSecond) - kCFAbsoluteTimeIntervalSince1970);
-
-    CFRelease(formatter);
-
-    // We truncate the string returned from CFDateFormatter if it's absurdly long (> 200 characters).
-    // That's not great error handling, but it just won't happen so it doesn't matter.
-    UChar buffer[200];
-    const size_t bufferLength = WTF_ARRAY_LENGTH(buffer);
-    size_t length = CFStringGetLength(string);
-    ASSERT(length <= bufferLength);
-    if (length > bufferLength)
-        length = bufferLength;
-    CFStringGetCharacters(string, CFRangeMake(0, length), buffer);
-
-    CFRelease(string);
-
-    return jsNontrivialString(exec, String(buffer, length));
+    auto formatter = adoptCF(CFDateFormatterCreate(kCFAllocatorDefault, adoptCF(CFLocaleCopyCurrent()).get(), dateStyle, timeStyle));
+    if (useCustomFormat)
+        CFDateFormatterSetFormat(formatter.get(), customFormatString.createCFString().get());
+    return jsNontrivialString(exec, adoptCF(CFDateFormatterCreateStringWithAbsoluteTime(kCFAllocatorDefault, formatter.get(), absoluteTime)).get());
 }
 
 #elif USE(ICU_UNICODE) && !UCONFIG_NO_FORMATTING

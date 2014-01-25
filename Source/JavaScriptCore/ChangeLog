@@ -1,3 +1,14 @@
+2014-01-25  Darin Adler  <darin@apple.com>
+
+        [Mac] Rewrite locale-specific date formatting code to remove strange string creation
+        https://bugs.webkit.org/show_bug.cgi?id=127624
+
+        Reviewed by Anders Carlsson.
+
+        * runtime/DatePrototype.cpp:
+        (JSC::formatLocaleDate): Use some smart pointers and conversion operators we already
+        have to do the formatting in a more straightforward way.
+
 2014-01-25  Anders Carlsson  <andersca@apple.com>
 
         Remove atomicIncrement/atomicDecrement
