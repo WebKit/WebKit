@@ -20,6 +20,7 @@
 #ifndef MediaQueryMatcher_h
 #define MediaQueryMatcher_h
 
+#include <memory>
 #include <wtf/Forward.h>
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
@@ -69,11 +70,11 @@ private:
     };
 
     MediaQueryMatcher(Document*);
-    PassOwnPtr<MediaQueryEvaluator> prepareEvaluator() const;
+    std::unique_ptr<MediaQueryEvaluator> prepareEvaluator() const;
     String mediaType() const;
 
     Document* m_document;
-    Vector<OwnPtr<Listener>> m_listeners;
+    Vector<std::unique_ptr<Listener>> m_listeners;
 
     // This value is incremented at style selector changes.
     // It is used to avoid evaluating queries more then once and to make sure

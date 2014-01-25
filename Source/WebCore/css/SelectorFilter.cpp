@@ -77,7 +77,7 @@ void SelectorFilter::popParentStackFrame()
     m_parentStack.removeLast();
     if (m_parentStack.isEmpty()) {
         ASSERT(m_ancestorIdentifierFilter->likelyEmpty());
-        m_ancestorIdentifierFilter.clear();
+        m_ancestorIdentifierFilter = nullptr;
     }
 }
 
@@ -86,7 +86,7 @@ void SelectorFilter::setupParentStack(Element* parent)
     ASSERT(m_parentStack.isEmpty() == !m_ancestorIdentifierFilter);
     // Kill whatever we stored before.
     m_parentStack.shrink(0);
-    m_ancestorIdentifierFilter = adoptPtr(new BloomFilter<bloomFilterKeyBits>);
+    m_ancestorIdentifierFilter = std::make_unique<BloomFilter<bloomFilterKeyBits>>();
     // Fast version if parent is a root element:
     if (!parent->parentNode() && !parent->isShadowRoot()) {
         pushParentStackFrame(parent);

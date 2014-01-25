@@ -75,7 +75,7 @@ String MediaQueryMatcher::mediaType() const
     return m_document->frame()->view()->mediaType();
 }
 
-PassOwnPtr<MediaQueryEvaluator> MediaQueryMatcher::prepareEvaluator() const
+std::unique_ptr<MediaQueryEvaluator> MediaQueryMatcher::prepareEvaluator() const
 {
     if (!m_document || !m_document->frame())
         return nullptr;
@@ -86,7 +86,7 @@ PassOwnPtr<MediaQueryEvaluator> MediaQueryMatcher::prepareEvaluator() const
 
     RefPtr<RenderStyle> rootStyle = m_document->ensureStyleResolver().styleForElement(documentElement, 0 /*defaultParent*/, DisallowStyleSharing, MatchOnlyUserAgentRules);
 
-    return adoptPtr(new MediaQueryEvaluator(mediaType(), m_document->frame(), rootStyle.get()));
+    return std::make_unique<MediaQueryEvaluator>(mediaType(), m_document->frame(), rootStyle.get());
 }
 
 bool MediaQueryMatcher::evaluate(const MediaQuerySet* media)
@@ -94,7 +94,7 @@ bool MediaQueryMatcher::evaluate(const MediaQuerySet* media)
     if (!media)
         return false;
 
-    OwnPtr<MediaQueryEvaluator> evaluator(prepareEvaluator());
+    std::unique_ptr<MediaQueryEvaluator> evaluator = prepareEvaluator();
     return evaluator && evaluator->eval(media);
 }
 
@@ -121,7 +121,7 @@ void MediaQueryMatcher::addListener(PassRefPtr<MediaQueryListListener> listener,
             return;
     }
 
-    m_listeners.append(adoptPtr(new Listener(listener, query)));
+    m_listeners.append(std::make_unique<Listener>(listener, query));
 }
 
 void MediaQueryMatcher::removeListener(MediaQueryListListener* listener, MediaQueryList* query)
@@ -142,7 +142,7 @@ void MediaQueryMatcher::styleResolverChanged()
     ASSERT(m_document);
 
     ++m_evaluationRound;
-    OwnPtr<MediaQueryEvaluator> evaluator = prepareEvaluator();
+    std::unique_ptr<MediaQueryEvaluator> evaluator = prepareEvaluator();
     if (!evaluator)
         return;
 

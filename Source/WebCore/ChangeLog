@@ -1,5 +1,26 @@
 2014-01-25  Zan Dobersek  <zdobersek@igalia.com>
 
+        Move MediaQueryMatcher, SelectorFilter to std::unique_ptr
+        https://bugs.webkit.org/show_bug.cgi?id=127574
+
+        Reviewed by Andreas Kling.
+
+        Replace the use of OwnPtr and adoptPtr with std::unique_ptr and std::make_unique
+        in the MediaQueryMatcher and SelectorFilter classes.
+
+        * css/MediaQueryMatcher.cpp:
+        (WebCore::MediaQueryMatcher::prepareEvaluator):
+        (WebCore::MediaQueryMatcher::evaluate):
+        (WebCore::MediaQueryMatcher::addListener):
+        (WebCore::MediaQueryMatcher::styleResolverChanged):
+        * css/MediaQueryMatcher.h:
+        * css/SelectorFilter.cpp:
+        (WebCore::SelectorFilter::popParentStackFrame):
+        (WebCore::SelectorFilter::setupParentStack):
+        * css/SelectorFilter.h:
+
+2014-01-25  Zan Dobersek  <zdobersek@igalia.com>
+
         Move PropertySetCSSStyleDeclaration, WebKitCSSKeyframesRule to std::unique_ptr
         https://bugs.webkit.org/show_bug.cgi?id=127572
 
