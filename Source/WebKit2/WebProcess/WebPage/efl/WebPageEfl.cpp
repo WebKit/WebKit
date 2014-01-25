@@ -33,6 +33,7 @@
 #include "NotImplemented.h"
 #include "WebEvent.h"
 #include "WindowsKeyboardCodes.h"
+#include <WebCore/BackForwardController.h>
 #include <WebCore/EflKeyboardUtilities.h>
 #include <WebCore/FocusController.h>
 #include <WebCore/Frame.h>
@@ -88,9 +89,9 @@ bool WebPage::performDefaultBehaviorForKeyEvent(const WebKeyboardEvent& keyboard
     switch (keyboardEvent.windowsVirtualKeyCode()) {
     case VK_BACK:
         if (keyboardEvent.shiftKey())
-            m_page->goForward();
+            m_page->backForward().goForward();
         else
-            m_page->goBack();
+            m_page->backForward().goBack();
         break;
     case VK_SPACE:
         scroll(m_page.get(), keyboardEvent.shiftKey() ? ScrollUp : ScrollDown, ScrollByPage);

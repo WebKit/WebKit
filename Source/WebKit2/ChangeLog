@@ -1,3 +1,10 @@
+2014-01-24  Jinwoo Song  <jinwoo7.song@samsung.com>
+
+        Fix EFL WebKit2 build.
+
+        * WebProcess/WebPage/efl/WebPageEfl.cpp:
+        (WebKit::WebPage::performDefaultBehaviorForKeyEvent):
+
 2014-01-24  Anders Carlsson  <andersca@apple.com>
 
         Fix GTK+ WebKit2 build.
