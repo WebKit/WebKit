@@ -4197,7 +4197,7 @@ gboolean webkit_web_view_can_go_back(WebKitWebView* webView)
 {
     g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), FALSE);
 
-    if (!core(webView) || !core(webView)->backForward().client()->canGoBackOrForward(-1))
+    if (!core(webView) || !core(webView)->backForward().canGoBackOrForward(-1))
         return FALSE;
 
     return TRUE;
