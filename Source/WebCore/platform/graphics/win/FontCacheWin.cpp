@@ -32,7 +32,6 @@
 #include "Font.h"
 #include "HWndDC.h"
 #include "SimpleFontData.h"
-#include "UnicodeRange.h"
 #include <mlang.h>
 #include <windows.h>
 #include <wtf/StdLibExtras.h>
@@ -201,7 +200,7 @@ PassRefPtr<SimpleFontData> FontCache::systemFallbackForCharacters(const FontDesc
         DWORD codePages = 0;
         langFontLink->GetCharCodePages(character, &codePages);
 
-        if (codePages && findCharUnicodeRange(character) == cRangeSetCJK) {
+        if (codePages && u_getIntPropertyValue(character, UCHAR_UNIFIED_IDEOGRAPH)) {
             // The CJK character may belong to multiple code pages. We want to
             // do font linking against a single one of them, preferring the default
             // code page for the user's locale.

@@ -5968,8 +5968,6 @@ platform_sources += \
 	Source/WebCore/platform/text/TextStream.cpp \
 	Source/WebCore/platform/text/TextStream.h \
 	Source/WebCore/platform/text/UnicodeBidi.h \
-	Source/WebCore/platform/text/UnicodeRange.cpp \
-	Source/WebCore/platform/text/UnicodeRange.h \
 	Source/WebCore/platform/text/WritingMode.h \
 	Source/WebCore/platform/Clock.cpp \
 	Source/WebCore/platform/Clock.h \

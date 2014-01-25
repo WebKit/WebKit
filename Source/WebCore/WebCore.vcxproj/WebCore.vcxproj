@@ -8597,7 +8597,6 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Production|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Production|x64'">true</ExcludedFromBuild>
     </ClCompile>
-    <ClCompile Include="..\platform\text\UnicodeRange.cpp" />
     <ClCompile Include="..\platform\graphics\WidthIterator.cpp" />
     <ClCompile Include="..\platform\text\cf\HyphenationCF.cpp" />
     <ClCompile Include="..\platform\text\win\TextBreakIteratorInternalICUWin.cpp" />
@@ -19554,7 +19553,6 @@
     <ClInclude Include="..\platform\text\TextEncodingRegistry.h" />
     <ClInclude Include="..\platform\text\TextStream.h" />
     <ClInclude Include="..\platform\text\UnicodeBidi.h" />
-    <ClInclude Include="..\platform\text\UnicodeRange.h" />
     <ClInclude Include="..\platform\graphics\WidthCache.h" />
     <ClInclude Include="..\platform\graphics\WidthIterator.h" />
     <ClInclude Include="..\platform\text\WritingMode.h" />

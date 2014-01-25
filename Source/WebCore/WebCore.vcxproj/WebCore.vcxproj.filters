@@ -2007,9 +2007,6 @@
     <ClCompile Include="..\platform\text\TextStream.cpp">
       <Filter>platform\text</Filter>
     </ClCompile>
-    <ClCompile Include="..\platform\text\UnicodeRange.cpp">
-      <Filter>platform\text</Filter>
-    </ClCompile>
     <ClCompile Include="..\platform\graphics\WidthIterator.cpp">
       <Filter>platform\text</Filter>
     </ClCompile>
@@ -8829,9 +8826,6 @@
       <Filter>platform\text</Filter>
     </ClInclude>
     <ClInclude Include="..\platform\text\UnicodeBidi.h">
-      <Filter>platform\text</Filter>
-    </ClInclude>
-    <ClInclude Include="..\platform\text\UnicodeRange.h">
       <Filter>platform\text</Filter>
     </ClInclude>
     <ClInclude Include="..\platform\graphics\WidthCache.h">

@@ -25,7 +25,6 @@
 #include "FontCache.h"
 #include "FontData.h"
 #include "SimpleFontData.h"
-#include "UnicodeRange.h"
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/StringHash.h>
 #include <wtf/text/WTFString.h>

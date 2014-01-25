@@ -4514,8 +4514,6 @@
 		B2C3DA490D006C1D00EF6F26 /* TextEncodingRegistry.h in Headers */ = {isa = PBXBuildFile; fileRef = B2C3DA190D006C1D00EF6F26 /* TextEncodingRegistry.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		B2C3DA4A0D006C1D00EF6F26 /* TextStream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2C3DA1A0D006C1D00EF6F26 /* TextStream.cpp */; };
 		B2C3DA4B0D006C1D00EF6F26 /* TextStream.h in Headers */ = {isa = PBXBuildFile; fileRef = B2C3DA1B0D006C1D00EF6F26 /* TextStream.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		B2C3DA4C0D006C1D00EF6F26 /* UnicodeRange.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2C3DA1C0D006C1D00EF6F26 /* UnicodeRange.cpp */; };
-		B2C3DA4D0D006C1D00EF6F26 /* UnicodeRange.h in Headers */ = {isa = PBXBuildFile; fileRef = B2C3DA1D0D006C1D00EF6F26 /* UnicodeRange.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		B2C3DA600D006CD600EF6F26 /* Font.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2C3DA4F0D006CD600EF6F26 /* Font.cpp */; };
 		B2C3DA610D006CD600EF6F26 /* Font.h in Headers */ = {isa = PBXBuildFile; fileRef = B2C3DA500D006CD600EF6F26 /* Font.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		B2C3DA620D006CD600EF6F26 /* FontCache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2C3DA510D006CD600EF6F26 /* FontCache.cpp */; };
@@ -11681,8 +11679,6 @@
 		B2C3DA190D006C1D00EF6F26 /* TextEncodingRegistry.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = TextEncodingRegistry.h; sourceTree = "<group>"; };
 		B2C3DA1A0D006C1D00EF6F26 /* TextStream.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = TextStream.cpp; sourceTree = "<group>"; };
 		B2C3DA1B0D006C1D00EF6F26 /* TextStream.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = TextStream.h; sourceTree = "<group>"; };
-		B2C3DA1C0D006C1D00EF6F26 /* UnicodeRange.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = UnicodeRange.cpp; sourceTree = "<group>"; };
-		B2C3DA1D0D006C1D00EF6F26 /* UnicodeRange.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = UnicodeRange.h; sourceTree = "<group>"; };
 		B2C3DA4F0D006CD600EF6F26 /* Font.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = Font.cpp; sourceTree = "<group>"; };
 		B2C3DA500D006CD600EF6F26 /* Font.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = Font.h; sourceTree = "<group>"; };
 		B2C3DA510D006CD600EF6F26 /* FontCache.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = FontCache.cpp; sourceTree = "<group>"; };
@@ -19990,8 +19986,6 @@
 				B2C3DA1A0D006C1D00EF6F26 /* TextStream.cpp */,
 				B2C3DA1B0D006C1D00EF6F26 /* TextStream.h */,
 				A863E2001343412000274926 /* UnicodeBidi.h */,
-				B2C3DA1C0D006C1D00EF6F26 /* UnicodeRange.cpp */,
-				B2C3DA1D0D006C1D00EF6F26 /* UnicodeRange.h */,
 				14476AA715DC4BB100305DB2 /* WritingMode.h */,
 			);
 			path = text;
@@ -25705,7 +25699,6 @@
 				AA4739D21757AFEC00E76767 /* UIRequestEvent.h in Headers */,
 				9B2D8A7914997CCF00ECEF3E /* UndoStep.h in Headers */,
 				A863E2011343412000274926 /* UnicodeBidi.h in Headers */,
-				B2C3DA4D0D006C1D00EF6F26 /* UnicodeRange.h in Headers */,
 				E4AFCFA50DAF29A300F5F55C /* UnitBezier.h in Headers */,
 				D086FE9809D53AAB005BC74D /* UnlinkCommand.h in Headers */,
 				F55B3DDE1251F12D003EF269 /* URLInputType.h in Headers */,
@@ -28920,7 +28913,6 @@
 				85031B4D0A44EFC700F992E0 /* UIEvent.cpp in Sources */,
 				93354A3C0B24F8C9003F6DEA /* UIEventWithKeyState.cpp in Sources */,
 				AA4739D11757AFEC00E76767 /* UIRequestEvent.cpp in Sources */,
-				B2C3DA4C0D006C1D00EF6F26 /* UnicodeRange.cpp in Sources */,
 				D086FE9909D53AAB005BC74D /* UnlinkCommand.cpp in Sources */,
 				F55B3DDD1251F12D003EF269 /* URLInputType.cpp in Sources */,
 				A769E96A16689D0C005D4529 /* UserActionElementSet.cpp in Sources */,

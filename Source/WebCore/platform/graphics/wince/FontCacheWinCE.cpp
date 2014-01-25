@@ -33,9 +33,7 @@
 #include "Font.h"
 #include "FontData.h"
 #include "SimpleFontData.h"
-#include "UnicodeRange.h"
-#include "wtf/OwnPtr.h"
-
+#include <wtf/OwnPtr.h>
 #include <windows.h>
 #include <mlang.h>
 
@@ -210,7 +208,6 @@ PassRefPtr<SimpleFontData> FontCache::systemFallbackForCharacters(const FontDesc
 
     UChar character = characters[0];
     const FontPlatformData& origFont = originalFontData->platformData();
-    unsigned unicodeRange = findCharUnicodeRange(character);
 
     if (IMLangFontLinkType* langFontLink = getFontLinkInterface()) {
         HGDIOBJ oldFont = GetCurrentObject(g_screenDC, OBJ_FONT);
@@ -219,7 +216,7 @@ PassRefPtr<SimpleFontData> FontCache::systemFallbackForCharacters(const FontDesc
         UINT codePage = 0;
         // Try MLang font linking first.
         langFontLink->GetCharCodePages(character, &codePages);
-        if (codePages && unicodeRange == cRangeSetCJK) {
+        if (codePages && u_getIntPropertyValue(character, UCHAR_UNIFIED_IDEOGRAPH)) {
             // The CJK character may belong to multiple code pages. We want to
             // do font linking against a single one of them, preferring the default
             // code page for the user's locale.
@@ -266,7 +263,7 @@ PassRefPtr<SimpleFontData> FontCache::systemFallbackForCharacters(const FontDesc
     if (!familyName.isEmpty()) {
         // FIXME: temporary workaround for Thai font problem
         FontDescription fontDescription(description);
-        if (unicodeRange == cRangeThai && fontDescription.weight() > FontWeightNormal)
+        if (ublock_getCode(c) == UBLOCK_THAI && fontDescription.weight() > FontWeightNormal)
             fontDescription.setWeight(FontWeightNormal);
 
         FontPlatformData* result = getCachedFontPlatformData(fontDescription, familyName);

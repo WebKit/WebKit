@@ -1,3 +1,33 @@
+2014-01-25  Darin Adler  <darin@apple.com>
+
+        Get rid of UnicodeRange.h/cpp, using ICU instead
+        https://bugs.webkit.org/show_bug.cgi?id=127622
+
+        Reviewed by Anders Carlsson.
+
+        * CMakeLists.txt: Remove UnicodeRange.h/cpp.
+        * GNUmakefile.list.am: Ditto.
+        * WebCore.vcxproj/WebCore.vcxproj: Ditto.
+        * WebCore.vcxproj/WebCore.vcxproj.filters: Ditto.
+        * WebCore.xcodeproj/project.pbxproj: Ditto.
+
+        * platform/graphics/win/FontCacheWin.cpp:
+        (WebCore::FontCache::systemFallbackForCharacters): To check if a character has
+        multiple code pages, use UCHAR_UNIFIED_IDEOGRAPH instead of cRangeSetCJK.
+        * platform/graphics/wince/FontCacheWinCE.cpp:
+        (WebCore::FontCache::systemFallbackForCharacters): Ditto. Also, to check if a
+        character is in the Thai block, use UBLOCK_THAI.
+
+        * platform/graphics/wince/FontPlatformData.cpp: Removed include of UnicodeRange.h.
+
+        * platform/text/UnicodeRange.cpp: Removed.
+        * platform/text/UnicodeRange.h: Removed.
+
+        * rendering/svg/SVGTextLayoutEngineBaseline.cpp:
+        (WebCore::SVGTextLayoutEngineBaseline::calculateGlyphOrientationAngle): To figure
+        out if a character is full width, use UCHAR_EAST_ASIAN_WIDTH, instead of hard-coding
+        "not Latin or Arabic" as the rule.
+
 2014-01-25  Tim Horton  <timothy_horton@apple.com>
 
         Remove an unnecessary platform #if in BitmapImage(CG)::checkForSolidColor()
