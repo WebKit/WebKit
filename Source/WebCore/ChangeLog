@@ -1,3 +1,9 @@
+2014-01-24  Dan Bernstein  <mitz@apple.com>
+
+        Try to fix some 32-bit builds.
+
+        * WebCore.exp.in:
+
 2014-01-24  Jinwoo Song  <jinwoo7.song@samsung.com>
 
         [EFL] Replace usage of DEFINE_STATIC_LOCAL with NeverDestroyed in WebCore/platform/efl
