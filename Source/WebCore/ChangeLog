@@ -1,5 +1,11 @@
 2014-01-24  Dan Bernstein  <mitz@apple.com>
 
+        Reverted r162760. It broke more things.
+
+        * WebCore.exp.in:
+
+2014-01-24  Dan Bernstein  <mitz@apple.com>
+
         Try to fix some 32-bit builds.
 
         * WebCore.exp.in:
