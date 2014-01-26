@@ -23,12 +23,12 @@ layer at (0,0) size 800x420
                 RenderBlock {P} at (0,0) size 140x23
                   RenderText {#text} at (0,8) size 27x11
                     text run at (0,8) width 27: "bang "
-                  RenderBlock {INPUT} at (31,3) size 17x16 [color=#000000]
+                  RenderBlock {INPUT} at (29,3) size 16x16 [color=#000000]
                   RenderText {#text} at (0,0) size 0x0
                 RenderBlock {P} at (0,23) size 140x23
                   RenderText {#text} at (0,8) size 41x11
                     text run at (0,8) width 41: "whimper "
-                  RenderBlock {INPUT} at (45,3) size 17x16 [color=#000000]
+                  RenderBlock {INPUT} at (43,3) size 16x16 [color=#000000]
                   RenderText {#text} at (0,0) size 0x0
               RenderBlock (anonymous) at (10,66) size 140x0
                 RenderInline {FORM} at (0,0) size 0x0

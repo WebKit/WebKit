@@ -39,7 +39,7 @@ layer at (0,0) size 785x2194
           text run at (80,97) width 29: "test. "
           text run at (109,97) width 464: "Both the content background and the padding should be aqua (light blue)."
       RenderBlock {P} at (0,643) size 769x453 [bgcolor=#00FFFF]
-        RenderText {#text} at (192,192) size 380x69
+        RenderText {#text} at (192,192) size 380x68
           text run at (192,192) width 380: "This element should have an overall padding of 25%, which"
           text run at (192,209) width 377: "is calculated with respect to the width of the parent element."
           text run at (192,226) width 354: "Both the content background and the padding should be"
@@ -80,12 +80,12 @@ layer at (0,0) size 785x2194
                   text run at (80,97) width 45: "to test. "
                   text run at (125,97) width 464: "Both the content background and the padding should be aqua (light blue)."
               RenderBlock {P} at (4,493) size 747x442 [bgcolor=#00FFFF]
-                RenderText {#text} at (186,186) size 363x69
-                  text run at (186,186) width 337: "This element should have an overall padding of 25%,"
-                  text run at (186,203) width 363: "which is calculated with respect to the width of the parent"
-                  text run at (186,220) width 58: "element. "
-                  text run at (243,220) width 289: "Both the content background and the padding"
-                  text run at (186,237) width 173: "should be aqua (light blue)."
+                RenderText {#text} at (186,187) size 363x68
+                  text run at (186,187) width 337: "This element should have an overall padding of 25%,"
+                  text run at (186,204) width 363: "which is calculated with respect to the width of the parent"
+                  text run at (186,221) width 58: "element. "
+                  text run at (243,221) width 289: "Both the content background and the padding"
+                  text run at (186,238) width 173: "should be aqua (light blue)."
               RenderBlock {P} at (4,950) size 747x35 [bgcolor=#00FFFF]
                 RenderText {#text} at (0,0) size 724x34
                   text run at (0,0) width 541: "This element should have no padding, since negative padding values are not allowed. "

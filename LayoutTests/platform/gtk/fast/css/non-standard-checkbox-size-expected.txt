@@ -5,8 +5,8 @@ layer at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderText {#text} at (0,37) size 289x17
         text run at (0,37) width 289: "The following inputs should not be stretched. "
-      RenderBlock {INPUT} at (293,3) size 17x50
-      RenderText {#text} at (314,37) size 4x17
-        text run at (314,37) width 4: " "
-      RenderBlock {INPUT} at (322,3) size 17x50
+      RenderBlock {INPUT} at (291,3) size 16x50
+      RenderText {#text} at (309,37) size 4x17
+        text run at (309,37) width 4: " "
+      RenderBlock {INPUT} at (315,3) size 16x50
       RenderText {#text} at (0,0) size 0x0

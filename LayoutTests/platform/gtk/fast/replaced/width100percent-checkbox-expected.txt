@@ -9,12 +9,12 @@ layer at (0,0) size 800x600
       RenderTable {TABLE} at (0,17) size 784x26
         RenderTableSection {TBODY} at (0,0) size 784x26
           RenderTableRow {TR} at (0,1) size 784x24
-            RenderTableCell {TD} at (1,1) size 11x24 [r=0 c=0 rs=1 cs=1]
-              RenderBlock {INPUT} at (5,4) size 10x16
-            RenderTableCell {TD} at (13,1) size 11x24 [r=0 c=1 rs=1 cs=1]
-              RenderBlock {INPUT} at (5,4) size 10x16
-            RenderTableCell {TD} at (25,1) size 11x24 [r=0 c=2 rs=1 cs=1]
-              RenderBlock {INPUT} at (5,4) size 10x16
-            RenderTableCell {TD} at (37,3) size 746x19 [r=0 c=3 rs=1 cs=1]
+            RenderTableCell {TD} at (1,1) size 6x24 [r=0 c=0 rs=1 cs=1]
+              RenderBlock {INPUT} at (3,4) size 4x16
+            RenderTableCell {TD} at (8,1) size 6x24 [r=0 c=1 rs=1 cs=1]
+              RenderBlock {INPUT} at (3,4) size 4x16
+            RenderTableCell {TD} at (15,1) size 6x24 [r=0 c=2 rs=1 cs=1]
+              RenderBlock {INPUT} at (3,4) size 4x16
+            RenderTableCell {TD} at (22,3) size 761x19 [r=0 c=3 rs=1 cs=1]
               RenderText {#text} at (1,1) size 4x17
                 text run at (1,1) width 4: " "

@@ -46,10 +46,10 @@ layer at (0,0) size 785x1015
         RenderTextControl {INPUT} at (55,5) size 106x106 [bgcolor=#800080] [border: (2px inset #000000)]
         RenderText {#text} at (0,0) size 0x0
 layer at (216,566) size 100x17
-  RenderBlock {DIV} at (3,44) size 100x18
+  RenderBlock {DIV} at (3,45) size 100x17
 layer at (316,693) size 100x17
-  RenderBlock {DIV} at (3,44) size 100x18
+  RenderBlock {DIV} at (3,45) size 100x17
 layer at (66,820) size 100x17
-  RenderBlock {DIV} at (3,44) size 100x18
+  RenderBlock {DIV} at (3,45) size 100x17
 layer at (66,947) size 100x17
-  RenderBlock {DIV} at (3,44) size 100x18
+  RenderBlock {DIV} at (3,45) size 100x17

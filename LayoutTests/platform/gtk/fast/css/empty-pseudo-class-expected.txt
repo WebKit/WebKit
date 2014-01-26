@@ -75,17 +75,17 @@ layer at (0,0) size 785x1607
               RenderText {#text} at (12,12) size 4x17
                 text run at (12,12) width 4: "."
           RenderBlock {PRE} at (16,70) size 584x103 [bgcolor=#FFFFFF]
-            RenderText {#text} at (6,6) size 225x91
-              text run at (6,6) width 65: ":empty {"
-              text run at (70,6) width 1: " "
-              text run at (6,21) width 9: "}"
-              text run at (14,21) width 1: " "
-              text run at (6,36) width 1: " "
-              text run at (6,51) width 49: "<div> "
-              text run at (54,51) width 1: " "
-              text run at (6,66) width 225: "   How about regular text..."
-              text run at (230,66) width 1: " "
-              text run at (6,81) width 49: "</div>"
+            RenderText {#text} at (6,7) size 225x90
+              text run at (6,7) width 65: ":empty {"
+              text run at (70,7) width 1: " "
+              text run at (6,22) width 9: "}"
+              text run at (14,22) width 1: " "
+              text run at (6,37) width 1: " "
+              text run at (6,52) width 49: "<div> "
+              text run at (54,52) width 1: " "
+              text run at (6,67) width 225: "   How about regular text..."
+              text run at (230,67) width 1: " "
+              text run at (6,82) width 49: "</div>"
           RenderBlock {P} at (16,189) size 584x17
             RenderText {#text} at (0,0) size 533x17
               text run at (0,0) width 533: "The CSS selector should not match the div element, because it is not empty"

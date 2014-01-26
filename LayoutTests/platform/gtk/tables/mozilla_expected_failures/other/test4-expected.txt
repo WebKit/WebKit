@@ -141,7 +141,7 @@ layer at (0,0) size 785x2355
           text run at (0,17) width 4: " "
       RenderTable {TABLE} at (0,576) size 252x167 [border: (1px none #808080)]
         RenderBlock {CAPTION} at (0,115) size 252x51
-          RenderText {#text} at (11,0) size 240x51
+          RenderText {#text} at (11,0) size 239x51
             text run at (11,0) width 230: "Table 4 has this bottom caption. The"
             text run at (6,17) width 240: "table has specified column widths and"
             text run at (66,34) width 120: "collapsing borders."

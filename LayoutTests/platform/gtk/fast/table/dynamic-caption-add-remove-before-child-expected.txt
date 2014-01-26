@@ -5,7 +5,7 @@ layer at (0,0) size 800x84
     RenderBody {body} at (8,8) size 784x68
       RenderTable {table} at (0,0) size 46x68
         RenderBlock {caption} at (0,0) size 46x68
-          RenderText {#text} at (1,0) size 46x68
+          RenderText {#text} at (1,0) size 47x68
             text run at (1,0) width 44: "PASS:"
             text run at (0,17) width 46: "Text in"
             text run at (0,34) width 46: "caption"

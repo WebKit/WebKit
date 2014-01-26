@@ -4,9 +4,9 @@ layer at (0,0) size 800x54
   RenderBlock {HTML} at (0,0) size 800x54
     RenderBody {BODY} at (8,16) size 784x22
       RenderBlock {P} at (0,0) size 784x22
-        RenderBlock {INPUT} at (4,3) size 17x16 [bgcolor=#00FF00]
-        RenderText {#text} at (25,3) size 4x17
-          text run at (25,3) width 4: " "
+        RenderBlock {INPUT} at (2,3) size 16x16 [bgcolor=#00FF00]
+        RenderText {#text} at (20,3) size 4x17
+          text run at (20,3) width 4: " "
         RenderInline {SPAN} at (0,0) size 388x17 [bgcolor=#00FF00]
-          RenderText {#text} at (29,3) size 388x17
-            text run at (29,3) width 388: "Everything in this paragraph should have a green background"
+          RenderText {#text} at (24,3) size 388x17
+            text run at (24,3) width 388: "Everything in this paragraph should have a green background"

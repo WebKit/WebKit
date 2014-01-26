@@ -1,3 +1,63 @@
+2014-01-26  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed GTK gardening. Rebaselining after r162553, r162742, r162791 and possibly other revisions.
+
+        * platform/gtk/css1/box_properties/padding-expected.txt:
+        * platform/gtk/css1/box_properties/padding_top-expected.txt:
+        * platform/gtk/css1/formatting_model/vertical_formatting-expected.txt:
+        * platform/gtk/css2.1/t080301-c411-vt-mrgn-00-b-expected.txt:
+        * platform/gtk/css2.1/t0804-c5510-padn-00-b-ag-expected.txt:
+        * platform/gtk/css2.1/t0905-c414-flt-wrap-00-e-expected.txt:
+        * platform/gtk/css3/selectors3/html/css3-modsel-25-expected.txt:
+        * platform/gtk/css3/selectors3/html/css3-modsel-70-expected.txt:
+        * platform/gtk/css3/selectors3/xhtml/css3-modsel-25-expected.txt:
+        * platform/gtk/css3/selectors3/xhtml/css3-modsel-70-expected.txt:
+        * platform/gtk/css3/selectors3/xml/css3-modsel-25-expected.txt:
+        * platform/gtk/css3/selectors3/xml/css3-modsel-70-expected.txt:
+        * platform/gtk/fast/block/basic/011-expected.txt:
+        * platform/gtk/fast/block/float/032-expected.txt:
+        * platform/gtk/fast/block/margin-collapse/103-expected.txt:
+        * platform/gtk/fast/css/empty-pseudo-class-expected.txt:
+        * platform/gtk/fast/css/fieldset-display-row-expected.txt:
+        * platform/gtk/fast/css/first-child-pseudo-class-expected.txt:
+        * platform/gtk/fast/css/input-search-padding-expected.txt:
+        * platform/gtk/fast/css/last-child-pseudo-class-expected.txt:
+        * platform/gtk/fast/css/non-standard-checkbox-size-expected.txt:
+        * platform/gtk/fast/css/only-child-pseudo-class-expected.txt:
+        * platform/gtk/fast/forms/001-expected.txt:
+        * platform/gtk/fast/forms/basic-inputs-expected.txt:
+        * platform/gtk/fast/forms/box-shadow-override-expected.txt:
+        * platform/gtk/fast/forms/file/file-input-disabled-expected.txt:
+        * platform/gtk/fast/forms/form-element-geometry-expected.txt:
+        * platform/gtk/fast/forms/formmove-expected.txt:
+        * platform/gtk/fast/forms/formmove2-expected.txt:
+        * platform/gtk/fast/forms/indeterminate-expected.txt:
+        * platform/gtk/fast/forms/input-appearance-height-expected.txt:
+        * platform/gtk/fast/forms/input-text-word-wrap-expected.txt:
+        * platform/gtk/fast/forms/input-value-expected.txt:
+        * platform/gtk/fast/forms/large-toggle-elements-expected.txt:
+        * platform/gtk/fast/inline/positionedLifetime-expected.txt:
+        * platform/gtk/fast/parser/bad-xml-slash-expected.txt:
+        * platform/gtk/fast/repaint/reflection-redraw-expected.txt:
+        * platform/gtk/fast/replaced/replaced-breaking-expected.txt:
+        * platform/gtk/fast/replaced/width100percent-checkbox-expected.txt:
+        * platform/gtk/fast/replaced/width100percent-radio-expected.txt:
+        * platform/gtk/fast/table/dynamic-caption-add-remove-before-child-expected.txt:
+        * platform/gtk/fast/text/textIteratorNilRenderer-expected.txt:
+        * platform/gtk/fast/text/whitespace/normal-after-nowrap-breaking-expected.txt:
+        * platform/gtk/http/tests/navigation/javascriptlink-frames-expected.txt:
+        * platform/gtk/tables/mozilla/bugs/bug1318-expected.txt:
+        * platform/gtk/tables/mozilla/bugs/bug4527-expected.txt:
+        * platform/gtk/tables/mozilla/marvin/body_col-expected.txt:
+        * platform/gtk/tables/mozilla/marvin/x_th_valign_baseline-expected.txt:
+        * platform/gtk/tables/mozilla/other/body_col-expected.txt:
+        * platform/gtk/tables/mozilla_expected_failures/bugs/bug10140-expected.txt:
+        * platform/gtk/tables/mozilla_expected_failures/bugs/bug10216-expected.txt:
+        * platform/gtk/tables/mozilla_expected_failures/core/captions1-expected.txt:
+        * platform/gtk/tables/mozilla_expected_failures/core/captions2-expected.txt:
+        * platform/gtk/tables/mozilla_expected_failures/core/captions3-expected.txt:
+        * platform/gtk/tables/mozilla_expected_failures/other/test4-expected.txt:
+
 2014-01-26  Benjamin Poulain  <bpoulain@apple.com>
 
         Improve the bindings of NodeList's name accessor

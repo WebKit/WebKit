@@ -51,21 +51,21 @@ layer at (0,0) size 800x600
       RenderBlock {DIV} at (10,392) size 450x24 [border: (1px solid #FF0000)]
         RenderText {#text} at (1,4) size 7x17
           text run at (1,4) width 7: "a"
-        RenderBlock {INPUT} at (12,4) size 17x16
-        RenderText {#text} at (33,4) size 65x17
-          text run at (33,4) width 65: "checkbox "
-        RenderBlock {INPUT} at (102,4) size 17x16
-        RenderText {#text} at (123,4) size 8x17
-          text run at (123,4) width 8: "b"
+        RenderBlock {INPUT} at (10,4) size 16x16
+        RenderText {#text} at (28,4) size 65x17
+          text run at (28,4) width 65: "checkbox "
+        RenderBlock {INPUT} at (95,4) size 16x16
+        RenderText {#text} at (113,4) size 8x17
+          text run at (113,4) width 8: "b"
       RenderBlock {DIV} at (10,426) size 450x24 [border: (1px solid #FF0000)]
         RenderText {#text} at (1,4) size 7x17
           text run at (1,4) width 7: "a"
-        RenderBlock {INPUT} at (12,4) size 17x16
-        RenderText {#text} at (33,4) size 36x17
-          text run at (33,4) width 36: "radio "
-        RenderBlock {INPUT} at (73,4) size 17x16
-        RenderText {#text} at (94,4) size 8x17
-          text run at (94,4) width 8: "b"
+        RenderBlock {INPUT} at (10,4) size 16x16
+        RenderText {#text} at (28,4) size 36x17
+          text run at (28,4) width 36: "radio "
+        RenderBlock {INPUT} at (66,4) size 16x16
+        RenderText {#text} at (84,4) size 8x17
+          text run at (84,4) width 8: "b"
 layer at (31,313) size 185x17 scrollWidth 214
   RenderBlock {DIV} at (3,3) size 185x17
     RenderText {#text} at (0,0) size 213x17

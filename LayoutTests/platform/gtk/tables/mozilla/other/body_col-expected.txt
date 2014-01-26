@@ -10,7 +10,7 @@ layer at (0,0) size 800x600
         RenderTableSection {TBODY} at (2,2) size 155x145
           RenderTableRow {TR} at (0,2) size 155x38
             RenderTableCell {TH} at (2,2) size 49x38 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (15,2) size 37x34
+              RenderText {#text} at (15,2) size 36x34
                 text run at (15,2) width 19: "La"
                 text run at (6,19) width 37: "Mesa"
             RenderTableCell {TD} at (53,10) size 100x21 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
@@ -18,7 +18,7 @@ layer at (0,0) size 800x600
                 text run at (2,2) width 12: "X"
           RenderTableRow {TR} at (0,42) size 155x38
             RenderTableCell {TH} at (2,42) size 49x38 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
-              RenderText {#text} at (17,2) size 43x34
+              RenderText {#text} at (17,2) size 42x34
                 text run at (17,2) width 15: "El"
                 text run at (3,19) width 43: "Cajon"
             RenderTableCell {TD} at (53,50) size 100x21 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
