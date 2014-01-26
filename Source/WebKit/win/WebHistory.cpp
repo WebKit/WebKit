@@ -553,7 +553,7 @@ HRESULT WebHistory::removeItemForURLString(const WTF::String& urlString)
     if (!m_entriesByURL.size())
         PageGroup::removeAllVisitedLinks();
 
-    return hr;
+    return S_OK;
 }
 
 COMPtr<IWebHistoryItem> WebHistory::itemForURLString(const String& urlString) const

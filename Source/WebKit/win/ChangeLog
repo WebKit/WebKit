@@ -1,5 +1,19 @@
 2014-01-26  Anders Carlsson  <andersca@apple.com>
 
+        Remove even more Windows history code.
+
+        * WebHistory.cpp:
+        (WebHistory::removeItemForURLString):
+        * WebHistoryItem.cpp:
+        (WebHistoryItem::initFromDictionaryRepresentation):
+        (WebHistoryItem::dictionaryRepresentation):
+        (WebHistoryItem::getDailyVisitCounts):
+        (WebHistoryItem::getWeeklyVisitCounts):
+        (WebHistoryItem::recordInitialVisit):
+        (WebHistoryItem::initWithURLString):
+
+2014-01-26  Anders Carlsson  <andersca@apple.com>
+
         Another follow-up build fix.
 
         * WebHistory.cpp:

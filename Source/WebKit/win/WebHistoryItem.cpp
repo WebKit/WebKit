@@ -92,11 +92,8 @@ WebHistoryItem* WebHistoryItem::createInstance(PassRefPtr<HistoryItem> historyIt
 
 static CFStringRef urlKey = CFSTR("");
 static CFStringRef titleKey = CFSTR("title");
-static CFStringRef visitCountKey = CFSTR("visitCount");
 static CFStringRef lastVisitWasFailureKey = CFSTR("lastVisitWasFailure");
 static CFStringRef redirectURLsKey = CFSTR("redirectURLs");
-static CFStringRef dailyVisitCountKey = CFSTR("D"); // short key to save space
-static CFStringRef weeklyVisitCountKey = CFSTR("W"); // short key to save space
 
 HRESULT STDMETHODCALLTYPE WebHistoryItem::initFromDictionaryRepresentation(void* dictionary)
 {
@@ -110,19 +107,6 @@ HRESULT STDMETHODCALLTYPE WebHistoryItem::initFromDictionaryRepresentation(void*
     if (titleRef && CFGetTypeID(titleRef) != CFStringGetTypeID())
         return E_FAIL;
 
-    CFNumberRef visitCountRef = (CFNumberRef) CFDictionaryGetValue(dictionaryRef, visitCountKey);
-    if (!visitCountRef || CFGetTypeID(visitCountRef) != CFNumberGetTypeID())
-        return E_FAIL;
-    int visitedCount = 0;
-    if (!CFNumberGetValue(visitCountRef, kCFNumberIntType, &visitedCount))
-        return E_FAIL;
-
-    // Can't trust data on disk, and we've had at least one report of this (<rdar://6572300>).
-    if (visitedCount < 0) {
-        LOG_ERROR("visit count for history item \"%s\" is negative (%d), will be reset to 1", String(urlStringRef).utf8().data(), visitedCount);
-        visitedCount = 1;
-    }
-
     CFBooleanRef lastVisitWasFailureRef = static_cast<CFBooleanRef>(CFDictionaryGetValue(dictionaryRef, lastVisitWasFailureKey));
     if (lastVisitWasFailureRef && CFGetTypeID(lastVisitWasFailureRef) != CFBooleanGetTypeID())
         return E_FAIL;
@@ -135,13 +119,6 @@ HRESULT STDMETHODCALLTYPE WebHistoryItem::initFromDictionaryRepresentation(void*
         for (CFIndex i = 0; i < size; ++i)
             (*redirectURLsVector)[i] = String(static_cast<CFStringRef>(CFArrayGetValueAtIndex(redirectURLsRef, i)));
     }
-
-    CFArrayRef dailyCounts = static_cast<CFArrayRef>(CFDictionaryGetValue(dictionaryRef, dailyVisitCountKey));
-    if (dailyCounts && CFGetTypeID(dailyCounts) != CFArrayGetTypeID())
-        dailyCounts = 0;
-    CFArrayRef weeklyCounts = static_cast<CFArrayRef>(CFDictionaryGetValue(dictionaryRef, weeklyVisitCountKey));
-    if (weeklyCounts && CFGetTypeID(weeklyCounts) != CFArrayGetTypeID())
-        weeklyCounts = 0;
 
     historyItemWrappers().remove(m_historyItem.get());
     m_historyItem = HistoryItem::create(urlStringRef, titleRef);
@@ -173,10 +150,6 @@ HRESULT STDMETHODCALLTYPE WebHistoryItem::dictionaryRepresentation(void** dictio
         keys[keyCount] = titleKey;
         values[keyCount++] = m_historyItem->title().createCFString().leakRef();
     }
-
-    keys[keyCount] = visitCountKey;
-    int visitCount = m_historyItem->visitCount();
-    values[keyCount++] = CFNumberCreate(0, kCFNumberIntType, &visitCount);
 
     if (m_historyItem->lastVisitWasFailure()) {
         keys[keyCount] = lastVisitWasFailureKey;
@@ -388,34 +361,23 @@ HRESULT STDMETHODCALLTYPE WebHistoryItem::visitedWithTitle(BSTR title, BOOL incr
     return S_OK;
 }
 
+// FIXME: This function should be removed from the IWebHistoryItem interface.
 HRESULT STDMETHODCALLTYPE WebHistoryItem::getDailyVisitCounts(int* number, int** counts)
 {
-    if (!number || !counts) {
-        ASSERT_NOT_REACHED();
-        return E_POINTER;
-    }
-
-    *counts = const_cast<int*>(m_historyItem->dailyVisitCounts().data());
-    *number = m_historyItem->dailyVisitCounts().size();
-    return S_OK;
+    return E_NOTIMPL;
 }
 
+// FIXME: This function should be removed from the IWebHistoryItem interface.
 HRESULT STDMETHODCALLTYPE WebHistoryItem::getWeeklyVisitCounts(int* number, int** counts)
 {
-    if (!number || !counts) {
-        ASSERT_NOT_REACHED();
-        return E_POINTER;
-    }
-
-    *counts = const_cast<int*>(m_historyItem->weeklyVisitCounts().data());
-    *number = m_historyItem->weeklyVisitCounts().size();
-    return S_OK;
+    return E_NOTIMPL;
 }
 
+// FIXME: This function should be removed from the IWebHistoryItem interface.
 HRESULT STDMETHODCALLTYPE WebHistoryItem::recordInitialVisit()
 {
-    m_historyItem->recordInitialVisit();
-    return S_OK;
+    // FIXME: This function should be removed from the IWebHistoryItem interface.
+    return E_NOTIMPL;
 }
 
 // IUnknown -------------------------------------------------------------------
@@ -460,7 +422,7 @@ HRESULT STDMETHODCALLTYPE WebHistoryItem::initWithURLString(
     /* [in] */ DATE lastVisited)
 {
     historyItemWrappers().remove(m_historyItem.get());
-    m_historyItem = HistoryItem::create(String(urlString, SysStringLen(urlString)), String(title, SysStringLen(title)), 0);
+    m_historyItem = HistoryItem::create(String(urlString, SysStringLen(urlString)), String(title, SysStringLen(title)));
     historyItemWrappers().set(m_historyItem.get(), this);
 
     return S_OK;
