@@ -94,10 +94,22 @@ NSString *WebHistoryItemChangedNotification = @"WebHistoryItemChangedNotificatio
 
 using namespace WebCore;
 
+@interface WebHistoryItemPrivate : NSObject {
+@package
+    RefPtr<HistoryItem> _historyItem;
+}
+@end
+
+@implementation WebHistoryItemPrivate
+
+@end
+
 typedef HashMap<HistoryItem*, WebHistoryItem*> HistoryItemMap;
 
-static inline WebHistoryItemPrivate* kitPrivate(WebCoreHistoryItem* list) { return (WebHistoryItemPrivate*)list; }
-static inline WebCoreHistoryItem* core(WebHistoryItemPrivate* list) { return (WebCoreHistoryItem*)list; }
+static inline WebCoreHistoryItem* core(WebHistoryItemPrivate* itemPrivate)
+{
+    return itemPrivate->_historyItem.get();
+}
 
 static HistoryItemMap& historyItemWrappers()
 {
@@ -143,25 +155,21 @@ void WKNotifyHistoryItemChanged(HistoryItem*)
     if (WebCoreObjCScheduleDeallocateOnMainThread([WebHistoryItem class], self))
         return;
 
-    if (_private) {
-        HistoryItem* coreItem = core(_private);
-        coreItem->deref();
-        historyItemWrappers().remove(coreItem);
-    }
+    historyItemWrappers().remove(_private->_historyItem.get());
+    [_private release];
+
     [super dealloc];
 }
 
 - (void)finalize
 {
     WebCoreThreadViolationCheckRoundOne();
+
     // FIXME: ~HistoryItem is what releases the history item's icon from the icon database
     // It's probably not good to release icons from the database only when the object is garbage-collected. 
     // Need to change design so this happens at a predictable time.
-    if (_private) {
-        HistoryItem* coreItem = core(_private);
-        coreItem->deref();
-        historyItemWrappers().remove(coreItem);
-    }
+    historyItemWrappers().remove(_private->_historyItem.get());
+
     [super finalize];
 }
 
@@ -317,9 +325,12 @@ WebHistoryItem *kit(HistoryItem* item)
     // other "init before WebKit is used" type things
     WebCore::notifyHistoryItemChanged = WKNotifyHistoryItemChanged;
     
-    self = [super init];
-    
-    _private = kitPrivate(item.leakRef());
+    if (!(self = [super init]))
+        return nil;
+
+    _private = [[WebHistoryItemPrivate alloc] init];
+    _private->_historyItem = item;
+
     ASSERT(!historyItemWrappers().get(core(_private)));
     historyItemWrappers().set(core(_private), self);
     return self;

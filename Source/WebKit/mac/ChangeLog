@@ -1,3 +1,17 @@
+2014-01-26  Anders Carlsson  <andersca@apple.com>
+
+        Turn WebHistoryItemPrivate back into a real Objective-C class
+        https://bugs.webkit.org/show_bug.cgi?id=127653
+
+        Reviewed by Sam Weinig.
+
+        This is a first step towards moving some history specific code from WebCore::HistoryItem back into WebKit.
+
+        * History/WebHistoryItem.mm:
+        (-[WebHistoryItem dealloc]):
+        (-[WebHistoryItem finalize]):
+        (-[WebHistoryItem initWithWebCoreHistoryItem:]):
+
 2014-01-25  Sam Weinig  <sam@webkit.org>
 
         Remove unused support for DRAGGABLE_REGION
