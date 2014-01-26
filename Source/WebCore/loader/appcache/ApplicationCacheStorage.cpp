@@ -566,9 +566,7 @@ bool ApplicationCacheStorage::storeUpdatedQuotaForOrigin(const SecurityOrigin* o
 
 bool ApplicationCacheStorage::executeSQLCommand(const String& sql)
 {
-#if PLATFORM(IOS)
     ASSERT(SQLiteDatabaseTracker::hasTransactionInProgress());
-#endif
     ASSERT(m_database.isOpen());
     
     bool result = m_database.executeCommand(sql);
@@ -586,9 +584,8 @@ static const int schemaVersion = 7;
     
 void ApplicationCacheStorage::verifySchemaVersion()
 {
-#if PLATFORM(IOS)
     ASSERT(SQLiteDatabaseTracker::hasTransactionInProgress());
-#endif
+
     int version = SQLiteStatement(m_database, "PRAGMA user_version").getColumnInt(0);
     if (version == schemaVersion)
         return;
@@ -682,9 +679,7 @@ void ApplicationCacheStorage::openDatabase(bool createIfDoesNotExist)
 
 bool ApplicationCacheStorage::executeStatement(SQLiteStatement& statement)
 {
-#if PLATFORM(IOS)
     ASSERT(SQLiteDatabaseTracker::hasTransactionInProgress());
-#endif
     bool result = statement.executeCommand();
     if (!result)
         LOG_ERROR("Application Cache Storage: failed to execute statement \"%s\" error \"%s\"", 
@@ -695,9 +690,7 @@ bool ApplicationCacheStorage::executeStatement(SQLiteStatement& statement)
 
 bool ApplicationCacheStorage::store(ApplicationCacheGroup* group, GroupStorageIDJournal* journal)
 {
-#if PLATFORM(IOS)
     ASSERT(SQLiteDatabaseTracker::hasTransactionInProgress());
-#endif
     ASSERT(group->storageID() == 0);
     ASSERT(journal);
 
@@ -724,9 +717,7 @@ bool ApplicationCacheStorage::store(ApplicationCacheGroup* group, GroupStorageID
 
 bool ApplicationCacheStorage::store(ApplicationCache* cache, ResourceStorageIDJournal* storageIDJournal)
 {
-#if PLATFORM(IOS)
     ASSERT(SQLiteDatabaseTracker::hasTransactionInProgress());
-#endif
     ASSERT(cache->storageID() == 0);
     ASSERT(cache->group()->storageID() != 0);
     ASSERT(storageIDJournal);
@@ -808,9 +799,7 @@ bool ApplicationCacheStorage::store(ApplicationCache* cache, ResourceStorageIDJo
 
 bool ApplicationCacheStorage::store(ApplicationCacheResource* resource, unsigned cacheStorageID)
 {
-#if PLATFORM(IOS)
     ASSERT(SQLiteDatabaseTracker::hasTransactionInProgress());
-#endif
     ASSERT(cacheStorageID);
     ASSERT(!resource->storageID());
     
@@ -983,9 +972,7 @@ bool ApplicationCacheStorage::store(ApplicationCacheResource* resource, Applicat
 
 bool ApplicationCacheStorage::ensureOriginRecord(const SecurityOrigin* origin)
 {
-#if PLATFORM(IOS)
     ASSERT(SQLiteDatabaseTracker::hasTransactionInProgress());
-#endif
     SQLiteStatement insertOriginStatement(m_database, "INSERT INTO Origins (origin, quota) VALUES (?, ?)");
     if (insertOriginStatement.prepare() != SQLResultOk)
         return false;
@@ -1133,10 +1120,8 @@ static inline void parseHeaders(const String& headers, ResourceResponse& respons
     
 PassRefPtr<ApplicationCache> ApplicationCacheStorage::loadCache(unsigned storageID)
 {
-#if PLATFORM(IOS)
     ASSERT(SQLiteDatabaseTracker::hasTransactionInProgress());
-#endif
-    SQLiteStatement cacheStatement(m_database, 
+    SQLiteStatement cacheStatement(m_database,
                                    "SELECT url, statusCode, type, mimeType, textEncodingName, headers, CacheResourceData.data, CacheResourceData.path FROM CacheEntries INNER JOIN CacheResources ON CacheEntries.resource=CacheResources.id "
                                    "INNER JOIN CacheResourceData ON CacheResourceData.id=CacheResources.data WHERE CacheEntries.cache=?");
     if (cacheStatement.prepare() != SQLResultOk) {

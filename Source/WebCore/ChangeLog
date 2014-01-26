@@ -1,5 +1,20 @@
 2014-01-25  Sam Weinig  <sam@webkit.org>
 
+        Remove more unnecessary #if PLATFORM(IOS)s in ApplicationCacheStorage.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=127635
+
+        Reviewed by Antti Koivisto.
+
+        * loader/appcache/ApplicationCacheStorage.cpp:
+        (WebCore::ApplicationCacheStorage::executeSQLCommand):
+        (WebCore::ApplicationCacheStorage::verifySchemaVersion):
+        (WebCore::ApplicationCacheStorage::executeStatement):
+        (WebCore::ApplicationCacheStorage::store):
+        (WebCore::ApplicationCacheStorage::ensureOriginRecord):
+        (WebCore::ApplicationCacheStorage::loadCache):
+
+2014-01-25  Sam Weinig  <sam@webkit.org>
+
         Remove some iOS #ifdefs by adding SQLiteDatabaseTracker to all the builds
         https://bugs.webkit.org/show_bug.cgi?id=127632
 
