@@ -509,7 +509,7 @@ WebHistoryItem *kit(HistoryItem* item)
         [dict setObject:[NSNumber numberWithInt:coreItem->visitCount()] forKey:visitCountKey];
     if (coreItem->lastVisitWasFailure())
         [dict setObject:[NSNumber numberWithBool:YES] forKey:lastVisitWasFailureKey];
-    if (coreItem->lastVisitWasHTTPNonGet()) {
+    if (_private->_lastVisitWasHTTPNonGet) {
         ASSERT(coreItem->urlString().startsWith("http:", false) || coreItem->urlString().startsWith("https:", false));
         [dict setObject:[NSNumber numberWithBool:YES] forKey:lastVisitWasHTTPNonGetKey];
     }

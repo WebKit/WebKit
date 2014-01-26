@@ -23,10 +23,11 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include "HistoryPropertyList.h"
+#import "HistoryPropertyList.h"
 
-#include <WebCore/HistoryItem.h>
-#include <wtf/StringExtras.h>
+#import "WebHistoryItemInternal.h"
+#import <WebCore/HistoryItem.h>
+#import <wtf/StringExtras.h>
 
 using namespace WebCore;
 
@@ -84,8 +85,10 @@ void HistoryPropertyListWriter::writeObjects(BinaryPropertyListObjectStream& str
     stream.writeDictionaryEnd(outerDictionaryStart);
 }
 
-void HistoryPropertyListWriter::writeHistoryItem(BinaryPropertyListObjectStream& stream, HistoryItem* item)
+void HistoryPropertyListWriter::writeHistoryItem(BinaryPropertyListObjectStream& stream, WebHistoryItem* webHistoryItem)
 {
+    HistoryItem* item = core(webHistoryItem);
+
     size_t itemDictionaryStart = stream.writeDictionaryStart();
 
     const String& title = item->title();
@@ -108,7 +111,7 @@ void HistoryPropertyListWriter::writeHistoryItem(BinaryPropertyListObjectStream&
         stream.writeString(m_visitCountKey);
     if (item->lastVisitWasFailure())
         stream.writeString(m_lastVisitWasFailureKey);
-    if (item->lastVisitWasHTTPNonGet())
+    if (webHistoryItem->_private->_lastVisitWasHTTPNonGet)
         stream.writeString(m_lastVisitWasHTTPNonGetKey);
     if (redirectURLs)
         stream.writeString(m_redirectURLsKey);
@@ -132,7 +135,7 @@ void HistoryPropertyListWriter::writeHistoryItem(BinaryPropertyListObjectStream&
         stream.writeInteger(visitCount);
     if (item->lastVisitWasFailure())
         stream.writeBooleanTrue();
-    if (item->lastVisitWasHTTPNonGet()) {
+    if (webHistoryItem->_private->_lastVisitWasHTTPNonGet) {
         ASSERT(item->urlString().startsWith("http:", false) || item->urlString().startsWith("https:", false));
         stream.writeBooleanTrue();
     }

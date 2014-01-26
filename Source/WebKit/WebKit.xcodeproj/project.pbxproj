@@ -29,7 +29,7 @@
 		1A4DF5E50EC8D104006BD4B4 /* WebBaseNetscapePluginView.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1A4DF5E30EC8D104006BD4B4 /* WebBaseNetscapePluginView.mm */; };
 		1A60519117502A5D00BC62F5 /* BinaryPropertyList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A60518D17502A5D00BC62F5 /* BinaryPropertyList.cpp */; };
 		1A60519217502A5D00BC62F5 /* BinaryPropertyList.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A60518E17502A5D00BC62F5 /* BinaryPropertyList.h */; };
-		1A60519317502A5D00BC62F5 /* HistoryPropertyList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A60518F17502A5D00BC62F5 /* HistoryPropertyList.cpp */; };
+		1A60519317502A5D00BC62F5 /* HistoryPropertyList.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1A60518F17502A5D00BC62F5 /* HistoryPropertyList.mm */; };
 		1A60519417502A5D00BC62F5 /* HistoryPropertyList.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A60519017502A5D00BC62F5 /* HistoryPropertyList.h */; };
 		1A6A208D1886154600E50F5F /* WebProgressTrackerClient.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1A6A208B1886154600E50F5F /* WebProgressTrackerClient.mm */; };
 		1A6A208E1886154600E50F5F /* WebProgressTrackerClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A6A208C1886154600E50F5F /* WebProgressTrackerClient.h */; };
@@ -470,7 +470,7 @@
 		1A4DF5E30EC8D104006BD4B4 /* WebBaseNetscapePluginView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebBaseNetscapePluginView.mm; sourceTree = "<group>"; };
 		1A60518D17502A5D00BC62F5 /* BinaryPropertyList.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BinaryPropertyList.cpp; sourceTree = "<group>"; };
 		1A60518E17502A5D00BC62F5 /* BinaryPropertyList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BinaryPropertyList.h; sourceTree = "<group>"; };
-		1A60518F17502A5D00BC62F5 /* HistoryPropertyList.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HistoryPropertyList.cpp; sourceTree = "<group>"; };
+		1A60518F17502A5D00BC62F5 /* HistoryPropertyList.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = HistoryPropertyList.mm; sourceTree = "<group>"; };
 		1A60519017502A5D00BC62F5 /* HistoryPropertyList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HistoryPropertyList.h; sourceTree = "<group>"; };
 		1A6A208B1886154600E50F5F /* WebProgressTrackerClient.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebProgressTrackerClient.mm; sourceTree = "<group>"; };
 		1A6A208C1886154600E50F5F /* WebProgressTrackerClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebProgressTrackerClient.h; sourceTree = "<group>"; };
@@ -1142,7 +1142,7 @@
 			children = (
 				1A60518D17502A5D00BC62F5 /* BinaryPropertyList.cpp */,
 				1A60518E17502A5D00BC62F5 /* BinaryPropertyList.h */,
-				1A60518F17502A5D00BC62F5 /* HistoryPropertyList.cpp */,
+				1A60518F17502A5D00BC62F5 /* HistoryPropertyList.mm */,
 				1A60519017502A5D00BC62F5 /* HistoryPropertyList.h */,
 				3944607D020F50ED0ECA1767 /* WebBackForwardList.h */,
 				3944607E020F50ED0ECA1767 /* WebBackForwardList.mm */,
@@ -2161,7 +2161,7 @@
 				939810FE0824BF01008DF038 /* CarbonWindowContentView.m in Sources */,
 				939810FF0824BF01008DF038 /* CarbonWindowFrame.m in Sources */,
 				B82958D4132707D0000D0E79 /* CorrectionPanel.mm in Sources */,
-				1A60519317502A5D00BC62F5 /* HistoryPropertyList.cpp in Sources */,
+				1A60519317502A5D00BC62F5 /* HistoryPropertyList.mm in Sources */,
 				939811000824BF01008DF038 /* HIViewAdapter.m in Sources */,
 				939811020824BF01008DF038 /* HIWebView.mm in Sources */,
 				1A8DED510EE88B8A00F25022 /* HostedNetscapePluginStream.mm in Sources */,

@@ -970,6 +970,6 @@ void WebHistoryWriter::writeHistoryItems(BinaryPropertyListObjectStream& stream)
         NSArray *entries = m_entriesByDate->get(m_dateKeys[dateIndex]).get();
         NSUInteger entryCount = [entries count];
         for (NSUInteger entryIndex = 0; entryIndex < entryCount; ++entryIndex)
-            writeHistoryItem(stream, core([entries objectAtIndex:entryIndex]));
+            writeHistoryItem(stream, [entries objectAtIndex:entryIndex]);
     }
 }

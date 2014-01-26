@@ -1,3 +1,11 @@
+2014-01-26  Anders Carlsson  <andersca@apple.com>
+
+        Fix build.
+        
+        Make HistoryPropertyList an Objective-C++ class.
+
+        * WebKit.xcodeproj/project.pbxproj:
+
 2014-01-25  Alex Christensen  <achristensen@webkit.org>
 
         Unreviewed build fix for Win64.

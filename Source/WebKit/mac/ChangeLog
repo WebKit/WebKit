@@ -1,5 +1,22 @@
 2014-01-26  Anders Carlsson  <andersca@apple.com>
 
+        Fix build.
+
+        Pass a WebHistoryItem to writeHistoryItem so we can extract _lastVisitWasHTTPNonGet from it.
+
+        * History/HistoryPropertyList.h:
+        * History/HistoryPropertyList.mm:
+        (HistoryPropertyListWriter::HistoryPropertyListWriter):
+        (HistoryPropertyListWriter::buffer):
+        (HistoryPropertyListWriter::releaseData):
+        (HistoryPropertyListWriter::writeObjects):
+        (HistoryPropertyListWriter::writeHistoryItem):
+        * History/WebHistory.mm:
+        (WebHistoryWriter::writeHistoryItems):
+        * History/WebHistoryItem.mm:
+
+2014-01-26  Anders Carlsson  <andersca@apple.com>
+
         Move lastVisitWasHTTPNonGet out to WebHistoryItem
         https://bugs.webkit.org/show_bug.cgi?id=127657
 
