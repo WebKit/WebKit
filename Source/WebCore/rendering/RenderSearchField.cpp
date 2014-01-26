@@ -373,8 +373,7 @@ void RenderSearchField::centerContainerIfNeeded(RenderBox* containerRenderer) co
 
     // A quirk for find-in-page box on Safari Windows.
     // http://webkit.org/b/63157
-    LayoutUnit logicalHeightDiff = containerRenderer->logicalHeight() - contentLogicalHeight();
-    containerRenderer->setLogicalTop(containerRenderer->logicalTop() - (logicalHeightDiff / 2 + layoutMod(logicalHeightDiff, 2)));
+    centerRenderer(*containerRenderer);
 }
 
 }

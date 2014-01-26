@@ -93,6 +93,13 @@ LayoutUnit RenderTextControlSingleLine::computeLogicalHeightLimit() const
     return containerElement() ? contentLogicalHeight() : logicalHeight();
 }
 
+void RenderTextControlSingleLine::centerRenderer(RenderBox& renderer) const
+{
+    LayoutUnit logicalHeightDiff = renderer.logicalHeight() - contentLogicalHeight();
+    float center = logicalHeightDiff / 2;
+    renderer.setLogicalTop(renderer.logicalTop() - LayoutUnit(round(center)));
+}
+
 static void setNeedsLayoutOnAncestors(RenderObject* start, RenderObject* ancestor)
 {
     ASSERT(start != ancestor);
@@ -170,10 +177,9 @@ void RenderTextControlSingleLine::layout()
         RenderBlockFlow::layoutBlock(true);
 
     // Center the child block in the block progression direction (vertical centering for horizontal text fields).
-    if (!container && innerTextRenderer && innerTextRenderer->height() != contentLogicalHeight()) {
-        LayoutUnit logicalHeightDiff = innerTextRenderer->logicalHeight() - contentLogicalHeight();
-        innerTextRenderer->setLogicalTop(innerTextRenderer->logicalTop() - (logicalHeightDiff / 2 + layoutMod(logicalHeightDiff, 2)));
-    } else
+    if (!container && innerTextRenderer && innerTextRenderer->height() != contentLogicalHeight())
+        centerRenderer(*innerTextRenderer);
+    else
         centerContainerIfNeeded(containerRenderer);
 
     // Ignores the paddings for the inner spin button.

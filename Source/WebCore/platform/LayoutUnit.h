@@ -958,11 +958,6 @@ inline LayoutUnit absoluteValue(const LayoutUnit& value)
     return value.abs();
 }
 
-inline LayoutUnit layoutMod(const LayoutUnit& numerator, const LayoutUnit& denominator)
-{
-    return numerator % denominator;
-}
-
 inline bool isIntegerValue(const LayoutUnit value)
 {
     return value.toInt() == value;
