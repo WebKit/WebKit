@@ -9234,9 +9234,9 @@
 		7E428CE413E3407F003B661C /* ResourceHandleIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ResourceHandleIOS.mm; sourceTree = "<group>"; };
 		7E46F6F81627A2C900062223 /* JSOESElementIndexUint.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSOESElementIndexUint.cpp; sourceTree = "<group>"; };
 		7E46F6F91627A2C900062223 /* JSOESElementIndexUint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSOESElementIndexUint.h; sourceTree = "<group>"; };
-		7E474E1B12494DC900235364 /* SQLiteDatabaseTrackerClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SQLiteDatabaseTrackerClient.h; sourceTree = "<group>"; };
-		7E474E1C12494DC900235364 /* SQLiteDatabaseTracker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SQLiteDatabaseTracker.h; sourceTree = "<group>"; };
-		7E474E1D12494DC900235364 /* SQLiteDatabaseTracker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SQLiteDatabaseTracker.cpp; sourceTree = "<group>"; };
+		7E474E1B12494DC900235364 /* SQLiteDatabaseTrackerClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SQLiteDatabaseTrackerClient.h; path = sql/SQLiteDatabaseTrackerClient.h; sourceTree = "<group>"; };
+		7E474E1C12494DC900235364 /* SQLiteDatabaseTracker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SQLiteDatabaseTracker.h; path = sql/SQLiteDatabaseTracker.h; sourceTree = "<group>"; };
+		7E474E1D12494DC900235364 /* SQLiteDatabaseTracker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SQLiteDatabaseTracker.cpp; path = sql/SQLiteDatabaseTracker.cpp; sourceTree = "<group>"; };
 		7E5D7A73161D3F8F00896C34 /* OESElementIndexUint.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = OESElementIndexUint.cpp; path = canvas/OESElementIndexUint.cpp; sourceTree = "<group>"; };
 		7E5D7A74161D3F8F00896C34 /* OESElementIndexUint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OESElementIndexUint.h; path = canvas/OESElementIndexUint.h; sourceTree = "<group>"; };
 		7E66E23116D6EB6C00F7E7FF /* WebGLCompressedTextureATC.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WebGLCompressedTextureATC.cpp; path = canvas/WebGLCompressedTextureATC.cpp; sourceTree = "<group>"; };
@@ -14510,7 +14510,9 @@
 		1A2E6E560CC551E0004A2062 /* sql */ = {
 			isa = PBXGroup;
 			children = (
-				7E474E1912494DA900235364 /* ios */,
+				7E474E1D12494DC900235364 /* SQLiteDatabaseTracker.cpp */,
+				7E474E1C12494DC900235364 /* SQLiteDatabaseTracker.h */,
+				7E474E1B12494DC900235364 /* SQLiteDatabaseTrackerClient.h */,
 				1A2E6E780CC556D5004A2062 /* SQLiteAuthorizer.cpp */,
 				1A2246430CC98DDB00C05240 /* SQLiteDatabase.cpp */,
 				1A2246440CC98DDB00C05240 /* SQLiteDatabase.h */,
@@ -16207,17 +16209,6 @@
 				7C74D43618823B1900E5ED57 /* UTextProvider.h */,
 			);
 			path = icu;
-			sourceTree = "<group>";
-		};
-		7E474E1912494DA900235364 /* ios */ = {
-			isa = PBXGroup;
-			children = (
-				7E474E1D12494DC900235364 /* SQLiteDatabaseTracker.cpp */,
-				7E474E1C12494DC900235364 /* SQLiteDatabaseTracker.h */,
-				7E474E1B12494DC900235364 /* SQLiteDatabaseTrackerClient.h */,
-			);
-			name = ios;
-			path = sql/ios;
 			sourceTree = "<group>";
 		};
 		7EE6847312D26E5500E79415 /* cf */ = {

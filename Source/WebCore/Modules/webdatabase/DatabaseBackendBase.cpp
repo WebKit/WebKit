@@ -40,6 +40,7 @@
 #include "DatabaseTracker.h"
 #include "ExceptionCode.h"
 #include "Logging.h"
+#include "SQLiteDatabaseTracker.h"
 #include "SQLiteStatement.h"
 #include "SQLiteTransaction.h"
 #include "SecurityOrigin.h"
@@ -51,10 +52,6 @@
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringHash.h>
-
-#if PLATFORM(IOS)
-#include "SQLiteDatabaseTracker.h"
-#endif
 
 // Registering "opened" databases with the DatabaseTracker
 // =======================================================
@@ -332,8 +329,9 @@ bool DatabaseBackendBase::performOpenAndVerify(bool shouldSetVersionInNewDatabas
         // Make sure we wait till the background removal of the empty database files finished before trying to open any database.
         MutexLocker locker(DatabaseTracker::openDatabaseMutex());
     }
-    SQLiteTransactionInProgressAutoCounter transactionCounter;
 #endif
+
+    SQLiteTransactionInProgressAutoCounter transactionCounter;
 
     if (!m_sqliteDatabase.open(m_filename, true)) {
         errorMessage = formatErrorMessage("unable to open database", m_sqliteDatabase.lastError(), m_sqliteDatabase.lastErrorMsg());
@@ -587,9 +585,8 @@ unsigned long long DatabaseBackendBase::maximumSize() const
 
 void DatabaseBackendBase::incrementalVacuumIfNeeded()
 {
-#if PLATFORM(IOS)
     SQLiteTransactionInProgressAutoCounter transactionCounter;
-#endif
+
     int64_t freeSpaceSize = m_sqliteDatabase.freeSpaceSize();
     int64_t totalSize = m_sqliteDatabase.totalSize();
     if (totalSize <= 10 * freeSpaceSize) {

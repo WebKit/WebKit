@@ -27,7 +27,6 @@
 #define SQLiteDatabaseTracker_h
 
 #include "SQLiteDatabaseTrackerClient.h"
-#include <wtf/Noncopyable.h>
 
 namespace WebCore {
 
@@ -40,7 +39,7 @@ void setClient(SQLiteDatabaseTrackerClient*);
 
 #if !ASSERT_DISABLED
 bool hasTransactionInProgress();
-#endif // !ASSERT_DISABLED
+#endif
 
 };
 

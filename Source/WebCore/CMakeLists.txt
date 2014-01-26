@@ -2057,6 +2057,7 @@ set(WebCore_SOURCES
     platform/sql/SQLValue.cpp
     platform/sql/SQLiteAuthorizer.cpp
     platform/sql/SQLiteDatabase.cpp
+    platform/sql/SQLiteDatabaseTracker.cpp
     platform/sql/SQLiteFileSystem.cpp
     platform/sql/SQLiteStatement.cpp
     platform/sql/SQLiteTransaction.cpp

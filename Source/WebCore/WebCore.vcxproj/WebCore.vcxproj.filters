@@ -1923,6 +1923,9 @@
     <ClCompile Include="..\platform\sql\SQLiteDatabase.cpp">
       <Filter>platform\sql</Filter>
     </ClCompile>
+    <ClCompile Include="..\platform\sql\SQLiteDatabaseTracker.cpp">
+      <Filter>platform\sql</Filter>
+    </ClCompile>
     <ClCompile Include="..\platform\sql\SQLiteFileSystem.cpp">
       <Filter>platform\sql</Filter>
     </ClCompile>
@@ -8697,6 +8700,12 @@
       <Filter>platform\network\cf</Filter>
     </ClInclude>
     <ClInclude Include="..\platform\sql\SQLiteDatabase.h">
+      <Filter>platform\sql</Filter>
+    </ClInclude>
+    <ClInclude Include="..\platform\sql\SQLiteDatabaseTracker.h">
+      <Filter>platform\sql</Filter>
+    </ClInclude>
+    <ClInclude Include="..\platform\sql\SQLiteDatabaseTrackerClient.h">
       <Filter>platform\sql</Filter>
     </ClInclude>
     <ClInclude Include="..\platform\sql\SQLiteFileSystem.h">

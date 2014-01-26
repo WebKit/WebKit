@@ -254,6 +254,8 @@ protected:
     bool hasLayerForVerticalScrollbar() const;
     bool hasLayerForScrollCorner() const;
 
+    virtual void sendWillRevealEdgeEventsIfNeeded(const IntPoint&, const IntPoint&) { }
+
 private:
     virtual IntRect visibleContentRectInternal(VisibleContentRectIncludesScrollbars, VisibleContentRectBehavior) const;
     void scrollPositionChanged(const IntPoint&);

@@ -8454,6 +8454,7 @@
     </ClCompile>
     <ClCompile Include="..\platform\sql\SQLiteAuthorizer.cpp" />
     <ClCompile Include="..\platform\sql\SQLiteDatabase.cpp" />
+    <ClCompile Include="..\platform\sql\SQLiteDatabaseTracker.cpp" />
     <ClCompile Include="..\platform\sql\SQLiteFileSystem.cpp" />
     <ClCompile Include="..\platform\sql\SQLiteStatement.cpp" />
     <ClCompile Include="..\platform\sql\SQLiteTransaction.cpp" />
@@ -19510,6 +19511,8 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Production|x64'">true</ExcludedFromBuild>
     </CustomBuildStep>
     <ClInclude Include="..\platform\sql\SQLiteDatabase.h" />
+    <ClInclude Include="..\platform\sql\SQLiteDatabaseTracker.h" />
+    <ClInclude Include="..\platform\sql\SQLiteDatabaseTrackerClient.h" />
     <ClInclude Include="..\platform\sql\SQLiteFileSystem.h" />
     <ClInclude Include="..\platform\sql\SQLiteStatement.h" />
     <ClInclude Include="..\platform\sql\SQLiteTransaction.h" />

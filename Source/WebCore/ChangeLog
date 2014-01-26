@@ -1,3 +1,35 @@
+2014-01-25  Sam Weinig  <sam@webkit.org>
+
+        Remove some iOS #ifdefs by adding SQLiteDatabaseTracker to all the builds
+        https://bugs.webkit.org/show_bug.cgi?id=127632
+
+        Reviewed by Darin Adler.
+
+        Move the SQLiteDatabaseTracker and client from platform/sql/ios to platform/sql,
+        as there is nothing iOS specific about it. Then, un-#ifdef all its uses. For
+        ports that don't setup a client, this has no change in behavior.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * Modules/webdatabase/DatabaseBackendBase.cpp:
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.vcxproj/WebCore.vcxproj.filters:
+        * WebCore.xcodeproj/project.pbxproj:
+        * loader/appcache/ApplicationCacheStorage.cpp:
+        * platform/ScrollableArea.h:
+        (WebCore::ScrollableArea::sendWillRevealEdgeEventsIfNeeded):
+        * platform/sql/SQLiteDatabaseTracker.cpp: Copied from Source/WebCore/platform/sql/ios/SQLiteDatabaseTracker.cpp.
+        * platform/sql/SQLiteDatabaseTracker.h: Copied from Source/WebCore/platform/sql/ios/SQLiteDatabaseTracker.h.
+        * platform/sql/SQLiteDatabaseTrackerClient.h: Copied from Source/WebCore/platform/sql/ios/SQLiteDatabaseTrackerClient.h.
+        * platform/sql/ios: Removed.
+        * platform/sql/ios/SQLiteDatabaseTracker.cpp: Removed.
+        * platform/sql/ios/SQLiteDatabaseTracker.h: Removed.
+        * platform/sql/ios/SQLiteDatabaseTrackerClient.h: Removed.
+        * storage/StorageAreaSync.cpp:
+        (WebCore::StorageAreaSync::openDatabase):
+        (WebCore::StorageAreaSync::sync):
+        * storage/StorageTracker.cpp:
+
 2014-01-25  Anders Carlsson  <andersca@apple.com>
 
         Remove an unused FrameLoaderClient function

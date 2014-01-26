@@ -5478,6 +5478,9 @@ webcore_platform_sources += \
 	Source/WebCore/platform/sql/SQLiteAuthorizer.cpp \
 	Source/WebCore/platform/sql/SQLiteDatabase.cpp \
 	Source/WebCore/platform/sql/SQLiteDatabase.h \
+	Source/WebCore/platform/sql/SQLiteDatabaseTracker.cpp \
+	Source/WebCore/platform/sql/SQLiteDatabaseTracker.h \
+	Source/WebCore/platform/sql/SQLiteDatabaseTrackerClient.h \
 	Source/WebCore/platform/sql/SQLiteFileSystem.cpp \
 	Source/WebCore/platform/sql/SQLiteFileSystem.h \
 	Source/WebCore/platform/sql/SQLiteStatement.cpp \
