@@ -1,3 +1,15 @@
+2014-01-26  Benjamin Poulain  <bpoulain@apple.com>
+
+        ASSERTION FAILED: !m_hasPendingCharacter
+        https://bugs.webkit.org/show_bug.cgi?id=110118
+
+        Reviewed by Sam Weinig.
+
+        Add more test coverage for r144552 with a use case that use to hit the assertion.
+
+        * fast/dom/xml-parser-entity-in-attribute-value-expected.txt: Added.
+        * fast/dom/xml-parser-entity-in-attribute-value.html: Added.
+
 2014-01-26  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Move InspectorDebuggerAgent into JavaScriptCore
