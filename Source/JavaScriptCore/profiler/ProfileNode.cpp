@@ -63,12 +63,9 @@ ProfileNode::ProfileNode(ExecState* callerCallFrame, const CallIdentifier& callI
     , m_parent(parentNode)
     , m_nextSibling(0)
     , m_startTime(0.0)
-    , m_actualTotalTime(0.0)
-    , m_visibleTotalTime(0.0)
-    , m_actualSelfTime(0.0)
-    , m_visibleSelfTime(0.0)
+    , m_totalTime(0.0)
+    , m_selfTime(0.0)
     , m_numberOfCalls(0)
-    , m_visible(true)
 {
     startTimer();
 }
@@ -80,12 +77,9 @@ ProfileNode::ProfileNode(ExecState* callerCallFrame, ProfileNode* headNode, Prof
     , m_parent(nodeToCopy->parent())
     , m_nextSibling(0)
     , m_startTime(0.0)
-    , m_actualTotalTime(nodeToCopy->actualTotalTime())
-    , m_visibleTotalTime(nodeToCopy->totalTime())
-    , m_actualSelfTime(nodeToCopy->actualSelfTime())
-    , m_visibleSelfTime(nodeToCopy->selfTime())
+    , m_totalTime(nodeToCopy->totalTime())
+    , m_selfTime(nodeToCopy->selfTime())
     , m_numberOfCalls(nodeToCopy->numberOfCalls())
-    , m_visible(nodeToCopy->visible())
 {
 }
 
@@ -120,19 +114,6 @@ void ProfileNode::addChild(PassRefPtr<ProfileNode> prpChild)
     m_children.append(child.release());
 }
 
-ProfileNode* ProfileNode::findChild(ProfileNode* node) const
-{
-    if (!node)
-        return 0;
-
-    for (size_t i = 0; i < m_children.size(); ++i) {
-        if (*node == m_children[i].get())
-            return m_children[i].get();
-    }
-
-    return 0;
-}
-
 void ProfileNode::removeChild(ProfileNode* node)
 {
     if (!node)
@@ -164,17 +145,14 @@ void ProfileNode::stopProfiling()
     if (m_startTime)
         endAndRecordCall();
 
-    m_visibleTotalTime = m_actualTotalTime;
-
-    ASSERT(m_actualSelfTime == 0.0 && m_startTime == 0.0);
+    ASSERT(m_selfTime == 0.0 && m_startTime == 0.0);
 
     // Because we iterate in post order all of our children have been stopped before us.
     for (unsigned i = 0; i < m_children.size(); ++i)
-        m_actualSelfTime += m_children[i]->totalTime();
+        m_selfTime += m_children[i]->totalTime();
 
-    ASSERT(m_actualSelfTime <= m_actualTotalTime);
-    m_actualSelfTime = m_actualTotalTime - m_actualSelfTime;
-    m_visibleSelfTime = m_actualSelfTime;
+    ASSERT(m_selfTime <= m_totalTime);
+    m_selfTime = m_totalTime - m_selfTime;
 }
 
 ProfileNode* ProfileNode::traverseNextNodePostOrder() const
@@ -187,89 +165,9 @@ ProfileNode* ProfileNode::traverseNextNodePostOrder() const
     return next;
 }
 
-ProfileNode* ProfileNode::traverseNextNodePreOrder(bool processChildren) const
-{
-    if (processChildren && m_children.size())
-        return m_children[0].get();
-
-    if (m_nextSibling)
-        return m_nextSibling;
-
-    ProfileNode* nextParent = m_parent;
-    if (!nextParent)
-        return 0;
-
-    ProfileNode* next;
-    for (next = m_parent->nextSibling(); !next; next = nextParent->nextSibling()) {
-        nextParent = nextParent->parent();
-        if (!nextParent)
-            return 0;
-    }
-
-    return next;
-}
-
-void ProfileNode::setTreeVisible(ProfileNode* node, bool visible)
-{
-    ProfileNode* nodeParent = node->parent();
-    ProfileNode* nodeSibling = node->nextSibling();
-    node->setParent(0);
-    node->setNextSibling(0);
-
-    for (ProfileNode* currentNode = node; currentNode; currentNode = currentNode->traverseNextNodePreOrder())
-        currentNode->setVisible(visible);
-
-    node->setParent(nodeParent);
-    node->setNextSibling(nodeSibling);
-}
-
-void ProfileNode::calculateVisibleTotalTime()
-{
-    double sumOfVisibleChildrensTime = 0.0;
-
-    for (unsigned i = 0; i < m_children.size(); ++i) {
-        if (m_children[i]->visible())
-            sumOfVisibleChildrensTime += m_children[i]->totalTime();
-    }
-
-    m_visibleTotalTime = m_visibleSelfTime + sumOfVisibleChildrensTime;
-}
-
-bool ProfileNode::focus(const CallIdentifier& callIdentifier)
-{
-    if (!m_visible)
-        return false;
-
-    if (m_callIdentifier != callIdentifier) {
-        m_visible = false;
-        return true;
-    }
-
-    for (ProfileNode* currentParent = m_parent; currentParent; currentParent = currentParent->parent())
-        currentParent->setVisible(true);
-
-    return false;
-}
-
-void ProfileNode::exclude(const CallIdentifier& callIdentifier)
-{
-    if (m_visible && m_callIdentifier == callIdentifier) {
-        setTreeVisible(this, false);
-
-        m_parent->setVisibleSelfTime(m_parent->selfTime() + m_visibleTotalTime);
-    }
-}
-
-void ProfileNode::restore()
-{
-    m_visibleTotalTime = m_actualTotalTime;
-    m_visibleSelfTime = m_actualSelfTime;
-    m_visible = true;
-}
-
 void ProfileNode::endAndRecordCall()
 {
-    m_actualTotalTime += m_startTime ? getCount() - m_startTime : 0.0;
+    m_totalTime += m_startTime ? getCount() - m_startTime : 0.0;
     m_startTime = 0.0;
 
     ++m_numberOfCalls;
@@ -297,7 +195,7 @@ void ProfileNode::debugPrintData(int indentLevel) const
 
     dataLogF("Function Name %s %d SelfTime %.3fms/%.3f%% TotalTime %.3fms/%.3f%% VSelf %.3fms VTotal %.3fms Visible %s Next Sibling %s\n",
         functionName().utf8().data(), 
-        m_numberOfCalls, m_actualSelfTime, selfPercent(), m_actualTotalTime, totalPercent(),
+        m_numberOfCalls, m_selfTime, selfPercent(), m_totalTime, totalPercent(),
         m_visibleSelfTime, m_visibleTotalTime, 
         (m_visible ? "True" : "False"),
         m_nextSibling ? m_nextSibling->functionName().utf8().data() : "");
@@ -316,7 +214,7 @@ double ProfileNode::debugPrintDataSampleStyle(int indentLevel, FunctionCallHashC
 
     // Print function names
     const char* name = functionName().utf8().data();
-    double sampleCount = m_actualTotalTime * 1000;
+    double sampleCount = m_totalTime * 1000;
     if (indentLevel) {
         for (int i = 0; i < indentLevel; ++i)
             dataLogF("  ");
@@ -344,7 +242,7 @@ double ProfileNode::debugPrintDataSampleStyle(int indentLevel, FunctionCallHashC
         dataLogF("%.0f %s\n", sampleCount - sumOfChildrensCount, functionName().utf8().data());
     }
 
-    return m_actualTotalTime;
+    return m_totalTime;
 }
 #endif
 

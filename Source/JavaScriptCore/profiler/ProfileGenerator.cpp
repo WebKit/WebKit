@@ -178,14 +178,13 @@ void ProfileGenerator::stopProfiling()
 
         idleNode->setTotalTime(headSelfTime);
         idleNode->setSelfTime(headSelfTime);
-        idleNode->setVisible(true);
 
         m_head->setSelfTime(0.0);
         m_head->addChild(idleNode.release());
     }
 }
 
-// The console.ProfileGenerator that started this ProfileGenerator will be the first child.
+// The console.profile that started this ProfileGenerator will be the first child.
 void ProfileGenerator::removeProfileStart()
 {
     ProfileNode* currentNode = 0;
@@ -200,7 +199,7 @@ void ProfileGenerator::removeProfileStart()
     currentNode->parent()->removeChild(currentNode);
 }
 
-// The console.ProfileGeneratorEnd that stopped this ProfileGenerator will be the last child.
+// The console.profileEnd that stopped this ProfileGenerator will be the last child.
 void ProfileGenerator::removeProfileEnd()
 {
     ProfileNode* currentNode = 0;

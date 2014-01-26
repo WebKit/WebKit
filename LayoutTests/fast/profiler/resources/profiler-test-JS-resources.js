@@ -79,9 +79,6 @@ function printProfileNodeWithoutTime(preElement, node, indentLevel)
     if (node.functionName == "(idle)")
         return;
 
-    if (!node.visible)
-        return;
-
     var space = "";
     for (var i = 0; i < indentLevel; ++i)
         space += "   "
