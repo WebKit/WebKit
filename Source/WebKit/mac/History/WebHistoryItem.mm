@@ -141,7 +141,11 @@ void WKNotifyHistoryItemChanged(HistoryItem*)
 - (instancetype)initWithURLString:(NSString *)URLString title:(NSString *)title lastVisitedTimeInterval:(NSTimeInterval)time
 {
     WebCoreThreadViolationCheckRoundOne();
-    return [self initWithWebCoreHistoryItem:HistoryItem::create(URLString, title, time)];
+
+    WebHistoryItem *item = [self initWithWebCoreHistoryItem:HistoryItem::create(URLString, title)];
+    item->_private->_lastVisitedTime = time;
+
+    return item;
 }
 
 - (void)dealloc
@@ -171,6 +175,11 @@ void WKNotifyHistoryItemChanged(HistoryItem*)
 {
     WebCoreThreadViolationCheckRoundOne();
     WebHistoryItem *copy = [[[self class] alloc] initWithWebCoreHistoryItem:core(_private)->copy()];
+
+    copy->_private->_lastVisitedTime = _private->_lastVisitedTime;
+    copy->_private->_visitCount = _private->_visitCount;
+    copy->_private->_dailyVisitCounts = _private->_dailyVisitCounts;
+    copy->_private->_weeklyVisitCounts = _private->_weeklyVisitCounts;
 
     copy->_private->_lastVisitWasHTTPNonGet = _private->_lastVisitWasHTTPNonGet;
 
@@ -220,7 +229,7 @@ void WKNotifyHistoryItemChanged(HistoryItem*)
 - (NSTimeInterval)lastVisitedTimeInterval
 {
     ASSERT_MAIN_THREAD();
-    return core(_private)->lastVisitedTime();
+    return _private->_lastVisitedTime;
 }
 
 - (NSUInteger)hash
@@ -271,10 +280,6 @@ void WKNotifyHistoryItemChanged(HistoryItem*)
     return result;
 }
 
-@end
-
-@implementation WebHistoryItem (WebInternal)
-
 HistoryItem* core(WebHistoryItem *item)
 {
     if (!item)
@@ -309,7 +314,11 @@ WebHistoryItem *kit(HistoryItem* item)
 
 - (id)initWithURLString:(NSString *)URLString title:(NSString *)title displayTitle:(NSString *)displayTitle lastVisitedTimeInterval:(NSTimeInterval)time
 {
-    return [self initWithWebCoreHistoryItem:HistoryItem::create(URLString, title, displayTitle, time)];
+    WebHistoryItem *item = [self initWithWebCoreHistoryItem:HistoryItem::create(URLString, title, displayTitle)];
+
+    item->_private->_lastVisitedTime = time;
+
+    return item;
 }
 
 - (id)initWithWebCoreHistoryItem:(PassRefPtr<HistoryItem>)item
@@ -340,7 +349,7 @@ WebHistoryItem *kit(HistoryItem* item)
 
 - (void)setVisitCount:(int)count
 {
-    core(_private)->setVisitCount(count);
+    _private->_visitCount = count;
 }
 
 - (void)setViewState:(id)statePList
@@ -351,7 +360,12 @@ WebHistoryItem *kit(HistoryItem* item)
 - (void)_mergeAutoCompleteHints:(WebHistoryItem *)otherItem
 {
     ASSERT_ARG(otherItem, otherItem);
-    core(_private)->mergeAutoCompleteHints(core(otherItem->_private));
+
+    // FIXME: this is broken - we should be merging the daily counts
+    // somehow.  but this is to support API that's not really used in
+    // practice so leave it broken for now.
+    if (otherItem != self)
+        _private->_visitCount += otherItem->_private->_visitCount;
 }
 
 - (id)initFromDictionaryRepresentation:(NSDictionary *)dict
@@ -384,7 +398,7 @@ WebHistoryItem *kit(HistoryItem* item)
         LOG_ERROR("visit count for history item \"%@\" is negative (%d), will be reset to 1", URLString, visitCount);
         visitCount = 1;
     }
-    core(_private)->setVisitCount(visitCount);
+    _private->_visitCount = visitCount;
 
     if ([dict _webkit_boolForKey:lastVisitWasFailureKey])
         core(_private)->setLastVisitWasFailure(true);
@@ -413,8 +427,9 @@ WebHistoryItem *kit(HistoryItem* item)
             coreDailyCounts[i] = std::max([[dailyCounts _webkit_numberAtIndex:i] intValue], 0);
         for (size_t i = 0; i < coreWeeklyCounts.size(); ++i)
             coreWeeklyCounts[i] = std::max([[weeklyCounts _webkit_numberAtIndex:i] intValue], 0);
-    
-        core(_private)->adoptVisitCounts(coreDailyCounts, coreWeeklyCounts);
+
+        _private->_dailyVisitCounts = std::move(coreDailyCounts);
+        _private->_weeklyVisitCounts = std::move(coreWeeklyCounts);
     }
 
     NSArray *childDicts = [dict objectForKey:childrenKey];
@@ -460,12 +475,68 @@ WebHistoryItem *kit(HistoryItem* item)
 
 - (void)_visitedWithTitle:(NSString *)title increaseVisitCount:(BOOL)increaseVisitCount
 {
-    core(_private)->visited(title, [NSDate timeIntervalSinceReferenceDate], increaseVisitCount ? IncreaseVisitCount : DoNotIncreaseVisitCount);
+    core(_private)->setTitle(title);
+
+    [self _recordVisitAtTime:[NSDate timeIntervalSinceReferenceDate] increaseVisitCount:increaseVisitCount];
 }
 
 - (void)_recordInitialVisit
 {
-    core(_private)->recordInitialVisit();
+    ASSERT(!_private->_visitCount);
+    [self _recordVisitAtTime:_private->_lastVisitedTime increaseVisitCount:YES];
+}
+
+static inline int timeToDay(double time)
+{
+    return static_cast<int>(ceil(time / secondsPerDay));
+}
+
+- (void)_padDailyCountsForNewVisit:(NSTimeInterval)time
+{
+    if (_private->_dailyVisitCounts.isEmpty())
+        _private->_dailyVisitCounts.insert(0, _private->_visitCount);
+
+    int daysElapsed = timeToDay(time) - timeToDay(_private->_lastVisitedTime);
+
+    if (daysElapsed < 0)
+        daysElapsed = 0;
+
+    Vector<int, 32> padding;
+    padding.fill(0, daysElapsed);
+
+    _private->_dailyVisitCounts.insertVector(0, padding);
+}
+
+static const size_t daysPerWeek = 7;
+static const size_t maxDailyCounts = 2 * daysPerWeek - 1;
+static const size_t maxWeeklyCounts = 5;
+
+- (void)_collapseDailyVisitsToWeekly
+{
+    while (_private->_dailyVisitCounts.size() > maxDailyCounts) {
+        int oldestWeekTotal = 0;
+        for (size_t i = 0; i < daysPerWeek; i++)
+            oldestWeekTotal += _private->_dailyVisitCounts[_private->_dailyVisitCounts.size() - daysPerWeek + i];
+        _private->_dailyVisitCounts.shrink(_private->_dailyVisitCounts.size() - daysPerWeek);
+        _private->_weeklyVisitCounts.insert(0, oldestWeekTotal);
+    }
+
+    if (_private->_weeklyVisitCounts.size() > maxWeeklyCounts)
+        _private->_weeklyVisitCounts.shrink(maxWeeklyCounts);
+}
+
+- (void)_recordVisitAtTime:(NSTimeInterval)time increaseVisitCount:(BOOL)increaseVisitCount
+{
+    [self _padDailyCountsForNewVisit:time];
+
+    _private->_lastVisitedTime = time;
+
+    if (increaseVisitCount) {
+        ++_private->_visitCount;
+        ++_private->_dailyVisitCounts[0];
+    }
+
+    [self _collapseDailyVisitsToWeekly];
 }
 
 @end
@@ -475,6 +546,14 @@ WebHistoryItem *kit(HistoryItem* item)
 - (id)initWithURL:(NSURL *)URL title:(NSString *)title
 {
     return [self initWithURLString:[URL _web_originalDataAsString] title:title lastVisitedTimeInterval:0];
+}
+
+// This should not be called directly for WebHistoryItems that are already included
+// in WebHistory. Use -[WebHistory setLastVisitedTimeInterval:forItem:] instead.
+- (void)_setLastVisitedTimeInterval:(NSTimeInterval)time
+{
+    if (_private->_lastVisitedTime != time)
+        [self _recordVisitAtTime:time increaseVisitCount:YES];
 }
 
 // FIXME: The only iOS difference here should be whether YES or NO is passed to dictionaryRepresentationIncludingChildren:
@@ -500,13 +579,13 @@ WebHistoryItem *kit(HistoryItem* item)
         [dict setObject:(NSString*)coreItem->title() forKey:titleKey];
     if (!coreItem->alternateTitle().isEmpty())
         [dict setObject:(NSString*)coreItem->alternateTitle() forKey:displayTitleKey];
-    if (coreItem->lastVisitedTime() != 0.0) {
+    if (_private->_lastVisitedTime) {
         // Store as a string to maintain backward compatibility. (See 3245793)
-        [dict setObject:[NSString stringWithFormat:@"%.1lf", coreItem->lastVisitedTime()]
+        [dict setObject:[NSString stringWithFormat:@"%.1lf", _private->_lastVisitedTime]
                  forKey:lastVisitedTimeIntervalKey];
     }
-    if (coreItem->visitCount())
-        [dict setObject:[NSNumber numberWithInt:coreItem->visitCount()] forKey:visitCountKey];
+    if (_private->_visitCount)
+        [dict setObject:[NSNumber numberWithInt:_private->_visitCount] forKey:visitCountKey];
     if (coreItem->lastVisitWasFailure())
         [dict setObject:[NSNumber numberWithBool:YES] forKey:lastVisitWasFailureKey];
     if (_private->_lastVisitWasHTTPNonGet) {
@@ -523,7 +602,7 @@ WebHistoryItem *kit(HistoryItem* item)
         [result release];
     }
     
-    const Vector<int>& dailyVisitCounts = coreItem->dailyVisitCounts();
+    const Vector<int>& dailyVisitCounts = _private->_dailyVisitCounts;
     if (dailyVisitCounts.size()) {
         NSMutableArray *array = [[NSMutableArray alloc] initWithCapacity:13];
         for (size_t i = 0; i < dailyVisitCounts.size(); ++i)
@@ -532,7 +611,7 @@ WebHistoryItem *kit(HistoryItem* item)
         [array release];
     }
     
-    const Vector<int>& weeklyVisitCounts = coreItem->weeklyVisitCounts();
+    const Vector<int>& weeklyVisitCounts = _private->_weeklyVisitCounts;
     if (weeklyVisitCounts.size()) {
         NSMutableArray *array = [[NSMutableArray alloc] initWithCapacity:5];
         for (size_t i = 0; i < weeklyVisitCounts.size(); ++i)
@@ -592,7 +671,7 @@ WebHistoryItem *kit(HistoryItem* item)
 - (int)visitCount
 {
     ASSERT_MAIN_THREAD();
-    return core(_private)->visitCount();
+    return _private->_visitCount;
 }
 
 - (NSString *)RSSFeedReferrer
@@ -633,13 +712,6 @@ WebHistoryItem *kit(HistoryItem* item)
     if (url.isEmpty())
         return nil;
     return url;
-}
-
-// This should not be called directly for WebHistoryItems that are already included
-// in WebHistory. Use -[WebHistory setLastVisitedTimeInterval:forItem:] instead.
-- (void)_setLastVisitedTimeInterval:(NSTimeInterval)time
-{
-    core(_private)->setLastVisitedTime(time);
 }
 
 - (WebHistoryItem *)targetItem
@@ -695,16 +767,14 @@ WebHistoryItem *kit(HistoryItem* item)
 
 - (size_t)_getDailyVisitCounts:(const int**)counts
 {
-    HistoryItem* coreItem = core(_private);
-    *counts = coreItem->dailyVisitCounts().data();
-    return coreItem->dailyVisitCounts().size();
+    *counts = _private->_dailyVisitCounts.data();
+    return _private->_dailyVisitCounts.size();
 }
 
 - (size_t)_getWeeklyVisitCounts:(const int**)counts
 {
-    HistoryItem* coreItem = core(_private);
-    *counts = coreItem->weeklyVisitCounts().data();
-    return coreItem->weeklyVisitCounts().size();
+    *counts = _private->_weeklyVisitCounts.data();
+    return _private->_weeklyVisitCounts.size();
 }
 
 #if PLATFORM(IOS)

@@ -1,5 +1,33 @@
 2014-01-26  Anders Carlsson  <andersca@apple.com>
 
+        Move history item visit count handling to WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=127659
+
+        Reviewed by Dan Bernstein.
+
+        Move code to deal with visit count and visit dates here from WebCore.
+
+        * History/HistoryPropertyList.mm:
+        (HistoryPropertyListWriter::writeHistoryItem):
+        * History/WebHistoryItem.mm:
+        (-[WebHistoryItem initWithURLString:title:lastVisitedTimeInterval:]):
+        (-[WebHistoryItem copyWithZone:]):
+        (-[WebHistoryItem lastVisitedTimeInterval]):
+        (-[WebHistoryItem initWithURLString:title:displayTitle:lastVisitedTimeInterval:]):
+        (-[WebHistoryItem setVisitCount:]):
+        (-[WebHistoryItem _mergeAutoCompleteHints:]):
+        (-[WebHistoryItem initFromDictionaryRepresentation:]):
+        (-[WebHistoryItem _visitedWithTitle:increaseVisitCount:]):
+        (-[WebHistoryItem _recordInitialVisit]):
+        (timeToDay):
+        (-[WebHistoryItem _padDailyCountsForNewVisit:]):
+        (-[WebHistoryItem _collapseDailyVisitsToWeekly]):
+        (-[WebHistoryItem _recordVisitAtTime:increaseVisitCount:]):
+        (-[WebHistoryItem _setLastVisitedTimeInterval:]):
+        * History/WebHistoryItemInternal.h:
+
+2014-01-26  Anders Carlsson  <andersca@apple.com>
+
         Fix build.
 
         Pass a WebHistoryItem to writeHistoryItem so we can extract _lastVisitWasHTTPNonGet from it.

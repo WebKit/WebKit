@@ -29,6 +29,7 @@
 #import "WebBackForwardList.h"
 #import "WebHistoryItemPrivate.h"
 #import <wtf/RefPtr.h>
+#import <wtf/Vector.h>
 
 namespace WebCore {
     class HistoryItem;
@@ -39,7 +40,7 @@ WebHistoryItem *kit(WebCore::HistoryItem* item);
 
 extern void WKNotifyHistoryItemChanged(WebCore::HistoryItem*);
 
-@interface WebHistoryItem (WebInternal)
+@interface WebHistoryItem ()
 
 + (WebHistoryItem *)entryWithURL:(NSURL *)URL;
 
@@ -62,6 +63,11 @@ extern void WKNotifyHistoryItemChanged(WebCore::HistoryItem*);
 @interface WebHistoryItemPrivate : NSObject {
 @package
     RefPtr<WebCore::HistoryItem> _historyItem;
+
+    NSTimeInterval _lastVisitedTime;
+    int _visitCount;
+    Vector<int> _dailyVisitCounts;
+    Vector<int> _weeklyVisitCounts;
 
     bool _lastVisitWasHTTPNonGet;
 }
