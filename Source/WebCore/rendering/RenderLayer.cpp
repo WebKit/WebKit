@@ -2323,7 +2323,7 @@ void RenderLayer::scrollTo(int x, int y)
         // If we're in the middle of layout, we'll just update layers once layout has finished.
         updateLayerPositionsAfterOverflowScroll();
         // Update regions, scrolling may change the clip of a particular region.
-#if ENABLE(DASHBOARD_SUPPORT) || ENABLE(DRAGGABLE_REGION)
+#if ENABLE(DASHBOARD_SUPPORT)
         view.frameView().updateAnnotatedRegions();
 #endif
         view.frameView().updateWidgetPositions();
@@ -3041,7 +3041,7 @@ void RenderLayer::setHasHorizontalScrollbar(bool hasScrollbar)
         m_vBar->styleChanged();
 
     // Force an update since we know the scrollbars have changed things.
-#if ENABLE(DASHBOARD_SUPPORT) || ENABLE(DRAGGABLE_REGION)
+#if ENABLE(DASHBOARD_SUPPORT)
     if (renderer().document().hasAnnotatedRegions())
         renderer().document().setAnnotatedRegionsDirty(true);
 #endif
@@ -3064,7 +3064,7 @@ void RenderLayer::setHasVerticalScrollbar(bool hasScrollbar)
         m_vBar->styleChanged();
 
     // Force an update since we know the scrollbars have changed things.
-#if ENABLE(DASHBOARD_SUPPORT) || ENABLE(DRAGGABLE_REGION)
+#if ENABLE(DASHBOARD_SUPPORT)
     if (renderer().document().hasAnnotatedRegions())
         renderer().document().setAnnotatedRegionsDirty(true);
 #endif
@@ -3276,7 +3276,7 @@ void RenderLayer::updateScrollbarsAfterLayout()
         updateSelfPaintingLayer();
 
         // Force an update since we know the scrollbars have changed things.
-#if ENABLE(DASHBOARD_SUPPORT) || ENABLE(DRAGGABLE_REGION)
+#if ENABLE(DASHBOARD_SUPPORT)
         if (renderer().document().hasAnnotatedRegions())
             renderer().document().setAnnotatedRegionsDirty(true);
 #endif

@@ -825,7 +825,7 @@ void RenderElement::styleWillChange(StyleDifference diff, const RenderStyle& new
         bool visibilityChanged = m_style->visibility() != newStyle.visibility()
             || m_style->zIndex() != newStyle.zIndex()
             || m_style->hasAutoZIndex() != newStyle.hasAutoZIndex();
-#if ENABLE(DASHBOARD_SUPPORT) || ENABLE(DRAGGABLE_REGION)
+#if ENABLE(DASHBOARD_SUPPORT)
         if (visibilityChanged)
             document().setAnnotatedRegionsDirty(true);
 #endif

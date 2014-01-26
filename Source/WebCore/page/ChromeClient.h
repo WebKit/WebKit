@@ -214,7 +214,7 @@ public:
     // the new cache.
     virtual void reachedApplicationCacheOriginQuota(SecurityOrigin*, int64_t totalSpaceNeeded) = 0;
 
-#if ENABLE(DASHBOARD_SUPPORT) || ENABLE(DRAGGABLE_REGION)
+#if ENABLE(DASHBOARD_SUPPORT)
     virtual void annotatedRegionsChanged();
 #endif
 

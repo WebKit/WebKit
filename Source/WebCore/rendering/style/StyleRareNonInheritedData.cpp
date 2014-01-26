@@ -41,9 +41,6 @@ StyleRareNonInheritedData::StyleRareNonInheritedData()
     , m_perspectiveOriginX(RenderStyle::initialPerspectiveOriginX())
     , m_perspectiveOriginY(RenderStyle::initialPerspectiveOriginY())
     , lineClamp(RenderStyle::initialLineClamp())
-#if ENABLE(DRAGGABLE_REGION)
-    , m_draggableRegionMode(DraggableRegionNone)
-#endif
     , m_deprecatedFlexibleBox(StyleDeprecatedFlexibleBoxData::create())
     , m_flexibleBox(StyleFlexibleBoxData::create())
     , m_marquee(StyleMarqueeData::create())
@@ -110,9 +107,6 @@ inline StyleRareNonInheritedData::StyleRareNonInheritedData(const StyleRareNonIn
     , m_perspectiveOriginX(o.m_perspectiveOriginX)
     , m_perspectiveOriginY(o.m_perspectiveOriginY)
     , lineClamp(o.lineClamp)
-#if ENABLE(DRAGGABLE_REGION)
-    , m_draggableRegionMode(o.m_draggableRegionMode)
-#endif
     , m_deprecatedFlexibleBox(o.m_deprecatedFlexibleBox)
     , m_flexibleBox(o.m_flexibleBox)
     , m_marquee(o.m_marquee)
@@ -203,9 +197,6 @@ bool StyleRareNonInheritedData::operator==(const StyleRareNonInheritedData& o) c
         && lineClamp == o.lineClamp
 #if ENABLE(DASHBOARD_SUPPORT)
         && m_dashboardRegions == o.m_dashboardRegions
-#endif
-#if ENABLE(DRAGGABLE_REGION)
-        && m_draggableRegionMode == o.m_draggableRegionMode
 #endif
         && m_deprecatedFlexibleBox == o.m_deprecatedFlexibleBox
         && m_flexibleBox == o.m_flexibleBox

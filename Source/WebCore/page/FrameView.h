@@ -271,7 +271,7 @@ public:
     void adjustTiledBackingCoverage();
     bool speculativeTilingEnabled() const { return m_speculativeTilingEnabled; }
 
-#if ENABLE(DASHBOARD_SUPPORT) || ENABLE(DRAGGABLE_REGION)
+#if ENABLE(DASHBOARD_SUPPORT)
     void updateAnnotatedRegions();
 #endif
     void updateControlTints();

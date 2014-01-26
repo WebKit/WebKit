@@ -43,7 +43,7 @@
 #include "TransformState.h"
 #include "VisiblePosition.h"
 
-#if ENABLE(DASHBOARD_SUPPORT) || ENABLE(DRAGGABLE_REGION)
+#if ENABLE(DASHBOARD_SUPPORT)
 #include "Frame.h"
 #endif
 
@@ -1651,14 +1651,13 @@ void RenderInline::paintOutlineForLine(GraphicsContext* graphicsContext, const L
             antialias);
 }
 
-#if ENABLE(DASHBOARD_SUPPORT) || ENABLE(DRAGGABLE_REGION)
+#if ENABLE(DASHBOARD_SUPPORT)
 void RenderInline::addAnnotatedRegions(Vector<AnnotatedRegionValue>& regions)
 {
     // Convert the style regions to absolute coordinates.
     if (style().visibility() != VISIBLE)
         return;
 
-#if ENABLE(DASHBOARD_SUPPORT)
     const Vector<StyleDashboardRegion>& styleRegions = style().dashboardRegions();
     unsigned i, count = styleRegions.size();
     for (i = 0; i < count; i++) {
@@ -1693,24 +1692,6 @@ void RenderInline::addAnnotatedRegions(Vector<AnnotatedRegionValue>& regions)
 
         regions.append(region);
     }
-#else // ENABLE(DRAGGABLE_REGION)
-    if (style().getDraggableRegionMode() == DraggableRegionNone)
-        return;
-
-    AnnotatedRegionValue region;
-    region.draggable = style().getDraggableRegionMode() == DraggableRegionDrag;
-    region.bounds = linesBoundingBox();
-
-    RenderObject* container = containingBlock();
-    if (!container)
-        container = this;
-
-    FloatPoint absPos = container->localToAbsolute();
-    region.bounds.setX(absPos.x() + region.bounds.x());
-    region.bounds.setY(absPos.y() + region.bounds.y());
-    
-    regions.append(region);
-#endif
 }
 #endif
 

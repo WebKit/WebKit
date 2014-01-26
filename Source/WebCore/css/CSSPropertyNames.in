@@ -452,9 +452,6 @@ user-zoom
 #if defined(ENABLE_DASHBOARD_SUPPORT) && ENABLE_DASHBOARD_SUPPORT
 -webkit-dashboard-region
 #endif
-#if defined(ENABLE_DRAGGABLE_REGION) && ENABLE_DRAGGABLE_REGION
--webkit-app-region
-#endif
 #if defined(ENABLE_ACCELERATED_OVERFLOW_SCROLLING) && ENABLE_ACCELERATED_OVERFLOW_SCROLLING
 -webkit-overflow-scrolling [Inherited]
 #endif

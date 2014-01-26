@@ -464,10 +464,6 @@
 #define ENABLE_DOWNLOAD_ATTRIBUTE 0
 #endif
 
-#if !defined(ENABLE_DRAGGABLE_REGION)
-#define ENABLE_DRAGGABLE_REGION 0
-#endif
-
 #if !defined(ENABLE_DRAG_SUPPORT)
 #define ENABLE_DRAG_SUPPORT 1
 #endif
@@ -856,6 +852,10 @@
 
 #if !defined(ENABLE_WEB_TIMING)
 #define ENABLE_WEB_TIMING 0
+#endif
+
+#if !defined(ENABLE_WILL_REVEAL_EDGE_EVENTS)
+#define ENABLE_WILL_REVEAL_EDGE_EVENTS 1
 #endif
 
 #if !defined(ENABLE_XHR_TIMEOUT)

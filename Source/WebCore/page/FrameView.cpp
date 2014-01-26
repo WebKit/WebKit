@@ -1375,7 +1375,7 @@ void FrameView::layout(bool allowSubtree)
         cache->postNotification(root, AXObjectCache::AXLayoutComplete);
 #endif
 
-#if ENABLE(DASHBOARD_SUPPORT) || ENABLE(DRAGGABLE_REGION)
+#if ENABLE(DASHBOARD_SUPPORT)
     updateAnnotatedRegions();
 #endif
 
@@ -3351,7 +3351,7 @@ bool FrameView::scrollAnimatorEnabled() const
     return false;
 }
 
-#if ENABLE(DASHBOARD_SUPPORT) || ENABLE(DRAGGABLE_REGION)
+#if ENABLE(DASHBOARD_SUPPORT)
 void FrameView::updateAnnotatedRegions()
 {
     Document* document = frame().document();
@@ -3710,7 +3710,7 @@ void FrameView::paintContents(GraphicsContext* p, const IntRect& rect)
 #endif
 
     // Regions may have changed as a result of the visibility/z-index of element changing.
-#if ENABLE(DASHBOARD_SUPPORT) || ENABLE(DRAGGABLE_REGION)
+#if ENABLE(DASHBOARD_SUPPORT)
     if (document->annotatedRegionsDirty())
         updateAnnotatedRegions();
 #endif

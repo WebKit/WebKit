@@ -2748,15 +2748,6 @@ bool CSSParser::parseValue(CSSPropertyID propId, bool important)
             validPrimitive = true;
         break;
 #endif
-    // End Apple-specific properties
-
-#if ENABLE(DRAGGABLE_REGION)
-    case CSSPropertyWebkitAppRegion:
-        if (id >= CSSValueDrag && id <= CSSValueNoDrag)
-            validPrimitive = true;
-        break;
-#endif
-
 #if ENABLE(TOUCH_EVENTS)
     case CSSPropertyWebkitTapHighlightColor:
         if ((id >= CSSValueAqua && id <= CSSValueWindowtext) || id == CSSValueMenu
@@ -2769,6 +2760,7 @@ bool CSSParser::parseValue(CSSPropertyID propId, bool important)
         }
         break;
 #endif
+    // End Apple-specific properties
 
         /* shorthand properties */
     case CSSPropertyBackground: {

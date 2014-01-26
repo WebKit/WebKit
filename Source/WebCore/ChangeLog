@@ -1,3 +1,53 @@
+2014-01-25  Sam Weinig  <sam@webkit.org>
+
+        Remove unused support for DRAGGABLE_REGION
+        https://bugs.webkit.org/show_bug.cgi?id=127642
+
+        Reviewed by Simon Fraser.
+
+        * Configurations/FeatureDefines.xcconfig:
+        * DerivedSources.make:
+        * WebCore.exp.in:
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::ComputedStyleExtractor::propertyValue):
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseValue):
+        * css/CSSPropertyNames.in:
+        * css/CSSValueKeywords.in:
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::applyProperty):
+        * dom/Document.cpp:
+        (WebCore::Document::Document):
+        * dom/Document.h:
+        * page/Chrome.cpp:
+        * page/ChromeClient.h:
+        * page/FrameView.cpp:
+        (WebCore::FrameView::layout):
+        (WebCore::FrameView::paintContents):
+        * page/FrameView.h:
+        * rendering/RenderElement.cpp:
+        (WebCore::RenderElement::styleWillChange):
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::addAnnotatedRegions):
+        * rendering/RenderInline.h:
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::scrollTo):
+        (WebCore::RenderLayer::setHasHorizontalScrollbar):
+        (WebCore::RenderLayer::setHasVerticalScrollbar):
+        (WebCore::RenderLayer::updateScrollbarsAfterLayout):
+        * rendering/RenderListBox.cpp:
+        (WebCore::RenderListBox::setHasVerticalScrollbar):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::addAnnotatedRegions):
+        * rendering/RenderObject.h:
+        (WebCore::AnnotatedRegionValue::operator==):
+        * rendering/style/RenderStyle.h:
+        * rendering/style/RenderStyleConstants.h:
+        * rendering/style/StyleRareNonInheritedData.cpp:
+        (WebCore::StyleRareNonInheritedData::StyleRareNonInheritedData):
+        (WebCore::StyleRareNonInheritedData::operator==):
+        * rendering/style/StyleRareNonInheritedData.h:
+
 2014-01-25  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Clean up SVGPatternElement::collectPatternAttributes 

@@ -106,9 +106,6 @@ public:
 #if ENABLE(DASHBOARD_SUPPORT)
     Vector<StyleDashboardRegion> m_dashboardRegions;
 #endif
-#if ENABLE(DRAGGABLE_REGION)
-    DraggableRegionMode m_draggableRegionMode;
-#endif
 
     DataRef<StyleDeprecatedFlexibleBoxData> m_deprecatedFlexibleBox; // Flexible box properties
     DataRef<StyleFlexibleBoxData> m_flexibleBox;

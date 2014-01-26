@@ -556,7 +556,7 @@ void Chrome::windowScreenDidChange(PlatformDisplayID displayID)
 
 // --------
 
-#if ENABLE(DASHBOARD_SUPPORT) || ENABLE(DRAGGABLE_REGION)
+#if ENABLE(DASHBOARD_SUPPORT)
 void ChromeClient::annotatedRegionsChanged()
 {
 }

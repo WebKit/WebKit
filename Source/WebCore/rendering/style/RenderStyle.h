@@ -1042,11 +1042,6 @@ public:
     }
 #endif
 
-#if ENABLE(DRAGGABLE_REGION)
-    DraggableRegionMode getDraggableRegionMode() const { return rareNonInheritedData->m_draggableRegionMode; }
-    void setDraggableRegionMode(DraggableRegionMode v) { SET_VAR(rareNonInheritedData, m_draggableRegionMode, v); }
-#endif
-
     void resetBorder() { resetBorderImage(); resetBorderTop(); resetBorderRight(); resetBorderBottom(); resetBorderLeft(); resetBorderRadius(); }
     void resetBorderTop() { SET_VAR(surround, border.m_top, BorderValue()); }
     void resetBorderRight() { SET_VAR(surround, border.m_right, BorderValue()); }

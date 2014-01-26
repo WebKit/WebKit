@@ -1042,12 +1042,6 @@ snap
 -webkit-paged-x
 -webkit-paged-y
 
-// -webkit-app-region
-#if defined(ENABLE_DRAGGABLE_REGION) && ENABLE_DRAGGABLE_REGION
-drag
-no-drag
-#endif
-
 // -webkit-grid-{column-start|column-end|row-start|row-end}
 span
 

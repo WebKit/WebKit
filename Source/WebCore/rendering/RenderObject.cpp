@@ -2141,7 +2141,7 @@ void RenderObject::getTextDecorationColors(int decorations, Color& underline, Co
     }
 }
 
-#if ENABLE(DASHBOARD_SUPPORT) || ENABLE(DRAGGABLE_REGION)
+#if ENABLE(DASHBOARD_SUPPORT)
 void RenderObject::addAnnotatedRegions(Vector<AnnotatedRegionValue>& regions)
 {
     // Convert the style regions to absolute coordinates.
@@ -2151,7 +2151,6 @@ void RenderObject::addAnnotatedRegions(Vector<AnnotatedRegionValue>& regions)
     RenderBox* box = toRenderBox(this);
     FloatPoint absPos = localToAbsolute();
 
-#if ENABLE(DASHBOARD_SUPPORT)
     const Vector<StyleDashboardRegion>& styleRegions = style().dashboardRegions();
     unsigned i, count = styleRegions.size();
     for (i = 0; i < count; i++) {
@@ -2180,14 +2179,6 @@ void RenderObject::addAnnotatedRegions(Vector<AnnotatedRegionValue>& regions)
 
         regions.append(region);
     }
-#else // ENABLE(DRAGGABLE_REGION)
-    if (style().getDraggableRegionMode() == DraggableRegionNone)
-        return;
-    AnnotatedRegionValue region;
-    region.draggable = style().getDraggableRegionMode() == DraggableRegionDrag;
-    region.bounds = LayoutRect(absPos.x(), absPos.y(), box->width(), box->height());
-    regions.append(region);
-#endif
 }
 
 void RenderObject::collectAnnotatedRegions(Vector<AnnotatedRegionValue>& regions)

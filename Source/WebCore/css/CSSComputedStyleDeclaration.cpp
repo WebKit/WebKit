@@ -377,9 +377,6 @@ static const CSSPropertyID computedProperties[] = {
     CSSPropertyWebkitRegionBreakInside,
     CSSPropertyWebkitRegionFragment,
 #endif
-#if ENABLE(DRAGGABLE_REGION)
-    CSSPropertyWebkitAppRegion,
-#endif
 #if ENABLE(CSS_EXCLUSIONS)
     CSSPropertyWebkitWrapFlow,
     CSSPropertyWebkitWrapThrough,
@@ -2475,10 +2472,6 @@ PassRefPtr<CSSValue> ComputedStyleExtractor::propertyValue(CSSPropertyID propert
             }
             return cssValuePool().createValue(firstRegion.release());
         }
-#endif
-#if ENABLE(DRAGGABLE_REGION)
-        case CSSPropertyWebkitAppRegion:
-            return cssValuePool().createIdentifierValue(style->getDraggableRegionMode() == DraggableRegionDrag ? CSSValueDrag : CSSValueNoDrag);
 #endif
         case CSSPropertyWebkitAnimationDelay:
             return getDelayValue(style->animations());

@@ -2507,15 +2507,6 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue* value)
         return;
     }
 #endif
-#if ENABLE(DRAGGABLE_REGION)
-    case CSSPropertyWebkitAppRegion: {
-        if (!primitiveValue || !primitiveValue->getValueID())
-            return;
-        state.style()->setDraggableRegionMode(primitiveValue->getValueID() == CSSValueDrag ? DraggableRegionDrag : DraggableRegionNoDrag);
-        state.document().setHasAnnotatedRegions(true);
-        return;
-    }
-#endif
     case CSSPropertyWebkitTextStrokeWidth: {
         HANDLE_INHERIT_AND_INITIAL(textStrokeWidth, TextStrokeWidth)
         float width = 0;

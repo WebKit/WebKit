@@ -448,7 +448,7 @@ Document::Document(Frame* frame, const URL& url, unsigned documentClasses, unsig
     , m_xmlStandalone(StandaloneUnspecified)
     , m_hasXMLDeclaration(false)
     , m_designMode(inherit)
-#if ENABLE(DASHBOARD_SUPPORT) || ENABLE(DRAGGABLE_REGION)
+#if ENABLE(DASHBOARD_SUPPORT)
     , m_hasAnnotatedRegions(false)
     , m_annotatedRegionsDirty(false)
 #endif
@@ -3319,7 +3319,7 @@ void Document::elementInActiveChainDidDetach(Element* element)
         m_activeElement = m_activeElement->parentElement();
 }
 
-#if ENABLE(DASHBOARD_SUPPORT) || ENABLE(DRAGGABLE_REGION)
+#if ENABLE(DASHBOARD_SUPPORT)
 const Vector<AnnotatedRegionValue>& Document::annotatedRegions() const
 {
     return m_annotatedRegions;

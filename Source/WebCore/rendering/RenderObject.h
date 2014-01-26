@@ -117,15 +117,11 @@ const int caretWidth = 2; // This value should be kept in sync with UIKit. See <
 const int caretWidth = 1;
 #endif
 
-#if ENABLE(DASHBOARD_SUPPORT) || ENABLE(DRAGGABLE_REGION)
+#if ENABLE(DASHBOARD_SUPPORT)
 struct AnnotatedRegionValue {
     bool operator==(const AnnotatedRegionValue& o) const
     {
-#if ENABLE(DASHBOARD_SUPPORT)
         return type == o.type && bounds == o.bounds && clip == o.clip && label == o.label;
-#else // ENABLE(DRAGGABLE_REGION)
-        return draggable == o.draggable && bounds == o.bounds;
-#endif
     }
     bool operator!=(const AnnotatedRegionValue& o) const
     {
@@ -133,13 +129,9 @@ struct AnnotatedRegionValue {
     }
 
     LayoutRect bounds;
-#if ENABLE(DASHBOARD_SUPPORT)
     String label;
     LayoutRect clip;
     int type;
-#else // ENABLE(DRAGGABLE_REGION)
-    bool draggable;
-#endif
 };
 #endif
 
@@ -649,7 +641,7 @@ public:
     // repaint and do not need a relayout
     virtual void updateFromElement() { }
 
-#if ENABLE(DASHBOARD_SUPPORT) || ENABLE(DRAGGABLE_REGION)
+#if ENABLE(DASHBOARD_SUPPORT)
     virtual void addAnnotatedRegions(Vector<AnnotatedRegionValue>&);
     void collectAnnotatedRegions(Vector<AnnotatedRegionValue>&);
 #endif
