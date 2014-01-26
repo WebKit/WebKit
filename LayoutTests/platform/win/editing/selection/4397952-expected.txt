@@ -1,0 +1,20 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x18
+        RenderText {#text} at (0,0) size 565x18
+          text run at (0,0) width 264: "This tests caret movement across buttons. "
+          text run at (264,0) width 301: "The caret should be just after the second button."
+      RenderBlock {DIV} at (0,34) size 784x22
+        RenderButton {INPUT} at (2,2) size 36x18 [bgcolor=#C0C0C0]
+          RenderBlock (anonymous) at (8,2) size 20x14
+            RenderText at (0,0) size 20x13
+              text run at (0,0) width 20: "Foo"
+        RenderButton {INPUT} at (41,2) size 34x18 [bgcolor=#C0C0C0]
+          RenderBlock (anonymous) at (8,2) size 17x14
+            RenderText at (0,0) size 17x13
+              text run at (0,0) width 17: "Bar"
+        RenderText {#text} at (0,0) size 0x0
+caret: position 1 of child 2 {INPUT} of child 2 {DIV} of body
