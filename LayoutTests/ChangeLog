@@ -1,5 +1,11 @@
 2014-01-26  Zalan Bujtas  <zalan@apple.com>
 
+        Some more Apple Windows port rebaseline.
+
+        * platform/win/svg/custom/foreign-object-skew-expected.txt: Added.
+
+2014-01-26  Zalan Bujtas  <zalan@apple.com>
+
         Unreviewed Apple Windows port rebaseline after r162803.
 
         * platform/win/editing/selection/3690703-2-expected.txt: Added.
