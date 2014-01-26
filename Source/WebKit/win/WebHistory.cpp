@@ -315,9 +315,6 @@ HRESULT STDMETHODCALLTYPE WebHistory::removeItems(
 
 HRESULT STDMETHODCALLTYPE WebHistory::removeAllItems( void)
 {
-    m_entriesByDate.clear();
-    m_orderedLastVisitedDays = nullptr;
-
     Vector<IWebHistoryItem*> itemsVector;
     itemsVector.reserveInitialCapacity(m_entriesByURL.size());
     for (auto it = m_entriesByURL.begin(); it != m_entriesByURL.end(); ++it)
@@ -339,35 +336,13 @@ HRESULT STDMETHODCALLTYPE WebHistory::orderedLastVisitedDays(
     return E_NOTIMPL;
 }
 
+// FIXME: This function should be removed from the IWebHistory interface.
 HRESULT STDMETHODCALLTYPE WebHistory::orderedItemsLastVisitedOnDay( 
     /* [out][in] */ int* count,
     /* [in] */ IWebHistoryItem** items,
     /* [in] */ DATE calendarDate)
 {
-    auto found = m_entriesByDate.find(dateKey(calendarDate));
-    if (found == m_entriesByDate.end()) {
-        *count = 0;
-        return 0;
-    }
-
-    auto& entriesForDate = found->value;
-    int newCount = entriesForDate.size();
-
-    if (!items) {
-        *count = newCount;
-        return S_OK;
-    }
-
-    if (*count < newCount) {
-        *count = newCount;
-        return E_FAIL;
-    }
-
-    *count = newCount;
-    for (int i = 0; i < newCount; ++i)
-        entriesForDate[i].copyRefTo(&items[i]);
-
-    return S_OK;
+    return E_NOTIMPL;
 }
 
 HRESULT STDMETHODCALLTYPE WebHistory::allItems( 

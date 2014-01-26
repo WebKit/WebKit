@@ -1,5 +1,18 @@
 2014-01-26  Anders Carlsson  <andersca@apple.com>
 
+        Another follow-up build fix.
+
+        * WebHistory.cpp:
+        (WebHistory::removeAllItems):
+        (WebHistory::orderedItemsLastVisitedOnDay):
+        * WebHistoryItem.cpp:
+        (WebHistoryItem::initFromDictionaryRepresentation):
+        (WebHistoryItem::dictionaryRepresentation):
+        (WebHistoryItem::visitCount):
+        (WebHistoryItem::setVisitCount):
+
+2014-01-26  Anders Carlsson  <andersca@apple.com>
+
         Remove more history gunk.
 
         * WebHistory.cpp:
