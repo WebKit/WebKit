@@ -81,7 +81,7 @@ layer at (0,0) size 800x600
                   text run at (1,1) width 224: "button with value property changed"
               RenderTableCell {TD} at (389,98) size 243x24 [r=4 c=1 rs=1 cs=1]
                 RenderButton {INPUT} at (3,3) size 41x18 [bgcolor=#C0C0C0]
-                  RenderBlock (anonymous) at (8,2) size 25x14
+                  RenderBlock (anonymous) at (8,2) size 25x13
                     RenderText at (0,0) size 25x13
                       text run at (0,0) width 25: "after"
               RenderTableCell {TD} at (634,100) size 62x20 [r=4 c=2 rs=1 cs=1]
@@ -193,7 +193,7 @@ layer at (0,0) size 800x600
               RenderTableCell {TD} at (389,316) size 243x24 [r=13 c=1 rs=1 cs=1]
                 RenderFileUploadControl {INPUT} at (3,3) size 237x18 "no file selected"
                   RenderButton {INPUT} at (0,0) size 78x18 [bgcolor=#C0C0C0]
-                    RenderBlock (anonymous) at (8,2) size 62x14
+                    RenderBlock (anonymous) at (8,2) size 62x13
                       RenderText at (0,0) size 62x13
                         text run at (0,0) width 62: "Choose File"
               RenderTableCell {TD} at (634,327) size 62x2 [r=13 c=2 rs=1 cs=1]

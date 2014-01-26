@@ -46,7 +46,7 @@ layer at (0,0) size 800x600
       RenderText {#text} at (451,3) size 5x18
         text run at (451,3) width 5: " "
       RenderButton {INPUT} at (457,4) size 79x18 [bgcolor=#C0C0C0]
-        RenderBlock (anonymous) at (8,2) size 62x14
+        RenderBlock (anonymous) at (8,2) size 62x13
           RenderText at (0,0) size 62x13
             text run at (0,0) width 62: "Test Button"
       RenderText {#text} at (537,3) size 5x18

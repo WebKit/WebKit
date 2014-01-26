@@ -5,12 +5,12 @@ layer at (0,0) size 800x86
     RenderBody {BODY} at (8,8) size 784x70
       RenderBlock {FORM} at (0,0) size 784x44
         RenderButton {INPUT} at (2,2) size 159x18 [bgcolor=#C0C0C0]
-          RenderBlock (anonymous) at (8,2) size 143x14
+          RenderBlock (anonymous) at (8,2) size 143x13
             RenderText at (0,0) size 143x13
               text run at (0,0) width 143: "(1) Fill cell with long string"
         RenderBR {BR} at (162,1) size 1x18
         RenderButton {INPUT} at (2,24) size 163x18 [bgcolor=#C0C0C0]
-          RenderBlock (anonymous) at (8,2) size 147x14
+          RenderBlock (anonymous) at (8,2) size 147x13
             RenderText at (0,0) size 147x13
               text run at (0,0) width 147: "(2) Fill cell with short string"
         RenderBR {BR} at (166,23) size 1x18

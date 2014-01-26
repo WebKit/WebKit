@@ -659,7 +659,7 @@ LengthBox ThemeMac::controlPadding(ControlPart part, const Font& font, const Len
             // This also guarantees the HTML <button> will match our rendering by default, since we're using a consistent
             // padding.
             const int padding = 8 * zoomFactor;
-            return LengthBox(0, padding, 0, padding);
+            return LengthBox(2, padding, 3, padding);
         }
         default:
             return Theme::controlPadding(part, font, zoomedBox, zoomFactor);

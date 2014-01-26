@@ -149,7 +149,7 @@ layer at (8,8) size 769x1399
                 RenderText {#text} at (219,42) size 5x18
                   text run at (219,42) width 5: " "
                 RenderButton {INPUT} at (225,43) size 54x18 [color=#000000] [bgcolor=#C0C0C0]
-                  RenderBlock (anonymous) at (8,2) size 38x14
+                  RenderBlock (anonymous) at (8,2) size 38x13
                     RenderText at (0,0) size 38x13
                       text run at (0,0) width 38: "Submit"
                 RenderText {#text} at (0,0) size 0x0

@@ -16,7 +16,7 @@ layer at (0,0) size 800x600
                 text run at (1,1) width 57: "First row"
       RenderBlock {FORM} at (0,46) size 784x22
         RenderButton {INPUT} at (2,2) size 46x18 [bgcolor=#C0C0C0]
-          RenderBlock (anonymous) at (8,2) size 30x14
+          RenderBlock (anonymous) at (8,2) size 30x13
             RenderText at (0,0) size 30x13
               text run at (0,0) width 30: "insert"
         RenderText {#text} at (0,0) size 0x0

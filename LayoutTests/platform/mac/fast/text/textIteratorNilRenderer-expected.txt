@@ -16,7 +16,7 @@ layer at (0,0) size 800x600
                   RenderText {#text} at (0,0) size 0x0
                 RenderTableCell {TD} at (439,0) size 99x22 [r=0 c=2 rs=1 cs=1]
                   RenderButton {INPUT} at (2,2) size 95x18 [bgcolor=#C0C0C0]
-                    RenderBlock (anonymous) at (8,2) size 79x14
+                    RenderBlock (anonymous) at (8,2) size 79x13
                       RenderText at (0,0) size 79x13
                         text run at (0,0) width 79: "Search Froogle"
                   RenderText {#text} at (0,0) size 0x0

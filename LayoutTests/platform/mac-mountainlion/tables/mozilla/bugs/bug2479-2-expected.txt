@@ -98,13 +98,13 @@ layer at (0,0) size 800x553
             RenderText {#text} at (0,0) size 0x0
           RenderBlock {P} at (0,253) size 568x32
             RenderButton {INPUT} at (2,9) size 57x18 [bgcolor=#C0C0C0]
-              RenderBlock (anonymous) at (8,2) size 41x14
+              RenderBlock (anonymous) at (8,2) size 41x13
                 RenderText at (0,0) size 41x13
                   text run at (0,0) width 41: "Submit!"
             RenderText {#text} at (60,6) size 7x19
               text run at (60,6) width 7: " "
             RenderButton {INPUT} at (68,9) size 76x18 [bgcolor=#C0C0C0]
-              RenderBlock (anonymous) at (8,2) size 59x14
+              RenderBlock (anonymous) at (8,2) size 59x13
                 RenderText at (0,0) size 59x13
                   text run at (0,0) width 59: "Clear Form"
             RenderText {#text} at (0,0) size 0x0

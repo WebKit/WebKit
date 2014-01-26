@@ -36,19 +36,19 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {P} at (0,90) size 784x22
         RenderButton {INPUT} at (2,2) size 76x18 [bgcolor=#C0C0C0]
-          RenderBlock (anonymous) at (8,2) size 60x14
+          RenderBlock (anonymous) at (8,2) size 60x13
             RenderText at (0,0) size 60x13
               text run at (0,0) width 60: "UPPERCASE"
         RenderText {#text} at (79,1) size 5x18
           text run at (79,1) width 5: " "
         RenderButton {INPUT} at (85,2) size 69x18 [bgcolor=#C0C0C0]
-          RenderBlock (anonymous) at (8,2) size 52x14
+          RenderBlock (anonymous) at (8,2) size 52x13
             RenderText at (0,0) size 52x13
               text run at (0,0) width 52: "lowercase"
         RenderText {#text} at (155,1) size 5x18
           text run at (155,1) width 5: " "
         RenderButton {INPUT} at (161,2) size 70x18 [bgcolor=#C0C0C0]
-          RenderBlock (anonymous) at (8,2) size 53x14
+          RenderBlock (anonymous) at (8,2) size 53x13
             RenderText at (0,0) size 53x13
               text run at (0,0) width 53: "Capitalize"
         RenderText {#text} at (0,0) size 0x0

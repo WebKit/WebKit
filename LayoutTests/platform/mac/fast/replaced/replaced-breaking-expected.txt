@@ -11,11 +11,11 @@ layer at (0,0) size 800x600
         RenderImage {IMG} at (1,74) size 27x27 [border: (1px solid #000000)]
         RenderText {#text} at (0,0) size 0x0
         RenderButton {INPUT} at (3,103) size 44x18 [bgcolor=#C0C0C0]
-          RenderBlock (anonymous) at (8,2) size 28x14
+          RenderBlock (anonymous) at (8,2) size 28x13
             RenderText at (0,0) size 28x13
               text run at (0,0) width 28: "input"
         RenderButton {INPUT} at (3,125) size 44x18 [bgcolor=#C0C0C0]
-          RenderBlock (anonymous) at (8,2) size 28x14
+          RenderBlock (anonymous) at (8,2) size 28x13
             RenderText at (0,0) size 28x13
               text run at (0,0) width 28: "input"
         RenderText {#text} at (0,0) size 0x0

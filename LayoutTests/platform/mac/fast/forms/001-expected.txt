@@ -35,7 +35,7 @@ layer at (0,0) size 800x600
             RenderTableRow {TR} at (0,0) size 780x24
               RenderTableCell {TD} at (0,0) size 42x24 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
                 RenderButton {INPUT} at (3,3) size 36x18 [bgcolor=#C0C0C0]
-                  RenderBlock (anonymous) at (8,2) size 20x14
+                  RenderBlock (anonymous) at (8,2) size 20x13
                     RenderText at (0,0) size 20x13
                       text run at (0,0) width 20: "Foo"
               RenderTableCell {TD} at (42,11) size 738x2 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]

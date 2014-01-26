@@ -1,3 +1,98 @@
+2014-01-26  Zalan Bujtas  <zalan@apple.com>
+
+        Subpixel Layout: Align <input type="button", submit etc (PushButtonPart) top and bottom paddings with <button>
+        https://bugs.webkit.org/show_bug.cgi?id=127640
+
+        Reviewed by Simon Fraser.
+
+        <button> sets padding-top: 2px and padding-bottom: 3px as default values (html.css),
+        while <input type="button" (submit, etc) has the hardcoded values of 0, 0 and we center the text using the available space.
+        This results in different baseline text position in normal cases. This adjustment puts the <input type='button'
+        rendering back to the pre-subpixel layout state.
+
+        * platform/mac/css3/flexbox/button-expected.txt:
+        * platform/mac/editing/selection/3690703-2-expected.txt:
+        * platform/mac/editing/selection/3690703-expected.txt:
+        * platform/mac/editing/selection/3690719-expected.txt:
+        * platform/mac/editing/selection/4397952-expected.txt:
+        * platform/mac/editing/selection/5240265-expected.txt:
+        * platform/mac/editing/selection/selection-button-text-expected.txt:
+        * platform/mac/fast/block/float/float-avoidance-expected.txt:
+        * platform/mac/fast/css/continuationCrash-expected.txt:
+        * platform/mac/fast/css/margin-top-bottom-dynamic-expected.txt:
+        * platform/mac/fast/css/rtl-ordering-expected.txt:
+        * platform/mac/fast/dom/HTMLTextAreaElement/reset-textarea-expected.txt:
+        * platform/mac/fast/forms/001-expected.png:
+        * platform/mac/fast/forms/001-expected.txt:
+        * platform/mac/fast/forms/basic-buttons-expected.png:
+        * platform/mac/fast/forms/basic-buttons-expected.txt:
+        * platform/mac/fast/forms/blankbuttons-expected.txt:
+        * platform/mac/fast/forms/box-shadow-override-expected.png:
+        * platform/mac/fast/forms/box-shadow-override-expected.txt:
+        * platform/mac/fast/forms/button-positioned-expected.png:
+        * platform/mac/fast/forms/button-positioned-expected.txt:
+        * platform/mac/fast/forms/button-sizes-expected.png:
+        * platform/mac/fast/forms/button-sizes-expected.txt:
+        * platform/mac/fast/forms/button-style-color-expected.png:
+        * platform/mac/fast/forms/button-style-color-expected.txt:
+        * platform/mac/fast/forms/button-table-styles-expected.png:
+        * platform/mac/fast/forms/button-table-styles-expected.txt:
+        * platform/mac/fast/forms/button-text-transform-expected.png:
+        * platform/mac/fast/forms/button-text-transform-expected.txt:
+        * platform/mac/fast/forms/control-restrict-line-height-expected.png:
+        * platform/mac/fast/forms/control-restrict-line-height-expected.txt:
+        * platform/mac/fast/forms/file/file-input-direction-expected.png:
+        * platform/mac/fast/forms/file/file-input-direction-expected.txt:
+        * platform/mac/fast/forms/file/file-input-disabled-expected.txt:
+        * platform/mac/fast/forms/file/input-file-re-render-expected.txt:
+        * platform/mac/fast/forms/form-element-geometry-expected.png:
+        * platform/mac/fast/forms/form-element-geometry-expected.txt:
+        * platform/mac/fast/forms/formmove3-expected.txt:
+        * platform/mac/fast/forms/input-appearance-height-expected.png:
+        * platform/mac/fast/forms/input-appearance-height-expected.txt:
+        * platform/mac/fast/forms/input-button-sizes-expected.png:
+        * platform/mac/fast/forms/input-button-sizes-expected.txt:
+        * platform/mac/fast/forms/input-value-expected.png:
+        * platform/mac/fast/forms/input-value-expected.txt:
+        * platform/mac/fast/forms/targeted-frame-submission-expected.txt:
+        * platform/mac/fast/forms/validation-message-appearance-expected.png:
+        * platform/mac/fast/forms/validation-message-appearance-expected.txt:
+        * platform/mac/fast/html/details-replace-summary-child-expected.txt:
+        * platform/mac/fast/html/details-replace-text-expected.txt:
+        * platform/mac/fast/overflow/scroll-nested-positioned-layer-in-overflow-expected.txt:
+        * platform/mac/fast/overflow/scrollRevealButton-expected.txt:
+        * platform/mac/fast/replaced/replaced-breaking-expected.txt:
+        * platform/mac/fast/replaced/width100percent-button-expected.txt:
+        * platform/mac/fast/text/textIteratorNilRenderer-expected.txt:
+        * platform/mac/http/tests/navigation/javascriptlink-frames-expected.txt:
+        * platform/mac/svg/custom/foreign-object-skew-expected.txt: Added.
+        * platform/mac/tables/mozilla/bugs/bug1188-expected.txt:
+        * platform/mac/tables/mozilla/bugs/bug1318-expected.txt:
+        * platform/mac/tables/mozilla/bugs/bug138725-expected.txt:
+        * platform/mac/tables/mozilla/bugs/bug18359-expected.txt:
+        * platform/mac/tables/mozilla/bugs/bug2479-2-expected.txt:
+        * platform/mac/tables/mozilla/bugs/bug2479-3-expected.txt:
+        * platform/mac/tables/mozilla/bugs/bug2479-4-expected.txt:
+        * platform/mac/tables/mozilla/bugs/bug26178-expected.txt:
+        * platform/mac/tables/mozilla/bugs/bug28928-expected.txt:
+        * platform/mac/tables/mozilla/bugs/bug33855-expected.txt:
+        * platform/mac/tables/mozilla/bugs/bug39209-expected.txt:
+        * platform/mac/tables/mozilla/bugs/bug4429-expected.txt:
+        * platform/mac/tables/mozilla/bugs/bug46368-1-expected.txt:
+        * platform/mac/tables/mozilla/bugs/bug46368-2-expected.txt:
+        * platform/mac/tables/mozilla/bugs/bug51037-expected.txt:
+        * platform/mac/tables/mozilla/bugs/bug51727-expected.txt:
+        * platform/mac/tables/mozilla/bugs/bug52505-expected.txt:
+        * platform/mac/tables/mozilla/bugs/bug52506-expected.txt:
+        * platform/mac/tables/mozilla/bugs/bug60749-expected.txt:
+        * platform/mac/tables/mozilla/bugs/bug7342-expected.txt:
+        * platform/mac/tables/mozilla/collapsing_borders/bug41262-4-expected.txt:
+        * platform/mac/tables/mozilla/dom/tableDom-expected.txt:
+        * platform/mac/tables/mozilla/other/move_row-expected.txt:
+        * platform/mac/tables/mozilla_expected_failures/bugs/bug1725-expected.txt:
+        * platform/mac/tables/mozilla_expected_failures/bugs/bug2479-5-expected.txt:
+        * platform/mac/tables/mozilla_expected_failures/bugs/bug58402-2-expected.txt:
+
 2014-01-26  Zan Dobersek  <zdobersek@igalia.com>
 
         Unreviewed GTK gardening. Rebaselining after r162553, r162742, r162791 and possibly other revisions.

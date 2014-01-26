@@ -30,12 +30,12 @@ layer at (0,0) size 800x600
                     text run at (4,4) width 59: "6:00 a.m."
           RenderBlock {P} at (0,96) size 704x22
             RenderButton {INPUT} at (287,2) size 63x18 [bgcolor=#C0C0C0]
-              RenderBlock (anonymous) at (8,2) size 46x14
+              RenderBlock (anonymous) at (8,2) size 46x13
                 RenderText at (0,0) size 46x13
                   text run at (0,0) width 46: "separate"
             RenderText {#text} at (351,1) size 5x18
               text run at (351,1) width 5: " "
             RenderButton {INPUT} at (357,2) size 60x18 [bgcolor=#C0C0C0]
-              RenderBlock (anonymous) at (8,2) size 44x14
+              RenderBlock (anonymous) at (8,2) size 44x13
                 RenderText at (0,0) size 44x13
                   text run at (0,0) width 44: "collapse"

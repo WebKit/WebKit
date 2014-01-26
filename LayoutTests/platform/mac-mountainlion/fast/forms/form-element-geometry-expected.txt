@@ -19,7 +19,7 @@ layer at (0,0) size 785x636
               RenderBlock {DIV} at (1,1) size 56x22 [border: (2px solid #0000FF)]
                 RenderInline {FONT} at (0,0) size 52x28
                   RenderButton {INPUT} at (2,2) size 52x18 [bgcolor=#C0C0C0]
-                    RenderBlock (anonymous) at (8,2) size 36x14
+                    RenderBlock (anonymous) at (8,2) size 36x13
                       RenderText at (0,0) size 36x13
                         text run at (0,0) width 36: "button"
             RenderTableCell {TD} at (62,2) size 68x24 [r=0 c=1 rs=1 cs=1]
@@ -43,7 +43,7 @@ layer at (0,0) size 785x636
             RenderTableCell {TD} at (2,2) size 58x24 [r=0 c=0 rs=1 cs=1]
               RenderBlock {DIV} at (1,1) size 56x22 [border: (2px solid #0000FF)]
                 RenderButton {INPUT} at (2,2) size 52x18 [bgcolor=#C0C0C0]
-                  RenderBlock (anonymous) at (8,2) size 36x14
+                  RenderBlock (anonymous) at (8,2) size 36x13
                     RenderText at (0,0) size 36x13
                       text run at (0,0) width 36: "button"
             RenderTableCell {TD} at (62,2) size 68x24 [r=0 c=1 rs=1 cs=1]
@@ -65,7 +65,7 @@ layer at (0,0) size 785x636
               RenderBlock {DIV} at (1,1) size 56x22 [border: (2px solid #0000FF)]
                 RenderInline {FONT} at (0,0) size 52x13
                   RenderButton {INPUT} at (2,2) size 52x18 [bgcolor=#C0C0C0]
-                    RenderBlock (anonymous) at (8,2) size 36x14
+                    RenderBlock (anonymous) at (8,2) size 36x13
                       RenderText at (0,0) size 36x13
                         text run at (0,0) width 36: "button"
             RenderTableCell {TD} at (62,2) size 68x24 [r=0 c=1 rs=1 cs=1]
@@ -96,7 +96,7 @@ layer at (0,0) size 785x636
               RenderBlock {DIV} at (1,1) size 241x22 [border: (2px solid #0000FF)]
                 RenderFileUploadControl {INPUT} at (2,2) size 237x18 "no file selected"
                   RenderButton {INPUT} at (0,0) size 78x18 [bgcolor=#C0C0C0]
-                    RenderBlock (anonymous) at (8,2) size 62x14
+                    RenderBlock (anonymous) at (8,2) size 62x13
                       RenderText at (0,0) size 62x13
                         text run at (0,0) width 62: "Choose File"
             RenderTableCell {TD} at (370,2) size 171x42 [r=0 c=3 rs=1 cs=1]
@@ -109,7 +109,7 @@ layer at (0,0) size 785x636
           RenderText {#text} at (0,0) size 43x28
             text run at (0,0) width 43: "text "
           RenderButton {INPUT} at (45,9) size 52x18 [bgcolor=#C0C0C0]
-            RenderBlock (anonymous) at (8,2) size 36x14
+            RenderBlock (anonymous) at (8,2) size 36x13
               RenderText at (0,0) size 36x13
                 text run at (0,0) width 36: "button"
           RenderText {#text} at (98,0) size 7x28
@@ -129,7 +129,7 @@ layer at (0,0) size 785x636
         RenderText {#text} at (0,1) size 27x18
           text run at (0,1) width 27: "text "
         RenderButton {INPUT} at (29,2) size 52x18 [bgcolor=#C0C0C0]
-          RenderBlock (anonymous) at (8,2) size 36x14
+          RenderBlock (anonymous) at (8,2) size 36x13
             RenderText at (0,0) size 36x13
               text run at (0,0) width 36: "button"
         RenderText {#text} at (82,1) size 5x18
@@ -150,7 +150,7 @@ layer at (0,0) size 785x636
           RenderText {#text} at (0,5) size 18x13
             text run at (0,5) width 18: "text "
           RenderButton {INPUT} at (20,2) size 52x18 [bgcolor=#C0C0C0]
-            RenderBlock (anonymous) at (8,2) size 36x14
+            RenderBlock (anonymous) at (8,2) size 36x13
               RenderText at (0,0) size 36x13
                 text run at (0,0) width 36: "button"
           RenderText {#text} at (73,5) size 4x13
@@ -174,7 +174,7 @@ layer at (0,0) size 785x636
           text run at (104,22) width 4: " "
         RenderFileUploadControl {INPUT} at (110,23) size 237x18 "no file selected"
           RenderButton {INPUT} at (0,0) size 78x18 [bgcolor=#C0C0C0]
-            RenderBlock (anonymous) at (8,2) size 62x14
+            RenderBlock (anonymous) at (8,2) size 62x13
               RenderText at (0,0) size 62x13
                 text run at (0,0) width 62: "Choose File"
         RenderText {#text} at (349,22) size 4x18

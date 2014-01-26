@@ -14,13 +14,13 @@ layer at (0,0) size 800x600
                 text run at (2,2) width 106: "   InspectionText"
       RenderBlock {FORM} at (0,28) size 784x22
         RenderButton {INPUT} at (2,2) size 88x18 [bgcolor=#C0C0C0]
-          RenderBlock (anonymous) at (8,2) size 72x14
+          RenderBlock (anonymous) at (8,2) size 72x13
             RenderText at (0,0) size 72x13
               text run at (0,0) width 72: "change width"
         RenderText {#text} at (91,1) size 5x18
           text run at (91,1) width 5: " "
         RenderButton {INPUT} at (97,2) size 181x18 [bgcolor=#C0C0C0]
-          RenderBlock (anonymous) at (8,2) size 164x14
+          RenderBlock (anonymous) at (8,2) size 164x13
             RenderText at (0,0) size 164x13
               text run at (0,0) width 164: "change width with table reflow"
         RenderText {#text} at (0,0) size 0x0

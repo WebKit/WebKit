@@ -14,7 +14,7 @@ layer at (0,0) size 800x138
           RenderText {#text} at (0,19) size 59x18
             text run at (0,19) width 59: "with text "
           RenderButton {INPUT} at (61,20) size 62x18 [bgcolor=#C0C0C0]
-            RenderBlock (anonymous) at (8,2) size 46x14
+            RenderBlock (anonymous) at (8,2) size 46x13
               RenderText at (0,0) size 46x13
                 text run at (0,0) width 46: "too little"
           RenderText {#text} at (124,19) size 56x18
@@ -23,7 +23,7 @@ layer at (0,0) size 800x138
           RenderText {#text} at (0,1) size 54x18
             text run at (0,1) width 54: "and text "
           RenderButton {INPUT} at (56,2) size 67x18 [bgcolor=#C0C0C0]
-            RenderBlock (anonymous) at (8,2) size 51x14
+            RenderBlock (anonymous) at (8,2) size 51x13
               RenderText at (0,0) size 51x13
                 text run at (0,0) width 51: "too much"
           RenderText {#text} at (124,1) size 64x18

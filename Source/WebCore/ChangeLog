@@ -1,3 +1,18 @@
+2014-01-26  Zalan Bujtas  <zalan@apple.com>
+
+        Subpixel Layout: Align <input type="button", submit etc (PushButtonPart) top and bottom paddings with <button>
+        https://bugs.webkit.org/show_bug.cgi?id=127640
+
+        Reviewed by Simon Fraser.
+
+        <button> sets padding-top: 2px and padding-bottom: 3px as default values (html.css),
+        while <input type="button" (submit, etc) has the hardcoded values of 0, 0 and we center the text using the available space.
+        This results in different baseline text position in normal cases. This adjustment puts the <input type='button'
+        rendering back to the pre-subpixel layout state.
+
+        * platform/mac/ThemeMac.mm:
+        (WebCore::ThemeMac::controlPadding):
+
 2014-01-26  Benjamin Poulain  <bpoulain@apple.com>
 
         Improve the bindings of NodeList's name accessor
