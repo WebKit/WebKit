@@ -1,3 +1,13 @@
+2014-01-25  Diego Pino Garcia  <dpino@igalia.com>
+
+        Web Inspector: Position the completion suggestions popup below if there is room
+        https://bugs.webkit.org/show_bug.cgi?id=127615
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/CompletionSuggestionsView.js:
+        (WebInspector.CompletionSuggestionsView.prototype.show):
+
 2014-01-23  Timothy Hatcher  <timothy@apple.com>
 
         Refactor TimelineRecordBar combining logic into a helper function.
