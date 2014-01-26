@@ -331,34 +331,12 @@ HRESULT STDMETHODCALLTYPE WebHistory::removeAllItems( void)
     return postNotification(kWebHistoryAllItemsRemovedNotification, userInfo.get());
 }
 
+// FIXME: This function should be removed from the IWebHistory interface.
 HRESULT STDMETHODCALLTYPE WebHistory::orderedLastVisitedDays( 
     /* [out][in] */ int* count,
     /* [in] */ DATE* calendarDates)
 {
-    int dateCount = m_entriesByDate.size();
-    if (!calendarDates) {
-        *count = dateCount;
-        return S_OK;
-    }
-
-    if (*count < dateCount) {
-        *count = dateCount;
-        return E_FAIL;
-    }
-
-    *count = dateCount;
-    if (!m_orderedLastVisitedDays) {
-        m_orderedLastVisitedDays = std::make_unique<DATE[]>(dateCount);
-        DateToEntriesMap::const_iterator::Keys end = m_entriesByDate.end().keys();
-        int i = 0;
-        for (DateToEntriesMap::const_iterator::Keys it = m_entriesByDate.begin().keys(); it != end; ++it, ++i)
-            m_orderedLastVisitedDays[i] = *it / secondsPerDay;
-        // Use std::greater to sort the days in descending order (i.e., most-recent first).
-        sort(m_orderedLastVisitedDays.get(), m_orderedLastVisitedDays.get() + dateCount, greater<DATE>());
-    }
-
-    memcpy(calendarDates, m_orderedLastVisitedDays.get(), dateCount * sizeof(DATE));
-    return S_OK;
+    return E_NOTIMPL;
 }
 
 HRESULT STDMETHODCALLTYPE WebHistory::orderedItemsLastVisitedOnDay( 
@@ -529,10 +507,6 @@ HRESULT WebHistory::addItem(IWebHistoryItem* entry, bool discardDuplicate, bool*
         }
     }
 
-    hr = addItemToDateCaches(entry);
-    if (FAILED(hr))
-        return hr;
-
     m_entriesByURL.set(urlString, entry);
 
     COMPtr<IPropertyBag> userInfo = createUserInfoFromHistoryItem(
@@ -548,16 +522,7 @@ HRESULT WebHistory::addItem(IWebHistoryItem* entry, bool discardDuplicate, bool*
 void WebHistory::visitedURL(const URL& url, const String& title, const String& httpMethod, bool wasFailure, bool increaseVisitCount)
 {
     IWebHistoryItem* entry = m_entriesByURL.get(url.string()).get();
-    if (entry) {
-        COMPtr<IWebHistoryItemPrivate> entryPrivate(Query, entry);
-        if (!entryPrivate)
-            return;
-
-        // Remove the item from date caches before changing its last visited date.  Otherwise we might get duplicate entries
-        // as seen in <rdar://problem/6570573>.
-        removeItemFromDateCaches(entry);
-        entryPrivate->visitedWithTitle(BString(title), increaseVisitCount);
-    } else {
+    if (!entry) {
         COMPtr<WebHistoryItem> item(AdoptCOM, WebHistoryItem::createInstance());
         if (!item)
             return;
@@ -573,12 +538,8 @@ void WebHistory::visitedURL(const URL& url, const String& title, const String& h
         if (FAILED(entry->initWithURLString(BString(url.string()), BString(title), lastVisited)))
             return;
         
-        item->recordInitialVisit();
-
         m_entriesByURL.set(url.string(), entry);
     }
-
-    addItemToDateCaches(entry);
 
     COMPtr<IWebHistoryItemPrivate> entryPrivate(Query, entry);
     if (!entryPrivate)
@@ -614,9 +575,6 @@ HRESULT WebHistory::removeItemForURLString(const WTF::String& urlString)
     if (it == m_entriesByURL.end())
         return E_FAIL;
 
-    HRESULT hr = removeItemFromDateCaches(it->value.get());
-    m_entriesByURL.remove(it);
-
     if (!m_entriesByURL.size())
         PageGroup::removeAllVisitedLinks();
 
@@ -628,96 +586,6 @@ COMPtr<IWebHistoryItem> WebHistory::itemForURLString(const String& urlString) co
     if (!urlString)
         return 0;
     return m_entriesByURL.get(urlString);
-}
-
-HRESULT WebHistory::removeItemFromDateCaches(IWebHistoryItem* entry)
-{
-    DATE lastVisitedTime;
-    entry->lastVisitedTimeInterval(&lastVisitedTime);
-
-    auto found = m_entriesByDate.find(dateKey(lastVisitedTime));
-    if (found == m_entriesByDate.end())
-        return S_OK;
-
-    auto& entriesForDate = found->value;
-    int count = entriesForDate.size();
-
-    for (int i = count - 1; i >= 0; --i) {
-        if (entriesForDate[i] == entry)
-            entriesForDate.remove(i);
-    }
-
-    // remove this date entirely if there are no other entries on it
-    if (entriesForDate.isEmpty()) {
-        m_entriesByDate.remove(found);
-        // Clear m_orderedLastVisitedDays so it will be regenerated when next requested.
-        m_orderedLastVisitedDays = nullptr;
-    }
-
-    return S_OK;
-}
-
-HRESULT WebHistory::addItemToDateCaches(IWebHistoryItem* entry)
-{
-    ASSERT_ARG(entry, entry);
-
-    DATE lastVisitedTime;
-    entry->lastVisitedTimeInterval(&lastVisitedTime);
-
-    DateKey key = dateKey(lastVisitedTime);
-    auto found = m_entriesByDate.find(key);
-    if (found == m_entriesByDate.end()) {
-        Vector<COMPtr<IWebHistoryItem>> entries;
-        entries.append(entry);
-        m_entriesByDate.set(key, entries);
-        // Clear m_orderedLastVisitedDays so it will be regenerated when next requested.
-        m_orderedLastVisitedDays = nullptr;
-        return S_OK;
-    }
-
-    auto& entriesForDate = found->value;
-    size_t count = entriesForDate.size();
-
-    // The entries for each day are stored in a sorted array with the most recent entry first
-    // Check for the common cases of the entry being newer than all existing entries or the first entry of the day
-    bool isNewerThanAllEntries = false;
-    if (count) {
-        DATE itemTime;
-        isNewerThanAllEntries = SUCCEEDED(entriesForDate.first()->lastVisitedTimeInterval(&itemTime)) && itemTime < lastVisitedTime;
-    }
-    if (!count || isNewerThanAllEntries) {
-        entriesForDate.insert(0, entry);
-        return S_OK;
-    }
-
-    // .. or older than all existing entries
-    bool isOlderThanAllEntries = false;
-    if (count > 0) {
-        DATE itemTime;
-        isOlderThanAllEntries = SUCCEEDED(entriesForDate.last()->lastVisitedTimeInterval(&itemTime)) && itemTime >= lastVisitedTime;
-    }
-    if (isOlderThanAllEntries) {
-        entriesForDate.append(entry);
-        return S_OK;
-    }
-
-    unsigned low = 0;
-    unsigned high = count;
-    while (low < high) {
-        unsigned mid = low + (high - low) / 2;
-        DATE itemTime;
-        if (FAILED(entriesForDate[mid]->lastVisitedTimeInterval(&itemTime)))
-            return E_FAIL;
-
-        if (itemTime >= lastVisitedTime)
-            low = mid + 1;
-        else
-            high = mid;
-    }
-
-    // low is now the index of the first entry that is older than entryDate
-    entriesForDate.insert(low, entry);
-    return S_OK;
 }
 
 void WebHistory::addVisitedLinksToPageGroup(PageGroup& group)

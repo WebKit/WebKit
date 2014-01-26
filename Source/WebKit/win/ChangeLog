@@ -1,5 +1,23 @@
 2014-01-26  Anders Carlsson  <andersca@apple.com>
 
+        Remove more history gunk.
+
+        * WebHistory.cpp:
+        (WebHistory::orderedLastVisitedDays):
+        (WebHistory::addItem):
+        (WebHistory::visitedURL):
+        (WebHistory::removeItemForURLString):
+        * WebHistory.h:
+        * WebHistoryItem.cpp:
+        (WebHistoryItem::initFromDictionaryRepresentation):
+        (WebHistoryItem::dictionaryRepresentation):
+        (WebHistoryItem::mergeAutoCompleteHints):
+        (WebHistoryItem::setLastVisitedTimeInterval):
+        (WebHistoryItem::initWithURLString):
+        (WebHistoryItem::lastVisitedTimeInterval):
+
+2014-01-26  Anders Carlsson  <andersca@apple.com>
+
         Build fix.
 
         * WebHistoryItem.cpp:

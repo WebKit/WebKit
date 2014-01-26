@@ -134,14 +134,10 @@ private:
     HRESULT removeItem(IWebHistoryItem* entry);
     HRESULT addItem(IWebHistoryItem* entry, bool discardDuplicate, bool* added);
     HRESULT removeItemForURLString(const WTF::String& urlString);
-    HRESULT addItemToDateCaches(IWebHistoryItem* entry);
-    HRESULT removeItemFromDateCaches(IWebHistoryItem* entry);
     BSTR getNotificationString(NotificationType notifyType);
 
     ULONG m_refCount;
     URLToEntriesMap m_entriesByURL;
-    DateToEntriesMap m_entriesByDate;
-    std::unique_ptr<DATE[]> m_orderedLastVisitedDays;
     COMPtr<WebPreferences> m_preferences;
 };
 

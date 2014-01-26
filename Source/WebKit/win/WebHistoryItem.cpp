@@ -91,7 +91,6 @@ WebHistoryItem* WebHistoryItem::createInstance(PassRefPtr<HistoryItem> historyIt
 // IWebHistoryItemPrivate -----------------------------------------------------
 
 static CFStringRef urlKey = CFSTR("");
-static CFStringRef lastVisitedDateKey = CFSTR("lastVisitedDate");
 static CFStringRef titleKey = CFSTR("title");
 static CFStringRef visitCountKey = CFSTR("visitCount");
 static CFStringRef lastVisitWasFailureKey = CFSTR("lastVisitWasFailure");
@@ -106,11 +105,6 @@ HRESULT STDMETHODCALLTYPE WebHistoryItem::initFromDictionaryRepresentation(void*
     CFStringRef urlStringRef = (CFStringRef) CFDictionaryGetValue(dictionaryRef, urlKey);
     if (urlStringRef && CFGetTypeID(urlStringRef) != CFStringGetTypeID())
         return E_FAIL;
-
-    CFStringRef lastVisitedRef = (CFStringRef) CFDictionaryGetValue(dictionaryRef, lastVisitedDateKey);
-    if (!lastVisitedRef || CFGetTypeID(lastVisitedRef) != CFStringGetTypeID())
-        return E_FAIL;
-    CFAbsoluteTime lastVisitedTime = CFStringGetDoubleValue(lastVisitedRef);
 
     CFStringRef titleRef = (CFStringRef) CFDictionaryGetValue(dictionaryRef, titleKey);
     if (titleRef && CFGetTypeID(titleRef) != CFStringGetTypeID())
@@ -174,7 +168,7 @@ HRESULT STDMETHODCALLTYPE WebHistoryItem::initFromDictionaryRepresentation(void*
     }
 
     historyItemWrappers().remove(m_historyItem.get());
-    m_historyItem = HistoryItem::create(urlStringRef, titleRef, lastVisitedTime);
+    m_historyItem = HistoryItem::create(urlStringRef, titleRef);
     historyItemWrappers().set(m_historyItem.get(), this);
 
     m_historyItem->setVisitCount(visitedCount);
@@ -193,11 +187,6 @@ HRESULT STDMETHODCALLTYPE WebHistoryItem::initFromDictionaryRepresentation(void*
 HRESULT STDMETHODCALLTYPE WebHistoryItem::dictionaryRepresentation(void** dictionary)
 {
     CFDictionaryRef* dictionaryRef = (CFDictionaryRef*) dictionary;
-    static CFStringRef lastVisitedFormat = CFSTR("%.1lf");
-    CFStringRef lastVisitedStringRef =
-        CFStringCreateWithFormat(0, 0, lastVisitedFormat, m_historyItem->lastVisitedTime());
-    if (!lastVisitedStringRef)
-        return E_FAIL;
 
     int keyCount = 0;
     CFTypeRef keys[9];
@@ -296,24 +285,16 @@ HRESULT STDMETHODCALLTYPE WebHistoryItem::setVisitCount(int count)
     return S_OK;
 }
 
+// FIXME: This function should be removed from the IWebHistoryItem interface.
 HRESULT STDMETHODCALLTYPE WebHistoryItem::mergeAutoCompleteHints(IWebHistoryItem* otherItem)
 {
-    if (!otherItem)
-        return E_FAIL;
-
-    COMPtr<WebHistoryItem> otherWebHistoryItem(Query, otherItem);
-    if (!otherWebHistoryItem)
-        return E_FAIL;
-
-    m_historyItem->mergeAutoCompleteHints(otherWebHistoryItem->historyItem());
-
-    return S_OK;
+    return E_NOTIMPL;
 }
 
+// FIXME: This function should be removed from the IWebHistoryItem interface.
 HRESULT STDMETHODCALLTYPE WebHistoryItem::setLastVisitedTimeInterval(DATE time)
 {
-    m_historyItem->setLastVisitedTime(MarshallingHelpers::DATEToCFAbsoluteTime(time));
-    return S_OK;
+    return E_NOTIMPL;
 }
 
 HRESULT STDMETHODCALLTYPE WebHistoryItem::setTitle(BSTR title)
@@ -539,7 +520,7 @@ HRESULT STDMETHODCALLTYPE WebHistoryItem::initWithURLString(
     /* [in] */ DATE lastVisited)
 {
     historyItemWrappers().remove(m_historyItem.get());
-    m_historyItem = HistoryItem::create(String(urlString, SysStringLen(urlString)), String(title, SysStringLen(title)), MarshallingHelpers::DATEToCFAbsoluteTime(lastVisited));
+    m_historyItem = HistoryItem::create(String(urlString, SysStringLen(urlString)), String(title, SysStringLen(title)), 0);
     historyItemWrappers().set(m_historyItem.get(), this);
 
     return S_OK;
@@ -578,14 +559,11 @@ HRESULT STDMETHODCALLTYPE WebHistoryItem::title(
     return S_OK;
 }
 
+// FIXME: This function should be removed from the IWebHistoryItem interface.
 HRESULT STDMETHODCALLTYPE WebHistoryItem::lastVisitedTimeInterval( 
     /* [retval][out] */ DATE* lastVisited)
 {
-    if (!lastVisited)
-        return E_POINTER;
-
-    *lastVisited = MarshallingHelpers::CFAbsoluteTimeToDATE(m_historyItem->lastVisitedTime());
-    return S_OK;
+    return E_NOTIMPL;
 }
 
 HRESULT STDMETHODCALLTYPE WebHistoryItem::setAlternateTitle( 
