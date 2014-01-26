@@ -1,3 +1,13 @@
+2014-01-25  Mark Lam  <mark.lam@apple.com>
+
+        Gardening: fix build breakage from previous commit.
+
+        Not reviewed.
+
+        * profiler/ProfileNode.cpp:
+        (JSC::ProfileNode::debugPrintData):
+        - Removed obsolete references to "visible" timers.
+
 2014-01-25  Timothy Hatcher  <timothy@apple.com>
 
         Remove dead code from the JSC profiler.

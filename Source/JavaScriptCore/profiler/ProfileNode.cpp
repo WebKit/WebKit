@@ -193,11 +193,9 @@ void ProfileNode::debugPrintData(int indentLevel) const
     for (int i = 0; i < indentLevel; ++i)
         dataLogF("  ");
 
-    dataLogF("Function Name %s %d SelfTime %.3fms/%.3f%% TotalTime %.3fms/%.3f%% VSelf %.3fms VTotal %.3fms Visible %s Next Sibling %s\n",
+    dataLogF("Function Name %s %d SelfTime %.3fms/%.3f%% TotalTime %.3fms/%.3f%% Next Sibling %s\n",
         functionName().utf8().data(), 
         m_numberOfCalls, m_selfTime, selfPercent(), m_totalTime, totalPercent(),
-        m_visibleSelfTime, m_visibleTotalTime, 
-        (m_visible ? "True" : "False"),
         m_nextSibling ? m_nextSibling->functionName().utf8().data() : "");
 
     ++indentLevel;
