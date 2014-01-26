@@ -27,6 +27,7 @@
 #include "config.h"
 #include "Internals.h"
 
+#include "AXObjectCache.h"
 #include "AnimationController.h"
 #include "ApplicationCacheStorage.h"
 #include "BackForwardController.h"
@@ -290,6 +291,9 @@ void Internals::resetToConsistentState(Page* page)
     cacheStorage().setDefaultOriginQuota(ApplicationCacheStorage::noQuota());
 #if ENABLE(VIDEO)
     MediaSessionManager::sharedManager().resetRestrictions();
+#endif
+#if HAVE(ACCESSIBILITY)
+    AXObjectCache::disableAccessibility();
 #endif
 }
 

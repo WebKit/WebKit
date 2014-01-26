@@ -2175,9 +2175,6 @@ void Document::clearAXObjectCache()
 
 AXObjectCache* Document::existingAXObjectCache() const
 {
-    if (!AXObjectCache::accessibilityEnabled())
-        return nullptr;
-
     if (!topDocument()->hasLivingRenderTree())
         return nullptr;
 

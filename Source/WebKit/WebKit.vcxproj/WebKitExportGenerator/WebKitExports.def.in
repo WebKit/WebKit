@@ -469,3 +469,5 @@ EXPORTS
         symbolWithPointer(?completeURL@Document@WebCore@@UBE?AVURL@2@ABVString@WTF@@@Z, ?completeURL@Document@WebCore@@UEBA?AVURL@2@AEBVString@WTF@@@Z)
         symbolWithPointer(??1DOMWindow@WebCore@@UAE@XZ, ??1DOMWindow@WebCore@@UEAA@XZ)
         symbolWithPointer(?visibleContentRect@ScrollableArea@WebCore@@QBE?AVIntRect@2@W4VisibleContentRectBehavior@12@@Z, ?visibleContentRect@ScrollableArea@WebCore@@QEBA?AVIntRect@2@W4VisibleContentRectBehavior@12@@Z)
+        symbolWithPointer(?gAccessibilityEnabled@AXObjectCache@WebCore@@0_NA, ?gAccessibilityEnabled@AXObjectCache@WebCore@@0_NA)
+

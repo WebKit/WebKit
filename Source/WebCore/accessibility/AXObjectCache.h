@@ -128,6 +128,8 @@ public:
 
 #if HAVE(ACCESSIBILITY)
     static void enableAccessibility() { gAccessibilityEnabled = true; }
+    static void disableAccessibility() { gAccessibilityEnabled = false; }
+
     // Enhanced user interface accessibility can be toggled by the assistive technology.
     static void setEnhancedUserInterfaceAccessibility(bool flag) { gAccessibilityEnhancedUserInterfaceEnabled = flag; }
     
@@ -135,6 +137,7 @@ public:
     static bool accessibilityEnhancedUserInterfaceEnabled() { return gAccessibilityEnhancedUserInterfaceEnabled; }
 #else
     static void enableAccessibility() { }
+    static void disableAccessibility() { }
     static void setEnhancedUserInterfaceAccessibility(bool) { }
     static bool accessibilityEnabled() { return false; }
     static bool accessibilityEnhancedUserInterfaceEnabled() { return false; }
