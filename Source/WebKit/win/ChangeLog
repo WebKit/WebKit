@@ -1,5 +1,12 @@
 2014-01-26  Anders Carlsson  <andersca@apple.com>
 
+        Follow-up build fix.
+
+        * WebHistoryItem.cpp:
+        (WebHistoryItem::visitedWithTitle):
+
+2014-01-26  Anders Carlsson  <andersca@apple.com>
+
         Remove even more Windows history code.
 
         * WebHistory.cpp:
