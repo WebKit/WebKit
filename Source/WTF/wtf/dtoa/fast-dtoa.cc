@@ -253,7 +253,8 @@ namespace double_conversion {
                     *power = kTen9;
                     *exponent = 9;
                     break;
-                }  // else fallthrough
+                }
+                FALLTHROUGH;
             case 29:
             case 28:
             case 27:
@@ -261,7 +262,8 @@ namespace double_conversion {
                     *power = kTen8;
                     *exponent = 8;
                     break;
-                }  // else fallthrough
+                }
+                FALLTHROUGH;
             case 26:
             case 25:
             case 24:
@@ -269,7 +271,8 @@ namespace double_conversion {
                     *power = kTen7;
                     *exponent = 7;
                     break;
-                }  // else fallthrough
+                }
+                FALLTHROUGH;
             case 23:
             case 22:
             case 21:
@@ -278,7 +281,8 @@ namespace double_conversion {
                     *power = kTen6;
                     *exponent = 6;
                     break;
-                }  // else fallthrough
+                }
+                FALLTHROUGH;
             case 19:
             case 18:
             case 17:
@@ -286,7 +290,8 @@ namespace double_conversion {
                     *power = kTen5;
                     *exponent = 5;
                     break;
-                }  // else fallthrough
+                }
+                FALLTHROUGH;
             case 16:
             case 15:
             case 14:
@@ -294,7 +299,8 @@ namespace double_conversion {
                     *power = kTen4;
                     *exponent = 4;
                     break;
-                }  // else fallthrough
+                }
+                FALLTHROUGH;
             case 13:
             case 12:
             case 11:
@@ -303,7 +309,8 @@ namespace double_conversion {
                     *power = 1000;
                     *exponent = 3;
                     break;
-                }  // else fallthrough
+                }
+                FALLTHROUGH;
             case 9:
             case 8:
             case 7:
@@ -311,7 +318,8 @@ namespace double_conversion {
                     *power = 100;
                     *exponent = 2;
                     break;
-                }  // else fallthrough
+                }
+                FALLTHROUGH;
             case 6:
             case 5:
             case 4:
@@ -319,7 +327,8 @@ namespace double_conversion {
                     *power = 10;
                     *exponent = 1;
                     break;
-                }  // else fallthrough
+                }
+                FALLTHROUGH;
             case 3:
             case 2:
             case 1:
@@ -327,7 +336,8 @@ namespace double_conversion {
                     *power = 1;
                     *exponent = 0;
                     break;
-                }  // else fallthrough
+                }
+                FALLTHROUGH;
             case 0:
                 *power = 0;
                 *exponent = -1;

@@ -1,3 +1,27 @@
+2014-01-25  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Add FALLTHROUGH and -Wimplicit-fallthrough to warn about unannotated implicit fallthroughs in switches
+        https://bugs.webkit.org/show_bug.cgi?id=127637
+
+        Reviewed by Darin Adler.
+
+        For information about [[clang::fallthrough]], see:
+        <http://clang.llvm.org/docs/LanguageExtensions.html#the-clang-fallthrough-attribute>
+
+        * Configurations/Base.xcconfig:
+        Enable -Wimplicit-fallthrough warnings.
+
+        * wtf/Compiler.h:
+        Define FALLTHROUGH on clang and fallback to outputing nothing when unsupported.
+
+        * wtf/dtoa/fast-dtoa.cc:
+        * wtf/unicode/UTF8.cpp:
+        (WTF::Unicode::convertLatin1ToUTF8):
+        (WTF::Unicode::convertUTF16ToUTF8):
+        (WTF::Unicode::isLegalUTF8):
+        (WTF::Unicode::readUTF8Sequence):
+        Explicitly annotate implicit fallthroughs with FALLTHROUGH.
+
 2014-01-25  Darin Adler  <darin@apple.com>
 
         Call deprecatedCharacters instead of characters at more call sites

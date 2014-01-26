@@ -157,6 +157,7 @@ ConversionResult convertLatin1ToUTF8(
         case 2:
             *--target = (char)((ch | byteMark) & byteMask);
             ch >>= 6;
+            FALLTHROUGH;
         case 1:
             *--target =  (char)(ch | firstByteMark[bytesToWrite]);
         }
@@ -230,9 +231,9 @@ ConversionResult convertUTF16ToUTF8(
             break;
         }
         switch (bytesToWrite) { // note: everything falls through.
-            case 4: *--target = (char)((ch | byteMark) & byteMask); ch >>= 6;
-            case 3: *--target = (char)((ch | byteMark) & byteMask); ch >>= 6;
-            case 2: *--target = (char)((ch | byteMark) & byteMask); ch >>= 6;
+            case 4: *--target = (char)((ch | byteMark) & byteMask); ch >>= 6; FALLTHROUGH;
+            case 3: *--target = (char)((ch | byteMark) & byteMask); ch >>= 6; FALLTHROUGH;
+            case 2: *--target = (char)((ch | byteMark) & byteMask); ch >>= 6; FALLTHROUGH;
             case 1: *--target =  (char)(ch | firstByteMark[bytesToWrite]);
         }
         target += bytesToWrite;
@@ -252,8 +253,8 @@ static bool isLegalUTF8(const unsigned char* source, int length)
     switch (length) {
         default: return false;
         // Everything else falls through when "true"...
-        case 4: if ((a = (*--srcptr)) < 0x80 || a > 0xBF) return false;
-        case 3: if ((a = (*--srcptr)) < 0x80 || a > 0xBF) return false;
+        case 4: if ((a = (*--srcptr)) < 0x80 || a > 0xBF) return false; FALLTHROUGH;
+        case 3: if ((a = (*--srcptr)) < 0x80 || a > 0xBF) return false; FALLTHROUGH;
         case 2: if ((a = (*--srcptr)) > 0xBF) return false;
 
         switch (*source) {
@@ -264,6 +265,7 @@ static bool isLegalUTF8(const unsigned char* source, int length)
             case 0xF4: if (a > 0x8F) return false; break;
             default:   if (a < 0x80) return false;
         }
+        FALLTHROUGH;
 
         case 1: if (*source >= 0x80 && *source < 0xC2) return false;
     }
@@ -283,11 +285,11 @@ static inline UChar32 readUTF8Sequence(const char*& sequence, unsigned length)
 
     // The cases all fall through.
     switch (length) {
-        case 6: character += static_cast<unsigned char>(*sequence++); character <<= 6;
-        case 5: character += static_cast<unsigned char>(*sequence++); character <<= 6;
-        case 4: character += static_cast<unsigned char>(*sequence++); character <<= 6;
-        case 3: character += static_cast<unsigned char>(*sequence++); character <<= 6;
-        case 2: character += static_cast<unsigned char>(*sequence++); character <<= 6;
+        case 6: character += static_cast<unsigned char>(*sequence++); character <<= 6; FALLTHROUGH;
+        case 5: character += static_cast<unsigned char>(*sequence++); character <<= 6; FALLTHROUGH;
+        case 4: character += static_cast<unsigned char>(*sequence++); character <<= 6; FALLTHROUGH;
+        case 3: character += static_cast<unsigned char>(*sequence++); character <<= 6; FALLTHROUGH;
+        case 2: character += static_cast<unsigned char>(*sequence++); character <<= 6; FALLTHROUGH;
         case 1: character += static_cast<unsigned char>(*sequence++);
     }
 
