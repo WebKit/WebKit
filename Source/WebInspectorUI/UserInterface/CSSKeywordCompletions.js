@@ -46,7 +46,7 @@ WebInspector.CSSKeywordCompletions.forProperty = function(propertyName)
     else if (isNotPrefixed && ("-webkit-" + propertyName) in WebInspector.CSSKeywordCompletions._colorAwareProperties)
         acceptedKeywords = acceptedKeywords.concat(WebInspector.CSSKeywordCompletions._colors);
 
-    // FIXME: This doesn't necessarily make sense. Some non-inheritable properties allow "inherit".
+    // Only suggest "inherit" on inheritable properties even though it is valid on all properties.
     if (propertyName in WebInspector.CSSKeywordCompletions.InheritedProperties)
         acceptedKeywords.push("inherit");
     else if (isNotPrefixed && ("-webkit-" + propertyName) in WebInspector.CSSKeywordCompletions.InheritedProperties)

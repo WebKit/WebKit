@@ -1,3 +1,14 @@
+2014-01-25  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Remove FIXME in CSSKeywordCompletions.js about "inherit" keyword
+        https://bugs.webkit.org/show_bug.cgi?id=127638
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/CSSKeywordCompletions.js:
+        (WebInspector.CSSKeywordCompletions.forProperty):
+        Replace FIXME with a descriptive comment about why the code is what it is.
+
 2014-01-25  Diego Pino Garcia  <dpino@igalia.com>
 
         Web Inspector: Position the completion suggestions popup below if there is room
