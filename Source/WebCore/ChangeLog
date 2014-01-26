@@ -1,3 +1,18 @@
+2014-01-25  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Clean up SVGPatternElement::collectPatternAttributes 
+        https://bugs.webkit.org/show_bug.cgi?id=127612
+
+        Reviewed by Andreas Kling.
+
+        This patch refactors SVGPatternElement::collectPatternAttributes() by extracting
+        the setPatternAttributes logic into a new function. This patch also changes the
+        while loop to be easier to understand and similar to collectGradientAttributes.
+
+        * svg/SVGPatternElement.cpp:
+        (WebCore::setPatternAttributes):
+        (WebCore::SVGPatternElement::collectPatternAttributes):
+
 2014-01-25  Zalan Bujtas  <zalan@apple.com>
 
         Subpixel layout: RenderInline is not centered when child RenderTextControl's innerTextRenderer needs bias centering.
