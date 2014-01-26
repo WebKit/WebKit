@@ -95,7 +95,6 @@ static CFStringRef lastVisitedDateKey = CFSTR("lastVisitedDate");
 static CFStringRef titleKey = CFSTR("title");
 static CFStringRef visitCountKey = CFSTR("visitCount");
 static CFStringRef lastVisitWasFailureKey = CFSTR("lastVisitWasFailure");
-static CFStringRef lastVisitWasHTTPNonGetKey = CFSTR("lastVisitWasHTTPNonGet");
 static CFStringRef redirectURLsKey = CFSTR("redirectURLs");
 static CFStringRef dailyVisitCountKey = CFSTR("D"); // short key to save space
 static CFStringRef weeklyVisitCountKey = CFSTR("W"); // short key to save space
@@ -134,11 +133,6 @@ HRESULT STDMETHODCALLTYPE WebHistoryItem::initFromDictionaryRepresentation(void*
     if (lastVisitWasFailureRef && CFGetTypeID(lastVisitWasFailureRef) != CFBooleanGetTypeID())
         return E_FAIL;
     bool lastVisitWasFailure = lastVisitWasFailureRef && CFBooleanGetValue(lastVisitWasFailureRef);
-
-    CFBooleanRef lastVisitWasHTTPNonGetRef = static_cast<CFBooleanRef>(CFDictionaryGetValue(dictionaryRef, lastVisitWasHTTPNonGetKey));
-    if (lastVisitWasHTTPNonGetRef && CFGetTypeID(lastVisitWasHTTPNonGetRef) != CFBooleanGetTypeID())
-        return E_FAIL;
-    bool lastVisitWasHTTPNonGet = lastVisitWasHTTPNonGetRef && CFBooleanGetValue(lastVisitWasHTTPNonGetRef);
 
     std::unique_ptr<Vector<String>> redirectURLsVector;
     if (CFArrayRef redirectURLsRef = static_cast<CFArrayRef>(CFDictionaryGetValue(dictionaryRef, redirectURLsKey))) {
@@ -228,12 +222,6 @@ HRESULT STDMETHODCALLTYPE WebHistoryItem::dictionaryRepresentation(void** dictio
 
     if (m_historyItem->lastVisitWasFailure()) {
         keys[keyCount] = lastVisitWasFailureKey;
-        values[keyCount++] = CFRetain(kCFBooleanTrue);
-    }
-
-    if (m_historyItem->lastVisitWasHTTPNonGet()) {
-        ASSERT(m_historyItem->urlString().startsWith("http:", false) || m_historyItem->urlString().startsWith("https:", false));
-        keys[keyCount] = lastVisitWasHTTPNonGetKey;
         values[keyCount++] = CFRetain(kCFBooleanTrue);
     }
 
