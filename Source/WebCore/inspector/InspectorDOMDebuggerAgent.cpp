@@ -29,14 +29,12 @@
  */
 
 #include "config.h"
+#include "InspectorDOMDebuggerAgent.h"
 
 #if ENABLE(INSPECTOR) && ENABLE(JAVASCRIPT_DEBUGGER)
 
-#include "InspectorDOMDebuggerAgent.h"
-
 #include "HTMLElement.h"
 #include "InspectorDOMAgent.h"
-#include "InspectorDebuggerAgent.h"
 #include "InspectorInstrumentation.h"
 #include "InspectorWebFrontendDispatchers.h"
 #include "InstrumentingAgents.h"

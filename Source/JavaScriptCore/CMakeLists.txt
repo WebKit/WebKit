@@ -242,8 +242,8 @@ set(JavaScriptCore_SOURCES
     inspector/JavaScriptCallFrame.cpp
     inspector/ScriptDebugServer.cpp
     inspector/agents/InspectorAgent.cpp
+    inspector/agents/InspectorDebuggerAgent.cpp
     inspector/agents/InspectorRuntimeAgent.cpp
-    inspector/agents/JSGlobalObjectRuntimeAgent.cpp
 
     interpreter/AbstractPC.cpp
     interpreter/CallFrame.cpp

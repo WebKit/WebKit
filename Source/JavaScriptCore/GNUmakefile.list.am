@@ -665,10 +665,10 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/inspector/ScriptDebugServer.h \
 	Source/JavaScriptCore/inspector/agents/InspectorAgent.h \
 	Source/JavaScriptCore/inspector/agents/InspectorAgent.cpp \
+	Source/JavaScriptCore/inspector/agents/InspectorDebuggerAgent.h \
+	Source/JavaScriptCore/inspector/agents/InspectorDebuggerAgent.cpp \
 	Source/JavaScriptCore/inspector/agents/InspectorRuntimeAgent.h \
 	Source/JavaScriptCore/inspector/agents/InspectorRuntimeAgent.cpp \
-	Source/JavaScriptCore/inspector/agents/JSGlobalObjectRuntimeAgent.h \
-	Source/JavaScriptCore/inspector/agents/JSGlobalObjectRuntimeAgent.cpp \
 	Source/JavaScriptCore/interpreter/AbstractPC.cpp \
 	Source/JavaScriptCore/interpreter/AbstractPC.h \
 	Source/JavaScriptCore/interpreter/CachedCall.h \

@@ -33,9 +33,9 @@
 
 #if ENABLE(JAVASCRIPT_DEBUGGER) && ENABLE(INSPECTOR)
 
-#include "InspectorDebuggerAgent.h"
 #include "InspectorWebAgentBase.h"
 #include "InspectorWebBackendDispatchers.h"
+#include <inspector/agents/InspectorDebuggerAgent.h>
 #include <wtf/HashMap.h>
 #include <wtf/PassOwnPtr.h>
 #include <wtf/RefCounted.h>
@@ -49,16 +49,15 @@ namespace WebCore {
 
 class Element;
 class InspectorDOMAgent;
-class InspectorDebuggerAgent;
 class InstrumentingAgents;
 class Node;
 
 typedef String ErrorString;
 
-class InspectorDOMDebuggerAgent : public InspectorAgentBase, public InspectorDebuggerAgent::Listener, public Inspector::InspectorDOMDebuggerBackendDispatcherHandler {
+class InspectorDOMDebuggerAgent : public InspectorAgentBase, public Inspector::InspectorDebuggerAgent::Listener, public Inspector::InspectorDOMDebuggerBackendDispatcherHandler {
     WTF_MAKE_NONCOPYABLE(InspectorDOMDebuggerAgent);
 public:
-    InspectorDOMDebuggerAgent(InstrumentingAgents*, InspectorDOMAgent*, InspectorDebuggerAgent*);
+    InspectorDOMDebuggerAgent(InstrumentingAgents*, InspectorDOMAgent*, Inspector::InspectorDebuggerAgent*);
     virtual ~InspectorDOMDebuggerAgent();
 
     // DOMDebugger API
@@ -86,7 +85,7 @@ public:
     virtual void discardAgent() override;
 
 private:
-    // InspectorDebuggerAgent::Listener implementation.
+    // Inspector::InspectorDebuggerAgent::Listener implementation.
     virtual void debuggerWasEnabled() override;
     virtual void debuggerWasDisabled() override;
     virtual void stepInto() override;
@@ -103,7 +102,7 @@ private:
     void clear();
 
     InspectorDOMAgent* m_domAgent;
-    InspectorDebuggerAgent* m_debuggerAgent;
+    Inspector::InspectorDebuggerAgent* m_debuggerAgent;
     RefPtr<Inspector::InspectorDOMDebuggerBackendDispatcher> m_backendDispatcher;
     HashMap<Node*, uint32_t> m_domBreakpoints;
     HashSet<String> m_eventListenerBreakpoints;

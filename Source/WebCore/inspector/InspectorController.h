@@ -44,9 +44,10 @@
 
 namespace Inspector {
 class InspectorAgent;
-class InspectorObject;
-class InspectorFrontendChannel;
 class InspectorBackendDispatcher;
+class InspectorDebuggerAgent;
+class InspectorFrontendChannel;
+class InspectorObject;
 }
 
 namespace WebCore {
@@ -58,7 +59,6 @@ class InspectorApplicationCacheAgent;
 class InspectorClient;
 class InspectorDOMAgent;
 class InspectorDOMDebuggerAgent;
-class InspectorDebuggerAgent;
 class InspectorFrontendClient;
 class InspectorMemoryAgent;
 class InspectorOverlay;
@@ -156,7 +156,7 @@ private:
     InspectorPageAgent* m_pageAgent;
     InspectorMemoryAgent* m_memoryAgent;
 #if ENABLE(JAVASCRIPT_DEBUGGER)
-    InspectorDebuggerAgent* m_debuggerAgent;
+    Inspector::InspectorDebuggerAgent* m_debuggerAgent;
     InspectorDOMDebuggerAgent* m_domDebuggerAgent;
     InspectorProfilerAgent* m_profilerAgent;
 #endif

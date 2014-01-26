@@ -1,3 +1,67 @@
+2014-01-26  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Move InspectorDebuggerAgent into JavaScriptCore
+        https://bugs.webkit.org/show_bug.cgi?id=127629
+
+        Rubber-stamped by Sam Weinig.
+
+        Test: inspector-protocol/debugger/pause-on-assert.html
+
+        * CMakeLists.txt:
+        * ForwardingHeaders/inspector/agents/InspectorDebuggerAgent.h: Added.
+        * GNUmakefile.list.am:
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.vcxproj/WebCore.vcxproj.filters:
+        * WebCore.xcodeproj/project.pbxproj:
+        * inspector/InspectorAllInOne.cpp:
+        - Remove InspectorDebuggerAgent.
+        - Add WebDebuggerAgent (shared between Page and Worker).
+
+        * inspector/WebDebuggerAgent.h: Added.
+        (WebCore::WebDebuggerAgent::~WebDebuggerAgent):
+        * inspector/WebDebuggerAgent.cpp: Added.
+        (WebCore::WebDebuggerAgent::WebDebuggerAgent):
+        (WebCore::WebDebuggerAgent::enable):
+        (WebCore::WebDebuggerAgent::disable):
+        Shared code for Page and Worker debugger agents.
+        Instrumenting agents is a concept in WebCore only,
+        and the Debugger agent is only in the instrumenting
+        agents list when it is enabled and removed when disabled.
+
+        * inspector/InstrumentingAgents.h:
+        (WebCore::InstrumentingAgents::inspectorDebuggerAgent):
+        (WebCore::InstrumentingAgents::setInspectorDebuggerAgent):
+        * inspector/InspectorDOMDebuggerAgent.cpp:
+        * inspector/InspectorDOMDebuggerAgent.h:
+        Update namespace for debugger agent.
+
+        * inspector/InspectorInstrumentation.cpp:
+        (WebCore::isConsoleAssertMessage):
+        (WebCore::InspectorInstrumentation::addMessageToConsoleImpl):
+        DebuggerAgent in JavaScriptCore does not yet know about console
+        types. So temporarily handle it here. We need to give JavaScriptCore
+        some concept of Console messages and types.
+
+        * inspector/PageDebuggerAgent.cpp:
+        (WebCore::PageDebuggerAgent::PageDebuggerAgent):
+        (WebCore::PageDebuggerAgent::enable):
+        (WebCore::PageDebuggerAgent::disable):
+        (WebCore::PageDebuggerAgent::sourceMapURLForScript):
+        (WebCore::PageDebuggerAgent::injectedScriptForEval):
+        * inspector/PageDebuggerAgent.h:
+        * inspector/WorkerDebuggerAgent.cpp:
+        (WebCore::WorkerDebuggerAgent::WorkerDebuggerAgent):
+        (WebCore::WorkerDebuggerAgent::injectedScriptForEval):
+        * inspector/WorkerDebuggerAgent.h:
+        Modernize the Page and Worker debugger agents.
+
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::InspectorController):
+        * inspector/InspectorController.h:
+        * inspector/WorkerInspectorController.cpp:
+        (WebCore::WorkerInspectorController::WorkerInspectorController):
+        New constructors for the debugger agents.
+
 2014-01-25  Timothy Hatcher  <timothy@apple.com>
 
         Remove dead code from the JSC profiler.

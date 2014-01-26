@@ -29,10 +29,9 @@
 */
 
 #include "config.h"
+#include "InspectorInstrumentation.h"
 
 #if ENABLE(INSPECTOR)
-
-#include "InspectorInstrumentation.h"
 
 #include "CSSRule.h"
 #include "CSSStyleRule.h"
@@ -52,7 +51,6 @@
 #include "InspectorDOMDebuggerAgent.h"
 #include "InspectorDOMStorageAgent.h"
 #include "InspectorDatabaseAgent.h"
-#include "InspectorDebuggerAgent.h"
 #include "InspectorHeapProfilerAgent.h"
 #include "InspectorLayerTreeAgent.h"
 #include "InspectorPageAgent.h"
@@ -76,6 +74,7 @@
 #include "WorkerRuntimeAgent.h"
 #include "WorkerThread.h"
 #include "XMLHttpRequest.h"
+#include <inspector/agents/InspectorDebuggerAgent.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/CString.h>
 
@@ -884,14 +883,23 @@ void InspectorInstrumentation::didWriteHTMLImpl(const InspectorInstrumentationCo
         timelineAgent->didWriteHTML(endLine);
 }
 
+// JavaScriptCore InspectorDebuggerAgent should know Console MessageTypes.
+static bool isConsoleAssertMessage(MessageSource source, MessageType type)
+{
+    return source == ConsoleAPIMessageSource && type == AssertMessageType;
+}
+
 // FIXME: Drop this once we no longer generate stacks outside of Inspector.
 void InspectorInstrumentation::addMessageToConsoleImpl(InstrumentingAgents* instrumentingAgents, MessageSource source, MessageType type, MessageLevel level, const String& message, PassRefPtr<ScriptCallStack> callStack, unsigned long requestIdentifier)
 {
     if (InspectorConsoleAgent* consoleAgent = instrumentingAgents->inspectorConsoleAgent())
         consoleAgent->addMessageToConsole(source, type, level, message, callStack, requestIdentifier);
 #if ENABLE(JAVASCRIPT_DEBUGGER)
-    if (InspectorDebuggerAgent* debuggerAgent = instrumentingAgents->inspectorDebuggerAgent())
-        debuggerAgent->addMessageToConsole(source, type);
+    // FIXME: This should just pass the message on to the debugger agent. JavaScriptCore InspectorDebuggerAgent should know Console MessageTypes.
+    if (InspectorDebuggerAgent* debuggerAgent = instrumentingAgents->inspectorDebuggerAgent()) {
+        if (isConsoleAssertMessage(source, type))
+            debuggerAgent->handleConsoleAssert();
+    }
 #endif
 }
 
@@ -900,8 +908,11 @@ void InspectorInstrumentation::addMessageToConsoleImpl(InstrumentingAgents* inst
     if (InspectorConsoleAgent* consoleAgent = instrumentingAgents->inspectorConsoleAgent())
         consoleAgent->addMessageToConsole(source, type, level, message, state, arguments, requestIdentifier);
 #if ENABLE(JAVASCRIPT_DEBUGGER)
-    if (InspectorDebuggerAgent* debuggerAgent = instrumentingAgents->inspectorDebuggerAgent())
-        debuggerAgent->addMessageToConsole(source, type);
+    // FIXME: This should just pass the message on to the debugger agent. JavaScriptCore InspectorDebuggerAgent should know Console MessageTypes.
+    if (InspectorDebuggerAgent* debuggerAgent = instrumentingAgents->inspectorDebuggerAgent()) {
+        if (isConsoleAssertMessage(source, type))
+            debuggerAgent->handleConsoleAssert();
+    }
 #endif
 }
 

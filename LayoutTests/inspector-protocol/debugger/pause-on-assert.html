@@ -1,0 +1,80 @@
+<html>
+<head>
+<script src="../../http/tests/inspector-protocol/resources/protocol-test.js"></script>
+<script src="resources/assert.js"></script>
+<script>
+function test()
+{
+    InspectorTest.sendCommand("Debugger.enable", {});
+    InspectorTest.sendCommand("Debugger.setPauseOnExceptions", {state: "all"}, InspectorTest.checkForError);
+
+    var step = null;
+    var steps = [
+        {
+            message: "Should not pause on passing assert.",
+            evaluate: "assertTrue()",
+            pause: false,
+        },
+        {
+            message: "Should pause on failing assert.",
+            evaluate: "assertFalse()",
+            pause: true,
+        },
+        {
+            message: "Should not pause on passing assert.",
+            evaluate: "assertCondition(window)",
+            pause: false,
+        },
+        {
+            message: "Should pause on failing assert.",
+            evaluate: "assertCondition(window === null)",
+            pause: true,
+        },
+        {
+            message: "Should not pause on passing assert.",
+            evaluate: "assertConditionWithMessage(window, 'Should not happen')",
+            pause: false,
+        },
+        {
+            message: "Should pause on failing assert and include a message.",
+            evaluate: "assertConditionWithMessage(window === null, 'ASSERT message')",
+            pause: true,
+        },
+    ];
+
+    InspectorTest.eventHandler["Debugger.paused"] = function(messageObject)
+    {
+        if (step.pause)
+            InspectorTest.log("PASS: Paused!");
+        else
+            InspectorTest.log("FAIL: Paused when unexpected");
+
+        InspectorTest.sendCommand("Debugger.resume", {}, runNextStep);
+    }
+
+    function runNextStep() {
+        step = steps.shift();
+        if (!step) {
+            InspectorTest.completeTest();
+            return;
+        }
+
+        // Evalute the command inside a setTimeout so that we can hit exceptions and break.
+        // Otherwise, evaluating through RuntimeAgent will not trigger a pause.
+        // Likewise, if no pause is expected wait for a bit before continuing.
+        InspectorTest.log(step.message);
+        InspectorTest.sendCommand("Runtime.evaluate", {expression: "setTimeout(function(){" + step.evaluate + "}, 0)"}, function(responseObject) {
+            InspectorTest.checkForError(responseObject);
+            if (!step.pause)
+                setTimeout(runNextStep, 20);
+        });
+    }
+
+    runNextStep();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Test that a failing console.assert will pause in the debugger with an optional message.</p>
+</body>
+</html>

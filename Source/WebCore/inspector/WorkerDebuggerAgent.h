@@ -32,7 +32,8 @@
 #define WorkerDebuggerAgent_h
 
 #if ENABLE(JAVASCRIPT_DEBUGGER) && ENABLE(INSPECTOR)
-#include "InspectorDebuggerAgent.h"
+
+#include "WebDebuggerAgent.h"
 #include "WorkerScriptDebugServer.h"
 
 namespace WebCore {
@@ -40,11 +41,11 @@ namespace WebCore {
 class WorkerGlobalScope;
 class WorkerThread;
 
-class WorkerDebuggerAgent final : public InspectorDebuggerAgent {
+class WorkerDebuggerAgent final : public WebDebuggerAgent {
     WTF_MAKE_NONCOPYABLE(WorkerDebuggerAgent);
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    WorkerDebuggerAgent(InstrumentingAgents*, WorkerGlobalScope*, Inspector::InjectedScriptManager*);
+    WorkerDebuggerAgent(Inspector::InjectedScriptManager*, InstrumentingAgents*, WorkerGlobalScope*);
     virtual ~WorkerDebuggerAgent();
 
     static const char* debuggerTaskMode;

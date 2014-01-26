@@ -29,11 +29,11 @@
  */
 
 #include "config.h"
+#include "PageDebuggerAgent.h"
 
 #if ENABLE(JAVASCRIPT_DEBUGGER) && ENABLE(INSPECTOR)
 
-#include "PageDebuggerAgent.h"
-
+#include "CachedResource.h"
 #include "InspectorOverlay.h"
 #include "InspectorPageAgent.h"
 #include "InstrumentingAgents.h"
@@ -48,27 +48,44 @@ using namespace Inspector;
 
 namespace WebCore {
 
-PageDebuggerAgent::PageDebuggerAgent(InstrumentingAgents* instrumentingAgents, InspectorPageAgent* pageAgent, InjectedScriptManager* injectedScriptManager, InspectorOverlay* overlay)
-    : InspectorDebuggerAgent(instrumentingAgents, injectedScriptManager)
+PageDebuggerAgent::PageDebuggerAgent(InjectedScriptManager* injectedScriptManager, InstrumentingAgents* instrumentingAgents, InspectorPageAgent* pageAgent, InspectorOverlay* overlay)
+    : WebDebuggerAgent(injectedScriptManager, instrumentingAgents)
     , m_pageAgent(pageAgent)
     , m_overlay(overlay)
 {
 }
 
-PageDebuggerAgent::~PageDebuggerAgent()
-{
-}
-
 void PageDebuggerAgent::enable()
 {
-    InspectorDebuggerAgent::enable();
+    WebDebuggerAgent::enable();
     m_instrumentingAgents->setPageDebuggerAgent(this);
 }
 
 void PageDebuggerAgent::disable(bool isBeingDestroyed)
 {
-    InspectorDebuggerAgent::disable(isBeingDestroyed);
+    WebDebuggerAgent::disable(isBeingDestroyed);
     m_instrumentingAgents->setPageDebuggerAgent(nullptr);
+}
+
+String PageDebuggerAgent::sourceMapURLForScript(const Script& script)
+{
+    DEFINE_STATIC_LOCAL(String, sourceMapHTTPHeader, (ASCIILiteral("SourceMap")));
+    DEFINE_STATIC_LOCAL(String, sourceMapHTTPHeaderDeprecated, (ASCIILiteral("X-SourceMap")));
+
+    if (!script.url.isEmpty()) {
+        CachedResource* resource = m_pageAgent->cachedResource(m_pageAgent->mainFrame(), URL(ParsedURLString, script.url));
+        if (resource) {
+            String sourceMapHeader = resource->response().httpHeaderField(sourceMapHTTPHeader);
+            if (!sourceMapHeader.isEmpty())
+                return sourceMapHeader;
+
+            sourceMapHeader = resource->response().httpHeaderField(sourceMapHTTPHeaderDeprecated);
+            if (!sourceMapHeader.isEmpty())
+                return sourceMapHeader;
+        }
+    }
+
+    return InspectorDebuggerAgent::sourceMapURLForScript(script);
 }
 
 void PageDebuggerAgent::startListeningScriptDebugServer()
@@ -107,9 +124,11 @@ InjectedScript PageDebuggerAgent::injectedScriptForEval(ErrorString* errorString
         JSC::ExecState* scriptState = mainWorldExecState(m_pageAgent->mainFrame());
         return injectedScriptManager()->injectedScriptFor(scriptState);
     }
+
     InjectedScript injectedScript = injectedScriptManager()->injectedScriptForId(*executionContextId);
     if (injectedScript.hasNoValue())
-        *errorString = "Execution context with given id not found.";
+        *errorString = ASCIILiteral("Execution context with given id not found.");
+
     return injectedScript;
 }
 

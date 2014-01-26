@@ -491,8 +491,8 @@
     <ClCompile Include="..\inspector\JavaScriptCallFrame.cpp" />
     <ClCompile Include="..\inspector\ScriptDebugServer.cpp" />
     <ClCompile Include="..\inspector\agents\InspectorAgent.cpp" />
+    <ClCompile Include="..\inspector\agents\InspectorDebuggerAgent.cpp" />
     <ClCompile Include="..\inspector\agents\InspectorRuntimeAgent.cpp" />
-    <ClCompile Include="..\inspector\agents\JSGlobalObjectRuntimeAgent.cpp" />
     <ClCompile Include="..\interpreter\AbstractPC.cpp" />
     <ClCompile Include="..\interpreter\CallFrame.cpp" />
     <ClCompile Include="..\interpreter\Interpreter.cpp" />
@@ -1070,8 +1070,8 @@
     <ClInclude Include="..\inspector\ScriptDebugListener.h" />
     <ClInclude Include="..\inspector\ScriptDebugServer.h" />
     <ClInclude Include="..\inspector\agents\InspectorAgent.h" />
+    <ClInclude Include="..\inspector\agents\InspectorDebuggerAgent.h" />
     <ClInclude Include="..\inspector\agents\InspectorRuntimeAgent.h" />
-    <ClInclude Include="..\inspector\agents\JSGlobalObjectRuntimeAgent.h" />
     <ClInclude Include="..\interpreter\AbstractPC.h" />
     <ClInclude Include="..\interpreter\CachedCall.h" />
     <ClInclude Include="..\interpreter\CallFrame.h" />

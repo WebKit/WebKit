@@ -92,7 +92,7 @@ WorkerInspectorController::WorkerInspectorController(WorkerGlobalScope& workerGl
 
     auto consoleAgent = std::make_unique<WorkerConsoleAgent>(m_instrumentingAgents.get(), m_injectedScriptManager.get());
 #if ENABLE(JAVASCRIPT_DEBUGGER)
-    auto debuggerAgent = std::make_unique<WorkerDebuggerAgent>(m_instrumentingAgents.get(), &workerGlobalScope, m_injectedScriptManager.get());
+    auto debuggerAgent = std::make_unique<WorkerDebuggerAgent>(m_injectedScriptManager.get(), m_instrumentingAgents.get(), &workerGlobalScope);
     m_runtimeAgent->setScriptDebugServer(&debuggerAgent->scriptDebugServer());
     m_agents.append(std::move(debuggerAgent));
 

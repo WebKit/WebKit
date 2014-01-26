@@ -39,6 +39,7 @@
 
 namespace Inspector {
 class InspectorAgent;
+class InspectorDebuggerAgent;
 }
 
 namespace WebCore {
@@ -51,7 +52,6 @@ class InspectorDOMAgent;
 class InspectorDOMDebuggerAgent;
 class InspectorDOMStorageAgent;
 class InspectorDatabaseAgent;
-class InspectorDebuggerAgent;
 class InspectorHeapProfilerAgent;
 class InspectorLayerTreeAgent;
 class InspectorPageAgent;
@@ -117,8 +117,8 @@ public:
     void setInspectorApplicationCacheAgent(InspectorApplicationCacheAgent* agent) { m_inspectorApplicationCacheAgent = agent; }
 
 #if ENABLE(JAVASCRIPT_DEBUGGER)
-    InspectorDebuggerAgent* inspectorDebuggerAgent() const { return m_inspectorDebuggerAgent; }
-    void setInspectorDebuggerAgent(InspectorDebuggerAgent* agent) { m_inspectorDebuggerAgent = agent; }
+    Inspector::InspectorDebuggerAgent* inspectorDebuggerAgent() const { return m_inspectorDebuggerAgent; }
+    void setInspectorDebuggerAgent(Inspector::InspectorDebuggerAgent* agent) { m_inspectorDebuggerAgent = agent; }
 
     PageDebuggerAgent* pageDebuggerAgent() const { return m_pageDebuggerAgent; }
     void setPageDebuggerAgent(PageDebuggerAgent* agent) { m_pageDebuggerAgent = agent; }
@@ -167,7 +167,7 @@ private:
 #endif
     InspectorApplicationCacheAgent* m_inspectorApplicationCacheAgent;
 #if ENABLE(JAVASCRIPT_DEBUGGER)
-    InspectorDebuggerAgent* m_inspectorDebuggerAgent;
+    Inspector::InspectorDebuggerAgent* m_inspectorDebuggerAgent;
     PageDebuggerAgent* m_pageDebuggerAgent;
     InspectorDOMDebuggerAgent* m_inspectorDOMDebuggerAgent;
     InspectorProfilerAgent* m_inspectorProfilerAgent;

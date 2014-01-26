@@ -1,3 +1,56 @@
+2014-01-26  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Move InspectorDebuggerAgent into JavaScriptCore
+        https://bugs.webkit.org/show_bug.cgi?id=127629
+
+        Rubber-stamped by Sam Weinig.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj.filters:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        - Add new files to the build.
+        - Also, since non REMOTE_INSPECTOR ports cannot yet connect to a
+          JSGlobalObject for inspection remove those files as they don't
+          need to be built.
+
+        * inspector/EventLoop.cpp: Added.
+        (Inspector::EventLoop::cycle):
+        * inspector/EventLoop.h: Added.
+        (Inspector::EventLoop::EventLoop):
+        (Inspector::EventLoop::ended):
+        Add a JavaScriptCore version of EventLoop. This is currently only
+        used by the Mac port for JSGlobalObject remote inspection. Keep
+        the WebCore/platform version alive because for the Mac port it does
+        slightly different things involving AppKit.
+
+        * inspector/JSGlobalObjectInspectorController.cpp:
+        (Inspector::JSGlobalObjectInspectorController::JSGlobalObjectInspectorController):
+        Create DebuggerAgent and hook up ScriptDebugServer where needed.
+
+        * inspector/JSGlobalObjectScriptDebugServer.cpp: Added.
+        (Inspector::JSGlobalObjectScriptDebugServer::JSGlobalObjectScriptDebugServer):
+        (Inspector::JSGlobalObjectScriptDebugServer::addListener):
+        (Inspector::JSGlobalObjectScriptDebugServer::removeListener):
+        (Inspector::JSGlobalObjectScriptDebugServer::recompileAllJSFunctions):
+        (Inspector::JSGlobalObjectScriptDebugServer::runEventLoopWhilePaused):
+        * inspector/JSGlobalObjectScriptDebugServer.h: Added.
+        Simple implementation of ScriptDebugServer with a JSGlobalObject.
+
+        * inspector/agents/InspectorDebuggerAgent.cpp: Renamed from Source/WebCore/inspector/InspectorDebuggerAgent.cpp.
+        * inspector/agents/InspectorDebuggerAgent.h: Renamed from Source/WebCore/inspector/InspectorDebuggerAgent.h.
+        Copied from WebCore. A few methods need to be made virtual so that Web implementations
+        can override and extend the funcitonality. E.g. sourceMapURLForScript and enable/disable.
+        
+        * inspector/agents/JSGlobalObjectDebuggerAgent.cpp: Added.
+        * inspector/agents/JSGlobalObjectDebuggerAgent.h: Added.
+        (Inspector::JSGlobalObjectDebuggerAgent::JSGlobalObjectDebuggerAgent):
+        (Inspector::JSGlobalObjectDebuggerAgent::startListeningScriptDebugServer):
+        (Inspector::JSGlobalObjectDebuggerAgent::stopListeningScriptDebugServer):
+        (Inspector::JSGlobalObjectDebuggerAgent::injectedScriptForEval):
+        Simple implementation of DebuggerAGent with a JSGlobalObject.
+
 2014-01-25  Mark Lam  <mark.lam@apple.com>
 
         Gardening: fix build breakage from previous commit.

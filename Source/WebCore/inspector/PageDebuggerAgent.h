@@ -33,28 +33,31 @@
 
 #if ENABLE(JAVASCRIPT_DEBUGGER) && ENABLE(INSPECTOR)
 
-#include "InspectorDebuggerAgent.h"
 #include "PageScriptDebugServer.h"
+#include "WebDebuggerAgent.h"
 
 namespace WebCore {
 
 class InspectorOverlay;
 class InspectorPageAgent;
+class InstrumentingAgents;
 class Page;
 class PageScriptDebugServer;
 
-class PageDebuggerAgent final : public InspectorDebuggerAgent {
+class PageDebuggerAgent final : public WebDebuggerAgent {
     WTF_MAKE_NONCOPYABLE(PageDebuggerAgent);
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    PageDebuggerAgent(InstrumentingAgents*, InspectorPageAgent*, Inspector::InjectedScriptManager*, InspectorOverlay*);
-    virtual ~PageDebuggerAgent();
+    PageDebuggerAgent(Inspector::InjectedScriptManager*, InstrumentingAgents*, InspectorPageAgent*, InspectorOverlay*);
+    virtual ~PageDebuggerAgent() { }
 
     void didClearMainFrameWindowObject();
 
 protected:
     virtual void enable() override;
     virtual void disable(bool isBeingDestroyed) override;
+
+    virtual String sourceMapURLForScript(const Script&) override;
 
 private:
     virtual void startListeningScriptDebugServer() override;

@@ -4767,9 +4767,6 @@
     <ClCompile Include="..\inspector\InspectorDatabaseResource.cpp">
       <Filter>inspector</Filter>
     </ClCompile>
-    <ClCompile Include="..\inspector\InspectorDebuggerAgent.cpp">
-      <Filter>inspector</Filter>
-    </ClCompile>
     <ClCompile Include="..\inspector\InspectorDOMAgent.cpp">
       <Filter>inspector</Filter>
     </ClCompile>
@@ -4864,6 +4861,9 @@
       <Filter>inspector</Filter>
     </ClCompile>
     <ClCompile Include="..\inspector\TimelineRecordFactory.cpp">
+      <Filter>inspector</Filter>
+    </ClCompile>
+    <ClCompile Include="..\inspector\WebDebuggerAgent.cpp">
       <Filter>inspector</Filter>
     </ClCompile>
     <ClCompile Include="..\inspector\WorkerConsoleAgent.cpp">
@@ -12296,9 +12296,6 @@
     <ClInclude Include="..\inspector\InspectorDatabaseResource.h">
       <Filter>inspector</Filter>
     </ClInclude>
-    <ClInclude Include="..\inspector\InspectorDebuggerAgent.h">
-      <Filter>inspector</Filter>
-    </ClInclude>
     <ClInclude Include="..\inspector\InspectorDOMAgent.h">
       <Filter>inspector</Filter>
     </ClInclude>
@@ -12408,6 +12405,9 @@
       <Filter>inspector</Filter>
     </ClInclude>
     <ClInclude Include="..\inspector\TimelineRecordFactory.h">
+      <Filter>inspector</Filter>
+    </ClInclude>
+    <ClInclude Include="..\inspector\WebDebuggerAgent.h">
       <Filter>inspector</Filter>
     </ClInclude>
     <ClInclude Include="..\inspector\WorkerConsoleAgent.h">

@@ -300,10 +300,10 @@
     <ClCompile Include="..\inspector\agents\InspectorAgent.cpp">
       <Filter>inspector</Filter>
     </ClCompile>
-    <ClCompile Include="..\inspector\agents\InspectorRuntimeAgent.cpp">
+    <ClCompile Include="..\inspector\agents\InspectorDebuggerAgent.cpp">
       <Filter>inspector</Filter>
     </ClCompile>
-    <ClCompile Include="..\inspector\agents\JSGlobalObjectRuntimeAgent.cpp">
+    <ClCompile Include="..\inspector\agents\InspectorRuntimeAgent.cpp">
       <Filter>inspector</Filter>
     </ClCompile>
     <ClCompile Include="..\interpreter\AbstractPC.cpp">
@@ -1802,10 +1802,10 @@
     <ClInclude Include="..\inspector\agents\InspectorAgent.h">
       <Filter>inspector</Filter>
     </ClInclude>
-    <ClInclude Include="..\inspector\agents\InspectorRuntimeAgent.h">
+    <ClInclude Include="..\inspector\agents\InspectorDebuggerAgent.h">
       <Filter>inspector</Filter>
     </ClInclude>
-    <ClInclude Include="..\inspector\agents\JSGlobalObjectRuntimeAgent.h">
+    <ClInclude Include="..\inspector\agents\InspectorRuntimeAgent.h">
       <Filter>inspector</Filter>
     </ClInclude>
     <ClInclude Include="..\interpreter\AbstractPC.h">

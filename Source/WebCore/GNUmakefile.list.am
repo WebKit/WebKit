@@ -3785,8 +3785,6 @@ webcore_sources += \
 	Source/WebCore/inspector/InspectorDatabaseInstrumentation.h \
 	Source/WebCore/inspector/InspectorDatabaseResource.cpp \
 	Source/WebCore/inspector/InspectorDatabaseResource.h \
-	Source/WebCore/inspector/InspectorDebuggerAgent.cpp \
-	Source/WebCore/inspector/InspectorDebuggerAgent.h \
 	Source/WebCore/inspector/InspectorDOMAgent.cpp \
 	Source/WebCore/inspector/InspectorDOMAgent.h \
 	Source/WebCore/inspector/InspectorDOMDebuggerAgent.cpp \
@@ -3857,6 +3855,8 @@ webcore_sources += \
 	Source/WebCore/inspector/ScriptCallStack.h \
 	Source/WebCore/inspector/TimelineRecordFactory.cpp \
 	Source/WebCore/inspector/TimelineRecordFactory.h \
+	Source/WebCore/inspector/WebDebuggerAgent.cpp \
+	Source/WebCore/inspector/WebDebuggerAgent.h \
 	Source/WebCore/inspector/WorkerConsoleAgent.cpp \
 	Source/WebCore/inspector/WorkerConsoleAgent.h \
 	Source/WebCore/inspector/WorkerDebuggerAgent.cpp \

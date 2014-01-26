@@ -1,3 +1,21 @@
+2014-01-26  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Move InspectorDebuggerAgent into JavaScriptCore
+        https://bugs.webkit.org/show_bug.cgi?id=127629
+
+        Rubber-stamped by Sam Weinig.
+
+        Add a test that we pause in the debugger for console.assert failures
+        when the DebuggerAgent is enabled.
+
+        * inspector-protocol/debugger/pause-on-assert-expected.txt: Added.
+        * inspector-protocol/debugger/pause-on-assert.html: Added.
+        * inspector-protocol/debugger/resources/assert.js: Added.
+        (assertTrue):
+        (assertFalse):
+        (assertCondition):
+        (assertConditionWithMessage):
+
 2014-01-25  Timothy Hatcher  <timothy@apple.com>
 
         Remove dead code from the JSC profiler.

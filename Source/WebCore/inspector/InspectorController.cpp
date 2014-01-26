@@ -45,7 +45,6 @@
 #include "InspectorDOMDebuggerAgent.h"
 #include "InspectorDOMStorageAgent.h"
 #include "InspectorDatabaseAgent.h"
-#include "InspectorDebuggerAgent.h"
 #include "InspectorFrontendClient.h"
 #include "InspectorHeapProfilerAgent.h"
 #include "InspectorIndexedDBAgent.h"
@@ -147,7 +146,7 @@ InspectorController::InspectorController(Page& page, InspectorClient* inspectorC
     m_agents.append(std::move(consoleAgentPtr));
 
 #if ENABLE(JAVASCRIPT_DEBUGGER)
-    auto debuggerAgentPtr = std::make_unique<PageDebuggerAgent>(m_instrumentingAgents.get(), pageAgent, m_injectedScriptManager.get(), m_overlay.get());
+    auto debuggerAgentPtr = std::make_unique<PageDebuggerAgent>(m_injectedScriptManager.get(), m_instrumentingAgents.get(), pageAgent, m_overlay.get());
     m_debuggerAgent = debuggerAgentPtr.get();
     m_agents.append(std::move(debuggerAgentPtr));
 
