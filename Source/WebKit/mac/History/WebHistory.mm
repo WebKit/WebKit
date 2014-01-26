@@ -938,7 +938,7 @@ static inline WebHistoryDateKey dateKey(NSTimeInterval date)
     item->setLastVisitWasFailure(wasFailure);
 
     if ([method length])
-        item->setLastVisitWasHTTPNonGet([method caseInsensitiveCompare:@"GET"] && (![[url scheme] caseInsensitiveCompare:@"http"] || ![[url scheme] caseInsensitiveCompare:@"https"]));
+        entry->_private->_lastVisitWasHTTPNonGet = [method caseInsensitiveCompare:@"GET"] && (![[url scheme] caseInsensitiveCompare:@"http"] || ![[url scheme] caseInsensitiveCompare:@"https"]);
 
     item->setRedirectURLs(nullptr);
 

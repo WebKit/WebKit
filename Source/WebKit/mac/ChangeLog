@@ -1,5 +1,31 @@
 2014-01-26  Anders Carlsson  <andersca@apple.com>
 
+        Move lastVisitWasHTTPNonGet out to WebHistoryItem
+        https://bugs.webkit.org/show_bug.cgi?id=127657
+
+        Reviewed by Dan Bernstein.
+
+        Keep track of _lastVisitWasHTTPNonGet inside WebHistoryItem.
+
+        * History/WebHistory.mm:
+        (-[WebHistory _visitedURL:withTitle:method:wasFailure:increaseVisitCount:]):
+        Set entry->_private->_lastVisitWasHTTPNonGet.
+
+        * History/WebHistoryItem.h:
+        Change @private to @package so we can get at WebHistoryItemPrivate from WebHistory.
+
+        * History/WebHistoryItem.mm:
+        (-[WebHistoryItem copyWithZone:]):
+        Assign _private->_lastVisitWasHTTPNonGet.
+
+        (-[WebHistoryItem initFromDictionaryRepresentation:]):
+        Set _private->_lastVisitWasHTTPNonGet.
+
+        * History/WebHistoryItemInternal.h:
+        Move WebHistoryItemPrivate interface here.
+
+2014-01-26  Anders Carlsson  <andersca@apple.com>
+
         Turn WebHistoryItemPrivate back into a real Objective-C class
         https://bugs.webkit.org/show_bug.cgi?id=127653
 

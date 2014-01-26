@@ -117,7 +117,6 @@ public:
     
     int visitCount() const;
     bool lastVisitWasFailure() const { return m_lastVisitWasFailure; }
-    bool lastVisitWasHTTPNonGet() const { return m_lastVisitWasHTTPNonGet; }
 
     void mergeAutoCompleteHints(HistoryItem* otherItem);
     
@@ -158,7 +157,6 @@ public:
 
     void setVisitCount(int);
     void setLastVisitWasFailure(bool wasFailure) { m_lastVisitWasFailure = wasFailure; }
-    void setLastVisitWasHTTPNonGet(bool wasNotGet) { m_lastVisitWasHTTPNonGet = wasNotGet; }
 
     void addChildItem(PassRefPtr<HistoryItem>);
     void setChildItem(PassRefPtr<HistoryItem>);
@@ -249,7 +247,6 @@ private:
     String m_displayTitle;
     
     double m_lastVisitedTime;
-    bool m_lastVisitWasHTTPNonGet;
 
     IntPoint m_scrollPoint;
     float m_pageScaleFactor;

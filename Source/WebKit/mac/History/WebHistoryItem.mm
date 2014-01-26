@@ -94,12 +94,6 @@ NSString *WebHistoryItemChangedNotification = @"WebHistoryItemChangedNotificatio
 
 using namespace WebCore;
 
-@interface WebHistoryItemPrivate : NSObject {
-@package
-    RefPtr<HistoryItem> _historyItem;
-}
-@end
-
 @implementation WebHistoryItemPrivate
 
 @end
@@ -177,6 +171,9 @@ void WKNotifyHistoryItemChanged(HistoryItem*)
 {
     WebCoreThreadViolationCheckRoundOne();
     WebHistoryItem *copy = [[[self class] alloc] initWithWebCoreHistoryItem:core(_private)->copy()];
+
+    copy->_private->_lastVisitWasHTTPNonGet = _private->_lastVisitWasHTTPNonGet;
+
     historyItemWrappers().set(core(copy->_private), copy);
 
     return copy;
@@ -395,7 +392,7 @@ WebHistoryItem *kit(HistoryItem* item)
     BOOL lastVisitWasHTTPNonGet = [dict _webkit_boolForKey:lastVisitWasHTTPNonGetKey];
     NSString *tempURLString = [URLString lowercaseString];
     if (lastVisitWasHTTPNonGet && ([tempURLString hasPrefix:@"http:"] || [tempURLString hasPrefix:@"https:"]))
-        core(_private)->setLastVisitWasHTTPNonGet(lastVisitWasHTTPNonGet);
+        _private->_lastVisitWasHTTPNonGet = lastVisitWasHTTPNonGet;
 
     if (NSArray *redirectURLs = [dict _webkit_arrayForKey:redirectURLsKey]) {
         NSUInteger size = [redirectURLs count];
@@ -679,7 +676,7 @@ WebHistoryItem *kit(HistoryItem* item)
 
 - (BOOL)_lastVisitWasHTTPNonGet
 {
-    return core(_private)->lastVisitWasHTTPNonGet();
+    return _private->_lastVisitWasHTTPNonGet;
 }
 
 - (NSArray *)_redirectURLs

@@ -52,7 +52,7 @@ extern NSString *WebHistoryItemChangedNotification;
 */
 @interface WebHistoryItem : NSObject <NSCopying>
 {
-@private
+@package
     WebHistoryItemPrivate *_private;
 }
 

@@ -187,9 +187,6 @@ HRESULT STDMETHODCALLTYPE WebHistoryItem::initFromDictionaryRepresentation(void*
     if (lastVisitWasFailure)
         m_historyItem->setLastVisitWasFailure(true);
 
-    if (lastVisitWasHTTPNonGet && (protocolIs(m_historyItem->urlString(), "http") || protocolIs(m_historyItem->urlString(), "https")))
-        m_historyItem->setLastVisitWasHTTPNonGet(true);
-
     if (redirectURLsVector.get())
         m_historyItem->setRedirectURLs(std::move(redirectURLsVector));
 
@@ -445,22 +442,16 @@ HRESULT STDMETHODCALLTYPE WebHistoryItem::setLastVisitWasFailure(BOOL wasFailure
     return S_OK;
 }
 
+// FIXME: This function should be removed from the IWebHistoryItem interface.
 HRESULT STDMETHODCALLTYPE WebHistoryItem::lastVisitWasHTTPNonGet(BOOL* HTTPNonGet)
 {
-    if (!HTTPNonGet) {
-        ASSERT_NOT_REACHED();
-        return E_POINTER;
-    }
-
-    *HTTPNonGet = m_historyItem->lastVisitWasHTTPNonGet();
-
-    return S_OK;
+    return E_NOTIMPL;
 }
 
+// FIXME: This function should be removed from the IWebHistoryItem interface.
 HRESULT STDMETHODCALLTYPE WebHistoryItem::setLastVisitWasHTTPNonGet(BOOL HTTPNonGet)
 {
-    m_historyItem->setLastVisitWasHTTPNonGet(HTTPNonGet);
-    return S_OK;
+    return E_NOTIMPL;
 }
 
 HRESULT STDMETHODCALLTYPE WebHistoryItem::redirectURLs(IEnumVARIANT** urls)

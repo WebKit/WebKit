@@ -1,3 +1,17 @@
+2014-01-26  Anders Carlsson  <andersca@apple.com>
+
+        Move lastVisitWasHTTPNonGet out to WebHistoryItem
+        https://bugs.webkit.org/show_bug.cgi?id=127657
+
+        Reviewed by Dan Bernstein.
+
+        Remove m_lastVisitWasHTTPNonGet, it's only used by WebKit.
+
+        * history/HistoryItem.cpp:
+        (WebCore::HistoryItem::HistoryItem):
+        (WebCore::HistoryItem::reset):
+        * history/HistoryItem.h:
+
 2014-01-26  Zalan Bujtas  <zalan@apple.com>
 
         Subpixel Layout: Align <input type="button", submit etc (PushButtonPart) top and bottom paddings with <button>

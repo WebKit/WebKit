@@ -28,7 +28,7 @@
 
 #import "WebBackForwardList.h"
 #import "WebHistoryItemPrivate.h"
-#import <wtf/Forward.h>
+#import <wtf/RefPtr.h>
 
 namespace WebCore {
     class HistoryItem;
@@ -57,4 +57,12 @@ extern void WKNotifyHistoryItemChanged(WebCore::HistoryItem*);
 
 @interface WebBackForwardList (WebInternal)
 - (void)_close;
+@end
+
+@interface WebHistoryItemPrivate : NSObject {
+@package
+    RefPtr<WebCore::HistoryItem> _historyItem;
+
+    bool _lastVisitWasHTTPNonGet;
+}
 @end

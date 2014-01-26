@@ -61,7 +61,6 @@ void (*notifyHistoryItemChanged)(HistoryItem*) = defaultNotifyHistoryItemChanged
 
 HistoryItem::HistoryItem()
     : m_lastVisitedTime(0)
-    , m_lastVisitWasHTTPNonGet(false)
     , m_pageScaleFactor(0)
     , m_lastVisitWasFailure(false)
     , m_isTargetItem(false)
@@ -83,7 +82,6 @@ HistoryItem::HistoryItem(const String& urlString, const String& title, double ti
     , m_originalURLString(urlString)
     , m_title(title)
     , m_lastVisitedTime(time)
-    , m_lastVisitWasHTTPNonGet(false)
     , m_pageScaleFactor(0)
     , m_lastVisitWasFailure(false)
     , m_isTargetItem(false)
@@ -107,7 +105,6 @@ HistoryItem::HistoryItem(const String& urlString, const String& title, const Str
     , m_title(title)
     , m_displayTitle(alternateTitle)
     , m_lastVisitedTime(time)
-    , m_lastVisitWasHTTPNonGet(false)
     , m_pageScaleFactor(0)
     , m_lastVisitWasFailure(false)
     , m_isTargetItem(false)
@@ -132,7 +129,6 @@ HistoryItem::HistoryItem(const URL& url, const String& target, const String& par
     , m_parent(parent)
     , m_title(title)
     , m_lastVisitedTime(0)
-    , m_lastVisitWasHTTPNonGet(false)
     , m_pageScaleFactor(0)
     , m_lastVisitWasFailure(false)
     , m_isTargetItem(false)
@@ -166,7 +162,6 @@ inline HistoryItem::HistoryItem(const HistoryItem& item)
     , m_title(item.m_title)
     , m_displayTitle(item.m_displayTitle)
     , m_lastVisitedTime(item.m_lastVisitedTime)
-    , m_lastVisitWasHTTPNonGet(item.m_lastVisitWasHTTPNonGet)
     , m_scrollPoint(item.m_scrollPoint)
     , m_pageScaleFactor(item.m_pageScaleFactor)
     , m_lastVisitWasFailure(item.m_lastVisitWasFailure)
@@ -214,7 +209,6 @@ void HistoryItem::reset()
     m_displayTitle = String();
 
     m_lastVisitedTime = 0;
-    m_lastVisitWasHTTPNonGet = false;
 
     m_lastVisitWasFailure = false;
     m_isTargetItem = false;
