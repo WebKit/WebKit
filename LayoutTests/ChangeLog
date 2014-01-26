@@ -1,5 +1,15 @@
 2014-01-26  Benjamin Poulain  <bpoulain@apple.com>
 
+        Improve the bindings of NodeList's name accessor
+        https://bugs.webkit.org/show_bug.cgi?id=127358
+
+        Reviewed by Geoffrey Garen.
+
+        * fast/dom/NodeList/nodelist-name-getter-properties-expected.txt: Added.
+        * fast/dom/NodeList/nodelist-name-getter-properties.html: Added.
+
+2014-01-26  Benjamin Poulain  <bpoulain@apple.com>
+
         ASSERTION FAILED: !m_hasPendingCharacter
         https://bugs.webkit.org/show_bug.cgi?id=110118
 

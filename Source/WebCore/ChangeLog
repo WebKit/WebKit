@@ -1,3 +1,26 @@
+2014-01-26  Benjamin Poulain  <bpoulain@apple.com>
+
+        Improve the bindings of NodeList's name accessor
+        https://bugs.webkit.org/show_bug.cgi?id=127358
+
+        Reviewed by Geoffrey Garen.
+
+        When accessing an item of NodeList by name, the default bindings was
+        going through the list of node twice:
+        -First, getOwnProperty calls canGetItemsForName() to find if a property exists for
+         the given name. This in turn used NodeList::namedItem() which is a slow operation.
+        -Then, the value itself was queried through nameGetter(), calling NodeList::namedItem()
+         a second time to find the same value.
+
+        This patch kills the default name getter in favor of a getOwnPropertySlotDelegate() returning
+        the value directly on the PropertySlot.
+
+        Ad Hoc testing show about 15% speed up for simple cases.
+
+        * bindings/js/JSNodeListCustom.cpp:
+        (WebCore::JSNodeList::getOwnPropertySlotDelegate):
+        * dom/NodeList.idl:
+
 2014-01-26  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Move InspectorDebuggerAgent into JavaScriptCore

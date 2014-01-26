@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2007, 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -51,15 +51,13 @@ bool JSNodeListOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handl
     return false;
 }
 
-bool JSNodeList::canGetItemsForName(ExecState*, NodeList* impl, PropertyName propertyName)
+bool JSNodeList::getOwnPropertySlotDelegate(ExecState* exec, PropertyName propertyName, PropertySlot& slot)
 {
-    return impl->namedItem(propertyNameToAtomicString(propertyName));
-}
-
-EncodedJSValue JSNodeList::nameGetter(ExecState* exec, EncodedJSValue slotBase, EncodedJSValue, PropertyName propertyName)
-{
-    JSNodeList* thisObj = jsCast<JSNodeList*>(JSValue::decode(slotBase));
-    return JSValue::encode(toJS(exec, thisObj->globalObject(), thisObj->impl().namedItem(propertyNameToAtomicString(propertyName))));
+    if (Node* item = impl().namedItem(propertyNameToAtomicString(propertyName))) {
+        slot.setValue(this, ReadOnly | DontDelete | DontEnum, toJS(exec, globalObject(), item));
+        return true;
+    }
+    return false;
 }
 
 } // namespace WebCore
