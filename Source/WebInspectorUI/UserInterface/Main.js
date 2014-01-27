@@ -52,27 +52,40 @@ WebInspector.loaded = function()
     this._initializeWebSocketIfNeeded();
 
     // Register observers for events from the InspectorBackend.
-    InspectorBackend.registerInspectorDispatcher(new WebInspector.InspectorObserver);
-    InspectorBackend.registerPageDispatcher(new WebInspector.PageObserver);
+    if (InspectorBackend.registerInspectorDispatcher)
+        InspectorBackend.registerInspectorDispatcher(new WebInspector.InspectorObserver);
+    if (InspectorBackend.registerPageDispatcher)
+        InspectorBackend.registerPageDispatcher(new WebInspector.PageObserver);
     if (InspectorBackend.registerCanvasDispatcher)
         InspectorBackend.registerCanvasDispatcher(new WebInspector.CanvasObserver);
-    InspectorBackend.registerConsoleDispatcher(new WebInspector.ConsoleObserver);
-    InspectorBackend.registerNetworkDispatcher(new WebInspector.NetworkObserver);
-    InspectorBackend.registerDOMDispatcher(new WebInspector.DOMObserver);
-    InspectorBackend.registerDebuggerDispatcher(new WebInspector.DebuggerObserver);
-    InspectorBackend.registerDatabaseDispatcher(new WebInspector.DatabaseObserver);
-    InspectorBackend.registerDOMStorageDispatcher(new WebInspector.DOMStorageObserver);
-    InspectorBackend.registerApplicationCacheDispatcher(new WebInspector.ApplicationCacheObserver);
-    InspectorBackend.registerTimelineDispatcher(new WebInspector.TimelineObserver);
-    InspectorBackend.registerProfilerDispatcher(new WebInspector.ProfilerObserver);
-    InspectorBackend.registerCSSDispatcher(new WebInspector.CSSObserver);
+    if (InspectorBackend.registerConsoleDispatcher)
+        InspectorBackend.registerConsoleDispatcher(new WebInspector.ConsoleObserver);
+    if (InspectorBackend.registerNetworkDispatcher)
+        InspectorBackend.registerNetworkDispatcher(new WebInspector.NetworkObserver);
+    if (InspectorBackend.registerDOMDispatcher)
+        InspectorBackend.registerDOMDispatcher(new WebInspector.DOMObserver);
+    if (InspectorBackend.registerDebuggerDispatcher)
+        InspectorBackend.registerDebuggerDispatcher(new WebInspector.DebuggerObserver);
+    if (InspectorBackend.registerDatabaseDispatcher)
+        InspectorBackend.registerDatabaseDispatcher(new WebInspector.DatabaseObserver);
+    if (InspectorBackend.registerDOMStorageDispatcher)
+        InspectorBackend.registerDOMStorageDispatcher(new WebInspector.DOMStorageObserver);
+    if (InspectorBackend.registerApplicationCacheDispatcher)
+        InspectorBackend.registerApplicationCacheDispatcher(new WebInspector.ApplicationCacheObserver);
+    if (InspectorBackend.registerTimelineDispatcher)
+        InspectorBackend.registerTimelineDispatcher(new WebInspector.TimelineObserver);
+    if (InspectorBackend.registerProfilerDispatcher)
+        InspectorBackend.registerProfilerDispatcher(new WebInspector.ProfilerObserver);
+    if (InspectorBackend.registerCSSDispatcher)
+        InspectorBackend.registerCSSDispatcher(new WebInspector.CSSObserver);
     if (InspectorBackend.registerLayerTreeDispatcher)
         InspectorBackend.registerLayerTreeDispatcher(new WebInspector.LayerTreeObserver);
     if (InspectorBackend.registerRuntimeDispatcher)
         InspectorBackend.registerRuntimeDispatcher(new WebInspector.RuntimeObserver);
 
     // Enable agents.
-    InspectorAgent.enable();
+    if (window.InspectorAgent)
+        InspectorAgent.enable();
 
     // Perform one-time tasks.
     WebInspector.CSSCompletions.requestCSSNameCompletions();
@@ -101,7 +114,8 @@ WebInspector.loaded = function()
     this.dashboardManager = new WebInspector.DashboardManager;
 
     // Enable the Console Agent after creating the singleton managers.
-    ConsoleAgent.enable();
+    if (window.ConsoleAgent)
+        ConsoleAgent.enable();
 
     // Register for events.
     this.debuggerManager.addEventListener(WebInspector.DebuggerManager.Event.Paused, this._debuggerDidPause, this);

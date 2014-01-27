@@ -1,3 +1,37 @@
+2014-01-27  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Feature Check all Protocol Generated Interfaces to get JSContext Inspection working
+        https://bugs.webkit.org/show_bug.cgi?id=127712
+
+        Reviewed by Timothy Hatcher.
+
+        Feature check protocol generated interfaces (e.g. FooAgent and registerFooObserver).
+        Also drive by handle a possible exception if a SourceCode's URL is null, which is possible.
+
+        * UserInterface/ApplicationCacheManager.js:
+        (WebInspector.ApplicationCacheManager):
+        (WebInspector.ApplicationCacheManager.prototype.initialize):
+        * UserInterface/CSSCompletions.js:
+        (WebInspector.CSSCompletions.requestCSSNameCompletions):
+        * UserInterface/CSSStyleManager.js:
+        (WebInspector.CSSStyleManager):
+        (WebInspector.CSSStyleManager.prototype.canForcePseudoClasses):
+        * UserInterface/DebuggerManager.js:
+        * UserInterface/FrameResourceManager.js:
+        (WebInspector.FrameResourceManager):
+        (WebInspector.FrameResourceManager.prototype.initialize):
+        * UserInterface/Main.js:
+        (WebInspector.loaded):
+        * UserInterface/ProfileManager.js:
+        (WebInspector.ProfileManager):
+        * UserInterface/StorageManager.js:
+        (WebInspector.StorageManager):
+        Type check generated interfaces.
+
+        (WebInspector.DebuggerManager):
+        (WebInspector.DebuggerManager.prototype.debuggerDidPause):
+        Null check a SourceCode URL, which can be null for a Script with no URL.
+
 2014-01-25  Timothy Hatcher  <timothy@apple.com>
 
         Remove dead code from the JSC profiler.

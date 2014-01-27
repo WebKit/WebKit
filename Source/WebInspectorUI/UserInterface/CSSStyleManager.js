@@ -27,7 +27,8 @@ WebInspector.CSSStyleManager = function()
 {
     WebInspector.Object.call(this);
 
-    CSSAgent.enable();
+    if (window.CSSAgent)
+        CSSAgent.enable();
 
     WebInspector.Frame.addEventListener(WebInspector.Frame.Event.MainResourceDidChange, this._mainResourceDidChange, this);
     WebInspector.Frame.addEventListener(WebInspector.Frame.Event.ResourceWasAdded, this._resourceAdded, this);
@@ -59,7 +60,7 @@ WebInspector.CSSStyleManager.prototype = {
 
     canForcePseudoClasses: function()
     {
-        return !!CSSAgent.forcePseudoState;
+        return window.CSSAgent && !!CSSAgent.forcePseudoState;
     },
 
     propertyNameHasOtherVendorPrefix: function(name)

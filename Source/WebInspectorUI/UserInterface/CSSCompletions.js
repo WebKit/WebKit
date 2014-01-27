@@ -153,7 +153,8 @@ WebInspector.CSSCompletions.requestCSSNameCompletions = function()
         updateCodeMirrorCSSMode("text/x-scss");
     }
 
-    CSSAgent.getSupportedCSSProperties(propertyNamesCallback);
+    if (window.CSSAgent)
+        CSSAgent.getSupportedCSSProperties(propertyNamesCallback);
 }
 
 WebInspector.CSSCompletions.prototype = {

@@ -27,8 +27,10 @@ WebInspector.FrameResourceManager = function()
 {
     WebInspector.Object.call(this);
 
-    PageAgent.enable();
-    NetworkAgent.enable();
+    if (window.PageAgent)
+        PageAgent.enable();
+    if (window.NetworkAgent)
+        NetworkAgent.enable();
 
     this.initialize();
 };
@@ -58,7 +60,8 @@ WebInspector.FrameResourceManager.prototype = {
             this._mainFrameDidChange(oldMainFrame);
 
         this._waitingForMainFrameResourceTreePayload = true;
-        PageAgent.getResourceTree(this._processMainFrameResourceTreePayload.bind(this));
+        if (window.PageAgent)
+            PageAgent.getResourceTree(this._processMainFrameResourceTreePayload.bind(this));
     },
 
     get mainFrame()

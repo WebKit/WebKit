@@ -27,7 +27,8 @@ WebInspector.ApplicationCacheManager = function()
 {
     WebInspector.Object.call(this);
 
-    ApplicationCacheAgent.enable();
+    if (window.ApplicationCacheAgent)
+        ApplicationCacheAgent.enable();
 
     WebInspector.Frame.addEventListener(WebInspector.Frame.Event.MainResourceDidChange, this._mainResourceDidChange, this);
     WebInspector.Frame.addEventListener(WebInspector.Frame.Event.ChildFrameWasRemoved, this._childFrameWasRemoved, this);
@@ -63,7 +64,8 @@ WebInspector.ApplicationCacheManager.prototype = {
     {
         this._applicationCacheObjects = [];
 
-        ApplicationCacheAgent.getFramesWithManifests(this._framesWithManifestsLoaded.bind(this));
+        if (window.ApplicationCacheAgent)
+            ApplicationCacheAgent.getFramesWithManifests(this._framesWithManifestsLoaded.bind(this));
     },
 
     networkStateUpdated: function(isNowOnline)

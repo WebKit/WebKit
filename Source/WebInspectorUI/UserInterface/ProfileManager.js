@@ -30,8 +30,10 @@ WebInspector.ProfileManager = function()
     this._javaScriptProfileType = new WebInspector.JavaScriptProfileType;
     this._canvasProfileType = new WebInspector.CanvasProfileType;
 
-    ProfilerAgent.enable();
-    ProfilerAgent.getProfileHeaders();
+    if (window.ProfilerAgent) {
+        ProfilerAgent.enable();
+        ProfilerAgent.getProfileHeaders();
+    }
 
     WebInspector.Frame.addEventListener(WebInspector.Frame.Event.MainResourceDidChange, this._mainResourceDidChange, this);
 

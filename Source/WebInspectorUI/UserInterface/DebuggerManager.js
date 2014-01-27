@@ -27,7 +27,8 @@ WebInspector.DebuggerManager = function()
 {
     WebInspector.Object.call(this);
 
-    DebuggerAgent.enable();
+    if (window.DebuggerAgent)
+        DebuggerAgent.enable();
 
     WebInspector.Breakpoint.addEventListener(WebInspector.Breakpoint.Event.DisplayLocationDidChange, this._breakpointDisplayLocationDidChange, this);
     WebInspector.Breakpoint.addEventListener(WebInspector.Breakpoint.Event.DisabledStateDidChange, this._breakpointDisabledStateDidChange, this);
@@ -58,7 +59,8 @@ WebInspector.DebuggerManager = function()
     this._breakpointsSetting = new WebInspector.Setting("breakpoints", []);
     this._breakpointsEnabledSetting = new WebInspector.Setting("breakpoints-enabled", true);
 
-    DebuggerAgent.setBreakpointsActive(this._breakpointsEnabledSetting.value);
+    if (window.DebuggerAgent)
+        DebuggerAgent.setBreakpointsActive(this._breakpointsEnabledSetting.value);
 
     this._updateBreakOnExceptionsState();
 
@@ -345,7 +347,7 @@ WebInspector.DebuggerManager.prototype = {
             var callFramePayload = callFramesPayload[i];
             var sourceCodeLocation = this._sourceCodeLocationFromPayload(callFramePayload.location);
             // Exclude the case where the call frame is in the inspector code.
-            if (!sourceCodeLocation || sourceCodeLocation._sourceCode._url.indexOf("__WebInspector") === 0)
+            if (!sourceCodeLocation || !sourceCodeLocation._sourceCode || !sourceCodeLocation._sourceCode._url || sourceCodeLocation._sourceCode._url.indexOf("__WebInspector") === 0)
                 continue;
             var thisObject = WebInspector.RemoteObject.fromPayload(callFramePayload.this);
             var scopeChain = this._scopeChainFromPayload(callFramePayload.scopeChain);

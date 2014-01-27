@@ -28,15 +28,17 @@ WebInspector.StorageManager = function()
 {
     WebInspector.Object.call(this);
 
-    DOMStorageAgent.enable();
-    DatabaseAgent.enable();
+    if (window.DOMStorageAgent)
+        DOMStorageAgent.enable();
+    if (window.DatabaseAgent)
+        DatabaseAgent.enable();
 
     WebInspector.Frame.addEventListener(WebInspector.Frame.Event.MainResourceDidChange, this._mainResourceDidChange, this);
 
     // COMPATIBILITY (iOS 6): DOMStorage was discovered via a DOMStorageObserver event. Now DOM Storage
     // is added whenever a new securityOrigin is discovered. Check for DOMStorageAgent.getDOMStorageItems,
     // which was renamed at the same time the change to start using securityOrigin was made.
-    if (DOMStorageAgent.getDOMStorageItems)
+    if (window.DOMStorageAgent && DOMStorageAgent.getDOMStorageItems)
         WebInspector.Frame.addEventListener(WebInspector.Frame.Event.SecurityOriginDidChange, this._securityOriginDidChange, this);
 
     this.initialize();
