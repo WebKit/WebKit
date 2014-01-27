@@ -1,3 +1,28 @@
+2014-01-26  David Hyatt  <hyatt@apple.com>
+
+        [New Multicolumn] Change the axis property to be a boolean like other isInline checks
+        https://bugs.webkit.org/show_bug.cgi?id=127661
+
+        Reviewed by Simon Fraser.
+
+        * rendering/ColumnInfo.h:
+        (WebCore::ColumnInfo::ColumnInfo):
+        (WebCore::ColumnInfo::progressionIsInline):
+        (WebCore::ColumnInfo::setProgressionIsInline):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::paintColumnRules):
+        (WebCore::RenderBlock::initialBlockOffsetForPainting):
+        (WebCore::RenderBlock::blockDeltaForPaintingNextColumn):
+        (WebCore::RenderBlock::setComputedColumnCountAndWidth):
+        (WebCore::RenderBlock::updateColumnInfoFromStyle):
+        (WebCore::RenderBlock::columnRectAt):
+        (WebCore::RenderBlock::adjustPointToColumnContents):
+        (WebCore::RenderBlock::adjustRectForColumns):
+        (WebCore::RenderBlock::adjustForColumns):
+        * rendering/RenderMultiColumnFlowThread.h:
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::columnNumberForOffset):
+
 2014-01-26  Benjamin Poulain  <benjamin@webkit.org>
 
         Make DOMStringMap a typedef of DatasetDOMStringMap

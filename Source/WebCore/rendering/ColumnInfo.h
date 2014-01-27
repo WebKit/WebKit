@@ -37,7 +37,7 @@ public:
     ColumnInfo()
         : m_desiredColumnWidth(0)
         , m_desiredColumnCount(1)
-        , m_progressionAxis(InlineAxis)
+        , m_progressionIsInline(true)
         , m_progressionIsReversed(false)
         , m_columnCount(1)
         , m_columnHeight(0)
@@ -55,10 +55,8 @@ public:
     unsigned desiredColumnCount() const { return m_desiredColumnCount; }
     void setDesiredColumnCount(unsigned count) { m_desiredColumnCount = count; }
 
-    enum Axis { InlineAxis, BlockAxis };
-
-    Axis progressionAxis() const { return m_progressionAxis; }
-    void setProgressionAxis(Axis progressionAxis) { m_progressionAxis = progressionAxis; }
+    bool progressionIsInline() const { return m_progressionIsInline; }
+    void setProgressionIsInline(bool progressionIsInline) { m_progressionIsInline = progressionIsInline; }
 
     bool progressionIsReversed() const { return m_progressionIsReversed; }
     void setProgressionIsReversed(bool reversed) { m_progressionIsReversed = reversed; }
@@ -105,7 +103,7 @@ public:
 private:
     LayoutUnit m_desiredColumnWidth;
     unsigned m_desiredColumnCount;
-    Axis m_progressionAxis;
+    bool m_progressionIsInline;
     bool m_progressionIsReversed;
 
     unsigned m_columnCount;

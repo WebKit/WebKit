@@ -2209,7 +2209,7 @@ void RenderBlock::paintColumnRules(PaintInfo& paintInfo, const LayoutPoint& pain
 
     bool antialias = shouldAntialiasLines(paintInfo.context);
 
-    if (colInfo->progressionAxis() == ColumnInfo::InlineAxis) {
+    if (colInfo->progressionIsInline()) {
         bool leftToRight = style().isLeftToRightDirection() ^ colInfo->progressionIsReversed();
         LayoutUnit currLogicalLeftOffset = leftToRight ? LayoutUnit() : contentLogicalWidth();
         LayoutUnit ruleAdd = logicalLeftOffsetForContent();
@@ -2282,7 +2282,7 @@ LayoutUnit RenderBlock::initialBlockOffsetForPainting() const
 {
     ColumnInfo* colInfo = columnInfo();
     LayoutUnit result = 0;
-    if (colInfo->progressionAxis() == ColumnInfo::BlockAxis && colInfo->progressionIsReversed()) {
+    if (!colInfo->progressionIsInline() && colInfo->progressionIsReversed()) {
         LayoutRect colRect = columnRectAt(colInfo, 0);
         result = isHorizontalWritingMode() ? colRect.y() : colRect.x();
         result -= borderAndPaddingBefore();
@@ -2297,7 +2297,7 @@ LayoutUnit RenderBlock::blockDeltaForPaintingNextColumn() const
     ColumnInfo* colInfo = columnInfo();
     LayoutUnit blockDelta = -colInfo->columnHeight();
     LayoutUnit colGap = columnGap();
-    if (colInfo->progressionAxis() == ColumnInfo::BlockAxis) {
+    if (!colInfo->progressionIsInline()) {
         if (!colInfo->progressionIsReversed())
             blockDelta = colGap;
         else
@@ -3706,7 +3706,7 @@ void RenderBlock::setComputedColumnCountAndWidth(int count, LayoutUnit width)
         }
         info->setDesiredColumnCount(count);
         info->setDesiredColumnWidth(width);
-        info->setProgressionAxis(style().hasInlineColumnAxis() ? ColumnInfo::InlineAxis : ColumnInfo::BlockAxis);
+        info->setProgressionIsInline(style().hasInlineColumnAxis());
         info->setProgressionIsReversed(style().columnProgression() == ReverseColumnProgression);
     }
 }
@@ -3719,10 +3719,10 @@ void RenderBlock::updateColumnInfoFromStyle(RenderStyle* style)
     ColumnInfo* info = gColumnInfoMap->get(this);
 
     bool needsLayout = false;
-    ColumnInfo::Axis oldAxis = info->progressionAxis();
-    ColumnInfo::Axis newAxis = style->hasInlineColumnAxis() ? ColumnInfo::InlineAxis : ColumnInfo::BlockAxis;
-    if (oldAxis != newAxis) {
-        info->setProgressionAxis(newAxis);
+    bool oldProgressionIsInline = info->progressionIsInline();
+    bool newProgressionIsInline = style->hasInlineColumnAxis();
+    if (oldProgressionIsInline != newProgressionIsInline) {
+        info->setProgressionIsInline(newProgressionIsInline);
         needsLayout = true;
     }
 
@@ -3775,7 +3775,7 @@ LayoutRect RenderBlock::columnRectAt(ColumnInfo* colInfo, unsigned index) const
     LayoutUnit colLogicalTop = borderAndPaddingBefore();
     LayoutUnit colLogicalLeft = logicalLeftOffsetForContent();
     LayoutUnit colGap = columnGap();
-    if (colInfo->progressionAxis() == ColumnInfo::InlineAxis) {
+    if (colInfo->progressionIsInline()) {
         if (style().isLeftToRightDirection() ^ colInfo->progressionIsReversed())
             colLogicalLeft += index * (colLogicalWidth + colGap);
         else
@@ -3811,10 +3811,10 @@ void RenderBlock::adjustPointToColumnContents(LayoutPoint& point) const
         // Add in half the column gap to the left and right of the rect.
         LayoutRect colRect = columnRectAt(colInfo, i);
         flipForWritingMode(colRect);
-        if (isHorizontalWritingMode() == (colInfo->progressionAxis() == ColumnInfo::InlineAxis)) {
+        if (isHorizontalWritingMode() == colInfo->progressionIsInline()) {
             LayoutRect gapAndColumnRect(colRect.x() - halfColGap, colRect.y(), colRect.width() + colGap, colRect.height());
             if (point.x() >= gapAndColumnRect.x() && point.x() < gapAndColumnRect.maxX()) {
-                if (colInfo->progressionAxis() == ColumnInfo::InlineAxis) {
+                if (colInfo->progressionIsInline()) {
                     // FIXME: The clamping that follows is not completely right for right-to-left
                     // content.
                     // Clamp everything above the column to its top left.
@@ -3834,7 +3834,7 @@ void RenderBlock::adjustPointToColumnContents(LayoutPoint& point) const
                 }
 
                 // We're inside the column.  Translate the x and y into our column coordinate space.
-                if (colInfo->progressionAxis() == ColumnInfo::InlineAxis)
+                if (colInfo->progressionIsInline())
                     point.move(columnPoint.x() - colRect.x(), (!style().isFlippedBlocksWritingMode() ? logicalOffset : -logicalOffset));
                 else
                     point.move((!style().isFlippedBlocksWritingMode() ? logicalOffset : -logicalOffset) - colRect.x() + borderLeft() + paddingLeft(), 0);
@@ -3842,11 +3842,11 @@ void RenderBlock::adjustPointToColumnContents(LayoutPoint& point) const
             }
 
             // Move to the next position.
-            logicalOffset += colInfo->progressionAxis() == ColumnInfo::InlineAxis ? colRect.height() : colRect.width();
+            logicalOffset += colInfo->progressionIsInline() ? colRect.height() : colRect.width();
         } else {
             LayoutRect gapAndColumnRect(colRect.x(), colRect.y() - halfColGap, colRect.width(), colRect.height() + colGap);
             if (point.y() >= gapAndColumnRect.y() && point.y() < gapAndColumnRect.maxY()) {
-                if (colInfo->progressionAxis() == ColumnInfo::InlineAxis) {
+                if (colInfo->progressionIsInline()) {
                     // FIXME: The clamping that follows is not completely right for right-to-left
                     // content.
                     // Clamp everything above the column to its top left.
@@ -3866,7 +3866,7 @@ void RenderBlock::adjustPointToColumnContents(LayoutPoint& point) const
                 }
 
                 // We're inside the column.  Translate the x and y into our column coordinate space.
-                if (colInfo->progressionAxis() == ColumnInfo::InlineAxis)
+                if (colInfo->progressionIsInline())
                     point.move((!style().isFlippedBlocksWritingMode() ? logicalOffset : -logicalOffset), columnPoint.y() - colRect.y());
                 else
                     point.move(0, (!style().isFlippedBlocksWritingMode() ? logicalOffset : -logicalOffset) - colRect.y() + borderTop() + paddingTop());
@@ -3874,7 +3874,7 @@ void RenderBlock::adjustPointToColumnContents(LayoutPoint& point) const
             }
 
             // Move to the next position.
-            logicalOffset += colInfo->progressionAxis() == ColumnInfo::InlineAxis ? colRect.width() : colRect.height();
+            logicalOffset += colInfo->progressionIsInline() ? colRect.width() : colRect.height();
         }
     }
 }
@@ -3915,7 +3915,7 @@ void RenderBlock::adjustRectForColumns(LayoutRect& r) const
         LayoutRect colRect = columnRectAt(colInfo, startColumn);
         LayoutRect repaintRect = r;
 
-        if (colInfo->progressionAxis() == ColumnInfo::InlineAxis) {
+        if (colInfo->progressionIsInline()) {
             if (isHorizontal)
                 repaintRect.move(colRect.x() - logicalLeftOffset, - static_cast<int>(startColumn) * colHeight);
             else
@@ -3990,7 +3990,7 @@ void RenderBlock::adjustForColumns(LayoutSize& offset, const LayoutPoint& point)
         // Now we're in the same coordinate space as the point.  See if it is inside the rectangle.
         if (isHorizontalWritingMode()) {
             if (point.y() >= sliceRect.y() && point.y() < sliceRect.maxY()) {
-                if (colInfo->progressionAxis() == ColumnInfo::InlineAxis)
+                if (colInfo->progressionIsInline())
                     offset.expand(columnRectAt(colInfo, i).x() - logicalLeft, -logicalOffset);
                 else
                     offset.expand(0, columnRectAt(colInfo, i).y() - logicalOffset - borderAndPaddingBefore());
@@ -3998,7 +3998,7 @@ void RenderBlock::adjustForColumns(LayoutSize& offset, const LayoutPoint& point)
             }
         } else {
             if (point.x() >= sliceRect.x() && point.x() < sliceRect.maxX()) {
-                if (colInfo->progressionAxis() == ColumnInfo::InlineAxis)
+                if (colInfo->progressionIsInline())
                     offset.expand(-logicalOffset, columnRectAt(colInfo, i).y() - logicalLeft);
                 else
                     offset.expand(columnRectAt(colInfo, i).x() - logicalOffset - borderAndPaddingBefore(), 0);

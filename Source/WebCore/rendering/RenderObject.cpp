@@ -1065,7 +1065,7 @@ int RenderObject::columnNumberForOffset(int offset)
         return columnNumber;
 
     ColumnInfo* columnInfo = view.columnInfo();
-    if (columnInfo && columnInfo->progressionAxis() == ColumnInfo::BlockAxis) {
+    if (columnInfo && !columnInfo->progressionIsInline()) {
         if (!columnInfo->progressionIsReversed())
             columnNumber = (pagination.pageLength + pagination.gap - offset) / (pagination.pageLength + pagination.gap);
         else
