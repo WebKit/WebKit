@@ -246,7 +246,7 @@ plugins/npruntime/embed-property-iframe-equality.html
 
 webkit.org/b/105952 fast/loader/submit-form-while-parsing-2.html [ Pass Failure ]
 
-webkit.org/b/127683 http/tests/navigation/new-window-redirect-history.html [Crash]
+webkit.org/b/127683 http/tests/navigation/new-window-redirect-history.html [ Crash ]
 
 ### END OF (1) Classified failures with bug reports
 ########################################

@@ -1,5 +1,11 @@
 2014-01-27  Csaba Osztrogonác  <ossy@webkit.org>
 
+        Typo fix after r162838.
+
+        * platform/wk2/TestExpectations:
+
+2014-01-27  Csaba Osztrogonác  <ossy@webkit.org>
+
         Unreviewed gardening, unskip now passing tests.
 
         * platform/wk2/TestExpectations:
