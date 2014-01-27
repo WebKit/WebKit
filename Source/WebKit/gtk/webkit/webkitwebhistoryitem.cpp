@@ -300,7 +300,7 @@ WebKitWebHistoryItem* webkit_web_history_item_new_with_data(const gchar* uri, co
 
     WebCore::URL historyUri(WebCore::URL(), uri);
     WTF::String historyTitle = WTF::String::fromUTF8(title);
-    RefPtr<WebCore::HistoryItem> item = WebCore::HistoryItem::create(historyUri, historyTitle, 0);
+    RefPtr<WebCore::HistoryItem> item = WebCore::HistoryItem::create(historyUri, historyTitle);
     priv->historyItem = item.release().leakRef();
     webkit_history_item_add(webHistoryItem, priv->historyItem);
 
@@ -427,7 +427,9 @@ gdouble webkit_web_history_item_get_last_visited_time(WebKitWebHistoryItem* webH
 
     g_return_val_if_fail(item, 0);
 
-    return item->lastVisitedTime();
+    // FIXME: HistoryItem in WebCore doesn't implement visit stats anymore.
+    // https://bugs.webkit.org/show_bug.cgi?id=127673.
+    return 0;
 }
 
 /**

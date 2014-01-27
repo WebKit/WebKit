@@ -1,3 +1,11 @@
+2014-01-27  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix GTK+ build after r162808.
+
+        * webkit/webkitwebhistoryitem.cpp:
+        (webkit_web_history_item_new_with_data):
+        (webkit_web_history_item_get_last_visited_time):
+
 2014-01-25  Anders Carlsson  <andersca@apple.com>
 
         Remove an unused FrameLoaderClient function
