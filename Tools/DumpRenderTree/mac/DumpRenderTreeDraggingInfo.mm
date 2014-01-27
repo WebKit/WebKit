@@ -29,6 +29,8 @@
 #import "config.h"
 #import "DumpRenderTreeDraggingInfo.h"
 
+#if !PLATFORM(IOS)
+
 #import "DumpRenderTree.h"
 #import "EventSendingController.h"
 #import <WebKit/WebKit.h>
@@ -142,3 +144,4 @@
 
 @end
 
+#endif // !PLATFORM(IOS)

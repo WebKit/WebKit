@@ -28,13 +28,24 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#if !PLATFORM(IOS)
 #import <AppKit/AppKit.h>
+#else
+#import <UIKit/UIKit.h>
+#import <UIKit/UIWebBrowserView.h>
+#import <WebKit/WAKWindow.h>
+#endif
 
 @class WebView;
 
 @interface DumpRenderTreeWindow : NSWindow
 {
 }
+
+#if PLATFORM(IOS)
+@property (nonatomic, retain) UIWindow *uiWindow;
+@property (nonatomic, retain) UIWebBrowserView *browserView;
+#endif
 
 // I'm not sure why we can't just use [NSApp windows]
 + (NSArray *)openWindows;

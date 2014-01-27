@@ -1,3 +1,97 @@
+2014-01-24  Andy Estes  <aestes@apple.com>
+
+        [iOS] Upstream changes in Tools/DumpRenderTree
+        https://bugs.webkit.org/show_bug.cgi?id=127412
+
+        Reviewed by Simon Fraser.
+
+        Upstream all iOS changes. Added a new target called DumpRenderTree.app,
+        which builds the DumpRenderTree static library into an app bundle as
+        expected by the iOS Simulator.
+
+        * DumpRenderTree/AccessibilityTextMarker.h:
+        * DumpRenderTree/AccessibilityUIElement.h:
+        * DumpRenderTree/DumpRenderTree.xcodeproj/project.pbxproj:
+        * DumpRenderTree/DumpRenderTreeFileDraggingSource.h:
+        * DumpRenderTree/DumpRenderTreePrefix.h:
+        * DumpRenderTree/PixelDumpSupport.cpp:
+        * DumpRenderTree/TestNetscapePlugIn/PluginObject.cpp:
+        * DumpRenderTree/TestNetscapePlugIn/PluginObject.h:
+        * DumpRenderTree/TestNetscapePlugIn/PluginObjectMac.mm:
+        * DumpRenderTree/TestNetscapePlugIn/PluginTest.cpp:
+        * DumpRenderTree/TestNetscapePlugIn/PluginTest.h:
+        * DumpRenderTree/TestNetscapePlugIn/TestObject.cpp:
+        * DumpRenderTree/TestNetscapePlugIn/TestObject.h:
+        * DumpRenderTree/TestNetscapePlugIn/Tests/DocumentOpenInDestroyStream.cpp:
+        * DumpRenderTree/TestNetscapePlugIn/Tests/EvaluateJSAfterRemovingPluginElement.cpp:
+        * DumpRenderTree/TestNetscapePlugIn/Tests/GetUserAgentWithNullNPPFromNPPNew.cpp:
+        * DumpRenderTree/TestNetscapePlugIn/Tests/NPRuntimeObjectFromDestroyedPlugin.cpp:
+        * DumpRenderTree/TestNetscapePlugIn/Tests/NPRuntimeRemoveProperty.cpp:
+        * DumpRenderTree/TestNetscapePlugIn/Tests/NullNPPGetValuePointer.cpp:
+        * DumpRenderTree/TestNetscapePlugIn/Tests/PassDifferentNPPStruct.cpp:
+        * DumpRenderTree/TestNetscapePlugIn/Tests/PluginScriptableNPObjectInvokeDefault.cpp:
+        * DumpRenderTree/TestNetscapePlugIn/main.cpp:
+        * DumpRenderTree/TestRunner.cpp:
+        * DumpRenderTree/TestRunner.h:
+        * DumpRenderTree/cg/ImageDiffCG.cpp:
+        * DumpRenderTree/cg/PixelDumpSupportCG.cpp:
+        * DumpRenderTree/ios/AccessibilityControllerIOS.mm:
+        * DumpRenderTree/ios/AccessibilityUIElementIOS.mm:
+        * DumpRenderTree/ios/DumpRenderTreeBrowserView.h: Added.
+        * DumpRenderTree/ios/DumpRenderTreeBrowserView.mm: Added.
+        * DumpRenderTree/ios/Info.plist: Added.
+        * DumpRenderTree/ios/PerlSupport/DumpRenderTreeSupport.c: Added.
+        * DumpRenderTree/ios/PerlSupport/DumpRenderTreeSupportPregenerated.pm: Added.
+        * DumpRenderTree/ios/PerlSupport/DumpRenderTreeSupport_wrapPregenerated.c: Added.
+        * DumpRenderTree/ios/PerlSupport/IPhoneSimulatorNotification/Changes: Added.
+        * DumpRenderTree/ios/PerlSupport/IPhoneSimulatorNotification/IPhoneSimulatorNotification.xs: Added.
+        * DumpRenderTree/ios/PerlSupport/IPhoneSimulatorNotification/MANIFEST: Added.
+        * DumpRenderTree/ios/PerlSupport/IPhoneSimulatorNotification/Makefile.PL: Added.
+        * DumpRenderTree/ios/PerlSupport/IPhoneSimulatorNotification/README: Added.
+        * DumpRenderTree/ios/PerlSupport/IPhoneSimulatorNotification/lib/IPhoneSimulatorNotification.pm: Added.
+        * DumpRenderTree/ios/PerlSupport/IPhoneSimulatorNotification/ppport.h: Added.
+        * DumpRenderTree/ios/PerlSupport/IPhoneSimulatorNotification/t/IPhoneSimulatorNotification.t: Added.
+        * DumpRenderTree/ios/PerlSupport/Makefile: Added.
+        * DumpRenderTree/ios/PixelDumpSupportIOS.mm: Added.
+        * DumpRenderTree/mac/AccessibilityNotificationHandler.mm:
+        * DumpRenderTree/mac/AccessibilityTextMarkerMac.mm:
+        * DumpRenderTree/mac/AppleScriptController.m:
+        * DumpRenderTree/mac/Configurations/Base.xcconfig:
+        * DumpRenderTree/mac/Configurations/DebugRelease.xcconfig:
+        * DumpRenderTree/mac/Configurations/DumpRenderTree.xcconfig:
+        * DumpRenderTree/mac/Configurations/DumpRenderTreeApp.xcconfig: Added.
+        * DumpRenderTree/mac/Configurations/DumpRenderTreeLibrary.xcconfig:
+        * DumpRenderTree/mac/Configurations/ImageDiff.xcconfig:
+        * DumpRenderTree/mac/Configurations/LayoutTestHelper.xcconfig: Added.
+        * DumpRenderTree/mac/Configurations/TestNetscapePlugIn.xcconfig:
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        * DumpRenderTree/mac/DumpRenderTreeDraggingInfo.h:
+        * DumpRenderTree/mac/DumpRenderTreeDraggingInfo.mm:
+        * DumpRenderTree/mac/DumpRenderTreeMac.h:
+        * DumpRenderTree/mac/DumpRenderTreePasteboard.h:
+        * DumpRenderTree/mac/DumpRenderTreePasteboard.m:
+        * DumpRenderTree/mac/DumpRenderTreeWindow.h:
+        * DumpRenderTree/mac/DumpRenderTreeWindow.mm:
+        * DumpRenderTree/mac/EditingDelegate.h:
+        * DumpRenderTree/mac/EventSendingController.h:
+        * DumpRenderTree/mac/EventSendingController.mm:
+        * DumpRenderTree/mac/FrameLoadDelegate.mm:
+        * DumpRenderTree/mac/HistoryDelegate.h:
+        * DumpRenderTree/mac/LayoutTestHelper.m:
+        * DumpRenderTree/mac/MockGeolocationProvider.mm:
+        * DumpRenderTree/mac/NavigationController.h:
+        * DumpRenderTree/mac/ObjCPlugin.h:
+        * DumpRenderTree/mac/ObjCPlugin.m:
+        * DumpRenderTree/mac/ObjCPluginFunction.h:
+        * DumpRenderTree/mac/PolicyDelegate.h:
+        * DumpRenderTree/mac/ResourceLoadDelegate.h:
+        * DumpRenderTree/mac/ResourceLoadDelegate.mm:
+        * DumpRenderTree/mac/TestRunnerMac.mm:
+        * DumpRenderTree/mac/TextInputController.h:
+        * DumpRenderTree/mac/TextInputController.m:
+        * DumpRenderTree/mac/UIDelegate.h:
+        * DumpRenderTree/mac/UIDelegate.mm:
+
 2014-01-25  Darin Adler  <darin@apple.com>
 
         Call deprecatedCharacters instead of characters at more call sites

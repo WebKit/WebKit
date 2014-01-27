@@ -28,6 +28,8 @@
 #import "AccessibilityTextMarker.h"
 #import "DumpRenderTree.h"
 
+#if SUPPORTS_AX_TEXTMARKERS
+
 // MARK: AccessibilityTextMarker
 
 AccessibilityTextMarker::AccessibilityTextMarker(PlatformTextMarker marker)
@@ -79,3 +81,5 @@ PlatformTextMarkerRange AccessibilityTextMarkerRange::platformTextMarkerRange() 
 {
     return m_textMarkerRange.get();
 }
+
+#endif // SUPPORTS_AX_TEXTMARKERS

@@ -1,3 +1,12 @@
+2014-01-24  Andy Estes  <aestes@apple.com>
+
+        [iOS] Upstream changes in Tools/DumpRenderTree
+        https://bugs.webkit.org/show_bug.cgi?id=127412
+
+        Reviewed by Simon Fraser.
+
+        * Misc/WebCoreStatistics.h: Included CGContext.h.
+
 2014-01-26  Anders Carlsson  <andersca@apple.com>
 
         Move history item visit count handling to WebKit

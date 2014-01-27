@@ -43,6 +43,10 @@
 
 #if PLATFORM(WIN)
 #include "MD5.h"
+#elif PLATFORM(IOS)
+#include <MobileCoreServices/UTCoreTypes.h>
+#define COMMON_DIGEST_FOR_OPENSSL
+#include <CommonCrypto/CommonDigest.h>
 #elif PLATFORM(MAC)
 #include <LaunchServices/UTCoreTypes.h>
 #define COMMON_DIGEST_FOR_OPENSSL

@@ -26,8 +26,8 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#import <CoreGraphics/CGContext.h>
 #import <Foundation/Foundation.h>
-
 #import <WebKit/WebFrame.h>
 
 @class DOMElement;

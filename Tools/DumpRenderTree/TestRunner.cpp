@@ -49,7 +49,7 @@
 #include <wtf/RefPtr.h>
 #include <wtf/StdLibExtras.h>
 
-#if PLATFORM(MAC)
+#if PLATFORM(MAC) && !PLATFORM(IOS)
 #include <Carbon/Carbon.h>
 #endif
 
@@ -1316,6 +1316,30 @@ static JSValueRef setTabKeyCyclesThroughElementsCallback(JSContextRef context, J
     return JSValueMakeUndefined(context);
 }
 
+#if PLATFORM(IOS)
+static JSValueRef setTelephoneNumberParsingEnabledCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+{
+    if (argumentCount < 1)
+        return JSValueMakeUndefined(context);
+
+    TestRunner* controller = static_cast<TestRunner*>(JSObjectGetPrivate(thisObject));
+    controller->setTelephoneNumberParsingEnabled(JSValueToBoolean(context, arguments[0]));
+
+    return JSValueMakeUndefined(context);
+}
+
+static JSValueRef setPagePausedCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+{
+    if (argumentCount < 1)
+        return JSValueMakeUndefined(context);
+
+    TestRunner* controller = static_cast<TestRunner*>(JSObjectGetPrivate(thisObject));
+    controller->setPagePaused(JSValueToBoolean(context, arguments[0]));
+
+    return JSValueMakeUndefined(context);
+}
+#endif
+
 #if ENABLE(IOS_TEXT_AUTOSIZING)
 static JSValueRef setTextAutosizingEnabledCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
@@ -1846,7 +1870,7 @@ static JSValueRef getWebHistoryItemCountCallback(JSContextRef context, JSObjectR
 
 static JSValueRef getSecureEventInputIsEnabledCallback(JSContextRef context, JSObjectRef thisObject, JSStringRef propertyName, JSValueRef* exception)
 {
-#if PLATFORM(MAC)
+#if PLATFORM(MAC) && !PLATFORM(IOS)
     return JSValueMakeBoolean(context, IsSecureEventInputEnabled());
 #else
     return JSValueMakeBoolean(context, false);
@@ -2168,6 +2192,10 @@ JSStaticFunction* TestRunner::staticFunctions()
         { "setSpatialNavigationEnabled", setSpatialNavigationEnabledCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "setStopProvisionalFrameLoads", setStopProvisionalFrameLoadsCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "setTabKeyCyclesThroughElements", setTabKeyCyclesThroughElementsCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
+#if PLATFORM(IOS)
+        { "setTelephoneNumberParsingEnabled", setTelephoneNumberParsingEnabledCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
+        { "setPagePaused", setPagePausedCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
+#endif
 #if ENABLE(IOS_TEXT_AUTOSIZING)
         { "setTextAutosizingEnabled", setTextAutosizingEnabledCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
 #endif

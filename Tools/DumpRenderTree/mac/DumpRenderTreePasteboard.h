@@ -28,6 +28,8 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#if !PLATFORM(IOS)
+
 #import <AppKit/AppKit.h>
 #import <WebKit/WebTypesInternal.h>
 
@@ -36,3 +38,4 @@
 + (void)releaseLocalPasteboards;
 @end
 
+#endif

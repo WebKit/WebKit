@@ -29,6 +29,9 @@
 #import "config.h"
 #import "TextInputController.h"
 
+#if !PLATFORM(IOS)
+// FIXME: <rdar://problem/5106287> DumpRenderTree: fix TextInputController to work with iOS and re-enable tests
+
 #import "DumpRenderTreeMac.h"
 #import <AppKit/NSInputManager.h>
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1080
@@ -524,3 +527,5 @@
 }
 
 @end
+
+#endif // !PLATFORM(IOS)

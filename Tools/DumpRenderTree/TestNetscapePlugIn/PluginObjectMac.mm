@@ -25,7 +25,6 @@
 
 #include "PluginObject.h"
 
-
 #include <QuartzCore/QuartzCore.h>
 
 @interface TestPluginLayer : CALayer
@@ -96,5 +95,3 @@ void* createCoreAnimationLayer()
     [caLayer addSublayer:sublayer];
     return caLayer;
 }
-
-

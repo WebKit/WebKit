@@ -25,8 +25,6 @@
 
 #include "PluginTest.h"
 
-#include "PluginTest.h"
-
 #include "PluginObject.h"
 
 using namespace std;

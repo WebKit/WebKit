@@ -31,19 +31,18 @@
 #import "FrameLoadDelegate.h"
 
 #import "AccessibilityController.h"
-#import "AppleScriptController.h"
 #import "EventSendingController.h"
-#import "Foundation/NSNotification.h"
 #import "GCController.h"
-#import "TestRunner.h"
 #import "NavigationController.h"
 #import "ObjCController.h"
 #import "ObjCPlugin.h"
 #import "ObjCPluginFunction.h"
+#import "TestRunner.h"
 #import "TextInputController.h"
 #import "WebCoreTestSupport.h"
 #import "WorkQueue.h"
 #import "WorkQueueItem.h"
+#import <Foundation/NSNotification.h>
 #import <JavaScriptCore/JavaScriptCore.h>
 #import <WebKitSystemInterface.h>
 #import <WebKit/WebFramePrivate.h>
@@ -54,6 +53,14 @@
 #import <WebKit/WebSecurityOriginPrivate.h>
 #import <WebKit/WebViewPrivate.h>
 #import <wtf/Assertions.h>
+
+#if !PLATFORM(IOS)
+#import "AppleScriptController.h"
+#endif
+
+#if PLATFORM(IOS)
+#import <WebKit/WebCoreThreadMessage.h>
+#endif
 
 #ifndef NSEC_PER_MSEC
 #define NSEC_PER_MSEC 1000000ull
@@ -111,14 +118,18 @@
     if ((self = [super init])) {
         gcController = new GCController;
         accessibilityController = new AccessibilityController;
+#if !PLATFORM(IOS)
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(webViewProgressFinishedNotification:) name:WebViewProgressFinishedNotification object:nil];
+#endif
     }
     return self;
 }
 
 - (void)dealloc
 {
+#if !PLATFORM(IOS)
     [[NSNotificationCenter defaultCenter] removeObserver:self];
+#endif
     delete gcController;
     delete accessibilityController;
     [super dealloc];
@@ -130,6 +141,10 @@
     // if another load started, then wait for it to complete.
     if (topLoadingFrame)
         return;
+
+#if PLATFORM(IOS)
+    WebThreadLock();
+#endif
 
     // if we finish all the commands, we're ready to dump state
     if (WorkQueue::shared()->processWork() && !gTestRunner->waitToDump())
@@ -212,6 +227,9 @@ static NSString *testPathFromURL(NSURL* url)
         int64_t deferredWaitTime = 5 * NSEC_PER_MSEC;
         dispatch_time_t when = dispatch_time(DISPATCH_TIME_NOW, deferredWaitTime);
         dispatch_after(when, dispatch_get_main_queue(), ^{
+#if PLATFORM(IOS)
+            WebThreadLock();
+#endif
             [sender setDefersCallbacks:NO];
         });
     }
@@ -226,10 +244,11 @@ static NSString *testPathFromURL(NSURL* url)
 
     ASSERT(![frame provisionalDataSource]);
     ASSERT([frame dataSource]);
-    
     gTestRunner->setWindowIsKey(true);
+#if !PLATFORM(IOS)
     NSView *documentView = [[mainFrame frameView] documentView];
     [[[mainFrame webView] window] makeFirstResponder:documentView];
+#endif
 }
 
 - (void)webView:(WebView *)sender didFailProvisionalLoadWithError:(NSError *)error forFrame:(WebFrame *)frame
@@ -315,11 +334,15 @@ static NSString *testPathFromURL(NSURL* url)
 
     // Make Old-Style controllers
 
+#if !PLATFORM(IOS)
     WebView *webView = [frame webView];
+#endif
     WebScriptObject *obj = [frame windowObject];
+#if !PLATFORM(IOS)
     AppleScriptController *asc = [[AppleScriptController alloc] initWithWebView:webView];
     [obj setValue:asc forKey:@"appleScriptController"];
     [asc release];
+#endif
 
     EventSendingController *esc = [[EventSendingController alloc] init];
     [obj setValue:esc forKey:@"eventSender"];
@@ -339,9 +362,12 @@ static NSString *testPathFromURL(NSURL* url)
     [obj setValue:pluginFunction forKey:@"objCPluginFunction"];
     [pluginFunction release];
 
+#if !PLATFORM(IOS)
+// FIXME: <rdar://problem/5106287> DumpRenderTree: fix TextInputController to work with iOS and re-enable tests
     TextInputController *tic = [[TextInputController alloc] initWithWebView:webView];
     [obj setValue:tic forKey:@"textInputController"];
     [tic release];
+#endif
 }
 
 - (void)didClearWindowObjectForFrame:(WebFrame *)frame inIsolatedWorld:(WebScriptWorld *)world

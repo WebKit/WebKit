@@ -26,6 +26,8 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#if !PLATFORM(IOS)
+
 #import <Cocoa/Cocoa.h>
 
 @interface DumpRenderTreeDraggingInfo : NSObject <NSDraggingInfo> {
@@ -51,3 +53,4 @@
 - (NSArray *)namesOfPromisedFilesDroppedAtDestination:(NSURL *)dropDestination;
 @end
 
+#endif

@@ -36,16 +36,29 @@
 #import "DumpRenderTreeDraggingInfo.h"
 #import "DumpRenderTreeFileDraggingSource.h"
 
-#import <Carbon/Carbon.h>                           // for GetCurrentEventTime()
 #import <WebKit/DOMPrivate.h>
 #import <WebKit/WebKit.h>
 #import <WebKit/WebViewPrivate.h>
 
+#if !PLATFORM(IOS)
+#import <Carbon/Carbon.h>                           // for GetCurrentEventTime()
+#endif
+
+#if PLATFORM(IOS)
+#import <GraphicsServices/GraphicsServices.h>       // for GSCurrentEventTimestamp()
+#import <WebKit/KeyEventCodesIOS.h>
+#import <WebKit/WAKWindow.h>
+#import <WebKit/WebEvent.h>
+#import <UIKit/UIKit.h>
+#endif
+
+#if !PLATFORM(IOS)
 extern "C" void _NSNewKillRingSequence();
 
 @interface NSApplication (Details)
 - (void)_setCurrentEvent:(NSEvent *)event;
 @end
+#endif
 
 enum MouseAction {
     MouseDown,
@@ -74,6 +87,46 @@ int lastClickButton = NoMouseButton;
 NSArray *webkitDomEventNames;
 NSMutableArray *savedMouseEvents; // mouse events sent between mouseDown and mouseUp are stored here, and then executed at once.
 BOOL replayingSavedEvents;
+
+
+#if PLATFORM(IOS)
+@interface SyntheticTouch : NSObject {
+@public
+    CGPoint _location;
+    UITouchPhase _phase;
+    unsigned _identifier;
+};
+
+@property (nonatomic) CGPoint location;
+@property (nonatomic) UITouchPhase phase;
+@property (nonatomic) unsigned identifier;
+
++ (id)touchWithLocation:(CGPoint)location phase:(UITouchPhase)phase identifier:(unsigned)identifier;
+- (id)initWithLocation:(CGPoint)location phase:(UITouchPhase)phase identifier:(unsigned)identifier;
+@end
+
+@implementation SyntheticTouch
+
+@synthesize location = _location;
+@synthesize phase = _phase;
+@synthesize identifier = _identifier;
+
++ (id)touchWithLocation:(CGPoint)location phase:(UITouchPhase)phase identifier:(unsigned)identifier
+{
+    return [[[SyntheticTouch alloc] initWithLocation:location phase:phase identifier:identifier] autorelease];
+}
+
+- (id)initWithLocation:(CGPoint)location phase:(UITouchPhase)phase identifier:(unsigned)identifier
+{
+    if ((self = [super init])) {
+        _location = location;
+        _phase = phase;
+        _identifier = identifier;
+    }
+    return self;
+}
+@end // SyntheticTouch
+#endif
 
 @implementation EventSendingController
 
@@ -149,7 +202,21 @@ BOOL replayingSavedEvents;
             || aSelector == @selector(zoomPageOut)
             || aSelector == @selector(scalePageBy:atX:andY:)
             || aSelector == @selector(mouseScrollByX:andY:)
-            || aSelector == @selector(continuousMouseScrollByX:andY:))
+            || aSelector == @selector(continuousMouseScrollByX:andY:)
+#if PLATFORM(IOS)
+            || aSelector == @selector(addTouchAtX:y:)
+            || aSelector == @selector(updateTouchAtIndex:x:y:)
+            || aSelector == @selector(cancelTouchAtIndex:)
+            || aSelector == @selector(clearTouchPoints)
+            || aSelector == @selector(markAllTouchesAsStationary)
+            || aSelector == @selector(releaseTouchAtIndex:)
+            || aSelector == @selector(setTouchModifier:value:)
+            || aSelector == @selector(touchStart)
+            || aSelector == @selector(touchMove)
+            || aSelector == @selector(touchEnd)
+            || aSelector == @selector(touchCancel)
+#endif            
+            )
         return NO;
     return YES;
 }
@@ -191,6 +258,30 @@ BOOL replayingSavedEvents;
         return @"continuousMouseScrollBy";
     if (aSelector == @selector(scalePageBy:atX:andY:))
         return @"scalePageBy";
+#if PLATFORM(IOS)
+    if (aSelector == @selector(addTouchAtX:y:))
+        return @"addTouchPoint";
+    if (aSelector == @selector(updateTouchAtIndex:x:y:))
+        return @"updateTouchPoint";
+    if (aSelector == @selector(cancelTouchAtIndex:))
+        return @"cancelTouchPoint";
+    if (aSelector == @selector(clearTouchPoints))
+        return @"clearTouchPoints";
+    if (aSelector == @selector(markAllTouchesAsStationary))
+        return @"markAllTouchesAsStationary";
+    if (aSelector == @selector(releaseTouchAtIndex:))
+        return @"releaseTouchPoint";
+    if (aSelector == @selector(setTouchModifier:value:))
+        return @"setTouchModifier";
+    if (aSelector == @selector(touchStart))
+        return @"touchStart";
+    if (aSelector == @selector(touchMove))
+        return @"touchMove";
+    if (aSelector == @selector(touchEnd))
+        return @"touchEnd";
+    if (aSelector == @selector(touchCancel))
+        return @"touchCancel";
+#endif
     return nil;
 }
 
@@ -204,12 +295,19 @@ BOOL replayingSavedEvents;
 
 - (void)dealloc
 {
+#if PLATFORM(IOS)
+    [touches release];
+#endif
     [super dealloc];
 }
 
 - (double)currentEventTime
 {
+#if !PLATFORM(IOS)
     return GetCurrentEventTime() + timeOffset;
+#else
+    return GSCurrentEventTimestamp() + timeOffset;
+#endif
 }
 
 - (void)leapForward:(int)milliseconds
@@ -230,9 +328,12 @@ BOOL replayingSavedEvents;
 
 - (void)clearKillRing
 {
+#if !PLATFORM(IOS)
     _NSNewKillRingSequence();
+#endif
 }
 
+#if !PLATFORM(IOS)
 static NSEventType eventTypeForMouseButtonAndAction(int button, MouseAction action)
 {
     switch (button) {
@@ -298,6 +399,7 @@ static NSEventType eventTypeForMouseButtonAndAction(int button, MouseAction acti
     dragMode = NO; // dragMode saves events and then replays them later.  We don't need/want that.
     leftMouseButtonDown = YES; // Make the rest of eventSender think a drag is in progress
 }
+#endif // !PLATFORM(IOS)
 
 - (void)updateClickCountForButton:(int)buttonNumber
 {
@@ -312,15 +414,27 @@ static NSEventType eventTypeForMouseButtonAndAction(int button, MouseAction acti
 
 static int modifierFlags(const NSString* modifierName)
 {
+#if !PLATFORM(IOS)
+    const int controlKeyMask = NSControlKeyMask;
+    const int shiftKeyMask = NSShiftKeyMask;
+    const int alternateKeyMask = NSAlternateKeyMask;
+    const int commandKeyMask = NSCommandKeyMask;
+#else
+    const int controlKeyMask = WebEventFlagMaskControl;
+    const int shiftKeyMask = WebEventFlagMaskShift;
+    const int alternateKeyMask = WebEventFlagMaskAlternate;
+    const int commandKeyMask = WebEventFlagMaskCommand;
+#endif
+
     int flags = 0;
     if ([modifierName isEqual:@"ctrlKey"])
-        flags |= NSControlKeyMask;
+        flags |= controlKeyMask;
     else if ([modifierName isEqual:@"shiftKey"] || [modifierName isEqual:@"rangeSelectionKey"])
-        flags |= NSShiftKeyMask;
+        flags |= shiftKeyMask;
     else if ([modifierName isEqual:@"altKey"])
-        flags |= NSAlternateKeyMask;
+        flags |= alternateKeyMask;
     else if ([modifierName isEqual:@"metaKey"] || [modifierName isEqual:@"addSelectionKey"])
-        flags |= NSCommandKeyMask;
+        flags |= commandKeyMask;
 
     return flags;
 }
@@ -344,6 +458,7 @@ static int buildModifierFlags(const WebScriptObject* modifiers)
     [[[mainFrame frameView] documentView] layout];
     [self updateClickCountForButton:buttonNumber];
     
+#if !PLATFORM(IOS)
     NSEventType eventType = eventTypeForMouseButtonAndAction(buttonNumber, MouseDown);
     NSEvent *event = [NSEvent mouseEventWithType:eventType
                                         location:lastMousePosition 
@@ -354,15 +469,28 @@ static int buildModifierFlags(const WebScriptObject* modifiers)
                                      eventNumber:++eventNumber 
                                       clickCount:clickCount 
                                         pressure:0.0];
+#else
+    WebEvent *event = [[WebEvent alloc] initWithMouseEventType:WebEventMouseDown
+                                                     timeStamp:[self currentEventTime]
+                                                      location:lastMousePosition];
+#endif
 
     NSView *subView = [[mainFrame webView] hitTest:[event locationInWindow]];
     if (subView) {
+#if !PLATFORM(IOS)
         [NSApp _setCurrentEvent:event];
+#endif
         [subView mouseDown:event];
+#if !PLATFORM(IOS)
         [NSApp _setCurrentEvent:nil];
+#endif
         if (buttonNumber == LeftMouseButton)
             leftMouseButtonDown = YES;
     }
+
+#if PLATFORM(IOS)
+    [event release];
+#endif
 }
 
 - (void)mouseDown:(int)buttonNumber
@@ -392,7 +520,11 @@ static int buildModifierFlags(const WebScriptObject* modifiers)
 
 - (void)scalePageBy:(float)scale atX:(float)x andY:(float)y
 {
+#if !PLATFORM(IOS)
+    // -[WebView _scaleWebView:] is Mac-specific API, and calls functions that
+    // assert to not be used in iOS.
     [[mainFrame webView] _scaleWebView:scale atOrigin:NSMakePoint(x, y)];
+#endif
 }
 
 - (void)mouseUp:(int)buttonNumber withModifiers:(WebScriptObject*)modifiers
@@ -411,6 +543,7 @@ static int buildModifierFlags(const WebScriptObject* modifiers)
     }
 
     [[[mainFrame frameView] documentView] layout];
+#if !PLATFORM(IOS)
     NSEventType eventType = eventTypeForMouseButtonAndAction(buttonNumber, MouseUp);
     NSEvent *event = [NSEvent mouseEventWithType:eventType
                                         location:lastMousePosition 
@@ -421,6 +554,11 @@ static int buildModifierFlags(const WebScriptObject* modifiers)
                                      eventNumber:++eventNumber 
                                       clickCount:clickCount 
                                         pressure:0.0];
+#else
+    WebEvent *event = [[WebEvent alloc] initWithMouseEventType:WebEventMouseUp
+                                                     timeStamp:[self currentEventTime]
+                                                      location:lastMousePosition];
+#endif
 
     NSView *targetView = [[mainFrame webView] hitTest:[event locationInWindow]];
     // FIXME: Silly hack to teach DRT to respect capturing mouse events outside the WebView.
@@ -428,13 +566,18 @@ static int buildModifierFlags(const WebScriptObject* modifiers)
     // instead of rolling our own algorithm for selecting an event target.
     targetView = targetView ? targetView : [[mainFrame frameView] documentView];
     assert(targetView);
+#if !PLATFORM(IOS)
     [NSApp _setCurrentEvent:event];
+#endif
     [targetView mouseUp:event];
+#if !PLATFORM(IOS)
     [NSApp _setCurrentEvent:nil];
+#endif
     if (buttonNumber == LeftMouseButton)
         leftMouseButtonDown = NO;
     lastClick = [event timestamp];
     lastClickPosition = lastMousePosition;
+#if !PLATFORM(IOS)
     if (draggingInfo) {
         WebView *webView = [mainFrame webView];
         
@@ -450,6 +593,11 @@ static int buildModifierFlags(const WebScriptObject* modifiers)
         [draggingInfo release];
         draggingInfo = nil;
     }
+#endif
+
+#if PLATFORM(IOS)
+    [event release];
+#endif
 }
 
 - (void)mouseUp:(int)buttonNumber
@@ -471,6 +619,7 @@ static int buildModifierFlags(const WebScriptObject* modifiers)
     }
 
     NSView *view = [mainFrame webView];
+#if !PLATFORM(IOS)
     lastMousePosition = [view convertPoint:NSMakePoint(x, [view frame].size.height - y) toView:nil];
     NSEvent *event = [NSEvent mouseEventWithType:(leftMouseButtonDown ? NSLeftMouseDragged : NSMouseMoved)
                                         location:lastMousePosition 
@@ -481,11 +630,20 @@ static int buildModifierFlags(const WebScriptObject* modifiers)
                                      eventNumber:++eventNumber 
                                       clickCount:(leftMouseButtonDown ? clickCount : 0) 
                                         pressure:0.0];
+#else
+    lastMousePosition = [view convertPoint:NSMakePoint(x, y) toView:nil];
+    WebEvent *event = [[WebEvent alloc] initWithMouseEventType:WebEventMouseMoved
+                                                     timeStamp:[self currentEventTime]
+                                                      location:lastMousePosition];
+#endif // !PLATFORM(IOS)
 
     NSView *subView = [[mainFrame webView] hitTest:[event locationInWindow]];
     if (subView) {
+#if !PLATFORM(IOS)
         [NSApp _setCurrentEvent:event];
+#endif
         if (leftMouseButtonDown) {
+#if !PLATFORM(IOS)
             if (draggingInfo) {
                 // Per NSDragging.h: draggingSources may not implement draggedImage:movedTo:
                 if ([[draggingInfo draggingSource] respondsToSelector:@selector(draggedImage:movedTo:)])
@@ -493,14 +651,22 @@ static int buildModifierFlags(const WebScriptObject* modifiers)
                 [[mainFrame webView] draggingUpdated:draggingInfo];
             } else
                 [subView mouseDragged:event];
+#endif
         } else
             [subView mouseMoved:event];
+#if !PLATFORM(IOS)
         [NSApp _setCurrentEvent:nil];
+#endif
     }
+
+#if PLATFORM(IOS)
+    [event release];
+#endif
 }
 
 - (void)mouseScrollByX:(int)x andY:(int)y continuously:(BOOL)c
 {
+#if !PLATFORM(IOS)
     CGScrollEventUnit unit = c?kCGScrollEventUnitPixel:kCGScrollEventUnitLine;
     CGEventRef cgScrollEvent = CGEventCreateScrollWheelEvent(NULL, unit, 2, y, x);
     
@@ -520,6 +686,7 @@ static int buildModifierFlags(const WebScriptObject* modifiers)
         [subView scrollWheel:scrollEvent];
         [NSApp _setCurrentEvent:nil];
     }
+#endif
 }
 
 - (void)continuousMouseScrollByX:(int)x andY:(int)y
@@ -534,6 +701,7 @@ static int buildModifierFlags(const WebScriptObject* modifiers)
 
 - (NSArray *)contextClick
 {
+#if !PLATFORM(IOS)
     [[[mainFrame frameView] documentView] layout];
     [self updateClickCountForButton:RightMouseButton];
 
@@ -568,6 +736,9 @@ static int buildModifierFlags(const WebScriptObject* modifiers)
     }
     
     return menuItemStrings;
+#else
+    return nil;
+#endif
 }
 
 - (void)scheduleAsynchronousClick
@@ -767,7 +938,11 @@ static int buildModifierFlags(const WebScriptObject* modifiers)
     int modifierFlags = 0;
 
     if ([character length] == 1 && [character characterAtIndex:0] >= 'A' && [character characterAtIndex:0] <= 'Z') {
+#if !PLATFORM(IOS)
         modifierFlags |= NSShiftKeyMask;
+#else
+        modifierFlags |= WebEventFlagMaskAlphaShift;
+#endif
         charactersIgnoringModifiers = [character lowercaseString];
     }
 
@@ -778,6 +953,7 @@ static int buildModifierFlags(const WebScriptObject* modifiers)
 
     [[[mainFrame frameView] documentView] layout];
 
+#if !PLATFORM(IOS)
     NSEvent *event = [NSEvent keyEventWithType:NSKeyDown
                         location:NSMakePoint(5, 5)
                         modifierFlags:modifierFlags
@@ -788,11 +964,28 @@ static int buildModifierFlags(const WebScriptObject* modifiers)
                         charactersIgnoringModifiers:charactersIgnoringModifiers
                         isARepeat:NO
                         keyCode:keyCode];
+#else
+    WebEvent *event = [[WebEvent alloc] initWithKeyEventType:WebEventKeyDown
+                        timeStamp:[self currentEventTime]
+                        characters:eventCharacter
+                        charactersIgnoringModifiers:charactersIgnoringModifiers
+                        modifiers:(WebEventFlags)modifierFlags
+                        isRepeating:NO
+                        isPopupVariant:NO
+                        keyCode:[character characterAtIndex:0]
+                        isTabKey:([character characterAtIndex:0] == '\t')
+                        characterSet:WebEventCharacterSetASCII];
+#endif
 
+#if !PLATFORM(IOS)
     [NSApp _setCurrentEvent:event];
+#endif
     [[[[mainFrame webView] window] firstResponder] keyDown:event];
+#if !PLATFORM(IOS)
     [NSApp _setCurrentEvent:nil];
+#endif
 
+#if !PLATFORM(IOS)
     event = [NSEvent keyEventWithType:NSKeyUp
                         location:NSMakePoint(5, 5)
                         modifierFlags:modifierFlags
@@ -803,10 +996,31 @@ static int buildModifierFlags(const WebScriptObject* modifiers)
                         charactersIgnoringModifiers:charactersIgnoringModifiers
                         isARepeat:NO
                         keyCode:keyCode];
+#else
+    [event release];
+    event = [[WebEvent alloc] initWithKeyEventType:WebEventKeyUp
+                        timeStamp:[self currentEventTime]
+                        characters:eventCharacter
+                        charactersIgnoringModifiers:charactersIgnoringModifiers
+                        modifiers:(WebEventFlags)modifierFlags
+                        isRepeating:NO
+                        isPopupVariant:NO
+                        keyCode:[character characterAtIndex:0]
+                        isTabKey:([character characterAtIndex:0] == '\t')
+                        characterSet:WebEventCharacterSetASCII];
+#endif
 
+#if !PLATFORM(IOS)
     [NSApp _setCurrentEvent:event];
+#endif
     [[[[mainFrame webView] window] firstResponder] keyUp:event];
+#if !PLATFORM(IOS)
     [NSApp _setCurrentEvent:nil];
+#endif
+
+#if PLATFORM(IOS)
+    [event release];
+#endif
 }
 
 - (void)keyDownWrapper:(NSString *)character withModifiers:(WebScriptObject *)modifiers withLocation:(unsigned long)location
@@ -977,5 +1191,160 @@ static int buildModifierFlags(const WebScriptObject* modifiers)
     [target dispatchEvent:domEvent];   
     
 }
+
+#if PLATFORM(IOS)
+- (void)addTouchAtX:(int)x y:(int)y
+{
+    if (!touches)
+        touches = [[NSMutableArray alloc] init];
+
+    [touches addObject:[SyntheticTouch touchWithLocation:CGPointMake(x, y) phase:UITouchPhaseBegan identifier:currentTouchIdentifier++]];
+}
+
+- (void)cancelTouchAtIndex:(unsigned)index
+{
+    if (index < [touches count])
+        [[touches objectAtIndex:index] setPhase:UITouchPhaseCancelled];
+}
+
+- (void)clearTouchPoints
+{
+    [touches removeAllObjects];
+}
+
+- (void)releaseTouchAtIndex:(unsigned)index
+{
+    if (index < [touches count]) {
+        SyntheticTouch *touch = [touches objectAtIndex:index];
+        [touch setPhase:UITouchPhaseEnded];
+    }
+}
+
+- (void)markAllTouchesAsStationary
+{
+    for (SyntheticTouch *touch in touches)
+        [touch setPhase:UITouchPhaseStationary];
+}
+
+- (void)updateTouchAtIndex:(unsigned)index x:(int)x y:(int)y
+{
+    if (index < [touches count]) {
+        SyntheticTouch *touch = [touches objectAtIndex:index];
+        [touch setPhase:UITouchPhaseMoved];
+        [touch setLocation:CGPointMake(x, y)];
+    }
+}
+
+- (void)setTouchModifier:(NSString*)modifierName value:(BOOL)flag
+{
+    unsigned modifier = 0;
+    
+    if ([modifierName isEqualToString:@"alt"])
+        modifier = WebEventFlagMaskAlternate;
+    else if ([modifierName isEqualToString:@"shift"])
+        modifier = WebEventFlagMaskShift;
+    else if ([modifierName isEqualToString:@"meta"])
+        modifier = WebEventFlagMaskCommand;
+    else if ([modifierName isEqualToString:@"ctrl"])
+        modifier = WebEventFlagMaskControl;
+
+    if (!modifier)
+        return;
+
+    if (flag)
+        nextEventFlags |= modifier;
+    else
+        nextEventFlags &= ~modifier;
+}
+
+- (void)sentTouchEventOfType:(WebEventType)type
+{
+    NSMutableArray *touchLocations = [[NSMutableArray alloc] initWithCapacity:[touches count]];
+    NSMutableArray *touchIdentifiers = [[NSMutableArray alloc] initWithCapacity:[touches count]];
+    NSMutableArray *touchPhases = [[NSMutableArray alloc] initWithCapacity:[touches count]];
+    
+    CGPoint centroid = CGPointZero;
+    NSUInteger touchesDownCount = 0;
+
+    for (SyntheticTouch *currTouch in touches) {
+        [touchLocations addObject:[NSValue valueWithCGPoint:currTouch.location]];
+        [touchIdentifiers addObject:[NSNumber numberWithUnsignedInt:currTouch.identifier]];
+        [touchPhases addObject:[NSNumber numberWithUnsignedInt:currTouch.phase]];
+
+        if ((currTouch.phase == UITouchPhaseEnded) || (currTouch.phase == UITouchPhaseCancelled))
+            continue;
+        
+        centroid.x += currTouch.location.x;
+        centroid.y += currTouch.location.y;
+
+        touchesDownCount++;
+    }
+
+    if (touchesDownCount > 0)
+        centroid = CGPointMake(centroid.x / touchesDownCount, centroid.y / touchesDownCount);
+    else
+        centroid = CGPointZero;
+
+    WebEvent *event = [[WebEvent alloc] initWithTouchEventType:type
+                                        timeStamp:[self currentEventTime]
+                                        location:centroid
+                                        modifiers:(WebEventFlags)nextEventFlags
+                                        touchCount:[touches count]
+                                        touchLocations:touchLocations
+                                        touchIdentifiers:touchIdentifiers
+                                        touchPhases:touchPhases
+                                        isGesture:(touchesDownCount > 1)
+                                        gestureScale:1
+                                        gestureRotation:0];
+    // Ensure that layout is up-to-date so that hit-testing through WAKViews works correctly.
+    [mainFrame updateLayout];
+    [[[mainFrame webView] window] sendEventSynchronously:event];
+    [event release];
+    
+    [touchLocations release];
+    [touchIdentifiers release];
+    [touchPhases release];
+    
+    nextEventFlags = 0;
+}
+
+- (void)touchStart
+{
+    [self sentTouchEventOfType:WebEventTouchBegin];
+}
+
+- (void)touchMove
+{
+    [self sentTouchEventOfType:WebEventTouchChange];
+}
+
+- (void)touchEnd
+{
+    [self sentTouchEventOfType:WebEventTouchEnd];
+
+    NSMutableArray *touchesToRemove = [[NSMutableArray alloc] init];
+    for (SyntheticTouch *currTouch in touches) {
+        if (currTouch.phase == UITouchPhaseEnded)
+            [touchesToRemove addObject:currTouch];
+    }
+
+    [touches removeObjectsInArray:touchesToRemove];
+    [touchesToRemove release];
+}
+
+- (void)touchCancel
+{
+    [self sentTouchEventOfType:WebEventTouchCancel];
+
+    NSMutableArray *touchesToRemove = [[NSMutableArray alloc] init];
+    for (SyntheticTouch *currTouch in touches) {
+        if (currTouch.phase == UITouchPhaseCancelled)
+            [touchesToRemove addObject:currTouch];
+    }
+
+    [touches removeObjectsInArray:touchesToRemove];
+    [touchesToRemove release];
+}
+#endif
 
 @end

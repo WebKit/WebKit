@@ -32,7 +32,6 @@
 #import "DumpRenderTree.h"
 #import "TestRunner.h"
 #import <WebKit/WebKit.h>
-#import <WebKit/WebTypesInternal.h>
 #import <WebKit/WebDataSourcePrivate.h>
 #import <wtf/Assertions.h>
 
@@ -248,9 +247,11 @@ BOOL hostIsUsedBySomeTestsToGenerateError(NSString *host)
 
 - (void)webView: (WebView *)wv plugInFailedWithError:(NSError *)error dataSource:(WebDataSource *)dataSource
 {
+#if !PLATFORM(IOS)
     // The call to -display here simulates the "Plug-in not found" sheet that Safari shows.
     // It is used for platform/mac/plugins/update-widget-from-style-recalc.html
     [wv display];
+#endif
 }
 
 -(NSCachedURLResponse *) webView: (WebView *)wv resource:(id)identifier willCacheResponse:(NSCachedURLResponse *)response fromDataSource:(WebDataSource *)dataSource

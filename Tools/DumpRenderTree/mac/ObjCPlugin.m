@@ -126,7 +126,7 @@ static BOOL _allowsScriptsFullAccess = NO;
 
 - (NSString *)classNameOfObject:(id)obj
 {
-    return [obj className];
+    return NSStringFromClass([obj class]);
 }
 
 @end

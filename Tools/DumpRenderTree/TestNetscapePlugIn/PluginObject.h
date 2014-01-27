@@ -85,4 +85,4 @@ extern bool testWindowOpen(NPP npp);
 extern void* createCoreAnimationLayer();
 #endif
 
-#endif // PluginObject_h
+#endif

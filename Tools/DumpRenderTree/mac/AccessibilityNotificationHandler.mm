@@ -37,7 +37,6 @@
 #import <JavaScriptCore/JSStringRef.h>
 #import <JavaScriptCore/JSStringRefCF.h>
 #import <WebKit/WebFrame.h>
-#import <WebKit/WebTypesInternal.h>
 #import <wtf/RetainPtr.h>
 
 @interface NSObject (WebAccessibilityObjectWrapperAdditions)

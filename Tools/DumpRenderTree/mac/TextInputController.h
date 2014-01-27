@@ -28,6 +28,9 @@
 
 #import <Foundation/Foundation.h>
 
+#if !PLATFORM(IOS)
+// FIXME: <rdar://problem/5106287> DumpRenderTree: fix TextInputController to work with iOS and re-enable tests
+
 @class WebView;
 @class WebHTMLView;
 @class WebScriptObject;
@@ -40,3 +43,5 @@
 }
 - (id)initWithWebView:(WebView *)view;
 @end
+
+#endif

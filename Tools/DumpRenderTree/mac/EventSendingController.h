@@ -25,8 +25,8 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
- 
-#import <Cocoa/Cocoa.h>
+
+#import <Foundation/Foundation.h>
 #import <WebKit/WebKit.h>
 
 @interface EventSendingController : NSObject <DOMEventListener>
@@ -37,6 +37,11 @@
     NSTimeInterval lastClick;
     int eventNumber;
     double timeOffset;
+#if PLATFORM(IOS)
+    NSMutableArray* touches;
+    unsigned currentTouchIdentifier;
+    unsigned nextEventFlags;
+#endif
 }
 
 + (void)saveEvent:(NSInvocation *)event;

@@ -287,8 +287,10 @@ private:
     static JSClassRef getJSClass();
     PlatformUIElement m_element;
     
+#if PLATFORM(IOS) 
+    JSObjectRef m_notificationFunctionCallback;
+#elif PLATFORM(MAC)
     // A retained, platform specific object used to help manage notifications for this object.
-#if PLATFORM(MAC)
     NotificationHandler m_notificationHandler;
 #endif
 

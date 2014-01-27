@@ -85,4 +85,3 @@ private:
 };
 
 static PluginTest::Register<NPRuntimeObjectFromDestroyedPlugin> npRuntimeObjectFromDestroyedPlugin("npruntime-object-from-destroyed-plugin");
-

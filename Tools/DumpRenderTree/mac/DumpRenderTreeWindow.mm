@@ -36,7 +36,10 @@
 // FIXME: This file is ObjC++ only because of this include. :(
 #import "TestRunner.h"
 #import <WebKit/WebViewPrivate.h>
-#import <WebKit/WebTypesInternal.h>
+
+#if PLATFORM(IOS)
+#import <QuartzCore/CALayer.h>
+#endif
 
 CFMutableArrayRef openWindowsRef = 0;
 
@@ -50,20 +53,46 @@ static CFArrayCallBacks NonRetainingArrayCallbacks = {
 
 @implementation DumpRenderTreeWindow
 
+#if PLATFORM(IOS)
+@synthesize uiWindow = _uiWindow;
+@synthesize browserView = _browserView;
+#endif
+
 + (NSArray *)openWindows
 {
     return [[(NSArray *)openWindowsRef copy] autorelease];
 }
 
-- (id)initWithContentRect:(NSRect)contentRect styleMask:(NSUInteger)styleMask backing:(NSBackingStoreType)bufferingType defer:(BOOL)deferCreation
+- (void)_addToOpenWindows
 {
     if (!openWindowsRef)
         openWindowsRef = CFArrayCreateMutable(NULL, 0, &NonRetainingArrayCallbacks);
 
     CFArrayAppendValue(openWindowsRef, self);
-            
+}
+
+#if !PLATFORM(IOS)
+- (id)initWithContentRect:(NSRect)contentRect styleMask:(NSUInteger)styleMask backing:(NSBackingStoreType)bufferingType defer:(BOOL)deferCreation
+{
+    [self _addToOpenWindows];
     return [super initWithContentRect:contentRect styleMask:styleMask backing:bufferingType defer:deferCreation];
 }
+#else
+- (id)initWithLayer:(CALayer *)layer
+{
+    if ((self = [super initWithLayer:layer]))
+        [self _addToOpenWindows];
+
+    return self;
+}
+
+- (void)dealloc
+{
+    ASSERT(!_browserView);
+    ASSERT(!_uiWindow);
+    [super dealloc];
+}
+#endif
 
 - (void)close
 {
@@ -75,6 +104,18 @@ static CFArrayCallBacks NonRetainingArrayCallbacks = {
         CFArrayRemoveValueAtIndex(openWindowsRef, i);
 
     [super close];
+
+#if PLATFORM(IOS)
+    // By default, NSWindows are released when closed. On iOS we do
+    // it manually, and release the UIWindow and UIWebBrowserView.
+    if (_uiWindow) {
+        [_uiWindow release];
+        _uiWindow = nil;
+        [_browserView release];
+        _browserView = nil;
+        [self release];
+    }
+#endif
 }
 
 - (BOOL)isKeyWindow
@@ -87,14 +128,17 @@ static CFArrayCallBacks NonRetainingArrayCallbacks = {
     return [self isKeyWindow];
 }
 
+#if !PLATFORM(IOS)
 - (void)keyDown:(NSEvent *)event
 {
     // Do nothing, avoiding the beep we'd otherwise get from NSResponder,
     // once we get to the end of the responder chain.
 }
+#endif
 
 - (WebView *)webView
 {
+#if !PLATFORM(IOS)
     NSView *firstView = nil;
     if ([[[self contentView] subviews] count] > 0) {
         firstView = [[[self contentView] subviews] objectAtIndex:0];
@@ -102,6 +146,10 @@ static CFArrayCallBacks NonRetainingArrayCallbacks = {
             return static_cast<WebView *>(firstView);
     }
     return nil;
+#else
+    ASSERT([[self contentView] isKindOfClass:[WebView class]]);
+    return (WebView *)[self contentView];
+#endif
 }
 
 - (void)startListeningForAcceleratedCompositingChanges
@@ -113,11 +161,13 @@ static CFArrayCallBacks NonRetainingArrayCallbacks = {
 
 - (void)webViewStartedAcceleratedCompositing:(NSNotification *)notification
 {
+#if !PLATFORM(IOS)
     // If the WebView has gone into compositing mode, turn on window autodisplay. This is necessary for CA
     // to update layers and start animations.
     // We only ever turn autodisplay on here, because we turn it off before every test.
     if ([[self webView] _isUsingAcceleratedCompositing])
         [self setAutodisplay:YES];
+#endif
 }
 
 @end

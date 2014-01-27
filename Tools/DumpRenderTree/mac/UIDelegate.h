@@ -26,7 +26,11 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
  
+#if !PLATFORM(IOS)
 #import <Cocoa/Cocoa.h>
+#else
+#import <WebKit/WAKView.h>
+#endif
 
 @interface UIDelegate : NSObject {
 

@@ -26,8 +26,8 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include <wtf/Platform.h>
+
 #ifdef __OBJC__
-
 #import <Foundation/Foundation.h>
-
 #endif

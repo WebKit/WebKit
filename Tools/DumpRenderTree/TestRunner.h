@@ -118,6 +118,11 @@ public:
     void setSpatialNavigationEnabled(bool);
     void setScrollbarPolicy(JSStringRef orientation, JSStringRef policy);
     void startSpeechInput(JSContextRef inputElement);
+#if PLATFORM(IOS)
+    void setTelephoneNumberParsingEnabled(bool enable);
+    void setPagePaused(bool paused);
+#endif
+
     void setPageVisibility(const char*);
     void resetPageVisibility();
 

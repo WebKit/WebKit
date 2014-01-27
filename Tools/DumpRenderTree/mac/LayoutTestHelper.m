@@ -29,6 +29,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#if !PLATFORM(IOS)
+
 #import <AppKit/AppKit.h>
 #import <ApplicationServices/ApplicationServices.h>
 #import <getopt.h>
@@ -204,3 +206,12 @@ int main(int argc, char* argv[])
     [pool release];
     return 0;
 }
+
+#endif // !PLATFORM(IOS)
+
+#if PLATFORM(IOS)
+int main(int argc, char* argv[])
+{
+    return 0;
+}
+#endif

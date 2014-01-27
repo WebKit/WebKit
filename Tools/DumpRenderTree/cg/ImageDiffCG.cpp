@@ -44,7 +44,9 @@
 #include <CoreGraphics/CGImage.h>
 #include <ImageIO/CGImageDestination.h>
 
-#if PLATFORM(MAC)
+#if PLATFORM(IOS)
+#include <MobileCoreServices/UTCoreTypes.h>
+#elif PLATFORM(MAC)
 #include <LaunchServices/UTCoreTypes.h>
 #endif
 

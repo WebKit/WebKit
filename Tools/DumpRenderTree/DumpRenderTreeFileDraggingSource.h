@@ -26,6 +26,8 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+#if !PLATFORM(IOS)
+
 #import <Cocoa/Cocoa.h>
 
 // An implementation of NSDraggingSource for use with DumpRenderTreeDraggingInfo when dragging files
@@ -37,3 +39,5 @@
 - (NSDragOperation)draggingSourceOperationMaskForLocal:(BOOL)flag;
 
 @end
+
+#endif

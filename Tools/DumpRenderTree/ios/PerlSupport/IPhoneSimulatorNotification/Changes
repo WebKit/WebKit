@@ -1,0 +1,6 @@
+Revision history for Perl extension IPhoneSimulatorNotification.
+
+1.00  Fri Sep 18 19:59:28 2009
+	- original version; created by h2xs 1.23 with options
+		-A -b 5.8.0 -n IPhoneSimulatorNotification
+

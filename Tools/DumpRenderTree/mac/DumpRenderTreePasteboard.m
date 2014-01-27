@@ -32,6 +32,8 @@
 #import "DumpRenderTreeMac.h"
 #import "DumpRenderTreePasteboard.h"
 
+#if !PLATFORM(IOS)
+
 #import <WebKit/WebTypesInternal.h>
 
 @interface LocalPasteboard : NSPasteboard
@@ -212,3 +214,5 @@ static NSMutableDictionary *localPasteboards;
 }
 
 @end
+
+#endif // !PLATFORM(IOS)

@@ -46,7 +46,9 @@
 #import <WebKit/WebViewPrivate.h>
 #import <wtf/Assertions.h>
 
+#if !PLATFORM(IOS)
 DumpRenderTreeDraggingInfo *draggingInfo = nil;
+#endif
 
 @implementation UIDelegate
 
@@ -80,16 +82,20 @@ DumpRenderTreeDraggingInfo *draggingInfo = nil;
 
 - (void)modalWindowWillClose:(NSNotification *)notification
 {
+#if !PLATFORM(IOS)
     [[NSNotificationCenter defaultCenter] removeObserver:self name:NSWindowWillCloseNotification object:nil];
     [NSApp abortModal];
+#endif
 }
 
 - (void)webViewRunModal:(WebView *)sender
 {
+#if !PLATFORM(IOS)
     gTestRunner->setWindowIsKey(false);
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(modalWindowWillClose:) name:NSWindowWillCloseNotification object:nil];
     [NSApp runModalForWindow:[sender window]];
     gTestRunner->setWindowIsKey(true);
+#endif
 }
 
 - (void)webView:(WebView *)sender runJavaScriptAlertPanelWithMessage:(NSString *)message initiatedByFrame:(WebFrame *)frame
@@ -123,6 +129,7 @@ DumpRenderTreeDraggingInfo *draggingInfo = nil;
 }
 
 
+#if !PLATFORM(IOS)
 - (void)webView:(WebView *)sender dragImage:(NSImage *)anImage at:(NSPoint)viewLocation offset:(NSSize)initialOffset event:(NSEvent *)event pasteboard:(NSPasteboard *)pboard source:(id)sourceObj slideBack:(BOOL)slideFlag forView:(NSView *)view
 {
      assert(!draggingInfo);
@@ -130,6 +137,7 @@ DumpRenderTreeDraggingInfo *draggingInfo = nil;
      [sender draggingUpdated:draggingInfo];
      [EventSendingController replaySavedEvents];
 }
+#endif
 
 - (void)webViewFocus:(WebView *)webView
 {
@@ -272,9 +280,14 @@ DumpRenderTreeDraggingInfo *draggingInfo = nil;
 
 - (BOOL)webView:(WebView *)webView supportsFullScreenForElement:(DOMElement*)element withKeyboard:(BOOL)withKeyboard
 {
+#if PLATFORM(IOS)
+    return NO;
+#else
     return YES;
+#endif
 }
 
+#if ENABLE(FULLSCREEN_API)
 - (void)enterFullScreenWithListener:(NSObject<WebKitFullScreenListener>*)listener
 {
     [listener webkitWillEnterFullScreen];
@@ -304,6 +317,7 @@ DumpRenderTreeDraggingInfo *draggingInfo = nil;
     [listener webkitWillExitFullScreen];
     [listener webkitDidExitFullScreen];
 }
+#endif
 
 - (BOOL)webView:(WebView *)webView didPressMissingPluginButton:(DOMElement *)element
 {
@@ -337,8 +351,10 @@ DumpRenderTreeDraggingInfo *draggingInfo = nil;
 
 - (void)dealloc
 {
+#if !PLATFORM(IOS)
     [draggingInfo release];
     draggingInfo = nil;
+#endif
     [m_pendingGeolocationPermissionListeners release];
     m_pendingGeolocationPermissionListeners = nil;
 

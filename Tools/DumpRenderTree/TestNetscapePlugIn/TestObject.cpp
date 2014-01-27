@@ -24,6 +24,7 @@
  */
 
 #include "TestObject.h"
+
 #include "PluginObject.h"
 
 #include <string.h>
