@@ -3711,7 +3711,7 @@ void RenderBlock::setComputedColumnCountAndWidth(int count, LayoutUnit width)
     }
 }
 
-void RenderBlock::updateColumnInfoFromStyle(RenderStyle* style)
+void RenderBlock::updateColumnProgressionFromStyle(RenderStyle* style)
 {
     if (!hasColumns())
         return;

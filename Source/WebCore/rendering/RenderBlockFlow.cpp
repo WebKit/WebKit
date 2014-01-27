@@ -3593,7 +3593,36 @@ void RenderBlockFlow::setComputedColumnCountAndWidth(int count, LayoutUnit width
         if (!multiColumnFlowThread())
             createMultiColumnFlowThread();
         multiColumnFlowThread()->setColumnCountAndWidth(count, width);
+        multiColumnFlowThread()->setProgressionIsInline(style().hasInlineColumnAxis());
+        multiColumnFlowThread()->setProgressionIsReversed(style().columnProgression() == ReverseColumnProgression);
     }
+}
+
+void RenderBlockFlow::updateColumnProgressionFromStyle(RenderStyle* style)
+{
+    if (!document().regionBasedColumnsEnabled())
+        return RenderBlock::updateColumnProgressionFromStyle(style);
+
+    if (!multiColumnFlowThread())
+        return;
+    
+    bool needsLayout = false;
+    bool oldProgressionIsInline = multiColumnFlowThread()->progressionIsInline();
+    bool newProgressionIsInline = style->hasInlineColumnAxis();
+    if (oldProgressionIsInline != newProgressionIsInline) {
+        multiColumnFlowThread()->setProgressionIsInline(newProgressionIsInline);
+        needsLayout = true;
+    }
+
+    bool oldProgressionIsReversed = multiColumnFlowThread()->progressionIsReversed();
+    bool newProgressionIsReversed = style->columnProgression() == ReverseColumnProgression;
+    if (oldProgressionIsReversed != newProgressionIsReversed) {
+        multiColumnFlowThread()->setProgressionIsReversed(newProgressionIsReversed);
+        needsLayout = true;
+    }
+
+    if (needsLayout)
+        setNeedsLayoutAndPrefWidthsRecalc();
 }
 
 LayoutUnit RenderBlockFlow::computedColumnWidth() const

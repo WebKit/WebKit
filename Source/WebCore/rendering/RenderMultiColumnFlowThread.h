@@ -55,6 +55,12 @@ public:
         m_columnWidth = width;
     }
 
+    bool progressionIsInline() const { return m_progressionIsInline; }
+    void setProgressionIsInline(bool progressionIsInline) { m_progressionIsInline = progressionIsInline; }
+
+    bool progressionIsReversed() const { return m_progressionIsReversed; }
+    void setProgressionIsReversed(bool reversed) { m_progressionIsReversed = reversed; }
+    
 private:
     virtual const char* renderName() const override;
     virtual void computeLogicalHeight(LayoutUnit logicalHeight, LayoutUnit logicalTop, LogicalExtentComputedValues&) const override;
@@ -71,6 +77,9 @@ private:
     LayoutUnit m_columnHeightAvailable; // Total height available to columns, or 0 if auto.
     bool m_inBalancingPass; // Guard to avoid re-entering column balancing.
     bool m_needsRebalancing;
+    
+    bool m_progressionIsInline;
+    bool m_progressionIsReversed;
 };
 
 } // namespace WebCore

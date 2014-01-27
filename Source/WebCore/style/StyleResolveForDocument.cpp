@@ -101,8 +101,8 @@ PassRef<RenderStyle> resolveForDocument(const Document& document)
     if (pagination.mode != Pagination::Unpaginated) {
         documentStyle.get().setColumnStylesFromPaginationMode(pagination.mode);
         documentStyle.get().setColumnGap(pagination.gap);
-        if (renderView.hasColumns())
-            renderView.updateColumnInfoFromStyle(&documentStyle.get());
+        if (renderView.hasColumns() || renderView.multiColumnFlowThread())
+            renderView.updateColumnProgressionFromStyle(&documentStyle.get());
     }
 
     // Seamless iframes want to inherit their font from their parent iframe, so early return before setting the font.

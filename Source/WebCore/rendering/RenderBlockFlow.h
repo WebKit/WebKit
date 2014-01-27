@@ -379,6 +379,8 @@ public:
     void createMultiColumnFlowThread();
     void destroyMultiColumnFlowThread();
     
+    virtual void updateColumnProgressionFromStyle(RenderStyle*) override;
+
 protected:
     // A page break is required at some offset due to space shortage in the current fragmentainer.
     void setPageBreak(LayoutUnit offset, LayoutUnit spaceShortage);
@@ -436,7 +438,7 @@ protected:
     virtual bool isMultiColumnBlockFlow() const override { return multiColumnFlowThread(); }
     
     virtual void setComputedColumnCountAndWidth(int, LayoutUnit) override;
-    
+
     virtual LayoutUnit computedColumnWidth() const override;
     virtual unsigned computedColumnCount() const override;
 

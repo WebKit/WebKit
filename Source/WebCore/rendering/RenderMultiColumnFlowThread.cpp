@@ -37,6 +37,8 @@ RenderMultiColumnFlowThread::RenderMultiColumnFlowThread(Document& document, Pas
     , m_columnHeightAvailable(0)
     , m_inBalancingPass(false)
     , m_needsRebalancing(false)
+    , m_progressionIsInline(false)
+    , m_progressionIsReversed(false)
 {
     setFlowThreadState(InsideInFlowThread);
 }

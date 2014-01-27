@@ -156,6 +156,33 @@
 
 2014-01-26  David Hyatt  <hyatt@apple.com>
 
+        [New Multicolumn] Make sure the progression axis and direction are propagated to the new columns.
+        https://bugs.webkit.org/show_bug.cgi?id=127670
+
+        This patch makes sure that the progression axis and direction style properties
+        are properly propagated from the style to the multi-column flow thread. Virtualizing
+        and renaming updateColumnInfoFromStyle to updateColumnProgressionFromStyle lets us
+        share code between the old multi-column code and the new.
+
+        Reviewed by Sam Weinig.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::updateColumnProgressionFromStyle):
+        * rendering/RenderBlock.h:
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::setComputedColumnCountAndWidth):
+        (WebCore::RenderBlockFlow::updateColumnProgressionFromStyle):
+        * rendering/RenderBlockFlow.h:
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::styleDidChange):
+        * rendering/RenderMultiColumnFlowThread.cpp:
+        (WebCore::RenderMultiColumnFlowThread::RenderMultiColumnFlowThread):
+        * rendering/RenderMultiColumnFlowThread.h:
+        * style/StyleResolveForDocument.cpp:
+        (WebCore::Style::resolveForDocument):
+
+2014-01-26  David Hyatt  <hyatt@apple.com>
+
         [New Multicolumn] Change the axis property to be a boolean like other isInline checks
         https://bugs.webkit.org/show_bug.cgi?id=127661
 

@@ -257,7 +257,8 @@ public:
     ColumnInfo* columnInfo() const;
     int columnGap() const;
 
-    void updateColumnInfoFromStyle(RenderStyle*);
+    // FIXME: Can devirtualize this and only have the RenderBlockFlow version once the old multi-column code is gone.
+    virtual void updateColumnProgressionFromStyle(RenderStyle*);
     
     LayoutUnit initialBlockOffsetForPainting() const;
     LayoutUnit blockDeltaForPaintingNextColumn() const;
