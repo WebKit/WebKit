@@ -2612,16 +2612,6 @@ void CodeBlock::shrinkToFit(ShrinkMode shrinkMode)
     } // else don't shrink these, because we would have already pointed pointers into these tables.
 }
 
-void CodeBlock::createActivation(CallFrame* callFrame)
-{
-    ASSERT(codeType() == FunctionCode);
-    ASSERT(needsFullScopeChain());
-    ASSERT(!callFrame->uncheckedR(activationRegister().offset()).jsValue());
-    JSActivation* activation = JSActivation::create(callFrame->vm(), callFrame, this);
-    callFrame->uncheckedR(activationRegister().offset()) = JSValue(activation);
-    callFrame->setScope(activation);
-}
-
 unsigned CodeBlock::addOrFindConstant(JSValue v)
 {
     unsigned result;

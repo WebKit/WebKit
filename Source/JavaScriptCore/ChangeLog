@@ -1,3 +1,13 @@
+2014-01-27  Mark Lam  <mark.lam@apple.com>
+
+        Remove unused CodeBlock::createActivation().
+        <https://webkit.org/b/127686>
+
+        Reviewed by Filip Pizlo.
+
+        * bytecode/CodeBlock.cpp:
+        * bytecode/CodeBlock.h:
+
 2014-01-26  Andreas Kling  <akling@apple.com>
 
         JSC: Pack unlinked instructions harder.
