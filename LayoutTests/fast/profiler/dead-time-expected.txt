@@ -4,8 +4,8 @@ To run this test manually, load it in the browser then load the WebInspector and
 
 Profile title: Dead time in profile.
 Thread_1 (no file) (line 0)
-   onload dead-time.html (line 20)
-      startTest dead-time.html (line 12)
+   onload dead-time.html (line 21)
+      startTest dead-time.html (line 13)
          setTimeout (no file) (line 0)
    (program) dead-time.html (line 1)
       endTest profiler-test-JS-resources.js (line 1)

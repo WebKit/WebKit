@@ -1,3 +1,17 @@
+2014-01-27  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Mac] fast/profiler/stop-profiling-after-setTimeout.html and fast/profiler/dead-time.html are flaky
+        https://bugs.webkit.org/show_bug.cgi?id=84102
+
+        Reviewed by Darin Adler.
+
+        * fast/profiler/dead-time-expected.txt: Updated.
+        * fast/profiler/stop-profiling-after-setTimeout-expected.txt: Updated.
+        * platform/efl/TestExpectations: Unskip tests.
+        * platform/gtk/fast/profiler/dead-time-expected.txt: Removed.
+        * platform/gtk/fast/profiler/stop-profiling-after-setTimeout-expected.txt: Removed.
+        * platform/mac/TestExpectations: Unskip tests.
+
 2014-01-26  Jinwoo Song  <jinwoo7.song@samsung.com>
 
         Unreviewed EFL gardening after r162742, r162791 and r162803.

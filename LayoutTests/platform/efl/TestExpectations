@@ -258,11 +258,6 @@ fast/frames/transparent-scrollbar.html
 fast/events/drag-and-drop-subframe-dataTransfer.html
 fast/events/drag-dataTransferItemList-file-handling.html
 
-# Still failing after https://bugs.webkit.org/show_bug.cgi?id=42328
-# most likely related to https://bugs.webkit.org/show_bug.cgi?id=84102
-fast/profiler/stop-profiling-after-setTimeout.html
-fast/profiler/dead-time.html
-
 # ENABLE(DRAGGABLE_REGION) is disabled
 fast/css/draggable-region-parser.html
 
