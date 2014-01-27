@@ -192,9 +192,10 @@ static void initializeGtkFontSettings(const char* testURL)
 
 CString getTopLevelPath()
 {
-    if (!g_getenv("WEBKIT_TOP_LEVEL"))
-        g_setenv("WEBKIT_TOP_LEVEL", TOP_LEVEL_DIR, FALSE);
+    if (const gchar* topLevel = g_getenv("WEBKIT_TOP_LEVEL"))
+        return topLevel;
 
+    g_setenv("WEBKIT_TOP_LEVEL", TOP_LEVEL_DIR, FALSE);
     return TOP_LEVEL_DIR;
 }
 
@@ -247,7 +248,8 @@ static void initializeFonts(const char* testURL = 0)
 
     CString fontsPath = getFontsPath();
     if (fontsPath.isNull())
-        g_error("Could not locate test fonts at %s. Is WEBKIT_TOP_LEVEL set?", fontsPath.data());
+        g_error("Could not locate test fonts at $WEBKIT_TOP_LEVEL/WebKitBuild/Dependencies/Root/webkitgtk-test-fonts. "
+            "WEBKIT_TOP_LEVEL is your WebKit checkout by default, and can be overridden by setting it as an environment variable.");
 
     GUniquePtr<GDir> fontsDirectory(g_dir_open(fontsPath.data(), 0, nullptr));
     while (const char* directoryEntry = g_dir_read_name(fontsDirectory.get())) {

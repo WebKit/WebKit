@@ -1,3 +1,14 @@
+2014-01-26  Brendan Long  <b.long@cablelabs.com>
+
+        [GTK] DumpRenderTree prints out suggesting to set WEBKIT_TOP_LEVEL when fonts are missing but doesn't use it.
+        https://bugs.webkit.org/show_bug.cgi?id=110602
+
+        Reviewed by Philippe Normand.
+
+        * DumpRenderTree/gtk/DumpRenderTree.cpp:
+        (getTopLevelPath): Use WEBKIT_TOP_LEVEL environment variable if it exists.
+        (initializeFonts): Fix printing of expected font path (fontPath is guaranteed to be null here).
+
 2014-01-24  Andy Estes  <aestes@apple.com>
 
         [iOS] Upstream changes in Tools/DumpRenderTree
