@@ -57,7 +57,6 @@ using namespace WebKit;
 
 @implementation WKContentView {
     std::unique_ptr<PageClientImpl> _pageClient;
-    RefPtr<WebPageProxy> _page;
     RetainPtr<WKBrowsingContextController> _browsingContextController;
 
     RetainPtr<UIView> _rootContentView;

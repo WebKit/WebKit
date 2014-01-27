@@ -40,7 +40,12 @@ inline WKProcessClass *wrapper(WebContext& context)
 
 }
 
-@interface WKProcessClass () <WKObject>
+@interface WKProcessClass () <WKObject> {
+@package
+    RetainPtr<WKProcessClassConfiguration> _configuration;
+
+    API::ObjectStorage<WebKit::WebContext> _context;
+}
 @end
 
 #endif // WK_API_ENABLED

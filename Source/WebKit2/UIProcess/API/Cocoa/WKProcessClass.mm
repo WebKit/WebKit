@@ -37,11 +37,7 @@
 #import <WebCore/WebCoreThreadSystemInterface.h>
 #endif
 
-@implementation WKProcessClass {
-    RetainPtr<WKProcessClassConfiguration> _configuration;
-
-    API::ObjectStorage<WebKit::WebContext> _context;
-}
+@implementation WKProcessClass
 
 - (instancetype)init
 {

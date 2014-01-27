@@ -39,13 +39,17 @@ class DrawingAreaProxy;
 class GeolocationPermissionRequestProxy;
 class LayerTreeContext;
 class WebFrameProxy;
+class WebPageProxy;
 class WebSecurityOrigin;
 struct InteractionInformationAtPosition;
 }
 
 @class WebIOSEvent;
 
-@interface WKContentView ()
+@interface WKContentView () {
+@package
+    RefPtr<WebKit::WebPageProxy> _page;
+}
 
 - (std::unique_ptr<WebKit::DrawingAreaProxy>)_createDrawingAreaProxy;
 - (void)_processDidCrash;
