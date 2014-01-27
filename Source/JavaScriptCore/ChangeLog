@@ -1,3 +1,23 @@
+2014-01-27  Brent Fulgham  <bfulgham@apple.com>
+
+        Merge r154513, r154354.
+
+    2013-08-23  Alex Christensen  <alex.christensen@flexsim.com>
+
+        Re-separating Win32 and Win64 builds.
+        https://bugs.webkit.org/show_bug.cgi?id=120178
+
+        Reviewed by Brent Fulgham.
+
+        * JavaScriptCore.vcxproj/JavaScriptCoreGenerated.make:
+        * JavaScriptCore.vcxproj/LLInt/LLIntAssembly/LLIntAssembly.make:
+        * JavaScriptCore.vcxproj/LLInt/LLIntDesiredOffsets/LLIntDesiredOffsets.make:
+        Pass PlatformArchitecture as a command line parameter to bash scripts.
+        * JavaScriptCore.vcxproj/copy-files.cmd: Use correct architecture
+        for build conditions.
+        * JavaScriptCore.vcxproj/jsc/jscCommon.props: Ditto
+        * JavaScriptCore.vcxproj/testRegExp/testRegExpCommon.props: Ditto
+
 2014-01-23  Brent Fulgham  <bfulgham@apple.com>
 
         Merge r162621

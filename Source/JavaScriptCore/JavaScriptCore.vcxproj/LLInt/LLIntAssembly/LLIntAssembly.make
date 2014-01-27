@@ -5,4 +5,4 @@ all:
 
 clean:
     -del "%ConfigurationBuildDir%\buildfailed"
-    -del /s /q "%ConfigurationBuildDir%\obj32\JavaScriptCore\DerivedSources\LLIntAssembly.h"
+    -del /s /q "%ConfigurationBuildDir%\obj%PlatformArchitecture%\JavaScriptCore\DerivedSources\LLIntAssembly.h"

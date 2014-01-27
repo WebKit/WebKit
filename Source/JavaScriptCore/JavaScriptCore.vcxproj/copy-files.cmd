@@ -2,7 +2,8 @@
 
 set PublicHeadersDirectory=%CONFIGURATIONBUILDDIR%\include\JavaScriptCore
 set PrivateHeadersDirectory=%CONFIGURATIONBUILDDIR%\include\private\JavaScriptCore
-set ResourcesDirectory=%CONFIGURATIONBUILDDIR%\bin32\JavaScriptCore.resources
+set ResourcesDirectory=%CONFIGURATIONBUILDDIR%\bin%PlatformArchitecture%\JavaScriptCore.resources
+set DerivedSourcesDirectory=%CONFIGURATIONBUILDDIR%\obj%PlatformArchitecture%\JavaScriptCore\DerivedSources
 
 if "%1" EQU "clean" goto :clean
 if "%1" EQU "rebuild" call :clean

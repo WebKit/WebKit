@@ -6,4 +6,4 @@ all:
 
 clean:
     -del "%ConfigurationBuildDir%\buildfailed"
-    -del /s /q "%ConfigurationBuildDir%\obj32\JavaScriptCore\DerivedSources\LLIntDesiredOffsets.h"
+    -del /s /q "%ConfigurationBuildDir%\obj%PlatformArchitecture%\JavaScriptCore\DerivedSources\LLIntDesiredOffsets.h"
