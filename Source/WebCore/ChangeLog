@@ -1,3 +1,12 @@
+2014-01-27  Maciej Stachowiak  <mjs@apple.com>
+
+        Move Conditional=BLOB from URL interface to Blob-related methods, to prepare for adding URL API
+        https://bugs.webkit.org/show_bug.cgi?id=127719
+
+        Reviewed by Sam Weinig.
+
+        * html/DOMURL.idl:
+
 2014-01-27  Andreas Kling  <akling@apple.com>
 
         Remove unused USE(OPENTYPE_SANITIZER) code.

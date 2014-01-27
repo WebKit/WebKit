@@ -26,7 +26,6 @@
 
 [
     GlobalContext=DOMWindow&WorkerGlobalScope,
-    Conditional=BLOB,
     Constructor,
     JSGenerateToNativeObject,
     JSGenerateToJSObject,
@@ -34,6 +33,6 @@
     InterfaceName=URL,
     ImplementationLacksVTable,
 ] interface DOMURL {
-    [CallWith=ScriptExecutionContext,TreatReturnedNullStringAs=Null] static DOMString createObjectURL(Blob? blob);
-    [CallWith=ScriptExecutionContext] static void revokeObjectURL(DOMString url);
+    [CallWith=ScriptExecutionContext,TreatReturnedNullStringAs=Null,Conditional=BLOB] static DOMString createObjectURL(Blob? blob);
+    [CallWith=ScriptExecutionContext,Conditional=BLOB] static void revokeObjectURL(DOMString url);
 };
