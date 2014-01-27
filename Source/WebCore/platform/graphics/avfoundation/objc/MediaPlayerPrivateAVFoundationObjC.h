@@ -116,6 +116,8 @@ public:
 private:
     MediaPlayerPrivateAVFoundationObjC(MediaPlayer*);
 
+    WeakPtr<MediaPlayerPrivateAVFoundationObjC> createWeakPtr() { return m_weakPtrFactory.createWeakPtr(); }
+
     // engine support
     static PassOwnPtr<MediaPlayerPrivateInterface> create(MediaPlayer*);
     static void getSupportedTypes(HashSet<String>& types);
@@ -214,6 +216,8 @@ private:
     void updateAudioTracks();
     void updateVideoTracks();
 #endif
+
+    WeakPtrFactory<MediaPlayerPrivateAVFoundationObjC> m_weakPtrFactory;
 
     RetainPtr<AVURLAsset> m_avAsset;
     RetainPtr<AVPlayer> m_avPlayer;

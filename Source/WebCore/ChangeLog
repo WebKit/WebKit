@@ -1,3 +1,27 @@
+2014-01-27  Jer Noble  <jer.noble@apple.com>
+
+        [iOS] Use callOnMainThread() not dispatch_async() in MediaPlayerPrivateAVFoundationObjC
+        https://bugs.webkit.org/show_bug.cgi?id=127701
+
+        Reviewed by Eric Carlson.
+
+        dispatch_async(dispatch_get_main_queue(), ...) used to be fine so long as the main
+        thread was also the web thread. But since that's not the case on iOS, we should be
+        using callOnMainThread() instead (because it dispatches to the web thread, not as
+        its name implies, the main thread).
+
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.h:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::createWeakPtr):
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::MediaPlayerPrivateAVFoundationObjC):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::createVideoLayer):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::seekToTime):
+        (-[WebCoreAVFMovieObserver legibleOutput:didOutputAttributedStrings:nativeSampleBuffers:forItemTime:]):
+        (-[WebCoreAVFMovieObserver outputSequenceWasFlushed:]):
+        (-[WebCoreAVFLoaderDelegate resourceLoader:shouldWaitForLoadingOfRequestedResource:]):
+        (-[WebCoreAVFLoaderDelegate resourceLoader:shouldWaitForResponseToAuthenticationChallenge:]):
+        (-[WebCoreAVFLoaderDelegate resourceLoader:didCancelLoadingRequest:]):
+
 2014-01-27  Maciej Stachowiak  <mjs@apple.com>
 
         Move Conditional=BLOB from URL interface to Blob-related methods, to prepare for adding URL API

@@ -274,6 +274,7 @@ void MediaPlayerPrivateAVFoundationObjC::registerMediaEngine(MediaEngineRegistra
 
 MediaPlayerPrivateAVFoundationObjC::MediaPlayerPrivateAVFoundationObjC(MediaPlayer* player)
     : MediaPlayerPrivateAVFoundation(player)
+    , m_weakPtrFactory(this)
     , m_objcObserver(adoptNS([[WebCoreAVFMovieObserver alloc] initWithCallback:this]))
     , m_videoFrameHasDrawn(false)
     , m_haveCheckedPlayability(false)
@@ -426,7 +427,11 @@ void MediaPlayerPrivateAVFoundationObjC::createVideoLayer()
     if (!m_avPlayer || m_videoLayer)
         return;
 
-    callOnMainThread([this] {
+    auto weakThis = createWeakPtr();
+    callOnMainThread([this, weakThis] {
+        if (!weakThis)
+            return;
+
         if (!m_avPlayer || m_videoLayer)
             return;
 
@@ -693,10 +698,10 @@ void MediaPlayerPrivateAVFoundationObjC::seekToTime(double time, double negative
     CMTime cmBefore = CMTimeMakeWithSeconds(negativeTolerance, 600);
     CMTime cmAfter = CMTimeMakeWithSeconds(positiveTolerance, 600);
 
-    __block auto weakThis = createWeakPtr();
+    auto weakThis = createWeakPtr();
 
     [m_avPlayerItem.get() seekToTime:cmTime toleranceBefore:cmBefore toleranceAfter:cmAfter completionHandler:^(BOOL finished) {
-        dispatch_async(dispatch_get_main_queue(), ^{
+        callOnMainThread([weakThis, finished] {
             auto _this = weakThis.get();
             if (!_this)
                 return;
@@ -2029,10 +2034,13 @@ NSArray* itemKVOProperties()
     if (!m_callback)
         return;
 
-    dispatch_async(dispatch_get_main_queue(), ^{
-        if (!m_callback)
+    RetainPtr<WebCoreAVFMovieObserver> strongSelf = self;
+    RetainPtr<NSArray> strongStrings = strings;
+    callOnMainThread([strongSelf, strongStrings, itemTime] {
+        MediaPlayerPrivateAVFoundationObjC* callback = strongSelf->m_callback;
+        if (!callback)
             return;
-        m_callback->processCue(strings, CMTimeGetSeconds(itemTime));
+        callback->processCue(strongStrings.get(), CMTimeGetSeconds(itemTime));
     });
 }
 
@@ -2043,10 +2051,10 @@ NSArray* itemKVOProperties()
     if (!m_callback)
         return;
     
-    dispatch_async(dispatch_get_main_queue(), ^{
-        if (!m_callback)
-            return;
-        m_callback->flushCues();
+    RetainPtr<WebCoreAVFMovieObserver> strongSelf = self;
+    callOnMainThread([strongSelf] {
+        if (MediaPlayerPrivateAVFoundationObjC* callback = strongSelf->m_callback)
+            callback->flushCues();
     });
 }
 #endif
@@ -2071,14 +2079,17 @@ NSArray* itemKVOProperties()
     if (!m_callback)
         return NO;
 
-    dispatch_async(dispatch_get_main_queue(), ^{
-        if (!m_callback) {
-            [loadingRequest finishLoadingWithError:nil];
+    RetainPtr<WebCoreAVFLoaderDelegate> strongSelf = self;
+    RetainPtr<AVAssetResourceLoadingRequest> strongRequest = loadingRequest;
+    callOnMainThread([strongSelf, strongRequest] {
+        MediaPlayerPrivateAVFoundationObjC* callback = strongSelf->m_callback;
+        if (!callback) {
+            [strongRequest finishLoadingWithError:nil];
             return;
         }
 
-        if (!m_callback->shouldWaitForLoadingOfResource(loadingRequest))
-            [loadingRequest finishLoadingWithError:nil];
+        if (!callback->shouldWaitForLoadingOfResource(strongRequest.get()))
+            [strongRequest finishLoadingWithError:nil];
     });
 
     return YES;
@@ -2090,14 +2101,17 @@ NSArray* itemKVOProperties()
     if (!m_callback)
         return NO;
 
-    dispatch_async(dispatch_get_main_queue(), ^{
-        if (!m_callback) {
-            [[challenge sender] cancelAuthenticationChallenge:challenge];
+    RetainPtr<WebCoreAVFLoaderDelegate> strongSelf = self;
+    RetainPtr<NSURLAuthenticationChallenge> strongChallenge = challenge;
+    callOnMainThread([strongSelf, strongChallenge] {
+        MediaPlayerPrivateAVFoundationObjC* callback = strongSelf->m_callback;
+        if (!callback) {
+            [[strongChallenge sender] cancelAuthenticationChallenge:strongChallenge.get()];
             return;
         }
 
-        if (!m_callback->shouldWaitForResponseToAuthenticationChallenge(challenge))
-            [[challenge sender] cancelAuthenticationChallenge:challenge];
+        if (!callback->shouldWaitForResponseToAuthenticationChallenge(strongChallenge.get()))
+            [[strongChallenge sender] cancelAuthenticationChallenge:strongChallenge.get()];
     });
 
     return YES;
@@ -2109,9 +2123,12 @@ NSArray* itemKVOProperties()
     if (!m_callback)
         return;
 
-    dispatch_async(dispatch_get_main_queue(), ^{
-        if (m_callback)
-            m_callback->didCancelLoadingRequest(loadingRequest);
+    RetainPtr<WebCoreAVFLoaderDelegate> strongSelf = self;
+    RetainPtr<AVAssetResourceLoadingRequest> strongRequest = loadingRequest;
+    callOnMainThread([strongSelf, strongRequest] {
+        MediaPlayerPrivateAVFoundationObjC* callback = strongSelf->m_callback;
+        if (callback)
+            callback->didCancelLoadingRequest(strongRequest.get());
     });
 }
 
