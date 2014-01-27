@@ -28,6 +28,8 @@ package CodeGeneratorObjC;
 
 use constant FileNamePrefix => "DOM";
 
+sub ConditionalIsEnabled(\%$);
+
 # Global Variables
 my $writeDependencies = 0;
 my %publicInterfaces = ();
@@ -376,7 +378,7 @@ sub GenerateInterface
     ReadPublicInterfaces($className, $parentClassName, $defines, $isProtocol);
 
     # Start actual generation..
-    $object->GenerateHeader($interface);
+    $object->GenerateHeader($interface, $defines);
     $object->GenerateImplementation($interface) unless $noImpl;
 
     # Check for missing public API
@@ -790,10 +792,35 @@ sub GetSVGPropertyTypes
     return ($svgPropertyType, $svgListPropertyType, $svgNativeType);
 }
 
+sub ConditionalIsEnabled(\%$)
+{
+    my $defines = shift;
+    my $conditional = shift;
+
+    return 1 if !$conditional;
+
+    my $operator = ($conditional =~ /&/ ? '&' : ($conditional =~ /\|/ ? '|' : ''));
+    if (!$operator) {
+        return exists($defines->{"ENABLE_" . $conditional});
+    }
+
+    my @conditions = split(/\Q$operator\E/, $conditional);
+    foreach (@conditions) {
+        my $enable = "ENABLE_" . $_;
+        return 0 if ($operator eq '&') and !exists($defines->{$enable});
+        return 1 if ($operator eq '|') and exists($defines->{$enable});
+    }
+
+    return $operator eq '&';
+}
+
 sub GenerateHeader
 {
     my $object = shift;
     my $interface = shift;
+    my $defines = shift;
+
+    my %definesRef = map { $_ => 1 } split(/\s+/, $defines);
 
     my $interfaceName = $interface->name;
     my $className = GetClassName($interfaceName);
@@ -851,19 +878,14 @@ sub GenerateHeader
         foreach my $constant (@constants) {
             my $constantName = $constant->name;
             my $constantValue = $constant->value;
-            my $conditional = $constant->extendedAttributes->{"Conditional"};
             my $notLast = $constant ne $constants[-1];
-
-            if ($conditional) {
-                my $conditionalString = $codeGenerator->GenerateConditionalStringFromAttributeValue($conditional);
-                $combinedConstants .= "#if ${conditionalString}\n";
-            }
-            $combinedConstants .= "    DOM_$constantName = $constantValue";
-            $combinedConstants .= "," if $notLast;
-            if ($conditional) {
-                $combinedConstants .= "\n#endif\n";
-            } elsif ($notLast) {
-                $combinedConstants .= "\n";
+            
+            if (ConditionalIsEnabled(%definesRef, $constant->extendedAttributes->{"Conditional"})) {
+                $combinedConstants .= "    DOM_$constantName = $constantValue";
+                $combinedConstants .= "," if $notLast;
+                if ($notLast) {
+                    $combinedConstants .= "\n";
+                }
             }
         }
 
@@ -943,13 +965,7 @@ sub GenerateHeader
                 $property .= $declarationSuffix;
                 push(@headerAttributes, $property) if $public;
                 push(@privateHeaderAttributes, $property) unless $public;
-            } else {
-                my $attributeConditionalString = $codeGenerator->GenerateConditionalString($attribute->signature);
-                if ($attributeConditionalString) {
-                    push(@headerAttributes, "#if ${attributeConditionalString}\n") if $public;
-                    push(@privateHeaderAttributes, "#if ${attributeConditionalString}\n") unless $public;
-                }
- 
+            } elsif (ConditionalIsEnabled(%definesRef, $attribute->signature->extendedAttributes->{"Conditional"})) {
                 # - GETTER
                 my $getter = "- (" . $attributeType . ")" . $attributeName . $declarationSuffix;
                 push(@headerAttributes, $getter) if $public;
@@ -960,11 +976,6 @@ sub GenerateHeader
                     my $setter = "- (void)$setterName(" . $attributeType . ")new" . ucfirst($attributeName) . $declarationSuffix;
                     push(@headerAttributes, $setter) if $public;
                     push(@privateHeaderAttributes, $setter) unless $public;
-                }
- 
-                if ($attributeConditionalString) {
-                    push(@headerAttributes, "#endif\n") if $public;
-                    push(@privateHeaderAttributes, "#endif\n") unless $public;
                 }
             }
         }
@@ -1052,45 +1063,34 @@ sub GenerateHeader
                 push(@privateHeaderFunctions, $endAppleCopyright) unless $public;
                 $inAppleCopyright{$public ? "public" : "private"} = 0;
             }
+            
+            if (ConditionalIsEnabled(%definesRef, $function->signature->extendedAttributes->{"Conditional"})) {
+                push(@headerFunctions, $functionDeclaration) if $public;
+                push(@privateHeaderFunctions, $functionDeclaration) unless $public;
 
-            my $functionConditionalString = $codeGenerator->GenerateConditionalString($function->signature);
-            if ($functionConditionalString) {
-                push(@headerFunctions, "#if ${functionConditionalString}\n") if $public;
-                push(@privateHeaderFunctions, "#if ${functionConditionalString}\n") unless $public;
-                push(@deprecatedHeaderFunctions, "#if ${functionConditionalString}\n") if $needsDeprecatedVersion;
-            }
+                # generate the old style method names with un-named parameters, these methods are deprecated
+                if ($needsDeprecatedVersion) {
+                    my $deprecatedFunctionSig = $functionSig;
+                    $deprecatedFunctionSig =~ s/\s\w+:/ :/g; # remove parameter names
 
-            push(@headerFunctions, $functionDeclaration) if $public;
-            push(@privateHeaderFunctions, $functionDeclaration) unless $public;
+                    $publicInterfaceKey = $deprecatedFunctionSig . ";";
 
-            # generate the old style method names with un-named parameters, these methods are deprecated
-            if ($needsDeprecatedVersion) {
-                my $deprecatedFunctionSig = $functionSig;
-                $deprecatedFunctionSig =~ s/\s\w+:/ :/g; # remove parameter names
+                    my $availabilityMacro = "WEBKIT_DEPRECATED_MAC(10_4, 10_5)";
+                    if (defined $publicInterfaces{$publicInterfaceKey} and length $publicInterfaces{$publicInterfaceKey}) {
+                        $availabilityMacro = $publicInterfaces{$publicInterfaceKey};
+                    }
 
-                $publicInterfaceKey = $deprecatedFunctionSig . ";";
+                    $functionDeclaration = "$deprecatedFunctionSig $availabilityMacro;\n";
 
-                my $availabilityMacro = "WEBKIT_DEPRECATED_MAC(10_4, 10_5)";
-                if (defined $publicInterfaces{$publicInterfaceKey} and length $publicInterfaces{$publicInterfaceKey}) {
-                    $availabilityMacro = $publicInterfaces{$publicInterfaceKey};
+                    push(@deprecatedHeaderFunctions, $functionDeclaration);
+
+                    unless (defined $publicInterfaces{$publicInterfaceKey}) {
+                        warn "Deprecated method $publicInterfaceKey is not in PublicDOMInterfaces.h. All deprecated methods need to be public, or should have the ObjCLegacyUnnamedParameters IDL attribute removed";
+                        $fatalError = 1;
+                    }
+
+                    delete $publicInterfaces{$publicInterfaceKey};
                 }
-
-                $functionDeclaration = "$deprecatedFunctionSig $availabilityMacro;\n";
-
-                push(@deprecatedHeaderFunctions, $functionDeclaration);
-
-                unless (defined $publicInterfaces{$publicInterfaceKey}) {
-                    warn "Deprecated method $publicInterfaceKey is not in PublicDOMInterfaces.h. All deprecated methods need to be public, or should have the ObjCLegacyUnnamedParameters IDL attribute removed";
-                    $fatalError = 1;
-                }
-
-                delete $publicInterfaces{$publicInterfaceKey};
-            }
-
-            if ($functionConditionalString) {
-                push(@headerFunctions, "#endif\n") if $public;
-                push(@privateHeaderFunctions, "#endif\n") unless $public;
-                push(@deprecatedHeaderFunctions, "#endif\n") if $needsDeprecatedVersion;
             }
         }
 

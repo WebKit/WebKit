@@ -1,3 +1,23 @@
+2014-01-27  Andy Estes  <aestes@apple.com>
+
+        Stop the code generator from adding ENABLE() macros to Objective-C DOM headers
+        https://bugs.webkit.org/show_bug.cgi?id=127706
+
+        Reviewed by David Kilzer.
+
+        Instead of adding ENABLE() macros to generated Objective-C DOM
+        headers, which might become Public or Private headers, elide generated
+        code for disabled features.
+
+        * bindings/scripts/CodeGeneratorObjC.pm:
+        (GenerateInterface): Passed $defines to GenerateHeader.
+        (ConditionalIsEnabled): Checked if the given conditional is found in
+        $defines. Handled conditionals with '&' and '|'.
+        (GenerateHeader): Rather than calling GenerateConditionalString to
+        generate an "#if ENABLE(...)", called ConditionalIsEnabled() to see
+        whether we should generate code for the given constant, attribute, or
+        function.
+
 2014-01-27  Zoltan Horvath  <zoltan@webkit.org>
 
         [CSS Shapes] Remove restriction of negative values for inset parameters
