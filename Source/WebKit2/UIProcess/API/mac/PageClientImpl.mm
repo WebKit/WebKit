@@ -434,6 +434,11 @@ void PageClientImpl::setAcceleratedCompositingRootLayer(CALayer *rootLayer)
     [m_wkView _setAcceleratedCompositingModeRootLayer:rootLayer];
 }
 
+CALayer *PageClientImpl::acceleratedCompositingRootLayer() const
+{
+    return m_wkView._acceleratedCompositingModeRootLayer;
+}
+
 RetainPtr<CGImageRef> PageClientImpl::takeViewSnapshot()
 {
     return [m_wkView _takeViewSnapshot];

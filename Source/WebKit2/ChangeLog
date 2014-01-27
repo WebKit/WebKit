@@ -1,3 +1,119 @@
+2014-01-27  Tim Horton  <timothy_horton@apple.com>
+
+        WebKit2 View Gestures: Fluid back-forward swipe
+        https://bugs.webkit.org/show_bug.cgi?id=127363
+
+        Reviewed by Anders Carlsson.
+
+        Add support for a "back-forward swipe", which allows fluid swiping between
+        items in the back-forward list. Currently disabled by default.
+
+        * Shared/WebPreferencesStore.h:
+        * UIProcess/API/C/WKPreferences.cpp:
+        (WKPreferencesSetViewGestureDebuggingEnabled):
+        (WKPreferencesGetViewGestureDebuggingEnabled):
+        * UIProcess/API/C/WKPreferencesPrivate.h:
+        Add a ViewGestureDebuggingEnabled preference, which currently causes snapshots to be blurred.
+        Additional view gesture debugging features could come in the future.
+
+        * UIProcess/API/Cocoa/WKViewPrivate.h:
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView _ensureGestureController]):
+        (-[WKView scrollWheel:]):
+        If back-forward navigation gestures are enabled, intercept scrollWheel events
+        on the WKView and let the ViewGestureController take the first crack at them.
+
+        (-[WKView setAllowsBackForwardNavigationGestures:]):
+        (-[WKView allowsBackForwardNavigationGestures]):
+        * UIProcess/API/mac/WKViewInternal.h:
+        Add allowsBackForwardNavigationGesture property, which enables the gesture.
+
+        * UIProcess/mac/ViewGestureController.h:
+        Add swipe-related methods, which will be described below.
+
+        Add an enum for the swipe transition style. Currently only Overlap is accessible,
+        but in the future one could see having API to choose the style.
+        'Overlap' has the outgoing page swipe out to the right (when swiping right)
+        or the incoming page swipe in from the right (when swiping left).
+        'Push' has the pages push each other along in sync, as if all the pages in the
+        back-forward list were oriented from left to right.
+
+        * UIProcess/mac/ViewGestureController.messages.in:
+        * UIProcess/mac/ViewGestureController.mm: Renamed from Source/WebKit2/UIProcess/mac/ViewGestureController.cpp.
+        Use some CAFilter SPI to blur the snapshot if ViewGestureDebuggingEnabled is on.
+
+        (WebKit::ViewGestureController::ViewGestureController):
+        (WebKit::ViewGestureController::~ViewGestureController):
+        (WebKit::ViewGestureController::endMagnificationGesture):
+        Move m_activeGestureType clearing to each end* function instead of one global place,
+        so that each gesture can handle when it ends separately.
+
+        (WebKit::ViewGestureController::handleScrollWheelEvent):
+        If we receive a scroll wheel event which is appropriate for starting a
+        fluid swipe, in a direction where the main frame is pinned to the appropriate
+        edge of the view, start tracking a swipe.
+
+        This should eventually have some hysterisis to avoid stealing scrolls that
+        venture into the wrong direction, but for now it starts tracking immediately.
+
+        Forward events from the tracking loop to {begin, handle, end}SwipeGesture.
+
+        (WebKit::ViewGestureController::beginSwipeGesture):
+        Create a layer with the destination page's snapshot, and set it up.
+
+        (WebKit::ViewGestureController::handleSwipeGesture):
+        Appropriately adjust the position of the root layer and snapshot layer,
+        given the transition style and swipe direction.
+
+        (WebKit::ViewGestureController::endSwipeGesture):
+        When the gesture ends, do the navigation, and tell the WebProcess to
+        inform us when the render tree hits half the size it was when the
+        snapshot was taken (when that happens, we will remove the snapshot
+        and the gesture will be truly complete). Also, start a watchdog timer
+        in case the render tree never hits that size, after which we will
+        also remove the snapshot.
+
+        (WebKit::ViewGestureController::didHitRenderTreeSizeThreshold):
+        (WebKit::ViewGestureController::swipeSnapshotWatchdogTimerFired):
+        (WebKit::ViewGestureController::removeSwipeSnapshot):
+        Tear down the swipe snapshot layer, and mark our current gesture as complete.
+
+        (WebKit::ViewGestureController::endActiveGesture):
+        Simplify endActiveGesture; it only has work to do for a pinch-zoom gesture,
+        as those are the only gestures where the user is directly in control of when they end.
+
+        * WebProcess/WebPage/ViewGestureGeometryCollector.cpp:
+        (WebKit::ViewGestureGeometryCollector::ViewGestureGeometryCollector):
+        (WebKit::ViewGestureGeometryCollector::mainFrameDidLayout):
+        (WebKit::ViewGestureGeometryCollector::renderTreeSizeNotificationTimerFired):
+        * WebProcess/WebPage/ViewGestureGeometryCollector.h:
+        (WebKit::ViewGestureGeometryCollector::setRenderTreeSizeNotificationThreshold):
+        * WebProcess/WebPage/ViewGestureGeometryCollector.messages.in:
+        ViewGestureController pushes a render-tree size threshold to the WebProcess;
+        ViewGestureGeometryCollector (whose name is now more unfortunate than before)
+        monitors render-tree size changes and informs ViewGestureController when
+        it reaches that threshold via the 'DidHitRenderTreeSizeThreshold' message.
+
+        * UIProcess/API/Cocoa/WKViewPrivate.h:
+        * UIProcess/API/ios/PageClientImplIOS.h:
+        * UIProcess/API/ios/PageClientImplIOS.mm:
+        (WebKit::PageClientImpl::acceleratedCompositingRootLayer):
+        * UIProcess/API/mac/PageClientImpl.h:
+        * UIProcess/API/mac/PageClientImpl.mm:
+        (WebKit::PageClientImpl::acceleratedCompositingRootLayer):
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView _acceleratedCompositingModeRootLayer]):
+        * UIProcess/API/mac/WKViewInternal.h:
+        * UIProcess/PageClient.h:
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/mac/WebPageProxyMac.mm:
+        (WebKit::WebPageProxy::acceleratedCompositingRootLayer):
+        Add a getter for the accelerated compositing root layer.
+
+        * UIProcess/mac/ViewSnapshotStore.mm:
+        (WebKit::ViewSnapshotStore::snapshotAndRenderTreeSize):
+        Don't extract the CGImageRef from a RetainPtr just to put it back in one.
+
 2014-01-27  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Implement custom URI schemes with CustomProtocols

@@ -459,6 +459,11 @@ void WebPageProxy::setAcceleratedCompositingRootLayer(PlatformLayer* rootLayer)
     m_pageClient.setAcceleratedCompositingRootLayer(rootLayer);
 }
 
+PlatformLayer* WebPageProxy::acceleratedCompositingRootLayer() const
+{
+    return m_pageClient.acceleratedCompositingRootLayer();
+}
+
 static NSString *temporaryPDFDirectoryPath()
 {
     static NSString *temporaryPDFDirectoryPath;

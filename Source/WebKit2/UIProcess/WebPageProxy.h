@@ -499,6 +499,7 @@ public:
     bool acceptsFirstMouse(int eventNumber, const WebMouseEvent&);
 
     void setAcceleratedCompositingRootLayer(PlatformLayer* rootLayer);
+    PlatformLayer* acceleratedCompositingRootLayer() const;
 
 #if USE(APPKIT)
     WKView* wkView() const;

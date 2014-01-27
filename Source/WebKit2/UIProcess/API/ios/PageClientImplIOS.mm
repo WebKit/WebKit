@@ -314,6 +314,12 @@ void PageClientImpl::setAcceleratedCompositingRootLayer(CALayer *rootLayer)
 {
     [m_view _setAcceleratedCompositingRootLayer:rootLayer];
 }
+
+CALayer *PageClientImpl::acceleratedCompositingRootLayer() const
+{
+    notImplemented();
+    return nullptr;
+}
 #endif
 
 RetainPtr<CGImageRef> PageClientImpl::takeViewSnapshot()

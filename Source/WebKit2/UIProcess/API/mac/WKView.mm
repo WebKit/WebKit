@@ -230,6 +230,7 @@ struct WKViewInterpretKeyEventsParameters {
 
     std::unique_ptr<ViewGestureController> _gestureController;
     BOOL _allowsMagnification;
+    BOOL _allowsBackForwardNavigationGestures;
 }
 
 @end
@@ -1103,16 +1104,25 @@ NATIVE_MOUSE_EVENT_HANDLER(rightMouseUp)
 
 #undef NATIVE_MOUSE_EVENT_HANDLER
 
-#define NATIVE_EVENT_HANDLER(Selector, Type) \
-    - (void)Selector:(NSEvent *)theEvent \
-    { \
-        NativeWeb##Type##Event webEvent = NativeWeb##Type##Event(theEvent, self); \
-        _data->_page->handle##Type##Event(webEvent); \
+- (void)_ensureGestureController
+{
+    if (_data->_gestureController)
+        return;
+
+    _data->_gestureController = std::make_unique<ViewGestureController>(*_data->_page);
+}
+
+- (void)scrollWheel:(NSEvent *)event
+{
+    if (_data->_allowsBackForwardNavigationGestures) {
+        [self _ensureGestureController];
+        if (_data->_gestureController->handleScrollWheelEvent(event))
+            return;
     }
 
-NATIVE_EVENT_HANDLER(scrollWheel, Wheel)
-
-#undef NATIVE_EVENT_HANDLER
+    NativeWebWheelEvent webEvent = NativeWebWheelEvent(event, self);
+    _data->_page->handleWheelEvent(webEvent);
+}
 
 - (void)mouseMoved:(NSEvent *)event
 {
@@ -2471,6 +2481,11 @@ static void createSandboxExtensionsForFileUpload(NSPasteboard *pasteboard, Sandb
     _data->_findIndicatorWindow->setFindIndicator(findIndicator, fadeOut, animate);
 }
 
+- (CALayer *)_rootLayer
+{
+    return [_data->_layerHostingView layer];
+}
+
 - (void)_setAcceleratedCompositingModeRootLayer:(CALayer *)rootLayer
 {
     [CATransaction begin];
@@ -2508,6 +2523,16 @@ static void createSandboxExtensionsForFileUpload(NSPasteboard *pasteboard, Sandb
     }
 
     [CATransaction commit];
+}
+
+- (CALayer *)_acceleratedCompositingModeRootLayer
+{
+    NSView *hostView = _data->_layerHostingView.get();
+
+    if (!hostView)
+        return nullptr;
+
+    return hostView.layer;
 }
 
 - (RetainPtr<CGImageRef>)_takeViewSnapshot
@@ -3221,14 +3246,6 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
     return NO;
 }
 
-- (void)_ensureGestureController
-{
-    if (_data->_gestureController)
-        return;
-
-    _data->_gestureController = std::make_unique<ViewGestureController>(*_data->_page);
-}
-
 - (void)setAllowsMagnification:(BOOL)allowsMagnification
 {
     _data->_allowsMagnification = allowsMagnification;
@@ -3237,6 +3254,17 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
 - (BOOL)allowsMagnification
 {
     return _data->_allowsMagnification;
+}
+
+- (void)setAllowsBackForwardNavigationGestures:(BOOL)allowsBackForwardNavigationGestures
+{
+    _data->_allowsBackForwardNavigationGestures = allowsBackForwardNavigationGestures;
+    _data->_page->setShouldRecordNavigationSnapshots(allowsBackForwardNavigationGestures);
+}
+
+- (BOOL)allowsBackForwardNavigationGestures
+{
+    return _data->_allowsBackForwardNavigationGestures;
 }
 
 - (void)magnifyWithEvent:(NSEvent *)event

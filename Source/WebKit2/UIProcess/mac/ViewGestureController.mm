@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,10 +26,33 @@
 #import "config.h"
 #import "ViewGestureController.h"
 
+#if !PLATFORM(IOS)
+
+#import "WebPageGroup.h"
 #import "ViewGestureControllerMessages.h"
 #import "ViewGestureGeometryCollectorMessages.h"
+#import "ViewSnapshotStore.h"
+#import "WebBackForwardList.h"
+#import "WebPageMessages.h"
 #import "WebPageProxy.h"
+#import "WebPreferences.h"
 #import "WebProcessProxy.h"
+#import <Cocoa/Cocoa.h>
+#import <QuartzCore/QuartzCore.h>
+#import <WebCore/WebCoreCALayerExtras.h>
+
+#if defined(__has_include) && __has_include(<QuartzCore/QuartzCorePrivate.h>)
+#import <QuartzCore/QuartzCorePrivate.h>
+#else
+@interface CAFilter : NSObject <NSCopying, NSMutableCopying, NSCoding>
+@end
+#endif
+
+@interface CAFilter (Details)
++ (CAFilter *)filterWithType:(NSString *)type;
+@end
+
+extern NSString * const kCAFilterGaussianBlur;
 
 using namespace WebCore;
 
@@ -45,6 +68,12 @@ static const double zoomOutResistance = 0.10;
 static const float smartMagnificationElementPadding = 0.05;
 static const float smartMagnificationPanScrollThreshold = 100;
 
+static const double swipeOverlayShadowOpacity = 0.66;
+static const double swipeOverlayShadowRadius = 3;
+
+static const float swipeSnapshotRemovalRenderTreeSizeTargetFraction = 0.5;
+static const std::chrono::seconds swipeSnapshotRemovalWatchdogDuration = 3_s;
+
 namespace WebKit {
 
 ViewGestureController::ViewGestureController(WebPageProxy& webPageProxy)
@@ -53,6 +82,8 @@ ViewGestureController::ViewGestureController(WebPageProxy& webPageProxy)
     , m_activeGestureType(ViewGestureType::None)
     , m_visibleContentRectIsValid(false)
     , m_frameHandlesMagnificationGesture(false)
+    , m_swipeTransitionStyle(SwipeTransitionStyle::Overlap)
+    , m_swipeWatchdogTimer(this, &ViewGestureController::swipeSnapshotWatchdogTimerFired)
 {
     m_webPageProxy.process().addMessageReceiver(Messages::ViewGestureController::messageReceiverName(), m_webPageProxy.pageID(), *this);
 }
@@ -139,6 +170,8 @@ void ViewGestureController::endMagnificationGesture()
         m_webPageProxy.scalePage(newMagnification, roundedIntPoint(m_magnificationOrigin));
     else
         m_webPageProxy.drawingArea()->commitTransientZoom(newMagnification, scaledMagnificationOrigin(m_magnificationOrigin, newMagnification));
+
+    m_activeGestureType = ViewGestureType::None;
 }
 
 void ViewGestureController::handleSmartMagnificationGesture(FloatPoint origin)
@@ -194,18 +227,175 @@ void ViewGestureController::didCollectGeometryForSmartMagnificationGesture(Float
     m_lastSmartMagnificationUnscaledTargetRectIsValid = true;
 }
 
-void ViewGestureController::endActiveGesture()
+bool ViewGestureController::handleScrollWheelEvent(NSEvent *event)
 {
-    switch (m_activeGestureType) {
-    case ViewGestureType::None:
-    case ViewGestureType::SmartMagnification:
-        break;
-    case ViewGestureType::Magnification:
-        endMagnificationGesture();
+    if (m_activeGestureType != ViewGestureType::None)
+        return false;
+
+    if (event.phase != NSEventPhaseBegan)
+        return false;
+
+    if (fabs(event.scrollingDeltaX) < fabs(event.scrollingDeltaY))
+        return false;
+
+    bool willSwipeLeft = event.scrollingDeltaX > 0 && m_webPageProxy.isPinnedToLeftSide() && m_webPageProxy.backForwardList().backItem();
+    bool willSwipeRight = event.scrollingDeltaX < 0 && m_webPageProxy.isPinnedToRightSide() && m_webPageProxy.backForwardList().forwardItem();
+    if (!willSwipeLeft && !willSwipeRight)
+        return false;
+
+    if (!event.hasPreciseScrollingDeltas)
+        return false;
+
+    if (![NSEvent isSwipeTrackingFromScrollEventsEnabled])
+        return false;
+
+    ViewSnapshotStore::shared().recordSnapshot(m_webPageProxy);
+
+    CGFloat maxProgress = willSwipeLeft ? 1 : 0;
+    CGFloat minProgress = willSwipeRight ? -1 : 0;
+    RefPtr<WebBackForwardListItem> targetItem = willSwipeLeft ? m_webPageProxy.backForwardList().backItem() : m_webPageProxy.backForwardList().forwardItem();
+    __block bool swipeCancelled = false;
+
+    [event trackSwipeEventWithOptions:0 dampenAmountThresholdMin:minProgress max:maxProgress usingHandler:^(CGFloat progress, NSEventPhase phase, BOOL isComplete, BOOL *stop) {
+        if (phase == NSEventPhaseBegan)
+            this->beginSwipeGesture(targetItem.get(), willSwipeLeft);
+        CGFloat clampedProgress = std::min(std::max(progress, minProgress), maxProgress);
+        this->handleSwipeGesture(targetItem.get(), clampedProgress, willSwipeLeft);
+        if (phase == NSEventPhaseCancelled)
+            swipeCancelled = true;
+        if (isComplete)
+            this->endSwipeGesture(targetItem.get(), swipeCancelled);
+    }];
+
+    return true;
+}
+
+void ViewGestureController::beginSwipeGesture(WebBackForwardListItem* targetItem, bool swipingLeft)
+{
+    m_activeGestureType = ViewGestureType::Swipe;
+
+    CALayer *rootLayer = m_webPageProxy.acceleratedCompositingRootLayer();
+
+    m_swipeSnapshotLayer = adoptNS([[CALayer alloc] init]);
+    [m_swipeSnapshotLayer setBackgroundColor:CGColorGetConstantColor(kCGColorWhite)];
+
+    RetainPtr<CGImageRef> snapshot = ViewSnapshotStore::shared().snapshotAndRenderTreeSize(targetItem).first;
+    [m_swipeSnapshotLayer setContents:(id)snapshot.get()];
+    [m_swipeSnapshotLayer setContentsGravity:kCAGravityTopLeft];
+    [m_swipeSnapshotLayer setContentsScale:m_webPageProxy.deviceScaleFactor()];
+    [m_swipeSnapshotLayer setFrame:rootLayer.frame];
+    [m_swipeSnapshotLayer setAnchorPoint:CGPointZero];
+    [m_swipeSnapshotLayer setPosition:CGPointZero];
+    [m_swipeSnapshotLayer setName:@"Gesture Swipe Snapshot Layer"];
+    [m_swipeSnapshotLayer web_disableAllActions];
+
+    if (m_webPageProxy.pageGroup().preferences()->viewGestureDebuggingEnabled()) {
+        CAFilter* filter = [CAFilter filterWithType:kCAFilterGaussianBlur];
+        [filter setValue:[NSNumber numberWithFloat:3] forKey:@"inputRadius"];
+        [m_swipeSnapshotLayer setFilters:@[filter]];
     }
 
-    m_visibleContentRectIsValid = false;
+    if (m_swipeTransitionStyle == SwipeTransitionStyle::Overlap) {
+        RetainPtr<CGPathRef> shadowPath = adoptCF(CGPathCreateWithRect([rootLayer bounds], 0));
+
+        [m_swipeSnapshotLayer setShadowColor:CGColorGetConstantColor(kCGColorBlack)];
+        [m_swipeSnapshotLayer setShadowOpacity:swipeOverlayShadowOpacity];
+        [m_swipeSnapshotLayer setShadowRadius:swipeOverlayShadowRadius];
+        [m_swipeSnapshotLayer setShadowPath:shadowPath.get()];
+
+        [rootLayer setShadowColor:CGColorGetConstantColor(kCGColorBlack)];
+        [rootLayer setShadowOpacity:swipeOverlayShadowOpacity];
+        [rootLayer setShadowRadius:swipeOverlayShadowRadius];
+        [rootLayer setShadowPath:shadowPath.get()];
+    }
+
+    if (swipingLeft)
+        [rootLayer.superlayer insertSublayer:m_swipeSnapshotLayer.get() below:rootLayer];
+    else
+        [rootLayer.superlayer insertSublayer:m_swipeSnapshotLayer.get() above:rootLayer];
+}
+
+void ViewGestureController::handleSwipeGesture(WebBackForwardListItem* targetItem, double progress, bool swipingLeft)
+{
+    ASSERT(m_activeGestureType == ViewGestureType::Swipe);
+
+    CALayer *rootLayer = m_webPageProxy.acceleratedCompositingRootLayer();
+    double width = rootLayer.bounds.size.width;
+    double swipingLayerOffset = floor(width * progress);
+
+    if (m_swipeTransitionStyle == SwipeTransitionStyle::Overlap) {
+        if (swipingLeft)
+            [rootLayer setPosition:CGPointMake(swipingLayerOffset, 0)];
+        else
+            [m_swipeSnapshotLayer setPosition:CGPointMake(width + swipingLayerOffset, 0)];
+    } else if (m_swipeTransitionStyle == SwipeTransitionStyle::Push) {
+        [rootLayer setPosition:CGPointMake(swipingLayerOffset, 0)];
+        [m_swipeSnapshotLayer setPosition:CGPointMake((swipingLeft ? -width : width) + swipingLayerOffset, 0)];
+    }
+}
+
+void ViewGestureController::endSwipeGesture(WebBackForwardListItem* targetItem, bool cancelled)
+{
+    ASSERT(m_activeGestureType == ViewGestureType::Swipe);
+
+    CALayer *rootLayer = m_webPageProxy.acceleratedCompositingRootLayer();
+
+    [rootLayer setShadowOpacity:0];
+    [rootLayer setShadowRadius:0];
+
+    if (cancelled) {
+        removeSwipeSnapshot();
+        return;
+    }
+
+    uint64_t renderTreeSize = ViewSnapshotStore::shared().snapshotAndRenderTreeSize(targetItem).second;
+    m_webPageProxy.process().send(Messages::ViewGestureGeometryCollector::SetRenderTreeSizeNotificationThreshold(renderTreeSize * swipeSnapshotRemovalRenderTreeSizeTargetFraction), m_webPageProxy.pageID());
+
+    // We don't want to replace the current back-forward item's snapshot
+    // like we normally would when going back or forward, because we are
+    // displaying the destination item's snapshot.
+    ViewSnapshotStore::shared().disableSnapshotting();
+    m_webPageProxy.goToBackForwardItem(targetItem);
+    ViewSnapshotStore::shared().enableSnapshotting();
+
+    if (!renderTreeSize) {
+        removeSwipeSnapshot();
+        return;
+    }
+
+    m_swipeWatchdogTimer.startOneShot(swipeSnapshotRemovalWatchdogDuration.count());
+}
+
+void ViewGestureController::didHitRenderTreeSizeThreshold()
+{
+    removeSwipeSnapshot();
+}
+
+void ViewGestureController::swipeSnapshotWatchdogTimerFired(WebCore::Timer<ViewGestureController>*)
+{
+    removeSwipeSnapshot();
+}
+
+void ViewGestureController::removeSwipeSnapshot()
+{
+    m_swipeWatchdogTimer.stop();
+
+    if (m_activeGestureType != ViewGestureType::Swipe)
+        return;
+
+    [m_webPageProxy.acceleratedCompositingRootLayer() setPosition:CGPointZero];
+    [m_swipeSnapshotLayer removeFromSuperlayer];
+    m_swipeSnapshotLayer = nullptr;
+
     m_activeGestureType = ViewGestureType::None;
+}
+
+void ViewGestureController::endActiveGesture()
+{
+    if (m_activeGestureType == ViewGestureType::Magnification) {
+        endMagnificationGesture();
+        m_visibleContentRectIsValid = false;
+    }
 }
 
 double ViewGestureController::magnification() const
@@ -217,3 +407,5 @@ double ViewGestureController::magnification() const
 }
 
 } // namespace WebKit
+
+#endif // !PLATFORM(IOS)

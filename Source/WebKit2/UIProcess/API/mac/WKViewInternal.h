@@ -69,6 +69,7 @@ namespace WebKit {
 - (void)_setFindIndicator:(PassRefPtr<WebKit::FindIndicator>)findIndicator fadeOut:(BOOL)fadeOut animate:(BOOL)animate;
 
 - (void)_setAcceleratedCompositingModeRootLayer:(CALayer *)rootLayer;
+- (CALayer *)_acceleratedCompositingModeRootLayer;
 
 - (RetainPtr<CGImageRef>)_takeViewSnapshot;
 

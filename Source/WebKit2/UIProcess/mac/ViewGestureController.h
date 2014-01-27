@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,11 +26,19 @@
 #ifndef ViewGestureController_h
 #define ViewGestureController_h
 
+#if !PLATFORM(IOS)
+
 #include "MessageReceiver.h"
 #include <WebCore/FloatRect.h>
+#include <WebCore/Timer.h>
+#include <wtf/RetainPtr.h>
+
+OBJC_CLASS CALayer;
+OBJC_CLASS NSEvent;
 
 namespace WebKit {
 
+class WebBackForwardListItem;
 class WebPageProxy;
 
 class ViewGestureController : private IPC::MessageReceiver {
@@ -44,12 +52,21 @@ public:
     void handleMagnificationGesture(double scale, WebCore::FloatPoint origin);
     void handleSmartMagnificationGesture(WebCore::FloatPoint origin);
 
+    bool handleScrollWheelEvent(NSEvent *);
+    void didHitRenderTreeSizeThreshold();
+
     void endActiveGesture();
 
     enum class ViewGestureType {
         None,
         Magnification,
         SmartMagnification,
+        Swipe
+    };
+
+    enum class SwipeTransitionStyle {
+        Overlap,
+        Push
     };
 
 private:
@@ -62,6 +79,12 @@ private:
 
     void endMagnificationGesture();
     WebCore::FloatPoint scaledMagnificationOrigin(WebCore::FloatPoint origin, double scale);
+
+    void beginSwipeGesture(WebBackForwardListItem* targetItem, bool swipingLeft);
+    void handleSwipeGesture(WebBackForwardListItem* targetItem, double progress, bool swipingLeft);
+    void endSwipeGesture(WebBackForwardListItem* targetItem, bool cancelled);
+    void removeSwipeSnapshot();
+    void swipeSnapshotWatchdogTimerFired(WebCore::Timer<ViewGestureController>*);
 
     WebPageProxy& m_webPageProxy;
 
@@ -76,8 +99,14 @@ private:
     WebCore::FloatRect m_visibleContentRect;
     bool m_visibleContentRectIsValid;
     bool m_frameHandlesMagnificationGesture;
+
+    RetainPtr<CALayer> m_swipeSnapshotLayer;
+    SwipeTransitionStyle m_swipeTransitionStyle;
+    WebCore::Timer<ViewGestureController> m_swipeWatchdogTimer;
 };
 
 } // namespace WebKit
+
+#endif // !PLATFORM(IOS)
 
 #endif // ViewGestureController_h

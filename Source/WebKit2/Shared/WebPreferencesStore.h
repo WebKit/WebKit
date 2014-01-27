@@ -178,6 +178,7 @@ namespace WebKit {
     macro(UseLegacyTextAlignPositionedElementBehavior, useLegacyTextAlignPositionedElementBehavior, Bool, bool, false) \
     macro(SpatialNavigationEnabled, spatialNavigationEnabled, Bool, bool, false) \
     macro(MediaSourceEnabled, mediaSourceEnabled, Bool, bool, false) \
+    macro(ViewGestureDebuggingEnabled, viewGestureDebuggingEnabled, Bool, bool, false) \
     \
 
 #define FOR_EACH_WEBKIT_DOUBLE_PREFERENCE(macro) \

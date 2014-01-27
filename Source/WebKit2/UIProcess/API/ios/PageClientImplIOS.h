@@ -94,6 +94,7 @@ private:
     virtual void exitAcceleratedCompositingMode() override;
     virtual void updateAcceleratedCompositingMode(const LayerTreeContext&) override;
     virtual void setAcceleratedCompositingRootLayer(CALayer *rootLayer) override;
+    virtual CALayer *acceleratedCompositingRootLayer() const override;
 #endif
 
     virtual RetainPtr<CGImageRef> takeViewSnapshot() override;

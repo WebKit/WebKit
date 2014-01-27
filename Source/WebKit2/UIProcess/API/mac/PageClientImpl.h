@@ -69,6 +69,7 @@ private:
     virtual LayerHostingMode viewLayerHostingMode() override;
     virtual ColorSpaceData colorSpace() override;
     virtual void setAcceleratedCompositingRootLayer(CALayer *) override;
+    virtual CALayer *acceleratedCompositingRootLayer() const override;
 
     virtual void processDidCrash();
     virtual void pageClosed();

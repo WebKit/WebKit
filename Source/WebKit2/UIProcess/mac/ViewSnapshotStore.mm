@@ -77,7 +77,7 @@ std::pair<RetainPtr<CGImageRef>, uint64_t> ViewSnapshotStore::snapshotAndRenderT
     if (snapshotAndRenderTreeSize == m_snapshotMap.end())
         return std::make_pair(nullptr, 0);
 
-    return std::make_pair(snapshotAndRenderTreeSize->value.first.get(), snapshotAndRenderTreeSize->value.second);
+    return snapshotAndRenderTreeSize->value;
 }
 
 } // namespace WebKit

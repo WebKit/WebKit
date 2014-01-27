@@ -26,6 +26,8 @@
 #include "config.h"
 #include "ViewGestureGeometryCollector.h"
 
+#if !PLATFORM(IOS)
+
 #include "ViewGestureControllerMessages.h"
 #include "ViewGestureGeometryCollectorMessages.h"
 #include "WebCoreArgumentCoders.h"
@@ -42,6 +44,8 @@ namespace WebKit {
 
 ViewGestureGeometryCollector::ViewGestureGeometryCollector(WebPage& webPage)
     : m_webPage(webPage)
+    , m_renderTreeSizeNotificationThreshold(0)
+    , m_renderTreeSizeNotificationTimer(RunLoop::main(), this, &ViewGestureGeometryCollector::renderTreeSizeNotificationTimerFired)
 {
     WebProcess::shared().addMessageReceiver(Messages::ViewGestureGeometryCollector::messageReceiverName(), m_webPage.pageID(), *this);
 }
@@ -77,4 +81,19 @@ void ViewGestureGeometryCollector::collectGeometryForSmartMagnificationGesture(F
     }
 }
 
+void ViewGestureGeometryCollector::mainFrameDidLayout()
+{
+    if (m_renderTreeSizeNotificationThreshold && m_webPage.renderTreeSize() >= m_renderTreeSizeNotificationThreshold) {
+        m_renderTreeSizeNotificationTimer.startOneShot(0);
+        m_renderTreeSizeNotificationThreshold = 0;
+    }
+}
+
+void ViewGestureGeometryCollector::renderTreeSizeNotificationTimerFired()
+{
+    m_webPage.send(Messages::ViewGestureController::DidHitRenderTreeSizeThreshold());
+}
+
 } // namespace WebKit
+
+#endif // !PLATFORM(IOS)
