@@ -25,6 +25,7 @@
 #include "LineBreakIteratorPoolICU.h"
 #include "UTextProviderLatin1.h"
 #include "UTextProviderUTF16.h"
+#include <mutex>
 #include <wtf/Atomics.h>
 #include <wtf/text/StringView.h>
 #include <wtf/text/WTFString.h>
@@ -276,8 +277,8 @@ static inline bool compareAndSwapNonSharedCharacterBreakIterator(TextBreakIterat
 #if ENABLE(COMPARE_AND_SWAP)
     return WTF::weakCompareAndSwap(reinterpret_cast<void**>(&nonSharedCharacterBreakIterator), expected, newValue);
 #else
-    DEFINE_STATIC_LOCAL(Mutex, nonSharedCharacterBreakIteratorMutex, ());
-    MutexLocker locker(nonSharedCharacterBreakIteratorMutex);
+    DEFINE_STATIC_LOCAL(std::mutex, nonSharedCharacterBreakIteratorMutex, ());
+    std::lock_guard<std::mutex> locker(nonSharedCharacterBreakIteratorMutex);
     if (nonSharedCharacterBreakIterator != expected)
         return false;
     nonSharedCharacterBreakIterator = newValue;
