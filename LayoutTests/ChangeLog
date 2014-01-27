@@ -1,3 +1,9 @@
+2014-01-27  Antti Koivisto  <antti@apple.com>
+
+        REGRESSION(r162837): fast/writing-mode/ruby-text-logical-left.html fails on WK1
+
+        * TestExpectations: skip for now
+
 2014-01-27  Zoltan Horvath  <zoltan@webkit.org>
     
         [CSS Shapes] inset() function with multiple spaces on element style

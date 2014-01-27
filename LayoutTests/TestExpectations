@@ -86,3 +86,5 @@ webkit.org/b/126166 [ Debug ] js/dfg-uint32array-overflow-values.html [ Skip ]
 
 # This test verifies that a mismatch reftest will fail as intended if both results are same. (introduced in r93187)
 fast/harness/sample-fail-mismatch-reftest.html [ WontFix ImageOnlyFailure ]
+
+webkit.org/b/127697 fast/writing-mode/ruby-text-logical-left.html [ Skip ]
