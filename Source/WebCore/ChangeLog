@@ -1,3 +1,15 @@
+2014-01-27  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: Disable accessibility after every test run
+        https://bugs.webkit.org/show_bug.cgi?id=127439
+
+        Reviewed by Csaba Osztrogonác.
+
+        Speculative fix for EFL build. Don't process these notifications unless accessibility is enabled.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::prepareForLoadStart):
+
 2014-01-27  Csaba Osztrogonác  <ossy@webkit.org>
 
         Buildfix for !ENABLE(COMPARE_AND_SWAP) platforms after r162774

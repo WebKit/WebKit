@@ -1184,10 +1184,11 @@ void FrameLoader::prepareForLoadStart()
     m_progressTracker->progressStarted();
     m_client.dispatchDidStartProvisionalLoad();
 
-    // Notify accessibility.
-    if (AXObjectCache* cache = m_frame.document()->existingAXObjectCache()) {
-        AXObjectCache::AXLoadingEvent loadingEvent = loadType() == FrameLoadTypeReload ? AXObjectCache::AXLoadingReloaded : AXObjectCache::AXLoadingStarted;
-        cache->frameLoadingEventNotification(&m_frame, loadingEvent);
+    if (AXObjectCache::accessibilityEnabled()) {
+        if (AXObjectCache* cache = m_frame.document()->existingAXObjectCache()) {
+            AXObjectCache::AXLoadingEvent loadingEvent = loadType() == FrameLoadTypeReload ? AXObjectCache::AXLoadingReloaded : AXObjectCache::AXLoadingStarted;
+            cache->frameLoadingEventNotification(&m_frame, loadingEvent);
+        }
     }
 }
 
