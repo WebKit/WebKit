@@ -1,5 +1,9 @@
 2014-01-27  Antti Koivisto  <antti@apple.com>
 
+        * WebCore.exp.in: Add export needed for iOS.
+
+2014-01-27  Antti Koivisto  <antti@apple.com>
+
         REGRESSION(r133214): Don't invalidate style when adding classes that don't match rules
         https://bugs.webkit.org/show_bug.cgi?id=126177
 
