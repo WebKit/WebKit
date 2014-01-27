@@ -62,6 +62,17 @@ BuildbotIteration.Event = {
     Updated: "updated"
 };
 
+function parseRevisionProperty(property, key)
+{
+    if (!property)
+        return null;
+
+    // The property "got_revision" is a dictionary for multi-codebase builds
+    // according to <http://docs.buildbot.net/0.8.8/manual/cfg-properties.html>.
+    var value = property[1];
+    return parseInt(typeof value == "string" ? value : value[key], 10);
+}
+
 BuildbotIteration.prototype = {
     constructor: BuildbotIteration,
     __proto__: BaseObject.prototype,
@@ -201,10 +212,10 @@ BuildbotIteration.prototype = {
                 return;
 
             var openSourceRevisionProperty = data.properties.findFirst(function(property) { return property[0] === "got_revision" || property[0] === "revision" || property[0] === "opensource_got_revision"; });
-            this.openSourceRevision = openSourceRevisionProperty ? parseInt(openSourceRevisionProperty[1], 10) : null;
+            this.openSourceRevision = parseRevisionProperty(openSourceRevisionProperty, "WebKitOpenSource");
 
-            var internalRevisionProperty = data.properties.findFirst(function(property) { return property[0] === "internal_got_revision"; });
-            this.internalRevision = internalRevisionProperty ? parseInt(internalRevisionProperty[1], 10) : null;
+            var internalRevisionProperty = data.properties.findFirst(function(property) { return property[0] === "internal_got_revision" || property[0] === "got_revision"; });
+            this.internalRevision = parseRevisionProperty(internalRevisionProperty, "Internal");
 
             var layoutTestResults = collectTestResults.call(this, data, "layout-test");
             this.layoutTestResults = layoutTestResults ? new BuildbotTestResults(this, layoutTestResults) : null;
