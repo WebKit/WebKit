@@ -254,7 +254,7 @@ Ewk_History_Item* ewk_history_item_new(const char* uri, const char* title)
 {
     WTF::String historyUri = WTF::String::fromUTF8(uri);
     WTF::String historyTitle = WTF::String::fromUTF8(title);
-    WTF::RefPtr<WebCore::HistoryItem> core = WebCore::HistoryItem::create(historyUri, historyTitle, 0);
+    WTF::RefPtr<WebCore::HistoryItem> core = WebCore::HistoryItem::create(historyUri, historyTitle);
     Ewk_History_Item* item = ewk_history_item_new_from_core(core.release().leakRef());
     return item;
 }
@@ -328,8 +328,8 @@ const char* ewk_history_item_uri_original_get(const Ewk_History_Item* item)
 
 double ewk_history_item_time_last_visited_get(const Ewk_History_Item* item)
 {
-    EWK_HISTORY_ITEM_CORE_GET_OR_RETURN(item, core, 0.0);
-    return core->lastVisitedTime();
+    // FIXME: Consider to drop this
+    return 0;
 }
 
 cairo_surface_t* ewk_history_item_icon_surface_get(const Ewk_History_Item* item)
@@ -365,8 +365,8 @@ Eina_Bool ewk_history_item_page_cache_exists(const Ewk_History_Item* item)
 
 int ewk_history_item_visit_count(const Ewk_History_Item* item)
 {
-    EWK_HISTORY_ITEM_CORE_GET_OR_RETURN(item, core, 0);
-    return core->visitCount();
+    // FIXME: Consider to drop this
+    return 0;
 }
 
 Eina_Bool ewk_history_item_visit_last_failed(const Ewk_History_Item* item)

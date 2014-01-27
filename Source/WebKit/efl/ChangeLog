@@ -1,3 +1,14 @@
+2014-01-26  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        Unreviewed build fix on the EFL build since r162808
+
+        lastVisitedTime and visitCount are removed from WebCore::HistoryItem
+
+        * ewk/ewk_history.cpp:
+        (ewk_history_item_new):
+        (ewk_history_item_time_last_visited_get):
+        (ewk_history_item_visit_count):
+
 2014-01-25  Anders Carlsson  <andersca@apple.com>
 
         Remove an unused FrameLoaderClient function
