@@ -1,3 +1,9 @@
+2014-01-27  Dan Bernstein  <mitz@apple.com>
+
+        Build fix.
+
+        * wtf/ThreadSafeRefCounted.h: Added a necessary #include.
+
 2014-01-25  Sam Weinig  <sam@webkit.org>
 
         Remove unused support for DRAGGABLE_REGION
