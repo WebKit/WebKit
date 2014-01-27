@@ -27,7 +27,7 @@
 
 #if ENABLE(INDEXED_DATABASE)
 
-#include "IDBTransactionIdentifier.h"
+#include "IDBIdentifier.h"
 #include "UniqueIDBDatabaseIdentifier.h"
 #include <WebCore/IDBKeyData.h>
 
@@ -40,7 +40,7 @@ UniqueIDBDatabaseIdentifier CrossThreadCopierBase<false, false, UniqueIDBDatabas
     return identifier.isolatedCopy();
 }
 
-IDBTransactionIdentifier CrossThreadCopierBase<false, false, IDBTransactionIdentifier>::copy(const IDBTransactionIdentifier& identifier)
+IDBIdentifier CrossThreadCopierBase<false, false, IDBIdentifier>::copy(const IDBIdentifier& identifier)
 {
     return identifier.isolatedCopy();
 }

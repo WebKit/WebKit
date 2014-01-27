@@ -267,7 +267,7 @@ std::unique_ptr<IDBDatabaseMetadata> UniqueIDBDatabaseBackingStoreSQLite::getOrE
     return metadata;
 }
 
-bool UniqueIDBDatabaseBackingStoreSQLite::establishTransaction(const IDBTransactionIdentifier& identifier, const Vector<int64_t>&, WebCore::IndexedDB::TransactionMode mode)
+bool UniqueIDBDatabaseBackingStoreSQLite::establishTransaction(const IDBIdentifier& identifier, const Vector<int64_t>&, WebCore::IndexedDB::TransactionMode mode)
 {
     ASSERT(!isMainThread());
 
@@ -279,7 +279,7 @@ bool UniqueIDBDatabaseBackingStoreSQLite::establishTransaction(const IDBTransact
     return true;
 }
 
-bool UniqueIDBDatabaseBackingStoreSQLite::beginTransaction(const IDBTransactionIdentifier& identifier)
+bool UniqueIDBDatabaseBackingStoreSQLite::beginTransaction(const IDBIdentifier& identifier)
 {
     ASSERT(!isMainThread());
 
@@ -292,7 +292,7 @@ bool UniqueIDBDatabaseBackingStoreSQLite::beginTransaction(const IDBTransactionI
     return transaction->begin(*m_sqliteDB);
 }
 
-bool UniqueIDBDatabaseBackingStoreSQLite::commitTransaction(const IDBTransactionIdentifier& identifier)
+bool UniqueIDBDatabaseBackingStoreSQLite::commitTransaction(const IDBIdentifier& identifier)
 {
     ASSERT(!isMainThread());
 
@@ -305,7 +305,7 @@ bool UniqueIDBDatabaseBackingStoreSQLite::commitTransaction(const IDBTransaction
     return transaction->commit();
 }
 
-bool UniqueIDBDatabaseBackingStoreSQLite::resetTransaction(const IDBTransactionIdentifier& identifier)
+bool UniqueIDBDatabaseBackingStoreSQLite::resetTransaction(const IDBIdentifier& identifier)
 {
     ASSERT(!isMainThread());
 
@@ -318,7 +318,7 @@ bool UniqueIDBDatabaseBackingStoreSQLite::resetTransaction(const IDBTransactionI
     return transaction->reset();
 }
 
-bool UniqueIDBDatabaseBackingStoreSQLite::rollbackTransaction(const IDBTransactionIdentifier& identifier)
+bool UniqueIDBDatabaseBackingStoreSQLite::rollbackTransaction(const IDBIdentifier& identifier)
 {
     ASSERT(!isMainThread());
 
@@ -331,7 +331,7 @@ bool UniqueIDBDatabaseBackingStoreSQLite::rollbackTransaction(const IDBTransacti
     return transaction->rollback();
 }
 
-bool UniqueIDBDatabaseBackingStoreSQLite::changeDatabaseVersion(const IDBTransactionIdentifier& identifier, uint64_t newVersion)
+bool UniqueIDBDatabaseBackingStoreSQLite::changeDatabaseVersion(const IDBIdentifier& identifier, uint64_t newVersion)
 {
     ASSERT(!isMainThread());
     ASSERT(m_sqliteDB);
@@ -360,7 +360,7 @@ bool UniqueIDBDatabaseBackingStoreSQLite::changeDatabaseVersion(const IDBTransac
     return true;
 }
 
-bool UniqueIDBDatabaseBackingStoreSQLite::createObjectStore(const IDBTransactionIdentifier& identifier, const IDBObjectStoreMetadata& metadata)
+bool UniqueIDBDatabaseBackingStoreSQLite::createObjectStore(const IDBIdentifier& identifier, const IDBObjectStoreMetadata& metadata)
 {
     ASSERT(!isMainThread());
     ASSERT(m_sqliteDB);
@@ -397,7 +397,7 @@ bool UniqueIDBDatabaseBackingStoreSQLite::createObjectStore(const IDBTransaction
     return true;
 }
 
-bool UniqueIDBDatabaseBackingStoreSQLite::deleteObjectStore(const IDBTransactionIdentifier& identifier, int64_t objectStoreID)
+bool UniqueIDBDatabaseBackingStoreSQLite::deleteObjectStore(const IDBIdentifier& identifier, int64_t objectStoreID)
 {
     ASSERT(!isMainThread());
     ASSERT(m_sqliteDB);
@@ -456,7 +456,7 @@ bool UniqueIDBDatabaseBackingStoreSQLite::deleteObjectStore(const IDBTransaction
     return true;
 }
 
-bool UniqueIDBDatabaseBackingStoreSQLite::clearObjectStore(const IDBTransactionIdentifier& identifier, int64_t objectStoreID)
+bool UniqueIDBDatabaseBackingStoreSQLite::clearObjectStore(const IDBIdentifier& identifier, int64_t objectStoreID)
 {
     ASSERT(!isMainThread());
     ASSERT(m_sqliteDB);
@@ -486,7 +486,7 @@ bool UniqueIDBDatabaseBackingStoreSQLite::clearObjectStore(const IDBTransactionI
     return true;
 }
 
-bool UniqueIDBDatabaseBackingStoreSQLite::createIndex(const IDBTransactionIdentifier& identifier, int64_t objectStoreID, const WebCore::IDBIndexMetadata& metadata)
+bool UniqueIDBDatabaseBackingStoreSQLite::createIndex(const IDBIdentifier& identifier, int64_t objectStoreID, const WebCore::IDBIndexMetadata& metadata)
 {
     ASSERT(!isMainThread());
     ASSERT(m_sqliteDB);
@@ -524,7 +524,7 @@ bool UniqueIDBDatabaseBackingStoreSQLite::createIndex(const IDBTransactionIdenti
     return true;
 }
 
-bool UniqueIDBDatabaseBackingStoreSQLite::deleteIndex(const IDBTransactionIdentifier& identifier, int64_t objectStoreID, int64_t indexID)
+bool UniqueIDBDatabaseBackingStoreSQLite::deleteIndex(const IDBIdentifier& identifier, int64_t objectStoreID, int64_t indexID)
 {
     ASSERT(!isMainThread());
     ASSERT(m_sqliteDB);
@@ -555,19 +555,19 @@ bool UniqueIDBDatabaseBackingStoreSQLite::deleteIndex(const IDBTransactionIdenti
     return true;
 }
 
-PassRefPtr<IDBKey> UniqueIDBDatabaseBackingStoreSQLite::generateKey(const IDBTransactionIdentifier&, int64_t objectStoreID)
+PassRefPtr<IDBKey> UniqueIDBDatabaseBackingStoreSQLite::generateKey(const IDBIdentifier&, int64_t objectStoreID)
 {
     // FIXME (<rdar://problem/15877909>): Implement
     return nullptr;
 }
 
-bool UniqueIDBDatabaseBackingStoreSQLite::keyExistsInObjectStore(const IDBTransactionIdentifier&, int64_t objectStoreID, const IDBKey&, bool& keyExists)
+bool UniqueIDBDatabaseBackingStoreSQLite::keyExistsInObjectStore(const IDBIdentifier&, int64_t objectStoreID, const IDBKey&, bool& keyExists)
 {
     // FIXME: When Get support is implemented, we need to implement this also (<rdar://problem/15779644>)
     return false;
 }
 
-bool UniqueIDBDatabaseBackingStoreSQLite::putRecord(const IDBTransactionIdentifier& identifier, int64_t objectStoreID, const IDBKey& key, const uint8_t* valueBuffer, size_t valueSize)
+bool UniqueIDBDatabaseBackingStoreSQLite::putRecord(const IDBIdentifier& identifier, int64_t objectStoreID, const IDBKey& key, const uint8_t* valueBuffer, size_t valueSize)
 {
     ASSERT(!isMainThread());
     ASSERT(m_sqliteDB);
@@ -603,13 +603,13 @@ bool UniqueIDBDatabaseBackingStoreSQLite::putRecord(const IDBTransactionIdentifi
     return true;
 }
 
-bool UniqueIDBDatabaseBackingStoreSQLite::updateKeyGenerator(const IDBTransactionIdentifier&, int64_t objectStoreId, const IDBKey&, bool checkCurrent)
+bool UniqueIDBDatabaseBackingStoreSQLite::updateKeyGenerator(const IDBIdentifier&, int64_t objectStoreId, const IDBKey&, bool checkCurrent)
 {
     // FIXME (<rdar://problem/15877909>): Implement
     return false;
 }
 
-bool UniqueIDBDatabaseBackingStoreSQLite::getKeyRecordFromObjectStore(const IDBTransactionIdentifier& identifier, int64_t objectStoreID, const WebCore::IDBKey& key, RefPtr<WebCore::SharedBuffer>& result)
+bool UniqueIDBDatabaseBackingStoreSQLite::getKeyRecordFromObjectStore(const IDBIdentifier& identifier, int64_t objectStoreID, const WebCore::IDBKey& key, RefPtr<WebCore::SharedBuffer>& result)
 {
     ASSERT(!isMainThread());
     ASSERT(m_sqliteDB);
@@ -655,7 +655,7 @@ bool UniqueIDBDatabaseBackingStoreSQLite::getKeyRecordFromObjectStore(const IDBT
     return true;
 }
 
-bool UniqueIDBDatabaseBackingStoreSQLite::getKeyRangeRecordFromObjectStore(const IDBTransactionIdentifier& identifier, int64_t objectStoreID, const WebCore::IDBKeyRange& keyRange, RefPtr<WebCore::SharedBuffer>& result, RefPtr<WebCore::IDBKey>& resultKey)
+bool UniqueIDBDatabaseBackingStoreSQLite::getKeyRangeRecordFromObjectStore(const IDBIdentifier& identifier, int64_t objectStoreID, const WebCore::IDBKeyRange& keyRange, RefPtr<WebCore::SharedBuffer>& result, RefPtr<WebCore::IDBKey>& resultKey)
 {
     ASSERT(!isMainThread());
     ASSERT(m_sqliteDB);

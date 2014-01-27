@@ -28,7 +28,7 @@
 
 #if ENABLE(INDEXED_DATABASE) && ENABLE(DATABASE_PROCESS)
 
-#include "IDBTransactionIdentifier.h"
+#include "IDBIdentifier.h"
 #include <wtf/Noncopyable.h>
 
 namespace WebCore {
@@ -47,14 +47,14 @@ namespace WebKit {
 class SQLiteIDBTransaction {
     WTF_MAKE_NONCOPYABLE(SQLiteIDBTransaction);
 public:
-    static std::unique_ptr<SQLiteIDBTransaction> create(const IDBTransactionIdentifier& identifier, WebCore::IndexedDB::TransactionMode mode)
+    static std::unique_ptr<SQLiteIDBTransaction> create(const IDBIdentifier& identifier, WebCore::IndexedDB::TransactionMode mode)
     {
         return std::unique_ptr<SQLiteIDBTransaction>(new SQLiteIDBTransaction(identifier, mode));
     }
 
     ~SQLiteIDBTransaction();
 
-    const IDBTransactionIdentifier& identifier() const { return m_identifier; }
+    const IDBIdentifier& identifier() const { return m_identifier; }
 
     bool begin(WebCore::SQLiteDatabase&);
     bool commit();
@@ -65,9 +65,9 @@ public:
     bool inProgress() const;
 
 private:
-    SQLiteIDBTransaction(const IDBTransactionIdentifier&, WebCore::IndexedDB::TransactionMode);
+    SQLiteIDBTransaction(const IDBIdentifier&, WebCore::IndexedDB::TransactionMode);
 
-    IDBTransactionIdentifier m_identifier;
+    IDBIdentifier m_identifier;
     WebCore::IndexedDB::TransactionMode m_mode;
 
     std::unique_ptr<WebCore::SQLiteTransaction> m_sqliteTransaction;

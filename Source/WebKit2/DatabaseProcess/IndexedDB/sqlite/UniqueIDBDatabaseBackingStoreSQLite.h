@@ -54,26 +54,26 @@ public:
 
     virtual std::unique_ptr<WebCore::IDBDatabaseMetadata> getOrEstablishMetadata() override;
 
-    virtual bool establishTransaction(const IDBTransactionIdentifier&, const Vector<int64_t>& objectStoreIDs, WebCore::IndexedDB::TransactionMode) override;
-    virtual bool beginTransaction(const IDBTransactionIdentifier&) override;
-    virtual bool commitTransaction(const IDBTransactionIdentifier&) override;
-    virtual bool resetTransaction(const IDBTransactionIdentifier&) override;
-    virtual bool rollbackTransaction(const IDBTransactionIdentifier&) override;
+    virtual bool establishTransaction(const IDBIdentifier&, const Vector<int64_t>& objectStoreIDs, WebCore::IndexedDB::TransactionMode) override;
+    virtual bool beginTransaction(const IDBIdentifier&) override;
+    virtual bool commitTransaction(const IDBIdentifier&) override;
+    virtual bool resetTransaction(const IDBIdentifier&) override;
+    virtual bool rollbackTransaction(const IDBIdentifier&) override;
 
-    virtual bool changeDatabaseVersion(const IDBTransactionIdentifier&, uint64_t newVersion) override;
-    virtual bool createObjectStore(const IDBTransactionIdentifier&, const WebCore::IDBObjectStoreMetadata&) override;
-    virtual bool deleteObjectStore(const IDBTransactionIdentifier&, int64_t objectStoreID) override;
-    virtual bool clearObjectStore(const IDBTransactionIdentifier&, int64_t objectStoreID) override;
-    virtual bool createIndex(const IDBTransactionIdentifier&, int64_t objectStoreID, const WebCore::IDBIndexMetadata&) override;
-    virtual bool deleteIndex(const IDBTransactionIdentifier&, int64_t objectStoreID, int64_t indexID) override;
+    virtual bool changeDatabaseVersion(const IDBIdentifier&, uint64_t newVersion) override;
+    virtual bool createObjectStore(const IDBIdentifier&, const WebCore::IDBObjectStoreMetadata&) override;
+    virtual bool deleteObjectStore(const IDBIdentifier&, int64_t objectStoreID) override;
+    virtual bool clearObjectStore(const IDBIdentifier&, int64_t objectStoreID) override;
+    virtual bool createIndex(const IDBIdentifier&, int64_t objectStoreID, const WebCore::IDBIndexMetadata&) override;
+    virtual bool deleteIndex(const IDBIdentifier&, int64_t objectStoreID, int64_t indexID) override;
 
-    virtual PassRefPtr<WebCore::IDBKey> generateKey(const IDBTransactionIdentifier&, int64_t objectStoreID) override;
-    virtual bool keyExistsInObjectStore(const IDBTransactionIdentifier&, int64_t objectStoreID, const WebCore::IDBKey&, bool& keyExists) override;
-    virtual bool putRecord(const IDBTransactionIdentifier&, int64_t objectStoreID, const WebCore::IDBKey&, const uint8_t* valueBuffer, size_t valueSize) override;
-    virtual bool updateKeyGenerator(const IDBTransactionIdentifier&, int64_t objectStoreId, const WebCore::IDBKey&, bool checkCurrent) override;
+    virtual PassRefPtr<WebCore::IDBKey> generateKey(const IDBIdentifier&, int64_t objectStoreID) override;
+    virtual bool keyExistsInObjectStore(const IDBIdentifier&, int64_t objectStoreID, const WebCore::IDBKey&, bool& keyExists) override;
+    virtual bool putRecord(const IDBIdentifier&, int64_t objectStoreID, const WebCore::IDBKey&, const uint8_t* valueBuffer, size_t valueSize) override;
+    virtual bool updateKeyGenerator(const IDBIdentifier&, int64_t objectStoreId, const WebCore::IDBKey&, bool checkCurrent) override;
 
-    virtual bool getKeyRecordFromObjectStore(const IDBTransactionIdentifier&, int64_t objectStoreID, const WebCore::IDBKey&, RefPtr<WebCore::SharedBuffer>& result) override;
-    virtual bool getKeyRangeRecordFromObjectStore(const IDBTransactionIdentifier&, int64_t objectStoreID, const WebCore::IDBKeyRange&, RefPtr<WebCore::SharedBuffer>& result, RefPtr<WebCore::IDBKey>& resultKey) override;
+    virtual bool getKeyRecordFromObjectStore(const IDBIdentifier&, int64_t objectStoreID, const WebCore::IDBKey&, RefPtr<WebCore::SharedBuffer>& result) override;
+    virtual bool getKeyRangeRecordFromObjectStore(const IDBIdentifier&, int64_t objectStoreID, const WebCore::IDBKeyRange&, RefPtr<WebCore::SharedBuffer>& result, RefPtr<WebCore::IDBKey>& resultKey) override;
 
 private:
     UniqueIDBDatabaseBackingStoreSQLite(const UniqueIDBDatabaseIdentifier&, const String& databaseDirectory);
@@ -89,7 +89,7 @@ private:
 
     std::unique_ptr<WebCore::SQLiteDatabase> m_sqliteDB;
 
-    HashMap<IDBTransactionIdentifier, std::unique_ptr<SQLiteIDBTransaction>> m_transactions;
+    HashMap<IDBIdentifier, std::unique_ptr<SQLiteIDBTransaction>> m_transactions;
 };
 
 } // namespace WebKit

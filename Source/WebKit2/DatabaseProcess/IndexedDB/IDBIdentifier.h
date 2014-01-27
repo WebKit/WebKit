@@ -23,8 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef IDBTransactionIdentifier_h
-#define IDBTransactionIdentifier_h
+#ifndef IDBIdentifier_h
+#define IDBIdentifier_h
 
 #if ENABLE(INDEXED_DATABASE) && ENABLE(DATABASE_PROCESS)
 
@@ -35,79 +35,79 @@ namespace WebKit {
 
 class DatabaseProcessIDBConnection;
 
-class IDBTransactionIdentifier {
+class IDBIdentifier {
 public:
-    IDBTransactionIdentifier()
+    IDBIdentifier()
         : m_connection(nullptr)
-        , m_transactionID(0)
+        , m_identifier(0)
     {
     }
 
-    IDBTransactionIdentifier(DatabaseProcessIDBConnection& connection, int64_t transactionID)
+    IDBIdentifier(DatabaseProcessIDBConnection& connection, int64_t identifier)
         : m_connection(&connection)
-        , m_transactionID(transactionID)
+        , m_identifier(identifier)
     {
     }
 
-    IDBTransactionIdentifier isolatedCopy() const
+    IDBIdentifier isolatedCopy() const
     {
         return *this;
     }
 
     bool isEmpty() const
     {
-        return !m_connection && !m_transactionID;
+        return !m_connection && !m_identifier;
     }
 
     unsigned hash() const
     {
-        uint64_t hashCodes[2] = { reinterpret_cast<uint64_t>(m_connection), static_cast<uint64_t>(m_transactionID) };
+        uint64_t hashCodes[2] = { reinterpret_cast<uint64_t>(m_connection), static_cast<uint64_t>(m_identifier) };
         return StringHasher::hashMemory<sizeof(hashCodes)>(hashCodes);
     }
 
-    bool operator==(const IDBTransactionIdentifier& other) const
+    bool operator==(const IDBIdentifier& other) const
     {
-        return m_connection == other.m_connection && m_transactionID == other.m_transactionID;
+        return m_connection == other.m_connection && m_identifier == other.m_identifier;
     }
 
-    IDBTransactionIdentifier(WTF::HashTableDeletedValueType)
+    IDBIdentifier(WTF::HashTableDeletedValueType)
         : m_connection(nullptr)
-        , m_transactionID(-1)
+        , m_identifier(-1)
     {
     }
 
     bool isHashTableDeletedValue() const
     {
-        return !m_connection && m_transactionID == -1;
+        return !m_connection && m_identifier == -1;
     }
 
 private:
     // If any members are added that cannot be safely copied across threads, isolatedCopy() must be updated.
     DatabaseProcessIDBConnection* m_connection;
-    int64_t m_transactionID;
+    int64_t m_identifier;
 };
 
-struct IDBTransactionIdentifierHash {
-    static unsigned hash(const IDBTransactionIdentifier& a) { return a.hash(); }
-    static bool equal(const IDBTransactionIdentifier& a, const IDBTransactionIdentifier& b) { return a == b; }
+struct IDBIdentifierHash {
+    static unsigned hash(const IDBIdentifier& a) { return a.hash(); }
+    static bool equal(const IDBIdentifier& a, const IDBIdentifier& b) { return a == b; }
     static const bool safeToCompareToEmptyOrDeleted = false;
 };
 
-struct IDBTransactionIdentifierHashTraits : WTF::SimpleClassHashTraits<IDBTransactionIdentifier> {
+struct IDBIdentifierHashTraits : WTF::SimpleClassHashTraits<IDBIdentifier> {
     static const bool hasIsEmptyValueFunction = true;
-    static bool isEmptyValue(const IDBTransactionIdentifier& info) { return info.isEmpty(); }
+    static bool isEmptyValue(const IDBIdentifier& info) { return info.isEmpty(); }
 };
 
 } // namespace WebKit
 
 namespace WTF {
 
-template<> struct HashTraits<WebKit::IDBTransactionIdentifier> : WebKit::IDBTransactionIdentifierHashTraits { };
-template<> struct DefaultHash<WebKit::IDBTransactionIdentifier> {
-    typedef WebKit::IDBTransactionIdentifierHash Hash;
+template<> struct HashTraits<WebKit::IDBIdentifier> : WebKit::IDBIdentifierHashTraits { };
+template<> struct DefaultHash<WebKit::IDBIdentifier> {
+    typedef WebKit::IDBIdentifierHash Hash;
 };
 
 } // namespace WTF
 
 #endif // ENABLE(INDEXED_DATABASE) && ENABLE(DATABASE_PROCESS)
-#endif // IDBTransactionIdentifier_h
+#endif // IDBIdentifier_h

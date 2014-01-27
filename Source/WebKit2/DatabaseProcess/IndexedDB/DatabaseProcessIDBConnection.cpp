@@ -30,7 +30,7 @@
 
 #include "DatabaseProcess.h"
 #include "DatabaseToWebProcessConnection.h"
-#include "IDBTransactionIdentifier.h"
+#include "IDBIdentifier.h"
 #include "Logging.h"
 #include "UniqueIDBDatabase.h"
 #include "WebCoreArgumentCoders.h"
@@ -91,7 +91,7 @@ void DatabaseProcessIDBConnection::openTransaction(uint64_t requestID, int64_t t
 
     IndexedDB::TransactionMode mode = static_cast<IndexedDB::TransactionMode>(intMode);
     RefPtr<DatabaseProcessIDBConnection> connection(this);
-    m_uniqueIDBDatabase->openTransaction(IDBTransactionIdentifier(*this, transactionID), objectStoreIDs, mode, [connection, requestID](bool success) {
+    m_uniqueIDBDatabase->openTransaction(IDBIdentifier(*this, transactionID), objectStoreIDs, mode, [connection, requestID](bool success) {
         connection->send(Messages::WebIDBServerConnection::DidOpenTransaction(requestID, success));
     });
 }
@@ -103,7 +103,7 @@ void DatabaseProcessIDBConnection::beginTransaction(uint64_t requestID, int64_t 
     LOG(IDB, "DatabaseProcess beginTransaction request ID %llu", requestID);
 
     RefPtr<DatabaseProcessIDBConnection> connection(this);
-    m_uniqueIDBDatabase->beginTransaction(IDBTransactionIdentifier(*this, transactionID), [connection, requestID](bool success) {
+    m_uniqueIDBDatabase->beginTransaction(IDBIdentifier(*this, transactionID), [connection, requestID](bool success) {
         connection->send(Messages::WebIDBServerConnection::DidBeginTransaction(requestID, success));
     });
 }
@@ -115,7 +115,7 @@ void DatabaseProcessIDBConnection::commitTransaction(uint64_t requestID, int64_t
     LOG(IDB, "DatabaseProcess commitTransaction request ID %llu", requestID);
 
     RefPtr<DatabaseProcessIDBConnection> connection(this);
-    m_uniqueIDBDatabase->commitTransaction(IDBTransactionIdentifier(*this, transactionID), [connection, requestID](bool success) {
+    m_uniqueIDBDatabase->commitTransaction(IDBIdentifier(*this, transactionID), [connection, requestID](bool success) {
         connection->send(Messages::WebIDBServerConnection::DidCommitTransaction(requestID, success));
     });
 }
@@ -127,7 +127,7 @@ void DatabaseProcessIDBConnection::resetTransaction(uint64_t requestID, int64_t 
     LOG(IDB, "DatabaseProcess resetTransaction request ID %llu", requestID);
 
     RefPtr<DatabaseProcessIDBConnection> connection(this);
-    m_uniqueIDBDatabase->resetTransaction(IDBTransactionIdentifier(*this, transactionID), [connection, requestID](bool success) {
+    m_uniqueIDBDatabase->resetTransaction(IDBIdentifier(*this, transactionID), [connection, requestID](bool success) {
         connection->send(Messages::WebIDBServerConnection::DidResetTransaction(requestID, success));
     });
 }
@@ -139,7 +139,7 @@ void DatabaseProcessIDBConnection::rollbackTransaction(uint64_t requestID, int64
     LOG(IDB, "DatabaseProcess rollbackTransaction request ID %llu", requestID);
 
     RefPtr<DatabaseProcessIDBConnection> connection(this);
-    m_uniqueIDBDatabase->rollbackTransaction(IDBTransactionIdentifier(*this, transactionID), [connection, requestID](bool success) {
+    m_uniqueIDBDatabase->rollbackTransaction(IDBIdentifier(*this, transactionID), [connection, requestID](bool success) {
         connection->send(Messages::WebIDBServerConnection::DidRollbackTransaction(requestID, success));
     });
 }
@@ -151,7 +151,7 @@ void DatabaseProcessIDBConnection::changeDatabaseVersion(uint64_t requestID, int
     LOG(IDB, "DatabaseProcess changeDatabaseVersion request ID %llu, new version %llu", requestID, newVersion);
 
     RefPtr<DatabaseProcessIDBConnection> connection(this);
-    m_uniqueIDBDatabase->changeDatabaseVersion(IDBTransactionIdentifier(*this, transactionID), newVersion, [connection, requestID](bool success) {
+    m_uniqueIDBDatabase->changeDatabaseVersion(IDBIdentifier(*this, transactionID), newVersion, [connection, requestID](bool success) {
         connection->send(Messages::WebIDBServerConnection::DidChangeDatabaseVersion(requestID, success));
     });
 }
@@ -162,7 +162,7 @@ void DatabaseProcessIDBConnection::createObjectStore(uint64_t requestID, int64_t
 
     LOG(IDB, "DatabaseProcess createObjectStore request ID %llu, object store name '%s'", requestID, metadata.name.utf8().data());
     RefPtr<DatabaseProcessIDBConnection> connection(this);
-    m_uniqueIDBDatabase->createObjectStore(IDBTransactionIdentifier(*this, transactionID), metadata, [connection, requestID](bool success) {
+    m_uniqueIDBDatabase->createObjectStore(IDBIdentifier(*this, transactionID), metadata, [connection, requestID](bool success) {
         connection->send(Messages::WebIDBServerConnection::DidCreateObjectStore(requestID, success));
     });
 }
@@ -173,7 +173,7 @@ void DatabaseProcessIDBConnection::deleteObjectStore(uint64_t requestID, int64_t
 
     LOG(IDB, "DatabaseProcess deleteObjectStore request ID %llu, object store id %lli", requestID, objectStoreID);
     RefPtr<DatabaseProcessIDBConnection> connection(this);
-    m_uniqueIDBDatabase->deleteObjectStore(IDBTransactionIdentifier(*this, transactionID), objectStoreID, [connection, requestID](bool success) {
+    m_uniqueIDBDatabase->deleteObjectStore(IDBIdentifier(*this, transactionID), objectStoreID, [connection, requestID](bool success) {
         connection->send(Messages::WebIDBServerConnection::DidDeleteObjectStore(requestID, success));
     });
 }
@@ -184,7 +184,7 @@ void DatabaseProcessIDBConnection::clearObjectStore(uint64_t requestID, int64_t 
 
     LOG(IDB, "DatabaseProcess clearObjectStore request ID %llu, object store id %lli", requestID, objectStoreID);
     RefPtr<DatabaseProcessIDBConnection> connection(this);
-    m_uniqueIDBDatabase->clearObjectStore(IDBTransactionIdentifier(*this, transactionID), objectStoreID, [connection, requestID](bool success) {
+    m_uniqueIDBDatabase->clearObjectStore(IDBIdentifier(*this, transactionID), objectStoreID, [connection, requestID](bool success) {
         connection->send(Messages::WebIDBServerConnection::DidClearObjectStore(requestID, success));
     });
 }
@@ -195,7 +195,7 @@ void DatabaseProcessIDBConnection::createIndex(uint64_t requestID, int64_t trans
 
     LOG(IDB, "DatabaseProcess createIndex request ID %llu, object store id %lli", requestID, objectStoreID);
     RefPtr<DatabaseProcessIDBConnection> connection(this);
-    m_uniqueIDBDatabase->createIndex(IDBTransactionIdentifier(*this, transactionID), objectStoreID, metadata, [connection, requestID](bool success) {
+    m_uniqueIDBDatabase->createIndex(IDBIdentifier(*this, transactionID), objectStoreID, metadata, [connection, requestID](bool success) {
         connection->send(Messages::WebIDBServerConnection::DidCreateIndex(requestID, success));
     });
 }
@@ -206,7 +206,7 @@ void DatabaseProcessIDBConnection::deleteIndex(uint64_t requestID, int64_t trans
 
     LOG(IDB, "DatabaseProcess deleteIndex request ID %llu, object store id %lli", requestID, objectStoreID);
     RefPtr<DatabaseProcessIDBConnection> connection(this);
-    m_uniqueIDBDatabase->deleteIndex(IDBTransactionIdentifier(*this, transactionID), objectStoreID, indexID, [connection, requestID](bool success) {
+    m_uniqueIDBDatabase->deleteIndex(IDBIdentifier(*this, transactionID), objectStoreID, indexID, [connection, requestID](bool success) {
         connection->send(Messages::WebIDBServerConnection::DidDeleteIndex(requestID, success));
     });
 }
@@ -217,7 +217,7 @@ void DatabaseProcessIDBConnection::putRecord(uint64_t requestID, int64_t transac
 
     LOG(IDB, "DatabaseProcess putRecord request ID %llu, object store id %lli", requestID, objectStoreID);
     RefPtr<DatabaseProcessIDBConnection> connection(this);
-    m_uniqueIDBDatabase->putRecord(IDBTransactionIdentifier(*this, transactionID), objectStoreID, key, value, putMode, indexIDs, indexKeys, [connection, requestID](const IDBKeyData& keyData, uint32_t errorCode, const String& errorMessage) {
+    m_uniqueIDBDatabase->putRecord(IDBIdentifier(*this, transactionID), objectStoreID, key, value, putMode, indexIDs, indexKeys, [connection, requestID](const IDBKeyData& keyData, uint32_t errorCode, const String& errorMessage) {
         connection->send(Messages::WebIDBServerConnection::DidPutRecord(requestID, keyData, errorCode, errorMessage));
     });
 }
@@ -228,7 +228,7 @@ void DatabaseProcessIDBConnection::getRecord(uint64_t requestID, int64_t transac
 
     LOG(IDB, "DatabaseProcess getRecord request ID %llu, object store id %lli", requestID, objectStoreID);
     RefPtr<DatabaseProcessIDBConnection> connection(this);
-    m_uniqueIDBDatabase->getRecord(IDBTransactionIdentifier(*this, transactionID), objectStoreID, indexID, keyRange, static_cast<IndexedDB::CursorType>(cursorType), [connection, requestID](const IDBGetResult& getResult, uint32_t errorCode, const String& errorMessage) {
+    m_uniqueIDBDatabase->getRecord(IDBIdentifier(*this, transactionID), objectStoreID, indexID, keyRange, static_cast<IndexedDB::CursorType>(cursorType), [connection, requestID](const IDBGetResult& getResult, uint32_t errorCode, const String& errorMessage) {
         connection->send(Messages::WebIDBServerConnection::DidGetRecord(requestID, getResult, errorCode, errorMessage));
     });
 }

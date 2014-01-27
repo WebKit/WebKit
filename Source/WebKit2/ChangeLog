@@ -1,3 +1,31 @@
+2014-01-27  Brady Eidson  <beidson@apple.com>
+
+        IDB: Rename "IDBTransactionIdentifier" to be more general purpose
+        https://bugs.webkit.org/show_bug.cgi?id=127717
+
+        Reviewed by Tim Horton.
+
+        Global rename of IDBTransactionIdentifier to IDBIdentifier.
+
+        * DatabaseProcess/IndexedDB/IDBIdentifier.h: Renamed from Source/WebKit2/DatabaseProcess/IndexedDB/IDBTransactionIdentifier.h.
+
+        * DatabaseProcess/IndexedDB/DatabaseProcessIDBConnection.cpp:
+
+        * DatabaseProcess/IndexedDB/UniqueIDBDatabase.cpp:
+        * DatabaseProcess/IndexedDB/UniqueIDBDatabase.h:
+
+        * DatabaseProcess/IndexedDB/sqlite/SQLiteIDBTransaction.cpp:
+        * DatabaseProcess/IndexedDB/sqlite/SQLiteIDBTransaction.h:
+
+        * DatabaseProcess/IndexedDB/UniqueIDBDatabaseBackingStore.h:
+        * DatabaseProcess/IndexedDB/sqlite/UniqueIDBDatabaseBackingStoreSQLite.cpp:
+        * DatabaseProcess/IndexedDB/sqlite/UniqueIDBDatabaseBackingStoreSQLite.h:
+
+        * Shared/WebCrossThreadCopier.cpp:
+        * Shared/WebCrossThreadCopier.h:
+
+        * WebKit2.xcodeproj/project.pbxproj:
+
 2014-01-27  Anders Carlsson  <andersca@apple.com>
 
         Move underlying C++ objects to class extensions
