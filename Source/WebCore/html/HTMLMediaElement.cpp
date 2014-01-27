@@ -4108,11 +4108,16 @@ PassRefPtr<TimeRanges> HTMLMediaElement::seekable() const
 
 bool HTMLMediaElement::potentiallyPlaying() const
 {
-    // When media engine ran out of buffered data it's not playing.
-    if (m_readyStateMaximum < HAVE_FUTURE_DATA && m_readyState < HAVE_FUTURE_DATA)
+    if (isBlockedOnMediaController())
+        return false;
+    
+    if (!couldPlayIfEnoughData())
         return false;
 
-    return couldPlayIfEnoughData() && !isBlockedOnMediaController();
+    if (m_readyState >= HAVE_FUTURE_DATA)
+        return true;
+
+    return m_readyStateMaximum >= HAVE_FUTURE_DATA && m_readyState < HAVE_FUTURE_DATA;
 }
 
 bool HTMLMediaElement::couldPlayIfEnoughData() const
@@ -4242,11 +4247,13 @@ void HTMLMediaElement::updatePlayState()
     bool shouldBePlaying = potentiallyPlaying();
     bool playerPaused = m_player->paused();
 
-#if PLATFORM(IOS)
-    if (shouldBePlaying && !m_requestingPlay && !m_player->readyForPlayback())
-        shouldBePlaying = false;
-    else if (!shouldBePlaying && m_requestingPlay && m_player->readyForPlayback())
-        shouldBePlaying = true;
+#if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
+    if (shouldUseVideoPluginProxy()) {
+        if (shouldBePlaying && !m_requestingPlay && !m_player->readyForPlayback())
+            shouldBePlaying = false;
+        else if (!shouldBePlaying && m_requestingPlay && m_player->readyForPlayback())
+            shouldBePlaying = true;
+    }
 #endif
 
     LOG(Media, "HTMLMediaElement::updatePlayState - shouldBePlaying = %s, playerPaused = %s", 

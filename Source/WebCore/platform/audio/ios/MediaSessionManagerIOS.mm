@@ -73,6 +73,7 @@ MediaSessionManageriOS::MediaSessionManageriOS()
     :MediaSessionManager()
     , m_objcObserver(adoptNS([[WebMediaSessionHelper alloc] initWithCallback:this]))
 {
+    resetRestrictions();
 }
 
 void MediaSessionManageriOS::resetRestrictions()

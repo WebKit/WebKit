@@ -1,3 +1,18 @@
+2014-01-27  Eric Carlson  <eric.carlson@apple.com>
+
+        [iOS] preload=none prevents play()
+        https://bugs.webkit.org/show_bug.cgi?id=127702
+
+        Reviewed by Jer Noble.
+
+        No new tests, covered by existing tests.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::potentiallyPlaying): Cleanup logic to make it simpler to understand,
+            fix logic error introduced in r161973
+        (WebCore::HTMLMediaElement::updatePlayState): Conditionalize some iOS-only code on whether or not
+            we are using the plug-in proxy.
+
 2014-01-27  Brady Eidson  <beidson@apple.com>
 
         IDB: LevelDB backing store shouldn't know about IDBCursor or IDBCallbacks
