@@ -24,7 +24,7 @@
  */
 
 var settings = new Settings;
-var buildbot = new WebKitBuildbot;
+var buildbots = [ new WebKitBuildbot ];
 var webkitTrac = new Trac("http://trac.webkit.org/");
 var bugzilla = new Bugzilla;
 var ews = new EWS;

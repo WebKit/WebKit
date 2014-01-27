@@ -28,35 +28,38 @@ var EWSCategory = "ews";
 
 var categorizedQueuesByPlatformAndBuildType = {};
 
-for (var id in buildbot.queues) {
-    var queue = buildbot.queues[id];
-    var platform = categorizedQueuesByPlatformAndBuildType[queue.platform];
-    if (!platform)
-        platform = categorizedQueuesByPlatformAndBuildType[queue.platform] = {};
-    if (!platform.builders)
-        platform.builders = {};
+for (var i = 0; i < buildbots.length; ++i) {
+    var buildbot = buildbots[i];
+    for (var id in buildbot.queues) {
+        var queue = buildbot.queues[id];
+        var platform = categorizedQueuesByPlatformAndBuildType[queue.platform];
+        if (!platform)
+            platform = categorizedQueuesByPlatformAndBuildType[queue.platform] = {};
+        if (!platform.builders)
+            platform.builders = {};
 
-    var categoryName;
-    if (queue.builder) {
-        categoryName = "builders";
-    } else if (queue.tester) {
-        categoryName = queue.testCategory;
-    } else {
-        console.assert("Unknown queue type.");
-        continue;
+        var categoryName;
+        if (queue.builder) {
+            categoryName = "builders";
+        } else if (queue.tester) {
+            categoryName = queue.testCategory;
+        } else {
+            console.assert("Unknown queue type.");
+            continue;
+        }
+
+        category = platform[categoryName];
+        if (!category)
+            category = platform[categoryName] = {};
+
+        var buildType = queue.debug ? "debug" : "release";
+
+        buildQueues = category[buildType];
+        if (!buildQueues)
+            buildQueues = category[buildType] = [];
+
+        buildQueues.push(queue);
     }
-
-    category = platform[categoryName];
-    if (!category)
-        category = platform[categoryName] = {};
-
-    var buildType = queue.debug ? "debug" : "release";
-
-    buildQueues = category[buildType];
-    if (!buildQueues)
-        buildQueues = category[buildType] = [];
-
-    buildQueues.push(queue);
 }
 
 if (hasEWS) {
