@@ -33,7 +33,6 @@
 #include "FontCustomPlatformData.h"
 #include "FontPlatformData.h"
 #include "MemoryCache.h"
-#include "OpenTypeSanitizer.h"
 #include "ResourceBuffer.h"
 #include "SharedBuffer.h"
 #include "TextResourceDecoder.h"
@@ -98,11 +97,6 @@ bool CachedFont::ensureCustomFontData()
         SharedBuffer* buffer = m_data.get()->sharedBuffer();
         ASSERT(buffer);
 
-#if USE(OPENTYPE_SANITIZER)
-        OpenTypeSanitizer sanitizer(buffer);
-        RefPtr<SharedBuffer> transcodeBuffer = sanitizer.sanitize();
-        buffer = transcodeBuffer.get();
-#else
         RefPtr<SharedBuffer> sfntBuffer;
         if (isWOFF(buffer)) {
             Vector<char> sfnt;
@@ -112,7 +106,6 @@ bool CachedFont::ensureCustomFontData()
             } else
                 buffer = nullptr;
         }
-#endif
 
         m_fontData = buffer ? createFontCustomPlatformData(*buffer) : nullptr;
         if (m_fontData)

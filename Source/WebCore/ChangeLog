@@ -1,3 +1,22 @@
+2014-01-27  Andreas Kling  <akling@apple.com>
+
+        Remove unused USE(OPENTYPE_SANITIZER) code.
+        <https://webkit.org/b/127710>
+
+        This code was only used by the Chromium port.
+
+        Reviewed by Darin Adler.
+
+        * GNUmakefile.list.am:
+        * WebCore.xcodeproj/project.pbxproj:
+        * loader/cache/CachedFont.cpp:
+        (WebCore::CachedFont::ensureCustomFontData):
+        * platform/graphics/WOFFFileFormat.cpp:
+        * platform/graphics/WOFFFileFormat.h:
+        * platform/graphics/opentype/OpenTypeSanitizer.cpp: Removed.
+        * platform/graphics/opentype/OpenTypeSanitizer.h: Removed.
+
+
 2014-01-27  Andy Estes  <aestes@apple.com>
 
         Stop the code generator from adding ENABLE() macros to Objective-C DOM headers
