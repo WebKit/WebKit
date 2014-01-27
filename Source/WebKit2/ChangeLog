@@ -1,3 +1,9 @@
+2014-01-27  Tim Horton  <timothy_horton@apple.com>
+
+        Fix the build on case-sensitive filesystems
+
+        * WebProcess/WebPage/ViewGestureGeometryCollector.h:
+
 2014-01-27  Brady Eidson  <beidson@apple.com>
 
         IDB: Refactor out the last of the operation callbacks that are called by the LevelDB backing store
