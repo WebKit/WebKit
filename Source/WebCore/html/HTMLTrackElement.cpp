@@ -213,15 +213,15 @@ void HTMLTrackElement::loadTimerFired(Timer<HTMLTrackElement>&)
 
     // 8. If the track element's parent is a media element then let CORS mode be the state of the parent media
     // element's crossorigin content attribute. Otherwise, let CORS mode be No CORS.
-    if (!canLoadUrl(url)) {
-        didCompleteLoad(&ensureTrack(), HTMLTrackElement::Failure);
+    if (!canLoadURL(url)) {
+        didCompleteLoad(HTMLTrackElement::Failure);
         return;
     }
 
     ensureTrack().scheduleLoad(url);
 }
 
-bool HTMLTrackElement::canLoadUrl(const URL& url)
+bool HTMLTrackElement::canLoadURL(const URL& url)
 {
     if (!RuntimeEnabledFeatures::sharedFeatures().webkitVideoTrackEnabled())
         return false;
@@ -239,14 +239,14 @@ bool HTMLTrackElement::canLoadUrl(const URL& url)
         return false;
 
     if (!document().contentSecurityPolicy()->allowMediaFromSource(url)) {
-        LOG(Media, "HTMLTrackElement::canLoadUrl(%s) -> rejected by Content Security Policy", urlForLoggingTrack(url).utf8().data());
+        LOG(Media, "HTMLTrackElement::canLoadURL(%s) -> rejected by Content Security Policy", urlForLoggingTrack(url).utf8().data());
         return false;
     }
     
     return dispatchBeforeLoadEvent(url.string());
 }
 
-void HTMLTrackElement::didCompleteLoad(LoadableTextTrack*, LoadStatus status)
+void HTMLTrackElement::didCompleteLoad(LoadStatus status)
 {
     // 4.8.10.12.3 Sourcing out-of-band text tracks (continued)
     

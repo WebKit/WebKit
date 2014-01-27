@@ -374,8 +374,6 @@ bool CachedResourceLoader::canRequest(CachedResource::Type type, const URL& url,
         break;
 #if ENABLE(VIDEO_TRACK)
     case CachedResource::TextTrackResource:
-        // Cues aren't called out in the CPS spec yet, but they only work with a media element
-        // so use the media policy.
         if (!shouldBypassMainWorldContentSecurityPolicy && !m_document->contentSecurityPolicy()->allowMediaFromSource(url))
             return false;
         break;

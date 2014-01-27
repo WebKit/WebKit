@@ -45,9 +45,7 @@ class TextTrackLoaderClient {
 public:
     virtual ~TextTrackLoaderClient() { }
     
-    virtual bool shouldLoadCues(TextTrackLoader*) = 0;
     virtual void newCuesAvailable(TextTrackLoader*) = 0;
-    virtual void cueLoadingStarted(TextTrackLoader*) = 0;
     virtual void cueLoadingCompleted(TextTrackLoader*, bool loadingFailed) = 0;
 #if ENABLE(WEBVTT_REGIONS)
     virtual void newRegionsAvailable(TextTrackLoader*) = 0;
@@ -58,7 +56,7 @@ class TextTrackLoader : public CachedResourceClient, private WebVTTParserClient 
     WTF_MAKE_NONCOPYABLE(TextTrackLoader); 
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static PassOwnPtr<TextTrackLoader> create(TextTrackLoaderClient* client, ScriptExecutionContext* context)
+    static PassOwnPtr<TextTrackLoader> create(TextTrackLoaderClient& client, ScriptExecutionContext* context)
     {
         return adoptPtr(new TextTrackLoader(client, context));
     }
@@ -83,7 +81,7 @@ private:
 #endif
     virtual void fileFailedToParse();
     
-    TextTrackLoader(TextTrackLoaderClient*, ScriptExecutionContext*);
+    TextTrackLoader(TextTrackLoaderClient&, ScriptExecutionContext*);
     
     void processNewCueData(CachedResource*);
     void cueLoadTimerFired(Timer<TextTrackLoader>*);
@@ -91,9 +89,9 @@ private:
 
     enum State { Idle, Loading, Finished, Failed };
     
-    TextTrackLoaderClient* m_client;
+    TextTrackLoaderClient& m_client;
     OwnPtr<WebVTTParser> m_cueParser;
-    CachedResourceHandle<CachedTextTrack> m_cachedCueData;
+    CachedResourceHandle<CachedTextTrack> m_resource;
     ScriptExecutionContext* m_scriptExecutionContext;
     Timer<TextTrackLoader> m_cueLoadTimer;
     String m_crossOriginMode;

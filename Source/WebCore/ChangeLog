@@ -1,3 +1,46 @@
+2014-01-24  Eric Carlson  <eric.carlson@apple.com>
+
+        Merge Chromium TextTrack cleanups
+        https://bugs.webkit.org/show_bug.cgi?id=127483
+
+        Reviewed by Darin Adler.
+
+        Merge some TextTrack cleanups:
+        https://chromium.googlesource.com/chromium/blink/+/b571b9fbc6e62e05aa77a402cf8f447e681b8ee3
+        https://chromium.googlesource.com/chromium/blink/+/6b1940151258150ea01bcf21ebfd958e2af247f4
+        https://chromium.googlesource.com/chromium/blink/+/397c2a2d9416f5c0d79bca22d6979f174eefcce2
+        https://chromium.googlesource.com/chromium/blink/+/f42ad93e25c6310b2b0327ab7ce5d82d3c4a6c1b
+        https://chromium.googlesource.com/chromium/blink/+/d55b52b53b7da05bba5fe378a4278250b9347430
+        https://chromium.googlesource.com/chromium/blink/+/cac766ecaaac477a08879f0b3157d0327cc75d96
+        https://chromium.googlesource.com/chromium/blink/+/6197ce278696cdd52fc2ad81893f369492468ca0
+
+        * html/HTMLTrackElement.cpp:
+        (WebCore::HTMLTrackElement::loadTimerFired): Remove the LoadableTextTrack* parameter, it isn't used.
+        (WebCore::HTMLTrackElement::didCompleteLoad): Ditto.
+        * html/HTMLTrackElement.h: didCompleteLoad doesn't need to be virtual.
+
+        * html/track/LoadableTextTrack.cpp:
+        (WebCore::LoadableTextTrack::loadTimerFired): Pass a reference, not a pointer.
+        (WebCore::LoadableTextTrack::cueLoadingStarted): Removed, it wasn't used.
+        (WebCore::LoadableTextTrack::cueLoadingCompleted): Pass a reference, not a pointer.
+        * html/track/LoadableTextTrack.h: Delete LoadableTextTrackClient, it is no longer used.
+
+        * loader/TextTrackLoader.cpp:
+        (WebCore::TextTrackLoader::TextTrackLoader): Take a TextTrackLoaderClient reference.
+        (WebCore::TextTrackLoader::~TextTrackLoader): Rename m_cachedCueData m_resource.
+        (WebCore::TextTrackLoader::cueLoadTimerFired): m_client is a reference.
+        (WebCore::TextTrackLoader::cancelLoad): m_cachedCueData -> m_resource.
+        (WebCore::TextTrackLoader::processNewCueData): Ditto.
+        (WebCore::TextTrackLoader::deprecatedDidReceiveCachedResource): Ditto.
+        (WebCore::TextTrackLoader::notifyFinished): Ditto.
+        (WebCore::TextTrackLoader::load): shouldLoadCues was removed from the client interface because
+            the only implementation always returned true.
+        (WebCore::TextTrackLoader::newRegionsParsed): m_client is a reference
+        * loader/TextTrackLoader.h:
+
+        * loader/cache/CachedResourceLoader.cpp:
+        (WebCore::CachedResourceLoader::canRequest): Remove an outdated comment.
+
 2014-01-27  Chris Fleizach  <cfleizach@apple.com>
 
         AX: Disable accessibility after every test run

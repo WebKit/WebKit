@@ -60,7 +60,7 @@ public:
     void scheduleLoad();
 
     enum LoadStatus { Failure, Success };
-    virtual void didCompleteLoad(LoadableTextTrack*, LoadStatus);
+    void didCompleteLoad(LoadStatus);
 
     const AtomicString& mediaElementCrossOriginAttribute() const;
 
@@ -88,7 +88,7 @@ private:
     virtual void textTrackRemoveCue(TextTrack*, PassRefPtr<TextTrackCue>) override;
 
     LoadableTextTrack& ensureTrack();
-    virtual bool canLoadUrl(const URL&);
+    bool canLoadURL(const URL&);
 
     RefPtr<LoadableTextTrack> m_track;
     Timer<HTMLTrackElement> m_loadTimer;
