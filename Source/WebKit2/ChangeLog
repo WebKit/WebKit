@@ -1,3 +1,15 @@
+2014-01-27  Anders Carlsson  <andersca@apple.com>
+
+        Tweak the WKWebView and WKWebViewConfiguration headers
+        https://bugs.webkit.org/show_bug.cgi?id=127705
+
+        Reviewed by Dan Bernstein.
+
+        Add WK_API_CLASS to WKWebView and make WKWebView.h and WKWebViewConfiguration.h public.
+
+        * UIProcess/API/Cocoa/WKWebView.h:
+        * WebKit2.xcodeproj/project.pbxproj:
+
 2014-01-27  Brady Eidson  <beidson@apple.com>
 
         IDB: Remove unused concept of "cursor prefetch"

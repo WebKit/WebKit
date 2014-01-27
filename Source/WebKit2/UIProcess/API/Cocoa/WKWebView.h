@@ -42,8 +42,10 @@
  Used to configure @link WKWebView @/link instances.
  */
 #if TARGET_OS_IPHONE
+WK_API_CLASS
 @interface WKWebView : UIView
 #else
+WK_API_CLASS
 @interface WKWebView : NSView
 #endif
 
