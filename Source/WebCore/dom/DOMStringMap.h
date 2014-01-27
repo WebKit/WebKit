@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010, 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,35 +26,11 @@
 #ifndef DOMStringMap_h
 #define DOMStringMap_h
 
-#include "ScriptWrappable.h"
-#include <wtf/Noncopyable.h>
-#include <wtf/Vector.h>
-#include <wtf/text/WTFString.h>
+#include "DatasetDOMStringMap.h"
 
 namespace WebCore {
 
-class Element;
-typedef int ExceptionCode;
-
-class DOMStringMap : public ScriptWrappable {
-    WTF_MAKE_NONCOPYABLE(DOMStringMap); WTF_MAKE_FAST_ALLOCATED;
-public:
-    virtual ~DOMStringMap();
-
-    virtual void ref() = 0;
-    virtual void deref() = 0;
-
-    virtual void getNames(Vector<String>&) = 0;
-    virtual String item(const String& name) = 0;
-    virtual bool contains(const String& name) = 0;
-    virtual void setItem(const String& name, const String& value, ExceptionCode&) = 0;
-    virtual void deleteItem(const String& name, ExceptionCode&) = 0;
-
-    virtual Element* element() = 0;
-
-protected:
-    DOMStringMap();
-};
+typedef DatasetDOMStringMap DOMStringMap;
 
 } // namespace WebCore
 

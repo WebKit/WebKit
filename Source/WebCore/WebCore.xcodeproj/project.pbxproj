@@ -5027,7 +5027,6 @@
 		BC60DA5B0D2A31F700B9918F /* XPathException.h in Headers */ = {isa = PBXBuildFile; fileRef = BC60DA590D2A31F700B9918F /* XPathException.h */; };
 		BC60DB490D2A3D1E00B9918F /* JSXPathException.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC60DB470D2A3D1E00B9918F /* JSXPathException.cpp */; };
 		BC60DB4A0D2A3D1E00B9918F /* JSXPathException.h in Headers */ = {isa = PBXBuildFile; fileRef = BC60DB480D2A3D1E00B9918F /* JSXPathException.h */; };
-		BC64640911D7F304006455B0 /* DOMStringMap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC64640711D7F304006455B0 /* DOMStringMap.cpp */; };
 		BC64640A11D7F304006455B0 /* DOMStringMap.h in Headers */ = {isa = PBXBuildFile; fileRef = BC64640811D7F304006455B0 /* DOMStringMap.h */; };
 		BC64641C11D7F416006455B0 /* DatasetDOMStringMap.h in Headers */ = {isa = PBXBuildFile; fileRef = BC64641A11D7F416006455B0 /* DatasetDOMStringMap.h */; };
 		BC64641D11D7F416006455B0 /* DatasetDOMStringMap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC64641B11D7F416006455B0 /* DatasetDOMStringMap.cpp */; };
@@ -12205,7 +12204,6 @@
 		BC60DA5A0D2A31F700B9918F /* XPathException.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = XPathException.idl; sourceTree = "<group>"; };
 		BC60DB470D2A3D1E00B9918F /* JSXPathException.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSXPathException.cpp; sourceTree = "<group>"; };
 		BC60DB480D2A3D1E00B9918F /* JSXPathException.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSXPathException.h; sourceTree = "<group>"; };
-		BC64640711D7F304006455B0 /* DOMStringMap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DOMStringMap.cpp; sourceTree = "<group>"; };
 		BC64640811D7F304006455B0 /* DOMStringMap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMStringMap.h; sourceTree = "<group>"; };
 		BC64641A11D7F416006455B0 /* DatasetDOMStringMap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DatasetDOMStringMap.h; sourceTree = "<group>"; };
 		BC64641B11D7F416006455B0 /* DatasetDOMStringMap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DatasetDOMStringMap.cpp; sourceTree = "<group>"; };
@@ -21928,7 +21926,6 @@
 				C55610F011A704EB00B82D27 /* DOMStringList.cpp */,
 				C544274911A57E7A0063A749 /* DOMStringList.h */,
 				C544274A11A57E7A0063A749 /* DOMStringList.idl */,
-				BC64640711D7F304006455B0 /* DOMStringMap.cpp */,
 				BC64640811D7F304006455B0 /* DOMStringMap.h */,
 				BC64647911D800CD006455B0 /* DOMStringMap.idl */,
 				05FD69DF12845D4300B2BEB3 /* DOMTimeStamp.h */,
@@ -26814,7 +26811,6 @@
 				BC5A86840C33676000EEA649 /* DOMSelection.cpp in Sources */,
 				4ACBC0C312713CCA0094F9B2 /* DOMSettableTokenList.cpp in Sources */,
 				C55610F111A704EB00B82D27 /* DOMStringList.cpp in Sources */,
-				BC64640911D7F304006455B0 /* DOMStringMap.cpp in Sources */,
 				0FF5025C102BA9010066F39A /* DOMStyleMedia.mm in Sources */,
 				850657010AAB4763002D15C0 /* DOMStyleSheet.mm in Sources */,
 				850657030AAB4763002D15C0 /* DOMStyleSheetList.mm in Sources */,

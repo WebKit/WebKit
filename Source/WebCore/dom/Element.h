@@ -37,7 +37,7 @@ namespace WebCore {
 
 class ClientRect;
 class ClientRectList;
-class DOMStringMap;
+class DatasetDOMStringMap;
 class DOMTokenList;
 class ElementRareData;
 class HTMLDocument;
@@ -459,7 +459,7 @@ public:
 
     DOMTokenList* classList();
 
-    DOMStringMap* dataset();
+    DatasetDOMStringMap* dataset();
 
 #if ENABLE(VIDEO)
     virtual bool isMediaElement() const { return false; }

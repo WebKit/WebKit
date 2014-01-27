@@ -2824,7 +2824,6 @@ webcore_sources += \
 	Source/WebCore/dom/DOMNamedFlowCollection.h \
 	Source/WebCore/dom/DOMStringList.cpp \
 	Source/WebCore/dom/DOMStringList.h \
-	Source/WebCore/dom/DOMStringMap.cpp \
 	Source/WebCore/dom/DOMStringMap.h \
 	Source/WebCore/dom/DOMTimeStamp.h \
 	Source/WebCore/dom/Element.cpp \

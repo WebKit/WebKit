@@ -3126,9 +3126,6 @@
     <ClCompile Include="..\dom\DOMStringList.cpp">
       <Filter>dom</Filter>
     </ClCompile>
-    <ClCompile Include="..\dom\DOMStringMap.cpp">
-      <Filter>dom</Filter>
-    </ClCompile>
     <ClCompile Include="..\dom\Element.cpp">
       <Filter>dom</Filter>
     </ClCompile>

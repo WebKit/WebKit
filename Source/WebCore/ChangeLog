@@ -1,3 +1,32 @@
+2014-01-26  Benjamin Poulain  <benjamin@webkit.org>
+
+        Make DOMStringMap a typedef of DatasetDOMStringMap
+        https://bugs.webkit.org/show_bug.cgi?id=127658
+
+        Reviewed by Sam Weinig.
+
+        The only concrete implementation of DOMStringMap is DatasetDOMStringMap.
+        The abstract interface for a single definition is adding complexity for no gain.
+
+        This patch removes DOMStringMap and simply keeps the name through a typedef.
+        I used a typedef instead of just renaming DatasetDOMStringMap because I think
+        having both name has value. DatasetDOMStringMap is a better description of what
+        the implementation does. DOMStringMap is the public name and the classname is
+        the same as the JavaScript type by convention.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.vcxproj/WebCore.vcxproj.filters:
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/DOMAllInOne.cpp:
+        * dom/DOMStringMap.cpp: Removed.
+        * dom/DOMStringMap.h:
+        * dom/DatasetDOMStringMap.h:
+        * dom/Element.cpp:
+        (WebCore::Element::dataset):
+        * dom/Element.h:
+
 2014-01-26  David Kilzer  <ddkilzer@apple.com>
 
         Part 2: Assertion failure in WebCore::PseudoElement::didRecalcStyle()

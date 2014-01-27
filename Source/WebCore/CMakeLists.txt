@@ -1144,7 +1144,6 @@ set(WebCore_SOURCES
     dom/DOMImplementation.cpp
     dom/DOMNamedFlowCollection.cpp
     dom/DOMStringList.cpp
-    dom/DOMStringMap.cpp
     dom/DataTransferItem.cpp
     dom/DatasetDOMStringMap.cpp
     dom/DecodedDataDocumentParser.cpp

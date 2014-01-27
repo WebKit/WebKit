@@ -2436,7 +2436,7 @@ DOMTokenList* Element::classList()
     return data.classList();
 }
 
-DOMStringMap* Element::dataset()
+DatasetDOMStringMap* Element::dataset()
 {
     ElementRareData& data = ensureElementRareData();
     if (!data.dataset())

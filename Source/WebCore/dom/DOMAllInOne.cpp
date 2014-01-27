@@ -49,7 +49,6 @@
 #include "DOMImplementation.cpp"
 #include "DOMNamedFlowCollection.cpp"
 #include "DOMStringList.cpp"
-#include "DOMStringMap.cpp"
 #include "DatasetDOMStringMap.cpp"
 #include "DecodedDataDocumentParser.cpp"
 #include "DeviceMotionController.cpp"
