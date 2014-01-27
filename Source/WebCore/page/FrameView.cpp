@@ -2114,8 +2114,6 @@ void FrameView::addTrackedRepaintRect(const IntRect& r)
     m_trackedRepaintRects.append(repaintRect);
 }
 
-const unsigned cRepaintRectUnionThreshold = 25;
-
 void FrameView::repaintContentRectangle(const IntRect& r, bool immediate)
 {
     ASSERT(!frame().ownerElement());

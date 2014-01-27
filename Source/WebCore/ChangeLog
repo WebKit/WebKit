@@ -1,3 +1,10 @@
+2014-01-27  Jessie Berlin  <jberlin@apple.com>
+
+        Build fix after r162838.
+
+        * page/FrameView.cpp:
+        Remove an unused constant.
+
 2014-01-27  Antti Koivisto  <antti@apple.com>
 
         Remove repaint throttling
