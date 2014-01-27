@@ -11,8 +11,8 @@ layer at (0,0) size 785x1071
           text run at (0,0) width 103: "table 1 - original"
       RenderTable {TABLE} at (5,46) size 90x94 [border: (10px solid #008000)]
         RenderBlock {CAPTION} at (10,68) size 80x26 [border: (3px solid #800080)]
-          RenderText {#text} at (6,3) size 47x17
-            text run at (6,3) width 47: "caption"
+          RenderText {#text} at (9,3) size 46x17
+            text run at (9,3) width 46: "caption"
           RenderBlock {INPUT} at (57,8) size 12x12
         RenderTableSection {TBODY} at (10,10) size 70x46
           RenderTableRow {TR} at (0,2) size 70x20
@@ -34,8 +34,8 @@ layer at (0,0) size 785x1071
           text run at (0,0) width 188: "table 2 - caption gains content"
       RenderTable {TABLE} at (5,173) size 90x112 [border: (10px solid #008000)]
         RenderBlock {CAPTION} at (10,68) size 80x44 [border: (3px solid #800080)]
-          RenderText {#text} at (6,3) size 47x17
-            text run at (6,3) width 47: "caption"
+          RenderText {#text} at (9,3) size 46x17
+            text run at (9,3) width 46: "caption"
           RenderBlock {INPUT} at (57,8) size 12x12
           RenderText {#text} at (17,23) size 46x17
             text run at (17,23) width 46: "foo foo"
@@ -59,8 +59,8 @@ layer at (0,0) size 785x1071
           text run at (0,0) width 384: "table 3 - caption gains content extending its max element size"
       RenderTable {TABLE} at (5,318) size 148x112 [border: (10px solid #008000)]
         RenderBlock {CAPTION} at (10,68) size 138x44 [border: (3px solid #800080)]
-          RenderText {#text} at (35,3) size 47x17
-            text run at (35,3) width 47: "caption"
+          RenderText {#text} at (38,3) size 46x17
+            text run at (38,3) width 46: "caption"
           RenderBlock {INPUT} at (86,8) size 12x12
           RenderText {#text} at (3,23) size 142x17
             text run at (3,23) width 142: "very_large_very_large"
@@ -106,8 +106,8 @@ layer at (0,0) size 785x1071
           text run at (0,0) width 154: "table 5 - table gets wider"
       RenderTable {TABLE} at (5,588) size 136x94 [border: (10px solid #008000)]
         RenderBlock {CAPTION} at (10,68) size 126x26 [border: (3px solid #800080)]
-          RenderText {#text} at (29,3) size 47x17
-            text run at (29,3) width 47: "caption"
+          RenderText {#text} at (32,3) size 46x17
+            text run at (32,3) width 46: "caption"
           RenderBlock {INPUT} at (80,8) size 12x12
         RenderTableSection {TBODY} at (10,10) size 116x46
           RenderTableRow {TR} at (0,2) size 116x20
@@ -136,8 +136,8 @@ layer at (0,0) size 785x1071
               RenderText {#text} at (1,1) size 46x17
                 text run at (1,1) width 46: "foo foo"
         RenderBlock {CAPTION} at (10,90) size 96x26 [border: (3px solid #800080)]
-          RenderText {#text} at (14,3) size 47x17
-            text run at (14,3) width 47: "caption"
+          RenderText {#text} at (17,3) size 46x17
+            text run at (17,3) width 46: "caption"
           RenderBlock {INPUT} at (65,8) size 12x12
         RenderTableSection {TBODY} at (10,34) size 86x44
           RenderTableRow {TR} at (0,0) size 86x20

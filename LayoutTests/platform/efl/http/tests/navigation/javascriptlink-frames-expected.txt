@@ -40,22 +40,22 @@ layer at (0,0) size 800x600
                   text run at (0,127) width 334: "that we can use for testing"
                 RenderTextControl {INPUT} at (336,136) size 192x28 [bgcolor=#FFFFFF]
                 RenderBR {BR} at (530,156) size 0x0
-                RenderBlock {INPUT} at (4,186) size 13x12
-                RenderText {#text} at (21,166) size 73x36
-                  text run at (21,166) width 73: " Male"
-                RenderBR {BR} at (94,195) size 0x0
-                RenderBlock {INPUT} at (4,223) size 13x12
-                RenderText {#text} at (21,203) size 102x36
-                  text run at (21,203) width 102: " Female"
-                RenderBR {BR} at (123,232) size 0x0
-                RenderBlock {INPUT} at (4,260) size 13x12
-                RenderText {#text} at (21,240) size 130x36
-                  text run at (21,240) width 130: " option #1"
-                RenderBR {BR} at (151,269) size 0x0
-                RenderBlock {INPUT} at (4,297) size 13x12
-                RenderText {#text} at (21,277) size 130x36
-                  text run at (21,277) width 130: " option #2"
-                RenderBR {BR} at (151,306) size 0x0
+                RenderBlock {INPUT} at (2,186) size 12x12
+                RenderText {#text} at (16,166) size 73x36
+                  text run at (16,166) width 73: " Male"
+                RenderBR {BR} at (89,195) size 0x0
+                RenderBlock {INPUT} at (2,223) size 12x12
+                RenderText {#text} at (16,203) size 102x36
+                  text run at (16,203) width 102: " Female"
+                RenderBR {BR} at (118,232) size 0x0
+                RenderBlock {INPUT} at (2,260) size 12x12
+                RenderText {#text} at (16,240) size 130x36
+                  text run at (16,240) width 130: " option #1"
+                RenderBR {BR} at (146,269) size 0x0
+                RenderBlock {INPUT} at (2,297) size 12x12
+                RenderText {#text} at (16,277) size 130x36
+                  text run at (16,277) width 130: " option #2"
+                RenderBR {BR} at (146,306) size 0x0
                 RenderMenuList {SELECT} at (2,316) size 355x38 [bgcolor=#FFFFFF]
                   RenderBlock (anonymous) at (15,10) size 299x18
                     RenderText at (0,0) size 84x17

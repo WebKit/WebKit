@@ -3,6 +3,6 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {INPUT} at (4,5) size 13x12
-      RenderText {#text} at (21,0) size 218x17
-        text run at (21,0) width 218: "This checkbox should be checked."
+      RenderBlock {INPUT} at (2,5) size 12x12
+      RenderText {#text} at (16,0) size 218x17
+        text run at (16,0) width 218: "This checkbox should be checked."

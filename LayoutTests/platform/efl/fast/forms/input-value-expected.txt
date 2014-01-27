@@ -57,7 +57,7 @@ layer at (0,0) size 785x621
                 RenderText {#text} at (1,1) size 249x17
                   text run at (1,1) width 249: "check box with value property changed"
               RenderTableCell {TD} at (328,72) size 312x20 [r=2 c=1 rs=1 cs=1]
-                RenderBlock {INPUT} at (5,4) size 13x12
+                RenderBlock {INPUT} at (3,4) size 12x12
               RenderTableCell {TD} at (642,72) size 62x20 [r=2 c=2 rs=1 cs=1]
                 RenderText {#text} at (1,1) size 28x17
                   text run at (1,1) width 28: "after"
@@ -107,7 +107,7 @@ layer at (0,0) size 785x621
                 RenderText {#text} at (1,1) size 216x17
                   text run at (1,1) width 216: "radio with value property changed"
               RenderTableCell {TD} at (328,189) size 312x20 [r=6 c=1 rs=1 cs=1]
-                RenderBlock {INPUT} at (5,4) size 13x12
+                RenderBlock {INPUT} at (3,4) size 12x12
               RenderTableCell {TD} at (642,189) size 62x20 [r=6 c=2 rs=1 cs=1]
                 RenderText {#text} at (1,1) size 28x17
                   text run at (1,1) width 28: "after"
@@ -131,7 +131,7 @@ layer at (0,0) size 785x621
                 RenderText {#text} at (1,1) size 247x17
                   text run at (1,1) width 247: "check box with value attribute changed"
               RenderTableCell {TD} at (328,247) size 312x20 [r=8 c=1 rs=1 cs=1]
-                RenderBlock {INPUT} at (5,4) size 13x12
+                RenderBlock {INPUT} at (3,4) size 12x12
               RenderTableCell {TD} at (642,247) size 62x20 [r=8 c=2 rs=1 cs=1]
                 RenderText {#text} at (1,1) size 28x17
                   text run at (1,1) width 28: "after"
@@ -144,7 +144,7 @@ layer at (0,0) size 785x621
                   text run at (1,1) width 314: "text with value property changed, then turned into"
                   text run at (1,19) width 65: "check box"
               RenderTableCell {TD} at (328,278) size 312x20 [r=9 c=1 rs=1 cs=1]
-                RenderBlock {INPUT} at (5,4) size 13x12
+                RenderBlock {INPUT} at (3,4) size 12x12
               RenderTableCell {TD} at (642,278) size 62x20 [r=9 c=2 rs=1 cs=1]
                 RenderText {#text} at (1,1) size 28x17
                   text run at (1,1) width 28: "after"
@@ -170,7 +170,7 @@ layer at (0,0) size 785x621
                   text run at (1,1) width 312: "text with value attribute changed, then turned into"
                   text run at (1,19) width 65: "check box"
               RenderTableCell {TD} at (328,358) size 312x20 [r=11 c=1 rs=1 cs=1]
-                RenderBlock {INPUT} at (5,4) size 13x12
+                RenderBlock {INPUT} at (3,4) size 12x12
               RenderTableCell {TD} at (642,358) size 62x20 [r=11 c=2 rs=1 cs=1]
                 RenderText {#text} at (1,1) size 28x17
                   text run at (1,1) width 28: "after"

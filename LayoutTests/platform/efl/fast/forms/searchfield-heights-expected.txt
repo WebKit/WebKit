@@ -7,7 +7,7 @@ layer at (0,0) size 800x600
         text run at (0,0) width 368: "This tests that aqua-style search fields do not honor height."
       RenderBR {BR} at (368,14) size 0x0
       RenderTextControl {INPUT} at (0,117) size 75x10 [bgcolor=#FFFFFF]
-        RenderFlexibleBox {DIV} at (4,2) size 68x8
+        RenderFlexibleBox {DIV} at (4,2) size 68x7
           RenderBlock {DIV} at (0,3) size 0x1
           RenderBlock {DIV} at (0,0) size 62x7
           RenderBlock {DIV} at (62,0) size 6x7
@@ -26,7 +26,7 @@ layer at (0,0) size 800x600
           RenderBlock {DIV} at (0,79) size 309x32
           RenderBlock {DIV} at (309,84) size 21x22
       RenderText {#text} at (0,0) size 0x0
-layer at (12,128) size 62x7
+layer at (12,127) size 62x7
   RenderBlock {DIV} at (0,0) size 62x7
     RenderText {#text} at (0,0) size 10x6
       text run at (0,0) width 10: "mini"

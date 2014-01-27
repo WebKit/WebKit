@@ -1,3 +1,82 @@
+2014-01-26  Jinwoo Song  <jinwoo7.song@samsung.com>
+
+        Unreviewed EFL gardening after r162742, r162791 and r162803.
+
+        * platform/efl-wk1/fast/forms/basic-inputs-expected.png: Removed.
+        * platform/efl-wk1/fast/forms/indeterminate-expected.png: Removed.
+        * platform/efl-wk2/fast/forms/basic-inputs-expected.png: Removed.
+        * platform/efl-wk2/fast/forms/indeterminate-expected.png: Removed.
+        * platform/efl/compositing/overflow/theme-affects-visual-overflow-expected.png:
+        * platform/efl/compositing/overflow/theme-affects-visual-overflow-expected.txt:
+        * platform/efl/css1/box_properties/acid_test-expected.png:
+        * platform/efl/css1/box_properties/acid_test-expected.txt:
+        * platform/efl/css2.1/t09-c5526c-display-00-e-expected.png:
+        * platform/efl/css2.1/t09-c5526c-display-00-e-expected.txt:
+        * platform/efl/css3/selectors3/html/css3-modsel-25-expected.png:
+        * platform/efl/css3/selectors3/html/css3-modsel-25-expected.txt:
+        * platform/efl/css3/selectors3/html/css3-modsel-70-expected.png:
+        * platform/efl/css3/selectors3/html/css3-modsel-70-expected.txt:
+        * platform/efl/css3/selectors3/xhtml/css3-modsel-25-expected.png:
+        * platform/efl/css3/selectors3/xhtml/css3-modsel-25-expected.txt:
+        * platform/efl/css3/selectors3/xhtml/css3-modsel-70-expected.png:
+        * platform/efl/css3/selectors3/xhtml/css3-modsel-70-expected.txt:
+        * platform/efl/css3/selectors3/xml/css3-modsel-25-expected.png:
+        * platform/efl/css3/selectors3/xml/css3-modsel-25-expected.txt:
+        * platform/efl/css3/selectors3/xml/css3-modsel-70-expected.png:
+        * platform/efl/css3/selectors3/xml/css3-modsel-70-expected.txt:
+        * platform/efl/fast/block/basic/011-expected.png:
+        * platform/efl/fast/block/basic/011-expected.txt:
+        * platform/efl/fast/block/margin-collapse/103-expected.png:
+        * platform/efl/fast/block/margin-collapse/103-expected.txt:
+        * platform/efl/fast/css/non-standard-checkbox-size-expected.png:
+        * platform/efl/fast/css/non-standard-checkbox-size-expected.txt:
+        * platform/efl/fast/forms/001-expected.png:
+        * platform/efl/fast/forms/001-expected.txt:
+        * platform/efl/fast/forms/basic-inputs-expected.txt:
+        * platform/efl/fast/forms/box-shadow-override-expected.png:
+        * platform/efl/fast/forms/box-shadow-override-expected.txt:
+        * platform/efl/fast/forms/file/file-input-disabled-expected.png:
+        * platform/efl/fast/forms/file/file-input-disabled-expected.txt:
+        * platform/efl/fast/forms/form-element-geometry-expected.png:
+        * platform/efl/fast/forms/form-element-geometry-expected.txt:
+        * platform/efl/fast/forms/formmove-expected.png:
+        * platform/efl/fast/forms/formmove-expected.txt:
+        * platform/efl/fast/forms/formmove2-expected.png:
+        * platform/efl/fast/forms/formmove2-expected.txt:
+        * platform/efl/fast/forms/indeterminate-expected.txt:
+        * platform/efl/fast/forms/input-appearance-height-expected.png:
+        * platform/efl/fast/forms/input-appearance-height-expected.txt:
+        * platform/efl/fast/forms/input-value-expected.png:
+        * platform/efl/fast/forms/input-value-expected.txt:
+        * platform/efl/fast/forms/search-vertical-alignment-expected.png:
+        * platform/efl/fast/forms/search-vertical-alignment-expected.txt:
+        * platform/efl/fast/forms/searchfield-heights-expected.png:
+        * platform/efl/fast/forms/searchfield-heights-expected.txt:
+        * platform/efl/fast/inline/positionedLifetime-expected.png:
+        * platform/efl/fast/inline/positionedLifetime-expected.txt:
+        * platform/efl/fast/parser/bad-xml-slash-expected.png:
+        * platform/efl/fast/parser/bad-xml-slash-expected.txt:
+        * platform/efl/fast/replaced/replaced-breaking-expected.png:
+        * platform/efl/fast/replaced/replaced-breaking-expected.txt:
+        * platform/efl/fast/replaced/width100percent-checkbox-expected.png:
+        * platform/efl/fast/replaced/width100percent-checkbox-expected.txt:
+        * platform/efl/fast/replaced/width100percent-radio-expected.png:
+        * platform/efl/fast/replaced/width100percent-radio-expected.txt:
+        * platform/efl/fast/text/textIteratorNilRenderer-expected.png:
+        * platform/efl/fast/text/textIteratorNilRenderer-expected.txt:
+        * platform/efl/fast/text/whitespace/normal-after-nowrap-breaking-expected.png:
+        * platform/efl/fast/text/whitespace/normal-after-nowrap-breaking-expected.txt:
+        * platform/efl/http/tests/navigation/javascriptlink-frames-expected.png:
+        * platform/efl/http/tests/navigation/javascriptlink-frames-expected.txt:
+        * platform/efl/tables/mozilla/bugs/bug1318-expected.png:
+        * platform/efl/tables/mozilla/bugs/bug1318-expected.txt:
+        * platform/efl/tables/mozilla/bugs/bug4527-expected.png:
+        * platform/efl/tables/mozilla/bugs/bug4527-expected.txt:
+        * platform/efl/tables/mozilla_expected_failures/core/captions1-expected.png:
+        * platform/efl/tables/mozilla_expected_failures/core/captions1-expected.txt:
+        * platform/efl/tables/mozilla_expected_failures/core/captions2-expected.png:
+        * platform/efl/tables/mozilla_expected_failures/core/captions2-expected.txt:
+
 2014-01-26  Zalan Bujtas  <zalan@apple.com>
 
         Some more Apple Windows port rebaseline.

@@ -21,10 +21,10 @@ layer at (0,0) size 800x600
         RenderBR {BR} at (227,54) size 0x0
         RenderText {#text} at (0,64) size 65x17
           text run at (0,64) width 65: "checkbox "
-        RenderBlock {INPUT} at (69,69) size 13x12
-        RenderText {#text} at (86,64) size 4x17
-          text run at (86,64) width 4: " "
-        RenderBR {BR} at (90,78) size 0x0
+        RenderBlock {INPUT} at (67,69) size 12x12
+        RenderText {#text} at (81,64) size 4x17
+          text run at (81,64) width 4: " "
+        RenderBR {BR} at (85,78) size 0x0
         RenderText {#text} at (0,96) size 24x17
           text run at (0,96) width 24: "file "
         RenderFileUploadControl {INPUT} at (26,86) size 306x40 "No file selected"
@@ -43,10 +43,10 @@ layer at (0,0) size 800x600
         RenderBR {BR} at (56,142) size 0x0
         RenderText {#text} at (0,146) size 36x17
           text run at (0,146) width 36: "radio "
-        RenderBlock {INPUT} at (40,151) size 13x12
-        RenderText {#text} at (57,146) size 4x17
-          text run at (57,146) width 4: " "
-        RenderBR {BR} at (61,160) size 0x0
+        RenderBlock {INPUT} at (38,151) size 12x12
+        RenderText {#text} at (52,146) size 4x17
+          text run at (52,146) width 4: " "
+        RenderBR {BR} at (56,160) size 0x0
         RenderText {#text} at (0,166) size 39x17
           text run at (0,166) width 39: "range "
         RenderSlider {INPUT} at (41,169) size 129x11 [color=#909090] [bgcolor=#FFFFFF]

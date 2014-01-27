@@ -105,7 +105,7 @@ layer at (0,0) size 785x851
         RenderText {#text} at (0,1) size 200x26
           text run at (0,1) width 200: "Baseline Alignment"
       RenderBlock {DIV} at (0,445) size 769x45
-        RenderInline {FONT} at (0,0) size 285x26
+        RenderInline {FONT} at (0,0) size 275x26
           RenderText {#text} at (0,5) size 43x26
             text run at (0,5) width 43: "text "
           RenderButton {INPUT} at (45,2) size 78x40 [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
@@ -120,10 +120,10 @@ layer at (0,0) size 785x851
                 text run at (0,0) width 40: "menu"
           RenderText {#text} at (231,5) size 6x26
             text run at (231,5) width 6: " "
-          RenderBlock {INPUT} at (241,17) size 13x12
-          RenderText {#text} at (258,5) size 6x26
-            text run at (258,5) width 6: " "
-          RenderBlock {INPUT} at (268,17) size 13x12
+          RenderBlock {INPUT} at (239,17) size 12x12
+          RenderText {#text} at (253,5) size 6x26
+            text run at (253,5) width 6: " "
+          RenderBlock {INPUT} at (261,17) size 12x12
           RenderText {#text} at (0,0) size 0x0
       RenderBlock {DIV} at (0,489) size 769x45
         RenderText {#text} at (0,12) size 27x17
@@ -140,13 +140,13 @@ layer at (0,0) size 785x851
               text run at (0,0) width 40: "menu"
         RenderText {#text} at (213,12) size 4x17
           text run at (213,12) width 4: " "
-        RenderBlock {INPUT} at (221,17) size 13x12
-        RenderText {#text} at (238,12) size 4x17
-          text run at (238,12) width 4: " "
-        RenderBlock {INPUT} at (246,17) size 13x12
+        RenderBlock {INPUT} at (219,17) size 12x12
+        RenderText {#text} at (233,12) size 4x17
+          text run at (233,12) width 4: " "
+        RenderBlock {INPUT} at (239,17) size 12x12
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {DIV} at (0,533) size 769x45
-        RenderInline {FONT} at (0,0) size 251x11
+        RenderInline {FONT} at (0,0) size 241x11
           RenderText {#text} at (0,17) size 18x11
             text run at (0,17) width 18: "text "
           RenderButton {INPUT} at (20,2) size 78x40 [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
@@ -161,10 +161,10 @@ layer at (0,0) size 785x851
                 text run at (0,0) width 40: "menu"
           RenderText {#text} at (203,17) size 3x11
             text run at (203,17) width 3: " "
-          RenderBlock {INPUT} at (210,17) size 13x12
-          RenderText {#text} at (227,17) size 3x11
-            text run at (227,17) width 3: " "
-          RenderBlock {INPUT} at (234,17) size 13x12
+          RenderBlock {INPUT} at (208,17) size 12x12
+          RenderText {#text} at (222,17) size 3x11
+            text run at (222,17) width 3: " "
+          RenderBlock {INPUT} at (227,17) size 12x12
           RenderText {#text} at (0,0) size 0x0
       RenderBlock {DIV} at (0,577) size 769x65
         RenderText {#text} at (0,32) size 27x17
