@@ -1,3 +1,23 @@
+2014-01-27  Jer Noble  <jer.noble@apple.com>
+
+        [WK2] callOnMainThread() from main thread sometimes results in ASSERTs.
+        https://bugs.webkit.org/show_bug.cgi?id=127370
+
+        Reviewed by Alexey Proskuryakov.
+
+        When WEB_THREAD is enabled, and callOnMainThread() is called from the main
+        thread, if the web thread is locked, a timer is set and the passed-in function
+        is called on the next run-loop. However, by that time the web thread may have
+        been unlocked, and isMainThread() will no longer return true, resulting in
+        an assert.
+
+        Instead, scheduleDispatchFunctionsOnMainThread() should check isWebThread(),
+        which is equivalent to isMainThread() when the WEB_THREAD is disabled, but
+        will do the correct thing when WEB_THREAD is enabled.
+
+        * wtf/mac/MainThreadMac.mm:
+        (WTF::scheduleDispatchFunctionsOnMainThread):
+
 2014-01-27  Dan Bernstein  <mitz@apple.com>
 
         Build fix.

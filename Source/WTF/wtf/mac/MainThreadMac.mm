@@ -124,7 +124,7 @@ void scheduleDispatchFunctionsOnMainThread()
 {
     ASSERT(staticMainThreadCaller);
 
-    if (isMainThread()) {
+    if (isWebThread()) {
         postTimer();
         return;
     }
