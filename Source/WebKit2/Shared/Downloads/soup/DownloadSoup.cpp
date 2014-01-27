@@ -233,8 +233,12 @@ void Download::cancel()
 {
     if (!m_resourceHandle)
         return;
-    static_cast<DownloadClient*>(m_downloadClient.get())->cancel(m_resourceHandle.get());
-    m_resourceHandle = 0;
+
+    // Cancelling the download will delete it and platformInvalidate() will be called by the destructor.
+    // So, we need to set m_resourceHandle to nullptr before actually cancelling the download to make sure
+    // it won't be cancelled again by platformInvalidate. See https://bugs.webkit.org/show_bug.cgi?id=127650.
+    RefPtr<ResourceHandle> resourceHandle = m_resourceHandle.release();
+    static_cast<DownloadClient*>(m_downloadClient.get())->cancel(resourceHandle.get());
 }
 
 void Download::platformInvalidate()

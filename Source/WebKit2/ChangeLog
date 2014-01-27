@@ -1,3 +1,22 @@
+2014-01-27  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [SOUP] WebProcess sometimes crashes when a download is cancelled
+        https://bugs.webkit.org/show_bug.cgi?id=127650
+
+        Reviewed by Martin Robinson.
+
+        The problem is that when the download is cancelled, the download
+        manager removes the download from the map and it's deleted. The
+        Download destructor calls platformInvalidate() that cancels the
+        resource handle if there's still one. We set to nullptr the
+        ResourceHandle when the download is cancelled to avoid cancelling
+        it twice, but it's done after calling Download::didCancel(). It
+        should be done before, because at that moment, when the download
+        is deleted, the resource handle pointer is still valid.
+
+        * Shared/Downloads/soup/DownloadSoup.cpp:
+        (WebKit::Download::cancel):
+
 2014-01-25  Sam Weinig  <sam@webkit.org>
 
         Remove unused support for DRAGGABLE_REGION
