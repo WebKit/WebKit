@@ -260,13 +260,7 @@ public:
 
     bool fixedElementsLayoutRelativeToFrame() const;
 
-    void beginDeferredRepaints();
-    void endDeferredRepaints();
-    void handleLoadCompleted();
-    void flushDeferredRepaints();
-    void startDeferredRepaintTimer(double delay);
-    void resetDeferredRepaintDelay();
-
+    void disableLayerFlushThrottlingTemporarilyForInteraction();
     void updateLayerFlushThrottlingInAllFrames();
     void adjustTiledBackingCoverage();
     bool speculativeTilingEnabled() const { return m_speculativeTilingEnabled; }
@@ -359,15 +353,6 @@ public:
 
     enum ScrollbarModesCalculationStrategy { RulesFromWebContentOnly, AnyRule };
     void calculateScrollbarModesForLayout(ScrollbarMode& hMode, ScrollbarMode& vMode, ScrollbarModesCalculationStrategy = AnyRule);
-
-    // Normal delay
-    static void setRepaintThrottlingDeferredRepaintDelay(double p);
-    // Negative value would mean that first few repaints happen without a delay
-    static void setRepaintThrottlingnInitialDeferredRepaintDelayDuringLoading(double p);
-    // The delay grows on each repaint to this maximum value
-    static void setRepaintThrottlingMaxDeferredRepaintDelayDuringLoading(double p);
-    // On each repaint the delay increses by this amount
-    static void setRepaintThrottlingDeferredRepaintDelayIncrementDuringLoading(double p);
 
     virtual IntPoint lastKnownMousePosition() const override;
     virtual bool isHandlingWheelEvent() const override;
@@ -552,12 +537,6 @@ private:
 
     virtual void notifyPageThatContentAreaWillPaint() const override;
 
-    bool shouldUseLoadTimeDeferredRepaintDelay() const;
-    void deferredRepaintTimerFired(Timer<FrameView>&);
-    void doDeferredRepaints();
-    void updateDeferredRepaintDelayAfterRepaint();
-    double adjustedDeferredRepaintDelay() const;
-
     void enableSpeculativeTilingIfNeeded();
     void speculativeTilingEnableTimerFired(Timer<FrameView>&);
 
@@ -637,11 +616,6 @@ private:
     bool m_inProgrammaticScroll;
     bool m_safeToPropagateScrollToParent;
 
-    unsigned m_deferringRepaints;
-    unsigned m_repaintCount;
-    Vector<LayoutRect> m_repaintRects;
-    Timer<FrameView> m_deferredRepaintTimer;
-    double m_deferredRepaintDelay;
     double m_lastPaintTime;
 
     bool m_isTrackingRepaints; // Used for testing.
@@ -697,11 +671,6 @@ private:
     int m_footerHeight;
 
     LayoutMilestones m_milestonesPendingPaint;
-
-    static double s_normalDeferredRepaintDelay;
-    static double s_initialDeferredRepaintDelayDuringLoading;
-    static double s_maxDeferredRepaintDelayDuringLoading;
-    static double s_deferredRepaintDelayIncrementDuringLoading;
 
     static const unsigned visualCharacterThreshold = 200;
     static const unsigned visualPixelThreshold = 32 * 32;

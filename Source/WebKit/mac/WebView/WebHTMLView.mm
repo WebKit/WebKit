@@ -1420,13 +1420,6 @@ static NSURL* uniqueURLWithRelativePart(NSString *relativePart)
     if (_private->dataSource && [self _isTopHTMLView])
         [self _web_updateLayoutAndStyleIfNeededRecursive];
 
-#if PLATFORM(IOS)
-    if (Frame* coreFrame = core([self _frame])) {
-        if (FrameView* coreView = coreFrame->view())
-            coreView->flushDeferredRepaints();
-    }
-#endif
-
     [super viewWillDraw];
 }
 

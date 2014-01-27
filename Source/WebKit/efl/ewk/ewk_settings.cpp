@@ -319,10 +319,11 @@ void ewk_settings_memory_cache_clear()
 
 void ewk_settings_repaint_throttling_set(double deferredRepaintDelay, double initialDeferredRepaintDelayDuringLoading, double maxDeferredRepaintDelayDuringLoading, double deferredRepaintDelayIncrementDuringLoading)
 {
-    WebCore::FrameView::setRepaintThrottlingDeferredRepaintDelay(deferredRepaintDelay);
-    WebCore::FrameView::setRepaintThrottlingnInitialDeferredRepaintDelayDuringLoading(initialDeferredRepaintDelayDuringLoading);
-    WebCore::FrameView::setRepaintThrottlingMaxDeferredRepaintDelayDuringLoading(maxDeferredRepaintDelayDuringLoading);
-    WebCore::FrameView::setRepaintThrottlingDeferredRepaintDelayIncrementDuringLoading(deferredRepaintDelayIncrementDuringLoading);
+    // FIXME: EFL should switch to layer flush throttling.
+    UNUSED_PARAM(deferredRepaintDelay);
+    UNUSED_PARAM(initialDeferredRepaintDelayDuringLoading);
+    UNUSED_PARAM(maxDeferredRepaintDelayDuringLoading);
+    UNUSED_PARAM(deferredRepaintDelayIncrementDuringLoading);
 }
 
 /**

@@ -956,7 +956,6 @@ void Frame::tiledBackingStorePaintBegin()
     if (!m_view)
         return;
     m_view->updateLayoutAndStyleIfNeededRecursive();
-    m_view->flushDeferredRepaints();
 }
 
 void Frame::tiledBackingStorePaint(GraphicsContext* context, const IntRect& rect)

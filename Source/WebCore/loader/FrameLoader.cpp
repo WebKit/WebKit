@@ -798,9 +798,6 @@ void FrameLoader::checkCompleted()
     Ref<Frame> protect(m_frame);
     m_shouldCallCheckCompleted = false;
 
-    if (m_frame.view())
-        m_frame.view()->handleLoadCompleted();
-
     // Have we completed before?
     if (m_isComplete)
         return;
@@ -845,9 +842,6 @@ void FrameLoader::checkCompleted()
     completed();
     if (m_frame.page())
         checkLoadComplete();
-
-    if (m_frame.view())
-        m_frame.view()->handleLoadCompleted();
 }
 
 void FrameLoader::checkTimerFired(Timer<FrameLoader>&)

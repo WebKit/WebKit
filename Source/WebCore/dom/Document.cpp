@@ -1739,8 +1739,6 @@ void Document::recalcStyle(Style::Change change)
         PostAttachCallbackDisabler disabler(*this);
         WidgetHierarchyUpdatesSuspensionScope suspendWidgetHierarchyUpdates;
 
-        frameView.beginDeferredRepaints();
-
         if (m_pendingStyleRecalcShouldForce)
             change = Style::Force;
 
@@ -1764,8 +1762,6 @@ void Document::recalcStyle(Style::Change change)
         // Pseudo element removal and similar may only work with these flags still set. Reset them after the style recalc.
         if (m_styleResolver)
             m_styleSheetCollection.resetCSSFeatureFlags();
-
-        frameView.endDeferredRepaints();
     }
 
     // If we wanted to call implicitClose() during recalcStyle, do so now that we're finished.

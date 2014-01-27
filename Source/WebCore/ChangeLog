@@ -1,3 +1,38 @@
+2014-01-27  Antti Koivisto  <antti@apple.com>
+
+        Remove repaint throttling
+        https://bugs.webkit.org/show_bug.cgi?id=127681
+
+        Reviewed by Sam Weinig.
+
+        Nowadays we throttle layer flushes. This code is unnecessary.
+
+        * WebCore.exp.in:
+        * dom/Document.cpp:
+        (WebCore::Document::recalcStyle):
+        * dom/Element.cpp:
+        (WebCore::Element::classAttributeChanged):
+        * editing/AlternativeTextController.cpp:
+        (WebCore::AlternativeTextController::insertDictatedText):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::checkCompleted):
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::dispatchDragEvent):
+        (WebCore::EventHandler::dispatchMouseEvent):
+        (WebCore::EventHandler::keyEvent):
+        (WebCore::EventHandler::handleTextInputEvent):
+        * page/FrameView.cpp:
+        (WebCore::FrameView::FrameView):
+        (WebCore::FrameView::reset):
+        (WebCore::FrameView::flushCompositingStateForThisFrame):
+        (WebCore::FrameView::layout):
+        (WebCore::FrameView::repaintContentRectangle):
+        (WebCore::FrameView::disableLayerFlushThrottlingTemporarilyForInteraction):
+        (WebCore::FrameView::updateLayoutAndStyleIfNeededRecursive):
+        * page/FrameView.h:
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::setSelection):
+
 2014-01-24  Eric Carlson  <eric.carlson@apple.com>
 
         Merge Chromium TextTrack cleanups
