@@ -206,8 +206,12 @@ static NSString* NSStringOrNil(String coreString)
 
 - (NSImage *)_image
 {
+#if !PLATFORM(IOS)
     Image* image = _result->image();
     return image ? image->getNSImage() : nil;
+#else
+    return nil;
+#endif
 }
 
 - (NSValue *)_imageRect

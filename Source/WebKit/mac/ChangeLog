@@ -1,3 +1,12 @@
+2014-01-27  Tim Horton  <timothy_horton@apple.com>
+
+        Another iOS build fix.
+
+        * Misc/WebElementDictionary.mm:
+        (-[WebElementDictionary _image]):
+        We were apparently depending on Image::getNSImage() being defined
+        (yet always returning nullptr) on iOS.
+
 2014-01-26  David Kilzer  <ddkilzer@apple.com>
 
         Remove duplicate settings for ENABLE(DISK_IMAGE_CACHE)
