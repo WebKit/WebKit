@@ -207,7 +207,7 @@ static URL getURLForImageElement(Element& element)
 
 void Pasteboard::writeImage(Element& element, const URL&, const String& title)
 {
-    if (!(element.renderer() && element.renderer()->isImage()))
+    if (!(element.renderer() && element.renderer()->isRenderImage()))
         return;
 
     RenderImage* renderer = toRenderImage(element.renderer());

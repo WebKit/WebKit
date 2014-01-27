@@ -294,8 +294,8 @@ Image* HitTestResult::image() const
         return 0;
     
     auto renderer = m_innerNonSharedNode->renderer();
-    if (renderer && renderer->isImage()) {
-        RenderImage* image = static_cast<WebCore::RenderImage*>(renderer);
+    if (renderer && renderer->isRenderImage()) {
+        RenderImage* image = toRenderImage(renderer);
         if (image->cachedImage() && !image->cachedImage()->errorOccurred())
             return image->cachedImage()->imageForRenderer(image);
     }

@@ -1,3 +1,26 @@
+2014-01-26  David Kilzer  <ddkilzer@apple.com>
+
+        Part 2: Assertion failure in WebCore::PseudoElement::didRecalcStyle()
+        <https://bugs.webkit.org/show_bug.cgi?id=126761>
+        <rdar://problem/15793540>
+
+        Reviewed by Simon Fraser.
+
+        * bindings/objc/DOM.mm:
+        (-[DOMElement image]):
+        (-[DOMElement _imageTIFFRepresentation]):
+        * platform/gtk/PasteboardGtk.cpp:
+        (WebCore::Pasteboard::writeImage):
+        * platform/win/PasteboardWin.cpp:
+        (WebCore::Pasteboard::writeImage):
+        (WebCore::getCachedImage):
+        * rendering/HitTestResult.cpp:
+        (WebCore::HitTestResult::image):
+        - More places where toRenderImage() should be used instead of
+          toImage().
+        - Fixed last two places where static_cast<WebCore::RenderImage*>
+          was being used instead of toRenderImage().
+
 2014-01-26  Chris Fleizach  <cfleizach@apple.com>
 
         AX: Disable accessibility after every test run

@@ -726,7 +726,7 @@ void Pasteboard::write(const PasteboardURL& pasteboardURL)
 
 void Pasteboard::writeImage(Element& element, const URL&, const String&)
 {
-    if (!(element.renderer() && element.renderer()->isImage()))
+    if (!(element.renderer() && element.renderer()->isRenderImage()))
         return;
 
     RenderImage* renderer = toRenderImage(element.renderer());
@@ -862,7 +862,7 @@ static CachedImage* getCachedImage(Element& element)
 {
     // Attempt to pull CachedImage from element
     RenderObject* renderer = element.renderer();
-    if (!renderer || !renderer->isImage()) 
+    if (!renderer || !renderer->isRenderImage())
         return 0;
 
     RenderImage* image = toRenderImage(renderer);
