@@ -570,11 +570,6 @@ public:
         [NSNumber numberWithBool:NO],     WebKitNetworkDataUsageTrackingEnabledPreferenceKey,
         @"",                              WebKitNetworkInterfaceNamePreferenceKey,
 #endif
-#if ENABLE(DISK_IMAGE_CACHE)
-        [NSNumber numberWithBool:YES], WebKitDiskImageCacheEnabledPreferenceKey,
-        [NSNumber numberWithUnsignedInt:(100 * 1024)], WebKitDiskImageCacheMinimumImageSizePreferenceKey,
-        [NSNumber numberWithUnsignedInt:(100 * 1024 * 1024)], WebKitDiskImageCacheMaximumCacheSizePreferenceKey,
-#endif
 #if ENABLE(IOS_TEXT_AUTOSIZING)
         [NSNumber numberWithFloat:WKGetMinimumZoomFontSize()], WebKitMinimumZoomFontSizePreferenceKey,
 #endif
