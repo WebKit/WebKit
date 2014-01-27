@@ -411,22 +411,21 @@ static String buildInsetString(const String& top, const String& right, const Str
     char opening[] = "inset(";
     char separator[] = " ";
     char cornersSeparator[] = "round";
-    char radiusSeparator[] = "/";
     StringBuilder result;
-    // Compute the required capacity in advance to reduce allocations.
-    result.reserveCapacity((sizeof(opening) - 1) + (13 * (sizeof(separator) - 1)) + (sizeof(cornersSeparator) - 1) + (sizeof(radiusSeparator) - 1) + 1
-        + top.length() + right.length() + bottom.length() + left.length()
-        + topLeftRadiusWidth.length() + topRightRadiusWidth.length() + bottomRightRadiusWidth.length() + bottomLeftRadiusWidth.length() +
-        + topLeftRadiusHeight.length() + topRightRadiusHeight.length() + bottomRightRadiusHeight.length() + bottomLeftRadiusHeight.length() +
-        + (box.length() ? box.length() + 1 : 0));
     result.appendLiteral(opening);
     result.append(top);
-    result.appendLiteral(separator);
-    result.append(right);
-    result.appendLiteral(separator);
-    result.append(bottom);
-    result.appendLiteral(separator);
-    result.append(left);
+    if (!right.isNull()) {
+        result.appendLiteral(separator);
+        result.append(right);
+    }
+    if (!bottom.isNull()) {
+        result.appendLiteral(separator);
+        result.append(bottom);
+    }
+    if (!left.isNull()) {
+        result.appendLiteral(separator);
+        result.append(left);
+    }
 
     if (!topLeftRadiusWidth.isNull() && !topLeftRadiusHeight.isNull()) {
         result.appendLiteral(separator);
@@ -442,7 +441,7 @@ static String buildInsetString(const String& top, const String& right, const Str
         result.append(bottomLeftRadiusWidth);
 
         result.appendLiteral(separator);
-        result.append(radiusSeparator);
+        result.append('/');
         result.appendLiteral(separator);
 
         result.append(topLeftRadiusHeight);
