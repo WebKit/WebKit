@@ -1,5 +1,11 @@
 2014-01-26  Tim Horton  <timothy_horton@apple.com>
 
+        Fix the iOS build (failed to correctly revert some broken changes in the last patch).
+
+        * platform/graphics/cg/BitmapImageCG.cpp:
+
+2014-01-26  Tim Horton  <timothy_horton@apple.com>
+
         Start cleaning up iOS upstreaming #ifs in platform/graphics
         https://bugs.webkit.org/show_bug.cgi?id=127641
 

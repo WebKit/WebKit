@@ -38,6 +38,10 @@
 #include <ApplicationServices/ApplicationServices.h>
 #endif
 
+#if PLATFORM(IOS)
+#include <CoreGraphics/CGContextPrivate.h>
+#endif
+
 #if PLATFORM(MAC)
 #include "WebCoreSystemInterface.h"
 #endif
