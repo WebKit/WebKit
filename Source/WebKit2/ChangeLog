@@ -1,3 +1,13 @@
+2014-01-27  Brady Eidson  <beidson@apple.com>
+
+        IDB: Remove unused concept of "cursor prefetch"
+        https://bugs.webkit.org/show_bug.cgi?id=127700
+
+        Reviewed by Tim Horton.
+
+        * WebProcess/Databases/IndexedDB/WebIDBServerConnection.cpp:
+        * WebProcess/Databases/IndexedDB/WebIDBServerConnection.h:
+
 2014-01-27  Tim Horton  <timothy_horton@apple.com>
 
         Fix the build on case-sensitive filesystems

@@ -78,8 +78,6 @@ public:
     // Cursor-level operations
     virtual void cursorAdvance(IDBCursorBackend&, const CursorAdvanceOperation&, std::function<void()> completionCallback) override;
     virtual void cursorIterate(IDBCursorBackend&, const CursorIterationOperation&, std::function<void()> completionCallback) override;
-    virtual void cursorPrefetchIteration(IDBCursorBackend&, const CursorPrefetchIterationOperation&, std::function<void()> completionCallback) override;
-    virtual void cursorPrefetchReset(IDBCursorBackend&, int usedPrefetches) override;
 
 private:
     IDBServerConnectionLevelDB(const String& databaseName, IDBBackingStoreLevelDB*);

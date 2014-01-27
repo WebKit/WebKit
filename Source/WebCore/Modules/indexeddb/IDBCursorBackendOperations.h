@@ -82,30 +82,6 @@ private:
     RefPtr<IDBCallbacks> m_callbacks;
 };
 
-class CursorPrefetchIterationOperation : public IDBOperation {
-public:
-    static PassRefPtr<IDBOperation> create(PassRefPtr<IDBCursorBackend> cursor, int numberToFetch, PassRefPtr<IDBCallbacks> callbacks)
-    {
-        return adoptRef(new CursorPrefetchIterationOperation(cursor, numberToFetch, callbacks));
-    }
-    virtual void perform(std::function<void()> completionCallback) override final;
-
-    int numberToFetch() const { return m_numberToFetch; }
-    IDBCallbacks* callbacks() const { return m_callbacks.get(); }
-
-private:
-    CursorPrefetchIterationOperation(PassRefPtr<IDBCursorBackend> cursor, int numberToFetch, PassRefPtr<IDBCallbacks> callbacks)
-        : m_cursor(cursor)
-        , m_numberToFetch(numberToFetch)
-        , m_callbacks(callbacks)
-    {
-    }
-
-    RefPtr<IDBCursorBackend> m_cursor;
-    int m_numberToFetch;
-    RefPtr<IDBCallbacks> m_callbacks;
-};
-
 } // namespace WebCore
 
 #endif // ENABLE(INDEXED_DATABASE)

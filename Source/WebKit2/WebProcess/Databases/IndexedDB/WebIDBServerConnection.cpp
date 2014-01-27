@@ -527,14 +527,6 @@ void WebIDBServerConnection::cursorIterate(IDBCursorBackend&, const CursorIterat
 {
 }
 
-void WebIDBServerConnection::cursorPrefetchIteration(IDBCursorBackend&, const CursorPrefetchIterationOperation&, std::function<void()> completionCallback)
-{
-}
-
-void WebIDBServerConnection::cursorPrefetchReset(IDBCursorBackend&, int usedPrefetches)
-{
-}
-
 IPC::Connection* WebIDBServerConnection::messageSenderConnection()
 {
     return WebProcess::shared().webToDatabaseProcessConnection()->connection();

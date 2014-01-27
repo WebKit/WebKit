@@ -81,25 +81,6 @@ void IDBCursorBackend::deleteFunction(PassRefPtr<IDBCallbacks> prpCallbacks, Exc
     m_transaction->database().deleteRange(m_transaction->id(), m_objectStoreID, keyRange.release(), prpCallbacks);
 }
 
-void IDBCursorBackend::prefetchContinue(int numberToFetch, PassRefPtr<IDBCallbacks> prpCallbacks, ExceptionCode&)
-{
-    LOG(StorageAPI, "IDBCursorBackend::prefetchContinue");
-    RefPtr<IDBCallbacks> callbacks = prpCallbacks;
-    m_transaction->scheduleTask(m_taskType, CursorPrefetchIterationOperation::create(this, numberToFetch, callbacks));
-}
-
-void IDBCursorBackend::prefetchReset(int usedPrefetches, int)
-{
-    LOG(StorageAPI, "IDBCursorBackend::prefetchReset");
-    m_cursorID = m_savedCursorID;
-    m_savedCursorID = 0;
-
-    if (m_closed)
-        return;
-    if (m_cursorID)
-        m_transaction->database().serverConnection().cursorPrefetchReset(*this, usedPrefetches);
-}
-
 void IDBCursorBackend::close()
 {
     LOG(StorageAPI, "IDBCursorBackend::close");

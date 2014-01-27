@@ -91,8 +91,6 @@ public:
     // Cursor-level operations
     virtual void cursorAdvance(IDBCursorBackend&, const CursorAdvanceOperation&, std::function<void()> completionCallback) = 0;
     virtual void cursorIterate(IDBCursorBackend&, const CursorIterationOperation&, std::function<void()> completionCallback) = 0;
-    virtual void cursorPrefetchIteration(IDBCursorBackend&, const CursorPrefetchIterationOperation&, std::function<void()> completionCallback) = 0;
-    virtual void cursorPrefetchReset(IDBCursorBackend&, int usedPrefetches) = 0;
 };
 
 } // namespace WebCore

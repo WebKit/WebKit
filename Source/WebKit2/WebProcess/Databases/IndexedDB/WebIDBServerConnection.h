@@ -82,8 +82,6 @@ public:
     // Cursor-level operations
     virtual void cursorAdvance(WebCore::IDBCursorBackend&, const WebCore::CursorAdvanceOperation&, std::function<void()> completionCallback) override;
     virtual void cursorIterate(WebCore::IDBCursorBackend&, const WebCore::CursorIterationOperation&, std::function<void()> completionCallback) override;
-    virtual void cursorPrefetchIteration(WebCore::IDBCursorBackend&, const WebCore::CursorPrefetchIterationOperation&, std::function<void()> completionCallback) override;
-    virtual void cursorPrefetchReset(WebCore::IDBCursorBackend&, int usedPrefetches) override;
 
     // Message handlers.
     void didReceiveWebIDBServerConnectionMessage(IPC::Connection*, IPC::MessageDecoder&);

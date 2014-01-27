@@ -55,8 +55,6 @@ public:
     void advance(unsigned long, PassRefPtr<IDBCallbacks>, ExceptionCode&);
     void continueFunction(PassRefPtr<IDBKey>, PassRefPtr<IDBCallbacks>, ExceptionCode&);
     void deleteFunction(PassRefPtr<IDBCallbacks>, ExceptionCode&);
-    void prefetchContinue(int numberToFetch, PassRefPtr<IDBCallbacks>, ExceptionCode&);
-    void prefetchReset(int usedPrefetches, int unusedPrefetches);
     void postSuccessHandlerCallback() { }
 
     IDBKey* key() const { return m_currentKey.get(); }

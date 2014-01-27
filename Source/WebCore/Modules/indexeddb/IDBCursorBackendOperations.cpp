@@ -47,12 +47,6 @@ void CursorIterationOperation::perform(std::function<void()> completionCallback)
     m_cursor->transaction().database().serverConnection().cursorIterate(*m_cursor, *this, completionCallback);
 }
 
-void CursorPrefetchIterationOperation::perform(std::function<void()> completionCallback)
-{
-    LOG(StorageAPI, "CursorPrefetchIterationOperation");
-    m_cursor->transaction().database().serverConnection().cursorPrefetchIteration(*m_cursor, *this, completionCallback);
-}
-
 } // namespace WebCore
 
 #endif // ENABLED(INDEXED_DATABASE)
