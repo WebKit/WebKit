@@ -1,3 +1,20 @@
+2014-01-27  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r162755.
+        http://trac.webkit.org/changeset/162755
+        https://bugs.webkit.org/show_bug.cgi?id=127696
+
+        not quite right, breaks subframe scrolling in some cases
+        (Requested by thorton on #webkit).
+
+        * page/scrolling/ScrollingTree.cpp:
+        (WebCore::ScrollingTree::ScrollingTree):
+        (WebCore::ScrollingTree::shouldHandleWheelEventSynchronously):
+        (WebCore::ScrollingTree::removeDestroyedNodes):
+        * page/scrolling/ScrollingTree.h:
+        * page/scrolling/mac/ScrollingTreeScrollingNodeMac.mm:
+        (WebCore::ScrollingTreeScrollingNodeMac::handleWheelEvent):
+
 2014-01-27  Zoltan Horvath  <zoltan@webkit.org>
 
         [CSS Shapes] inset() function with multiple spaces on element style
