@@ -1,3 +1,17 @@
+2014-01-27  Anders Carlsson  <andersca@apple.com>
+
+        Implement the _injectedBundleURL property
+        https://bugs.webkit.org/show_bug.cgi?id=127714
+
+        Reviewed by Tim Horton.
+
+        Properties declared in class categories need to be implemented. Do this
+        for the _injectedBundleURL property.
+
+        * UIProcess/API/Cocoa/WKProcessClassConfiguration.mm:
+        (-[WKProcessClassConfiguration _injectedBundleURL]):
+        (-[WKProcessClassConfiguration _setInjectedBundleURL:]):
+
 2014-01-27  Brady Eidson  <beidson@apple.com>
 
         IDB: LevelDB backing store shouldn't know about IDBCursor or IDBCallbacks

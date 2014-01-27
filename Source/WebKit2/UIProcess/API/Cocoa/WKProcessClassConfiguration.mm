@@ -28,7 +28,21 @@
 
 #if WK_API_ENABLED
 
-@implementation WKProcessClassConfiguration
+#import <wtf/RetainPtr.h>
+
+@implementation WKProcessClassConfiguration {
+    RetainPtr<NSURL> _injectedBundleURL;
+}
+
+- (NSURL *)_injectedBundleURL
+{
+    return _injectedBundleURL.get();
+}
+
+- (void)_setInjectedBundleURL:(NSURL *)injectedBundleURL
+{
+    _injectedBundleURL = adoptNS([injectedBundleURL copy]);
+}
 
 - (id)copyWithZone:(NSZone *)zone
 {
