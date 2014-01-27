@@ -141,10 +141,14 @@ public:
 
     virtual PassNativeImagePtr nativeImageForCurrentFrame() { return 0; }
     virtual ImageOrientation orientationForCurrentFrame() { return ImageOrientation(); }
-    
-#if PLATFORM(MAC)
+
     // Accessors for native image formats.
+
+#if USE(APPKIT)
     virtual NSImage* getNSImage() { return 0; }
+#endif
+
+#if PLATFORM(MAC)
     virtual CFDataRef getTIFFRepresentation() { return 0; }
 #endif
 

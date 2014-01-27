@@ -36,9 +36,10 @@
 
 #if PLATFORM(MAC)
 #include <wtf/RetainPtr.h>
-#if !PLATFORM(IOS)
+#endif
+
+#if USE(APPKIT)
 OBJC_CLASS NSImage;
-#endif // PLATFORM(IOS)
 #endif
 
 #if PLATFORM(WIN)
@@ -156,11 +157,13 @@ public:
     virtual void drawPattern(GraphicsContext*, const FloatRect& srcRect, const AffineTransform& patternTransform,
         const FloatPoint& phase, ColorSpace styleColorSpace, CompositeOperator, const FloatRect& destRect, BlendMode = BlendModeNormal) override;
 
-#if PLATFORM(MAC)
     // Accessors for native image formats.
-#if !PLATFORM(IOS)
+
+#if USE(APPKIT)
     virtual NSImage* getNSImage() override;
 #endif
+
+#if PLATFORM(MAC)
     virtual CFDataRef getTIFFRepresentation() override;
 #endif
 
@@ -313,10 +316,10 @@ private:
     int m_repetitionsComplete;  // How many repetitions we've finished.
     double m_desiredFrameStartTime;  // The system time at which we hope to see the next call to startAnimation().
 
-#if PLATFORM(MAC)
-#if !PLATFORM(IOS)
+#if USE(APPKIT)
     mutable RetainPtr<NSImage> m_nsImage; // A cached NSImage of frame 0. Only built lazily if someone actually queries for one.
 #endif
+#if USE(CG)
     mutable RetainPtr<CFDataRef> m_tiffRep; // Cached TIFF rep for frame 0.  Only built lazily if someone queries for one.
 #endif
 

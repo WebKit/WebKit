@@ -56,7 +56,7 @@ void BitmapImage::invalidatePlatformData()
     if (m_frames.size() != 1)
         return;
 
-#if !PLATFORM(IOS)
+#if USE(APPKIT)
     m_nsImage = 0;
 #endif
     m_tiffRep = 0;
@@ -84,9 +84,9 @@ CFDataRef BitmapImage::getTIFFRepresentation()
 {
     if (m_tiffRep)
         return m_tiffRep.get();
-    
+
     unsigned numFrames = frameCount();
-    
+
     // If numFrames is zero, we know for certain this image doesn't have valid data
     // Even though the call to CGImageDestinationCreateWithData will fail and we'll handle it gracefully,
     // in certain circumstances that call will spam the console with an error message
@@ -101,13 +101,13 @@ CFDataRef BitmapImage::getTIFFRepresentation()
     }
 
     unsigned numValidFrames = images.size();
-    
+
     RetainPtr<CFMutableDataRef> data = adoptCF(CFDataCreateMutable(0, 0));
     RetainPtr<CGImageDestinationRef> destination = adoptCF(CGImageDestinationCreateWithData(data.get(), kUTTypeTIFF, numValidFrames, 0));
 
     if (!destination)
         return 0;
-    
+
     for (unsigned i = 0; i < numValidFrames; ++i)
         CGImageDestinationAddImage(destination.get(), images[i], 0);
 
@@ -117,7 +117,7 @@ CFDataRef BitmapImage::getTIFFRepresentation()
     return m_tiffRep.get();
 }
 
-#if !PLATFORM(IOS)
+#if USE(APPKIT)
 NSImage* BitmapImage::getNSImage()
 {
     if (m_nsImage)

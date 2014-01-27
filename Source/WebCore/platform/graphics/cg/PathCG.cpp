@@ -34,12 +34,7 @@
 #include "GraphicsContext.h"
 #include "IntRect.h"
 #include "StrokeStyleApplier.h"
-#if !PLATFORM(IOS)
-#include <ApplicationServices/ApplicationServices.h>
-#else
-#include <CoreGraphics/CGPathPrivate.h>
 #include <CoreGraphics/CoreGraphics.h>
-#endif
 #include <wtf/MathExtras.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/text/WTFString.h>
@@ -324,9 +319,6 @@ FloatPoint Path::currentPoint() const
         return FloatPoint();
     return CGPathGetCurrentPoint(m_path);
 }
-
-// MARK: -
-// MARK: Path Management
 
 struct PathApplierInfo {
     void* info;

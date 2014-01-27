@@ -476,7 +476,6 @@ void MediaPlayerPrivateAVFoundationObjC::createAVAssetForURL(const String& url)
 
     [options.get() setObject:[NSNumber numberWithInt:AVAssetReferenceRestrictionForbidRemoteReferenceToLocal | AVAssetReferenceRestrictionForbidLocalReferenceToRemote] forKey:AVURLAssetReferenceRestrictionsKey];
 
-#if PLATFORM(IOS) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 1080
     RetainPtr<NSMutableDictionary> headerFields = adoptNS([[NSMutableDictionary alloc] init]);
 
     String referrer = player()->referrer();
@@ -489,7 +488,6 @@ void MediaPlayerPrivateAVFoundationObjC::createAVAssetForURL(const String& url)
 
     if ([headerFields.get() count])
         [options.get() setObject:headerFields.get() forKey:@"AVURLAssetHTTPHeaderFieldsKey"];
-#endif
 
     NSURL *cocoaURL = URL(ParsedURLString, url);
     m_avAsset = adoptNS([[AVURLAsset alloc] initWithURL:cocoaURL options:options.get()]);

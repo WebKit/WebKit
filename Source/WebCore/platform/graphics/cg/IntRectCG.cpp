@@ -28,11 +28,7 @@
 
 #if USE(CG)
 
-#if !PLATFORM(IOS)
-#include <ApplicationServices/ApplicationServices.h>
-#else
 #include <CoreGraphics/CoreGraphics.h>
-#endif
 
 namespace WebCore {
 

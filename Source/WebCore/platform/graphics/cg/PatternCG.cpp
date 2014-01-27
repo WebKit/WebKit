@@ -30,11 +30,7 @@
 #include "AffineTransform.h"
 #include "GraphicsContext.h"
 
-#if !PLATFORM(IOS)
-#include <ApplicationServices/ApplicationServices.h>
-#else
 #include <CoreGraphics/CoreGraphics.h>
-#endif
 #include <wtf/MainThread.h>
 
 #if PLATFORM(MAC)

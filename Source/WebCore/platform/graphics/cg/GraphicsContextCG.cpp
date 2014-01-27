@@ -1017,10 +1017,8 @@ static void applyShadowOffsetWorkaroundIfNeeded(const GraphicsContext& context, 
     if (context.isAcceleratedContext())
         return;
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1080
     if (wkCGContextDrawsWithCorrectShadowOffsets(context.platformContext()))
         return;
-#endif
 
     // Work around <rdar://problem/5539388> by ensuring that the offsets will get truncated
     // to the desired integer. Also see: <rdar://problem/10056277>

@@ -79,9 +79,7 @@ FontPlatformData::FontPlatformData(CTFontRef ctFont, float size, bool isPrinterF
     {
         CTFontSymbolicTraits traits = CTFontGetSymbolicTraits(toCTFontRef(m_font));
         m_isColorBitmapFont = traits & kCTFontColorGlyphsTrait;
-#if PLATFORM(IOS) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 1080
         m_isCompositeFontReference = traits & kCTFontCompositeTrait;
-#endif
     }
 
     if (m_font)
@@ -194,9 +192,7 @@ void FontPlatformData::setFont(NSFont *font)
     {
         CTFontSymbolicTraits traits = CTFontGetSymbolicTraits(toCTFontRef(m_font));
         m_isColorBitmapFont = traits & kCTFontColorGlyphsTrait;
-#if PLATFORM(IOS) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 1080
         m_isCompositeFontReference = traits & kCTFontCompositeTrait;
-#endif
     }
     m_CTFont = 0;
 }

@@ -1,3 +1,52 @@
+2014-01-26  Tim Horton  <timothy_horton@apple.com>
+
+        Start cleaning up iOS upstreaming #ifs in platform/graphics
+        https://bugs.webkit.org/show_bug.cgi?id=127641
+
+        Reviewed by Sam Weinig.
+
+        * platform/graphics/BitmapImage.h:
+        * platform/graphics/mac/ColorMac.h:
+        Use USE(APPKIT) instead of PLATFORM(MAC) && !PLATFORM(IOS) for NSImage/getNSImage().
+
+        * platform/graphics/avfoundation/AVTrackPrivateAVFObjCImpl.mm:
+        (WebCore::AVTrackPrivateAVFObjCImpl::label):
+        * platform/graphics/avfoundation/objc/InbandTextTrackPrivateLegacyAVFObjC.mm:
+        (WebCore::InbandTextTrackPrivateLegacyAVFObjC::label):
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::createAVAssetForURL):
+        Remove some code that was only used on OS X on Lion or below.
+
+        * platform/graphics/cg/GraphicsContextCG.cpp:
+        (WebCore::GraphicsContext::platformInit):
+        ToT WebKit doesn't build on Lion or earlier anymore, so this code can always run.
+
+        * platform/graphics/cg/FloatPointCG.cpp:
+        * platform/graphics/cg/FloatRectCG.cpp:
+        * platform/graphics/cg/FloatSizeCG.cpp:
+        * platform/graphics/cg/GradientCG.cpp:
+        * platform/graphics/cg/ImageBufferCG.cpp:
+        * platform/graphics/cg/ImageCG.cpp:
+        * platform/graphics/cg/IntPointCG.cpp:
+        * platform/graphics/cg/IntRectCG.cpp:
+        * platform/graphics/cg/PathCG.cpp:
+        * platform/graphics/cg/PatternCG.cpp:
+        * platform/graphics/mac/FontCustomPlatformData.cpp:
+        Use CoreGraphics/CoreGraphics.h instead of ApplicationServices/ApplicationServices.h
+        even on Mac, so we can share the include.
+
+        * platform/graphics/cg/IntSizeCG.cpp:
+        Remove a random comment of a style we don't tend to use in WebKit,
+        and from a file not large enough to need it.
+
+        * platform/graphics/cocoa/FontPlatformDataCocoa.mm:
+        (WebCore::FontPlatformData::FontPlatformData):
+        (WebCore::FontPlatformData::setFont):
+        Remove some more always-true #ifs.
+
+        * platform/graphics/mac/WebLayer.mm:
+        Move a #if'd include out to its own block as per the style guide.
+
 2014-01-26  David Hyatt  <hyatt@apple.com>
 
         [New Multicolumn] Change the axis property to be a boolean like other isInline checks

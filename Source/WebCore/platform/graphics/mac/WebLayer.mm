@@ -32,15 +32,16 @@
 #import "GraphicsContext.h"
 #import "GraphicsLayerCA.h"
 #import "PlatformCALayer.h"
-#if !PLATFORM(IOS)
-#import "ThemeMac.h"
-#endif
 #import <QuartzCore/QuartzCore.h>
 
 #if PLATFORM(IOS)
 #import "WKGraphics.h"
 #import "WAKWindow.h"
 #import "WebCoreThread.h"
+#endif
+
+#if !PLATFORM(IOS)
+#import "ThemeMac.h"
 #endif
 
 @interface CALayer(WebCoreCALayerPrivate)

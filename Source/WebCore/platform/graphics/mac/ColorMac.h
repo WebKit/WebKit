@@ -31,13 +31,13 @@
 
 #include "Color.h"
 
-#if !PLATFORM(IOS)
+#if USE(APPKIT)
 OBJC_CLASS NSColor;
 #endif
 
 namespace WebCore {
     
-#if !PLATFORM(IOS)
+#if USE(APPKIT)
     // These functions assume NSColors are in DeviceRGB colorspace
     Color colorFromNSColor(NSColor *);
     NSColor *nsColor(const Color&);

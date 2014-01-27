@@ -34,12 +34,8 @@
 #include "ImageData.h"
 #include "MIMETypeRegistry.h"
 #include <math.h>
-#if !PLATFORM(IOS)
-#include <ApplicationServices/ApplicationServices.h>
-#else
 #include <CoreGraphics/CoreGraphics.h>
 #include <ImageIO/ImageIO.h>
-#endif
 #include <wtf/Assertions.h>
 #include <wtf/CheckedArithmetic.h>
 #include <wtf/MainThread.h>

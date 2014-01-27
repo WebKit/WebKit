@@ -32,12 +32,11 @@
 #include "GraphicsContextCG.h"
 #include "ImageObserver.h"
 #include "SubimageCacheWithTimer.h"
-#if !PLATFORM(IOS)
-#include <ApplicationServices/ApplicationServices.h>
-#else
-#include <CoreGraphics/CGContextPrivate.h>
-#endif
 #include <wtf/RetainPtr.h>
+
+#if USE(APPKIT)
+#include <ApplicationServices/ApplicationServices.h>
+#endif
 
 #if PLATFORM(MAC)
 #include "WebCoreSystemInterface.h"
