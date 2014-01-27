@@ -44,6 +44,10 @@ testStyleValue("circle(-.5px, +.5px, .5px)", "circle(-0.5px, 0.5px, 0.5px)");
 testStyleValue("rectangle(1cm, 1mm, 1in, 1px, 1pt, 1pc)", "rectangle(1cm, 1mm, 1in, 1px, 1pt, 1pc)");
 testStyleValue("inset-rectangle(1cm, 1mm, 1in, 1px, 1pt, 1pc)", "inset-rectangle(1cm, 1mm, 1in, 1px, 1pt, 1pc)");
 testStyleValue("inset(1cm 1mm 1in 1px round 1pt 1pc)", "inset(1cm 1mm 1in 1px round 1pt 1pc 1pt 1pc / 1pt 1pc 1pt 1pc)");
+testStyleValue("inset(-1px 1px 1px 1px round 1px 1px 1px 1px)", "inset(-1px 1px 1px 1px round 1px 1px 1px 1px / 1px 1px 1px 1px)");
+testStyleValue("inset(1px -1px 1px 1px round 1px 1px 1px 1px)", "inset(1px -1px 1px 1px round 1px 1px 1px 1px / 1px 1px 1px 1px)");
+testStyleValue("inset(1px 1px -1px 1px round 1px 1px 1px 1px)", "inset(1px 1px -1px 1px round 1px 1px 1px 1px / 1px 1px 1px 1px)");
+testStyleValue("inset(1px 1px 1px -1px round 1px 1px 1px 1px)", "inset(1px 1px 1px -1px round 1px 1px 1px 1px / 1px 1px 1px 1px)");
 
 // font-relative lengths - number serialization, units, resolution
 testStyleValue("circle(-1em, +1em, 1em)", "circle(-1em, 1em, 1em)");
@@ -106,12 +110,6 @@ testInvalidValue("-webkit-shape-inside", "inset-rectangle(-1cm, 1mm, 1in, 1px, 1
 testInvalidValue("-webkit-shape-inside", "inset-rectangle(1cm, -1mm, 1in, 1px, 1pt, 1pc)");
 testInvalidValue("-webkit-shape-inside", "inset-rectangle(1cm, 1mm, -1in, 1px, 1pt, 1pc)");
 testInvalidValue("-webkit-shape-inside", "inset-rectangle(1cm, 1mm, 1in, -1px, 1pt, 1pc)");
-
-// reject negative top, right, bottom, and left
-testInvalidValue("-webkit-shape-inside", "inset(-1cm 1mm 1in 1px)");
-testInvalidValue("-webkit-shape-inside", "inset(1cm -1mm 1in 1px)");
-testInvalidValue("-webkit-shape-inside", "inset(1cm 1mm -1in 1px)");
-testInvalidValue("-webkit-shape-inside", "inset(1cm 1mm 1in -1px)");
 
 </script>
 <script src="../../../resources/js-test-post.js"></script>

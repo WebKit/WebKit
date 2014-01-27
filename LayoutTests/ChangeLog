@@ -1,3 +1,13 @@
+2014-01-27  Zoltan Horvath  <zoltan@webkit.org>
+
+        [CSS Shapes] Remove restriction of negative values for inset parameters
+        https://bugs.webkit.org/show_bug.cgi?id=127704
+
+        Reviewed by Darin Adler.
+
+        * fast/shapes/parsing/parsing-shape-lengths-expected.txt:
+        * fast/shapes/parsing/parsing-shape-lengths.html:
+
 2014-01-27  Antti Koivisto  <antti@apple.com>
 
         REGRESSION(r162837): fast/writing-mode/ruby-text-logical-left.html fails on WK1

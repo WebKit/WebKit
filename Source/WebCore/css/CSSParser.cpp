@@ -5393,7 +5393,7 @@ PassRefPtr<CSSBasicShape> CSSParser::parseBasicShapeInset(CSSParserValueList* ar
             return nullptr;
         }
 
-        Units unitFlags = FLength | FPercent| FNonNeg;
+        Units unitFlags = FLength | FPercent;
         if (!validUnit(argument, unitFlags) || argumentNumber > 3)
             return nullptr;
 

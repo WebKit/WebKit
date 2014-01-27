@@ -1,3 +1,19 @@
+2014-01-27  Zoltan Horvath  <zoltan@webkit.org>
+
+        [CSS Shapes] Remove restriction of negative values for inset parameters
+        https://bugs.webkit.org/show_bug.cgi?id=127704
+
+        Reviewed by Darin Adler.
+
+        The latest version of CSS Shapes (http://www.w3.org/TR/css-shapes/) specification
+        doesn't contain any restriction of using negative values for the inset sizing.
+        I removed the restriction from the code and added testing for them.
+
+        Existing tests have been extended with the new cases.
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseBasicShapeInset):
+
 2014-01-27  Eric Carlson  <eric.carlson@apple.com>
 
         [iOS] preload=none prevents play()

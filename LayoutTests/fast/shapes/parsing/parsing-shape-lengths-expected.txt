@@ -10,6 +10,10 @@ PASS getStyleValue("-webkit-shape-inside", "circle(-.5px, +.5px, .5px)") is "cir
 PASS getStyleValue("-webkit-shape-inside", "rectangle(1cm, 1mm, 1in, 1px, 1pt, 1pc)") is "rectangle(1cm, 1mm, 1in, 1px, 1pt, 1pc)"
 PASS getStyleValue("-webkit-shape-inside", "inset-rectangle(1cm, 1mm, 1in, 1px, 1pt, 1pc)") is "inset-rectangle(1cm, 1mm, 1in, 1px, 1pt, 1pc)"
 PASS getStyleValue("-webkit-shape-inside", "inset(1cm 1mm 1in 1px round 1pt 1pc)") is "inset(1cm 1mm 1in 1px round 1pt 1pc 1pt 1pc / 1pt 1pc 1pt 1pc)"
+PASS getStyleValue("-webkit-shape-inside", "inset(-1px 1px 1px 1px round 1px 1px 1px 1px)") is "inset(-1px 1px 1px 1px round 1px 1px 1px 1px / 1px 1px 1px 1px)"
+PASS getStyleValue("-webkit-shape-inside", "inset(1px -1px 1px 1px round 1px 1px 1px 1px)") is "inset(1px -1px 1px 1px round 1px 1px 1px 1px / 1px 1px 1px 1px)"
+PASS getStyleValue("-webkit-shape-inside", "inset(1px 1px -1px 1px round 1px 1px 1px 1px)") is "inset(1px 1px -1px 1px round 1px 1px 1px 1px / 1px 1px 1px 1px)"
+PASS getStyleValue("-webkit-shape-inside", "inset(1px 1px 1px -1px round 1px 1px 1px 1px)") is "inset(1px 1px 1px -1px round 1px 1px 1px 1px / 1px 1px 1px 1px)"
 PASS getStyleValue("-webkit-shape-inside", "circle(-1em, +1em, 1em)") is "circle(-1em, 1em, 1em)"
 PASS getStyleValue("-webkit-shape-inside", "circle(-1.5em, +1.5em, 1.5em)") is "circle(-1.5em, 1.5em, 1.5em)"
 PASS getStyleValue("-webkit-shape-inside", "circle(-.5em, +.5em, .5em)") is "circle(-0.5em, 0.5em, 0.5em)"
@@ -71,14 +75,6 @@ PASS getStyleValue("-webkit-shape-inside", "inset-rectangle(1cm, 1mm, -1in, 1px,
 PASS getComputedStyleValue("-webkit-shape-inside", "inset-rectangle(1cm, 1mm, -1in, 1px, 1pt, 1pc)") is "none"
 PASS getStyleValue("-webkit-shape-inside", "inset-rectangle(1cm, 1mm, 1in, -1px, 1pt, 1pc)") is null
 PASS getComputedStyleValue("-webkit-shape-inside", "inset-rectangle(1cm, 1mm, 1in, -1px, 1pt, 1pc)") is "none"
-PASS getStyleValue("-webkit-shape-inside", "inset(-1cm 1mm 1in 1px)") is null
-PASS getComputedStyleValue("-webkit-shape-inside", "inset(-1cm 1mm 1in 1px)") is "none"
-PASS getStyleValue("-webkit-shape-inside", "inset(1cm -1mm 1in 1px)") is null
-PASS getComputedStyleValue("-webkit-shape-inside", "inset(1cm -1mm 1in 1px)") is "none"
-PASS getStyleValue("-webkit-shape-inside", "inset(1cm 1mm -1in 1px)") is null
-PASS getComputedStyleValue("-webkit-shape-inside", "inset(1cm 1mm -1in 1px)") is "none"
-PASS getStyleValue("-webkit-shape-inside", "inset(1cm 1mm 1in -1px)") is null
-PASS getComputedStyleValue("-webkit-shape-inside", "inset(1cm 1mm 1in -1px)") is "none"
 PASS successfullyParsed is true
 
 TEST COMPLETE
