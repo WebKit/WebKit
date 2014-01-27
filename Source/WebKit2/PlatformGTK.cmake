@@ -82,9 +82,7 @@ list(APPEND WebKit2_SOURCES
     UIProcess/API/C/gtk/WKInspectorClientGtk.cpp
     UIProcess/API/C/gtk/WKView.cpp
 
-    UIProcess/API/C/soup/WKContextSoup.cpp
     UIProcess/API/C/soup/WKCookieManagerSoup.cpp
-    UIProcess/API/C/soup/WKSoupRequestManager.cpp
     UIProcess/API/C/soup/WKSoupCustomProtocolRequestManager.cpp
 
     UIProcess/API/gtk/PageClientImpl.cpp
@@ -269,8 +267,6 @@ list(APPEND WebKit2_SOURCES
     UIProcess/Network/soup/NetworkProcessProxySoup.cpp
     UIProcess/soup/WebContextSoup.cpp
     UIProcess/soup/WebCookieManagerProxySoup.cpp
-    UIProcess/soup/WebSoupRequestManagerClient.cpp
-    UIProcess/soup/WebSoupRequestManagerProxy.cpp
 
     WebProcess/Cookies/soup/WebCookieManagerSoup.cpp
     WebProcess/Cookies/soup/WebKitSoupCookieJarSqlite.cpp
@@ -311,7 +307,6 @@ list(APPEND WebKit2_SOURCES
     WebProcess/soup/WebKitSoupRequestGeneric.cpp
     WebProcess/soup/WebKitSoupRequestInputStream.cpp
     WebProcess/soup/WebProcessSoup.cpp
-    WebProcess/soup/WebSoupRequestManager.cpp
 )
 
 set(WebKit2GTK_INSTALLED_HEADERS

@@ -29,20 +29,19 @@
 #include "DownloadProxy.h"
 #include "WebContext.h"
 #include "WebKitPrivate.h"
-#include "WebKitURISchemeRequest.h"
 #include "WebKitWebContext.h"
 #include "WebKitWebViewGroup.h"
-#include "WebSoupRequestManagerProxy.h"
+#include "WebSoupCustomProtocolRequestManager.h"
 
 WebKit::WebContext* webkitWebContextGetContext(WebKitWebContext*);
 WebKitDownload* webkitWebContextGetOrCreateDownload(WebKit::DownloadProxy*);
 WebKitDownload* webkitWebContextStartDownload(WebKitWebContext*, const char* uri, WebKit::WebPageProxy*);
 void webkitWebContextRemoveDownload(WebKit::DownloadProxy*);
 void webkitWebContextDownloadStarted(WebKitWebContext*, WebKitDownload*);
-WebKit::WebSoupRequestManagerProxy* webkitWebContextGetRequestManager(WebKitWebContext*);
-void webkitWebContextReceivedURIRequest(WebKitWebContext*, WebKitURISchemeRequest*);
-void webkitWebContextDidFailToLoadURIRequest(WebKitWebContext*, uint64_t requestID);
-void webkitWebContextDidFinishURIRequest(WebKitWebContext*, uint64_t requestID);
+WebKit::WebSoupCustomProtocolRequestManager* webkitWebContextGetRequestManager(WebKitWebContext*);
+void webkitWebContextStartLoadingCustomProtocol(WebKitWebContext*, uint64_t customProtocolID, API::URLRequest*);
+void webkitWebContextStopLoadingCustomProtocol(WebKitWebContext*, uint64_t customProtocolID);
+void webkitWebContextDidFinishLoadingCustomProtocol(WebKitWebContext*, uint64_t customProtocolID);
 void webkitWebContextCreatePageForWebView(WebKitWebContext*, WebKitWebView*, WebKitWebViewGroup*);
 void webkitWebContextWebViewDestroyed(WebKitWebContext*, WebKitWebView*);
 WebKitWebView* webkitWebContextGetWebViewForPage(WebKitWebContext*, WebKit::WebPageProxy*);

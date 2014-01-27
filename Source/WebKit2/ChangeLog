@@ -1,5 +1,43 @@
 2014-01-27  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GTK] Implement custom URI schemes with CustomProtocols
+        https://bugs.webkit.org/show_bug.cgi?id=127091
+
+        Reviewed by Gustavo Noronha Silva.
+
+        The old classes are no longer built for GTK+ and should be removed once
+        other ports using soup backend switch to custom protocols implementation.
+
+        * GNUmakefile.am: Remove include path.
+        * GNUmakefile.list.am: Remove files from compilation.
+        * PlatformGTK.cmake: Ditto.
+        * UIProcess/API/gtk/WebKitPrivate.h:
+        * UIProcess/API/gtk/WebKitRequestManagerClient.cpp:
+        (startLoading):
+        (stopLoading):
+        (attachRequestManagerClientToContext):
+        * UIProcess/API/gtk/WebKitURISchemeRequest.cpp:
+        (webkitURISchemeRequestCreate):
+        (webkit_uri_scheme_request_get_web_view):
+        (webkitURISchemeRequestReadCallback):
+        (webkit_uri_scheme_request_finish):
+        (webkit_uri_scheme_request_finish_error):
+        * UIProcess/API/gtk/WebKitURISchemeRequestPrivate.h:
+        * UIProcess/API/gtk/WebKitWebContext.cpp:
+        (createDefaultWebContext):
+        (webkit_web_context_register_uri_scheme):
+        (webkitWebContextGetRequestManager):
+        (webkitWebContextStartLoadingCustomProtocol):
+        (webkitWebContextStopLoadingCustomProtocol):
+        (webkitWebContextDidFinishLoadingCustomProtocol):
+        * UIProcess/API/gtk/WebKitWebContextPrivate.h:
+        * UIProcess/gtk/WebContextGtk.cpp:
+        (WebKit::WebContext::platformInitializeWebProcess):
+        * WebKit2Prefix.h: Enable CustomProtocols unconditionally for the
+        GTK+ port.
+
+2014-01-27  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [SOUP] WebProcess sometimes crashes when a download is cancelled
         https://bugs.webkit.org/show_bug.cgi?id=127650
 

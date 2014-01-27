@@ -160,10 +160,6 @@ webkit2_built_sources += \
 	DerivedSources/WebKit2/WebResourceCacheManagerProxyMessages.h \
 	DerivedSources/WebKit2/WebResourceLoaderMessageReceiver.cpp \
 	DerivedSources/WebKit2/WebResourceLoaderMessages.h \
-	DerivedSources/WebKit2/WebSoupRequestManagerMessageReceiver.cpp \
-	DerivedSources/WebKit2/WebSoupRequestManagerMessages.h \
-	DerivedSources/WebKit2/WebSoupRequestManagerProxyMessageReceiver.cpp \
-	DerivedSources/WebKit2/WebSoupRequestManagerProxyMessages.h \
 	DerivedSources/WebKit2/WebVibrationProxyMessageReceiver.cpp \
 	DerivedSources/WebKit2/WebVibrationProxyMessages.h
 
@@ -521,10 +517,6 @@ webkit2_sources += \
 	Source/WebKit2/UIProcess/API/C/gtk/WKView.h \
 	Source/WebKit2/UIProcess/API/C/gtk/WKViewPrivate.h \
 	Source/WebKit2/UIProcess/API/C/soup/WKAPICastSoup.h \
-	Source/WebKit2/UIProcess/API/C/soup/WKContextSoup.cpp \
-	Source/WebKit2/UIProcess/API/C/soup/WKContextSoup.h \
-	Source/WebKit2/UIProcess/API/C/soup/WKSoupRequestManager.cpp \
-	Source/WebKit2/UIProcess/API/C/soup/WKSoupRequestManager.h \
 	Source/WebKit2/UIProcess/API/C/soup/WKSoupCustomProtocolRequestManager.cpp \
 	Source/WebKit2/UIProcess/API/C/soup/WKSoupCustomProtocolRequestManager.h \
 	Source/WebKit2/UIProcess/API/C/WebKit2_C.h \
@@ -886,10 +878,6 @@ webkit2_sources += \
 	Source/WebKit2/UIProcess/Storage/StorageManager.h \
 	Source/WebKit2/UIProcess/soup/WebContextSoup.cpp \
 	Source/WebKit2/UIProcess/soup/WebCookieManagerProxySoup.cpp \
-	Source/WebKit2/UIProcess/soup/WebSoupRequestManagerClient.cpp \
-	Source/WebKit2/UIProcess/soup/WebSoupRequestManagerClient.h \
-	Source/WebKit2/UIProcess/soup/WebSoupRequestManagerProxy.cpp \
-	Source/WebKit2/UIProcess/soup/WebSoupRequestManagerProxy.h \
 	Source/WebKit2/UIProcess/TextChecker.h \
 	Source/WebKit2/UIProcess/TextCheckerCompletion.h \
 	Source/WebKit2/UIProcess/TextCheckerCompletion.cpp \
@@ -1184,8 +1172,6 @@ webkit2_sources += \
 	Source/WebKit2/WebProcess/Storage/StorageAreaMap.h \
 	Source/WebKit2/WebProcess/Storage/StorageNamespaceImpl.cpp \
 	Source/WebKit2/WebProcess/Storage/StorageNamespaceImpl.h \
-	Source/WebKit2/WebProcess/soup/WebSoupRequestManager.cpp \
-	Source/WebKit2/WebProcess/soup/WebSoupRequestManager.h \
 	Source/WebKit2/WebProcess/soup/WebProcessSoup.cpp \
 	Source/WebKit2/WebProcess/soup/WebKitSoupRequestGeneric.cpp \
 	Source/WebKit2/WebProcess/soup/WebKitSoupRequestGeneric.h \

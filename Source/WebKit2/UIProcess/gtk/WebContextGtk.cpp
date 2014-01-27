@@ -33,6 +33,7 @@
 #include "WebInspectorServer.h"
 #include "WebProcessCreationParameters.h"
 #include "WebProcessMessages.h"
+#include "WebSoupCustomProtocolRequestManager.h"
 #include <WebCore/FileSystem.h>
 #include <WebCore/NotImplemented.h>
 #include <WebCore/SchemeRegistry.h>
@@ -41,12 +42,6 @@
 
 #if ENABLE(NETWORK_PROCESS)
 #include "NetworkProcessMessages.h"
-#endif
-
-#if ENABLE(CUSTOM_PROTOCOLS)
-#include "WebSoupCustomProtocolRequestManager.h"
-#else
-#include "WebSoupRequestManagerProxy.h"
 #endif
 
 namespace WebKit {
@@ -104,11 +99,7 @@ void WebContext::platformInitializeWebProcess(WebProcessCreationParameters& para
     }
 
     if (!usesNetworkProcess()) {
-#if ENABLE(CUSTOM_PROTOCOLS)
         parameters.urlSchemesRegisteredForCustomProtocols = supplement<WebSoupCustomProtocolRequestManager>()->registeredSchemesForCustomProtocols();
-#else
-        parameters.urlSchemesRegistered = supplement<WebSoupRequestManagerProxy>()->registeredURISchemes();
-#endif
 
         supplement<WebCookieManagerProxy>()->getCookiePersistentStorage(parameters.cookiePersistentStoragePath, parameters.cookiePersistentStorageType);
         parameters.cookieAcceptPolicy = m_initialHTTPCookieAcceptPolicy;

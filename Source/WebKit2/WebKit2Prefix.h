@@ -70,6 +70,7 @@
 
 #if PLATFORM(GTK)
 #define ENABLE_NETWORK_PROCESS 1
+#define ENABLE_CUSTOM_PROTOCOLS 1
 #endif
 
 /* When C++ exceptions are disabled, the C++ library defines |try| and |catch|

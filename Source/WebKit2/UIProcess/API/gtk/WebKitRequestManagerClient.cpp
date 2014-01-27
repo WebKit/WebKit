@@ -20,34 +20,30 @@
 #include "config.h"
 #include "WebKitRequestManagerClient.h"
 
-#include "WebKitURISchemeRequestPrivate.h"
 #include "WebKitWebContextPrivate.h"
-#include <wtf/gobject/GRefPtr.h>
 
 using namespace WebKit;
 
-static void didReceiveURIRequest(WKSoupRequestManagerRef soupRequestManagerRef, WKURLRef urlRef, WKPageRef initiatingPageRef, uint64_t requestID, const void* clientInfo)
+static void startLoading(WKSoupCustomProtocolRequestManagerRef soupRequestManagerRef, uint64_t customProtocolID, WKURLRequestRef requestRef, const void* clientInfo)
 {
-    WebKitWebContext* webContext = WEBKIT_WEB_CONTEXT(clientInfo);
-    GRefPtr<WebKitURISchemeRequest> request = adoptGRef(webkitURISchemeRequestCreate(webContext, toImpl(soupRequestManagerRef), toImpl(urlRef), toImpl(initiatingPageRef), requestID));
-    webkitWebContextReceivedURIRequest(webContext, request.get());
+    webkitWebContextStartLoadingCustomProtocol(WEBKIT_WEB_CONTEXT(clientInfo), customProtocolID, toImpl(requestRef));
 }
 
-static void didFailToLoadURIRequest(WKSoupRequestManagerRef, uint64_t requestID, const void* clientInfo)
+static void stopLoading(WKSoupCustomProtocolRequestManagerRef, uint64_t customProtocolID, const void* clientInfo)
 {
-    webkitWebContextDidFailToLoadURIRequest(WEBKIT_WEB_CONTEXT(clientInfo), requestID);
+    webkitWebContextStopLoadingCustomProtocol(WEBKIT_WEB_CONTEXT(clientInfo), customProtocolID);
 }
 
 void attachRequestManagerClientToContext(WebKitWebContext* webContext)
 {
-    WKSoupRequestManagerClientV0 wkRequestManagerClient = {
+    WKSoupCustomProtocolRequestManagerClientV0 wkRequestManagerClient = {
         {
             0, // version
             webContext // clientInfo
         },
-        didReceiveURIRequest,
-        didFailToLoadURIRequest
+        startLoading,
+        stopLoading
     };
-    WKSoupRequestManagerSetClient(toAPI(webkitWebContextGetRequestManager(webContext)), &wkRequestManagerClient.base);
+    WKSoupCustomProtocolRequestManagerSetClient(toAPI(webkitWebContextGetRequestManager(webContext)), &wkRequestManagerClient.base);
 }
 

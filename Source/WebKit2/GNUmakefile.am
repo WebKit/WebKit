@@ -428,7 +428,6 @@ vpath %.messages.in = \
 	$(WebKit2)/UIProcess/Plugins \
 	$(WebKit2)/UIProcess/ResourceCache \
 	$(WebKit2)/UIProcess/Storage \
-	$(WebKit2)/UIProcess/soup \
 	$(WebKit2)/WebProcess \
 	$(WebKit2)/WebProcess/ApplicationCache \
 	$(WebKit2)/WebProcess/Battery \

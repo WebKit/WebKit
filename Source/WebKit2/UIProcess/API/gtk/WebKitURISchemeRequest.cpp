@@ -25,7 +25,6 @@
 #include "WebKitWebContextPrivate.h"
 #include "WebKitWebView.h"
 #include "WebPageProxy.h"
-#include "WebSoupRequestManagerProxy.h"
 #include <WebCore/GUniquePtrSoup.h>
 #include <WebCore/ResourceError.h>
 #include <libsoup/soup.h>
@@ -55,7 +54,7 @@ static const unsigned int gReadBufferSize = 8192;
 
 struct _WebKitURISchemeRequestPrivate {
     WebKitWebContext* webContext;
-    RefPtr<WebSoupRequestManagerProxy> webRequestManager;
+    RefPtr<WebSoupCustomProtocolRequestManager> webRequestManager;
     RefPtr<WebPageProxy> initiatingPage;
     uint64_t requestID;
     CString uri;
@@ -75,20 +74,15 @@ static void webkit_uri_scheme_request_class_init(WebKitURISchemeRequestClass* re
 {
 }
 
-WebKitURISchemeRequest* webkitURISchemeRequestCreate(WebKitWebContext* webContext, WebSoupRequestManagerProxy* webRequestManager, API::URL* webURL, WebPageProxy* initiatingPage, uint64_t requestID)
+WebKitURISchemeRequest* webkitURISchemeRequestCreate(uint64_t requestID, WebKitWebContext* webContext, API::URLRequest* urlRequest, WebPageProxy* initiatingPage)
 {
     WebKitURISchemeRequest* request = WEBKIT_URI_SCHEME_REQUEST(g_object_new(WEBKIT_TYPE_URI_SCHEME_REQUEST, NULL));
     request->priv->webContext = webContext;
-    request->priv->webRequestManager = webRequestManager;
-    request->priv->uri = webURL->string().utf8();
+    request->priv->webRequestManager = webkitWebContextGetRequestManager(webContext);
+    request->priv->uri = urlRequest->resourceRequest().url().string().utf8();
     request->priv->initiatingPage = initiatingPage;
     request->priv->requestID = requestID;
     return request;
-}
-
-uint64_t webkitURISchemeRequestGetID(WebKitURISchemeRequest* request)
-{
-    return request->priv->requestID;
 }
 
 void webkitURISchemeRequestCancel(WebKitURISchemeRequest* request)
@@ -158,7 +152,8 @@ WebKitWebView* webkit_uri_scheme_request_get_web_view(WebKitURISchemeRequest* re
 {
     g_return_val_if_fail(WEBKIT_IS_URI_SCHEME_REQUEST(request), 0);
 
-    return WEBKIT_WEB_VIEW(request->priv->initiatingPage->viewWidget());
+    // FIXME: initiatingPage is now always null, we need to re-implement this somehow.
+    return request->priv->initiatingPage ? WEBKIT_WEB_VIEW(request->priv->initiatingPage->viewWidget()) : nullptr;
 }
 
 static void webkitURISchemeRequestReadCallback(GInputStream* inputStream, GAsyncResult* result, WebKitURISchemeRequest* schemeRequest)
@@ -174,21 +169,25 @@ static void webkitURISchemeRequestReadCallback(GInputStream* inputStream, GAsync
     WebKitURISchemeRequestPrivate* priv = request->priv;
     RefPtr<API::Data> webData = API::Data::create(reinterpret_cast<const unsigned char*>(priv->readBuffer), bytesRead);
     if (!priv->bytesRead) {
-        // First chunk read. In case of empty reply an empty API::Data is sent to the WebProcess.
-        priv->webRequestManager->didHandleURIRequest(webData.get(), priv->streamLength, String::fromUTF8(priv->mimeType.data()), priv->requestID);
+        // First chunk read. In case of empty reply an empty API::Data is sent to the networking process.
+        WebCore::ResourceResponse response(WebCore::URL(WebCore::URL(), String::fromUTF8(priv->uri)), String::fromUTF8(priv->mimeType.data()),
+            priv->streamLength, emptyString(), emptyString());
+        priv->webRequestManager->didReceiveResponse(priv->requestID, response);
+        priv->webRequestManager->didLoadData(priv->requestID, webData.get());
     } else if (bytesRead || (!bytesRead && !priv->streamLength)) {
-        // Subsequent chunk read. We only send an empty API::Data to the WebProcess when stream length is unknown.
-        priv->webRequestManager->didReceiveURIRequestData(webData.get(), priv->requestID);
+        // Subsequent chunk read. We only send an empty API::Data to the networking process when stream length is unknown.
+        priv->webRequestManager->didLoadData(priv->requestID, webData.get());
     }
 
     if (!bytesRead) {
-        webkitWebContextDidFinishURIRequest(request->priv->webContext, request->priv->requestID);
+        priv->webRequestManager->didFinishLoading(request->priv->requestID);
+        webkitWebContextDidFinishLoadingCustomProtocol(request->priv->webContext, request->priv->requestID);
         return;
     }
 
     priv->bytesRead += bytesRead;
     g_input_stream_read_async(inputStream, priv->readBuffer, gReadBufferSize, G_PRIORITY_DEFAULT, priv->cancellable.get(),
-                              reinterpret_cast<GAsyncReadyCallback>(webkitURISchemeRequestReadCallback), g_object_ref(request.get()));
+        reinterpret_cast<GAsyncReadyCallback>(webkitURISchemeRequestReadCallback), g_object_ref(request.get()));
 }
 
 /**
@@ -213,7 +212,7 @@ void webkit_uri_scheme_request_finish(WebKitURISchemeRequest* request, GInputStr
     request->priv->bytesRead = 0;
     request->priv->mimeType = mimeType;
     g_input_stream_read_async(inputStream, request->priv->readBuffer, gReadBufferSize, G_PRIORITY_DEFAULT, request->priv->cancellable.get(),
-                              reinterpret_cast<GAsyncReadyCallback>(webkitURISchemeRequestReadCallback), g_object_ref(request));
+        reinterpret_cast<GAsyncReadyCallback>(webkitURISchemeRequestReadCallback), g_object_ref(request));
 }
 
 /**
@@ -233,7 +232,6 @@ void webkit_uri_scheme_request_finish_error(WebKitURISchemeRequest* request, GEr
     WebKitURISchemeRequestPrivate* priv = request->priv;
 
     WebCore::ResourceError resourceError(g_quark_to_string(error->domain), error->code, priv->uri.data(), String::fromUTF8(error->message));
-    priv->webRequestManager->didFailURIRequest(resourceError, priv->requestID);
-
-    webkitWebContextDidFinishURIRequest(priv->webContext, priv->requestID);
+    priv->webRequestManager->didFailWithError(priv->requestID, resourceError);
+    webkitWebContextDidFinishLoadingCustomProtocol(priv->webContext, priv->requestID);
 }

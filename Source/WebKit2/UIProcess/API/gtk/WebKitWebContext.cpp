@@ -137,7 +137,7 @@ struct _WebKitWebContextPrivate {
     GRefPtr<WebKitCookieManager> cookieManager;
     GRefPtr<WebKitFaviconDatabase> faviconDatabase;
     GRefPtr<WebKitSecurityManager> securityManager;
-    RefPtr<WebSoupRequestManagerProxy> requestManager;
+    RefPtr<WebSoupCustomProtocolRequestManager> requestManager;
     URISchemeHandlerMap uriSchemeHandlers;
     URISchemeRequestMap uriSchemeRequests;
 #if ENABLE(GEOLOCATION)
@@ -226,7 +226,7 @@ static gpointer createDefaultWebContext(gpointer)
     WebKitWebContextPrivate* priv = webContext->priv;
 
     priv->context = WebContext::create(WebCore::filenameToString(injectedBundleFilename().data()));
-    priv->requestManager = webContext->priv->context->supplement<WebSoupRequestManagerProxy>();
+    priv->requestManager = webContext->priv->context->supplement<WebSoupCustomProtocolRequestManager>();
     priv->context->setCacheModel(CacheModelPrimaryWebBrowser);
 #if ENABLE(NETWORK_PROCESS)
     // FIXME: Temporary use an env var until we have API to set the process model. See https://bugs.webkit.org/show_bug.cgi?id=125463.
@@ -642,7 +642,7 @@ void webkit_web_context_register_uri_scheme(WebKitWebContext* context, const cha
 
     RefPtr<WebKitURISchemeHandler> handler = adoptRef(new WebKitURISchemeHandler(callback, userData, destroyNotify));
     context->priv->uriSchemeHandlers.set(String::fromUTF8(scheme), handler.get());
-    context->priv->requestManager->registerURIScheme(String::fromUTF8(scheme));
+    context->priv->requestManager->registerSchemeForCustomProtocol(String::fromUTF8(scheme));
 }
 
 /**
@@ -933,34 +933,36 @@ WebContext* webkitWebContextGetContext(WebKitWebContext* context)
     return context->priv->context.get();
 }
 
-WebSoupRequestManagerProxy* webkitWebContextGetRequestManager(WebKitWebContext* context)
+WebSoupCustomProtocolRequestManager* webkitWebContextGetRequestManager(WebKitWebContext* context)
 {
     return context->priv->requestManager.get();
 }
 
-void webkitWebContextReceivedURIRequest(WebKitWebContext* context, WebKitURISchemeRequest* request)
+void webkitWebContextStartLoadingCustomProtocol(WebKitWebContext* context, uint64_t customProtocolID, API::URLRequest* urlRequest)
 {
-    String scheme(String::fromUTF8(webkit_uri_scheme_request_get_scheme(request)));
+    // FIXME: We need to figure out how to get the initiating page.
+    GRefPtr<WebKitURISchemeRequest> request = adoptGRef(webkitURISchemeRequestCreate(customProtocolID, context, urlRequest, nullptr));
+    String scheme(String::fromUTF8(webkit_uri_scheme_request_get_scheme(request.get())));
     RefPtr<WebKitURISchemeHandler> handler = context->priv->uriSchemeHandlers.get(scheme);
     ASSERT(handler.get());
     if (!handler->hasCallback())
         return;
 
-    context->priv->uriSchemeRequests.set(webkitURISchemeRequestGetID(request), request);
-    handler->performCallback(request);
+    context->priv->uriSchemeRequests.set(customProtocolID, request.get());
+    handler->performCallback(request.get());
 }
 
-void webkitWebContextDidFailToLoadURIRequest(WebKitWebContext* context, uint64_t requestID)
+void webkitWebContextStopLoadingCustomProtocol(WebKitWebContext* context, uint64_t customProtocolID)
 {
-    GRefPtr<WebKitURISchemeRequest> request = context->priv->uriSchemeRequests.get(requestID);
+    GRefPtr<WebKitURISchemeRequest> request = context->priv->uriSchemeRequests.get(customProtocolID);
     if (!request.get())
         return;
     webkitURISchemeRequestCancel(request.get());
 }
 
-void webkitWebContextDidFinishURIRequest(WebKitWebContext* context, uint64_t requestID)
+void webkitWebContextDidFinishLoadingCustomProtocol(WebKitWebContext* context, uint64_t customProtocolID)
 {
-    context->priv->uriSchemeRequests.remove(requestID);
+    context->priv->uriSchemeRequests.remove(customProtocolID);
 }
 
 void webkitWebContextCreatePageForWebView(WebKitWebContext* context, WebKitWebView* webView, WebKitWebViewGroup* webViewGroup)

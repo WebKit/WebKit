@@ -1,3 +1,15 @@
+2014-01-27  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Implement custom URI schemes with CustomProtocols
+        https://bugs.webkit.org/show_bug.cgi?id=127091
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Temporarily disable the WebKitWebView check until we figure out
+        how to implement it with CustomProtocols.
+
+        * TestWebKitAPI/Tests/WebKit2Gtk/TestWebKitWebContext.cpp:
+
 2014-01-26  Alexey Proskuryakov  <ap@apple.com>
 
         REGRESSION(r127412): http/tests/misc/link-rel-icon-beforeload.html is broken.
