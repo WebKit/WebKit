@@ -57,6 +57,7 @@ class SourceProvider;
 class SymbolTable;
 class UnlinkedCodeBlock;
 class UnlinkedFunctionCodeBlock;
+class UnlinkedInstructionStream;
 
 typedef unsigned UnlinkedValueProfile;
 typedef unsigned UnlinkedArrayProfile;
@@ -341,9 +342,8 @@ public:
         }
     }
 
-    unsigned numberOfInstructions() const { return m_unlinkedInstructions.size(); }
-    RefCountedArray<UnlinkedInstruction>& instructions() { return m_unlinkedInstructions; }
-    const RefCountedArray<UnlinkedInstruction>& instructions() const { return m_unlinkedInstructions; }
+    void setInstructions(std::unique_ptr<UnlinkedInstructionStream>);
+    const UnlinkedInstructionStream& instructions() const;
 
     int m_numVars;
     int m_numCapturedVars;
@@ -484,7 +484,7 @@ private:
 
     void getLineAndColumn(ExpressionRangeInfo&, unsigned& line, unsigned& column);
 
-    RefCountedArray<UnlinkedInstruction> m_unlinkedInstructions;
+    std::unique_ptr<UnlinkedInstructionStream> m_unlinkedInstructions;
 
     int m_numParameters;
     VM* m_vm;

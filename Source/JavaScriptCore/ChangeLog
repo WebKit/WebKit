@@ -1,3 +1,53 @@
+2014-01-26  Andreas Kling  <akling@apple.com>
+
+        JSC: Pack unlinked instructions harder.
+        <https://webkit.org/b/127660>
+
+        Store UnlinkedCodeBlock's instructions in a variable-length stream
+        to reduce memory usage. Compression rate ends up around 60-61%.
+
+        The format is very simple. Every instruction starts with a 1 byte
+        opcode. It's followed by an opcode-dependent number of argument
+        values, each encoded separately for maximum packing. There are
+        7 packed value formats:
+
+            5-bit positive integer
+            5-bit negative integer
+            13-bit positive integer
+            13-bit positive integer
+            5-bit constant register index
+            13-bit constant register index
+            32-bit value (fallback)
+
+        27.5 MB progression on Membuster3. (~2% of total memory.)
+
+        Reviewed by Filip Pizlo.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * bytecode/UnlinkedInstructionStream.h: Added.
+        (JSC::UnlinkedInstructionStream::count):
+        (JSC::UnlinkedInstructionStream::Reader::atEnd):
+        * bytecode/UnlinkedInstructionStream.cpp: Added.
+        (JSC::UnlinkedInstructionStream::Reader::Reader):
+        (JSC::UnlinkedInstructionStream::Reader::read8):
+        (JSC::UnlinkedInstructionStream::Reader::read32):
+        (JSC::UnlinkedInstructionStream::Reader::next):
+        (JSC::append8):
+        (JSC::append32):
+        (JSC::UnlinkedInstructionStream::UnlinkedInstructionStream):
+        (JSC::UnlinkedInstructionStream::unpackForDebugging):
+        * bytecompiler/BytecodeGenerator.cpp:
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::CodeBlock):
+        * bytecode/UnlinkedCodeBlock.cpp:
+        (JSC::UnlinkedCodeBlock::lineNumberForBytecodeOffset):
+        (JSC::dumpLineColumnEntry):
+        (JSC::UnlinkedCodeBlock::expressionRangeForBytecodeOffset):
+        (JSC::UnlinkedCodeBlock::setInstructions):
+        (JSC::UnlinkedCodeBlock::instructions):
+        * bytecode/UnlinkedCodeBlock.h:
+        (JSC::BytecodeGenerator::generate):
+
 2014-01-26  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Move InspectorDebuggerAgent into JavaScriptCore

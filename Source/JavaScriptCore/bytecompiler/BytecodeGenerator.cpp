@@ -41,6 +41,7 @@
 #include "StackAlignment.h"
 #include "StrongInlines.h"
 #include "UnlinkedCodeBlock.h"
+#include "UnlinkedInstructionStream.h"
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/WTFString.h>
 
@@ -106,7 +107,7 @@ ParserError BytecodeGenerator::generate()
         m_codeBlock->addExceptionHandler(info);
     }
     
-    m_codeBlock->instructions() = RefCountedArray<UnlinkedInstruction>(m_instructions);
+    m_codeBlock->setInstructions(std::make_unique<UnlinkedInstructionStream>(m_instructions));
 
     m_codeBlock->shrinkToFit();
 

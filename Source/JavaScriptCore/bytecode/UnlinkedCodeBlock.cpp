@@ -37,6 +37,7 @@
 #include "SourceProvider.h"
 #include "Structure.h"
 #include "SymbolTable.h"
+#include "UnlinkedInstructionStream.h"
 #include <wtf/DataLog.h>
 
 namespace JSC {
@@ -247,7 +248,7 @@ void UnlinkedCodeBlock::visitChildren(JSCell* cell, SlotVisitor& visitor)
 
 int UnlinkedCodeBlock::lineNumberForBytecodeOffset(unsigned bytecodeOffset)
 {
-    ASSERT(bytecodeOffset < instructions().size());
+    ASSERT(bytecodeOffset < instructions().count());
     int divot;
     int startOffset;
     int endOffset;
@@ -278,8 +279,9 @@ inline void UnlinkedCodeBlock::getLineAndColumn(ExpressionRangeInfo& info,
 }
 
 #ifndef NDEBUG
-static void dumpLineColumnEntry(size_t index, const RefCountedArray<UnlinkedInstruction>& instructions, unsigned instructionOffset, unsigned line, unsigned column)
+static void dumpLineColumnEntry(size_t index, const UnlinkedInstructionStream& instructionStream, unsigned instructionOffset, unsigned line, unsigned column)
 {
+    const auto& instructions = instructionStream.unpackForDebugging();
     OpcodeID opcode = instructions[instructionOffset].u.opcode;
     const char* event = "";
     if (opcode == op_debug) {
@@ -315,7 +317,7 @@ void UnlinkedCodeBlock::dumpExpressionRangeInfo()
 void UnlinkedCodeBlock::expressionRangeForBytecodeOffset(unsigned bytecodeOffset,
     int& divot, int& startOffset, int& endOffset, unsigned& line, unsigned& column)
 {
-    ASSERT(bytecodeOffset < instructions().size());
+    ASSERT(bytecodeOffset < instructions().count());
 
     if (!m_expressionInfo.size()) {
         startOffset = 0;
@@ -435,6 +437,17 @@ void UnlinkedFunctionCodeBlock::destroy(JSCell* cell)
 void UnlinkedFunctionExecutable::destroy(JSCell* cell)
 {
     jsCast<UnlinkedFunctionExecutable*>(cell)->~UnlinkedFunctionExecutable();
+}
+
+void UnlinkedCodeBlock::setInstructions(std::unique_ptr<UnlinkedInstructionStream> instructions)
+{
+    m_unlinkedInstructions = std::move(instructions);
+}
+
+const UnlinkedInstructionStream& UnlinkedCodeBlock::instructions() const
+{
+    ASSERT(m_unlinkedInstructions.get());
+    return *m_unlinkedInstructions;
 }
 
 }

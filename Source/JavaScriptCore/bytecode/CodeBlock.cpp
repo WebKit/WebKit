@@ -54,6 +54,7 @@
 #include "Repatch.h"
 #include "RepatchBuffer.h"
 #include "SlotVisitorInlines.h"
+#include "UnlinkedInstructionStream.h"
 #include <wtf/BagToHashMap.h>
 #include <wtf/CommaPrinter.h>
 #include <wtf/StringExtras.h>
@@ -1658,21 +1659,25 @@ CodeBlock::CodeBlock(ScriptExecutable* ownerExecutable, UnlinkedCodeBlock* unlin
         m_objectAllocationProfiles.resizeToFit(size);
 
     // Copy and translate the UnlinkedInstructions
-    size_t instructionCount = unlinkedCodeBlock->instructions().size();
-    UnlinkedInstruction* pc = unlinkedCodeBlock->instructions().data();
+    unsigned instructionCount = unlinkedCodeBlock->instructions().count();
+    UnlinkedInstructionStream::Reader instructionReader(unlinkedCodeBlock->instructions());
+
     Vector<Instruction, 0, UnsafeVectorOverflow> instructions(instructionCount);
-    for (size_t i = 0; i < unlinkedCodeBlock->instructions().size(); ) {
-        unsigned opLength = opcodeLength(pc[i].u.opcode);
-        instructions[i] = vm()->interpreter->getOpcode(pc[i].u.opcode);
+    for (unsigned i = 0; !instructionReader.atEnd(); ) {
+        const UnlinkedInstruction* pc = instructionReader.next();
+
+        unsigned opLength = opcodeLength(pc[0].u.opcode);
+
+        instructions[i] = vm()->interpreter->getOpcode(pc[0].u.opcode);
         for (size_t j = 1; j < opLength; ++j) {
             if (sizeof(int32_t) != sizeof(intptr_t))
                 instructions[i + j].u.pointer = 0;
-            instructions[i + j].u.operand = pc[i + j].u.operand;
+            instructions[i + j].u.operand = pc[j].u.operand;
         }
-        switch (pc[i].u.opcode) {
+        switch (pc[0].u.opcode) {
         case op_get_by_val:
         case op_get_argument_by_val: {
-            int arrayProfileIndex = pc[i + opLength - 2].u.operand;
+            int arrayProfileIndex = pc[opLength - 2].u.operand;
             m_arrayProfiles[arrayProfileIndex] = ArrayProfile(i);
 
             instructions[i + opLength - 2] = &m_arrayProfiles[arrayProfileIndex];
@@ -1680,20 +1685,20 @@ CodeBlock::CodeBlock(ScriptExecutable* ownerExecutable, UnlinkedCodeBlock* unlin
         }
         case op_get_by_id:
         case op_call_varargs: {
-            ValueProfile* profile = &m_valueProfiles[pc[i + opLength - 1].u.operand];
+            ValueProfile* profile = &m_valueProfiles[pc[opLength - 1].u.operand];
             ASSERT(profile->m_bytecodeOffset == -1);
             profile->m_bytecodeOffset = i;
             instructions[i + opLength - 1] = profile;
             break;
         }
         case op_put_by_val: {
-            int arrayProfileIndex = pc[i + opLength - 1].u.operand;
+            int arrayProfileIndex = pc[opLength - 1].u.operand;
             m_arrayProfiles[arrayProfileIndex] = ArrayProfile(i);
             instructions[i + opLength - 1] = &m_arrayProfiles[arrayProfileIndex];
             break;
         }
         case op_put_by_val_direct: {
-            int arrayProfileIndex = pc[i + opLength - 1].u.operand;
+            int arrayProfileIndex = pc[opLength - 1].u.operand;
             m_arrayProfiles[arrayProfileIndex] = ArrayProfile(i);
             instructions[i + opLength - 1] = &m_arrayProfiles[arrayProfileIndex];
             break;
@@ -1702,14 +1707,14 @@ CodeBlock::CodeBlock(ScriptExecutable* ownerExecutable, UnlinkedCodeBlock* unlin
         case op_new_array:
         case op_new_array_buffer:
         case op_new_array_with_size: {
-            int arrayAllocationProfileIndex = pc[i + opLength - 1].u.operand;
+            int arrayAllocationProfileIndex = pc[opLength - 1].u.operand;
             instructions[i + opLength - 1] = &m_arrayAllocationProfiles[arrayAllocationProfileIndex];
             break;
         }
         case op_new_object: {
-            int objectAllocationProfileIndex = pc[i + opLength - 1].u.operand;
+            int objectAllocationProfileIndex = pc[opLength - 1].u.operand;
             ObjectAllocationProfile* objectAllocationProfile = &m_objectAllocationProfiles[objectAllocationProfileIndex];
-            int inferredInlineCapacity = pc[i + opLength - 2].u.operand;
+            int inferredInlineCapacity = pc[opLength - 2].u.operand;
 
             instructions[i + opLength - 1] = objectAllocationProfile;
             objectAllocationProfile->initialize(*vm(),
@@ -1719,23 +1724,23 @@ CodeBlock::CodeBlock(ScriptExecutable* ownerExecutable, UnlinkedCodeBlock* unlin
 
         case op_call:
         case op_call_eval: {
-            ValueProfile* profile = &m_valueProfiles[pc[i + opLength - 1].u.operand];
+            ValueProfile* profile = &m_valueProfiles[pc[opLength - 1].u.operand];
             ASSERT(profile->m_bytecodeOffset == -1);
             profile->m_bytecodeOffset = i;
             instructions[i + opLength - 1] = profile;
-            int arrayProfileIndex = pc[i + opLength - 2].u.operand;
+            int arrayProfileIndex = pc[opLength - 2].u.operand;
             m_arrayProfiles[arrayProfileIndex] = ArrayProfile(i);
             instructions[i + opLength - 2] = &m_arrayProfiles[arrayProfileIndex];
 #if ENABLE(LLINT)
-            instructions[i + 5] = &m_llintCallLinkInfos[pc[i + 5].u.operand];
+            instructions[i + 5] = &m_llintCallLinkInfos[pc[5].u.operand];
 #endif
             break;
         }
         case op_construct: {
 #if ENABLE(LLINT)
-            instructions[i + 5] = &m_llintCallLinkInfos[pc[i + 5].u.operand];
+            instructions[i + 5] = &m_llintCallLinkInfos[pc[5].u.operand];
 #endif
-            ValueProfile* profile = &m_valueProfiles[pc[i + opLength - 1].u.operand];
+            ValueProfile* profile = &m_valueProfiles[pc[opLength - 1].u.operand];
             ASSERT(profile->m_bytecodeOffset == -1);
             profile->m_bytecodeOffset = i;
             instructions[i + opLength - 1] = profile;
@@ -1758,7 +1763,7 @@ CodeBlock::CodeBlock(ScriptExecutable* ownerExecutable, UnlinkedCodeBlock* unlin
 
         case op_init_global_const_nop: {
             ASSERT(codeType() == GlobalCode);
-            Identifier ident = identifier(pc[i + 4].u.operand);
+            Identifier ident = identifier(pc[4].u.operand);
             SymbolTableEntry entry = m_globalObject->symbolTable()->get(ident.impl());
             if (entry.isNull())
                 break;
@@ -1769,8 +1774,8 @@ CodeBlock::CodeBlock(ScriptExecutable* ownerExecutable, UnlinkedCodeBlock* unlin
         }
 
         case op_resolve_scope: {
-            const Identifier& ident = identifier(pc[i + 2].u.operand);
-            ResolveType type = static_cast<ResolveType>(pc[i + 3].u.operand);
+            const Identifier& ident = identifier(pc[2].u.operand);
+            ResolveType type = static_cast<ResolveType>(pc[3].u.operand);
 
             ResolveOp op = JSScope::abstractResolve(m_globalObject->globalExec(), scope, ident, Get, type);
             instructions[i + 3].u.operand = op.type;
@@ -1781,14 +1786,14 @@ CodeBlock::CodeBlock(ScriptExecutable* ownerExecutable, UnlinkedCodeBlock* unlin
         }
 
         case op_get_from_scope: {
-            ValueProfile* profile = &m_valueProfiles[pc[i + opLength - 1].u.operand];
+            ValueProfile* profile = &m_valueProfiles[pc[opLength - 1].u.operand];
             ASSERT(profile->m_bytecodeOffset == -1);
             profile->m_bytecodeOffset = i;
             instructions[i + opLength - 1] = profile;
 
             // get_from_scope dst, scope, id, ResolveModeAndType, Structure, Operand
-            const Identifier& ident = identifier(pc[i + 3].u.operand);
-            ResolveModeAndType modeAndType = ResolveModeAndType(pc[i + 4].u.operand);
+            const Identifier& ident = identifier(pc[3].u.operand);
+            ResolveModeAndType modeAndType = ResolveModeAndType(pc[4].u.operand);
             ResolveOp op = JSScope::abstractResolve(m_globalObject->globalExec(), scope, ident, Get, modeAndType.type());
 
             instructions[i + 4].u.operand = ResolveModeAndType(modeAndType.mode(), op.type).operand();
@@ -1802,8 +1807,8 @@ CodeBlock::CodeBlock(ScriptExecutable* ownerExecutable, UnlinkedCodeBlock* unlin
 
         case op_put_to_scope: {
             // put_to_scope scope, id, value, ResolveModeAndType, Structure, Operand
-            const Identifier& ident = identifier(pc[i + 2].u.operand);
-            ResolveModeAndType modeAndType = ResolveModeAndType(pc[i + 4].u.operand);
+            const Identifier& ident = identifier(pc[2].u.operand);
+            ResolveModeAndType modeAndType = ResolveModeAndType(pc[4].u.operand);
             ResolveOp op = JSScope::abstractResolve(m_globalObject->globalExec(), scope, ident, Put, modeAndType.type());
 
             instructions[i + 4].u.operand = ResolveModeAndType(modeAndType.mode(), op.type).operand();
@@ -1820,11 +1825,11 @@ CodeBlock::CodeBlock(ScriptExecutable* ownerExecutable, UnlinkedCodeBlock* unlin
             
         case op_captured_mov:
         case op_new_captured_func: {
-            if (pc[i + 3].u.index == UINT_MAX) {
+            if (pc[3].u.index == UINT_MAX) {
                 instructions[i + 3].u.watchpointSet = 0;
                 break;
             }
-            StringImpl* uid = identifier(pc[i + 3].u.index).impl();
+            StringImpl* uid = identifier(pc[3].u.index).impl();
             RELEASE_ASSERT(didCloneSymbolTable);
             ConcurrentJITLocker locker(m_symbolTable->m_lock);
             SymbolTable::Map::iterator iter = m_symbolTable->find(locker, uid);

@@ -341,6 +341,7 @@
     <ClCompile Include="..\bytecode\StructureStubClearingWatchpoint.cpp" />
     <ClCompile Include="..\bytecode\StructureStubInfo.cpp" />
     <ClCompile Include="..\bytecode\UnlinkedCodeBlock.cpp" />
+    <ClCompile Include="..\bytecode\UnlinkedInstructionStream.cpp" />
     <ClCompile Include="..\bytecode\ValueRecovery.cpp" />
     <ClCompile Include="..\bytecode\Watchpoint.cpp" />
     <ClCompile Include="..\bytecompiler\BytecodeGenerator.cpp" />
@@ -841,6 +842,7 @@
     <ClInclude Include="..\bytecode\StructureStubClearingWatchpoint.h" />
     <ClInclude Include="..\bytecode\StructureStubInfo.h" />
     <ClInclude Include="..\bytecode\UnlinkedCodeBlock.h" />
+    <ClInclude Include="..\bytecode\UnlinkedInstructionStream.h" />
     <ClInclude Include="..\bytecode\ValueProfile.h" />
     <ClInclude Include="..\bytecode\ValueRecovery.h" />
     <ClInclude Include="..\bytecode\VariableWatchpointSet.h" />

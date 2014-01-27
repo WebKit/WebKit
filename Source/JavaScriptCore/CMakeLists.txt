@@ -84,6 +84,7 @@ set(JavaScriptCore_SOURCES
     bytecode/StructureStubClearingWatchpoint.cpp
     bytecode/StructureStubInfo.cpp
     bytecode/UnlinkedCodeBlock.cpp
+    bytecode/UnlinkedInstructionStream.cpp
     bytecode/ValueRecovery.cpp
     bytecode/Watchpoint.cpp
 

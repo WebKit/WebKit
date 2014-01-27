@@ -1170,6 +1170,7 @@
 		A7FCC26D17A0B6AA00786D1A /* FTLSwitchCase.h in Headers */ = {isa = PBXBuildFile; fileRef = A7FCC26C17A0B6AA00786D1A /* FTLSwitchCase.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A8A4748E151A8306004123FF /* libWTF.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A8A4748D151A8306004123FF /* libWTF.a */; };
 		ADE39FFF16DD144B0003CD4A /* PropertyTable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AD1CF06816DCAB2D00B97123 /* PropertyTable.cpp */; };
+		B59F89391891F29F00D5CCDC /* UnlinkedInstructionStream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B59F89381891ADB500D5CCDC /* UnlinkedInstructionStream.cpp */; };
 		BC02E90D0E1839DB000F9297 /* ErrorConstructor.h in Headers */ = {isa = PBXBuildFile; fileRef = BC02E9050E1839DB000F9297 /* ErrorConstructor.h */; };
 		BC02E90F0E1839DB000F9297 /* ErrorPrototype.h in Headers */ = {isa = PBXBuildFile; fileRef = BC02E9070E1839DB000F9297 /* ErrorPrototype.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC02E9110E1839DB000F9297 /* NativeErrorConstructor.h in Headers */ = {isa = PBXBuildFile; fileRef = BC02E9090E1839DB000F9297 /* NativeErrorConstructor.h */; };
@@ -2591,6 +2592,8 @@
 		A8E894310CD0602400367179 /* JSCallbackObjectFunctions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSCallbackObjectFunctions.h; sourceTree = "<group>"; };
 		A8E894330CD0603F00367179 /* JSGlobalObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSGlobalObject.h; sourceTree = "<group>"; };
 		AD1CF06816DCAB2D00B97123 /* PropertyTable.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PropertyTable.cpp; sourceTree = "<group>"; };
+		B59F89371891AD3300D5CCDC /* UnlinkedInstructionStream.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UnlinkedInstructionStream.h; sourceTree = "<group>"; };
+		B59F89381891ADB500D5CCDC /* UnlinkedInstructionStream.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UnlinkedInstructionStream.cpp; sourceTree = "<group>"; };
 		BC021BF2136900C300FC5467 /* ToolExecutable.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = ToolExecutable.xcconfig; sourceTree = "<group>"; };
 		BC02E9040E1839DB000F9297 /* ErrorConstructor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ErrorConstructor.cpp; sourceTree = "<group>"; };
 		BC02E9050E1839DB000F9297 /* ErrorConstructor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ErrorConstructor.h; sourceTree = "<group>"; };
@@ -4366,6 +4369,8 @@
 				BCCF0D070EF0AAB900413C8F /* StructureStubInfo.h */,
 				A79E781E15EECBA80047C855 /* UnlinkedCodeBlock.cpp */,
 				A79E781F15EECBA80047C855 /* UnlinkedCodeBlock.h */,
+				B59F89381891ADB500D5CCDC /* UnlinkedInstructionStream.cpp */,
+				B59F89371891AD3300D5CCDC /* UnlinkedInstructionStream.h */,
 				0F963B3613FC6FDE0002D9B2 /* ValueProfile.h */,
 				0F24E55717F74EDB00ABB217 /* ValueRecovery.cpp */,
 				0F426A451460CBAB00131F8F /* ValueRecovery.h */,
@@ -5965,6 +5970,7 @@
 				86E3C616167BABEE006D760A /* JSContext.mm in Sources */,
 				14BD5A300A3E91F600BAF59C /* JSContextRef.cpp in Sources */,
 				A72028B61797601E0098028C /* JSCTestRunnerUtils.cpp in Sources */,
+				B59F89391891F29F00D5CCDC /* UnlinkedInstructionStream.cpp in Sources */,
 				0F2B66EB17B6B5AB00A7AE3F /* JSDataView.cpp in Sources */,
 				0F2B66ED17B6B5AB00A7AE3F /* JSDataViewPrototype.cpp in Sources */,
 				978801401471AD920041B016 /* JSDateMath.cpp in Sources */,

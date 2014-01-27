@@ -186,6 +186,9 @@
     <ClCompile Include="..\bytecode\UnlinkedCodeBlock.cpp">
       <Filter>bytecode</Filter>
     </ClCompile>
+    <ClCompile Include="..\bytecode\UnlinkedInstructionStream.cpp">
+      <Filter>bytecode</Filter>
+    </ClCompile>
     <ClCompile Include="..\bytecode\Watchpoint.cpp">
       <Filter>bytecode</Filter>
     </ClCompile>
@@ -1557,6 +1560,9 @@
       <Filter>bytecode</Filter>
     </ClInclude>
     <ClInclude Include="..\bytecode\UnlinkedCodeBlock.h">
+      <Filter>bytecode</Filter>
+    </ClInclude>
+    <ClInclude Include="..\bytecode\UnlinkedInstructionStream.h">
       <Filter>bytecode</Filter>
     </ClInclude>
     <ClInclude Include="..\bytecode\ValueProfile.h">
