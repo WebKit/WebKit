@@ -1,3 +1,10 @@
+2014-01-26  Alexey Proskuryakov  <ap@apple.com>
+
+        REGRESSION(r127412): http/tests/misc/link-rel-icon-beforeload.html is broken.
+
+        * DumpRenderTree/mac/TestRunnerMac.mm: (TestRunner::setIconDatabaseEnabled):
+        Fixed an incorrect ifdef.
+
 2014-01-26  Brendan Long  <b.long@cablelabs.com>
 
         [GTK] DumpRenderTree prints out suggesting to set WEBKIT_TOP_LEVEL when fonts are missing but doesn't use it.

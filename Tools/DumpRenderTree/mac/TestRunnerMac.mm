@@ -495,7 +495,7 @@ void TestRunner::startSpeechInput(JSContextRef inputElement)
 
 void TestRunner::setIconDatabaseEnabled(bool iconDatabaseEnabled)
 {
-#if ENABLE(ICON_DATABASE)
+#if ENABLE(ICONDATABASE)
     // FIXME: Workaround <rdar://problem/6480108>
     static WebIconDatabase *sharedWebIconDatabase = NULL;
     if (!sharedWebIconDatabase) {
