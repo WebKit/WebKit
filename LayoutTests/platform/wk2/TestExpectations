@@ -246,6 +246,8 @@ plugins/npruntime/embed-property-iframe-equality.html
 
 webkit.org/b/105952 fast/loader/submit-form-while-parsing-2.html [ Pass Failure ]
 
+webkit.org/b/127683 http/tests/navigation/new-window-redirect-history.html [Crash]
+
 ### END OF (1) Classified failures with bug reports
 ########################################
 
@@ -510,27 +512,6 @@ svg/hixie/cascade/002.xml
 tables/mozilla_expected_failures/bugs/bug8499.html
 transitions/font-family-during-transition.html
 
-# Unexplained back/forward list failures
-fast/loader/frame-location-change-not-added-to-history.html
-fast/loader/frame-src-change-added-to-history.html
-fast/loader/frame-src-change-not-added-to-history.html
-http/tests/history/redirect-200-refresh-0-seconds.pl
-http/tests/history/redirect-js-document-location-before-load.html
-http/tests/history/redirect-js-form-submit-before-load.html
-http/tests/history/redirect-js-location-assign-before-load.html
-http/tests/history/redirect-js-location-before-load.html
-http/tests/history/redirect-js-location-href-before-load.html
-http/tests/history/redirect-js-location-replace-0-seconds.html
-http/tests/history/redirect-js-location-replace-2-seconds.html
-http/tests/history/redirect-js-location-replace-before-load.html
-http/tests/history/redirect-meta-refresh-0-seconds.html
-http/tests/navigation/anchor-frames.html
-http/tests/navigation/document-location-script.html
-http/tests/navigation/location-replace-adds-history-item.html
-http/tests/navigation/multiple-back-forward-entries.html
-http/tests/navigation/new-window-redirect-history.html
-http/tests/navigation/post-basic.html
-http/tests/navigation/post-goback1.html
 
 # [WK2] http/tests/navigation/anchor-frames-cross-origin.html fails.
 # https://bugs.webkit.org/show_bug.cgi?id=83581
