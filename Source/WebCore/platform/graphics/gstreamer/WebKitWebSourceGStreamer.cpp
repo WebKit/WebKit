@@ -874,6 +874,9 @@ void StreamingClient::handleResponseReceived(const ResourceResponse& response)
     priv->size = length >= 0 ? length : 0;
     priv->seekable = length > 0 && g_ascii_strcasecmp("none", response.httpHeaderField("Accept-Ranges").utf8().data());
 
+    // Wait until we unlock to send notifications
+    g_object_freeze_notify(G_OBJECT(src));
+
     GstTagList* tags = gst_tag_list_new_empty();
     String value = response.httpHeaderField("icy-name");
     if (!value.isEmpty()) {
@@ -905,6 +908,7 @@ void StreamingClient::handleResponseReceived(const ResourceResponse& response)
     }
 
     locker.unlock();
+    g_object_thaw_notify(G_OBJECT(src));
 
     // notify size/duration
     if (length > 0) {

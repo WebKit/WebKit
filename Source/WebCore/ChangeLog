@@ -1,3 +1,16 @@
+2014-01-27  Brendan Long  <b.long@cablelabs.com>
+
+        [GStreamer] Lockup when playing Icecast radio
+        https://bugs.webkit.org/show_bug.cgi?id=127452
+
+        Reviewed by Philippe Normand.
+
+        No new tests. This bug can only be demonstrated with an Icecast stream, and it's
+        not clear how to do that in our testing framework.
+
+        * platform/graphics/gstreamer/WebKitWebSourceGStreamer.cpp:
+        (StreamingClient::handleResponseReceived): Wait until we unlock to send notifications.
+
 2014-01-27  Jessie Berlin  <jberlin@apple.com>
 
         Build fix after r162838.
