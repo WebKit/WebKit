@@ -1,3 +1,14 @@
+2014-01-27  Tim Horton  <timothy_horton@apple.com>
+
+        Crashes in RemoteScrollingCoordinatorProxy::rootScrollingNodeID
+
+        Reviewed by Simon Fraser.
+
+        * UIProcess/Scrolling/RemoteScrollingCoordinatorProxy.cpp:
+        (WebKit::RemoteScrollingCoordinatorProxy::rootScrollingNodeID):
+        Null-check the root scrolling node, in case something scrolls before
+        we've made the first remote layer/scrolling tree commit.
+
 2014-01-27  Brady Eidson  <beidson@apple.com>
 
         IDB: Rename "IDBTransactionIdentifier" to be more general purpose

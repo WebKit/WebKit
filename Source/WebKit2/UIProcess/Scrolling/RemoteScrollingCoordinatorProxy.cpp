@@ -57,6 +57,9 @@ RemoteScrollingCoordinatorProxy::~RemoteScrollingCoordinatorProxy()
 
 WebCore::ScrollingNodeID RemoteScrollingCoordinatorProxy::rootScrollingNodeID() const
 {
+    if (!m_scrollingTree->rootNode())
+        return 0;
+
     return m_scrollingTree->rootNode()->scrollingNodeID();
 }
 
