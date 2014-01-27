@@ -420,11 +420,11 @@ void WebIDBServerConnection::didGetRecord(uint64_t requestID, const WebCore::IDB
     serverRequest->completeRequest(getResult, errorCode ? IDBDatabaseError::create(errorCode, errorMessage) : nullptr);
 }
 
-void WebIDBServerConnection::openCursor(IDBTransactionBackend&, const OpenCursorOperation&, std::function<void(PassRefPtr<IDBDatabaseError>)> completionCallback)
+void WebIDBServerConnection::openCursor(IDBTransactionBackend&, const OpenCursorOperation&, std::function<void(int64_t, PassRefPtr<IDBDatabaseError>)> completionCallback)
 {
 }
 
-void WebIDBServerConnection::count(IDBTransactionBackend&, const CountOperation&, std::function<void(PassRefPtr<IDBDatabaseError>)> completionCallback)
+void WebIDBServerConnection::count(IDBTransactionBackend&, const CountOperation&, std::function<void(int64_t, PassRefPtr<IDBDatabaseError>)> completionCallback)
 {
 }
 

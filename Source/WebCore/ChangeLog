@@ -1,3 +1,27 @@
+2014-01-27  Brady Eidson  <beidson@apple.com>
+
+        IDB: Refactor out the last of the operation callbacks that are called by the LevelDB backing store
+        https://bugs.webkit.org/show_bug.cgi?id=127592
+
+        Reviewed by Tim Horton.
+
+        For each of the 3 remaining operations where the backing store calls callbacks directly,
+        factor out the callbacks to the operation itself.
+
+
+        * Modules/indexeddb/IDBTransactionBackendOperations.cpp:
+        (WebCore::OpenCursorOperation::perform):
+        (WebCore::CountOperation::perform):
+        (WebCore::DeleteRangeOperation::perform):
+        * Modules/indexeddb/IDBTransactionBackendOperations.h:
+
+        * Modules/indexeddb/IDBServerConnection.h:
+        * Modules/indexeddb/leveldb/IDBServerConnectionLevelDB.cpp:
+        (WebCore::IDBServerConnectionLevelDB::openCursor):
+        (WebCore::IDBServerConnectionLevelDB::count):
+        (WebCore::IDBServerConnectionLevelDB::deleteRange):
+        * Modules/indexeddb/leveldb/IDBServerConnectionLevelDB.h:
+
 2014-01-27  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r162755.

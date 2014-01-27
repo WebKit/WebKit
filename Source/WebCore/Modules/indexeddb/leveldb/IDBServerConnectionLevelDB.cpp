@@ -429,7 +429,7 @@ void IDBServerConnectionLevelDB::put(IDBTransactionBackend& transaction, const P
     });
 }
 
-void IDBServerConnectionLevelDB::openCursor(IDBTransactionBackend& transaction, const OpenCursorOperation& operation, std::function<void(PassRefPtr<IDBDatabaseError>)> completionCallback)
+void IDBServerConnectionLevelDB::openCursor(IDBTransactionBackend& transaction, const OpenCursorOperation& operation, std::function<void(int64_t, PassRefPtr<IDBDatabaseError>)> completionCallback)
 {
     IDBBackingStoreTransactionLevelDB* backingStoreTransaction = m_backingStoreTransactions.get(transaction.id());
     ASSERT(backingStoreTransaction);
@@ -456,23 +456,16 @@ void IDBServerConnectionLevelDB::openCursor(IDBTransactionBackend& transaction, 
     }
 
     if (!backingStoreCursor) {
-        operation.callbacks()->onSuccess(static_cast<SharedBuffer*>(0));
-        callOnMainThread([completionCallback]() {
-            completionCallback(0);
-        });
-        return;
+        // FIXME: Should it be an error to not have a backing store cursor?
+        cursorID = 0;
     }
 
-    IDBDatabaseBackend::TaskType taskType(static_cast<IDBDatabaseBackend::TaskType>(operation.taskType()));
-
-    RefPtr<IDBCursorBackend> cursor = IDBCursorBackend::create(cursorID, operation.cursorType(), taskType, transaction, operation.objectStoreID());
-
-    operation.callbacks()->onSuccess(cursor, cursor->key(), cursor->primaryKey(), cursor->value());
-
-    ASYNC_COMPLETION_CALLBACK_WITH_NULL_ARG(completionCallback);
+    callOnMainThread([completionCallback, cursorID]() {
+        completionCallback(cursorID, nullptr);
+    });
 }
 
-void IDBServerConnectionLevelDB::count(IDBTransactionBackend& transaction, const CountOperation& operation, std::function<void(PassRefPtr<IDBDatabaseError>)> completionCallback)
+void IDBServerConnectionLevelDB::count(IDBTransactionBackend& transaction, const CountOperation& operation, std::function<void(int64_t, PassRefPtr<IDBDatabaseError>)> completionCallback)
 {
     IDBBackingStoreTransactionLevelDB* backingStoreTransaction = m_backingStoreTransactions.get(transaction.id());
     ASSERT(backingStoreTransaction);
@@ -487,9 +480,9 @@ void IDBServerConnectionLevelDB::count(IDBTransactionBackend& transaction, const
     else
         backingStoreCursor = m_backingStore->openIndexKeyCursor(cursorID, *backingStoreTransaction, transaction.database().id(), operation.objectStoreID(), operation.indexID(), operation.keyRange(), IndexedDB::CursorDirection::Next);
     if (!backingStoreCursor) {
-        operation.callbacks()->onSuccess(count);
-        callOnMainThread([completionCallback]() {
-            completionCallback(0);
+        // FIXME: Is this an error case?
+        callOnMainThread([completionCallback, count]() {
+            completionCallback(count, nullptr);
         });
         return;
     }
@@ -498,8 +491,9 @@ void IDBServerConnectionLevelDB::count(IDBTransactionBackend& transaction, const
         ++count;
     } while (backingStoreCursor->continueFunction(0));
 
-    operation.callbacks()->onSuccess(count);
-    ASYNC_COMPLETION_CALLBACK_WITH_NULL_ARG(completionCallback);
+    callOnMainThread([completionCallback, count]() {
+        completionCallback(count, nullptr);
+    });
 }
 
 void IDBServerConnectionLevelDB::deleteRange(IDBTransactionBackend& transaction, const DeleteRangeOperation& operation, std::function<void(PassRefPtr<IDBDatabaseError>)> completionCallback)
@@ -513,17 +507,17 @@ void IDBServerConnectionLevelDB::deleteRange(IDBTransactionBackend& transaction,
     if (backingStoreCursor) {
         do {
             if (!m_backingStore->deleteRecord(*backingStoreTransaction, transaction.database().id(), operation.objectStoreID(), backingStoreCursor->recordIdentifier())) {
-                operation.callbacks()->onError(IDBDatabaseError::create(IDBDatabaseException::UnknownError, "Error deleting data in range"));
                 callOnMainThread([completionCallback]() {
-                    completionCallback(0);
+                    completionCallback(IDBDatabaseError::create(IDBDatabaseException::UnknownError, "Error deleting data in range"));
                 });
                 return;
             }
         } while (backingStoreCursor->continueFunction(0));
     }
 
-    operation.callbacks()->onSuccess();
-    ASYNC_COMPLETION_CALLBACK_WITH_NULL_ARG(completionCallback);
+    callOnMainThread([completionCallback]() {
+        completionCallback(nullptr);
+    });
 }
 
 void IDBServerConnectionLevelDB::clearObjectStore(IDBTransactionBackend& transaction, const ClearObjectStoreOperation& operation, std::function<void(PassRefPtr<IDBDatabaseError>)> completionCallback)

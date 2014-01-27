@@ -154,9 +154,20 @@ void OpenCursorOperation::perform(std::function<void()> completionCallback)
     LOG(StorageAPI, "OpenCursorOperation");
 
     RefPtr<OpenCursorOperation> operation(this);
-    STANDARD_DATABASE_ERROR_CALLBACK;
+    auto callback = [this, operation, completionCallback](int64_t cursorID, PassRefPtr<IDBDatabaseError>) {
+        // FIXME: When the LevelDB port fails to open a backing store cursor it calls onSuccess(nullptr);
+        // This seems nonsensical and might have to change soon, breaking them.
+        if (!cursorID)
+            m_callbacks->onSuccess(static_cast<SharedBuffer*>(0));
+        else {
+            RefPtr<IDBCursorBackend> cursor = IDBCursorBackend::create(cursorID, m_cursorType, m_taskType, *m_transaction, m_objectStoreID);
+            m_callbacks->onSuccess(cursor, cursor->key(), cursor->primaryKey(), cursor->value());
+        }
 
-    m_transaction->database().serverConnection().openCursor(*m_transaction, *this, operationCallback);
+        completionCallback();
+    };
+
+    m_transaction->database().serverConnection().openCursor(*m_transaction, *this, callback);
 }
 
 void CountOperation::perform(std::function<void()> completionCallback)
@@ -164,9 +175,15 @@ void CountOperation::perform(std::function<void()> completionCallback)
     LOG(StorageAPI, "CountOperation");
 
     RefPtr<CountOperation> operation(this);
-    STANDARD_DATABASE_ERROR_CALLBACK;
+    auto callback = [this, operation, completionCallback](int64_t count, PassRefPtr<IDBDatabaseError>) {
+        // FIXME: The LevelDB port never had an error condition for the count operation.
+        // We probably need to support an error for the count operation, breaking the LevelDB port.
+        m_callbacks->onSuccess(count);
 
-    m_transaction->database().serverConnection().count(*m_transaction, *this, operationCallback);
+        completionCallback();
+    };
+
+    m_transaction->database().serverConnection().count(*m_transaction, *this, callback);
 }
 
 void DeleteRangeOperation::perform(std::function<void()> completionCallback)
@@ -174,9 +191,16 @@ void DeleteRangeOperation::perform(std::function<void()> completionCallback)
     LOG(StorageAPI, "DeleteRangeOperation");
 
     RefPtr<DeleteRangeOperation> operation(this);
-    STANDARD_DATABASE_ERROR_CALLBACK;
+    auto callback = [this, operation, completionCallback](PassRefPtr<IDBDatabaseError> error) {
+        if (error)
+            m_callbacks->onError(error);
+        else
+            m_callbacks->onSuccess();
 
-    m_transaction->database().serverConnection().deleteRange(*m_transaction, *this, operationCallback);
+        completionCallback();
+    };
+
+    m_transaction->database().serverConnection().deleteRange(*m_transaction, *this, callback);
 }
 
 void ClearObjectStoreOperation::perform(std::function<void()> completionCallback)

@@ -89,7 +89,6 @@ public:
 
     IDBTransactionBackend* transaction() const { return m_transaction.get(); }
     int64_t version() const { return m_version; }
-    IDBCallbacks* callbacks() const { return m_callbacks.get(); }
     IDBDatabaseCallbacks* databaseCallbacks() const { return m_databaseCallbacks.get(); }
 
 private:
@@ -362,7 +361,6 @@ public:
     IDBDatabaseBackend::TaskType taskType() const { return m_taskType; }
     IDBKeyRange* keyRange() const { return m_keyRange.get(); }
     IndexedDB::CursorDirection cursorDirection() const { return m_direction; }
-    IDBCallbacks* callbacks() const { return m_callbacks.get(); }
 
 private:
     OpenCursorOperation(IDBTransactionBackend* transaction, int64_t objectStoreId, int64_t indexId, PassRefPtr<IDBKeyRange> keyRange, IndexedDB::CursorDirection direction, IndexedDB::CursorType cursorType, IDBDatabaseBackend::TaskType taskType, PassRefPtr<IDBCallbacks> callbacks)
@@ -398,7 +396,7 @@ public:
     int64_t objectStoreID() const { return m_objectStoreID; }
     int64_t indexID() const { return m_indexID; }
     IDBKeyRange* keyRange() const { return m_keyRange.get(); }
-    IDBCallbacks* callbacks() const { return m_callbacks.get(); }
+
 private:
     CountOperation(IDBTransactionBackend* transaction, int64_t objectStoreId, int64_t indexId, PassRefPtr<IDBKeyRange> keyRange, PassRefPtr<IDBCallbacks> callbacks)
         : m_transaction(transaction)
@@ -425,7 +423,6 @@ public:
     virtual void perform(std::function<void()> successCallback) override final;
 
     int64_t objectStoreID() const { return m_objectStoreID; }
-    IDBCallbacks* callbacks() const { return m_callbacks.get(); }
     IDBKeyRange* keyRange() const { return m_keyRange.get(); }
 
 private:

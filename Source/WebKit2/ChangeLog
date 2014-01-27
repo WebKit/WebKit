@@ -1,3 +1,16 @@
+2014-01-27  Brady Eidson  <beidson@apple.com>
+
+        IDB: Refactor out the last of the operation callbacks that are called by the LevelDB backing store
+        https://bugs.webkit.org/show_bug.cgi?id=127592
+
+        Reviewed by Tim Horton.
+
+        Update the WebIDBServerConnection to the new callback signatures:
+        * WebProcess/Databases/IndexedDB/WebIDBServerConnection.cpp:
+        (WebKit::WebIDBServerConnection::openCursor):
+        (WebKit::WebIDBServerConnection::count):
+        * WebProcess/Databases/IndexedDB/WebIDBServerConnection.h:
+
 2014-01-27  Tim Horton  <timothy_horton@apple.com>
 
         WebKit2 View Gestures: Fluid back-forward swipe
