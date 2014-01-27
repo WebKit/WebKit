@@ -76,8 +76,8 @@ public:
     virtual void changeDatabaseVersion(IDBTransactionBackend&, const IDBDatabaseBackend::VersionChangeOperation&, std::function<void(PassRefPtr<IDBDatabaseError>)> completionCallback) override;
 
     // Cursor-level operations
-    virtual void cursorAdvance(IDBCursorBackend&, const CursorAdvanceOperation&, std::function<void()> completionCallback) override;
-    virtual void cursorIterate(IDBCursorBackend&, const CursorIterationOperation&, std::function<void()> completionCallback) override;
+    virtual void cursorAdvance(IDBCursorBackend&, const CursorAdvanceOperation&, std::function<void(PassRefPtr<IDBKey>, PassRefPtr<IDBKey>, PassRefPtr<SharedBuffer>, PassRefPtr<IDBDatabaseError>)> completionCallback) override;
+    virtual void cursorIterate(IDBCursorBackend&, const CursorIterationOperation&, std::function<void(PassRefPtr<IDBKey>, PassRefPtr<IDBKey>, PassRefPtr<SharedBuffer>, PassRefPtr<IDBDatabaseError>)> completionCallback) override;
 
 private:
     IDBServerConnectionLevelDB(const String& databaseName, IDBBackingStoreLevelDB*);

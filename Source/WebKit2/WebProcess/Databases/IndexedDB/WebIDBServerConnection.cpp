@@ -519,11 +519,11 @@ void WebIDBServerConnection::didChangeDatabaseVersion(uint64_t requestID, bool s
     serverRequest->completeRequest(success ? nullptr : IDBDatabaseError::create(IDBDatabaseException::UnknownError, "Unknown error occured changing database version"));
 }
 
-void WebIDBServerConnection::cursorAdvance(IDBCursorBackend&, const CursorAdvanceOperation&, std::function<void()> completionCallback)
+void WebIDBServerConnection::cursorAdvance(IDBCursorBackend&, const CursorAdvanceOperation&, std::function<void(PassRefPtr<IDBKey>, PassRefPtr<IDBKey>, PassRefPtr<SharedBuffer>, PassRefPtr<IDBDatabaseError>)> completionCallback)
 {
 }
 
-void WebIDBServerConnection::cursorIterate(IDBCursorBackend&, const CursorIterationOperation&, std::function<void()> completionCallback)
+void WebIDBServerConnection::cursorIterate(IDBCursorBackend&, const CursorIterationOperation&, std::function<void(PassRefPtr<IDBKey>, PassRefPtr<IDBKey>, PassRefPtr<SharedBuffer>, PassRefPtr<IDBDatabaseError>)> completionCallback)
 {
 }
 

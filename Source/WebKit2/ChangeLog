@@ -1,3 +1,16 @@
+2014-01-27  Brady Eidson  <beidson@apple.com>
+
+        IDB: LevelDB backing store shouldn't know about IDBCursor or IDBCallbacks
+        https://bugs.webkit.org/show_bug.cgi?id=127708
+
+        Reviewed by Tim Horton.
+
+        Update to new callback signatures:
+        * WebProcess/Databases/IndexedDB/WebIDBServerConnection.cpp:
+        (WebKit::WebIDBServerConnection::cursorAdvance):
+        (WebKit::WebIDBServerConnection::cursorIterate):
+        * WebProcess/Databases/IndexedDB/WebIDBServerConnection.h:
+
 2014-01-27  Anders Carlsson  <andersca@apple.com>
 
         Tweak the WKWebView and WKWebViewConfiguration headers

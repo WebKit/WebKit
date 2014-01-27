@@ -1,5 +1,25 @@
 2014-01-27  Brady Eidson  <beidson@apple.com>
 
+        IDB: LevelDB backing store shouldn't know about IDBCursor or IDBCallbacks
+        https://bugs.webkit.org/show_bug.cgi?id=127708
+
+        Reviewed by Tim Horton.
+
+        Move that knowledge to the IDBCursorBackendOperations inside the callback.
+
+        * Modules/indexeddb/IDBCursorBackendOperations.cpp:
+        (WebCore::CursorAdvanceOperation::perform):
+        (WebCore::CursorIterationOperation::perform):
+        * Modules/indexeddb/IDBCursorBackendOperations.h:
+
+        * Modules/indexeddb/IDBServerConnection.h:
+        * Modules/indexeddb/leveldb/IDBServerConnectionLevelDB.cpp:
+        (WebCore::IDBServerConnectionLevelDB::cursorAdvance):
+        (WebCore::IDBServerConnectionLevelDB::cursorIterate):
+        * Modules/indexeddb/leveldb/IDBServerConnectionLevelDB.h:
+
+2014-01-27  Brady Eidson  <beidson@apple.com>
+
         IDB: Remove unused concept of "cursor prefetch"
         https://bugs.webkit.org/show_bug.cgi?id=127700
 

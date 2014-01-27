@@ -80,8 +80,8 @@ public:
     virtual void changeDatabaseVersion(WebCore::IDBTransactionBackend&, const WebCore::IDBDatabaseBackend::VersionChangeOperation&, std::function<void(PassRefPtr<WebCore::IDBDatabaseError>)> completionCallback) override;
 
     // Cursor-level operations
-    virtual void cursorAdvance(WebCore::IDBCursorBackend&, const WebCore::CursorAdvanceOperation&, std::function<void()> completionCallback) override;
-    virtual void cursorIterate(WebCore::IDBCursorBackend&, const WebCore::CursorIterationOperation&, std::function<void()> completionCallback) override;
+    virtual void cursorAdvance(WebCore::IDBCursorBackend&, const WebCore::CursorAdvanceOperation&, std::function<void(PassRefPtr<WebCore::IDBKey>, PassRefPtr<WebCore::IDBKey>, PassRefPtr<WebCore::SharedBuffer>, PassRefPtr<WebCore::IDBDatabaseError>)> completionCallback) override;
+    virtual void cursorIterate(WebCore::IDBCursorBackend&, const WebCore::CursorIterationOperation&, std::function<void(PassRefPtr<WebCore::IDBKey>, PassRefPtr<WebCore::IDBKey>, PassRefPtr<WebCore::SharedBuffer>, PassRefPtr<WebCore::IDBDatabaseError>)> completionCallback) override;
 
     // Message handlers.
     void didReceiveWebIDBServerConnectionMessage(IPC::Connection*, IPC::MessageDecoder&);

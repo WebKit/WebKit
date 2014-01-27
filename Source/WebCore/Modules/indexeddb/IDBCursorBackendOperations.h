@@ -43,7 +43,6 @@ public:
     virtual void perform(std::function<void()> completionCallback) override final;
 
     IDBKey* key() const { return m_key.get(); }
-    IDBCallbacks* callbacks() const { return m_callbacks.get(); }
 
 private:
     CursorIterationOperation(PassRefPtr<IDBCursorBackend> cursor, PassRefPtr<IDBKey> key, PassRefPtr<IDBCallbacks> callbacks)
@@ -67,7 +66,6 @@ public:
     virtual void perform(std::function<void()> completionCallback) override final;
 
     unsigned long count() const { return m_count; }
-    IDBCallbacks* callbacks() const { return m_callbacks.get(); }
 
 private:
     CursorAdvanceOperation(PassRefPtr<IDBCursorBackend> cursor, unsigned long count, PassRefPtr<IDBCallbacks> callbacks)

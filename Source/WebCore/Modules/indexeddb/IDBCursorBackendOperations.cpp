@@ -38,13 +38,47 @@ namespace WebCore {
 void CursorAdvanceOperation::perform(std::function<void()> completionCallback)
 {
     LOG(StorageAPI, "CursorAdvanceOperation");
-    m_cursor->transaction().database().serverConnection().cursorAdvance(*m_cursor, *this, completionCallback);
+
+    RefPtr<CursorAdvanceOperation> operation(this);
+    auto callback = [this, operation, completionCallback](PassRefPtr<IDBKey> key, PassRefPtr<IDBKey> primaryKey, PassRefPtr<SharedBuffer> value, PassRefPtr<IDBDatabaseError> error) {
+        if (error) {
+            m_cursor->clear();
+            // FIXME: The LevelDB backend calls onSuccess even on failure.
+            // This will probably have to change soon (for sanity) and will probably break LevelDB
+            m_callbacks->onSuccess(static_cast<SharedBuffer*>(0));
+        } else {
+            m_cursor->updateCursorData(key.get(), primaryKey.get(), value.get());
+            m_callbacks->onSuccess(key, primaryKey, value);
+        }
+
+        // FIXME: Cursor operations should be able to pass along an error instead of success
+        completionCallback();
+    };
+
+    m_cursor->transaction().database().serverConnection().cursorAdvance(*m_cursor, *this, callback);
 }
 
 void CursorIterationOperation::perform(std::function<void()> completionCallback)
 {
     LOG(StorageAPI, "CursorIterationOperation");
-    m_cursor->transaction().database().serverConnection().cursorIterate(*m_cursor, *this, completionCallback);
+
+    RefPtr<CursorIterationOperation> operation(this);
+    auto callback = [this, operation, completionCallback](PassRefPtr<IDBKey> key, PassRefPtr<IDBKey> primaryKey, PassRefPtr<SharedBuffer> value, PassRefPtr<IDBDatabaseError> error) {
+        if (error) {
+            m_cursor->clear();
+            // FIXME: The LevelDB backend calls onSuccess even on failure.
+            // This will probably have to change soon (for sanity) and will probably break LevelDB
+            m_callbacks->onSuccess(static_cast<SharedBuffer*>(0));
+        } else {
+            m_cursor->updateCursorData(key.get(), primaryKey.get(), value.get());
+            m_callbacks->onSuccess(key, primaryKey, value);
+        }
+
+        // FIXME: Cursor operations should be able to pass along an error instead of success
+        completionCallback();
+    };
+
+    m_cursor->transaction().database().serverConnection().cursorIterate(*m_cursor, *this, callback);
 }
 
 } // namespace WebCore
