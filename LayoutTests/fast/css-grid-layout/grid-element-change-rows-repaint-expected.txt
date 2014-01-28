@@ -1,7 +1,5 @@
 This test checks that changing the grid-definition-rows lead to a repaint. The final grid element should be 100px * 150px, the grid item should be 100px * 100px. No trace of the elements before the grid-definition-rows change should be seen.
 (repaint rects
-  (rect 8 48 100 50)
-  (rect 8 48 100 100)
   (rect 8 48 100 150)
 )
 

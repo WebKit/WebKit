@@ -1,10 +1,7 @@
 This text should not get clipped
 (repaint rects
   (rect 0 0 800 50)
+  (rect 0 50 400 150)
   (rect 0 200 800 50)
-  (rect 0 200 800 50)
-  (rect 0 0 400 200)
-  (rect 0 50 400 200)
-  (rect 0 50 400 200)
 )
 

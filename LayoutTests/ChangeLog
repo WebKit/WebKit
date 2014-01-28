@@ -1,3 +1,36 @@
+2014-01-28  Antti Koivisto  <antti@apple.com>
+
+        Rebaseline some repaint test results after https://trac.webkit.org/r162947
+        
+        There are less repaint rects.
+
+        * compositing/repaint/resize-repaint-expected.txt:
+        * fast/box-shadow/shadow-repaint-expected.txt:
+        * fast/css-grid-layout/grid-element-change-columns-repaint-expected.txt:
+        * fast/css-grid-layout/grid-element-change-rows-repaint-expected.txt:
+        * fast/css-grid-layout/grid-item-change-column-repaint-expected.txt:
+        * fast/css-grid-layout/grid-item-change-row-repaint-expected.txt:
+        * fast/regions/repaint/element-in-named-flow-absolute-from-fixed-expected.txt:
+        * fast/regions/repaint/element-in-named-flow-fixed-from-absolute-expected.txt:
+        * fast/regions/repaint/element-inflow-fixed-from-outflow-static-expected.txt:
+        * fast/regions/repaint/element-outflow-static-from-inflow-fixed-expected.txt:
+        * fast/regions/repaint/invalid-region-repaint-crash-expected.txt:
+        * fast/regions/repaint/repaint-element-inside-relative-region-expected.txt:
+        * fast/regions/repaint/repaint-regions-overflow-expected.txt:
+        * fast/repaint/horizontal-bt-overflow-child-expected.txt:
+        * fast/repaint/horizontal-bt-overflow-parent-expected.txt:
+        * fast/repaint/horizontal-bt-overflow-same-expected.txt:
+        * fast/repaint/negative-text-indent-with-overflow-hidden-expected.txt:
+        * fast/repaint/overflow-flipped-writing-mode-table-expected.txt:
+        * fast/repaint/reflection-table-layout-expected.txt:
+        * fast/repaint/transform-table-layout-expected.txt:
+        * fast/repaint/vertical-overflow-child-expected.txt:
+        * fast/repaint/vertical-overflow-parent-expected.txt:
+        * fast/repaint/vertical-overflow-same-expected.txt:
+        * platform/mac/compositing/repaint/invalidations-on-composited-layers-expected.txt:
+        * platform/mac/fast/images/repaint-subrect-grid-expected.txt:
+        * svg/repaint/repaint-webkit-svg-shadow-container-expected.txt:
+
 2014-01-28  Michał Pakuła vel Rutka  <m.pakula@samsung.com>
 
         Unreviewed EFL gardening

@@ -1,7 +1,5 @@
 This test checks that changing the grid-definition-columns lead to a repaint. The final grid element should be 250px * 50px, the grid item should be 50px * 50px. No trace of the elements before the grid-definition-columns change should be seen.
 (repaint rects
-  (rect 8 48 100 50)
-  (rect 8 48 50 50)
   (rect 8 48 250 50)
 )
 
