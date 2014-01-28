@@ -872,7 +872,7 @@ public:
     int hasDebuggerRequests() const { return !!m_debuggerRequests; }
     void* debuggerRequestsAddress() { return &m_debuggerRequests; }
 
-    void addBreakpoint(unsigned numBreakpoints) { m_numBreakpoints += numBreakpoints; }
+    void addBreakpoint(unsigned numBreakpoints);
     void removeBreakpoint(unsigned numBreakpoints)
     {
         ASSERT(m_numBreakpoints >= numBreakpoints);
@@ -883,7 +883,7 @@ public:
         SteppingModeDisabled,
         SteppingModeEnabled
     };
-    void setSteppingMode(SteppingMode mode) { m_steppingMode = mode; }
+    void setSteppingMode(SteppingMode);
 
     void clearDebuggerRequests() { m_debuggerRequests = 0; }
 

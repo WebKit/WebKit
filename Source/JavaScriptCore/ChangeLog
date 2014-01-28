@@ -1,3 +1,58 @@
+2014-01-28  Mark Lam  <mark.lam@apple.com>
+
+        Jettison DFG code when neither breakpoints or the profiler are active.
+        <https://webkit.org/b/127766>
+
+        Reviewed by Geoffrey Garen.
+
+        We need to jettison the DFG CodeBlocks under the following circumstances:
+        1. When adding breakpoints to a CodeBlock, jettison it if it is a DFG CodeBlock.
+        2. When enabling stepping mode in a CodeBlock, jettison it if it a DFG CodeBlock.
+        3. When settign the enabled profiler in the VM, we need to jettison all DFG
+           CodeBlocks.
+
+        Instead of emitting speculation checks, the DFG code will now treat Breakpoint,
+        ProfileWillCall, and ProfileDidCall as no-ops similar to a Phantom node. We
+        still need to track these nodes so that they match the corresponding opcodes
+        in the baseline JIT when we jettison and OSR exit. Without them, we would OSR
+        exit to the wrong location in the baseline JIT code.
+
+        In DFGDriver's compileImpl() and DFGPlan's finalizeWithoutNotifyingCallback()
+        we fail the compilation effort with a CompilationInvalidated result. This allows
+        the DFG compiler to re-attampt the compilation of the function after some time
+        if it is hot. The CompilationInvalidated result is supposed to cause the DFG
+        to exercise an exponential back off before re-attempting compilation again
+        (see runtime/CompilationResult.h).
+
+        This patch improves the Octane score from ~2950 to ~3067.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::addBreakpoint):
+        (JSC::CodeBlock::setSteppingMode):
+        * bytecode/CodeBlock.h:
+        * debugger/Debugger.h:
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGDriver.cpp:
+        (JSC::DFG::compileImpl):
+        * dfg/DFGPlan.cpp:
+        (JSC::DFG::Plan::finalizeWithoutNotifyingCallback):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * profiler/LegacyProfiler.cpp:
+        (JSC::LegacyProfiler::startProfiling):
+        (JSC::LegacyProfiler::stopProfiling):
+        * runtime/VM.cpp:
+        (JSC::VM::VM):
+        (JSC::SetEnabledProfilerFunctor::operator()):
+        (JSC::VM::setEnabledProfiler):
+        * runtime/VM.h:
+        (JSC::VM::enabledProfiler):
+
 2014-01-27  Joseph Pecoraro  <pecoraro@apple.com>
 
         -[JSContext evaluteScript:] calls JSEvaluteScript with startingLineNumber 0, later interpreted as a oneBasedInt

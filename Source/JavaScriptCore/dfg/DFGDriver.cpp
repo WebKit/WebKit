@@ -34,6 +34,7 @@
 #include "DFGPlan.h"
 #include "DFGThunks.h"
 #include "DFGWorklist.h"
+#include "Debugger.h"
 #include "JITCode.h"
 #include "Operations.h"
 #include "Options.h"
@@ -73,6 +74,13 @@ static CompilationResult compileImpl(
     if (!Options::bytecodeRangeToDFGCompile().isInRange(codeBlock->instructionCount()))
         return CompilationFailed;
     
+    if (vm.enabledProfiler())
+        return CompilationInvalidated;
+
+    Debugger* debugger = codeBlock->globalObject()->debugger();
+    if (debugger && (debugger->isStepping() || codeBlock->baselineAlternative()->hasDebuggerRequests()))
+        return CompilationInvalidated;
+
     if (logCompilationChanges())
         dataLog("DFG(Driver) compiling ", *codeBlock, " with ", mode, ", number of instructions = ", codeBlock->instructionCount(), "\n");
     

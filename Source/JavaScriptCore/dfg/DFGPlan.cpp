@@ -62,6 +62,7 @@
 #include "DFGValidate.h"
 #include "DFGVirtualRegisterAllocationPhase.h"
 #include "DFGWatchpointCollectionPhase.h"
+#include "Debugger.h"
 #include "OperandsInlines.h"
 #include "Operations.h"
 #include <wtf/CurrentTime.h>
@@ -346,7 +347,14 @@ CompilationResult Plan::finalizeWithoutNotifyingCallback()
 {
     if (!isStillValid())
         return CompilationInvalidated;
-    
+
+    if (vm.enabledProfiler())
+        return CompilationInvalidated;
+
+    Debugger* debugger = codeBlock->globalObject()->debugger();
+    if (debugger && (debugger->isStepping() || codeBlock->baselineAlternative()->hasDebuggerRequests()))
+        return CompilationInvalidated;
+
     bool result;
     if (codeBlock->codeType() == FunctionCode)
         result = finalizer->finalizeFunction();

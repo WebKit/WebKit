@@ -197,7 +197,6 @@ VM::VM(VMType vmType, HeapType heapType)
     , jsFinalObjectClassInfo(JSFinalObject::info())
     , sizeOfLastScratchBuffer(0)
     , entryScope(0)
-    , m_enabledProfiler(0)
     , m_regExpCache(new RegExpCache(this))
 #if ENABLE(REGEXP_TRACING)
     , m_rtTraceList(new RTTraceList())
@@ -222,6 +221,7 @@ VM::VM(VMType vmType, HeapType heapType)
 #endif
     , m_inDefineOwnProperty(false)
     , m_codeCache(CodeCache::create())
+    , m_enabledProfiler(nullptr)
 {
     interpreter = new Interpreter(*this);
     StackBounds stack = wtfThreadData().stack();
@@ -778,6 +778,25 @@ void VM::addImpureProperty(const String& propertyName)
 {
     if (RefPtr<WatchpointSet> watchpointSet = m_impurePropertyWatchpointSets.take(propertyName))
         watchpointSet->fireAll();
+}
+
+class SetEnabledProfilerFunctor {
+public:
+    bool operator()(CodeBlock* codeBlock)
+    {
+        if (codeBlock->jitType() == JITCode::DFGJIT)
+            codeBlock->jettison();
+        return false;
+    }
+};
+
+void VM::setEnabledProfiler(LegacyProfiler* profiler)
+{
+    m_enabledProfiler = profiler;
+    if (m_enabledProfiler) {
+        SetEnabledProfilerFunctor functor;
+        heap.forEachCodeBlock(functor);
+    }
 }
 
 } // namespace JSC

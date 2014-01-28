@@ -90,6 +90,7 @@ public:
     void stepOutOfFunction();
 
     bool isPaused() { return m_isPaused; }
+    bool isStepping() const { return m_steppingMode == SteppingModeEnabled; }
 
     virtual void sourceParsed(ExecState*, SourceProvider*, int errorLineNumber, const WTF::String& errorMessage) = 0;
 
@@ -170,7 +171,6 @@ private:
         SteppingModeEnabled
     };
     void setSteppingMode(SteppingMode);
-    bool isStepping() const { return m_steppingMode == SteppingModeEnabled; }
 
     enum BreakpointState {
         BreakpointDisabled,

@@ -3531,4 +3531,19 @@ void CodeBlock::endValidationDidFail()
     RELEASE_ASSERT_NOT_REACHED();
 }
 
+void CodeBlock::addBreakpoint(unsigned numBreakpoints)
+{
+    m_numBreakpoints += numBreakpoints;
+    ASSERT(m_numBreakpoints);
+    if (jitType() == JITCode::DFGJIT)
+        jettison();
+}
+
+void CodeBlock::setSteppingMode(CodeBlock::SteppingMode mode)
+{
+    m_steppingMode = mode;
+    if (mode == SteppingModeEnabled && jitType() == JITCode::DFGJIT)
+        jettison();
+}
+
 } // namespace JSC

@@ -304,10 +304,9 @@ namespace JSC {
             return m_inDefineOwnProperty;
         }
 
-        LegacyProfiler* enabledProfiler()
-        {
-            return m_enabledProfiler;
-        }
+        LegacyProfiler* enabledProfiler() { return m_enabledProfiler; }
+        void setEnabledProfiler(LegacyProfiler*);
+
         void* enabledProfilerAddress() { return &m_enabledProfiler; }
 
 #if ENABLE(JIT) && ENABLE(LLINT)
@@ -432,7 +431,6 @@ namespace JSC {
         String cachedDateString;
         double cachedDateStringValue;
 
-        LegacyProfiler* m_enabledProfiler;
         OwnPtr<Profiler::Database> m_perBytecodeProfiler;
         RefPtr<TypedArrayController> m_typedArrayController;
         RegExpCache* m_regExpCache;
@@ -523,6 +521,8 @@ namespace JSC {
         bool m_inDefineOwnProperty;
         OwnPtr<CodeCache> m_codeCache;
         RefCountedArray<StackFrame> m_exceptionStack;
+
+        LegacyProfiler* m_enabledProfiler;
 
         HashMap<String, RefPtr<WatchpointSet>> m_impurePropertyWatchpointSets;
     };

@@ -4232,26 +4232,6 @@ void SpeculativeJIT::compile(Node* node)
     case Flush:
         break;
 
-    case Breakpoint: {
-        GPRTemporary temp(this);
-        GPRReg debuggerRequestsGPR = temp.gpr();
-        m_jit.load32(m_jit.codeBlock()->debuggerRequestsAddress(), debuggerRequestsGPR);
-        speculationCheck(
-            DebuggerEvent, JSValueRegs(), 0,
-            m_jit.branchTest32(JITCompiler::NonZero, debuggerRequestsGPR));
-        break;
-    }
-
-    case ProfileWillCall:
-    case ProfileDidCall: {
-        GPRTemporary temp(this);
-        m_jit.loadPtr(m_jit.vm()->enabledProfilerAddress(), temp.gpr());
-        speculationCheck(
-            DebuggerEvent, JSValueRegs(), 0,
-            m_jit.branchTestPtr(JITCompiler::NonZero, temp.gpr()));
-        break;
-    }
-
     case Call:
     case Construct:
         emitCall(node);
@@ -4690,6 +4670,9 @@ void SpeculativeJIT::compile(Node* node)
         noResult(node);
         break;
 
+    case Breakpoint:
+    case ProfileWillCall:
+    case ProfileDidCall:
     case PhantomLocal:
     case LoopHint:
         // This is a no-op.

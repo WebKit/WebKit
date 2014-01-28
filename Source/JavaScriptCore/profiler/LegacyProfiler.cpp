@@ -75,7 +75,7 @@ void LegacyProfiler::startProfiling(ExecState* exec, const String& title)
             return;
     }
 
-    exec->vm().m_enabledProfiler = this;
+    exec->vm().setEnabledProfiler(this);
     RefPtr<ProfileGenerator> profileGenerator = ProfileGenerator::create(exec, title, ++ProfilesUID);
     m_currentProfiles.append(profileGenerator);
 }
@@ -94,7 +94,7 @@ PassRefPtr<Profile> LegacyProfiler::stopProfiling(ExecState* exec, const String&
 
             m_currentProfiles.remove(i);
             if (!m_currentProfiles.size())
-                exec->vm().m_enabledProfiler = 0;
+                exec->vm().setEnabledProfiler(nullptr);
             
             return returnProfile;
         }
@@ -111,7 +111,7 @@ void LegacyProfiler::stopProfiling(JSGlobalObject* origin)
             profileGenerator->stopProfiling();
             m_currentProfiles.remove(i);
             if (!m_currentProfiles.size())
-                origin->vm().m_enabledProfiler = 0;
+                origin->vm().setEnabledProfiler(nullptr);
         }
     }
 }

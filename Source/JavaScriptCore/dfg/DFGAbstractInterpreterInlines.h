@@ -1754,13 +1754,13 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         node->setCanExit(true);
         break;
 
-    case Breakpoint:
-    case ProfileWillCall:
-    case ProfileDidCall:
     case CheckWatchdogTimer:
         node->setCanExit(true);
         break;
 
+    case Breakpoint:
+    case ProfileWillCall:
+    case ProfileDidCall:
     case Phantom:
     case Check:
     case CountExecution:

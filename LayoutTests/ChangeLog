@@ -1,3 +1,23 @@
+2014-01-28  Mark Lam  <mark.lam@apple.com>
+
+        Jettison DFG code when neither breakpoints or the profiler are active.
+        <https://webkit.org/b/127766>
+
+        Reviewed by Geoffrey Garen.
+
+        Added a test to exercise setting a breakpoint in 2 DFG compiled functions:
+        1 not inlined, and 1 inlined.
+
+        * inspector-protocol/debugger/resources/breakpoint.js:
+        (notInlineable):
+        (inlineable):
+        (notInliningFoo):
+        (inliningFoo):
+        (dfgWithoutInline):
+        (dfgWithInline):
+        * inspector-protocol/debugger/setBreakpoint-dfg-expected.txt: Added.
+        * inspector-protocol/debugger/setBreakpoint-dfg.html: Added.
+
 2014-01-28  Gurpreet Kaur  <k.gurpreet@samsung.com>
 
         Add support for menclose element

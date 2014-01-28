@@ -88,6 +88,9 @@ void clobberize(Graph& graph, Node* node, ReadFunctor& read, WriteFunctor& write
     case WeakJSConstant:
     case Identity:
     case Phantom:
+    case Breakpoint:
+    case ProfileWillCall:
+    case ProfileDidCall:
     case BitAnd:
     case BitOr:
     case BitXor:
@@ -618,9 +621,6 @@ void clobberize(Graph& graph, Node* node, ReadFunctor& read, WriteFunctor& write
         clobberizeForAllocation(read, write);
         return;
         
-    case Breakpoint:
-    case ProfileWillCall:
-    case ProfileDidCall:
     case CountExecution:
     case CheckWatchdogTimer:
         read(InternalState);
