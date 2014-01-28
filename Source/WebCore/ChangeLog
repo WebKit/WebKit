@@ -1,3 +1,28 @@
+2014-01-28  Anders Carlsson  <andersca@apple.com>
+
+        Add stubbed out VisitedLinkProvider class
+        https://bugs.webkit.org/show_bug.cgi?id=127744
+
+        Reviewed by Andreas Kling.
+
+        This is a first step towards moving responsibility of visited links from 
+        the page group to a separate object.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.vcxproj/WebCore.vcxproj.filters:
+        * WebCore.xcodeproj/project.pbxproj:
+        * page/PageGroup.cpp:
+        (WebCore::PageGroup::PageGroup):
+        * page/PageGroup.h:
+        (WebCore::PageGroup::visitedLinkProvider):
+        * page/VisitedLinkProvider.cpp: Added.
+        (WebCore::VisitedLinkProvider::VisitedLinkProvider):
+        (WebCore::VisitedLinkProvider::~VisitedLinkProvider):
+        * page/VisitedLinkProvider.h: Added.
+        (WebCore::VisitedLinkProvider::create):
+
 2014-01-28  Gurpreet Kaur  <k.gurpreet@samsung.com>
 
         Add support for menclose element

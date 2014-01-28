@@ -1768,6 +1768,7 @@ set(WebCore_SOURCES
     page/SuspendableTimer.cpp
     page/UserContentController.cpp
     page/UserContentURLPattern.cpp
+    page/VisitedLinkProvider.cpp
     page/WindowFeatures.cpp
     page/WindowFocusAllowedIndicator.cpp
     page/WorkerNavigator.cpp

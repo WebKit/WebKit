@@ -795,6 +795,8 @@
 		1ABA76C911D20E47004C201C /* ColorData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E406F3FB1198307D009D59D6 /* ColorData.cpp */; };
 		1ABA76CA11D20E50004C201C /* CSSPropertyNames.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E41EA038119836DB00710BC5 /* CSSPropertyNames.cpp */; };
 		1ABA76CB11D20E57004C201C /* CSSValueKeywords.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E41EA0391198374900710BC5 /* CSSValueKeywords.cpp */; };
+		1ABA80001897341200DCE9D6 /* VisitedLinkProvider.h in Headers */ = {isa = PBXBuildFile; fileRef = 1ABA7FFF1897341200DCE9D6 /* VisitedLinkProvider.h */; };
+		1ABA80061897355500DCE9D6 /* VisitedLinkProvider.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1ABA80051897355500DCE9D6 /* VisitedLinkProvider.cpp */; };
 		1ABC7109170E5E1B00F9A9D6 /* WorkerNavigatorStorageQuota.h in Headers */ = {isa = PBXBuildFile; fileRef = 1ABC7108170E5E1B00F9A9D6 /* WorkerNavigatorStorageQuota.h */; };
 		1AC2260C0DB69F190089B669 /* JSDOMApplicationCache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AC2260A0DB69F190089B669 /* JSDOMApplicationCache.cpp */; };
 		1AC2260D0DB69F190089B669 /* JSDOMApplicationCache.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AC2260B0DB69F190089B669 /* JSDOMApplicationCache.h */; };
@@ -7565,6 +7567,8 @@
 		1AB7FC650A8B92EC00D9D37B /* XPathValue.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = XPathValue.h; sourceTree = "<group>"; };
 		1AB7FC660A8B92EC00D9D37B /* XPathVariableReference.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = XPathVariableReference.cpp; sourceTree = "<group>"; };
 		1AB7FC670A8B92EC00D9D37B /* XPathVariableReference.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = XPathVariableReference.h; sourceTree = "<group>"; };
+		1ABA7FFF1897341200DCE9D6 /* VisitedLinkProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VisitedLinkProvider.h; sourceTree = "<group>"; };
+		1ABA80051897355500DCE9D6 /* VisitedLinkProvider.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VisitedLinkProvider.cpp; sourceTree = "<group>"; };
 		1ABC7108170E5E1B00F9A9D6 /* WorkerNavigatorStorageQuota.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WorkerNavigatorStorageQuota.h; sourceTree = "<group>"; };
 		1AC2260A0DB69F190089B669 /* JSDOMApplicationCache.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSDOMApplicationCache.cpp; sourceTree = "<group>"; };
 		1AC2260B0DB69F190089B669 /* JSDOMApplicationCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSDOMApplicationCache.h; sourceTree = "<group>"; };
@@ -16186,6 +16190,8 @@
 				BC8BF1591058141800A40A07 /* UserStyleSheetTypes.h */,
 				F513A3E915FF4841001526DB /* ValidationMessageClient.h */,
 				8678D0BA1878E810003ABDE6 /* ViewState.h */,
+				1ABA80051897355500DCE9D6 /* VisitedLinkProvider.cpp */,
+				1ABA7FFF1897341200DCE9D6 /* VisitedLinkProvider.h */,
 				BE983D95052A2E0A00892D85 /* WebCoreKeyboardUIMode.h */,
 				494BD7930F55C8EE00747828 /* WebKitPoint.h */,
 				494BD7940F55C8EE00747828 /* WebKitPoint.idl */,
@@ -19746,7 +19752,6 @@
 				441AF0A70EBA7BBF0044ED4B /* ios */,
 				B27535490B053814002CE64F /* mac */,
 				FBC220DD1237FBEB00BCF788 /* opengl */,
-				F4EAF4AB10C74268009100D3 /* opentype */,
 				49E911B20EF86D27009D0CAF /* transforms */,
 				490707E41219C04300D90E51 /* ANGLEWebKitBridge.cpp */,
 				490707E51219C04300D90E51 /* ANGLEWebKitBridge.h */,
@@ -24037,6 +24042,7 @@
 				93B70D6409EB0C7C009D8468 /* JSDOMBinding.h in Headers */,
 				BC60D7C10D29A46300B9918F /* JSDOMCoreException.h in Headers */,
 				40ECAE7E16B8B67200C36103 /* JSDOMError.h in Headers */,
+				1ABA80001897341200DCE9D6 /* VisitedLinkProvider.h in Headers */,
 				2E0888D51148848A00AF4265 /* JSDOMFormData.h in Headers */,
 				E1C36C030EB076D6007410BC /* JSDOMGlobalObject.h in Headers */,
 				65DF31F809D1CC60000BE325 /* JSDOMImplementation.h in Headers */,
@@ -27488,6 +27494,7 @@
 				BC6D44BE0C07EFB60072D2C9 /* JSHTMLEmbedElementCustom.cpp in Sources */,
 				1AE2AA260A1CDAB400B42B25 /* JSHTMLFieldSetElement.cpp in Sources */,
 				1AE2AA280A1CDAB400B42B25 /* JSHTMLFontElement.cpp in Sources */,
+				1ABA80061897355500DCE9D6 /* VisitedLinkProvider.cpp in Sources */,
 				9BF9A8801648DD2F001C6B23 /* JSHTMLFormControlsCollection.cpp in Sources */,
 				9B1AB07C1648C7C40051F3F2 /* JSHTMLFormControlsCollectionCustom.cpp in Sources */,
 				A8D064FB0A23C0CC005E7203 /* JSHTMLFormElement.cpp in Sources */,

@@ -4220,6 +4220,8 @@ webcore_sources += \
 	Source/WebCore/page/UserStyleSheetTypes.h \
 	Source/WebCore/page/ValidationMessageClient.h \
 	Source/WebCore/page/ViewState.h \
+	Source/WebCore/page/VisitedLinkProvider.cpp \
+	Source/WebCore/page/VisitedLinkProvider.h \
 	Source/WebCore/page/WebCoreKeyboardUIMode.h \
 	Source/WebCore/page/WebKitPoint.h \
 	Source/WebCore/page/WindowFeatures.cpp \

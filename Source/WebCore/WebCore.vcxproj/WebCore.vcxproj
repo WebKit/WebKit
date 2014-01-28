@@ -7059,6 +7059,7 @@
     <ClCompile Include="..\page\SuspendableTimer.cpp" />
     <ClCompile Include="..\page\UserContentController.cpp" />
     <ClCompile Include="..\page\UserContentURLPattern.cpp" />
+    <ClCompile Include="..\page\VisitedLinkProvider.cpp" />
     <ClCompile Include="..\fileapi\WebKitBlobBuilder.cpp" />
     <ClCompile Include="..\page\WindowFeatures.cpp" />
     <ClCompile Include="..\page\WindowFocusAllowedIndicator.cpp" />
@@ -18830,6 +18831,7 @@
     <ClInclude Include="..\page\UserScriptTypes.h" />
     <ClInclude Include="..\page\UserStyleSheet.h" />
     <ClInclude Include="..\page\UserStyleSheetTypes.h" />
+    <ClInclude Include="..\page\VisitedLinkProvider.h" />
     <ClInclude Include="..\fileapi\WebKitBlobBuilder.h" />
     <ClInclude Include="..\page\WebKitPoint.h" />
     <ClInclude Include="..\page\WindowFeatures.h" />
