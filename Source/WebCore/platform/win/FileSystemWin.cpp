@@ -68,6 +68,17 @@ static bool getFileSizeFromFindData(const WIN32_FIND_DATAW& findData, long long&
     return true;
 }
 
+static void getFileCreationTimeFromFindData(const WIN32_FIND_DATAW& findData, time_t& time)
+{
+    ULARGE_INTEGER fileTime;
+    fileTime.HighPart = findData.ftCreationTime.dwHighDateTime;
+    fileTime.LowPart = findData.ftCreationTime.dwLowDateTime;
+
+    // Information about converting time_t to FileTime is available at http://msdn.microsoft.com/en-us/library/ms724228%28v=vs.85%29.aspx
+    time = fileTime.QuadPart / 10000000 - kSecondsFromFileTimeToTimet;
+}
+
+
 static void getFileModificationTimeFromFindData(const WIN32_FIND_DATAW& findData, time_t& time)
 {
     ULARGE_INTEGER fileTime;
@@ -94,6 +105,16 @@ bool getFileModificationTime(const String& path, time_t& time)
         return false;
 
     getFileModificationTimeFromFindData(findData, time);
+    return true;
+}
+
+bool getFileCreationTime(const String& path, time_t& time)
+{
+    WIN32_FIND_DATAW findData;
+    if (!getFindData(path, findData))
+        return false;
+
+    getFileCreationTimeFromFindData(findData, time);
     return true;
 }
 

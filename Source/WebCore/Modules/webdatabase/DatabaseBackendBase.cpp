@@ -455,7 +455,8 @@ String DatabaseBackendBase::fileName() const
 
 DatabaseDetails DatabaseBackendBase::details() const
 {
-    return DatabaseDetails(stringIdentifier(), displayName(), estimatedSize(), 0);
+    // This code path is only used for database quota delegate calls, so file dates are irrelevant and left uninitialized.
+    return DatabaseDetails(stringIdentifier(), displayName(), estimatedSize(), 0, 0, 0);
 }
 
 bool DatabaseBackendBase::getVersionFromDatabase(String& version, bool shouldCacheVersion)

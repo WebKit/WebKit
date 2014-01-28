@@ -1,3 +1,28 @@
+2014-01-27  Alexey Proskuryakov  <ap@apple.com>
+
+        Expose SQL database creation and modification times
+        https://bugs.webkit.org/show_bug.cgi?id=127728
+
+        Reviewed by Brady Eidson.
+
+        * Shared/WebCoreArgumentCoders.cpp:
+        (IPC::ArgumentCoder<DatabaseDetails>::encode):
+        (IPC::ArgumentCoder<DatabaseDetails>::decode):
+        Encode and decode new DatabaseDetails member variables.
+
+        * UIProcess/API/C/WKDatabaseManager.cpp:
+        (WKDatabaseManagerGetDatabaseDetailsCreationTimeKey):
+        (WKDatabaseManagerGetDatabaseDetailsModificationTimeKey):
+        * UIProcess/API/C/WKDatabaseManager.h:
+        Added new keys for database details.
+
+        * UIProcess/WebDatabaseManagerProxy.cpp:
+        (WebKit::WebDatabaseManagerProxy::databaseDetailsCreationTimeKey):
+        (WebKit::WebDatabaseManagerProxy::databaseDetailsModificationTimeKey):
+        (WebKit::WebDatabaseManagerProxy::didGetDatabasesByOrigin):
+        * UIProcess/WebDatabaseManagerProxy.h:
+        Set the new keys if times are valid.
+
 2014-01-28  Tim Horton  <timothy_horton@apple.com>
 
         WebKit2 View Gestures (Swipe): Use CGSCaptureWindowsContentsToRect for now

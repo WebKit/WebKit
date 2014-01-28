@@ -61,6 +61,12 @@ WK_EXPORT WKStringRef WKDatabaseManagerGetDatabaseDetailsExpectedUsageKey();
 /* Value type: WKUInt64Ref */
 WK_EXPORT WKStringRef WKDatabaseManagerGetDatabaseDetailsCurrentUsageKey();
 
+/* Value type: WKDoubleRef, seconds since January 1st, 1970 UTC */
+WK_EXPORT WKStringRef WKDatabaseManagerGetDatabaseDetailsCreationTimeKey();
+
+/* Value type: WKDoubleRef, seconds since January 1st, 1970 UTC */
+WK_EXPORT WKStringRef WKDatabaseManagerGetDatabaseDetailsModificationTimeKey();
+
 
 // Database Manager Client
 typedef void (*WKDatabaseManagerDidModifyOriginCallback)(WKDatabaseManagerRef databaseManager, WKSecurityOriginRef origin, const void *clientInfo);

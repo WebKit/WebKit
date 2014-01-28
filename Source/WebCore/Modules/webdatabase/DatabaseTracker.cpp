@@ -484,7 +484,10 @@ DatabaseDetails DatabaseTracker::detailsForNameAndOrigin(const String& name, Sec
         expectedUsage = statement.getColumnInt64(1);
     }
 
-    return DatabaseDetails(name, displayName, expectedUsage, usageForDatabase(name, origin));
+    String path = fullPathForDatabase(origin, name, false);
+    if (path.isEmpty())
+        return DatabaseDetails(name, displayName, expectedUsage, 0, 0, 0);
+    return DatabaseDetails(name, displayName, expectedUsage, SQLiteFileSystem::getDatabaseFileSize(path), SQLiteFileSystem::databaseCreationTime(path), SQLiteFileSystem::databaseModificationTime(path));
 }
 
 void DatabaseTracker::setDatabaseDetails(SecurityOrigin* origin, const String& name, const String& displayName, unsigned long estimatedSize)
@@ -537,15 +540,6 @@ void DatabaseTracker::setDatabaseDetails(SecurityOrigin* origin, const String& n
 
     if (m_client)
         m_client->dispatchDidModifyDatabase(origin, name);
-}
-
-unsigned long long DatabaseTracker::usageForDatabase(const String& name, SecurityOrigin* origin)
-{
-    String path = fullPathForDatabase(origin, name, false);
-    if (path.isEmpty())
-        return 0;
-
-    return SQLiteFileSystem::getDatabaseFileSize(path);
 }
 
 void DatabaseTracker::doneCreatingDatabase(DatabaseBackendBase* database)

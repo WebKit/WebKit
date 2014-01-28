@@ -130,6 +130,12 @@ bool getFileSize(const String& path, long long& resultSize)
     return true;
 }
 
+bool getFileCreationTime(const String&, time_t&)
+{
+    // FIXME: Is there a way to retrieve file creation time with Gtk on platforms that support it?
+    return false;
+}
+
 bool getFileModificationTime(const String& path, time_t& modifiedTime)
 {
     GStatBuf statResult;

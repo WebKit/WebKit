@@ -70,6 +70,8 @@ public:
     static String databaseDetailsDisplayNameKey();
     static String databaseDetailsExpectedUsageKey();
     static String databaseDetailsCurrentUsageKey();
+    static String databaseDetailsCreationTimeKey();
+    static String databaseDetailsModificationTimeKey();
 
     using API::Object::ref;
     using API::Object::deref;

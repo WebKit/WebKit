@@ -127,4 +127,16 @@ long long SQLiteFileSystem::getDatabaseFileSize(const String& fileName)
     return getFileSize(fileName, size) ? size : 0;
 }
 
+double SQLiteFileSystem::databaseCreationTime(const String& fileName)
+{
+    time_t time;
+    return getFileCreationTime(fileName, time) ? time : 0;
+}
+
+double SQLiteFileSystem::databaseModificationTime(const String& fileName)
+{
+    time_t time;
+    return getFileModificationTime(fileName, time) ? time : 0;
+}
+
 } // namespace WebCore

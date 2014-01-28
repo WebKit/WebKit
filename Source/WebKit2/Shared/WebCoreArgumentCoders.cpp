@@ -915,6 +915,8 @@ void ArgumentCoder<DatabaseDetails>::encode(ArgumentEncoder& encoder, const Data
     encoder << details.displayName();
     encoder << details.expectedUsage();
     encoder << details.currentUsage();
+    encoder << details.creationTime();
+    encoder << details.modificationTime();
 }
     
 bool ArgumentCoder<DatabaseDetails>::decode(ArgumentDecoder& decoder, DatabaseDetails& details)
@@ -934,8 +936,16 @@ bool ArgumentCoder<DatabaseDetails>::decode(ArgumentDecoder& decoder, DatabaseDe
     uint64_t currentUsage;
     if (!decoder.decode(currentUsage))
         return false;
-    
-    details = DatabaseDetails(name, displayName, expectedUsage, currentUsage);
+
+    double creationTime;
+    if (!decoder.decode(creationTime))
+        return false;
+
+    double modificationTime;
+    if (!decoder.decode(modificationTime))
+        return false;
+
+    details = DatabaseDetails(name, displayName, expectedUsage, currentUsage, creationTime, modificationTime);
     return true;
 }
 

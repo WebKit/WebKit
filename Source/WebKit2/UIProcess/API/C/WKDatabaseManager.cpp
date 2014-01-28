@@ -120,6 +120,26 @@ WKStringRef WKDatabaseManagerGetDatabaseDetailsCurrentUsageKey()
 #endif
 }
 
+WKStringRef WKDatabaseManagerGetDatabaseDetailsCreationTimeKey()
+{
+#if ENABLE(SQL_DATABASE)
+    static API::String* key = API::String::create(WebDatabaseManagerProxy::databaseDetailsCreationTimeKey()).leakRef();
+    return toAPI(key);
+#else
+    return 0;
+#endif
+}
+
+WKStringRef WKDatabaseManagerGetDatabaseDetailsModificationTimeKey()
+{
+#if ENABLE(SQL_DATABASE)
+    static API::String* key = API::String::create(WebDatabaseManagerProxy::databaseDetailsModificationTimeKey()).leakRef();
+    return toAPI(key);
+#else
+    return 0;
+#endif
+}
+
 void WKDatabaseManagerSetClient(WKDatabaseManagerRef databaseManagerRef, const WKDatabaseManagerClientBase* wkClient)
 {
 #if ENABLE(SQL_DATABASE)

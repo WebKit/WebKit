@@ -53,7 +53,7 @@ DatabaseManager::ProposedDatabase::ProposedDatabase(DatabaseManager& manager,
     SecurityOrigin* origin, const String& name, const String& displayName, unsigned long estimatedSize)
     : m_manager(manager)
     , m_origin(origin->isolatedCopy())
-    , m_details(name.isolatedCopy(), displayName.isolatedCopy(), estimatedSize, 0)
+    , m_details(name.isolatedCopy(), displayName.isolatedCopy(), estimatedSize, 0, 0, 0)
 {
     m_manager.addProposedDatabase(this);
 }
@@ -268,8 +268,7 @@ PassRefPtr<DatabaseBackendBase> DatabaseManager::openDatabaseBackend(ScriptExecu
             // one more try after if that is the case.
             {
                 ProposedDatabase proposedDb(*this, context->securityOrigin(), name, displayName, estimatedSize);
-                databaseContext->databaseExceededQuota(name,
-                    DatabaseDetails(name.isolatedCopy(), displayName.isolatedCopy(), estimatedSize, 0));
+                databaseContext->databaseExceededQuota(name, proposedDb.details());
             }
             error = DatabaseError::None;
 

@@ -1,3 +1,48 @@
+2014-01-27  Alexey Proskuryakov  <ap@apple.com>
+
+        Expose SQL database creation and modification times
+        https://bugs.webkit.org/show_bug.cgi?id=127728
+
+        Reviewed by Brady Eidson.
+
+        * platform/FileSystem.h:
+        * platform/posix/FileSystemPOSIX.cpp:
+        (WebCore::getFileCreationTime):
+        * platform/win/FileSystemWin.cpp:
+        (WebCore::getFileCreationTimeFromFindData):
+        (WebCore::getFileCreationTime):
+        Added functions to get file creation times. Not all OSes support that, but Darwin
+        and Windows do, as (I think) various BSD flavors.
+
+        * platform/gtk/FileSystemGtk.cpp: Added a stub for getFileCreationTime().
+
+        * platform/sql/SQLiteFileSystem.h:
+        * platform/sql/SQLiteFileSystem.cpp:
+        (WebCore::SQLiteFileSystem::databaseCreationTime):
+        (WebCore::SQLiteFileSystem::databaseModificationTime):
+        Expose it in the same strange manner other database file operations are.
+
+        * Modules/webdatabase/DatabaseDetails.h:
+        (WebCore::DatabaseDetails::DatabaseDetails):
+        (WebCore::DatabaseDetails::creationTime):
+        (WebCore::DatabaseDetails::modificationTime):
+        Added creation and modification times to DatabaseDetails.
+
+        * Modules/webdatabase/DatabaseManager.cpp:
+        (WebCore::DatabaseManager::ProposedDatabase::ProposedDatabase):
+        (WebCore::DatabaseManager::openDatabaseBackend):
+        ProposedDatabase is an unfortunate mechanism for communicating quota errors to the
+        client, we should really straighten it up. But for now, just leave the times uninitialized.
+
+        * Modules/webdatabase/DatabaseBackendBase.cpp: (WebCore::DatabaseBackendBase::details):
+        This code path is for handling quota errors, so there is no need to initialize most
+        of DatabaseDetails here as well.
+
+        * Modules/webdatabase/DatabaseTracker.cpp: (WebCore::DatabaseTracker::detailsForNameAndOrigin):
+        * Modules/webdatabase/DatabaseTracker.h:
+        Fill in database file times. Inlined and removed usageForDatabase function to
+        avoid rebuilding the path multiple times.
+
 2014-01-28  Jer Noble  <jer.noble@apple.com>
 
         Setting muted attribute on <video> element is not reflected in controls

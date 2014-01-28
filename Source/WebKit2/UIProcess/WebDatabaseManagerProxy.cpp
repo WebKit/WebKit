@@ -93,6 +93,18 @@ String WebDatabaseManagerProxy::databaseDetailsCurrentUsageKey()
     return key;
 }
 
+String WebDatabaseManagerProxy::databaseDetailsCreationTimeKey()
+{
+    static NeverDestroyed<String> key(ASCIILiteral("WebDatabaseManagerDatabaseDetailsCreationTimeKey"));
+    return key;
+}
+
+String WebDatabaseManagerProxy::databaseDetailsModificationTimeKey()
+{
+    static NeverDestroyed<String> key(ASCIILiteral("WebDatabaseManagerDatabaseDetailsModificationTimeKey"));
+    return key;
+}
+
 PassRefPtr<WebDatabaseManagerProxy> WebDatabaseManagerProxy::create(WebContext* webContext)
 {
     return adoptRef(new WebDatabaseManagerProxy(webContext));
@@ -173,6 +185,10 @@ void WebDatabaseManagerProxy::didGetDatabasesByOrigin(const Vector<OriginAndData
             detailsMap.set(databaseDetailsDisplayNameKey(), API::String::create(databaseDetails.displayName()));
             detailsMap.set(databaseDetailsExpectedUsageKey(), API::UInt64::create(databaseDetails.expectedUsage()));
             detailsMap.set(databaseDetailsCurrentUsageKey(), API::UInt64::create(databaseDetails.currentUsage()));
+            if (databaseDetails.creationTime())
+                detailsMap.set(databaseDetailsCreationTimeKey(), API::Double::create(databaseDetails.creationTime()));
+            if (databaseDetails.modificationTime())
+                detailsMap.set(databaseDetailsModificationTimeKey(), API::Double::create(databaseDetails.modificationTime()));
 
             databases.uncheckedAppend(ImmutableDictionary::create(std::move(detailsMap)));
         }

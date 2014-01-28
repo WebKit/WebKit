@@ -41,17 +41,21 @@ public:
     DatabaseDetails()
         : m_expectedUsage(0)
         , m_currentUsage(0)
+        , m_creationTime(0)
+        , m_modificationTime(0)
 #ifndef NDEBUG
         , m_threadID(std::this_thread::get_id())
 #endif
     {
     }
 
-    DatabaseDetails(const String& databaseName, const String& displayName, unsigned long long expectedUsage, unsigned long long currentUsage)
+    DatabaseDetails(const String& databaseName, const String& displayName, unsigned long long expectedUsage, unsigned long long currentUsage, double creationTime, double modificationTime)
         : m_name(databaseName)
         , m_displayName(displayName)
         , m_expectedUsage(expectedUsage)
         , m_currentUsage(currentUsage)
+        , m_creationTime(creationTime)
+        , m_modificationTime(modificationTime)
 #ifndef NDEBUG
         , m_threadID(std::this_thread::get_id())
 #endif
@@ -62,6 +66,8 @@ public:
     const String& displayName() const { return m_displayName; }
     uint64_t expectedUsage() const { return m_expectedUsage; }
     uint64_t currentUsage() const { return m_currentUsage; }
+    double creationTime() const { return m_creationTime; }
+    double modificationTime() const { return m_modificationTime; }
 #ifndef NDEBUG
     std::thread::id threadID() const { return m_threadID; }
 #endif
@@ -71,6 +77,8 @@ private:
     String m_displayName;
     uint64_t m_expectedUsage;
     uint64_t m_currentUsage;
+    double m_creationTime;
+    double m_modificationTime;
 #ifndef NDEBUG
     std::thread::id m_threadID;
 #endif
