@@ -575,7 +575,6 @@ String InspectorDebuggerAgent::sourceMapURLForScript(const Script& script)
 void InspectorDebuggerAgent::didParseSource(JSC::SourceID sourceID, const Script& inScript)
 {
     Script script = inScript;
-    // FIXME: Why does -[JSContext evaluateScript] have a -1 startLine?
     if (script.startLine <= 0 && !script.startColumn)
         script.sourceURL = ContentSearchUtilities::findScriptSourceURL(script.source);
     script.sourceMappingURL = sourceMapURLForScript(script);

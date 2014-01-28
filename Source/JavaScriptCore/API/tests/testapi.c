@@ -1629,6 +1629,26 @@ int main(int argc, char* argv[])
     JSStringRelease(line);
 
     exception = NULL;
+    functionBody = JSStringCreateWithUTF8CString("rreturn Array;");
+    line = JSStringCreateWithUTF8CString("line");
+    ASSERT(!JSObjectMakeFunction(context, NULL, 0, NULL, functionBody, NULL, -42, &exception));
+    ASSERT(JSValueIsObject(context, exception));
+    v = JSObjectGetProperty(context, JSValueToObject(context, exception, NULL), line, NULL);
+    assertEqualsAsNumber(v, 1);
+    JSStringRelease(functionBody);
+    JSStringRelease(line);
+
+    exception = NULL;
+    functionBody = JSStringCreateWithUTF8CString("// Line one.\nrreturn Array;");
+    line = JSStringCreateWithUTF8CString("line");
+    ASSERT(!JSObjectMakeFunction(context, NULL, 0, NULL, functionBody, NULL, 1, &exception));
+    ASSERT(JSValueIsObject(context, exception));
+    v = JSObjectGetProperty(context, JSValueToObject(context, exception, NULL), line, NULL);
+    assertEqualsAsNumber(v, 2);
+    JSStringRelease(functionBody);
+    JSStringRelease(line);
+
+    exception = NULL;
     functionBody = JSStringCreateWithUTF8CString("return Array;");
     function = JSObjectMakeFunction(context, NULL, 0, NULL, functionBody, NULL, 1, &exception);
     JSStringRelease(functionBody);

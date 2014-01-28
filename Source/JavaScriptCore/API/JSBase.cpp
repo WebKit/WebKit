@@ -53,6 +53,8 @@ JSValueRef JSEvaluateScript(JSContextRef ctx, JSStringRef script, JSObjectRef th
 
     JSObject* jsThisObject = toJS(thisObject);
 
+    startingLineNumber = std::max(1, startingLineNumber);
+
     // evaluate sets "this" to the global object if it is NULL
     JSGlobalObject* globalObject = exec->vmEntryGlobalObject();
     SourceCode source = makeSource(script->string(), sourceURL->string(), TextPosition(OrdinalNumber::fromOneBasedInt(startingLineNumber), OrdinalNumber::first()));
@@ -81,6 +83,8 @@ bool JSCheckScriptSyntax(JSContextRef ctx, JSStringRef script, JSStringRef sourc
     }
     ExecState* exec = toJS(ctx);
     APIEntryShim entryShim(exec);
+
+    startingLineNumber = std::max(1, startingLineNumber);
 
     SourceCode source = makeSource(script->string(), sourceURL->string(), TextPosition(OrdinalNumber::fromOneBasedInt(startingLineNumber), OrdinalNumber::first()));
     

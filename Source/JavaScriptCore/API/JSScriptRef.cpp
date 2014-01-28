@@ -83,6 +83,8 @@ JSScriptRef JSScriptCreateReferencingImmortalASCIIText(JSContextGroupRef context
             return 0;
     }
 
+    startingLineNumber = std::max(1, startingLineNumber);
+
     RefPtr<OpaqueJSScript> result = OpaqueJSScript::create(vm, url->string(), startingLineNumber, String(StringImpl::createFromLiteral(source, length)));
 
     ParserError error;
@@ -101,6 +103,8 @@ JSScriptRef JSScriptCreateFromString(JSContextGroupRef contextGroup, JSStringRef
 {
     VM* vm = toJS(contextGroup);
     APIEntryShim entryShim(vm);
+
+    startingLineNumber = std::max(1, startingLineNumber);
 
     RefPtr<OpaqueJSScript> result = OpaqueJSScript::create(vm, url->string(), startingLineNumber, source->string());
 

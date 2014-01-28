@@ -1,5 +1,42 @@
 2014-01-27  Joseph Pecoraro  <pecoraro@apple.com>
 
+        -[JSContext evaluteScript:] calls JSEvaluteScript with startingLineNumber 0, later interpreted as a oneBasedInt
+        https://bugs.webkit.org/show_bug.cgi?id=127648
+
+        Reviewed by Geoffrey Garen.
+
+        The actual bug being fixed here is that the line number for
+        scripts evaluated via the JSC APIs is now sane. However,
+        there is no good infrastructure in place right now to test that.
+
+        * API/tests/testapi.c:
+        (main):
+        * API/tests/testapi.mm:
+        (testObjectiveCAPI):
+        Add tests for exception line numbers and handling of bad
+        startingLineNumbers in public APIs. These tests were already
+        passing, I just add them to make sure they are not regressed
+        in the future.
+
+        * API/JSBase.cpp:
+        (JSEvaluateScript):
+        (JSCheckScriptSyntax):
+        * API/JSBase.h:
+        * API/JSObjectRef.cpp:
+        (JSObjectMakeFunction):
+        * API/JSObjectRef.h:
+        * API/JSScriptRef.cpp:
+        * API/JSScriptRefPrivate.h:
+        * API/JSStringRef.h:
+        - Clarify documentation that startingLineNumber is 1 based and clamped.
+        - Add clamping in the implementation to put sane values into JSC::SourceProvider.
+
+        * inspector/agents/InspectorDebuggerAgent.cpp:
+        (Inspector::InspectorDebuggerAgent::didParseSource):
+        Remove the FIXME now that the SourceProvider is giving us expected values.
+
+2014-01-27  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: CRASH when debugger closes remote inspecting JSContext
         https://bugs.webkit.org/show_bug.cgi?id=127738
 

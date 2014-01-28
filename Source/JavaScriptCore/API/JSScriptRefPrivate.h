@@ -42,7 +42,7 @@ extern "C" {
  @abstract Creates a script reference from an ascii string, without copying or taking ownership of the string
  @param contextGroup The context group the script is to be used in.
  @param url The source url to be reported in errors and exceptions.
- @param startingLineNumber An integer value specifying the script's starting line number in the file located at sourceURL. This is only used when reporting exceptions.
+ @param startingLineNumber An integer value specifying the script's starting line number in the file located at sourceURL. This is only used when reporting exceptions. The value is one-based, so the first line is line 1 and invalid values are clamped to 1.
  @param source The source string.  This is required to be pure ASCII and to never be deallocated.
  @param length The length of the source string.
  @param errorMessage A pointer to a JSStringRef in which to store the parse error message if the source is not valid. Pass NULL if you do not care to store an error message.
@@ -58,7 +58,7 @@ JS_EXPORT JSScriptRef JSScriptCreateReferencingImmortalASCIIText(JSContextGroupR
  @abstract Creates a script reference from a string
  @param contextGroup The context group the script is to be used in.
  @param url The source url to be reported in errors and exceptions.
- @param startingLineNumber An integer value specifying the script's starting line number in the file located at sourceURL. This is only used when reporting exceptions.
+ @param startingLineNumber An integer value specifying the script's starting line number in the file located at sourceURL. This is only used when reporting exceptions. The value is one-based, so the first line is line 1 and invalid values are clamped to 1.
  @param source The source string.
  @param errorMessage A pointer to a JSStringRef in which to store the parse error message if the source is not valid. Pass NULL if you do not care to store an error message.
  @param errorLine A pointer to an int in which to store the line number of a parser error. Pass NULL if you do not care to store an error line.

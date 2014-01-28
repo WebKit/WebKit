@@ -594,6 +594,22 @@ void testObjectiveCAPI()
 
     @autoreleasepool {
         JSContext *context = [[JSContext alloc] init];
+        __block int expectedExceptionLineNumber = 1;
+        __block bool sawExpectedExceptionLineNumber = false;
+        context.exceptionHandler = ^(JSContext *, JSValue *exception) {
+            sawExpectedExceptionLineNumber = [exception[@"line"] toInt32] == expectedExceptionLineNumber;
+        };
+        [context evaluateScript:@"!@#$%^&*() THIS IS NOT VALID JAVASCRIPT SYNTAX !@#$%^&*()"];
+        checkResult(@"evaluteScript exception on line 1", sawExpectedExceptionLineNumber);
+
+        expectedExceptionLineNumber = 2;
+        sawExpectedExceptionLineNumber = false;
+        [context evaluateScript:@"// Line 1\n!@#$%^&*() THIS IS NOT VALID JAVASCRIPT SYNTAX !@#$%^&*()"];
+        checkResult(@"evaluteScript exception on line 2", sawExpectedExceptionLineNumber);
+    }
+
+    @autoreleasepool {
+        JSContext *context = [[JSContext alloc] init];
         context[@"callback"] = ^{
             JSContext *context = [JSContext currentContext];
             context.exception = [JSValue valueWithNewErrorFromMessage:@"Something went wrong." inContext:context];
