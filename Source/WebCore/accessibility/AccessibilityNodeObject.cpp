@@ -401,6 +401,7 @@ bool AccessibilityNodeObject::canHaveChildren() const
     case LegendRole:
         if (Element* element = this->element())
             return !ancestorsOfType<HTMLFieldSetElement>(*element).first();
+        FALLTHROUGH;
     default:
         return true;
     }
@@ -1337,6 +1338,7 @@ void AccessibilityNodeObject::visibleText(Vector<AccessibilityText>& textOrder) 
         // Native popup buttons should not use their button children's text as a title. That value is retrieved through stringValue().
         if (node->hasTagName(selectTag))
             break;
+        FALLTHROUGH;
     case ButtonRole:
     case ToggleButtonRole:
     case CheckBoxRole:
@@ -1712,6 +1714,7 @@ String AccessibilityNodeObject::title() const
         // Native popup buttons should not use their button children's text as a title. That value is retrieved through stringValue().
         if (node->hasTagName(selectTag))
             return String();
+        FALLTHROUGH;
     case ButtonRole:
     case ToggleButtonRole:
     case CheckBoxRole:

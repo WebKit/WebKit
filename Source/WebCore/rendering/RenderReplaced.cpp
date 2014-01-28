@@ -329,7 +329,7 @@ LayoutRect RenderReplaced::replacedContentRect(const LayoutSize& intrinsicSize) 
         finalRect.setSize(finalRect.size().fitToAspectRatio(intrinsicSize, objectFit == ObjectFitCover ? AspectRatioFitGrow : AspectRatioFitShrink));
         if (objectFit != ObjectFitScaleDown || finalRect.width() <= intrinsicSize.width())
             break;
-        // fall through
+        FALLTHROUGH;
     case ObjectFitNone:
         finalRect.setSize(intrinsicSize);
         break;

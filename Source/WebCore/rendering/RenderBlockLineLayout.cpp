@@ -602,7 +602,7 @@ void RenderBlockFlow::updateLogicalWidthForAlignment(const ETextAlign& textAlign
             }
             break;
         }
-        // Fall through
+        FALLTHROUGH;
     case TASTART:
         if (style().isLeftToRightDirection())
             updateLogicalWidthForLeftAlignedBlock(style().isLeftToRightDirection(), trailingSpaceRun, logicalLeft, totalLogicalWidth, availableLogicalWidth);

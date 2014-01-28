@@ -336,6 +336,7 @@ void EventSource::parseEventStream()
                 break;
             case '\r':
                 m_discardTrailingNewline = true;
+                FALLTHROUGH;
             case '\n':
                 lineLength = i - bufPos;
                 break;

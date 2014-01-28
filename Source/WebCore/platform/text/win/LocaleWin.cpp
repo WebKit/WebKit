@@ -523,7 +523,8 @@ void LocaleWin::initializeLocaleData()
     case NegativeFormatSpaceSignSuffix:
         negativeSuffix = " " + negativeSign;
         break;
-    case NegativeFormatSignPrefix: // Fall through.
+    case NegativeFormatSignPrefix:
+        FALLTHROUGH;
     default:
         negativePrefix = negativeSign;
         break;

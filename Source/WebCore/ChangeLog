@@ -1,3 +1,125 @@
+2014-01-27  Joseph Pecoraro  <pecoraro@apple.com>
+
+        WebCore: Enable -Wimplicit-fallthrough and add FALLTHROUGH annotation where needed
+        https://bugs.webkit.org/show_bug.cgi?id=127671
+
+        Reviewed by Ryosuke Niwa.
+
+        * Configurations/Base.xcconfig:
+        Enable the warning.
+
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::applyProperty):
+        Caught a bug. CSSPropertyWebkitAlt could fall through to CSSPropertyQuotes.
+
+        * css/SVGCSSParser.cpp:
+        (WebCore::CSSParser::parseSVGValue):
+        Caught a bug. CSSPropertyWebkitSvgShadow could fall through to CSSPropertyMaskType.
+
+        * platform/Decimal.cpp:
+        (WebCore::Decimal::fromString):
+        Possible bug. Implementation doesn't seem to match its documentation.
+        Filed an issue to follow-up on this unclear function.
+
+        * css/makeprop.pl:
+        * css/makevalues.pl:
+        * platform/ColorData.gperf:
+        Ignore implicit fallthrough warnings in generated code. gperf outputs
+        a "/*FALLTHROUGH*/" comment, but is not easily customizable to change
+        this output. Easiest to just ignore the warning for now.
+
+        * rendering/AutoTableLayout.cpp:
+        (WebCore::AutoTableLayout::recalcColumn):
+        (WebCore::AutoTableLayout::calcEffectiveLogicalWidth):
+        (WebCore::AutoTableLayout::layout):
+        There has been a "fall through" comment immediately followed by a break
+        since its introduction in 2003. Removing the inaccurate comment.
+
+        * accessibility/AccessibilityNodeObject.cpp:
+        (WebCore::AccessibilityNodeObject::canHaveChildren):
+        (WebCore::AccessibilityNodeObject::visibleText):
+        (WebCore::AccessibilityNodeObject::title):
+        * accessibility/mac/WebAccessibilityObjectWrapperBase.mm:
+        (-[WebAccessibilityObjectWrapperBase accessibilityDescription]):
+        (-[WebAccessibilityObjectWrapperBase accessibilityHelpText]):
+        * bindings/js/SerializedScriptValue.cpp:
+        (WebCore::CloneSerializer::serialize):
+        (WebCore::CloneDeserializer::deserialize):
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::ComputedStyleExtractor::propertyValue):
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseValue):
+        (WebCore::CSSParser::parseContent):
+        (WebCore::CSSParser::realLex):
+        * css/CSSSelector.cpp:
+        (WebCore::CSSSelector::extractPseudoType):
+        (WebCore::CSSSelector::selectorText):
+        * css/StyleProperties.cpp:
+        (WebCore::StyleProperties::asText):
+        * css/StyleSheetContents.cpp:
+        (WebCore::childRulesHaveFailedOrCanceledSubresources):
+        * dom/Node.cpp:
+        (WebCore::appendTextContent):
+        * html/parser/HTMLTreeBuilder.cpp:
+        (WebCore::HTMLTreeBuilder::processStartTag):
+        (WebCore::HTMLTreeBuilder::processEndTag):
+        (WebCore::HTMLTreeBuilder::processCharacterBuffer):
+        (WebCore::HTMLTreeBuilder::processEndOfFile):
+        * loader/cache/CachedResourceLoader.cpp:
+        (WebCore::CachedResourceLoader::requestResource):
+        * page/EventSource.cpp:
+        (WebCore::EventSource::parseEventStream):
+        * platform/DateComponents.cpp:
+        (WebCore::DateComponents::toStringForTime):
+        * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundation.cpp:
+        (WebCore::MediaPlayerPrivateAVFoundation::updateStates):
+        * platform/graphics/cg/GraphicsContextCG.cpp:
+        (WebCore::GraphicsContext::platformInit):
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivateGStreamer::totalBytes):
+        * platform/graphics/win/FullScreenController.cpp:
+        (FullScreenController::Private::fullscreenClientWndProc):
+        * platform/text/BidiResolver.h:
+        (WebCore::Run>::updateStatusLastFromCurrentDirection):
+        (WebCore::Run>::createBidiRunsForLine):
+        * platform/text/win/LocaleWin.cpp:
+        (WebCore::LocaleWin::initializeLocaleData):
+        * rendering/PointerEventsHitRules.cpp:
+        (WebCore::PointerEventsHitRules::PointerEventsHitRules):
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::newLine):
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::RenderBlockFlow::updateLogicalWidthForAlignment):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::computeReplacedLogicalWidthUsing):
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::calculateFillTileSize):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::drawLineForBoxSide):
+        * rendering/RenderQuote.cpp:
+        (WebCore::RenderQuote::originalText):
+        * rendering/RenderReplaced.cpp:
+        (WebCore::RenderReplaced::replacedContentRect):
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::addChild):
+        * rendering/RenderTheme.cpp:
+        (WebCore::RenderTheme::adjustStyle):
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::setWordSpacing):
+        * rendering/svg/RenderSVGResource.cpp:
+        (WebCore::requestPaintingResource):
+        * rendering/svg/SVGMarkerData.h:
+        (WebCore::SVGMarkerData::updateMarkerDataForPathElement):
+        * svg/SVGPathParser.cpp:
+        (WebCore::SVGPathParser::parsePathDataFromSource):
+        * svg/SVGTransformDistance.cpp:
+        (WebCore::SVGTransformDistance::SVGTransformDistance):
+        (WebCore::SVGTransformDistance::scaledDistance):
+        (WebCore::SVGTransformDistance::addSVGTransforms):
+        (WebCore::SVGTransformDistance::addToSVGTransform):
+        (WebCore::SVGTransformDistance::distance):
+        Add annotation or break before falling into a default:break;
+
 2014-01-27  Andreas Kling  <akling@apple.com>
 
         Allow mmap encoded data replacement for WOFF fonts.

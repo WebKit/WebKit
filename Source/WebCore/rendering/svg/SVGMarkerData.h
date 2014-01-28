@@ -127,6 +127,7 @@ private:
             break;
         case PathElementMoveToPoint:
             m_subpathStart = points[0];
+            FALLTHROUGH;
         case PathElementAddLineToPoint:
             updateInslope(points[0]);
             m_origin = points[0];

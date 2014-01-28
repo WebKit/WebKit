@@ -753,6 +753,8 @@ Decimal Decimal::fromString(const String& str)
                 state = StateDotDigit;
                 break;
             }
+            // FIXME: <http://webkit.org/b/127667> Decimal::fromString's EBNF documentation does not match implementation
+            FALLTHROUGH;
 
         case StateDotDigit:
             if (ch >= '0' && ch <= '9') {

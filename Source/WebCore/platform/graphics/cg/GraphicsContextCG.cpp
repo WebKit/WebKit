@@ -1752,6 +1752,7 @@ void GraphicsContext::setPlatformCompositeOperation(CompositeOperator mode, Blen
             break;
         case BlendModeLuminosity:
             target = kCGBlendModeLuminosity;
+            break;
         default:
             break;
         }

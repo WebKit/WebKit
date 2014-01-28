@@ -1456,6 +1456,7 @@ void RenderStyle::setWordSpacing(Length v)
     switch (v.type()) {
     case Auto:
         fontWordSpacing = 0;
+        FALLTHROUGH;
     case Percent:
         fontWordSpacing = v.getFloatValue() * font().spaceWidth() / 100;
         break;

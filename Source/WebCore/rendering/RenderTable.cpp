@@ -159,7 +159,7 @@ void RenderTable::addChild(RenderObject* child, RenderObject* beforeChild)
                     wrapInAnonymousSection = false;
                     break;
                 }
-                // Fall through.
+                FALLTHROUGH;
             case TABLE_ROW_GROUP:
                 resetSectionPointerIfNotBefore(m_firstBody, beforeChild);
                 if (!m_firstBody)

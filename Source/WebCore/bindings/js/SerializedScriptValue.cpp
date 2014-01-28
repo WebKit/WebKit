@@ -1182,9 +1182,9 @@ SerializationReturnCode CloneSerializer::serialize(JSValue in)
                 inputObjectStack.append(inArray);
                 indexStack.append(0);
                 lengthStack.append(length);
-                // fallthrough
             }
             arrayStartVisitMember:
+            FALLTHROUGH;
             case ArrayStartVisitMember: {
                 JSObject* array = inputObjectStack.last();
                 uint32_t index = indexStack.last();
@@ -1244,9 +1244,9 @@ SerializationReturnCode CloneSerializer::serialize(JSValue in)
                 indexStack.append(0);
                 propertyStack.append(PropertyNameArray(m_exec));
                 inObject->methodTable()->getOwnPropertyNames(inObject, m_exec, propertyStack.last(), ExcludeDontEnumProperties);
-                // fallthrough
             }
             objectStartVisitMember:
+            FALLTHROUGH;
             case ObjectStartVisitMember: {
                 JSObject* object = inputObjectStack.last();
                 uint32_t index = indexStack.last();
@@ -1279,7 +1279,7 @@ SerializationReturnCode CloneSerializer::serialize(JSValue in)
                 }
                 if (terminalCode != SuccessfullyCompleted)
                     return terminalCode;
-                // fallthrough
+                FALLTHROUGH;
             }
             case ObjectEndVisitMember: {
                 if (shouldTerminate())
@@ -2317,9 +2317,9 @@ DeserializationResult CloneDeserializer::deserialize()
             JSArray* outArray = constructEmptyArray(m_exec, 0, m_globalObject, length);
             m_gcBuffer.append(outArray);
             outputObjectStack.append(outArray);
-            // fallthrough
         }
         arrayStartVisitMember:
+        FALLTHROUGH;
         case ArrayStartVisitMember: {
             uint32_t index;
             if (!read(index)) {
@@ -2358,9 +2358,9 @@ DeserializationResult CloneDeserializer::deserialize()
             JSObject* outObject = constructEmptyObject(m_exec, m_globalObject->objectPrototype());
             m_gcBuffer.append(outObject);
             outputObjectStack.append(outObject);
-            // fallthrough
         }
         objectStartVisitMember:
+        FALLTHROUGH;
         case ObjectStartVisitMember: {
             CachedStringRef cachedString;
             bool wasTerminator = false;

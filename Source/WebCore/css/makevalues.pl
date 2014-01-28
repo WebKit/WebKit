@@ -70,6 +70,7 @@ print GPERF << "EOF";
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored \"-Wunknown-pragmas\"
 #pragma clang diagnostic ignored \"-Wdeprecated-register\"
+#pragma clang diagnostic ignored \"-Wimplicit-fallthrough\"
 #endif
 
 namespace WebCore {

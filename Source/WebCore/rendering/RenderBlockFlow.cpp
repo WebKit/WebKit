@@ -2370,6 +2370,7 @@ void RenderBlockFlow::newLine(EClear clear)
         break;
     case CBOTH:
         newY = lowestFloatLogicalBottom();
+        break;
     default:
         break;
     }

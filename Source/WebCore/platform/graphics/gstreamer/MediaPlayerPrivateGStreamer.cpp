@@ -1257,7 +1257,7 @@ unsigned MediaPlayerPrivateGStreamer::totalBytes() const
             gst_iterator_resync(iter);
             break;
         case GST_ITERATOR_ERROR:
-            // Fall through.
+            FALLTHROUGH;
         case GST_ITERATOR_DONE:
             done = true;
             break;

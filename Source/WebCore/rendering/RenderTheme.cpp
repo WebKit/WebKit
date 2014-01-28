@@ -181,6 +181,7 @@ void RenderTheme::adjustStyle(StyleResolver& styleResolver, RenderStyle& style, 
                 style.font().update(0);
         }
     }
+    break;
     default:
         break;
     }

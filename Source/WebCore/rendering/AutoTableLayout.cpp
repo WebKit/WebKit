@@ -116,6 +116,7 @@ void AutoTableLayout::recalcColumn(unsigned effCol)
                         // which are not necessarily of the same type.
                         if (cellLogicalWidth.value() > columnLayout.logicalWidth.value())
                             columnLayout.logicalWidth = cellLogicalWidth;
+                        break;
                     default:
                         break;
                     }
@@ -309,10 +310,10 @@ int AutoTableLayout::calcEffectiveLogicalWidth()
                     // legacy behaviour anyway. mozilla doesn't do this so I decided we don't neither.
                     break;
                 }
-                // fall through
+                FALLTHROUGH;
             case Auto:
                 haveAuto = true;
-                // fall through
+                FALLTHROUGH;
             default:
                 // If the column is a percentage width, do not let the spanning cell overwrite the
                 // width value.  This caused a mis-rendering on amazon.com.
@@ -520,7 +521,6 @@ void AutoTableLayout::layout()
         case Fixed:
             numFixed++;
             totalFixed += m_layoutStruct[i].effectiveMaxLogicalWidth;
-            // fall through
             break;
         case Auto:
             if (m_layoutStruct[i].emptyCellsOnly)

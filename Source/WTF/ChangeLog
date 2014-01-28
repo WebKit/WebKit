@@ -1,3 +1,13 @@
+2014-01-27  Joseph Pecoraro  <pecoraro@apple.com>
+
+        WebCore: Enable -Wimplicit-fallthrough and add FALLTHROUGH annotation where needed
+        https://bugs.webkit.org/show_bug.cgi?id=127671
+
+        Reviewed by Ryosuke Niwa.
+
+        * wtf/text/WTFString.h:
+        (WTF::appendNumber):
+
 2014-01-27  Jer Noble  <jer.noble@apple.com>
 
         [WK2] callOnMainThread() from main thread sometimes results in ASSERTs.

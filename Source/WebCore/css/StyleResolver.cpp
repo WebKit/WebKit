@@ -2225,7 +2225,9 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue* value)
             }
             if (!didSet)
                 state.style()->setContentAltText(emptyAtom);
+            return;
         }
+        
     case CSSPropertyQuotes:
         if (isInherit) {
             state.style()->setQuotes(state.parentStyle()->quotes());

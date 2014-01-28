@@ -1909,7 +1909,7 @@ bool CSSParser::parseValue(CSSPropertyID propId, bool important)
             validPrimitive = true;
             break;
         }
-        /* nobreak */
+        FALLTHROUGH;
     case CSSPropertyBackgroundColor: // <color> | inherit
     case CSSPropertyBorderTopColor: // <color> | inherit
     case CSSPropertyBorderRightColor:
@@ -3690,6 +3690,7 @@ bool CSSParser::parseContent(CSSPropertyID propId, bool important)
             case CSSValueNone:
             case CSSValueNormal:
                 parsedValue = cssValuePool().createIdentifierValue(val->id);
+                break;
             default:
                 break;
             }
@@ -10930,13 +10931,14 @@ restartAfterComment:
 
     switch ((m_token <= 127) ? typesOfASCIICharacters[m_token] : CharacterIdentifierStart) {
     case CharacterCaselessU:
-        if (UNLIKELY(*currentCharacter<SrcCharacterType>() == '+'))
+        if (UNLIKELY(*currentCharacter<SrcCharacterType>() == '+')) {
             if (parseUnicodeRange<SrcCharacterType>()) {
                 m_token = UNICODERANGE;
                 yylval->string.init(tokenStart<SrcCharacterType>(), currentCharacter<SrcCharacterType>() - tokenStart<SrcCharacterType>());
                 break;
             }
-        // Fall through to CharacterIdentifierStart.
+        }
+        FALLTHROUGH; // To CharacterIdentifierStart.
 
     case CharacterIdentifierStart:
         --currentCharacter<SrcCharacterType>();
@@ -11011,7 +11013,7 @@ restartAfterComment:
     case CharacterDot:
         if (!isASCIIDigit(currentCharacter<SrcCharacterType>()[0]))
             break;
-        // Fall through to CharacterNumber.
+        FALLTHROUGH; // To CharacterNumber.
 
     case CharacterNumber: {
         bool dotSeen = (m_token == '.');

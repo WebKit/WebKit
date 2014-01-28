@@ -514,7 +514,7 @@ inline void BidiResolver<Iterator, Run>::updateStatusLastFromCurrentDirection(UC
         // ignore these
         break;
     case U_EUROPEAN_NUMBER:
-        // fall through
+        FALLTHROUGH;
     default:
         m_status.last = dirCurrent;
     }
@@ -687,6 +687,7 @@ void BidiResolver<Iterator, Run>::createBidiRunsForLine(const Iterator& end, Vis
                         }
                         appendRun();
                     }
+                    break;
                 default:
                     break;
             }
@@ -702,6 +703,7 @@ void BidiResolver<Iterator, Run>::createBidiRunsForLine(const Iterator& end, Vis
                 case U_EUROPEAN_NUMBER:
                 case U_ARABIC_NUMBER:
                     appendRun();
+                    FALLTHROUGH;
                 case U_RIGHT_TO_LEFT:
                 case U_RIGHT_TO_LEFT_ARABIC:
                     break;
@@ -724,6 +726,7 @@ void BidiResolver<Iterator, Run>::createBidiRunsForLine(const Iterator& end, Vis
                             m_eor = m_last;
                         appendRun();
                     }
+                    break;
                 default:
                     break;
             }
@@ -753,6 +756,7 @@ void BidiResolver<Iterator, Run>::createBidiRunsForLine(const Iterator& end, Vis
                     case U_COMMON_NUMBER_SEPARATOR:
                         if (m_status.eor == U_EUROPEAN_NUMBER)
                             break;
+                        FALLTHROUGH;
                     case U_EUROPEAN_NUMBER_TERMINATOR:
                     case U_BOUNDARY_NEUTRAL:
                     case U_BLOCK_SEPARATOR:
@@ -790,6 +794,7 @@ void BidiResolver<Iterator, Run>::createBidiRunsForLine(const Iterator& end, Vis
                             // Begin a new EN run.
                             m_direction = U_EUROPEAN_NUMBER;
                         }
+                        break;
                     default:
                         break;
                 }
@@ -799,6 +804,7 @@ void BidiResolver<Iterator, Run>::createBidiRunsForLine(const Iterator& end, Vis
                     m_direction = U_LEFT_TO_RIGHT;
                 break;
             }
+            FALLTHROUGH;
         case U_ARABIC_NUMBER:
             dirCurrent = U_ARABIC_NUMBER;
             switch (m_status.last) {
@@ -817,6 +823,7 @@ void BidiResolver<Iterator, Run>::createBidiRunsForLine(const Iterator& end, Vis
                 case U_COMMON_NUMBER_SEPARATOR:
                     if (m_status.eor == U_ARABIC_NUMBER)
                         break;
+                    FALLTHROUGH;
                 case U_EUROPEAN_NUMBER_SEPARATOR:
                 case U_EUROPEAN_NUMBER_TERMINATOR:
                 case U_BOUNDARY_NEUTRAL:
@@ -835,6 +842,7 @@ void BidiResolver<Iterator, Run>::createBidiRunsForLine(const Iterator& end, Vis
                         m_direction = m_status.lastStrong == U_LEFT_TO_RIGHT ? U_LEFT_TO_RIGHT : U_RIGHT_TO_LEFT;
                     m_eor = m_last;
                     appendRun();
+                    break;
                 default:
                     break;
             }

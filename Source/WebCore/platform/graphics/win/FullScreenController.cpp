@@ -94,7 +94,7 @@ LRESULT FullScreenController::Private::fullscreenClientWndProc(HWND hwnd, UINT m
             m_controller->exitFullScreen();
             break;
         }
-        // Fall through.
+        FALLTHROUGH;
     default:
         lResult = ::DefWindowProc(hwnd, msg, wParam, lParam);
     }

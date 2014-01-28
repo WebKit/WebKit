@@ -85,6 +85,7 @@ static inline RenderSVGResource* requestPaintingResource(RenderSVGResourceMode m
     case SVGPaint::SVG_PAINTTYPE_URI_RGBCOLOR:
     case SVGPaint::SVG_PAINTTYPE_URI_RGBCOLOR_ICCCOLOR:
         color = applyToFill ? svgStyle.fillPaintColor() : svgStyle.strokePaintColor();
+        break;
     default:
         break;
     }

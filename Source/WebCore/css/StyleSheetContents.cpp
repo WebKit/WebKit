@@ -456,6 +456,9 @@ static bool childRulesHaveFailedOrCanceledSubresources(const Vector<RefPtr<Style
 #endif
         case StyleRuleBase::Import:
             ASSERT_NOT_REACHED();
+#if ASSERT_DISABLED
+            FALLTHROUGH;
+#endif
         case StyleRuleBase::Page:
         case StyleRuleBase::Keyframes:
         case StyleRuleBase::Unknown:

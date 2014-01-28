@@ -347,7 +347,7 @@ String RenderQuote::originalText() const
         return emptyString();
     case OPEN_QUOTE:
         isOpenQuote = true;
-        // fall through
+        FALLTHROUGH;
     case CLOSE_QUOTE:
         if (const QuotesData* quotes = style().quotes())
             return isOpenQuote ? quotes->openQuote(m_depth).impl() : quotes->closeQuote(m_depth).impl();

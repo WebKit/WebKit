@@ -908,11 +908,11 @@ void RenderObject::drawLineForBoxSide(GraphicsContext* graphicsContext, int x1, 
             // https://bugs.webkit.org/show_bug.cgi?id=58608
             if (side == BSTop || side == BSLeft)
                 color = color.dark();
-            // fall through
+            FALLTHROUGH;
         case OUTSET:
             if (borderStyle == OUTSET && (side == BSBottom || side == BSRight))
                 color = color.dark();
-            // fall through
+            FALLTHROUGH;
         case SOLID: {
             StrokeStyle oldStrokeStyle = graphicsContext->strokeStyle();
             graphicsContext->setStrokeStyle(NoStroke);

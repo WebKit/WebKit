@@ -538,6 +538,7 @@ void MediaPlayerPrivateAVFoundation::updateStates()
                 // If the readyState is already HaveEnoughData, don't go lower because of this state change.
                 if (m_readyState == MediaPlayer::HaveEnoughData)
                     break;
+                FALLTHROUGH;
 
             case MediaPlayerAVPlayerItemStatusPlaybackBufferEmpty:
                 if (maxTimeLoaded() > currentTime())

@@ -443,7 +443,7 @@ CachedResourceHandle<CachedResource> CachedResourceLoader::requestResource(Cache
     switch (policy) {
     case Reload:
         memoryCache()->remove(resource.get());
-        // Fall through
+        FALLTHROUGH;
     case Load:
         resource = loadResource(type, request, request.charset());
         break;

@@ -400,6 +400,7 @@ void CSSSelector::extractPseudoType() const
     case PseudoFirstLetter:
     case PseudoFirstLine:
         compat = true;
+        FALLTHROUGH;
 #if ENABLE(SHADOW_DOM)
     case PseudoDistributed:
 #endif
@@ -642,6 +643,9 @@ String CSSSelector::selectorText(const String& rightSide) const
             return tagHistory->selectorText(" ~ " + str.toString() + rightSide);
         case CSSSelector::SubSelector:
             ASSERT_NOT_REACHED();
+#if ASSERT_DISABLED
+            FALLTHROUGH;
+#endif
         case CSSSelector::ShadowDescendant:
             return tagHistory->selectorText(str.toString() + rightSide);
         }

@@ -810,12 +810,14 @@ String StyleProperties::asText() const
         case CSSPropertyBorderLeftWidth:
             if (!borderFallbackShorthandProperty)
                 borderFallbackShorthandProperty = CSSPropertyBorderWidth;
+            FALLTHROUGH;
         case CSSPropertyBorderTopStyle:
         case CSSPropertyBorderRightStyle:
         case CSSPropertyBorderBottomStyle:
         case CSSPropertyBorderLeftStyle:
             if (!borderFallbackShorthandProperty)
                 borderFallbackShorthandProperty = CSSPropertyBorderStyle;
+            FALLTHROUGH;
         case CSSPropertyBorderTopColor:
         case CSSPropertyBorderRightColor:
         case CSSPropertyBorderBottomColor:

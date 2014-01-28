@@ -2297,7 +2297,9 @@ PassRefPtr<CSSValue> ComputedStyleExtractor::propertyValue(CSSPropertyID propert
                 return cssValuePool().createValue(style->textEmphasisCustomMark(), CSSPrimitiveValue::CSS_STRING);
             case TextEmphasisMarkAuto:
                 ASSERT_NOT_REACHED();
-                // Fall through
+#if ASSERT_DISABLED
+                FALLTHROUGH;
+#endif
             case TextEmphasisMarkDot:
             case TextEmphasisMarkCircle:
             case TextEmphasisMarkDoubleCircle:
