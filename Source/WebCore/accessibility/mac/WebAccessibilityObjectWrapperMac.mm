@@ -1531,7 +1531,10 @@ static id textMarkerRangeFromVisiblePositions(AXObjectCache *cache, VisiblePosit
     Widget* widget = m_object->widget();
     if (!widget)
         return nil;
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     return [(widget->platformWidget()) accessibilityAttributeValue: NSAccessibilityChildrenAttribute];
+#pragma clang diagnostic pop
 }
 
 - (id)remoteAccessibilityParentObject
@@ -1835,6 +1838,8 @@ static NSString* roleValueToNSString(AccessibilityRole value)
     return NSAccessibilityUnknownRole;
 }
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
 - (NSString*)subrole
 {
     if (m_object->isPasswordField())
@@ -1979,6 +1984,7 @@ static NSString* roleValueToNSString(AccessibilityRole value)
     
     return nil;
 }
+#pragma clang diagnostic pop
 
 - (NSString*)roleDescription
 {
@@ -3625,6 +3631,8 @@ static RenderObject* rendererForView(NSView* view)
     return NSNotFound;
 }
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
 - (NSUInteger)accessibilityArrayAttributeCount:(NSString *)attribute
 {
     if (![self updateObjectBackingStore])
@@ -3645,6 +3653,7 @@ static RenderObject* rendererForView(NSView* view)
     
     return [super accessibilityArrayAttributeCount:attribute];
 }
+#pragma clang diagnostic pop
 
 - (NSArray *)accessibilityArrayAttributeValues:(NSString *)attribute index:(NSUInteger)index maxCount:(NSUInteger)maxCount
 {

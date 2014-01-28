@@ -440,8 +440,11 @@ struct WKViewInterpretKeyEventsParameters {
         if (_data->_needsViewFrameInWindowCoordinates)
             viewFrameInWindowCoordinates = [self convertRect:self.frame toView:nil];
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
         if (WebCore::AXObjectCache::accessibilityEnabled())
             accessibilityPosition = [[self accessibilityAttributeValue:NSAccessibilityPositionAttribute] pointValue];
+#pragma clang diagnostic pop
 
         _data->_page->windowAndViewFramesChanged(viewFrameInWindowCoordinates, accessibilityPosition);
     });

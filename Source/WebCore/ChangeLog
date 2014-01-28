@@ -1,3 +1,18 @@
+2014-01-28  Mark Rowe  <mrowe@apple.com>
+
+        <https://webkit.org/b/127767> Disable some deprecation warnings to fix the build.
+
+        Reviewed by Ryosuke Niwa.
+
+        * accessibility/mac/AXObjectCacheMac.mm:
+        (WebCore::AXObjectCache::postPlatformNotification):
+        * accessibility/mac/WebAccessibilityObjectWrapperMac.mm:
+        (-[WebAccessibilityObjectWrapper renderWidgetChildren]):
+        * platform/audio/mac/AudioDestinationMac.cpp:
+        (WebCore::AudioDestinationMac::configure):
+        * platform/audio/mac/AudioFileReaderMac.cpp:
+        (WebCore::AudioFileReader::createBus):
+
 2014-01-28  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [SOUP] Remove soupURIToKURL

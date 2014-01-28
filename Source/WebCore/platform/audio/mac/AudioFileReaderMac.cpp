@@ -157,6 +157,8 @@ PassRefPtr<AudioBus> AudioFileReader::createBus(float sampleRate, bool mixToMono
     // Client format will be linear PCM (canonical), and potentially change sample-rate.
     m_clientDataFormat = m_fileDataFormat;
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     m_clientDataFormat.mFormatID = kAudioFormatLinearPCM;
     m_clientDataFormat.mFormatFlags = kAudioFormatFlagsCanonical;
     m_clientDataFormat.mBitsPerChannel = 8 * sizeof(AudioSampleType);
@@ -165,6 +167,7 @@ PassRefPtr<AudioBus> AudioFileReader::createBus(float sampleRate, bool mixToMono
     m_clientDataFormat.mBytesPerPacket = sizeof(AudioSampleType);
     m_clientDataFormat.mBytesPerFrame = sizeof(AudioSampleType);
     m_clientDataFormat.mFormatFlags |= kAudioFormatFlagIsNonInterleaved;
+#pragma clang diagnostic pop
 
     if (sampleRate)
         m_clientDataFormat.mSampleRate = sampleRate;

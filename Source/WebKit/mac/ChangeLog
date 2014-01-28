@@ -1,3 +1,12 @@
+2014-01-28  Mark Rowe  <mrowe@apple.com>
+
+        <https://webkit.org/b/127767> Disable some deprecation warnings to fix the build.
+
+        Reviewed by Ryosuke Niwa.
+
+        * WebCoreSupport/PopupMenuMac.mm:
+        (PopupMenuMac::populate):
+
 2014-01-27  Joseph Pecoraro  <pecoraro@apple.com>
 
         WebKit1: Enable -Wimplicit-fallthrough and add FALLTHROUGH annotation where needed
