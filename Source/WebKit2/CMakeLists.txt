@@ -199,6 +199,7 @@ set(WebKit2_SOURCES
     Shared/FontInfo.cpp
     Shared/ImmutableDictionary.cpp
     Shared/MutableDictionary.cpp
+    Shared/NavigationActionData.cpp
     Shared/OriginAndDatabases.cpp
     Shared/PlatformPopupMenuData.cpp
     Shared/PrintInfo.cpp
