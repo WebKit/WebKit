@@ -1,3 +1,15 @@
+2014-01-28  Jeremy Jones  <jeremyj@apple.com>
+
+        HTMLMediaElement::m_platformLayerBorrowed is uninitialized.
+        https://bugs.webkit.org/show_bug.cgi?id=127759
+
+        Reviewed by Eric Carlson.
+
+        Initalize m_platformLayerBorrowed to false.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::HTMLMediaElement):
+
 2014-01-28  Jer Noble  <jer.noble@apple.com>
 
         [Mac] Use explicit, rather than canonical, AudioFormatFlags and types.

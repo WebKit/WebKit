@@ -322,6 +322,7 @@ HTMLMediaElement::HTMLMediaElement(const QualifiedName& tagName, Document& docum
 #endif
 #if PLATFORM(IOS)
     , m_requestingPlay(false)
+    , m_platformLayerBorrowed(false)
 #endif
 #if ENABLE(VIDEO_TRACK)
     , m_tracksAreReady(true)
