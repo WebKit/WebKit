@@ -1,3 +1,33 @@
+2014-01-28  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        Unreviewed GTK gardening.
+
+        Remove failure/timeout expectations for the following passed tests:
+            fast/css3-text/css3-text-decoration/text-decoration-skip/text-decoration-skip-non-intersecting-underline.html
+            fast/shapes/shape-inside/shape-inside-subpixel-rectangle-top.html
+            svg/custom/mouse-move-on-svg-container.xhtml
+            svg/custom/mouse-move-on-svg-root.xhtml
+            fast/css/style-scoped/style-scoped-with-dom-operation.html
+
+        http/tests/download failures only affect gtk-wk1 now
+
+        Report and mark flaky tests:
+            http/tests/w3c/webperf/approved/navigation-timing/html/test_timing_attributes_order.html
+            fast/spatial-navigation/snav-unit-overflow-and-scroll-in-direction.html
+            fast/parser/document-write-basic.html
+            http/tests/w3c/webperf/submission/Google/resource-timing/html/test_resource_dynamic_insertion.html
+            media/crash-closing-page-with-media-as-plugin-fallback.html
+
+        Add timeout to flaky test media/audio-garbage-collect.html
+
+        Report and mark failed tests:
+             accessibility/range-alter-by-percent.html
+             media/video-restricted-no-preload-auto.html
+
+        * platform/gtk/TestExpectations:
+        * platform/gtk-wk1/TestExpectations:
+        * platform/gtk-wk2/TestExpectations:
+
 2014-01-28  Alexey Proskuryakov  <ap@apple.com>
 
         js/dom/post-message-numeric-property.html is flaky

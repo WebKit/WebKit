@@ -254,6 +254,9 @@ Bug(GTK) storage/websql/open-database-expand-quota.html [ Failure ]
 # Needs to make sure the redirect-chain scenario in https://bugs.webkit.org/show_bug.cgi?id=31410 works
 webkit.org/b/35300 http/tests/loading/307-after-303-after-post.html [ Failure ]
 
+# Needs custom policy delegate enhancement to log downloads
+Bug(GTK) http/tests/download [ Failure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests failing
 #////////////////////////////////////////////////////////////////////////////////////////

@@ -212,7 +212,7 @@ webkit.org/b/58337 fast/dom/StyleSheet/detached-stylesheet-without-wrapper.html 
 
 # media/audio-garbage-collect.html is flaky
 # https://bugs.webkit.org/show_bug.cgi?id=72698
-webkit.org/b/72698 media/audio-garbage-collect.html [ Failure Pass ]
+webkit.org/b/72698 media/audio-garbage-collect.html [ Failure Timeout Pass ]
 
 # Tests showing flakiness in the bot
 Bug(GTK) editing/pasteboard/smart-paste-004.html [ Failure Pass ]
@@ -325,8 +325,6 @@ webkit.org/b/42457 svg/custom/embedded-svg-allowed-in-dashboard.xml [ Failure ]
 webkit.org/b/42457 svg/custom/manually-parsed-embedded-svg-allowed-in-dashboard.html [ Failure ]
 webkit.org/b/42457 svg/custom/manually-parsed-svg-allowed-in-dashboard.html [ Failure ]
 webkit.org/b/42457 svg/custom/svg-allowed-in-dashboard-object.html [ Failure ]
-webkit.org/b/63706 svg/custom/mouse-move-on-svg-container.xhtml [ Failure ]
-webkit.org/b/63706 svg/custom/mouse-move-on-svg-root.xhtml [ Failure ]
 Bug(GTK) svg/custom/gradient-attr-update.svg [ Failure Pass ]
 Bug(GTK) svg/custom/pointer-events-on-svg-with-pointer.xhtml [ Failure Pass ]
 Bug(GTK) svg/custom/pointer-events-on-svg-without-pointer.xhtml [ Failure Pass ]
@@ -354,6 +352,7 @@ webkit.org/b/95935 http/tests/security/cross-origin-plugin.html [ Failure ]
 webkit.org/b/39160 security/block-test-no-port.html [ Failure ]
 
 webkit.org/b/97655 fast/css/style-scoped [ Failure ]
+webkit.org/b/97655 fast/css/style-scoped/style-scoped-with-dom-operation.html [ Pass ]
 webkit.org/b/97655 fast/regions/style-scoped/style-scoped-in-flow-override-container-style.html [ ImageOnlyFailure ]
 webkit.org/b/97655 fast/regions/style-scoped/style-scoped-in-flow-override-region-styling.html [ ImageOnlyFailure ]
 webkit.org/b/97655 fast/regions/style-scoped/style-scoped-in-flow.html [ ImageOnlyFailure ]

@@ -500,6 +500,8 @@ crypto/subtle [ Skip ]
 # QuickTime plug-in not relevant to this port
 plugins/quicktime-plugin-replacement.html [ Skip ]
 
+webkit.org/b/127743 media/video-restricted-no-preload-auto.html [ Failure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Expected failures
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -753,6 +755,16 @@ webkit.org/b/126432 http/tests/misc/acid2.html [ Failure Pass ]
 webkit.org/b/126523 perf/accessibility-title-ui-element.html [ Failure Pass ]
 
 webkit.org/b/127280 media/audio-concurrent-supported.html [ Failure Pass ]
+
+webkit.org/b/127682 http/tests/w3c/webperf/approved/navigation-timing/html/test_timing_attributes_order.html [ Failure Pass ]
+
+webkit.org/b/127742 fast/spatial-navigation/snav-unit-overflow-and-scroll-in-direction.html [ Failure Pass ]
+
+webkit.org/b/127745 fast/parser/document-write-basic.html [ Crash Pass ]
+
+webkit.org/b/127733 http/tests/w3c/webperf/submission/Google/resource-timing/html/test_resource_dynamic_insertion.html [ Failure Pass ]
+
+webkit.org/b/127735 media/crash-closing-page-with-media-as-plugin-fallback.html [ Timeout Pass ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Flaky tests
@@ -1175,9 +1187,6 @@ webkit.org/b/73653 fast/forms/range/slider-in-multi-column.html [ Failure ]
 
 webkit.org/b/74282 editing/pasteboard/emacs-ctrl-k-with-move.html [ Failure ]
 
-# Needs custom policy delegate enhancement to log downloads
-Bug(GTK) http/tests/download [ Failure ]
-
 webkit.org/b/81320 editing/pasteboard/copy-two-pasteboard-types-both-work.html [ Failure ]
 
 # EditorClient::checkTextOfParagraph() is not implemented.
@@ -1482,7 +1491,6 @@ webkit.org/b/124503 mathml/presentation/mspace-units.html [ ImageOnlyFailure ]
 webkit.org/b/124504 fast/text/break-word-pre-wrap.html [ ImageOnlyFailure ]
 
 webkit.org/b/124507 fast/css3-text/css3-text-decoration/text-decoration-skip/text-decoration-skip-ink.html [ ImageOnlyFailure ]
-webkit.org/b/124507 fast/css3-text/css3-text-decoration/text-decoration-skip/text-decoration-skip-non-intersecting-underline.html [ ImageOnlyFailure ]
 
 webkit.org/b/124509 media/video-controls-captions-trackmenu-hide-on-click-outside.html [ Failure ]
 webkit.org/b/124509 media/video-controls-captions-trackmenu-hide-on-click.html [ Failure ]
@@ -1509,8 +1517,6 @@ webkit.org/b/124834 fast/regions/overflow-in-variable-width-regions-inline-lr.ht
 webkit.org/b/124834 fast/regions/overflow-in-variable-width-regions-inline-rl.html [ ImageOnlyFailure ]
 webkit.org/b/124834 fast/regions/overflow-in-variable-width-regions-inline.html [ ImageOnlyFailure ]
 
-webkit.org/b/125071 fast/shapes/shape-inside/shape-inside-subpixel-rectangle-top.html [ ImageOnlyFailure ]
-
 webkit.org/b/125348 accessibility/document-attributes.html [ Failure ]
 
 webkit.org/b/125406 fast/regions/relative-in-absolute-borders-overflow.html [ ImageOnlyFailure ]
@@ -1527,6 +1533,8 @@ webkit.org/b/126521 accessibility/menu-list-sends-change-notification.html [ Fai
 webkit.org/b/126619 http/tests/media/video-auth.html [ Failure ]
 
 webkit.org/b/126879 fast/css3-text/css3-text-decoration/text-decoration-skip/text-decoration-skip-tall-underlines.html [ ImageOnlyFailure ]
+
+webkit.org/b/127740 accessibility/range-alter-by-percent.html [ Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests failing
