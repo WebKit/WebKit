@@ -1,3 +1,14 @@
+2014-01-27  Roger Fong  <roger_fong@apple.com>
+
+        WebGLLoadPolicy::WebGLAsk is an unnecessary value.
+        https://bugs.webkit.org/show_bug.cgi?id=127755
+
+        Reviewed by Anders Carlsson.
+
+        * UIProcess/API/C/WKAPICast.h:
+        (WebKit::toWebGLLoadPolicy):
+        * UIProcess/API/C/WKPageLoaderClient.h:
+
 2014-01-27  Brady Eidson  <beidson@apple.com>
 
         IDB: Cursor support - Messaging, IPC, Threading plumbing

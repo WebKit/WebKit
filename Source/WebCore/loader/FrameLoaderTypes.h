@@ -107,9 +107,8 @@ namespace WebCore {
     };
     
     enum WebGLLoadPolicy {
-        WebGLAsk = 0,
-        WebGLAllow,
-        WebGLBlock
+        WebGLBlock = 0,
+        WebGLAllow
     };
 
 }

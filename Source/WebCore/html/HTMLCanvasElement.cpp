@@ -230,9 +230,6 @@ CanvasRenderingContext* HTMLCanvasElement::getContext(const String& type, Canvas
                 if (page && !document().url().isLocalFile()) {
                     WebGLLoadPolicy policy = page->mainFrame().loader().client().webGLPolicyForURL(document().url());
 
-                    if (policy == WebGLAsk)
-                        return nullptr;
-
                     if (policy == WebGLBlock)
                         return nullptr;
                 }
