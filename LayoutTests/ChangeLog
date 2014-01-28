@@ -1,3 +1,11 @@
+2014-01-28  Michał Pakuła vel Rutka  <m.pakula@samsung.com>
+
+        Unreviewed EFL gardening
+
+        Skip crashing http tests.
+
+        * platform/efl-wk2/TestExpectations:
+
 2014-01-28  Jer Noble  <jer.noble@apple.com>
 
         Setting muted attribute on <video> element is not reflected in controls
