@@ -54,12 +54,23 @@ String filenameToString(const char* filename)
 #endif
 }
 
+static GUniquePtr<char> unescapedFilename(const String& path)
+{
+    if (path.isEmpty())
+        return nullptr;
+#if OS(WINDOWS)
+    return GUniquePtr<char>(g_strdup(path.utf8().data()));
+#else
+    return GUniquePtr<char>(g_uri_unescape_string(path.utf8().data(), nullptr));
+#endif
+}
+
 CString fileSystemRepresentation(const String& path)
 {
 #if OS(WINDOWS)
     return path.utf8();
 #else
-    GUniquePtr<gchar> filename(g_uri_unescape_string(path.utf8().data(), 0));
+    GUniquePtr<gchar> filename = unescapedFilename(path);
     return filename.get();
 #endif
 }
@@ -70,8 +81,11 @@ String filenameForDisplay(const String& string)
 #if OS(WINDOWS)
     return string;
 #else
-    CString filename = fileSystemRepresentation(string);
-    GUniquePtr<gchar> display(g_filename_to_utf8(filename.data(), 0, 0, 0, 0));
+    GUniquePtr<gchar> filename = unescapedFilename(string);
+    if (!filename)
+        return string;
+
+    GUniquePtr<gchar> display(g_filename_to_utf8(filename.get(), -1, nullptr, nullptr, nullptr));
     if (!display)
         return string;
 
@@ -81,46 +95,35 @@ String filenameForDisplay(const String& string)
 
 bool fileExists(const String& path)
 {
-    bool result = false;
-    CString filename = fileSystemRepresentation(path);
-
-    if (!filename.isNull())
-        result = g_file_test(filename.data(), G_FILE_TEST_EXISTS);
-
-    return result;
+    GUniquePtr<gchar> filename = unescapedFilename(path);
+    return filename ? g_file_test(filename.get(), G_FILE_TEST_EXISTS) : false;
 }
 
 bool deleteFile(const String& path)
 {
-    bool result = false;
-    CString filename = fileSystemRepresentation(path);
-
-    if (!filename.isNull())
-        result = g_remove(filename.data()) == 0;
-
-    return result;
+    GUniquePtr<gchar> filename = unescapedFilename(path);
+    return filename ? g_remove(filename.get()) != -1 : false;
 }
 
 bool deleteEmptyDirectory(const String& path)
 {
-    bool result = false;
-    CString filename = fileSystemRepresentation(path);
+    GUniquePtr<gchar> filename = unescapedFilename(path);
+    return filename ? g_rmdir(filename.get()) != -1 : false;
+}
 
-    if (!filename.isNull())
-        result = g_rmdir(filename.data()) == 0;
+static bool getFileStat(const String& path, GStatBuf* statBuffer)
+{
+    GUniquePtr<gchar> filename = unescapedFilename(path);
+    if (!filename)
+        return false;
 
-    return result;
+    return g_stat(filename.get(), statBuffer) != -1;
 }
 
 bool getFileSize(const String& path, long long& resultSize)
 {
-    CString filename = fileSystemRepresentation(path);
-    if (filename.isNull())
-        return false;
-
     GStatBuf statResult;
-    gint result = g_stat(filename.data(), &statResult);
-    if (result != 0)
+    if (!getFileStat(path, &statResult))
         return false;
 
     resultSize = statResult.st_size;
@@ -129,55 +132,37 @@ bool getFileSize(const String& path, long long& resultSize)
 
 bool getFileModificationTime(const String& path, time_t& modifiedTime)
 {
-    CString filename = fileSystemRepresentation(path);
-    if (filename.isNull())
-        return false;
-
     GStatBuf statResult;
-    gint result = g_stat(filename.data(), &statResult);
-    if (result != 0)
+    if (!getFileStat(path, &statResult))
         return false;
 
     modifiedTime = statResult.st_mtime;
     return true;
-
 }
 
 bool getFileMetadata(const String& path, FileMetadata& metadata)
 {
-    CString filename = fileSystemRepresentation(path);
-    if (filename.isNull())
-        return false;
-
-    struct stat statResult;
-    gint result = g_stat(filename.data(), &statResult);
-    if (result)
+    GStatBuf statResult;
+    if (!getFileStat(path, &statResult))
         return false;
 
     metadata.modificationTime = statResult.st_mtime;
     metadata.length = statResult.st_size;
     metadata.type = S_ISDIR(statResult.st_mode) ? FileMetadata::TypeDirectory : FileMetadata::TypeFile;
     return true;
-
 }
 
 String pathByAppendingComponent(const String& path, const String& component)
 {
     if (path.endsWith(G_DIR_SEPARATOR_S))
         return path + component;
-    else
-        return path + G_DIR_SEPARATOR_S + component;
+    return path + G_DIR_SEPARATOR_S + component;
 }
 
 bool makeAllDirectories(const String& path)
 {
-    CString filename = fileSystemRepresentation(path);
-    if (filename.isNull())
-        return false;
-
-    gint result = g_mkdir_with_parents(filename.data(), S_IRWXU);
-
-    return result == 0;
+    GUniquePtr<gchar> filename = unescapedFilename(path);
+    return filename ? g_mkdir_with_parents(filename.get(), S_IRWXU) != -1 : false;
 }
 
 String homeDirectoryPath()
@@ -187,11 +172,11 @@ String homeDirectoryPath()
 
 String pathGetFileName(const String& pathName)
 {
-    if (pathName.isEmpty())
+    GUniquePtr<gchar> tmpFilename = unescapedFilename(pathName);
+    if (!tmpFilename)
         return pathName;
 
-    CString tmpFilename = fileSystemRepresentation(pathName);
-    GUniquePtr<gchar> baseName(g_path_get_basename(tmpFilename.data()));
+    GUniquePtr<gchar> baseName(g_path_get_basename(tmpFilename.get()));
     return String::fromUTF8(baseName.get());
 }
 
@@ -242,8 +227,11 @@ uint64_t getVolumeFreeSizeForPath(const char* path)
 
 String directoryName(const String& path)
 {
-    /* No null checking needed */
-    GUniquePtr<char> dirname(g_path_get_dirname(fileSystemRepresentation(path).data()));
+    GUniquePtr<gchar> filename = unescapedFilename(path);
+    if (!filename)
+        return String();
+
+    GUniquePtr<char> dirname(g_path_get_dirname(filename.get()));
     return String::fromUTF8(dirname.get());
 }
 
@@ -251,8 +239,11 @@ Vector<String> listDirectory(const String& path, const String& filter)
 {
     Vector<String> entries;
 
-    CString filename = fileSystemRepresentation(path);
-    GUniquePtr<GDir> dir(g_dir_open(filename.data(), 0, nullptr));
+    GUniquePtr<gchar> filename = unescapedFilename(path);
+    if (!filename)
+        return entries;
+
+    GUniquePtr<GDir> dir(g_dir_open(filename.get(), 0, nullptr));
     if (!dir)
         return entries;
 
@@ -261,7 +252,7 @@ Vector<String> listDirectory(const String& path, const String& filter)
         if (!g_pattern_match_string(pspec.get(), name))
             continue;
 
-        GUniquePtr<gchar> entry(g_build_filename(filename.data(), name, NULL));
+        GUniquePtr<gchar> entry(g_build_filename(filename.get(), name, nullptr));
         entries.append(filenameToString(entry.get()));
     }
 
@@ -282,16 +273,16 @@ String openTemporaryFile(const String& prefix, PlatformFileHandle& handle)
 
 PlatformFileHandle openFile(const String& path, FileOpenMode mode)
 {
-    CString fsRep = fileSystemRepresentation(path);
-    if (fsRep.isNull())
+    GUniquePtr<gchar> filename = unescapedFilename(path);
+    if (!filename)
         return invalidPlatformFileHandle;
 
-    GRefPtr<GFile> file = adoptGRef(g_file_new_for_path(fsRep.data()));
+    GRefPtr<GFile> file = adoptGRef(g_file_new_for_path(filename.get()));
     GFileIOStream* ioStream = 0;
     if (mode == OpenForRead)
         ioStream = g_file_open_readwrite(file.get(), 0, 0);
     else if (mode == OpenForWrite) {
-        if (g_file_test(fsRep.data(), static_cast<GFileTest>(G_FILE_TEST_EXISTS | G_FILE_TEST_IS_REGULAR)))
+        if (g_file_test(filename.get(), static_cast<GFileTest>(G_FILE_TEST_EXISTS | G_FILE_TEST_IS_REGULAR)))
             ioStream = g_file_open_readwrite(file.get(), 0, 0);
         else
             ioStream = g_file_create_readwrite(file.get(), G_FILE_CREATE_NONE, 0, 0);
