@@ -1,5 +1,12 @@
 2014-01-28  Antti Koivisto  <antti@apple.com>
 
+        Rebase fast/repaint/background-shorthand-with-gradient-and-height-changes.html after https://trac.webkit.org/r162947
+
+        * fast/repaint/background-shorthand-with-gradient-and-height-changes-expected.txt:
+        * fast/repaint/background-shorthand-with-gradient-and-height-changes.html:
+
+2014-01-28  Antti Koivisto  <antti@apple.com>
+
         Rebaseline some repaint test results after https://trac.webkit.org/r162947
         
         There are less repaint rects.

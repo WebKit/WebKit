@@ -58,11 +58,10 @@ function start() {
 function logRepaints() {
     if (!window.internals)
         return;
-        
+
     repaintRects = window.internals.repaintRectsAsText();
     window.internals.stopTrackingRepaints();
-    shouldNotBe("repaintRects.indexOf('28 84')", "-1");
-    shouldNotBe("repaintRects.indexOf('8 84')", "-1");
+    shouldNotBe("repaintRects.indexOf('8 84 40 220')", "-1");
     finishJSTest();
 }
 </script>
