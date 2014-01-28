@@ -1,3 +1,14 @@
+2014-01-27  Tim Horton  <timothy_horton@apple.com>
+
+        Lots of varied and random crashes on the scrolling thread (ScrollbarPainters are going away)
+        https://bugs.webkit.org/show_bug.cgi?id=127734
+        <rdar://problem/15906263>
+
+        Reviewed by Simon Fraser.
+
+        * page/scrolling/ScrollingStateScrollingNode.h:
+        Retain the ScrollbarPainters in the scrolling state tree.
+
 2014-01-27  Joseph Pecoraro  <pecoraro@apple.com>
 
         Unreviewed iOS build fix. FALLTHROUGHs for iOS.

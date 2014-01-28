@@ -117,8 +117,8 @@ public:
     void setFooterLayer(const LayerRepresentation&);
 
 #if PLATFORM(MAC) && !PLATFORM(IOS)
-    ScrollbarPainter verticalScrollbarPainter() const { return m_verticalScrollbarPainter; }
-    ScrollbarPainter horizontalScrollbarPainter() const { return m_horizontalScrollbarPainter; }
+    ScrollbarPainter verticalScrollbarPainter() const { return m_verticalScrollbarPainter.get(); }
+    ScrollbarPainter horizontalScrollbarPainter() const { return m_horizontalScrollbarPainter.get(); }
 #endif
     void setScrollbarPaintersFromScrollbars(Scrollbar* verticalScrollbar, Scrollbar* horizontalScrollbar);
 
@@ -135,8 +135,8 @@ private:
     LayerRepresentation m_footerLayer;
 
 #if PLATFORM(MAC) && !PLATFORM(IOS)
-    ScrollbarPainter m_verticalScrollbarPainter;
-    ScrollbarPainter m_horizontalScrollbarPainter;
+    RetainPtr<ScrollbarPainter> m_verticalScrollbarPainter;
+    RetainPtr<ScrollbarPainter> m_horizontalScrollbarPainter;
 #endif
 
     IntRect m_viewportRect;
