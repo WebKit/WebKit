@@ -760,7 +760,7 @@ void WebPageProxy::recordNavigationSnapshot()
     if (!m_shouldRecordNavigationSnapshots)
         return;
 
-#if PLATFORM(MAC)
+#if PLATFORM(MAC) && !PLATFORM(IOS)
     ViewSnapshotStore::shared().recordSnapshot(*this);
 #endif
 }

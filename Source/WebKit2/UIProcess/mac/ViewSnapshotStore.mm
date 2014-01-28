@@ -26,6 +26,8 @@
 #import "config.h"
 #import "ViewSnapshotStore.h"
 
+#if !PLATFORM(IOS)
+
 #import "WebBackForwardList.h"
 #import "WebPageProxy.h"
 #import <CoreGraphics/CoreGraphics.h>
@@ -202,3 +204,5 @@ std::pair<RetainPtr<IOSurfaceRef>, uint64_t> ViewSnapshotStore::snapshotAndRende
 }
 
 } // namespace WebKit
+
+#endif

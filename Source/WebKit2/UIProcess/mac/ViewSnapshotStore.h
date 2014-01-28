@@ -26,6 +26,8 @@
 #ifndef ViewSnapshotStore_h
 #define ViewSnapshotStore_h
 
+#if !PLATFORM(IOS)
+
 #include <chrono>
 #include <wtf/HashMap.h>
 #include <wtf/Noncopyable.h>
@@ -68,5 +70,7 @@ private:
 };
 
 } // namespace WebKit
+
+#endif // !PLATFORM(IOS)
 
 #endif // ViewSnapshotStore_h

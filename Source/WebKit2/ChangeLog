@@ -1,3 +1,12 @@
+2014-01-28  Tim Horton  <timothy_horton@apple.com>
+
+        Fix the iOS build.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::recordNavigationSnapshot):
+        * UIProcess/mac/ViewSnapshotStore.h:
+        * UIProcess/mac/ViewSnapshotStore.mm:
+
 2014-01-28  Brady Eidson  <beidson@apple.com>
 
         Remove unneeded “WebCore::” prefixing in two .cpp files.
