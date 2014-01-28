@@ -410,6 +410,7 @@ public:
         case WKTypeRefWrapperType: {
             WKTypeRefWrapper *wrapper = static_cast<WKTypeRefWrapper *>(m_root);
             encoder << InjectedBundleUserMessageEncoder(toImpl(wrapper.object));
+            break;
         }
 #endif
         default:

@@ -1,3 +1,18 @@
+2014-01-27  Joseph Pecoraro  <pecoraro@apple.com>
+
+        WebKit2: Enable -Wimplicit-fallthrough and add FALLTHROUGH annotation where needed
+        https://bugs.webkit.org/show_bug.cgi?id=127665
+
+        Reviewed by Anders Carlsson.
+
+        * Shared/UserData.cpp:
+        (WebKit::UserData::encode):
+        These look like they should not have fallen through!
+
+        * Configurations/Base.xcconfig:
+        * Shared/mac/ObjCObjectGraphCoders.mm:
+        (WebKit::InjectedBundleObjCObjectGraphEncoderImpl::encode):
+
 2014-01-27  Andy Estes  <aestes@apple.com>
 
         [WebKit2] Add SPI to disable the WebCore memory cache

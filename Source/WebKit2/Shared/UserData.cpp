@@ -150,9 +150,11 @@ void UserData::encode(IPC::ArgumentEncoder& encoder, const API::Object& object) 
 
     case API::Object::Type::Point:
         static_cast<const API::Point&>(object).encode(encoder);
+        break;
 
     case API::Object::Type::Rect:
         static_cast<const API::Rect&>(object).encode(encoder);
+        break;
 
     case API::Object::Type::SerializedScriptValue: {
         auto& serializedScriptValue = static_cast<const WebSerializedScriptValue&>(object);
