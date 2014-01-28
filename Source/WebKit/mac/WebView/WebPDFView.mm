@@ -1037,6 +1037,7 @@ static BOOL isFrameInRange(WebFrame *frame, DOMRange *range)
             PlatformKeyboardEvent pe = PlatformEventFactory::createPlatformKeyboardEvent(nsEvent);
             pe.disambiguateKeyDownEvent(PlatformEvent::RawKeyDown);
             event = KeyboardEvent::create(pe, 0);
+            break;
         }
         default:
             break;

@@ -749,19 +749,26 @@ void BinaryPropertyListSerializer::appendObjectReference(ObjectReference referen
 #ifdef __LP64__
     case 8:
         appendByte(reference >> 56);
+        FALLTHROUGH;
     case 7:
         appendByte(reference >> 48);
+        FALLTHROUGH;
     case 6:
         appendByte(reference >> 40);
+        FALLTHROUGH;
     case 5:
         appendByte(reference >> 32);
+        FALLTHROUGH;
 #endif
     case 4:
         appendByte(reference >> 24);
+        FALLTHROUGH;
     case 3:
         appendByte(reference >> 16);
+        FALLTHROUGH;
     case 2:
         appendByte(reference >> 8);
+        FALLTHROUGH;
     case 1:
         appendByte(reference);
     }
@@ -778,19 +785,26 @@ void BinaryPropertyListSerializer::startObject()
 #ifdef __LP64__
     case 8:
         offsetTableEntry[-8] = offset >> 56;
+        FALLTHROUGH;
     case 7:
         offsetTableEntry[-7] = offset >> 48;
+        FALLTHROUGH;
     case 6:
         offsetTableEntry[-6] = offset >> 40;
+        FALLTHROUGH;
     case 5:
         offsetTableEntry[-5] = offset >> 32;
+        FALLTHROUGH;
 #endif
     case 4:
         offsetTableEntry[-4] = offset >> 24;
+        FALLTHROUGH;
     case 3:
         offsetTableEntry[-3] = offset >> 16;
+        FALLTHROUGH;
     case 2:
         offsetTableEntry[-2] = offset >> 8;
+        FALLTHROUGH;
     case 1:
         offsetTableEntry[-1] = offset;
     }
@@ -802,19 +816,26 @@ void BinaryPropertyListSerializer::addAggregateObjectReference(ObjectReference r
 #ifdef __LP64__
     case 8:
         *--m_currentAggregateBufferByte = reference >> 56;
+        FALLTHROUGH;
     case 7:
         *--m_currentAggregateBufferByte = reference >> 48;
+        FALLTHROUGH;
     case 6:
         *--m_currentAggregateBufferByte = reference >> 40;
+        FALLTHROUGH;
     case 5:
         *--m_currentAggregateBufferByte = reference >> 32;
+        FALLTHROUGH;
 #endif
     case 4:
         *--m_currentAggregateBufferByte = reference >> 24;
+        FALLTHROUGH;
     case 3:
         *--m_currentAggregateBufferByte = reference >> 16;
+        FALLTHROUGH;
     case 2:
         *--m_currentAggregateBufferByte = reference >> 8;
+        FALLTHROUGH;
     case 1:
         *--m_currentAggregateBufferByte = reference;
     }
