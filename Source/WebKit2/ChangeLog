@@ -1,5 +1,16 @@
 2014-01-28  Anders Carlsson  <andersca@apple.com>
 
+        Add an empty WKNavigation class
+        https://bugs.webkit.org/show_bug.cgi?id=127796
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/API/Cocoa/WKNavigation.h: Added.
+        * UIProcess/API/Cocoa/WKNavigation.mm: Added.
+        * WebKit2.xcodeproj/project.pbxproj:
+
+2014-01-28  Anders Carlsson  <andersca@apple.com>
+
         Add a NavigationActionData object for easy storage of navigation action data
         https://bugs.webkit.org/show_bug.cgi?id=127787
 
