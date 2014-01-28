@@ -8,15 +8,11 @@ RUN(video = document.createElement('video'))
 RUN(video.setAttribute('controls', 'controls'))
 RUN(video.setAttribute('muted', 'muted'))
 
-*** Test before setting src, IDL attribute should default to false
-EXPECTED (video.muted == 'false') OK
+*** Test before setting src, muted IDL attribute should default to muted content attribute
+EXPECTED (video.muted == 'true') OK
 EXPECTED (video.defaultMuted == 'true') OK
 
 EVENT(loadedmetadata)
-
-*** After setting url, content attribute should have set IDL attribute
-EXPECTED (video.muted == 'true') OK
-EXPECTED (video.defaultMuted == 'true') OK
 
 *** Change 'defaultMuted', IDL attribute should not change but content attribute should.
 RUN(video.defaultMuted = false)
@@ -41,15 +37,11 @@ EXPECTED (video.defaultMuted == 'false') OK
 RUN(video = document.createElement('video'))
 RUN(video.setAttribute('controls', 'controls'))
 
-*** Test before setting src, IDL attribute should default to false
+*** Test before setting src, muted IDL attribute should default to muted content attribute
 EXPECTED (video.muted == 'false') OK
 EXPECTED (video.defaultMuted == 'false') OK
 
 EVENT(loadedmetadata)
-
-*** After setting url, content attribute should have set IDL attribute
-EXPECTED (video.muted == 'false') OK
-EXPECTED (video.defaultMuted == 'false') OK
 
 *** Change 'defaultMuted', IDL attribute should not change but content attribute should.
 RUN(video.defaultMuted = true)
@@ -67,6 +59,42 @@ EXPECTED (video.hasAttribute('muted') == 'true') OK
 RUN(video.setAttribute('muted', 'muted'))
 EXPECTED (video.muted == 'false') OK
 EXPECTED (video.defaultMuted == 'true') OK
+
+
+*** Test that the 'muted' content attribute reflects the 'muted' IDL attribute before the element is added to the document, and does not reflect after
+
+RUN(video = document.createElement('video'))
+RUN(video.setAttribute('controls', 'controls'))
+EXPECTED (video.muted == 'false') OK
+EXPECTED (video.defaultMuted == 'false') OK
+
+*** Change 'muted' content attribute, IDL attribute should change.
+RUN(video.setAttribute('muted', 'muted'))
+EXPECTED (video.muted == 'true') OK
+EXPECTED (video.defaultMuted == 'true') OK
+RUN(document.getElementById('parent').appendChild(video))
+
+*** Change 'muted' content attribute, IDL attribute should not change.
+EXPECTED (video.muted == 'true') OK
+EXPECTED (video.defaultMuted == 'false') OK
+
+
+*** Test that setting the 'muted' IDL attribute means that changes to the 'muted' content attribute are no longer reflected.
+
+RUN(video = document.createElement('video'))
+RUN(video.setAttribute('controls', 'controls'))
+EXPECTED (video.muted == 'false') OK
+EXPECTED (video.defaultMuted == 'false') OK
+
+*** Change 'muted' content attribute, IDL attribute should change.
+RUN(video.setAttribute('muted', 'muted'))
+EXPECTED (video.muted == 'true') OK
+EXPECTED (video.defaultMuted == 'true') OK
+
+*** Change 'muted' IDL attribute, then the content attribute. IDL attribute should not change.
+RUN(video.muted = true)
+EXPECTED (video.muted == 'true') OK
+EXPECTED (video.defaultMuted == 'false') OK
 
 END OF TEST
 

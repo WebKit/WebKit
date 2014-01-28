@@ -1,3 +1,13 @@
+2014-01-28  Jer Noble  <jer.noble@apple.com>
+
+        Setting muted attribute on <video> element is not reflected in controls
+        https://bugs.webkit.org/show_bug.cgi?id=127726
+
+        Reviewed by Eric Carlson.
+
+        * media/video-defaultmuted-expected.txt:
+        * media/video-defaultmuted.html:
+
 2014-01-28  Mark Lam  <mark.lam@apple.com>
 
         Jettison DFG code when neither breakpoints or the profiler are active.

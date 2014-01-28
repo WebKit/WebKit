@@ -749,6 +749,7 @@ private:
     bool m_inActiveDocument : 1;
     bool m_autoplaying : 1;
     bool m_muted : 1;
+    bool m_explicitlyMuted : 1;
     bool m_paused : 1;
     bool m_seeking : 1;
 

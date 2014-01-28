@@ -301,6 +301,7 @@ HTMLMediaElement::HTMLMediaElement(const QualifiedName& tagName, Document& docum
     , m_inActiveDocument(true)
     , m_autoplaying(true)
     , m_muted(false)
+    , m_explicitlyMuted(false)
     , m_paused(true)
     , m_seeking(false)
     , m_sentStalledEvent(false)
@@ -693,6 +694,11 @@ Node::InsertionNotificationRequest HTMLMediaElement::insertedInto(ContainerNode&
         if (m_networkState == NETWORK_EMPTY && !fastGetAttribute(srcAttr).isEmpty())
 #endif
             scheduleDelayedAction(LoadMediaResource);
+    }
+
+    if (!m_explicitlyMuted) {
+        m_explicitlyMuted = true;
+        m_muted = fastHasAttribute(mutedAttr);
     }
 
     configureMediaControls();
@@ -1215,8 +1221,11 @@ void HTMLMediaElement::loadResource(const URL& initialURL, ContentType& contentT
         m_player->setPreload(m_mediaSession->effectivePreloadForElement(*this));
     m_player->setPreservesPitch(m_webkitPreservesPitch);
 
-    if (fastHasAttribute(mutedAttr))
-        m_muted = true;
+    if (!m_explicitlyMuted) {
+        m_explicitlyMuted = true;
+        m_muted = fastHasAttribute(mutedAttr);
+    }
+
     updateVolume();
 
 #if ENABLE(MEDIA_SOURCE)
@@ -2897,7 +2906,7 @@ void HTMLMediaElement::setVolume(double vol, ExceptionCode& ec)
 
 bool HTMLMediaElement::muted() const
 {
-    return m_muted;
+    return m_explicitlyMuted ? m_muted : fastHasAttribute(mutedAttr);
 }
 
 void HTMLMediaElement::setMuted(bool muted)
@@ -2907,8 +2916,9 @@ void HTMLMediaElement::setMuted(bool muted)
 #if PLATFORM(IOS)
     UNUSED_PARAM(muted);
 #else
-    if (m_muted != muted) {
+    if (m_muted != muted || !m_explicitlyMuted) {
         m_muted = muted;
+        m_explicitlyMuted = true;
         // Avoid recursion when the player reports volume changes.
         if (!processingMediaPlayerCallback()) {
             if (m_player) {
@@ -4211,7 +4221,7 @@ void HTMLMediaElement::updateVolume()
     if (!processingMediaPlayerCallback()) {
         Page* page = document().page();
         double volumeMultiplier = page ? page->mediaVolume() : 1;
-        bool shouldMute = m_muted;
+        bool shouldMute = muted();
 
         if (m_mediaController) {
             volumeMultiplier *= m_mediaController->volume();
@@ -4272,7 +4282,7 @@ void HTMLMediaElement::updatePlayState()
             // Set rate, muted before calling play in case they were set before the media engine was setup.
             // The media engine should just stash the rate and muted values since it isn't already playing.
             m_player->setRate(m_playbackRate);
-            m_player->setMuted(m_muted);
+            m_player->setMuted(muted());
 
             m_player->play();
         }

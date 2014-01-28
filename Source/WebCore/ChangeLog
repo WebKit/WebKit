@@ -1,3 +1,35 @@
+2014-01-28  Jer Noble  <jer.noble@apple.com>
+
+        Setting muted attribute on <video> element is not reflected in controls
+        https://bugs.webkit.org/show_bug.cgi?id=127726
+
+        Reviewed by Eric Carlson.
+
+        If the 'muted' IDL attribute is queried after the 'muted' and 'src' content attributes are
+        set but before loading begins, it will return 'false' until loading begins, but with no
+        way to query whether that value is valid, nor firing a volumechange event when its value
+        changes.
+
+        The HTML spec says that the 'muted' content attribute controls whether audio output is
+        muted "when the media element is created", not when loading begins, but we don't
+        necessarily have a signal that the element is fully parsed.  Additionally, this means its
+        impossible to make an element via script and get this behavior.
+
+        So the new behavior is that the 'muted' IDL attribute will always reflect the 'muted'
+        content attribute up until one of the following three conditions:
+
+        - The 'muted' IDL attribute is set via script.
+        - The element is inserted in the document.
+        - The element begins loading.
+
+        After the first one of the above conditions, the 'muted' IDL attribute will no longer
+        change when the 'muted' content attribute changes.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::HTMLMediaElement):
+        (WebCore::HTMLMediaElement::parseAttribute):
+        * html/HTMLMediaElement.h:
+
 2014-01-28  Anders Carlsson  <andersca@apple.com>
 
         Add stubbed out VisitedLinkProvider class
