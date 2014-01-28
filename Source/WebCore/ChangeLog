@@ -1,3 +1,20 @@
+2014-01-28  Jer Noble  <jer.noble@apple.com>
+
+        [Mac] Use explicit, rather than canonical, AudioFormatFlags and types.
+        https://bugs.webkit.org/show_bug.cgi?id=127781
+
+        Reviewed by Eric Carlson.
+
+        Since every mac platform uses Float32 audio samples, use these types explicitly
+        rather than the implicit, canonical AudioSampleType type. Once we're using Float32
+        explicity, we can also use the explicit kAudioFormatFlagsNativeFloatPacked flag
+        rather than the canonical version.
+
+        * platform/audio/mac/AudioDestinationMac.cpp:
+        (WebCore::AudioDestinationMac::configure):
+        * platform/audio/mac/AudioFileReaderMac.cpp:
+        (WebCore::AudioFileReader::createBus):
+
 2014-01-27  Alexey Proskuryakov  <ap@apple.com>
 
         Expose SQL database creation and modification times

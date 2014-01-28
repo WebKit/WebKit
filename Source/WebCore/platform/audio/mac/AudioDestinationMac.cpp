@@ -124,19 +124,16 @@ void AudioDestinationMac::configure()
     OSStatus result = AudioUnitSetProperty(m_outputUnit, kAudioUnitProperty_SetRenderCallback, kAudioUnitScope_Global, 0, &input, sizeof(input));
     ASSERT(!result);
 
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     // Set stream format
     AudioStreamBasicDescription streamFormat;
     streamFormat.mSampleRate = m_sampleRate;
     streamFormat.mFormatID = kAudioFormatLinearPCM;
-    streamFormat.mFormatFlags = kAudioFormatFlagsCanonical | kAudioFormatFlagIsNonInterleaved;
-    streamFormat.mBitsPerChannel = 8 * sizeof(AudioSampleType);
+    streamFormat.mFormatFlags = kAudioFormatFlagsNativeFloatPacked | kAudioFormatFlagIsNonInterleaved;
+    streamFormat.mBitsPerChannel = 8 * sizeof(Float32);
     streamFormat.mChannelsPerFrame = 2;
     streamFormat.mFramesPerPacket = 1;
-    streamFormat.mBytesPerPacket = sizeof(AudioSampleType);
-    streamFormat.mBytesPerFrame = sizeof(AudioSampleType);
-#pragma clang diagnostic pop
+    streamFormat.mBytesPerPacket = sizeof(Float32);
+    streamFormat.mBytesPerFrame = sizeof(Float32);
 
     result = AudioUnitSetProperty(m_outputUnit, kAudioUnitProperty_StreamFormat, kAudioUnitScope_Input, 0, (void*)&streamFormat, sizeof(AudioStreamBasicDescription));
     ASSERT(!result);
