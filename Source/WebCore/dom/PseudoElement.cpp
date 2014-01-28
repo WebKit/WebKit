@@ -112,9 +112,10 @@ void PseudoElement::didRecalcStyle(Style::Change)
     RenderObject* renderer = this->renderer();
     for (RenderObject* child = renderer->nextInPreOrder(renderer); child; child = child->nextInPreOrder(renderer)) {
         // We only manage the style for the generated content which must be images or text.
-        if (!child->isRenderImage())
+        if (!child->isRenderImage() && !child->isQuote())
             continue;
-        toRenderImage(*child).setStyle(RenderImage::createStyleInheritingFromPseudoStyle(renderer->style()));
+        PassRef<RenderStyle> createdStyle = RenderStyle::createStyleInheritingFromPseudoStyle(renderer->style());
+        toRenderElement(*child).setStyle(std::move(createdStyle));
     }
 }
 

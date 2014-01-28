@@ -24,14 +24,15 @@
 #include "RenderQuote.h"
 
 #include "QuotesData.h"
+#include "RenderTextFragment.h"
 #include "RenderView.h"
 
 using namespace WTF::Unicode;
 
 namespace WebCore {
 
-RenderQuote::RenderQuote(Document& document, QuoteType quote)
-    : RenderText(document, emptyString())
+RenderQuote::RenderQuote(Document& document, PassRef<RenderStyle> style, QuoteType quote)
+    : RenderInline(document, std::move(style))
     , m_type(quote)
     , m_depth(-1)
     , m_next(0)
@@ -50,19 +51,19 @@ RenderQuote::~RenderQuote()
 void RenderQuote::willBeDestroyed()
 {
     detachQuote();
-    RenderText::willBeDestroyed();
+    RenderInline::willBeDestroyed();
 }
 
 void RenderQuote::willBeRemovedFromTree()
 {
-    RenderText::willBeRemovedFromTree();
+    RenderInline::willBeRemovedFromTree();
     detachQuote();
 }
 
 void RenderQuote::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
 {
-    RenderText::styleDidChange(diff, oldStyle);
-    setText(originalText(), true);
+    RenderInline::styleDidChange(diff, oldStyle);
+    updateText();
 }
 
 const unsigned maxDistinctQuoteCharacters = 16;
@@ -336,7 +337,27 @@ static inline StringImpl* apostropheString()
     return apostropheString;
 }
 
-String RenderQuote::originalText() const
+void RenderQuote::updateText()
+{
+    String text = computeText();
+    if (m_text == text)
+        return;
+
+    while (RenderObject* child = firstChild())
+        child->destroy();
+
+    if (text == emptyString() || text == String()) {
+        m_text = String();
+        return;
+    }
+
+    m_text = text;
+
+    RenderTextFragment* fragment = new RenderTextFragment(document(), m_text.impl());
+    addChild(fragment);
+}
+
+String RenderQuote::computeText() const
 {
     if (m_depth < 0)
         return emptyString();
@@ -452,7 +473,7 @@ void RenderQuote::updateDepth()
     if (m_depth == depth)
         return;
     m_depth = depth;
-    setText(originalText(), true);
+    updateText();
 }
 
 } // namespace WebCore

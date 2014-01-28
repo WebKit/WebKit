@@ -39,9 +39,6 @@ public:
     RenderImage(Document&, PassRef<RenderStyle>, StyleImage* = nullptr);
     virtual ~RenderImage();
 
-    // Create a RenderStyle for generated content by inheriting from a pseudo style.
-    static PassRef<RenderStyle> createStyleInheritingFromPseudoStyle(const RenderStyle&);
-
     RenderImageResource& imageResource() { return *m_imageResource; }
     const RenderImageResource& imageResource() const { return *m_imageResource; }
     CachedImage* cachedImage() const { return imageResource().cachedImage(); }

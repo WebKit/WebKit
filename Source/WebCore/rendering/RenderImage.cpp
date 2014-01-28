@@ -142,18 +142,6 @@ RenderImage::~RenderImage()
     imageResource().shutdown();
 }
 
-PassRef<RenderStyle> RenderImage::createStyleInheritingFromPseudoStyle(const RenderStyle& pseudoStyle)
-{
-    ASSERT(pseudoStyle.styleType() == BEFORE || pseudoStyle.styleType() == AFTER);
-
-    // Images are special and must inherit the pseudoStyle so the width and height of
-    // the pseudo element doesn't change the size of the image. In all other cases we
-    // can just share the style.
-    auto style = RenderStyle::create();
-    style.get().inheritFrom(&pseudoStyle);
-    return style;
-}
-
 // If we'll be displaying either alt text or an image, add some padding.
 static const unsigned short paddingWidth = 4;
 static const unsigned short paddingHeight = 4;

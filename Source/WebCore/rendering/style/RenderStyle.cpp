@@ -107,6 +107,18 @@ PassRef<RenderStyle> RenderStyle::clone(const RenderStyle* other)
     return adoptRef(*new RenderStyle(*other));
 }
 
+PassRef<RenderStyle> RenderStyle::createStyleInheritingFromPseudoStyle(const RenderStyle& pseudoStyle)
+{
+    ASSERT(pseudoStyle.styleType() == BEFORE || pseudoStyle.styleType() == AFTER);
+
+    // Images are special and must inherit the pseudoStyle so the width and height of
+    // the pseudo element doesn't change the size of the image. In all other cases we
+    // can just share the style.
+    auto style = RenderStyle::create();
+    style.get().inheritFrom(&pseudoStyle);
+    return style;
+}
+
 ALWAYS_INLINE RenderStyle::RenderStyle()
     : m_box(defaultStyle().m_box)
     , visual(defaultStyle().visual)

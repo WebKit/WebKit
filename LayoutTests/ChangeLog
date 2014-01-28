@@ -1,3 +1,25 @@
+2014-01-23  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        ASSERT_WITH_SECURITY_IMPLICATION in WebCore::InlineTextBox::paint
+        https://bugs.webkit.org/show_bug.cgi?id=114586
+
+        Reviewed by Dave Hyatt.
+
+        Taken mostly from https://chromium.googlesource.com/chromium/blink/+/cb2297db16f2e9328cb4dd8b552093d6b22340a8
+
+        If RenderQuote is a subclass of RenderObject, it can't be split by the first-letter CSS pseudoclass.
+        Instead, we should make it a subclass of RenderElement, so that it can be split properly.
+
+        This adds a test to make sure that the splitting behavior occurs, as well as updates existing tests that
+        didn't use the splitting behavior.
+
+        * fast/css-generated-content/quote-first-letter-expected.html: Added.
+        * fast/css-generated-content/quote-first-letter.html: Added.
+        * platform/mac/fast/css-generated-content/005-expected.txt:
+        * platform/mac/fast/css-generated-content/beforeAfter-interdocument-expected.txt:
+        * platform/mac/fast/css-generated-content/nested-tables-with-before-after-content-crash-expected.txt:
+        * platform/mac/fast/css-generated-content/no-openclose-quote-expected.txt:
+
 2014-01-28  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         Unreviewed GTK gardening.

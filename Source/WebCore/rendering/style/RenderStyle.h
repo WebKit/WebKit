@@ -352,6 +352,9 @@ public:
     static PassRef<RenderStyle> createAnonymousStyleWithDisplay(const RenderStyle* parentStyle, EDisplay);
     static PassRef<RenderStyle> clone(const RenderStyle*);
 
+    // Create a RenderStyle for generated content by inheriting from a pseudo style.
+    static PassRef<RenderStyle> createStyleInheritingFromPseudoStyle(const RenderStyle& pseudoStyle);
+
     enum IsAtShadowBoundary {
         AtShadowBoundary,
         NotAtShadowBoundary,
