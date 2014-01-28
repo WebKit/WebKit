@@ -530,7 +530,7 @@ static void activateFontsIOS()
 {
     static const char* fontSectionNames[] = {
         "Ahem",
-        "ltcher100",
+        "WeightWatcher100",
         "WeightWatcher200",
         "WeightWatcher300",
         "WeightWatcher400",

@@ -1,3 +1,16 @@
+2014-01-27  David Farler  <dfarler@apple.com>
+
+        iOS DumpRenderTree.app dies loading fonts
+        https://bugs.webkit.org/show_bug.cgi?id=127730
+
+        Reviewed by Daniel Bates.
+
+        * DumpRenderTree/mac/Configurations/DumpRenderTreeApp.xcconfig:
+        - Add Ahem to the __DATA section
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (activateFontsIOS):
+        - Load "WeightWatcher100" instead.
+
 2014-01-27  Alexey Proskuryakov  <ap@apple.com>
 
         [Mac] Extra logging output from run-safari --no-saved-state
