@@ -1,3 +1,15 @@
+2014-01-27  Roger Fong  <roger_fong@apple.com>
+
+        [Windows] Tests crashing on Windows after r162816.
+        https://bugs.webkit.org/show_bug.cgi?id=127703.
+
+        Reviewed by Alexey Proskuryakov.
+
+        * accessibility/AXObjectCache.cpp:
+        (WebCore::AXObjectCache::enableAccessibility):
+        (WebCore::AXObjectCache::disableAccessibility):
+        * accessibility/AXObjectCache.h: Un-inline some methods so that they can be exported.
+
 2014-01-27  Andy Estes  <aestes@apple.com>
 
         Update bindings test expectations after r162872

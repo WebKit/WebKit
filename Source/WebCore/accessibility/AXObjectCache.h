@@ -127,8 +127,8 @@ public:
     void recomputeIsIgnored(RenderObject* renderer);
 
 #if HAVE(ACCESSIBILITY)
-    static void enableAccessibility() { gAccessibilityEnabled = true; }
-    static void disableAccessibility() { gAccessibilityEnabled = false; }
+    static void enableAccessibility();
+    static void disableAccessibility();
 
     // Enhanced user interface accessibility can be toggled by the assistive technology.
     static void setEnhancedUserInterfaceAccessibility(bool flag) { gAccessibilityEnhancedUserInterfaceEnabled = flag; }
