@@ -26,7 +26,7 @@
 #ifndef MediaPlayerProxy_h
 #define MediaPlayerProxy_h
 
-#if PLATFORM(IOS)
+#if TARGET_OS_IPHONE
 #if defined(__OBJC__)
 #import <Foundation/NSGeometry.h>
 #endif
@@ -41,7 +41,12 @@
 #endif // !defined(OBJC_CLASS)
 
 OBJC_CLASS CALayer;
-#endif // PLATFORM(IOS)
+
+#endif // TARGET_OS_IPHONE
+
+#if !defined(ENABLE_IOS_AIRPLAY)
+#define ENABLE_IOS_AIRPLAY TARGET_OS_IPHONE
+#endif
 
 OBJC_CLASS WebMediaPlayerProxy;
 
@@ -80,7 +85,7 @@ enum MediaPlayerProxyNotificationType {
     MediaPlayerRequestBeginPlayback,
     MediaPlayerRequestPausePlayback,
 
-#if ENABLE(IOS_AIRPLAY)
+#if ENABLE_IOS_AIRPLAY
     MediaPlayerNotificationCurrentPlaybackTargetIsWirelessChanged,
     MediaPlayerNotificationPlaybackTargetAvailabilityChanged,
 #endif
@@ -104,7 +109,7 @@ enum MediaPlayerProxyNotificationType {
 - (void)_enterFullScreen;
 - (void)_exitFullScreen;
 
-#if ENABLE(IOS_AIRPLAY)
+#if ENABLE_IOS_AIRPLAY
 - (BOOL)_isCurrentPlaybackTargetWireless;
 - (void)_showPlaybackTargetPicker;
 
@@ -157,7 +162,7 @@ enum MediaPlayerProxyNotificationType {
 
 - (NSArray *)_mimeTypes;
 
-#if PLATFORM(IOS)
+#if TARGET_OS_IPHONE
 - (void)_setDelegate:(id)delegate;
 - (void)_setOutOfBandTextTracks:(NSArray *)textTracks;
 - (void)_setSelectedTextTrack:(NSNumber *)textTrack;

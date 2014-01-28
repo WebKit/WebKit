@@ -1,3 +1,19 @@
+2014-01-27  Andy Estes  <aestes@apple.com>
+
+        Scrub WebKit API headers of WTF macros
+        https://bugs.webkit.org/show_bug.cgi?id=127706
+
+        Reviewed by David Kilzer.
+
+        * Configurations/FeatureDefines.xcconfig: Added ENABLE_INSPECTOR.
+        * WebView/WebPreferenceKeysPrivate.h: Changed ENABLE(REMOTE_INSPECTOR)
+        to !defined(ENABLE_REMOTE_INSPECTOR) || ENABLE_REMOTE_INSPECTOR. We are
+        in a TARGET_OS_IPHONE block, and ENABLE_REMOTE_INSPECTOR is enabled by
+        default on iOS, so include this block unless the feature is explicitly
+        disabled.
+        * postprocess-headers.sh: Stopped processing ENABLE_IOS_TOUCH_EVENTS
+        and ENABLE_IOS_GESTURE_EVENTS. These are now defined in DOMEvents.h.
+
 2014-01-27  Tim Horton  <timothy_horton@apple.com>
 
         Another iOS build fix.

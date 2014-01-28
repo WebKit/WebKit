@@ -29,7 +29,7 @@
 #ifndef SystemMemory_h
 #define SystemMemory_h
 
-#if PLATFORM(IOS)
+#if TARGET_OS_IPHONE
 
 namespace WebCore {
 int systemMemoryLevel(); // In [0, 100]

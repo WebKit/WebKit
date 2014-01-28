@@ -1,3 +1,15 @@
+2014-01-27  Andy Estes  <aestes@apple.com>
+
+        Scrub WebKit API headers of WTF macros
+        https://bugs.webkit.org/show_bug.cgi?id=127706
+
+        Reviewed by David Kilzer.
+
+        * Scripts/check-for-inappropriate-macros-in-external-headers: Modified
+        the regex to require a '(' after the macro name in order to be
+        considered a match. This prevents things like 'ENABLE_SOME_FEATURE'
+        from being flagged as an ENABLE() macro.
+
 2014-01-27  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r162846.

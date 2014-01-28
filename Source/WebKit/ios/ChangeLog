@@ -1,3 +1,13 @@
+2014-01-27  Andy Estes  <aestes@apple.com>
+
+        Scrub WebKit API headers of WTF macros
+        https://bugs.webkit.org/show_bug.cgi?id=127706
+
+        Reviewed by David Kilzer.
+
+        * WebCoreSupport/WebMIMETypeRegistry.h: Changed PLATFORM(IOS) to
+        TARGET_OS_IPHONE.
+
 2014-01-15  Sam Weinig  <sam@webkit.org>
 
         TextBreakIterator's should support Latin-1 for all iterator types (Part 3)

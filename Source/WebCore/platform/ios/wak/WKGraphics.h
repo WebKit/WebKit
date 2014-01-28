@@ -65,7 +65,7 @@ public:
 
 private:
 
-#if PLATFORM(IOS_SIMULATOR)
+#if TARGET_IPHONE_SIMULATOR
 #pragma clang diagnostic push
 #if defined(__has_warning) && __has_warning("-Wunused-private-field")
 #pragma clang diagnostic ignored "-Wunused-private-field"
@@ -74,7 +74,7 @@ private:
     CGContextRef m_context;
     bool m_useOrientationDependentFontAntialiasing;
     CGFontAntialiasingStyle m_oldAntialiasingStyle;
-#if PLATFORM(IOS_SIMULATOR)
+#if TARGET_IPHONE_SIMULATOR
 #pragma clang diagnostic pop
 #endif
 };
