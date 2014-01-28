@@ -3,6 +3,19 @@
         Fixing several incorrect assumptions with handling isolated inlines.
         https://bugs.webkit.org/show_bug.cgi?id=127608
 
+        Reviewed by Simon Fraser.
+
+        Fixing capitalization.
+
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::setUpResolverToResumeInIsolate):
+        (WebCore::constructBidiRunsForSegment):
+
+2014-01-28  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Fixing several incorrect assumptions with handling isolated inlines.
+        https://bugs.webkit.org/show_bug.cgi?id=127608
+
         Reviewed by Dave Hyatt.
 
         First, when an isolated inline spans multiple lines, we aren't guaranteed
