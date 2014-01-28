@@ -117,6 +117,7 @@
 
 #if defined(__has_include) && __has_include(<CoreGraphics/CoreGraphicsPrivate.h>)
 #import <CoreGraphics/CoreGraphicsPrivate.h>
+#import <CoreGraphics/CGSCapture.h>
 #endif
 
 extern "C" {
@@ -124,6 +125,7 @@ typedef uint32_t CGSConnectionID;
 typedef uint32_t CGSWindowID;
 CGSConnectionID CGSMainConnectionID(void);
 CGError CGSGetScreenRectForWindow(CGSConnectionID cid, CGSWindowID wid, CGRect *rect);
+CGError CGSCaptureWindowsContentsToRect(CGSConnectionID cid, const CGSWindowID windows[], uint32_t windowCount, CGRect rect, CGImageRef *outImage);
 };
 
 using namespace WebKit;
@@ -2545,7 +2547,11 @@ static void createSandboxExtensionsForFileUpload(NSPasteboard *pasteboard, Sandb
     if (![window windowNumber])
         return nullptr;
 
-    RetainPtr<CGImageRef> windowSnapshotImage = adoptCF(CGWindowListCreateImage(CGRectNull, kCGWindowListOptionIncludingWindow, [window windowNumber], kCGWindowImageBoundsIgnoreFraming | kCGWindowImageShouldBeOpaque));
+    // FIXME: This should use CGWindowListCreateImage once <rdar://problem/15709646> is resolved.
+    CGSWindowID windowID = [window windowNumber];
+    CGImageRef cgWindowImage = nullptr;
+    CGSCaptureWindowsContentsToRect(CGSMainConnectionID(), &windowID, 1, CGRectNull, &cgWindowImage);
+    RetainPtr<CGImageRef> windowSnapshotImage = adoptCF(cgWindowImage);
 
     NSRect windowCaptureRect = [self convertRect:self.bounds toView:nil];
     NSRect windowCaptureScreenRect = [window convertRectToScreen:windowCaptureRect];

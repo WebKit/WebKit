@@ -1,3 +1,16 @@
+2014-01-28  Tim Horton  <timothy_horton@apple.com>
+
+        WebKit2 View Gestures (Swipe): Use CGSCaptureWindowsContentsToRect for now
+        https://bugs.webkit.org/show_bug.cgi?id=127768
+        <rdar://problem/15923662>
+
+        Reviewed by Simon Fraser.
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView _takeViewSnapshot]):
+        Until <rdar://problem/15709646> is resolved, we'll use
+        CGSCaptureWindowsContentsToRect instead of CGWindowListCreateImage.
+
 2014-01-28  Mark Rowe  <mrowe@apple.com>
 
         <https://webkit.org/b/127767> Disable some deprecation warnings to fix the build.
