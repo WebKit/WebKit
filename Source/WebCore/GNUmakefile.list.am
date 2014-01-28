@@ -5866,8 +5866,6 @@ platform_sources += \
 	Source/WebCore/platform/network/soup/SocketStreamError.h \
 	Source/WebCore/platform/network/soup/SocketStreamHandle.h \
 	Source/WebCore/platform/network/soup/SocketStreamHandleSoup.cpp \
-	Source/WebCore/platform/network/soup/SoupURIUtils.cpp \
-	Source/WebCore/platform/network/soup/SoupURIUtils.h \
 	Source/WebCore/platform/network/AuthenticationChallengeBase.cpp \
 	Source/WebCore/platform/network/AuthenticationChallengeBase.h \
 	Source/WebCore/platform/network/AuthenticationClient.h \
@@ -5906,6 +5904,7 @@ platform_sources += \
 	Source/WebCore/platform/network/SocketStreamHandleBase.h \
 	Source/WebCore/platform/network/SocketStreamHandleClient.h \
 	Source/WebCore/platform/soup/SharedBufferSoup.cpp \
+	Source/WebCore/platform/soup/URLSoup.cpp \
 	Source/WebCore/platform/text/enchant/TextCheckerEnchant.h \
 	Source/WebCore/platform/text/enchant/TextCheckerEnchant.cpp \
 	Source/WebCore/platform/text/icu/UTextProvider.cpp \

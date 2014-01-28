@@ -27,8 +27,8 @@
 #ifndef ResourceRequest_h
 #define ResourceRequest_h
 
+#include "GUniquePtrSoup.h"
 #include "ResourceRequestBase.h"
-#include "SoupURIUtils.h"
 #include <libsoup/soup.h>
 
 namespace WebCore {
@@ -78,7 +78,7 @@ namespace WebCore {
         }
 
         ResourceRequest(SoupRequest* soupRequest)
-            : ResourceRequestBase(soupURIToKURL(soup_request_get_uri(soupRequest)), UseProtocolCachePolicy)
+            : ResourceRequestBase(URL(soup_request_get_uri(soupRequest)), UseProtocolCachePolicy)
             , m_acceptEncoding(true)
             , m_soupFlags(static_cast<SoupMessageFlags>(0))
             , m_initiatingPageID(0)
@@ -105,7 +105,7 @@ namespace WebCore {
         uint64_t initiatingPageID() const { return m_initiatingPageID; }
         void setInitiatingPageID(uint64_t pageID) { m_initiatingPageID = pageID; }
 
-        SoupURI* soupURI() const;
+        GUniquePtr<SoupURI> createSoupURI() const;
 
     private:
         friend class ResourceRequestBase;

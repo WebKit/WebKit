@@ -1,3 +1,45 @@
+2014-01-28  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [SOUP] Remove soupURIToKURL
+        https://bugs.webkit.org/show_bug.cgi?id=127104
+
+        Reviewed by Martin Robinson.
+
+        In favor of a URL constructor receiving a SoupURI. Also add a
+        method to URL to create a soupURI.
+
+        * GNUmakefile.list.am: Remove SoupURIUtils and add URLSoup.
+        * PlatformEfl.cmake: Ditto.
+        * PlatformGTK.cmake: Ditto.
+        * platform/URL.h: Add URL constructor receiving a SoupURI and
+        createSoupURI() to create a new soupURI for the URL.
+        * platform/network/soup/CookieJarSoup.cpp:
+        (WebCore::setCookiesFromDOM): Use URL::createSoupURI().
+        (WebCore::cookiesForSession): Ditto.
+        (WebCore::getRawCookies): Ditto.
+        (WebCore::deleteCookie): Ditto.
+        * platform/network/soup/ResourceHandleSoup.cpp:
+        (WebCore::doRedirect): Use the new URL constructor instead of
+        soupURIToKURL.
+        (WebCore::createSoupRequestAndMessageForHandle): Use URL::createSoupURI().
+        * platform/network/soup/ResourceRequest.h: Rename soupURI as
+        createSoupURI to make it clear that the method returns a newly
+        created SoupURI.
+        * platform/network/soup/ResourceRequestSoup.cpp:
+        (WebCore::ResourceRequest::updateSoupMessageMembers): Use URL::createSoupURI().
+        (WebCore::ResourceRequest::updateSoupMessage): Ditto.
+        (WebCore::ResourceRequest::updateFromSoupMessage): Use the new URL
+        constructor instead of soupURIToKURL.
+        (WebCore::ResourceRequest::createSoupURI): Use URL::createSoupURI().
+        * platform/network/soup/ResourceResponseSoup.cpp:
+        (WebCore::ResourceResponse::updateFromSoupMessage): Use the new
+        URL constructor instead of soupURIToKURL.
+        * platform/network/soup/SoupURIUtils.cpp: Removed.
+        * platform/network/soup/SoupURIUtils.h: Removed.
+        * platform/soup/URLSoup.cpp: Added.
+        (WebCore::URL::URL):
+        (WebCore::URL::createSoupURI):
+
 2014-01-27  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Avoid unnecessary string duplications in FileSystemGtk

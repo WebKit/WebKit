@@ -23,6 +23,7 @@ list(APPEND WebKitTestRunner_INCLUDE_DIRECTORIES
     ${TOOLS_DIR}/DumpRenderTree/efl/
     ${WEBKIT2_DIR}/UIProcess/API/efl
     "${WTF_DIR}/wtf/gobject"
+    ${WEBCORE_DIR}/platform/network/soup
     ${CAIRO_INCLUDE_DIRS}
     ${ECORE_EVAS_INCLUDE_DIRS}
     ${ECORE_FILE_INCLUDE_DIRS}

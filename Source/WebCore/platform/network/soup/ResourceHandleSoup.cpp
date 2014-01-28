@@ -44,7 +44,6 @@
 #include "ResourceResponse.h"
 #include "SharedBuffer.h"
 #include "SoupNetworkSession.h"
-#include "SoupURIUtils.h"
 #include "TextEncoding.h"
 #include <errno.h>
 #include <fcntl.h>
@@ -453,7 +452,7 @@ static void doRedirect(ResourceHandle* handle)
     ResourceRequest newRequest = handle->firstRequest();
     SoupMessage* message = d->m_soupMessage.get();
     const char* location = soup_message_headers_get_one(message->response_headers, "Location");
-    URL newURL = URL(soupURIToKURL(soup_message_get_uri(message)), location);
+    URL newURL = URL(URL(soup_message_get_uri(message)), location);
     bool crossOrigin = !protocolHostAndPortAreEqual(handle->firstRequest().url(), newURL);
     newRequest.setURL(newURL);
     newRequest.setFirstPartyForCookies(newURL);
@@ -981,7 +980,7 @@ static bool createSoupRequestAndMessageForHandle(ResourceHandle* handle, const R
 
     GOwnPtr<GError> error;
 
-    GUniquePtr<SoupURI> soupURI(request.soupURI());
+    GUniquePtr<SoupURI> soupURI = request.createSoupURI();
     if (!soupURI)
         return false;
 

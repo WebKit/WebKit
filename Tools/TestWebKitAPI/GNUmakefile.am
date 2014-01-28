@@ -284,7 +284,9 @@ DISTCLEANFILES += \
 
 Programs_TestWebKitAPI_WebCore_TestWebCore_CPPFLAGS = \
 	$(Libraries_libTestWebKitAPIMain_la_CPPFLAGS) \
-	-I$(top_builddir)/DerivedSources/WebCore/include
+	-I$(srcdir)/Source/WebCore/platform/network/soup \
+	-I$(top_builddir)/DerivedSources/WebCore/include \
+	$(LIBSOUP_CFLAGS)
 
 Programs_TestWebKitAPI_WebCore_TestWebCore_CXXFLAGS = \
 	-DGTEST_HAS_RTTI=0 \

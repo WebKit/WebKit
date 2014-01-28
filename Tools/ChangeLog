@@ -1,3 +1,16 @@
+2014-01-28  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [SOUP] Remove soupURIToKURL
+        https://bugs.webkit.org/show_bug.cgi?id=127104
+
+        Reviewed by Martin Robinson.
+
+        * TestWebKitAPI/GNUmakefile.am: Add soup cppflags to WebCore unit
+        tests, because URL.h now includes GUniquePtrSoup.h.
+        * TestWebKitAPI/CMakeLists.txt: Ditto.
+        * WebKitTestRunner/PlatformEfl.cmake: Add soup cppflags to WTR,
+        because URL.h now includes GUniquePtrSoup.h.
+
 2014-01-27  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Make webkit_uri_scheme_request_get_web_view() work with CustomProtocols

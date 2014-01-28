@@ -167,13 +167,13 @@ list(APPEND WebCore_SOURCES
     platform/network/soup/ResourceResponseSoup.cpp
     platform/network/soup/SocketStreamHandleSoup.cpp
     platform/network/soup/SoupNetworkSession.cpp
-    platform/network/soup/SoupURIUtils.cpp
     platform/network/soup/SynchronousLoaderClientSoup.cpp
 
     platform/posix/FileSystemPOSIX.cpp
     platform/posix/SharedBufferPOSIX.cpp
 
     platform/soup/SharedBufferSoup.cpp
+    platform/soup/URLSoup.cpp
 
     platform/text/LocaleICU.cpp
 

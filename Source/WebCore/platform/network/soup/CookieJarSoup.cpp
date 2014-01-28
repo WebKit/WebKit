@@ -88,8 +88,8 @@ void setCookiesFromDOM(const NetworkStorageSession& session, const URL& firstPar
     if (!jar)
         return;
 
-    GUniquePtr<SoupURI> origin(soup_uri_new(url.string().utf8().data()));
-    GUniquePtr<SoupURI> firstPartyURI(soup_uri_new(firstParty.string().utf8().data()));
+    GUniquePtr<SoupURI> origin = url.createSoupURI();
+    GUniquePtr<SoupURI> firstPartyURI = firstParty.createSoupURI();
 
     // Get existing cookies for this origin.
     GSList* existingCookies = soup_cookie_jar_get_cookie_list(jar, origin.get(), TRUE);
@@ -122,7 +122,7 @@ static String cookiesForSession(const NetworkStorageSession& session, const URL&
     if (!jar)
         return String();
 
-    GUniquePtr<SoupURI> uri(soup_uri_new(url.string().utf8().data()));
+    GUniquePtr<SoupURI> uri = url.createSoupURI();
     GUniquePtr<char> cookies(soup_cookie_jar_get_cookies(jar, uri.get(), forHTTPHeader));
     return String::fromUTF8(cookies.get());
 }
@@ -149,7 +149,7 @@ bool getRawCookies(const NetworkStorageSession& session, const URL& /*firstParty
     if (!jar)
         return false;
 
-    GUniquePtr<SoupURI> uri(soup_uri_new(url.string().utf8().data()));
+    GUniquePtr<SoupURI> uri = url.createSoupURI();
     GUniquePtr<GSList> cookies(soup_cookie_jar_get_cookie_list(jar, uri.get(), TRUE));
     if (!cookies)
         return false;
@@ -171,7 +171,7 @@ void deleteCookie(const NetworkStorageSession& session, const URL& url, const St
     if (!jar)
         return;
 
-    GUniquePtr<SoupURI> uri(soup_uri_new(url.string().utf8().data()));
+    GUniquePtr<SoupURI> uri = url.createSoupURI();
     GUniquePtr<GSList> cookies(soup_cookie_jar_get_cookie_list(jar, uri.get(), TRUE));
     if (!cookies)
         return;

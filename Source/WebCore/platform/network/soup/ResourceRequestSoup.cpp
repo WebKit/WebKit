@@ -23,7 +23,6 @@
 #include "GUniquePtrSoup.h"
 #include "HTTPParsers.h"
 #include "MIMETypeRegistry.h"
-#include "SoupURIUtils.h"
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
 
@@ -33,11 +32,9 @@ void ResourceRequest::updateSoupMessageMembers(SoupMessage* soupMessage) const
 {
     updateSoupMessageHeaders(soupMessage->request_headers);
 
-    String firstPartyString = firstPartyForCookies().string();
-    if (!firstPartyString.isEmpty()) {
-        GUniquePtr<SoupURI> firstParty(soup_uri_new(firstPartyString.utf8().data()));
+    GUniquePtr<SoupURI> firstParty = firstPartyForCookies().createSoupURI();
+    if (firstParty)
         soup_message_set_first_party(soupMessage, firstParty.get());
-    }
 
     soup_message_set_flags(soupMessage, m_soupFlags);
 
@@ -70,7 +67,7 @@ void ResourceRequest::updateSoupMessage(SoupMessage* soupMessage) const
 {
     g_object_set(soupMessage, SOUP_MESSAGE_METHOD, httpMethod().utf8().data(), NULL);
 
-    GUniquePtr<SoupURI> uri(soupURI());
+    GUniquePtr<SoupURI> uri = createSoupURI();
     soup_message_set_uri(soupMessage, uri.get());
 
     updateSoupMessageMembers(soupMessage);
@@ -93,7 +90,7 @@ SoupMessage* ResourceRequest::toSoupMessage() const
 void ResourceRequest::updateFromSoupMessage(SoupMessage* soupMessage)
 {
     bool shouldPortBeResetToZero = m_url.hasPort() && !m_url.port();
-    m_url = soupURIToKURL(soup_message_get_uri(soupMessage));
+    m_url = URL(soup_message_get_uri(soupMessage));
 
     // SoupURI cannot differeniate between an explicitly specified port 0 and
     // no port specified.
@@ -107,9 +104,8 @@ void ResourceRequest::updateFromSoupMessage(SoupMessage* soupMessage)
     if (soupMessage->request_body->data)
         m_httpBody = FormData::create(soupMessage->request_body->data, soupMessage->request_body->length);
 
-    SoupURI* firstParty = soup_message_get_first_party(soupMessage);
-    if (firstParty)
-        m_firstPartyForCookies = soupURIToKURL(firstParty);
+    if (SoupURI* firstParty = soup_message_get_first_party(soupMessage))
+        m_firstPartyForCookies = URL(firstParty);
 
     m_soupFlags = soup_message_get_flags(soupMessage);
 
@@ -143,31 +139,11 @@ unsigned initializeMaximumHTTPConnectionCountPerHost()
     return 10000;
 }
 
-SoupURI* ResourceRequest::soupURI() const
+GUniquePtr<SoupURI> ResourceRequest::createSoupURI() const
 {
-    // WebKit does not support fragment identifiers in data URLs, but soup does.
-    // Before passing the URL to soup, we should make sure to urlencode any '#'
-    // characters, so that soup does not interpret them as fragment identifiers.
-    // See http://wkbug.com/68089
-    if (m_url.protocolIsData()) {
-        String urlString = m_url.string();
-        urlString.replace("#", "%23");
-        return soup_uri_new(urlString.utf8().data());
-    }
-
     URL url = m_url;
     url.removeFragmentIdentifier();
-    SoupURI* uri = soup_uri_new(url.string().utf8().data());
-
-    // Versions of libsoup prior to 2.42 have a soup_uri_new that will convert empty passwords that are not
-    // prefixed by a colon into null. Some parts of soup like the SoupAuthenticationManager will only be active
-    // when both the username and password are non-null. When we have credentials, empty usernames and passwords
-    // should be empty strings instead of null.
-    if (!url.user().isEmpty() || !url.pass().isEmpty()) {
-        soup_uri_set_user(uri, url.user().utf8().data());
-        soup_uri_set_password(uri, url.pass().utf8().data());
-    }
-    return uri;
+    return url.createSoupURI();
 }
 
 }
