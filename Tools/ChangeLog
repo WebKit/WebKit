@@ -1,3 +1,13 @@
+2014-01-27  Alexey Proskuryakov  <ap@apple.com>
+
+        [Mac] Extra logging output from run-safari --no-saved-state
+        https://bugs.webkit.org/show_bug.cgi?id=127732
+
+        Reviewed by Daniel Bates.
+
+        * Scripts/webkitdirs.pm: (argumentsForRunAndDebugMacWebKitApp): Use an option that
+        disables saved state without logging.
+
 2014-01-27  Tim Horton  <timothy_horton@apple.com>
 
         Revert the parts of r162629 that add a new pluginLoadPolicy and the context menu item.
