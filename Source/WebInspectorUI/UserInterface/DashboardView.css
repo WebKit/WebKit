@@ -54,19 +54,19 @@ body.window-inactive .toolbar .dashboard {
 }
 
 .toolbar.collapsed .dashboard,
-.javascript .toolbar .dashboard {
+body.javascript .toolbar .dashboard {
     width: 175px;
 }
 
-.web .toolbar.collapsed .dashboard > .time,
-.web .toolbar.collapsed .dashboard > .resourcesSize,
-.web .toolbar.collapsed .dashboard > .logs {
+body.web .toolbar.collapsed .dashboard > .time,
+body.web .toolbar.collapsed .dashboard > .resourcesSize,
+body.web .toolbar.collapsed .dashboard > .logs {
     display: none;
 }
 
-.javascript .toolbar .dashboard > .time,
-.javascript .toolbar .dashboard > .resourcesSize,
-.javascript .toolbar .dashboard > .resourcesCount {
+body.javascript .toolbar .dashboard > .time,
+body.javascript .toolbar .dashboard > .resourcesSize,
+body.javascript .toolbar .dashboard > .resourcesCount {
     display: none;
 }
 

@@ -1,5 +1,17 @@
 2014-01-28  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Unreviewed follow-up to r162965. Better coding style.
+
+        Timothy Hatcher pointed out a clearer style for classes
+        on the <body> is to specify body.class. I agree.
+
+        * UserInterface/DashboardView.css:
+        (body.javascript .toolbar .dashboard):
+        (body.web .toolbar.collapsed .dashboard > .logs):
+        (body.javascript .toolbar .dashboard > .resourcesCount):
+
+2014-01-28  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Tweak UI when debugging a JSContext
         https://bugs.webkit.org/show_bug.cgi?id=127799
 
