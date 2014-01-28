@@ -27,7 +27,7 @@
 #define StackStats_h
 
 #include "ExportMacros.h"
-#include "ThreadingPrimitives.h"
+#include <mutex>
 
 
 // Define this flag to enable Stack stats collection. This feature is useful
@@ -40,7 +40,7 @@
 // convenience for collecting that data. It is not meant to be enabled by
 // default on release or debug builds.
 
-// #define ENABLE_STACK_STATS 1
+#define ENABLE_STACK_STATS 1
 
 
 namespace WTF {
@@ -124,7 +124,7 @@ public:
 
 private:
     // CheckPoint management:
-    static Mutex* s_sharedLock;
+    static std::mutex* s_sharedMutex;
     static CheckPoint* s_topCheckPoint;
     static LayoutCheckPoint* s_firstLayoutCheckPoint;
     static LayoutCheckPoint* s_topLayoutCheckPoint;

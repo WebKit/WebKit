@@ -33,7 +33,8 @@
 #include "Deque.h"
 #include "Functional.h"
 #include "StdLibExtras.h"
-#include "Threading.h"
+#include <mutex>
+#include <wtf/NeverDestroyed.h>
 #include <wtf/ThreadSpecific.h>
 
 namespace WTF {
@@ -68,16 +69,17 @@ static bool callbacksPaused; // This global variable is only accessed from main 
 static ThreadIdentifier mainThreadIdentifier;
 #endif
 
-static Mutex& mainThreadFunctionQueueMutex()
+static std::mutex& mainThreadFunctionQueueMutex()
 {
-    DEFINE_STATIC_LOCAL(Mutex, staticMutex, ());
-    return staticMutex;
+    static NeverDestroyed<std::mutex> mutex;
+    
+    return mutex;
 }
 
 static FunctionQueue& functionQueue()
 {
-    DEFINE_STATIC_LOCAL(FunctionQueue, staticFunctionQueue, ());
-    return staticFunctionQueue;
+    static NeverDestroyed<FunctionQueue> functionQueue;
+    return functionQueue;
 }
 
 
@@ -154,7 +156,7 @@ void dispatchFunctionsFromMainThread()
     FunctionWithContext invocation;
     while (true) {
         {
-            MutexLocker locker(mainThreadFunctionQueueMutex());
+            std::lock_guard<std::mutex> lock(mainThreadFunctionQueueMutex());
             if (!functionQueue().size())
                 break;
             invocation = functionQueue().takeFirst();
@@ -178,7 +180,7 @@ void callOnMainThread(MainThreadFunction* function, void* context)
     ASSERT(function);
     bool needToSchedule = false;
     {
-        MutexLocker locker(mainThreadFunctionQueueMutex());
+        std::lock_guard<std::mutex> lock(mainThreadFunctionQueueMutex());
         needToSchedule = functionQueue().size() == 0;
         functionQueue().append(FunctionWithContext(function, context));
     }
@@ -190,7 +192,7 @@ void cancelCallOnMainThread(MainThreadFunction* function, void* context)
 {
     ASSERT(function);
 
-    MutexLocker locker(mainThreadFunctionQueueMutex());
+    std::lock_guard<std::mutex> lock(mainThreadFunctionQueueMutex());
 
     FunctionWithContextFinder pred(FunctionWithContext(function, context));
 

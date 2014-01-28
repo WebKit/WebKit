@@ -36,13 +36,13 @@
 // checkpoint. By default, we only log checkpoints that establish new
 // max values.
 
-// #define ENABLE_VERBOSE_STACK_STATS 1
+#define ENABLE_VERBOSE_STACK_STATS 1
 
 
 namespace WTF {
 
 // CheckPoint management:
-Mutex* StackStats::s_sharedLock = 0;
+std::mutex* StackStats::s_sharedMutex = 0;
 StackStats::CheckPoint* StackStats::s_topCheckPoint = 0;
 StackStats::LayoutCheckPoint* StackStats::s_firstLayoutCheckPoint = 0;
 StackStats::LayoutCheckPoint* StackStats::s_topLayoutCheckPoint = 0;
@@ -60,7 +60,7 @@ int StackStats::s_maxLayoutReentryDepth = 0;
 // Initializes locks and the log. Should only be called once.
 void StackStats::initialize()
 {
-    s_sharedLock = new Mutex();
+    s_sharedMutex = std::make_unique<std::mutex>().release();
     dataLogF(" === LOG new stack stats ========\n");
 }
 
@@ -76,7 +76,7 @@ StackStats::PerThreadStats::PerThreadStats()
 
 StackStats::CheckPoint::CheckPoint()
 {
-    MutexLocker locker(*StackStats::s_sharedLock);
+    std::lock_guard<std::mutex> lock(*StackStats::s_sharedMutex);
     WTFThreadData* threadData = const_cast<WTFThreadData*>(&wtfThreadData());
     StackStats::PerThreadStats& t = threadData->stackStats();
     const StackBounds& stack = threadData->stack();
@@ -134,7 +134,7 @@ StackStats::CheckPoint::CheckPoint()
 
 StackStats::CheckPoint::~CheckPoint()
 {
-    MutexLocker locker(*StackStats::s_sharedLock);
+    std::lock_guard<std::mutex> lock(*StackStats::s_sharedMutex);
     WTFThreadData* threadData = const_cast<WTFThreadData*>(&wtfThreadData());
     StackStats::PerThreadStats& t = threadData->stackStats();
 
@@ -165,7 +165,7 @@ StackStats::CheckPoint::~CheckPoint()
 
 void StackStats::probe()
 {
-    MutexLocker locker(*StackStats::s_sharedLock);
+    std::lock_guard<std::mutex> lock(*StackStats::s_sharedMutex);
     WTFThreadData* threadData = const_cast<WTFThreadData*>(&wtfThreadData());
     StackStats::PerThreadStats& t = threadData->stackStats();
     const StackBounds& stack = threadData->stack();
@@ -226,7 +226,7 @@ StackStats::LayoutCheckPoint::LayoutCheckPoint()
     // probe first, we can avoid re-entering the lock.
     StackStats::probe();
 
-    MutexLocker locker(*StackStats::s_sharedLock);
+    std::lock_guard<std::mutex> lock(*StackStats::s_sharedMutex);
     WTFThreadData* threadData = const_cast<WTFThreadData*>(&wtfThreadData());
     StackStats::PerThreadStats& t = threadData->stackStats();
     const StackBounds& stack = threadData->stack();
@@ -295,7 +295,7 @@ StackStats::LayoutCheckPoint::LayoutCheckPoint()
 
 StackStats::LayoutCheckPoint::~LayoutCheckPoint()
 {
-    MutexLocker locker(*StackStats::s_sharedLock);
+    std::lock_guard<std::mutex> lock(*StackStats::s_sharedMutex);
 
     // Pop to the previous layout checkpoint:
     StackStats::s_topLayoutCheckPoint = m_prev;
