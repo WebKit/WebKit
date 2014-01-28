@@ -41,8 +41,6 @@ typedef Vector<Ewk_History_Item*> HistoryItemChildrenVector;
 
 namespace WebCore {
 class Frame;
-class MessagePortChannel;
-typedef Vector<OwnPtr<MessagePortChannel>, 1> MessagePortChannelArray;
 }
 
 class EAPI DumpRenderTreeSupportEfl {
