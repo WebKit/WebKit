@@ -42,6 +42,7 @@ public:
     }
     virtual void perform(std::function<void()> completionCallback) override final;
 
+    int64_t cursorID() const { return m_cursor->id(); }
     IDBKey* key() const { return m_key.get(); }
 
 private:
@@ -65,6 +66,7 @@ public:
     }
     virtual void perform(std::function<void()> completionCallback) override final;
 
+    int64_t cursorID() const { return m_cursor->id(); }
     unsigned long count() const { return m_count; }
 
 private:

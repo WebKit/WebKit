@@ -547,6 +547,71 @@ void UniqueIDBDatabase::getRecord(const IDBIdentifier& transactionIdentifier, in
     postDatabaseTask(createAsyncTask(*this, &UniqueIDBDatabase::getRecordFromBackingStore, requestID, transactionIdentifier, m_metadata->objectStores.get(objectStoreID), indexID, keyRangeData, cursorType));
 }
 
+void UniqueIDBDatabase::openCursor(const IDBIdentifier& transactionIdentifier, int64_t objectStoreID, int64_t indexID, WebCore::IndexedDB::CursorDirection cursorDirection, WebCore::IndexedDB::CursorType cursorType, WebCore::IDBDatabaseBackend::TaskType taskType, const WebCore::IDBKeyRangeData& keyRangeData, std::function<void(int64_t, uint32_t, const String&)> callback)
+{
+    ASSERT(isMainThread());
+
+    if (!m_acceptingNewRequests) {
+        callback(0, INVALID_STATE_ERR, "Unable to open cursor in database because it has shut down");
+        return;
+    }
+
+    ASSERT(m_metadata->objectStores.contains(objectStoreID));
+
+    RefPtr<AsyncRequest> request = AsyncRequestImpl<int64_t, uint32_t, const String&>::create([this, callback](int64_t cursorID, uint32_t errorCode, const String& errorMessage) {
+        callback(cursorID, errorCode, errorMessage);
+    }, [this, callback]() {
+        callback(0, INVALID_STATE_ERR, "Unable to get record from database");
+    });
+
+    uint64_t requestID = request->requestID();
+    m_pendingDatabaseTasks.add(requestID, request.release());
+
+    postDatabaseTask(createAsyncTask(*this, &UniqueIDBDatabase::openCursorInBackingStore, requestID, transactionIdentifier, objectStoreID, indexID, cursorDirection, cursorType, taskType, keyRangeData));
+}
+
+void UniqueIDBDatabase::cursorAdvance(const IDBIdentifier& cursorIdentifier, uint64_t count, std::function<void(WebCore::IDBKeyData, WebCore::IDBKeyData, PassRefPtr<WebCore::SharedBuffer>, uint32_t, const String&)> callback)
+{
+    ASSERT(isMainThread());
+
+    if (!m_acceptingNewRequests) {
+        callback(nullptr, nullptr, nullptr, INVALID_STATE_ERR, "Unable to advance cursor in database because it has shut down");
+        return;
+    }
+
+    RefPtr<AsyncRequest> request = AsyncRequestImpl<WebCore::IDBKeyData, WebCore::IDBKeyData, PassRefPtr<WebCore::SharedBuffer>, uint32_t, const String&>::create([this, callback](WebCore::IDBKeyData key, WebCore::IDBKeyData primaryKey, PassRefPtr<WebCore::SharedBuffer> value, uint32_t errorCode, const String& errorMessage) {
+        callback(key, primaryKey, value, errorCode, errorMessage);
+    }, [this, callback]() {
+        callback(nullptr, nullptr, nullptr, INVALID_STATE_ERR, "Unable to advance cursor in database");
+    });
+
+    uint64_t requestID = request->requestID();
+    m_pendingDatabaseTasks.add(requestID, request.release());
+
+    postDatabaseTask(createAsyncTask(*this, &UniqueIDBDatabase::advanceCursorInBackingStore, requestID, cursorIdentifier, count));
+}
+
+void UniqueIDBDatabase::cursorIterate(const IDBIdentifier& cursorIdentifier, const WebCore::IDBKeyData& key, std::function<void(WebCore::IDBKeyData, WebCore::IDBKeyData, PassRefPtr<WebCore::SharedBuffer>, uint32_t, const String&)> callback)
+{
+    ASSERT(isMainThread());
+
+    if (!m_acceptingNewRequests) {
+        callback(nullptr, nullptr, nullptr, INVALID_STATE_ERR, "Unable to iterate cursor in database because it has shut down");
+        return;
+    }
+
+    RefPtr<AsyncRequest> request = AsyncRequestImpl<WebCore::IDBKeyData, WebCore::IDBKeyData, PassRefPtr<WebCore::SharedBuffer>, uint32_t, const String&>::create([this, callback](WebCore::IDBKeyData key, WebCore::IDBKeyData primaryKey, PassRefPtr<WebCore::SharedBuffer> value, uint32_t errorCode, const String& errorMessage) {
+        callback(key, primaryKey, value, errorCode, errorMessage);
+    }, [this, callback]() {
+        callback(nullptr, nullptr, nullptr, INVALID_STATE_ERR, "Unable to iterate cursor in database");
+    });
+
+    uint64_t requestID = request->requestID();
+    m_pendingDatabaseTasks.add(requestID, request.release());
+
+    postDatabaseTask(createAsyncTask(*this, &UniqueIDBDatabase::iterateCursorInBackingStore, requestID, cursorIdentifier, key));
+}
+
 void UniqueIDBDatabase::openBackingStoreTransaction(const IDBIdentifier& transactionIdentifier, const Vector<int64_t>& objectStoreIDs, IndexedDB::TransactionMode mode)
 {
     ASSERT(!isMainThread());
@@ -760,6 +825,51 @@ void UniqueIDBDatabase::didGetRecordFromBackingStore(uint64_t requestID, const I
     ASSERT(request);
 
     request->completeRequest(result, errorCode, errorMessage);
+}
+
+void UniqueIDBDatabase::openCursorInBackingStore(uint64_t requestID, const IDBIdentifier& transactionIdentifier, int64_t objectStoreID, int64_t indexID, WebCore::IndexedDB::CursorDirection, WebCore::IndexedDB::CursorType, WebCore::IDBDatabaseBackend::TaskType, const WebCore::IDBKeyRangeData&)
+{
+    // FIXME: Implement
+
+    postMainThreadTask(createAsyncTask(*this, &UniqueIDBDatabase::didOpenCursorInBackingStore, requestID, 0, IDBDatabaseException::UnknownError, ASCIILiteral("advancing cursors in backing store not supported yet")));
+}
+
+void UniqueIDBDatabase::didOpenCursorInBackingStore(uint64_t requestID, int64_t cursorID, uint32_t errorCode, const String& errorMessage)
+{
+    RefPtr<AsyncRequest> request = m_pendingDatabaseTasks.take(requestID);
+    ASSERT(request);
+
+    request->completeRequest(cursorID, errorCode, errorMessage);
+}
+
+void UniqueIDBDatabase::advanceCursorInBackingStore(uint64_t requestID, const IDBIdentifier& cursorIdentifier, uint64_t count)
+{
+    // FIXME: Implement
+
+    postMainThreadTask(createAsyncTask(*this, &UniqueIDBDatabase::didAdvanceCursorInBackingStore, requestID, IDBKeyData(), IDBKeyData(), Vector<char>(), IDBDatabaseException::UnknownError, ASCIILiteral("advancing cursors in backing store not supported yet")));
+}
+
+void UniqueIDBDatabase::didAdvanceCursorInBackingStore(uint64_t requestID, const WebCore::IDBKeyData& key, const WebCore::IDBKeyData& primaryKey, const Vector<char>& value, uint32_t errorCode, const String& errorMessage)
+{
+    RefPtr<AsyncRequest> request = m_pendingDatabaseTasks.take(requestID);
+    ASSERT(request);
+
+    request->completeRequest(key, primaryKey, SharedBuffer::create(value.data(), value.size()), errorCode, errorMessage);
+}
+
+void UniqueIDBDatabase::iterateCursorInBackingStore(uint64_t requestID, const IDBIdentifier& cursorIdentifier, const WebCore::IDBKeyData&)
+{
+    // FIXME: Implement
+
+    postMainThreadTask(createAsyncTask(*this, &UniqueIDBDatabase::didIterateCursorInBackingStore, requestID, IDBKeyData(), IDBKeyData(), Vector<char>(), IDBDatabaseException::UnknownError, ASCIILiteral("iterating cursors in backing store not supported yet")));
+}
+
+void UniqueIDBDatabase::didIterateCursorInBackingStore(uint64_t requestID, const WebCore::IDBKeyData& key, const WebCore::IDBKeyData& primaryKey, const Vector<char>& value, uint32_t errorCode, const String& errorMessage)
+{
+    RefPtr<AsyncRequest> request = m_pendingDatabaseTasks.take(requestID);
+    ASSERT(request);
+
+    request->completeRequest(key, primaryKey, SharedBuffer::create(value.data(), value.size()), errorCode, errorMessage);
 }
 
 String UniqueIDBDatabase::absoluteDatabaseDirectory() const

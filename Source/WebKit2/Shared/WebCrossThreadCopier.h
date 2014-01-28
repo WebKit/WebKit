@@ -50,6 +50,10 @@ template<> struct CrossThreadCopierBase<false, false, WebKit::IDBIdentifier> {
     static WebKit::IDBIdentifier copy(const WebKit::IDBIdentifier&);
 };
 
+template<> struct CrossThreadCopierBase<false, false, Vector<char>> {
+    static Vector<char> copy(const Vector<char>&);
+};
+
 template<> struct CrossThreadCopierBase<false, false, Vector<int64_t>> {
     static Vector<int64_t> copy(const Vector<int64_t>&);
 };

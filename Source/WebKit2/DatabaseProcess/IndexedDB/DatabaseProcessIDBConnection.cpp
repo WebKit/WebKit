@@ -28,6 +28,7 @@
 
 #if ENABLE(INDEXED_DATABASE) && ENABLE(DATABASE_PROCESS)
 
+#include "DataReference.h"
 #include "DatabaseProcess.h"
 #include "DatabaseToWebProcessConnection.h"
 #include "IDBIdentifier.h"
@@ -230,6 +231,41 @@ void DatabaseProcessIDBConnection::getRecord(uint64_t requestID, int64_t transac
     RefPtr<DatabaseProcessIDBConnection> connection(this);
     m_uniqueIDBDatabase->getRecord(IDBIdentifier(*this, transactionID), objectStoreID, indexID, keyRange, static_cast<IndexedDB::CursorType>(cursorType), [connection, requestID](const IDBGetResult& getResult, uint32_t errorCode, const String& errorMessage) {
         connection->send(Messages::WebIDBServerConnection::DidGetRecord(requestID, getResult, errorCode, errorMessage));
+    });
+}
+
+void DatabaseProcessIDBConnection::openCursor(uint64_t requestID, int64_t transactionID, int64_t objectStoreID, int64_t indexID, int64_t cursorDirection, int64_t cursorType, int64_t taskType, const WebCore::IDBKeyRangeData& keyRangeData)
+{
+    ASSERT(m_uniqueIDBDatabase);
+
+    LOG(IDB, "DatabaseProcess openCursor request ID %llu, object store id %lli", requestID, objectStoreID);
+    RefPtr<DatabaseProcessIDBConnection> connection(this);
+    m_uniqueIDBDatabase->openCursor(IDBIdentifier(*this, transactionID), objectStoreID, indexID, static_cast<IndexedDB::CursorDirection>(cursorDirection), static_cast<IndexedDB::CursorType>(cursorType), static_cast<IDBDatabaseBackend::TaskType>(taskType), keyRangeData, [connection, requestID](int64_t cursorID, uint32_t errorCode, const String& errorMessage) {
+        connection->send(Messages::WebIDBServerConnection::DidOpenCursor(requestID, cursorID, errorCode, errorMessage));
+    });
+}
+
+void DatabaseProcessIDBConnection::cursorAdvance(uint64_t requestID, int64_t cursorID, uint64_t count)
+{
+    ASSERT(m_uniqueIDBDatabase);
+
+    LOG(IDB, "DatabaseProcess cursorAdvance request ID %llu, cursor id %lli", requestID, cursorID);
+    RefPtr<DatabaseProcessIDBConnection> connection(this);
+    m_uniqueIDBDatabase->cursorAdvance(IDBIdentifier(*this, cursorID), count, [connection, requestID](const IDBKeyData& resultKey, const IDBKeyData& primaryKey, PassRefPtr<SharedBuffer> value, uint32_t errorCode, const String& errorMessage) {
+        IPC::DataReference data = value ? IPC::DataReference(reinterpret_cast<const uint8_t*>(value->data()), value->size()) : IPC::DataReference();
+        connection->send(Messages::WebIDBServerConnection::DidAdvanceCursor(requestID, resultKey, primaryKey, data, errorCode, errorMessage));
+    });
+}
+
+void DatabaseProcessIDBConnection::cursorIterate(uint64_t requestID, int64_t cursorID, const IDBKeyData& key)
+{
+    ASSERT(m_uniqueIDBDatabase);
+
+    LOG(IDB, "DatabaseProcess cursorIterate request ID %llu, cursor id %lli", requestID, cursorID);
+    RefPtr<DatabaseProcessIDBConnection> connection(this);
+    m_uniqueIDBDatabase->cursorIterate(IDBIdentifier(*this, cursorID), key, [connection, requestID](const IDBKeyData& resultKey, const IDBKeyData& primaryKey, PassRefPtr<SharedBuffer> value, uint32_t errorCode, const String& errorMessage) {
+        IPC::DataReference data = value ? IPC::DataReference(reinterpret_cast<const uint8_t*>(value->data()), value->size()) : IPC::DataReference();
+        connection->send(Messages::WebIDBServerConnection::DidIterateCursor(requestID, resultKey, primaryKey, data, errorCode, errorMessage));
     });
 }
 

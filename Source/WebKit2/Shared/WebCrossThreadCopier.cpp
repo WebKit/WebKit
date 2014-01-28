@@ -45,6 +45,13 @@ IDBIdentifier CrossThreadCopierBase<false, false, IDBIdentifier>::copy(const IDB
     return transactionIdentifier.isolatedCopy();
 }
 
+Vector<char> CrossThreadCopierBase<false, false, Vector<char>>::copy(const Vector<char>& vector)
+{
+    Vector<char> result;
+    result.appendVector(vector);
+    return result;
+}
+
 Vector<int64_t> CrossThreadCopierBase<false, false, Vector<int64_t>>::copy(const Vector<int64_t>& vector)
 {
     Vector<int64_t> result;

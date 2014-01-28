@@ -1,3 +1,19 @@
+2014-01-27  Brady Eidson  <beidson@apple.com>
+
+        IDB: Cursor support - Messaging, IPC, Threading plumbing
+        https://bugs.webkit.org/show_bug.cgi?id=127736
+
+        Reviewed by Sam Weinig.
+
+        * Modules/indexeddb/IDBCursorBackendOperations.h:
+        (WebCore::CursorIterationOperation::cursorID):
+        (WebCore::CursorAdvanceOperation::cursorID):
+
+        * Modules/indexeddb/IDBTransactionBackendOperations.h:
+        (WebCore::OpenCursorOperation::transactionID):
+
+        * WebCore.exp.in:
+
 2014-01-27  Joseph Pecoraro  <pecoraro@apple.com>
 
         WebCore: Enable -Wimplicit-fallthrough and add FALLTHROUGH annotation where needed

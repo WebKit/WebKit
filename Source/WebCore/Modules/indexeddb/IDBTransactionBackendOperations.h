@@ -354,6 +354,7 @@ public:
     }
     virtual void perform(std::function<void()> successCallback) override final;
 
+    int64_t transactionID() const { return m_transaction->id(); }
     int64_t objectStoreID() const { return m_objectStoreID; }
     int64_t indexID() const { return m_indexID; }
     IndexedDB::CursorDirection direction() const { return m_direction; }

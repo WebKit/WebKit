@@ -40,7 +40,11 @@ messages -> DatabaseProcessIDBConnection LegacyReceiver {
     DeleteIndex(uint64_t requestID, int64_t transactionID, int64_t objectStoreID, int64_t indexID)
 
     PutRecord(uint64_t requestID, int64_t transactionID, int64_t objectStoreID, WebCore::IDBKeyData key, IPC::DataReference value, int64_t putMode, Vector<int64_t> indexIDs, Vector<Vector<WebCore::IDBKeyData>> indexKeys)
-    GetRecord(uint64_t requestID, int64_t transactionID, int64_t objectStoreID, int64_t indexID, WebCore::IDBKeyRangeData keyRange, int64_t cursorType);
+    GetRecord(uint64_t requestID, int64_t transactionID, int64_t objectStoreID, int64_t indexID, WebCore::IDBKeyRangeData keyRange, int64_t cursorType)
+    
+    OpenCursor(uint64_t requestID, int64_t transactionID, int64_t objectStoreID, int64_t indexID, int64_t cursorDirection, int64_t cursorType, int64_t taskType, WebCore::IDBKeyRangeData keyRange)
+    CursorAdvance(uint64_t requestID, int64_t cursorID, uint64_t count)
+    CursorIterate(uint64_t requestID, int64_t cursorID, WebCore::IDBKeyData key)
 }
 
 #endif // ENABLE(INDEXED_DATABASE) && ENABLE(DATABASE_PROCESS)

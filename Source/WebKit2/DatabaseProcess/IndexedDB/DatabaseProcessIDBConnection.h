@@ -82,6 +82,10 @@ private:
     void putRecord(uint64_t requestID, int64_t transactionID, int64_t objectStoreID, const WebCore::IDBKeyData&, const IPC::DataReference& value, int64_t putMode, const Vector<int64_t>& indexIDs, const Vector<Vector<WebCore::IDBKeyData>>& indexKeys);
     void getRecord(uint64_t requestID, int64_t transactionID, int64_t objectStoreID, int64_t indexID, const WebCore::IDBKeyRangeData&, int64_t cursorType);
 
+    void openCursor(uint64_t requestID, int64_t transactionID, int64_t objectStoreID, int64_t indexID, int64_t cursorDirection, int64_t cursorType, int64_t taskType, const WebCore::IDBKeyRangeData&);
+    void cursorAdvance(uint64_t requestID, int64_t cursorID, uint64_t count);
+    void cursorIterate(uint64_t requestID, int64_t cursorID, const WebCore::IDBKeyData&);
+
     Ref<DatabaseToWebProcessConnection> m_connection;
     uint64_t m_serverConnectionIdentifier;
 

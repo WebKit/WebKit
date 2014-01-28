@@ -1,3 +1,48 @@
+2014-01-27  Brady Eidson  <beidson@apple.com>
+
+        IDB: Cursor support - Messaging, IPC, Threading plumbing
+        https://bugs.webkit.org/show_bug.cgi?id=127736
+
+        Reviewed by Sam Weinig.
+
+        Pipe three cursor-related calls to the DatabaseProcess, and handle messages
+        from the database process when it is done handling them:
+        * WebProcess/Databases/IndexedDB/WebIDBServerConnection.cpp:
+        (WebKit::WebIDBServerConnection::didOpenCursor):
+        (WebKit::WebIDBServerConnection::didAdvanceCursor):
+        (WebKit::WebIDBServerConnection::didIterateCursor):
+        (WebKit::WebIDBServerConnection::openCursor):
+        (WebKit::WebIDBServerConnection::cursorAdvance):
+        (WebKit::WebIDBServerConnection::cursorIterate):
+        * WebProcess/Databases/IndexedDB/WebIDBServerConnection.h:
+        * WebProcess/Databases/IndexedDB/WebIDBServerConnection.messages.in:
+
+        Pipe the calls through to the appropriate UniqueIDBDatabase:
+        * DatabaseProcess/IndexedDB/DatabaseProcessIDBConnection.cpp:
+        (WebKit::DatabaseProcessIDBConnection::openCursor):
+        (WebKit::DatabaseProcessIDBConnection::cursorAdvance):
+        (WebKit::DatabaseProcessIDBConnection::cursorIterate):
+        * DatabaseProcess/IndexedDB/DatabaseProcessIDBConnection.h:
+        * DatabaseProcess/IndexedDB/DatabaseProcessIDBConnection.messages.in:
+
+        Pass the calls to the backing store thread, then message back to the WebProcess
+        when the requests are complete.
+        * DatabaseProcess/IndexedDB/UniqueIDBDatabase.cpp:
+        (WebKit::UniqueIDBDatabase::openCursor):
+        (WebKit::UniqueIDBDatabase::cursorAdvance):
+        (WebKit::UniqueIDBDatabase::cursorIterate):
+        (WebKit::UniqueIDBDatabase::openCursorInBackingStore):
+        (WebKit::UniqueIDBDatabase::didOpenCursorInBackingStore):
+        (WebKit::UniqueIDBDatabase::advanceCursorInBackingStore):
+        (WebKit::UniqueIDBDatabase::didAdvanceCursorInBackingStore):
+        (WebKit::UniqueIDBDatabase::iterateCursorInBackingStore):
+        (WebKit::UniqueIDBDatabase::didIterateCursorInBackingStore):
+        * DatabaseProcess/IndexedDB/UniqueIDBDatabase.h:
+
+        * Shared/WebCrossThreadCopier.cpp:
+        (WebCore::Vector<char>>::copy):
+        * Shared/WebCrossThreadCopier.h:
+
 2014-01-27  Joseph Pecoraro  <pecoraro@apple.com>
 
         WebKit2: Enable -Wimplicit-fallthrough and add FALLTHROUGH annotation where needed

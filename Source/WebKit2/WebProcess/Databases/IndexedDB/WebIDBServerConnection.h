@@ -109,6 +109,9 @@ private:
     void didDeleteIndex(uint64_t requestID, bool success);
     void didPutRecord(uint64_t requestID, const WebCore::IDBKeyData&, uint32_t errorCode, const String& errorMessage);
     void didGetRecord(uint64_t requestID, const WebCore::IDBGetResult&, uint32_t errorCode, const String& errorMessage);
+    void didOpenCursor(uint64_t requestID, int64_t cursorID, uint32_t errorCode, const String& errorMessage);
+    void didAdvanceCursor(uint64_t requestID, WebCore::IDBKeyData&, WebCore::IDBKeyData&, const IPC::DataReference&, uint32_t errorCode, const String& errorMessage);
+    void didIterateCursor(uint64_t requestID, WebCore::IDBKeyData&, WebCore::IDBKeyData&, const IPC::DataReference&, uint32_t errorCode, const String& errorMessage);
 
     uint64_t m_serverConnectionIdentifier;
 
