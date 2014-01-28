@@ -1,5 +1,11 @@
 2014-01-28  Anders Carlsson  <andersca@apple.com>
 
+        Turn stack stats back off.
+
+        * wtf/StackStats.cpp:
+
+2014-01-28  Anders Carlsson  <andersca@apple.com>
+
         Use std::mutex instead of WTF::Mutex in WTF
         https://bugs.webkit.org/show_bug.cgi?id=127783
 

@@ -36,7 +36,7 @@
 // checkpoint. By default, we only log checkpoints that establish new
 // max values.
 
-#define ENABLE_VERBOSE_STACK_STATS 1
+#define ENABLE_VERBOSE_STACK_STATS 0
 
 
 namespace WTF {
