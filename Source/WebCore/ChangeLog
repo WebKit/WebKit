@@ -1,5 +1,12 @@
 2014-01-27  Andy Estes  <aestes@apple.com>
 
+        Update bindings test expectations after r162872
+
+        * bindings/scripts/test/ObjC/DOMTestInterface.h:
+        * bindings/scripts/test/ObjC/DOMTestObj.h:
+
+2014-01-27  Andy Estes  <aestes@apple.com>
+
         Scrub WebKit API headers of WTF macros
         https://bugs.webkit.org/show_bug.cgi?id=127706
 
