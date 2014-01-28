@@ -1,3 +1,21 @@
+2014-01-27  Brady Eidson  <beidson@apple.com>
+
+        IDB: Rename "IDBTransactionIdentifier" to be more general purpose (take 2)
+        https://bugs.webkit.org/show_bug.cgi?id=127717
+
+        Reviewed by Tim Horton.
+
+        Update all related variable names since the type no longer contains the relevant info.
+
+        * DatabaseProcess/IndexedDB/UniqueIDBDatabase.cpp:
+        * DatabaseProcess/IndexedDB/UniqueIDBDatabase.h:
+        * DatabaseProcess/IndexedDB/UniqueIDBDatabaseBackingStore.h:
+        * DatabaseProcess/IndexedDB/sqlite/SQLiteIDBTransaction.cpp:
+        * DatabaseProcess/IndexedDB/sqlite/SQLiteIDBTransaction.h:
+        * DatabaseProcess/IndexedDB/sqlite/UniqueIDBDatabaseBackingStoreSQLite.cpp:
+        * DatabaseProcess/IndexedDB/sqlite/UniqueIDBDatabaseBackingStoreSQLite.h:
+        * Shared/WebCrossThreadCopier.cpp:
+
 2014-01-27  Anders Carlsson  <andersca@apple.com>
 
         Copy relevant code from the iOS version of WKView to WKWebView

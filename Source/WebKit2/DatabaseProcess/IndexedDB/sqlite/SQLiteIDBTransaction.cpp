@@ -34,8 +34,8 @@ using namespace WebCore;
 
 namespace WebKit {
 
-SQLiteIDBTransaction::SQLiteIDBTransaction(const IDBIdentifier& identifier, IndexedDB::TransactionMode mode)
-    : m_identifier(identifier)
+SQLiteIDBTransaction::SQLiteIDBTransaction(const IDBIdentifier& transactionIdentifier, IndexedDB::TransactionMode mode)
+    : m_identifier(transactionIdentifier)
     , m_mode(mode)
 {
 }

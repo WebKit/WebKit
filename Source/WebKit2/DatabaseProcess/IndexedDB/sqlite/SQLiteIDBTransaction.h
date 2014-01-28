@@ -47,14 +47,14 @@ namespace WebKit {
 class SQLiteIDBTransaction {
     WTF_MAKE_NONCOPYABLE(SQLiteIDBTransaction);
 public:
-    static std::unique_ptr<SQLiteIDBTransaction> create(const IDBIdentifier& identifier, WebCore::IndexedDB::TransactionMode mode)
+    static std::unique_ptr<SQLiteIDBTransaction> create(const IDBIdentifier& transactionIdentifier, WebCore::IndexedDB::TransactionMode mode)
     {
-        return std::unique_ptr<SQLiteIDBTransaction>(new SQLiteIDBTransaction(identifier, mode));
+        return std::unique_ptr<SQLiteIDBTransaction>(new SQLiteIDBTransaction(transactionIdentifier, mode));
     }
 
     ~SQLiteIDBTransaction();
 
-    const IDBIdentifier& identifier() const { return m_identifier; }
+    const IDBIdentifier& transactionIdentifier() const { return m_identifier; }
 
     bool begin(WebCore::SQLiteDatabase&);
     bool commit();
@@ -65,7 +65,7 @@ public:
     bool inProgress() const;
 
 private:
-    SQLiteIDBTransaction(const IDBIdentifier&, WebCore::IndexedDB::TransactionMode);
+    SQLiteIDBTransaction(const IDBIdentifier& transactionIdentifier, WebCore::IndexedDB::TransactionMode);
 
     IDBIdentifier m_identifier;
     WebCore::IndexedDB::TransactionMode m_mode;

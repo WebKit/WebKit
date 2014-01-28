@@ -40,9 +40,9 @@ UniqueIDBDatabaseIdentifier CrossThreadCopierBase<false, false, UniqueIDBDatabas
     return identifier.isolatedCopy();
 }
 
-IDBIdentifier CrossThreadCopierBase<false, false, IDBIdentifier>::copy(const IDBIdentifier& identifier)
+IDBIdentifier CrossThreadCopierBase<false, false, IDBIdentifier>::copy(const IDBIdentifier& transactionIdentifier)
 {
-    return identifier.isolatedCopy();
+    return transactionIdentifier.isolatedCopy();
 }
 
 Vector<int64_t> CrossThreadCopierBase<false, false, Vector<int64_t>>::copy(const Vector<int64_t>& vector)

@@ -267,11 +267,11 @@ std::unique_ptr<IDBDatabaseMetadata> UniqueIDBDatabaseBackingStoreSQLite::getOrE
     return metadata;
 }
 
-bool UniqueIDBDatabaseBackingStoreSQLite::establishTransaction(const IDBIdentifier& identifier, const Vector<int64_t>&, WebCore::IndexedDB::TransactionMode mode)
+bool UniqueIDBDatabaseBackingStoreSQLite::establishTransaction(const IDBIdentifier& transactionIdentifier, const Vector<int64_t>&, WebCore::IndexedDB::TransactionMode mode)
 {
     ASSERT(!isMainThread());
 
-    if (!m_transactions.add(identifier, SQLiteIDBTransaction::create(identifier, mode)).isNewEntry) {
+    if (!m_transactions.add(transactionIdentifier, SQLiteIDBTransaction::create(transactionIdentifier, mode)).isNewEntry) {
         LOG_ERROR("Attempt to establish transaction identifier that already exists");
         return false;
     }
@@ -279,11 +279,11 @@ bool UniqueIDBDatabaseBackingStoreSQLite::establishTransaction(const IDBIdentifi
     return true;
 }
 
-bool UniqueIDBDatabaseBackingStoreSQLite::beginTransaction(const IDBIdentifier& identifier)
+bool UniqueIDBDatabaseBackingStoreSQLite::beginTransaction(const IDBIdentifier& transactionIdentifier)
 {
     ASSERT(!isMainThread());
 
-    SQLiteIDBTransaction* transaction = m_transactions.get(identifier);
+    SQLiteIDBTransaction* transaction = m_transactions.get(transactionIdentifier);
     if (!transaction) {
         LOG_ERROR("Attempt to begin a transaction that hasn't been established");
         return false;
@@ -292,11 +292,11 @@ bool UniqueIDBDatabaseBackingStoreSQLite::beginTransaction(const IDBIdentifier& 
     return transaction->begin(*m_sqliteDB);
 }
 
-bool UniqueIDBDatabaseBackingStoreSQLite::commitTransaction(const IDBIdentifier& identifier)
+bool UniqueIDBDatabaseBackingStoreSQLite::commitTransaction(const IDBIdentifier& transactionIdentifier)
 {
     ASSERT(!isMainThread());
 
-    SQLiteIDBTransaction* transaction = m_transactions.get(identifier);
+    SQLiteIDBTransaction* transaction = m_transactions.get(transactionIdentifier);
     if (!transaction) {
         LOG_ERROR("Attempt to commit a transaction that hasn't been established");
         return false;
@@ -305,11 +305,11 @@ bool UniqueIDBDatabaseBackingStoreSQLite::commitTransaction(const IDBIdentifier&
     return transaction->commit();
 }
 
-bool UniqueIDBDatabaseBackingStoreSQLite::resetTransaction(const IDBIdentifier& identifier)
+bool UniqueIDBDatabaseBackingStoreSQLite::resetTransaction(const IDBIdentifier& transactionIdentifier)
 {
     ASSERT(!isMainThread());
 
-    SQLiteIDBTransaction* transaction = m_transactions.get(identifier);
+    SQLiteIDBTransaction* transaction = m_transactions.get(transactionIdentifier);
     if (!transaction) {
         LOG_ERROR("Attempt to reset a transaction that hasn't been established");
         return false;
@@ -318,11 +318,11 @@ bool UniqueIDBDatabaseBackingStoreSQLite::resetTransaction(const IDBIdentifier& 
     return transaction->reset();
 }
 
-bool UniqueIDBDatabaseBackingStoreSQLite::rollbackTransaction(const IDBIdentifier& identifier)
+bool UniqueIDBDatabaseBackingStoreSQLite::rollbackTransaction(const IDBIdentifier& transactionIdentifier)
 {
     ASSERT(!isMainThread());
 
-    SQLiteIDBTransaction* transaction = m_transactions.get(identifier);
+    SQLiteIDBTransaction* transaction = m_transactions.get(transactionIdentifier);
     if (!transaction) {
         LOG_ERROR("Attempt to rollback a transaction that hasn't been established");
         return false;
@@ -331,13 +331,13 @@ bool UniqueIDBDatabaseBackingStoreSQLite::rollbackTransaction(const IDBIdentifie
     return transaction->rollback();
 }
 
-bool UniqueIDBDatabaseBackingStoreSQLite::changeDatabaseVersion(const IDBIdentifier& identifier, uint64_t newVersion)
+bool UniqueIDBDatabaseBackingStoreSQLite::changeDatabaseVersion(const IDBIdentifier& transactionIdentifier, uint64_t newVersion)
 {
     ASSERT(!isMainThread());
     ASSERT(m_sqliteDB);
     ASSERT(m_sqliteDB->isOpen());
 
-    SQLiteIDBTransaction* transaction = m_transactions.get(identifier);
+    SQLiteIDBTransaction* transaction = m_transactions.get(transactionIdentifier);
     if (!transaction || !transaction->inProgress()) {
         LOG_ERROR("Attempt to change database version with an established, in-progress transaction");
         return false;
@@ -360,13 +360,13 @@ bool UniqueIDBDatabaseBackingStoreSQLite::changeDatabaseVersion(const IDBIdentif
     return true;
 }
 
-bool UniqueIDBDatabaseBackingStoreSQLite::createObjectStore(const IDBIdentifier& identifier, const IDBObjectStoreMetadata& metadata)
+bool UniqueIDBDatabaseBackingStoreSQLite::createObjectStore(const IDBIdentifier& transactionIdentifier, const IDBObjectStoreMetadata& metadata)
 {
     ASSERT(!isMainThread());
     ASSERT(m_sqliteDB);
     ASSERT(m_sqliteDB->isOpen());
 
-    SQLiteIDBTransaction* transaction = m_transactions.get(identifier);
+    SQLiteIDBTransaction* transaction = m_transactions.get(transactionIdentifier);
     if (!transaction || !transaction->inProgress()) {
         LOG_ERROR("Attempt to change database version with an established, in-progress transaction");
         return false;
@@ -397,13 +397,13 @@ bool UniqueIDBDatabaseBackingStoreSQLite::createObjectStore(const IDBIdentifier&
     return true;
 }
 
-bool UniqueIDBDatabaseBackingStoreSQLite::deleteObjectStore(const IDBIdentifier& identifier, int64_t objectStoreID)
+bool UniqueIDBDatabaseBackingStoreSQLite::deleteObjectStore(const IDBIdentifier& transactionIdentifier, int64_t objectStoreID)
 {
     ASSERT(!isMainThread());
     ASSERT(m_sqliteDB);
     ASSERT(m_sqliteDB->isOpen());
 
-    SQLiteIDBTransaction* transaction = m_transactions.get(identifier);
+    SQLiteIDBTransaction* transaction = m_transactions.get(transactionIdentifier);
     if (!transaction || !transaction->inProgress()) {
         LOG_ERROR("Attempt to change database version with an established, in-progress transaction");
         return false;
@@ -444,7 +444,7 @@ bool UniqueIDBDatabaseBackingStoreSQLite::deleteObjectStore(const IDBIdentifier&
         }
 
         for (auto indexID : indexIDs) {
-            if (!deleteIndex(identifier, objectStoreID, indexID))
+            if (!deleteIndex(transactionIdentifier, objectStoreID, indexID))
                 return false;
         }
     }
@@ -456,13 +456,13 @@ bool UniqueIDBDatabaseBackingStoreSQLite::deleteObjectStore(const IDBIdentifier&
     return true;
 }
 
-bool UniqueIDBDatabaseBackingStoreSQLite::clearObjectStore(const IDBIdentifier& identifier, int64_t objectStoreID)
+bool UniqueIDBDatabaseBackingStoreSQLite::clearObjectStore(const IDBIdentifier& transactionIdentifier, int64_t objectStoreID)
 {
     ASSERT(!isMainThread());
     ASSERT(m_sqliteDB);
     ASSERT(m_sqliteDB->isOpen());
 
-    SQLiteIDBTransaction* transaction = m_transactions.get(identifier);
+    SQLiteIDBTransaction* transaction = m_transactions.get(transactionIdentifier);
     if (!transaction || !transaction->inProgress()) {
         LOG_ERROR("Attempt to change database version with an establish, in-progress transaction");
         return false;
@@ -486,13 +486,13 @@ bool UniqueIDBDatabaseBackingStoreSQLite::clearObjectStore(const IDBIdentifier& 
     return true;
 }
 
-bool UniqueIDBDatabaseBackingStoreSQLite::createIndex(const IDBIdentifier& identifier, int64_t objectStoreID, const WebCore::IDBIndexMetadata& metadata)
+bool UniqueIDBDatabaseBackingStoreSQLite::createIndex(const IDBIdentifier& transactionIdentifier, int64_t objectStoreID, const WebCore::IDBIndexMetadata& metadata)
 {
     ASSERT(!isMainThread());
     ASSERT(m_sqliteDB);
     ASSERT(m_sqliteDB->isOpen());
 
-    SQLiteIDBTransaction* transaction = m_transactions.get(identifier);
+    SQLiteIDBTransaction* transaction = m_transactions.get(transactionIdentifier);
     if (!transaction || !transaction->inProgress()) {
         LOG_ERROR("Attempt to create index without an established, in-progress transaction");
         return false;
@@ -524,13 +524,13 @@ bool UniqueIDBDatabaseBackingStoreSQLite::createIndex(const IDBIdentifier& ident
     return true;
 }
 
-bool UniqueIDBDatabaseBackingStoreSQLite::deleteIndex(const IDBIdentifier& identifier, int64_t objectStoreID, int64_t indexID)
+bool UniqueIDBDatabaseBackingStoreSQLite::deleteIndex(const IDBIdentifier& transactionIdentifier, int64_t objectStoreID, int64_t indexID)
 {
     ASSERT(!isMainThread());
     ASSERT(m_sqliteDB);
     ASSERT(m_sqliteDB->isOpen());
 
-    SQLiteIDBTransaction* transaction = m_transactions.get(identifier);
+    SQLiteIDBTransaction* transaction = m_transactions.get(transactionIdentifier);
     if (!transaction || !transaction->inProgress()) {
         LOG_ERROR("Attempt to delete index without an established, in-progress transaction");
         return false;
@@ -555,25 +555,25 @@ bool UniqueIDBDatabaseBackingStoreSQLite::deleteIndex(const IDBIdentifier& ident
     return true;
 }
 
-PassRefPtr<IDBKey> UniqueIDBDatabaseBackingStoreSQLite::generateKey(const IDBIdentifier&, int64_t objectStoreID)
+PassRefPtr<IDBKey> UniqueIDBDatabaseBackingStoreSQLite::generateKey(const IDBIdentifier& transactionIdentifier, int64_t objectStoreID)
 {
     // FIXME (<rdar://problem/15877909>): Implement
     return nullptr;
 }
 
-bool UniqueIDBDatabaseBackingStoreSQLite::keyExistsInObjectStore(const IDBIdentifier&, int64_t objectStoreID, const IDBKey&, bool& keyExists)
+bool UniqueIDBDatabaseBackingStoreSQLite::keyExistsInObjectStore(const IDBIdentifier& transactionIdentifier, int64_t objectStoreID, const IDBKey&, bool& keyExists)
 {
     // FIXME: When Get support is implemented, we need to implement this also (<rdar://problem/15779644>)
     return false;
 }
 
-bool UniqueIDBDatabaseBackingStoreSQLite::putRecord(const IDBIdentifier& identifier, int64_t objectStoreID, const IDBKey& key, const uint8_t* valueBuffer, size_t valueSize)
+bool UniqueIDBDatabaseBackingStoreSQLite::putRecord(const IDBIdentifier& transactionIdentifier, int64_t objectStoreID, const IDBKey& key, const uint8_t* valueBuffer, size_t valueSize)
 {
     ASSERT(!isMainThread());
     ASSERT(m_sqliteDB);
     ASSERT(m_sqliteDB->isOpen());
 
-    SQLiteIDBTransaction* transaction = m_transactions.get(identifier);
+    SQLiteIDBTransaction* transaction = m_transactions.get(transactionIdentifier);
     if (!transaction || !transaction->inProgress()) {
         LOG_ERROR("Attempt to put a record into database without an established, in-progress transaction");
         return false;
@@ -603,19 +603,19 @@ bool UniqueIDBDatabaseBackingStoreSQLite::putRecord(const IDBIdentifier& identif
     return true;
 }
 
-bool UniqueIDBDatabaseBackingStoreSQLite::updateKeyGenerator(const IDBIdentifier&, int64_t objectStoreId, const IDBKey&, bool checkCurrent)
+bool UniqueIDBDatabaseBackingStoreSQLite::updateKeyGenerator(const IDBIdentifier& transactionIdentifier, int64_t objectStoreId, const IDBKey&, bool checkCurrent)
 {
     // FIXME (<rdar://problem/15877909>): Implement
     return false;
 }
 
-bool UniqueIDBDatabaseBackingStoreSQLite::getKeyRecordFromObjectStore(const IDBIdentifier& identifier, int64_t objectStoreID, const WebCore::IDBKey& key, RefPtr<WebCore::SharedBuffer>& result)
+bool UniqueIDBDatabaseBackingStoreSQLite::getKeyRecordFromObjectStore(const IDBIdentifier& transactionIdentifier, int64_t objectStoreID, const WebCore::IDBKey& key, RefPtr<WebCore::SharedBuffer>& result)
 {
     ASSERT(!isMainThread());
     ASSERT(m_sqliteDB);
     ASSERT(m_sqliteDB->isOpen());
 
-    SQLiteIDBTransaction* transaction = m_transactions.get(identifier);
+    SQLiteIDBTransaction* transaction = m_transactions.get(transactionIdentifier);
     if (!transaction || !transaction->inProgress()) {
         LOG_ERROR("Attempt to put a record into database without an established, in-progress transaction");
         return false;
@@ -655,13 +655,13 @@ bool UniqueIDBDatabaseBackingStoreSQLite::getKeyRecordFromObjectStore(const IDBI
     return true;
 }
 
-bool UniqueIDBDatabaseBackingStoreSQLite::getKeyRangeRecordFromObjectStore(const IDBIdentifier& identifier, int64_t objectStoreID, const WebCore::IDBKeyRange& keyRange, RefPtr<WebCore::SharedBuffer>& result, RefPtr<WebCore::IDBKey>& resultKey)
+bool UniqueIDBDatabaseBackingStoreSQLite::getKeyRangeRecordFromObjectStore(const IDBIdentifier& transactionIdentifier, int64_t objectStoreID, const WebCore::IDBKeyRange& keyRange, RefPtr<WebCore::SharedBuffer>& result, RefPtr<WebCore::IDBKey>& resultKey)
 {
     ASSERT(!isMainThread());
     ASSERT(m_sqliteDB);
     ASSERT(m_sqliteDB->isOpen());
 
-    SQLiteIDBTransaction* transaction = m_transactions.get(identifier);
+    SQLiteIDBTransaction* transaction = m_transactions.get(transactionIdentifier);
     if (!transaction || !transaction->inProgress()) {
         LOG_ERROR("Attempt to put a record into database without an established, in-progress transaction");
         return false;

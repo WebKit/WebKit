@@ -68,21 +68,21 @@ public:
 
     void getOrEstablishIDBDatabaseMetadata(std::function<void(bool, const WebCore::IDBDatabaseMetadata&)> completionCallback);
 
-    void openTransaction(const IDBIdentifier&, const Vector<int64_t>& objectStoreIDs, WebCore::IndexedDB::TransactionMode, std::function<void(bool)> successCallback);
-    void beginTransaction(const IDBIdentifier&, std::function<void(bool)> successCallback);
-    void commitTransaction(const IDBIdentifier&, std::function<void(bool)> successCallback);
-    void resetTransaction(const IDBIdentifier&, std::function<void(bool)> successCallback);
-    void rollbackTransaction(const IDBIdentifier&, std::function<void(bool)> successCallback);
+    void openTransaction(const IDBIdentifier& transactionIdentifier, const Vector<int64_t>& objectStoreIDs, WebCore::IndexedDB::TransactionMode, std::function<void(bool)> successCallback);
+    void beginTransaction(const IDBIdentifier& transactionIdentifier, std::function<void(bool)> successCallback);
+    void commitTransaction(const IDBIdentifier& transactionIdentifier, std::function<void(bool)> successCallback);
+    void resetTransaction(const IDBIdentifier& transactionIdentifier, std::function<void(bool)> successCallback);
+    void rollbackTransaction(const IDBIdentifier& transactionIdentifier, std::function<void(bool)> successCallback);
 
-    void changeDatabaseVersion(const IDBIdentifier&, uint64_t newVersion, std::function<void(bool)> successCallback);
-    void createObjectStore(const IDBIdentifier&, const WebCore::IDBObjectStoreMetadata&, std::function<void(bool)> successCallback);
-    void deleteObjectStore(const IDBIdentifier&, int64_t objectStoreID, std::function<void(bool)> successCallback);
-    void clearObjectStore(const IDBIdentifier&, int64_t objectStoreID, std::function<void(bool)> successCallback);
-    void createIndex(const IDBIdentifier&, int64_t objectStoreID, const WebCore::IDBIndexMetadata&, std::function<void(bool)> successCallback);
-    void deleteIndex(const IDBIdentifier&, int64_t objectStoreID, int64_t indexID, std::function<void(bool)> successCallback);
+    void changeDatabaseVersion(const IDBIdentifier& transactionIdentifier, uint64_t newVersion, std::function<void(bool)> successCallback);
+    void createObjectStore(const IDBIdentifier& transactionIdentifier, const WebCore::IDBObjectStoreMetadata&, std::function<void(bool)> successCallback);
+    void deleteObjectStore(const IDBIdentifier& transactionIdentifier, int64_t objectStoreID, std::function<void(bool)> successCallback);
+    void clearObjectStore(const IDBIdentifier& transactionIdentifier, int64_t objectStoreID, std::function<void(bool)> successCallback);
+    void createIndex(const IDBIdentifier& transactionIdentifier, int64_t objectStoreID, const WebCore::IDBIndexMetadata&, std::function<void(bool)> successCallback);
+    void deleteIndex(const IDBIdentifier& transactionIdentifier, int64_t objectStoreID, int64_t indexID, std::function<void(bool)> successCallback);
 
-    void putRecord(const IDBIdentifier&, int64_t objectStoreID, const WebCore::IDBKeyData&, const IPC::DataReference& value, int64_t putMode, const Vector<int64_t>& indexIDs, const Vector<Vector<WebCore::IDBKeyData>>& indexKeys, std::function<void(const WebCore::IDBKeyData&, uint32_t, const String&)> callback);
-    void getRecord(const IDBIdentifier&, int64_t objectStoreID, int64_t indexID, const WebCore::IDBKeyRangeData&, WebCore::IndexedDB::CursorType, std::function<void(const WebCore::IDBGetResult&, uint32_t, const String&)> callback);
+    void putRecord(const IDBIdentifier& transactionIdentifier, int64_t objectStoreID, const WebCore::IDBKeyData&, const IPC::DataReference& value, int64_t putMode, const Vector<int64_t>& indexIDs, const Vector<Vector<WebCore::IDBKeyData>>& indexKeys, std::function<void(const WebCore::IDBKeyData&, uint32_t, const String&)> callback);
+    void getRecord(const IDBIdentifier& transactionIdentifier, int64_t objectStoreID, int64_t indexID, const WebCore::IDBKeyRangeData&, WebCore::IndexedDB::CursorType, std::function<void(const WebCore::IDBGetResult&, uint32_t, const String&)> callback);
 
 private:
     UniqueIDBDatabase(const UniqueIDBDatabaseIdentifier&);
@@ -109,33 +109,33 @@ private:
     // Returns true if this origin can use the same databases as the given origin.
     bool canShareDatabases(const SecurityOriginData&, const SecurityOriginData&) const;
 
-    void postTransactionOperation(const IDBIdentifier&, std::unique_ptr<AsyncTask>, std::function<void(bool)> successCallback);
+    void postTransactionOperation(const IDBIdentifier& transactionIdentifier, std::unique_ptr<AsyncTask>, std::function<void(bool)> successCallback);
     
     // To be called from the database workqueue thread only
     void performNextDatabaseTask();
     void postMainThreadTask(std::unique_ptr<AsyncTask>);
     void openBackingStoreAndReadMetadata(const UniqueIDBDatabaseIdentifier&, const String& databaseDirectory);
-    void openBackingStoreTransaction(const IDBIdentifier&, const Vector<int64_t>& objectStoreIDs, WebCore::IndexedDB::TransactionMode);
+    void openBackingStoreTransaction(const IDBIdentifier& transactionIdentifier, const Vector<int64_t>& objectStoreIDs, WebCore::IndexedDB::TransactionMode);
     void beginBackingStoreTransaction(const IDBIdentifier&);
     void commitBackingStoreTransaction(const IDBIdentifier&);
     void resetBackingStoreTransaction(const IDBIdentifier&);
     void rollbackBackingStoreTransaction(const IDBIdentifier&);
 
-    void changeDatabaseVersionInBackingStore(uint64_t requestID, const IDBIdentifier&, uint64_t newVersion);
-    void createObjectStoreInBackingStore(uint64_t requestID, const IDBIdentifier&, const WebCore::IDBObjectStoreMetadata&);
-    void deleteObjectStoreInBackingStore(uint64_t requestID, const IDBIdentifier&, int64_t objectStoreID);
-    void clearObjectStoreInBackingStore(uint64_t requestID, const IDBIdentifier&, int64_t objectStoreID);
-    void createIndexInBackingStore(uint64_t requestID, const IDBIdentifier&, int64_t objectStoreID, const WebCore::IDBIndexMetadata&);
-    void deleteIndexInBackingStore(uint64_t requestID, const IDBIdentifier&, int64_t objectStoreID, int64_t indexID);
-    void putRecordInBackingStore(uint64_t requestID, const IDBIdentifier&, const WebCore::IDBObjectStoreMetadata&, const WebCore::IDBKeyData&, const Vector<uint8_t>& value, int64_t putMode, const Vector<int64_t>& indexIDs, const Vector<Vector<WebCore::IDBKeyData>>& indexKeys);
-    void getRecordFromBackingStore(uint64_t requestID, const IDBIdentifier&, const WebCore::IDBObjectStoreMetadata&, int64_t indexID, const WebCore::IDBKeyRangeData&, WebCore::IndexedDB::CursorType);
+    void changeDatabaseVersionInBackingStore(uint64_t requestID, const IDBIdentifier& transactionIdentifier, uint64_t newVersion);
+    void createObjectStoreInBackingStore(uint64_t requestID, const IDBIdentifier& transactionIdentifier, const WebCore::IDBObjectStoreMetadata&);
+    void deleteObjectStoreInBackingStore(uint64_t requestID, const IDBIdentifier& transactionIdentifier, int64_t objectStoreID);
+    void clearObjectStoreInBackingStore(uint64_t requestID, const IDBIdentifier& transactionIdentifier, int64_t objectStoreID);
+    void createIndexInBackingStore(uint64_t requestID, const IDBIdentifier& transactionIdentifier, int64_t objectStoreID, const WebCore::IDBIndexMetadata&);
+    void deleteIndexInBackingStore(uint64_t requestID, const IDBIdentifier& transactionIdentifier, int64_t objectStoreID, int64_t indexID);
+    void putRecordInBackingStore(uint64_t requestID, const IDBIdentifier& transactionIdentifier, const WebCore::IDBObjectStoreMetadata&, const WebCore::IDBKeyData&, const Vector<uint8_t>& value, int64_t putMode, const Vector<int64_t>& indexIDs, const Vector<Vector<WebCore::IDBKeyData>>& indexKeys);
+    void getRecordFromBackingStore(uint64_t requestID, const IDBIdentifier& transactionIdentifier, const WebCore::IDBObjectStoreMetadata&, int64_t indexID, const WebCore::IDBKeyRangeData&, WebCore::IndexedDB::CursorType);
 
     void shutdownBackingStore();
 
     // Callbacks from the database workqueue thread, to be performed on the main thread only
     void performNextMainThreadTask();
     void didOpenBackingStoreAndReadMetadata(const WebCore::IDBDatabaseMetadata&, bool success);
-    void didCompleteTransactionOperation(const IDBIdentifier&, bool success);
+    void didCompleteTransactionOperation(const IDBIdentifier& transactionIdentifier, bool success);
     void didChangeDatabaseVersion(uint64_t requestID, bool success);
     void didCreateObjectStore(uint64_t requestID, bool success);
     void didDeleteObjectStore(uint64_t requestID, bool success);

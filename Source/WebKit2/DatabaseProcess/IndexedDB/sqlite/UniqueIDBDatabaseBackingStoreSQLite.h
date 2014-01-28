@@ -54,26 +54,26 @@ public:
 
     virtual std::unique_ptr<WebCore::IDBDatabaseMetadata> getOrEstablishMetadata() override;
 
-    virtual bool establishTransaction(const IDBIdentifier&, const Vector<int64_t>& objectStoreIDs, WebCore::IndexedDB::TransactionMode) override;
+    virtual bool establishTransaction(const IDBIdentifier& transactionIdentifier, const Vector<int64_t>& objectStoreIDs, WebCore::IndexedDB::TransactionMode) override;
     virtual bool beginTransaction(const IDBIdentifier&) override;
     virtual bool commitTransaction(const IDBIdentifier&) override;
     virtual bool resetTransaction(const IDBIdentifier&) override;
     virtual bool rollbackTransaction(const IDBIdentifier&) override;
 
-    virtual bool changeDatabaseVersion(const IDBIdentifier&, uint64_t newVersion) override;
-    virtual bool createObjectStore(const IDBIdentifier&, const WebCore::IDBObjectStoreMetadata&) override;
-    virtual bool deleteObjectStore(const IDBIdentifier&, int64_t objectStoreID) override;
-    virtual bool clearObjectStore(const IDBIdentifier&, int64_t objectStoreID) override;
-    virtual bool createIndex(const IDBIdentifier&, int64_t objectStoreID, const WebCore::IDBIndexMetadata&) override;
-    virtual bool deleteIndex(const IDBIdentifier&, int64_t objectStoreID, int64_t indexID) override;
+    virtual bool changeDatabaseVersion(const IDBIdentifier& transactionIdentifier, uint64_t newVersion) override;
+    virtual bool createObjectStore(const IDBIdentifier& transactionIdentifier, const WebCore::IDBObjectStoreMetadata&) override;
+    virtual bool deleteObjectStore(const IDBIdentifier& transactionIdentifier, int64_t objectStoreID) override;
+    virtual bool clearObjectStore(const IDBIdentifier& transactionIdentifier, int64_t objectStoreID) override;
+    virtual bool createIndex(const IDBIdentifier& transactionIdentifier, int64_t objectStoreID, const WebCore::IDBIndexMetadata&) override;
+    virtual bool deleteIndex(const IDBIdentifier& transactionIdentifier, int64_t objectStoreID, int64_t indexID) override;
 
-    virtual PassRefPtr<WebCore::IDBKey> generateKey(const IDBIdentifier&, int64_t objectStoreID) override;
-    virtual bool keyExistsInObjectStore(const IDBIdentifier&, int64_t objectStoreID, const WebCore::IDBKey&, bool& keyExists) override;
-    virtual bool putRecord(const IDBIdentifier&, int64_t objectStoreID, const WebCore::IDBKey&, const uint8_t* valueBuffer, size_t valueSize) override;
-    virtual bool updateKeyGenerator(const IDBIdentifier&, int64_t objectStoreId, const WebCore::IDBKey&, bool checkCurrent) override;
+    virtual PassRefPtr<WebCore::IDBKey> generateKey(const IDBIdentifier& transactionIdentifier, int64_t objectStoreID) override;
+    virtual bool keyExistsInObjectStore(const IDBIdentifier& transactionIdentifier, int64_t objectStoreID, const WebCore::IDBKey&, bool& keyExists) override;
+    virtual bool putRecord(const IDBIdentifier& transactionIdentifier, int64_t objectStoreID, const WebCore::IDBKey&, const uint8_t* valueBuffer, size_t valueSize) override;
+    virtual bool updateKeyGenerator(const IDBIdentifier& transactionIdentifier, int64_t objectStoreId, const WebCore::IDBKey&, bool checkCurrent) override;
 
-    virtual bool getKeyRecordFromObjectStore(const IDBIdentifier&, int64_t objectStoreID, const WebCore::IDBKey&, RefPtr<WebCore::SharedBuffer>& result) override;
-    virtual bool getKeyRangeRecordFromObjectStore(const IDBIdentifier&, int64_t objectStoreID, const WebCore::IDBKeyRange&, RefPtr<WebCore::SharedBuffer>& result, RefPtr<WebCore::IDBKey>& resultKey) override;
+    virtual bool getKeyRecordFromObjectStore(const IDBIdentifier& transactionIdentifier, int64_t objectStoreID, const WebCore::IDBKey&, RefPtr<WebCore::SharedBuffer>& result) override;
+    virtual bool getKeyRangeRecordFromObjectStore(const IDBIdentifier& transactionIdentifier, int64_t objectStoreID, const WebCore::IDBKeyRange&, RefPtr<WebCore::SharedBuffer>& result, RefPtr<WebCore::IDBKey>& resultKey) override;
 
 private:
     UniqueIDBDatabaseBackingStoreSQLite(const UniqueIDBDatabaseIdentifier&, const String& databaseDirectory);
