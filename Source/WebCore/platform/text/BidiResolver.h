@@ -307,10 +307,8 @@ private:
 template <class Iterator, class Run>
 BidiResolver<Iterator, Run>::~BidiResolver()
 {
-    // The owner of this resolver should have handled the isolated runs
-    // or should never have called enterIsolate().
+    // The owner of this resolver should have handled the isolated runs.
     ASSERT(m_isolatedRuns.isEmpty());
-    ASSERT(!m_nestedIsolateCount);
 }
 #endif
 

@@ -872,6 +872,15 @@ void RenderBlockFlow::appendFloatingObjectToLastLine(FloatingObject* floatingObj
     lastRootBox()->appendFloat(floatingObject->renderer());
 }
 
+static inline void setupResolverToResumeInIsolate(InlineBidiResolver& resolver, RenderObject* root, RenderObject* startObject)
+{
+    if (root != startObject) {
+        RenderObject* parent = startObject->parent();
+        setupResolverToResumeInIsolate(resolver, root, parent);
+        notifyObserverEnteredObject(&resolver, startObject);
+    }
+}
+
 // FIXME: BidiResolver should have this logic.
 static inline void constructBidiRunsForSegment(InlineBidiResolver& topResolver, BidiRunList<BidiRun>& bidiRuns, const InlineIterator& endOfRuns, VisualDirectionOverride override, bool previousLineBrokeCleanly)
 {
@@ -906,10 +915,7 @@ static inline void constructBidiRunsForSegment(InlineBidiResolver& topResolver, 
         }
         isolatedResolver.setStatus(BidiStatus(direction, isOverride(unicodeBidi)));
 
-        // FIXME: The fact that we have to construct an Iterator here
-        // currently prevents this code from moving into BidiResolver.
-        if (!bidiFirstSkippingEmptyInlines(*isolatedInline, &isolatedResolver))
-            continue;
+        setupResolverToResumeInIsolate(isolatedResolver, isolatedInline, &startObj);
 
         // The starting position is the beginning of the first run within the isolate that was identified
         // during the earlier call to createBidiRunsForLine. This can be but is not necessarily the

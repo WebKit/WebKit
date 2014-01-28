@@ -396,7 +396,8 @@ void RenderLineBoxList::dirtyLinesFromChangedChild(RenderBoxModelObject* contain
         // space, the search for |child|'s linebox will go past the leading space to the previous linebox and select that
         // one as |box|. If we hit that situation here, dirty the |box| actually containing the child too. 
         bool insertedAfterLeadingSpace = box->lineBreakObj() == child->previousSibling();
-        if (adjacentBox && (adjacentBox->lineBreakObj() == child || child->isBR() || (curr && curr->isBR()) || insertedAfterLeadingSpace))
+        if (adjacentBox && (adjacentBox->lineBreakObj() == child || child->isBR() || (curr && curr->isBR())
+            || insertedAfterLeadingSpace || isIsolated(container->style().unicodeBidi())))
             adjacentBox->markDirty();
     }
 }

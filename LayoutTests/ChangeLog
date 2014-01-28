@@ -1,3 +1,22 @@
+2014-01-28  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Fixing several incorrect assumptions with handling isolated inlines.
+        https://bugs.webkit.org/show_bug.cgi?id=127608
+
+        Reviewed by Dave Hyatt.
+
+        See file-specific info.
+
+        Merged from Blink: https://chromium.googlesource.com/chromium/blink/+/72698f203b1c50900e535b80945563b92b7eef23
+
+        * fast/text/nested-bidi-assert-expected.txt: Added.
+        * fast/text/nested-bidi-assert.html: Added. Tests that no crash occurs
+        when an isolated inline spans several lines
+        * fast/text/nested-bidi-with-continuation-crash-expected.txt: Added.
+        * fast/text/nested-bidi-with-continuation-crash.html: Added. Tests that
+        no crash occurs when additional isolates need to be set up for a
+        continuation
+
 2014-01-28  Antti Koivisto  <antti@apple.com>
 
         Rebase fast/repaint/background-shorthand-with-gradient-and-height-changes.html after https://trac.webkit.org/r162947
