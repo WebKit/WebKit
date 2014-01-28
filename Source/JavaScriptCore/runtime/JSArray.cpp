@@ -541,7 +541,7 @@ void JSArray::push(ExecState* exec, JSValue value)
     switch (structure()->indexingType()) {
     case ArrayClass: {
         createInitialUndecided(exec->vm(), 0);
-        // Fall through.
+        FALLTHROUGH;
     }
         
     case ArrayWithUndecided: {
@@ -635,7 +635,7 @@ void JSArray::push(ExecState* exec, JSValue value)
                 setLength(exec, oldLength + 1, true);
             return;
         }
-        // Fall through.
+        FALLTHROUGH;
     }
         
     case ArrayWithArrayStorage: {

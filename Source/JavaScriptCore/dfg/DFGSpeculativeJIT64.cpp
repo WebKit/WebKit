@@ -711,6 +711,14 @@ void SpeculativeJIT::emitCall(Node* node)
     m_jit.addJSCall(fastCall, slowCall, targetToCheck, callType, calleeGPR, m_currentNode->codeOrigin);
 }
 
+// Clang should allow unreachable [[clang::fallthrough]] in template functions if any template expansion uses it
+// http://llvm.org/bugs/show_bug.cgi?id=18619
+#if COMPILER(CLANG) && defined(__has_warning)
+#pragma clang diagnostic push
+#if __has_warning("-Wimplicit-fallthrough")
+#pragma clang diagnostic ignored "-Wimplicit-fallthrough"
+#endif
+#endif
 template<bool strict>
 GPRReg SpeculativeJIT::fillSpeculateInt32Internal(Edge edge, DataFormat& returnFormat)
 {
@@ -798,6 +806,7 @@ GPRReg SpeculativeJIT::fillSpeculateInt32Internal(Edge edge, DataFormat& returnF
         // Fill as JSValue, and fall through.
         info.fillJSValue(*m_stream, gpr, DataFormatJSInt32);
         m_gprs.unlock(gpr);
+        FALLTHROUGH;
     }
 
     case DataFormatJS: {
@@ -815,6 +824,7 @@ GPRReg SpeculativeJIT::fillSpeculateInt32Internal(Edge edge, DataFormat& returnF
         }
         // else fall through & handle as DataFormatJSInt32.
         m_gprs.unlock(gpr);
+        FALLTHROUGH;
     }
 
     case DataFormatJSInt32: {
@@ -888,6 +898,7 @@ GPRReg SpeculativeJIT::fillSpeculateInt32Internal(Edge edge, DataFormat& returnF
             returnFormat = DataFormatInt32;
             return gpr;
         }
+        FALLTHROUGH;
     }
     case DataFormatCell:
     case DataFormatBoolean:
@@ -906,6 +917,9 @@ GPRReg SpeculativeJIT::fillSpeculateInt32Internal(Edge edge, DataFormat& returnF
         return InvalidGPRReg;
     }
 }
+#if COMPILER(CLANG) && defined(__has_warning)
+#pragma clang diagnostic pop
+#endif
 
 GPRReg SpeculativeJIT::fillSpeculateInt32(Edge edge, DataFormat& returnFormat)
 {
@@ -986,6 +1000,7 @@ GPRReg SpeculativeJIT::fillSpeculateInt52(Edge edge, DataFormat desiredFormat)
         // Fill as JSValue, and fall through.
         info.fillJSValue(*m_stream, gpr, DataFormatJSInt32);
         m_gprs.unlock(gpr);
+        FALLTHROUGH;
     }
 
     case DataFormatJS: {
@@ -1076,7 +1091,7 @@ GPRReg SpeculativeJIT::fillSpeculateInt52(Edge edge, DataFormat desiredFormat)
                 return gpr;
             }
         }
-        
+        FALLTHROUGH;
     case DataFormatCell:
     case DataFormatBoolean:
     case DataFormatJSCell:

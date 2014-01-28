@@ -1,3 +1,59 @@
+2014-01-27  Joseph Pecoraro  <pecoraro@apple.com>
+
+        JavaScriptCore: Enable -Wimplicit-fallthrough and add FALLTHROUGH annotation where needed
+        https://bugs.webkit.org/show_bug.cgi?id=127647
+
+        Reviewed by Anders Carlsson.
+
+        Explicitly annotate switch case fallthroughs in JavaScriptCore and
+        enable warnings for unannotated fallthroughs.
+
+        * dfg/DFGArithMode.h:
+        (doesOverflow):
+        Only insert FALLTHROUGH in release builds. In debug builds, the
+        FALLTHROUGH would be unreachable (due to the ASSERT_NOT_REACHED)
+        and would through a warning.
+
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::fillSpeculateInt32Internal):
+        (JSC::DFG::SpeculativeJIT::fillSpeculateInt52):
+        Due to the templatized nature of this function, a fallthrough
+        in one of the template expansions would be unreachable. Disable
+        the warning for this function.
+
+        * Configurations/Base.xcconfig:
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::CodeBlock):
+        * dfg/DFGCFGSimplificationPhase.cpp:
+        (JSC::DFG::CFGSimplificationPhase::run):
+        * dfg/DFGValidate.cpp:
+        (JSC::DFG::Validate::validateCPS):
+        * parser/Lexer.cpp:
+        (JSC::Lexer<T>::lex):
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::parseStatement):
+        (JSC::Parser<LexerType>::parseProperty):
+        * runtime/JSArray.cpp:
+        (JSC::JSArray::push):
+        * runtime/JSONObject.cpp:
+        (JSC::Walker::walk):
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::putByIndex):
+        (JSC::JSObject::putByIndexBeyondVectorLength):
+        * runtime/JSObject.h:
+        (JSC::JSObject::setIndexQuickly):
+        (JSC::JSObject::initializeIndex):
+        * runtime/LiteralParser.cpp:
+        (JSC::LiteralParser<CharType>::parse):
+        * yarr/YarrInterpreter.cpp:
+        (JSC::Yarr::Interpreter::backtrackParenthesesOnceBegin):
+        (JSC::Yarr::Interpreter::backtrackParenthesesOnceEnd):
+        * yarr/YarrParser.h:
+        (JSC::Yarr::Parser::CharacterClassParserDelegate::atomPatternCharacter):
+        (JSC::Yarr::Parser::CharacterClassParserDelegate::atomBuiltInCharacterClass):
+        (JSC::Yarr::Parser::parseEscape):
+        (JSC::Yarr::Parser::parseTokens):
+
 2014-01-27  Andy Estes  <aestes@apple.com>
 
         Scrub WebKit API headers of WTF macros

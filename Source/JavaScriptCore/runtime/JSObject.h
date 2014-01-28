@@ -328,7 +328,7 @@ public:
                 convertInt32ToDoubleOrContiguousWhilePerformingSetIndex(vm, i, v);
                 return;
             }
-            // Fall through to contiguous case.
+            FALLTHROUGH;
         }
         case ALL_CONTIGUOUS_INDEXING_TYPES: {
             ASSERT(i < m_butterfly->vectorLength());
@@ -384,7 +384,7 @@ public:
                 convertInt32ToDoubleOrContiguousWhilePerformingSetIndex(vm, i, v);
                 break;
             }
-            // Fall through.
+            FALLTHROUGH;
         }
         case ALL_CONTIGUOUS_INDEXING_TYPES: {
             ASSERT(i < m_butterfly->publicLength());

@@ -188,6 +188,7 @@ public:
                         innerChanged = outerChanged = true;
                         break;
                     }
+                    break;
                 }
                     
                 default:

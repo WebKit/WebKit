@@ -119,6 +119,7 @@ private:
                     return;
                 }
                 // Otherwise just fall through - cached character so treat this as Empty.
+                FALLTHROUGH;
 
             case Empty:
                 m_character = ch;
@@ -168,7 +169,7 @@ private:
             case CachedCharacter:
                 // Flush the currently cached character, then fall through.
                 m_delegate.atomCharacterClassAtom(m_character);
-
+                FALLTHROUGH;
             case Empty:
             case AfterCharacterClass:
                 m_state = AfterCharacterClass;
@@ -186,7 +187,7 @@ private:
             case CachedCharacterHyphen:
                 m_delegate.atomCharacterClassAtom(m_character);
                 m_delegate.atomCharacterClassAtom('-');
-                // fall through
+                FALLTHROUGH;
             case AfterCharacterClassHyphen:
                 m_delegate.atomCharacterClassBuiltIn(classID, invert);
                 m_state = Empty;
@@ -349,6 +350,7 @@ private:
             }
 
             // Fall-through to handle this as an octal escape.
+            FALLTHROUGH;
         }
 
         // Octal escape
@@ -656,7 +658,9 @@ private:
                 }
 
                 restoreState(state);
-            } // if we did not find a complete quantifer, fall through to the default case.
+            }
+            // if we did not find a complete quantifer, fall through to the default case.
+            FALLTHROUGH;
 
             default:
                 m_delegate.atomPatternCharacter(consume());

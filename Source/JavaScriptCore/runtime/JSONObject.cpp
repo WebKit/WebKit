@@ -659,9 +659,9 @@ NEVER_INLINE JSValue Walker::walk(JSValue unfiltered)
                 JSArray* array = asArray(inValue);
                 arrayStack.push(array);
                 indexStack.append(0);
-                // fallthrough
             }
             arrayStartVisitMember:
+            FALLTHROUGH;
             case ArrayStartVisitMember: {
                 JSArray* array = arrayStack.peek();
                 uint32_t index = indexStack.last();
@@ -686,7 +686,7 @@ NEVER_INLINE JSValue Walker::walk(JSValue unfiltered)
                     goto stateUnknown;
                 } else
                     outValue = inValue;
-                // fallthrough
+                FALLTHROUGH;
             }
             case ArrayEndVisitMember: {
                 JSArray* array = arrayStack.peek();
@@ -712,9 +712,9 @@ NEVER_INLINE JSValue Walker::walk(JSValue unfiltered)
                 indexStack.append(0);
                 propertyStack.append(PropertyNameArray(m_exec));
                 object->methodTable()->getOwnPropertyNames(object, m_exec, propertyStack.last(), ExcludeDontEnumProperties);
-                // fallthrough
             }
             objectStartVisitMember:
+            FALLTHROUGH;
             case ObjectStartVisitMember: {
                 JSObject* object = objectStack.peek();
                 uint32_t index = indexStack.last();
@@ -741,7 +741,7 @@ NEVER_INLINE JSValue Walker::walk(JSValue unfiltered)
                     goto stateUnknown;
                 } else
                     outValue = inValue;
-                // fallthrough
+                FALLTHROUGH;
             }
             case ObjectEndVisitMember: {
                 JSObject* object = objectStack.peek();

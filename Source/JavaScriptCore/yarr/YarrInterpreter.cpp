@@ -707,6 +707,7 @@ public:
             return true;
         case QuantifierNonGreedy:
             ASSERT(backTrack->begin != notFound);
+            FALLTHROUGH;
         case QuantifierFixedCount:
             break;
         }
@@ -727,6 +728,7 @@ public:
                 context->term -= term.atom.parenthesesWidth;
                 return false;
             }
+            FALLTHROUGH;
         case QuantifierNonGreedy:
             if (backTrack->begin == notFound) {
                 backTrack->begin = input.getPos();
@@ -742,6 +744,7 @@ public:
                 context->term -= term.atom.parenthesesWidth;
                 return true;
             }
+            FALLTHROUGH;
         case QuantifierFixedCount:
             break;
         }

@@ -1133,6 +1133,7 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseStatement(Tre
         if (directiveLiteralLength)
             *directiveLiteralLength = m_token.m_location.endOffset - m_token.m_location.startOffset;
         nonTrivialExpressionCount = m_nonTrivialExpressionCount;
+        FALLTHROUGH;
     default:
         TreeStatement exprStatement = parseExpressionStatement(context);
         if (directive && nonTrivialExpressionCount != m_nonTrivialExpressionCount)
@@ -1681,6 +1682,7 @@ template <class TreeBuilder> TreeProperty Parser<LexerType>::parseProperty(TreeB
     namedProperty:
     case IDENT:
         wasIdent = true;
+        FALLTHROUGH;
     case STRING: {
         const Identifier* ident = m_token.m_data.ident;
         if (complete || (wasIdent && (*ident == m_vm->propertyNames->get || *ident == m_vm->propertyNames->set)))

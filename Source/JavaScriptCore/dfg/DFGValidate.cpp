@@ -341,6 +341,7 @@ private:
                     case Phantom:
                         if (m_graph.m_form == LoadStore && !j)
                             break;
+                        FALLTHROUGH;
                     default:
                         VALIDATE((node, edge), !phisInThisBlock.contains(edge.node()));
                         break;

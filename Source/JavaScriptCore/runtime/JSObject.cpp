@@ -439,7 +439,7 @@ void JSObject::putByIndex(JSCell* cell, ExecState* exec, unsigned propertyName, 
             putByIndex(cell, exec, propertyName, value, shouldThrow);
             return;
         }
-        // Fall through.
+        FALLTHROUGH;
     }
         
     case ALL_CONTIGUOUS_INDEXING_TYPES: {
@@ -2048,7 +2048,7 @@ void JSObject::putByIndexBeyondVectorLength(ExecState* exec, unsigned i, JSValue
         SparseArrayValueMap* map = arrayStorage()->m_sparseMap.get();
         if (!(map && map->contains(i)) && attemptToInterceptPutByIndexOnHole(exec, i, value, shouldThrow))
             return;
-        // Otherwise, fall though.
+        FALLTHROUGH;
     }
 
     case NonArrayWithArrayStorage:

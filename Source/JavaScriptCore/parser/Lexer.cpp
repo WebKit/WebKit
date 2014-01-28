@@ -1607,7 +1607,7 @@ start:
                 }
             }
         }
-        // Fall through into CharacterNumber
+        FALLTHROUGH;
     case CharacterNumber:
         if (LIKELY(token != NUMBER)) {
             if (!parseDecimal(tokenData->doubleValue)) {
@@ -1656,7 +1656,7 @@ inNumberAfterDecimalPoint:
         break;
     case CharacterIdentifierStart:
         ASSERT(isIdentStart(m_current));
-        // Fall through into CharacterBackSlash.
+        FALLTHROUGH;
     case CharacterBackSlash:
         if (lexerFlags & LexexFlagsDontBuildKeywords)
             token = parseIdentifier<false>(tokenData, lexerFlags, strictMode);
