@@ -33,6 +33,7 @@
 #include "InjectedBundleDOMWindowExtension.h"
 #include "InjectedBundleNavigationAction.h"
 #include "InjectedBundleUserMessageCoders.h"
+#include "NavigationActionData.h"
 #include "PluginView.h"
 #include "WebBackForwardListProxy.h"
 #include "WebContextMessages.h"
@@ -678,8 +679,12 @@ void WebFrameLoaderClient::dispatchDecidePolicyForNewWindowAction(const Navigati
 
     uint64_t listenerID = m_frame->setUpPolicyListener(std::move(function));
 
-    // Notify the UIProcess.
-    webPage->send(Messages::WebPageProxy::DecidePolicyForNewWindowAction(m_frame->frameID(), action->navigationType(), action->modifiers(), action->mouseButton(), request, frameName, listenerID, InjectedBundleUserMessageEncoder(userData.get())));
+    NavigationActionData navigationActionData;
+    navigationActionData.navigationType = action->navigationType();
+    navigationActionData.modifiers = action->modifiers();
+    navigationActionData.mouseButton = action->mouseButton();
+
+    webPage->send(Messages::WebPageProxy::DecidePolicyForNewWindowAction(m_frame->frameID(), navigationActionData, request, frameName, listenerID, InjectedBundleUserMessageEncoder(userData.get())));
 }
 
 void WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction(const NavigationAction& navigationAction, const ResourceRequest& request, PassRefPtr<FormState> prpFormState, FramePolicyFunction function)
@@ -729,8 +734,13 @@ void WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction(const Navigat
         break;
     }
 
+    NavigationActionData navigationActionData;
+    navigationActionData.navigationType = action->navigationType();
+    navigationActionData.modifiers = action->modifiers();
+    navigationActionData.mouseButton = action->mouseButton();
+
     // Notify the UIProcess.
-    if (!webPage->sendSync(Messages::WebPageProxy::DecidePolicyForNavigationAction(m_frame->frameID(), action->navigationType(), action->modifiers(), action->mouseButton(), originatingFrame ? originatingFrame->frameID() : 0, navigationAction.resourceRequest(), request, listenerID, InjectedBundleUserMessageEncoder(userData.get())), Messages::WebPageProxy::DecidePolicyForNavigationAction::Reply(receivedPolicyAction, policyAction, downloadID)))
+    if (!webPage->sendSync(Messages::WebPageProxy::DecidePolicyForNavigationAction(m_frame->frameID(), navigationActionData, originatingFrame ? originatingFrame->frameID() : 0, navigationAction.resourceRequest(), request, listenerID, InjectedBundleUserMessageEncoder(userData.get())), Messages::WebPageProxy::DecidePolicyForNavigationAction::Reply(receivedPolicyAction, policyAction, downloadID)))
         return;
 
     // We call this synchronously because WebCore cannot gracefully handle a frame load without a synchronous navigation policy reply.

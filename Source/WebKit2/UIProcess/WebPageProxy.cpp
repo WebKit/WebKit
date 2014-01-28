@@ -43,6 +43,7 @@
 #include "NativeWebKeyboardEvent.h"
 #include "NativeWebMouseEvent.h"
 #include "NativeWebWheelEvent.h"
+#include "NavigationActionData.h"
 #include "NotificationPermissionRequest.h"
 #include "NotificationPermissionRequestManager.h"
 #include "PageClient.h"
@@ -2442,8 +2443,7 @@ void WebPageProxy::frameDidBecomeFrameSet(uint64_t frameID, bool value)
         m_frameSetLargestFrame = value ? m_mainFrame : 0;
 }
 
-// PolicyClient
-void WebPageProxy::decidePolicyForNavigationAction(uint64_t frameID, uint32_t opaqueNavigationType, uint32_t opaqueModifiers, int32_t opaqueMouseButton, uint64_t originatingFrameID, const WebCore::ResourceRequest& originalRequest, const ResourceRequest& request, uint64_t listenerID, IPC::MessageDecoder& decoder, bool& receivedPolicyAction, uint64_t& policyAction, uint64_t& downloadID)
+void WebPageProxy::decidePolicyForNavigationAction(uint64_t frameID, const NavigationActionData& navigationActionData, uint64_t originatingFrameID, const WebCore::ResourceRequest& originalRequest, const ResourceRequest& request, uint64_t listenerID, IPC::MessageDecoder& decoder, bool& receivedPolicyAction, uint64_t& policyAction, uint64_t& downloadID)
 {
     RefPtr<API::Object> userData;
     WebContextUserMessageDecoder messageDecoder(userData, process());
@@ -2460,9 +2460,6 @@ void WebPageProxy::decidePolicyForNavigationAction(uint64_t frameID, uint32_t op
     MESSAGE_CHECK_URL(request.url());
     MESSAGE_CHECK_URL(originalRequest.url());
 
-    NavigationType navigationType = static_cast<NavigationType>(opaqueNavigationType);
-    WebEvent::Modifiers modifiers = static_cast<WebEvent::Modifiers>(opaqueModifiers);
-    WebMouseEvent::Button mouseButton = static_cast<WebMouseEvent::Button>(opaqueMouseButton);
     WebFrameProxy* originatingFrame = m_process->webFrame(originatingFrameID);
     
     RefPtr<WebFramePolicyListenerProxy> listener = frame->setUpPolicyListenerProxy(listenerID);
@@ -2472,7 +2469,7 @@ void WebPageProxy::decidePolicyForNavigationAction(uint64_t frameID, uint32_t op
     m_inDecidePolicyForNavigationAction = true;
     m_syncNavigationActionPolicyActionIsValid = false;
 
-    m_policyClient->decidePolicyForNavigationAction(this, frame, navigationType, modifiers, mouseButton, originatingFrame, originalRequest, request, listener.get(), userData.get());
+    m_policyClient->decidePolicyForNavigationAction(this, frame, navigationActionData.navigationType, navigationActionData.modifiers, navigationActionData.mouseButton, originatingFrame, originalRequest, request, listener.get(), userData.get());
 
     m_inDecidePolicyForNavigationAction = false;
 
@@ -2484,7 +2481,7 @@ void WebPageProxy::decidePolicyForNavigationAction(uint64_t frameID, uint32_t op
     }
 }
 
-void WebPageProxy::decidePolicyForNewWindowAction(uint64_t frameID, uint32_t opaqueNavigationType, uint32_t opaqueModifiers, int32_t opaqueMouseButton, const ResourceRequest& request, const String& frameName, uint64_t listenerID, IPC::MessageDecoder& decoder)
+void WebPageProxy::decidePolicyForNewWindowAction(uint64_t frameID, const NavigationActionData& navigationActionData, const ResourceRequest& request, const String& frameName, uint64_t listenerID, IPC::MessageDecoder& decoder)
 {
     RefPtr<API::Object> userData;
     WebContextUserMessageDecoder messageDecoder(userData, process());
@@ -2495,12 +2492,9 @@ void WebPageProxy::decidePolicyForNewWindowAction(uint64_t frameID, uint32_t opa
     MESSAGE_CHECK(frame);
     MESSAGE_CHECK_URL(request.url());
 
-    NavigationType navigationType = static_cast<NavigationType>(opaqueNavigationType);
-    WebEvent::Modifiers modifiers = static_cast<WebEvent::Modifiers>(opaqueModifiers);
-    WebMouseEvent::Button mouseButton = static_cast<WebMouseEvent::Button>(opaqueMouseButton);
     RefPtr<WebFramePolicyListenerProxy> listener = frame->setUpPolicyListenerProxy(listenerID);
 
-    m_policyClient->decidePolicyForNewWindowAction(this, frame, navigationType, modifiers, mouseButton, request, frameName, listener.get(), userData.get());
+    m_policyClient->decidePolicyForNewWindowAction(this, frame, navigationActionData.navigationType, navigationActionData.modifiers, navigationActionData.mouseButton, request, frameName, listener.get(), userData.get());
 }
 
 void WebPageProxy::decidePolicyForResponse(uint64_t frameID, const ResourceResponse& response, const ResourceRequest& request, bool canShowMIMEType, uint64_t listenerID, IPC::MessageDecoder& decoder)

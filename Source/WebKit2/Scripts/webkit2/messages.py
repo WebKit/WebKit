@@ -212,6 +212,7 @@ def struct_or_class(namespace, type):
         'WebKit::DrawingAreaInfo',
         'WebKit::EditorState',
         'WebKit::InteractionInformationAtPosition',
+        'WebKit::NavigationActionData',
         'WebKit::NetworkProcessCreationParameters',
         'WebKit::PlatformPopupMenuData',
         'WebKit::PluginCreationParameters',

@@ -106,8 +106,8 @@ messages -> WebPageProxy {
 
     # Policy messages
     DecidePolicyForResponseSync(uint64_t frameID, WebCore::ResourceResponse response, WebCore::ResourceRequest request, bool canShowMIMEType, uint64_t listenerID, WebKit::InjectedBundleUserMessageEncoder userData) -> (bool receivedPolicyAction, uint64_t policyAction, uint64_t downloadID) Variadic
-    DecidePolicyForNavigationAction(uint64_t frameID, uint32_t navigationType, uint32_t modifiers, int32_t mouseButton, uint64_t originatingFrameID, WebCore::ResourceRequest originalRequest, WebCore::ResourceRequest request, uint64_t listenerID, WebKit::InjectedBundleUserMessageEncoder userData) -> (bool receivedPolicyAction, uint64_t policyAction, uint64_t downloadID) Variadic
-    DecidePolicyForNewWindowAction(uint64_t frameID, uint32_t navigationType, uint32_t modifiers, int32_t mouseButton, WebCore::ResourceRequest request, String frameName, uint64_t listenerID, WebKit::InjectedBundleUserMessageEncoder userData) Variadic
+    DecidePolicyForNavigationAction(uint64_t frameID, WebKit::NavigationActionData navigationActionData, uint64_t originatingFrameID, WebCore::ResourceRequest originalRequest, WebCore::ResourceRequest request, uint64_t listenerID, WebKit::InjectedBundleUserMessageEncoder userData) -> (bool receivedPolicyAction, uint64_t policyAction, uint64_t downloadID) Variadic
+    DecidePolicyForNewWindowAction(uint64_t frameID, WebKit::NavigationActionData navigationActionData, WebCore::ResourceRequest request, String frameName, uint64_t listenerID, WebKit::InjectedBundleUserMessageEncoder userData) Variadic
     UnableToImplementPolicy(uint64_t frameID, WebCore::ResourceError error, WebKit::InjectedBundleUserMessageEncoder userData)  Variadic
 
     # Progress messages

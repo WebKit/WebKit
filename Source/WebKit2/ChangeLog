@@ -1,3 +1,27 @@
+2014-01-28  Anders Carlsson  <andersca@apple.com>
+
+        Add a NavigationActionData object for easy storage of navigation action data
+        https://bugs.webkit.org/show_bug.cgi?id=127787
+
+        Reviewed by Tim Horton.
+
+        * Scripts/webkit2/messages.py:
+        (struct_or_class):
+        * Shared/NavigationActionData.cpp: Added.
+        (WebKit::NavigationActionData::NavigationActionData):
+        (WebKit::NavigationActionData::encode):
+        (WebKit::NavigationActionData::decode):
+        * Shared/NavigationActionData.h: Added.
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::decidePolicyForNavigationAction):
+        (WebKit::WebPageProxy::decidePolicyForNewWindowAction):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::dispatchDecidePolicyForNewWindowAction):
+        (WebKit::WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction):
+
 2014-01-28  Tim Horton  <timothy_horton@apple.com>
 
         Fix the Mountain Lion build.

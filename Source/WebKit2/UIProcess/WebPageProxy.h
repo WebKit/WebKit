@@ -920,8 +920,8 @@ private:
     void didChangeProgress(double);
     void didFinishProgress();
 
-    void decidePolicyForNavigationAction(uint64_t frameID, uint32_t navigationType, uint32_t modifiers, int32_t mouseButton, uint64_t originatingFrameID, const WebCore::ResourceRequest& originalRequest, const WebCore::ResourceRequest& request, uint64_t listenerID, IPC::MessageDecoder&, bool& receivedPolicyAction, uint64_t& policyAction, uint64_t& downloadID);
-    void decidePolicyForNewWindowAction(uint64_t frameID, uint32_t navigationType, uint32_t modifiers, int32_t mouseButton, const WebCore::ResourceRequest&, const String& frameName, uint64_t listenerID, IPC::MessageDecoder&);
+    void decidePolicyForNavigationAction(uint64_t frameID, const NavigationActionData&, uint64_t originatingFrameID, const WebCore::ResourceRequest& originalRequest, const WebCore::ResourceRequest&, uint64_t listenerID, IPC::MessageDecoder&, bool& receivedPolicyAction, uint64_t& policyAction, uint64_t& downloadID);
+    void decidePolicyForNewWindowAction(uint64_t frameID, const NavigationActionData&, const WebCore::ResourceRequest&, const String& frameName, uint64_t listenerID, IPC::MessageDecoder&);
     void decidePolicyForResponse(uint64_t frameID, const WebCore::ResourceResponse&, const WebCore::ResourceRequest&, bool canShowMIMEType, uint64_t listenerID, IPC::MessageDecoder&);
     void decidePolicyForResponseSync(uint64_t frameID, const WebCore::ResourceResponse&, const WebCore::ResourceRequest&, bool canShowMIMEType, uint64_t listenerID, IPC::MessageDecoder&, bool& receivedPolicyAction, uint64_t& policyAction, uint64_t& downloadID);
     void unableToImplementPolicy(uint64_t frameID, const WebCore::ResourceError&, IPC::MessageDecoder&);

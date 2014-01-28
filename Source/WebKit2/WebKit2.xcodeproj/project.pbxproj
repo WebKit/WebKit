@@ -316,6 +316,8 @@
 		1AD25E96167AB08100EA9BCD /* DownloadProxyMap.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AD25E94167AB08100EA9BCD /* DownloadProxyMap.h */; };
 		1AD3306E16B1D991004F60E7 /* StorageAreaImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AD3306C16B1D991004F60E7 /* StorageAreaImpl.cpp */; };
 		1AD3306F16B1D991004F60E7 /* StorageAreaImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AD3306D16B1D991004F60E7 /* StorageAreaImpl.h */; };
+		1ADCB86A189831B30022EE5A /* NavigationActionData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1ADCB868189831B30022EE5A /* NavigationActionData.cpp */; };
+		1ADCB86B189831B30022EE5A /* NavigationActionData.h in Headers */ = {isa = PBXBuildFile; fileRef = 1ADCB869189831B30022EE5A /* NavigationActionData.h */; };
 		1ADF591A1890528E0043C145 /* WKWebViewConfiguration.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1ADF59181890528E0043C145 /* WKWebViewConfiguration.mm */; };
 		1ADF591B1890528E0043C145 /* WKWebViewConfiguration.h in Headers */ = {isa = PBXBuildFile; fileRef = 1ADF59191890528E0043C145 /* WKWebViewConfiguration.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		1AE00D4C182D6EB000087DD7 /* WKBrowsingContextHandle.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1AE00D4A182D6EB000087DD7 /* WKBrowsingContextHandle.mm */; };
@@ -1958,6 +1960,8 @@
 		1AD25E94167AB08100EA9BCD /* DownloadProxyMap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DownloadProxyMap.h; sourceTree = "<group>"; };
 		1AD3306C16B1D991004F60E7 /* StorageAreaImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StorageAreaImpl.cpp; sourceTree = "<group>"; };
 		1AD3306D16B1D991004F60E7 /* StorageAreaImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StorageAreaImpl.h; sourceTree = "<group>"; };
+		1ADCB868189831B30022EE5A /* NavigationActionData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NavigationActionData.cpp; sourceTree = "<group>"; };
+		1ADCB869189831B30022EE5A /* NavigationActionData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NavigationActionData.h; sourceTree = "<group>"; };
 		1ADF59181890528E0043C145 /* WKWebViewConfiguration.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKWebViewConfiguration.mm; sourceTree = "<group>"; };
 		1ADF59191890528E0043C145 /* WKWebViewConfiguration.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKWebViewConfiguration.h; sourceTree = "<group>"; };
 		1AE00D4A182D6EB000087DD7 /* WKBrowsingContextHandle.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKBrowsingContextHandle.mm; sourceTree = "<group>"; };
@@ -3782,6 +3786,8 @@
 				1A92DC1012F8BA460017AF65 /* LayerTreeContext.h */,
 				BCB0AEE8122F53E300B1341E /* MutableDictionary.cpp */,
 				BCB0AEE7122F53E300B1341E /* MutableDictionary.h */,
+				1ADCB868189831B30022EE5A /* NavigationActionData.cpp */,
+				1ADCB869189831B30022EE5A /* NavigationActionData.h */,
 				C02BFF1512514FD8009CCBEA /* NativeWebKeyboardEvent.h */,
 				31EA25D3134F78D6005B1452 /* NativeWebMouseEvent.h */,
 				DF58C6311371AC5800F9A37C /* NativeWebWheelEvent.h */,
@@ -6175,6 +6181,7 @@
 				BC64697011DBE603006455B0 /* APIArray.h in Headers */,
 				BCBCB0CB1215E32100DE59CA /* ImmutableDictionary.h in Headers */,
 				BC204EE311C83E98008F3375 /* InjectedBundle.h in Headers */,
+				1ADCB86B189831B30022EE5A /* NavigationActionData.h in Headers */,
 				935EEBA2127761D0003322B8 /* InjectedBundleBackForwardList.h in Headers */,
 				935EEBA4127761D6003322B8 /* InjectedBundleBackForwardListItem.h in Headers */,
 				BCEE7DC5128B645D009827DA /* InjectedBundleClient.h in Headers */,
@@ -8071,6 +8078,7 @@
 				BC40762A124FF0400068F20A /* WKURLRequestNS.mm in Sources */,
 				512A9760180E031D0039A149 /* DatabaseProcessMessageReceiver.cpp in Sources */,
 				BC40760D124FF0270068F20A /* WKURLResponse.cpp in Sources */,
+				1ADCB86A189831B30022EE5A /* NavigationActionData.cpp in Sources */,
 				BC40762C124FF0400068F20A /* WKURLResponseNS.mm in Sources */,
 				2D819B9E18627EE9001F03D1 /* ViewGestureGeometryCollector.cpp in Sources */,
 				F6113E28126CE19B0057D0A7 /* WKUserContentURLPattern.cpp in Sources */,
