@@ -459,7 +459,7 @@ void TestController::createWebViewWithOptions(WKDictionaryRef options)
         0, // didLayout
         0, // pluginLoadPolicy_deprecatedForUseWithV2
         0, // pluginDidFail
-        0, // pluginLoadPolicy
+        pluginLoadPolicy, // pluginLoadPolicy
         0, // webGLLoadPolicy
     };
     WKPageSetPageLoaderClient(m_mainWebView->page(), &pageLoaderClient.base);

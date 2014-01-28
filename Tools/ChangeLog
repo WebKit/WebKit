@@ -1,3 +1,12 @@
+2014-01-27  Tim Horton  <timothy_horton@apple.com>
+
+        Revert one more tiny part of r162629 that didn't get reverted in r162883.
+
+        ... which was also causing test failures!
+
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::createWebViewWithOptions):
+
 2014-01-27  David Farler  <dfarler@apple.com>
 
         iOS DumpRenderTree.app dies loading fonts
