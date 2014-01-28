@@ -40,12 +40,9 @@
 #include "InspectorValues.h"
 #include "JSLock.h"
 #include "ParserError.h"
+#include "ScriptDebugServer.h"
 #include "SourceCode.h"
 #include <wtf/PassRefPtr.h>
-
-#if ENABLE(JAVASCRIPT_DEBUGGER)
-#include "ScriptDebugServer.h"
-#endif
 
 using namespace JSC;
 
@@ -59,9 +56,7 @@ static bool asBool(const bool* const b)
 InspectorRuntimeAgent::InspectorRuntimeAgent(InjectedScriptManager* injectedScriptManager)
     : InspectorAgentBase(ASCIILiteral("Runtime"))
     , m_injectedScriptManager(injectedScriptManager)
-#if ENABLE(JAVASCRIPT_DEBUGGER)
     , m_scriptDebugServer(nullptr)
-#endif
     , m_enabled(false)
 {
 }
@@ -70,7 +65,6 @@ InspectorRuntimeAgent::~InspectorRuntimeAgent()
 {
 }
 
-#if ENABLE(JAVASCRIPT_DEBUGGER)
 static ScriptDebugServer::PauseOnExceptionsState setPauseOnExceptionsState(ScriptDebugServer* scriptDebugServer, ScriptDebugServer::PauseOnExceptionsState newState)
 {
     ASSERT(scriptDebugServer);
@@ -79,7 +73,6 @@ static ScriptDebugServer::PauseOnExceptionsState setPauseOnExceptionsState(Scrip
         scriptDebugServer->setPauseOnExceptionsState(newState);
     return presentState;
 }
-#endif
 
 static PassRefPtr<Inspector::TypeBuilder::Runtime::ErrorRange> buildErrorRangeObject(const JSTokenLocation& tokenLocation)
 {
@@ -124,11 +117,9 @@ void InspectorRuntimeAgent::evaluate(ErrorString* errorString, const String& exp
     if (injectedScript.hasNoValue())
         return;
 
-#if ENABLE(JAVASCRIPT_DEBUGGER)
     ScriptDebugServer::PauseOnExceptionsState previousPauseOnExceptionsState = ScriptDebugServer::DontPauseOnExceptions;
     if (asBool(doNotPauseOnExceptionsAndMuteConsole))
         previousPauseOnExceptionsState = setPauseOnExceptionsState(m_scriptDebugServer, ScriptDebugServer::DontPauseOnExceptions);
-#endif
     if (asBool(doNotPauseOnExceptionsAndMuteConsole))
         muteConsole();
 
@@ -136,9 +127,7 @@ void InspectorRuntimeAgent::evaluate(ErrorString* errorString, const String& exp
 
     if (asBool(doNotPauseOnExceptionsAndMuteConsole)) {
         unmuteConsole();
-#if ENABLE(JAVASCRIPT_DEBUGGER)
         setPauseOnExceptionsState(m_scriptDebugServer, previousPauseOnExceptionsState);
-#endif
     }
 }
 
@@ -154,11 +143,9 @@ void InspectorRuntimeAgent::callFunctionOn(ErrorString* errorString, const Strin
     if (optionalArguments)
         arguments = (*optionalArguments)->toJSONString();
 
-#if ENABLE(JAVASCRIPT_DEBUGGER)
     ScriptDebugServer::PauseOnExceptionsState previousPauseOnExceptionsState = ScriptDebugServer::DontPauseOnExceptions;
     if (asBool(doNotPauseOnExceptionsAndMuteConsole))
         previousPauseOnExceptionsState = setPauseOnExceptionsState(m_scriptDebugServer, ScriptDebugServer::DontPauseOnExceptions);
-#endif
     if (asBool(doNotPauseOnExceptionsAndMuteConsole))
         muteConsole();
 
@@ -166,9 +153,7 @@ void InspectorRuntimeAgent::callFunctionOn(ErrorString* errorString, const Strin
 
     if (asBool(doNotPauseOnExceptionsAndMuteConsole)) {
         unmuteConsole();
-#if ENABLE(JAVASCRIPT_DEBUGGER)
         setPauseOnExceptionsState(m_scriptDebugServer, previousPauseOnExceptionsState);
-#endif
     }
 }
 
@@ -180,18 +165,14 @@ void InspectorRuntimeAgent::getProperties(ErrorString* errorString, const String
         return;
     }
 
-#if ENABLE(JAVASCRIPT_DEBUGGER)
     ScriptDebugServer::PauseOnExceptionsState previousPauseOnExceptionsState = setPauseOnExceptionsState(m_scriptDebugServer, ScriptDebugServer::DontPauseOnExceptions);
-#endif
     muteConsole();
 
     injectedScript.getProperties(errorString, objectId, ownProperties ? *ownProperties : false, &result);
     injectedScript.getInternalProperties(errorString, objectId, &internalProperties);
 
     unmuteConsole();
-#if ENABLE(JAVASCRIPT_DEBUGGER)
     setPauseOnExceptionsState(m_scriptDebugServer, previousPauseOnExceptionsState);
-#endif
 }
 
 void InspectorRuntimeAgent::releaseObject(ErrorString*, const String& objectId)

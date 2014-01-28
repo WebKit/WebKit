@@ -30,8 +30,6 @@
 #ifndef ScriptDebugServer_h
 #define ScriptDebugServer_h
 
-#if ENABLE(JAVASCRIPT_DEBUGGER)
-
 #include "ScriptBreakpoint.h"
 #include "ScriptDebugListener.h"
 #include "bindings/ScriptObject.h"
@@ -114,7 +112,5 @@ private:
 };
 
 } // namespace Inspector
-
-#endif // ENABLE(JAVASCRIPT_DEBUGGER)
 
 #endif // ScriptDebugServer_h

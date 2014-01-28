@@ -30,8 +30,6 @@
 #ifndef ScriptDebugListener_h
 #define ScriptDebugListener_h
 
-#if ENABLE(JAVASCRIPT_DEBUGGER)
-
 #include "debugger/Debugger.h"
 #include <wtf/Forward.h>
 #include <wtf/text/WTFString.h>
@@ -79,7 +77,5 @@ public:
 };
 
 } // namespace Inspector
-
-#endif // ENABLE(JAVASCRIPT_DEBUGGER)
 
 #endif // ScriptDebugListener_h

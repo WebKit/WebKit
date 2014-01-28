@@ -27,7 +27,6 @@
 #include "JSJavaScriptCallFramePrototype.h"
 
 #if ENABLE(INSPECTOR)
-#if ENABLE(JAVASCRIPT_DEBUGGER)
 
 #include "Error.h"
 #include "GetterSetter.h"
@@ -234,5 +233,4 @@ EncodedJSValue JSC_HOST_CALL jsJavaScriptCallFrameConstantCATCH_SCOPE(ExecState*
 
 } // namespace Inspector
 
-#endif // ENABLE(JAVASCRIPT_DEBUGGER)
 #endif // ENABLE(INSPECTOR)

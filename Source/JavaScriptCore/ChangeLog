@@ -1,3 +1,42 @@
+2014-01-28  Mark Lam  <mark.lam@apple.com>
+
+        Remove some unneeded debugger code.
+        https://bugs.webkit.org/show_bug.cgi?id=127805.
+
+        Reviewed by Oliver Hunt.
+
+        JSC will now always support the debugger. Hence, the #if ENABLE(JAVASCRIPT_DEBUGGER)
+        checks can be removed.
+
+        DebuggerCallFrame::callFrame() is also unused and will be removed.
+
+        * debugger/Breakpoint.h:
+        * debugger/Debugger.cpp:
+        * debugger/DebuggerCallFrame.h:
+        * inspector/InjectedScript.cpp:
+        (Inspector::InjectedScript::wrapCallFrames):
+        * inspector/InjectedScript.h:
+        * inspector/JSGlobalObjectScriptDebugServer.cpp:
+        * inspector/JSGlobalObjectScriptDebugServer.h:
+        * inspector/JSJavaScriptCallFrame.cpp:
+        * inspector/JSJavaScriptCallFrame.h:
+        * inspector/JSJavaScriptCallFramePrototype.cpp:
+        * inspector/JSJavaScriptCallFramePrototype.h:
+        * inspector/JavaScriptCallFrame.cpp:
+        * inspector/JavaScriptCallFrame.h:
+        * inspector/ScriptDebugListener.h:
+        * inspector/ScriptDebugServer.cpp:
+        * inspector/ScriptDebugServer.h:
+        * inspector/agents/InspectorDebuggerAgent.cpp:
+        * inspector/agents/InspectorDebuggerAgent.h:
+        * inspector/agents/InspectorRuntimeAgent.cpp:
+        (Inspector::InspectorRuntimeAgent::InspectorRuntimeAgent):
+        (Inspector::setPauseOnExceptionsState):
+        (Inspector::InspectorRuntimeAgent::evaluate):
+        (Inspector::InspectorRuntimeAgent::callFunctionOn):
+        (Inspector::InspectorRuntimeAgent::getProperties):
+        * inspector/agents/InspectorRuntimeAgent.h:
+
 2014-01-28  Geoffrey Garen  <ggaren@apple.com>
 
         REGRESSION: JavascriptCore crash during OS Installation (due to

@@ -27,7 +27,6 @@
 #include "JSGlobalObjectScriptDebugServer.h"
 
 #if ENABLE(INSPECTOR)
-#if ENABLE(JAVASCRIPT_DEBUGGER)
 
 #include "EventLoop.h"
 
@@ -85,5 +84,4 @@ void JSGlobalObjectScriptDebugServer::runEventLoopWhilePaused()
 
 } // namespace Inspector
 
-#endif // ENABLE(JAVASCRIPT_DEBUGGER)
 #endif // ENABLE(INSPECTOR)

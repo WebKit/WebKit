@@ -27,7 +27,6 @@
 #define JSJavaScriptCallFrame_h
 
 #if ENABLE(INSPECTOR)
-#if ENABLE(JAVASCRIPT_DEBUGGER)
 
 #include "JSDestructibleObject.h"
 #include "JavaScriptCallFrame.h"
@@ -96,7 +95,6 @@ JSJavaScriptCallFrame* toJSJavaScriptCallFrame(JSC::JSValue);
 
 } // namespace Inspector
 
-#endif // ENABLE(JAVASCRIPT_DEBUGGER)
 #endif // ENABLE(INSPECTOR)
 
 #endif // !defined(JSJavaScriptCallFrame_h)

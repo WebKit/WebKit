@@ -31,8 +31,6 @@
 #include "config.h"
 #include "ScriptDebugServer.h"
 
-#if ENABLE(JAVASCRIPT_DEBUGGER)
-
 #include "DebuggerCallFrame.h"
 #include "JSJavaScriptCallFrame.h"
 #include "JSLock.h"
@@ -338,5 +336,3 @@ const Vector<ScriptBreakpointAction>& ScriptDebugServer::getActionsForBreakpoint
 }
 
 } // namespace Inspector
-
-#endif // ENABLE(JAVASCRIPT_DEBUGGER)

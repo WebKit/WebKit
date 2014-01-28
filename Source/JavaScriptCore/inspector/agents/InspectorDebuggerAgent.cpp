@@ -31,7 +31,6 @@
 #include "InspectorDebuggerAgent.h"
 
 #if ENABLE(INSPECTOR)
-#if ENABLE(JAVASCRIPT_DEBUGGER)
 
 #include "ContentSearchUtilities.h"
 #include "InjectedScript.h"
@@ -733,5 +732,4 @@ void InspectorDebuggerAgent::didClearGlobalObject()
 
 } // namespace Inspector
 
-#endif // ENABLE(JAVASCRIPT_DEBUGGER)
 #endif // ENABLE(INSPECTOR)

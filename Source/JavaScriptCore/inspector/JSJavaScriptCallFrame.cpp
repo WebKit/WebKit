@@ -27,7 +27,6 @@
 #include "JSJavaScriptCallFrame.h"
 
 #if ENABLE(INSPECTOR)
-#if ENABLE(JAVASCRIPT_DEBUGGER)
 
 #include "Error.h"
 #include "JSCJSValue.h"
@@ -211,5 +210,4 @@ JSJavaScriptCallFrame* toJSJavaScriptCallFrame(JSValue value)
 
 } // namespace Inspector
 
-#endif // ENABLE(JAVASCRIPT_DEBUGGER)
 #endif // ENABLE(INSPECTOR)

@@ -26,8 +26,6 @@
 #ifndef Breakpoint_h
 #define Breakpoint_h
 
-#if ENABLE(JAVASCRIPT_DEBUGGER)
-
 #include "DebuggerPrimitives.h"
 #include <wtf/text/WTFString.h>
 
@@ -64,7 +62,5 @@ struct Breakpoint {
 };
 
 } // namespace JSC
-
-#endif // ENABLE(JAVASCRIPT_DEBUGGER)
 
 #endif // Breakpoint_h

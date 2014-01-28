@@ -63,9 +63,7 @@ public:
     void getProperties(ErrorString*, const String& objectId, bool ownProperties, RefPtr<TypeBuilder::Array<TypeBuilder::Runtime::PropertyDescriptor>>* result);
     void getInternalProperties(ErrorString*, const String& objectId, RefPtr<TypeBuilder::Array<TypeBuilder::Runtime::InternalPropertyDescriptor>>* result);
 
-#if ENABLE(JAVASCRIPT_DEBUGGER)
     PassRefPtr<TypeBuilder::Array<TypeBuilder::Debugger::CallFrame>> wrapCallFrames(const Deprecated::ScriptValue&);
-#endif
     PassRefPtr<TypeBuilder::Runtime::RemoteObject> wrapObject(const Deprecated::ScriptValue&, const String& groupName, bool generatePreview = false) const;
     PassRefPtr<TypeBuilder::Runtime::RemoteObject> wrapTable(const Deprecated::ScriptValue& table, const Deprecated::ScriptValue& columns) const;
 

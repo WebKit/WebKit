@@ -67,9 +67,7 @@ public:
     virtual void releaseObjectGroup(ErrorString*, const String& objectGroup) override final;
     virtual void run(ErrorString*) override;
 
-#if ENABLE(JAVASCRIPT_DEBUGGER)
     void setScriptDebugServer(ScriptDebugServer* scriptDebugServer) { m_scriptDebugServer = scriptDebugServer; }
-#endif
 
     bool enabled() const { return m_enabled; }
 
@@ -86,9 +84,7 @@ protected:
 
 private:
     InjectedScriptManager* m_injectedScriptManager;
-#if ENABLE(JAVASCRIPT_DEBUGGER)
     ScriptDebugServer* m_scriptDebugServer;
-#endif
     bool m_enabled;
 };
 

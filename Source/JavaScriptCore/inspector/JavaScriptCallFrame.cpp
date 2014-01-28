@@ -27,7 +27,6 @@
 #include "JavaScriptCallFrame.h"
 
 #if ENABLE(INSPECTOR)
-#if ENABLE(JAVASCRIPT_DEBUGGER)
 
 using namespace JSC;
 
@@ -53,5 +52,4 @@ JavaScriptCallFrame* JavaScriptCallFrame::caller()
 
 } // namespace Inspector
 
-#endif // ENABLE(JAVASCRIPT_DEBUGGER)
 #endif // ENABLE(INSPECTOR)

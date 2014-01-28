@@ -31,7 +31,6 @@
 #define InspectorDebuggerAgent_h
 
 #if ENABLE(INSPECTOR)
-#if ENABLE(JAVASCRIPT_DEBUGGER)
 
 #include "InspectorJSBackendDispatchers.h"
 #include "InspectorJSFrontendDispatchers.h"
@@ -169,7 +168,6 @@ private:
 
 } // namespace Inspector
 
-#endif // ENABLE(JAVASCRIPT_DEBUGGER)
 #endif // ENABLE(INSPECTOR)
 
 #endif // !defined(InspectorDebuggerAgent_h)
