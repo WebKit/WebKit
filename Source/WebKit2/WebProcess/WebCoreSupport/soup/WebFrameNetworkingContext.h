@@ -50,9 +50,6 @@ private:
     WebFrameNetworkingContext(WebFrame*);
 
     virtual WebCore::NetworkStorageSession& storageSession() const;
-    virtual uint64_t initiatingPageID() const;
-
-    uint64_t m_initiatingPageID;
 };
 
 }

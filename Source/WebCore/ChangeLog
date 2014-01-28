@@ -1,3 +1,26 @@
+2014-01-27  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Make webkit_uri_scheme_request_get_web_view() work with CustomProtocols
+        https://bugs.webkit.org/show_bug.cgi?id=127614
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Add API to set the page identifier that initiated the request to
+        ResourceRequest, and remove the initiatingPageID() method from the
+        NetworkingContext class.
+
+        * platform/network/NetworkingContext.h:
+        * platform/network/ResourceHandle.h:
+        * platform/network/soup/ResourceHandleSoup.cpp:
+        (WebCore::createSoupRequestAndMessageForHandle):
+        * platform/network/soup/ResourceRequest.h:
+        (WebCore::ResourceRequest::ResourceRequest):
+        (WebCore::ResourceRequest::initiatingPageID):
+        (WebCore::ResourceRequest::setInitiatingPageID):
+        * platform/network/soup/ResourceRequestSoup.cpp:
+        (WebCore::ResourceRequest::updateSoupRequest):
+        (WebCore::ResourceRequest::updateFromSoupRequest):
+
 2014-01-27  Tim Horton  <timothy_horton@apple.com>
 
         Lots of varied and random crashes on the scrolling thread (ScrollbarPainters are going away)

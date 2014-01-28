@@ -1,3 +1,13 @@
+2014-01-27  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Make webkit_uri_scheme_request_get_web_view() work with CustomProtocols
+        https://bugs.webkit.org/show_bug.cgi?id=127614
+
+        Reviewed by Gustavo Noronha Silva.
+
+        * TestWebKitAPI/Tests/WebKit2Gtk/TestWebKitWebContext.cpp: Bring
+        back the custom URI scheme WebView check.
+
 2014-01-27  Tim Horton  <timothy_horton@apple.com>
 
         Revert yet one more tiny part of r162629 that didn't get reverted in r162883

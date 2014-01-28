@@ -66,10 +66,6 @@ private:
     virtual WebCore::ResourceError blockedError(const WebCore::ResourceRequest&) const override;
 #endif
 
-#if USE(SOUP)
-    virtual uint64_t initiatingPageID() const;
-#endif
-
     uint64_t m_sessionID;
     bool m_shouldClearReferrerOnHTTPSToHTTPRedirect;
 

@@ -917,18 +917,6 @@ static void networkEventCallback(SoupMessage*, GSocketClientEvent event, GIOStre
 }
 #endif
 
-static const char* gSoupRequestInitiatingPageIDKey = "wk-soup-request-initiating-page-id";
-
-static void setSoupRequestInitiatingPageIDFromNetworkingContext(SoupRequest* request, NetworkingContext* context)
-{
-    if (!context || !context->isValid())
-        return;
-
-    uint64_t* initiatingPageIDPtr = static_cast<uint64_t*>(fastMalloc(sizeof(uint64_t)));
-    *initiatingPageIDPtr = context->initiatingPageID();
-    g_object_set_data_full(G_OBJECT(request), g_intern_static_string(gSoupRequestInitiatingPageIDKey), initiatingPageIDPtr, fastFree);
-}
-
 static bool createSoupMessageForHandleAndRequest(ResourceHandle* handle, const ResourceRequest& request)
 {
     ASSERT(handle);
@@ -1009,7 +997,7 @@ static bool createSoupRequestAndMessageForHandle(ResourceHandle* handle, const R
         return false;
     }
 
-    setSoupRequestInitiatingPageIDFromNetworkingContext(d->m_soupRequest.get(), d->m_context.get());
+    request.updateSoupRequest(d->m_soupRequest.get());
 
     return true;
 }
@@ -1390,12 +1378,6 @@ static gboolean requestTimeoutCallback(gpointer data)
     handle->cancel();
 
     return FALSE;
-}
-
-uint64_t ResourceHandle::getSoupRequestInitiatingPageID(SoupRequest* request)
-{
-    uint64_t* initiatingPageIDPtr = static_cast<uint64_t*>(g_object_get_data(G_OBJECT(request), gSoupRequestInitiatingPageIDKey));
-    return initiatingPageIDPtr ? *initiatingPageIDPtr : 0;
 }
 
 }

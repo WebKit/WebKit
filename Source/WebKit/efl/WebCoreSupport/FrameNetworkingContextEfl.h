@@ -38,7 +38,6 @@ public:
     static PassRefPtr<FrameNetworkingContextEfl> create(Frame*, Evas_Object*);
 
     WebCore::Frame* coreFrame() const { return frame(); }
-    virtual uint64_t initiatingPageID() const;
 
 private:
     virtual WebCore::NetworkStorageSession& storageSession() const;

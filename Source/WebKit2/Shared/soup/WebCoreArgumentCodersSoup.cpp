@@ -42,6 +42,7 @@ namespace IPC {
 void ArgumentCoder<ResourceRequest>::encodePlatformData(ArgumentEncoder& encoder, const ResourceRequest& resourceRequest)
 {
     encoder << static_cast<uint32_t>(resourceRequest.soupMessageFlags());
+    encoder << resourceRequest.initiatingPageID();
 }
 
 bool ArgumentCoder<ResourceRequest>::decodePlatformData(ArgumentDecoder& decoder, ResourceRequest& resourceRequest)
@@ -50,6 +51,12 @@ bool ArgumentCoder<ResourceRequest>::decodePlatformData(ArgumentDecoder& decoder
     if (!decoder.decode(soupMessageFlags))
         return false;
     resourceRequest.setSoupMessageFlags(static_cast<SoupMessageFlags>(soupMessageFlags));
+
+    uint64_t initiatingPageID;
+    if (!decoder.decode(initiatingPageID))
+        return false;
+    resourceRequest.setInitiatingPageID(initiatingPageID);
+
     return true;
 }
 

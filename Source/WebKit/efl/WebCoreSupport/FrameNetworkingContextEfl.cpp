@@ -58,10 +58,4 @@ NetworkStorageSession& FrameNetworkingContextEfl::storageSession() const
     return NetworkStorageSession::defaultStorageSession();
 }
 
-uint64_t FrameNetworkingContextEfl::initiatingPageID() const
-{
-    notImplemented();
-    return 0;
-}
-
 }

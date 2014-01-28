@@ -74,13 +74,13 @@ static void webkit_uri_scheme_request_class_init(WebKitURISchemeRequestClass* re
 {
 }
 
-WebKitURISchemeRequest* webkitURISchemeRequestCreate(uint64_t requestID, WebKitWebContext* webContext, API::URLRequest* urlRequest, WebPageProxy* initiatingPage)
+WebKitURISchemeRequest* webkitURISchemeRequestCreate(uint64_t requestID, WebKitWebContext* webContext, API::URLRequest* urlRequest)
 {
     WebKitURISchemeRequest* request = WEBKIT_URI_SCHEME_REQUEST(g_object_new(WEBKIT_TYPE_URI_SCHEME_REQUEST, NULL));
     request->priv->webContext = webContext;
     request->priv->webRequestManager = webkitWebContextGetRequestManager(webContext);
     request->priv->uri = urlRequest->resourceRequest().url().string().utf8();
-    request->priv->initiatingPage = initiatingPage;
+    request->priv->initiatingPage = WebProcessProxy::webPage(urlRequest->resourceRequest().initiatingPageID());
     request->priv->requestID = requestID;
     return request;
 }

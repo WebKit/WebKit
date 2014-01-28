@@ -32,7 +32,6 @@ public:
     }
 
     WebCore::Frame* coreFrame() const { return frame(); }
-    virtual uint64_t initiatingPageID() const;
 
 private:
     virtual WebCore::NetworkStorageSession& storageSession() const;

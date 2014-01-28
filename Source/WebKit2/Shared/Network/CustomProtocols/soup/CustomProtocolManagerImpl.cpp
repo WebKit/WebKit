@@ -32,7 +32,6 @@
 #include <WebCore/ResourceRequest.h>
 #include <WebCore/ResourceResponse.h>
 #include <WebCore/SoupNetworkSession.h>
-#include <WebCore/SoupURIUtils.h>
 
 namespace WebKit {
 
@@ -193,7 +192,7 @@ void CustomProtocolManagerImpl::send(GTask* task)
     WebKitSoupRequestGeneric* request = WEBKIT_SOUP_REQUEST_GENERIC(g_task_get_source_object(task));
     m_customProtocolMap.set(customProtocolID, std::make_unique<WebSoupRequestAsyncData>(task, request));
 
-    WebCore::ResourceRequest resourceRequest(WebCore::soupURIToKURL(soup_request_get_uri(SOUP_REQUEST(request))));
+    WebCore::ResourceRequest resourceRequest(SOUP_REQUEST(request));
     m_childProcess->send(Messages::CustomProtocolManagerProxy::StartLoading(customProtocolID, resourceRequest), 0);
 }
 

@@ -182,7 +182,6 @@ public:
     void ensureReadBuffer();
     size_t currentStreamPosition() const;
     void didStartRequest();
-    static uint64_t getSoupRequestInitiatingPageID(SoupRequest*);
     static void setHostAllowsAnyHTTPSCertificate(const String&);
     static void setClientCertificate(const String& host, GTlsCertificate*);
     static void setIgnoreSSLErrors(bool);

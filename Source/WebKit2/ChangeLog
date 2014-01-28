@@ -1,3 +1,36 @@
+2014-01-27  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Make webkit_uri_scheme_request_get_web_view() work with CustomProtocols
+        https://bugs.webkit.org/show_bug.cgi?id=127614
+
+        Reviewed by Gustavo Noronha Silva.
+
+        * NetworkProcess/RemoteNetworkingContext.h: Remove
+        initiatingPageID() method.
+        * NetworkProcess/soup/RemoteNetworkingContextSoup.cpp: Ditto.
+        * Shared/Network/CustomProtocols/soup/CustomProtocolManagerImpl.cpp:
+        (WebKit::CustomProtocolManagerImpl::send): Create the request with
+        the ResourceRequest constructor that receives a SoupRequest.
+        * Shared/soup/WebCoreArgumentCodersSoup.cpp:
+        (IPC::ArgumentCoder<ResourceRequest>::encodePlatformData): Encode initiatingPageID.
+        (IPC::ArgumentCoder<ResourceRequest>::decodePlatformData): Decode initiatingPageID.
+        * UIProcess/API/gtk/WebKitURISchemeRequest.cpp:
+        (webkitURISchemeRequestCreate): Remove initiatingPageID parameter
+        and get it from the given ResourceRequest.
+        * UIProcess/API/gtk/WebKitURISchemeRequestPrivate.h:
+        * UIProcess/API/gtk/WebKitWebContext.cpp:
+        (webkitWebContextStartLoadingCustomProtocol): Update to
+        webkitURISchemeRequestCreate API change.
+        * WebProcess/InjectedBundle/API/gtk/WebKitWebPage.cpp:
+        (willSendRequestForFrame): Set the initiatingPageID to the ResourceRequest.
+        * WebProcess/WebCoreSupport/soup/WebFrameNetworkingContext.cpp:
+        (WebKit::WebFrameNetworkingContext::WebFrameNetworkingContext):
+        Remove initiatingPageID() method.
+        * WebProcess/WebCoreSupport/soup/WebFrameNetworkingContext.h:
+        * WebProcess/soup/WebSoupRequestManager.cpp:
+        (WebKit::WebSoupRequestManager::send): Get the initiatingPageID
+        from the SoupRequest using the ResourceRequest API.
+
 2014-01-27  Roger Fong  <roger_fong@apple.com>
 
         WebGLLoadPolicy::WebGLAsk is an unnecessary value.

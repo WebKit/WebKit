@@ -49,10 +49,7 @@ void WebFrameNetworkingContext::ensurePrivateBrowsingSession(uint64_t sessionID)
 
 WebFrameNetworkingContext::WebFrameNetworkingContext(WebFrame* frame)
     : FrameNetworkingContext(frame->coreFrame())
-    , m_initiatingPageID(0)
 {
-    if (WebPage* page = frame->page())
-        m_initiatingPageID = page->pageID();
 }
 
 NetworkStorageSession& WebFrameNetworkingContext::storageSession() const
@@ -61,11 +58,6 @@ NetworkStorageSession& WebFrameNetworkingContext::storageSession() const
         return *SessionTracker::session(SessionTracker::legacyPrivateSessionID);
 
     return NetworkStorageSession::defaultStorageSession();
-}
-
-uint64_t WebFrameNetworkingContext::initiatingPageID() const
-{
-    return m_initiatingPageID;
 }
 
 WebFrameLoaderClient* WebFrameNetworkingContext::webFrameLoaderClient() const

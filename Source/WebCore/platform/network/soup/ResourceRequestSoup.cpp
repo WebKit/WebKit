@@ -117,6 +117,24 @@ void ResourceRequest::updateFromSoupMessage(SoupMessage* soupMessage)
     // doUpdatePlatformRequest somehow.
 }
 
+static const char* gSoupRequestInitiatingPageIDKey = "wk-soup-request-initiating-page-id";
+
+void ResourceRequest::updateSoupRequest(SoupRequest* soupRequest) const
+{
+    if (!m_initiatingPageID)
+        return;
+
+    uint64_t* initiatingPageIDPtr = static_cast<uint64_t*>(fastMalloc(sizeof(uint64_t)));
+    *initiatingPageIDPtr = m_initiatingPageID;
+    g_object_set_data_full(G_OBJECT(soupRequest), g_intern_static_string(gSoupRequestInitiatingPageIDKey), initiatingPageIDPtr, fastFree);
+}
+
+void ResourceRequest::updateFromSoupRequest(SoupRequest* soupRequest)
+{
+    uint64_t* initiatingPageIDPtr = static_cast<uint64_t*>(g_object_get_data(G_OBJECT(soupRequest), gSoupRequestInitiatingPageIDKey));
+    m_initiatingPageID = initiatingPageIDPtr ? *initiatingPageIDPtr : 0;
+}
+
 unsigned initializeMaximumHTTPConnectionCountPerHost()
 {
     // Soup has its own queue control; it wants to have all requests

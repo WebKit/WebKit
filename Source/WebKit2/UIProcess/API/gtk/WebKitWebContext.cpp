@@ -940,8 +940,7 @@ WebSoupCustomProtocolRequestManager* webkitWebContextGetRequestManager(WebKitWeb
 
 void webkitWebContextStartLoadingCustomProtocol(WebKitWebContext* context, uint64_t customProtocolID, API::URLRequest* urlRequest)
 {
-    // FIXME: We need to figure out how to get the initiating page.
-    GRefPtr<WebKitURISchemeRequest> request = adoptGRef(webkitURISchemeRequestCreate(customProtocolID, context, urlRequest, nullptr));
+    GRefPtr<WebKitURISchemeRequest> request = adoptGRef(webkitURISchemeRequestCreate(customProtocolID, context, urlRequest));
     String scheme(String::fromUTF8(webkit_uri_scheme_request_get_scheme(request.get())));
     RefPtr<WebKitURISchemeHandler> handler = context->priv->uriSchemeHandlers.get(scheme);
     ASSERT(handler.get());

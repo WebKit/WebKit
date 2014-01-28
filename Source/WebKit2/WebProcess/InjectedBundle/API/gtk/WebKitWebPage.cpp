@@ -172,6 +172,7 @@ static WKURLRequestRef willSendRequestForFrame(WKBundlePageRef page, WKBundleFra
 
     ResourceRequest resourceRequest;
     webkitURIRequestGetResourceRequest(request.get(), resourceRequest);
+    resourceRequest.setInitiatingPageID(toImpl(page)->pageID());
     RefPtr<API::URLRequest> newRequest = API::URLRequest::create(resourceRequest);
 
     ImmutableDictionary::MapType message;

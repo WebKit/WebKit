@@ -33,10 +33,4 @@ NetworkStorageSession& FrameNetworkingContextGtk::storageSession() const
     return NetworkStorageSession::defaultStorageSession();
 }
 
-uint64_t FrameNetworkingContextGtk::initiatingPageID() const
-{
-    notImplemented();
-    return 0;
-}
-
 }

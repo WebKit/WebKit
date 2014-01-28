@@ -28,6 +28,7 @@
 #define ResourceRequest_h
 
 #include "ResourceRequestBase.h"
+#include "SoupURIUtils.h"
 #include <libsoup/soup.h>
 
 namespace WebCore {
@@ -38,6 +39,7 @@ namespace WebCore {
             : ResourceRequestBase(URL(ParsedURLString, url), UseProtocolCachePolicy)
             , m_acceptEncoding(true)
             , m_soupFlags(static_cast<SoupMessageFlags>(0))
+            , m_initiatingPageID(0)
         {
         }
 
@@ -45,6 +47,7 @@ namespace WebCore {
             : ResourceRequestBase(url, UseProtocolCachePolicy)
             , m_acceptEncoding(true)
             , m_soupFlags(static_cast<SoupMessageFlags>(0))
+            , m_initiatingPageID(0)
         {
         }
 
@@ -52,6 +55,7 @@ namespace WebCore {
             : ResourceRequestBase(url, policy)
             , m_acceptEncoding(true)
             , m_soupFlags(static_cast<SoupMessageFlags>(0))
+            , m_initiatingPageID(0)
         {
             setHTTPReferrer(referrer);
         }
@@ -60,6 +64,7 @@ namespace WebCore {
             : ResourceRequestBase(URL(), UseProtocolCachePolicy)
             , m_acceptEncoding(true)
             , m_soupFlags(static_cast<SoupMessageFlags>(0))
+            , m_initiatingPageID(0)
         {
         }
 
@@ -67,8 +72,18 @@ namespace WebCore {
             : ResourceRequestBase(URL(), UseProtocolCachePolicy)
             , m_acceptEncoding(true)
             , m_soupFlags(static_cast<SoupMessageFlags>(0))
+            , m_initiatingPageID(0)
         {
             updateFromSoupMessage(soupMessage);
+        }
+
+        ResourceRequest(SoupRequest* soupRequest)
+            : ResourceRequestBase(soupURIToKURL(soup_request_get_uri(soupRequest)), UseProtocolCachePolicy)
+            , m_acceptEncoding(true)
+            , m_soupFlags(static_cast<SoupMessageFlags>(0))
+            , m_initiatingPageID(0)
+        {
+            updateFromSoupRequest(soupRequest);
         }
 
         void updateFromDelegatePreservingOldHTTPBody(const ResourceRequest& delegateProvidedRequest) { *this = delegateProvidedRequest; }
@@ -81,9 +96,14 @@ namespace WebCore {
         void updateSoupMessage(SoupMessage*) const;
         SoupMessage* toSoupMessage() const;
         void updateFromSoupMessage(SoupMessage*);
+        void updateSoupRequest(SoupRequest*) const;
+        void updateFromSoupRequest(SoupRequest*);
 
         SoupMessageFlags soupMessageFlags() const { return m_soupFlags; }
         void setSoupMessageFlags(SoupMessageFlags soupFlags) { m_soupFlags = soupFlags; }
+
+        uint64_t initiatingPageID() const { return m_initiatingPageID; }
+        void setInitiatingPageID(uint64_t pageID) { m_initiatingPageID = pageID; }
 
         SoupURI* soupURI() const;
 
@@ -92,6 +112,7 @@ namespace WebCore {
 
         bool m_acceptEncoding : 1;
         SoupMessageFlags m_soupFlags;
+        uint64_t m_initiatingPageID;
 
         void updateSoupMessageMembers(SoupMessage*) const;
         void doUpdatePlatformRequest() { }

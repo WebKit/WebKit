@@ -67,10 +67,6 @@ public:
     virtual ResourceError blockedError(const ResourceRequest&) const = 0;
 #endif
 
-#if USE(SOUP)
-    virtual uint64_t initiatingPageID() const = 0;
-#endif
-
 protected:
     NetworkingContext() { }
 };

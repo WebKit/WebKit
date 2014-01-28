@@ -146,8 +146,7 @@ public:
         test->m_uriSchemeRequest = request;
         test->assertObjectIsDeletedWhenTestFinishes(G_OBJECT(request));
 
-        // FIXME: webkit_uri_scheme_request_get_web_view doesn't work with custom protocols.
-        // g_assert(webkit_uri_scheme_request_get_web_view(request) == test->m_webView);
+        g_assert(webkit_uri_scheme_request_get_web_view(request) == test->m_webView);
 
         GRefPtr<GInputStream> inputStream = adoptGRef(g_memory_input_stream_new());
         test->assertObjectIsDeletedWhenTestFinishes(G_OBJECT(inputStream.get()));

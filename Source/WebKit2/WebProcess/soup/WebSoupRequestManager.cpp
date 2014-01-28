@@ -181,7 +181,7 @@ void WebSoupRequestManager::send(GTask* task)
     uint64_t requestID = generateSoupRequestID();
     m_requestMap.set(requestID, adoptPtr(new WebSoupRequestAsyncData(task, request)));
 
-    uint64_t initiatingPageID = WebCore::ResourceHandle::getSoupRequestInitiatingPageID(soupRequest);
+    uint64_t initiatingPageID = WebCore::ResourceRequest(soupRequest).initiatingPageID();
     m_process->parentProcessConnection()->send(Messages::WebPageProxy::DidReceiveURIRequest(String::fromUTF8(uriString.get()), requestID), initiatingPageID);
 }
 
