@@ -46,9 +46,8 @@ OBJC_CLASS NSString;
 OBJC_CLASS PDFAnnotation;
 OBJC_CLASS PDFLayerController;
 OBJC_CLASS PDFSelection;
-OBJC_CLASS WKPDFLayerControllerDelegate;
 OBJC_CLASS WKPDFPluginAccessibilityObject;
-OBJC_CLASS WKPDFPluginContextMenuTarget;
+OBJC_CLASS WKPDFLayerControllerDelegate;
 
 namespace IPC {
 class DataReference;
@@ -89,7 +88,6 @@ public:
     void clickedLink(NSURL *);
     void saveToPDF();
     void openWithNativeApplication();
-    void openWithPlugin();
     void writeItemsToPasteboard(NSString *pasteboardName, NSArray *items, NSArray *types);
     void showDefinitionForAttributedString(NSAttributedString *, CGPoint);
     void performWebSearch(NSString *);
@@ -104,8 +102,6 @@ public:
     WebCore::IntRect boundsOnScreen() const;
     
     bool showContextMenuAtPoint(const WebCore::IntPoint&);
-
-    void setUsedInPlaceOfBlockedPlugin(bool value, const String& useBlockedPluginContextMenuTitle);
 
 private:
     explicit PDFPlugin(WebFrame*);
@@ -261,9 +257,6 @@ private:
 
     bool m_isPostScript;
     bool m_pdfDocumentWasMutated;
-    bool m_usedInPlaceOfBlockedPlugin;
-
-    String m_useBlockedPluginContextMenuTitle;
 
     WebCore::IntSize m_scrollOffset;
 
@@ -274,8 +267,7 @@ private:
     RetainPtr<CALayer> m_scrollCornerLayer;
     RetainPtr<PDFLayerController> m_pdfLayerController;
     RetainPtr<WKPDFPluginAccessibilityObject> m_accessibilityObject;
-    RetainPtr<WKPDFPluginContextMenuTarget> m_contextMenuTarget;
-
+    
     RefPtr<PDFPluginAnnotation> m_activeAnnotation;
     RefPtr<PDFPluginPasswordField> m_passwordField;
     RefPtr<WebCore::Element> m_annotationContainer;

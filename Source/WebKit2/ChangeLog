@@ -1,3 +1,27 @@
+2014-01-27  Tim Horton  <timothy_horton@apple.com>
+
+        Revert the parts of r162629 that add a new pluginLoadPolicy and the context menu item.
+
+        We're leaving the parts that make us use PDFPlugin instead of showing the blocked
+        plugin indicator intact, though.
+
+        * UIProcess/API/APILoaderClient.h:
+        (API::LoaderClient::pluginLoadPolicy):
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageSetPageLoaderClient):
+        * UIProcess/API/C/WKPageLoaderClient.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::findPlugin):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * WebProcess/Plugins/PDF/PDFPlugin.h:
+        * WebProcess/Plugins/PDF/PDFPlugin.mm:
+        (WebKit::PDFPlugin::PDFPlugin):
+        (WebKit::PDFPlugin::handleContextMenuEvent):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::createPlugin):
+        (WebKit::WebPage::canPluginHandleResponse):
+
 2014-01-27  Anders Carlsson  <andersca@apple.com>
 
         Add a WKContentView initializer that takes a WKWebViewConfiguration

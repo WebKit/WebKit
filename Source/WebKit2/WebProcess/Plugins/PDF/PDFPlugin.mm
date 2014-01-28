@@ -55,7 +55,6 @@
 #import <QuartzCore/QuartzCore.h>
 #import <WebCore/ArchiveResource.h>
 #import <WebCore/Chrome.h>
-#import <WebCore/ChromeClient.h>
 #import <WebCore/Cursor.h>
 #import <WebCore/DocumentLoader.h>
 #import <WebCore/FocusController.h>
@@ -66,7 +65,6 @@
 #import <WebCore/GraphicsContext.h>
 #import <WebCore/HTMLElement.h>
 #import <WebCore/HTMLFormElement.h>
-#import <WebCore/HTMLPlugInElement.h>
 #import <WebCore/LocalizedStrings.h>
 #import <WebCore/MouseEvent.h>
 #import <WebCore/Page.h>
@@ -271,37 +269,6 @@ static const int defaultScrollMagnitudeThresholdForPageFlip = 20;
 
 @end
 
-@interface WKPDFPluginContextMenuTarget : NSObject
-{
-    WebKit::PDFPlugin* _pdfPlugin;
-}
-
-@property(assign) WebKit::PDFPlugin* pdfPlugin;
-
-- (id)initWithPDFPlugin:(WebKit::PDFPlugin *)plugin;
-
-@end
-
-@implementation WKPDFPluginContextMenuTarget
-
-@synthesize pdfPlugin = _pdfPlugin;
-
-- (id)initWithPDFPlugin:(WebKit::PDFPlugin *)plugin
-{
-    if (!(self = [super init]))
-        return nil;
-
-    _pdfPlugin = plugin;
-
-    return self;
-}
-
-- (void)useBlockedPlugin:(id)sender
-{
-    _pdfPlugin->openWithPlugin();
-}
-
-@end
 
 @interface WKPDFPluginScrollbarLayer : CALayer
 {
@@ -532,12 +499,10 @@ PDFPlugin::PDFPlugin(WebFrame* frame)
     : m_frame(frame)
     , m_isPostScript(false)
     , m_pdfDocumentWasMutated(false)
-    , m_usedInPlaceOfBlockedPlugin(false)
     , m_containerLayer(adoptNS([[CALayer alloc] init]))
     , m_contentLayer(adoptNS([[CALayer alloc] init]))
     , m_scrollCornerLayer(adoptNS([[WKPDFPluginScrollbarLayer alloc] initWithPDFPlugin:this]))
     , m_pdfLayerController(adoptNS([[pdfLayerControllerClass() alloc] init]))
-    , m_contextMenuTarget(adoptNS([[WKPDFPluginContextMenuTarget alloc] initWithPDFPlugin:this]))
     , m_pdfLayerControllerDelegate(adoptNS([[WKPDFLayerControllerDelegate alloc] initWithPDFPlugin:this]))
 {
     m_pdfLayerController.get().delegate = m_pdfLayerControllerDelegate.get();
@@ -1492,18 +1457,6 @@ bool PDFPlugin::handleContextMenuEvent(const WebMouseEvent& event)
     IntPoint point = frameView->contentsToScreen(IntRect(frameView->windowToContents(event.position()), IntSize())).location();
     
     if (NSMenu *nsMenu = [m_pdfLayerController menuForEvent:nsEventForWebMouseEvent(event)]) {
-        if (m_usedInPlaceOfBlockedPlugin) {
-            String title = useBlockedPlugInContextMenuTitle();
-
-            if (!m_useBlockedPluginContextMenuTitle.isEmpty())
-                title = m_useBlockedPluginContextMenuTitle;
-
-            NSMenuItem *useBlockedPluginItem = [[[NSMenuItem alloc] initWithTitle:title action:@selector(useBlockedPlugin:) keyEquivalent:@""] autorelease];
-
-            [useBlockedPluginItem setTarget:m_contextMenuTarget.get()];
-            [nsMenu insertItem:useBlockedPluginItem atIndex:0];
-            [nsMenu insertItem:[NSMenuItem separatorItem] atIndex:1];
-        }
         WKPopupContextMenu(nsMenu, point);
         return true;
     }
@@ -1688,11 +1641,6 @@ void PDFPlugin::openWithNativeApplication()
     }
 
     webFrame()->page()->send(Messages::WebPageProxy::OpenPDFFromTemporaryFolderWithNativeApplication(m_temporaryPDFUUID));
-}
-
-void PDFPlugin::openWithPlugin()
-{
-    webFrame()->page()->corePage()->chrome().client().unavailablePluginButtonClicked(pluginView()->pluginElement(), RenderEmbeddedObject::InsecurePluginVersion);
 }
 
 void PDFPlugin::writeItemsToPasteboard(NSString *pasteboardName, NSArray *items, NSArray *types)
@@ -1933,13 +1881,6 @@ NSData *PDFPlugin::liveData() const
 NSObject *PDFPlugin::accessibilityObject() const
 {
     return m_accessibilityObject.get();
-}
-
-
-void PDFPlugin::setUsedInPlaceOfBlockedPlugin(bool value, const String& useBlockedPluginContextMenuTitle)
-{
-    m_usedInPlaceOfBlockedPlugin = value;
-    m_useBlockedPluginContextMenuTitle = useBlockedPluginContextMenuTitle;
 }
 
 } // namespace WebKit

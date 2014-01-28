@@ -91,7 +91,7 @@ public:
     virtual void willGoToBackForwardListItem(WebKit::WebPageProxy*, WebKit::WebBackForwardListItem*, API::Object*) { }
 
 #if ENABLE(NETSCAPE_PLUGIN_API)
-    virtual WebKit::PluginModuleLoadPolicy pluginLoadPolicy(WebKit::WebPageProxy*, WebKit::PluginModuleLoadPolicy currentPluginLoadPolicy, WebKit::ImmutableDictionary*, WTF::String& unavailabilityDescription, WTF::String& useBlockedPluginTitle) { return currentPluginLoadPolicy; }
+    virtual WebKit::PluginModuleLoadPolicy pluginLoadPolicy(WebKit::WebPageProxy*, WebKit::PluginModuleLoadPolicy currentPluginLoadPolicy, WebKit::ImmutableDictionary*, WTF::String& unavailabilityDescription) { return currentPluginLoadPolicy; }
     virtual void didFailToInitializePlugin(WebKit::WebPageProxy*, WebKit::ImmutableDictionary*) { }
     virtual void didBlockInsecurePluginVersion(WebKit::WebPageProxy*, WebKit::ImmutableDictionary*) { }
 #endif // ENABLE(NETSCAPE_PLUGIN_API)
