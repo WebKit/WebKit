@@ -1,3 +1,11 @@
+2014-01-27  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Unreviewed iOS build fix. FALLTHROUGHs for iOS.
+
+        * accessibility/ios/WebAccessibilityObjectWrapperIOS.mm:
+        (-[WebAccessibilityObjectWrapper accessibilityTraits]):
+        (-[WebAccessibilityObjectWrapper determineIsAccessibilityElement]):
+
 2014-01-27  Roger Fong  <roger_fong@apple.com>
 
         WebGLLoadPolicy::WebGLAsk is an unnecessary value.

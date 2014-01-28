@@ -171,7 +171,7 @@ static bool needsBidiLayout(const UChar *characters, unsigned length, UCharDirec
                     foundFirstStrong = true;
                     baseDirection = U_RIGHT_TO_LEFT;
                 }
-                // Fall through to rest of strongly directional cases
+                FALLTHROUGH; // To the rest of strongly directional cases.
             case U_LEFT_TO_RIGHT_EMBEDDING:
             case U_LEFT_TO_RIGHT_OVERRIDE:
             case U_RIGHT_TO_LEFT_EMBEDDING:

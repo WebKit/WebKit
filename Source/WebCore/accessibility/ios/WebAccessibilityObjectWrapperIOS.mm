@@ -514,8 +514,9 @@ static AccessibilityObjectWrapper* AccessibilityUnignoredAncestor(AccessibilityO
         case TextFieldRole:
             if (m_object->isPasswordField())
                 traits |= [self _axSecureTextFieldTrait];
+            FALLTHROUGH;
         case TextAreaRole:
-            traits |= [self _axTextEntryTrait];            
+            traits |= [self _axTextEntryTrait];
             if (m_object->isFocused())
                 traits |= ([self _axHasTextCursorTrait] | [self _axTextOperationsAvailableTrait]);
             break;
@@ -645,6 +646,7 @@ static AccessibilityObjectWrapper* AccessibilityUnignoredAncestor(AccessibilityO
         case GroupRole:
             if ([self isSVGGroupElement])
                 return true;
+            FALLTHROUGH;
         // All other elements are ignored on the iphone.
         default:
         case UnknownRole:

@@ -1,3 +1,10 @@
+2014-01-27  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Unreviewed iOS build fix. FALLTHROUGHs for iOS.
+
+        * Misc/WebNSStringDrawing.mm:
+        (needsBidiLayout):
+
 2014-01-27  Andy Estes  <aestes@apple.com>
 
         Scrub WebKit API headers of WTF macros
