@@ -1,3 +1,12 @@
+2014-01-28  Brady Eidson  <beidson@apple.com>
+
+        Remove unneeded “WebCore::” prefixing in two .cpp files.
+
+        Rubberstamped by Alexey Proskuryakov.
+
+        * DatabaseProcess/IndexedDB/UniqueIDBDatabase.cpp:
+        * DatabaseProcess/IndexedDB/sqlite/UniqueIDBDatabaseBackingStoreSQLite.cpp:
+
 2014-01-28  Tim Horton  <timothy_horton@apple.com>
 
         WebKit2 View Gestures (Swipe): Snapshots should be purgeable

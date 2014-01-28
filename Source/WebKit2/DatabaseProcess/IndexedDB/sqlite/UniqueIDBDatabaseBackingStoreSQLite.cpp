@@ -68,7 +68,7 @@ UniqueIDBDatabaseBackingStoreSQLite::~UniqueIDBDatabaseBackingStoreSQLite()
     ASSERT(!isMainThread());
 }
 
-std::unique_ptr<WebCore::IDBDatabaseMetadata> UniqueIDBDatabaseBackingStoreSQLite::createAndPopulateInitialMetadata()
+std::unique_ptr<IDBDatabaseMetadata> UniqueIDBDatabaseBackingStoreSQLite::createAndPopulateInitialMetadata()
 {
     ASSERT(!isMainThread());
     ASSERT(m_sqliteDB);
@@ -267,7 +267,7 @@ std::unique_ptr<IDBDatabaseMetadata> UniqueIDBDatabaseBackingStoreSQLite::getOrE
     return metadata;
 }
 
-bool UniqueIDBDatabaseBackingStoreSQLite::establishTransaction(const IDBIdentifier& transactionIdentifier, const Vector<int64_t>&, WebCore::IndexedDB::TransactionMode mode)
+bool UniqueIDBDatabaseBackingStoreSQLite::establishTransaction(const IDBIdentifier& transactionIdentifier, const Vector<int64_t>&, IndexedDB::TransactionMode mode)
 {
     ASSERT(!isMainThread());
 
@@ -486,7 +486,7 @@ bool UniqueIDBDatabaseBackingStoreSQLite::clearObjectStore(const IDBIdentifier& 
     return true;
 }
 
-bool UniqueIDBDatabaseBackingStoreSQLite::createIndex(const IDBIdentifier& transactionIdentifier, int64_t objectStoreID, const WebCore::IDBIndexMetadata& metadata)
+bool UniqueIDBDatabaseBackingStoreSQLite::createIndex(const IDBIdentifier& transactionIdentifier, int64_t objectStoreID, const IDBIndexMetadata& metadata)
 {
     ASSERT(!isMainThread());
     ASSERT(m_sqliteDB);
@@ -609,7 +609,7 @@ bool UniqueIDBDatabaseBackingStoreSQLite::updateKeyGenerator(const IDBIdentifier
     return false;
 }
 
-bool UniqueIDBDatabaseBackingStoreSQLite::getKeyRecordFromObjectStore(const IDBIdentifier& transactionIdentifier, int64_t objectStoreID, const WebCore::IDBKey& key, RefPtr<WebCore::SharedBuffer>& result)
+bool UniqueIDBDatabaseBackingStoreSQLite::getKeyRecordFromObjectStore(const IDBIdentifier& transactionIdentifier, int64_t objectStoreID, const IDBKey& key, RefPtr<SharedBuffer>& result)
 {
     ASSERT(!isMainThread());
     ASSERT(m_sqliteDB);
@@ -655,7 +655,7 @@ bool UniqueIDBDatabaseBackingStoreSQLite::getKeyRecordFromObjectStore(const IDBI
     return true;
 }
 
-bool UniqueIDBDatabaseBackingStoreSQLite::getKeyRangeRecordFromObjectStore(const IDBIdentifier& transactionIdentifier, int64_t objectStoreID, const WebCore::IDBKeyRange& keyRange, RefPtr<WebCore::SharedBuffer>& result, RefPtr<WebCore::IDBKey>& resultKey)
+bool UniqueIDBDatabaseBackingStoreSQLite::getKeyRangeRecordFromObjectStore(const IDBIdentifier& transactionIdentifier, int64_t objectStoreID, const IDBKeyRange& keyRange, RefPtr<SharedBuffer>& result, RefPtr<IDBKey>& resultKey)
 {
     ASSERT(!isMainThread());
     ASSERT(m_sqliteDB);

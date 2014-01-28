@@ -433,7 +433,7 @@ void UniqueIDBDatabase::clearObjectStore(const IDBIdentifier& transactionIdentif
     postDatabaseTask(createAsyncTask(*this, &UniqueIDBDatabase::clearObjectStoreInBackingStore, requestID, transactionIdentifier, objectStoreID));
 }
 
-void UniqueIDBDatabase::createIndex(const IDBIdentifier& transactionIdentifier, int64_t objectStoreID, const WebCore::IDBIndexMetadata& metadata, std::function<void(bool)> successCallback)
+void UniqueIDBDatabase::createIndex(const IDBIdentifier& transactionIdentifier, int64_t objectStoreID, const IDBIndexMetadata& metadata, std::function<void(bool)> successCallback)
 {
     ASSERT(isMainThread());
 
@@ -524,7 +524,7 @@ void UniqueIDBDatabase::putRecord(const IDBIdentifier& transactionIdentifier, in
     postDatabaseTask(createAsyncTask(*this, &UniqueIDBDatabase::putRecordInBackingStore, requestID, transactionIdentifier, m_metadata->objectStores.get(objectStoreID), keyData, value.vector(), putMode, indexIDs, indexKeys));
 }
 
-void UniqueIDBDatabase::getRecord(const IDBIdentifier& transactionIdentifier, int64_t objectStoreID, int64_t indexID, const WebCore::IDBKeyRangeData& keyRangeData, WebCore::IndexedDB::CursorType cursorType, std::function<void(const WebCore::IDBGetResult&, uint32_t, const String&)> callback)
+void UniqueIDBDatabase::getRecord(const IDBIdentifier& transactionIdentifier, int64_t objectStoreID, int64_t indexID, const IDBKeyRangeData& keyRangeData, IndexedDB::CursorType cursorType, std::function<void(const IDBGetResult&, uint32_t, const String&)> callback)
 {
     ASSERT(isMainThread());
 
@@ -547,7 +547,7 @@ void UniqueIDBDatabase::getRecord(const IDBIdentifier& transactionIdentifier, in
     postDatabaseTask(createAsyncTask(*this, &UniqueIDBDatabase::getRecordFromBackingStore, requestID, transactionIdentifier, m_metadata->objectStores.get(objectStoreID), indexID, keyRangeData, cursorType));
 }
 
-void UniqueIDBDatabase::openCursor(const IDBIdentifier& transactionIdentifier, int64_t objectStoreID, int64_t indexID, WebCore::IndexedDB::CursorDirection cursorDirection, WebCore::IndexedDB::CursorType cursorType, WebCore::IDBDatabaseBackend::TaskType taskType, const WebCore::IDBKeyRangeData& keyRangeData, std::function<void(int64_t, uint32_t, const String&)> callback)
+void UniqueIDBDatabase::openCursor(const IDBIdentifier& transactionIdentifier, int64_t objectStoreID, int64_t indexID, IndexedDB::CursorDirection cursorDirection, IndexedDB::CursorType cursorType, IDBDatabaseBackend::TaskType taskType, const IDBKeyRangeData& keyRangeData, std::function<void(int64_t, uint32_t, const String&)> callback)
 {
     ASSERT(isMainThread());
 
@@ -570,7 +570,7 @@ void UniqueIDBDatabase::openCursor(const IDBIdentifier& transactionIdentifier, i
     postDatabaseTask(createAsyncTask(*this, &UniqueIDBDatabase::openCursorInBackingStore, requestID, transactionIdentifier, objectStoreID, indexID, cursorDirection, cursorType, taskType, keyRangeData));
 }
 
-void UniqueIDBDatabase::cursorAdvance(const IDBIdentifier& cursorIdentifier, uint64_t count, std::function<void(WebCore::IDBKeyData, WebCore::IDBKeyData, PassRefPtr<WebCore::SharedBuffer>, uint32_t, const String&)> callback)
+void UniqueIDBDatabase::cursorAdvance(const IDBIdentifier& cursorIdentifier, uint64_t count, std::function<void(IDBKeyData, IDBKeyData, PassRefPtr<SharedBuffer>, uint32_t, const String&)> callback)
 {
     ASSERT(isMainThread());
 
@@ -579,7 +579,7 @@ void UniqueIDBDatabase::cursorAdvance(const IDBIdentifier& cursorIdentifier, uin
         return;
     }
 
-    RefPtr<AsyncRequest> request = AsyncRequestImpl<WebCore::IDBKeyData, WebCore::IDBKeyData, PassRefPtr<WebCore::SharedBuffer>, uint32_t, const String&>::create([this, callback](WebCore::IDBKeyData key, WebCore::IDBKeyData primaryKey, PassRefPtr<WebCore::SharedBuffer> value, uint32_t errorCode, const String& errorMessage) {
+    RefPtr<AsyncRequest> request = AsyncRequestImpl<IDBKeyData, IDBKeyData, PassRefPtr<SharedBuffer>, uint32_t, const String&>::create([this, callback](IDBKeyData key, IDBKeyData primaryKey, PassRefPtr<SharedBuffer> value, uint32_t errorCode, const String& errorMessage) {
         callback(key, primaryKey, value, errorCode, errorMessage);
     }, [this, callback]() {
         callback(nullptr, nullptr, nullptr, INVALID_STATE_ERR, "Unable to advance cursor in database");
@@ -591,7 +591,7 @@ void UniqueIDBDatabase::cursorAdvance(const IDBIdentifier& cursorIdentifier, uin
     postDatabaseTask(createAsyncTask(*this, &UniqueIDBDatabase::advanceCursorInBackingStore, requestID, cursorIdentifier, count));
 }
 
-void UniqueIDBDatabase::cursorIterate(const IDBIdentifier& cursorIdentifier, const WebCore::IDBKeyData& key, std::function<void(WebCore::IDBKeyData, WebCore::IDBKeyData, PassRefPtr<WebCore::SharedBuffer>, uint32_t, const String&)> callback)
+void UniqueIDBDatabase::cursorIterate(const IDBIdentifier& cursorIdentifier, const IDBKeyData& key, std::function<void(IDBKeyData, IDBKeyData, PassRefPtr<SharedBuffer>, uint32_t, const String&)> callback)
 {
     ASSERT(isMainThread());
 
@@ -600,7 +600,7 @@ void UniqueIDBDatabase::cursorIterate(const IDBIdentifier& cursorIdentifier, con
         return;
     }
 
-    RefPtr<AsyncRequest> request = AsyncRequestImpl<WebCore::IDBKeyData, WebCore::IDBKeyData, PassRefPtr<WebCore::SharedBuffer>, uint32_t, const String&>::create([this, callback](WebCore::IDBKeyData key, WebCore::IDBKeyData primaryKey, PassRefPtr<WebCore::SharedBuffer> value, uint32_t errorCode, const String& errorMessage) {
+    RefPtr<AsyncRequest> request = AsyncRequestImpl<IDBKeyData, IDBKeyData, PassRefPtr<SharedBuffer>, uint32_t, const String&>::create([this, callback](IDBKeyData key, IDBKeyData primaryKey, PassRefPtr<SharedBuffer> value, uint32_t errorCode, const String& errorMessage) {
         callback(key, primaryKey, value, errorCode, errorMessage);
     }, [this, callback]() {
         callback(nullptr, nullptr, nullptr, INVALID_STATE_ERR, "Unable to iterate cursor in database");
@@ -702,7 +702,7 @@ void UniqueIDBDatabase::clearObjectStoreInBackingStore(uint64_t requestID, const
     postMainThreadTask(createAsyncTask(*this, &UniqueIDBDatabase::didClearObjectStore, requestID, success));
 }
 
-void UniqueIDBDatabase::createIndexInBackingStore(uint64_t requestID, const IDBIdentifier& transactionIdentifier, int64_t objectStoreID, const WebCore::IDBIndexMetadata& metadata)
+void UniqueIDBDatabase::createIndexInBackingStore(uint64_t requestID, const IDBIdentifier& transactionIdentifier, int64_t objectStoreID, const IDBIndexMetadata& metadata)
 {
     ASSERT(!isMainThread());
     ASSERT(m_backingStore);
@@ -778,7 +778,7 @@ void UniqueIDBDatabase::didPutRecordInBackingStore(uint64_t requestID, const IDB
     request->completeRequest(keyData, errorCode, errorMessage);
 }
 
-void UniqueIDBDatabase::getRecordFromBackingStore(uint64_t requestID, const IDBIdentifier& transaction, const WebCore::IDBObjectStoreMetadata& objectStoreMetadata, int64_t indexID, const WebCore::IDBKeyRangeData& keyRangeData, WebCore::IndexedDB::CursorType cursorType)
+void UniqueIDBDatabase::getRecordFromBackingStore(uint64_t requestID, const IDBIdentifier& transaction, const IDBObjectStoreMetadata& objectStoreMetadata, int64_t indexID, const IDBKeyRangeData& keyRangeData, IndexedDB::CursorType cursorType)
 {
     ASSERT(!isMainThread());
     ASSERT(m_backingStore);
@@ -827,7 +827,7 @@ void UniqueIDBDatabase::didGetRecordFromBackingStore(uint64_t requestID, const I
     request->completeRequest(result, errorCode, errorMessage);
 }
 
-void UniqueIDBDatabase::openCursorInBackingStore(uint64_t requestID, const IDBIdentifier& transactionIdentifier, int64_t objectStoreID, int64_t indexID, WebCore::IndexedDB::CursorDirection, WebCore::IndexedDB::CursorType, WebCore::IDBDatabaseBackend::TaskType, const WebCore::IDBKeyRangeData&)
+void UniqueIDBDatabase::openCursorInBackingStore(uint64_t requestID, const IDBIdentifier& transactionIdentifier, int64_t objectStoreID, int64_t indexID, IndexedDB::CursorDirection, IndexedDB::CursorType, IDBDatabaseBackend::TaskType, const IDBKeyRangeData&)
 {
     // FIXME: Implement
 
@@ -849,7 +849,7 @@ void UniqueIDBDatabase::advanceCursorInBackingStore(uint64_t requestID, const ID
     postMainThreadTask(createAsyncTask(*this, &UniqueIDBDatabase::didAdvanceCursorInBackingStore, requestID, IDBKeyData(), IDBKeyData(), Vector<char>(), IDBDatabaseException::UnknownError, ASCIILiteral("advancing cursors in backing store not supported yet")));
 }
 
-void UniqueIDBDatabase::didAdvanceCursorInBackingStore(uint64_t requestID, const WebCore::IDBKeyData& key, const WebCore::IDBKeyData& primaryKey, const Vector<char>& value, uint32_t errorCode, const String& errorMessage)
+void UniqueIDBDatabase::didAdvanceCursorInBackingStore(uint64_t requestID, const IDBKeyData& key, const IDBKeyData& primaryKey, const Vector<char>& value, uint32_t errorCode, const String& errorMessage)
 {
     RefPtr<AsyncRequest> request = m_pendingDatabaseTasks.take(requestID);
     ASSERT(request);
@@ -857,14 +857,14 @@ void UniqueIDBDatabase::didAdvanceCursorInBackingStore(uint64_t requestID, const
     request->completeRequest(key, primaryKey, SharedBuffer::create(value.data(), value.size()), errorCode, errorMessage);
 }
 
-void UniqueIDBDatabase::iterateCursorInBackingStore(uint64_t requestID, const IDBIdentifier& cursorIdentifier, const WebCore::IDBKeyData&)
+void UniqueIDBDatabase::iterateCursorInBackingStore(uint64_t requestID, const IDBIdentifier& cursorIdentifier, const IDBKeyData&)
 {
     // FIXME: Implement
 
     postMainThreadTask(createAsyncTask(*this, &UniqueIDBDatabase::didIterateCursorInBackingStore, requestID, IDBKeyData(), IDBKeyData(), Vector<char>(), IDBDatabaseException::UnknownError, ASCIILiteral("iterating cursors in backing store not supported yet")));
 }
 
-void UniqueIDBDatabase::didIterateCursorInBackingStore(uint64_t requestID, const WebCore::IDBKeyData& key, const WebCore::IDBKeyData& primaryKey, const Vector<char>& value, uint32_t errorCode, const String& errorMessage)
+void UniqueIDBDatabase::didIterateCursorInBackingStore(uint64_t requestID, const IDBKeyData& key, const IDBKeyData& primaryKey, const Vector<char>& value, uint32_t errorCode, const String& errorMessage)
 {
     RefPtr<AsyncRequest> request = m_pendingDatabaseTasks.take(requestID);
     ASSERT(request);
