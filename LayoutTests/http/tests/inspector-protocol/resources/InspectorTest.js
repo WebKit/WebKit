@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2012 Samsung Electronics. All rights reserved.
+ * Copyright (C) 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -151,12 +152,12 @@ InspectorTest.importScript = function(scriptName)
     window.eval(script);
 }
 
-InspectorTest.importInspectorScripts = function()
+InspectorTest.initializeInspectorModels = function()
 {
     // Catch any errors and finish the test early.
     console.error = window.onerror = function()
     {
-        console.log(Array.prototype.join.call(arguments, ', '));
+        InspectorTest.log(Array.prototype.join.call(arguments, ', '));
         InspectorTest.completeTest();
     };
 
@@ -164,8 +165,8 @@ InspectorTest.importInspectorScripts = function()
     {
         if (assertion)
             return;
-        console.log("ASSERT:" + message);
         InspectorTest.completeTest();
+        InspectorTest.log("ASSERT:" + message);
     };
 
     // Note: This function overwrites the InspectorFrontendAPI, so there's currently no
@@ -183,6 +184,7 @@ InspectorTest.importInspectorScripts = function()
         "URLUtilities",
         "MessageDispatcher",
         "Setting",
+        "InspectorObserver",
         "PageObserver",
         "DOMObserver",
         "CSSObserver",
@@ -206,6 +208,8 @@ InspectorTest.importInspectorScripts = function()
         "RuntimeObserver",
         "RuntimeManager"
     ];
+
+    // This corresponds to loading the scripts in Main.hml.
     for (var i = 0; i < inspectorScripts.length; ++i)
         InspectorTest.importScript("../../../../../Source/WebInspectorUI/UserInterface/" + inspectorScripts[i] + ".js");
 
@@ -213,6 +217,12 @@ InspectorTest.importInspectorScripts = function()
     // FIXME: As soon as we can support all the observers and managers we should remove UI related tasks
     // from WebInspector.loaded, so that it can be used from the LayoutTests.
 
+    InspectorFrontendHost.loaded();
+
+    // Enable agents.
+    InspectorAgent.enable();
+
+    InspectorBackend.registerInspectorDispatcher(new WebInspector.InspectorObserver);
     InspectorBackend.registerPageDispatcher(new WebInspector.PageObserver);
     InspectorBackend.registerDOMDispatcher(new WebInspector.DOMObserver);
     InspectorBackend.registerCSSDispatcher(new WebInspector.CSSObserver);
@@ -223,8 +233,6 @@ InspectorTest.importInspectorScripts = function()
     WebInspector.domTreeManager = new WebInspector.DOMTreeManager;
     WebInspector.cssStyleManager = new WebInspector.CSSStyleManager;
     WebInspector.runtimeManager = new WebInspector.RuntimeManager;
-
-    InspectorFrontendHost.loaded();
 }
 
 

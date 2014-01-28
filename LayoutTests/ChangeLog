@@ -1,3 +1,27 @@
+2014-01-27  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: clean up initialization of managers and observers in InspectorTest
+        https://bugs.webkit.org/show_bug.cgi?id=127707
+
+        Reviewed by Timothy Hatcher.
+
+        The test harness was setting up managers and observers before
+        telling the frontend host that the page loaded. The InspectorObserver
+        was also not being initialized.
+
+        For clarity, rename importInspectorScripts to initializeInspectorModels.
+        For easier debugging, make model test assertions use InspectorTest.log.
+
+        * http/tests/inspector-protocol/resources/InspectorTest.js:
+        (InspectorTest.initializeInspectorModels.console.error.window.onerror):
+        (InspectorTest.initializeInspectorModels.console.assert):
+        (InspectorTest.initializeInspectorModels):
+        * inspector-protocol/model/content-flow-content-nodes.html:
+        * inspector-protocol/model/content-flow-content-removal.html:
+        * inspector-protocol/model/content-flow-list.html:
+        * inspector-protocol/model/content-node-region-info.html:
+        * inspector-protocol/model/main-frame-resource.html:
+
 2014-01-27  David Hyatt  <hyatt@apple.com>
 
         [New Multicolumn] Add support for block progression axis and reverse direction

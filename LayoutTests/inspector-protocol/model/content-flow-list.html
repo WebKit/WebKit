@@ -16,7 +16,7 @@ function removeFlow()
 
 function test()
 {
-    InspectorTest.importInspectorScripts();
+    InspectorTest.initializeInspectorModels();
 
     WebInspector.frameResourceManager.addEventListener(WebInspector.FrameResourceManager.Event.MainFrameDidChange, function(event) {
         var domTree = WebInspector.frameResourceManager.mainFrame.domTree;

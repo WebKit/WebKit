@@ -5,7 +5,7 @@
 <script>
 function test()
 {
-    InspectorTest.importInspectorScripts();
+    InspectorTest.initializeInspectorModels();
 
     WebInspector.frameResourceManager.addEventListener(WebInspector.FrameResourceManager.Event.MainFrameDidChange, function(event) {
         var url = WebInspector.frameResourceManager.mainFrame.url;

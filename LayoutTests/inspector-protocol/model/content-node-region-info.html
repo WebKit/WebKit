@@ -30,7 +30,7 @@ function test()
     var queryList = ["#flow", ".contentNode1", ".contentNode2", "body", "#region1", "#region2"];
     var documentNodeId;
 
-    InspectorTest.importInspectorScripts();
+    InspectorTest.initializeInspectorModels();
     WebInspector.domTreeManager.requestDocument(function(documentNode) {
         documentNodeId = documentNode.id;
         WebInspector.domTreeManager.getNamedFlowCollection(documentNodeId);
