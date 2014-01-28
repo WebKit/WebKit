@@ -145,6 +145,10 @@
     margin-left: 16px;
 }
 
+.navigation-sidebar-panel-content-tree-outline.hide-disclosure-buttons .item.small {
+    padding-left: 8px;
+}
+
 .navigation-sidebar-panel-content-tree-outline .item .disclosure-button {
     display: none;
 

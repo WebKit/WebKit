@@ -1,3 +1,32 @@
+2014-01-28  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Tweak UI when debugging a JSContext
+        https://bugs.webkit.org/show_bug.cgi?id=127799
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/DashboardView.css:
+        (.toolbar.javascript .dashboard):
+        (.toolbar.web.collapsed .dashboard > .logs):
+        (.toolbar.javascript .dashboard > .resourcesCount):
+        Adjust collapsed dashboard in web and javascript debugging modes.
+        JavaScript debugging mode is always treated as collapsed.
+
+        * UserInterface/Main.js:
+        (WebInspector.contentLoaded):
+        Adjust what is created and shown when in javascript debugging mode.
+
+        * UserInterface/NavigationSidebarPanel.css:
+        (.navigation-sidebar-panel-content-tree-outline.hide-disclosure-buttons .item.small):
+        * UserInterface/ResourceSidebarPanel.js:
+        (WebInspector.ResourceSidebarPanel):
+        (WebInspector.ResourceSidebarPanel.prototype._scriptWasAdded):
+        * UserInterface/TimelineSidebarPanel.css:
+        (.sidebar > .panel.timeline > .status-bar):
+        (.sidebar > .panel.timeline > .title-bar):
+        When javascript debugging expect to put things at the root level, so hide
+        disclosure buttons and adjust the style so resources look nice here.
+
 2014-01-28  Diego Pino Garcia  <dpino@igalia.com>
 
         Web Inspector: In a DataGrid, store value of columnIdentifier to DOM node representing a cell

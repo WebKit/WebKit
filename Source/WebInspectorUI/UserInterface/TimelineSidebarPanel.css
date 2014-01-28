@@ -26,7 +26,7 @@
 .sidebar > .panel.timeline > .status-bar {
     position: absolute;
     top: 0;
-    left: 0;
+    left: 5px;
     right: 0;
     height: 22px;
     border-bottom: 1px solid rgb(179, 179, 179);
@@ -110,7 +110,7 @@
     font-family: "Lucida Grande", sans-serif;
     font-weight: bold;
 
-    padding: 4px 6px;
+    padding: 4px 9px;
 
     white-space: nowrap;
     overflow: hidden;

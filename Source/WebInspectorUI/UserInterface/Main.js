@@ -37,7 +37,11 @@ WebInspector.ContentViewCookieType = {
     DOMStorage: "dom-storage",
     Resource: "resource", // includes Frame too.
     Timelines: "timelines",
+};
 
+WebInspector.DebuggableType = {
+    Web: "web",
+    JavaScript: "javascript"
 };
 
 WebInspector.SelectedSidebarPanelCookieKey = "selected-sidebar-panel";
@@ -181,6 +185,9 @@ WebInspector.contentLoaded = function()
     if (versionMatch && versionMatch[1].indexOf("+") !== -1 && document.styleSheets.length < 10)
         document.body.classList.add("nightly-build");
 
+    this.debuggableType = InspectorFrontendHost.debuggableType() === "web" ? WebInspector.DebuggableType.Web : WebInspector.DebuggableType.JavaScript;
+    document.body.classList.add(this.debuggableType);
+
     // Create the user interface elements.
     this.toolbar = new WebInspector.Toolbar(document.getElementById("toolbar"));
     this.toolbar.addEventListener(WebInspector.Toolbar.Event.DisplayModeDidChange, this._toolbarDisplayModeDidChange, this);
@@ -238,11 +245,15 @@ WebInspector.contentLoaded = function()
     this.debuggerSidebarPanel = new WebInspector.DebuggerSidebarPanel;
 
     this.navigationSidebar.addSidebarPanel(this.resourceSidebarPanel);
-    this.navigationSidebar.addSidebarPanel(this.timelineSidebarPanel);
+    // FIXME: Enable timelines panel for JavaScript inspection.
+    if (this.debuggableType !== WebInspector.DebuggableType.JavaScript)
+        this.navigationSidebar.addSidebarPanel(this.timelineSidebarPanel);
     this.navigationSidebar.addSidebarPanel(this.debuggerSidebarPanel);
 
     this.toolbar.addToolbarItem(this.resourceSidebarPanel.toolbarItem, WebInspector.Toolbar.Section.Left);
-    this.toolbar.addToolbarItem(this.timelineSidebarPanel.toolbarItem, WebInspector.Toolbar.Section.Left);
+    // FIXME: Enable timelines panel for JavaScript inspection.
+    if (this.debuggableType !== WebInspector.DebuggableType.JavaScript)
+        this.toolbar.addToolbarItem(this.timelineSidebarPanel.toolbarItem, WebInspector.Toolbar.Section.Left);
     this.toolbar.addToolbarItem(this.debuggerSidebarPanel.toolbarItem, WebInspector.Toolbar.Section.Left);
 
     // The toolbar button for the console.
@@ -256,11 +267,13 @@ WebInspector.contentLoaded = function()
     this.toolbar.addToolbarItem(this.dashboardManager.toolbarItem, WebInspector.Toolbar.Section.Center);
 
     // The toolbar button for node inspection.
-    var toolTip = WebInspector.UIString("Enable point to inspect mode (%s)").format(WebInspector._inspectModeKeyboardShortcut.displayName);
-    var activatedToolTip = WebInspector.UIString("Disable point to inspect mode (%s)").format(WebInspector._inspectModeKeyboardShortcut.displayName);
-    this._inspectModeToolbarButton = new WebInspector.ActivateButtonToolbarItem("inspect", toolTip, activatedToolTip, WebInspector.UIString("Inspect"), "Images/Crosshair.svg");
-    this._inspectModeToolbarButton.addEventListener(WebInspector.ButtonNavigationItem.Event.Clicked, this._toggleInspectMode, this);
-    this.toolbar.addToolbarItem(this._inspectModeToolbarButton, WebInspector.Toolbar.Section.Center);
+    if (this.debuggableType === WebInspector.DebuggableType.Web) {
+        var toolTip = WebInspector.UIString("Enable point to inspect mode (%s)").format(WebInspector._inspectModeKeyboardShortcut.displayName);
+        var activatedToolTip = WebInspector.UIString("Disable point to inspect mode (%s)").format(WebInspector._inspectModeKeyboardShortcut.displayName);
+        this._inspectModeToolbarButton = new WebInspector.ActivateButtonToolbarItem("inspect", toolTip, activatedToolTip, WebInspector.UIString("Inspect"), "Images/Crosshair.svg");
+        this._inspectModeToolbarButton.addEventListener(WebInspector.ButtonNavigationItem.Event.Clicked, this._toggleInspectMode, this);
+        this.toolbar.addToolbarItem(this._inspectModeToolbarButton, WebInspector.Toolbar.Section.Center);
+    }
 
     this.resourceDetailsSidebarPanel = new WebInspector.ResourceDetailsSidebarPanel;
     this.domNodeDetailsSidebarPanel = new WebInspector.DOMNodeDetailsSidebarPanel;

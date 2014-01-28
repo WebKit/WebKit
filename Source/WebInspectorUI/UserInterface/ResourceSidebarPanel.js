@@ -86,6 +86,9 @@ WebInspector.ResourceSidebarPanel = function() {
     this._searchContentTreeOutline.onselect = this._treeElementSelected.bind(this);
 
     this._resourcesContentTreeOutline.includeSourceMapResourceChildren = true;
+
+    if (WebInspector.debuggableType === WebInspector.DebuggableType.JavaScript)
+        this._resourcesContentTreeOutline.element.classList.add(WebInspector.NavigationSidebarPanel.HideDisclosureButtonsStyleClassName);
 };
 
 WebInspector.ResourceSidebarPanel.prototype = {
@@ -578,23 +581,35 @@ WebInspector.ResourceSidebarPanel.prototype = {
         if (script.resource)
             return;
 
+        var insertIntoTopLevel = false;
+
         if (script.injected) {
             if (!this._extensionScriptsFolderTreeElement)
                 this._extensionScriptsFolderTreeElement = new WebInspector.FolderTreeElement(WebInspector.UIString("Extension Scripts"));
             var parentFolderTreeElement = this._extensionScriptsFolderTreeElement;
         } else {
-            if (!this._extraScriptsFolderTreeElement)
-                this._extraScriptsFolderTreeElement = new WebInspector.FolderTreeElement(WebInspector.UIString("Extra Scripts"));
-            var parentFolderTreeElement = this._extraScriptsFolderTreeElement;
-        }
-
-        if (!parentFolderTreeElement.parent) {
-            var index = insertionIndexForObjectInListSortedByFunction(parentFolderTreeElement, this._resourcesContentTreeOutline.children, this._compareTreeElements);
-            this._resourcesContentTreeOutline.insertChild(parentFolderTreeElement, index);
+            if (WebInspector.debuggableType === WebInspector.DebuggableType.JavaScript)
+                insertIntoTopLevel = true;
+            else {
+                if (!this._extraScriptsFolderTreeElement)
+                    this._extraScriptsFolderTreeElement = new WebInspector.FolderTreeElement(WebInspector.UIString("Extra Scripts"));
+                var parentFolderTreeElement = this._extraScriptsFolderTreeElement;
+            }
         }
 
         var scriptTreeElement = new WebInspector.ScriptTreeElement(script);
-        parentFolderTreeElement.appendChild(scriptTreeElement);
+
+        if (insertIntoTopLevel) {
+            var index = insertionIndexForObjectInListSortedByFunction(scriptTreeElement, this._resourcesContentTreeOutline.children, this._compareTreeElements);
+            this._resourcesContentTreeOutline.insertChild(scriptTreeElement, index);
+        } else {
+            if (!parentFolderTreeElement.parent) {
+                var index = insertionIndexForObjectInListSortedByFunction(parentFolderTreeElement, this._resourcesContentTreeOutline.children, this._compareTreeElements);
+                this._resourcesContentTreeOutline.insertChild(parentFolderTreeElement, index);
+            }
+
+            parentFolderTreeElement.appendChild(scriptTreeElement);
+        }
     },
 
     _scriptsCleared: function(event)
