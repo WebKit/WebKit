@@ -161,6 +161,7 @@ noinst_PROGRAMS += \
 	Programs/TestWebKitAPI/WebKit2Gtk/TestInspector \
 	Programs/TestWebKitAPI/WebKit2Gtk/TestInspectorServer \
 	Programs/TestWebKitAPI/WebKit2Gtk/TestLoaderClient \
+	Programs/TestWebKitAPI/WebKit2Gtk/TestMultiprocess \
 	Programs/TestWebKitAPI/WebKit2Gtk/TestPrinting \
 	Programs/TestWebKitAPI/WebKit2Gtk/TestResources \
 	Programs/TestWebKitAPI/WebKit2Gtk/TestSSL \
@@ -768,6 +769,12 @@ Programs_TestWebKitAPI_WebKit2Gtk_TestLoaderClient_SOURCES = \
 Programs_TestWebKitAPI_WebKit2Gtk_TestLoaderClient_CPPFLAGS = $(webkit2gtk_tests_cppflags)
 Programs_TestWebKitAPI_WebKit2Gtk_TestLoaderClient_LDADD = $(webkit2gtk_tests_ldadd)
 Programs_TestWebKitAPI_WebKit2Gtk_TestLoaderClient_LDFLAGS = $(webkit2gtk_tests_ldflags)
+
+Programs_TestWebKitAPI_WebKit2Gtk_TestMultiprocess_SOURCES = \
+	Tools/TestWebKitAPI/Tests/WebKit2Gtk/TestMultiprocess.cpp
+Programs_TestWebKitAPI_WebKit2Gtk_TestMultiprocess_CPPFLAGS = $(webkit2gtk_tests_cppflags)
+Programs_TestWebKitAPI_WebKit2Gtk_TestMultiprocess_LDADD = $(webkit2gtk_tests_ldadd)
+Programs_TestWebKitAPI_WebKit2Gtk_TestMultiprocess_LDFLAGS = $(webkit2gtk_tests_ldflags)
 
 Programs_TestWebKitAPI_WebKit2Gtk_TestWebKitSettings_SOURCES = \
 	Tools/TestWebKitAPI/Tests/WebKit2Gtk/TestWebKitSettings.cpp

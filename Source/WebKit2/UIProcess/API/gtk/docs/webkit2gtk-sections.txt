@@ -24,6 +24,7 @@ WEBKIT_OBSOLETE_API
 <TITLE>WebKitWebContext</TITLE>
 WebKitWebContext
 WebKitCacheModel
+WebKitProcessModel
 WebKitTLSErrorsPolicy
 webkit_web_context_get_default
 webkit_web_context_get_cache_model
@@ -50,6 +51,8 @@ webkit_web_context_set_web_extensions_initialization_user_data
 webkit_web_context_prefetch_dns
 webkit_web_context_set_disk_cache_directory
 webkit_web_context_allow_tls_certificate_for_host
+webkit_web_context_get_process_model
+webkit_web_context_set_process_model
 
 <SUBSECTION URI Scheme>
 WebKitURISchemeRequestCallback

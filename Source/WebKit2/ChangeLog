@@ -1,3 +1,27 @@
+2014-01-28  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [GTK] Add API to allow setting the process model in WebKitWebContext
+        https://bugs.webkit.org/show_bug.cgi?id=125463
+
+        Reviewed by Carlos Garcia Campos.
+
+        Implements accessors in WebKitWebContext for the process model.
+        The default behavior is unchanged, and a single web process is
+        used. Using WEBKIT_PROCESS_MODEL_ONE_SECONDARY_PROCESS_PER_WEB_VIEW
+        as the process model will make use one web process for each
+        WebKitWebView. This also enables the network process. Setting
+        the process model must be done as early as possible, before the
+        very first web process is spawned.
+
+        * UIProcess/API/gtk/WebKitWebContext.cpp:
+        Add accessors in the API to get/set the process model.
+        (webkit_web_context_set_process_model):
+        (webkit_web_context_get_process_model):
+        * UIProcess/API/gtk/WebKitWebContext.h:
+        Define the WebKitProcessModel enum.
+        * UIProcess/API/gtk/docs/webkit2gtk-sections.txt:
+        Add new public API bits to the documentation.
+
 2014-01-27  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Make webkit_uri_scheme_request_get_web_view() work with CustomProtocols

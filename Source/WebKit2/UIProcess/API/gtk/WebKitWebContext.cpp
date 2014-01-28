@@ -64,8 +64,9 @@ using namespace WebKit;
  * The #WebKitWebContext manages all aspects common to all
  * #WebKitWebView<!-- -->s.
  *
- * You can define the #WebKitCacheModel with
- * webkit_web_context_set_cache_model(), depending on the needs of
+ * You can define the #WebKitCacheModel and #WebKitProcessModel with
+ * webkit_web_context_set_cache_model() and
+ * webkit_web_context_set_process_model(), depending on the needs of
  * your application. You can access the #WebKitCookieManager or the
  * #WebKitSecurityManager to specify the behaviour of your application
  * regarding cookies and security, using
@@ -161,6 +162,9 @@ struct _WebKitWebContextPrivate {
 
 static guint signals[LAST_SIGNAL] = { 0, };
 
+COMPILE_ASSERT_MATCHING_ENUM(WEBKIT_PROCESS_MODEL_SHARED_SECONDARY_PROCESS, ProcessModelSharedSecondaryProcess);
+COMPILE_ASSERT_MATCHING_ENUM(WEBKIT_PROCESS_MODEL_ONE_SECONDARY_PROCESS_PER_WEB_VIEW, ProcessModelMultipleSecondaryProcesses);
+
 WEBKIT_DEFINE_TYPE(WebKitWebContext, webkit_web_context, G_TYPE_OBJECT)
 
 static void webkit_web_context_class_init(WebKitWebContextClass* webContextClass)
@@ -228,10 +232,6 @@ static gpointer createDefaultWebContext(gpointer)
     priv->context = WebContext::create(WebCore::filenameToString(injectedBundleFilename().data()));
     priv->requestManager = webContext->priv->context->supplement<WebSoupCustomProtocolRequestManager>();
     priv->context->setCacheModel(CacheModelPrimaryWebBrowser);
-#if ENABLE(NETWORK_PROCESS)
-    // FIXME: Temporary use an env var until we have API to set the process model. See https://bugs.webkit.org/show_bug.cgi?id=125463.
-    priv->context->setUsesNetworkProcess(g_getenv("WEBKIT_USE_NETWORK_PROCESS"));
-#endif
     priv->tlsErrorsPolicy = WEBKIT_TLS_ERRORS_POLICY_IGNORE;
 
     attachInjectedBundleClientToContext(webContext.get());
@@ -886,6 +886,56 @@ void webkit_web_context_allow_tls_certificate_for_host(WebKitWebContext* context
 
     RefPtr<WebCertificateInfo> webCertificateInfo = WebCertificateInfo::create(webkitCertificateInfoGetCertificateInfo(info));
     context->priv->context->allowSpecificHTTPSCertificateForHost(webCertificateInfo.get(), String::fromUTF8(host));
+}
+
+/**
+ * webkit_web_context_set_process_model:
+ * @context: the #WebKitWebContext
+ * @process_model: a #WebKitProcessModel
+ *
+ * Specifies a process model for WebViews, which WebKit will use to
+ * determine how auxiliary processes are handled. The default setting
+ * (%WEBKIT_PROCESS_MODEL_SHARED_SECONDARY_PROCESS) is suitable for most
+ * applications which embed a small amount of WebViews, or are used to
+ * display documents which are considered safe -- like local files.
+ *
+ * Applications which may potentially use a large amount of WebViews --for
+ * example a multi-tabbed web browser-- may want to use
+ * %WEBKIT_PROCESS_MODEL_ONE_SECONDARY_PROCESS_PER_WEB_VIEW to use one
+ * process per view. Using this model, when a WebView hangs or crashes,
+ * the rest of the WebViews in the application will still work normally.
+ *
+ * This method <strong>must be called before any other functions</strong>,
+ * as early as possible in your application. Calling it later will make
+ * your application crash.
+ *
+ * Since: 2.4
+ */
+void webkit_web_context_set_process_model(WebKitWebContext* context, WebKitProcessModel processModel)
+{
+    g_return_if_fail(WEBKIT_IS_WEB_CONTEXT(context));
+
+    if (processModel != context->priv->context->processModel()) {
+        context->priv->context->setUsesNetworkProcess(processModel == ProcessModelMultipleSecondaryProcesses);
+        context->priv->context->setProcessModel(static_cast<ProcessModel>(processModel));
+    }
+}
+
+/**
+ * webkit_web_context_get_process_model:
+ * @context: the #WebKitWebContext
+ *
+ * Returns the current process model. For more information about this value
+ * see webkit_web_context_set_process_model().
+ *
+ * Returns: the current #WebKitProcessModel
+ *
+ * Since: 2.4
+ */
+WebKitProcessModel webkit_web_context_get_process_model(WebKitWebContext* context)
+{
+    g_return_val_if_fail(WEBKIT_IS_WEB_CONTEXT(context), WEBKIT_PROCESS_MODEL_SHARED_SECONDARY_PROCESS);
+    return static_cast<WebKitProcessModel>(context->priv->context->processModel());
 }
 
 WebKitDownload* webkitWebContextGetOrCreateDownload(DownloadProxy* downloadProxy)

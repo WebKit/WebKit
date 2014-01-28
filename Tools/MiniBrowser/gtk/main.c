@@ -241,6 +241,12 @@ int main(int argc, char *argv[])
 {
     gtk_init(&argc, &argv);
 
+    const gchar *multiprocess = g_getenv("MINIBROWSER_MULTIPROCESS");
+    if (multiprocess && *multiprocess) {
+        webkit_web_context_set_process_model(webkit_web_context_get_default(),
+            WEBKIT_PROCESS_MODEL_ONE_SECONDARY_PROCESS_PER_WEB_VIEW);
+    }
+
     GOptionContext *context = g_option_context_new(NULL);
     g_option_context_add_main_entries(context, commandLineOptions, 0);
     g_option_context_add_group(context, gtk_get_option_group(TRUE));

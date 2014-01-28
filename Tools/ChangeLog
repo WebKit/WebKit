@@ -1,3 +1,41 @@
+2014-01-28  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [GTK] Add API to allow setting the process model in WebKitWebContext
+        https://bugs.webkit.org/show_bug.cgi?id=125463
+
+        Reviewed by Carlos Garcia Campos.
+
+        Implements accessors in WebKitWebContext for the process model.
+        The default behavior is unchanged, and a single web process is
+        used. Using WEBKIT_PROCESS_MODEL_ONE_SECONDARY_PROCESS_PER_WEB_VIEW
+        as the process model will make use one web process for each
+        WebKitWebView. This also enables the network process. Setting
+        the process model must be done as early as possible, before the
+        very first web process is spawned.
+
+        * MiniBrowser/gtk/main.c:
+        (main):
+        Enable multiple process mode if the MINIBROWSER_MULTIPROCESS
+        environment variable is defined and not empty.
+        * TestWebKitAPI/GNUmakefile.am:
+        Add new TestMultiprocess test case.
+        * TestWebKitAPI/Tests/WebKit2Gtk/CMakeLists.txt:
+        Add new TestMultiprocess test case.
+        * TestWebKitAPI/Tests/WebKit2Gtk/TestMultiprocess.cpp: Added.
+        (loadChanged):
+        (testMultipleSecondaryProcesses):
+        (initializeWebExtensions):
+        (beforeAll):
+        (afterAll):
+        * TestWebKitAPI/Tests/WebKit2Gtk/WebExtensionTest.cpp:
+        (methodCallCallback):
+        Implement the GetProcessIdentifier D-Bus method.
+        (makeBusName):
+        Choose a different bus name when the web extension is used
+        from TestMultiprocess.
+        (webkit_web_extension_initialize_with_user_data):
+        Use makeBusName() to choose the bus name.
+
 2014-01-28  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [SOUP] Remove soupURIToKURL
