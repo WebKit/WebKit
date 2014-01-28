@@ -1,3 +1,31 @@
+2014-01-28  Geoffrey Garen  <ggaren@apple.com>
+
+        REGRESSION: JavascriptCore crash during OS Installation (due to
+        Heap::m_operationInProgress ASSERT vs DelayedReleaseScope)
+        https://bugs.webkit.org/show_bug.cgi?id=127793
+
+        Reviewed by Mark Hahnenberg.
+
+        This was a mistaken ASSERT.
+
+        * API/tests/testapi.mm:
+        (-[EvilAllocationObject doEvilThingsWithContext:]): Added a test to verify
+        that GC from a DelayedReleaseScope doesn't crash.
+
+        * heap/DelayedReleaseScope.h:
+        (JSC::DelayedReleaseScope::~DelayedReleaseScope): Our contract is that
+        it is valid to do anything while running a DelayedReleaseScope -dealloc
+        method, so the Heap must be ready for new allocations and collections.
+
+        Change the Heap's operationInProgress value to NoOperation while running
+        -dealloc methods, so that it doesn't ASSERT in the face of new allocations
+        and collections.
+
+        * heap/Heap.h: Made DelayedReleaseScope a friend because exposing a setter
+        for m_operationInProgress seemed like the worse of the two options for
+        encapsulation: we don't really want arbitrary clients to set the Heap's
+        m_operationInProgress.
+
 2014-01-28  Mark Lam  <mark.lam@apple.com>
 
         Jettison DFG code when neither breakpoints or the profiler are active.

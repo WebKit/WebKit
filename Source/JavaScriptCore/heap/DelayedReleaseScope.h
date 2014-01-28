@@ -47,8 +47,13 @@ public:
         ASSERT(m_markedSpace.m_currentDelayedReleaseScope == this);
         m_markedSpace.m_currentDelayedReleaseScope = nullptr;
 
+        HeapOperation operationInProgress = NoOperation;
+        std::swap(operationInProgress, m_markedSpace.m_heap->m_operationInProgress);
+
         APICallbackShim callbackShim(*m_markedSpace.m_heap->vm());
         m_delayedReleaseObjects.clear();
+
+        std::swap(operationInProgress, m_markedSpace.m_heap->m_operationInProgress);
     }
 
     template <typename T>

@@ -453,7 +453,7 @@ static bool evilAllocationObjectWasDealloced = false;
 
 - (JSValue *)doEvilThingsWithContext:(JSContext *)context
 {
-    return [context evaluateScript:@" \
+    JSValue *result = [context evaluateScript:@" \
         (function() { \
             var a = []; \
             var sum = 0; \
@@ -463,6 +463,9 @@ static bool evilAllocationObjectWasDealloced = false;
             } \
             return sum; \
         })()"];
+
+    JSSynchronousGarbageCollectForDebugging([context JSGlobalContextRef]);
+    return result;
 }
 @end
 
@@ -1215,12 +1218,13 @@ void testObjectiveCAPI()
 
     @autoreleasepool {
         JSContext *context = [[JSContext alloc] init];
-        @autoreleasepool {
-            EvilAllocationObject *evilObject = [[EvilAllocationObject alloc] initWithContext:context];
-            context[@"evilObject"] = evilObject;
-            context[@"evilObject"] = nil;
+        while (!evilAllocationObjectWasDealloced) {
+            @autoreleasepool {
+                EvilAllocationObject *evilObject = [[EvilAllocationObject alloc] initWithContext:context];
+                context[@"evilObject"] = evilObject;
+                context[@"evilObject"] = nil;
+            }
         }
-        JSSynchronousGarbageCollectForDebugging([context JSGlobalContextRef]);
         checkResult(@"EvilAllocationObject was successfully dealloced without crashing", evilAllocationObjectWasDealloced);
     }
 

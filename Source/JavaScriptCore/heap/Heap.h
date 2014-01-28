@@ -208,6 +208,7 @@ namespace JSC {
         friend class CopiedBlock;
         friend class DeferGC;
         friend class DeferGCForAWhile;
+        friend class DelayedReleaseScope;
         friend class GCAwareJITStubRoutine;
         friend class HandleSet;
         friend class JITStubRoutine;
