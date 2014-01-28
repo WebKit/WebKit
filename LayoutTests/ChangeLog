@@ -1,3 +1,17 @@
+2014-01-28  Viatcheslav Ostapenko  <sl.ostapenko@samsung.com>
+
+        Sticky positioning is broken for table rows
+        https://bugs.webkit.org/show_bug.cgi?id=112024
+
+        Reviewed by Simon Fraser.
+
+        Add layout tests for sticky positioned table row and table thead.
+
+        * fast/css/sticky/sticky-table-row-top-expected.html: Added.
+        * fast/css/sticky/sticky-table-row-top.html: Added.
+        * fast/css/sticky/sticky-table-thead-top-expected.html: Added.
+        * fast/css/sticky/sticky-table-thead-top.html: Added.
+
 2014-01-28  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Fixing several incorrect assumptions with handling isolated inlines.

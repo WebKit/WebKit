@@ -1,3 +1,30 @@
+2014-01-28  Viatcheslav Ostapenko  <sl.ostapenko@samsung.com>
+
+        Sticky positioning is broken for table rows
+        https://bugs.webkit.org/show_bug.cgi?id=112024
+
+        Reviewed by Simon Fraser.
+
+        Enable sticky positioning for table elements. 
+        Also includes fix for bug ​wkb.ug/105654
+        I don't have access to this bug, but from related commit message I 
+        assume it says about "Heap use after free problem".
+        Debugging showed that it wasn't heap use after free. 
+        The real problem that RenderObject::container() returns object which is
+        not RenderBlock and it is used as RenderBlock in 
+        RenderBox::containingBlockLogicalHeightForPositioned() method.
+        Added extra isRenderBlock check and search for containingBlock if 
+        current block is not RenderBlock.
+        
+        Tests: fast/css/sticky/sticky-table-row-top.html
+               fast/css/sticky/sticky-table-thead-top.html
+
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::adjustRenderStyle):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::containingBlockLogicalHeightForPositioned):
+        * rendering/RenderTableRow.h:
+
 2014-01-28  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Fixing several incorrect assumptions with handling isolated inlines.

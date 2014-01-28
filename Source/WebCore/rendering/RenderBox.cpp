@@ -3090,7 +3090,7 @@ LayoutUnit RenderBox::containingBlockLogicalHeightForPositioned(const RenderBoxM
         if (isFixedPosition && containingBlock->isRenderView())
             return toRenderView(containingBlock)->clientLogicalHeightForFixedPosition();
 
-        const RenderBlock* cb = toRenderBlock(containingBlock);
+        const RenderBlock* cb = containingBlock->isRenderBlock() ? toRenderBlock(containingBlock) : containingBlock->containingBlock();
         LayoutUnit result = cb->clientLogicalHeight();
         RenderFlowThread* flowThread = flowThreadContainingBlock();
         if (flowThread && containingBlock->isRenderFlowThread() && flowThread->isHorizontalWritingMode() == containingBlock->isHorizontalWritingMode()) {

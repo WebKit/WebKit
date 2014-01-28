@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+<style>
+    body {
+        margin: 0;
+        height: 2000px;
+        overflow: hidden; /* hide scrollbars */
+    }
+
+    .group {
+        display: inline-block;
+        position: relative;
+        width: 250px;
+        height: 500px;
+    }
+
+    .container {
+        width: 200px;
+        height: 400px;
+        outline: 2px solid black;
+        border: hidden;
+        border-width: 0px;
+        border-spacing: 0px !important;
+        border-collapse:collapse;
+        cellspacing: 0;
+        cellpadding: 0;
+        padding: 0;
+    }
+
+    .box {
+        width: 200px;
+        height: 198px;
+    }
+
+    .sticky {
+        position: -webkit-sticky;
+        top: 100px;
+        background-color: green;
+    }
+
+    .indicator {
+        position: absolute;
+        top: 0;
+        left: 0;
+        background-color: red;
+    }
+</style>
+<script>
+    function doTest()
+    {
+        window.scrollTo(0, 100);
+    }
+    window.addEventListener('load', doTest, false);
+</script>
+</head>
+<body>
+    <div class="group">
+        <div class="indicator box" style="top: 200px;"></div>
+        <table class="container">
+            <tbody>
+                <tr class="sticky">
+                    <td class="box"></td>
+                </tr>
+                <tr>
+                    <td></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="group" style="top: 100px">
+        <div class="indicator box" style="top: 100px;"></div>
+        <table class="container" style="">
+            <tbody>
+                <tr class="sticky">
+                    <td class="box"></td>
+                </tr>
+                <tr>
+                    <td></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="group" style="top: 200px">
+        <div class="indicator box" style="top: 0;"></div>
+        <table class="container" style="">
+            <tbody>
+                <tr class="sticky">
+                    <td class="box"></td>
+                </tr>
+                <tr>
+                    <td></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div style="position: absolute; top: 620px;">
+    This test checks that sticky positioned table rows are contained by their table.
+    There should be no red.
+    </div>
+</body>
+</html>
