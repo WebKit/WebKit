@@ -62,6 +62,20 @@ BuildbotIteration.Event = {
     Updated: "updated"
 };
 
+// See <http://docs.buildbot.net/0.8.8/manual/cfg-properties.html>.
+function isMultiCodebaseGotRevisionProperty(property)
+{
+    return property[0] === "got_revision" && typeof property[1] === "object";
+}
+
+function parseRevisionProperty(property, key)
+{
+    if (!property)
+        return null;
+    var value = property[1];
+    return parseInt(isMultiCodebaseGotRevisionProperty(property) ? value[key] : value, 10);
+}
+
 BuildbotIteration.prototype = {
     constructor: BuildbotIteration,
     __proto__: BaseObject.prototype,
@@ -200,11 +214,25 @@ BuildbotIteration.prototype = {
             if (!data || !data.properties)
                 return;
 
-            var openSourceRevisionProperty = data.properties.findFirst(function(property) { return property[0] === "got_revision" || property[0] === "revision" || property[0] === "opensource_got_revision"; });
-            this.openSourceRevision = openSourceRevisionProperty ? parseInt(openSourceRevisionProperty[1], 10) : null;
+            // The property got_revision may have the following forms:
+            //
+            // ["got_revision",{"Internal":"1357","WebKitOpenSource":"2468"},"Source"]
+            // OR
+            // ["got_revision","2468_1357","Source"]
+            // OR
+            // ["got_revision","2468","Source"]
+            //
+            // When extracting the OpenSource revision from property got_revision we don't need to check whether the
+            // value of got_revision is a dictionary (represents multiple codebases) or a string literal because we
+            // assume that got_revision contains the OpenSource revision. However, it may not have the Internal
+            // revision. Therefore, we only look at got_revision to extract the Internal revision when it's
+            // a dictionary.
 
-            var internalRevisionProperty = data.properties.findFirst(function(property) { return property[0] === "internal_got_revision"; });
-            this.internalRevision = internalRevisionProperty ? parseInt(internalRevisionProperty[1], 10) : null;
+            var openSourceRevisionProperty = data.properties.findFirst(function(property) { return property[0] === "got_revision" || property[0] === "revision" || property[0] === "opensource_got_revision"; });
+            this.openSourceRevision = parseRevisionProperty(openSourceRevisionProperty, "WebKitOpenSource");
+
+            var internalRevisionProperty = data.properties.findFirst(function(property) { return property[0] === "internal_got_revision" || isMultiCodebaseGotRevisionProperty(property); });
+            this.internalRevision = parseRevisionProperty(internalRevisionProperty, "Internal");
 
             var layoutTestResults = collectTestResults.call(this, data, "layout-test");
             this.layoutTestResults = layoutTestResults ? new BuildbotTestResults(this, layoutTestResults) : null;

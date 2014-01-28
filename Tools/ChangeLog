@@ -1,3 +1,20 @@
+2014-01-28  Daniel Bates  <dabates@apple.com>
+
+        Teach Buildbot dashboard to parse alternative revision format
+        https://bugs.webkit.org/show_bug.cgi?id=127561
+
+        Reviewed by Alexey Proskuryakov.
+
+        Add support for extracting the OpenSource and Internal revision numbers when Buildbot
+        returns a dictionary for the value of property got_revision.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/BuildbotIteration.js:
+        (isMultiCodebaseGotRevisionProperty): Added.
+        (parseRevisionProperty): Added; parses Buildbot revision property, which can either be a
+        string or a dictionary.
+        (BuildbotIteration.prototype.update.): Modified to call parseRevisionProperty() to determine
+        the OpenSource and Internal revision numbers.
+
 2014-01-28  Adrian Perez de Castro  <aperez@igalia.com>
 
         [GTK] Add API to allow setting the process model in WebKitWebContext
