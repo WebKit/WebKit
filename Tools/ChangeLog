@@ -1,5 +1,13 @@
 2014-01-27  Tim Horton  <timothy_horton@apple.com>
 
+        Revert yet one more tiny part of r162629 that didn't get reverted in r162883
+
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::pluginLoadPolicy):
+        * WebKitTestRunner/TestController.h:
+
+2014-01-27  Tim Horton  <timothy_horton@apple.com>
+
         Revert one more tiny part of r162629 that didn't get reverted in r162883.
 
         ... which was also causing test failures!
