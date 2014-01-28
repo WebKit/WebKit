@@ -2469,7 +2469,7 @@ void WebPageProxy::decidePolicyForNavigationAction(uint64_t frameID, const Navig
     m_inDecidePolicyForNavigationAction = true;
     m_syncNavigationActionPolicyActionIsValid = false;
 
-    m_policyClient->decidePolicyForNavigationAction(this, frame, navigationActionData.navigationType, navigationActionData.modifiers, navigationActionData.mouseButton, originatingFrame, originalRequest, request, listener.get(), userData.get());
+    m_policyClient->decidePolicyForNavigationAction(this, frame, navigationActionData, originatingFrame, originalRequest, request, listener.get(), userData.get());
 
     m_inDecidePolicyForNavigationAction = false;
 
