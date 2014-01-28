@@ -40,7 +40,7 @@
 // convenience for collecting that data. It is not meant to be enabled by
 // default on release or debug builds.
 
-#define ENABLE_STACK_STATS 1
+#define ENABLE_STACK_STATS 0
 
 
 namespace WTF {

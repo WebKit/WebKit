@@ -1,5 +1,12 @@
 2014-01-28  Anders Carlsson  <andersca@apple.com>
 
+        Actually turn stack stats back off.
+
+        * wtf/StackStats.cpp:
+        * wtf/StackStats.h:
+
+2014-01-28  Anders Carlsson  <andersca@apple.com>
+
         Turn stack stats back off.
 
         * wtf/StackStats.cpp:
