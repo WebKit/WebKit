@@ -1,3 +1,9 @@
+2014-01-27  Jinwoo Song  <jinwoo7.song@samsung.com>
+
+        Unreviewed EFL gardening. Add test expectations for failing tests.
+
+        * platform/efl/TestExpectations:
+
 2014-01-27  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Unreviewed gardening, unskip now passing webgl tests on EFL port.

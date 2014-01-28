@@ -1801,3 +1801,11 @@ webkit.org/b/127489 http/tests/misc/will-send-request-returns-null-on-redirect.h
 webkit.org/b/126519 inspector-protocol/model/highlight-shape-outside-margin.html [ Failure ]
 
 webkit.org/b/126619 http/tests/media/video-auth.html [ Failure ]
+
+webkit.org/b/127723 accessibility/menu-list-sends-change-notification.html [ Failure ]
+
+webkit.org/b/127724 accessibility/range-alter-by-percent.html [ Failure ]
+
+webkit.org/b/127725 media/video-restricted-no-preload-auto.html [ Failure ]
+
+webkit.org/b/127731 plugins/embed-prefers-plugins-for-images.html [ Failure ]
