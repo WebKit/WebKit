@@ -69,7 +69,7 @@ private:
 
     std::unique_ptr<FontCustomPlatformData> m_fontData;
     bool m_loadInitiated;
-    bool m_hasCreatedFontData;
+    bool m_hasCreatedFontDataWrappingResource;
 
 #if ENABLE(SVG_FONTS)
     RefPtr<SVGDocument> m_externalSVGDocument;

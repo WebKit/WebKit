@@ -1,3 +1,24 @@
+2014-01-27  Andreas Kling  <akling@apple.com>
+
+        Allow mmap encoded data replacement for WOFF fonts.
+        <https://webkit.org/b/127737>
+
+        We always have to convert WOFF fonts to SFNT format. This happens
+        in a separate buffer from the CachedFont's internal resource buffer.
+        Because of this, there's no need to protect the original buffer from
+        mmap replacement.
+
+        With this change, WOFF web fonts are no longer duplicated between
+        the network and web processes.
+
+        Reviewed by Brady Eidson.
+
+        * loader/cache/CachedFont.cpp:
+        (WebCore::CachedFont::CachedFont):
+        (WebCore::CachedFont::ensureCustomFontData):
+        (WebCore::CachedFont::mayTryReplaceEncodedData):
+        * loader/cache/CachedFont.h:
+
 2014-01-27  David Hyatt  <hyatt@apple.com>
 
         [New Multicolumn] Add support for block progression axis and reverse direction
