@@ -36,6 +36,8 @@
 #import "WKGeolocationProviderIOS.h"
 #import "WKInteractionView.h"
 #import "WKProcessGroupPrivate.h"
+#import "WKProcessClassInternal.h"
+#import "WKWebViewConfiguration.h"
 #import "WebContext.h"
 #import "WebFrameProxy.h"
 #import "WebPageGroup.h"
@@ -65,13 +67,6 @@ using namespace WebKit;
     WebCore::FloatPoint _currentExposedRectPosition;
 }
 
-- (id)initWithCoder:(NSCoder *)coder
-{
-    // FIXME: Implement.
-    [self release];
-    return nil;
-}
-
 - (id)initWithFrame:(CGRect)frame contextRef:(WKContextRef)contextRef pageGroupRef:(WKPageGroupRef)pageGroupRef
 {
     return [self initWithFrame:frame contextRef:contextRef pageGroupRef:pageGroupRef relatedToPage:nullptr];
@@ -92,6 +87,38 @@ using namespace WebKit;
         return nil;
 
     [self _commonInitializationWithContextRef:processGroup._contextRef pageGroupRef:browsingContextGroup._pageGroupRef relatedToPage:nullptr];
+    return self;
+}
+
+- (instancetype)initWithFrame:(CGRect)frame configuration:(WKWebViewConfiguration *)configuration
+{
+    if (!(self = [super initWithFrame:frame]))
+        return nil;
+
+    InitializeWebKit2();
+    RunLoop::initializeMainRunLoop();
+
+    _pageClient = std::make_unique<PageClientImpl>(self);
+
+    _page = configuration.processClass->_context->createWebPage(*_pageClient, nullptr);
+    _page->initializeWebPage();
+    _page->setIntrinsicDeviceScaleFactor([UIScreen mainScreen].scale);
+    _page->setUseFixedLayout(true);
+
+    WebContext::statistics().wkViewCount++;
+
+    _rootContentView = adoptNS([[UIView alloc] init]);
+    [_rootContentView layer].masksToBounds = NO;
+    [_rootContentView setUserInteractionEnabled:NO];
+
+    [self addSubview:_rootContentView.get()];
+
+    _interactionView = adoptNS([[WKInteractionView alloc] init]);
+    [_interactionView setPage:_page];
+    [self addSubview:_interactionView.get()];
+
+    self.layer.hitTestsAsOpaque = YES;
+
     return self;
 }
 
