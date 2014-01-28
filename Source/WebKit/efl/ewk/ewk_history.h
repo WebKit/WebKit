@@ -352,15 +352,6 @@ EAPI const char       *ewk_history_item_uri_get(const Ewk_History_Item *item);
 EAPI const char       *ewk_history_item_uri_original_get(const Ewk_History_Item *item);
 
 /**
- * Query last visited time for given history item.
- *
- * @param item history item to query.
- *
- * @return the time in seconds this item was visited.
- */
-EAPI double            ewk_history_item_time_last_visited_get(const Ewk_History_Item *item);
-
-/**
  * Get the icon (aka favicon) associated with this history item.
  *
  * @note in order to have this working, one must open icon database
@@ -399,15 +390,6 @@ EAPI Evas_Object      *ewk_history_item_icon_object_add(const Ewk_History_Item *
  * @return @c EINA_TRUE if in cache, @c EINA_FALSE otherwise.
  */
 EAPI Eina_Bool         ewk_history_item_page_cache_exists(const Ewk_History_Item *item);
-
-/**
- * Query number of times item was visited.
- *
- * @param item history item to query.
- *
- * @return number of visits.
- */
-EAPI int               ewk_history_item_visit_count(const Ewk_History_Item *item);
 
 /**
  * Query if last visit to item was failure or not.

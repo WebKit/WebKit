@@ -326,12 +326,6 @@ const char* ewk_history_item_uri_original_get(const Ewk_History_Item* item)
     return historyItem->originalUri;
 }
 
-double ewk_history_item_time_last_visited_get(const Ewk_History_Item* item)
-{
-    // FIXME: Consider to drop this
-    return 0;
-}
-
 cairo_surface_t* ewk_history_item_icon_surface_get(const Ewk_History_Item* item)
 {
     EWK_HISTORY_ITEM_CORE_GET_OR_RETURN(item, core, 0);
@@ -361,12 +355,6 @@ Eina_Bool ewk_history_item_page_cache_exists(const Ewk_History_Item* item)
 {
     EWK_HISTORY_ITEM_CORE_GET_OR_RETURN(item, core, false);
     return core->isInPageCache();
-}
-
-int ewk_history_item_visit_count(const Ewk_History_Item* item)
-{
-    // FIXME: Consider to drop this
-    return 0;
 }
 
 Eina_Bool ewk_history_item_visit_last_failed(const Ewk_History_Item* item)

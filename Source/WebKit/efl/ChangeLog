@@ -1,3 +1,19 @@
+2014-01-27  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        [EFL][WK1] Remove ewk_history_item_time_last_visited_get and ewk_history_item_visit_count
+        https://bugs.webkit.org/show_bug.cgi?id=127662
+
+        Reviewed by Gyuyoung Kim.
+
+        These APIs are exposing WebCore's internal structure, but they removed
+        from WebCore since 162808.
+
+        This patch removed not to support them because applications can do it
+        if they want.
+
+        * ewk/ewk_history.cpp:
+        * ewk/ewk_history.h:
+
 2014-01-26  Ryuan Choi  <ryuan.choi@samsung.com>
 
         Unreviewed build fix on the EFL build since r162808
