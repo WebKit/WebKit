@@ -1323,3 +1323,6 @@ webkit.org/b/126900 svg/zoom/page/zoom-zoom-coords.xhtml [ Failure ]
 webkit.org/b/35297 media/video-display-aspect-ratio.html [ Pass Failure ]
 
 webkit.org/b/127310 svg/filters/feComponentTransfer-style-crash.xhtml [ Pass Failure Timeout ]
+
+webkit.org/b/127809 css3/flexbox/multiline-justify-content.html [ Skip ]
+webkit.org/b/127809 css3/flexbox/position-absolute-child.html [ Skip ]

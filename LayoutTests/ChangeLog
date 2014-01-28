@@ -1,3 +1,11 @@
+2014-01-28  Alexey Proskuryakov  <ap@apple.com>
+
+        REGRESSION (r162947): css3/flexbox/multiline-justify-content.html and
+        css3/flexbox/position-absolute-child.html are timing out
+        https://bugs.webkit.org/show_bug.cgi?id=127809
+
+        * platform/mac/TestExpectations: Skipping for now, Antti is going to take a look tomorrow.
+
 2014-01-23  Myles C. Maxfield  <mmaxfield@apple.com>
 
         ASSERT_WITH_SECURITY_IMPLICATION in WebCore::InlineTextBox::paint
