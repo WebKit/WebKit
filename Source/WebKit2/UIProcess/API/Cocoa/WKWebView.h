@@ -66,6 +66,9 @@ WK_API_CLASS
  */
 - (instancetype)initWithFrame:(CGRect)frame configuration:(WKWebViewConfiguration *)configuration WK_DESIGNATED_INITIALIZER;
 
+// FIXME: This should return a WKNavigation object.
+- (void)loadRequest:(NSURLRequest *)request;
+
 @end
 
 #endif

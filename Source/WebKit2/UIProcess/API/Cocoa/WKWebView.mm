@@ -97,7 +97,6 @@ static _UIWebViewportConfiguration standardViewportConfiguration = { { UIWebView
     [_viewportHandler setDelegate:self];
 
     [self _frameOrBoundsChanged];
-
 #endif
 
     return self;
@@ -106,6 +105,11 @@ static _UIWebViewportConfiguration standardViewportConfiguration = { { UIWebView
 - (WKWebViewConfiguration *)configuration
 {
     return [[_configuration copy] autorelease];
+}
+
+- (void)loadRequest:(NSURLRequest *)request
+{
+    _page->loadURLRequest(API::URLRequest::create(request).get());
 }
 
 #pragma mark iOS-specific methods
