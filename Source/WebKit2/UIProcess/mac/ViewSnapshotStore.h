@@ -26,6 +26,7 @@
 #ifndef ViewSnapshotStore_h
 #define ViewSnapshotStore_h
 
+#include <chrono>
 #include <wtf/HashMap.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/RetainPtr.h>
@@ -45,13 +46,23 @@ public:
     static ViewSnapshotStore& shared();
 
     void recordSnapshot(WebPageProxy&);
-    std::pair<RetainPtr<CGImageRef>, uint64_t> snapshotAndRenderTreeSize(WebBackForwardListItem*);
+    std::pair<RetainPtr<IOSurfaceRef>, uint64_t> snapshotAndRenderTreeSize(WebBackForwardListItem*);
 
     void disableSnapshotting() { m_enabled = false; }
     void enableSnapshotting() { m_enabled = true; }
 
 private:
-    HashMap<String, std::pair<RetainPtr<CGImageRef>, uint64_t>> m_snapshotMap;
+    void pruneSnapshots(WebPageProxy&);
+
+    struct Snapshot {
+        RetainPtr<IOSurfaceRef> surface;
+        RetainPtr<CGContextRef> surfaceContext;
+
+        std::chrono::steady_clock::time_point creationTime;
+    };
+
+    HashMap<String, Snapshot> m_snapshotMap;
+    HashMap<String, uint64_t> m_renderTreeSizeMap;
 
     bool m_enabled;
 };

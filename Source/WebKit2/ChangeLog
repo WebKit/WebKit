@@ -1,3 +1,52 @@
+2014-01-28  Tim Horton  <timothy_horton@apple.com>
+
+        WebKit2 View Gestures (Swipe): Snapshots should be purgeable
+        https://bugs.webkit.org/show_bug.cgi?id=127390
+        <rdar://problem/15876775>
+
+        Reviewed by Anders Carlsson.
+
+        Make snapshots be purgeable, and implement a straightforward
+        (if perhaps expensive, for now) cache eviction strategy to limit the
+        number of snapshots to 20.
+
+        * UIProcess/mac/ViewGestureController.mm:
+        (WebKit::ViewGestureController::beginSwipeGesture):
+        When beginning a gesture, attempt to make the retrieved snapshot
+        non-volatile. If it was purged while volatile, we won't use it, but if it
+        is still valid, we'll go ahead and use it as the swipe layer's contents.
+
+        (WebKit::ViewGestureController::removeSwipeSnapshot):
+        When removing the swipe snapshot, make it volatile once again.
+
+        * UIProcess/mac/ViewSnapshotStore.h:
+        Store a creation time along with the image.
+        Store and return IOSurfaces instead of CGImages.
+        Store snapshots and render tree sizes separately, so that we can
+        throw away snapshots but keep the render tree sizes indefinitely.
+
+        * UIProcess/mac/ViewSnapshotStore.mm:
+        (WebKit::ViewSnapshotStore::pruneSnapshots):
+        Cap the number of snapshots we'll ever have live at 20.
+        Enforce this cap by first trying to remove snapshots farthest
+        from the current back-forward list's current item, falling back
+        to removing the least recently created snapshot if there are no
+        snapshots owned by the current back-forward list.
+
+        (WebKit::createIOSurfaceFromImage):
+        Build an IOSurface from the CGImage snapshot we took, for ease of
+        use of its purgeability API.
+
+        (WebKit::ViewSnapshotStore::recordSnapshot):
+        Bail from taking the snapshot if the image is empty; this can happen
+        if the view is out of the window when the snapshot is taken.
+
+        Mark snapshots as purgeable as soon as they go into the cache.
+
+        (WebKit::ViewSnapshotStore::snapshotAndRenderTreeSize):
+        Return the target render tree size even if there is no snapshot image.
+        Take care not to look up an empty UUID.
+
 2014-01-27  Alexey Proskuryakov  <ap@apple.com>
 
         Expose SQL database creation and modification times

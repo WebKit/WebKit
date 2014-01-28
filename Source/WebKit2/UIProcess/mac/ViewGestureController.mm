@@ -41,6 +41,18 @@
 #import <QuartzCore/QuartzCore.h>
 #import <WebCore/WebCoreCALayerExtras.h>
 
+#if defined(__has_include) && __has_include(<IOSurface/IOSurfacePrivate.h>)
+#import <IOSurface/IOSurfacePrivate.h>
+#else
+enum {
+    kIOSurfacePurgeableNonVolatile = 0,
+    kIOSurfacePurgeableVolatile = 1,
+    kIOSurfacePurgeableEmpty = 2,
+};
+#endif
+
+extern "C" IOReturn IOSurfaceSetPurgeable(IOSurfaceRef buffer, uint32_t newState, uint32_t *oldState);
+
 #if defined(__has_include) && __has_include(<QuartzCore/QuartzCorePrivate.h>)
 #import <QuartzCore/QuartzCorePrivate.h>
 #else
@@ -279,8 +291,16 @@ void ViewGestureController::beginSwipeGesture(WebBackForwardListItem* targetItem
     m_swipeSnapshotLayer = adoptNS([[CALayer alloc] init]);
     [m_swipeSnapshotLayer setBackgroundColor:CGColorGetConstantColor(kCGColorWhite)];
 
-    RetainPtr<CGImageRef> snapshot = ViewSnapshotStore::shared().snapshotAndRenderTreeSize(targetItem).first;
-    [m_swipeSnapshotLayer setContents:(id)snapshot.get()];
+    RetainPtr<IOSurfaceRef> snapshot = ViewSnapshotStore::shared().snapshotAndRenderTreeSize(targetItem).first;
+
+    if (snapshot) {
+        uint32_t purgeabilityState;
+        IOSurfaceSetPurgeable(snapshot.get(), kIOSurfacePurgeableNonVolatile, &purgeabilityState);
+
+        if (purgeabilityState != kIOSurfacePurgeableEmpty)
+            [m_swipeSnapshotLayer setContents:(id)snapshot.get()];
+    }
+
     [m_swipeSnapshotLayer setContentsGravity:kCAGravityTopLeft];
     [m_swipeSnapshotLayer setContentsScale:m_webPageProxy.deviceScaleFactor()];
     [m_swipeSnapshotLayer setFrame:rootLayer.frame];
@@ -382,6 +402,10 @@ void ViewGestureController::removeSwipeSnapshot()
 
     if (m_activeGestureType != ViewGestureType::Swipe)
         return;
+
+    IOSurfaceRef snapshotSurface = (IOSurfaceRef)[m_swipeSnapshotLayer contents];
+    if (snapshotSurface)
+        IOSurfaceSetPurgeable(snapshotSurface, kIOSurfacePurgeableVolatile, nullptr);
 
     [m_webPageProxy.acceleratedCompositingRootLayer() setPosition:CGPointZero];
     [m_swipeSnapshotLayer removeFromSuperlayer];
