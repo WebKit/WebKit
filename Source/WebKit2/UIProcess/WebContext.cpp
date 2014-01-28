@@ -154,6 +154,7 @@ WebContext::WebContext(const String& injectedBundlePath)
 #if USE(SOUP)
     , m_ignoreTLSErrors(true)
 #endif
+    , m_memoryCacheDisabled(false)
 {
     platformInitialize();
 
@@ -600,6 +601,8 @@ WebProcessProxy& WebContext::createNewWebProcess()
 
     parameters.plugInAutoStartOriginHashes = m_plugInAutoStartProvider.autoStartOriginHashesCopy();
     copyToVector(m_plugInAutoStartProvider.autoStartOrigins(), parameters.plugInAutoStartOrigins);
+
+    parameters.memoryCacheDisabled = m_memoryCacheDisabled;
 
     // Add any platform specific parameters
     platformInitializeWebProcess(parameters);
@@ -1368,5 +1371,11 @@ void WebContext::pluginInfoStoreDidLoadPlugins(PluginInfoStore* store)
     m_client.plugInInformationBecameAvailable(this, API::Array::create(std::move(plugins)).get());
 }
 #endif
+    
+void WebContext::setMemoryCacheDisabled(bool disabled)
+{
+    m_memoryCacheDisabled = disabled;
+    sendToAllProcesses(Messages::WebProcess::SetMemoryCacheDisabled(disabled));
+}
 
 } // namespace WebKit

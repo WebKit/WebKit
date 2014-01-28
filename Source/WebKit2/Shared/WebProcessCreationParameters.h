@@ -140,6 +140,8 @@ struct WebProcessCreationParameters {
 
     HashMap<unsigned, double> plugInAutoStartOriginHashes;
     Vector<String> plugInAutoStartOrigins;
+
+    bool memoryCacheDisabled;
 };
 
 } // namespace WebKit

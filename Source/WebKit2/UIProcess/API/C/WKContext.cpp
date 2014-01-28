@@ -401,3 +401,8 @@ void WKContextSetInvalidMessageFunction(WKContextInvalidMessageFunction invalidM
 {
     WebContext::setInvalidMessageCallback(invalidMessageFunction);
 }
+
+void WKContextSetMemoryCacheDisabled(WKContextRef contextRef, bool disabled)
+{
+    toImpl(contextRef)->setMemoryCacheDisabled(disabled);
+}

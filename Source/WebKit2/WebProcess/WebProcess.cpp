@@ -356,6 +356,8 @@ void WebProcess::initializeWebProcess(const WebProcessCreationParameters& parame
     resetPlugInAutoStartOriginHashes(parameters.plugInAutoStartOriginHashes);
     for (size_t i = 0; i < parameters.plugInAutoStartOrigins.size(); ++i)
         m_plugInAutoStartOrigins.add(parameters.plugInAutoStartOrigins[i]);
+
+    setMemoryCacheDisabled(parameters.memoryCacheDisabled);
 }
 
 #if ENABLE(NETWORK_PROCESS)
@@ -1191,6 +1193,12 @@ RefPtr<API::Object> WebProcess::apiObjectByConvertingFromHandles(API::Object* ob
             return nullptr;
         }
     });
+}
+
+void WebProcess::setMemoryCacheDisabled(bool disabled)
+{
+    if (memoryCache()->disabled() != disabled)
+        memoryCache()->setDisabled(disabled);
 }
 
 } // namespace WebKit

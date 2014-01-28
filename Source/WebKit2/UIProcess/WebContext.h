@@ -328,6 +328,8 @@ public:
     void updateProcessSuppressionState() const;
 #endif
 
+    void setMemoryCacheDisabled(bool);
+
 private:
     void platformInitialize();
 
@@ -513,6 +515,8 @@ private:
 #if USE(SOUP)
     bool m_ignoreTLSErrors;
 #endif
+
+    bool m_memoryCacheDisabled;
 };
 
 template<typename T>

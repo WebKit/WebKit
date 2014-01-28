@@ -87,4 +87,6 @@ messages -> WebProcess LegacyReceiver {
 #if USE(SOUP)
     AllowSpecificHTTPSCertificateForHost(WebCore::CertificateInfo certificate, String host)
 #endif
+
+    SetMemoryCacheDisabled(bool disabled);
 }

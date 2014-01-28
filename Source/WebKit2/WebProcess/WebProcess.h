@@ -243,6 +243,8 @@ private:
     void setIgnoreTLSErrors(bool);
 #endif
 
+    void setMemoryCacheDisabled(bool);
+
     void postInjectedBundleMessage(const IPC::DataReference& messageData);
 
     // ChildProcess
