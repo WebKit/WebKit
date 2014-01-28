@@ -60,7 +60,6 @@ webkit.org/b/102651 [ Debug ] networkinformation/basic-operation.html [ Crash ]
 # WebGL test cases crashing in WebCore::GraphicsContext3D::readPixels().
 webkit.org/b/109417 webgl/conformance/textures/texture-attachment-formats.html [ Crash Failure ]
 webkit.org/b/109945 webgl/conformance/glsl/misc/shader-uniform-packing-restrictions.html [ Crash ]
-webkit.org/b/109945 webgl/conformance/uniforms/gl-uniform-arrays.html [ Crash Failure ]
 webkit.org/b/109945 webgl/conformance/uniforms/uniform-default-values.html [ Crash ]
 
 # Known WebGL conformance test failures, fails on Intel and AMD hardware
@@ -320,12 +319,10 @@ webkit.org/b/109435 webgl/conformance/context/context-creation-and-destruction.h
 webkit.org/b/109435 webgl/conformance/glsl/functions/glsl-function-sin.html [ Failure Crash ]
 webkit.org/b/109435 webgl/conformance/glsl/functions/glsl-function-smoothstep-float.html [ Failure Crash ]
 webkit.org/b/109435 webgl/conformance/glsl/literals/float_literal.vert.html [ Failure Crash ]
-webkit.org/b/109435 webgl/conformance/glsl/misc/shader-with-global-variable-precision-mismatch.html [ Failure Crash ]
 webkit.org/b/109435 webgl/conformance/glsl/misc/shaders-with-varyings.html [ Failure Crash ]
 webkit.org/b/109435 webgl/conformance/more/functions/readPixelsBadArgs.html [ Failure Crash ]
 webkit.org/b/109435 webgl/conformance/more/functions/texImage2DHTML.html [ Failure Crash ]
 webkit.org/b/109435 webgl/conformance/more/functions/texSubImage2DHTML.html [ Failure Crash ]
-webkit.org/b/109435 webgl/conformance/renderbuffers/framebuffer-object-attachment.html [ Failure Crash ]
 webkit.org/b/109435 webgl/conformance/rendering/multisample-corruption.html [ Failure Crash ]
 webkit.org/b/109435 webgl/conformance/rendering/point-size.html [ Failure Crash ]
 webkit.org/b/109435 webgl/conformance/textures/copy-tex-image-2d-formats.html [ Failure Crash ]

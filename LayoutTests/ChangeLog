@@ -1,3 +1,10 @@
+2014-01-27  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Unreviewed gardening, unskip now passing webgl tests on EFL port.
+
+        * platform/efl-wk2/TestExpectations:
+        * platform/efl/TestExpectations:
+
 2014-01-27  Zoltan Horvath  <zoltan@webkit.org>
 
         [CSS Shapes] Remove restriction of negative values for inset parameters

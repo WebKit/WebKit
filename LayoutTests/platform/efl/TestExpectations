@@ -1400,7 +1400,6 @@ webkit.org/b/102464 [ Debug ] fast/images/webgl-teximage2d.html [ Pass Timeout ]
 
 
 # Fail color checks, may also need platform results.
-webkit.org/b/105030 fast/canvas/webgl/framebuffer-object-attachment.html [ Failure ]
 webkit.org/b/105030 fast/canvas/webgl/premultiplyalpha-test.html [ Failure ]
 
 # Rendering issues.
@@ -1632,7 +1631,6 @@ webgl/1.0.2/conformance/context/context-creation-and-destruction.html [ Failure 
 webgl/1.0.2/conformance/context/premultiplyalpha-test.html [ Failure ]
 webgl/1.0.2/conformance/extensions/oes-texture-float.html [ Failure ]
 webgl/1.0.2/conformance/glsl/literals/float_literal.vert.html [ Failure ]
-webgl/1.0.2/conformance/glsl/misc/shader-with-global-variable-precision-mismatch.html [ Failure ]
 webgl/1.0.2/conformance/glsl/misc/shaders-with-varyings.html [ Failure ]
 webgl/1.0.2/conformance/ogles/GL/sin/sin_001_to_006.html [ Failure ]
 webgl/1.0.2/conformance/renderbuffers/framebuffer-object-attachment.html [ Failure ]
@@ -1640,8 +1638,6 @@ webgl/1.0.2/conformance/rendering/multisample-corruption.html [ Failure ]
 webgl/1.0.2/conformance/textures/copy-tex-image-2d-formats.html [ Failure ]
 webgl/1.0.2/conformance/textures/texture-attachment-formats.html [ Failure ]
 webgl/1.0.2/conformance/textures/texture-size-cube-maps.html [ Failure ]
-webgl/1.0.2/conformance/typedarrays/array-unit-tests.html [ Failure ]
-webgl/1.0.2/conformance/typedarrays/data-view-test.html [ Failure ]
 webgl/1.0.2/conformance/uniforms/gl-uniform-arrays.html [ Failure ]
 
 # Currently working on 1.0.2 conformance, skip currently known failing tests.
