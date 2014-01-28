@@ -1,3 +1,79 @@
+2014-01-27  David Hyatt  <hyatt@apple.com>
+
+        [New Multicolumn] Add support for block progression axis and reverse direction
+        https://bugs.webkit.org/show_bug.cgi?id=127715
+
+        Reviewed by thorton.
+
+        This patch adds support for -webkit-progression-direction and -webkit-progression-axis
+        to the new column code. This allows columns to stack along the block axis instead of
+        the inline axis or to reverse directions along that progression axis.
+
+        Added fast/multicol/newmulticol/progression-reverse.html and
+              fast/multicol/newmulticol/progression-reverse-overflow.html
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::isTopLayoutOverflowAllowed):
+        (WebCore::RenderBlock::isLeftLayoutOverflowAllowed):
+        New functions have been added for top and left layout overflow in order to get
+        a bunch of code out of RenderBox that didn't belong there. RenderBlock is overriding
+        the functions for the old multicolumn layout code to keep it working.
+
+        * rendering/RenderBlock.h:
+        Added the new top/left overflow functions.
+
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::determineLogicalLeftPositionForChild):
+        Moved from RenderBlock, since it didn't belong there.
+
+        (WebCore::RenderBlockFlow::isTopLayoutOverflowAllowed):
+        (WebCore::RenderBlockFlow::isLeftLayoutOverflowAllowed):
+        * rendering/RenderBlockFlow.h:
+        Overridden for the new multi-column code to specify when top/left overflow are
+        allowed (e.g., when the columns go backwards).
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::addLayoutOverflow):
+        Overridden to use the new top/left overflow functions.
+
+        * rendering/RenderBox.h:
+        (WebCore::RenderBox::isTopLayoutOverflowAllowed):
+        (WebCore::RenderBox::isLeftLayoutOverflowAllowed):
+        Added base definitions that look at direction and writing-mode.
+
+        * rendering/RenderFlexibleBox.cpp:
+        (WebCore::RenderFlexibleBox::isTopLayoutOverflowAllowed):
+        (WebCore::RenderFlexibleBox::isLeftLayoutOverflowAllowed):
+        * rendering/RenderFlexibleBox.h:
+        Overrides for flexible box of the top/left overflow functions.
+
+        * rendering/RenderMultiColumnFlowThread.h:
+        Make sure requiresBalancing() is set to false if the axis of the columns
+        is block, since at least right now, we don't support balancing columns
+        along the block axis. (In theory we could support this in the future, but
+        nobody has requested it.)
+
+        * rendering/RenderMultiColumnSet.cpp:
+        (WebCore::RenderMultiColumnSet::updateLogicalWidth):
+        Remove the code that expands the width of multi column sets. We now always
+        let their logical width match the containing block's content width and instead
+        add the overflow to the set itself.
+
+        (WebCore::RenderMultiColumnSet::columnRectAt):
+        (WebCore::RenderMultiColumnSet::flowThreadPortionOverflowRect):
+        (WebCore::RenderMultiColumnSet::paintColumnRules):
+        (WebCore::RenderMultiColumnSet::initialBlockOffsetForPainting):
+        (WebCore::RenderMultiColumnSet::collectLayerFragments):
+        (WebCore::RenderMultiColumnSet::adjustRegionBoundsFromFlowThreadPortionRect):
+        Patch all of these functions to know how to handle a block axis or reversed
+        direction.
+
+        (WebCore::RenderMultiColumnSet::addOverflowFromChildren):
+        * rendering/RenderMultiColumnSet.h:
+        Make multi-column set add in its overflow in the same way that the old
+        multi-column code did, by looking at the last column rect. (This is really
+        not a very good way to do it, but it's the same as the old code for now.)
+
 2014-01-27  Daniel Bates  <dabates@apple.com>
 
         Fix the Mac build following <http://trac.webkit.org/changeset/162887>

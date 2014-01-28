@@ -57,6 +57,9 @@ public:
 
     bool isHorizontalFlow() const;
 
+    bool isTopLayoutOverflowAllowed() const override;
+    bool isLeftLayoutOverflowAllowed() const override;
+
 protected:
     virtual void computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const override;
     virtual void computePreferredLogicalWidths() override;

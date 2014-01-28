@@ -82,6 +82,9 @@ public:
 
     void prepareForLayout();
 
+protected:
+    void addOverflowFromChildren() override;
+    
 private:
     virtual void computeLogicalHeight(LayoutUnit logicalHeight, LayoutUnit logicalTop, LogicalExtentComputedValues&) const override;
 
@@ -111,6 +114,8 @@ private:
 
     LayoutRect flowThreadPortionRectAt(unsigned index) const;
     LayoutRect flowThreadPortionOverflowRect(const LayoutRect& flowThreadPortion, unsigned index, unsigned colCount, LayoutUnit colGap);
+
+    LayoutUnit initialBlockOffsetForPainting() const;
 
     enum ColumnIndexCalculationMode {
         ClampToExistingColumns, // Stay within the range of already existing columns.

@@ -762,6 +762,24 @@ LayoutUnit RenderBlockFlow::marginOffsetForSelfCollapsingBlock()
     return LayoutUnit();
 }
 
+void RenderBlockFlow::determineLogicalLeftPositionForChild(RenderBox& child, ApplyLayoutDeltaMode applyDelta)
+{
+    LayoutUnit startPosition = borderStart() + paddingStart();
+    if (style().shouldPlaceBlockDirectionScrollbarOnLogicalLeft())
+        startPosition -= verticalScrollbarWidth();
+    LayoutUnit totalAvailableLogicalWidth = borderAndPaddingLogicalWidth() + availableLogicalWidth();
+
+    // Add in our start margin.
+    LayoutUnit childMarginStart = marginStartForChild(child);
+    LayoutUnit newPosition = startPosition + childMarginStart;
+        
+    // Some objects (e.g., tables, horizontal rules, overflow:auto blocks) avoid floats. They need
+    // to shift over as necessary to dodge any floats that might get in the way.
+    if (child.avoidsFloats() && containsFloats() && !flowThreadContainingBlock())
+        newPosition += computeStartPositionDeltaForChildAvoidingFloats(child, marginStartForChild(child));
+
+    setLogicalLeftForChild(child, style().isLeftToRightDirection() ? newPosition : totalAvailableLogicalWidth - newPosition - logicalWidthForChild(child), applyDelta);
+}
 
 void RenderBlockFlow::adjustFloatingBlock(const MarginInfo& marginInfo)
 {
@@ -3644,6 +3662,30 @@ unsigned RenderBlockFlow::computedColumnCount() const
         return multiColumnFlowThread()->computedColumnCount();
     
     return 1;
+}
+
+bool RenderBlockFlow::isTopLayoutOverflowAllowed() const
+{
+    bool hasTopOverflow = RenderBlock::isTopLayoutOverflowAllowed();
+    if (!multiColumnFlowThread() || style().columnProgression() == NormalColumnProgression)
+        return hasTopOverflow;
+    
+    if (!(isHorizontalWritingMode() ^ !style().hasInlineColumnAxis()))
+        hasTopOverflow = !hasTopOverflow;
+
+    return hasTopOverflow;
+}
+
+bool RenderBlockFlow::isLeftLayoutOverflowAllowed() const
+{
+    bool hasLeftOverflow = RenderBlock::isLeftLayoutOverflowAllowed();
+    if (!multiColumnFlowThread() || style().columnProgression() == NormalColumnProgression)
+        return hasLeftOverflow;
+    
+    if (isHorizontalWritingMode() ^ !style().hasInlineColumnAxis())
+        hasLeftOverflow = !hasLeftOverflow;
+
+    return hasLeftOverflow;
 }
 
 }

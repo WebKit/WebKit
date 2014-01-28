@@ -1,0 +1,56 @@
+<style>
+    div.test {
+        width: 100px;
+        height: 100px;
+        -webkit-column-width: 100px;
+        -webkit-column-gap: 0;
+        -webkit-column-fill: auto;
+        -webkit-column-progression: reverse;
+        column-width: 100px;
+        column-gap: 0;
+        column-fill: auto;
+        overflow: hidden;
+    }
+
+    div.test > div {
+        -webkit-logical-height: 100%;
+    }
+
+    div.test > div:first-child {
+        background-color: red;
+    }
+
+    div.test > div:last-child {
+        background-color: green;
+    }
+</style>
+<div class="test">
+    <div></div><div></div>
+</div>
+<div class="test" style="direction: rtl;">
+    <div></div><div></div>
+</div>
+<div class="test" style="-webkit-writing-mode: horizontal-bt;">
+    <div></div><div></div>
+</div>
+<div class="test" style="-webkit-writing-mode: vertical-lr;">
+    <div></div><div></div>
+</div>
+<div class="test" style="-webkit-column-axis: vertical;">
+    <div></div><div></div>
+</div>
+<div class="test" style="-webkit-writing-mode: vertical-lr; -webkit-column-axis: horizontal;">
+    <div></div><div></div>
+</div>
+<script>
+    var tests = document.querySelectorAll("div.test");
+    for (var i = 0; i < tests.length; ++i) {
+        var test = tests[i];
+        if (test.scrollLeft)
+            test.scrollLeft = 0;
+        else
+            test.scrollLeft = test.scrollWidth;
+        if (test.scrollTop)
+            test.scrollTop = 0;
+    }
+</script>

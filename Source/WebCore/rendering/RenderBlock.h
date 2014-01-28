@@ -423,9 +423,13 @@ protected:
 public:
     virtual void computeOverflow(LayoutUnit oldClientAfterEdge, bool recomputeFloats = false);
     void clearLayoutOverflow();
+    
+    bool isTopLayoutOverflowAllowed() const override;
+    bool isLeftLayoutOverflowAllowed() const override;
+
 protected:
     virtual void addOverflowFromChildren();
-    // FIXME-BLOCKFLOW: Remove virtualizaion when all callers have moved to RenderBlockFlow
+    // FIXME-BLOCKFLOW: Remove virtualization when all callers have moved to RenderBlockFlow
     virtual void addOverflowFromInlineChildren() { }
     void addOverflowFromBlockChildren();
     void addOverflowFromPositionedObjects();
@@ -580,8 +584,6 @@ private:
     
 protected:
     void dirtyForLayoutFromPercentageHeightDescendants();
-    
-    void determineLogicalLeftPositionForChild(RenderBox& child, ApplyLayoutDeltaMode = DoNotApplyLayoutDelta);
     
     virtual ColumnInfo::PaginationUnit paginationUnit() const;
 

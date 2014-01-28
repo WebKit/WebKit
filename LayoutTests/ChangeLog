@@ -1,3 +1,22 @@
+2014-01-27  David Hyatt  <hyatt@apple.com>
+
+        [New Multicolumn] Add support for block progression axis and reverse direction
+        https://bugs.webkit.org/show_bug.cgi?id=127715
+
+        Reviewed by thorton.
+
+        This patch adds support for -webkit-progression-direction and -webkit-progression-axis
+        to the new column code. This allows columns to stack along the block axis instead of
+        the inline axis or to reverse directions along that progression axis.
+
+        Added fast/multicol/newmulticol/progression-reverse.html and
+              fast/multicol/newmulticol/progression-reverse-overflow.html
+
+        * fast/multicol/newmulticol/progression-reverse-expected.html: Added.
+        * fast/multicol/newmulticol/progression-reverse-overflow-expected.html: Added.
+        * fast/multicol/newmulticol/progression-reverse-overflow.html: Added.
+        * fast/multicol/newmulticol/progression-reverse.html: Added.
+
 2014-01-27  Jinwoo Song  <jinwoo7.song@samsung.com>
 
         Unreviewed EFL gardening. Add test expectations for failing tests.

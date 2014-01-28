@@ -1677,6 +1677,30 @@ void RenderBlock::addVisualOverflowFromTheme()
         flowThread->addRegionsVisualOverflowFromTheme(this);
 }
 
+bool RenderBlock::isTopLayoutOverflowAllowed() const
+{
+    bool hasTopOverflow = RenderBox::isTopLayoutOverflowAllowed();
+    if (!hasColumns() || style().columnProgression() == NormalColumnProgression)
+        return hasTopOverflow;
+    
+    if (!(isHorizontalWritingMode() ^ !style().hasInlineColumnAxis()))
+        hasTopOverflow = !hasTopOverflow;
+
+    return hasTopOverflow;
+}
+
+bool RenderBlock::isLeftLayoutOverflowAllowed() const
+{
+    bool hasLeftOverflow = RenderBox::isLeftLayoutOverflowAllowed();
+    if (!hasColumns() || style().columnProgression() == NormalColumnProgression)
+        return hasLeftOverflow;
+    
+    if (isHorizontalWritingMode() ^ !style().hasInlineColumnAxis())
+        hasLeftOverflow = !hasLeftOverflow;
+
+    return hasLeftOverflow;
+}
+
 bool RenderBlock::expandsToEncloseOverhangingFloats() const
 {
     return isInlineBlockOrInlineTable() || isFloatingOrOutOfFlowPositioned() || hasOverflowClip() || (parent() && parent()->isFlexibleBoxIncludingDeprecated())
@@ -1844,25 +1868,6 @@ LayoutUnit RenderBlock::computeStartPositionDeltaForChildAvoidingFloats(const Re
         newPosition = startOff + childMarginStart;
 
     return newPosition - oldPosition;
-}
-
-void RenderBlock::determineLogicalLeftPositionForChild(RenderBox& child, ApplyLayoutDeltaMode applyDelta)
-{
-    LayoutUnit startPosition = borderStart() + paddingStart();
-    if (style().shouldPlaceBlockDirectionScrollbarOnLogicalLeft())
-        startPosition -= verticalScrollbarWidth();
-    LayoutUnit totalAvailableLogicalWidth = borderAndPaddingLogicalWidth() + availableLogicalWidth();
-
-    // Add in our start margin.
-    LayoutUnit childMarginStart = marginStartForChild(child);
-    LayoutUnit newPosition = startPosition + childMarginStart;
-        
-    // Some objects (e.g., tables, horizontal rules, overflow:auto blocks) avoid floats.  They need
-    // to shift over as necessary to dodge any floats that might get in the way.
-    if (child.avoidsFloats() && containsFloats() && !flowThreadContainingBlock())
-        newPosition += computeStartPositionDeltaForChildAvoidingFloats(child, marginStartForChild(child));
-
-    setLogicalLeftForChild(child, style().isLeftToRightDirection() ? newPosition : totalAvailableLogicalWidth - newPosition - logicalWidthForChild(child), applyDelta);
 }
 
 void RenderBlock::setLogicalLeftForChild(RenderBox& child, LayoutUnit logicalLeft, ApplyLayoutDeltaMode applyDelta)

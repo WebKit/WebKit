@@ -47,7 +47,7 @@ public:
     
     bool shouldRelayoutForPagination() const { return !m_inBalancingPass && m_needsRebalancing; }
     
-    bool requiresBalancing() const { return !columnHeightAvailable() || parent()->style().columnFill() == ColumnFillBalance; }
+    bool requiresBalancing() const { return progressionIsInline() && (!columnHeightAvailable() || parent()->style().columnFill() == ColumnFillBalance); }
 
     void setColumnCountAndWidth(unsigned count, LayoutUnit width)
     {

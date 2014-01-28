@@ -205,18 +205,6 @@ void RenderMultiColumnSet::updateLogicalWidth()
     // FIXME: When we add regions support, we'll start it off at the width of the multi-column
     // block in that particular region.
     setLogicalWidth(parentBox()->contentLogicalWidth());
-
-    // If we overflow, increase our logical width.
-    unsigned colCount = columnCount();
-    LayoutUnit colGap = columnGap();
-    LayoutUnit minimumContentLogicalWidth = colCount * computedColumnWidth() + (colCount - 1) * colGap;
-    LayoutUnit currentContentLogicalWidth = contentLogicalWidth();
-    LayoutUnit delta = std::max(LayoutUnit(), minimumContentLogicalWidth - currentContentLogicalWidth);
-    if (!delta)
-        return;
-
-    // Increase our logical width by the delta.
-    setLogicalWidth(logicalWidth() + delta);
 }
 
 void RenderMultiColumnSet::prepareForLayout()
@@ -295,11 +283,23 @@ LayoutRect RenderMultiColumnSet::columnRectAt(unsigned index) const
     LayoutUnit colLogicalTop = borderAndPaddingBefore();
     LayoutUnit colLogicalLeft = borderAndPaddingLogicalLeft();
     LayoutUnit colGap = columnGap();
-    if (style().isLeftToRightDirection())
-        colLogicalLeft += index * (colLogicalWidth + colGap);
-    else
-        colLogicalLeft += contentLogicalWidth() - colLogicalWidth - index * (colLogicalWidth + colGap);
-
+    
+    RenderBlockFlow* parentFlow = toRenderBlockFlow(parent());
+    bool progressionReversed = parentFlow->multiColumnFlowThread()->progressionIsReversed();
+    bool progressionInline = parentFlow->multiColumnFlowThread()->progressionIsInline();
+    
+    if (progressionInline) {
+        if (style().isLeftToRightDirection() ^ progressionReversed)
+            colLogicalLeft += index * (colLogicalWidth + colGap);
+        else
+            colLogicalLeft += contentLogicalWidth() - colLogicalWidth - index * (colLogicalWidth + colGap);
+    } else {
+        if (!progressionReversed)
+            colLogicalTop += index * (colLogicalHeight + colGap);
+        else
+            colLogicalTop += contentLogicalHeight() - colLogicalHeight - index * (colLogicalHeight + colGap);
+    }
+    
     if (isHorizontalWritingMode())
         return LayoutRect(colLogicalLeft, colLogicalTop, colLogicalWidth, colLogicalHeight);
     return LayoutRect(colLogicalTop, colLogicalLeft, colLogicalHeight, colLogicalWidth);
@@ -347,10 +347,14 @@ LayoutRect RenderMultiColumnSet::flowThreadPortionOverflowRect(const LayoutRect&
     // FIXME: Eventually we will know overflow on a per-column basis, but we can't do this until we have a painting
     // mode that understands not to paint contents from a previous column in the overflow area of a following column.
     // This problem applies to regions and pages as well and is not unique to columns.
+    
+    RenderBlockFlow* parentFlow = toRenderBlockFlow(parent());
+    bool progressionReversed = parentFlow->multiColumnFlowThread()->progressionIsReversed();
+    
     bool isFirstColumn = !index;
     bool isLastColumn = index == colCount - 1;
-    bool isLeftmostColumn = style().isLeftToRightDirection() ? isFirstColumn : isLastColumn;
-    bool isRightmostColumn = style().isLeftToRightDirection() ? isLastColumn : isFirstColumn;
+    bool isLeftmostColumn = style().isLeftToRightDirection() ^ progressionReversed ? isFirstColumn : isLastColumn;
+    bool isRightmostColumn = style().isLeftToRightDirection() ^ progressionReversed ? isLastColumn : isFirstColumn;
 
     // Calculate the overflow rectangle, based on the flow thread's, clipped at column logical
     // top/bottom unless it's the first/last column.
@@ -395,6 +399,7 @@ void RenderMultiColumnSet::paintColumnRules(PaintInfo& paintInfo, const LayoutPo
     if (paintInfo.context->paintingDisabled())
         return;
 
+    RenderMultiColumnFlowThread* flowThread = toRenderBlockFlow(parent())->multiColumnFlowThread();
     const RenderStyle& blockStyle = parent()->style();
     const Color& ruleColor = blockStyle.visitedDependentColor(CSSPropertyWebkitColumnRuleColor);
     bool ruleTransparent = blockStyle.columnRuleIsTransparent();
@@ -411,36 +416,66 @@ void RenderMultiColumnSet::paintColumnRules(PaintInfo& paintInfo, const LayoutPo
 
     bool antialias = shouldAntialiasLines(paintInfo.context);
 
-    bool leftToRight = style().isLeftToRightDirection();
-    LayoutUnit currLogicalLeftOffset = leftToRight ? LayoutUnit() : contentLogicalWidth();
-    LayoutUnit ruleAdd = borderAndPaddingLogicalLeft();
-    LayoutUnit ruleLogicalLeft = leftToRight ? LayoutUnit() : contentLogicalWidth();
-    LayoutUnit inlineDirectionSize = computedColumnWidth();
-    BoxSide boxSide = isHorizontalWritingMode()
-        ? leftToRight ? BSLeft : BSRight
-        : leftToRight ? BSTop : BSBottom;
+    if (flowThread->progressionIsInline()) {
+        bool leftToRight = style().isLeftToRightDirection() ^ flowThread->progressionIsReversed();
+        LayoutUnit currLogicalLeftOffset = leftToRight ? LayoutUnit() : contentLogicalWidth();
+        LayoutUnit ruleAdd = logicalLeftOffsetForContent();
+        LayoutUnit ruleLogicalLeft = leftToRight ? LayoutUnit() : contentLogicalWidth();
+        LayoutUnit inlineDirectionSize = computedColumnWidth();
+        BoxSide boxSide = isHorizontalWritingMode()
+            ? leftToRight ? BSLeft : BSRight
+            : leftToRight ? BSTop : BSBottom;
 
-    for (unsigned i = 0; i < colCount; i++) {
-        // Move to the next position.
-        if (leftToRight) {
-            ruleLogicalLeft += inlineDirectionSize + colGap / 2;
-            currLogicalLeftOffset += inlineDirectionSize + colGap;
-        } else {
-            ruleLogicalLeft -= (inlineDirectionSize + colGap / 2);
-            currLogicalLeftOffset -= (inlineDirectionSize + colGap);
+        for (unsigned i = 0; i < colCount; i++) {
+            // Move to the next position.
+            if (leftToRight) {
+                ruleLogicalLeft += inlineDirectionSize + colGap / 2;
+                currLogicalLeftOffset += inlineDirectionSize + colGap;
+            } else {
+                ruleLogicalLeft -= (inlineDirectionSize + colGap / 2);
+                currLogicalLeftOffset -= (inlineDirectionSize + colGap);
+            }
+
+            // Now paint the column rule.
+            if (i < colCount - 1) {
+                LayoutUnit ruleLeft = isHorizontalWritingMode() ? paintOffset.x() + ruleLogicalLeft - ruleThickness / 2 + ruleAdd : paintOffset.x() + borderLeft() + paddingLeft();
+                LayoutUnit ruleRight = isHorizontalWritingMode() ? ruleLeft + ruleThickness : ruleLeft + contentWidth();
+                LayoutUnit ruleTop = isHorizontalWritingMode() ? paintOffset.y() + borderTop() + paddingTop() : paintOffset.y() + ruleLogicalLeft - ruleThickness / 2 + ruleAdd;
+                LayoutUnit ruleBottom = isHorizontalWritingMode() ? ruleTop + contentHeight() : ruleTop + ruleThickness;
+                IntRect pixelSnappedRuleRect = pixelSnappedIntRectFromEdges(ruleLeft, ruleTop, ruleRight, ruleBottom);
+                drawLineForBoxSide(paintInfo.context, pixelSnappedRuleRect.x(), pixelSnappedRuleRect.y(), pixelSnappedRuleRect.maxX(), pixelSnappedRuleRect.maxY(), boxSide, ruleColor, ruleStyle, 0, 0, antialias);
+            }
+            
+            ruleLogicalLeft = currLogicalLeftOffset;
+        }
+    } else {
+        bool topToBottom = !style().isFlippedBlocksWritingMode() ^ flowThread->progressionIsReversed();
+        LayoutUnit ruleLeft = isHorizontalWritingMode() ? LayoutUnit() : colGap / 2 - colGap - ruleThickness / 2;
+        LayoutUnit ruleWidth = isHorizontalWritingMode() ? contentWidth() : ruleThickness;
+        LayoutUnit ruleTop = isHorizontalWritingMode() ? colGap / 2 - colGap - ruleThickness / 2 : LayoutUnit();
+        LayoutUnit ruleHeight = isHorizontalWritingMode() ? ruleThickness : contentHeight();
+        LayoutRect ruleRect(ruleLeft, ruleTop, ruleWidth, ruleHeight);
+
+        if (!topToBottom) {
+            if (isHorizontalWritingMode())
+                ruleRect.setY(height() - ruleRect.maxY());
+            else
+                ruleRect.setX(width() - ruleRect.maxX());
         }
 
-        // Now paint the column rule.
-        if (i < colCount - 1) {
-            LayoutUnit ruleLeft = isHorizontalWritingMode() ? paintOffset.x() + ruleLogicalLeft - ruleThickness / 2 + ruleAdd : paintOffset.x() + borderLeft() + paddingLeft();
-            LayoutUnit ruleRight = isHorizontalWritingMode() ? ruleLeft + ruleThickness : ruleLeft + contentWidth();
-            LayoutUnit ruleTop = isHorizontalWritingMode() ? paintOffset.y() + borderTop() + paddingTop() : paintOffset.y() + ruleLogicalLeft - ruleThickness / 2 + ruleAdd;
-            LayoutUnit ruleBottom = isHorizontalWritingMode() ? ruleTop + contentHeight() : ruleTop + ruleThickness;
-            IntRect pixelSnappedRuleRect = pixelSnappedIntRectFromEdges(ruleLeft, ruleTop, ruleRight, ruleBottom);
+        ruleRect.moveBy(paintOffset);
+
+        BoxSide boxSide = isHorizontalWritingMode() ? topToBottom ? BSTop : BSBottom : topToBottom ? BSLeft : BSRight;
+
+        LayoutSize step(0, topToBottom ? computedColumnHeight() + colGap : -(computedColumnHeight() + colGap));
+        if (!isHorizontalWritingMode())
+            step = step.transposedSize();
+
+        for (unsigned i = 1; i < colCount; i++) {
+            ruleRect.move(step);
+            IntRect pixelSnappedRuleRect = pixelSnappedIntRect(ruleRect);
             drawLineForBoxSide(paintInfo.context, pixelSnappedRuleRect.x(), pixelSnappedRuleRect.y(), pixelSnappedRuleRect.maxX(), pixelSnappedRuleRect.maxY(), boxSide, ruleColor, ruleStyle, 0, 0, antialias);
         }
-        
-        ruleLogicalLeft = currLogicalLeftOffset;
     }
 }
 
@@ -480,6 +515,22 @@ void RenderMultiColumnSet::repaintFlowThreadContent(const LayoutRect& repaintRec
         // Do a repaint for this specific column.
         repaintFlowThreadContentRectangle(repaintRect, immediate, flowThreadPortion, colRect.location(), &flowThreadOverflowPortion);
     }
+}
+
+LayoutUnit RenderMultiColumnSet::initialBlockOffsetForPainting() const
+{
+    RenderBlockFlow* parentFlow = toRenderBlockFlow(parent());
+    bool progressionReversed = parentFlow->multiColumnFlowThread()->progressionIsReversed();
+    bool progressionIsInline = parentFlow->multiColumnFlowThread()->progressionIsInline();
+    
+    LayoutUnit result = 0;
+    if (!progressionIsInline && progressionReversed) {
+        LayoutRect colRect = columnRectAt(0);
+        result = isHorizontalWritingMode() ? colRect.y() : colRect.x();
+        if (style().isFlippedBlocksWritingMode())
+            result = -result;
+    }
+    return result;
 }
 
 void RenderMultiColumnSet::collectLayerFragments(LayerFragments& fragments, const LayoutRect& layerBoundingBox, const LayoutRect& dirtyRect)
@@ -535,6 +586,12 @@ void RenderMultiColumnSet::collectLayerFragments(LayerFragments& fragments, cons
     LayoutUnit colGap = columnGap();
     unsigned colCount = columnCount();
     
+    RenderBlockFlow* parentFlow = toRenderBlockFlow(parent());
+    bool progressionReversed = parentFlow->multiColumnFlowThread()->progressionIsReversed();
+    bool progressionIsInline = parentFlow->multiColumnFlowThread()->progressionIsInline();
+    
+    LayoutUnit initialBlockOffset = initialBlockOffsetForPainting();
+    
     for (unsigned i = startColumn; i <= endColumn; i++) {
         // Get the portion of the flow thread that corresponds to this column.
         LayoutRect flowThreadPortion = flowThreadPortionRectAt(i);
@@ -551,11 +608,22 @@ void RenderMultiColumnSet::collectLayerFragments(LayerFragments& fragments, cons
         // We also need to intersect the dirty rect. We have to apply a translation and shift based off
         // our column index.
         LayoutPoint translationOffset;
-        LayoutUnit inlineOffset = i * (colLogicalWidth + colGap);
-        if (!style().isLeftToRightDirection())
+        LayoutUnit inlineOffset = progressionIsInline ? i * (colLogicalWidth + colGap) : LayoutUnit();
+        
+        bool leftToRight = style().isLeftToRightDirection() ^ progressionReversed;
+        if (!leftToRight) {
             inlineOffset = -inlineOffset;
+            if (progressionReversed)
+                inlineOffset += contentLogicalWidth() - colLogicalWidth;
+        }
         translationOffset.setX(inlineOffset);
-        LayoutUnit blockOffset = isHorizontalWritingMode() ? -flowThreadPortion.y() : -flowThreadPortion.x();
+        LayoutUnit blockOffset = initialBlockOffset + (isHorizontalWritingMode() ? -flowThreadPortion.y() : -flowThreadPortion.x());
+        if (!progressionIsInline) {
+            if (!progressionReversed)
+                blockOffset = i * colGap;
+            else
+                blockOffset -= i * (computedColumnHeight() + colGap);
+        }
         if (isFlippedBlocksWritingMode(style().writingMode()))
             blockOffset = -blockOffset;
         translationOffset.setY(blockOffset);
@@ -597,13 +665,29 @@ void RenderMultiColumnSet::adjustRegionBoundsFromFlowThreadPortionRect(const Int
     
     LayoutRect flowThreadPortion = flowThreadPortionRectAt(startColumn);
     LayoutPoint translationOffset;
-
-    LayoutUnit inlineOffset = startColumn * (colLogicalWidth + colGap);
-    if (!style().isLeftToRightDirection())
+    
+    RenderBlockFlow* parentFlow = toRenderBlockFlow(parent());
+    bool progressionReversed = parentFlow->multiColumnFlowThread()->progressionIsReversed();
+    bool progressionIsInline = parentFlow->multiColumnFlowThread()->progressionIsInline();
+    
+    LayoutUnit initialBlockOffset = initialBlockOffsetForPainting();
+    
+    LayoutUnit inlineOffset = progressionIsInline ? startColumn * (colLogicalWidth + colGap) : LayoutUnit();
+    
+    bool leftToRight = style().isLeftToRightDirection() ^ progressionReversed;
+    if (!leftToRight) {
         inlineOffset = -inlineOffset;
+        if (progressionReversed)
+            inlineOffset += contentLogicalWidth() - colLogicalWidth;
+    }
     translationOffset.setX(inlineOffset);
-        
-    LayoutUnit blockOffset = isHorizontalWritingMode() ? -flowThreadPortion.y() : -flowThreadPortion.x();
+    LayoutUnit blockOffset = initialBlockOffset + (isHorizontalWritingMode() ? -flowThreadPortion.y() : -flowThreadPortion.x());
+    if (!progressionIsInline) {
+        if (!progressionReversed)
+            blockOffset = startColumn * colGap;
+        else
+            blockOffset -= startColumn * (computedColumnHeight() + colGap);
+    }
     if (isFlippedBlocksWritingMode(style().writingMode()))
         blockOffset = -blockOffset;
     translationOffset.setY(blockOffset);
@@ -615,6 +699,19 @@ void RenderMultiColumnSet::adjustRegionBoundsFromFlowThreadPortionRect(const Int
     // multicolumn block as well. This won't be an issue until we start creating multiple multicolumn sets.
     
     regionBounds.moveBy(roundedIntPoint(-translationOffset));
+}
+
+void RenderMultiColumnSet::addOverflowFromChildren()
+{
+    // FIXME: Need to do much better here.
+    unsigned colCount = columnCount();
+    if (!colCount)
+        return;
+    
+    LayoutRect lastRect = columnRectAt(colCount - 1);
+    addLayoutOverflow(lastRect);
+    if (!hasOverflowClip())
+        addVisualOverflow(lastRect);
 }
 
 const char* RenderMultiColumnSet::renderName() const

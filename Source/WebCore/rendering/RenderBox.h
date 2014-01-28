@@ -197,6 +197,9 @@ public:
     void addVisualOverflow(const LayoutRect&);
     void clearOverflow();
     
+    virtual bool isTopLayoutOverflowAllowed() const { return !style().isLeftToRightDirection() && !isHorizontalWritingMode(); }
+    virtual bool isLeftLayoutOverflowAllowed() const { return !style().isLeftToRightDirection() && isHorizontalWritingMode(); }
+    
     void addVisualEffectOverflow();
     LayoutRect applyVisualEffectOverflow(const LayoutRect&) const;
     void addOverflowFromChild(RenderBox* child) { addOverflowFromChild(child, child->locationOffset()); }

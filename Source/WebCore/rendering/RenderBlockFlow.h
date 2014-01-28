@@ -441,6 +441,9 @@ protected:
 
     virtual LayoutUnit computedColumnWidth() const override;
     virtual unsigned computedColumnCount() const override;
+    
+    bool isTopLayoutOverflowAllowed() const override;
+    bool isLeftLayoutOverflowAllowed() const override;
 
 private:
     // Called to lay out the legend for a fieldset or the ruby text of a ruby run. Also used by multi-column layout to handle
@@ -483,6 +486,8 @@ private:
     bool hasOverhangingFloats() { return parent() && !hasColumns() && containsFloats() && lowestFloatLogicalBottom() > logicalHeight(); }
     LayoutUnit getClearDelta(RenderBox& child, LayoutUnit yPos);
 
+    void determineLogicalLeftPositionForChild(RenderBox& child, ApplyLayoutDeltaMode = DoNotApplyLayoutDelta);
+    
     virtual bool hitTestFloats(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset) override;
     virtual bool hitTestInlineChildren(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction) override;
 

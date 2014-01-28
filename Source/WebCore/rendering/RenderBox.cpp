@@ -4307,22 +4307,8 @@ void RenderBox::addLayoutOverflow(const LayoutRect& rect)
         // Overflow is in the block's coordinate space and thus is flipped for horizontal-bt and vertical-rl 
         // writing modes.  At this stage that is actually a simplification, since we can treat horizontal-tb/bt as the same
         // and vertical-lr/rl as the same.
-        bool hasTopOverflow = !style().isLeftToRightDirection() && !isHorizontalWritingMode();
-        bool hasLeftOverflow = !style().isLeftToRightDirection() && isHorizontalWritingMode();
-        if (isFlexibleBox() && style().isReverseFlexDirection()) {
-            RenderFlexibleBox* flexibleBox = toRenderFlexibleBox(this);
-            if (flexibleBox->isHorizontalFlow())
-                hasLeftOverflow = true;
-            else
-                hasTopOverflow = true;
-        }
-
-        if (hasColumns() && style().columnProgression() == ReverseColumnProgression) {
-            if (isHorizontalWritingMode() ^ !style().hasInlineColumnAxis())
-                hasLeftOverflow = !hasLeftOverflow;
-            else
-                hasTopOverflow = !hasTopOverflow;
-        }
+        bool hasTopOverflow = isTopLayoutOverflowAllowed();
+        bool hasLeftOverflow = isLeftLayoutOverflowAllowed();
 
         if (!hasTopOverflow)
             overflowRect.shiftYEdgeTo(std::max(overflowRect.y(), clientBox.y()));
