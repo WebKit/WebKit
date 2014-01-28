@@ -1,3 +1,18 @@
+2014-01-28  Diego Pino Garcia  <dpino@igalia.com>
+
+        Web Inspector: In a DataGrid, store value of columnIdentifier to DOM node representing a cell
+        https://bugs.webkit.org/show_bug.cgi?id=127613
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/DOMStorageContentView.js:
+        (WebInspector.DOMStorageContentView.prototype._editingCallback):
+        * UserInterface/DataGrid.js:
+        (WebInspector.DataGrid):
+        (WebInspector.DataGrid.prototype._keyDown):
+        (WebInspector.DataGrid.prototype._contextMenuInDataTable):
+        (WebInspector.DataGridNode.prototype.createCell):
+
 2014-01-27  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Feature Check all Protocol Generated Interfaces to get JSContext Inspection working

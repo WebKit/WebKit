@@ -215,7 +215,7 @@ WebInspector.DOMStorageContentView.prototype = {
     _editingCallback: function(editingNode, columnIdentifier, oldText, newText)
     {
         var domStorage = this.representedObject;
-        if (columnIdentifier === 0) {
+        if (columnIdentifier === "0") {
             if (oldText)
                 domStorage.removeItem(oldText);
 

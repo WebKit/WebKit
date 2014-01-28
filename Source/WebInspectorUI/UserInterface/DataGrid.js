@@ -153,6 +153,7 @@ WebInspector.DataGrid = function(columns, editCallback, deleteCallback)
         var column = columns[columnIdentifier];
         var td = document.createElement("td");
         td.className = columnIdentifier + "-column";
+        td.__columnIdentifier = columnIdentifier;
         var group = this.groups[columnIdentifier];
         if (group)
             td.classList.add("column-group-" + group);
@@ -343,8 +344,7 @@ WebInspector.DataGrid.prototype = {
         // FIXME: We need more column identifiers here throughout this function.
         // Not needed yet since only editable DataGrid is DOM Storage, which is Key - Value.
 
-        // FIXME: Better way to do this than regular expressions?
-        var columnIdentifier = parseInt(element.className.match(/\b(\d+)-column\b/)[1], 10);
+        var columnIdentifier = element.__columnIdentifier;
 
         var textBeforeEditing = this._editingNode.data[columnIdentifier] || "";
         var currentEditingNode = this._editingNode;
@@ -901,8 +901,6 @@ WebInspector.DataGrid.prototype = {
         } else if (isEnterKey(event)) {
             if (this._editCallback) {
                 handled = true;
-                // The first child of the selected element is the <td class="0-column">,
-                // and that's what we want to edit.
                 this._startEditing(this.selectedNode._element.children[0]);
             }
         }
@@ -1137,7 +1135,7 @@ WebInspector.DataGrid.prototype = {
                     contextMenu.appendItem(WebInspector.UIString("Add New"), this._startEditing.bind(this, event.target));
                 else {
                     var element = event.target.enclosingNodeOrSelfWithNodeName("td");
-                    var columnIdentifier = parseInt(element.className.match(/\b(\d+)-column\b/)[1], 10);
+                    var columnIdentifier = element.__columnIdentifier;
                     var columnTitle = this.dataGrid.columns[columnIdentifier].title;
                     contextMenu.appendItem(WebInspector.UIString("Edit “%s”").format(columnTitle), this._startEditing.bind(this, event.target));
                 }
@@ -1518,6 +1516,7 @@ WebInspector.DataGridNode.prototype = {
     {
         var cell = document.createElement("td");
         cell.className = columnIdentifier + "-column";
+        cell.__columnIdentifier = columnIdentifier;
 
         var alignment = this.dataGrid.aligned[columnIdentifier];
         if (alignment)
