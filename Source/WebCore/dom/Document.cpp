@@ -1720,6 +1720,8 @@ void Document::recalcStyle(Style::Change change)
     if (m_inStyleRecalc)
         return; // Guard against re-entrancy. -dwh
 
+    RenderView::RepaintRegionAccumulator repaintRegionAccumulator(renderView());
+
     // FIXME: We should update style on our ancestor chain before proceeding (especially for seamless),
     // however doing so currently causes several tests to crash, as Frame::setDocument calls Document::attach
     // before setting the DOMWindow on the Frame, or the SecurityOrigin on the document. The attach, in turn
@@ -1810,6 +1812,8 @@ void Document::updateLayout()
         ASSERT_NOT_REACHED();
         return;
     }
+
+    RenderView::RepaintRegionAccumulator repaintRegionAccumulator(renderView());
 
     if (Element* oe = ownerElement())
         oe->document().updateLayout();
@@ -4309,12 +4313,7 @@ Document* Document::parentDocument() const
 
 Document* Document::topDocument() const
 {
-    // FIXME: Why does this walk up owner elements instead using the frame tree as parentDocument does?
-    // The frame tree even has a top() function.
-    Document* document = const_cast<Document*>(this);
-    while (Element* element = document->ownerElement())
-        document = &element->document();
-    return document;
+    return m_frame ? m_frame->mainFrame().document() : const_cast<Document*>(this);
 }
 
 PassRefPtr<Attr> Document::createAttribute(const String& name, ExceptionCode& ec)

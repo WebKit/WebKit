@@ -1,3 +1,28 @@
+2014-01-28  Antti Koivisto  <antti@apple.com>
+
+        REGRESSION(r162837): 5% regression on html5-full-render and 3% regression in DoYouEvenBench
+        https://bugs.webkit.org/show_bug.cgi?id=127722
+
+        Reviewed by Darin Adler.
+
+        Accumulate repaint region in RendeView instead of flushing rects directly to the system.
+
+        * dom/Document.cpp:
+        (WebCore::Document::recalcStyle):
+        (WebCore::Document::updateLayout):
+        (WebCore::Document::topDocument):
+        
+            Make less silly.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::layout):
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::repaintViewRectangle):
+        (WebCore::RenderView::flushAccumulatedRepaintRegion):
+        (WebCore::RenderView::RepaintRegionAccumulator::RepaintRegionAccumulator):
+        (WebCore::RenderView::RepaintRegionAccumulator::~RepaintRegionAccumulator):
+        * rendering/RenderView.h:
+
 2014-01-28  Jeremy Jones  <jeremyj@apple.com>
 
         HTMLMediaElement::m_platformLayerBorrowed is uninitialized.

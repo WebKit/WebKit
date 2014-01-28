@@ -25,6 +25,7 @@
 #include "FrameView.h"
 #include "LayoutState.h"
 #include "PODFreeListArena.h"
+#include "Region.h"
 #include "RenderBlockFlow.h"
 #include <wtf/OwnPtr.h>
 
@@ -234,6 +235,17 @@ public:
     void didCreateRenderer() { ++m_rendererCount; }
     void didDestroyRenderer() { --m_rendererCount; }
 
+    class RepaintRegionAccumulator {
+        WTF_MAKE_NONCOPYABLE(RepaintRegionAccumulator);
+    public:
+        RepaintRegionAccumulator(RenderView*);
+        ~RepaintRegionAccumulator();
+
+    private:
+        RenderView* m_rootView;
+        bool m_wasAccumulatingRepaintRegion;
+    };
+
 protected:
     virtual void mapLocalToContainer(const RenderLayerModelObject* repaintContainer, TransformState&, MapCoordinatesFlags = ApplyContainerFlip, bool* wasFixed = 0) const override;
     virtual const RenderObject* pushMappingToContainer(const RenderLayerModelObject* ancestorToStopAt, RenderGeometryMap&) const override;
@@ -247,6 +259,7 @@ private:
     virtual ColumnInfo::PaginationUnit paginationUnit() const override;
 
     bool shouldRepaint(const LayoutRect&) const;
+    void flushAccumulatedRepaintRegion() const;
 
     // These functions may only be accessed by LayoutStateMaintainer.
     bool pushLayoutState(RenderBox& renderer, const LayoutSize& offset, LayoutUnit pageHeight = 0, bool pageHeightChanged = false, ColumnInfo* colInfo = nullptr)
@@ -302,6 +315,8 @@ private:
     int m_selectionEndPos;
 
     uint64_t m_rendererCount;
+
+    mutable std::unique_ptr<Region> m_accumulatedRepaintRegion;
 
     // FIXME: Only used by embedded WebViews inside AppKit NSViews.  Find a way to remove.
     struct LegacyPrinting {

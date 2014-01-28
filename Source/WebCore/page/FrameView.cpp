@@ -1276,6 +1276,7 @@ void FrameView::layout(bool allowSubtree)
             root->view().pushLayoutState(*root);
         }
         LayoutStateDisabler layoutStateDisabler(disableLayoutState ? &root->view() : 0);
+        RenderView::RepaintRegionAccumulator repaintRegionAccumulator(&root->view());
 
         ASSERT(m_layoutPhase == InPreLayout);
         m_layoutPhase = InLayout;

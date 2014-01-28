@@ -605,33 +605,45 @@ void RenderView::repaintRootContents()
     repaint();
 }
 
-void RenderView::repaintViewRectangle(const LayoutRect& ur, bool immediate) const
+void RenderView::repaintViewRectangle(const LayoutRect& repaintRect, bool immediate) const
 {
-    if (!shouldRepaint(ur))
+    // FIXME: Get rid of the 'immediate' argument. It only works on Mac WK1 and should never be used.
+    if (!shouldRepaint(repaintRect))
         return;
 
-    // We always just invalidate the root view, since we could be an iframe that is clipped out
-    // or even invisible.
-    Element* elt = document().ownerElement();
-    if (!elt)
-        frameView().repaintContentRectangle(pixelSnappedIntRect(ur), immediate);
-    else if (RenderBox* obj = elt->renderBox()) {
-        LayoutRect vr = viewRect();
+    if (auto ownerElement = document().ownerElement()) {
+        if (!ownerElement->renderer())
+            return;
+        auto& ownerBox = toRenderBox(*ownerElement->renderer());
+        LayoutRect viewRect = this->viewRect();
 #if PLATFORM(IOS)
         // Don't clip using the visible rect since clipping is handled at a higher level on iPhone.
-        LayoutRect r = ur;
+        LayoutRect adjustedRect = repaintRect;
 #else
-        LayoutRect r = intersection(ur, vr);
+        LayoutRect adjustedRect = intersection(repaintRect, viewRect);
 #endif
-        
-        // Subtract out the contentsX and contentsY offsets to get our coords within the viewing
-        // rectangle.
-        r.moveBy(-vr.location());
-
-        // FIXME: Hardcoded offsets here are not good.
-        r.moveBy(obj->contentBoxRect().location());
-        obj->repaintRectangle(r, immediate);
+        adjustedRect.moveBy(-viewRect.location());
+        adjustedRect.moveBy(ownerBox.contentBoxRect().location());
+        ownerBox.repaintRectangle(adjustedRect, immediate);
+        return;
     }
+
+    IntRect pixelSnappedRect = pixelSnappedIntRect(repaintRect);
+    if (!m_accumulatedRepaintRegion || immediate) {
+        frameView().repaintContentRectangle(pixelSnappedRect, immediate);
+        return;
+    }
+    m_accumulatedRepaintRegion->unite(pixelSnappedRect);
+}
+
+void RenderView::flushAccumulatedRepaintRegion() const
+{
+    ASSERT(!document().ownerElement());
+    ASSERT(m_accumulatedRepaintRegion);
+    auto repaintRects = m_accumulatedRepaintRegion->rects();
+    for (auto& rect : repaintRects)
+        frameView().repaintContentRectangle(rect, false);
+    m_accumulatedRepaintRegion = nullptr;
 }
 
 void RenderView::repaintRectangleInViewAndCompositedLayers(const LayoutRect& ur, bool immediate)
@@ -1251,6 +1263,25 @@ ImageQualityController& RenderView::imageQualityController()
     if (!m_imageQualityController)
         m_imageQualityController = ImageQualityController::create(*this);
     return *m_imageQualityController;
+}
+
+RenderView::RepaintRegionAccumulator::RepaintRegionAccumulator(RenderView* view)
+    : m_rootView(view ? view->document().topDocument()->renderView() : nullptr)
+{
+    if (!m_rootView)
+        return;
+    m_wasAccumulatingRepaintRegion = !!m_rootView->m_accumulatedRepaintRegion;
+    if (!m_wasAccumulatingRepaintRegion)
+        m_rootView->m_accumulatedRepaintRegion = std::make_unique<Region>();
+}
+
+RenderView::RepaintRegionAccumulator::~RepaintRegionAccumulator()
+{
+    if (!m_rootView)
+        return;
+    if (m_wasAccumulatingRepaintRegion)
+        return;
+    m_rootView->flushAccumulatedRepaintRegion();
 }
 
 } // namespace WebCore
