@@ -3,8 +3,8 @@ Tests that posting a message that consists of an object with a numeric property 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
+PASS e.data[0] is 'hi'
 PASS successfullyParsed is true
 
 TEST COMPLETE
-PASS e.data[0] is 'hi'
 

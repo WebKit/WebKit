@@ -2,8 +2,7 @@ description(
 "Tests that having a bad time has correct cross frame behavior, if an instance object is created in a different global object than the affected prototype, and the prototype is assigned using __proto__."
 );
 
-if (window.testRunner)
-    testRunner.waitUntilDone();
+jsTestIsAsync = true;
 
 var ouches = 0;
 
@@ -40,8 +39,7 @@ function done() {
     else
         testFailed("Did not get 5 ouches. Got " + ouches + " + instead.");
     
-    if (testRunner)
-        testRunner.notifyDone();
+    finishJSTest();
 }
 
 var frame = document.getElementById("myframe");

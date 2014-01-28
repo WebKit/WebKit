@@ -2,8 +2,7 @@ description(
 "Tests that having a bad time has correct cross frame behavior."
 );
 
-if (window.testRunner)
-    testRunner.waitUntilDone();
+jsTestIsAsync = true;
 
 var ouches = 0;
 
@@ -14,8 +13,7 @@ function foo(array) {
         testPassed("Got 100 ouches.");
     else
         testFailed("Did not get 100 ouches. Got " + ouches + " instead.");
-    if (testRunner)
-        testRunner.notifyDone();
+    finishJSTest();
 }
 
 var frame = document.getElementById("myframe");

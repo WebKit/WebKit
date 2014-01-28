@@ -2,10 +2,8 @@
 <head>
 <script src="../../resources/js-test-pre.js"></script>
 <script>
-if (window.testRunner) {
-    testRunner.waitUntilDone();
+if (window.testRunner)
     testRunner.dumpAsText();
-}
 </script>
 </head>
 <body>
@@ -33,9 +31,5 @@ var actual = "" + MyClass.runTest();
 shouldBe("actual", "'function () { }'");
 </script>
 <script src="../../resources/js-test-post.js"></script>
-<script>
-if (window.testRunner)
-    testRunner.notifyDone();
-</script>
 </body>
 </html>

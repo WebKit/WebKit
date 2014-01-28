@@ -1,3 +1,37 @@
+2014-01-28  Alexey Proskuryakov  <ap@apple.com>
+
+        js/dom/post-message-numeric-property.html is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=127713
+
+        Reviewed by Geoffrey Garen.
+
+        Plain testRunner and js-test-post.js approaches to being asynchronous don't work
+        together, you need one or the other.
+
+        * js/dom/post-message-numeric-property-expected.txt:
+        * js/dom/script-tests/post-message-numeric-property.js:
+        Updated to use jsTestIsAsync, as the wrapper includes js-test-post.js. The results
+        are now always printed in correct order, not flakily.
+
+        * js/dom/cross-global-object-inline-global-var-expected.txt:
+        * js/dom/script-tests/cross-global-object-inline-global-var.js:
+        Ditto.
+
+        * js/dom/function-prototype.html:
+        * js/dom/parse-error-external-script-in-eval.html:
+        * js/dom/parse-error-external-script-in-new-Function.html:
+        * js/dom/parse-syntax-error-in-initializer.html:
+        Removed waitUntilDone, these tests are not asynchronous at all.
+
+        * js/dom/script-tests/cross-frame-bad-time.js:
+        * js/dom/script-tests/cross-frame-really-bad-time-with-__proto__.js:
+        * js/dom/script-tests/cross-frame-really-bad-time.js:
+        Updated to use jsTestIsAsync. These tests were not flaky because they happened to
+        run synchronously in practice, but document.writing a script into subframe won't
+        necessarily execute it synchronously in the future.
+
+        * js/resources/fs-test-post.js: Removed. This file was unused.
+
 2014-01-28  Viatcheslav Ostapenko  <sl.ostapenko@samsung.com>
 
         Sticky positioning is broken for table rows
