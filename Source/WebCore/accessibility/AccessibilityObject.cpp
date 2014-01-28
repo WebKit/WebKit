@@ -609,11 +609,11 @@ MainFrame* AccessibilityObject::mainFrame() const
 {
     Document* document = topDocument();
     if (!document)
-        return 0;
+        return nullptr;
     
     Frame* frame = document->frame();
     if (!frame)
-        return 0;
+        return nullptr;
     
     return &frame->mainFrame();
 }
@@ -621,8 +621,8 @@ MainFrame* AccessibilityObject::mainFrame() const
 Document* AccessibilityObject::topDocument() const
 {
     if (!document())
-        return 0;
-    return document()->topDocument();
+        return nullptr;
+    return &document()->topDocument();
 }
 
 String AccessibilityObject::language() const

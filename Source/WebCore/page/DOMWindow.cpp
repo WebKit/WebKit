@@ -1695,7 +1695,7 @@ bool DOMWindow::addEventListener(const AtomicString& eventType, PassRefPtr<Event
 void DOMWindow::incrementScrollEventListenersCount()
 {
     Document* document = this->document();
-    if (++m_scrollEventListenerCount == 1 && document == document->topDocument()) {
+    if (++m_scrollEventListenerCount == 1 && document == &document->topDocument()) {
         Frame* frame = this->frame();
         if (frame && frame->page())
             frame->page()->chrome().client().setNeedsScrollNotifications(frame, true);
@@ -1705,7 +1705,7 @@ void DOMWindow::incrementScrollEventListenersCount()
 void DOMWindow::decrementScrollEventListenersCount()
 {
     Document* document = this->document();
-    if (!--m_scrollEventListenerCount && document == document->topDocument()) {
+    if (!--m_scrollEventListenerCount && document == &document->topDocument()) {
         Frame* frame = this->frame();
         if (frame && frame->page() && !document->inPageCache())
             frame->page()->chrome().client().setNeedsScrollNotifications(frame, false);

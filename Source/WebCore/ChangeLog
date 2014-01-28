@@ -1,3 +1,36 @@
+2014-01-28  Antti Koivisto  <antti@apple.com>
+
+        Document::topDocument() should return a reference
+        https://bugs.webkit.org/show_bug.cgi?id=127786
+
+        Reviewed by Darin Adler.
+
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::mainFrame):
+        (WebCore::AccessibilityObject::topDocument):
+        * accessibility/ios/WebAccessibilityObjectWrapperIOS.mm:
+        (-[WebAccessibilityObjectWrapper accessibilityContainer]):
+        * dom/Document.cpp:
+        (WebCore::Document::~Document):
+        (WebCore::Document::createRenderTree):
+        (WebCore::Document::destroyRenderTree):
+        (WebCore::Document::clearAXObjectCache):
+        (WebCore::Document::existingAXObjectCache):
+        (WebCore::Document::axObjectCache):
+        (WebCore::Document::implicitClose):
+        (WebCore::Document::topDocument):
+        (WebCore::Document::topOrigin):
+        (WebCore::Document::webkitCancelFullScreen):
+        (WebCore::Document::webkitDidExitFullScreenForElement):
+        * dom/Document.h:
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::incrementScrollEventListenersCount):
+        (WebCore::DOMWindow::decrementScrollEventListenersCount):
+        * rendering/RenderEmbeddedObject.cpp:
+        (WebCore::RenderEmbeddedObject::isReplacementObscured):
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::RepaintRegionAccumulator::RepaintRegionAccumulator):
+        
 2014-01-28  Viatcheslav Ostapenko  <sl.ostapenko@samsung.com>
 
         Sticky positioning is broken for table rows

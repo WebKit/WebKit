@@ -424,7 +424,7 @@ bool RenderEmbeddedObject::isReplacementObscured() const
     if (rect.isEmpty())
         return true;
 
-    RenderView* rootRenderView = document().topDocument()->renderView();
+    RenderView* rootRenderView = document().topDocument().renderView();
     ASSERT(rootRenderView);
     if (!rootRenderView)
         return true;

@@ -1266,7 +1266,7 @@ ImageQualityController& RenderView::imageQualityController()
 }
 
 RenderView::RepaintRegionAccumulator::RepaintRegionAccumulator(RenderView* view)
-    : m_rootView(view ? view->document().topDocument()->renderView() : nullptr)
+    : m_rootView(view ? view->document().topDocument().renderView() : nullptr)
 {
     if (!m_rootView)
         return;

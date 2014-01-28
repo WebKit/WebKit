@@ -905,7 +905,7 @@ public:
     bool inDesignMode() const;
 
     Document* parentDocument() const;
-    Document* topDocument() const;
+    Document& topDocument() const;
     
     ScriptRunner* scriptRunner() { return m_scriptRunner.get(); }
 

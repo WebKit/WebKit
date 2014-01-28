@@ -593,7 +593,7 @@ Document::~Document()
     ASSERT(!m_parser || m_parser->refCount() == 1);
     detachParser();
 
-    if (this == topDocument())
+    if (this == &topDocument())
         clearAXObjectCache();
 
     m_decoder = nullptr;
@@ -1947,7 +1947,7 @@ void Document::createRenderTree()
 {
     ASSERT(!renderView());
     ASSERT(!m_inPageCache);
-    ASSERT(!m_axObjectCache || this != topDocument());
+    ASSERT(!m_axObjectCache || this != &topDocument());
 
     if (m_isNonRenderedPlaceholder)
         return;
@@ -2032,7 +2032,7 @@ void Document::destroyRenderTree()
 
     TemporaryChange<bool> change(m_renderTreeBeingDestroyed, true);
 
-    if (this == topDocument())
+    if (this == &topDocument())
         clearAXObjectCache();
 
     documentWillBecomeInactive();
@@ -2167,7 +2167,7 @@ void Document::stopActiveDOMObjects()
 
 void Document::clearAXObjectCache()
 {
-    ASSERT(topDocument() == this);
+    ASSERT(&topDocument() == this);
     // Clear the cache member variable before calling delete because attempts
     // are made to access it during destruction.
     m_axObjectCache.clear();
@@ -2175,10 +2175,10 @@ void Document::clearAXObjectCache()
 
 AXObjectCache* Document::existingAXObjectCache() const
 {
-    if (!topDocument()->hasLivingRenderTree())
+    Document& topDocument = this->topDocument();
+    if (!topDocument.hasLivingRenderTree())
         return nullptr;
-
-    return topDocument()->m_axObjectCache.get();
+    return topDocument.m_axObjectCache.get();
 }
 
 AXObjectCache* Document::axObjectCache() const
@@ -2190,16 +2190,16 @@ AXObjectCache* Document::axObjectCache() const
     // document.  This is because we need to be able to get from any WebCoreAXObject
     // to any other WebCoreAXObject on the same page.  Using a single cache allows
     // lookups across nested webareas (i.e. multiple documents).
-    Document* topDocument = this->topDocument();
+    Document& topDocument = this->topDocument();
 
     // If the document has already been detached, do not make a new axObjectCache.
-    if (!topDocument->hasLivingRenderTree())
+    if (!topDocument.hasLivingRenderTree())
         return nullptr;
 
-    ASSERT(topDocument == this || !m_axObjectCache);
-    if (!topDocument->m_axObjectCache)
-        topDocument->m_axObjectCache = adoptPtr(new AXObjectCache(*topDocument));
-    return topDocument->m_axObjectCache.get();
+    ASSERT(&topDocument == this || !m_axObjectCache);
+    if (!topDocument.m_axObjectCache)
+        topDocument.m_axObjectCache = adoptPtr(new AXObjectCache(topDocument));
+    return topDocument.m_axObjectCache.get();
 }
 
 void Document::setVisuallyOrdered()
@@ -2468,7 +2468,7 @@ void Document::implicitClose()
         // exists in the cache (we ignore the return value because we don't need it here). This is 
         // only safe to call when a layout is not in progress, so it can not be used in postNotification.    
         axObjectCache()->getOrCreate(renderView());
-        if (this == topDocument())
+        if (this == &topDocument())
             axObjectCache()->postNotification(renderView(), AXObjectCache::AXLoadComplete);
         else {
             // AXLoadComplete can only be posted on the top document, so if it's a document
@@ -4311,9 +4311,13 @@ Document* Document::parentDocument() const
     return parent->document();
 }
 
-Document* Document::topDocument() const
+Document& Document::topDocument() const
 {
-    return m_frame ? m_frame->mainFrame().document() : const_cast<Document*>(this);
+    if (!m_frame)
+        return const_cast<Document&>(*this);
+    // This should always be non-null.
+    Document* mainFrameDocument = m_frame->mainFrame().document();
+    return mainFrameDocument ? *mainFrameDocument : const_cast<Document&>(*this);
 }
 
 PassRefPtr<Attr> Document::createAttribute(const String& name, ExceptionCode& ec)
@@ -4875,7 +4879,7 @@ void Document::addMessage(MessageSource source, MessageLevel level, const String
 
 SecurityOrigin* Document::topOrigin() const
 {
-    return topDocument()->securityOrigin();
+    return topDocument().securityOrigin();
 }
 
 struct PerformTaskContext {
@@ -5222,16 +5226,17 @@ void Document::webkitCancelFullScreen()
     // is defined as: 
     // "To fully exit fullscreen act as if the exitFullscreen() method was invoked on the top-level browsing
     // context's document and subsequently empty that document's fullscreen element stack."
-    if (!topDocument()->webkitFullscreenElement())
+    Document& topDocument = this->topDocument();
+    if (!topDocument.webkitFullscreenElement())
         return;
 
     // To achieve that aim, remove all the elements from the top document's stack except for the first before
     // calling webkitExitFullscreen():
     Vector<RefPtr<Element>> replacementFullscreenElementStack;
-    replacementFullscreenElementStack.append(topDocument()->webkitFullscreenElement());
-    topDocument()->m_fullScreenElementStack.swap(replacementFullscreenElementStack);
+    replacementFullscreenElementStack.append(topDocument.webkitFullscreenElement());
+    topDocument.m_fullScreenElementStack.swap(replacementFullscreenElementStack);
 
-    topDocument()->webkitExitFullscreen();
+    topDocument.webkitExitFullscreen();
 }
 
 void Document::webkitExitFullscreen()
@@ -5404,10 +5409,9 @@ void Document::webkitDidExitFullScreenForElement(Element*)
     // When webkitCancelFullScreen is called, we call webkitExitFullScreen on the topDocument(). That
     // means that the events will be queued there. So if we have no events here, start the timer on
     // the exiting document.
-    Document* exitingDocument = this;
-    if (m_fullScreenChangeEventTargetQueue.isEmpty() && m_fullScreenErrorEventTargetQueue.isEmpty())
-        exitingDocument = topDocument();
-    exitingDocument->m_fullScreenChangeDelayTimer.startOneShot(0);
+    bool eventTargetQueuesEmpty = m_fullScreenChangeEventTargetQueue.isEmpty() && m_fullScreenErrorEventTargetQueue.isEmpty();
+    Document& exitingDocument = eventTargetQueuesEmpty ? topDocument() : *this;
+    exitingDocument.m_fullScreenChangeDelayTimer.startOneShot(0);
 }
     
 void Document::setFullScreenRenderer(RenderFullScreen* renderer)
