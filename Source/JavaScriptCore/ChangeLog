@@ -1,5 +1,45 @@
 2014-01-27  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: CRASH when debugger closes remote inspecting JSContext
+        https://bugs.webkit.org/show_bug.cgi?id=127738
+
+        Reviewed by Timothy Hatcher.
+
+        RemoteInspectorXPCConnection could be accessed in a background dispatch
+        queue, while being deallocated on the main thread when a connection
+        was suddenly terminated.
+
+        Make RemoteInspectorXPCConnection a ThreadSafeRefCounted object. Always
+        keep the connection object ref'd until the main thread calls close()
+        and removes its reference. At that point we can close the connection,
+        queue, and deref safely on the background queue.
+
+        * inspector/remote/RemoteInspector.h:
+        * inspector/remote/RemoteInspector.mm:
+        (Inspector::RemoteInspector::setupXPCConnectionIfNeeded):
+        (Inspector::RemoteInspector::xpcConnectionFailed):
+        For simplicity RemoteInspectorXPCConnections's don't have any threading
+        primatives to prevent client callbacks after they are closed. RemoteInspector
+        does, so it just ignores possible callbacks from connections it no longer
+        cares about.
+
+        * inspector/remote/RemoteInspectorXPCConnection.h:
+        * inspector/remote/RemoteInspectorXPCConnection.mm:
+        (Inspector::RemoteInspectorXPCConnection::RemoteInspectorXPCConnection):
+        (Inspector::RemoteInspectorXPCConnection::~RemoteInspectorXPCConnection):
+        (Inspector::RemoteInspectorXPCConnection::close):
+        Keep the connection alive as long as the queue it can be used on
+        is alive. Clean up everything on the queue when close() is called.
+
+        (Inspector::RemoteInspectorXPCConnection::handleEvent):
+        Checking if closed here is not thread safe so it is meaningless.
+        Remove the check.
+
+        (Inspector::RemoteInspectorXPCConnection::sendMessage):
+        Bail based on the m_closed state.
+
+2014-01-27  Joseph Pecoraro  <pecoraro@apple.com>
+
         JavaScriptCore: Enable -Wimplicit-fallthrough and add FALLTHROUGH annotation where needed
         https://bugs.webkit.org/show_bug.cgi?id=127647
 

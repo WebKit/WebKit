@@ -29,7 +29,7 @@
 #define RemoteInspectorXPCConnection_h
 
 #import <dispatch/dispatch.h>
-#import <wtf/Noncopyable.h>
+#import <wtf/ThreadSafeRefCounted.h>
 #import <xpc/xpc.h>
 
 OBJC_CLASS NSDictionary;
@@ -37,9 +37,7 @@ OBJC_CLASS NSString;
 
 namespace Inspector {
 
-class RemoteInspectorXPCConnection {
-    WTF_MAKE_NONCOPYABLE(RemoteInspectorXPCConnection);
-
+class RemoteInspectorXPCConnection : public ThreadSafeRefCounted<RemoteInspectorXPCConnection> {
 public:
     class Client {
     public:
@@ -62,6 +60,7 @@ private:
     xpc_connection_t m_connection;
     dispatch_queue_t m_queue;
     Client* m_client;
+    bool m_closed;
 };
 
 } // namespace Inspector

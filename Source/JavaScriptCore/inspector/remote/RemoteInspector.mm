@@ -215,7 +215,7 @@ void RemoteInspector::setupXPCConnectionIfNeeded()
     if (!connection)
         return;
 
-    m_xpcConnection = std::make_unique<RemoteInspectorXPCConnection>(connection, this);
+    m_xpcConnection = adoptRef(new RemoteInspectorXPCConnection(connection, this));
     m_xpcConnection->sendMessage(@"syn", nil); // Send a simple message to initialize the XPC connection.
     xpc_release(connection);
 
@@ -249,9 +249,11 @@ void RemoteInspector::xpcConnectionReceivedMessage(RemoteInspectorXPCConnection*
         NSLog(@"Unrecognized RemoteInspector XPC Message: %@", messageName);
 }
 
-void RemoteInspector::xpcConnectionFailed(RemoteInspectorXPCConnection*)
+void RemoteInspector::xpcConnectionFailed(RemoteInspectorXPCConnection* connection)
 {
     MutexLocker locker(m_lock);
+    if (connection != m_xpcConnection)
+        return;
 
     m_pushScheduled = false;
 
