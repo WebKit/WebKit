@@ -1,5 +1,24 @@
 2014-01-28  Anders Carlsson  <andersca@apple.com>
 
+        Remove WebPageProxy::canGoBack and WebPageProxy::canGoForward
+        https://bugs.webkit.org/show_bug.cgi?id=127803
+
+        Reviewed by Andreas Kling.
+
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageCanGoForward):
+        (WKPageCanGoBack):
+        * UIProcess/API/Cocoa/WKBrowsingContextController.mm:
+        (-[WKBrowsingContextController canGoForward]):
+        (-[WKBrowsingContextController canGoBack]):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::goForward):
+        (WebKit::WebPageProxy::goBack):
+        (WebKit::WebPageProxy::sendWheelEvent):
+        * UIProcess/WebPageProxy.h:
+
+2014-01-28  Anders Carlsson  <andersca@apple.com>
+
         API::PolicyClient::decidePolicyForNavigationAction should take a NavigationActionData object
         https://bugs.webkit.org/show_bug.cgi?id=127798
 

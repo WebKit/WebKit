@@ -393,9 +393,7 @@ public:
     void reload(bool reloadFromOrigin);
 
     void goForward();
-    bool canGoForward() const;
     void goBack();
-    bool canGoBack() const;
 
     void goToBackForwardItem(WebBackForwardListItem*);
     void tryRestoreScrollPosition();

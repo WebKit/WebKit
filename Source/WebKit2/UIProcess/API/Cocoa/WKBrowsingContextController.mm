@@ -304,7 +304,7 @@ static void releaseNSData(unsigned char*, const void* data)
 
 - (BOOL)canGoForward
 {
-    return _page->canGoForward();
+    return !!_page->backForwardList().forwardItem();
 }
 
 - (void)goBack
@@ -314,7 +314,7 @@ static void releaseNSData(unsigned char*, const void* data)
 
 - (BOOL)canGoBack
 {
-    return _page->canGoBack();
+    return !!_page->backForwardList().backItem();
 }
 
 - (void)goToBackForwardListItem:(WKBackForwardListItem *)item

@@ -768,9 +768,6 @@ void WebPageProxy::recordNavigationSnapshot()
 
 void WebPageProxy::goForward()
 {
-    if (isValid() && !canGoForward())
-        return;
-
     WebBackForwardListItem* forwardItem = m_backForwardList->forwardItem();
     if (!forwardItem)
         return;
@@ -790,14 +787,9 @@ void WebPageProxy::goForward()
     m_process->responsivenessTimer()->start();
 }
 
-bool WebPageProxy::canGoForward() const
-{
-    return m_backForwardList->forwardItem();
-}
-
 void WebPageProxy::goBack()
 {
-    if (isValid() && !canGoBack())
+    if (isValid())
         return;
 
     WebBackForwardListItem* backItem = m_backForwardList->backItem();
@@ -817,11 +809,6 @@ void WebPageProxy::goBack()
 
     m_process->send(Messages::WebPage::GoBack(backItem->itemID()), m_pageID);
     m_process->responsivenessTimer()->start();
-}
-
-bool WebPageProxy::canGoBack() const
-{
-    return m_backForwardList->backItem();
 }
 
 void WebPageProxy::goToBackForwardItem(WebBackForwardListItem* item)
@@ -1313,8 +1300,8 @@ void WebPageProxy::sendWheelEvent(const WebWheelEvent& event)
         Messages::EventDispatcher::WheelEvent(
             m_pageID,
             event,
-            m_useLegacyImplicitRubberBandControl ? !canGoBack() : rubberBandsAtLeft(),
-            m_useLegacyImplicitRubberBandControl ? !canGoForward() : rubberBandsAtRight(),
+            m_useLegacyImplicitRubberBandControl ? !m_backForwardList->backItem() : rubberBandsAtLeft(),
+            m_useLegacyImplicitRubberBandControl ? !m_backForwardList->forwardItem() : rubberBandsAtRight(),
             rubberBandsAtTop(),
             rubberBandsAtBottom()
         ), 0);

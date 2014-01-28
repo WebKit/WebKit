@@ -197,7 +197,7 @@ void WKPageGoForward(WKPageRef pageRef)
 
 bool WKPageCanGoForward(WKPageRef pageRef)
 {
-    return toImpl(pageRef)->canGoForward();
+    return toImpl(pageRef)->backForwardList().forwardItem();
 }
 
 void WKPageGoBack(WKPageRef pageRef)
@@ -207,7 +207,7 @@ void WKPageGoBack(WKPageRef pageRef)
 
 bool WKPageCanGoBack(WKPageRef pageRef)
 {
-    return toImpl(pageRef)->canGoBack();
+    return toImpl(pageRef)->backForwardList().backItem();
 }
 
 void WKPageGoToBackForwardListItem(WKPageRef pageRef, WKBackForwardListItemRef itemRef)
