@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src="../../resources/js-test-pre.js"></script>
+        <script>
+            function runTest() {
+                description('Tests that left, right, top, bottom, box, roundedbox, madruwb, actuarial attribute value is applied for menclose');
+
+                shouldBeEqualToString("window.getComputedStyle(document.getElementById('mathmenclose1'),null).getPropertyValue('border-left-style')","solid");
+                shouldBeEqualToString("window.getComputedStyle(document.getElementById('mathmenclose1'),null).getPropertyValue('border-left-width')","1px");
+                shouldBeEqualToString("window.getComputedStyle(document.getElementById('mathmenclose1'),null).getPropertyValue('border-right-style')","none");
+                shouldBeEqualToString("window.getComputedStyle(document.getElementById('mathmenclose1'),null).getPropertyValue('border-right-width')","0px");
+                shouldBeEqualToString("window.getComputedStyle(document.getElementById('mathmenclose2'),null).getPropertyValue('border-right-style')","solid");
+                shouldBeEqualToString("window.getComputedStyle(document.getElementById('mathmenclose2'),null).getPropertyValue('border-right-width')","1px");
+                shouldBeEqualToString("window.getComputedStyle(document.getElementById('mathmenclose2'),null).getPropertyValue('border-left-style')","none");
+                shouldBeEqualToString("window.getComputedStyle(document.getElementById('mathmenclose2'),null).getPropertyValue('border-left-width')","0px");
+                shouldBeEqualToString("window.getComputedStyle(document.getElementById('mathmenclose3'),null).getPropertyValue('border-top-style')","solid");
+                shouldBeEqualToString("window.getComputedStyle(document.getElementById('mathmenclose3'),null).getPropertyValue('border-top-width')","1px");
+                shouldBeEqualToString("window.getComputedStyle(document.getElementById('mathmenclose3'),null).getPropertyValue('border-bottom-style')","none");
+                shouldBeEqualToString("window.getComputedStyle(document.getElementById('mathmenclose3'),null).getPropertyValue('border-bottom-width')","0px");
+                shouldBeEqualToString("window.getComputedStyle(document.getElementById('mathmenclose4'),null).getPropertyValue('border-bottom-style')","solid");
+                shouldBeEqualToString("window.getComputedStyle(document.getElementById('mathmenclose4'),null).getPropertyValue('border-bottom-width')","1px");
+                shouldBeEqualToString("window.getComputedStyle(document.getElementById('mathmenclose4'),null).getPropertyValue('border-top-style')","none");
+                shouldBeEqualToString("window.getComputedStyle(document.getElementById('mathmenclose4'),null).getPropertyValue('border-top-width')","0px");
+                shouldBeEqualToString("window.getComputedStyle(document.getElementById('mathmenclose5'),null).getPropertyValue('border')","1px solid rgb(0, 0, 0)");
+                shouldBeEqualToString("window.getComputedStyle(document.getElementById('mathmenclose6'),null).getPropertyValue('border')","1px solid rgb(0, 0, 0)");
+                shouldBeEqualToString("window.getComputedStyle(document.getElementById('mathmenclose6'),null).getPropertyValue('border-radius')","5px");
+                shouldBeEqualToString("window.getComputedStyle(document.getElementById('mathmenclose7'),null).getPropertyValue('border-right-style')","solid");
+                shouldBeEqualToString("window.getComputedStyle(document.getElementById('mathmenclose7'),null).getPropertyValue('border-right-width')","1px");
+                shouldBeEqualToString("window.getComputedStyle(document.getElementById('mathmenclose7'),null).getPropertyValue('border-bottom-style')","solid");
+                shouldBeEqualToString("window.getComputedStyle(document.getElementById('mathmenclose7'),null).getPropertyValue('border-bottom-width')","1px");
+                shouldBeEqualToString("window.getComputedStyle(document.getElementById('mathmenclose7'),null).getPropertyValue('border-top-style')","none");
+                shouldBeEqualToString("window.getComputedStyle(document.getElementById('mathmenclose7'),null).getPropertyValue('border-top-width')","0px");
+                shouldBeEqualToString("window.getComputedStyle(document.getElementById('mathmenclose8'),null).getPropertyValue('border-right-style')","solid");
+                shouldBeEqualToString("window.getComputedStyle(document.getElementById('mathmenclose8'),null).getPropertyValue('border-right-width')","1px");
+                shouldBeEqualToString("window.getComputedStyle(document.getElementById('mathmenclose8'),null).getPropertyValue('border-top-style')","solid");
+                shouldBeEqualToString("window.getComputedStyle(document.getElementById('mathmenclose8'),null).getPropertyValue('border-top-width')","1px");
+				shouldBeEqualToString("window.getComputedStyle(document.getElementById('mathmenclose8'),null).getPropertyValue('border-bottom-style')","none");
+                shouldBeEqualToString("window.getComputedStyle(document.getElementById('mathmenclose8'),null).getPropertyValue('border-bottom-width')","0px");              
+                isSuccessfullyParsed();				
+            }
+        </script>
+    </head>
+    <body onload="runTest()">
+        <p>
+            <math>
+                <menclose notation="left" id="mathmenclose1"><mspace width="100px" height="50px" mathbackground="red"/></menclose>
+            </math>
+        </p>
+        <p>
+            <math>
+                <menclose notation="right" id="mathmenclose2"><mspace width="100px" height="50px" mathbackground="red"/></menclose>
+            </math>
+        </p>
+        <p>
+            <math>
+                <menclose notation="top" id="mathmenclose3"><mspace width="100px" height="50px" mathbackground="red"/></menclose>
+            </math>
+        </p>
+        <p>
+            <math>
+                <menclose notation="bottom" id="mathmenclose4"><mspace width="100px" height="50px" mathbackground="red"/></menclose>
+            </math>
+        </p>
+        <p>
+            <math>
+                <menclose notation="box" id="mathmenclose5"><mspace width="100px" height="50px" mathbackground="red"/></menclose>
+            </math>
+        </p>
+        <p>
+            <math>
+                <menclose notation="roundedbox" id="mathmenclose6"><mspace width="100px" height="50px" mathbackground="red"/></menclose>
+            </math>
+        </p>
+        <p>
+            <math>
+                <menclose notation="madruwb" id="mathmenclose7"><mspace width="100px" height="50px" mathbackground="red"/></menclose>
+            </math>
+        </p>
+        <p>
+            <math>
+                <menclose notation="actuarial" id="mathmenclose8"><mspace width="100px" height="50px" mathbackground="red"/></menclose>
+            </math>
+        </p>
+    </body>
+</html>

@@ -5,6 +5,7 @@ This test passes if all the vertical bars stretch.
  
  
  
+ 
 
 Mrow: PASS
 Sqrt: PASS
@@ -12,4 +13,5 @@ Style: PASS
 Error: PASS
 Phantom: PASS
 Math: PASS
+Menclose: PASS
 

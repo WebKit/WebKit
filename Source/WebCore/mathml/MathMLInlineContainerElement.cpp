@@ -34,6 +34,7 @@
 #include "RenderMathMLBlock.h"
 #include "RenderMathMLFenced.h"
 #include "RenderMathMLFraction.h"
+#include "RenderMathMLMenclose.h"
 #include "RenderMathMLRoot.h"
 #include "RenderMathMLRow.h"
 #include "RenderMathMLScripts.h"

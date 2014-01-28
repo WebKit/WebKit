@@ -5,7 +5,7 @@
     <script type="text/javascript">
       function test()
       {
-        var tags = ["Mrow", "Sqrt", "Style", "Error", "Phantom", "Math"];
+        var tags = ["Mrow", "Sqrt", "Style", "Error", "Phantom", "Math", "Menclose"];
         var result = "";
         for (var i in tags) {
           var tag = tags[i];
@@ -36,6 +36,8 @@
       <math><mphantom><mspace style="visibility: visible;" id="abovePhantom" width="10px" height="30px" mathbackground="red"></mspace><mspace style="visibility: visible;" id="belowPhantom" width="10px" depth="30px" mathbackground="blue"></mspace></mphantom></math>
 
       <math><mspace id="aboveMath" width="10px" height="30px" mathbackground="red"></mspace><mspace id="belowMath" width="10px" depth="30px" mathbackground="blue"></mspace></math>
+	  
+      <math><menclose notation="box"><mspace id="aboveMenclose" width="10px" height="30px" mathbackground="red"></mspace><mspace id="belowMenclose" width="10px" depth="30px" mathbackground="blue"></mspace></menclose></math>
     </p>
 
     <div id="result"></div>

@@ -1,7 +1,5 @@
 /*
- * Copyright (C) 2009 Alex Milowski (alex@milowski.com). All rights reserved.
- * Copyright (C) 2010 Apple Inc. All rights reserved.
- * Copyright (C) 2010 François Sausset (sausset@gmail.com). All rights reserved.
+ * Copyright (C) 2014 Gurpreet Kaur (k.gurpreet@samsung.com). All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,55 +23,39 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef MathMLElement_h
-#define MathMLElement_h
+#ifndef MathMLMencloseElement_h
+#define MathMLMencloseElement_h
 
 #if ENABLE(MATHML)
-
-#include "MathMLNames.h"
-#include "StyledElement.h"
+#include "MathMLInlineContainerElement.h"
 
 namespace WebCore {
 
-class MathMLElement : public StyledElement {
+class MathMLMencloseElement final: public MathMLInlineContainerElement {
 public:
-    static PassRefPtr<MathMLElement> create(const QualifiedName& tagName, Document&);
+    static PassRefPtr<MathMLMencloseElement> create(const QualifiedName& tagName, Document&);
+    const Vector<String>& notationValues() const { return m_notationValues; }
+    bool isRadical() const { return m_isRadicalValue; }
 
-    int colSpan() const;
-    int rowSpan() const;
-
-    bool isMathMLToken() const
-    {
-        return hasTagName(MathMLNames::miTag) || hasTagName(MathMLNames::mnTag) || hasTagName(MathMLNames::moTag) || hasTagName(MathMLNames::msTag) || hasTagName(MathMLNames::mtextTag);
-    }
-
-    bool isSemanticAnnotation() const
-    {
-        return hasTagName(MathMLNames::annotationTag) || hasTagName(MathMLNames::annotation_xmlTag);
-    }
-
-    virtual bool isPresentationMathML() const;
-
-protected:
-    MathMLElement(const QualifiedName& tagName, Document&);
-
-    virtual void parseAttribute(const QualifiedName&, const AtomicString&) override;
-    virtual bool childShouldCreateRenderer(const Node&) const override;
-    virtual void attributeChanged(const QualifiedName&, const AtomicString& newValue, AttributeModificationReason) override;
-
+private:
+    MathMLMencloseElement(const QualifiedName&, Document&);
+    virtual RenderPtr<RenderElement> createElementRenderer(PassRef<RenderStyle>) override;
     virtual bool isPresentationAttribute(const QualifiedName&) const override;
     virtual void collectStyleForPresentationAttribute(const QualifiedName&, const AtomicString&, MutableStyleProperties&) override;
-private:    
+    virtual void finishParsingChildren() override;
+    String longDivLeftPadding() const;
 
-    virtual void updateSelectedChild() { };
+    Vector<String> m_notationValues;
+    bool m_isRadicalValue;
 };
 
-void isMathMLElement(const MathMLElement&); // Catch unnecessary runtime check of type known at compile time.
-inline bool isMathMLElement(const Node& node) { return node.isMathMLElement(); }
-NODE_TYPE_CASTS(MathMLElement)
+inline MathMLMencloseElement* toMathMLMencloseElement(Node* node)
+{
+    ASSERT_WITH_SECURITY_IMPLICATION(!node || (node->isElementNode() && toElement(node)->hasTagName(MathMLNames::mencloseTag)));
+    return static_cast<MathMLMencloseElement*>(node);
+}
 
 }
 
 #endif // ENABLE(MATHML)
-
-#endif // MathMLElement_h
+#endif // MathMLMencloseElement_h

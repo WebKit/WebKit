@@ -1,0 +1,47 @@
+Tests that left, right, top, bottom, box, roundedbox, madruwb, actuarial attribute value is applied for menclose
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS window.getComputedStyle(document.getElementById('mathmenclose1'),null).getPropertyValue('border-left-style') is "solid"
+PASS window.getComputedStyle(document.getElementById('mathmenclose1'),null).getPropertyValue('border-left-width') is "1px"
+PASS window.getComputedStyle(document.getElementById('mathmenclose1'),null).getPropertyValue('border-right-style') is "none"
+PASS window.getComputedStyle(document.getElementById('mathmenclose1'),null).getPropertyValue('border-right-width') is "0px"
+PASS window.getComputedStyle(document.getElementById('mathmenclose2'),null).getPropertyValue('border-right-style') is "solid"
+PASS window.getComputedStyle(document.getElementById('mathmenclose2'),null).getPropertyValue('border-right-width') is "1px"
+PASS window.getComputedStyle(document.getElementById('mathmenclose2'),null).getPropertyValue('border-left-style') is "none"
+PASS window.getComputedStyle(document.getElementById('mathmenclose2'),null).getPropertyValue('border-left-width') is "0px"
+PASS window.getComputedStyle(document.getElementById('mathmenclose3'),null).getPropertyValue('border-top-style') is "solid"
+PASS window.getComputedStyle(document.getElementById('mathmenclose3'),null).getPropertyValue('border-top-width') is "1px"
+PASS window.getComputedStyle(document.getElementById('mathmenclose3'),null).getPropertyValue('border-bottom-style') is "none"
+PASS window.getComputedStyle(document.getElementById('mathmenclose3'),null).getPropertyValue('border-bottom-width') is "0px"
+PASS window.getComputedStyle(document.getElementById('mathmenclose4'),null).getPropertyValue('border-bottom-style') is "solid"
+PASS window.getComputedStyle(document.getElementById('mathmenclose4'),null).getPropertyValue('border-bottom-width') is "1px"
+PASS window.getComputedStyle(document.getElementById('mathmenclose4'),null).getPropertyValue('border-top-style') is "none"
+PASS window.getComputedStyle(document.getElementById('mathmenclose4'),null).getPropertyValue('border-top-width') is "0px"
+PASS window.getComputedStyle(document.getElementById('mathmenclose5'),null).getPropertyValue('border') is "1px solid rgb(0, 0, 0)"
+PASS window.getComputedStyle(document.getElementById('mathmenclose6'),null).getPropertyValue('border') is "1px solid rgb(0, 0, 0)"
+PASS window.getComputedStyle(document.getElementById('mathmenclose6'),null).getPropertyValue('border-radius') is "5px"
+PASS window.getComputedStyle(document.getElementById('mathmenclose7'),null).getPropertyValue('border-right-style') is "solid"
+PASS window.getComputedStyle(document.getElementById('mathmenclose7'),null).getPropertyValue('border-right-width') is "1px"
+PASS window.getComputedStyle(document.getElementById('mathmenclose7'),null).getPropertyValue('border-bottom-style') is "solid"
+PASS window.getComputedStyle(document.getElementById('mathmenclose7'),null).getPropertyValue('border-bottom-width') is "1px"
+PASS window.getComputedStyle(document.getElementById('mathmenclose7'),null).getPropertyValue('border-top-style') is "none"
+PASS window.getComputedStyle(document.getElementById('mathmenclose7'),null).getPropertyValue('border-top-width') is "0px"
+PASS window.getComputedStyle(document.getElementById('mathmenclose8'),null).getPropertyValue('border-right-style') is "solid"
+PASS window.getComputedStyle(document.getElementById('mathmenclose8'),null).getPropertyValue('border-right-width') is "1px"
+PASS window.getComputedStyle(document.getElementById('mathmenclose8'),null).getPropertyValue('border-top-style') is "solid"
+PASS window.getComputedStyle(document.getElementById('mathmenclose8'),null).getPropertyValue('border-top-width') is "1px"
+PASS window.getComputedStyle(document.getElementById('mathmenclose8'),null).getPropertyValue('border-bottom-style') is "none"
+PASS window.getComputedStyle(document.getElementById('mathmenclose8'),null).getPropertyValue('border-bottom-width') is "0px"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
+
+
+
+
+
+
+

@@ -4030,6 +4030,8 @@ webcore_sources += \
 	Source/WebCore/mathml/MathMLInlineContainerElement.h  \
 	Source/WebCore/mathml/MathMLMathElement.cpp \
 	Source/WebCore/mathml/MathMLMathElement.h \
+	Source/WebCore/mathml/MathMLMencloseElement.cpp \
+	Source/WebCore/mathml/MathMLMencloseElement.h \
 	Source/WebCore/mathml/MathMLSelectElement.cpp \
 	Source/WebCore/mathml/MathMLSelectElement.h  \
 	Source/WebCore/mathml/MathMLTextElement.cpp \
@@ -4519,6 +4521,8 @@ webcore_sources += \
 	Source/WebCore/rendering/mathml/RenderMathMLFraction.h \
 	Source/WebCore/rendering/mathml/RenderMathMLMath.cpp \
 	Source/WebCore/rendering/mathml/RenderMathMLMath.h \
+	Source/WebCore/rendering/mathml/RenderMathMLMenclose.cpp \
+	Source/WebCore/rendering/mathml/RenderMathMLMenclose.h \
 	Source/WebCore/rendering/mathml/RenderMathMLOperator.cpp \
 	Source/WebCore/rendering/mathml/RenderMathMLOperator.h \
 	Source/WebCore/rendering/mathml/RenderMathMLRoot.cpp \

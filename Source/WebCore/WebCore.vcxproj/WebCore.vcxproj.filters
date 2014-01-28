@@ -2721,6 +2721,9 @@
     <ClCompile Include="..\rendering\mathml\RenderMathMLMath.cpp">
       <Filter>rendering\mathml</Filter>
     </ClCompile>
+	<ClCompile Include="..\rendering\mathml\RenderMathMLMenclose.cpp">
+      <Filter>rendering\mathml</Filter>
+    </ClCompile>
     <ClCompile Include="..\rendering\mathml\RenderMathMLOperator.cpp">
       <Filter>rendering\mathml</Filter>
     </ClCompile>
@@ -4885,6 +4888,9 @@
       <Filter>rendering\mathml</Filter>
     </ClCompile>
     <ClCompile Include="..\mathml\MathMLMathElement.cpp">
+      <Filter>rendering\mathml</Filter>
+    </ClCompile>
+    <ClCompile Include="..\mathml\MathMLMencloseElement.cpp">
       <Filter>rendering\mathml</Filter>
     </ClCompile>
     <ClCompile Include="..\mathml\MathMLSelectElement.cpp">
@@ -9563,6 +9569,9 @@
     <ClInclude Include="..\rendering\mathml\RenderMathMLMath.h">
       <Filter>rendering\mathml</Filter>
     </ClInclude>
+    <ClInclude Include="..\rendering\mathml\RenderMathMLMenclose.h">
+      <Filter>rendering\mathml</Filter>
+    </ClInclude>
     <ClInclude Include="..\rendering\mathml\RenderMathMLOperator.h">
       <Filter>rendering\mathml</Filter>
     </ClInclude>
@@ -12426,6 +12435,9 @@
       <Filter>rendering\mathml</Filter>
     </ClInclude>
     <ClInclude Include="..\mathml\MathMLMathElement.h">
+      <Filter>rendering\mathml</Filter>
+    </ClInclude>
+    <ClInclude Include="..\mathml\MathMLMencloseElement.h">
       <Filter>rendering\mathml</Filter>
     </ClInclude>
     <ClInclude Include="..\mathml\MathMLSelectElement.h">

@@ -74,6 +74,14 @@ RenderMathMLRoot::RenderMathMLRoot(Element& element, PassRef<RenderStyle> style)
 {
 }
 
+RenderMathMLRoot::RenderMathMLRoot(Document& document, PassRef<RenderStyle> style)
+    : RenderMathMLBlock(document, std::move(style))
+    , m_intrinsicPaddingBefore(0)
+    , m_intrinsicPaddingAfter(0)
+    , m_intrinsicPaddingStart(0)
+    , m_intrinsicPaddingEnd(0)
+{
+}
 LayoutUnit RenderMathMLRoot::paddingTop() const
 {
     LayoutUnit result = computedCSSPaddingTop();

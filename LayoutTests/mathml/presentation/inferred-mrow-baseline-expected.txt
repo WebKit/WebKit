@@ -5,6 +5,7 @@ This test passes if rectangles are correctly aligned with respect to the baselin
  
  
  
+ 
 
 Mrow: PASS
 Sqrt: PASS
@@ -12,4 +13,5 @@ Style: PASS
 Error: PASS
 Phantom: PASS
 Math: PASS
+Menclose: PASS
 

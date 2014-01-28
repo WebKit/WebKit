@@ -1,6 +1,5 @@
 /*
- * Copyright (C) 2009 Alex Milowski (alex@milowski.com). All rights reserved.
- * Copyright (C) 2010 François Sausset (sausset@gmail.com). All rights reserved.
+ * Copyright (C) 2014 Gurpreet Kaur (k.gurpreet@samsung.com). All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,32 +23,28 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
+#ifndef RenderMathMLMenclose_h
+#define RenderMathMLMenclose_h
 
 #if ENABLE(MATHML)
-
-#include "RenderMathMLSquareRoot.h"
-
-#include "RenderMathMLMenclose.h"
+#include "RenderMathMLRow.h"
 
 namespace WebCore {
     
-RenderMathMLSquareRoot::RenderMathMLSquareRoot(Element& element, PassRef<RenderStyle> style)
-    : RenderMathMLRoot(element, std::move(style))
-{
+class RenderMathMLMenclose final: public RenderMathMLRow {
+public:
+    RenderMathMLMenclose(Element&, PassRef<RenderStyle>);
+
+private:
+    virtual const char* renderName() const { return "RenderMathMLMenclose"; }
+    virtual void paint(PaintInfo&, const LayoutPoint&) override;
+    virtual void updateLogicalHeight() override;
+    virtual void addChild(RenderObject* newChild, RenderObject* beforeChild = nullptr) override;
+    virtual void computePreferredLogicalWidths() override;
+    bool checkNotationalValuesValidity(const Vector<String>&) const;
+};
+    
 }
 
-RenderMathMLSquareRoot::RenderMathMLSquareRoot(Document& document, PassRef<RenderStyle> style)
-    : RenderMathMLRoot(document, std::move(style))
-{
-}
-
-RenderPtr<RenderMathMLSquareRoot> RenderMathMLSquareRoot::createAnonymousWithParentRenderer(RenderMathMLMenclose& parent)
-{
-    RenderPtr<RenderMathMLSquareRoot> squareRoot = createRenderer<RenderMathMLSquareRoot>(parent.document(), RenderStyle::createAnonymousStyleWithDisplay(&parent.style(), FLEX));
-    squareRoot->initializeStyle();
-    return squareRoot;
-}
-
-}
 #endif // ENABLE(MATHML)
+#endif // RenderMathMLMenclose_h

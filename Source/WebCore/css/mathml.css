@@ -42,11 +42,11 @@ math[display="block"] {
     -webkit-margin-after: 1em;
 }
 
-mo, mrow, mfenced, mfrac, msub, msup, msubsup, mmultiscripts, mprescripts, none, munder, mover, munderover, msqrt, mroot, merror, mphantom, mstyle {
+mo, mrow, mfenced, mfrac, msub, msup, msubsup, mmultiscripts, mprescripts, none, munder, mover, munderover, msqrt, mroot, merror, mphantom, mstyle, menclose {
     display: -webkit-inline-flex !important;
 }
 
-math, mrow, mfenced, msqrt, mroot, merror, mphantom, mstyle {
+math, mrow, mfenced, msqrt, mroot, merror, mphantom, mstyle, menclose {
     -webkit-align-items: baseline;
 }
 msqrt > * { /* This rule is needed because of <msqrt>'s anonymous <mrow>. */

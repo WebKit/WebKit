@@ -36,6 +36,7 @@ namespace WebCore {
 class RenderMathMLRoot : public RenderMathMLBlock {
 public:
     RenderMathMLRoot(Element&, PassRef<RenderStyle>);
+    RenderMathMLRoot(Document&, PassRef<RenderStyle>);
 
     virtual LayoutUnit paddingTop() const override;
     virtual LayoutUnit paddingBottom() const override;

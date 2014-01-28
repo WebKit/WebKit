@@ -1,3 +1,38 @@
+2014-01-28  Gurpreet Kaur  <k.gurpreet@samsung.com>
+
+        Add support for menclose element
+        https://bugs.webkit.org/show_bug.cgi?id=85729
+
+        Reviewed by Chris Fleizach.
+
+        * mathml/presentation/inferred-mrow-baseline-expected.txt:
+        * mathml/presentation/inferred-mrow-baseline.html:
+        * mathml/presentation/inferred-mrow-stretchy-expected.txt:
+        * mathml/presentation/inferred-mrow-stretchy.html:
+        Rebaselining existing tests as per the new behavior.
+
+        * mathml/presentation/menclose-add-children-expected.html: Added.
+        * mathml/presentation/menclose-add-children.html: Added.
+        * mathml/presentation/menclose-notation-attribute-add-expected.html: Added.
+        * mathml/presentation/menclose-notation-attribute-add.html: Added.
+        * mathml/presentation/menclose-notation-attribute-change-value-expected.html: Added.
+        * mathml/presentation/menclose-notation-attribute-change-value.html: Added.
+        * mathml/presentation/menclose-notation-attribute-remove-expected.html: Added.
+        * mathml/presentation/menclose-notation-attribute-remove.html: Added.
+        * mathml/presentation/menclose-notation-attribute-set1-expected.txt: Added.
+        * mathml/presentation/menclose-notation-attribute-set1.html: Added.
+        * mathml/presentation/menclose-notation-attribute-set2-expected-mismatch.html: Added.
+        * mathml/presentation/menclose-notation-attribute-set2.html: Added.
+        * mathml/presentation/menclose-notation-no-overlap-expected.txt: Added.
+        * mathml/presentation/menclose-notation-no-overlap.html: Added.
+        * mathml/presentation/menclose-notation-radical-expected.html: Added.
+        * mathml/presentation/menclose-notation-radical.html: Added.
+        * mathml/presentation/menclose-remove-children-expected.html: Added.
+        * mathml/presentation/menclose-remove-children.html: Added.
+        Added new test cases for verifying the behaviour of menclose element
+        with different values of notation attribute and removing/changing/adding
+        notation attribute.
+
 2014-01-27  Brian Burg  <bburg@apple.com>
 
         Web Inspector: clean up initialization of managers and observers in InspectorTest

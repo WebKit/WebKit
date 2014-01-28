@@ -1,3 +1,72 @@
+2014-01-28  Gurpreet Kaur  <k.gurpreet@samsung.com>
+
+        Add support for menclose element
+        https://bugs.webkit.org/show_bug.cgi?id=85729
+
+        Reviewed by Chris Fleizach.
+
+        Added support for menclose element. MathML <menclose> element renders
+        its content inside an enclosing notation specified by the notation
+        attribute. The notation attribute can have values longdiv, box, left,
+        right, top, bottom , radical, madruwb, actuarial, roundedbox, circle,
+        updiagonalstrike, downdiagonalstrike, verticalstrike and
+        horizontalstrike.
+
+        Tests: mathml/presentation/menclose-add-children.html
+               mathml/presentation/menclose-notation-attribute-add.html
+               mathml/presentation/menclose-notation-attribute-change-value.html
+               mathml/presentation/menclose-notation-attribute-remove.html
+               mathml/presentation/menclose-notation-attribute-set1.html
+               mathml/presentation/menclose-notation-attribute-set2.html
+               mathml/presentation/menclose-notation-no-overlap.html
+               mathml/presentation/menclose-notation-radical.html
+               mathml/presentation/menclose-remove-children.html
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.vcxproj/WebCore.vcxproj.filters:
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/mathml.css:
+        (mo, mrow, mfenced, mfrac, msub, msup, msubsup, mmultiscripts, mprescripts, none, munder, mover, munderover, msqrt, mroot, merror, mphantom, mstyle, menclose):
+        (math, mrow, mfenced, msqrt, mroot, merror, mphantom, mstyle, menclose):
+        * mathml/MathMLAllInOne.cpp:
+        * mathml/MathMLElement.h:
+        * mathml/MathMLInlineContainerElement.cpp:
+        * mathml/MathMLMencloseElement.cpp: Added.
+        (WebCore::MathMLMencloseElement::MathMLMencloseElement):
+        (WebCore::MathMLMencloseElement::create):
+        (WebCore::MathMLMencloseElement::createElementRenderer):
+        (WebCore::MathMLMencloseElement::isPresentationAttribute):
+        (WebCore::MathMLMencloseElement::finishParsingChildren):
+        (WebCore::MathMLMencloseElement::collectStyleForPresentationAttribute):
+        (WebCore::MathMLMencloseElement::longDivLeftPadding):
+        * mathml/MathMLMencloseElement.h: Added.
+        (WebCore::toMathMLMencloseElement):
+        * mathml/mathattrs.in:
+        * mathml/mathtags.in:
+        * rendering/mathml/RenderMathMLMenclose.cpp: Added.
+        (WebCore::RenderMathMLMenclose::RenderMathMLMenclose):
+        (WebCore::RenderMathMLMenclose::addChild):
+        (WebCore::RenderMathMLMenclose::computePreferredLogicalWidths):
+        (WebCore::RenderMathMLMenclose::updateLogicalHeight):
+        (WebCore::RenderMathMLMenclose::paint):
+        (WebCore::RenderMathMLMenclose::checkNotationalValuesValidity):
+        * rendering/mathml/RenderMathMLMenclose.h: Added.
+        * rendering/mathml/RenderMathMLRoot.cpp:
+        (WebCore::RenderMathMLRoot::RenderMathMLRoot):
+        * rendering/mathml/RenderMathMLRoot.h:
+        * rendering/mathml/RenderMathMLSquareRoot.cpp:
+        (WebCore::RenderMathMLSquareRoot::RenderMathMLSquareRoot):
+        (WebCore::RenderMathMLSquareRoot::createAnonymousWithParentRenderer):
+        * rendering/mathml/RenderMathMLSquareRoot.h:
+        Added new file related to menclose element implementation. Menclose
+        element is created and while parsing its notation attribute based on
+        its values like top, left CSSBorder properties are applied and for
+        values like circle, verticalstrike, longidv its taken care in paint.
+        For radical value an anonymous RenderMathMLSquareRoot is created as
+        a child of menclose.
+
 2014-01-28  Krzysztof Czech  <k.czech@samsung.com>
 
         [ATK] accessibility/range-alter-by-percent.html is failing after r162587.

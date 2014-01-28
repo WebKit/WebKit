@@ -31,12 +31,12 @@ mtr interfaceName=MathMLElement
 mtd interfaceName=MathMLElement
 mmultiscripts interfaceName=MathMLInlineContainerElement
 mprescripts interfaceName=MathMLInlineContainerElement
+menclose interfaceName=MathMLMencloseElement
 none interfaceName=MathMLInlineContainerElement
 semantics interfaceName=MathMLSelectElement
 
 maligngroup interfaceName=MathMLElement
 malignmark interfaceName=MathMLElement
-menclose interfaceName=MathMLElement
 mglyph interfaceName=MathMLElement
 mlabeledtr interfaceName=MathMLElement
 mlongdiv interfaceName=MathMLElement
