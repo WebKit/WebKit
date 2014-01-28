@@ -48,7 +48,9 @@ enum {
 };
 #endif
 
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
 extern "C" IOReturn IOSurfaceSetPurgeable(IOSurfaceRef buffer, uint32_t newState, uint32_t *oldState);
+#endif
 
 using namespace WebCore;
 
@@ -179,7 +181,9 @@ void ViewSnapshotStore::recordSnapshot(WebPageProxy& webPageProxy)
     snapshot.surfaceContext = surfaceAndContext.second;
     snapshot.creationTime = std::chrono::steady_clock::now();
 
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
     IOSurfaceSetPurgeable(snapshot.surface.get(), kIOSurfacePurgeableVolatile, nullptr);
+#endif
 
     m_snapshotMap.add(item->snapshotUUID(), snapshot);
     m_renderTreeSizeMap.add(item->snapshotUUID(), webPageProxy.renderTreeSize());

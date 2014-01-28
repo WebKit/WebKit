@@ -51,7 +51,9 @@ enum {
 };
 #endif
 
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
 extern "C" IOReturn IOSurfaceSetPurgeable(IOSurfaceRef buffer, uint32_t newState, uint32_t *oldState);
+#endif
 
 #if defined(__has_include) && __has_include(<QuartzCore/QuartzCorePrivate.h>)
 #import <QuartzCore/QuartzCorePrivate.h>
@@ -294,8 +296,10 @@ void ViewGestureController::beginSwipeGesture(WebBackForwardListItem* targetItem
     RetainPtr<IOSurfaceRef> snapshot = ViewSnapshotStore::shared().snapshotAndRenderTreeSize(targetItem).first;
 
     if (snapshot) {
-        uint32_t purgeabilityState;
+        uint32_t purgeabilityState = kIOSurfacePurgeableNonVolatile;
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
         IOSurfaceSetPurgeable(snapshot.get(), kIOSurfacePurgeableNonVolatile, &purgeabilityState);
+#endif
 
         if (purgeabilityState != kIOSurfacePurgeableEmpty)
             [m_swipeSnapshotLayer setContents:(id)snapshot.get()];
@@ -403,9 +407,11 @@ void ViewGestureController::removeSwipeSnapshot()
     if (m_activeGestureType != ViewGestureType::Swipe)
         return;
 
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
     IOSurfaceRef snapshotSurface = (IOSurfaceRef)[m_swipeSnapshotLayer contents];
     if (snapshotSurface)
         IOSurfaceSetPurgeable(snapshotSurface, kIOSurfacePurgeableVolatile, nullptr);
+#endif
 
     [m_webPageProxy.acceleratedCompositingRootLayer() setPosition:CGPointZero];
     [m_swipeSnapshotLayer removeFromSuperlayer];

@@ -1,5 +1,15 @@
 2014-01-28  Tim Horton  <timothy_horton@apple.com>
 
+        Fix the Mountain Lion build.
+
+        * UIProcess/mac/ViewGestureController.mm:
+        (WebKit::ViewGestureController::beginSwipeGesture):
+        (WebKit::ViewGestureController::removeSwipeSnapshot):
+        * UIProcess/mac/ViewSnapshotStore.mm:
+        (WebKit::ViewSnapshotStore::recordSnapshot):
+
+2014-01-28  Tim Horton  <timothy_horton@apple.com>
+
         Fix the iOS build.
 
         * UIProcess/WebPageProxy.cpp:
