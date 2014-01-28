@@ -1,3 +1,17 @@
+2014-01-28  Krzysztof Czech  <k.czech@samsung.com>
+
+        [ATK] accessibility/range-alter-by-percent.html is failing after r162587.
+        https://bugs.webkit.org/show_bug.cgi?id=127774
+
+        Reviewed by Mario Sanchez Prada.
+
+        Implicit value of step in range type elements should be one or larger.
+
+        No new tests. Covered by exiting one.
+
+        * accessibility/atk/WebKitAccessibleInterfaceValue.cpp:
+        (webkitAccessibleValueGetMinimumIncrement):
+
 2014-01-28  Mark Rowe  <mrowe@apple.com>
 
         <https://webkit.org/b/127767> Disable some deprecation warnings to fix the build.

@@ -119,9 +119,9 @@ static void webkitAccessibleValueGetMinimumIncrement(AtkValue* value, GValue* gV
     }
 
     // If 'step' attribute is not defined, WebCore assumes a 5% of the
-    // range between minimum and maximum values, so return that.
-    float range = coreObject->maxValueForRange() - coreObject->minValueForRange();
-    g_value_set_float(gValue, range * 0.05);
+    // range between minimum and maximum values. Implicit value of step should be one or larger.
+    float step = (coreObject->maxValueForRange() - coreObject->minValueForRange()) * 0.05;
+    g_value_set_float(gValue, step < 1 ? 1 : step);
 }
 
 void webkitAccessibleValueInterfaceInit(AtkValueIface* iface)
