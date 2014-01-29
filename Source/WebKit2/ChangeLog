@@ -1,5 +1,13 @@
 2014-01-28  Ryuan Choi  <ryuan.choi@samsung.com>
 
+        Unreviewed build fix on the cmake based port after r162981
+
+        One more build fix.
+
+        * CMakeLists.txt: Added WebDocumentLoader.cpp
+
+2014-01-28  Ryuan Choi  <ryuan.choi@samsung.com>
+
         Unreviewed build fix on the EFL build after r162984
 
         r162984 added wheelEventWasNotHandledByWebCore which is guarded to PLATFORM(MAC).
