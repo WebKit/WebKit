@@ -511,7 +511,7 @@ JSValue CLoop::execute(OpcodeID entryOpcodeID, void* executableAddress, VM* vm, 
     ".thumb\n"                                   \
     ".thumb_func " THUMB_FUNC_PARAM(label) "\n"  \
     SYMBOL_STRING(label) ":\n"
-#elif CPU(X86_64) && COMPILER(CLANG)
+#elif CPU(XXX86_64) && COMPILER(CLANG)
 #define OFFLINE_ASM_GLOBAL_LABEL(label)         \
     ".text\n"                                   \
     ".globl " SYMBOL_STRING(label) "\n"         \

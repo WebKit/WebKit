@@ -1,3 +1,10 @@
+2014-01-29  Beth Dakin  <bdakin@apple.com>
+
+        Build fix.
+
+        * bytecode/ProfiledCodeBlockJettisoningWatchpoint.cpp:
+        * llint/LowLevelInterpreter.cpp:
+
 2014-01-29  Dan Bernstein  <mitz@apple.com>
 
         Build fix.
