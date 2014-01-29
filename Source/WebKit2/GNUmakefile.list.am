@@ -1258,6 +1258,8 @@ webkit2_sources += \
 	Source/WebKit2/WebProcess/WebPage/WebBackForwardListProxy.h \
 	Source/WebKit2/WebProcess/WebPage/WebContextMenu.cpp \
 	Source/WebKit2/WebProcess/WebPage/WebContextMenu.h \
+	Source/WebKit2/WebProcess/WebPage/WebDocumentLoader.cpp \
+	Source/WebKit2/WebProcess/WebPage/WebDocumentLoader.h \
 	Source/WebKit2/WebProcess/WebPage/WebFrame.cpp \
 	Source/WebKit2/WebProcess/WebPage/WebFrame.h \
 	Source/WebKit2/WebProcess/WebPage/WebInspector.cpp \

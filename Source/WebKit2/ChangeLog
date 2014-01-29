@@ -1,5 +1,12 @@
 2014-01-29  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        Unreviewed. Fix GTK+ build after r162981.
+
+        * GNUmakefile.list.am: Add WebProcess/WebPage/WebDocumentLoader to
+        the compilation.
+
+2014-01-29  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         Unreviewed. Actually fix the GTK+ build after r162967.
 
         * UIProcess/API/gtk/WebKitWebView.cpp:
