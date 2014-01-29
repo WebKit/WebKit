@@ -1,3 +1,11 @@
+2014-01-29  Oliver Hunt  <oliver@apple.com>
+
+        This dereference should not actually be necessary, and
+        is producing deprecation warnings with newer perls
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateAttributesHashTable):
+
 2014-01-28  Oliver Hunt  <oliver@apple.com>
 
         Make DOM attributes appear to be faux accessor properties

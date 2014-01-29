@@ -1216,7 +1216,7 @@ sub GenerateAttributesHashTable
 
         my $conditional = $attribute->signature->extendedAttributes->{"Conditional"};
         if ($conditional) {
-            %$conditionals->{$name} =  $conditional;
+            $conditionals->{$name} =  $conditional;
         }
     }
 
