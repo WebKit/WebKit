@@ -1,0 +1,113 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../../resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+
+<table border="1" cellpadding="5" cellspacing="2" id="table">
+  <tbody><tr>
+    <th colspan="6" scope="colgroup">Community Courses -- Bath Autumn 1997</th>
+  </tr>
+  <tr>
+    <th scope="col" abbr="Name">Course Name</th>
+    <th scope="col" abbr="Tutor">Course Tutor</th>
+    <th scope="col">Summary</th>
+    <th scope="col">Code</th>
+    <th scope="col" colspan="2">Fee</th>
+  </tr>
+  <tr>
+    <td scope="row">After the Civil War</td>
+    <td>Dr. John Wroughton</td>
+    <td>
+       The course will examine the turbulent years in England
+       after 1646. <em>6 weekly meetings starting Monday 13th
+      October.</em>
+    </td>
+    <td>H27</td>
+    <td>£32</td>
+    <td>£32</td>
+  </tr>
+  <tr>
+    <td scope="row">An Introduction to Anglo-Saxon England</td>
+    <td scope="rowgroup" rowspan="2">Mark Cottle</td>
+    <td>
+       One day course introducing the early medieval
+       period reconstruction the Anglo-Saxons and
+       their society. <em>Saturday 18th October.</em>
+    </td>
+    <td>H28</td>
+    <td>£18</td>
+    <td>£18</td>
+  </tr>
+  <tr>
+    <td scope="row">The Glory that was Greece</td>
+    <td>
+     Birthplace of democracy, philosophy, heartland of theater, home of
+     argument. The Romans may have done it but the Greeks did it
+     first. <em>Saturday day school 25th October 1997</em>
+    </td>
+    <td>H30</td>
+    <td>£18</td>
+    <td>£18</td>
+  </tr>
+</tbody></table>
+
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    description("This tests the scope attribute on table cells will manifest as the right header elements on the cells in that row or column.");
+
+    if (window.accessibilityController) {
+
+        var table = accessibilityController.accessibleElementById("table");
+
+        // Course name has a column header of Community Courses.
+        var cell = table.cellForColumnAndRow(0, 1);
+        var colHeaders = cell.columnHeaders();
+        shouldBeTrue("colHeaders[0].isEqual(table.cellForColumnAndRow(0, 0))");
+
+        // As does Fee.
+        cell = table.cellForColumnAndRow(4, 1);
+        var colHeaders = cell.columnHeaders();
+        shouldBeTrue("colHeaders[0].isEqual(table.cellForColumnAndRow(0, 0))");
+
+        // Dr. John should have two col headers and a row header.
+        cell = table.cellForColumnAndRow(1, 2);
+        colHeaders = cell.columnHeaders();
+        rowHeaders = cell.rowHeaders();
+        shouldBeTrue("colHeaders[0].isEqual(table.cellForColumnAndRow(0, 0))");
+        shouldBeTrue("colHeaders[1].isEqual(table.cellForColumnAndRow(1, 1))");
+        shouldBeTrue("rowHeaders[0].isEqual(table.cellForColumnAndRow(0, 2))");
+
+        // Code H28, two row headers, two col headers.
+        cell = table.cellForColumnAndRow(3, 3);
+        colHeaders = cell.columnHeaders();
+        rowHeaders = cell.rowHeaders();
+        shouldBeTrue("colHeaders[0].isEqual(table.cellForColumnAndRow(0, 0))");
+        shouldBeTrue("colHeaders[1].isEqual(table.cellForColumnAndRow(3, 1))");
+        shouldBeTrue("rowHeaders[0].isEqual(table.cellForColumnAndRow(0, 3))");
+        shouldBeTrue("rowHeaders[1].isEqual(table.cellForColumnAndRow(1, 3))");
+
+        // Verify Code H30 has two row headers even though the 2nd header started in a span before this row.
+        cell = table.cellForColumnAndRow(3, 4);
+        rowHeaders = cell.rowHeaders();
+        shouldBeTrue("rowHeaders[0].isEqual(table.cellForColumnAndRow(0, 4))");
+        shouldBeTrue("rowHeaders[1].isEqual(table.cellForColumnAndRow(1, 3))");
+
+        // Verify items in column 5 are picking up Fee as a header even though it's colspan starts before this column.
+        cell = table.cellForColumnAndRow(4, 4);
+        colHeaders = cell.columnHeaders();
+        shouldBeTrue("colHeaders[0].isEqual(table.cellForColumnAndRow(0, 0))");
+        shouldBeTrue("colHeaders[1].isEqual(table.cellForColumnAndRow(4, 1))");
+
+    }
+
+</script>
+
+<script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>

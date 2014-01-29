@@ -47,7 +47,7 @@ public:
     virtual void columnIndexRange(std::pair<unsigned, unsigned>& columnRange) override;
     
 protected:
-    virtual AccessibilityObject* parentTable() const override;
+    virtual AccessibilityTable* parentTable() const override;
 }; 
     
 } // namespace WebCore 

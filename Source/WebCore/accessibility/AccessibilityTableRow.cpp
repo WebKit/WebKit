@@ -30,6 +30,7 @@
 #include "AccessibilityTableRow.h"
 
 #include "AXObjectCache.h"
+#include "AccessibilityTable.h"
 #include "AccessibilityTableCell.h"
 #include "HTMLNames.h"
 #include "HTMLTableRowElement.h"
@@ -98,7 +99,7 @@ bool AccessibilityTableRow::computeAccessibilityIsIgnored() const
     return false;
 }
     
-AccessibilityObject* AccessibilityTableRow::parentTable() const
+AccessibilityTable* AccessibilityTableRow::parentTable() const
 {
     // The parent table might not be the direct ancestor of the row unfortunately. ARIA states that role="grid" should
     // only have "row" elements, but if not, we still should handle it gracefully by finding the right table.
@@ -106,7 +107,7 @@ AccessibilityObject* AccessibilityTableRow::parentTable() const
         // If this is a table object, but not an accessibility table, we should stop because we don't want to
         // choose another ancestor table as this row's table.
         if (parent->isTable())
-            return parent->isAccessibilityTable() ? parent : 0;
+            return parent->isAccessibilityTable() ? toAccessibilityTable(parent) : 0;
     }
     
     return 0;

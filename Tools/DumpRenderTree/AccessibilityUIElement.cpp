@@ -482,6 +482,30 @@ static JSValueRef stringAttributeValueCallback(JSContextRef context, JSObjectRef
     return result;
 }
 
+static JSValueRef convertElementsToObjectArray(JSContextRef context, Vector<AccessibilityUIElement>& elements, JSValueRef* exception)
+{
+    size_t elementCount = elements.size();
+    auto valueElements = std::make_unique<JSValueRef[]>(elementCount);
+    for (size_t i = 0; i < elementCount; ++i)
+        valueElements[i] = AccessibilityUIElement::makeJSAccessibilityUIElement(context, elements[i]);
+    
+    return JSObjectMakeArray(context, elementCount, valueElements.get(), exception);
+}
+
+static JSValueRef columnHeadersCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+{
+    Vector<AccessibilityUIElement> elements;
+    toAXElement(thisObject)->columnHeaders(elements);
+    return convertElementsToObjectArray(context, elements, exception);
+}
+
+static JSValueRef rowHeadersCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+{
+    Vector<AccessibilityUIElement> elements;
+    toAXElement(thisObject)->rowHeaders(elements);
+    return convertElementsToObjectArray(context, elements, exception);
+}
+
 static JSValueRef uiElementArrayAttributeValueCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
     if (argumentCount != 1)
@@ -491,13 +515,7 @@ static JSValueRef uiElementArrayAttributeValueCallback(JSContextRef context, JSO
     
     Vector<AccessibilityUIElement> elements;
     toAXElement(thisObject)->uiElementArrayAttributeValue(attribute.get(), elements);
-    
-    size_t elementCount = elements.size();
-    auto valueElements = std::make_unique<JSValueRef[]>(elementCount);
-    for (size_t i = 0; i < elementCount; ++i)
-        valueElements[i] = AccessibilityUIElement::makeJSAccessibilityUIElement(context, elements[i]);
-    
-    return JSObjectMakeArray(context, elementCount, valueElements.get(), exception);
+    return convertElementsToObjectArray(context, elements, exception);
 }
 
 static JSValueRef uiElementAttributeValueCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
@@ -1247,6 +1265,8 @@ JSStringRef AccessibilityUIElement::pathDescription() const { return 0; }
 
 #if !PLATFORM(MAC)
 void AccessibilityUIElement::uiElementArrayAttributeValue(JSStringRef, Vector<AccessibilityUIElement>&) const { }
+void AccessibilityUIElement::columnHeaders(Vector<AccessibilityUIElement>&) const { }
+void AccessibilityUIElement::rowHeaders(Vector<AccessibilityUIElement>&) const { }
 #endif
 
 #if !PLATFORM(WIN)
@@ -1480,6 +1500,8 @@ JSClassRef AccessibilityUIElement::getJSClass()
         { "setSelectedTextRange", setSelectedTextRangeCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "stringAttributeValue", stringAttributeValueCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "uiElementArrayAttributeValue", uiElementArrayAttributeValueCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
+        { "rowHeaders", rowHeadersCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
+        { "columnHeaders", columnHeadersCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "uiElementAttributeValue", uiElementAttributeValueCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "numberAttributeValue", numberAttributeValueCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "boolAttributeValue", boolAttributeValueCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },

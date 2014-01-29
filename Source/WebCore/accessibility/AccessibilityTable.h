@@ -53,8 +53,8 @@ public:
     virtual void addChildren() override;
     virtual void clearChildren() override;
     
-    AccessibilityChildrenVector& columns();
-    AccessibilityChildrenVector& rows();
+    const AccessibilityChildrenVector& columns();
+    const AccessibilityChildrenVector& rows();
     
     virtual bool supportsSelectedRows() { return false; }
     unsigned columnCount();

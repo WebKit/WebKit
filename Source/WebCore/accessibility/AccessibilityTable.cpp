@@ -407,14 +407,14 @@ AccessibilityObject* AccessibilityTable::headerContainer()
     return m_headerContainer.get();
 }
 
-AccessibilityObject::AccessibilityChildrenVector& AccessibilityTable::columns()
+const AccessibilityObject::AccessibilityChildrenVector& AccessibilityTable::columns()
 {
     updateChildrenIfNecessary();
         
     return m_columns;
 }
 
-AccessibilityObject::AccessibilityChildrenVector& AccessibilityTable::rows()
+const AccessibilityObject::AccessibilityChildrenVector& AccessibilityTable::rows()
 {
     updateChildrenIfNecessary();
     

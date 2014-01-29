@@ -87,10 +87,6 @@ using namespace HTMLNames;
 #define NSAccessibilityVisibleCellsAttribute @"AXVisibleCells"
 #endif
 
-#ifndef NSAccessibilityRowHeaderUIElementsAttribute
-#define NSAccessibilityRowHeaderUIElementsAttribute @"AXRowHeaderUIElements"
-#endif
-
 #ifndef NSAccessibilityRowIndexRangeAttribute
 #define NSAccessibilityRowIndexRangeAttribute @"AXRowIndexRange"
 #endif
@@ -1357,7 +1353,7 @@ static id textMarkerRangeFromVisiblePositions(AXObjectCache *cache, VisiblePosit
         [tempArray addObject:NSAccessibilityColumnsAttribute];
         [tempArray addObject:NSAccessibilityVisibleColumnsAttribute];
         [tempArray addObject:NSAccessibilityVisibleCellsAttribute];
-        [tempArray addObject:(NSString *)kAXColumnHeaderUIElementsAttribute];
+        [tempArray addObject:NSAccessibilityColumnHeaderUIElementsAttribute];
         [tempArray addObject:NSAccessibilityRowHeaderUIElementsAttribute];
         [tempArray addObject:NSAccessibilityHeaderAttribute];
         [tempArray addObject:NSAccessibilityColumnCountAttribute];
@@ -1384,6 +1380,8 @@ static id textMarkerRangeFromVisiblePositions(AXObjectCache *cache, VisiblePosit
         tempArray = [[NSMutableArray alloc] initWithArray:attributes];
         [tempArray addObject:NSAccessibilityRowIndexRangeAttribute];
         [tempArray addObject:NSAccessibilityColumnIndexRangeAttribute];
+        [tempArray addObject:NSAccessibilityColumnHeaderUIElementsAttribute];
+        [tempArray addObject:NSAccessibilityRowHeaderUIElementsAttribute];
         tableCellAttrs = [[NSArray alloc] initWithArray:tempArray];
         [tempArray release];
     }
@@ -2431,7 +2429,7 @@ static NSString* roleValueToNSString(AccessibilityRole value)
             [attributeName isEqualToString:NSAccessibilitySelectedCellsAttribute])
             return nil;
         
-        if ([attributeName isEqualToString:(NSString *)kAXColumnHeaderUIElementsAttribute]) {
+        if ([attributeName isEqualToString:NSAccessibilityColumnHeaderUIElementsAttribute]) {
             AccessibilityObject::AccessibilityChildrenVector columnHeaders;
             toAccessibilityTable(m_object)->columnHeaders(columnHeaders);
             return convertToNSArray(columnHeaders);
@@ -2490,6 +2488,16 @@ static NSString* roleValueToNSString(AccessibilityRole value)
             std::pair<unsigned, unsigned> columnRange;
             toAccessibilityTableCell(m_object)->columnIndexRange(columnRange);
             return [NSValue valueWithRange:NSMakeRange(columnRange.first, columnRange.second)];
+        }
+        if ([attributeName isEqualToString:NSAccessibilityColumnHeaderUIElementsAttribute]) {
+            AccessibilityObject::AccessibilityChildrenVector columnHeaders;
+            toAccessibilityTableCell(m_object)->columnHeaders(columnHeaders);
+            return convertToNSArray(columnHeaders);
+        }
+        if ([attributeName isEqualToString:NSAccessibilityRowHeaderUIElementsAttribute]) {
+            AccessibilityObject::AccessibilityChildrenVector rowHeaders;
+            toAccessibilityTableCell(m_object)->rowHeaders(rowHeaders);
+            return convertToNSArray(rowHeaders);
         }
     }
     

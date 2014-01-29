@@ -820,6 +820,18 @@ JSValueRef AccessibilityUIElement::uiElementArrayAttributeValue(JSStringRef attr
     return nullptr;
 }
 
+JSValueRef AccessibilityUIElement::rowHeaders() const
+{
+    // FIXME: implement
+    return nullptr;
+}
+
+JSValueRef AccessibilityUIElement::columnHeaders() const
+{
+    // FIXME: implement
+    return nullptr;
+}
+
 PassRefPtr<AccessibilityUIElement> AccessibilityUIElement::uiElementAttributeValue(JSStringRef attribute) const
 {
     // FIXME: implement

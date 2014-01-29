@@ -33,6 +33,8 @@
 
 namespace WebCore {
     
+class AccessibilityTable;
+
 class AccessibilityTableRow : public AccessibilityRenderObject {
     
 protected:
@@ -45,7 +47,7 @@ public:
 
     // retrieves the "row" header (a th tag in the rightmost column)
     virtual AccessibilityObject* headerObject();
-    virtual AccessibilityObject* parentTable() const;
+    virtual AccessibilityTable* parentTable() const;
     
     void setRowIndex(int rowIndex) { m_rowIndex = rowIndex; }
     int rowIndex() const { return m_rowIndex; }

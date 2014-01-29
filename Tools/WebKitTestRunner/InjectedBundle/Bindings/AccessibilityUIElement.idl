@@ -139,6 +139,8 @@ interface AccessibilityUIElement {
     DOMString columnIndexRange();
     int rowCount();
     int columnCount();
+    object columnHeaders();
+    object rowHeaders();
 
     AccessibilityUIElement ariaOwnsElementAtIndex(unsigned long index);
     AccessibilityUIElement ariaFlowToElementAtIndex(unsigned long index);

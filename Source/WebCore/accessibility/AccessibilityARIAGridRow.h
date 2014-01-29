@@ -33,6 +33,8 @@
 
 namespace WebCore {
     
+class AccessibilityTable;
+    
 class AccessibilityARIAGridRow : public AccessibilityTableRow {
     
 private:
@@ -48,7 +50,7 @@ public:
     
 private:
     virtual bool isARIATreeGridRow() const override;
-    virtual AccessibilityObject* parentTable() const override;
+    virtual AccessibilityTable* parentTable() const override;
 }; 
 
 ACCESSIBILITY_OBJECT_TYPE_CASTS(AccessibilityARIAGridRow, isARIATreeGridRow())

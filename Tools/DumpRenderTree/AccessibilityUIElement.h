@@ -179,6 +179,8 @@ public:
     JSStringRef columnIndexRange();
     int rowCount();
     int columnCount();
+    void rowHeaders(Vector<AccessibilityUIElement>& elements) const;
+    void columnHeaders(Vector<AccessibilityUIElement>& elements) const;
     
     // Tree/Outline specific attributes
     AccessibilityUIElement selectedRowAtIndex(unsigned);

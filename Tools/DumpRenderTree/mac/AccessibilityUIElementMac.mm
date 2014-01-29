@@ -466,6 +466,24 @@ JSStringRef AccessibilityUIElement::stringAttributeValue(JSStringRef attribute)
     return nullptr;
 }
 
+void AccessibilityUIElement::rowHeaders(Vector<AccessibilityUIElement>& elements) const
+{
+    BEGIN_AX_OBJC_EXCEPTIONS
+    id value = [m_element accessibilityAttributeValue:NSAccessibilityRowHeaderUIElementsAttribute];
+    if ([value isKindOfClass:[NSArray class]])
+        convertNSArrayToVector(value, elements);
+    END_AX_OBJC_EXCEPTIONS
+}
+
+void AccessibilityUIElement::columnHeaders(Vector<AccessibilityUIElement>& elements) const
+{
+    BEGIN_AX_OBJC_EXCEPTIONS
+    id value = [m_element accessibilityAttributeValue:NSAccessibilityColumnHeaderUIElementsAttribute];
+    if ([value isKindOfClass:[NSArray class]])
+        convertNSArrayToVector(value, elements);
+    END_AX_OBJC_EXCEPTIONS
+}
+
 void AccessibilityUIElement::uiElementArrayAttributeValue(JSStringRef attribute, Vector<AccessibilityUIElement>& elements) const
 {
     BEGIN_AX_OBJC_EXCEPTIONS

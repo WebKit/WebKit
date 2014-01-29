@@ -1,3 +1,40 @@
+2014-01-27  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: Support @scope in HTML tables
+        https://bugs.webkit.org/show_bug.cgi?id=127688
+
+        Reviewed by Mario Sanchez Prada.
+
+        Add support for scope attribute so that row headers and column headers
+        are now exposed at the table cell level where appropriate.
+
+        Test: platform/mac/accessibility/table-scope.html
+
+        * accessibility/AccessibilityARIAGridCell.cpp:
+        (WebCore::AccessibilityARIAGridCell::parentTable):
+        * accessibility/AccessibilityARIAGridCell.h:
+        * accessibility/AccessibilityARIAGridRow.cpp:
+        (WebCore::AccessibilityARIAGridRow::parentTable):
+        * accessibility/AccessibilityARIAGridRow.h:
+        * accessibility/AccessibilityTable.cpp:
+        (WebCore::AccessibilityTable::columns):
+        (WebCore::AccessibilityTable::rows):
+        * accessibility/AccessibilityTable.h:
+        * accessibility/AccessibilityTableCell.cpp:
+        (WebCore::AccessibilityTableCell::parentTable):
+        (WebCore::AccessibilityTableCell::isTableHeaderCell):
+        (WebCore::AccessibilityTableCell::isTableCellInSameRowGroup):
+        (WebCore::AccessibilityTableCell::isTableCellInSameColGroup):
+        (WebCore::AccessibilityTableCell::columnHeaders):
+        (WebCore::AccessibilityTableCell::rowHeaders):
+        * accessibility/AccessibilityTableCell.h:
+        * accessibility/AccessibilityTableRow.cpp:
+        (WebCore::AccessibilityTableRow::parentTable):
+        * accessibility/AccessibilityTableRow.h:
+        * accessibility/mac/WebAccessibilityObjectWrapperMac.mm:
+        (-[WebAccessibilityObjectWrapper accessibilityAttributeNames]):
+        (-[WebAccessibilityObjectWrapper accessibilityAttributeValue:]):
+
 2014-01-28  Brent Fulgham  <bfulgham@apple.com>
 
         Improve latching behavior for wheel events

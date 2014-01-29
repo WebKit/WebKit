@@ -175,7 +175,9 @@ public:
     JSRetainPtr<JSStringRef> columnIndexRange();
     int rowCount();
     int columnCount();
-    
+    JSValueRef rowHeaders() const;
+    JSValueRef columnHeaders() const;
+
     // Tree/Outline specific attributes
     PassRefPtr<AccessibilityUIElement> selectedRowAtIndex(unsigned);
     PassRefPtr<AccessibilityUIElement> disclosedByRow();

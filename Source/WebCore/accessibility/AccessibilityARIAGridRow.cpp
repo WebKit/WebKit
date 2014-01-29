@@ -114,14 +114,14 @@ AccessibilityObject* AccessibilityARIAGridRow::disclosedByRow() const
     return nullptr;
 }
     
-AccessibilityObject* AccessibilityARIAGridRow::parentTable() const
+AccessibilityTable* AccessibilityARIAGridRow::parentTable() const
 {
     // The parent table might not be the direct ancestor of the row unfortunately. ARIA states that role="grid" should
     // only have "row" elements, but if not, we still should handle it gracefully by finding the right table.
     for (AccessibilityObject* parent = parentObject(); parent; parent = parent->parentObject()) {
         // The parent table for an ARIA grid row should be an ARIA table.
         if (parent->isTable() && parent->isAccessibilityTable() && toAccessibilityTable(parent)->isAriaTable())
-            return parent;
+            return toAccessibilityTable(parent);
     }
     
     return nullptr;
