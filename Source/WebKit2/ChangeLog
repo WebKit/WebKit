@@ -1,5 +1,16 @@
 2014-01-28  Ian Henderson  <ianh@apple.com>
 
+        [iOS] UI process crashes whenever web process crashes
+        https://bugs.webkit.org/show_bug.cgi?id=127826
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/API/ios/WKContentView.mm:
+        (-[WKContentView _updateFixedPositionRect]): Null-check the drawing
+        area before calling size() on it.
+
+2014-01-28  Ian Henderson  <ianh@apple.com>
+
         WKRemoteObjectCoder should support more argument types
         https://bugs.webkit.org/show_bug.cgi?id=127824
 

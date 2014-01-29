@@ -195,11 +195,12 @@ using namespace WebKit;
 
 - (void)_updateFixedPositionRect
 {
-    FloatRect exposedRect(_currentExposedRectPosition, _page->drawingArea()->size());
+    auto drawingArea = _page->drawingArea();
+    if (!drawingArea)
+        return;
+    FloatRect exposedRect(_currentExposedRectPosition, drawingArea->size());
     FloatRect fixedPosRect = [self fixedPositionRectFromExposedRect:exposedRect scale:_page->pageScaleFactor()];
-
-    if (auto drawingArea = _page->drawingArea())
-        drawingArea->setCustomFixedPositionRect(fixedPosRect);
+    drawingArea->setCustomFixedPositionRect(fixedPosRect);
 }
 
 - (void)setViewportSize:(CGSize)size
