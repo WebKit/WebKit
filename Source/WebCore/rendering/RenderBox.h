@@ -453,6 +453,7 @@ public:
     int instrinsicScrollbarLogicalWidth() const;
     int scrollbarLogicalHeight() const { return style().isHorizontalWritingMode() ? horizontalScrollbarHeight() : verticalScrollbarWidth(); }
     virtual bool scroll(ScrollDirection, ScrollGranularity, float multiplier = 1, Element** stopElement = 0);
+    virtual bool scrollWithWheelEventLocation(ScrollDirection, ScrollGranularity, float multiplier, RenderBox* startBox, Element** stopElement, IntPoint absolutePoint);
     virtual bool logicalScroll(ScrollLogicalDirection, ScrollGranularity, float multiplier = 1, Element** stopElement = 0);
     bool canBeScrolledAndHasScrollableArea() const;
     virtual bool canBeProgramaticallyScrolled() const;
@@ -656,6 +657,8 @@ private:
 #if ENABLE(CSS_SHAPES)
     void updateShapeOutsideInfoAfterStyleChange(const RenderStyle&, const RenderStyle* oldStyle);
 #endif
+
+    bool scrollLayer(ScrollDirection, ScrollGranularity, float multiplier, Element** stopElement);
 
     bool fixedElementLaysOutRelativeToFrame(const FrameView&) const;
 

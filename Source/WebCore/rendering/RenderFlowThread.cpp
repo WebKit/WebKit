@@ -460,7 +460,29 @@ RenderRegion* RenderFlowThread::regionAtBlockOffset(const RenderBox* clampBox, L
         return region;
     return region ? clampBox->clampToStartAndEndRegions(region) : 0;
 }
-    
+
+RenderRegion* RenderFlowThread::regionFromAbsolutePointAndBox(const IntPoint& absolutePoint, const RenderBox& flowedBox)
+{
+    RenderRegion* startRegion = nullptr;
+    RenderRegion* endRegion = nullptr;
+    getRegionRangeForBox(&flowedBox, startRegion, endRegion);
+
+    if (!startRegion)
+        return nullptr;
+
+    for (auto iter = m_regionList.find(startRegion), end = m_regionList.end(); iter != end; ++iter) {
+        RenderRegion* region = *iter;
+        IntRect regionAbsoluteRect(roundedIntPoint(region->localToAbsolute()), roundedIntSize(region->frameRect().size()));
+        if (regionAbsoluteRect.contains(absolutePoint))
+            return region;
+
+        if (region == endRegion)
+            break;
+    }
+
+    return nullptr;
+}
+
 LayoutPoint RenderFlowThread::adjustedPositionRelativeToOffsetParent(const RenderBoxModelObject& boxModelObject, const LayoutPoint& startPoint)
 {
     LayoutPoint referencePoint = startPoint;

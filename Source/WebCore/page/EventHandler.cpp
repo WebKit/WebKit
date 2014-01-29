@@ -281,7 +281,7 @@ static inline ScrollGranularity wheelGranularityToScrollGranularity(unsigned del
     }
 }
 
-static inline bool scrollNode(float delta, ScrollGranularity granularity, ScrollDirection positiveDirection, ScrollDirection negativeDirection, Node* node, Element** stopElement)
+static inline bool scrollNode(float delta, ScrollGranularity granularity, ScrollDirection positiveDirection, ScrollDirection negativeDirection, Node* node, Element** stopElement, const IntPoint& absolutePoint)
 {
     if (!delta)
         return false;
@@ -289,7 +289,8 @@ static inline bool scrollNode(float delta, ScrollGranularity granularity, Scroll
         return false;
     RenderBox* enclosingBox = node->renderer()->enclosingBox();
     float absDelta = delta > 0 ? delta : -delta;
-    return enclosingBox->scroll(delta < 0 ? negativeDirection : positiveDirection, granularity, absDelta, stopElement);
+
+    return enclosingBox->scrollWithWheelEventLocation(delta < 0 ? negativeDirection : positiveDirection, granularity, absDelta, enclosingBox, stopElement, absolutePoint);
 }
 
 #if (ENABLE(TOUCH_EVENTS) && !PLATFORM(IOS))
@@ -2612,10 +2613,10 @@ void EventHandler::defaultWheelEventHandler(Node* startNode, WheelEvent* wheelEv
     
     // Break up into two scrolls if we need to.  Diagonal movement on 
     // a MacBook pro is an example of a 2-dimensional mouse wheel event (where both deltaX and deltaY can be set).
-    if (dominantDirection != DominantScrollDirectionVertical && scrollNode(wheelEvent->deltaX(), granularity, ScrollRight, ScrollLeft, startNode, &stopElement))
+    if (dominantDirection != DominantScrollDirectionVertical && scrollNode(wheelEvent->deltaX(), granularity, ScrollRight, ScrollLeft, startNode, &stopElement, roundedIntPoint(wheelEvent->absoluteLocation())))
         wheelEvent->setDefaultHandled();
     
-    if (dominantDirection != DominantScrollDirectionHorizontal && scrollNode(wheelEvent->deltaY(), granularity, ScrollDown, ScrollUp, startNode, &stopElement))
+    if (dominantDirection != DominantScrollDirectionHorizontal && scrollNode(wheelEvent->deltaY(), granularity, ScrollDown, ScrollUp, startNode, &stopElement, roundedIntPoint(wheelEvent->absoluteLocation())))
         wheelEvent->setDefaultHandled();
     
     if (!m_latchedWheelEventElement)

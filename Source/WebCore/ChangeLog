@@ -1,3 +1,28 @@
+2014-01-29  Radu Stavila  <stavila@adobe.com>
+
+        [CSSRegions] Unable to scroll a scrollable container for regions using mouse wheel
+        https://bugs.webkit.org/show_bug.cgi?id=123886
+
+        When an element flowed into a scrollable region is scrolled using the mouse wheel, the event 
+        needs to be propagated to the region containing that element, on top of which the cursor
+        is located.
+
+        Reviewed by Antti Koivisto.
+
+        Tests: fast/regions/wheel-scroll-abspos.html
+               fast/regions/wheel-scroll.html
+
+        * page/EventHandler.cpp:
+        (WebCore::scrollNode):
+        (WebCore::EventHandler::defaultWheelEventHandler):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::scroll):
+        (WebCore::RenderBox::scrollWithWheelEventLocation):
+        * rendering/RenderBox.h:
+        * rendering/RenderFlowThread.cpp:
+        (WebCore::RenderFlowThread::regionFromAbsolutePointAndBox):
+        * rendering/RenderFlowThread.h:
+
 2014-01-29  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         REGRESSION(r162922): [SOUP] Several tests are failing in EFL and GTK+ after r162922

@@ -115,6 +115,8 @@ public:
 
     RenderRegion* regionAtBlockOffset(const RenderBox*, LayoutUnit, bool extendLastRegion = false, RegionAutoGenerationPolicy = AllowRegionAutoGeneration);
 
+    RenderRegion* regionFromAbsolutePointAndBox(const IntPoint&, const RenderBox& flowedBox);
+
     bool regionsHaveUniformLogicalWidth() const { return m_regionsHaveUniformLogicalWidth; }
     bool regionsHaveUniformLogicalHeight() const { return m_regionsHaveUniformLogicalHeight; }
 

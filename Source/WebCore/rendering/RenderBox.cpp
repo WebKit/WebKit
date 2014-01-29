@@ -760,14 +760,23 @@ int RenderBox::instrinsicScrollbarLogicalWidth() const
     return 0;
 }
 
-bool RenderBox::scroll(ScrollDirection direction, ScrollGranularity granularity, float multiplier, Element** stopElement)
+bool RenderBox::scrollLayer(ScrollDirection direction, ScrollGranularity granularity, float multiplier, Element** stopElement)
 {
-    RenderLayer* l = layer();
-    if (l && l->scroll(direction, granularity, multiplier)) {
+    RenderLayer* boxLayer = layer();
+    if (boxLayer && boxLayer->scroll(direction, granularity, multiplier)) {
         if (stopElement)
             *stopElement = element();
+
         return true;
     }
+
+    return false;
+}
+
+bool RenderBox::scroll(ScrollDirection direction, ScrollGranularity granularity, float multiplier, Element** stopElement)
+{
+    if (scrollLayer(direction, granularity, multiplier, stopElement))
+        return true;
 
     if (stopElement && *stopElement && *stopElement == element())
         return true;
@@ -775,6 +784,27 @@ bool RenderBox::scroll(ScrollDirection direction, ScrollGranularity granularity,
     RenderBlock* b = containingBlock();
     if (b && !b->isRenderView())
         return b->scroll(direction, granularity, multiplier, stopElement);
+
+    return false;
+}
+
+bool RenderBox::scrollWithWheelEventLocation(ScrollDirection direction, ScrollGranularity granularity, float multiplier, RenderBox* startBox, Element** stopElement, IntPoint absolutePoint)
+{
+    if (scrollLayer(direction, granularity, multiplier, stopElement))
+        return true;
+
+    if (stopElement && *stopElement && *stopElement == element())
+        return true;
+
+    RenderBlock* nextScrollBlock = containingBlock();
+    if (nextScrollBlock && nextScrollBlock->isRenderNamedFlowThread()) {
+        ASSERT(startBox);
+        nextScrollBlock = toRenderFlowThread(nextScrollBlock)->regionFromAbsolutePointAndBox(absolutePoint, *startBox);
+    }
+
+    if (nextScrollBlock && !nextScrollBlock->isRenderView())
+        return nextScrollBlock->scrollWithWheelEventLocation(direction, granularity, multiplier, startBox, stopElement, absolutePoint);
+
     return false;
 }
 
