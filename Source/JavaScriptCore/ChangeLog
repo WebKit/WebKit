@@ -1,3 +1,10 @@
+2014-01-29  Dan Bernstein  <mitz@apple.com>
+
+        Build fix.
+
+        * bytecode/ProfiledCodeBlockJettisoningWatchpoint.cpp: Added a newline at the end of the
+        file.
+
 2014-01-28  Michael Saboff  <msaboff@apple.com>
 
         Merge the jsCStack branch
