@@ -1,5 +1,25 @@
 2014-01-28  Anders Carlsson  <andersca@apple.com>
 
+        Add WebDocumentLoader, a WebCore::DocumentLoader subclass
+        https://bugs.webkit.org/show_bug.cgi?id=127817
+
+        Reviewed by Tim Horton.
+
+        We need a place to store navigation IDs, and since they are per document loader, putting them
+        in a DocumentLoader subclass seems like a good idea.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::createDocumentLoader):
+        * WebProcess/WebPage/WebDocumentLoader.cpp: Added.
+        (WebKit::WebDocumentLoader::WebDocumentLoader):
+        (WebKit::WebDocumentLoader::setNavigationID):
+        * WebProcess/WebPage/WebDocumentLoader.h: Added.
+        (WebKit::WebDocumentLoader::create):
+        (WebKit::WebDocumentLoader::navigationID):
+
+2014-01-28  Anders Carlsson  <andersca@apple.com>
+
         Simplify WebFrame::isMainFrame
         https://bugs.webkit.org/show_bug.cgi?id=127812
 

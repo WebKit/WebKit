@@ -38,6 +38,7 @@
 #include "WebBackForwardListProxy.h"
 #include "WebContextMessages.h"
 #include "WebCoreArgumentCoders.h"
+#include "WebDocumentLoader.h"
 #include "WebErrors.h"
 #include "WebEvent.h"
 #include "WebFrame.h"
@@ -1132,7 +1133,7 @@ void WebFrameLoaderClient::prepareForDataSourceReplacement()
 
 PassRefPtr<DocumentLoader> WebFrameLoaderClient::createDocumentLoader(const ResourceRequest& request, const SubstituteData& data)
 {
-    return DocumentLoader::create(request, data);
+    return WebDocumentLoader::create(request, data);
 }
 
 void WebFrameLoaderClient::setTitle(const StringWithDirection& title, const URL& url)
