@@ -2171,7 +2171,7 @@ void webkit_web_view_go_forward(WebKitWebView* webView)
 {
     g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
 
-    getPage(webView)->backForwardList().forwardItem();
+    getPage(webView)->goForward();
 }
 
 /**
@@ -2186,7 +2186,7 @@ gboolean webkit_web_view_can_go_forward(WebKitWebView* webView)
 {
     g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), FALSE);
 
-    return getPage(webView)->canGoForward();
+    return getPage(webView)->backForwardList().forwardItem();
 }
 
 /**

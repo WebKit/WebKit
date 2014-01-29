@@ -1,5 +1,14 @@
 2014-01-28  Zan Dobersek  <zdobersek@igalia.com>
 
+        Unreviewed followup to r163006. That change incorrectly modified
+        webkit_web_view_go_forward when webkit_web_view_can_go_forward needed fixing.
+
+        * UIProcess/API/gtk/WebKitWebView.cpp:
+        (webkit_web_view_go_forward):
+        (webkit_web_view_can_go_forward):
+
+2014-01-28  Zan Dobersek  <zdobersek@igalia.com>
+
         Unreviewed GTK build fix after r162967.
 
         * UIProcess/API/gtk/WebKitWebView.cpp:
