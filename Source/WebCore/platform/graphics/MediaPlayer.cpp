@@ -56,7 +56,6 @@
 #if PLATFORM(MAC)
 #if PLATFORM(IOS)
 #include "MediaPlayerPrivateIOS.h"
-#define PlatformMediaEngineClassName MediaPlayerPrivateIOS
 #else
 #include "MediaPlayerPrivateQTKit.h"
 #endif
@@ -204,8 +203,10 @@ static Vector<MediaPlayerFactory*>& installedMediaEngines(RequeryEngineOptions r
         return installedEngines;
     }
 
-    if (!enginesQueried) {
-        enginesQueried = true;
+    if (enginesQueried)
+        return installedEngines;
+
+    enginesQueried = true;
 
 #if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
     if (Settings::isVideoPluginProxyEnabled())
@@ -213,29 +214,26 @@ static Vector<MediaPlayerFactory*>& installedMediaEngines(RequeryEngineOptions r
 #endif
 
 #if USE(AVFOUNDATION)
-        if (Settings::isAVFoundationEnabled()) {
+    if (Settings::isAVFoundationEnabled()) {
 #if PLATFORM(MAC)
-            MediaPlayerPrivateAVFoundationObjC::registerMediaEngine(addMediaEngine);
+        MediaPlayerPrivateAVFoundationObjC::registerMediaEngine(addMediaEngine);
 #if ENABLE(MEDIA_SOURCE)
-            MediaPlayerPrivateMediaSourceAVFObjC::registerMediaEngine(addMediaEngine);
+        MediaPlayerPrivateMediaSourceAVFObjC::registerMediaEngine(addMediaEngine);
 #endif
 #elif PLATFORM(WIN)
-            MediaPlayerPrivateAVFoundationCF::registerMediaEngine(addMediaEngine);
+        MediaPlayerPrivateAVFoundationCF::registerMediaEngine(addMediaEngine);
 #endif
-        }
+    }
 #endif
 
-#if !PLATFORM(IOS)
-#if PLATFORM(MAC)
-        if (Settings::isQTKitEnabled())
-            MediaPlayerPrivateQTKit::registerMediaEngine(addMediaEngine);
-#endif
+#if PLATFORM(MAC) && !PLATFORM(IOS)
+    if (Settings::isQTKitEnabled())
+        MediaPlayerPrivateQTKit::registerMediaEngine(addMediaEngine);
 #endif
 
 #if defined(PlatformMediaEngineClassName)
-        PlatformMediaEngineClassName::registerMediaEngine(addMediaEngine);
+    PlatformMediaEngineClassName::registerMediaEngine(addMediaEngine);
 #endif
-    }
 
     return installedEngines;
 }
@@ -343,7 +341,7 @@ MediaPlayer::MediaPlayer(MediaPlayerClient* client)
 {
 #if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
     Vector<MediaPlayerFactory*>& engines = installedMediaEngines();
-    if (!engines.isEmpty()) {
+    if (Settings::isVideoPluginProxyEnabled() && !engines.isEmpty()) {
         m_currentMediaEngine = engines[0];
         m_private = engines[0]->constructor(this);
         if (m_mediaPlayerClient)

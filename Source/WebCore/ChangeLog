@@ -1,3 +1,18 @@
+2014-01-29  Eric Carlson  <eric.carlson@apple.com>
+
+        [iOS] cleanup MediaPlayer.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=127821
+
+        Reviewed by Jer Noble.
+
+        Don't register MediaPlayerPrivateIOS unless the runtime setting for media player proxy is set.
+
+        * platform/graphics/MediaPlayer.cpp: Don't define PlatformMediaEngineClassName on iOS
+        (WebCore::installedMediaEngines): Drive by cleanup to return early if registration has
+            already happened.
+        (WebCore::MediaPlayer::MediaPlayer): Don't force-register the first media engine unless 
+            isVideoPluginProxyEnabled returns true.
+
 2014-01-29  Youenn Fablet  <youennf@gmail.com>
 
         Have XHR.getResponseHeader() return null and XHR.getAllResponseHeader() return the empty string in initial ready states
