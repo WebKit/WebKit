@@ -322,13 +322,15 @@ void ViewGestureController::beginSwipeGesture(WebBackForwardListItem* targetItem
     RetainPtr<IOSurfaceRef> snapshot = ViewSnapshotStore::shared().snapshotAndRenderTreeSize(targetItem).first;
 
     if (snapshot) {
-        uint32_t purgeabilityState = kIOSurfacePurgeableNonVolatile;
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
+        uint32_t purgeabilityState = kIOSurfacePurgeableNonVolatile;
         IOSurfaceSetPurgeable(snapshot.get(), kIOSurfacePurgeableNonVolatile, &purgeabilityState);
-#endif
 
         if (purgeabilityState != kIOSurfacePurgeableEmpty)
             [m_swipeSnapshotLayer setContents:(id)snapshot.get()];
+#else
+        [m_swipeSnapshotLayer setContents:(id)snapshot.get()];
+#endif
     }
 
     [m_swipeSnapshotLayer setContentsGravity:kCAGravityTopLeft];

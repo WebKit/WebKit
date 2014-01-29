@@ -1,3 +1,10 @@
+2014-01-28  Tim Horton  <timothy_horton@apple.com>
+
+        Fix the Mountain Lion build if you have private headers.
+
+        * UIProcess/mac/ViewGestureController.mm:
+        (WebKit::ViewGestureController::beginSwipeGesture):
+
 2014-01-28  Ian Henderson  <ianh@apple.com>
 
         [iOS] UI process crashes whenever web process crashes
