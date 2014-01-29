@@ -1,5 +1,17 @@
 2014-01-28  Tim Horton  <timothy_horton@apple.com>
 
+        Crashes in ViewGestureController::wheelEventWasNotHandledByWebCore
+        https://bugs.webkit.org/show_bug.cgi?id=127828
+        <rdar://problem/15932902>
+
+        Reviewed by Dan Bernstein.
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView _wheelEventWasNotHandledByWebCore:]):
+        Null check. ViewGestureController only needs unhandled wheel events after it has been created.
+
+2014-01-28  Tim Horton  <timothy_horton@apple.com>
+
         Fix the Mountain Lion build if you have private headers.
 
         * UIProcess/mac/ViewGestureController.mm:

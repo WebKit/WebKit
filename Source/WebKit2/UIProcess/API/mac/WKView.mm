@@ -2566,7 +2566,8 @@ static void createSandboxExtensionsForFileUpload(NSPasteboard *pasteboard, Sandb
 
 - (void)_wheelEventWasNotHandledByWebCore:(NSEvent *)event
 {
-    _data->_gestureController->wheelEventWasNotHandledByWebCore(event);
+    if (_data->_gestureController)
+        _data->_gestureController->wheelEventWasNotHandledByWebCore(event);
 }
 
 - (void)_setAccessibilityWebProcessToken:(NSData *)data
