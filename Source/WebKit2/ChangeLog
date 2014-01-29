@@ -1,5 +1,11 @@
 2014-01-28  Anders Carlsson  <andersca@apple.com>
 
+        Fix build.
+
+        * WebProcess/WebPage/WebFrame.cpp:
+
+2014-01-28  Anders Carlsson  <andersca@apple.com>
+
         Add WebDocumentLoader, a WebCore::DocumentLoader subclass
         https://bugs.webkit.org/show_bug.cgi?id=127817
 

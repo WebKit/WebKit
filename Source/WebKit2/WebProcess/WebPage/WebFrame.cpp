@@ -57,6 +57,7 @@
 #include <WebCore/JSCSSStyleDeclaration.h>
 #include <WebCore/JSElement.h>
 #include <WebCore/JSRange.h>
+#include <WebCore/MainFrame.h>
 #include <WebCore/NetworkingContext.h>
 #include <WebCore/NodeTraversal.h>
 #include <WebCore/Page.h>
