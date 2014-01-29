@@ -1,3 +1,14 @@
+2014-01-28  Ian Henderson  <ianh@apple.com>
+
+        WKRemoteObjectCoder should support more argument types
+        https://bugs.webkit.org/show_bug.cgi?id=127824
+
+        Reviewed by Anders Carlsson.
+
+        * Shared/API/Cocoa/WKRemoteObjectCoder.mm:
+        (encodeInvocation): Support encoding char values.
+        (decodeInvocationArguments): Support decoding char values.
+
 2014-01-28  Ryuan Choi  <ryuan.choi@samsung.com>
 
         Unreviewed build fix on the cmake based port after r162981

@@ -146,6 +146,15 @@ static void encodeInvocation(WKRemoteObjectEncoder *encoder, NSInvocation *invoc
             break;
         }
 
+        // char
+        case 'c': {
+            char value;
+            [invocation getArgument:&value atIndex:i];
+
+            encodeToObjectStream(encoder, @(value));
+            break;
+        }
+
         // bool
         case 'B': {
             BOOL value;
@@ -399,6 +408,13 @@ static void decodeInvocationArguments(WKRemoteObjectDecoder *decoder, NSInvocati
         // int
         case 'i': {
             int value = [decodeObjectFromObjectStream(decoder, [NSSet setWithObject:[NSNumber class]]) intValue];
+            [invocation setArgument:&value atIndex:i];
+            break;
+        }
+
+        // char
+        case 'c': {
+            char value = [decodeObjectFromObjectStream(decoder, [NSSet setWithObject:[NSNumber class]]) charValue];
             [invocation setArgument:&value atIndex:i];
             break;
         }
