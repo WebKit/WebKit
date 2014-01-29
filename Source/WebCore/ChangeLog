@@ -1,3 +1,22 @@
+2014-01-28  Zoltan Horvath  <zoltan@webkit.org>
+
+        [CSS Shapes] Adjust inset sizing syntax to the latest specification
+        https://bugs.webkit.org/show_bug.cgi?id=127785
+
+        Reviewed by Bem Jones-Bey.
+
+        According to the latest CSS Shapes specification [1], the width arguments of inset should
+        follow the syntax of the margin shorthand, which let us set all four insets with one, two
+        or four values. This patch updates the behavior and updates the affected tests.
+
+        [1] http://dev.w3.org/csswg/css-shapes/#funcdef-inset
+
+        Existing tests have been updated.
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseInsetRoundedCorners):
+        (WebCore::CSSParser::parseBasicShapeInset):
+
 2014-01-28  Oliver Hunt  <oliver@apple.com>
 
         Make DOM attributes appear to be faux accessor properties

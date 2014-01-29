@@ -5323,6 +5323,9 @@ PassRefPtr<CSSBasicShape> CSSParser::parseInsetRoundedCorners(PassRefPtr<CSSBasi
 {
     CSSParserValue* argument = args->next();
 
+    if (!argument)
+        return nullptr;
+
     std::unique_ptr<CSSParserValueList> radiusArguments(new CSSParserValueList);
     while (argument) {
         radiusArguments->addValue(*argument);
@@ -5385,41 +5388,58 @@ PassRefPtr<CSSBasicShape> CSSParser::parseBasicShapeInset(CSSParserValueList* ar
 
     RefPtr<CSSBasicShapeInset> shape = CSSBasicShapeInset::create();
 
-    unsigned argumentNumber = 0;
     CSSParserValue* argument = args->current();
+    Vector<RefPtr<CSSPrimitiveValue> > widthArguments;
+    bool hasRoundedInset = false;
     while (argument) {
-        if (argument->unit == CSSPrimitiveValue::CSS_IDENT) {
-            if (argumentNumber > 0 && equalIgnoringCase(argument->string, "round"))
-                return parseInsetRoundedCorners(shape.release(), args);
-            return nullptr;
+        if (argument->unit == CSSPrimitiveValue::CSS_IDENT && equalIgnoringCase(argument->string, "round")) {
+            hasRoundedInset = true;
+            break;
         }
 
         Units unitFlags = FLength | FPercent;
-        if (!validUnit(argument, unitFlags) || argumentNumber > 3)
+        if (!validUnit(argument, unitFlags) || widthArguments.size() > 4)
             return nullptr;
 
-        RefPtr<CSSPrimitiveValue> length = createPrimitiveNumericValue(argument);
-        switch (argumentNumber) {
-        case 0:
-            shape->setTop(length);
-            break;
-        case 1:
-            shape->setRight(length);
-            break;
-        case 2:
-            shape->setBottom(length);
-            break;
-        case 3:
-            shape->setLeft(length);
-            break;
-        }
+        widthArguments.append(createPrimitiveNumericValue(argument));
         argument = args->next();
-        argumentNumber++;
     }
 
-    if (!argumentNumber)
+    switch (widthArguments.size()) {
+    case 1: {
+        shape->setTop(widthArguments[0]);
+        shape->setRight(widthArguments[0]);
+        shape->setBottom(widthArguments[0]);
+        shape->setLeft(widthArguments[0]);
+        break;
+    }
+    case 2: {
+        shape->setTop(widthArguments[0]);
+        shape->setRight(widthArguments[1]);
+        shape->setBottom(widthArguments[0]);
+        shape->setLeft(widthArguments[1]);
+        break;
+        }
+    case 3: {
+        shape->setTop(widthArguments[0]);
+        shape->setRight(widthArguments[1]);
+        shape->setBottom(widthArguments[2]);
+        shape->setLeft(widthArguments[1]);
+        break;
+    }
+    case 4: {
+        shape->setTop(widthArguments[0]);
+        shape->setRight(widthArguments[1]);
+        shape->setBottom(widthArguments[2]);
+        shape->setLeft(widthArguments[3]);
+        break;
+    }
+    default:
         return nullptr;
+    }
 
+    if (hasRoundedInset)
+        return parseInsetRoundedCorners(shape, args);
     return shape;
 }
 
