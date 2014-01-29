@@ -1,3 +1,17 @@
+2014-01-28  Oliver Hunt  <oliver@apple.com>
+
+        Make DOM attributes appear to be faux accessor properties
+        https://bugs.webkit.org/show_bug.cgi?id=127797
+
+        Reviewed by Michael Saboff.
+
+        These properties now show up as accessors in these tests
+
+        * fast/dom/Window/replaceable-expected.txt:
+        * fast/dom/Window/replaceable.html:
+        * js/dom/getOwnPropertyDescriptor-expected.txt:
+        * js/resources/getOwnPropertyDescriptor.js:
+
 2014-01-27  Chris Fleizach  <cfleizach@apple.com>
 
         AX: Support @scope in HTML tables

@@ -47,12 +47,12 @@ namespace WebCore {
 
 static const HashTableValue JSTestTypedefsTableValues[] =
 {
-    { "unsignedLongLongAttr", DontDelete, NoIntrinsic, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestTypedefsUnsignedLongLongAttr), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestTypedefsUnsignedLongLongAttr) },
-    { "immutableSerializedScriptValue", DontDelete, NoIntrinsic, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestTypedefsImmutableSerializedScriptValue), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestTypedefsImmutableSerializedScriptValue) },
-    { "attrWithGetterException", DontDelete, NoIntrinsic, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestTypedefsAttrWithGetterException), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestTypedefsAttrWithGetterException) },
-    { "attrWithSetterException", DontDelete, NoIntrinsic, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestTypedefsAttrWithSetterException), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestTypedefsAttrWithSetterException) },
-    { "stringAttrWithGetterException", DontDelete, NoIntrinsic, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestTypedefsStringAttrWithGetterException), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestTypedefsStringAttrWithGetterException) },
-    { "stringAttrWithSetterException", DontDelete, NoIntrinsic, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestTypedefsStringAttrWithSetterException), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestTypedefsStringAttrWithSetterException) },
+    { "unsignedLongLongAttr", DontDelete | CustomAccessor, NoIntrinsic, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestTypedefsUnsignedLongLongAttr), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestTypedefsUnsignedLongLongAttr) },
+    { "immutableSerializedScriptValue", DontDelete | CustomAccessor, NoIntrinsic, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestTypedefsImmutableSerializedScriptValue), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestTypedefsImmutableSerializedScriptValue) },
+    { "attrWithGetterException", DontDelete | CustomAccessor, NoIntrinsic, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestTypedefsAttrWithGetterException), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestTypedefsAttrWithGetterException) },
+    { "attrWithSetterException", DontDelete | CustomAccessor, NoIntrinsic, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestTypedefsAttrWithSetterException), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestTypedefsAttrWithSetterException) },
+    { "stringAttrWithGetterException", DontDelete | CustomAccessor, NoIntrinsic, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestTypedefsStringAttrWithGetterException), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestTypedefsStringAttrWithGetterException) },
+    { "stringAttrWithSetterException", DontDelete | CustomAccessor, NoIntrinsic, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestTypedefsStringAttrWithSetterException), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestTypedefsStringAttrWithSetterException) },
     { "constructor", DontEnum | ReadOnly, NoIntrinsic, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestTypedefsConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) },
     { 0, 0, NoIntrinsic, 0, 0 }
 };
@@ -266,11 +266,9 @@ EncodedJSValue jsTestTypedefsStringAttrWithSetterException(ExecState* exec, Enco
 }
 
 
-EncodedJSValue jsTestTypedefsConstructor(ExecState* exec, EncodedJSValue thisValue, EncodedJSValue, PropertyName)
+EncodedJSValue jsTestTypedefsConstructor(ExecState* exec, EncodedJSValue, EncodedJSValue thisValue, PropertyName)
 {
     JSTestTypedefs* domObject = jsDynamicCast<JSTestTypedefs*>(JSValue::decode(thisValue));
-    if (!domObject)
-        return throwVMTypeError(exec);
     if (!domObject)
         return throwVMTypeError(exec);
     return JSValue::encode(JSTestTypedefs::getConstructor(exec->vm(), domObject->globalObject()));

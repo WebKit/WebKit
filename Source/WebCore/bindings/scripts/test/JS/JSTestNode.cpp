@@ -121,11 +121,9 @@ bool JSTestNode::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyN
     return getStaticValueSlot<JSTestNode, Base>(exec, JSTestNodeTable, thisObject, propertyName, slot);
 }
 
-EncodedJSValue jsTestNodeConstructor(ExecState* exec, EncodedJSValue thisValue, EncodedJSValue, PropertyName)
+EncodedJSValue jsTestNodeConstructor(ExecState* exec, EncodedJSValue, EncodedJSValue thisValue, PropertyName)
 {
     JSTestNode* domObject = jsDynamicCast<JSTestNode*>(JSValue::decode(thisValue));
-    if (!domObject)
-        return throwVMTypeError(exec);
     if (!domObject)
         return throwVMTypeError(exec);
     return JSValue::encode(JSTestNode::getConstructor(exec->vm(), domObject->globalObject()));

@@ -52,28 +52,28 @@ namespace WebCore {
 static const HashTableValue JSTestInterfaceTableValues[] =
 {
 #if ENABLE(Condition22) || ENABLE(Condition23)
-    { "implementsStr1", DontDelete | ReadOnly, NoIntrinsic, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestInterfaceImplementsStr1), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) },
+    { "implementsStr1", DontDelete | ReadOnly | CustomAccessor, NoIntrinsic, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestInterfaceImplementsStr1), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) },
 #endif
 #if ENABLE(Condition22) || ENABLE(Condition23)
-    { "implementsStr2", DontDelete, NoIntrinsic, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestInterfaceImplementsStr2), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestInterfaceImplementsStr2) },
+    { "implementsStr2", DontDelete | CustomAccessor, NoIntrinsic, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestInterfaceImplementsStr2), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestInterfaceImplementsStr2) },
 #endif
 #if ENABLE(Condition22) || ENABLE(Condition23)
-    { "implementsStr3", DontDelete, NoIntrinsic, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestInterfaceImplementsStr3), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestInterfaceImplementsStr3) },
+    { "implementsStr3", DontDelete | CustomAccessor, NoIntrinsic, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestInterfaceImplementsStr3), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestInterfaceImplementsStr3) },
 #endif
 #if ENABLE(Condition22) || ENABLE(Condition23)
-    { "implementsNode", DontDelete, NoIntrinsic, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestInterfaceImplementsNode), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestInterfaceImplementsNode) },
+    { "implementsNode", DontDelete | CustomAccessor, NoIntrinsic, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestInterfaceImplementsNode), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestInterfaceImplementsNode) },
 #endif
 #if ENABLE(Condition11) || ENABLE(Condition12)
-    { "supplementalStr1", DontDelete | ReadOnly, NoIntrinsic, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestInterfaceSupplementalStr1), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) },
+    { "supplementalStr1", DontDelete | ReadOnly | CustomAccessor, NoIntrinsic, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestInterfaceSupplementalStr1), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) },
 #endif
 #if ENABLE(Condition11) || ENABLE(Condition12)
-    { "supplementalStr2", DontDelete, NoIntrinsic, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestInterfaceSupplementalStr2), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestInterfaceSupplementalStr2) },
+    { "supplementalStr2", DontDelete | CustomAccessor, NoIntrinsic, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestInterfaceSupplementalStr2), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestInterfaceSupplementalStr2) },
 #endif
 #if ENABLE(Condition11) || ENABLE(Condition12)
-    { "supplementalStr3", DontDelete, NoIntrinsic, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestInterfaceSupplementalStr3), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestInterfaceSupplementalStr3) },
+    { "supplementalStr3", DontDelete | CustomAccessor, NoIntrinsic, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestInterfaceSupplementalStr3), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestInterfaceSupplementalStr3) },
 #endif
 #if ENABLE(Condition11) || ENABLE(Condition12)
-    { "supplementalNode", DontDelete, NoIntrinsic, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestInterfaceSupplementalNode), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestInterfaceSupplementalNode) },
+    { "supplementalNode", DontDelete | CustomAccessor, NoIntrinsic, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestInterfaceSupplementalNode), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestInterfaceSupplementalNode) },
 #endif
     { "constructor", DontEnum | ReadOnly, NoIntrinsic, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestInterfaceConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) },
     { 0, 0, NoIntrinsic, 0, 0 }
@@ -433,11 +433,9 @@ EncodedJSValue jsTestInterfaceSupplementalNode(ExecState* exec, EncodedJSValue s
 
 #endif
 
-EncodedJSValue jsTestInterfaceConstructor(ExecState* exec, EncodedJSValue thisValue, EncodedJSValue, PropertyName)
+EncodedJSValue jsTestInterfaceConstructor(ExecState* exec, EncodedJSValue, EncodedJSValue thisValue, PropertyName)
 {
     JSTestInterface* domObject = jsDynamicCast<JSTestInterface*>(JSValue::decode(thisValue));
-    if (!domObject)
-        return throwVMTypeError(exec);
     if (!domObject)
         return throwVMTypeError(exec);
     return JSValue::encode(JSTestInterface::getConstructor(exec->vm(), domObject->globalObject()));

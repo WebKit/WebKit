@@ -41,6 +41,7 @@ enum Attribute {
     DontDelete   = 1 << 3,  // property can't be deleted
     Function     = 1 << 4,  // property is a function - only used by static hashtables
     Accessor     = 1 << 5,  // property is a getter/setter
+    CustomAccessor = 1 << 6,
 };
 
 class PropertySlot {

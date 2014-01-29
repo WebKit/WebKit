@@ -1,3 +1,19 @@
+2014-01-28  Oliver Hunt  <oliver@apple.com>
+
+        Make DOM attributes appear to be faux accessor properties
+        https://bugs.webkit.org/show_bug.cgi?id=127797
+
+        Reviewed by Michael Saboff.
+
+        Refactor the bindings generator, and make sure we emit
+        the CustomAccessor flag on properties that should 
+        appear to be accessors.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateGetOwnPropertySlotBody):
+        (GenerateAttributesHashTable):
+        (GenerateImplementation):
+
 2014-01-27  Chris Fleizach  <cfleizach@apple.com>
 
         AX: Support @scope in HTML tables

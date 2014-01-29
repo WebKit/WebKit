@@ -34,7 +34,7 @@ namespace WebCore {
 
 static const HashTableValue JSattributeTableValues[] =
 {
-    { "readonly", DontDelete | ReadOnly, NoIntrinsic, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsattributeReadonly), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) },
+    { "readonly", DontDelete | ReadOnly | CustomAccessor, NoIntrinsic, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsattributeReadonly), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) },
     { "constructor", DontEnum | ReadOnly, NoIntrinsic, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsattributeConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) },
     { 0, 0, NoIntrinsic, 0, 0 }
 };
@@ -133,11 +133,9 @@ EncodedJSValue jsattributeReadonly(ExecState* exec, EncodedJSValue slotBase, Enc
 }
 
 
-EncodedJSValue jsattributeConstructor(ExecState* exec, EncodedJSValue thisValue, EncodedJSValue, PropertyName)
+EncodedJSValue jsattributeConstructor(ExecState* exec, EncodedJSValue, EncodedJSValue thisValue, PropertyName)
 {
     JSattribute* domObject = jsDynamicCast<JSattribute*>(JSValue::decode(thisValue));
-    if (!domObject)
-        return throwVMTypeError(exec);
     if (!domObject)
         return throwVMTypeError(exec);
     return JSValue::encode(JSattribute::getConstructor(exec->vm(), domObject->globalObject()));
