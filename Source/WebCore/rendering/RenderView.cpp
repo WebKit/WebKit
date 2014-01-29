@@ -634,6 +634,12 @@ void RenderView::repaintViewRectangle(const LayoutRect& repaintRect, bool immedi
         return;
     }
     m_accumulatedRepaintRegion->unite(pixelSnappedRect);
+
+    // Region will get slow if it gets too complex. Merge all rects so far to bounds if this happens.
+    // FIXME: Maybe there should be a region type that does this automatically.
+    static const unsigned maximumRepaintRegionGridSize = 16 * 16;
+    if (m_accumulatedRepaintRegion->gridSize() > maximumRepaintRegionGridSize)
+        m_accumulatedRepaintRegion = std::make_unique<Region>(m_accumulatedRepaintRegion->bounds());
 }
 
 void RenderView::flushAccumulatedRepaintRegion() const

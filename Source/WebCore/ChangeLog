@@ -1,3 +1,25 @@
+2014-01-29  Antti Koivisto  <antti@apple.com>
+
+        REGRESSION (r162947): css3/flexbox/multiline-justify-content.html and css3/flexbox/position-absolute-child.html are timing out
+        https://bugs.webkit.org/show_bug.cgi?id=127809
+
+        Reviewed by Anders Carlsson.
+
+        These tests generate very large number of small repaint rectangles that overwhelm the region code.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::repaintContentRectangle):
+        * platform/graphics/Region.h:
+        (WebCore::Region::gridSize):
+        (WebCore::Region::Shape::gridSize):
+        
+            Add accessor for getting the current region grid complexity.
+
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::repaintViewRectangle):
+        
+            If the region gets very complex merge the repaint rects into a single big rectangle.
+
 2014-01-29  Radu Stavila  <stavila@adobe.com>
 
         [CSSRegions] Unable to scroll a scrollable container for regions using mouse wheel

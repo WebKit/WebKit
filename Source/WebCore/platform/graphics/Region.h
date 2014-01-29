@@ -58,6 +58,8 @@ public:
 
     unsigned totalArea() const;
 
+    unsigned gridSize() const { return m_shape.gridSize(); }
+
 #ifndef NDEBUG
     void dump() const;
 #endif
@@ -81,6 +83,7 @@ private:
         IntRect bounds() const;
         bool isEmpty() const { return m_spans.isEmpty(); }
         bool isRect() const { return m_spans.size() <= 2 && m_segments.size() <= 2; }
+        unsigned gridSize() const { return m_spans.size() * m_segments.size(); }
 
         typedef const Span* SpanIterator;
         SpanIterator spans_begin() const;
