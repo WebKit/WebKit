@@ -4,7 +4,7 @@
 
 description('Tests that Replaceable attributes are writable');
 
-shouldBeTrue('Object.getOwnPropertyDescriptor(window, "innerHeight").hasOwnProperty("get")');
+shouldBeTrue('Object.getOwnPropertyDescriptor(window, "innerHeight").writable');
 
 window.innerHeight = 42;
 shouldBe('window.innerHeight', '42');

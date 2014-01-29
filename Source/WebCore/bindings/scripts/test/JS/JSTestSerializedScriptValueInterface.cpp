@@ -39,11 +39,11 @@ namespace WebCore {
 
 static const HashTableValue JSTestSerializedScriptValueInterfaceTableValues[] =
 {
-    { "value", DontDelete | CustomAccessor, NoIntrinsic, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestSerializedScriptValueInterfaceValue), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestSerializedScriptValueInterfaceValue) },
-    { "readonlyValue", DontDelete | ReadOnly | CustomAccessor, NoIntrinsic, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestSerializedScriptValueInterfaceReadonlyValue), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) },
-    { "cachedValue", DontDelete | CustomAccessor, NoIntrinsic, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestSerializedScriptValueInterfaceCachedValue), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestSerializedScriptValueInterfaceCachedValue) },
-    { "ports", DontDelete | ReadOnly | CustomAccessor, NoIntrinsic, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestSerializedScriptValueInterfacePorts), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) },
-    { "cachedReadonlyValue", DontDelete | ReadOnly | CustomAccessor, NoIntrinsic, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestSerializedScriptValueInterfaceCachedReadonlyValue), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) },
+    { "value", DontDelete, NoIntrinsic, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestSerializedScriptValueInterfaceValue), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestSerializedScriptValueInterfaceValue) },
+    { "readonlyValue", DontDelete | ReadOnly, NoIntrinsic, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestSerializedScriptValueInterfaceReadonlyValue), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) },
+    { "cachedValue", DontDelete, NoIntrinsic, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestSerializedScriptValueInterfaceCachedValue), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestSerializedScriptValueInterfaceCachedValue) },
+    { "ports", DontDelete | ReadOnly, NoIntrinsic, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestSerializedScriptValueInterfacePorts), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) },
+    { "cachedReadonlyValue", DontDelete | ReadOnly, NoIntrinsic, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestSerializedScriptValueInterfaceCachedReadonlyValue), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) },
     { "constructor", DontEnum | ReadOnly, NoIntrinsic, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestSerializedScriptValueInterfaceConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) },
     { 0, 0, NoIntrinsic, 0, 0 }
 };
@@ -200,9 +200,11 @@ EncodedJSValue jsTestSerializedScriptValueInterfaceCachedReadonlyValue(ExecState
 }
 
 
-EncodedJSValue jsTestSerializedScriptValueInterfaceConstructor(ExecState* exec, EncodedJSValue, EncodedJSValue thisValue, PropertyName)
+EncodedJSValue jsTestSerializedScriptValueInterfaceConstructor(ExecState* exec, EncodedJSValue thisValue, EncodedJSValue, PropertyName)
 {
     JSTestSerializedScriptValueInterface* domObject = jsDynamicCast<JSTestSerializedScriptValueInterface*>(JSValue::decode(thisValue));
+    if (!domObject)
+        return throwVMTypeError(exec);
     if (!domObject)
         return throwVMTypeError(exec);
     return JSValue::encode(JSTestSerializedScriptValueInterface::getConstructor(exec->vm(), domObject->globalObject()));

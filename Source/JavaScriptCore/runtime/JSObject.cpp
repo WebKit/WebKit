@@ -2421,8 +2421,6 @@ bool JSObject::getOwnPropertyDescriptor(ExecState* exec, PropertyName propertyNa
         return false;
     if (slot.isAccessor())
         descriptor.setAccessorDescriptor(slot.getterSetter(), slot.attributes());
-    else if (slot.attributes() & CustomAccessor)
-        descriptor.setCustomDescriptor(slot.attributes());
     else
         descriptor.setDescriptor(slot.getValue(exec, propertyName), slot.attributes());
     return true;

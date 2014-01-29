@@ -144,9 +144,11 @@ bool JSTestCustomNamedGetter::getOwnPropertySlotByIndex(JSObject* object, ExecSt
     return Base::getOwnPropertySlotByIndex(thisObject, exec, index, slot);
 }
 
-EncodedJSValue jsTestCustomNamedGetterConstructor(ExecState* exec, EncodedJSValue, EncodedJSValue thisValue, PropertyName)
+EncodedJSValue jsTestCustomNamedGetterConstructor(ExecState* exec, EncodedJSValue thisValue, EncodedJSValue, PropertyName)
 {
     JSTestCustomNamedGetter* domObject = jsDynamicCast<JSTestCustomNamedGetter*>(JSValue::decode(thisValue));
+    if (!domObject)
+        return throwVMTypeError(exec);
     if (!domObject)
         return throwVMTypeError(exec);
     return JSValue::encode(JSTestCustomNamedGetter::getConstructor(exec->vm(), domObject->globalObject()));

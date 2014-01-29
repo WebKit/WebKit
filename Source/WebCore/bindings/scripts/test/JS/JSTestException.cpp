@@ -34,7 +34,7 @@ namespace WebCore {
 
 static const HashTableValue JSTestExceptionTableValues[] =
 {
-    { "name", DontDelete | ReadOnly | CustomAccessor, NoIntrinsic, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestExceptionName), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) },
+    { "name", DontDelete | ReadOnly, NoIntrinsic, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestExceptionName), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) },
     { "constructor", DontEnum | ReadOnly, NoIntrinsic, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestExceptionConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) },
     { 0, 0, NoIntrinsic, 0, 0 }
 };
@@ -133,9 +133,11 @@ EncodedJSValue jsTestExceptionName(ExecState* exec, EncodedJSValue slotBase, Enc
 }
 
 
-EncodedJSValue jsTestExceptionConstructor(ExecState* exec, EncodedJSValue, EncodedJSValue thisValue, PropertyName)
+EncodedJSValue jsTestExceptionConstructor(ExecState* exec, EncodedJSValue thisValue, EncodedJSValue, PropertyName)
 {
     JSTestException* domObject = jsDynamicCast<JSTestException*>(JSValue::decode(thisValue));
+    if (!domObject)
+        return throwVMTypeError(exec);
     if (!domObject)
         return throwVMTypeError(exec);
     return JSValue::encode(JSTestException::getConstructor(exec->vm(), domObject->globalObject()));

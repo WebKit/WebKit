@@ -117,9 +117,11 @@ bool JSreadonly::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyN
     return getStaticValueSlot<JSreadonly, Base>(exec, JSreadonlyTable, thisObject, propertyName, slot);
 }
 
-EncodedJSValue jsreadonlyConstructor(ExecState* exec, EncodedJSValue, EncodedJSValue thisValue, PropertyName)
+EncodedJSValue jsreadonlyConstructor(ExecState* exec, EncodedJSValue thisValue, EncodedJSValue, PropertyName)
 {
     JSreadonly* domObject = jsDynamicCast<JSreadonly*>(JSValue::decode(thisValue));
+    if (!domObject)
+        return throwVMTypeError(exec);
     if (!domObject)
         return throwVMTypeError(exec);
     return JSValue::encode(JSreadonly::getConstructor(exec->vm(), domObject->globalObject()));

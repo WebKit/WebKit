@@ -1,3 +1,48 @@
+2014-01-28  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r162987.
+        http://trac.webkit.org/changeset/162987
+        https://bugs.webkit.org/show_bug.cgi?id=127825
+
+        Broke Mountain Lion build (Requested by andersca on #webkit).
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateGetOwnPropertySlotBody):
+        (GenerateAttributesHashTable):
+        (GenerateImplementation):
+        * bindings/scripts/test/JS/JSTestActiveDOMObject.cpp:
+        (WebCore::jsTestActiveDOMObjectConstructor):
+        * bindings/scripts/test/JS/JSTestCustomNamedGetter.cpp:
+        (WebCore::jsTestCustomNamedGetterConstructor):
+        * bindings/scripts/test/JS/JSTestEventConstructor.cpp:
+        (WebCore::jsTestEventConstructorConstructor):
+        * bindings/scripts/test/JS/JSTestEventTarget.cpp:
+        (WebCore::jsTestEventTargetConstructor):
+        * bindings/scripts/test/JS/JSTestException.cpp:
+        (WebCore::jsTestExceptionConstructor):
+        * bindings/scripts/test/JS/JSTestGenerateIsReachable.cpp:
+        (WebCore::jsTestGenerateIsReachableConstructor):
+        * bindings/scripts/test/JS/JSTestInterface.cpp:
+        (WebCore::jsTestInterfaceConstructor):
+        * bindings/scripts/test/JS/JSTestMediaQueryListListener.cpp:
+        (WebCore::jsTestMediaQueryListListenerConstructor):
+        * bindings/scripts/test/JS/JSTestNamedConstructor.cpp:
+        (WebCore::jsTestNamedConstructorConstructor):
+        * bindings/scripts/test/JS/JSTestNode.cpp:
+        (WebCore::jsTestNodeConstructor):
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        (WebCore::jsTestObjConstructor):
+        * bindings/scripts/test/JS/JSTestOverloadedConstructors.cpp:
+        (WebCore::jsTestOverloadedConstructorsConstructor):
+        * bindings/scripts/test/JS/JSTestSerializedScriptValueInterface.cpp:
+        (WebCore::jsTestSerializedScriptValueInterfaceConstructor):
+        * bindings/scripts/test/JS/JSTestTypedefs.cpp:
+        (WebCore::jsTestTypedefsConstructor):
+        * bindings/scripts/test/JS/JSattribute.cpp:
+        (WebCore::jsattributeConstructor):
+        * bindings/scripts/test/JS/JSreadonly.cpp:
+        (WebCore::jsreadonlyConstructor):
+
 2014-01-28  Enrica Casucci  <enrica@apple.com>
 
         Add support for ActionSheets in WK2 for iOS.

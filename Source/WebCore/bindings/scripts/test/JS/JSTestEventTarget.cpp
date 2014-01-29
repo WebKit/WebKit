@@ -169,9 +169,11 @@ bool JSTestEventTarget::getOwnPropertySlotByIndex(JSObject* object, ExecState* e
     return Base::getOwnPropertySlotByIndex(thisObject, exec, index, slot);
 }
 
-EncodedJSValue jsTestEventTargetConstructor(ExecState* exec, EncodedJSValue, EncodedJSValue thisValue, PropertyName)
+EncodedJSValue jsTestEventTargetConstructor(ExecState* exec, EncodedJSValue thisValue, EncodedJSValue, PropertyName)
 {
     JSTestEventTarget* domObject = jsDynamicCast<JSTestEventTarget*>(JSValue::decode(thisValue));
+    if (!domObject)
+        return throwVMTypeError(exec);
     if (!domObject)
         return throwVMTypeError(exec);
     return JSValue::encode(JSTestEventTarget::getConstructor(exec->vm(), domObject->globalObject()));
