@@ -1,3 +1,11 @@
+2014-01-29  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Actually fix the GTK+ build after r162967.
+
+        * UIProcess/API/gtk/WebKitWebView.cpp:
+        (webkit_web_view_can_go_back):
+        (webkit_web_view_can_go_forward):
+
 2014-01-28  Zan Dobersek  <zdobersek@igalia.com>
 
         Unreviewed followup to r163006. That change incorrectly modified
