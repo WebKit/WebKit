@@ -1,5 +1,16 @@
 2014-01-29  Daniel Bates  <dabates@apple.com>
 
+        Fix JSONP requests made by the WebKit Bot Watcher's Dashboard following <http://trac.webkit.org/changeset/163034>
+        (https://bugs.webkit.org/show_bug.cgi?id=127784)
+
+        Use dot-notation instead of array index notation to access the dictionary value for key jsonpCallbackName
+        in the specified options dictionary.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/Utilities.js:
+        (JSON.load):
+
+2014-01-29  Daniel Bates  <dabates@apple.com>
+
         WebKit Bot Watcher's Dashboard: Add support for using HTTP authentication with Buildbot
         https://bugs.webkit.org/show_bug.cgi?id=127784
 

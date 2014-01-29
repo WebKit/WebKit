@@ -41,7 +41,7 @@ JSON.load = function(url, callback, options)
         try {
             var responseText = request.responseText;
             if (options.hasOwnProperty("jsonpCallbackName"))
-                responseText = responseText.replace(new RegExp("^" + options[jsonpCallbackName] + "\\((.*)\\);?$"), "$1");
+                responseText = responseText.replace(new RegExp("^" + options.jsonpCallbackName + "\\((.*)\\);?$"), "$1");
             var data = JSON.parse(responseText);
         } catch (e) {
             var data = {error: e.message};
