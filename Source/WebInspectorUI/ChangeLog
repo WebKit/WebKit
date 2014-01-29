@@ -1,3 +1,15 @@
+2014-01-29  Diego Pino Garcia  <dpino@igalia.com>
+
+        Web Inspector: [REGRESSION(r162931)] Tab navigation broken in DataGrid
+        https://bugs.webkit.org/show_bug.cgi?id=127816
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/DataGrid.js:
+        (WebInspector.DataGrid.prototype.moveToNextIfNeeded):
+        (WebInspector.DataGrid.prototype._editingCommitted):
+        Change columnIdentifier values 0 and 1 to strings "0" and "1".
+
 2014-01-28  Joseph Pecoraro  <pecoraro@apple.com>
 
         Unreviewed follow-up to r162965. Better coding style.

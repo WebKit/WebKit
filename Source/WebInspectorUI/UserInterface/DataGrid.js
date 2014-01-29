@@ -354,29 +354,29 @@ WebInspector.DataGrid.prototype = {
                 return;
 
             if (moveDirection === "forward") {
-                if (currentEditingNode.isCreationNode && columnIdentifier === 0 && !wasChange)
+                if (currentEditingNode.isCreationNode && columnIdentifier === "0" && !wasChange)
                     return;
 
-                if (columnIdentifier === 0)
-                    return this._startEditingColumnOfDataGridNode(currentEditingNode, 1);
+                if (columnIdentifier === "0")
+                    return this._startEditingColumnOfDataGridNode(currentEditingNode, "1");
 
                 var nextDataGridNode = currentEditingNode.traverseNextNode(true, null, true);
                 if (nextDataGridNode)
-                    return this._startEditingColumnOfDataGridNode(nextDataGridNode, 0);
+                    return this._startEditingColumnOfDataGridNode(nextDataGridNode, "0");
                 if (currentEditingNode.isCreationNode && wasChange) {
                     this.addCreationNode(false);
-                    return this._startEditingColumnOfDataGridNode(this.creationNode, 0);
+                    return this._startEditingColumnOfDataGridNode(this.creationNode, "0");
                 }
                 return;
             }
 
             if (moveDirection === "backward") {
-                if (columnIdentifier === 1)
-                    return this._startEditingColumnOfDataGridNode(currentEditingNode, 0);
+                if (columnIdentifier === "1")
+                    return this._startEditingColumnOfDataGridNode(currentEditingNode, "0");
                     var nextDataGridNode = currentEditingNode.traversePreviousNode(true, null, true);
 
                 if (nextDataGridNode)
-                    return this._startEditingColumnOfDataGridNode(nextDataGridNode, 1);
+                    return this._startEditingColumnOfDataGridNode(nextDataGridNode, "1");
                 return;
             }
         }
