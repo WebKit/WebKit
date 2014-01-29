@@ -1,3 +1,10 @@
+2014-01-28  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        Unreviewed GTK build fix after r162951.
+        https://bugs.webkit.org/show_bug.cgi?id=127815
+
+        * GNUmakefile.list.am: Adding missing build targets.
+
 2014-01-28  Tim Horton  <timothy_horton@apple.com>
 
         WebKit2 View Gestures (Swipe): Give WebCore the first crack at scroll events if it needs it

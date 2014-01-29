@@ -398,6 +398,8 @@ webkit2_sources += \
 	Source/WebKit2/Shared/NativeWebKeyboardEvent.h \
 	Source/WebKit2/Shared/NativeWebMouseEvent.h \
 	Source/WebKit2/Shared/NativeWebWheelEvent.h \
+	Source/WebKit2/Shared/NavigationActionData.cpp \
+	Source/WebKit2/Shared/NavigationActionData.h \
 	Source/WebKit2/Shared/Network/CustomProtocols/CustomProtocolManager.h \
 	Source/WebKit2/Shared/Network/CustomProtocols/soup/CustomProtocolManagerImpl.h \
 	Source/WebKit2/Shared/Network/CustomProtocols/soup/CustomProtocolManagerImpl.cpp \
