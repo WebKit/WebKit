@@ -295,7 +295,7 @@ void FrameSelection::setSelection(const VisibleSelection& newSelection, SetSelec
 
     if (m_selection == s) {
         // Even if selection was not changed, selection offsets may have been changed.
-        notifyRendererOfSelectionChange(userTriggered);
+        updateSelectionCachesIfSelectionIsInsideTextFormControl(userTriggered);
         return;
     }
 
@@ -320,7 +320,7 @@ void FrameSelection::setSelection(const VisibleSelection& newSelection, SetSelec
     // It will be restored by the vertical arrow navigation code if necessary.
     m_xPosForVerticalArrowNavigation = NoXPosForVerticalArrowNavigation();
     selectFrameElementInParentIfFullySelected();
-    notifyRendererOfSelectionChange(userTriggered);
+    updateSelectionCachesIfSelectionIsInsideTextFormControl(userTriggered);
     m_frame->editor().respondToChangedSelection(oldSelection, options);
     if (userTriggered == UserTriggered) {
         ScrollAlignment alignment;
@@ -1702,7 +1702,7 @@ void FrameSelection::selectAll()
         setSelection(newSelection);
 
     selectFrameElementInParentIfFullySelected();
-    notifyRendererOfSelectionChange(UserTriggered);
+    updateSelectionCachesIfSelectionIsInsideTextFormControl(UserTriggered);
 }
 
 bool FrameSelection::setSelectedRange(Range* range, EAffinity affinity, bool closeTyping)
@@ -1910,10 +1910,8 @@ void FrameSelection::caretBlinkTimerFired(Timer<FrameSelection>&)
 #endif
 }
 
-void FrameSelection::notifyRendererOfSelectionChange(EUserTriggered userTriggered)
+void FrameSelection::updateSelectionCachesIfSelectionIsInsideTextFormControl(EUserTriggered userTriggered)
 {
-    m_frame->document()->updateStyleIfNeeded();
-
     if (HTMLTextFormControlElement* textControl = enclosingTextFormControl(start()))
         textControl->selectionChanged(userTriggered == UserTriggered);
 }

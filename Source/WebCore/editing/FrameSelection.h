@@ -273,7 +273,7 @@ public:
     bool shouldDeleteSelection(const VisibleSelection&) const;
     enum EndPointsAdjustmentMode { AdjustEndpointsAtBidiBoundary, DoNotAdjsutEndpoints };
     void setNonDirectionalSelectionIfNeeded(const VisibleSelection&, TextGranularity, EndPointsAdjustmentMode = DoNotAdjsutEndpoints);
-    void notifyRendererOfSelectionChange(EUserTriggered);
+    void updateSelectionCachesIfSelectionIsInsideTextFormControl(EUserTriggered);
 
     void paintDragCaret(GraphicsContext*, const LayoutPoint&, const LayoutRect& clipRect) const;
 

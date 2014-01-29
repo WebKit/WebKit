@@ -984,7 +984,7 @@ bool EventHandler::handleMouseReleaseEvent(const MouseEventWithHitTestResults& e
         handled = true;
     }
 
-    m_frame.selection().notifyRendererOfSelectionChange(UserTriggered);
+    m_frame.selection().updateSelectionCachesIfSelectionIsInsideTextFormControl(UserTriggered);
 
     m_frame.selection().selectFrameElementInParentIfFullySelected();
 

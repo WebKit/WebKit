@@ -477,9 +477,10 @@ void HTMLTextFormControlElement::restoreCachedSelection()
 
 void HTMLTextFormControlElement::selectionChanged(bool userTriggered)
 {
-    if (!renderer() || !isTextFormControl())
+    if (!isTextFormControl())
         return;
 
+    // FIXME: Don't re-compute selection start and end if this function was called inside setSelectionRange.
     // selectionStart() or selectionEnd() will return cached selection when this node doesn't have focus
     cacheSelection(computeSelectionStart(), computeSelectionEnd(), computeSelectionDirection());
 

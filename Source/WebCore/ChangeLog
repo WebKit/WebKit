@@ -1,3 +1,24 @@
+2014-01-29  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Rename notifyRendererOfSelectionChange
+        https://bugs.webkit.org/show_bug.cgi?id=127831
+
+        Reviewed by Antti Koivisto.
+
+        Renamed notifyRendererOfSelectionChange to updateSelectionCachesIfSelectionIsInsideTextFormControl.
+
+        * WebCore.order: Removed the exported symbol name as it's not used in WebKit or WebKit2 code.
+        * editing/FrameSelection.cpp:
+        (WebCore::FrameSelection::setSelection):
+        (WebCore::FrameSelection::selectAll):
+        (WebCore::FrameSelection::updateSelectionCachesIfSelectionIsInsideTextFormControl): Don't update the style since the existence
+        of text form control's shadow DOM no longer depends on renderer.
+        * editing/FrameSelection.h:
+        * html/HTMLTextFormControlElement.cpp:
+        (WebCore::HTMLTextFormControlElement::selectionChanged): Don't check renderer() for the same reason.
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::handleMouseReleaseEvent):
+
 2014-01-28  Jer Noble  <jer.noble@apple.com>
 
         [Mac] Handle NSURLAuthenticationMethodServerTrust challenges from -resourceLoader:shouldWaitForResponseToAuthenticationChallenge:
