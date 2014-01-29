@@ -1,3 +1,14 @@
+2014-01-28  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Rebaseline quote-text-around-iframe.html after r162972
+        https://bugs.webkit.org/show_bug.cgi?id=127822
+
+        Reviewed by Alexey Proskuryakov.
+
+        Forgot to rebaseline fast/table/quote-text-around-iframe.html
+
+        * platform/mac/fast/table/quote-text-around-iframe-expected.txt:
+
 2014-01-28  Jinwoo Song  <jinwoo7.song@samsung.com>
 
         Unreviewed EFL gardening after r162972.
