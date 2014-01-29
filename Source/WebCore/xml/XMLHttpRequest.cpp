@@ -986,12 +986,10 @@ String XMLHttpRequest::getRequestHeader(const AtomicString& name) const
     return m_requestHeaders.get(name);
 }
 
-String XMLHttpRequest::getAllResponseHeaders(ExceptionCode& ec) const
+String XMLHttpRequest::getAllResponseHeaders() const
 {
-    if (m_state < HEADERS_RECEIVED) {
-        ec = INVALID_STATE_ERR;
+    if (m_state < HEADERS_RECEIVED || m_error)
         return "";
-    }
 
     StringBuilder stringBuilder;
 
@@ -1022,12 +1020,10 @@ String XMLHttpRequest::getAllResponseHeaders(ExceptionCode& ec) const
     return stringBuilder.toString();
 }
 
-String XMLHttpRequest::getResponseHeader(const AtomicString& name, ExceptionCode& ec) const
+String XMLHttpRequest::getResponseHeader(const AtomicString& name) const
 {
-    if (m_state < HEADERS_RECEIVED) {
-        ec = INVALID_STATE_ERR;
+    if (m_state < HEADERS_RECEIVED || m_error)
         return String();
-    }
 
     // See comment in getAllResponseHeaders above.
     if (isSetCookieHeader(name) && !securityOrigin()->canLoadLocalResources()) {

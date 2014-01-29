@@ -1,10 +1,27 @@
-Test page for bug 15356 and bug 29121
+Test the required behavior of XMLHttpRequest.getAllResponseHeaders()
 
-Assertion: Invoking getAllResponseHeaders method when readyState >= 2 (HEADERS_RECEIVED) should return a conforming list of headers.
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
-PASSED 0
-PASSED 1
-PASSED 2: getAllResponseHeaders returned what looks like a conforming headerlist.
-PASSED 3
-PASSED 4
+
+PASS {state: 0}; headerValues = xhr.getAllResponseHeaders(); did not throw exception.
+PASS headerValues is the empty string
+PASS {state: 1}; headerValues = xhr.getAllResponseHeaders(); did not throw exception.
+PASS headerValues is the empty string
+PASS getAllResponseHeaders() result is empty in ready state 1.
+PASS xhr.open("GET", "resources/1251.html", true); did not throw exception.
+PASS {state: 1}; headerValues = xhr.getAllResponseHeaders(); did not throw exception.
+PASS headerValues is the empty string
+PASS xhr.send(null); did not throw exception.
+PASS {state: 2}; headerValues = xhr.getAllResponseHeaders(); did not throw exception.
+PASS headerValues is not the empty string
+PASS Header values appears to be conforming.
+PASS {state: 3}; headerValues = xhr.getAllResponseHeaders(); did not throw exception.
+PASS headerValues is not the empty string
+PASS responseHeaders is savedHeaders
+PASS {state: 4}; headerValues = xhr.getAllResponseHeaders(); did not throw exception.
+PASS headerValues is not the empty string
+PASS responseHeaders is savedHeaders
+PASS successfullyParsed is true
+
+TEST COMPLETE
 

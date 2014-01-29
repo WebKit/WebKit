@@ -1,118 +1,69 @@
+<!doctype html>
 <html>
 <head>
-    <title>Check exception thrown by getAllResponseHeaders and some
-    characteristics of the return value</title>
+<title>Testing XMLHttpRequest.getReponseHeader behavior</title>
+<script src="/js-test-resources/js-test-pre.js"></script>
 <script type="text/javascript">
+description("Test the required behavior of XMLHttpRequest.getAllResponseHeaders()");
 
-function log (msg) {
-    var paragraph = document.createElement("li");
-    paragraph.innerHTML=msg.replace(/\n/gm,"<br>");
-    document.getElementById("console").appendChild(paragraph);
+window.jsTestIsAsync = true;
+
+var xhr = new XMLHttpRequest();
+
+var savedHeaders = null;
+
+var headerValues;
+function testGetAllResponseHeaders(xhr, expectEmpty) {
+    shouldNotThrow("{state: " + xhr.readyState + "}; headerValues = xhr.getAllResponseHeaders();");
+    if (expectEmpty && headerValues !== "")
+        testFailed("Expected the empty string, got: '" + headerValues + "'");
+    else
+        testPassed("headerValues is " + (!expectEmpty ? "not " : "") + "the empty string");
+    return headerValues;
 }
 
-var xhr;
-
-if (window.XMLHttpRequest) {
-    xhr = new XMLHttpRequest();
-} else {
-    try {
-        xhr = new ActiveXObject("Msxml2.XMLHTTP");
-    } catch (ex) {
-        xhr = new ActiveXObject("Microsoft.XMLHTTP");
-    }
-}
-
-var savedHeader = null;
+var responseHeaders;
 xhr.onreadystatechange = function() {
     var rState = this.readyState;
-    // We expect an INVALID_STATE_ERR exception for readyState < 2
-    // and no exception for readyState >= 2
-    try {
-        var header = this.getAllResponseHeaders();
-        if (rState != this.readyState)
-            log("UNCERTAIN " + rState + ": readyState changed while getting headers.");
-        if (rState < 2) {
-            log("FAILED " + rState + ": headerlist=" + header);
-        } else if (header)
-            if (savedHeader)
-                if (savedHeader != header) {
-                    log("FAILED " + rState +
-": headerlist changed after it was first returned. Previous header list:\n"
-+ savedHeader + "\n New headerlist:\n" + header);
-                savedHeader = header;
-                } 
-                else //savedHeader == header here; no need to reprint header
-                    log("PASSED " + rState);
-            else {//first header list retrieved
-                if (/^Set-Cookie:|^Set-Cookie2:/im.test(header))
-                    log("FAILED " + rState +
-": /^Set-Cookie:|^Set-Cookie2:/ matches. getAllResponseHeaders returned:\n" + header);
-                else if (window.testRunner)
-//do not print list for automated tests to avoid false failures.
-                    log("PASSED " + rState +
-": getAllResponseHeaders returned what looks like a conforming headerlist.");
-                else
-                    log("PASSED " + rState +
-": getAllResponseHeaders returned:\n" + header);
-                savedHeader = header;
-            }
-        else //header is null
-            log("FAILED " + rState + ": null header list returned");
-    } catch (e) {
-        if (rState < 2) {
-            log("PASSED " + rState);
+    responseHeaders = testGetAllResponseHeaders(this, rState <= XMLHttpRequest.OPENED);
+    if (responseHeaders) {
+        if (savedHeaders) {
+            shouldBe("responseHeaders", "savedHeaders");
         } else {
-            log("FAILED " + rState + ": EXCEPTION THROWN: " + e.message + ".");
+            if (/^Set-Cookie:|^Set-Cookie2:/im.test(responseHeaders)) {
+                testFailed("Did not expect to find a Set-Cookie{2} header, got: '" + responseHeaders + "'");
+            } else {
+                // Do not print list for automated tests to avoid false failures.
+                if (self.testRunner)
+                    testPassed("Header values appears to be conforming.");
+                else
+                    testPassed("Header values appears ok: " + JSON.stringify(headerValues));
+            }
         }
+        savedHeaders = responseHeaders;
+    } else {
+        if (rState > XMLHttpRequest.OPENED)
+            testFailed("In ready state " + rState + ", unexpected empty value.");
+        else if (responseHeaders !== "")
+            testFailed("In ready state " + rState + ", expected the empty string, got: " + JSON.stringify(responseHeaders) + ".");
+        else
+            testPassed("getAllResponseHeaders() result is empty in ready state " + rState + ".");
     }
-    if ((rState == 4) && (window.testRunner))
-            testRunner.notifyDone();
+
+    if (rState == XMLHttpRequest.DONE)
+        finishJSTest();
 }
 
-function test() {
-    if (window.testRunner) {
-        testRunner.waitUntilDone();
-        testRunner.dumpAsText();
-    }
+function runTest() {
     // Test for readyState = 0
-    try {
-        var header = xhr.getAllResponseHeaders();
-        log("FAILED " + xhr.readyState + ": header=" + header);
-    } catch (e) {
-        log("PASSED " + xhr.readyState);
-    }
-    try {
-        xhr.open("GET","resources/1251.html", true);
-        xhr.send(null);
-    } catch(e) {
-        log("FAILED open/send: EXCEPTION THROWN: " + e.message +".");
-        if (window.testRunner)
-            testRunner.notifyDone();
-    }
+    testGetAllResponseHeaders(xhr, true);
+    shouldNotThrow('xhr.open("GET", "resources/1251.html", true);');
+    // Test for readyState = 1
+    testGetAllResponseHeaders(xhr, true);
+    shouldNotThrow("xhr.send(null);");
 }
+runTest();
 </script>
+<script src="/js-test-resources/js-test-post.js"></script>
 </head>
-<body onload="test()">
-
-<p>Test page for <a href="http://bugs.webkit.org/show_bug.cgi?id=15356">bug 15356</a>
-and <a href="http://bugs.webkit.org/show_bug.cgi?id=29121">bug 29121</a></p>
-<p>Assertion: Invoking getAllResponseHeaders method when readyState >= 2
-(HEADERS_RECEIVED) should return a conforming list of headers.</p>
-<script>
-    if (!window.testRunner)
-        document.write("<p>If the test passes one should see \
-below the ruler the text \"passed\" in all capital letters, 5 times, \
-followed each time by a space and the readyState number.</p>\n\
-<p>ReadyStatenumbers should be in ascending order 0 to 4.</p>\n\
-<p>A conforming list of response headers should also be printed.</p>\n\
-<p>A conforming list of headers:</p> \
-   <li> contains one header per line.</li> \
-   <li> has header names and header values separated by a COLON and \
-a SPACE.</li>\
-   <li> does not contain any headers that match (case-insensitively) \
-Set-Cookie or Set-Cookie2</li>");
- </script>
- <hr>
- <p><ol id=console></ol></p>
-</body>
 </html>

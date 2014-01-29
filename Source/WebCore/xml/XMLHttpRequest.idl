@@ -80,8 +80,8 @@ enum XMLHttpRequestResponseType {
     readonly attribute XMLHttpRequestUpload upload;
 
     // response
-    [TreatReturnedNullStringAs=Undefined, RaisesException] DOMString getAllResponseHeaders();
-    [TreatReturnedNullStringAs=Null, RaisesException] DOMString getResponseHeader(DOMString header);
+    [TreatReturnedNullStringAs=Undefined] DOMString getAllResponseHeaders();
+    [TreatReturnedNullStringAs=Null] DOMString getResponseHeader(DOMString header);
     [GetterRaisesException, CustomGetter] readonly attribute DOMString responseText; // The custom getter implements TreatReturnedNullStringAs=Null
     [GetterRaisesException] readonly attribute Document responseXML;
 

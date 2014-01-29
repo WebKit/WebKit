@@ -1,3 +1,22 @@
+2014-01-29  Youenn Fablet  <youennf@gmail.com>
+
+        Have XHR.getResponseHeader() return null and XHR.getAllResponseHeader() return the empty string in initial ready states
+        https://bugs.webkit.org/show_bug.cgi?id=125840
+
+        Reviewed by Alexey Proskuryakov.
+
+        Merging https://chromium.googlesource.com/chromium/blink/+/d201caf874a0bd6f101f517462b3cf1d8c5fce3d
+        This patch makes it clear that null/empty string is returned whenever the error flag is set.
+        This new code path is covered by the added test.
+        
+        Test: http/tests/xmlhttprequest/response-access-on-error.html
+
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::getAllResponseHeaders):
+        (WebCore::XMLHttpRequest::getResponseHeader):
+        * xml/XMLHttpRequest.h:
+        * xml/XMLHttpRequest.idl:
+
 2014-01-29  Antti Koivisto  <antti@apple.com>
 
         REGRESSION (r162947): Repaint test results are different between WK1 and WK2

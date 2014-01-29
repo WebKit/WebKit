@@ -105,8 +105,8 @@ public:
     void setRequestHeader(const AtomicString& name, const String& value, ExceptionCode&);
     void overrideMimeType(const String& override);
     bool doneWithoutErrors() const { return !m_error && m_state == DONE; }
-    String getAllResponseHeaders(ExceptionCode&) const;
-    String getResponseHeader(const AtomicString& name, ExceptionCode&) const;
+    String getAllResponseHeaders() const;
+    String getResponseHeader(const AtomicString& name) const;
     String responseText(ExceptionCode&);
     String responseTextIgnoringResponseType() const { return m_responseBuilder.toStringPreserveCapacity(); }
     Document* responseXML(ExceptionCode&);
