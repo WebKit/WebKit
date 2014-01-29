@@ -1,3 +1,15 @@
+2014-01-29  Alexey Proskuryakov  <ap@apple.com>
+
+        Add a WebCrypto test to verify that BigInteger allows for leading zeroes
+        https://bugs.webkit.org/show_bug.cgi?id=127804
+
+        Reviewed by Darin Adler.
+
+        This already worked, but wasn't tested for.
+
+        * crypto/subtle/rsassa-pkcs1-v1_5-generate-key-with-leading-zeroes-in-exponent-expected.txt: Added.
+        * crypto/subtle/rsassa-pkcs1-v1_5-generate-key-with-leading-zeroes-in-exponent.html: Added.
+
 2014-01-29  Youenn Fablet  <youennf@gmail.com>
 
         Have XHR.getResponseHeader() return null and XHR.getAllResponseHeaders() return empty string in initial ready states
