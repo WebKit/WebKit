@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2012, 2013, 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -99,6 +99,13 @@ public:
 
     ScrollingTreeScrollingNode* rootNode() const { return m_rootNode.get(); }
 
+    ScrollingNodeID latchedNode();
+    void setLatchedNode(ScrollingNodeID);
+    void clearLatchedNode();
+
+    bool hasLatchedNode() const { return m_latchedNode; }
+    void setOrClearLatchedNode(const PlatformWheelEvent&, ScrollingNodeID);
+    
 protected:
     void setMainFrameScrollPosition(IntPoint);
     virtual void handleWheelEvent(const PlatformWheelEvent&);
@@ -132,6 +139,7 @@ private:
     bool m_mainFramePinnedToTheBottom;
     bool m_mainFrameIsRubberBanding;
     ScrollPinningBehavior m_scrollPinningBehavior;
+    ScrollingNodeID m_latchedNode;
 
     bool m_scrollingPerformanceLoggingEnabled;
     

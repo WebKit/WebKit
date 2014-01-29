@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2012, 2013, 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -48,6 +48,7 @@ ScrollingTree::ScrollingTree()
     , m_mainFramePinnedToTheBottom(false)
     , m_mainFrameIsRubberBanding(false)
     , m_scrollPinningBehavior(DoNotPin)
+    , m_latchedNode(0)
     , m_scrollingPerformanceLoggingEnabled(false)
     , m_isHandlingProgrammaticScroll(false)
 {
@@ -57,13 +58,39 @@ ScrollingTree::~ScrollingTree()
 {
 }
 
+static bool shouldConsiderLatching(const PlatformWheelEvent& wheelEvent)
+{
+    return wheelEvent.phase() == PlatformWheelEventPhaseBegan
+        || wheelEvent.phase() == PlatformWheelEventPhaseMayBegin;
+}
+
+static bool eventShouldClearLatchedNode(const PlatformWheelEvent& wheelEvent)
+{
+    if (wheelEvent.phase() == PlatformWheelEventPhaseCancelled)
+        return true;
+    
+    if (wheelEvent.phase() == PlatformWheelEventPhaseNone && wheelEvent.momentumPhase() == PlatformWheelEventPhaseEnded)
+        return true;
+    
+    return false;
+}
+
 bool ScrollingTree::shouldHandleWheelEventSynchronously(const PlatformWheelEvent& wheelEvent)
 {
+    // This method is invoked by the event handling thread
     MutexLocker lock(m_mutex);
 
     if (m_hasWheelEventHandlers)
         return true;
 
+    bool shouldSetLatch = shouldConsiderLatching(wheelEvent);
+    
+    if (hasLatchedNode() && !shouldSetLatch)
+        return false;
+
+    if (shouldSetLatch)
+        m_latchedNode = 0;
+    
     if (!m_nonFastScrollableRegion.isEmpty()) {
         // FIXME: This is not correct for non-default scroll origins.
         IntPoint position = wheelEvent.position();
@@ -72,6 +99,14 @@ bool ScrollingTree::shouldHandleWheelEventSynchronously(const PlatformWheelEvent
             return true;
     }
     return false;
+}
+
+void ScrollingTree::setOrClearLatchedNode(const PlatformWheelEvent& wheelEvent, ScrollingNodeID nodeID)
+{
+    if (shouldConsiderLatching(wheelEvent))
+        setLatchedNode(nodeID);
+    else if (eventShouldClearLatchedNode(wheelEvent))
+        clearLatchedNode();
 }
 
 void ScrollingTree::handleWheelEvent(const PlatformWheelEvent& wheelEvent)
@@ -174,14 +209,18 @@ void ScrollingTree::updateTreeFromStateNode(const ScrollingStateNode* stateNode)
 
 void ScrollingTree::removeDestroyedNodes(const ScrollingStateTree& stateTree)
 {
-    const Vector<ScrollingNodeID>& removedNodes = stateTree.removedNodes();
-    size_t size = removedNodes.size();
-    for (size_t i = 0; i < size; ++i) {
-        ScrollingTreeNode* node = m_nodeMap.take(removedNodes[i]);
+    for (const auto& removedNode : stateTree.removedNodes()) {
+        ScrollingTreeNode* node = m_nodeMap.take(removedNode);
+        if (!node)
+            continue;
+
         // Never destroy the root node. There will be a new root node in the state tree, and we will
         // associate it with our existing root node in updateTreeFromStateNode().
-        if (node && node->parent())
+        if (node->parent())
             m_rootNode->removeChild(node);
+
+        if (node->scrollingNodeID() == m_latchedNode)
+            clearLatchedNode();
     }
 }
 
@@ -313,6 +352,24 @@ void ScrollingTree::setScrollingPerformanceLoggingEnabled(bool flag)
 bool ScrollingTree::scrollingPerformanceLoggingEnabled()
 {
     return m_scrollingPerformanceLoggingEnabled;
+}
+
+ScrollingNodeID ScrollingTree::latchedNode()
+{
+    MutexLocker locker(m_mutex);
+    return m_latchedNode;
+}
+
+void ScrollingTree::setLatchedNode(ScrollingNodeID node)
+{
+    MutexLocker locker(m_mutex);
+    m_latchedNode = node;
+}
+
+void ScrollingTree::clearLatchedNode()
+{
+    MutexLocker locker(m_mutex);
+    m_latchedNode = 0;
 }
 
 } // namespace WebCore

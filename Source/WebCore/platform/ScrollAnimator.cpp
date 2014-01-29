@@ -81,6 +81,16 @@ void ScrollAnimator::scrollToOffsetWithoutAnimation(const FloatPoint& offset)
 
 bool ScrollAnimator::handleWheelEvent(const PlatformWheelEvent& e)
 {
+#if PLATFORM(MAC)
+    // Events in the PlatformWheelEventPhaseMayBegin phase have no deltas, and therefore never passes through the scroll handling logic below.
+    // This causes us to return with an 'unhandled' return state, even though this event was successfully processed.
+    //
+    // We receive at least one PlatformWheelEventPhaseMayBegin when starting main-thread scrolling (see FrameView::wheelEvent), which can
+    // fool the scrolling thread into attempting to handle the scroll, unless we treat the event as handled here.
+    if (e.phase() == PlatformWheelEventPhaseMayBegin)
+        return true;
+#endif
+
     Scrollbar* horizontalScrollbar = m_scrollableArea->horizontalScrollbar();
     Scrollbar* verticalScrollbar = m_scrollableArea->verticalScrollbar();
 
