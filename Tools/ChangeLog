@@ -1,3 +1,31 @@
+2014-01-29  Alexey Proskuryakov  <ap@apple.com>
+
+        build.webkit.org/dashboard links to an old failing build rather than the most recent
+        https://bugs.webkit.org/show_bug.cgi?id=127765
+        <rdar://problem/15795228>
+
+        Reviewed by Timothy Hatcher.
+
+        This patch changes builder view to not show how many failures there were in a row,
+        because it is not very relevant, and complicates the UI. Instead, we just show the
+        latest failing build and the latest successful one.
+
+        The patch also removes commit history popovers from revisions that can not be correlated
+        with any change. These popovers are only helpful in the first line, when there is
+        another line for comparison below. In this case, it's useful to see what changed
+        between the revisions, but even then, only if it was an actual failure, not a buildbot
+        exception.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/BuildbotBuilderQueueView.js:
+        (BuildbotBuilderQueueView.prototype.update.appendBuilderQueueStatus):
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/BuildbotQueue.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/BuildbotQueueView.js:
+        (BuildbotQueueView.prototype._presentPopoverForRevisionRange):
+        (BuildbotQueueView.prototype._revisionPopoverContentForIteration):
+        (BuildbotQueueView.prototype.revisionContentForIteration):
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/BuildbotTesterQueueView.js:
+        (BuildbotTesterQueueView.prototype.update.appendBuilderQueueStatus):
+
 2014-01-29  Csaba Osztrogonác  <ossy@webkit.org>
 
         Remove ENABLE(JAVASCRIPT_DEBUGGER) guards

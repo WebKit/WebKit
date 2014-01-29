@@ -56,7 +56,8 @@ BuildbotTesterQueueView.prototype = {
 
                 --limit;
 
-                var messageElement = this.revisionContentForIteration(iteration);
+                var willHaveAnotherStatusLine = i + 1 < queue.iterations.length && limit > 0 && !iteration.successful; // This is not 100% correct, as the remaining iterations may not be finished or loaded yet, but close enough.
+                var messageElement = this.revisionContentForIteration(iteration, (iteration.productive && willHaveAnotherStatusLine) ? iteration.previousProductiveIteration : null);
 
                 var layoutTestResults = iteration.layoutTestResults || {failureCount: 0};
                 var javascriptTestResults = iteration.javascriptTestResults || {failureCount: 0};

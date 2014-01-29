@@ -69,24 +69,11 @@ BuildbotQueue.prototype = {
         return this.buildbot.baseURL + "builders/" + encodeURIComponent(this.id) + "?numbuilds=50";
     },
 
-    get pendingIterationsCount()
-    {
-        var firstFinishedIteration = this.mostRecentFinishedIteration;
-        if (!firstFinishedIteration)
-            return this.iterations.length;
-        return this.iterations.indexOf(firstFinishedIteration);
-    },
-
     get recentFailedIterationCount()
     {
         var firstFinishedIteration = this.mostRecentFinishedIteration;
         var mostRecentSuccessfulIteration = this.mostRecentSuccessfulIteration;
         return this.iterations.indexOf(mostRecentSuccessfulIteration) - this.iterations.indexOf(firstFinishedIteration);
-    },
-
-    get mostRecentIteration()
-    {
-        return this.iterations[0];
     },
 
     get firstRecentUnsuccessfulIteration()

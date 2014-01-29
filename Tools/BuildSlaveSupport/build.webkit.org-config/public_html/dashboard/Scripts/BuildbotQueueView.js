@@ -190,7 +190,7 @@ BuildbotQueueView.prototype = {
 
         var line = document.createElement("div");
         line.className = "title";
-        line.textContent = "new commits in this build";
+        line.textContent = "commits since previous result";
         content.appendChild(line);
         this._addDividerToPopover(content);
 
@@ -204,31 +204,12 @@ BuildbotQueueView.prototype = {
         return true;
     },
 
-    _presentNoChangePopover: function(element, popover, context)
-    {
-        var content = document.createElement("div");
-        content.className = "commit-history-popover";
-
-        var line = document.createElement("div");
-        line.className = "no-commits";
-        line.textContent = "no new commits in this build";
-        
-        content.appendChild(line);
-
-        var rect = Dashboard.Rect.rectFromClientRect(element.getBoundingClientRect());
-        popover.content = content;
-        popover.present(rect, [Dashboard.RectEdge.MIN_Y, Dashboard.RectEdge.MAX_Y, Dashboard.RectEdge.MAX_X, Dashboard.RectEdge.MIN_X]);
-
-        return true;
-    },
-
-    _revisionPopoverContentForIteration: function(iteration, internal)
+    _revisionPopoverContentForIteration: function(iteration, previousIteration, internal)
     {
         var content = document.createElement("span");
         content.textContent = "r" + (internal ? iteration.internalRevision : iteration.openSourceRevision);
         content.classList.add("revision-number");
 
-        var previousIteration = iteration.previousProductiveIteration;
         if (previousIteration) {
             var context = {
                 trac: internal ? internalTrac : webkitTrac,
@@ -237,8 +218,6 @@ BuildbotQueueView.prototype = {
             };
             if (context.firstRevision <= context.lastRevision)
                 new PopoverTracker(content, this._presentPopoverForRevisionRange.bind(this), context);
-            else
-                new PopoverTracker(content, this._presentNoChangePopover.bind(this), context);
         }
 
         return content;
@@ -278,15 +257,16 @@ BuildbotQueueView.prototype = {
         content.appendChild(divider);
     },
 
-    revisionContentForIteration: function(iteration)
+    revisionContentForIteration: function(iteration, previousDisplayedIteration)
     {
         console.assert(iteration.openSourceRevision);
-        var openSourceContent = this._revisionPopoverContentForIteration(iteration);
+
+        var openSourceContent = this._revisionPopoverContentForIteration(iteration, previousDisplayedIteration);
 
         if (!iteration.internalRevision)
             return openSourceContent;
 
-        var internalContent = this._revisionPopoverContentForIteration(iteration, true);
+        var internalContent = this._revisionPopoverContentForIteration(iteration, previousDisplayedIteration, true);
 
         var fragment = document.createDocumentFragment();
         fragment.appendChild(openSourceContent);

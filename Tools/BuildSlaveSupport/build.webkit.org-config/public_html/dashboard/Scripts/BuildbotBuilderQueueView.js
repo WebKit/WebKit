@@ -63,14 +63,18 @@ BuildbotBuilderQueueView.prototype = {
             this._appendPendingRevisionCount(queue);
 
             var firstRecentUnsuccessfulIteration = queue.firstRecentUnsuccessfulIteration;
-            if (firstRecentUnsuccessfulIteration && firstRecentUnsuccessfulIteration.loaded) {
-                var failureCount = queue.recentFailedIterationCount;
-                var message = this.revisionContentForIteration(firstRecentUnsuccessfulIteration);
-                if (firstRecentUnsuccessfulIteration.failed) {
+            var mostRecentFinishedIteration = queue.mostRecentFinishedIteration;
+            var mostRecentSuccessfulIteration = queue.mostRecentSuccessfulIteration;
+
+            if (firstRecentUnsuccessfulIteration && firstRecentUnsuccessfulIteration.loaded
+                && mostRecentFinishedIteration && mostRecentFinishedIteration.loaded) {
+                console.assert(!mostRecentFinishedIteration.successful);
+                var message = this.revisionContentForIteration(mostRecentFinishedIteration, mostRecentFinishedIteration.productive ? mostRecentSuccessfulIteration : null);
+                if (mostRecentFinishedIteration.failed) {
                     // Assume it was a build step that failed, and link directly to output.
-                    var url = firstRecentUnsuccessfulIteration.failureLogURL("build log");
+                    var url = mostRecentFinishedIteration.failureLogURL("build log");
                     if (!url)
-                        url = firstRecentUnsuccessfulIteration.failureLogURL("stdio");
+                        url = mostRecentFinishedIteration.failureLogURL("stdio");
                     var status = StatusLineView.Status.Bad;
                 } else
                     var status = StatusLineView.Status.Danger;
@@ -80,15 +84,14 @@ BuildbotBuilderQueueView.prototype = {
 
                 // Some other step failed, link to main buildbot page for the iteration.
                 if (!url)
-                    url = queue.buildbot.buildPageURLForIteration(firstRecentUnsuccessfulIteration);
-                var status = new StatusLineView(message, status, failureCount > 1 ? "failures since" : firstRecentUnsuccessfulIteration.text, failureCount > 1 ? failureCount : null, url);
+                    url = queue.buildbot.buildPageURLForIteration(mostRecentFinishedIteration);
+                var status = new StatusLineView(message, status, mostRecentFinishedIteration.text, null, url);
                 this.element.appendChild(status.element);
 
                 if (needsPopover)
-                    new PopoverTracker(status.statusBubbleElement, this._presentPopoverFailureLogs.bind(this), firstRecentUnsuccessfulIteration);
+                    new PopoverTracker(status.statusBubbleElement, this._presentPopoverFailureLogs.bind(this), mostRecentFinishedIteration);
             }
 
-            var mostRecentSuccessfulIteration = queue.mostRecentSuccessfulIteration;
             if (mostRecentSuccessfulIteration && mostRecentSuccessfulIteration.loaded) {
                 var message = this.revisionContentForIteration(mostRecentSuccessfulIteration);
                 var url = queue.buildbot.buildPageURLForIteration(mostRecentSuccessfulIteration);
@@ -101,6 +104,7 @@ BuildbotBuilderQueueView.prototype = {
                 if (firstRecentUnsuccessfulIteration) {
                     // We have a failed iteration but no successful. It might be further back in time.
                     // Update all the iterations so we get more history.
+                    // FIXME: It can be very time consuming to load all iterations, we should load progressively.
                     queue.iterations.forEach(function(iteration) { iteration.update(); });
                 }
             }
