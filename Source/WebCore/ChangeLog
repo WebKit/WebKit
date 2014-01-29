@@ -1,3 +1,19 @@
+2014-01-29  Bem Jones-Bey  <bjonesbe@adobe.com>
+
+        clip-path swaps bottom radii for the inset shape
+        https://bugs.webkit.org/show_bug.cgi?id=127859
+
+        Reviewed by Dirk Schulze.
+
+        The bottom right and bottom left radii were passed in the wrong order,
+        causing the wrong corner to be clipped in the resultant rendering.
+
+        Test: css3/masking/clip-path-inset-corners.html
+
+        * rendering/style/BasicShapes.cpp:
+        (WebCore::BasicShapeInset::path): Change the parameter order to be
+        correct.
+
 2014-01-29  Jer Noble  <jer.noble@apple.com>
 
         [MediaControls][iOS] Hook up the fullscreen button

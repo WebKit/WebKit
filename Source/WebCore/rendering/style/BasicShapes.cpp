@@ -365,12 +365,12 @@ void BasicShapeInset::path(Path& path, const FloatRect& boundingBox)
             floatValueForLength(m_topRightRadius.height(), boundingBox.height())
         ),
         FloatSize(
-            floatValueForLength(m_bottomRightRadius.width(), boundingBox.width()),
-            floatValueForLength(m_bottomRightRadius.height(), boundingBox.height())
-        ),
-        FloatSize(
             floatValueForLength(m_bottomLeftRadius.width(), boundingBox.width()),
             floatValueForLength(m_bottomLeftRadius.height(), boundingBox.height())
+        ),
+        FloatSize(
+            floatValueForLength(m_bottomRightRadius.width(), boundingBox.width()),
+            floatValueForLength(m_bottomRightRadius.height(), boundingBox.height())
         )
     );
 }
