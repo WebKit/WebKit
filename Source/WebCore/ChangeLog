@@ -1,3 +1,14 @@
+2014-01-28  Andy Estes  <aestes@apple.com>
+
+        [iOS] REGRESSION (r162663): Webpages have strange artifacts or corruption around tile boundaries
+        https://bugs.webkit.org/show_bug.cgi?id=127823
+
+        Reviewed by Daniel Bates.
+
+        Original patch by Simon Fraser.
+
+        * platform/ScrollView.cpp: Specify LegacyIOSDocumentViewRect when calling visibleContentRect().
+
 2014-01-28  Zoltan Horvath  <zoltan@webkit.org>
 
         [CSS Shapes] Adjust inset sizing syntax to the latest specification

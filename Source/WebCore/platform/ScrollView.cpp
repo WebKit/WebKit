@@ -382,7 +382,7 @@ int ScrollView::scrollSize(ScrollbarOrientation orientation) const
 {
     // If no scrollbars are present, it does not indicate content is not be scrollable.
     if (!m_horizontalScrollbar && !m_verticalScrollbar && !prohibitsScrolling()) {
-        IntSize scrollSize = m_contentsSize - visibleContentRect().size();
+        IntSize scrollSize = m_contentsSize - visibleContentRect(LegacyIOSDocumentVisibleRect).size();
         scrollSize.clampNegativeToZero();
         return orientation == HorizontalScrollbar ? scrollSize.width() : scrollSize.height();
     }
@@ -1025,7 +1025,7 @@ void ScrollView::repaintContentRectangle(const IntRect& rect, bool now)
 {
     IntRect paintRect = rect;
     if (clipsRepaints() && !paintsEntireContents())
-        paintRect.intersect(visibleContentRect());
+        paintRect.intersect(visibleContentRect(LegacyIOSDocumentVisibleRect));
     if (paintRect.isEmpty())
         return;
 
@@ -1142,7 +1142,7 @@ void ScrollView::paint(GraphicsContext* context, const IntRect& rect)
 
     IntRect documentDirtyRect = rect;
     if (!paintsEntireContents()) {
-        IntRect visibleAreaWithoutScrollbars(location(), visibleContentRect().size());
+        IntRect visibleAreaWithoutScrollbars(location(), visibleContentRect(LegacyIOSDocumentVisibleRect).size());
         documentDirtyRect.intersect(visibleAreaWithoutScrollbars);
     }
 
@@ -1156,7 +1156,7 @@ void ScrollView::paint(GraphicsContext* context, const IntRect& rect)
             context->translate(-scrollX(), -scrollY());
             documentDirtyRect.moveBy(scrollPosition());
 
-            context->clip(visibleContentRect());
+            context->clip(visibleContentRect(LegacyIOSDocumentVisibleRect));
         }
 
         paintContents(context, documentDirtyRect);
