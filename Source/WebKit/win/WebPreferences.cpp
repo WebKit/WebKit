@@ -32,7 +32,6 @@
 #include "WebPreferenceKeysPrivate.h"
 
 #include <CoreFoundation/CoreFoundation.h>
-#include <WebCore/CACFLayerTreeHost.h>
 #include <WebCore/COMPtr.h>
 #include <WebCore/FileSystem.h>
 #include <WebCore/Font.h>
@@ -48,6 +47,7 @@
 
 #if USE(CG)
 #include <CoreGraphics/CoreGraphics.h>
+#include <WebCore/CACFLayerTreeHost.h>
 #include <WebKitSystemInterface/WebKitSystemInterface.h>
 #endif
 

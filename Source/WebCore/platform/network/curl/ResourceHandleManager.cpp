@@ -704,11 +704,6 @@ static void setupFormData(ResourceHandle* job, CURLoption sizeOption, struct cur
             expectedSizeOfCurlOffT = sizeof(int);
     }
 
-#if COMPILER(MSVC)
-    // work around compiler error in Visual Studio 2005.  It can't properly
-    // handle math with 64-bit constant declarations.
-#pragma warning(disable: 4307)
-#endif
     static const long long maxCurlOffT = (1LL << (expectedSizeOfCurlOffT * 8 - 1)) - 1;
     // Obtain the total size of the form data
     curl_off_t size = 0;

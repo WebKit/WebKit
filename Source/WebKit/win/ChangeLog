@@ -1,3 +1,14 @@
+2014-01-29  Alex Christensen  <achristensen@webkit.org>
+
+        Prepare for accelerated compositing on WinCairo.
+        https://bugs.webkit.org/show_bug.cgi?id=127843
+
+        Reviewed by Anders Carlsson.
+
+        * WebPreferences.cpp:
+        Moved CACFLayerTreeHost.h inclusion to Apple-specific includes
+        to avoid compile errors in WinCairo when using accelerated compositing.
+
 2014-01-26  Anders Carlsson  <andersca@apple.com>
 
         Follow-up build fix.
