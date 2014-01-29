@@ -1,3 +1,10 @@
+2014-01-29  Anders Carlsson  <andersca@apple.com>
+
+        Fix build.
+
+        * WebView/WebPDFView.mm:
+        (_applicationInfoForMIMEType):
+
 2014-01-28  Mark Rowe  <mrowe@apple.com>
 
         <https://webkit.org/b/127767> Disable some deprecation warnings to fix the build.
