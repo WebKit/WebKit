@@ -350,6 +350,18 @@ InjectedScript.prototype = {
                         }
                         continue;
                     }
+                    if (descriptor.hasOwnProperty("get") && descriptor.hasOwnProperty("set") && !descriptor.get && !descriptor.set) {
+                        // Not all bindings provide proper descriptors. Fall back to the writable, configurable property.
+                        try {
+                            descriptor = { name: name, value: object[name], writable: false, configurable: false, enumerable: false};
+                            if (o === object)
+                                descriptor.isOwn = true;
+                            descriptors.push(descriptor);
+                        } catch (e) {
+                            // Silent catch.
+                        }
+                        continue;
+                    }
                 } catch (e) {
                     var descriptor = {};
                     descriptor.value = e;

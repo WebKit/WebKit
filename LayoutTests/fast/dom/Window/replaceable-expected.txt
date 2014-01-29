@@ -3,7 +3,7 @@ Tests that Replaceable attributes are writable
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS Object.getOwnPropertyDescriptor(window, "innerHeight").writable is true
+PASS Object.getOwnPropertyDescriptor(window, "innerHeight").hasOwnProperty("get") is true
 PASS window.innerHeight is 42
 PASS successfullyParsed is true
 

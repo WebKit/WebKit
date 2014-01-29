@@ -1,3 +1,29 @@
+2014-01-28  Oliver Hunt  <oliver@apple.com>
+
+        Make DOM attributes appear to be faux accessor properties
+        https://bugs.webkit.org/show_bug.cgi?id=127797
+
+        Reviewed by Michael Saboff.
+
+        Add flag so we can identify which properties should have the old
+        custom property semantics vs. the new faux accessors. Update the
+        inspector protocol accordingly.
+
+        These faux accessors produce descriptors with "get" and "set"
+        properties, but both values are undefined so can't be used
+        directly. A few custom properties actually require their
+        existing magical behaviour, so we now have a flag to 
+        distinguish the expected output.
+
+        * inspector/InjectedScriptSource.js:
+        (.):
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::getOwnPropertyDescriptor):
+        * runtime/PropertyDescriptor.cpp:
+        (JSC::PropertyDescriptor::setCustomDescriptor):
+        * runtime/PropertyDescriptor.h:
+        * runtime/PropertySlot.h:
+
 2014-01-29  Beth Dakin  <bdakin@apple.com>
 
         Build fix.
