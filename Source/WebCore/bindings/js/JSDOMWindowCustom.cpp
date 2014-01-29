@@ -42,8 +42,8 @@
 #endif
 
 #if ENABLE(IOS_TOUCH_EVENTS)
-#include "JSTouchConstructor.h"
-#include "JSTouchListConstructor.h"
+#include "JSTouchConstructorIOS.h"
+#include "JSTouchListConstructorIOS.h"
 #endif
 
 #if ENABLE(WEB_AUDIO)

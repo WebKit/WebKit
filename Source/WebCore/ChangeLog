@@ -1,3 +1,9 @@
+2014-01-29  Dan Bernstein  <mitz@apple.com>
+
+        Fixed the iOS build.
+
+        * bindings/js/JSDOMWindowCustom.cpp: Updated for header renames.
+
 2014-01-29  Csaba Osztrogonác  <ossy@webkit.org>
 
         Remove ENABLE(JAVASCRIPT_DEBUGGER) guards
