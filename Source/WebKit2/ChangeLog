@@ -1,3 +1,15 @@
+2014-01-29  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] [CMake] Fix the build after r162835
+        https://bugs.webkit.org/show_bug.cgi?id=127753
+
+        Reviewed by Gustavo Noronha Silva.
+
+        * CMakeLists.txt: Add support for using the prefix header (GCC / clang only for now)
+        when WebKit2_USE_PREFIX_HEADER is set to true.
+        * PlatformGTK.cmake: Set WebKit2_USE_PREFIX_HEADER support and no longer process some message.in files.
+        * WebKit2Prefix.h: Add support for the CMake GTK+ build.
+
 2014-01-29  Csaba Osztrogonác  <ossy@webkit.org>
 
         Remove ENABLE(JAVASCRIPT_DEBUGGER) guards
