@@ -169,7 +169,7 @@ void PlatformPasteboard::write(const PasteboardImage& pasteboardImage)
 {
     RetainPtr<NSMutableDictionary> representations = adoptNS([[NSMutableDictionary alloc] init]);
     if (!pasteboardImage.resourceMIMEType.isNull()) {
-        [representations setObject:pasteboardImage.image->data()->createNSData().get() forKey:pasteboardImage.resourceMIMEType];
+        [representations setObject:pasteboardImage.resourceData->createNSData().get() forKey:pasteboardImage.resourceMIMEType];
         [representations setObject:(NSString *)pasteboardImage.url.url forKey:(NSString *)kUTTypeURL];
     }
     [m_pasteboard setItems:@[representations.get()]];
@@ -179,9 +179,10 @@ void PlatformPasteboard::write(const String& pasteboardType, const String& text)
 {
     RetainPtr<NSDictionary> representations = adoptNS([[NSMutableDictionary alloc] init]);
 
-    if (pasteboardType == String(kUTTypeURL))
+    if (pasteboardType == String(kUTTypeURL)) {
         [representations setValue:adoptNS([[NSURL alloc] initWithString:text]).get() forKey:pasteboardType];
-    else if (!pasteboardType.isNull())
+        [representations setValue:text forKey:(NSString *)kUTTypeText];
+    } else if (!pasteboardType.isNull())
         [representations setValue:text forKey:pasteboardType];
     [m_pasteboard setItems:@[representations.get()]];
 }

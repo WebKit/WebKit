@@ -150,6 +150,11 @@ void Pasteboard::writePlainText(const String& text, SmartReplaceOption)
     platformStrategies()->pasteboardStrategy()->writeToPasteboard(kUTTypeText, text);
 }
 
+void Pasteboard::write(const PasteboardURL& pasteboardURL)
+{
+    platformStrategies()->pasteboardStrategy()->writeToPasteboard(kUTTypeURL, pasteboardURL.url.string());
+}
+
 void Pasteboard::writePasteboard(const Pasteboard&)
 {
 }

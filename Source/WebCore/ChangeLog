@@ -1,3 +1,30 @@
+2014-01-28  Enrica Casucci  <enrica@apple.com>
+
+        Add support for ActionSheets in WK2 for iOS.
+        https://bugs.webkit.org/show_bug.cgi?id=127586
+        <rdar://problem/15283667>
+
+        Reviewed by Benjamin Poulain.
+
+        This patch contains some WebCore changes required to
+        implement support for ActionSheets.
+        It adds copyURL implementation for iOS in the Editor
+        class and fixes some bugs in the iOS specific pasteboard
+        writing code.
+        The changes to Localizable.strings are the result of
+        running update-webkit-localizedstrings script.
+
+        * English.lproj/Localizable.strings:
+        * WebCore.exp.in:
+        * editing/Editor.cpp:
+        * editing/Editor.h:
+        * editing/ios/EditorIOS.mm:
+        (WebCore::Editor::writeImageToPasteboard):
+        * platform/ios/PasteboardIOS.mm:
+        (WebCore::Pasteboard::write):
+        * platform/ios/PlatformPasteboardIOS.mm:
+        (WebCore::PlatformPasteboard::write):
+
 2014-01-28  Andy Estes  <aestes@apple.com>
 
         [iOS] REGRESSION (r162663): Webpages have strange artifacts or corruption around tile boundaries

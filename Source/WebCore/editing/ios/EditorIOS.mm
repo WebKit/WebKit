@@ -48,6 +48,7 @@
 #include "Pasteboard.h"
 #include "RenderBlock.h"
 #include "RenderImage.h"
+#include "ResourceBuffer.h"
 #include "SharedBuffer.h"
 #include "SoftLinking.h"
 #include "StyleProperties.h"
@@ -374,6 +375,7 @@ void Editor::writeImageToPasteboard(Pasteboard& pasteboard, Element& imageElemen
     pasteboardImage.url.url = imageElement.document().completeURL(stripLeadingAndTrailingHTMLSpaces(imageElement.imageSourceURL()));
     pasteboardImage.url.title = title;
     pasteboardImage.resourceMIMEType = pasteboard.resourceMIMEType(cachedImage->response().mimeType());
+    pasteboardImage.resourceData = cachedImage->resourceBuffer()->sharedBuffer();
 
     pasteboard.write(pasteboardImage);
 }

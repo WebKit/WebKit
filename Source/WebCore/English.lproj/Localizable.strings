@@ -64,6 +64,9 @@
 /* window title for a standalone image (uses multiplication symbol, not x) */
 "<filename> %d×%d pixels" = "<filename> %d×%d pixels";
 
+/* Title for Add to Reading List action button */
+"Add to Reading List" = "Add to Reading List";
+
 /* Undo action name */
 "Align Left (Undo action name)" = "Align Left";
 
@@ -87,6 +90,9 @@
 
 /* Undo action name */
 "Bold (Undo action name)" = "Bold";
+
+/* Title for Cancel button label in button bar */
+"Cancel button label in button bar" = "Cancel";
 
 /* Capitalize context menu item */
 "Capitalize" = "Capitalize";
@@ -112,11 +118,11 @@
 /* title for a multiple file chooser button used in HTML forms. This title should be as short as possible. */
 "Choose Files" = "Choose Files";
 
-/* PLATFORM(IOS) title for file button used in HTML forms for media files */
-"Choose Media (Single)" = "Choose Photo";
+/* Title for file button used in HTML5 forms for multiple media files */
+"Choose Media (Multiple)" = "Choose Media (Multiple)";
 
-/* PLATFORM(IOS) title for file button used in HTML5 forms for multiple media files */
-"Choose Media (Multiple)" = "Choose Photos";
+/* Title for file button used in HTML forms for media files */
+"Choose Media (Single)" = "Choose Media (Single)";
 
 /* menu item in Recent Searches menu that empties menu's contents */
 "Clear Recent Searches" = "Clear Recent Searches";
@@ -135,6 +141,9 @@
 
 /* Copy context menu item */
 "Copy" = "Copy";
+
+/* Title for Copy Link or Image action button */
+"Copy ActionSheet Link" = "Copy";
 
 /* Copy Audio Address Location context menu item */
 "Copy Audio Address" = "Copy Audio Address";
@@ -163,14 +172,14 @@
 /* Default writing direction context menu item */
 "Default" = "Default";
 
-/* PLATFORM(IOS) Undo action name */
+/* Undo action name (Used only by PLATFORM(IOS) code) */
 "Delete (Undo action name)" = "Delete";
-
-/* PLATFORM(IOS) Undo action name */
-"Dictation (Undo action name)" = "Dictation";
 
 /* text to display in <details> tag when it has no <summary> child */
 "Details" = "Details";
+
+/* Undo action name (Used only by PLATFORM(IOS) code) */
+"Dictation (Undo action name)" = "Dictation";
 
 /* Download Audio To Disk context menu item */
 "Download Audio" = "Download Audio";
@@ -247,6 +256,9 @@
 /* WebKitErrorJavaUnavailable description */
 "Java is unavailable" = "Java is unavailable";
 
+/* Title for action sheet for JavaScript link */
+"JavaScript Action Sheet Title" = "JavaScript";
+
 /* Undo action name */
 "Justify (Undo action name)" = "Justify";
 
@@ -306,6 +318,9 @@
 
 /* Menu item label for the track that represents disabling closed captions */
 "Off" = "Off";
+
+/* Title for Open Link action button */
+"Open ActionSheet Link" = "Open";
 
 /* Open Audio in New Window context menu item */
 "Open Audio in New Window" = "Open Audio in New Window";
@@ -391,6 +406,9 @@
 /* Right to Left context menu item */
 "Right to Left" = "Right to Left";
 
+/* Title for Save Image action button */
+"Save Image" = "Save Image";
+
 /* Search in Spotlight context menu item */
 "Search in Spotlight" = "Search in Spotlight";
 
@@ -432,6 +450,9 @@
 
 /* menu item title */
 "Show Substitutions" = "Show Substitutions";
+
+/* Title of the context menu item to show when PDFPlugin was used instead of a blocked plugin */
+"Show in blocked plug-in" = "Show in blocked plug-in";
 
 /* Smart Copy/Paste context menu item */
 "Smart Copy/Paste" = "Smart Copy/Paste";
@@ -544,7 +565,7 @@
 /* Undo action name */
 "Turn Off Ligatures (Undo action name)" = "Turn Off Ligatures";
 
-/* Undo action name */
+/* We don't care if we find this string, but searching for it will load the plist and save the results. */
 "Typing (Undo action name)" = "Typing";
 
 /* Underline context menu item */
@@ -793,14 +814,14 @@
 /* text to display in file button used in HTML forms when no files are selected and the button allows multiple files to be selected */
 "no files selected" = "no files selected";
 
-/* PLATFORM(IOS) text to display in file button used in HTML forms for media files when no media file is selected */
-"no media selected (single)" = "no photo selected";
-
-/* PLATFORM(IOS) text to display in file button used in HTML forms for media files when no media files are selected and the button allows multiple files to be selected */
-"no media selected (multiple)" = "no photos selected";
-
 /* HTTP result code string */
 "no longer exists" = "no longer exists";
+
+/* Text to display in file button used in HTML forms for media files when no media files are selected and the button allows multiple files to be selected */
+"no media selected (multiple)" = "no media selected (multiple)";
+
+/* Text to display in file button used in HTML forms for media files when no media file is selected */
+"no media selected (single)" = "no media selected (single)";
 
 /* HTTP result code string */
 "non-authoritative information" = "non-authoritative information";
@@ -985,5 +1006,3 @@
 /* accessibility label for video element controller */
 "video playback" = "video playback";
 
-/* title of the context menu item to show when PDFPlugin was used instead of a blocked plugin */
-"Show in blocked plug-in" = "Show in blocked plug-in";

@@ -126,9 +126,9 @@ public:
     void pasteAsPlainText();
     void performDelete();
 
-#if !PLATFORM(IOS)
     void copyURL(const URL&, const String& title);
     void copyURL(const URL&, const String& title, Pasteboard&);
+#if !PLATFORM(IOS)
     void copyImage(const HitTestResult&);
 #endif
 
