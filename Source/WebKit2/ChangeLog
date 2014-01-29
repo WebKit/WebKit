@@ -1,3 +1,37 @@
+2014-01-29  Anders Carlsson  <andersca@apple.com>
+
+        Consolidate page loading functions
+        https://bugs.webkit.org/show_bug.cgi?id=127847
+
+        Reviewed by Tim Horton.
+
+        Get rid of the loadURL functions (and the LoadURL message), rename
+        loadURLRequest to loadRequest and change it to take a ResourceRequest instead
+        of an API::URLRequest.
+
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageLoadURL):
+        (WKPageLoadURLWithUserData):
+        (WKPageLoadURLRequest):
+        (WKPageLoadURLRequestWithUserData):
+        * UIProcess/API/Cocoa/WKBrowsingContextController.mm:
+        (-[WKBrowsingContextController loadRequest:userData:]):
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView loadRequest:]):
+        * UIProcess/WebInspectorProxy.cpp:
+        (WebKit::decidePolicyForNavigationAction):
+        (WebKit::WebInspectorProxy::createInspectorPage):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::loadRequest):
+        (WebKit::WebPageProxy::loadFile):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/cf/WebPageProxyCF.cpp:
+        (WebKit::WebPageProxy::restoreFromSessionStateData):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::loadRequest):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+
 2014-01-29  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] [CMake] Fix the build after r162835

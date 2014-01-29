@@ -109,7 +109,7 @@ static _UIWebViewportConfiguration standardViewportConfiguration = { { UIWebView
 
 - (void)loadRequest:(NSURLRequest *)request
 {
-    _page->loadURLRequest(API::URLRequest::create(request).get());
+    _page->loadRequest(request);
 }
 
 #pragma mark iOS-specific methods
