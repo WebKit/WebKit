@@ -1,3 +1,20 @@
+2014-01-29  Sergio Villar Senin  <svillar@igalia.com>
+
+        [CSS Grid Layout] minmax() should be a CSSFunction instead of a CSSValueList
+        https://bugs.webkit.org/show_bug.cgi?id=127057
+
+        Include the output of element.style.webkitGridDefinition{Columns|Rows}
+        as part of the expected output.
+
+        * fast/css-grid-layout/grid-columns-rows-get-set-expected.txt:
+        * fast/css-grid-layout/grid-columns-rows-get-set-multiple-expected.txt:
+        * fast/css-grid-layout/named-grid-line-get-set-expected.txt:
+        * fast/css-grid-layout/named-grid-line-get-set.html:
+        * fast/css-grid-layout/resources/grid-definitions-parsing-utils.js:
+        (testGridDefinitionsSetJSValues):
+        (testNonGridDefinitionsSetJSValues):
+        (checkGridDefinitionsSetJSValues):
+
 2014-01-28  Jinwoo Song  <jinwoo7.song@samsung.com>
 
         Unreviewed EFL gardening after r162972.

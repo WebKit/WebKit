@@ -6,17 +6,17 @@ function testGridDefinitionsValues(element, columnValue, rowValue)
     shouldBeEqualToString("window.getComputedStyle(" + elementID + ", '').getPropertyValue('-webkit-grid-definition-rows')", rowValue);
 }
 
-function testGridDefinitionsSetJSValues(columnValue, rowValue, computedColumnValue, computedRowValue)
+function testGridDefinitionsSetJSValues(columnValue, rowValue, computedColumnValue, computedRowValue, jsColumnValue, jsRowValue)
 {
-    checkGridDefinitionsSetJSValues(true, columnValue, rowValue, computedColumnValue, computedRowValue);
+    checkGridDefinitionsSetJSValues(true, columnValue, rowValue, computedColumnValue, computedRowValue, jsColumnValue, jsRowValue);
 }
 
-function testNonGridDefinitionsSetJSValues(columnValue, rowValue, computedColumnValue, computedRowValue)
+function testNonGridDefinitionsSetJSValues(columnValue, rowValue, computedColumnValue, computedRowValue, jsColumnValue, jsRowValue)
 {
-    checkGridDefinitionsSetJSValues(false, columnValue, rowValue, computedColumnValue, computedRowValue);
+    checkGridDefinitionsSetJSValues(false, columnValue, rowValue, computedColumnValue, computedRowValue, jsColumnValue, jsRowValue);
 }
 
-function checkGridDefinitionsSetJSValues(useGrid, columnValue, rowValue, computedColumnValue, computedRowValue)
+function checkGridDefinitionsSetJSValues(useGrid, columnValue, rowValue, computedColumnValue, computedRowValue, jsColumnValue, jsRowValue)
 {
     window.element = document.createElement("div");
     document.body.appendChild(element);
@@ -29,7 +29,9 @@ function checkGridDefinitionsSetJSValues(useGrid, columnValue, rowValue, compute
     element.style.webkitGridDefinitionColumns = columnValue;
     element.style.webkitGridDefinitionRows = rowValue;
     shouldBeEqualToString("getComputedStyle(element, '').getPropertyValue('-webkit-grid-definition-columns')", computedColumnValue || columnValue);
+    shouldBeEqualToString("element.style.webkitGridDefinitionColumns", jsColumnValue || columnValue);
     shouldBeEqualToString("getComputedStyle(element, '').getPropertyValue('-webkit-grid-definition-rows')", computedRowValue || rowValue);
+    shouldBeEqualToString("element.style.webkitGridDefinitionRows", jsRowValue || rowValue);
     document.body.removeChild(element);
 }
 

@@ -49,6 +49,8 @@ public:
 
     bool equals(const CSSFunctionValue&) const;
 
+    CSSValueList* arguments() const { return m_args.get(); }
+
 private:
     explicit CSSFunctionValue(CSSParserFunction*);
     CSSFunctionValue(String, PassRefPtr<CSSValueList>);

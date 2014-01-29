@@ -1,3 +1,28 @@
+2014-01-29  Sergio Villar Senin  <svillar@igalia.com>
+
+        [CSS Grid Layout] minmax() should be a CSSFunction instead of a CSSValueList
+        https://bugs.webkit.org/show_bug.cgi?id=127057
+
+        Reviewed by Antti Koivisto.
+
+        We were incorrectly dumping minmax(x,y) as "x y" instead of
+        "minmax(x,y)". That's because we were treating minmax() internally
+        as a CSSValueList instead of a CSSFunction. Replaced that and also
+        added some extra information to our tests in order to check that
+        we don't regress. From now on the CSS grid layout testing helper
+        functions print not only the computed style but also the contents
+        of element.style.webkitGridDefinition{Columns|Rows}.
+
+        * css/CSSFunctionValue.h:
+        (WebCore::CSSFunctionValue::arguments):
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseGridTrackList):
+        (WebCore::CSSParser::parseGridTrackRepeatFunction):
+        (WebCore::CSSParser::parseGridTrackSize):
+        * css/CSSParser.h:
+        * css/StyleResolver.cpp:
+        (WebCore::createGridTrackSize):
+
 2014-01-29  Ryosuke Niwa  <rniwa@webkit.org>
 
         Rename notifyRendererOfSelectionChange

@@ -4886,10 +4886,10 @@ bool CSSParser::parseGridTrackList(CSSPropertyID propId, bool important)
             if (!parseGridTrackRepeatFunction(*values))
                 return false;
         } else {
-            RefPtr<CSSPrimitiveValue> primitiveValue = parseGridTrackSize(*m_valueList);
-            if (!primitiveValue)
+            RefPtr<CSSValue> value = parseGridTrackSize(*m_valueList);
+            if (!value)
                 return false;
-            values->append(primitiveValue.release());
+            values->append(value.release());
         }
         seenTrackSizeOrRepeatFunction = true;
 
@@ -4923,7 +4923,7 @@ bool CSSParser::parseGridTrackRepeatFunction(CSSValueList& list)
         if (!arguments->current())
             break;
 
-        RefPtr<CSSPrimitiveValue> trackSize = parseGridTrackSize(*arguments);
+        RefPtr<CSSValue> trackSize = parseGridTrackSize(*arguments);
         if (!trackSize)
             return false;
 
@@ -4939,7 +4939,7 @@ bool CSSParser::parseGridTrackRepeatFunction(CSSValueList& list)
     return true;
 }
 
-PassRefPtr<CSSPrimitiveValue> CSSParser::parseGridTrackSize(CSSParserValueList& inputList)
+PassRefPtr<CSSValue> CSSParser::parseGridTrackSize(CSSParserValueList& inputList)
 {
     CSSParserValue* currentValue = inputList.current();
     inputList.next();
@@ -4961,7 +4961,10 @@ PassRefPtr<CSSPrimitiveValue> CSSParser::parseGridTrackSize(CSSParserValueList& 
         if (!maxTrackBreadth)
             return 0;
 
-        return createPrimitiveValuePair(minTrackBreadth, maxTrackBreadth);
+        RefPtr<CSSValueList> parsedArguments = CSSValueList::createCommaSeparated();
+        parsedArguments->append(minTrackBreadth);
+        parsedArguments->append(maxTrackBreadth);
+        return CSSFunctionValue::create("minmax(", parsedArguments);
     }
 
     return parseGridBreadth(currentValue);
