@@ -141,9 +141,36 @@ unsigned initializeMaximumHTTPConnectionCountPerHost()
 
 GUniquePtr<SoupURI> ResourceRequest::createSoupURI() const
 {
-    URL url = m_url;
-    url.removeFragmentIdentifier();
-    return url.createSoupURI();
+    // WebKit does not support fragment identifiers in data URLs, but soup does.
+    // Before passing the URL to soup, we should make sure to urlencode any '#'
+    // characters, so that soup does not interpret them as fragment identifiers.
+    // See http://wkbug.com/68089
+    if (m_url.protocolIsData()) {
+        String urlString = m_url.string();
+        urlString.replace("#", "%23");
+        return GUniquePtr<SoupURI>(soup_uri_new(urlString.utf8().data()));
+    }
+
+    GUniquePtr<SoupURI> soupURI;
+    if (m_url.hasFragmentIdentifier()) {
+        URL url = m_url;
+        url.removeFragmentIdentifier();
+        soupURI.reset(soup_uri_new(url.string().utf8().data()));
+    } else
+        soupURI = m_url.createSoupURI();
+
+    // Versions of libsoup prior to 2.42 have a soup_uri_new that will convert empty passwords that are not
+    // prefixed by a colon into null. Some parts of soup like the SoupAuthenticationManager will only be active
+    // when both the username and password are non-null. When we have credentials, empty usernames and passwords
+    // should be empty strings instead of null.
+    String urlUser = m_url.user();
+    String urlPass = m_url.pass();
+    if (!urlUser.isEmpty() || !urlPass.isEmpty()) {
+        soup_uri_set_user(soupURI.get(), urlUser.utf8().data());
+        soup_uri_set_password(soupURI.get(), urlPass.utf8().data());
+    }
+
+    return soupURI;
 }
 
 }

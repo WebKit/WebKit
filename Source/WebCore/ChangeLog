@@ -1,3 +1,20 @@
+2014-01-29  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        REGRESSION(r162922): [SOUP] Several tests are failing in EFL and GTK+ after r162922
+        https://bugs.webkit.org/show_bug.cgi?id=127836
+
+        Reviewed by Gustavo Noronha Silva.
+
+        The problem is that I assumed that several things done in
+        ResourceRequest::soupURI() were always desired, so I moved them to
+        URL. This patch restores the previous behaviour, so that those
+        tings are only done right before making a request.
+
+        * platform/network/soup/ResourceRequestSoup.cpp:
+        (WebCore::ResourceRequest::createSoupURI):
+        * platform/soup/URLSoup.cpp:
+        (WebCore::URL::createSoupURI):
+
 2014-01-29  Krzysztof Czech  <k.czech@samsung.com>
 
         [ATK] Expose aria-describedby with ATK_RELATION_DESCRIBED_BY

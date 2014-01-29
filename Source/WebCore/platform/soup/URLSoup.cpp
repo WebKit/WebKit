@@ -57,30 +57,7 @@ GUniquePtr<SoupURI> URL::createSoupURI() const
     if (!isValid())
         return nullptr;
 
-    // WebKit does not support fragment identifiers in data URLs, but soup does.
-    // Before passing the URL to soup, we should make sure to urlencode any '#'
-    // characters, so that soup does not interpret them as fragment identifiers.
-    // See http://wkbug.com/68089
-    if (protocolIsData()) {
-        String urlString = string();
-        urlString.replace("#", "%23");
-        return GUniquePtr<SoupURI>(soup_uri_new(urlString.utf8().data()));
-    }
-
-    GUniquePtr<SoupURI> soupURI(soup_uri_new(string().utf8().data()));
-
-    // Versions of libsoup prior to 2.42 have a soup_uri_new that will convert empty passwords that are not
-    // prefixed by a colon into null. Some parts of soup like the SoupAuthenticationManager will only be active
-    // when both the username and password are non-null. When we have credentials, empty usernames and passwords
-    // should be empty strings instead of null.
-    String urlUser = user();
-    String urlPass = pass();
-    if (!urlUser.isEmpty() || !urlPass.isEmpty()) {
-        soup_uri_set_user(soupURI.get(), urlUser.utf8().data());
-        soup_uri_set_password(soupURI.get(), urlPass.utf8().data());
-    }
-
-    return soupURI;
+    return GUniquePtr<SoupURI>(soup_uri_new(string().utf8().data()));
 }
 
 } // namespace WebCore
