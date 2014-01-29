@@ -364,6 +364,35 @@ webkit.org/b/124476 platform/mac-wk2/plugins/slow/asynchronous-plugin-initializa
 # uiElementForSearchPredicate() is not returning an undefined object when the search returns no results
 webkit.org/b/125996 platform/mac/accessibility/search-when-element-starts-in-table.html [ Failure ]
 
+webkit.org/b/127814 compositing/repaint/invalidations-on-composited-layers.html [ Failure ]
+webkit.org/b/127814 compositing/repaint/resize-repaint.html [ Failure ]
+webkit.org/b/127814 fast/box-shadow/shadow-repaint.html [ Failure ]
+webkit.org/b/127814 fast/css-grid-layout/grid-element-change-columns-repaint.html [ Failure ]
+webkit.org/b/127814 fast/css-grid-layout/grid-element-change-rows-repaint.html [ Failure ]
+webkit.org/b/127814 fast/css-grid-layout/grid-item-change-column-repaint.html [ Failure ]
+webkit.org/b/127814 fast/css-grid-layout/grid-item-change-row-repaint.html [ Failure ]
+webkit.org/b/127814 fast/images/repaint-subrect-grid.html [ Failure ]
+webkit.org/b/127814 fast/regions/repaint/element-in-named-flow-absolute-from-fixed.html [ Failure ]
+webkit.org/b/127814 fast/regions/repaint/element-in-named-flow-fixed-from-absolute.html [ Failure ]
+webkit.org/b/127814 fast/regions/repaint/element-inflow-fixed-from-outflow-static.html [ Failure ]
+webkit.org/b/127814 fast/regions/repaint/element-outflow-static-from-inflow-fixed.html [ Failure ]
+webkit.org/b/127814 fast/regions/repaint/invalid-region-repaint-crash.html [ Failure ]
+webkit.org/b/127814 fast/regions/repaint/repaint-element-inside-relative-region.html [ Failure ]
+webkit.org/b/127814 fast/regions/repaint/repaint-regions-overflow.html [ Failure ]
+webkit.org/b/127814 fast/repaint/background-shorthand-with-gradient-and-height-changes.html [ Failure ]
+webkit.org/b/127814 fast/repaint/horizontal-bt-overflow-child.html [ Failure ]
+webkit.org/b/127814 fast/repaint/horizontal-bt-overflow-parent.html [ Failure ]
+webkit.org/b/127814 fast/repaint/horizontal-bt-overflow-same.html [ Failure ]
+webkit.org/b/127814 fast/repaint/negative-text-indent-with-overflow-hidden.html [ Failure ]
+webkit.org/b/127814 fast/repaint/overflow-flipped-writing-mode-table.html [ Failure ]
+webkit.org/b/127814 fast/repaint/reflection-table-layout.html [ Failure ]
+webkit.org/b/127814 fast/repaint/transform-table-layout.html [ Failure ]
+webkit.org/b/127814 fast/repaint/vertical-overflow-child.html [ Failure ]
+webkit.org/b/127814 fast/repaint/vertical-overflow-parent.html [ Failure ]
+webkit.org/b/127814 fast/repaint/vertical-overflow-same.html [ Failure ]
+webkit.org/b/127814 svg/repaint/repaint-webkit-svg-shadow-container.html [ Failure ]
+
+
 ### END OF (1) Classified failures with bug reports
 ########################################
 
