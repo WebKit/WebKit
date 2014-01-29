@@ -789,9 +789,6 @@ void WebPageProxy::goForward()
 
 void WebPageProxy::goBack()
 {
-    if (isValid())
-        return;
-
     WebBackForwardListItem* backItem = m_backForwardList->backItem();
     if (!backItem)
         return;
