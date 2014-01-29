@@ -72,6 +72,7 @@ namespace WebKit {
 - (CALayer *)_acceleratedCompositingModeRootLayer;
 
 - (RetainPtr<CGImageRef>)_takeViewSnapshot;
+- (void)_wheelEventWasNotHandledByWebCore:(NSEvent *)event;
 
 - (void)_setAccessibilityWebProcessToken:(NSData *)data;
 

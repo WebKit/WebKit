@@ -55,6 +55,8 @@ public:
     bool handleScrollWheelEvent(NSEvent *);
     void didHitRenderTreeSizeThreshold();
 
+    void wheelEventWasNotHandledByWebCore(NSEvent *);
+
     void endActiveGesture();
 
     enum class ViewGestureType {
@@ -80,8 +82,10 @@ private:
     void endMagnificationGesture();
     WebCore::FloatPoint scaledMagnificationOrigin(WebCore::FloatPoint origin, double scale);
 
-    void beginSwipeGesture(WebBackForwardListItem* targetItem, bool swipingLeft);
-    void handleSwipeGesture(WebBackForwardListItem* targetItem, double progress, bool swipingLeft);
+    enum class SwipeDirection { Left, Right };
+    void trackSwipeGesture(NSEvent *, SwipeDirection);
+    void beginSwipeGesture(WebBackForwardListItem* targetItem, SwipeDirection);
+    void handleSwipeGesture(WebBackForwardListItem* targetItem, double progress, SwipeDirection);
     void endSwipeGesture(WebBackForwardListItem* targetItem, bool cancelled);
     void removeSwipeSnapshot();
     void swipeSnapshotWatchdogTimerFired(WebCore::Timer<ViewGestureController>*);
@@ -103,6 +107,11 @@ private:
     RetainPtr<CALayer> m_swipeSnapshotLayer;
     SwipeTransitionStyle m_swipeTransitionStyle;
     WebCore::Timer<ViewGestureController> m_swipeWatchdogTimer;
+
+    // If we need to wait for content to decide if it is going to consume
+    // the scroll event that would have started a swipe, we'll fill these in.
+    bool m_hasPendingSwipe;
+    SwipeDirection m_pendingSwipeDirection;
 };
 
 } // namespace WebKit

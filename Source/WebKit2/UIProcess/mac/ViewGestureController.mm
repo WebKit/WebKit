@@ -28,6 +28,7 @@
 
 #if !PLATFORM(IOS)
 
+#import "NativeWebWheelEvent.h"
 #import "WebPageGroup.h"
 #import "ViewGestureControllerMessages.h"
 #import "ViewGestureGeometryCollectorMessages.h"
@@ -98,6 +99,7 @@ ViewGestureController::ViewGestureController(WebPageProxy& webPageProxy)
     , m_frameHandlesMagnificationGesture(false)
     , m_swipeTransitionStyle(SwipeTransitionStyle::Overlap)
     , m_swipeWatchdogTimer(this, &ViewGestureController::swipeSnapshotWatchdogTimerFired)
+    , m_hasPendingSwipe(false)
 {
     m_webPageProxy.process().addMessageReceiver(Messages::ViewGestureController::messageReceiverName(), m_webPageProxy.pageID(), *this);
 }
@@ -249,6 +251,8 @@ bool ViewGestureController::handleScrollWheelEvent(NSEvent *event)
     if (event.phase != NSEventPhaseBegan)
         return false;
 
+    m_hasPendingSwipe = false;
+
     if (fabs(event.scrollingDeltaX) < fabs(event.scrollingDeltaY))
         return false;
 
@@ -257,34 +261,56 @@ bool ViewGestureController::handleScrollWheelEvent(NSEvent *event)
     if (!willSwipeLeft && !willSwipeRight)
         return false;
 
+    SwipeDirection direction = willSwipeLeft ? SwipeDirection::Left : SwipeDirection::Right;
+
     if (!event.hasPreciseScrollingDeltas)
         return false;
 
     if (![NSEvent isSwipeTrackingFromScrollEventsEnabled])
         return false;
 
+    if (m_webPageProxy.willHandleHorizontalScrollEvents()) {
+        m_hasPendingSwipe = true;
+        m_pendingSwipeDirection = direction;
+        return false;
+    }
+
+    trackSwipeGesture(event, direction);
+
+    return true;
+}
+
+void ViewGestureController::wheelEventWasNotHandledByWebCore(NSEvent *event)
+{
+    if (!m_hasPendingSwipe)
+        return;
+
+    m_hasPendingSwipe = false;
+    trackSwipeGesture(event, m_pendingSwipeDirection);
+}
+
+void ViewGestureController::trackSwipeGesture(NSEvent *event, SwipeDirection direction)
+{
     ViewSnapshotStore::shared().recordSnapshot(m_webPageProxy);
 
-    CGFloat maxProgress = willSwipeLeft ? 1 : 0;
-    CGFloat minProgress = willSwipeRight ? -1 : 0;
-    RefPtr<WebBackForwardListItem> targetItem = willSwipeLeft ? m_webPageProxy.backForwardList().backItem() : m_webPageProxy.backForwardList().forwardItem();
+    CGFloat maxProgress = (direction == SwipeDirection::Left) ? 1 : 0;
+    CGFloat minProgress = (direction == SwipeDirection::Right) ? -1 : 0;
+    RefPtr<WebBackForwardListItem> targetItem = (direction == SwipeDirection::Left) ? m_webPageProxy.backForwardList().backItem() : m_webPageProxy.backForwardList().forwardItem();
     __block bool swipeCancelled = false;
 
     [event trackSwipeEventWithOptions:0 dampenAmountThresholdMin:minProgress max:maxProgress usingHandler:^(CGFloat progress, NSEventPhase phase, BOOL isComplete, BOOL *stop) {
         if (phase == NSEventPhaseBegan)
-            this->beginSwipeGesture(targetItem.get(), willSwipeLeft);
+            this->beginSwipeGesture(targetItem.get(), direction);
         CGFloat clampedProgress = std::min(std::max(progress, minProgress), maxProgress);
-        this->handleSwipeGesture(targetItem.get(), clampedProgress, willSwipeLeft);
+        this->handleSwipeGesture(targetItem.get(), clampedProgress, direction);
         if (phase == NSEventPhaseCancelled)
             swipeCancelled = true;
         if (isComplete)
             this->endSwipeGesture(targetItem.get(), swipeCancelled);
     }];
-
-    return true;
 }
 
-void ViewGestureController::beginSwipeGesture(WebBackForwardListItem* targetItem, bool swipingLeft)
+void ViewGestureController::beginSwipeGesture(WebBackForwardListItem* targetItem, SwipeDirection direction)
 {
     m_activeGestureType = ViewGestureType::Swipe;
 
@@ -333,13 +359,13 @@ void ViewGestureController::beginSwipeGesture(WebBackForwardListItem* targetItem
         [rootLayer setShadowPath:shadowPath.get()];
     }
 
-    if (swipingLeft)
+    if (direction == SwipeDirection::Left)
         [rootLayer.superlayer insertSublayer:m_swipeSnapshotLayer.get() below:rootLayer];
     else
         [rootLayer.superlayer insertSublayer:m_swipeSnapshotLayer.get() above:rootLayer];
 }
 
-void ViewGestureController::handleSwipeGesture(WebBackForwardListItem* targetItem, double progress, bool swipingLeft)
+void ViewGestureController::handleSwipeGesture(WebBackForwardListItem* targetItem, double progress, SwipeDirection direction)
 {
     ASSERT(m_activeGestureType == ViewGestureType::Swipe);
 
@@ -348,13 +374,13 @@ void ViewGestureController::handleSwipeGesture(WebBackForwardListItem* targetIte
     double swipingLayerOffset = floor(width * progress);
 
     if (m_swipeTransitionStyle == SwipeTransitionStyle::Overlap) {
-        if (swipingLeft)
+        if (direction == SwipeDirection::Left)
             [rootLayer setPosition:CGPointMake(swipingLayerOffset, 0)];
         else
             [m_swipeSnapshotLayer setPosition:CGPointMake(width + swipingLayerOffset, 0)];
     } else if (m_swipeTransitionStyle == SwipeTransitionStyle::Push) {
         [rootLayer setPosition:CGPointMake(swipingLayerOffset, 0)];
-        [m_swipeSnapshotLayer setPosition:CGPointMake((swipingLeft ? -width : width) + swipingLayerOffset, 0)];
+        [m_swipeSnapshotLayer setPosition:CGPointMake((direction == SwipeDirection::Left ? -width : width) + swipingLayerOffset, 0)];
     }
 }
 

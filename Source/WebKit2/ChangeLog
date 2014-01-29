@@ -1,3 +1,45 @@
+2014-01-28  Tim Horton  <timothy_horton@apple.com>
+
+        WebKit2 View Gestures (Swipe): Give WebCore the first crack at scroll events if it needs it
+        https://bugs.webkit.org/show_bug.cgi?id=127396
+
+        Reviewed by Anders Carlsson.
+
+        * UIProcess/API/ios/PageClientImplIOS.h:
+        * UIProcess/API/ios/PageClientImplIOS.mm:
+        (WebKit::PageClientImpl::wheelEventWasNotHandledByWebCore):
+        * UIProcess/API/mac/PageClientImpl.h:
+        * UIProcess/API/mac/PageClientImpl.mm:
+        (WebKit::PageClientImpl::wheelEventWasNotHandledByWebCore):
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView _wheelEventWasNotHandledByWebCore:]):
+        * UIProcess/API/mac/WKViewInternal.h:
+        * UIProcess/PageClient.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didReceiveEvent):
+        In addition to informing the page client about un-handled wheel events,
+        inform the ViewGestureController, in a roundabout way.
+
+        * UIProcess/mac/ViewGestureController.h:
+        Add and use SwipeDirection enum instead of 'bool willSwipeLeft'.
+
+        * UIProcess/mac/ViewGestureController.mm:
+        (WebKit::ViewGestureController::ViewGestureController):
+        (WebKit::ViewGestureController::handleScrollWheelEvent):
+        If we get a Begin scroll wheel event, any previously deferred
+        swipes are invalid.
+
+        If the page has subframes or wheel handlers, defer starting the
+        swipe until we get a wheelEventWasNotHandledByWebCore back from the WebProcess.
+
+        (WebKit::ViewGestureController::wheelEventWasNotHandledByWebCore):
+        Start the swipe if the WebProcess didn't eat the event.
+
+        (WebKit::ViewGestureController::trackSwipeGesture):
+        (WebKit::ViewGestureController::beginSwipeGesture):
+        (WebKit::ViewGestureController::handleSwipeGesture):
+        Use SwipeDirection.
+
 2014-01-28  Anders Carlsson  <andersca@apple.com>
 
         Fix build.

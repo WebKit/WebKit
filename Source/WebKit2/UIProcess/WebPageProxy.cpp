@@ -3535,8 +3535,11 @@ void WebPageProxy::didReceiveEvent(uint32_t opaqueType, bool handled)
         OwnPtr<Vector<NativeWebWheelEvent>> oldestCoalescedEvent = m_currentlyProcessedWheelEvents.takeFirst();
 
         // FIXME: Dispatch additional events to the didNotHandleWheelEvent client function.
-        if (!handled && m_uiClient.implementsDidNotHandleWheelEvent())
-            m_uiClient.didNotHandleWheelEvent(this, oldestCoalescedEvent->last());
+        if (!handled) {
+            if (m_uiClient.implementsDidNotHandleWheelEvent())
+                m_uiClient.didNotHandleWheelEvent(this, oldestCoalescedEvent->last());
+            m_pageClient.wheelEventWasNotHandledByWebCore(oldestCoalescedEvent->last());
+        }
 
         if (!m_wheelEventQueue.isEmpty())
             processNextQueuedWheelEvent();

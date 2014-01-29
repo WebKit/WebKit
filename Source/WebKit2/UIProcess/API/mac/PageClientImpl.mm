@@ -32,6 +32,7 @@
 #import "DictionaryPopupInfo.h"
 #import "FindIndicator.h"
 #import "NativeWebKeyboardEvent.h"
+#import "NativeWebWheelEvent.h"
 #import "StringUtilities.h"
 #import "WKAPICast.h"
 #import "WKFullScreenWindowController.h"
@@ -442,6 +443,11 @@ CALayer *PageClientImpl::acceleratedCompositingRootLayer() const
 RetainPtr<CGImageRef> PageClientImpl::takeViewSnapshot()
 {
     return [m_wkView _takeViewSnapshot];
+}
+
+void PageClientImpl::wheelEventWasNotHandledByWebCore(const NativeWebWheelEvent& event)
+{
+    [m_wkView _wheelEventWasNotHandledByWebCore:event.nativeEvent()];
 }
 
 void PageClientImpl::pluginFocusOrWindowFocusChanged(uint64_t pluginComplexTextInputIdentifier, bool pluginHasFocusAndWindowHasFocus)

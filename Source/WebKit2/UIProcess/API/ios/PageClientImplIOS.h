@@ -98,6 +98,7 @@ private:
 #endif
 
     virtual RetainPtr<CGImageRef> takeViewSnapshot() override;
+    virtual void wheelEventWasNotHandledByWebCore(const NativeWebWheelEvent&) override;
 
     virtual void mainDocumentDidReceiveMobileDocType() override;
 

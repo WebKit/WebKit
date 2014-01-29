@@ -328,6 +328,11 @@ RetainPtr<CGImageRef> PageClientImpl::takeViewSnapshot()
     return nullptr;
 }
 
+void PageClientImpl::wheelEventWasNotHandledByWebCore(const NativeWebWheelEvent& event)
+{
+    notImplemented();
+}
+
 void PageClientImpl::mainDocumentDidReceiveMobileDocType()
 {
     [m_view _didReceiveMobileDocTypeForMainFrame];

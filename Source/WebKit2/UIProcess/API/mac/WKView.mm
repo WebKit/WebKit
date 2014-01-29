@@ -2564,6 +2564,11 @@ static void createSandboxExtensionsForFileUpload(NSPasteboard *pasteboard, Sandb
     return adoptCF(CGImageCreateWithImageInRect(windowSnapshotImage.get(), NSRectToCGRect([window convertRectToBacking:croppedImageRect])));
 }
 
+- (void)_wheelEventWasNotHandledByWebCore:(NSEvent *)event
+{
+    _data->_gestureController->wheelEventWasNotHandledByWebCore(event);
+}
+
 - (void)_setAccessibilityWebProcessToken:(NSData *)data
 {
     _data->_remoteAccessibilityChild = WKAXRemoteElementForToken(data);
