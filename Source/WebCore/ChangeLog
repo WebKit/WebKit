@@ -1,3 +1,17 @@
+2014-01-29  Brady Eidson  <beidson@apple.com>
+
+        IDB: Opening an existing database is broken
+        https://bugs.webkit.org/show_bug.cgi?id=127851
+
+        Reviewed by Tim Hatcher.
+
+        * Modules/indexeddb/IDBDatabaseBackend.cpp:
+        (WebCore::IDBDatabaseBackend::IDBDatabaseBackend):
+        (WebCore::IDBDatabaseBackend::didOpenInternalAsync): Remember if this method has completed.
+        (WebCore::IDBDatabaseBackend::processPendingCalls): If didOpenInternalAsync hasn’t
+          been called yet, then it is incorrect to process any pending calls right now.
+        * Modules/indexeddb/IDBDatabaseBackend.h:
+
 2014-01-29  Oliver Hunt  <oliver@apple.com>
 
         This dereference should not actually be necessary, and

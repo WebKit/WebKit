@@ -191,22 +191,23 @@ std::unique_ptr<IDBDatabaseMetadata> UniqueIDBDatabaseBackingStoreSQLite::extrac
 
         int result = sql.step();
         while (result == SQLResultRow) {
-            IDBObjectStoreMetadata metadata;
-            metadata.id = sql.getColumnInt64(0);
-            metadata.name = sql.getColumnText(1);
+            IDBObjectStoreMetadata osMetadata;
+            osMetadata.id = sql.getColumnInt64(0);
+            osMetadata.name = sql.getColumnText(1);
 
             int keyPathSize;
             const uint8_t* keyPathBuffer = static_cast<const uint8_t*>(sql.getColumnBlob(2, keyPathSize));
 
 
-            if (!deserializeIDBKeyPath(keyPathBuffer, keyPathSize, metadata.keyPath)) {
+            if (!deserializeIDBKeyPath(keyPathBuffer, keyPathSize, osMetadata.keyPath)) {
                 LOG_ERROR("Unable to extract key path metadata from database");
                 return nullptr;
             }
 
-            metadata.autoIncrement = sql.getColumnInt(3);
-            metadata.maxIndexId = sql.getColumnInt64(4);
+            osMetadata.autoIncrement = sql.getColumnInt(3);
+            osMetadata.maxIndexId = sql.getColumnInt64(4);
 
+            metadata->objectStores.set(osMetadata.id, osMetadata);
             result = sql.step();
         }
 

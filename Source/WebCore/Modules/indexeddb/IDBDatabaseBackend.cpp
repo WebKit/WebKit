@@ -58,6 +58,7 @@ IDBDatabaseBackend::IDBDatabaseBackend(const String& name, const String& uniqueI
     , m_serverConnection(serverConnection)
     , m_transactionCoordinator(IDBTransactionCoordinator::create())
     , m_closingConnection(false)
+    , m_didOpenInternal(false)
 {
     ASSERT(!m_metadata.name.isNull());
 }
@@ -112,6 +113,8 @@ void IDBDatabaseBackend::openInternalAsync()
 
 void IDBDatabaseBackend::didOpenInternalAsync(const IDBDatabaseMetadata& metadata, bool success)
 {
+    m_didOpenInternal = true;
+
     if (!success) {
         processPendingOpenCalls(false);
         return;
@@ -364,6 +367,10 @@ size_t IDBDatabaseBackend::connectionCount()
 
 void IDBDatabaseBackend::processPendingCalls()
 {
+    // processPendingCalls() will be called again after openInternalAsync() completes.
+    if (!m_didOpenInternal)
+        return;
+
     if (m_pendingSecondHalfOpen) {
         ASSERT(m_pendingSecondHalfOpen->version() == m_metadata.version);
         ASSERT(m_metadata.id != InvalidId);

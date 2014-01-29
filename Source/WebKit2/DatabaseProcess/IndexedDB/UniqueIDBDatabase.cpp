@@ -179,9 +179,9 @@ void UniqueIDBDatabase::getOrEstablishIDBDatabaseMetadata(std::function<void(boo
         return;
     }
 
-    // If this is the first unanswered metadata request, post a task to open the backing store and get metadata.
-    if (m_pendingMetadataRequests.isEmpty())
-        postDatabaseTask(createAsyncTask(*this, &UniqueIDBDatabase::openBackingStoreAndReadMetadata, m_identifier, absoluteDatabaseDirectory()));
+    // If this is the first unanswered metadata request, then later we need to
+    // post a task to open the backing store and get metadata.
+    bool shouldOpenBackingStore = m_pendingMetadataRequests.isEmpty();
 
     // Then remember this metadata request to be answered later.
     RefPtr<AsyncRequest> request = AsyncRequestImpl<>::create([completionCallback, this]() {
@@ -194,6 +194,9 @@ void UniqueIDBDatabase::getOrEstablishIDBDatabaseMetadata(std::function<void(boo
     });
 
     m_pendingMetadataRequests.append(request.release());
+
+    if (shouldOpenBackingStore)
+        postDatabaseTask(createAsyncTask(*this, &UniqueIDBDatabase::openBackingStoreAndReadMetadata, m_identifier, absoluteDatabaseDirectory()));
 }
 
 void UniqueIDBDatabase::openBackingStoreAndReadMetadata(const UniqueIDBDatabaseIdentifier& identifier, const String& databaseDirectory)

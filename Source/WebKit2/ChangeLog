@@ -1,3 +1,17 @@
+2014-01-29  Brady Eidson  <beidson@apple.com>
+
+        IDB: Opening an existing database is broken
+        https://bugs.webkit.org/show_bug.cgi?id=127851
+
+        Reviewed by Tim Hatcher.
+
+        * DatabaseProcess/IndexedDB/UniqueIDBDatabase.cpp:
+        (WebKit::UniqueIDBDatabase::getOrEstablishIDBDatabaseMetadata): Save the request to get metadata
+          to the set before posting the task to the thread.
+        * DatabaseProcess/IndexedDB/sqlite/UniqueIDBDatabaseBackingStoreSQLite.cpp:
+        (WebKit::UniqueIDBDatabaseBackingStoreSQLite::extractExistingMetadata): Actually save the retrieved
+          object store metadata to the database metadata.
+
 2014-01-29  Anders Carlsson  <andersca@apple.com>
 
         Consolidate page loading functions

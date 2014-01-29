@@ -165,6 +165,7 @@ private:
     DatabaseCallbacksSet m_databaseCallbacksSet;
 
     bool m_closingConnection;
+    bool m_didOpenInternal;
 };
 
 } // namespace WebCore
