@@ -1,3 +1,21 @@
+2014-01-29  Jer Noble  <jer.noble@apple.com>
+
+        [MediaControls][iOS] Hook up the fullscreen button
+        https://bugs.webkit.org/show_bug.cgi?id=127850
+
+        Reviewed by Eric Carlson.
+
+        For the fullscreen button, do the same thing we do for the play button: handle touchstart,
+        touchend, and touchcancel, and perform the action (i.e., 'click') on touchend.
+
+        * Modules/mediacontrols/mediaControlsiOS.js:
+        (ControllerIOS.prototype.createControls): Add listeners for the fullscreenButton.
+        (ControllerIOS.prototype.isFullScreen): Override.
+        (ControllerIOS.prototype.handleFullscreenButtonClicked): Override.
+        (ControllerIOS.prototype.handleFullscreenTouchStart): Added.
+        (ControllerIOS.prototype.handleFullscreenTouchEnd): Added.
+        (ControllerIOS.prototype.handleFullscreenTouchCancel): Added.
+
 2014-01-29  Brady Eidson  <beidson@apple.com>
 
         IDB: Opening an existing database is broken

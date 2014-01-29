@@ -34,6 +34,9 @@ ControllerIOS.prototype = {
         this.listenFor(this.controls.playButton, 'touchstart', this.handlePlayButtonTouchStart);
         this.listenFor(this.controls.playButton, 'touchend', this.handlePlayButtonTouchEnd);
         this.listenFor(this.controls.playButton, 'touchcancel', this.handlePlayButtonTouchCancel);
+        this.listenFor(this.controls.fullscreenButton, 'touchstart', this.handleFullscreenTouchStart);
+        this.listenFor(this.controls.fullscreenButton, 'touchend', this.handleFullscreenTouchEnd);
+        this.listenFor(this.controls.fullscreenButton, 'touchcancel', this.handleFullscreenTouchCancel);
         this.stopListeningFor(this.controls.playButton, 'click', this.handlePlayButtonClicked);
     },
 
@@ -96,6 +99,38 @@ ControllerIOS.prototype = {
     handlePanelTouchCancel: function(event) {
         this.video.style.removeProperty('-webkit-user-select');
     },
+
+    isFullScreen: function()
+    {
+        return this.video.webkitDisplayingFullscreen;
+    },
+
+    handleFullscreenButtonClicked: function(event)
+    {
+        console.trace();
+        if (this.isFullScreen())
+            this.video.webkitExitFullscreen();
+        else
+            this.video.webkitEnterFullscreen();
+    },
+
+    handleFullscreenTouchStart: function() {
+        this.controls.fullscreenButton.classList.add('active');
+    },
+
+    handleFullscreenTouchEnd: function(event) {
+        this.controls.fullscreenButton.classList.remove('active');
+
+        this.handleFullscreenButtonClicked();
+
+        event.stopPropagation();
+    },
+
+    handleFullscreenTouchCancel: function(event) {
+        this.controls.fullscreenButton.classList.remove('active');
+        event.stopPropagation();
+    },
+
 };
 
 ControllerIOS.prototype.inheritFrom(Object.create(Controller.prototype));
