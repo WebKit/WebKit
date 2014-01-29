@@ -110,6 +110,17 @@ void AssemblyHelpers::jitAssertIsCell(GPRReg gpr)
     breakpoint();
     checkCell.link(this);
 }
+
+void AssemblyHelpers::jitAssertTagsInPlace()
+{
+    Jump ok = branch64(Equal, GPRInfo::tagTypeNumberRegister, TrustedImm64(TagTypeNumber));
+    breakpoint();
+    ok.link(this);
+    
+    ok = branch64(Equal, GPRInfo::tagMaskRegister, TrustedImm64(TagMask));
+    breakpoint();
+    ok.link(this);
+}
 #elif USE(JSVALUE32_64)
 void AssemblyHelpers::jitAssertIsInt32(GPRReg gpr)
 {
@@ -145,6 +156,10 @@ void AssemblyHelpers::jitAssertIsCell(GPRReg gpr)
     breakpoint();
     checkCell.link(this);
 }
+
+void AssemblyHelpers::jitAssertTagsInPlace()
+{
+}
 #endif // USE(JSVALUE32_64)
 
 void AssemblyHelpers::jitAssertHasValidCallFrame()
@@ -159,6 +174,13 @@ void AssemblyHelpers::jitAssertIsNull(GPRReg gpr)
     Jump checkNull = branchTestPtr(Zero, gpr);
     breakpoint();
     checkNull.link(this);
+}
+
+void AssemblyHelpers::jitAssertArgumentCountSane()
+{
+    Jump ok = branch32(Below, payloadFor(JSStack::ArgumentCount), TrustedImm32(10000000));
+    breakpoint();
+    ok.link(this);
 }
 #endif // !ASSERT_DISABLED
 

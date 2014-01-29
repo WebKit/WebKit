@@ -58,8 +58,36 @@ public:
     CodeBlock* codeBlock() { return m_codeBlock; }
     VM* vm() { return m_vm; }
     AssemblerType_T& assembler() { return m_assembler; }
-    
+
+    void checkStackPointerAlignment()
+    {
+        // This check is both unneeded and harder to write correctly for ARM64
+#if !defined(NDEBUG) && !CPU(ARM64)
+        Jump stackPointerAligned = branchTestPtr(Zero, stackPointerRegister, TrustedImm32(0xf));
+        breakpoint();
+        stackPointerAligned.link(this);
+#endif
+    }
+
 #if CPU(X86_64) || CPU(X86)
+    size_t prologueStackPointerDelta()
+    {
+        // Prologue only saves the framePointerRegister
+        return sizeof(void*);
+    }
+
+    void emitFunctionPrologue()
+    {
+        push(framePointerRegister);
+        move(stackPointerRegister, framePointerRegister);
+    }
+
+    void emitFunctionEpilogue()
+    {
+        move(framePointerRegister, stackPointerRegister);
+        pop(framePointerRegister);
+    }
+
     void preserveReturnAddressAfterCall(GPRReg reg)
     {
         pop(reg);
@@ -77,6 +105,24 @@ public:
 #endif // CPU(X86_64) || CPU(X86)
 
 #if CPU(ARM) || CPU(ARM64)
+    size_t prologueStackPointerDelta()
+    {
+        // Prologue saves the framePointerRegister and linkRegister
+        return 2 * sizeof(void*);
+    }
+
+    void emitFunctionPrologue()
+    {
+        pushPair(framePointerRegister, linkRegister);
+        move(stackPointerRegister, framePointerRegister);
+    }
+
+    void emitFunctionEpilogue()
+    {
+        move(framePointerRegister, stackPointerRegister);
+        popPair(framePointerRegister, linkRegister);
+    }
+
     ALWAYS_INLINE void preserveReturnAddressAfterCall(RegisterID reg)
     {
         move(linkRegister, reg);
@@ -94,6 +140,12 @@ public:
 #endif
 
 #if CPU(MIPS)
+    size_t prologueStackPointerDelta()
+    {
+        // Prologue saves the framePointerRegister and returnAddressRegister
+        return 2 * sizeof(void*);
+    }
+
     ALWAYS_INLINE void preserveReturnAddressAfterCall(RegisterID reg)
     {
         move(returnAddressRegister, reg);
@@ -111,6 +163,12 @@ public:
 #endif
 
 #if CPU(SH4)
+    size_t prologueStackPointerDelta()
+    {
+        // Prologue saves the framePointerRegister and link register
+        return 2 * sizeof(void*);
+    }
+
     ALWAYS_INLINE void preserveReturnAddressAfterCall(RegisterID reg)
     {
         m_assembler.stspr(reg);
@@ -150,10 +208,6 @@ public:
         storePtr(from, Address(GPRInfo::callFrameRegister, CallFrame::callerFrameOffset()));
     }
 
-    void emitGetReturnPCFromCallFrameHeaderPtr(RegisterID to)
-    {
-        loadPtr(Address(GPRInfo::callFrameRegister, CallFrame::returnPCOffset()), to);
-    }
     void emitPutReturnPCToCallFrameHeader(RegisterID from)
     {
         storePtr(from, Address(GPRInfo::callFrameRegister, CallFrame::returnPCOffset()));
@@ -162,6 +216,29 @@ public:
     {
         storePtr(from, Address(GPRInfo::callFrameRegister, CallFrame::returnPCOffset()));
     }
+
+    // emitPutToCallFrameHeaderBeforePrologue() and related are used to access callee frame header
+    // fields before the code from emitFunctionPrologue() has executed.
+    // First, the access is via the stack pointer. Second, the address calculation must also take
+    // into account that the stack pointer may not have been adjusted down for the return PC and/or
+    // caller's frame pointer. On some platforms, the callee is responsible for pushing the
+    // "link register" containing the return address in the function prologue.
+#if USE(JSVALUE64)
+    void emitPutToCallFrameHeaderBeforePrologue(GPRReg from, JSStack::CallFrameHeaderEntry entry)
+    {
+        storePtr(from, Address(stackPointerRegister, entry * static_cast<ptrdiff_t>(sizeof(Register)) - prologueStackPointerDelta()));
+    }
+#else
+    void emitPutPayloadToCallFrameHeaderBeforePrologue(GPRReg from, JSStack::CallFrameHeaderEntry entry)
+    {
+        storePtr(from, Address(stackPointerRegister, entry * static_cast<ptrdiff_t>(sizeof(Register)) - prologueStackPointerDelta() + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.payload)));
+    }
+
+    void emitPutTagToCallFrameHeaderBeforePrologue(TrustedImm32 tag, JSStack::CallFrameHeaderEntry entry)
+    {
+        storePtr(tag, Address(stackPointerRegister, entry * static_cast<ptrdiff_t>(sizeof(Register)) - prologueStackPointerDelta() + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.tag)));
+    }
+#endif
 
     Jump branchIfNotCell(GPRReg reg)
     {
@@ -194,7 +271,7 @@ public:
     static Address tagFor(VirtualRegister virtualRegister)
     {
         ASSERT(virtualRegister.isValid());
-        return Address(GPRInfo::callFrameRegister, virtualRegister.offset() * sizeof(Register) + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.tag));
+        return Address(GPRInfo::callFrameRegister, virtualRegister.offset() * sizeof(Register) + TagOffset);
     }
     static Address tagFor(int operand)
     {
@@ -204,7 +281,7 @@ public:
     static Address payloadFor(VirtualRegister virtualRegister)
     {
         ASSERT(virtualRegister.isValid());
-        return Address(GPRInfo::callFrameRegister, virtualRegister.offset() * sizeof(Register) + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.payload));
+        return Address(GPRInfo::callFrameRegister, virtualRegister.offset() * sizeof(Register) + PayloadOffset);
     }
     static Address payloadFor(int operand)
     {
@@ -298,6 +375,8 @@ public:
     void jitAssertIsCell(GPRReg);
     void jitAssertHasValidCallFrame();
     void jitAssertIsNull(GPRReg);
+    void jitAssertTagsInPlace();
+    void jitAssertArgumentCountSane();
 #else
     void jitAssertIsInt32(GPRReg) { }
     void jitAssertIsJSInt32(GPRReg) { }
@@ -306,6 +385,8 @@ public:
     void jitAssertIsCell(GPRReg) { }
     void jitAssertHasValidCallFrame() { }
     void jitAssertIsNull(GPRReg) { }
+    void jitAssertTagsInPlace() { }
+    void jitAssertArgumentCountSane() { }
 #endif
 
     // These methods convert between doubles, and doubles boxed and JSValues.

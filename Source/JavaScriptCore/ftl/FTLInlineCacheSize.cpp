@@ -47,6 +47,11 @@ size_t sizeOfPutById()
     return 32;
 }
 
+size_t sizeOfCall()
+{
+    return 43;
+}
+
 } } // namespace JSC::FTL
 
 #endif // ENABLE(FTL_JIT)

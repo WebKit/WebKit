@@ -589,6 +589,7 @@
     <ClCompile Include="..\runtime\DumpContext.cpp" />
     <ClCompile Include="..\runtime\Error.cpp" />
     <ClCompile Include="..\runtime\ErrorConstructor.cpp" />
+    <ClCompile Include="..\runtime\ErrorHandlingScope.cpp" />
     <ClCompile Include="..\runtime\ErrorInstance.cpp" />
     <ClCompile Include="..\runtime\ErrorPrototype.cpp" />
     <ClCompile Include="..\runtime\ExceptionHelpers.cpp" />
@@ -791,6 +792,7 @@
     <ClInclude Include="..\assembler\MacroAssemblerX86.h" />
     <ClInclude Include="..\assembler\MacroAssemblerX86Common.h" />
     <ClInclude Include="..\assembler\MacroAssemblerX86_64.h" />
+    <ClInclude Include="..\assembler\MaxFrameExtentForSlowPathCall.h" />
     <ClInclude Include="..\assembler\RepatchBuffer.h" />
     <ClInclude Include="..\assembler\X86Assembler.h" />
     <ClInclude Include="..\bindings\ScriptFunctionCall.h" />
@@ -1204,6 +1206,7 @@
     <ClInclude Include="..\runtime\DumpContext.h" />
     <ClInclude Include="..\runtime\Error.h" />
     <ClInclude Include="..\runtime\ErrorConstructor.h" />
+    <ClInclude Include="..\runtime\ErrorHandlingScope.h" />
     <ClInclude Include="..\runtime\ErrorInstance.h" />
     <ClInclude Include="..\runtime\ErrorPrototype.h" />
     <ClInclude Include="..\runtime\ExceptionHelpers.h" />
@@ -1405,22 +1408,6 @@
     <None Include="JavaScriptCorePreLink.cmd">
       <FileType>Document</FileType>
     </None>
-  </ItemGroup>
-  <ItemGroup>
-    <MASM Include="..\jit\JITStubsMSVC64.asm">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_WinCairo|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_WinCairo|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Production|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Production|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug_WinCairo|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug_WinCairo|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugSuffix|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugSuffix|x64'">true</ExcludedFromBuild>
-    </MASM>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

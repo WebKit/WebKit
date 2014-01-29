@@ -156,6 +156,7 @@ void JITCode::setOptimizationThresholdBasedOnCompilationResult(
     switch (result) {
     case CompilationSuccessful:
         optimizeNextInvocation(codeBlock);
+        codeBlock->baselineVersion()->m_hasBeenCompiledWithFTL = true;
         return;
     case CompilationFailed:
         dontOptimizeAnytimeSoon(codeBlock);

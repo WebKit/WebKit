@@ -4981,7 +4981,6 @@ _llint_slow_path_handle_watchdog_timer
 _llint_slow_path_debug
 _llint_slow_path_profile_will_call
 _llint_slow_path_profile_did_call
-_llint_throw_from_native_call
 _llint_begin
 _llint_program_prologue
 _llint_eval_prologue

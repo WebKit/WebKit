@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2012, 2013, 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,7 +26,9 @@
 #ifndef CallLinkStatus_h
 #define CallLinkStatus_h
 
+#include "CodeOrigin.h"
 #include "CodeSpecializationKind.h"
+#include "ConcurrentJITLock.h"
 #include "Intrinsic.h"
 #include "JSCJSValue.h"
 
@@ -37,6 +39,7 @@ class ExecutableBase;
 class InternalFunction;
 class JSFunction;
 class Structure;
+struct CallLinkInfo;
 
 class CallLinkStatus {
 public:
@@ -73,32 +76,22 @@ public:
     }
     
     static CallLinkStatus computeFor(CodeBlock*, unsigned bytecodeIndex);
+
+#if ENABLE(JIT)
+    // Computes the status assuming that we never took slow path and never previously
+    // exited.
+    static CallLinkStatus computeFor(const ConcurrentJITLocker&, CallLinkInfo&);
+#endif
     
-    CallLinkStatus& setHasBadFunctionExitSite(bool didHaveExitSite)
-    {
-        ASSERT(!m_isProved);
-        if (didHaveExitSite) {
-            // Turn this into a closure call.
-            m_callTarget = JSValue();
-        }
-        return *this;
-    }
+    typedef HashMap<CodeOrigin, CallLinkStatus, CodeOriginApproximateHash> ContextMap;
     
-    CallLinkStatus& setHasBadCacheExitSite(bool didHaveExitSite)
-    {
-        ASSERT(!m_isProved);
-        if (didHaveExitSite)
-            *this = takesSlowPath();
-        return *this;
-    }
+    // Computes all of the statuses of the DFG code block. Doesn't include statuses that had
+    // no information. Currently we use this when compiling FTL code, to enable polyvariant
+    // inlining.
+    static void computeDFGStatuses(CodeBlock* dfgCodeBlock, ContextMap&);
     
-    CallLinkStatus& setHasBadExecutableExitSite(bool didHaveExitSite)
-    {
-        ASSERT(!m_isProved);
-        if (didHaveExitSite)
-            *this = takesSlowPath();
-        return *this;
-    }
+    // Helper that first consults the ContextMap and then does computeFor().
+    static CallLinkStatus computeFor(CodeBlock*, CodeOrigin, const ContextMap&);
     
     bool isSet() const { return m_callTarget || m_executable || m_couldTakeSlowPath; }
     
@@ -119,7 +112,14 @@ public:
     void dump(PrintStream&) const;
     
 private:
-    static CallLinkStatus computeFromLLInt(CodeBlock*, unsigned bytecodeIndex);
+    void makeClosureCall()
+    {
+        ASSERT(!m_isProved);
+        // Turn this into a closure call.
+        m_callTarget = JSValue();
+    }
+    
+    static CallLinkStatus computeFromLLInt(const ConcurrentJITLocker&, CodeBlock*, unsigned bytecodeIndex);
     
     JSValue m_callTarget;
     ExecutableBase* m_executable;

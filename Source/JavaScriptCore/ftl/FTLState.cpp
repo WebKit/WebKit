@@ -43,6 +43,8 @@ State::State(Graph& graph)
     , module(0)
     , function(0)
     , generatedFunction(0)
+    , compactUnwind(0)
+    , compactUnwindSize(0)
 {
     switch (graph.m_plan.mode) {
     case FTLMode: {

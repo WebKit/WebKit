@@ -40,17 +40,25 @@ namespace JSC { namespace FTL {
     macro(addWithOverflow32, "llvm.sadd.with.overflow.i32", functionType(structType(m_context, int32, boolean), int32, int32)) \
     macro(addWithOverflow64, "llvm.sadd.with.overflow.i64", functionType(structType(m_context, int64, boolean), int64, int64)) \
     macro(doubleAbs, "llvm.fabs.f64", functionType(doubleType, doubleType)) \
+    macro(doubleSin, "llvm.sin.f64", functionType(doubleType, doubleType)) \
+    macro(doubleCos, "llvm.cos.f64", functionType(doubleType, doubleType)) \
+    macro(doubleSqrt, "llvm.sqrt.f64", functionType(doubleType, doubleType)) \
+    macro(frameAddress, "llvm.frameaddress", functionType(pointerType(int8), int32)) \
     macro(mulWithOverflow32, "llvm.smul.with.overflow.i32", functionType(structType(m_context, int32, boolean), int32, int32)) \
     macro(mulWithOverflow64, "llvm.smul.with.overflow.i64", functionType(structType(m_context, int64, boolean), int64, int64)) \
-    macro(patchpointInt64, "llvm.experimental.patchpoint.i64", functionType(int64, int32, int32, ref8, int32, Variadic)) \
-    macro(patchpointVoid, "llvm.experimental.patchpoint.void", functionType(voidType, int32, int32, ref8, int32, Variadic)) \
-    macro(stackmap, "llvm.experimental.stackmap", functionType(voidType, int32, int32, Variadic)) \
+    macro(patchpointInt64, "llvm.experimental.patchpoint.i64", functionType(int64, int64, int32, ref8, int32, Variadic)) \
+    macro(patchpointVoid, "llvm.experimental.patchpoint.void", functionType(voidType, int64, int32, ref8, int32, Variadic)) \
+    macro(stackmap, "llvm.experimental.stackmap", functionType(voidType, int64, int32, Variadic)) \
     macro(subWithOverflow32, "llvm.ssub.with.overflow.i32", functionType(structType(m_context, int32, boolean), int32, int32)) \
     macro(subWithOverflow64, "llvm.ssub.with.overflow.i64", functionType(structType(m_context, int64, boolean), int64, int64)) \
     macro(trap, "llvm.trap", functionType(voidType)) \
     macro(x86SSE2CvtTSD2SI, "llvm.x86.sse2.cvttsd2si", functionType(int32, vectorType(doubleType, 2)))
 
 #define FOR_EACH_FUNCTION_TYPE(macro) \
+    macro(C_JITOperation_EC, functionType(intPtr, intPtr, intPtr)) \
+    macro(C_JITOperation_EJ, functionType(intPtr, intPtr, int64)) \
+    macro(C_JITOperation_EJssJss, functionType(intPtr, intPtr, intPtr, intPtr)) \
+    macro(C_JITOperation_EJssJssJss, functionType(intPtr, intPtr, intPtr, intPtr, intPtr)) \
     macro(C_JITOperation_ESt, functionType(intPtr, intPtr, intPtr)) \
     macro(I_JITOperation_EJss, functionType(intPtr, intPtr, intPtr)) \
     macro(J_JITOperation_E, functionType(int64, intPtr)) \

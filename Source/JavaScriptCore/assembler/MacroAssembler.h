@@ -595,6 +595,11 @@ public:
         store32(TrustedImm32(imm), address);
     }
 
+    void storePtr(TrustedImm32 imm, ImplicitAddress address)
+    {
+        store32(imm, address);
+    }
+
     void storePtr(TrustedImmPtr imm, BaseIndex address)
     {
         store32(TrustedImm32(imm), address);

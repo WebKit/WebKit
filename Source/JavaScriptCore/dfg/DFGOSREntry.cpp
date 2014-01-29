@@ -44,7 +44,10 @@ void* prepareOSREntry(ExecState* exec, CodeBlock* codeBlock, unsigned bytecodeIn
     ASSERT(codeBlock->alternative());
     ASSERT(codeBlock->alternative()->jitType() == JITCode::BaselineJIT);
     ASSERT(!codeBlock->jitCodeMap());
-    
+
+    if (!Options::enableOSREntryToDFG())
+        return 0;
+
     if (Options::verboseOSR()) {
         dataLog(
             "DFG OSR in ", *codeBlock->alternative(), " -> ", *codeBlock,
@@ -52,8 +55,8 @@ void* prepareOSREntry(ExecState* exec, CodeBlock* codeBlock, unsigned bytecodeIn
     }
     
     VM* vm = &exec->vm();
-    
-    vm->interpreter->stack().sanitizeStack();
+
+    sanitizeStackForVM(vm);
     
     if (codeBlock->jitType() != JITCode::DFGJIT) {
         RELEASE_ASSERT(codeBlock->jitType() == JITCode::FTLJIT);
@@ -185,7 +188,7 @@ void* prepareOSREntry(ExecState* exec, CodeBlock* codeBlock, unsigned bytecodeIn
     //    would have otherwise just kept running albeit less quickly.
     
     unsigned frameSize = jitCode->common.requiredRegisterCountForExecutionAndExit();
-    if (!vm->interpreter->stack().grow(&exec->registers()[virtualRegisterForLocal(frameSize).offset()])) {
+    if (!vm->interpreter->stack().ensureCapacityFor(&exec->registers()[virtualRegisterForLocal(frameSize - 1).offset()])) {
         if (Options::verboseOSR())
             dataLogF("    OSR failed because stack growth failed.\n");
         return 0;
@@ -213,12 +216,14 @@ void* prepareOSREntry(ExecState* exec, CodeBlock* codeBlock, unsigned bytecodeIn
     
     // 5) Clear those parts of the call frame that the DFG ain't using. This helps GC on some
     //    programs by eliminating some stale pointer pathologies.
-    
+
+#if 0 // FIXME: CStack - This needs to be verified before being enabled
     for (unsigned i = frameSize; i--;) {
         if (entry->m_machineStackUsed.get(i))
             continue;
         registers[virtualRegisterForLocal(i).offset()] = JSValue::encode(JSValue());
     }
+#endif
     
     // 6) Fix the call frame.
     

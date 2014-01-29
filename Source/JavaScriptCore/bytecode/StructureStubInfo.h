@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2012, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2008, 2012, 2013, 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -216,7 +216,6 @@ struct StructureStubInfo {
 
     struct {
         int8_t registersFlushed;
-        int8_t callFrameRegister;
         int8_t baseGPR;
 #if USE(JSVALUE32_64)
         int8_t valueTagGPR;
@@ -290,7 +289,7 @@ inline CodeOrigin getStructureStubInfoCodeOrigin(StructureStubInfo& structureStu
     return structureStubInfo.codeOrigin;
 }
 
-typedef HashMap<CodeOrigin, StructureStubInfo*> StubInfoMap;
+typedef HashMap<CodeOrigin, StructureStubInfo*, CodeOriginApproximateHash> StubInfoMap;
 
 #else
 

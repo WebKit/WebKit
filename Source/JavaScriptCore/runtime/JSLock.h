@@ -95,10 +95,6 @@ namespace JSC {
 
         JS_EXPORT_PRIVATE bool currentThreadIsHoldingLock();
 
-        unsigned dropAllLocks(SpinLock&);
-        unsigned dropAllLocksUnconditionally(SpinLock&);
-        void grabAllLocks(unsigned lockCount, SpinLock&);
-
         void willDestroyVM(VM*);
 
         class DropAllLocks {
@@ -114,9 +110,15 @@ namespace JSC {
         private:
             intptr_t m_lockCount;
             RefPtr<VM> m_vm;
+            size_t m_savedReservedZoneSize;
+            void* m_savedStackPointerAtVMEntry;
         };
 
     private:
+        unsigned dropAllLocks(SpinLock&);
+        unsigned dropAllLocksUnconditionally(SpinLock&);
+        void grabAllLocks(unsigned lockCount, SpinLock&);
+
         SpinLock m_spinLock;
         Mutex m_lock;
         ThreadIdentifier m_ownerThread;

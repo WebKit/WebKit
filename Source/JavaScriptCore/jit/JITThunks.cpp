@@ -52,6 +52,7 @@ MacroAssemblerCodePtr JITThunks::ctiNativeCall(VM* vm)
 #endif
     return ctiStub(vm, nativeCallGenerator).code();
 }
+
 MacroAssemblerCodePtr JITThunks::ctiNativeConstruct(VM* vm)
 {
 #if ENABLE(LLINT)
@@ -59,6 +60,12 @@ MacroAssemblerCodePtr JITThunks::ctiNativeConstruct(VM* vm)
         return MacroAssemblerCodePtr::createLLIntCodePtr(llint_native_construct_trampoline);
 #endif
     return ctiStub(vm, nativeConstructGenerator).code();
+}
+
+MacroAssemblerCodePtr JITThunks::ctiNativeTailCall(VM* vm)
+{
+    ASSERT(vm->canUseJIT());
+    return ctiStub(vm, nativeTailCallGenerator).code();
 }
 
 MacroAssemblerCodeRef JITThunks::ctiStub(VM* vm, ThunkGenerator generator)
@@ -80,7 +87,12 @@ NativeExecutable* JITThunks::hostFunctionStub(VM* vm, NativeFunction function, N
     if (NativeExecutable* nativeExecutable = m_hostFunctionStubMap->get(std::make_pair(function, constructor)))
         return nativeExecutable;
 
-    NativeExecutable* nativeExecutable = NativeExecutable::create(*vm, JIT::compileCTINativeCall(vm, function), function, MacroAssemblerCodeRef::createSelfManagedCodeRef(ctiNativeConstruct(vm)), constructor, NoIntrinsic);
+    NativeExecutable* nativeExecutable = NativeExecutable::create(
+        *vm,
+        adoptRef(new NativeJITCode(JIT::compileCTINativeCall(vm, function), JITCode::HostCallThunk)),
+        function,
+        adoptRef(new NativeJITCode(MacroAssemblerCodeRef::createSelfManagedCodeRef(ctiNativeConstruct(vm)), JITCode::HostCallThunk)),
+        constructor, NoIntrinsic);
     weakAdd(*m_hostFunctionStubMap, std::make_pair(function, constructor), Weak<NativeExecutable>(nativeExecutable));
     return nativeExecutable;
 }
@@ -92,16 +104,18 @@ NativeExecutable* JITThunks::hostFunctionStub(VM* vm, NativeFunction function, T
     if (NativeExecutable* nativeExecutable = m_hostFunctionStubMap->get(std::make_pair(function, &callHostFunctionAsConstructor)))
         return nativeExecutable;
 
-    MacroAssemblerCodeRef code;
+    RefPtr<JITCode> forCall;
     if (generator) {
-        if (vm->canUseJIT())
-            code = generator(vm);
-        else
-            code = MacroAssemblerCodeRef();
+        if (vm->canUseJIT()) {
+            MacroAssemblerCodeRef entry = generator(vm);
+            forCall = adoptRef(new DirectJITCode(entry, entry.code(), JITCode::HostCallThunk));
+        }
     } else
-        code = JIT::compileCTINativeCall(vm, function);
-
-    NativeExecutable* nativeExecutable = NativeExecutable::create(*vm, code, function, MacroAssemblerCodeRef::createSelfManagedCodeRef(ctiNativeConstruct(vm)), callHostFunctionAsConstructor, intrinsic);
+        forCall = adoptRef(new NativeJITCode(JIT::compileCTINativeCall(vm, function), JITCode::HostCallThunk));
+    
+    RefPtr<JITCode> forConstruct = adoptRef(new NativeJITCode(MacroAssemblerCodeRef::createSelfManagedCodeRef(ctiNativeConstruct(vm)), JITCode::HostCallThunk));
+    
+    NativeExecutable* nativeExecutable = NativeExecutable::create(*vm, forCall, function, forConstruct, callHostFunctionAsConstructor, intrinsic);
     weakAdd(*m_hostFunctionStubMap, std::make_pair(function, &callHostFunctionAsConstructor), Weak<NativeExecutable>(nativeExecutable));
     return nativeExecutable;
 }

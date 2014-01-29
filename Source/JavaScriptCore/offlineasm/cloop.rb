@@ -1,4 +1,4 @@
-# Copyright (C) 2012 Apple Inc. All rights reserved.
+# Copyright (C) 2012, 2014 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -68,34 +68,22 @@ C_LOOP_SCRATCH_FPR = SpecialRegister.new("d6")
 class RegisterID
     def clDump
         case name
-        when "a0"
-            "a0"
-        when "a1"
-            "a1"
-        when "a2"
-            "a2"
-        when "a3"
-            "a3"
-        when "a4"
-            "a4"
-        when "a5"
-            "a5"
-        when "a6"
-            "a6"
-        when "a6"
-            "a6"
-        when "t0"
+        # The cloop is modelled on the ARM implementation. Hence, the a0-a3
+        # registers are aliases for r0-r3 i.e. t0-t3 in our case.
+        when "t0", "a0"
             "t0"
-        when "t1"
+        when "t1", "a1"
             "t1"
-        when "t2"
+        when "t2", "a2"
             "t2"
-        when "t3"
+        when "t3", "a3"
             "t3"
         when "t4"
-            "rPC"
+            "pc"
+        when "t5"
+            "t5"
         when "t6"
-            "rBasePC"
+            "pcBase"
         when "csr1"
             "tagTypeNumber"
         when "csr2"
@@ -103,7 +91,7 @@ class RegisterID
         when "cfr"
             "cfr"
         when "lr"
-            "rRetVPC"
+            "lr"
         when "sp"
             "sp"
         else
@@ -555,14 +543,14 @@ end
 # operands: callTarget, currentFrame, currentPC
 def cloopEmitCallSlowPath(operands)
     $asm.putc "{"
-    $asm.putc "    ExecState* exec = CAST<ExecState*>(#{operands[1].clValue(:voidPtr)});"
-    $asm.putc "    Instruction* pc = CAST<Instruction*>(#{operands[2].clValue(:voidPtr)});"
-    $asm.putc "    SlowPathReturnType result = #{operands[0].cLabel}(exec, pc);"
-    $asm.putc "    decodeResult(result, t0.instruction, t1.vp);"
+    $asm.putc "    SlowPathReturnType result = #{operands[0].cLabel}(#{operands[1].clDump}, #{operands[2].clDump});"
+    $asm.putc "    decodeResult(result, t0.vp, t1.vp);"
     $asm.putc "}"
 end
 
 class Instruction
+    @@didReturnFromJSLabelCounter = 0
+
     def lowerC_LOOP
         $asm.codeOrigin codeOriginString if $enableCodeOriginComments
         $asm.annotation annotation if $enableInstrAnnotations && (opcode != "cloopDo")
@@ -876,7 +864,8 @@ class Instruction
         when "break"
             $asm.putc "CRASH(); // break instruction not implemented."
         when "ret"
-            $asm.putc "goto doReturnHelper;"
+            $asm.putc "opcode = lr.opcode;"
+            $asm.putc "DISPATCH_OPCODE();"
 
         when "cbeq"
             cloopEmitCompareAndSet(operands, :uint8, "==")
@@ -1097,6 +1086,12 @@ class Instruction
             cloopEmitOpAndBranch(operands, "|", :int32, "!= 0")
             
         when "memfence"
+
+        when "push"
+            $asm.putc "PUSH(#{operands[0].clDump});"
+        when "pop"
+            $asm.putc "POP(#{operands[0].clDump});"
+
         when "pushCalleeSaves"
         when "popCalleeSaves"
 
@@ -1113,8 +1108,11 @@ class Instruction
         # use of the call instruction. Instead, we just implement JS calls
         # as an opcode dispatch.
         when "cloopCallJSFunction"
+            @@didReturnFromJSLabelCounter += 1
+            $asm.putc "lr.opcode = getOpcode(llint_cloop_did_return_from_js_#{@@didReturnFromJSLabelCounter});"
             $asm.putc "opcode = #{operands[0].clValue(:opcode)};"
             $asm.putc "DISPATCH_OPCODE();"
+            $asm.putsLabel("llint_cloop_did_return_from_js_#{@@didReturnFromJSLabelCounter}")
 
         # We can't do generic function calls with an arbitrary set of args, but
         # fortunately we don't have to here. All native function calls always

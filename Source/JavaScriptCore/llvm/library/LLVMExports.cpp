@@ -42,6 +42,10 @@ extern "C" JSC::LLVMAPI* initializeAndGetJSCLLVMAPI(void (*callback)(const char*
     g_llvmTrapCallback = callback;
     
     LLVMInstallFatalErrorHandler(llvmCrash);
+
+    if (!LLVMStartMultithreaded())
+        callback("Could not start LLVM multithreading");
+    
     LLVMLinkInMCJIT();
     LLVMInitializeNativeTarget();
     LLVMInitializeX86AsmPrinter();

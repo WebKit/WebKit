@@ -140,7 +140,7 @@ public:
         {
             return Address(base, offset + additionalOffset);
         }
-
+        
         RegisterID base;
         int32_t offset;
     };

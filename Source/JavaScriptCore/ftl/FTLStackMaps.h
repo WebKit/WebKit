@@ -61,7 +61,7 @@ struct StackMaps {
         uint16_t dwarfRegNum; // Represented as a 12-bit int in the section.
         int8_t size;
         Kind kind;
-        int16_t offset;
+        int32_t offset;
         
         void parse(DataView*, unsigned& offset);
         void dump(PrintStream& out) const;

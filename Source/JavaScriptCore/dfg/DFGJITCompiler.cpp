@@ -28,6 +28,7 @@
 
 #if ENABLE(DFG_JIT)
 
+#include "ArityCheckFailReturnThunks.h"
 #include "CodeBlock.h"
 #include "DFGFailedFinalizer.h"
 #include "DFGInlineCacheWrapperInlines.h"
@@ -40,6 +41,7 @@
 #include "DFGSpeculativeJIT.h"
 #include "DFGThunks.h"
 #include "JSCJSValueInlines.h"
+#include "MaxFrameExtentForSlowPathCall.h"
 #include "VM.h"
 #include "LinkBuffer.h"
 
@@ -92,15 +94,14 @@ void JITCompiler::linkOSRExits()
 void JITCompiler::compileEntry()
 {
     // This code currently matches the old JIT. In the function header we need to
-    // pop the return address (since we do not allow any recursion on the machine
-    // stack), and perform a fast stack check.
+    // save return address and call frame via the prologue and perform a fast stack check.
     // FIXME: https://bugs.webkit.org/show_bug.cgi?id=56292
     // We'll need to convert the remaining cti_ style calls (specifically the stack
     // check) which will be dependent on stack layout. (We'd need to account for this in
     // both normal return code and when jumping to an exception handler).
-    preserveReturnAddressAfterCall(GPRInfo::regT2);
-    emitPutReturnPCToCallFrameHeader(GPRInfo::regT2);
+    emitFunctionPrologue();
     emitPutImmediateToCallFrameHeader(m_codeBlock, JSStack::CodeBlock);
+    jitAssertTagsInPlace();
 }
 
 void JITCompiler::compileBody()
@@ -121,22 +122,25 @@ void JITCompiler::compileExceptionHandlers()
 
     if (!m_exceptionChecksWithCallFrameRollback.empty()) {
         m_exceptionChecksWithCallFrameRollback.link(this);
-        emitGetCallerFrameFromCallFrameHeaderPtr(GPRInfo::argumentGPR0);
+        emitGetCallerFrameFromCallFrameHeaderPtr(GPRInfo::argumentGPR1);
         doLookup = jump();
     }
 
     if (!m_exceptionChecks.empty())
         m_exceptionChecks.link(this);
 
-    // lookupExceptionHandler is passed one argument, the exec (the CallFrame*).
-    move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
+    // lookupExceptionHandler is passed two arguments, the VM and the exec (the CallFrame*).
+    move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR1);
 
     if (doLookup.isSet())
         doLookup.link(this);
 
+    move(TrustedImmPtr(vm()), GPRInfo::argumentGPR0);
+
 #if CPU(X86)
     // FIXME: should use the call abstraction, but this is currently in the SpeculativeJIT layer!
     poke(GPRInfo::argumentGPR0);
+    poke(GPRInfo::argumentGPR1, 1);
 #endif
     m_calls.append(CallLinkRecord(call(), lookupExceptionHandler));
     jumpToExceptionHandler();
@@ -228,13 +232,16 @@ void JITCompiler::link(LinkBuffer& linkBuffer)
         info.patch.deltaCallToSlowCase = differenceBetweenCodePtr(callReturnLocation, linkBuffer.locationOf(m_ins[i].m_slowPathGenerator->label()));
     }
     
+    RELEASE_ASSERT(!m_graph.m_plan.willTryToTierUp || m_jitCode->slowPathCalls.size() >= m_jsCalls.size());
     m_codeBlock->setNumberOfCallLinkInfos(m_jsCalls.size());
     for (unsigned i = 0; i < m_jsCalls.size(); ++i) {
         CallLinkInfo& info = m_codeBlock->callLinkInfo(i);
         info.callType = m_jsCalls[i].m_callType;
-        info.isDFG = true;
         info.codeOrigin = m_jsCalls[i].m_codeOrigin;
-        linkBuffer.link(m_jsCalls[i].m_slowCall, FunctionPtr((m_vm->getCTIStub(info.callType == CallLinkInfo::Construct ? linkConstructThunkGenerator : linkCallThunkGenerator)).code().executableAddress()));
+        ThunkGenerator generator = linkThunkGeneratorFor(
+            info.callType == CallLinkInfo::Construct ? CodeForConstruct : CodeForCall,
+            RegisterPreservationNotRequired);
+        linkBuffer.link(m_jsCalls[i].m_slowCall, FunctionPtr(m_vm->getCTIStub(generator).code().executableAddress()));
         info.callReturnLocation = linkBuffer.locationOfNearCall(m_jsCalls[i].m_slowCall);
         info.hotPathBegin = linkBuffer.locationOf(m_jsCalls[i].m_targetToCheck);
         info.hotPathOther = linkBuffer.locationOfNearCall(m_jsCalls[i].m_fastCall);
@@ -278,6 +285,8 @@ void JITCompiler::compile()
     setStartOfCode();
     compileEntry();
     m_speculative = adoptPtr(new SpeculativeJIT(*this));
+    addPtr(TrustedImm32(m_graph.stackPointerOffset() * sizeof(Register)), GPRInfo::callFrameRegister, stackPointerRegister);
+    checkStackPointerAlignment();
     compileBody();
     setEndOfMainPath();
 
@@ -325,11 +334,12 @@ void JITCompiler::compileFunction()
     // so enter after this.
     Label fromArityCheck(this);
     // Plant a check that sufficient space is available in the JSStack.
-    addPtr(TrustedImm32(virtualRegisterForLocal(m_graph.requiredRegisterCountForExecutionAndExit()).offset() * sizeof(Register)), GPRInfo::callFrameRegister, GPRInfo::regT1);
-    Jump stackCheck = branchPtr(Above, AbsoluteAddress(m_vm->addressOfJSStackLimit()), GPRInfo::regT1);
-    // Return here after stack check.
-    Label fromStackCheck = label();
+    addPtr(TrustedImm32(virtualRegisterForLocal(m_graph.requiredRegisterCountForExecutionAndExit() - 1).offset() * sizeof(Register)), GPRInfo::callFrameRegister, GPRInfo::regT1);
+    Jump stackOverflow = branchPtr(Above, AbsoluteAddress(m_vm->addressOfJSStackLimit()), GPRInfo::regT1);
 
+    // Move the stack pointer down to accommodate locals
+    addPtr(TrustedImm32(m_graph.stackPointerOffset() * sizeof(Register)), GPRInfo::callFrameRegister, stackPointerRegister);
+    checkStackPointerAlignment();
 
     // === Function body code generation ===
     m_speculative = adoptPtr(new SpeculativeJIT(*this));
@@ -338,17 +348,19 @@ void JITCompiler::compileFunction()
 
     // === Function footer code generation ===
     //
-    // Generate code to perform the slow stack check (if the fast one in
+    // Generate code to perform the stack overflow handling (if the stack check in
     // the function header fails), and generate the entry point with arity check.
     //
-    // Generate the stack check; if the fast check in the function head fails,
-    // we need to call out to a helper function to check whether more space is available.
-    // FIXME: change this from a cti call to a DFG style operation (normal C calling conventions).
-    stackCheck.link(this);
+    // Generate the stack overflow handling; if the stack check in the function head fails,
+    // we need to call out to a helper function to throw the StackOverflowError.
+    stackOverflow.link(this);
 
     emitStoreCodeOrigin(CodeOrigin(0));
-    m_speculative->callOperationWithCallFrameRollbackOnException(operationStackCheck, m_codeBlock);
-    jump(fromStackCheck);
+
+    if (maxFrameExtentForSlowPathCall)
+        addPtr(TrustedImm32(-maxFrameExtentForSlowPathCall), stackPointerRegister);
+
+    m_speculative->callOperationWithCallFrameRollbackOnException(operationThrowStackOverflowError, m_codeBlock);
     
     // The fast entry point into a function does not check the correct number of arguments
     // have been passed to the call (we only use the fast entry point where we can statically
@@ -361,9 +373,15 @@ void JITCompiler::compileFunction()
     load32(AssemblyHelpers::payloadFor((VirtualRegister)JSStack::ArgumentCount), GPRInfo::regT1);
     branch32(AboveOrEqual, GPRInfo::regT1, TrustedImm32(m_codeBlock->numParameters())).linkTo(fromArityCheck, this);
     emitStoreCodeOrigin(CodeOrigin(0));
+    if (maxFrameExtentForSlowPathCall)
+        addPtr(TrustedImm32(-maxFrameExtentForSlowPathCall), stackPointerRegister);
     m_speculative->callOperationWithCallFrameRollbackOnException(m_codeBlock->m_isConstructor ? operationConstructArityCheck : operationCallArityCheck, GPRInfo::regT0);
+    if (maxFrameExtentForSlowPathCall)
+        addPtr(TrustedImm32(maxFrameExtentForSlowPathCall), stackPointerRegister);
     branchTest32(Zero, GPRInfo::regT0).linkTo(fromArityCheck, this);
     emitStoreCodeOrigin(CodeOrigin(0));
+    move(TrustedImmPtr(m_vm->arityCheckFailReturnThunks->returnPCsFor(*m_vm, m_codeBlock->numParameters())), GPRInfo::regT5);
+    loadPtr(BaseIndex(GPRInfo::regT5, GPRInfo::regT0, timesPtr()), GPRInfo::regT5);
     m_callArityFixup = call();
     jump(fromArityCheck);
     

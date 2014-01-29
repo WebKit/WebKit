@@ -254,6 +254,11 @@ public:
     }
 
     void* value() const { return m_value; }
+    
+    void dump(PrintStream& out) const
+    {
+        out.print(RawPointer(m_value));
+    }
 
 private:
     void* m_value;
@@ -309,9 +314,10 @@ public:
     void* dataLocation() const { ASSERT_VALID_CODE_POINTER(m_value); return m_value; }
 #endif
 
-    bool operator!() const
+    typedef void* (MacroAssemblerCodePtr::*UnspecifiedBoolType);
+    operator UnspecifiedBoolType*() const
     {
-        return !m_value;
+        return !!m_value ? reinterpret_cast<UnspecifiedBoolType*>(1) : 0;
     }
     
     bool operator==(const MacroAssemblerCodePtr& other) const
@@ -434,7 +440,11 @@ public:
         return JSC::tryToDisassemble(m_codePtr, size(), prefix, WTF::dataFile());
     }
     
-    bool operator!() const { return !m_codePtr; }
+    typedef void* (MacroAssemblerCodeRef::*UnspecifiedBoolType);
+    operator UnspecifiedBoolType*() const
+    {
+        return !!m_codePtr ? reinterpret_cast<UnspecifiedBoolType*>(1) : 0;
+    }
     
     void dump(PrintStream& out) const
     {

@@ -198,6 +198,8 @@ CapabilityLevel capabilityLevel(OpcodeID opcodeID, CodeBlock* codeBlock, Instruc
     case op_call_varargs:
         if (codeBlock->usesArguments() && pc[4].u.operand == codeBlock->argumentsRegister().offset())
             return CanInline;
+        // FIXME: We should handle this.
+        // https://bugs.webkit.org/show_bug.cgi?id=127626
         return CannotCompile;
 
     case op_new_regexp: 

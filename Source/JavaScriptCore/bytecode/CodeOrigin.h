@@ -63,7 +63,7 @@ struct CodeOrigin {
     
     CodeOrigin(WTF::HashTableDeletedValueType)
         : bytecodeIndex(invalidBytecodeIndex)
-        , inlineCallFrame(bitwise_cast<InlineCallFrame*>(static_cast<uintptr_t>(1)))
+        , inlineCallFrame(deletedMarker())
     {
     }
     
@@ -97,15 +97,27 @@ struct CodeOrigin {
     bool operator==(const CodeOrigin& other) const;
     bool operator!=(const CodeOrigin& other) const { return !(*this == other); }
     
+    // This checks if the two code origins correspond to the same stack trace snippets,
+    // but ignore whether the InlineCallFrame's are identical.
+    bool isApproximatelyEqualTo(const CodeOrigin& other) const;
+    
+    unsigned approximateHash() const;
+    
     // Get the inline stack. This is slow, and is intended for debugging only.
     Vector<CodeOrigin> inlineStack() const;
     
     void dump(PrintStream&) const;
     void dumpInContext(PrintStream&, DumpContext*) const;
+
+private:
+    static InlineCallFrame* deletedMarker()
+    {
+        return bitwise_cast<InlineCallFrame*>(static_cast<uintptr_t>(1));
+    }
 };
 
 struct InlineCallFrame {
-    Vector<ValueRecovery> arguments;
+    Vector<ValueRecovery> arguments; // Includes 'this'.
     WriteBarrier<ScriptExecutable> executable;
     ValueRecovery calleeRecovery;
     CodeOrigin caller;
@@ -182,6 +194,12 @@ inline ScriptExecutable* CodeOrigin::codeOriginOwner() const
 struct CodeOriginHash {
     static unsigned hash(const CodeOrigin& key) { return key.hash(); }
     static bool equal(const CodeOrigin& a, const CodeOrigin& b) { return a == b; }
+    static const bool safeToCompareToEmptyOrDeleted = true;
+};
+
+struct CodeOriginApproximateHash {
+    static unsigned hash(const CodeOrigin& key) { return key.approximateHash(); }
+    static bool equal(const CodeOrigin& a, const CodeOrigin& b) { return a.isApproximatelyEqualTo(b); }
     static const bool safeToCompareToEmptyOrDeleted = true;
 };
 

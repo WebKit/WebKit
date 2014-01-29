@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -55,7 +55,8 @@ class LongLivedState;
 
 struct Plan : public ThreadSafeRefCounted<Plan> {
     Plan(
-        PassRefPtr<CodeBlock>, CompilationMode, unsigned osrEntryBytecodeIndex,
+        PassRefPtr<CodeBlock> codeBlockToCompile, CodeBlock* profiledDFGCodeBlock,
+        CompilationMode, unsigned osrEntryBytecodeIndex,
         const Operands<JSValue>& mustHandleValues);
     ~Plan();
     
@@ -70,6 +71,7 @@ struct Plan : public ThreadSafeRefCounted<Plan> {
     
     VM& vm;
     RefPtr<CodeBlock> codeBlock;
+    RefPtr<CodeBlock> profiledDFGCodeBlock;
     CompilationMode mode;
     const unsigned osrEntryBytecodeIndex;
     Operands<JSValue> mustHandleValues;
@@ -84,6 +86,8 @@ struct Plan : public ThreadSafeRefCounted<Plan> {
     DesiredWeakReferences weakReferences;
     DesiredWriteBarriers writeBarriers;
     DesiredTransitions transitions;
+    
+    bool willTryToTierUp;
 
     double beforeFTL;
     
@@ -92,6 +96,8 @@ struct Plan : public ThreadSafeRefCounted<Plan> {
     RefPtr<DeferredCompilationCallback> callback;
 
 private:
+    bool reportCompileTimes() const;
+    
     enum CompilationPath { FailPath, DFGPath, FTLPath };
     CompilationPath compileInThreadImpl(LongLivedState&);
     

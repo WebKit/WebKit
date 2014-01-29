@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,6 +31,7 @@
 #if ENABLE(FTL_JIT)
 
 #include "FTLAbbreviations.h"
+#include "FTLValueRange.h"
 
 namespace JSC { namespace FTL {
 
@@ -73,6 +74,10 @@ public:
     const LValue intPtrEight;
     const LValue intPtrPtr;
     const LValue doubleZero;
+    
+    const unsigned rangeKind;
+    
+    const ValueRange nonNegativeInt32;
     
     LContext const m_context;
     LModule m_module;

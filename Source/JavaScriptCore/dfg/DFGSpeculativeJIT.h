@@ -119,6 +119,9 @@ public:
     ~SpeculativeJIT();
 
     bool compile();
+    
+    void prepareJITCodeForTierUp();
+    
     void createOSREntries();
     void linkOSREntries(LinkBuffer&);
 
@@ -742,44 +745,45 @@ public:
     
     ptrdiff_t calleeFrameOffset(int numArgs)
     {
-        return virtualRegisterForLocal(m_jit.graph().m_nextMachineLocal + JSStack::CallFrameHeaderSize + numArgs).offset() * sizeof(Register);
+        return virtualRegisterForLocal(m_jit.graph().m_nextMachineLocal - 1 + JSStack::CallFrameHeaderSize + numArgs).offset() * sizeof(Register);
     }
     
     // Access to our fixed callee CallFrame.
-    MacroAssembler::Address calleeFrameSlot(int numArgs, int slot)
+    MacroAssembler::Address calleeFrameSlot(int slot)
     {
-        return MacroAssembler::Address(GPRInfo::callFrameRegister, calleeFrameOffset(numArgs) + sizeof(Register) * slot);
+        ASSERT(slot >= JSStack::CallerFrameAndPCSize);
+        return MacroAssembler::Address(MacroAssembler::stackPointerRegister, sizeof(Register) * (slot - JSStack::CallerFrameAndPCSize));
     }
 
     // Access to our fixed callee CallFrame.
-    MacroAssembler::Address calleeArgumentSlot(int numArgs, int argument)
+    MacroAssembler::Address calleeArgumentSlot(int argument)
     {
-        return calleeFrameSlot(numArgs, virtualRegisterForArgument(argument).offset());
+        return calleeFrameSlot(virtualRegisterForArgument(argument).offset());
     }
 
-    MacroAssembler::Address calleeFrameTagSlot(int numArgs, int slot)
+    MacroAssembler::Address calleeFrameTagSlot(int slot)
     {
-        return calleeFrameSlot(numArgs, slot).withOffset(OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.tag));
+        return calleeFrameSlot(slot).withOffset(OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.tag));
     }
 
-    MacroAssembler::Address calleeFramePayloadSlot(int numArgs, int slot)
+    MacroAssembler::Address calleeFramePayloadSlot(int slot)
     {
-        return calleeFrameSlot(numArgs, slot).withOffset(OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.payload));
+        return calleeFrameSlot(slot).withOffset(OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.payload));
     }
 
-    MacroAssembler::Address calleeArgumentTagSlot(int numArgs, int argument)
+    MacroAssembler::Address calleeArgumentTagSlot(int argument)
     {
-        return calleeArgumentSlot(numArgs, argument).withOffset(OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.tag));
+        return calleeArgumentSlot(argument).withOffset(OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.tag));
     }
 
-    MacroAssembler::Address calleeArgumentPayloadSlot(int numArgs, int argument)
+    MacroAssembler::Address calleeArgumentPayloadSlot(int argument)
     {
-        return calleeArgumentSlot(numArgs, argument).withOffset(OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.payload));
+        return calleeArgumentSlot(argument).withOffset(OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.payload));
     }
 
-    MacroAssembler::Address calleeFrameCallerFrame(int numArgs)
+    MacroAssembler::Address calleeFrameCallerFrame()
     {
-        return calleeFrameSlot(numArgs, 0).withOffset(CallFrame::callerFrameOffset());
+        return calleeFrameSlot(0).withOffset(CallFrame::callerFrameOffset());
     }
 
     void emitCall(Node*);

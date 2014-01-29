@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -36,6 +36,7 @@
 #include "FTLInlineCacheDescriptor.h"
 #include "FTLJITCode.h"
 #include "FTLJITFinalizer.h"
+#include "FTLJSCall.h"
 #include "FTLStackMaps.h"
 #include <wtf/Noncopyable.h>
 
@@ -57,10 +58,15 @@ public:
     RefPtr<JITCode> jitCode;
     GeneratedFunction generatedFunction;
     JITFinalizer* finalizer;
+    unsigned handleExceptionStackmapID;
+    unsigned capturedStackmapID;
     SegmentedVector<GetByIdDescriptor> getByIds;
     SegmentedVector<PutByIdDescriptor> putByIds;
+    Vector<JSCall> jsCalls;
     Vector<CString> codeSectionNames;
     Vector<CString> dataSectionNames;
+    void* compactUnwind;
+    size_t compactUnwindSize;
     RefCountedArray<LSectionWord> stackmapsSection;
     
     void dumpState(const char* when);

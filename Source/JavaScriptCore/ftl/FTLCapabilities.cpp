@@ -32,6 +32,11 @@ namespace JSC { namespace FTL {
 
 using namespace DFG;
 
+static bool verboseCapabilities()
+{
+    return verboseCompilationEnabled() || Options::verboseFTLFailure();
+}
+
 inline CapabilityLevel canCompile(Node* node)
 {
     // NOTE: If we ever have phantom arguments, we can compile them but we cannot
@@ -77,6 +82,9 @@ inline CapabilityLevel canCompile(Node* node)
     case ArithMin:
     case ArithMax:
     case ArithAbs:
+    case ArithSin:
+    case ArithCos:
+    case ArithSqrt:
     case ArithNegate:
     case UInt32ToNumber:
     case Int32ToDouble:
@@ -88,8 +96,6 @@ inline CapabilityLevel canCompile(Node* node)
     case Upsilon:
     case ExtractOSREntryLocal:
     case LoopHint:
-    case Call:
-    case Construct:
     case GetMyScope:
     case SkipScope:
     case GetClosureRegisters:
@@ -108,15 +114,27 @@ inline CapabilityLevel canCompile(Node* node)
     case StoreBarrier:
     case ConditionalStoreBarrier:
     case StoreBarrierWithNullCheck:
+    case Call:
+    case Construct:
     case ValueToInt32:
     case Branch:
     case LogicalNot:
     case CheckInBounds:
     case ConstantStoragePointer:
     case Check:
+    case CountExecution:
+    case CheckExecutable:
+    case GetScope:
+    case AllocationProfileWatchpoint:
+    case CheckArgumentsNotCreated:
+    case GetCallee:
+    case ToString:
+    case MakeRope:
+    case NewArrayWithSize:
         // These are OK.
         break;
     case GetById:
+    case PutByIdDirect:
     case PutById:
         if (node->child1().useKind() == CellUse)
             break;
@@ -237,8 +255,17 @@ inline CapabilityLevel canCompile(Node* node)
 CapabilityLevel canCompile(Graph& graph)
 {
     if (graph.m_codeBlock->codeType() != FunctionCode) {
-        if (verboseCompilationEnabled())
-            dataLog("FTL rejecting code block that doesn't belong to a function.\n");
+        if (verboseCapabilities())
+            dataLog("FTL rejecting ", *graph.m_codeBlock, " because it doesn't belong to a function.\n");
+        return CannotCompile;
+    }
+    
+    if (graph.m_codeBlock->needsActivation()) {
+        // Need this because although we also don't support
+        // CreateActivation/TearOffActivation, we might not see those nodes in case of
+        // OSR entry.
+        if (verboseCapabilities())
+            dataLog("FTL rejecting ", *graph.m_codeBlock, " because it uses activations.\n");
         return CannotCompile;
     }
     
@@ -274,13 +301,17 @@ CapabilityLevel canCompile(Graph& graph)
                 case ObjectUse:
                 case ObjectOrOtherUse:
                 case StringUse:
+                case KnownStringUse:
+                case StringObjectUse:
+                case StringOrStringObjectUse:
                 case FinalObjectUse:
+                case NotCellUse:
                     // These are OK.
                     break;
                 default:
                     // Don't know how to handle anything else.
-                    if (verboseCompilationEnabled()) {
-                        dataLog("FTL rejecting node because of bad use kind: ", edge.useKind(), " in node:\n");
+                    if (verboseCapabilities()) {
+                        dataLog("FTL rejecting node in ", *graph.m_codeBlock, " because of bad use kind: ", edge.useKind(), " in node:\n");
                         graph.dump(WTF::dataFile(), "    ", node);
                     }
                     return CannotCompile;
@@ -289,8 +320,8 @@ CapabilityLevel canCompile(Graph& graph)
             
             switch (canCompile(node)) {
             case CannotCompile: 
-                if (verboseCompilationEnabled()) {
-                    dataLog("FTL rejecting node:\n");
+                if (verboseCapabilities()) {
+                    dataLog("FTL rejecting node in ", *graph.m_codeBlock, ":\n");
                     graph.dump(WTF::dataFile(), "    ", node);
                 }
                 return CannotCompile;

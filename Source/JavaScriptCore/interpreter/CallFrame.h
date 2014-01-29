@@ -176,15 +176,13 @@ namespace JSC  {
         // CodeOrigin(0) if we're in native code.
         CodeOrigin codeOrigin();
 
-        Register* frameExtent()
+        Register* topOfFrame()
         {
             if (isVMEntrySentinel() || !codeBlock())
-                return registers() - 1;
-            return frameExtentInternal();
+                return registers();
+            return topOfFrameInternal();
         }
     
-        Register* frameExtentInternal();
-
 #if USE(JSVALUE32_64)
         Instruction* currentVPC() const
         {
@@ -317,6 +315,8 @@ namespace JSC  {
 #endif
         ExecState();
         ~ExecState();
+
+        Register* topOfFrameInternal();
 
         // The following are for internal use in debugging and verification
         // code only and not meant as an API for general usage:

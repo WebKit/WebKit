@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2012, 2013, 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -34,7 +34,18 @@
 
 #define FOR_EACH_LLINT_NOJIT_NATIVE_HELPER(macro) \
     macro(getHostCallReturnValue, 1) \
-    macro(returnFromJavaScript, 1)
+    macro(llint_return_to_host, 1) \
+    macro(llint_call_to_javascript, 1) \
+    macro(llint_call_to_native_function, 1) \
+    macro(handleUncaughtException, 1) \
+    \
+    macro(llint_cloop_did_return_from_js_1, 1) \
+    macro(llint_cloop_did_return_from_js_2, 1) \
+    macro(llint_cloop_did_return_from_js_3, 1) \
+    macro(llint_cloop_did_return_from_js_4, 1) \
+    macro(llint_cloop_did_return_from_js_5, 1) \
+    macro(llint_cloop_did_return_from_js_6, 1) \
+    macro(llint_cloop_did_return_from_js_7, 1) \
 
 #else // !ENABLE(LLINT_C_LOOP)
 

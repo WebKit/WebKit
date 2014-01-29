@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -45,6 +45,22 @@ JITFinalizer::~JITFinalizer()
 {
 }
 
+size_t JITFinalizer::codeSize()
+{
+    size_t result = 0;
+    
+    result += exitThunksLinkBuffer->size();
+    result += entrypointLinkBuffer->size();
+    if (sideCodeLinkBuffer)
+        result += sideCodeLinkBuffer->size();
+    result += handleExceptionsLinkBuffer->size();
+    
+    for (unsigned i = jitCode->handles().size(); i--;)
+        result += jitCode->handles()[i]->sizeInBytes();
+    
+    return result;
+}
+
 bool JITFinalizer::finalize()
 {
     RELEASE_ASSERT_NOT_REACHED();
@@ -73,9 +89,7 @@ bool JITFinalizer::finalizeFunction()
             exitThunksLinkBuffer->link(
                 info.m_thunkJump,
                 CodeLocationLabel(
-                    m_plan.vm.ftlThunks->getOSRExitGenerationThunk(
-                        m_plan.vm, Location::forStackmaps(
-                            &jitCode->stackmaps, iter->value.locations[0])).code()));
+                    m_plan.vm.getCTIStub(osrExitGenerationThunkGenerator).code()));
         }
         
         jitCode->initializeExitThunks(
@@ -102,15 +116,26 @@ bool JITFinalizer::finalizeFunction()
             .executableMemory());
     }
     
+    if (handleExceptionsLinkBuffer) {
+        jitCode->addHandle(FINALIZE_DFG_CODE(
+            *handleExceptionsLinkBuffer,
+            ("FTL exception handler for %s",
+                toCString(CodeBlockWithJITType(m_plan.codeBlock.get(), JITCode::FTLJIT)).data()))
+            .executableMemory());
+    }
+    
     MacroAssemblerCodePtr withArityCheck;
     if (arityCheck.isSet())
         withArityCheck = entrypointLinkBuffer->locationOf(arityCheck);
-    jitCode->initializeCode(
+    jitCode->initializeArityCheckEntrypoint(
         FINALIZE_DFG_CODE(
             *entrypointLinkBuffer,
             ("FTL entrypoint thunk for %s with LLVM generated code at %p", toCString(CodeBlockWithJITType(m_plan.codeBlock.get(), JITCode::FTLJIT)).data(), function)));
     
-    m_plan.codeBlock->setJITCode(jitCode, withArityCheck);
+    m_plan.codeBlock->setJITCode(jitCode);
+    
+    if (m_plan.compilation)
+        m_plan.vm.m_perBytecodeProfiler->addCompilation(m_plan.compilation);
     
     return true;
 }

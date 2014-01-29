@@ -93,7 +93,6 @@ ALWAYS_INLINE void JIT::emitLoadCharacterString(RegisterID src, RegisterID dst, 
 ALWAYS_INLINE JIT::Call JIT::emitNakedCall(CodePtr function)
 {
     ASSERT(m_bytecodeOffset != (unsigned)-1); // This method should only be called during hot/cold path generation, so that m_bytecodeOffset is set.
-
     Call nakedCall = nearCall();
     m_calls.append(CallRecord(nakedCall, m_bytecodeOffset, function.executableAddress()));
     return nakedCall;
@@ -223,12 +222,6 @@ ALWAYS_INLINE MacroAssembler::Call JIT::callOperation(J_JITOperation_EZ operatio
     return appendCallWithExceptionCheckSetJSValueResult(operation, dst);
 }
 
-ALWAYS_INLINE MacroAssembler::Call JIT::callOperation(P_JITOperation_EZ operation, int32_t op)
-{
-    setupArgumentsWithExecState(TrustedImm32(op));
-    return appendCallWithExceptionCheck(operation);
-}
-
 ALWAYS_INLINE MacroAssembler::Call JIT::callOperation(S_JITOperation_ECC operation, RegisterID regOp1, RegisterID regOp2)
 {
     setupArgumentsWithExecState(regOp1, regOp2);
@@ -238,6 +231,12 @@ ALWAYS_INLINE MacroAssembler::Call JIT::callOperation(S_JITOperation_ECC operati
 ALWAYS_INLINE MacroAssembler::Call JIT::callOperation(S_JITOperation_EOJss operation, RegisterID regOp1, RegisterID regOp2)
 {
     setupArgumentsWithExecState(regOp1, regOp2);
+    return appendCallWithExceptionCheck(operation);
+}
+
+ALWAYS_INLINE MacroAssembler::Call JIT::callOperation(Sprt_JITOperation_EZ operation, int32_t op)
+{
+    setupArgumentsWithExecState(TrustedImm32(op));
     return appendCallWithExceptionCheck(operation);
 }
 
@@ -275,6 +274,13 @@ ALWAYS_INLINE MacroAssembler::Call JIT::callOperationWithCallFrameRollbackOnExce
 {
     setupArgumentsExecState();
     return appendCallWithCallFrameRollbackOnException(operation);
+}
+
+ALWAYS_INLINE MacroAssembler::Call JIT::callOperationNoExceptionCheck(J_JITOperation_EE operation, RegisterID regOp)
+{
+    setupArgumentsWithExecState(regOp);
+    updateTopCallFrame();
+    return appendCall(operation);
 }
 
 ALWAYS_INLINE MacroAssembler::Call JIT::callOperationWithCallFrameRollbackOnException(V_JITOperation_ECb operation, CodeBlock* pointer)

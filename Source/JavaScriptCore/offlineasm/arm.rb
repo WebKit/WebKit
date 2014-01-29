@@ -601,6 +601,8 @@ class Instruction
             $asm.puts "smull #{operands[2].armOperand}, #{operands[3].armOperand}, #{operands[0].armOperand}, #{operands[1].armOperand}"
         when "memfence"
             $asm.puts "dmb sy"
+        when "clrbp"
+            $asm.puts "bic #{operands[2].armOperand}, #{operands[0].armOperand}, #{operands[1].armOperand}"
         else
             lowerDefault
         end

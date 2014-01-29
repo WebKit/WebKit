@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2012, 2013, 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -63,6 +63,7 @@ public:
     CompilationKind kind() const { return m_kind; }
     
     void addDescription(const CompiledBytecode&);
+    void addDescription(const OriginStack&, const CString& description);
     ExecutionCounter* executionCounterFor(const OriginStack&);
     void addOSRExitSite(const Vector<const void*>& codeAddresses);
     OSRExit* addOSRExit(unsigned id, const OriginStack&, ExitKind, bool isWatchpoint);

@@ -31,6 +31,7 @@
 
 #include "CodeBlock.h"
 #include "CallFrame.h"
+#include "ErrorHandlingScope.h"
 #include "ErrorInstance.h"
 #include "JSGlobalObjectFunctions.h"
 #include "JSObject.h"
@@ -160,14 +161,16 @@ JSObject* throwOutOfMemoryError(ExecState* exec)
 
 JSObject* throwStackOverflowError(ExecState* exec)
 {
-    Interpreter::ErrorHandlingMode mode(exec);
-    return exec->vm().throwException(exec, createStackOverflowError(exec));
+    VM& vm = exec->vm();
+    ErrorHandlingScope errorScope(vm);
+    return vm.throwException(exec, createStackOverflowError(exec));
 }
 
 JSObject* throwTerminatedExecutionException(ExecState* exec)
 {
-    Interpreter::ErrorHandlingMode mode(exec);
-    return exec->vm().throwException(exec, createTerminatedExecutionException(&exec->vm()));
+    VM& vm = exec->vm();
+    ErrorHandlingScope errorScope(vm);
+    return vm.throwException(exec, createTerminatedExecutionException(&vm));
 }
 
 } // namespace JSC

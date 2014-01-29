@@ -565,6 +565,22 @@ public:
     int sBit() { return (m_opcode >> 12) & 0x1; }
 };
 
+class A64DOpcodeLoadStoreRegisterPair : public A64DOpcodeLoadStore {
+public:
+    static const uint32_t mask = 0x3a000000;
+    static const uint32_t pattern = 0x28000000;
+
+    DEFINE_STATIC_FORMAT(A64DOpcodeLoadStoreRegisterPair, thisObj);
+
+    const char* format();
+    const char* opName();
+
+    unsigned rt2() { return (m_opcode >> 10) & 0x1f; }
+    int immediate7() { return (static_cast<int>((m_opcode >> 15) & 0x7f) << 25) >> 25; }
+    unsigned offsetMode() { return (m_opcode >> 23) & 0x7; }
+    int lBit() { return (m_opcode >> 22) & 0x1; }
+};
+
 class A64DOpcodeLoadStoreUnsignedImmediate : public A64DOpcodeLoadStore {
 public:
     static const uint32_t mask = 0x3b000000;

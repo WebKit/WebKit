@@ -28,8 +28,10 @@
 
 namespace JSC {
 
+    class CodeBlockSet;
     class ConservativeRoots;
     class Heap;
+    class JITStubRoutineSet;
 
     class MachineThreads {
         WTF_MAKE_NONCOPYABLE(MachineThreads);
@@ -37,20 +39,20 @@ namespace JSC {
         MachineThreads(Heap*);
         ~MachineThreads();
 
-        void gatherConservativeRoots(ConservativeRoots&, void* stackCurrent);
+        void gatherConservativeRoots(ConservativeRoots&, JITStubRoutineSet&, CodeBlockSet&, void* stackCurrent);
 
         JS_EXPORT_PRIVATE void makeUsableFromMultipleThreads();
         JS_EXPORT_PRIVATE void addCurrentThread(); // Only needs to be called by clients that can use the same heap from multiple threads.
 
     private:
-        void gatherFromCurrentThread(ConservativeRoots&, void* stackCurrent);
+        void gatherFromCurrentThread(ConservativeRoots&, JITStubRoutineSet&, CodeBlockSet&, void* stackCurrent);
 
         class Thread;
 
         static void removeThread(void*);
         void removeCurrentThread();
 
-        void gatherFromOtherThread(ConservativeRoots&, Thread*);
+        void gatherFromOtherThread(ConservativeRoots&, Thread*, JITStubRoutineSet&, CodeBlockSet&);
 
         Mutex m_registeredThreadsMutex;
         Thread* m_registeredThreads;

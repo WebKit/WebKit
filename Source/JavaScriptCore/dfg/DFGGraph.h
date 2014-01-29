@@ -793,6 +793,7 @@ public:
     bool isLiveInBytecode(VirtualRegister, CodeOrigin);
     
     unsigned frameRegisterCount();
+    unsigned stackPointerOffset();
     unsigned requiredRegisterCountForExit();
     unsigned requiredRegisterCountForExecutionAndExit();
     

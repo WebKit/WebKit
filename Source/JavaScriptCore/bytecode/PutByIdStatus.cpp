@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2012, 2013, 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -34,6 +34,17 @@
 #include "StructureChain.h"
 
 namespace JSC {
+
+#if ENABLE(JIT)
+bool PutByIdStatus::hasExitSite(const ConcurrentJITLocker& locker, CodeBlock* profiledBlock, unsigned bytecodeIndex, ExitingJITType exitType)
+{
+    return profiledBlock->hasExitSite(locker, DFG::FrequentExitSite(bytecodeIndex, BadCache, exitType))
+        || profiledBlock->hasExitSite(locker, DFG::FrequentExitSite(bytecodeIndex, BadCacheWatchpoint, exitType))
+        || profiledBlock->hasExitSite(locker, DFG::FrequentExitSite(bytecodeIndex, BadWeakConstantCache, exitType))
+        || profiledBlock->hasExitSite(locker, DFG::FrequentExitSite(bytecodeIndex, BadWeakConstantCacheWatchpoint, exitType));
+    
+}
+#endif
 
 PutByIdStatus PutByIdStatus::computeFromLLInt(CodeBlock* profiledBlock, unsigned bytecodeIndex, StringImpl* uid)
 {
@@ -89,12 +100,27 @@ PutByIdStatus PutByIdStatus::computeFor(CodeBlock* profiledBlock, StubInfoMap& m
     UNUSED_PARAM(bytecodeIndex);
     UNUSED_PARAM(uid);
 #if ENABLE(JIT)
-    if (profiledBlock->likelyToTakeSlowCase(bytecodeIndex))
+    if (profiledBlock->likelyToTakeSlowCase(bytecodeIndex)
+        || hasExitSite(locker, profiledBlock, bytecodeIndex))
         return PutByIdStatus(TakesSlowPath, 0, 0, 0, invalidOffset);
     
     StructureStubInfo* stubInfo = map.get(CodeOrigin(bytecodeIndex));
-    if (!stubInfo || !stubInfo->seen)
+    PutByIdStatus result = computeForStubInfo(locker, profiledBlock, stubInfo, uid);
+    if (!result)
         return computeFromLLInt(profiledBlock, bytecodeIndex, uid);
+    
+    return result;
+#else // ENABLE(JIT)
+    UNUSED_PARAM(map);
+    return PutByIdStatus(NoInformation, 0, 0, 0, invalidOffset);
+#endif // ENABLE(JIT)
+}
+
+#if ENABLE(JIT)
+PutByIdStatus PutByIdStatus::computeForStubInfo(const ConcurrentJITLocker&, CodeBlock* profiledBlock, StructureStubInfo* stubInfo, StringImpl* uid)
+{
+    if (!stubInfo || !stubInfo->seen)
+        return PutByIdStatus();
     
     if (stubInfo->resetByGC)
         return PutByIdStatus(TakesSlowPath, 0, 0, 0, invalidOffset);
@@ -142,10 +168,34 @@ PutByIdStatus PutByIdStatus::computeFor(CodeBlock* profiledBlock, StubInfoMap& m
         // we could do about it.
         return PutByIdStatus(TakesSlowPath, 0, 0, 0, invalidOffset);
     }
-#else // ENABLE(JIT)
-    UNUSED_PARAM(map);
-    return PutByIdStatus(NoInformation, 0, 0, 0, invalidOffset);
-#endif // ENABLE(JIT)
+}
+#endif
+
+PutByIdStatus PutByIdStatus::computeFor(CodeBlock* baselineBlock, CodeBlock* dfgBlock, StubInfoMap& baselineMap, StubInfoMap& dfgMap, CodeOrigin codeOrigin, StringImpl* uid)
+{
+#if ENABLE(JIT)
+    if (dfgBlock) {
+        {
+            ConcurrentJITLocker locker(baselineBlock->m_lock);
+            if (hasExitSite(locker, baselineBlock, codeOrigin.bytecodeIndex, ExitFromFTL))
+                return PutByIdStatus(TakesSlowPath);
+        }
+            
+        PutByIdStatus result;
+        {
+            ConcurrentJITLocker locker(dfgBlock->m_lock);
+            result = computeForStubInfo(locker, dfgBlock, dfgMap.get(codeOrigin), uid);
+        }
+        
+        if (result.isSet())
+            return result;
+    }
+#else
+    UNUSED_PARAM(dfgBlock);
+    UNUSED_PARAM(dfgMap);
+#endif
+
+    return computeFor(baselineBlock, baselineMap, codeOrigin.bytecodeIndex, uid);
 }
 
 PutByIdStatus PutByIdStatus::computeFor(VM& vm, JSGlobalObject* globalObject, Structure* structure, StringImpl* uid, bool isDirect)

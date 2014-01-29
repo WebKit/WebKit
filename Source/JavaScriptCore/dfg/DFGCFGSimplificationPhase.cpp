@@ -79,6 +79,8 @@ public:
                     // suboptimal, because if my successor has multiple predecessors then we'll
                     // be keeping alive things on other predecessor edges unnecessarily.
                     // What we really need is the notion of end-of-block ghosties!
+                    // FIXME: Allow putting phantoms after terminals.
+                    // https://bugs.webkit.org/show_bug.cgi?id=126778
                     break;
                 }
                 

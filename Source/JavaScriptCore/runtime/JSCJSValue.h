@@ -97,6 +97,9 @@ union EncodedValueDescriptor {
 #endif
 };
 
+#define TagOffset (OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.tag))
+#define PayloadOffset (OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.payload))
+
 enum WhichValueWord {
     TagWord,
     PayloadWord

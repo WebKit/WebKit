@@ -261,23 +261,52 @@ void Worklist::threadFunction(void* argument)
     static_cast<Worklist*>(argument)->runThread();
 }
 
-static Worklist* theGlobalWorklist;
+static Worklist* theGlobalDFGWorklist;
 
-Worklist* globalWorklist()
+Worklist* ensureGlobalDFGWorklist()
 {
     static std::once_flag initializeGlobalWorklistOnceFlag;
     std::call_once(initializeGlobalWorklistOnceFlag, [] {
-        unsigned numberOfThreads;
-
-        if (Options::useExperimentalFTL())
-            numberOfThreads = 1; // We don't yet use LLVM in a thread-safe way.
-        else
-            numberOfThreads = Options::numberOfCompilerThreads();
-
-        theGlobalWorklist = Worklist::create(numberOfThreads).leakRef();
+        theGlobalDFGWorklist = Worklist::create(Options::numberOfDFGCompilerThreads()).leakRef();
     });
+    return theGlobalDFGWorklist;
+}
 
-    return theGlobalWorklist;
+Worklist* existingGlobalDFGWorklistOrNull()
+{
+    return theGlobalDFGWorklist;
+}
+
+static Worklist* theGlobalFTLWorklist;
+
+Worklist* ensureGlobalFTLWorklist()
+{
+    static std::once_flag initializeGlobalWorklistOnceFlag;
+    std::call_once(initializeGlobalWorklistOnceFlag, [] {
+        theGlobalFTLWorklist = Worklist::create(Options::numberOfFTLCompilerThreads()).leakRef();
+    });
+    return theGlobalFTLWorklist;
+}
+
+Worklist* existingGlobalFTLWorklistOrNull()
+{
+    return theGlobalFTLWorklist;
+}
+
+Worklist* ensureGlobalWorklistFor(CompilationMode mode)
+{
+    switch (mode) {
+    case InvalidCompilationMode:
+        RELEASE_ASSERT_NOT_REACHED();
+        return 0;
+    case DFGMode:
+        return ensureGlobalDFGWorklist();
+    case FTLMode:
+    case FTLForOSREntryMode:
+        return ensureGlobalFTLWorklist();
+    }
+    RELEASE_ASSERT_NOT_REACHED();
+    return 0;
 }
 
 } } // namespace JSC::DFG

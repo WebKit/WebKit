@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -184,7 +184,23 @@ public:
     {
         return call(doubleAbsIntrinsic(), value);
     }
-    
+    LValue doubleSin(LValue value)
+    {
+        return call(doubleSinIntrinsic(), value);
+    }
+
+
+    LValue doubleCos(LValue value)
+    {
+        return call(doubleCosIntrinsic(), value);
+    }
+
+    LValue doubleSqrt(LValue value)
+    {
+        return call(doubleSqrtIntrinsic(), value);
+    }
+
+
     static bool hasSensibleDoubleToInt() { return isX86(); }
     LValue sensibleDoubleToInt(LValue value)
     {
@@ -210,6 +226,7 @@ public:
     LValue castToInt32(LValue value) { return intCast(value, int32); }
     LValue fpCast(LValue value, LType type) { return buildFPCast(m_builder, value, type); }
     LValue intToPtr(LValue value, LType type) { return buildIntToPtr(m_builder, value, type); }
+    LValue ptrToInt(LValue value, LType type) { return buildPtrToInt(m_builder, value, type); }
     LValue bitCast(LValue value, LType type) { return buildBitCast(m_builder, value, type); }
     
     LValue alloca(LType type) { return buildAlloca(m_builder, type); }
@@ -313,6 +330,20 @@ public:
     void store64(LValue value, LValue base, const AbstractField& field) { store64(value, address(base, field)); }
     void storePtr(LValue value, LValue base, const AbstractField& field) { storePtr(value, address(base, field)); }
     void storeDouble(LValue value, LValue base, const AbstractField& field) { storeDouble(value, address(base, field)); }
+    
+    void ascribeRange(LValue loadInstruction, const ValueRange& range)
+    {
+        range.decorateInstruction(m_context, loadInstruction, rangeKind);
+    }
+    
+    LValue nonNegative32(LValue loadInstruction)
+    {
+        ascribeRange(loadInstruction, nonNegativeInt32);
+        return loadInstruction;
+    }
+    
+    LValue load32NonNegative(TypedPointer pointer) { return nonNegative32(load32(pointer)); }
+    LValue load32NonNegative(LValue base, const AbstractField& field) { return nonNegative32(load32(base, field)); }
     
     LValue icmp(LIntPredicate cond, LValue left, LValue right) { return buildICmp(m_builder, cond, left, right); }
     LValue equal(LValue left, LValue right) { return icmp(LLVMIntEQ, left, right); }

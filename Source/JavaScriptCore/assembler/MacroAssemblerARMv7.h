@@ -170,6 +170,14 @@ public:
     void add32(TrustedImm32 imm, RegisterID src, RegisterID dest)
     {
         ARMThumbImmediate armImm = ARMThumbImmediate::makeUInt12OrEncodedImm(imm.m_value);
+
+        // For adds with stack pointer destination, moving the src first to sp is
+        // needed to avoid unpredictable instruction
+        if (dest == ARMRegisters::sp && src != dest) {
+            move(src, ARMRegisters::sp);
+            src = ARMRegisters::sp;
+        }
+
         if (armImm.isValid())
             m_assembler.add(dest, src, armImm);
         else {
@@ -1160,6 +1168,16 @@ public:
         push(dataTempRegister);
     }
 
+    void popPair(RegisterID dest1, RegisterID dest2)
+    {
+        m_assembler.pop(1 << dest1 | 1 << dest2);
+    }
+    
+    void pushPair(RegisterID src1, RegisterID src2)
+    {
+        m_assembler.push(1 << src1 | 1 << src2);
+    }
+    
     // Register move operations:
     //
     // Move values in registers.
@@ -1281,11 +1299,19 @@ private:
             m_assembler.tst(reg, reg);
         else {
             ARMThumbImmediate armImm = ARMThumbImmediate::makeEncodedImm(imm);
-            if (armImm.isValid())
-                m_assembler.tst(reg, armImm);
-            else {
+            if (armImm.isValid()) {
+                if (reg == ARMRegisters::sp) {
+                    move(reg, addressTempRegister);
+                    m_assembler.tst(addressTempRegister, armImm);
+                } else
+                    m_assembler.tst(reg, armImm);
+            } else {
                 move(mask, dataTempRegister);
-                m_assembler.tst(reg, dataTempRegister);
+                if (reg == ARMRegisters::sp) {
+                    move(reg, addressTempRegister);
+                    m_assembler.tst(addressTempRegister, dataTempRegister);
+                } else
+                    m_assembler.tst(reg, dataTempRegister);
             }
         }
     }

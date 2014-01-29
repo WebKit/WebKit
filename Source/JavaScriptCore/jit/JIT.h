@@ -241,13 +241,8 @@ namespace JSC {
             return jit.privateCompileCTINativeCall(vm, func);
         }
 
-        static void linkFor(ExecState*, JSFunction* callee, CodeBlock* callerCodeBlock, CodeBlock* calleeCodeBlock, CodePtr, CallLinkInfo*, VM*, CodeSpecializationKind);
-        static void linkSlowCall(CodeBlock* callerCodeBlock, CallLinkInfo*);
-        
-        static unsigned frameRegisterCountFor(CodeBlock* codeBlock)
-        {
-            return codeBlock->m_numCalleeRegisters;
-        }
+        static unsigned frameRegisterCountFor(CodeBlock*);
+        static int stackPointerOffsetFor(CodeBlock*);
 
     private:
         JIT(VM*, CodeBlock* = 0);
@@ -697,11 +692,11 @@ namespace JSC {
         MacroAssembler::Call callOperation(WithProfileTag, J_JITOperation_EPc, int, Instruction*);
         MacroAssembler::Call callOperation(J_JITOperation_EZ, int, int32_t);
         MacroAssembler::Call callOperation(P_JITOperation_EJS, GPRReg, size_t);
-        MacroAssembler::Call callOperation(P_JITOperation_EZ, int32_t);
         MacroAssembler::Call callOperation(S_JITOperation_ECC, RegisterID, RegisterID);
         MacroAssembler::Call callOperation(S_JITOperation_EJ, RegisterID);
         MacroAssembler::Call callOperation(S_JITOperation_EJJ, RegisterID, RegisterID);
         MacroAssembler::Call callOperation(S_JITOperation_EOJss, RegisterID, RegisterID);
+        MacroAssembler::Call callOperation(Sprt_JITOperation_EZ, int32_t);
         MacroAssembler::Call callOperation(V_JITOperation_E);
         MacroAssembler::Call callOperation(V_JITOperation_EC, RegisterID);
         MacroAssembler::Call callOperation(V_JITOperation_ECC, RegisterID, RegisterID);
@@ -726,6 +721,7 @@ namespace JSC {
         MacroAssembler::Call callOperation(V_JITOperation_EPc, Instruction*);
         MacroAssembler::Call callOperation(V_JITOperation_EZ, int32_t);
         MacroAssembler::Call callOperationWithCallFrameRollbackOnException(J_JITOperation_E);
+        MacroAssembler::Call callOperationNoExceptionCheck(J_JITOperation_EE, RegisterID);
         MacroAssembler::Call callOperationWithCallFrameRollbackOnException(V_JITOperation_ECb, CodeBlock*);
         MacroAssembler::Call callOperationWithCallFrameRollbackOnException(Z_JITOperation_E);
 #if USE(JSVALUE32_64)

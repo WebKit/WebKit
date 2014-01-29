@@ -537,6 +537,9 @@
     <ClCompile Include="..\runtime\ErrorConstructor.cpp">
       <Filter>runtime</Filter>
     </ClCompile>
+    <ClCompile Include="..\runtime\ErrorHandlingScope.cpp">
+      <Filter>runtime</Filter>
+    </ClCompile>
     <ClCompile Include="..\runtime\ErrorInstance.cpp">
       <Filter>runtime</Filter>
     </ClCompile>
@@ -1442,6 +1445,9 @@
     <ClInclude Include="..\assembler\MacroAssemblerX86_64.h">
       <Filter>assembler</Filter>
     </ClInclude>
+    <ClInclude Include="..\assembler\MaxFrameExtentForSlowPathCall.h">
+      <Filter>assembler</Filter>
+    </ClInclude>
     <ClInclude Include="..\assembler\RepatchBuffer.h">
       <Filter>assembler</Filter>
     </ClInclude>
@@ -2127,6 +2133,9 @@
       <Filter>runtime</Filter>
     </ClInclude>
     <ClInclude Include="..\runtime\ErrorConstructor.h">
+      <Filter>runtime</Filter>
+    </ClInclude>
+    <ClInclude Include="..\runtime\ErrorHandlingScope.h">
       <Filter>runtime</Filter>
     </ClInclude>
     <ClInclude Include="..\runtime\ErrorInstance.h">
@@ -3294,10 +3303,5 @@
     <None Include="JavaScriptCorePreLink.cmd" />
     <None Include="JavaScriptCorePostBuild.cmd" />
     <None Include="JavaScriptCorePreBuild.cmd" />
-  </ItemGroup>
-  <ItemGroup>
-    <MASM Include="..\jit\JITStubsMSVC64.asm">
-      <Filter>jit</Filter>
-    </MASM>
   </ItemGroup>
 </Project>

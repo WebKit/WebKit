@@ -62,6 +62,8 @@ struct OpcodeGroupInitializer {
 { groupIndex, groupClass::mask, groupClass::pattern, groupClass::format }
 
 static OpcodeGroupInitializer opcodeGroupList[] = {
+    OPCODE_GROUP_ENTRY(0x08, A64DOpcodeLoadStoreRegisterPair),
+    OPCODE_GROUP_ENTRY(0x09, A64DOpcodeLoadStoreRegisterPair),
     OPCODE_GROUP_ENTRY(0x0a, A64DOpcodeLogicalShiftedRegister),
     OPCODE_GROUP_ENTRY(0x0b, A64DOpcodeAddSubtractExtendedRegister),
     OPCODE_GROUP_ENTRY(0x0b, A64DOpcodeAddSubtractShiftedRegister),
@@ -172,6 +174,11 @@ const char* A64DOpcode::format()
 
 void A64DOpcode::appendRegisterName(unsigned registerNumber, bool is64Bit)
 {
+    if (registerNumber == 29) {
+        bufferPrintf(is64Bit ? "fp" : "wfp");
+        return;
+    }
+
     if (registerNumber == 30) {
         bufferPrintf(is64Bit ? "lr" : "wlr");
         return;
@@ -935,6 +942,63 @@ const char* A64DOpcodeLoadStoreRegisterOffset::format()
     }
 
     appendCharacter(']');
+
+    return m_formatBuffer;
+}
+
+const char* A64DOpcodeLoadStoreRegisterPair::opName()
+{
+    if (!vBit() && lBit() && size() == 0x1)
+        return "ldpsw";
+    if (lBit())
+        return "ldp";
+    return "stp";
+}
+
+const char* A64DOpcodeLoadStoreRegisterPair::format()
+{
+    const char* thisOpName = opName();
+    
+    if (size() == 0x3)
+        return A64DOpcode::format();
+
+    if ((offsetMode() < 0x1) || (offsetMode() > 0x3))
+        return A64DOpcode::format();
+
+    if ((offsetMode() == 0x1) && !vBit() && !lBit())
+        return A64DOpcode::format();
+
+    appendInstructionName(thisOpName);
+    unsigned offsetShift;
+    if (vBit()) {
+        appendFPRegisterName(rt(), size());
+        appendSeparator();
+        appendFPRegisterName(rt2(), size());
+        offsetShift = size() + 2;
+    } else {
+        appendRegisterName(rt(), is64Bit());
+        appendSeparator();
+        appendRegisterName(rt2(), is64Bit());
+        offsetShift = (size() >> 1) + 2;
+    }
+
+    appendSeparator();
+    appendCharacter('[');
+    appendSPOrRegisterName(rn());
+
+    int offset = immediate7() << offsetShift;
+
+    if (offsetMode() == 1) {
+        appendCharacter(']');
+        appendSeparator();
+        appendSignedImmediate(offset);
+    } else {
+        appendSeparator();
+        appendSignedImmediate(offset);
+        appendCharacter(']');
+        if (offsetMode() == 0x3)
+            appendCharacter('!');
+    }
 
     return m_formatBuffer;
 }

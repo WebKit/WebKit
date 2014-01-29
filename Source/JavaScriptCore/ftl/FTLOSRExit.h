@@ -166,6 +166,11 @@ struct OSRExit : public DFG::OSRExitBase {
     uint32_t m_stackmapID;
     
     CodeLocationJump codeLocationForRepatch(CodeBlock* ftlCodeBlock) const;
+    
+    bool considerAddingAsFrequentExitSite(CodeBlock* profiledCodeBlock)
+    {
+        return OSRExitBase::considerAddingAsFrequentExitSite(profiledCodeBlock, ExitFromFTL);
+    }
 };
 
 } } // namespace JSC::FTL

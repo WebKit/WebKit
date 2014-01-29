@@ -46,10 +46,16 @@ JITFinalizer::~JITFinalizer()
 {
 }
 
+size_t JITFinalizer::codeSize()
+{
+    return m_linkBuffer->size();
+}
+
 bool JITFinalizer::finalize()
 {
-    m_jitCode->initializeCodeRef(m_linkBuffer->finalizeCodeWithoutDisassembly());
-    m_plan.codeBlock->setJITCode(m_jitCode, MacroAssemblerCodePtr());
+    m_jitCode->initializeCodeRef(
+        m_linkBuffer->finalizeCodeWithoutDisassembly(), MacroAssemblerCodePtr());
+    m_plan.codeBlock->setJITCode(m_jitCode);
     
     finalizeCommon();
     
@@ -59,8 +65,9 @@ bool JITFinalizer::finalize()
 bool JITFinalizer::finalizeFunction()
 {
     RELEASE_ASSERT(!m_withArityCheck.isEmptyValue());
-    m_jitCode->initializeCodeRef(m_linkBuffer->finalizeCodeWithoutDisassembly());
-    m_plan.codeBlock->setJITCode(m_jitCode, m_withArityCheck);
+    m_jitCode->initializeCodeRef(
+        m_linkBuffer->finalizeCodeWithoutDisassembly(), m_withArityCheck);
+    m_plan.codeBlock->setJITCode(m_jitCode);
     
     finalizeCommon();
     
@@ -75,6 +82,9 @@ void JITFinalizer::finalizeCommon()
     
     if (m_plan.compilation)
         m_plan.vm.m_perBytecodeProfiler->addCompilation(m_plan.compilation);
+    
+    if (!m_plan.willTryToTierUp)
+        m_plan.codeBlock->baselineVersion()->m_didFailFTLCompilation = true;
 }
 
 } } // namespace JSC::DFG

@@ -27,6 +27,7 @@
 
 #include "ArrayProfile.h"
 #include "CodeBlock.h"
+#include "CommonSlowPaths.h"
 #include "Debugger.h"
 #include "Executable.h"
 #include "Heap.h"

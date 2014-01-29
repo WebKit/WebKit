@@ -28,7 +28,7 @@
 
 namespace JSC {
 
-enum ExitKind {
+enum ExitKind : uint8_t {
     ExitKindUnset,
     BadType, // We exited because a type prediction was wrong.
     BadFunction, // We exited because we made an incorrect assumption about what function we would see.

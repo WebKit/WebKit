@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2011, 2013 Apple Inc. All rights reserved.
+ *  Copyright (C) 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2011, 2013, 2014 Apple Inc. All rights reserved.
  *  Copyright (C) 2007 Eric Seidel <eric@webkit.org>
  *
  *  This library is free software; you can redistribute it and/or
@@ -451,24 +451,27 @@ void Heap::markRoots()
     double gcStartTime = WTF::monotonicallyIncreasingTime();
 #endif
 
+    m_codeBlocks.clearMarks();
     void* dummy;
-    
+
     // We gather conservative roots before clearing mark bits because conservative
     // gathering uses the mark bits to determine whether a reference is valid.
     ConservativeRoots machineThreadRoots(&m_objectSpace.blocks(), &m_storageSpace);
     m_jitStubRoutines.clearMarks();
     {
         GCPHASE(GatherConservativeRoots);
-        m_machineThreads.gatherConservativeRoots(machineThreadRoots, &dummy);
+        m_machineThreads.gatherConservativeRoots(machineThreadRoots, m_jitStubRoutines, m_codeBlocks, &dummy);
     }
 
+#if ENABLE(LLINT_C_LOOP)
     ConservativeRoots stackRoots(&m_objectSpace.blocks(), &m_storageSpace);
-    m_codeBlocks.clearMarks();
     {
         GCPHASE(GatherStackRoots);
         stack().gatherConservativeRoots(stackRoots, m_jitStubRoutines, m_codeBlocks);
-        stack().sanitizeStack();
     }
+#endif
+
+    sanitizeStackForVM(m_vm);
 
 #if ENABLE(DFG_JIT)
     ConservativeRoots scratchBufferRoots(&m_objectSpace.blocks(), &m_storageSpace);
@@ -505,12 +508,14 @@ void Heap::markRoots()
             visitor.append(machineThreadRoots);
             visitor.donateAndDrain();
         }
+#if ENABLE(LLINT_C_LOOP)
         {
             GCPHASE(VisitStackRoots);
             MARK_LOG_ROOT(visitor, "Stack");
             visitor.append(stackRoots);
             visitor.donateAndDrain();
         }
+#endif
 #if ENABLE(DFG_JIT)
         {
             GCPHASE(VisitScratchBufferRoots);
@@ -952,12 +957,12 @@ void Heap::collect()
 
 bool Heap::collectIfNecessaryOrDefer()
 {
-    if (m_deferralDepth)
+    if (isDeferred())
         return false;
-    
+
     if (!shouldCollect())
         return false;
-    
+
     collect();
     return true;
 }

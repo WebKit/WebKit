@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011, 2012, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2011, 2012, 2013, 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,6 +33,7 @@
 #include "CallFrame.h"
 #include "CommonSlowPaths.h"
 #include "CommonSlowPathsExceptions.h"
+#include "ErrorHandlingScope.h"
 #include "GetterSetter.h"
 #include "HostCallReturnValue.h"
 #include "Interpreter.h"
@@ -51,6 +52,7 @@
 #include "LowLevelInterpreter.h"
 #include "ObjectConstructor.h"
 #include "Operations.h"
+#include "ProtoCallFrame.h"
 #include "StructureRareDataInlines.h"
 #include <wtf/StringPrintStream.h>
 
@@ -82,7 +84,7 @@ namespace JSC { namespace LLInt {
         return encodeResult(first, second);        \
     } while (false)
 
-#define LLINT_END_IMPL() LLINT_RETURN_TWO(pc, exec)
+#define LLINT_END_IMPL() LLINT_RETURN_TWO(pc, 0)
 
 #define LLINT_THROW(exceptionToThrow) do {                        \
         vm.throwException(exec, exceptionToThrow);                \
@@ -137,21 +139,27 @@ namespace JSC { namespace LLInt {
 #define LLINT_CALL_THROW(exec, exceptionToThrow) do {                   \
         ExecState* __ct_exec = (exec);                                  \
         vm.throwException(__ct_exec, exceptionToThrow);                 \
-        LLINT_CALL_END_IMPL(__ct_exec, callToThrow(__ct_exec));         \
+        LLINT_CALL_END_IMPL(0, callToThrow(__ct_exec));                 \
     } while (false)
 
 #define LLINT_CALL_CHECK_EXCEPTION(exec) do {                           \
         ExecState* __cce_exec = (exec);                                 \
         if (UNLIKELY(vm.exception()))                                   \
-            LLINT_CALL_END_IMPL(__cce_exec, callToThrow(__cce_exec));   \
+            LLINT_CALL_END_IMPL(0, callToThrow(__cce_exec));            \
     } while (false)
 
 #define LLINT_CALL_RETURN(exec, callTarget) do {                        \
         ExecState* __cr_exec = (exec);                                  \
         void* __cr_callTarget = (callTarget);                           \
-        LLINT_CALL_CHECK_EXCEPTION(__cr_exec->callerFrame());           \
+        LLINT_CALL_CHECK_EXCEPTION(__cr_exec);                          \
         LLINT_CALL_END_IMPL(__cr_exec, __cr_callTarget);                \
     } while (false)
+
+#define LLINT_RETURN_CALLEE_FRAME(execCallee) do {                      \
+        ExecState* __rcf_exec = (execCallee);                           \
+        LLINT_RETURN_TWO(pc, __rcf_exec);                               \
+    } while (false)
+    
 
 extern "C" SlowPathReturnType llint_trace_operand(ExecState* exec, Instruction* pc, int fromWhere, int operand)
 {
@@ -242,6 +250,10 @@ LLINT_SLOW_PATH_DECL(trace)
             static_cast<intptr_t>(pc - exec->codeBlock()->instructions().begin()),
             opcodeNames[exec->vm().interpreter->getOpcodeID(pc[0].u.opcode)],
             exec->scope(), pc);
+    if (exec->vm().interpreter->getOpcodeID(pc[0].u.opcode) == op_enter) {
+        dataLogF("Frame will eventually return to %p\n", exec->returnPC().value());
+        *bitwise_cast<volatile char*>(exec->returnPC().value());
+    }
     if (exec->vm().interpreter->getOpcodeID(pc[0].u.opcode) == op_ret) {
         dataLogF("Will be returning to %p\n", exec->returnPC().value());
         dataLogF("The new cfr will be %p\n", exec->callerFrame());
@@ -325,15 +337,17 @@ static SlowPathReturnType entryOSR(ExecState* exec, Instruction*, CodeBlock* cod
     
     if (!shouldJIT(exec)) {
         codeBlock->dontJITAnytimeSoon();
-        LLINT_RETURN_TWO(0, exec);
+        LLINT_RETURN_TWO(0, 0);
     }
     if (!jitCompileAndSetHeuristics(codeBlock, exec))
-        LLINT_RETURN_TWO(0, exec);
+        LLINT_RETURN_TWO(0, 0);
     
     if (kind == Prologue)
-        LLINT_RETURN_TWO(codeBlock->jitCode()->executableAddress(), exec);
+        LLINT_RETURN_TWO(codeBlock->jitCode()->executableAddress(), 0);
     ASSERT(kind == ArityCheck);
-    LLINT_RETURN_TWO(codeBlock->jitCodeWithArityCheck().executableAddress(), exec);
+    LLINT_RETURN_TWO(codeBlock->jitCode()->addressForCall(
+        *codeBlock->vm(), codeBlock->ownerExecutable(), MustCheckArity,
+        RegisterPreservationNotRequired).executableAddress(), 0);
 }
 #else // ENABLE(JIT)
 static SlowPathReturnType entryOSR(ExecState* exec, Instruction*, CodeBlock* codeBlock, const char*, EntryKind)
@@ -381,11 +395,11 @@ LLINT_SLOW_PATH_DECL(loop_osr)
     
     if (!shouldJIT(exec)) {
         codeBlock->dontJITAnytimeSoon();
-        LLINT_RETURN_TWO(0, exec);
+        LLINT_RETURN_TWO(0, 0);
     }
     
     if (!jitCompileAndSetHeuristics(codeBlock, exec))
-        LLINT_RETURN_TWO(0, exec);
+        LLINT_RETURN_TWO(0, 0);
     
     ASSERT(codeBlock->jitType() == JITCode::BaselineJIT);
     
@@ -398,10 +412,10 @@ LLINT_SLOW_PATH_DECL(loop_osr)
     void* jumpTarget = codeBlock->jitCode()->executableAddressAtOffset(mapping->m_machineCodeOffset);
     ASSERT(jumpTarget);
     
-    LLINT_RETURN_TWO(jumpTarget, exec);
+    LLINT_RETURN_TWO(jumpTarget, exec->topOfFrame());
 #else // ENABLE(JIT)
     codeBlock->dontJITAnytimeSoon();
-    LLINT_RETURN_TWO(0, exec);
+    LLINT_RETURN_TWO(0, 0);
 #endif // ENABLE(JIT)
 }
 
@@ -437,13 +451,34 @@ LLINT_SLOW_PATH_DECL(stack_check)
     dataLogF("Num vars = %u.\n", exec->codeBlock()->m_numVars);
     dataLogF("Current end is at %p.\n", exec->vm().interpreter->stack().end());
 #endif
-    ASSERT(!exec->vm().interpreter->stack().containsAddress(&exec->registers()[virtualRegisterForLocal(exec->codeBlock()->m_numCalleeRegisters).offset()]));
-    if (UNLIKELY(!vm.interpreter->stack().grow(&exec->registers()[virtualRegisterForLocal(exec->codeBlock()->m_numCalleeRegisters).offset()]))) {
-        exec = exec->callerFrame();
-        CommonSlowPaths::interpreterThrowInCaller(exec, createStackOverflowError(exec));
-        pc = returnToThrowForThrownException(exec);
-    }
-    LLINT_END_IMPL();
+
+    // This stack check is done in the prologue for a function call, and the
+    // CallFrame is not completely set up yet. For example, if the frame needs
+    // an activation object, the activation object will only be set up after
+    // we start executing the function. If we need to throw a StackOverflowError
+    // here, then we need to tell the prologue to start the stack unwinding from
+    // the caller frame (which is fully set up) instead. To do that, we return
+    // the caller's CallFrame in the second return value.
+    //
+    // If the stack check succeeds and we don't need to throw the error, then
+    // we'll return 0 instead. The prologue will check for a non-zero value
+    // when determining whether to set the callFrame or not.
+
+    // For JIT enabled builds which uses the C stack, the stack is not growable.
+    // Hence, if we get here, then we know a stack overflow is imminent. So, just
+    // throw the StackOverflowError unconditionally.
+#if ENABLE(LLINT_C_LOOP)
+    ASSERT(!vm.interpreter->stack().containsAddress(exec->topOfFrame()));
+    if (LIKELY(vm.interpreter->stack().ensureCapacityFor(exec->topOfFrame())))
+        LLINT_RETURN_TWO(pc, 0);
+#endif
+
+    exec = exec->callerFrame();
+    vm.topCallFrame = exec;
+    ErrorHandlingScope errorScope(vm);
+    CommonSlowPaths::interpreterThrowInCaller(exec, createStackOverflowError(exec));
+    pc = returnToThrowForThrownException(exec);
+    LLINT_RETURN_TWO(pc, exec);
 }
 
 LLINT_SLOW_PATH_DECL(slow_path_create_activation)
@@ -1045,7 +1080,7 @@ inline SlowPathReturnType setUpCall(ExecState* execCallee, Instruction* pc, Code
     MacroAssemblerCodePtr codePtr;
     CodeBlock* codeBlock = 0;
     if (executable->isHostFunction())
-        codePtr = executable->hostCodeEntryFor(kind);
+        codePtr = executable->entrypointFor(vm, kind, MustCheckArity, RegisterPreservationNotRequired);
     else {
         FunctionExecutable* functionExecutable = static_cast<FunctionExecutable*>(executable);
         JSObject* error = functionExecutable->prepareForExecution(execCallee, callee->scope(), kind);
@@ -1053,11 +1088,15 @@ inline SlowPathReturnType setUpCall(ExecState* execCallee, Instruction* pc, Code
             LLINT_CALL_THROW(execCallee->callerFrame(), error);
         codeBlock = functionExecutable->codeBlockFor(kind);
         ASSERT(codeBlock);
+        ArityCheckMode arity;
         if (execCallee->argumentCountIncludingThis() < static_cast<size_t>(codeBlock->numParameters()))
-            codePtr = functionExecutable->jsCodeWithArityCheckEntryFor(kind);
+            arity = MustCheckArity;
         else
-            codePtr = functionExecutable->jsCodeEntryFor(kind);
+            arity = ArityCheckNotRequired;
+        codePtr = functionExecutable->entrypointFor(vm, kind, arity, RegisterPreservationNotRequired);
     }
+    
+    ASSERT(!!codePtr);
     
     if (!LLINT_ALWAYS_ACCESS_SLOW && callLinkInfo) {
         ExecState* execCaller = execCallee->callerFrame();
@@ -1110,19 +1149,19 @@ LLINT_SLOW_PATH_DECL(slow_path_construct)
     return genericCall(exec, pc, CodeForConstruct);
 }
 
-LLINT_SLOW_PATH_DECL(slow_path_size_and_alloc_frame_for_varargs)
+LLINT_SLOW_PATH_DECL(slow_path_size_frame_for_varargs)
 {
     LLINT_BEGIN();
     // This needs to:
     // - Set up a call frame while respecting the variable arguments.
     
-    ExecState* execCallee = sizeAndAllocFrameForVarargs(exec, &vm.interpreter->stack(),
+    ExecState* execCallee = sizeFrameForVarargs(exec, &vm.interpreter->stack(),
         LLINT_OP_C(4).jsValue(), pc[5].u.operand);
     LLINT_CALL_CHECK_EXCEPTION(exec);
     
     vm.newCallFrameReturnValue = execCallee;
 
-    LLINT_END();
+    LLINT_RETURN_CALLEE_FRAME(execCallee);
 }
 
 LLINT_SLOW_PATH_DECL(slow_path_call_varargs)
@@ -1312,13 +1351,6 @@ LLINT_SLOW_PATH_DECL(slow_path_profile_did_call)
     LLINT_END();
 }
 
-LLINT_SLOW_PATH_DECL(throw_from_native_call)
-{
-    LLINT_BEGIN();
-    ASSERT(vm.exception());
-    LLINT_END();
-}
-
 LLINT_SLOW_PATH_DECL(slow_path_handle_exception)
 {
     LLINT_BEGIN_NO_SET_PC();
@@ -1387,6 +1419,23 @@ LLINT_SLOW_PATH_DECL(slow_path_put_to_scope)
 
     LLINT_END();
 }
+
+extern "C" SlowPathReturnType llint_throw_stack_overflow_error(VM* vm, ProtoCallFrame* protoFrame)
+{
+    ExecState* exec = vm->topCallFrame;
+    if (!exec)
+        exec = protoFrame->scope()->globalObject()->globalExec();
+    throwStackOverflowError(exec);
+    return encodeResult(0, 0);
+}
+
+#if ENABLE(LLINT_C_LOOP)
+extern "C" SlowPathReturnType llint_stack_check_at_vm_entry(VM* vm, Register* newTopOfStack)
+{
+    bool success = vm->interpreter->stack().ensureCapacityFor(newTopOfStack);
+    return encodeResult(reinterpret_cast<void*>(success), 0);
+}
+#endif
 
 extern "C" void llint_write_barrier_slow(ExecState*, JSCell* cell)
 {

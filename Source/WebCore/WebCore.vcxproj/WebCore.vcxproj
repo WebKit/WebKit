@@ -18512,6 +18512,7 @@
     <ClInclude Include="..\ForwardingHeaders\runtime\ConstructData.h" />
     <ClInclude Include="..\ForwardingHeaders\runtime\DateInstance.h" />
     <ClInclude Include="..\ForwardingHeaders\runtime\Error.h" />
+    <ClInclude Include="..\ForwardingHeaders\runtime\ErrorHandlingScope.h" />
     <ClInclude Include="..\ForwardingHeaders\runtime\ErrorPrototype.h" />
     <ClInclude Include="..\ForwardingHeaders\runtime\ExceptionHelpers.h" />
     <ClInclude Include="..\ForwardingHeaders\runtime\Executable.h" />

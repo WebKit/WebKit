@@ -180,6 +180,15 @@ namespace JSC {
             ASSERT(!callFrame->isVMEntrySentinel());
             vm->topCallFrame = callFrame;
         }
+        
+        enum VMEntrySentinelOKTag { VMEntrySentinelOK };
+        ALWAYS_INLINE NativeCallFrameTracer(VM* vm, CallFrame* callFrame, VMEntrySentinelOKTag)
+        {
+            ASSERT(vm);
+            ASSERT(callFrame);
+            if (!callFrame->isVMEntrySentinel())
+                vm->topCallFrame = callFrame;
+        }
     };
 
     class Interpreter {
@@ -190,14 +199,6 @@ namespace JSC {
         friend class VM;
 
     public:
-        class ErrorHandlingMode {
-        public:
-            JS_EXPORT_PRIVATE ErrorHandlingMode(ExecState*);
-            JS_EXPORT_PRIVATE ~ErrorHandlingMode();
-        private:
-            Interpreter& m_interpreter;
-        };
-
         Interpreter(VM &);
         ~Interpreter();
         
@@ -236,8 +237,6 @@ namespace JSC {
         void getArgumentsData(CallFrame*, JSFunction*&, ptrdiff_t& firstParameterIndex, Register*& argv, int& argc);
         
         SamplingTool* sampler() { return m_sampler.get(); }
-
-        bool isInErrorHandlingMode() { return m_errorHandlingModeReentry; }
 
         NEVER_INLINE HandlerInfo* unwind(CallFrame*&, JSValue&);
         NEVER_INLINE void debug(CallFrame*, DebugHookID);
@@ -286,7 +285,7 @@ namespace JSC {
     };
 
     JSValue eval(CallFrame*);
-    CallFrame* sizeAndAllocFrameForVarargs(CallFrame*, JSStack*, JSValue, int);
+    CallFrame* sizeFrameForVarargs(CallFrame*, JSStack*, JSValue, int);
     void loadVarargs(CallFrame*, CallFrame*, JSValue, JSValue);
 } // namespace JSC
 

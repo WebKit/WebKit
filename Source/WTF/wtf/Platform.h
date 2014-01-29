@@ -660,12 +660,12 @@
 #define ENABLE_JIT 0
 #endif
 
-/* The JIT is enabled by default on all x86, x86-64, ARM & MIPS platforms except Win64. */
+/* The JIT is enabled by default on all x86, x86-64, ARM & MIPS platforms except Windows. */
 #if !defined(ENABLE_JIT) \
     && (CPU(X86) || CPU(X86_64) || CPU(ARM) || CPU(ARM64) || CPU(MIPS)) \
     && (OS(DARWIN) || !COMPILER(GCC) || GCC_VERSION_AT_LEAST(4, 1, 0)) \
     && !OS(WINCE) \
-    && !(OS(WINDOWS) && CPU(X86_64))
+    && !OS(WINDOWS)
 #define ENABLE_JIT 1
 #endif
 
@@ -833,14 +833,6 @@
 #undef ENABLE_ASSEMBLER
 #define ENABLE_ASSEMBLER 1
 #endif
-#endif
-
-/* FIXME: We currently unconditionally use spearate stacks. When we switch to using the
-   C stack for JS frames, we'll need to make the following conditional on ENABLE(LLINT_CLOOP)
-   only.
-*/
-#if ENABLE(LLINT_CLOOP) || 1
-#define WTF_USE_SEPARATE_C_AND_JS_STACK 1
 #endif
 
 /* Pick which allocator to use; we only need an executable allocator if the assembler is compiled in.

@@ -37,14 +37,13 @@ namespace JSC {
 #if ENABLE(JIT)
 
 #if OS(WINDOWS)
-class ExecState;
-class Register;
 struct ProtoCallFrame;
+class VM;
 
 extern "C" {
-    EncodedJSValue callToJavaScript(void*, ExecState**, ProtoCallFrame*, Register*);
-    void returnFromJavaScript();
-    EncodedJSValue callToNativeFunction(void*, ExecState**, ProtoCallFrame*, Register*);
+    EncodedJSValue callToJavaScript(void*, VM*, ProtoCallFrame*);
+    EncodedJSValue callToNativeFunction(void*, VM*, ProtoCallFrame*);
+    void handleUncaughtException();
 }
 #endif
 

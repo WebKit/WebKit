@@ -38,6 +38,7 @@
 #include "JSFunction.h"
 #include "JSPropertyNameIterator.h"
 #include "LinkBuffer.h"
+#include "MaxFrameExtentForSlowPathCall.h"
 #include "SlowPathCall.h"
 #include "VirtualRegister.h"
 
@@ -73,7 +74,7 @@ void JIT::emit_op_end(Instruction* currentInstruction)
 {
     RELEASE_ASSERT(returnValueGPR != callFrameRegister);
     emitGetVirtualRegister(currentInstruction[1].u.operand, returnValueGPR);
-    restoreReturnAddressBeforeReturn(Address(callFrameRegister, CallFrame::returnPCOffset()));
+    emitFunctionEpilogue();
     ret();
 }
 
@@ -262,14 +263,8 @@ void JIT::emit_op_ret(Instruction* currentInstruction)
     // Return the result in %eax.
     emitGetVirtualRegister(currentInstruction[1].u.operand, returnValueGPR);
 
-    // Grab the return address.
-    emitGetReturnPCFromCallFrameHeaderPtr(regT1);
-
-    // Restore our caller's "r".
-    emitGetCallerFrameFromCallFrameHeaderPtr(callFrameRegister);
-
-    // Return.
-    restoreReturnAddressBeforeReturn(regT1);
+    checkStackPointerAlignment();
+    emitFunctionEpilogue();
     ret();
 }
 
@@ -285,14 +280,8 @@ void JIT::emit_op_ret_object_or_this(Instruction* currentInstruction)
     loadPtr(Address(returnValueGPR, JSCell::structureOffset()), regT2);
     Jump notObject = emitJumpIfNotObject(regT2);
 
-    // Grab the return address.
-    emitGetReturnPCFromCallFrameHeaderPtr(regT1);
-
-    // Restore our caller's "r".
-    emitGetCallerFrameFromCallFrameHeaderPtr(callFrameRegister);
-
     // Return.
-    restoreReturnAddressBeforeReturn(regT1);
+    emitFunctionEpilogue();
     ret();
 
     // Return 'this' in %eax.
@@ -300,14 +289,8 @@ void JIT::emit_op_ret_object_or_this(Instruction* currentInstruction)
     notObject.link(this);
     emitGetVirtualRegister(currentInstruction[2].u.operand, returnValueGPR);
 
-    // Grab the return address.
-    emitGetReturnPCFromCallFrameHeaderPtr(regT1);
-
-    // Restore our caller's "r".
-    emitGetCallerFrameFromCallFrameHeaderPtr(callFrameRegister);
-
     // Return.
-    restoreReturnAddressBeforeReturn(regT1);
+    emitFunctionEpilogue();
     ret();
 }
 
@@ -650,6 +633,9 @@ void JIT::emit_op_catch(Instruction* currentInstruction)
 {
     move(TrustedImmPtr(m_vm), regT3);
     load64(Address(regT3, VM::callFrameForThrowOffset()), callFrameRegister);
+
+    addPtr(TrustedImm32(stackPointerOffsetFor(codeBlock()) * sizeof(Register)), callFrameRegister, stackPointerRegister);
+
     load64(Address(regT3, VM::exceptionOffset()), regT0);
     store64(TrustedImm64(JSValue::encode(JSValue())), Address(regT3, VM::exceptionOffset()));
     emitPutVirtualRegister(currentInstruction[1].u.operand);
@@ -1103,20 +1089,8 @@ void JIT::emit_op_loop_hint(Instruction*)
 {
     // Emit the JIT optimization check: 
     if (canBeOptimized()) {
-        if (Options::enableOSREntryInLoops()) {
-            addSlowCase(branchAdd32(PositiveOrZero, TrustedImm32(Options::executionCounterIncrementForLoop()),
-                AbsoluteAddress(m_codeBlock->addressOfJITExecuteCounter())));
-        } else {
-            // Add with saturation.
-            move(TrustedImmPtr(m_codeBlock->addressOfJITExecuteCounter()), regT3);
-            load32(regT3, regT2);
-            Jump dontAdd = branch32(
-                GreaterThan, regT2,
-                TrustedImm32(std::numeric_limits<int32_t>::max() - Options::executionCounterIncrementForLoop()));
-            add32(TrustedImm32(Options::executionCounterIncrementForLoop()), regT2);
-            store32(regT2, regT3);
-            dontAdd.link(this);
-        }
+        addSlowCase(branchAdd32(PositiveOrZero, TrustedImm32(Options::executionCounterIncrementForLoop()),
+            AbsoluteAddress(m_codeBlock->addressOfJITExecuteCounter())));
     }
 
     // Emit the watchdog timer check:
@@ -1128,11 +1102,12 @@ void JIT::emitSlow_op_loop_hint(Instruction*, Vector<SlowCaseEntry>::iterator& i
 {
 #if ENABLE(DFG_JIT)
     // Emit the slow path for the JIT optimization check:
-    if (canBeOptimized() && Options::enableOSREntryInLoops()) {
+    if (canBeOptimized()) {
         linkSlowCase(iter);
         
         callOperation(operationOptimize, m_bytecodeOffset);
         Jump noOptimizedEntry = branchTestPtr(Zero, returnValueGPR);
+        move(returnValueGPR2, stackPointerRegister);
         jump(returnValueGPR);
         noOptimizedEntry.link(this);
 

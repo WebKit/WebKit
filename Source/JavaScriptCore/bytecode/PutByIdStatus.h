@@ -26,6 +26,7 @@
 #ifndef PutByIdStatus_h
 #define PutByIdStatus_h
 
+#include "ExitingJITType.h"
 #include "IntendedStructureChain.h"
 #include "PropertyOffset.h"
 #include "StructureStubInfo.h"
@@ -94,6 +95,8 @@ public:
     static PutByIdStatus computeFor(CodeBlock*, StubInfoMap&, unsigned bytecodeIndex, StringImpl* uid);
     static PutByIdStatus computeFor(VM&, JSGlobalObject*, Structure*, StringImpl* uid, bool isDirect);
     
+    static PutByIdStatus computeFor(CodeBlock* baselineBlock, CodeBlock* dfgBlock, StubInfoMap& baselineMap, StubInfoMap& dfgMap, CodeOrigin, StringImpl* uid);
+    
     State state() const { return m_state; }
     
     bool isSet() const { return m_state != NoInformation; }
@@ -108,6 +111,10 @@ public:
     PropertyOffset offset() const { return m_offset; }
     
 private:
+#if ENABLE(JIT)
+    static bool hasExitSite(const ConcurrentJITLocker&, CodeBlock*, unsigned bytecodeIndex, ExitingJITType = ExitFromAnything);
+    static PutByIdStatus computeForStubInfo(const ConcurrentJITLocker&, CodeBlock*, StructureStubInfo*, StringImpl* uid);
+#endif
     static PutByIdStatus computeFromLLInt(CodeBlock*, unsigned bytecodeIndex, StringImpl* uid);
     
     State m_state;

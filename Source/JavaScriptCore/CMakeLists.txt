@@ -255,6 +255,7 @@ set(JavaScriptCore_SOURCES
     interpreter/VMInspector.cpp
 
     jit/AssemblyHelpers.cpp
+    jit/ArityCheckFailReturnThunks.cpp
     jit/ClosureCallStubRoutine.cpp
     jit/ExecutableAllocator.cpp
     jit/ExecutableAllocatorFixedVMPool.cpp
@@ -278,6 +279,7 @@ set(JavaScriptCore_SOURCES
     jit/JITStubs.cpp
     jit/JITThunks.cpp
     jit/JITToDFGDeferredCompilationCallback.cpp
+    jit/RegisterPreservationWrapperGenerator.cpp
     jit/RegisterSet.cpp
     jit/Repatch.cpp
     jit/TempRegisterSet.cpp
@@ -340,6 +342,7 @@ set(JavaScriptCore_SOURCES
     runtime/DumpContext.cpp
     runtime/Error.cpp
     runtime/ErrorConstructor.cpp
+    runtime/ErrorHandlingScope.cpp
     runtime/ErrorInstance.cpp
     runtime/ErrorPrototype.cpp
     runtime/ExceptionHelpers.cpp

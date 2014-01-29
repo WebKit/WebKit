@@ -27,6 +27,8 @@
 #ifndef StackBounds_h
 #define StackBounds_h
 
+#include <algorithm>
+
 namespace WTF {
 
 class StackBounds {
@@ -65,6 +67,17 @@ public:
         if (isGrowingDownward())
             return static_cast<char*>(m_bound) + minAvailableDelta;
         return static_cast<char*>(m_bound) - minAvailableDelta;
+    }
+
+    void* recursionLimit(size_t hostZoneSize, void* desiredLimit) const
+    {
+        checkConsistency();
+        if (isGrowingDownward()) {
+            char* endOfStackWithHostZone = reinterpret_cast<char*>(m_bound) + hostZoneSize;
+            return std::max(desiredLimit, reinterpret_cast<void*>(endOfStackWithHostZone));
+        }
+        char* endOfStackWithHostZone = reinterpret_cast<char*>(m_bound) - hostZoneSize;
+        return std::min(desiredLimit, reinterpret_cast<void*>(endOfStackWithHostZone));
     }
 
     bool isGrowingDownward() const

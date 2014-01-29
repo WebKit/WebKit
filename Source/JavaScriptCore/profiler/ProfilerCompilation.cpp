@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2012, 2013, 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -65,6 +65,11 @@ void Compilation::addProfiledBytecodes(Database& database, CodeBlock* profiledBl
 void Compilation::addDescription(const CompiledBytecode& compiledBytecode)
 {
     m_descriptions.append(compiledBytecode);
+}
+
+void Compilation::addDescription(const OriginStack& stack, const CString& description)
+{
+    addDescription(CompiledBytecode(stack, description));
 }
 
 ExecutionCounter* Compilation::executionCounterFor(const OriginStack& origin)

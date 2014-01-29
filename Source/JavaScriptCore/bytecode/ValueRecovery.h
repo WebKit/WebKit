@@ -230,6 +230,27 @@ public:
         return VirtualRegister(m_source.virtualReg);
     }
     
+    ValueRecovery withLocalsOffset(int offset) const
+    {
+        switch (m_technique) {
+        case DisplacedInJSStack:
+        case Int32DisplacedInJSStack:
+        case DoubleDisplacedInJSStack:
+        case CellDisplacedInJSStack:
+        case BooleanDisplacedInJSStack:
+        case Int52DisplacedInJSStack:
+        case StrictInt52DisplacedInJSStack: {
+            ValueRecovery result;
+            result.m_technique = m_technique;
+            result.m_source.virtualReg = m_source.virtualReg + offset;
+            return result;
+        }
+            
+        default:
+            return *this;
+        }
+    }
+    
     JSValue constant() const
     {
         ASSERT(m_technique == Constant);

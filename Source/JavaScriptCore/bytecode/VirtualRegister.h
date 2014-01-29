@@ -65,6 +65,7 @@ public:
     int toArgument() const { ASSERT(isArgument()); return operandToArgument(m_virtualRegister); }
     int toConstantIndex() const { ASSERT(isConstant()); return m_virtualRegister - s_firstConstantRegisterIndex; }
     int offset() const { return m_virtualRegister; }
+    int offsetInBytes() const { return m_virtualRegister * sizeof(Register); }
 
     bool operator==(const VirtualRegister other) const { return m_virtualRegister == other.m_virtualRegister; }
     bool operator!=(const VirtualRegister other) const { return m_virtualRegister != other.m_virtualRegister; }

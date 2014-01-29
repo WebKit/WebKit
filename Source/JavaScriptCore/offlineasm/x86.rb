@@ -150,15 +150,15 @@ class RegisterID
         when "t4"
             case kind
             when :byte
-                "%sil"
+                "%dil"
             when :half
-                "%si"
+                "%di"
             when :int
-                "%esi"
+                "%edi"
             when :ptr
-                isX64 ? "%rsi" : "%esi"
+                isX64 ? "%rdi" : "%edi"
             when :quad
-                isX64 ? "%rsi" : raise
+                isX64 ? "%rdi" : raise
             else
                 raise
             end
@@ -206,15 +206,15 @@ class RegisterID
         when "t5"
             case kind
             when :byte
-                "%dil"
+                "%sil"
             when :half
-                "%di"
+                "%si"
             when :int
-                "%edi"
+                "%esi"
             when :ptr
-                isX64 ? "%rdi" : "%edi"
+                isX64 ? "%rsi" : "%esi"
             when :quad
-                isX64 ? "%rdi" : raise
+                isX64 ? "%rsi" : raise
             end
         when "t6"
             raise "Cannot use #{name} in 32-bit X86 at #{codeOriginString}" unless isX64

@@ -40,6 +40,8 @@ namespace JSC { namespace DFG {
 
 void OSRExitCompiler::compileExit(const OSRExit& exit, const Operands<ValueRecovery>& operands, SpeculationRecovery* recovery)
 {
+    m_jit.jitAssertTagsInPlace();
+
     // 1) Pro-forma stuff.
     if (Options::printEachOSRExit()) {
         SpeculationFailureDebugInfo* debugInfo = new SpeculationFailureDebugInfo;
@@ -47,6 +49,12 @@ void OSRExitCompiler::compileExit(const OSRExit& exit, const Operands<ValueRecov
         
         m_jit.debugCall(debugOperationPrintSpeculationFailure, debugInfo);
     }
+    
+    // Need to ensure that the stack pointer accounts for the worst-case stack usage at exit.
+    m_jit.addPtr(
+        CCallHelpers::TrustedImm32(
+            -m_jit.codeBlock()->jitCode()->dfgCommon()->requiredRegisterCountForExit * sizeof(Register)),
+        CCallHelpers::framePointerRegister, CCallHelpers::stackPointerRegister);
     
     // 2) Perform speculation recovery. This only comes into play when an operation
     //    starts mutating state before verifying the speculation it has already made.

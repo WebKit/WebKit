@@ -172,7 +172,7 @@ bool SpeculativeJIT::fillJSValue(Edge edge, GPRReg& tagGPR, GPRReg& payloadGPR, 
 void SpeculativeJIT::cachedGetById(CodeOrigin codeOrigin, GPRReg baseTagGPROrNone, GPRReg basePayloadGPR, GPRReg resultTagGPR, GPRReg resultPayloadGPR, unsigned identifierNumber, JITCompiler::Jump slowPathTarget, SpillRegistersMode spillMode)
 {
     JITGetByIdGenerator gen(
-        m_jit.codeBlock(), codeOrigin, usedRegisters(), GPRInfo::callFrameRegister,
+        m_jit.codeBlock(), codeOrigin, usedRegisters(),
         JSValueRegs(baseTagGPROrNone, basePayloadGPR),
         JSValueRegs(resultTagGPR, resultPayloadGPR), spillMode != NeedToSpill);
     
@@ -204,7 +204,7 @@ void SpeculativeJIT::cachedGetById(CodeOrigin codeOrigin, GPRReg baseTagGPROrNon
 void SpeculativeJIT::cachedPutById(CodeOrigin codeOrigin, GPRReg basePayloadGPR, GPRReg valueTagGPR, GPRReg valuePayloadGPR, GPRReg scratchGPR, unsigned identifierNumber, PutKind putKind, JITCompiler::Jump slowPathTarget)
 {
     JITPutByIdGenerator gen(
-        m_jit.codeBlock(), codeOrigin, usedRegisters(), GPRInfo::callFrameRegister,
+        m_jit.codeBlock(), codeOrigin, usedRegisters(),
         JSValueRegs::payloadOnly(basePayloadGPR), JSValueRegs(valueTagGPR, valuePayloadGPR),
         scratchGPR, false, m_jit.ecmaModeFor(codeOrigin), putKind);
     
@@ -631,10 +631,9 @@ void SpeculativeJIT::emitCall(Node* node)
     
     int numArgs = numPassedArgs + dummyThisArgument;
 
-    m_jit.store32(MacroAssembler::TrustedImm32(numArgs), calleeFramePayloadSlot(numArgs, JSStack::ArgumentCount));
-    m_jit.storePtr(GPRInfo::callFrameRegister, calleeFrameCallerFrame(numArgs));
-    m_jit.store32(calleePayloadGPR, calleeFramePayloadSlot(numArgs, JSStack::Callee));
-    m_jit.store32(calleeTagGPR, calleeFrameTagSlot(numArgs, JSStack::Callee));
+    m_jit.store32(MacroAssembler::TrustedImm32(numArgs), calleeFramePayloadSlot(JSStack::ArgumentCount));
+    m_jit.store32(calleePayloadGPR, calleeFramePayloadSlot(JSStack::Callee));
+    m_jit.store32(calleeTagGPR, calleeFrameTagSlot(JSStack::Callee));
 
     for (int i = 0; i < numPassedArgs; i++) {
         Edge argEdge = m_jit.graph().m_varArgChildren[node->firstChild() + 1 + i];
@@ -643,8 +642,8 @@ void SpeculativeJIT::emitCall(Node* node)
         GPRReg argPayloadGPR = arg.payloadGPR();
         use(argEdge);
 
-        m_jit.store32(argTagGPR, calleeArgumentTagSlot(numArgs, i + dummyThisArgument));
-        m_jit.store32(argPayloadGPR, calleeArgumentPayloadSlot(numArgs, i + dummyThisArgument));
+        m_jit.store32(argTagGPR, calleeArgumentTagSlot(i + dummyThisArgument));
+        m_jit.store32(argPayloadGPR, calleeArgumentPayloadSlot(i + dummyThisArgument));
     }
 
     flushRegisters();
@@ -659,13 +658,11 @@ void SpeculativeJIT::emitCall(Node* node)
 
     m_jit.emitStoreCodeOrigin(node->codeOrigin);
     
-    m_jit.addPtr(TrustedImm32(calleeFrameOffset(numArgs)), GPRInfo::callFrameRegister);
-    
     slowPath.append(m_jit.branch32(MacroAssembler::NotEqual, calleeTagGPR, TrustedImm32(JSValue::CellTag)));
     slowPath.append(m_jit.branchPtrWithPatch(MacroAssembler::NotEqual, calleePayloadGPR, targetToCheck));
     m_jit.loadPtr(MacroAssembler::Address(calleePayloadGPR, OBJECT_OFFSETOF(JSFunction, m_scope)), resultPayloadGPR);
-    m_jit.storePtr(resultPayloadGPR, MacroAssembler::Address(GPRInfo::callFrameRegister, static_cast<ptrdiff_t>(sizeof(Register)) * JSStack::ScopeChain + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.payload)));
-    m_jit.store32(MacroAssembler::TrustedImm32(JSValue::CellTag), MacroAssembler::Address(GPRInfo::callFrameRegister, static_cast<ptrdiff_t>(sizeof(Register)) * JSStack::ScopeChain + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.tag)));
+    m_jit.storePtr(resultPayloadGPR, calleeFramePayloadSlot(JSStack::ScopeChain));
+    m_jit.storePtr(MacroAssembler::TrustedImm32(JSValue::CellTag), calleeFrameTagSlot(JSStack::ScopeChain));
 
     JITCompiler::Call fastCall = m_jit.nearCall();
 
@@ -3047,12 +3044,7 @@ void SpeculativeJIT::compile(Node* node)
             }
         }
 
-        // Grab the return address.
-        m_jit.emitGetReturnPCFromCallFrameHeaderPtr(GPRInfo::regT2);
-        // Restore our caller's "r".
-        m_jit.emitGetCallerFrameFromCallFrameHeaderPtr(GPRInfo::callFrameRegister);
-        // Return.
-        m_jit.restoreReturnAddressBeforeReturn(GPRInfo::regT2);
+        m_jit.emitFunctionEpilogue();
         m_jit.ret();
         
         noResult(node);

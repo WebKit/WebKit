@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2008, 2009, 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -520,7 +520,7 @@ void JIT::emit_op_get_by_id(Instruction* currentInstruction)
 
     JITGetByIdGenerator gen(
         m_codeBlock, CodeOrigin(m_bytecodeOffset), RegisterSet::specialRegisters(),
-        callFrameRegister, JSValueRegs(regT0), JSValueRegs(regT0), true);
+        JSValueRegs(regT0), JSValueRegs(regT0), true);
     gen.generateFastPath(*this);
     addSlowCase(gen.slowPathJump());
     m_getByIds.append(gen);
@@ -566,8 +566,8 @@ void JIT::emit_op_put_by_id(Instruction* currentInstruction)
 
     JITPutByIdGenerator gen(
         m_codeBlock, CodeOrigin(m_bytecodeOffset), RegisterSet::specialRegisters(),
-        callFrameRegister, JSValueRegs(regT0), JSValueRegs(regT1), regT2, true,
-        m_codeBlock->ecmaMode(), direct ? Direct : NotDirect);
+        JSValueRegs(regT0), JSValueRegs(regT1), regT2, true, m_codeBlock->ecmaMode(),
+        direct ? Direct : NotDirect);
     
     gen.generateFastPath(*this);
     addSlowCase(gen.slowPathJump());
@@ -1078,7 +1078,7 @@ void JIT::privateCompileGetByVal(ByValInfo* byValInfo, ReturnAddressPtr returnAd
     patchBuffer.link(done, byValInfo->badTypeJump.labelAtOffset(byValInfo->badTypeJumpToDone));
     
     byValInfo->stubRoutine = FINALIZE_CODE_FOR_STUB(
-        patchBuffer,
+        m_codeBlock, patchBuffer,
         ("Baseline get_by_val stub for %s, return point %p", toCString(*m_codeBlock).data(), returnAddress.value()));
     
     RepatchBuffer repatchBuffer(m_codeBlock);
@@ -1141,12 +1141,12 @@ void JIT::privateCompilePutByVal(ByValInfo* byValInfo, ReturnAddressPtr returnAd
     bool isDirect = m_interpreter->getOpcodeID(currentInstruction->u.opcode) == op_put_by_val_direct;
     if (!isDirect) {
         byValInfo->stubRoutine = FINALIZE_CODE_FOR_STUB(
-            patchBuffer,
+            m_codeBlock, patchBuffer,
             ("Baseline put_by_val stub for %s, return point %p", toCString(*m_codeBlock).data(), returnAddress.value()));
         
     } else {
         byValInfo->stubRoutine = FINALIZE_CODE_FOR_STUB(
-            patchBuffer,
+            m_codeBlock, patchBuffer,
             ("Baseline put_by_val_direct stub for %s, return point %p", toCString(*m_codeBlock).data(), returnAddress.value()));
     }
     RepatchBuffer repatchBuffer(m_codeBlock);

@@ -37,6 +37,8 @@ ExitProfile::~ExitProfile() { }
 
 bool ExitProfile::add(const ConcurrentJITLocker&, const FrequentExitSite& site)
 {
+    ASSERT(site.jitType() != ExitFromAnything);
+    
     // If we've never seen any frequent exits then create the list and put this site
     // into it.
     if (!m_frequentExitSites) {
@@ -78,7 +80,7 @@ bool ExitProfile::hasExitSite(const ConcurrentJITLocker&, const FrequentExitSite
         return false;
     
     for (unsigned i = m_frequentExitSites->size(); i--;) {
-        if (m_frequentExitSites->at(i) == site)
+        if (site.subsumes(m_frequentExitSites->at(i)))
             return true;
     }
     return false;

@@ -129,10 +129,15 @@ CString CodeBlock::sourceCodeOnOneLine() const
 
 void CodeBlock::dumpAssumingJITType(PrintStream& out, JITCode::JITType jitType) const
 {
+    out.print(inferredName(), "#");
     if (hasHash() || isSafeToComputeHash())
-        out.print(inferredName(), "#", hash(), ":[", RawPointer(this), "->", RawPointer(ownerExecutable()), ", ", jitType, codeType());
+        out.print(hash());
     else
-        out.print(inferredName(), "#<no-hash>:[", RawPointer(this), "->", RawPointer(ownerExecutable()), ", ", jitType, codeType());
+        out.print("<no-hash>");
+    out.print(":[", RawPointer(this), "->");
+    if (!!m_alternative)
+        out.print(RawPointer(m_alternative.get()), "->");
+    out.print(RawPointer(ownerExecutable()), ", ", jitType, codeType());
 
     if (codeType() == FunctionCode)
         out.print(specializationKind());
@@ -143,6 +148,10 @@ void CodeBlock::dumpAssumingJITType(PrintStream& out, JITCode::JITType jitType) 
         out.print(" (NeverInline)");
     if (ownerExecutable()->isStrictMode())
         out.print(" (StrictMode)");
+    if (this->jitType() == JITCode::BaselineJIT && m_didFailFTLCompilation)
+        out.print(" (FTLFail)");
+    if (this->jitType() == JITCode::BaselineJIT && m_hasBeenCompiledWithFTL)
+        out.print(" (HadFTLReplacement)");
     out.print("]");
 }
 
@@ -475,8 +484,8 @@ void CodeBlock::printCallOp(PrintStream& out, ExecState* exec, int location, con
             if (target)
                 out.printf(" jit(%p, exec %p)", target, target->executable());
         }
-#endif
         out.print(" status(", CallLinkStatus::computeFor(this, location), ")");
+#endif
     }
     ++it;
     dumpArrayProfiling(out, it, hasPrintedProfiling);
@@ -526,12 +535,7 @@ void CodeBlock::dumpBytecode(PrintStream& out)
     out.printf("\n");
     
     StubInfoMap stubInfos;
-#if ENABLE(JIT)
-    {
-        ConcurrentJITLocker locker(m_lock);
-        getStubInfoMap(locker, stubInfos);
-    }
-#endif
+    getStubInfoMap(stubInfos);
     
     const Instruction* begin = instructions().begin();
     const Instruction* end = instructions().end();
@@ -1469,6 +1473,7 @@ CodeBlock::CodeBlock(CopyParsedBlockTag, CodeBlock& other)
     , m_isConstructor(other.m_isConstructor)
     , m_shouldAlwaysBeInlined(true)
     , m_didFailFTLCompilation(false)
+    , m_hasBeenCompiledWithFTL(false)
     , m_unlinkedCode(*other.m_vm, other.m_ownerExecutable.get(), other.m_unlinkedCode.get())
     , m_steppingMode(SteppingModeDisabled)
     , m_numBreakpoints(0)
@@ -1525,6 +1530,7 @@ CodeBlock::CodeBlock(ScriptExecutable* ownerExecutable, UnlinkedCodeBlock* unlin
     , m_isConstructor(unlinkedCodeBlock->isConstructor())
     , m_shouldAlwaysBeInlined(true)
     , m_didFailFTLCompilation(false)
+    , m_hasBeenCompiledWithFTL(false)
     , m_unlinkedCode(m_globalObject->vm(), ownerExecutable, unlinkedCodeBlock)
     , m_steppingMode(SteppingModeDisabled)
     , m_numBreakpoints(0)
@@ -1854,23 +1860,13 @@ CodeBlock::CodeBlock(ScriptExecutable* ownerExecutable, UnlinkedCodeBlock* unlin
 
     // If the concurrent thread will want the code block's hash, then compute it here
     // synchronously.
-    if (Options::showDisassembly()
-        || Options::showDFGDisassembly()
-        || Options::dumpBytecodeAtDFGTime()
-        || Options::dumpGraphAtEachPhase()
-        || Options::verboseCompilation()
-        || Options::logCompilationChanges()
-        || Options::validateGraph()
-        || Options::validateGraphAtEachPhase()
-        || Options::verboseOSR()
-        || Options::verboseCompilationQueue()
-        || Options::reportCompileTimes()
-        || Options::verboseCFA())
+    if (Options::alwaysComputeHash())
         hash();
 
     if (Options::dumpGeneratedBytecodes())
         dumpBytecode();
 
+    
     m_heap->m_codeBlocks.add(this);
     m_heap->reportExtraMemoryCost(sizeof(CodeBlock) + m_instructions.size() * sizeof(Instruction));
 }
@@ -2334,16 +2330,26 @@ void CodeBlock::finalizeUnconditionally()
 #endif
 }
 
+void CodeBlock::getStubInfoMap(const ConcurrentJITLocker&, StubInfoMap& result)
+{
+#if ENABLE(JIT)
+    toHashMap(m_stubInfos, getStructureStubInfoCodeOrigin, result);
+#else
+    UNUSED_PARAM(result);
+#endif
+}
+
+void CodeBlock::getStubInfoMap(StubInfoMap& result)
+{
+    ConcurrentJITLocker locker(m_lock);
+    getStubInfoMap(locker, result);
+}
+
 #if ENABLE(JIT)
 StructureStubInfo* CodeBlock::addStubInfo()
 {
     ConcurrentJITLocker locker(m_lock);
     return m_stubInfos.add();
-}
-
-void CodeBlock::getStubInfoMap(const ConcurrentJITLocker&, StubInfoMap& result)
-{
-    toHashMap(m_stubInfos, getStructureStubInfoCodeOrigin, result);
 }
 
 void CodeBlock::resetStub(StructureStubInfo& stubInfo)
@@ -2899,6 +2905,11 @@ void CodeBlock::countReoptimization()
 unsigned CodeBlock::numberOfDFGCompiles()
 {
     ASSERT(JITCode::isBaselineCode(jitType()));
+    if (Options::testTheFTL()) {
+        if (m_didFailFTLCompilation)
+            return 1000000;
+        return (m_hasBeenCompiledWithFTL ? 1 : 0) + m_reoptimizationRetryCounter;
+    }
     return (JITCode::isOptimizingJIT(replacement()->jitType()) ? 1 : 0) + m_reoptimizationRetryCounter;
 }
 
@@ -3010,7 +3021,7 @@ int32_t CodeBlock::adjustedCounterValue(int32_t desiredThreshold)
 bool CodeBlock::checkIfOptimizationThresholdReached()
 {
 #if ENABLE(DFG_JIT)
-    if (DFG::Worklist* worklist = m_vm->worklist.get()) {
+    if (DFG::Worklist* worklist = DFG::existingGlobalDFGWorklistOrNull()) {
         if (worklist->compilationState(DFG::CompilationKey(this, DFG::DFGMode))
             == DFG::Worklist::Compiled) {
             optimizeNextInvocation();
@@ -3339,6 +3350,11 @@ unsigned CodeBlock::frameRegisterCount()
         RELEASE_ASSERT_NOT_REACHED();
         return 0;
     }
+}
+
+int CodeBlock::stackPointerOffset()
+{
+    return virtualRegisterForLocal(frameRegisterCount() - 1).offset();
 }
 
 size_t CodeBlock::predictedMachineCodeSize()

@@ -190,8 +190,8 @@ GPRReg SpeculativeJIT::fillJSValue(Edge edge)
 void SpeculativeJIT::cachedGetById(CodeOrigin codeOrigin, GPRReg baseGPR, GPRReg resultGPR, unsigned identifierNumber, JITCompiler::Jump slowPathTarget, SpillRegistersMode spillMode)
 {
     JITGetByIdGenerator gen(
-        m_jit.codeBlock(), codeOrigin, usedRegisters(), GPRInfo::callFrameRegister,
-        JSValueRegs(baseGPR), JSValueRegs(resultGPR), spillMode != NeedToSpill);
+        m_jit.codeBlock(), codeOrigin, usedRegisters(), JSValueRegs(baseGPR),
+        JSValueRegs(resultGPR), spillMode != NeedToSpill);
     gen.generateFastPath(m_jit);
     
     JITCompiler::JumpList slowCases;
@@ -210,9 +210,8 @@ void SpeculativeJIT::cachedGetById(CodeOrigin codeOrigin, GPRReg baseGPR, GPRReg
 void SpeculativeJIT::cachedPutById(CodeOrigin codeOrigin, GPRReg baseGPR, GPRReg valueGPR, GPRReg scratchGPR, unsigned identifierNumber, PutKind putKind, JITCompiler::Jump slowPathTarget)
 {
     JITPutByIdGenerator gen(
-        m_jit.codeBlock(), codeOrigin, usedRegisters(), GPRInfo::callFrameRegister,
-        JSValueRegs(baseGPR), JSValueRegs(valueGPR), scratchGPR, false,
-        m_jit.ecmaModeFor(codeOrigin), putKind);
+        m_jit.codeBlock(), codeOrigin, usedRegisters(), JSValueRegs(baseGPR),
+        JSValueRegs(valueGPR), scratchGPR, false, m_jit.ecmaModeFor(codeOrigin), putKind);
     gen.generateFastPath(m_jit);
     
     JITCompiler::JumpList slowCases;
@@ -663,9 +662,8 @@ void SpeculativeJIT::emitCall(Node* node)
     
     int numArgs = numPassedArgs + dummyThisArgument;
     
-    m_jit.store32(MacroAssembler::TrustedImm32(numArgs), calleeFramePayloadSlot(numArgs, JSStack::ArgumentCount));
-    m_jit.store64(GPRInfo::callFrameRegister, calleeFrameCallerFrame(numArgs));
-    m_jit.store64(calleeGPR, calleeFrameSlot(numArgs, JSStack::Callee));
+    m_jit.store32(MacroAssembler::TrustedImm32(numArgs), calleeFramePayloadSlot(JSStack::ArgumentCount));
+    m_jit.store64(calleeGPR, calleeFrameSlot(JSStack::Callee));
     
     for (int i = 0; i < numPassedArgs; i++) {
         Edge argEdge = m_jit.graph().m_varArgChildren[node->firstChild() + 1 + i];
@@ -673,7 +671,7 @@ void SpeculativeJIT::emitCall(Node* node)
         GPRReg argGPR = arg.gpr();
         use(argEdge);
         
-        m_jit.store64(argGPR, calleeArgumentSlot(numArgs, i + dummyThisArgument));
+        m_jit.store64(argGPR, calleeArgumentSlot(i + dummyThisArgument));
     }
 
     flushRegisters();
@@ -682,22 +680,27 @@ void SpeculativeJIT::emitCall(Node* node)
     GPRReg resultGPR = result.gpr();
 
     JITCompiler::DataLabelPtr targetToCheck;
-    JITCompiler::JumpList slowPath;
+    JITCompiler::Jump slowPath;
 
     m_jit.emitStoreCodeOrigin(node->codeOrigin);
     
-    m_jit.addPtr(TrustedImm32(calleeFrameOffset(numArgs)), GPRInfo::callFrameRegister);
-    
-    slowPath.append(m_jit.branchPtrWithPatch(MacroAssembler::NotEqual, calleeGPR, targetToCheck, MacroAssembler::TrustedImmPtr(0)));
+    slowPath = m_jit.branchPtrWithPatch(MacroAssembler::NotEqual, calleeGPR, targetToCheck, MacroAssembler::TrustedImmPtr(0));
 
     m_jit.loadPtr(MacroAssembler::Address(calleeGPR, OBJECT_OFFSETOF(JSFunction, m_scope)), resultGPR);
-    m_jit.store64(resultGPR, MacroAssembler::Address(GPRInfo::callFrameRegister, static_cast<ptrdiff_t>(sizeof(Register)) * JSStack::ScopeChain));
+    m_jit.store64(resultGPR, calleeFrameSlot(JSStack::ScopeChain));
 
     JITCompiler::Call fastCall = m_jit.nearCall();
-    
+
     JITCompiler::Jump done = m_jit.jump();
     
     slowPath.link(&m_jit);
+    
+    if (m_jit.graph().m_plan.willTryToTierUp) {
+        m_jit.add32(
+            TrustedImm32(1),
+            MacroAssembler::AbsoluteAddress(
+                m_jit.jitCode()->slowPathCalls.begin() + m_jit.currentJSCallIndex()));
+    }
     
     m_jit.move(calleeGPR, GPRInfo::regT0); // Callee needs to be in regT0
     JITCompiler::Call slowCall = m_jit.nearCall();
@@ -3200,7 +3203,7 @@ void SpeculativeJIT::compile(Node* node)
             
             addSlowPathGenerator(
                 slowPathCall(
-                    slowPath, this, operationArrayPush, NoResult, storageLengthGPR,
+                    slowPath, this, operationArrayPush, storageLengthGPR,
                     valueGPR, baseGPR));
         
             jsValueResult(storageLengthGPR, node);
@@ -3224,7 +3227,7 @@ void SpeculativeJIT::compile(Node* node)
             
             addSlowPathGenerator(
                 slowPathCall(
-                    slowPath, this, operationArrayPushDouble, NoResult, storageLengthGPR,
+                    slowPath, this, operationArrayPushDouble, storageLengthGPR,
                     valueFPR, baseGPR));
         
             jsValueResult(storageLengthGPR, node);
@@ -3388,12 +3391,7 @@ void SpeculativeJIT::compile(Node* node)
         JSValueOperand op1(this, node->child1());
         m_jit.move(op1.gpr(), GPRInfo::returnValueGPR);
 
-        // Grab the return address.
-        m_jit.emitGetReturnPCFromCallFrameHeaderPtr(GPRInfo::regT1);
-        // Restore our caller's "r".
-        m_jit.emitGetCallerFrameFromCallFrameHeaderPtr(GPRInfo::callFrameRegister);
-        // Return.
-        m_jit.restoreReturnAddressBeforeReturn(GPRInfo::regT1);
+        m_jit.emitFunctionEpilogue();
         m_jit.ret();
         
         noResult(node);

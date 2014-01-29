@@ -27,6 +27,7 @@
 #define ParserError_h
 
 #include "Error.h"
+#include "ErrorHandlingScope.h"
 #include "ExceptionHelpers.h"
 #include "ParserTokens.h"
 #include <wtf/text/WTFString.h>
@@ -94,8 +95,10 @@ struct ParserError {
             return addErrorInfo(globalObject->globalExec(), createSyntaxError(globalObject, m_message), m_line, source);
         case EvalError:
             return createSyntaxError(globalObject, m_message);
-        case StackOverflow:
+        case StackOverflow: {
+            ErrorHandlingScope errorScope(globalObject->vm());
             return createStackOverflowError(globalObject);
+        }
         case OutOfMemory:
             return createOutOfMemoryError(globalObject);
         }

@@ -68,6 +68,7 @@
 
 namespace JSC {
 
+    class ArityCheckFailReturnThunks;
     class CodeBlock;
     class CodeCache;
     class CommonIdentifiers;
@@ -103,7 +104,6 @@ namespace JSC {
 #if ENABLE(DFG_JIT)
     namespace DFG {
     class LongLivedState;
-    class Worklist;
     }
 #endif // ENABLE(DFG_JIT)
 #if ENABLE(FTL_JIT)
@@ -111,6 +111,9 @@ namespace JSC {
     class Thunks;
     }
 #endif // ENABLE(FTL_JIT)
+    namespace CommonSlowPaths {
+    struct ArityCheckData;
+    }
 
     struct HashTable;
     struct Instruction;
@@ -204,10 +207,6 @@ namespace JSC {
 
         void makeUsableFromMultipleThreads() { heap.machineThreads().makeUsableFromMultipleThreads(); }
         
-#if ENABLE(DFG_JIT)
-        DFG::Worklist* ensureWorklist();
-#endif // ENABLE(DFG_JIT)
-
     private:
         RefPtr<JSLock> m_apiLock;
 
@@ -224,12 +223,12 @@ namespace JSC {
         
 #if ENABLE(DFG_JIT)
         OwnPtr<DFG::LongLivedState> dfgState;
-        RefPtr<DFG::Worklist> worklist;
 #endif // ENABLE(DFG_JIT)
 
         VMType vmType;
         ClientData* clientData;
         ExecState* topCallFrame;
+        void* stackPointerAtVMEntry;
         Watchdog watchdog;
 
         const OwnPtr<const HashTable> arrayConstructorTable;
@@ -340,7 +339,13 @@ namespace JSC {
             return jitStubs->ctiStub(this, generator);
         }
         NativeExecutable* getHostFunction(NativeFunction, Intrinsic);
-#endif
+        
+        std::unique_ptr<ArityCheckFailReturnThunks> arityCheckFailReturnThunks;
+#if CPU(X86)
+        void* currentReturnThunkPC;
+#endif // CPU(X86)
+#endif // ENABLE(JIT)
+        std::unique_ptr<CommonSlowPaths::ArityCheckData> arityCheckData;
 #if ENABLE(FTL_JIT)
         std::unique_ptr<FTL::Thunks> ftlThunks;
 #endif
@@ -372,12 +377,16 @@ namespace JSC {
         JS_EXPORT_PRIVATE JSValue throwException(ExecState*, JSValue);
         JS_EXPORT_PRIVATE JSObject* throwException(ExecState*, JSObject*);
         
+        size_t reservedZoneSize() const { return m_reservedZoneSize; }
+        size_t updateStackLimitWithReservedZoneSize(size_t reservedZoneSize);
+
         void** addressOfJSStackLimit() { return &m_jsStackLimit; }
+#if ENABLE(LLINT_C_LOOP)
         void* jsStackLimit() { return m_jsStackLimit; }
         void setJSStackLimit(void* limit) { m_jsStackLimit = limit; }
-
+#endif
         void* stackLimit() { return m_stackLimit; }
-        void setStackLimit(void* limit) { m_stackLimit = limit; }
+
         bool isSafeToRecurse(size_t neededStackInBytes = 0) const
         {
             ASSERT(wtfThreadData().stack().isGrowingDownward());
@@ -386,10 +395,12 @@ namespace JSC {
             return curr >= limit && static_cast<size_t>(curr - limit) >= neededStackInBytes;
         }
 
+        void* lastStackTop() { return m_lastStackTop; }
+        void setLastStackTop(void* lastStackTop) { m_lastStackTop = lastStackTop; }
+
         const ClassInfo* const jsArrayClassInfo;
         const ClassInfo* const jsFinalObjectClassInfo;
 
-        ReturnAddressPtr exceptionLocation;
         JSValue hostCallReturnValue;
         ExecState* newCallFrameReturnValue;
         ExecState* callFrameForThrow;
@@ -412,7 +423,9 @@ namespace JSC {
                 // max(scratch buffer size) * 4.
                 sizeOfLastScratchBuffer = size * 2;
 
-                scratchBuffers.append(ScratchBuffer::create(sizeOfLastScratchBuffer));
+                ScratchBuffer* newBuffer = ScratchBuffer::create(sizeOfLastScratchBuffer);
+                RELEASE_ASSERT(newBuffer);
+                scratchBuffers.append(newBuffer);
             }
 
             ScratchBuffer* result = scratchBuffers.last();
@@ -493,6 +506,9 @@ namespace JSC {
         VM(VMType, HeapType);
         static VM*& sharedInstanceInternal();
         void createNativeThunk();
+
+        void setStackLimit(void* limit) { m_stackLimit = limit; }
+
 #if ENABLE(ASSEMBLER)
         bool m_canUseAssembler;
 #endif
@@ -505,8 +521,8 @@ namespace JSC {
 #if ENABLE(GC_VALIDATION)
         const ClassInfo* m_initializingObjectClass;
 #endif
-
-#if USE(SEPARATE_C_AND_JS_STACK)
+        size_t m_reservedZoneSize;
+#if ENABLE(LLINT_C_LOOP)
         struct {
             void* m_stackLimit;
             void* m_jsStackLimit;
@@ -517,6 +533,7 @@ namespace JSC {
             void* m_jsStackLimit;
         };
 #endif
+        void* m_lastStackTop;
         JSValue m_exception;
         bool m_inDefineOwnProperty;
         OwnPtr<CodeCache> m_codeCache;
@@ -543,6 +560,13 @@ namespace JSC {
     {
         return &m_vm->heap;
     }
+
+#if !ENABLE(LLINT_C_LOOP)
+    extern "C" void sanitizeStackForVMImpl(VM*);
+#endif
+
+    void sanitizeStackForVM(VM*);
+    void logSanitizeStack(VM*);
 
 } // namespace JSC
 

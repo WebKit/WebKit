@@ -49,6 +49,12 @@ namespace JSC {
 
 namespace CommonSlowPaths {
 
+struct ArityCheckData {
+    unsigned paddedStackSpace;
+    void* thunkToCall;
+    void* returnPC;
+};
+
 ALWAYS_INLINE int arityCheckFor(ExecState* exec, JSStack* stack, CodeSpecializationKind kind)
 {
     JSFunction* callee = jsCast<JSFunction*>(exec->callee());
@@ -58,18 +64,12 @@ ALWAYS_INLINE int arityCheckFor(ExecState* exec, JSStack* stack, CodeSpecializat
     
     ASSERT(argumentCountIncludingThis < newCodeBlock->numParameters());
     int missingArgumentCount = newCodeBlock->numParameters() - argumentCountIncludingThis;
-    int paddedMissingArgumentCount = WTF::roundUpToMultipleOf(stackAlignmentRegisters(), missingArgumentCount);
+    int neededStackSpace = missingArgumentCount + 1; // Allow space to save the original return PC.
+    int paddedStackSpace = WTF::roundUpToMultipleOf(stackAlignmentRegisters(), neededStackSpace);
 
-#if USE(SEPARATE_C_AND_JS_STACK)
-    if (!stack->grow(exec->registers() - paddedMissingArgumentCount))
+    if (!stack->ensureCapacityFor(exec->registers() - paddedStackSpace))
         return -1;
-#else
-    UNUSED_PARAM(stack);
-    if (!exec->vm().isSafeToRecurse(paddedMissingArgumentCount * sizeof(Register)))
-        return -1;
-#endif // USE(SEPARATE_C_AND_JS_STACK)
-
-    return paddedMissingArgumentCount;
+    return paddedStackSpace / stackAlignmentRegisters();
 }
 
 inline bool opIn(ExecState* exec, JSValue propName, JSValue baseVal)

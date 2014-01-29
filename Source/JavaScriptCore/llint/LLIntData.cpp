@@ -33,6 +33,7 @@
 #include "Instruction.h"
 #include "JSScope.h"
 #include "LLIntCLoop.h"
+#include "MaxFrameExtentForSlowPathCall.h"
 #include "Opcode.h"
 #include "PropertyOffset.h"
 
@@ -87,6 +88,7 @@ void Data::performAssertions(VM& vm)
     ASSERT(JSStack::CallFrameHeaderSize == CallFrameHeaderSlots);
 
     ASSERT(!CallFrame::callerFrameOffset());
+    ASSERT(JSStack::CallerFrameAndPCSize == (PtrSize * 2) / SlotSize);
     ASSERT(CallFrame::returnPCOffset() == CallFrame::callerFrameOffset() + PtrSize);
     ASSERT(JSStack::CodeBlock * sizeof(Register) == CallFrame::returnPCOffset() + PtrSize);
     ASSERT(JSStack::ScopeChain * sizeof(Register) == JSStack::CodeBlock * sizeof(Register) + SlotSize);
@@ -122,6 +124,13 @@ void Data::performAssertions(VM& vm)
     ASSERT(ValueTrue == (TagBitTypeOther | TagBitBool | 1));
     ASSERT(ValueUndefined == (TagBitTypeOther | TagBitUndefined));
     ASSERT(ValueNull == TagBitTypeOther);
+#endif
+#if CPU(X86_64) || CPU(ARM64) || ENABLE(LLINT_C_LOOP)
+    ASSERT(!maxFrameExtentForSlowPathCall);
+#elif CPU(ARM) || CPU(SH4)
+    ASSERT(maxFrameExtentForSlowPathCall == 24);
+#elif CPU(X86) || CPU(MIPS)
+    ASSERT(maxFrameExtentForSlowPathCall == 40);
 #endif
     ASSERT(StringType == 5);
     ASSERT(ObjectType == 17);

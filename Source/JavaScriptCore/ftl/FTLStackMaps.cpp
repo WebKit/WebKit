@@ -79,7 +79,9 @@ void StackMaps::Location::restoreInto(
 
 bool StackMaps::Record::parse(DataView* view, unsigned& offset)
 {
-    patchpointID = view->read<uint32_t>(offset, true);
+    int64_t id = view->read<int64_t>(offset, true);
+    ASSERT(static_cast<int32_t>(id) == id);
+    patchpointID = static_cast<uint32_t>(id);
     if (static_cast<int32_t>(patchpointID) < 0)
         return false;
     
@@ -89,6 +91,13 @@ bool StackMaps::Record::parse(DataView* view, unsigned& offset)
     unsigned length = view->read<uint16_t>(offset, true);
     while (length--)
         locations.append(readObject<Location>(view, offset));
+    
+    unsigned numLiveOuts = view->read<uint16_t>(offset, true);
+    while (numLiveOuts--) {
+        view->read<uint16_t>(offset, true); // regnum
+        view->read<uint8_t>(offset, true); // reserved
+        view->read<uint8_t>(offset, true); // size in bytes
+    }
     
     return true;
 }

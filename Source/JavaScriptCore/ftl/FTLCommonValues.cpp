@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -61,6 +61,8 @@ CommonValues::CommonValues(LContext context)
     , intPtrEight(constInt(intPtr, 8, SignExtend))
     , intPtrPtr(constInt(intPtr, sizeof(void*), SignExtend))
     , doubleZero(constReal(doubleType, 0))
+    , rangeKind(mdKindID(context, "range"))
+    , nonNegativeInt32(constInt(int32, 0, SignExtend), constInt(int32, 1ll << 31, SignExtend))
     , m_context(context)
     , m_module(0)
 {

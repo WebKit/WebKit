@@ -45,7 +45,64 @@ unsigned CodeOrigin::inlineDepth() const
 {
     return inlineDepthForCallFrame(inlineCallFrame);
 }
+
+bool CodeOrigin::isApproximatelyEqualTo(const CodeOrigin& other) const
+{
+    CodeOrigin a = *this;
+    CodeOrigin b = other;
+
+    if (!a.isSet())
+        return !b.isSet();
+    if (!b.isSet())
+        return false;
     
+    if (a.isHashTableDeletedValue())
+        return b.isHashTableDeletedValue();
+    if (b.isHashTableDeletedValue())
+        return false;
+    
+    for (;;) {
+        ASSERT(a.isSet());
+        ASSERT(b.isSet());
+        
+        if (a.bytecodeIndex != b.bytecodeIndex)
+            return false;
+        
+        if ((!!a.inlineCallFrame) != (!!b.inlineCallFrame))
+            return false;
+        
+        if (!a.inlineCallFrame)
+            return true;
+        
+        if (a.inlineCallFrame->executable != b.inlineCallFrame->executable)
+            return false;
+        
+        a = a.inlineCallFrame->caller;
+        b = b.inlineCallFrame->caller;
+    }
+}
+
+unsigned CodeOrigin::approximateHash() const
+{
+    if (!isSet())
+        return 0;
+    if (isHashTableDeletedValue())
+        return 1;
+    
+    unsigned result = 2;
+    CodeOrigin codeOrigin = *this;
+    for (;;) {
+        result += codeOrigin.bytecodeIndex;
+        
+        if (!codeOrigin.inlineCallFrame)
+            return result;
+        
+        result += WTF::PtrHash<JSCell*>::hash(codeOrigin.inlineCallFrame->executable.get());
+        
+        codeOrigin = codeOrigin.inlineCallFrame->caller;
+    }
+}
+
 Vector<CodeOrigin> CodeOrigin::inlineStack() const
 {
     Vector<CodeOrigin> result(inlineDepth());

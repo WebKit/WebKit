@@ -48,11 +48,15 @@ namespace JSC { namespace FTL {
     macro(JSArrayBufferView_mode, JSArrayBufferView::offsetOfMode()) \
     macro(JSArrayBufferView_vector, JSArrayBufferView::offsetOfVector()) \
     macro(JSCell_structure, JSCell::structureOffset()) \
+    macro(JSFunction_executable, JSFunction::offsetOfExecutable()) \
+    macro(JSFunction_scope, JSFunction::offsetOfScopeChain()) \
     macro(JSObject_butterfly, JSObject::butterflyOffset()) \
     macro(JSScope_next, JSScope::offsetOfNext()) \
+    macro(JSString_flags, JSString::offsetOfFlags()) \
     macro(JSString_length, JSString::offsetOfLength()) \
     macro(JSString_value, JSString::offsetOfValue()) \
     macro(JSVariableObject_registers, JSVariableObject::offsetOfRegisters()) \
+    macro(JSWrapperObject_internalValue, JSWrapperObject::internalValueOffset()) \
     macro(MarkedAllocator_freeListHead, MarkedAllocator::offsetOfFreeListHead()) \
     macro(MarkedBlock_markBits, MarkedBlock::offsetOfMarks()) \
     macro(StringImpl_data, StringImpl::dataOffset()) \
@@ -64,14 +68,15 @@ namespace JSC { namespace FTL {
     macro(Structure_typeInfoType, Structure::typeInfoTypeOffset())
 
 #define FOR_EACH_INDEXED_ABSTRACT_HEAP(macro) \
-    macro(characters8, sizeof(LChar)) \
-    macro(characters16, sizeof(UChar)) \
-    macro(indexedInt32Properties, sizeof(EncodedJSValue)) \
-    macro(indexedDoubleProperties, sizeof(double)) \
-    macro(indexedContiguousProperties, sizeof(EncodedJSValue)) \
-    macro(indexedArrayStorageProperties, sizeof(EncodedJSValue)) \
-    macro(singleCharacterStrings, sizeof(JSString*)) \
-    macro(variables, sizeof(Register))
+    macro(JSRopeString_fibers, JSRopeString::offsetOfFibers(), sizeof(WriteBarrier<JSString>)) \
+    macro(characters8, 0, sizeof(LChar)) \
+    macro(characters16, 0, sizeof(UChar)) \
+    macro(indexedInt32Properties, 0, sizeof(EncodedJSValue)) \
+    macro(indexedDoubleProperties, 0, sizeof(double)) \
+    macro(indexedContiguousProperties, 0, sizeof(EncodedJSValue)) \
+    macro(indexedArrayStorageProperties, 0, sizeof(EncodedJSValue)) \
+    macro(singleCharacterStrings, 0, sizeof(JSString*)) \
+    macro(variables, 0, sizeof(Register))
     
 #define FOR_EACH_NUMBERED_ABSTRACT_HEAP(macro) \
     macro(properties)
@@ -97,7 +102,7 @@ public:
     
     AbstractField& JSCell_freeListNext;
     
-#define INDEXED_ABSTRACT_HEAP_DECLARATION(name, size) IndexedAbstractHeap name;
+#define INDEXED_ABSTRACT_HEAP_DECLARATION(name, offset, size) IndexedAbstractHeap name;
     FOR_EACH_INDEXED_ABSTRACT_HEAP(INDEXED_ABSTRACT_HEAP_DECLARATION)
 #undef INDEXED_ABSTRACT_HEAP_DECLARATION
     

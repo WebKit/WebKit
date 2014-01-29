@@ -100,12 +100,14 @@ private:
         case BitRShift:
         case BitLShift:
         case BitURShift: {
-            fixBinaryIntEdges();
+            fixIntEdge(node->child1());
+            fixIntEdge(node->child2());
             break;
         }
 
         case ArithIMul: {
-            fixBinaryIntEdges();
+            fixIntEdge(node->child1());
+            fixIntEdge(node->child2());
             node->setOp(ArithMul);
             node->setArithMode(Arith::Unchecked);
             node->child1().setUseKind(Int32Use);
@@ -450,6 +452,7 @@ private:
         case GetByVal: {
             node->setArrayMode(
                 node->arrayMode().refine(
+                    m_graph, node->codeOrigin,
                     node->child1()->prediction(),
                     node->child2()->prediction(),
                     SpecNone, node->flags()));
@@ -507,6 +510,7 @@ private:
 
             node->setArrayMode(
                 node->arrayMode().refine(
+                    m_graph, node->codeOrigin,
                     child1->prediction(),
                     child2->prediction(),
                     child3->prediction()));
@@ -592,6 +596,7 @@ private:
             // that would break things.
             node->setArrayMode(
                 node->arrayMode().refine(
+                    m_graph, node->codeOrigin,
                     node->child1()->prediction() & SpecCell,
                     SpecInt32,
                     node->child2()->prediction()));
@@ -946,7 +951,6 @@ private:
                 OpInfo(m_graph.globalObjectFor(node->codeOrigin)));
             Node* barrierNode = m_graph.addNode(SpecNone, ConditionalStoreBarrier, m_currentNode->codeOrigin, 
                 Edge(globalObjectNode, KnownCellUse), Edge(node->child1().node(), UntypedUse));
-            fixupNode(barrierNode);
             m_insertionSet.insert(m_indexInBlock, barrierNode);
             break;
         }
@@ -954,7 +958,6 @@ private:
         case TearOffActivation: {
             Node* barrierNode = m_graph.addNode(SpecNone, StoreBarrierWithNullCheck, m_currentNode->codeOrigin, 
                 Edge(node->child1().node(), UntypedUse));
-            fixupNode(barrierNode);
             m_insertionSet.insert(m_indexInBlock, barrierNode);
             break;
         }
@@ -1034,6 +1037,24 @@ private:
         
         if (!node->containsMovHint())
             DFG_NODE_DO_TO_CHILDREN(m_graph, node, observeUntypedEdge);
+        
+        if (node->isTerminal()) {
+            // Terminal nodes don't need post-phantoms, and inserting them would violate
+            // the current requirement that a terminal is the last thing in a block. We
+            // should eventually change that requirement but even if we did, this would
+            // still be a valid optimization. All terminals accept just one input, and
+            // if that input is a conversion node then no further speculations will be
+            // performed.
+            // FIXME: Get rid of this by allowing Phantoms after terminals.
+            // https://bugs.webkit.org/show_bug.cgi?id=126778
+            m_requiredPhantoms.resize(0);
+        // Since StoreBarriers are recursively fixed up so that their children look 
+        // identical to that of the node they're barrier-ing, we need to avoid adding
+        // any Phantoms when processing them because this would invalidate the 
+        // InsertionSet's invariant of inserting things in a monotonically increasing
+        // order. This should be okay anyways because StoreBarriers can't exit. 
+        } else
+            addPhantomsIfNecessary();
     }
     
     void observeUntypedEdge(Node*, Edge& edge)
@@ -1319,6 +1340,7 @@ private:
                 RELEASE_ASSERT_NOT_REACHED();
                 break;
             }
+            addPhantomsIfNecessary();
         }
         m_insertionSet.execute(block);
     }
@@ -1334,8 +1356,10 @@ private:
             if (node->op() != SetLocal)
                 continue;
             
-            if (node->child1().useKind() == UntypedUse)
+            if (node->child1().useKind() == UntypedUse) {
                 fixEdge<UntypedUse>(node->child1());
+                addPhantomsIfNecessary();
+            }
         }
         m_insertionSet.execute(block);
     }
@@ -1509,6 +1533,7 @@ private:
                 // Int8ToDouble will convert int52's that fit in an int32 into a double
                 // rather than trying to create a boxed int32 like Int52ToValue does.
                 
+                m_requiredPhantoms.append(edge.node());
                 Node* result = m_insertionSet.insertNode(
                     m_indexInBlock, SpecInt52AsDouble, Int52ToDouble,
                     m_currentNode->codeOrigin, Edge(edge.node(), NumberUse));
@@ -1562,6 +1587,7 @@ private:
             //
             // But the solution we use handles the above gracefully.
             
+            m_requiredPhantoms.append(edge.node());
             Node* result = m_insertionSet.insertNode(
                 m_indexInBlock, SpecInt52, Int52ToValue,
                 m_currentNode->codeOrigin, Edge(edge.node(), UntypedUse));
@@ -1583,16 +1609,15 @@ private:
             barrierNode = m_graph.addNode(SpecNone, ConditionalStoreBarrier, m_currentNode->codeOrigin, 
                 Edge(child1.node(), child1.useKind()), Edge(child2.node(), child2.useKind()));
         }
-        fixupNode(barrierNode);
         m_insertionSet.insert(indexInBlock, barrierNode);
     }
 
-    bool fixIntEdge(Edge& edge)
+    void fixIntEdge(Edge& edge)
     {
         Node* node = edge.node();
         if (node->shouldSpeculateInt32()) {
             fixEdge<Int32Use>(edge);
-            return false;
+            return;
         }
         
         UseKind useKind;
@@ -1610,24 +1635,13 @@ private:
         observeUseKindOnNode(node, useKind);
         
         edge = Edge(newNode, KnownInt32Use);
-        return true;
-    }
-    
-    void fixBinaryIntEdges()
-    {
-        AdjacencyList children = m_currentNode->children;
-        
-        // Call fixIntEdge() on both edges.
-        bool needPhantom =
-            fixIntEdge(m_currentNode->child1()) | fixIntEdge(m_currentNode->child2());
-        
-        if (!needPhantom)
-            return;
-        m_insertionSet.insertNode(m_indexInBlock + 1, SpecNone, Phantom, m_currentNode->codeOrigin, children);
+        m_requiredPhantoms.append(node);
     }
     
     void injectInt32ToDoubleNode(Edge& edge, UseKind useKind = NumberUse)
     {
+        m_requiredPhantoms.append(edge.node());
+        
         Node* result = m_insertionSet.insertNode(
             m_indexInBlock, SpecInt52AsDouble, Int32ToDouble,
             m_currentNode->codeOrigin, Edge(edge.node(), NumberUse));
@@ -1722,7 +1736,8 @@ private:
             }
         }
             
-        arrayMode = arrayMode.refine(node->child1()->prediction(), node->prediction());
+        arrayMode = arrayMode.refine(
+            m_graph, node->codeOrigin, node->child1()->prediction(), node->prediction());
             
         if (arrayMode.type() == Array::Generic) {
             // Check if the input is something that we can't get array length for, but for which we
@@ -1813,12 +1828,27 @@ private:
         fixEdge<KnownCellUse>(node->child1());
         return true;
     }
+    
+    void addPhantomsIfNecessary()
+    {
+        if (m_requiredPhantoms.isEmpty())
+            return;
+        
+        for (unsigned i = m_requiredPhantoms.size(); i--;) {
+            m_insertionSet.insertNode(
+                m_indexInBlock + 1, SpecNone, Phantom, m_currentNode->codeOrigin,
+                Edge(m_requiredPhantoms[i], UntypedUse));
+        }
+        
+        m_requiredPhantoms.resize(0);
+    }
 
     BasicBlock* m_block;
     unsigned m_indexInBlock;
     Node* m_currentNode;
     InsertionSet m_insertionSet;
     bool m_profitabilityChanged;
+    Vector<Node*, 3> m_requiredPhantoms;
 };
     
 bool performFixup(Graph& graph)

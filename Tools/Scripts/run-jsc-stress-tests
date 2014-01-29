@@ -180,6 +180,8 @@ $numFailures = 0
 
 EAGER_OPTIONS = ["--thresholdForJITAfterWarmUp=10", "--thresholdForJITSoon=10", "--thresholdForOptimizeAfterWarmUp=20", "--thresholdForOptimizeAfterLongWarmUp=20", "--thresholdForOptimizeSoon=20", "--thresholdForFTLOptimizeAfterWarmUp=20", "--thresholdForFTLOptimizeSoon=20"]
 
+FTL_OPTIONS = ["--useExperimentalFTL=true", "--enableExperimentalFTLCoverage=true"]
+
 $runlist = []
 
 def frameworkFromJSCPath(jscPath)
@@ -532,19 +534,19 @@ def runNoCJITValidatePhases
 end
 
 def runDefaultFTL
-    run("default-ftl", "--useExperimentalFTL=true")
+    run("default-ftl", *FTL_OPTIONS)
 end
 
 def runFTLNoCJIT
-    run("ftl-no-cjit", "--enableConcurrentJIT=false", "--useExperimentalFTL=true")
+    run("ftl-no-cjit", "--enableConcurrentJIT=false", *FTL_OPTIONS)
 end
 
 def runFTLNoCJITValidate
-    run("ftl-no-cjit-validate", "--enableConcurrentJIT=false", "--useExperimentalFTL=true", "--validateGraph=true")
+    run("ftl-no-cjit-validate", "--enableConcurrentJIT=false", "--validateGraph=true", *FTL_OPTIONS)
 end
 
 def runFTLNoCJITOSRValidation
-    run("ftl-no-cjit-osr-validation", "--enableConcurrentJIT=false", "--useExperimentalFTL=true", "--validateFTLOSRExitLiveness=true")
+    run("ftl-no-cjit-osr-validation", "--enableConcurrentJIT=false", "--validateFTLOSRExitLiveness=true", *FTL_OPTIONS)
 end
 
 def runDFGEager
@@ -556,15 +558,15 @@ def runDFGEagerNoCJITValidate
 end
 
 def runFTLEager
-    run("ftl-eager", "--useExperimentalFTL=true", *EAGER_OPTIONS)
+    run("ftl-eager", *(FTL_OPTIONS + EAGER_OPTIONS))
 end
 
 def runFTLEagerNoCJITValidate
-    run("ftl-eager-no-cjit", "--useExperimentalFTL=true", "--enableConcurrentJIT=false", "--validateGraph=true", *EAGER_OPTIONS)
+    run("ftl-eager-no-cjit", "--enableConcurrentJIT=false", "--validateGraph=true", *(FTL_OPTIONS + EAGER_OPTIONS))
 end
 
 def runFTLEagerNoCJITOSRValidation
-    run("ftl-eager-no-cjit-osr-validation", "--useExperimentalFTL=true", "--enableConcurrentJIT=false", "--validateFTLOSRExitLiveness=true", *EAGER_OPTIONS)
+    run("ftl-eager-no-cjit-osr-validation", "--enableConcurrentJIT=false", "--validateFTLOSRExitLiveness=true", *(FTL_OPTIONS + EAGER_OPTIONS))
 end
 
 def runAlwaysTriggerCopyPhase
@@ -646,11 +648,32 @@ def runLayoutTestDFGEagerNoCJIT
     runLayoutTest("dfg-eager-no-cjit", "--enableConcurrentJIT=false", *EAGER_OPTIONS)
 end
 
-def defaultRunLayoutTest
+def runLayoutTestDefaultFTL
+    runLayoutTest("ftl", "--testTheFTL=true", *FTL_OPTIONS)
+end
+
+def runLayoutTestFTLNoCJIT
+    runLayoutTest("ftl-no-cjit", "--testTheFTL=true", "--enableConcurrentJIT=false", *FTL_OPTIONS)
+end
+
+def runLayoutTestFTLEagerNoCJIT
+    runLayoutTest("ftl-eager-no-cjit", "--testTheFTL=true", "--enableConcurrentJIT=false", *(FTL_OPTIONS + EAGER_OPTIONS))
+end
+
+def noFTLRunLayoutTest
     runLayoutTestDefault
     runLayoutTestNoLLInt
     runLayoutTestNoCJIT
     runLayoutTestDFGEagerNoCJIT
+end
+
+def defaultRunLayoutTest
+    noFTLRunLayoutTest
+    if $enableFTL
+        runLayoutTestDefaultFTL
+        runLayoutTestFTLNoCJIT
+        runLayoutTestFTLEagerNoCJIT
+    end
 end
 
 def prepareExtraRelativeFiles(extraFiles, destination)
@@ -706,6 +729,10 @@ def runMozillaTestDefault(mode, *extraFiles)
     runMozillaTest(nil, mode, extraFiles)
 end
 
+def runMozillaTestDefaultFTL(mode, *extraFiles)
+    runMozillaTest("ftl", mode, extraFiles, *FTL_OPTIONS)
+end
+
 def runMozillaTestLLInt(mode, *extraFiles)
     runMozillaTest("llint", mode, extraFiles, "--useJIT=false")
 end
@@ -718,11 +745,19 @@ def runMozillaTestDFGEagerNoCJITValidatePhases(mode, *extraFiles)
     runMozillaTest("dfg-eager-no-cjit-validate-phases", mode, extraFiles, "--enableConcurrentJIT=false", "--validateBytecode=true", "--validateGraphAtEachPhase=true", *EAGER_OPTIONS)
 end
 
+def runMozillaTestFTLEagerNoCJITValidatePhases(mode, *extraFiles)
+    runMozillaTest("ftl-eager-no-cjit-validate-phases", mode, extraFiles, "--enableConcurrentJIT=false", "--validateBytecode=true", "--validateGraphAtEachPhase=true", *(FTL_OPTIONS + EAGER_OPTIONS))
+end
+
 def defaultRunMozillaTest(mode, *extraFiles)
     runMozillaTestDefault(mode, *extraFiles)
     runMozillaTestLLInt(mode, *extraFiles)
     runMozillaTestBaselineJIT(mode, *extraFiles)
     runMozillaTestDFGEagerNoCJITValidatePhases(mode, *extraFiles)
+    if $enableFTL
+        runMozillaTestDefaultFTL(mode, *extraFiles)
+        runMozillaTestFTLEagerNoCJITValidatePhases(mode, *extraFiles)
+    end
 end
 
 def skip

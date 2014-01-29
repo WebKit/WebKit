@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011, 2012, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2011, 2012, 2013, 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,6 +29,7 @@
 #include "JSExportMacros.h"
 #include <stdint.h>
 #include <stdio.h>
+#include <wtf/StdLibExtras.h>
 
 namespace JSC {
 
@@ -94,6 +95,10 @@ typedef OptionRange optionRange;
     v(bool, useDFGJIT, true) \
     v(bool, useRegExpJIT, true) \
     \
+    v(unsigned, maxPerThreadStackUsage, 4 * MB) \
+    v(unsigned, reservedZoneSize, 128 * KB) \
+    v(unsigned, errorModeReservedZoneSize, 64 * KB) \
+    \
     v(bool, crashIfCantAllocateJITMemory, false) \
     \
     v(bool, forceDFGCodeBlockLiveness, false) \
@@ -118,11 +123,19 @@ typedef OptionRange optionRange;
     v(bool, verboseCallLink, false) \
     v(bool, verboseCompilationQueue, false) \
     v(bool, reportCompileTimes, false) \
+    v(bool, reportFTLCompileTimes, false) \
     v(bool, verboseCFA, false) \
+    v(bool, verboseFTLToJSThunk, false) \
+    v(bool, verboseFTLFailure, false) \
+    v(bool, alwaysComputeHash, false) \
+    v(bool, testTheFTL, false) \
+    v(bool, verboseSanitizeStack, false) \
     \
-    v(bool, enableOSREntryInLoops, true) \
+    v(bool, enableOSREntryToDFG, true) \
+    v(bool, enableOSREntryToFTL, true) \
     \
     v(bool, useExperimentalFTL, false) \
+    v(bool, enableExperimentalFTLCoverage, false) \
     v(bool, useFTLTBAA, true) \
     v(bool, enableLLVMFastISel, false) \
     v(bool, useLLVMSmallCodeModel, false) \
@@ -134,10 +147,12 @@ typedef OptionRange optionRange;
     v(unsigned, llvmBackendOptimizationLevel, 2) \
     v(unsigned, llvmOptimizationLevel, 2) \
     v(unsigned, llvmSizeLevel, 0) \
+    v(bool, llvmDisallowAVX, true) \
     v(bool, ftlCrashes, false) /* fool-proof way of checking that you ended up in the FTL. ;-) */\
     \
     v(bool, enableConcurrentJIT, true) \
-    v(unsigned, numberOfCompilerThreads, computeNumberOfWorkerThreads(2) - 1) \
+    v(unsigned, numberOfDFGCompilerThreads, computeNumberOfWorkerThreads(2) - 1) \
+    v(unsigned, numberOfFTLCompilerThreads, computeNumberOfWorkerThreads(8) - 1) \
     \
     v(bool, enableProfiler, false) \
     \
@@ -145,6 +160,8 @@ typedef OptionRange optionRange;
     v(bool, forceLLVMDisassembler, false) \
     \
     v(bool, enableArchitectureSpecificOptimizations, true) \
+    \
+    v(bool, breakOnThrow, false) \
     \
     v(unsigned, maximumOptimizationCandidateInstructionCount, 10000) \
     \
@@ -154,6 +171,12 @@ typedef OptionRange optionRange;
     \
     /* Depth of inline stack, so 1 = no inlining, 2 = one level, etc. */ \
     v(unsigned, maximumInliningDepth, 5) \
+    v(unsigned, maximumInliningRecursion, 2) \
+    v(unsigned, maximumInliningDepthForMustInline, 7) \
+    v(unsigned, maximumInliningRecursionForMustInline, 3) \
+    \
+    v(bool, enablePolyvariantCallInlining, true) \
+    v(bool, enablePolyvariantByIdInlining, true) \
     \
     v(unsigned, maximumBinaryStringSwitchCaseLength, 50) \
     v(unsigned, maximumBinaryStringSwitchTotalLength, 2000) \
@@ -210,6 +233,7 @@ typedef OptionRange optionRange;
     v(bool, showObjectStatistics, false) \
     \
     v(bool, logGC, false) \
+    v(bool, disableGC, false) \
     v(unsigned, gcMaxHeapSize, 0) \
     v(bool, recordGCPauseTimes, false) \
     v(bool, logHeapStatisticsAtExit, false)

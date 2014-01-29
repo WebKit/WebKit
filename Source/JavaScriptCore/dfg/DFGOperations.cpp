@@ -1140,7 +1140,7 @@ void JIT_OPERATION triggerTierUpNow(ExecState* exec)
     }
     
     Worklist::State worklistState;
-    if (Worklist* worklist = vm->worklist.get()) {
+    if (Worklist* worklist = existingGlobalFTLWorklistOrNull()) {
         worklistState = worklist->completeAllReadyPlansForVM(
             *vm, CompilationKey(codeBlock->baselineVersion(), FTLMode));
     } else
@@ -1169,8 +1169,8 @@ void JIT_OPERATION triggerTierUpNow(ExecState* exec)
 
     // We need to compile the code.
     compile(
-        *vm, codeBlock->newReplacement().get(), FTLMode, UINT_MAX, Operands<JSValue>(),
-        ToFTLDeferredCompilationCallback::create(codeBlock), vm->ensureWorklist());
+        *vm, codeBlock->newReplacement().get(), codeBlock, FTLMode, UINT_MAX,
+        Operands<JSValue>(), ToFTLDeferredCompilationCallback::create(codeBlock));
 }
 
 char* JIT_OPERATION triggerOSREntryNow(
@@ -1202,8 +1202,10 @@ char* JIT_OPERATION triggerOSREntryNow(
         return 0;
     }
     
+    Worklist* worklist = existingGlobalFTLWorklistOrNull();
+
     Worklist::State worklistState;
-    if (Worklist* worklist = vm->worklist.get()) {
+    if (worklist) {
         worklistState = worklist->completeAllReadyPlansForVM(
             *vm, CompilationKey(codeBlock->baselineVersion(), FTLForOSREntryMode));
     } else
@@ -1252,10 +1254,9 @@ char* JIT_OPERATION triggerOSREntryNow(
     Operands<JSValue> mustHandleValues;
     jitCode->reconstruct(
         exec, codeBlock, CodeOrigin(bytecodeIndex), streamIndex, mustHandleValues);
-    CompilationResult forEntryResult = DFG::compile(
-        *vm, codeBlock->newReplacement().get(), FTLForOSREntryMode, bytecodeIndex,
-        mustHandleValues, ToFTLForOSREntryDeferredCompilationCallback::create(codeBlock),
-        vm->ensureWorklist());
+    CompilationResult forEntryResult = compile(
+        *vm, codeBlock->newReplacement().get(), codeBlock, FTLForOSREntryMode, bytecodeIndex,
+        mustHandleValues, ToFTLForOSREntryDeferredCompilationCallback::create(codeBlock));
     
     // But we also want to trigger a replacement compile. Of course, we don't want to
     // trigger it if we don't need to. Note that this is kind of weird because we might
@@ -1268,11 +1269,11 @@ char* JIT_OPERATION triggerOSREntryNow(
     CompilationKey keyForReplacement(codeBlock->baselineVersion(), FTLMode);
     if (codeBlock->codeType() != GlobalCode
         && !codeBlock->hasOptimizedReplacement()
-        && (!vm->worklist.get()
-            || vm->worklist->compilationState(keyForReplacement) == Worklist::NotKnown)) {
+        && (!worklist
+            || worklist->compilationState(keyForReplacement) == Worklist::NotKnown)) {
         compile(
-            *vm, codeBlock->newReplacement().get(), FTLMode, UINT_MAX, Operands<JSValue>(),
-            ToFTLDeferredCompilationCallback::create(codeBlock), vm->ensureWorklist());
+            *vm, codeBlock->newReplacement().get(), codeBlock, FTLMode, UINT_MAX,
+            Operands<JSValue>(), ToFTLDeferredCompilationCallback::create(codeBlock));
     }
     
     if (forEntryResult != CompilationSuccessful)

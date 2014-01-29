@@ -39,6 +39,7 @@
 #include <interpreter/Interpreter.h>
 #include <runtime/DateInstance.h>
 #include <runtime/Error.h>
+#include <runtime/ErrorHandlingScope.h>
 #include <runtime/ExceptionHelpers.h>
 #include <runtime/JSFunction.h>
 #include <wtf/MathExtras.h>
@@ -154,7 +155,7 @@ void reportException(ExecState* exec, JSValue exception, CachedScript* cachedScr
     if (isTerminatedExecutionException(exception))
         return;
 
-    Interpreter::ErrorHandlingMode mode(exec);
+    ErrorHandlingScope errorScope(exec->vm());
 
     RefPtr<ScriptCallStack> callStack(createScriptCallStackFromException(exec, exception, ScriptCallStack::maxCallStackSizeToCapture));
     exec->clearException();

@@ -53,7 +53,7 @@ struct ProtoCallFrame {
     int argumentCountIncludingThis() const { return argCountAndCodeOriginValue.payload(); }
     int argumentCount() const { return argumentCountIncludingThis() - 1; }
     void setArgumentCountIncludingThis(int count) { argCountAndCodeOriginValue.payload() = count; }
-    void setPaddedArgsCount(size_t argCount) { paddedArgCount = argCount; }
+    void setPaddedArgCount(size_t argCount) { paddedArgCount = argCount; }
 
     void clearCurrentVPC() { argCountAndCodeOriginValue.tag() = 0; }
     

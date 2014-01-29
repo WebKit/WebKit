@@ -201,7 +201,10 @@ public:
 
     void add64(RegisterID src, RegisterID dest)
     {
-        m_assembler.add<64>(dest, dest, src);
+        if (src == ARM64Registers::sp)
+            m_assembler.add<64>(dest, src, dest);
+        else
+            m_assembler.add<64>(dest, dest, src);
     }
 
     void add64(TrustedImm32 imm, RegisterID dest)
@@ -1435,6 +1438,16 @@ public:
     void push(TrustedImm32) NO_RETURN_DUE_TO_CRASH
     {
         CRASH();
+    }
+
+    void popPair(RegisterID dest1, RegisterID dest2)
+    {
+        m_assembler.ldp<64>(dest1, dest2, ARM64Registers::sp, PairPostIndex(16));
+    }
+
+    void pushPair(RegisterID src1, RegisterID src2)
+    {
+        m_assembler.stp<64>(src1, src2, ARM64Registers::sp, PairPreIndex(-16));
     }
 
     void popToRestore(RegisterID dest)

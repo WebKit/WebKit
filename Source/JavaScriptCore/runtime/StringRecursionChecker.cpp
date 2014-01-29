@@ -28,7 +28,7 @@ namespace JSC {
 
 JSValue StringRecursionChecker::throwStackOverflowError()
 {
-    return m_exec->vm().throwException(m_exec, createStackOverflowError(m_exec));
+    return JSC::throwStackOverflowError(m_exec);
 }
 
 JSValue StringRecursionChecker::emptyString()

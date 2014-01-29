@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2011, 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -36,12 +36,13 @@ namespace JSC {
 
 class ExecState;
 struct Instruction;
+struct ProtoCallFrame;
 
 namespace LLInt {
 
 extern "C" SlowPathReturnType llint_trace_operand(ExecState*, Instruction*, int fromWhere, int operand);
 extern "C" SlowPathReturnType llint_trace_value(ExecState*, Instruction*, int fromWhere, int operand);
-extern "C" void llint_write_barrier_slow(ExecState*, JSCell*);
+extern "C" void llint_write_barrier_slow(ExecState*, JSCell*) WTF_INTERNAL;
 
 #define LLINT_SLOW_PATH_DECL(name) \
     extern "C" SlowPathReturnType llint_##name(ExecState* exec, Instruction* pc)
@@ -101,7 +102,7 @@ LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_new_func);
 LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_new_func_exp);
 LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_call);
 LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_construct);
-LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_size_and_alloc_frame_for_varargs);
+LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_size_frame_for_varargs);
 LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_call_varargs);
 LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_call_eval);
 LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_tear_off_activation);
@@ -119,11 +120,14 @@ LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_handle_watchdog_timer);
 LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_debug);
 LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_profile_will_call);
 LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_profile_did_call);
-LLINT_SLOW_PATH_HIDDEN_DECL(throw_from_native_call);
 LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_handle_exception);
 LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_resolve_scope);
 LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_get_from_scope);
 LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_put_to_scope);
+extern "C" SlowPathReturnType llint_throw_stack_overflow_error(VM*, ProtoCallFrame*) WTF_INTERNAL;
+#if ENABLE(LLINT_C_LOOP)
+extern "C" SlowPathReturnType llint_stack_check_at_vm_entry(VM*, Register*) WTF_INTERNAL;
+#endif
 
 } } // namespace JSC::LLInt
 

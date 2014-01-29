@@ -28,6 +28,8 @@
 
 #if ENABLE(DFG_JIT)
 
+#include "DFGAbstractHeap.h"
+#include "DFGClobberize.h"
 #include "DFGEdgeUsesStructure.h"
 #include "DFGGraph.h"
 #include "DFGPhase.h"
@@ -1006,6 +1008,18 @@ private:
         return result;
     }
     
+    bool invalidationPointElimination()
+    {
+        for (unsigned i = m_indexInBlock; i--;) {
+            Node* node = m_currentBlock->at(i);
+            if (node->op() == InvalidationPoint)
+                return true;
+            if (writesOverlap(m_graph, node, Watchpoint_fire))
+                break;
+        }
+        return false;
+    }
+    
     void eliminateIrrelevantPhantomChildren(Node* node)
     {
         ASSERT(node->op() == Phantom);
@@ -1385,9 +1399,13 @@ private:
             eliminate(putByOffsetStoreElimination(m_graph.m_storageAccessData[node->storageAccessDataIndex()].identifierNumber, node->child1().node()));
             break;
             
+        case InvalidationPoint:
+            if (invalidationPointElimination())
+                eliminate();
+            break;
+            
         case Phantom:
             // FIXME: we ought to remove Phantom's that have no children.
-            
             eliminateIrrelevantPhantomChildren(node);
             break;
             

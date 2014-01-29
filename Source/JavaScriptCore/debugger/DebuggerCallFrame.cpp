@@ -35,7 +35,6 @@
 #include "Operations.h"
 #include "Parser.h"
 #include "StackVisitor.h"
-#include "VMEntryScope.h"
 
 namespace JSC {
 

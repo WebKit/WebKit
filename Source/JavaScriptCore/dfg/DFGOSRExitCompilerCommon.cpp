@@ -30,6 +30,7 @@
 
 #include "Arguments.h"
 #include "DFGOperations.h"
+#include "JIT.h"
 #include "JSCJSValueInlines.h"
 #include "Operations.h"
 
@@ -173,7 +174,11 @@ void adjustAndJumpToTarget(CCallHelpers& jit, const OSRExitBase& exit)
     ASSERT(mapping->m_bytecodeIndex == exit.m_codeOrigin.bytecodeIndex);
     
     void* jumpTarget = baselineCodeBlock->jitCode()->executableAddressAtOffset(mapping->m_machineCodeOffset);
+
+    jit.addPtr(AssemblyHelpers::TrustedImm32(JIT::stackPointerOffsetFor(baselineCodeBlock) * sizeof(Register)), GPRInfo::callFrameRegister, AssemblyHelpers::stackPointerRegister);
     
+    jit.jitAssertTagsInPlace();
+
     jit.move(AssemblyHelpers::TrustedImmPtr(jumpTarget), GPRInfo::regT2);
     jit.jump(GPRInfo::regT2);
 }

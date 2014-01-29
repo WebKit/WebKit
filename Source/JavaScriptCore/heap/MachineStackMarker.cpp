@@ -232,7 +232,7 @@ void MachineThreads::removeCurrentThread()
 #define REGISTER_BUFFER_ALIGNMENT
 #endif
 
-void MachineThreads::gatherFromCurrentThread(ConservativeRoots& conservativeRoots, void* stackCurrent)
+void MachineThreads::gatherFromCurrentThread(ConservativeRoots& conservativeRoots, JITStubRoutineSet& jitStubRoutines, CodeBlockSet& codeBlocks, void* stackCurrent)
 {
     // setjmp forces volatile registers onto the stack
     jmp_buf registers REGISTER_BUFFER_ALIGNMENT;
@@ -248,12 +248,12 @@ void MachineThreads::gatherFromCurrentThread(ConservativeRoots& conservativeRoot
     void* registersBegin = &registers;
     void* registersEnd = reinterpret_cast<void*>(roundUpToMultipleOf<sizeof(void*)>(reinterpret_cast<uintptr_t>(&registers + 1)));
     swapIfBackwards(registersBegin, registersEnd);
-    conservativeRoots.add(registersBegin, registersEnd);
+    conservativeRoots.add(registersBegin, registersEnd, jitStubRoutines, codeBlocks);
 
     void* stackBegin = stackCurrent;
     void* stackEnd = wtfThreadData().stack().origin();
     swapIfBackwards(stackBegin, stackEnd);
-    conservativeRoots.add(stackBegin, stackEnd);
+    conservativeRoots.add(stackBegin, stackEnd, jitStubRoutines, codeBlocks);
 }
 
 static inline void suspendThread(const PlatformThread& platformThread)
@@ -434,24 +434,24 @@ static void freePlatformThreadRegisters(PlatformThreadRegisters& regs)
 #endif
 }
 
-void MachineThreads::gatherFromOtherThread(ConservativeRoots& conservativeRoots, Thread* thread)
+void MachineThreads::gatherFromOtherThread(ConservativeRoots& conservativeRoots, Thread* thread, JITStubRoutineSet& jitStubRoutines, CodeBlockSet& codeBlocks)
 {
     PlatformThreadRegisters regs;
     size_t regSize = getPlatformThreadRegisters(thread->platformThread, regs);
 
-    conservativeRoots.add(static_cast<void*>(&regs), static_cast<void*>(reinterpret_cast<char*>(&regs) + regSize));
+    conservativeRoots.add(static_cast<void*>(&regs), static_cast<void*>(reinterpret_cast<char*>(&regs) + regSize), jitStubRoutines, codeBlocks);
 
     void* stackPointer = otherThreadStackPointer(regs);
     void* stackBase = thread->stackBase;
     swapIfBackwards(stackPointer, stackBase);
-    conservativeRoots.add(stackPointer, stackBase);
+    conservativeRoots.add(stackPointer, stackBase, jitStubRoutines, codeBlocks);
 
     freePlatformThreadRegisters(regs);
 }
 
-void MachineThreads::gatherConservativeRoots(ConservativeRoots& conservativeRoots, void* stackCurrent)
+void MachineThreads::gatherConservativeRoots(ConservativeRoots& conservativeRoots, JITStubRoutineSet& jitStubRoutines, CodeBlockSet& codeBlocks, void* stackCurrent)
 {
-    gatherFromCurrentThread(conservativeRoots, stackCurrent);
+    gatherFromCurrentThread(conservativeRoots, jitStubRoutines, codeBlocks, stackCurrent);
 
     if (m_threadSpecific) {
         PlatformThread currentPlatformThread = getCurrentPlatformThread();
@@ -473,7 +473,7 @@ void MachineThreads::gatherConservativeRoots(ConservativeRoots& conservativeRoot
         // and since this is a shared heap, they are real locks.
         for (Thread* thread = m_registeredThreads; thread; thread = thread->next) {
             if (!equalThread(thread->platformThread, currentPlatformThread))
-                gatherFromOtherThread(conservativeRoots, thread);
+                gatherFromOtherThread(conservativeRoots, thread, jitStubRoutines, codeBlocks);
         }
 
         for (Thread* thread = m_registeredThreads; thread; thread = thread->next) {

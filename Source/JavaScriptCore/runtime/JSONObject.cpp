@@ -654,7 +654,7 @@ NEVER_INLINE JSValue Walker::walk(JSValue unfiltered)
                 ASSERT(inValue.isObject());
                 ASSERT(isJSArray(asObject(inValue)) || asObject(inValue)->inherits(JSArray::info()));
                 if (objectStack.size() + arrayStack.size() > maximumFilterRecursion)
-                    return m_exec->vm().throwException(m_exec, createStackOverflowError(m_exec));
+                    return throwStackOverflowError(m_exec);
 
                 JSArray* array = asArray(inValue);
                 arrayStack.push(array);
@@ -705,7 +705,7 @@ NEVER_INLINE JSValue Walker::walk(JSValue unfiltered)
                 ASSERT(inValue.isObject());
                 ASSERT(!isJSArray(asObject(inValue)) && !asObject(inValue)->inherits(JSArray::info()));
                 if (objectStack.size() + arrayStack.size() > maximumFilterRecursion)
-                    return m_exec->vm().throwException(m_exec, createStackOverflowError(m_exec));
+                    return throwStackOverflowError(m_exec);
 
                 JSObject* object = asObject(inValue);
                 objectStack.push(object);

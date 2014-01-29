@@ -34,6 +34,7 @@
 #include "LLIntEntrypoint.h"
 #include "Operations.h"
 #include "Parser.h"
+#include <wtf/CommaPrinter.h>
 #include <wtf/Vector.h>
 #include <wtf/text/StringBuilder.h>
 
@@ -118,12 +119,14 @@ void ScriptExecutable::installCode(CodeBlock* genericCodeBlock)
     switch (kind) {
     case CodeForCall:
         m_jitCodeForCall = genericCodeBlock->jitCode();
-        m_jitCodeForCallWithArityCheck = genericCodeBlock->jitCodeWithArityCheck();
+        m_jitCodeForCallWithArityCheck = MacroAssemblerCodePtr();
+        m_jitCodeForCallWithArityCheckAndPreserveRegs = MacroAssemblerCodePtr();
         m_numParametersForCall = genericCodeBlock->numParameters();
         break;
     case CodeForConstruct:
         m_jitCodeForConstruct = genericCodeBlock->jitCode();
-        m_jitCodeForConstructWithArityCheck = genericCodeBlock->jitCodeWithArityCheck();
+        m_jitCodeForConstructWithArityCheck = MacroAssemblerCodePtr();
+        m_jitCodeForConstructWithArityCheckAndPreserveRegs = MacroAssemblerCodePtr();
         m_numParametersForConstruct = genericCodeBlock->numParameters();
         break;
     }
@@ -133,7 +136,6 @@ void ScriptExecutable::installCode(CodeBlock* genericCodeBlock)
         ProgramExecutable* executable = jsCast<ProgramExecutable*>(this);
         ProgramCodeBlock* codeBlock = static_cast<ProgramCodeBlock*>(genericCodeBlock);
         
-        ASSERT(!codeBlock->jitCodeWithArityCheck());
         ASSERT(kind == CodeForCall);
         
         oldCodeBlock = executable->m_programCodeBlock;
@@ -145,7 +147,6 @@ void ScriptExecutable::installCode(CodeBlock* genericCodeBlock)
         EvalExecutable* executable = jsCast<EvalExecutable*>(this);
         EvalCodeBlock* codeBlock = static_cast<EvalCodeBlock*>(genericCodeBlock);
         
-        ASSERT(!codeBlock->jitCodeWithArityCheck());
         ASSERT(kind == CodeForCall);
         
         oldCodeBlock = executable->m_evalCodeBlock;
@@ -608,6 +609,46 @@ FunctionExecutable* FunctionExecutable::fromGlobalCode(const Identifier& name, E
 String FunctionExecutable::paramString() const
 {
     return m_unlinkedExecutable->paramString();
+}
+
+void ExecutableBase::dump(PrintStream& out) const
+{
+    ExecutableBase* realThis = const_cast<ExecutableBase*>(this);
+    
+    if (classInfo() == NativeExecutable::info()) {
+        NativeExecutable* native = jsCast<NativeExecutable*>(realThis);
+        out.print("NativeExecutable:", RawPointer(bitwise_cast<void*>(native->function())), "/", RawPointer(bitwise_cast<void*>(native->constructor())));
+        return;
+    }
+    
+    if (classInfo() == EvalExecutable::info()) {
+        EvalExecutable* eval = jsCast<EvalExecutable*>(realThis);
+        if (CodeBlock* codeBlock = eval->codeBlock())
+            out.print(*codeBlock);
+        else
+            out.print("EvalExecutable w/o CodeBlock");
+        return;
+    }
+    
+    if (classInfo() == ProgramExecutable::info()) {
+        ProgramExecutable* eval = jsCast<ProgramExecutable*>(realThis);
+        if (CodeBlock* codeBlock = eval->codeBlock())
+            out.print(*codeBlock);
+        else
+            out.print("ProgramExecutable w/o CodeBlock");
+        return;
+    }
+    
+    FunctionExecutable* function = jsCast<FunctionExecutable*>(realThis);
+    if (!function->eitherCodeBlock())
+        out.print("FunctionExecutable w/o CodeBlock");
+    else {
+        CommaPrinter comma("/");
+        if (function->codeBlockForCall())
+            out.print(comma, *function->codeBlockForCall());
+        if (function->codeBlockForConstruct())
+            out.print(comma, *function->codeBlockForConstruct());
+    }
 }
 
 CodeBlockHash ExecutableBase::hashFor(CodeSpecializationKind kind) const

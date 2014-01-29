@@ -105,6 +105,11 @@ struct OSRExit : public OSRExitBase {
     unsigned m_streamIndex;
     
     RefPtr<ValueRecoveryOverride> m_valueRecoveryOverride;
+    
+    bool considerAddingAsFrequentExitSite(CodeBlock* profiledCodeBlock)
+    {
+        return OSRExitBase::considerAddingAsFrequentExitSite(profiledCodeBlock, ExitFromDFG);
+    }
 };
 
 struct SpeculationFailureDebugInfo {

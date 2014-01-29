@@ -41,6 +41,7 @@ namespace JSC {
         SpecializedThunkJIT(VM* vm, int expectedArgCount)
             : JSInterfaceJIT(vm)
         {
+            emitFunctionPrologue();
             // Check that we have the expected number of arguments
             m_failures.append(branch32(NotEqual, payloadFor(JSStack::ArgumentCount), TrustedImm32(expectedArgCount + 1)));
         }
@@ -48,6 +49,7 @@ namespace JSC {
         explicit SpecializedThunkJIT(VM* vm)
             : JSInterfaceJIT(vm)
         {
+            emitFunctionPrologue();
         }
         
         void loadDoubleArgument(int argument, FPRegisterID dst, RegisterID scratch)
@@ -97,7 +99,7 @@ namespace JSC {
         {
             if (src != regT0)
                 move(src, regT0);
-            loadPtr(Address(callFrameRegister, CallFrame::callerFrameOffset()), callFrameRegister);
+            emitFunctionEpilogue();
             ret();
         }
 #else
@@ -105,7 +107,7 @@ namespace JSC {
         {
             ASSERT_UNUSED(payload, payload == regT0);
             ASSERT_UNUSED(tag, tag == regT1);
-            loadPtr(Address(callFrameRegister, CallFrame::callerFrameOffset()), callFrameRegister);
+            emitFunctionEpilogue();
             ret();
         }
 #endif
@@ -136,7 +138,7 @@ namespace JSC {
             lowNonZero.link(this);
             highNonZero.link(this);
 #endif
-            loadPtr(Address(callFrameRegister, CallFrame::callerFrameOffset()), callFrameRegister);
+            emitFunctionEpilogue();
             ret();
         }
 
@@ -145,7 +147,7 @@ namespace JSC {
             if (src != regT0)
                 move(src, regT0);
             tagReturnAsInt32();
-            loadPtr(Address(callFrameRegister, CallFrame::callerFrameOffset()), callFrameRegister);
+            emitFunctionEpilogue();
             ret();
         }
 
@@ -154,7 +156,7 @@ namespace JSC {
             if (src != regT0)
                 move(src, regT0);
             tagReturnAsJSCell();
-            loadPtr(Address(callFrameRegister, CallFrame::callerFrameOffset()), callFrameRegister);
+            emitFunctionEpilogue();
             ret();
         }
         

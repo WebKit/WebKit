@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009, 2010, 2012, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2009, 2010, 2012, 2013, 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -43,6 +43,7 @@
 
 namespace JSC {
 
+class CodeBlock;
 class VM;
 
 // LinkBuffer:
@@ -164,6 +165,11 @@ public:
     }
 
     // These methods are used to obtain handles to allow the code to be relinked / repatched later.
+    
+    CodeLocationLabel entrypoint()
+    {
+        return CodeLocationLabel(code());
+    }
 
     CodeLocationCall locationOf(Call call)
     {
@@ -302,6 +308,11 @@ private:
     (UNLIKELY((condition))                                              \
      ? ((linkBufferReference).finalizeCodeWithDisassembly dataLogFArgumentsForHeading) \
      : (linkBufferReference).finalizeCodeWithoutDisassembly())
+
+bool shouldShowDisassemblyFor(CodeBlock*);
+
+#define FINALIZE_CODE_FOR(codeBlock, linkBufferReference, dataLogFArgumentsForHeading)  \
+    FINALIZE_CODE_IF(shouldShowDisassemblyFor(codeBlock), linkBufferReference, dataLogFArgumentsForHeading)
 
 // Use this to finalize code, like so:
 //

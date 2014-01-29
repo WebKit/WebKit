@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2011, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2008, 2011, 2013, 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,11 +30,13 @@
 #include "VM.h"
 
 #include "ArgList.h"
+#include "ArityCheckFailReturnThunks.h"
 #include "ArrayBufferNeuteringWatchpoint.h"
 #include "CallFrameInlines.h"
 #include "CodeBlock.h"
 #include "CodeCache.h"
 #include "CommonIdentifiers.h"
+#include "CommonSlowPaths.h"
 #include "DFGLongLivedState.h"
 #include "DFGWorklist.h"
 #include "DebuggerActivation.h"
@@ -49,6 +51,7 @@
 #include "Identifier.h"
 #include "IncrementalSweeper.h"
 #include "Interpreter.h"
+#include "JITCode.h"
 #include "JSAPIValueWrapper.h"
 #include "JSActivation.h"
 #include "JSArray.h"
@@ -166,6 +169,7 @@ VM::VM(VMType vmType, HeapType heapType)
     , vmType(vmType)
     , clientData(0)
     , topCallFrame(CallFrame::noCaller())
+    , stackPointerAtVMEntry(0)
     , arrayConstructorTable(adoptPtr(new HashTable(JSC::arrayConstructorTable)))
     , arrayPrototypeTable(adoptPtr(new HashTable(JSC::arrayPrototypeTable)))
     , booleanPrototypeTable(adoptPtr(new HashTable(JSC::booleanPrototypeTable)))
@@ -216,7 +220,7 @@ VM::VM(VMType vmType, HeapType heapType)
     , m_initializingObjectClass(0)
 #endif
     , m_stackLimit(0)
-#if USE(SEPARATE_C_AND_JS_STACK)
+#if ENABLE(LLINT_C_LOOP)
     , m_jsStackLimit(0)
 #endif
     , m_inDefineOwnProperty(false)
@@ -225,7 +229,11 @@ VM::VM(VMType vmType, HeapType heapType)
 {
     interpreter = new Interpreter(*this);
     StackBounds stack = wtfThreadData().stack();
-    setStackLimit(stack.recursionLimit());
+    updateStackLimitWithReservedZoneSize(Options::reservedZoneSize());
+#if ENABLE(LLINT_C_LOOP)
+    interpreter->stack().setReservedZoneSize(Options::reservedZoneSize());
+#endif
+    setLastStackTop(stack.origin());
 
     // Need to be careful to keep everything consistent here
     JSLockHolder lock(this);
@@ -267,7 +275,9 @@ VM::VM(VMType vmType, HeapType heapType)
 
 #if ENABLE(JIT)
     jitStubs = adoptPtr(new JITThunks());
+    arityCheckFailReturnThunks = std::make_unique<ArityCheckFailReturnThunks>();
 #endif
+    arityCheckData = std::make_unique<CommonSlowPaths::ArityCheckData>();
 
 #if ENABLE(FTL_JIT)
     ftlThunks = std::make_unique<FTL::Thunks>();
@@ -280,7 +290,7 @@ VM::VM(VMType vmType, HeapType heapType)
 #endif
 
     heap.notifyIsSafeToCollect();
-
+    
     LLInt::Data::performAssertions(*this);
     
     if (Options::enableProfiler()) {
@@ -306,6 +316,16 @@ VM::VM(VMType vmType, HeapType heapType)
     m_typedArrayController = adoptRef(new SimpleTypedArrayController());
 }
 
+#if ENABLE(DFG_JIT)
+static void cleanWorklist(VM& vm, DFG::Worklist* worklist)
+{
+    if (!worklist)
+        return;
+    worklist->waitUntilAllPlansForVMAreReady(vm);
+    worklist->removeAllReadyPlansForVM(vm);
+}
+#endif // ENABLE(DFG_JIT)
+
 VM::~VM()
 {
     // Never GC, ever again.
@@ -314,10 +334,8 @@ VM::~VM()
 #if ENABLE(DFG_JIT)
     // Make sure concurrent compilations are done, but don't install them, since there is
     // no point to doing so.
-    if (worklist) {
-        worklist->waitUntilAllPlansForVMAreReady(*this);
-        worklist->removeAllReadyPlansForVM(*this);
-    }
+    cleanWorklist(*this, DFG::existingGlobalDFGWorklistOrNull());
+    cleanWorklist(*this, DFG::existingGlobalFTLWorklistOrNull());
 #endif // ENABLE(DFG_JIT)
     
     // Clear this first to ensure that nobody tries to remove themselves from it.
@@ -461,8 +479,8 @@ NativeExecutable* VM::getHostFunction(NativeFunction function, Intrinsic intrins
 NativeExecutable* VM::getHostFunction(NativeFunction function, NativeFunction constructor)
 {
     return NativeExecutable::create(*this,
-        MacroAssemblerCodeRef::createLLIntCodeRef(llint_native_call_trampoline), function,
-        MacroAssemblerCodeRef::createLLIntCodeRef(llint_native_construct_trampoline), constructor,
+        adoptRef(new NativeJITCode(MacroAssemblerCodeRef::createLLIntCodeRef(llint_native_call_trampoline), JITCode::HostCallThunk)), function,
+        adoptRef(new NativeJITCode(MacroAssemblerCodeRef::createLLIntCodeRef(llint_native_construct_trampoline), JITCode::HostCallThunk)), constructor,
         NoIntrinsic);
 }
 
@@ -490,14 +508,21 @@ void VM::stopSampling()
     interpreter->stopSampling();
 }
 
+#if ENABLE(DFG_JIT)
+static void prepareToDiscardCodeFor(VM& vm, DFG::Worklist* worklist)
+{
+    if (!worklist)
+        return;
+    worklist->completeAllPlansForVM(vm);
+}
+#endif // ENABLE(DFG_JIT)
+
 void VM::prepareToDiscardCode()
 {
 #if ENABLE(DFG_JIT)
-    if (!worklist)
-        return;
-    
-    worklist->completeAllPlansForVM(*this);
-#endif
+    prepareToDiscardCodeFor(*this, DFG::existingGlobalDFGWorklistOrNull());
+    prepareToDiscardCodeFor(*this, DFG::existingGlobalFTLWorklistOrNull());
+#endif // ENABLE(DFG_JIT)
 }
 
 void VM::discardAllCode()
@@ -632,6 +657,11 @@ static void appendSourceToError(CallFrame* callFrame, ErrorInstance* exception, 
     
 JSValue VM::throwException(ExecState* exec, JSValue error)
 {
+    if (Options::breakOnThrow()) {
+        dataLog("In call frame ", RawPointer(exec), " for code block ", *exec->codeBlock(), "\n");
+        CRASH();
+    }
+    
     ASSERT(exec == topCallFrame || exec == exec->lexicalGlobalObject()->globalExec() || exec == exec->vmEntryGlobalObject()->globalExec());
     
     Vector<StackFrame> stackTrace;
@@ -706,6 +736,24 @@ void VM:: clearExceptionStack()
     m_exceptionStack = RefCountedArray<StackFrame>();
 }
 
+size_t VM::updateStackLimitWithReservedZoneSize(size_t reservedZoneSize)
+{
+    size_t oldReservedZoneSize = m_reservedZoneSize;
+    m_reservedZoneSize = reservedZoneSize;
+
+    void* stackLimit;
+    if (stackPointerAtVMEntry) {
+        ASSERT(wtfThreadData().stack().isGrowingDownward());
+        char* startOfStack = reinterpret_cast<char*>(stackPointerAtVMEntry);
+        char* desiredStackLimit = startOfStack - Options::maxPerThreadStackUsage() + reservedZoneSize;
+        stackLimit = wtfThreadData().stack().recursionLimit(reservedZoneSize, desiredStackLimit);
+    } else
+        stackLimit = wtfThreadData().stack().recursionLimit(reservedZoneSize);
+
+    setStackLimit(stackLimit);
+    return oldReservedZoneSize;
+}
+
 void releaseExecutableMemory(VM& vm)
 {
     vm.releaseExecutableMemory();
@@ -722,16 +770,19 @@ void VM::gatherConservativeRoots(ConservativeRoots& conservativeRoots)
         }
     }
 }
-
-DFG::Worklist* VM::ensureWorklist()
-{
-    if (!DFG::enableConcurrentJIT())
-        return 0;
-    if (!worklist)
-        worklist = DFG::globalWorklist();
-    return worklist.get();
-}
 #endif
+
+void logSanitizeStack(VM* vm)
+{
+    if (Options::verboseSanitizeStack() && vm->topCallFrame) {
+        int dummy;
+        dataLog(
+            "Sanitizing stack with top call frame at ", RawPointer(vm->topCallFrame),
+            ", current stack pointer at ", RawPointer(&dummy), ", in ",
+            pointerDump(vm->topCallFrame->codeBlock()), " and last code origin = ",
+            vm->topCallFrame->codeOrigin(), "\n");
+    }
+}
 
 #if ENABLE(REGEXP_TRACING)
 void VM::addRegExpToTrace(RegExp* regExp)
@@ -797,6 +848,16 @@ void VM::setEnabledProfiler(LegacyProfiler* profiler)
         SetEnabledProfilerFunctor functor;
         heap.forEachCodeBlock(functor);
     }
+}
+
+void sanitizeStackForVM(VM* vm)
+{
+    logSanitizeStack(vm);
+#if ENABLE(LLINT_C_LOOP)
+    vm->interpreter->stack().sanitizeStack();
+#else
+    sanitizeStackForVMImpl(vm);
+#endif
 }
 
 } // namespace JSC

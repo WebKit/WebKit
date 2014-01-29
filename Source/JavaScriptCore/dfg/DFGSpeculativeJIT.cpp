@@ -1346,6 +1346,8 @@ void SpeculativeJIT::compileCurrentBlock()
     m_stream->appendAndLog(VariableEvent::reset());
     
     m_jit.jitAssertHasValidCallFrame();
+    m_jit.jitAssertTagsInPlace();
+    m_jit.jitAssertArgumentCountSane();
 
     for (size_t i = 0; i < m_block->variablesAtHead.numberOfArguments(); ++i) {
         m_stream->appendAndLog(
@@ -1532,10 +1534,40 @@ void SpeculativeJIT::checkArgumentTypes()
     m_isCheckingArgumentTypes = false;
 }
 
+void SpeculativeJIT::prepareJITCodeForTierUp()
+{
+    unsigned numberOfCalls = 0;
+    
+    for (BlockIndex blockIndex = m_jit.graph().numBlocks(); blockIndex--;) {
+        BasicBlock* block = m_jit.graph().block(blockIndex);
+        if (!block)
+            continue;
+        
+        for (unsigned nodeIndex = block->size(); nodeIndex--;) {
+            Node* node = block->at(nodeIndex);
+            
+            switch (node->op()) {
+            case Call:
+            case Construct:
+                numberOfCalls++;
+                break;
+                
+            default:
+                break;
+            }
+        }
+    }
+    
+    m_jit.jitCode()->slowPathCalls.fill(0, numberOfCalls);
+}
+
 bool SpeculativeJIT::compile()
 {
     checkArgumentTypes();
-
+    
+    if (m_jit.graph().m_plan.willTryToTierUp)
+        prepareJITCodeForTierUp();
+    
     ASSERT(!m_currentNode);
     for (BlockIndex blockIndex = 0; blockIndex < m_jit.graph().numBlocks(); ++blockIndex) {
         m_jit.setForBlockIndex(blockIndex);
@@ -2390,6 +2422,10 @@ void SpeculativeJIT::compilePutByValForIntTypedArray(GPRReg base, GPRReg propert
     ASSERT(valueGPR != base);
     ASSERT(valueGPR != storageReg);
     MacroAssembler::Jump outOfBounds = jumpForTypedArrayOutOfBounds(node, base, property);
+    if (node->arrayMode().isInBounds() && outOfBounds.isSet()) {
+        speculationCheck(OutOfBounds, JSValueSource(), 0, outOfBounds);
+        outOfBounds = MacroAssembler::Jump();
+    }
 
     switch (elementSize(type)) {
     case 1:
@@ -2465,6 +2501,10 @@ void SpeculativeJIT::compilePutByValForFloatTypedArray(GPRReg base, GPRReg prope
     ASSERT_UNUSED(baseUse, node->arrayMode().alreadyChecked(m_jit.graph(), node, m_state.forNode(baseUse)));
     
     MacroAssembler::Jump outOfBounds = jumpForTypedArrayOutOfBounds(node, base, property);
+    if (node->arrayMode().isInBounds() && outOfBounds.isSet()) {
+        speculationCheck(OutOfBounds, JSValueSource(), 0, outOfBounds);
+        outOfBounds = MacroAssembler::Jump();
+    }
     
     switch (elementSize(type)) {
     case 4: {
@@ -3429,6 +3469,17 @@ void SpeculativeJIT::compileArithMod(Node* node)
         GPRReg quotientThenRemainderGPR = quotientThenRemainder.gpr();
         GPRReg multiplyAnswerGPR = multiplyAnswer.gpr();
 
+        JITCompiler::JumpList done;
+        
+        if (shouldCheckOverflow(node->arithMode()))
+            speculationCheck(Overflow, JSValueRegs(), 0, m_jit.branchTest32(JITCompiler::Zero, divisorGPR));
+        else {
+            JITCompiler::Jump denominatorNotZero = m_jit.branchTest32(JITCompiler::NonZero, divisorGPR);
+            m_jit.move(divisorGPR, quotientThenRemainderGPR);
+            done.append(m_jit.jump());
+            denominatorNotZero.link(&m_jit);
+        }
+
         m_jit.assembler().sdiv(quotientThenRemainderGPR, dividendGPR, divisorGPR);
         // FIXME: It seems like there are cases where we don't need this? What if we have
         // arithMode() == Arith::Unchecked?
@@ -3445,6 +3496,8 @@ void SpeculativeJIT::compileArithMod(Node* node)
             numeratorPositive.link(&m_jit);
         }
 
+        done.link(&m_jit);
+        
         int32Result(quotientThenRemainderGPR, node);
 #elif CPU(ARM64)
         GPRTemporary temp(this);
@@ -3454,6 +3507,17 @@ void SpeculativeJIT::compileArithMod(Node* node)
         GPRReg divisorGPR = op2.gpr();
         GPRReg quotientThenRemainderGPR = quotientThenRemainder.gpr();
         GPRReg multiplyAnswerGPR = multiplyAnswer.gpr();
+
+        JITCompiler::JumpList done;
+    
+        if (shouldCheckOverflow(node->arithMode()))
+            speculationCheck(Overflow, JSValueRegs(), 0, m_jit.branchTest32(JITCompiler::Zero, divisorGPR));
+        else {
+            JITCompiler::Jump denominatorNotZero = m_jit.branchTest32(JITCompiler::NonZero, divisorGPR);
+            m_jit.move(divisorGPR, quotientThenRemainderGPR);
+            done.append(m_jit.jump());
+            denominatorNotZero.link(&m_jit);
+        }
 
         m_jit.assembler().sdiv<32>(quotientThenRemainderGPR, dividendGPR, divisorGPR);
         // FIXME: It seems like there are cases where we don't need this? What if we have
@@ -3470,6 +3534,8 @@ void SpeculativeJIT::compileArithMod(Node* node)
             speculationCheck(Overflow, JSValueRegs(), 0, m_jit.branchTest32(JITCompiler::Zero, quotientThenRemainderGPR));
             numeratorPositive.link(&m_jit);
         }
+
+        done.link(&m_jit);
 
         int32Result(quotientThenRemainderGPR, node);
 #else // not architecture that can do integer division

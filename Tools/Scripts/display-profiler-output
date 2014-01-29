@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 
-# Copyright (C) 2012, 2013 Apple Inc. All rights reserved.
+# Copyright (C) 2012, 2013, 2014 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -437,7 +437,11 @@ $compilations = $json["compilations"].map {
     | subJson |
     Compilation.new(subJson)
 }
-$engines = ["Baseline", "DFG"]
+$engines = ["Baseline", "DFG", "FTL", "FTLForOSREntry"]
+
+def isOptimizing(engine)
+    engine == "DFG" or engine == "FTL" or engine == "FTLForOSREntry"
+end
 
 $showCounts = true
 $sortMode = :time
@@ -572,9 +576,9 @@ def summary(mode)
     if mode == :full
         print(" " + (" " * instructionCountCols))
     end
-    print(" " + center("Base/DFG", countCols))
+    print(" " + center("Base/DFG/FTL/FTLOSR", countCols))
     if mode == :full
-        print(" " + center("Base/DFG", machineCountCols))
+        print(" " + center("Base/DFG/FTL/FTLOSR", machineCountCols))
         print(" " + (" " * compilationsCols))
         print(" " + center("Src/Total", inlinesCols))
         print(" " + (" " * exitCountCols))
@@ -674,7 +678,7 @@ def executeCommand(*commandArray)
             if $showCounts
                 puts(center("Source Counts", countCols) + " " + center("Machine Counts", machineCols) +
                      (" " * pad) + center("Bytecode for #{bytecodes}", screenWidth - pad - countCols - 1 - machineCols))
-                puts(center("Base/DFG", countCols) + " " + center("Base/DFG", countCols))
+                puts(center("Base/DFG/FTL/FTLOSR", countCols) + " " + center("Base/DFG/FTL/FTLOSR", countCols))
             else
                 puts("Bytecode for #{bytecodes}:")
             end
@@ -894,7 +898,7 @@ def executeCommand(*commandArray)
             puts("Compilation #{compilation}:")
             if $showCounts
                 puts(center("Actual Counts", actualCountCols) + " " + center("Source Counts", sourceCountCols) + " " + center("Disassembly in #{compilation.engine}", screenWidth - 1 - sourceCountCols - 1 - actualCountCols))
-                puts((" " * actualCountCols) + " " + center("Base/DFG", sourceCountCols))
+                puts((" " * actualCountCols) + " " + center("Base/DFG/FTL/FTLOSR", sourceCountCols))
             else
                 puts("Disassembly in #{compilation.engine}")
             end
@@ -905,10 +909,14 @@ def executeCommand(*commandArray)
                 | description |
                 # FIXME: We should have a better way of detecting things like CountExecution nodes
                 # and slow path entries in the baseline JIT.
-                if description.description =~ /CountExecution\(/ and compilation.engine == "DFG"
+                if description.description =~ /CountExecution\(/ and isOptimizing(compilation.engine)
                     shouldShow = false
                 else
                     shouldShow = true
+                end
+                if not description.origin.empty? and not description.origin[-1]
+                    p description.origin
+                    p description.description
                 end
                 if description.origin.empty? or not description.origin[-1].shouldHaveCounts? or (compilation.engine == "Baseline" and description.description =~ /^\s*\(S\)/)
                     actualCountsString = ""

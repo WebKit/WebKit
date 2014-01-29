@@ -39,6 +39,7 @@ public:
     FailedFinalizer(Plan&);
     virtual ~FailedFinalizer();
     
+    virtual size_t codeSize() override;
     virtual bool finalize() override;
     virtual bool finalizeFunction() override;
 };

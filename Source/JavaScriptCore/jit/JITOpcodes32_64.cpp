@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009, 2012, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2009, 2012, 2013, 2014 Apple Inc. All rights reserved.
  * Copyright (C) 2010 Patrick Gansterer <paroga@paroga.com>
  *
  * Redistribution and use in source and binary forms, with or without
@@ -39,6 +39,7 @@
 #include "JSPropertyNameIterator.h"
 #include "JSVariableObject.h"
 #include "LinkBuffer.h"
+#include "MaxFrameExtentForSlowPathCall.h"
 #include "SlowPathCall.h"
 #include "VirtualRegister.h"
 
@@ -48,6 +49,7 @@ JIT::CodeRef JIT::privateCompileCTINativeCall(VM* vm, NativeFunction func)
 {
     Call nativeCall;
 
+    emitFunctionPrologue();
     emitPutImmediateToCallFrameHeader(0, JSStack::CodeBlock);
     storePtr(callFrameRegister, &m_vm->topCallFrame);
 
@@ -58,30 +60,23 @@ JIT::CodeRef JIT::privateCompileCTINativeCall(VM* vm, NativeFunction func)
     emitGetFromCallFrameHeaderPtr(JSStack::ScopeChain, regT1, regT0);
     emitPutCellToCallFrameHeader(regT1, JSStack::ScopeChain);
 
-    peek(regT1);
-    emitPutReturnPCToCallFrameHeader(regT1);
-
     // Calling convention:      f(ecx, edx, ...);
     // Host function signature: f(ExecState*);
     move(callFrameRegister, X86Registers::ecx);
 
-    subPtr(TrustedImm32(16 - sizeof(void*)), stackPointerRegister); // Align stack after call.
-
-    move(regT0, callFrameRegister); // Eagerly restore caller frame register to avoid loading from stack.
+    subPtr(TrustedImm32(8), stackPointerRegister); // Align stack for call.
+    storePtr(X86Registers::ecx, Address(stackPointerRegister));
 
     // call the function
     nativeCall = call();
 
-    addPtr(TrustedImm32(16 - sizeof(void*)), stackPointerRegister);
+    addPtr(TrustedImm32(8), stackPointerRegister);
 
 #elif CPU(ARM) || CPU(SH4) || CPU(MIPS)
     // Load caller frame's scope chain into this callframe so that whatever we call can get to its global data.
     emitGetCallerFrameFromCallFrameHeaderPtr(regT2);
     emitGetFromCallFrameHeaderPtr(JSStack::ScopeChain, regT1, regT2);
     emitPutCellToCallFrameHeader(regT1, JSStack::ScopeChain);
-
-    preserveReturnAddressAfterCall(regT3); // Callee preserved
-    emitPutReturnPCToCallFrameHeader(regT3);
 
 #if CPU(MIPS)
     // Allocate stack space for (unused) 16 bytes (8-byte aligned) for 4 arguments.
@@ -93,7 +88,6 @@ JIT::CodeRef JIT::privateCompileCTINativeCall(VM* vm, NativeFunction func)
     move(callFrameRegister, argumentGPR0);
 
     emitGetFromCallFrameHeaderPtr(JSStack::Callee, argumentGPR1);
-    move(regT2, callFrameRegister); // Eagerly restore caller frame register to avoid loading from stack.
     loadPtr(Address(argumentGPR1, OBJECT_OFFSETOF(JSFunction, m_executable)), regT2);
 
     // call the function
@@ -113,30 +107,27 @@ JIT::CodeRef JIT::privateCompileCTINativeCall(VM* vm, NativeFunction func)
     // Check for an exception
     Jump sawException = branch32(NotEqual, AbsoluteAddress(reinterpret_cast<char*>(vm->addressOfException()) + OBJECT_OFFSETOF(JSValue, u.asBits.tag)), TrustedImm32(JSValue::EmptyValueTag)); 
 
+    emitFunctionEpilogue();
     // Return.
     ret();
 
     // Handle an exception
     sawException.link(this);
 
-    // Grab the return address.
-    preserveReturnAddressAfterCall(regT1);
-
-    move(TrustedImmPtr(&vm->exceptionLocation), regT2);
-    storePtr(regT1, regT2);
     storePtr(callFrameRegister, &m_vm->topCallFrame);
 
 #if CPU(X86)
-    addPtr(TrustedImm32(-12), stackPointerRegister);
-    push(callFrameRegister);
+    addPtr(TrustedImm32(-4), stackPointerRegister);
+    loadPtr(Address(callFrameRegister), X86Registers::ecx);
+    push(X86Registers::ecx);
 #else
-    move(callFrameRegister, argumentGPR0);
+    loadPtr(Address(callFrameRegister), argumentGPR0);
 #endif
     move(TrustedImmPtr(FunctionPtr(operationVMHandleException).value()), regT3);
     call(regT3);
 
 #if CPU(X86)
-    addPtr(TrustedImm32(16), stackPointerRegister);
+    addPtr(TrustedImm32(8), stackPointerRegister);
 #endif
 
     jumpToExceptionHandler();
@@ -175,7 +166,7 @@ void JIT::emit_op_end(Instruction* currentInstruction)
 {
     ASSERT(returnValueGPR != callFrameRegister);
     emitLoad(currentInstruction[1].u.operand, regT1, regT0);
-    restoreReturnAddressBeforeReturn(Address(callFrameRegister, CallFrame::returnPCOffset()));
+    emitFunctionEpilogue();
     ret();
 }
 
@@ -927,6 +918,9 @@ void JIT::emit_op_catch(Instruction* currentInstruction)
     move(TrustedImmPtr(m_vm), regT3);
     // operationThrow returns the callFrame for the handler.
     load32(Address(regT3, VM::callFrameForThrowOffset()), callFrameRegister);
+
+    addPtr(TrustedImm32(stackPointerOffsetFor(codeBlock()) * sizeof(Register)), callFrameRegister, stackPointerRegister);
+
     // Now store the exception returned by operationThrow.
     load32(Address(regT3, VM::exceptionOffset() + OBJECT_OFFSETOF(JSValue, u.asBits.payload)), regT0);
     load32(Address(regT3, VM::exceptionOffset() + OBJECT_OFFSETOF(JSValue, u.asBits.tag)), regT1);

@@ -36,8 +36,10 @@
 #include "FunctionExecutableDump.h"
 #include "JIT.h"
 #include "JSActivation.h"
+#include "MaxFrameExtentForSlowPathCall.h"
 #include "OperandsInlines.h"
 #include "Operations.h"
+#include "StackAlignment.h"
 #include <wtf/CommaPrinter.h>
 #include <wtf/ListDump.h>
 
@@ -678,10 +680,10 @@ FullBytecodeLiveness& Graph::livenessFor(InlineCallFrame* inlineCallFrame)
 bool Graph::isLiveInBytecode(VirtualRegister operand, CodeOrigin codeOrigin)
 {
     for (;;) {
+        VirtualRegister reg = VirtualRegister(
+            operand.offset() - codeOrigin.stackOffset());
+        
         if (operand.offset() < codeOrigin.stackOffset() + JSStack::CallFrameHeaderSize) {
-            VirtualRegister reg = VirtualRegister(
-                operand.offset() - codeOrigin.stackOffset());
-            
             if (reg.isArgument()) {
                 RELEASE_ASSERT(reg.offset() < JSStack::CallFrameHeaderSize);
                 
@@ -700,10 +702,18 @@ bool Graph::isLiveInBytecode(VirtualRegister operand, CodeOrigin codeOrigin)
                 reg.offset(), codeOrigin.bytecodeIndex);
         }
         
-        if (!codeOrigin.inlineCallFrame)
+        InlineCallFrame* inlineCallFrame = codeOrigin.inlineCallFrame;
+        if (!inlineCallFrame)
             break;
+
+        // Arguments are always live. This would be redundant if it wasn't for our
+        // op_call_varargs inlining.
+        if (reg.isArgument()
+            && reg.toArgument()
+            && static_cast<size_t>(reg.toArgument()) < inlineCallFrame->arguments.size())
+            return true;
         
-        codeOrigin = codeOrigin.inlineCallFrame->caller;
+        codeOrigin = inlineCallFrame->caller;
     }
     
     return true;
@@ -711,7 +721,13 @@ bool Graph::isLiveInBytecode(VirtualRegister operand, CodeOrigin codeOrigin)
 
 unsigned Graph::frameRegisterCount()
 {
-    return m_nextMachineLocal + m_parameterSlots;
+    unsigned result = m_nextMachineLocal + std::max(m_parameterSlots, static_cast<unsigned>(maxFrameExtentForSlowPathCallInRegisters));
+    return roundLocalRegisterCountForFramePointerOffset(result);
+}
+
+unsigned Graph::stackPointerOffset()
+{
+    return virtualRegisterForLocal(frameRegisterCount() - 1).offset();
 }
 
 unsigned Graph::requiredRegisterCountForExit()

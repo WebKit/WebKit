@@ -197,7 +197,7 @@ namespace JSC {
         
         void addReference(JSCell*, ArrayBuffer*);
         
-        bool isDeferred() const { return !!m_deferralDepth; }
+        bool isDeferred() const { return !!m_deferralDepth || Options::disableGC(); }
 
 #if USE(CF)
         template<typename T> void releaseSoon(RetainPtr<T>&&);

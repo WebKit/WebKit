@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -55,13 +55,15 @@ private:
     SlowPathCallKey m_key;
 };
 
+void storeCodeOrigin(State&, CCallHelpers&, CodeOrigin);
+
 MacroAssembler::Call callOperation(
-    State&, const RegisterSet&, CCallHelpers&, J_JITOperation_ESsiJI,
-    GPRReg result, GPRReg callFrameRegister, StructureStubInfo*, GPRReg object,
+    State&, const RegisterSet&, CCallHelpers&, CodeOrigin, CCallHelpers::JumpList*,
+    J_JITOperation_ESsiJI, GPRReg result, StructureStubInfo*, GPRReg object,
     StringImpl* uid);
 MacroAssembler::Call callOperation(
-    State&, const RegisterSet&, CCallHelpers&, V_JITOperation_ESsiJJI,
-    GPRReg callFrameRegister, StructureStubInfo*, GPRReg value, GPRReg object,
+    State&, const RegisterSet&, CCallHelpers&, CodeOrigin, CCallHelpers::JumpList*,
+    V_JITOperation_ESsiJJI, StructureStubInfo*, GPRReg value, GPRReg object,
     StringImpl* uid);
 
 } } // namespace JSC::FTL

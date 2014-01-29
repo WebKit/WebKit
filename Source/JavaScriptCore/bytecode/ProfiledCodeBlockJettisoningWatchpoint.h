@@ -26,6 +26,8 @@
 #ifndef ProfiledCodeBlockJettisoningWatchpoint_h
 #define ProfiledCodeBlockJettisoningWatchpoint_h
 
+#if ENABLE(DFG_JIT)
+
 #include "CodeOrigin.h"
 #include "ExitKind.h"
 #include "Watchpoint.h"
@@ -60,6 +62,8 @@ private:
 };
 
 } // namespace JSC
+
+#endif // ENABLE(DFG_JIT)
 
 #endif // ProfiledCodeBlockJettisoningWatchpoint_h
 

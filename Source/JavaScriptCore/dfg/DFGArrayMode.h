@@ -211,7 +211,7 @@ public:
         return ArrayMode(type, arrayClass(), speculation(), conversion);
     }
     
-    ArrayMode refine(SpeculatedType base, SpeculatedType index, SpeculatedType value = SpecNone, NodeFlags = 0) const;
+    ArrayMode refine(Graph&, CodeOrigin, SpeculatedType base, SpeculatedType index, SpeculatedType value = SpecNone, NodeFlags = 0) const;
     
     bool alreadyChecked(Graph&, Node*, AbstractValue&) const;
     

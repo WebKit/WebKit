@@ -53,9 +53,10 @@ void AbstractHeap::decorateInstruction(LValue instruction, const AbstractHeapRep
     setMetadata(instruction, repository.m_tbaaKind, tbaaMetadata(repository));
 }
 
-IndexedAbstractHeap::IndexedAbstractHeap(LContext context, AbstractHeap* parent, const char* heapName, size_t elementSize)
+IndexedAbstractHeap::IndexedAbstractHeap(LContext context, AbstractHeap* parent, const char* heapName, ptrdiff_t offset, size_t elementSize)
     : m_heapForAnyIndex(parent, heapName)
     , m_heapNameLength(strlen(heapName))
+    , m_offset(offset)
     , m_elementSize(elementSize)
     , m_scaleTerm(0)
     , m_canShift(false)
@@ -93,7 +94,7 @@ TypedPointer IndexedAbstractHeap::baseIndex(Output& out, LValue base, LValue ind
     } else
         result = out.add(base, out.mul(index, m_scaleTerm));
     
-    return TypedPointer(atAnyIndex(), out.addPtr(result, offset));
+    return TypedPointer(atAnyIndex(), out.addPtr(result, m_offset + offset));
 }
 
 const AbstractField& IndexedAbstractHeap::atSlow(ptrdiff_t index)
@@ -168,16 +169,15 @@ void IndexedAbstractHeap::initialize(AbstractField& field, ptrdiff_t signedIndex
             accumulator >>= 4;
         }
         
-        field.initialize(&m_heapForAnyIndex, characters, signedIndex * m_elementSize);
+        field.initialize(&m_heapForAnyIndex, characters, m_offset + signedIndex * m_elementSize);
         return;
     }
     
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-NumberedAbstractHeap::NumberedAbstractHeap(
-    LContext context, AbstractHeap* heap, const char* heapName)
-    : m_indexedHeap(context, heap, heapName, 1)
+NumberedAbstractHeap::NumberedAbstractHeap(LContext context, AbstractHeap* heap, const char* heapName)
+    : m_indexedHeap(context, heap, heapName, 0, 1)
 {
 }
 
@@ -185,9 +185,8 @@ NumberedAbstractHeap::~NumberedAbstractHeap()
 {
 }
 
-AbsoluteAbstractHeap::AbsoluteAbstractHeap(
-    LContext context, AbstractHeap* heap, const char* heapName)
-    : m_indexedHeap(context, heap, heapName, 1)
+AbsoluteAbstractHeap::AbsoluteAbstractHeap(LContext context, AbstractHeap* heap, const char* heapName)
+    : m_indexedHeap(context, heap, heapName, 0, 1)
 {
 }
 

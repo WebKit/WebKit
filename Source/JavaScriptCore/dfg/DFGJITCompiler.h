@@ -221,6 +221,11 @@ public:
     {
         m_ins.append(record);
     }
+    
+    unsigned currentJSCallIndex() const
+    {
+        return m_jsCalls.size();
+    }
 
     void addJSCall(Call fastCall, Call slowCall, DataLabelPtr targetToCheck, CallLinkInfo::CallType callType, GPRReg callee, CodeOrigin codeOrigin)
     {

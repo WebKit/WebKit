@@ -55,8 +55,8 @@ struct CallLinkInfo : public BasicRawSentinelNode<CallLinkInfo> {
     }
         
     CallLinkInfo()
-        : hasSeenShouldRepatch(false)
-        , isDFG(false)
+        : isFTL(false)
+        , hasSeenShouldRepatch(false)
         , hasSeenClosure(false)
         , callType(None)
     {
@@ -79,8 +79,8 @@ struct CallLinkInfo : public BasicRawSentinelNode<CallLinkInfo> {
     JITWriteBarrier<JSFunction> callee;
     WriteBarrier<JSFunction> lastSeenCallee;
     RefPtr<ClosureCallStubRoutine> stub;
+    bool isFTL : 1;
     bool hasSeenShouldRepatch : 1;
-    bool isDFG : 1;
     bool hasSeenClosure : 1;
     unsigned callType : 5; // CallType
     unsigned calleeGPR : 8;

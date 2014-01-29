@@ -43,6 +43,7 @@ void* prepareOSREntry(
 {
     VM& vm = exec->vm();
     CodeBlock* baseline = dfgCodeBlock->baselineVersion();
+    ExecutableBase* executable = dfgCodeBlock->ownerExecutable();
     DFG::JITCode* dfgCode = dfgCodeBlock->jitCode()->dfg();
     ForOSREntryJITCode* entryCode = entryCodeBlock->jitCode()->ftlForOSREntry();
     
@@ -80,7 +81,7 @@ void* prepareOSREntry(
         scratch[local] = JSValue::encode(values.local(local));
     
     int stackFrameSize = entryCode->common.requiredRegisterCountForExecutionAndExit();
-    if (!vm.interpreter->stack().grow(&exec->registers()[virtualRegisterForLocal(stackFrameSize).offset()])) {
+    if (!vm.interpreter->stack().ensureCapacityFor(&exec->registers()[virtualRegisterForLocal(stackFrameSize - 1).offset()])) {
         if (Options::verboseOSR())
             dataLog("    OSR failed because stack growth failed.\n");
         return 0;
@@ -88,7 +89,9 @@ void* prepareOSREntry(
     
     exec->setCodeBlock(entryCodeBlock);
     
-    void* result = entryCode->addressForCall().executableAddress();
+    void* result = entryCode->addressForCall(
+        vm, executable, ArityCheckNotRequired,
+        RegisterPreservationNotRequired).executableAddress();
     if (Options::verboseOSR())
         dataLog("    Entry will succeed, going to address", RawPointer(result), "\n");
     

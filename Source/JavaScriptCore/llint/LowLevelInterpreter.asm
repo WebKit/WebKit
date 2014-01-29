@@ -38,8 +38,11 @@ const CallFrameHeaderSlots = 6
 else
 const PtrSize = 4
 const CallFrameHeaderSlots = 5
+const CallFrameAlignSlots = 1
 end
 const SlotSize = 8
+
+const CallerFrameAndPCSize = 2 * PtrSize
 
 const CallerFrame = 0
 const ReturnPC = CallerFrame + PtrSize
@@ -71,6 +74,16 @@ const DeletedValueTag = -7
 const LowestTag = DeletedValueTag
 end
 
+if X86_64 or ARM64 or C_LOOP
+const maxFrameExtentForSlowPathCall = 0
+elsif ARM or ARMv7_TRADITIONAL or ARMv7 or SH4
+const maxFrameExtentForSlowPathCall = 24
+elsif X86
+const maxFrameExtentForSlowPathCall = 40
+elsif MIPS
+const maxFrameExtentForSlowPathCall = 40
+end
+
 # Watchpoint states
 const ClearWatchpoint = 0
 const IsWatched = 1
@@ -85,7 +98,7 @@ if JSVALUE64
     #   to C functions.
     # - C calls are still given the Instruction* rather than the PC index.
     #   This requires an add before the call, and a sub after.
-    const PC = t4
+    const PC = t5
     const PB = t6
     const tagTypeNumber = csr1
     const tagMask = csr2
@@ -103,7 +116,7 @@ if JSVALUE64
     end
 
 else
-    const PC = t4
+    const PC = t5
     macro loadisFromInstruction(offset, dest)
         loadis offset * 4[PC], dest
     end
@@ -210,6 +223,52 @@ macro assert(assertion)
     end
 end
 
+macro checkStackPointerAlignment(tempReg, location)
+    if ARM64 or C_LOOP
+        # ARM64 will check for us!
+        # C_LOOP does not need the alignment, and can use a little perf
+        # improvement from avoiding useless work.
+    else
+        if ARM or ARMv7 or ARMv7_TRADITIONAL
+            # ARM can't do logical ops with the sp as a source
+            move sp, tempReg
+            andp 0xf, tempReg
+        else
+            andp sp, 0xf, tempReg
+        end
+        btpz tempReg, .stackPointerOkay
+        move location, tempReg
+        break
+    .stackPointerOkay:
+    end
+end
+
+macro preserveCallerPCAndCFR()
+    if C_LOOP or ARM or ARMv7 or ARMv7_TRADITIONAL or MIPS or SH4
+        push lr
+        push cfr
+    elsif X86 or X86_64
+        push cfr
+    elsif ARM64
+        pushLRAndFP
+    else
+        error
+    end
+    move sp, cfr
+end
+
+macro restoreCallerPCAndCFR()
+    move cfr, sp
+    if C_LOOP or ARM or ARMv7 or ARMv7_TRADITIONAL or MIPS or SH4
+        pop cfr
+        pop lr
+    elsif X86 or X86_64
+        pop cfr
+    elsif ARM64
+        popLRAndFP
+    end
+end
+
 macro preserveReturnAddressAfterCall(destinationRegister)
     if C_LOOP or ARM or ARMv7 or ARMv7_TRADITIONAL or ARM64 or MIPS or SH4
         # In C_LOOP case, we're only preserving the bytecode vPC.
@@ -232,31 +291,122 @@ macro restoreReturnAddressBeforeReturn(sourceRegister)
     end
 end
 
+macro functionPrologue()
+    if X86 or X86_64
+        push cfr
+    elsif ARM64
+        pushLRAndFP
+    elsif C_LOOP or ARM or ARMv7 or ARMv7_TRADITIONAL or MIPS
+        push lr
+        push cfr
+    end
+    move sp, cfr
+end
+
+macro functionEpilogue()
+    if X86 or X86_64
+        pop cfr
+    elsif ARM64
+        popLRAndFP
+    elsif C_LOOP or ARM or ARMv7 or ARMv7_TRADITIONAL or MIPS
+        pop cfr
+        pop lr
+    end
+end
+
+macro callToJavaScriptPrologue()
+    if X86_64
+        push cfr
+        push t0
+    elsif X86
+        push cfr
+    elsif ARM64
+        pushLRAndFP
+    elsif C_LOOP or ARM or ARMv7 or ARMv7_TRADITIONAL or MIPS
+        push lr
+        push cfr
+    end
+    pushCalleeSaves
+    if X86
+        subp 12, sp
+    elsif ARM or ARMv7 or ARMv7_TRADITIONAL
+        subp 4, sp
+        move sp, t4
+        clrbp t4, 0xf, t5
+        move t5, sp
+        storep t4, [sp]
+    end
+end
+
+macro callToJavaScriptEpilogue()
+    addp CallFrameHeaderSlots * 8, cfr, sp
+    loadp CallerFrame[cfr], cfr
+
+    if X86
+        addp 12, sp
+    elsif ARM or ARMv7 or ARMv7_TRADITIONAL
+        pop t4
+        move t4, sp
+        addp 4, sp
+    end
+
+    popCalleeSaves
+    if X86_64
+        pop t2
+        pop cfr
+    elsif X86
+        pop cfr
+    elsif ARM64
+        popLRAndFP
+    elsif C_LOOP or ARM or ARMv7 or ARMv7_TRADITIONAL or MIPS
+        pop cfr
+        pop lr
+    end
+end
+
+macro moveStackPointerForCodeBlock(codeBlock, scratch)
+    loadi CodeBlock::m_numCalleeRegisters[codeBlock], scratch
+    lshiftp 3, scratch
+    addp maxFrameExtentForSlowPathCall, scratch
+    subp cfr, scratch, sp
+end
+
+macro restoreStackPointerAfterCall()
+    loadp CodeBlock[cfr], t2
+    moveStackPointerForCodeBlock(t2, t4)
+end
+
 macro traceExecution()
     if EXECUTION_TRACING
         callSlowPath(_llint_trace)
     end
 end
 
-macro callTargetFunction(callLinkInfo)
+macro callTargetFunction(callLinkInfo, calleeFramePtr)
+    move calleeFramePtr, sp
     if C_LOOP
         cloopCallJSFunction LLIntCallLinkInfo::machineCodeTarget[callLinkInfo]
     else
         call LLIntCallLinkInfo::machineCodeTarget[callLinkInfo]
-        dispatchAfterCall()
     end
+    restoreStackPointerAfterCall()
+    dispatchAfterCall()
 end
 
 macro slowPathForCall(slowPath)
     callCallSlowPath(
         slowPath,
         macro (callee)
+            btpz t1, .dontUpdateSP
+            addp CallerFrameAndPCSize, t1, sp
+        .dontUpdateSP:
             if C_LOOP
                 cloopCallJSFunction callee
             else
                 call callee
-                dispatchAfterCall()
             end
+            restoreStackPointerAfterCall()
+            dispatchAfterCall()
         end)
 end
 
@@ -325,26 +475,48 @@ end
 # Do the bare minimum required to execute code. Sets up the PC, leave the CodeBlock*
 # in t1. May also trigger prologue entry OSR.
 macro prologue(codeBlockGetter, codeBlockSetter, osrSlowPath, traceSlowPath)
-    preserveReturnAddressAfterCall(t2)
-    
     # Set up the call frame and check if we should OSR.
-    storep t2, ReturnPC[cfr]
+    preserveCallerPCAndCFR()
+
     if EXECUTION_TRACING
+        subp maxFrameExtentForSlowPathCall, sp
         callSlowPath(traceSlowPath)
+        addp maxFrameExtentForSlowPathCall, sp
     end
     codeBlockGetter(t1)
+if C_LOOP
+else
     baddis 5, CodeBlock::m_llintExecuteCounter + ExecutionCounter::m_counter[t1], .continue
-    cCall2(osrSlowPath, cfr, PC)
-    move t1, cfr
+    if JSVALUE64
+        cCall2(osrSlowPath, cfr, PC)
+    else
+        # We are after the function prologue, but before we have set up sp from the CodeBlock.
+        # Temporarily align stack pointer for this call.
+        subp 8, sp
+        cCall2(osrSlowPath, cfr, PC)
+        addp 8, sp
+    end
     btpz t0, .recover
-    loadp ReturnPC[cfr], t2
-    restoreReturnAddressBeforeReturn(t2)
+    move cfr, sp # restore the previous sp
+    # pop the callerFrame since we will jump to a function that wants to save it
+    if ARM64
+        popLRAndFP
+    elsif ARM or ARMv7 or ARMv7_TRADITIONAL or MIPS or SH4
+        pop cfr
+        pop lr
+    else
+        pop cfr
+    end
     jmp t0
 .recover:
     codeBlockGetter(t1)
 .continue:
+end
+
     codeBlockSetter(t1)
     
+    moveStackPointerForCodeBlock(t1, t2)
+
     # Set up the PC.
     if JSVALUE64
         loadp CodeBlock::m_instructions[t1], PB
@@ -389,14 +561,16 @@ macro functionInitialization(profileArgSkip)
         
     # Check stack height.
     loadi CodeBlock::m_numCalleeRegisters[t1], t0
-    addi 1, t0 # Account that local0 goes at slot -1
     loadp CodeBlock::m_vm[t1], t2
     lshiftp 3, t0
+    addi maxFrameExtentForSlowPathCall, t0
     subp cfr, t0, t0
     bpbeq VM::m_jsStackLimit[t2], t0, .stackHeightOK
 
     # Stack height check failed - need to call a slow_path.
     callSlowPath(_llint_stack_check)
+    bpeq t1, 0, .stackHeightOK
+    move t1, cfr
 .stackHeightOK:
 end
 
@@ -423,25 +597,69 @@ macro allocateJSObject(allocator, structure, result, scratch1, slowCase)
 end
 
 macro doReturn()
-    loadp ReturnPC[cfr], t2
-    loadp CallerFrame[cfr], cfr
-    restoreReturnAddressBeforeReturn(t2)
+    restoreCallerPCAndCFR()
     ret
 end
 
-if C_LOOP
-else
 # stub to call into JavaScript or Native functions
-# EncodedJSValue callToJavaScript(void* code, ExecState** vm, ProtoCallFrame* protoFrame, Register* topOfStack)
-# EncodedJSValue callToNativeFunction(void* code, ExecState** vm, ProtoCallFrame* protoFrame, Register* topOfStack)
+# EncodedJSValue callToJavaScript(void* code, ExecState** vmTopCallFrame, ProtoCallFrame* protoFrame)
+# EncodedJSValue callToNativeFunction(void* code, ExecState** vmTopCallFrame, ProtoCallFrame* protoFrame)
 # Note, if these stubs or one of their related macros are changed, make the
 # equivalent changes in jit/JITStubsX86.h and/or jit/JITStubsMSVC64.asm
-_callToJavaScript:
-    doCallToJavaScript(makeJavaScriptCall, doReturnFromJavaScript)
 
-_callToNativeFunction:
-    doCallToJavaScript(makeHostFunctionCall, doReturnFromHostFunction)
+if C_LOOP
+_llint_call_to_javascript:
+else
+_callToJavaScript:
 end
+    doCallToJavaScript(makeJavaScriptCall)
+
+
+if C_LOOP
+_llint_call_to_native_function:
+else
+_callToNativeFunction:
+end
+    doCallToJavaScript(makeHostFunctionCall)
+
+
+if C_LOOP
+else
+# void sanitizeStackForVMImpl(VM* vm)
+_sanitizeStackForVMImpl:
+    if X86_64
+        const vm = t4
+        const address = t1
+        const zeroValue = t0
+    elsif X86
+        const vm = t2
+        const address = t1
+        const zeroValue = t0
+    else
+        const vm = a0
+        const address = t1
+        const zeroValue = t2
+    end
+
+    if X86
+        loadp 4[sp], vm
+    end
+
+    loadp VM::m_lastStackTop[vm], address
+    bpbeq sp, address, .zeroFillDone
+
+    move 0, zeroValue
+.zeroFillLoop:
+    storep zeroValue, [address]
+    addp PtrSize, address
+    bpa sp, address, .zeroFillLoop
+
+.zeroFillDone:
+    move sp, address
+    storep address, VM::m_lastStackTop[vm]
+    ret
+end
+
 
 # Indicate the beginning of LLInt.
 _llint_begin:
@@ -731,8 +949,15 @@ _llint_op_construct:
 
 _llint_op_call_varargs:
     traceExecution()
-    callSlowPath(_llint_slow_path_size_and_alloc_frame_for_varargs)
+    callSlowPath(_llint_slow_path_size_frame_for_varargs)
     branchIfException(_llint_throw_from_slow_path_trampoline)
+    # calleeFrame in t1
+    if JSVALUE64
+        move t1, sp
+    else
+        # The calleeFrame is not stack aligned, move down by CallerFrameAndPCSize to align
+        subp t1, CallerFrameAndPCSize, sp
+    end
     slowPathForCall(_llint_slow_path_call_varargs)
 
 

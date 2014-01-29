@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,6 +31,7 @@
 #if ENABLE(FTL_JIT)
 
 #include "FTLExitArgument.h"
+#include "FTLRecoveryOpcode.h"
 #include "JSCJSValue.h"
 #include "VirtualRegister.h"
 #include <wtf/PrintStream.h>
@@ -51,7 +52,8 @@ enum ExitValueKind {
     ExitValueInJSStack,
     ExitValueInJSStackAsInt32,
     ExitValueInJSStackAsInt52,
-    ExitValueInJSStackAsDouble
+    ExitValueInJSStackAsDouble,
+    ExitValueRecovery
 };
 
 class ExitValue {
@@ -118,6 +120,17 @@ public:
         return result;
     }
     
+    static ExitValue recovery(RecoveryOpcode opcode, unsigned leftArgument, unsigned rightArgument, ValueFormat format)
+    {
+        ExitValue result;
+        result.m_kind = ExitValueRecovery;
+        result.u.recovery.opcode = opcode;
+        result.u.recovery.leftArgument = leftArgument;
+        result.u.recovery.rightArgument = rightArgument;
+        result.u.recovery.format = format;
+        return result;
+    }
+    
     ExitValueKind kind() const { return m_kind; }
     
     bool isDead() const { return kind() == ExitValueDead; }
@@ -135,11 +148,36 @@ public:
     }
     bool isConstant() const { return kind() == ExitValueConstant; }
     bool isArgument() const { return kind() == ExitValueArgument; }
+    bool isRecovery() const { return kind() == ExitValueRecovery; }
     
     ExitArgument exitArgument() const
     {
         ASSERT(isArgument());
         return ExitArgument(u.argument);
+    }
+    
+    unsigned leftRecoveryArgument() const
+    {
+        ASSERT(isRecovery());
+        return u.recovery.leftArgument;
+    }
+    
+    unsigned rightRecoveryArgument() const
+    {
+        ASSERT(isRecovery());
+        return u.recovery.rightArgument;
+    }
+    
+    ValueFormat recoveryFormat() const
+    {
+        ASSERT(isRecovery());
+        return static_cast<ValueFormat>(u.recovery.format);
+    }
+    
+    RecoveryOpcode recoveryOpcode() const
+    {
+        ASSERT(isRecovery());
+        return static_cast<RecoveryOpcode>(u.recovery.opcode);
     }
     
     JSValue constant() const
@@ -152,6 +190,15 @@ public:
     {
         ASSERT(isInJSStackSomehow());
         return VirtualRegister(u.virtualRegister);
+    }
+    
+    ExitValue withVirtualRegister(VirtualRegister virtualRegister)
+    {
+        ASSERT(isInJSStackSomehow());
+        ExitValue result;
+        result.m_kind = m_kind;
+        result.u.virtualRegister = virtualRegister.offset();
+        return result;
     }
 
     // If it's in the JSStack somehow, this will tell you what format it's in, in a manner
@@ -181,6 +228,9 @@ public:
             
         case ExitValueInJSStackAsDouble:
             return ValueFormatDouble;
+            
+        case ExitValueRecovery:
+            return recoveryFormat();
         }
         
         RELEASE_ASSERT_NOT_REACHED();
@@ -196,6 +246,12 @@ private:
         ExitArgumentRepresentation argument;
         EncodedJSValue constant;
         int virtualRegister;
+        struct {
+            uint16_t leftArgument;
+            uint16_t rightArgument;
+            uint16_t opcode;
+            uint16_t format;
+        } recovery;
     } u;
 };
 

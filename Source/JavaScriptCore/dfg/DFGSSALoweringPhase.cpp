@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -73,22 +73,33 @@ private:
             break;
             
         case PutByVal:
-        case PutByValDirect:
-            lowerBoundsCheck(
-                m_graph.varArgChild(m_node, 0),
-                m_graph.varArgChild(m_node, 1),
-                m_graph.varArgChild(m_node, 3));
+        case PutByValDirect: {
+            Edge base = m_graph.varArgChild(m_node, 0);
+            Edge index = m_graph.varArgChild(m_node, 1);
+            Edge storage = m_graph.varArgChild(m_node, 3);
+            if (lowerBoundsCheck(base, index, storage))
+                break;
+            
+            if (m_node->arrayMode().typedArrayType() != NotTypedArray && m_node->arrayMode().isOutOfBounds()) {
+                Node* length = m_insertionSet.insertNode(
+                    m_nodeIndex, SpecInt32, GetArrayLength, m_node->codeOrigin,
+                    OpInfo(m_node->arrayMode().asWord()), base, storage);
+                
+                m_graph.varArgChild(m_node, 4) = Edge(length, KnownInt32Use);
+                break;
+            }
             break;
+        }
             
         default:
             break;
         }
     }
     
-    void lowerBoundsCheck(Edge base, Edge index, Edge storage)
+    bool lowerBoundsCheck(Edge base, Edge index, Edge storage)
     {
         if (!m_node->arrayMode().permitsBoundsCheckLowering())
-            return;
+            return false;
         
         if (!m_node->arrayMode().lengthNeedsStorage())
             storage = Edge();
@@ -99,6 +110,7 @@ private:
         m_insertionSet.insertNode(
             m_nodeIndex, SpecInt32, CheckInBounds, m_node->codeOrigin,
             index, Edge(length, KnownInt32Use));
+        return true;
     }
     
     InsertionSet m_insertionSet;

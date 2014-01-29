@@ -46,6 +46,7 @@ public:
     Finalizer(Plan&);
     virtual ~Finalizer();
     
+    virtual size_t codeSize() = 0;
     virtual bool finalize() = 0;
     virtual bool finalizeFunction() = 0;
 

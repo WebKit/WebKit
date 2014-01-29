@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2012, 2013, 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,11 +28,20 @@
 
 #if ENABLE(ASSEMBLER)
 
+#include "CodeBlock.h"
+#include "JITCode.h"
 #include "Options.h"
 #include "VM.h"
 #include <wtf/CompilationThread.h>
 
 namespace JSC {
+
+bool shouldShowDisassemblyFor(CodeBlock* codeBlock)
+{
+    if (JITCode::isOptimizingJIT(codeBlock->jitType()) && Options::showDFGDisassembly())
+        return true;
+    return Options::showDisassembly();
+}
 
 LinkBuffer::CodeRef LinkBuffer::finalizeCodeWithoutDisassembly()
 {
@@ -47,8 +56,6 @@ LinkBuffer::CodeRef LinkBuffer::finalizeCodeWithoutDisassembly()
 
 LinkBuffer::CodeRef LinkBuffer::finalizeCodeWithDisassembly(const char* format, ...)
 {
-    ASSERT(Options::showDisassembly() || Options::showDFGDisassembly());
-    
     CodeRef result = finalizeCodeWithoutDisassembly();
 
 #if ENABLE(DISASSEMBLER)

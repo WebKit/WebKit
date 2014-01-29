@@ -61,15 +61,13 @@ public:
                 Availability::unavailable().withFlush(
                     FlushedAt(FlushedJSValue, virtualRegisterForArgument(argument)));
         }
-        for (unsigned local = root->ssa->availabilityAtHead.numberOfLocals(); local--;)
-            root->ssa->availabilityAtHead.local(local) = Availability::unavailable();
-        
+
         if (m_graph.m_plan.mode == FTLForOSREntryMode) {
-            for (unsigned local = m_graph.m_profiledBlock->m_numCalleeRegisters; local--;) {
-                root->ssa->availabilityAtHead.local(local) =
-                    Availability::unavailable().withFlush(
-                        FlushedAt(FlushedJSValue, virtualRegisterForLocal(local)));
-            }
+            for (unsigned local = m_graph.m_profiledBlock->m_numCalleeRegisters; local--;)
+                root->ssa->availabilityAtHead.local(local) = Availability::unavailable();
+        } else {
+            for (unsigned local = root->ssa->availabilityAtHead.numberOfLocals(); local--;)
+                root->ssa->availabilityAtHead.local(local) = Availability::unavailable();
         }
         
         // This could be made more efficient by processing blocks in reverse postorder.

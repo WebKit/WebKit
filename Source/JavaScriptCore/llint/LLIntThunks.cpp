@@ -94,58 +94,16 @@ MacroAssemblerCodeRef programEntryThunkGenerator(VM* vm)
 
 // Non-JIT (i.e. C Loop LLINT) case:
 
-typedef JSValue (*ExecuteCode) (CallFrame*, void* executableAddress);
-
-template<ExecuteCode execute>
-EncodedJSValue doCallToJavaScript(void* executableAddress, ProtoCallFrame* protoCallFrame)
+EncodedJSValue callToJavaScript(void* executableAddress, VM* vm, ProtoCallFrame* protoCallFrame)
 {
-    CodeBlock* codeBlock = protoCallFrame->codeBlock();
-    JSScope* scope = protoCallFrame->scope();
-    JSObject* callee = protoCallFrame->callee();
-    int argCountIncludingThis = protoCallFrame->argumentCountIncludingThis();
-    int argCount = protoCallFrame->argumentCount();
-    JSValue thisValue = protoCallFrame->thisValue();
-    JSStack& stack = scope->vm()->interpreter->stack();
-
-    CallFrame* newCallFrame = stack.pushFrame(codeBlock, scope, argCountIncludingThis, callee);
-    if (UNLIKELY(!newCallFrame)) {
-        JSGlobalObject* globalObject = scope->globalObject();
-        ExecState* exec = globalObject->globalExec();
-        return JSValue::encode(throwStackOverflowError(exec));
-    }
-
-    // Set the arguments for the callee:
-    newCallFrame->setThisValue(thisValue);
-    for (int i = 0; i < argCount; ++i)
-        newCallFrame->setArgument(i, protoCallFrame->argument(i));
-
-    JSValue result = execute(newCallFrame, executableAddress);
-
-    stack.popFrame(newCallFrame);
-
+    JSValue result = CLoop::execute(llint_call_to_javascript, executableAddress, vm, protoCallFrame);
     return JSValue::encode(result);
 }
 
-static inline JSValue executeJS(CallFrame* newCallFrame, void* executableAddress)
+EncodedJSValue callToNativeFunction(void* executableAddress, VM* vm, ProtoCallFrame* protoCallFrame)
 {
-    Opcode entryOpcode = *reinterpret_cast<Opcode*>(&executableAddress);
-    return CLoop::execute(newCallFrame, entryOpcode);
-}
-
-EncodedJSValue callToJavaScript(void* executableAddress, ExecState**, ProtoCallFrame* protoCallFrame, Register*)
-{
-    return doCallToJavaScript<executeJS>(executableAddress, protoCallFrame);
-}
-
-static inline JSValue executeNative(CallFrame* newCallFrame, void* executableAddress)
-{
-    NativeFunction function = reinterpret_cast<NativeFunction>(executableAddress);
-    return JSValue::decode(function(newCallFrame));
-}
-
-EncodedJSValue callToNativeFunction(void* executableAddress, ExecState**, ProtoCallFrame* protoCallFrame, Register*)
-{
-    return doCallToJavaScript<executeNative>(executableAddress, protoCallFrame);
+    JSValue result = CLoop::execute(llint_call_to_native_function, executableAddress, vm, protoCallFrame);
+    return JSValue::encode(result);
 }
 
 #endif // ENABLE(JIT)

@@ -175,6 +175,9 @@ public:
     void expressionRangeForBytecodeOffset(unsigned bytecodeOffset, int& divot,
                                           int& startOffset, int& endOffset, unsigned& line, unsigned& column);
 
+    void getStubInfoMap(const ConcurrentJITLocker&, StubInfoMap& result);
+    void getStubInfoMap(StubInfoMap& result);
+
 #if ENABLE(JIT)
     StructureStubInfo* addStubInfo();
     Bag<StructureStubInfo>::iterator begin() { return m_stubInfos.begin(); }
@@ -182,8 +185,6 @@ public:
 
     void resetStub(StructureStubInfo&);
     
-    void getStubInfoMap(const ConcurrentJITLocker&, StubInfoMap& result);
-
     ByValInfo& getByValInfo(unsigned bytecodeIndex)
     {
         return *(binarySearch<ByValInfo, unsigned>(m_byValInfos, m_byValInfos.size(), bytecodeIndex, getByValInfoBytecodeIndex));
@@ -256,17 +257,15 @@ public:
     // Exactly equivalent to codeBlock->ownerExecutable()->newReplacementCodeBlockFor(codeBlock->specializationKind())
     PassRefPtr<CodeBlock> newReplacement();
     
-    void setJITCode(PassRefPtr<JITCode> code, MacroAssemblerCodePtr codeWithArityCheck)
+    void setJITCode(PassRefPtr<JITCode> code)
     {
         ASSERT(m_heap->isDeferred());
         m_heap->reportExtraMemoryCost(code->size());
         ConcurrentJITLocker locker(m_lock);
         WTF::storeStoreFence(); // This is probably not needed because the lock will also do something similar, but it's good to be paranoid.
         m_jitCode = code;
-        m_jitCodeWithArityCheck = codeWithArityCheck;
     }
     PassRefPtr<JITCode> jitCode() { return m_jitCode; }
-    MacroAssemblerCodePtr jitCodeWithArityCheck() { return m_jitCodeWithArityCheck; }
     JITCode::JITType jitType() const
     {
         JITCode* jitCode = m_jitCode.get();
@@ -489,8 +488,8 @@ public:
     RareCaseProfile* specialFastCaseProfileForBytecodeOffset(int bytecodeOffset)
     {
         return tryBinarySearch<RareCaseProfile, int>(
-                                                     m_specialFastCaseProfiles, m_specialFastCaseProfiles.size(), bytecodeOffset,
-                                                     getRareCaseProfileBytecodeOffset);
+            m_specialFastCaseProfiles, m_specialFastCaseProfiles.size(), bytecodeOffset,
+            getRareCaseProfileBytecodeOffset);
     }
 
     bool likelyToTakeSpecialFastCase(int bytecodeOffset)
@@ -576,11 +575,15 @@ public:
         ConcurrentJITLocker locker(m_lock);
         return m_exitProfile.add(locker, site);
     }
-        
+
+    bool hasExitSite(const ConcurrentJITLocker& locker, const DFG::FrequentExitSite& site) const
+    {
+        return m_exitProfile.hasExitSite(locker, site);
+    }
     bool hasExitSite(const DFG::FrequentExitSite& site) const
     {
         ConcurrentJITLocker locker(m_lock);
-        return m_exitProfile.hasExitSite(locker, site);
+        return hasExitSite(locker, site);
     }
 
     DFG::ExitProfile& exitProfile() { return m_exitProfile; }
@@ -588,11 +591,6 @@ public:
     CompressedLazyOperandValueProfileHolder& lazyOperandValueProfiles()
     {
         return m_lazyOperandValueProfiles;
-    }
-#else // ENABLE(DFG_JIT)
-    bool addFrequentExitSite(const DFG::FrequentExitSite&)
-    {
-        return false;
     }
 #endif // ENABLE(DFG_JIT)
 
@@ -679,9 +677,19 @@ public:
 
     BytecodeLivenessAnalysis& livenessAnalysis()
     {
-        if (!m_livenessAnalysis)
-            m_livenessAnalysis = std::make_unique<BytecodeLivenessAnalysis>(this);
-        return *m_livenessAnalysis;
+        {
+            ConcurrentJITLocker locker(m_lock);
+            if (!!m_livenessAnalysis)
+                return *m_livenessAnalysis;
+        }
+        std::unique_ptr<BytecodeLivenessAnalysis> analysis =
+            std::make_unique<BytecodeLivenessAnalysis>(this);
+        {
+            ConcurrentJITLocker locker(m_lock);
+            if (!m_livenessAnalysis)
+                m_livenessAnalysis = std::move(analysis);
+            return *m_livenessAnalysis;
+        }
     }
     
     void validate();
@@ -866,6 +874,7 @@ public:
     void updateAllPredictions();
 
     unsigned frameRegisterCount();
+    int stackPointerOffset();
 
     bool hasOpDebugForLineAndColumn(unsigned line, unsigned column);
 
@@ -891,7 +900,7 @@ public:
 
     int m_numCalleeRegisters;
     int m_numVars;
-    bool m_isConstructor;
+    bool m_isConstructor : 1;
     
     // This is intentionally public; it's the responsibility of anyone doing any
     // of the following to hold the lock:
@@ -911,10 +920,11 @@ public:
     // concurrent compilation threads finish what they're doing.
     mutable ConcurrentJITLock m_lock;
     
-    bool m_shouldAlwaysBeInlined;
-    bool m_allTransitionsHaveBeenMarked; // Initialized and used on every GC.
+    bool m_shouldAlwaysBeInlined; // Not a bitfield because the JIT wants to store to it.
+    bool m_allTransitionsHaveBeenMarked : 1; // Initialized and used on every GC.
     
-    bool m_didFailFTLCompilation;
+    bool m_didFailFTLCompilation : 1;
+    bool m_hasBeenCompiledWithFTL : 1;
 
     // Internal methods for use by validation code. It would be private if it wasn't
     // for the fact that we use it from anonymous namespaces.
@@ -1054,7 +1064,6 @@ private:
     SentinelLinkedList<LLIntCallLinkInfo, BasicRawSentinelNode<LLIntCallLinkInfo>> m_incomingLLIntCalls;
 #endif
     RefPtr<JITCode> m_jitCode;
-    MacroAssemblerCodePtr m_jitCodeWithArityCheck;
 #if ENABLE(JIT)
     Bag<StructureStubInfo> m_stubInfos;
     Vector<ByValInfo> m_byValInfos;

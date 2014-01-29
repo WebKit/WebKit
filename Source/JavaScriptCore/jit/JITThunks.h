@@ -54,6 +54,7 @@ public:
 
     MacroAssemblerCodePtr ctiNativeCall(VM*);
     MacroAssemblerCodePtr ctiNativeConstruct(VM*);
+    MacroAssemblerCodePtr ctiNativeTailCall(VM*);    
 
     MacroAssemblerCodeRef ctiStub(VM*, ThunkGenerator);
 

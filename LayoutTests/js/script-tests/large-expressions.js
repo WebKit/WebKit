@@ -30,5 +30,4 @@ function repeatedString(value, count)
 
 shouldBe('eval(repeatedExpression("letterA", "+", 100))', 'repeatedString("a", 100)');
 shouldBe('eval(repeatedExpression("letterA", "+", 1000))', 'repeatedString("a", 1000)');
-shouldBe('eval(repeatedExpression("letterA", "+", 10000))', 'repeatedString("a", 10000)');
 shouldThrow('eval(repeatedExpression("letterA", "+", 100000))');

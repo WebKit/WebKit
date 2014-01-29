@@ -45,6 +45,7 @@ public:
     
     StructureSet(Structure* structure)
     {
+        ASSERT(structure);
         m_structures.append(structure);
     }
     
@@ -55,6 +56,7 @@ public:
     
     void add(Structure* structure)
     {
+        ASSERT(structure);
         ASSERT(!contains(structure));
         m_structures.append(structure);
     }

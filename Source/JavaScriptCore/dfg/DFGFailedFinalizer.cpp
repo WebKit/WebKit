@@ -39,6 +39,11 @@ FailedFinalizer::~FailedFinalizer()
 {
 }
 
+size_t FailedFinalizer::codeSize()
+{
+    return 0;
+}
+
 bool FailedFinalizer::finalize()
 {
     return false;

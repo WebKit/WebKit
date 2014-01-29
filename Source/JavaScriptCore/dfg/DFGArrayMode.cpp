@@ -131,7 +131,10 @@ ArrayMode ArrayMode::fromObserved(const ConcurrentJITLocker& locker, ArrayProfil
     }
 }
 
-ArrayMode ArrayMode::refine(SpeculatedType base, SpeculatedType index, SpeculatedType value, NodeFlags flags) const
+ArrayMode ArrayMode::refine(
+    Graph& graph, CodeOrigin codeOrigin,
+    SpeculatedType base, SpeculatedType index, SpeculatedType value,
+    NodeFlags flags) const
 {
     if (!base || !index) {
         // It can be that we had a legitimate arrayMode but no incoming predictions. That'll
@@ -186,7 +189,7 @@ ArrayMode ArrayMode::refine(SpeculatedType base, SpeculatedType index, Speculate
             return withConversion(Array::RageConvert);
         return *this;
         
-    case Array::SelectUsingPredictions:
+    case Array::SelectUsingPredictions: {
         base &= ~SpecOther;
         
         if (isStringSpeculation(base))
@@ -195,34 +198,41 @@ ArrayMode ArrayMode::refine(SpeculatedType base, SpeculatedType index, Speculate
         if (isArgumentsSpeculation(base))
             return withType(Array::Arguments);
         
+        ArrayMode result;
+        if (graph.hasExitSite(codeOrigin, OutOfBounds))
+            result = withSpeculation(Array::OutOfBounds);
+        else
+            result = *this;
+        
         if (isInt8ArraySpeculation(base))
-            return withType(Array::Int8Array);
+            return result.withType(Array::Int8Array);
         
         if (isInt16ArraySpeculation(base))
-            return withType(Array::Int16Array);
+            return result.withType(Array::Int16Array);
         
         if (isInt32ArraySpeculation(base))
-            return withType(Array::Int32Array);
+            return result.withType(Array::Int32Array);
         
         if (isUint8ArraySpeculation(base))
-            return withType(Array::Uint8Array);
+            return result.withType(Array::Uint8Array);
         
         if (isUint8ClampedArraySpeculation(base))
-            return withType(Array::Uint8ClampedArray);
+            return result.withType(Array::Uint8ClampedArray);
         
         if (isUint16ArraySpeculation(base))
-            return withType(Array::Uint16Array);
+            return result.withType(Array::Uint16Array);
         
         if (isUint32ArraySpeculation(base))
-            return withType(Array::Uint32Array);
+            return result.withType(Array::Uint32Array);
         
         if (isFloat32ArraySpeculation(base))
-            return withType(Array::Float32Array);
+            return result.withType(Array::Float32Array);
         
         if (isFloat64ArraySpeculation(base))
-            return withType(Array::Float64Array);
+            return result.withType(Array::Float64Array);
 
         return ArrayMode(Array::Generic);
+    }
 
     default:
         return *this;

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -58,6 +58,9 @@ void ExitValue::dumpInContext(PrintStream& out, DumpContext* context) const
         return;
     case ExitValueInJSStackAsDouble:
         out.print("InJSStackAsDouble:r", virtualRegister());
+        return;
+    case ExitValueRecovery:
+        out.print("Recovery(", recoveryOpcode(), ", arg", leftRecoveryArgument(), ", arg", rightRecoveryArgument(), ", ", recoveryFormat(), ")");
         return;
     }
     

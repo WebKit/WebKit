@@ -37,6 +37,17 @@ enum CompilationMode {
     FTLForOSREntryMode
 };
 
+inline bool isFTL(CompilationMode mode)
+{
+    switch (mode) {
+    case FTLMode:
+    case FTLForOSREntryMode:
+        return true;
+    default:
+        return false;
+    }
+}
+
 } } // namespace JSC::DFG
 
 namespace WTF {

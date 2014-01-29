@@ -27,6 +27,8 @@
 #define StackAlignment_h
 
 #include "JSCJSValue.h"
+#include "JSStack.h"
+#include <wtf/MathExtras.h>
 
 namespace JSC {
 
@@ -36,6 +38,25 @@ inline unsigned stackAlignmentBytes() { return 16; }
 inline unsigned stackAlignmentRegisters()
 {
     return stackAlignmentBytes() / sizeof(EncodedJSValue);
+}
+
+// Align argument count taking into account the CallFrameHeaderSize may be
+// an "unaligned" count of registers.
+inline unsigned roundArgumentCountToAlignFrame(unsigned argumentCount)
+{
+    return WTF::roundUpToMultipleOf(stackAlignmentRegisters(), argumentCount + JSStack::CallFrameHeaderSize) - JSStack::CallFrameHeaderSize;
+}
+
+// Align local register count to make the last local end on a stack aligned address given the
+// CallFrame is at an address that is stack aligned minus JSStack::CallerFrameAndPCSize
+inline unsigned roundLocalRegisterCountForFramePointerOffset(unsigned localRegisterCount)
+{
+    return WTF::roundUpToMultipleOf(stackAlignmentRegisters(), localRegisterCount + JSStack::CallerFrameAndPCSize) - JSStack::CallerFrameAndPCSize;
+}
+
+inline unsigned logStackAlignmentRegisters()
+{
+    return WTF::fastLog2(stackAlignmentRegisters());
 }
 
 } // namespace JSC

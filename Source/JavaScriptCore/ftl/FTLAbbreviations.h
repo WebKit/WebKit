@@ -58,6 +58,7 @@ static inline LType floatType(LContext context) { return llvm->FloatTypeInContex
 static inline LType doubleType(LContext context) { return llvm->DoubleTypeInContext(context); }
 
 static inline LType pointerType(LType type) { return llvm->PointerType(type, 0); }
+static inline LType arrayType(LType type, unsigned count) { return llvm->ArrayType(type, count); }
 static inline LType vectorType(LType type, unsigned count) { return llvm->VectorType(type, count); }
 
 enum PackingMode { NotPacked, Packed };
@@ -132,6 +133,7 @@ static inline void setMetadata(LValue instruction, unsigned kind, LValue metadat
 static inline LValue addFunction(LModule module, const char* name, LType type) { return llvm->AddFunction(module, name, type); }
 static inline void setLinkage(LValue global, LLinkage linkage) { llvm->SetLinkage(global, linkage); }
 static inline void setFunctionCallingConv(LValue function, LCallConv convention) { llvm->SetFunctionCallConv(function, convention); }
+static inline void addTargetDependentFunctionAttr(LValue function, const char* key, const char* value) { llvm->AddTargetDependentFunctionAttr(function, key, value); }
 
 static inline LValue addExternFunction(LModule module, const char* name, LType type)
 {

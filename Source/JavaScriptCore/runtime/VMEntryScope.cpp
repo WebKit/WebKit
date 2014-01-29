@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,6 +27,7 @@
 #include "VMEntryScope.h"
 
 #include "Debugger.h"
+#include "Options.h"
 #include "VM.h"
 #include <wtf/StackBounds.h>
 
@@ -34,12 +35,10 @@ namespace JSC {
 
 VMEntryScope::VMEntryScope(VM& vm, JSGlobalObject* globalObject)
     : m_vm(vm)
-    , m_stack(wtfThreadData().stack())
     , m_globalObject(globalObject)
-    , m_prev(vm.entryScope)
-    , m_prevStackLimit(vm.stackLimit())
     , m_recompilationNeeded(false)
 {
+    ASSERT(wtfThreadData().stack().isGrowingDownward());
     if (!vm.entryScope) {
 #if ENABLE(ASSEMBLER)
         if (ExecutableAllocator::underMemoryPressure())
@@ -51,17 +50,24 @@ VMEntryScope::VMEntryScope(VM& vm, JSGlobalObject* globalObject)
         // observe time xone changes.
         vm.resetDateCache();
     }
-    // Clear the exception stack between entries
-    vm.clearExceptionStack();
 
-    void* limit = m_stack.recursionLimit(requiredCapacity());
-    vm.setStackLimit(limit);
+    if (!vm.stackPointerAtVMEntry) {
+        vm.stackPointerAtVMEntry = this;
+        m_savedReservedZoneSize = vm.updateStackLimitWithReservedZoneSize(Options::reservedZoneSize());
+    }
+
+    // Clear the captured exception stack between entries
+    vm.clearExceptionStack();
 }
 
 VMEntryScope::~VMEntryScope()
 {
-    m_vm.entryScope = m_prev;
-    m_vm.setStackLimit(m_prevStackLimit);
+    if (m_vm.entryScope == this)
+        m_vm.entryScope = nullptr;
+    if (m_vm.stackPointerAtVMEntry == this) {
+        m_vm.stackPointerAtVMEntry = nullptr;
+        m_vm.updateStackLimitWithReservedZoneSize(m_savedReservedZoneSize);
+    }
 
     if (m_recompilationNeeded) {
         if (m_vm.entryScope)
@@ -71,25 +77,6 @@ VMEntryScope::~VMEntryScope()
                 debugger->recompileAllJSFunctions(&m_vm);
         }
     }
-}
-
-size_t VMEntryScope::requiredCapacity() const
-{
-    Interpreter* interpreter = m_vm.interpreter;
-
-    // We require a smaller stack budget for the error stack. This is to allow
-    // some minimal JS execution to proceed and do the work of throwing a stack
-    // overflow error if needed. In contrast, arbitrary JS code will require the
-    // more generous stack budget in order to proceed.
-    //
-    // These sizes were derived from the stack usage of a number of sites when
-    // layout occurs when we've already consumed most of the C stack.
-    const size_t requiredStack = 128 * KB;
-    const size_t errorModeRequiredStack = 64 * KB;
-
-    size_t requiredCapacity = interpreter->isInErrorHandlingMode() ? errorModeRequiredStack : requiredStack;
-    RELEASE_ASSERT(m_stack.size() >= requiredCapacity);
-    return requiredCapacity;
 }
 
 } // namespace JSC

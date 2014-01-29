@@ -91,6 +91,7 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/assembler/MacroAssemblerX86Common.cpp \
 	Source/JavaScriptCore/assembler/MacroAssemblerX86Common.h \
 	Source/JavaScriptCore/assembler/MacroAssemblerX86_64.h \
+	Source/JavaScriptCore/assembler/MaxFrameExtentForSlowPathCall.h \
 	Source/JavaScriptCore/assembler/MIPSAssembler.h \
 	Source/JavaScriptCore/assembler/RepatchBuffer.h \
 	Source/JavaScriptCore/assembler/SH4Assembler.h \
@@ -691,6 +692,8 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/interpreter/VMInspector.cpp \
 	Source/JavaScriptCore/interpreter/VMInspector.h \
 	Source/JavaScriptCore/JavaScriptCorePrefix.h \
+    Source/JavaScriptCore/jit/ArityCheckFailReturnThunks.h \
+    Source/JavaScriptCore/jit/ArityCheckFailReturnThunks.cpp \
 	Source/JavaScriptCore/jit/AssemblyHelpers.cpp \
 	Source/JavaScriptCore/jit/AssemblyHelpers.h \
 	Source/JavaScriptCore/jit/CCallHelpers.h \
@@ -744,6 +747,8 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/jit/JITToDFGDeferredCompilationCallback.h \
 	Source/JavaScriptCore/jit/JITWriteBarrier.h \
 	Source/JavaScriptCore/jit/JSInterfaceJIT.h \
+    Source/JavaScriptCore/jit/RegisterPreservationWrapperGenerator.h \
+    Source/JavaScriptCore/jit/RegisterPreservationWrapperGenerator.cpp \
 	Source/JavaScriptCore/jit/RegisterSet.cpp \
 	Source/JavaScriptCore/jit/RegisterSet.h \
 	Source/JavaScriptCore/jit/Repatch.cpp \
@@ -904,6 +909,8 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/runtime/ErrorConstructor.h \
 	Source/JavaScriptCore/runtime/Error.cpp \
 	Source/JavaScriptCore/runtime/Error.h \
+	Source/JavaScriptCore/runtime/ErrorHandlingScope.cpp \
+	Source/JavaScriptCore/runtime/ErrorHandlingScope.h \
 	Source/JavaScriptCore/runtime/ErrorInstance.cpp \
 	Source/JavaScriptCore/runtime/ErrorInstance.h \
 	Source/JavaScriptCore/runtime/ErrorPrototype.cpp \

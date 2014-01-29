@@ -95,10 +95,15 @@ private:
     unsigned m_numberOfActiveThreads;
 };
 
-// For now we use a single global worklist. It's not clear that this
-// is the right thing to do, but it is what we do, for now. This function
-// will lazily create one when it's needed.
-Worklist* globalWorklist();
+// For DFGMode compilations.
+Worklist* ensureGlobalDFGWorklist();
+Worklist* existingGlobalDFGWorklistOrNull();
+
+// For FTLMode and FTLForOSREntryMode compilations.
+Worklist* ensureGlobalFTLWorklist();
+Worklist* existingGlobalFTLWorklistOrNull();
+
+Worklist* ensureGlobalWorklistFor(CompilationMode);
 
 } } // namespace JSC::DFG
 

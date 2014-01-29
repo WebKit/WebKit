@@ -1048,8 +1048,13 @@ void Structure::dump(PrintStream& out) const
     if (table) {
         PropertyTable::iterator iter = table->begin();
         PropertyTable::iterator end = table->end();
-        for (; iter != end; ++iter)
+        for (; iter != end; ++iter) {
             out.print(comma, iter->key, ":", static_cast<int>(iter->offset));
+            if (iter->specificValue) {
+                DumpContext dummyContext;
+                out.print("=>", RawPointer(iter->specificValue.get()));
+            }
+        }
         
         structure->m_lock.unlock();
     }
@@ -1059,6 +1064,10 @@ void Structure::dump(PrintStream& out) const
         if (!structure->m_nameInPrevious)
             continue;
         out.print(comma, structure->m_nameInPrevious.get(), ":", static_cast<int>(structure->m_offset));
+        if (structure->m_specificValueInPrevious) {
+            DumpContext dummyContext;
+            out.print("=>", RawPointer(structure->m_specificValueInPrevious.get()));
+        }
     }
     
     out.print("}, ", IndexingTypeDump(indexingType()));

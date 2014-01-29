@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,6 +26,8 @@
 #include "config.h"
 #include "ProfiledCodeBlockJettisoningWatchpoint.h"
 
+#if ENABLE(DFG_JIT)
+
 #include "CodeBlock.h"
 #include "DFGCommon.h"
 #include "DFGExitProfile.h"
@@ -49,7 +51,9 @@ void ProfiledCodeBlockJettisoningWatchpoint::fireInternal()
     
     if (sourceBaselineCodeBlock) {
         sourceBaselineCodeBlock->addFrequentExitSite(
-            DFG::FrequentExitSite(m_codeOrigin.bytecodeIndex, m_exitKind));
+            DFG::FrequentExitSite(
+                m_codeOrigin.bytecodeIndex, m_exitKind,
+                exitingJITTypeFor(m_codeBlock->jitType())));
     }
     
     m_codeBlock->jettison(CountReoptimization);
@@ -60,3 +64,4 @@ void ProfiledCodeBlockJettisoningWatchpoint::fireInternal()
 
 } // namespace JSC
 
+#endif // ENABLE(DFG_JIT)

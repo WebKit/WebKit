@@ -290,6 +290,10 @@ JSLock::DropAllLocks::DropAllLocks(ExecState* exec, AlwaysDropLocksTag alwaysDro
 #if PLATFORM(IOS)
     SpinLockHolder holder(&spinLock);
 #endif
+    m_savedReservedZoneSize = m_vm->reservedZoneSize();
+    m_savedStackPointerAtVMEntry = m_vm->stackPointerAtVMEntry;
+    m_vm->stackPointerAtVMEntry = nullptr;
+
     if (alwaysDropLocks)
         m_lockCount = m_vm->apiLock().dropAllLocksUnconditionally(spinLock);
     else
@@ -306,6 +310,10 @@ JSLock::DropAllLocks::DropAllLocks(VM* vm, AlwaysDropLocksTag alwaysDropLocks)
 #if PLATFORM(IOS)
     SpinLockHolder holder(&spinLock);
 #endif
+    m_savedReservedZoneSize = m_vm->reservedZoneSize();
+    m_savedStackPointerAtVMEntry = m_vm->stackPointerAtVMEntry;
+    m_vm->stackPointerAtVMEntry = nullptr;
+
     if (alwaysDropLocks)
         m_lockCount = m_vm->apiLock().dropAllLocksUnconditionally(spinLock);
     else
@@ -321,6 +329,9 @@ JSLock::DropAllLocks::~DropAllLocks()
     SpinLockHolder holder(&spinLock);
 #endif
     m_vm->apiLock().grabAllLocks(m_lockCount, spinLock);
+
+    m_vm->stackPointerAtVMEntry = m_savedStackPointerAtVMEntry;
+    m_vm->updateStackLimitWithReservedZoneSize(m_savedReservedZoneSize);
 }
 
 } // namespace JSC
