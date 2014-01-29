@@ -28,7 +28,7 @@
 
 #if ENABLE(INDEXED_DATABASE)
 
-#include "KeyedCoding.h"
+#include "IDBKeyData.h"
 
 namespace WebCore {
 
@@ -96,41 +96,6 @@ bool IDBKey::isEqual(const IDBKey* other) const
         return false;
 
     return !compare(other);
-}
-
-void IDBKey::encode(KeyedEncoder& encoder) const
-{
-    encoder.encodeEnum("type", m_type);
-
-    switch (m_type) {
-    case InvalidType:
-        return;
-    case ArrayType:
-        encoder.encodeObjects("array", m_array.begin(), m_array.end(), [](WebCore::KeyedEncoder& encoder, const RefPtr<IDBKey>& key) {
-            encoder.encodeObject("idbKey", *key, [](KeyedEncoder& encoder, const IDBKey& key) {
-                key.encode(encoder);
-            });
-        });
-        return;
-    case StringType:
-        encoder.encodeString("string", m_string);
-        return;
-    case DateType:
-    case NumberType:
-        encoder.encodeDouble("number", m_number);
-        return;
-    case MinType:
-        ASSERT_NOT_REACHED();
-        return;
-    }
-
-    ASSERT_NOT_REACHED();
-}
-
-bool IDBKey::decode(KeyedDecoder&, IDBKey&)
-{
-    // FIXME: Implement when IDB Get support is implemented (<rdar://problem/15779644>)
-    return false;
 }
 
 } // namespace WebCore

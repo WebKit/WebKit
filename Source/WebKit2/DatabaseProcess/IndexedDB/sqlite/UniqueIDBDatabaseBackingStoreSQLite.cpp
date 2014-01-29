@@ -198,14 +198,12 @@ std::unique_ptr<IDBDatabaseMetadata> UniqueIDBDatabaseBackingStoreSQLite::extrac
             int keyPathSize;
             const uint8_t* keyPathBuffer = static_cast<const uint8_t*>(sql.getColumnBlob(2, keyPathSize));
 
-            std::unique_ptr<IDBKeyPath> keyPath = deserializeIDBKeyPath(keyPathBuffer, keyPathSize);
 
-            if (!keyPath) {
+            if (!deserializeIDBKeyPath(keyPathBuffer, keyPathSize, metadata.keyPath)) {
                 LOG_ERROR("Unable to extract key path metadata from database");
                 return nullptr;
             }
 
-            metadata.keyPath = *keyPath;
             metadata.autoIncrement = sql.getColumnInt(3);
             metadata.maxIndexId = sql.getColumnInt64(4);
 
@@ -583,7 +581,7 @@ bool UniqueIDBDatabaseBackingStoreSQLite::putRecord(const IDBIdentifier& transac
         return false;
     }
 
-    RefPtr<SharedBuffer> keyBuffer = serializeIDBKey(key);
+    RefPtr<SharedBuffer> keyBuffer = serializeIDBKeyData(IDBKeyData(&key));
     if (!keyBuffer) {
         LOG_ERROR("Unable to serialize IDBKey to be stored in the database");
         return false;
@@ -621,7 +619,7 @@ bool UniqueIDBDatabaseBackingStoreSQLite::getKeyRecordFromObjectStore(const IDBI
         return false;
     }
 
-    RefPtr<SharedBuffer> keyBuffer = serializeIDBKey(key);
+    RefPtr<SharedBuffer> keyBuffer = serializeIDBKeyData(IDBKeyData(&key));
     if (!keyBuffer) {
         LOG_ERROR("Unable to serialize IDBKey to be stored in the database");
         return false;
@@ -667,13 +665,13 @@ bool UniqueIDBDatabaseBackingStoreSQLite::getKeyRangeRecordFromObjectStore(const
         return false;
     }
 
-    RefPtr<SharedBuffer> lowerBuffer = serializeIDBKey(*keyRange.lower());
+    RefPtr<SharedBuffer> lowerBuffer = serializeIDBKeyData(IDBKeyData(keyRange.lower().get()));
     if (!lowerBuffer) {
         LOG_ERROR("Unable to serialize IDBKey to be stored in the database");
         return false;
     }
 
-    RefPtr<SharedBuffer> upperBuffer = serializeIDBKey(*keyRange.upper());
+    RefPtr<SharedBuffer> upperBuffer = serializeIDBKeyData(IDBKeyData(keyRange.upper().get()));
     if (!upperBuffer) {
         LOG_ERROR("Unable to serialize IDBKey to be stored in the database");
         return false;

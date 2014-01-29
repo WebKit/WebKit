@@ -28,9 +28,11 @@
 
 #if ENABLE(INDEXED_DATABASE)
 
+#include "KeyedCoding.h"
+
 namespace WebCore {
 
-IDBKeyData::IDBKeyData(IDBKey* key)
+IDBKeyData::IDBKeyData(const IDBKey* key)
     : type(IDBKey::InvalidType)
     , numberValue(0)
     , isNull(false)
@@ -124,6 +126,45 @@ IDBKeyData IDBKeyData::isolatedCopy() const
 
     ASSERT_NOT_REACHED();
     return result;
+}
+
+void IDBKeyData::encode(KeyedEncoder& encoder) const
+{
+    encoder.encodeBool("null", isNull);
+    if (isNull)
+        return;
+
+    encoder.encodeEnum("type", type);
+
+    switch (type) {
+    case IDBKey::InvalidType:
+        return;
+    case IDBKey::ArrayType:
+        encoder.encodeObjects("array", arrayValue.begin(), arrayValue.end(), [](KeyedEncoder& encoder, const IDBKeyData& key) {
+            encoder.encodeObject("idbKeyData", key, [](KeyedEncoder& encoder, const IDBKeyData& key) {
+                key.encode(encoder);
+            });
+        });
+        return;
+    case IDBKey::StringType:
+        encoder.encodeString("string", stringValue);
+        return;
+    case IDBKey::DateType:
+    case IDBKey::NumberType:
+        encoder.encodeDouble("number", numberValue);
+        return;
+    case IDBKey::MinType:
+        ASSERT_NOT_REACHED();
+        return;
+    }
+
+    ASSERT_NOT_REACHED();
+}
+
+bool IDBKeyData::decode(KeyedDecoder&, IDBKeyData&)
+{
+    // FIXME: Implement when IDB Get support is implemented (<rdar://problem/15779644>)
+    return false;
 }
 
 }

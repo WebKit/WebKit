@@ -30,7 +30,7 @@
 #include "ArgumentEncoder.h"
 #include "KeyedDecoder.h"
 #include "KeyedEncoder.h"
-#include <WebCore/IDBKey.h>
+#include <WebCore/IDBKeyData.h>
 #include <WebCore/IDBKeyPath.h>
 
 using namespace WebCore;
@@ -44,17 +44,13 @@ RefPtr<SharedBuffer> serializeIDBKeyPath(const IDBKeyPath& keyPath)
     return encoder.finishEncoding();
 }
 
-std::unique_ptr<WebCore::IDBKeyPath> deserializeIDBKeyPath(const uint8_t* data, size_t size)
+bool deserializeIDBKeyPath(const uint8_t* data, size_t size, IDBKeyPath& result)
 {
     KeyedDecoder decoder(data, size);
-    std::unique_ptr<IDBKeyPath> result = std::make_unique<IDBKeyPath>();
-    if (!IDBKeyPath::decode(decoder, *result))
-        return nullptr;
-
-    return result;
+    return IDBKeyPath::decode(decoder, result);
 }
 
-RefPtr<WebCore::SharedBuffer> serializeIDBKey(const IDBKey& key)
+RefPtr<WebCore::SharedBuffer> serializeIDBKeyData(const IDBKeyData& key)
 {
     KeyedEncoder encoder;
     key.encode(encoder);

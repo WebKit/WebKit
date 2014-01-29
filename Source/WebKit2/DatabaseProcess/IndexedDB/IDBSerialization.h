@@ -32,17 +32,18 @@
 #include <wtf/Vector.h>
 
 namespace WebCore {
-class IDBKey;
 class IDBKeyPath;
+
+struct IDBKeyData;
 }
 
 namespace WebKit {
 
 RefPtr<WebCore::SharedBuffer> serializeIDBKeyPath(const WebCore::IDBKeyPath&);
-std::unique_ptr<WebCore::IDBKeyPath> deserializeIDBKeyPath(const uint8_t* buffer, size_t bufferSize);
+bool deserializeIDBKeyPath(const uint8_t* buffer, size_t bufferSize, WebCore::IDBKeyPath&);
 
-RefPtr<WebCore::SharedBuffer> serializeIDBKey(const WebCore::IDBKey&);
-PassRefPtr<WebCore::IDBKey> deserializeIDBKey(const uint8_t* buffer, size_t bufferSize);
+RefPtr<WebCore::SharedBuffer> serializeIDBKeyData(const WebCore::IDBKeyData&);
+bool deserializeIDBKey(const uint8_t* buffer, size_t bufferSize, WebCore::IDBKeyData&);
 
 } // namespace WebKit
 

@@ -1,3 +1,23 @@
+2014-01-29  Brady Eidson  <beidson@apple.com>
+
+        IDB: Serialize IDBKeyDatas to disk, not IDBKeys
+        https://bugs.webkit.org/show_bug.cgi?id=127829
+
+        Reviewed by Tim Horton.
+
+        Move encode/decode from IDBKey to IDBKeyData.
+
+        * Modules/indexeddb/IDBKey.cpp:
+        * Modules/indexeddb/IDBKey.h:
+
+        * Modules/indexeddb/IDBKeyData.cpp:
+        (WebCore::IDBKeyData::IDBKeyData):
+        (WebCore::IDBKeyData::encode):
+        (WebCore::IDBKeyData::decode):
+        * Modules/indexeddb/IDBKeyData.h:
+
+        * WebCore.exp.in:
+
 2014-01-29  Antti Koivisto  <antti@apple.com>
 
         REGRESSION (r162947): css3/flexbox/multiline-justify-content.html and css3/flexbox/position-absolute-child.html are timing out

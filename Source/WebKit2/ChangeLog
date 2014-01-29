@@ -1,3 +1,23 @@
+2014-01-29  Brady Eidson  <beidson@apple.com>
+
+        IDB: Serialize IDBKeyDatas to disk, not IDBKeys
+        https://bugs.webkit.org/show_bug.cgi?id=127829
+
+        Reviewed by Tim Horton.
+
+        Serialize IDBKeyDatas, not IDBKeys.
+
+        * DatabaseProcess/IndexedDB/IDBSerialization.cpp:
+        (WebKit::deserializeIDBKeyPath):
+        (WebKit::serializeIDBKeyData):
+        * DatabaseProcess/IndexedDB/IDBSerialization.h:
+
+        * DatabaseProcess/IndexedDB/sqlite/UniqueIDBDatabaseBackingStoreSQLite.cpp:
+        (WebKit::UniqueIDBDatabaseBackingStoreSQLite::extractExistingMetadata):
+        (WebKit::UniqueIDBDatabaseBackingStoreSQLite::putRecord):
+        (WebKit::UniqueIDBDatabaseBackingStoreSQLite::getKeyRecordFromObjectStore):
+        (WebKit::UniqueIDBDatabaseBackingStoreSQLite::getKeyRangeRecordFromObjectStore):
+
 2014-01-29  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Fix GTK+ build after r162981.

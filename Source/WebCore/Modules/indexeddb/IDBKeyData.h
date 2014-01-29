@@ -32,6 +32,9 @@
 
 namespace WebCore {
 
+class KeyedDecoder;
+class KeyedEncoder;
+
 struct IDBKeyData {
     IDBKeyData()
         : type(IDBKey::InvalidType)
@@ -40,11 +43,14 @@ struct IDBKeyData {
     {
     }
 
-    IDBKeyData(IDBKey*);
+    IDBKeyData(const IDBKey*);
 
     PassRefPtr<IDBKey> maybeCreateIDBKey() const;
 
     IDBKeyData isolatedCopy() const;
+
+    void encode(KeyedEncoder&) const;
+    static bool decode(KeyedDecoder&, IDBKeyData&);
 
     IDBKey::Type type;
     Vector<IDBKeyData> arrayValue;
