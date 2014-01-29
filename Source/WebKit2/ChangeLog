@@ -1,3 +1,16 @@
+2014-01-28  Anders Carlsson  <andersca@apple.com>
+
+        WebPage should be in charge of creating document loaders
+        https://bugs.webkit.org/show_bug.cgi?id=127818
+
+        Reviewed by Dan Bernstein.
+
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::createDocumentLoader):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::createDocumentLoader):
+        * WebProcess/WebPage/WebPage.h:
+
 2014-01-28  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         Unreviewed GTK build fix after r162951.

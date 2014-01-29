@@ -61,6 +61,7 @@
 #include "WebContextMenuClient.h"
 #include "WebContextMessages.h"
 #include "WebCoreArgumentCoders.h"
+#include "WebDocumentLoader.h"
 #include "WebDragClient.h"
 #include "WebEditorClient.h"
 #include "WebEvent.h"
@@ -4161,6 +4162,15 @@ void WebPage::setScrollPinningBehavior(uint32_t pinning)
 {
     m_scrollPinningBehavior = static_cast<ScrollPinningBehavior>(pinning);
     m_page->mainFrame().view()->setScrollPinningBehavior(m_scrollPinningBehavior);
+}
+
+PassRefPtr<DocumentLoader> WebPage::createDocumentLoader(Frame& frame, const ResourceRequest& request, const SubstituteData& substituteData)
+{
+    RefPtr<WebDocumentLoader> documentLoader = WebDocumentLoader::create(request, substituteData);
+
+    // FIXME: Set the navigation ID if possible.
+
+    return documentLoader.release();
 }
 
 } // namespace WebKit

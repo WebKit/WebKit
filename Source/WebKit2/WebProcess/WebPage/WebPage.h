@@ -122,6 +122,7 @@ namespace WebCore {
     class ResourceResponse;
     class ResourceRequest;
     class SharedBuffer;
+    class SubstituteData;
     class TextCheckingRequest;
     class VisibleSelection;
     struct KeypressCommand;
@@ -689,7 +690,9 @@ public:
 
     WKTypeRef pageOverlayCopyAccessibilityAttributeValue(WKStringRef attribute, WKTypeRef parameter);
     WKArrayRef pageOverlayCopyAccessibilityAttributesNames(bool parameterizedNames);
-    
+
+    PassRefPtr<WebCore::DocumentLoader> createDocumentLoader(WebCore::Frame&, const WebCore::ResourceRequest&, const WebCore::SubstituteData&);
+
 private:
     WebPage(uint64_t pageID, const WebPageCreationParameters&);
 
