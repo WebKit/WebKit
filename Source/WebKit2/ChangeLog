@@ -1,3 +1,27 @@
+2014-01-29  Anders Carlsson  <andersca@apple.com>
+
+        Make WKWebView limp along on OS X
+        https://bugs.webkit.org/show_bug.cgi?id=127857
+
+        Reviewed by Tim Horton.
+
+        On Mac, create a WKView and add it as a subview of the WKWebVew so we'll actually get something
+        on screen when creating a WKWebView.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView initWithFrame:configuration:]):
+        Create a WKView.
+
+        (-[WKWebView resizeSubviewsWithOldSize:]):
+        Resize the WKView.
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView initWithFrame:configuration:]):
+        Add new initializer.
+
+        * UIProcess/API/mac/WKViewInternal.h:
+        Use a class extension for internal methods and add the new initializer.
+
 2014-01-29  Brady Eidson  <beidson@apple.com>
 
         IDB: Opening an existing database is broken

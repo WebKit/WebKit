@@ -54,10 +54,12 @@
 #import "WKAPICast.h"
 #import "WKFullScreenWindowController.h"
 #import "WKPrintingView.h"
+#import "WKProcessClassInternal.h"
 #import "WKStringCF.h"
 #import "WKTextInputWindowController.h"
 #import "WKViewInternal.h"
 #import "WKViewPrivate.h"
+#import "WKWebViewConfiguration.h"
 #import "WebBackForwardList.h"
 #import "WebContext.h"
 #import "WebEventFactory.h"
@@ -145,15 +147,6 @@ struct WKViewInterpretKeyEventsParameters {
     bool executingSavedKeypressCommands;
     Vector<KeypressCommand>* commands;
 };
-
-@interface WKView ()
-- (void)_accessibilityRegisterUIProcessTokens;
-- (void)_disableComplexTextInputIfNecessary;
-- (float)_intrinsicDeviceScaleFactor;
-- (void)_postFakeMouseMovedEventForFlagsChangedEvent:(NSEvent *)flagsChangedEvent;
-- (void)_setDrawingAreaSize:(NSSize)size;
-- (void)_setPluginComplexTextInputState:(PluginComplexTextInputState)pluginComplexTextInputState;
-@end
 
 @interface WKViewData : NSObject {
 @public
@@ -264,6 +257,11 @@ struct WKViewInterpretKeyEventsParameters {
 @implementation WKView
 
 #if WK_API_ENABLED
+
+- (instancetype)initWithFrame:(CGRect)frame configuration:(WKWebViewConfiguration *)configuration
+{
+    return [self initWithFrame:frame contextRef:toAPI(configuration.processClass->_context.get()) pageGroupRef:nullptr];
+}
 
 - (id)initWithFrame:(NSRect)frame processGroup:(WKProcessGroup *)processGroup browsingContextGroup:(WKBrowsingContextGroup *)browsingContextGroup
 {
@@ -2188,10 +2186,6 @@ static void createSandboxExtensionsForFileUpload(NSPasteboard *pasteboard, Sandb
     _data->_page->performDictionaryLookupAtLocation(FloatPoint(locationInViewCoordinates.x, locationInViewCoordinates.y));
 }
 #endif
-
-@end
-
-@implementation WKView (Internal)
 
 - (std::unique_ptr<WebKit::DrawingAreaProxy>)_createDrawingAreaProxy
 {

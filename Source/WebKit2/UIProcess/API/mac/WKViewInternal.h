@@ -30,6 +30,8 @@
 #import <wtf/Forward.h>
 #import <wtf/Vector.h>
 
+@class WKWebViewConfiguration;
+
 namespace IPC {
     class DataReference;
 }
@@ -50,7 +52,11 @@ namespace WebKit {
 
 @class WKFullScreenWindowController;
 
-@interface WKView (Internal)
+@interface WKView ()
+#if WK_API_ENABLED
+- (instancetype)initWithFrame:(CGRect)frame configuration:(WKWebViewConfiguration *)configuration;
+#endif
+
 - (std::unique_ptr<WebKit::DrawingAreaProxy>)_createDrawingAreaProxy;
 - (BOOL)_isFocused;
 - (void)_processDidCrash;

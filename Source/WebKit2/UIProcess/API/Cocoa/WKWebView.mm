@@ -48,6 +48,10 @@ static _UIWebViewportConfiguration standardViewportConfiguration = { { UIWebView
 @end
 #endif
 
+#if PLATFORM(MAC) && !PLATFORM(IOS)
+#import "WKViewInternal.h"
+#endif
+
 @implementation WKWebView {
     RetainPtr<WKWebViewConfiguration> _configuration;
     RefPtr<WebKit::WebPageProxy> _page;
@@ -59,6 +63,9 @@ static _UIWebViewportConfiguration standardViewportConfiguration = { { UIWebView
 
     BOOL _userHasChangedPageScale;
     BOOL _hasStaticMinimumLayoutSize;
+#endif
+#if PLATFORM(MAC) && !PLATFORM(IOS)
+    RetainPtr<WKView> _wkView;
 #endif
 }
 
@@ -77,9 +84,9 @@ static _UIWebViewportConfiguration standardViewportConfiguration = { { UIWebView
     if (![_configuration processClass])
         [_configuration setProcessClass:adoptNS([[WKProcessClass alloc] init]).get()];
 
-#if PLATFORM(IOS)
     CGRect bounds = self.bounds;
 
+#if PLATFORM(IOS)
     _scrollView = adoptNS([[WKScrollView alloc] initWithFrame:bounds]);
     [_scrollView setInternalDelegate:self];
     [_scrollView setBouncesZoom:YES];
@@ -97,6 +104,12 @@ static _UIWebViewportConfiguration standardViewportConfiguration = { { UIWebView
     [_viewportHandler setDelegate:self];
 
     [self _frameOrBoundsChanged];
+#endif
+
+#if PLATFORM(MAC) && !PLATFORM(IOS)
+    _wkView = [[WKView alloc] initWithFrame:bounds configuration:_configuration.get()];
+    [self addSubview:_wkView.get()];
+    _page = WebKit::toImpl([_wkView pageRef]);
 #endif
 
     return self;
@@ -265,8 +278,6 @@ static _UIWebViewportConfiguration standardViewportConfiguration = { { UIWebView
     [_contentView didZoomToScale:scale];
 }
 
-#pragma mark Internal
-
 - (void)_frameOrBoundsChanged
 {
     CGRect bounds = self.bounds;
@@ -289,6 +300,17 @@ static _UIWebViewportConfiguration standardViewportConfiguration = { { UIWebView
 
     CGPoint contentOffset = [_scrollView convertPoint:contentOffsetInDocumentCoordinates fromView:_contentView.get()];
     [_scrollView setContentOffset:contentOffset];
+}
+
+#endif
+
+#pragma mark OS X-specific methods
+
+#if PLATFORM(MAC) && !PLATFORM(IOS)
+
+- (void)resizeSubviewsWithOldSize:(NSSize)oldSize
+{
+    [_wkView setFrame:self.bounds];
 }
 
 #endif
