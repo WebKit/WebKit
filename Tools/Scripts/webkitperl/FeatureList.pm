@@ -312,9 +312,6 @@ my @features = (
     { option => "inspector", desc => "Toggle Inspector support",
       define => "ENABLE_INSPECTOR", default => !isWinCE(), value => \$inspectorSupport },
 
-    { option => "javascript-debugger", desc => "Toggle JavaScript Debugger support",
-      define => "ENABLE_JAVASCRIPT_DEBUGGER", default => 1, value => \$javascriptDebuggerSupport },
-
     { option => "legacy-notifications", desc => "Toggle Legacy Notifications support",
       define => "ENABLE_LEGACY_NOTIFICATIONS", default => 0, value => \$legacyNotificationsSupport },
 

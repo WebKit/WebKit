@@ -103,7 +103,7 @@ void JSDOMWindowBase::printErrorMessage(const String& message) const
 
 bool JSDOMWindowBase::supportsProfiling(const JSGlobalObject* object)
 {
-#if !ENABLE(JAVASCRIPT_DEBUGGER) || !ENABLE(INSPECTOR)
+#if !ENABLE(INSPECTOR)
     UNUSED_PARAM(object);
     return false;
 #else
@@ -126,7 +126,7 @@ bool JSDOMWindowBase::supportsProfiling(const JSGlobalObject* object)
 
 bool JSDOMWindowBase::supportsRichSourceInfo(const JSGlobalObject* object)
 {
-#if !ENABLE(JAVASCRIPT_DEBUGGER) || !ENABLE(INSPECTOR)
+#if !ENABLE(INSPECTOR)
     UNUSED_PARAM(object);
     return false;
 #else

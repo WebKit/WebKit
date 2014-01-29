@@ -62,12 +62,10 @@ InstrumentingAgents::InstrumentingAgents(InspectorEnvironment& environment)
     , m_inspectorDatabaseAgent(nullptr)
 #endif
     , m_inspectorApplicationCacheAgent(nullptr)
-#if ENABLE(JAVASCRIPT_DEBUGGER)
     , m_inspectorDebuggerAgent(nullptr)
     , m_pageDebuggerAgent(nullptr)
     , m_inspectorDOMDebuggerAgent(nullptr)
     , m_inspectorProfilerAgent(nullptr)
-#endif
     , m_inspectorWorkerAgent(nullptr)
     , m_inspectorCanvasAgent(nullptr)
 {
@@ -92,12 +90,10 @@ void InstrumentingAgents::reset()
     m_inspectorDatabaseAgent = nullptr;
 #endif
     m_inspectorApplicationCacheAgent = nullptr;
-#if ENABLE(JAVASCRIPT_DEBUGGER)
     m_inspectorDebuggerAgent = nullptr;
     m_pageDebuggerAgent = nullptr;
     m_inspectorDOMDebuggerAgent = nullptr;
     m_inspectorProfilerAgent = nullptr;
-#endif
     m_inspectorWorkerAgent = nullptr;
     m_inspectorCanvasAgent = nullptr;
 }

@@ -31,7 +31,7 @@
 #include "config.h"
 #include "WorkerDebuggerAgent.h"
 
-#if ENABLE(JAVASCRIPT_DEBUGGER) && ENABLE(INSPECTOR)
+#if ENABLE(INSPECTOR)
 
 #include "WorkerGlobalScope.h"
 #include "WorkerThread.h"
@@ -160,4 +160,4 @@ void WorkerDebuggerAgent::unmuteConsole()
 
 } // namespace WebCore
 
-#endif // ENABLE(JAVASCRIPT_DEBUGGER) && ENABLE(INSPECTOR)
+#endif // ENABLE(INSPECTOR)

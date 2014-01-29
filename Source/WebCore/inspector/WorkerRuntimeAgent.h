@@ -51,9 +51,7 @@ public:
 
     virtual void run(ErrorString*) override;
 
-#if ENABLE(JAVASCRIPT_DEBUGGER)
     void pauseWorkerGlobalScope(WorkerGlobalScope*);
-#endif
 
 private:
     virtual JSC::VM* globalVM() override;

@@ -44,10 +44,7 @@ import CodeGeneratorInspectorStrings
 
 DOMAIN_DEFINE_NAME_MAP = {
     "Database": "SQL_DATABASE",
-    "Debugger": "JAVASCRIPT_DEBUGGER",
-    "DOMDebugger": "JAVASCRIPT_DEBUGGER",
     "IndexedDB": "INDEXED_DATABASE",
-    "Profiler": "JAVASCRIPT_DEBUGGER",
 }
 
 

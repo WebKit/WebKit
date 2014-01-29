@@ -27,8 +27,6 @@
 #ifndef ScriptProfiler_h
 #define ScriptProfiler_h
 
-#if ENABLE(JAVASCRIPT_DEBUGGER)
-
 #include "ScriptHeapSnapshot.h"
 #include "ScriptProfile.h"
 #include "ScriptState.h"
@@ -73,7 +71,5 @@ public:
 };
 
 } // namespace WebCore
-
-#endif // ENABLE(JAVASCRIPT_DEBUGGER)
 
 #endif // ScriptProfiler_h

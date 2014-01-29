@@ -2948,7 +2948,7 @@ void FrameLoader::continueLoadAfterNavigationPolicy(const ResourceRequest&, Pass
     if (!m_frame.page())
         return;
 
-#if ENABLE(JAVASCRIPT_DEBUGGER) && ENABLE(INSPECTOR)
+#if ENABLE(INSPECTOR)
     if (Page* page = m_frame.page()) {
         if (m_frame.isMainFrame())
             page->inspectorController().resume();

@@ -31,7 +31,7 @@
 #include "config.h"
 #include "PageDebuggerAgent.h"
 
-#if ENABLE(JAVASCRIPT_DEBUGGER) && ENABLE(INSPECTOR)
+#if ENABLE(INSPECTOR)
 
 #include "CachedResource.h"
 #include "InspectorOverlay.h"
@@ -144,4 +144,4 @@ void PageDebuggerAgent::didClearMainFrameWindowObject()
 
 } // namespace WebCore
 
-#endif // ENABLE(JAVASCRIPT_DEBUGGER) && ENABLE(INSPECTOR)
+#endif // ENABLE(INSPECTOR)

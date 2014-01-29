@@ -26,8 +26,6 @@
 
 #include "config.h"
 
-#if ENABLE(JAVASCRIPT_DEBUGGER)
-
 #include "ScriptProfile.h"
 
 #include "JSDOMBinding.h"
@@ -107,5 +105,3 @@ PassRefPtr<Inspector::TypeBuilder::Profiler::CPUProfileNode> ScriptProfile::buil
 #endif
 
 } // namespace WebCore
-
-#endif // ENABLE(JAVASCRIPT_DEBUGGER)

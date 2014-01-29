@@ -31,8 +31,6 @@
 #ifndef PageScriptDebugServer_h
 #define PageScriptDebugServer_h
 
-#if ENABLE(JAVASCRIPT_DEBUGGER)
-
 #include <inspector/ScriptDebugServer.h>
 #include <wtf/Forward.h>
 
@@ -80,7 +78,5 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // ENABLE(JAVASCRIPT_DEBUGGER)
 
 #endif // PageScriptDebugServer_h

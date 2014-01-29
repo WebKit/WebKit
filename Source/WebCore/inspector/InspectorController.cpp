@@ -145,7 +145,6 @@ InspectorController::InspectorController(Page& page, InspectorClient* inspectorC
     InspectorConsoleAgent* consoleAgent = consoleAgentPtr.get();
     m_agents.append(std::move(consoleAgentPtr));
 
-#if ENABLE(JAVASCRIPT_DEBUGGER)
     auto debuggerAgentPtr = std::make_unique<PageDebuggerAgent>(m_injectedScriptManager.get(), m_instrumentingAgents.get(), pageAgent, m_overlay.get());
     m_debuggerAgent = debuggerAgentPtr.get();
     m_agents.append(std::move(debuggerAgentPtr));
@@ -159,7 +158,6 @@ InspectorController::InspectorController(Page& page, InspectorClient* inspectorC
     m_agents.append(std::move(profilerAgentPtr));
 
     m_agents.append(std::make_unique<InspectorHeapProfilerAgent>(m_instrumentingAgents.get(), m_injectedScriptManager.get()));
-#endif
 
     m_agents.append(std::make_unique<InspectorWorkerAgent>(m_instrumentingAgents.get()));
 
@@ -183,9 +181,7 @@ InspectorController::InspectorController(Page& page, InspectorClient* inspectorC
         );
     }
 
-#if ENABLE(JAVASCRIPT_DEBUGGER)
     runtimeAgent->setScriptDebugServer(&m_debuggerAgent->scriptDebugServer());
-#endif
 }
 
 InspectorController::~InspectorController()
@@ -390,7 +386,6 @@ void InspectorController::setIndicating(bool indicating)
         m_inspectorClient->hideIndication();
 }
 
-#if ENABLE(JAVASCRIPT_DEBUGGER)
 bool InspectorController::profilerEnabled() const
 {
     return m_profilerAgent->enabled();
@@ -412,7 +407,6 @@ void InspectorController::resume()
         m_debuggerAgent->resume(&error);
     }
 }
-#endif
 
 void InspectorController::setResourcesDataSizeLimitsFromInternals(int maximumResourcesContentSize, int maximumSingleResourceContentSize)
 {

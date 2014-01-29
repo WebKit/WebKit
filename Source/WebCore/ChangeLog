@@ -1,3 +1,87 @@
+2014-01-29  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Remove ENABLE(JAVASCRIPT_DEBUGGER) guards
+        https://bugs.webkit.org/show_bug.cgi?id=127840
+
+        Reviewed by Mark Lam.
+
+        * bindings/js/JSDOMWindowBase.cpp:
+        (WebCore::JSDOMWindowBase::supportsProfiling):
+        (WebCore::JSDOMWindowBase::supportsRichSourceInfo):
+        * bindings/js/PageScriptDebugServer.cpp:
+        * bindings/js/PageScriptDebugServer.h:
+        * bindings/js/ScriptProfile.cpp:
+        * bindings/js/ScriptProfile.h:
+        * bindings/js/ScriptProfileNode.h:
+        * bindings/js/ScriptProfiler.cpp:
+        * bindings/js/ScriptProfiler.h:
+        * bindings/js/WorkerScriptDebugServer.cpp:
+        * bindings/js/WorkerScriptDebugServer.h:
+        * inspector/InspectorConsoleAgent.h:
+        * inspector/InspectorConsoleInstrumentation.h:
+        (WebCore::InspectorInstrumentation::getCurrentUserInitiatedProfileName):
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::InspectorController):
+        (WebCore::InspectorController::resume):
+        * inspector/InspectorController.h:
+        * inspector/InspectorDOMDebuggerAgent.cpp:
+        * inspector/InspectorDOMDebuggerAgent.h:
+        * inspector/InspectorHeapProfilerAgent.cpp:
+        * inspector/InspectorHeapProfilerAgent.h:
+        * inspector/InspectorInstrumentation.cpp:
+        (WebCore::InspectorInstrumentation::didClearWindowObjectInWorldImpl):
+        (WebCore::InspectorInstrumentation::isDebuggerPausedImpl):
+        (WebCore::InspectorInstrumentation::willInsertDOMNodeImpl):
+        (WebCore::InspectorInstrumentation::didInsertDOMNodeImpl):
+        (WebCore::InspectorInstrumentation::willRemoveDOMNodeImpl):
+        (WebCore::InspectorInstrumentation::didRemoveDOMNodeImpl):
+        (WebCore::InspectorInstrumentation::willModifyDOMAttrImpl):
+        (WebCore::InspectorInstrumentation::didInvalidateStyleAttrImpl):
+        (WebCore::InspectorInstrumentation::willSendXMLHttpRequestImpl):
+        (WebCore::InspectorInstrumentation::scriptExecutionBlockedByCSPImpl):
+        (WebCore::InspectorInstrumentation::didCommitLoadImpl):
+        (WebCore::InspectorInstrumentation::addMessageToConsoleImpl):
+        (WebCore::InspectorInstrumentation::profilerEnabledImpl):
+        (WebCore::InspectorInstrumentation::willEvaluateWorkerScript):
+        (WebCore::InspectorInstrumentation::pauseOnNativeEventIfNeeded):
+        (WebCore::InspectorInstrumentation::cancelPauseOnNativeEvent):
+        * inspector/InspectorInstrumentation.h:
+        * inspector/InspectorProfilerAgent.cpp:
+        * inspector/InspectorProfilerAgent.h:
+        * inspector/InstrumentingAgents.cpp:
+        (WebCore::InstrumentingAgents::InstrumentingAgents):
+        (WebCore::InstrumentingAgents::reset):
+        * inspector/InstrumentingAgents.h:
+        * inspector/PageDebuggerAgent.cpp:
+        * inspector/PageDebuggerAgent.h:
+        * inspector/ScriptProfile.idl:
+        * inspector/ScriptProfileNode.idl:
+        * inspector/WebDebuggerAgent.cpp:
+        * inspector/WebDebuggerAgent.h:
+        * inspector/WorkerDebuggerAgent.cpp:
+        * inspector/WorkerDebuggerAgent.h:
+        * inspector/WorkerInspectorController.cpp:
+        (WebCore::WorkerInspectorController::WorkerInspectorController):
+        (WebCore::WorkerInspectorController::resume):
+        * inspector/WorkerInspectorController.h:
+        * inspector/WorkerRuntimeAgent.cpp:
+        (WebCore::WorkerRuntimeAgent::pauseWorkerGlobalScope):
+        * inspector/WorkerRuntimeAgent.h:
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::continueLoadAfterNavigationPolicy):
+        * page/Console.cpp:
+        * page/Console.h:
+        * page/Console.idl:
+        * testing/Internals.cpp:
+        (WebCore::Internals::resetToConsistentState):
+        * workers/WorkerMessagingProxy.cpp:
+        (WebCore::connectToWorkerGlobalScopeInspectorTask):
+        (WebCore::WorkerMessagingProxy::connectToInspector):
+        (WebCore::disconnectFromWorkerGlobalScopeInspectorTask):
+        (WebCore::WorkerMessagingProxy::disconnectFromInspector):
+        (WebCore::dispatchOnInspectorBackendTask):
+        (WebCore::WorkerMessagingProxy::sendMessageToInspector):
+
 2014-01-29  Eric Carlson  <eric.carlson@apple.com>
 
         [iOS] cleanup MediaPlayer.cpp

@@ -27,7 +27,6 @@
 #define WebDebuggerAgent_h
 
 #if ENABLE(INSPECTOR)
-#if ENABLE(JAVASCRIPT_DEBUGGER)
 
 #include <inspector/agents/InspectorDebuggerAgent.h>
 
@@ -52,7 +51,6 @@ protected:
 
 } // namespace WebCore
 
-#endif // ENABLE(JAVASCRIPT_DEBUGGER)
 #endif // ENABLE(INSPECTOR)
 
 #endif // !defined(WebDebuggerAgent_h)

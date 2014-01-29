@@ -27,7 +27,6 @@
 #include "WebDebuggerAgent.h"
 
 #if ENABLE(INSPECTOR)
-#if ENABLE(JAVASCRIPT_DEBUGGER)
 
 #include "InstrumentingAgents.h"
 
@@ -55,5 +54,4 @@ void WebDebuggerAgent::disable(bool isBeingDestroyed)
 
 } // namespace WebCore
 
-#endif // ENABLE(JAVASCRIPT_DEBUGGER)
 #endif // ENABLE(INSPECTOR)

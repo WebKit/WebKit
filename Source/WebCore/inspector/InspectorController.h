@@ -119,12 +119,10 @@ public:
     bool isUnderTest();
     void evaluateForTestInFrontend(long callId, const String& script);
 
-#if ENABLE(JAVASCRIPT_DEBUGGER)
     bool profilerEnabled() const;
     void setProfilerEnabled(bool);
 
     void resume();
-#endif
 
     void setResourcesDataSizeLimitsFromInternals(int maximumResourcesContentSize, int maximumSingleResourceContentSize);
 
@@ -155,11 +153,9 @@ private:
     InspectorResourceAgent* m_resourceAgent;
     InspectorPageAgent* m_pageAgent;
     InspectorMemoryAgent* m_memoryAgent;
-#if ENABLE(JAVASCRIPT_DEBUGGER)
     Inspector::InspectorDebuggerAgent* m_debuggerAgent;
     InspectorDOMDebuggerAgent* m_domDebuggerAgent;
     InspectorProfilerAgent* m_profilerAgent;
-#endif
 
     RefPtr<Inspector::InspectorBackendDispatcher> m_inspectorBackendDispatcher;
     std::unique_ptr<InspectorFrontendClient> m_inspectorFrontendClient;

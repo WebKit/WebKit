@@ -91,14 +91,12 @@ WorkerInspectorController::WorkerInspectorController(WorkerGlobalScope& workerGl
     m_agents.append(std::move(runtimeAgent));
 
     auto consoleAgent = std::make_unique<WorkerConsoleAgent>(m_instrumentingAgents.get(), m_injectedScriptManager.get());
-#if ENABLE(JAVASCRIPT_DEBUGGER)
     auto debuggerAgent = std::make_unique<WorkerDebuggerAgent>(m_injectedScriptManager.get(), m_instrumentingAgents.get(), &workerGlobalScope);
     m_runtimeAgent->setScriptDebugServer(&debuggerAgent->scriptDebugServer());
     m_agents.append(std::move(debuggerAgent));
 
     m_agents.append(InspectorProfilerAgent::create(m_instrumentingAgents.get(), consoleAgent.get(), &workerGlobalScope, m_injectedScriptManager.get()));
     m_agents.append(std::make_unique<InspectorHeapProfilerAgent>(m_instrumentingAgents.get(), m_injectedScriptManager.get()));
-#endif
     m_agents.append(std::make_unique<InspectorTimelineAgent>(m_instrumentingAgents.get(), nullptr, nullptr, InspectorTimelineAgent::WorkerInspector, nullptr));
     m_agents.append(std::move(consoleAgent));
 
@@ -145,13 +143,11 @@ void WorkerInspectorController::dispatchMessageFromFrontend(const String& messag
         m_backendDispatcher->dispatch(message);
 }
 
-#if ENABLE(JAVASCRIPT_DEBUGGER)
 void WorkerInspectorController::resume()
 {
     ErrorString unused;
     m_runtimeAgent->run(&unused);
 }
-#endif
 
 InspectorFunctionCallHandler WorkerInspectorController::functionCallHandler() const
 {

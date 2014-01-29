@@ -233,49 +233,39 @@ void WebInspector::showMainResourceForFrame(uint64_t frameID)
 
 void WebInspector::startJavaScriptDebugging()
 {
-#if ENABLE(JAVASCRIPT_DEBUGGER)
     m_page->corePage()->inspectorController().show();
     if (m_frontendClient)
         m_frontendClient->setDebuggingEnabled(true);
-#endif
 }
 
 void WebInspector::stopJavaScriptDebugging()
 {
-#if ENABLE(JAVASCRIPT_DEBUGGER)
     m_page->corePage()->inspectorController().show();
     if (m_frontendClient)
         m_frontendClient->setDebuggingEnabled(false);
-#endif
 }
 
 void WebInspector::setJavaScriptProfilingEnabled(bool enabled)
 {
-#if ENABLE(JAVASCRIPT_DEBUGGER)
     m_page->corePage()->inspectorController().show();
     if (!m_frontendClient)
         return;
 
     m_page->corePage()->inspectorController().setProfilerEnabled(enabled);
-#endif
 }
 
 void WebInspector::startJavaScriptProfiling()
 {
-#if ENABLE(JAVASCRIPT_DEBUGGER)
     m_page->corePage()->inspectorController().show();
     if (m_frontendClient)
         m_frontendClient->startProfilingJavaScript();
-#endif
 }
 
 void WebInspector::stopJavaScriptProfiling()
 {
-#if ENABLE(JAVASCRIPT_DEBUGGER)
     m_page->corePage()->inspectorController().show();
     if (m_frontendClient)
         m_frontendClient->stopProfilingJavaScript();
-#endif
 }
 
 void WebInspector::startPageProfiling()

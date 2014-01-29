@@ -1,3 +1,17 @@
+2014-01-29  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Remove ENABLE(JAVASCRIPT_DEBUGGER) guards
+        https://bugs.webkit.org/show_bug.cgi?id=127840
+
+        Reviewed by Mark Lam.
+
+        * WebProcess/WebPage/WebInspector.cpp:
+        (WebKit::WebInspector::startJavaScriptDebugging):
+        (WebKit::WebInspector::stopJavaScriptDebugging):
+        (WebKit::WebInspector::setJavaScriptProfilingEnabled):
+        (WebKit::WebInspector::startJavaScriptProfiling):
+        (WebKit::WebInspector::stopJavaScriptProfiling):
+
 2014-01-29  Brady Eidson  <beidson@apple.com>
 
         IDB: Serialize IDBKeyDatas to disk, not IDBKeys

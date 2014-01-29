@@ -406,13 +406,11 @@ void WorkerMessagingProxy::workerObjectDestroyedInternal(ScriptExecutionContext*
 }
 
 #if ENABLE(INSPECTOR)
-#if ENABLE(JAVASCRIPT_DEBUGGER)
 static void connectToWorkerGlobalScopeInspectorTask(ScriptExecutionContext* context, bool)
 {
     ASSERT_WITH_SECURITY_IMPLICATION(context->isWorkerGlobalScope());
     static_cast<WorkerGlobalScope*>(context)->workerInspectorController().connectFrontend();
 }
-#endif
 
 void WorkerMessagingProxy::connectToInspector(WorkerGlobalScopeProxy::PageInspector* pageInspector)
 {
@@ -420,45 +418,35 @@ void WorkerMessagingProxy::connectToInspector(WorkerGlobalScopeProxy::PageInspec
         return;
     ASSERT(!m_pageInspector);
     m_pageInspector = pageInspector;
-#if ENABLE(JAVASCRIPT_DEBUGGER)
     m_workerThread->runLoop().postTaskForMode(createCallbackTask(connectToWorkerGlobalScopeInspectorTask, true), WorkerDebuggerAgent::debuggerTaskMode);
-#endif
 }
 
-#if ENABLE(JAVASCRIPT_DEBUGGER)
 static void disconnectFromWorkerGlobalScopeInspectorTask(ScriptExecutionContext* context, bool)
 {
     ASSERT_WITH_SECURITY_IMPLICATION(context->isWorkerGlobalScope());
     static_cast<WorkerGlobalScope*>(context)->workerInspectorController().disconnectFrontend(Inspector::InspectorDisconnectReason::InspectorDestroyed);
 }
-#endif
 
 void WorkerMessagingProxy::disconnectFromInspector()
 {
     m_pageInspector = 0;
     if (m_askedToTerminate)
         return;
-#if ENABLE(JAVASCRIPT_DEBUGGER)
     m_workerThread->runLoop().postTaskForMode(createCallbackTask(disconnectFromWorkerGlobalScopeInspectorTask, true), WorkerDebuggerAgent::debuggerTaskMode);
-#endif
 }
 
-#if ENABLE(JAVASCRIPT_DEBUGGER)
 static void dispatchOnInspectorBackendTask(ScriptExecutionContext* context, const String& message)
 {
     ASSERT_WITH_SECURITY_IMPLICATION(context->isWorkerGlobalScope());
     static_cast<WorkerGlobalScope*>(context)->workerInspectorController().dispatchMessageFromFrontend(message);
 }
-#endif
 
 void WorkerMessagingProxy::sendMessageToInspector(const String& message)
 {
     if (m_askedToTerminate)
         return;
-#if ENABLE(JAVASCRIPT_DEBUGGER)
     m_workerThread->runLoop().postTaskForMode(createCallbackTask(dispatchOnInspectorBackendTask, String(message)), WorkerDebuggerAgent::debuggerTaskMode);
     WorkerDebuggerAgent::interruptAndDispatchInspectorCommands(m_workerThread.get());
-#endif
 }
 #endif
 

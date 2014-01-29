@@ -65,9 +65,7 @@ public:
     void connectFrontend();
     void disconnectFrontend(Inspector::InspectorDisconnectReason);
     void dispatchMessageFromFrontend(const String&);
-#if ENABLE(JAVASCRIPT_DEBUGGER)
     void resume();
-#endif
 
     virtual bool developerExtrasEnabled() const override { return true; }
     virtual bool canAccessInspectedScriptState(JSC::ExecState*) const override { return true; }

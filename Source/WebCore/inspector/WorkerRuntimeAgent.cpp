@@ -95,7 +95,6 @@ JSC::VM* WorkerRuntimeAgent::globalVM()
     return JSDOMWindowBase::commonVM();
 }
 
-#if ENABLE(JAVASCRIPT_DEBUGGER)
 void WorkerRuntimeAgent::pauseWorkerGlobalScope(WorkerGlobalScope* context)
 {
     m_paused = true;
@@ -105,7 +104,6 @@ void WorkerRuntimeAgent::pauseWorkerGlobalScope(WorkerGlobalScope* context)
     // Keep waiting until execution is resumed.
     } while (result == MessageQueueMessageReceived && m_paused);
 }
-#endif // ENABLE(JAVASCRIPT_DEBUGGER)
 
 } // namespace WebCore
 

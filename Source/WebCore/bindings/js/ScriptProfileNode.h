@@ -27,7 +27,6 @@
 #ifndef ScriptProfileNode_h
 #define ScriptProfileNode_h
 
-#if ENABLE(JAVASCRIPT_DEBUGGER)
 #include <profiler/ProfileNode.h>
 
 namespace WebCore {
@@ -35,7 +34,5 @@ namespace WebCore {
 typedef JSC::ProfileNode ScriptProfileNode;
 
 } // namespace WebCore
-
-#endif // ENABLE(JAVASCRIPT_DEBUGGER)
 
 #endif // ScriptProfileNode_h

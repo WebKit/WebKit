@@ -173,7 +173,6 @@ inline void InspectorInstrumentation::consoleTimeStamp(Frame* frame, PassRefPtr<
 #endif
 }
 
-#if ENABLE(JAVASCRIPT_DEBUGGER)
 inline void InspectorInstrumentation::addStartProfilingMessageToConsole(Page* page, const String& title, unsigned lineNumber, unsigned columnNumber, const String& sourceURL)
 {
 #if ENABLE(INSPECTOR)
@@ -222,7 +221,6 @@ inline String InspectorInstrumentation::getCurrentUserInitiatedProfileName(Page*
 #endif
     return "";
 }
-#endif
 
 } // namespace WebCore
 

@@ -186,8 +186,6 @@ void Console::count(JSC::ExecState* state, PassRefPtr<ScriptArguments> arguments
     InspectorInstrumentation::consoleCount(page(), state, arguments);
 }
 
-#if ENABLE(JAVASCRIPT_DEBUGGER)
-
 void Console::profile(JSC::ExecState* state, const String& title)
 {
     Page* page = this->page();
@@ -226,8 +224,6 @@ void Console::profileEnd(JSC::ExecState* state, const String& title)
     RefPtr<ScriptCallStack> callStack(createScriptCallStack(state, 1));
     InspectorInstrumentation::addProfile(page, profile, callStack);
 }
-
-#endif
 
 void Console::time(const String& title)
 {

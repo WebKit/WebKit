@@ -26,7 +26,6 @@
 
 [
     NoInterfaceObject,
-    Conditional=JAVASCRIPT_DEBUGGER,
     ImplementationLacksVTable
 ] interface ScriptProfileNode {
     readonly attribute DOMString functionName;

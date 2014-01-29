@@ -26,8 +26,6 @@
 
 #include "config.h"
 
-#if ENABLE(JAVASCRIPT_DEBUGGER)
-
 #include "ScriptProfiler.h"
 
 #include "GCController.h"
@@ -92,5 +90,3 @@ PassRefPtr<ScriptProfile> ScriptProfiler::stopForWorkerGlobalScope(WorkerGlobalS
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(JAVASCRIPT_DEBUGGER)

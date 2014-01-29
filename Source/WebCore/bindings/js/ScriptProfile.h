@@ -27,7 +27,6 @@
 #ifndef ScriptProfile_h
 #define ScriptProfile_h
 
-#if ENABLE(JAVASCRIPT_DEBUGGER)
 #include "ScriptProfileNode.h"
 #include <wtf/Forward.h>
 #include <wtf/PassRefPtr.h>
@@ -67,7 +66,5 @@ private:
 
 
 } // namespace WebCore
-
-#endif // ENABLE(JAVASCRIPT_DEBUGGER)
 
 #endif // ScriptProfile_h

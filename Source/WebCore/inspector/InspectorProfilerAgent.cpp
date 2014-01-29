@@ -29,7 +29,7 @@
 
 #include "config.h"
 
-#if ENABLE(JAVASCRIPT_DEBUGGER) && ENABLE(INSPECTOR)
+#if ENABLE(INSPECTOR)
 
 #include "InspectorProfilerAgent.h"
 
@@ -455,4 +455,4 @@ void InspectorProfilerAgent::getHeapObjectId(ErrorString* errorString, const Str
 
 } // namespace WebCore
 
-#endif // ENABLE(JAVASCRIPT_DEBUGGER) && ENABLE(INSPECTOR)
+#endif // ENABLE(INSPECTOR)
