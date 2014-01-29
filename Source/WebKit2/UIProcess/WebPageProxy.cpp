@@ -307,7 +307,7 @@ WebPageProxy::WebPageProxy(PageClient& pageClient, WebProcessProxy& process, Web
     , m_mainFrameIsPinnedToRightSide(false)
     , m_mainFrameIsPinnedToTopSide(false)
     , m_mainFrameIsPinnedToBottomSide(false)
-    , m_useLegacyImplicitRubberBandControl(false)
+    , m_shouldUseImplicitRubberBandControl(false)
     , m_rubberBandsAtLeft(true)
     , m_rubberBandsAtRight(true)
     , m_rubberBandsAtTop(true)
@@ -1280,8 +1280,8 @@ void WebPageProxy::sendWheelEvent(const WebWheelEvent& event)
         Messages::EventDispatcher::WheelEvent(
             m_pageID,
             event,
-            m_useLegacyImplicitRubberBandControl ? !m_backForwardList->backItem() : rubberBandsAtLeft(),
-            m_useLegacyImplicitRubberBandControl ? !m_backForwardList->forwardItem() : rubberBandsAtRight(),
+            shouldUseImplicitRubberBandControl() ? !m_backForwardList->backItem() : rubberBandsAtLeft(),
+            shouldUseImplicitRubberBandControl() ? !m_backForwardList->forwardItem() : rubberBandsAtRight(),
             rubberBandsAtTop(),
             rubberBandsAtBottom()
         ), 0);

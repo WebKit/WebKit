@@ -519,6 +519,7 @@ static void runOpenPanel(WKPageRef page, WKFrameRef frame, WKOpenPanelParameters
     _webView = [[WKView alloc] initWithFrame:[containerView bounds] processGroup:_processGroup browsingContextGroup:_browsingContextGroup];
 
     _webView.allowsMagnification = YES;
+    _webView.allowsBackForwardNavigationGestures = YES;
 
     [_webView setAutoresizingMask:(NSViewWidthSizable | NSViewHeightSizable)];
     [containerView addSubview:_webView];

@@ -42,6 +42,7 @@
 #import "WebProcessProxy.h"
 #import <WebCore/DictationAlternative.h>
 #import <WebCore/GraphicsLayer.h>
+#import <WebCore/RuntimeApplicationChecks.h>
 #import <WebCore/SharedBuffer.h>
 #import <WebCore/TextAlternativeWithRange.h>
 #import <WebCore/UserAgent.h>
@@ -60,15 +61,23 @@ using namespace WebCore;
 
 namespace WebKit {
 
-static bool shouldUseLegacyImplicitRubberBandControl()
+static inline bool expectsLegacyImplicitRubberBandControl()
 {
-    static bool linkedAgainstExecutableExpectingImplicitRubberBandControl = NSVersionOfLinkTimeLibrary("WebKit2") < 0x021A0200 /* 538.2.0 */;
-    return linkedAgainstExecutableExpectingImplicitRubberBandControl;
+    if (applicationIsSafari()) {
+        const int32_t firstVersionOfSafariNotExpectingImplicitRubberBandControl = 0x021A0F00; // 538.15.0
+        bool linkedAgainstSafariExpectingImplicitRubberBandControl = NSVersionOfLinkTimeLibrary("Safari") < firstVersionOfSafariNotExpectingImplicitRubberBandControl;
+        return linkedAgainstSafariExpectingImplicitRubberBandControl;
+    }
+
+    const int32_t firstVersionOfWebKit2WithNoImplicitRubberBandControl = 0x021A0200; // 538.2.0
+    int32_t linkedWebKit2Version = NSVersionOfLinkTimeLibrary("WebKit2");
+    return linkedWebKit2Version != -1 && linkedWebKit2Version < firstVersionOfWebKit2WithNoImplicitRubberBandControl;
 }
 
 void WebPageProxy::platformInitialize()
 {
-    m_useLegacyImplicitRubberBandControl = shouldUseLegacyImplicitRubberBandControl();
+    static bool clientExpectsLegacyImplicitRubberBandControl = expectsLegacyImplicitRubberBandControl();
+    setShouldUseImplicitRubberBandControl(clientExpectsLegacyImplicitRubberBandControl);
 }
 
 static String userVisibleWebKitVersionString()

@@ -596,6 +596,9 @@ public:
     bool rubberBandsAtBottom() const;
     void setRubberBandsAtBottom(bool);
 
+    void setShouldUseImplicitRubberBandControl(bool shouldUseImplicitRubberBandControl) { m_shouldUseImplicitRubberBandControl = shouldUseImplicitRubberBandControl; }
+    bool shouldUseImplicitRubberBandControl() const { return m_shouldUseImplicitRubberBandControl; }
+
     void setBackgroundExtendsBeyondPage(bool);
     bool backgroundExtendsBeyondPage() const;
 
@@ -1353,7 +1356,7 @@ private:
     bool m_mainFrameIsPinnedToTopSide;
     bool m_mainFrameIsPinnedToBottomSide;
 
-    bool m_useLegacyImplicitRubberBandControl;
+    bool m_shouldUseImplicitRubberBandControl;
     bool m_rubberBandsAtLeft;
     bool m_rubberBandsAtRight;
     bool m_rubberBandsAtTop;

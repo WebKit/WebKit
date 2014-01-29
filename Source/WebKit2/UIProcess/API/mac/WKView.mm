@@ -3269,6 +3269,7 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
 {
     _data->_allowsBackForwardNavigationGestures = allowsBackForwardNavigationGestures;
     _data->_page->setShouldRecordNavigationSnapshots(allowsBackForwardNavigationGestures);
+    _data->_page->setShouldUseImplicitRubberBandControl(allowsBackForwardNavigationGestures);
 }
 
 - (BOOL)allowsBackForwardNavigationGestures
