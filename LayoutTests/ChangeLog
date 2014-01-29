@@ -1,3 +1,9 @@
+2014-01-28  Jinwoo Song  <jinwoo7.song@samsung.com>
+
+        Unreviewed EFL gardening after r162972.
+
+        * platform/efl/fast/table/quote-text-around-iframe-expected.txt:
+
 2014-01-28  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Rebaseline quote-text-around-iframe.html after r162972
