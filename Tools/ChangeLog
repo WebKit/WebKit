@@ -1,3 +1,17 @@
+2014-01-29  Krzysztof Czech  <k.czech@samsung.com>
+
+        [ATK] Expose aria-describedby with ATK_RELATION_DESCRIBED_BY
+        https://bugs.webkit.org/show_bug.cgi?id=121684
+
+        Reviewed by Mario Sanchez Prada.
+
+        Implementing helpText by using relation ATK_RELATION_DESCRIBED_BY.
+
+        * DumpRenderTree/atk/AccessibilityUIElementAtk.cpp:
+        (AccessibilityUIElement::helpText):
+        * WebKitTestRunner/InjectedBundle/atk/AccessibilityUIElementAtk.cpp:
+        (WTR::AccessibilityUIElement::helpText):
+
 2014-01-27  Chris Fleizach  <cfleizach@apple.com>
 
         AX: Support @scope in HTML tables

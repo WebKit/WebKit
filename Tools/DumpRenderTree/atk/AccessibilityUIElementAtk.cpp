@@ -803,10 +803,37 @@ JSStringRef AccessibilityUIElement::language()
 
 JSStringRef AccessibilityUIElement::helpText() const
 {
-    // FIXME: We need to provide a proper implementation for this that does
-    // not depend on Mac specific concepts such as ATK_RELATION_DESCRIBED_BY,
-    // once it's implemented (see http://webkit.org/b/121684).
-    return JSStringCreateWithCharacters(0, 0);
+    if (!ATK_IS_OBJECT(m_element))
+        return JSStringCreateWithCharacters(0, 0);
+
+    AtkRelationSet* relationSet = atk_object_ref_relation_set(ATK_OBJECT(m_element));
+    if (!relationSet)
+        return nullptr;
+
+    AtkRelation* relation = atk_relation_set_get_relation_by_type(relationSet, ATK_RELATION_DESCRIBED_BY);
+    if (!relation)
+        return nullptr;
+
+    GPtrArray* targetList = atk_relation_get_target(relation);
+    if (!targetList || !targetList->len)
+        return nullptr;
+
+    StringBuilder builder;
+    builder.append("AXHelp: ");
+
+    for (int targetCount = 0; targetCount < targetList->len; targetCount++) {
+        if (AtkObject* target = static_cast<AtkObject*>(g_ptr_array_index(targetList, targetCount))) {
+            GUniquePtr<gchar> text(atk_text_get_text(ATK_TEXT(target), 0, -1));
+            if (!builder.isEmpty())
+                builder.append(" ");
+            builder.append(text.get());
+        }
+    }
+
+    g_object_unref(relationSet);
+
+    return JSStringCreateWithUTF8CString(builder.toString().utf8().data());
+
 }
 
 double AccessibilityUIElement::x()

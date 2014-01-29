@@ -553,6 +553,8 @@ public:
     virtual void ariaOwnsElements(AccessibilityChildrenVector&) const { }
     virtual bool supportsARIAFlowTo() const { return false; }
     virtual void ariaFlowToElements(AccessibilityChildrenVector&) const { }
+    virtual bool supportsARIADescribedBy() const { return false; }
+    virtual void ariaDescribedByElements(AccessibilityChildrenVector&) const { }
     virtual bool ariaHasPopup() const { return false; }
     virtual bool ariaPressedIsPresent() const;
     bool ariaIsMultiline() const;
@@ -626,6 +628,8 @@ public:
     virtual String ariaLabeledByAttribute() const { return String(); }
     virtual String ariaDescribedByAttribute() const { return String(); }
     const AtomicString& placeholderValue() const;
+
+    void elementsFromAttribute(Vector<Element*>&, const QualifiedName&) const;
 
     // Only if isColorWell()
     virtual void colorValue(int& r, int& g, int& b) const { r = 0; g = 0; b = 0; }

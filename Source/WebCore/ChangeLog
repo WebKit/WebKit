@@ -1,3 +1,31 @@
+2014-01-29  Krzysztof Czech  <k.czech@samsung.com>
+
+        [ATK] Expose aria-describedby with ATK_RELATION_DESCRIBED_BY
+        https://bugs.webkit.org/show_bug.cgi?id=121684
+
+        Reviewed by Mario Sanchez Prada.
+
+        Exposed aria-describedby by ATK_RELATION_DESCRIBED_BY.
+        Moved elementsFromAttribut to AccessibilityObject to have common interface
+        for AccessibilityNodeObject and AccessibilityRenderObject. Implemented
+        supportsARIADescribedBy and ariaDescribedByElements to better deal with aria-describedby attribute.
+
+        No new tests. Covered by existed one.
+
+        * accessibility/AccessibilityNodeObject.cpp:
+        * accessibility/AccessibilityNodeObject.h:
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::elementsFromAttribute):
+        * accessibility/AccessibilityObject.h:
+        (WebCore::AccessibilityObject::supportsARIADescribedBy):
+        (WebCore::AccessibilityObject::ariaDescribedByElements):
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::supportsARIADescribedBy):
+        (WebCore::AccessibilityRenderObject::ariaDescribedByElements):
+        * accessibility/AccessibilityRenderObject.h:
+        * accessibility/atk/WebKitAccessibleWrapperAtk.cpp:
+        (setAtkRelationSetFromCoreObject):
+
 2014-01-29  Sergio Villar Senin  <svillar@igalia.com>
 
         [CSS Grid Layout] minmax() should be a CSSFunction instead of a CSSValueList

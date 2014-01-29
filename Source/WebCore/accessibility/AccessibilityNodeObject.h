@@ -182,7 +182,6 @@ protected:
     String ariaAccessibilityDescription() const;
     void ariaLabeledByElements(Vector<Element*>& elements) const;
     String accessibilityDescriptionForElements(Vector<Element*> &elements) const;
-    void elementsFromAttribute(Vector<Element*>& elements, const QualifiedName&) const;
     virtual LayoutRect boundingBoxRect() const override;
     virtual String ariaDescribedByAttribute() const override;
     

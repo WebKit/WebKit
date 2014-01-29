@@ -1433,7 +1433,6 @@ webkit.org/b/106316 accessibility/render-counter-text.html [ Failure ]
 # New accessibility test added in r149155 is failing. Has been moved to the mac port in r155603.
 webkit.org/b/115659 accessibility/meter-element.html [ Missing ]
 
-webkit.org/b/121684 accessibility/aria-describedby-on-input.html [ Failure ]
 webkit.org/b/121593 accessibility/radio-button-title-label.html [ Failure ]
 
 # Newly added test at r139111 is failing.

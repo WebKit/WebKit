@@ -1028,7 +1028,24 @@ void AccessibilityRenderObject::ariaFlowToElements(AccessibilityChildrenVector& 
     }
         
 }
-    
+
+bool AccessibilityRenderObject::supportsARIADescribedBy() const
+{
+    return !getAttribute(aria_describedbyAttr).isEmpty();
+}
+
+void AccessibilityRenderObject::ariaDescribedByElements(AccessibilityChildrenVector& ariaDescribedBy) const
+{
+    Vector<Element*> elements;
+    elementsFromAttribute(elements, aria_describedbyAttr);
+
+    AXObjectCache* cache = axObjectCache();
+    for (const auto& element : elements) {
+        if (AccessibilityObject* describedByElement = cache->getOrCreate(element))
+            ariaDescribedBy.append(describedByElement);
+    }
+}
+
 bool AccessibilityRenderObject::supportsARIADropping() const 
 {
     const AtomicString& dropEffect = getAttribute(aria_dropeffectAttr);

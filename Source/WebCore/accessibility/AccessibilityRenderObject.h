@@ -180,6 +180,8 @@ public:
     virtual void setSelectedVisiblePositionRange(const VisiblePositionRange&) const override;
     virtual bool supportsARIAFlowTo() const override;
     virtual void ariaFlowToElements(AccessibilityChildrenVector&) const override;
+    virtual bool supportsARIADescribedBy() const override;
+    virtual void ariaDescribedByElements(AccessibilityChildrenVector&) const override;
     virtual bool ariaHasPopup() const override;
 
     virtual bool supportsARIADropping() const override;

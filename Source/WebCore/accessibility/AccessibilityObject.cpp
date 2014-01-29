@@ -2123,4 +2123,26 @@ bool AccessibilityObject::accessibilityIsIgnored() const
     return result;
 }
 
+void AccessibilityObject::elementsFromAttribute(Vector<Element*>& elements, const QualifiedName& attribute) const
+{
+    Node* node = this->node();
+    if (!node || !node->isElementNode())
+        return;
+
+    TreeScope& treeScope = node->treeScope();
+
+    String idList = getAttribute(attribute).string();
+    if (idList.isEmpty())
+        return;
+
+    idList.replace('\n', ' ');
+    Vector<String> idVector;
+    idList.split(' ', idVector);
+
+    for (auto idName : idVector) {
+        if (Element* idElement = treeScope.getElementById(idName))
+            elements.append(idElement);
+    }
+}
+
 } // namespace WebCore

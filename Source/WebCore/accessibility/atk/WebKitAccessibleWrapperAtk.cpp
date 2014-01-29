@@ -245,6 +245,15 @@ static void setAtkRelationSetFromCoreObject(AccessibilityObject* coreObject, Atk
         for (const auto& accessibilityObject : ariaFlowToElements)
             atk_relation_set_add_relation_by_type(relationSet, ATK_RELATION_FLOWS_TO, accessibilityObject->wrapper());
     }
+
+    // Check whether object supports aria-describedby. It provides an additional information for the user.
+    if (coreObject->supportsARIADescribedBy()) {
+        removeAtkRelationByType(relationSet, ATK_RELATION_DESCRIBED_BY);
+        AccessibilityObject::AccessibilityChildrenVector ariaDescribedByElements;
+        coreObject->ariaDescribedByElements(ariaDescribedByElements);
+        for (const auto& accessibilityObject : ariaDescribedByElements)
+            atk_relation_set_add_relation_by_type(relationSet, ATK_RELATION_DESCRIBED_BY, accessibilityObject->wrapper());
+    }
 }
 
 static gpointer webkitAccessibleParentClass = 0;
