@@ -23,12 +23,15 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-JSON.load = function(url, callback, jsonpCallbackName)
+JSON.load = function(url, callback, options)
 {
     console.assert(url);
 
     if (!(callback instanceof Function))
         return;
+
+    if (typeof options !== "object")
+        options = {};
 
     var request = new XMLHttpRequest;
     request.onreadystatechange = function() {
@@ -37,8 +40,8 @@ JSON.load = function(url, callback, jsonpCallbackName)
 
         try {
             var responseText = request.responseText;
-            if (jsonpCallbackName)
-                responseText = responseText.replace(new RegExp("^" + jsonpCallbackName + "\\((.*)\\);?$"), "$1");
+            if (options.hasOwnProperty("jsonpCallbackName"))
+                responseText = responseText.replace(new RegExp("^" + options[jsonpCallbackName] + "\\((.*)\\);?$"), "$1");
             var data = JSON.parse(responseText);
         } catch (e) {
             var data = {error: e.message};
@@ -50,6 +53,8 @@ JSON.load = function(url, callback, jsonpCallbackName)
     };
 
     request.open("GET", url);
+    if (options.hasOwnProperty("withCredentials"))
+        request.withCredentials = options.withCredentials;
     request.send();
 };
 

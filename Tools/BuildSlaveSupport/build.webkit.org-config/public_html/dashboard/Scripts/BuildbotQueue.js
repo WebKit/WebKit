@@ -154,7 +154,7 @@ BuildbotQueue.prototype = {
             this.sortIterations();
 
             this.dispatchEventToListeners(BuildbotQueue.Event.IterationsAdded, {addedIterations: newIterations});
-        }.bind(this));
+        }.bind(this), {withCredentials: this.buildbot.needsAuthentication});
     },
 
     sortIterations: function()

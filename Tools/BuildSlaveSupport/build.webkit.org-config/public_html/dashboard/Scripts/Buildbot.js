@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-Buildbot = function(baseURL, queuesInfo)
+Buildbot = function(baseURL, queuesInfo, options)
 {
     BaseObject.call(this);
 
@@ -32,6 +32,7 @@ Buildbot = function(baseURL, queuesInfo)
 
     this.baseURL = baseURL;
     this.queues = {};
+    this.needsAuthentication = typeof options === "object" && options.needsAuthentication === true;
 
     for (var id in queuesInfo)
         this.queues[id] = new BuildbotQueue(this, id, queuesInfo[id]);

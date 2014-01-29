@@ -1,3 +1,28 @@
+2014-01-29  Daniel Bates  <dabates@apple.com>
+
+        WebKit Bot Watcher's Dashboard: Add support for using HTTP authentication with Buildbot
+        https://bugs.webkit.org/show_bug.cgi?id=127784
+
+        Reviewed by Alexey Proskuryakov.
+
+        Implement support for querying a Buildbot that requires HTTP authentication to access it.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/Buildbot.js:
+        (Buildbot): Add optional argument, options, to pass a dictionary of Buildbot options.
+        For now, we only support a single option, needsAuthentication, to indicate whether the
+        Buildbots requires HTTP authentication (defaults to false - HTTP authentication is
+        not required).
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/BuildbotIteration.js:
+        (BuildbotIteration.prototype.loadLayoutTestResults): Modified to pass JSONP callback name
+        to JSON.load() using the option dictionary.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/BuildbotQueue.js:
+        (BuildbotQueue.prototype.update): Modified to pass withCredentials to JSON.load().
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/Utilities.js:
+        (JSON.load): Removed optional argument jsonpCallbackName and added optional argument options,
+        which is a dictionary. The argument jsonpCallbackName is now specified as an entry in the
+        options dictionary. Added boolean options withCredentials to toggle querying with HTTP
+        authentication credentials.
+
 2014-01-29  Alexey Proskuryakov  <ap@apple.com>
 
         build.webkit.org/dashboard links to an old failing build rather than the most recent

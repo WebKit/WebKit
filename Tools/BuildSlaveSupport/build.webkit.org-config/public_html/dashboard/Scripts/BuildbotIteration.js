@@ -357,6 +357,6 @@ BuildbotIteration.prototype = {
             console.assert(data.num_missing === this.layoutTestResults.testsWithMissingResults.length);
 
             callback();
-        }.bind(this), "ADD_RESULTS");
+        }.bind(this), {jsonpCallbackName: "ADD_RESULTS"});
     }
 };
