@@ -4123,7 +4123,16 @@ void ewk_view_text_direction_set(Evas_Object* ewkView, Ewk_Text_Direction direct
     if (!editor.canEdit())
         return;
 
-    editor.setBaseWritingDirection(static_cast<WritingDirection>(direction));
+    switch (direction) {
+    case EWK_TEXT_DIRECTION_DEFAULT:
+        editor.setBaseWritingDirection(NaturalWritingDirection);
+    case EWK_TEXT_DIRECTION_LEFT_TO_RIGHT:
+        editor.setBaseWritingDirection(LeftToRightWritingDirection);
+    case EWK_TEXT_DIRECTION_RIGHT_TO_LEFT:
+        editor.setBaseWritingDirection(RightToLeftWritingDirection);
+    }
+
+    ASSERT_NOT_REACHED();
 }
 
 void ewk_view_did_first_visually_nonempty_layout(Evas_Object* ewkView)
@@ -4176,7 +4185,7 @@ void ewk_view_transition_to_commited_for_newpage(Evas_Object* ewkView)
  * client did not make a decision, we return true by default since the default policy
  * is to accept.
  */
-bool ewk_view_navigation_policy_decision(Evas_Object* ewkView, Ewk_Frame_Resource_Request* request, Ewk_Navigation_Type navigationType)
+bool ewk_view_navigation_policy_decision(Evas_Object* ewkView, Ewk_Frame_Resource_Request* request, WebCore::NavigationType navigationType)
 {
     EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData, false);
     EINA_SAFETY_ON_NULL_RETURN_VAL(smartData->api, false);
@@ -4184,7 +4193,23 @@ bool ewk_view_navigation_policy_decision(Evas_Object* ewkView, Ewk_Frame_Resourc
     if (!smartData->api->navigation_policy_decision)
         return true;
 
-    return smartData->api->navigation_policy_decision(smartData, request, navigationType);
+    Ewk_Navigation_Type type;
+    switch (navigationType) {
+    case WebCore::NavigationTypeLinkClicked:
+        type = EWK_NAVIGATION_TYPE_LINK_CLICKED;
+    case WebCore::NavigationTypeFormSubmitted:
+        type = EWK_NAVIGATION_TYPE_FORM_SUBMITTED;
+    case WebCore::NavigationTypeBackForward:
+        type = EWK_NAVIGATION_TYPE_BACK_FORWARD;
+    case WebCore::NavigationTypeReload:
+        type = EWK_NAVIGATION_TYPE_RELOAD;
+    case WebCore::NavigationTypeFormResubmitted:
+        type = EWK_NAVIGATION_TYPE_FORM_RESUBMITTED;
+    case WebCore::NavigationTypeOther:
+        type = EWK_NAVIGATION_TYPE_OTHER;
+    }
+
+    return smartData->api->navigation_policy_decision(smartData, request, type);
 }
 
 Eina_Bool ewk_view_js_object_add(Evas_Object* ewkView, Ewk_JS_Object* object, const char* objectName)
@@ -4275,13 +4300,55 @@ bool ewk_view_need_touch_events_get(const Evas_Object* ewkView)
 }
 #endif
 
+inline static WebCore::Page::ViewMode toViewMode(Ewk_View_Mode viewMode)
+{
+    switch (viewMode) {
+    case EWK_VIEW_MODE_INVALID:
+        return WebCore::Page::ViewModeInvalid;
+    case EWK_VIEW_MODE_WINDOWED:
+        return WebCore::Page::ViewModeWindowed;
+    case EWK_VIEW_MODE_FLOATING:
+        return WebCore::Page::ViewModeFloating;
+    case EWK_VIEW_MODE_FULLSCREEN:
+        return WebCore::Page::ViewModeFullscreen;
+    case EWK_VIEW_MODE_MAXIMIZED:
+        return WebCore::Page::ViewModeMaximized;
+    case EWK_VIEW_MODE_MINIMIZED:
+        return WebCore::Page::ViewModeMinimized;
+    }
+    ASSERT_NOT_REACHED();
+
+    return WebCore::Page::ViewModeInvalid;
+}
+
+inline static Ewk_View_Mode toEwkViewMode(WebCore::Page::ViewMode viewMode)
+{
+    switch (viewMode) {
+    case WebCore::Page::ViewModeInvalid:
+        return EWK_VIEW_MODE_INVALID;
+    case WebCore::Page::ViewModeWindowed:
+        return EWK_VIEW_MODE_WINDOWED;
+    case WebCore::Page::ViewModeFloating:
+        return EWK_VIEW_MODE_FLOATING;
+    case WebCore::Page::ViewModeFullscreen:
+        return EWK_VIEW_MODE_FULLSCREEN;
+    case WebCore::Page::ViewModeMaximized:
+        return EWK_VIEW_MODE_MAXIMIZED;
+    case WebCore::Page::ViewModeMinimized:
+        return EWK_VIEW_MODE_MINIMIZED;
+    }
+    ASSERT_NOT_REACHED();
+
+    return EWK_VIEW_MODE_INVALID;
+}
+
 Eina_Bool ewk_view_mode_set(Evas_Object* ewkView, Ewk_View_Mode viewMode)
 {
 #if ENABLE(VIEW_MODE_CSS_MEDIA)
     EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData, false);
     EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv, false);
 
-    priv->page->setViewMode(static_cast<WebCore::Page::ViewMode>(viewMode));
+    priv->page->setViewMode(toViewMode(viewMode));
     return true;
 #else
     UNUSED_PARAM(ewkView);
@@ -4296,7 +4363,7 @@ Ewk_View_Mode ewk_view_mode_get(const Evas_Object* ewkView)
     EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData, EWK_VIEW_MODE_INVALID);
     EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv, EWK_VIEW_MODE_INVALID);
 
-    return static_cast<Ewk_View_Mode>(priv->page->viewMode());
+    return toEwkViewMode(priv->page->viewMode());
 #else
     UNUSED_PARAM(ewkView);
     return EWK_VIEW_MODE_INVALID;
@@ -4419,12 +4486,23 @@ Ewk_Page_Visibility_State ewk_view_visibility_state_get(const Evas_Object* ewkVi
     EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData, EWK_PAGE_VISIBILITY_STATE_VISIBLE);
     EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv, EWK_PAGE_VISIBILITY_STATE_VISIBLE);
 
-    return static_cast<Ewk_Page_Visibility_State>(priv->page->visibilityState());
+
+    switch (priv->page->visibilityState()) {
+    case WebCore::PageVisibilityStateVisible:
+        return EWK_PAGE_VISIBILITY_STATE_VISIBLE;
+    case WebCore::PageVisibilityStateHidden:
+        return EWK_PAGE_VISIBILITY_STATE_HIDDEN;
+    case WebCore::PageVisibilityStatePrerender:
+        return EWK_PAGE_VISIBILITY_STATE_PRERENDER;
+    default:
+        ASSERT_NOT_REACHED();
+    }
 #else
     DBG("PAGE_VISIBILITY_API is disabled.");
     UNUSED_PARAM(ewkView);
-    return EWK_PAGE_VISIBILITY_STATE_VISIBLE;
 #endif
+
+    return EWK_PAGE_VISIBILITY_STATE_VISIBLE;
 }
 
 SoupSession* ewk_view_soup_session_get(const Evas_Object* ewkView)

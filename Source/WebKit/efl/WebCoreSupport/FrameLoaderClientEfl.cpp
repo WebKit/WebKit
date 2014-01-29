@@ -324,7 +324,7 @@ void FrameLoaderClientEfl::dispatchDecidePolicyForNavigationAction(const Navigat
     CString firstParty = resourceRequest.firstPartyForCookies().string().utf8();
     CString httpMethod = resourceRequest.httpMethod().utf8();
     Ewk_Frame_Resource_Request request = { url.data(), firstParty.data(), httpMethod.data(), 0, m_frame, false };
-    bool ret = ewk_view_navigation_policy_decision(m_view, &request, static_cast<Ewk_Navigation_Type>(action.type()));
+    bool ret = ewk_view_navigation_policy_decision(m_view, &request, action.type());
 
     PolicyAction policy;
     if (!ret)

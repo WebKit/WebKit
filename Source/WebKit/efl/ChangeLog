@@ -1,3 +1,35 @@
+2014-01-29  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        EFL port should stop using COMPILE_ASSERT_MATCHING_ENUM macros
+        https://bugs.webkit.org/show_bug.cgi?id=127801
+
+        Reviewed by Anders Carlsson.
+
+        Instead of COMPILE_ASSERT_MATCHING_ENUMS with static_cast, this patch
+        added switch and conversion functions if needed.
+
+        * WebCoreSupport/AssertMatchingEnums.cpp: Removed.
+        * WebCoreSupport/FrameLoaderClientEfl.cpp:
+        (WebCore::FrameLoaderClientEfl::dispatchDecidePolicyForNavigationAction):
+        * ewk/ewk_contextmenu.cpp:
+        (toEwkContextMenuAction):
+        * ewk/ewk_contextmenu.h:
+        Added missing enum variables. These are required not to break the build.
+        * ewk/ewk_frame.cpp:
+        (ewk_frame_text_selection_type_get):
+        * ewk/ewk_touch_event.cpp:
+        (toPlatformTouchPointState):
+        (WebKitPlatformTouchEvent::WebKitPlatformTouchEvent):
+        * ewk/ewk_view.cpp:
+        (ewk_view_text_direction_set):
+        (ewk_view_navigation_policy_decision):
+        (toViewMode):
+        (toEwkViewMode):
+        (ewk_view_mode_set):
+        (ewk_view_mode_get):
+        (ewk_view_visibility_state_get):
+        * ewk/ewk_view_private.h:
+
 2014-01-28  Zan Dobersek  <zdobersek@igalia.com>
 
         Remove unnecessary forward declarations of MessagePortChannel, MessagePortChannelArray in DumpRenderTreeSupportEfl.h

@@ -1075,7 +1075,17 @@ Ewk_Text_Selection_Type ewk_frame_text_selection_type_get(const Evas_Object* ewk
 
     WebCore::FrameSelection& controller = smartData->frame->selection();
 
-    return static_cast<Ewk_Text_Selection_Type>(controller.selectionType());
+    switch (controller.selectionType()) {
+    case WebCore::VisibleSelection::NoSelection:
+        return EWK_TEXT_SELECTION_NONE;
+    case WebCore::VisibleSelection::CaretSelection:
+        return EWK_TEXT_SELECTION_CARET;
+    case WebCore::VisibleSelection::RangeSelection:
+        return EWK_TEXT_SELECTION_RANGE;
+    }
+    ASSERT_NOT_REACHED();
+
+    return EWK_TEXT_SELECTION_NONE;
 }
 
 /* internal methods ****************************************************/
