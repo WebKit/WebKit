@@ -2156,7 +2156,7 @@ gboolean webkit_web_view_can_go_back(WebKitWebView* webView)
 {
     g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), FALSE);
 
-    return getPage(webView)->canGoBack();
+    return getPage(webView)->backForwardList().backItem();
 }
 
 /**
@@ -2171,7 +2171,7 @@ void webkit_web_view_go_forward(WebKitWebView* webView)
 {
     g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
 
-    getPage(webView)->goForward();
+    getPage(webView)->backForwardList().forwardItem();
 }
 
 /**

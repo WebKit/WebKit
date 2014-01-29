@@ -1,3 +1,11 @@
+2014-01-28  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed GTK build fix after r162967.
+
+        * UIProcess/API/gtk/WebKitWebView.cpp:
+        (webkit_web_view_can_go_back):
+        (webkit_web_view_go_forward):
+
 2014-01-28  Tim Horton  <timothy_horton@apple.com>
 
         Crashes in ViewGestureController::wheelEventWasNotHandledByWebCore
