@@ -2101,6 +2101,9 @@ NSArray* itemKVOProperties()
     if (!m_callback)
         return NO;
 
+    if ([[[challenge protectionSpace] authenticationMethod] isEqualToString:NSURLAuthenticationMethodServerTrust])
+        return NO;
+
     RetainPtr<WebCoreAVFLoaderDelegate> strongSelf = self;
     RetainPtr<NSURLAuthenticationChallenge> strongChallenge = challenge;
     callOnMainThread([strongSelf, strongChallenge] {
