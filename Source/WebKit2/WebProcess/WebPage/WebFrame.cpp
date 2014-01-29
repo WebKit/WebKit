@@ -366,10 +366,10 @@ bool WebFrame::isFrameSet() const
 
 bool WebFrame::isMainFrame() const
 {
-    if (WebPage* p = page())
-        return p->mainWebFrame() == this;
+    if (!m_coreFrame)
+        return false;
 
-    return false;
+    return m_coreFrame->isMainFrame();
 }
 
 String WebFrame::name() const
