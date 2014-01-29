@@ -1,5 +1,5 @@
 (repaint rects
-  (rect 8 113 784 13)
+  (rect 8 113 784 102)
   (rect 0 126 800 102)
 )
 (GraphicsLayer

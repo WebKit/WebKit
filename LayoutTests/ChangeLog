@@ -1,5 +1,42 @@
 2014-01-29  Antti Koivisto  <antti@apple.com>
 
+        REGRESSION (r162947): Repaint test results are different between WK1 and WK2
+        https://bugs.webkit.org/show_bug.cgi?id=127814
+
+        Revert test results changes. We now always log raw repaint rects which are same between platforms.
+
+        * compositing/repaint/resize-repaint-expected.txt:
+        * fast/box-shadow/shadow-repaint-expected.txt:
+        * fast/css-grid-layout/grid-element-change-columns-repaint-expected.txt:
+        * fast/css-grid-layout/grid-element-change-rows-repaint-expected.txt:
+        * fast/css-grid-layout/grid-item-change-column-repaint-expected.txt:
+        * fast/css-grid-layout/grid-item-change-row-repaint-expected.txt:
+        * fast/regions/repaint/element-in-named-flow-absolute-from-fixed-expected.txt:
+        * fast/regions/repaint/element-in-named-flow-fixed-from-absolute-expected.txt:
+        * fast/regions/repaint/element-inflow-fixed-from-outflow-static-expected.txt:
+        * fast/regions/repaint/element-outflow-static-from-inflow-fixed-expected.txt:
+        * fast/regions/repaint/invalid-region-repaint-crash-expected.txt:
+        * fast/regions/repaint/repaint-element-inside-relative-region-expected.txt:
+        * fast/regions/repaint/repaint-regions-overflow-expected.txt:
+        * fast/repaint/background-shorthand-with-gradient-and-height-changes-expected.txt:
+        * fast/repaint/background-shorthand-with-gradient-and-height-changes.html:
+        * fast/repaint/horizontal-bt-overflow-child-expected.txt:
+        * fast/repaint/horizontal-bt-overflow-parent-expected.txt:
+        * fast/repaint/horizontal-bt-overflow-same-expected.txt:
+        * fast/repaint/negative-text-indent-with-overflow-hidden-expected.txt:
+        * fast/repaint/overflow-flipped-writing-mode-table-expected.txt:
+        * fast/repaint/reflection-table-layout-expected.txt:
+        * fast/repaint/transform-table-layout-expected.txt:
+        * fast/repaint/vertical-overflow-child-expected.txt:
+        * fast/repaint/vertical-overflow-parent-expected.txt:
+        * fast/repaint/vertical-overflow-same-expected.txt:
+        * platform/mac-wk2/TestExpectations:
+        * platform/mac/compositing/repaint/invalidations-on-composited-layers-expected.txt:
+        * platform/mac/fast/images/repaint-subrect-grid-expected.txt:
+        * svg/repaint/repaint-webkit-svg-shadow-container-expected.txt:
+
+2014-01-29  Antti Koivisto  <antti@apple.com>
+
         REGRESSION (r162947): css3/flexbox/multiline-justify-content.html and css3/flexbox/position-absolute-child.html are timing out
         https://bugs.webkit.org/show_bug.cgi?id=127809
 

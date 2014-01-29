@@ -627,8 +627,10 @@ void RenderView::repaintViewRectangle(const LayoutRect& repaintRect, bool immedi
         ownerBox.repaintRectangle(adjustedRect, immediate);
         return;
     }
-
     IntRect pixelSnappedRect = pixelSnappedIntRect(repaintRect);
+
+    frameView().addTrackedRepaintRect(pixelSnappedRect);
+
     if (!m_accumulatedRepaintRegion || immediate) {
         frameView().repaintContentRectangle(pixelSnappedRect, immediate);
         return;

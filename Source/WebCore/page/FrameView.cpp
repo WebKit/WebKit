@@ -2119,8 +2119,6 @@ void FrameView::repaintContentRectangle(const IntRect& r, bool immediate)
 {
     ASSERT(!frame().ownerElement());
 
-    addTrackedRepaintRect(r);
-
     if (!shouldUpdate(immediate))
         return;
 
