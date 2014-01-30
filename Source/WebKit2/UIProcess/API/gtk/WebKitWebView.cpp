@@ -1945,7 +1945,7 @@ void webkit_web_view_load_uri(WebKitWebView* webView, const gchar* uri)
     g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
     g_return_if_fail(uri);
 
-    getPage(webView)->loadURL(String::fromUTF8(uri));
+    getPage(webView)->loadRequest(String::fromUTF8(uri));
 }
 
 /**
@@ -2027,8 +2027,7 @@ void webkit_web_view_load_request(WebKitWebView* webView, WebKitURIRequest* requ
 
     ResourceRequest resourceRequest;
     webkitURIRequestGetResourceRequest(request, resourceRequest);
-    RefPtr<API::URLRequest> urlRequest = API::URLRequest::create(resourceRequest);
-    getPage(webView)->loadURLRequest(urlRequest.get());
+    getPage(webView)->loadRequest(resourceRequest);
 }
 
 /**
