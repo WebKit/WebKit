@@ -1,3 +1,21 @@
+2014-01-30  Geoffrey Garen  <ggaren@apple.com>
+
+        Part 2: REGRESSION: JavascriptCore crash during OS Installation (due to
+        Heap::m_operationInProgress ASSERT vs DelayedReleaseScope)
+        https://bugs.webkit.org/show_bug.cgi?id=127950
+
+        Reviewed by Mark Hahnenberg.
+
+        Scope the APICallbackShim to make sure that we re-acquire the lock
+        before putting the heap back into the "unsafe to allocate" state.
+        Otherwise, the heap will seem to be in the "unsafe to allocate" state
+        during any GC that happens before we re-acquire the lock.
+
+        No regression test because threads.
+
+        * heap/DelayedReleaseScope.h:
+        (JSC::DelayedReleaseScope::~DelayedReleaseScope):
+
 2014-01-30  Filip Pizlo  <fpizlo@apple.com>
 
         Update FTL StackMaps parser to stackSize change

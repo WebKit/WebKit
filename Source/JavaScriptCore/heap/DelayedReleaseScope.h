@@ -50,8 +50,10 @@ public:
         HeapOperation operationInProgress = NoOperation;
         std::swap(operationInProgress, m_markedSpace.m_heap->m_operationInProgress);
 
-        APICallbackShim callbackShim(*m_markedSpace.m_heap->vm());
-        m_delayedReleaseObjects.clear();
+        {
+            APICallbackShim callbackShim(*m_markedSpace.m_heap->vm());
+            m_delayedReleaseObjects.clear();
+        }
 
         std::swap(operationInProgress, m_markedSpace.m_heap->m_operationInProgress);
     }
