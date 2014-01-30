@@ -117,9 +117,21 @@ SOFT_LINK(CoreMedia, CMSetAttachment, void, (CMAttachmentBearerRef target, CFStr
 @end
 
 #pragma mark -
+#pragma mark AVSampleBufferDisplayLayer
+
+@interface AVSampleBufferDisplayLayer : CALayer
+- (NSInteger)status;
+- (NSError*)error;
+- (void)enqueueSampleBuffer:(CMSampleBufferRef)sampleBuffer;
+- (void)flush;
+- (BOOL)isReadyForMoreMediaData;
+- (void)requestMediaDataWhenReadyOnQueue:(dispatch_queue_t)queue usingBlock:(void (^)(void))block;
+- (void)stopRequestingMediaData;
+@end
+
+#pragma mark -
 #pragma mark AVSampleBufferAudioRenderer
 
-#if PLATFORM(IOS) || __MAC_OS_X_VERSION_MIN_REQUIRED <= 1090
 @interface AVSampleBufferAudioRenderer : NSObject
 - (NSInteger)status;
 - (NSError*)error;
@@ -129,7 +141,6 @@ SOFT_LINK(CoreMedia, CMSetAttachment, void, (CMAttachmentBearerRef target, CFStr
 - (void)requestMediaDataWhenReadyOnQueue:(dispatch_queue_t)queue usingBlock:(void (^)(void))block;
 - (void)stopRequestingMediaData;
 @end
-#endif
 
 #pragma mark -
 #pragma mark WebAVStreamDataParserListener
