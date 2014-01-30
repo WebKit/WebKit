@@ -119,6 +119,8 @@ static _UIWebViewportConfiguration standardViewportConfiguration = { { UIWebView
     _page = WebKit::toImpl([_wkView pageRef]);
 #endif
 
+    _page->setPolicyClient(_navigationState->createPolicyClient());
+
     return self;
 }
 

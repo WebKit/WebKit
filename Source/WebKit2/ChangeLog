@@ -1,3 +1,48 @@
+2014-01-30  Anders Carlsson  <andersca@apple.com>
+
+        Begin fleshing out the navigation delegate
+        https://bugs.webkit.org/show_bug.cgi?id=127939
+
+        Reviewed by Dan Bernstein.
+
+        * UIProcess/API/APIPolicyClient.h:
+        (API::PolicyClient::decidePolicyForNavigationAction):
+        Pass the listener as a RefPtr.
+
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageSetPagePolicyClient):
+        Update for API::PolicyClient changes.
+
+        * UIProcess/API/Cocoa/WKNavigationDelegate.h:
+        Add new delegate.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView initWithFrame:configuration:]):
+        Set a policy client on the page.
+
+        * UIProcess/Cocoa/NavigationState.h:
+        Add a new PolicyClient class.
+
+        * UIProcess/Cocoa/NavigationState.mm:
+        (WebKit::NavigationState::NavigationState):
+        Initialize m_navigationDelegateMethods.
+
+        (WebKit::NavigationState::navigationDelegate):
+        m_delegate was renamed to m_navigationDelegate.
+
+        (WebKit::NavigationState::setNavigationDelegate):
+        Update m_navigationDelegateMethods.webViewDecidePolicyForNavigationActionDecisionHandler.
+        
+        (WebKit::NavigationState::createPolicyClient):
+        New helper function for creating a new policy client.
+
+        (WebKit::NavigationState::PolicyClient::decidePolicyForNavigationAction):
+        Call the navigation delegate method.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::decidePolicyForNavigationAction):
+        Use std::move to hand off the listener to the client.
+
 2014-01-30  Jeremy Jones  <jeremyj@apple.com>
 
         Crash in RemoteLayerBackingStore::encode when m_frontBuffer is nullptr.

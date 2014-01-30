@@ -28,11 +28,13 @@
 
 #if WK_API_ENABLED
 
+#import "WKNavigationDelegate.h"
 #import "WKNavigationInternal.h"
 
 namespace WebKit {
 
 NavigationState::NavigationState(WKWebView *webView)
+    : m_navigationDelegateMethods()
 {
 }
 
@@ -42,12 +44,14 @@ NavigationState::~NavigationState()
 
 RetainPtr<id <WKNavigationDelegate> > NavigationState::navigationDelegate()
 {
-    return m_delegate.get();
+    return m_navigationDelegate.get();
 }
 
 void NavigationState::setNavigationDelegate(id <WKNavigationDelegate> delegate)
 {
-    m_delegate = delegate;
+    m_navigationDelegate = delegate;
+
+    m_navigationDelegateMethods.webViewDecidePolicyForNavigationActionDecisionHandler = [delegate respondsToSelector:@selector(webView:decidePolicyForNavigationAction:decisionHandler:)];
 }
 
 RetainPtr<WKNavigation> NavigationState::createLoadRequestNavigation(uint64_t navigationID, NSURLRequest *request)
@@ -61,6 +65,52 @@ RetainPtr<WKNavigation> NavigationState::createLoadRequestNavigation(uint64_t na
     m_navigations.set(navigationID, navigation);
 
     return navigation;
+}
+
+std::unique_ptr<API::PolicyClient> NavigationState::createPolicyClient()
+{
+    return std::make_unique<PolicyClient>(*this);
+}
+
+NavigationState::PolicyClient::PolicyClient(NavigationState& navigationState)
+    : m_navigationState(navigationState)
+{
+}
+
+NavigationState::PolicyClient::~PolicyClient()
+{
+}
+
+void NavigationState::PolicyClient::decidePolicyForNavigationAction(WebPageProxy*, WebFrameProxy*, const NavigationActionData&, WebFrameProxy* originatingFrame, const WebCore::ResourceRequest& originalRequest, const WebCore::ResourceRequest&, RefPtr<WebFramePolicyListenerProxy> listener, API::Object* userData)
+{
+    if (!m_navigationState.m_navigationDelegateMethods.webViewDecidePolicyForNavigationActionDecisionHandler) {
+        // FIXME: <rdar://problem/15949822> Figure out what the "default delegate behavior" should be here.
+        listener->use();
+        return;
+    }
+
+    auto navigationDelegate = m_navigationState.m_navigationDelegate.get();
+    if (!navigationDelegate)
+        return;
+
+    // FIXME: Set up the navigation action object.
+    WKNavigationAction *navigationAction = nil;
+
+    [navigationDelegate.get() webView:m_navigationState.m_webView decidePolicyForNavigationAction:navigationAction decisionHandler:[listener](WKNavigationPolicyDecision policyDecision) {
+        switch (policyDecision) {
+        case WKNavigationPolicyDecisionAllow:
+            listener->use();
+            break;
+
+        case WKNavigationPolicyDecisionCancel:
+            listener->ignore();
+            break;
+
+        case WKNavigationPolicyDecisionDownload:
+            listener->download();
+            break;
+        }
+    }];
 }
 
 } // namespace WebKit

@@ -32,6 +32,7 @@
 
 #import <wtf/HashMap.h>
 #import <wtf/RetainPtr.h>
+#import "APIPolicyClient.h"
 #import "WeakObjCPtr.h"
 
 @class WKNavigation;
@@ -45,15 +46,34 @@ public:
     explicit NavigationState(WKWebView *);
     ~NavigationState();
 
+    std::unique_ptr<API::PolicyClient> createPolicyClient();
+
     RetainPtr<id <WKNavigationDelegate> > navigationDelegate();
     void setNavigationDelegate(id <WKNavigationDelegate>);
 
     RetainPtr<WKNavigation> createLoadRequestNavigation(uint64_t navigationID, NSURLRequest *);
 
 private:
-    HashMap<uint64_t, RetainPtr<WKNavigation>> m_navigations;
+    class PolicyClient : public API::PolicyClient {
+    public:
+        explicit PolicyClient(NavigationState&);
+        ~PolicyClient();
 
-    WeakObjCPtr<id <WKNavigationDelegate> > m_delegate;
+    private:
+        // API::PolicyClient
+        virtual void decidePolicyForNavigationAction(WebPageProxy*, WebFrameProxy*, const NavigationActionData&, WebFrameProxy* originatingFrame, const WebCore::ResourceRequest& originalRequest, const WebCore::ResourceRequest&, RefPtr<WebFramePolicyListenerProxy>, API::Object* userData) override;
+
+        NavigationState& m_navigationState;
+    };
+
+    struct {
+        bool webViewDecidePolicyForNavigationActionDecisionHandler : 1;
+    } m_navigationDelegateMethods;
+
+    WKWebView *m_webView;
+    WeakObjCPtr<id <WKNavigationDelegate> > m_navigationDelegate;
+
+    HashMap<uint64_t, RetainPtr<WKNavigation>> m_navigations;
 };
 
 } // namespace WebKit

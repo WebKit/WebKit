@@ -28,7 +28,20 @@
 
 #if WK_API_ENABLED
 
+@class WKNavigationAction;
+@class WKWebView;
+
+typedef NS_ENUM(NSInteger, WKNavigationPolicyDecision) {
+    WKNavigationPolicyDecisionCancel,
+    WKNavigationPolicyDecisionAllow,
+    WKNavigationPolicyDecisionDownload
+};
+
 @protocol WKNavigationDelegate <NSObject>
+
+@optional
+
+- (void)webView:(WKWebView *)webView decidePolicyForNavigationAction:(WKNavigationAction *)navigationAction decisionHandler:(void (^)(WKNavigationPolicyDecision))decisionHandler;
 
 @end
 
