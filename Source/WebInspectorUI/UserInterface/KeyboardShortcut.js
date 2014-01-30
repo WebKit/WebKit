@@ -180,7 +180,7 @@ WebInspector.KeyboardShortcut.prototype = {
         if (this._modifiers & WebInspector.KeyboardShortcut.Modifier.Control)
             result += "\u2303";
         if (this._modifiers & WebInspector.KeyboardShortcut.Modifier.Option)
-            result += "\u2325";
+            result += InspectorFrontendHost.platform() === "mac" ? "\u2325" : "\u2387";
         if (this._modifiers & WebInspector.KeyboardShortcut.Modifier.Shift)
             result += "\u21e7";
         if (this._modifiers & WebInspector.KeyboardShortcut.Modifier.Command)
