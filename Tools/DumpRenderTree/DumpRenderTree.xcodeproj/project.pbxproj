@@ -1309,7 +1309,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = A134E5391890671C00901D06 /* DumpRenderTreeLibrary.xcconfig */;
 			buildSettings = {
-				OTHER_LDFLAGS = "";
 			};
 			name = Debug;
 		};
@@ -1317,7 +1316,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = A134E5391890671C00901D06 /* DumpRenderTreeLibrary.xcconfig */;
 			buildSettings = {
-				OTHER_LDFLAGS = "";
 			};
 			name = Release;
 		};
@@ -1325,7 +1323,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = A134E5391890671C00901D06 /* DumpRenderTreeLibrary.xcconfig */;
 			buildSettings = {
-				OTHER_LDFLAGS = "";
 			};
 			name = Production;
 		};

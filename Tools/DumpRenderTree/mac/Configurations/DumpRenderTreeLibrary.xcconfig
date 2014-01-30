@@ -28,6 +28,8 @@
 PRODUCT_NAME = DumpRenderTree;
 SKIP_INSTALL = YES;
 
+OTHER_LDFLAGS = ;
+
 EXCLUDED_SOURCE_FILE_NAMES = $(EXCLUDED_SOURCE_FILE_NAMES_$(PLATFORM_NAME));
 EXCLUDED_SOURCE_FILE_NAMES_iphoneos = AccessibilityControllerMac.mm AccessibilityUIElementMac.mm DumpRenderTreeFileDraggingSource.m PixelDumpSupportMac.mm PixelDumpSupportCG.cpp;
 EXCLUDED_SOURCE_FILE_NAMES_iphonesimulator = $(EXCLUDED_SOURCE_FILE_NAMES_iphoneos);

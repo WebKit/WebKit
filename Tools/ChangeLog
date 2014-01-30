@@ -1,5 +1,16 @@
 2014-01-30  David Farler  <dfarler@apple.com>
 
+        Move OTHER_LDFLAGS erasure to DumpRenderTreeLibrary.xcconfig.
+        https://bugs.webkit.org/show_bug.cgi?id=127935
+
+        Reviewed by Andy Estes.
+
+        * DumpRenderTree/DumpRenderTree.xcodeproj/project.pbxproj:
+        * DumpRenderTree/mac/Configurations/DumpRenderTreeLibrary.xcconfig:
+        Move OTHER_LDFLAGS erasure to the static library's xcconfig.
+
+2014-01-30  David Farler  <dfarler@apple.com>
+
         DumpRenderTree fails to build with ASAN: -fsanitize=address passed to static DRT target
         https://bugs.webkit.org/show_bug.cgi?id=127935
 
