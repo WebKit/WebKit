@@ -476,8 +476,6 @@ webkit.org/b/125632 compositing/layer-creation/fixed-position-transformed-outsid
 webkit.org/b/125633 compositing/repaint/fixed-background-scroll.html [ Failure ]
 
 # Failing after r159030
-webkit.org/b/125634 compositing/repaint/invalidations-on-composited-layers.html [ Failure ]
-
 webkit.org/b/125635 compositing/repaint/positioned-movement.html [ Failure ]
 
 webkit.org/b/125636 compositing/video/video-object-fit.html [ Failure ]

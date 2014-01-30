@@ -1,3 +1,14 @@
+2014-01-30  Krzysztof Wolanski  <k.wolanski@samsung.com>
+
+        [EFL] Update test expectations for WK1 and WK2 after r162947
+        https://bugs.webkit.org/show_bug.cgi?id=127913
+
+        Unreviewed EFL gardening.
+
+        * platform/efl-wk1/TestExpectations:
+        * platform/efl-wk2/TestExpectations:
+        * platform/efl/compositing/repaint/invalidations-on-composited-layers-expected.txt:
+
 2014-01-30  Michał Pakuła vel Rutka  <m.pakula@samsung.com>
 
         Unreviewed EFL gardening
