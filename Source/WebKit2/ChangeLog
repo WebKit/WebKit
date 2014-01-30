@@ -1,5 +1,12 @@
 2014-01-29  Anders Carlsson  <andersca@apple.com>
 
+        Fix 32-bit build.
+
+        * UIProcess/Cocoa/NavigationState.h:
+        * UIProcess/Cocoa/NavigationState.mm:
+
+2014-01-29  Anders Carlsson  <andersca@apple.com>
+
         Add a NavigationState object to keep track of the navigations for a given page
         https://bugs.webkit.org/show_bug.cgi?id=127884
 

@@ -26,6 +26,8 @@
 #import "config.h"
 #import "NavigationState.h"
 
+#if WK_API_ENABLED
+
 #import "WKNavigationInternal.h"
 
 namespace WebKit {
@@ -52,3 +54,5 @@ RetainPtr<WKNavigation> NavigationState::createLoadRequestNavigation(uint64_t na
 }
 
 } // namespace WebKit
+
+#endif

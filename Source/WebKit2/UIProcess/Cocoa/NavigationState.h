@@ -26,6 +26,10 @@
 #ifndef NavigationState_h
 #define NavigationState_h
 
+#import "WKFoundation.h"
+
+#if WK_API_ENABLED
+
 #import <wtf/HashMap.h>
 #import <wtf/RetainPtr.h>
 
@@ -46,5 +50,7 @@ private:
 };
 
 } // namespace WebKit
+
+#endif
 
 #endif // NavigationState_h
