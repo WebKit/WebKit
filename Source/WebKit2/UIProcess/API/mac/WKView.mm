@@ -2219,12 +2219,14 @@ static void createSandboxExtensionsForFileUpload(NSPasteboard *pasteboard, Sandb
     return colorSpaceData;    
 }
 
-- (void)_processDidCrash
+- (void)_processDidExit
 {
     if (_data->_layerHostingView)
         [self _setAcceleratedCompositingModeRootLayer:nil];
 
     [self _updateRemoteAccessibilityRegistration:NO];
+
+    _data->_gestureController = nullptr;
 }
 
 - (void)_pageClosed
@@ -3338,6 +3340,9 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
 
 - (void)_setCustomSwipeViews:(NSArray *)customSwipeViews
 {
+    if (!customSwipeViews.count && !_data->_gestureController)
+        return;
+
     [self _ensureGestureController];
 
     Vector<RetainPtr<NSView>> views;

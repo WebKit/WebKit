@@ -52,7 +52,7 @@ struct InteractionInformationAtPosition;
 }
 
 - (std::unique_ptr<WebKit::DrawingAreaProxy>)_createDrawingAreaProxy;
-- (void)_processDidCrash;
+- (void)_processDidExit;
 - (void)_didRelaunchProcess;
 - (void)_setAcceleratedCompositingRootLayer:(CALayer *)rootLayer;
 

@@ -281,7 +281,7 @@ using namespace WebKit;
     return std::make_unique<RemoteLayerTreeDrawingAreaProxy>(_page.get());
 }
 
-- (void)_processDidCrash
+- (void)_processDidExit
 {
     // FIXME: Implement.
 }

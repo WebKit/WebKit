@@ -241,9 +241,9 @@ ColorSpaceData PageClientImpl::colorSpace()
     return [m_wkView _colorSpace];
 }
 
-void PageClientImpl::processDidCrash()
+void PageClientImpl::processDidExit()
 {
-    [m_wkView _processDidCrash];
+    [m_wkView _processDidExit];
 }
 
 void PageClientImpl::pageClosed()

@@ -116,7 +116,7 @@ bool PageClientImpl::isViewInWindow()
     return webkitWebViewBaseIsInWindow(WEBKIT_WEB_VIEW_BASE(m_viewWidget));
 }
 
-void PageClientImpl::PageClientImpl::processDidCrash()
+void PageClientImpl::PageClientImpl::processDidExit()
 {
     notImplemented();
 }

@@ -59,7 +59,7 @@ namespace WebKit {
 
 - (std::unique_ptr<WebKit::DrawingAreaProxy>)_createDrawingAreaProxy;
 - (BOOL)_isFocused;
-- (void)_processDidCrash;
+- (void)_processDidExit;
 - (void)_pageClosed;
 - (void)_didRelaunchProcess;
 - (void)_preferencesDidChange;

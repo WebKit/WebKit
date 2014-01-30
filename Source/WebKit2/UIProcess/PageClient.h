@@ -117,7 +117,7 @@ public:
     // Return the layer hosting mode for the view.
     virtual LayerHostingMode viewLayerHostingMode() { return LayerHostingModeDefault; }
 
-    virtual void processDidCrash() = 0;
+    virtual void processDidExit() = 0;
     virtual void didRelaunchProcess() = 0;
     virtual void pageClosed() = 0;
 

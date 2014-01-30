@@ -3749,11 +3749,9 @@ void WebPageProxy::processDidCrash()
 
     resetStateAfterProcessExited();
 
+    // FIXME: Should we do this when the process exits cleanly, instead of just upon crashing?
     auto transaction = m_pageLoadState.transaction();
-
     m_pageLoadState.reset(transaction);
-
-    m_pageClient.processDidCrash();
 
     m_loaderClient->processDidCrash(this);
 }
@@ -3855,6 +3853,8 @@ void WebPageProxy::resetStateAfterProcessExited()
     }
 
     resetState();
+
+    m_pageClient.processDidExit();
 
     m_pageClient.clearAllEditCommands();
     m_pendingLearnOrIgnoreWordMessageCount = 0;

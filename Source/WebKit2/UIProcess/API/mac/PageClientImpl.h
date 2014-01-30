@@ -72,7 +72,7 @@ private:
     virtual void setAcceleratedCompositingRootLayer(CALayer *) override;
     virtual CALayer *acceleratedCompositingRootLayer() const override;
 
-    virtual void processDidCrash();
+    virtual void processDidExit();
     virtual void pageClosed();
     virtual void didRelaunchProcess();
     virtual void preferencesDidChange() override;

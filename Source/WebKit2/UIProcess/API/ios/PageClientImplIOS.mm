@@ -109,9 +109,9 @@ bool PageClientImpl::isViewInWindow()
     return [m_view window];
 }
 
-void PageClientImpl::processDidCrash()
+void PageClientImpl::processDidExit()
 {
-    [m_view _processDidCrash];
+    [m_view _processDidExit];
 }
 
 void PageClientImpl::didRelaunchProcess()
