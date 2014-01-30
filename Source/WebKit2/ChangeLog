@@ -1,3 +1,17 @@
+2014-01-30  Anders Carlsson  <andersca@apple.com>
+
+        decidePolicyForNewWindowAction should take a NavigationActionData object
+        https://bugs.webkit.org/show_bug.cgi?id=127952
+
+        Reviewed by Dan Bernstein.
+
+        * UIProcess/API/APIPolicyClient.h:
+        (API::PolicyClient::decidePolicyForNewWindowAction):
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageSetPagePolicyClient):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::decidePolicyForNewWindowAction):
+
 2014-01-27  Jeffrey Pfau  <jpfau@apple.com>
 
         Add a method for schemes to be registered as supporting cache partitioning

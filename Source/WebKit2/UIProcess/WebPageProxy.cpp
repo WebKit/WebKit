@@ -2477,7 +2477,7 @@ void WebPageProxy::decidePolicyForNewWindowAction(uint64_t frameID, const Naviga
 
     RefPtr<WebFramePolicyListenerProxy> listener = frame->setUpPolicyListenerProxy(listenerID);
 
-    m_policyClient->decidePolicyForNewWindowAction(this, frame, navigationActionData.navigationType, navigationActionData.modifiers, navigationActionData.mouseButton, request, frameName, listener.get(), userData.get());
+    m_policyClient->decidePolicyForNewWindowAction(this, frame, navigationActionData, request, frameName, std::move(listener), userData.get());
 }
 
 void WebPageProxy::decidePolicyForResponse(uint64_t frameID, const ResourceResponse& response, const ResourceRequest& request, bool canShowMIMEType, uint64_t listenerID, IPC::MessageDecoder& decoder)
