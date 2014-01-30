@@ -1913,13 +1913,15 @@ void FrameView::setFixedVisibleContentRect(const IntRect& visibleContentRect)
     }
 
     IntSize offset = scrollOffset();
+    IntPoint oldPosition = scrollPosition();
     ScrollView::setFixedVisibleContentRect(visibleContentRect);
     if (offset != scrollOffset()) {
         updateLayerPositionsAfterScrolling();
         if (frame().page()->settings().acceleratedCompositingForFixedPositionEnabled())
             updateCompositingLayersAfterScrolling();
+        IntPoint newPosition = scrollPosition();
         scrollAnimator()->setCurrentPosition(scrollPosition());
-        scrollPositionChanged();
+        scrollPositionChanged(oldPosition, newPosition);
     }
     if (visibleContentSizeDidChange) {
         // Update the scroll-bars to calculate new page-step size.
@@ -1938,18 +1940,20 @@ void FrameView::setViewportConstrainedObjectsNeedLayout()
         renderer->setNeedsLayout();
 }
 
-void FrameView::scrollPositionChangedViaPlatformWidget()
+void FrameView::scrollPositionChangedViaPlatformWidget(const IntPoint& oldPosition, const IntPoint& newPosition)
 {
     updateLayerPositionsAfterScrolling();
     updateCompositingLayersAfterScrolling();
     repaintSlowRepaintObjects();
-    scrollPositionChanged();
+    scrollPositionChanged(oldPosition, newPosition);
 }
 
-void FrameView::scrollPositionChanged()
+void FrameView::scrollPositionChanged(const IntPoint& oldPosition, const IntPoint& newPosition)
 {
     frame().eventHandler().sendScrollEvent();
     frame().eventHandler().dispatchFakeMouseMoveEventSoon();
+
+    sendWillRevealEdgeEventsIfNeeded(oldPosition, newPosition);
 
     if (RenderView* renderView = this->renderView()) {
         if (renderView->usesCompositing())
@@ -2710,6 +2714,59 @@ void FrameView::sendResizeEventIfNeeded()
 #endif
 }
 
+void FrameView::sendWillRevealEdgeEventsIfNeeded(const IntPoint& oldPosition, const IntPoint& newPosition)
+{
+    // For each edge (top, bottom, left and right), send the will reveal edge event for that direction
+    // if newPosition is at or beyond the notification point, if the scroll direction is heading in the
+    // direction of that edge point, and if oldPosition is before the notification point (which indicates
+    // that this is the first moment that we know we crossed the magic line).
+
+#if ENABLE(WILL_REVEAL_EDGE_EVENTS)
+    Document* document = frame().document();
+    if (!document)
+        return;
+
+    IntRect visibleRect = visibleContentRect();
+
+    int willRevealBottomNotificationPoint = std::max(0, contentsHeight() - 2 *  visibleRect.height());
+    int willRevealTopNotificationPoint = visibleRect.height();
+
+    // Bottom edge.
+    if (newPosition.y() >= willRevealBottomNotificationPoint && newPosition.y() > oldPosition.y()
+        && willRevealBottomNotificationPoint >= oldPosition.y()) {
+        RefPtr<Event> willRevealEvent = Event::create(eventNames().webkitwillrevealbottomEvent, false, false);
+        document->enqueueWindowEvent(willRevealEvent.release());
+    }
+
+    // Top edge.
+    if (newPosition.y() <= willRevealTopNotificationPoint && newPosition.y() < oldPosition.y()
+        && willRevealTopNotificationPoint <= oldPosition.y()) {
+        RefPtr<Event> willRevealEvent = Event::create(eventNames().webkitwillrevealtopEvent, false, false);
+        document->enqueueWindowEvent(willRevealEvent.release());
+    }
+
+    int willRevealRightNotificationPoint = std::max(0, contentsWidth() - 2 * visibleRect.width());
+    int willRevealLeftNotificationPoint = visibleRect.width();
+
+    // Right edge.
+    if (newPosition.x() >= willRevealRightNotificationPoint && newPosition.x() > oldPosition.x()
+        && willRevealRightNotificationPoint >= oldPosition.x()) {
+        RefPtr<Event> willRevealEvent = Event::create(eventNames().webkitwillrevealrightEvent, false, false);
+        document->enqueueWindowEvent(willRevealEvent.release());
+    }
+
+    // Left edge.
+    if (newPosition.x() <= willRevealLeftNotificationPoint && newPosition.x() < oldPosition.x()
+        && willRevealLeftNotificationPoint <= oldPosition.x()) {
+        RefPtr<Event> willRevealEvent = Event::create(eventNames().webkitwillrevealleftEvent, false, false);
+        document->enqueueWindowEvent(willRevealEvent.release());
+    }
+#else
+    UNUSED_PARAM(oldPosition);
+    UNUSED_PARAM(newPosition);
+#endif
+}
+
 void FrameView::willStartLiveResize()
 {
     ScrollView::willStartLiveResize();
@@ -2949,9 +3006,10 @@ bool FrameView::updatesScrollLayerPositionOnMainThread() const
 void FrameView::scrollTo(const IntSize& newOffset)
 {
     LayoutSize offset = scrollOffset();
+    IntPoint oldPosition = scrollPosition();
     ScrollView::scrollTo(newOffset);
     if (offset != scrollOffset())
-        scrollPositionChanged();
+        scrollPositionChanged(oldPosition, scrollPosition());
     frame().loader().client().didChangeScrollOffset();
 }
 
@@ -3922,10 +3980,11 @@ bool FrameView::wheelEvent(const PlatformWheelEvent& wheelEvent)
 
     if (delegatesScrolling()) {
         IntSize offset = scrollOffset();
+        IntPoint oldPosition = scrollPosition();
         IntSize newOffset = IntSize(offset.width() - wheelEvent.deltaX(), offset.height() - wheelEvent.deltaY());
         if (offset != newOffset) {
             ScrollView::scrollTo(newOffset);
-            scrollPositionChanged();
+            scrollPositionChanged(oldPosition, scrollPosition());
             frame().loader().client().didChangeScrollOffset();
         }
         return true;

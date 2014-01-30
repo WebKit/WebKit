@@ -151,6 +151,16 @@ void HTMLBodyElement::parseAttribute(const QualifiedName& name, const AtomicStri
         document().setWindowAttributeEventListener(eventNames().onlineEvent, name, value);
     else if (name == onofflineAttr)
         document().setWindowAttributeEventListener(eventNames().offlineEvent, name, value);
+#if ENABLE(WILL_REVEAL_EDGE_EVENTS)
+    else if (name == onwebkitwillrevealbottomAttr)
+        document().setWindowAttributeEventListener(eventNames().webkitwillrevealbottomEvent, name, value);
+    else if (name == onwebkitwillrevealleftAttr)
+        document().setWindowAttributeEventListener(eventNames().webkitwillrevealleftEvent, name, value);
+    else if (name == onwebkitwillrevealrightAttr)
+        document().setWindowAttributeEventListener(eventNames().webkitwillrevealrightEvent, name, value);
+    else if (name == onwebkitwillrevealtopAttr)
+        document().setWindowAttributeEventListener(eventNames().webkitwillrevealtopEvent, name, value);
+#endif
     else
         HTMLElement::parseAttribute(name, value);
 }

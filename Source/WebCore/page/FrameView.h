@@ -214,7 +214,7 @@ public:
     virtual void setFixedVisibleContentRect(const IntRect&) override;
 #endif
     virtual void setScrollPosition(const IntPoint&) override;
-    void scrollPositionChangedViaPlatformWidget();
+    void scrollPositionChangedViaPlatformWidget(const IntPoint& oldPosition, const IntPoint& newPosition);
     virtual void updateLayerPositionsAfterScrolling() override;
     virtual void updateCompositingLayersAfterScrolling() override;
     virtual bool requestScrollPositionUpdate(const IntPoint&) override;
@@ -521,6 +521,8 @@ private:
     virtual GraphicsLayer* layerForOverhangAreas() const override;
 #endif
 
+    void sendWillRevealEdgeEventsIfNeeded(const IntPoint& oldPosition, const IntPoint& newPosition);
+
     // Override scrollbar notifications to update the AXObject cache.
     virtual void didAddScrollbar(Scrollbar*, ScrollbarOrientation) override;
     virtual void willRemoveScrollbar(Scrollbar*, ScrollbarOrientation) override;
@@ -537,7 +539,7 @@ private:
     bool updateEmbeddedObjects();
     void updateEmbeddedObject(RenderEmbeddedObject&);
     void scrollToAnchor();
-    void scrollPositionChanged();
+    void scrollPositionChanged(const IntPoint& oldPosition, const IntPoint& newPosition);
 
     bool hasCustomScrollbars() const;
 

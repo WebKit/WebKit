@@ -1,3 +1,52 @@
+2014-01-30  Beth Dakin  <bdakin@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=127371
+        Explore new API that could be used to help build infinitely scrolling websites
+        -and corresponding-
+        <rdar://problem/15244768>
+
+        Reviewed by Sam Weinig.
+
+        This patch adds 4 new events called webkitwillrevealbottom, webkitwillrevealtop, 
+        webkitwillrevealleft, and webkitwillrevealright. These events will fire when the 
+        user has scrolled close to corresponding edge of the document. Right now that is 
+        defined to be one viewport away from the corresponding edge. 
+
+        FrameView::scrollPositionChanged() and 
+        FrameView::scrollPositionChangedViaPlatformWidget() now take two parameters 
+        representing the old scroll position and the new position.
+        * WebCore.exp.in:
+
+        New events.
+        * dom/Document.h:
+        * dom/Document.idl:
+        * dom/Element.h:
+        * dom/Element.idl:
+        * dom/EventNames.h:
+        * html/HTMLAttributeNames.in:
+        * html/HTMLElement.cpp:
+        (WebCore::populateEventNameForAttributeLocalNameMap):
+        * page/DOMWindow.h:
+        * page/DOMWindow.idl:
+
+        Send oldPosition and newPosition to scrollPositionChanged().
+        * page/FrameView.cpp:
+        (WebCore::FrameView::setFixedVisibleContentRect):
+        (WebCore::FrameView::scrollPositionChangedViaPlatformWidget):
+
+        After sending scroll events, also call sendWillRevealEdgeEventsIfNeeded() to send 
+        the see if we should send the new will-reveal events.
+        (WebCore::FrameView::scrollPositionChanged):
+
+        Use the old position and the new position to determine if the events should be 
+        sent.
+        (WebCore::FrameView::sendWillRevealEdgeEventsIfNeeded):
+
+        Send new parameters to scrollPositionChanged().
+        (WebCore::FrameView::scrollTo):
+        (WebCore::FrameView::wheelEvent):
+        * page/FrameView.h:
+
 2014-01-30  Szabolcs David  <davidsz@inf.u-szeged.hu>
 
         [curl] Improve realm string parsing in WWW-Authenticate headers

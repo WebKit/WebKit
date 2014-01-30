@@ -346,6 +346,12 @@ namespace WebCore {
         DEFINE_ATTRIBUTE_EVENT_LISTENER(waiting);
         DEFINE_ATTRIBUTE_EVENT_LISTENER(webkitbeginfullscreen);
         DEFINE_ATTRIBUTE_EVENT_LISTENER(webkitendfullscreen);
+#if ENABLE(WILL_REVEAL_EDGE_EVENTS)
+        DEFINE_ATTRIBUTE_EVENT_LISTENER(webkitwillrevealbottom);
+        DEFINE_ATTRIBUTE_EVENT_LISTENER(webkitwillrevealleft);
+        DEFINE_ATTRIBUTE_EVENT_LISTENER(webkitwillrevealright);
+        DEFINE_ATTRIBUTE_EVENT_LISTENER(webkitwillrevealtop);
+#endif
         DEFINE_ATTRIBUTE_EVENT_LISTENER(wheel);
 
         DEFINE_MAPPED_ATTRIBUTE_EVENT_LISTENER(webkitanimationstart, webkitAnimationStart);

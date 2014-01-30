@@ -1,0 +1,57 @@
+<html>
+<script src="../../resources/js-test-pre.js"></script>
+
+<script type="text/javascript">
+description('This tests that onwebkitwillrevealbottom, onwebkitwillrevealtop, onwebkitwillrevealleft, and onwebkitwillrevealright work as window attributes.');
+
+var triggeredWillRevealBottom = false;
+var triggeredWillRevealTop = false;
+var triggeredWillRevealRight = false;
+var triggeredWillRevealLeft = false;
+
+window.onwebkitwillrevealbottom =
+    function() {
+        triggeredWillRevealBottom = true;
+        window.scrollTo(0,0);
+        checkComplete();
+    }
+
+window.onwebkitwillrevealtop =
+    function() {
+        triggeredWillRevealTop = true;
+        window.scrollTo(2000, 0);
+        checkComplete();
+    }
+
+window.onwebkitwillrevealright =
+    function() {
+        triggeredWillRevealRight = true;
+        window.scrollTo(0, 0);
+        checkComplete();
+    }
+
+window.onwebkitwillrevealleft =
+    function() {
+        triggeredWillRevealLeft = true;
+        checkComplete();
+    }
+
+function checkComplete()
+{
+    if (triggeredWillRevealBottom && triggeredWillRevealTop && triggeredWillRevealRight && triggeredWillRevealLeft) {
+        debug('All edges were revealed!');
+        finishJSTest();
+    }
+}
+
+var jsTestIsAsync = true;
+
+function runTest() {
+    window.scrollTo(0, 2000);
+}
+</script>
+
+<body style="height:2000px; width:2000px;" onload="runTest()">
+    <script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

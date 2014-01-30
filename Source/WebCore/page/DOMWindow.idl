@@ -294,6 +294,11 @@
 
     [Conditional=PROXIMITY_EVENTS] attribute EventListener onwebkitdeviceproximity;
 
+    [Conditional=WILL_REVEAL_EDGE_EVENTS] attribute EventListener onwebkitwillrevealbottom;
+    [Conditional=WILL_REVEAL_EDGE_EVENTS] attribute EventListener onwebkitwillrevealleft;
+    [Conditional=WILL_REVEAL_EDGE_EVENTS] attribute EventListener onwebkitwillrevealright;
+    [Conditional=WILL_REVEAL_EDGE_EVENTS] attribute EventListener onwebkitwillrevealtop;
+
     // EventTarget interface
     [Custom] void addEventListener(DOMString type,
                                   EventListener listener,

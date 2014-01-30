@@ -290,6 +290,12 @@ static NEVER_INLINE void populateEventNameForAttributeLocalNameMap(HashMap<Atomi
         &ontouchstartAttr,
         &onvolumechangeAttr,
         &onwaitingAttr,
+#if ENABLE(WILL_REVEAL_EDGE_EVENTS)
+        &onwebkitwillrevealbottomAttr,
+        &onwebkitwillrevealleftAttr,
+        &onwebkitwillrevealrightAttr,
+        &onwebkitwillrevealtopAttr,
+#endif
         &onwheelAttr,
 #if ENABLE(IOS_GESTURE_EVENTS)
         &ongesturechangeAttr,

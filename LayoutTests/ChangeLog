@@ -1,3 +1,19 @@
+2014-01-30  Beth Dakin  <bdakin@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=127371
+        Explore new API that could be used to help build infinitely scrolling websites
+        -and corresponding-
+        <rdar://problem/15244768>
+
+        Reviewed by Sam Weinig.
+
+        * fast/events/will-reveal-edges-body-attributes-expected.txt: Added.
+        * fast/events/will-reveal-edges-body-attributes.html: Added.
+        * fast/events/will-reveal-edges-event-listeners-expected.txt: Added.
+        * fast/events/will-reveal-edges-event-listeners.html: Added.
+        * fast/events/will-reveal-edges-window-attributes-expected.txt: Added.
+        * fast/events/will-reveal-edges-window-attributes.html: Added.
+
 2014-01-30  Krzysztof Wolanski  <k.wolanski@samsung.com>
 
         [EFL] Update test expectations for WK1 and WK2 after r162947

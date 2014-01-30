@@ -1,0 +1,10 @@
+This tests that onwebkitwillrevealbottom, onwebkitwillrevealtop, onwebkitwillrevealleft, and onwebkitwillrevealright work as body attributes
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+All edges were revealed!
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

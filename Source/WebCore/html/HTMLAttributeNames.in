@@ -269,6 +269,10 @@ onwebkitsourceclose
 onwebkitsourceended
 onwebkitsourceopen
 onwebkittransitionend
+onwebkitwillrevealbottom
+onwebkitwillrevealleft
+onwebkitwillrevealright
+onwebkitwillrevealtop
 open
 optimum
 pattern

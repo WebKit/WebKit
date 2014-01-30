@@ -120,6 +120,12 @@ namespace WebCore {
     macro(upgradeneeded) \
     macro(versionchange) \
     macro(visibilitychange) \
+    /* ENABLE(WILL_REVEAL_EDGE_EVENT) */ \
+    macro(webkitwillrevealbottom) \
+    macro(webkitwillrevealleft) \
+    macro(webkitwillrevealright) \
+    macro(webkitwillrevealtop) \
+    /* End of ENABLE(WILL_REVEAL_EDGE_EVENT) */ \
     macro(wheel) \
     macro(write) \
     macro(writeend) \
