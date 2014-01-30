@@ -228,6 +228,9 @@
 (allow file* (subpath (param "DARWIN_USER_CACHE_DIR")))
 (allow file* (subpath (param "NSURL_CACHE_DIR")))
 
+;; Allow the OpenGL Profiler to attach.
+(if (defined? 'mach-register)
+    (allow mach-register (global-name-regex #"^_oglprof_attach_<[0-9]+>$")))
 
 ;; Networking
 (if (defined? 'system-network)
