@@ -114,6 +114,14 @@ SQLiteIDBCursor* SQLiteIDBTransaction::openCursor(int64_t objectStoreID, int64_t
     return addResult.iterator->value.get();
 }
 
+void SQLiteIDBTransaction::closeCursor(SQLiteIDBCursor& cursor)
+{
+    ASSERT(m_cursors.contains(cursor.identifier()));
+
+    m_backingStore.unregisterCursor(&cursor);
+    m_cursors.remove(cursor.identifier());
+}
+
 void SQLiteIDBTransaction::clearCursors()
 {
     // Iterate over the keys instead of each key/value pair because std::unique_ptr<> can't be iterated over directly.

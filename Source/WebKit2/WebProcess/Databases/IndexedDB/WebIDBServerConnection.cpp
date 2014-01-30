@@ -501,7 +501,7 @@ void WebIDBServerConnection::count(IDBTransactionBackend& transaction, const Cou
 
 void WebIDBServerConnection::didCount(uint64_t requestID, int64_t count, uint32_t errorCode, const String& errorMessage)
 {
-    LOG(IDB, "WebProcess didCount request ID %llu (error - %s)", requestID, errorMessage.utf8().data());
+    LOG(IDB, "WebProcess didCount %lli request ID %llu (error - %s)", count, requestID, errorMessage.utf8().data());
 
     RefPtr<AsyncRequest> serverRequest = m_serverRequests.take(requestID);
 

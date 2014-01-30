@@ -1,3 +1,31 @@
+2014-01-30  Brady Eidson  <beidson@apple.com>
+
+        IDB: Implement IDBObjectStore.count()
+        https://bugs.webkit.org/show_bug.cgi?id=127888
+
+        Reviewed by Tim Horton.
+
+        Now count() actually works.
+
+        Forward the count() request to the backing store”
+        * DatabaseProcess/IndexedDB/UniqueIDBDatabase.cpp:
+        (WebKit::UniqueIDBDatabase::countInBackingStore):
+
+        Using a cursor, get a count:
+        * DatabaseProcess/IndexedDB/UniqueIDBDatabaseBackingStore.h:
+        * DatabaseProcess/IndexedDB/sqlite/UniqueIDBDatabaseBackingStoreSQLite.cpp:
+        (WebKit::UniqueIDBDatabaseBackingStoreSQLite::count):
+        * DatabaseProcess/IndexedDB/sqlite/UniqueIDBDatabaseBackingStoreSQLite.h:
+
+        Give a direct accessor to allow the backing store to close a cursor it opened
+        for its own use:
+        * DatabaseProcess/IndexedDB/sqlite/SQLiteIDBTransaction.cpp:
+        (WebKit::SQLiteIDBTransaction::closeCursor):
+        * DatabaseProcess/IndexedDB/sqlite/SQLiteIDBTransaction.h:
+
+        * WebProcess/Databases/IndexedDB/WebIDBServerConnection.cpp:
+        (WebKit::WebIDBServerConnection::didCount): Update the logging to show the count.
+
 2014-01-30  Anders Carlsson  <andersca@apple.com>
 
         Implement NavigationState::PolicyClient::decidePolicyForNewWindowAction

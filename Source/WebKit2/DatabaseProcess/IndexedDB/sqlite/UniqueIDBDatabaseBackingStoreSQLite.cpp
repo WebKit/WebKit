@@ -798,6 +798,36 @@ bool UniqueIDBDatabaseBackingStoreSQLite::getKeyRangeRecordFromObjectStore(const
     return true;
 }
 
+bool UniqueIDBDatabaseBackingStoreSQLite::count(const IDBIdentifier& transactionIdentifier, int64_t objectStoreID, int64_t indexID, const IDBKeyRangeData& keyRangeData, int64_t& count)
+{
+    ASSERT(!isMainThread());
+    ASSERT(m_sqliteDB);
+    ASSERT(m_sqliteDB->isOpen());
+
+    SQLiteIDBTransaction* transaction = m_transactions.get(transactionIdentifier);
+    if (!transaction || !transaction->inProgress()) {
+        LOG_ERROR("Attempt to get count from database without an established, in-progress transaction");
+        return false;
+    }
+
+    SQLiteIDBCursor* cursor = transaction->openCursor(objectStoreID, indexID, IndexedDB::CursorDirection::Next, IndexedDB::CursorType::KeyOnly, IDBDatabaseBackend::NormalTask, keyRangeData);
+
+    if (!cursor) {
+        LOG_ERROR("Cannot open cursor to get count in database");
+        return false;
+    }
+
+    m_cursors.set(cursor->identifier(), cursor);
+
+    count = 0;
+    while (cursor->advance(1))
+        ++count;
+
+    transaction->closeCursor(*cursor);
+
+    return true;
+}
+
 bool UniqueIDBDatabaseBackingStoreSQLite::openCursor(const IDBIdentifier& transactionIdentifier, int64_t objectStoreID, int64_t indexID, IndexedDB::CursorDirection cursorDirection, IndexedDB::CursorType cursorType, IDBDatabaseBackend::TaskType taskType, const IDBKeyRangeData& keyRange, int64_t& cursorID)
 {
     ASSERT(!isMainThread());
