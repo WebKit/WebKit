@@ -1,3 +1,20 @@
+2014-01-30  Brady Eidson  <beidson@apple.com>
+
+        IDB: ObjectStore cursor advance() support
+        <rdar://problem/15779645> and https://bugs.webkit.org/show_bug.cgi?id=127866
+
+        Reviewed by Sam Weinig.
+
+        Add IDBKeyData sorting for database collation:
+        * Modules/indexeddb/IDBKeyData.cpp:
+        (WebCore::IDBKeyData::compare):
+        * Modules/indexeddb/IDBKeyData.h:
+
+        * WebCore.exp.in:
+
+        * platform/sql/SQLiteTransaction.h:
+        (WebCore::SQLiteTransaction::database):
+
 2014-01-30  David Kilzer  <ddkilzer@apple.com>
 
         De-virtual-ize CachedResource::isImage()

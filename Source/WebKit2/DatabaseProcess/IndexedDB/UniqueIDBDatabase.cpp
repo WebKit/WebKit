@@ -36,7 +36,6 @@
 #include "UniqueIDBDatabaseBackingStoreSQLite.h"
 #include "WebCrossThreadCopier.h"
 #include <WebCore/FileSystem.h>
-#include <WebCore/IDBDatabaseBackend.h>
 #include <WebCore/IDBDatabaseMetadata.h>
 #include <WebCore/IDBGetResult.h>
 #include <WebCore/IDBKeyData.h>
@@ -877,11 +876,22 @@ void UniqueIDBDatabase::didGetRecordFromBackingStore(uint64_t requestID, const I
     request->completeRequest(result, errorCode, errorMessage);
 }
 
-void UniqueIDBDatabase::openCursorInBackingStore(uint64_t requestID, const IDBIdentifier& transactionIdentifier, int64_t objectStoreID, int64_t indexID, IndexedDB::CursorDirection, IndexedDB::CursorType, IDBDatabaseBackend::TaskType, const IDBKeyRangeData&)
+void UniqueIDBDatabase::openCursorInBackingStore(uint64_t requestID, const IDBIdentifier& transactionIdentifier, int64_t objectStoreID, int64_t indexID, IndexedDB::CursorDirection cursorDirection, IndexedDB::CursorType cursorType, IDBDatabaseBackend::TaskType taskType, const IDBKeyRangeData& keyRange)
 {
-    // FIXME: Implement
+    ASSERT(!isMainThread());
+    ASSERT(m_backingStore);
 
-    postMainThreadTask(createAsyncTask(*this, &UniqueIDBDatabase::didOpenCursorInBackingStore, requestID, 0, IDBDatabaseException::UnknownError, ASCIILiteral("advancing cursors in backing store not supported yet")));
+    int64_t cursorID = 0;
+    int32_t errorCode = 0;
+    String errorMessage;
+    bool success = m_backingStore->openCursor(transactionIdentifier, objectStoreID, indexID, cursorDirection, cursorType, taskType, keyRange, cursorID);
+
+    if (!success) {
+        errorCode = IDBDatabaseException::UnknownError;
+        errorMessage = ASCIILiteral("Unknown error opening cursor in backing store");
+    }
+
+    postMainThreadTask(createAsyncTask(*this, &UniqueIDBDatabase::didOpenCursorInBackingStore, requestID, cursorID, errorCode, errorMessage));
 }
 
 void UniqueIDBDatabase::didOpenCursorInBackingStore(uint64_t requestID, int64_t cursorID, uint32_t errorCode, const String& errorMessage)
@@ -894,9 +904,19 @@ void UniqueIDBDatabase::didOpenCursorInBackingStore(uint64_t requestID, int64_t 
 
 void UniqueIDBDatabase::advanceCursorInBackingStore(uint64_t requestID, const IDBIdentifier& cursorIdentifier, uint64_t count)
 {
-    // FIXME: Implement
+    IDBKeyData key;
+    IDBKeyData primaryKey;
+    Vector<char> value;
+    int32_t errorCode = 0;
+    String errorMessage;
+    bool success = m_backingStore->advanceCursor(cursorIdentifier, count, key, primaryKey, value);
 
-    postMainThreadTask(createAsyncTask(*this, &UniqueIDBDatabase::didAdvanceCursorInBackingStore, requestID, IDBKeyData(), IDBKeyData(), Vector<char>(), IDBDatabaseException::UnknownError, ASCIILiteral("advancing cursors in backing store not supported yet")));
+    if (!success) {
+        errorCode = IDBDatabaseException::UnknownError;
+        errorMessage = ASCIILiteral("Unknown error advancing cursor in backing store");
+    }
+
+    postMainThreadTask(createAsyncTask(*this, &UniqueIDBDatabase::didAdvanceCursorInBackingStore, requestID, key, primaryKey, value, errorCode, errorMessage));
 }
 
 void UniqueIDBDatabase::didAdvanceCursorInBackingStore(uint64_t requestID, const IDBKeyData& key, const IDBKeyData& primaryKey, const Vector<char>& value, uint32_t errorCode, const String& errorMessage)
@@ -907,11 +927,21 @@ void UniqueIDBDatabase::didAdvanceCursorInBackingStore(uint64_t requestID, const
     request->completeRequest(key, primaryKey, SharedBuffer::create(value.data(), value.size()), errorCode, errorMessage);
 }
 
-void UniqueIDBDatabase::iterateCursorInBackingStore(uint64_t requestID, const IDBIdentifier& cursorIdentifier, const IDBKeyData&)
+void UniqueIDBDatabase::iterateCursorInBackingStore(uint64_t requestID, const IDBIdentifier& cursorIdentifier, const IDBKeyData& iterateKey)
 {
-    // FIXME: Implement
+    IDBKeyData key;
+    IDBKeyData primaryKey;
+    Vector<char> value;
+    int32_t errorCode = 0;
+    String errorMessage;
+    bool success = m_backingStore->iterateCursor(cursorIdentifier, iterateKey, key, primaryKey, value);
 
-    postMainThreadTask(createAsyncTask(*this, &UniqueIDBDatabase::didIterateCursorInBackingStore, requestID, IDBKeyData(), IDBKeyData(), Vector<char>(), IDBDatabaseException::UnknownError, ASCIILiteral("iterating cursors in backing store not supported yet")));
+    if (!success) {
+        errorCode = IDBDatabaseException::UnknownError;
+        errorMessage = ASCIILiteral("Unknown error iterating cursor in backing store");
+    }
+
+    postMainThreadTask(createAsyncTask(*this, &UniqueIDBDatabase::didIterateCursorInBackingStore, requestID, key, primaryKey, value, errorCode, errorMessage));
 }
 
 void UniqueIDBDatabase::didIterateCursorInBackingStore(uint64_t requestID, const IDBKeyData& key, const IDBKeyData& primaryKey, const Vector<char>& value, uint32_t errorCode, const String& errorMessage)

@@ -1,3 +1,65 @@
+2014-01-30  Brady Eidson  <beidson@apple.com>
+
+        IDB: ObjectStore cursor advance() support
+        <rdar://problem/15779645> and https://bugs.webkit.org/show_bug.cgi?id=127866
+
+        Reviewed by Sam Weinig.
+
+        Plumb calls through to the backing store:
+        * DatabaseProcess/IndexedDB/UniqueIDBDatabase.cpp:
+        (WebKit::UniqueIDBDatabase::openCursorInBackingStore):
+        (WebKit::UniqueIDBDatabase::advanceCursorInBackingStore):
+        (WebKit::UniqueIDBDatabase::iterateCursorInBackingStore):
+
+        * DatabaseProcess/IndexedDB/UniqueIDBDatabaseBackingStore.h:
+        * DatabaseProcess/IndexedDB/sqlite/UniqueIDBDatabaseBackingStoreSQLite.cpp:
+        (WebKit::UniqueIDBDatabaseBackingStoreSQLite::createAndPopulateInitialMetadata): Update schema
+          for Records table.
+        (WebKit::UniqueIDBDatabaseBackingStoreSQLite::getOrEstablishMetadata):
+        (WebKit::UniqueIDBDatabaseBackingStoreSQLite::establishTransaction):
+        (WebKit::UniqueIDBDatabaseBackingStoreSQLite::resetTransaction):
+        (WebKit::UniqueIDBDatabaseBackingStoreSQLite::putRecord):
+        (WebKit::UniqueIDBDatabaseBackingStoreSQLite::openCursor): Create a SQLiteIDBCursor object.
+        (WebKit::UniqueIDBDatabaseBackingStoreSQLite::advanceCursor): Call through to that object.
+        (WebKit::UniqueIDBDatabaseBackingStoreSQLite::iterateCursor): Ditto.
+        (WebKit::UniqueIDBDatabaseBackingStoreSQLite::idbKeyCollate): Renamed for clarity.
+        (WebKit::UniqueIDBDatabaseBackingStoreSQLite::unregisterCursor): Cleanup open cursors.
+        * DatabaseProcess/IndexedDB/sqlite/UniqueIDBDatabaseBackingStoreSQLite.h:
+
+        * DatabaseProcess/IndexedDB/sqlite/SQLiteIDBCursor.cpp: Added.
+        (WebKit::SQLiteIDBCursor::maybeCreate):
+        (WebKit::SQLiteIDBCursor::SQLiteIDBCursor):
+        (WebKit::SQLiteIDBCursor::establishStatement):
+        (WebKit::SQLiteIDBCursor::createIndexCursorStatement): Stubbed for now.
+        (WebKit::SQLiteIDBCursor::createObjectStoreCursorStatement): Create the appropriate query for
+          the passed in IDBKeyRange.
+        (WebKit::SQLiteIDBCursor::advance): Step through that query.
+        (WebKit::SQLiteIDBCursor::iterate): Stubbed for now.
+        * DatabaseProcess/IndexedDB/sqlite/SQLiteIDBCursor.h: Added.
+        (WebKit::SQLiteIDBCursor::identifier):
+        (WebKit::SQLiteIDBCursor::transaction):
+        (WebKit::SQLiteIDBCursor::currentKey):
+        (WebKit::SQLiteIDBCursor::currentPrimaryKey):
+        (WebKit::SQLiteIDBCursor::currentValue):
+
+        Add infrastructure for a SQLiteIDBTransaction to keep track of (and clean up) its open cursors:
+        * DatabaseProcess/IndexedDB/sqlite/SQLiteIDBTransaction.cpp:
+        (WebKit::SQLiteIDBTransaction::SQLiteIDBTransaction):
+        (WebKit::SQLiteIDBTransaction::~SQLiteIDBTransaction):
+        (WebKit::SQLiteIDBTransaction::reset):
+        (WebKit::SQLiteIDBTransaction::openCursor):
+        (WebKit::SQLiteIDBTransaction::clearCursors):
+        * DatabaseProcess/IndexedDB/sqlite/SQLiteIDBTransaction.h:
+        (WebKit::SQLiteIDBTransaction::create):
+        (WebKit::SQLiteIDBTransaction::sqliteTransaction):
+
+        Add accessors for the two fields:
+        * DatabaseProcess/IndexedDB/IDBIdentifier.h:
+        (WebKit::IDBIdentifier::connection):
+        (WebKit::IDBIdentifier::id):
+
+        * WebKit2.xcodeproj/project.pbxproj:
+
 2014-01-30  Anders Carlsson  <andersca@apple.com>
 
         Implement policy response delegate handling

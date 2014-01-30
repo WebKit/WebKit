@@ -605,6 +605,8 @@
 		51032F19180F73BB00961BB7 /* WebToDatabaseProcessConnection.h in Headers */ = {isa = PBXBuildFile; fileRef = 51032F17180F73BB00961BB7 /* WebToDatabaseProcessConnection.h */; };
 		51032F1D180F791700961BB7 /* DatabaseToWebProcessConnectionMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51032F1B180F791700961BB7 /* DatabaseToWebProcessConnectionMessageReceiver.cpp */; };
 		51032F1E180F791700961BB7 /* DatabaseToWebProcessConnectionMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 51032F1C180F791700961BB7 /* DatabaseToWebProcessConnectionMessages.h */; };
+		51064D35189781C4004B2FEB /* SQLiteIDBCursor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51064D33189781C4004B2FEB /* SQLiteIDBCursor.cpp */; };
+		51064D36189781C4004B2FEB /* SQLiteIDBCursor.h in Headers */ = {isa = PBXBuildFile; fileRef = 51064D34189781C4004B2FEB /* SQLiteIDBCursor.h */; };
 		510AFFB916542048001BA05E /* WebResourceLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 510AFFB716542048001BA05E /* WebResourceLoader.cpp */; };
 		510AFFBA16542048001BA05E /* WebResourceLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = 510AFFB816542048001BA05E /* WebResourceLoader.h */; };
 		510CC8491613C85C00D03ED3 /* NetworkProcess.app in Copy Files */ = {isa = PBXBuildFile; fileRef = 510CC80E1613C79900D03ED3 /* NetworkProcess.app */; };
@@ -2285,6 +2287,8 @@
 		5105B0D4162F7A7A00E27709 /* NetworkProcessConnection.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = NetworkProcessConnection.cpp; path = Network/NetworkProcessConnection.cpp; sourceTree = "<group>"; };
 		5105B0D5162F7A7A00E27709 /* NetworkProcessConnection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NetworkProcessConnection.h; path = Network/NetworkProcessConnection.h; sourceTree = "<group>"; };
 		5105B0F31630872E00E27709 /* NetworkProcessProxy.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = NetworkProcessProxy.messages.in; sourceTree = "<group>"; };
+		51064D33189781C4004B2FEB /* SQLiteIDBCursor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SQLiteIDBCursor.cpp; sourceTree = "<group>"; };
+		51064D34189781C4004B2FEB /* SQLiteIDBCursor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SQLiteIDBCursor.h; sourceTree = "<group>"; };
 		510AFFB716542048001BA05E /* WebResourceLoader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WebResourceLoader.cpp; path = Network/WebResourceLoader.cpp; sourceTree = "<group>"; };
 		510AFFB816542048001BA05E /* WebResourceLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebResourceLoader.h; path = Network/WebResourceLoader.h; sourceTree = "<group>"; };
 		510AFFCE16542CBD001BA05E /* WebResourceLoader.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; name = WebResourceLoader.messages.in; path = Network/WebResourceLoader.messages.in; sourceTree = "<group>"; };
@@ -4484,6 +4488,8 @@
 		51654EF0184EF241007DC837 /* sqlite */ = {
 			isa = PBXGroup;
 			children = (
+				51064D33189781C4004B2FEB /* SQLiteIDBCursor.cpp */,
+				51064D34189781C4004B2FEB /* SQLiteIDBCursor.h */,
 				511D8200185BC217001AED56 /* SQLiteIDBTransaction.cpp */,
 				511D81FD185BBDEE001AED56 /* SQLiteIDBTransaction.h */,
 				51654EFB184EF33F007DC837 /* UniqueIDBDatabaseBackingStoreSQLite.cpp */,
@@ -6469,6 +6475,7 @@
 				51654F00184EF34A007DC837 /* UniqueIDBDatabaseBackingStore.h in Headers */,
 				BC032D7B10F4378D0058C15A /* WebDragClient.h in Headers */,
 				BCA0EF9F12332642007D3CFB /* WebEditCommandProxy.h in Headers */,
+				51064D36189781C4004B2FEB /* SQLiteIDBCursor.h in Headers */,
 				BC032D7D10F4378D0058C15A /* WebEditorClient.h in Headers */,
 				0F5947A8187B517600437857 /* RemoteScrollingCoordinatorMessages.h in Headers */,
 				516A4A5D120A2CCD00C05B7F /* APIError.h in Headers */,
@@ -7886,6 +7893,7 @@
 				BC1BE1E112D54A410004A228 /* WebGeolocationClient.cpp in Sources */,
 				BC0E5FE612D697160012A72A /* WebGeolocationManager.cpp in Sources */,
 				BC0E606112D6BA910012A72A /* WebGeolocationManagerMessageReceiver.cpp in Sources */,
+				51064D35189781C4004B2FEB /* SQLiteIDBCursor.cpp in Sources */,
 				BC54CACC12D64291005C67B0 /* WebGeolocationManagerProxy.cpp in Sources */,
 				BC0E618212D6CB1D0012A72A /* WebGeolocationManagerProxyMessageReceiver.cpp in Sources */,
 				BC0E607412D6BC200012A72A /* WebGeolocationPosition.cpp in Sources */,

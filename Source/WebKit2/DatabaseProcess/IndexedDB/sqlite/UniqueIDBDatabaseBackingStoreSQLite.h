@@ -41,6 +41,7 @@ struct IDBDatabaseMetadata;
 
 namespace WebKit {
 
+class SQLiteIDBCursor;
 class SQLiteIDBTransaction;
 
 class UniqueIDBDatabaseBackingStoreSQLite final : public UniqueIDBDatabaseBackingStore {
@@ -76,6 +77,12 @@ public:
     virtual bool getKeyRecordFromObjectStore(const IDBIdentifier& transactionIdentifier, int64_t objectStoreID, const WebCore::IDBKey&, RefPtr<WebCore::SharedBuffer>& result) override;
     virtual bool getKeyRangeRecordFromObjectStore(const IDBIdentifier& transactionIdentifier, int64_t objectStoreID, const WebCore::IDBKeyRange&, RefPtr<WebCore::SharedBuffer>& result, RefPtr<WebCore::IDBKey>& resultKey) override;
 
+    virtual bool openCursor(const IDBIdentifier& transactionIdentifier, int64_t objectStoreID, int64_t indexID, WebCore::IndexedDB::CursorDirection, WebCore::IndexedDB::CursorType, WebCore::IDBDatabaseBackend::TaskType, const WebCore::IDBKeyRangeData&, int64_t& cursorID) override;
+    virtual bool advanceCursor(const IDBIdentifier& cursorIdentifier, uint64_t count, WebCore::IDBKeyData&, WebCore::IDBKeyData&, Vector<char>&) override;
+    virtual bool iterateCursor(const IDBIdentifier& cursorIdentifier, const WebCore::IDBKeyData&, WebCore::IDBKeyData&, WebCore::IDBKeyData&, Vector<char>&) override;
+
+    void unregisterCursor(SQLiteIDBCursor*);
+
 private:
     UniqueIDBDatabaseBackingStoreSQLite(const UniqueIDBDatabaseIdentifier&, const String& databaseDirectory);
 
@@ -83,7 +90,7 @@ private:
     std::unique_ptr<WebCore::IDBDatabaseMetadata> extractExistingMetadata();
     std::unique_ptr<WebCore::IDBDatabaseMetadata> createAndPopulateInitialMetadata();
 
-    int collate(int aLength, const void* a, int bLength, const void* b);
+    int idbKeyCollate(int aLength, const void* a, int bLength, const void* b);
 
     UniqueIDBDatabaseIdentifier m_identifier;
     String m_absoluteDatabaseDirectory;
@@ -91,6 +98,7 @@ private:
     std::unique_ptr<WebCore::SQLiteDatabase> m_sqliteDB;
 
     HashMap<IDBIdentifier, std::unique_ptr<SQLiteIDBTransaction>> m_transactions;
+    HashMap<IDBIdentifier, SQLiteIDBCursor*> m_cursors;
 };
 
 } // namespace WebKit

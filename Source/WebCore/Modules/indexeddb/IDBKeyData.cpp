@@ -200,6 +200,52 @@ bool IDBKeyData::decode(KeyedDecoder& decoder, IDBKeyData& result)
     return decoder.decodeObjects("array", result.arrayValue, arrayFunction);
 }
 
+int IDBKeyData::compare(const IDBKeyData& other)
+{
+    if (type == IDBKey::InvalidType) {
+        if (other.type != IDBKey::InvalidType)
+            return -1;
+        if (other.type == IDBKey::InvalidType)
+            return 0;
+    } else if (other.type == IDBKey::InvalidType)
+        return 1;
+
+    // The IDBKey::Type enum is in reverse sort order.
+    if (type != other.type)
+        return type < other.type ? 1 : -1;
+
+    // The types are the same, so handle actual value comparison.
+    switch (type) {
+    case IDBKey::InvalidType:
+        // InvalidType should have been fully handled above
+        ASSERT_NOT_REACHED();
+        return 0;
+    case IDBKey::ArrayType:
+        for (size_t i = 0; i < arrayValue.size() && i < other.arrayValue.size(); ++i) {
+            if (int result = arrayValue[i].compare(other.arrayValue[i]))
+                return result;
+        }
+        if (arrayValue.size() < other.arrayValue.size())
+            return -1;
+        if (arrayValue.size() > other.arrayValue.size())
+            return 1;
+        return 0;
+    case IDBKey::StringType:
+        return codePointCompare(stringValue, other.stringValue);
+    case IDBKey::DateType:
+    case IDBKey::NumberType:
+        if (numberValue == other.numberValue)
+            return 0;
+        return numberValue > other.numberValue ? 1 : -1;
+    case IDBKey::MinType:
+        ASSERT_NOT_REACHED();
+        return 0;
+    }
+
+    ASSERT_NOT_REACHED();
+    return 0;
+}
+
 }
 
 #endif // ENABLE(INDEXED_DATABASE)

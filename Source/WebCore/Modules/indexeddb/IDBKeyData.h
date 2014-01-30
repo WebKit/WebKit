@@ -52,6 +52,12 @@ struct IDBKeyData {
     void encode(KeyedEncoder&) const;
     static bool decode(KeyedDecoder&, IDBKeyData&);
 
+    // compare() has the same semantics as strcmp().
+    //   - Returns negative if this IDBKeyData is less than other.
+    //   - Returns positive if this IDBKeyData is greater than other.
+    //   - Returns zero if this IDBKeyData is equal to other.
+    int compare(const IDBKeyData& other);
+
     IDBKey::Type type;
     Vector<IDBKeyData> arrayValue;
     String stringValue;

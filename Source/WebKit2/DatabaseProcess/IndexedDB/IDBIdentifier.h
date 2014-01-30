@@ -81,6 +81,14 @@ public:
         return !m_connection && m_identifier == -1;
     }
 
+    DatabaseProcessIDBConnection& connection() const
+    {
+        ASSERT(m_connection);
+        return *m_connection;
+    }
+
+    int64_t id() const { return m_identifier; }
+
 private:
     // If any members are added that cannot be safely copied across threads, isolatedCopy() must be updated.
     DatabaseProcessIDBConnection* m_connection;

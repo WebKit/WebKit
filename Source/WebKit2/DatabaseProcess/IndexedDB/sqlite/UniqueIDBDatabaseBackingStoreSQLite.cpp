@@ -30,6 +30,7 @@
 
 #include "ArgumentDecoder.h"
 #include "IDBSerialization.h"
+#include "SQLiteIDBCursor.h"
 #include "SQLiteIDBTransaction.h"
 #include <WebCore/FileSystem.h>
 #include <WebCore/IDBDatabaseMetadata.h>
@@ -92,7 +93,7 @@ std::unique_ptr<IDBDatabaseMetadata> UniqueIDBDatabaseBackingStoreSQLite::create
         return nullptr;
     }
 
-    if (!m_sqliteDB->executeCommand("CREATE TABLE Records (objectStoreID INTEGER NOT NULL ON CONFLICT FAIL, key BLOB COLLATE IDBKEY NOT NULL ON CONFLICT FAIL UNIQUE ON CONFLICT REPLACE, value BLOB NOT NULL ON CONFLICT FAIL);")) {
+    if (!m_sqliteDB->executeCommand("CREATE TABLE Records (objectStoreID INTEGER NOT NULL ON CONFLICT FAIL, key TEXT COLLATE IDBKEY NOT NULL ON CONFLICT FAIL UNIQUE ON CONFLICT REPLACE, value NOT NULL ON CONFLICT FAIL);")) {
         LOG_ERROR("Could not create Records table in database (%i) - %s", m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg());
         m_sqliteDB = nullptr;
         return nullptr;
@@ -254,9 +255,8 @@ std::unique_ptr<IDBDatabaseMetadata> UniqueIDBDatabaseBackingStoreSQLite::getOrE
     if (!m_sqliteDB)
         return nullptr;
 
-    RefPtr<UniqueIDBDatabaseBackingStoreSQLite> protector(this);
     m_sqliteDB->setCollationFunction("IDBKEY", [this](int aLength, const void* a, int bLength, const void* b) {
-        return collate(aLength, a, bLength, b);
+        return idbKeyCollate(aLength, a, bLength, b);
     });
 
     std::unique_ptr<IDBDatabaseMetadata> metadata = extractExistingMetadata();
@@ -276,7 +276,7 @@ bool UniqueIDBDatabaseBackingStoreSQLite::establishTransaction(const IDBIdentifi
 {
     ASSERT(!isMainThread());
 
-    if (!m_transactions.add(transactionIdentifier, SQLiteIDBTransaction::create(transactionIdentifier, mode)).isNewEntry) {
+    if (!m_transactions.add(transactionIdentifier, SQLiteIDBTransaction::create(*this, transactionIdentifier, mode)).isNewEntry) {
         LOG_ERROR("Attempt to establish transaction identifier that already exists");
         return false;
     }
@@ -314,7 +314,7 @@ bool UniqueIDBDatabaseBackingStoreSQLite::resetTransaction(const IDBIdentifier& 
 {
     ASSERT(!isMainThread());
 
-    SQLiteIDBTransaction* transaction = m_transactions.get(transactionIdentifier);
+    std::unique_ptr<SQLiteIDBTransaction> transaction = m_transactions.take(transactionIdentifier);
     if (!transaction) {
         LOG_ERROR("Attempt to reset a transaction that hasn't been established");
         return false;
@@ -684,7 +684,7 @@ bool UniqueIDBDatabaseBackingStoreSQLite::putRecord(const IDBIdentifier& transac
         return false;
     }
     {
-        SQLiteStatement sql(*m_sqliteDB, ASCIILiteral("INSERT INTO Records VALUES (?, ?, ?);"));
+        SQLiteStatement sql(*m_sqliteDB, ASCIILiteral("INSERT INTO Records VALUES (?, CAST(? AS TEXT), ?);"));
         if (sql.prepare() != SQLResultOk
             || sql.bindInt64(1, objectStoreID) != SQLResultOk
             || sql.bindBlob(2, keyBuffer->data(), keyBuffer->size()) != SQLResultOk
@@ -798,10 +798,109 @@ bool UniqueIDBDatabaseBackingStoreSQLite::getKeyRangeRecordFromObjectStore(const
     return true;
 }
 
-int UniqueIDBDatabaseBackingStoreSQLite::collate(int aLength, const void* a, int bLength, const void* b)
+bool UniqueIDBDatabaseBackingStoreSQLite::openCursor(const IDBIdentifier& transactionIdentifier, int64_t objectStoreID, int64_t indexID, IndexedDB::CursorDirection cursorDirection, IndexedDB::CursorType cursorType, IDBDatabaseBackend::TaskType taskType, const IDBKeyRangeData& keyRange, int64_t& cursorID)
 {
-    // FIXME: Implement
-    return 0;
+    ASSERT(!isMainThread());
+    ASSERT(m_sqliteDB);
+    ASSERT(m_sqliteDB->isOpen());
+
+    SQLiteIDBTransaction* transaction = m_transactions.get(transactionIdentifier);
+    if (!transaction || !transaction->inProgress()) {
+        LOG_ERROR("Attempt to open a cursor in database without an established, in-progress transaction");
+        return false;
+    }
+
+    SQLiteIDBCursor* cursor = transaction->openCursor(objectStoreID, indexID, cursorDirection, cursorType, taskType, keyRange);
+    if (!cursor)
+        return false;
+
+    m_cursors.set(cursor->identifier(), cursor);
+    cursorID = cursor->identifier().id();
+
+    return true;
+}
+
+bool UniqueIDBDatabaseBackingStoreSQLite::advanceCursor(const IDBIdentifier& cursorIdentifier, uint64_t count, IDBKeyData& key, IDBKeyData& primaryKey, Vector<char>& value)
+{
+    ASSERT(!isMainThread());
+    ASSERT(m_sqliteDB);
+    ASSERT(m_sqliteDB->isOpen());
+
+    SQLiteIDBCursor* cursor = m_cursors.get(cursorIdentifier);
+    if (!cursor) {
+        LOG_ERROR("Attempt to advance a cursor that doesn't exist");
+        return false;
+    }
+    if (!cursor->transaction() || !cursor->transaction()->inProgress()) {
+        LOG_ERROR("Attempt to advance a cursor without an established, in-progress transaction");
+        return false;
+    }
+
+    if (!cursor->advance(count)) {
+        LOG_ERROR("Attempt to advance cursor %lli steps failed", count);
+        return false;
+    }
+
+    key = cursor->currentKey();
+    primaryKey = cursor->currentPrimaryKey();
+    value = cursor->currentValue();
+
+    return true;
+}
+
+bool UniqueIDBDatabaseBackingStoreSQLite::iterateCursor(const IDBIdentifier& cursorIdentifier, const IDBKeyData& targetKey, IDBKeyData& key, IDBKeyData& primaryKey, Vector<char>& value)
+{
+    ASSERT(!isMainThread());
+    ASSERT(m_sqliteDB);
+    ASSERT(m_sqliteDB->isOpen());
+
+    SQLiteIDBCursor* cursor = m_cursors.get(cursorIdentifier);
+    if (!cursor) {
+        LOG_ERROR("Attempt to iterate a cursor that doesn't exist");
+        return false;
+    }
+    if (!cursor->transaction() || !cursor->transaction()->inProgress()) {
+        LOG_ERROR("Attempt to iterate a cursor without an established, in-progress transaction");
+        return false;
+    }
+
+    if (!cursor->iterate(targetKey)) {
+        LOG_ERROR("Attempt to iterate cursor failed");
+        return false;
+    }
+
+    key = cursor->currentKey();
+    primaryKey = cursor->currentPrimaryKey();
+    value = cursor->currentValue();
+
+    return true;
+}
+
+int UniqueIDBDatabaseBackingStoreSQLite::idbKeyCollate(int aLength, const void* aBuffer, int bLength, const void* bBuffer)
+{
+    IDBKeyData a, b;
+    if (!deserializeIDBKeyData(static_cast<const uint8_t*>(aBuffer), aLength, a)) {
+        LOG_ERROR("Unable to deserialize key A in collation function.");
+
+        // There's no way to indicate an error to SQLite - we have to return a sorting decision.
+        // We arbitrarily choose "A > B"
+        return 1;
+    }
+    if (!deserializeIDBKeyData(static_cast<const uint8_t*>(bBuffer), bLength, b)) {
+        LOG_ERROR("Unable to deserialize key B in collation function.");
+
+        // There's no way to indicate an error to SQLite - we have to return a sorting decision.
+        // We arbitrarily choose "A > B"
+        return 1;
+    }
+
+    return a.compare(b);
+}
+
+void UniqueIDBDatabaseBackingStoreSQLite::unregisterCursor(SQLiteIDBCursor* cursor)
+{
+    ASSERT(m_cursors.contains(cursor->identifier()));
+    m_cursors.remove(cursor->identifier());
 }
 
 } // namespace WebKit
