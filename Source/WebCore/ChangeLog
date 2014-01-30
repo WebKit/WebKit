@@ -1,3 +1,13 @@
+2014-01-30  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] [CMake] Add a "make dist" target
+        https://bugs.webkit.org/show_bug.cgi?id=116378
+
+        Reviewed by Gustavo Noronha Silva.
+
+        * CMakeLists.txt: Don't build WebKitVersion.h for WebKitGTK+. We don't use it
+        and we don't want to distribute the dependency.
+
 2014-01-30  Brady Eidson  <beidson@apple.com>
 
         IDB: ObjectStore cursor advance() support

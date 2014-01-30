@@ -1,0 +1,74 @@
+# Global rules
+exclude #$
+exclude ChangeLog
+exclude GNUmakefile
+exclude Makefile
+exclude tags$
+exclude ~$
+exclude \.#$
+exclude \.bak$
+exclude \.cproject$
+exclude \.git$
+exclude \.gitattributes$
+exclude \.gitignore$
+exclude \.gyp$
+exclude \.icns$
+exclude \.lproj$
+exclude \.nib$
+exclude \.o$
+exclude \.order$
+exclude \.pdf$
+exclude \.plist$
+exlucde \.pro\.user$
+exclude \.project$
+exclude \.props$
+exclude \.pyc$
+exclude \.pyo$
+exclude \.settings$
+exclude \.svn$
+exclude \.sw[a-p]$
+exclude \.vcxproj$
+exclude \.xcconfig$
+exclude \.xcodeproj$
+
+directory Source
+exclude Source/WebCore/platform/audio/resources/IRC_Composite_.*\.wav$
+exclude Source/WebCore/bindings/scripts/test
+exclude Source/WebCore/platform/efl/DefaultTheme
+exclude Source/autotools$
+
+# Most of the files in Source/WebKit are not necessary to build GTK+ and
+# the directory includes lots of images, so we're a bit more picky here.
+exclude Source/WebKit/.*
+include Source/WebKit/CMakeLists.txt
+include Source/WebKit/PlatformGTK.cmake
+include Source/WebKit/gtk
+exclude Source/WebKit/gtk/NEWS$
+
+# We do want to include the NEWS, but we want it to be in the root of the archive.
+file Source/WebKit/gtk/NEWS NEWS
+
+directory Tools/gtk
+directory Tools/GtkLauncher
+directory Tools/ImageDiff
+directory Tools/MiniBrowser
+directory Tools/TestWebKitAPI
+
+directory Tools/DumpRenderTree
+exclude Tools/DumpRenderTree/fonts
+
+directory Tools/WebKitTestRunner
+exclude Tools/WebKitTestRunner/fonts/
+
+file CMakeLists.txt
+file Tools/CMakeLists.txt
+file Tools/Scripts/VCSUtils.pm
+file Tools/Scripts/run-gtk-tests
+file Tools/Scripts/webkit-build-directory
+file Tools/Scripts/webkitdirs.pm
+file Tools/jhbuild/jhbuildutils.py
+
+directory $build/Documentation/webkit2gtk/html Documentation/webkit2gtk/html
+directory $build/Documentation/webkit2gtk/html Documentation/webkit2gtk/html
+directory $build/Documentation/webkitgtk/tmpl Documentation/webkitgtk/tmpl
+directory $build/Documentation/webkitgtk/tmpl Documentation/webkitgtk/tmpl

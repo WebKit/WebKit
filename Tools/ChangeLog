@@ -1,3 +1,16 @@
+2014-01-30  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] [CMake] Add a "make dist" target
+        https://bugs.webkit.org/show_bug.cgi?id=116378
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Added a script that reads a manifest file an produces a tarball. Also add
+        the manifest.
+
+        * gtk/make-dist.py: Added.
+        * gtk/manifest.txt: Added.
+
 2014-01-30  David Farler  <dfarler@apple.com>
 
         Move OTHER_LDFLAGS erasure to DumpRenderTreeLibrary.xcconfig.

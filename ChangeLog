@@ -1,3 +1,13 @@
+2014-01-30  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] [CMake] Add a "make dist" target
+        https://bugs.webkit.org/show_bug.cgi?id=116378
+
+        Reviewed by Gustavo Noronha Silva.
+
+        * Source/PlatformGTK.cmake: A CMake support for executing the make-dist
+        script and then turning the tarfile into a LZMA compressed file.
+
 2014-01-30  Zan Dobersek  <zdobersek@igalia.com>
 
         [GTK] Only disable -ftree-dce optimization when compiling with GCC
