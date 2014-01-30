@@ -559,6 +559,10 @@
 		3760881F150413E900FC82C7 /* WebRenderObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 3760881D150413E900FC82C7 /* WebRenderObject.h */; };
 		37608822150414F700FC82C7 /* WKRenderObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37608820150414F700FC82C7 /* WKRenderObject.cpp */; };
 		37608823150414F700FC82C7 /* WKRenderObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 37608821150414F700FC82C7 /* WKRenderObject.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		3766F9EE189A1241003CF19B /* JavaScriptCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1AA1C7DE100E846E0078DEBC /* JavaScriptCore.framework */; };
+		3766F9EF189A1244003CF19B /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1AA1CC5C100FA1A10078DEBC /* QuartzCore.framework */; };
+		3766F9F0189A1248003CF19B /* WebCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1AA1C79A100E7FC50078DEBC /* WebCore.framework */; };
+		3766F9F1189A1254003CF19B /* libicucore.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = BC87DFA91018101400564216 /* libicucore.dylib */; };
 		37694525184FC6B600CDE21F /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BCF5068412431861005955AE /* Security.framework */; };
 		377EAD4517E2C51A002D193D /* WKDeclarationSpecifiers.h in Headers */ = {isa = PBXBuildFile; fileRef = 377EAD4417E2C51A002D193D /* WKDeclarationSpecifiers.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		377EAD4817E2C77B002D193D /* WKUserContentInjectedFrames.h in Headers */ = {isa = PBXBuildFile; fileRef = 377EAD4617E2C77B002D193D /* WKUserContentInjectedFrames.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -3229,7 +3233,11 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3766F9EE189A1241003CF19B /* JavaScriptCore.framework in Frameworks */,
+				3766F9F1189A1254003CF19B /* libicucore.dylib in Frameworks */,
+				3766F9EF189A1244003CF19B /* QuartzCore.framework in Frameworks */,
 				37694525184FC6B600CDE21F /* Security.framework in Frameworks */,
+				3766F9F0189A1248003CF19B /* WebCore.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
