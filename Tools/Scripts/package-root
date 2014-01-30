@@ -75,11 +75,10 @@ my $publicInstallPath = "/System/Library/Frameworks";
 
 my $configuration = configuration();
 my $platform = xcodeSDKPlatformName();
-my $installPrefix = xcodeSDK() =~ /iphoneos/ ? "/" : XcodeSDKPath();
 my $productDir = productDir();
 my $stagingRoot = tempdir(CLEANUP => 1);
-my $stagingPrivatePath = "/$stagingRoot/$installPrefix/$privateInstallPath";
-my $stagingPublicPath = "/$stagingRoot/$installPrefix/$publicInstallPath";
+my $stagingPrivatePath = "/$stagingRoot$privateInstallPath";
+my $stagingPublicPath = "/$stagingRoot/$publicInstallPath";
 my $archiveName = "webkit-$configuration-$platform";
 my $archivePath = "$productDir/$archiveName.tar.gz";
 my ($fh, $tempArchiveName) = tempfile( "/tmp/$archiveName-XXXXXXX");
@@ -96,7 +95,7 @@ foreach my $framework (@publicFrameworks) {
     die "Check to see that you have built $framework for $configuration-$platform" if $?;
 }
 
-system 'ditto', "$productDir/usr", "$stagingRoot/$installPrefix/usr";
+system 'ditto', "$productDir/usr", "$stagingRoot/usr";
 
 chdir $stagingRoot;
 print "Creating compressed archive ...\n";

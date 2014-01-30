@@ -1,3 +1,12 @@
+2014-01-30  David Farler  <dfarler@apple.com>
+
+        package-root shouldn't prefix simulator roots with the SDK path
+        http://bugs.webkit.org/show_bug.cgi?id=127923
+
+        Reviewed by Dan Bernstein.
+
+        * Scripts/package-root: Don't add an install path prefix.
+
 2014-01-30  Gabor Rapcsanyi  <rgabor@webkit.org>
 
         Add ARM EFL Linux builder bots to Apple buildmaster
