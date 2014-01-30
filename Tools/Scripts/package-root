@@ -96,6 +96,8 @@ foreach my $framework (@publicFrameworks) {
     die "Check to see that you have built $framework for $configuration-$platform" if $?;
 }
 
+system 'ditto', "$productDir/usr", "$stagingRoot/$installPrefix/usr";
+
 chdir $stagingRoot;
 print "Creating compressed archive ...\n";
 system 'ditto', '-cz', $stagingRoot, $tempArchiveName;

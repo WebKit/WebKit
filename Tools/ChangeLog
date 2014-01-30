@@ -1,3 +1,13 @@
+2014-01-30  David Farler  <dfarler@apple.com>
+
+        package-root should copy ./usr from the build products directory
+        https://bugs.webkit.org/show_bug.cgi?id=127878
+
+        Reviewed by Daniel Bates.
+
+        * Scripts/package-root:
+        Copy ./usr in addition to the frameworks.
+
 2014-01-30  Andrei Bucur  <abucur@adobe.com>
 
         Remove the ACCELERATED_COMPOSITING flag
