@@ -52,6 +52,7 @@ video:-webkit-full-page-media::-webkit-media-controls-panel {
     -webkit-align-items: stretch;
     -webkit-justify-content: flex-end;
     -webkit-flex-direction: column;
+    font-family: -apple-system-font;
 }
 
 video::-webkit-media-text-track-container,
@@ -153,8 +154,8 @@ video::-webkit-media-controls-play-button,
 audio::-webkit-media-controls-play-button {
     margin-left: 34px;
     margin-right: 13px;
-    width: 18px;
-    height: 16px;
+    width: 19px;
+    height: 17px;
     -webkit-mask-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 18 16"><rect x="1" y="0" width="5" height="16" fill="white"/><rect x="12" y="0" width="5" height="16" fill="white"/></svg>');
 }
 
@@ -167,8 +168,8 @@ video::-webkit-media-controls-fullscreen-button,
 audio::-webkit-media-controls-fullscreen-button {
     margin-right: 34px;
     margin-left: 13px;
-    width: 16px;
-    height: 16px;
+    width: 17px;
+    height: 17px;
     -webkit-mask-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16px" height="16px"><g stroke="white" fill="transparent"><path d="M .5,5 v -4.5 h 4.5M .5,.5 l 5.5,5.5" /> <path d="M 15.5,11 v 4.5 h -4.5 M 15.5,15.5 l -5.5,-5.5" /></g></svg>')
 }
 
@@ -218,7 +219,6 @@ audio::-webkit-media-controls-time-remaining-display {
     -webkit-justify-content: center;
     -webkit-align-items: center;
     cursor: default;
-    font: -webkit-small-control;
     font-size: 10px;
     overflow-y: hidden;
     overflow-x: hidden;

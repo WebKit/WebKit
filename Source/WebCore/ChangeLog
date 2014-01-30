@@ -1,3 +1,20 @@
+2014-01-30  Jer Noble  <jer.noble@apple.com>
+
+        [MediaControls][iOS] Fix a couple of UI bugs in the iOS Media Controls
+        https://bugs.webkit.org/show_bug.cgi?id=127929
+
+        Reviewed by Eric Carlson.
+
+        Two UI bugs in the iOS Media Controls: the text in the controls should use the apple
+        system font rather than the webkit small control font, and the buttons in the controls
+        are clipped due to an "off by one" error when calculating the SVG image dimensions.
+
+        * Modules/mediacontrols/mediaControlsiOS.css:
+        (::-webkit-media-controls):
+        (audio::-webkit-media-controls-play-button):
+        (audio::-webkit-media-controls-fullscreen-button):
+        (audio::-webkit-media-controls-time-remaining-display):
+
 2014-01-30  Jeremy Jones  <jeremyj@apple.com>
 
         Refactor WebVideoFullscreenController separating AVKit from MediaElement.
