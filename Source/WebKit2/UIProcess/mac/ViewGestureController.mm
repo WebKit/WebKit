@@ -310,11 +310,47 @@ void ViewGestureController::trackSwipeGesture(NSEvent *event, SwipeDirection dir
     }];
 }
 
+FloatRect ViewGestureController::windowRelativeBoundsForCustomSwipeViews() const
+{
+    FloatRect swipeArea;
+    for (const auto& view : m_customSwipeViews)
+        swipeArea.unite([view convertRect:[view bounds] toView:nil]);
+    return swipeArea;
+}
+
+static CALayer *leastCommonAncestorLayer(Vector<RetainPtr<CALayer>>& layers)
+{
+    Vector<Vector<CALayer *>> liveLayerPathsFromRoot(layers.size());
+
+    size_t shortestPathLength = std::numeric_limits<size_t>::max();
+
+    for (size_t layerIndex = 0; layerIndex < layers.size(); layerIndex++) {
+        CALayer *parent = [layers[layerIndex] superlayer];
+        while (parent) {
+            liveLayerPathsFromRoot[layerIndex].insert(0, parent);
+            shortestPathLength = std::min(shortestPathLength, liveLayerPathsFromRoot[layerIndex].size());
+            parent = parent.superlayer;
+        }
+    }
+
+    for (size_t pathIndex = 0; pathIndex < shortestPathLength; pathIndex++) {
+        CALayer *firstPathLayer = liveLayerPathsFromRoot[0][pathIndex];
+        for (size_t layerIndex = 1; layerIndex < layers.size(); layerIndex++) {
+            if (liveLayerPathsFromRoot[layerIndex][pathIndex] != firstPathLayer)
+                return firstPathLayer;
+        }
+    }
+
+    return liveLayerPathsFromRoot[0][shortestPathLength];
+}
+
 void ViewGestureController::beginSwipeGesture(WebBackForwardListItem* targetItem, SwipeDirection direction)
 {
+    ASSERT(m_currentSwipeLiveLayers.isEmpty());
+
     m_activeGestureType = ViewGestureType::Swipe;
 
-    CALayer *rootLayer = m_webPageProxy.acceleratedCompositingRootLayer();
+    CALayer *rootContentLayer = m_webPageProxy.acceleratedCompositingRootLayer();
 
     m_swipeSnapshotLayer = adoptNS([[CALayer alloc] init]);
     [m_swipeSnapshotLayer setBackgroundColor:CGColorGetConstantColor(kCGColorWhite)];
@@ -333,11 +369,26 @@ void ViewGestureController::beginSwipeGesture(WebBackForwardListItem* targetItem
 #endif
     }
 
+    m_currentSwipeCustomViewBounds = windowRelativeBoundsForCustomSwipeViews();
+
+    FloatRect swipeArea;
+    if (!m_customSwipeViews.isEmpty()) {
+        swipeArea = m_currentSwipeCustomViewBounds;
+
+        for (const auto& view : m_customSwipeViews) {
+            CALayer *layer = [view layer];
+            ASSERT(layer);
+            m_currentSwipeLiveLayers.append(layer);
+        }
+    } else {
+        swipeArea = rootContentLayer.frame;
+        m_currentSwipeLiveLayers.append(rootContentLayer);
+    }
+
     [m_swipeSnapshotLayer setContentsGravity:kCAGravityTopLeft];
     [m_swipeSnapshotLayer setContentsScale:m_webPageProxy.deviceScaleFactor()];
-    [m_swipeSnapshotLayer setFrame:rootLayer.frame];
     [m_swipeSnapshotLayer setAnchorPoint:CGPointZero];
-    [m_swipeSnapshotLayer setPosition:CGPointZero];
+    [m_swipeSnapshotLayer setFrame:swipeArea];
     [m_swipeSnapshotLayer setName:@"Gesture Swipe Snapshot Layer"];
     [m_swipeSnapshotLayer web_disableAllActions];
 
@@ -347,42 +398,68 @@ void ViewGestureController::beginSwipeGesture(WebBackForwardListItem* targetItem
         [m_swipeSnapshotLayer setFilters:@[filter]];
     }
 
-    if (m_swipeTransitionStyle == SwipeTransitionStyle::Overlap) {
-        RetainPtr<CGPathRef> shadowPath = adoptCF(CGPathCreateWithRect([rootLayer bounds], 0));
+    // We don't know enough about the custom views' hierarchy to apply a shadow.
+    if (m_swipeTransitionStyle == SwipeTransitionStyle::Overlap && m_customSwipeViews.isEmpty()) {
+        RetainPtr<CGPathRef> shadowPath = adoptCF(CGPathCreateWithRect([m_swipeSnapshotLayer bounds], 0));
 
-        [m_swipeSnapshotLayer setShadowColor:CGColorGetConstantColor(kCGColorBlack)];
-        [m_swipeSnapshotLayer setShadowOpacity:swipeOverlayShadowOpacity];
-        [m_swipeSnapshotLayer setShadowRadius:swipeOverlayShadowRadius];
-        [m_swipeSnapshotLayer setShadowPath:shadowPath.get()];
+        if (direction == SwipeDirection::Left) {
+            [rootContentLayer setShadowColor:CGColorGetConstantColor(kCGColorBlack)];
+            [rootContentLayer setShadowOpacity:swipeOverlayShadowOpacity];
+            [rootContentLayer setShadowRadius:swipeOverlayShadowRadius];
+            [rootContentLayer setShadowPath:shadowPath.get()];
+        } else {
+            [m_swipeSnapshotLayer setShadowColor:CGColorGetConstantColor(kCGColorBlack)];
+            [m_swipeSnapshotLayer setShadowOpacity:swipeOverlayShadowOpacity];
+            [m_swipeSnapshotLayer setShadowRadius:swipeOverlayShadowRadius];
+            [m_swipeSnapshotLayer setShadowPath:shadowPath.get()];
+        }
+    }
 
-        [rootLayer setShadowColor:CGColorGetConstantColor(kCGColorBlack)];
-        [rootLayer setShadowOpacity:swipeOverlayShadowOpacity];
-        [rootLayer setShadowRadius:swipeOverlayShadowRadius];
-        [rootLayer setShadowPath:shadowPath.get()];
+    // If we have custom swiping views, we assume that the views were passed to us in back-to-front z-order.
+    CALayer *layerAdjacentToSnapshot = direction == SwipeDirection::Left ? m_currentSwipeLiveLayers.first().get() : m_currentSwipeLiveLayers.last().get();
+    CALayer *snapshotLayerParent;
+
+    if (m_currentSwipeLiveLayers.size() == 1)
+        snapshotLayerParent = [m_currentSwipeLiveLayers[0] superlayer];
+    else {
+        // We insert our snapshot into the first shared superlayer of the custom views' layer, above the frontmost or below the bottommost layer.
+        snapshotLayerParent = leastCommonAncestorLayer(m_currentSwipeLiveLayers);
+
+        // If the layers are not all siblings, find the child of the layer we're going to insert the snapshot into which has the frontmost/bottommost layer as a child.
+        while (snapshotLayerParent != layerAdjacentToSnapshot.superlayer)
+            layerAdjacentToSnapshot = layerAdjacentToSnapshot.superlayer;
     }
 
     if (direction == SwipeDirection::Left)
-        [rootLayer.superlayer insertSublayer:m_swipeSnapshotLayer.get() below:rootLayer];
+        [snapshotLayerParent insertSublayer:m_swipeSnapshotLayer.get() below:layerAdjacentToSnapshot];
     else
-        [rootLayer.superlayer insertSublayer:m_swipeSnapshotLayer.get() above:rootLayer];
+        [snapshotLayerParent insertSublayer:m_swipeSnapshotLayer.get() above:layerAdjacentToSnapshot];
 }
 
 void ViewGestureController::handleSwipeGesture(WebBackForwardListItem* targetItem, double progress, SwipeDirection direction)
 {
     ASSERT(m_activeGestureType == ViewGestureType::Swipe);
 
-    CALayer *rootLayer = m_webPageProxy.acceleratedCompositingRootLayer();
-    double width = rootLayer.bounds.size.width;
+    double width;
+    if (!m_customSwipeViews.isEmpty())
+        width = m_currentSwipeCustomViewBounds.width();
+    else
+        width = m_webPageProxy.acceleratedCompositingRootLayer().frame.size.width;
+
     double swipingLayerOffset = floor(width * progress);
 
     if (m_swipeTransitionStyle == SwipeTransitionStyle::Overlap) {
-        if (direction == SwipeDirection::Left)
-            [rootLayer setPosition:CGPointMake(swipingLayerOffset, 0)];
-        else
-            [m_swipeSnapshotLayer setPosition:CGPointMake(width + swipingLayerOffset, 0)];
-    } else if (m_swipeTransitionStyle == SwipeTransitionStyle::Push) {
-        [rootLayer setPosition:CGPointMake(swipingLayerOffset, 0)];
-        [m_swipeSnapshotLayer setPosition:CGPointMake((direction == SwipeDirection::Left ? -width : width) + swipingLayerOffset, 0)];
+        if (direction == SwipeDirection::Right)
+            [m_swipeSnapshotLayer setTransform:CATransform3DMakeTranslation(width + swipingLayerOffset, 0, 0)];
+    } else if (m_swipeTransitionStyle == SwipeTransitionStyle::Push)
+        [m_swipeSnapshotLayer setTransform:CATransform3DMakeTranslation((direction == SwipeDirection::Left ? -width : width) + swipingLayerOffset, 0, 0)];
+
+    for (const auto& layer : m_currentSwipeLiveLayers) {
+        if (m_swipeTransitionStyle == SwipeTransitionStyle::Overlap) {
+            if (direction == SwipeDirection::Left)
+                [layer setTransform:CATransform3DMakeTranslation(swipingLayerOffset, 0, 0)];
+        } else if (m_swipeTransitionStyle == SwipeTransitionStyle::Push)
+            [layer setTransform:CATransform3DMakeTranslation(swipingLayerOffset, 0, 0)];
     }
 }
 
@@ -441,9 +518,13 @@ void ViewGestureController::removeSwipeSnapshot()
         IOSurfaceSetPurgeable(snapshotSurface, kIOSurfacePurgeableVolatile, nullptr);
 #endif
 
-    [m_webPageProxy.acceleratedCompositingRootLayer() setPosition:CGPointZero];
+    for (const auto& layer : m_currentSwipeLiveLayers)
+        [layer setTransform:CATransform3DIdentity];
+
     [m_swipeSnapshotLayer removeFromSuperlayer];
     m_swipeSnapshotLayer = nullptr;
+
+    m_currentSwipeLiveLayers.clear();
 
     m_activeGestureType = ViewGestureType::None;
 }

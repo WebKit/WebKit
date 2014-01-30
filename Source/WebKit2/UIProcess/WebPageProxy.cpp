@@ -824,6 +824,10 @@ void WebPageProxy::tryRestoreScrollPosition()
 void WebPageProxy::didChangeBackForwardList(WebBackForwardListItem* added, Vector<RefPtr<API::Object>>* removed)
 {
     m_loaderClient->didChangeBackForwardList(this, added, removed);
+
+#if PLATFORM(MAC) && !PLATFORM(IOS)
+    m_pageClient.clearCustomSwipeViews();
+#endif
 }
 
 void WebPageProxy::willGoToBackForwardListItem(uint64_t itemID, IPC::MessageDecoder& decoder)

@@ -35,6 +35,7 @@
 
 OBJC_CLASS CALayer;
 OBJC_CLASS NSEvent;
+OBJC_CLASS NSView;
 
 namespace WebKit {
 
@@ -56,6 +57,9 @@ public:
     void didHitRenderTreeSizeThreshold();
 
     void wheelEventWasNotHandledByWebCore(NSEvent *);
+
+    void setCustomSwipeViews(Vector<RetainPtr<NSView>> views) { m_customSwipeViews = std::move(views); }
+    WebCore::FloatRect windowRelativeBoundsForCustomSwipeViews() const;
 
     void endActiveGesture();
 
@@ -105,8 +109,12 @@ private:
     bool m_frameHandlesMagnificationGesture;
 
     RetainPtr<CALayer> m_swipeSnapshotLayer;
+    Vector<RetainPtr<CALayer>> m_currentSwipeLiveLayers;
+
     SwipeTransitionStyle m_swipeTransitionStyle;
     WebCore::Timer<ViewGestureController> m_swipeWatchdogTimer;
+    Vector<RetainPtr<NSView>> m_customSwipeViews;
+    WebCore::FloatRect m_currentSwipeCustomViewBounds;
 
     // If we need to wait for content to decide if it is going to consume
     // the scroll event that would have started a swipe, we'll fill these in.

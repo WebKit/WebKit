@@ -92,6 +92,9 @@
 
 - (void)saveBackForwardSnapshotForCurrentItem;
 
+// Views must be layer-backed, have no transform applied, be in back-to-front z-order, and the whole set must be a contiguous opaque rectangle.
+- (void)_setCustomSwipeViews:(NSArray *)customSwipeViews;
+
 #endif
 
 @end

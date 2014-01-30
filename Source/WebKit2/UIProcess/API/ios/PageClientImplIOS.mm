@@ -331,6 +331,11 @@ void PageClientImpl::wheelEventWasNotHandledByWebCore(const NativeWebWheelEvent&
     notImplemented();
 }
 
+void PageClientImpl::clearCustomSwipeViews()
+{
+    notImplemented();
+}
+
 void PageClientImpl::mainDocumentDidReceiveMobileDocType()
 {
     [m_view _didReceiveMobileDocTypeForMainFrame];

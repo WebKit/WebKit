@@ -1,3 +1,55 @@
+2014-01-30  Tim Horton  <timothy_horton@apple.com>
+
+        WebKit2 View Gestures (Swipe): Provide a way for clients to provide views to swipe
+        https://bugs.webkit.org/show_bug.cgi?id=127891
+        <rdar://problem/15931413>
+
+        Reviewed by Anders Carlsson.
+
+        * UIProcess/API/Cocoa/WKViewPrivate.h: Add the SPI.
+
+        * UIProcess/API/ios/PageClientImplIOS.h:
+        * UIProcess/API/ios/PageClientImplIOS.mm:
+        (WebKit::PageClientImpl::clearCustomSwipeViews):
+        * UIProcess/API/mac/PageClientImpl.h:
+        * UIProcess/API/mac/PageClientImpl.mm:
+        (WebKit::PageClientImpl::clearCustomSwipeViews):
+        * UIProcess/PageClient.h:
+        Plumb clearCustomSwipeViews() so that WebPageProxy can clear
+        ViewGestureController's list of custom views when the current
+        back-forward item changes.
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView _takeViewSnapshot]):
+        If we have custom swipe views, use the union of their bounds as the snapshot region.
+
+        (-[WKView _setCustomSwipeViews:]):
+        Forward along to ViewGestureController.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didChangeBackForwardList):
+        When the current back forward list item changes, clear the custom swipe views.
+
+        * UIProcess/mac/ViewGestureController.h:
+        (WebKit::ViewGestureController::setCustomSwipeViews):
+        (WebKit::ViewGestureController::customSwipeViews):
+        * UIProcess/mac/ViewGestureController.mm:
+        (WebKit::ViewGestureController::windowRelativeBoundsForCustomSwipeViews):
+        Compute the union of the custom swipe view bounds in the window's coordinate space.
+
+        (WebKit::ViewGestureController::beginSwipeGesture):
+        Store the layers we'll be swiping as the "live" layers in m_currentSwipeLiveLayers.
+        Don't set a shadow (yet) if we have custom swipe views, because it's not clear where to put it.
+
+        (WebKit::ViewGestureController::handleSwipeGesture):
+        Compute the swipe distance ('width') based on the union of the custom views bounds if needed.
+        Update the transform of all of the live layers. We use transform instead of position now
+        so that clients can set the position (having an identity transform is one of the SPI caveats).
+
+        (WebKit::ViewGestureController::removeSwipeSnapshot):
+        Reset the transform on all of the live layers.
+        Clear the list of live layers.
+
 2014-01-30  Brady Eidson  <beidson@apple.com>
 
         IDB: Add no-op plumbing for deleteDatabase and deleteRange

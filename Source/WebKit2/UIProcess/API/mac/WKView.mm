@@ -2547,7 +2547,13 @@ static void createSandboxExtensionsForFileUpload(NSPasteboard *pasteboard, Sandb
     CGSCaptureWindowsContentsToRect(CGSMainConnectionID(), &windowID, 1, CGRectNull, &cgWindowImage);
     RetainPtr<CGImageRef> windowSnapshotImage = adoptCF(cgWindowImage);
 
-    NSRect windowCaptureRect = [self convertRect:self.bounds toView:nil];
+    NSRect windowCaptureRect;
+    FloatRect boundsForCustomSwipeViews = _data->_gestureController->windowRelativeBoundsForCustomSwipeViews();
+    if (!boundsForCustomSwipeViews.isEmpty())
+        windowCaptureRect = boundsForCustomSwipeViews;
+    else
+        windowCaptureRect = [self convertRect:self.bounds toView:nil];
+
     NSRect windowCaptureScreenRect = [window convertRectToScreen:windowCaptureRect];
     CGRect windowScreenRect;
     CGSGetScreenRectForWindow(CGSMainConnectionID(), (CGSWindowID)[window windowNumber], &windowScreenRect);
@@ -3328,6 +3334,17 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
         return _data->_gestureController->magnification();
 
     return _data->_page->pageScaleFactor();
+}
+
+- (void)_setCustomSwipeViews:(NSArray *)customSwipeViews
+{
+    [self _ensureGestureController];
+
+    Vector<RetainPtr<NSView>> views;
+    for (NSView *view in customSwipeViews)
+        views.append(view);
+
+    _data->_gestureController->setCustomSwipeViews(views);
 }
 
 @end

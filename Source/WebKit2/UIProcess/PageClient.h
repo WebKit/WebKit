@@ -178,6 +178,7 @@ public:
     virtual CALayer *acceleratedCompositingRootLayer() const = 0;
     virtual RetainPtr<CGImageRef> takeViewSnapshot() = 0;
     virtual void wheelEventWasNotHandledByWebCore(const NativeWebWheelEvent&) = 0;
+    virtual void clearCustomSwipeViews() = 0;
 #endif
 
 #if USE(APPKIT)
