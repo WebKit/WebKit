@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -56,7 +56,7 @@ private:
     StringImpl* m_uid;
     
 public:
-    MacroAssembler::Jump m_slowPathDone;
+    Vector<MacroAssembler::Jump> m_slowPathDone;
 };
 
 class GetByIdDescriptor : public InlineCacheDescriptor {
@@ -68,7 +68,7 @@ public:
     {
     }
     
-    JITGetByIdGenerator m_generator;
+    Vector<JITGetByIdGenerator> m_generators;
 };
 
 class PutByIdDescriptor : public InlineCacheDescriptor {
@@ -84,7 +84,7 @@ public:
     {
     }
     
-    JITPutByIdGenerator m_generator;
+    Vector<JITPutByIdGenerator> m_generators;
     
     ECMAMode ecmaMode() const { return m_ecmaMode; }
     PutKind putKind() const { return m_putKind; }

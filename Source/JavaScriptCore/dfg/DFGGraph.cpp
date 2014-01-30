@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2011, 2013, 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -247,19 +247,21 @@ void Graph::dump(PrintStream& out, const char* prefix, Node* node, DumpContext* 
     }
     ASSERT(node->hasVariableAccessData(*this) == node->hasLocal(*this));
     if (node->hasVariableAccessData(*this)) {
-        VariableAccessData* variableAccessData = node->variableAccessData();
-        VirtualRegister operand = variableAccessData->local();
-        if (operand.isArgument())
-            out.print(comma, "arg", operand.toArgument(), "(", VariableAccessDataDump(*this, variableAccessData), ")");
-        else
-            out.print(comma, "loc", operand.toLocal(), "(", VariableAccessDataDump(*this, variableAccessData), ")");
-        
-        operand = variableAccessData->machineLocal();
-        if (operand.isValid()) {
+        VariableAccessData* variableAccessData = node->tryGetVariableAccessData();
+        if (variableAccessData) {
+            VirtualRegister operand = variableAccessData->local();
             if (operand.isArgument())
-                out.print(comma, "machine:arg", operand.toArgument());
+                out.print(comma, "arg", operand.toArgument(), "(", VariableAccessDataDump(*this, variableAccessData), ")");
             else
-                out.print(comma, "machine:loc", operand.toLocal());
+                out.print(comma, "loc", operand.toLocal(), "(", VariableAccessDataDump(*this, variableAccessData), ")");
+            
+            operand = variableAccessData->machineLocal();
+            if (operand.isValid()) {
+                if (operand.isArgument())
+                    out.print(comma, "machine:arg", operand.toArgument());
+                else
+                    out.print(comma, "machine:loc", operand.toLocal());
+            }
         }
     }
     if (node->hasUnlinkedLocal()) {
@@ -330,8 +332,8 @@ void Graph::dump(PrintStream& out, const char* prefix, Node* node, DumpContext* 
     out.print(")");
 
     if (!skipped) {
-        if (node->hasVariableAccessData(*this))
-            out.print("  predicting ", SpeculationDump(node->variableAccessData()->prediction()));
+        if (node->hasVariableAccessData(*this) && node->tryGetVariableAccessData())
+            out.print("  predicting ", SpeculationDump(node->tryGetVariableAccessData()->prediction()));
         else if (node->hasHeapPrediction())
             out.print("  predicting ", SpeculationDump(node->getHeapPrediction()));
     }

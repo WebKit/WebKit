@@ -517,6 +517,16 @@ struct Node {
         return hasVariableAccessData(graph);
     }
     
+    // This is useful for debugging code, where a node that should have a variable
+    // access data doesn't have one because it hasn't been initialized yet.
+    VariableAccessData* tryGetVariableAccessData()
+    {
+        VariableAccessData* result = reinterpret_cast<VariableAccessData*>(m_opInfo);
+        if (!result)
+            return 0;
+        return result->find();
+    }
+    
     VariableAccessData* variableAccessData()
     {
         return reinterpret_cast<VariableAccessData*>(m_opInfo)->find();

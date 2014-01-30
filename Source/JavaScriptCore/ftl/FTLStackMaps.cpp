@@ -161,7 +161,7 @@ StackMaps::RecordMap StackMaps::getRecordMap() const
 {
     RecordMap result;
     for (unsigned i = records.size(); i--;)
-        result.add(records[i].patchpointID, records[i]);
+        result.add(records[i].patchpointID, Vector<Record>()).iterator->value.append(records[i]);
     return result;
 }
 

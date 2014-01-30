@@ -49,11 +49,14 @@ size_t JITFinalizer::codeSize()
 {
     size_t result = 0;
     
-    result += exitThunksLinkBuffer->size();
-    result += entrypointLinkBuffer->size();
+    if (exitThunksLinkBuffer)
+        result += exitThunksLinkBuffer->size();
+    if (entrypointLinkBuffer)
+        result += entrypointLinkBuffer->size();
     if (sideCodeLinkBuffer)
         result += sideCodeLinkBuffer->size();
-    result += handleExceptionsLinkBuffer->size();
+    if (handleExceptionsLinkBuffer)
+        result += handleExceptionsLinkBuffer->size();
     
     for (unsigned i = jitCode->handles().size(); i--;)
         result += jitCode->handles()[i]->sizeInBytes();

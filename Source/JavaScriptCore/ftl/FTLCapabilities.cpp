@@ -131,9 +131,9 @@ inline CapabilityLevel canCompile(Node* node)
     case ToString:
     case MakeRope:
     case NewArrayWithSize:
+    case GetById:
         // These are OK.
         break;
-    case GetById:
     case PutByIdDirect:
     case PutById:
         if (node->child1().useKind() == CellUse)

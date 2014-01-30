@@ -124,30 +124,37 @@ void generateICFastPath(
         return;
     }
     
-    StackMaps::Record& record = iter->value;
-
-    CCallHelpers fastPathJIT(&vm, codeBlock);
-    ic.m_generator.generateFastPath(fastPathJIT);
-
-    char* startOfIC =
-        bitwise_cast<char*>(generatedFunction) + record.instructionOffset;
-            
-    LinkBuffer linkBuffer(vm, &fastPathJIT, startOfIC, sizeOfIC);
-    // Note: we could handle the !isValid() case. We just don't appear to have a
-    // reason to do so, yet.
-    RELEASE_ASSERT(linkBuffer.isValid());
+    Vector<StackMaps::Record>& records = iter->value;
     
-    MacroAssembler::AssemblerType_T::fillNops(
-        startOfIC + linkBuffer.size(), sizeOfIC - linkBuffer.size());
+    RELEASE_ASSERT(records.size() == ic.m_generators.size());
     
-    state.finalizer->sideCodeLinkBuffer->link(
-        ic.m_slowPathDone, CodeLocationLabel(startOfIC + sizeOfIC));
-            
-    linkBuffer.link(
-        ic.m_generator.slowPathJump(),
-        state.finalizer->sideCodeLinkBuffer->locationOf(ic.m_generator.slowPathBegin()));
-            
-    ic.m_generator.finalize(linkBuffer, *state.finalizer->sideCodeLinkBuffer);
+    for (unsigned i = records.size(); i--;) {
+        StackMaps::Record& record = records[i];
+        auto generator = ic.m_generators[i];
+
+        CCallHelpers fastPathJIT(&vm, codeBlock);
+        generator.generateFastPath(fastPathJIT);
+        
+        char* startOfIC =
+            bitwise_cast<char*>(generatedFunction) + record.instructionOffset;
+        
+        LinkBuffer linkBuffer(vm, &fastPathJIT, startOfIC, sizeOfIC);
+        // Note: we could handle the !isValid() case. We just don't appear to have a
+        // reason to do so, yet.
+        RELEASE_ASSERT(linkBuffer.isValid());
+        
+        MacroAssembler::AssemblerType_T::fillNops(
+            startOfIC + linkBuffer.size(), sizeOfIC - linkBuffer.size());
+        
+        state.finalizer->sideCodeLinkBuffer->link(
+            ic.m_slowPathDone[i], CodeLocationLabel(startOfIC + sizeOfIC));
+        
+        linkBuffer.link(
+            generator.slowPathJump(),
+            state.finalizer->sideCodeLinkBuffer->locationOf(generator.slowPathBegin()));
+        
+        generator.finalize(linkBuffer, *state.finalizer->sideCodeLinkBuffer);
+    }
 }
 
 static void fixFunctionBasedOnStackMaps(
@@ -160,9 +167,10 @@ static void fixFunctionBasedOnStackMaps(
     
     StackMaps::RecordMap::iterator iter = recordMap.find(state.capturedStackmapID);
     RELEASE_ASSERT(iter != recordMap.end());
-    RELEASE_ASSERT(iter->value.locations.size() == 1);
+    RELEASE_ASSERT(iter->value.size() == 1);
+    RELEASE_ASSERT(iter->value[0].locations.size() == 1);
     Location capturedLocation =
-        Location::forStackmaps(&jitCode->stackmaps, iter->value.locations[0]);
+        Location::forStackmaps(&jitCode->stackmaps, iter->value[0].locations[0]);
     RELEASE_ASSERT(capturedLocation.kind() == Location::Register);
     RELEASE_ASSERT(capturedLocation.gpr() == GPRInfo::callFrameRegister);
     RELEASE_ASSERT(!(capturedLocation.addend() % sizeof(Register)));
@@ -272,28 +280,30 @@ static void fixFunctionBasedOnStackMaps(
                 continue;
             }
             
-            StackMaps::Record& record = iter->value;
+            for (unsigned i = 0; i < iter->value.size(); ++i) {
+                StackMaps::Record& record = iter->value[i];
             
-            // FIXME: LLVM should tell us which registers are live.
-            RegisterSet usedRegisters = RegisterSet::allRegisters();
-            
-            GPRReg result = record.locations[0].directGPR();
-            GPRReg base = record.locations[1].directGPR();
-            
-            JITGetByIdGenerator gen(
-                codeBlock, getById.codeOrigin(), usedRegisters, JSValueRegs(base),
-                JSValueRegs(result), false);
-            
-            MacroAssembler::Label begin = slowPathJIT.label();
-            
-            MacroAssembler::Call call = callOperation(
-                state, usedRegisters, slowPathJIT, getById.codeOrigin(), &exceptionTarget,
-                operationGetByIdOptimize, result, gen.stubInfo(), base, getById.uid());
-            
-            gen.reportSlowPathCall(begin, call);
-            
-            getById.m_slowPathDone = slowPathJIT.jump();
-            getById.m_generator = gen;
+                // FIXME: LLVM should tell us which registers are live.
+                RegisterSet usedRegisters = RegisterSet::allRegisters();
+                
+                GPRReg result = record.locations[0].directGPR();
+                GPRReg base = record.locations[1].directGPR();
+                
+                JITGetByIdGenerator gen(
+                    codeBlock, getById.codeOrigin(), usedRegisters, JSValueRegs(base),
+                    JSValueRegs(result), false);
+                
+                MacroAssembler::Label begin = slowPathJIT.label();
+                
+                MacroAssembler::Call call = callOperation(
+                    state, usedRegisters, slowPathJIT, getById.codeOrigin(), &exceptionTarget,
+                    operationGetByIdOptimize, result, gen.stubInfo(), base, getById.uid());
+                
+                gen.reportSlowPathCall(begin, call);
+                
+                getById.m_slowPathDone.append(slowPathJIT.jump());
+                getById.m_generators.append(gen);
+            }
         }
         
         for (unsigned i = state.putByIds.size(); i--;) {
@@ -308,29 +318,31 @@ static void fixFunctionBasedOnStackMaps(
                 continue;
             }
             
-            StackMaps::Record& record = iter->value;
-            
-            // FIXME: LLVM should tell us which registers are live.
-            RegisterSet usedRegisters = RegisterSet::allRegisters();
-            
-            GPRReg base = record.locations[0].directGPR();
-            GPRReg value = record.locations[1].directGPR();
-            
-            JITPutByIdGenerator gen(
-                codeBlock, putById.codeOrigin(), usedRegisters, JSValueRegs(base),
-                JSValueRegs(value), MacroAssembler::scratchRegister, false, putById.ecmaMode(),
-                putById.putKind());
-            
-            MacroAssembler::Label begin = slowPathJIT.label();
-            
-            MacroAssembler::Call call = callOperation(
-                state, usedRegisters, slowPathJIT, putById.codeOrigin(), &exceptionTarget,
-                gen.slowPathFunction(), gen.stubInfo(), value, base, putById.uid());
-            
-            gen.reportSlowPathCall(begin, call);
-            
-            putById.m_slowPathDone = slowPathJIT.jump();
-            putById.m_generator = gen;
+            for (unsigned i = 0; i < iter->value.size(); ++i) {
+                StackMaps::Record& record = iter->value[i];
+                
+                // FIXME: LLVM should tell us which registers are live.
+                RegisterSet usedRegisters = RegisterSet::allRegisters();
+                
+                GPRReg base = record.locations[0].directGPR();
+                GPRReg value = record.locations[1].directGPR();
+                
+                JITPutByIdGenerator gen(
+                    codeBlock, putById.codeOrigin(), usedRegisters, JSValueRegs(base),
+                    JSValueRegs(value), MacroAssembler::scratchRegister, false, putById.ecmaMode(),
+                    putById.putKind());
+                
+                MacroAssembler::Label begin = slowPathJIT.label();
+                
+                MacroAssembler::Call call = callOperation(
+                    state, usedRegisters, slowPathJIT, putById.codeOrigin(), &exceptionTarget,
+                    gen.slowPathFunction(), gen.stubInfo(), value, base, putById.uid());
+                
+                gen.reportSlowPathCall(begin, call);
+                
+                putById.m_slowPathDone.append(slowPathJIT.jump());
+                putById.m_generators.append(gen);
+            }
         }
         
         exceptionTarget.link(&slowPathJIT);
@@ -355,19 +367,20 @@ static void fixFunctionBasedOnStackMaps(
     
     // Handling JS calls is weird: we need to ensure that we sort them by the PC in LLVM
     // generated code. That implies first pruning the ones that LLVM didn't generate.
-    for (unsigned i = 0; i < state.jsCalls.size(); ++i) {
-        JSCall& call = state.jsCalls[i];
+    Vector<JSCall> oldCalls = state.jsCalls;
+    state.jsCalls.resize(0);
+    for (unsigned i = 0; i < oldCalls.size(); ++i) {
+        JSCall& call = oldCalls[i];
         
         StackMaps::RecordMap::iterator iter = recordMap.find(call.stackmapID());
-        if (iter == recordMap.end()) {
-            // It was optimized out. Prune it.
-            call = state.jsCalls.last();
-            state.jsCalls.removeLast();
-            i--;
+        if (iter == recordMap.end())
             continue;
+
+        for (unsigned j = 0; j < iter->value.size(); ++j) {
+            JSCall copy = call;
+            copy.m_instructionOffset = iter->value[j].instructionOffset;
+            state.jsCalls.append(copy);
         }
-        
-        call.m_instructionOffset = iter->value.instructionOffset;
     }
     
     std::sort(state.jsCalls.begin(), state.jsCalls.end());
@@ -397,12 +410,14 @@ static void fixFunctionBasedOnStackMaps(
     // It's sort of remotely possible that we won't have an in-band exception handling
     // path, for some kinds of functions.
     if (iter != recordMap.end()) {
-        StackMaps::Record& record = iter->value;
-        
-        CodeLocationLabel source = CodeLocationLabel(
-            bitwise_cast<char*>(generatedFunction) + record.instructionOffset);
-
-        repatchBuffer.replaceWithJump(source, state.finalizer->handleExceptionsLinkBuffer->entrypoint());
+        for (unsigned i = iter->value.size(); i--;) {
+            StackMaps::Record& record = iter->value[i];
+            
+            CodeLocationLabel source = CodeLocationLabel(
+                bitwise_cast<char*>(generatedFunction) + record.instructionOffset);
+            
+            repatchBuffer.replaceWithJump(source, state.finalizer->handleExceptionsLinkBuffer->entrypoint());
+        }
     }
     
     for (unsigned exitIndex = 0; exitIndex < jitCode->osrExit.size(); ++exitIndex) {
@@ -413,17 +428,19 @@ static void fixFunctionBasedOnStackMaps(
         Vector<const void*> codeAddresses;
         
         if (iter != recordMap.end()) {
-            StackMaps::Record& record = iter->value;
-            
-            CodeLocationLabel source = CodeLocationLabel(
-                bitwise_cast<char*>(generatedFunction) + record.instructionOffset);
-            
-            codeAddresses.append(bitwise_cast<char*>(generatedFunction) + record.instructionOffset + MacroAssembler::maxJumpReplacementSize());
-            
-            if (info.m_isInvalidationPoint)
-                jitCode->common.jumpReplacements.append(JumpReplacement(source, info.m_thunkAddress));
-            else
-                repatchBuffer.replaceWithJump(source, info.m_thunkAddress);
+            for (unsigned i = iter->value.size(); i--;) {
+                StackMaps::Record& record = iter->value[i];
+                
+                CodeLocationLabel source = CodeLocationLabel(
+                    bitwise_cast<char*>(generatedFunction) + record.instructionOffset);
+                
+                codeAddresses.append(bitwise_cast<char*>(generatedFunction) + record.instructionOffset + MacroAssembler::maxJumpReplacementSize());
+                
+                if (info.m_isInvalidationPoint)
+                    jitCode->common.jumpReplacements.append(JumpReplacement(source, info.m_thunkAddress));
+                else
+                    repatchBuffer.replaceWithJump(source, info.m_thunkAddress);
+            }
         }
         
         if (graph.compilation())

@@ -1,3 +1,73 @@
+2014-01-29  Filip Pizlo  <fpizlo@apple.com>
+
+        FTL should support GetById(Untyped:)
+        https://bugs.webkit.org/show_bug.cgi?id=127750
+
+        Reviewed by Oliver Hunt.
+        
+        This was supposed to be easy. Indeed, the actual GetById UntypedUse case was easy. But
+        then it expanded coverage by a lot and I got to deal with three bugs. So, this has
+        some additional changes:
+        
+        Also make it safe for LLVM to duplicate calls to patchpoints and stackmaps. Previously
+        we incorrectly assumed that if we emitted a patchpoint, then there would only be one
+        copy of that patchpoint (with that ID) in the resulting machine code and in the
+        stackmaps section. That's obviously a bad assumption - LLVM is allowed to do anything
+        it wants so long as the outcome of executing the code has a semantically equivalent
+        meaning to the IR we gave it, and duplicating code is trivially OK under this rule. We
+        should be OK with it, too. The solution is to add Vectors in a bunch of places that
+        previously just thought they only had one value. For example, an InlineCacheDescriptor
+        now has a Vector of generators - one generator for each copy that LLVM stamped out.
+        Normally there will only be one copy, of course - since duplication is usually
+        unprofitable. But, if LLVM decides that copying would be groovy then we will no longer
+        barf.
+        
+        Also fix SSA conversion. It turns out that we mishandled the case where a block had
+        multiple Phi functions for the same local. If any of those CPS Phis fail to trivialize
+        in the Aycock-Horspool fixpoint, we need to insert an SSA Phi. Previously, it was
+        assuming that so long as the head CPS Phi was trivial, we could forego SSA Phi
+        insertion. That's wrong if the head CPS Phi trivialized but ended up pointing to a
+        non-trivial CPS Phi in the same block. This madness with trees of Phis occurs because
+        we try to save on compile times: no Phi ever has more than three children even if the
+        block has more than three predecessors; we just build out a tree of Phis to satisfy
+        all predecessors. So weird.
+        
+        And finally, fix DFG->FTL OSR entry's reconstruction of 'this' in a constructor. That
+        reconstruction code, JITCode::reconstruct(), had a work-around for the case where we
+        were entering into a constructor at the prologue. In that case, 'this' is definitely
+        unavailable. But the OSR code does reconstructions at LoopHints, which aren't at the
+        prologue, and so 'this' should totally be available.
+
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::dump):
+        * dfg/DFGJITCode.cpp:
+        (JSC::DFG::JITCode::reconstruct):
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::tryGetVariableAccessData):
+        * dfg/DFGSSAConversionPhase.cpp:
+        (JSC::DFG::SSAConversionPhase::run):
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLCompile.cpp:
+        (JSC::FTL::generateICFastPath):
+        (JSC::FTL::fixFunctionBasedOnStackMaps):
+        * ftl/FTLInlineCacheDescriptor.h:
+        * ftl/FTLJITFinalizer.cpp:
+        (JSC::FTL::JITFinalizer::codeSize):
+        * ftl/FTLJSCall.cpp:
+        (JSC::FTL::JSCall::JSCall):
+        * ftl/FTLJSCall.h:
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::LowerDFGToLLVM::compileGetById):
+        (JSC::FTL::LowerDFGToLLVM::getById):
+        * ftl/FTLOSREntry.cpp:
+        (JSC::FTL::prepareOSREntry):
+        * ftl/FTLStackMaps.cpp:
+        (JSC::FTL::StackMaps::getRecordMap):
+        * ftl/FTLStackMaps.h:
+        * tests/stress/get-by-id-untyped.js: Added.
+        (foo):
+
 2014-01-30  Geoffrey Garen  <ggaren@apple.com>
 
         Part 2: REGRESSION: JavascriptCore crash during OS Installation (due to

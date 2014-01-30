@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,6 +31,13 @@
 #include "DFGNode.h"
 
 namespace JSC { namespace FTL {
+
+JSCall::JSCall()
+    : m_stackmapID(UINT_MAX)
+    , m_node(0)
+    , m_instructionOffset(UINT_MAX)
+{
+}
 
 JSCall::JSCall(unsigned stackmapID, DFG::Node* node)
     : m_stackmapID(stackmapID)

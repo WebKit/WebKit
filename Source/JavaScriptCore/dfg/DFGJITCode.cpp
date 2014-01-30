@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -80,7 +80,8 @@ void JITCode::reconstruct(
     for (size_t i = result.size(); i--;) {
         int operand = result.operandForIndex(i);
         
-        if (operandIsArgument(operand)
+        if (codeOrigin == CodeOrigin(0)
+            && operandIsArgument(operand)
             && !VirtualRegister(operand).toArgument()
             && codeBlock->codeType() == FunctionCode
             && codeBlock->specializationKind() == CodeForConstruct) {
