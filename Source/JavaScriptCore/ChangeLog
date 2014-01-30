@@ -1,5 +1,24 @@
 2014-01-29  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Run JSC Inspector EventLoop in a custom run loop mode to prevent default observers from running
+        https://bugs.webkit.org/show_bug.cgi?id=127865
+
+        Reviewed by Geoffrey Garen.
+
+        When hitting a breakpoint in a JSContext Inspector we want to entirely
+        pause the process and all access to the JSContext and only move forward
+        based on debugger commands. Having the nested run loop run in a default
+        mode allowed NSTimers scheduled on the thread to regularly run and
+        evaluate code in the JSContext. Using a custom run loop mode gets us
+        a bit closer to locking down the context. This doesn't handle scenarios
+        where background threads also access the JSContext, but it handles the
+        most common scenario.
+
+        * inspector/EventLoop.cpp:
+        (Inspector::EventLoop::cycle):
+
+2014-01-29  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Deadlock hitting breakpoint while inspecting JSContext
         https://bugs.webkit.org/show_bug.cgi?id=127864
 
