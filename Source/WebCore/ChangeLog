@@ -1,3 +1,12 @@
+2014-01-30  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [SOUP] Fix the build if !ENABLE(WEB_TIMING)
+        https://bugs.webkit.org/show_bug.cgi?id=127906
+
+        Reviewed by Gustavo Noronha Silva.
+
+        * platform/network/soup/SoupNetworkSession.cpp:
+
 2014-01-30  Andrei Bucur  <abucur@adobe.com>
 
         Remove the ACCELERATED_COMPOSITING flag

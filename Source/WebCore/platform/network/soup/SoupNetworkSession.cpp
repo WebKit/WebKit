@@ -78,6 +78,7 @@ static void authenticateCallback(SoupSession* session, SoupMessage* soupMessage,
     handle->didReceiveAuthenticationChallenge(AuthenticationChallenge(session, soupMessage, soupAuth, retrying, handle.get()));
 }
 
+#if ENABLE(WEB_TIMING)
 static void requestStartedCallback(SoupSession*, SoupMessage* soupMessage, SoupSocket*, gpointer)
 {
     RefPtr<ResourceHandle> handle = static_cast<ResourceHandle*>(g_object_get_data(G_OBJECT(soupMessage), "handle"));
@@ -85,6 +86,7 @@ static void requestStartedCallback(SoupSession*, SoupMessage* soupMessage, SoupS
         return;
     handle->didStartRequest();
 }
+#endif
 
 SoupNetworkSession::SoupNetworkSession(SoupCookieJar* cookieJar)
     : m_soupSession(adoptGRef(soup_session_async_new()))
