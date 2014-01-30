@@ -1,3 +1,13 @@
+2014-01-30  Anders Carlsson  <andersca@apple.com>
+
+        Add WKNavigationDelegate class
+        https://bugs.webkit.org/show_bug.cgi?id=127927
+
+        Reviewed by Dan Bernstein.
+
+        * TestWebKitAPI/Tests/WebKit2Cocoa/Navigation.mm:
+        (TEST):
+
 2014-01-30  David Farler  <dfarler@apple.com>
 
         Enable iOS Tools builds by default

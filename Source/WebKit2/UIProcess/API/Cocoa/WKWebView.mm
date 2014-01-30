@@ -29,6 +29,7 @@
 #if WK_API_ENABLED
 
 #import "NavigationState.h"
+#import "WKNavigationDelegate.h"
 #import "WKNavigationInternal.h"
 #import "WKProcessClass.h"
 #import "WKWebViewConfiguration.h"
@@ -124,6 +125,16 @@ static _UIWebViewportConfiguration standardViewportConfiguration = { { UIWebView
 - (WKWebViewConfiguration *)configuration
 {
     return [[_configuration copy] autorelease];
+}
+
+- (id <WKNavigationDelegate>)navigationDelegate
+{
+    return [_navigationState->navigationDelegate().leakRef() autorelease];
+}
+
+- (void)setNavigationDelegate:(id <WKNavigationDelegate>)navigationDelegate
+{
+    _navigationState->setNavigationDelegate(navigationDelegate);
 }
 
 - (WKNavigation *)loadRequest:(NSURLRequest *)request

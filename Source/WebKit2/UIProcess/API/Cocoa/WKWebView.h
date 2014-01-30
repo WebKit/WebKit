@@ -37,6 +37,8 @@
 @class WKNavigation;
 @class WKWebViewConfiguration;
 
+@protocol WKNavigationDelegate;
+
 /*!
  A @link WKWebView @/link displays interactive Web content.
  @helperclass @link WKWebViewConfiguration @/link
@@ -52,6 +54,8 @@ WK_API_CLASS
 
 /*! @abstract A copy of the configuration with which the @link WKWebView @/link was initialized. */
 @property (nonatomic, readonly) WKWebViewConfiguration *configuration;
+
+@property (nonatomic, weak) id <WKNavigationDelegate> navigationDelegate;
 
 /*! @abstract Returns a view initialized with the specified frame and configuration.
  @param frame The frame for the new view.

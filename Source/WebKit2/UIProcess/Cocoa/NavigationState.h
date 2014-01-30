@@ -32,9 +32,11 @@
 
 #import <wtf/HashMap.h>
 #import <wtf/RetainPtr.h>
+#import "WeakObjCPtr.h"
 
-OBJC_CLASS WKNavigation;
-OBJC_CLASS WKWebView;
+@class WKNavigation;
+@class WKWebView;
+@protocol WKNavigationDelegate;
 
 namespace WebKit {
 
@@ -43,10 +45,15 @@ public:
     explicit NavigationState(WKWebView *);
     ~NavigationState();
 
+    RetainPtr<id <WKNavigationDelegate> > navigationDelegate();
+    void setNavigationDelegate(id <WKNavigationDelegate>);
+
     RetainPtr<WKNavigation> createLoadRequestNavigation(uint64_t navigationID, NSURLRequest *);
 
 private:
     HashMap<uint64_t, RetainPtr<WKNavigation>> m_navigations;
+
+    WeakObjCPtr<id <WKNavigationDelegate> > m_delegate;
 };
 
 } // namespace WebKit

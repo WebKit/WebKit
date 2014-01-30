@@ -23,46 +23,13 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "config.h"
-#import "NavigationState.h"
+#import <Foundation/Foundation.h>
+#import <WebKit2/WKFoundation.h>
 
 #if WK_API_ENABLED
 
-#import "WKNavigationInternal.h"
+@protocol WKNavigationDelegate <NSObject>
 
-namespace WebKit {
-
-NavigationState::NavigationState(WKWebView *webView)
-{
-}
-
-NavigationState::~NavigationState()
-{
-}
-
-RetainPtr<id <WKNavigationDelegate> > NavigationState::navigationDelegate()
-{
-    return m_delegate.get();
-}
-
-void NavigationState::setNavigationDelegate(id <WKNavigationDelegate> delegate)
-{
-    m_delegate = delegate;
-}
-
-RetainPtr<WKNavigation> NavigationState::createLoadRequestNavigation(uint64_t navigationID, NSURLRequest *request)
-{
-    ASSERT(!m_navigations.contains(navigationID));
-
-    RetainPtr<WKNavigation> navigation = adoptNS([[WKNavigation alloc] init]);
-    [navigation setRequest:request];
-
-    // FIXME: We need to remove the navigation when we're done with it!
-    m_navigations.set(navigationID, navigation);
-
-    return navigation;
-}
-
-} // namespace WebKit
+@end
 
 #endif

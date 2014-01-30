@@ -293,6 +293,7 @@
 		1ABC3DF11899C6B6004F0626 /* WKNavigationInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 1ABC3DF01899C6B6004F0626 /* WKNavigationInternal.h */; };
 		1ABC3DF51899E437004F0626 /* NavigationState.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1ABC3DF31899E437004F0626 /* NavigationState.mm */; };
 		1ABC3DF61899E437004F0626 /* NavigationState.h in Headers */ = {isa = PBXBuildFile; fileRef = 1ABC3DF41899E437004F0626 /* NavigationState.h */; };
+		1ABC3DFC1899F51C004F0626 /* WKNavigationDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 1ABC3DFB1899F51C004F0626 /* WKNavigationDelegate.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		1AC1336718565B5700F3EC05 /* UserData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AC1336518565B5700F3EC05 /* UserData.cpp */; };
 		1AC1336818565B5700F3EC05 /* UserData.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AC1336618565B5700F3EC05 /* UserData.h */; };
 		1AC1336C18565C7A00F3EC05 /* APIPageHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AC1336B18565C7A00F3EC05 /* APIPageHandle.h */; };
@@ -1944,6 +1945,7 @@
 		1ABC3DF01899C6B6004F0626 /* WKNavigationInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKNavigationInternal.h; sourceTree = "<group>"; };
 		1ABC3DF31899E437004F0626 /* NavigationState.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = NavigationState.mm; sourceTree = "<group>"; };
 		1ABC3DF41899E437004F0626 /* NavigationState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NavigationState.h; sourceTree = "<group>"; };
+		1ABC3DFB1899F51C004F0626 /* WKNavigationDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKNavigationDelegate.h; sourceTree = "<group>"; };
 		1AC1336518565B5700F3EC05 /* UserData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UserData.cpp; sourceTree = "<group>"; };
 		1AC1336618565B5700F3EC05 /* UserData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UserData.h; sourceTree = "<group>"; };
 		1AC1336B18565C7A00F3EC05 /* APIPageHandle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = APIPageHandle.h; sourceTree = "<group>"; };
@@ -4261,6 +4263,7 @@
 				1A43E826188F38E2009E4D30 /* Deprecated */,
 				1A5B1C4F1898606F004FCF9B /* WKNavigation.h */,
 				1A5B1C4E1898606F004FCF9B /* WKNavigation.mm */,
+				1ABC3DFB1899F51C004F0626 /* WKNavigationDelegate.h */,
 				1ABC3DF01899C6B6004F0626 /* WKNavigationInternal.h */,
 				1AFDD3161891C94700153970 /* WKPreferences.h */,
 				1AFDD3181891CA1200153970 /* WKPreferences.mm */,
@@ -6209,6 +6212,7 @@
 				515E7728183DD6F60007203F /* AsyncRequest.h in Headers */,
 				1A91010A1268C8CA001842F5 /* FindIndicatorWindow.h in Headers */,
 				BCE81D8D1319F7EF00241910 /* FontInfo.h in Headers */,
+				1ABC3DFC1899F51C004F0626 /* WKNavigationDelegate.h in Headers */,
 				BC17753F118BABF0007D9E9A /* GenericCallback.h in Headers */,
 				BC06F42F12DBB9B6002D78DE /* GeolocationPermissionRequestManager.h in Headers */,
 				BC06F44A12DBD1F5002D78DE /* GeolocationPermissionRequestManagerProxy.h in Headers */,

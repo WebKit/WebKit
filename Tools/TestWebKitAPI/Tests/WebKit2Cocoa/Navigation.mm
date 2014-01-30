@@ -26,11 +26,33 @@
 #include "config.h"
 
 #import <WebKit2/WKNavigation.h>
+#import <WebKit2/WKNavigationDelegate.h>
 #import <WebKit2/WKWebView.h>
 #import <wtf/RetainPtr.h>
 #import "Test.h"
 
 #if WK_API_ENABLED
+
+@interface NavigationDelegate : NSObject <WKNavigationDelegate>
+@end
+
+@implementation NavigationDelegate
+@end
+
+TEST(WKNavigation, NavigationDelegate)
+{
+    RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
+
+    NavigationDelegate *delegate = [[NavigationDelegate alloc] init];
+    [webView setNavigationDelegate:delegate];
+
+    @autoreleasepool {
+        EXPECT_EQ(delegate, [webView navigationDelegate]);
+    }
+
+    [delegate release];
+    EXPECT_NULL([webView navigationDelegate]);
+}
 
 TEST(WKNavigation, LoadRequest)
 {
