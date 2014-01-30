@@ -1,3 +1,13 @@
+2014-01-30  Andy Estes  <aestes@apple.com>
+
+        REGRESSION (r163037): WebKit2.PageLoadBasic API test failing on Mountain Lion
+        https://bugs.webkit.org/show_bug.cgi?id=127934
+
+        Disable the failing test on Mountain Lion.
+
+        * TestWebKitAPI/Tests/WebKit2/PageLoadBasic.cpp:
+        (TestWebKitAPI::TEST):
+
 2014-01-30  Anders Carlsson  <andersca@apple.com>
 
         Add WKNavigationDelegate class
