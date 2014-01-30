@@ -171,8 +171,19 @@ bool SQLiteIDBCursor::iterate(const WebCore::IDBKeyData& targetKey)
     ASSERT(m_transaction->sqliteTransaction());
     ASSERT(m_statement);
 
-    LOG_ERROR("IDBCursor.iterate not supported yet");
-    return false;
+    bool result = advance(1);
+
+    // Iterating with no key is equivalent to advancing 1 step.
+    if (targetKey.isNull || !result)
+        return result;
+
+    while (!m_completed && m_currentKey.compare(targetKey)) {
+        result = advance(1);
+        if (!result)
+            return false;
+    }
+
+    return result;
 }
 
 } // namespace WebKit
