@@ -79,6 +79,14 @@ void DatabaseProcessIDBConnection::getOrEstablishIDBDatabaseMetadata(uint64_t re
     });
 }
 
+void DatabaseProcessIDBConnection::deleteDatabase(uint64_t requestID, const String& databaseName)
+{
+    LOG(IDB, "DatabaseProcess deleteDatabase request ID %llu", requestID);
+
+    // FIXME: Implement
+    send(Messages::WebIDBServerConnection::DidDeleteDatabase(requestID, false));
+}
+
 void DatabaseProcessIDBConnection::openTransaction(uint64_t requestID, int64_t transactionID, const Vector<int64_t>& objectStoreIDs, uint64_t intMode)
 {
     ASSERT(m_uniqueIDBDatabase);
@@ -157,7 +165,7 @@ void DatabaseProcessIDBConnection::changeDatabaseVersion(uint64_t requestID, int
     });
 }
 
-void DatabaseProcessIDBConnection::createObjectStore(uint64_t requestID, int64_t transactionID, WebCore::IDBObjectStoreMetadata metadata)
+void DatabaseProcessIDBConnection::createObjectStore(uint64_t requestID, int64_t transactionID, IDBObjectStoreMetadata metadata)
 {
     ASSERT(m_uniqueIDBDatabase);
 
@@ -190,7 +198,7 @@ void DatabaseProcessIDBConnection::clearObjectStore(uint64_t requestID, int64_t 
     });
 }
 
-void DatabaseProcessIDBConnection::createIndex(uint64_t requestID, int64_t transactionID, int64_t objectStoreID, const WebCore::IDBIndexMetadata& metadata)
+void DatabaseProcessIDBConnection::createIndex(uint64_t requestID, int64_t transactionID, int64_t objectStoreID, const IDBIndexMetadata& metadata)
 {
     ASSERT(m_uniqueIDBDatabase);
 
@@ -212,7 +220,7 @@ void DatabaseProcessIDBConnection::deleteIndex(uint64_t requestID, int64_t trans
     });
 }
 
-void DatabaseProcessIDBConnection::putRecord(uint64_t requestID, int64_t transactionID, int64_t objectStoreID, const WebCore::IDBKeyData& key, const IPC::DataReference& value, int64_t putMode, const Vector<int64_t>& indexIDs, const Vector<Vector<WebCore::IDBKeyData>>& indexKeys)
+void DatabaseProcessIDBConnection::putRecord(uint64_t requestID, int64_t transactionID, int64_t objectStoreID, const IDBKeyData& key, const IPC::DataReference& value, int64_t putMode, const Vector<int64_t>& indexIDs, const Vector<Vector<IDBKeyData>>& indexKeys)
 {
     ASSERT(m_uniqueIDBDatabase);
 
@@ -246,7 +254,19 @@ void DatabaseProcessIDBConnection::count(uint64_t requestID, int64_t transaction
     });
 }
 
-void DatabaseProcessIDBConnection::openCursor(uint64_t requestID, int64_t transactionID, int64_t objectStoreID, int64_t indexID, int64_t cursorDirection, int64_t cursorType, int64_t taskType, const WebCore::IDBKeyRangeData& keyRangeData)
+void DatabaseProcessIDBConnection::deleteRange(uint64_t requestID, int64_t transactionID, int64_t objectStoreID, const IDBKeyRangeData& keyRangeData)
+{
+    ASSERT(m_uniqueIDBDatabase);
+
+    LOG(IDB, "DatabaseProcess deleteRange request ID %llu, object store id %lli", requestID, objectStoreID);
+
+    RefPtr<DatabaseProcessIDBConnection> connection(this);
+    m_uniqueIDBDatabase->deleteRange(IDBIdentifier(*this, transactionID), objectStoreID, keyRangeData, [connection, requestID](uint32_t errorCode, const String& errorMessage) {
+        connection->send(Messages::WebIDBServerConnection::DidDeleteRange(requestID, errorCode, errorMessage));
+    });
+}
+
+void DatabaseProcessIDBConnection::openCursor(uint64_t requestID, int64_t transactionID, int64_t objectStoreID, int64_t indexID, int64_t cursorDirection, int64_t cursorType, int64_t taskType, const IDBKeyRangeData& keyRangeData)
 {
     ASSERT(m_uniqueIDBDatabase);
 

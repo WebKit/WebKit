@@ -25,6 +25,7 @@
 messages -> DatabaseProcessIDBConnection LegacyReceiver {
     EstablishConnection(String databaseName, WebKit::SecurityOriginData openingOrigin, WebKit::SecurityOriginData mainFrameOrigin)
     GetOrEstablishIDBDatabaseMetadata(uint64_t requestID)
+    DeleteDatabase(uint64_t requestID, String databaseName)
 
     OpenTransaction(uint64_t requestID, int64_t transactionID, Vector<int64_t> objectStoreIDs, uint64_t transactionMode)
     BeginTransaction(uint64_t requestID, int64_t transactionID)
@@ -47,6 +48,7 @@ messages -> DatabaseProcessIDBConnection LegacyReceiver {
     CursorIterate(uint64_t requestID, int64_t cursorID, WebCore::IDBKeyData key)
     
     Count(uint64_t requestID, int64_t transactionID, int64_t objectStoreID, int64_t indexID, WebCore::IDBKeyRangeData keyRange)
+    DeleteRange(uint64_t requestID, int64_t transactionID, int64_t objectStoreID, WebCore::IDBKeyRangeData keyRange)
 }
 
 #endif // ENABLE(INDEXED_DATABASE) && ENABLE(DATABASE_PROCESS)

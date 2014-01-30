@@ -85,6 +85,31 @@ bool WebIDBServerConnection::isClosed()
 
 void WebIDBServerConnection::deleteDatabase(const String& name, BoolCallbackFunction successCallback)
 {
+    RefPtr<AsyncRequest> serverRequest = AsyncRequestImpl<bool>::create(successCallback);
+
+    serverRequest->setAbortHandler([successCallback]() {
+        successCallback(false);
+    });
+
+    uint64_t requestID = serverRequest->requestID();
+    ASSERT(!m_serverRequests.contains(requestID));
+    m_serverRequests.add(requestID, serverRequest.release());
+
+    LOG(IDB, "WebProcess deleteDatabase request ID %llu", requestID);
+
+    send(Messages::DatabaseProcessIDBConnection::DeleteDatabase(requestID, name));
+}
+
+void WebIDBServerConnection::didDeleteDatabase(uint64_t requestID, bool success)
+{
+    LOG(IDB, "WebProcess didDeleteDatabase request ID %llu", requestID);
+
+    RefPtr<AsyncRequest> serverRequest = m_serverRequests.take(requestID);
+
+    if (!serverRequest)
+        return;
+
+    serverRequest->completeRequest(success);
 }
 
 void WebIDBServerConnection::getOrEstablishIDBDatabaseMetadata(GetIDBDatabaseMetadataFunction completionCallback)
@@ -486,8 +511,33 @@ void WebIDBServerConnection::didCount(uint64_t requestID, int64_t count, uint32_
     serverRequest->completeRequest(count, errorCode ? IDBDatabaseError::create(errorCode, errorMessage) : nullptr);
 }
 
-void WebIDBServerConnection::deleteRange(IDBTransactionBackend&, const DeleteRangeOperation&, std::function<void(PassRefPtr<IDBDatabaseError>)> completionCallback)
+void WebIDBServerConnection::deleteRange(IDBTransactionBackend& transaction, const DeleteRangeOperation& operation, std::function<void(PassRefPtr<IDBDatabaseError>)> completionCallback)
 {
+    RefPtr<AsyncRequest> serverRequest = AsyncRequestImpl<PassRefPtr<IDBDatabaseError>>::create(completionCallback);
+
+    serverRequest->setAbortHandler([completionCallback]() {
+        completionCallback(IDBDatabaseError::create(IDBDatabaseException::UnknownError, "Unknown error occured getting count"));
+    });
+
+    uint64_t requestID = serverRequest->requestID();
+    ASSERT(!m_serverRequests.contains(requestID));
+    m_serverRequests.add(requestID, serverRequest.release());
+
+    LOG(IDB, "WebProcess deleteRange request ID %llu", requestID);
+
+    send(Messages::DatabaseProcessIDBConnection::DeleteRange(requestID, transaction.id(), operation.objectStoreID(), IDBKeyRangeData(operation.keyRange())));
+}
+
+void WebIDBServerConnection::didDeleteRange(uint64_t requestID, uint32_t errorCode, const String& errorMessage)
+{
+    LOG(IDB, "WebProcess didDeleteRange request ID %llu", requestID);
+
+    RefPtr<AsyncRequest> serverRequest = m_serverRequests.take(requestID);
+
+    if (!serverRequest)
+        return;
+
+    serverRequest->completeRequest(errorCode ? IDBDatabaseError::create(errorCode, errorMessage) : nullptr);
 }
 
 void WebIDBServerConnection::clearObjectStore(IDBTransactionBackend&, const ClearObjectStoreOperation& operation, std::function<void(PassRefPtr<IDBDatabaseError>)> completionCallback)

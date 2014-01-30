@@ -96,6 +96,7 @@ private:
     virtual IPC::Connection* messageSenderConnection() override;
 
     void didGetOrEstablishIDBDatabaseMetadata(uint64_t requestID, bool success, const WebCore::IDBDatabaseMetadata&);
+    void didDeleteDatabase(uint64_t requestID, bool success);
     void didOpenTransaction(uint64_t requestID, bool success);
     void didBeginTransaction(uint64_t requestID, bool success);
     void didCommitTransaction(uint64_t requestID, bool success);
@@ -113,6 +114,7 @@ private:
     void didAdvanceCursor(uint64_t requestID, WebCore::IDBKeyData&, WebCore::IDBKeyData&, const IPC::DataReference&, uint32_t errorCode, const String& errorMessage);
     void didIterateCursor(uint64_t requestID, WebCore::IDBKeyData&, WebCore::IDBKeyData&, const IPC::DataReference&, uint32_t errorCode, const String& errorMessage);
     void didCount(uint64_t requestID, int64_t count, uint32_t errorCode, const String& errorMessage);
+    void didDeleteRange(uint64_t requestID, uint32_t errorCode, const String& errorMessage);
 
     uint64_t m_serverConnectionIdentifier;
 

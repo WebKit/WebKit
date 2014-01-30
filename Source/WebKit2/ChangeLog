@@ -1,3 +1,33 @@
+2014-01-30  Brady Eidson  <beidson@apple.com>
+
+        IDB: Add no-op plumbing for deleteDatabase and deleteRange
+        https://bugs.webkit.org/show_bug.cgi?id=127912
+
+        Reviewed by Alexey Proskuryakov.
+
+        Forward the calls to the DatabaseProcess, and handle completion from the DatabaseProcess:
+        * WebProcess/Databases/IndexedDB/WebIDBServerConnection.cpp:
+        (WebKit::WebIDBServerConnection::deleteDatabase):
+        (WebKit::WebIDBServerConnection::didDeleteDatabase):
+        (WebKit::WebIDBServerConnection::deleteRange):
+        (WebKit::WebIDBServerConnection::didDeleteRange):
+        * WebProcess/Databases/IndexedDB/WebIDBServerConnection.h:
+        * WebProcess/Databases/IndexedDB/WebIDBServerConnection.messages.in:
+
+        Stub out deleteDatabase, and forward deleteRange to the appropriate UniqueIDBDatabase:
+        * DatabaseProcess/IndexedDB/DatabaseProcessIDBConnection.cpp:
+        (WebKit::DatabaseProcessIDBConnection::deleteDatabase):
+        (WebKit::DatabaseProcessIDBConnection::deleteRange):
+        * DatabaseProcess/IndexedDB/DatabaseProcessIDBConnection.h:
+        * DatabaseProcess/IndexedDB/DatabaseProcessIDBConnection.messages.in:
+
+        Forward the request to the backing store thread, and handle the response from that thread:
+        * DatabaseProcess/IndexedDB/UniqueIDBDatabase.cpp:
+        (WebKit::UniqueIDBDatabase::deleteRange):
+        (WebKit::UniqueIDBDatabase::deleteRangeInBackingStore):
+        (WebKit::UniqueIDBDatabase::didDeleteRangeInBackingStore):
+        * DatabaseProcess/IndexedDB/UniqueIDBDatabase.h:
+
 2014-01-30  Antti Koivisto  <antti@apple.com>
 
         WebPage::determinePrimarySnapshottedPlugIn is slow

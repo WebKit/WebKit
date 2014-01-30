@@ -92,6 +92,7 @@ public:
     void cursorIterate(const IDBIdentifier& cursorIdentifier, const WebCore::IDBKeyData&, std::function<void(WebCore::IDBKeyData, WebCore::IDBKeyData, PassRefPtr<WebCore::SharedBuffer>, uint32_t, const String&)> callback);
 
     void count(const IDBIdentifier& transactionIdentifier, int64_t objectStoreID, int64_t indexID, const WebCore::IDBKeyRangeData&, std::function<void(int64_t, uint32_t, const String&)> callback);
+    void deleteRange(const IDBIdentifier& transactionIdentifier, int64_t objectStoreID, const WebCore::IDBKeyRangeData&, std::function<void(uint32_t, const String&)> callback);
 
 private:
     UniqueIDBDatabase(const UniqueIDBDatabaseIdentifier&);
@@ -142,6 +143,7 @@ private:
     void advanceCursorInBackingStore(uint64_t requestID, const IDBIdentifier& cursorIdentifier, uint64_t count);
     void iterateCursorInBackingStore(uint64_t requestID, const IDBIdentifier& cursorIdentifier, const WebCore::IDBKeyData&);
     void countInBackingStore(uint64_t requestID, const IDBIdentifier& transactionIdentifier, int64_t objectStoreID, int64_t indexID, const WebCore::IDBKeyRangeData&);
+    void deleteRangeInBackingStore(uint64_t requestID, const IDBIdentifier& transactionIdentifier, int64_t objectStoreID, const WebCore::IDBKeyRangeData&);
 
     void shutdownBackingStore();
 
@@ -161,6 +163,7 @@ private:
     void didAdvanceCursorInBackingStore(uint64_t requestID, const WebCore::IDBKeyData&, const WebCore::IDBKeyData&, const Vector<char>&, uint32_t errorCode, const String& errorMessage);
     void didIterateCursorInBackingStore(uint64_t requestID, const WebCore::IDBKeyData&, const WebCore::IDBKeyData&, const Vector<char>&, uint32_t errorCode, const String& errorMessage);
     void didCountInBackingStore(uint64_t requestID, int64_t count, uint32_t errorCode, const String& errorMessage);
+    void didDeleteRangeInBackingStore(uint64_t requestID, uint32_t errorCode, const String& errorMessage);
 
     void didShutdownBackingStore();
     void didCompleteBoolRequest(uint64_t requestID, bool success);

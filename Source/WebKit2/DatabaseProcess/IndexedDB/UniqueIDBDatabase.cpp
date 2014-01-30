@@ -636,6 +636,27 @@ void UniqueIDBDatabase::count(const IDBIdentifier& transactionIdentifier, int64_
     postDatabaseTask(createAsyncTask(*this, &UniqueIDBDatabase::countInBackingStore, requestID, transactionIdentifier, objectStoreID, indexID, keyRangeData));
 }
 
+void UniqueIDBDatabase::deleteRange(const IDBIdentifier& transactionIdentifier, int64_t objectStoreID, const IDBKeyRangeData& keyRangeData, std::function<void(uint32_t, const String&)> callback)
+{
+    ASSERT(isMainThread());
+
+    if (!m_acceptingNewRequests) {
+        callback(INVALID_STATE_ERR, "Unable to deleteRange from database because it has shut down");
+        return;
+    }
+
+    RefPtr<AsyncRequest> request = AsyncRequestImpl<uint32_t, const String&>::create([callback](uint32_t errorCode, const String& errorMessage) {
+        callback(errorCode, errorMessage);
+    }, [callback]() {
+        callback(INVALID_STATE_ERR, "Unable to deleteRange from database");
+    });
+
+    uint64_t requestID = request->requestID();
+    m_pendingDatabaseTasks.add(requestID, request.release());
+
+    postDatabaseTask(createAsyncTask(*this, &UniqueIDBDatabase::deleteRangeInBackingStore, requestID, transactionIdentifier, objectStoreID, keyRangeData));
+}
+
 void UniqueIDBDatabase::openBackingStoreTransaction(const IDBIdentifier& transactionIdentifier, const Vector<int64_t>& objectStoreIDs, IndexedDB::TransactionMode mode)
 {
     ASSERT(!isMainThread());
@@ -914,6 +935,21 @@ void UniqueIDBDatabase::didCountInBackingStore(uint64_t requestID, int64_t count
     ASSERT(request);
 
     request->completeRequest(count, errorCode, errorMessage);
+}
+
+void UniqueIDBDatabase::deleteRangeInBackingStore(uint64_t requestID, const IDBIdentifier& transactionIdentifier, int64_t objectStoreID, const IDBKeyRangeData&)
+{
+    // FIXME: Implement
+
+    postMainThreadTask(createAsyncTask(*this, &UniqueIDBDatabase::didDeleteRangeInBackingStore, requestID, IDBDatabaseException::UnknownError, ASCIILiteral("deleteRange in backing store not supported yet")));
+}
+
+void UniqueIDBDatabase::didDeleteRangeInBackingStore(uint64_t requestID, uint32_t errorCode, const String& errorMessage)
+{
+    RefPtr<AsyncRequest> request = m_pendingDatabaseTasks.take(requestID);
+    ASSERT(request);
+
+    request->completeRequest(errorCode, errorMessage);
 }
 
 String UniqueIDBDatabase::absoluteDatabaseDirectory() const

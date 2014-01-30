@@ -24,6 +24,7 @@
 
 messages -> WebIDBServerConnection LegacyReceiver {
     DidGetOrEstablishIDBDatabaseMetadata(uint64_t requestID, bool success, WebCore::IDBDatabaseMetadata metadata)
+    DidDeleteDatabase(uint64_t requestID, bool success)
 
     DidOpenTransaction(uint64_t requestID, bool success)
     DidBeginTransaction(uint64_t requestID, bool success)
@@ -43,6 +44,7 @@ messages -> WebIDBServerConnection LegacyReceiver {
     DidAdvanceCursor(uint64_t requestID, WebCore::IDBKeyData key, WebCore::IDBKeyData primaryKey, IPC::DataReference value, uint32_t errorCode, String errorMessage)
     DidIterateCursor(uint64_t requestID, WebCore::IDBKeyData key, WebCore::IDBKeyData primaryKey, IPC::DataReference value, uint32_t errorCode, String errorMessage)
     DidCount(uint64_t requestID, int64_t count, uint32_t errorCode, String errorMessage)
+    DidDeleteRange(uint64_t requestID, uint32_t errorCode, String errorMessage)
 }
 
 #endif // ENABLE(INDEXED_DATABASE) && ENABLE(DATABASE_PROCESS)

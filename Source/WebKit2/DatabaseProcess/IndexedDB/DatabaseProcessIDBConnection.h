@@ -68,6 +68,7 @@ private:
     // Message handlers.
     void establishConnection(const String& databaseName, const SecurityOriginData& openingOrigin, const SecurityOriginData& mainFrameOrigin);
     void getOrEstablishIDBDatabaseMetadata(uint64_t requestID);
+    void deleteDatabase(uint64_t requestID, const String& databaseName);
     void openTransaction(uint64_t requestID, int64_t transactionID, const Vector<int64_t>& objectStoreIDs, uint64_t transactionMode);
     void beginTransaction(uint64_t requestID, int64_t transactionID);
     void commitTransaction(uint64_t requestID, int64_t transactionID);
@@ -87,6 +88,7 @@ private:
     void cursorIterate(uint64_t requestID, int64_t cursorID, const WebCore::IDBKeyData&);
 
     void count(uint64_t requestID, int64_t transactionID, int64_t objectStoreID, int64_t indexID, const WebCore::IDBKeyRangeData&);
+    void deleteRange(uint64_t requestID, int64_t transactionID, int64_t objectStoreID, const WebCore::IDBKeyRangeData& keyRange);
 
     Ref<DatabaseToWebProcessConnection> m_connection;
     uint64_t m_serverConnectionIdentifier;
