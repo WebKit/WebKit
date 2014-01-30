@@ -76,11 +76,10 @@ INSTALLHDRS_SCRIPT_PHASE = YES;
 PRODUCT_NAME = WebKit;
 UMBRELLA_FRAMEWORKS_DIR = $(PRODUCTION_FRAMEWORKS_DIR)/WebKit.framework/Versions/A/Frameworks;
 
-OTHER_LDFLAGS_BASE = -licucore -framework JavaScriptCore -framework QuartzCore -framework WebCore;
-OTHER_LDFLAGS = $(inherited) $(OTHER_LDFLAGS_BASE) $(OTHER_LDFLAGS_$(PLATFORM_NAME));
-OTHER_LDFLAGS_iphoneos = -lobjc -framework CFNetwork -framework CoreFoundation -framework CoreGraphics -framework CoreText -framework Foundation -framework GraphicsServices -framework ImageIO -lMobileGestalt -framework Security;
+OTHER_LDFLAGS = $(inherited) $(OTHER_LDFLAGS_$(PLATFORM_NAME));
+OTHER_LDFLAGS_iphoneos = -lobjc -framework CFNetwork -framework CoreFoundation -framework CoreGraphics -framework CoreText -framework Foundation -framework GraphicsServices -framework ImageIO -lMobileGestalt;
 OTHER_LDFLAGS_iphonesimulator = $(OTHER_LDFLAGS_iphoneos);
-OTHER_LDFLAGS_macosx = -sub_umbrella WebCore -framework Carbon -framework Cocoa -framework DiskArbitration -framework IOKit -framework OpenGL -framework Security;
+OTHER_LDFLAGS_macosx = -sub_umbrella WebCore -framework Carbon -framework Cocoa -framework DiskArbitration -framework IOKit -framework OpenGL;
 
 NORMAL_WEBKIT_FRAMEWORKS_DIR = $(NORMAL_WEBKIT_FRAMEWORKS_DIR_$(PLATFORM_NAME));
 NORMAL_WEBKIT_FRAMEWORKS_DIR_iphoneos = $(PRODUCTION_FRAMEWORKS_DIR);

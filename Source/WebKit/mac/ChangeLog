@@ -1,3 +1,11 @@
+2014-01-29  Dan Bernstein  <mitz@apple.com>
+
+        Moved linking against common frameworks and a library from the .xcconfig file into the target.
+
+        Reviewed by Tim Horton.
+
+        * Configurations/WebKit.xcconfig:
+
 2014-01-29  Ryosuke Niwa  <rniwa@webkit.org>
 
         checkTextOfParagraph releases NSString twice
