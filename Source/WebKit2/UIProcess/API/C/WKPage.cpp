@@ -82,7 +82,7 @@ WKPageGroupRef WKPageGetPageGroup(WKPageRef pageRef)
 
 void WKPageLoadURL(WKPageRef pageRef, WKURLRef URLRef)
 {
-    toImpl(pageRef)->loadRequest(toWTFString(URLRef));
+    toImpl(pageRef)->loadRequest(URL(URL(), toWTFString(URLRef)));
 }
 
 void WKPageLoadURLWithUserData(WKPageRef pageRef, WKURLRef URLRef, WKTypeRef userDataRef)
