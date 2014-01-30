@@ -1,3 +1,15 @@
+2014-01-30  David Kilzer  <ddkilzer@apple.com>
+
+        De-virtual-ize CachedResource::isImage()
+        <http://webkit.org/b/127936>
+
+        Reviewed by Andreas Kling.
+
+        Also replace explicit type() checks with isImage().
+
+        * Misc/WebCache.mm:
+        (+[WebCache imageForURL:]): Use !isImage().
+
 2014-01-30  Beth Dakin  <bdakin@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=127371

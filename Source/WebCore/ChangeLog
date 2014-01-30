@@ -1,3 +1,22 @@
+2014-01-30  David Kilzer  <ddkilzer@apple.com>
+
+        De-virtual-ize CachedResource::isImage()
+        <http://webkit.org/b/127936>
+
+        Reviewed by Andreas Kling.
+
+        Also replace explicit type() checks with isImage().
+
+        * loader/SubresourceLoader.cpp:
+        (WebCore::SubresourceLoader::willSendRequest): Use isImage().
+        * loader/cache/CachedImage.h:
+        (WebCore::CachedResource::isImage): Remove virtual override.
+        * loader/cache/CachedResource.h:
+        (WebCore::CachedResource::isImage): Check type() instead of
+        defining a virtual method that returns false by default.
+        * loader/cache/CachedResourceLoader.cpp:
+        (WebCore::CachedResourceLoader::reloadImagesIfNotDeferred): Use isImage().
+
 2014-01-30  Eric Carlson  <eric.carlson@apple.com>
 
         [iOS] don't update media layers on main thread when using AVFoundation

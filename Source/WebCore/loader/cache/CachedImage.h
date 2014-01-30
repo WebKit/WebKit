@@ -122,7 +122,6 @@ private:
     // For compatibility, images keep loading even if there are HTTP errors.
     virtual bool shouldIgnoreHTTPStatusCodeErrors() const override { return true; }
 
-    virtual bool isImage() const override { return true; }
     virtual bool stillNeedsLoad() const override { return !errorOccurred() && status() == Unknown && !isLoading(); }
 
     // ImageObserver

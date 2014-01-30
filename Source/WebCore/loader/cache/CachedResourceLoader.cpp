@@ -686,7 +686,7 @@ void CachedResourceLoader::reloadImagesIfNotDeferred()
     DocumentResourceMap::iterator end = m_documentResources.end();
     for (DocumentResourceMap::iterator it = m_documentResources.begin(); it != end; ++it) {
         CachedResource* resource = it->value.get();
-        if (resource->type() == CachedResource::ImageResource && resource->stillNeedsLoad() && !clientDefersImage(resource->url()))
+        if (resource->isImage() && resource->stillNeedsLoad() && !clientDefersImage(resource->url()))
             const_cast<CachedResource*>(resource)->load(this, defaultCachedResourceOptions());
     }
 }

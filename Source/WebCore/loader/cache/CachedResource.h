@@ -155,7 +155,7 @@ public:
 
     SubresourceLoader* loader() { return m_loader.get(); }
 
-    virtual bool isImage() const { return false; }
+    bool isImage() const { return type() == ImageResource; }
     bool ignoreForRequestCount() const
     {
         return type() == MainResource
