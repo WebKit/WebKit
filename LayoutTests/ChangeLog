@@ -1,5 +1,27 @@
 2014-01-29  Bem Jones-Bey  <bjonesbe@adobe.com>
 
+        Update clip-path tests to use new shape syntax
+        https://bugs.webkit.org/show_bug.cgi?id=127862
+
+        Reviewed by Dirk Schulze.
+
+        Update the tests to reflect the new shape syntax. The inset tests are
+        copied from the rectangle tests that will be removed when the old
+        syntax is removed.
+
+        * css3/masking/clip-path-inset-expected.txt: Added.
+        * css3/masking/clip-path-inset.html: Added.
+        * svg/clip-path/clip-path-shape-circle-1.svg:
+        * svg/clip-path/clip-path-shape-circle-2.svg:
+        * svg/clip-path/clip-path-shape-ellipse-1.svg:
+        * svg/clip-path/clip-path-shape-ellipse-2.svg:
+        * svg/clip-path/clip-path-shape-rounded-inset-1-expected.svg: Added.
+        * svg/clip-path/clip-path-shape-rounded-inset-1.svg: Copied from LayoutTests/svg/clip-path/clip-path-shape-circle-1.svg.
+        * svg/clip-path/clip-path-shape-rounded-inset-2-expected.svg: Added.
+        * svg/clip-path/clip-path-shape-rounded-inset-2.svg: Copied from LayoutTests/svg/clip-path/clip-path-shape-circle-1.svg.
+
+2014-01-29  Bem Jones-Bey  <bjonesbe@adobe.com>
+
         clip-path swaps bottom radii for the inset shape
         https://bugs.webkit.org/show_bug.cgi?id=127859
 
