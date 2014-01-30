@@ -1,3 +1,13 @@
+2014-01-30  Filip Pizlo  <fpizlo@apple.com>
+
+        Update FTL StackMaps parser to stackSize change
+        https://bugs.webkit.org/show_bug.cgi?id=127933
+
+        Reviewed by Oliver Hunt.
+
+        * ftl/FTLStackMaps.cpp:
+        (JSC::FTL::StackMaps::parse):
+
 2014-01-30  Zan Dobersek  <zdobersek@igalia.com>
 
         [GTK] Only disable -ftree-dce optimization when compiling with GCC

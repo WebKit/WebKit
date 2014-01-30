@@ -115,6 +115,18 @@ bool StackMaps::parse(DataView* view)
     
     view->read<uint32_t>(offset, true); // Reserved (header)
     
+    uint32_t numFunctions = view->read<uint32_t>(offset, true);
+    while (numFunctions--) {
+        // FIXME: Actually use this data.
+        // https://bugs.webkit.org/show_bug.cgi?id=125650
+        uint32_t functionOffset = view->read<uint32_t>(offset, true);
+        uint32_t stackSize = view->read<uint32_t>(offset, true);
+        if (!stackSize || stackSize > (1 << 20)) {
+            dataLog("Bad stack size ", stackSize, " for function offset", functionOffset, "\n");
+            RELEASE_ASSERT_NOT_REACHED();
+        }
+    }
+    
     uint32_t numConstants = view->read<uint32_t>(offset, true);
     while (numConstants--)
         constants.append(readObject<Constant>(view, offset));
