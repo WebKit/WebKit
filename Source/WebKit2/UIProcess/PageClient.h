@@ -105,6 +105,9 @@ public:
     // Return whether the view is visible.
     virtual bool isViewVisible() = 0;
 
+    // Return whether the view is visible, or occluded by another window.
+    virtual bool isViewVisibleOrOccluded() { return isViewVisible(); }
+
     // Return whether the view is in a window.
     virtual bool isViewInWindow() = 0;
 

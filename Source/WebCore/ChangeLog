@@ -1,3 +1,13 @@
+2014-01-29  Gavin Barraclough  <barraclough@apple.com>
+
+        Add IsVisibleOrOccluded to ViewState
+        https://bugs.webkit.org/show_bug.cgi?id=127875
+
+        Reviewed by Anders Carlsson.
+
+        * page/ViewState.h:
+            - added IsVisibleOrOccluded
+
 2014-01-29  Ryosuke Niwa  <rniwa@webkit.org>
 
         EventHandler::handleMouseReleaseEvent shouldn't call updateSelectionCachesIfSelectionIsInsideTextFormControl

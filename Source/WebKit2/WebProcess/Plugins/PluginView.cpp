@@ -509,8 +509,8 @@ void PluginView::platformViewStateDidChange(ViewState::Flags changed)
     if (!m_plugin || !m_isInitialized)
         return;
 
-    if (changed & ViewState::IsVisible)
-        m_plugin->windowVisibilityChanged(m_webPage->isVisible());
+    if (changed & ViewState::IsVisibleOrOccluded)
+        m_plugin->windowVisibilityChanged(m_webPage->isVisibleOrOccluded());
     if (changed & ViewState::WindowIsActive)
         m_plugin->windowFocusChanged(m_webPage->windowIsFocused());
 }

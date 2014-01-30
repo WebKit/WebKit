@@ -33,14 +33,15 @@ struct ViewState {
         WindowIsActive = 1 << 0,
         IsFocused = 1 << 1,
         IsVisible = 1 << 2,
-        IsInWindow = 1 << 3,
-        IsVisuallyIdle = 1 << 4,
+        IsVisibleOrOccluded = 1 << 3,
+        IsInWindow = 1 << 4,
+        IsVisuallyIdle = 1 << 5,
     };
 
     typedef unsigned Flags;
 
     static const Flags NoFlags = 0;
-    static const Flags AllFlags = WindowIsActive | IsFocused | IsVisible | IsInWindow | IsVisuallyIdle;
+    static const Flags AllFlags = WindowIsActive | IsFocused | IsVisible | IsVisibleOrOccluded | IsInWindow | IsVisuallyIdle;
 };
 
 } // namespace WebCore

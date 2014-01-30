@@ -207,6 +207,11 @@ bool PageClientImpl::isViewVisible()
     return true;
 }
 
+bool PageClientImpl::isViewVisibleOrOccluded()
+{
+    return [[m_wkView window] isVisible];
+}
+
 bool PageClientImpl::isViewInWindow()
 {
     return [m_wkView window];

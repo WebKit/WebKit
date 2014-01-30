@@ -361,6 +361,7 @@ public:
     void removePluginView(PluginView*);
 
     bool isVisible() const { return m_viewState & WebCore::ViewState::IsVisible; }
+    bool isVisibleOrOccluded() const { return m_viewState & WebCore::ViewState::IsVisibleOrOccluded; }
 
     LayerHostingMode layerHostingMode() const { return m_layerHostingMode; }
     void setLayerHostingMode(unsigned);

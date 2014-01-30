@@ -934,6 +934,8 @@ void WebPageProxy::updateViewState(ViewState::Flags flagsToUpdate)
         m_viewState |= ViewState::WindowIsActive;
     if (flagsToUpdate & ViewState::IsVisible && m_pageClient.isViewVisible())
         m_viewState |= ViewState::IsVisible;
+    if (flagsToUpdate & ViewState::IsVisibleOrOccluded && m_pageClient.isViewVisibleOrOccluded())
+        m_viewState |= ViewState::IsVisibleOrOccluded;
     if (flagsToUpdate & ViewState::IsInWindow && m_pageClient.isViewInWindow())
         m_viewState |= ViewState::IsInWindow;
     if (flagsToUpdate & ViewState::IsVisuallyIdle && m_pageClient.isVisuallyIdle())
@@ -945,9 +947,9 @@ void WebPageProxy::viewStateDidChange(ViewState::Flags mayHaveChanged, WantsRepl
     if (!isValid())
         return;
 
-    // If the visibility state may have changed, then so may the visually idle.
+    // If the visibility state may have changed, then so may the visually idle & occluded agnostic state.
     if (mayHaveChanged & ViewState::IsVisible)
-        mayHaveChanged |= ViewState::IsVisuallyIdle;
+        mayHaveChanged |= ViewState::IsVisibleOrOccluded | ViewState::IsVisuallyIdle;
 
     // Record the prior view state, update the flags that may have changed,
     // and check which flags have actually changed.

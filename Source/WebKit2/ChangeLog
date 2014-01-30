@@ -1,3 +1,35 @@
+2014-01-29  Gavin Barraclough  <barraclough@apple.com>
+
+        Add IsVisibleOrOccluded to ViewState
+        https://bugs.webkit.org/show_bug.cgi?id=127875
+
+        Reviewed by Anders Carlsson.
+
+        When the WKView associated with a plugin becomes occluded
+        we tell the plugin it is no longer visible. This is a problem
+        if the plugin is being occluded by its own fullscreen window.
+
+        Instead, consider plugins to be visible any time they are in
+        a visible window – i.e. when they are visible or occluded.
+
+        * UIProcess/API/mac/PageClientImpl.h:
+        * UIProcess/API/mac/PageClientImpl.mm:
+        (WebKit::PageClientImpl::isViewVisibleOrOccluded):
+        * UIProcess/PageClient.h:
+        (WebKit::PageClient::isViewVisibleOrOccluded):
+            - added isViewVisibleOrOccluded.
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::updateViewState):
+            - update IsVisibleOrOccluded.
+        (WebKit::WebPageProxy::viewStateDidChange):
+            - when updating IsVisible also update IsVisibleOrOccluded.
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::platformViewStateDidChange):
+            - use isVisibleOrOccluded to determine plugin visibility.
+        * WebProcess/WebPage/WebPage.h:
+        (WebKit::WebPage::isVisibleOrOccluded):
+            - accessor.
+
 2014-01-29  Anders Carlsson  <andersca@apple.com>
 
         Pass navigation IDs along to LoadRequest and Reload

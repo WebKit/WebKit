@@ -64,6 +64,7 @@ private:
     virtual bool isViewWindowActive();
     virtual bool isViewFocused();
     virtual bool isViewVisible();
+    virtual bool isViewVisibleOrOccluded();
     virtual bool isViewInWindow();
     virtual bool isVisuallyIdle();
     virtual LayerHostingMode viewLayerHostingMode() override;
