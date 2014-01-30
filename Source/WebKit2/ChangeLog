@@ -1,3 +1,12 @@
+2014-01-29  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Remove ENABLE(JAVASCRIPT_DEBUGGER) leftovers
+        https://bugs.webkit.org/show_bug.cgi?id=127845
+
+        Reviewed by Joseph Pecoraro.
+
+        * Configurations/FeatureDefines.xcconfig:
+
 2014-01-29  Dan Bernstein  <mitz@apple.com>
 
         Moved linking against common frameworks and a library from the .xcconfig file into the target.

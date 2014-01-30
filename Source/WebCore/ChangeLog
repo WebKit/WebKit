@@ -1,3 +1,14 @@
+2014-01-29  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Remove ENABLE(JAVASCRIPT_DEBUGGER) leftovers
+        https://bugs.webkit.org/show_bug.cgi?id=127845
+
+        Reviewed by Joseph Pecoraro.
+
+        * Configurations/FeatureDefines.xcconfig:
+        * bindings/js/JSDOMWindowBase.cpp:
+        (WebCore::JSDOMWindowBase::supportsProfiling):
+
 2014-01-29  Gavin Barraclough  <barraclough@apple.com>
 
         Add IsVisibleOrOccluded to ViewState

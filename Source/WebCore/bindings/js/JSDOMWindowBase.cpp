@@ -116,12 +116,8 @@ bool JSDOMWindowBase::supportsProfiling(const JSGlobalObject* object)
     if (!page)
         return false;
 
-#if ENABLE(INSPECTOR)
     return page->inspectorController().profilerEnabled();
-#else
-    return false;
 #endif // ENABLE(INSPECTOR)
-#endif
 }
 
 bool JSDOMWindowBase::supportsRichSourceInfo(const JSGlobalObject* object)

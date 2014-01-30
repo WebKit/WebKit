@@ -1,3 +1,13 @@
+2014-01-29  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Remove ENABLE(JAVASCRIPT_DEBUGGER) leftovers
+        https://bugs.webkit.org/show_bug.cgi?id=127845
+
+        Reviewed by Joseph Pecoraro.
+
+        * win/tools/vsprops/FeatureDefines.props:
+        * win/tools/vsprops/FeatureDefinesCairo.props:
+
 2014-01-23  Roger Fong  <roger_fong@apple.com>
 
         [Windows] Unreviewed. Disable unnecessary warning C4309, "truncation of constant value".
