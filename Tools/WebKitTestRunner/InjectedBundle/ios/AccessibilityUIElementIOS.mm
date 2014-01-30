@@ -198,6 +198,16 @@ JSValueRef AccessibilityUIElement::uiElementArrayAttributeValue(JSStringRef attr
     return 0;
 }
 
+JSValueRef AccessibilityUIElement::rowHeaders() const
+{
+    return nullptr;
+}
+
+JSValueRef AccessibilityUIElement::columnHeaders() const
+{
+    return nullptr;
+}
+
 PassRefPtr<AccessibilityUIElement> AccessibilityUIElement::uiElementAttributeValue(JSStringRef attribute) const
 {
     return 0;
