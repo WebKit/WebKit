@@ -1,5 +1,13 @@
 2014-01-29  Jer Noble  <jer.noble@apple.com>
 
+        Unreviewed iOS build fix after 163050.
+
+        Import CALayer.h explicitly as (on iOS) it is not included by other headers.
+
+        * platform/graphics/avfoundation/objc/SourceBufferPrivateAVFObjC.mm:
+
+2014-01-29  Jer Noble  <jer.noble@apple.com>
+
         Unreviewed Mac Build fix after r163046.
 
         Forward define AVSampleLayerDisplayLayer and its methods.
