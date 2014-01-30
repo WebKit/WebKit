@@ -225,6 +225,7 @@ protected:
     virtual bool computeAccessibilityIsIgnored() const override;
 
 private:
+    void ariaElementsFromAttribute(AccessibilityChildrenVector&, const QualifiedName&) const;
     void ariaListboxSelectedChildren(AccessibilityChildrenVector&);
     void ariaListboxVisibleChildren(AccessibilityChildrenVector&);
     bool isAllowedChildOfTree() const;
