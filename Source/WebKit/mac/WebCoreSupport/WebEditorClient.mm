@@ -891,7 +891,6 @@ Vector<TextCheckingResult> WebEditorClient::checkTextOfParagraph(StringView stri
 
     auto textString = nsStringWithoutCopying(string);
     NSArray *incomingResults = [[m_webView _UIKitDelegateForwarder] checkSpellingOfString:textString.get()];
-    [textString release];
     for (NSValue *incomingResult in incomingResults) {
         NSRange resultRange = [incomingResult rangeValue];
         ASSERT(resultRange.location != NSNotFound && resultRange.length > 0);

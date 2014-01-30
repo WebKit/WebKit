@@ -1,3 +1,19 @@
+2014-01-29  Ryosuke Niwa  <rniwa@webkit.org>
+
+        checkTextOfParagraph releases NSString twice
+        https://bugs.webkit.org/show_bug.cgi?id=127881
+        <rdar://problem/15937446>
+
+        Reviewed by Anders Carlsson.
+
+        textString is released once by an explicit call to release and again by it going out of scope.
+        Don't do the explicit release.
+
+        The bug was spotted by Sam Weinig.
+
+        * WebCoreSupport/WebEditorClient.mm:
+        (WebEditorClient::checkTextOfParagraph):
+
 2014-01-29  Anders Carlsson  <andersca@apple.com>
 
         Fix build.
