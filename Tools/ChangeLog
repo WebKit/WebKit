@@ -1,5 +1,16 @@
 2014-01-30  David Farler  <dfarler@apple.com>
 
+        DumpRenderTree fails to build with ASAN: -fsanitize=address passed to static DRT target
+        https://bugs.webkit.org/show_bug.cgi?id=127935
+
+        Reviewed by Andy Estes.
+
+        * DumpRenderTree/DumpRenderTree.xcodeproj/project.pbxproj:
+        Clear OTHER_LDFLAGS at the project level for the static library target.
+        No other linker flags were inherited from DebugRelease.
+
+2014-01-30  David Farler  <dfarler@apple.com>
+
         package-root shouldn't prefix simulator roots with the SDK path
         http://bugs.webkit.org/show_bug.cgi?id=127923
 
