@@ -1,3 +1,9 @@
+2014-01-29  Sam Weinig  <sam@webkit.org>
+
+        Fix windows.
+
+        * WebKit.vcxproj/WebKitExportGenerator/WebKitExports.def.in:
+
 2014-01-29  Ryuan Choi  <ryuan.choi@samsung.com>
 
         EFL port should stop using COMPILE_ASSERT_MATCHING_ENUM macros
