@@ -41,6 +41,8 @@ GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 GCC_WARN_ABOUT_DEPRECATED_FUNCTIONS = NO
 GCC_WARN_UNUSED_FUNCTION = YES
 GCC_WARN_UNUSED_VARIABLE = YES
+GCC_WARN_64_TO_32_BIT_CONVERSION[arch=arm64] = NO;
+GCC_WARN_64_TO_32_BIT_CONVERSION[arch=x86_64] = NO;
 WARNING_CFLAGS = -Wall -W -Wno-unused-parameter
 LINKER_DISPLAYS_MANGLED_NAMES = YES;
 
@@ -62,7 +64,7 @@ WEBCORE_PRIVATE_HEADERS_DIR = $(WEBKIT_UMBRELLA_FRAMEWORKS_DIR)/WebCore.framewor
 
 EXCLUDED_SOURCE_FILE_NAMES = $(EXCLUDED_SOURCE_FILE_NAMES_$(PLATFORM_NAME));
 EXCLUDED_SOURCE_FILE_NAMES_macosx = *IOS.h *IOS.cpp *IOS.mm;
-EXCLUDED_SOURCE_FILE_NAMES_iphoneos = *Mac.h *Mac.cpp *Mac.mm *InjectedBundle* *PlatformUtilities* Tests/WebKit2/* Tests/WebKit2ObjC/* *_Bundle* JavaScriptTest.*;
+EXCLUDED_SOURCE_FILE_NAMES_iphoneos = *Mac.h *Mac.cpp *Mac.mm *InjectedBundle* *PlatformUtilities* Tests/WebKit2/* Tests/WebKit2ObjC/* *_Bundle* JavaScriptTest.* */mac/* CustomProtocolsSyncXHRTest.mm;
 EXCLUDED_SOURCE_FILE_NAMES_iphonesimulator = $(EXCLUDED_SOURCE_FILE_NAMES_iphoneos);
 
 TOOLCHAINS = $(TOOLCHAINS_$(PLATFORM_NAME));

@@ -1,5 +1,18 @@
 2014-01-30  David Farler  <dfarler@apple.com>
 
+        Make TestWebKitAPI build and run for iOS
+        https://bugs.webkit.org/show_bug.cgi?id=127925
+
+        Reviewed by Andy Estes.
+
+        * TestWebKitAPI/Configurations/Base.xcconfig:
+        - Don't warn on 64-32 bit conversion on x86_64 and arm64
+        - Don't build mac/*
+        * TestWebKitAPI/Configurations/TestWebKitAPI.xcconfig:
+        - Link WebKit2 on all platforms
+
+2014-01-30  David Farler  <dfarler@apple.com>
+
         package-root should copy ./usr from the build products directory
         https://bugs.webkit.org/show_bug.cgi?id=127878
 

@@ -24,7 +24,7 @@
 PRODUCT_NAME = TestWebKitAPI;
 GCC_ENABLE_OBJC_EXCEPTIONS = YES;
 
-OTHER_LDFLAGS = $(inherited) -lgtest -framework JavaScriptCore -framework WebKit $(OTHER_LDFLAGS_$(PLATFORM_NAME));
+OTHER_LDFLAGS = $(inherited) -lgtest -framework JavaScriptCore -framework WebKit -framework WebKit2 $(OTHER_LDFLAGS_$(PLATFORM_NAME));
 OTHER_LDFLAGS_iphoneos = -framework WebCore;
 OTHER_LDFLAGS_iphonesimulator = $(OTHER_LDFLAGS_iphoneos);
-OTHER_LDFLAGS_macosx = -framework Cocoa -framework Carbon -framework WebKit2;
+OTHER_LDFLAGS_macosx = -framework Cocoa -framework Carbon;
