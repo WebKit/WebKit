@@ -1,3 +1,14 @@
+2014-01-30  Gabor Rapcsanyi  <rgabor@webkit.org>
+
+        Add ARM EFL Linux builder bots to Apple buildmaster
+        https://bugs.webkit.org/show_bug.cgi?id=127472
+
+        Reviewed by Csaba Osztrogonác.
+
+        There is no ARM buildslaves after removing the Qt builders.
+
+        * BuildSlaveSupport/build.webkit.org-config/config.json:
+
 2014-01-30  Andy Estes  <aestes@apple.com>
 
         REGRESSION (r163037): WebKit2.PageLoadBasic API test failing on Mountain Lion
