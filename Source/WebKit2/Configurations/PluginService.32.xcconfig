@@ -23,10 +23,13 @@
 
 #include "BaseXPCService.xcconfig"
 
-ARCHS = $(ARCHS_$(PLATFORM_NAME));
-ARCHS_macosx = i386;
-ARCHS_iphoneos = $(ARCHS_STANDARD_32_64_BIT);
-ARCHS_iphonesimulator = $(ARCHS_iphoneos);
+VALID_ARCHS = $(VALID_ARCHS_$(PLATFORM_NAME));
+VALID_ARCHS_macosx = $(VALID_ARCHS_macosx_$(CONFIGURATION));
+VALID_ARCHS_macosx_Debug = $(ARCHS_STANDARD_32_64_BIT);
+VALID_ARCHS_macosx_Release = $(VALID_ARCHS_macosx_Debug);
+VALID_ARCHS_macosx_Production = i386;
+VALID_ARCHS_iphoneos = $(VALID_ARCHS);
+VALID_ARCHS_iphonesimulator = $(VALID_ARCHS_iphoneos);
 
 PRODUCT_NAME = com.apple.WebKit.Plugin.32;
 INFOPLIST_FILE = PluginProcess/EntryPoint/mac/XPCService/PluginService.32-64.Info.plist;

@@ -1,3 +1,21 @@
+2014-01-30  Mark Rowe  <mrowe@apple.com>
+
+        Host plug-ins in XPC services
+        <https://webkit.org/b/127897> / <rdar://problem/13675955>
+
+        We disabled use of XPC services for plug-ins back in r143829 as the per-architecture services
+        were not being built for the appropriate architectures. Fixing that allows us to reenable them.
+
+        Reviewed by Anders Carlsson.
+
+        * Configurations/PluginService.32.xcconfig: Use VALID_ARCHS to restrict the service
+        to building for i386-only in production builds. Non-production builds allow building
+        for all standard architectures to ensure that Xcode will be able to build this target.
+        The exact architecture used isn't a concern for non-production builds since we'll use
+        the development version of the service anyway.
+        * UIProcess/Plugins/mac/PluginProcessProxyMac.mm:
+        (WebKit::shouldUseXPC): Remove the workaround that disables use of the XPC services.
+
 2014-01-30  Anders Carlsson  <andersca@apple.com>
 
         Add WKNavigationDelegate class
