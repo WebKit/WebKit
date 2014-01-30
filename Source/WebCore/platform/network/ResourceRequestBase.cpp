@@ -412,9 +412,8 @@ void ResourceRequestBase::addHTTPHeaderField(const AtomicString& name, const Str
 
 void ResourceRequestBase::addHTTPHeaderFields(const HTTPHeaderMap& headerFields)
 {
-    HTTPHeaderMap::const_iterator end = headerFields.end();
-    for (HTTPHeaderMap::const_iterator it = headerFields.begin(); it != end; ++it)
-        addHTTPHeaderField(it->key, it->value);
+    for (const auto& header : headerFields)
+        addHTTPHeaderField(header.key, header.value);
 }
 
 bool equalIgnoringHeaderFields(const ResourceRequestBase& a, const ResourceRequestBase& b)

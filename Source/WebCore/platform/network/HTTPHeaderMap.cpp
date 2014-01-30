@@ -48,9 +48,8 @@ PassOwnPtr<CrossThreadHTTPHeaderMapData> HTTPHeaderMap::copyData() const
     OwnPtr<CrossThreadHTTPHeaderMapData> data = adoptPtr(new CrossThreadHTTPHeaderMapData());
     data->reserveInitialCapacity(size());
 
-    HTTPHeaderMap::const_iterator end_it = end();
-    for (HTTPHeaderMap::const_iterator it = begin(); it != end_it; ++it)
-        data->uncheckedAppend(std::make_pair(it->key.string().isolatedCopy(), it->value.isolatedCopy()));
+    for (const auto& header : *this)
+        data->uncheckedAppend(std::make_pair(header.key.string().isolatedCopy(), header.value.isolatedCopy()));
 
     return data.release();
 }

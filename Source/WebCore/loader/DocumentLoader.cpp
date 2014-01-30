@@ -605,7 +605,8 @@ void DocumentLoader::responseReceived(CachedResource* resource, const ResourceRe
         return;
 
     DEFINE_STATIC_LOCAL(AtomicString, xFrameOptionHeader, ("x-frame-options", AtomicString::ConstructFromLiteral));
-    HTTPHeaderMap::const_iterator it = response.httpHeaderFields().find(xFrameOptionHeader);
+
+    auto it = response.httpHeaderFields().find(xFrameOptionHeader);
     if (it != response.httpHeaderFields().end()) {
         String content = it->value;
         ASSERT(m_mainResource);

@@ -863,11 +863,10 @@ bool ApplicationCacheStorage::store(ApplicationCacheResource* resource, unsigned
     // Serialize the headers
     StringBuilder stringBuilder;
     
-    HTTPHeaderMap::const_iterator end = resource->response().httpHeaderFields().end();
-    for (HTTPHeaderMap::const_iterator it = resource->response().httpHeaderFields().begin(); it!= end; ++it) {
-        stringBuilder.append(it->key);
+    for (const auto& header : resource->response().httpHeaderFields()) {
+        stringBuilder.append(header.key);
         stringBuilder.append(':');
-        stringBuilder.append(it->value);
+        stringBuilder.append(header.value);
         stringBuilder.append('\n');
     }
     

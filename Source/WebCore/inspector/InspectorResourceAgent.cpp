@@ -95,9 +95,9 @@ void InspectorResourceAgent::willDestroyFrontendAndBackend(InspectorDisconnectRe
 static PassRefPtr<InspectorObject> buildObjectForHeaders(const HTTPHeaderMap& headers)
 {
     RefPtr<InspectorObject> headersObject = InspectorObject::create();
-    HTTPHeaderMap::const_iterator end = headers.end();
-    for (HTTPHeaderMap::const_iterator it = headers.begin(); it != end; ++it)
-        headersObject->setString(it->key.string(), it->value);
+    
+    for (const auto& header : headers)
+        headersObject->setString(header.key.string(), header.value);
     return headersObject;
 }
 
@@ -371,9 +371,8 @@ void InspectorResourceAgent::documentThreadableLoaderStartedLoadingForClient(uns
 void InspectorResourceAgent::willLoadXHR(ThreadableLoaderClient* client, const String& method, const URL& url, bool async, PassRefPtr<FormData> formData, const HTTPHeaderMap& headers, bool includeCredentials)
 {
     RefPtr<XHRReplayData> xhrReplayData = XHRReplayData::create(method, url, async, formData, includeCredentials);
-    HTTPHeaderMap::const_iterator end = headers.end();
-    for (HTTPHeaderMap::const_iterator it = headers.begin(); it!= end; ++it)
-        xhrReplayData->addHeader(it->key, it->value);
+    for (const auto& header : headers)
+        xhrReplayData->addHeader(header.key, header.value);
     m_pendingXHRReplayData.set(client, xhrReplayData);
 }
 
@@ -600,9 +599,8 @@ void InspectorResourceAgent::replayXHR(ErrorString*, const String& requestId)
         memoryCache()->remove(cachedResource);
 
     xhr->open(xhrReplayData->method(), xhrReplayData->url(), xhrReplayData->async(), IGNORE_EXCEPTION);
-    HTTPHeaderMap::const_iterator end = xhrReplayData->headers().end();
-    for (HTTPHeaderMap::const_iterator it = xhrReplayData->headers().begin(); it!= end; ++it)
-        xhr->setRequestHeader(it->key, it->value, IGNORE_EXCEPTION);
+    for (const auto& header : xhrReplayData->headers())
+        xhr->setRequestHeader(header.key, header.value, IGNORE_EXCEPTION);
     xhr->sendFromInspector(xhrReplayData->formData(), IGNORE_EXCEPTION);
 }
 

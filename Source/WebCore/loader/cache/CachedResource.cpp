@@ -715,17 +715,15 @@ void CachedResource::updateResponseAfterRevalidation(const ResourceResponse& val
 
     // RFC2616 10.3.5
     // Update cached headers from the 304 response
-    const HTTPHeaderMap& newHeaders = validatingResponse.httpHeaderFields();
-    HTTPHeaderMap::const_iterator end = newHeaders.end();
-    for (HTTPHeaderMap::const_iterator it = newHeaders.begin(); it != end; ++it) {
+    for (const auto& header : validatingResponse.httpHeaderFields()) {
         // Entity headers should not be sent by servers when generating a 304
         // response; misconfigured servers send them anyway. We shouldn't allow
         // such headers to update the original request. We'll base this on the
         // list defined by RFC2616 7.1, with a few additions for extension headers
         // we care about.
-        if (!shouldUpdateHeaderAfterRevalidation(it->key))
+        if (!shouldUpdateHeaderAfterRevalidation(header.key))
             continue;
-        m_response.setHTTPHeaderField(it->key, it->value);
+        m_response.setHTTPHeaderField(header.key, header.value);
     }
 }
 

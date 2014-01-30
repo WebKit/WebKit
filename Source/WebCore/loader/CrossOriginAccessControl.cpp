@@ -67,9 +67,8 @@ bool isSimpleCrossOriginAccessRequest(const String& method, const HTTPHeaderMap&
     if (!isOnAccessControlSimpleRequestMethodWhitelist(method))
         return false;
 
-    HTTPHeaderMap::const_iterator end = headerMap.end();
-    for (HTTPHeaderMap::const_iterator it = headerMap.begin(); it != end; ++it) {
-        if (!isOnAccessControlSimpleRequestHeaderWhitelist(it->key, it->value))
+    for (const auto& header : headerMap) {
+        if (!isOnAccessControlSimpleRequestHeaderWhitelist(header.key, header.value))
             return false;
     }
 
@@ -112,17 +111,17 @@ ResourceRequest createAccessControlPreflightRequest(const ResourceRequest& reque
 
     const HTTPHeaderMap& requestHeaderFields = request.httpHeaderFields();
 
-    if (requestHeaderFields.size() > 0) {
+    if (!requestHeaderFields.isEmpty()) {
         StringBuilder headerBuffer;
-        HTTPHeaderMap::const_iterator it = requestHeaderFields.begin();
-        headerBuffer.append(it->key);
-        ++it;
-
-        HTTPHeaderMap::const_iterator end = requestHeaderFields.end();
-        for (; it != end; ++it) {
-            headerBuffer.append(',');
-            headerBuffer.append(' ');
-            headerBuffer.append(it->key);
+        
+        bool appendComma = false;
+        for (const auto& headerName : requestHeaderFields.keys()) {
+            if (appendComma)
+                headerBuffer.appendLiteral(", ");
+            else
+                appendComma = true;
+            
+            headerBuffer.append(headerName);
         }
 
         preflightRequest.setHTTPHeaderField("Access-Control-Request-Headers", headerBuffer.toString().lower());

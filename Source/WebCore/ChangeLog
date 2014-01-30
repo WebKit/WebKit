@@ -1,3 +1,38 @@
+2014-01-30  Anders Carlsson  <andersca@apple.com>
+
+        Modernize HTTPHeaderMap iteration
+        https://bugs.webkit.org/show_bug.cgi?id=127915
+
+        Reviewed by Andreas Kling.
+
+        * inspector/InspectorResourceAgent.cpp:
+        (WebCore::buildObjectForHeaders):
+        (WebCore::InspectorResourceAgent::willLoadXHR):
+        (WebCore::InspectorResourceAgent::replayXHR):
+        * loader/CrossOriginAccessControl.cpp:
+        (WebCore::isSimpleCrossOriginAccessRequest):
+        (WebCore::createAccessControlPreflightRequest):
+        * loader/CrossOriginPreflightResultCache.cpp:
+        (WebCore::CrossOriginPreflightResultCacheItem::allowsCrossOriginHeaders):
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::responseReceived):
+        * loader/appcache/ApplicationCacheStorage.cpp:
+        (WebCore::ApplicationCacheStorage::store):
+        * loader/cache/CachedRawResource.cpp:
+        (WebCore::CachedRawResource::canReuse):
+        * loader/cache/CachedResource.cpp:
+        (WebCore::CachedResource::updateResponseAfterRevalidation):
+        * platform/network/HTTPHeaderMap.cpp:
+        (WebCore::HTTPHeaderMap::copyData):
+        * platform/network/ResourceRequestBase.cpp:
+        (WebCore::ResourceRequestBase::addHTTPHeaderFields):
+        * platform/network/cf/ResourceRequestCFNet.cpp:
+        (WebCore::setHeaderFields):
+        * platform/network/mac/ResourceRequestMac.mm:
+        (WebCore::ResourceRequest::doUpdatePlatformRequest):
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::getAllResponseHeaders):
+
 2014-01-30  Antti Koivisto  <antti@apple.com>
 
         WebPage::determinePrimarySnapshottedPlugIn is slow

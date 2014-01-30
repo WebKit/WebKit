@@ -233,17 +233,13 @@ bool CachedRawResource::canReuse(const ResourceRequest& newRequest) const
     const HTTPHeaderMap& newHeaders = newRequest.httpHeaderFields();
     const HTTPHeaderMap& oldHeaders = m_resourceRequest.httpHeaderFields();
 
-    HTTPHeaderMap::const_iterator end = newHeaders.end();
-    for (HTTPHeaderMap::const_iterator i = newHeaders.begin(); i != end; ++i) {
-        AtomicString headerName = i->key;
-        if (!shouldIgnoreHeaderForCacheReuse(headerName) && i->value != oldHeaders.get(headerName))
+    for (const auto& header : newHeaders) {
+        if (!shouldIgnoreHeaderForCacheReuse(header.key) && header.value != oldHeaders.get(header.key))
             return false;
     }
 
-    end = oldHeaders.end();
-    for (HTTPHeaderMap::const_iterator i = oldHeaders.begin(); i != end; ++i) {
-        AtomicString headerName = i->key;
-        if (!shouldIgnoreHeaderForCacheReuse(headerName) && i->value != newHeaders.get(headerName))
+    for (const auto& header : oldHeaders) {
+        if (!shouldIgnoreHeaderForCacheReuse(header.key) && header.value != newHeaders.get(header.key))
             return false;
     }
 

@@ -130,8 +130,8 @@ static inline void setHeaderFields(CFMutableURLRequestRef request, const HTTPHea
             CFURLRequestSetHTTPHeaderFieldValue(request, oldHeaderFieldNames[i], 0);
     }
 
-    for (HTTPHeaderMap::const_iterator it = requestHeaders.begin(), end = requestHeaders.end(); it != end; ++it)
-        CFURLRequestSetHTTPHeaderFieldValue(request, it->key.string().createCFString().get(), it->value.createCFString().get());
+    for (const auto& header : requestHeaders)
+        CFURLRequestSetHTTPHeaderFieldValue(request, header.key.string().createCFString().get(), header.value.createCFString().get());
 }
 
 void ResourceRequest::doUpdatePlatformRequest()

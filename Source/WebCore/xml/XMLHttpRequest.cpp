@@ -995,24 +995,24 @@ String XMLHttpRequest::getAllResponseHeaders() const
 
     HTTPHeaderSet accessControlExposeHeaderSet;
     parseAccessControlExposeHeadersAllowList(m_response.httpHeaderField("Access-Control-Expose-Headers"), accessControlExposeHeaderSet);
-    HTTPHeaderMap::const_iterator end = m_response.httpHeaderFields().end();
-    for (HTTPHeaderMap::const_iterator it = m_response.httpHeaderFields().begin(); it!= end; ++it) {
+    
+    for (const auto& header : m_response.httpHeaderFields()) {
         // Hide Set-Cookie header fields from the XMLHttpRequest client for these reasons:
         //     1) If the client did have access to the fields, then it could read HTTP-only
         //        cookies; those cookies are supposed to be hidden from scripts.
         //     2) There's no known harm in hiding Set-Cookie header fields entirely; we don't
         //        know any widely used technique that requires access to them.
         //     3) Firefox has implemented this policy.
-        if (isSetCookieHeader(it->key) && !securityOrigin()->canLoadLocalResources())
+        if (isSetCookieHeader(header.key) && !securityOrigin()->canLoadLocalResources())
             continue;
 
-        if (!m_sameOriginRequest && !isOnAccessControlResponseHeaderWhitelist(it->key) && !accessControlExposeHeaderSet.contains(it->key))
+        if (!m_sameOriginRequest && !isOnAccessControlResponseHeaderWhitelist(header.key) && !accessControlExposeHeaderSet.contains(header.key))
             continue;
 
-        stringBuilder.append(it->key);
+        stringBuilder.append(header.key);
         stringBuilder.append(':');
         stringBuilder.append(' ');
-        stringBuilder.append(it->value);
+        stringBuilder.append(header.value);
         stringBuilder.append('\r');
         stringBuilder.append('\n');
     }
