@@ -1,3 +1,24 @@
+2014-01-29  Geoffrey Garen  <ggaren@apple.com>
+
+        50% time on Dromaeo Selector * benchmark spent allocating oversized backing stores (but not in Chrome)
+        https://bugs.webkit.org/show_bug.cgi?id=127879
+
+        Reviewed by Gavin Barraclough.
+
+        Let's not dynamically resize an array whose size is statically known,
+        mmmkay?
+
+        * runtime/ArrayPrototype.cpp:
+        (JSC::arrayProtoFuncConcat): Use nullptr to disambiguate vs the numeric
+        argument.
+
+        (JSC::arrayProtoFuncSlice): The fix.
+
+        (JSC::arrayProtoFuncSort):
+        (JSC::arrayProtoFuncSplice):
+        (JSC::arrayProtoFuncFilter):
+        (JSC::arrayProtoFuncMap): Use nullptr.
+
 2014-01-29  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Run JSC Inspector EventLoop in a custom run loop mode to prevent default observers from running

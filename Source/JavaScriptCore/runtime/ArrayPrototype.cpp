@@ -420,7 +420,7 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncJoin(ExecState* exec)
 EncodedJSValue JSC_HOST_CALL arrayProtoFuncConcat(ExecState* exec)
 {
     JSValue thisValue = exec->hostThisValue().toThis(exec, StrictMode);
-    JSArray* arr = constructEmptyArray(exec, 0);
+    JSArray* arr = constructEmptyArray(exec, nullptr);
     unsigned n = 0;
     JSValue curArg = thisValue.toObject(exec);
     if (exec->hadException())
@@ -581,12 +581,10 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncSlice(ExecState* exec)
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
 
-    // We return a new array
-    JSArray* resObj = constructEmptyArray(exec, 0);
-    JSValue result = resObj;
-
     unsigned begin = argumentClampedIndexFromStartOrEnd(exec, 0, length);
     unsigned end = argumentClampedIndexFromStartOrEnd(exec, 1, length, length);
+
+    JSArray* result = constructEmptyArray(exec, nullptr, end - begin);
 
     unsigned n = 0;
     for (unsigned k = begin; k < end; k++, n++) {
@@ -594,9 +592,9 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncSlice(ExecState* exec)
         if (exec->hadException())
             return JSValue::encode(jsUndefined());
         if (v)
-            resObj->putDirectIndex(exec, n, v);
+            result->putDirectIndex(exec, n, v);
     }
-    resObj->setLength(exec, n);
+    result->setLength(exec, n);
     return JSValue::encode(result);
 }
 
@@ -704,7 +702,7 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncSort(ExecState* exec)
     
     JSGlobalObject* globalObject = JSGlobalObject::create(
         exec->vm(), JSGlobalObject::createStructure(exec->vm(), jsNull()));
-    JSArray* flatArray = constructEmptyArray(globalObject->globalExec(), 0);
+    JSArray* flatArray = constructEmptyArray(globalObject->globalExec(), nullptr);
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
     
@@ -767,7 +765,7 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncSplice(ExecState* exec)
         return JSValue::encode(jsUndefined());
     
     if (!exec->argumentCount())
-        return JSValue::encode(constructEmptyArray(exec, 0));
+        return JSValue::encode(constructEmptyArray(exec, nullptr));
 
     unsigned begin = argumentClampedIndexFromStartOrEnd(exec, 0, length);
 
@@ -854,7 +852,7 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncFilter(ExecState* exec)
         return throwVMTypeError(exec);
 
     JSValue applyThis = exec->argument(1);
-    JSArray* resultArray = constructEmptyArray(exec, 0);
+    JSArray* resultArray = constructEmptyArray(exec, nullptr);
 
     unsigned filterIndex = 0;
     unsigned k = 0;
@@ -914,7 +912,7 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncMap(ExecState* exec)
 
     JSValue applyThis = exec->argument(1);
 
-    JSArray* resultArray = constructEmptyArray(exec, 0, length);
+    JSArray* resultArray = constructEmptyArray(exec, nullptr, length);
     unsigned k = 0;
     if (callType == CallTypeJS && isJSArray(thisObj)) {
         JSFunction* f = jsCast<JSFunction*>(function);
