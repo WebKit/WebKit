@@ -183,11 +183,9 @@ public:
 
     virtual void scrollRectIntoView(const IntRect&) const override { }
 
-#if USE(ACCELERATED_COMPOSITING)
     virtual void attachRootGraphicsLayer(Frame*, GraphicsLayer*) override { }
     virtual void setNeedsOneShotDrawingSynchronization() override { }
     virtual void scheduleCompositingLayerFlush() override { }
-#endif
 
 #if PLATFORM(WIN)
     virtual void setLastSetCursorToCurrentCursor() override { }

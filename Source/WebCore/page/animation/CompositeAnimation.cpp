@@ -148,7 +148,6 @@ void CompositeAnimation::updateTransitions(RenderElement* renderer, RenderStyle*
                     // list. In this case, the latter one overrides the earlier one, so we
                     // behave as though this is a running animation being replaced.
                     if (!implAnim->isTargetPropertyEqual(prop, targetStyle)) {
-#if USE(ACCELERATED_COMPOSITING)
                         // For accelerated animations we need to return a new RenderStyle with the _current_ value
                         // of the property, so that restarted transitions use the correct starting point.
                         if (CSSPropertyAnimation::animationOfPropertyIsAccelerated(prop) && implAnim->isAccelerated()) {
@@ -157,7 +156,6 @@ void CompositeAnimation::updateTransitions(RenderElement* renderer, RenderStyle*
 
                             implAnim->blendPropertyValueInStyle(prop, modifiedCurrentStyle.get());
                         }
-#endif
                         LOG(Animations, "Removing existing ImplicitAnimation %p for property %s", implAnim, getPropertyName(prop));
                         animationController()->animationWillBeRemoved(implAnim);
                         m_transitions.remove(prop);

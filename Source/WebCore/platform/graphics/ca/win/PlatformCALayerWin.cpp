@@ -25,8 +25,6 @@
 
 #include "config.h"
 
-#if USE(ACCELERATED_COMPOSITING)
-
 #include "PlatformCALayerWin.h"
 
 #include "AbstractCACFLayerTreeHost.h"
@@ -675,5 +673,3 @@ PassRefPtr<PlatformCALayer> PlatformCALayerWin::createCompatibleLayer(PlatformCA
 {
     return PlatformCALayerWin::create(layerType, client);
 }
-
-#endif // USE(ACCELERATED_COMPOSITING)

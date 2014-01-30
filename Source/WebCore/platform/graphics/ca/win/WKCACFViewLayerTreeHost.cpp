@@ -26,8 +26,6 @@
 #include "config.h"
 #include "WKCACFViewLayerTreeHost.h"
 
-#if USE(ACCELERATED_COMPOSITING)
-
 #include "PlatformCALayer.h"
 #include "SoftLinking.h"
 #include <wtf/CurrentTime.h>
@@ -187,5 +185,3 @@ GraphicsDeviceAdapter* WKCACFViewLayerTreeHost::graphicsDeviceAdapter() const
 #endif
 
 } // namespace WebCore
-
-#endif // USE(ACCELERATED_COMPOSITING)

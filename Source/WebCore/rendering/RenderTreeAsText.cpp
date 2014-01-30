@@ -43,6 +43,7 @@
 #include "RenderInline.h"
 #include "RenderIterator.h"
 #include "RenderLayer.h"
+#include "RenderLayerBacking.h"
 #include "RenderLineBreak.h"
 #include "RenderListItem.h"
 #include "RenderListMarker.h"
@@ -68,10 +69,6 @@
 #include "RenderSVGRoot.h"
 #include "RenderSVGText.h"
 #include "SVGRenderTreeAsText.h"
-#endif
-
-#if USE(ACCELERATED_COMPOSITING)
-#include "RenderLayerBacking.h"
 #endif
 
 namespace WebCore {
@@ -639,15 +636,11 @@ static void write(TextStream& ts, RenderLayer& l,
         ts << " layerType: background only";
     else if (paintPhase == LayerPaintPhaseForeground)
         ts << " layerType: foreground only";
-    
-#if USE(ACCELERATED_COMPOSITING)
+
     if (behavior & RenderAsTextShowCompositedLayers) {
         if (l.isComposited())
             ts << " (composited, bounds=" << l.backing()->compositedBounds() << ", drawsContent=" << l.backing()->graphicsLayer()->drawsContent() << ", paints into ancestor=" << l.backing()->paintsIntoCompositedAncestor() << ")";
     }
-#else
-    UNUSED_PARAM(behavior);
-#endif
     
     ts << "\n";
 

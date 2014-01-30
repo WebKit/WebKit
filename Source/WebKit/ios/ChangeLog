@@ -1,3 +1,18 @@
+2014-01-30  Andrei Bucur  <abucur@adobe.com>
+
+        Remove the ACCELERATED_COMPOSITING flag
+        https://bugs.webkit.org/show_bug.cgi?id=127833
+
+        Reviewed by Antti Koivisto.
+
+        Remove the USE(ACCELERATED_COMPOSITING) conditionals from the code base and make AC
+        mandatory.
+
+        * WebCoreSupport/WebChromeClientIOS.h:
+        * WebCoreSupport/WebChromeClientIOS.mm:
+        (WebChromeClientIOS::attachRootGraphicsLayer):
+        * WebView/WebUIKitDelegate.h:
+
 2014-01-27  Joseph Pecoraro  <pecoraro@apple.com>
 
         Unreviewed iOS build fix. FALLTHROUGHs for iOS.

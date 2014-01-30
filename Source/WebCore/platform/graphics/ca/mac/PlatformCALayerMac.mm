@@ -25,8 +25,6 @@
 
 #include "config.h"
 
-#if USE(ACCELERATED_COMPOSITING)
-
 #import "PlatformCALayerMac.h"
 
 #import "AnimationUtilities.h"
@@ -831,5 +829,3 @@ void PlatformCALayerMac::enumerateRectsBeingDrawn(CGContextRef context, void (^b
 {
     wkCALayerEnumerateRectsBeingDrawnWithBlock(m_layer.get(), context, block);
 }
-
-#endif // USE(ACCELERATED_COMPOSITING)

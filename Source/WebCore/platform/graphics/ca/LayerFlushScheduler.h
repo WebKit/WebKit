@@ -26,8 +26,6 @@
 #ifndef LayerFlushScheduler_h
 #define LayerFlushScheduler_h
 
-#if USE(ACCELERATED_COMPOSITING)
-
 #include "LayerFlushSchedulerClient.h"
 #include <wtf/Noncopyable.h>
 #include <wtf/RetainPtr.h>
@@ -62,7 +60,5 @@ protected:
 };
 
 } // namespace WebCore
-
-#endif // USE(ACCELERATED_COMPOSITING)
 
 #endif // LayerFlushScheduler_h

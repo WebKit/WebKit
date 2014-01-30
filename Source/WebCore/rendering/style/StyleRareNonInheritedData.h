@@ -186,9 +186,7 @@ public:
     unsigned m_wrapFlow: 3; // WrapFlow
     unsigned m_wrapThrough: 1; // WrapThrough
 
-#if USE(ACCELERATED_COMPOSITING)
     unsigned m_runningAcceleratedAnimation : 1;
-#endif
 
     unsigned m_hasAspectRatio : 1; // Whether or not an aspect ratio has been specified.
 

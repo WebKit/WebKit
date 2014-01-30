@@ -128,12 +128,10 @@ public:
     virtual void needTouchEvents(bool);
 #endif
 
-#if USE(ACCELERATED_COMPOSITING)
     virtual void attachRootGraphicsLayer(Frame*, GraphicsLayer*);
     virtual void setNeedsOneShotDrawingSynchronization();
     virtual void scheduleCompositingLayerFlush();
     virtual CompositingTriggerFlags allowedCompositingTriggers() const;
-#endif
 
 #if ENABLE(FULLSCREEN_API)
     virtual bool supportsFullScreenForElement(const WebCore::Element*, bool withKeyboard);

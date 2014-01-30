@@ -26,8 +26,6 @@
 #ifndef RenderLayerBacking_h
 #define RenderLayerBacking_h
 
-#if USE(ACCELERATED_COMPOSITING)
-
 #include "FloatPoint.h"
 #include "FloatPoint3D.h"
 #include "GraphicsLayer.h"
@@ -333,7 +331,5 @@ enum CanvasCompositingStrategy {
 CanvasCompositingStrategy canvasCompositingStrategy(const RenderObject&);
 
 } // namespace WebCore
-
-#endif // USE(ACCELERATED_COMPOSITING)
 
 #endif // RenderLayerBacking_h

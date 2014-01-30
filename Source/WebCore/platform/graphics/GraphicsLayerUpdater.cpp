@@ -25,8 +25,6 @@
 
 #include "config.h"
 
-#if USE(ACCELERATED_COMPOSITING)
-
 #include "GraphicsLayerUpdater.h"
 
 #include "GraphicsLayer.h"
@@ -81,5 +79,3 @@ void GraphicsLayerUpdater::displayRefreshFired(double timestamp)
 }
 
 } // namespace WebCore
-
-#endif // USE(ACCELERATED_COMPOSITING)

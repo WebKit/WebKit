@@ -237,7 +237,6 @@ void PageClientImpl::setFindIndicator(PassRefPtr<FindIndicator>, bool fadeOut, b
     notImplemented();
 }
 
-#if USE(ACCELERATED_COMPOSITING)
 void PageClientImpl::enterAcceleratedCompositingMode(const LayerTreeContext&)
 {
     notImplemented();
@@ -252,7 +251,6 @@ void PageClientImpl::updateAcceleratedCompositingMode(const LayerTreeContext&)
 {
     notImplemented();
 }
-#endif // USE(ACCELERATED_COMPOSITING)
 
 void PageClientImpl::pageClosed()
 {

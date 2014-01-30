@@ -80,9 +80,7 @@ public:
     bool isMarkedForDestruction() const;
     void getRanges(Vector<RefPtr<Range>>&, const RenderRegion*) const;
 
-#if USE(ACCELERATED_COMPOSITING)
     virtual bool collectsGraphicsLayersUnderRegions() const override;
-#endif
 
     // Check if the content is flown into at least a region with region styling rules.
     bool hasRegionsWithStyling() const { return m_hasRegionsWithStyling; }

@@ -659,10 +659,8 @@ void AnimationBase::freezeAtTime(double t)
     else
         m_pauseTime = m_startTime + t - m_animation->delay();
 
-#if USE(ACCELERATED_COMPOSITING)
     if (m_object && m_object->isComposited())
         toRenderBoxModelObject(m_object)->suspendAnimations(m_pauseTime);
-#endif
 }
 
 double AnimationBase::beginAnimationUpdateTime() const

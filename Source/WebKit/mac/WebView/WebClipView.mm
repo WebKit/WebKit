@@ -82,7 +82,6 @@ using namespace WebCore;
     return self;
 }
 
-#if USE(ACCELERATED_COMPOSITING)
 - (NSRect)visibleRect
 {
     if (!_isScrolling)
@@ -114,7 +113,6 @@ using namespace WebCore;
 
     _isScrolling = NO;
 }
-#endif
 
 - (void)resetAdditionalClip
 {

@@ -53,9 +53,7 @@ public:
     virtual ~TextTrackRepresentation() { }
 
     virtual void update() = 0;
-#if USE(ACCELERATED_COMPOSITING)
     virtual PlatformLayer* platformLayer() = 0;
-#endif
     virtual void setContentScale(float) = 0;
     virtual IntRect bounds() const = 0;
 };

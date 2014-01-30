@@ -52,11 +52,7 @@ void ViewClientEfl::didChangeContentsSize(WKViewRef, WKSize size, const void* cl
 {
     EwkView* ewkView = toEwkView(clientInfo);
     if (WKPageUseFixedLayout(ewkView->wkPage()))
-#if USE(ACCELERATED_COMPOSITING)
         ewkView->pageViewportController().didChangeContentsSize(toIntSize(size));
-#else
-        { }
-#endif
     else
         ewkView->scheduleUpdateDisplay();
 
@@ -102,11 +98,7 @@ void ViewClientEfl::didChangeContentsPosition(WKViewRef, WKPoint position, const
 {
     EwkView* ewkView = toEwkView(clientInfo);
     if (WKPageUseFixedLayout(ewkView->wkPage())) {
-#if USE(ACCELERATED_COMPOSITING)
         ewkView->pageViewportController().pageDidRequestScroll(toIntPoint(position));
-#else
-        UNUSED_PARAM(position);
-#endif
         return;
     }
 
@@ -117,12 +109,7 @@ void ViewClientEfl::didRenderFrame(WKViewRef, WKSize contentsSize, WKRect covere
 {
     EwkView* ewkView = toEwkView(clientInfo);
     if (WKPageUseFixedLayout(ewkView->wkPage())) {
-#if USE(ACCELERATED_COMPOSITING)
         ewkView->pageViewportController().didRenderFrame(toIntSize(contentsSize), toIntRect(coveredRect));
-#else
-        UNUSED_PARAM(contentsSize);
-        UNUSED_PARAM(coveredRect);
-#endif
         return;
     }
 
@@ -133,9 +120,7 @@ void ViewClientEfl::didCompletePageTransition(WKViewRef, const void* clientInfo)
 {
     EwkView* ewkView = toEwkView(clientInfo);
     if (WKPageUseFixedLayout(ewkView->wkPage())) {
-#if USE(ACCELERATED_COMPOSITING)
         ewkView->pageViewportController().pageTransitionViewportReady();
-#endif
         return;
     }
 
@@ -146,12 +131,8 @@ void ViewClientEfl::didChangeViewportAttributes(WKViewRef, WKViewportAttributesR
 {
     EwkView* ewkView = toEwkView(clientInfo);
     if (WKPageUseFixedLayout(ewkView->wkPage())) {
-#if USE(ACCELERATED_COMPOSITING)
         // FIXME: pageViewportController should accept WKViewportAttributesRef.
         ewkView->pageViewportController().didChangeViewportAttributes(toImpl(attributes)->originalAttributes());
-#else
-        UNUSED_PARAM(attributes);
-#endif
         return;
     }
     ewkView->scheduleUpdateDisplay();

@@ -32,10 +32,7 @@
 #include <Ecore_IMF.h>
 #include <Eina.h>
 #include <Evas.h>
-
-#if USE(ACCELERATED_COMPOSITING)
 #include <Evas_GL.h>
-#endif
 
 namespace WTF {
 
@@ -69,12 +66,10 @@ void deleteOwnedPtr(Ecore_IMF_Context* ptr)
         ecore_imf_context_del(ptr);
 }
 
-#if USE(ACCELERATED_COMPOSITING)
 void deleteOwnedPtr(Evas_GL* ptr)
 {
     if (ptr)
         evas_gl_free(ptr);
 }
-#endif
 
 }

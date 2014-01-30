@@ -20,7 +20,7 @@
 #ifndef TextureMapperLayer_h
 #define TextureMapperLayer_h
 
-#if USE(ACCELERATED_COMPOSITING) && USE(TEXTURE_MAPPER)
+#if USE(TEXTURE_MAPPER)
 
 #include "FilterOperations.h"
 #include "FloatRect.h"

@@ -66,6 +66,7 @@
 #import <WebCore/Frame.h>
 #import <WebCore/FrameLoadRequest.h>
 #import <WebCore/FrameView.h>
+#import <WebCore/GraphicsLayer.h>
 #import <WebCore/HTMLInputElement.h>
 #import <WebCore/HTMLNames.h>
 #import <WebCore/HTMLPlugInImageElement.h>
@@ -83,10 +84,6 @@
 #import <wtf/PassRefPtr.h>
 #import <wtf/Vector.h>
 #import <wtf/text/WTFString.h>
-
-#if USE(ACCELERATED_COMPOSITING)
-#import <WebCore/GraphicsLayer.h>
-#endif
 
 #if USE(PLUGIN_HOST_PROCESS) && ENABLE(NETSCAPE_PLUGIN_API)
 #import "NetscapePluginHostManager.h"
@@ -930,8 +927,6 @@ bool WebChromeClient::shouldPaintEntireContents() const
 #endif
 }
 
-#if USE(ACCELERATED_COMPOSITING)
-
 void WebChromeClient::attachRootGraphicsLayer(Frame* frame, GraphicsLayer* graphicsLayer)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
@@ -964,8 +959,6 @@ void WebChromeClient::scheduleCompositingLayerFlush()
     [m_webView _scheduleCompositingLayerFlush];
     END_BLOCK_OBJC_EXCEPTIONS;
 }
-
-#endif
 
 #if ENABLE(VIDEO)
 

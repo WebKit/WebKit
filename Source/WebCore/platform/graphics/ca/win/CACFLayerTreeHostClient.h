@@ -26,8 +26,6 @@
 #ifndef CACFLayerTreeHostClient_h
 #define CACFLayerTreeHostClient_h
 
-#if USE(ACCELERATED_COMPOSITING)
-
 namespace WebCore {
 
 class CACFLayerTreeHostClient {
@@ -37,7 +35,5 @@ public:
 };
 
 } // namespace WebCore
-
-#endif // USE(ACCELERATED_COMPOSITING)
 
 #endif // CACFLayerTreeHostClient_h

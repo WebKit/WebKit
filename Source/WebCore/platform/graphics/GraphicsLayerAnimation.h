@@ -20,8 +20,6 @@
 #ifndef GraphicsLayerAnimation_h
 #define GraphicsLayerAnimation_h
 
-#if USE(ACCELERATED_COMPOSITING)
-
 #include "GraphicsLayer.h"
 #include "TransformationMatrix.h"
 #include <wtf/HashMap.h>
@@ -105,6 +103,5 @@ private:
 };
 
 }
-#endif
 
 #endif // GraphicsLayerAnimation_h

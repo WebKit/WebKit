@@ -97,11 +97,9 @@ private:
     virtual void updateTextInputState() override;
     virtual void startDrag(const WebCore::DragData&, PassRefPtr<ShareableBitmap> dragImage) override;
 
-#if USE(ACCELERATED_COMPOSITING)
     virtual void enterAcceleratedCompositingMode(const LayerTreeContext&) override;
     virtual void exitAcceleratedCompositingMode() override;
     virtual void updateAcceleratedCompositingMode(const LayerTreeContext&) override;
-#endif
 
     virtual void handleDownloadRequest(DownloadProxy*) override;
     virtual void didCommitLoadForMainFrame() override;

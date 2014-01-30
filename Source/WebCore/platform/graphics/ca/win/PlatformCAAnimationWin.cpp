@@ -25,8 +25,6 @@
 
 #include "config.h"
 
-#if USE(ACCELERATED_COMPOSITING)
-
 #include "PlatformCAAnimation.h"
 
 #include "FloatConversion.h"
@@ -559,5 +557,3 @@ void PlatformCAAnimation::copyTimingFunctionsFrom(const PlatformCAAnimation* val
 {
     CACFAnimationSetTimingFunctions(m_animation.get(), CACFAnimationGetTimingFunctions(value->platformAnimation()));
 }
-
-#endif // USE(ACCELERATED_COMPOSITING)

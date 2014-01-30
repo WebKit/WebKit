@@ -101,11 +101,9 @@ public:
 
     virtual bool shouldUseTiledBackingForFrameView(const WebCore::FrameView*) { return false; }
 
-#if USE(ACCELERATED_COMPOSITING)
     virtual WebCore::GraphicsLayerFactory* graphicsLayerFactory() { return 0; }
     virtual void setRootCompositingLayer(WebCore::GraphicsLayer*) = 0;
     virtual void scheduleCompositingLayerFlush() = 0;
-#endif
 
 #if USE(COORDINATED_GRAPHICS)
     virtual void didReceiveCoordinatedLayerTreeHostMessage(IPC::Connection*, IPC::MessageDecoder&) = 0;

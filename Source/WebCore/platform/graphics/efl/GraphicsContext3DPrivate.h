@@ -21,8 +21,6 @@
 #ifndef GraphicsContext3DPrivate_h
 #define GraphicsContext3DPrivate_h
 
-#if USE(3D_GRAPHICS) || USE(ACCELERATED_COMPOSITING)
-
 #include "GraphicsContext3D.h"
 
 #if USE(TEXTURE_MAPPER_GL)
@@ -94,7 +92,5 @@ private:
 };
 
 } // namespace WebCore
-
-#endif
 
 #endif

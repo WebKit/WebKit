@@ -26,8 +26,6 @@
 #ifndef GLTransportSurface_h
 #define GLTransportSurface_h
 
-#if USE(ACCELERATED_COMPOSITING)
-
 #include "GLPlatformSurface.h"
 #include <wtf/PassOwnPtr.h>
 
@@ -75,7 +73,5 @@ protected:
 };
 
 }
-
-#endif
 
 #endif

@@ -19,7 +19,7 @@
 #include "config.h"
 #include "AcceleratedCompositingContext.h"
 
-#if USE(ACCELERATED_COMPOSITING) && USE(TEXTURE_MAPPER_GL)
+#if USE(TEXTURE_MAPPER_GL)
 
 #include "CairoUtilities.h"
 #include "FrameView.h"
@@ -406,4 +406,4 @@ void AcceleratedCompositingContext::paintContents(const GraphicsLayer*, Graphics
 
 } // namespace WebKit
 
-#endif // USE(ACCELERATED_COMPOSITING) && USE(TEXTURE_MAPPER_GL)
+#endif // USE(TEXTURE_MAPPER_GL)

@@ -25,8 +25,6 @@
 
 #include "config.h"
 
-#if USE(ACCELERATED_COMPOSITING)
-
 #include "LayerFlushScheduler.h"
 
 namespace WebCore {
@@ -50,5 +48,3 @@ void LayerFlushScheduler::resume()
 }
 
 } // namespace WebCore
-
-#endif // USE(ACCELERATED_COMPOSITING)

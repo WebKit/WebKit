@@ -135,7 +135,6 @@ public:
     void serviceScriptedAnimations(double monotonicAnimationStartTime);
 #endif
 
-#if USE(ACCELERATED_COMPOSITING)
     void updateCompositingLayersAfterStyleChange();
     void updateCompositingLayersAfterLayout();
     bool flushCompositingStateForThisFrame(Frame* rootFrameForFlush);
@@ -155,7 +154,6 @@ public:
     // In the future when any ScrollableArea can have a node in th ScrollingTree, this should
     // become a virtual function on ScrollableArea.
     uint64_t scrollLayerID() const;
-#endif
 
     bool hasCompositedContent() const;
     bool hasCompositedContentIncludingDescendants() const;
@@ -197,9 +195,7 @@ public:
     bool hasExtendedBackground() const;
     IntRect extendedBackgroundRect() const;
     
-#if USE(ACCELERATED_COMPOSITING)
     void setBackgroundExtendsBeyondPage(bool);
-#endif
 
     bool shouldUpdateWhileOffscreen() const;
     void setShouldUpdateWhileOffscreen(bool);
@@ -516,7 +512,6 @@ private:
     virtual ScrollableArea* enclosingScrollableArea() const override;
     virtual IntRect scrollableAreaBoundingBox() const override;
     virtual bool scrollAnimatorEnabled() const override;
-#if USE(ACCELERATED_COMPOSITING)
     virtual bool usesCompositedScrolling() const override;
     virtual GraphicsLayer* layerForScrolling() const override;
     virtual GraphicsLayer* layerForHorizontalScrollbar() const override;
@@ -524,7 +519,6 @@ private:
     virtual GraphicsLayer* layerForScrollCorner() const override;
 #if ENABLE(RUBBER_BANDING)
     virtual GraphicsLayer* layerForOverhangAreas() const override;
-#endif
 #endif
 
     // Override scrollbar notifications to update the AXObject cache.

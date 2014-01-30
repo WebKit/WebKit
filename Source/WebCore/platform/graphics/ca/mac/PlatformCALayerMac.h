@@ -26,8 +26,6 @@
 #ifndef PlatformCALayerMac_h
 #define PlatformCALayerMac_h
 
-#if USE(ACCELERATED_COMPOSITING)
-
 #include "PlatformCALayer.h"
 
 OBJC_CLASS NSObject;
@@ -164,7 +162,5 @@ private:
 PLATFORM_CALAYER_TYPE_CASTS(PlatformCALayerMac, isPlatformCALayerMac())
 
 } // namespace WebCore
-
-#endif // USE(ACCELERATED_COMPOSITING)
 
 #endif // PlatformCALayerMac_h

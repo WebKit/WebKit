@@ -352,10 +352,8 @@ public:
     void stopLoadingFrame(uint64_t frameID);
     void setDefersLoading(bool deferLoading);
 
-#if USE(ACCELERATED_COMPOSITING)
     void enterAcceleratedCompositingMode(WebCore::GraphicsLayer*);
     void exitAcceleratedCompositingMode();
-#endif
 
     void addPluginView(PluginView*);
     void removePluginView(PluginView*);

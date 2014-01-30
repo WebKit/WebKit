@@ -20,7 +20,7 @@
 #ifndef TextureMapperTile_h
 #define TextureMapperTile_h
 
-#if USE(ACCELERATED_COMPOSITING) && USE(TEXTURE_MAPPER)
+#if USE(TEXTURE_MAPPER)
 
 #include "FloatRect.h"
 #include "Image.h"

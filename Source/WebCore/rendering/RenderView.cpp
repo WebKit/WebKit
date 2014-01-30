@@ -40,16 +40,13 @@
 #include "RenderIterator.h"
 #include "RenderLayer.h"
 #include "RenderLayerBacking.h"
+#include "RenderLayerCompositor.h"
 #include "RenderNamedFlowThread.h"
 #include "RenderSelectionInfo.h"
 #include "RenderWidget.h"
 #include "StyleInheritedData.h"
 #include "TransformState.h"
 #include <wtf/StackStats.h>
-
-#if USE(ACCELERATED_COMPOSITING)
-#include "RenderLayerCompositor.h"
-#endif
 
 namespace WebCore {
 
@@ -533,14 +530,12 @@ void RenderView::paintBoxDecorations(PaintInfo& paintInfo, const LayoutPoint&)
             break;
         }
 
-#if USE(ACCELERATED_COMPOSITING)
         if (RenderLayer* compositingLayer = layer->enclosingCompositingLayerForRepaint()) {
             if (!compositingLayer->backing()->paintsIntoWindow()) {
                 frameView().setCannotBlitToWindow();
                 break;
             }
         }
-#endif
     }
 
     if (document().ownerElement())
@@ -560,9 +555,7 @@ void RenderView::paintBoxDecorations(PaintInfo& paintInfo, const LayoutPoint&)
     }
 
     bool hasTiledMargin = false;
-#if USE(ACCELERATED_COMPOSITING)
     hasTiledMargin = compositor().mainFrameBackingIsTiledWithMargin();
-#endif
 
     Page* page = document().page();
     float pageScaleFactor = page ? page->pageScaleFactor() : 1;
@@ -596,12 +589,10 @@ bool RenderView::shouldRepaint(const LayoutRect& rect) const
 
 void RenderView::repaintRootContents()
 {
-#if USE(ACCELERATED_COMPOSITING)
     if (layer()->isComposited()) {
         layer()->setBackingNeedsRepaint(GraphicsLayer::DoNotClipToLayer);
         return;
     }
-#endif
     repaint();
 }
 
@@ -660,24 +651,21 @@ void RenderView::repaintRectangleInViewAndCompositedLayers(const LayoutRect& ur,
         return;
 
     repaintViewRectangle(ur, immediate);
-    
-#if USE(ACCELERATED_COMPOSITING)
+
     RenderLayerCompositor& compositor = this->compositor();
     if (compositor.inCompositingMode()) {
         IntRect repaintRect = pixelSnappedIntRect(ur);
         compositor.repaintCompositedLayers(&repaintRect);
     }
-#endif
 }
 
 void RenderView::repaintViewAndCompositedLayers()
 {
     repaintRootContents();
-#if USE(ACCELERATED_COMPOSITING)
+
     RenderLayerCompositor& compositor = this->compositor();
     if (compositor.inCompositingMode())
         compositor.repaintCompositedLayers();
-#endif
 }
 
 LayoutRect RenderView::visualOverflowRect() const
@@ -802,7 +790,6 @@ void RenderView::repaintSelection() const
     }
 }
 
-#if USE(ACCELERATED_COMPOSITING)
 // Compositing layer dimensions take outline size into account, so we have to recompute layer
 // bounds when it changes.
 // FIXME: This is ugly; it would be nice to have a better way to do this.
@@ -815,7 +802,6 @@ void RenderView::setMaximalOutlineSize(int o)
         compositor().setCompositingLayersNeedRebuild();    // FIXME: this really just needs to be a geometry update.
     }
 }
-#endif
 
 // When exploring the RenderTree looking for the nodes involved in the Selection, sometimes it's
 // required to change the traversing direction because the "start" position is below the "end" one.
@@ -1167,7 +1153,6 @@ void RenderView::setBestTruncatedAt(int y, RenderBoxModelObject* forRenderer, bo
     }
 }
 
-#if USE(ACCELERATED_COMPOSITING)
 bool RenderView::usesCompositing() const
 {
     return m_compositor && m_compositor->inCompositingMode();
@@ -1180,16 +1165,11 @@ RenderLayerCompositor& RenderView::compositor()
 
     return *m_compositor;
 }
-#endif
 
 void RenderView::setIsInWindow(bool isInWindow)
 {
-#if USE(ACCELERATED_COMPOSITING)
     if (m_compositor)
         m_compositor->setIsInWindow(isInWindow);
-#else
-    UNUSED_PARAM(isInWindow);
-#endif
 }
 
 void RenderView::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)

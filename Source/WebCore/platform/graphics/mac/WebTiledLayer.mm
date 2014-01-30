@@ -24,9 +24,6 @@
  */
 
 #include "config.h"
-
-#if USE(ACCELERATED_COMPOSITING)
-
 #import "WebTiledLayer.h"
 
 #import "GraphicsContext.h"
@@ -141,5 +138,3 @@ using namespace WebCore;
 }
 
 @end // implementation WebTiledLayer
-
-#endif // USE(ACCELERATED_COMPOSITING)

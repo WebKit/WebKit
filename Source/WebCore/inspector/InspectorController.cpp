@@ -165,9 +165,7 @@ InspectorController::InspectorController(Page& page, InspectorClient* inspectorC
 
     m_agents.append(std::make_unique<InspectorInputAgent>(m_instrumentingAgents.get(), &page));
 
-#if USE(ACCELERATED_COMPOSITING)
     m_agents.append(std::make_unique<InspectorLayerTreeAgent>(m_instrumentingAgents.get()));
-#endif
 
     ASSERT(m_injectedScriptManager->commandLineAPIHost());
     if (CommandLineAPIHost* commandLineAPIHost = m_injectedScriptManager->commandLineAPIHost()) {

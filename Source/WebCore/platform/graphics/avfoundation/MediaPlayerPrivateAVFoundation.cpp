@@ -91,10 +91,8 @@ MediaPlayerPrivateAVFoundation::~MediaPlayerPrivateAVFoundation()
 
 MediaPlayerPrivateAVFoundation::MediaRenderingMode MediaPlayerPrivateAVFoundation::currentRenderingMode() const
 {
-#if USE(ACCELERATED_COMPOSITING)
     if (platformLayer())
         return MediaRenderingToLayer;
-#endif
 
     if (hasContextRenderer())
         return MediaRenderingToContext;
@@ -107,10 +105,8 @@ MediaPlayerPrivateAVFoundation::MediaRenderingMode MediaPlayerPrivateAVFoundatio
     if (!m_player->visible() || !m_player->frameView() || assetStatus() == MediaPlayerAVAssetStatusUnknown)
         return MediaRenderingNone;
 
-#if USE(ACCELERATED_COMPOSITING)
     if (supportsAcceleratedRendering() && m_player->mediaPlayerClient()->mediaPlayerRenderingCanBeAccelerated(m_player))
         return MediaRenderingToLayer;
-#endif
 
     return MediaRenderingToContext;
 }
@@ -140,21 +136,17 @@ void MediaPlayerPrivateAVFoundation::setUpVideoRendering()
     case MediaRenderingToContext:
         createContextVideoRenderer();
         break;
-        
-#if USE(ACCELERATED_COMPOSITING)
+
     case MediaRenderingToLayer:
         createVideoLayer();
         break;
-#endif
     }
 
-#if USE(ACCELERATED_COMPOSITING)
     // If using a movie layer, inform the client so the compositing tree is updated.
     if (currentMode == MediaRenderingToLayer || preferredMode == MediaRenderingToLayer) {
         LOG(Media, "MediaPlayerPrivateAVFoundation::setUpVideoRendering(%p) - calling mediaPlayerRenderingModeChanged()", this);
         m_player->mediaPlayerClient()->mediaPlayerRenderingModeChanged(m_player);
     }
-#endif
 }
 
 void MediaPlayerPrivateAVFoundation::tearDownVideoRendering()
@@ -163,10 +155,8 @@ void MediaPlayerPrivateAVFoundation::tearDownVideoRendering()
 
     destroyContextVideoRenderer();
 
-#if USE(ACCELERATED_COMPOSITING)
     if (platformLayer())
         destroyVideoLayer();
-#endif
 }
 
 bool MediaPlayerPrivateAVFoundation::hasSetUpVideoRendering() const

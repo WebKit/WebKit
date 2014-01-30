@@ -22,8 +22,6 @@
 #ifndef PageViewportController_h
 #define PageViewportController_h
 
-#if USE(ACCELERATED_COMPOSITING)
-
 #include <WebCore/FloatPoint.h>
 #include <WebCore/FloatRect.h>
 #include <WebCore/FloatSize.h>
@@ -112,5 +110,4 @@ bool fuzzyCompare(float, float, float epsilon);
 
 } // namespace WebKit
 
-#endif // USE(ACCELERATED_COMPOSITING)
 #endif // PageViewportController_h

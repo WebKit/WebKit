@@ -24,9 +24,6 @@
  */
 
 #include "config.h"
-
-#if USE(ACCELERATED_COMPOSITING)
-
 #import "PlatformCALayerRemote.h"
 
 #import "PlatformCALayerRemoteCustom.h"
@@ -532,5 +529,3 @@ uint32_t PlatformCALayerRemote::hostingContextID()
     ASSERT_NOT_REACHED();
     return 0;
 }
-
-#endif // USE(ACCELERATED_COMPOSITING)

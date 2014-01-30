@@ -205,7 +205,6 @@ private:
     virtual PassRefPtr<WebCore::PopupMenu> createPopupMenu(WebCore::PopupMenuClient*) const override;
     virtual PassRefPtr<WebCore::SearchPopupMenu> createSearchPopupMenu(WebCore::PopupMenuClient*) const override;
 
-#if USE(ACCELERATED_COMPOSITING)
     virtual WebCore::GraphicsLayerFactory* graphicsLayerFactory() const override;
     virtual void attachRootGraphicsLayer(WebCore::Frame*, WebCore::GraphicsLayer*) override;
     virtual void setNeedsOneShotDrawingSynchronization() override;
@@ -225,7 +224,6 @@ private:
     }
 
     virtual bool layerTreeStateIsFrozen() const override;
-#endif
 
 #if ENABLE(ASYNC_SCROLLING)
     virtual PassRefPtr<WebCore::ScrollingCoordinator> createScrollingCoordinator(WebCore::Page*) const override;

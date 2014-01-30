@@ -36,7 +36,6 @@ PageClientEfl::~PageClientEfl()
 {
 }
 
-#if USE(ACCELERATED_COMPOSITING)
 bool PageClientEfl::createEvasObjectForAcceleratedCompositing(Evas_Native_Surface* nativeSurface, const WebCore::IntRect& rect)
 {
     return ewk_view_accelerated_compositing_object_create(m_view, nativeSurface, rect);
@@ -46,4 +45,3 @@ WebCore::GraphicsContext3D* PageClientEfl::acceleratedCompositingContext()
 {
     return ewk_view_accelerated_compositing_context_get(m_view);
 }
-#endif

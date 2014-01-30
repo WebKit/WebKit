@@ -231,7 +231,6 @@ static void initializeAudioSession()
 
 - (CALayer *)superlayerForPluginView:(NSView *)view
 {
-#if USE(ACCELERATED_COMPOSITING)
     Frame* coreFrame = core([self webFrame]);
     FrameView* coreView = coreFrame ? coreFrame->view() : nullptr;
     if (!coreView)
@@ -243,9 +242,6 @@ static void initializeAudioSession()
         return nil;
     
     return layerForWidget->platformLayer();
-#else
-    return nil;
-#endif
 }
 #endif
 

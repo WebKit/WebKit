@@ -75,6 +75,7 @@
 #include "Page.h"
 #include "PageCache.h"
 #include "PageGroup.h"
+#include "RenderLayerCompositor.h"
 #include "RenderTableCell.h"
 #include "RenderText.h"
 #include "RenderTextControl.h"
@@ -108,10 +109,6 @@
 #include <wtf/RefCountedLeakCounter.h>
 #include <wtf/StdLibExtras.h>
 #include <yarr/RegularExpression.h>
-
-#if USE(ACCELERATED_COMPOSITING)
-#include "RenderLayerCompositor.h"
-#endif
 
 #if ENABLE(SVG)
 #include "SVGDocument.h"
@@ -999,17 +996,12 @@ Color Frame::tiledBackingStoreBackgroundColor() const
 
 String Frame::layerTreeAsText(LayerTreeFlags flags) const
 {
-#if USE(ACCELERATED_COMPOSITING)
     document()->updateLayout();
 
     if (!contentRenderer())
         return String();
 
     return contentRenderer()->compositor().layerTreeAsText(flags);
-#else
-    UNUSED_PARAM(flags);
-    return String();
-#endif
 }
 
 String Frame::trackedRepaintRectsAsText() const
@@ -1123,7 +1115,6 @@ void Frame::resumeActiveDOMObjectsAndAnimations()
     }
 }
 
-#if USE(ACCELERATED_COMPOSITING)
 void Frame::deviceOrPageScaleFactorChanged()
 {
     for (RefPtr<Frame> child = tree().firstChild(); child; child = child->tree().nextSibling())
@@ -1132,7 +1123,6 @@ void Frame::deviceOrPageScaleFactorChanged()
     if (RenderView* root = contentRenderer())
         root->compositor().deviceOrPageScaleFactorChanged();
 }
-#endif
 
 bool Frame::isURLAllowed(const URL& url) const
 {

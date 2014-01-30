@@ -26,8 +26,6 @@
 #ifndef PlatformLayer_h
 #define PlatformLayer_h
 
-#if USE(ACCELERATED_COMPOSITING)
-
 #if PLATFORM(MAC)
 OBJC_CLASS CALayer;
 typedef CALayer PlatformLayer;
@@ -55,7 +53,5 @@ typedef TextureMapperPlatformLayer PlatformLayer;
 #else
 typedef void* PlatformLayer;
 #endif
-
-#endif // USE(ACCELERATED_COMPOSITING)
 
 #endif // PlatformLayer_h

@@ -634,12 +634,7 @@ void AnimationController::endAnimationUpdate()
 
 bool AnimationController::supportsAcceleratedAnimationOfProperty(CSSPropertyID property)
 {
-#if USE(ACCELERATED_COMPOSITING)
     return CSSPropertyAnimation::animationOfPropertyIsAccelerated(property);
-#else
-    UNUSED_PARAM(property);
-    return false;
-#endif
 }
 
 } // namespace WebCore

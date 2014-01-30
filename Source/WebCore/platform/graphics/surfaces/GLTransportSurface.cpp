@@ -26,8 +26,6 @@
 #include "config.h"
 #include "GLTransportSurface.h"
 
-#if USE(ACCELERATED_COMPOSITING)
-
 #include "FloatRect.h"
 
 #if USE(GLX)
@@ -259,5 +257,3 @@ void GLTransportSurfaceClient::createTexture()
 }
 
 }
-
-#endif

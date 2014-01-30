@@ -1,3 +1,43 @@
+2014-01-30  Andrei Bucur  <abucur@adobe.com>
+
+        Remove the ACCELERATED_COMPOSITING flag
+        https://bugs.webkit.org/show_bug.cgi?id=127833
+
+        Reviewed by Antti Koivisto.
+
+        Remove the USE(ACCELERATED_COMPOSITING) conditionals from the code base and make AC
+        mandatory.
+
+        Another patch will be required to remove the flag support from the Win build system.
+
+        * FullscreenVideoController.cpp:
+        (FullscreenVideoController::LayerClient::platformCALayerLayoutSublayersOfLayer):
+        (FullscreenVideoController::FullscreenVideoController):
+        (FullscreenVideoController::~FullscreenVideoController):
+        (FullscreenVideoController::enterFullscreen):
+        * FullscreenVideoController.h:
+        * WebCoreSupport/WebChromeClient.cpp:
+        (WebChromeClient::scheduleCompositingLayerFlush):
+        * WebCoreSupport/WebChromeClient.h:
+        (WebChromeClient::setNeedsOneShotDrawingSynchronization):
+        * WebPreferences.cpp:
+        (WebPreferences::acceleratedCompositingEnabled):
+        * WebView.cpp:
+        (WebView::WebView):
+        (WebView::~WebView):
+        (WebView::close):
+        (WebView::repaint):
+        (WebView::addToDirtyRegion):
+        (WebView::scrollBackingStore):
+        (WebView::sizeChanged):
+        (WebView::updateBackingStore):
+        (WebView::paint):
+        (WebView::setShouldInvertColors):
+        (WebView::WebViewWndProc):
+        (WebView::notifyPreferencesChanged):
+        (WebView::setAcceleratedCompositing):
+        * WebView.h:
+
 2014-01-29  Alex Christensen  <achristensen@webkit.org>
 
         Prepare for accelerated compositing on WinCairo.

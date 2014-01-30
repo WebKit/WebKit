@@ -26,8 +26,6 @@
 #ifndef PlatformCALayer_h
 #define PlatformCALayer_h
 
-#if USE(ACCELERATED_COMPOSITING)
-
 #include "GraphicsContext.h"
 #include "GraphicsLayer.h"
 #include "PlatformCAAnimation.h"
@@ -237,7 +235,5 @@ protected:
     TYPE_CASTS_BASE(ToValueTypeName, WebCore::PlatformCALayer, object, object->predicate, object.predicate)
 
 } // namespace WebCore
-
-#endif // USE(ACCELERATED_COMPOSITING)
 
 #endif // PlatformCALayer_h

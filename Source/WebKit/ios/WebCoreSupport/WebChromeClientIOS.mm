@@ -241,7 +241,6 @@ PassRefPtr<WebCore::SearchPopupMenu> WebChromeClientIOS::createSearchPopupMenu(W
     return adoptRef(new SearchPopupMenuIOS(client));
 }
 
-#if USE(ACCELERATED_COMPOSITING)
 void WebChromeClientIOS::attachRootGraphicsLayer(Frame*, GraphicsLayer* graphicsLayer)
 {
     // FIXME: for non-root frames we rely on RenderView positioning the root layer,
@@ -249,7 +248,6 @@ void WebChromeClientIOS::attachRootGraphicsLayer(Frame*, GraphicsLayer* graphics
     // Send the delegate message on the web thread to avoid <rdar://problem/8567677>
     [[webView() _UIKitDelegate] _webthread_webView:webView() attachRootLayer:graphicsLayer ? graphicsLayer->platformLayer() : 0];
 }
-#endif
 
 void WebChromeClientIOS::didFlushCompositingLayers()
 {

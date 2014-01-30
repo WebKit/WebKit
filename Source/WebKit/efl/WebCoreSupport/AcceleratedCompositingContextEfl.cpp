@@ -19,7 +19,7 @@
 
 #include "config.h"
 
-#if USE(ACCELERATED_COMPOSITING) && USE(TEXTURE_MAPPER_GL)
+#if USE(TEXTURE_MAPPER_GL)
 
 #include "AcceleratedCompositingContextEfl.h"
 
@@ -122,4 +122,4 @@ GraphicsContext3D* AcceleratedCompositingContext::context()
 
 } // namespace WebCore
 
-#endif // USE(ACCELERATED_COMPOSITING) && USE(TEXTURE_MAPPER_GL)
+#endif // USE(TEXTURE_MAPPER_GL)

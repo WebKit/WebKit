@@ -3921,7 +3921,6 @@ WebPageCreationParameters WebPageProxy::creationParameters()
     return parameters;
 }
 
-#if USE(ACCELERATED_COMPOSITING)
 void WebPageProxy::enterAcceleratedCompositingMode(const LayerTreeContext& layerTreeContext)
 {
     m_pageClient.enterAcceleratedCompositingMode(layerTreeContext);
@@ -3936,7 +3935,6 @@ void WebPageProxy::updateAcceleratedCompositingMode(const LayerTreeContext& laye
 {
     m_pageClient.updateAcceleratedCompositingMode(layerTreeContext);
 }
-#endif // USE(ACCELERATED_COMPOSITING)
 
 void WebPageProxy::backForwardClear()
 {

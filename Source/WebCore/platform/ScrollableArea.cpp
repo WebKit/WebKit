@@ -322,7 +322,6 @@ void ScrollableArea::setScrollbarOverlayStyle(ScrollbarOverlayStyle overlayStyle
 
 void ScrollableArea::invalidateScrollbar(Scrollbar* scrollbar, const IntRect& rect)
 {
-#if USE(ACCELERATED_COMPOSITING)
     if (scrollbar == horizontalScrollbar()) {
         if (GraphicsLayer* graphicsLayer = layerForHorizontalScrollbar()) {
             graphicsLayer->setNeedsDisplay();
@@ -336,22 +335,20 @@ void ScrollableArea::invalidateScrollbar(Scrollbar* scrollbar, const IntRect& re
             return;
         }
     }
-#endif
+
     invalidateScrollbarRect(scrollbar, rect);
 }
 
 void ScrollableArea::invalidateScrollCorner(const IntRect& rect)
 {
-#if USE(ACCELERATED_COMPOSITING)
     if (GraphicsLayer* graphicsLayer = layerForScrollCorner()) {
         graphicsLayer->setNeedsDisplay();
         return;
     }
-#endif
+
     invalidateScrollCornerRect(rect);
 }
 
-#if USE(ACCELERATED_COMPOSITING)
 void ScrollableArea::verticalScrollbarLayerDidChange()
 {
     scrollAnimator()->verticalScrollbarLayerDidChange();
@@ -361,33 +358,20 @@ void ScrollableArea::horizontalScrollbarLayerDidChange()
 {
     scrollAnimator()->horizontalScrollbarLayerDidChange();
 }
-#endif
 
 bool ScrollableArea::hasLayerForHorizontalScrollbar() const
 {
-#if USE(ACCELERATED_COMPOSITING)
     return layerForHorizontalScrollbar();
-#else
-    return false;
-#endif
 }
 
 bool ScrollableArea::hasLayerForVerticalScrollbar() const
 {
-#if USE(ACCELERATED_COMPOSITING)
     return layerForVerticalScrollbar();
-#else
-    return false;
-#endif
 }
 
 bool ScrollableArea::hasLayerForScrollCorner() const
 {
-#if USE(ACCELERATED_COMPOSITING)
     return layerForScrollCorner();
-#else
-    return false;
-#endif
 }
 
 void ScrollableArea::serviceScrollAnimations()

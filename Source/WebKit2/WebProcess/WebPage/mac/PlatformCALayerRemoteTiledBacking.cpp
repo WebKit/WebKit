@@ -24,9 +24,6 @@
  */
 
 #include "config.h"
-
-#if USE(ACCELERATED_COMPOSITING)
-
 #import "PlatformCALayerRemoteTiledBacking.h"
 
 #import "RemoteLayerTreeContext.h"
@@ -105,5 +102,3 @@ void PlatformCALayerRemoteTiledBacking::setBorderColor(const WebCore::Color& col
 {
     m_tileController->setTileDebugBorderColor(color);
 }
-
-#endif // USE(ACCELERATED_COMPOSITING)

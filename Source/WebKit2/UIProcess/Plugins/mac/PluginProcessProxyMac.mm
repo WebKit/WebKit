@@ -157,7 +157,7 @@ void PluginProcessProxy::platformInitializePluginProcess(PluginProcessCreationPa
     // For now only Flash is known to behave with asynchronous plug-in initialization.
     parameters.supportsAsynchronousPluginInitialization = m_pluginProcessAttributes.moduleInfo.bundleIdentifier == "com.macromedia.Flash Player.plugin";
 
-#if USE(ACCELERATED_COMPOSITING) && HAVE(HOSTED_CORE_ANIMATION)
+#if HAVE(HOSTED_CORE_ANIMATION)
     mach_port_t renderServerPort = [[CARemoteLayerServer sharedServer] serverPort];
     if (renderServerPort != MACH_PORT_NULL)
         parameters.acceleratedCompositingPort = IPC::MachPort(renderServerPort, MACH_MSG_TYPE_COPY_SEND);

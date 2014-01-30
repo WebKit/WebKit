@@ -26,8 +26,6 @@
 #ifndef GLPlatformContext_h
 #define GLPlatformContext_h
 
-#if USE(ACCELERATED_COMPOSITING)
-
 #include "GLDefs.h"
 #include "GLPlatformSurface.h"
 #include "GraphicsContext3D.h"
@@ -95,7 +93,5 @@ protected:
 };
 
 } // namespace WebCore
-
-#endif
 
 #endif // GLNativeContext_H

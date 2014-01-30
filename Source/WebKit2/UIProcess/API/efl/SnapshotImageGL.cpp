@@ -24,9 +24,6 @@
 */
 
 #include "config.h"
-
-#if USE(ACCELERATED_COMPOSITING)
-
 #include "SnapshotImageGL.h"
 
 #if USE(OPENGL_ES_2)
@@ -73,4 +70,3 @@ PassRefPtr<cairo_surface_t> getImageSurfaceFromFrameBuffer(int x, int y, int wid
     cairo_surface_mark_dirty(newSurface.get());
     return newSurface;
 }
-#endif

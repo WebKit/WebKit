@@ -287,7 +287,6 @@ public:
     
     virtual bool shouldPaintEntireContents() const { return false; }
 
-#if USE(ACCELERATED_COMPOSITING)
     // Allows ports to customize the type of graphics layers created by this page.
     virtual GraphicsLayerFactory* graphicsLayerFactory() const { return 0; }
 
@@ -321,7 +320,6 @@ public:
     
     // Returns true if layer tree updates are disabled.
     virtual bool layerTreeStateIsFrozen() const { return false; }
-#endif
 
     virtual PassRefPtr<ScrollingCoordinator> createScrollingCoordinator(Page*) const { return nullptr; }
 

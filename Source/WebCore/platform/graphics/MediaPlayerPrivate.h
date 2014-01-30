@@ -52,9 +52,7 @@ public:
     
     virtual void prepareToPlay() { }
     virtual PlatformMedia platformMedia() const { return NoPlatformMedia; }
-#if USE(ACCELERATED_COMPOSITING)
     virtual PlatformLayer* platformLayer() const { return 0; }
-#endif
 
     virtual void play() = 0;
     virtual void pause() = 0;    
@@ -160,12 +158,10 @@ public:
     virtual bool canEnterFullscreen() const { return false; }
 #endif
 
-#if USE(ACCELERATED_COMPOSITING)
     // whether accelerated rendering is supported by the media engine for the current media.
     virtual bool supportsAcceleratedRendering() const { return false; }
     // called when the rendering system flips the into or out of accelerated rendering mode.
     virtual void acceleratedRenderingStateChanged() { }
-#endif
 
     virtual bool shouldMaintainAspectRatio() const { return true; }
     virtual void setShouldMaintainAspectRatio(bool) { }

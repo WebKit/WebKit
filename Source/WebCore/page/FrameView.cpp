@@ -62,6 +62,7 @@
 #include "RenderIFrame.h"
 #include "RenderLayer.h"
 #include "RenderLayerBacking.h"
+#include "RenderLayerCompositor.h"
 #include "RenderScrollbar.h"
 #include "RenderScrollbarPart.h"
 #include "RenderStyle.h"
@@ -75,15 +76,11 @@
 #include "StyleResolver.h"
 #include "TextResourceDecoder.h"
 #include "TextStream.h"
+#include "TiledBacking.h"
 
 #include <wtf/CurrentTime.h>
 #include <wtf/Ref.h>
 #include <wtf/TemporaryChange.h>
-
-#if USE(ACCELERATED_COMPOSITING)
-#include "RenderLayerCompositor.h"
-#include "TiledBacking.h"
-#endif
 
 #if ENABLE(SVG)
 #include "RenderSVGRoot.h"
@@ -433,12 +430,10 @@ void FrameView::setFrameRect(const IntRect& newRect)
 
     updateScrollableAreaSet();
 
-#if USE(ACCELERATED_COMPOSITING)
     if (RenderView* renderView = this->renderView()) {
         if (renderView->usesCompositing())
             renderView->compositor().frameViewDidChangeSize();
     }
-#endif
 
     if (!frameFlatteningEnabled())
         sendResizeEventIfNeeded();
@@ -713,7 +708,6 @@ void FrameView::calculateScrollbarModesForLayout(ScrollbarMode& hMode, Scrollbar
     }    
 }
 
-#if USE(ACCELERATED_COMPOSITING)
 void FrameView::updateCompositingLayersAfterStyleChange()
 {
     RenderView* renderView = this->renderView();
@@ -923,7 +917,6 @@ void FrameView::scheduleLayerFlushAllowingThrottling()
         return;
     view->compositor().scheduleLayerFlush(true /* canThrottle */);
 }
-#endif // USE(ACCELERATED_COMPOSITING)
 
 void FrameView::setHeaderHeight(int headerHeight)
 {
@@ -947,16 +940,13 @@ void FrameView::setFooterHeight(int footerHeight)
 
 bool FrameView::hasCompositedContent() const
 {
-#if USE(ACCELERATED_COMPOSITING)
     if (RenderView* renderView = this->renderView())
         return renderView->compositor().inCompositingMode();
-#endif
     return false;
 }
 
 bool FrameView::hasCompositedContentIncludingDescendants() const
 {
-#if USE(ACCELERATED_COMPOSITING)
     for (Frame* frame = m_frame.get(); frame; frame = frame->tree().traverseNext(m_frame.get())) {
         RenderView* renderView = frame->contentRenderer();
         if (RenderLayerCompositor* compositor = renderView ? &renderView->compositor() : 0) {
@@ -967,51 +957,43 @@ bool FrameView::hasCompositedContentIncludingDescendants() const
                 break;
         }
     }
-#endif
     return false;
 }
 
 bool FrameView::hasCompositingAncestor() const
 {
-#if USE(ACCELERATED_COMPOSITING)
     for (Frame* frame = this->frame().tree().parent(); frame; frame = frame->tree().parent()) {
         if (FrameView* view = frame->view()) {
             if (view->hasCompositedContent())
                 return true;
         }
     }
-#endif
     return false;
 }
 
 // Sometimes (for plug-ins) we need to eagerly go into compositing mode.
 void FrameView::enterCompositingMode()
 {
-#if USE(ACCELERATED_COMPOSITING)
     if (RenderView* renderView = this->renderView()) {
         renderView->compositor().enableCompositingMode();
         if (!needsLayout())
             renderView->compositor().scheduleCompositingLayerUpdate();
     }
-#endif
 }
 
 bool FrameView::isEnclosedInCompositingLayer() const
 {
-#if USE(ACCELERATED_COMPOSITING)
     auto frameOwnerRenderer = frame().ownerRenderer();
     if (frameOwnerRenderer && frameOwnerRenderer->containerForRepaint())
         return true;
 
     if (FrameView* parentView = parentFrameView())
         return parentView->isEnclosedInCompositingLayer();
-#endif
     return false;
 }
 
 bool FrameView::flushCompositingStateIncludingSubframes()
 {
-#if USE(ACCELERATED_COMPOSITING)
     bool allFramesFlushed = flushCompositingStateForThisFrame(&frame());
     
     for (Frame* child = frame().tree().firstChild(); child; child = child->tree().traverseNext(&frame())) {
@@ -1019,19 +1001,12 @@ bool FrameView::flushCompositingStateIncludingSubframes()
         allFramesFlushed &= flushed;
     }
     return allFramesFlushed;
-#else // USE(ACCELERATED_COMPOSITING)
-    return true;
-#endif
 }
 
 bool FrameView::isSoftwareRenderable() const
 {
-#if USE(ACCELERATED_COMPOSITING)
     RenderView* renderView = this->renderView();
     return !renderView || !renderView->compositor().has3DContent();
-#else
-    return true;
-#endif
 }
 
 void FrameView::didMoveOnscreen()
@@ -1328,9 +1303,7 @@ void FrameView::layout(bool allowSubtree)
 
     layer->updateLayerPositionsAfterLayout(renderView()->layer(), updateLayerPositionFlags(layer, subtree, m_needsFullRepaint));
 
-#if USE(ACCELERATED_COMPOSITING)
     updateCompositingLayersAfterLayout();
-#endif
     
     m_layoutCount++;
 
@@ -1494,14 +1467,13 @@ void FrameView::updateCanBlitOnScrollRecursively()
 
 bool FrameView::contentsInCompositedLayer() const
 {
-#if USE(ACCELERATED_COMPOSITING)
     RenderView* renderView = this->renderView();
     if (renderView && renderView->isComposited()) {
         GraphicsLayer* layer = renderView->layer()->backing()->graphicsLayer();
         if (layer && layer->drawsContent())
             return true;
     }
-#endif
+
     return false;
 }
 
@@ -1675,22 +1647,18 @@ bool FrameView::scrollContentsFastPath(const IntSize& scrollDelta, const IntRect
     for (auto& renderer : *m_viewportConstrainedObjects) {
         if (!renderer->style().hasViewportConstrainedPosition())
             continue;
-#if USE(ACCELERATED_COMPOSITING)
         if (renderer->isComposited())
             continue;
-#endif
 
         // Fixed items should always have layers.
         ASSERT(renderer->hasLayer());
         RenderLayer* layer = toRenderBoxModelObject(renderer)->layer();
 
-#if USE(ACCELERATED_COMPOSITING)
         if (layer->viewportConstrainedNotCompositedReason() == RenderLayer::NotCompositedForBoundsOutOfView
             || layer->viewportConstrainedNotCompositedReason() == RenderLayer::NotCompositedForNoVisibleContent) {
             // Don't invalidate for invisible fixed layers.
             continue;
         }
-#endif
 
 #if ENABLE(CSS_FILTERS)
         if (layer->hasAncestorWithFilterOutsets()) {
@@ -1718,14 +1686,12 @@ bool FrameView::scrollContentsFastPath(const IntSize& scrollDelta, const IntRect
         IntRect scrolledRect = updateRect;
         scrolledRect.move(scrollDelta);
         updateRect.unite(scrolledRect);
-#if USE(ACCELERATED_COMPOSITING)
         if (isCompositedContentLayer) {
             updateRect = rootViewToContents(updateRect);
             ASSERT(renderView());
             renderView()->layer()->setBackingNeedsRepaintInRect(updateRect);
             continue;
         }
-#endif
         if (clipsRepaints())
             updateRect.intersect(rectToScroll);
         hostWindow()->invalidateContentsAndRootView(updateRect, false);
@@ -1736,7 +1702,6 @@ bool FrameView::scrollContentsFastPath(const IntSize& scrollDelta, const IntRect
 
 void FrameView::scrollContentsSlowPath(const IntRect& updateRect)
 {
-#if USE(ACCELERATED_COMPOSITING)
     if (contentsInCompositedLayer()) {
         // FIXME: respect paintsEntireContents()?
         IntRect updateRect = visibleContentRect(LegacyIOSDocumentVisibleRect);
@@ -1760,7 +1725,6 @@ void FrameView::scrollContentsSlowPath(const IntRect& updateRect)
             return;
         }
     }
-#endif
 
     ScrollView::scrollContentsSlowPath(updateRect);
 }
@@ -1784,8 +1748,7 @@ void FrameView::setIsOverlapped(bool isOverlapped)
 
     m_isOverlapped = isOverlapped;
     updateCanBlitOnScrollRecursively();
-    
-#if USE(ACCELERATED_COMPOSITING)
+
     if (hasCompositedContentIncludingDescendants()) {
         // Overlap can affect compositing tests, so if it changes, we need to trigger
         // a layer update in the parent document.
@@ -1809,7 +1772,6 @@ void FrameView::setIsOverlapped(bool isOverlapped)
             }
         }
     }
-#endif
 }
 
 bool FrameView::isOverlappedIncludingAncestors() const
@@ -1934,11 +1896,9 @@ void FrameView::setScrollPosition(const IntPoint& scrollPoint)
 
 void FrameView::delegatesScrollingDidChange()
 {
-#if USE(ACCELERATED_COMPOSITING)
     // When we switch to delgatesScrolling mode, we should destroy the scrolling/clipping layers in RenderLayerCompositor.
     if (hasCompositedContent())
         clearBackingStores();
-#endif
 }
 
 #if USE(TILED_BACKING_STORE)
@@ -1991,12 +1951,10 @@ void FrameView::scrollPositionChanged()
     frame().eventHandler().sendScrollEvent();
     frame().eventHandler().dispatchFakeMouseMoveEventSoon();
 
-#if USE(ACCELERATED_COMPOSITING)
     if (RenderView* renderView = this->renderView()) {
         if (renderView->usesCompositing())
             renderView->compositor().frameViewDidScroll();
     }
-#endif
 }
 
 void FrameView::updateLayerPositionsAfterScrolling()
@@ -2045,7 +2003,6 @@ bool FrameView::shouldUpdateCompositingLayersAfterScrolling() const
 
 void FrameView::updateCompositingLayersAfterScrolling()
 {
-#if USE(ACCELERATED_COMPOSITING)
     if (!shouldUpdateCompositingLayersAfterScrolling())
         return;
 
@@ -2053,7 +2010,6 @@ void FrameView::updateCompositingLayersAfterScrolling()
         if (RenderView* renderView = this->renderView())
             renderView->compositor().updateCompositingLayers(CompositingUpdateOnScroll);
     }
-#endif
 }
 
 bool FrameView::isRubberBandInProgress() const
@@ -2191,41 +2147,33 @@ void FrameView::visibleContentsResized()
     if (!useFixedLayout() && needsLayout())
         layout();
 
-#if USE(ACCELERATED_COMPOSITING)
     if (RenderView* renderView = this->renderView()) {
         if (renderView->usesCompositing())
             renderView->compositor().frameViewDidChangeSize();
     }
-#endif
 }
 
 void FrameView::addedOrRemovedScrollbar()
 {
-#if USE(ACCELERATED_COMPOSITING)
     if (RenderView* renderView = this->renderView()) {
         if (renderView->usesCompositing())
             renderView->compositor().frameViewDidAddOrRemoveScrollbars();
     }
-#endif
 }
 
 void FrameView::disableLayerFlushThrottlingTemporarilyForInteraction()
 {
-#if USE(ACCELERATED_COMPOSITING)
     if (RenderView* view = renderView())
         view->compositor().disableLayerFlushThrottlingTemporarilyForInteraction();
-#endif
 }
 
 void FrameView::updateLayerFlushThrottlingInAllFrames()
 {
-#if USE(ACCELERATED_COMPOSITING)
     bool isMainLoadProgressing = frame().page()->progress().isMainLoadProgressing();
     for (Frame* frame = m_frame.get(); frame; frame = frame->tree().traverseNext(m_frame.get())) {
         if (RenderView* renderView = frame->contentRenderer())
             renderView->compositor().setLayerFlushThrottlingEnabled(isMainLoadProgressing);
     }
-#endif
 }
 
 void FrameView::adjustTiledBackingCoverage()
@@ -2233,11 +2181,9 @@ void FrameView::adjustTiledBackingCoverage()
     if (!m_speculativeTilingEnabled)
         enableSpeculativeTilingIfNeeded();
 
-#if USE(ACCELERATED_COMPOSITING)
     RenderView* renderView = this->renderView();
     if (renderView && renderView->layer()->backing())
         renderView->layer()->backing()->adjustTiledBackingCoverage();
-#endif
 #if PLATFORM(IOS)
     if (TileCache* tileCache = this->tileCache())
         tileCache->setSpeculativeTileCreationEnabled(m_speculativeTilingEnabled);
@@ -2487,7 +2433,6 @@ void FrameView::updateBackgroundRecursively(const Color& backgroundColor, bool t
 
 bool FrameView::hasExtendedBackground() const
 {
-#if USE(ACCELERATED_COMPOSITING)
     if (!frame().settings().backgroundShouldExtendBeyondPage())
         return false;
 
@@ -2496,29 +2441,17 @@ bool FrameView::hasExtendedBackground() const
         return false;
 
     return tiledBacking->hasMargins();
-#else
-    return false;
-#endif
 }
 
 IntRect FrameView::extendedBackgroundRect() const
 {
-#if USE(ACCELERATED_COMPOSITING)
     TiledBacking* tiledBacking = this->tiledBacking();
     if (!tiledBacking)
         return IntRect();
 
     return tiledBacking->bounds();
-#else
-    RenderView* renderView = this->renderView();
-    if (!renderView)
-        return IntRect();
-
-    return renderView->unscaledDocumentRect();
-#endif
 }
 
-#if USE(ACCELERATED_COMPOSITING)
 void FrameView::setBackgroundExtendsBeyondPage(bool extendBackground)
 {
     RenderView* renderView = this->renderView();
@@ -2531,7 +2464,6 @@ void FrameView::setBackgroundExtendsBeyondPage(bool extendBackground)
 
     backing->setTiledBackingHasMargins(extendBackground);
 }
-#endif
 
 bool FrameView::shouldUpdateWhileOffscreen() const
 {
@@ -2716,12 +2648,10 @@ void FrameView::performPostLayoutTasks()
             scrollingCoordinator->frameViewLayoutUpdated(this);
     }
 
-#if USE(ACCELERATED_COMPOSITING)
     if (RenderView* renderView = this->renderView()) {
         if (renderView->usesCompositing())
             renderView->compositor().frameViewDidLayout();
     }
-#endif
 
     scrollToAnchor();
 
@@ -3459,10 +3389,8 @@ void FrameView::paintContents(GraphicsContext* p, const IntRect& rect)
 
     FontCachePurgePreventer fontCachePurgePreventer;
 
-#if USE(ACCELERATED_COMPOSITING)
     if (!p->paintingDisabled() && !document->printing())
         flushCompositingStateForThisFrame(&frame());
-#endif
 
     PaintBehavior oldPaintBehavior = m_paintBehavior;
     
@@ -3927,12 +3855,10 @@ void FrameView::setTracksRepaints(bool trackRepaints)
             frame().document()->updateLayout();
     }
 
-#if USE(ACCELERATED_COMPOSITING)
     for (Frame* frame = &m_frame->tree().top(); frame; frame = frame->tree().traverseNext()) {
         if (RenderView* renderView = frame->contentRenderer())
             renderView->compositor().setTracksRepaints(trackRepaints);
     }
-#endif
 
     resetTrackedRepaints();
     m_isTrackingRepaints = trackRepaints;
@@ -3941,10 +3867,8 @@ void FrameView::setTracksRepaints(bool trackRepaints)
 void FrameView::resetTrackedRepaints()
 {
     m_trackedRepaintRects.clear();
-#if USE(ACCELERATED_COMPOSITING)
     if (RenderView* renderView = this->renderView())
         renderView->compositor().resetTrackedRepaintRects();
-#endif
 }
 
 String FrameView::trackedRepaintRectsAsText() const
@@ -4099,12 +4023,8 @@ bool FrameView::updateFixedPositionLayoutRect()
 
 void FrameView::setScrollingPerformanceLoggingEnabled(bool flag)
 {
-#if USE(ACCELERATED_COMPOSITING)
     if (TiledBacking* tiledBacking = this->tiledBacking())
         tiledBacking->setScrollingPerformanceLoggingEnabled(flag);
-#else
-    UNUSED_PARAM(flag);
-#endif
 }
 
 void FrameView::didAddScrollbar(Scrollbar* scrollbar, ScrollbarOrientation orientation)
@@ -4240,13 +4160,11 @@ void FrameView::setExposedRect(FloatRect exposedRect)
 
     m_exposedRect = exposedRect;
 
-#if USE(ACCELERATED_COMPOSITING)
     // FIXME: We should support clipping to the exposed rect for subframes as well.
     if (m_frame->isMainFrame()) {
         if (TiledBacking* tiledBacking = this->tiledBacking())
             tiledBacking->setExposedRect(exposedRect);
     }
-#endif
 }
 
 } // namespace WebCore

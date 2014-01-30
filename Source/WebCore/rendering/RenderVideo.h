@@ -45,10 +45,8 @@ public:
 
     static IntSize defaultSize();
 
-#if USE(ACCELERATED_COMPOSITING)
     bool supportsAcceleratedRendering() const;
     void acceleratedRenderingStateChanged();
-#endif
 
     bool requiresImmediateCompositing() const;
 

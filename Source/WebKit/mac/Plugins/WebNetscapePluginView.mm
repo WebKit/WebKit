@@ -1088,9 +1088,7 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
             _pluginLayer = adoptNS((CALayer *)value);
 
             BOOL accleratedCompositingEnabled = false;
-#if USE(ACCELERATED_COMPOSITING)
             accleratedCompositingEnabled = [[[self webView] preferences] acceleratedCompositingEnabled];
-#endif
             if (accleratedCompositingEnabled) {
                 // FIXME: This code can be shared between WebHostedNetscapePluginView and WebNetscapePluginView.
                 // Since this layer isn't going to be inserted into a view, we need to create another layer and flip its geometry
@@ -2077,13 +2075,13 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
             *(WKNBrowserContainerCheckFuncs **)value = browserContainerCheckFuncs();
             return NPERR_NO_ERROR;
         }
-#if USE(ACCELERATED_COMPOSITING)
+
         case WKNVSupportsCompositingCoreAnimationPluginsBool:
         {
             *(NPBool *)value = [[[self webView] preferences] acceleratedCompositingEnabled];
             return NPERR_NO_ERROR;
         }
-#endif
+
         default:
             break;
     }

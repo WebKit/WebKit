@@ -25,8 +25,6 @@
 
 #include "config.h"
 
-#if USE(ACCELERATED_COMPOSITING)
-
 #include "RenderLayerBacking.h"
 
 #include "AnimationController.h"
@@ -2621,5 +2619,3 @@ double RenderLayerBacking::backingStoreMemoryEstimate() const
 }
 
 } // namespace WebCore
-
-#endif // USE(ACCELERATED_COMPOSITING)

@@ -295,8 +295,7 @@ void PageClientImpl::setFindIndicator(PassRefPtr<FindIndicator>, bool, bool)
 {
     notImplemented();
 }
-    
-#if USE(ACCELERATED_COMPOSITING)
+
 void PageClientImpl::enterAcceleratedCompositingMode(const LayerTreeContext& layerTreeContext)
 {
 }
@@ -320,7 +319,6 @@ CALayer *PageClientImpl::acceleratedCompositingRootLayer() const
     notImplemented();
     return nullptr;
 }
-#endif
 
 RetainPtr<CGImageRef> PageClientImpl::takeViewSnapshot()
 {

@@ -26,7 +26,7 @@
 #ifndef GLXSurface_h
 #define GLXSurface_h
 
-#if USE(ACCELERATED_COMPOSITING) && USE(GLX)
+#if USE(GLX)
 
 #include "GLTransportSurface.h"
 #include "GLXConfigSelector.h"

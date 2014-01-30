@@ -26,8 +26,6 @@
 #ifndef WKCAImageQueue_h
 #define WKCAImageQueue_h
 
-#if USE(ACCELERATED_COMPOSITING)
-
 typedef const void * CFTypeRef;
 typedef const struct __CFDictionary * CFDictionaryRef;
 
@@ -86,7 +84,5 @@ private:
 };
 
 }
-
-#endif
 
 #endif

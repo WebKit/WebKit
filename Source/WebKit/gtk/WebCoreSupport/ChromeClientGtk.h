@@ -144,12 +144,10 @@ namespace WebKit {
 
         virtual void numWheelEventHandlersChanged(unsigned) { }
 
-#if USE(ACCELERATED_COMPOSITING) 
         virtual void attachRootGraphicsLayer(Frame*, GraphicsLayer*);
         virtual void setNeedsOneShotDrawingSynchronization();
         virtual void scheduleCompositingLayerFlush();
         virtual CompositingTriggerFlags allowedCompositingTriggers() const;
-#endif 
 
         void performAllPendingScrolls();
         void paint(Timer<ChromeClient>*);

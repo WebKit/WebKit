@@ -24,9 +24,6 @@
  */
 
 #include "config.h"
-
-#if USE(ACCELERATED_COMPOSITING)
-
 #import "WebLayer.h"
 
 #import "GraphicsContext.h"
@@ -330,5 +327,3 @@ void drawRepaintIndicator(CGContextRef context, PlatformCALayer* platformCALayer
 @end  // implementation WebLayer(ExtendedDescription)
 
 #endif // NDEBUG
-
-#endif // USE(ACCELERATED_COMPOSITING)

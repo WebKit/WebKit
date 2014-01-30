@@ -26,8 +26,6 @@
 #include "config.h"
 #include "GLPlatformContext.h"
 
-#if USE(ACCELERATED_COMPOSITING)
-
 #if USE(GLX)
 #include "GLXContext.h"
 #elif USE(EGL)
@@ -285,5 +283,3 @@ void GLPlatformContext::destroy()
 }
 
 } // namespace WebCore
-
-#endif

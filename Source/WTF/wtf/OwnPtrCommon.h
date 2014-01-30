@@ -39,9 +39,7 @@ typedef struct _Eo_Opaque Evas_Object;
 #else
 typedef struct _Evas_Object Evas_Object;
 #endif
-#if USE(ACCELERATED_COMPOSITING)
 typedef struct _Evas_GL Evas_GL;
-#endif
 #endif
 
 namespace WTF {
@@ -60,9 +58,7 @@ namespace WTF {
     WTF_EXPORT_PRIVATE void deleteOwnedPtr(Eina_Hash*);
     WTF_EXPORT_PRIVATE void deleteOwnedPtr(Eina_Module*);
     WTF_EXPORT_PRIVATE void deleteOwnedPtr(Evas_Object*);
-#if USE(ACCELERATED_COMPOSITING)
     WTF_EXPORT_PRIVATE void deleteOwnedPtr(Evas_GL*);
-#endif
 #endif
 
 } // namespace WTF

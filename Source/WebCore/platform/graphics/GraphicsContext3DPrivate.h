@@ -24,14 +24,14 @@
 #include "GraphicsContext3D.h"
 #include <wtf/PassOwnPtr.h>
 
-#if USE(ACCELERATED_COMPOSITING) && USE(TEXTURE_MAPPER)
+#if USE(TEXTURE_MAPPER)
 #include "TextureMapperPlatformLayer.h"
 #endif
 
 namespace WebCore {
 
 class GraphicsContext3DPrivate
-#if USE(ACCELERATED_COMPOSITING) && USE(TEXTURE_MAPPER)
+#if USE(TEXTURE_MAPPER)
     : public TextureMapperPlatformLayer
 #endif
 {
@@ -43,7 +43,7 @@ public:
 
     GraphicsContext3D::RenderStyle renderStyle() { return m_renderStyle; }
 
-#if USE(ACCELERATED_COMPOSITING) && USE(TEXTURE_MAPPER)
+#if USE(TEXTURE_MAPPER)
     virtual void paintToTextureMapper(TextureMapper*, const FloatRect& target, const TransformationMatrix&, float opacity);
 #endif
 

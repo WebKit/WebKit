@@ -24,9 +24,6 @@
  */
 
 #include "config.h"
-
-#if USE(ACCELERATED_COMPOSITING)
-
 #include "GraphicsLayerCARemote.h"
 #include "PlatformCALayerRemote.h"
 
@@ -56,5 +53,3 @@ PassRefPtr<PlatformCALayer> GraphicsLayerCARemote::createPlatformCALayer(Platfor
 }
 
 }
-
-#endif // USE(ACCELERATED_COMPOSITING)

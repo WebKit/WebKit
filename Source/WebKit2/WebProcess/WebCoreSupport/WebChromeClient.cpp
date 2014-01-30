@@ -779,7 +779,6 @@ PassRefPtr<WebCore::SearchPopupMenu> WebChromeClient::createSearchPopupMenu(WebC
     return WebSearchPopupMenu::create(m_page, client);
 }
 
-#if USE(ACCELERATED_COMPOSITING)
 GraphicsLayerFactory* WebChromeClient::graphicsLayerFactory() const
 {
     return m_page->drawingArea()->graphicsLayerFactory();
@@ -812,7 +811,6 @@ bool WebChromeClient::layerTreeStateIsFrozen() const
 
     return false;
 }
-#endif
 
 #if ENABLE(ASYNC_SCROLLING)
 PassRefPtr<ScrollingCoordinator> WebChromeClient::createScrollingCoordinator(Page* page) const

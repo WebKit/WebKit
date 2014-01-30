@@ -406,7 +406,6 @@ void ImageBufferData::paintToTextureMapper(TextureMapper* textureMapper, const F
 }
 #endif
 
-#if USE(ACCELERATED_COMPOSITING)
 PlatformLayer* ImageBuffer::platformLayer() const
 {
 #if ENABLE(ACCELERATED_2D_CANVAS)
@@ -415,6 +414,5 @@ PlatformLayer* ImageBuffer::platformLayer() const
 #endif
     return 0;
 }
-#endif
 
 } // namespace WebCore

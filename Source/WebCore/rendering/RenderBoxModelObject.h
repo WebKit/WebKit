@@ -182,7 +182,6 @@ public:
     bool canHaveBoxInfoInRegion() const { return !isFloating() && !isReplaced() && !isInline() && !hasColumns() && !isTableCell() && isRenderBlock() && !isRenderSVGBlock(); }
 
     void getGeometryForBackgroundImage(const RenderLayerModelObject* paintContainer, IntRect& destRect, IntPoint& phase, IntSize& tileSize) const;
-#if USE(ACCELERATED_COMPOSITING)
     void contentChanged(ContentChangeType);
     bool hasAcceleratedCompositing() const;
 
@@ -195,7 +194,6 @@ public:
     void animationFinished(const String& name);
 
     void suspendAnimations(double time = 0);
-#endif
 
 protected:
     RenderBoxModelObject(Element&, PassRef<RenderStyle>, unsigned baseTypeFlags);

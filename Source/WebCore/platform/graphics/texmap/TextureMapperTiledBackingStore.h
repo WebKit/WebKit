@@ -20,7 +20,7 @@
 #ifndef TextureMapperTiledBackingStore_h
 #define TextureMapperTiledBackingStore_h
 
-#if USE(ACCELERATED_COMPOSITING) && USE(TEXTURE_MAPPER)
+#if USE(TEXTURE_MAPPER)
 
 #include "FloatRect.h"
 #include "Image.h"

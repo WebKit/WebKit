@@ -36,10 +36,8 @@ class GraphicsContext;
 class PlatformTouchEvent;
 class PlatformWheelEvent;
 class ScrollAnimator;
-#if USE(ACCELERATED_COMPOSITING)
 class GraphicsLayer;
 class TiledBacking;
-#endif
 
 class ScrollableArea {
 public:
@@ -221,7 +219,6 @@ public:
     bool isPinnedVerticallyInDirection(int verticalScrollDelta) const;
 #endif
 
-#if USE(ACCELERATED_COMPOSITING)
     virtual TiledBacking* tiledBacking() const { return 0; }
     virtual bool usesCompositedScrolling() const { return false; }
 
@@ -230,7 +227,6 @@ public:
 
     void verticalScrollbarLayerDidChange();
     void horizontalScrollbarLayerDidChange();
-#endif
 
 protected:
     ScrollableArea();
@@ -242,14 +238,13 @@ protected:
     virtual void invalidateScrollbarRect(Scrollbar*, const IntRect&) = 0;
     virtual void invalidateScrollCornerRect(const IntRect&) = 0;
 
-#if USE(ACCELERATED_COMPOSITING)
     friend class ScrollingCoordinator;
     virtual GraphicsLayer* layerForScrolling() const { return 0; }
     virtual GraphicsLayer* layerForScrollCorner() const { return 0; }
 #if ENABLE(RUBBER_BANDING)
     virtual GraphicsLayer* layerForOverhangAreas() const { return 0; }
 #endif
-#endif
+
     bool hasLayerForHorizontalScrollbar() const;
     bool hasLayerForVerticalScrollbar() const;
     bool hasLayerForScrollCorner() const;

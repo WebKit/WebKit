@@ -49,6 +49,7 @@
 #include "RenderInline.h"
 #include "RenderIterator.h"
 #include "RenderLayer.h"
+#include "RenderLayerCompositor.h"
 #include "RenderRegion.h"
 #include "RenderTableCell.h"
 #include "RenderTheme.h"
@@ -58,10 +59,6 @@
 #include <algorithm>
 #include <math.h>
 #include <wtf/StackStats.h>
-
-#if USE(ACCELERATED_COMPOSITING)
-#include "RenderLayerCompositor.h"
-#endif
 
 #if PLATFORM(IOS)
 #include "Settings.h"
@@ -275,10 +272,8 @@ void RenderBox::styleWillChange(StyleDifference diff, const RenderStyle& newStyl
         // the canvas. Issue full repaint, when our style changes substantially.
         if (diff >= StyleDifferenceRepaint && (isRoot() || isBody())) {
             view().repaintRootContents();
-#if USE(ACCELERATED_COMPOSITING)
             if (oldStyle->hasEntirelyFixedBackground() != newStyle.hasEntirelyFixedBackground())
                 view().compositor().rootFixedBackgroundsChanged();
-#endif
         }
         
         // When a layout hint happens and an object's position style changes, we have to do a layout
@@ -1346,10 +1341,8 @@ static bool isCandidateForOpaquenessTest(const RenderBox& childBox)
     if (!childBox.width() || !childBox.height())
         return false;
     if (RenderLayer* childLayer = childBox.layer()) {
-#if USE(ACCELERATED_COMPOSITING)
         if (childLayer->isComposited())
             return false;
-#endif
         // FIXME: Deal with z-index.
         if (!childStyle.hasAutoZIndex())
             return false;
@@ -1540,7 +1533,6 @@ void RenderBox::paintFillLayer(const PaintInfo& paintInfo, const Color& c, const
     paintFillLayerExtended(paintInfo, c, fillLayer, rect, bleedAvoidance, 0, LayoutSize(), op, backgroundObject);
 }
 
-#if USE(ACCELERATED_COMPOSITING)
 static bool layersUseImage(WrappedImagePtr image, const FillLayer* layers)
 {
     for (const FillLayer* curLayer = layers; curLayer; curLayer = curLayer->next()) {
@@ -1550,7 +1542,6 @@ static bool layersUseImage(WrappedImagePtr image, const FillLayer* layers)
 
     return false;
 }
-#endif
 
 void RenderBox::imageChanged(WrappedImagePtr image, const IntRect*)
 {
@@ -1567,8 +1558,6 @@ void RenderBox::imageChanged(WrappedImagePtr image, const IntRect*)
     if (!didFullRepaint)
         repaintLayerRectsForImage(image, style().maskLayers(), false);
 
-
-#if USE(ACCELERATED_COMPOSITING)
     if (!isComposited())
         return;
 
@@ -1576,7 +1565,6 @@ void RenderBox::imageChanged(WrappedImagePtr image, const IntRect*)
         layer()->contentChanged(MaskImageChanged);
     if (layersUseImage(image, style().backgroundLayers()))
         layer()->contentChanged(BackgroundImageChanged);
-#endif
 }
 
 bool RenderBox::repaintLayerRectsForImage(WrappedImagePtr image, const FillLayer* layers, bool drawingBackground)

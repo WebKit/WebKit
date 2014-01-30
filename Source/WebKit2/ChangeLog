@@ -1,3 +1,131 @@
+2014-01-30  Andrei Bucur  <abucur@adobe.com>
+
+        Remove the ACCELERATED_COMPOSITING flag
+        https://bugs.webkit.org/show_bug.cgi?id=127833
+
+        Reviewed by Antti Koivisto.
+
+        Remove the USE(ACCELERATED_COMPOSITING) conditionals from the code base and make AC
+        mandatory.
+
+        * PluginProcess/PluginControllerProxy.cpp:
+        (WebKit::PluginControllerProxy::PluginControllerProxy):
+        * PluginProcess/PluginCreationParameters.cpp:
+        (WebKit::PluginCreationParameters::PluginCreationParameters):
+        (WebKit::PluginCreationParameters::encode):
+        (WebKit::PluginCreationParameters::decode):
+        * PluginProcess/PluginCreationParameters.h:
+        * PluginProcess/PluginProcess.h:
+        * Shared/WebRenderLayer.cpp:
+        (WebKit::WebRenderLayer::WebRenderLayer):
+        * Shared/mac/RemoteLayerBackingStore.h:
+        * Shared/mac/RemoteLayerBackingStore.mm:
+        (RemoteLayerBackingStore::enumerateRectsBeingDrawn):
+        * UIProcess/API/efl/EvasGLContext.cpp:
+        * UIProcess/API/efl/EvasGLContext.h:
+        * UIProcess/API/efl/EvasGLSurface.cpp:
+        * UIProcess/API/efl/EvasGLSurface.h:
+        * UIProcess/API/efl/EwkView.cpp:
+        (EwkView::EwkView):
+        (EwkView::displayTimerFired):
+        (EwkView::createGLSurface):
+        (EwkView::handleEvasObjectCalculate):
+        (EwkView::handleEvasObjectShow):
+        (EwkView::takeSnapshot):
+        * UIProcess/API/efl/EwkView.h:
+        * UIProcess/API/efl/SnapshotImageGL.cpp:
+        (getImageSurfaceFromFrameBuffer):
+        * UIProcess/API/efl/SnapshotImageGL.h:
+        * UIProcess/API/efl/tests/UnitTestUtils/EWK2UnitTestBase.cpp:
+        (EWK2UnitTest::EWK2UnitTestBase::SetUp):
+        * UIProcess/API/gtk/PageClientImpl.cpp:
+        (WebKit::PageClientImpl::updateAcceleratedCompositingMode):
+        * UIProcess/API/gtk/PageClientImpl.h:
+        * UIProcess/API/ios/PageClientImplIOS.h:
+        * UIProcess/API/ios/PageClientImplIOS.mm:
+        (WebKit::PageClientImpl::acceleratedCompositingRootLayer):
+        * UIProcess/CoordinatedGraphics/CoordinatedDrawingAreaProxy.cpp:
+        (WebKit::CoordinatedDrawingAreaProxy::~CoordinatedDrawingAreaProxy):
+        (WebKit::CoordinatedDrawingAreaProxy::visibilityDidChange):
+        (WebKit::CoordinatedDrawingAreaProxy::didUpdateBackingStoreState):
+        (WebKit::CoordinatedDrawingAreaProxy::enterAcceleratedCompositingMode):
+        (WebKit::CoordinatedDrawingAreaProxy::exitAcceleratedCompositingMode):
+        (WebKit::CoordinatedDrawingAreaProxy::updateAcceleratedCompositingMode):
+        (WebKit::CoordinatedDrawingAreaProxy::sendUpdateBackingStoreState):
+        (WebKit::CoordinatedDrawingAreaProxy::waitForAndDispatchDidUpdateBackingStoreState):
+        * UIProcess/CoordinatedGraphics/CoordinatedDrawingAreaProxy.h:
+        * UIProcess/CoordinatedGraphics/PageViewportController.cpp:
+        * UIProcess/CoordinatedGraphics/PageViewportController.h:
+        * UIProcess/CoordinatedGraphics/WebView.cpp:
+        (WebKit::WebView::setVisible):
+        * UIProcess/DrawingAreaProxy.h:
+        * UIProcess/DrawingAreaProxy.messages.in:
+        * UIProcess/DrawingAreaProxyImpl.cpp:
+        (WebKit::DrawingAreaProxyImpl::~DrawingAreaProxyImpl):
+        (WebKit::DrawingAreaProxyImpl::didUpdateBackingStoreState):
+        (WebKit::DrawingAreaProxyImpl::enterAcceleratedCompositingMode):
+        (WebKit::DrawingAreaProxyImpl::exitAcceleratedCompositingMode):
+        (WebKit::DrawingAreaProxyImpl::updateAcceleratedCompositingMode):
+        (WebKit::DrawingAreaProxyImpl::sendUpdateBackingStoreState):
+        (WebKit::DrawingAreaProxyImpl::waitForAndDispatchDidUpdateBackingStoreState):
+        * UIProcess/DrawingAreaProxyImpl.h:
+        * UIProcess/PageClient.h:
+        * UIProcess/Plugins/mac/PluginProcessProxyMac.mm:
+        (WebKit::PluginProcessProxy::platformInitializePluginProcess):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::updateAcceleratedCompositingMode):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/efl/PageLoadClientEfl.cpp:
+        (WebKit::PageLoadClientEfl::didCommitLoadForFrame):
+        * UIProcess/efl/PageViewportControllerClientEfl.cpp:
+        * UIProcess/efl/ViewClientEfl.cpp:
+        (WebKit::ViewClientEfl::didChangeContentsSize):
+        (WebKit::ViewClientEfl::didChangeContentsPosition):
+        (WebKit::ViewClientEfl::didRenderFrame):
+        (WebKit::ViewClientEfl::didCompletePageTransition):
+        (WebKit::ViewClientEfl::didChangeViewportAttributes):
+        * UIProcess/mac/WebContextMac.mm:
+        (WebKit::WebContext::platformInitializeWebProcess):
+        * WebProcess/FullScreen/WebFullScreenManager.cpp:
+        (WebKit::screenRectOfContents):
+        * WebProcess/Plugins/Netscape/NetscapePlugin.cpp:
+        (WebKit::NetscapePlugin::isAcceleratedCompositingEnabled):
+        * WebProcess/Plugins/PluginController.h:
+        * WebProcess/Plugins/PluginProxy.cpp:
+        (WebKit::PluginProxy::initialize):
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::layerTreeStateIsFrozen):
+        * WebProcess/WebCoreSupport/WebChromeClient.h:
+        * WebProcess/WebPage/CoordinatedGraphics/CoordinatedDrawingArea.cpp:
+        (WebKit::CoordinatedDrawingArea::layerHostDidFlushLayers):
+        (WebKit::CoordinatedDrawingArea::scheduleCompositingLayerFlush):
+        * WebProcess/WebPage/CoordinatedGraphics/CoordinatedDrawingArea.h:
+        * WebProcess/WebPage/DrawingArea.h:
+        * WebProcess/WebPage/DrawingAreaImpl.cpp:
+        (WebKit::DrawingAreaImpl::layerHostDidFlushLayers):
+        (WebKit::DrawingAreaImpl::scheduleCompositingLayerFlush):
+        (WebKit::DrawingAreaImpl::exitAcceleratedCompositingMode):
+        * WebProcess/WebPage/DrawingAreaImpl.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::exitAcceleratedCompositingMode):
+        (WebKit::WebPage::mainFrameDidLayout):
+        (WebKit::WebPage::didReceiveMessage):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/mac/GraphicsLayerCARemote.cpp:
+        * WebProcess/WebPage/mac/GraphicsLayerCARemote.h:
+        * WebProcess/WebPage/mac/PlatformCALayerRemote.cpp:
+        (PlatformCALayerRemote::hostingContextID):
+        * WebProcess/WebPage/mac/PlatformCALayerRemote.h:
+        * WebProcess/WebPage/mac/PlatformCALayerRemoteCustom.h:
+        * WebProcess/WebPage/mac/PlatformCALayerRemoteCustom.mm:
+        (PlatformCALayerRemoteCustom::hostingContextID):
+        * WebProcess/WebPage/mac/PlatformCALayerRemoteTiledBacking.cpp:
+        (PlatformCALayerRemoteTiledBacking::setBorderColor):
+        * WebProcess/WebPage/mac/PlatformCALayerRemoteTiledBacking.h:
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::WebProcess):
+        * WebProcess/WebProcess.h:
+
 2014-01-30  Brady Eidson  <beidson@apple.com>
 
         IDB: Key generator support

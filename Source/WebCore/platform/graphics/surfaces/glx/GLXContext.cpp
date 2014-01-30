@@ -26,7 +26,7 @@
 #include "config.h"
 #include "GLXContext.h"
 
-#if USE(ACCELERATED_COMPOSITING) && USE(GLX)
+#if USE(GLX)
 
 #include "X11Helper.h"
 

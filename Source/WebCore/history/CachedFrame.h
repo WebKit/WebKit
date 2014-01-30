@@ -61,9 +61,7 @@ protected:
     std::unique_ptr<ScriptCachedFrameData> m_cachedFrameScriptData;
     std::unique_ptr<CachedFramePlatformData> m_cachedFramePlatformData;
     bool m_isMainFrame;
-#if USE(ACCELERATED_COMPOSITING)
     bool m_isComposited;
-#endif
     
     Vector<std::unique_ptr<CachedFrame>> m_childFrames;
 };

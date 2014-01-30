@@ -436,7 +436,7 @@ void dump()
 static Ecore_Evas* initEcoreEvas()
 {
     Ecore_Evas* ecoreEvas = 0;
-#if defined(WTF_USE_ACCELERATED_COMPOSITING) && defined(HAVE_ECORE_X)
+#if defined(HAVE_ECORE_X)
     ecoreEvas = ecore_evas_new("opengl_x11", 0, 0, 800, 600, 0);
     if (!ecoreEvas)
 #endif

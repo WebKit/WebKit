@@ -183,14 +183,12 @@ void KeyframeAnimation::animate(CompositeAnimation* compositeAnimation, RenderEl
         double progress = 0.0;
         fetchIntervalEndpointsForProperty(*it, fromStyle, toStyle, progress);
 
-#if USE(ACCELERATED_COMPOSITING)
         bool needsAnim = CSSPropertyAnimation::blendProperties(this, *it, animatedStyle.get(), fromStyle, toStyle, progress);
         if (!needsAnim)
             // If we are running an accelerated animation, set a flag in the style
             // to indicate it. This can be used to make sure we get an updated
             // style for hit testing, etc.
             animatedStyle->setIsRunningAcceleratedAnimation();
-#endif
     }
 }
 
@@ -226,13 +224,9 @@ bool KeyframeAnimation::hasAnimationForProperty(CSSPropertyID property) const
 
 bool KeyframeAnimation::startAnimation(double timeOffset)
 {
-#if USE(ACCELERATED_COMPOSITING)
     if (m_object && m_object->isComposited()) {
         return toRenderBoxModelObject(m_object)->startAnimation(timeOffset, m_animation.get(), m_keyframes);
     }
-#else
-    UNUSED_PARAM(timeOffset);
-#endif
     return false;
 }
 
@@ -241,12 +235,9 @@ void KeyframeAnimation::pauseAnimation(double timeOffset)
     if (!m_object)
         return;
 
-#if USE(ACCELERATED_COMPOSITING)
     if (m_object->isComposited())
         toRenderBoxModelObject(m_object)->animationPaused(timeOffset, m_keyframes.animationName());
-#else
-    UNUSED_PARAM(timeOffset);
-#endif
+
     // Restore the original (unanimated) style
     if (!paused())
         setNeedsStyleRecalc(m_object->element());
@@ -257,10 +248,9 @@ void KeyframeAnimation::endAnimation()
     if (!m_object)
         return;
 
-#if USE(ACCELERATED_COMPOSITING)
     if (m_object->isComposited())
         toRenderBoxModelObject(m_object)->animationFinished(m_keyframes.animationName());
-#endif
+
     // Restore the original (unanimated) style
     if (!paused())
         setNeedsStyleRecalc(m_object->element());
@@ -432,7 +422,6 @@ void KeyframeAnimation::checkForMatchingFilterFunctionLists()
 double KeyframeAnimation::timeToNextService()
 {
     double t = AnimationBase::timeToNextService();
-#if USE(ACCELERATED_COMPOSITING)
     if (t != 0 || preActive())
         return t;
         
@@ -452,7 +441,7 @@ double KeyframeAnimation::timeToNextService()
         bool isLooping;
         getTimeToNextEvent(t, isLooping);
     }
-#endif
+
     return t;
 }
 

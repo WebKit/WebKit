@@ -41,6 +41,7 @@
 #include "RenderImageResourceStyleImage.h"
 #include "RenderIterator.h"
 #include "RenderLayer.h"
+#include "RenderLayerCompositor.h"
 #include "RenderLineBreak.h"
 #include "RenderListItem.h"
 #include "RenderRegion.h"
@@ -55,10 +56,6 @@
 #include "SVGRenderSupport.h"
 #include "StyleResolver.h"
 #include <wtf/StackStats.h>
-
-#if USE(ACCELERATED_COMPOSITING)
-#include "RenderLayerCompositor.h"
-#endif
 
 namespace WebCore {
 
@@ -237,7 +234,6 @@ RenderStyle* RenderElement::cachedFirstLineStyle() const
 
 StyleDifference RenderElement::adjustStyleDifference(StyleDifference diff, unsigned contextSensitiveProperties) const
 {
-#if USE(ACCELERATED_COMPOSITING)
     // If transform changed, and we are not composited, need to do a layout.
     if (contextSensitiveProperties & ContextSensitivePropertyTransform) {
         // Text nodes share style with their parents but transforms don't apply to them,
@@ -282,9 +278,6 @@ StyleDifference RenderElement::adjustStyleDifference(StyleDifference diff, unsig
         if (hasLayer() != toRenderLayerModelObject(this)->requiresLayer())
             diff = StyleDifferenceLayout;
     }
-#else
-    UNUSED_PARAM(contextSensitiveProperties);
-#endif
 
     // If we have no layer(), just treat a RepaintLayer hint as a normal Repaint.
     if (diff == StyleDifferenceRepaintLayer && !hasLayer())
@@ -385,13 +378,11 @@ void RenderElement::setStyle(PassRef<RenderStyle> style)
 
     if (&m_style.get() == &style.get()) {
         // FIXME: Can we change things so we never hit this code path?
-#if USE(ACCELERATED_COMPOSITING)
         // We need to run through adjustStyleDifference() for iframes, plugins, and canvas so
         // style sharing is disabled for them. That should ensure that we never hit this code path.
         ASSERT(!isRenderIFrame());
         ASSERT(!isEmbeddedObject());
         ASSERT(!isCanvas());
-#endif
         style.dropRef();
         return;
     }
@@ -888,8 +879,6 @@ void RenderElement::styleWillChange(StyleDifference diff, const RenderStyle& new
 
     bool newStyleSlowScroll = repaintFixedBackgroundsOnScroll && newStyle.hasFixedBackgroundImage();
     bool oldStyleSlowScroll = oldStyle && repaintFixedBackgroundsOnScroll && m_style->hasFixedBackgroundImage();
-
-#if USE(ACCELERATED_COMPOSITING)
     bool drawsRootBackground = isRoot() || (isBody() && !rendererHasBackground(document().documentElement()->renderer()));
     if (drawsRootBackground && repaintFixedBackgroundsOnScroll) {
         if (view().compositor().supportsFixedRootBackgroundCompositing()) {
@@ -900,7 +889,7 @@ void RenderElement::styleWillChange(StyleDifference diff, const RenderStyle& new
                 oldStyleSlowScroll = false;
         }
     }
-#endif
+
     if (oldStyleSlowScroll != newStyleSlowScroll) {
         if (oldStyleSlowScroll)
             view().frameView().removeSlowRepaintObject(this);

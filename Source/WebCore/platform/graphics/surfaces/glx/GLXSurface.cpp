@@ -26,7 +26,7 @@
 #include "config.h"
 #include "GLXSurface.h"
 
-#if USE(ACCELERATED_COMPOSITING) && USE(GLX)
+#if USE(GLX)
 
 namespace WebCore {
 

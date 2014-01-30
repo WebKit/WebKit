@@ -26,8 +26,6 @@
 #ifndef CACFLayerTreeHost_h
 #define CACFLayerTreeHost_h
 
-#if USE(ACCELERATED_COMPOSITING)
-
 #include "AbstractCACFLayerTreeHost.h"
 #include "COMPtr.h"
 #include "Timer.h"
@@ -119,7 +117,5 @@ private:
 };
 
 }
-
-#endif // USE(ACCELERATED_COMPOSITING)
 
 #endif // CACFLayerTreeHost_h

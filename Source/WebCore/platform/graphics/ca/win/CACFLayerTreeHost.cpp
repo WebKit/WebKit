@@ -26,8 +26,6 @@
 #include "config.h"
 #include "CACFLayerTreeHost.h"
 
-#if USE(ACCELERATED_COMPOSITING)
-
 #include "CACFLayerTreeHostClient.h"
 #include "DefWndProcWindowClass.h"
 #include "LayerChangesFlusher.h"
@@ -328,5 +326,3 @@ CGRect CACFLayerTreeHost::bounds() const
 }
 
 }
-
-#endif // USE(ACCELERATED_COMPOSITING)

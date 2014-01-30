@@ -37,8 +37,6 @@
 #include "TextureMapperFPSCounter.h"
 #endif
 
-#if USE(ACCELERATED_COMPOSITING)
-
 namespace WebKit {
 
 class AcceleratedCompositingContext : public WebCore::GraphicsLayerClient {
@@ -101,5 +99,4 @@ private:
 
 } // namespace WebKit
 
-#endif // USE(ACCELERATED_COMPOSITING)
 #endif // AcceleratedCompositingContext_h

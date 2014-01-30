@@ -25,7 +25,6 @@
 
 #include "config.h"
 
-#if USE(ACCELERATED_COMPOSITING)
 #if ENABLE(WEBGL)
 
 #import "WebGLLayer.h"
@@ -177,4 +176,3 @@ static void freeData(void *, const void *data, size_t /* size */)
 @end
 
 #endif // ENABLE(WEBGL)
-#endif // USE(ACCELERATED_COMPOSITING)

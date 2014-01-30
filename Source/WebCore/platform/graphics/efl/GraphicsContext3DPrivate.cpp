@@ -21,8 +21,6 @@
 #include "config.h"
 #include "GraphicsContext3DPrivate.h"
 
-#if USE(3D_GRAPHICS) || USE(ACCELERATED_COMPOSITING)
-
 #include "HostWindow.h"
 #include "NotImplemented.h"
 
@@ -275,5 +273,3 @@ GraphicsSurface::Flags GraphicsContext3DPrivate::graphicsSurfaceFlags() const
 #endif
 
 } // namespace WebCore
-
-#endif // USE(3D_GRAPHICS) || USE(ACCELERATED_COMPOSITING)

@@ -876,7 +876,6 @@ static bool anyFrameHasTiledLayers(Frame* rootFrame)
 
 void Frame::viewportOffsetChanged(ViewportOffsetChangeType changeType)
 {
-#if USE(ACCELERATED_COMPOSITING)
     if (changeType == IncrementalScrollOffset) {
         if (anyFrameHasTiledLayers(this)) {
             if (RenderView* root = contentRenderer())
@@ -888,15 +887,13 @@ void Frame::viewportOffsetChanged(ViewportOffsetChangeType changeType)
         if (RenderView* root = contentRenderer())
             root->compositor().updateCompositingLayers(CompositingUpdateOnScroll);
     }
-#endif
 }
 
 bool Frame::containsTiledBackingLayers() const
 {
-#if USE(ACCELERATED_COMPOSITING)
     if (RenderView* root = contentRenderer())
         return root->compositor().hasNonMainLayersWithTiledBacking();
-#endif
+
     return false;
 }
 

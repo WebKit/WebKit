@@ -180,11 +180,9 @@ protected:
     virtual void paint(GraphicsContext*, const IntRect&) = 0;
     virtual void paintCurrentFrameInContext(GraphicsContext*, const IntRect&) = 0;
     virtual void setPreload(MediaPlayer::Preload) override;
-#if USE(ACCELERATED_COMPOSITING)
     virtual PlatformLayer* platformLayer() const { return 0; }
     virtual bool supportsAcceleratedRendering() const = 0;
     virtual void acceleratedRenderingStateChanged() override;
-#endif
     virtual bool shouldMaintainAspectRatio() const override { return m_shouldMaintainAspectRatio; }
     virtual void setShouldMaintainAspectRatio(bool) override;
 

@@ -769,10 +769,8 @@ void InspectorInstrumentation::didCommitLoadImpl(InstrumentingAgents* instrument
 #endif
         if (InspectorDOMAgent* domAgent = instrumentingAgents->inspectorDOMAgent())
             domAgent->setDocument(page->mainFrame().document());
-#if USE(ACCELERATED_COMPOSITING)
         if (InspectorLayerTreeAgent* layerTreeAgent = instrumentingAgents->inspectorLayerTreeAgent())
             layerTreeAgent->reset();
-#endif
     }
     if (InspectorDOMAgent* domAgent = instrumentingAgents->inspectorDOMAgent())
         domAgent->didCommitLoad(loader->frame()->document());
@@ -1184,7 +1182,6 @@ InstrumentingAgents* InspectorInstrumentation::instrumentingAgentsForNonDocument
     return nullptr;
 }
 
-#if USE(ACCELERATED_COMPOSITING)
 void InspectorInstrumentation::layerTreeDidChangeImpl(InstrumentingAgents* instrumentingAgents)
 {
     if (InspectorLayerTreeAgent* layerTreeAgent = instrumentingAgents->inspectorLayerTreeAgent())
@@ -1202,7 +1199,6 @@ void InspectorInstrumentation::pseudoElementDestroyedImpl(InstrumentingAgents* i
     if (InspectorLayerTreeAgent* layerTreeAgent = instrumentingAgents->inspectorLayerTreeAgent())
         layerTreeAgent->pseudoElementDestroyed(pseudoElement);
 }
-#endif
 
 } // namespace WebCore
 

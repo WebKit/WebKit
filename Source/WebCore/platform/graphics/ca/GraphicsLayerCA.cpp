@@ -25,8 +25,6 @@
 
 #include "config.h"
 
-#if USE(ACCELERATED_COMPOSITING)
-
 #include "GraphicsLayerCA.h"
 
 #include "Animation.h"
@@ -3508,5 +3506,3 @@ double GraphicsLayerCA::backingStoreMemoryEstimate() const
 }
 
 } // namespace WebCore
-
-#endif // USE(ACCELERATED_COMPOSITING)

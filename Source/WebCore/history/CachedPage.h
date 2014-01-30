@@ -56,9 +56,7 @@ public:
     void markForCaptionPreferencesChanged() { m_needsCaptionPreferencesChanged = true; }
 #endif
 
-#if USE(ACCELERATED_COMPOSITING)
     void markForDeviceScaleChanged() { m_needsDeviceScaleChanged = true; }
-#endif
 
 private:
     void destroy();

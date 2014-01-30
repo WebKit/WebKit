@@ -26,8 +26,6 @@
 #ifndef GLPlatformSurface_h
 #define GLPlatformSurface_h
 
-#if USE(ACCELERATED_COMPOSITING)
-
 #include "GLDefs.h"
 #include "IntRect.h"
 #include <wtf/Noncopyable.h>
@@ -95,6 +93,3 @@ protected:
 }
 
 #endif
-
-#endif
-

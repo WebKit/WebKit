@@ -21,8 +21,6 @@
 #include "config.h"
 #include "GraphicsContext3D.h"
 
-#if USE(3D_GRAPHICS) || USE(ACCELERATED_COMPOSITING)
-
 #include "GLDefs.h"
 #include "GraphicsContext3DPrivate.h"
 #include "Image.h"
@@ -175,7 +173,6 @@ Platform3DObject GraphicsContext3D::platformTexture() const
     return m_texture;
 }
 
-#if USE(ACCELERATED_COMPOSITING)
 PlatformLayer* GraphicsContext3D::platformLayer() const
 {
 #if USE(TEXTURE_MAPPER_GL)
@@ -185,7 +182,6 @@ PlatformLayer* GraphicsContext3D::platformLayer() const
     return 0;
 #endif
 }
-#endif
 
 bool GraphicsContext3D::makeContextCurrent()
 {
@@ -310,5 +306,3 @@ bool GraphicsContext3D::ImageExtractor::extractImage(bool premultiplyAlpha, bool
 }
 
 } // namespace WebCore
-
-#endif // USE(3D_GRAPHICS)

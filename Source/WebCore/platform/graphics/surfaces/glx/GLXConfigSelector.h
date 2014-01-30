@@ -26,7 +26,7 @@
 #ifndef GLXConfigSelector_h
 #define GLXConfigSelector_h
 
-#if USE(ACCELERATED_COMPOSITING) && USE(GLX)
+#if USE(GLX)
 
 #include "X11Helper.h"
 #include <opengl/GLDefs.h>

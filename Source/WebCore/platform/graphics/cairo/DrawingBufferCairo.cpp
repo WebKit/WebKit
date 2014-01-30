@@ -33,8 +33,6 @@
 
 namespace WebCore {
 
-#if USE(ACCELERATED_COMPOSITING)
-
 unsigned DrawingBuffer::frontColorBuffer() const
 {
     return colorBuffer();
@@ -43,7 +41,6 @@ unsigned DrawingBuffer::frontColorBuffer() const
 void DrawingBuffer::paintCompositedResultsToCanvas(ImageBuffer*)
 {
 }
-#endif
 
 }
 

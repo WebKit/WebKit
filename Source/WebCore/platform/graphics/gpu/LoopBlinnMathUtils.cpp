@@ -25,8 +25,6 @@
 
 #include "config.h"
 
-#if USE(ACCELERATED_COMPOSITING) || ENABLE(ACCELERATED_2D_CANVAS)
-
 #include "LoopBlinnMathUtils.h"
 
 #include "FloatPoint.h"
@@ -666,5 +664,3 @@ bool isConvex(const FloatPoint* vertices, int nVertices)
 
 } // namespace LoopBlinnMathUtils
 } // namespace WebCore
-
-#endif

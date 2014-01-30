@@ -111,9 +111,7 @@ public:
     InjectedBundle* injectedBundle() const { return m_injectedBundle.get(); }
 
 #if PLATFORM(MAC)
-#if USE(ACCELERATED_COMPOSITING)
     mach_port_t compositingRenderServerPort() const { return m_compositingRenderServerPort; }
-#endif
 #endif
     
     void setShouldTrackVisitedLinks(bool);
@@ -291,10 +289,8 @@ private:
     bool m_hasSetCacheModel;
     CacheModel m_cacheModel;
 
-#if USE(ACCELERATED_COMPOSITING) && PLATFORM(MAC)
-    mach_port_t m_compositingRenderServerPort;
-#endif
 #if PLATFORM(MAC)
+    mach_port_t m_compositingRenderServerPort;
     pid_t m_presenterApplicationPid;
     dispatch_group_t m_clearResourceCachesDispatchGroup;
     bool m_shouldForceScreenFontSubstitution;

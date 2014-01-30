@@ -38,16 +38,13 @@
 #import "URL.h"
 #import "Logging.h"
 #import "MIMETypeRegistry.h"
+#import "PlatformLayer.h"
 #import "SecurityOrigin.h"
 #import "SoftLinking.h"
 #import "TimeRanges.h"
 #import "WebCoreSystemInterface.h"
 #import <QTKit/QTKit.h>
 #import <objc/runtime.h>
-
-#if USE(ACCELERATED_COMPOSITING)
-#include "PlatformLayer.h"
-#endif
 
 #if DRAW_FRAME_RATE
 #import "Font.h"
@@ -508,7 +505,6 @@ void MediaPlayerPrivateQTKit::destroyQTVideoRenderer()
 void MediaPlayerPrivateQTKit::createQTMovieLayer()
 {
     LOG(Media, "MediaPlayerPrivateQTKit::createQTMovieLayer(%p)", this);
-#if USE(ACCELERATED_COMPOSITING)
     if (!m_qtMovie)
         return;
 
@@ -525,20 +521,17 @@ void MediaPlayerPrivateQTKit::createQTMovieLayer()
 #endif
         // The layer will get hooked up via RenderLayerBacking::updateGraphicsLayerConfiguration().
     }
-#endif
 }
 
 void MediaPlayerPrivateQTKit::destroyQTMovieLayer()
 {
     LOG(Media, "MediaPlayerPrivateQTKit::destroyQTMovieLayer(%p)", this);
-#if USE(ACCELERATED_COMPOSITING)
     if (!m_qtVideoLayer)
         return;
 
     // disassociate our movie from our instance of QTMovieLayer
     [m_qtVideoLayer.get() setMovie:nil];    
     m_qtVideoLayer = nil;
-#endif
 }
 
 MediaPlayerPrivateQTKit::MediaRenderingMode MediaPlayerPrivateQTKit::currentRenderingMode() const
@@ -560,10 +553,8 @@ MediaPlayerPrivateQTKit::MediaRenderingMode MediaPlayerPrivateQTKit::preferredRe
     if (!m_player->frameView() || !m_qtMovie)
         return MediaRenderingNone;
 
-#if USE(ACCELERATED_COMPOSITING)
     if (supportsAcceleratedRendering() && m_player->mediaPlayerClient()->mediaPlayerRenderingCanBeAccelerated(m_player))
         return MediaRenderingMovieLayer;
-#endif
 
     if (!QTVideoRendererClass())
         return MediaRenderingMovieView;
@@ -691,12 +682,10 @@ PlatformMedia MediaPlayerPrivateQTKit::platformMedia() const
     return pm;
 }
 
-#if USE(ACCELERATED_COMPOSITING)
 PlatformLayer* MediaPlayerPrivateQTKit::platformLayer() const
 {
     return m_qtVideoLayer.get();
 }
-#endif
 
 void MediaPlayerPrivateQTKit::play()
 {
@@ -897,12 +886,10 @@ void MediaPlayerPrivateQTKit::setClosedCaptionsVisible(bool closedCaptionsVisibl
     if (metaDataAvailable()) {
         wkQTMovieSetShowClosedCaptions(m_qtMovie.get(), closedCaptionsVisible);
 
-#if USE(ACCELERATED_COMPOSITING)
         if (closedCaptionsVisible && m_qtVideoLayer) {
             // Captions will be rendered upside down unless we flag the movie as flipped (again). See <rdar://7408440>.
             [m_qtVideoLayer.get() setGeometryFlipped:YES];
         }
-#endif
     }
 }
 
@@ -1225,12 +1212,10 @@ void MediaPlayerPrivateQTKit::didEnd()
     m_player->timeChanged();
 }
 
-#if USE(ACCELERATED_COMPOSITING)
 void MediaPlayerPrivateQTKit::layerHostChanged(PlatformLayer* rootLayer)
 {
     UNUSED_PARAM(rootLayer);
 }
-#endif
 
 void MediaPlayerPrivateQTKit::setSize(const IntSize&) 
 { 
@@ -1617,7 +1602,6 @@ void MediaPlayerPrivateQTKit::sawUnsupportedTracks()
     m_player->mediaPlayerClient()->mediaPlayerSawUnsupportedTracks(m_player);
 }
 
-#if USE(ACCELERATED_COMPOSITING)
 bool MediaPlayerPrivateQTKit::supportsAcceleratedRendering() const
 {
     return isReadyForVideoSetup() && getQTMovieLayerClass() != Nil;
@@ -1628,7 +1612,6 @@ void MediaPlayerPrivateQTKit::acceleratedRenderingStateChanged()
     // Set up or change the rendering path if necessary.
     setUpVideoRendering();
 }
-#endif
 
 bool MediaPlayerPrivateQTKit::hasSingleSecurityOrigin() const
 {
@@ -1780,12 +1763,8 @@ void MediaPlayerPrivateQTKit::setPrivateBrowsingMode(bool privateBrowsing)
 
 - (void)layerHostChanged:(NSNotification *)notification
 {
-#if USE(ACCELERATED_COMPOSITING)
     CALayer* rootLayer = static_cast<CALayer*>([notification object]);
     m_callback->layerHostChanged(rootLayer);
-#else
-    UNUSED_PARAM(notification);
-#endif
 }
 
 - (void)setDelayCallbacks:(BOOL)shouldDelay

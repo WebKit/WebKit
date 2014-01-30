@@ -26,8 +26,6 @@
 #ifndef LayerChangesFlusher_h
 #define LayerChangesFlusher_h
 
-#if USE(ACCELERATED_COMPOSITING)
-
 #include <windows.h>
 #include <wtf/HashSet.h>
 #include <wtf/Noncopyable.h>
@@ -59,7 +57,5 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // USE(ACCELERATED_COMPOSITING)
 
 #endif // LayerChangesFlusher_h

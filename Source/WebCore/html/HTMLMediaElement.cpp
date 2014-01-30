@@ -64,6 +64,7 @@
 #include "PageActivityAssertionToken.h"
 #include "PageGroup.h"
 #include "ProgressTracker.h"
+#include "RenderLayerCompositor.h"
 #include "RenderVideo.h"
 #include "RenderView.h"
 #include "ScriptController.h"
@@ -78,10 +79,6 @@
 #include <wtf/MathExtras.h>
 #include <wtf/Ref.h>
 #include <wtf/text/CString.h>
-
-#if USE(ACCELERATED_COMPOSITING)
-#include "RenderLayerCompositor.h"
-#endif
 
 #if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
 #include "RenderEmbeddedObject.h"
@@ -4014,7 +4011,6 @@ void HTMLMediaElement::mediaPlayerSizeChanged(MediaPlayer*)
     endProcessingMediaPlayerCallback();
 }
 
-#if USE(ACCELERATED_COMPOSITING)
 bool HTMLMediaElement::mediaPlayerRenderingCanBeAccelerated(MediaPlayer*)
 {
     if (renderer() && renderer()->isVideo())
@@ -4029,7 +4025,6 @@ void HTMLMediaElement::mediaPlayerRenderingModeChanged(MediaPlayer*)
     // Kick off a fake recalcStyle that will update the compositing tree.
     setNeedsStyleRecalc(SyntheticStyleChange);
 }
-#endif
 
 #if PLATFORM(WIN) && USE(AVFOUNDATION)
 GraphicsDeviceAdapter* HTMLMediaElement::mediaPlayerGraphicsDeviceAdapter(const MediaPlayer*) const
@@ -4060,9 +4055,7 @@ void HTMLMediaElement::mediaPlayerFirstVideoFrameAvailable(MediaPlayer*)
     beginProcessingMediaPlayerCallback();
     if (displayMode() == PosterWaitingForVideo) {
         setDisplayMode(Video);
-#if USE(ACCELERATED_COMPOSITING)
         mediaPlayerRenderingModeChanged(m_player.get());
-#endif
     }
     endProcessingMediaPlayerCallback();
 }
@@ -4922,7 +4915,6 @@ PlatformMedia HTMLMediaElement::platformMedia() const
     return m_player ? m_player->platformMedia() : NoPlatformMedia;
 }
 
-#if USE(ACCELERATED_COMPOSITING)
 PlatformLayer* HTMLMediaElement::platformLayer() const
 {
 #if PLATFORM(IOS)
@@ -4950,7 +4942,6 @@ void HTMLMediaElement::returnPlatformLayer(PlatformLayer* platformLayer)
     if (renderer())
         renderer()->updateFromElement();
 }
-#endif
 #endif
 
 bool HTMLMediaElement::hasClosedCaptions() const

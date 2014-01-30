@@ -26,8 +26,6 @@
 #ifndef AbstractCACFLayerTreeHost_h
 #define AbstractCACFLayerTreeHost_h
 
-#if USE(ACCELERATED_COMPOSITING)
-
 #include <wtf/Forward.h>
 
 namespace WebCore {
@@ -46,7 +44,5 @@ protected:
 };
 
 }
-
-#endif // USE(ACCELERATED_COMPOSITING)
 
 #endif // AbstractCACFLayerTreeHost_h

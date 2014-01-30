@@ -1,3 +1,55 @@
+2014-01-30  Andrei Bucur  <abucur@adobe.com>
+
+        Remove the ACCELERATED_COMPOSITING flag
+        https://bugs.webkit.org/show_bug.cgi?id=127833
+
+        Reviewed by Antti Koivisto.
+
+        Remove the USE(ACCELERATED_COMPOSITING) conditionals from the code base and make AC
+        mandatory.
+
+        * Plugins/Hosted/WebHostedNetscapePluginView.mm:
+        (-[WebHostedNetscapePluginView createPlugin]):
+        (-[WebHostedNetscapePluginView createPluginLayer]):
+        * Plugins/WebNetscapePluginView.mm:
+        (-[WebNetscapePluginView createPlugin]):
+        (-[WebNetscapePluginView getVariable:value:]):
+        * Plugins/WebPluginController.mm:
+        (-[WebPluginController superlayerForPluginView:]):
+        * WebCoreSupport/WebChromeClient.h:
+        (WebChromeClient::allowedCompositingTriggers):
+        * WebCoreSupport/WebChromeClient.mm:
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (PluginWidgetIOS::detachPluginLayer):
+        (NetscapePluginWidget::platformLayer):
+        * WebView/WebClipView.mm:
+        (-[WebClipView _immediateScrollToPoint:]):
+        * WebView/WebHTMLView.mm:
+        (setNeedsDisplayInRect):
+        (+[WebHTMLViewPrivate initialize]):
+        (-[WebHTMLViewPrivate clear]):
+        (-[WebHTMLView _setAsideSubviews]):
+        (-[WebHTMLView hitTest:]):
+        (-[WebHTMLView _isUsingAcceleratedCompositing]):
+        (-[WebHTMLView _compositingLayersHostingView]):
+        (-[WebHTMLView viewDidMoveToSuperview]):
+        (-[WebHTMLView drawRect:]):
+        * WebView/WebHTMLViewInternal.h:
+        * WebView/WebRenderLayer.mm:
+        (+[WebRenderLayer compositingInfoForLayer:]):
+        * WebView/WebView.mm:
+        (-[WebView _close]):
+        (-[WebView _setMediaLayer:forPluginView:]):
+        (-[WebView _postsAcceleratedCompositingNotifications]):
+        (-[WebView _setPostsAcceleratedCompositingNotifications:]):
+        (-[WebView _isUsingAcceleratedCompositing]):
+        (-[WebView _isSoftwareRenderable]):
+        (-[WebView close]):
+        * WebView/WebViewData.h:
+        * WebView/WebViewData.mm:
+        (WebViewLayerFlushScheduler::WebViewLayerFlushScheduler):
+        * WebView/WebViewInternal.h:
+
 2014-01-29  Csaba Osztrogonác  <ossy@webkit.org>
 
         Remove ENABLE(JAVASCRIPT_DEBUGGER) leftovers

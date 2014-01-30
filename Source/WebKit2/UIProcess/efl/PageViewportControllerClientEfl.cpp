@@ -25,9 +25,6 @@
  */
 
 #include "config.h"
-
-#if USE(ACCELERATED_COMPOSITING)
-
 #include "PageViewportControllerClientEfl.h"
 
 #include "EwkView.h"
@@ -78,4 +75,3 @@ void PageViewportControllerClientEfl::setController(PageViewportController* cont
 }
 
 } // namespace WebKit
-#endif // USE(ACCELERATED_COMPOSITING)

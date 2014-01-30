@@ -40,9 +40,7 @@ class RenderStyle;
 
 class CSSPropertyAnimation {
 public:
-#if USE(ACCELERATED_COMPOSITING)
     static bool animationOfPropertyIsAccelerated(CSSPropertyID);
-#endif
     static bool propertiesEqual(CSSPropertyID, const RenderStyle* a, const RenderStyle* b);
     static CSSPropertyID getPropertyAtIndex(int, bool& isShorthand);
     static int getNumProperties();

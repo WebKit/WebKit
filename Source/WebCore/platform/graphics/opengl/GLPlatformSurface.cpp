@@ -26,8 +26,6 @@
 #include "config.h"
 #include "GLPlatformSurface.h"
 
-#if USE(ACCELERATED_COMPOSITING)
-
 #if USE(GLX)
 #include "GLXSurface.h"
 #endif
@@ -133,5 +131,3 @@ GLPlatformSurface::SurfaceAttributes GLPlatformSurface::attributes() const
 }
 
 }
-
-#endif

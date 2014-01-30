@@ -82,7 +82,7 @@
 - (void)addInputString:(NSString *)str withFlags:(NSUInteger)flags;
 - (void)deleteFromInput;
 
-// Accelerated compositing; only called if USE(ACCELERATED_COMPOSITING) is defined
+// Accelerated compositing
 - (void)_webthread_webView:(WebView*)webView attachRootLayer:(id)rootLayer;
 - (void)webViewDidCommitCompositingLayerChanges:(WebView*)webView;
 

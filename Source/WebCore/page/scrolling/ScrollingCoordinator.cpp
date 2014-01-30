@@ -36,14 +36,11 @@
 #include "PlatformWheelEvent.h"
 #include "PluginViewBase.h"
 #include "Region.h"
+#include "RenderLayerCompositor.h"
 #include "RenderView.h"
 #include "ScrollAnimator.h"
 #include <wtf/MainThread.h>
 #include <wtf/text/StringBuilder.h>
-
-#if USE(ACCELERATED_COMPOSITING)
-#include "RenderLayerCompositor.h"
-#endif
 
 #if USE(COORDINATED_GRAPHICS)
 #include "ScrollingCoordinatorCoordinatedGraphics.h"
@@ -89,14 +86,10 @@ bool ScrollingCoordinator::coordinatesScrollingForFrameView(FrameView* frameView
         return false;
 
     // We currently only support composited mode.
-#if USE(ACCELERATED_COMPOSITING)
     RenderView* renderView = m_page->mainFrame().contentRenderer();
     if (!renderView)
         return false;
     return renderView->usesCompositing();
-#else
-    return false;
-#endif
 }
 
 Region ScrollingCoordinator::computeNonFastScrollableRegion(const Frame* frame, const IntPoint& frameLocation) const
@@ -112,11 +105,9 @@ Region ScrollingCoordinator::computeNonFastScrollableRegion(const Frame* frame, 
     if (const FrameView::ScrollableAreaSet* scrollableAreas = frameView->scrollableAreas()) {
         for (FrameView::ScrollableAreaSet::const_iterator it = scrollableAreas->begin(), end = scrollableAreas->end(); it != end; ++it) {
             ScrollableArea* scrollableArea = *it;
-#if USE(ACCELERATED_COMPOSITING)
             // Composited scrollable areas can be scrolled off the main thread.
             if (scrollableArea->usesCompositedScrolling())
                 continue;
-#endif
             IntRect box = scrollableArea->scrollableAreaBoundingBox();
             box.moveBy(offset);
             nonFastScrollableRegion.unite(box);
@@ -179,7 +170,6 @@ void ScrollingCoordinator::frameViewFixedObjectsDidChange(FrameView* frameView)
     updateSynchronousScrollingReasons();
 }
 
-#if USE(ACCELERATED_COMPOSITING)
 GraphicsLayer* ScrollingCoordinator::scrollLayerForScrollableArea(ScrollableArea* scrollableArea)
 {
     return scrollableArea->layerForScrolling();
@@ -194,23 +184,17 @@ GraphicsLayer* ScrollingCoordinator::verticalScrollbarLayerForScrollableArea(Scr
 {
     return scrollableArea->layerForVerticalScrollbar();
 }
-#endif
 
 GraphicsLayer* ScrollingCoordinator::scrollLayerForFrameView(FrameView* frameView)
 {
-#if USE(ACCELERATED_COMPOSITING)
     if (RenderView* renderView = frameView->frame().contentRenderer())
         return renderView->compositor().scrollLayer();
     return 0;
-#else
-    UNUSED_PARAM(frameView);
-    return 0;
-#endif
 }
 
 GraphicsLayer* ScrollingCoordinator::headerLayerForFrameView(FrameView* frameView)
 {
-#if USE(ACCELERATED_COMPOSITING) && ENABLE(RUBBER_BANDING)
+#if ENABLE(RUBBER_BANDING)
     if (RenderView* renderView = frameView->frame().contentRenderer())
         renderView->compositor().headerLayer();
     return 0;
@@ -222,7 +206,7 @@ GraphicsLayer* ScrollingCoordinator::headerLayerForFrameView(FrameView* frameVie
 
 GraphicsLayer* ScrollingCoordinator::footerLayerForFrameView(FrameView* frameView)
 {
-#if USE(ACCELERATED_COMPOSITING) && ENABLE(RUBBER_BANDING)
+#if ENABLE(RUBBER_BANDING)
     if (RenderView* renderView = frameView->frame().contentRenderer())
         return renderView->compositor().footerLayer();
     return 0;
@@ -234,14 +218,9 @@ GraphicsLayer* ScrollingCoordinator::footerLayerForFrameView(FrameView* frameVie
 
 GraphicsLayer* ScrollingCoordinator::counterScrollingLayerForFrameView(FrameView* frameView)
 {
-#if USE(ACCELERATED_COMPOSITING)
     if (RenderView* renderView = frameView->frame().contentRenderer())
         return renderView->compositor().fixedRootBackgroundLayer();
     return 0;
-#else
-    UNUSED_PARAM(frameView);
-    return 0;
-#endif
 }
 
 void ScrollingCoordinator::frameViewRootLayerDidChange(FrameView* frameView)
@@ -279,7 +258,6 @@ bool ScrollingCoordinator::hasVisibleSlowRepaintViewportConstrainedObjects(Frame
     if (!viewportConstrainedObjects)
         return false;
 
-#if USE(ACCELERATED_COMPOSITING)
     for (FrameView::ViewportConstrainedObjectSet::const_iterator it = viewportConstrainedObjects->begin(), end = viewportConstrainedObjects->end(); it != end; ++it) {
         RenderObject* viewportConstrainedObject = *it;
         if (!viewportConstrainedObject->isBoxModelObject() || !viewportConstrainedObject->hasLayer())
@@ -290,9 +268,6 @@ bool ScrollingCoordinator::hasVisibleSlowRepaintViewportConstrainedObjects(Frame
             return true;
     }
     return false;
-#else
-    return viewportConstrainedObjects->size();
-#endif
 }
 
 SynchronousScrollingReasons ScrollingCoordinator::synchronousScrollingReasons() const

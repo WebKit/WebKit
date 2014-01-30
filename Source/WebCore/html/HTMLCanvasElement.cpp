@@ -212,7 +212,7 @@ CanvasRenderingContext* HTMLCanvasElement::getContext(const String& type, Canvas
                 usesDashbardCompatibilityMode = settings->usesDashboardBackwardCompatibilityMode();
 #endif
             m_context = CanvasRenderingContext2D::create(this, document().inQuirksMode(), usesDashbardCompatibilityMode);
-#if USE(IOSURFACE_CANVAS_BACKING_STORE) || (ENABLE(ACCELERATED_2D_CANVAS) && USE(ACCELERATED_COMPOSITING))
+#if USE(IOSURFACE_CANVAS_BACKING_STORE) || ENABLE(ACCELERATED_2D_CANVAS)
             // Need to make sure a RenderLayer and compositing layer get created for the Canvas
             setNeedsStyleRecalc(SyntheticStyleChange);
 #endif
@@ -356,10 +356,8 @@ void HTMLCanvasElement::reset()
         if (m_rendererIsCanvas) {
             if (oldSize != size()) {
                 toRenderHTMLCanvas(renderer)->canvasSizeChanged();
-#if USE(ACCELERATED_COMPOSITING)
                 if (renderBox() && renderBox()->hasAcceleratedCompositing())
                     renderBox()->contentChanged(CanvasChanged);
-#endif
             }
             if (hadImageBuffer)
                 renderer->repaint();
@@ -387,13 +385,12 @@ bool HTMLCanvasElement::paintsIntoCanvasBuffer() const
         return true;
 #endif
 
-#if USE(ACCELERATED_COMPOSITING)
     if (!m_context->isAccelerated())
         return true;
 
     if (renderBox() && renderBox()->hasAcceleratedCompositing())
         return false;
-#endif
+
     return true;
 }
 
@@ -616,7 +613,7 @@ void HTMLCanvasElement::createImageBuffer() const
     size_t numBytes = 4 * m_imageBuffer->internalSize().width() * m_imageBuffer->internalSize().height();
     scriptExecutionContext()->vm()->heap.reportExtraMemoryCost(numBytes);
 
-#if USE(IOSURFACE_CANVAS_BACKING_STORE) || (ENABLE(ACCELERATED_2D_CANVAS) && USE(ACCELERATED_COMPOSITING))
+#if USE(IOSURFACE_CANVAS_BACKING_STORE) || ENABLE(ACCELERATED_2D_CANVAS)
     if (m_context && m_context->is2d())
         // Recalculate compositing requirements if acceleration state changed.
         const_cast<HTMLCanvasElement*>(this)->setNeedsStyleRecalc(SyntheticStyleChange);

@@ -130,12 +130,10 @@ public:
     virtual bool supportsScanning() const override;
     
     PlatformMedia platformMedia() const;
-#if USE(ACCELERATED_COMPOSITING)
     PlatformLayer* platformLayer() const;
 #if PLATFORM(IOS)
     PlatformLayer* borrowPlatformLayer();
     void returnPlatformLayer(PlatformLayer*);
-#endif
 #endif
 
     enum DelayedActionType {
@@ -508,10 +506,8 @@ private:
     virtual void mediaPlayerResourceNotSupported(MediaPlayer*) override;
     virtual void mediaPlayerRepaint(MediaPlayer*) override;
     virtual void mediaPlayerSizeChanged(MediaPlayer*) override;
-#if USE(ACCELERATED_COMPOSITING)
     virtual bool mediaPlayerRenderingCanBeAccelerated(MediaPlayer*) override;
     virtual void mediaPlayerRenderingModeChanged(MediaPlayer*) override;
-#endif
     virtual void mediaPlayerEngineUpdated(MediaPlayer*) override;
     
     virtual void mediaPlayerFirstVideoFrameAvailable(MediaPlayer*) override;

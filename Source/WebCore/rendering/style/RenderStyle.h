@@ -925,10 +925,8 @@ public:
     const LengthSize& pageSize() const { return rareNonInheritedData->m_pageSize; }
     PageSizeType pageSizeType() const { return static_cast<PageSizeType>(rareNonInheritedData->m_pageSizeType); }
     
-#if USE(ACCELERATED_COMPOSITING)
     // When set, this ensures that styles compare as different. Used during accelerated animations.
     bool isRunningAcceleratedAnimation() const { return rareNonInheritedData->m_runningAcceleratedAnimation; }
-#endif
 
     LineBoxContain lineBoxContain() const { return rareInheritedData->m_lineBoxContain; }
     const LineClampValue& lineClamp() const { return rareNonInheritedData->lineClamp; }
@@ -1435,9 +1433,7 @@ public:
     void setPageSizeType(PageSizeType t) { SET_VAR(rareNonInheritedData, m_pageSizeType, t); }
     void resetPageSizeType() { SET_VAR(rareNonInheritedData, m_pageSizeType, PAGE_SIZE_AUTO); }
 
-#if USE(ACCELERATED_COMPOSITING)
     void setIsRunningAcceleratedAnimation(bool b = true) { SET_VAR(rareNonInheritedData, m_runningAcceleratedAnimation, b); }
-#endif
 
     void setLineBoxContain(LineBoxContain c) { SET_VAR(rareInheritedData, m_lineBoxContain, c); }
     void setLineClamp(LineClampValue c) { SET_VAR(rareNonInheritedData, lineClamp, c); }

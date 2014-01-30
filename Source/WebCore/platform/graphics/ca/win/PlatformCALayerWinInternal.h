@@ -26,8 +26,6 @@
 #ifndef PlatformCALayerWinInternal_h
 #define PlatformCALayerWinInternal_h
 
-#if USE(ACCELERATED_COMPOSITING)
-
 #include <CoreGraphics/CGGeometry.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/Vector.h>
@@ -83,7 +81,5 @@ private:
 };
 
 }
-
-#endif // USE(ACCELERATED_COMPOSITING)
 
 #endif // PlatformCALayerWinInternal_h

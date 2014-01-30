@@ -26,8 +26,6 @@
 #ifndef PlatformCALayerClient_h
 #define PlatformCALayerClient_h
 
-#if USE(ACCELERATED_COMPOSITING)
-
 #include "GraphicsContext.h"
 #include "GraphicsLayer.h"
 #include "PlatformCAAnimation.h"
@@ -70,7 +68,5 @@ protected:
 };
 
 }
-
-#endif // USE(ACCELERATED_COMPOSITING)
 
 #endif // PlatformCALayerClient_h

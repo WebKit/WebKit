@@ -55,9 +55,7 @@ public:
     void setModalWindowIsShowing(bool);
     void setFullscreenWindowIsShowing(bool);
 
-#if USE(ACCELERATED_COMPOSITING)
     mach_port_t compositingRenderServerPort() const { return m_compositingRenderServerPort; }
-#endif
 
     bool launchProcess(const String& launchPath, const Vector<String>& arguments);
     bool launchApplicationAtURL(const String& urlString, const Vector<String>& arguments);
@@ -113,7 +111,7 @@ private:
 
     RunLoop::Timer<PluginProcess> m_minimumLifetimeTimer;
 
-#if USE(ACCELERATED_COMPOSITING) && PLATFORM(MAC)
+#if PLATFORM(MAC)
     // The Mach port used for accelerated compositing.
     mach_port_t m_compositingRenderServerPort;
 #endif

@@ -25,8 +25,6 @@
 
 #include "config.h"
 
-#if USE(ACCELERATED_COMPOSITING)
-
 #include "GraphicsLayer.h"
 
 #include "FloatPoint.h"
@@ -793,5 +791,3 @@ void showGraphicsLayerTree(const WebCore::GraphicsLayer* layer)
     fprintf(stderr, "%s\n", output.utf8().data());
 }
 #endif
-
-#endif // USE(ACCELERATED_COMPOSITING)

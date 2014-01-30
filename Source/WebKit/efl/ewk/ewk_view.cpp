@@ -24,6 +24,7 @@
 #include "config.h"
 #include "ewk_view.h"
 
+#include "AcceleratedCompositingContextEfl.h"
 #include "BackForwardController.h"
 #include "BackForwardList.h"
 #include "Bridge.h"
@@ -108,10 +109,6 @@
 
 #if ENABLE(BATTERY_STATUS)
 #include "BatteryClientEfl.h"
-#endif
-
-#if USE(ACCELERATED_COMPOSITING)
-#include "AcceleratedCompositingContextEfl.h"
 #endif
 
 #if ENABLE(NETWORK_INFO)
@@ -260,11 +257,9 @@ struct _Ewk_View_Private_Data {
     WebCore::ViewportArguments viewportArguments;
     Ewk_History* history;
     OwnPtr<PageClientEfl> pageClient;
-#if USE(ACCELERATED_COMPOSITING)
     OwnPtr<WebCore::AcceleratedCompositingContext> acceleratedCompositingContext;
     bool isCompositingActive;
     RefPtr<Evas_Object> compositingObject;
-#endif
 #if ENABLE(INPUT_TYPE_COLOR)
     WebCore::ColorChooserClient* colorChooserClient;
 #endif
@@ -757,13 +752,11 @@ static Ewk_View_Private_Data* _ewk_view_priv_new(Ewk_View_Smart_Data* smartData)
     pageSettings.setFullScreenEnabled(true);
 #endif
     pageSettings.setInteractiveFormValidationEnabled(true);
-#if USE(ACCELERATED_COMPOSITING)
     pageSettings.setAcceleratedCompositingEnabled(false);
     char* debugVisualsEnvironment = getenv("WEBKIT_SHOW_COMPOSITING_DEBUG_VISUALS");
     bool showDebugVisuals = debugVisualsEnvironment && !strcmp(debugVisualsEnvironment, "1");
     pageSettings.setShowDebugBorders(showDebugVisuals);
     pageSettings.setShowRepaintCounter(showDebugVisuals);
-#endif
 
     url = pageSettings.userStyleSheetLocation();
     priv->settings.userStylesheet = eina_stringshare_add(url.string().utf8().data());
@@ -849,9 +842,7 @@ static Ewk_View_Private_Data* _ewk_view_priv_new(Ewk_View_Smart_Data* smartData)
     priv->contextMenu = 0;
 #endif
 
-#if USE(ACCELERATED_COMPOSITING)
     priv->isCompositingActive = false;
-#endif
 
     return priv;
 }
@@ -890,9 +881,7 @@ static void _ewk_view_priv_del(Ewk_View_Private_Data* priv)
         ewk_context_menu_free(priv->contextMenu);
 #endif
 
-#if USE(ACCELERATED_COMPOSITING)
     priv->acceleratedCompositingContext = nullptr;
-#endif
 
     delete priv;
 }
@@ -4676,7 +4665,6 @@ void ewk_view_inspector_view_set(Evas_Object* ewkView, Evas_Object* inspectorVie
 #endif
 }
 
-#if USE(ACCELERATED_COMPOSITING)
 void _ewk_view_accelerated_compositing_cb(void* data, Evas_Object*)
 {
     Ewk_View_Private_Data* priv = static_cast<Ewk_View_Private_Data*>(data);
@@ -4764,7 +4752,6 @@ void ewk_view_mark_for_sync(Evas_Object* ewkView)
     // It will call the pixel get callback then.
     evas_object_image_pixels_dirty_set(priv->compositingObject.get(), true);
 }
-#endif
 
 void ewk_view_cursor_set(Evas_Object* ewkView, const WebCore::Cursor& cursor)
 {

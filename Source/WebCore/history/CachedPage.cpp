@@ -101,11 +101,9 @@ void CachedPage::restore(Page& page)
             frame->document()->visitedLinkState().invalidateStyleForAllLinks();
     }
 
-#if USE(ACCELERATED_COMPOSITING)
     if (m_needsDeviceScaleChanged) {
         page.mainFrame().deviceOrPageScaleFactorChanged();
     }
-#endif
 
     if (m_needsFullStyleRecalc)
         page.setNeedsRecalcStyleInAllFrames();

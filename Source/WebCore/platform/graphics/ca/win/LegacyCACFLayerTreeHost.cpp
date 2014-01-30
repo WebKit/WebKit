@@ -26,8 +26,6 @@
 #include "config.h"
 #include "LegacyCACFLayerTreeHost.h"
 
-#if USE(ACCELERATED_COMPOSITING)
-
 #include "PlatformCALayer.h"
 #include <QuartzCore/CABase.h>
 #include <WebKitSystemInterface/WebKitSystemInterface.h>
@@ -398,5 +396,3 @@ bool LegacyCACFLayerTreeHost::resetDevice(ResetReason reason)
 }
 
 } // namespace WebCore
-
-#endif // USE(ACCELERATED_COMPOSITING)

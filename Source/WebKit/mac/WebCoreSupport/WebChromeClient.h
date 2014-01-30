@@ -166,7 +166,6 @@ public:
 
     virtual bool shouldPaintEntireContents() const override;
 
-#if USE(ACCELERATED_COMPOSITING)
     virtual void attachRootGraphicsLayer(WebCore::Frame*, WebCore::GraphicsLayer*) override;
     virtual void setNeedsOneShotDrawingSynchronization() override;
     virtual void scheduleCompositingLayerFlush() override;
@@ -183,7 +182,6 @@ public:
 #endif
             AnimationTrigger);
     }
-#endif
 
 #if ENABLE(VIDEO)
     virtual bool supportsFullscreenForNode(const WebCore::Node*) override;

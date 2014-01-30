@@ -24,9 +24,6 @@
  */
 
 #include "config.h"
-
-#if USE(ACCELERATED_COMPOSITING)
-
 #include "EvasGLContext.h"
 
 namespace WebKit {
@@ -45,4 +42,3 @@ EvasGLContext::~EvasGLContext()
 }
 
 } // namespace WebKit
-#endif

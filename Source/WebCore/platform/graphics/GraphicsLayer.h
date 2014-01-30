@@ -26,8 +26,6 @@
 #ifndef GraphicsLayer_h
 #define GraphicsLayer_h
 
-#if USE(ACCELERATED_COMPOSITING)
-
 #include "Animation.h"
 #include "Color.h"
 #include "FloatPoint.h"
@@ -624,7 +622,5 @@ protected:
 // Outside the WebCore namespace for ease of invocation from gdb.
 void showGraphicsLayerTree(const WebCore::GraphicsLayer* layer);
 #endif
-
-#endif // USE(ACCELERATED_COMPOSITING)
 
 #endif // GraphicsLayer_h

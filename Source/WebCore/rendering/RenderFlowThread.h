@@ -47,10 +47,8 @@ class RenderRegion;
 
 typedef ListHashSet<RenderRegion*> RenderRegionList;
 typedef Vector<RenderLayer*> RenderLayerList;
-#if USE(ACCELERATED_COMPOSITING)
 typedef HashMap<RenderNamedFlowFragment*, RenderLayerList> RegionToLayerListMap;
 typedef HashMap<RenderLayer*, RenderNamedFlowFragment*> LayerToRegionMap;
-#endif
 
 // RenderFlowThread is used to collect all the render objects that participate in a
 // flow thread. It will also help in doing the layout. However, it will not render
@@ -179,7 +177,6 @@ public:
     bool needsTwoPhasesLayout() const { return m_needsTwoPhasesLayout; }
     void clearNeedsTwoPhasesLayout() { m_needsTwoPhasesLayout = false; }
 
-#if USE(ACCELERATED_COMPOSITING)
     // Whether any of the regions has a compositing descendant.
     bool hasCompositingRegionDescendant() const;
 
@@ -195,7 +192,6 @@ public:
     RenderNamedFlowFragment* regionForCompositedLayer(RenderLayer&); // By means of getRegionRangeForBox or regionAtBlockOffset.
     RenderNamedFlowFragment* cachedRegionForCompositedLayer(RenderLayer&);
 
-#endif
     virtual bool collectsGraphicsLayersUnderRegions() const;
 
     void pushFlowThreadLayoutState(const RenderObject&);
@@ -236,7 +232,6 @@ protected:
 
     LayoutRect computeRegionClippingRect(const LayoutPoint&, const LayoutRect&, const LayoutRect&) const;
 
-#if USE(ACCELERATED_COMPOSITING)
     bool updateAllLayerToRegionMappings();
 
     // Triggers a layers' update if a layer has moved from a region to another since the last update.
@@ -244,7 +239,6 @@ protected:
     RenderNamedFlowFragment* regionForCompositedLayer(RenderLayer*);
     bool updateLayerToRegionMappings();
     void updateRegionForRenderLayer(RenderLayer*, LayerToRegionMap&, RegionToLayerListMap&, bool& needsLayerUpdate);
-#endif
 
     void setDispatchRegionLayoutUpdateEvent(bool value) { m_dispatchRegionLayoutUpdateEvent = value; }
     bool shouldDispatchRegionLayoutUpdateEvent() { return m_dispatchRegionLayoutUpdateEvent; }
@@ -322,13 +316,11 @@ protected:
         RenderRegion* m_result;
     };
 
-#if USE(ACCELERATED_COMPOSITING)
     // To easily find the region where a layer should be painted.
     OwnPtr<LayerToRegionMap> m_layerToRegionMap;
 
     // To easily find the list of layers that paint in a region.
     OwnPtr<RegionToLayerListMap> m_regionToLayerListMap;
-#endif
 
     // Map a box to the list of regions in which the box is rendered.
     typedef HashMap<const RenderBox*, RenderRegionRange> RenderRegionRangeMap;

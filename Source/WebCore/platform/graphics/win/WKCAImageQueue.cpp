@@ -26,8 +26,6 @@
 #include "config.h"
 #include "WKCAImageQueue.h"
 
-#if USE(ACCELERATED_COMPOSITING)
-
 #include <CoreFoundation/CoreFoundation.h>
 #include <WebKitSystemInterface/WebKitSystemInterface.h>
 #include <wtf/PassOwnPtr.h>
@@ -101,5 +99,3 @@ CFTypeRef WKCAImageQueue::get()
 }
 
 }
-
-#endif

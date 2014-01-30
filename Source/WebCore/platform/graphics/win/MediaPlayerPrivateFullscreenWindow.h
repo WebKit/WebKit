@@ -29,13 +29,13 @@
 #include <wtf/RefPtr.h>
 #include <wtf/WindowsExtras.h>
 
-#if USE(ACCELERATED_COMPOSITING) && USE(CA)
+#if USE(CA)
 #include "CACFLayerTreeHostClient.h"
 #endif
 
 namespace WebCore {
 
-#if USE(ACCELERATED_COMPOSITING) && USE(CA)
+#if USE(CA)
 class CACFLayerTreeHost;
 class PlatformCALayer;
 #endif
@@ -56,7 +56,7 @@ public:
     
     HWND hwnd() const { return m_hwnd; }
 
-#if USE(ACCELERATED_COMPOSITING) && USE(CA)
+#if USE(CA)
     PlatformCALayer* rootChildLayer() const { return m_rootChild.get(); }
     void setRootChildLayer(PassRefPtr<PlatformCALayer>);
 #endif
@@ -66,7 +66,7 @@ private:
     LRESULT wndProc(HWND, UINT message, WPARAM, LPARAM);
 
     MediaPlayerPrivateFullscreenClient* m_client;
-#if USE(ACCELERATED_COMPOSITING) && USE(CA)
+#if USE(CA)
     RefPtr<CACFLayerTreeHost> m_layerTreeHost;
     RefPtr<PlatformCALayer> m_rootChild;
 #endif

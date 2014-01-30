@@ -26,8 +26,6 @@
 #ifndef PlatformCALayerRemoteCustom_h
 #define PlatformCALayerRemoteCustom_h
 
-#if USE(ACCELERATED_COMPOSITING)
-
 #include "PlatformCALayerRemote.h"
 
 namespace WebKit {
@@ -51,7 +49,5 @@ private:
 };
 
 } // namespace WebKit
-
-#endif // USE(ACCELERATED_COMPOSITING)
 
 #endif // PlatformCALayerRemoteCustom_h

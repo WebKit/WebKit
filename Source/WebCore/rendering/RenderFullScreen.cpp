@@ -30,10 +30,7 @@
 
 #include "RenderBlockFlow.h"
 #include "RenderLayer.h"
-
-#if USE(ACCELERATED_COMPOSITING)
 #include "RenderLayerCompositor.h"
-#endif
 
 namespace WebCore {
 

@@ -26,8 +26,6 @@
 #ifndef GraphicsLayerCA_h
 #define GraphicsLayerCA_h
 
-#if USE(ACCELERATED_COMPOSITING)
-
 #include "GraphicsLayer.h"
 #include "Image.h"
 #include "PlatformCAAnimation.h"
@@ -550,8 +548,5 @@ private:
 GRAPHICSLAYER_TYPE_CASTS(GraphicsLayerCA, isGraphicsLayerCA());
 
 } // namespace WebCore
-
-
-#endif // USE(ACCELERATED_COMPOSITING)
 
 #endif // GraphicsLayerCA_h

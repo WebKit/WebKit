@@ -287,11 +287,7 @@ void NetscapePlugin::removePluginStream(NetscapePluginStream* pluginStream)
 
 bool NetscapePlugin::isAcceleratedCompositingEnabled()
 {
-#if USE(ACCELERATED_COMPOSITING)
     return controller()->isAcceleratedCompositingEnabled();
-#else
-    return false;
-#endif
 }
 
 void NetscapePlugin::pushPopupsEnabledState(bool state)

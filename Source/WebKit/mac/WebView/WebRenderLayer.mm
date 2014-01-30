@@ -80,7 +80,6 @@ using namespace WebCore;
         return @"";
 
     NSString *layerType = @"";
-#if USE(ACCELERATED_COMPOSITING)
     RenderLayerBacking* backing = layer->backing();
     switch (backing->compositingLayerType()) {
         case NormalCompositingLayer:
@@ -102,7 +101,6 @@ using namespace WebCore;
 
     if (backing->hasAncestorClippingLayer())
         layerType = [layerType stringByAppendingString:@" (clipped)"];
-#endif
 
     return layerType;
 }

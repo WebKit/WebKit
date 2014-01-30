@@ -26,8 +26,6 @@
 #ifndef PlatformCALayerRemote_h
 #define PlatformCALayerRemote_h
 
-#if USE(ACCELERATED_COMPOSITING)
-
 #include "RemoteLayerTreeTransaction.h"
 #include <WebCore/PlatformCALayer.h>
 #include <WebCore/PlatformLayer.h>
@@ -171,7 +169,5 @@ private:
 PLATFORM_CALAYER_TYPE_CASTS(PlatformCALayerRemote, isPlatformCALayerRemote())
 
 } // namespace WebKit
-
-#endif // USE(ACCELERATED_COMPOSITING)
 
 #endif // PlatformCALayerRemote_h

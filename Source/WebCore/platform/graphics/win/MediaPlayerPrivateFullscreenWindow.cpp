@@ -34,7 +34,7 @@
 #include <CoreGraphics/CGColor.h>
 #endif
 
-#if USE(ACCELERATED_COMPOSITING) && USE(CA)
+#if USE(CA)
 #include "CACFLayerTreeHost.h"
 #include "PlatformCALayer.h"
 #endif
@@ -84,7 +84,7 @@ void MediaPlayerPrivateFullscreenWindow::createWindow(HWND parentHwnd)
         parentHwnd, 0, instanceHandle(), this);
     ASSERT(IsWindow(m_hwnd));
 
-#if USE(ACCELERATED_COMPOSITING) && USE(CA)
+#if USE(CA)
     if (m_layerTreeHost)
         m_layerTreeHost->setWindow(m_hwnd);
 #endif
@@ -92,7 +92,7 @@ void MediaPlayerPrivateFullscreenWindow::createWindow(HWND parentHwnd)
     ::SetFocus(m_hwnd);
 }
 
-#if USE(ACCELERATED_COMPOSITING) && USE(CA)
+#if USE(CA)
 void MediaPlayerPrivateFullscreenWindow::setRootChildLayer(PassRefPtr<PlatformCALayer> rootChild)
 {
     if (m_rootChild == rootChild)
@@ -156,7 +156,7 @@ LRESULT MediaPlayerPrivateFullscreenWindow::wndProc(HWND hWnd, UINT message, WPA
         break;
     case WM_DESTROY:
         m_hwnd = 0;
-#if USE(ACCELERATED_COMPOSITING) && USE(CA)
+#if USE(CA)
         if (m_layerTreeHost)
             m_layerTreeHost->setWindow(0);
 #endif
@@ -166,7 +166,7 @@ LRESULT MediaPlayerPrivateFullscreenWindow::wndProc(HWND hWnd, UINT message, WPA
             LPWINDOWPOS wp = reinterpret_cast<LPWINDOWPOS>(lParam);
             if (wp->flags & SWP_NOSIZE)
                 break;
-#if USE(ACCELERATED_COMPOSITING) && USE(CA)
+#if USE(CA)
             if (m_layerTreeHost) {
                 m_layerTreeHost->resize();
                 PlatformCALayer* rootLayer = m_rootChild->rootLayer();
@@ -179,7 +179,7 @@ LRESULT MediaPlayerPrivateFullscreenWindow::wndProc(HWND hWnd, UINT message, WPA
         }
         break;
     case WM_PAINT:
-#if USE(ACCELERATED_COMPOSITING) && USE(CA)
+#if USE(CA)
         if (m_layerTreeHost) {
             m_layerTreeHost->paint();
             ::ValidateRect(m_hwnd, 0);

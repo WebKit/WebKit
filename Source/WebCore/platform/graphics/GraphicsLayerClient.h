@@ -26,8 +26,6 @@
 #ifndef GraphicsLayerClient_h
 #define GraphicsLayerClient_h
 
-#if USE(ACCELERATED_COMPOSITING)
-
 namespace WebCore {
 
 class FloatPoint;
@@ -106,7 +104,5 @@ public:
 };
 
 } // namespace WebCore
-
-#endif // USE(ACCELERATED_COMPOSITING)
 
 #endif // GraphicsLayerClient_h

@@ -37,7 +37,7 @@
 #include "OpenGLShims.h"
 #endif
 
-#if USE(ACCELERATED_COMPOSITING) && USE(TEXTURE_MAPPER) && USE(TEXTURE_MAPPER_GL)
+#if USE(TEXTURE_MAPPER) && USE(TEXTURE_MAPPER_GL)
 #include <texmap/TextureMapperGL.h>
 #endif
 
@@ -68,7 +68,7 @@ GraphicsContext3DPrivate::GraphicsContext3DPrivate(GraphicsContext3D* context, G
 
 GraphicsContext3DPrivate::~GraphicsContext3DPrivate()
 {
-#if USE(ACCELERATED_COMPOSITING) && USE(TEXTURE_MAPPER)
+#if USE(TEXTURE_MAPPER)
     if (client())
         client()->platformLayerWillBeDestroyed();
 #endif
@@ -84,7 +84,7 @@ PlatformGraphicsContext3D GraphicsContext3DPrivate::platformContext()
     return m_glContext ? m_glContext->platformContext() : GLContext::getCurrent()->platformContext();
 }
 
-#if USE(ACCELERATED_COMPOSITING) && USE(TEXTURE_MAPPER)
+#if USE(TEXTURE_MAPPER)
 void GraphicsContext3DPrivate::paintToTextureMapper(TextureMapper* textureMapper, const FloatRect& targetRect, const TransformationMatrix& matrix, float opacity)
 {
     if (!m_glContext)
@@ -150,9 +150,9 @@ void GraphicsContext3DPrivate::paintToTextureMapper(TextureMapper* textureMapper
     TextureMapperGL::Flags flags = TextureMapperGL::ShouldFlipTexture | (m_context->m_attrs.alpha ? TextureMapperGL::ShouldBlend : 0);
     IntSize textureSize(m_context->m_currentWidth, m_context->m_currentHeight);
     texmapGL->drawTexture(m_context->m_texture, flags, textureSize, targetRect, matrix, opacity);
-#endif // USE(ACCELERATED_COMPOSITING_GL)
+#endif // USE(TEXTURE_MAPPER_GL)
 }
-#endif // USE(ACCELERATED_COMPOSITING)
+#endif // USE(TEXTURE_MAPPER)
 
 } // namespace WebCore
 

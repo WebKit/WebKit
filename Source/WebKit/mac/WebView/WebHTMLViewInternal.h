@@ -30,9 +30,7 @@
 
 #import "WebHTMLViewPrivate.h"
 
-#if USE(ACCELERATED_COMPOSITING)
 @class CALayer;
-#endif
 @class WebFrame;
 
 namespace WebCore {
@@ -66,11 +64,9 @@ namespace WebCore {
 - (void)_destroyAllWebPlugins;
 - (BOOL)_needsLayout;
 
-#if USE(ACCELERATED_COMPOSITING)
 - (void)attachRootLayer:(CALayer*)layer;
 - (void)detachRootLayer;
 - (BOOL)_web_isDrawingIntoLayer;
-#endif
 
 #if PLATFORM(IOS)
 - (void)_layoutIfNeeded;

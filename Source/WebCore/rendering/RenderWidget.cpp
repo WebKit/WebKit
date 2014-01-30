@@ -28,13 +28,10 @@
 #include "HTMLFrameOwnerElement.h"
 #include "HitTestResult.h"
 #include "RenderLayer.h"
+#include "RenderLayerBacking.h"
 #include "RenderView.h"
 #include <wtf/StackStats.h>
 #include <wtf/Ref.h>
-
-#if USE(ACCELERATED_COMPOSITING)
-#include "RenderLayerBacking.h"
-#endif
 
 namespace WebCore {
 
@@ -141,10 +138,9 @@ bool RenderWidget::setWidgetGeometry(const LayoutRect& frame)
     if (!weakThis)
         return true;
 
-#if USE(ACCELERATED_COMPOSITING)
     if (boundsChanged && hasLayer() && layer()->isComposited())
         layer()->backing()->updateAfterWidgetResize();
-#endif
+
     return oldFrameRect.size() != newFrameRect.size();
 }
 
@@ -384,7 +380,6 @@ bool RenderWidget::nodeAtPoint(const HitTestRequest& request, HitTestResult& res
     return inside;
 }
 
-#if USE(ACCELERATED_COMPOSITING)
 bool RenderWidget::requiresLayer() const
 {
     return RenderReplaced::requiresLayer() || requiresAcceleratedCompositing();
@@ -400,7 +395,6 @@ bool RenderWidget::requiresAcceleratedCompositing() const
 
     return false;
 }
-#endif
 
 bool RenderWidget::needsPreferredWidthsRecalculation() const
 {

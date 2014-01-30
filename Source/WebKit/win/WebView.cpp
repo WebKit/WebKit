@@ -165,7 +165,7 @@
 #include <WebKitSystemInterface/WebKitSystemInterface.h> 
 #endif
 
-#if USE(ACCELERATED_COMPOSITING) && USE(CA)
+#if USE(CA)
 #include <WebCore/CACFLayerTreeHost.h>
 #include <WebCore/PlatformCALayer.h>
 #endif
@@ -393,9 +393,7 @@ WebView::WebView()
     , m_lastPanY(0)
     , m_xOverpan(0)
     , m_yOverpan(0)
-#if USE(ACCELERATED_COMPOSITING)
     , m_isAcceleratedCompositing(false)
-#endif
     , m_nextDisplayIsSynchronous(false)
     , m_lastSetCursor(0)
     , m_usesLayeredWindow(false)
@@ -434,11 +432,8 @@ WebView::~WebView()
     ASSERT(!m_preferences);
     ASSERT(!m_viewWindow);
 
-#if USE(ACCELERATED_COMPOSITING)
 #if USE(CA)
     ASSERT(!m_layerTreeHost);
-#endif
-    ASSERT(!m_backingLayer);
 #endif
 
     WebViewCount--;
@@ -703,9 +698,7 @@ HRESULT STDMETHODCALLTYPE WebView::close()
 
     m_didClose = true;
 
-#if USE(ACCELERATED_COMPOSITING)
     setAcceleratedCompositing(false);
-#endif
 
     WebNotificationCenter::defaultCenterInternal()->postNotificationName(_bstr_t(WebViewWillCloseNotification).GetBSTR(), static_cast<IWebView*>(this), 0);
 
@@ -779,14 +772,12 @@ HRESULT STDMETHODCALLTYPE WebView::close()
 
 void WebView::repaint(const WebCore::IntRect& windowRect, bool contentChanged, bool immediate, bool repaintContentOnly)
 {
-#if USE(ACCELERATED_COMPOSITING)
     if (isAcceleratedCompositing()) {
         // The contentChanged, immediate, and repaintContentOnly parameters are all based on a non-
         // compositing painting/scrolling model.
         addToDirtyRegion(windowRect);
         return;
     }
-#endif
 
     if (!repaintContentOnly) {
         RECT rect = windowRect;
@@ -845,12 +836,10 @@ void WebView::addToDirtyRegion(const IntRect& dirtyRect)
     // but it was being hit during our layout tests, and is being investigated in
     // http://webkit.org/b/29350.
 
-#if USE(ACCELERATED_COMPOSITING)
     if (isAcceleratedCompositing()) {
         m_backingLayer->setNeedsDisplayInRect(dirtyRect);
         return;
     }
-#endif
 
     auto newRegion = adoptGDIObject(::CreateRectRgn(dirtyRect.x(), dirtyRect.y(),
         dirtyRect.maxX(), dirtyRect.maxY()));
@@ -861,9 +850,7 @@ void WebView::addToDirtyRegion(GDIObject<HRGN> newRegion)
 {
     m_needsDisplay = true;
 
-#if USE(ACCELERATED_COMPOSITING)
     ASSERT(!isAcceleratedCompositing());
-#endif
 
     LOCAL_GDI_COUNTER(0, __FUNCTION__);
 
@@ -882,14 +869,12 @@ void WebView::scrollBackingStore(FrameView* frameView, int dx, int dy, const Int
 {
     m_needsDisplay = true;
 
-#if USE(ACCELERATED_COMPOSITING)
     if (isAcceleratedCompositing()) {
         // FIXME: We should be doing something smarter here, like moving tiles around and painting
         // any newly-exposed tiles. <http://webkit.org/b/52714>
         m_backingLayer->setNeedsDisplayInRect(scrollViewRect);
         return;
     }
-#endif
 
     LOCAL_GDI_COUNTER(0, __FUNCTION__);
 
@@ -941,7 +926,7 @@ void WebView::sizeChanged(const IntSize& newSize)
     if (Frame* coreFrame = core(topLevelFrame()))
         coreFrame->view()->resize(newSize);
 
-#if USE(ACCELERATED_COMPOSITING) && USE(CA)
+#if USE(CA)
     if (m_layerTreeHost)
         m_layerTreeHost->resize();
     if (m_backingLayer) {
@@ -995,9 +980,7 @@ static void getUpdateRects(HRGN region, const IntRect& dirtyRect, Vector<IntRect
 
 void WebView::updateBackingStore(FrameView* frameView, HDC dc, bool backingStoreCompletelyDirty, WindowsToPaint windowsToPaint)
 {
-#if USE(ACCELERATED_COMPOSITING)
     ASSERT(!isAcceleratedCompositing());
-#endif
 
     LOCAL_GDI_COUNTER(0, __FUNCTION__);
 
@@ -1078,7 +1061,7 @@ void WebView::paint(HDC dc, LPARAM options)
 {
     LOCAL_GDI_COUNTER(0, __FUNCTION__);
 
-#if USE(ACCELERATED_COMPOSITING) && USE(CA)
+#if USE(CA)
     if (isAcceleratedCompositing() && !usesLayeredWindow()) {
         m_layerTreeHost->flushPendingLayerChangesNow();
         // Flushing might have taken us out of compositing mode.
@@ -2143,7 +2126,7 @@ void WebView::setShouldInvertColors(bool shouldInvertColors)
 
     m_shouldInvertColors = shouldInvertColors;
 
-#if USE(ACCELERATED_COMPOSITING) && USE(CA)
+#if USE(CA)
     if (m_layerTreeHost)
         m_layerTreeHost->setShouldInvertColors(shouldInvertColors);
 #endif
@@ -2387,10 +2370,8 @@ LRESULT CALLBACK WebView::WebViewWndProc(HWND hWnd, UINT message, WPARAM wParam,
                 RECT windowRect;
                 ::GetClientRect(hWnd, &windowRect);
                 ::InvalidateRect(hWnd, &windowRect, false);
-#if USE(ACCELERATED_COMPOSITING)
                 if (webView->isAcceleratedCompositing())
                     webView->m_backingLayer->setNeedsDisplay();
-#endif
            }
             break;
         case WM_MOUSEACTIVATE:
@@ -4988,12 +4969,10 @@ HRESULT WebView::notifyPreferencesChanged(IWebNotification* notification)
         return hr;
     settings.setFrameFlatteningEnabled(enabled);
 
-#if USE(ACCELERATED_COMPOSITING)
     hr = prefsPrivate->acceleratedCompositingEnabled(&enabled);
     if (FAILED(hr))
         return hr;
     settings.setAcceleratedCompositingEnabled(enabled);
-#endif
 
     hr = prefsPrivate->showDebugBorders(&enabled);
     if (FAILED(hr))
@@ -6567,7 +6546,6 @@ void WebView::downloadURL(const URL& url)
     download->start();
 }
 
-#if USE(ACCELERATED_COMPOSITING)
 void WebView::setRootChildLayer(GraphicsLayer* layer)
 {
     setAcceleratedCompositing(layer ? true : false);
@@ -6630,7 +6608,6 @@ void WebView::setAcceleratedCompositing(bool accelerated)
     }
 #endif
 }
-#endif
 
 #if PLATFORM(WIN) && USE(AVFOUNDATION)
 WebCore::GraphicsDeviceAdapter* WebView::graphicsDeviceAdapter() const
@@ -6742,7 +6719,6 @@ HRESULT WebView::nextDisplayIsSynchronous()
     return S_OK;
 }
 
-#if USE(ACCELERATED_COMPOSITING)
 void WebView::notifyAnimationStarted(const GraphicsLayer*, double)
 {
     // We never set any animations on our backing layer.
@@ -6785,8 +6761,6 @@ void WebView::flushPendingGraphicsLayerChanges()
 
     view->flushCompositingStateIncludingSubframes();
 }
-
-#endif
 
 class EnumTextMatches : public IEnumTextMatches
 {

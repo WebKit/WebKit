@@ -26,8 +26,6 @@
 #ifndef GLDefs_h
 #define GLDefs_h
 
-#if USE(ACCELERATED_COMPOSITING)
-
 #define GL_GLEXT_PROTOTYPES 1
 
 #if USE(OPENGL_ES_2)
@@ -80,7 +78,5 @@ typedef void* PlatformDrawable;
 #endif
 
 }
-
-#endif
 
 #endif

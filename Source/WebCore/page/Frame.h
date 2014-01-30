@@ -195,9 +195,7 @@ namespace WebCore {
         // Scale factor of this frame with respect to the container.
         float frameScaleFactor() const;
 
-#if USE(ACCELERATED_COMPOSITING)
         void deviceOrPageScaleFactorChanged();
-#endif
 
 #if PLATFORM(IOS)
         const ViewportArguments& viewportArguments() const;

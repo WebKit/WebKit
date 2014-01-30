@@ -60,11 +60,9 @@ CoordinatedDrawingAreaProxy::CoordinatedDrawingAreaProxy(WebPageProxy* webPagePr
 
 CoordinatedDrawingAreaProxy::~CoordinatedDrawingAreaProxy()
 {
-#if USE(ACCELERATED_COMPOSITING)
     // Make sure to exit accelerated compositing mode.
     if (isInAcceleratedCompositingMode())
         exitAcceleratedCompositingMode();
-#endif
 }
 
 void CoordinatedDrawingAreaProxy::paint(BackingStore::PlatformGraphicsContext context, const IntRect& rect, Region& unpaintedRegion)
@@ -130,7 +128,6 @@ void CoordinatedDrawingAreaProxy::deviceScaleFactorDidChange()
     backingStoreStateDidChange(RespondImmediately);
 }
 
-#if USE(ACCELERATED_COMPOSITING)
 void CoordinatedDrawingAreaProxy::visibilityDidChange()
 {
     // If we don't have a backing store, go ahead and mark the backing store as being changed so
@@ -138,7 +135,6 @@ void CoordinatedDrawingAreaProxy::visibilityDidChange()
     if (!m_backingStore && m_layerTreeContext.isEmpty())
         backingStoreStateDidChange(DoNotRespondImmediately);
 }
-#endif
 
 void CoordinatedDrawingAreaProxy::setBackingStoreIsDiscardable(bool isBackingStoreDiscardable)
 {
@@ -180,7 +176,6 @@ void CoordinatedDrawingAreaProxy::didUpdateBackingStoreState(uint64_t backingSto
     // Stop the responsiveness timer that was started in sendUpdateBackingStoreState.
     m_webPageProxy->process().responsivenessTimer()->stop();
 
-#if USE(ACCELERATED_COMPOSITING)
     if (layerTreeContext != m_layerTreeContext) {
         if (!m_layerTreeContext.isEmpty()) {
             exitAcceleratedCompositingMode();
@@ -192,21 +187,16 @@ void CoordinatedDrawingAreaProxy::didUpdateBackingStoreState(uint64_t backingSto
             ASSERT(layerTreeContext == m_layerTreeContext);
         }
     }
-#endif
 
     if (m_nextBackingStoreStateID != m_currentBackingStoreStateID)
         sendUpdateBackingStoreState(RespondImmediately);
     else
         m_hasReceivedFirstUpdate = true;
 
-#if USE(ACCELERATED_COMPOSITING)
     if (isInAcceleratedCompositingMode()) {
         ASSERT(!m_backingStore);
         return;
     }
-#else
-    UNUSED_PARAM(layerTreeContext);
-#endif
 
     // If we have a backing store the right size, reuse it.
     if (m_backingStore && (m_backingStore->size() != updateInfo.viewSize || m_backingStore->deviceScaleFactor() != updateInfo.deviceScaleFactor))
@@ -220,11 +210,7 @@ void CoordinatedDrawingAreaProxy::enterAcceleratedCompositingMode(uint64_t backi
     if (backingStoreStateID < m_currentBackingStoreStateID)
         return;
 
-#if USE(ACCELERATED_COMPOSITING)
     enterAcceleratedCompositingMode(layerTreeContext);
-#else
-    UNUSED_PARAM(layerTreeContext);
-#endif
 }
 
 void CoordinatedDrawingAreaProxy::exitAcceleratedCompositingMode(uint64_t backingStoreStateID, const UpdateInfo& updateInfo)
@@ -233,9 +219,7 @@ void CoordinatedDrawingAreaProxy::exitAcceleratedCompositingMode(uint64_t backin
     if (backingStoreStateID < m_currentBackingStoreStateID)
         return;
 
-#if USE(ACCELERATED_COMPOSITING)
     exitAcceleratedCompositingMode();
-#endif
 
     incorporateUpdate(updateInfo);
 }
@@ -246,11 +230,7 @@ void CoordinatedDrawingAreaProxy::updateAcceleratedCompositingMode(uint64_t back
     if (backingStoreStateID < m_currentBackingStoreStateID)
         return;
 
-#if USE(ACCELERATED_COMPOSITING)
     updateAcceleratedCompositingMode(layerTreeContext);
-#else
-    UNUSED_PARAM(layerTreeContext);
-#endif
 }
 
 void CoordinatedDrawingAreaProxy::incorporateUpdate(const UpdateInfo& updateInfo)
@@ -311,13 +291,11 @@ void CoordinatedDrawingAreaProxy::sendUpdateBackingStoreState(RespondImmediately
         m_webPageProxy->process().responsivenessTimer()->start();
     }
 
-#if USE(ACCELERATED_COMPOSITING)
     if (m_isWaitingForDidUpdateBackingStoreState && !m_layerTreeContext.isEmpty()) {
         // Wait for the DidUpdateBackingStoreState message. Normally we do this in CoordinatedDrawingAreaProxy::paint, but that
         // function is never called when in accelerated compositing mode.
         waitForAndDispatchDidUpdateBackingStoreState();
     }
-#endif
 }
 
 void CoordinatedDrawingAreaProxy::waitForAndDispatchDidUpdateBackingStoreState()
@@ -329,7 +307,6 @@ void CoordinatedDrawingAreaProxy::waitForAndDispatchDidUpdateBackingStoreState()
     if (m_webPageProxy->process().isLaunching())
         return;
 
-#if USE(ACCELERATED_COMPOSITING)
     // FIXME: waitForAndDispatchImmediately will always return the oldest DidUpdateBackingStoreState message that
     // hasn't yet been processed. But it might be better to skip ahead to some other DidUpdateBackingStoreState
     // message, if multiple DidUpdateBackingStoreState messages are waiting to be processed. For instance, we could
@@ -337,10 +314,8 @@ void CoordinatedDrawingAreaProxy::waitForAndDispatchDidUpdateBackingStoreState()
 
     // The timeout, in seconds, we use when waiting for a DidUpdateBackingStoreState message when we're asked to paint.
     m_webPageProxy->process().connection()->waitForAndDispatchImmediately<Messages::DrawingAreaProxy::DidUpdateBackingStoreState>(m_webPageProxy->pageID(), std::chrono::milliseconds(500));
-#endif
 }
 
-#if USE(ACCELERATED_COMPOSITING)
 void CoordinatedDrawingAreaProxy::enterAcceleratedCompositingMode(const LayerTreeContext& layerTreeContext)
 {
     ASSERT(!isInAcceleratedCompositingMode());
@@ -373,7 +348,6 @@ void CoordinatedDrawingAreaProxy::updateAcceleratedCompositingMode(const LayerTr
     m_layerTreeContext = layerTreeContext;
     m_webPageProxy->updateAcceleratedCompositingMode(layerTreeContext);
 }
-#endif
 
 void CoordinatedDrawingAreaProxy::discardBackingStoreSoon()
 {

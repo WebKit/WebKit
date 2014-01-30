@@ -1,3 +1,31 @@
+2014-01-30  Andrei Bucur  <abucur@adobe.com>
+
+        Remove the ACCELERATED_COMPOSITING flag
+        https://bugs.webkit.org/show_bug.cgi?id=127833
+
+        Reviewed by Antti Koivisto.
+
+        Remove the USE(ACCELERATED_COMPOSITING) conditionals from the code base and make AC
+        mandatory.
+
+        Another patch will be required to remove the flag support from the GTK build system.
+
+        * WebCoreSupport/AcceleratedCompositingContext.h:
+        * WebCoreSupport/AcceleratedCompositingContextGL.cpp:
+        * WebCoreSupport/ChromeClientGtk.cpp:
+        (WebKit::ChromeClient::widgetSizeChanged):
+        (WebKit::ChromeClient::forcePaint):
+        (WebKit::ChromeClient::invalidateContentsAndRootView):
+        (WebKit::ChromeClient::invalidateContentsForSlowScroll):
+        (WebKit::ChromeClient::scroll):
+        (WebKit::ChromeClient::allowedCompositingTriggers):
+        * WebCoreSupport/ChromeClientGtk.h:
+        * webkit/webkitwebview.cpp:
+        (webkit_web_view_update_settings):
+        (webkit_web_view_settings_notify):
+        (webkit_web_view_init):
+        * webkit/webkitwebviewprivate.h:
+
 2014-01-29  Csaba Osztrogonác  <ossy@webkit.org>
 
         Remove ENABLE(JAVASCRIPT_DEBUGGER) guards

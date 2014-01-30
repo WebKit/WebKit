@@ -614,7 +614,6 @@ PassRefPtr<SearchPopupMenu> ChromeClientEfl::createSearchPopupMenu(PopupMenuClie
     return adoptRef(new SearchPopupMenuEfl(client));
 }
 
-#if USE(ACCELERATED_COMPOSITING)
 void ChromeClientEfl::attachRootGraphicsLayer(Frame*, GraphicsLayer* rootLayer)
 {
     ewk_view_root_graphics_layer_set(m_view, rootLayer);
@@ -634,7 +633,6 @@ ChromeClient::CompositingTriggerFlags ChromeClientEfl::allowedCompositingTrigger
 {
     return AllTriggers;
 }
-#endif
 
 #if ENABLE(FULLSCREEN_API)
 bool ChromeClientEfl::supportsFullScreenForElement(const WebCore::Element* element, bool withKeyboard)

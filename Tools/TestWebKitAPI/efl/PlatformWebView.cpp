@@ -46,7 +46,7 @@ static Ecore_Evas* initEcoreEvas()
         return 0;
 
     Ecore_Evas* ecoreEvas;
-#if defined(WTF_USE_ACCELERATED_COMPOSITING) && defined(HAVE_ECORE_X)
+#if defined(HAVE_ECORE_X)
     ecoreEvas = ecore_evas_new("opengl_x11", 0, 0, 800, 600, 0);
     // Graceful fallback to software rendering if evas_gl engine is not available.
     if (!ecoreEvas)

@@ -48,6 +48,7 @@
 #include <WebCore/FrameLoadRequest.h>
 #include <WebCore/FrameView.h>
 #include <WebCore/FullScreenController.h>
+#include <WebCore/GraphicsLayer.h>
 #include <WebCore/HTMLNames.h>
 #include <WebCore/HTMLVideoElement.h>
 #include <WebCore/Icon.h>
@@ -61,10 +62,6 @@
 #include <WebCore/SearchPopupMenuWin.h>
 #include <WebCore/WindowFeatures.h>
 #include <wchar.h>
-
-#if USE(ACCELERATED_COMPOSITING)
-#include <WebCore/GraphicsLayer.h>
-#endif
 
 using namespace WebCore;
 
@@ -751,7 +748,6 @@ void WebChromeClient::setLastSetCursorToCurrentCursor()
     m_webView->setLastCursor(::GetCursor());
 }
 
-#if USE(ACCELERATED_COMPOSITING)
 void WebChromeClient::attachRootGraphicsLayer(Frame* frame, GraphicsLayer* graphicsLayer)
 {
     m_webView->setRootChildLayer(graphicsLayer);
@@ -761,7 +757,6 @@ void WebChromeClient::scheduleCompositingLayerFlush()
 {
     m_webView->flushPendingGraphicsLayerChangesSoon();
 }
-#endif
 
 #if PLATFORM(WIN) && USE(AVFOUNDATION)
 WebCore::GraphicsDeviceAdapter* WebChromeClient::graphicsDeviceAdapter() const

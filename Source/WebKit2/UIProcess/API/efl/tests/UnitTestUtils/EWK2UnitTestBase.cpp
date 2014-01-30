@@ -47,7 +47,7 @@ void EWK2UnitTestBase::SetUp()
     unsigned int width = environment->defaultWidth();
     unsigned int height = environment->defaultHeight();
 
-#if defined(WTF_USE_ACCELERATED_COMPOSITING) && defined(HAVE_ECORE_X)
+#if defined(HAVE_ECORE_X)
     const char* engine = "opengl_x11";
     m_ecoreEvas = ecore_evas_new(engine, 0, 0, width, height, 0);
     // Graceful fallback to software rendering if evas_gl engine is not available.

@@ -306,9 +306,7 @@ PageCache::PageCache()
     , m_size(0)
     , m_head(0)
     , m_tail(0)
-#if USE(ACCELERATED_COMPOSITING)
     , m_shouldClearBackingStores(false)
-#endif
 {
 }
     
@@ -434,8 +432,6 @@ void PageCache::markPagesForFullStyleRecalc(Page* page)
     }
 }
 
-
-#if USE(ACCELERATED_COMPOSITING)
 void PageCache::markPagesForDeviceScaleChanged(Page* page)
 {
     for (HistoryItem* current = m_head; current; current = current->m_next) {
@@ -444,7 +440,6 @@ void PageCache::markPagesForDeviceScaleChanged(Page* page)
             cachedPage->markForDeviceScaleChanged();
     }
 }
-#endif
 
 #if ENABLE(VIDEO_TRACK)
 void PageCache::markPagesForCaptionPreferencesChanged()

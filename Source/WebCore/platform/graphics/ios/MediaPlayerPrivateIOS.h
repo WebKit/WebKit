@@ -142,9 +142,7 @@ private:
     virtual void setHasPlaybackTargetAvailabilityListeners(bool) override;
 #endif
 
-#if USE(ACCELERATED_COMPOSITING)
     virtual bool supportsAcceleratedRendering() const override;
-#endif
 
     virtual void setMediaPlayerProxy(WebMediaPlayerProxy*) override;
     void processPendingRequests();

@@ -273,11 +273,9 @@ public:
     static void registerInstrumentingAgents(InstrumentingAgents*);
     static void unregisterInstrumentingAgents(InstrumentingAgents*);
 
-#if USE(ACCELERATED_COMPOSITING)
     static void layerTreeDidChange(Page*);
     static void renderLayerDestroyed(Page*, const RenderLayer*);
     static void pseudoElementDestroyed(Page*, PseudoElement*);
-#endif
 
 private:
 #if ENABLE(INSPECTOR)
@@ -444,11 +442,9 @@ private:
     static void cancelPauseOnNativeEvent(InstrumentingAgents*);
     static InspectorTimelineAgent* retrieveTimelineAgent(const InspectorInstrumentationCookie&);
 
-#if USE(ACCELERATED_COMPOSITING)
     static void layerTreeDidChangeImpl(InstrumentingAgents*);
     static void renderLayerDestroyedImpl(InstrumentingAgents*, const RenderLayer*);
     static void pseudoElementDestroyedImpl(InstrumentingAgents*, PseudoElement*);
-#endif
 
     static int s_frontendCounter;
 #endif
@@ -1842,7 +1838,6 @@ inline void InspectorInstrumentation::didFireAnimationFrame(const InspectorInstr
 #endif
 }
 
-#if USE(ACCELERATED_COMPOSITING)
 inline void InspectorInstrumentation::layerTreeDidChange(Page* page)
 {
 #if ENABLE(INSPECTOR)
@@ -1874,7 +1869,6 @@ inline void InspectorInstrumentation::pseudoElementDestroyed(Page* page, PseudoE
     UNUSED_PARAM(pseudoElement);
 #endif
 }
-#endif
 
 #if ENABLE(INSPECTOR)
 inline InstrumentingAgents* InspectorInstrumentation::instrumentingAgentsForContext(ScriptExecutionContext* context)

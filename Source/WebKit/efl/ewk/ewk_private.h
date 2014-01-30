@@ -30,10 +30,8 @@
 
 // forward declarations
 namespace WebCore {
-#if USE(ACCELERATED_COMPOSITING)
 class GraphicsContext3D;
 class GraphicsLayer;
-#endif
 }
 
 struct Ewk_Window_Object_Cleared_Event {

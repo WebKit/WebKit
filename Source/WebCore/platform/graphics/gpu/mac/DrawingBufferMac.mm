@@ -94,7 +94,6 @@ DrawingBuffer::~DrawingBuffer()
     clear();
 }
 
-#if USE(ACCELERATED_COMPOSITING)
 PlatformLayer* DrawingBuffer::platformLayer()
 {
     return m_platformLayer.get();
@@ -104,7 +103,6 @@ unsigned DrawingBuffer::frontColorBuffer() const
 {
     return colorBuffer();
 }
-#endif
 
 }
 

@@ -3606,13 +3606,11 @@ static void webkit_web_view_update_settings(WebKitWebView* webView)
     WebCore::RuntimeEnabledFeatures::sharedFeatures().setMediaStreamEnabled(settingsPrivate->enableMediaStream);
 #endif
 
-#if USE(ACCELERATED_COMPOSITING)
     updateAcceleratedCompositingSetting(coreSettings, settingsPrivate->enableAcceleratedCompositing);
     char* debugVisualsEnvironment = getenv("WEBKIT_SHOW_COMPOSITING_DEBUG_VISUALS");
     bool showDebugVisuals = debugVisualsEnvironment && !strcmp(debugVisualsEnvironment, "1");
     coreSettings.setShowDebugBorders(showDebugVisuals);
     coreSettings.setShowRepaintCounter(showDebugVisuals);
-#endif
 
 #if ENABLE(WEB_AUDIO)
     coreSettings.setWebAudioEnabled(settingsPrivate->enableWebAudio);
@@ -3758,10 +3756,8 @@ static void webkit_web_view_settings_notify(WebKitWebSettings* webSettings, GPar
         settings.setWebGLEnabled(g_value_get_boolean(&value));
 #endif
 
-#if USE(ACCELERATED_COMPOSITING)
     else if (name == g_intern_string("enable-accelerated-compositing"))
         updateAcceleratedCompositingSetting(settings, g_value_get_boolean(&value));
-#endif
 
 #if ENABLE(WEB_AUDIO)
     else if (name == g_intern_string("enable-webaudio"))
@@ -3885,10 +3881,7 @@ static void webkit_web_view_init(WebKitWebView* webView)
 #endif
 
     priv->selfScrolling = false;
-
-#if USE(ACCELERATED_COMPOSITING)
     priv->acceleratedCompositingContext = AcceleratedCompositingContext::create(webView);
-#endif
 
     g_signal_connect(webView, "direction-changed", G_CALLBACK(webkitWebViewDirectionChanged), 0);
 }

@@ -67,9 +67,7 @@ public:
     virtual void elementDidFocus(const WebCore::Node*) override;
     virtual void elementDidBlur(const WebCore::Node*) override;
 
-#if USE(ACCELERATED_COMPOSITING)
     virtual void attachRootGraphicsLayer(WebCore::Frame*, WebCore::GraphicsLayer*) override;
-#endif
 
     virtual void didFlushCompositingLayers() override;
 

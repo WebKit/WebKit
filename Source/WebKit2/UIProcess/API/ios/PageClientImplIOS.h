@@ -89,13 +89,12 @@ private:
     virtual PassRefPtr<WebPopupMenuProxy> createPopupMenuProxy(WebPageProxy*) override;
     virtual PassRefPtr<WebContextMenuProxy> createContextMenuProxy(WebPageProxy*) override;
     virtual void setFindIndicator(PassRefPtr<FindIndicator>, bool fadeOut, bool animate) override;
-#if USE(ACCELERATED_COMPOSITING)
+
     virtual void enterAcceleratedCompositingMode(const LayerTreeContext&) override;
     virtual void exitAcceleratedCompositingMode() override;
     virtual void updateAcceleratedCompositingMode(const LayerTreeContext&) override;
     virtual void setAcceleratedCompositingRootLayer(CALayer *rootLayer) override;
     virtual CALayer *acceleratedCompositingRootLayer() const override;
-#endif
 
     virtual RetainPtr<CGImageRef> takeViewSnapshot() override;
     virtual void wheelEventWasNotHandledByWebCore(const NativeWebWheelEvent&) override;

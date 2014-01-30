@@ -33,11 +33,8 @@ namespace WebCore {
 
 class FlowThreadController;
 class ImageQualityController;
-class RenderQuote;
-
-#if USE(ACCELERATED_COMPOSITING)
 class RenderLayerCompositor;
-#endif
+class RenderQuote;
 
 class RenderView final : public RenderBlockFlow {
 public:
@@ -99,11 +96,7 @@ public:
     virtual void absoluteRects(Vector<IntRect>&, const LayoutPoint& accumulatedOffset) const override;
     virtual void absoluteQuads(Vector<FloatQuad>&, bool* wasFixed) const override;
 
-#if USE(ACCELERATED_COMPOSITING)
     void setMaximalOutlineSize(int o);
-#else
-    void setMaximalOutlineSize(int o) { m_maximalOutlineSize = o; }
-#endif
     int maximalOutlineSize() const { return m_maximalOutlineSize; }
 
     LayoutRect viewRect() const;
@@ -181,10 +174,8 @@ public:
     // Notification that this view moved into or out of a native window.
     void setIsInWindow(bool);
 
-#if USE(ACCELERATED_COMPOSITING)
     RenderLayerCompositor& compositor();
     bool usesCompositing() const;
-#endif
 
     IntRect unscaledDocumentRect() const;
     LayoutRect backgroundRect(RenderBox* backgroundRenderer) const;
@@ -345,9 +336,7 @@ private:
     bool m_pageLogicalHeightChanged;
     std::unique_ptr<LayoutState> m_layoutState;
     unsigned m_layoutStateDisableCount;
-#if USE(ACCELERATED_COMPOSITING)
     OwnPtr<RenderLayerCompositor> m_compositor;
-#endif
     OwnPtr<FlowThreadController> m_flowThreadController;
     RefPtr<IntervalArena> m_intervalArena;
 

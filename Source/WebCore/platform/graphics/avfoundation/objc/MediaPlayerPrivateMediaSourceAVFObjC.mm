@@ -258,12 +258,10 @@ PlatformMedia MediaPlayerPrivateMediaSourceAVFObjC::platformMedia() const
     return pm;
 }
 
-#if USE(ACCELERATED_COMPOSITING)
 PlatformLayer* MediaPlayerPrivateMediaSourceAVFObjC::platformLayer() const
 {
     return m_sampleBufferDisplayLayer.get();
 }
-#endif
 
 void MediaPlayerPrivateMediaSourceAVFObjC::play()
 {
@@ -437,7 +435,6 @@ bool MediaPlayerPrivateMediaSourceAVFObjC::hasAvailableVideoFrame() const
     return m_hasAvailableVideoFrame;
 }
 
-#if USE(ACCELERATED_COMPOSITING)
 bool MediaPlayerPrivateMediaSourceAVFObjC::supportsAcceleratedRendering() const
 {
     return true;
@@ -450,7 +447,6 @@ void MediaPlayerPrivateMediaSourceAVFObjC::acceleratedRenderingStateChanged()
     else
         destroyLayer();
 }
-#endif
 
 MediaPlayer::MovieLoadType MediaPlayerPrivateMediaSourceAVFObjC::movieLoadType() const
 {

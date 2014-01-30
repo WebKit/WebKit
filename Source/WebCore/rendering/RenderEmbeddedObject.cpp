@@ -123,7 +123,6 @@ RenderPtr<RenderEmbeddedObject> RenderEmbeddedObject::createForApplet(HTMLApplet
     return renderer;
 }
 
-#if USE(ACCELERATED_COMPOSITING)
 bool RenderEmbeddedObject::requiresLayer() const
 {
     if (RenderWidget::requiresLayer())
@@ -141,7 +140,6 @@ bool RenderEmbeddedObject::allowsAcceleratedCompositing() const
     return widget() && widget()->isPluginViewBase() && toPluginViewBase(widget())->platformLayer();
 #endif
 }
-#endif
 
 #if !PLATFORM(IOS)
 static String unavailablePluginReplacementText(RenderEmbeddedObject::PluginUnavailabilityReason pluginUnavailabilityReason)

@@ -455,13 +455,11 @@ static void clearEverywhereInBackingStore(WebKitWebView* webView, cairo_t* cr)
 
 void ChromeClient::widgetSizeChanged(const IntSize& oldWidgetSize, IntSize newSize)
 {
-#if USE(ACCELERATED_COMPOSITING)
     AcceleratedCompositingContext* compositingContext = m_webView->priv->acceleratedCompositingContext.get();
     if (compositingContext->enabled()) {
         m_webView->priv->acceleratedCompositingContext->resizeRootLayer(newSize);
         return;
     }
-#endif
 
     // Grow the backing store by at least 1.5 times the current size. This prevents
     // lots of unnecessary allocations during an opaque resize.
@@ -632,10 +630,8 @@ void ChromeClient::paint(WebCore::Timer<ChromeClient>*)
 
 void ChromeClient::forcePaint()
 {
-#if USE(ACCELERATED_COMPOSITING)
     if (m_webView->priv->acceleratedCompositingContext->enabled())
         return;
-#endif
 
     m_forcePaint = true;
     paint(0);
@@ -648,13 +644,11 @@ void ChromeClient::invalidateRootView(const IntRect&, bool immediate)
 
 void ChromeClient::invalidateContentsAndRootView(const IntRect& updateRect, bool immediate)
 {
-#if USE(ACCELERATED_COMPOSITING)
     AcceleratedCompositingContext* acContext = m_webView->priv->acceleratedCompositingContext.get();
     if (acContext->enabled()) {
         acContext->setNonCompositedContentsNeedDisplay(updateRect);
         return;
     }
-#endif
 
     if (updateRect.isEmpty())
         return;
@@ -666,13 +660,11 @@ void ChromeClient::invalidateContentsForSlowScroll(const IntRect& updateRect, bo
 {
     m_adjustmentWatcher.updateAdjustmentsFromScrollbarsLater();
 
-#if USE(ACCELERATED_COMPOSITING)
     AcceleratedCompositingContext* acContext = m_webView->priv->acceleratedCompositingContext.get();
     if (acContext->enabled()) {
         acContext->setNonCompositedContentsNeedDisplay(updateRect);
         return;
     }
-#endif
 
     invalidateContentsAndRootView(updateRect, immediate);
 }
@@ -681,7 +673,6 @@ void ChromeClient::scroll(const IntSize& delta, const IntRect& rectToScroll, con
 {
     m_adjustmentWatcher.updateAdjustmentsFromScrollbarsLater();
 
-#if USE(ACCELERATED_COMPOSITING)
     AcceleratedCompositingContext* compositingContext = m_webView->priv->acceleratedCompositingContext.get();
     if (compositingContext->enabled()) {
         ASSERT(!rectToScroll.isEmpty());
@@ -690,7 +681,6 @@ void ChromeClient::scroll(const IntSize& delta, const IntRect& rectToScroll, con
         compositingContext->scrollNonCompositedContents(rectToScroll, delta);
         return;
     }
-#endif
 
     m_rectsToScroll.append(rectToScroll);
     m_scrollOffsets.append(delta);
@@ -1000,7 +990,6 @@ void ChromeClient::exitFullScreenForElement(WebCore::Element*)
 }
 #endif
 
-#if USE(ACCELERATED_COMPOSITING)
 void ChromeClient::attachRootGraphicsLayer(Frame* frame, GraphicsLayer* rootLayer)
 {
     AcceleratedCompositingContext* context = m_webView->priv->acceleratedCompositingContext.get();
@@ -1042,6 +1031,5 @@ ChromeClient::CompositingTriggerFlags ChromeClient::allowedCompositingTriggers()
     return AllTriggers;
 #endif
 }
-#endif
 
 }

@@ -25,7 +25,6 @@
 
 #include "config.h"
 
-#if USE(ACCELERATED_COMPOSITING)
 #include "RenderLayerCompositor.h"
 
 #include "AnimationController.h"
@@ -3712,5 +3711,3 @@ void RenderLayerCompositor::paintRelatedMilestonesTimerFired(Timer<RenderLayerCo
 }
 
 } // namespace WebCore
-
-#endif // USE(ACCELERATED_COMPOSITING)

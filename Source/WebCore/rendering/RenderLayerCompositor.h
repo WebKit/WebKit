@@ -26,8 +26,6 @@
 #ifndef RenderLayerCompositor_h
 #define RenderLayerCompositor_h
 
-#if USE(ACCELERATED_COMPOSITING)
-
 #include "ChromeClient.h"
 #include "GraphicsLayerClient.h"
 #include "GraphicsLayerUpdater.h"
@@ -521,7 +519,5 @@ private:
 
 
 } // namespace WebCore
-
-#endif // USE(ACCELERATED_COMPOSITING)
 
 #endif // RenderLayerCompositor_h

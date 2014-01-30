@@ -229,6 +229,7 @@
 #import <MobileGestalt.h>
 #import <WebCore/EventNames.h>
 #import <WebCore/FontCache.h>
+#import <WebCore/GraphicsLayer.h>
 #import <WebCore/IconController.h>
 #import <WebCore/NetworkStateNotifier.h>
 #import <WebCore/RuntimeApplicationChecksIOS.h>
@@ -245,10 +246,6 @@
 #import <WebCore/WebVideoFullscreenControllerAVKit.h>
 #import <dispatch/private.h>
 #import <wtf/FastMalloc.h>
-
-#if USE(ACCELERATED_COMPOSITING)
-#import <WebCore/GraphicsLayer.h>
-#endif
 #endif // !PLATFORM(IOS)
 
 #if ENABLE(DASHBOARD_SUPPORT)
@@ -1744,12 +1741,10 @@ static bool fastDocumentTeardownEnabled()
     }
 #endif
 
-#if USE(ACCELERATED_COMPOSITING)
     if (_private->layerFlushController) {
         _private->layerFlushController->invalidate();
         _private->layerFlushController = nullptr;
     }
-#endif
     
 #if USE(GLIB)
     [self _clearGlibLoopObserver];
@@ -3473,7 +3468,6 @@ static inline IMP getMethod(id o, SEL s)
 
 - (BOOL)_setMediaLayer:(CALayer*)layer forPluginView:(NSView*)pluginView
 {
-#if USE(ACCELERATED_COMPOSITING)
     WebThreadLock();
 
     Frame* mainCoreFrame = [self _mainCoreFrame];
@@ -3495,7 +3489,7 @@ static inline IMP getMethod(id o, SEL s)
             return YES;
         }
     }
-#endif
+
     return NO;
 }
 
@@ -3873,30 +3867,22 @@ static inline IMP getMethod(id o, SEL s)
 
 - (BOOL)_postsAcceleratedCompositingNotifications
 {
-#if USE(ACCELERATED_COMPOSITING)
     return _private->postsAcceleratedCompositingNotifications;
-#else
-    return NO;
-#endif
-
 }
 - (void)_setPostsAcceleratedCompositingNotifications:(BOOL)flag
 {
-#if USE(ACCELERATED_COMPOSITING)
     _private->postsAcceleratedCompositingNotifications = flag;
-#endif
 }
 
 - (BOOL)_isUsingAcceleratedCompositing
 {
-#if USE(ACCELERATED_COMPOSITING)
     Frame* coreFrame = [self _mainCoreFrame];
     for (Frame* frame = coreFrame; frame; frame = frame->tree().traverseNext(coreFrame)) {
         NSView *documentView = [[kit(frame) frameView] documentView];
         if ([documentView isKindOfClass:[WebHTMLView class]] && [(WebHTMLView *)documentView _isUsingAcceleratedCompositing])
             return YES;
     }
-#endif
+
     return NO;
 }
 
@@ -3927,7 +3913,6 @@ static inline IMP getMethod(id o, SEL s)
 
 - (BOOL)_isSoftwareRenderable
 {
-#if USE(ACCELERATED_COMPOSITING)
     Frame* coreFrame = [self _mainCoreFrame];
     for (Frame* frame = coreFrame; frame; frame = frame->tree().traverseNext(coreFrame)) {
         if (FrameView* view = frame->view()) {
@@ -3935,7 +3920,7 @@ static inline IMP getMethod(id o, SEL s)
                 return NO;
         }
     }
-#endif
+
     return YES;
 }
 
@@ -5219,7 +5204,7 @@ static bool needsWebViewInitThreadWorkaround()
     // _close existed first, and some clients might be calling or overriding it, so call through.
     [self _close];
 
-#if PLATFORM(IOS) && USE(ACCELERATED_COMPOSITING)
+#if PLATFORM(IOS)
     if (_private->layerFlushController) {
         _private->layerFlushController->invalidate();
         _private->layerFlushController = nullptr;
@@ -8341,8 +8326,6 @@ static inline uint64_t roundUpToPowerOf2(uint64_t num)
     return result;
 }
 
-#if USE(ACCELERATED_COMPOSITING)
-
 - (BOOL)_needsOneShotDrawingSynchronization
 {
     return _private->needsOneShotDrawingSynchronization;
@@ -8462,8 +8445,6 @@ bool LayerFlushController::flushLayers()
     if (FrameView* view = coreFrame->view())
         view->scheduleLayerFlushAllowingThrottling();
 }
-#endif
-
 #endif
 
 #if ENABLE(VIDEO)

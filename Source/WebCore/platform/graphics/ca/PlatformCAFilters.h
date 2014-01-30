@@ -26,7 +26,6 @@
 #ifndef PlatformCAFilters_h
 #define PlatformCAFilters_h
 
-#if USE(ACCELERATED_COMPOSITING)
 #if ENABLE(CSS_FILTERS)
 
 #include "FilterOperations.h"
@@ -65,6 +64,5 @@ public:
 }
 
 #endif // ENABLE(CSS_FILTERS)
-#endif // USE(ACCELERATED_COMPOSITING)
 
 #endif // PlatformCAFilters_h

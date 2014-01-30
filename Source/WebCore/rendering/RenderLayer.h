@@ -344,7 +344,6 @@ public:
 
     void repaintIncludingDescendants();
 
-#if USE(ACCELERATED_COMPOSITING)
     // Indicate that the layer contents need to be repainted. Only has an effect
     // if layer compositing is being used.
     void setBackingNeedsRepaint(GraphicsLayer::ShouldClipToLayer = GraphicsLayer::ClipToLayer);
@@ -352,7 +351,6 @@ public:
     // The rect is in the coordinate space of the layer's render object.
     void setBackingNeedsRepaintInRect(const LayoutRect&, GraphicsLayer::ShouldClipToLayer = GraphicsLayer::ClipToLayer);
     void repaintIncludingNonCompositingDescendants(RenderLayerModelObject* repaintContainer);
-#endif
 
     void styleChanged(StyleDifference, const RenderStyle* oldStyle);
 
@@ -473,13 +471,11 @@ public:
 
     bool isRootLayer() const { return m_isRootLayer; }
 
-#if USE(ACCELERATED_COMPOSITING)
     RenderLayerCompositor& compositor() const;
     
     // Notification from the renderer that its content changed (e.g. current frame of image changed).
     // Allows updates of layer content without repainting.
     void contentChanged(ContentChangeType);
-#endif
 
     bool canRender3DTransforms() const;
 
@@ -498,9 +494,7 @@ public:
     void updateLayerPositionsAfterOverflowScroll();
     void updateLayerPositionsAfterDocumentScroll();
 
-#if USE(ACCELERATED_COMPOSITING)
     void positionNewlyCreatedOverflowControls();
-#endif
     
     bool isPaginated() const { return m_isPaginated; }
     RenderLayer* enclosingPaginationLayer() const { return m_enclosingPaginationLayer; }
@@ -604,13 +598,11 @@ public:
 
     RenderLayer* enclosingOverflowClipLayer(IncludeSelfOrNot) const;
 
-#if USE(ACCELERATED_COMPOSITING)
     // Enclosing compositing layer; if includeSelf is true, may return this.
     RenderLayer* enclosingCompositingLayer(IncludeSelfOrNot = IncludeSelf) const;
     RenderLayer* enclosingCompositingLayerForRepaint(IncludeSelfOrNot = IncludeSelf) const;
     // Ancestor compositing layer, excluding this.
     RenderLayer* ancestorCompositingLayer() const { return enclosingCompositingLayer(ExcludeSelf); }
-#endif
 
 #if ENABLE(CSS_FILTERS)
     RenderLayer* enclosingFilterLayer(IncludeSelfOrNot = IncludeSelf) const;
@@ -792,7 +784,6 @@ public:
     bool hasBlendMode() const { return false; }
 #endif
 
-#if USE(ACCELERATED_COMPOSITING)
     bool isComposited() const { return m_backing != 0; }
     bool hasCompositingDescendant() const { return m_hasCompositingDescendant; }
     bool hasCompositedMask() const;
@@ -807,12 +798,6 @@ public:
     bool needsCompositedScrolling() const;
     bool needsCompositingLayersRebuiltForClip(const RenderStyle* oldStyle, const RenderStyle* newStyle) const;
     bool needsCompositingLayersRebuiltForOverflow(const RenderStyle* oldStyle, const RenderStyle* newStyle) const;
-#else
-    bool isComposited() const { return false; }
-    bool hasCompositedMask() const { return false; }
-    bool usesCompositedScrolling() const { return false; }
-    bool needsCompositedScrolling() const { return false; }
-#endif
 
     bool paintsWithTransparency(PaintBehavior paintBehavior) const
     {
@@ -841,7 +826,6 @@ public:
 
     Element* enclosingElement() const;
 
-#if USE(ACCELERATED_COMPOSITING)
     enum ViewportConstrainedNotCompositedReason {
         NoNotCompositedReason,
         NotCompositedForBoundsOutOfView,
@@ -851,7 +835,6 @@ public:
 
     void setViewportConstrainedNotCompositedReason(ViewportConstrainedNotCompositedReason reason) { m_viewportConstrainedNotCompositedReason = reason; }
     ViewportConstrainedNotCompositedReason viewportConstrainedNotCompositedReason() const { return static_cast<ViewportConstrainedNotCompositedReason>(m_viewportConstrainedNotCompositedReason); }
-#endif
     
     bool isRenderFlowThread() const { return renderer().isRenderFlowThread(); }
     bool isOutOfFlowRenderFlowThread() const { return renderer().isOutOfFlowRenderFlowThread(); }
@@ -1092,9 +1075,7 @@ private:
     void setAncestorChainHasVisibleDescendant();
 
     void updateDescendantDependentFlags(HashSet<const RenderObject*>* outOfFlowDescendantContainingBlocks = 0);
-#if USE(ACCELERATED_COMPOSITING)
     bool checkIfDescendantClippingContextNeedsUpdate(bool isClipping);
-#endif
 
     // This flag is computed by RenderLayerCompositor, which knows more about 3d hierarchies than we do.
     void setHas3DTransformedDescendant(bool b) { m_has3DTransformedDescendant = b; }
@@ -1136,8 +1117,7 @@ private:
     
     // FIXME: Temporary. Remove when new columns come online.
     bool useRegionBasedColumns() const;
-    
-#if USE(ACCELERATED_COMPOSITING)    
+
     void setHasCompositingDescendant(bool b)  { m_hasCompositingDescendant = b; }
     
     enum IndirectCompositingReason {
@@ -1153,7 +1133,6 @@ private:
     void setIndirectCompositingReason(IndirectCompositingReason reason) { m_indirectCompositingReason = reason; }
     IndirectCompositingReason indirectCompositingReason() const { return static_cast<IndirectCompositingReason>(m_indirectCompositingReason); }
     bool mustCompositeForIndirectReasons() const { return m_indirectCompositingReason; }
-#endif
 
     // Returns true if z ordering would not change if this layer were a stacking container.
     bool canBeStackingContainer() const;
@@ -1231,11 +1210,9 @@ private:
     bool m_3DTransformedDescendantStatusDirty : 1;
     bool m_has3DTransformedDescendant : 1;  // Set on a stacking context layer that has 3D descendants anywhere
                                             // in a preserves3D hierarchy. Hint to do 3D-aware hit testing.
-#if USE(ACCELERATED_COMPOSITING)
     bool m_hasCompositingDescendant : 1; // In the z-order tree.
     unsigned m_indirectCompositingReason : 3;
     unsigned m_viewportConstrainedNotCompositedReason : 2;
-#endif
 
 #if PLATFORM(IOS)
     bool m_adjustForIOSCaretWhenScrolling : 1;
@@ -1324,9 +1301,7 @@ private:
 
     IntRect m_blockSelectionGapsBounds;
 
-#if USE(ACCELERATED_COMPOSITING)
     OwnPtr<RenderLayerBacking> m_backing;
-#endif
 
     class FilterInfo;
 };

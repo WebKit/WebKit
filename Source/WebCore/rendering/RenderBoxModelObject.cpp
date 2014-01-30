@@ -37,6 +37,8 @@
 #include "RenderBlock.h"
 #include "RenderInline.h"
 #include "RenderLayer.h"
+#include "RenderLayerBacking.h"
+#include "RenderLayerCompositor.h"
 #include "RenderNamedFlowFragment.h"
 #include "RenderNamedFlowThread.h"
 #include "RenderRegion.h"
@@ -45,11 +47,6 @@
 #include "ScrollingConstraints.h"
 #include "Settings.h"
 #include "TransformState.h"
-
-#if USE(ACCELERATED_COMPOSITING)
-#include "RenderLayerBacking.h"
-#include "RenderLayerCompositor.h"
-#endif
 
 namespace WebCore {
 
@@ -89,7 +86,6 @@ void RenderBoxModelObject::setSelectionState(SelectionState state)
         containingBlock->setSelectionState(state);
 }
 
-#if USE(ACCELERATED_COMPOSITING)
 void RenderBoxModelObject::contentChanged(ContentChangeType changeType)
 {
     if (!hasLayer())
@@ -151,7 +147,6 @@ void RenderBoxModelObject::suspendAnimations(double time)
     ASSERT(isComposited());
     layer()->backing()->suspendAnimations(time);
 }
-#endif
 
 bool RenderBoxModelObject::shouldPaintAtLowQuality(GraphicsContext* context, Image* image, const void* layer, const LayoutSize& size)
 {
@@ -1028,7 +1023,6 @@ IntPoint RenderBoxModelObject::BackgroundImageGeometry::relativePhase() const
 
 bool RenderBoxModelObject::fixedBackgroundPaintsInLocalCoordinates() const
 {
-#if USE(ACCELERATED_COMPOSITING)
     if (!isRoot())
         return false;
 
@@ -1040,9 +1034,6 @@ bool RenderBoxModelObject::fixedBackgroundPaintsInLocalCoordinates() const
         return false;
 
     return rootLayer->backing()->backgroundLayerPaintsFixedRootBackground();
-#else
-    return false;
-#endif
 }
 
 static inline int getSpace(int areaSize, int tileSize)

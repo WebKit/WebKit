@@ -309,9 +309,7 @@ public:
 
     GraphicsContext3D* graphicsContext3D() const { return m_context.get(); }
     WebGLContextGroup* contextGroup() const { return m_contextGroup.get(); }
-#if USE(ACCELERATED_COMPOSITING)
     virtual PlatformLayer* platformLayer() const override;
-#endif
 
     void reshape(int width, int height);
 

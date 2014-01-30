@@ -135,9 +135,7 @@
 #import <WebCore/PlatformEventFactoryMac.h>
 #endif
 
-#if USE(ACCELERATED_COMPOSITING)
 #import <QuartzCore/QuartzCore.h>
-#endif
 
 #if PLATFORM(IOS)
 #import "WebUIKitDelegate.h"
@@ -323,7 +321,6 @@ extern NSString *NSTextInputReplacementRangeAttributeName;
 @end
 
 #if !PLATFORM(IOS)
-#if USE(ACCELERATED_COMPOSITING)
 static IMP oldSetNeedsDisplayInRectIMP;
 
 static void setNeedsDisplayInRect(NSView *self, SEL cmd, NSRect invalidRect)
@@ -357,7 +354,6 @@ static void setNeedsDisplayInRect(NSView *self, SEL cmd, NSRect invalidRect)
 
     frameView->invalidateRect(invalidRectInFrameViewCoordinates);
 }
-#endif // USE(ACCELERATED_COMPOSITING)
 
 @interface NSApplication (WebNSApplicationDetails)
 - (void)speakString:(NSString *)string;
@@ -551,10 +547,8 @@ struct WebHTMLViewInterpretKeyEventsParameters {
     BOOL subviewsSetAside;
 #endif
 
-#if USE(ACCELERATED_COMPOSITING)
     NSView *layerHostingView;
     BOOL drawingIntoLayer;
-#endif
 
 #if !PLATFORM(IOS)
     NSEvent *mouseDownEvent; // Kept after handling the event.
@@ -664,14 +658,12 @@ static NSCellStateValue kit(TriState state)
         ASSERT(oldSetCursorForMouseLocationIMP);
     }
 
-#if USE(ACCELERATED_COMPOSITING)
     if (!oldSetNeedsDisplayInRectIMP) {
         Method setNeedsDisplayInRectMethod = class_getInstanceMethod([NSView class], @selector(setNeedsDisplayInRect:));
         ASSERT(setNeedsDisplayInRectMethod);
         oldSetNeedsDisplayInRectIMP = method_setImplementation(setNeedsDisplayInRectMethod, (IMP)setNeedsDisplayInRect);
         ASSERT(oldSetNeedsDisplayInRectIMP);
     }
-#endif // USE(ACCELERATED_COMPOSITING)
 
 #endif
 
@@ -760,9 +752,7 @@ static NSCellStateValue kit(TriState state)
     promisedDragTIFFDataSource = 0;
 #endif
 
-#if USE(ACCELERATED_COMPOSITING)
     layerHostingView = nil;
-#endif
 }
 
 @end
@@ -1367,16 +1357,12 @@ static NSURL* uniqueURLWithRelativePart(NSString *relativePart)
     ASSERT(!_private->subviewsSetAside);
     ASSERT(_private->savedSubviews == nil);
     _private->savedSubviews = _subviews;
-#if USE(ACCELERATED_COMPOSITING)
     // We need to keep the layer-hosting view in the subviews, otherwise the layers flash.
     if (_private->layerHostingView) {
         NSArray* newSubviews = [[NSArray alloc] initWithObjects:_private->layerHostingView, nil];
         _subviews = newSubviews;
     } else
         _subviews = nil;
-#else
-    _subviews = nil;
-#endif    
     _private->subviewsSetAside = YES;
 #endif
  }
@@ -1385,7 +1371,6 @@ static NSURL* uniqueURLWithRelativePart(NSString *relativePart)
  {
 #if !PLATFORM(IOS)
     ASSERT(_private->subviewsSetAside);
-#if USE(ACCELERATED_COMPOSITING)
     if (_private->layerHostingView) {
         [_subviews release];
         _subviews = _private->savedSubviews;
@@ -1393,10 +1378,6 @@ static NSURL* uniqueURLWithRelativePart(NSString *relativePart)
         ASSERT(_subviews == nil);
         _subviews = _private->savedSubviews;
     }
-#else
-    ASSERT(_subviews == nil);
-    _subviews = _private->savedSubviews;
-#endif    
     _private->savedSubviews = nil;
     _private->subviewsSetAside = NO;
 #endif
@@ -1606,10 +1587,8 @@ static BOOL isQuickLookEvent(NSEvent *event)
 
     if (!captureHitsOnSubviews) {
         NSView* hitView = [super hitTest:point];
-#if USE(ACCELERATED_COMPOSITING)
         if (_private && hitView == _private->layerHostingView)
             hitView = self;
-#endif
         return hitView;
     }
 #endif // !PLATFORM(IOS)
@@ -2342,20 +2321,12 @@ static bool mouseEventIsPartOfClickOrDrag(NSEvent *event)
 
 - (BOOL)_isUsingAcceleratedCompositing
 {
-#if USE(ACCELERATED_COMPOSITING)
     return _private->layerHostingView != nil;
-#else
-    return NO;
-#endif
 }
 
 - (NSView *)_compositingLayersHostingView
 {
-#if USE(ACCELERATED_COMPOSITING)
     return _private->layerHostingView;
-#else
-    return 0;
-#endif
 }
 
 - (BOOL)_isInPrintMode
@@ -3182,13 +3153,11 @@ WEBCORE_COMMAND(toggleUnderline)
     if ([self superview] != nil)
         [self addSuperviewObservers];
 
-#if USE(ACCELERATED_COMPOSITING)
     if ([self superview] && [self _isUsingAcceleratedCompositing]) {
         WebView *webView = [self _webView];
         if ([webView _postsAcceleratedCompositingNotifications])
             [[NSNotificationCenter defaultCenter] postNotificationName:_WebViewDidStartAcceleratedCompositingNotification object:webView userInfo:nil];
     }
-#endif
 }
 #endif // !PLATFORM(IOS)
 
@@ -3652,7 +3621,7 @@ static void setMenuTargets(NSMenu* menu)
 
     WebView *webView = [self _webView];
 
-#if USE(ACCELERATED_COMPOSITING) && !PLATFORM(IOS)
+#if !PLATFORM(IOS)
     // Only do the synchronization dance if we're drawing into the window, otherwise
     // we risk disabling screen updates when no flush is pending.
     if ([NSGraphicsContext currentContext] == [[self window] graphicsContext] && [webView _needsOneShotDrawingSynchronization]) {
@@ -5998,7 +5967,6 @@ static BOOL writingDirectionKeyBindingsEnabled()
     return [[self _frame] _needsLayout];
 }
 
-#if USE(ACCELERATED_COMPOSITING)
 - (void)attachRootLayer:(CALayer*)layer
 {
 #if !PLATFORM(IOS)
@@ -6072,8 +6040,6 @@ static BOOL writingDirectionKeyBindingsEnabled()
     return _private->drawingIntoLayer;
 #endif
 }
-
-#endif // USE(ACCELERATED_COMPOSITING)
 
 @end
 

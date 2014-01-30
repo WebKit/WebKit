@@ -22,7 +22,7 @@
 #include "config.h"
 #include "TextureMapperShaderProgram.h"
 
-#if USE(ACCELERATED_COMPOSITING) && USE(TEXTURE_MAPPER)
+#if USE(TEXTURE_MAPPER)
 #include "LengthFunctions.h"
 #include "Logging.h"
 #include "TextureMapperGL.h"

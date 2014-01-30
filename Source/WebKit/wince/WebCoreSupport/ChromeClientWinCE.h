@@ -137,7 +137,6 @@ public:
     // will be called frequently, so handling should be very fast.
     virtual void formStateDidChange(const WebCore::Node*) override;
 
-#if USE(ACCELERATED_COMPOSITING)
     // Pass 0 as the GraphicsLayer to detatch the root layer.
     virtual void attachRootGraphicsLayer(WebCore::Frame*, WebCore::GraphicsLayer*) override;
     // Sets a flag to specify that the next time content is drawn to the window,
@@ -146,7 +145,6 @@ public:
     // Sets a flag to specify that the view needs to be updated, so we need
     // to do an eager layout before the drawing.
     virtual void scheduleCompositingLayerFlush() override;
-#endif
 
     virtual void setLastSetCursorToCurrentCursor() override;
     virtual void AXStartFrameLoad() override;

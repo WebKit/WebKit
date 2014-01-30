@@ -20,8 +20,6 @@
  */
 
 #include "config.h"
-
-#if USE(ACCELERATED_COMPOSITING)
 #include "PageViewportController.h"
 
 #include "CoordinatedDrawingAreaProxy.h"
@@ -357,5 +355,3 @@ bool PageViewportController::updateMinimumScaleToFit(bool userInitiatedUpdate)
 }
 
 } // namespace WebKit
-
-#endif

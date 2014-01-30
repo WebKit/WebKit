@@ -101,9 +101,7 @@ struct _WebKitWebViewPrivate {
     WebCore::GtkDragAndDropHelper dragAndDropHelper;
     bool selfScrolling;
 
-#if USE(ACCELERATED_COMPOSITING)
     OwnPtr<WebKit::AcceleratedCompositingContext> acceleratedCompositingContext;
-#endif
 
 #if ENABLE(ICONDATABASE)
     gulong iconLoadedHandler;

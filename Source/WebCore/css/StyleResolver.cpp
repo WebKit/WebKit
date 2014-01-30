@@ -680,7 +680,6 @@ bool StyleResolver::canShareStyleWithElement(StyledElement* element) const
     if (style->transitions() || style->animations())
         return false;
 
-#if USE(ACCELERATED_COMPOSITING)
     // Turn off style sharing for elements that can gain layers for reasons outside of the style system.
     // See comments in RenderObject::setStyle().
     if (element->hasTagName(iframeTag) || element->hasTagName(frameTag) || element->hasTagName(embedTag) || element->hasTagName(objectTag) || element->hasTagName(appletTag) || element->hasTagName(canvasTag))
@@ -690,8 +689,6 @@ bool StyleResolver::canShareStyleWithElement(StyledElement* element) const
     // With proxying, the media elements are backed by a RenderEmbeddedObject.
     if ((element->hasTagName(videoTag) || element->hasTagName(audioTag)) && toHTMLMediaElement(element)->shouldUseVideoPluginProxy())
         return false;
-#endif
-
 #endif
 
     if (elementHasDirectionAuto(element))

@@ -26,8 +26,6 @@
 #ifndef PlatformCALayerWin_h
 #define PlatformCALayerWin_h
 
-#if USE(ACCELERATED_COMPOSITING)
-
 #include "PlatformCALayer.h"
 
 namespace WebCore {
@@ -153,7 +151,5 @@ private:
 };
 
 }
-
-#endif // USE(ACCELERATED_COMPOSITING)
 
 #endif // PlatformCALayerWin_h

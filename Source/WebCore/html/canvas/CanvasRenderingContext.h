@@ -56,10 +56,7 @@ public:
     virtual bool isAccelerated() const { return false; }
 
     virtual void paintRenderingResultsToCanvas() {}
-
-#if USE(ACCELERATED_COMPOSITING)
     virtual PlatformLayer* platformLayer() const { return 0; }
-#endif
 
 protected:
     CanvasRenderingContext(HTMLCanvasElement*);

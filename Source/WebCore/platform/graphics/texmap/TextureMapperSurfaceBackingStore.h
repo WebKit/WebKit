@@ -20,7 +20,7 @@
 #ifndef TextureMapperSurfaceBackingStore_h
 #define TextureMapperSurfaceBackingStore_h
 
-#if USE(ACCELERATED_COMPOSITING) && USE(GRAPHICS_SURFACE)
+#if USE(GRAPHICS_SURFACE)
 
 #include "GraphicsSurface.h"
 #include "TextureMapperBackingStore.h"

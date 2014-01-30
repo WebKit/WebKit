@@ -43,7 +43,7 @@
 
 #include <gst/audio/streamvolume.h>
 
-#if GST_CHECK_VERSION(1, 1, 0) && USE(ACCELERATED_COMPOSITING) && USE(TEXTURE_MAPPER_GL)
+#if GST_CHECK_VERSION(1, 1, 0) && USE(TEXTURE_MAPPER_GL)
 #include "TextureMapperGL.h"
 #endif
 
@@ -304,7 +304,7 @@ void MediaPlayerPrivateGStreamerBase::muteChanged()
 }
 
 
-#if USE(ACCELERATED_COMPOSITING) && USE(TEXTURE_MAPPER_GL) && !USE(COORDINATED_GRAPHICS)
+#if USE(TEXTURE_MAPPER_GL) && !USE(COORDINATED_GRAPHICS)
 PassRefPtr<BitmapTexture> MediaPlayerPrivateGStreamerBase::updateTexture(TextureMapper* textureMapper)
 {
     GMutexLocker lock(m_bufferMutex);
@@ -357,7 +357,7 @@ void MediaPlayerPrivateGStreamerBase::triggerRepaint(GstBuffer* buffer)
         gst_buffer_replace(&m_buffer, buffer);
     }
 
-#if USE(ACCELERATED_COMPOSITING) && USE(TEXTURE_MAPPER_GL) && !USE(COORDINATED_GRAPHICS)
+#if USE(TEXTURE_MAPPER_GL) && !USE(COORDINATED_GRAPHICS)
     if (supportsAcceleratedRendering() && m_player->mediaPlayerClient()->mediaPlayerRenderingCanBeAccelerated(m_player) && client()) {
         client()->setPlatformLayerNeedsDisplay();
         return;
@@ -374,7 +374,7 @@ void MediaPlayerPrivateGStreamerBase::setSize(const IntSize& size)
 
 void MediaPlayerPrivateGStreamerBase::paint(GraphicsContext* context, const IntRect& rect)
 {
-#if USE(ACCELERATED_COMPOSITING) && USE(TEXTURE_MAPPER_GL) && !USE(COORDINATED_GRAPHICS)
+#if USE(TEXTURE_MAPPER_GL) && !USE(COORDINATED_GRAPHICS)
     if (client())
         return;
 #endif
@@ -401,7 +401,7 @@ void MediaPlayerPrivateGStreamerBase::paint(GraphicsContext* context, const IntR
         rect, gstImage->rect(), CompositeCopy, ImageOrientationDescription(), false);
 }
 
-#if USE(ACCELERATED_COMPOSITING) && USE(TEXTURE_MAPPER_GL) && !USE(COORDINATED_GRAPHICS)
+#if USE(TEXTURE_MAPPER_GL) && !USE(COORDINATED_GRAPHICS)
 void MediaPlayerPrivateGStreamerBase::paintToTextureMapper(TextureMapper* textureMapper, const FloatRect& targetRect, const TransformationMatrix& matrix, float opacity)
 {
     if (textureMapper->accelerationMode() != TextureMapper::OpenGLMode)

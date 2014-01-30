@@ -19,7 +19,6 @@
 
 #include "config.h"
 
-#if USE(ACCELERATED_COMPOSITING)
 #include "GraphicsLayerAnimation.h"
 
 #include "LayoutSize.h"
@@ -401,5 +400,3 @@ GraphicsLayerAnimations GraphicsLayerAnimations::getActiveAnimations() const
     return active;
 }
 }
-#endif
-

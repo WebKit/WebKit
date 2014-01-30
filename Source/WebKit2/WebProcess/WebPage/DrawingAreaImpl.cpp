@@ -268,16 +268,13 @@ void DrawingAreaImpl::layerHostDidFlushLayers()
     if (!m_layerTreeHost)
         return;
 
-#if USE(ACCELERATED_COMPOSITING)
     ASSERT(!m_compositingAccordingToProxyMessages);
     if (!exitAcceleratedCompositingModePending()) {
         m_webPage->send(Messages::DrawingAreaProxy::EnterAcceleratedCompositingMode(m_backingStoreStateID, m_layerTreeHost->layerTreeContext()));
         m_compositingAccordingToProxyMessages = true;
     }
-#endif
 }
 
-#if USE(ACCELERATED_COMPOSITING)
 GraphicsLayerFactory* DrawingAreaImpl::graphicsLayerFactory()
 {
     if (m_layerTreeHost)
@@ -332,7 +329,6 @@ void DrawingAreaImpl::scheduleCompositingLayerFlush()
         return;
     m_layerTreeHost->scheduleLayerFlush();
 }
-#endif
 
 void DrawingAreaImpl::updateBackingStoreState(uint64_t stateID, bool respondImmediately, float deviceScaleFactor, const WebCore::IntSize& size, const WebCore::IntSize& scrollOffset)
 {
@@ -508,7 +504,6 @@ void DrawingAreaImpl::exitAcceleratedCompositingMode()
     } else
         display(updateInfo);
 
-#if USE(ACCELERATED_COMPOSITING)
     // Send along a complete update of the page so we can paint the contents right after we exit the
     // accelerated compositing mode, eliminiating flicker.
     if (m_compositingAccordingToProxyMessages) {
@@ -519,7 +514,6 @@ void DrawingAreaImpl::exitAcceleratedCompositingMode()
         // UI process, we still need to let it know about the new contents, so send an Update message.
         m_webPage->send(Messages::DrawingAreaProxy::Update(m_backingStoreStateID, updateInfo));
     }
-#endif
 }
 
 void DrawingAreaImpl::exitAcceleratedCompositingModeSoon()

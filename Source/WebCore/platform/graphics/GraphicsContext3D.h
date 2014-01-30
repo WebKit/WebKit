@@ -491,9 +491,7 @@ public:
 #else
     PlatformGraphicsContext3D platformGraphicsContext3D();
     Platform3DObject platformTexture() const;
-#if USE(ACCELERATED_COMPOSITING) 
     PlatformLayer* platformLayer() const;
-#endif
 #endif
 
     bool makeContextCurrent();

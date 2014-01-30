@@ -26,8 +26,6 @@
 #ifndef WebLayer_h
 #define WebLayer_h
 
-#if USE(ACCELERATED_COMPOSITING)
-
 #import <QuartzCore/QuartzCore.h>
 #import <WebCore/FloatRect.h>
 #import <wtf/Vector.h>
@@ -53,7 +51,5 @@ RepaintRectList collectRectsToPaint(CGContextRef, PlatformCALayer*);
 void drawLayerContents(CGContextRef, PlatformCALayer*, RepaintRectList& dirtyRects);
 void drawRepaintIndicator(CGContextRef, PlatformCALayer*, int repaintCount, CGColorRef customBackgroundColor);
 }
-
-#endif // USE(ACCELERATED_COMPOSITING)
 
 #endif // WebLayer_h

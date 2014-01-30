@@ -67,9 +67,7 @@ PseudoElement::PseudoElement(Element& host, PseudoId pseudoId)
 PseudoElement::~PseudoElement()
 {
     ASSERT(!m_hostElement);
-#if USE(ACCELERATED_COMPOSITING)
     InspectorInstrumentation::pseudoElementDestroyed(document().page(), this);
-#endif
 }
 
 PassRefPtr<RenderStyle> PseudoElement::customStyleForRenderer()

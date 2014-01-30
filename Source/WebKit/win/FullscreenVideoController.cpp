@@ -176,7 +176,6 @@ void HUDSlider::drag(const IntPoint& point, bool start)
     m_buttonPosition = max(0, min(m_rect.width() - m_buttonSize, point.x() - m_dragStartOffset));
 }
 
-#if USE(ACCELERATED_COMPOSITING)
 class FullscreenVideoController::LayerClient : public WebCore::PlatformCALayerClient {
 public:
     LayerClient(FullscreenVideoController* parent) : m_parent(parent) { }
@@ -232,7 +231,6 @@ void FullscreenVideoController::LayerClient::platformCALayerLayoutSublayersOfLay
     videoLayer->setPosition(videoOrigin);
     videoLayer->setBounds(FloatRect(FloatPoint(), videoSize));
 }
-#endif 
 
 FullscreenVideoController::FullscreenVideoController()
     : m_hudWindow(0)
@@ -247,19 +245,15 @@ FullscreenVideoController::FullscreenVideoController()
     , m_hitWidget(0)
     , m_movingWindow(false)
     , m_timer(this, &FullscreenVideoController::timerFired)
-#if USE(ACCELERATED_COMPOSITING)
     , m_layerClient(adoptPtr(new LayerClient(this)))
     , m_rootChild(PlatformCALayerWin::create(PlatformCALayer::LayerTypeLayer, m_layerClient.get()))
-#endif
     , m_fullscreenWindow(adoptPtr(new MediaPlayerPrivateFullscreenWindow(this)))
 {
 }
 
 FullscreenVideoController::~FullscreenVideoController()
 {
-#if USE(ACCELERATED_COMPOSITING)
     m_rootChild->setOwner(0);
-#endif
 }
 
 void FullscreenVideoController::setMediaElement(HTMLMediaElement* mediaElement)
@@ -284,14 +278,12 @@ void FullscreenVideoController::enterFullscreen()
 
     m_fullscreenWindow->createWindow(parentHwnd);
     ::ShowWindow(m_fullscreenWindow->hwnd(), SW_SHOW);
-#if USE(ACCELERATED_COMPOSITING)
     m_fullscreenWindow->setRootChildLayer(m_rootChild);
 
     PlatformCALayer* videoLayer = PlatformCALayer::platformCALayer(m_mediaElement->platformLayer());
     m_rootChild->appendSublayer(videoLayer);
     m_rootChild->setNeedsLayout();
     m_rootChild->setGeometryFlipped(1);
-#endif
 
     RECT windowRect;
     GetClientRect(m_fullscreenWindow->hwnd(), &windowRect);

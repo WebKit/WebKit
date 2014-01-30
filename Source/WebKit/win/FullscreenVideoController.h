@@ -39,9 +39,7 @@
 
 namespace WebCore {
 class GraphicsContext;
-#if USE(ACCELERATED_COMPOSITING)
 class PlatformCALayer;
-#endif
 }
 
 class HUDWidget {
@@ -158,12 +156,11 @@ private:
     WebCore::IntSize m_fullscreenSize;
     WebCore::IntPoint m_hudPosition;
     OwnPtr<WebCore::MediaPlayerPrivateFullscreenWindow> m_fullscreenWindow;
-#if USE(ACCELERATED_COMPOSITING)
+
     class LayerClient;
     friend class LayerClient;
     OwnPtr<LayerClient> m_layerClient;
     RefPtr<WebCore::PlatformCALayer> m_rootChild;
-#endif
 
     HUDButton m_playPauseButton;
     HUDButton m_timeSliderButton;

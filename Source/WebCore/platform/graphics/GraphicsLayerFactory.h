@@ -26,8 +26,6 @@
 #ifndef GraphicsLayerFactory_h
 #define GraphicsLayerFactory_h
 
-#if USE(ACCELERATED_COMPOSITING)
-
 #include <wtf/Forward.h>
 
 namespace WebCore {
@@ -43,7 +41,5 @@ public:
 };
 
 } // namespace WebCore
-
-#endif // USE(ACCELERATED_COMPOSITING)
 
 #endif // GraphicsLayerFactory_h

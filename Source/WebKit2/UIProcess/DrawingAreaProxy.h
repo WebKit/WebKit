@@ -101,11 +101,9 @@ private:
     // FIXME: These should be pure virtual.
     virtual void update(uint64_t /* backingStoreStateID */, const UpdateInfo&) { }
     virtual void didUpdateBackingStoreState(uint64_t /* backingStoreStateID */, const UpdateInfo&, const LayerTreeContext&) { }
-#if USE(ACCELERATED_COMPOSITING)
     virtual void enterAcceleratedCompositingMode(uint64_t /* backingStoreStateID */, const LayerTreeContext&) { }
     virtual void exitAcceleratedCompositingMode(uint64_t /* backingStoreStateID */, const UpdateInfo&) { }
     virtual void updateAcceleratedCompositingMode(uint64_t /* backingStoreStateID */, const LayerTreeContext&) { }
-#endif
 #if PLATFORM(MAC)
     virtual void didUpdateGeometry() { }
     virtual void intrinsicContentSizeDidChange(const WebCore::IntSize& newIntrinsicContentSize) { }

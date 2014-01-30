@@ -26,8 +26,6 @@
 #ifndef LayerFlushSchedulerClient_h
 #define LayerFlushSchedulerClient_h
 
-#if USE(ACCELERATED_COMPOSITING)
-
 namespace WebCore {
 
 class LayerFlushSchedulerClient {
@@ -40,7 +38,5 @@ public:
 };
 
 } // namespace WebCore
-
-#endif // USE(ACCELERATED_COMPOSITING)
 
 #endif // LayerFlushSchedulerClient_h

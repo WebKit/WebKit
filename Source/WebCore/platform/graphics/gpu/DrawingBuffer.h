@@ -117,11 +117,9 @@ public:
 
     void markContentsChanged() { m_contentsChanged = true; }
 
-#if USE(ACCELERATED_COMPOSITING)
     PlatformLayer* platformLayer();
     unsigned frontColorBuffer() const;
     void paintCompositedResultsToCanvas(ImageBuffer*);
-#endif
 
     GraphicsContext3D* graphicsContext3D() const { return m_context.get(); }
 

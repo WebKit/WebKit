@@ -64,7 +64,7 @@ public:
     static bool isCurrentlyDrawingIntoLayer();
     static void setIsCurrentlyDrawingIntoLayer(bool);
 
-#if USE(ACCELERATED_COMPOSITING) && ENABLE(RUBBER_BANDING)
+#if ENABLE(RUBBER_BANDING)
     static void setUpOverhangAreaBackground(CALayer *, const Color& customBackgroundColor = Color());
     static void removeOverhangAreaBackground(CALayer *);
 
@@ -88,7 +88,7 @@ protected:
     virtual bool shouldDragDocumentInsteadOfThumb(ScrollbarThemeClient*, const PlatformMouseEvent&);
     int scrollbarPartToHIPressedState(ScrollbarPart);
 
-#if USE(ACCELERATED_COMPOSITING) && ENABLE(RUBBER_BANDING)
+#if ENABLE(RUBBER_BANDING)
     virtual void setUpOverhangAreasLayerContents(GraphicsLayer*, const Color&) override;
     virtual void setUpContentShadowLayer(GraphicsLayer*) override;
 #endif

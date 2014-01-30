@@ -80,9 +80,7 @@ private:
 
     virtual void prepareToPlay() override;
     virtual PlatformMedia platformMedia() const override;
-#if USE(ACCELERATED_COMPOSITING)
     virtual PlatformLayer* platformLayer() const override;
-#endif
 
     virtual void play() override;
     void playInternal();
@@ -128,11 +126,9 @@ private:
 
     virtual bool hasAvailableVideoFrame() const override;
 
-#if USE(ACCELERATED_COMPOSITING)
     virtual bool supportsAcceleratedRendering() const override;
     // called when the rendering system flips the into or out of accelerated rendering mode.
     virtual void acceleratedRenderingStateChanged() override;
-#endif
 
     virtual MediaPlayer::MovieLoadType movieLoadType() const override;
 

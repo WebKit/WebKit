@@ -1829,12 +1829,10 @@ private:
 
 #if PLATFORM(IOS)
 @interface WAKView (UIKitSecretsWebKitKnowsAboutSeeUIWebPlugInView)
-#if USE(ACCELERATED_COMPOSITING)
 - (PlatformLayer *)pluginLayer;
 - (BOOL)willProvidePluginLayer;
 - (void)attachPluginLayer;
 - (void)detachPluginLayer;
-#endif
 @end
 
 class PluginWidgetIOS : public PluginWidget {
@@ -1844,7 +1842,6 @@ public:
     {
     }
 
-#if USE(ACCELERATED_COMPOSITING)
     virtual PlatformLayer* platformLayer() const
     {
         if (![platformWidget() respondsToSelector:@selector(pluginLayer)])
@@ -1870,7 +1867,6 @@ public:
         if ([platformWidget() respondsToSelector:@selector(detachPluginLayer)])
             [platformWidget() detachPluginLayer];
     }
-#endif
 };
 #endif // PLATFORM(IOS)
 
@@ -1882,13 +1878,11 @@ public:
         : PluginWidget(view)
     {
     }
-    
-#if USE(ACCELERATED_COMPOSITING)
+
     virtual PlatformLayer* platformLayer() const
     {
         return [(WebBaseNetscapePluginView *)platformWidget() pluginLayer];
     }
-#endif
 
     virtual bool getFormValue(String& value)
     {

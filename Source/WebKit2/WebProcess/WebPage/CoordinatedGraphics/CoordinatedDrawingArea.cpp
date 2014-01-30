@@ -267,16 +267,13 @@ void CoordinatedDrawingArea::layerHostDidFlushLayers()
     if (!m_layerTreeHost)
         return;
 
-#if USE(ACCELERATED_COMPOSITING)
     ASSERT(!m_compositingAccordingToProxyMessages);
     if (!exitAcceleratedCompositingModePending()) {
         m_webPage->send(Messages::DrawingAreaProxy::EnterAcceleratedCompositingMode(m_backingStoreStateID, m_layerTreeHost->layerTreeContext()));
         m_compositingAccordingToProxyMessages = true;
     }
-#endif
 }
 
-#if USE(ACCELERATED_COMPOSITING)
 GraphicsLayerFactory* CoordinatedDrawingArea::graphicsLayerFactory()
 {
     if (m_layerTreeHost)
@@ -320,7 +317,6 @@ void CoordinatedDrawingArea::scheduleCompositingLayerFlush()
         return;
     m_layerTreeHost->scheduleLayerFlush();
 }
-#endif
 
 void CoordinatedDrawingArea::updateBackingStoreState(uint64_t stateID, bool respondImmediately, float deviceScaleFactor, const WebCore::IntSize& size, const WebCore::IntSize& scrollOffset)
 {

@@ -155,7 +155,7 @@ WebProcess::WebProcess()
     , m_shouldTrackVisitedLinks(true)
     , m_hasSetCacheModel(false)
     , m_cacheModel(CacheModelDocumentViewer)
-#if USE(ACCELERATED_COMPOSITING) && PLATFORM(MAC)
+#if PLATFORM(MAC)
     , m_compositingRenderServerPort(MACH_PORT_NULL)
 #endif
 #if PLATFORM(MAC)

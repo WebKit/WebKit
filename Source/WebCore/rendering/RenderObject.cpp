@@ -1194,7 +1194,6 @@ RenderLayerModelObject* RenderObject::containerForRepaint() const
 {
     RenderLayerModelObject* repaintContainer = 0;
 
-#if USE(ACCELERATED_COMPOSITING)
     if (view().usesCompositing()) {
         if (RenderLayer* parentLayer = enclosingLayer()) {
             RenderLayer* compLayer = parentLayer->enclosingCompositingLayerForRepaint();
@@ -1202,7 +1201,6 @@ RenderLayerModelObject* RenderObject::containerForRepaint() const
                 repaintContainer = &compLayer->renderer();
         }
     }
-#endif
     
 #if ENABLE(CSS_FILTERS)
     if (view().hasSoftwareFilters()) {
@@ -1255,7 +1253,6 @@ void RenderObject::repaintUsingContainer(const RenderLayerModelObject* repaintCo
     }
 #endif
 
-#if USE(ACCELERATED_COMPOSITING)
     RenderView& v = view();
     if (repaintContainer->isRenderView()) {
         ASSERT(repaintContainer == &v);
@@ -1270,10 +1267,6 @@ void RenderObject::repaintUsingContainer(const RenderLayerModelObject* repaintCo
         ASSERT(repaintContainer->hasLayer() && repaintContainer->layer()->isComposited());
         repaintContainer->layer()->setBackingNeedsRepaintInRect(r, shouldClipToLayer ? GraphicsLayer::ClipToLayer : GraphicsLayer::DoNotClipToLayer);
     }
-#else
-    if (repaintContainer->isRenderView())
-        toRenderView(*repaintContainer).repaintViewRectangle(r, immediate);
-#endif
 }
 
 void RenderObject::repaint(bool immediate) const

@@ -26,8 +26,6 @@
 #ifndef GraphicsLayerCARemote_h
 #define GraphicsLayerCARemote_h
 
-#if USE(ACCELERATED_COMPOSITING)
-
 #include <WebCore/GraphicsLayerCA.h>
 #include <WebCore/PlatformLayer.h>
 
@@ -67,7 +65,5 @@ private:
 GRAPHICSLAYER_TYPE_CASTS(GraphicsLayerCARemote, isGraphicsLayerCARemote());
 
 } // namespace WebKit
-
-#endif // USE(ACCELERATED_COMPOSITING)
 
 #endif // GraphicsLayerCARemote_h

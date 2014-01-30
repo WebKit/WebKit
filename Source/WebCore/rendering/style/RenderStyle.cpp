@@ -474,29 +474,13 @@ bool RenderStyle::changeRequiresLayout(const RenderStyle* other, unsigned& chang
 
         if (rareNonInheritedData->m_transform.get() != other->rareNonInheritedData->m_transform.get()
             && *rareNonInheritedData->m_transform.get() != *other->rareNonInheritedData->m_transform.get()) {
-#if USE(ACCELERATED_COMPOSITING)
             changedContextSensitiveProperties |= ContextSensitivePropertyTransform;
             // Don't return; keep looking for another change
-#else
-            UNUSED_PARAM(changedContextSensitiveProperties);
-            return true;
-#endif
         }
 
         if (rareNonInheritedData->m_grid.get() != other->rareNonInheritedData->m_grid.get()
             || rareNonInheritedData->m_gridItem.get() != other->rareNonInheritedData->m_gridItem.get())
             return true;
-
-#if !USE(ACCELERATED_COMPOSITING)
-        if (rareNonInheritedData.get() != other->rareNonInheritedData.get()) {
-            if (rareNonInheritedData->m_transformStyle3D != other->rareNonInheritedData->m_transformStyle3D
-                || rareNonInheritedData->m_backfaceVisibility != other->rareNonInheritedData->m_backfaceVisibility
-                || rareNonInheritedData->m_perspective != other->rareNonInheritedData->m_perspective
-                || rareNonInheritedData->m_perspectiveOriginX != other->rareNonInheritedData->m_perspectiveOriginX
-                || rareNonInheritedData->m_perspectiveOriginY != other->rareNonInheritedData->m_perspectiveOriginY)
-                return true;
-        }
-#endif
 
 #if ENABLE(DASHBOARD_SUPPORT)
         // If regions change, trigger a relayout to re-calc regions.
@@ -713,24 +697,15 @@ bool RenderStyle::changeRequiresLayerRepaint(const RenderStyle* other, unsigned&
 #endif
 
     if (rareNonInheritedData->opacity != other->rareNonInheritedData->opacity) {
-#if USE(ACCELERATED_COMPOSITING)
         changedContextSensitiveProperties |= ContextSensitivePropertyOpacity;
         // Don't return; keep looking for another change.
-#else
-        UNUSED_PARAM(changedContextSensitiveProperties);
-        return true;
-#endif
     }
 
 #if ENABLE(CSS_FILTERS)
     if (rareNonInheritedData->m_filter.get() != other->rareNonInheritedData->m_filter.get()
         && *rareNonInheritedData->m_filter.get() != *other->rareNonInheritedData->m_filter.get()) {
-#if USE(ACCELERATED_COMPOSITING)
         changedContextSensitiveProperties |= ContextSensitivePropertyFilter;
         // Don't return; keep looking for another change.
-#else
-        return true;
-#endif
     }
 #endif
 
@@ -791,7 +766,6 @@ bool RenderStyle::changeRequiresRepaintIfTextOrBorderOrOutline(const RenderStyle
 
 bool RenderStyle::changeRequiresRecompositeLayer(const RenderStyle* other, unsigned&) const
 {
-#if USE(ACCELERATED_COMPOSITING)
     if (rareNonInheritedData.get() != other->rareNonInheritedData.get()) {
         if (rareNonInheritedData->m_transformStyle3D != other->rareNonInheritedData->m_transformStyle3D
             || rareNonInheritedData->m_backfaceVisibility != other->rareNonInheritedData->m_backfaceVisibility
@@ -800,9 +774,7 @@ bool RenderStyle::changeRequiresRecompositeLayer(const RenderStyle* other, unsig
             || rareNonInheritedData->m_perspectiveOriginY != other->rareNonInheritedData->m_perspectiveOriginY)
             return true;
     }
-#else
-    UNUSED_PARAM(other);
-#endif
+
     return false;
 }
 
@@ -840,10 +812,8 @@ StyleDifference RenderStyle::diff(const RenderStyle* other, unsigned& changedCon
     if (changeRequiresRepaint(other, changedContextSensitiveProperties))
         return StyleDifferenceRepaint;
 
-#if USE(ACCELERATED_COMPOSITING)
     if (changeRequiresRecompositeLayer(other, changedContextSensitiveProperties))
         return StyleDifferenceRecompositeLayer;
-#endif
 
     if (changeRequiresRepaintIfTextOrBorderOrOutline(other, changedContextSensitiveProperties))
         return StyleDifferenceRepaintIfTextOrBorderOrOutline;

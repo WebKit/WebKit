@@ -20,7 +20,7 @@
 #ifndef TextureMapper_h
 #define TextureMapper_h
 
-#if USE(ACCELERATED_COMPOSITING) && USE(TEXTURE_MAPPER)
+#if USE(TEXTURE_MAPPER)
 
 #if (PLATFORM(GTK) || PLATFORM(EFL)) && USE(OPENGL_ES_2)
 #define TEXMAP_OPENGL_ES_2

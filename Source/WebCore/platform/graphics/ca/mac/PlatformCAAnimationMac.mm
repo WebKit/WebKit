@@ -25,8 +25,6 @@
 
 #include "config.h"
 
-#if USE(ACCELERATED_COMPOSITING)
-
 #import "PlatformCAAnimation.h"
 
 #import "FloatConversion.h"
@@ -583,5 +581,3 @@ void PlatformCAAnimation::copyTimingFunctionsFrom(const PlatformCAAnimation* val
     CAKeyframeAnimation* other = static_cast<CAKeyframeAnimation*>(value->m_animation.get());
     [static_cast<CAKeyframeAnimation*>(m_animation.get()) setTimingFunctions:[other timingFunctions]];
 }
-
-#endif // USE(ACCELERATED_COMPOSITING)

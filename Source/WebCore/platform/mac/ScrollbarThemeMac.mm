@@ -530,7 +530,7 @@ bool ScrollbarThemeMac::paint(ScrollbarThemeClient* scrollbar, GraphicsContext* 
     return true;
 }
 
-#if USE(ACCELERATED_COMPOSITING) && ENABLE(RUBBER_BANDING)
+#if ENABLE(RUBBER_BANDING)
 static RetainPtr<CGColorRef> linenBackgroundColor()
 {
     NSImage *image = [NSColor _linenPatternImage];

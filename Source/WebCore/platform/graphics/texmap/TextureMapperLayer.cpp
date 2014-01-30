@@ -24,7 +24,7 @@
 #include "Region.h"
 #include <wtf/MathExtras.h>
 
-#if USE(ACCELERATED_COMPOSITING) && USE(TEXTURE_MAPPER)
+#if USE(TEXTURE_MAPPER)
 
 namespace WebCore {
 

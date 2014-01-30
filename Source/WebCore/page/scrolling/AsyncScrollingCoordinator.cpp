@@ -197,7 +197,6 @@ void AsyncScrollingCoordinator::updateScrollPositionAfterAsyncScroll(ScrollingNo
 
     frameView->setInProgrammaticScroll(oldProgrammaticScroll);
 
-#if USE(ACCELERATED_COMPOSITING)
     if (scrollingNodeID == frameView->scrollLayerID()) {
         if (GraphicsLayer* scrollLayer = scrollLayerForFrameView(frameView)) {
             GraphicsLayer* counterScrollingLayer = counterScrollingLayerForFrameView(frameView);
@@ -228,9 +227,6 @@ void AsyncScrollingCoordinator::updateScrollPositionAfterAsyncScroll(ScrollingNo
         }
     }
     // FIXME: handle non-main scrolling nodes.
-#else
-    UNUSED_PARAM(scrollingLayerPositionAction);
-#endif
 }
 
 void AsyncScrollingCoordinator::scrollableAreaScrollbarLayerDidChange(ScrollableArea* scrollableArea, ScrollbarOrientation orientation)

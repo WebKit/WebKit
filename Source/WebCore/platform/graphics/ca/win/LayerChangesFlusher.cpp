@@ -26,8 +26,6 @@
 #include "config.h"
 #include "LayerChangesFlusher.h"
 
-#if USE(ACCELERATED_COMPOSITING)
-
 #include "AbstractCACFLayerTreeHost.h"
 #include "StructuredExceptionHandlerSuppressor.h"
 #include <wtf/StdLibExtras.h>
@@ -131,5 +129,3 @@ void LayerChangesFlusher::removeHook()
 }
 
 } // namespace WebCore
-
-#endif // USE(ACCELERATED_COMPOSITING)

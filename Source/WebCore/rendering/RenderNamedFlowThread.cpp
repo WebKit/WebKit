@@ -718,7 +718,6 @@ void RenderNamedFlowThread::getRanges(Vector<RefPtr<Range>>& rangeObjects, const
     }
 }
 
-#if USE(ACCELERATED_COMPOSITING)
 bool RenderNamedFlowThread::collectsGraphicsLayersUnderRegions() const
 {
     // We only need to map layers to regions for named flow threads.
@@ -727,7 +726,6 @@ bool RenderNamedFlowThread::collectsGraphicsLayersUnderRegions() const
 
     return true;
 }
-#endif
 
 // Check if the content is flown into at least a region with region styling rules.
 void RenderNamedFlowThread::checkRegionsWithStyling()

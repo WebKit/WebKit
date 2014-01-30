@@ -790,7 +790,6 @@ void WebPage::clearMainFrameName()
         frame->tree().clearName();
 }
 
-#if USE(ACCELERATED_COMPOSITING)
 void WebPage::enterAcceleratedCompositingMode(GraphicsLayer* layer)
 {
     m_drawingArea->setRootCompositingLayer(layer);
@@ -800,7 +799,6 @@ void WebPage::exitAcceleratedCompositingMode()
 {
     m_drawingArea->setRootCompositingLayer(0);
 }
-#endif
 
 void WebPage::close()
 {
@@ -3051,7 +3049,7 @@ void WebPage::mainFrameDidLayout()
         m_cachedPageCount = pageCount;
     }
 
-#if USE(TILED_BACKING_STORE) && USE(ACCELERATED_COMPOSITING)
+#if USE(TILED_BACKING_STORE)
     if (m_drawingArea && m_drawingArea->layerTreeHost()) {
         double red, green, blue, alpha;
         m_mainFrame->getDocumentBackgroundColor(&red, &green, &blue, &alpha);
@@ -3146,7 +3144,7 @@ void WebPage::didReceiveMessage(IPC::Connection* connection, IPC::MessageDecoder
         return;
     }
 
-#if USE(TILED_BACKING_STORE) && USE(ACCELERATED_COMPOSITING)
+#if USE(TILED_BACKING_STORE)
     if (decoder.messageReceiverName() == Messages::CoordinatedLayerTreeHost::messageReceiverName()) {
         if (m_drawingArea)
             m_drawingArea->didReceiveCoordinatedLayerTreeHostMessage(connection, decoder);

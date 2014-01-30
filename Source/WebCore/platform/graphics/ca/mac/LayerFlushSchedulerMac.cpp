@@ -25,8 +25,6 @@
 
 #include "config.h"
 
-#if USE(ACCELERATED_COMPOSITING)
-
 #include "LayerFlushScheduler.h"
 
 #include <wtf/AutodrainedPool.h>
@@ -111,5 +109,3 @@ void LayerFlushScheduler::invalidate()
 }
     
 } // namespace WebCore
-
-#endif // USE(ACCELERATED_COMPOSITING)

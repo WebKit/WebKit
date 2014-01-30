@@ -26,11 +26,8 @@
 #ifndef SnapshotImageGL_h
 #define SnapshotImageGL_h
 
-#if USE(ACCELERATED_COMPOSITING)
-
 #include <RefPtrCairo.h>
 
 PassRefPtr<cairo_surface_t> getImageSurfaceFromFrameBuffer(int x, int y, int width, int height);
 
-#endif // USE(ACCELERATED_COMPOSITING)
 #endif // SnapshotImageGL_h

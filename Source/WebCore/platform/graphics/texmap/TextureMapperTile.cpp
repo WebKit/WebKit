@@ -18,7 +18,7 @@
  */
 #include "config.h"
 
-#if USE(ACCELERATED_COMPOSITING) && USE(TEXTURE_MAPPER)
+#if USE(TEXTURE_MAPPER)
 #include "TextureMapperTile.h"
 
 #include "Image.h"

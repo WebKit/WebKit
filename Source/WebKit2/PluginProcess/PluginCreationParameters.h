@@ -67,10 +67,8 @@ struct PluginCreationParameters {
     // Simulated initialization delay test asynchronous plugin initialization
     bool artificialPluginInitializationDelayEnabled;
 
-#if USE(ACCELERATED_COMPOSITING)
     // Whether accelerated compositing is enabled.
     bool isAcceleratedCompositingEnabled;
-#endif
 };
 
 } // namespace WebKit

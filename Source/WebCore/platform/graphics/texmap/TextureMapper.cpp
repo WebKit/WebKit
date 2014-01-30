@@ -26,7 +26,7 @@
 #include "Timer.h"
 #include <wtf/CurrentTime.h>
 
-#if USE(ACCELERATED_COMPOSITING) && USE(TEXTURE_MAPPER)
+#if USE(TEXTURE_MAPPER)
 
 namespace WebCore {
 

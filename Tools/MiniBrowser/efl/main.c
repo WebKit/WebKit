@@ -1972,7 +1972,7 @@ elm_main(int argc, char *argv[])
 
     if (evas_engine_name)
         elm_config_preferred_engine_set(evas_engine_name);
-#if defined(WTF_USE_ACCELERATED_COMPOSITING) && defined(HAVE_ECORE_X)
+#if defined(HAVE_ECORE_X)
     else {
         evas_engine_name = "opengl_x11";
         elm_config_preferred_engine_set(evas_engine_name);

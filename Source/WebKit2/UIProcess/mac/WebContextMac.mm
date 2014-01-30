@@ -154,7 +154,7 @@ void WebContext::platformInitializeWebProcess(WebProcessCreationParameters& para
 #endif
     parameters.shouldEnableKerningAndLigaturesByDefault = [[NSUserDefaults standardUserDefaults] boolForKey:WebKitKerningAndLigaturesEnabledByDefaultDefaultsKey];
 
-#if USE(ACCELERATED_COMPOSITING) && HAVE(HOSTED_CORE_ANIMATION)
+#if HAVE(HOSTED_CORE_ANIMATION)
 #if !PLATFORM(IOS)
     mach_port_t renderServerPort = [[CARemoteLayerServer sharedServer] serverPort];
     if (renderServerPort != MACH_PORT_NULL)

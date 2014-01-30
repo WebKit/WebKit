@@ -26,8 +26,6 @@
 #ifndef WKCACFViewLayerTreeHost_h
 #define WKCACFViewLayerTreeHost_h
 
-#if USE(ACCELERATED_COMPOSITING)
-
 #include "CACFLayerTreeHost.h"
 
 typedef struct _WKCACFView* WKCACFViewRef;
@@ -64,7 +62,5 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // USE(ACCELERATED_COMPOSITING)
 
 #endif // WKCACFViewLayerTreeHost_h

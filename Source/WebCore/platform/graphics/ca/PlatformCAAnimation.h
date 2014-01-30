@@ -26,8 +26,6 @@
 #ifndef PlatformCAAnimation_h
 #define PlatformCAAnimation_h
 
-#if USE(ACCELERATED_COMPOSITING)
-
 #include "Color.h"
 #include "FilterOperation.h"
 #include "FloatPoint3D.h"
@@ -164,7 +162,5 @@ private:
 };
 
 }
-
-#endif // USE(ACCELERATED_COMPOSITING)
 
 #endif // PlatformCAAnimation_h

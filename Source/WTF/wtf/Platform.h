@@ -854,11 +854,6 @@
 #endif
 #endif
 
-/* Accelerated compositing */
-#if PLATFORM(MAC) || PLATFORM(IOS) || (PLATFORM(WIN) && !USE(WINGDI) && !PLATFORM(WIN_CAIRO))
-#define WTF_USE_ACCELERATED_COMPOSITING 1
-#endif
-
 #if ENABLE(WEBGL) && !defined(WTF_USE_3D_GRAPHICS)
 #define WTF_USE_3D_GRAPHICS 1
 #endif
@@ -875,7 +870,7 @@
 #define GST_API_VERSION_1 1
 #endif
 
-#if USE(ACCELERATED_COMPOSITING) && PLATFORM(WIN_CAIRO)
+#if PLATFORM(WIN_CAIRO)
 #define WTF_USE_TEXTURE_MAPPER 1
 #endif
 

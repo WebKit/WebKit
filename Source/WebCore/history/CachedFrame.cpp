@@ -43,6 +43,7 @@
 #include "Logging.h"
 #include "MainFrame.h"
 #include "Page.h"
+#include "PageCache.h"
 #include "PageTransitionEvent.h"
 #include "ScriptController.h"
 #include "SerializedScriptValue.h"
@@ -58,10 +59,6 @@
 #include "ChromeClient.h"
 #endif
 
-#if USE(ACCELERATED_COMPOSITING)
-#include "PageCache.h"
-#endif
-
 namespace WebCore {
 
 DEFINE_DEBUG_ONLY_GLOBAL(WTF::RefCountedLeakCounter, cachedFrameCounter, ("CachedFrame"));
@@ -73,9 +70,7 @@ CachedFrameBase::CachedFrameBase(Frame& frame)
     , m_mousePressNode(frame.eventHandler().mousePressNode())
     , m_url(frame.document()->url())
     , m_isMainFrame(!frame.tree().parent())
-#if USE(ACCELERATED_COMPOSITING)
     , m_isComposited(frame.view()->hasCompositedContent())
-#endif
 {
 }
 
@@ -112,10 +107,8 @@ void CachedFrameBase::restore()
     // cached page.
     frame.script().updatePlatformScriptObjects();
 
-#if USE(ACCELERATED_COMPOSITING)
     if (m_isComposited)
         frame.view()->restoreBackingStores();
-#endif
 
     frame.loader().client().didRestoreFromPageCache();
 
@@ -188,10 +181,8 @@ CachedFrame::CachedFrame(Frame& frame)
 
     frame.loader().client().savePlatformDataToCachedFrame(this);
 
-#if USE(ACCELERATED_COMPOSITING)
     if (m_isComposited && pageCache()->shouldClearBackingStores())
         frame.view()->clearBackingStores();
-#endif
 
     // documentWillSuspendForPageCache() can set up a layout timer on the FrameView, so clear timers after that.
     frame.clearTimers();

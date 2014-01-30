@@ -197,12 +197,10 @@ bool GraphicsContext3D::isGLES2Compliant() const
 #endif
 }
 
-#if USE(ACCELERATED_COMPOSITING)
 PlatformLayer* GraphicsContext3D::platformLayer() const
 {
     return m_webGLLayer->platformLayer();
 }
-#endif
 
 } // namespace WebCore
 

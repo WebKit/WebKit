@@ -26,8 +26,6 @@
 #ifndef GraphicsLayerUpdater_h
 #define GraphicsLayerUpdater_h
 
-#if USE(ACCELERATED_COMPOSITING)
-
 #include "DisplayRefreshMonitor.h"
 #include "PlatformScreen.h"
 
@@ -61,7 +59,5 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // USE(ACCELERATED_COMPOSITING)
 
 #endif // GraphicsLayerUpdater_h

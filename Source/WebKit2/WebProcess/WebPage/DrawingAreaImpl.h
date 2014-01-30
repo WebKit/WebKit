@@ -67,11 +67,9 @@ private:
     virtual void setPaintingEnabled(bool);
     virtual void updatePreferences(const WebPreferencesStore&) override;
 
-#if USE(ACCELERATED_COMPOSITING)
     virtual WebCore::GraphicsLayerFactory* graphicsLayerFactory() override;
     virtual void setRootCompositingLayer(WebCore::GraphicsLayer*) override;
     virtual void scheduleCompositingLayerFlush() override;
-#endif
 
     // IPC message handlers.
     virtual void updateBackingStoreState(uint64_t backingStoreStateID, bool respondImmediately, float deviceScaleFactor, const WebCore::IntSize&, const WebCore::IntSize& scrollOffset);

@@ -63,11 +63,9 @@ private:
     virtual void setPaintingEnabled(bool);
     virtual void updatePreferences(const WebPreferencesStore&) override;
 
-#if USE(ACCELERATED_COMPOSITING)
     virtual WebCore::GraphicsLayerFactory* graphicsLayerFactory() override;
     virtual void setRootCompositingLayer(WebCore::GraphicsLayer*) override;
     virtual void scheduleCompositingLayerFlush() override;
-#endif
 
     virtual void didReceiveCoordinatedLayerTreeHostMessage(IPC::Connection*, IPC::MessageDecoder&);
 

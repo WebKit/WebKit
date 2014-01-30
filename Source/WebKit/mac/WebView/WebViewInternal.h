@@ -99,11 +99,9 @@ OBJC_CLASS NSTextAlternatives;
 - (void)_dispatchDidReceiveIconFromWebFrame:(WebFrame *)webFrame;
 #endif
 
-#if USE(ACCELERATED_COMPOSITING)
 - (BOOL)_needsOneShotDrawingSynchronization;
 - (void)_setNeedsOneShotDrawingSynchronization:(BOOL)needsSynchronization;
 - (void)_scheduleCompositingLayerFlush;
-#endif
 
 #if USE(GLIB)
 - (void)_scheduleGlibContextIterations;

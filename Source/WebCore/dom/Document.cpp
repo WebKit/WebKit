@@ -114,6 +114,7 @@
 #include "PointerLockController.h"
 #include "PopStateEvent.h"
 #include "ProcessingInstruction.h"
+#include "RenderLayerCompositor.h"
 #include "RenderView.h"
 #include "RenderWidget.h"
 #include "ResourceLoadScheduler.h"
@@ -151,10 +152,6 @@
 #include <wtf/CurrentTime.h>
 #include <wtf/TemporaryChange.h>
 #include <wtf/text/StringBuffer.h>
-
-#if USE(ACCELERATED_COMPOSITING)
-#include "RenderLayerCompositor.h"
-#endif
 
 #if ENABLE(SHARED_WORKERS)
 #include "SharedWorkerRepository.h"
@@ -1242,10 +1239,8 @@ void Document::setVisualUpdatesAllowed(bool visualUpdatesAllowed)
         }
     }
 
-#if USE(ACCELERATED_COMPOSITING)
     if (view())
         view()->updateCompositingLayersAfterLayout();
-#endif
 
     if (RenderView* renderView = this->renderView())
         renderView->repaintViewAndCompositedLayers();
@@ -1751,9 +1746,7 @@ void Document::recalcStyle(Style::Change change)
 
         Style::resolveTree(*this, change);
 
-#if USE(ACCELERATED_COMPOSITING)
         frameView.updateCompositingLayersAfterStyleChange();
-#endif
 
         clearNeedsStyleRecalc();
         clearChildNeedsStyleRecalc();
@@ -1956,9 +1949,7 @@ void Document::createRenderTree()
     m_renderView = createRenderer<RenderView>(*this, RenderStyle::create());
     Node::setRenderer(m_renderView.get());
 
-#if USE(ACCELERATED_COMPOSITING)
     renderView()->setIsInWindow(true);
-#endif
 
     recalcStyle(Style::Force);
 }
@@ -4077,10 +4068,8 @@ void Document::setInPageCache(bool flag)
 
 void Document::documentWillBecomeInactive()
 {
-#if USE(ACCELERATED_COMPOSITING)
     if (renderView())
         renderView()->setIsInWindow(false);
-#endif
 }
 
 void Document::documentWillSuspendForPageCache()
@@ -4106,10 +4095,8 @@ void Document::documentDidResumeFromPageCache()
     for (Vector<Element*>::iterator i = elements.begin(); i != end; ++i)
         (*i)->documentDidResumeFromPageCache();
 
-#if USE(ACCELERATED_COMPOSITING)
     if (renderView())
         renderView()->setIsInWindow(true);
-#endif
 
     ASSERT(page());
     page()->lockAllOverlayScrollbarsToHidden(false);
@@ -5008,12 +4995,10 @@ void Document::windowScreenDidChange(PlatformDisplayID displayID)
         m_scriptedAnimationController->windowScreenDidChange(displayID);
 #endif
 
-#if USE(ACCELERATED_COMPOSITING)
     if (RenderView* view = renderView()) {
         if (view->usesCompositing())
             view->compositor().windowScreenDidChange(displayID);
     }
-#endif
 }
 
 String Document::displayStringModifiedByEncoding(const String& str) const

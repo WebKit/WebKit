@@ -30,8 +30,6 @@
 
 #include "config.h"
 
-#if USE(ACCELERATED_COMPOSITING) || ENABLE(ACCELERATED_2D_CANVAS)
-
 #include "TilingData.h"
 
 #include "FloatRect.h"
@@ -203,5 +201,3 @@ void TilingData::recomputeNumTiles()
 }
 
 }
-
-#endif

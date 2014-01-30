@@ -647,21 +647,17 @@ void WebGLRenderingContext::markContextChanged()
         m_drawingBuffer->markContentsChanged();
 
     m_layerCleared = false;
-#if USE(ACCELERATED_COMPOSITING)
     RenderBox* renderBox = canvas()->renderBox();
     if (renderBox && renderBox->hasAcceleratedCompositing()) {
         m_markedCanvasDirty = true;
         canvas()->clearCopiedImage();
         renderBox->contentChanged(CanvasChanged);
     } else {
-#endif
         if (!m_markedCanvasDirty) {
             m_markedCanvasDirty = true;
             canvas()->didDraw(FloatRect(FloatPoint(0, 0), clampedCanvasSize()));
         }
-#if USE(ACCELERATED_COMPOSITING)
     }
-#endif
 }
 
 bool WebGLRenderingContext::clearIfComposited(GC3Dbitfield mask)
@@ -802,11 +798,9 @@ void WebGLRenderingContext::reshape(int width, int height)
     height = clamp(height, 1, maxHeight);
 
     if (m_needsUpdate) {
-#if USE(ACCELERATED_COMPOSITING)
         RenderBox* renderBox = canvas()->renderBox();
         if (renderBox && renderBox->hasAcceleratedCompositing())
             renderBox->contentChanged(CanvasChanged);
-#endif
         m_needsUpdate = false;
     }
 
@@ -4776,12 +4770,10 @@ void WebGLRenderingContext::forceRestoreContext()
         m_restoreTimer.startOneShot(0);
 }
 
-#if USE(ACCELERATED_COMPOSITING)
 PlatformLayer* WebGLRenderingContext::platformLayer() const
 {
     return (!isContextLost()) ? m_context->platformLayer() : 0;
 }
-#endif
 
 void WebGLRenderingContext::removeSharedObject(WebGLSharedObject* object)
 {

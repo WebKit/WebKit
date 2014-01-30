@@ -317,7 +317,6 @@ void ChromeClientWinCE::needTouchEvents(bool)
 }
 #endif
 
-#if USE(ACCELERATED_COMPOSITING)
 void ChromeClientWinCE::attachRootGraphicsLayer(Frame*, GraphicsLayer*)
 {
     notImplemented();
@@ -332,7 +331,6 @@ void ChromeClientWinCE::scheduleCompositingLayerFlush()
 {
     notImplemented();
 }
-#endif
 
 void ChromeClientWinCE::runOpenPanel(Frame*, PassRefPtr<FileChooser> prpFileChooser)
 {

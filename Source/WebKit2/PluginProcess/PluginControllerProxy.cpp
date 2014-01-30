@@ -59,9 +59,7 @@ PluginControllerProxy::PluginControllerProxy(WebProcessConnection* connection, c
     , m_pluginInstanceID(creationParameters.pluginInstanceID)
     , m_userAgent(creationParameters.userAgent)
     , m_isPrivateBrowsingEnabled(creationParameters.isPrivateBrowsingEnabled)
-#if USE(ACCELERATED_COMPOSITING)
     , m_isAcceleratedCompositingEnabled(creationParameters.isAcceleratedCompositingEnabled)
-#endif
     , m_isInitializing(false)
     , m_paintTimer(RunLoop::main(), this, &PluginControllerProxy::paint)
     , m_pluginDestructionProtectCount(0)

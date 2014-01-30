@@ -19,7 +19,7 @@
 
 #include "config.h"
 
-#if USE(ACCELERATED_COMPOSITING) && USE(GRAPHICS_SURFACE)
+#if USE(GRAPHICS_SURFACE)
 #include "TextureMapperSurfaceBackingStore.h"
 
 #include "GraphicsSurface.h"

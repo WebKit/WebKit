@@ -127,9 +127,7 @@ extern "C" {
 
     NSString *userAgent = [[self webView] userAgentForURL:_baseURL.get()];
     BOOL acceleratedCompositingEnabled = false;
-#if USE(ACCELERATED_COMPOSITING)
     acceleratedCompositingEnabled = [[[self webView] preferences] acceleratedCompositingEnabled];
-#endif
     _hostsLayersInWindowServer = [self windowHostsLayersInWindowServer];
 
     _proxy = NetscapePluginHostManager::shared().instantiatePlugin([_pluginPackage.get() path], [_pluginPackage.get() pluginHostArchitecture], [_pluginPackage.get() bundleIdentifier], self, _MIMEType.get(), _attributeKeys.get(), _attributeValues.get(), userAgent, _sourceURL.get(),
@@ -151,9 +149,7 @@ extern "C" {
 - (void)createPluginLayer
 {
     BOOL acceleratedCompositingEnabled = false;
-#if USE(ACCELERATED_COMPOSITING)
     acceleratedCompositingEnabled = [[[self webView] preferences] acceleratedCompositingEnabled];
-#endif
 
     _pluginLayer = WKMakeRenderLayer(_proxy->renderContextID());
 

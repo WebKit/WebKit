@@ -70,9 +70,7 @@ public:
     void updateWidgetPosition();
     IntRect windowClipRect() const;
 
-#if USE(ACCELERATED_COMPOSITING)
     bool requiresAcceleratedCompositing() const;
-#endif
 
     WeakPtr<RenderWidget> createWeakPtr() { return m_weakPtrFactory.createWeakPtr(); }
 
@@ -84,9 +82,7 @@ protected:
     virtual void paint(PaintInfo&, const LayoutPoint&) override;
     virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction) override;
     virtual void paintContents(PaintInfo&, const LayoutPoint&);
-#if USE(ACCELERATED_COMPOSITING)
     virtual bool requiresLayer() const override;
-#endif
 
 private:
     void element() const = delete;

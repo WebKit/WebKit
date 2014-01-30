@@ -26,8 +26,6 @@
 #import "config.h"
 #import "RemoteLayerBackingStore.h"
 
-#if USE(ACCELERATED_COMPOSITING)
-
 #import "ArgumentCoders.h"
 #import "MachPort.h"
 #import "PlatformCALayerRemote.h"
@@ -349,5 +347,3 @@ void RemoteLayerBackingStore::enumerateRectsBeingDrawn(CGContextRef context, voi
         block(rectToDraw);
     }
 }
-
-#endif // USE(ACCELERATED_COMPOSITING)

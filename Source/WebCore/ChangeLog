@@ -1,3 +1,434 @@
+2014-01-30  Andrei Bucur  <abucur@adobe.com>
+
+        Remove the ACCELERATED_COMPOSITING flag
+        https://bugs.webkit.org/show_bug.cgi?id=127833
+
+        Reviewed by Antti Koivisto.
+
+        Remove the USE(ACCELERATED_COMPOSITING) conditionals from the code base and make AC
+        mandatory.
+
+        Tests: No new tests, no functional change.
+
+        * css/MediaQueryEvaluator.cpp:
+        (WebCore::transform_3dMediaFeatureEval):
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::canShareStyleWithElement):
+        * dom/Document.cpp:
+        (WebCore::Document::setVisualUpdatesAllowed):
+        (WebCore::Document::recalcStyle):
+        (WebCore::Document::createRenderTree):
+        (WebCore::Document::documentWillBecomeInactive):
+        (WebCore::Document::documentDidResumeFromPageCache):
+        (WebCore::Document::windowScreenDidChange):
+        * dom/PseudoElement.cpp:
+        (WebCore::PseudoElement::~PseudoElement):
+        * history/CachedFrame.cpp:
+        (WebCore::CachedFrameBase::CachedFrameBase):
+        (WebCore::CachedFrameBase::restore):
+        (WebCore::CachedFrame::CachedFrame):
+        * history/CachedFrame.h:
+        * history/CachedPage.cpp:
+        (WebCore::CachedPage::restore):
+        * history/CachedPage.h:
+        * history/PageCache.cpp:
+        (WebCore::PageCache::PageCache):
+        (WebCore::PageCache::markPagesForDeviceScaleChanged):
+        * history/PageCache.h:
+        * html/HTMLCanvasElement.cpp:
+        (WebCore::HTMLCanvasElement::getContext):
+        (WebCore::HTMLCanvasElement::reset):
+        (WebCore::HTMLCanvasElement::paintsIntoCanvasBuffer):
+        (WebCore::HTMLCanvasElement::createImageBuffer):
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::parseAttribute):
+        * html/HTMLMediaElement.h:
+        * html/canvas/CanvasRenderingContext.h:
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::didDraw):
+        * html/canvas/CanvasRenderingContext2D.h:
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore::WebGLRenderingContext::markContextChanged):
+        (WebCore::WebGLRenderingContext::reshape):
+        (WebCore::WebGLRenderingContext::platformLayer):
+        * html/canvas/WebGLRenderingContext.h:
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::InspectorController):
+        * inspector/InspectorInstrumentation.cpp:
+        (WebCore::InspectorInstrumentation::didCommitLoadImpl):
+        (WebCore::InspectorInstrumentation::pseudoElementDestroyedImpl):
+        * inspector/InspectorInstrumentation.h:
+        (WebCore::InspectorInstrumentation::pseudoElementDestroyed):
+        * inspector/InspectorLayerTreeAgent.cpp:
+        * inspector/InstrumentingAgents.cpp:
+        (WebCore::InstrumentingAgents::InstrumentingAgents):
+        (WebCore::InstrumentingAgents::reset):
+        * inspector/InstrumentingAgents.h:
+        * loader/EmptyClients.h:
+        * page/ChromeClient.h:
+        * page/Frame.cpp:
+        (WebCore::Frame::layerTreeAsText):
+        (WebCore::Frame::deviceOrPageScaleFactorChanged):
+        * page/Frame.h:
+        * page/FrameView.cpp:
+        (WebCore::FrameView::setFrameRect):
+        (WebCore::FrameView::scheduleLayerFlushAllowingThrottling):
+        (WebCore::FrameView::hasCompositedContent):
+        (WebCore::FrameView::hasCompositedContentIncludingDescendants):
+        (WebCore::FrameView::hasCompositingAncestor):
+        (WebCore::FrameView::enterCompositingMode):
+        (WebCore::FrameView::isEnclosedInCompositingLayer):
+        (WebCore::FrameView::flushCompositingStateIncludingSubframes):
+        (WebCore::FrameView::isSoftwareRenderable):
+        (WebCore::FrameView::layout):
+        (WebCore::FrameView::contentsInCompositedLayer):
+        (WebCore::FrameView::scrollContentsFastPath):
+        (WebCore::FrameView::scrollContentsSlowPath):
+        (WebCore::FrameView::setIsOverlapped):
+        (WebCore::FrameView::delegatesScrollingDidChange):
+        (WebCore::FrameView::scrollPositionChanged):
+        (WebCore::FrameView::updateCompositingLayersAfterScrolling):
+        (WebCore::FrameView::visibleContentsResized):
+        (WebCore::FrameView::addedOrRemovedScrollbar):
+        (WebCore::FrameView::disableLayerFlushThrottlingTemporarilyForInteraction):
+        (WebCore::FrameView::updateLayerFlushThrottlingInAllFrames):
+        (WebCore::FrameView::adjustTiledBackingCoverage):
+        (WebCore::FrameView::hasExtendedBackground):
+        (WebCore::FrameView::extendedBackgroundRect):
+        (WebCore::FrameView::setBackgroundExtendsBeyondPage):
+        (WebCore::FrameView::performPostLayoutTasks):
+        (WebCore::FrameView::paintContents):
+        (WebCore::FrameView::setTracksRepaints):
+        (WebCore::FrameView::resetTrackedRepaints):
+        (WebCore::FrameView::setScrollingPerformanceLoggingEnabled):
+        (WebCore::FrameView::setExposedRect):
+        * page/FrameView.h:
+        * page/Page.cpp:
+        (WebCore::Page::setPageScaleFactor):
+        (WebCore::Page::setDeviceScaleFactor):
+        * page/Settings.cpp:
+        (WebCore::Settings::setBackgroundShouldExtendBeyondPage):
+        * page/animation/AnimationBase.cpp:
+        (WebCore::AnimationBase::freezeAtTime):
+        * page/animation/AnimationController.cpp:
+        (WebCore::AnimationController::supportsAcceleratedAnimationOfProperty):
+        * page/animation/CSSPropertyAnimation.cpp:
+        (WebCore::CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap):
+        (WebCore::CSSPropertyAnimation::blendProperties):
+        (WebCore::CSSPropertyAnimation::animationOfPropertyIsAccelerated):
+        * page/animation/CSSPropertyAnimation.h:
+        * page/animation/CompositeAnimation.cpp:
+        (WebCore::CompositeAnimation::updateTransitions):
+        * page/animation/ImplicitAnimation.cpp:
+        (WebCore::ImplicitAnimation::animate):
+        (WebCore::ImplicitAnimation::startAnimation):
+        (WebCore::ImplicitAnimation::pauseAnimation):
+        (WebCore::ImplicitAnimation::endAnimation):
+        (WebCore::ImplicitAnimation::timeToNextService):
+        * page/animation/KeyframeAnimation.cpp:
+        (WebCore::KeyframeAnimation::animate):
+        (WebCore::KeyframeAnimation::startAnimation):
+        (WebCore::KeyframeAnimation::pauseAnimation):
+        (WebCore::KeyframeAnimation::endAnimation):
+        (WebCore::KeyframeAnimation::timeToNextService):
+        * page/ios/FrameIOS.mm:
+        (WebCore::Frame::viewportOffsetChanged):
+        (WebCore::Frame::containsTiledBackingLayers):
+        * page/scrolling/AsyncScrollingCoordinator.cpp:
+        (WebCore::AsyncScrollingCoordinator::updateScrollPositionAfterAsyncScroll):
+        * page/scrolling/ScrollingCoordinator.cpp:
+        (WebCore::ScrollingCoordinator::coordinatesScrollingForFrameView):
+        (WebCore::ScrollingCoordinator::computeNonFastScrollableRegion):
+        (WebCore::ScrollingCoordinator::verticalScrollbarLayerForScrollableArea):
+        (WebCore::ScrollingCoordinator::scrollLayerForFrameView):
+        (WebCore::ScrollingCoordinator::headerLayerForFrameView):
+        (WebCore::ScrollingCoordinator::footerLayerForFrameView):
+        (WebCore::ScrollingCoordinator::counterScrollingLayerForFrameView):
+        (WebCore::ScrollingCoordinator::hasVisibleSlowRepaintViewportConstrainedObjects):
+        * page/scrolling/ScrollingCoordinator.h:
+        * platform/ScrollView.cpp:
+        (WebCore::positionScrollCornerLayer):
+        (WebCore::ScrollView::positionScrollbarLayers):
+        (WebCore::ScrollView::paintScrollbars):
+        (WebCore::ScrollView::paint):
+        * platform/ScrollableArea.cpp:
+        (WebCore::ScrollableArea::invalidateScrollbar):
+        (WebCore::ScrollableArea::invalidateScrollCorner):
+        (WebCore::ScrollableArea::horizontalScrollbarLayerDidChange):
+        (WebCore::ScrollableArea::hasLayerForHorizontalScrollbar):
+        (WebCore::ScrollableArea::hasLayerForVerticalScrollbar):
+        (WebCore::ScrollableArea::hasLayerForScrollCorner):
+        * platform/ScrollableArea.h:
+        * platform/ScrollbarTheme.h:
+        * platform/efl/EflScreenUtilities.cpp:
+        (WebCore::applyFallbackCursor):
+        * platform/graphics/GraphicsContext3D.h:
+        * platform/graphics/GraphicsContext3DPrivate.cpp:
+        (WebCore::GraphicsContext3DPrivate::~GraphicsContext3DPrivate):
+        (WebCore::GraphicsContext3DPrivate::paintToTextureMapper):
+        * platform/graphics/GraphicsContext3DPrivate.h:
+        * platform/graphics/GraphicsLayer.cpp:
+        * platform/graphics/GraphicsLayer.h:
+        * platform/graphics/GraphicsLayerAnimation.cpp:
+        * platform/graphics/GraphicsLayerAnimation.h:
+        * platform/graphics/GraphicsLayerClient.h:
+        * platform/graphics/GraphicsLayerFactory.h:
+        * platform/graphics/GraphicsLayerUpdater.cpp:
+        * platform/graphics/GraphicsLayerUpdater.h:
+        * platform/graphics/ImageBuffer.cpp:
+        * platform/graphics/ImageBuffer.h:
+        * platform/graphics/MediaPlayer.cpp:
+        (WebCore::MediaPlayer::platformLayer):
+        (WebCore::MediaPlayer::supportsAcceleratedRendering):
+        * platform/graphics/MediaPlayer.h:
+        * platform/graphics/MediaPlayerPrivate.h:
+        * platform/graphics/PlatformLayer.h:
+        * platform/graphics/TextTrackRepresentation.cpp:
+        * platform/graphics/TextTrackRepresentation.h:
+        * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundation.cpp:
+        (WebCore::MediaPlayerPrivateAVFoundation::currentRenderingMode):
+        (WebCore::MediaPlayerPrivateAVFoundation::preferredRenderingMode):
+        (WebCore::MediaPlayerPrivateAVFoundation::setUpVideoRendering):
+        (WebCore::MediaPlayerPrivateAVFoundation::tearDownVideoRendering):
+        * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundation.h:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaSourceAVFObjC.h:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaSourceAVFObjC.mm:
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::platformLayer):
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::acceleratedRenderingStateChanged):
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        * platform/graphics/ca/GraphicsLayerCA.h:
+        * platform/graphics/ca/LayerFlushScheduler.cpp:
+        * platform/graphics/ca/LayerFlushScheduler.h:
+        * platform/graphics/ca/LayerFlushSchedulerClient.h:
+        * platform/graphics/ca/PlatformCAAnimation.h:
+        * platform/graphics/ca/PlatformCAFilters.h:
+        * platform/graphics/ca/PlatformCALayer.h:
+        * platform/graphics/ca/PlatformCALayerClient.h:
+        * platform/graphics/ca/mac/LayerFlushSchedulerMac.cpp:
+        * platform/graphics/ca/mac/PlatformCAAnimationMac.mm:
+        (PlatformCAAnimation::copyTimingFunctionsFrom):
+        * platform/graphics/ca/mac/PlatformCAFiltersMac.mm:
+        * platform/graphics/ca/mac/PlatformCALayerMac.h:
+        * platform/graphics/ca/mac/PlatformCALayerMac.mm:
+        (PlatformCALayerMac::enumerateRectsBeingDrawn):
+        * platform/graphics/ca/win/AbstractCACFLayerTreeHost.h:
+        * platform/graphics/ca/win/CACFLayerTreeHost.cpp:
+        * platform/graphics/ca/win/CACFLayerTreeHost.h:
+        * platform/graphics/ca/win/CACFLayerTreeHostClient.h:
+        * platform/graphics/ca/win/LayerChangesFlusher.cpp:
+        * platform/graphics/ca/win/LayerChangesFlusher.h:
+        * platform/graphics/ca/win/LegacyCACFLayerTreeHost.cpp:
+        * platform/graphics/ca/win/LegacyCACFLayerTreeHost.h:
+        * platform/graphics/ca/win/PlatformCAAnimationWin.cpp:
+        (PlatformCAAnimation::copyTimingFunctionsFrom):
+        * platform/graphics/ca/win/PlatformCAFiltersWin.cpp:
+        * platform/graphics/ca/win/PlatformCALayerWin.cpp:
+        (PlatformCALayerWin::createCompatibleLayer):
+        * platform/graphics/ca/win/PlatformCALayerWin.h:
+        * platform/graphics/ca/win/PlatformCALayerWinInternal.cpp:
+        (PlatformCALayerWinInternal::drawTile):
+        * platform/graphics/ca/win/PlatformCALayerWinInternal.h:
+        * platform/graphics/ca/win/WKCACFViewLayerTreeHost.cpp:
+        * platform/graphics/ca/win/WKCACFViewLayerTreeHost.h:
+        * platform/graphics/cairo/DrawingBufferCairo.cpp:
+        (WebCore::DrawingBuffer::paintCompositedResultsToCanvas):
+        * platform/graphics/cairo/GraphicsContext3DCairo.cpp:
+        (WebCore::GraphicsContext3D::platformLayer):
+        * platform/graphics/cairo/ImageBufferCairo.cpp:
+        (WebCore::ImageBuffer::platformLayer):
+        * platform/graphics/efl/GraphicsContext3DEfl.cpp:
+        (WebCore::GraphicsContext3D::platformLayer):
+        * platform/graphics/efl/GraphicsContext3DPrivate.cpp:
+        * platform/graphics/efl/GraphicsContext3DPrivate.h:
+        * platform/graphics/gpu/DrawingBuffer.h:
+        * platform/graphics/gpu/LoopBlinnMathUtils.cpp:
+        * platform/graphics/gpu/TilingData.cpp:
+        * platform/graphics/gpu/mac/DrawingBufferMac.mm:
+        (WebCore::DrawingBuffer::frontColorBuffer):
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.cpp:
+        (WebCore::MediaPlayerPrivateGStreamerBase::triggerRepaint):
+        (WebCore::MediaPlayerPrivateGStreamerBase::paint):
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.h:
+        * platform/graphics/ios/MediaPlayerPrivateIOS.h:
+        * platform/graphics/ios/MediaPlayerPrivateIOS.mm:
+        (WebCore::MediaPlayerPrivateIOS::supportsAcceleratedRendering):
+        * platform/graphics/mac/MediaPlayerPrivateQTKit.h:
+        * platform/graphics/mac/MediaPlayerPrivateQTKit.mm:
+        (WebCore::MediaPlayerPrivateQTKit::createQTMovieLayer):
+        (WebCore::MediaPlayerPrivateQTKit::destroyQTMovieLayer):
+        (WebCore::MediaPlayerPrivateQTKit::preferredRenderingMode):
+        (WebCore::MediaPlayerPrivateQTKit::platformLayer):
+        (WebCore::MediaPlayerPrivateQTKit::setClosedCaptionsVisible):
+        (WebCore::MediaPlayerPrivateQTKit::layerHostChanged):
+        (WebCore::MediaPlayerPrivateQTKit::acceleratedRenderingStateChanged):
+        (-[WebCoreMovieObserver layerHostChanged:]):
+        * platform/graphics/mac/WebGLLayer.h:
+        * platform/graphics/mac/WebGLLayer.mm:
+        * platform/graphics/mac/WebLayer.h:
+        * platform/graphics/mac/WebLayer.mm:
+        * platform/graphics/mac/WebTiledLayer.h:
+        * platform/graphics/mac/WebTiledLayer.mm:
+        * platform/graphics/opengl/GLDefs.h:
+        * platform/graphics/opengl/GLPlatformContext.cpp:
+        * platform/graphics/opengl/GLPlatformContext.h:
+        * platform/graphics/opengl/GLPlatformSurface.cpp:
+        * platform/graphics/opengl/GLPlatformSurface.h:
+        * platform/graphics/surfaces/GLTransportSurface.cpp:
+        * platform/graphics/surfaces/GLTransportSurface.h:
+        * platform/graphics/surfaces/glx/GLXConfigSelector.h:
+        * platform/graphics/surfaces/glx/GLXContext.cpp:
+        * platform/graphics/surfaces/glx/GLXContext.h:
+        * platform/graphics/surfaces/glx/GLXSurface.cpp:
+        * platform/graphics/surfaces/glx/GLXSurface.h:
+        * platform/graphics/texmap/TextureMapper.cpp:
+        * platform/graphics/texmap/TextureMapper.h:
+        * platform/graphics/texmap/TextureMapperBackingStore.cpp:
+        * platform/graphics/texmap/TextureMapperBackingStore.h:
+        * platform/graphics/texmap/TextureMapperFPSCounter.cpp:
+        * platform/graphics/texmap/TextureMapperFPSCounter.h:
+        * platform/graphics/texmap/TextureMapperGL.cpp:
+        * platform/graphics/texmap/TextureMapperGL.h:
+        * platform/graphics/texmap/TextureMapperLayer.cpp:
+        * platform/graphics/texmap/TextureMapperLayer.h:
+        * platform/graphics/texmap/TextureMapperShaderProgram.cpp:
+        * platform/graphics/texmap/TextureMapperSurfaceBackingStore.cpp:
+        * platform/graphics/texmap/TextureMapperSurfaceBackingStore.h:
+        * platform/graphics/texmap/TextureMapperTile.cpp:
+        * platform/graphics/texmap/TextureMapperTile.h:
+        * platform/graphics/texmap/TextureMapperTiledBackingStore.cpp:
+        * platform/graphics/texmap/TextureMapperTiledBackingStore.h:
+        * platform/graphics/win/GraphicsContext3DWin.cpp:
+        (WebCore::GraphicsContext3D::platformLayer):
+        * platform/graphics/win/MediaPlayerPrivateFullscreenWindow.cpp:
+        (WebCore::MediaPlayerPrivateFullscreenWindow::createWindow):
+        (WebCore::MediaPlayerPrivateFullscreenWindow::wndProc):
+        * platform/graphics/win/MediaPlayerPrivateFullscreenWindow.h:
+        * platform/graphics/win/MediaPlayerPrivateQuickTimeVisualContext.cpp:
+        (WebCore::MediaPlayerPrivateQuickTimeVisualContext::LayerClient::platformCALayerLayoutSublayersOfLayer):
+        (WebCore::MediaPlayerPrivateQuickTimeVisualContext::MediaPlayerPrivateQuickTimeVisualContext):
+        (WebCore::MediaPlayerPrivateQuickTimeVisualContext::supportsFullscreen):
+        (WebCore::MediaPlayerPrivateQuickTimeVisualContext::platformMedia):
+        (WebCore::MediaPlayerPrivateQuickTimeVisualContext::platformLayer):
+        (WebCore::MediaPlayerPrivateQuickTimeVisualContext::naturalSize):
+        (WebCore::MediaPlayerPrivateQuickTimeVisualContext::paint):
+        (WebCore::CreateCGImageFromPixelBuffer):
+        (WebCore::MediaPlayerPrivateQuickTimeVisualContext::retrieveCurrentImage):
+        (WebCore::MediaPlayerPrivateQuickTimeVisualContext::currentRenderingMode):
+        (WebCore::MediaPlayerPrivateQuickTimeVisualContext::preferredRenderingMode):
+        (WebCore::MediaPlayerPrivateQuickTimeVisualContext::setUpVideoRendering):
+        (WebCore::MediaPlayerPrivateQuickTimeVisualContext::tearDownVideoRendering):
+        (WebCore::MediaPlayerPrivateQuickTimeVisualContext::hasSetUpVideoRendering):
+        (WebCore::MediaPlayerPrivateQuickTimeVisualContext::retrieveAndResetMovieTransform):
+        (WebCore::MediaPlayerPrivateQuickTimeVisualContext::createLayerForMovie):
+        (WebCore::MediaPlayerPrivateQuickTimeVisualContext::destroyLayerForMovie):
+        (WebCore::MediaPlayerPrivateQuickTimeVisualContext::setPrivateBrowsingMode):
+        * platform/graphics/win/MediaPlayerPrivateQuickTimeVisualContext.h:
+        * platform/graphics/win/WKCAImageQueue.cpp:
+        * platform/graphics/win/WKCAImageQueue.h:
+        * platform/mac/ScrollbarThemeMac.h:
+        * platform/mac/ScrollbarThemeMac.mm:
+        * plugins/PluginViewBase.h:
+        * rendering/FlowThreadController.cpp:
+        (WebCore::FlowThreadController::updateRenderFlowThreadLayersIfNeeded):
+        * rendering/FlowThreadController.h:
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::styleWillChange):
+        (WebCore::isCandidateForOpaquenessTest):
+        (WebCore::layersUseImage):
+        (WebCore::RenderBox::imageChanged):
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::suspendAnimations):
+        (WebCore::RenderBoxModelObject::fixedBackgroundPaintsInLocalCoordinates):
+        * rendering/RenderBoxModelObject.h:
+        * rendering/RenderElement.cpp:
+        (WebCore::RenderElement::adjustStyleDifference):
+        (WebCore::RenderElement::setStyle):
+        (WebCore::RenderElement::styleWillChange):
+        * rendering/RenderEmbeddedObject.cpp:
+        (WebCore::RenderEmbeddedObject::allowsAcceleratedCompositing):
+        * rendering/RenderEmbeddedObject.h:
+        * rendering/RenderFlowThread.cpp:
+        (WebCore::RenderFlowThread::RenderFlowThread):
+        (WebCore::RenderFlowThread::layout):
+        (WebCore::RenderFlowThread::updateAllLayerToRegionMappings):
+        * rendering/RenderFlowThread.h:
+        * rendering/RenderFullScreen.cpp:
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::imageDimensionsChanged):
+        (WebCore::RenderImage::notifyFinished):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::RenderLayer):
+        (WebCore::RenderLayer::~RenderLayer):
+        (WebCore::RenderLayer::canRender3DTransforms):
+        (WebCore::RenderLayer::paintsWithFilters):
+        (WebCore::RenderLayer::updateLayerPositions):
+        (WebCore::RenderLayer::updateDescendantsAreContiguousInStackingOrderRecursive):
+        (WebCore::RenderLayer::currentTransform):
+        (WebCore::RenderLayer::updateDescendantDependentFlags):
+        (WebCore::RenderLayer::checkIfDescendantClippingContextNeedsUpdate):
+        (WebCore::RenderLayer::shouldRepaintAfterLayout):
+        (WebCore::RenderLayer::enclosingFilterRepaintLayer):
+        (WebCore::RenderLayer::setFilterBackendNeedsRepaintingInRect):
+        (WebCore::RenderLayer::clippingRootForPainting):
+        (WebCore::RenderLayer::addChild):
+        (WebCore::RenderLayer::removeChild):
+        (WebCore::RenderLayer::removeOnlyThisLayer):
+        (WebCore::RenderLayer::scrollTo):
+        (WebCore::RenderLayer::updateCompositingLayersAfterScroll):
+        (WebCore::RenderLayer::invalidateScrollbarRect):
+        (WebCore::RenderLayer::invalidateScrollCornerRect):
+        (WebCore::RenderLayer::positionOverflowControls):
+        (WebCore::RenderLayer::updateScrollInfoAfterLayout):
+        (WebCore::RenderLayer::paintOverflowControls):
+        (WebCore::shouldDoSoftwarePaint):
+        (WebCore::RenderLayer::paintLayer):
+        (WebCore::RenderLayer::calculateClipRects):
+        * rendering/RenderLayer.h:
+        * rendering/RenderLayerBacking.cpp:
+        * rendering/RenderLayerBacking.h:
+        * rendering/RenderLayerCompositor.cpp:
+        * rendering/RenderLayerCompositor.h:
+        * rendering/RenderNamedFlowThread.cpp:
+        (WebCore::RenderNamedFlowThread::collectsGraphicsLayersUnderRegions):
+        * rendering/RenderNamedFlowThread.h:
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::containerForRepaint):
+        (WebCore::RenderObject::repaintUsingContainer):
+        * rendering/RenderTreeAsText.cpp:
+        (WebCore::write):
+        * rendering/RenderVideo.cpp:
+        (WebCore::RenderVideo::updatePlayer):
+        (WebCore::RenderVideo::acceleratedRenderingStateChanged):
+        * rendering/RenderVideo.h:
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::paintBoxDecorations):
+        (WebCore::RenderView::repaintRootContents):
+        (WebCore::RenderView::repaintRectangleInViewAndCompositedLayers):
+        (WebCore::RenderView::repaintViewAndCompositedLayers):
+        (WebCore::RenderView::setMaximalOutlineSize):
+        (WebCore::RenderView::compositor):
+        (WebCore::RenderView::setIsInWindow):
+        * rendering/RenderView.h:
+        * rendering/RenderWidget.cpp:
+        (WebCore::RenderWidget::setWidgetGeometry):
+        (WebCore::RenderWidget::requiresAcceleratedCompositing):
+        * rendering/RenderWidget.h:
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::changeRequiresLayout):
+        (WebCore::RenderStyle::changeRequiresLayerRepaint):
+        (WebCore::RenderStyle::changeRequiresRecompositeLayer):
+        (WebCore::RenderStyle::diff):
+        * rendering/style/RenderStyle.h:
+        * rendering/style/RenderStyleConstants.h:
+        * rendering/style/StyleRareNonInheritedData.cpp:
+        (WebCore::StyleRareNonInheritedData::StyleRareNonInheritedData):
+        (WebCore::StyleRareNonInheritedData::operator==):
+        * rendering/style/StyleRareNonInheritedData.h:
+        * testing/Internals.cpp:
+        (WebCore::Internals::resetToConsistentState):
+        (WebCore::Internals::setHeaderHeight):
+        (WebCore::Internals::setFooterHeight):
+
 2014-01-30  Krzysztof Czech  <k.czech@samsung.com>
 
         AX: Clean up AccessibilityRenderObject

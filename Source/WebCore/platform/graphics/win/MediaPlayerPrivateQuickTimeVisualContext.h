@@ -49,11 +49,8 @@ namespace WebCore {
 class GraphicsContext;
 class IntSize;
 class IntRect;
-
-#if USE(ACCELERATED_COMPOSITING)
 class PlatformCALayer;
 class WKCAImageQueue;
-#endif
 
 class MediaPlayerPrivateQuickTimeVisualContext : public MediaPlayerPrivateInterface {
 public:
@@ -66,9 +63,7 @@ private:
 
     virtual bool supportsFullscreen() const;
     virtual PlatformMedia platformMedia() const;
-#if USE(ACCELERATED_COMPOSITING)
     virtual PlatformLayer* platformLayer() const;
-#endif
 
     IntSize naturalSize() const;
     bool hasVideo() const;
@@ -131,10 +126,8 @@ private:
     static MediaPlayer::SupportsType supportsType(const MediaEngineSupportParameters&);
     static bool isAvailable();
 
-#if USE(ACCELERATED_COMPOSITING)
     virtual bool supportsAcceleratedRendering() const;
     virtual void acceleratedRenderingStateChanged();
-#endif
 
     enum MediaRenderingMode { MediaRenderingNone, MediaRenderingSoftwareRenderer, MediaRenderingMovieLayer };
     MediaRenderingMode currentRenderingMode() const;
@@ -162,11 +155,9 @@ private:
     friend class MovieClient;
     OwnPtr<MovieClient> m_movieClient;
 
-#if USE(ACCELERATED_COMPOSITING)
     class LayerClient;
     friend class LayerClient;
     OwnPtr<LayerClient> m_layerClient;
-#endif
 
     class VisualContextClient;
     friend class VisualContextClient;
@@ -178,13 +169,11 @@ private:
 
     MediaPlayer* m_player;
     RefPtr<QTMovie> m_movie;
-#if USE(ACCELERATED_COMPOSITING)
     RefPtr<PlatformCALayer> m_qtVideoLayer;
     RefPtr<PlatformCALayer> m_transformLayer;
     OwnPtr<WKCAImageQueue> m_imageQueue;
     OwnPtr<QTDecompressionSession> m_decompressionSession;
     CGAffineTransform m_movieTransform; 
-#endif
     RefPtr<QTMovieVisualContext> m_visualContext;
     float m_seekTo;
     Timer<MediaPlayerPrivateQuickTimeVisualContext> m_seekTimer;

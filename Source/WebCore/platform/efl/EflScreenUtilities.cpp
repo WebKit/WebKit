@@ -114,12 +114,10 @@ void applyFallbackCursor(Ecore_Evas* ecoreEvas, const char* cursorString)
     }
 
     Ecore_X_Window window;
-#if USE(ACCELERATED_COMPOSITING)
     window = ecore_evas_gl_x11_window_get(ecoreEvas);
     // Fallback to software mode if necessary.
     if (!window)
-#endif
-    window = ecore_evas_software_x11_window_get(ecoreEvas);
+        window = ecore_evas_software_x11_window_get(ecoreEvas);
 
     Ecore_X_Cursor cursor = ecore_x_cursor_shape_get(shape);
     ecore_x_window_cursor_set(window, cursor);

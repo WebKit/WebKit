@@ -25,8 +25,6 @@
 
 #include "config.h"
 
-#if USE(ACCELERATED_COMPOSITING)
-
 #include "PlatformCALayerWinInternal.h"
 
 #include "Font.h"
@@ -488,5 +486,3 @@ void PlatformCALayerWinInternal::drawTile(CACFLayerRef tile, CGContextRef contex
 
     CGContextRestoreGState(context);
 }
-
-#endif // USE(ACCELERATED_COMPOSITING)

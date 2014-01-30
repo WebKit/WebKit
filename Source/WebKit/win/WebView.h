@@ -31,9 +31,11 @@
 #include "WebKit.h"
 #include "WebFrame.h"
 #include "WebPreferences.h"
+#include <WebCore/CACFLayerTreeHostClient.h>
 #include <WebCore/COMPtr.h>
 #include <WebCore/DragActions.h>
 #include <WebCore/GraphicsLayer.h>
+#include <WebCore/GraphicsLayerClient.h>
 #include <WebCore/IntRect.h>
 #include <WebCore/SharedGDIObject.h>
 #include <WebCore/SuspendableTimer.h>
@@ -42,17 +44,12 @@
 #include <wtf/OwnPtr.h>
 #include <wtf/RefPtr.h>
 
-#if USE(ACCELERATED_COMPOSITING)
-#include <WebCore/CACFLayerTreeHostClient.h>
-#include <WebCore/GraphicsLayerClient.h>
-#endif
-
 #if ENABLE(FULLSCREEN_API)
 #include <WebCore/FullScreenControllerClient.h>
 #endif
 
 namespace WebCore {
-#if USE(ACCELERATED_COMPOSITING) && USE(CA)
+#if USE(CA)
     class CACFLayerTreeHost;
 #endif
     class FullScreenController;
@@ -87,10 +84,8 @@ class WebView
     , public IWebNotificationObserver
     , public IDropTarget
     , WebCore::WindowMessageListener
-#if USE(ACCELERATED_COMPOSITING)
     , WebCore::GraphicsLayerClient
     , WebCore::CACFLayerTreeHostClient
-#endif
 #if ENABLE(FULLSCREEN_API)
     , WebCore::FullScreenControllerClient
 #endif
@@ -950,10 +945,8 @@ public:
 
     void downloadURL(const WebCore::URL&);
 
-#if USE(ACCELERATED_COMPOSITING)
     void flushPendingGraphicsLayerChangesSoon();
     void setRootChildLayer(WebCore::GraphicsLayer*);
-#endif
 
 #if PLATFORM(WIN) && USE(AVFOUNDATION)
     WebCore::GraphicsDeviceAdapter* graphicsDeviceAdapter() const;
@@ -1023,7 +1016,6 @@ private:
     // (see https://bugs.webkit.org/show_bug.cgi?id=29264)
     DWORD m_lastDropEffect;
 
-#if USE(ACCELERATED_COMPOSITING)
     // GraphicsLayerClient
     virtual void notifyAnimationStarted(const WebCore::GraphicsLayer*, double time);
     virtual void notifyFlushRequired(const WebCore::GraphicsLayer*);
@@ -1031,7 +1023,6 @@ private:
 
     // CACFLayerTreeHostClient
     virtual void flushPendingGraphicsLayerChanges();
-#endif
 
     bool m_shouldInvertColors;
     void setShouldInvertColors(bool);
@@ -1152,7 +1143,6 @@ protected:
     OwnPtr<FullscreenVideoController> m_fullScreenVideoController;
 #endif
 
-#if USE(ACCELERATED_COMPOSITING)
     bool isAcceleratedCompositing() const { return m_isAcceleratedCompositing; }
     void setAcceleratedCompositing(bool);
 #if USE(CA)
@@ -1160,7 +1150,6 @@ protected:
 #endif
     std::unique_ptr<WebCore::GraphicsLayer> m_backingLayer;
     bool m_isAcceleratedCompositing;
-#endif
 
     bool m_nextDisplayIsSynchronous;
     bool m_usesLayeredWindow;

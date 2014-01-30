@@ -62,9 +62,7 @@ RenderFlowThread::RenderFlowThread(Document& document, PassRef<RenderStyle> styl
     , m_pageLogicalSizeChanged(false)
     , m_layoutPhase(LayoutPhaseMeasureContent)
     , m_needsTwoPhasesLayout(false)
-#if USE(ACCELERATED_COMPOSITING)
     , m_layersToRegionMappingsDirty(true)
-#endif
 {
     setFlowThreadState(InsideOutOfFlowThread);
 }
@@ -226,7 +224,6 @@ void RenderFlowThread::layout()
     if (lastRegion())
         lastRegion()->expandToEncompassFlowThreadContentsIfNeeded();
 
-#if USE(ACCELERATED_COMPOSITING)
     // If there are children layers in the RenderFlowThread then we need to make sure that the
     // composited children layers will land in the right RenderRegions. Also, the parent RenderRegions
     // will get RenderLayers and become composited as needed.
@@ -238,7 +235,6 @@ void RenderFlowThread::layout()
         if (updateAllLayerToRegionMappings())
             layer()->compositor().setCompositingLayersNeedRebuild();
     }
-#endif
 
     if (shouldDispatchRegionLayoutUpdateEvent())
         dispatchRegionLayoutUpdateEvent();
@@ -247,7 +243,6 @@ void RenderFlowThread::layout()
         dispatchRegionOversetChangeEvent();
 }
 
-#if USE(ACCELERATED_COMPOSITING)
 bool RenderFlowThread::hasCompositingRegionDescendant() const
 {
     for (auto& region : m_regionList)
@@ -350,7 +345,6 @@ bool RenderFlowThread::updateAllLayerToRegionMappings()
 
     return needsLayerUpdate;
 }
-#endif
 
 bool RenderFlowThread::collectsGraphicsLayersUnderRegions() const
 {

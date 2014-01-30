@@ -26,8 +26,6 @@
 #ifndef LegacyCACFLayerTreeHost_h
 #define LegacyCACFLayerTreeHost_h
 
-#if USE(ACCELERATED_COMPOSITING)
-
 #include "CACFLayerTreeHost.h"
 
 namespace WebCore {
@@ -80,7 +78,5 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // USE(ACCELERATED_COMPOSITING)
 
 #endif // LegacyCACFLayerTreeHost_h

@@ -663,12 +663,10 @@ void MediaPlayerPrivateIOS::setHasPlaybackTargetAvailabilityListeners(bool hasLi
 }
 #endif
 
-#if USE(ACCELERATED_COMPOSITING)
 bool MediaPlayerPrivateIOS::supportsAcceleratedRendering() const
 {
     return true;
 }
-#endif
 
 void MediaPlayerPrivateIOS::enterFullscreen()
 {

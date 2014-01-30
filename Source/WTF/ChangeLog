@@ -1,3 +1,18 @@
+2014-01-30  Andrei Bucur  <abucur@adobe.com>
+
+        Remove the ACCELERATED_COMPOSITING flag
+        https://bugs.webkit.org/show_bug.cgi?id=127833
+
+        Reviewed by Antti Koivisto.
+
+        Remove the USE(ACCELERATED_COMPOSITING) conditionals from the code base and make AC
+        mandatory.
+
+        * wtf/OwnPtrCommon.h:
+        * wtf/Platform.h:
+        * wtf/efl/OwnPtrEfl.cpp:
+        (WTF::deleteOwnedPtr):
+
 2014-01-28  Michael Saboff  <msaboff@apple.com>
 
         Merge the jsCStack branch

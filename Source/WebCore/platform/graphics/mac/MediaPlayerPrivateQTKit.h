@@ -65,9 +65,7 @@ public:
     void sizeChanged();
     void timeChanged();
     void didEnd();
-#if USE(ACCELERATED_COMPOSITING)
     void layerHostChanged(PlatformLayer* rootLayer);
-#endif
 
 private:
     MediaPlayerPrivateQTKit(MediaPlayer*);
@@ -83,9 +81,7 @@ private:
     static bool isAvailable();
 
     PlatformMedia platformMedia() const;
-#if USE(ACCELERATED_COMPOSITING)
     PlatformLayer* platformLayer() const;
-#endif
 
     IntSize naturalSize() const;
     bool hasVideo() const;
@@ -138,11 +134,8 @@ private:
     void paintCurrentFrameInContext(GraphicsContext*, const IntRect&);
     virtual void prepareForRendering();
 
-
-#if USE(ACCELERATED_COMPOSITING)
     bool supportsAcceleratedRendering() const;
     void acceleratedRenderingStateChanged();
-#endif
 
     bool hasSingleSecurityOrigin() const;
     MediaPlayer::MovieLoadType movieLoadType() const;

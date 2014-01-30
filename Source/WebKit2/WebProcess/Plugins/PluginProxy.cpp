@@ -105,10 +105,7 @@ bool PluginProxy::initialize(const Parameters& parameters)
     m_pendingPluginCreationParameters->contentsScaleFactor = contentsScaleFactor();
     m_pendingPluginCreationParameters->isPrivateBrowsingEnabled = controller()->isPrivateBrowsingEnabled();
     m_pendingPluginCreationParameters->artificialPluginInitializationDelayEnabled = controller()->artificialPluginInitializationDelayEnabled();
-
-#if USE(ACCELERATED_COMPOSITING)
     m_pendingPluginCreationParameters->isAcceleratedCompositingEnabled = controller()->isAcceleratedCompositingEnabled();
-#endif
 
     if (!canInitializeAsynchronously())
         return initializeSynchronously();

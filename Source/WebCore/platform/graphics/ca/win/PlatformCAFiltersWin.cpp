@@ -25,7 +25,6 @@
 
 #include "config.h"
 
-#if USE(ACCELERATED_COMPOSITING)
 #if ENABLE(CSS_FILTERS)
 
 #include "PlatformCAFilters.h"
@@ -50,4 +49,3 @@ const char* PlatformCAFilters::animatedFilterPropertyName(FilterOperation::Opera
 }
 
 #endif // ENABLE(CSS_FILTERS)
-#endif // USE(ACCELERATED_COMPOSITING)

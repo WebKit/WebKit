@@ -26,8 +26,6 @@
 #ifndef PlatformCALayerRemoteTiledBacking_h
 #define PlatformCALayerRemoteTiledBacking_h
 
-#if USE(ACCELERATED_COMPOSITING)
-
 #include "PlatformCALayerRemote.h"
 
 namespace WebKit {
@@ -60,7 +58,5 @@ private:
 };
 
 } // namespace WebKit
-
-#endif // USE(ACCELERATED_COMPOSITING)
 
 #endif // PlatformCALayerRemoteTiledBacking_h
