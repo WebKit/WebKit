@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,21 +23,30 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebVideoFullscreenControllerAVKit_h
-#define WebVideoFullscreenControllerAVKit_h
+
+#ifndef WebVideoFullscreenInterface_h
+#define WebVideoFullscreenInterface_h
 
 #if PLATFORM(IOS)
 
-#import <WebCore/HTMLMediaElement.h>
+#import <WebCore/PlatformLayer.h>
 
-OBJC_CLASS UIScreen;
+namespace WebCore {
+    
+class WebVideoFullscreenInterface {
+public:
+    virtual ~WebVideoFullscreenInterface() { };
+    virtual void setDuration(double) = 0;
+    virtual void setCurrentTime(double currentTime, double anchorTime) = 0;
+    virtual void setRate(bool isPlaying, float playbackRate) = 0;
+    virtual void setVideoDimensions(bool hasVideo, float width, float height) = 0;
+    virtual void setVideoLayer(PlatformLayer*) = 0;
+    virtual void setVideoLayerID(uint32_t) = 0;
+    virtual void enterFullscreen() = 0;
+    virtual void exitFullscreen() = 0;
+};
 
-@interface WebVideoFullscreenController : NSObject
-- (void)setMediaElement:(WebCore::HTMLMediaElement*)mediaElement;
-- (WebCore::HTMLMediaElement*)mediaElement;
-- (void)enterFullscreen:(UIScreen *)screen;
-- (void)exitFullscreen;
-@end
+}
 
 #endif
-#endif // WebVideoFullscreenControllerAVKit_h
+#endif

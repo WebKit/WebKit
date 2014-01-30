@@ -1,3 +1,61 @@
+2014-01-30  Jeremy Jones  <jeremyj@apple.com>
+
+        Refactor WebVideoFullscreenController separating AVKit from MediaElement.
+        https://bugs.webkit.org/show_bug.cgi?id=127762
+
+        Reviewed by Jer Noble.
+
+        Refactor WebVideoFullscreenControllerAVKit implementation into two abstract interfaces with concrete implementations: 
+        WebVideoFullscreenModel, WebVideoFullscreenInterface, WebVideoFullscreenModelMediaElement, WebVideoFullscreenInterfaceAVKit.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/ios/WebVideoFullscreenControllerAVKit.h:
+        * platform/ios/WebVideoFullscreenControllerAVKit.mm:
+        (-[WebVideoFullscreenController init]):
+        (-[WebVideoFullscreenController dealloc]):
+        (-[WebVideoFullscreenController enterFullscreen:]):
+        (-[WebVideoFullscreenController exitFullscreen]):
+        * platform/ios/WebVideoFullscreenInterface.h: Copied from Source/WebCore/platform/ios/WebVideoFullscreenControllerAVKit.h.
+        (WebCore::WebVideoFullscreenInterface::~WebVideoFullscreenInterface):
+        * platform/ios/WebVideoFullscreenInterfaceAVKit.h: Added.
+        (WebCore::WebVideoFullscreenInterfaceAVKit::~WebVideoFullscreenInterfaceAVKit):
+        * platform/ios/WebVideoFullscreenInterfaceAVKit.mm: Added.
+        (NS_ENUM):
+        (-[WebAVPlayerController init]):
+        (-[WebAVPlayerController dealloc]):
+        (-[WebAVPlayerController forwardingTargetForSelector:]):
+        (-[WebAVPlayerController playerViewController:shouldDismissWithReason:]):
+        (-[WebAVPlayerController play:]):
+        (-[WebAVPlayerController pause:]):
+        (-[WebAVPlayerController togglePlayback:]):
+        (-[WebAVPlayerController isPlaying]):
+        (-[WebAVPlayerController setPlaying:]):
+        (+[WebAVPlayerController keyPathsForValuesAffectingPlaying]):
+        (-[WebAVPlayerController seekToTime:]):
+        (:m_videoFullscreenModel):
+        (WebVideoFullscreenInterfaceAVKit::setWebVideoFullscreenModel):
+        (WebVideoFullscreenInterfaceAVKit::setDuration):
+        (WebVideoFullscreenInterfaceAVKit::setCurrentTime):
+        (WebVideoFullscreenInterfaceAVKit::setRate):
+        (WebVideoFullscreenInterfaceAVKit::setVideoDimensions):
+        (WebVideoFullscreenInterfaceAVKit::setVideoLayer):
+        (WebVideoFullscreenInterfaceAVKit::enterFullscreen):
+        (WebVideoFullscreenInterfaceAVKit::exitFullscreen):
+        * platform/ios/WebVideoFullscreenModel.h: Copied from Source/WebCore/platform/ios/WebVideoFullscreenControllerAVKit.h.
+        (WebCore::WebVideoFullscreenModel::~WebVideoFullscreenModel):
+        * platform/ios/WebVideoFullscreenModelMediaElement.h: Copied from Source/WebCore/platform/ios/WebVideoFullscreenControllerAVKit.h.
+        (WebCore::WebVideoFullscreenModelMediaElement::~WebVideoFullscreenModelMediaElement):
+        (WebCore::WebVideoFullscreenModelMediaElement::setWebVideoFullscreenInterface):
+        * platform/ios/WebVideoFullscreenModelMediaElement.mm: Added.
+        (WebVideoFullscreenModelMediaElement::setMediaElement):
+        (WebVideoFullscreenModelMediaElement::handleEvent):
+        (WebVideoFullscreenModelMediaElement::requestExitFullScreen):
+        (WebVideoFullscreenModelMediaElement::play):
+        (WebVideoFullscreenModelMediaElement::pause):
+        (WebVideoFullscreenModelMediaElement::togglePlayState):
+        (WebVideoFullscreenModelMediaElement::seekToTime):
+        (WebVideoFullscreenModelMediaElement::didExitFullscreen):
+
 2014-01-30  Jer Noble  <jer.noble@apple.com>
 
         [MediaControls][iOS] Add a "start load" button.

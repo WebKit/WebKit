@@ -1300,6 +1300,12 @@
 		3F2B33EF165AF15600E3987C /* JSWebKitCSSViewportRule.h in Headers */ = {isa = PBXBuildFile; fileRef = 3F2B33EA165AF15500E3987C /* JSWebKitCSSViewportRule.h */; };
 		3F42B31D1881191B00278AAC /* WebVideoFullscreenControllerAVKit.h in Headers */ = {isa = PBXBuildFile; fileRef = 3F42B31B1881191B00278AAC /* WebVideoFullscreenControllerAVKit.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		3F42B31E1881191B00278AAC /* WebVideoFullscreenControllerAVKit.mm in Sources */ = {isa = PBXBuildFile; fileRef = 3F42B31C1881191B00278AAC /* WebVideoFullscreenControllerAVKit.mm */; };
+		3FBC4AEA189880EF0046EE38 /* WebVideoFullscreenModel.h in Headers */ = {isa = PBXBuildFile; fileRef = 3FBC4AE9189880EF0046EE38 /* WebVideoFullscreenModel.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		3FBC4AEC1898810E0046EE38 /* WebVideoFullscreenInterface.h in Headers */ = {isa = PBXBuildFile; fileRef = 3FBC4AEB1898810E0046EE38 /* WebVideoFullscreenInterface.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		3FBC4AEF189881380046EE38 /* WebVideoFullscreenModelMediaElement.mm in Sources */ = {isa = PBXBuildFile; fileRef = 3FBC4AED189881380046EE38 /* WebVideoFullscreenModelMediaElement.mm */; };
+		3FBC4AF0189881380046EE38 /* WebVideoFullscreenModelMediaElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 3FBC4AEE189881380046EE38 /* WebVideoFullscreenModelMediaElement.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		3FBC4AF3189881560046EE38 /* WebVideoFullscreenInterfaceAVKit.mm in Sources */ = {isa = PBXBuildFile; fileRef = 3FBC4AF1189881560046EE38 /* WebVideoFullscreenInterfaceAVKit.mm */; };
+		3FBC4AF4189881560046EE38 /* WebVideoFullscreenInterfaceAVKit.h in Headers */ = {isa = PBXBuildFile; fileRef = 3FBC4AF2189881560046EE38 /* WebVideoFullscreenInterfaceAVKit.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		3FFFF9A8159D9A550020BBD5 /* WebKitCSSViewportRule.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3FFFF9A6159D9A550020BBD5 /* WebKitCSSViewportRule.cpp */; };
 		3FFFF9A9159D9A550020BBD5 /* WebKitCSSViewportRule.h in Headers */ = {isa = PBXBuildFile; fileRef = 3FFFF9A7159D9A550020BBD5 /* WebKitCSSViewportRule.h */; };
 		3FFFF9AD159D9B060020BBD5 /* ViewportStyleResolver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3FFFF9AB159D9B060020BBD5 /* ViewportStyleResolver.cpp */; };
@@ -8124,6 +8130,12 @@
 		3F2B33EA165AF15500E3987C /* JSWebKitCSSViewportRule.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWebKitCSSViewportRule.h; sourceTree = "<group>"; };
 		3F42B31B1881191B00278AAC /* WebVideoFullscreenControllerAVKit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebVideoFullscreenControllerAVKit.h; path = ios/WebVideoFullscreenControllerAVKit.h; sourceTree = "<group>"; };
 		3F42B31C1881191B00278AAC /* WebVideoFullscreenControllerAVKit.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WebVideoFullscreenControllerAVKit.mm; path = ios/WebVideoFullscreenControllerAVKit.mm; sourceTree = "<group>"; };
+		3FBC4AE9189880EF0046EE38 /* WebVideoFullscreenModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebVideoFullscreenModel.h; path = ios/WebVideoFullscreenModel.h; sourceTree = "<group>"; };
+		3FBC4AEB1898810E0046EE38 /* WebVideoFullscreenInterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebVideoFullscreenInterface.h; path = ios/WebVideoFullscreenInterface.h; sourceTree = "<group>"; };
+		3FBC4AED189881380046EE38 /* WebVideoFullscreenModelMediaElement.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WebVideoFullscreenModelMediaElement.mm; path = ios/WebVideoFullscreenModelMediaElement.mm; sourceTree = "<group>"; };
+		3FBC4AEE189881380046EE38 /* WebVideoFullscreenModelMediaElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebVideoFullscreenModelMediaElement.h; path = ios/WebVideoFullscreenModelMediaElement.h; sourceTree = "<group>"; };
+		3FBC4AF1189881560046EE38 /* WebVideoFullscreenInterfaceAVKit.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WebVideoFullscreenInterfaceAVKit.mm; path = ios/WebVideoFullscreenInterfaceAVKit.mm; sourceTree = "<group>"; };
+		3FBC4AF2189881560046EE38 /* WebVideoFullscreenInterfaceAVKit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebVideoFullscreenInterfaceAVKit.h; path = ios/WebVideoFullscreenInterfaceAVKit.h; sourceTree = "<group>"; };
 		3FFFF9A6159D9A550020BBD5 /* WebKitCSSViewportRule.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebKitCSSViewportRule.cpp; sourceTree = "<group>"; };
 		3FFFF9A7159D9A550020BBD5 /* WebKitCSSViewportRule.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebKitCSSViewportRule.h; sourceTree = "<group>"; };
 		3FFFF9AB159D9B060020BBD5 /* ViewportStyleResolver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ViewportStyleResolver.cpp; sourceTree = "<group>"; };
@@ -17950,6 +17962,12 @@
 				3F42B31B1881191B00278AAC /* WebVideoFullscreenControllerAVKit.h */,
 				3F42B31C1881191B00278AAC /* WebVideoFullscreenControllerAVKit.mm */,
 				E453903C0EAFD637003695C8 /* WidgetIOS.mm */,
+				3FBC4AE9189880EF0046EE38 /* WebVideoFullscreenModel.h */,
+				3FBC4AEB1898810E0046EE38 /* WebVideoFullscreenInterface.h */,
+				3FBC4AED189881380046EE38 /* WebVideoFullscreenModelMediaElement.mm */,
+				3FBC4AEE189881380046EE38 /* WebVideoFullscreenModelMediaElement.h */,
+				3FBC4AF1189881560046EE38 /* WebVideoFullscreenInterfaceAVKit.mm */,
+				3FBC4AF2189881560046EE38 /* WebVideoFullscreenInterfaceAVKit.h */,
 			);
 			name = ios;
 			sourceTree = "<group>";
@@ -23530,6 +23548,7 @@
 				A74BB76B13BDA86300FF7BF0 /* ExceptionCodePlaceholder.h in Headers */,
 				148AFDA50AF58360008CC700 /* ExceptionHandlers.h in Headers */,
 				9767CE0B145ABC13005E64DB /* ExceptionHeaders.h in Headers */,
+				3FBC4AEC1898810E0046EE38 /* WebVideoFullscreenInterface.h in Headers */,
 				9767CE0C145ABC13005E64DB /* ExceptionInterfaces.h in Headers */,
 				A024575216CEAA27000E5671 /* EXTDrawBuffers.h in Headers */,
 				6E67D2A91280E8BD008758F7 /* Extensions3D.h in Headers */,
@@ -23814,6 +23833,7 @@
 				977B3875122883E900B81FF8 /* HTMLScriptRunner.h in Headers */,
 				977B3876122883E900B81FF8 /* HTMLScriptRunnerHost.h in Headers */,
 				A81369D8097374F600D74463 /* HTMLSelectElement.h in Headers */,
+				3FBC4AEA189880EF0046EE38 /* WebVideoFullscreenModel.h in Headers */,
 				E44613A80CD6331000FADA75 /* HTMLSourceElement.h in Headers */,
 				977E2DCE12F0E28300C13379 /* HTMLSourceTracker.h in Headers */,
 				978AD67514130A8D00C7CAE3 /* HTMLSpanElement.h in Headers */,
@@ -24028,6 +24048,7 @@
 				B59DD699119029E5007E9684 /* JSDatabaseCallback.h in Headers */,
 				B58CEB6911913607002A6790 /* JSDatabaseSync.h in Headers */,
 				4162A4581011464700DFF3ED /* JSDedicatedWorkerGlobalScope.h in Headers */,
+				3FBC4AF0189881380046EE38 /* WebVideoFullscreenModelMediaElement.h in Headers */,
 				FDA15ED212B03F94003A583A /* JSDelayNode.h in Headers */,
 				31FB1A66120A5D3F00DC02A0 /* JSDeviceMotionEvent.h in Headers */,
 				59A86008119DAFA100DEF1EF /* JSDeviceOrientationEvent.h in Headers */,
@@ -24241,6 +24262,7 @@
 				6EBF0E7712A9868800DB1709 /* JSOESTextureFloat.h in Headers */,
 				A31C4E5416E02B40002F7957 /* JSOESTextureHalfFloat.h in Headers */,
 				77A17AA712F28B2A004E02F6 /* JSOESVertexArrayObject.h in Headers */,
+				3FBC4AF4189881560046EE38 /* WebVideoFullscreenInterfaceAVKit.h in Headers */,
 				FDF6BAF9134A4C9800822920 /* JSOfflineAudioCompletionEvent.h in Headers */,
 				FDA9326716703BA9008982DC /* JSOfflineAudioContext.h in Headers */,
 				FDEA6243152102E200479DF0 /* JSOscillatorNode.h in Headers */,
@@ -27701,6 +27723,7 @@
 				24D9129513CA956100D21915 /* JSSVGAltGlyphItemElement.cpp in Sources */,
 				B222F6980AB771950022EFAD /* JSSVGAngle.cpp in Sources */,
 				51D719C3181106E00016DC51 /* IDBCursorWithValue.cpp in Sources */,
+				3FBC4AEF189881380046EE38 /* WebVideoFullscreenModelMediaElement.mm in Sources */,
 				B2FA3D360AB75A6F000E5AC4 /* JSSVGAnimateColorElement.cpp in Sources */,
 				B2FA3D380AB75A6F000E5AC4 /* JSSVGAnimatedAngle.cpp in Sources */,
 				B2FA3D3A0AB75A6F000E5AC4 /* JSSVGAnimatedBoolean.cpp in Sources */,
@@ -28693,6 +28716,7 @@
 				B25599840D00D8BA00BB825C /* SVGFEImage.cpp in Sources */,
 				B22279EE0D00BF220071B782 /* SVGFEImageElement.cpp in Sources */,
 				51D719EB181106E00016DC51 /* IDBRequest.cpp in Sources */,
+				3FBC4AF3189881560046EE38 /* WebVideoFullscreenInterfaceAVKit.mm in Sources */,
 				0FDA7C1A188322EB00C954B5 /* JSTouchList.cpp in Sources */,
 				A584FE2B1863870F00843B10 /* CommandLineAPIModule.cpp in Sources */,
 				B22279F10D00BF220071B782 /* SVGFELightElement.cpp in Sources */,
