@@ -23,32 +23,24 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "config.h"
-#import "WKNavigation.h"
+#include "config.h"
 
+#import <WebKit2/WKNavigation.h>
+#import <WebKit2/WKWebView.h>
 #import <wtf/RetainPtr.h>
+#import "Test.h"
 
 #if WK_API_ENABLED
 
-@implementation WKNavigation {
-    RetainPtr<NSURLRequest> _request;
-}
-
-- (instancetype)initWithRequest:(NSURLRequest *)request
+TEST(WKNavigation, LoadRequest)
 {
-    if (!(self = [super init]))
-        return nil;
+    RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
 
-    _request = adoptNS([request copy]);
+    NSURLRequest *request = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"simple" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
 
-    return self;
+    WKNavigation *navigation = [webView loadRequest:request];
+    ASSERT_NOT_NULL(navigation);
+    ASSERT_TRUE([navigation.request isEqual:request]);
 }
-
-- (NSURLRequest *)request
-{
-    return _request.get();
-}
-
-@end
 
 #endif

@@ -26,6 +26,7 @@
 		1A9E52C913E65EF4006917F5 /* 18-characters.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = C045F9461385C2F800C0F3CD /* 18-characters.html */; };
 		1AA9BAE418500450003B6BC6 /* WeakObjCPtr.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1AA9BAE218500450003B6BC6 /* WeakObjCPtr.mm */; };
 		1AA9E55914980A9900001A8A /* Functional.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AA9E55714980A9900001A8A /* Functional.cpp */; };
+		1ABC3DEF1899BE6D004F0626 /* Navigation.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1ABC3DED1899BE6D004F0626 /* Navigation.mm */; };
 		1ADBEFAE130C689C00D61D19 /* ForceRepaint.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1ADBEFAD130C689C00D61D19 /* ForceRepaint.cpp */; };
 		1ADBEFE3130C6AA100D61D19 /* simple-accelerated-compositing.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 1ADBEFBC130C6A0100D61D19 /* simple-accelerated-compositing.html */; };
 		1AE72F48173EB214006362F0 /* TerminateTwice.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AE72F47173EB214006362F0 /* TerminateTwice.cpp */; };
@@ -347,6 +348,7 @@
 		1A7E8B351812093600AEB74A /* FragmentNavigation.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = FragmentNavigation.html; sourceTree = "<group>"; };
 		1AA9BAE218500450003B6BC6 /* WeakObjCPtr.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WeakObjCPtr.mm; sourceTree = "<group>"; };
 		1AA9E55714980A9900001A8A /* Functional.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Functional.cpp; sourceTree = "<group>"; };
+		1ABC3DED1899BE6D004F0626 /* Navigation.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = Navigation.mm; sourceTree = "<group>"; };
 		1ADBEFAD130C689C00D61D19 /* ForceRepaint.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ForceRepaint.cpp; sourceTree = "<group>"; };
 		1ADBEFBC130C6A0100D61D19 /* simple-accelerated-compositing.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "simple-accelerated-compositing.html"; sourceTree = "<group>"; };
 		1AE72F47173EB214006362F0 /* TerminateTwice.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TerminateTwice.cpp; sourceTree = "<group>"; };
@@ -667,6 +669,15 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		1ABC3DEC1899BE55004F0626 /* WebKit2 Cocoa */ = {
+			isa = PBXGroup;
+			children = (
+				1ABC3DED1899BE6D004F0626 /* Navigation.mm */,
+			);
+			name = "WebKit2 Cocoa";
+			path = WebKit2Cocoa;
+			sourceTree = "<group>";
+		};
 		2E9660DC16C07D7B00371B42 /* ios */ = {
 			isa = PBXGroup;
 			children = (
@@ -922,6 +933,7 @@
 				C08587F913FEC39B001EF4E5 /* TestWebKitAPI */,
 				440A1D3614A01000008A66F2 /* WebCore */,
 				BC9096411255616000083756 /* WebKit2 */,
+				1ABC3DEC1899BE55004F0626 /* WebKit2 Cocoa */,
 				BC3C4C6F14575B1D0025FB62 /* WebKit2 Objective-C */,
 				BC9096461255618900083756 /* WTF */,
 			);
@@ -1145,6 +1157,7 @@
 				A7A966DB140ECCC8005EF9B4 /* CheckedArithmeticOperations.cpp in Sources */,
 				5142B2711517C88B00C32B19 /* ContextMenuCanCopyURL.mm in Sources */,
 				F6F3F29113342FEB00A6BF19 /* CookieManager.cpp in Sources */,
+				1ABC3DEF1899BE6D004F0626 /* Navigation.mm in Sources */,
 				26A2C72F15E2E73C005B1A14 /* CString.cpp in Sources */,
 				29AB8AA1164C735800D49BEC /* CustomProtocolsTest.mm in Sources */,
 				3776BC63150946BC0043A66D /* DeviceScaleFactorInDashboardRegions.mm in Sources */,

@@ -290,6 +290,7 @@
 		1AB8A1F418400B8F00E9AE69 /* WKPageFindClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AB8A1F318400B8F00E9AE69 /* WKPageFindClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1AB8A1F618400B9D00E9AE69 /* WKPageFindMatchesClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AB8A1F518400B9D00E9AE69 /* WKPageFindMatchesClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1AB8A1F818400BB800E9AE69 /* WKPageContextMenuClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AB8A1F718400BB800E9AE69 /* WKPageContextMenuClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		1ABC3DF11899C6B6004F0626 /* WKNavigationInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 1ABC3DF01899C6B6004F0626 /* WKNavigationInternal.h */; };
 		1AC1336718565B5700F3EC05 /* UserData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AC1336518565B5700F3EC05 /* UserData.cpp */; };
 		1AC1336818565B5700F3EC05 /* UserData.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AC1336618565B5700F3EC05 /* UserData.h */; };
 		1AC1336C18565C7A00F3EC05 /* APIPageHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AC1336B18565C7A00F3EC05 /* APIPageHandle.h */; };
@@ -1934,6 +1935,7 @@
 		1AB8A1F318400B8F00E9AE69 /* WKPageFindClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKPageFindClient.h; sourceTree = "<group>"; };
 		1AB8A1F518400B9D00E9AE69 /* WKPageFindMatchesClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKPageFindMatchesClient.h; sourceTree = "<group>"; };
 		1AB8A1F718400BB800E9AE69 /* WKPageContextMenuClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKPageContextMenuClient.h; sourceTree = "<group>"; };
+		1ABC3DF01899C6B6004F0626 /* WKNavigationInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKNavigationInternal.h; sourceTree = "<group>"; };
 		1AC1336518565B5700F3EC05 /* UserData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UserData.cpp; sourceTree = "<group>"; };
 		1AC1336618565B5700F3EC05 /* UserData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UserData.h; sourceTree = "<group>"; };
 		1AC1336B18565C7A00F3EC05 /* APIPageHandle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = APIPageHandle.h; sourceTree = "<group>"; };
@@ -4238,6 +4240,7 @@
 				1A43E826188F38E2009E4D30 /* Deprecated */,
 				1A5B1C4F1898606F004FCF9B /* WKNavigation.h */,
 				1A5B1C4E1898606F004FCF9B /* WKNavigation.mm */,
+				1ABC3DF01899C6B6004F0626 /* WKNavigationInternal.h */,
 				1AFDD3161891C94700153970 /* WKPreferences.h */,
 				1AFDD3181891CA1200153970 /* WKPreferences.mm */,
 				1A158418189044F50017616C /* WKProcessClass.h */,
@@ -6133,6 +6136,7 @@
 				293EBEAB1627D9C9005F89F1 /* WKDOMText.h in Headers */,
 				BC017D2116263308007054F5 /* WKDOMTextIterator.h in Headers */,
 				37DFA7001810BB92001F4A9F /* WKFoundation.h in Headers */,
+				1ABC3DF11899C6B6004F0626 /* WKNavigationInternal.h in Headers */,
 				1F604BA81889FA7400EE0395 /* WKRenderingProgressEvents.h in Headers */,
 				BCBAACEB145225E30053F82F /* WKProcessGroup.h in Headers */,
 				377EAD4817E2C77B002D193D /* WKUserContentInjectedFrames.h in Headers */,

@@ -34,6 +34,7 @@
 #import <AppKit/AppKit.h>
 #endif
 
+@class WKNavigation;
 @class WKWebViewConfiguration;
 
 /*!
@@ -66,8 +67,7 @@ WK_API_CLASS
  */
 - (instancetype)initWithFrame:(CGRect)frame configuration:(WKWebViewConfiguration *)configuration WK_DESIGNATED_INITIALIZER;
 
-// FIXME: This should return a WKNavigation object.
-- (void)loadRequest:(NSURLRequest *)request;
+- (WKNavigation *)loadRequest:(NSURLRequest *)request;
 
 @end
 

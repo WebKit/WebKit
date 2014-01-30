@@ -23,31 +23,13 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "config.h"
 #import "WKNavigation.h"
-
-#import <wtf/RetainPtr.h>
 
 #if WK_API_ENABLED
 
-@implementation WKNavigation {
-    RetainPtr<NSURLRequest> _request;
-}
+@interface WKNavigation ()
 
-- (instancetype)initWithRequest:(NSURLRequest *)request
-{
-    if (!(self = [super init]))
-        return nil;
-
-    _request = adoptNS([request copy]);
-
-    return self;
-}
-
-- (NSURLRequest *)request
-{
-    return _request.get();
-}
+- (instancetype)initWithRequest:(NSURLRequest *)request;
 
 @end
 

@@ -28,6 +28,7 @@
 
 #if WK_API_ENABLED
 
+#import "WKNavigationInternal.h"
 #import "WKProcessClass.h"
 #import "WKWebViewConfiguration.h"
 #import "WebPageProxy.h"
@@ -120,9 +121,11 @@ static _UIWebViewportConfiguration standardViewportConfiguration = { { UIWebView
     return [[_configuration copy] autorelease];
 }
 
-- (void)loadRequest:(NSURLRequest *)request
+- (WKNavigation *)loadRequest:(NSURLRequest *)request
 {
     _page->loadRequest(request);
+
+    return [[[WKNavigation alloc] initWithRequest:request] autorelease];
 }
 
 #pragma mark iOS-specific methods
