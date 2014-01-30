@@ -1023,7 +1023,7 @@ void WKPageSetPagePolicyClient(WKPageRef pageRef, const WKPagePolicyClientBase* 
             m_client.decidePolicyForNewWindowAction(toAPI(page), toAPI(frame), toAPI(type), toAPI(modifiers), toAPI(mouseButton), toAPI(request.get()), toAPI(frameName.impl()), toAPI(listener), toAPI(userData), m_client.base.clientInfo);
         }
 
-        virtual void decidePolicyForResponse(WebPageProxy* page, WebFrameProxy* frame, const ResourceResponse& resourceResponse, const ResourceRequest& resourceRequest, bool canShowMIMEType, WebFramePolicyListenerProxy* listener, API::Object* userData) override
+        virtual void decidePolicyForResponse(WebPageProxy* page, WebFrameProxy* frame, const ResourceResponse& resourceResponse, const ResourceRequest& resourceRequest, bool canShowMIMEType, RefPtr<WebFramePolicyListenerProxy> listener, API::Object* userData) override
         {
             if (!m_client.decidePolicyForResponse_deprecatedForUseWithV0 && !m_client.decidePolicyForResponse) {
                 listener->use();
@@ -1034,9 +1034,9 @@ void WKPageSetPagePolicyClient(WKPageRef pageRef, const WKPagePolicyClientBase* 
             RefPtr<API::URLRequest> request = API::URLRequest::create(resourceRequest);
 
             if (m_client.decidePolicyForResponse_deprecatedForUseWithV0)
-                m_client.decidePolicyForResponse_deprecatedForUseWithV0(toAPI(page), toAPI(frame), toAPI(response.get()), toAPI(request.get()), toAPI(listener), toAPI(userData), m_client.base.clientInfo);
+                m_client.decidePolicyForResponse_deprecatedForUseWithV0(toAPI(page), toAPI(frame), toAPI(response.get()), toAPI(request.get()), toAPI(listener.get()), toAPI(userData), m_client.base.clientInfo);
             else
-                m_client.decidePolicyForResponse(toAPI(page), toAPI(frame), toAPI(response.get()), toAPI(request.get()), canShowMIMEType, toAPI(listener), toAPI(userData), m_client.base.clientInfo);
+                m_client.decidePolicyForResponse(toAPI(page), toAPI(frame), toAPI(response.get()), toAPI(request.get()), canShowMIMEType, toAPI(listener.get()), toAPI(userData), m_client.base.clientInfo);
         }
 
         virtual void unableToImplementPolicy(WebPageProxy* page, WebFrameProxy* frame, const ResourceError& error, API::Object* userData) override

@@ -52,6 +52,7 @@ void NavigationState::setNavigationDelegate(id <WKNavigationDelegate> delegate)
     m_navigationDelegate = delegate;
 
     m_navigationDelegateMethods.webViewDecidePolicyForNavigationActionDecisionHandler = [delegate respondsToSelector:@selector(webView:decidePolicyForNavigationAction:decisionHandler:)];
+    m_navigationDelegateMethods.webViewDecidePolicyForNavigationResponseDecisionHandler = [delegate respondsToSelector:@selector(webView:decidePolicyForNavigationResponse:decisionHandler:)];
 }
 
 RetainPtr<WKNavigation> NavigationState::createLoadRequestNavigation(uint64_t navigationID, NSURLRequest *request)
@@ -96,7 +97,7 @@ void NavigationState::PolicyClient::decidePolicyForNavigationAction(WebPageProxy
     // FIXME: Set up the navigation action object.
     WKNavigationAction *navigationAction = nil;
 
-    [navigationDelegate.get() webView:m_navigationState.m_webView decidePolicyForNavigationAction:navigationAction decisionHandler:[listener](WKNavigationPolicyDecision policyDecision) {
+    [navigationDelegate webView:m_navigationState.m_webView decidePolicyForNavigationAction:navigationAction decisionHandler:[listener](WKNavigationPolicyDecision policyDecision) {
         switch (policyDecision) {
         case WKNavigationPolicyDecisionAllow:
             listener->use();
@@ -107,6 +108,38 @@ void NavigationState::PolicyClient::decidePolicyForNavigationAction(WebPageProxy
             break;
 
         case WKNavigationPolicyDecisionDownload:
+            listener->download();
+            break;
+        }
+    }];
+}
+
+void NavigationState::PolicyClient::decidePolicyForResponse(WebPageProxy*, WebFrameProxy*, const WebCore::ResourceResponse&, const WebCore::ResourceRequest& resourceRequest, bool canShowMIMEType, RefPtr<WebFramePolicyListenerProxy> listener, API::Object* userData)
+{
+    if (!m_navigationState.m_navigationDelegateMethods.webViewDecidePolicyForNavigationResponseDecisionHandler) {
+        // FIXME: <rdar://problem/15949822> Figure out what the "default delegate behavior" should be here.
+        listener->use();
+        return;
+    }
+
+    auto navigationDelegate = m_navigationState.m_navigationDelegate.get();
+    if (!navigationDelegate)
+        return;
+
+    // FIXME: Set up the navigation response object.
+    WKNavigationResponse *navigationResponse = nil;
+
+    [navigationDelegate webView:m_navigationState.m_webView decidePolicyForNavigationResponse:navigationResponse decisionHandler:[listener](WKNavigationResponsePolicyDecision policyDecision) {
+        switch (policyDecision) {
+        case WKNavigationResponsePolicyDecisionAllow:
+            listener->use();
+            break;
+
+        case WKNavigationResponsePolicyDecisionCancel:
+            listener->ignore();
+            break;
+
+        case WKNavigationResponsePolicyDecisionBecomeDownload:
             listener->download();
             break;
         }

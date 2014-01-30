@@ -29,6 +29,7 @@
 #if WK_API_ENABLED
 
 @class WKNavigationAction;
+@class WKNavigationResponse;
 @class WKWebView;
 
 typedef NS_ENUM(NSInteger, WKNavigationPolicyDecision) {
@@ -37,11 +38,18 @@ typedef NS_ENUM(NSInteger, WKNavigationPolicyDecision) {
     WKNavigationPolicyDecisionDownload
 };
 
+typedef NS_ENUM(NSInteger, WKNavigationResponsePolicyDecision) {
+    WKNavigationResponsePolicyDecisionCancel,
+    WKNavigationResponsePolicyDecisionAllow,
+    WKNavigationResponsePolicyDecisionBecomeDownload
+};
+
 @protocol WKNavigationDelegate <NSObject>
 
 @optional
 
 - (void)webView:(WKWebView *)webView decidePolicyForNavigationAction:(WKNavigationAction *)navigationAction decisionHandler:(void (^)(WKNavigationPolicyDecision))decisionHandler;
+- (void)webView:(WKWebView *)webView decidePolicyForNavigationResponse:(WKNavigationResponse *)navigationResponse decisionHandler:(void (^)(WKNavigationResponsePolicyDecision))decisionHandler;
 
 @end
 

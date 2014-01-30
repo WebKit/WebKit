@@ -2494,7 +2494,7 @@ void WebPageProxy::decidePolicyForResponse(uint64_t frameID, const ResourceRespo
 
     RefPtr<WebFramePolicyListenerProxy> listener = frame->setUpPolicyListenerProxy(listenerID);
 
-    m_policyClient->decidePolicyForResponse(this, frame, response, request, canShowMIMEType, listener.get(), userData.get());
+    m_policyClient->decidePolicyForResponse(this, frame, response, request, canShowMIMEType, std::move(listener), userData.get());
 }
 
 void WebPageProxy::decidePolicyForResponseSync(uint64_t frameID, const ResourceResponse& response, const ResourceRequest& request, bool canShowMIMEType, uint64_t listenerID, IPC::MessageDecoder& decoder, bool& receivedPolicyAction, uint64_t& policyAction, uint64_t& downloadID)

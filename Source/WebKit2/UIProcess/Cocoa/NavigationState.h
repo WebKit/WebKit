@@ -62,12 +62,14 @@ private:
     private:
         // API::PolicyClient
         virtual void decidePolicyForNavigationAction(WebPageProxy*, WebFrameProxy*, const NavigationActionData&, WebFrameProxy* originatingFrame, const WebCore::ResourceRequest& originalRequest, const WebCore::ResourceRequest&, RefPtr<WebFramePolicyListenerProxy>, API::Object* userData) override;
+        virtual void decidePolicyForResponse(WebPageProxy*, WebFrameProxy*, const WebCore::ResourceResponse&, const WebCore::ResourceRequest&, bool canShowMIMEType, RefPtr<WebFramePolicyListenerProxy>, API::Object* userData) override;
 
         NavigationState& m_navigationState;
     };
 
     struct {
         bool webViewDecidePolicyForNavigationActionDecisionHandler : 1;
+        bool webViewDecidePolicyForNavigationResponseDecisionHandler : 1;
     } m_navigationDelegateMethods;
 
     WKWebView *m_webView;
