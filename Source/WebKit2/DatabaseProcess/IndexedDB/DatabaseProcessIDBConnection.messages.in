@@ -45,6 +45,8 @@ messages -> DatabaseProcessIDBConnection LegacyReceiver {
     OpenCursor(uint64_t requestID, int64_t transactionID, int64_t objectStoreID, int64_t indexID, int64_t cursorDirection, int64_t cursorType, int64_t taskType, WebCore::IDBKeyRangeData keyRange)
     CursorAdvance(uint64_t requestID, int64_t cursorID, uint64_t count)
     CursorIterate(uint64_t requestID, int64_t cursorID, WebCore::IDBKeyData key)
+    
+    Count(uint64_t requestID, int64_t transactionID, int64_t objectStoreID, int64_t indexID, WebCore::IDBKeyRangeData keyRange)
 }
 
 #endif // ENABLE(INDEXED_DATABASE) && ENABLE(DATABASE_PROCESS)

@@ -86,6 +86,8 @@ private:
     void cursorAdvance(uint64_t requestID, int64_t cursorID, uint64_t count);
     void cursorIterate(uint64_t requestID, int64_t cursorID, const WebCore::IDBKeyData&);
 
+    void count(uint64_t requestID, int64_t transactionID, int64_t objectStoreID, int64_t indexID, const WebCore::IDBKeyRangeData&);
+
     Ref<DatabaseToWebProcessConnection> m_connection;
     uint64_t m_serverConnectionIdentifier;
 

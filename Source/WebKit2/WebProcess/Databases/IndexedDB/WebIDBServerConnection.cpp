@@ -458,8 +458,33 @@ void WebIDBServerConnection::didIterateCursor(uint64_t requestID, WebCore::IDBKe
     serverRequest->completeRequest(key.maybeCreateIDBKey(), primaryKey.maybeCreateIDBKey(), value.release(), errorCode ? IDBDatabaseError::create(errorCode, errorMessage) : nullptr);
 }
 
-void WebIDBServerConnection::count(IDBTransactionBackend&, const CountOperation&, std::function<void(int64_t, PassRefPtr<IDBDatabaseError>)> completionCallback)
+void WebIDBServerConnection::count(IDBTransactionBackend& transaction, const CountOperation& operation, std::function<void(int64_t, PassRefPtr<IDBDatabaseError>)> completionCallback)
 {
+    RefPtr<AsyncRequest> serverRequest = AsyncRequestImpl<int64_t, PassRefPtr<IDBDatabaseError>>::create(completionCallback);
+
+    serverRequest->setAbortHandler([completionCallback]() {
+        completionCallback(0, IDBDatabaseError::create(IDBDatabaseException::UnknownError, "Unknown error occured getting count"));
+    });
+
+    uint64_t requestID = serverRequest->requestID();
+    ASSERT(!m_serverRequests.contains(requestID));
+    m_serverRequests.add(requestID, serverRequest.release());
+
+    LOG(IDB, "WebProcess count request ID %llu", requestID);
+
+    send(Messages::DatabaseProcessIDBConnection::Count(requestID, transaction.id(), operation.objectStoreID(), operation.indexID(), IDBKeyRangeData(operation.keyRange())));
+}
+
+void WebIDBServerConnection::didCount(uint64_t requestID, int64_t count, uint32_t errorCode, const String& errorMessage)
+{
+    LOG(IDB, "WebProcess didCount request ID %llu (error - %s)", requestID, errorMessage.utf8().data());
+
+    RefPtr<AsyncRequest> serverRequest = m_serverRequests.take(requestID);
+
+    if (!serverRequest)
+        return;
+
+    serverRequest->completeRequest(count, errorCode ? IDBDatabaseError::create(errorCode, errorMessage) : nullptr);
 }
 
 void WebIDBServerConnection::deleteRange(IDBTransactionBackend&, const DeleteRangeOperation&, std::function<void(PassRefPtr<IDBDatabaseError>)> completionCallback)

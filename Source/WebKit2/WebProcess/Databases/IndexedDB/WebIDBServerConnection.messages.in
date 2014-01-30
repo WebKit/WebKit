@@ -40,8 +40,9 @@ messages -> WebIDBServerConnection LegacyReceiver {
     DidPutRecord(uint64_t requestID, WebCore::IDBKeyData resultKey, uint32_t errorCode, String errorMessage)
     DidGetRecord(uint64_t requestID, WebCore::IDBGetResult getResult, uint32_t errorCode, String errorMessage)
     DidOpenCursor(uint64_t requestID, int64_t cursorID, uint32_t errorCode, String errorMessage)
-    DidAdvanceCursor(uint64_t requestID, WebCore::IDBKeyData key, WebCore::IDBKeyData primaryKey, IPC::DataReference value, uint32_t errorCode, String errorMessage);
-    DidIterateCursor(uint64_t requestID, WebCore::IDBKeyData key, WebCore::IDBKeyData primaryKey, IPC::DataReference value, uint32_t errorCode, String errorMessage);
+    DidAdvanceCursor(uint64_t requestID, WebCore::IDBKeyData key, WebCore::IDBKeyData primaryKey, IPC::DataReference value, uint32_t errorCode, String errorMessage)
+    DidIterateCursor(uint64_t requestID, WebCore::IDBKeyData key, WebCore::IDBKeyData primaryKey, IPC::DataReference value, uint32_t errorCode, String errorMessage)
+    DidCount(uint64_t requestID, int64_t count, uint32_t errorCode, String errorMessage)
 }
 
 #endif // ENABLE(INDEXED_DATABASE) && ENABLE(DATABASE_PROCESS)

@@ -134,6 +134,26 @@ std::unique_ptr<AsyncTask> createAsyncTask(
         WebCore::CrossThreadCopier<P4>::copy(parameter4));
 }
 
+template<typename T, typename P1, typename MP1, typename P2, typename MP2, typename P3, typename MP3, typename P4, typename MP4, typename P5, typename MP5>
+std::unique_ptr<AsyncTask> createAsyncTask(
+    T& callee,
+    void (T::*method)(MP1, MP2, MP3, MP4, MP5),
+    const P1& parameter1,
+    const P2& parameter2,
+    const P3& parameter3,
+    const P4& parameter4,
+    const P5& parameter5)
+{
+    return std::make_unique<AsyncTaskImpl<T, MP1, MP2, MP3, MP4, MP5>>(
+        &callee,
+        method,
+        WebCore::CrossThreadCopier<P1>::copy(parameter1),
+        WebCore::CrossThreadCopier<P2>::copy(parameter2),
+        WebCore::CrossThreadCopier<P3>::copy(parameter3),
+        WebCore::CrossThreadCopier<P4>::copy(parameter4),
+        WebCore::CrossThreadCopier<P5>::copy(parameter5));
+}
+
 template<typename T, typename P1, typename MP1, typename P2, typename MP2, typename P3, typename MP3, typename P4, typename MP4, typename P5, typename MP5, typename P6, typename MP6>
 std::unique_ptr<AsyncTask> createAsyncTask(
     T& callee,

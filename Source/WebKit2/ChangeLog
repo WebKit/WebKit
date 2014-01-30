@@ -1,3 +1,33 @@
+2014-01-30  Brady Eidson  <beidson@apple.com>
+
+        IDB: Implement IDBObjectStore.count()
+        https://bugs.webkit.org/show_bug.cgi?id=127888
+
+        Reviewed by Tim Horton.
+
+        Forward request to the DatabaseProcess, and handle its completion:
+        * WebProcess/Databases/IndexedDB/WebIDBServerConnection.cpp:
+        (WebKit::WebIDBServerConnection::count):
+        (WebKit::WebIDBServerConnection::didCount):
+        * WebProcess/Databases/IndexedDB/WebIDBServerConnection.h:
+        * WebProcess/Databases/IndexedDB/WebIDBServerConnection.messages.in:
+
+        Pass request along to the appropriate UniqueIDBDatabase:
+        * DatabaseProcess/IndexedDB/DatabaseProcessIDBConnection.cpp:
+        (WebKit::DatabaseProcessIDBConnection::count):
+        * DatabaseProcess/IndexedDB/DatabaseProcessIDBConnection.h:
+        * DatabaseProcess/IndexedDB/DatabaseProcessIDBConnection.messages.in:
+
+        Pass request to backing store thread, then pass it back to the WebProcess:
+        * DatabaseProcess/IndexedDB/UniqueIDBDatabase.cpp:
+        (WebKit::UniqueIDBDatabase::count):
+        (WebKit::UniqueIDBDatabase::countInBackingStore):
+        (WebKit::UniqueIDBDatabase::didCountInBackingStore):
+        * DatabaseProcess/IndexedDB/UniqueIDBDatabase.h:
+
+        * Shared/AsyncTask.h:
+        (WebKit::createAsyncTask):
+
 2014-01-29  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Fix the GTK+ build after r163037.

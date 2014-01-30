@@ -615,6 +615,27 @@ void UniqueIDBDatabase::cursorIterate(const IDBIdentifier& cursorIdentifier, con
     postDatabaseTask(createAsyncTask(*this, &UniqueIDBDatabase::iterateCursorInBackingStore, requestID, cursorIdentifier, key));
 }
 
+void UniqueIDBDatabase::count(const IDBIdentifier& transactionIdentifier, int64_t objectStoreID, int64_t indexID, const IDBKeyRangeData& keyRangeData, std::function<void(int64_t, uint32_t, const String&)> callback)
+{
+    ASSERT(isMainThread());
+
+    if (!m_acceptingNewRequests) {
+        callback(0, INVALID_STATE_ERR, "Unable to get count from database because it has shut down");
+        return;
+    }
+
+    RefPtr<AsyncRequest> request = AsyncRequestImpl<int64_t, uint32_t, const String&>::create([this, callback](int64_t count, uint32_t errorCode, const String& errorMessage) {
+        callback(count, errorCode, errorMessage);
+    }, [this, callback]() {
+        callback(0, INVALID_STATE_ERR, "Unable to get count from database");
+    });
+
+    uint64_t requestID = request->requestID();
+    m_pendingDatabaseTasks.add(requestID, request.release());
+
+    postDatabaseTask(createAsyncTask(*this, &UniqueIDBDatabase::countInBackingStore, requestID, transactionIdentifier, objectStoreID, indexID, keyRangeData));
+}
+
 void UniqueIDBDatabase::openBackingStoreTransaction(const IDBIdentifier& transactionIdentifier, const Vector<int64_t>& objectStoreIDs, IndexedDB::TransactionMode mode)
 {
     ASSERT(!isMainThread());
@@ -873,6 +894,21 @@ void UniqueIDBDatabase::didIterateCursorInBackingStore(uint64_t requestID, const
     ASSERT(request);
 
     request->completeRequest(key, primaryKey, SharedBuffer::create(value.data(), value.size()), errorCode, errorMessage);
+}
+
+void UniqueIDBDatabase::countInBackingStore(uint64_t requestID, const IDBIdentifier& transactionIdentifier, int64_t objectStoreID, int64_t indexID, const IDBKeyRangeData&)
+{
+    // FIXME: Implement
+
+    postMainThreadTask(createAsyncTask(*this, &UniqueIDBDatabase::didCountInBackingStore, requestID, 0, IDBDatabaseException::UnknownError, ASCIILiteral("counting in backing store not supported yet")));
+}
+
+void UniqueIDBDatabase::didCountInBackingStore(uint64_t requestID, int64_t count, uint32_t errorCode, const String& errorMessage)
+{
+    RefPtr<AsyncRequest> request = m_pendingDatabaseTasks.take(requestID);
+    ASSERT(request);
+
+    request->completeRequest(count, errorCode, errorMessage);
 }
 
 String UniqueIDBDatabase::absoluteDatabaseDirectory() const

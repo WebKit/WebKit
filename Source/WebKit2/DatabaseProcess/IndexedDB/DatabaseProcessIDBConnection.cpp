@@ -234,6 +234,18 @@ void DatabaseProcessIDBConnection::getRecord(uint64_t requestID, int64_t transac
     });
 }
 
+void DatabaseProcessIDBConnection::count(uint64_t requestID, int64_t transactionID, int64_t objectStoreID, int64_t indexID, const IDBKeyRangeData& keyRangeData)
+{
+    ASSERT(m_uniqueIDBDatabase);
+
+    LOG(IDB, "DatabaseProcess count request ID %llu, object store id %lli", requestID, objectStoreID);
+
+    RefPtr<DatabaseProcessIDBConnection> connection(this);
+    m_uniqueIDBDatabase->count(IDBIdentifier(*this, transactionID), objectStoreID, indexID, keyRangeData, [connection, requestID](int64_t count, uint32_t errorCode, const String& errorMessage) {
+        connection->send(Messages::WebIDBServerConnection::DidCount(requestID, count, errorCode, errorMessage));
+    });
+}
+
 void DatabaseProcessIDBConnection::openCursor(uint64_t requestID, int64_t transactionID, int64_t objectStoreID, int64_t indexID, int64_t cursorDirection, int64_t cursorType, int64_t taskType, const WebCore::IDBKeyRangeData& keyRangeData)
 {
     ASSERT(m_uniqueIDBDatabase);
