@@ -1,3 +1,12 @@
+2014-01-29  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        js/function-apply-aliased.html is timing out
+        https://bugs.webkit.org/show_bug.cgi?id=127860
+
+        Reviewed by Michael Saboff.
+
+        * TestExpectations:
+
 2014-01-29  Bem Jones-Bey  <bjonesbe@adobe.com>
 
         Update clip-path tests to use new shape syntax
