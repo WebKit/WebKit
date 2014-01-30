@@ -91,6 +91,12 @@ public:
     
     // Schemes whose responses can be cached indefinitely.
     static bool shouldCacheResponsesFromURLSchemeIndefinitely(const String& scheme);
+
+#if ENABLE(CACHE_PARTITIONING)
+    // Schemes whose requests should be partitioned in the cache
+    static void registerURLSchemeAsCachePartitioned(const String& scheme);
+    static bool shouldPartitionCacheForURLScheme(const String& scheme);
+#endif
 };
 
 } // namespace WebCore

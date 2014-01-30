@@ -576,6 +576,9 @@ WebProcessProxy& WebContext::createNewWebProcess()
     copyToVector(m_schemesToRegisterAsNoAccess, parameters.urlSchemesRegisteredAsNoAccess);
     copyToVector(m_schemesToRegisterAsDisplayIsolated, parameters.urlSchemesRegisteredAsDisplayIsolated);
     copyToVector(m_schemesToRegisterAsCORSEnabled, parameters.urlSchemesRegisteredAsCORSEnabled);
+#if ENABLE(CACHE_PARTITIONING)
+    copyToVector(m_schemesToRegisterAsCachePartitioned, parameters.urlSchemesRegisteredAsCachePartitioned);
+#endif
 
     parameters.shouldAlwaysUseComplexTextCodePath = m_alwaysUsesComplexTextCodePath;
     parameters.shouldUseFontSmoothing = m_shouldUseFontSmoothing;
@@ -935,6 +938,14 @@ void WebContext::unregisterGlobalURLSchemeAsHavingCustomProtocolHandlers(const S
     globalURLSchemesWithCustomProtocolHandlers().remove(schemeLower);
     for (auto* context : allContexts())
         context->unregisterSchemeForCustomProtocol(schemeLower);
+}
+#endif
+
+#if ENABLE(CACHE_PARTITIONING)
+void WebContext::registerURLSchemeAsCachePartitioned(const String& urlScheme)
+{
+    m_schemesToRegisterAsCachePartitioned.add(urlScheme);
+    sendToAllProcesses(Messages::WebProcess::RegisterURLSchemeAsCachePartitioned(urlScheme));
 }
 #endif
 

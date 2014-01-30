@@ -327,6 +327,11 @@ void WebProcess::initializeWebProcess(const WebProcessCreationParameters& parame
     for (size_t i = 0; i < parameters.urlSchemesRegisteredAsCORSEnabled.size(); ++i)
         registerURLSchemeAsCORSEnabled(parameters.urlSchemesRegisteredAsCORSEnabled[i]);
 
+#if ENABLE(CACHE_PARTITIONING)
+    for (auto& scheme : parameters.urlSchemesRegisteredAsCachePartitioned)
+        registerURLSchemeAsCORSEnabled(scheme);
+#endif
+
     setDefaultRequestTimeoutInterval(parameters.defaultRequestTimeoutInterval);
 
     if (parameters.shouldAlwaysUseComplexTextCodePath)
@@ -428,6 +433,13 @@ void WebProcess::registerURLSchemeAsCORSEnabled(const String& urlScheme) const
 {
     SchemeRegistry::registerURLSchemeAsCORSEnabled(urlScheme);
 }
+
+#if ENABLE(CACHE_PARTITIONING)
+void WebProcess::registerURLSchemeAsCachePartitioned(const String& urlScheme) const
+{
+    SchemeRegistry::registerURLSchemeAsCachePartitioned(urlScheme);
+}
+#endif
 
 void WebProcess::setDefaultRequestTimeoutInterval(double timeoutInterval)
 {

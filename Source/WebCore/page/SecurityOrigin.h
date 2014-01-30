@@ -215,6 +215,10 @@ private:
     // FIXME: Rename this function to something more semantic.
     bool passesFileCheck(const SecurityOrigin*) const;
     bool isThirdParty(const SecurityOrigin*) const;
+
+    // This method checks that the scheme for this origin is an HTTP-family
+    // scheme, e.g. HTTP and HTTPS.
+    bool isHTTPFamily() const { return m_protocol == "http" || m_protocol == "https"; }
     
     enum ShouldAllowFromThirdParty { AlwaysAllowFromThirdParty, MaybeAllowFromThirdParty };
     bool canAccessStorage(const SecurityOrigin*, ShouldAllowFromThirdParty = MaybeAllowFromThirdParty) const;

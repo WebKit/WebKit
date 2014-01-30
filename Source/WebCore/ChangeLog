@@ -1,3 +1,26 @@
+2014-01-27  Jeffrey Pfau  <jpfau@apple.com>
+
+        Add a method for schemes to be registered as supporting cache partitioning
+        https://bugs.webkit.org/show_bug.cgi?id=127739
+
+        Reviewed by Darin Adler.
+
+        Currently, this assumes that schemes supporting cache partitioning
+        also support (scheme, host) doubles for the scheme. Furthermore,
+        the scheme is currently discarded when partitioning and is only
+        checked to ensure that partitioning is supported for that scheme: it
+        is assumed that all origins with the same host double should be binned
+        together, regardless of scheme.
+
+        * WebCore.exp.in:
+        * page/SecurityOrigin.cpp:
+        (WebCore::SecurityOrigin::cachePartition):
+        * platform/SchemeRegistry.cpp:
+        (WebCore::CachePartitioningSchemes):
+        (WebCore::SchemeRegistry::registerURLSchemeAsCachePartitioned):
+        (WebCore::SchemeRegistry::shouldPartitionCacheForURLScheme):
+        * platform/SchemeRegistry.h:
+
 2014-01-30  Jer Noble  <jer.noble@apple.com>
 
         [iOS] Convert blocks to lambdas in iOS Fullscreen code.

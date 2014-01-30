@@ -1,3 +1,29 @@
+2014-01-27  Jeffrey Pfau  <jpfau@apple.com>
+
+        Add a method for schemes to be registered as supporting cache partitioning
+        https://bugs.webkit.org/show_bug.cgi?id=127739
+
+        Reviewed by Darin Adler.
+
+        Pipe information about cache partitioned scheme through WebKit2.
+
+        * Shared/WebProcessCreationParameters.cpp:
+        (WebKit::WebProcessCreationParameters::encode):
+        (WebKit::WebProcessCreationParameters::decode):
+        * Shared/WebProcessCreationParameters.h:
+        * UIProcess/API/C/WKContext.cpp:
+        (WKContextRegisterURLSchemeAsCachePartitioned):
+        * UIProcess/API/C/WKContextPrivate.h:
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::createNewWebProcess):
+        (WebKit::WebContext::registerURLSchemeAsCachePartitioned):
+        * UIProcess/WebContext.h:
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::initializeWebProcess):
+        (WebKit::WebProcess::registerURLSchemeAsCachePartitioned):
+        * WebProcess/WebProcess.h:
+        * WebProcess/WebProcess.messages.in:
+
 2014-01-30  Tim Horton  <timothy_horton@apple.com>
 
         Lots of API test assertion failures after r163093

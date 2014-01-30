@@ -186,6 +186,16 @@ void WKContextRegisterURLSchemeAsSecure(WKContextRef contextRef, WKStringRef url
     toImpl(contextRef)->registerURLSchemeAsSecure(toImpl(urlScheme)->string());
 }
 
+void WKContextRegisterURLSchemeAsCachePartitioned(WKContextRef contextRef, WKStringRef urlScheme)
+{
+#if ENABLE(CACHE_PARTITIONING)
+    toImpl(contextRef)->registerURLSchemeAsCachePartitioned(toImpl(urlScheme)->string());
+#else
+    UNUSED_PARAM(contextRef);
+    UNUSED_PARAM(urlScheme);
+#endif
+}
+
 void WKContextSetDomainRelaxationForbiddenForURLScheme(WKContextRef contextRef, WKStringRef urlScheme)
 {
     toImpl(contextRef)->setDomainRelaxationForbiddenForURLScheme(toImpl(urlScheme)->string());

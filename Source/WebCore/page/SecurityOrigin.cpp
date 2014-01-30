@@ -444,10 +444,13 @@ String SecurityOrigin::cachePartition() const
     if (m_storageBlockingPolicy != BlockThirdPartyStorage)
         return String();
 
-    if (m_protocol != "http" && m_protocol != "https")
-        return String();
+    if (isHTTPFamily())
+        return host();
 
-    return host();
+    if (SchemeRegistry::shouldPartitionCacheForURLScheme(m_protocol))
+        return host();
+
+    return String();
 }
 #endif
 

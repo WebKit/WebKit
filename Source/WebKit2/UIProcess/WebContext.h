@@ -189,6 +189,9 @@ public:
     void registerURLSchemeAsNoAccess(const String&);
     void registerURLSchemeAsDisplayIsolated(const String&);
     void registerURLSchemeAsCORSEnabled(const String&);
+#if ENABLE(CACHE_PARTITIONING)
+    void registerURLSchemeAsCachePartitioned(const String&);
+#endif
 
     void addVisitedLink(const String&);
     void addVisitedLinkHash(WebCore::LinkHash);
@@ -452,6 +455,9 @@ private:
     HashSet<String> m_schemesToRegisterAsNoAccess;
     HashSet<String> m_schemesToRegisterAsDisplayIsolated;
     HashSet<String> m_schemesToRegisterAsCORSEnabled;
+#if ENABLE(CACHE_PARTITIONING)
+    HashSet<String> m_schemesToRegisterAsCachePartitioned;
+#endif
 
     bool m_alwaysUsesComplexTextCodePath;
     bool m_shouldUseFontSmoothing;
