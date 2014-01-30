@@ -69,8 +69,7 @@ public:
 
     void enumerateRectsBeingDrawn(CGContextRef, void (^)(CGRect));
 
-private:
-    bool hasFrontBuffer()
+    bool hasFrontBuffer() const
     {
 #if USE(IOSURFACE)
         if (m_acceleratesDrawing)
@@ -78,6 +77,7 @@ private:
 #endif
         return !!m_frontBuffer;
     }
+private:
 
     void drawInContext(WebCore::GraphicsContext&, CGImageRef frontImage);
 

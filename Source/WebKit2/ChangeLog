@@ -1,3 +1,18 @@
+2014-01-30  Jeremy Jones  <jeremyj@apple.com>
+
+        Crash in RemoteLayerBackingStore::encode when m_frontBuffer is nullptr.
+        https://bugs.webkit.org/show_bug.cgi?id=127756
+
+        Reviewed by Jer Noble.
+
+        Don't encode RemoteLayerBackingStore when it has no front buffer.
+
+        * Shared/mac/RemoteLayerBackingStore.h:
+        (WebKit::RemoteLayerBackingStore::hasFrontBuffer):
+        * Shared/mac/RemoteLayerTreeTransaction.mm:
+        (WebKit::RemoteLayerTreeTransaction::LayerProperties::encode):
+        (WebKit::RemoteLayerTreeTransaction::LayerProperties::decode):
+
 2014-01-30  Mark Rowe  <mrowe@apple.com>
 
         Host plug-ins in XPC services
