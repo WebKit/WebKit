@@ -1,5 +1,28 @@
 2014-01-30  Brady Eidson  <beidson@apple.com>
 
+        IDB: Key generator support
+        https://bugs.webkit.org/show_bug.cgi?id=127871
+
+        Reviewed by Tim Horton.
+
+        * DatabaseProcess/IndexedDB/UniqueIDBDatabase.cpp:
+        (WebKit::UniqueIDBDatabase::putRecordInBackingStore): Update for storing/retrieving integers instead of IDBKeys.
+        * DatabaseProcess/IndexedDB/UniqueIDBDatabaseBackingStore.h:
+
+        * DatabaseProcess/IndexedDB/sqlite/UniqueIDBDatabaseBackingStoreSQLite.cpp:
+        (WebKit::UniqueIDBDatabaseBackingStoreSQLite::createAndPopulateInitialMetadata): Create a keygen table.
+        (WebKit::UniqueIDBDatabaseBackingStoreSQLite::createObjectStore): Put a record in the keygen table for
+          this object store if necessary.
+        (WebKit::UniqueIDBDatabaseBackingStoreSQLite::deleteObjectStore): Delete the entry in the keygen table.
+        (WebKit::UniqueIDBDatabaseBackingStoreSQLite::generateKeyNumber): Pull the current number from the table.
+        (WebKit::UniqueIDBDatabaseBackingStoreSQLite::updateKeyGeneratorNumber): Update the number in the table.
+        * DatabaseProcess/IndexedDB/sqlite/UniqueIDBDatabaseBackingStoreSQLite.h:
+
+        * WebProcess/Databases/IndexedDB/WebIDBServerConnection.cpp:
+        (WebKit::WebIDBServerConnection::put): Null keys are acceptable for autoIncrement object stores.
+
+2014-01-30  Brady Eidson  <beidson@apple.com>
+
         IDB: Implement IDBObjectStore.count()
         https://bugs.webkit.org/show_bug.cgi?id=127888
 

@@ -67,10 +67,11 @@ public:
     virtual bool createIndex(const IDBIdentifier& transactionIdentifier, int64_t objectStoreID, const WebCore::IDBIndexMetadata&) override;
     virtual bool deleteIndex(const IDBIdentifier& transactionIdentifier, int64_t objectStoreID, int64_t indexID) override;
 
-    virtual PassRefPtr<WebCore::IDBKey> generateKey(const IDBIdentifier& transactionIdentifier, int64_t objectStoreID) override;
+    virtual bool generateKeyNumber(const IDBIdentifier& transactionIdentifier, int64_t objectStoreID, int64_t& generatedKey) override;
+    virtual bool updateKeyGeneratorNumber(const IDBIdentifier& transactionIdentifier, int64_t objectStoreId, int64_t keyNumber, bool checkCurrent) override;
+
     virtual bool keyExistsInObjectStore(const IDBIdentifier& transactionIdentifier, int64_t objectStoreID, const WebCore::IDBKey&, bool& keyExists) override;
     virtual bool putRecord(const IDBIdentifier& transactionIdentifier, int64_t objectStoreID, const WebCore::IDBKey&, const uint8_t* valueBuffer, size_t valueSize) override;
-    virtual bool updateKeyGenerator(const IDBIdentifier& transactionIdentifier, int64_t objectStoreId, const WebCore::IDBKey&, bool checkCurrent) override;
 
     virtual bool getKeyRecordFromObjectStore(const IDBIdentifier& transactionIdentifier, int64_t objectStoreID, const WebCore::IDBKey&, RefPtr<WebCore::SharedBuffer>& result) override;
     virtual bool getKeyRangeRecordFromObjectStore(const IDBIdentifier& transactionIdentifier, int64_t objectStoreID, const WebCore::IDBKeyRange&, RefPtr<WebCore::SharedBuffer>& result, RefPtr<WebCore::IDBKey>& resultKey) override;

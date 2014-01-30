@@ -98,6 +98,12 @@ std::unique_ptr<IDBDatabaseMetadata> UniqueIDBDatabaseBackingStoreSQLite::create
         return nullptr;
     }
 
+    if (!m_sqliteDB->executeCommand("CREATE TABLE KeyGenerators (objectStoreID INTEGER NOT NULL ON CONFLICT FAIL UNIQUE ON CONFLICT REPLACE, currentKey INTEGER NOT NULL ON CONFLICT FAIL);")) {
+        LOG_ERROR("Could not create KeyGenerators table in database (%i) - %s", m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg());
+        m_sqliteDB = nullptr;
+        return nullptr;
+    }
+
     {
         SQLiteStatement sql(*m_sqliteDB, ASCIILiteral("INSERT INTO IDBDatabaseInfo VALUES ('MetadataVersion', ?);"));
         if (sql.prepare() != SQLResultOk
@@ -381,16 +387,28 @@ bool UniqueIDBDatabaseBackingStoreSQLite::createObjectStore(const IDBIdentifier&
         return false;
     }
 
-    SQLiteStatement sql(*m_sqliteDB, ASCIILiteral("INSERT INTO ObjectStoreInfo VALUES (?, ?, ?, ?, ?);"));
-    if (sql.prepare() != SQLResultOk
-        || sql.bindInt64(1, metadata.id) != SQLResultOk
-        || sql.bindText(2, metadata.name) != SQLResultOk
-        || sql.bindBlob(3, keyPathBlob->data(), keyPathBlob->size()) != SQLResultOk
-        || sql.bindInt(4, metadata.autoIncrement) != SQLResultOk
-        || sql.bindInt64(5, metadata.maxIndexId) != SQLResultOk
-        || sql.step() != SQLResultDone) {
-        LOG_ERROR("Could not add object store '%s' to ObjectStoreInfo table (%i) - %s", metadata.name.utf8().data(), m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg());
-        return false;
+    {
+        SQLiteStatement sql(*m_sqliteDB, ASCIILiteral("INSERT INTO ObjectStoreInfo VALUES (?, ?, ?, ?, ?);"));
+        if (sql.prepare() != SQLResultOk
+            || sql.bindInt64(1, metadata.id) != SQLResultOk
+            || sql.bindText(2, metadata.name) != SQLResultOk
+            || sql.bindBlob(3, keyPathBlob->data(), keyPathBlob->size()) != SQLResultOk
+            || sql.bindInt(4, metadata.autoIncrement) != SQLResultOk
+            || sql.bindInt64(5, metadata.maxIndexId) != SQLResultOk
+            || sql.step() != SQLResultDone) {
+            LOG_ERROR("Could not add object store '%s' to ObjectStoreInfo table (%i) - %s", metadata.name.utf8().data(), m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg());
+            return false;
+        }
+    }
+
+    {
+        SQLiteStatement sql(*m_sqliteDB, ASCIILiteral("INSERT INTO KeyGenerators VALUES (?, 0);"));
+        if (sql.prepare() != SQLResultOk
+            || sql.bindInt64(1, metadata.id) != SQLResultOk
+            || sql.step() != SQLResultDone) {
+            LOG_ERROR("Could not seed initial key generator value for ObjectStoreInfo table (%i) - %s", m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg());
+            return false;
+        }
     }
 
     return true;
@@ -419,6 +437,17 @@ bool UniqueIDBDatabaseBackingStoreSQLite::deleteObjectStore(const IDBIdentifier&
             || sql.bindInt64(1, objectStoreID) != SQLResultOk
             || sql.step() != SQLResultDone) {
             LOG_ERROR("Could not delete object store id %lli from ObjectStoreInfo table (%i) - %s", objectStoreID, m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg());
+            return false;
+        }
+    }
+
+    // Delete the ObjectStore's key generator record if there is one.
+    {
+        SQLiteStatement sql(*m_sqliteDB, ASCIILiteral("DELETE FROM KeyGenerators WHERE objectStoreID = ?;"));
+        if (sql.prepare() != SQLResultOk
+            || sql.bindInt64(1, objectStoreID) != SQLResultOk
+            || sql.step() != SQLResultDone) {
+            LOG_ERROR("Could not delete object store from KeyGenerators table (%i) - %s", m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg());
             return false;
         }
     }
@@ -554,10 +583,77 @@ bool UniqueIDBDatabaseBackingStoreSQLite::deleteIndex(const IDBIdentifier& trans
     return true;
 }
 
-PassRefPtr<IDBKey> UniqueIDBDatabaseBackingStoreSQLite::generateKey(const IDBIdentifier& transactionIdentifier, int64_t objectStoreID)
+bool UniqueIDBDatabaseBackingStoreSQLite::generateKeyNumber(const IDBIdentifier& transactionIdentifier, int64_t objectStoreID, int64_t& generatedKey)
 {
-    // FIXME (<rdar://problem/15877909>): Implement
-    return nullptr;
+    ASSERT(!isMainThread());
+    ASSERT(m_sqliteDB);
+    ASSERT(m_sqliteDB->isOpen());
+
+    // The IndexedDatabase spec defines the max key generator value as 2^53;
+    static const int64_t maxGeneratorValue = 9007199254740992LL;
+
+    SQLiteIDBTransaction* transaction = m_transactions.get(transactionIdentifier);
+    if (!transaction || !transaction->inProgress()) {
+        LOG_ERROR("Attempt to generate key in database without an established, in-progress transaction");
+        return false;
+    }
+    if (transaction->mode() == IndexedDB::TransactionMode::ReadOnly) {
+        LOG_ERROR("Attempt to generate key in database during read-only transaction");
+        return false;
+    }
+
+    int64_t currentValue;
+    {
+        SQLiteStatement sql(*m_sqliteDB, ASCIILiteral("SELECT currentKey FROM KeyGenerators WHERE objectStoreID = ?;"));
+        if (sql.prepare() != SQLResultOk
+            || sql.bindInt64(1, objectStoreID) != SQLResultOk) {
+            LOG_ERROR("Could not delete index id %lli from IndexInfo table (%i) - %s", objectStoreID, m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg());
+            return false;
+        }
+        int result = sql.step();
+        if (result != SQLResultRow) {
+            LOG_ERROR("Could not retreive key generator value for object store, but it should be there.");
+            return false;
+        }
+
+        currentValue = sql.getColumnInt64(0);
+    }
+
+    if (currentValue < 0 || currentValue > maxGeneratorValue)
+        return false;
+
+    generatedKey = currentValue + 1;
+    return true;
+}
+
+bool UniqueIDBDatabaseBackingStoreSQLite::updateKeyGeneratorNumber(const IDBIdentifier& transactionIdentifier, int64_t objectStoreID, int64_t keyNumber, bool)
+{
+    ASSERT(!isMainThread());
+    ASSERT(m_sqliteDB);
+    ASSERT(m_sqliteDB->isOpen());
+
+    SQLiteIDBTransaction* transaction = m_transactions.get(transactionIdentifier);
+    if (!transaction || !transaction->inProgress()) {
+        LOG_ERROR("Attempt to update key generator in database without an established, in-progress transaction");
+        return false;
+    }
+    if (transaction->mode() == IndexedDB::TransactionMode::ReadOnly) {
+        LOG_ERROR("Attempt to update key generator in database during read-only transaction");
+        return false;
+    }
+
+    {
+        SQLiteStatement sql(*m_sqliteDB, ASCIILiteral("INSERT INTO KeyGenerators VALUES (?, ?);"));
+        if (sql.prepare() != SQLResultOk
+            || sql.bindInt64(1, objectStoreID) != SQLResultOk
+            || sql.bindInt64(2, keyNumber) != SQLResultOk
+            || sql.step() != SQLResultDone) {
+            LOG_ERROR("Could not update key generator value (%i) - %s", m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg());
+            return false;
+        }
+    }
+
+    return true;
 }
 
 bool UniqueIDBDatabaseBackingStoreSQLite::keyExistsInObjectStore(const IDBIdentifier& transactionIdentifier, int64_t objectStoreID, const IDBKey&, bool& keyExists)
@@ -600,12 +696,6 @@ bool UniqueIDBDatabaseBackingStoreSQLite::putRecord(const IDBIdentifier& transac
     }
 
     return true;
-}
-
-bool UniqueIDBDatabaseBackingStoreSQLite::updateKeyGenerator(const IDBIdentifier& transactionIdentifier, int64_t objectStoreId, const IDBKey&, bool checkCurrent)
-{
-    // FIXME (<rdar://problem/15877909>): Implement
-    return false;
 }
 
 bool UniqueIDBDatabaseBackingStoreSQLite::getKeyRecordFromObjectStore(const IDBIdentifier& transactionIdentifier, int64_t objectStoreID, const IDBKey& key, RefPtr<SharedBuffer>& result)

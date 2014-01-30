@@ -753,9 +753,14 @@ void UniqueIDBDatabase::putRecordInBackingStore(uint64_t requestID, const IDBIde
 
     bool keyWasGenerated = false;
     RefPtr<IDBKey> key;
+    int64_t keyNumber = 0;
 
     if (putMode != IDBDatabaseBackend::CursorUpdate && objectStoreMetadata.autoIncrement && keyData.isNull) {
-        key = m_backingStore->generateKey(transaction, objectStoreMetadata.id);
+        if (!m_backingStore->generateKeyNumber(transaction, objectStoreMetadata.id, keyNumber)) {
+            postMainThreadTask(createAsyncTask(*this, &UniqueIDBDatabase::didPutRecordInBackingStore, requestID, IDBKeyData(), IDBDatabaseException::UnknownError, ASCIILiteral("Internal backing store error checking for key existence")));
+            return;
+        }
+        key = IDBKey::createNumber(keyNumber);
         keyWasGenerated = true;
     } else
         key = keyData.maybeCreateIDBKey();
@@ -785,7 +790,7 @@ void UniqueIDBDatabase::putRecordInBackingStore(uint64_t requestID, const IDBIde
     // FIXME: The LevelDB port updates index keys here. Necessary?
 
     if (putMode != IDBDatabaseBackend::CursorUpdate && objectStoreMetadata.autoIncrement && key->type() == IDBKey::NumberType) {
-        if (!m_backingStore->updateKeyGenerator(transaction, objectStoreMetadata.id, *key, keyWasGenerated)) {
+        if (!m_backingStore->updateKeyGeneratorNumber(transaction, objectStoreMetadata.id, keyNumber, keyWasGenerated)) {
             postMainThreadTask(createAsyncTask(*this, &UniqueIDBDatabase::didPutRecordInBackingStore, requestID, IDBKeyData(), IDBDatabaseException::UnknownError, ASCIILiteral("Internal backing store error updating key generator")));
             return;
         }

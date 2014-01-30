@@ -381,7 +381,6 @@ void WebIDBServerConnection::put(IDBTransactionBackend& transaction, const PutOp
 
     LOG(IDB, "WebProcess put request ID %llu", requestID);
 
-    ASSERT(operation.key());
     ASSERT(operation.value());
 
     IPC::DataReference value(reinterpret_cast<const uint8_t*>(operation.value()->data()), operation.value()->size());
