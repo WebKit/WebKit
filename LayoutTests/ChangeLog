@@ -1,3 +1,11 @@
+2014-01-30  Michał Pakuła vel Rutka  <m.pakula@samsung.com>
+
+        Unreviewed EFL gardening
+
+        Add test expectation for tests failing after r160991 and r162605.
+
+        * platform/efl-wk2/TestExpectations:
+
 2014-01-29  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Play Breakpoint Sound in Frontend
