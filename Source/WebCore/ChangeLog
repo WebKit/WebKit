@@ -1,3 +1,14 @@
+2014-01-30  Roger Fong  <roger_fong@apple.com>
+
+        WebGL load policy should be queried for the top level document.
+        https://bugs.webkit.org/show_bug.cgi?id=127937.
+        <rdar://problem/15950122>
+
+        Reviewed by Timothy Horton.
+
+        * html/HTMLCanvasElement.cpp:
+        (WebCore::HTMLCanvasElement::getContext):
+
 2014-01-27  Jeffrey Pfau  <jpfau@apple.com>
 
         Add a method for schemes to be registered as supporting cache partitioning

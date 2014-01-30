@@ -226,9 +226,10 @@ CanvasRenderingContext* HTMLCanvasElement::getContext(const String& type, Canvas
             if (m_context && !m_context->is3d())
                 return nullptr;
             if (!m_context) {
-                Page* page = document().page();
-                if (page && !document().url().isLocalFile()) {
-                    WebGLLoadPolicy policy = page->mainFrame().loader().client().webGLPolicyForURL(document().url());
+                Document& topDocument = document().topDocument();
+                Page* page = topDocument.page();
+                if (page && !topDocument.url().isLocalFile()) {
+                    WebGLLoadPolicy policy = page->mainFrame().loader().client().webGLPolicyForURL(topDocument.url());
 
                     if (policy == WebGLBlock)
                         return nullptr;
