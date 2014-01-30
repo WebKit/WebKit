@@ -364,6 +364,8 @@ webkit.org/b/124476 platform/mac-wk2/plugins/slow/asynchronous-plugin-initializa
 # uiElementForSearchPredicate() is not returning an undefined object when the search returns no results
 webkit.org/b/125996 platform/mac/accessibility/search-when-element-starts-in-table.html [ Failure ]
 
+webkit.org/b/127960 [ MountainLion ] http/tests/security/cross-origin-plugin-private-browsing-toggled.html [ Pass Failure ]
+
 ### END OF (1) Classified failures with bug reports
 ########################################
 

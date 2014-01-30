@@ -1,3 +1,10 @@
+2014-01-30  Alexey Proskuryakov  <ap@apple.com>
+
+        http/tests/security/cross-origin-plugin-private-browsing-toggled.html is flaky on WK2
+        https://bugs.webkit.org/show_bug.cgi?id=127960
+
+        * platform/mac-wk2/TestExpectations: Marked it as such.
+
 2014-01-30  Beth Dakin  <bdakin@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=127371
