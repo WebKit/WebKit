@@ -29,6 +29,7 @@
 #if ENABLE(INSPECTOR)
 
 #include "EventLoop.h"
+#include "JSLock.h"
 
 using namespace JSC;
 
@@ -77,6 +78,9 @@ void JSGlobalObjectScriptDebugServer::recompileAllJSFunctions()
 
 void JSGlobalObjectScriptDebugServer::runEventLoopWhilePaused()
 {
+    // Drop all locks so another thread can work in the VM while we are nested.
+    JSC::JSLock::DropAllLocks dropAllLocks(&m_globalObject.vm());
+
     EventLoop loop;
     while (!m_doneProcessingDebuggerEvents && !loop.ended())
         loop.cycle();
