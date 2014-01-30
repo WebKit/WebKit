@@ -181,7 +181,7 @@ public:
     WebCore::Page* corePage() const { return m_page.get(); }
     uint64_t pageID() const { return m_pageID; }
     uint64_t sessionID() const;
-    void setSessionID(uint64_t sessionID) { m_sessionID = sessionID; }
+    void setSessionID(uint64_t);
 
     void setSize(const WebCore::IntSize&);
     const WebCore::IntSize& size() const { return m_viewSize; }

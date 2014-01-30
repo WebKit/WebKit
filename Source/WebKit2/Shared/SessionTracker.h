@@ -43,6 +43,7 @@ public:
     static const HashMap<uint64_t, std::unique_ptr<WebCore::NetworkStorageSession>>& sessionMap();
     static const String& getIdentifierBase();
     static WebCore::NetworkStorageSession* session(uint64_t sessionID);
+    static uint64_t sessionID(const WebCore::NetworkStorageSession&);
     static void setSession(uint64_t sessionID, std::unique_ptr<WebCore::NetworkStorageSession>);
     static void destroySession(uint64_t sessionID);
     static void setIdentifierBase(const String&);
