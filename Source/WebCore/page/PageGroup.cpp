@@ -42,14 +42,6 @@
 #include "VisitedLinkProvider.h"
 #include <wtf/StdLibExtras.h>
 
-#if ENABLE(VIDEO_TRACK)
-#if (PLATFORM(MAC) && !PLATFORM(IOS)) || HAVE(MEDIA_ACCESSIBILITY_FRAMEWORK)
-#include "CaptionUserPreferencesMediaAF.h"
-#else
-#include "CaptionUserPreferences.h"
-#endif
-#endif
-
 namespace WebCore {
 
 static unsigned getUniqueIdentifier()
@@ -309,27 +301,5 @@ void PageGroup::removeAllUserContent()
 {
     m_userContentController->removeAllUserContent();
 }
-
-#if ENABLE(VIDEO_TRACK)
-void PageGroup::captionPreferencesChanged()
-{
-    for (auto it = m_pages.begin(), end = m_pages.end(); it != end; ++it)
-        (*it)->captionPreferencesChanged();
-    pageCache()->markPagesForCaptionPreferencesChanged();
-}
-
-CaptionUserPreferences* PageGroup::captionPreferences()
-{
-    if (!m_captionPreferences) {
-#if (PLATFORM(MAC) && !PLATFORM(IOS)) || HAVE(MEDIA_ACCESSIBILITY_FRAMEWORK)
-        m_captionPreferences = std::make_unique<CaptionUserPreferencesMediaAF>(*this);
-#else
-        m_captionPreferences = std::make_unique<CaptionUserPreferences>(*this);
-#endif
-    }
-
-    return m_captionPreferences.get();
-}
-#endif
 
 } // namespace WebCore

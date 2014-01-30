@@ -281,8 +281,8 @@ void Internals::resetToConsistentState(Page* page)
     page->inspectorController().setProfilerEnabled(false);
 #endif
 #if ENABLE(VIDEO_TRACK) && !PLATFORM(WIN)
-    page->group().captionPreferences()->setCaptionsStyleSheetOverride(emptyString());
-    page->group().captionPreferences()->setTestingMode(false);
+    page->captionPreferences().setCaptionsStyleSheetOverride(emptyString());
+    page->captionPreferences().setTestingMode(false);
 #endif
     if (!page->mainFrame().editor().isContinuousSpellCheckingEnabled())
         page->mainFrame().editor().toggleContinuousSpellChecking();
@@ -302,7 +302,7 @@ Internals::Internals(Document* document)
 {
 #if ENABLE(VIDEO_TRACK) && !PLATFORM(WIN)
     if (document && document->page())
-        document->page()->group().captionPreferences()->setTestingMode(true);
+        document->page()->captionPreferences().setTestingMode(true);
 #endif
 
 #if ENABLE(MEDIA_STREAM)
@@ -2051,7 +2051,7 @@ String Internals::captionsStyleSheetOverride(ExceptionCode& ec)
     }
 
 #if ENABLE(VIDEO_TRACK) && !PLATFORM(WIN)
-    return document->page()->group().captionPreferences()->captionsStyleSheetOverride();
+    return document->page()->captionPreferences().captionsStyleSheetOverride();
 #else
     return emptyString();
 #endif
@@ -2066,7 +2066,7 @@ void Internals::setCaptionsStyleSheetOverride(const String& override, ExceptionC
     }
 
 #if ENABLE(VIDEO_TRACK) && !PLATFORM(WIN)
-    document->page()->group().captionPreferences()->setCaptionsStyleSheetOverride(override);
+    document->page()->captionPreferences().setCaptionsStyleSheetOverride(override);
 #else
     UNUSED_PARAM(override);
 #endif
@@ -2081,7 +2081,7 @@ void Internals::setPrimaryAudioTrackLanguageOverride(const String& language, Exc
     }
 
 #if ENABLE(VIDEO_TRACK) && !PLATFORM(WIN)
-    document->page()->group().captionPreferences()->setPrimaryAudioTrackLanguageOverride(language);
+    document->page()->captionPreferences().setPrimaryAudioTrackLanguageOverride(language);
 #else
     UNUSED_PARAM(language);
 #endif
@@ -2096,14 +2096,18 @@ void Internals::setCaptionDisplayMode(const String& mode, ExceptionCode& ec)
     }
     
 #if ENABLE(VIDEO_TRACK) && !PLATFORM(WIN)
-    CaptionUserPreferences* captionPreferences = document->page()->group().captionPreferences();
+    CaptionUserPreferences& captionPreferences = document->page()->captionPreferences();
     
-    if (equalIgnoringCase(mode, "Automatic"))
-        captionPreferences->setCaptionDisplayMode(CaptionUserPreferences::Automatic);
-    else if (equalIgnoringCase(mode, "ForcedOnly"))
-        captionPreferences->setCaptionDisplayMode(CaptionUserPreferences::ForcedOnly);
-    else if (equalIgnoringCase(mode, "AlwaysOn"))
-        captionPreferences->setCaptionDisplayMode(CaptionUserPreferences::AlwaysOn);
+    if (equalIgnoringCase(mode, "Automatic")) {
+        captionPreferences.setCaptionDisplayMode(CaptionUserPreferences::Automatic);
+        document->page()->settings().setShouldDisplayCaptions(false);
+        document->page()->settings().setShouldDisplaySubtitles(false);
+    } else if (equalIgnoringCase(mode, "ForcedOnly")) {
+        captionPreferences.setCaptionDisplayMode(CaptionUserPreferences::ForcedOnly);
+        document->page()->settings().setShouldDisplayCaptions(false);
+        document->page()->settings().setShouldDisplaySubtitles(false);
+    } else if (equalIgnoringCase(mode, "AlwaysOn"))
+        captionPreferences.setCaptionDisplayMode(CaptionUserPreferences::AlwaysOn);
     else
         ec = SYNTAX_ERR;
 #else

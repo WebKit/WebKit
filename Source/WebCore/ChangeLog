@@ -1,3 +1,87 @@
+2014-01-26  Sam Weinig  <sam@webkit.org>
+
+        CaptionUserPreferences should not be on the PageGroup if they are not really per-PageGroup (Part 1)
+        https://bugs.webkit.org/show_bug.cgi?id=127666
+
+        Reviewed by Eric Carlson.
+
+        This patch:
+        - Makes CaptionUserPreferences a singleton (temporary) that is accessed
+          via Page.
+        - Simplifies overriding system preferences by requiring that a Document be
+          be passed so the correct Settings object can be obtained (and not just a 
+          random one).
+        - Stops using UserStyleSheets for captions style injection, and instead
+          adds a new style sheet to the DocumentStyleSheetCollection.
+        - Move caption style sheet creation into its own file - CaptionStyleSheetMediaAF.h/cpp
+
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.vcxproj/WebCore.vcxproj.filters:
+        * WebCore.xcodeproj/project.pbxproj:
+        Add new files.
+
+        * WebCore.exp.in:
+        Update exports.
+
+        * css/DocumentRuleSets.cpp:
+        * css/InspectorCSSOMWrappers.cpp:
+        * dom/Document.cpp:
+        * dom/DocumentStyleSheetCollection.cpp:
+        * dom/DocumentStyleSheetCollection.h:
+        Switch from using the user style sheet mechanism, which is meant for, you guessed it, users,
+        to an explicit caption style sheet.
+
+        * Modules/mediacontrols/MediaControlsHost.cpp:
+        * html/HTMLMediaElement.cpp:
+        * html/shadow/MediaControlElements.cpp:
+        Get the CaptionUserPreferences via the Page.
+
+        * page/CaptionStyleSheetMediaAF.cpp: Added.
+        * page/CaptionStyleSheetMediaAF.h: Added.
+        Move caption style sheet creation here. If the global style changes, the sheet is invalidated
+        and this is called again.
+
+        * page/CaptionUserPreferences.cpp:
+        * page/CaptionUserPreferences.h:
+        - Removes unused m_havePreferences member.
+        - Change userPrefersFoo() functions to take a Document&. Use it to check its Settings.
+        - Remove setUserPrefersFoo() functions and just set the Settings directly.
+        - Move all the testing only pieces together.
+        
+        * page/CaptionUserPreferencesMediaAF.cpp:
+        * page/CaptionUserPreferencesMediaAF.h:
+        - Extract caption style sheet creation into CaptionStyleSheetMediaAF.h/cpp
+        - Stop waiting for an interested party, and just register for appearance change
+          notifications right away. Media elements are common enough that this should not
+          make a difference.
+
+        * page/Page.cpp:
+        (WebCore::Page::updateStyleForAllPagesForCaptionPreferencesChanged):
+        Add helper to call captionPreferencesChanged() on all the Pages.
+
+        (WebCore::Page::captionPreferences):
+        Add accessor for the CaptionUserPreferences. Currently this returns a singleton, but I plan
+        to extract the singleton aspects of it into another class, and leave the per-Page parts here.
+
+        * page/Page.h:
+        * page/PageGroup.cpp:
+        * page/PageGroup.h:
+        Remove CaptionUserPreferences from here.
+
+        * testing/InternalSettings.cpp:
+        (WebCore::InternalSettings::setShouldDisplayTrackKind):
+        (WebCore::InternalSettings::shouldDisplayTrackKind):
+        Override the settings for the page directly.
+
+        * testing/Internals.cpp:
+        (WebCore::Internals::resetToConsistentState):
+        (WebCore::Internals::Internals):
+        (WebCore::Internals::captionsStyleSheetOverride):
+        (WebCore::Internals::setCaptionsStyleSheetOverride):
+        (WebCore::Internals::setPrimaryAudioTrackLanguageOverride):
+        (WebCore::Internals::setCaptionDisplayMode):
+        Get the CaptionUserPreferences via the Page.
+
 2014-01-29  Jer Noble  <jer.noble@apple.com>
 
         [MSE][Mac] In SourceBufferPrivateAVFObjC, only include those headers actually necessary to compile.

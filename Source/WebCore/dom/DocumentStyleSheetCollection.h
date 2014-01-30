@@ -53,6 +53,7 @@ public:
     const Vector<RefPtr<CSSStyleSheet>>& activeAuthorStyleSheets() const { return m_activeAuthorStyleSheets; }
 
     CSSStyleSheet* pageUserSheet();
+    CSSStyleSheet* captionsStyleSheet();
     const Vector<RefPtr<CSSStyleSheet>>& documentUserStyleSheets() const { return m_userStyleSheets; }
     const Vector<RefPtr<CSSStyleSheet>>& documentAuthorStyleSheets() const { return m_authorStyleSheets; }
     const Vector<RefPtr<CSSStyleSheet>>& injectedUserStyleSheets() const;
@@ -63,6 +64,10 @@ public:
 
     void clearPageUserSheet();
     void updatePageUserSheet();
+    
+    void invalidateCaptionsStyleSheet();
+    void updateCaptionsStyleSheet();
+
     void invalidateInjectedStyleSheetCache();
     void updateInjectedStyleSheetCache() const;
 
@@ -141,6 +146,7 @@ private:
     int m_pendingStylesheets;
 
     RefPtr<CSSStyleSheet> m_pageUserSheet;
+    RefPtr<CSSStyleSheet> m_captionsStyleSheet;
 
     mutable Vector<RefPtr<CSSStyleSheet>> m_injectedUserStyleSheets;
     mutable Vector<RefPtr<CSSStyleSheet>> m_injectedAuthorStyleSheets;

@@ -29,6 +29,7 @@
 #include "DocumentStyleSheetCollection.h"
 
 #include "CSSStyleSheet.h"
+#include "CaptionUserPreferences.h"
 #include "Element.h"
 #include "HTMLIFrameElement.h"
 #include "HTMLLinkElement.h"
@@ -116,6 +117,41 @@ void DocumentStyleSheetCollection::updatePageUserSheet()
     clearPageUserSheet();
     if (pageUserSheet())
         m_document.styleResolverChanged(RecalcStyleImmediately);
+}
+
+CSSStyleSheet* DocumentStyleSheetCollection::captionsStyleSheet()
+{
+    updateCaptionsStyleSheet();
+    return m_captionsStyleSheet.get();
+}
+
+void DocumentStyleSheetCollection::updateCaptionsStyleSheet()
+{
+    // Identify our override style sheet with a unique URL - a new scheme and a UUID.
+    DEFINE_STATIC_LOCAL(URL, captionsStyleSheetURL, (ParsedURLString, "user-captions-override:01F6AF12-C3B0-4F70-AF5E-A3E00234DC23"));
+
+    if (m_captionsStyleSheet)
+        return;
+
+    Page* owningPage = m_document.page();
+    if (!owningPage)
+        return;
+    
+    String captionsStyleSheetText = owningPage->captionPreferences().captionsStyleSheet();
+    if (captionsStyleSheetText.isEmpty())
+        return;
+
+    // Parse the sheet and cache it.
+    m_captionsStyleSheet = CSSStyleSheet::createInline(m_document, captionsStyleSheetURL);
+    m_captionsStyleSheet->contents().parseString(captionsStyleSheetText);
+}
+
+void DocumentStyleSheetCollection::invalidateCaptionsStyleSheet()
+{
+    if (m_captionsStyleSheet) {
+        m_captionsStyleSheet = nullptr;
+        m_document.styleResolverChanged(DeferRecalcStyle);
+    }
 }
 
 const Vector<RefPtr<CSSStyleSheet>>& DocumentStyleSheetCollection::injectedUserStyleSheets() const

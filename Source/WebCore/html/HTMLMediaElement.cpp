@@ -379,7 +379,7 @@ HTMLMediaElement::HTMLMediaElement(const QualifiedName& tagName, Document& docum
 #if ENABLE(VIDEO_TRACK)
     document.registerForCaptionPreferencesChangedCallbacks(this);
     if (document.page())
-        m_captionDisplayMode = document.page()->group().captionPreferences()->captionDisplayMode();
+        m_captionDisplayMode = document.page()->captionPreferences().captionDisplayMode();
 #endif
 }
 
@@ -3424,7 +3424,7 @@ void HTMLMediaElement::configureTextTrackGroup(const TrackGroup& group)
     LOG(Media, "HTMLMediaElement::configureTextTrackGroup");
 
     Page* page = document().page();
-    CaptionUserPreferences* captionPreferences = page? page->group().captionPreferences() : 0;
+    CaptionUserPreferences* captionPreferences = page ? &page->captionPreferences() : nullptr;
     CaptionUserPreferences::CaptionDisplayMode displayMode = captionPreferences ? captionPreferences->captionDisplayMode() : CaptionUserPreferences::Automatic;
 
     // First, find the track in the group that should be enabled (if any).
@@ -3534,11 +3534,10 @@ void HTMLMediaElement::setSelectedTextTrack(TextTrack* trackToSelect)
         }
     }
 
-    CaptionUserPreferences* captionPreferences = document().page() ? document().page()->group().captionPreferences() : 0;
-    if (!captionPreferences)
+    if (!document().page())
         return;
 
-    CaptionUserPreferences::CaptionDisplayMode displayMode = captionPreferences->captionDisplayMode();
+    CaptionUserPreferences::CaptionDisplayMode displayMode = document().page()->captionPreferences().captionDisplayMode();
     if (trackToSelect == TextTrack::captionMenuOffItem())
         displayMode = CaptionUserPreferences::ForcedOnly;
     else if (trackToSelect == TextTrack::captionMenuAutomaticItem())
@@ -3546,13 +3545,13 @@ void HTMLMediaElement::setSelectedTextTrack(TextTrack* trackToSelect)
     else {
         displayMode = CaptionUserPreferences::AlwaysOn;
         if (trackToSelect->language().length())
-            captionPreferences->setPreferredLanguage(trackToSelect->language());
+            document().page()->captionPreferences().setPreferredLanguage(trackToSelect->language());
         
         // Set m_captionDisplayMode here so we don't reconfigure again when the preference changed notification comes through.
         m_captionDisplayMode = displayMode;
     }
 
-    captionPreferences->setCaptionDisplayMode(displayMode);
+    document().page()->captionPreferences().setCaptionDisplayMode(displayMode);
 }
 
 void HTMLMediaElement::configureTextTracks()
@@ -5256,8 +5255,8 @@ void HTMLMediaElement::captionPreferencesChanged()
 
     if (!document().page())
         return;
-
-    CaptionUserPreferences::CaptionDisplayMode displayMode = document().page()->group().captionPreferences()->captionDisplayMode();
+    
+    CaptionUserPreferences::CaptionDisplayMode displayMode = document().page()->captionPreferences().captionDisplayMode();
     if (m_captionDisplayMode == displayMode)
         return;
 

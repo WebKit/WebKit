@@ -45,11 +45,6 @@ namespace WebCore {
     class VisitedLinkProvider;
     class UserContentController;
 
-#if ENABLE(VIDEO_TRACK)
-    class CaptionPreferencesChangedListener;
-    class CaptionUserPreferences;
-#endif
-
     class PageGroup : public Supplementable<PageGroup> {
         WTF_MAKE_NONCOPYABLE(PageGroup); WTF_MAKE_FAST_ALLOCATED;
     public:
@@ -103,11 +98,6 @@ namespace WebCore {
 
         GroupSettings& groupSettings() const { return *m_groupSettings; }
 
-#if ENABLE(VIDEO_TRACK)
-        void captionPreferencesChanged();
-        CaptionUserPreferences* captionPreferences();
-#endif
-
     private:
         void addVisitedLink(LinkHash);
 
@@ -126,10 +116,6 @@ namespace WebCore {
         RefPtr<UserContentController> m_userContentController;
 
         const std::unique_ptr<GroupSettings> m_groupSettings;
-
-#if ENABLE(VIDEO_TRACK)
-        std::unique_ptr<CaptionUserPreferences> m_captionPreferences;
-#endif
     };
 
 } // namespace WebCore

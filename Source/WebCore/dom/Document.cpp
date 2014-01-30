@@ -748,6 +748,7 @@ void Document::setCompatibilityMode(CompatibilityMode mode)
     if (inQuirksMode() != wasInQuirksMode) {
         // All user stylesheets have to reparse using the different mode.
         m_styleSheetCollection.clearPageUserSheet();
+        m_styleSheetCollection.invalidateCaptionsStyleSheet();
         m_styleSheetCollection.invalidateInjectedStyleSheetCache();
     }
 }
@@ -4171,9 +4172,6 @@ void Document::unregisterForPrivateBrowsingStateChangedCallbacks(Element* e)
 #if ENABLE(VIDEO_TRACK)
 void Document::registerForCaptionPreferencesChangedCallbacks(Element* e)
 {
-    if (page())
-        page()->group().captionPreferences()->setInterestedInCaptionPreferenceChanges();
-
     m_captionPreferencesChangedElements.add(e);
 }
 
@@ -4184,9 +4182,11 @@ void Document::unregisterForCaptionPreferencesChangedCallbacks(Element* e)
 
 void Document::captionPreferencesChanged()
 {
-    HashSet<Element*>::iterator end = m_captionPreferencesChangedElements.end();
-    for (HashSet<Element*>::iterator it = m_captionPreferencesChangedElements.begin(); it != end; ++it)
-        (*it)->captionPreferencesChanged();
+    m_styleSheetCollection.invalidateCaptionsStyleSheet();
+    styleResolverChanged(DeferRecalcStyle);
+
+    for (auto* element : m_captionPreferencesChangedElements)
+        element->captionPreferencesChanged();
 }
 #endif
 

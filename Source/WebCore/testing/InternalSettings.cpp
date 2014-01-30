@@ -413,16 +413,12 @@ void InternalSettings::setShouldDisplayTrackKind(const String& kind, bool enable
     InternalSettingsGuardForSettings();
 
 #if ENABLE(VIDEO_TRACK)
-    if (!page())
-        return;
-    CaptionUserPreferences* captionPreferences = page()->group().captionPreferences();
-
     if (equalIgnoringCase(kind, "Subtitles"))
-        captionPreferences->setUserPrefersSubtitles(enabled);
+        settings()->setShouldDisplaySubtitles(enabled);
     else if (equalIgnoringCase(kind, "Captions"))
-        captionPreferences->setUserPrefersCaptions(enabled);
+        settings()->setShouldDisplayCaptions(enabled);
     else if (equalIgnoringCase(kind, "TextDescriptions"))
-        captionPreferences->setUserPrefersTextDescriptions(enabled);
+        settings()->setShouldDisplayTextDescriptions(enabled);
     else
         ec = SYNTAX_ERR;
 #else
@@ -436,16 +432,12 @@ bool InternalSettings::shouldDisplayTrackKind(const String& kind, ExceptionCode&
     InternalSettingsGuardForSettingsReturn(false);
 
 #if ENABLE(VIDEO_TRACK)
-    if (!page())
-        return false;
-    CaptionUserPreferences* captionPreferences = page()->group().captionPreferences();
-
     if (equalIgnoringCase(kind, "Subtitles"))
-        return captionPreferences->userPrefersSubtitles();
+        return settings()->shouldDisplaySubtitles();
     if (equalIgnoringCase(kind, "Captions"))
-        return captionPreferences->userPrefersCaptions();
+        return settings()->shouldDisplayCaptions();
     if (equalIgnoringCase(kind, "TextDescriptions"))
-        return captionPreferences->userPrefersTextDescriptions();
+        return settings()->shouldDisplayTextDescriptions();
 
     ec = SYNTAX_ERR;
     return false;

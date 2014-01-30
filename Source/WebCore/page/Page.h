@@ -61,6 +61,7 @@ namespace WebCore {
 class AlternativeTextClient;
 class BackForwardController;
 class BackForwardClient;
+class CaptionUserPreferences;
 class Chrome;
 class ChromeClient;
 class ClientRectList;
@@ -402,6 +403,8 @@ public:
 #endif
 
 #if ENABLE(VIDEO_TRACK)
+    static void updateStyleForAllPagesForCaptionPreferencesChanged();
+    CaptionUserPreferences& captionPreferences();
     void captionPreferencesChanged();
 #endif
 

@@ -3063,7 +3063,9 @@ __ZN7WebCore4Page11setViewModeENS0_8ViewModeE
 #endif
 
 #if ENABLE(VIDEO_TRACK)
-__ZN7WebCore9PageGroup18captionPreferencesEv
+__ZN7WebCore22CaptionUserPreferences29setCaptionsStyleSheetOverrideERKN3WTF6StringE
+__ZN7WebCore4Page18captionPreferencesEv
+__ZNK7WebCore22CaptionUserPreferences26captionsStyleSheetOverrideEv
 #endif
 
 #if ENABLE(VIDEO)

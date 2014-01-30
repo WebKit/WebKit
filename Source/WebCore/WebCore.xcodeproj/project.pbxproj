@@ -2293,6 +2293,8 @@
 		7CC7E3D717208C0F003C5277 /* IDNScriptWhiteList.txt in Resources */ = {isa = PBXBuildFile; fileRef = 7CC7E3D617208C0F003C5277 /* IDNScriptWhiteList.txt */; };
 		7CE6CBFB187F370700D46BF5 /* FormatConverter.h in Headers */ = {isa = PBXBuildFile; fileRef = 7CE6CBFA187F370700D46BF5 /* FormatConverter.h */; };
 		7CE6CBFD187F394900D46BF5 /* FormatConverter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CE6CBFC187F394900D46BF5 /* FormatConverter.cpp */; };
+		7CFC30591895EFAD00E8F43F /* CaptionStyleSheetMediaAF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CFC30571895EFAD00E8F43F /* CaptionStyleSheetMediaAF.cpp */; };
+		7CFC305A1895EFAD00E8F43F /* CaptionStyleSheetMediaAF.h in Headers */ = {isa = PBXBuildFile; fileRef = 7CFC30581895EFAD00E8F43F /* CaptionStyleSheetMediaAF.h */; };
 		7D741BDA177226AA00859170 /* CSSValueKeywords.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = 6565814809D13043000E61D7 /* CSSValueKeywords.h */; };
 		7E33CD01127F340D00BE8F17 /* PurgePriority.h in Headers */ = {isa = PBXBuildFile; fileRef = 7E33CD00127F340D00BE8F17 /* PurgePriority.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7E37EF2E1339208800B29250 /* SubresourceLoaderCF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7E37EF2D1339208800B29250 /* SubresourceLoaderCF.cpp */; };
@@ -9234,6 +9236,8 @@
 		7CC7E3D617208C0F003C5277 /* IDNScriptWhiteList.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = IDNScriptWhiteList.txt; sourceTree = "<group>"; };
 		7CE6CBFA187F370700D46BF5 /* FormatConverter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FormatConverter.h; sourceTree = "<group>"; };
 		7CE6CBFC187F394900D46BF5 /* FormatConverter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FormatConverter.cpp; sourceTree = "<group>"; };
+		7CFC30571895EFAD00E8F43F /* CaptionStyleSheetMediaAF.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CaptionStyleSheetMediaAF.cpp; sourceTree = "<group>"; };
+		7CFC30581895EFAD00E8F43F /* CaptionStyleSheetMediaAF.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CaptionStyleSheetMediaAF.h; sourceTree = "<group>"; };
 		7E33CD00127F340D00BE8F17 /* PurgePriority.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PurgePriority.h; sourceTree = "<group>"; };
 		7E37EF2D1339208800B29250 /* SubresourceLoaderCF.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SubresourceLoaderCF.cpp; path = cf/SubresourceLoaderCF.cpp; sourceTree = "<group>"; };
 		7E428CE413E3407F003B661C /* ResourceHandleIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ResourceHandleIOS.mm; sourceTree = "<group>"; };
@@ -16032,6 +16036,8 @@
 				079D0867162F20E800DB8658 /* CaptionUserPreferences.h */,
 				079D086A162F21F900DB8658 /* CaptionUserPreferencesMediaAF.cpp */,
 				079D0869162F21F900DB8658 /* CaptionUserPreferencesMediaAF.h */,
+				7CFC30571895EFAD00E8F43F /* CaptionStyleSheetMediaAF.cpp */,
+				7CFC30581895EFAD00E8F43F /* CaptionStyleSheetMediaAF.h */,
 				14D8238A0AF92DF60004F057 /* Chrome.cpp */,
 				14D823500AF92A790004F057 /* Chrome.h */,
 				14D824060AF93AEB0004F057 /* ChromeClient.h */,
@@ -22599,6 +22605,7 @@
 				FE115FAB167988CD00249134 /* AbstractDatabaseServer.h in Headers */,
 				9A528E8417D7F52F00AA9518 /* FloatingObjects.h in Headers */,
 				FE4AADEE16D2C37400026FFC /* AbstractSQLStatement.h in Headers */,
+				7CFC305A1895EFAD00E8F43F /* CaptionStyleSheetMediaAF.h in Headers */,
 				6E84E9E117668BF100815B68 /* RasterShape.h in Headers */,
 				FE4AADEF16D2C37400026FFC /* AbstractSQLStatementBackend.h in Headers */,
 				41E1B1D10FF5986900576B3B /* AbstractWorker.h in Headers */,
@@ -27118,6 +27125,7 @@
 				A81369E1097374F600D74463 /* HTMLLegendElement.cpp in Sources */,
 				A8EA79FC0A1916DF00A8EF5F /* HTMLLIElement.cpp in Sources */,
 				A871DC210A15205700B12A68 /* HTMLLinkElement.cpp in Sources */,
+				7CFC30591895EFAD00E8F43F /* CaptionStyleSheetMediaAF.cpp in Sources */,
 				A8EA7D320A19385500A8EF5F /* HTMLMapElement.cpp in Sources */,
 				A8EA7CAC0A192B9C00A8EF5F /* HTMLMarqueeElement.cpp in Sources */,
 				E44613A40CD6331000FADA75 /* HTMLMediaElement.cpp in Sources */,
