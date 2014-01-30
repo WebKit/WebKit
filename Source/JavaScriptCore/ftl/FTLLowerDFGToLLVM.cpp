@@ -416,6 +416,12 @@ private:
         case PutByValDirect:
             compilePutByVal();
             break;
+        case ArrayPush:
+            compileArrayPush();
+            break;
+        case ArrayPop:
+            compileArrayPop();
+            break;
         case NewObject:
             compileNewObject();
             break;
@@ -2178,6 +2184,132 @@ private:
             
             RELEASE_ASSERT_NOT_REACHED();
             break;
+        }
+    }
+    
+    void compileArrayPush()
+    {
+        LValue base = lowCell(m_node->child1());
+        LValue storage = lowStorage(m_node->child3());
+        
+        switch (m_node->arrayMode().type()) {
+        case Array::Int32:
+        case Array::Contiguous:
+        case Array::Double: {
+            LValue value;
+            LType refType;
+            
+            if (m_node->arrayMode().type() != Array::Double) {
+                value = lowJSValue(m_node->child2(), ManualOperandSpeculation);
+                if (m_node->arrayMode().type() == Array::Int32) {
+                    FTL_TYPE_CHECK(
+                        jsValueValue(value), m_node->child2(), SpecInt32, isNotInt32(value));
+                }
+                refType = m_out.ref64;
+            } else {
+                value = lowDouble(m_node->child2());
+                FTL_TYPE_CHECK(
+                    doubleValue(value), m_node->child2(), SpecFullRealNumber,
+                    m_out.doubleNotEqualOrUnordered(value, value));
+                refType = m_out.refDouble;
+            }
+            
+            IndexedAbstractHeap& heap = m_heaps.forArrayType(m_node->arrayMode().type());
+
+            LValue prevLength = m_out.load32(storage, m_heaps.Butterfly_publicLength);
+            
+            LBasicBlock fastPath = FTL_NEW_BLOCK(m_out, ("ArrayPush fast path"));
+            LBasicBlock slowPath = FTL_NEW_BLOCK(m_out, ("ArrayPush slow path"));
+            LBasicBlock continuation = FTL_NEW_BLOCK(m_out, ("ArrayPush continuation"));
+            
+            m_out.branch(
+                m_out.aboveOrEqual(
+                    prevLength, m_out.load32(storage, m_heaps.Butterfly_vectorLength)),
+                slowPath, fastPath);
+            
+            LBasicBlock lastNext = m_out.appendTo(fastPath, slowPath);
+            m_out.store(
+                value,
+                m_out.baseIndex(heap, storage, m_out.zeroExt(prevLength, m_out.intPtr)),
+                refType);
+            LValue newLength = m_out.add(prevLength, m_out.int32One);
+            m_out.store32(newLength, storage, m_heaps.Butterfly_publicLength);
+            
+            ValueFromBlock fastResult = m_out.anchor(boxInt32(newLength));
+            m_out.jump(continuation);
+            
+            m_out.appendTo(slowPath, continuation);
+            LValue operation;
+            if (m_node->arrayMode().type() != Array::Double)
+                operation = m_out.operation(operationArrayPush);
+            else
+                operation = m_out.operation(operationArrayPushDouble);
+            ValueFromBlock slowResult = m_out.anchor(
+                vmCall(operation, m_callFrame, value, base));
+            m_out.jump(continuation);
+            
+            m_out.appendTo(continuation, lastNext);
+            setJSValue(m_out.phi(m_out.int64, fastResult, slowResult));
+            return;
+        }
+            
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+            return;
+        }
+    }
+    
+    void compileArrayPop()
+    {
+        LValue base = lowCell(m_node->child1());
+        LValue storage = lowStorage(m_node->child2());
+        
+        switch (m_node->arrayMode().type()) {
+        case Array::Int32:
+        case Array::Double:
+        case Array::Contiguous: {
+            IndexedAbstractHeap& heap = m_heaps.forArrayType(m_node->arrayMode().type());
+            
+            LBasicBlock fastCase = FTL_NEW_BLOCK(m_out, ("ArrayPop fast case"));
+            LBasicBlock slowCase = FTL_NEW_BLOCK(m_out, ("ArrayPop slow case"));
+            LBasicBlock continuation = FTL_NEW_BLOCK(m_out, ("ArrayPop continuation"));
+            
+            LValue prevLength = m_out.load32(storage, m_heaps.Butterfly_publicLength);
+            
+            Vector<ValueFromBlock, 3> results;
+            results.append(m_out.anchor(m_out.constInt64(JSValue::encode(jsUndefined()))));
+            m_out.branch(m_out.isZero32(prevLength), continuation, fastCase);
+            
+            LBasicBlock lastNext = m_out.appendTo(fastCase, slowCase);
+            LValue newLength = m_out.sub(prevLength, m_out.int32One);
+            m_out.store32(newLength, storage, m_heaps.Butterfly_publicLength);
+            TypedPointer pointer = m_out.baseIndex(
+                heap, storage, m_out.zeroExt(newLength, m_out.intPtr));
+            if (m_node->arrayMode().type() != Array::Double) {
+                LValue result = m_out.load64(pointer);
+                m_out.store64(m_out.int64Zero, pointer);
+                results.append(m_out.anchor(result));
+                m_out.branch(m_out.notZero64(result), continuation, slowCase);
+            } else {
+                LValue result = m_out.loadDouble(pointer);
+                m_out.store64(m_out.constInt64(bitwise_cast<int64_t>(QNaN)), pointer);
+                results.append(m_out.anchor(boxDouble(result)));
+                m_out.branch(m_out.doubleEqual(result, result), continuation, slowCase);
+            }
+            
+            m_out.appendTo(slowCase, continuation);
+            results.append(m_out.anchor(vmCall(
+                m_out.operation(operationArrayPopAndRecoverLength), m_callFrame, base)));
+            m_out.jump(continuation);
+            
+            m_out.appendTo(continuation, lastNext);
+            setJSValue(m_out.phi(m_out.int64, results));
+            return;
+        }
+
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+            return;
         }
     }
     

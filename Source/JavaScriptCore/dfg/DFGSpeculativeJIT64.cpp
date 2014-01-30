@@ -3302,7 +3302,7 @@ void SpeculativeJIT::compile(Node* node)
                 // FIXME: This would not have to be here if changing the publicLength also zeroed the values between the old
                 // length and the new length.
                 m_jit.store64(
-                MacroAssembler::TrustedImm64((int64_t)0), MacroAssembler::BaseIndex(storageGPR, storageLengthGPR, MacroAssembler::TimesEight));
+                    MacroAssembler::TrustedImm64(bitwise_cast<int64_t>(QNaN)), MacroAssembler::BaseIndex(storageGPR, storageLengthGPR, MacroAssembler::TimesEight));
                 slowCase = m_jit.branchDouble(MacroAssembler::DoubleNotEqualOrUnordered, tempFPR, tempFPR);
                 boxDouble(tempFPR, valueGPR);
             } else {

@@ -201,6 +201,17 @@ inline CapabilityLevel canCompile(Node* node)
             return CannotCompile;
         }
         break;
+    case ArrayPush:
+    case ArrayPop:
+        switch (node->arrayMode().type()) {
+        case Array::Int32:
+        case Array::Contiguous:
+        case Array::Double:
+            break;
+        default:
+            return CannotCompile;
+        }
+        break;
     case CompareEq:
         if (node->isBinaryUseKind(Int32Use))
             break;

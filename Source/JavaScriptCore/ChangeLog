@@ -1,5 +1,93 @@
 2014-01-29  Filip Pizlo  <fpizlo@apple.com>
 
+        Merge final changesets from the jsCStack branch (r162969, r162975, r162992, r163004, r163069).
+
+    2014-01-29  Filip Pizlo  <fpizlo@apple.com>
+    
+            DFG ArrayPop double array mishandles the NaN hole installation
+            https://bugs.webkit.org/show_bug.cgi?id=127813
+    
+            Reviewed by Mark Rowe.
+            
+            Our object model for arrays inferred double dictates that we use quiet NaN (QNaN) to
+            mark holes. Holes, in this context, are any entries in the allocated array buffer
+            (i.e. from index 0 up to the vectorLength) that don't currently hold a value. Popping
+            creates a hole, since it deletes the value at publicLength - 1.
+            
+            But, because of some sloppy copy-and-paste, we were storing (int64_t)0 when creating
+            the hole, instead of storing QNaN. That's likely because for other kinds of arrays,
+            64-bit zero is the hole marker, instead of QNaN.
+            
+            The attached test case illustrates the problem. In the LLInt and Baseline JIT, the
+            result returned from foo() is "1.5,2.5,,4.5", since array.pop() removes 3.5 and
+            replaces it with a hole and then the assignment "array[3] = 4.5" creates an element
+            just beyond that hole. But, once we tier-up to the DFG, the result previously became
+            "1.5,2.5,0,4.5", which is wrong. The 0 appeared because the IEEE double
+            interpretation of 64-bit zero is simply zero.
+            
+            This patch fixes that problem. Now the DFG agrees with the other engines.
+            
+            This patch also fixes style. For some reason that copy-pasted code wasn't even
+            indented correctly.
+    
+            * dfg/DFGSpeculativeJIT64.cpp:
+            (JSC::DFG::SpeculativeJIT::compile):
+            * tests/stress/array-pop-double-hole.js: Added.
+            (foo):
+    
+    2014-01-28  Filip Pizlo  <fpizlo@apple.com>
+    
+            FTL should support ArrayPush
+            https://bugs.webkit.org/show_bug.cgi?id=127748
+    
+            Not reviewed, remove some debug code.
+    
+            * ftl/FTLLowerDFGToLLVM.cpp:
+            (JSC::FTL::LowerDFGToLLVM::compileArrayPush):
+    
+    2014-01-27  Filip Pizlo  <fpizlo@apple.com>
+    
+            FTL should support ArrayPush
+            https://bugs.webkit.org/show_bug.cgi?id=127748
+    
+            Reviewed by Oliver Hunt.
+    
+            * ftl/FTLAbstractHeapRepository.h:
+            (JSC::FTL::AbstractHeapRepository::forArrayType):
+            * ftl/FTLCapabilities.cpp:
+            (JSC::FTL::canCompile):
+            * ftl/FTLIntrinsicRepository.h:
+            * ftl/FTLLowerDFGToLLVM.cpp:
+            (JSC::FTL::LowerDFGToLLVM::compileNode):
+            (JSC::FTL::LowerDFGToLLVM::compileArrayPush):
+            * tests/stress/array-push-contiguous.js: Added.
+            (foo):
+            * tests/stress/array-push-double.js: Added.
+            (foo):
+    
+    2014-01-28  Filip Pizlo  <fpizlo@apple.com>
+    
+            FTL should support ArrayPop
+            https://bugs.webkit.org/show_bug.cgi?id=127749
+    
+            Reviewed by Geoffrey Garen.
+    
+            * ftl/FTLCapabilities.cpp:
+            (JSC::FTL::canCompile):
+            * ftl/FTLIntrinsicRepository.h:
+            * ftl/FTLLowerDFGToLLVM.cpp:
+            (JSC::FTL::LowerDFGToLLVM::compileNode):
+            (JSC::FTL::LowerDFGToLLVM::compileArrayPush):
+            (JSC::FTL::LowerDFGToLLVM::compileArrayPop):
+            * tests/stress/array-pop-contiguous.js: Added.
+            (foo):
+            * tests/stress/array-pop-double.js: Added.
+            (foo):
+            * tests/stress/array-pop-int32.js: Added.
+            (foo):
+    
+2014-01-29  Filip Pizlo  <fpizlo@apple.com>
+
         DFG::ByteCodeParser::m_dfgCodeBlock is sometimes uninitialized
         <rdar://problem/15939032>
 

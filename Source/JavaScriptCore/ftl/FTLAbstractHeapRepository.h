@@ -30,6 +30,7 @@
 
 #if ENABLE(FTL_JIT)
 
+#include "DFGArrayMode.h"
 #include "FTLAbstractHeap.h"
 #include "IndexingType.h"
 
@@ -134,6 +135,24 @@ public:
         default:
             RELEASE_ASSERT_NOT_REACHED();
             return 0;
+        }
+    }
+    
+    IndexedAbstractHeap& forArrayType(DFG::Array::Type type)
+    {
+        switch (type) {
+        case DFG::Array::Int32:
+            return indexedInt32Properties;
+        case DFG::Array::Double:
+            return indexedDoubleProperties;
+        case DFG::Array::Contiguous:
+            return indexedContiguousProperties;
+        case DFG::Array::ArrayStorage:
+        case DFG::Array::SlowPutArrayStorage:
+            return indexedArrayStorageProperties;
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+            return indexedInt32Properties;
         }
     }
 
