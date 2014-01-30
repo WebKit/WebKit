@@ -3707,14 +3707,12 @@ bool ByteCodeParser::parse()
     // Set during construction.
     ASSERT(!m_currentIndex);
     
-    if (isFTL(m_graph.m_plan.mode)) {
-        m_dfgCodeBlock = m_graph.m_plan.profiledDFGCodeBlock.get();
-        if (m_dfgCodeBlock) {
-            if (Options::enablePolyvariantCallInlining())
-                CallLinkStatus::computeDFGStatuses(m_dfgCodeBlock, m_callContextMap);
-            if (Options::enablePolyvariantByIdInlining())
-                m_dfgCodeBlock->getStubInfoMap(m_dfgStubInfos);
-        }
+    m_dfgCodeBlock = m_graph.m_plan.profiledDFGCodeBlock.get();
+    if (isFTL(m_graph.m_plan.mode) && m_dfgCodeBlock) {
+        if (Options::enablePolyvariantCallInlining())
+            CallLinkStatus::computeDFGStatuses(m_dfgCodeBlock, m_callContextMap);
+        if (Options::enablePolyvariantByIdInlining())
+            m_dfgCodeBlock->getStubInfoMap(m_dfgStubInfos);
     }
     
     if (m_codeBlock->captureCount()) {

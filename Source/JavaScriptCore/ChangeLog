@@ -1,3 +1,13 @@
+2014-01-29  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG::ByteCodeParser::m_dfgCodeBlock is sometimes uninitialized
+        <rdar://problem/15939032>
+
+        Reviewed by Dan Bernstein.
+
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parse):
+
 2014-01-29  Geoffrey Garen  <ggaren@apple.com>
 
         50% time on Dromaeo Selector * benchmark spent allocating oversized backing stores (but not in Chrome)
