@@ -23,27 +23,28 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "config.h"
-#import "WKNavigation.h"
+#ifndef NavigationState_h
+#define NavigationState_h
 
+#import <wtf/HashMap.h>
 #import <wtf/RetainPtr.h>
 
-#if WK_API_ENABLED
+OBJC_CLASS WKNavigation;
+OBJC_CLASS WKWebView;
 
-@implementation WKNavigation {
-    RetainPtr<NSURLRequest> _request;
-}
+namespace WebKit {
 
-- (NSURLRequest *)request
-{
-    return _request.get();
-}
+class NavigationState {
+public:
+    explicit NavigationState(WKWebView *);
+    ~NavigationState();
 
-- (void)setRequest:(NSURLRequest *)request
-{
-    _request = adoptNS([request copy]);
-}
+    RetainPtr<WKNavigation> createLoadRequestNavigation(uint64_t navigationID, NSURLRequest *);
 
-@end
+private:
+    HashMap<uint64_t, RetainPtr<WKNavigation>> m_navigations;
+};
 
-#endif
+} // namespace WebKit
+
+#endif // NavigationState_h

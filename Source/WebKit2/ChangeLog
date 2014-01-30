@@ -1,3 +1,27 @@
+2014-01-29  Anders Carlsson  <andersca@apple.com>
+
+        Add a NavigationState object to keep track of the navigations for a given page
+        https://bugs.webkit.org/show_bug.cgi?id=127884
+
+        Reviewed by Sam Weinig.
+
+        * UIProcess/API/Cocoa/WKNavigation.mm:
+        (-[WKNavigation request]):
+        (-[WKNavigation setRequest:]):
+        * UIProcess/API/Cocoa/WKNavigationInternal.h:
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView initWithFrame:configuration:]):
+        (-[WKWebView loadRequest:]):
+        * UIProcess/Cocoa/NavigationState.h: Copied from Source/WebKit2/UIProcess/API/Cocoa/WKNavigation.mm.
+        * UIProcess/Cocoa/NavigationState.mm: Copied from Source/WebKit2/UIProcess/API/Cocoa/WKNavigation.mm.
+        (WebKit::NavigationState::NavigationState):
+        (WebKit::NavigationState::~NavigationState):
+        (WebKit::NavigationState::createLoadRequestNavigation):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::loadRequest):
+        * UIProcess/WebPageProxy.h:
+        * WebKit2.xcodeproj/project.pbxproj:
+
 2014-01-29  Gavin Barraclough  <barraclough@apple.com>
 
         Add IsVisibleOrOccluded to ViewState

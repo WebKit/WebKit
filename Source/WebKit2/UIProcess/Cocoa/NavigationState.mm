@@ -24,26 +24,31 @@
  */
 
 #import "config.h"
-#import "WKNavigation.h"
+#import "NavigationState.h"
 
-#import <wtf/RetainPtr.h>
+#import "WKNavigationInternal.h"
 
-#if WK_API_ENABLED
+namespace WebKit {
 
-@implementation WKNavigation {
-    RetainPtr<NSURLRequest> _request;
-}
-
-- (NSURLRequest *)request
+NavigationState::NavigationState(WKWebView *webView)
 {
-    return _request.get();
 }
 
-- (void)setRequest:(NSURLRequest *)request
+NavigationState::~NavigationState()
 {
-    _request = adoptNS([request copy]);
 }
 
-@end
+RetainPtr<WKNavigation> NavigationState::createLoadRequestNavigation(uint64_t navigationID, NSURLRequest *request)
+{
+    ASSERT(!m_navigations.contains(navigationID));
 
-#endif
+    RetainPtr<WKNavigation> navigation = adoptNS([[WKNavigation alloc] init]);
+    [navigation setRequest:request];
+
+    // FIXME: We need to remove the navigation when we're done with it!
+    m_navigations.set(navigationID, navigation);
+
+    return navigation;
+}
+
+} // namespace WebKit

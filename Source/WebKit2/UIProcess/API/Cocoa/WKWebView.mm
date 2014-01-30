@@ -28,6 +28,7 @@
 
 #if WK_API_ENABLED
 
+#import "NavigationState.h"
 #import "WKNavigationInternal.h"
 #import "WKProcessClass.h"
 #import "WKWebViewConfiguration.h"
@@ -55,6 +56,8 @@ static _UIWebViewportConfiguration standardViewportConfiguration = { { UIWebView
 
 @implementation WKWebView {
     RetainPtr<WKWebViewConfiguration> _configuration;
+    std::unique_ptr<WebKit::NavigationState> _navigationState;
+
     RefPtr<WebKit::WebPageProxy> _page;
 
 #if PLATFORM(IOS)
@@ -84,6 +87,8 @@ static _UIWebViewportConfiguration standardViewportConfiguration = { { UIWebView
 
     if (![_configuration processClass])
         [_configuration setProcessClass:adoptNS([[WKProcessClass alloc] init]).get()];
+
+    _navigationState = std::make_unique<WebKit::NavigationState>(self);
 
     CGRect bounds = self.bounds;
 
@@ -123,9 +128,10 @@ static _UIWebViewportConfiguration standardViewportConfiguration = { { UIWebView
 
 - (WKNavigation *)loadRequest:(NSURLRequest *)request
 {
-    _page->loadRequest(request);
+    uint64_t navigationID = _page->loadRequest(request);
+    auto navigation = _navigationState->createLoadRequestNavigation(navigationID, request);
 
-    return [[[WKNavigation alloc] initWithRequest:request] autorelease];
+    return [navigation.leakRef() autorelease];
 }
 
 #pragma mark iOS-specific methods

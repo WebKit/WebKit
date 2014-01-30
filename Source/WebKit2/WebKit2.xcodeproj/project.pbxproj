@@ -291,6 +291,8 @@
 		1AB8A1F618400B9D00E9AE69 /* WKPageFindMatchesClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AB8A1F518400B9D00E9AE69 /* WKPageFindMatchesClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1AB8A1F818400BB800E9AE69 /* WKPageContextMenuClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AB8A1F718400BB800E9AE69 /* WKPageContextMenuClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1ABC3DF11899C6B6004F0626 /* WKNavigationInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 1ABC3DF01899C6B6004F0626 /* WKNavigationInternal.h */; };
+		1ABC3DF51899E437004F0626 /* NavigationState.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1ABC3DF31899E437004F0626 /* NavigationState.mm */; };
+		1ABC3DF61899E437004F0626 /* NavigationState.h in Headers */ = {isa = PBXBuildFile; fileRef = 1ABC3DF41899E437004F0626 /* NavigationState.h */; };
 		1AC1336718565B5700F3EC05 /* UserData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AC1336518565B5700F3EC05 /* UserData.cpp */; };
 		1AC1336818565B5700F3EC05 /* UserData.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AC1336618565B5700F3EC05 /* UserData.h */; };
 		1AC1336C18565C7A00F3EC05 /* APIPageHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AC1336B18565C7A00F3EC05 /* APIPageHandle.h */; };
@@ -1936,6 +1938,8 @@
 		1AB8A1F518400B9D00E9AE69 /* WKPageFindMatchesClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKPageFindMatchesClient.h; sourceTree = "<group>"; };
 		1AB8A1F718400BB800E9AE69 /* WKPageContextMenuClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKPageContextMenuClient.h; sourceTree = "<group>"; };
 		1ABC3DF01899C6B6004F0626 /* WKNavigationInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKNavigationInternal.h; sourceTree = "<group>"; };
+		1ABC3DF31899E437004F0626 /* NavigationState.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = NavigationState.mm; sourceTree = "<group>"; };
+		1ABC3DF41899E437004F0626 /* NavigationState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NavigationState.h; sourceTree = "<group>"; };
 		1AC1336518565B5700F3EC05 /* UserData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UserData.cpp; sourceTree = "<group>"; };
 		1AC1336618565B5700F3EC05 /* UserData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UserData.h; sourceTree = "<group>"; };
 		1AC1336B18565C7A00F3EC05 /* APIPageHandle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = APIPageHandle.h; sourceTree = "<group>"; };
@@ -3950,6 +3954,15 @@
 			path = Downloads;
 			sourceTree = "<group>";
 		};
+		1ABC3DF21899E415004F0626 /* Cocoa */ = {
+			isa = PBXGroup;
+			children = (
+				1ABC3DF41899E437004F0626 /* NavigationState.h */,
+				1ABC3DF31899E437004F0626 /* NavigationState.mm */,
+			);
+			path = Cocoa;
+			sourceTree = "<group>";
+		};
 		1AE00D6818327C1200087DD7 /* IPC */ = {
 			isa = PBXGroup;
 			children = (
@@ -4877,6 +4890,7 @@
 				BC032DC410F4387C0058C15A /* API */,
 				512F588D12A8836F00629530 /* Authentication */,
 				51B3004D12529CF5000B5CA0 /* cf */,
+				1ABC3DF21899E415004F0626 /* Cocoa */,
 				517DD5BB180DA7C40081660B /* Databases */,
 				1AB7D4C71288AA9A00CFD08C /* Downloads */,
 				BC111B18112F5FB400337BAB /* Launcher */,
@@ -6172,6 +6186,7 @@
 				2D8949F1182044F600E898AA /* PlatformCALayerRemoteTiledBacking.h in Headers */,
 				0FB659231208B4DB0044816C /* DrawingAreaInfo.h in Headers */,
 				1A64229A12DD029200CAAE2C /* DrawingAreaMessages.h in Headers */,
+				1ABC3DF61899E437004F0626 /* NavigationState.h in Headers */,
 				BC2652171182608100243E12 /* DrawingAreaProxy.h in Headers */,
 				1A64230912DD09EB00CAAE2C /* DrawingAreaProxyMessages.h in Headers */,
 				5DA6ED0A1490606900B41D12 /* DynamicLinkerEnvironmentExtractor.h in Headers */,
@@ -8063,6 +8078,7 @@
 				1AD09F2B1743F8E600A95E50 /* WKNPAPIPlugInContainer.mm in Sources */,
 				BC407601124FF0270068F20A /* WKNumber.cpp in Sources */,
 				7CD5EBB81746A15B000C1C45 /* WKObjCTypeWrapperRef.mm in Sources */,
+				1ABC3DF51899E437004F0626 /* NavigationState.mm in Sources */,
 				BC85806312B8505700EDEB2E /* WKOpenPanelParameters.cpp in Sources */,
 				BC85806212B8505700EDEB2E /* WKOpenPanelResultListener.cpp in Sources */,
 				51FCB18817BBFE0300394CD8 /* SynchronousNetworkLoaderClient.cpp in Sources */,

@@ -380,7 +380,7 @@ public:
     bool tryClose();
     bool isClosed() const { return m_isClosed; }
 
-    void loadRequest(const WebCore::ResourceRequest&, API::Object* userData = nullptr);
+    uint64_t loadRequest(const WebCore::ResourceRequest&, API::Object* userData = nullptr);
     void loadFile(const String& fileURL, const String& resourceDirectoryURL, API::Object* userData = nullptr);
     void loadData(API::Data*, const String& MIMEType, const String& encoding, const String& baseURL, API::Object* userData = nullptr);
     void loadHTMLString(const String& htmlString, const String& baseURL, API::Object* userData = nullptr);

@@ -29,7 +29,7 @@
 
 @interface WKNavigation ()
 
-- (instancetype)initWithRequest:(NSURLRequest *)request;
+@property (nonatomic, readwrite, copy) NSURLRequest *request;
 
 @end
 

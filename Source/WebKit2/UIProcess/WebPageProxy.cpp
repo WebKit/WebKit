@@ -608,8 +608,10 @@ bool WebPageProxy::maybeInitializeSandboxExtensionHandle(const URL& url, Sandbox
     return true;
 }
 
-void WebPageProxy::loadRequest(const ResourceRequest& request, API::Object* userData)
+uint64_t WebPageProxy::loadRequest(const ResourceRequest& request, API::Object* userData)
 {
+    uint64_t navigationID = generateNavigationID();
+
     auto transaction = m_pageLoadState.transaction();
 
     m_pageLoadState.setPendingAPIRequestURL(transaction, request.url());
@@ -621,8 +623,10 @@ void WebPageProxy::loadRequest(const ResourceRequest& request, API::Object* user
     bool createdExtension = maybeInitializeSandboxExtensionHandle(request.url(), sandboxExtensionHandle);
     if (createdExtension)
         m_process->willAcquireUniversalFileReadSandboxExtension();
-    m_process->send(Messages::WebPage::LoadRequest(generateNavigationID(), request, sandboxExtensionHandle, WebContextUserMessageEncoder(userData, process())), m_pageID);
+    m_process->send(Messages::WebPage::LoadRequest(navigationID, request, sandboxExtensionHandle, WebContextUserMessageEncoder(userData, process())), m_pageID);
     m_process->responsivenessTimer()->start();
+
+    return navigationID;
 }
 
 void WebPageProxy::loadFile(const String& fileURLString, const String& resourceDirectoryURLString, API::Object* userData)
