@@ -80,16 +80,15 @@ using namespace WebCore;
 
 - (void)exitFullscreen
 {
-    __block RetainPtr<WebVideoFullscreenController> protect{self};
+    RetainPtr<WebVideoFullscreenController> strongSelf(self);
     
-    _interface->exitFullscreen(^{
-        WebThreadRun(^{
-            _model->setMediaElement(nullptr);
-            _interface->setWebVideoFullscreenModel(nullptr);
-            _model->setWebVideoFullscreenInterface(nullptr);
-            _model = nullptr;
-            _interface = nullptr;
-            protect.clear();
+    _interface->exitFullscreen([strongSelf]{
+        WebThreadRun([strongSelf]{
+            strongSelf->_model->setMediaElement(nullptr);
+            strongSelf->_interface->setWebVideoFullscreenModel(nullptr);
+            strongSelf->_model->setWebVideoFullscreenInterface(nullptr);
+            strongSelf->_model = nullptr;
+            strongSelf->_interface = nullptr;
         });
     });
 }

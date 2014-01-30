@@ -1,3 +1,24 @@
+2014-01-30  Jer Noble  <jer.noble@apple.com>
+
+        [iOS] Convert blocks to lambdas in iOS Fullscreen code.
+        https://bugs.webkit.org/show_bug.cgi?id=127946
+
+        Reviewed by Anders Carlsson.
+
+        Pushing a block into a std::function will eventually cause a crash, since std::function
+        does not know about Block_copy and Block_release.
+
+        Lamdas can be intrinsicly converted to blocks, but not vice versa. Switch over all the
+        blocks in the new iOS Fullscreen code to use lamdas, and use the ref-counted this object
+        directly rather than implicitly.
+
+        * platform/ios/WebVideoFullscreenControllerAVKit.mm:
+        (-[WebVideoFullscreenController exitFullscreen]):
+        * platform/ios/WebVideoFullscreenInterfaceAVKit.mm:
+        (WebVideoFullscreenInterfaceAVKit::setVideoLayer):
+        (WebVideoFullscreenInterfaceAVKit::enterFullscreen):
+        (WebVideoFullscreenInterfaceAVKit::exitFullscreen):
+
 2014-01-30  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] [CMake] Add a "make dist" target

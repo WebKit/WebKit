@@ -267,63 +267,64 @@ void WebVideoFullscreenInterfaceAVKit::setVideoLayer(PlatformLayer* videoLayer)
 {
     [m_playerController.get().playerLayer removeFromSuperlayer];
     [videoLayer removeFromSuperlayer];
-    ASSERT([videoLayer isKindOfClass:[classAVPlayerLayer class]]
+    ASSERT(!videoLayer
+        || [videoLayer isKindOfClass:[classAVPlayerLayer class]]
         || ([videoLayer isKindOfClass:[CALayer class]] && [videoLayer conformsToProtocol:@protocol(AVPlayerLayer)]));
     m_playerController.get().playerLayer = (CALayer<AVPlayerLayer>*)videoLayer;
 }
 
 void WebVideoFullscreenInterfaceAVKit::enterFullscreen(std::function<void()> completion)
 {
-    __block RefPtr<WebVideoFullscreenInterfaceAVKit> protect(this);
+    RefPtr<WebVideoFullscreenInterfaceAVKit> strongThis(this);
     
-    dispatch_async(dispatch_get_main_queue(), ^{
-        m_playerViewController = [[[classAVPlayerViewController alloc] init] autorelease];
-        m_playerViewController.get().playerController = (AVPlayerController *)m_playerController.get();
+    dispatch_async(dispatch_get_main_queue(), [strongThis, completion]{
+        strongThis->m_playerViewController = [[[classAVPlayerViewController alloc] init] autorelease];
+        strongThis->m_playerViewController.get().playerController = (AVPlayerController *)strongThis->m_playerController.get();
         
-        if ([m_playerViewController respondsToSelector:@selector(setDelegate:)])
-            m_playerViewController.get().delegate = m_playerController.get();
+        if ([strongThis->m_playerViewController respondsToSelector:@selector(setDelegate:)])
+            strongThis->m_playerViewController.get().delegate = strongThis->m_playerController.get();
         
-        m_viewController = adoptNS([[classUIViewController alloc] init]);
+        strongThis->m_viewController = adoptNS([[classUIViewController alloc] init]);
         
-        m_window = [[[classUIWindow alloc] initWithFrame:[[classUIScreen mainScreen] bounds]] autorelease];
-        m_window.get().backgroundColor = [classUIColor clearColor];
-        m_window.get().rootViewController = m_viewController.get();
-        [m_window makeKeyAndVisible];
+        strongThis->m_window = [[[classUIWindow alloc] initWithFrame:[[classUIScreen mainScreen] bounds]] autorelease];
+        strongThis->m_window.get().backgroundColor = [classUIColor clearColor];
+        strongThis->m_window.get().rootViewController = strongThis->m_viewController.get();
+        [strongThis->m_window makeKeyAndVisible];
         
-        [m_viewController presentViewController:m_playerViewController.get() animated:YES completion:nil];
-        completion();
-        protect.clear();
+        [strongThis->m_viewController presentViewController:strongThis->m_playerViewController.get() animated:YES completion:nil];
+        if (completion)
+            completion();
     });
 }
 
 void WebVideoFullscreenInterfaceAVKit::enterFullscreen()
 {
-    enterFullscreen(^{ });
+    enterFullscreen(nullptr);
 }
 
 void WebVideoFullscreenInterfaceAVKit::exitFullscreen(std::function<void()> completion)
 {
     m_playerController.clear();
-    __block RefPtr<WebVideoFullscreenInterfaceAVKit> protect(this);
+    RefPtr<WebVideoFullscreenInterfaceAVKit> strongThis(this);
     
-    dispatch_async(dispatch_get_main_queue(), ^{
-        [m_viewController dismissViewControllerAnimated:YES completion:^{
-            m_window.get().hidden = YES;
-            m_window.get().rootViewController = nil;
-            m_playerViewController = nil;
-            m_viewController = nil;
-            m_window = nil;
-            if (m_videoFullscreenModel)
-                m_videoFullscreenModel->didExitFullscreen();
-            completion();
-            protect.clear();
+    dispatch_async(dispatch_get_main_queue(), [strongThis, completion]{
+        [strongThis->m_viewController dismissViewControllerAnimated:YES completion:[strongThis, completion]{
+            strongThis->m_window.get().hidden = YES;
+            strongThis->m_window.get().rootViewController = nil;
+            strongThis->m_playerViewController = nil;
+            strongThis->m_viewController = nil;
+            strongThis->m_window = nil;
+            if (strongThis->m_videoFullscreenModel)
+                strongThis->m_videoFullscreenModel->didExitFullscreen();
+            if (completion)
+                completion();
         }];
     });
 }
 
 void WebVideoFullscreenInterfaceAVKit::exitFullscreen()
 {
-    exitFullscreen(^{ });
+    exitFullscreen(nullptr);
 }
 
 #endif
