@@ -324,6 +324,7 @@ WebPageProxy::WebPageProxy(PageClient& pageClient, WebProcessProxy& process, Web
     , m_mayStartMediaWhenInWindow(true)
     , m_waitingForDidUpdateViewState(false)
     , m_scrollPinningBehavior(DoNotPin)
+    , m_navigationID(0)
 {
     updateViewState();
 
@@ -620,7 +621,7 @@ void WebPageProxy::loadRequest(const ResourceRequest& request, API::Object* user
     bool createdExtension = maybeInitializeSandboxExtensionHandle(request.url(), sandboxExtensionHandle);
     if (createdExtension)
         m_process->willAcquireUniversalFileReadSandboxExtension();
-    m_process->send(Messages::WebPage::LoadRequest(request, sandboxExtensionHandle, WebContextUserMessageEncoder(userData, process())), m_pageID);
+    m_process->send(Messages::WebPage::LoadRequest(generateNavigationID(), request, sandboxExtensionHandle, WebContextUserMessageEncoder(userData, process())), m_pageID);
     m_process->responsivenessTimer()->start();
 }
 
@@ -647,7 +648,7 @@ void WebPageProxy::loadFile(const String& fileURLString, const String& resourceD
     SandboxExtension::Handle sandboxExtensionHandle;
     SandboxExtension::createHandle(resourceDirectoryPath, SandboxExtension::ReadOnly, sandboxExtensionHandle);
     m_process->assumeReadAccessToBaseURL(resourceDirectoryURL);
-    m_process->send(Messages::WebPage::LoadRequest(fileURL, sandboxExtensionHandle, WebContextUserMessageEncoder(userData, process())), m_pageID);
+    m_process->send(Messages::WebPage::LoadRequest(generateNavigationID(), fileURL, sandboxExtensionHandle, WebContextUserMessageEncoder(userData, process())), m_pageID);
     m_process->responsivenessTimer()->start();
 }
 
@@ -735,7 +736,7 @@ void WebPageProxy::reload(bool reloadFromOrigin)
         return;
     }
 
-    m_process->send(Messages::WebPage::Reload(reloadFromOrigin, sandboxExtensionHandle), m_pageID);
+    m_process->send(Messages::WebPage::Reload(generateNavigationID(), reloadFromOrigin, sandboxExtensionHandle), m_pageID);
     m_process->responsivenessTimer()->start();
 }
 
@@ -1303,6 +1304,11 @@ void WebPageProxy::handleKeyboardEvent(const NativeWebKeyboardEvent& event)
         didReceiveEvent(event.type(), handled);
     } else if (m_keyEventQueue.size() == 1) // Otherwise, sent from DidReceiveEvent message handler.
         m_process->send(Messages::WebPage::KeyEvent(event), m_pageID);
+}
+
+uint64_t WebPageProxy::generateNavigationID()
+{
+    return ++m_navigationID;
 }
 
 #if ENABLE(NETSCAPE_PLUGIN_API)

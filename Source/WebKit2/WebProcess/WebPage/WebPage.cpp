@@ -288,6 +288,7 @@ WebPage::WebPage(uint64_t pageID, const WebPageCreationParameters& parameters)
     , m_useAsyncScrolling(false)
     , m_viewState(parameters.viewState)
     , m_processSuppressionDisabledByWebPreference("Process suppression is disabled.")
+    , m_pendingNavigationID(0)
 {
     ASSERT(m_pageID);
     // FIXME: This is a non-ideal location for this Setting and
@@ -900,7 +901,7 @@ void WebPage::loadURLInFrame(const String& url, uint64_t frameID)
     frame->coreFrame()->loader().load(FrameLoadRequest(frame->coreFrame(), ResourceRequest(URL(URL(), url))));
 }
 
-void WebPage::loadRequest(const ResourceRequest& request, const SandboxExtension::Handle& sandboxExtensionHandle, IPC::MessageDecoder& decoder)
+void WebPage::loadRequest(uint64_t navigationID, const ResourceRequest& request, const SandboxExtension::Handle& sandboxExtensionHandle, IPC::MessageDecoder& decoder)
 {
     SendStopResponsivenessTimer stopper(this);
 
@@ -908,6 +909,9 @@ void WebPage::loadRequest(const ResourceRequest& request, const SandboxExtension
     InjectedBundleUserMessageDecoder userMessageDecoder(userData);
     if (!decoder.decode(userMessageDecoder))
         return;
+
+    ASSERT(!m_pendingNavigationID);
+    m_pendingNavigationID = navigationID;
 
     m_sandboxExtensionTracker.beginLoad(m_mainFrame.get(), sandboxExtensionHandle);
 
@@ -917,6 +921,8 @@ void WebPage::loadRequest(const ResourceRequest& request, const SandboxExtension
 
     // Initate the load in WebCore.
     m_mainFrame->coreFrame()->loader().load(FrameLoadRequest(m_mainFrame->coreFrame(), request));
+
+    ASSERT(!m_pendingNavigationID);
 }
 
 void WebPage::loadDataImpl(PassRefPtr<SharedBuffer> sharedBuffer, const String& MIMEType, const String& encodingName, const URL& baseURL, const URL& unreachableURL, IPC::MessageDecoder& decoder)
@@ -1002,9 +1008,12 @@ void WebPage::setDefersLoading(bool defersLoading)
     m_page->setDefersLoading(defersLoading);
 }
 
-void WebPage::reload(bool reloadFromOrigin, const SandboxExtension::Handle& sandboxExtensionHandle)
+void WebPage::reload(uint64_t navigationID, bool reloadFromOrigin, const SandboxExtension::Handle& sandboxExtensionHandle)
 {
     SendStopResponsivenessTimer stopper(this);
+
+    ASSERT(!m_pendingNavigationID);
+    m_pendingNavigationID = navigationID;
 
     m_sandboxExtensionTracker.beginLoad(m_mainFrame.get(), sandboxExtensionHandle);
     m_mainFrame->coreFrame()->loader().reload(reloadFromOrigin);
@@ -4163,7 +4172,12 @@ PassRefPtr<DocumentLoader> WebPage::createDocumentLoader(Frame& frame, const Res
 {
     RefPtr<WebDocumentLoader> documentLoader = WebDocumentLoader::create(request, substituteData);
 
-    // FIXME: Set the navigation ID if possible.
+    if (m_pendingNavigationID) {
+        ASSERT(frame.isMainFrame());
+
+        documentLoader->setNavigationID(m_pendingNavigationID);
+        m_pendingNavigationID = 0;
+    }
 
     return documentLoader.release();
 }

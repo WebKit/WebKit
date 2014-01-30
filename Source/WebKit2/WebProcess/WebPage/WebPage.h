@@ -723,13 +723,13 @@ private:
 
     // Actions
     void tryClose();
-    void loadRequest(const WebCore::ResourceRequest&, const SandboxExtension::Handle&, IPC::MessageDecoder&);
+    void loadRequest(uint64_t navigationID, const WebCore::ResourceRequest&, const SandboxExtension::Handle&, IPC::MessageDecoder&);
     void loadData(const IPC::DataReference&, const String& MIMEType, const String& encodingName, const String& baseURL, IPC::MessageDecoder&);
     void loadHTMLString(const String& htmlString, const String& baseURL, IPC::MessageDecoder&);
     void loadAlternateHTMLString(const String& htmlString, const String& baseURL, const String& unreachableURL, IPC::MessageDecoder&);
     void loadPlainTextString(const String&, IPC::MessageDecoder&);
     void loadWebArchiveData(const IPC::DataReference&, IPC::MessageDecoder&);
-    void reload(bool reloadFromOrigin, const SandboxExtension::Handle&);
+    void reload(uint64_t navigationID, bool reloadFromOrigin, const SandboxExtension::Handle&);
     void goForward(uint64_t);
     void goBack(uint64_t);
     void goToBackForwardItem(uint64_t);
@@ -1059,6 +1059,8 @@ private:
     WebCore::ViewState::Flags m_viewState;
 
     UserActivity m_processSuppressionDisabledByWebPreference;
+
+    uint64_t m_pendingNavigationID;
 };
 
 } // namespace WebKit

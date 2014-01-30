@@ -1168,6 +1168,8 @@ private:
     void findPlugin(const String& mimeType, uint32_t processType, const String& urlString, const String& frameURLString, const String& pageURLString, bool allowOnlyApplicationPlugins, uint64_t& pluginProcessToken, String& newMIMEType, uint32_t& pluginLoadPolicy, String& unavailabilityDescription);
 #endif
 
+    uint64_t generateNavigationID();
+
     PageClient& m_pageClient;
     std::unique_ptr<API::LoaderClient> m_loaderClient;
     std::unique_ptr<API::PolicyClient> m_policyClient;
@@ -1390,6 +1392,8 @@ private:
 #endif
         
     WebCore::ScrollPinningBehavior m_scrollPinningBehavior;
+
+    uint64_t m_navigationID;
 };
 
 } // namespace WebKit

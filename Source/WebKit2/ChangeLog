@@ -1,5 +1,29 @@
 2014-01-29  Anders Carlsson  <andersca@apple.com>
 
+        Pass navigation IDs along to LoadRequest and Reload
+        https://bugs.webkit.org/show_bug.cgi?id=127883
+
+        Reviewed by Sam Weinig.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::WebPageProxy):
+        (WebKit::WebPageProxy::loadRequest):
+        (WebKit::WebPageProxy::loadFile):
+        (WebKit::WebPageProxy::reload):
+        (WebKit::WebPageProxy::generateNavigationID):
+        * UIProcess/WebPageProxy.h:
+        * WebProcess/WebPage/WebDocumentLoader.cpp:
+        (WebKit::WebDocumentLoader::setNavigationID):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::WebPage):
+        (WebKit::WebPage::loadRequest):
+        (WebKit::WebPage::reload):
+        (WebKit::WebPage::createDocumentLoader):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+
+2014-01-29  Anders Carlsson  <andersca@apple.com>
+
         -[WKWebView loadRequest:] should return a WKNavigation
         https://bugs.webkit.org/show_bug.cgi?id=127873
 

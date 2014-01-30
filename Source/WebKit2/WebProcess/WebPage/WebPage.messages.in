@@ -82,14 +82,14 @@ messages -> WebPage LegacyReceiver {
     TryRestoreScrollPosition()
 
     LoadURLInFrame(String url, uint64_t frameID)
-    LoadRequest(WebCore::ResourceRequest request, WebKit::SandboxExtension::Handle sandboxExtensionHandle, WebKit::WebContextUserMessageEncoder userData) Variadic
+    LoadRequest(uint64_t navigationID, WebCore::ResourceRequest request, WebKit::SandboxExtension::Handle sandboxExtensionHandle, WebKit::WebContextUserMessageEncoder userData) Variadic
     LoadData(IPC::DataReference data, String MIMEType, String encoding, String baseURL, WebKit::WebContextUserMessageEncoder userData) Variadic
     LoadHTMLString(String htmlString, String baseURL, WebKit::WebContextUserMessageEncoder userData) Variadic
     LoadAlternateHTMLString(String htmlString, String baseURL, String unreachableURL, WebKit::WebContextUserMessageEncoder userData) Variadic
     LoadPlainTextString(String string, WebKit::WebContextUserMessageEncoder userData) Variadic
     LoadWebArchiveData(IPC::DataReference webArchiveData, WebKit::WebContextUserMessageEncoder userData) Variadic
 
-    Reload(bool reloadFromOrigin, WebKit::SandboxExtension::Handle sandboxExtensionHandle)
+    Reload(uint64_t navigationID, bool reloadFromOrigin, WebKit::SandboxExtension::Handle sandboxExtensionHandle)
     StopLoading()
 
     StopLoadingFrame(uint64_t frameID)
