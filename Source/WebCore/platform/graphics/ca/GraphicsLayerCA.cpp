@@ -3160,7 +3160,10 @@ void GraphicsLayerCA::setupContentsLayer(PlatformCALayer* contentsLayer)
 #if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
 bool GraphicsLayerCA::mediaLayerMustBeUpdatedOnMainThread() const
 {
-    return m_contentsLayerPurpose == ContentsLayerForMedia;
+    if (m_contentsLayerPurpose != ContentsLayerForMedia)
+        return false;
+
+    return m_client && m_client->mediaLayerMustBeUpdatedOnMainThread();
 }
 #endif
 

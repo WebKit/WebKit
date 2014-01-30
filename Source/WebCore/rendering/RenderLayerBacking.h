@@ -179,6 +179,10 @@ public:
     virtual bool shouldSkipLayerInDump(const GraphicsLayer*) const override;
     virtual bool shouldDumpPropertyForLayer(const GraphicsLayer*, const char* propertyName) const override;
 
+#if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
+    virtual bool mediaLayerMustBeUpdatedOnMainThread() const override;
+#endif
+
 #ifndef NDEBUG
     virtual void verifyNotPainting();
 #endif

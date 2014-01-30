@@ -1,3 +1,22 @@
+2014-01-30  Eric Carlson  <eric.carlson@apple.com>
+
+        [iOS] don't update media layers on main thread when using AVFoundation
+        https://bugs.webkit.org/show_bug.cgi?id=127931
+
+        Reviewed by Simon Fraser.
+
+        * platform/graphics/GraphicsLayerClient.h:
+        (WebCore::GraphicsLayerClient::mediaLayerMustBeUpdatedOnMainThread): Add mediaLayerMustBeUpdatedOnMainThread.
+
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayerCA::mediaLayerMustBeUpdatedOnMainThread): Ask the client if graphics layers
+            should be updated on the main thread.
+
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::mediaLayerMustBeUpdatedOnMainThread): New, check settings to see
+            if video plug-in proxy is enabled.
+        * rendering/RenderLayerBacking.h:
+
 2014-01-30  Jer Noble  <jer.noble@apple.com>
 
         [MediaControls][iOS] Fix a couple of UI bugs in the iOS Media Controls
