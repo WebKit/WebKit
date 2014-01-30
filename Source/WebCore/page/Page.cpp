@@ -92,14 +92,6 @@
 #include <wtf/text/Base64.h>
 #include <wtf/text/StringHash.h>
 
-#if ENABLE(VIDEO_TRACK)
-#if (PLATFORM(MAC) && !PLATFORM(IOS)) || HAVE(MEDIA_ACCESSIBILITY_FRAMEWORK)
-#include "CaptionUserPreferencesMediaAF.h"
-#else
-#include "CaptionUserPreferences.h"
-#endif
-#endif
-
 namespace WebCore {
 
 static HashSet<Page*>* allPages;
@@ -1501,28 +1493,6 @@ void Page::hiddenPageCSSAnimationSuspensionStateChanged()
 #endif
 
 #if ENABLE(VIDEO_TRACK)
-CaptionUserPreferences& Page::captionPreferences()
-{
-    // FIXME: This should not be a singleton.
-#if (PLATFORM(MAC) && !PLATFORM(IOS)) || HAVE(MEDIA_ACCESSIBILITY_FRAMEWORK)
-    static NeverDestroyed<CaptionUserPreferencesMediaAF> preferences;
-#else
-    static NeverDestroyed<CaptionUserPreferences> preferences;
-#endif
-
-    return preferences;
-}
-
-void Page::updateStyleForAllPagesForCaptionPreferencesChanged()
-{
-    if (!allPages)
-        return;
-
-    for (auto page : *allPages)
-        page->captionPreferencesChanged();
-}
-
-
 void Page::captionPreferencesChanged()
 {
     for (Frame* frame = &mainFrame(); frame; frame = frame->tree().traverseNext())

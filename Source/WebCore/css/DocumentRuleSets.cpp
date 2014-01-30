@@ -51,8 +51,6 @@ void DocumentRuleSets::initUserStyle(DocumentStyleSheetCollection& styleSheetCol
     OwnPtr<RuleSet> tempUserStyle = RuleSet::create();
     if (CSSStyleSheet* pageUserSheet = styleSheetCollection.pageUserSheet())
         tempUserStyle->addRulesFromSheet(&pageUserSheet->contents(), medium, &resolver);
-    if (CSSStyleSheet* captionsStyleSheet = styleSheetCollection.captionsStyleSheet())
-        tempUserStyle->addRulesFromSheet(&captionsStyleSheet->contents(), medium, &resolver);
     collectRulesFromUserStyleSheets(styleSheetCollection.injectedUserStyleSheets(), *tempUserStyle, medium, resolver);
     collectRulesFromUserStyleSheets(styleSheetCollection.documentUserStyleSheets(), *tempUserStyle, medium, resolver);
     if (tempUserStyle->ruleCount() > 0 || tempUserStyle->pageRules().size() > 0)

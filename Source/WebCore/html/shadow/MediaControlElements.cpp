@@ -820,7 +820,7 @@ void MediaControlClosedCaptionsTrackListElement::updateDisplay()
 
     if (!document().page())
         return;
-    CaptionUserPreferences::CaptionDisplayMode displayMode = document().page()->captionPreferences().captionDisplayMode();
+    CaptionUserPreferences::CaptionDisplayMode displayMode = document().page()->group().captionPreferences()->captionDisplayMode();
 
     HTMLMediaElement* mediaElement = parentMediaElement(this);
     if (!mediaElement)
@@ -896,9 +896,8 @@ void MediaControlClosedCaptionsTrackListElement::rebuildTrackListMenu()
 
     if (!document().page())
         return;
-
-    CaptionUserPreferences& captionPreferences = document().page()->captionPreferences();
-    Vector<RefPtr<TextTrack>> tracksForMenu = captionPreferences.sortedTrackListForMenu(trackList);
+    CaptionUserPreferences* captionPreferences = document().page()->group().captionPreferences();
+    Vector<RefPtr<TextTrack>> tracksForMenu = captionPreferences->sortedTrackListForMenu(trackList);
 
     RefPtr<Element> captionsHeader = document().createElement(h3Tag, ASSERT_NO_EXCEPTION);
     captionsHeader->appendChild(document().createTextNode(textTrackSubtitlesText()));
@@ -908,7 +907,7 @@ void MediaControlClosedCaptionsTrackListElement::rebuildTrackListMenu()
     for (unsigned i = 0, length = tracksForMenu.size(); i < length; ++i) {
         RefPtr<TextTrack> textTrack = tracksForMenu[i];
         RefPtr<Element> menuItem = document().createElement(liTag, ASSERT_NO_EXCEPTION);
-        menuItem->appendChild(document().createTextNode(captionPreferences.displayNameForTrack(textTrack.get())));
+        menuItem->appendChild(document().createTextNode(captionPreferences->displayNameForTrack(textTrack.get())));
         captionsMenuList->appendChild(menuItem);
         m_menuItems.append(menuItem);
         m_menuToTrackMap.add(menuItem, textTrack);
@@ -1332,7 +1331,7 @@ void MediaControlTextTrackContainerElement::updateTimerFired(Timer<MediaControlT
         return;
 
     float smallestDimension = std::min(m_videoDisplaySize.size().height(), m_videoDisplaySize.size().width());
-    float fontScale = document().page()->captionPreferences().captionFontSizeScaleAndImportance(m_fontSizeIsImportant);
+    float fontScale = document().page()->group().captionPreferences()->captionFontSizeScaleAndImportance(m_fontSizeIsImportant);
     m_fontSize = lroundf(smallestDimension * fontScale);
     
     CueList activeCues = mediaElement->currentlyActiveCues();

@@ -6984,12 +6984,6 @@
     <ClCompile Include="..\page\animation\AnimationController.cpp" />
     <ClCompile Include="..\page\AutoscrollController.cpp" />
     <ClCompile Include="..\page\BarProp.cpp" />
-    <ClCompile Include="..\page\CaptionStyleSheetMediaAF.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_WinCairo|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_WinCairo|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug_WinCairo|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug_WinCairo|x64'">true</ExcludedFromBuild>
-    </ClCompile>
     <ClCompile Include="..\page\CaptionUserPreferences.cpp" />
     <ClCompile Include="..\page\CaptionUserPreferencesMediaAF.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_WinCairo|Win32'">true</ExcludedFromBuild>
@@ -18765,7 +18759,6 @@
     <ClInclude Include="..\page\animation\AnimationControllerPrivate.h" />
     <ClInclude Include="..\page\AutoscrollController.h" />
     <ClInclude Include="..\page\BarProp.h" />
-    <ClInclude Include="..\page\CaptionStyleSheetMediaAF.h" />
     <ClInclude Include="..\page\CaptionUserPreferences.h" />
     <ClInclude Include="..\page\CaptionUserPreferencesMediaAF.h" />
     <ClInclude Include="..\page\Chrome.h" />

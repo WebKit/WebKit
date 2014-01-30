@@ -82,7 +82,8 @@ Vector<RefPtr<TextTrack>> MediaControlsHost::sortedTrackListForMenu(TextTrackLis
     if (!page)
         return Vector<RefPtr<TextTrack>>();
 
-    return page->captionPreferences().sortedTrackListForMenu(trackList);
+    CaptionUserPreferences* captionPreferences = page->group().captionPreferences();
+    return captionPreferences->sortedTrackListForMenu(trackList);
 }
 
 String MediaControlsHost::displayNameForTrack(TextTrack* track)
@@ -94,7 +95,8 @@ String MediaControlsHost::displayNameForTrack(TextTrack* track)
     if (!page)
         return emptyString();
 
-    return page->captionPreferences().displayNameForTrack(track);
+    CaptionUserPreferences* captionPreferences = page->group().captionPreferences();
+    return captionPreferences->displayNameForTrack(track);
 }
 
 TextTrack* MediaControlsHost::captionMenuOffItem()
@@ -113,7 +115,7 @@ AtomicString MediaControlsHost::captionDisplayMode()
     if (!page)
         return emptyAtom;
 
-    switch (page->captionPreferences().captionDisplayMode()) {
+    switch (page->group().captionPreferences()->captionDisplayMode()) {
     case CaptionUserPreferences::Automatic:
         return automaticKeyword();
     case CaptionUserPreferences::ForcedOnly:

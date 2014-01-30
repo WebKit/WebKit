@@ -107,7 +107,6 @@ void InspectorCSSOMWrappers::collectFromDocumentStyleSheetCollection(DocumentSty
 {
     collectFromStyleSheets(styleSheetCollection.activeAuthorStyleSheets());
     collect(styleSheetCollection.pageUserSheet());
-    collect(styleSheetCollection.captionsStyleSheet());
     collectFromStyleSheets(styleSheetCollection.injectedUserStyleSheets());
     collectFromStyleSheets(styleSheetCollection.documentUserStyleSheets());
 }

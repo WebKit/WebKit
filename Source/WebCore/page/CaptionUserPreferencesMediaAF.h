@@ -37,35 +37,50 @@ namespace WebCore {
 
 class CaptionUserPreferencesMediaAF : public CaptionUserPreferences {
 public:
-    CaptionUserPreferencesMediaAF();
+    CaptionUserPreferencesMediaAF(PageGroup&);
     virtual ~CaptionUserPreferencesMediaAF();
 
 #if HAVE(MEDIA_ACCESSIBILITY_FRAMEWORK)
-    void captionApperenceChanged();
-
     virtual CaptionDisplayMode captionDisplayMode() const override;
     virtual void setCaptionDisplayMode(CaptionDisplayMode) override;
 
-    virtual bool userPrefersCaptions(Document&) const override;
-    virtual bool userPrefersSubtitles(Document&) const override;
+    virtual bool userPrefersCaptions() const override;
+    virtual bool userPrefersSubtitles() const override;
 
     virtual float captionFontSizeScaleAndImportance(bool&) const override;
 
+    virtual void setInterestedInCaptionPreferenceChanges() override;
+
     virtual void setPreferredLanguage(const String&) override;
     virtual Vector<String> preferredLanguages() const override;
+
+    virtual void captionPreferencesChanged() override;
 
     bool shouldFilterTrackMenu() const { return true; }
 #else
     bool shouldFilterTrackMenu() const { return false; }
 #endif
 
-    virtual String platformCaptionsStyleSheet() override;
+    virtual String captionsStyleSheetOverride() const override;
     virtual int textTrackSelectionScore(TextTrack*, HTMLMediaElement*) const override;
     virtual Vector<RefPtr<TextTrack>> sortedTrackListForMenu(TextTrackList*) override;
     virtual String displayNameForTrack(TextTrack*) const override;
 
 private:
-    String m_captionStyleSheet;
+#if HAVE(MEDIA_ACCESSIBILITY_FRAMEWORK)
+    String captionsWindowCSS() const;
+    String captionsBackgroundCSS() const;
+    String captionsTextColorCSS() const;
+    Color captionsTextColor(bool&) const;
+    String captionsDefaultFontCSS() const;
+    Color captionsEdgeColorForTextColor(const Color&) const;
+    String windowRoundedCornerRadiusCSS() const;
+    String captionsTextEdgeCSS() const;
+    String cssPropertyWithTextEdgeColor(CSSPropertyID, const String&, const Color&, bool) const;
+    String colorPropertyCSS(CSSPropertyID, const Color&, bool) const;
+
+    bool m_listeningForPreferenceChanges;
+#endif
 };
 
 }

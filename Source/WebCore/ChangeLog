@@ -1,3 +1,97 @@
+2014-01-29  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r163048.
+        http://trac.webkit.org/changeset/163048
+        https://bugs.webkit.org/show_bug.cgi?id=127890
+
+        Caused many crashes, detected by EWS prior to landing
+        (Requested by ap on #webkit).
+
+        * Modules/mediacontrols/MediaControlsHost.cpp:
+        (WebCore::MediaControlsHost::sortedTrackListForMenu):
+        (WebCore::MediaControlsHost::displayNameForTrack):
+        (WebCore::MediaControlsHost::captionDisplayMode):
+        * WebCore.exp.in:
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.vcxproj/WebCore.vcxproj.filters:
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/DocumentRuleSets.cpp:
+        (WebCore::DocumentRuleSets::initUserStyle):
+        * css/InspectorCSSOMWrappers.cpp:
+        (WebCore::InspectorCSSOMWrappers::collectFromDocumentStyleSheetCollection):
+        * dom/Document.cpp:
+        (WebCore::Document::setCompatibilityMode):
+        (WebCore::Document::registerForCaptionPreferencesChangedCallbacks):
+        (WebCore::Document::captionPreferencesChanged):
+        * dom/DocumentStyleSheetCollection.cpp:
+        * dom/DocumentStyleSheetCollection.h:
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::HTMLMediaElement):
+        (WebCore::HTMLMediaElement::parseAttribute):
+        * html/shadow/MediaControlElements.cpp:
+        (WebCore::MediaControlClosedCaptionsTrackListElement::updateDisplay):
+        (WebCore::MediaControlClosedCaptionsTrackListElement::rebuildTrackListMenu):
+        (WebCore::MediaControlTextTrackContainerElement::updateTimerFired):
+        * page/CaptionStyleSheetMediaAF.cpp: Removed.
+        * page/CaptionStyleSheetMediaAF.h: Removed.
+        * page/CaptionUserPreferences.cpp:
+        (WebCore::CaptionUserPreferences::CaptionUserPreferences):
+        (WebCore::CaptionUserPreferences::notify):
+        (WebCore::CaptionUserPreferences::setCaptionDisplayMode):
+        (WebCore::CaptionUserPreferences::userPrefersCaptions):
+        (WebCore::CaptionUserPreferences::setUserPrefersCaptions):
+        (WebCore::CaptionUserPreferences::userPrefersSubtitles):
+        (WebCore::CaptionUserPreferences::setUserPrefersSubtitles):
+        (WebCore::CaptionUserPreferences::userPrefersTextDescriptions):
+        (WebCore::CaptionUserPreferences::setUserPrefersTextDescriptions):
+        (WebCore::CaptionUserPreferences::captionPreferencesChanged):
+        (WebCore::CaptionUserPreferences::textTrackSelectionScore):
+        (WebCore::CaptionUserPreferences::setCaptionsStyleSheetOverride):
+        (WebCore::CaptionUserPreferences::updateCaptionStyleSheetOveride):
+        * page/CaptionUserPreferences.h:
+        (WebCore::CaptionUserPreferences::captionsStyleSheetOverride):
+        (WebCore::CaptionUserPreferences::setInterestedInCaptionPreferenceChanges):
+        (WebCore::CaptionUserPreferences::testingMode):
+        (WebCore::CaptionUserPreferences::setTestingMode):
+        (WebCore::CaptionUserPreferences::pageGroup):
+        * page/CaptionUserPreferencesMediaAF.cpp:
+        (WebCore::userCaptionPreferencesChangedNotificationCallback):
+        (WebCore::CaptionUserPreferencesMediaAF::CaptionUserPreferencesMediaAF):
+        (WebCore::CaptionUserPreferencesMediaAF::userPrefersCaptions):
+        (WebCore::CaptionUserPreferencesMediaAF::userPrefersSubtitles):
+        (WebCore::CaptionUserPreferencesMediaAF::setInterestedInCaptionPreferenceChanges):
+        (WebCore::CaptionUserPreferencesMediaAF::captionPreferencesChanged):
+        (WebCore::CaptionUserPreferencesMediaAF::captionsWindowCSS):
+        (WebCore::CaptionUserPreferencesMediaAF::captionsBackgroundCSS):
+        (WebCore::CaptionUserPreferencesMediaAF::captionsTextColor):
+        (WebCore::CaptionUserPreferencesMediaAF::captionsTextColorCSS):
+        (WebCore::CaptionUserPreferencesMediaAF::windowRoundedCornerRadiusCSS):
+        (WebCore::CaptionUserPreferencesMediaAF::captionsEdgeColorForTextColor):
+        (WebCore::CaptionUserPreferencesMediaAF::cssPropertyWithTextEdgeColor):
+        (WebCore::CaptionUserPreferencesMediaAF::colorPropertyCSS):
+        (WebCore::CaptionUserPreferencesMediaAF::captionsTextEdgeCSS):
+        (WebCore::CaptionUserPreferencesMediaAF::captionsDefaultFontCSS):
+        (WebCore::CaptionUserPreferencesMediaAF::captionsStyleSheetOverride):
+        (WebCore::CaptionUserPreferencesMediaAF::textTrackSelectionScore):
+        (WebCore::CaptionUserPreferencesMediaAF::sortedTrackListForMenu):
+        * page/CaptionUserPreferencesMediaAF.h:
+        * page/Page.cpp:
+        * page/Page.h:
+        * page/PageGroup.cpp:
+        (WebCore::PageGroup::captionPreferencesChanged):
+        (WebCore::PageGroup::captionPreferences):
+        * page/PageGroup.h:
+        * testing/InternalSettings.cpp:
+        (WebCore::InternalSettings::setShouldDisplayTrackKind):
+        (WebCore::InternalSettings::shouldDisplayTrackKind):
+        * testing/Internals.cpp:
+        (WebCore::Internals::resetToConsistentState):
+        (WebCore::Internals::Internals):
+        (WebCore::Internals::captionsStyleSheetOverride):
+        (WebCore::Internals::setCaptionsStyleSheetOverride):
+        (WebCore::Internals::setPrimaryAudioTrackLanguageOverride):
+        (WebCore::Internals::setCaptionDisplayMode):
+
 2014-01-29  Csaba Osztrogonác  <ossy@webkit.org>
 
         Remove ENABLE(JAVASCRIPT_DEBUGGER) leftovers

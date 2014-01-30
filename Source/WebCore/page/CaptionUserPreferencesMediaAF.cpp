@@ -29,7 +29,9 @@
 
 #include "CaptionUserPreferencesMediaAF.h"
 
-#include "CaptionStyleSheetMediaAF.h"
+#if HAVE(MEDIA_ACCESSIBILITY_FRAMEWORK)
+#include "CoreText/CoreText.h"
+#endif
 #include "FloatConversion.h"
 #include "HTMLMediaElement.h"
 #include "URL.h"
@@ -40,6 +42,7 @@
 #include "SoftLinking.h"
 #include "TextTrackCue.h"
 #include "TextTrackList.h"
+#include "UserStyleSheetTypes.h"
 #include <wtf/RetainPtr.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringBuilder.h>
@@ -73,29 +76,52 @@
 #endif
 
 SOFT_LINK_AVF_FRAMEWORK(MediaAccessibility)
+SOFT_LINK_AVF_FRAMEWORK(CoreText)
 
 SOFT_LINK_AVF_FRAMEWORK_IMPORT(MediaAccessibility, MACaptionAppearanceGetDisplayType, MACaptionAppearanceDisplayType, (MACaptionAppearanceDomain domain), (domain))
 SOFT_LINK_AVF_FRAMEWORK_IMPORT(MediaAccessibility, MACaptionAppearanceSetDisplayType, void, (MACaptionAppearanceDomain domain, MACaptionAppearanceDisplayType displayType), (domain, displayType))
+SOFT_LINK_AVF_FRAMEWORK_IMPORT(MediaAccessibility, MACaptionAppearanceCopyForegroundColor, CGColorRef, (MACaptionAppearanceDomain domain, MACaptionAppearanceBehavior *behavior), (domain, behavior))
+SOFT_LINK_AVF_FRAMEWORK_IMPORT(MediaAccessibility, MACaptionAppearanceCopyBackgroundColor, CGColorRef, (MACaptionAppearanceDomain domain, MACaptionAppearanceBehavior *behavior), (domain, behavior))
+SOFT_LINK_AVF_FRAMEWORK_IMPORT(MediaAccessibility, MACaptionAppearanceCopyWindowColor, CGColorRef, (MACaptionAppearanceDomain domain, MACaptionAppearanceBehavior *behavior), (domain, behavior))
+SOFT_LINK_AVF_FRAMEWORK_IMPORT(MediaAccessibility, MACaptionAppearanceGetForegroundOpacity, CGFloat, (MACaptionAppearanceDomain domain, MACaptionAppearanceBehavior *behavior), (domain, behavior))
+SOFT_LINK_AVF_FRAMEWORK_IMPORT(MediaAccessibility, MACaptionAppearanceGetBackgroundOpacity, CGFloat, (MACaptionAppearanceDomain domain, MACaptionAppearanceBehavior *behavior), (domain, behavior))
+SOFT_LINK_AVF_FRAMEWORK_IMPORT(MediaAccessibility, MACaptionAppearanceGetWindowOpacity, CGFloat, (MACaptionAppearanceDomain domain, MACaptionAppearanceBehavior *behavior), (domain, behavior))
+SOFT_LINK_AVF_FRAMEWORK_IMPORT(MediaAccessibility, MACaptionAppearanceGetWindowRoundedCornerRadius, CGFloat, (MACaptionAppearanceDomain domain, MACaptionAppearanceBehavior *behavior), (domain, behavior))
+SOFT_LINK_AVF_FRAMEWORK_IMPORT(MediaAccessibility, MACaptionAppearanceCopyFontDescriptorForStyle, CTFontDescriptorRef, (MACaptionAppearanceDomain domain,  MACaptionAppearanceBehavior *behavior, MACaptionAppearanceFontStyle fontStyle), (domain, behavior, fontStyle))
+SOFT_LINK_AVF_FRAMEWORK_IMPORT(MediaAccessibility, MACaptionAppearanceGetRelativeCharacterSize, CGFloat, (MACaptionAppearanceDomain domain, MACaptionAppearanceBehavior *behavior), (domain, behavior))
+SOFT_LINK_AVF_FRAMEWORK_IMPORT(MediaAccessibility, MACaptionAppearanceGetTextEdgeStyle, MACaptionAppearanceTextEdgeStyle, (MACaptionAppearanceDomain domain, MACaptionAppearanceBehavior *behavior), (domain, behavior))
 SOFT_LINK_AVF_FRAMEWORK_IMPORT(MediaAccessibility, MACaptionAppearanceAddSelectedLanguage, bool, (MACaptionAppearanceDomain domain, CFStringRef language), (domain, language));
 SOFT_LINK_AVF_FRAMEWORK_IMPORT(MediaAccessibility, MACaptionAppearanceCopySelectedLanguages, CFArrayRef, (MACaptionAppearanceDomain domain), (domain));
 SOFT_LINK_AVF_FRAMEWORK_IMPORT(MediaAccessibility, MACaptionAppearanceCopyPreferredCaptioningMediaCharacteristics,  CFArrayRef, (MACaptionAppearanceDomain domain), (domain));
-SOFT_LINK_AVF_FRAMEWORK_IMPORT(MediaAccessibility, MACaptionAppearanceGetRelativeCharacterSize, CGFloat, (MACaptionAppearanceDomain domain, MACaptionAppearanceBehavior *behavior), (domain, behavior))
+
+SOFT_LINK_AVF_FRAMEWORK_IMPORT(CoreText, CTFontDescriptorCopyAttribute,  CFTypeRef, (CTFontDescriptorRef descriptor, CFStringRef attribute), (descriptor, attribute));
 
 #if PLATFORM(WIN)
 // These are needed on Windows due to the way DLLs work. We do not need them on other platforms
 #define MACaptionAppearanceGetDisplayType softLink_MACaptionAppearanceGetDisplayType
 #define MACaptionAppearanceSetDisplayType softLink_MACaptionAppearanceSetDisplayType
+#define MACaptionAppearanceCopyForegroundColor softLink_MACaptionAppearanceCopyForegroundColor
+#define MACaptionAppearanceCopyBackgroundColor softLink_MACaptionAppearanceCopyBackgroundColor
+#define MACaptionAppearanceCopyWindowColor softLink_MACaptionAppearanceCopyWindowColor
+#define MACaptionAppearanceGetForegroundOpacity softLink_MACaptionAppearanceGetForegroundOpacity
+#define MACaptionAppearanceGetBackgroundOpacity softLink_MACaptionAppearanceGetBackgroundOpacity
+#define MACaptionAppearanceGetWindowOpacity softLink_MACaptionAppearanceGetWindowOpacity
+#define MACaptionAppearanceGetWindowRoundedCornerRadius softLink_MACaptionAppearanceGetWindowRoundedCornerRadius
+#define MACaptionAppearanceCopyFontDescriptorForStyle softLink_MACaptionAppearanceCopyFontDescriptorForStyle
+#define MACaptionAppearanceGetRelativeCharacterSize softLink_MACaptionAppearanceGetRelativeCharacterSize
+#define MACaptionAppearanceGetTextEdgeStyle softLink_MACaptionAppearanceGetTextEdgeStyle
 #define MACaptionAppearanceAddSelectedLanguage softLink_MACaptionAppearanceAddSelectedLanguage
 #define MACaptionAppearanceCopySelectedLanguages softLink_MACaptionAppearanceCopySelectedLanguages
 #define MACaptionAppearanceCopyPreferredCaptioningMediaCharacteristics softLink_MACaptionAppearanceCopyPreferredCaptioningMediaCharacteristics
-#define MACaptionAppearanceGetRelativeCharacterSize softLink_MACaptionAppearanceGetRelativeCharacterSize
+#define CTFontDescriptorCopyAttribute softLink_CTFontDescriptorCopyAttribute
 #endif
 
 SOFT_LINK_AVF_POINTER(MediaAccessibility, kMAXCaptionAppearanceSettingsChangedNotification, CFStringRef)
 #define kMAXCaptionAppearanceSettingsChangedNotification getkMAXCaptionAppearanceSettingsChangedNotification()
 
+SOFT_LINK_AVF_POINTER(CoreText, kCTFontNameAttribute, CFStringRef)
+#define kCTFontNameAttribute getkCTFontNameAttribute()
 #endif
-
 
 namespace WebCore {
 
@@ -103,21 +129,21 @@ namespace WebCore {
 static void userCaptionPreferencesChangedNotificationCallback(CFNotificationCenterRef, void* observer, CFStringRef, const void *, CFDictionaryRef)
 {
 #if !PLATFORM(IOS)
-    static_cast<CaptionUserPreferencesMediaAF*>(observer)->captionApperenceChanged();
+    static_cast<CaptionUserPreferencesMediaAF*>(observer)->captionPreferencesChanged();
 #else
     WebThreadRun(^{
-        static_cast<CaptionUserPreferencesMediaAF*>(observer)->captionApperenceChanged();
+        static_cast<CaptionUserPreferencesMediaAF*>(observer)->captionPreferencesChanged();
     });
 #endif
 }
 #endif
 
-CaptionUserPreferencesMediaAF::CaptionUserPreferencesMediaAF()
-{
+CaptionUserPreferencesMediaAF::CaptionUserPreferencesMediaAF(PageGroup& group)
+    : CaptionUserPreferences(group)
 #if HAVE(MEDIA_ACCESSIBILITY_FRAMEWORK)
-    if (MediaAccessibilityLibrary() && kMAXCaptionAppearanceSettingsChangedNotification)
-        CFNotificationCenterAddObserver(CFNotificationCenterGetLocalCenter(), this, userCaptionPreferencesChangedNotificationCallback, kMAXCaptionAppearanceSettingsChangedNotification, 0, CFNotificationSuspensionBehaviorCoalesce);
+    , m_listeningForPreferenceChanges(false)
 #endif
+{
 }
 
 CaptionUserPreferencesMediaAF::~CaptionUserPreferencesMediaAF()
@@ -129,15 +155,6 @@ CaptionUserPreferencesMediaAF::~CaptionUserPreferencesMediaAF()
 }
 
 #if HAVE(MEDIA_ACCESSIBILITY_FRAMEWORK)
-
-void CaptionUserPreferencesMediaAF::captionApperenceChanged()
-{
-    // Invalidate the caption style sheet.
-    m_captionStyleSheet = String();
-
-    // Tell the base class to invalidate all the uses of it.
-    captionPreferencesChanged();
-}
 
 CaptionUserPreferences::CaptionDisplayMode CaptionUserPreferencesMediaAF::captionDisplayMode() const
 {
@@ -189,9 +206,9 @@ void CaptionUserPreferencesMediaAF::setCaptionDisplayMode(CaptionUserPreferences
     MACaptionAppearanceSetDisplayType(kMACaptionAppearanceDomainUser, displayType);
 }
 
-bool CaptionUserPreferencesMediaAF::userPrefersCaptions(Document& document) const
+bool CaptionUserPreferencesMediaAF::userPrefersCaptions() const
 {
-    bool captionSetting = CaptionUserPreferences::userPrefersCaptions(document);
+    bool captionSetting = CaptionUserPreferences::userPrefersCaptions();
     if (captionSetting || testingMode() || !MediaAccessibilityLibrary())
         return captionSetting;
     
@@ -199,14 +216,230 @@ bool CaptionUserPreferencesMediaAF::userPrefersCaptions(Document& document) cons
     return captioningMediaCharacteristics && CFArrayGetCount(captioningMediaCharacteristics.get());
 }
 
-bool CaptionUserPreferencesMediaAF::userPrefersSubtitles(Document& document) const
+bool CaptionUserPreferencesMediaAF::userPrefersSubtitles() const
 {
-    bool subtitlesSetting = CaptionUserPreferences::userPrefersSubtitles(document);
+    bool subtitlesSetting = CaptionUserPreferences::userPrefersSubtitles();
     if (subtitlesSetting || testingMode() || !MediaAccessibilityLibrary())
         return subtitlesSetting;
     
     RetainPtr<CFArrayRef> captioningMediaCharacteristics = adoptCF(MACaptionAppearanceCopyPreferredCaptioningMediaCharacteristics(kMACaptionAppearanceDomainUser));
     return !(captioningMediaCharacteristics && CFArrayGetCount(captioningMediaCharacteristics.get()));
+}
+
+void CaptionUserPreferencesMediaAF::setInterestedInCaptionPreferenceChanges()
+{
+    if (!MediaAccessibilityLibrary())
+        return;
+
+    if (!kMAXCaptionAppearanceSettingsChangedNotification)
+        return;
+
+    if (!m_listeningForPreferenceChanges) {
+        m_listeningForPreferenceChanges = true;
+        CFNotificationCenterAddObserver(CFNotificationCenterGetLocalCenter(), this, userCaptionPreferencesChangedNotificationCallback, kMAXCaptionAppearanceSettingsChangedNotification, 0, CFNotificationSuspensionBehaviorCoalesce);
+        updateCaptionStyleSheetOveride();
+    }
+}
+
+void CaptionUserPreferencesMediaAF::captionPreferencesChanged()
+{
+    if (m_listeningForPreferenceChanges)
+        updateCaptionStyleSheetOveride();
+
+    CaptionUserPreferences::captionPreferencesChanged();
+}
+
+String CaptionUserPreferencesMediaAF::captionsWindowCSS() const
+{
+    MACaptionAppearanceBehavior behavior;
+    RetainPtr<CGColorRef> color = adoptCF(MACaptionAppearanceCopyWindowColor(kMACaptionAppearanceDomainUser, &behavior));
+
+    Color windowColor(color.get());
+    if (!windowColor.isValid())
+        windowColor = Color::transparent;
+
+    bool important = behavior == kMACaptionAppearanceBehaviorUseValue;
+    CGFloat opacity = MACaptionAppearanceGetWindowOpacity(kMACaptionAppearanceDomainUser, &behavior);
+    if (!important)
+        important = behavior == kMACaptionAppearanceBehaviorUseValue;
+    String windowStyle = colorPropertyCSS(CSSPropertyBackgroundColor, Color(windowColor.red(), windowColor.green(), windowColor.blue(), static_cast<int>(opacity * 255)), important);
+
+    if (!opacity)
+        return windowStyle;
+
+    StringBuilder builder;
+    builder.append(windowStyle);
+    builder.append(getPropertyNameString(CSSPropertyPadding));
+    builder.append(": .4em !important;");
+
+    return builder.toString();
+}
+
+String CaptionUserPreferencesMediaAF::captionsBackgroundCSS() const
+{
+    // This default value must be the same as the one specified in mediaControls.css for -webkit-media-text-track-past-nodes
+    // and webkit-media-text-track-future-nodes.
+    DEFINE_STATIC_LOCAL(Color, defaultBackgroundColor, (Color(0, 0, 0, 0.8 * 255)));
+
+    MACaptionAppearanceBehavior behavior;
+
+    RetainPtr<CGColorRef> color = adoptCF(MACaptionAppearanceCopyBackgroundColor(kMACaptionAppearanceDomainUser, &behavior));
+    Color backgroundColor(color.get());
+    if (!backgroundColor.isValid())
+        backgroundColor = defaultBackgroundColor;
+
+    bool important = behavior == kMACaptionAppearanceBehaviorUseValue;
+    CGFloat opacity = MACaptionAppearanceGetBackgroundOpacity(kMACaptionAppearanceDomainUser, &behavior);
+    if (!important)
+        important = behavior == kMACaptionAppearanceBehaviorUseValue;
+    return colorPropertyCSS(CSSPropertyBackgroundColor, Color(backgroundColor.red(), backgroundColor.green(), backgroundColor.blue(), static_cast<int>(opacity * 255)), important);
+}
+
+Color CaptionUserPreferencesMediaAF::captionsTextColor(bool& important) const
+{
+    MACaptionAppearanceBehavior behavior;
+    RetainPtr<CGColorRef> color = adoptCF(MACaptionAppearanceCopyForegroundColor(kMACaptionAppearanceDomainUser, &behavior));
+    Color textColor(color.get());
+    if (!textColor.isValid())
+        // This default value must be the same as the one specified in mediaControls.css for -webkit-media-text-track-container.
+        textColor = Color::white;
+    
+    important = behavior == kMACaptionAppearanceBehaviorUseValue;
+    CGFloat opacity = MACaptionAppearanceGetForegroundOpacity(kMACaptionAppearanceDomainUser, &behavior);
+    if (!important)
+        important = behavior == kMACaptionAppearanceBehaviorUseValue;
+    return Color(textColor.red(), textColor.green(), textColor.blue(), static_cast<int>(opacity * 255));
+}
+    
+String CaptionUserPreferencesMediaAF::captionsTextColorCSS() const
+{
+    bool important;
+    Color textColor = captionsTextColor(important);
+
+    if (!textColor.isValid())
+        return emptyString();
+
+    return colorPropertyCSS(CSSPropertyColor, textColor, important);
+}
+    
+String CaptionUserPreferencesMediaAF::windowRoundedCornerRadiusCSS() const
+{
+    MACaptionAppearanceBehavior behavior;
+    CGFloat radius = MACaptionAppearanceGetWindowRoundedCornerRadius(kMACaptionAppearanceDomainUser, &behavior);
+    if (!radius)
+        return emptyString();
+
+    StringBuilder builder;
+    builder.append(getPropertyNameString(CSSPropertyBorderRadius));
+    builder.append(String::format(":%.02fpx", radius));
+    if (behavior == kMACaptionAppearanceBehaviorUseValue)
+        builder.append(" !important");
+    builder.append(';');
+
+    return builder.toString();
+}
+    
+Color CaptionUserPreferencesMediaAF::captionsEdgeColorForTextColor(const Color& textColor) const
+{
+    int distanceFromWhite = differenceSquared(textColor, Color::white);
+    int distanceFromBlack = differenceSquared(textColor, Color::black);
+    
+    if (distanceFromWhite < distanceFromBlack)
+        return textColor.dark();
+    
+    return textColor.light();
+}
+
+String CaptionUserPreferencesMediaAF::cssPropertyWithTextEdgeColor(CSSPropertyID id, const String& value, const Color& textColor, bool important) const
+{
+    StringBuilder builder;
+    
+    builder.append(getPropertyNameString(id));
+    builder.append(':');
+    builder.append(value);
+    builder.append(' ');
+    builder.append(captionsEdgeColorForTextColor(textColor).serialized());
+    if (important)
+        builder.append(" !important");
+    builder.append(';');
+    
+    return builder.toString();
+}
+
+String CaptionUserPreferencesMediaAF::colorPropertyCSS(CSSPropertyID id, const Color& color, bool important) const
+{
+    StringBuilder builder;
+    
+    builder.append(getPropertyNameString(id));
+    builder.append(':');
+    builder.append(color.serialized());
+    if (important)
+        builder.append(" !important");
+    builder.append(';');
+    
+    return builder.toString();
+}
+
+String CaptionUserPreferencesMediaAF::captionsTextEdgeCSS() const
+{
+    DEFINE_STATIC_LOCAL(const String, edgeStyleRaised, (" -.05em -.05em 0 ", String::ConstructFromLiteral));
+    DEFINE_STATIC_LOCAL(const String, edgeStyleDepressed, (" .05em .05em 0 ", String::ConstructFromLiteral));
+    DEFINE_STATIC_LOCAL(const String, edgeStyleDropShadow, (" .075em .075em 0 ", String::ConstructFromLiteral));
+    DEFINE_STATIC_LOCAL(const String, edgeStyleUniform, (" .03em ", String::ConstructFromLiteral));
+
+    bool unused;
+    Color color = captionsTextColor(unused);
+    if (!color.isValid())
+        color.setNamedColor("black");
+    color = captionsEdgeColorForTextColor(color);
+
+    MACaptionAppearanceBehavior behavior;
+    MACaptionAppearanceTextEdgeStyle textEdgeStyle = MACaptionAppearanceGetTextEdgeStyle(kMACaptionAppearanceDomainUser, &behavior);
+    switch (textEdgeStyle) {
+    case kMACaptionAppearanceTextEdgeStyleUndefined:
+    case kMACaptionAppearanceTextEdgeStyleNone:
+        return emptyString();
+            
+    case kMACaptionAppearanceTextEdgeStyleRaised:
+        return cssPropertyWithTextEdgeColor(CSSPropertyTextShadow, edgeStyleRaised, color, behavior == kMACaptionAppearanceBehaviorUseValue);
+    case kMACaptionAppearanceTextEdgeStyleDepressed:
+        return cssPropertyWithTextEdgeColor(CSSPropertyTextShadow, edgeStyleDepressed, color, behavior == kMACaptionAppearanceBehaviorUseValue);
+    case kMACaptionAppearanceTextEdgeStyleDropShadow:
+        return cssPropertyWithTextEdgeColor(CSSPropertyTextShadow, edgeStyleDropShadow, color, behavior == kMACaptionAppearanceBehaviorUseValue);
+    case kMACaptionAppearanceTextEdgeStyleUniform:
+        return cssPropertyWithTextEdgeColor(CSSPropertyWebkitTextStroke, edgeStyleUniform, color, behavior == kMACaptionAppearanceBehaviorUseValue);
+            
+    default:
+        ASSERT_NOT_REACHED();
+        break;
+    }
+    
+    return emptyString();
+}
+
+String CaptionUserPreferencesMediaAF::captionsDefaultFontCSS() const
+{
+    MACaptionAppearanceBehavior behavior;
+    
+    RetainPtr<CTFontDescriptorRef> font = adoptCF(MACaptionAppearanceCopyFontDescriptorForStyle(kMACaptionAppearanceDomainUser, &behavior, kMACaptionAppearanceFontStyleDefault));
+    if (!font)
+        return emptyString();
+
+    RetainPtr<CFTypeRef> name = adoptCF(CTFontDescriptorCopyAttribute(font.get(), kCTFontNameAttribute));
+    if (!name)
+        return emptyString();
+    
+    StringBuilder builder;
+    
+    builder.append(getPropertyNameString(CSSPropertyFontFamily));
+    builder.append(": \"");
+    builder.append(static_cast<CFStringRef>(name.get()));
+    builder.append('"');
+    if (behavior == kMACaptionAppearanceBehaviorUseValue)
+        builder.append(" !important");
+    builder.append(';');
+    
+    return builder.toString();
 }
 
 float CaptionUserPreferencesMediaAF::captionFontSizeScaleAndImportance(bool& important) const
@@ -274,6 +507,58 @@ Vector<String> CaptionUserPreferencesMediaAF::preferredLanguages() const
 }
 #endif // HAVE(MEDIA_ACCESSIBILITY_FRAMEWORK)
 
+String CaptionUserPreferencesMediaAF::captionsStyleSheetOverride() const
+{
+    if (testingMode())
+        return CaptionUserPreferences::captionsStyleSheetOverride();
+    
+    StringBuilder captionsOverrideStyleSheet;
+
+#if HAVE(MEDIA_ACCESSIBILITY_FRAMEWORK)
+    if (!MediaAccessibilityLibrary())
+        return CaptionUserPreferences::captionsStyleSheetOverride();
+    
+    String captionsColor = captionsTextColorCSS();
+    String edgeStyle = captionsTextEdgeCSS();
+    String fontName = captionsDefaultFontCSS();
+    String background = captionsBackgroundCSS();
+    if (!background.isEmpty() || !captionsColor.isEmpty() || !edgeStyle.isEmpty() || !fontName.isEmpty()) {
+        captionsOverrideStyleSheet.append(" video::");
+        captionsOverrideStyleSheet.append(TextTrackCue::cueShadowPseudoId());
+        captionsOverrideStyleSheet.append('{');
+        
+        if (!background.isEmpty())
+            captionsOverrideStyleSheet.append(background);
+        if (!captionsColor.isEmpty())
+            captionsOverrideStyleSheet.append(captionsColor);
+        if (!edgeStyle.isEmpty())
+            captionsOverrideStyleSheet.append(edgeStyle);
+        if (!fontName.isEmpty())
+            captionsOverrideStyleSheet.append(fontName);
+        
+        captionsOverrideStyleSheet.append('}');
+    }
+    
+    String windowColor = captionsWindowCSS();
+    String windowCornerRadius = windowRoundedCornerRadiusCSS();
+    if (!windowColor.isEmpty() || !windowCornerRadius.isEmpty()) {
+        captionsOverrideStyleSheet.append(" video::");
+        captionsOverrideStyleSheet.append(TextTrackCueBox::textTrackCueBoxShadowPseudoId());
+        captionsOverrideStyleSheet.append('{');
+        
+        if (!windowColor.isEmpty())
+            captionsOverrideStyleSheet.append(windowColor);
+        if (!windowCornerRadius.isEmpty())
+            captionsOverrideStyleSheet.append(windowCornerRadius);
+        
+        captionsOverrideStyleSheet.append('}');
+    }
+#endif // HAVE(MEDIA_ACCESSIBILITY_FRAMEWORK)
+
+    LOG(Media, "CaptionUserPreferencesMediaAF::captionsStyleSheetOverrideSetting sytle to:\n%s", captionsOverrideStyleSheet.toString().utf8().data());
+
+    return captionsOverrideStyleSheet.toString();
+}
 
 static String languageIdentifier(const String& languageCode)
 {
@@ -350,14 +635,6 @@ static String trackDisplayName(TextTrack* track)
     return displayName.toString();
 }
 
-String CaptionUserPreferencesMediaAF::platformCaptionsStyleSheet()
-{
-    if (!m_captionStyleSheet)
-        m_captionStyleSheet = defaultCaptionsStyleSheet();
-
-    return m_captionStyleSheet;
-}
-
 String CaptionUserPreferencesMediaAF::displayNameForTrack(TextTrack* track) const
 {
     return trackDisplayName(track);
@@ -367,7 +644,7 @@ int CaptionUserPreferencesMediaAF::textTrackSelectionScore(TextTrack* track, HTM
 {
     CaptionDisplayMode displayMode = captionDisplayMode();
     bool legacyOverride = mediaElement->webkitClosedCaptionsVisible();
-    if (displayMode == AlwaysOn && (!userPrefersSubtitles(mediaElement->document()) && !userPrefersCaptions(mediaElement->document()) && !legacyOverride))
+    if (displayMode == AlwaysOn && (!userPrefersSubtitles() && !userPrefersCaptions() && !legacyOverride))
         return 0;
     if (track->kind() != TextTrack::captionsKeyword() && track->kind() != TextTrack::subtitlesKeyword() && track->kind() != TextTrack::forcedKeyword())
         return 0;
@@ -427,7 +704,7 @@ int CaptionUserPreferencesMediaAF::textTrackSelectionScore(TextTrack* track, HTM
 
     int trackScore = 0;
 
-    if (userPrefersCaptions(mediaElement->document())) {
+    if (userPrefersCaptions()) {
         // When the user prefers accessiblity tracks, rank is SDH, then CC, then subtitles.
         if (track->kind() == track->subtitlesKeyword())
             trackScore = 1;
@@ -489,7 +766,7 @@ Vector<RefPtr<TextTrack>> CaptionUserPreferencesMediaAF::sortedTrackListForMenu(
 
     Vector<RefPtr<TextTrack>> tracksForMenu;
     HashSet<String> languagesIncluded;
-    bool prefersAccessibilityTracks = userPrefersCaptions(trackList->mediaElement()->document());
+    bool prefersAccessibilityTracks = userPrefersCaptions();
     bool filterTrackList = shouldFilterTrackMenu();
 
     for (unsigned i = 0, length = trackList->length(); i < length; ++i) {
@@ -571,7 +848,7 @@ Vector<RefPtr<TextTrack>> CaptionUserPreferencesMediaAF::sortedTrackListForMenu(
 
     return tracksForMenu;
 }
-
+    
 }
 
 #endif // ENABLE(VIDEO_TRACK)

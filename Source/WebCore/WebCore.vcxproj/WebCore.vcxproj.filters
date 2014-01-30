@@ -6724,9 +6724,6 @@
     <ClCompile Include="..\platform\graphics\opengl\TemporaryOpenGLSetting.cpp">
       <Filter>platform\graphics\opengl</Filter>
     </ClCompile>
-    <ClCompile Include="..\page\CaptionStyleSheetMediaAF.cpp">
-      <Filter>page</Filter>
-    </ClCompile>
     <ClCompile Include="..\page\CaptionUserPreferencesMediaAF.cpp">
       <Filter>page</Filter>
     </ClCompile>
@@ -14502,9 +14499,6 @@
     </ClInclude>
     <ClInclude Include="..\platform\graphics\opengl\GLPlatformSurface.h">
       <Filter>platform\graphics\opengl</Filter>
-    </ClInclude>
-    <ClInclude Include="..\page\CaptionStyleSheetMediaAF.h">
-      <Filter>page</Filter>
     </ClInclude>
     <ClInclude Include="..\page\CaptionUserPreferences.h">
       <Filter>page</Filter>

@@ -43,27 +43,37 @@ class TextTrackList;
 
 class CaptionUserPreferences {
 public:
-    CaptionUserPreferences();
+    CaptionUserPreferences(PageGroup&);
     virtual ~CaptionUserPreferences();
-
-    String captionsStyleSheet();
 
     enum CaptionDisplayMode {
         Automatic,
         ForcedOnly,
         AlwaysOn
     };
-
     virtual CaptionDisplayMode captionDisplayMode() const;
     virtual void setCaptionDisplayMode(CaptionDisplayMode);
 
     virtual int textTrackSelectionScore(TextTrack*, HTMLMediaElement*) const;
     virtual int textTrackLanguageSelectionScore(TextTrack*, const Vector<String>&) const;
-    virtual bool userPrefersCaptions(Document&) const;
-    virtual bool userPrefersSubtitles(Document&) const;
-    virtual bool userPrefersTextDescriptions(Document&) const;
+
+    virtual bool userPrefersCaptions() const;
+    virtual void setUserPrefersCaptions(bool);
+
+    virtual bool userPrefersSubtitles() const;
+    virtual void setUserPrefersSubtitles(bool preference);
+    
+    virtual bool userPrefersTextDescriptions() const;
+    virtual void setUserPrefersTextDescriptions(bool preference);
 
     virtual float captionFontSizeScaleAndImportance(bool& important) const { important = false; return 0.05f; }
+
+    virtual String captionsStyleSheetOverride() const { return m_captionsStyleSheetOverride; }
+    virtual void setCaptionsStyleSheetOverride(const String&);
+
+    virtual void setInterestedInCaptionPreferenceChanges() { }
+
+    virtual void captionPreferencesChanged();
 
     virtual void setPreferredLanguage(const String&);
     virtual Vector<String> preferredLanguages() const;
@@ -71,32 +81,31 @@ public:
     virtual String displayNameForTrack(TextTrack*) const;
     virtual Vector<RefPtr<TextTrack>> sortedTrackListForMenu(TextTrackList*);
 
-    void captionPreferencesChanged();
-
-    // These are used for testing mode only.
-    void setCaptionsStyleSheetOverride(const String&);
-    String captionsStyleSheetOverride() const;
     void setPrimaryAudioTrackLanguageOverride(const String& language) { m_primaryAudioTrackLanguageOverride = language;  }
     String primaryAudioTrackLanguageOverride() const;
-    void setTestingMode(bool override) { m_testingMode = override; }
-    bool testingMode() const { return m_testingMode; }
+
+    virtual bool testingMode() const { return m_testingMode; }
+    virtual void setTestingMode(bool override) { m_testingMode = override; }
     
+    PageGroup& pageGroup() const { return m_pageGroup; }
+
+protected:
+    void updateCaptionStyleSheetOveride();
+
 private:
     void timerFired(Timer<CaptionUserPreferences>&);
     void notify();
 
-    virtual String platformCaptionsStyleSheet() { return String(); }
-
-    Timer<CaptionUserPreferences> m_timer;
-
-    // These are used for testing mode only.
+    PageGroup& m_pageGroup;
     CaptionDisplayMode m_displayMode;
+    Timer<CaptionUserPreferences> m_timer;
     String m_userPreferredLanguage;
     String m_captionsStyleSheetOverride;
     String m_primaryAudioTrackLanguageOverride;
     bool m_testingMode;
+    bool m_havePreferences;
 };
-
+    
 }
 #endif
 
