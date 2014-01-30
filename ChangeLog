@@ -1,3 +1,14 @@
+2014-01-30  Zan Dobersek  <zdobersek@igalia.com>
+
+        [GTK] Only disable -ftree-dce optimization when compiling with GCC
+        https://bugs.webkit.org/show_bug.cgi?id=127911
+
+        Reviewed by Carlos Garcia Campos.
+
+        * Source/autotools/SetupAutomake.m4: Define the COMPILER_GCC and COMPILER_CLANG Automake macros.
+        These can be used when compiler-specific flags have to be used. The latter one is not actually needed
+        at the moment, but is added for the sake of completeness.
+
 2014-01-30  Csaba Osztrogonác  <ossy@webkit.org>
 
         [EFL] Fix the regression caused by the jsCStack branch merge
