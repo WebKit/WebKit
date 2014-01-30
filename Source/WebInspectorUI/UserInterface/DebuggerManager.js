@@ -390,6 +390,11 @@ WebInspector.DebuggerManager.prototype = {
         this._delayedResumeTimeout = setTimeout(delayedWork.bind(this), 50);
     },
 
+    playBreakpointActionSound: function(breakpointActionIdentifier)
+    {
+        InspectorFrontendHost.beep();
+    },
+
     scriptDidParse: function(scriptIdentifier, url, isContentScript, startLine, startColumn, endLine, endColumn, sourceMapURL)
     {
         // Don't add the script again if it is already known.

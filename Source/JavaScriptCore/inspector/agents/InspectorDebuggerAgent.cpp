@@ -665,9 +665,9 @@ void InspectorDebuggerAgent::didSampleProbe(JSC::ExecState* scriptState, int pro
     m_frontendDispatcher->didSampleProbe(result.release());
 }
 
-void InspectorDebuggerAgent::breakpointActionSound()
+void InspectorDebuggerAgent::breakpointActionSound(int breakpointActionIdentifier)
 {
-    // FIXME: We should send a message to the frontend to make the frontend beep.
+    m_frontendDispatcher->playBreakpointActionSound(breakpointActionIdentifier);
 }
 
 void InspectorDebuggerAgent::didContinue()

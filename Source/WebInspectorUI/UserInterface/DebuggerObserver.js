@@ -61,7 +61,12 @@ WebInspector.DebuggerObserver.prototype = {
     resumed: function()
     {
         WebInspector.debuggerManager.debuggerDidResume();
-    }
+    },
+
+    playBreakpointActionSound: function(breakpointActionIdentifier)
+    {
+        WebInspector.debuggerManager.playBreakpointActionSound(breakpointActionIdentifier);
+    },
 };
 
 WebInspector.DebuggerObserver.prototype.__proto__ = WebInspector.Object.prototype;

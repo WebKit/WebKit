@@ -299,6 +299,13 @@
             "parameters": [
                 { "name": "sample", "$ref": "ProbeSample", "description": "A collected probe sample." }
             ]
+        },
+        {
+            "name": "playBreakpointActionSound",
+            "description": "Fired when a \"sound\" breakpoint action is triggered on a breakpoint.",
+            "parameters": [
+                { "name": "breakpointActionId", "$ref": "BreakpointActionIdentifier", "description": "Breakpoint action identifier." }
+            ]
         }
     ]
 }

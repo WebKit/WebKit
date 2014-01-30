@@ -1,3 +1,15 @@
+2014-01-29  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Play Breakpoint Sound in Frontend
+        https://bugs.webkit.org/show_bug.cgi?id=127885
+
+        Reviewed by Timothy Hatcher.
+
+        Extend the breakpoint actions test for the "playBreakpointActionSound" event.
+
+        * inspector-protocol/debugger/setBreakpoint-actions-expected.txt:
+        * inspector-protocol/debugger/setBreakpoint-actions.html:
+
 2014-01-29  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         js/function-apply-aliased.html is timing out

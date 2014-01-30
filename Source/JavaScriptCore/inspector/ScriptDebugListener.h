@@ -73,7 +73,7 @@ public:
     virtual void didContinue() = 0;
 
     virtual void breakpointActionLog(JSC::ExecState*, const String&) = 0;
-    virtual void breakpointActionSound() = 0;
+    virtual void breakpointActionSound(int breakpointActionIdentifier) = 0;
 };
 
 } // namespace Inspector

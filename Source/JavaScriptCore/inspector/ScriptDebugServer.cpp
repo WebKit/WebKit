@@ -103,7 +103,7 @@ bool ScriptDebugServer::evaluateBreakpointAction(const ScriptBreakpointAction& b
         break;
     }
     case ScriptBreakpointActionTypeSound:
-        dispatchBreakpointActionSound(debuggerCallFrame->exec());
+        dispatchBreakpointActionSound(debuggerCallFrame->exec(), breakpointAction.identifier);
         break;
     case ScriptBreakpointActionTypeProbe: {
         JSValue exception;
@@ -158,7 +158,7 @@ void ScriptDebugServer::dispatchBreakpointActionLog(ExecState* exec, const Strin
         listener->breakpointActionLog(exec, message);
 }
 
-void ScriptDebugServer::dispatchBreakpointActionSound(ExecState* exec)
+void ScriptDebugServer::dispatchBreakpointActionSound(ExecState* exec, int breakpointActionIdentifier)
 {
     if (m_callingListeners)
         return;
@@ -173,7 +173,7 @@ void ScriptDebugServer::dispatchBreakpointActionSound(ExecState* exec)
     Vector<ScriptDebugListener*> listenersCopy;
     copyToVector(*listeners, listenersCopy);
     for (auto listener : listenersCopy)
-        listener->breakpointActionSound();
+        listener->breakpointActionSound(breakpointActionIdentifier);
 }
 
 void ScriptDebugServer::dispatchDidSampleProbe(ExecState* exec, int identifier, const Deprecated::ScriptValue& sample)

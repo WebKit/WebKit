@@ -90,7 +90,7 @@ protected:
     void dispatchDidParseSource(const ListenerSet& listeners, JSC::SourceProvider*, bool isContentScript);
     void dispatchFailedToParseSource(const ListenerSet& listeners, JSC::SourceProvider*, int errorLine, const String& errorMessage);
     void dispatchBreakpointActionLog(JSC::ExecState*, const String&);
-    void dispatchBreakpointActionSound(JSC::ExecState*);
+    void dispatchBreakpointActionSound(JSC::ExecState*, int breakpointActionIdentifier);
     void dispatchDidSampleProbe(JSC::ExecState*, int probeIdentifier, const Deprecated::ScriptValue& sample);
 
     bool m_doneProcessingDebuggerEvents;

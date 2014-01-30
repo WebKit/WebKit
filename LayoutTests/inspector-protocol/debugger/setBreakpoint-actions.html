@@ -12,14 +12,17 @@ function test()
     InspectorTest.sendCommand("Debugger.enable", {});
 
     var isExpectingLogs = false;
+    var isExpectingSounds = false;
     var isExpectingSamples = false;
     var logCount = 0;
+    var soundCount = 0;
     var sampleCount = 0;
     const expectedLogCount = 6;
+    const expectedSoundCount = 2;
     const expectedSampleCount = 2;
 
     function receivedAllExpectedOutput() {
-        return logCount === expectedLogCount && sampleCount === expectedSampleCount;
+        return logCount === expectedLogCount && sampleCount === expectedSampleCount && soundCount === expectedSoundCount;
     }
 
     InspectorTest.eventHandler["Debugger.scriptParsed"] = function(messageObject)
@@ -48,6 +51,7 @@ function test()
                 InspectorTest.sendCommand("Runtime.evaluate", {expression: "breakpointActions(2, 12)"});
                 InspectorTest.sendCommand("Runtime.evaluate", {expression: "breakpointActions(2, {x:1,y:2})"}, function() {
                     isExpectingLogs = true;
+                    isExpectingSounds = true;
                     isExpectingSamples = true;
                     InspectorTest.log("Running breakpointActions to triggering the breakpoint actions");
                     InspectorTest.sendCommand("Runtime.evaluate", {expression: "breakpointActions(12, {x:1,y:2})"}, function() {
@@ -64,6 +68,22 @@ function test()
 
         InspectorTest.log("FAIL: should not have hit breakpoint, autoContinue was true");
         InspectorTest.completeTest();
+    }
+
+    InspectorTest.eventHandler["Debugger.playBreakpointActionSound"] = function(messageObject)
+    {
+        if (!isExpectingSounds) {
+            InspectorTest.log("FAIL: unexpected breakpoint sound.");
+            InspectorTest.completeTest();
+            return;
+        }
+
+        InspectorTest.log("PASS: Breakpoint Sound");
+
+        ++soundCount;
+
+        if (receivedAllExpectedOutput())
+            InspectorTest.completeTest();
     }
 
     InspectorTest.eventHandler["Debugger.didSampleProbe"] = function(messageObject)

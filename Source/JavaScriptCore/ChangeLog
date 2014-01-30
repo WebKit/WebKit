@@ -1,3 +1,26 @@
+2014-01-29  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Play Breakpoint Sound in Frontend
+        https://bugs.webkit.org/show_bug.cgi?id=127885
+
+        Reviewed by Timothy Hatcher.
+
+        * inspector/ScriptDebugListener.h:
+        * inspector/ScriptDebugServer.cpp:
+        (Inspector::ScriptDebugServer::evaluateBreakpointAction):
+        (Inspector::ScriptDebugServer::dispatchBreakpointActionSound):
+        * inspector/ScriptDebugServer.h:
+        Pass the breakpoint action identifier through when the
+        sound breakpoint action is triggered.
+
+        * inspector/protocol/Debugger.json:
+        New "playBreakpointActionSound" event when a "sound" breakpoint action triggers.
+
+        * inspector/agents/InspectorDebuggerAgent.h:
+        * inspector/agents/InspectorDebuggerAgent.cpp:
+        (Inspector::InspectorDebuggerAgent::breakpointActionSound):
+        Send the new event so the frontend can handle it.
+
 2014-01-29  Filip Pizlo  <fpizlo@apple.com>
 
         Merge final changesets from the jsCStack branch (r162969, r162975, r162992, r163004, r163069).
