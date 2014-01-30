@@ -42,7 +42,8 @@
 #import "AudioTrackPrivateMediaSourceAVFObjC.h"
 #import "VideoTrackPrivateMediaSourceAVFObjC.h"
 #import "InbandTextTrackPrivateAVFObjC.h"
-#import <AVFoundation/AVFoundation.h>
+#import <AVFoundation/AVAssetTrack.h>
+#import <CoreMedia/CMSampleBuffer.h>
 #import <objc/runtime.h>
 #import <wtf/text/AtomicString.h>
 #import <wtf/text/CString.h>

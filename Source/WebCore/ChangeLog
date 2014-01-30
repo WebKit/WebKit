@@ -1,3 +1,15 @@
+2014-01-29  Jer Noble  <jer.noble@apple.com>
+
+        [MSE][Mac] In SourceBufferPrivateAVFObjC, only include those headers actually necessary to compile.
+        https://bugs.webkit.org/show_bug.cgi?id=127846
+
+        Reviewed by Darin Adler.
+
+        To work around a compile issue, only include those paths containing classes and typedefs
+        which are used within SourceBufferPrivateAVFObjC, rather than all of AVFoundation.
+
+        * platform/graphics/avfoundation/objc/SourceBufferPrivateAVFObjC.mm:
+
 2014-01-29  Brady Eidson  <beidson@apple.com>
 
         IDB: Fully implement IDBKeyData encoding/decoding
