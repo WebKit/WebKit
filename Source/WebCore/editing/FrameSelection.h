@@ -125,6 +125,7 @@ public:
         DoNotSetFocus = 1 << 4,
         DictationTriggered = 1 << 5,
         DoNotUpdateAppearance = 1 << 6,
+        DoNotRevealSelection = 1 << 7,
     };
     typedef unsigned SetSelectionOptions; // Union of values in SetSelectionOption and EUserTriggered
     static inline EUserTriggered selectionOptionsToUserTriggered(SetSelectionOptions options)
@@ -149,14 +150,10 @@ public:
 
     const VisibleSelection& selection() const { return m_selection; }
     void setSelection(const VisibleSelection&, SetSelectionOptions = CloseTyping | ClearTypingStyle, CursorAlignOnScroll = AlignCursorOnScrollIfNeeded, TextGranularity = CharacterGranularity);
-    void setSelection(const VisibleSelection& selection, TextGranularity granularity) { setSelection(selection, CloseTyping | ClearTypingStyle, AlignCursorOnScrollIfNeeded, granularity); }
     bool setSelectedRange(Range*, EAffinity, bool closeTyping);
     void selectAll();
     void clear();
     void prepareForDestruction();
-
-    // Call this after doing user-triggered selections to make it easy to delete the frame you entirely selected.
-    void selectFrameElementInParentIfFullySelected();
 
     bool contains(const LayoutPoint&);
 
@@ -272,8 +269,7 @@ public:
     bool shouldChangeSelection(const VisibleSelection&) const;
     bool shouldDeleteSelection(const VisibleSelection&) const;
     enum EndPointsAdjustmentMode { AdjustEndpointsAtBidiBoundary, DoNotAdjsutEndpoints };
-    void setNonDirectionalSelectionIfNeeded(const VisibleSelection&, TextGranularity, EndPointsAdjustmentMode = DoNotAdjsutEndpoints);
-    void updateSelectionCachesIfSelectionIsInsideTextFormControl(EUserTriggered);
+    void setSelectionByMouseIfDifferent(const VisibleSelection&, TextGranularity, EndPointsAdjustmentMode = DoNotAdjsutEndpoints);
 
     void paintDragCaret(GraphicsContext*, const LayoutPoint&, const LayoutRect& clipRect) const;
 
@@ -320,6 +316,10 @@ private:
 #if HAVE(ACCESSIBILITY)
     void notifyAccessibilityForSelectionChange();
 #endif
+
+    void updateSelectionCachesIfSelectionIsInsideTextFormControl(EUserTriggered);
+
+    void selectFrameElementInParentIfFullySelected();
 
     void setFocusedElementIfNeeded();
     void focusedOrActiveStateChanged();

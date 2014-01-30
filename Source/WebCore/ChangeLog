@@ -1,3 +1,31 @@
+2014-01-29  Ryosuke Niwa  <rniwa@webkit.org>
+
+        EventHandler::handleMouseReleaseEvent shouldn't call updateSelectionCachesIfSelectionIsInsideTextFormControl
+        and selectFrameElementInParentIfFullySelected
+        https://bugs.webkit.org/show_bug.cgi?id=127834
+
+        Reviewed by Alexey Proskuryakov.
+
+        Removed the calls and made setNonDirectionalSelectionIfNeeded pass in UserTriggered option.
+
+        In addition, removed the rather error-prone function override of setSelection since TextGranularity,
+        which is an enum, could be implicitly coerced into SetSelectionOptions which is a typedefed unsigned int.
+
+        * editing/FrameSelection.cpp:
+        (WebCore::FrameSelection::setSelectionByMouseIfDifferent): Renamed from setNonDirectionalSelectionIfNeeded.
+        Pass in DoNotRevealSelection to avoid revealing the selection to preserve the existing behavior.
+        There are two layout tests that fail without this.
+        (WebCore::FrameSelection::setSelection): Check the newly addeed DoNotRevealSelection option.
+        (WebCore::FrameSelection::wordSelectionContainingCaretSelection): Call
+
+        * editing/FrameSelection.h: Made updateSelectionCachesIfSelectionIsInsideTextFormControl and
+        selectFrameElementInParentIfFullySelected private as they are no longer called outside of FrameSelection.
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::updateSelectionForMouseDownDispatchingSelectStart):
+        (WebCore::EventHandler::updateSelectionForMouseDrag):
+        (WebCore::EventHandler::handleMouseReleaseEvent): Removed calls to the functions.
+
 2014-01-29  Jer Noble  <jer.noble@apple.com>
 
         Unreviewed iOS build fix after 163050.

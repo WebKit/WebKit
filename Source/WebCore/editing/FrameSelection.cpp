@@ -220,7 +220,7 @@ static void adjustEndpointsAtBidiBoundary(VisiblePosition& visibleBase, VisibleP
     }
 }
 
-void FrameSelection::setNonDirectionalSelectionIfNeeded(const VisibleSelection& passedNewSelection, TextGranularity granularity,
+void FrameSelection::setSelectionByMouseIfDifferent(const VisibleSelection& passedNewSelection, TextGranularity granularity,
     EndPointsAdjustmentMode endpointsAdjustmentMode)
 {
     VisibleSelection newSelection = passedNewSelection;
@@ -247,7 +247,7 @@ void FrameSelection::setNonDirectionalSelectionIfNeeded(const VisibleSelection& 
     if (m_selection == newSelection || !shouldChangeSelection(newSelection))
         return;
 
-    setSelection(newSelection, granularity);
+    setSelection(newSelection, UserTriggered | DoNotRevealSelection | CloseTyping | ClearTypingStyle, AlignCursorOnScrollIfNeeded, granularity);
 }
 
 void FrameSelection::setSelection(const VisibleSelection& newSelection, SetSelectionOptions options, CursorAlignOnScroll align, TextGranularity granularity)
@@ -322,7 +322,7 @@ void FrameSelection::setSelection(const VisibleSelection& newSelection, SetSelec
     selectFrameElementInParentIfFullySelected();
     updateSelectionCachesIfSelectionIsInsideTextFormControl(userTriggered);
     m_frame->editor().respondToChangedSelection(oldSelection, options);
-    if (userTriggered == UserTriggered) {
+    if (userTriggered == UserTriggered && !(options & DoNotRevealSelection)) {
         ScrollAlignment alignment;
 
         if (m_frame->editor().behavior().shouldCenterAlignWhenSelectionIsRevealed())
@@ -2429,7 +2429,7 @@ VisibleSelection FrameSelection::wordSelectionContainingCaretSelection(const Vis
 
     VisibleSelection newSelection = frameSelection.selection();
     newSelection.expandUsingGranularity(WordGranularity);
-    frameSelection.setSelection(newSelection, frameSelection.granularity());
+    frameSelection.setSelection(newSelection, CloseTyping | ClearTypingStyle, AlignCursorOnScrollIfNeeded, frameSelection.granularity());
 
     Position startPos(frameSelection.selection().start());
     Position endPos(frameSelection.selection().end());
