@@ -14,9 +14,8 @@ function Controller(root, video, host)
     this.addVideoListeners();
     this.createBase();
     this.createControls();
-    this.setControlsType(this.isFullScreen() ? Controller.FullScreenControls : Controller.InlineControls);
-
     this.updateBase();
+    this.updateControls();
     this.updateDuration();
     this.updateTime();
     this.updateReadyState();
@@ -238,6 +237,11 @@ Controller.prototype = {
             base.appendChild(this.host.textTrackContainer);
     },
 
+    shouldHaveAnyUI: function()
+    {
+        return this.shouldHaveControls() || (this.video.textTracks && this.video.textTracks.length);
+    },
+
     shouldHaveControls: function()
     {
         return this.video.controls || this.isFullScreen();
@@ -245,12 +249,14 @@ Controller.prototype = {
 
     updateBase: function()
     {
-        if (this.shouldHaveControls() || (this.video.textTracks && this.video.textTracks.length)) {
-            if (!this.base.parentNode)
+        if (this.shouldHaveAnyUI()) {
+            if (!this.base.parentNode) {
                 this.root.appendChild(this.base);
+            }
         } else {
-            if (this.base.parentNode)
+            if (this.base.parentNode) {
                 this.base.parentNode.removeChild(this.base);
+            }
         }
     },
 
@@ -371,12 +377,13 @@ Controller.prototype = {
     {
         if (type === this.controlsType)
             return;
+        this.controlsType = type;
 
         this.disconnectControls();
 
         if (type === Controller.InlineControls)
             this.configureInlineControls();
-        else
+        else if (type == Controller.FullScreenControls)
             this.configureFullScreenControls();
 
         if (this.shouldHaveControls())
@@ -436,6 +443,15 @@ Controller.prototype = {
         this.controls.thumbnailTrack.appendChild(this.controls.thumbnail);
         this.controls.thumbnail.appendChild(this.controls.thumbnailImage);
         this.controls.timelineBox.appendChild(this.controls.remainingTime);
+    },
+
+    updateControls: function()
+    {
+        if (this.isFullScreen())
+            this.setControlsType(Controller.FullScreenControls);
+        else
+            this.setControlsType(Controller.InlineControls);
+
     },
 
     handleLoadStart: function(event)
@@ -542,15 +558,14 @@ Controller.prototype = {
     handleFullscreenChange: function(event)
     {
         this.updateBase();
+        this.updateControls();
 
         if (this.isFullScreen()) {
             this.controls.fullscreenButton.classList.add(this.ClassNames.exit);
             this.controls.fullscreenButton.setAttribute('aria-label', this.UIString('Exit Full Screen'));
-            this.setControlsType(Controller.FullScreenControls);
         } else {
             this.controls.fullscreenButton.classList.remove(this.ClassNames.exit);
             this.controls.fullscreenButton.setAttribute('aria-label', this.UIString('Display Full Screen'));
-            this.setControlsType(Controller.InlineControls);
         }
     },
 

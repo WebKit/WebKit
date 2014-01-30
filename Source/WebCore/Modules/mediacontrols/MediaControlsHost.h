@@ -58,6 +58,7 @@ public:
     void setSelectedTextTrack(TextTrack*);
     Element* textTrackContainer();
     void updateTextTrackContainer();
+    bool mediaPlaybackAllowsInline() const;
 
 private:
     MediaControlsHost(HTMLMediaElement*);

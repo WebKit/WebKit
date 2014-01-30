@@ -105,6 +105,28 @@ video::-webkit-media-controls-volume-slider {
     display: none !important;
 }
 
+video::-webkit-media-controls-start-playback-button,
+audio::-webkit-media-controls-start-playback-button {
+    -webkit-appearance: none;
+    display: block;
+    padding: 0;
+    border: 0;
+    position: absolute;
+    width: 150px;
+    height: 150px;
+    left: calc(50% - 75px);
+    top: calc(50% - 75px);
+    background-origin: content-box;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-image: url('data:image/svg+xml,<svg width="140" height="140" xmlns="http://www.w3.org/2000/svg"><circle r="70" cy="70" cx="70" fill="rgba(247, 247, 247, .82)"/><path d="M 48,34 v 72 l 62,-35.5 z" fill="rgba(129, 129, 129, .9)"/></svg>');
+}
+
+video::-webkit-media-controls-start-playback-button.failed,
+audio::-webkit-media-controls-start-playback-button.failed {
+    background-image: url('data:image/svg+xml,<svg width="140" height="140" xmlns="http://www.w3.org/2000/svg"><circle r="70" cy="70" cx="70" fill="rgba(247, 247, 247, .82)"/><g fill="rgba(129, 129, 129, .9)"><path d="M 48,34 v 17 l 47,28 l 15,-8.5 z"/><path d="M 16,36 l 110,64 l -2,4 l -110,-64 z"/><path d="M 48,63 v 43 l 37,-21.5 z"/></g></svg>');
+}
+
 video::-webkit-media-controls-play-button,
 audio::-webkit-media-controls-play-button,
 video::-webkit-media-controls-fullscreen-button,
@@ -123,7 +145,7 @@ audio::-webkit-media-controls-fullscreen-button {
 video::-webkit-media-controls-play-button:active,
 audio::-webkit-media-controls-play-button:active,
 video::-webkit-media-controls-fullscreen-button:active,
-audio::-webkit-media-controls-fullscreen-button:active, {
+audio::-webkit-media-controls-fullscreen-button:active {
     background-color: white;
 }
 

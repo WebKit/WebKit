@@ -1,3 +1,54 @@
+2014-01-30  Jer Noble  <jer.noble@apple.com>
+
+        [MediaControls][iOS] Add a "start load" button.
+        https://bugs.webkit.org/show_bug.cgi?id=127861
+
+        Reviewed by Eric Carlson.
+
+        Add a "start load" button which replaces the controls on platforms
+        where inline playback is not allowed, or when playback without a
+        user gesture is not allowed.
+
+        Add an accessor to MediaControlsHost to query whether inline playback is allowed.:
+        * Modules/mediacontrols/MediaControlsHost.cpp:
+        (WebCore::MediaControlsHost::mediaPlaybackAllowsInline):
+        * Modules/mediacontrols/MediaControlsHost.h:
+        * Modules/mediacontrols/MediaControlsHost.idl:
+        * html/HTMLMediaElement.h:
+        (WebCore::HTMLMediaElement::mediaSession):
+
+        Update the base controller to allow more functions to be overridden:
+        * Modules/mediacontrols/mediaControlsApple.js:
+        (Controller):
+        (Controller.prototype.shouldHaveAnyUI):
+        (Controller.prototype.updateBase):
+        (Controller.prototype.setControlsType):
+        (Controller.prototype.updateControls):
+        (Controller.prototype.handleFullscreenChange):
+
+        Add the new button, and allow for switching between "start", "inline", and "fullscreen" controls:
+        * Modules/mediacontrols/mediaControlsiOS.js:
+        (ControllerIOS.prototype.addVideoListeners):
+        (ControllerIOS.prototype.removeVideoListeners):
+        (ControllerIOS.prototype.createBase):
+        (ControllerIOS.prototype.shouldHaveStartPlaybackButton):
+        (ControllerIOS.prototype.shouldHaveControls):
+        (ControllerIOS.prototype.shouldHaveAnyUI):
+        (ControllerIOS.prototype.createControls):
+        (ControllerIOS.prototype.setControlsType):
+        (ControllerIOS.prototype.addStartPlaybackControls):
+        (ControllerIOS.prototype.removeStartPlaybackControls):
+        (ControllerIOS.prototype.updateControls):
+        (ControllerIOS.prototype.handleStartPlaybackButtonTouchStart):
+        (ControllerIOS.prototype.handleStartPlaybackButtonTouchEnd):
+        (ControllerIOS.prototype.handleStartPlaybackButtonTouchCancel):
+        (ControllerIOS.prototype.handleReadyStateChange):
+
+        Add the new art:
+        * Modules/mediacontrols/mediaControlsiOS.css:
+        (audio::-webkit-media-controls-start-playback-button):
+        (audio::-webkit-media-controls-start-playback-button.failed):
+
 2014-01-30  Tim Horton  <timothy_horton@apple.com>
 
         WebKit2 View Gestures (Swipe): Provide a way for clients to provide views to swipe

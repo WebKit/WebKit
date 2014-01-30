@@ -427,6 +427,7 @@ public:
 #endif
 
     MediaPlayer::Preload preloadValue() const { return m_preload; }
+    HTMLMediaSession& mediaSession() const { return *m_mediaSession; }
 
 protected:
     HTMLMediaElement(const QualifiedName&, Document&, bool);
@@ -453,8 +454,6 @@ protected:
 #endif
 
     virtual RenderPtr<RenderElement> createElementRenderer(PassRef<RenderStyle>) override;
-
-    HTMLMediaSession& mediaSession() const { return *m_mediaSession; }
 
 private:
     void createMediaPlayer();

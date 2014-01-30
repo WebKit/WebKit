@@ -148,6 +148,11 @@ void MediaControlsHost::updateTextTrackContainer()
         m_textTrackContainer->updateDisplay();
 }
 
+bool MediaControlsHost::mediaPlaybackAllowsInline() const
+{
+    return !m_mediaElement->mediaSession().requiresFullscreenForVideoPlayback(*m_mediaElement);
+}
+
 }
 
 #endif

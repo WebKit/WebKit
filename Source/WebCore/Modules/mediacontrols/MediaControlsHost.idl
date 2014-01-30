@@ -36,4 +36,5 @@
     void setSelectedTextTrack(TextTrack track);
     readonly attribute HTMLElement textTrackContainer;
     void updateTextTrackContainer();
+    readonly attribute boolean mediaPlaybackAllowsInline;
 };
