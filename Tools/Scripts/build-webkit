@@ -219,18 +219,15 @@ if (isAppleMacWebKit()) {
         # WebInspectorUI must come before WebKit and WebKit2
         unshift @projects, ("Source/WebInspectorUI");
 
-        # Build Tools needed for Apple ports
-        push @projects, ("Tools/DumpRenderTree", "Tools/WebKitTestRunner", "Source/ThirdParty/gtest", "Tools/TestWebKitAPI");
-
         # Copy library and header from WebKitLibraries to a findable place in the product directory.
         (system("perl", "Tools/Scripts/copy-webkitlibraries-to-product-directory", $productDir) == 0) or die;
     } else {
         push @projects, ("Source/WebKit2") if !$noWebKit2;
-
-        # Build Tools needed for Apple ports
-        # FIXME: <rdar://problem/11784024> WebKitTestRunner should build for iOS
-        # FIXME: Build projects Tools/DumpRenderTree, Source/ThirdParty/gtest, and Tools/TestWebKitAPI
     }
+
+    # Build Tools needed for Apple ports
+    push @projects, ("Tools/DumpRenderTree", "Tools/WebKitTestRunner", "Source/ThirdParty/gtest", "Tools/TestWebKitAPI");
+
 } elsif (isWinCairo()) {
     (system("perl Tools/Scripts/update-webkit-wincairo-libs") == 0) or die;
 } elsif (isAppleWinWebKit()) {
@@ -288,6 +285,9 @@ for my $dir (@projects) {
         my @local_options = @options;
         push @local_options, XcodeCoverageSupportOptions() if $coverageSupport;
         my $projectPath = $project =~ /gtest/ ? "xcode/gtest" : $project;
+        if (isIOSWebKit()){
+            push @local_options, qw(-target WebKitTestRunnerApp) if ($project eq "WebKitTestRunner") && !$clean;
+        }
         $result = buildXCodeProject($projectPath, $clean, @local_options, @ARGV);
     } elsif (isAppleWinWebKit() || isWinCairo()) {
         if ($project eq "WebKit") {
