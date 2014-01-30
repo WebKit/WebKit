@@ -98,6 +98,7 @@
 #include <WebCore/DragController.h>
 #include <WebCore/DragData.h>
 #include <WebCore/DragSession.h>
+#include <WebCore/ElementIterator.h>
 #include <WebCore/EventHandler.h>
 #include <WebCore/FocusController.h>
 #include <WebCore/FormState.h>
@@ -3992,7 +3993,6 @@ void WebPage::didFinishLoad(WebFrame* frame)
 
 #if ENABLE(PRIMARY_SNAPSHOTTED_PLUGIN_HEURISTIC)
 static int primarySnapshottedPlugInSearchLimit = 3000;
-static int primarySnapshottedPlugInSearchGap = 200;
 static float primarySnapshottedPlugInSearchBucketSize = 1.1;
 static int primarySnapshottedPlugInMinimumWidth = 400;
 static int primarySnapshottedPlugInMinimumHeight = 300;
@@ -4035,59 +4035,59 @@ void WebPage::determinePrimarySnapshottedPlugIn()
 
     ++m_numberOfPrimarySnapshotDetectionAttempts;
 
-    RenderView* renderView = corePage()->mainFrame().view()->renderView();
+    MainFrame& mainFrame = corePage()->mainFrame();
+    if (!mainFrame.view())
+        return;
+    if (!mainFrame.view()->renderView())
+        return;
+    RenderView& mainRenderView = *mainFrame.view()->renderView();
 
     IntRect searchRect = IntRect(IntPoint(), corePage()->mainFrame().view()->contentsSize());
     searchRect.intersect(IntRect(IntPoint(), IntSize(primarySnapshottedPlugInSearchLimit, primarySnapshottedPlugInSearchLimit)));
 
     HitTestRequest request(HitTestRequest::ReadOnly | HitTestRequest::Active | HitTestRequest::AllowChildFrameContent | HitTestRequest::IgnoreClipping | HitTestRequest::DisallowShadowContent);
 
-    HashSet<RenderObject*> seenRenderers;
-    HTMLPlugInImageElement* candidatePlugIn = 0;
+    HTMLPlugInImageElement* candidatePlugIn = nullptr;
     unsigned candidatePlugInArea = 0;
 
-    for (int x = searchRect.x(); x <= searchRect.width(); x += primarySnapshottedPlugInSearchGap) {
-        for (int y = searchRect.y(); y <= searchRect.height(); y += primarySnapshottedPlugInSearchGap) {
-            HitTestResult hitTestResult = HitTestResult(LayoutPoint(x, y));
-            renderView->hitTest(request, hitTestResult);
+    for (Frame* frame = &mainFrame; frame; frame = frame->tree().traverseNext()) {
+        if (!frame->loader().subframeLoader().containsPlugins())
+            continue;
+        if (!frame->document() || !frame->view())
+            continue;
+        for (auto& plugInImageElement : descendantsOfType<HTMLPlugInImageElement>(*frame->document())) {
+            if (plugInImageElement.displayState() == HTMLPlugInElement::Playing)
+                continue;
+
+            IntRect plugInRectRelativeToView = plugInImageElement.clientRect();
+            if (plugInRectRelativeToView.isEmpty())
+                continue;
+            IntSize scrollOffset = mainFrame.view()->scrollOffsetRelativeToDocument();
+            IntRect plugInRectRelativeToTopDocument(plugInRectRelativeToView.location() + scrollOffset, plugInRectRelativeToView.size());
+            if (!plugInRectRelativeToTopDocument.intersects(searchRect))
+                continue;
+
+            HitTestResult hitTestResult(plugInRectRelativeToTopDocument.center());
+            mainRenderView.hitTest(request, hitTestResult);
 
             Element* element = hitTestResult.innerElement();
-            if (!element)
+            if (element != &plugInImageElement)
                 continue;
 
-            RenderObject* renderer = element->renderer();
+            auto renderer = plugInImageElement.renderer();
             if (!renderer || !renderer->isBox())
                 continue;
-
-            RenderBox* renderBox = toRenderBox(renderer);
-
-            if (!seenRenderers.add(renderer).isNewEntry)
+            auto& renderBox = toRenderBox(*renderer);
+            if (renderBox.contentWidth() < primarySnapshottedPlugInMinimumWidth || renderBox.contentHeight() < primarySnapshottedPlugInMinimumHeight)
                 continue;
 
-            if (!element->isPluginElement())
-                continue;
-
-            HTMLPlugInElement* plugInElement = toHTMLPlugInElement(element);
-            if (!plugInElement->isPlugInImageElement())
-                continue;
-
-            HTMLPlugInImageElement* plugInImageElement = toHTMLPlugInImageElement(plugInElement);
-
-            if (plugInElement->displayState() == HTMLPlugInElement::Playing)
-                continue;
-
-            if (renderBox->contentWidth() < primarySnapshottedPlugInMinimumWidth || renderBox->contentHeight() < primarySnapshottedPlugInMinimumHeight)
-                continue;
-
-            LayoutUnit contentArea = renderBox->contentWidth() * renderBox->contentHeight();
-
+            LayoutUnit contentArea = renderBox.contentWidth() * renderBox.contentHeight();
             if (contentArea > candidatePlugInArea * primarySnapshottedPlugInSearchBucketSize) {
-                candidatePlugIn = plugInImageElement;
+                candidatePlugIn = &plugInImageElement;
                 candidatePlugInArea = contentArea;
             }
         }
     }
-
     if (!candidatePlugIn) {
         LOG(Plugins, "Primary Plug-In Detection: fail - did not find a candidate plug-in.");
         if (m_numberOfPrimarySnapshotDetectionAttempts < maxPrimarySnapshottedPlugInDetectionAttempts) {

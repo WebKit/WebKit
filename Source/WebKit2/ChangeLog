@@ -1,3 +1,24 @@
+2014-01-30  Antti Koivisto  <antti@apple.com>
+
+        WebPage::determinePrimarySnapshottedPlugIn is slow
+        https://bugs.webkit.org/show_bug.cgi?id=127905
+
+        Reviewed by Anders Carlsson.
+        
+        PLT before:
+        132.0ms  0.8% 0,0   WebKit::WebPage::determinePrimarySnapshottedPlugIn()
+        130.0ms  0.8% 0,0    WebCore::RenderView::hitTest(WebCore::HitTestRequest const&, WebCore::HitTestResult&)
+        
+        After:
+        7.0ms    0.0% 0,0   WebKit::WebPage::determinePrimarySnapshottedPlugIn()
+        3.0ms    0.0% 0,0    WebCore::RenderView::hitTest(WebCore::HitTestRequest const&, WebCore::HitTestResult&)
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::determinePrimarySnapshottedPlugIn):
+        
+            Instead of shotgunning the page with hit tests, do a DOM crawl for plugins
+            and hit test the centers.
+
 2014-01-30  Andrei Bucur  <abucur@adobe.com>
 
         Remove the ACCELERATED_COMPOSITING flag
