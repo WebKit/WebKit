@@ -1,3 +1,14 @@
+2014-01-30  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r163052.
+        http://trac.webkit.org/changeset/163052
+        https://bugs.webkit.org/show_bug.cgi?id=127895
+
+        It was the buildfix after the rolled out r163048 (Requested by
+        Ossy on #webkit).
+
+        * WebKit.vcxproj/WebKitExportGenerator/WebKitExports.def.in:
+
 2014-01-29  Dan Bernstein  <mitz@apple.com>
 
         Moved linking against common frameworks and a library from the .xcconfig file into the target.

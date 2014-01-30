@@ -432,6 +432,9 @@ EXPORTS
         symbolWithPointer(?create@SerializedScriptValue@WebCore@@SA?AV?$PassRefPtr@VSerializedScriptValue@WebCore@@@WTF@@PAVExecState@JSC@@VJSValue@6@PAV?$Vector@V?$RefPtr@VMessagePort@WebCore@@@WTF@@$00VCrashOnOverflow@2@@4@PAV?$Vector@V?$RefPtr@VArrayBuffer@JSC@@@WTF@@$00VCrashOnOverflow@2@@4@W4SerializationErrorMode@2@@Z, ?create@SerializedScriptValue@WebCore@@SA?AV?$PassRefPtr@VSerializedScriptValue@WebCore@@@WTF@@PEAVExecState@JSC@@VJSValue@6@PEAV?$Vector@V?$RefPtr@VMessagePort@WebCore@@@WTF@@$00VCrashOnOverflow@2@@4@PEAV?$Vector@V?$RefPtr@VArrayBuffer@JSC@@@WTF@@$00VCrashOnOverflow@2@@4@W4SerializationErrorMode@2@@Z)
         symbolWithPointer(??0ClientRectList@WebCore@@AAE@ABV?$Vector@VFloatQuad@WebCore@@$0A@VCrashOnOverflow@WTF@@@WTF@@@Z, ??0ClientRectList@WebCore@@AEAA@AEBV?$Vector@VFloatQuad@WebCore@@$0A@VCrashOnOverflow@WTF@@@WTF@@@Z)
         symbolWithPointer(??0SerializedScriptValue@WebCore@@AAE@AAV?$Vector@E$0A@VCrashOnOverflow@WTF@@@WTF@@@Z, ??0SerializedScriptValue@WebCore@@AEAA@AEAV?$Vector@E$0A@VCrashOnOverflow@WTF@@@WTF@@@Z)
+#if ENABLE(VIDEO_TRACK)
+        symbolWithPointer(?captionPreferences@PageGroup@WebCore@@QAEPAVCaptionUserPreferences@2@XZ, ?captionPreferences@PageGroup@WebCore@@QEAAPEAVCaptionUserPreferences@2@XZ)
+#endif
         symbolWithPointer(?initGroup@Page@WebCore@@AAEXXZ, ?initGroup@Page@WebCore@@AEAAXXZ)
         symbolWithPointer(?toInt8@WebCore@@YACPAVExecState@JSC@@VJSValue@3@W4IntegerConversionConfiguration@1@@Z, ?toInt8@WebCore@@YACPEAVExecState@JSC@@VJSValue@3@W4IntegerConversionConfiguration@1@@Z)
         symbolWithPointer(?toUInt8@WebCore@@YAEPAVExecState@JSC@@VJSValue@3@W4IntegerConversionConfiguration@1@@Z, ?toUInt8@WebCore@@YAEPEAVExecState@JSC@@VJSValue@3@W4IntegerConversionConfiguration@1@@Z)
