@@ -1,3 +1,18 @@
+2014-01-29  Brady Eidson  <beidson@apple.com>
+
+        IDB: Fully implement IDBKeyData encoding/decoding
+        https://bugs.webkit.org/show_bug.cgi?id=127863
+
+        Rubberstamped by Alexey Proskuryakov.
+
+        * platform/KeyedCoding.h:
+
+        * Modules/indexeddb/IDBKeyData.cpp:
+        (WebCore::IDBKeyData::encode):
+        (WebCore::IDBKeyData::decode):
+
+        * WebCore.exp.in:
+
 2014-01-29  Bem Jones-Bey  <bjonesbe@adobe.com>
 
         clip-path swaps bottom radii for the inset shape

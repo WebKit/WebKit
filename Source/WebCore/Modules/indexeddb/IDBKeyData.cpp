@@ -141,9 +141,7 @@ void IDBKeyData::encode(KeyedEncoder& encoder) const
         return;
     case IDBKey::ArrayType:
         encoder.encodeObjects("array", arrayValue.begin(), arrayValue.end(), [](KeyedEncoder& encoder, const IDBKeyData& key) {
-            encoder.encodeObject("idbKeyData", key, [](KeyedEncoder& encoder, const IDBKeyData& key) {
-                key.encode(encoder);
-            });
+            key.encode(encoder);
         });
         return;
     case IDBKey::StringType:
@@ -161,10 +159,45 @@ void IDBKeyData::encode(KeyedEncoder& encoder) const
     ASSERT_NOT_REACHED();
 }
 
-bool IDBKeyData::decode(KeyedDecoder&, IDBKeyData&)
+bool IDBKeyData::decode(KeyedDecoder& decoder, IDBKeyData& result)
 {
-    // FIXME: Implement when IDB Get support is implemented (<rdar://problem/15779644>)
-    return false;
+    if (!decoder.decodeBool("null", result.isNull))
+        return false;
+
+    if (result.isNull)
+        return true;
+
+    auto enumFunction = [](int64_t value) {
+        return value == IDBKey::InvalidType
+            || value == IDBKey::ArrayType
+            || value == IDBKey::StringType
+            || value == IDBKey::DateType
+            || value == IDBKey::NumberType
+            || value == IDBKey::MinType;
+    };
+    if (!decoder.decodeVerifiedEnum("type", result.type, enumFunction))
+        return false;
+
+    if (result.type == IDBKey::InvalidType)
+        return true;
+
+    if (result.type == IDBKey::MinType) {
+        ASSERT_NOT_REACHED();
+        return true;
+    }
+
+    if (result.type == IDBKey::StringType)
+        return decoder.decodeString("string", result.stringValue);
+
+    if (result.type == IDBKey::NumberType || result.type == IDBKey::DateType)
+        return decoder.decodeDouble("number", result.numberValue);
+
+    ASSERT(result.type == IDBKey::ArrayType);
+
+    auto arrayFunction = [](KeyedDecoder& decoder, IDBKeyData& result) {
+        return decode(decoder, result);
+    };
+    return decoder.decodeObjects("array", result.arrayValue, arrayFunction);
 }
 
 }

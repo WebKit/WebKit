@@ -50,6 +50,31 @@ KeyedDecoder::~KeyedDecoder()
     ASSERT(m_arrayIndexStack.isEmpty());
 }
 
+bool KeyedDecoder::decodeBool(const String& key, bool& result)
+{
+    if (!m_dictionaryStack.last())
+        return false;
+
+    CFBooleanRef boolean = static_cast<CFBooleanRef>(CFDictionaryGetValue(m_dictionaryStack.last(), key.createCFString().get()));
+    if (!boolean || CFGetTypeID(boolean) != CFBooleanGetTypeID())
+        return false;
+
+    result = CFBooleanGetValue(boolean);
+    return true;
+}
+
+bool KeyedDecoder::decodeDouble(const String& key, double& result)
+{
+    if (!m_dictionaryStack.last())
+        return false;
+
+    CFNumberRef number = static_cast<CFNumberRef>(CFDictionaryGetValue(m_dictionaryStack.last(), key.createCFString().get()));
+    if (!number || CFGetTypeID(number) != CFNumberGetTypeID() || (CFNumberGetType(number) != kCFNumberDoubleType && CFNumberGetType(number) != kCFNumberFloat64Type))
+        return false;
+
+    return CFNumberGetValue(number, kCFNumberDoubleType, &result);
+}
+
 bool KeyedDecoder::decodeInt64(const String& key, int64_t& result)
 {
     if (!m_dictionaryStack.last())

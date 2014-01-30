@@ -46,15 +46,27 @@ RefPtr<SharedBuffer> serializeIDBKeyPath(const IDBKeyPath& keyPath)
 
 bool deserializeIDBKeyPath(const uint8_t* data, size_t size, IDBKeyPath& result)
 {
+    if (!data || !size)
+        return false;
+
     KeyedDecoder decoder(data, size);
     return IDBKeyPath::decode(decoder, result);
 }
 
-RefPtr<WebCore::SharedBuffer> serializeIDBKeyData(const IDBKeyData& key)
+RefPtr<SharedBuffer> serializeIDBKeyData(const IDBKeyData& key)
 {
     KeyedEncoder encoder;
     key.encode(encoder);
     return encoder.finishEncoding();
+}
+
+bool deserializeIDBKeyData(const uint8_t* data, size_t size, IDBKeyData& result)
+{
+    if (!data || !size)
+        return false;
+
+    KeyedDecoder decoder(data, size);
+    return IDBKeyData::decode(decoder, result);
 }
 
 } // namespace WebKit

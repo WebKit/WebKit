@@ -35,20 +35,22 @@ namespace WebKit {
 class KeyedDecoder final : public WebCore::KeyedDecoder {
 public:
     KeyedDecoder(const uint8_t* data, size_t);
-    virtual ~KeyedDecoder();
+    virtual ~KeyedDecoder() override;
 
 private:
-    virtual bool decodeInt64(const String& key, int64_t&);
-    virtual bool decodeUInt32(const String& key, uint32_t&);
-    virtual bool decodeString(const String& key, String&);
+    virtual bool decodeBool(const String& key, bool&) override;
+    virtual bool decodeDouble(const String& key, double&) override;
+    virtual bool decodeInt64(const String& key, int64_t&) override;
+    virtual bool decodeUInt32(const String& key, uint32_t&) override;
+    virtual bool decodeString(const String& key, String&) override;
 
-    virtual bool beginObject(const String& key);
-    virtual void endObject();
+    virtual bool beginObject(const String& key) override;
+    virtual void endObject() override;
 
-    virtual bool beginArray(const String& key);
-    virtual bool beginArrayElement();
-    virtual void endArrayElement();
-    virtual void endArray();
+    virtual bool beginArray(const String& key) override;
+    virtual bool beginArrayElement() override;
+    virtual void endArrayElement() override;
+    virtual void endArray() override;
 
     RetainPtr<CFDictionaryRef> m_rootDictionary;
 

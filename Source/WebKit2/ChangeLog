@@ -1,3 +1,23 @@
+2014-01-29  Brady Eidson  <beidson@apple.com>
+
+        IDB: Fully implement IDBKeyData encoding/decoding
+        https://bugs.webkit.org/show_bug.cgi?id=127863
+
+        Rubberstamped by Alexey Proskuryakov.
+
+        Handle invalid buffers, and pass IDBKeyData decoding along:
+        * DatabaseProcess/IndexedDB/IDBSerialization.cpp:
+        (WebKit::deserializeIDBKeyPath):
+        (WebKit::serializeIDBKeyData):
+        (WebKit::deserializeIDBKeyData):
+        * DatabaseProcess/IndexedDB/IDBSerialization.h:
+
+        Implement decodeBool and decodeDouble:
+        * Shared/cf/KeyedDecoder.cpp:
+        (WebKit::KeyedDecoder::decodeBool):
+        (WebKit::KeyedDecoder::decodeDouble):
+        * Shared/cf/KeyedDecoder.h:
+
 2014-01-29  Tim Horton  <timothy_horton@apple.com>
 
         WebKit2 View Gestures (Swipe): Update rubberBandsAt{Left,Right} when WebKit swipe is enabled

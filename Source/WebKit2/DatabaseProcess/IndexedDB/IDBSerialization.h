@@ -43,7 +43,7 @@ RefPtr<WebCore::SharedBuffer> serializeIDBKeyPath(const WebCore::IDBKeyPath&);
 bool deserializeIDBKeyPath(const uint8_t* buffer, size_t bufferSize, WebCore::IDBKeyPath&);
 
 RefPtr<WebCore::SharedBuffer> serializeIDBKeyData(const WebCore::IDBKeyData&);
-bool deserializeIDBKey(const uint8_t* buffer, size_t bufferSize, WebCore::IDBKeyData&);
+bool deserializeIDBKeyData(const uint8_t* buffer, size_t bufferSize, WebCore::IDBKeyData&);
 
 } // namespace WebKit
 
