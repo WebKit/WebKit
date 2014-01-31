@@ -37,7 +37,7 @@
 
 namespace WebKit {
 
-class RawPluginMetaData;
+struct RawPluginMetaData;
 
 class NetscapePluginModule : public RefCounted<NetscapePluginModule> {
 public:
