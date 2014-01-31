@@ -1,5 +1,11 @@
 2014-01-31  Filip Pizlo  <fpizlo@apple.com>
 
+        Unreviewed, really add the --copy-libraries option.
+
+        * Scripts/build-jsc:
+
+2014-01-31  Filip Pizlo  <fpizlo@apple.com>
+
         Unreviewed, fix the script for older Rubies.
 
         * Scripts/export-llvm-build:
