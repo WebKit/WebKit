@@ -1,3 +1,15 @@
+2014-01-31  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r163165.
+        http://trac.webkit.org/changeset/163165
+        https://bugs.webkit.org/show_bug.cgi?id=127997
+
+        broke 2 fast/table tests (Requested by kling on #webkit).
+
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::updateLogicalWidth):
+        (WebCore::RenderTable::computePreferredLogicalWidths):
+
 2014-01-31  Anders Carlsson  <andersca@apple.com>
 
         Don't allocate a new XMLHttpRequestStaticData every time staticData() is called
