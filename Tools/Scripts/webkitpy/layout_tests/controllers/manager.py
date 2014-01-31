@@ -358,8 +358,10 @@ class Manager(object):
             "layout-tests",
             self._options.master_name)
 
-        _log.debug("Finished writing JSON files.")
-
+        if generator.generate_json_output():
+            _log.debug("Finished writing JSON file for the test results server.")
+        else:
+            _log.debug("Failed to generate JSON file for the test results server.")
 
         json_files = ["incremental_results.json", "full_results.json", "times_ms.json"]
 

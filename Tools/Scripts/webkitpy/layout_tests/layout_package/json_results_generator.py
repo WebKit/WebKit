@@ -235,9 +235,11 @@ class JSONResultsGenerator(object):
 
     def generate_json_output(self):
         json_object = self.get_json()
-        if json_object:
-            file_path = self._filesystem.join(self._results_directory, self.INCREMENTAL_RESULTS_FILENAME)
-            write_json(self._filesystem, json_object, file_path)
+        if not json_object:
+            return False
+        file_path = self._filesystem.join(self._results_directory, self.INCREMENTAL_RESULTS_FILENAME)
+        write_json(self._filesystem, json_object, file_path)
+        return True
 
     def generate_times_ms_file(self):
         # FIXME: rename to generate_times_ms_file. This needs to be coordinated with

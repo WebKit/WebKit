@@ -1,3 +1,21 @@
+2014-01-30  Ryosuke Niwa  <rniwa@webkit.org>
+
+        NRWT shouldn't say "Finished writing JSON files" if it failed to to so
+        https://bugs.webkit.org/show_bug.cgi?id=127966
+
+        Reviewed by Alexey Proskuryakov.
+
+        Don't say "Finished writing JSON files" if we had failed to generate the JSON file.
+        Also explicitly say this is for test results server as we're generating two JSON files.
+
+        * Scripts/webkitpy/layout_tests/controllers/manager.py:
+        (Manager._upload_json_files):
+        * Scripts/webkitpy/layout_tests/layout_package/json_layout_results_generator.py:
+        (JSONLayoutResultsGenerator.__init__): Don't generate JSON file implicitly inside the constructor.
+        * Scripts/webkitpy/layout_tests/layout_package/json_results_generator.py:
+        (JSONResultsGenerator.generate_json_output): Return a boolean indicating whether the generation
+        had succeeded or not.
+
 2014-01-30  Filip Pizlo  <fpizlo@apple.com>
 
         copy-webkitlibraries-to-product-directory should accept command-line arguments for extra work required for optional features rather than relying on environment variables

@@ -72,8 +72,6 @@ class JSONLayoutResultsGenerator(json_results_generator.JSONResultsGenerator):
         self._failures = dict((test_name, run_results.results_by_name[test_name].type) for test_name in run_results.failures_by_name)
         self._test_timings = run_results.results_by_name
 
-        self.generate_json_output()
-
     def _get_path_relative_to_layout_test_root(self, test):
         """Returns the path of the test relative to the layout test root.
         For example, for:
