@@ -2139,6 +2139,11 @@ void FrameView::fixedLayoutSizeChanged()
     ScrollView::fixedLayoutSizeChanged();
 }
 
+bool FrameView::shouldLayoutAfterViewportChange() const
+{
+    return hasViewportConstrainedObjects() && (!useFixedLayout() || useCustomFixedPositionLayoutRect());
+}
+
 void FrameView::visibleContentsResized()
 {
     // We check to make sure the view is attached to a frame() as this method can
@@ -2160,7 +2165,7 @@ void FrameView::visibleContentsResized()
     }
 #endif
 
-    if (!useFixedLayout() && needsLayout())
+    if (shouldLayoutAfterViewportChange() && needsLayout())
         layout();
 
     if (RenderView* renderView = this->renderView()) {

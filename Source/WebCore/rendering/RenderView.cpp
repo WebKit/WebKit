@@ -1197,24 +1197,6 @@ FlowThreadController& RenderView::flowThreadController()
     return *m_flowThreadController;
 }
 
-#if PLATFORM(IOS)
-static bool isFixedPositionInViewport(const RenderObject& renderer, const RenderObject* container)
-{
-    return (renderer.style().position() == FixedPosition) && renderer.container() == container;
-}
-
-bool RenderView::hasCustomFixedPosition(const RenderObject& renderer, ContainingBlockCheck checkContainer) const
-{
-    if (!frameView().useCustomFixedPositionLayoutRect())
-        return false;
-
-    if (checkContainer == CheckContainingBlock)
-        return isFixedPositionInViewport(renderer, this);
-
-    return renderer.style().position() == FixedPosition;
-}
-#endif
-
 void RenderView::pushLayoutStateForCurrentFlowThread(const RenderObject& object)
 {
     if (!m_flowThreadController)
