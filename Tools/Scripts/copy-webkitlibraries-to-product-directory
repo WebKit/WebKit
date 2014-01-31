@@ -30,18 +30,27 @@ use lib $FindBin::Bin;
 use webkitdirs;
 
 my $showHelp = 0;
-my $ftlJIT = 0;
+my $llvm = 0;
+my $wksi = 0;
+my $llvmIncludePackage = "";
+my $llvmLibraryPackage = "";
 
 my $programName = basename($0);
 my $usage = <<EOF;
 Usage: $programName [options]
   --help                        Show this help message
-  --[no-]ftl-jit                Toggle FTL JIT support (default: $ftlJIT)
+  --[no-]llvm                   Toggle copying LLVM drops (default: $llvm)
+  --[no-]wksi                   Toggle copying WebKitSystemInterface drops (default: $wksi)
+  --use-llvm-includes=<path>    Get the LLVM inludes package from <path>
+  --use-llvm-libraries=<path>   Get the LLVM libraries package from <path>
 EOF
 
 GetOptions(
     'help' => \$showHelp,
-    'ftl-jit!' => \$ftlJIT,
+    'llvm!' => \$llvm,
+    'wksi!' => \$wksi,
+    'use-llvm-includes=s' => \$llvmIncludePackage,
+    'use-llvm-libraries=s' => \$llvmLibraryPackage,
 );
 
 if ($showHelp) {
@@ -54,25 +63,8 @@ $productDir = $ENV{BUILT_PRODUCTS_DIR} if !$productDir;
 
 chdirWebKit();
 
-my @librariesToCopy = (
-    "libWebKitSystemInterfaceLion.a",
-    "libWebKitSystemInterfaceMountainLion.a",
-    "libWebKitSystemInterfaceMavericks.a",
-);
-
 my $ranlib = `xcrun -find ranlib`;
 chomp $ranlib;
-foreach my $libName (@librariesToCopy) {
-    my $srcLib = "WebKitLibraries/" . $libName;
-    my $lib = "$productDir/" . $libName;
-    if (!-e $lib || -M $lib > -M $srcLib) {
-        print "Updating $lib\n";
-        (system("ditto", $srcLib, $lib) == 0) or die;
-        (system($ranlib, $lib) == 0) or die;
-    }
-}
-
-(system("mkdir", "-p", "$productDir/usr/local/include") == 0) or die;
 
 sub unpackIfNecessary
 {
@@ -101,38 +93,64 @@ sub dittoHeaders
     }
 }
 
-dittoHeaders("WebKitLibraries/WebKitSystemInterface.h", "$productDir/usr/local/include/WebKitSystemInterface.h");
+if ($llvm || $wksi) {
+    (system("mkdir", "-p", "$productDir/usr/local/include") == 0) or die;
+}
 
-if ($ftlJIT) {
+if ($wksi) {
+    my @librariesToCopy = (
+        "libWebKitSystemInterfaceLion.a",
+        "libWebKitSystemInterfaceMountainLion.a",
+        "libWebKitSystemInterfaceMavericks.a",
+    );
+    
+    foreach my $libName (@librariesToCopy) {
+        my $srcLib = "WebKitLibraries/" . $libName;
+        my $lib = "$productDir/" . $libName;
+        if (!-e $lib || -M $lib > -M $srcLib) {
+            print "Updating $lib\n";
+            (system("ditto", $srcLib, $lib) == 0) or die;
+            (system($ranlib, $lib) == 0) or die;
+        }
+    }
+    
+    dittoHeaders("WebKitLibraries/WebKitSystemInterface.h", "$productDir/usr/local/include/WebKitSystemInterface.h");
+}
+
+if ($llvm) {
     # Determine where to get LLVM binaries and headers.
     my $majorDarwinVersion = (split /\./, `uname -r`)[0];
-    my $llvmLibraryPackage;
-    my $llvmIncludePackage;
     my $useOwnLLVM = 0;
     my $ownLLVMDirectory;
-    if (defined($ENV{LLVM_SOURCE_PATH})) {
-        $useOwnLLVM = 1;
-        $ownLLVMDirectory = $ENV{LLVM_SOURCE_PATH};
-    } elsif (-d "llvm" && -e "llvm/LLVMBuild.txt") {
-        $useOwnLLVM = 1;
-        $ownLLVMDirectory = sourceDir() . "/llvm";
-    } elsif (defined($ENV{LLVM_LIBRARY_PACKAGE}) && defined($ENV{LLVM_INCLUDE_PACKAGE})) {
-        $llvmLibraryPackage = $ENV{LLVM_LIBRARY_PACKAGE};
-        $llvmIncludePackage = $ENV{LLVM_INCLUDE_PACKAGE};
-    } elsif ($majorDarwinVersion == 11) {
-        $llvmLibraryPackage = "WebKitLibraries/LLVMLibrariesLion.tar.bz2";
-        $llvmIncludePackage = "WebKitLibraries/LLVMIncludesLion.tar.bz2";
-    } elsif ($majorDarwinVersion == 12) {
-        $llvmLibraryPackage = "WebKitLibraries/LLVMLibrariesMountainLion.tar.bz2";
-        $llvmIncludePackage = "WebKitLibraries/LLVMIncludesMountainLion.tar.bz2";
-    } else {
-        print "Don't know where to find LLVM!\n";
-        print "\n";
-        print "Try defining LLVM_LIBRARY_PACKAGE and LLVM_INCLUDE_PACKAGE.\n";
-        print "\n";
-        print "Alternatively, you can check out llvm trunk into the WebKit directory:\n";
-        print "svn co http://llvm.org/svn/llvm-project/llvm/trunk llvm\n";
-        exit 1;
+    if ($llvmLibraryPackage eq "" && $llvmIncludePackage eq "") {
+        if (defined($ENV{LLVM_SOURCE_PATH})) {
+            $useOwnLLVM = 1;
+            $ownLLVMDirectory = $ENV{LLVM_SOURCE_PATH};
+        } elsif (-d "llvm" && -e "llvm/LLVMBuild.txt") {
+            $useOwnLLVM = 1;
+            $ownLLVMDirectory = sourceDir() . "/llvm";
+        } elsif (defined($ENV{LLVM_LIBRARY_PACKAGE}) && defined($ENV{LLVM_INCLUDE_PACKAGE})) {
+            $llvmLibraryPackage = $ENV{LLVM_LIBRARY_PACKAGE};
+            $llvmIncludePackage = $ENV{LLVM_INCLUDE_PACKAGE};
+        } elsif ($majorDarwinVersion == 11) {
+            $llvmLibraryPackage = "WebKitLibraries/LLVMLibrariesLion.tar.bz2";
+            $llvmIncludePackage = "WebKitLibraries/LLVMIncludesLion.tar.bz2";
+        } elsif ($majorDarwinVersion == 12) {
+            $llvmLibraryPackage = "WebKitLibraries/LLVMLibrariesMountainLion.tar.bz2";
+            $llvmIncludePackage = "WebKitLibraries/LLVMIncludesMountainLion.tar.bz2";
+        } elsif ($majorDarwinVersion == 13) {
+            $llvmLibraryPackage = "WebKitLibraries/LLVMLibrariesMavericks.tar.bz2";
+            $llvmIncludePackage = "WebKitLibraries/LLVMIncludesMavericks.tar.bz2";
+        } else {
+            print "Don't know where to find LLVM!\n";
+            print "\n";
+            print "Try defining LLVM_LIBRARY_PACKAGE and LLVM_INCLUDE_PACKAGE or setting the\n";
+            print "--use-llvm-includes and --use-llvm-libraries options.\n";
+            print "\n";
+            print "Alternatively, you can check out llvm trunk into the WebKit directory:\n";
+            print "svn co http://llvm.org/svn/llvm-project/llvm/trunk llvm\n";
+            exit 1;
+        }
     }
 
     sub fileContains
@@ -226,6 +244,5 @@ if ($ftlJIT) {
         print {$fileHandle} "/* This file fools WebKit's build system into relinking JavaScriptCore if the LLVM libraries changed. */\n";
         close $fileHandle;
     }
-
 }
 

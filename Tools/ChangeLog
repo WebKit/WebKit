@@ -1,3 +1,18 @@
+2014-01-31  Filip Pizlo  <fpizlo@apple.com>
+
+        Allow more flexibility for copy-webkitlibraries-to-product-directory
+        https://bugs.webkit.org/show_bug.cgi?id=128010
+
+        Reviewed by Oliver Hunt.
+        
+        It's now the case that copy-webkitlibraries-to-product-directory does nothing by
+        default, but you can tell it to either copy WebKitSystemInterface (--wksi) or LLVM
+        (--llvm). You can also tell it where to get LLVM from.
+
+        * Scripts/build-jsc:
+        * Scripts/build-webkit:
+        * Scripts/copy-webkitlibraries-to-product-directory:
+
 2014-01-31  David Farler  <dfarler@apple.com>
 
         DumpRenderTree iOS fails to link: missing rowHeaders and columnHeaders in AccessibilityUIElement

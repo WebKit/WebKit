@@ -40,6 +40,7 @@ my $showHelp = 0;
 my $ftlJIT = 0;
 my $forceCLoop = 0;
 my $makeArgs = "";
+my $copyLibraries = 1;
 
 my $programName = basename($0);
 my $usage = <<EOF;
@@ -47,6 +48,7 @@ Usage: $programName [options] [options to pass to build system]
   --help                        Show this help message
   --[no-]coverage               Toggle code coverage support (default: $coverageSupport)
   --[no-]ftl-jit                Toggle FTL JIT support (default: $ftlJIT)
+  --[no-]copy-libraries         Toggle whether to copy libraries (default: $copyLibraries)
   --cloop                       Use C Loop interpreter (default: $forceCLoop)
   --makeargs=<arguments>        Optional Makefile flags
 EOF
@@ -89,12 +91,14 @@ if (isAppleMacWebKit()) {
     if ($forceCLoop) {
         push @options, "ENABLE_LLINT_C_LOOP=ENABLE_LLINT_C_LOOP";
     }
-    my @copyLibrariesArgs = ("perl", "Tools/Scripts/copy-webkitlibraries-to-product-directory");
-    if ($ftlJIT) {
-        push @copyLibrariesArgs, "--ftl-jit";
+    if ($copyLibraries) {
+        my @copyLibrariesArgs = ("perl", "Tools/Scripts/copy-webkitlibraries-to-product-directory");
+        if ($ftlJIT) {
+            push @copyLibrariesArgs, "--llvm";
+        }
+        push @copyLibrariesArgs, productDir();
+        (system(@copyLibrariesArgs) == 0) or die;
     }
-    push @copyLibrariesArgs, productDir();
-    (system(@copyLibrariesArgs) == 0) or die;
 }
 
 sub buildMyProject
