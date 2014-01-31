@@ -128,7 +128,7 @@ void LegacyProfiler::willExecute(ExecState* callerCallFrame, JSValue function)
 {
     ASSERT(!m_currentProfiles.isEmpty());
 
-    dispatchFunctionToProfiles(callerCallFrame, m_currentProfiles, &ProfileGenerator::willExecute, createCallIdentifier(callerCallFrame, function, ASCIILiteral(""), 0, 0), callerCallFrame->lexicalGlobalObject()->profileGroup());
+    dispatchFunctionToProfiles(callerCallFrame, m_currentProfiles, &ProfileGenerator::willExecute, createCallIdentifier(callerCallFrame, function, StringImpl::empty(), 0, 0), callerCallFrame->lexicalGlobalObject()->profileGroup());
 }
 
 void LegacyProfiler::willExecute(ExecState* callerCallFrame, const String& sourceURL, unsigned startingLineNumber, unsigned startingColumnNumber)
@@ -144,7 +144,7 @@ void LegacyProfiler::didExecute(ExecState* callerCallFrame, JSValue function)
 {
     ASSERT(!m_currentProfiles.isEmpty());
 
-    dispatchFunctionToProfiles(callerCallFrame, m_currentProfiles, &ProfileGenerator::didExecute, createCallIdentifier(callerCallFrame, function, ASCIILiteral(""), 0, 0), callerCallFrame->lexicalGlobalObject()->profileGroup());
+    dispatchFunctionToProfiles(callerCallFrame, m_currentProfiles, &ProfileGenerator::didExecute, createCallIdentifier(callerCallFrame, function, StringImpl::empty(), 0, 0), callerCallFrame->lexicalGlobalObject()->profileGroup());
 }
 
 void LegacyProfiler::didExecute(ExecState* callerCallFrame, const String& sourceURL, unsigned startingLineNumber, unsigned startingColumnNumber)
@@ -158,7 +158,7 @@ void LegacyProfiler::exceptionUnwind(ExecState* handlerCallFrame)
 {
     ASSERT(!m_currentProfiles.isEmpty());
 
-    dispatchFunctionToProfiles(handlerCallFrame, m_currentProfiles, &ProfileGenerator::exceptionUnwind, createCallIdentifier(handlerCallFrame, JSValue(), ASCIILiteral(""), 0, 0), handlerCallFrame->lexicalGlobalObject()->profileGroup());
+    dispatchFunctionToProfiles(handlerCallFrame, m_currentProfiles, &ProfileGenerator::exceptionUnwind, createCallIdentifier(handlerCallFrame, JSValue(), StringImpl::empty(), 0, 0), handlerCallFrame->lexicalGlobalObject()->profileGroup());
 }
 
 CallIdentifier LegacyProfiler::createCallIdentifier(ExecState* exec, JSValue functionValue, const String& defaultSourceURL, unsigned defaultLineNumber, unsigned defaultColumnNumber)
