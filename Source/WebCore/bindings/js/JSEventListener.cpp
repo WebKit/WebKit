@@ -133,7 +133,7 @@ void JSEventListener::handleEvent(ScriptExecutionContext* scriptExecutionContext
             ? JSMainThreadExecState::call(exec, handleEventFunction, callType, callData, thisValue, args)
             : JSC::call(exec, handleEventFunction, callType, callData, thisValue, args);
 
-        InspectorInstrumentation::didCallFunction(cookie);
+        InspectorInstrumentation::didCallFunction(cookie, scriptExecutionContext);
 
         globalObject->setCurrentEvent(savedEvent);
 

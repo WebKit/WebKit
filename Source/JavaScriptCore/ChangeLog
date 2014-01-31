@@ -1,3 +1,16 @@
+2014-01-26  Timothy Hatcher  <timothy@apple.com>
+
+        Include profile with FunctionCall and EvaluateScript Timeline records.
+
+        https://bugs.webkit.org/show_bug.cgi?id=127663
+
+        Reviewed by Joseph Pecoraro.
+
+        * inspector/InjectedScriptBase.cpp:
+        (Inspector::InjectedScriptBase::callFunctionWithEvalEnabled):
+        * inspector/InspectorEnvironment.h:
+        * inspector/JSGlobalObjectInspectorController.h:
+
 2014-01-29  Filip Pizlo  <fpizlo@apple.com>
 
         FTL should support GetById(Untyped:)

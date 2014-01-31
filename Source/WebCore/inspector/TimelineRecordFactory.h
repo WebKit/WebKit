@@ -42,6 +42,7 @@ namespace WebCore {
     class FloatQuad;
     class ResourceRequest;
     class ResourceResponse;
+    class ScriptProfile;
 
     class TimelineRecordFactory {
     public:
@@ -91,6 +92,8 @@ namespace WebCore {
         static PassRefPtr<Inspector::InspectorObject> createPaintData(const FloatQuad&);
 
         static void appendLayoutRoot(Inspector::InspectorObject* data, const FloatQuad&);
+
+        static void appendProfile(Inspector::InspectorObject*, PassRefPtr<ScriptProfile>);
 
 #if ENABLE(WEB_SOCKETS)
         static inline PassRefPtr<Inspector::InspectorObject> createWebSocketCreateData(unsigned long identifier, const URL& url, const String& protocol)

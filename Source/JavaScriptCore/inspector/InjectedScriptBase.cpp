@@ -94,7 +94,7 @@ Deprecated::ScriptValue InjectedScriptBase::callFunctionWithEvalEnabled(Deprecat
         scriptState->lexicalGlobalObject()->setEvalEnabled(false);
 
     if (m_environment)
-        m_environment->didCallInjectedScriptFunction();
+        m_environment->didCallInjectedScriptFunction(m_injectedScriptObject.scriptState());
 
     return resultValue;
 }

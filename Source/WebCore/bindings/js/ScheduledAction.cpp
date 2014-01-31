@@ -106,7 +106,7 @@ void ScheduledAction::executeFunctionInContext(JSGlobalObject* globalObject, JSV
     else
         JSC::call(exec, m_function.get(), callType, callData, thisValue, args);
 
-    InspectorInstrumentation::didCallFunction(cookie);
+    InspectorInstrumentation::didCallFunction(cookie, context);
 
     if (exec->hadException())
         reportCurrentException(exec);

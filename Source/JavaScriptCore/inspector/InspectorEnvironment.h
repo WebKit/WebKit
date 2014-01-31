@@ -45,7 +45,7 @@ public:
     virtual InspectorFunctionCallHandler functionCallHandler() const = 0;
     virtual InspectorEvaluateHandler evaluateHandler() const = 0;
     virtual void willCallInjectedScriptFunction(JSC::ExecState*, const String& scriptName, int scriptLine) = 0;
-    virtual void didCallInjectedScriptFunction() = 0;
+    virtual void didCallInjectedScriptFunction(JSC::ExecState*) = 0;
 };
 
 } // namespace Inspector

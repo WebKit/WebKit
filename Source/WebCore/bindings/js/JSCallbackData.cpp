@@ -77,7 +77,7 @@ JSValue JSCallbackData::invokeCallback(JSValue thisValue, MarkedArgumentBuffer& 
         ? JSMainThreadExecState::call(exec, function, callType, callData, thisValue, args)
         : JSC::call(exec, function, callType, callData, thisValue, args);
 
-    InspectorInstrumentation::didCallFunction(cookie);
+    InspectorInstrumentation::didCallFunction(cookie, context);
 
     if (exec->hadException()) {
         reportCurrentException(exec);

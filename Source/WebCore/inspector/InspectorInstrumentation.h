@@ -129,7 +129,7 @@ public:
     static void didRemoveTimer(ScriptExecutionContext*, int timerId);
 
     static InspectorInstrumentationCookie willCallFunction(ScriptExecutionContext*, const String& scriptName, int scriptLine);
-    static void didCallFunction(const InspectorInstrumentationCookie&);
+    static void didCallFunction(const InspectorInstrumentationCookie&, ScriptExecutionContext*);
     static InspectorInstrumentationCookie willDispatchXHRReadyStateChangeEvent(ScriptExecutionContext*, XMLHttpRequest*);
     static void didDispatchXHRReadyStateChangeEvent(const InspectorInstrumentationCookie&);
     static InspectorInstrumentationCookie willDispatchEvent(Document*, const Event&, bool hasEventListeners);
@@ -139,7 +139,7 @@ public:
     static InspectorInstrumentationCookie willDispatchEventOnWindow(Frame*, const Event& event, DOMWindow* window);
     static void didDispatchEventOnWindow(const InspectorInstrumentationCookie&);
     static InspectorInstrumentationCookie willEvaluateScript(Frame*, const String& url, int lineNumber);
-    static void didEvaluateScript(const InspectorInstrumentationCookie&);
+    static void didEvaluateScript(const InspectorInstrumentationCookie&, Frame*);
     static void scriptsEnabled(Page*, bool isEnabled);
     static void didCreateIsolatedContext(Frame*, JSC::ExecState*, SecurityOrigin*);
     static InspectorInstrumentationCookie willFireTimer(ScriptExecutionContext*, int timerId);
@@ -313,7 +313,7 @@ private:
     static void didRemoveTimerImpl(InstrumentingAgents*, int timerId, ScriptExecutionContext*);
 
     static InspectorInstrumentationCookie willCallFunctionImpl(InstrumentingAgents*, const String& scriptName, int scriptLine, ScriptExecutionContext*);
-    static void didCallFunctionImpl(const InspectorInstrumentationCookie&);
+    static void didCallFunctionImpl(const InspectorInstrumentationCookie&, ScriptExecutionContext*);
     static InspectorInstrumentationCookie willDispatchXHRReadyStateChangeEventImpl(InstrumentingAgents*, XMLHttpRequest*, ScriptExecutionContext*);
     static void didDispatchXHRReadyStateChangeEventImpl(const InspectorInstrumentationCookie&);
     static InspectorInstrumentationCookie willDispatchEventImpl(InstrumentingAgents*, const Event&, bool hasEventListeners, Document*);
@@ -323,7 +323,7 @@ private:
     static InspectorInstrumentationCookie willDispatchEventOnWindowImpl(InstrumentingAgents*, const Event&, DOMWindow*);
     static void didDispatchEventOnWindowImpl(const InspectorInstrumentationCookie&);
     static InspectorInstrumentationCookie willEvaluateScriptImpl(InstrumentingAgents*, const String& url, int lineNumber, Frame*);
-    static void didEvaluateScriptImpl(const InspectorInstrumentationCookie&);
+    static void didEvaluateScriptImpl(const InspectorInstrumentationCookie&, Frame*);
     static void scriptsEnabledImpl(InstrumentingAgents*, bool isEnabled);
     static void didCreateIsolatedContextImpl(InstrumentingAgents*, Frame*, JSC::ExecState*, SecurityOrigin*);
     static InspectorInstrumentationCookie willFireTimerImpl(InstrumentingAgents*, int timerId, ScriptExecutionContext*);
@@ -823,14 +823,15 @@ inline InspectorInstrumentationCookie InspectorInstrumentation::willCallFunction
 }
 
 
-inline void InspectorInstrumentation::didCallFunction(const InspectorInstrumentationCookie& cookie)
+inline void InspectorInstrumentation::didCallFunction(const InspectorInstrumentationCookie& cookie, ScriptExecutionContext* context)
 {
 #if ENABLE(INSPECTOR)
     FAST_RETURN_IF_NO_FRONTENDS(void());
     if (cookie.isValid())
-        didCallFunctionImpl(cookie);
+        didCallFunctionImpl(cookie, context);
 #else
     UNUSED_PARAM(cookie);
+    UNUSED_PARAM(context);
 #endif
 }
 
@@ -946,14 +947,15 @@ inline InspectorInstrumentationCookie InspectorInstrumentation::willEvaluateScri
     return InspectorInstrumentationCookie();
 }
 
-inline void InspectorInstrumentation::didEvaluateScript(const InspectorInstrumentationCookie& cookie)
+inline void InspectorInstrumentation::didEvaluateScript(const InspectorInstrumentationCookie& cookie, Frame* frame)
 {
 #if ENABLE(INSPECTOR)
     FAST_RETURN_IF_NO_FRONTENDS(void());
     if (cookie.isValid())
-        didEvaluateScriptImpl(cookie);
+        didEvaluateScriptImpl(cookie, frame);
 #else
     UNUSED_PARAM(cookie);
+    UNUSED_PARAM(frame);
 #endif
 }
 

@@ -61,7 +61,7 @@ public:
     virtual InspectorFunctionCallHandler functionCallHandler() const override;
     virtual InspectorEvaluateHandler evaluateHandler() const override;
     virtual void willCallInjectedScriptFunction(JSC::ExecState*, const String&, int) override { }
-    virtual void didCallInjectedScriptFunction() override { }
+    virtual void didCallInjectedScriptFunction(JSC::ExecState*) override { }
 
 private:
     JSC::JSGlobalObject& m_globalObject;

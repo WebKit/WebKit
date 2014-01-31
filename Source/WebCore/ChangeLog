@@ -1,3 +1,44 @@
+2014-01-26  Timothy Hatcher  <timothy@apple.com>
+
+        Include profile with FunctionCall and EvaluateScript Timeline records.
+
+        https://bugs.webkit.org/show_bug.cgi?id=127663
+
+        Reviewed by Joseph Pecoraro.
+
+        * bindings/js/JSCallbackData.cpp:
+        (WebCore::JSCallbackData::invokeCallback):
+        * bindings/js/JSEventListener.cpp:
+        (WebCore::JSEventListener::handleEvent):
+        * bindings/js/JSMutationCallback.cpp:
+        (WebCore::JSMutationCallback::call):
+        * bindings/js/ScheduledAction.cpp:
+        (WebCore::ScheduledAction::executeFunctionInContext):
+        * bindings/js/ScriptController.cpp:
+        (WebCore::ScriptController::evaluateInWorld):
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::didCallInjectedScriptFunction):
+        * inspector/InspectorController.h:
+        * inspector/InspectorInstrumentation.cpp:
+        (WebCore::InspectorInstrumentation::didCallFunctionImpl):
+        (WebCore::InspectorInstrumentation::didEvaluateScriptImpl):
+        * inspector/InspectorInstrumentation.h:
+        (WebCore::InspectorInstrumentation::didCallFunction):
+        (WebCore::InspectorInstrumentation::didEvaluateScript):
+        * inspector/InspectorTimelineAgent.cpp:
+        (WebCore::InspectorTimelineAgent::willCallFunction):
+        (WebCore::InspectorTimelineAgent::didCallFunction):
+        (WebCore::InspectorTimelineAgent::willEvaluateScript):
+        (WebCore::InspectorTimelineAgent::didEvaluateScript):
+        (WebCore::InspectorTimelineAgent::InspectorTimelineAgent):
+        * inspector/InspectorTimelineAgent.h:
+        * inspector/TimelineRecordFactory.cpp:
+        (WebCore::TimelineRecordFactory::appendProfile):
+        * inspector/TimelineRecordFactory.h:
+        * inspector/WorkerInspectorController.cpp:
+        (WebCore::WorkerInspectorController::didCallInjectedScriptFunction):
+        * inspector/WorkerInspectorController.h:
+
 2014-01-30  Joseph Pecoraro  <pecoraro@apple.com>
 
         Remove now-empty ScriptController::setCaptureCallStackForUncaughtExceptions

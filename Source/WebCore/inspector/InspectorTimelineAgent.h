@@ -145,7 +145,7 @@ public:
 
     // Methods called from WebCore.
     void willCallFunction(const String& scriptName, int scriptLine, Frame*);
-    void didCallFunction();
+    void didCallFunction(Frame*);
 
     void willDispatchEvent(const Event&, Frame*);
     void didDispatchEvent();
@@ -184,7 +184,7 @@ public:
     void didDispatchXHRLoadEvent();
 
     void willEvaluateScript(const String&, int, Frame*);
-    void didEvaluateScript();
+    void didEvaluateScript(Frame*);
 
     void didTimeStamp(Frame*, const String&);
     void didMarkDOMContentEvent(Frame*);
@@ -268,6 +268,7 @@ private:
 
     bool m_enabled;
     bool m_includeDOMCounters;
+    bool m_recordingProfile;
 };
 
 } // namespace WebCore

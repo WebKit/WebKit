@@ -469,11 +469,12 @@ void InspectorController::willCallInjectedScriptFunction(JSC::ExecState* scriptS
     m_injectedScriptInstrumentationCookies.append(cookie);
 }
 
-void InspectorController::didCallInjectedScriptFunction()
+void InspectorController::didCallInjectedScriptFunction(JSC::ExecState* scriptState)
 {
     ASSERT(!m_injectedScriptInstrumentationCookies.isEmpty());
+    ScriptExecutionContext* scriptExecutionContext = scriptExecutionContextFromExecState(scriptState);
     InspectorInstrumentationCookie cookie = m_injectedScriptInstrumentationCookies.takeLast();
-    InspectorInstrumentation::didCallFunction(cookie);
+    InspectorInstrumentation::didCallFunction(cookie, scriptExecutionContext);
 }
 
 } // namespace WebCore

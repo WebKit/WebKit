@@ -42,6 +42,7 @@
 #include "ResourceResponse.h"
 #include "ScriptCallStack.h"
 #include "ScriptCallStackFactory.h"
+#include "ScriptProfile.h"
 #include <inspector/InspectorValues.h>
 #include <wtf/CurrentTime.h>
 
@@ -249,6 +250,11 @@ PassRefPtr<InspectorObject> TimelineRecordFactory::createPaintData(const FloatQu
 void TimelineRecordFactory::appendLayoutRoot(InspectorObject* data, const FloatQuad& quad)
 {
     data->setArray("root", createQuad(quad));
+}
+
+void TimelineRecordFactory::appendProfile(InspectorObject* data, PassRefPtr<ScriptProfile> profile)
+{
+    data->setValue("profile", profile->buildInspectorObjectForHead());
 }
 
 } // namespace WebCore
