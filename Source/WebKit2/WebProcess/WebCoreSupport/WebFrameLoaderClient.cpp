@@ -517,8 +517,10 @@ void WebFrameLoaderClient::dispatchDidFinishLoad()
     // Notify the bundle client.
     webPage->injectedBundleLoaderClient().didFinishLoadForFrame(webPage, m_frame, userData);
 
+    WebDocumentLoader& documentLoader = static_cast<WebDocumentLoader&>(*m_frame->coreFrame()->loader().documentLoader());
+
     // Notify the UIProcess.
-    webPage->send(Messages::WebPageProxy::DidFinishLoadForFrame(m_frame->frameID(), InjectedBundleUserMessageEncoder(userData.get())));
+    webPage->send(Messages::WebPageProxy::DidFinishLoadForFrame(m_frame->frameID(), documentLoader.navigationID(), InjectedBundleUserMessageEncoder(userData.get())));
 
     // If we have a load listener, notify it.
     if (WebFrame::LoadListener* loadListener = m_frame->loadListener())

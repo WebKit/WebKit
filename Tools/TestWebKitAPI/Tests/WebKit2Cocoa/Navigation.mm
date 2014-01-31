@@ -51,6 +51,11 @@ static RetainPtr<WKNavigation> currentNavigation;
 - (void)webView:(WKWebView *)webView didCommitNavigation:(WKNavigation *)navigation
 {
     EXPECT_EQ(currentNavigation, navigation);
+}
+
+- (void)webView:(WKWebView *)webView didFinishLoadingNavigation:(WKNavigation *)navigation
+{
+    EXPECT_EQ(currentNavigation, navigation);
 
     isDone = true;
 }

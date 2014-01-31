@@ -1,3 +1,29 @@
+2014-01-30  Anders Carlsson  <andersca@apple.com>
+
+        Add webView:didFinishLoadingNavigation: delegate method
+        https://bugs.webkit.org/show_bug.cgi?id=127976
+
+        Reviewed by Dan Bernstein.
+
+        * UIProcess/API/APILoaderClient.h:
+        (API::LoaderClient::didFinishLoadForFrame):
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageSetPageLoaderClient):
+        * UIProcess/API/Cocoa/WKNavigationDelegate.h:
+        * UIProcess/Cocoa/NavigationState.h:
+        * UIProcess/Cocoa/NavigationState.mm:
+        (WebKit::NavigationState::setNavigationDelegate):
+        (WebKit::NavigationState::LoaderClient::didStartProvisionalLoadForFrame):
+        (WebKit::NavigationState::LoaderClient::didFailProvisionalLoadWithErrorForFrame):
+        (WebKit::NavigationState::LoaderClient::didCommitLoadForFrame):
+        (WebKit::NavigationState::LoaderClient::didFinishLoadForFrame):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didFinishLoadForFrame):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::dispatchDidFinishLoad):
+
 2014-01-30  Tim Horton  <timothy_horton@apple.com>
 
         Crashes after 163116 in [WKView takeViewSnapshot]

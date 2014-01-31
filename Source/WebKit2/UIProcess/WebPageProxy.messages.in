@@ -126,7 +126,7 @@ messages -> WebPageProxy {
     DidCommitLoadForFrame(uint64_t frameID, uint64_t navigationID, String mimeType, uint32_t loadType, WebCore::CertificateInfo certificateInfo, WebKit::InjectedBundleUserMessageEncoder userData) Variadic
     DidFailLoadForFrame(uint64_t frameID, WebCore::ResourceError error, WebKit::InjectedBundleUserMessageEncoder userData) Variadic
     DidFinishDocumentLoadForFrame(uint64_t frameID, WebKit::InjectedBundleUserMessageEncoder userData) Variadic
-    DidFinishLoadForFrame(uint64_t frameID, WebKit::InjectedBundleUserMessageEncoder userData) Variadic
+    DidFinishLoadForFrame(uint64_t frameID, uint64_t navigationID, WebKit::InjectedBundleUserMessageEncoder userData) Variadic
     DidFirstLayoutForFrame(uint64_t frameID, WebKit::InjectedBundleUserMessageEncoder userData) Variadic
     DidFirstVisuallyNonEmptyLayoutForFrame(uint64_t frameID, WebKit::InjectedBundleUserMessageEncoder userData) Variadic
     DidLayout(uint32_t type, WebKit::InjectedBundleUserMessageEncoder userData) Variadic

@@ -732,7 +732,7 @@ void WKPageSetPageLoaderClient(WKPageRef pageRef, const WKPageLoaderClientBase* 
             m_client.didFinishDocumentLoadForFrame(toAPI(page), toAPI(frame), toAPI(userData), m_client.base.clientInfo);
         }
 
-        virtual void didFinishLoadForFrame(WebPageProxy* page, WebFrameProxy* frame, API::Object* userData) override
+        virtual void didFinishLoadForFrame(WebPageProxy* page, WebFrameProxy* frame, uint64_t navigationID, API::Object* userData) override
         {
             if (!m_client.didFinishLoadForFrame)
                 return;
