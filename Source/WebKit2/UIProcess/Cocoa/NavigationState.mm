@@ -67,6 +67,7 @@ void NavigationState::setNavigationDelegate(id <WKNavigationDelegate> delegate)
 
     m_navigationDelegateMethods.webViewDidStartProvisionalNavigation = [delegate respondsToSelector:@selector(webView:didStartProvisionalNavigation:)];
     m_navigationDelegateMethods.webViewDidFailProvisionalNavigationWithError = [delegate respondsToSelector:@selector(webView:didFailProvisionalNavigation:withError:)];
+    m_navigationDelegateMethods.webViewDidCommitNavigation = [delegate respondsToSelector:@selector(webView:didCommitNavigation:)];
 }
 
 RetainPtr<WKNavigation> NavigationState::createLoadRequestNavigation(uint64_t navigationID, NSURLRequest *request)
@@ -209,6 +210,26 @@ void NavigationState::LoaderClient::didFailProvisionalLoadWithErrorForFrame(WebP
         return;
 
     [navigationDelegate.get() webView:m_navigationState.m_webView didFailProvisionalNavigation:navigation.get() withError:error];
+}
+
+void NavigationState::LoaderClient::didCommitLoadForFrame(WebPageProxy*, WebFrameProxy* webFrameProxy, uint64_t navigationID, API::Object*)
+{
+    if (!webFrameProxy->isMainFrame())
+        return;
+
+    if (!m_navigationState.m_navigationDelegateMethods.webViewDidCommitNavigation)
+        return;
+
+    auto navigationDelegate = m_navigationState.m_navigationDelegate.get();
+    if (!navigationDelegate)
+        return;
+
+    // FIXME: We should assert that navigationID is not zero here, but it's currently zero for navigations originating from the web process.
+    WKNavigation *navigation = nil;
+    if (navigationID)
+        navigation = m_navigationState.m_navigations.get(navigationID).get();
+
+    [navigationDelegate.get() webView:m_navigationState.m_webView didCommitNavigation:navigation];
 }
 
 } // namespace WebKit

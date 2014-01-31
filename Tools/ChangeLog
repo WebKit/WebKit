@@ -1,5 +1,16 @@
 2014-01-30  Anders Carlsson  <andersca@apple.com>
 
+        Add a webView:didCommitNavigation: delegate method
+        https://bugs.webkit.org/show_bug.cgi?id=127972
+
+        Reviewed by Dan Bernstein.
+
+        * TestWebKitAPI/Tests/WebKit2Cocoa/Navigation.mm:
+        (-[NavigationDelegate webView:didStartProvisionalNavigation:]):
+        (-[NavigationDelegate webView:didCommitNavigation:]):
+
+2014-01-30  Anders Carlsson  <andersca@apple.com>
+
         Add a webView:didFailProvisionalNavigation:withError: delegate method
         https://bugs.webkit.org/show_bug.cgi?id=127968
 

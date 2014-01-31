@@ -78,6 +78,7 @@ private:
     private:
         virtual void didStartProvisionalLoadForFrame(WebPageProxy*, WebFrameProxy*, uint64_t navigationID, API::Object*) override;
         virtual void didFailProvisionalLoadWithErrorForFrame(WebPageProxy*, WebFrameProxy*, uint64_t navigationID, const WebCore::ResourceError&, API::Object*) override;
+        virtual void didCommitLoadForFrame(WebPageProxy*, WebFrameProxy*, uint64_t navigationID, API::Object*) override;
 
         NavigationState& m_navigationState;
     };
@@ -88,6 +89,7 @@ private:
 
         bool webViewDidStartProvisionalNavigation : 1;
         bool webViewDidFailProvisionalNavigationWithError : 1;
+        bool webViewDidCommitNavigation : 1;
     } m_navigationDelegateMethods;
 
     WKWebView *m_webView;

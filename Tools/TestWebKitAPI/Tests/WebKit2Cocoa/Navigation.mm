@@ -46,6 +46,11 @@ static RetainPtr<WKNavigation> currentNavigation;
 {
     EXPECT_EQ(currentNavigation, navigation);
     EXPECT_NOT_NULL(navigation.request);
+}
+
+- (void)webView:(WKWebView *)webView didCommitNavigation:(WKNavigation *)navigation
+{
+    EXPECT_EQ(currentNavigation, navigation);
 
     isDone = true;
 }
