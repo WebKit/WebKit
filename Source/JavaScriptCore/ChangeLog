@@ -1,5 +1,11 @@
 2014-01-31  Oliver Hunt  <oliver@apple.com>
 
+        Fix windows
+
+        * generate-js-builtins:
+
+2014-01-31  Oliver Hunt  <oliver@apple.com>
+
         Fix 32bit.
 
         * jit/JITPropertyAccess32_64.cpp:

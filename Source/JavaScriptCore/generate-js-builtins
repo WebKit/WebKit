@@ -229,7 +229,7 @@ builtinsHeader.write("""
 JSC_FOREACH_BUILTIN(JSC_DECLARE_BUILTIN_GENERATOR)
 #undef JSC_DECLARE_BUILTIN_GENERATOR
 
-#define JSC_BUILTIN_EXISTS(name) defined(JSC_BUILTIN_##name)
+#define JSC_BUILTIN_EXISTS(name) defined JSC_BUILTIN_ ## name
 
 }
 
