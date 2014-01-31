@@ -1,3 +1,57 @@
+2014-01-31  Beth Dakin  <bdakin@apple.com>
+
+        Sideways 'wobble' when scrolling with trackpad on Mavericks
+        https://bugs.webkit.org/show_bug.cgi?id=127521
+        -and corresponding-
+        <rdar://problem/14137306>
+
+        Reviewed by Simon Fraser.
+
+        This patch takes http://trac.webkit.org/changeset/154535 which introduced 
+        filtering wheel events for overflow areas to try to make them less sensitive to X 
+        deltas when scrolling in a primarily Y direction, and it factors that code out 
+        into its own class, now called WheelEventDeltaTracker. So now this new class can 
+        use the same code to filter events for WebKit2’s EventDispatcher.
+
+        Files for WheelEventDeltaTracker.
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.vcxproj/WebCore.vcxproj.filters:
+        * WebCore.xcodeproj/project.pbxproj:
+
+        WK2 needs these new WheelEventDeltaTracker functions.
+        * WebCore.exp.in:
+
+        Move a bunch of code over to WheelEventDeltaTracker and use
+        m_recentWheelEventTracker to serve the same purpose.
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::EventHandler):
+        (WebCore::EventHandler::handleWheelEvent):
+        (WebCore::EventHandler::defaultWheelEventHandler):
+        * page/EventHandler.h:
+
+        Allow horizontal rubber banding now that we have some event filtering in place.
+        * page/FrameView.cpp:
+        (WebCore::FrameView::FrameView):
+
+        New files. Most of this code was from EventHandler.
+        * page/WheelEventDeltaTracker.cpp: Added.
+        (WebCore::WheelEventDeltaTracker::WheelEventDeltaTracker):
+        (WebCore::WheelEventDeltaTracker::~WheelEventDeltaTracker):
+        (WebCore::WheelEventDeltaTracker::beginTrackingDeltas):
+        (WebCore::WheelEventDeltaTracker::endTrackingDeltas):
+        (WebCore::WheelEventDeltaTracker::recordWheelEventDelta):
+        (WebCore::deltaIsPredominantlyVertical):
+        (WebCore::WheelEventDeltaTracker::dominantScrollGestureDirection):
+        * page/WheelEventDeltaTracker.h: Added.
+        (WebCore::WheelEventDeltaTracker::isTrackingDeltas):
+
+        New function to clone events while zero-ing out certain deltas.
+        * platform/PlatformWheelEvent.h:
+        (WebCore::PlatformWheelEvent::copyIgnoringHorizontalDelta):
+        (WebCore::PlatformWheelEvent::copyIgnoringVerticalDelta):
+
 2014-01-31  Simon Fraser  <simon.fraser@apple.com>
 
         Don't do logging from Range::collectSelectionRects() on iOS

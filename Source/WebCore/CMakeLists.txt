@@ -1769,6 +1769,7 @@ set(WebCore_SOURCES
     page/UserContentController.cpp
     page/UserContentURLPattern.cpp
     page/VisitedLinkProvider.cpp
+    page/WheelEventDeltaTracker.cpp
     page/WindowFeatures.cpp
     page/WindowFocusAllowedIndicator.cpp
     page/WorkerNavigator.cpp

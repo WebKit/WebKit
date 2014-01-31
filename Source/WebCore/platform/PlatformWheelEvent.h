@@ -119,6 +119,20 @@ namespace WebCore {
             return copy;
         }
 
+        PlatformWheelEvent copyIgnoringHorizontalDelta() const
+        {
+            PlatformWheelEvent copy = *this;
+            copy.m_deltaX = 0;
+            return copy;
+        }
+
+        PlatformWheelEvent copyIgnoringVerticalDelta() const
+        {
+            PlatformWheelEvent copy = *this;
+            copy.m_deltaY = 0;
+            return copy;
+        }
+
         const IntPoint& position() const { return m_position; } // PlatformWindow coordinates.
         const IntPoint& globalPosition() const { return m_globalPosition; } // Screen coordinates.
 

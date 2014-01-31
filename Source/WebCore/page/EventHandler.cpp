@@ -355,7 +355,7 @@ EventHandler::EventHandler(Frame& frame)
 #endif
     , m_mousePositionIsUnknown(true)
     , m_mouseDownTimestamp(0)
-    , m_inTrackingScrollGesturePhase(false)
+    , m_recentWheelEventDeltaTracker(adoptPtr(new WheelEventDeltaTracker))
     , m_widgetIsLatched(false)
 #if PLATFORM(MAC)
     , m_mouseDownView(nil)
@@ -2467,41 +2467,6 @@ bool EventHandler::shouldTurnVerticalTicksIntoHorizontal(const HitTestResult&, c
 }
 #endif
 
-void EventHandler::recordWheelEventDelta(const PlatformWheelEvent& event)
-{
-    const size_t recentEventCount = 3;
-    
-    m_recentWheelEventDeltas.append(FloatSize(event.deltaX(), event.deltaY()));
-    if (m_recentWheelEventDeltas.size() > recentEventCount)
-        m_recentWheelEventDeltas.removeFirst();
-}
-
-static bool deltaIsPredominantlyVertical(const FloatSize& delta)
-{
-    return fabs(delta.height()) > fabs(delta.width());
-}
-
-EventHandler::DominantScrollGestureDirection EventHandler::dominantScrollGestureDirection() const
-{
-    bool allVertical = m_recentWheelEventDeltas.size();
-    bool allHorizontal = m_recentWheelEventDeltas.size();
-
-    Deque<FloatSize>::const_iterator end = m_recentWheelEventDeltas.end();
-    for (Deque<FloatSize>::const_iterator it = m_recentWheelEventDeltas.begin(); it != end; ++it) {
-        bool isVertical = deltaIsPredominantlyVertical(*it);
-        allVertical &= isVertical;
-        allHorizontal &= !isVertical;
-    }
-    
-    if (allVertical)
-        return DominantScrollDirectionVertical;
-
-    if (allHorizontal)
-        return DominantScrollDirectionHorizontal;
-    
-    return DominantScrollDirectionNone;
-}
-
 bool EventHandler::handleWheelEvent(const PlatformWheelEvent& e)
 {
     Document* document = m_frame.document();
@@ -2555,18 +2520,17 @@ bool EventHandler::handleWheelEvent(const PlatformWheelEvent& e)
 #if PLATFORM(MAC)
     switch (event.phase()) {
     case PlatformWheelEventPhaseBegan:
-        m_recentWheelEventDeltas.clear();
-        m_inTrackingScrollGesturePhase = true;
+        m_recentWheelEventDeltaTracker->beginTrackingDeltas();
         break;
     case PlatformWheelEventPhaseEnded:
-        m_inTrackingScrollGesturePhase = false;
+        m_recentWheelEventDeltaTracker->endTrackingDeltas();
         break;
     default:
         break;
     }
 #endif
 
-    recordWheelEventDelta(event);
+    m_recentWheelEventDeltaTracker->recordWheelEventDelta(event);
 
     if (element) {
         // Figure out which view to send the event to.
@@ -2601,18 +2565,20 @@ void EventHandler::defaultWheelEventHandler(Node* startNode, WheelEvent* wheelEv
     
     Element* stopElement = m_previousWheelScrolledElement.get();
     ScrollGranularity granularity = wheelGranularityToScrollGranularity(wheelEvent->deltaMode());
-    
-    DominantScrollGestureDirection dominantDirection = DominantScrollDirectionNone;
-    // Workaround for scrolling issues in iTunes (<rdar://problem/14758615>).
-    if (m_inTrackingScrollGesturePhase && applicationIsITunes())
-        dominantDirection = dominantScrollGestureDirection();
+    DominantScrollGestureDirection dominantDirection = DominantScrollGestureDirection::None;
+
+    // Workaround for scrolling issues <rdar://problem/14758615>.
+#if PLATFORM(MAC)
+    if (m_recentWheelEventDeltaTracker->isTrackingDeltas())
+        dominantDirection = m_recentWheelEventDeltaTracker->dominantScrollGestureDirection();
+#endif
     
     // Break up into two scrolls if we need to.  Diagonal movement on 
     // a MacBook pro is an example of a 2-dimensional mouse wheel event (where both deltaX and deltaY can be set).
-    if (dominantDirection != DominantScrollDirectionVertical && scrollNode(wheelEvent->deltaX(), granularity, ScrollRight, ScrollLeft, startNode, &stopElement, roundedIntPoint(wheelEvent->absoluteLocation())))
+    if (dominantDirection != DominantScrollGestureDirection::Vertical && scrollNode(wheelEvent->deltaX(), granularity, ScrollRight, ScrollLeft, startNode, &stopElement, roundedIntPoint(wheelEvent->absoluteLocation())))
         wheelEvent->setDefaultHandled();
     
-    if (dominantDirection != DominantScrollDirectionHorizontal && scrollNode(wheelEvent->deltaY(), granularity, ScrollDown, ScrollUp, startNode, &stopElement, roundedIntPoint(wheelEvent->absoluteLocation())))
+    if (dominantDirection != DominantScrollGestureDirection::Horizontal && scrollNode(wheelEvent->deltaY(), granularity, ScrollDown, ScrollUp, startNode, &stopElement, roundedIntPoint(wheelEvent->absoluteLocation())))
         wheelEvent->setDefaultHandled();
     
     if (!m_latchedWheelEventElement)

@@ -4224,6 +4224,8 @@ webcore_sources += \
 	Source/WebCore/page/VisitedLinkProvider.h \
 	Source/WebCore/page/WebCoreKeyboardUIMode.h \
 	Source/WebCore/page/WebKitPoint.h \
+	Source/WebCore/page/WheelEventDeltaTracker.cpp \
+	Source/WebCore/page/WheelEventDeltaTracker.h \
 	Source/WebCore/page/WindowFeatures.cpp \
 	Source/WebCore/page/WindowFeatures.h \
 	Source/WebCore/page/WindowFocusAllowedIndicator.cpp \

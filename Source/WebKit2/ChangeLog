@@ -1,3 +1,18 @@
+2014-01-31  Beth Dakin  <bdakin@apple.com>
+
+        Sideways 'wobble' when scrolling with trackpad on Mavericks
+        https://bugs.webkit.org/show_bug.cgi?id=127521
+        -and corresponding-
+        <rdar://problem/14137306>
+
+        Reviewed by Simon Fraser.
+
+        Start using WebCore::WheelEventDeltaTracker to filter events.
+        * WebProcess/WebPage/EventDispatcher.cpp:
+        (WebKit::EventDispatcher::EventDispatcher):
+        (WebKit::EventDispatcher::wheelEvent):
+        * WebProcess/WebPage/EventDispatcher.h:
+
 2014-01-31  Zan Dobersek  <zdobersek@igalia.com>
 
         Fix the forward declaration of RawPluginMetaData in NetscapePluginModule.h

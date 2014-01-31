@@ -3202,6 +3202,8 @@
 		93EB169509F880B00091F8FF /* WebCoreSystemInterface.mm in Sources */ = {isa = PBXBuildFile; fileRef = 93EB169409F880B00091F8FF /* WebCoreSystemInterface.mm */; };
 		93EB169709F880C00091F8FF /* WebCoreSystemInterface.h in Headers */ = {isa = PBXBuildFile; fileRef = 93EB169609F880C00091F8FF /* WebCoreSystemInterface.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		93EB355F09E37FD600F43799 /* MouseEventWithHitTestResults.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93EB355E09E37FD600F43799 /* MouseEventWithHitTestResults.cpp */; };
+		93EC44A1188F4BB800661DF1 /* WheelEventDeltaTracker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93EC449F188F4BB800661DF1 /* WheelEventDeltaTracker.cpp */; };
+		93EC44A2188F4BB800661DF1 /* WheelEventDeltaTracker.h in Headers */ = {isa = PBXBuildFile; fileRef = 93EC44A0188F4BB800661DF1 /* WheelEventDeltaTracker.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		93F198E508245E59001E9ABC /* HTMLDocument.h in Headers */ = {isa = PBXBuildFile; fileRef = F523D23C02DE4396018635CA /* HTMLDocument.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		93F198E608245E59001E9ABC /* HTMLElement.h in Headers */ = {isa = PBXBuildFile; fileRef = F523D23F02DE4396018635CA /* HTMLElement.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		93F198F608245E59001E9ABC /* TextResourceDecoder.h in Headers */ = {isa = PBXBuildFile; fileRef = F523D27902DE43D7018635CA /* TextResourceDecoder.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -10142,6 +10144,8 @@
 		93EB169409F880B00091F8FF /* WebCoreSystemInterface.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebCoreSystemInterface.mm; sourceTree = "<group>"; };
 		93EB169609F880C00091F8FF /* WebCoreSystemInterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebCoreSystemInterface.h; sourceTree = "<group>"; };
 		93EB355E09E37FD600F43799 /* MouseEventWithHitTestResults.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MouseEventWithHitTestResults.cpp; sourceTree = "<group>"; };
+		93EC449F188F4BB800661DF1 /* WheelEventDeltaTracker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WheelEventDeltaTracker.cpp; sourceTree = "<group>"; };
+		93EC44A0188F4BB800661DF1 /* WheelEventDeltaTracker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WheelEventDeltaTracker.h; sourceTree = "<group>"; };
 		93EEC1E509C2877700C515D1 /* Attr.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Attr.idl; sourceTree = "<group>"; };
 		93EEC1E609C2877700C515D1 /* CharacterData.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CharacterData.idl; sourceTree = "<group>"; };
 		93EEC1E809C2877700C515D1 /* DocumentType.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = DocumentType.idl; sourceTree = "<group>"; };
@@ -16207,6 +16211,8 @@
 				BE983D95052A2E0A00892D85 /* WebCoreKeyboardUIMode.h */,
 				494BD7930F55C8EE00747828 /* WebKitPoint.h */,
 				494BD7940F55C8EE00747828 /* WebKitPoint.idl */,
+				93EC449F188F4BB800661DF1 /* WheelEventDeltaTracker.cpp */,
+				93EC44A0188F4BB800661DF1 /* WheelEventDeltaTracker.h */,
 				BC8243E60D0CFD7500460C8F /* WindowFeatures.cpp */,
 				BC8243E70D0CFD7500460C8F /* WindowFeatures.h */,
 				7E99AF520B13846468FB01A5 /* WindowFocusAllowedIndicator.cpp */,
@@ -23709,6 +23715,7 @@
 				77A17A7B12F2890B004E02F6 /* GraphicsTypes3D.h in Headers */,
 				A12705C31656BD6500C2E27C /* GridPosition.h in Headers */,
 				A12A1050166444FD008FA311 /* GridTrackSize.h in Headers */,
+				93EC44A2188F4BB800661DF1 /* WheelEventDeltaTracker.h in Headers */,
 				C50B561712119D23008B46E0 /* GroupSettings.h in Headers */,
 				E1FF8F65180745D800132674 /* JSSubtleCrypto.h in Headers */,
 				078E094017D16E1C00420AA1 /* RTCIceCandidateDescriptor.h in Headers */,
@@ -27187,6 +27194,7 @@
 				A871DB2D0A150BD600B12A68 /* HTMLTablePartElement.cpp in Sources */,
 				A871DB300A150BD600B12A68 /* HTMLTableRowElement.cpp in Sources */,
 				93442CA00D2B336000338FF9 /* HTMLTableRowsCollection.cpp in Sources */,
+				93EC44A1188F4BB800661DF1 /* WheelEventDeltaTracker.cpp in Sources */,
 				A871DB260A150BD600B12A68 /* HTMLTableSectionElement.cpp in Sources */,
 				E19AC3F01824DC7900349426 /* CryptoAlgorithmSHA256.cpp in Sources */,
 				511EF2CB17F0FD3500E4FA16 /* JSIDBVersionChangeEvent.cpp in Sources */,

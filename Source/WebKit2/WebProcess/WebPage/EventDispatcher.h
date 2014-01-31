@@ -27,6 +27,8 @@
 #define EventDispatcher_h
 
 #include "Connection.h"
+
+#include <WebCore/WheelEventDeltaTracker.h>
 #include <wtf/HashMap.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/RefPtr.h>
@@ -76,6 +78,7 @@ private:
     Mutex m_scrollingTreesMutex;
     HashMap<uint64_t, RefPtr<WebCore::ThreadedScrollingTree>> m_scrollingTrees;
 #endif
+    OwnPtr<WebCore::WheelEventDeltaTracker> m_recentWheelEventDeltaTracker;
 };
 
 } // namespace WebKit

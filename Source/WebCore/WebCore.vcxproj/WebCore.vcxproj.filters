@@ -798,6 +798,9 @@
     <ClCompile Include="..\fileapi\WebKitBlobBuilder.cpp">
       <Filter>page</Filter>
     </ClCompile>
+    <ClCompile Include="..\page\WheelEventDeltaTracker.cpp">
+      <Filter>page</Filter>
+    </ClCompile>
     <ClCompile Include="..\page\WindowFeatures.cpp">
       <Filter>page</Filter>
     </ClCompile>
@@ -7659,6 +7662,9 @@
       <Filter>page</Filter>
     </ClInclude>
     <ClInclude Include="..\page\WebKitPoint.h">
+      <Filter>page</Filter>
+    </ClInclude>
+    <ClInclude Include="..\page\WheelEventDeltaTracker.h">
       <Filter>page</Filter>
     </ClInclude>
     <ClInclude Include="..\page\WindowFeatures.h">

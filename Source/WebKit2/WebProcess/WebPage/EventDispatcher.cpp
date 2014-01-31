@@ -53,6 +53,7 @@ PassRefPtr<EventDispatcher> EventDispatcher::create()
 
 EventDispatcher::EventDispatcher()
     : m_queue(WorkQueue::create("com.apple.WebKit.EventDispatcher"))
+    , m_recentWheelEventDeltaTracker(adoptPtr(new WheelEventDeltaTracker))
 {
 }
 
@@ -88,11 +89,37 @@ void EventDispatcher::initializeConnection(IPC::Connection* connection)
 
 void EventDispatcher::wheelEvent(uint64_t pageID, const WebWheelEvent& wheelEvent, bool canRubberBandAtLeft, bool canRubberBandAtRight, bool canRubberBandAtTop, bool canRubberBandAtBottom)
 {
+    PlatformWheelEvent platformWheelEvent = platform(wheelEvent);
+
+#if PLATFORM(MAC)
+    switch (wheelEvent.phase()) {
+    case PlatformWheelEventPhaseBegan:
+        m_recentWheelEventDeltaTracker->beginTrackingDeltas();
+        break;
+    case PlatformWheelEventPhaseEnded:
+        m_recentWheelEventDeltaTracker->endTrackingDeltas();
+        break;
+    default:
+        break;
+    }
+
+    if (m_recentWheelEventDeltaTracker->isTrackingDeltas()) {
+        m_recentWheelEventDeltaTracker->recordWheelEventDelta(platformWheelEvent);
+
+        DominantScrollGestureDirection dominantDirection = DominantScrollGestureDirection::None;
+        dominantDirection = m_recentWheelEventDeltaTracker->dominantScrollGestureDirection();
+
+        // Workaround for scrolling issues <rdar://problem/14758615>.
+        if (dominantDirection == DominantScrollGestureDirection::Vertical && platformWheelEvent.deltaX())
+            platformWheelEvent = platformWheelEvent.copyIgnoringHorizontalDelta();
+        else if (dominantDirection == DominantScrollGestureDirection::Horizontal && platformWheelEvent.deltaY())
+            platformWheelEvent = platformWheelEvent.copyIgnoringVerticalDelta();
+    }
+#endif
+
 #if ENABLE(ASYNC_SCROLLING)
     MutexLocker locker(m_scrollingTreesMutex);
     if (ThreadedScrollingTree* scrollingTree = m_scrollingTrees.get(pageID)) {
-        PlatformWheelEvent platformWheelEvent = platform(wheelEvent);
-
         // FIXME: It's pretty horrible that we're updating the back/forward state here.
         // WebCore should always know the current state and know when it changes so the
         // scrolling tree can be notified.
