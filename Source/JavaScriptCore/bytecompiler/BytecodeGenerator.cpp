@@ -490,7 +490,7 @@ RegisterID* BytecodeGenerator::resolveCallee(FunctionBodyNode* functionBodyNode)
     m_calleeRegister.setIndex(JSStack::Callee);
 
     // If non-strict eval is in play, we use a separate object in the scope chain for the callee's name.
-    if ((m_codeBlock->usesEval() && !m_codeBlock->isStrictMode()) || m_shouldEmitDebugHooks)
+    if (m_codeBlock->usesEval() && !m_codeBlock->isStrictMode())
         emitPushNameScope(functionBodyNode->ident(), &m_calleeRegister, ReadOnly | DontDelete);
 
     if (!functionBodyNode->captures(functionBodyNode->ident()))
@@ -506,7 +506,7 @@ void BytecodeGenerator::addCallee(FunctionBodyNode* functionBodyNode, RegisterID
         return;
 
     // If non-strict eval is in play, we use a separate object in the scope chain for the callee's name.
-    if ((m_codeBlock->usesEval() && !m_codeBlock->isStrictMode()) || m_shouldEmitDebugHooks)
+    if (m_codeBlock->usesEval() && !m_codeBlock->isStrictMode())
         return;
 
     ASSERT(calleeRegister);

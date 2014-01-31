@@ -1,3 +1,23 @@
+2014-01-31  Mark Lam  <mark.lam@apple.com>
+
+        Don't need a JSNameScope for the callee name just for the debugger.
+        <https://webkit.org/b/128024>
+
+        Reviewed by Geoffrey Garen.
+
+        Currently, in the bytecode for a function, we push a JSNamedScope for
+        the name of the function when a debugger is attached. The name scope for
+        the function name is only needed for evals which can redefine the name
+        to resolve to something else, and can later delete the redefined name
+        which should revert the resolution of the name to the original function.
+        The debugger does not need this feature because it declares all new vars
+        in a temporary nested scope. Hence, we can remove the presence of the
+        debugger as a criteria for pushing the JSNameScope.
+
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::resolveCallee):
+        (JSC::BytecodeGenerator::addCallee):
+
 2014-01-31  Filip Pizlo  <fpizlo@apple.com>
 
         Unreviewed, build fix.
