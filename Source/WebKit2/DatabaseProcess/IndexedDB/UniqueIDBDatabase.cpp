@@ -800,14 +800,20 @@ void UniqueIDBDatabase::putRecordInBackingStore(uint64_t requestID, const IDBIde
         }
     }
 
-    // FIXME: The LevelDB port performs "makeIndexWriters" here. Necessary?
-
     if (!m_backingStore->putRecord(transaction, objectStoreMetadata.id, *key, value.data(), value.size())) {
         postMainThreadTask(createAsyncTask(*this, &UniqueIDBDatabase::didPutRecordInBackingStore, requestID, IDBKeyData(), IDBDatabaseException::UnknownError, ASCIILiteral("Internal backing store error putting a record")));
         return;
     }
 
-    // FIXME: The LevelDB port updates index keys here. Necessary?
+    ASSERT(indexIDs.size() == indexKeys.size());
+    for (size_t i = 0; i < indexIDs.size(); ++i) {
+        for (size_t j = 0; j < indexKeys[i].size(); ++j) {
+            if (!m_backingStore->putIndexRecord(transaction, objectStoreMetadata.id, indexIDs[i], keyData, indexKeys[i][j])) {
+                postMainThreadTask(createAsyncTask(*this, &UniqueIDBDatabase::didPutRecordInBackingStore, requestID, IDBKeyData(), IDBDatabaseException::UnknownError, ASCIILiteral("Internal backing store error writing index key")));
+                return;
+            }
+        }
+    }
 
     if (putMode != IDBDatabaseBackend::CursorUpdate && objectStoreMetadata.autoIncrement && key->type() == IDBKey::NumberType) {
         if (!m_backingStore->updateKeyGeneratorNumber(transaction, objectStoreMetadata.id, keyNumber, keyWasGenerated)) {

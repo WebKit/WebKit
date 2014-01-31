@@ -1,3 +1,21 @@
+2014-01-31  Brady Eidson  <beidson@apple.com>
+
+        IDB: Index writing
+        <rdar://problem/15899973> and https://bugs.webkit.org/show_bug.cgi?id=127868
+
+        Reviewed by Anders Carlsson.
+
+        * Modules/indexeddb/IDBDatabaseBackend.cpp:
+        (WebCore::IDBDatabaseBackend::openConnectionInternal): Remove outdated comment and ASSERT.
+
+        * Modules/indexeddb/IDBObjectStore.cpp:
+        (WebCore::IDBObjectStore::createIndex): Conditionalize a block of code that is LevelDB-only.
+
+        Remove getColumnBlob().  Nobody used it, and it was dangerous because it reset the statement:
+        * platform/sql/SQLiteStatement.cpp:
+        * platform/sql/SQLiteStatement.h:
+        * WebCore.exp.in:
+
 2014-01-30  László Langó  <lango@inf.u-szeged.hu>
 
         [CSS Grid Layout] Do log(n) search in the named line vectors when positioning named line spans.

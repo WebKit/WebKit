@@ -81,7 +81,6 @@ public:
     double getColumnDouble(int col);
     int getColumnInt(int col);
     int64_t getColumnInt64(int col);
-    const void* getColumnBlob(int col, int& size);
     String getColumnBlobAsString(int col);
     void getColumnBlobAsVector(int col, Vector<char>&);
 

@@ -467,9 +467,6 @@ void IDBDatabaseBackend::openConnectionInternal(PassRefPtr<IDBCallbacks> prpCall
     bool isNewDatabase = m_metadata.version == IDBDatabaseMetadata::NoIntVersion;
 
     if (version == IDBDatabaseMetadata::DefaultIntVersion) {
-        // FIXME: this comments was related to Chromium code. It may be incorrect
-        // For unit tests only - skip upgrade steps. Calling from script with DefaultIntVersion throws exception.
-        ASSERT(isNewDatabase);
         m_databaseCallbacksSet.add(databaseCallbacks);
         callbacks->onSuccess(this, this->metadata());
         return;

@@ -1,3 +1,23 @@
+2014-01-31  Brady Eidson  <beidson@apple.com>
+
+        IDB: Index writing
+        <rdar://problem/15899973> and https://bugs.webkit.org/show_bug.cgi?id=127868
+
+        Reviewed by Anders Carlsson.
+
+        * DatabaseProcess/IndexedDB/UniqueIDBDatabase.cpp:
+        (WebKit::UniqueIDBDatabase::putRecordInBackingStore): Handle writing index records, as well.
+
+        * DatabaseProcess/IndexedDB/UniqueIDBDatabaseBackingStore.h:
+        * DatabaseProcess/IndexedDB/sqlite/UniqueIDBDatabaseBackingStoreSQLite.cpp:
+        (WebKit::UniqueIDBDatabaseBackingStoreSQLite::createAndPopulateInitialMetadata): Create a table
+          for index records
+        (WebKit::UniqueIDBDatabaseBackingStoreSQLite::extractExistingMetadata): Extract IDBIndexMetadata
+        (WebKit::UniqueIDBDatabaseBackingStoreSQLite::deleteObjectStore):
+        (WebKit::UniqueIDBDatabaseBackingStoreSQLite::deleteIndex):
+        (WebKit::UniqueIDBDatabaseBackingStoreSQLite::putIndexRecord): Store in the IndexRecords table.
+        * DatabaseProcess/IndexedDB/sqlite/UniqueIDBDatabaseBackingStoreSQLite.h:
+
 2014-01-30  Jinwoo Song  <jinwoo7.song@samsung.com>
 
         [EFL][WK2] Unreviewed EFL WebKit2 build fix after r163116.
