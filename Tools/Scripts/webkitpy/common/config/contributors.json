@@ -2602,11 +2602,12 @@
       },
       "Zoltan Horvath" : {
          "emails" : [
+            "zoltan@adobe.com",
             "zoltan@webkit.org",
             "hzoltan@inf.u-szeged.hu",
             "horvath.zoltan.6@stud.u-szeged.hu"
          ],
-         "expertise" : "The QtWebKit Port, Custom Allocation Framework, PerformanceTests - memory measurements",
+         "expertise" : "CSS Shapes, Line layout, Custom Allocation Framework, PerformanceTests, QtWebKit",
          "nicks" : [
             "zoltan"
          ]
