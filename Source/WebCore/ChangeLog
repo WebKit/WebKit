@@ -1,3 +1,12 @@
+2014-01-30  Simon Fraser  <simon.fraser@apple.com>
+
+        Fix iOS build after r163156.
+        
+        Need to convert LayoutSizes to FloatSizes.
+
+        * bindings/objc/DOMUIKitExtensions.mm:
+        (-[DOMNode borderRadii]):
+
 2014-01-30  Zalan Bujtas  <zalan@apple.com>
 
         Subpixel rendering: Change drawRect()/drawLine() signature to support subpixel rendering.

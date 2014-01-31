@@ -201,10 +201,10 @@ using WebCore::VisiblePosition;
 
     if (renderer && renderer->isBox()) {
         RoundedRect::Radii radii = toRenderBox(renderer)->borderRadii();
-        return @[[NSValue valueWithSize:(CGSize)radii.topLeft()],
-                 [NSValue valueWithSize:(CGSize)radii.topRight()],
-                 [NSValue valueWithSize:(CGSize)radii.bottomLeft()],
-                 [NSValue valueWithSize:(CGSize)radii.bottomRight()]];
+        return @[[NSValue valueWithSize:(FloatSize)radii.topLeft()],
+                 [NSValue valueWithSize:(FloatSize)radii.topRight()],
+                 [NSValue valueWithSize:(FloatSize)radii.bottomLeft()],
+                 [NSValue valueWithSize:(FloatSize)radii.bottomRight()]];
     }
     NSValue *emptyValue = [NSValue valueWithSize:CGSizeZero];
     return @[emptyValue, emptyValue, emptyValue, emptyValue];
