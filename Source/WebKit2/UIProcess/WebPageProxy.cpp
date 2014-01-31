@@ -512,8 +512,7 @@ void WebPageProxy::setSession(API::Session& session)
     m_process->send(Messages::WebPage::SetSessionID(session.getID()), m_pageID);
 
 #if ENABLE(NETWORK_PROCESS)
-    if (session.isEphemeral())
-        m_process->context().sendToNetworkingProcess(Messages::NetworkProcess::EnsurePrivateBrowsingSession(session.getID()));
+    m_process->context().sendToNetworkingProcess(Messages::NetworkProcess::EnsurePrivateBrowsingSession(session.getID()));
 #endif
 }
 
