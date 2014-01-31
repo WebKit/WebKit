@@ -1,3 +1,24 @@
+2014-01-30  László Langó  <lango@inf.u-szeged.hu>
+
+        [CSS Grid Layout] Do log(n) search in the named line vectors when positioning named line spans.
+        https://bugs.webkit.org/show_bug.cgi?id=125396
+
+        Reviewed by Andreas Kling.
+
+        Implement the suggested FIXMEs and do a log search in the named line
+        vectors. This maintains the previous (somewhat tricky) behavior by
+        using std::lower_bound and std::upper_bound. No difference in existing
+        performance tests, but should scale much better for big grids.
+
+        Backported from Blink:
+        https://chromium.googlesource.com/chromium/blink/+/9fc477af0be708c490a6b90e65e412b0c22b161f
+
+        No new tests, no behavior change.
+
+        * rendering/RenderGrid.cpp:
+        (WebCore::RenderGrid::resolveRowStartColumnStartNamedGridLinePositionAgainstOppositePosition):
+        (WebCore::RenderGrid::resolveRowEndColumnEndNamedGridLinePositionAgainstOppositePosition):
+
 2014-01-31  László Langó  <lango@inf.u-szeged.hu>
 
         Fix table sizing when 'max-width' is used.

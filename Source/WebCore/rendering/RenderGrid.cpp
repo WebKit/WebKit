@@ -979,9 +979,10 @@ PassOwnPtr<GridSpan> RenderGrid::resolveRowStartColumnStartNamedGridLinePosition
 {
     // The grid line inequality needs to be strict (which doesn't match the after / end case) because |resolvedOppositePosition|
     // is already converted to an index in our grid representation (ie one was removed from the grid line to account for the side).
-    // FIXME: This could be a binary search as |gridLines| is ordered.
-    int firstLineBeforeOppositePositionIndex = gridLines.size() - 1;
-    for (; firstLineBeforeOppositePositionIndex >= 0 && gridLines[firstLineBeforeOppositePositionIndex] > resolvedOppositePosition; --firstLineBeforeOppositePositionIndex) { }
+    size_t firstLineBeforeOppositePositionIndex = 0;
+    const size_t* firstLineBeforeOppositePosition = std::lower_bound(gridLines.begin(), gridLines.end(), resolvedOppositePosition);
+    if (firstLineBeforeOppositePosition != gridLines.end())
+        firstLineBeforeOppositePositionIndex = firstLineBeforeOppositePosition - gridLines.begin();
 
     size_t gridLineIndex = std::max<int>(0, firstLineBeforeOppositePositionIndex - position.spanPosition() + 1);
     size_t resolvedGridLinePosition = gridLines[gridLineIndex];
@@ -992,9 +993,10 @@ PassOwnPtr<GridSpan> RenderGrid::resolveRowStartColumnStartNamedGridLinePosition
 
 PassOwnPtr<GridSpan> RenderGrid::resolveRowEndColumnEndNamedGridLinePositionAgainstOppositePosition(size_t resolvedOppositePosition, const GridPosition& position, const Vector<size_t>& gridLines) const
 {
-    // FIXME: This could be a binary search as |gridLines| is ordered.
-    size_t firstLineAfterOppositePositionIndex = 0;
-    for (; firstLineAfterOppositePositionIndex < gridLines.size() && gridLines[firstLineAfterOppositePositionIndex] <= resolvedOppositePosition; ++firstLineAfterOppositePositionIndex) { }
+    size_t firstLineAfterOppositePositionIndex = gridLines.size() - 1;
+    const size_t* firstLineAfterOppositePosition = std::upper_bound(gridLines.begin(), gridLines.end(), resolvedOppositePosition);
+    if (firstLineAfterOppositePosition != gridLines.end())
+        firstLineAfterOppositePositionIndex = firstLineAfterOppositePosition - gridLines.begin();
 
     size_t gridLineIndex = std::min(gridLines.size() - 1, firstLineAfterOppositePositionIndex + position.spanPosition() - 1);
     size_t resolvedGridLinePosition = adjustGridPositionForRowEndColumnEndSide(gridLines[gridLineIndex]);
