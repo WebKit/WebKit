@@ -43,13 +43,6 @@ var PLATFORMS = {
             'MAC': {
                 expectationsDirectory: 'mac',
                 subPlatforms: {
-                    'LION': {
-                        expectationsDirectory: 'mac-lion',
-                        subPlatforms: {
-                            'WK1': { fallbackPlatforms: ['APPLE_MAC_LION', 'APPLE_MAC'] },
-                            'WK2': { fallbackPlatforms: ['APPLE_MAC_LION', 'APPLE_MAC', 'WK2'], expectationsDirectory: 'mac-wk2'}
-                        }
-                    },
                     'MOUNTAINLION': {
                         subPlatforms: {
                             'WK1': { fallbackPlatforms: ['APPLE_MAC_MOUNTAINLION', 'APPLE_MAC'] },
