@@ -1,3 +1,19 @@
+2014-01-31  Andreas Kling  <akling@apple.com>
+
+        Deduplicate Document::encoding().
+        <https://webkit.org/b/128000>
+
+        Make Document::encoding() return an AtomicString so we don't duplicate
+        the string every time it's called.
+
+        215 KB progression on Membuster3.
+
+        Reviewed by Simon Fraser.
+
+        * dom/Document.h:
+        * dom/Document.cpp:
+        (WebCore::Document::encoding):
+
 2014-01-31  Simon Fraser  <simon.fraser@apple.com>
 
         Even when in fixed layout mode, some platforms need to do layout after a viewport change

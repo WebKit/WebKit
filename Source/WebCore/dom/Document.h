@@ -414,7 +414,7 @@ public:
     String charset() const { return Document::encoding(); }
     String characterSet() const { return Document::encoding(); }
 
-    String encoding() const;
+    AtomicString encoding() const;
 
     void setCharset(const String&);
 

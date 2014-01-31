@@ -1270,7 +1270,7 @@ void Document::setVisualUpdatesAllowedByClient(bool visualUpdatesAllowedByClient
         setVisualUpdatesAllowed(true);
 }
 
-String Document::encoding() const
+AtomicString Document::encoding() const
 {
     if (TextResourceDecoder* d = decoder())
         return d->encoding().domName();
