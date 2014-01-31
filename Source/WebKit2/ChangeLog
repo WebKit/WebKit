@@ -1,3 +1,12 @@
+2014-01-30  Simon Fraser  <simon.fraser@apple.com>
+
+        Fix iOS WK2 build after r163156.
+
+        Need to convert to IntSizes.
+
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::tapHighlightAtPosition):
+
 2014-01-30  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] [CMake] Add support for building against GTK+ 2

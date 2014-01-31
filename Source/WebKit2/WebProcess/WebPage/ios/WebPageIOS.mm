@@ -322,7 +322,7 @@ void WebPage::tapHighlightAtPosition(uint64_t requestID, const FloatPoint& posit
             borderRadii = box->borderRadii();
         }
 
-        send(Messages::WebPageProxy::DidGetTapHighlightGeometries(requestID, highlightColor, quads, borderRadii.topLeft(), borderRadii.topRight(), borderRadii.bottomLeft(), borderRadii.bottomRight()));
+        send(Messages::WebPageProxy::DidGetTapHighlightGeometries(requestID, highlightColor, quads, roundedIntSize(borderRadii.topLeft()), roundedIntSize(borderRadii.topRight()), roundedIntSize(borderRadii.bottomLeft()), roundedIntSize(borderRadii.bottomRight())));
     }
 }
 
