@@ -3,10 +3,10 @@ This page's JavaScript starts profiling from within a function which is then cal
 To run this test manually, load it in the browser then load the WebInspector and look at the profile. In the profiler you should see a call to indirection() and functionWichStartsAndStopsTheProfiler()
 
 Profile title: Calling the same function where the profile started from another function
-Thread_1 (no file) (line 0)
-   indirection calling-the-function-that-started-the-profiler-from-another-scope.html (line 18)
-      functionWichStartsAndStopsTheProfiler calling-the-function-that-started-the-profiler-from-another-scope.html (line 24)
-   functionWichStartsAndStopsTheProfiler calling-the-function-that-started-the-profiler-from-another-scope.html (line 24)
-   endTest profiler-test-JS-resources.js (line 1)
+Thread_1 (no file) (line 0:0)
+   indirection calling-the-function-that-started-the-profiler-from-another-scope.html (line 18:1)
+      functionWichStartsAndStopsTheProfiler calling-the-function-that-started-the-profiler-from-another-scope.html (line 24:1)
+   functionWichStartsAndStopsTheProfiler calling-the-function-that-started-the-profiler-from-another-scope.html (line 24:1)
+   endTest profiler-test-JS-resources.js (line 1:20)
 
 

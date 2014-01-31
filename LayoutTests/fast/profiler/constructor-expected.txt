@@ -3,10 +3,10 @@ This page's JavaScript has a call to new() in it.
 To run this test manually, load it in the browser then load the WebInspector and look at the profile. In the profile there should be a call to fakeObject() and Array() in it.
 
 Profile title: Using a constructor.
-Thread_1 (no file) (line 0)
-   startTest constructor.html (line 11)
-      fakeObject constructor.html (line 20)
-         Array (no file) (line 0)
-      endTest profiler-test-JS-resources.js (line 1)
+Thread_1 (no file) (line 0:0)
+   startTest constructor.html (line 11:1)
+      fakeObject constructor.html (line 20:1)
+         Array (no file) (line 0:0)
+      endTest profiler-test-JS-resources.js (line 1:20)
 
 

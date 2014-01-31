@@ -3,16 +3,16 @@ This test has JS executing in another window.
 To run this test manually, load it in the browser then load the WebInspector and look at the profile. In the profile there should be a call to functionInOtherFrame().
 
 Profile title: Other window executing JavaScript
-Thread_1 (no file) (line 0)
-   startTest multiple-frames.html (line 11)
-      getElementById (no file) (line 0)
-      functionInOtherFrame other-frame.html (line 4)
-         functionInParentFrame multiple-frames.html (line 21)
-      insertGivenText profiler-test-JS-resources.js (line 9)
-         createElement (no file) (line 0)
-         createTextNode (no file) (line 0)
-         appendChild (no file) (line 0)
-         getElementById (no file) (line 0)
-      endTest profiler-test-JS-resources.js (line 1)
+Thread_1 (no file) (line 0:0)
+   startTest multiple-frames.html (line 11:1)
+      getElementById (no file) (line 0:0)
+      functionInOtherFrame other-frame.html (line 4:33)
+         functionInParentFrame multiple-frames.html (line 21:34)
+      insertGivenText profiler-test-JS-resources.js (line 9:32)
+         createElement (no file) (line 0:0)
+         createTextNode (no file) (line 0:0)
+         appendChild (no file) (line 0:0)
+         getElementById (no file) (line 0:0)
+      endTest profiler-test-JS-resources.js (line 1:20)
 
 

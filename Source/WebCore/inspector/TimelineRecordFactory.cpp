@@ -254,7 +254,7 @@ void TimelineRecordFactory::appendLayoutRoot(InspectorObject* data, const FloatQ
 
 void TimelineRecordFactory::appendProfile(InspectorObject* data, PassRefPtr<ScriptProfile> profile)
 {
-    data->setValue("profile", profile->buildInspectorObjectForHead());
+    data->setValue(ASCIILiteral("profile"), profile->buildInspectorObject());
 }
 
 } // namespace WebCore

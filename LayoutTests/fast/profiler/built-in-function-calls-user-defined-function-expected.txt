@@ -3,11 +3,11 @@ This page uses a built-in function to call a user defined function.
 To run this test manually, load it in the browser then load the WebInspector and look at the profile. In the profile map() should have arrayOperatorFunction() as a child.
 
 Profile title: Built-in function calls a user defined function
-Thread_1 (no file) (line 0)
-   startTest built-in-function-calls-user-defined-function.html (line 11)
-      Array (no file) (line 0)
-      map (no file) (line 0)
-         arrayOperatorFunction profiler-test-JS-resources.js (line 25)
-      endTest profiler-test-JS-resources.js (line 1)
+Thread_1 (no file) (line 0:0)
+   startTest built-in-function-calls-user-defined-function.html (line 11:1)
+      Array (no file) (line 0:0)
+      map (no file) (line 0:0)
+         arrayOperatorFunction profiler-test-JS-resources.js (line 25:46)
+      endTest profiler-test-JS-resources.js (line 1:20)
 
 

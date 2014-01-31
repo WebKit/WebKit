@@ -3,15 +3,15 @@ This page has multiple profiles with the same name.
 To run this test manually, load it in the browser then load the WebInspector and look at the profile. It should not crash or hang and there should be multiple runs of the same named profile.
 
 Profile title: Test
-Thread_1 (no file) (line 0)
-   startTest compare-multiple-profiles.html (line 23)
-      test compare-multiple-profiles.html (line 11)
-         test2 compare-multiple-profiles.html (line 17)
+Thread_1 (no file) (line 0:0)
+   startTest compare-multiple-profiles.html (line 23:1)
+      test compare-multiple-profiles.html (line 11:20)
+         test2 compare-multiple-profiles.html (line 17:21)
 
 Profile title: Test
-Thread_1 (no file) (line 0)
-   startTest compare-multiple-profiles.html (line 23)
-      test compare-multiple-profiles.html (line 11)
-         test2 compare-multiple-profiles.html (line 17)
+Thread_1 (no file) (line 0:0)
+   startTest compare-multiple-profiles.html (line 23:1)
+      test compare-multiple-profiles.html (line 11:20)
+         test2 compare-multiple-profiles.html (line 17:21)
 
 

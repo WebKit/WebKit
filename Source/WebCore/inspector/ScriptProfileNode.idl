@@ -28,13 +28,18 @@
     NoInterfaceObject,
     ImplementationLacksVTable
 ] interface ScriptProfileNode {
+    readonly attribute unsigned long id;
+
     readonly attribute DOMString functionName;
+
     readonly attribute DOMString url;
     readonly attribute unsigned long lineNumber;
+    readonly attribute unsigned long columnNumber;
+
     readonly attribute double totalTime;
     readonly attribute double selfTime;
-    readonly attribute unsigned long numberOfCalls;
-    sequence<ScriptProfileNode> children();
-    readonly attribute unsigned long callUID;
-};
 
+    readonly attribute unsigned long numberOfCalls;
+
+    sequence<ScriptProfileNode> children();
+};

@@ -3,8 +3,8 @@ This page's JavaScript starts profiling from within a nested location.
 To run this test manually, load it in the browser then load the WebInspector and look at the profile. In the profile there should be a call to functionWichStopsTheProfiler().
 
 Profile title: Profiling From A Nested Location
-Thread_1 (no file) (line 0)
-   startTest start-and-stop-profiling-in-the-same-function.html (line 11)
-      functionWichStopsTheProfiler start-and-stop-profiling-in-the-same-function.html (line 18)
+Thread_1 (no file) (line 0:0)
+   startTest start-and-stop-profiling-in-the-same-function.html (line 11:1)
+      functionWichStopsTheProfiler start-and-stop-profiling-in-the-same-function.html (line 18:1)
 
 

@@ -3,10 +3,10 @@ This page's JavaScript has a call to call() in it.
 To run this test manually, load it in the browser then load the WebInspector and look at the profile. In the profile there should be a call to fakeObject() with call() as its child and a fakeInteriorFunction() as call()'s child.
 
 Profile title: Using the call() method
-Thread_1 (no file) (line 0)
-   startTest call.html (line 11)
-      fakeObject call.html (line 20)
-         fakeInteriorFunction call.html (line 26)
-      endTest profiler-test-JS-resources.js (line 1)
+Thread_1 (no file) (line 0:0)
+   startTest call.html (line 11:1)
+      fakeObject call.html (line 20:1)
+         fakeInteriorFunction call.html (line 26:1)
+      endTest profiler-test-JS-resources.js (line 1:20)
 
 

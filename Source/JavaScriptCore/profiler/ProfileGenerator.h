@@ -72,6 +72,7 @@ namespace JSC {
         unsigned m_profileGroup;
         RefPtr<ProfileNode> m_head;
         RefPtr<ProfileNode> m_currentNode;
+        bool m_foundConsoleStartParent;
     };
 
 } // namespace JSC

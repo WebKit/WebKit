@@ -3,15 +3,15 @@ This page's JavaScript calls an anonymous which calls a nested anonymous functio
 To run this test manually, load it in the browser then load the WebInspector and look at the profile. In the profile there should be an (anonymous function) with a child (anonymous function).
 
 Profile title: Nested anonymous functions called
-Thread_1 (no file) (line 0)
-   startTest nested-anonymous-functon.html (line 11)
-      AnonymousFunctionWichCallsAnAnonymousFunction nested-anonymous-functon.html (line 14)
-         anonymousFunction profiler-test-JS-resources.js (line 29)
-            insertNewText profiler-test-JS-resources.js (line 17)
-               createElement (no file) (line 0)
-               createTextNode (no file) (line 0)
-               appendChild (no file) (line 0)
-               getElementById (no file) (line 0)
-      endTest profiler-test-JS-resources.js (line 1)
+Thread_1 (no file) (line 0:0)
+   startTest nested-anonymous-functon.html (line 11:1)
+      AnonymousFunctionWichCallsAnAnonymousFunction nested-anonymous-functon.html (line 14:68)
+         anonymousFunction profiler-test-JS-resources.js (line 29:37)
+            insertNewText profiler-test-JS-resources.js (line 17:26)
+               createElement (no file) (line 0:0)
+               createTextNode (no file) (line 0:0)
+               appendChild (no file) (line 0:0)
+               getElementById (no file) (line 0:0)
+      endTest profiler-test-JS-resources.js (line 1:20)
 
 

@@ -6,10 +6,18 @@
             "type": "object",
             "description": "Profile header.",
             "properties": [
-                { "name": "typeId", "type": "string", "enum": ["CPU", "CSS", "HEAP"], "description": "Profile type name." },
+                { "name": "typeId", "type": "string", "enum": ["CPU", "HEAP"], "description": "Profile type name." },
                 { "name": "title", "type": "string", "description": "Profile title." },
-                { "name": "uid", "type": "integer", "description": "Unique identifier of the profile." },
-                { "name": "maxJSObjectId", "type": "integer", "optional": true, "description": "Last seen JS object Id." }
+                { "name": "uid", "type": "integer", "description": "Unique identifier of the profile." }
+            ]
+        },
+        {
+            "id": "CPUProfileNodeCall",
+            "type": "object",
+            "description": "CPU Profile call info. Holds time information for a specific call that happened on a node.",
+            "properties": [
+                { "name": "startTime", "type": "number", "description": "Start time for the call." },
+                { "name": "totalTime", "type": "number", "description": "Total execution time for the call." }
             ]
         },
         {
@@ -17,15 +25,13 @@
             "type": "object",
             "description": "CPU Profile node. Holds callsite information, execution statistics and child nodes.",
             "properties": [
-                { "name": "functionName", "type": "string", "description": "Function name." },
-                { "name": "url", "type": "string", "description": "URL." },
-                { "name": "lineNumber", "type": "integer", "description": "Line number." },
-                { "name": "totalTime", "type": "number", "description": "Total execution time." },
-                { "name": "selfTime", "type": "number", "description": "Self time." },
-                { "name": "numberOfCalls", "type": "integer", "description": "Number of calls." },
-                { "name": "callUID", "type": "number", "description": "Call UID." },
-                { "name": "children", "type": "array", "items": { "$ref": "CPUProfileNode" }, "description": "Child nodes." },
-                { "name": "id", "optional": true, "type": "integer", "description": "Unique id of the node." }
+                { "name": "id", "type": "integer", "description": "Unique identifier for this call site." },
+                { "name": "calls", "type": "array", "items": { "$ref": "CPUProfileNodeCall" }, "description": "Calls making up this node." },
+                { "name": "functionName", "type": "string", "optional": true, "description": "Function name." },
+                { "name": "url", "type": "string", "optional": true, "description": "URL." },
+                { "name": "lineNumber", "type": "integer", "optional": true, "description": "Line number." },
+                { "name": "columnNumber", "type": "integer", "optional": true, "description": "Column number." },
+                { "name": "children", "type": "array", "items": { "$ref": "CPUProfileNode" }, "optional": true, "description": "Child nodes." }
             ]
         },
         {
@@ -33,9 +39,8 @@
             "type": "object",
             "description": "Profile.",
             "properties": [
-                { "name": "head", "$ref": "CPUProfileNode", "optional": true },
-                { "name": "idleTime", "type": "number", "optional": true },
-                { "name": "samples", "optional": true, "type": "array", "items": { "type": "integer" }, "description": "Ids of samples top nodes." }
+                { "name": "rootNodes", "type": "array", "items": { "$ref": "CPUProfileNode" }, "description": "Top level nodes in the stack." },
+                { "name": "idleTime", "type": "number", "optional": true }
             ]
         },
         {

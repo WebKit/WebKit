@@ -3,14 +3,14 @@ This page's JavaScript calls anonymous functions with display names.
 To run this test manually, load it in the browser then load the WebInspector and look at the profile. You should see functions named "[x] iterations function", and no anonymous functions.
 
 Profile title: Anonymous functions with display names
-Thread_1 (no file) (line 0)
-   startTest anonymous-functions-with-display-names.html (line 23)
-      anonymousFunctionGenerator anonymous-functions-with-display-names.html (line 11)
-      0 iterations function anonymous-functions-with-display-names.html (line 13)
-      1 iterations function anonymous-functions-with-display-names.html (line 13)
-      2 iterations function anonymous-functions-with-display-names.html (line 13)
-      20 iterations function anonymous-functions-with-display-names.html (line 13)
-      1000 iterations function anonymous-functions-with-display-names.html (line 13)
-      endTest profiler-test-JS-resources.js (line 1)
+Thread_1 (no file) (line 0:0)
+   startTest anonymous-functions-with-display-names.html (line 23:1)
+      anonymousFunctionGenerator anonymous-functions-with-display-names.html (line 11:1)
+      0 iterations function anonymous-functions-with-display-names.html (line 13:5)
+      1 iterations function anonymous-functions-with-display-names.html (line 13:5)
+      2 iterations function anonymous-functions-with-display-names.html (line 13:5)
+      20 iterations function anonymous-functions-with-display-names.html (line 13:5)
+      1000 iterations function anonymous-functions-with-display-names.html (line 13:5)
+      endTest profiler-test-JS-resources.js (line 1:20)
 
 

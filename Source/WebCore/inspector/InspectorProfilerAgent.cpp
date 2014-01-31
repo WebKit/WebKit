@@ -186,7 +186,6 @@ PassRefPtr<Inspector::TypeBuilder::Profiler::ProfileHeader> InspectorProfilerAge
         .setTypeId(Inspector::TypeBuilder::Profiler::ProfileHeader::TypeId::HEAP)
         .setUid(snapshot.uid())
         .setTitle(snapshot.title());
-    header->setMaxJSObjectId(snapshot.maxSnapshotJSObjectId());
     return header.release();
 }
 
@@ -273,9 +272,8 @@ void InspectorProfilerAgent::getCPUProfile(ErrorString* errorString, int rawUid,
         *errorString = "Profile wasn't found";
         return;
     }
-    profileObject = Inspector::TypeBuilder::Profiler::CPUProfile::create();
-    profileObject->setHead(it->value->buildInspectorObjectForHead());
-    profileObject->setIdleTime(it->value->idleTime());
+
+    profileObject = it->value->buildInspectorObject();
 }
 
 void InspectorProfilerAgent::getHeapSnapshot(ErrorString* errorString, int rawUid)

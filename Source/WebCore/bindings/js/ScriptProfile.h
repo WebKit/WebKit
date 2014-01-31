@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010, 2014 Apple Inc. All rights reserved.
  * Copyright (C) 2010 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -54,8 +54,7 @@ public:
     double idleTime() const;
 
 #if ENABLE(INSPECTOR)
-    PassRefPtr<Inspector::TypeBuilder::Profiler::CPUProfileNode> buildInspectorObjectForHead() const;
-    PassRefPtr<Inspector::TypeBuilder::Profiler::CPUProfileNode> buildInspectorObjectForBottomUpHead() const;
+    PassRefPtr<Inspector::TypeBuilder::Profiler::CPUProfile> buildInspectorObject() const;
 #endif
 
 private:
@@ -63,7 +62,6 @@ private:
 
     RefPtr<JSC::Profile> m_profile;
 };
-
 
 } // namespace WebCore
 

@@ -1,3 +1,55 @@
+2014-01-28  Timothy Hatcher  <timothy@apple.com>
+
+        Add column number and call timing support to LegacyProfiler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=127764
+
+        Reviewed by Joseph Pecoraro.
+
+        Update test and results to include column numbers.
+
+        * fast/profiler/anonymous-event-handler-expected.txt:
+        * fast/profiler/anonymous-function-called-from-different-contexts-expected.txt:
+        * fast/profiler/anonymous-function-calls-built-in-functions-expected.txt:
+        * fast/profiler/anonymous-function-calls-eval-expected.txt:
+        * fast/profiler/anonymous-functions-with-display-names-expected.txt:
+        * fast/profiler/apply-expected.txt:
+        * fast/profiler/built-in-function-calls-anonymous-expected.txt:
+        * fast/profiler/built-in-function-calls-user-defined-function-expected.txt:
+        * fast/profiler/call-expected.txt:
+        * fast/profiler/calling-the-function-that-started-the-profiler-from-another-scope-expected.txt:
+        * fast/profiler/compare-multiple-profiles-expected.txt:
+        * fast/profiler/constructor-expected.txt:
+        * fast/profiler/dead-time-expected.txt:
+        * fast/profiler/document-dot-write-expected.txt:
+        * fast/profiler/event-handler-expected.txt:
+        * fast/profiler/execution-context-and-eval-on-same-line-expected.txt:
+        * fast/profiler/inline-event-handler-expected.txt:
+        * fast/profiler/many-calls-in-the-same-scope-expected.txt:
+        * fast/profiler/multiple-and-different-scoped-anonymous-function-calls-expected.txt:
+        * fast/profiler/multiple-and-different-scoped-function-calls-expected.txt:
+        * fast/profiler/multiple-anonymous-functions-called-from-the-same-function-expected.txt:
+        * fast/profiler/multiple-frames-expected.txt:
+        * fast/profiler/named-functions-with-display-names-expected.txt:
+        * fast/profiler/nested-anonymous-functon-expected.txt:
+        * fast/profiler/nested-start-and-stop-profiler-expected.txt:
+        * fast/profiler/one-execution-context-expected.txt:
+        * fast/profiler/profile-calls-in-included-file-expected.txt:
+        * fast/profiler/profile-with-no-title-expected.txt:
+        * fast/profiler/profiling-from-a-nested-location-but-stop-profiling-outside-the-nesting-expected.txt:
+        * fast/profiler/profiling-from-a-nested-location-expected.txt:
+        * fast/profiler/resources/profiler-test-JS-resources.js:
+        (printProfileNodeWithoutTime):
+        * fast/profiler/simple-event-call-expected.txt:
+        * fast/profiler/simple-no-level-change-expected.txt:
+        * fast/profiler/start-and-stop-profiler-multiple-times-expected.txt:
+        * fast/profiler/start-and-stop-profiling-in-the-same-function-expected.txt:
+        * fast/profiler/stop-profiling-after-setTimeout-expected.txt:
+        * fast/profiler/stop-then-function-call-expected.txt:
+        * fast/profiler/two-execution-contexts-expected.txt:
+        * fast/profiler/user-defined-function-calls-built-in-functions-expected.txt:
+        * fast/profiler/window-dot-eval-expected.txt:
+
 2014-01-30  Alexey Proskuryakov  <ap@apple.com>
 
         http/tests/security/cross-origin-plugin-private-browsing-toggled.html is flaky on WK2

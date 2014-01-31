@@ -3,8 +3,8 @@ This page has a single script tag with some simple JavaScript.
 To run this test manually, load it in the browser then load the WebInspector and look at the profile.
 
 Profile title: One Execution Context
-Thread_1 (no file) (line 0)
-   startTest one-execution-context.html (line 11)
-      endTest profiler-test-JS-resources.js (line 1)
+Thread_1 (no file) (line 0:0)
+   startTest one-execution-context.html (line 11:1)
+      endTest profiler-test-JS-resources.js (line 1:20)
 
 

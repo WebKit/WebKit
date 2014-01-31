@@ -3,16 +3,16 @@ This page has an event handler.
 To run this test manually, load it in the browser then load the WebInspector and look at the profile. In the profile insertnewText() should be a sibling to onload(). 
 
 Profile title: Event handler
-Thread_1 (no file) (line 0)
-   startTest event-handler.html (line 11)
-      getElementById (no file) (line 0)
-      addEventListener (no file) (line 0)
-      click (no file) (line 0)
-         insertNewText profiler-test-JS-resources.js (line 17)
-            createElement (no file) (line 0)
-            createTextNode (no file) (line 0)
-            appendChild (no file) (line 0)
-            getElementById (no file) (line 0)
-      endTest profiler-test-JS-resources.js (line 1)
+Thread_1 (no file) (line 0:0)
+   startTest event-handler.html (line 11:1)
+      getElementById (no file) (line 0:0)
+      addEventListener (no file) (line 0:0)
+      click (no file) (line 0:0)
+         insertNewText profiler-test-JS-resources.js (line 17:26)
+            createElement (no file) (line 0:0)
+            createTextNode (no file) (line 0:0)
+            appendChild (no file) (line 0:0)
+            getElementById (no file) (line 0:0)
+      endTest profiler-test-JS-resources.js (line 1:20)
 
 

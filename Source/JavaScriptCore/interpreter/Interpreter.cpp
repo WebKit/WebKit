@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2009, 2010, 2012, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2008, 2009, 2010, 2012, 2013, 2014 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Cameron Zwarich <cwzwarich@uwaterloo.ca>
  *
  * Redistribution and use in source and binary forms, with or without
@@ -890,7 +890,7 @@ failedJSONP:
     protoCallFrame.init(codeBlock, scope, 0, thisObj, 1);
 
     if (LegacyProfiler* profiler = vm.enabledProfiler())
-        profiler->willExecute(callFrame, program->sourceURL(), program->lineNo());
+        profiler->willExecute(callFrame, program->sourceURL(), program->lineNo(), program->startColumn());
 
     // Execute the code:
     JSValue result;
@@ -902,7 +902,7 @@ failedJSONP:
     }
 
     if (LegacyProfiler* profiler = vm.enabledProfiler())
-        profiler->didExecute(callFrame, program->sourceURL(), program->lineNo());
+        profiler->didExecute(callFrame, program->sourceURL(), program->lineNo(), program->startColumn());
 
     return checkedReturn(result);
 }
@@ -1169,7 +1169,7 @@ JSValue Interpreter::execute(EvalExecutable* eval, CallFrame* callFrame, JSValue
     protoCallFrame.init(codeBlock, scope, 0, thisValue, 1);
 
     if (LegacyProfiler* profiler = vm.enabledProfiler())
-        profiler->willExecute(callFrame, eval->sourceURL(), eval->lineNo());
+        profiler->willExecute(callFrame, eval->sourceURL(), eval->lineNo(), eval->startColumn());
 
     // Execute the code:
     JSValue result;
@@ -1181,7 +1181,7 @@ JSValue Interpreter::execute(EvalExecutable* eval, CallFrame* callFrame, JSValue
     }
 
     if (LegacyProfiler* profiler = vm.enabledProfiler())
-        profiler->didExecute(callFrame, eval->sourceURL(), eval->lineNo());
+        profiler->didExecute(callFrame, eval->sourceURL(), eval->lineNo(), eval->startColumn());
 
     return checkedReturn(result);
 }

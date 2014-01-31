@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2008, 2012, 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -48,16 +48,16 @@ class LegacyProfiler {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     JS_EXPORT_PRIVATE static LegacyProfiler* profiler(); 
-    static CallIdentifier createCallIdentifier(ExecState*, JSValue, const WTF::String& sourceURL, int lineNumber);
+    static CallIdentifier createCallIdentifier(ExecState*, JSValue, const WTF::String& sourceURL, unsigned defaultLineNumber, unsigned defaultColumnNumber);
 
     JS_EXPORT_PRIVATE void startProfiling(ExecState*, const WTF::String& title);
     JS_EXPORT_PRIVATE PassRefPtr<Profile> stopProfiling(ExecState*, const WTF::String& title);
     void stopProfiling(JSGlobalObject*);
 
     void willExecute(ExecState* callerCallFrame, JSValue function);
-    void willExecute(ExecState* callerCallFrame, const WTF::String& sourceURL, int startingLineNumber);
+    void willExecute(ExecState* callerCallFrame, const WTF::String& sourceURL, unsigned startingLineNumber, unsigned startingColumnNumber);
     void didExecute(ExecState* callerCallFrame, JSValue function);
-    void didExecute(ExecState* callerCallFrame, const WTF::String& sourceURL, int startingLineNumber);
+    void didExecute(ExecState* callerCallFrame, const WTF::String& sourceURL, unsigned startingLineNumber, unsigned startingColumnNumber);
 
     void exceptionUnwind(ExecState* handlerCallFrame);
 

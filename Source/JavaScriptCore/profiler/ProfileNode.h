@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2008, 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -54,6 +54,25 @@ namespace JSC {
             return adoptRef(new ProfileNode(callerCallFrame, headNode, node));
         }
 
+        struct Call {
+        public:
+            Call(double startTime, double totalTime = NAN)
+                : m_startTime(startTime)
+                , m_totalTime(totalTime)
+            {
+            }
+
+            double startTime() const { return m_startTime; }
+            void setStartTime(double time) { m_startTime = time; }
+
+            double totalTime() const { return m_totalTime; }
+            void setTotalTime(double time) { m_totalTime = time; }
+
+        private:
+            double m_startTime;
+            double m_totalTime;
+        };
+
         bool operator==(ProfileNode* node) { return m_callIdentifier == node->callIdentifier(); }
 
         ProfileNode* willExecute(ExecState* callerCallFrame, const CallIdentifier&);
@@ -64,10 +83,11 @@ namespace JSC {
         // CallIdentifier members
         ExecState* callerCallFrame() const { return m_callerCallFrame; }
         const CallIdentifier& callIdentifier() const { return m_callIdentifier; }
-        unsigned long callUID() const { return m_callIdentifier.hash(); };
-        const String& functionName() const { return m_callIdentifier.m_name; }
-        const String& url() const { return m_callIdentifier.m_url; }
-        unsigned lineNumber() const { return m_callIdentifier.m_lineNumber; }
+        unsigned id() const { return m_callIdentifier.hash(); }
+        const String& functionName() const { return m_callIdentifier.functionName(); }
+        const String& url() const { return m_callIdentifier.url(); }
+        unsigned lineNumber() const { return m_callIdentifier.lineNumber(); }
+        unsigned columnNumber() const { return m_callIdentifier.columnNumber(); }
 
         // Relationships
         ProfileNode* head() const { return m_head; }
@@ -80,9 +100,6 @@ namespace JSC {
         void setNextSibling(ProfileNode* nextSibling) { m_nextSibling = nextSibling; }
 
         // Time members
-        double startTime() const { return m_startTime; }
-        void setStartTime(double startTime) { m_startTime = startTime; }
-
         double totalTime() const { return m_totalTime; }
         void setTotalTime(double time) { m_totalTime = time; }
 
@@ -92,7 +109,9 @@ namespace JSC {
         double totalPercent() const { return (m_totalTime / (m_head ? m_head->totalTime() : totalTime())) * 100.0; }
         double selfPercent() const { return (m_selfTime / (m_head ? m_head->totalTime() : totalTime())) * 100.0; }
 
-        unsigned numberOfCalls() const { return m_numberOfCalls; }
+        Vector<Call> calls() const { return m_calls; }
+        Call& lastCall() { ASSERT(!m_calls.isEmpty()); return m_calls.last(); }
+        size_t numberOfCalls() const { return m_calls.size(); }
 
         // Children members
         const Vector<RefPtr<ProfileNode>>& children() const { return m_children; }
@@ -103,8 +122,6 @@ namespace JSC {
         void insertNode(PassRefPtr<ProfileNode> prpNode);
 
         ProfileNode* traverseNextNodePostOrder() const;
-
-        void endAndRecordCall();
 
 #ifndef NDEBUG
         const char* c_str() const { return m_callIdentifier; }
@@ -120,6 +137,7 @@ namespace JSC {
 
         void startTimer();
         void resetChildrensSiblings();
+        void endAndRecordCall();
 
         ExecState* m_callerCallFrame;
         CallIdentifier m_callIdentifier;
@@ -127,11 +145,10 @@ namespace JSC {
         ProfileNode* m_parent;
         ProfileNode* m_nextSibling;
 
-        double m_startTime;
         double m_totalTime;
         double m_selfTime;
-        unsigned m_numberOfCalls;
 
+        Vector<Call, 1> m_calls;
         Vector<RefPtr<ProfileNode>> m_children;
     };
 

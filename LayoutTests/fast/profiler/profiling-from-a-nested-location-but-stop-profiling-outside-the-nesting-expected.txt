@@ -3,8 +3,8 @@ This page's JavaScript starts profiling from within a nested location but stops 
 To run this test manually, load it in the browser then load the WebInspector and look at the profile. In the profile there should be a call to functionWichStartsAndStopsTheProfiler().
 
 Profile title: Profiling From A Nested Location But Stop Profiling Outside The Nesting
-Thread_1 (no file) (line 0)
-   functionWichStartsTheProfiler profiling-from-a-nested-location-but-stop-profiling-outside-the-nesting.html (line 17)
-   endTest profiler-test-JS-resources.js (line 1)
+Thread_1 (no file) (line 0:0)
+   functionWichStartsTheProfiler profiling-from-a-nested-location-but-stop-profiling-outside-the-nesting.html (line 17:1)
+   endTest profiler-test-JS-resources.js (line 1:20)
 
 

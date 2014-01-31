@@ -1,3 +1,66 @@
+2014-01-28  Timothy Hatcher  <timothy@apple.com>
+
+        Add column number and call timing support to LegacyProfiler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=127764
+
+        Reviewed by Joseph Pecoraro.
+
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::execute):
+        * profiler/CallIdentifier.h:
+        (JSC::CallIdentifier::CallIdentifier):
+        (JSC::CallIdentifier::functionName):
+        (JSC::CallIdentifier::url):
+        (JSC::CallIdentifier::lineNumber):
+        (JSC::CallIdentifier::columnNumber):
+        (JSC::CallIdentifier::operator==):
+        (JSC::CallIdentifier::operator!=):
+        (JSC::CallIdentifier::Hash::hash):
+        (WTF::HashTraits<JSC::CallIdentifier>::constructDeletedValue):
+        (WTF::HashTraits<JSC::CallIdentifier>::isDeletedValue):
+        * profiler/LegacyProfiler.cpp:
+        (JSC::LegacyProfiler::willExecute):
+        (JSC::LegacyProfiler::didExecute):
+        (JSC::LegacyProfiler::exceptionUnwind):
+        (JSC::LegacyProfiler::createCallIdentifier):
+        (JSC::createCallIdentifierFromFunctionImp):
+        * profiler/LegacyProfiler.h:
+        * profiler/Profile.cpp:
+        (JSC::Profile::Profile):
+        * profiler/Profile.h:
+        (JSC::Profile::uid):
+        (JSC::Profile::idleTime):
+        (JSC::Profile::setIdleTime):
+        * profiler/ProfileGenerator.cpp:
+        (JSC::AddParentForConsoleStartFunctor::operator()):
+        (JSC::ProfileGenerator::addParentForConsoleStart):
+        (JSC::ProfileGenerator::willExecute):
+        (JSC::ProfileGenerator::didExecute):
+        (JSC::ProfileGenerator::stopProfiling):
+        (JSC::ProfileGenerator::removeProfileStart):
+        (JSC::ProfileGenerator::removeProfileEnd):
+        * profiler/ProfileNode.cpp:
+        (JSC::ProfileNode::ProfileNode):
+        (JSC::ProfileNode::stopProfiling):
+        (JSC::ProfileNode::endAndRecordCall):
+        (JSC::ProfileNode::startTimer):
+        (JSC::ProfileNode::debugPrintData):
+        * profiler/ProfileNode.h:
+        (JSC::ProfileNode::Call::Call):
+        (JSC::ProfileNode::Call::startTime):
+        (JSC::ProfileNode::Call::setStartTime):
+        (JSC::ProfileNode::Call::totalTime):
+        (JSC::ProfileNode::Call::setTotalTime):
+        (JSC::ProfileNode::id):
+        (JSC::ProfileNode::functionName):
+        (JSC::ProfileNode::url):
+        (JSC::ProfileNode::lineNumber):
+        (JSC::ProfileNode::columnNumber):
+        (JSC::ProfileNode::calls):
+        (JSC::ProfileNode::lastCall):
+        (JSC::ProfileNode::numberOfCalls):
+
 2014-01-26  Timothy Hatcher  <timothy@apple.com>
 
         Include profile with FunctionCall and EvaluateScript Timeline records.

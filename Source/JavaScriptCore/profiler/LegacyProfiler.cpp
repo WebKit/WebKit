@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2008, 2012, 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -47,7 +47,7 @@ static const char* GlobalCodeExecution = "(program)";
 static const char* AnonymousFunction = "(anonymous function)";
 static unsigned ProfilesUID = 0;
 
-static CallIdentifier createCallIdentifierFromFunctionImp(ExecState*, JSObject*, const String& defaultSourceURL, int defaultLineNumber);
+static CallIdentifier createCallIdentifierFromFunctionImp(ExecState*, JSObject*, const String& defaultSourceURL, unsigned defaultLineNumber, unsigned defaultColumnNumber);
 
 LegacyProfiler* LegacyProfiler::s_sharedLegacyProfiler = 0;
 
@@ -128,14 +128,14 @@ void LegacyProfiler::willExecute(ExecState* callerCallFrame, JSValue function)
 {
     ASSERT(!m_currentProfiles.isEmpty());
 
-    dispatchFunctionToProfiles(callerCallFrame, m_currentProfiles, &ProfileGenerator::willExecute, createCallIdentifier(callerCallFrame, function, "", 0), callerCallFrame->lexicalGlobalObject()->profileGroup());
+    dispatchFunctionToProfiles(callerCallFrame, m_currentProfiles, &ProfileGenerator::willExecute, createCallIdentifier(callerCallFrame, function, ASCIILiteral(""), 0, 0), callerCallFrame->lexicalGlobalObject()->profileGroup());
 }
 
-void LegacyProfiler::willExecute(ExecState* callerCallFrame, const String& sourceURL, int startingLineNumber)
+void LegacyProfiler::willExecute(ExecState* callerCallFrame, const String& sourceURL, unsigned startingLineNumber, unsigned startingColumnNumber)
 {
     ASSERT(!m_currentProfiles.isEmpty());
 
-    CallIdentifier callIdentifier = createCallIdentifier(callerCallFrame, JSValue(), sourceURL, startingLineNumber);
+    CallIdentifier callIdentifier = createCallIdentifier(callerCallFrame, JSValue(), sourceURL, startingLineNumber, startingColumnNumber);
 
     dispatchFunctionToProfiles(callerCallFrame, m_currentProfiles, &ProfileGenerator::willExecute, callIdentifier, callerCallFrame->lexicalGlobalObject()->profileGroup());
 }
@@ -144,41 +144,41 @@ void LegacyProfiler::didExecute(ExecState* callerCallFrame, JSValue function)
 {
     ASSERT(!m_currentProfiles.isEmpty());
 
-    dispatchFunctionToProfiles(callerCallFrame, m_currentProfiles, &ProfileGenerator::didExecute, createCallIdentifier(callerCallFrame, function, "", 0), callerCallFrame->lexicalGlobalObject()->profileGroup());
+    dispatchFunctionToProfiles(callerCallFrame, m_currentProfiles, &ProfileGenerator::didExecute, createCallIdentifier(callerCallFrame, function, ASCIILiteral(""), 0, 0), callerCallFrame->lexicalGlobalObject()->profileGroup());
 }
 
-void LegacyProfiler::didExecute(ExecState* callerCallFrame, const String& sourceURL, int startingLineNumber)
+void LegacyProfiler::didExecute(ExecState* callerCallFrame, const String& sourceURL, unsigned startingLineNumber, unsigned startingColumnNumber)
 {
     ASSERT(!m_currentProfiles.isEmpty());
 
-    dispatchFunctionToProfiles(callerCallFrame, m_currentProfiles, &ProfileGenerator::didExecute, createCallIdentifier(callerCallFrame, JSValue(), sourceURL, startingLineNumber), callerCallFrame->lexicalGlobalObject()->profileGroup());
+    dispatchFunctionToProfiles(callerCallFrame, m_currentProfiles, &ProfileGenerator::didExecute, createCallIdentifier(callerCallFrame, JSValue(), sourceURL, startingLineNumber, startingColumnNumber), callerCallFrame->lexicalGlobalObject()->profileGroup());
 }
 
 void LegacyProfiler::exceptionUnwind(ExecState* handlerCallFrame)
 {
     ASSERT(!m_currentProfiles.isEmpty());
 
-    dispatchFunctionToProfiles(handlerCallFrame, m_currentProfiles, &ProfileGenerator::exceptionUnwind, createCallIdentifier(handlerCallFrame, JSValue(), "", 0), handlerCallFrame->lexicalGlobalObject()->profileGroup());
+    dispatchFunctionToProfiles(handlerCallFrame, m_currentProfiles, &ProfileGenerator::exceptionUnwind, createCallIdentifier(handlerCallFrame, JSValue(), ASCIILiteral(""), 0, 0), handlerCallFrame->lexicalGlobalObject()->profileGroup());
 }
 
-CallIdentifier LegacyProfiler::createCallIdentifier(ExecState* exec, JSValue functionValue, const String& defaultSourceURL, int defaultLineNumber)
+CallIdentifier LegacyProfiler::createCallIdentifier(ExecState* exec, JSValue functionValue, const String& defaultSourceURL, unsigned defaultLineNumber, unsigned defaultColumnNumber)
 {
     if (!functionValue)
-        return CallIdentifier(GlobalCodeExecution, defaultSourceURL, defaultLineNumber);
+        return CallIdentifier(ASCIILiteral(GlobalCodeExecution), defaultSourceURL, defaultLineNumber, defaultColumnNumber);
     if (!functionValue.isObject())
-        return CallIdentifier("(unknown)", defaultSourceURL, defaultLineNumber);
+        return CallIdentifier(ASCIILiteral("(unknown)"), defaultSourceURL, defaultLineNumber, defaultColumnNumber);
     if (asObject(functionValue)->inherits(JSFunction::info()) || asObject(functionValue)->inherits(InternalFunction::info()))
-        return createCallIdentifierFromFunctionImp(exec, asObject(functionValue), defaultSourceURL, defaultLineNumber);
-    return CallIdentifier(makeString("(", asObject(functionValue)->methodTable()->className(asObject(functionValue)), " object)"), defaultSourceURL, defaultLineNumber);
+        return createCallIdentifierFromFunctionImp(exec, asObject(functionValue), defaultSourceURL, defaultLineNumber, defaultColumnNumber);
+    return CallIdentifier(asObject(functionValue)->methodTable()->className(asObject(functionValue)), defaultSourceURL, defaultLineNumber, defaultColumnNumber);
 }
 
-CallIdentifier createCallIdentifierFromFunctionImp(ExecState* exec, JSObject* function, const String& defaultSourceURL, int defaultLineNumber)
+CallIdentifier createCallIdentifierFromFunctionImp(ExecState* exec, JSObject* function, const String& defaultSourceURL, unsigned defaultLineNumber, unsigned defaultColumnNumber)
 {
     const String& name = getCalculatedDisplayName(exec, function);
     JSFunction* jsFunction = jsDynamicCast<JSFunction*>(function);
     if (jsFunction && !jsFunction->isHostFunction())
-        return CallIdentifier(name.isEmpty() ? AnonymousFunction : name, jsFunction->jsExecutable()->sourceURL(), jsFunction->jsExecutable()->lineNo());
-    return CallIdentifier(name.isEmpty() ? AnonymousFunction : name, defaultSourceURL, defaultLineNumber);
+        return CallIdentifier(name.isEmpty() ? ASCIILiteral(AnonymousFunction) : name, jsFunction->jsExecutable()->sourceURL(), jsFunction->jsExecutable()->lineNo(), jsFunction->jsExecutable()->startColumn());
+    return CallIdentifier(name.isEmpty() ? ASCIILiteral(AnonymousFunction) : name, defaultSourceURL, defaultLineNumber, defaultColumnNumber);
 }
 
 } // namespace JSC

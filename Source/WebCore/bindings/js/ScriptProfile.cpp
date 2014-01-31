@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010, 2014 Apple Inc. All rights reserved.
  * Copyright (C) 2010 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -68,39 +68,60 @@ ScriptProfileNode* ScriptProfile::head() const
 
 double ScriptProfile::idleTime() const
 {
-    return 0.0;
+    return m_profile->idleTime();
 }
 
 #if ENABLE(INSPECTOR)
-static PassRefPtr<Inspector::TypeBuilder::Profiler::CPUProfileNode> buildInspectorObjectFor(const JSC::ProfileNode* node)
+static PassRefPtr<Inspector::TypeBuilder::Profiler::CPUProfileNodeCall> buildInspectorObjectFor(const JSC::ProfileNode::Call& call)
 {
-    typedef Vector<RefPtr<JSC::ProfileNode>> ProfileNodesList;
-    const ProfileNodesList& nodeChildren = node->children();
-    ProfileNodesList::const_iterator end = nodeChildren.end();
-    RefPtr<Inspector::TypeBuilder::Array<Inspector::TypeBuilder::Profiler::CPUProfileNode>> children = Inspector::TypeBuilder::Array<Inspector::TypeBuilder::Profiler::CPUProfileNode>::create();
-    for (ProfileNodesList::const_iterator iter = nodeChildren.begin(); iter != end; ++iter)
-        children->addItem(buildInspectorObjectFor(iter->get()));
-
-    RefPtr<Inspector::TypeBuilder::Profiler::CPUProfileNode> result = Inspector::TypeBuilder::Profiler::CPUProfileNode::create()
-        .setFunctionName(node->functionName())
-        .setUrl(node->url())
-        .setLineNumber(node->lineNumber())
-        .setTotalTime(node->totalTime())
-        .setSelfTime(node->selfTime())
-        .setNumberOfCalls(node->numberOfCalls())
-        .setCallUID(node->callIdentifier().hash())
-        .setChildren(children.release());
+    RefPtr<Inspector::TypeBuilder::Profiler::CPUProfileNodeCall> result = Inspector::TypeBuilder::Profiler::CPUProfileNodeCall::create()
+        .setStartTime(call.startTime())
+        .setTotalTime(call.totalTime());
     return result.release();
 }
 
-PassRefPtr<Inspector::TypeBuilder::Profiler::CPUProfileNode> ScriptProfile::buildInspectorObjectForHead() const
+static PassRefPtr<Inspector::TypeBuilder::Profiler::CPUProfileNode> buildInspectorObjectFor(const JSC::ProfileNode* node)
 {
-    return buildInspectorObjectFor(m_profile->head());
+    RefPtr<Inspector::TypeBuilder::Array<Inspector::TypeBuilder::Profiler::CPUProfileNodeCall>> calls = Inspector::TypeBuilder::Array<Inspector::TypeBuilder::Profiler::CPUProfileNodeCall>::create();
+    for (const JSC::ProfileNode::Call& call : node->calls())
+        calls->addItem(buildInspectorObjectFor(call));
+
+    RefPtr<Inspector::TypeBuilder::Profiler::CPUProfileNode> result = Inspector::TypeBuilder::Profiler::CPUProfileNode::create()
+        .setId(node->id())
+        .setCalls(calls.release());
+
+    if (!node->functionName().isEmpty())
+        result->setFunctionName(node->functionName());
+
+    if (!node->url().isEmpty()) {
+        result->setUrl(node->url());
+        result->setLineNumber(node->lineNumber());
+        result->setColumnNumber(node->columnNumber());
+    }
+
+    if (!node->children().isEmpty()) {
+        RefPtr<Inspector::TypeBuilder::Array<Inspector::TypeBuilder::Profiler::CPUProfileNode>> children = Inspector::TypeBuilder::Array<Inspector::TypeBuilder::Profiler::CPUProfileNode>::create();
+        for (RefPtr<JSC::ProfileNode> profileNode : node->children())
+            children->addItem(buildInspectorObjectFor(profileNode.get()));
+        result->setChildren(children);
+    }
+
+    return result.release();
 }
 
-PassRefPtr<Inspector::TypeBuilder::Profiler::CPUProfileNode> ScriptProfile::buildInspectorObjectForBottomUpHead() const
+PassRefPtr<Inspector::TypeBuilder::Profiler::CPUProfile> ScriptProfile::buildInspectorObject() const
 {
-    return 0;
+    RefPtr<Inspector::TypeBuilder::Array<Inspector::TypeBuilder::Profiler::CPUProfileNode>> rootNodes = Inspector::TypeBuilder::Array<Inspector::TypeBuilder::Profiler::CPUProfileNode>::create();
+    for (RefPtr<JSC::ProfileNode> profileNode : m_profile->head()->children())
+        rootNodes->addItem(buildInspectorObjectFor(profileNode.get()));
+
+    RefPtr<Inspector::TypeBuilder::Profiler::CPUProfile> result = Inspector::TypeBuilder::Profiler::CPUProfile::create()
+        .setRootNodes(rootNodes);
+
+    if (m_profile->idleTime())
+        result->setIdleTime(m_profile->idleTime());
+
+    return result.release();
 }
 #endif
 

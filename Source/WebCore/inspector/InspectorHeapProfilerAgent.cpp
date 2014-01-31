@@ -103,7 +103,6 @@ PassRefPtr<Inspector::TypeBuilder::HeapProfiler::ProfileHeader> InspectorHeapPro
     RefPtr<Inspector::TypeBuilder::HeapProfiler::ProfileHeader> header = Inspector::TypeBuilder::HeapProfiler::ProfileHeader::create()
         .setUid(snapshot.uid())
         .setTitle(snapshot.title());
-    header->setMaxJSObjectId(snapshot.maxSnapshotJSObjectId());
     return header.release();
 }
 

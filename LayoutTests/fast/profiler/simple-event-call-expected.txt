@@ -3,8 +3,8 @@ This page's JavaScript has an onload event.
 To run this test manually, load it in the browser then load the WebInspector and look at the profile. There should be only one onload node.
 
 Profile title: A simple profile test where an event happens.
-Thread_1 (no file) (line 0)
-   startTest simple-event-call.html (line 11)
-      endTest profiler-test-JS-resources.js (line 1)
+Thread_1 (no file) (line 0:0)
+   startTest simple-event-call.html (line 11:1)
+      endTest profiler-test-JS-resources.js (line 1:20)
 
 

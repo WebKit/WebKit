@@ -76,9 +76,6 @@ function printProfilesDataWithoutTime()
 
 function printProfileNodeWithoutTime(preElement, node, indentLevel)
 {
-    if (node.functionName == "(idle)")
-        return;
-
     var space = "";
     for (var i = 0; i < indentLevel; ++i)
         space += "   "
@@ -89,7 +86,7 @@ function printProfileNodeWithoutTime(preElement, node, indentLevel)
     if (!strippedURL)
         strippedURL = "(no file)";
 
-    var line = space + node.functionName + " " + strippedURL + " (line " + node.lineNumber + ")\n";
+    var line = space + node.functionName + " " + strippedURL + " (line " + node.lineNumber + ":" + node.columnNumber + ")\n";
     preElement.appendChild(document.createTextNode(line));
 
     var children = node.children();

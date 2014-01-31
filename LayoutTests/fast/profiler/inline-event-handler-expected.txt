@@ -3,18 +3,18 @@ This page has an inline event handler.
 To run this test manually, load it in the browser then load the WebInspector and look at the profile. In the profile onclick() should be a sibling to onload() and onclick() should have eventListener() as a child. 
 
 Profile title: Inline event handler
-Thread_1 (no file) (line 0)
-   startTest inline-event-handler.html (line 11)
-      getElementById (no file) (line 0)
-      click (no file) (line 0)
-         onclick inline-event-handler.html (line 31)
-            eventListener inline-event-handler.html (line 17)
-               anonymousFunction profiler-test-JS-resources.js (line 29)
-                  insertNewText profiler-test-JS-resources.js (line 17)
-                     createElement (no file) (line 0)
-                     createTextNode (no file) (line 0)
-                     appendChild (no file) (line 0)
-                     getElementById (no file) (line 0)
-               endTest profiler-test-JS-resources.js (line 1)
+Thread_1 (no file) (line 0:0)
+   startTest inline-event-handler.html (line 11:1)
+      getElementById (no file) (line 0:0)
+      click (no file) (line 0:0)
+         onclick inline-event-handler.html (line 31:1)
+            eventListener inline-event-handler.html (line 17:26)
+               anonymousFunction profiler-test-JS-resources.js (line 29:37)
+                  insertNewText profiler-test-JS-resources.js (line 17:26)
+                     createElement (no file) (line 0:0)
+                     createTextNode (no file) (line 0:0)
+                     appendChild (no file) (line 0:0)
+                     getElementById (no file) (line 0:0)
+               endTest profiler-test-JS-resources.js (line 1:20)
 
 

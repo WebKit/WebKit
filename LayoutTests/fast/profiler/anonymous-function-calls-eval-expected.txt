@@ -3,16 +3,16 @@ This page's JavaScript calls an anonymous function which calls eval().
 To run this test manually, load it in the browser then load the WebInspector and look at the profile. Beneath onload and startTest it should show an (anonymous function) which has a (program) child.
 
 Profile title: Anonymous function calles eval
-Thread_1 (no file) (line 0)
-   startTest anonymous-function-calls-eval.html (line 11)
-      variableThatPointsToAnAnonymousFunction anonymous-function-calls-eval.html (line 14)
-         eval (no file) (line 0)
-            (program) (no file) (line 1)
-               insertNewText profiler-test-JS-resources.js (line 17)
-                  createElement (no file) (line 0)
-                  createTextNode (no file) (line 0)
-                  appendChild (no file) (line 0)
-                  getElementById (no file) (line 0)
-      endTest profiler-test-JS-resources.js (line 1)
+Thread_1 (no file) (line 0:0)
+   startTest anonymous-function-calls-eval.html (line 11:1)
+      variableThatPointsToAnAnonymousFunction anonymous-function-calls-eval.html (line 14:62)
+         eval (no file) (line 0:0)
+            (program) (no file) (line 1:1)
+               insertNewText profiler-test-JS-resources.js (line 17:26)
+                  createElement (no file) (line 0:0)
+                  createTextNode (no file) (line 0:0)
+                  appendChild (no file) (line 0:0)
+                  getElementById (no file) (line 0:0)
+      endTest profiler-test-JS-resources.js (line 1:20)
 
 

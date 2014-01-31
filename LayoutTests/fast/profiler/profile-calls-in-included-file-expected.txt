@@ -3,8 +3,8 @@ This page calls the profiler from the included file.
 To run this test manually, load it in the browser then load the WebInspector and look at the profile. If there is a profile that is sufficient for this test.
 
 Profile title: Profile call in included file
-Thread_1 (no file) (line 0)
-   startProfile profiler-test-JS-resources.js (line 43)
-   endTest profiler-test-JS-resources.js (line 1)
+Thread_1 (no file) (line 0:0)
+   startProfile profiler-test-JS-resources.js (line 43:1)
+   endTest profiler-test-JS-resources.js (line 1:20)
 
 

@@ -1,8 +1,8 @@
 
 Profile title: Call Document.write()
-Thread_1 (no file) (line 0)
-   startTest document-dot-write.html (line 11)
-      write (no file) (line 0)
-      endTest profiler-test-JS-resources.js (line 1)
+Thread_1 (no file) (line 0:0)
+   startTest document-dot-write.html (line 11:1)
+      write (no file) (line 0:0)
+      endTest profiler-test-JS-resources.js (line 1:20)
 
 

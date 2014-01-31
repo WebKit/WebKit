@@ -3,8 +3,8 @@ This page creates a profile without a title.
 To run this test manually, load it in the browser then load the WebInspector and look at the profile. If there is a profile that is sufficient for this test.
 
 Profile title: org.webkit.profiles.user-initiated.1
-Thread_1 (no file) (line 0)
-   startTest profile-with-no-title.html (line 11)
-      endTest profiler-test-JS-resources.js (line 1)
+Thread_1 (no file) (line 0:0)
+   startTest profile-with-no-title.html (line 11:1)
+      endTest profiler-test-JS-resources.js (line 1:20)
 
 

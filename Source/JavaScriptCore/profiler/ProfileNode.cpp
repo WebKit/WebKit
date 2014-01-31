@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2008, 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -34,38 +34,18 @@
 #include <wtf/DataLog.h>
 #include <wtf/text/StringHash.h>
 
-#if OS(WINDOWS)
-#include <windows.h>
-#endif
-
 using namespace WTF;
 
 namespace JSC {
-
-static double getCount()
-{
-#if OS(WINDOWS)
-    static LARGE_INTEGER frequency;
-    if (!frequency.QuadPart)
-        QueryPerformanceFrequency(&frequency);
-    LARGE_INTEGER counter;
-    QueryPerformanceCounter(&counter);
-    return static_cast<double>(counter.QuadPart) / frequency.QuadPart;
-#else
-    return currentTimeMS();
-#endif
-}
 
 ProfileNode::ProfileNode(ExecState* callerCallFrame, const CallIdentifier& callIdentifier, ProfileNode* headNode, ProfileNode* parentNode)
     : m_callerCallFrame(callerCallFrame)
     , m_callIdentifier(callIdentifier)
     , m_head(headNode)
     , m_parent(parentNode)
-    , m_nextSibling(0)
-    , m_startTime(0.0)
-    , m_totalTime(0.0)
-    , m_selfTime(0.0)
-    , m_numberOfCalls(0)
+    , m_nextSibling(nullptr)
+    , m_totalTime(0)
+    , m_selfTime(0)
 {
     startTimer();
 }
@@ -76,10 +56,9 @@ ProfileNode::ProfileNode(ExecState* callerCallFrame, ProfileNode* headNode, Prof
     , m_head(headNode)
     , m_parent(nodeToCopy->parent())
     , m_nextSibling(0)
-    , m_startTime(0.0)
     , m_totalTime(nodeToCopy->totalTime())
     , m_selfTime(nodeToCopy->selfTime())
-    , m_numberOfCalls(nodeToCopy->numberOfCalls())
+    , m_calls(nodeToCopy->calls())
 {
 }
 
@@ -142,10 +121,10 @@ void ProfileNode::insertNode(PassRefPtr<ProfileNode> prpNode)
 
 void ProfileNode::stopProfiling()
 {
-    if (m_startTime)
-        endAndRecordCall();
+    ASSERT(!m_calls.isEmpty());
 
-    ASSERT(m_selfTime == 0.0 && m_startTime == 0.0);
+    if (isnan(m_calls.last().totalTime()))
+        endAndRecordCall();
 
     // Because we iterate in post order all of our children have been stopped before us.
     for (unsigned i = 0; i < m_children.size(); ++i)
@@ -167,16 +146,17 @@ ProfileNode* ProfileNode::traverseNextNodePostOrder() const
 
 void ProfileNode::endAndRecordCall()
 {
-    m_totalTime += m_startTime ? getCount() - m_startTime : 0.0;
-    m_startTime = 0.0;
+    Call& last = lastCall();
+    ASSERT(isnan(last.totalTime()));
 
-    ++m_numberOfCalls;
+    last.setTotalTime(currentTime() - last.startTime());
+
+    m_totalTime += last.totalTime();
 }
 
 void ProfileNode::startTimer()
 {
-    if (!m_startTime)
-        m_startTime = getCount();
+    m_calls.append(Call(currentTime()));
 }
 
 void ProfileNode::resetChildrensSiblings()
@@ -193,9 +173,9 @@ void ProfileNode::debugPrintData(int indentLevel) const
     for (int i = 0; i < indentLevel; ++i)
         dataLogF("  ");
 
-    dataLogF("Function Name %s %d SelfTime %.3fms/%.3f%% TotalTime %.3fms/%.3f%% Next Sibling %s\n",
-        functionName().utf8().data(), 
-        m_numberOfCalls, m_selfTime, selfPercent(), m_totalTime, totalPercent(),
+    dataLogF("Function Name %s %zu SelfTime %.3fms/%.3f%% TotalTime %.3fms/%.3f%% Next Sibling %s\n",
+        functionName().utf8().data(),
+        numberOfCalls(), m_selfTime, selfPercent(), m_totalTime, totalPercent(),
         m_nextSibling ? m_nextSibling->functionName().utf8().data() : "");
 
     ++indentLevel;

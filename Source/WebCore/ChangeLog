@@ -1,3 +1,26 @@
+2014-01-28  Timothy Hatcher  <timothy@apple.com>
+
+        Add column number and call timing support to LegacyProfiler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=127764
+
+        Reviewed by Joseph Pecoraro.
+
+        * bindings/js/ScriptProfile.cpp:
+        (WebCore::ScriptProfile::idleTime):
+        (WebCore::buildInspectorObjectFor):
+        (WebCore::ScriptProfile::buildInspectorObject):
+        * bindings/js/ScriptProfile.h:
+        * inspector/InspectorHeapProfilerAgent.cpp:
+        (WebCore::InspectorHeapProfilerAgent::createSnapshotHeader):
+        * inspector/InspectorProfilerAgent.cpp:
+        (WebCore::InspectorProfilerAgent::createSnapshotHeader):
+        (WebCore::InspectorProfilerAgent::getCPUProfile):
+        * inspector/ScriptProfileNode.idl:
+        * inspector/TimelineRecordFactory.cpp:
+        (WebCore::TimelineRecordFactory::appendProfile):
+        * inspector/protocol/Profiler.json:
+
 2014-01-26  Timothy Hatcher  <timothy@apple.com>
 
         Include profile with FunctionCall and EvaluateScript Timeline records.

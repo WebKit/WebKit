@@ -3,12 +3,12 @@ This page uses a built-in function to call an anonymous function.
 To run this test manually, load it in the browser then load the WebInspector and look at the profile. In the profile map() should be the sibling of an (anonymous function) which has arrayOperatorFunction() as a child.
 
 Profile title: Built-in function calls an anonymous function
-Thread_1 (no file) (line 0)
-   startTest built-in-function-calls-anonymous.html (line 11)
-      Array (no file) (line 0)
-      map (no file) (line 0)
-         myFunction built-in-function-calls-anonymous.html (line 14)
-            arrayOperatorFunction profiler-test-JS-resources.js (line 25)
-      endTest profiler-test-JS-resources.js (line 1)
+Thread_1 (no file) (line 0:0)
+   startTest built-in-function-calls-anonymous.html (line 11:1)
+      Array (no file) (line 0:0)
+      map (no file) (line 0:0)
+         myFunction built-in-function-calls-anonymous.html (line 14:45)
+            arrayOperatorFunction profiler-test-JS-resources.js (line 25:46)
+      endTest profiler-test-JS-resources.js (line 1:20)
 
 

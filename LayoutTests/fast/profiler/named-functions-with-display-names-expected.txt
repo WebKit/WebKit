@@ -3,14 +3,14 @@ This page's JavaScript calls named functions and changes their display names.
 To run this test manually, load it in the browser then load the WebInspector and look at the profile. You should see functions named "[x] iteration[s] function", and not "function[x]"
 
 Profile title: Named functions with display names
-Thread_1 (no file) (line 0)
-   startTest named-functions-with-display-names.html (line 54)
-      0 iterations function named-functions-with-display-names.html (line 11)
-      1 iteration function named-functions-with-display-names.html (line 18)
-      2 iterations function named-functions-with-display-names.html (line 25)
-      20 iterations function named-functions-with-display-names.html (line 32)
-      1000 iterations function named-functions-with-display-names.html (line 39)
-      bogusDisplayNameFunction named-functions-with-display-names.html (line 47)
-      endTest profiler-test-JS-resources.js (line 1)
+Thread_1 (no file) (line 0:0)
+   startTest named-functions-with-display-names.html (line 54:1)
+      0 iterations function named-functions-with-display-names.html (line 11:1)
+      1 iteration function named-functions-with-display-names.html (line 18:1)
+      2 iterations function named-functions-with-display-names.html (line 25:1)
+      20 iterations function named-functions-with-display-names.html (line 32:1)
+      1000 iterations function named-functions-with-display-names.html (line 39:1)
+      bogusDisplayNameFunction named-functions-with-display-names.html (line 47:1)
+      endTest profiler-test-JS-resources.js (line 1:20)
 
 

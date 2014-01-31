@@ -3,10 +3,10 @@ This page's JavaScript has a call to apply() in it.
 To run this test manually, load it in the browser then load the WebInspector and look at the profile. In the profile there should be a call to fakeInteriorFunction() and a call to apply().
 
 Profile title: Using the apply() method
-Thread_1 (no file) (line 0)
-   startTest apply.html (line 11)
-      fakeObject apply.html (line 18)
-         fakeInteriorFunction apply.html (line 24)
-      endTest profiler-test-JS-resources.js (line 1)
+Thread_1 (no file) (line 0:0)
+   startTest apply.html (line 11:1)
+      fakeObject apply.html (line 18:1)
+         fakeInteriorFunction apply.html (line 24:1)
+      endTest profiler-test-JS-resources.js (line 1:20)
 
 
