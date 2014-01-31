@@ -558,7 +558,16 @@ bool UniqueIDBDatabaseBackingStoreSQLite::clearObjectStore(const IDBIdentifier& 
         }
     }
 
-    // FIXME <rdar://problem/15779642>: Once indexes are implemented, drop index records.
+    {
+        SQLiteStatement sql(*m_sqliteDB, ASCIILiteral("DELETE FROM IndexRecords WHERE objectStoreID = ?;"));
+        if (sql.prepare() != SQLResultOk
+            || sql.bindInt64(1, objectStoreID) != SQLResultOk
+            || sql.step() != SQLResultDone) {
+            LOG_ERROR("Could not delete records from index record store id %lli (%i) - %s", objectStoreID, m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg());
+            return false;
+        }
+    }
+
     return true;
 }
 

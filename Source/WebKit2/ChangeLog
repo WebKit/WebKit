@@ -1,5 +1,16 @@
 2014-01-31  Brady Eidson  <beidson@apple.com>
 
+        IDB: When deleting object stores/indexes, also delete associated records
+        https://bugs.webkit.org/show_bug.cgi?id=127872
+
+        Reviewed by Anders Carlsson.
+
+        This was mostly done via other patches, but clearObjectStore was the last remaining case:
+        * DatabaseProcess/IndexedDB/sqlite/UniqueIDBDatabaseBackingStoreSQLite.cpp:
+        (WebKit::UniqueIDBDatabaseBackingStoreSQLite::clearObjectStore): Also delete Index records.
+
+2014-01-31  Brady Eidson  <beidson@apple.com>
+
         IDB: Index writing
         <rdar://problem/15899973> and https://bugs.webkit.org/show_bug.cgi?id=127868
 
