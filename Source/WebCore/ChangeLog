@@ -1,3 +1,15 @@
+2014-01-31  Simon Fraser  <simon.fraser@apple.com>
+
+        Don't do logging from Range::collectSelectionRects() on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=127999
+
+        Reviewed by Enrica Casucci.
+
+        Remove some logging code that printed Range stuff in debug builds.
+
+        * dom/Range.cpp:
+        (WebCore::Range::collectSelectionRects):
+
 2014-01-30  Simon Fraser  <simon.fraser@apple.com>
 
         Make iOS fixed layer registration more like OS X
