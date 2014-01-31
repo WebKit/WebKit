@@ -58,7 +58,7 @@ GetOptions(
     'help' => \$showHelp,
     'ftl-jit!' => \$ftlJIT,
     'cloop!' => \$forceCLoop,
-    'copy-libraries' => \$copyLibraries,
+    'copy-libraries!' => \$copyLibraries,
     'makeargs=s' => \$makeArgs
 );
 
