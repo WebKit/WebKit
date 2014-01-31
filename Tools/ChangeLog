@@ -1,3 +1,14 @@
+2014-01-31  David Farler  <dfarler@apple.com>
+
+        DumpRenderTree iOS fails to link: missing rowHeaders and columnHeaders in AccessibilityUIElement
+        https://bugs.webkit.org/show_bug.cgi?id=128004
+
+        Reviewed by Chris Fleizach.
+
+        * DumpRenderTree/ios/AccessibilityUIElementIOS.mm:
+        (AccessibilityUIElement::columnHeaders): Stub added.
+        (AccessibilityUIElement::rowHeaders): Stub added.
+
 2014-01-31  Zoltan Horvath  <zoltan@webkit.org>
 
         Unreviewed. Update my contributors.json entry.

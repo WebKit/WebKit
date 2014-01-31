@@ -833,3 +833,13 @@ void AccessibilityUIElement::uiElementArrayAttributeValue(JSStringRef, Vector<Ac
 {
     // FIXME: implement
 }
+
+void AccessibilityUIElement::columnHeaders(Vector<AccessibilityUIElement>&) const
+{
+    // FIXME: implement
+}
+
+void AccessibilityUIElement::rowHeaders(Vector<AccessibilityUIElement>&) const
+{
+    // FIXME: implement
+}
