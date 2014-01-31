@@ -161,6 +161,11 @@ private:
 };
 #endif
 
+CACHED_RESOURCE_TYPE_CASTS(CachedImage, CachedResource, CachedResource::ImageResource)
+#if USE(CF)
+TYPE_CASTS_BASE(CachedImageManual, CachedImage, resource, resource->isManual(), resource.isManual())
+#endif
+
 }
 
 #endif

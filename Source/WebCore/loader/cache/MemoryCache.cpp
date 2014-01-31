@@ -255,7 +255,7 @@ void MemoryCache::removeImageFromCache(const URL& url, const String& cachePartit
         return;
 
     // A resource exists and is not a manually cached image, so just remove it.
-    if (!resource->isImage() || !static_cast<CachedImage*>(resource)->isManual()) {
+    if (!resource->isImage() || !toCachedImage(resource)->isManual()) {
         evict(resource);
         return;
     }
@@ -265,7 +265,7 @@ void MemoryCache::removeImageFromCache(const URL& url, const String& cachePartit
     // dead resources are pruned. That might be immediately since
     // removing the last client triggers a MemoryCache::prune, so the
     // resource may be deleted after this call.
-    static_cast<CachedImageManual*>(resource)->removeFakeClient();
+    toCachedImageManual(toCachedImage(resource))->removeFakeClient();
 }
 #endif
 

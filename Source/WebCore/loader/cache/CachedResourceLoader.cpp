@@ -160,7 +160,7 @@ CachedResourceHandle<CachedImage> CachedResourceLoader::requestImage(CachedResou
         }
     }
     request.setDefer(clientDefersImage(request.resourceRequest().url()) ? CachedResourceRequest::DeferredByClient : CachedResourceRequest::NoDefer);
-    return static_cast<CachedImage*>(requestResource(CachedResource::ImageResource, request).get());
+    return toCachedImage(requestResource(CachedResource::ImageResource, request).get());
 }
 
 CachedResourceHandle<CachedFont> CachedResourceLoader::requestFont(CachedResourceRequest& request)

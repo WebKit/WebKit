@@ -141,7 +141,7 @@ void CachedImage::switchClientsToRevalidatedResource()
         for (ContainerSizeRequests::iterator it = m_pendingContainerSizeRequests.begin(); it != m_pendingContainerSizeRequests.end(); ++it)
             switchContainerSizeRequests.set(it->key, it->value);
         CachedResource::switchClientsToRevalidatedResource();
-        CachedImage* revalidatedCachedImage = static_cast<CachedImage*>(resourceToRevalidate());
+        CachedImage* revalidatedCachedImage = toCachedImage(resourceToRevalidate());
         for (ContainerSizeRequests::iterator it = switchContainerSizeRequests.begin(); it != switchContainerSizeRequests.end(); ++it)
             revalidatedCachedImage->setContainerSizeForRenderer(it->key, it->value.first, it->value.second);
         return;
@@ -545,7 +545,7 @@ void CachedImage::resumeAnimatingImagesForLoader(CachedResourceLoader* loader)
         const CachedResourceHandle<CachedResource>& resource = it->value;
         if (!resource || !resource->isImage())
             continue;
-        CachedImage* cachedImage = static_cast<CachedImage*>(resource.get());
+        CachedImage* cachedImage = toCachedImage(resource.get());
         if (!cachedImage->hasImage())
             continue;
         Image* image = cachedImage->image();

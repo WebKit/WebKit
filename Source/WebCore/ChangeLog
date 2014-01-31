@@ -1,3 +1,25 @@
+2014-01-30  David Kilzer  <ddkilzer@apple.com>
+
+        Add security-checked cast for WebCore::CachedImage
+        <http://webkit.org/b/127967>
+
+        Reviewed by Darin Adler.
+
+        * loader/cache/CachedImage.h:
+        (WebCore::toCachedImage): Add.
+        (WebCore::toCachedImageManual): Add.
+        * loader/cache/CachedResource.h:
+        (CACHED_RESOURCE_TYPE_CASTS): Add macro.
+
+        * loader/cache/CachedImage.cpp:
+        (WebCore::CachedImage::switchClientsToRevalidatedResource):
+        (WebCore::CachedImage::resumeAnimatingImagesForLoader):
+        * loader/cache/CachedResourceLoader.cpp:
+        (WebCore::CachedResourceLoader::requestImage):
+        * loader/cache/MemoryCache.cpp:
+        (WebCore::MemoryCache::removeImageFromCache):
+        - Use toCachedImage() and toCachedImageManual().
+
 2014-01-30  Simon Fraser  <simon.fraser@apple.com>
 
         Fixed position objects are clipped in iOS WK2

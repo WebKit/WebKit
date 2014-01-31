@@ -368,6 +368,9 @@ private:
     HashSet<CachedResourceHandleBase*> m_handlesToRevalidate;
 };
 
+#define CACHED_RESOURCE_TYPE_CASTS(ToClassName, FromClassName, CachedResourceType) \
+    TYPE_CASTS_BASE(ToClassName, FromClassName, resource, resource->type() == CachedResourceType, resource.type() == CachedResourceType)
+
 }
 
 #endif

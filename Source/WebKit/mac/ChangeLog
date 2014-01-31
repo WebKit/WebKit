@@ -1,5 +1,16 @@
 2014-01-30  David Kilzer  <ddkilzer@apple.com>
 
+        Add security-checked cast for WebCore::CachedImage
+        <http://webkit.org/b/127967>
+
+        Reviewed by Darin Adler.
+
+        * Misc/WebCache.mm:
+        (+[WebCache imageForURL:]):
+        - Use WebCore::toCachedImage().
+
+2014-01-30  David Kilzer  <ddkilzer@apple.com>
+
         De-virtual-ize CachedResource::isImage()
         <http://webkit.org/b/127936>
 
