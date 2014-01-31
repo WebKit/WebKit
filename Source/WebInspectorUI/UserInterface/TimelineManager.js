@@ -207,12 +207,16 @@ WebInspector.TimelineManager.prototype = {
                     }
                 }
 
+                var profile = null;
+                if (recordPayload.data.profile)
+                    profile = this._profileFromPayload(recordPayload.data.profile);
+
                 switch (parentRecordPayload && parentRecordPayload.type) {
                 case TimelineAgent.EventType.TimerFire:
-                    this._addRecord(new WebInspector.ScriptTimelineRecord(WebInspector.ScriptTimelineRecord.EventType.TimerFired, startTime, endTime, callFrames, sourceCodeLocation, parentRecordPayload.data.timerId));
+                    this._addRecord(new WebInspector.ScriptTimelineRecord(WebInspector.ScriptTimelineRecord.EventType.TimerFired, startTime, endTime, callFrames, sourceCodeLocation, parentRecordPayload.data.timerId, profile));
                     break;
                 default:
-                    this._addRecord(new WebInspector.ScriptTimelineRecord(WebInspector.ScriptTimelineRecord.EventType.ScriptEvaluated, startTime, endTime, callFrames, sourceCodeLocation, null));
+                    this._addRecord(new WebInspector.ScriptTimelineRecord(WebInspector.ScriptTimelineRecord.EventType.ScriptEvaluated, startTime, endTime, callFrames, sourceCodeLocation, null, profile));
                     break;
                 }
 
@@ -229,6 +233,10 @@ WebInspector.TimelineManager.prototype = {
                 if (!parentRecordPayload)
                     break;
 
+                var profile = null;
+                if (recordPayload.data.profile)
+                    profile = this._profileFromPayload(recordPayload.data.profile);
+
                 if (!sourceCodeLocation) {
                     var mainFrame = WebInspector.frameResourceManager.mainFrame;
                     var scriptResource = mainFrame.url === recordPayload.data.scriptName ? mainFrame.mainResource : mainFrame.resourceForURL(recordPayload.data.scriptName, true);
@@ -243,19 +251,19 @@ WebInspector.TimelineManager.prototype = {
 
                 switch (parentRecordPayload.type) {
                 case TimelineAgent.EventType.TimerFire:
-                    this._addRecord(new WebInspector.ScriptTimelineRecord(WebInspector.ScriptTimelineRecord.EventType.TimerFired, startTime, endTime, callFrames, sourceCodeLocation, parentRecordPayload.data.timerId));
+                    this._addRecord(new WebInspector.ScriptTimelineRecord(WebInspector.ScriptTimelineRecord.EventType.TimerFired, startTime, endTime, callFrames, sourceCodeLocation, parentRecordPayload.data.timerId, profile));
                     break;
                 case TimelineAgent.EventType.EventDispatch:
-                    this._addRecord(new WebInspector.ScriptTimelineRecord(WebInspector.ScriptTimelineRecord.EventType.EventDispatched, startTime, endTime, callFrames, sourceCodeLocation, parentRecordPayload.data.type));
+                    this._addRecord(new WebInspector.ScriptTimelineRecord(WebInspector.ScriptTimelineRecord.EventType.EventDispatched, startTime, endTime, callFrames, sourceCodeLocation, parentRecordPayload.data.type, profile));
                     break;
                 case TimelineAgent.EventType.XHRLoad:
-                    this._addRecord(new WebInspector.ScriptTimelineRecord(WebInspector.ScriptTimelineRecord.EventType.EventDispatched, startTime, endTime, callFrames, sourceCodeLocation, "load"));
+                    this._addRecord(new WebInspector.ScriptTimelineRecord(WebInspector.ScriptTimelineRecord.EventType.EventDispatched, startTime, endTime, callFrames, sourceCodeLocation, "load", profile));
                     break;
                 case TimelineAgent.EventType.XHRReadyStateChange:
-                    this._addRecord(new WebInspector.ScriptTimelineRecord(WebInspector.ScriptTimelineRecord.EventType.EventDispatched, startTime, endTime, callFrames, sourceCodeLocation, "readystatechange"));
+                    this._addRecord(new WebInspector.ScriptTimelineRecord(WebInspector.ScriptTimelineRecord.EventType.EventDispatched, startTime, endTime, callFrames, sourceCodeLocation, "readystatechange", profile));
                     break;
                 case TimelineAgent.EventType.FireAnimationFrame:
-                    this._addRecord(new WebInspector.ScriptTimelineRecord(WebInspector.ScriptTimelineRecord.EventType.AnimationFrameFired, startTime, endTime, callFrames, sourceCodeLocation, parentRecordPayload.data.id));
+                    this._addRecord(new WebInspector.ScriptTimelineRecord(WebInspector.ScriptTimelineRecord.EventType.AnimationFrameFired, startTime, endTime, callFrames, sourceCodeLocation, parentRecordPayload.data.id, profile));
                     break;
                 }
 
@@ -319,6 +327,74 @@ WebInspector.TimelineManager.prototype = {
     },
 
     // Private
+
+    _profileFromPayload: function(payload)
+    {
+        if (!payload)
+            return null;
+
+        console.assert(payload.rootNodes instanceof Array);
+
+        function profileNodeFromPayload(nodePayload)
+        {
+            console.assert("id" in nodePayload);
+            console.assert(nodePayload.calls instanceof Array);
+
+            if (nodePayload.url) {
+                var sourceCode = WebInspector.frameResourceManager.resourceForURL(nodePayload.url);
+                if (!sourceCode)
+                    sourceCode = WebInspector.debuggerManager.scriptsForURL(nodePayload.url)[0];
+
+                // The lineNumber is 1-based, but we expect 0-based.
+                var lineNumber = nodePayload.lineNumber - 1;
+
+                var sourceCodeLocation = sourceCode ? sourceCode.createSourceCodeLocation(lineNumber, nodePayload.columnNumber) : null;
+            }
+
+            var isProgramCode = nodePayload.functionName === "(program)";
+            var isAnonymousFunction = nodePayload.functionName === "(anonymous function)";
+
+            var type = isProgramCode ? WebInspector.ProfileNode.Type.Program : WebInspector.ProfileNode.Type.Function;
+            var functionName = !isProgramCode && !isAnonymousFunction && nodePayload.functionName !== "(unknown)" ? nodePayload.functionName : null;
+            var calls = nodePayload.calls.map(profileNodeCallFromPayload);
+
+            return new WebInspector.ProfileNode(nodePayload.id, type, functionName, sourceCodeLocation, calls, nodePayload.children);
+        }
+
+        function profileNodeCallFromPayload(nodeCallPayload)
+        {
+            console.assert("startTime" in nodeCallPayload);
+            console.assert("totalTime" in nodeCallPayload);
+
+            return new WebInspector.ProfileNodeCall(nodeCallPayload.startTime, nodeCallPayload.totalTime);
+        }
+
+        var rootNodes = payload.rootNodes;
+
+        // Iterate over the node tree using a stack. Doing this recursively can easily cause a stack overflow.
+        // We traverse the profile in post-order and convert the payloads in place until we get back to the root.
+        var stack = [{parent: {children: rootNodes}, index: 0, root: true}];
+        while (stack.length) {
+            var entry = stack.lastValue;
+
+            if (entry.index < entry.parent.children.length) {
+                var childNodePayload = entry.parent.children[entry.index];
+                if (childNodePayload.children && childNodePayload.children.length)
+                    stack.push({parent: childNodePayload, index: 0});
+
+                ++entry.index;
+            } else {
+                if (!entry.root)
+                    entry.parent.children = entry.parent.children.map(profileNodeFromPayload);
+                else
+                    rootNodes = rootNodes.map(profileNodeFromPayload);
+
+                stack.pop();
+            }
+        }
+
+        return new WebInspector.Profile(rootNodes, payload.idleTime);
+    },
 
     _callFramesFromPayload: function(payload)
     {

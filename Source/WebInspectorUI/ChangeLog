@@ -1,3 +1,50 @@
+2014-01-30  Timothy Hatcher  <timothy@apple.com>
+
+        Add the model objects for the new Web Inspector profile data.
+
+        https://bugs.webkit.org/show_bug.cgi?id=127899
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Main.html:
+        * UserInterface/Profile.js: Added.
+        (WebInspector.Profile):
+        (WebInspector.Profile.prototype.get idleTime):
+        (WebInspector.Profile.prototype.get topDownRootNodes):
+        (WebInspector.Profile.prototype.get bottomUpRootNodes):
+        * UserInterface/ProfileNode.js: Added.
+        (WebInspector.ProfileNode):
+        (WebInspector.ProfileNode.prototype.get id):
+        (WebInspector.ProfileNode.prototype.get type):
+        (WebInspector.ProfileNode.prototype.get functionName):
+        (WebInspector.ProfileNode.prototype.get sourceCodeLocation):
+        (WebInspector.ProfileNode.prototype.get startTime):
+        (WebInspector.ProfileNode.prototype.get endTime):
+        (WebInspector.ProfileNode.prototype.get selfTime):
+        (WebInspector.ProfileNode.prototype.get totalTime):
+        (WebInspector.ProfileNode.prototype.get calls):
+        (WebInspector.ProfileNode.prototype.get previousSibling):
+        (WebInspector.ProfileNode.prototype.get nextSibling):
+        (WebInspector.ProfileNode.prototype.get parentNode):
+        (WebInspector.ProfileNode.prototype.get childNodes):
+        (WebInspector.ProfileNode.prototype.totalTimeInRange):
+        (WebInspector.ProfileNode.prototype.computeCallInfoForTimeRange):
+        (WebInspector.ProfileNode.prototype.traverseNextProfileNode):
+        (WebInspector.ProfileNode.prototype.saveIdentityToCookie):
+        (WebInspector.ProfileNode.prototype.establishRelationships):
+        * UserInterface/ProfileNodeCall.js: Added.
+        (WebInspector.ProfileNodeCall):
+        (WebInspector.ProfileNodeCall.prototype.get startTime):
+        (WebInspector.ProfileNodeCall.prototype.get totalTime):
+        (WebInspector.ProfileNodeCall.prototype.get endTime):
+        (WebInspector.ProfileNodeCall.prototype.establishRelationships):
+        * UserInterface/TimelineManager.js:
+        (WebInspector.TimelineManager.prototype.eventRecorded.processRecord):
+        (WebInspector.TimelineManager.prototype.eventRecorded):
+        (WebInspector.TimelineManager.prototype._profileFromPayload.profileNodeFromPayload):
+        (WebInspector.TimelineManager.prototype._profileFromPayload.profileNodeCallFromPayload):
+        (WebInspector.TimelineManager.prototype._profileFromPayload):
+
 2014-01-26  Timothy Hatcher  <timothy@apple.com>
 
         Prefix existing Web Inspector profiler classes with "Legacy".
