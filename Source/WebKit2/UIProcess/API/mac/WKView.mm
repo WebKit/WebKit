@@ -2549,6 +2549,8 @@ static void createSandboxExtensionsForFileUpload(NSPasteboard *pasteboard, Sandb
     CGSCaptureWindowsContentsToRect(CGSMainConnectionID(), &windowID, 1, CGRectNull, &cgWindowImage);
     RetainPtr<CGImageRef> windowSnapshotImage = adoptCF(cgWindowImage);
 
+    [self _ensureGestureController];
+
     NSRect windowCaptureRect;
     FloatRect boundsForCustomSwipeViews = _data->_gestureController->windowRelativeBoundsForCustomSwipeViews();
     if (!boundsForCustomSwipeViews.isEmpty())

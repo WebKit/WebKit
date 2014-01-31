@@ -1,3 +1,14 @@
+2014-01-30  Tim Horton  <timothy_horton@apple.com>
+
+        Crashes after 163116 in [WKView takeViewSnapshot]
+        https://bugs.webkit.org/show_bug.cgi?id=127973
+
+        Reviewed by Alexey Proskuryakov.
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView _takeViewSnapshot]):
+        Make the ViewGestureController before using it, if we need one.
+
 2014-01-30  Anders Carlsson  <andersca@apple.com>
 
         Add a webView:didCommitNavigation: delegate method
