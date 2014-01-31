@@ -23,12 +23,18 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-JSON.load = function(url, callback, options)
+JSON.LoadError = "JSONLoadError";
+JSON.ParseError = "JSONParseError";
+
+JSON.load = function(url, successCallback, failureCallback, options)
 {
     console.assert(url);
 
-    if (!(callback instanceof Function))
+    if (!(successCallback instanceof Function))
         return;
+
+    if (!(failureCallback instanceof Function))
+        failureCallback = function() { };
 
     if (typeof options !== "object")
         options = {};
@@ -38,18 +44,25 @@ JSON.load = function(url, callback, options)
         if (this.readyState !== 4)
             return;
 
+        // Don't consider a status of 0 to be a load error for easier testing with local files.
+        var loadErrorOccurred = this.status !== 0 && this.status !== 200;
+        if (loadErrorOccurred) {
+            failureCallback({errorType: JSON.LoadError, error: this.statusText, errorHTTPCode: this.status});
+            return;
+        }
+
         try {
             var responseText = request.responseText;
             if (options.hasOwnProperty("jsonpCallbackName"))
                 responseText = responseText.replace(new RegExp("^" + options.jsonpCallbackName + "\\((.*)\\);?$"), "$1");
             var data = JSON.parse(responseText);
         } catch (e) {
-            var data = {error: e.message};
+            var data = {errorType: JSON.ParseError, error: e.message};
+            failureCallback(data);
+            return;
         }
 
-        // Allow a status of 0 for easier testing with local files.
-        if (!this.status || this.status === 200)
-            callback(data);
+        successCallback(data);
     };
 
     request.open("GET", url);

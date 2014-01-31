@@ -339,12 +339,6 @@ BuildbotIteration.prototype = {
         }
 
         JSON.load(this.queue.buildbot.layoutTestFullResultsURLForIteration(this), function(data) {
-            if (data.error) {
-                console.log(data.error);
-                callback();
-                return;
-            }
-
             this.hasPrettyPatch = data.has_pretty_patch;
 
             this.layoutTestResults.regressions = collectResults(data.tests, function(info) { return info["report"] === "REGRESSION" });
@@ -357,6 +351,10 @@ BuildbotIteration.prototype = {
             console.assert(data.num_missing === this.layoutTestResults.testsWithMissingResults.length);
 
             callback();
-        }.bind(this), {jsonpCallbackName: "ADD_RESULTS"});
+        }.bind(this),
+        function(data) {
+            console.log(data.error);
+            callback();
+        }, {jsonpCallbackName: "ADD_RESULTS"});
     }
 };
