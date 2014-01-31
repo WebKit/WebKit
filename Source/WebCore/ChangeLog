@@ -1,3 +1,49 @@
+2014-01-31  Hans Muller  <hmuller@adobe.com>
+
+        [CSS Shapes] Image valued shape can fail
+        https://bugs.webkit.org/show_bug.cgi?id=127588
+
+        Reviewed by Dean Jackson.
+
+        Correct the handling of image valued shapes that extend into or beyond the
+        margin box. This can happen when object-fit causes one dimension of the shape
+        to be greater than the corresponding margin box dimension.
+
+        Made some simplifications in RasterShapeIntervals::computeShapeMarginIntervals()
+        by making the shapeMargin parameter an int, removing some unnecessary variables.
+
+        Revised the RasterShapeIntervals class. It's now a just a list of size() interval-lists,
+        with valid indices: -offset() <= y < size() - offset(), or minY() to maxY(). If margin-top
+        and shape-margin are specified, then offset() is the larger of shape-margin and margin-top.
+        Similarly size() is the vertical size of the margin-box or the content-box expanded by
+        shape-margin, whichever is larger. See computeShapeMarginIntervals().
+
+        Tests: fast/shapes/shape-outside-floats/shape-outside-image-fit-005.html
+               fast/shapes/shape-outside-floats/shape-outside-image-fit-006.html
+
+        * rendering/shapes/RasterShape.cpp:
+        (WebCore::RasterShapeIntervals::computeShapeMarginIntervals):
+        (WebCore::RasterShape::marginIntervals):
+        * rendering/shapes/RasterShape.h:
+        (WebCore::RasterShapeIntervals::RasterShapeIntervals):
+        (WebCore::RasterShapeIntervals::offset):
+        (WebCore::RasterShapeIntervals::minY):
+        (WebCore::RasterShapeIntervals::maxY):
+        (WebCore::RasterShapeIntervals::intervalsAt):
+        * rendering/shapes/Shape.cpp:
+        (WebCore::Shape::createRasterShape):
+        * rendering/shapes/Shape.h:
+        * rendering/shapes/ShapeInfo.cpp:
+
+        (WebCore::getShapeImageReplacedRect):
+        The rect that the image will be drawn into. This rect can imply image
+        scaling and translation.
+
+        (WebCore::getShapeImageMarginRect):
+        The margin rect relative too the (0,0 origin) shape content rect.
+
+        (WebCore::ShapeInfo<RenderType>::computedShape):
+
 2014-01-31  Andreas Kling  <akling@apple.com>
 
         Deduplicate Document::encoding().

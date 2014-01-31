@@ -217,25 +217,23 @@ void RasterShapeIntervals::getExcludedIntervals(int y1, int y2, IntShapeInterval
 
 // Currently limited to computing the margin boundary for shape-outside for floats, see https://bugs.webkit.org/show_bug.cgi?id=116348.
 
-PassOwnPtr<RasterShapeIntervals> RasterShapeIntervals::computeShapeMarginIntervals(unsigned shapeMargin) const
+PassOwnPtr<RasterShapeIntervals> RasterShapeIntervals::computeShapeMarginIntervals(int shapeMargin) const
 {
-    OwnPtr<RasterShapeIntervals> result = adoptPtr(new RasterShapeIntervals(size(), shapeMargin));
+    int marginIntervalsSize = (offset() > shapeMargin) ? size() : size() - offset() * 2 + shapeMargin * 2;
+    OwnPtr<RasterShapeIntervals> result = adoptPtr(new RasterShapeIntervals(marginIntervalsSize, std::max(shapeMargin, offset())));
     MarginIntervalGenerator marginIntervalGenerator(shapeMargin);
 
-    int minY = bounds().y();
-    int maxY = bounds().maxY();
-
-    for (int y = minY; y < maxY; ++y) {
+    for (int y = bounds().y(); y < bounds().maxY(); ++y) {
         const IntShapeInterval& intervalAtY = limitIntervalAt(y);
         if (intervalAtY.isEmpty())
             continue;
 
         marginIntervalGenerator.set(y, intervalAtY);
-        int marginY0 = y - clampToInteger(shapeMargin);
-        int marginY1 = y + clampToInteger(shapeMargin);
+        int marginY0 = std::max(minY(), y - shapeMargin);
+        int marginY1 = std::min(maxY(), y + shapeMargin);
 
         for (int marginY = y - 1; marginY >= marginY0; --marginY) {
-            if (marginY > minY && limitIntervalAt(marginY).contains(intervalAtY))
+            if (marginY > bounds().y() && limitIntervalAt(marginY).contains(intervalAtY))
                 break;
             result->uniteMarginInterval(marginY, marginIntervalGenerator.intervalAt(marginY));
         }
@@ -243,7 +241,7 @@ PassOwnPtr<RasterShapeIntervals> RasterShapeIntervals::computeShapeMarginInterva
         result->uniteMarginInterval(y, marginIntervalGenerator.intervalAt(y));
 
         for (int marginY = y + 1; marginY <= marginY1; ++marginY) {
-            if (marginY < maxY && limitIntervalAt(marginY).contains(intervalAtY))
+            if (marginY < bounds().maxY() && limitIntervalAt(marginY).contains(intervalAtY))
                 break;
             result->uniteMarginInterval(marginY, marginIntervalGenerator.intervalAt(marginY));
         }
@@ -275,9 +273,11 @@ const RasterShapeIntervals& RasterShape::marginIntervals() const
     if (!shapeMargin())
         return *m_intervals;
 
-    unsigned marginBoundaryRadius = std::min(clampToUnsigned(ceil(shapeMargin())), std::max<unsigned>(m_imageSize.width(), m_imageSize.height()));
-    if (!m_marginIntervals)
+    int marginBoundaryRadius = std::min(clampToInteger(ceil(shapeMargin())), std::max(m_imageSize.width(), m_imageSize.height()));
+    if (!m_marginIntervals) {
+        ASSERT(marginBoundaryRadius >= 0);
         m_marginIntervals = m_intervals->computeShapeMarginIntervals(marginBoundaryRadius);
+    }
 
     return *m_marginIntervals;
 }

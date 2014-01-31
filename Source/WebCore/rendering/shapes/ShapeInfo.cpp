@@ -55,7 +55,7 @@ bool checkShapeImageOrigin(Document& document, CachedImage& cachedImage)
     return false;
 }
 
-static LayoutRect getShapeImageRect(const StyleImage& styleImage, const RenderBox& renderBox)
+static LayoutRect getShapeImageReplacedRect(const RenderBox& renderBox, const StyleImage& styleImage)
 {
     if (renderBox.isRenderImage()) {
         const RenderImage& renderImage = *toRenderImage(&renderBox);
@@ -65,6 +65,13 @@ static LayoutRect getShapeImageRect(const StyleImage& styleImage, const RenderBo
     ASSERT(styleImage.cachedImage());
     ASSERT(styleImage.cachedImage()->hasImage());
     return LayoutRect(LayoutPoint(), styleImage.cachedImage()->image()->size());
+}
+
+static LayoutRect getShapeImageMarginRect(const RenderBox& renderBox, const LayoutSize& shapeSize)
+{
+    LayoutPoint marginBoxOrigin(-renderBox.marginLogicalLeft() - renderBox.borderAndPaddingLogicalLeft(), -renderBox.marginBefore() - renderBox.borderBefore() - renderBox.paddingBefore());
+    LayoutSize marginBoxSizeDelta(renderBox.marginLogicalWidth() + renderBox.borderAndPaddingLogicalWidth(), renderBox.marginLogicalHeight() + renderBox.borderAndPaddingLogicalHeight());
+    return LayoutRect(marginBoxOrigin, shapeSize + marginBoxSizeDelta);
 }
 
 template<class RenderType>
@@ -88,7 +95,9 @@ const Shape& ShapeInfo<RenderType>::computedShape() const
     case ShapeValue::Image: {
         ASSERT(shapeValue->image());
         const StyleImage& styleImage = *(shapeValue->image());
-        m_shape = Shape::createRasterShape(styleImage, shapeImageThreshold, getShapeImageRect(styleImage, m_renderer), m_shapeLogicalSize, writingMode, margin, padding);
+        const LayoutRect& imageRect = getShapeImageReplacedRect(m_renderer, styleImage);
+        const LayoutRect& marginRect = getShapeImageMarginRect(m_renderer, m_shapeLogicalSize);
+        m_shape = Shape::createRasterShape(styleImage, shapeImageThreshold, imageRect, marginRect, writingMode, margin, padding);
         break;
     }
     case ShapeValue::Box: {

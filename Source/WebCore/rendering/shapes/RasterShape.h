@@ -40,10 +40,10 @@ namespace WebCore {
 
 class RasterShapeIntervals {
 public:
-    RasterShapeIntervals(unsigned size, unsigned shapeMargin = 0)
-        : m_shapeMargin(shapeMargin)
+    RasterShapeIntervals(unsigned size, int offset = 0)
+        : m_offset(offset)
     {
-        m_intervalLists.resize(size + shapeMargin * 2);
+        m_intervalLists.resize(size);
     }
 
     const IntRect& bounds() const { return m_bounds; }
@@ -53,23 +53,26 @@ public:
     void getIncludedIntervals(int y1, int y2, IntShapeIntervals& result) const;
     void getExcludedIntervals(int y1, int y2, IntShapeIntervals& result) const;
     bool firstIncludedIntervalY(int minY, const IntSize& minSize, LayoutUnit& result) const;
-    PassOwnPtr<RasterShapeIntervals> computeShapeMarginIntervals(unsigned shapeMargin) const;
+    PassOwnPtr<RasterShapeIntervals> computeShapeMarginIntervals(int shapeMargin) const;
 
     void buildBoundsPath(Path&) const;
 
 private:
     int size() const { return m_intervalLists.size(); }
+    int offset() const { return m_offset; }
+    int minY() const { return -m_offset; }
+    int maxY() const { return -m_offset + m_intervalLists.size(); }
 
     IntShapeIntervals& intervalsAt(int y)
     {
-        ASSERT(static_cast<int>(y + m_shapeMargin) >= 0 && y + m_shapeMargin < m_intervalLists.size());
-        return m_intervalLists[y + m_shapeMargin];
+        ASSERT(y + m_offset >= 0 && static_cast<unsigned>(y + m_offset) < m_intervalLists.size());
+        return m_intervalLists[y + m_offset];
     }
 
     const IntShapeIntervals& intervalsAt(int y) const
     {
-        ASSERT(static_cast<int>(y + m_shapeMargin) >= 0 && y + m_shapeMargin < m_intervalLists.size());
-        return m_intervalLists[y + m_shapeMargin];
+        ASSERT(y + m_offset >= 0 && static_cast<unsigned>(y + m_offset) < m_intervalLists.size());
+        return m_intervalLists[y + m_offset];
     }
 
     IntShapeInterval limitIntervalAt(int y) const
@@ -83,7 +86,7 @@ private:
     void uniteMarginInterval(int y, const IntShapeInterval&);
     IntRect m_bounds;
     Vector<IntShapeIntervals> m_intervalLists;
-    unsigned m_shapeMargin;
+    int m_offset;
 };
 
 class RasterShape : public Shape {
