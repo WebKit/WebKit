@@ -151,8 +151,8 @@ void BytecodeGenerator::preserveLastVar()
 }
 
 BytecodeGenerator::BytecodeGenerator(VM& vm, ProgramNode* programNode, UnlinkedProgramCodeBlock* codeBlock, DebuggerMode debuggerMode, ProfilerMode profilerMode)
-    : m_shouldEmitDebugHooks(debuggerMode == DebuggerOn)
-    , m_shouldEmitProfileHooks(profilerMode == ProfilerOn)
+    : m_shouldEmitDebugHooks(Options::forceDebuggerBytecodeGeneration() || debuggerMode == DebuggerOn)
+    , m_shouldEmitProfileHooks(Options::forceProfilerBytecodeGeneration() || profilerMode == ProfilerOn)
     , m_symbolTable(0)
     , m_scopeNode(programNode)
     , m_codeBlock(vm, codeBlock)
@@ -199,8 +199,8 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, ProgramNode* programNode, UnlinkedP
 }
 
 BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionBodyNode* functionBody, UnlinkedFunctionCodeBlock* codeBlock, DebuggerMode debuggerMode, ProfilerMode profilerMode)
-    : m_shouldEmitDebugHooks(debuggerMode == DebuggerOn)
-    , m_shouldEmitProfileHooks(profilerMode == ProfilerOn)
+    : m_shouldEmitDebugHooks(Options::forceDebuggerBytecodeGeneration() || debuggerMode == DebuggerOn)
+    , m_shouldEmitProfileHooks(Options::forceProfilerBytecodeGeneration() || profilerMode == ProfilerOn)
     , m_symbolTable(codeBlock->symbolTable())
     , m_scopeNode(functionBody)
     , m_codeBlock(vm, codeBlock)
@@ -421,8 +421,8 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionBodyNode* functionBody, Unl
 }
 
 BytecodeGenerator::BytecodeGenerator(VM& vm, EvalNode* evalNode, UnlinkedEvalCodeBlock* codeBlock, DebuggerMode debuggerMode, ProfilerMode profilerMode)
-    : m_shouldEmitDebugHooks(debuggerMode == DebuggerOn)
-    , m_shouldEmitProfileHooks(profilerMode == ProfilerOn)
+    : m_shouldEmitDebugHooks(Options::forceDebuggerBytecodeGeneration() || debuggerMode == DebuggerOn)
+    , m_shouldEmitProfileHooks(Options::forceProfilerBytecodeGeneration() || profilerMode == ProfilerOn)
     , m_symbolTable(codeBlock->symbolTable())
     , m_scopeNode(evalNode)
     , m_codeBlock(vm, codeBlock)
