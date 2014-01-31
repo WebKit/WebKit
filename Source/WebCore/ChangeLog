@@ -1,5 +1,25 @@
 2014-01-30  Simon Fraser  <simon.fraser@apple.com>
 
+        Remove ScrollingCoordinator::setLayerIsContainerForFixedPositionLayers() which is no longer used
+        https://bugs.webkit.org/show_bug.cgi?id=127981
+
+        Reviewed by Andreas Kling.
+
+        setLayerIsContainerForFixedPositionLayers() was only used by Chromium and Blackberry,
+        so remove it.
+        
+        This allows the removal of RenderLayerBacking::registerScrollingLayers(),
+        moving the single useful line of code to the caller.
+
+        * page/scrolling/ScrollingCoordinator.h:
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::updateGraphicsLayerGeometry):
+        * rendering/RenderLayerBacking.h:
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::ensureRootLayer):
+
+2014-01-30  Simon Fraser  <simon.fraser@apple.com>
+
         Some fixed position elements disappear in WK2 on iOS
         https://bugs.webkit.org/show_bug.cgi?id=127977
 

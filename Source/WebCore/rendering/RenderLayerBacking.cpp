@@ -958,7 +958,8 @@ void RenderLayerBacking::updateGraphicsLayerGeometry()
 
     updateDrawsContent(isSimpleContainer);
     updateAfterWidgetResize();
-    registerScrollingLayers();
+
+    compositor().updateViewportConstraintStatus(m_owningLayer);
 }
 
 void RenderLayerBacking::adjustAncestorCompositingBoundsForFlowThread(IntRect& ancestorCompositingBounds, const RenderLayer* compositingAncestor) const
@@ -1015,29 +1016,6 @@ void RenderLayerBacking::updateDirectlyCompositedContents(bool isSimpleContainer
     // to also update the contentsRect.
     updateDirectlyCompositedBackgroundColor(isSimpleContainer, didUpdateContentsRect);
     updateDirectlyCompositedBackgroundImage(isSimpleContainer, didUpdateContentsRect);
-}
-
-void RenderLayerBacking::registerScrollingLayers()
-{
-#if PLATFORM(IOS)
-    compositor().updateViewportConstraintStatus(m_owningLayer);
-#else
-    // Register fixed position layers and their containers with the scrolling coordinator.
-    ScrollingCoordinator* scrollingCoordinator = scrollingCoordinatorFromLayer(m_owningLayer);
-    if (!scrollingCoordinator)
-        return;
-
-    compositor().updateViewportConstraintStatus(m_owningLayer);
-
-    if (!scrollingCoordinator->supportsFixedPositionLayers())
-        return;
-
-    // Page scale is applied as a transform on the root render view layer. Because the scroll
-    // layer is further up in the hierarchy, we need to avoid marking the root render view
-    // layer as a container.
-    bool isContainer = m_owningLayer.hasTransform() && !m_owningLayer.isRootLayer();
-    scrollingCoordinator->setLayerIsContainerForFixedPositionLayers(childForSuperlayers(), isContainer);
-#endif
 }
 
 void RenderLayerBacking::updateInternalHierarchy()

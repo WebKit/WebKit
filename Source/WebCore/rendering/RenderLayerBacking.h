@@ -233,7 +233,6 @@ private:
     bool requiresScrollCornerLayer() const;
     bool updateScrollingLayers(bool scrollingLayers);
     void updateDrawsContent(bool isSimpleContainer);
-    void registerScrollingLayers();
     
     void updateRootLayerConfiguration();
 
