@@ -142,7 +142,7 @@ protected:
     virtual bool isViewVisible() override;
     virtual bool isViewInWindow() override;
 
-    virtual void processDidCrash() override;
+    virtual void processDidExit() override;
     virtual void didRelaunchProcess() override;
     virtual void pageClosed() override;
 

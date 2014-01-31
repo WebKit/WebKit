@@ -1,3 +1,14 @@
+2014-01-30  Jinwoo Song  <jinwoo7.song@samsung.com>
+
+        [EFL][WK2] Unreviewed EFL WebKit2 build fix after r163116.
+        https://bugs.webkit.org/show_bug.cgi?id=127985
+
+        Unreviewed EFL WebKit2 build fix.
+
+        * UIProcess/CoordinatedGraphics/WebView.cpp:
+        (WebKit::WebView::processDidExit):
+        * UIProcess/CoordinatedGraphics/WebView.h:
+
 2014-01-30  Simon Fraser  <simon.fraser@apple.com>
 
         Fix iOS WK2 build after r163156.

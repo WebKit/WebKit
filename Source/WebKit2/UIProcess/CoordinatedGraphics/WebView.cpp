@@ -344,7 +344,7 @@ bool WebView::isViewInWindow()
     return true;
 }
 
-void WebView::processDidCrash()
+void WebView::processDidExit()
 {
     m_client.webProcessCrashed(this, m_page->urlAtProcessExit());
 }
