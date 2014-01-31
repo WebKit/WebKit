@@ -67,3 +67,5 @@ TOOLCHAINS_macosx = $(TOOLCHAINS_macosx_$(MAC_OS_X_VERSION_MAJOR));
 TOOLCHAINS_macosx_1080 = default;
 TOOLCHAINS_macosx_1090 = $(TOOLCHAINS);
 TOOLCHAINS_macosx_101000 = $(TOOLCHAINS_macosx_1090);
+
+SUPPORTED_PLATFORMS = macosx iphoneos iphonesimulator;
