@@ -34,8 +34,20 @@ extern "C" {
 
 WK_EXPORT WKTypeID WKKeyValueStorageManagerGetTypeID();
 
+/* Value type: WKSecurityOriginRef */
+WK_EXPORT WKStringRef WKKeyValueStorageManagerGetOriginKey();
+
+/* Value type: WKDoubleRef, seconds since January 1st, 1970 UTC */
+WK_EXPORT WKStringRef WKKeyValueStorageManagerGetCreationTimeKey();
+
+/* Value type: WKDoubleRef, seconds since January 1st, 1970 UTC */
+WK_EXPORT WKStringRef WKKeyValueStorageManagerGetModificationTimeKey();
+
 typedef void (*WKKeyValueStorageManagerGetKeyValueStorageOriginsFunction)(WKArrayRef, WKErrorRef, void*);
 WK_EXPORT void WKKeyValueStorageManagerGetKeyValueStorageOrigins(WKKeyValueStorageManagerRef keyValueStorageManager, void* context, WKKeyValueStorageManagerGetKeyValueStorageOriginsFunction function);
+
+typedef void (*WKKeyValueStorageManagerGetStorageDetailsByOriginFunction)(WKArrayRef, WKErrorRef, void*);
+WK_EXPORT void WKKeyValueStorageManagerGetStorageDetailsByOrigin(WKKeyValueStorageManagerRef keyValueStorageManager, void* context, WKKeyValueStorageManagerGetStorageDetailsByOriginFunction function);
 
 WK_EXPORT void WKKeyValueStorageManagerDeleteEntriesForOrigin(WKKeyValueStorageManagerRef keyValueStorageManager, WKSecurityOriginRef origin);
 WK_EXPORT void WKKeyValueStorageManagerDeleteAllEntries(WKKeyValueStorageManagerRef keyValueStorageManager);

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,48 +23,19 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebKeyValueStorageManager_h
-#define WebKeyValueStorageManager_h
+#ifndef LocalStorageDetails_h
+#define LocalStorageDetails_h
 
-#include "APIObject.h"
-#include "GenericCallback.h"
-#include "MessageReceiver.h"
-#include "WebContextSupplement.h"
-#include <wtf/PassRefPtr.h>
-#include <wtf/RefPtr.h>
-#include <wtf/Vector.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebKit {
 
-typedef GenericCallback<WKArrayRef> ArrayCallback;
-
-class WebKeyValueStorageManager : public API::ObjectImpl<API::Object::Type::KeyValueStorageManager>, public WebContextSupplement {
-public:
-    static const char* supplementName();
-
-    static PassRefPtr<WebKeyValueStorageManager> create(WebContext*);
-    virtual ~WebKeyValueStorageManager();
-
-    void getKeyValueStorageOrigins(PassRefPtr<ArrayCallback>);
-    void getStorageDetailsByOrigin(PassRefPtr<ArrayCallback>);
-    void deleteEntriesForOrigin(WebSecurityOrigin*);
-    void deleteAllEntries();
-
-    using API::Object::ref;
-    using API::Object::deref;
-
-    static String originKey();
-    static String creationTimeKey();
-    static String modificationTimeKey();
-
-private:
-    explicit WebKeyValueStorageManager(WebContext*);
-
-    // WebContextSupplement
-    virtual void refWebContextSupplement() override;
-    virtual void derefWebContextSupplement() override;
+struct LocalStorageDetails {
+    String originIdentifier;
+    double creationTime;
+    double modificationTime;
 };
 
 } // namespace WebKit
 
-#endif // WebKeyValueStorageManager_h
+#endif // LocalStorageDetails_h

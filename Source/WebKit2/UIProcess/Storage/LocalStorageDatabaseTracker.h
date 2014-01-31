@@ -42,6 +42,8 @@ class WorkQueue;
 
 namespace WebKit {
 
+struct LocalStorageDetails;
+
 class LocalStorageDatabaseTracker : public ThreadSafeRefCounted<LocalStorageDatabaseTracker> {
 public:
     static PassRefPtr<LocalStorageDatabaseTracker> create(PassRefPtr<WorkQueue>);
@@ -55,6 +57,7 @@ public:
     void deleteAllDatabases();
 
     Vector<RefPtr<WebCore::SecurityOrigin>> origins() const;
+    Vector<LocalStorageDetails> details();
 
 private:
     explicit LocalStorageDatabaseTracker(PassRefPtr<WorkQueue>);

@@ -36,9 +36,32 @@ WKTypeID WKKeyValueStorageManagerGetTypeID()
     return toAPI(WebKeyValueStorageManager::APIType);
 }
 
+WKStringRef WKKeyValueStorageManagerGetOriginKey()
+{
+    static API::String* key = API::String::create(WebKeyValueStorageManager::originKey()).leakRef();
+    return toAPI(key);
+}
+
+WKStringRef WKKeyValueStorageManagerGetCreationTimeKey()
+{
+    static API::String* key = API::String::create(WebKeyValueStorageManager::creationTimeKey()).leakRef();
+    return toAPI(key);
+}
+
+WKStringRef WKKeyValueStorageManagerGetModificationTimeKey()
+{
+    static API::String* key = API::String::create(WebKeyValueStorageManager::modificationTimeKey()).leakRef();
+    return toAPI(key);
+}
+
 void WKKeyValueStorageManagerGetKeyValueStorageOrigins(WKKeyValueStorageManagerRef keyValueStorageManagerRef, void* context, WKKeyValueStorageManagerGetKeyValueStorageOriginsFunction callback)
 {
     toImpl(keyValueStorageManagerRef)->getKeyValueStorageOrigins(ArrayCallback::create(context, callback));
+}
+
+void WKKeyValueStorageManagerGetStorageDetailsByOrigin(WKKeyValueStorageManagerRef keyValueStorageManagerRef, void* context, WKKeyValueStorageManagerGetStorageDetailsByOriginFunction callback)
+{
+    toImpl(keyValueStorageManagerRef)->getStorageDetailsByOrigin(ArrayCallback::create(context, callback));
 }
 
 void WKKeyValueStorageManagerDeleteEntriesForOrigin(WKKeyValueStorageManagerRef keyValueStorageManagerRef, WKSecurityOriginRef originRef)

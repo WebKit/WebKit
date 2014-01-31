@@ -27,9 +27,11 @@
 #include "WebKeyValueStorageManager.h"
 
 #include "APIArray.h"
+#include "LocalStorageDetails.h"
 #include "SecurityOriginData.h"
 #include "WebContext.h"
 #include "WebSecurityOrigin.h"
+#include <wtf/NeverDestroyed.h>
 
 using namespace WebCore;
 
@@ -38,6 +40,24 @@ namespace WebKit {
 const char* WebKeyValueStorageManager::supplementName()
 {
     return "WebKeyValueStorageManager";
+}
+
+String WebKeyValueStorageManager::originKey()
+{
+    static NeverDestroyed<String> key(ASCIILiteral("WebKeyValueStorageManagerStorageDetailsOriginKey"));
+    return key;
+}
+
+String WebKeyValueStorageManager::creationTimeKey()
+{
+    static NeverDestroyed<String> key(ASCIILiteral("WebKeyValueStorageManagerStorageDetailsCreationTimeKey"));
+    return key;
+}
+
+String WebKeyValueStorageManager::modificationTimeKey()
+{
+    static NeverDestroyed<String> key(ASCIILiteral("WebKeyValueStorageManagerStorageDetailsModificationTimeKey"));
+    return key;
 }
 
 PassRefPtr<WebKeyValueStorageManager> WebKeyValueStorageManager::create(WebContext* context)
@@ -66,7 +86,7 @@ void WebKeyValueStorageManager::derefWebContextSupplement()
     API::Object::deref();
 }
 
-static void didGetKeyValueStorageOrigins(const Vector<RefPtr<WebCore::SecurityOrigin>>& securityOrigins, void* context)
+static void didGetKeyValueStorageOrigins(const Vector<RefPtr<SecurityOrigin>>& securityOrigins, void* context)
 {
     RefPtr<ArrayCallback> callback = adoptRef(static_cast<ArrayCallback*>(context));
 
@@ -83,7 +103,36 @@ void WebKeyValueStorageManager::getKeyValueStorageOrigins(PassRefPtr<ArrayCallba
 {
     context()->storageManager().getOrigins(RunLoop::main(), prpCallback.leakRef(), didGetKeyValueStorageOrigins);
 }
-    
+
+static void didGetStorageDetailsByOrigin(const Vector<LocalStorageDetails>& storageDetails, void* context)
+{
+    RefPtr<ArrayCallback> callback = adoptRef(static_cast<ArrayCallback*>(context));
+
+    Vector<RefPtr<API::Object>> result;
+    result.reserveInitialCapacity(storageDetails.size());
+
+    for (const LocalStorageDetails& originDetails : storageDetails) {
+        HashMap<String, RefPtr<API::Object>> detailsMap;
+
+        RefPtr<API::Object> origin = WebSecurityOrigin::createFromDatabaseIdentifier(originDetails.originIdentifier);
+
+        detailsMap.set(WebKeyValueStorageManager::originKey(), origin);
+        if (originDetails.creationTime)
+            detailsMap.set(WebKeyValueStorageManager::creationTimeKey(), API::Double::create(originDetails.creationTime));
+        if (originDetails.modificationTime)
+            detailsMap.set(WebKeyValueStorageManager::modificationTimeKey(), API::Double::create(originDetails.modificationTime));
+
+        result.uncheckedAppend(ImmutableDictionary::create(std::move(detailsMap)));
+    }
+
+    callback->performCallbackWithReturnValue(API::Array::create(std::move(result)).get());
+}
+
+void WebKeyValueStorageManager::getStorageDetailsByOrigin(PassRefPtr<ArrayCallback> prpCallback)
+{
+    context()->storageManager().getStorageDetailsByOrigin(RunLoop::main(), prpCallback.leakRef(), didGetStorageDetailsByOrigin);
+}
+
 void WebKeyValueStorageManager::deleteEntriesForOrigin(WebSecurityOrigin* origin)
 {
     context()->storageManager().deleteEntriesForOrigin(origin->securityOrigin());

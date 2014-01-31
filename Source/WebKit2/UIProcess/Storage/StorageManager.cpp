@@ -28,6 +28,7 @@
 
 #include "LocalStorageDatabase.h"
 #include "LocalStorageDatabaseTracker.h"
+#include "LocalStorageDetails.h"
 #include "SecurityOriginData.h"
 #include "StorageAreaMapMessages.h"
 #include "StorageManagerMessages.h"
@@ -425,6 +426,11 @@ void StorageManager::getOrigins(FunctionDispatcher* callbackDispatcher, void* co
     m_queue->dispatch(bind(&StorageManager::getOriginsInternal, this, RefPtr<FunctionDispatcher>(callbackDispatcher), context, callback));
 }
 
+void StorageManager::getStorageDetailsByOrigin(FunctionDispatcher* callbackDispatcher, void* context, void (*callback)(const Vector<LocalStorageDetails>& storageDetails, void* context))
+{
+    m_queue->dispatch(bind(&StorageManager::getStorageDetailsByOriginInternal, this, RefPtr<FunctionDispatcher>(callbackDispatcher), context, callback));
+}
+
 void StorageManager::deleteEntriesForOrigin(SecurityOrigin* securityOrigin)
 {
     m_queue->dispatch(bind(&StorageManager::deleteEntriesForOriginInternal, this, RefPtr<SecurityOrigin>(securityOrigin)));
@@ -633,6 +639,12 @@ void StorageManager::getOriginsInternal(FunctionDispatcher* dispatcher, void* co
 {
     OwnPtr<Vector<RefPtr<WebCore::SecurityOrigin>>> securityOrigins = adoptPtr(new Vector<RefPtr<WebCore::SecurityOrigin>>(m_localStorageDatabaseTracker->origins()));
     dispatcher->dispatch(bind(callCallbackFunction, context, callbackFunction, securityOrigins.leakPtr()));
+}
+
+void StorageManager::getStorageDetailsByOriginInternal(FunctionDispatcher* dispatcher, void* context, void (*callbackFunction)(const Vector<LocalStorageDetails>& storageDetails, void* context))
+{
+    Vector<LocalStorageDetails> storageDetails = m_localStorageDatabaseTracker->details();
+    dispatcher->dispatch(bind(callbackFunction, std::move(storageDetails), context));
 }
 
 void StorageManager::deleteEntriesForOriginInternal(SecurityOrigin* securityOrigin)

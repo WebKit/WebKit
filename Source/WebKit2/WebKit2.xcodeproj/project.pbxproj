@@ -1366,6 +1366,7 @@
 		E133FD8A1423DD7F00FC7BFB /* WebKit.icns in Resources */ = {isa = PBXBuildFile; fileRef = E133FD891423DD7F00FC7BFB /* WebKit.icns */; };
 		E134F01712EA5D33004EC58D /* WKPrintingView.h in Headers */ = {isa = PBXBuildFile; fileRef = E134F01512EA5D11004EC58D /* WKPrintingView.h */; };
 		E134F01A12EA5D99004EC58D /* WKPrintingView.mm in Sources */ = {isa = PBXBuildFile; fileRef = E134F01912EA5D99004EC58D /* WKPrintingView.mm */; };
+		E13833EC189C33C8001E2350 /* LocalStorageDetails.h in Headers */ = {isa = PBXBuildFile; fileRef = E13833EB189C33C8001E2350 /* LocalStorageDetails.h */; };
 		E14A954916E016A40068DE82 /* NetworkProcessPlatformStrategies.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E14A954716E016A40068DE82 /* NetworkProcessPlatformStrategies.cpp */; };
 		E14A954A16E016A40068DE82 /* NetworkProcessPlatformStrategies.h in Headers */ = {isa = PBXBuildFile; fileRef = E14A954816E016A40068DE82 /* NetworkProcessPlatformStrategies.h */; };
 		E1513C66166EABB200149FCB /* ChildProcessProxy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1513C64166EABB200149FCB /* ChildProcessProxy.cpp */; };
@@ -3121,6 +3122,7 @@
 		E133FD891423DD7F00FC7BFB /* WebKit.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; name = WebKit.icns; path = Resources/WebKit.icns; sourceTree = "<group>"; };
 		E134F01512EA5D11004EC58D /* WKPrintingView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKPrintingView.h; sourceTree = "<group>"; };
 		E134F01912EA5D99004EC58D /* WKPrintingView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKPrintingView.mm; sourceTree = "<group>"; };
+		E13833EB189C33C8001E2350 /* LocalStorageDetails.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LocalStorageDetails.h; sourceTree = "<group>"; };
 		E14A954716E016A40068DE82 /* NetworkProcessPlatformStrategies.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = NetworkProcessPlatformStrategies.cpp; path = NetworkProcess/NetworkProcessPlatformStrategies.cpp; sourceTree = "<group>"; };
 		E14A954816E016A40068DE82 /* NetworkProcessPlatformStrategies.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NetworkProcessPlatformStrategies.h; path = NetworkProcess/NetworkProcessPlatformStrategies.h; sourceTree = "<group>"; };
 		E1513C64166EABB200149FCB /* ChildProcessProxy.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ChildProcessProxy.cpp; sourceTree = "<group>"; };
@@ -4935,6 +4937,7 @@
 				BC06F43912DBCCFB002D78DE /* GeolocationPermissionRequestProxy.cpp */,
 				BC06F43812DBCCFB002D78DE /* GeolocationPermissionRequestProxy.h */,
 				BC6EDAA5111271C600E7678B /* PageClient.h */,
+				E13833EB189C33C8001E2350 /* LocalStorageDetails.h */,
 				1AC75379183A9FDA0072CB15 /* PageLoadState.cpp */,
 				1AC7537A183A9FDB0072CB15 /* PageLoadState.h */,
 				BC597074116591D000551FCA /* ProcessModel.h */,
@@ -6745,6 +6748,7 @@
 				518ACAEA12AEE6BB00B04B83 /* WKProtectionSpaceTypes.h in Headers */,
 				37948409150C4B9700E52CE9 /* WKRenderLayer.h in Headers */,
 				37608823150414F700FC82C7 /* WKRenderObject.h in Headers */,
+				E13833EC189C33C8001E2350 /* LocalStorageDetails.h in Headers */,
 				3336763B130C99DC006C9DE2 /* WKResourceCacheManager.h in Headers */,
 				BC8A501511765F5600757573 /* WKRetainPtr.h in Headers */,
 				F634445D12A885E9000612D8 /* WKSecurityOrigin.h in Headers */,
