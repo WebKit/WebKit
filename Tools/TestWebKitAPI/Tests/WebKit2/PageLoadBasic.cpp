@@ -109,11 +109,7 @@ static void decidePolicyForResponse(WKPageRef page, WKFrameRef frame, WKURLRespo
 }
 
 // FIXME: http://webkit.org/b/127934 REGRESSION (r163037): WebKit2.PageLoadBasic API test failing on Mountain Lion
-#if defined(__MAC_OS_X_VERSION_MIN_REQUIRED) && __MAC_OS_X_VERSION_MIN_REQUIRED == 1080
-TEST(WebKit2, DISABLED_PageLoadBasic)
-#else
 TEST(WebKit2, PageLoadBasic)
-#endif
 {
     State state;
 

@@ -52,7 +52,7 @@ WKStringRef WKURLCopyString(WKURLRef url)
 
 bool WKURLIsEqual(WKURLRef a, WKURLRef b)
 {
-    return toImpl(a)->string() == toImpl(b)->string();
+    return API::URL::equals(*toImpl(a), *toImpl(b));
 }
 
 WKStringRef WKURLCopyHostName(WKURLRef url)

@@ -58,6 +58,11 @@ public:
 
     const WTF::String& string() const { return m_string; }
 
+    static bool equals(const URL& a, const URL& b)
+    {
+        return a.url() == b.url();
+    }
+
     WTF::String host() const
     {
         parseURLIfNecessary();
@@ -107,6 +112,12 @@ private:
         : m_string(string)
         , m_parsedURL(std::move(parsedURL))
     {
+    }
+
+    const WebCore::URL& url() const
+    {
+        parseURLIfNecessary();
+        return *m_parsedURL;
     }
 
     void parseURLIfNecessary() const
