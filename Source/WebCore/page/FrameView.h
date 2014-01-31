@@ -129,8 +129,6 @@ public:
     IntRect customFixedPositionLayoutRect() const { return m_customFixedPositionLayoutRect; }
     void setCustomFixedPositionLayoutRect(const IntRect&);
     bool updateFixedPositionLayoutRect();
-#else
-    bool useCustomFixedPositionLayoutRect() const { return false; }
 #endif
 
 #if ENABLE(REQUEST_ANIMATION_FRAME)
@@ -481,7 +479,6 @@ private:
     bool useSlowRepaintsIfNotOverlapped() const;
     void updateCanBlitOnScrollRecursively();
     bool contentsInCompositedLayer() const;
-    bool shouldLayoutAfterViewportChange() const;
 
     bool shouldUpdateCompositingLayersAfterScrolling() const;
 
