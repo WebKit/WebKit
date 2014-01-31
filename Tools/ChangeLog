@@ -1,3 +1,15 @@
+2014-01-30  Anders Carlsson  <andersca@apple.com>
+
+        Add a webView:didFailProvisionalNavigation:withError: delegate method
+        https://bugs.webkit.org/show_bug.cgi?id=127968
+
+        Reviewed by Dan Bernstein.
+
+        * TestWebKitAPI/Tests/WebKit2Cocoa/Navigation.mm:
+        (-[DidFailProvisionalNavigationDelegate webView:didStartProvisionalNavigation:]):
+        (-[DidFailProvisionalNavigationDelegate webView:didFailProvisionalNavigation:withError:]):
+        (TEST):
+
 2014-01-30  Ryosuke Niwa  <rniwa@webkit.org>
 
         The test server build fixes.

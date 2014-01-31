@@ -34,11 +34,11 @@
 
 #if WK_API_ENABLED
 
-@interface NavigationDelegate : NSObject <WKNavigationDelegate>
-@end
-
 static bool isDone;
 static RetainPtr<WKNavigation> currentNavigation;
+
+@interface NavigationDelegate : NSObject <WKNavigationDelegate>
+@end
 
 @implementation NavigationDelegate
 
@@ -75,6 +75,46 @@ TEST(WKNavigation, LoadRequest)
     [webView setNavigationDelegate:delegate.get()];
 
     NSURLRequest *request = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"simple" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
+
+    currentNavigation = [webView loadRequest:request];
+    ASSERT_NOT_NULL(currentNavigation);
+    ASSERT_TRUE([[currentNavigation request] isEqual:request]);
+
+    TestWebKitAPI::Util::run(&isDone);
+}
+
+@interface DidFailProvisionalNavigationDelegate : NSObject <WKNavigationDelegate>
+@end
+
+@implementation DidFailProvisionalNavigationDelegate
+
+- (void)webView:(WKWebView *)webView didStartProvisionalNavigation:(WKNavigation *)navigation
+{
+    EXPECT_EQ(currentNavigation, navigation);
+    EXPECT_NOT_NULL(navigation.request);
+}
+
+- (void)webView:(WKWebView *)webView didFailProvisionalNavigation:(WKNavigation *)navigation withError:(NSError *)error
+{
+    EXPECT_EQ(currentNavigation, navigation);
+    EXPECT_NOT_NULL(navigation.request);
+
+    EXPECT_TRUE([error.domain isEqualToString:NSURLErrorDomain]);
+    EXPECT_EQ(NSURLErrorUnsupportedURL, error.code);
+
+    isDone = true;
+}
+
+@end
+
+TEST(WKNavigation, DidFailProvisionalNavigation)
+{
+    RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
+
+    RetainPtr<DidFailProvisionalNavigationDelegate> delegate = adoptNS([[DidFailProvisionalNavigationDelegate alloc] init]);
+    [webView setNavigationDelegate:delegate.get()];
+
+    NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"non-existant-scheme://"]];
 
     currentNavigation = [webView loadRequest:request];
     ASSERT_NOT_NULL(currentNavigation);

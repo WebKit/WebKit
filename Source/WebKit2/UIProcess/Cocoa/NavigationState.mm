@@ -66,6 +66,7 @@ void NavigationState::setNavigationDelegate(id <WKNavigationDelegate> delegate)
     m_navigationDelegateMethods.webViewDecidePolicyForNavigationResponseDecisionHandler = [delegate respondsToSelector:@selector(webView:decidePolicyForNavigationResponse:decisionHandler:)];
 
     m_navigationDelegateMethods.webViewDidStartProvisionalNavigation = [delegate respondsToSelector:@selector(webView:didStartProvisionalNavigation:)];
+    m_navigationDelegateMethods.webViewDidFailProvisionalNavigationWithError = [delegate respondsToSelector:@selector(webView:didFailProvisionalNavigation:withError:)];
 }
 
 RetainPtr<WKNavigation> NavigationState::createLoadRequestNavigation(uint64_t navigationID, NSURLRequest *request)
@@ -186,6 +187,28 @@ void NavigationState::LoaderClient::didStartProvisionalLoadForFrame(WebPageProxy
         navigation = m_navigationState.m_navigations.get(navigationID).get();
 
     [navigationDelegate.get() webView:m_navigationState.m_webView didStartProvisionalNavigation:navigation];
+}
+
+void NavigationState::LoaderClient::didFailProvisionalLoadWithErrorForFrame(WebPageProxy*, WebFrameProxy* webFrameProxy, uint64_t navigationID, const WebCore::ResourceError& error, API::Object*)
+{
+    if (!webFrameProxy->isMainFrame())
+        return;
+
+    // FIXME: We should assert that navigationID is not zero here, but it's currently zero for navigations originating from the web process.
+    RetainPtr<WKNavigation> navigation;
+    if (navigationID)
+        navigation = m_navigationState.m_navigations.take(navigationID);
+
+    // FIXME: Set the error on the navigation object.
+
+    if (!m_navigationState.m_navigationDelegateMethods.webViewDidFailProvisionalNavigationWithError)
+        return;
+
+    auto navigationDelegate = m_navigationState.m_navigationDelegate.get();
+    if (!navigationDelegate)
+        return;
+
+    [navigationDelegate.get() webView:m_navigationState.m_webView didFailProvisionalNavigation:navigation.get() withError:error];
 }
 
 } // namespace WebKit

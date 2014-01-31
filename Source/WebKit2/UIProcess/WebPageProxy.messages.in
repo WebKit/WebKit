@@ -120,17 +120,17 @@ messages -> WebPageProxy {
     DidCreateSubframe(uint64_t frameID)
 
     # Frame load messages
+    DidStartProvisionalLoadForFrame(uint64_t frameID, uint64_t navigationID, String url, String unreachableURL, WebKit::InjectedBundleUserMessageEncoder userData) Variadic
+    DidReceiveServerRedirectForProvisionalLoadForFrame(uint64_t frameID, String url, WebKit::InjectedBundleUserMessageEncoder userData) Variadic
+    DidFailProvisionalLoadForFrame(uint64_t frameID, uint64_t navigationID, WebCore::ResourceError error, WebKit::InjectedBundleUserMessageEncoder userData) Variadic
     DidCommitLoadForFrame(uint64_t frameID, String mimeType, uint32_t loadType, WebCore::CertificateInfo certificateInfo, WebKit::InjectedBundleUserMessageEncoder userData) Variadic
     DidFailLoadForFrame(uint64_t frameID, WebCore::ResourceError error, WebKit::InjectedBundleUserMessageEncoder userData) Variadic
-    DidFailProvisionalLoadForFrame(uint64_t frameID, WebCore::ResourceError error, WebKit::InjectedBundleUserMessageEncoder userData) Variadic
     DidFinishDocumentLoadForFrame(uint64_t frameID, WebKit::InjectedBundleUserMessageEncoder userData) Variadic
     DidFinishLoadForFrame(uint64_t frameID, WebKit::InjectedBundleUserMessageEncoder userData) Variadic
     DidFirstLayoutForFrame(uint64_t frameID, WebKit::InjectedBundleUserMessageEncoder userData) Variadic
     DidFirstVisuallyNonEmptyLayoutForFrame(uint64_t frameID, WebKit::InjectedBundleUserMessageEncoder userData) Variadic
     DidLayout(uint32_t type, WebKit::InjectedBundleUserMessageEncoder userData) Variadic
-    DidReceiveServerRedirectForProvisionalLoadForFrame(uint64_t frameID, String url, WebKit::InjectedBundleUserMessageEncoder userData) Variadic
     DidRemoveFrameFromHierarchy(uint64_t frameID, WebKit::InjectedBundleUserMessageEncoder userData) Variadic
-    DidStartProvisionalLoadForFrame(uint64_t frameID, uint64_t navigationID, String url, String unreachableURL, WebKit::InjectedBundleUserMessageEncoder userData) Variadic
     DidReceiveTitleForFrame(uint64_t frameID, String title, WebKit::InjectedBundleUserMessageEncoder userData) Variadic
     DidDisplayInsecureContentForFrame(uint64_t frameID, WebKit::InjectedBundleUserMessageEncoder userData) Variadic
     DidRunInsecureContentForFrame(uint64_t frameID, WebKit::InjectedBundleUserMessageEncoder userData) Variadic

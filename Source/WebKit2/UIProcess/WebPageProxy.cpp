@@ -2146,7 +2146,7 @@ void WebPageProxy::didReceiveServerRedirectForProvisionalLoadForFrame(uint64_t f
     m_loaderClient->didReceiveServerRedirectForProvisionalLoadForFrame(this, frame, userData.get());
 }
 
-void WebPageProxy::didFailProvisionalLoadForFrame(uint64_t frameID, const ResourceError& error, IPC::MessageDecoder& decoder)
+void WebPageProxy::didFailProvisionalLoadForFrame(uint64_t frameID, uint64_t navigationID, const ResourceError& error, IPC::MessageDecoder& decoder)
 {
     RefPtr<API::Object> userData;
     WebContextUserMessageDecoder messageDecoder(userData, process());
@@ -2164,7 +2164,7 @@ void WebPageProxy::didFailProvisionalLoadForFrame(uint64_t frameID, const Resour
     frame->didFailProvisionalLoad();
 
     m_pageLoadState.commitChanges();
-    m_loaderClient->didFailProvisionalLoadWithErrorForFrame(this, frame, error, userData.get());
+    m_loaderClient->didFailProvisionalLoadWithErrorForFrame(this, frame, navigationID, error, userData.get());
 }
 
 void WebPageProxy::clearLoadDependentCallbacks()

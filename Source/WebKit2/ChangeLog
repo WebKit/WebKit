@@ -1,5 +1,28 @@
 2014-01-30  Anders Carlsson  <andersca@apple.com>
 
+        Add a webView:didFailProvisionalNavigation:withError: delegate method
+        https://bugs.webkit.org/show_bug.cgi?id=127968
+
+        Reviewed by Dan Bernstein.
+
+        * UIProcess/API/APILoaderClient.h:
+        (API::LoaderClient::didFailProvisionalLoadWithErrorForFrame):
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageSetPageLoaderClient):
+        * UIProcess/API/Cocoa/WKNavigationDelegate.h:
+        * UIProcess/Cocoa/NavigationState.h:
+        * UIProcess/Cocoa/NavigationState.mm:
+        (WebKit::NavigationState::setNavigationDelegate):
+        (WebKit::NavigationState::LoaderClient::didFailProvisionalLoadWithErrorForFrame):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didFailProvisionalLoadForFrame):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::dispatchDidFailProvisionalLoad):
+
+2014-01-30  Anders Carlsson  <andersca@apple.com>
+
         Add a webView:didStartProvisionalNavigation: delegate method
         https://bugs.webkit.org/show_bug.cgi?id=127965
 
