@@ -1,3 +1,9 @@
+2014-01-30  Jessie Berlin  <jberlin@apple.com>
+
+        Speculative build fix.
+
+        * page/animation/CSSPropertyAnimation.cpp:
+
 2014-01-30  Zalan Bujtas  <zalan@apple.com>
 
         Subpixel rendering: Change BorderData's width from unsigned to float to enable subpixel border painting.

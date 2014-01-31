@@ -62,11 +62,6 @@ static inline int blendFunc(const AnimationBase*, int from, int to, double progr
     return blend(from, to, progress);
 }
 
-static inline unsigned blendFunc(const AnimationBase*, unsigned from, unsigned to, double progress)
-{
-    return blend(from, to, progress);
-}
-
 static inline double blendFunc(const AnimationBase*, double from, double to, double progress)
 {
     return blend(from, to, progress);
