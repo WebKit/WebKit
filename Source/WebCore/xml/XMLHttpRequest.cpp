@@ -120,7 +120,7 @@ XMLHttpRequestStaticData::XMLHttpRequestStaticData()
 
 static const XMLHttpRequestStaticData& staticData()
 {
-    std::once_flag onceFlag;
+    static std::once_flag onceFlag;
     static const XMLHttpRequestStaticData* staticData;
 
     std::call_once(onceFlag, [] {
