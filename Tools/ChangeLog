@@ -1,3 +1,12 @@
+2014-01-31  Filip Pizlo  <fpizlo@apple.com>
+
+        Having a custom LLVM checkout should always override all other ways of getting LLVM
+        https://bugs.webkit.org/show_bug.cgi?id=128015
+
+        Reviewed by Oliver Hunt.
+
+        * Scripts/copy-webkitlibraries-to-product-directory:
+
 2014-01-31  Daniel Bates  <dabates@apple.com>
 
         WebKit Bot Watcher's Dashboard: Teach JSON.load() to take optional failure callback function

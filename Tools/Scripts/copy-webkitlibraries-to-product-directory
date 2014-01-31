@@ -122,35 +122,35 @@ if ($llvm) {
     my $majorDarwinVersion = (split /\./, `uname -r`)[0];
     my $useOwnLLVM = 0;
     my $ownLLVMDirectory;
-    if ($llvmLibraryPackage eq "" && $llvmIncludePackage eq "") {
-        if (defined($ENV{LLVM_SOURCE_PATH})) {
-            $useOwnLLVM = 1;
-            $ownLLVMDirectory = $ENV{LLVM_SOURCE_PATH};
-        } elsif (-d "llvm" && -e "llvm/LLVMBuild.txt") {
-            $useOwnLLVM = 1;
-            $ownLLVMDirectory = sourceDir() . "/llvm";
-        } elsif (defined($ENV{LLVM_LIBRARY_PACKAGE}) && defined($ENV{LLVM_INCLUDE_PACKAGE})) {
-            $llvmLibraryPackage = $ENV{LLVM_LIBRARY_PACKAGE};
-            $llvmIncludePackage = $ENV{LLVM_INCLUDE_PACKAGE};
-        } elsif ($majorDarwinVersion == 11) {
-            $llvmLibraryPackage = "WebKitLibraries/LLVMLibrariesLion.tar.bz2";
-            $llvmIncludePackage = "WebKitLibraries/LLVMIncludesLion.tar.bz2";
-        } elsif ($majorDarwinVersion == 12) {
-            $llvmLibraryPackage = "WebKitLibraries/LLVMLibrariesMountainLion.tar.bz2";
-            $llvmIncludePackage = "WebKitLibraries/LLVMIncludesMountainLion.tar.bz2";
-        } elsif ($majorDarwinVersion == 13) {
-            $llvmLibraryPackage = "WebKitLibraries/LLVMLibrariesMavericks.tar.bz2";
-            $llvmIncludePackage = "WebKitLibraries/LLVMIncludesMavericks.tar.bz2";
-        } else {
-            print "Don't know where to find LLVM!\n";
-            print "\n";
-            print "Try defining LLVM_LIBRARY_PACKAGE and LLVM_INCLUDE_PACKAGE or setting the\n";
-            print "--use-llvm-includes and --use-llvm-libraries options.\n";
-            print "\n";
-            print "Alternatively, you can check out llvm trunk into the WebKit directory:\n";
-            print "svn co http://llvm.org/svn/llvm-project/llvm/trunk llvm\n";
-            exit 1;
-        }
+    if (defined($ENV{LLVM_SOURCE_PATH})) {
+        $useOwnLLVM = 1;
+        $ownLLVMDirectory = $ENV{LLVM_SOURCE_PATH};
+    } elsif (-d "llvm" && -e "llvm/LLVMBuild.txt") {
+        $useOwnLLVM = 1;
+        $ownLLVMDirectory = sourceDir() . "/llvm";
+    } elsif ($llvmLibraryPackage ne "" && $llvmIncludePackage ne "") {
+        # Command-line arguments override our other ways of finding the packages.
+    } elsif (defined($ENV{LLVM_LIBRARY_PACKAGE}) && defined($ENV{LLVM_INCLUDE_PACKAGE})) {
+        $llvmLibraryPackage = $ENV{LLVM_LIBRARY_PACKAGE};
+        $llvmIncludePackage = $ENV{LLVM_INCLUDE_PACKAGE};
+    } elsif ($majorDarwinVersion == 11) {
+        $llvmLibraryPackage = "WebKitLibraries/LLVMLibrariesLion.tar.bz2";
+        $llvmIncludePackage = "WebKitLibraries/LLVMIncludesLion.tar.bz2";
+    } elsif ($majorDarwinVersion == 12) {
+        $llvmLibraryPackage = "WebKitLibraries/LLVMLibrariesMountainLion.tar.bz2";
+        $llvmIncludePackage = "WebKitLibraries/LLVMIncludesMountainLion.tar.bz2";
+    } elsif ($majorDarwinVersion == 13) {
+        $llvmLibraryPackage = "WebKitLibraries/LLVMLibrariesMavericks.tar.bz2";
+        $llvmIncludePackage = "WebKitLibraries/LLVMIncludesMavericks.tar.bz2";
+    } else {
+        print "Don't know where to find LLVM!\n";
+        print "\n";
+        print "Try defining LLVM_LIBRARY_PACKAGE and LLVM_INCLUDE_PACKAGE or setting the\n";
+        print "--use-llvm-includes and --use-llvm-libraries options.\n";
+        print "\n";
+        print "Alternatively, you can check out llvm trunk into the WebKit directory:\n";
+        print "svn co http://llvm.org/svn/llvm-project/llvm/trunk llvm\n";
+        exit 1;
     }
 
     sub fileContains
