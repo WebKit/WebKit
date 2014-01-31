@@ -44,6 +44,7 @@
 #include "RenderNamedFlowThread.h"
 #include "RenderSelectionInfo.h"
 #include "RenderWidget.h"
+#include "Settings.h"
 #include "StyleInheritedData.h"
 #include "TransformState.h"
 #include <wtf/StackStats.h>
@@ -554,14 +555,14 @@ void RenderView::paintBoxDecorations(PaintInfo& paintInfo, const LayoutPoint&)
         rootObscuresBackground = rendererObscuresBackground(rootRenderer);
     }
 
-    bool hasTiledMargin = false;
-    hasTiledMargin = compositor().mainFrameBackingIsTiledWithMargin();
+    compositor().setRootExtendedBackgroundColor(frameView().frame().settings().backgroundShouldExtendBeyondPage()
+        ? frameView().documentBackgroundColor() : Color());
 
     Page* page = document().page();
     float pageScaleFactor = page ? page->pageScaleFactor() : 1;
 
     // If painting will entirely fill the view, no need to fill the background.
-    if (!hasTiledMargin && rootFillsViewport && rootObscuresBackground && pageScaleFactor >= 1)
+    if (rootFillsViewport && rootObscuresBackground && pageScaleFactor >= 1)
         return;
 
     // This code typically only executes if the root element's visibility has been set to hidden,
@@ -571,7 +572,7 @@ void RenderView::paintBoxDecorations(PaintInfo& paintInfo, const LayoutPoint&)
     if (frameView().isTransparent()) // FIXME: This needs to be dynamic. We should be able to go back to blitting if we ever stop being transparent.
         frameView().setCannotBlitToWindow(); // The parent must show behind the child.
     else {
-        Color backgroundColor = hasTiledMargin ? frameView().documentBackgroundColor() : frameView().baseBackgroundColor();
+        Color backgroundColor = frameView().baseBackgroundColor();
         if (backgroundColor.alpha()) {
             CompositeOperator previousOperator = paintInfo.context->compositeOperation();
             paintInfo.context->setCompositeOperation(CompositeCopy);
@@ -1035,7 +1036,7 @@ bool RenderView::rootBackgroundIsEntirelyFixed() const
 LayoutRect RenderView::backgroundRect(RenderBox* backgroundRenderer) const
 {
     if (!hasColumns())
-        return frameView().hasExtendedBackground() ? frameView().extendedBackgroundRect() : unscaledDocumentRect();
+        return frameView().hasExtendedBackgroundRectForPainting() ? frameView().extendedBackgroundRectForPainting() : unscaledDocumentRect();
 
     ColumnInfo* columnInfo = this->columnInfo();
     LayoutRect backgroundRect(0, 0, columnInfo->desiredColumnWidth(), columnInfo->columnHeight() * columnInfo->columnCount());

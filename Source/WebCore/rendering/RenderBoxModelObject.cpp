@@ -1094,8 +1094,8 @@ void RenderBoxModelObject::calculateBackgroundImageGeometry(const RenderLayerMod
         // the background positioning area.
         if (isRoot()) {
             positioningAreaSize = pixelSnappedIntSize(toRenderBox(this)->size() - LayoutSize(left + right, top + bottom), toRenderBox(this)->location());
-            if (view().frameView().hasExtendedBackground()) {
-                IntRect extendedBackgroundRect = view().frameView().extendedBackgroundRect();
+            if (view().frameView().hasExtendedBackgroundRectForPainting()) {
+                IntRect extendedBackgroundRect = view().frameView().extendedBackgroundRectForPainting();
                 left += (marginLeft() - extendedBackgroundRect.x());
                 top += (marginTop() - extendedBackgroundRect.y());
             }

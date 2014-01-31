@@ -897,6 +897,12 @@ void RenderElement::styleWillChange(StyleDifference diff, const RenderStyle& new
         if (newStyleSlowScroll)
             view().frameView().addSlowRepaintObject(this);
     }
+
+    if (isRoot() || isBody()) {
+        bool needsExtendedBackground = view().frameView().needsExtendedBackgroundRectForPainting();
+        if (view().frameView().hasExtendedBackgroundRectForPainting() != needsExtendedBackground)
+            view().frameView().setHasExtendedBackgroundRectForPainting(needsExtendedBackground);
+    }
 }
 
 #if !PLATFORM(IOS)

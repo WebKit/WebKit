@@ -789,7 +789,7 @@ bool RenderLayerCompositor::updateBacking(RenderLayer& layer, CompositingChangeR
                     updateLayerForFooter(page->footerHeight());
                 }
 #endif
-                if (mainFrameBackingIsTiledWithMargin())
+                if (m_renderView.frameView().frame().settings().backgroundShouldExtendBeyondPage())
                     m_rootContentLayer->setMasksToBounds(false);
             }
 
@@ -2736,19 +2736,6 @@ bool RenderLayerCompositor::mainFrameBackingIsTiled() const
     return backing->usingTiledBacking();
 }
 
-bool RenderLayerCompositor::mainFrameBackingIsTiledWithMargin() const
-{
-    RenderLayer* layer = m_renderView.layer();
-    if (!layer)
-        return false;
-
-    RenderLayerBacking* backing = layer->backing();
-    if (!backing)
-        return false;
-
-    return backing->tiledBackingHasMargin();
-}
-
 bool RenderLayerCompositor::shouldCompositeOverflowControls() const
 {
     FrameView& frameView = m_renderView.frameView();
@@ -2805,6 +2792,10 @@ bool RenderLayerCompositor::requiresContentShadowLayer() const
 
 #if PLATFORM(MAC)
     if (viewHasTransparentBackground())
+        return false;
+
+    // If the background is going to extend, then it doesn't make sense to have a shadow layer.
+    if (m_renderView.frameView().frame().settings().backgroundShouldExtendBeyondPage())
         return false;
 
     // On Mac, we want a content shadow layer if we're using tiled drawing and can scroll.
@@ -2963,6 +2954,19 @@ bool RenderLayerCompositor::viewHasTransparentBackground(Color* backgroundColor)
     return documentBackgroundColor.hasAlpha();
 }
 
+void RenderLayerCompositor::setRootExtendedBackgroundColor(const Color& color)
+{
+#if ENABLE(RUBBER_BANDING)
+    if (!m_layerForOverhangAreas)
+        return;
+
+    m_layerForOverhangAreas->setBackgroundColor(color);
+
+    if (!color.isValid())
+        m_layerForOverhangAreas->setCustomAppearance(GraphicsLayer::ScrollingOverhang);
+#endif
+}
+
 void RenderLayerCompositor::updateOverflowControlsLayers()
 {
 #if ENABLE(RUBBER_BANDING)
@@ -2974,7 +2978,11 @@ void RenderLayerCompositor::updateOverflowControlsLayers()
 #endif
             m_layerForOverhangAreas->setDrawsContent(false);
             m_layerForOverhangAreas->setSize(m_renderView.frameView().frameRect().size());
-            m_layerForOverhangAreas->setCustomAppearance(GraphicsLayer::ScrollingOverhang);
+
+            if (m_renderView.frameView().frame().settings().backgroundShouldExtendBeyondPage())
+                m_layerForOverhangAreas->setBackgroundColor(m_renderView.frameView().documentBackgroundColor());
+            else
+                m_layerForOverhangAreas->setCustomAppearance(GraphicsLayer::ScrollingOverhang);
 
             // We want the overhang areas layer to be positioned below the frame contents,
             // so insert it below the clip layer.

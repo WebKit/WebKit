@@ -138,7 +138,6 @@ RenderLayerBacking::RenderLayerBacking(RenderLayer& layer)
         if (m_isMainFrameRenderViewLayer) {
             tiledBacking->setExposedRect(renderer().frame().view()->exposedRect());
             tiledBacking->setUnparentsOffscreenTiles(true);
-            setTiledBackingHasMargins(page->settings().backgroundShouldExtendBeyondPage());
         }
 
         tiledBacking->setScrollingPerformanceLoggingEnabled(page->settings().scrollingPerformanceLoggingEnabled());
@@ -192,11 +191,6 @@ bool RenderLayerBacking::shouldUseTiledBacking(const GraphicsLayer*) const
     return m_usingTiledCacheLayer && m_creatingPrimaryGraphicsLayer;
 }
 
-bool RenderLayerBacking::tiledBackingHasMargin() const
-{
-    return m_usingTiledCacheLayer && tiledBacking()->hasMargins();
-}
-
 void RenderLayerBacking::tiledBackingUsageChanged(const GraphicsLayer* layer, bool usingTiledBacking)
 {
     compositor().layerTiledBackingUsageChanged(layer, usingTiledBacking);
@@ -240,13 +234,14 @@ void RenderLayerBacking::adjustTiledBackingCoverage()
     tiledBacking()->setTileCoverage(tileCoverage);
 }
 
-void RenderLayerBacking::setTiledBackingHasMargins(bool extendBackground)
+void RenderLayerBacking::setTiledBackingHasMargins(bool hasExtendedBackgroundRect)
 {
     if (!m_usingTiledCacheLayer)
         return;
 
-    int marginSize = extendBackground ? 512 : 0;
-    tiledBacking()->setTileMargins(marginSize, marginSize, marginSize, marginSize);
+    int marginLeftAndRightSize = hasExtendedBackgroundRect ? defaultTileWidth : 0;
+    int marginTopAndBottomSize = hasExtendedBackgroundRect ? defaultTileHeight : 0;
+    tiledBacking()->setTileMargins(marginTopAndBottomSize, marginTopAndBottomSize, marginLeftAndRightSize, marginLeftAndRightSize);
 }
 
 void RenderLayerBacking::updateDebugIndicators(bool showBorder, bool showRepaintCounter)

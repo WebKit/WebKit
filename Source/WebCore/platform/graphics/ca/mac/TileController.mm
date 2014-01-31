@@ -47,9 +47,6 @@ enum TileValidationPolicyFlag {
     UnparentAllTiles = 1 << 1
 };
 
-static const int defaultTileWidth = 512;
-static const int defaultTileHeight = 512;
-
 PassOwnPtr<TileController> TileController::create(PlatformCALayer* rootPlatformLayer)
 {
     return adoptPtr(new TileController(rootPlatformLayer));

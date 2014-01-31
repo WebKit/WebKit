@@ -299,7 +299,7 @@ public:
     
     void didPaintBacking(RenderLayerBacking*);
 
-    bool mainFrameBackingIsTiledWithMargin() const;
+    void setRootExtendedBackgroundColor(const Color&);
 
 private:
     class OverlapMap;

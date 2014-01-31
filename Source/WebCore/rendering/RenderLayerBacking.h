@@ -152,7 +152,6 @@ public:
     bool hasUnpositionedOverflowControlsLayers() const;
 
     bool usingTiledBacking() const { return m_usingTiledCacheLayer; }
-    bool tiledBackingHasMargin() const;
     TiledBacking* tiledBacking() const;
     void adjustTiledBackingCoverage();
     void setTiledBackingHasMargins(bool);

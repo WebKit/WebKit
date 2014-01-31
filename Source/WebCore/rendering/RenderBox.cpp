@@ -1608,9 +1608,9 @@ bool RenderBox::repaintLayerRectsForImage(WrappedImagePtr image, const FillLayer
             // If this is the root background layer, we may need to extend the repaintRect if the FrameView has an
             // extendedBackground. We should only extend the rect if it is already extending the full width or height
             // of the rendererRect.
-            if (drawingRootBackground && view().frameView().hasExtendedBackground()) {
+            if (drawingRootBackground && view().frameView().hasExtendedBackgroundRectForPainting()) {
                 shouldClipToLayer = false;
-                IntRect extendedBackgroundRect = view().frameView().extendedBackgroundRect();
+                IntRect extendedBackgroundRect = view().frameView().extendedBackgroundRectForPainting();
                 if (rectToRepaint.width() == rendererRect.width()) {
                     rectToRepaint.move(extendedBackgroundRect.x(), 0);
                     rectToRepaint.setWidth(extendedBackgroundRect.width());

@@ -2447,7 +2447,17 @@ void FrameView::updateBackgroundRecursively(const Color& backgroundColor, bool t
     }
 }
 
-bool FrameView::hasExtendedBackground() const
+void FrameView::setBackgroundExtendsBeyondPage(bool extendBackground)
+{
+    RenderView* renderView = this->renderView();
+    if (!renderView)
+        return;
+
+    renderView->compositor().setRootExtendedBackgroundColor(extendBackground ? documentBackgroundColor() : Color());
+    setHasExtendedBackgroundRectForPainting(needsExtendedBackgroundRectForPainting());
+}
+
+bool FrameView::hasExtendedBackgroundRectForPainting() const
 {
     if (!frame().settings().backgroundShouldExtendBeyondPage())
         return false;
@@ -2459,17 +2469,39 @@ bool FrameView::hasExtendedBackground() const
     return tiledBacking->hasMargins();
 }
 
-IntRect FrameView::extendedBackgroundRect() const
+bool FrameView::needsExtendedBackgroundRectForPainting() const
 {
-    TiledBacking* tiledBacking = this->tiledBacking();
-    if (!tiledBacking)
-        return IntRect();
+    // Just because Settings::backgroundShouldExtendBeyondPage() is true does not necessarily mean
+    // that the background rect needs to be extended for painting. Simple backgrounds can be extended
+    // just with RenderLayerCompositor::setRootExtendedBackgroundColor(). More complicated backgrounds,
+    // such as images, require extending the background rect to continue painting into the extended
+    // region. This function finds out if it is necessary to extend the background rect for painting.
 
-    return tiledBacking->bounds();
+    if (!frame().settings().backgroundShouldExtendBeyondPage())
+        return false;
+
+    if (!frame().isMainFrame())
+        return false;
+
+    Document* document = frame().document();
+    if (!document)
+        return false;
+
+    auto documentElement = document->documentElement();
+    auto bodyElement = document->body();
+    auto documentElementRenderer = documentElement ? documentElement->renderer() : nullptr;
+    auto bodyRenderer = bodyElement ? bodyElement->renderer() : nullptr;
+    bool rootBackgroundHasImage = (documentElementRenderer && documentElementRenderer->style().hasBackgroundImage())
+        || (bodyRenderer && bodyRenderer->style().hasBackgroundImage());
+
+    return rootBackgroundHasImage;
 }
 
-void FrameView::setBackgroundExtendsBeyondPage(bool extendBackground)
+void FrameView::setHasExtendedBackgroundRectForPainting(bool shouldHaveExtendedBackgroundRect)
 {
+    if (shouldHaveExtendedBackgroundRect == hasExtendedBackgroundRectForPainting())
+        return;
+
     RenderView* renderView = this->renderView();
     if (!renderView)
         return;
@@ -2478,7 +2510,16 @@ void FrameView::setBackgroundExtendsBeyondPage(bool extendBackground)
     if (!backing)
         return;
 
-    backing->setTiledBackingHasMargins(extendBackground);
+    backing->setTiledBackingHasMargins(frame().settings().backgroundShouldExtendBeyondPage() && shouldHaveExtendedBackgroundRect);
+}
+
+IntRect FrameView::extendedBackgroundRectForPainting() const
+{
+    TiledBacking* tiledBacking = this->tiledBacking();
+    if (!tiledBacking)
+        return IntRect();
+
+    return tiledBacking->bounds();
 }
 
 bool FrameView::shouldUpdateWhileOffscreen() const

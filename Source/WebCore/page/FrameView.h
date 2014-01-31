@@ -191,11 +191,18 @@ public:
     void setBaseBackgroundColor(const Color&);
     void updateBackgroundRecursively(const Color&, bool);
 
-    // extendedBackgroundRect() is in the viewport's coordinate space. 
-    bool hasExtendedBackground() const;
-    IntRect extendedBackgroundRect() const;
-    
+    // setBackgroundExtendsBeyondPage() is controlled by Settings::setBackgroundShouldExtendBeyondPage(). Some
+    // extended backgrounds require an extended background rect for painting, (at this time, that corresponds
+    // to documents with background images) and needsExtendedBackgroundRectForPainting() determines if this
+    // FrameView is one of those special FrameViews that does require an extended rect for painting. Since
+    // needing an extended background rect for painting is something that can change in the course of a FrameView's
+    // life, the extended rect is set and unset using setHasExtendedBackgroundRectForPainting(). The
+    // extendedBackgroundRectForPainting() is in the viewport's coordinate space.
     void setBackgroundExtendsBeyondPage(bool);
+    bool needsExtendedBackgroundRectForPainting() const;
+    void setHasExtendedBackgroundRectForPainting(bool shouldHaveExtendedBackgroundRect);
+    bool hasExtendedBackgroundRectForPainting() const;
+    IntRect extendedBackgroundRectForPainting() const;
 
     bool shouldUpdateWhileOffscreen() const;
     void setShouldUpdateWhileOffscreen(bool);

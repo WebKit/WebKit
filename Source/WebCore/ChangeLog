@@ -1,3 +1,103 @@
+2014-01-31  Beth Dakin  <bdakin@apple.com>
+
+        Extended background should only create margin tiles for pages with background 
+        images
+        https://bugs.webkit.org/show_bug.cgi?id=127876
+        -and corresponding-
+        <rdar://problem/15827632>
+
+        Reviewed by Simon Fraser.
+
+        Settings::backgroundShouldExtendBeyondPage() doesn't need to create margin tiles
+        for pages with simple background colors. Instead, those pages should achieve the 
+        same effect by setting a background color on RenderLayerCompositor's
+        m_layerForOverhangAreas. For now, we should only create tiles when there is a 
+        background image. We may want to extend this to other types of complicated 
+        backgrounds in the future.
+
+        This patch makes callers that only care about the value of the setting always call 
+        Settings::backgroundShouldExtendBeyondPage() rather than asking about margin 
+        tiles. And callers that want to know about margin tiles can either keep querying 
+        that directly or they can call FrameView::hasExtendedBackgroundRectForPainting(). 
+        An extended background does not necessarily require an extended background rect 
+        for painting, and this new FrameView function can make that distinction. 
+
+        When setBackgroundExtendsBeyondPage() is called, call RenderLayerCompositor:: 
+        setRootExtendedBackgroundColor() with either the document background color, or an 
+        invalid color, depending on whether you have or do not have an extended 
+        background. Also call needsExtendedBackgroundRectForPainting() to determine if we 
+        also need to extend the background rect, and then call 
+        setHasExtendedBackgroundRectForPainting() with its value.
+        * page/FrameView.cpp:
+        (WebCore::FrameView::setBackgroundExtendsBeyondPage):
+        (WebCore::FrameView::hasExtendedBackgroundRectForPainting):
+
+         Right now we only need to extend the background rect for documents with 
+        background images on the root. This may be extended in the future.
+        (WebCore::FrameView::needsExtendedBackgroundRectForPainting):
+        (WebCore::FrameView::setHasExtendedBackgroundRectForPainting):
+        (WebCore::FrameView::extendedBackgroundRectForPainting):
+        * page/FrameView.h:
+
+        Expose defaultTileWidth and defaultTileHeight from TiledBacking.h so that we can 
+        access the values from RenderLayerBacking.
+        * platform/graphics/TiledBacking.h:
+        * platform/graphics/ca/mac/TileController.mm:
+
+        hasExtendedBackgroundForPainting() is now called 
+        hasExtendedBackgroundRectForPainting() to distinguish 
+        the case where an extended RECT is needed.
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::repaintLayerRectsForImage):
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::calculateBackgroundImageGeometry):
+
+        Call setHasExtendedBackgroundRectForPainting() if relevant.
+        * rendering/RenderElement.cpp:
+        (WebCore::RenderElement::styleWillChange):
+
+        Don't call setTiledBackingHasMargins() right in the constructor because we only
+        want margins if we have a background image, and we won't have that information
+        yet.
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::RenderLayerBacking):
+
+        Clean up the variable name here. We are only setting margins when we need to 
+        extend the background rect for painting. Also make us of newly-exposed 
+        defaultTileWidth and Height.
+        (WebCore::RenderLayerBacking::setTiledBackingHasMargins):
+
+        Remove RenderLayerBacking::tiledBackingHasMargin() since there aren't any more
+        callers.
+        * rendering/RenderLayerBacking.h:
+        (WebCore::RenderLayerBacking::usingTiledBacking):
+
+        setMasksToBounds(false) based on the Setting, and not based on whether there are 
+        tile margins.
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::updateBacking):
+
+        Return false from RenderLayerCompositor::requiresContentShadowLayer() if there is 
+        an extended background.
+        (WebCore::RenderLayerCompositor::requiresContentShadowLayer):
+
+        Setting the background color on m_layerForOverhangAreas is all we need to do to 
+        create the extended background effect on pages that only have background colors. 
+        (WebCore::RenderLayerCompositor::setRootExtendedBackgroundColor):
+        (WebCore::RenderLayerCompositor::updateOverflowControlsLayers):
+
+        Remove mainFrameBackingIsTiledWithMargin() since there aren't any more callers,
+        and add setRootExtendedBackgroundColor() so that we can update the color from 
+        RenderView.
+        * rendering/RenderLayerCompositor.h:
+
+        Revert the code that was added to paint background color here, since this should 
+        all be covered by calling RenderLayerCompositor::setExtendedBackgroundColor(). 
+        More complicated backgrounds will run through the full background painting code.
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::paintBoxDecorations):
+        (WebCore::RenderView::backgroundRect):
+
 2014-01-31  Jochen Eisinger  <jochen@chromium.org>
 
         Remove FrameLoader's reloadWithOverrideURL and reloadWithRequest

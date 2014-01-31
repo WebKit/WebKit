@@ -28,6 +28,9 @@
 
 namespace WebCore {
 
+static const int defaultTileWidth = 512;
+static const int defaultTileHeight = 512;
+
 class IntRect;
 #if PLATFORM(MAC)
 class PlatformCALayer;
