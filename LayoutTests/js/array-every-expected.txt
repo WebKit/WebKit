@@ -30,12 +30,12 @@ PASS [12, 5, 8, 130, 44].every(isBigEnoughAndException) threw exception exceptio
 PASS [12, 54, 18, 130, 44].every(isBigEnoughAndException) threw exception exception from function.
 
 5.0 Wrong Type for Callback Test
-PASS [12, 5, 8, 130, 44].every(5) threw exception TypeError: Type error.
-PASS [12, 5, 8, 130, 44].every('wrong') threw exception TypeError: Type error.
-PASS [12, 5, 8, 130, 44].every(new Object()) threw exception TypeError: Type error.
-PASS [12, 5, 8, 130, 44].every(null) threw exception TypeError: Type error.
-PASS [12, 5, 8, 130, 44].every(undefined) threw exception TypeError: Type error.
-PASS [12, 5, 8, 130, 44].every() threw exception TypeError: Type error.
+PASS [12, 5, 8, 130, 44].every(5) threw exception TypeError: Array.prototype.every callback must be a function.
+PASS [12, 5, 8, 130, 44].every('wrong') threw exception TypeError: Array.prototype.every callback must be a function.
+PASS [12, 5, 8, 130, 44].every(new Object()) threw exception TypeError: Array.prototype.every callback must be a function.
+PASS [12, 5, 8, 130, 44].every(null) threw exception TypeError: Array.prototype.every callback must be a function.
+PASS [12, 5, 8, 130, 44].every(undefined) threw exception TypeError: Array.prototype.every callback must be a function.
+PASS [12, 5, 8, 130, 44].every() threw exception TypeError: Array.prototype.every callback must be a function.
 
 6.0 Early Exit ("Short Circuiting")
 PASS [12, 5, 8, 130, 44].every(isBigEnoughShortCircuit) is false

@@ -22,7 +22,9 @@
 #include "StringObject.h"
 
 #include "Error.h"
+#include "JSCJSValueInlines.h"
 #include "JSGlobalObject.h"
+#include "JSStringInlines.h"
 #include "Operations.h"
 #include "PropertyNameArray.h"
 

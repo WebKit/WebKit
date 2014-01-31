@@ -24,7 +24,6 @@
 #define JSString_h
 
 #include "CallFrame.h"
-#include "CommonIdentifiers.h"
 #include "Identifier.h"
 #include "PropertyDescriptor.h"
 #include "PropertySlot.h"
@@ -472,33 +471,6 @@ namespace JSC {
     inline JSString* jsNontrivialString(ExecState* exec, const String& s) { return jsNontrivialString(&exec->vm(), s); }
     inline JSString* jsOwnedString(ExecState* exec, const String& s) { return jsOwnedString(&exec->vm(), s); }
 
-    ALWAYS_INLINE bool JSString::getStringPropertySlot(ExecState* exec, PropertyName propertyName, PropertySlot& slot)
-    {
-        if (propertyName == exec->propertyNames().length) {
-            slot.setValue(this, DontEnum | DontDelete | ReadOnly, jsNumber(m_length));
-            return true;
-        }
-
-        unsigned i = propertyName.asIndex();
-        if (i < m_length) {
-            ASSERT(i != PropertyName::NotAnIndex); // No need for an explicit check, the above test would always fail!
-            slot.setValue(this, DontDelete | ReadOnly, getIndex(exec, i));
-            return true;
-        }
-
-        return false;
-    }
-            
-    ALWAYS_INLINE bool JSString::getStringPropertySlot(ExecState* exec, unsigned propertyName, PropertySlot& slot)
-    {
-        if (propertyName < m_length) {
-            slot.setValue(this, DontDelete | ReadOnly, getIndex(exec, propertyName));
-            return true;
-        }
-
-        return false;
-    }
-
     inline bool isJSString(JSValue v) { return v.isCell() && v.asCell()->classInfo() == JSString::info(); }
 
     // --- JSValue inlines ----------------------------
@@ -526,32 +498,6 @@ namespace JSC {
         if (isString())
             return static_cast<JSString*>(asCell())->value(exec);
         return toWTFStringSlowCase(exec);
-    }
-
-    ALWAYS_INLINE String inlineJSValueNotStringtoString(const JSValue& value, ExecState* exec)
-    {
-        VM& vm = exec->vm();
-        if (value.isInt32())
-            return vm.numericStrings.add(value.asInt32());
-        if (value.isDouble())
-            return vm.numericStrings.add(value.asDouble());
-        if (value.isTrue())
-            return vm.propertyNames->trueKeyword.string();
-        if (value.isFalse())
-            return vm.propertyNames->falseKeyword.string();
-        if (value.isNull())
-            return vm.propertyNames->nullKeyword.string();
-        if (value.isUndefined())
-            return vm.propertyNames->undefinedKeyword.string();
-        return value.toString(exec)->value(exec);
-    }
-
-    ALWAYS_INLINE String JSValue::toWTFStringInline(ExecState* exec) const
-    {
-        if (isString())
-            return static_cast<JSString*>(asCell())->value(exec);
-
-        return inlineJSValueNotStringtoString(*this, exec);
     }
 
 } // namespace JSC

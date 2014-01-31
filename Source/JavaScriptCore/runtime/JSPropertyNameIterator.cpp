@@ -29,7 +29,9 @@
 #include "config.h"
 #include "JSPropertyNameIterator.h"
 
+#include "JSCJSValueInlines.h"
 #include "JSGlobalObject.h"
+#include "Operations.h"
 #include <wtf/StdLibExtras.h>
 
 namespace JSC {

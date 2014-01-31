@@ -41,7 +41,7 @@
 #include "JIT.h"
 #include "JITStubs.h"
 #include "JSActivation.h"
-#include "JSCJSValue.h"
+#include "JSCJSValueInlines.h"
 #include "JSGlobalObjectFunctions.h"
 #include "JSNameScope.h"
 #include "JSPropertyNameIterator.h"

@@ -46,6 +46,7 @@
 #include <JavaScriptCore/APICast.h>
 #include <JavaScriptCore/JSBase.h>
 #include <JavaScriptCore/JSCJSValueInlines.h>
+#include <JavaScriptCore/JSStringInlines.h>
 
 using namespace JSC;
 

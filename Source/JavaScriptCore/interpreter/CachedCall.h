@@ -43,7 +43,7 @@ namespace JSC {
             , m_interpreter(callFrame->interpreter())
             , m_entryScope(callFrame->vm(), function->scope()->globalObject())
         {
-            ASSERT(!function->isHostFunction());
+            ASSERT(!function->isHostFunctionNonInline());
             if (callFrame->vm().isSafeToRecurse()) {
                 m_arguments.resize(argumentCount);
                 m_closure = m_interpreter->prepareForRepeatCall(function->jsExecutable(), callFrame, &m_protoCallFrame, function, argumentCount + 1, function->scope(), m_arguments.data());

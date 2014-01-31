@@ -36,7 +36,7 @@
 #include "IDBObjectStore.h"
 #include "JSIDBIndex.h"
 #include <runtime/Error.h>
-#include <runtime/JSString.h>
+#include <runtime/JSStringInlines.h>
 
 using namespace JSC;
 

@@ -32,6 +32,7 @@
 #include "Executable.h"
 #include "GetterSetter.h"
 #include "IndexingHeaderInlines.h"
+#include "JSStringInlines.h"
 #include "PropertyNameArray.h"
 #include "Reject.h"
 #include <wtf/AVLTree.h>

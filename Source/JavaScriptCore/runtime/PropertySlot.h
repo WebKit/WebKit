@@ -42,6 +42,8 @@ enum Attribute {
     Function     = 1 << 4,  // property is a function - only used by static hashtables
     Accessor     = 1 << 5,  // property is a getter/setter
     CustomAccessor = 1 << 6,
+    Builtin         = 1 << 7, // property is a builtin function - only used by static hashtables
+    BuiltinOrFunction = Builtin | Function, // helper only used by static hashtables
 };
 
 class PropertySlot {

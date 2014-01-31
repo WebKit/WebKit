@@ -1,3 +1,14 @@
+2014-01-29  Oliver Hunt  <oliver@apple.com>
+
+        Make it possible to implement JS builtins in JS
+        https://bugs.webkit.org/show_bug.cgi?id=127887
+
+        Reviewed by Michael Saboff.
+
+        CMake updates
+
+        * Source/cmake/gtest/CMakeLists.txt:
+
 2014-01-30  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] [CMake] Add support for building against GTK+ 2

@@ -1,3 +1,22 @@
+2014-01-29  Oliver Hunt  <oliver@apple.com>
+
+        Make it possible to implement JS builtins in JS
+        https://bugs.webkit.org/show_bug.cgi?id=127887
+
+        Reviewed by Michael Saboff.
+
+        Updated the test results for new error messages (now that they're
+        actually helpful), and added a js-regress test to track performance.
+
+        * js/array-every-expected.txt:
+        * js/dom/array-prototype-properties-expected.txt:
+        * js/regress/array-prototype-every-expected.txt: Added.
+        * js/regress/array-prototype-every.html: Added.
+        * js/regress/script-tests/array-prototype-every.js: Added.
+        (test1):
+        (test2):
+        (test3):
+
 2014-01-30  Beth Dakin  <bdakin@apple.com>
 
         Extended background should only create margin tiles for pages with background 

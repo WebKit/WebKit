@@ -1,3 +1,14 @@
+2014-01-29  Oliver Hunt  <oliver@apple.com>
+
+        Make it possible to implement JS builtins in JS
+        https://bugs.webkit.org/show_bug.cgi?id=127887
+
+        Reviewed by Michael Saboff.
+
+        CMake updates
+
+        * CMakeLists.txt:
+
 2014-01-31  Tim Horton  <timothy_horton@apple.com>
 
         WebKit2 View Gestures (Swipe): Crashes swiping around a Google Docs spreadsheet

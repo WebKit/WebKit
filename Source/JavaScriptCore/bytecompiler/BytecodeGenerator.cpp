@@ -175,6 +175,7 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, ProgramNode* programNode, UnlinkedP
 #endif
     , m_usesExceptions(false)
     , m_expressionTooDeep(false)
+    , m_isBuiltinFunction(false)
 {
     if (m_shouldEmitDebugHooks)
         m_codeBlock->setNeedsFullScopeChain(true);
@@ -222,7 +223,13 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionBodyNode* functionBody, Unl
 #endif
     , m_usesExceptions(false)
     , m_expressionTooDeep(false)
+    , m_isBuiltinFunction(codeBlock->isBuiltinFunction())
 {
+    if (m_isBuiltinFunction) {
+        m_shouldEmitProfileHooks = false;
+        m_shouldEmitDebugHooks = false;
+    }
+
     if (m_shouldEmitDebugHooks)
         m_codeBlock->setNeedsFullScopeChain(true);
 
@@ -438,6 +445,7 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, EvalNode* evalNode, UnlinkedEvalCod
 #endif
     , m_usesExceptions(false)
     , m_expressionTooDeep(false)
+    , m_isBuiltinFunction(false)
 {
     m_codeBlock->setNeedsFullScopeChain(true);
 

@@ -26,7 +26,9 @@
 #include "config.h"
 #include "ArgumentsIteratorPrototype.h"
 
+#include "CommonIdentifiers.h"
 #include "JSArgumentsIterator.h"
+#include "JSCJSValueInlines.h"
 
 namespace JSC {
 

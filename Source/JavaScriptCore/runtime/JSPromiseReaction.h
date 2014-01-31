@@ -27,6 +27,7 @@
 #define JSPromiseReaction_h
 
 #include "JSCell.h"
+#include "JSStringInlines.h"
 #include "Structure.h"
 
 namespace JSC {

@@ -25,6 +25,7 @@
 
 #include "config.h"
 #include "DFGDominators.h"
+#include "JSFunctionInlines.h"
 
 #if ENABLE(DFG_JIT)
 

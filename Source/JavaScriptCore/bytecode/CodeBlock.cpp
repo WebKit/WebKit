@@ -43,11 +43,13 @@
 #include "JIT.h"
 #include "JITStubs.h"
 #include "JSActivation.h"
-#include "JSCJSValue.h"
+#include "JSCJSValueInlines.h"
 #include "JSFunction.h"
 #include "JSNameScope.h"
 #include "LLIntEntrypoint.h"
 #include "LowLevelInterpreter.h"
+#include "NativeErrorConstructor.h"
+#include "ObjectConstructor.h"
 #include "Operations.h"
 #include "PolymorphicPutByIdList.h"
 #include "ReduceWhitespace.h"
@@ -1569,7 +1571,7 @@ CodeBlock::CodeBlock(ScriptExecutable* ownerExecutable, UnlinkedCodeBlock* unlin
 
     setConstantRegisters(unlinkedCodeBlock->constantRegisters());
     if (unlinkedCodeBlock->usesGlobalObject())
-        m_constantRegisters[unlinkedCodeBlock->globalObjectRegister().offset()].set(*m_vm, ownerExecutable, m_globalObject.get());
+        m_constantRegisters[unlinkedCodeBlock->globalObjectRegister().toConstantIndex()].set(*m_vm, ownerExecutable, m_globalObject.get());
     m_functionDecls.resizeToFit(unlinkedCodeBlock->numberOfFunctionDecls());
     for (size_t count = unlinkedCodeBlock->numberOfFunctionDecls(), i = 0; i < count; ++i) {
         UnlinkedFunctionExecutable* unlinkedExecutable = unlinkedCodeBlock->functionDecl(i);

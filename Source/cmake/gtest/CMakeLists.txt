@@ -6,6 +6,7 @@
 include_directories(${THIRDPARTY_DIR}/gtest
     ${THIRDPARTY_DIR}/gtest/include
     ${JAVASCRIPTCORE_DIR}
+    ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}
     ${WTF_DIR}
 )
 

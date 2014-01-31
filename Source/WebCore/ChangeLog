@@ -1,3 +1,20 @@
+2014-01-29  Oliver Hunt  <oliver@apple.com>
+
+        Make it possible to implement JS builtins in JS
+        https://bugs.webkit.org/show_bug.cgi?id=127887
+
+        Reviewed by Michael Saboff.
+
+        Updating for the newly required headers.
+
+        Test: js/regress/array-prototype-every.html
+
+        * ForwardingHeaders/runtime/JSStringInlines.h: Added.
+        * Modules/plugins/QuickTimePluginReplacement.cpp:
+        * bindings/js/JSIDBAnyCustom.cpp:
+        * bindings/js/JSIDBDatabaseCustom.cpp:
+        * bindings/js/JSIDBObjectStoreCustom.cpp:
+
 2014-01-31  Beth Dakin  <bdakin@apple.com>
 
         Build fix.

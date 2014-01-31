@@ -27,8 +27,10 @@
 #define JSCellInlines_h
 
 #include "CallFrame.h"
+#include "CommonIdentifiers.h"
 #include "DeferGC.h"
 #include "Handle.h"
+#include "JSCJSValueInlines.h"
 #include "JSCell.h"
 #include "JSObject.h"
 #include "JSString.h"

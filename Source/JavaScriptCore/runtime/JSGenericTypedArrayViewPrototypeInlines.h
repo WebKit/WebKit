@@ -26,6 +26,7 @@
 #ifndef JSGenericTypedArrayViewPrototypeInlines_h
 #define JSGenericTypedArrayViewPrototypeInlines_h
 
+#include "CommonIdentifiers.h"
 #include "Error.h"
 #include "ExceptionHelpers.h"
 #include "JSFunction.h"

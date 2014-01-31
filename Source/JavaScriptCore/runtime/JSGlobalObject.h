@@ -67,6 +67,7 @@ class JSStack;
 class LLIntOffsetsExtractor;
 class Microtask;
 class NativeErrorConstructor;
+class ObjectConstructor;
 class ProgramCodeBlock;
 class ProgramExecutable;
 class RegExpConstructor;
@@ -158,6 +159,7 @@ protected:
     WriteBarrier<NativeErrorConstructor> m_typeErrorConstructor;
     WriteBarrier<NativeErrorConstructor> m_URIErrorConstructor;
     WriteBarrier<JSPromiseConstructor> m_promiseConstructor;
+    WriteBarrier<ObjectConstructor> m_objectConstructor;
 
     WriteBarrier<JSFunction> m_evalFunction;
     WriteBarrier<JSFunction> m_callFunction;
@@ -330,6 +332,7 @@ public:
     RegExpConstructor* regExpConstructor() const { return m_regExpConstructor.get(); }
 
     ErrorConstructor* errorConstructor() const { return m_errorConstructor.get(); }
+    ObjectConstructor* objectConstructor() const { return m_objectConstructor.get(); }
     NativeErrorConstructor* evalErrorConstructor() const { return m_evalErrorConstructor.get(); }
     NativeErrorConstructor* rangeErrorConstructor() const { return m_rangeErrorConstructor.get(); }
     NativeErrorConstructor* referenceErrorConstructor() const { return m_referenceErrorConstructor.get(); }
@@ -581,7 +584,7 @@ inline bool JSGlobalObject::hasOwnPropertyForWrite(ExecState* exec, PropertyName
 
 inline bool JSGlobalObject::symbolTableHasProperty(PropertyName propertyName)
 {
-    SymbolTableEntry entry = symbolTable()->inlineGet(propertyName.publicName());
+    SymbolTableEntry entry = symbolTable()->inlineGet(propertyName.uid());
     return !entry.isNull();
 }
 

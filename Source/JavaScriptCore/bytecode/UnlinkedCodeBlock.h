@@ -66,26 +66,35 @@ typedef unsigned UnlinkedObjectAllocationProfile;
 typedef unsigned UnlinkedLLIntCallLinkInfo;
 
 struct ExecutableInfo {
-    ExecutableInfo(bool needsActivation, bool usesEval, bool isStrictMode, bool isConstructor)
+    ExecutableInfo(bool needsActivation, bool usesEval, bool isStrictMode, bool isConstructor, bool isBuiltinFunction)
         : m_needsActivation(needsActivation)
         , m_usesEval(usesEval)
         , m_isStrictMode(isStrictMode)
         , m_isConstructor(isConstructor)
+        , m_isBuiltinFunction(isBuiltinFunction)
     {
     }
-    bool m_needsActivation;
-    bool m_usesEval;
-    bool m_isStrictMode;
-    bool m_isConstructor;
+    bool m_needsActivation : 1;
+    bool m_usesEval : 1;
+    bool m_isStrictMode : 1;
+    bool m_isConstructor : 1;
+    bool m_isBuiltinFunction : 1;
+};
+
+enum UnlinkedFunctionKind {
+    UnlinkedNormalFunction,
+    UnlinkedBuiltinFunction,
 };
 
 class UnlinkedFunctionExecutable : public JSCell {
 public:
+    friend class BuiltinExecutables;
     friend class CodeCache;
+    friend class VM;
     typedef JSCell Base;
-    static UnlinkedFunctionExecutable* create(VM* vm, const SourceCode& source, FunctionBodyNode* node, bool isFromGlobalCode = false)
+    static UnlinkedFunctionExecutable* create(VM* vm, const SourceCode& source, FunctionBodyNode* node, bool isFromGlobalCode, UnlinkedFunctionKind unlinkedFunctionKind)
     {
-        UnlinkedFunctionExecutable* instance = new (NotNull, allocateCell<UnlinkedFunctionExecutable>(vm->heap)) UnlinkedFunctionExecutable(vm, vm->unlinkedFunctionExecutableStructure.get(), source, node, isFromGlobalCode);
+        UnlinkedFunctionExecutable* instance = new (NotNull, allocateCell<UnlinkedFunctionExecutable>(vm->heap)) UnlinkedFunctionExecutable(vm, vm->unlinkedFunctionExecutableStructure.get(), source, node, isFromGlobalCode, unlinkedFunctionKind);
         instance->finishCreation(*vm);
         return instance;
     }
@@ -99,6 +108,14 @@ public:
     }
     size_t parameterCount() const;
     bool isInStrictContext() const { return m_isInStrictContext; }
+    JSParserStrictness toStrictness() const
+    {
+        if (m_isBuiltinFunction)
+            return JSParseBuiltin;
+        if (m_isInStrictContext)
+            return JSParseStrict;
+        return JSParseNormal;
+    }
     FunctionNameIsInScopeToggle functionNameIsInScopeToggle() const { return m_functionNameIsInScopeToggle; }
 
     unsigned firstLineOffset() const { return m_firstLineOffset; }
@@ -142,8 +159,10 @@ public:
     static const bool hasImmortalStructure = true;
     static void destroy(JSCell*);
 
+    bool isBuiltinFunction() const { return m_isBuiltinFunction; }
+
 private:
-    UnlinkedFunctionExecutable(VM*, Structure*, const SourceCode&, FunctionBodyNode*, bool isFromGlobalCode);
+    UnlinkedFunctionExecutable(VM*, Structure*, const SourceCode&, FunctionBodyNode*, bool isFromGlobalCode, UnlinkedFunctionKind);
     WriteBarrier<UnlinkedFunctionCodeBlock> m_codeBlockForCall;
     WriteBarrier<UnlinkedFunctionCodeBlock> m_codeBlockForConstruct;
 
@@ -152,6 +171,7 @@ private:
     bool m_isInStrictContext : 1;
     bool m_hasCapturedVariables : 1;
     bool m_isFromGlobalCode : 1;
+    bool m_isBuiltinFunction : 1;
 
     Identifier m_name;
     Identifier m_inferredName;
@@ -319,6 +339,8 @@ public:
     void setIsNumericCompareFunction(bool isNumericCompareFunction) { m_isNumericCompareFunction = isNumericCompareFunction; }
     bool isNumericCompareFunction() const { return m_isNumericCompareFunction; }
 
+    bool isBuiltinFunction() const { return m_isBuiltinFunction; }
+    
     void shrinkToFit()
     {
         m_jumpTargets.shrinkToFit();
@@ -500,6 +522,7 @@ private:
     bool m_isStrictMode : 1;
     bool m_isConstructor : 1;
     bool m_hasCapturedVariables : 1;
+    bool m_isBuiltinFunction : 1;
     unsigned m_firstLine;
     unsigned m_lineCount;
     unsigned m_endColumn;

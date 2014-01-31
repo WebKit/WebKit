@@ -38,6 +38,7 @@
 #include "JSLock.h"
 #include "JSProxy.h"
 #include "JSString.h"
+#include "JSStringInlines.h"
 #include "Operations.h"
 #include "SamplingTool.h"
 #include "StackVisitor.h"

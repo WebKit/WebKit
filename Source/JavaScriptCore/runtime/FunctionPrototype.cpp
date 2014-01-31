@@ -22,12 +22,13 @@
 #include "FunctionPrototype.h"
 
 #include "Arguments.h"
+#include "Interpreter.h"
 #include "JSArray.h"
 #include "JSBoundFunction.h"
 #include "JSFunction.h"
 #include "JSString.h"
 #include "JSStringBuilder.h"
-#include "Interpreter.h"
+#include "JSStringInlines.h"
 #include "Lexer.h"
 #include "Operations.h"
 
@@ -108,7 +109,7 @@ EncodedJSValue JSC_HOST_CALL functionProtoFuncToString(ExecState* exec)
     JSValue thisValue = exec->hostThisValue();
     if (thisValue.inherits(JSFunction::info())) {
         JSFunction* function = jsCast<JSFunction*>(thisValue);
-        if (function->isHostFunction())
+        if (function->isHostOrBuiltinFunction())
             return JSValue::encode(jsMakeNontrivialString(exec, "function ", function->name(exec), "() {\n    [native code]\n}"));
         FunctionExecutable* executable = function->jsExecutable();
         String sourceString = executable->source().toString();

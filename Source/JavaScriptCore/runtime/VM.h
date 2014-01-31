@@ -44,6 +44,7 @@
 #include "PrivateName.h"
 #include "PrototypeMap.h"
 #include "SmallStrings.h"
+#include "SourceCode.h"
 #include "Strong.h"
 #include "ThunkGenerators.h"
 #include "TypedArrayController.h"
@@ -69,6 +70,7 @@
 namespace JSC {
 
     class ArityCheckFailReturnThunks;
+    class BuiltinExecutables;
     class CodeBlock;
     class CodeCache;
     class CommonIdentifiers;
@@ -497,6 +499,8 @@ namespace JSC {
         void registerWatchpointForImpureProperty(const Identifier&, Watchpoint*);
         // FIXME: Use AtomicString once it got merged with Identifier.
         JS_EXPORT_PRIVATE void addImpureProperty(const String&);
+        
+        BuiltinExecutables* builtinExecutables() { return m_builtinExecutables.get(); }
 
     private:
         friend class LLIntOffsetsExtractor;
@@ -537,10 +541,9 @@ namespace JSC {
         JSValue m_exception;
         bool m_inDefineOwnProperty;
         OwnPtr<CodeCache> m_codeCache;
-        RefCountedArray<StackFrame> m_exceptionStack;
-
         LegacyProfiler* m_enabledProfiler;
-
+        OwnPtr<BuiltinExecutables> m_builtinExecutables;
+        RefCountedArray<StackFrame> m_exceptionStack;
         HashMap<String, RefPtr<WatchpointSet>> m_impurePropertyWatchpointSets;
     };
 

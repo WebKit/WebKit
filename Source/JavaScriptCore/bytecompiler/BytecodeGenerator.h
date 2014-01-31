@@ -461,7 +461,9 @@ namespace JSC {
         bool shouldEmitDebugHooks() { return m_shouldEmitDebugHooks; }
         
         bool isStrictMode() const { return m_codeBlock->isStrictMode(); }
-
+        
+        bool isBuiltinFunction() const { return m_isBuiltinFunction; }
+        
     private:
         friend class Label;
         
@@ -543,7 +545,7 @@ namespace JSC {
         
         UnlinkedFunctionExecutable* makeFunction(FunctionBodyNode* body)
         {
-            return UnlinkedFunctionExecutable::create(m_vm, m_scopeNode->source(), body);
+            return UnlinkedFunctionExecutable::create(m_vm, m_scopeNode->source(), body, false, isBuiltinFunction() ? UnlinkedBuiltinFunction : UnlinkedNormalFunction);
         }
 
         RegisterID* emitInitLazyRegister(RegisterID*);
@@ -677,6 +679,7 @@ namespace JSC {
 
         bool m_usesExceptions;
         bool m_expressionTooDeep;
+        bool m_isBuiltinFunction;
     };
 
 }

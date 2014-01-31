@@ -42,6 +42,7 @@ for %%d in (
     assembler
     bindings
     bytecode
+    builtins
     dfg
     disassembler
     heap
@@ -71,6 +72,9 @@ xcopy /y "%DerivedSourcesDirectory%\InspectorJS.json" "%PrivateHeadersDirectory%
 xcopy /y "%DerivedSourcesDirectory%\InspectorJSTypeBuilders.h" "%PrivateHeadersDirectory%" >NUL
 xcopy /y "%DerivedSourcesDirectory%\InspectorJSBackendDispatchers.h" "%PrivateHeadersDirectory%" >NUL
 xcopy /y "%DerivedSourcesDirectory%\InspectorJSFrontendDispatchers.h" "%PrivateHeadersDirectory%" >NUL
+
+echo Copying builtins header as if it were a private header...
+xcopy /y "%DerivedSourcesDirectory%\JSCBuiltins.h" "%PrivateHeadersDirectory%" >NUL
 
 echo Copying resources...
 mkdir "%ResourcesDirectory%" 2>NUL

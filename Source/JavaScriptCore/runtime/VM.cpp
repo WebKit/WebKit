@@ -32,6 +32,7 @@
 #include "ArgList.h"
 #include "ArityCheckFailReturnThunks.h"
 #include "ArrayBufferNeuteringWatchpoint.h"
+#include "BuiltinExecutables.h"
 #include "CallFrameInlines.h"
 #include "CodeBlock.h"
 #include "CodeCache.h"
@@ -55,7 +56,9 @@
 #include "JSAPIValueWrapper.h"
 #include "JSActivation.h"
 #include "JSArray.h"
-#include "JSFunction.h"
+#include "JSCJSValueInlines.h"
+#include "JSCellInlines.h"
+#include "JSFunctionInlines.h"
 #include "JSGlobalObjectFunctions.h"
 #include "JSLock.h"
 #include "JSNameScope.h"
@@ -68,13 +71,16 @@
 #include "Lookup.h"
 #include "MapData.h"
 #include "Nodes.h"
+#include "Parser.h"
 #include "ParserArena.h"
+#include "PropertyMapHashTable.h"
 #include "RegExpCache.h"
 #include "RegExpObject.h"
 #include "SimpleTypedArrayController.h"
 #include "SourceProviderCache.h"
 #include "StrictEvalActivation.h"
 #include "StrongInlines.h"
+#include "StructureInlines.h"
 #include "UnlinkedCodeBlock.h"
 #include "WeakMapData.h"
 #include <wtf/ProcessID.h>
@@ -226,6 +232,7 @@ VM::VM(VMType vmType, HeapType heapType)
     , m_inDefineOwnProperty(false)
     , m_codeCache(CodeCache::create())
     , m_enabledProfiler(nullptr)
+    , m_builtinExecutables(BuiltinExecutables::create(*this))
 {
     interpreter = new Interpreter(*this);
     StackBounds stack = wtfThreadData().stack();

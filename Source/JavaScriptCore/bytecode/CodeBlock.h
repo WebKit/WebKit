@@ -56,7 +56,6 @@
 #include "HandlerInfo.h"
 #include "ObjectAllocationProfile.h"
 #include "Options.h"
-#include "Operations.h"
 #include "PutPropertySlot.h"
 #include "Instruction.h"
 #include "JITCode.h"

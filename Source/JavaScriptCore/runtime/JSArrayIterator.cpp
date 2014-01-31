@@ -28,6 +28,7 @@
 
 #include "JSCJSValueInlines.h"
 #include "JSCellInlines.h"
+#include "JSStringInlines.h"
 #include "SlotVisitorInlines.h"
 
 namespace JSC {

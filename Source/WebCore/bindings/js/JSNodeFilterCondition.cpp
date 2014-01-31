@@ -26,6 +26,7 @@
 #include "NodeFilter.h"
 #include <runtime/Error.h>
 #include <runtime/JSLock.h>
+#include <runtime/JSStringInlines.h>
 
 namespace WebCore {
 

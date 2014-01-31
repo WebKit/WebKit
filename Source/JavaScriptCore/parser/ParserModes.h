@@ -29,7 +29,7 @@
 
 namespace JSC {
 
-enum JSParserStrictness { JSParseNormal, JSParseStrict };
+enum JSParserStrictness { JSParseNormal, JSParseBuiltin, JSParseStrict };
 enum JSParserMode { JSParseProgramCode, JSParseFunctionCode };
 
 enum ProfilerMode { ProfilerOff, ProfilerOn };

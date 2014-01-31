@@ -27,6 +27,7 @@
 #define JSGenericTypedArrayViewInlines_h
 
 #include "ArrayBufferView.h"
+#include "CommonIdentifiers.h"
 #include "DeferGC.h"
 #include "Error.h"
 #include "ExceptionHelpers.h"
