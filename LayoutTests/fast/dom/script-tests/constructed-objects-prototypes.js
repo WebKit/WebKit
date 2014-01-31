@@ -11,6 +11,7 @@ inner.Object.prototype.isInner = true;
 var constructorNames = ["Image", "MediaController", "Option", "OverflowEvent", "ProgressEvent", "URL", "XMLHttpRequest"];
 
 var argumentsForConstructor = {
+    'URL' : "'about:blank'",
     'Worker' : "'foo'",
 }
 

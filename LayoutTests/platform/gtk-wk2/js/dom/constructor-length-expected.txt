@@ -50,7 +50,7 @@ PASS WebKitPoint.length is 0
 PASS WebKitTransitionEvent.length is 1
 PASS WebSocket.length is 1
 PASS Worker.length is 1
-PASS URL.length is 0
+PASS URL.length is 1
 PASS XMLHttpRequest.length is 0
 PASS XMLSerializer.length is 0
 PASS XPathEvaluator.length is 0

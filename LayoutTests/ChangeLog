@@ -1,3 +1,56 @@
+2014-01-31  Maciej Stachowiak  <mjs@apple.com>
+
+        Implement (most of) URL API
+        https://bugs.webkit.org/show_bug.cgi?id=127795
+
+        Reviewed by Alexey Proskuryakov.
+
+        Add a bunch of new tests for URL(), copied from HTMLAnchorElement API tests:
+
+        * fast/dom/DOMURL/get-href-attribute-port-expected.txt: Added.
+        * fast/dom/DOMURL/get-href-attribute-port.html: Added.
+        * fast/dom/DOMURL/resources: Added.
+        * fast/dom/DOMURL/resources/iframe-with-anchor.html: Added.
+        * fast/dom/DOMURL/set-href-attribute-hash-expected.txt: Added.
+        * fast/dom/DOMURL/set-href-attribute-hash.html: Added.
+        * fast/dom/DOMURL/set-href-attribute-host-expected.txt: Added.
+        * fast/dom/DOMURL/set-href-attribute-host.html: Added.
+        * fast/dom/DOMURL/set-href-attribute-hostname-expected.txt: Added.
+        * fast/dom/DOMURL/set-href-attribute-hostname.html: Added.
+        * fast/dom/DOMURL/set-href-attribute-pathname-expected.txt: Added.
+        * fast/dom/DOMURL/set-href-attribute-pathname.html: Added.
+        * fast/dom/DOMURL/set-href-attribute-port-expected.txt: Added.
+        * fast/dom/DOMURL/set-href-attribute-port.html: Added.
+        * fast/dom/DOMURL/set-href-attribute-protocol-expected.txt: Added.
+        * fast/dom/DOMURL/set-href-attribute-protocol.html: Added.
+        * fast/dom/DOMURL/set-href-attribute-search-expected.txt: Added.
+        * fast/dom/DOMURL/set-href-attribute-search.html: Added.
+        * fast/dom/DOMURL/set-href-attribute-whitespace-expected.txt: Added.
+        * fast/dom/DOMURL/set-href-attribute-whitespace.html: Added.
+        * fast/dom/DOMURL/url-origin-expected.txt: Added.
+        * fast/dom/DOMURL/url-origin.html: Added.
+
+        Brand new tests for username and password properties, accessors on invalid URLS,
+        and different constructor modes:
+        * fast/dom/DOMURL/invalid-url-getters-expected.txt: Added.
+        * fast/dom/DOMURL/invalid-url-getters.html: Added.
+        * fast/dom/DOMURL/url-constructor-expected.txt: Added.
+        * fast/dom/DOMURL/url-constructor.html: Added.
+        * fast/dom/DOMURL/url-password-expected.txt: Added.
+        * fast/dom/DOMURL/url-password.html: Added.
+        * fast/dom/DOMURL/url-username-expected.txt: Added.
+        * fast/dom/DOMURL/url-username.html: Added.
+
+        Update tests and results for the fact that URL constructor takes arguments.
+        * fast/dom/DOMURL/check-instanceof-domurl-functions.html:
+        * fast/dom/constructed-objects-prototypes-expected.txt:
+        * fast/dom/script-tests/constructed-objects-prototypes.js:
+        * js/dom/constructor-length.html:
+        * platform/efl/js/dom/constructor-length-expected.txt:
+        * platform/gtk-wk2/js/dom/constructor-length-expected.txt:
+        * platform/gtk/js/dom/constructor-length-expected.txt:
+        * platform/mac/js/dom/constructor-length-expected.txt:
+
 2014-01-31  Bem Jones-Bey  <bjonesbe@adobe.com>
 
         Create clipping path from <box> value

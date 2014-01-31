@@ -27,6 +27,7 @@
 #ifndef DOMURL_h
 #define DOMURL_h
 
+#include "ExceptionCode.h"
 #include "URL.h"
 #include <wtf/HashSet.h>
 #include <wtf/PassRefPtr.h>
@@ -42,7 +43,44 @@ class URLRegistrable;
 class DOMURL : public RefCounted<DOMURL> {
 
 public:
-    static PassRefPtr<DOMURL> create() { return adoptRef(new DOMURL); }
+    static PassRefPtr<DOMURL> create(const String& url, const String& base, ExceptionCode&);
+    static PassRefPtr<DOMURL> create(const String& url, const DOMURL* base, ExceptionCode&);
+    static PassRefPtr<DOMURL> create(const String& url, ExceptionCode&);
+
+    const URL& href() const;
+    void setHref(const String& url);
+    void setHref(const String&, ExceptionCode&);
+    const String& toString() const;
+
+    String origin() const;
+
+    String protocol() const;
+    void setProtocol(const String&);
+
+    String username() const;
+    void setUsername(const String&);
+
+    String password() const;
+    void setPassword(const String&);
+
+    String host() const;
+    void setHost(const String&);
+
+    String hostname() const;
+    void setHostname(const String&);
+
+    String port() const;
+    void setPort(const String&);
+
+    String pathname() const;
+    void setPathname(const String&);
+
+    String search() const;
+    void setSearch(const String&);
+
+    String hash() const;
+    void setHash(const String&);
+
 
 #if ENABLE(BLOB)
     static void contextDestroyed(ScriptExecutionContext*);
@@ -52,6 +90,13 @@ public:
 
     static String createPublicURL(ScriptExecutionContext*, URLRegistrable*);
 #endif
+private:
+    DOMURL(const String& url, const String& base, ExceptionCode&);
+    DOMURL(const String& url, const DOMURL& base, ExceptionCode&);
+    DOMURL(const String& url, ExceptionCode&);
+
+    URL m_baseURL;
+    URL m_url;
 };
 
 } // namespace WebCore

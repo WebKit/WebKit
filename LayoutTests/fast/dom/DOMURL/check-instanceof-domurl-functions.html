@@ -7,7 +7,7 @@
 <script>
 description("Test instanceof functions and properties of URL and webkitURL.");
 
-var url = new URL;
+var url = new URL("about:blank");
 
 shouldBeTrue("'createObjectURL' in URL");
 shouldBeTrue("'revokeObjectURL' in URL");

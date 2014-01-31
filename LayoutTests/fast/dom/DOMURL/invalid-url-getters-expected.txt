@@ -1,0 +1,19 @@
+Test what getters return on an invalid URL
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+FAIL invalidURL should be http://@@:p@www.example.com:22/bar?x#y (of type string). Was http://@@:p@www.example.com:22/bar?x#y (of type object).
+FAIL url.origin should be . Threw exception ReferenceError: Can't find variable: url
+FAIL url.username should be . Threw exception ReferenceError: Can't find variable: url
+FAIL url.password should be . Threw exception ReferenceError: Can't find variable: url
+FAIL url.host should be . Threw exception ReferenceError: Can't find variable: url
+FAIL url.hostname should be . Threw exception ReferenceError: Can't find variable: url
+FAIL url.port should be . Threw exception ReferenceError: Can't find variable: url
+FAIL url.pathname should be . Threw exception ReferenceError: Can't find variable: url
+FAIL url.search should be . Threw exception ReferenceError: Can't find variable: url
+FAIL url.hash should be . Threw exception ReferenceError: Can't find variable: url
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

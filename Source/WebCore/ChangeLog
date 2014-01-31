@@ -1,3 +1,59 @@
+2014-01-30  Maciej Stachowiak  <mjs@apple.com>
+
+        Implement (most of) URL API
+        https://bugs.webkit.org/show_bug.cgi?id=127795
+
+        Reviewed by Alexey Proskuryakov.
+
+        Tests: fast/dom/DOMURL/get-href-attribute-port.html
+               fast/dom/DOMURL/invalid-url-getters.html
+               fast/dom/DOMURL/set-href-attribute-hash.html
+               fast/dom/DOMURL/set-href-attribute-host.html
+               fast/dom/DOMURL/set-href-attribute-hostname.html
+               fast/dom/DOMURL/set-href-attribute-pathname.html
+               fast/dom/DOMURL/set-href-attribute-port.html
+               fast/dom/DOMURL/set-href-attribute-protocol.html
+               fast/dom/DOMURL/set-href-attribute-search.html
+               fast/dom/DOMURL/set-href-attribute-whitespace.html
+               fast/dom/DOMURL/url-constructor.html
+               fast/dom/DOMURL/url-origin.html
+               fast/dom/DOMURL/url-password.html
+               fast/dom/DOMURL/url-username.html
+
+        * CMakeLists.txt: Update for new IDL file.
+        * DerivedSources.make: ditto
+        * GNUmakefile.list.am: ditto
+        * html/DOMURL.cpp: Implement URL() constructor and instance methods; cribbed from
+        HTMLAnchorElement mostly
+        (WebCore::DOMURL::DOMURL):
+        (WebCore::DOMURL::href):
+        (WebCore::DOMURL::setHref):
+        (WebCore::DOMURL::toString):
+        (WebCore::DOMURL::origin):
+        (WebCore::DOMURL::protocol):
+        (WebCore::DOMURL::setProtocol):
+        (WebCore::DOMURL::username):
+        (WebCore::DOMURL::setUsername):
+        (WebCore::DOMURL::password):
+        (WebCore::DOMURL::setPassword):
+        (WebCore::DOMURL::host):
+        (WebCore::parsePortFromStringPosition):
+        (WebCore::DOMURL::setHost):
+        (WebCore::DOMURL::hostname):
+        (WebCore::DOMURL::setHostname):
+        (WebCore::DOMURL::port):
+        (WebCore::DOMURL::setPort):
+        (WebCore::DOMURL::pathname):
+        (WebCore::DOMURL::setPathname):
+        (WebCore::DOMURL::search):
+        (WebCore::DOMURL::setSearch):
+        (WebCore::DOMURL::hash):
+        (WebCore::DOMURL::setHash):
+        * html/DOMURL.h:
+        (WebCore::DOMURL::create):
+        * html/DOMURL.idl: Update for new methods.
+        * html/URLUtils.idl: Added. New IDL file that contains most of the interface.
+
 2014-01-31  Bem Jones-Bey  <bjonesbe@adobe.com>
 
         Create clipping path from <box> value

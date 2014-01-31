@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+
+description('Test getting the username attribute of a URL object.');
+
+debug("One-parameter constructor - valid URL");
+var url = new URL("http://user:pass@example.com/path?query#fragment")
+shouldBe("url.href", "'http://user:pass@example.com/path?query#fragment'");
+
+debug("One-parameter constructor - invalid URL should throw");
+shouldThrow('url = new URL("%^$#")');
+
+debug("One-parameter constructor - relative URL not valid against default base");
+shouldThrow('url = new URL("foobar")');
+
+debug("URL with string base");
+url = new URL("./nowhere?ok", "http://example.com/path/to/");
+shouldBe("url.href", "'http://example.com/path/to/nowhere?ok'");
+
+debug("URL with URL base");
+var base = new URL("http://example.com/path/to/");
+url = new URL("./nowhere?ok", base);
+shouldBe("url.href", "'http://example.com/path/to/nowhere?ok'");
+
+debug("URL with URL base that itself has a base");
+var metabase = new URL("http://example.org/");
+var base = new URL("http://example.com/are/we/", metabase);
+url = new URL("./nowhere?ok", base);
+shouldBe("url.href", "'http://example.com/are/we/nowhere?ok'");
+
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>

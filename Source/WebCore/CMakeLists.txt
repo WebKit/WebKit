@@ -492,6 +492,7 @@ set(WebCore_IDL_FILES
     html/RadioNodeList.idl
     html/TextMetrics.idl
     html/TimeRanges.idl
+    html/URLUtils.idl
     html/ValidityState.idl
     html/VoidCallback.idl
 

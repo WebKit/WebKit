@@ -13,8 +13,8 @@ PASS (new inner.OverflowEvent()).isInner is true
 PASS (new inner.OverflowEvent()).constructor.isInner is true
 PASS (new inner.ProgressEvent()).isInner is true
 PASS (new inner.ProgressEvent()).constructor.isInner is true
-PASS (new inner.URL()).isInner is true
-PASS (new inner.URL()).constructor.isInner is true
+PASS (new inner.URL('about:blank')).isInner is true
+PASS (new inner.URL('about:blank')).constructor.isInner is true
 PASS (new inner.XMLHttpRequest()).isInner is true
 PASS (new inner.XMLHttpRequest()).constructor.isInner is true
 PASS successfullyParsed is true

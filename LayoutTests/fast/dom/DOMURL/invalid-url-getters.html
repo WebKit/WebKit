@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+
+description("Test what getters return on an invalid URL");
+
+var invalidURL = new URL("http://u:p@www.example.com:22/bar?x#y")
+invalidURL.username = "@@";
+
+shouldBe("invalidURL.toString()", "'http://@@:p@www.example.com:22/bar?x#y'");
+shouldBe("invalidURL.origin", "''");
+shouldBe("invalidURL.username", "''");
+shouldBe("invalidURL.password", "''");
+shouldBe("invalidURL.host", "''");
+shouldBe("invalidURL.hostname", "''");
+shouldBe("invalidURL.port", "''");
+shouldBe("invalidURL.pathname", "''");
+shouldBe("invalidURL.search", "''");
+shouldBe("invalidURL.hash", "''");
+
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>
