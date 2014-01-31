@@ -62,7 +62,8 @@ StatusLineView.Status = {
     Neutral: "neutral",
     Good: "good",
     Danger: "danger",
-    Bad: "bad"
+    Bad: "bad",
+    Unauthorized: "unauthorized"
 };
 
 BaseObject.addConstructorFunctions(StatusLineView);

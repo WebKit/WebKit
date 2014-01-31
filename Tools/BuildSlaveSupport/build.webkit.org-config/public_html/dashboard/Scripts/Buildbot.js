@@ -32,13 +32,28 @@ Buildbot = function(baseURL, queuesInfo, options)
 
     this.baseURL = baseURL;
     this.queues = {};
-    this.needsAuthentication = typeof options === "object" && options.needsAuthentication === true;
+
+    // We regard _needsAuthentication as a hint whether this Buildbot requires authentication so that we can show
+    // an appropriate initial status message (say, an "unauthorized" status if the Buildbot requires authentication)
+    // for its associated queues before we make the actual HTTP request for the status of each queue.
+    this._needsAuthentication = typeof options === "object" && options.needsAuthentication === true;
+    this._authenticationStatus = Buildbot.AuthenticationStatus.Unauthenticated;
 
     for (var id in queuesInfo)
         this.queues[id] = new BuildbotQueue(this, id, queuesInfo[id]);
 };
 
 BaseObject.addConstructorFunctions(Buildbot);
+
+Buildbot.AuthenticationStatus = {
+    Unauthenticated: "unauthenticated",
+    Authenticated: "authenticated",
+    InvalidCredentials: "invalid-credentials"
+};
+
+Buildbot.UpdateReason = {
+    Reauthenticate: "reauthenticate"
+};
 
 // Ordered importance.
 Buildbot.TestCategory = {
@@ -56,6 +71,42 @@ Buildbot.BuildArchitecture = {
 Buildbot.prototype = {
     constructor: Buildbot,
     __proto__: BaseObject.prototype,
+
+    get needsAuthentication()
+    {
+        return this._needsAuthentication;
+    },
+
+    get authenticationStatus()
+    {
+        return this._authenticationStatus;
+    },
+
+    get isAuthenticated()
+    {
+        return this._authenticationStatus === Buildbot.AuthenticationStatus.Authenticated;
+    },
+
+    set isAuthenticated(value)
+    {
+        this._authenticationStatus = value ? Buildbot.AuthenticationStatus.Authenticated : Buildbot.AuthenticationStatus.InvalidCredentials;
+    },
+
+    updateQueues: function(updateReason)
+    {
+        var shouldReauthenticate = updateReason === Buildbot.UpdateReason.Reauthenticate;
+        if (shouldReauthenticate) {
+            var savedAuthenticationStatus = this._authenticationStatus;
+            this._authenticationStatus = Buildbot.AuthenticationStatus.Unauthenticated;
+        }
+        for (var id in this.queues)
+            this.queues[id].update();
+        if (shouldReauthenticate) {
+            // Assert status wasn't changed synchronously. Otherwise, we will override it (below).
+            console.assert(this._authenticationStatus === Buildbot.AuthenticationStatus.Unauthenticated);
+            this._authenticationStatus = savedAuthenticationStatus;
+        }
+    },
 
     buildPageURLForIteration: function(iteration)
     {

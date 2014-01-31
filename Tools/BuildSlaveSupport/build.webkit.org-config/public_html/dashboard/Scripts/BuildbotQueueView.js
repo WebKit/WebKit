@@ -36,6 +36,7 @@ BuildbotQueueView = function(debugQueues, releaseQueues)
         else
             this.platform = queue.platform;
         queue.addEventListener(BuildbotQueue.Event.IterationsAdded, this._queueIterationsAdded, this);
+        queue.addEventListener(BuildbotQueue.Event.UnauthorizedAccess, this.updateSoon, this);
     }.bind(this));
 
     this.debugQueues.forEach(function(queue) {
@@ -44,6 +45,7 @@ BuildbotQueueView = function(debugQueues, releaseQueues)
         else
             this.platform = queue.platform;
         queue.addEventListener(BuildbotQueue.Event.IterationsAdded, this._queueIterationsAdded, this);
+        queue.addEventListener(BuildbotQueue.Event.UnauthorizedAccess, this.updateSoon, this);
     }.bind(this));
 
     webkitTrac.addEventListener(Trac.Event.NewCommitsRecorded, this._newCommitsRecorded, this);
@@ -67,6 +69,15 @@ BuildbotQueueView.prototype = {
         if (queue.iterations[0].productive)
             return queue.iterations[0];
         return queue.iterations[0].previousProductiveIteration;
+    },
+
+    _appendUnauthorizedLineView: function(queue)
+    {
+        console.assert(queue.buildbot.needsAuthentication);
+        console.assert(!queue.buildbot.isAuthenticated);
+        var javascriptURL = "javascript:buildbots[" + buildbots.indexOf(queue.buildbot) + "].updateQueues(Buildbot.UpdateReason.Reauthenticate)";
+        var status = new StatusLineView("unauthorized", StatusLineView.Status.Unauthorized, "", null, javascriptURL);
+        this.element.appendChild(status.element);
     },
 
     _appendPendingRevisionCount: function(queue)

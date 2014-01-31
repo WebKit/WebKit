@@ -1,3 +1,49 @@
+2014-01-31  Daniel Bates  <dabates@apple.com>
+
+        WebKit Bot Watcher's Dashboard: Access restricted queue should only prompt for HTTP credentials once per page load
+        https://bugs.webkit.org/show_bug.cgi?id=127849
+
+        Reviewed by Alexey Proskuryakov.
+
+        Currently whenever the dashboard updates the status of a queue whose Buildbot requires authentication
+        it will cause a browser to prompt for credentials once per update until valid credentials are provided.
+        Instead we should keep track of Buildbots that respond with an HTTP 401 Unauthorized status code to avoid
+        subsequently querying them and hence cause a browser to prompt for credentials. Together with an optional
+        hint provided when instantiating a Buildbot object as to whether it requires authentication, we can make
+        the dashboard prompt for HTTP credentials exactly once per page load for each queue whose associated
+        Buildbot requires authentication.
+
+        Queues whose Buildbot wasn't authenticated will show in the dashboard as "unauthorized". Clicking on
+        this status message will cause the browser to prompt for credentials.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/Buildbot.js:
+        (Buildbot): Initialize instance variable authenticationStatus to Buildbot.AuthenticationStatus.Unauthenticated.
+        (Buildbot.prototype.get needsAuthentication): Added.
+        (Buildbot.prototype.get authenticationStatus): Added.
+        (Buildbot.prototype.get isAuthenticated): Added.
+        (Buildbot.prototype.set isAuthenticated): Added.
+        (Buildbot.prototype.updateQueues): Added.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/BuildbotBuilderQueueView.js:
+        (BuildbotBuilderQueueView.prototype.update.appendBuilderQueueStatus): Modified to call
+        BuildbotQueueView.prototype._appendUnauthorizedLineView() to update the view and show status of the queue as
+        "unauthorized" if the Buildbot associated with the queue is either unauthenticated or was given invalid credentials.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/BuildbotQueue.js:
+        (BuildbotQueue.prototype.update): Return immediately if the associated Buildbot requires authentication.
+        Additionally, if the JSON load fails with an HTTP 401 Unauthorized access error (say, credentials were
+        invalidated) then update the authentication status of the Buildbot to avoid subsequently prompting a
+        person for credentials the next time the queue update timer fires.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/BuildbotQueueView.js:
+        (BuildbotQueueView): Register as a listener for event BuildbotQueue.Event.UnauthorizedAccess on each queue
+        so that the view can be updated to show status "unauthorized".
+        (BuildbotQueueView.prototype._appendUnauthorizedLineView): Added.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/BuildbotTesterQueueView.js:
+        (BuildbotTesterQueueView.prototype.update.appendBuilderQueueStatus):
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/StatusLineView.js: Added new status, StatusLineView.Status.Unauthorized.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Styles/StatusLineView.css:
+        (.status-line.unauthorized .bubble): Added.
+        (.status-line.unauthorized .bubble.pictogram): Added.
+        (.status-line.unauthorized .message): Added.
+
 2014-01-31  Filip Pizlo  <fpizlo@apple.com>
 
         Unreviewed, really make --copy-libraries a no-able option.

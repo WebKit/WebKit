@@ -60,6 +60,11 @@ BuildbotBuilderQueueView.prototype = {
 
         function appendBuilderQueueStatus(queue)
         {
+            if (queue.buildbot.needsAuthentication && !queue.buildbot.isAuthenticated) {
+                this._appendUnauthorizedLineView(queue);
+                return;
+            }
+
             this._appendPendingRevisionCount(queue);
 
             var firstRecentUnsuccessfulIteration = queue.firstRecentUnsuccessfulIteration;
