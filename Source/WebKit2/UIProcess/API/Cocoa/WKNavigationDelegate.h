@@ -52,6 +52,8 @@ typedef NS_ENUM(NSInteger, WKNavigationResponsePolicyDecision) {
 - (void)webView:(WKWebView *)webView decidePolicyForNavigationResponse:(WKNavigationResponse *)navigationResponse decisionHandler:(void (^)(WKNavigationResponsePolicyDecision))decisionHandler;
 
 - (void)webView:(WKWebView *)webView didStartProvisionalNavigation:(WKNavigation *)navigation;
+- (void)webView:(WKWebView *)webView didReceiveServerRedirectForProvisionalNavigation:(WKNavigation *)navigation;
+
 - (void)webView:(WKWebView *)webView didFailProvisionalNavigation:(WKNavigation *)navigation withError:(NSError *)error;
 - (void)webView:(WKWebView *)webView didCommitNavigation:(WKNavigation *)navigation;
 - (void)webView:(WKWebView *)webView didFinishLoadingNavigation:(WKNavigation *)navigation;
