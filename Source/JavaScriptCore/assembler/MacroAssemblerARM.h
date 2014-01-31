@@ -517,6 +517,12 @@ public:
         m_assembler.pop(dest);
     }
 
+    void popPair(RegisterID dest1, RegisterID dest2)
+    {
+        m_assembler.pop(dest1);
+        m_assembler.pop(dest2);
+    }
+
     void push(RegisterID src)
     {
         m_assembler.push(src);
@@ -532,6 +538,12 @@ public:
     {
         move(imm, ARMRegisters::S0);
         push(ARMRegisters::S0);
+    }
+
+    void pushPair(RegisterID src1, RegisterID src2)
+    {
+        m_assembler.push(src2);
+        m_assembler.push(src1);
     }
 
     void move(TrustedImm32 imm, RegisterID dest)
