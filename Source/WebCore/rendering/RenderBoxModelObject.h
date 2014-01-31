@@ -113,14 +113,14 @@ public:
     virtual LayoutUnit paddingStart() const { return computedCSSPaddingStart(); }
     virtual LayoutUnit paddingEnd() const { return computedCSSPaddingEnd(); }
 
-    virtual int borderTop() const { return style().borderTopWidth(); }
-    virtual int borderBottom() const { return style().borderBottomWidth(); }
-    virtual int borderLeft() const { return style().borderLeftWidth(); }
-    virtual int borderRight() const { return style().borderRightWidth(); }
-    virtual int borderBefore() const { return style().borderBeforeWidth(); }
-    virtual int borderAfter() const { return style().borderAfterWidth(); }
-    virtual int borderStart() const { return style().borderStartWidth(); }
-    virtual int borderEnd() const { return style().borderEndWidth(); }
+    virtual LayoutUnit borderTop() const { return style().borderTopWidth(); }
+    virtual LayoutUnit borderBottom() const { return style().borderBottomWidth(); }
+    virtual LayoutUnit borderLeft() const { return style().borderLeftWidth(); }
+    virtual LayoutUnit borderRight() const { return style().borderRightWidth(); }
+    virtual LayoutUnit borderBefore() const { return style().borderBeforeWidth(); }
+    virtual LayoutUnit borderAfter() const { return style().borderAfterWidth(); }
+    virtual LayoutUnit borderStart() const { return style().borderStartWidth(); }
+    virtual LayoutUnit borderEnd() const { return style().borderEndWidth(); }
 
     LayoutUnit borderAndPaddingStart() const { return borderStart() + paddingStart(); }
     LayoutUnit borderAndPaddingBefore() const { return borderBefore() + paddingBefore(); }

@@ -31,6 +31,7 @@
 #include "IntPoint.h"
 #include "IntRect.h"
 #include "LayoutRect.h"
+#include "LayoutUnit.h"
 #include <wtf/MathExtras.h>
 #include <wtf/StringExtras.h>
 #include <wtf/text/WTFString.h>
@@ -148,6 +149,11 @@ TextStream& TextStream::operator<<(const FloatSize& s)
 {
     return *this << "width=" << TextStream::FormatNumberRespectingIntegers(s.width())
         << " height=" << TextStream::FormatNumberRespectingIntegers(s.height());
+}
+
+TextStream& TextStream::operator<<(const LayoutUnit& v)
+{
+    return *this << TextStream::FormatNumberRespectingIntegers(v.toFloat());
 }
 
 TextStream& TextStream::operator<<(const LayoutPoint& p)

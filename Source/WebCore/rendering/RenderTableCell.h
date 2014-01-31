@@ -103,21 +103,21 @@ public:
         // In strict mode, box-sizing: content-box do the right thing and actually add in the border and padding.
         // Call computedCSSPadding* directly to avoid including implicitPadding.
         if (!document().inQuirksMode() && style().boxSizing() != BORDER_BOX)
-            styleLogicalHeight += (computedCSSPaddingBefore() + computedCSSPaddingAfter()).floor() + borderBefore() + borderAfter();
+            styleLogicalHeight += (computedCSSPaddingBefore() + computedCSSPaddingAfter()).floor() + (borderBefore() + borderAfter()).floor();
         return std::max(styleLogicalHeight, adjustedLogicalHeight);
     }
 
 
     void setCellLogicalWidth(int constrainedLogicalWidth);
 
-    virtual int borderLeft() const override;
-    virtual int borderRight() const override;
-    virtual int borderTop() const override;
-    virtual int borderBottom() const override;
-    virtual int borderStart() const override;
-    virtual int borderEnd() const override;
-    virtual int borderBefore() const override;
-    virtual int borderAfter() const override;
+    virtual LayoutUnit borderLeft() const override;
+    virtual LayoutUnit borderRight() const override;
+    virtual LayoutUnit borderTop() const override;
+    virtual LayoutUnit borderBottom() const override;
+    virtual LayoutUnit borderStart() const override;
+    virtual LayoutUnit borderEnd() const override;
+    virtual LayoutUnit borderBefore() const override;
+    virtual LayoutUnit borderAfter() const override;
 
     void collectBorderValues(RenderTable::CollapsedBorderValues&) const;
     static void sortBorderValues(RenderTable::CollapsedBorderValues&);

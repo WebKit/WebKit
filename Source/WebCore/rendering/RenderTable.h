@@ -53,33 +53,33 @@ public:
     
     bool collapseBorders() const { return style().borderCollapse(); }
 
-    virtual int borderStart() const override { return m_borderStart; }
-    virtual int borderEnd() const override { return m_borderEnd; }
-    virtual int borderBefore() const override;
-    virtual int borderAfter() const override;
+    virtual LayoutUnit borderStart() const override { return m_borderStart; }
+    virtual LayoutUnit borderEnd() const override { return m_borderEnd; }
+    virtual LayoutUnit borderBefore() const override;
+    virtual LayoutUnit borderAfter() const override;
 
-    virtual int borderLeft() const override
+    virtual LayoutUnit borderLeft() const override
     {
         if (style().isHorizontalWritingMode())
             return style().isLeftToRightDirection() ? borderStart() : borderEnd();
         return style().isFlippedBlocksWritingMode() ? borderAfter() : borderBefore();
     }
 
-    virtual int borderRight() const override
+    virtual LayoutUnit borderRight() const override
     {
         if (style().isHorizontalWritingMode())
             return style().isLeftToRightDirection() ? borderEnd() : borderStart();
         return style().isFlippedBlocksWritingMode() ? borderBefore() : borderAfter();
     }
 
-    virtual int borderTop() const override
+    virtual LayoutUnit borderTop() const override
     {
         if (style().isHorizontalWritingMode())
             return style().isFlippedBlocksWritingMode() ? borderAfter() : borderBefore();
         return style().isLeftToRightDirection() ? borderStart() : borderEnd();
     }
 
-    virtual int borderBottom() const override
+    virtual LayoutUnit borderBottom() const override
     {
         if (style().isHorizontalWritingMode())
             return style().isFlippedBlocksWritingMode() ? borderBefore() : borderAfter();

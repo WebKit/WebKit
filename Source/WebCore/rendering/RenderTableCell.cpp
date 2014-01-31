@@ -930,46 +930,46 @@ inline RenderTableCell* RenderTableCell::cellAtBottom(const RenderStyle* styleFo
     return styleForCellFlow->isLeftToRightDirection() ? table()->cellAfter(this) : table()->cellBefore(this);
 }
 
-int RenderTableCell::borderLeft() const
+LayoutUnit RenderTableCell::borderLeft() const
 {
-    return table()->collapseBorders() ? borderHalfLeft(false) : RenderBlockFlow::borderLeft();
+    return table()->collapseBorders() ? LayoutUnit::fromPixel(borderHalfLeft(false)) : RenderBlockFlow::borderLeft();
 }
 
-int RenderTableCell::borderRight() const
+LayoutUnit RenderTableCell::borderRight() const
 {
-    return table()->collapseBorders() ? borderHalfRight(false) : RenderBlockFlow::borderRight();
+    return table()->collapseBorders() ? LayoutUnit::fromPixel(borderHalfRight(false)) : RenderBlockFlow::borderRight();
 }
 
-int RenderTableCell::borderTop() const
+LayoutUnit RenderTableCell::borderTop() const
 {
-    return table()->collapseBorders() ? borderHalfTop(false) : RenderBlockFlow::borderTop();
+    return table()->collapseBorders() ? LayoutUnit::fromPixel(borderHalfTop(false)) : RenderBlockFlow::borderTop();
 }
 
-int RenderTableCell::borderBottom() const
+LayoutUnit RenderTableCell::borderBottom() const
 {
-    return table()->collapseBorders() ? borderHalfBottom(false) : RenderBlockFlow::borderBottom();
+    return table()->collapseBorders() ? LayoutUnit::fromPixel(borderHalfBottom(false)) : RenderBlockFlow::borderBottom();
 }
 
 // FIXME: https://bugs.webkit.org/show_bug.cgi?id=46191, make the collapsed border drawing
 // work with different block flow values instead of being hard-coded to top-to-bottom.
-int RenderTableCell::borderStart() const
+LayoutUnit RenderTableCell::borderStart() const
 {
-    return table()->collapseBorders() ? borderHalfStart(false) : RenderBlockFlow::borderStart();
+    return table()->collapseBorders() ? LayoutUnit::fromPixel(borderHalfStart(false)) : RenderBlockFlow::borderStart();
 }
 
-int RenderTableCell::borderEnd() const
+LayoutUnit RenderTableCell::borderEnd() const
 {
-    return table()->collapseBorders() ? borderHalfEnd(false) : RenderBlockFlow::borderEnd();
+    return table()->collapseBorders() ? LayoutUnit::fromPixel(borderHalfEnd(false)) : RenderBlockFlow::borderEnd();
 }
 
-int RenderTableCell::borderBefore() const
+LayoutUnit RenderTableCell::borderBefore() const
 {
-    return table()->collapseBorders() ? borderHalfBefore(false) : RenderBlockFlow::borderBefore();
+    return table()->collapseBorders() ? LayoutUnit::fromPixel(borderHalfBefore(false)) : RenderBlockFlow::borderBefore();
 }
 
-int RenderTableCell::borderAfter() const
+LayoutUnit RenderTableCell::borderAfter() const
 {
-    return table()->collapseBorders() ? borderHalfAfter(false) : RenderBlockFlow::borderAfter();
+    return table()->collapseBorders() ? LayoutUnit::fromPixel(borderHalfAfter(false)) : RenderBlockFlow::borderAfter();
 }
 
 int RenderTableCell::borderHalfLeft(bool outer) const

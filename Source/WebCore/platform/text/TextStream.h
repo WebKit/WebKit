@@ -38,6 +38,7 @@ class FloatPoint;
 class FloatSize;
 class LayoutPoint;
 class LayoutRect;
+class LayoutUnit;
 
 class TextStream {
 public:
@@ -64,6 +65,7 @@ public:
     TextStream& operator<<(const IntRect&);
     TextStream& operator<<(const FloatPoint&);
     TextStream& operator<<(const FloatSize&);
+    TextStream& operator<<(const LayoutUnit&);
     TextStream& operator<<(const LayoutPoint&);
     TextStream& operator<<(const LayoutRect&);
 
