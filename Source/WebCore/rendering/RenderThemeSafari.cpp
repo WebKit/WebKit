@@ -778,7 +778,7 @@ void RenderThemeSafari::paintMenuListButtonGradients(RenderObject* o, const Pain
 
     RetainPtr<CGShadingRef> rightShading = adoptCF(CGShadingCreateAxial(cspace, CGPointMake(r.maxX(),  r.y()), CGPointMake(r.maxX() - radius, r.y()), mainFunction.get(), false, false));
     paintInfo.context->save();
-    CGContextClipToRect(context, bound.rect());
+    CGContextClipToRect(context, r);
     paintInfo.context->clipRoundedRect(bound);
     CGContextDrawShading(context, mainShading.get());
     paintInfo.context->restore();
@@ -798,7 +798,7 @@ void RenderThemeSafari::paintMenuListButtonGradients(RenderObject* o, const Pain
     }
 
     paintInfo.context->save();
-    CGContextClipToRect(context, bound.rect());
+    CGContextClipToRect(context, r);
     paintInfo.context->clipRoundedRect(bound);
     CGContextDrawShading(context, leftShading.get());
     CGContextDrawShading(context, rightShading.get());
@@ -973,7 +973,7 @@ bool RenderThemeSafari::paintSliderTrack(RenderObject* o, const PaintInfo& paint
     CGColorSpaceRef cspace = deviceRGBColorSpaceRef();
 
     paintInfo.context->save();
-    CGContextClipToRect(context, bounds.rect());
+    CGContextClipToRect(context, pixelSnappedIntRect(bounds.rect()));
 
     struct CGFunctionCallbacks mainCallbacks = { 0, TrackGradientInterpolate, NULL };
     RetainPtr<CGFunctionRef> mainFunction = adoptCF(CGFunctionCreate(NULL, 1, NULL, 4, NULL, &mainCallbacks));

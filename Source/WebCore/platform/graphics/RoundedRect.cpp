@@ -28,6 +28,9 @@
 #include "config.h"
 #include "RoundedRect.h"
 
+#include "LayoutRect.h"
+#include "LayoutUnit.h"
+
 #include <algorithm>
 
 namespace WebCore {
@@ -45,42 +48,42 @@ void RoundedRect::Radii::scale(float factor)
     // If either radius on a corner becomes zero, reset both radii on that corner.
     m_topLeft.scale(factor);
     if (!m_topLeft.width() || !m_topLeft.height())
-        m_topLeft = IntSize();
+        m_topLeft = LayoutSize();
     m_topRight.scale(factor);
     if (!m_topRight.width() || !m_topRight.height())
-        m_topRight = IntSize();
+        m_topRight = LayoutSize();
     m_bottomLeft.scale(factor);
     if (!m_bottomLeft.width() || !m_bottomLeft.height())
-        m_bottomLeft = IntSize();
+        m_bottomLeft = LayoutSize();
     m_bottomRight.scale(factor);
     if (!m_bottomRight.width() || !m_bottomRight.height())
-        m_bottomRight = IntSize();
+        m_bottomRight = LayoutSize();
 
 }
 
-void RoundedRect::Radii::expand(int topWidth, int bottomWidth, int leftWidth, int rightWidth)
+void RoundedRect::Radii::expand(const LayoutUnit& topWidth, const LayoutUnit& bottomWidth, const LayoutUnit& leftWidth, const LayoutUnit& rightWidth)
 {
     if (m_topLeft.width() > 0 && m_topLeft.height() > 0) {
-        m_topLeft.setWidth(std::max<int>(0, m_topLeft.width() + leftWidth));
-        m_topLeft.setHeight(std::max<int>(0, m_topLeft.height() + topWidth));
+        m_topLeft.setWidth(std::max<LayoutUnit>(0, m_topLeft.width() + leftWidth));
+        m_topLeft.setHeight(std::max<LayoutUnit>(0, m_topLeft.height() + topWidth));
     }
     if (m_topRight.width() > 0 && m_topRight.height() > 0) {
-        m_topRight.setWidth(std::max<int>(0, m_topRight.width() + rightWidth));
-        m_topRight.setHeight(std::max<int>(0, m_topRight.height() + topWidth));
+        m_topRight.setWidth(std::max<LayoutUnit>(0, m_topRight.width() + rightWidth));
+        m_topRight.setHeight(std::max<LayoutUnit>(0, m_topRight.height() + topWidth));
     }
     if (m_bottomLeft.width() > 0 && m_bottomLeft.height() > 0) {
-        m_bottomLeft.setWidth(std::max<int>(0, m_bottomLeft.width() + leftWidth));
-        m_bottomLeft.setHeight(std::max<int>(0, m_bottomLeft.height() + bottomWidth));
+        m_bottomLeft.setWidth(std::max<LayoutUnit>(0, m_bottomLeft.width() + leftWidth));
+        m_bottomLeft.setHeight(std::max<LayoutUnit>(0, m_bottomLeft.height() + bottomWidth));
     }
     if (m_bottomRight.width() > 0 && m_bottomRight.height() > 0) {
-        m_bottomRight.setWidth(std::max<int>(0, m_bottomRight.width() + rightWidth));
-        m_bottomRight.setHeight(std::max<int>(0, m_bottomRight.height() + bottomWidth));
+        m_bottomRight.setWidth(std::max<LayoutUnit>(0, m_bottomRight.width() + rightWidth));
+        m_bottomRight.setHeight(std::max<LayoutUnit>(0, m_bottomRight.height() + bottomWidth));
     }
 }
 
-void RoundedRect::inflateWithRadii(int size)
+void RoundedRect::inflateWithRadii(const LayoutUnit& size)
 {
-    IntRect old = m_rect;
+    LayoutRect old = m_rect;
 
     m_rect.inflate(size);
     // Considering the inflation factor of shorter size to scale the radii seems appropriate here
@@ -131,18 +134,18 @@ void RoundedRect::Radii::excludeLogicalEdges(bool isHorizontal, bool excludeLogi
     }
 }
 
-RoundedRect::RoundedRect(int x, int y, int width, int height)
+RoundedRect::RoundedRect(const LayoutUnit& x, const LayoutUnit& y, const LayoutUnit& width, const LayoutUnit& height)
     : m_rect(x, y, width, height)
 {
 }
 
-RoundedRect::RoundedRect(const IntRect& rect, const Radii& radii)
+RoundedRect::RoundedRect(const LayoutRect& rect, const Radii& radii)
     : m_rect(rect)
     , m_radii(radii)
 {
 }
 
-RoundedRect::RoundedRect(const IntRect& rect, const IntSize& topLeft, const IntSize& topRight, const IntSize& bottomLeft, const IntSize& bottomRight)
+RoundedRect::RoundedRect(const LayoutRect& rect, const LayoutSize& topLeft, const LayoutSize& topRight, const LayoutSize& bottomLeft, const LayoutSize& bottomRight)
     : m_rect(rect)
     , m_radii(topLeft, topRight, bottomLeft, bottomRight)
 {
@@ -186,7 +189,7 @@ bool RoundedRect::intersectsQuad(const FloatQuad& quad) const
     if (!quad.intersectsRect(rect))
         return false;
 
-    const IntSize& topLeft = m_radii.topLeft();
+    const LayoutSize& topLeft = m_radii.topLeft();
     if (!topLeft.isEmpty()) {
         FloatRect rect(m_rect.x(), m_rect.y(), topLeft.width(), topLeft.height());
         if (quad.intersectsRect(rect)) {
@@ -197,7 +200,7 @@ bool RoundedRect::intersectsQuad(const FloatQuad& quad) const
         }
     }
 
-    const IntSize& topRight = m_radii.topRight();
+    const LayoutSize& topRight = m_radii.topRight();
     if (!topRight.isEmpty()) {
         FloatRect rect(m_rect.maxX() - topRight.width(), m_rect.y(), topRight.width(), topRight.height());
         if (quad.intersectsRect(rect)) {
@@ -208,7 +211,7 @@ bool RoundedRect::intersectsQuad(const FloatQuad& quad) const
         }
     }
 
-    const IntSize& bottomLeft = m_radii.bottomLeft();
+    const LayoutSize& bottomLeft = m_radii.bottomLeft();
     if (!bottomLeft.isEmpty()) {
         FloatRect rect(m_rect.x(), m_rect.maxY() - bottomLeft.height(), bottomLeft.width(), bottomLeft.height());
         if (quad.intersectsRect(rect)) {
@@ -219,7 +222,7 @@ bool RoundedRect::intersectsQuad(const FloatQuad& quad) const
         }
     }
 
-    const IntSize& bottomRight = m_radii.bottomRight();
+    const LayoutSize& bottomRight = m_radii.bottomRight();
     if (!bottomRight.isEmpty()) {
         FloatRect rect(m_rect.maxX() - bottomRight.width(), m_rect.maxY() - bottomRight.height(), bottomRight.width(), bottomRight.height());
         if (quad.intersectsRect(rect)) {

@@ -1,3 +1,80 @@
+2014-01-30  Zalan Bujtas  <zalan@apple.com>
+
+        Subpixel rendering: Make RoundedRect layout unit aware.
+        https://bugs.webkit.org/show_bug.cgi?id=127779
+
+        Reviewed by Simon Fraser.
+
+        In order to draw hairline borders, RoundedRect needs to be
+        LayoutUnit based.
+
+        No change in behavior.
+
+        * platform/graphics/GraphicsContext.cpp:
+        (WebCore::GraphicsContext::fillRoundedRect):
+        * platform/graphics/GraphicsContext.h:
+        * platform/graphics/RoundedRect.cpp:
+        (WebCore::RoundedRect::Radii::scale):
+        (WebCore::RoundedRect::Radii::expand):
+        (WebCore::RoundedRect::inflateWithRadii):
+        (WebCore::RoundedRect::RoundedRect):
+        (WebCore::RoundedRect::intersectsQuad):
+        * platform/graphics/RoundedRect.h:
+        (WebCore::RoundedRect::Radii::Radii):
+        (WebCore::RoundedRect::Radii::setTopLeft):
+        (WebCore::RoundedRect::Radii::setTopRight):
+        (WebCore::RoundedRect::Radii::setBottomLeft):
+        (WebCore::RoundedRect::Radii::setBottomRight):
+        (WebCore::RoundedRect::Radii::topLeft):
+        (WebCore::RoundedRect::Radii::topRight):
+        (WebCore::RoundedRect::Radii::bottomLeft):
+        (WebCore::RoundedRect::Radii::bottomRight):
+        (WebCore::RoundedRect::Radii::expand):
+        (WebCore::RoundedRect::Radii::shrink):
+        (WebCore::RoundedRect::rect):
+        (WebCore::RoundedRect::setRect):
+        (WebCore::RoundedRect::move):
+        (WebCore::RoundedRect::inflate):
+        (WebCore::RoundedRect::expandRadii):
+        (WebCore::RoundedRect::shrinkRadii):
+        * platform/graphics/ShadowBlur.cpp:
+        (WebCore::ScratchBuffer::setCachedShadowValues):
+        (WebCore::ScratchBuffer::setCachedInsetShadowValues):
+        (WebCore::computeSliceSizesFromRadii):
+        (WebCore::ShadowBlur::templateSize):
+        (WebCore::ShadowBlur::drawRectShadow):
+        (WebCore::ShadowBlur::drawInsetShadow):
+        (WebCore::ShadowBlur::drawRectShadowWithoutTiling):
+        (WebCore::ShadowBlur::drawInsetShadowWithoutTiling):
+        (WebCore::ShadowBlur::drawInsetShadowWithTiling):
+        (WebCore::ShadowBlur::drawRectShadowWithTiling):
+        (WebCore::ShadowBlur::drawLayerPieces):
+        (WebCore::ShadowBlur::beginShadowLayer):
+        * platform/graphics/ShadowBlur.h:
+        * platform/graphics/cairo/GraphicsContextCairo.cpp:
+        (WebCore::GraphicsContext::clipOut):
+        (WebCore::GraphicsContext::fillRoundedRect):
+        (WebCore::GraphicsContext::fillRectWithRoundedHole):
+        * platform/graphics/cg/GraphicsContextCG.cpp:
+        (WebCore::GraphicsContext::platformInit):
+        * platform/graphics/wince/GraphicsContextWinCE.cpp:
+        (WebCore::GraphicsContext::clipOut):
+        (WebCore::GraphicsContext::fillRoundedRect):
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::paintOneBorderSide):
+        (WebCore::calculateSideRect):
+        (WebCore::RenderBoxModelObject::paintBorderSides):
+        (WebCore::RenderBoxModelObject::paintBorder):
+        (WebCore::RenderBoxModelObject::clipBorderSidePolygon):
+        (WebCore::calculateSideRectIncludingInner):
+        (WebCore::calculateAdjustedInnerBorder):
+        (WebCore::areaCastingShadowInHole):
+        (WebCore::RenderBoxModelObject::paintBoxShadow):
+        * rendering/RenderBoxModelObject.h:
+        * rendering/RenderThemeSafari.cpp:
+        (WebCore::RenderThemeSafari::paintMenuListButtonGradients):
+        (WebCore::RenderThemeSafari::paintSliderTrack):
+
 2014-01-30  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] [CMake] Add support for building against GTK+ 2
