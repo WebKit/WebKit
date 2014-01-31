@@ -2495,21 +2495,6 @@ static bool isViewportConstrainedFixedOrStickyLayer(const RenderLayer& layer)
 
 bool RenderLayerCompositor::requiresCompositingForPosition(RenderLayerModelObject& renderer, const RenderLayer& layer, RenderLayer::ViewportConstrainedNotCompositedReason* viewportConstrainedNotCompositedReason) const
 {
-#if PLATFORM(IOS)
-    if (renderer.isStickyPositioned())
-        return true;
-
-    // position:fixed elements that create their own stacking context (e.g. have an explicit z-index,
-    // opacity, transform) can get their own composited layer. A stacking context is required otherwise
-    // z-index and clipping will be broken.
-    if (!(renderer.isOutOfFlowPositioned() && renderer.style().position() == FixedPosition))
-        return false;
-
-    if (!m_renderView.hasCustomFixedPosition(renderer, RenderView::CheckContainingBlock)) {
-        m_reevaluateCompositingAfterLayout = true;
-        return false;
-    }
-#else
     // position:fixed elements that create their own stacking context (e.g. have an explicit z-index,
     // opacity, transform) can get their own composited layer. A stacking context is required otherwise
     // z-index and clipping will be broken.
@@ -2532,7 +2517,6 @@ bool RenderLayerCompositor::requiresCompositingForPosition(RenderLayerModelObjec
 
     if (isSticky)
         return hasCoordinatedScrolling() && isViewportConstrainedFixedOrStickyLayer(layer);
-#endif
 
     auto container = renderer.container();
     // If the renderer is not hooked up yet then we have to wait until it is.
@@ -2563,7 +2547,7 @@ bool RenderLayerCompositor::requiresCompositingForPosition(RenderLayerModelObjec
     }
 
     // Fixed position elements that are invisible in the current view don't get their own layer.
-    LayoutRect viewBounds = m_renderView.frameView().viewportConstrainedVisibleContentRect();
+    LayoutRect viewBounds = m_renderView.frameView().viewportConstrainedExtentRect();
     LayoutRect layerBounds = layer.calculateLayerBounds(&layer, 0, RenderLayer::UseLocalClipRectIfPossible | RenderLayer::IncludeLayerFilterOutsets | RenderLayer::UseFragmentBoxes
         | RenderLayer::ExcludeHiddenDescendants | RenderLayer::DontConstrainForMask | RenderLayer::IncludeCompositedDescendants);
     // Map to m_renderView to ignore page scale.

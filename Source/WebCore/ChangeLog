@@ -1,3 +1,24 @@
+2014-01-30  Simon Fraser  <simon.fraser@apple.com>
+
+        Some fixed position elements disappear in WK2 on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=127977
+
+        Reviewed by Tim Horton.
+
+        Use the appropriate rectangle to ensure that on iOS we don't 
+        consider a fixed element outside the viewport when zoomed in,
+        and therefore never make a compositing layer for it.
+
+        Also remove the iOS-specific code in RenderLayerCompositor::requiresCompositingForPosition(),
+        since it's OK to use the common code. Doing so requires that we
+        set the "acceleratedCompositingForFixedPositionEnabled" setting to true
+        for iOS, so do so.
+
+        * page/Settings.cpp:
+        * page/Settings.in:
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::requiresCompositingForPosition):
+
 2014-01-30  Zalan Bujtas  <zalan@apple.com>
 
         Subpixel rendering: Make RoundedRect layout unit aware.
