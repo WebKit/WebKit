@@ -437,11 +437,12 @@ void RenderLayerCompositor::flushPendingLayerChanges(bool isFlushRoot)
     ChromeClient* client = this->chromeClient();
     if (client && isFlushRoot)
         client->didFlushCompositingLayers();
-#else
+#endif
+
     for (auto it = m_viewportConstrainedLayersNeedingUpdate.begin(), end = m_viewportConstrainedLayersNeedingUpdate.end(); it != end; ++it)
         registerOrUpdateViewportConstrainedLayer(**it);
+
     m_viewportConstrainedLayersNeedingUpdate.clear();
-#endif
     startLayerFlushTimerIfNeeded();
 }
 
@@ -3428,7 +3429,6 @@ StickyPositionViewportConstraints RenderLayerCompositor::computeStickyViewportCo
     return constraints;
 }
 
-#if !PLATFORM(IOS)
 static RenderLayerBacking* nearestScrollingCoordinatorAncestor(RenderLayer& layer)
 {
     RenderLayer* ancestor = layer.parent();
@@ -3442,14 +3442,9 @@ static RenderLayerBacking* nearestScrollingCoordinatorAncestor(RenderLayer& laye
 
     return nullptr;
 }
-#endif
 
 void RenderLayerCompositor::registerOrUpdateViewportConstrainedLayer(RenderLayer& layer)
 {
-#if PLATFORM(IOS)
-    UNUSED_PARAM(layer);
-    // On iOS, we batch-update viewport-constrained layers in updateCustomLayersAfterFlush().
-#else
     // FIXME: We should support sticky position here! And we should eventuall support fixed/sticky elements
     // that are inside non-main frames once we get non-main frames scrolling with the ScrollingCoordinator.
     if (m_renderView.document().ownerElement())
@@ -3483,19 +3478,14 @@ void RenderLayerCompositor::registerOrUpdateViewportConstrainedLayer(RenderLayer
         scrollingCoordinator->updateViewportConstrainedNode(nodeID, computeStickyViewportConstraints(layer), backing->graphicsLayer());
     else
         scrollingCoordinator->updateViewportConstrainedNode(nodeID, computeFixedViewportConstraints(layer), backing->graphicsLayer());
-#endif
 }
 
 void RenderLayerCompositor::unregisterViewportConstrainedLayer(RenderLayer& layer)
 {
     ASSERT(m_viewportConstrainedLayers.contains(&layer));
-#if PLATFORM(IOS)
-    UNUSED_PARAM(layer);
-    // On iOS, we batch-update viewport-constrained layers in updateCustomLayersAfterFlush().
-#else
+
     if (RenderLayerBacking* backing = layer.backing())
         backing->detachFromScrollingCoordinator();
-#endif
 }
 
 #if PLATFORM(IOS)
