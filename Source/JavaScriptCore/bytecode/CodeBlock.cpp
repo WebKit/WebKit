@@ -1558,7 +1558,7 @@ CodeBlock::CodeBlock(ScriptExecutable* ownerExecutable, UnlinkedCodeBlock* unlin
     
     if (SymbolTable* symbolTable = unlinkedCodeBlock->symbolTable()) {
         if (codeType() == FunctionCode && symbolTable->captureCount()) {
-            m_symbolTable.set(*m_vm, m_ownerExecutable.get(), symbolTable->clone(*m_vm));
+            m_symbolTable.set(*m_vm, m_ownerExecutable.get(), symbolTable->cloneCapturedNames(*m_vm));
             didCloneSymbolTable = true;
         } else
             m_symbolTable.set(*m_vm, m_ownerExecutable.get(), symbolTable);

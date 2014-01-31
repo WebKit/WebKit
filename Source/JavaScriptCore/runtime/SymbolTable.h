@@ -467,7 +467,7 @@ public:
     const SlowArgument* slowArguments() { return m_slowArguments.get(); }
     void setSlowArguments(std::unique_ptr<SlowArgument[]> slowArguments) { m_slowArguments = std::move(slowArguments); }
     
-    SymbolTable* clone(VM&);
+    SymbolTable* cloneCapturedNames(VM&);
 
     static void visitChildren(JSCell*, SlotVisitor&);
 

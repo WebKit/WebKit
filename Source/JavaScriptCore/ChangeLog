@@ -1,3 +1,22 @@
+2014-01-30  Andreas Kling  <akling@apple.com>
+
+        CodeBlock's cloned SymbolTables only need the captured names.
+        <https://webkit.org/b/127978>
+
+        Renamed SymbolTable::clone() to SymbolTable::cloneCapturedNames()
+        and make it skip over any symbols that aren't captured, since those
+        won't be needed after codegen.
+
+        This is a first step towards getting rid of redundant symbol tables.
+
+        Reviewed by Geoffrey Garen.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::CodeBlock):
+        * runtime/SymbolTable.cpp:
+        (JSC::SymbolTable::cloneCapturedNames):
+        * runtime/SymbolTable.h:
+
 2014-01-28  Timothy Hatcher  <timothy@apple.com>
 
         Add column number and call timing support to LegacyProfiler.

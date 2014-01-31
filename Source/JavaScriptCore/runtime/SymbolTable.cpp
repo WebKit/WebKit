@@ -134,7 +134,7 @@ void SymbolTable::WatchpointCleanup::finalizeUnconditionally()
     }
 }
 
-SymbolTable* SymbolTable::clone(VM& vm)
+SymbolTable* SymbolTable::cloneCapturedNames(VM& vm)
 {
     SymbolTable* result = SymbolTable::create(vm);
     
@@ -142,10 +142,10 @@ SymbolTable* SymbolTable::clone(VM& vm)
     result->m_usesNonStrictEval = m_usesNonStrictEval;
     result->m_captureStart = m_captureStart;
     result->m_captureEnd = m_captureEnd;
-    
-    Map::iterator iter = m_map.begin();
-    Map::iterator end = m_map.end();
-    for (; iter != end; ++iter) {
+
+    for (auto iter = m_map.begin(), end = m_map.end(); iter != end; ++iter) {
+        if (!isCaptured(iter->value.getIndex()))
+            continue;
         result->m_map.add(
             iter->key,
             SymbolTableEntry(iter->value.getIndex(), iter->value.getAttributes()));
