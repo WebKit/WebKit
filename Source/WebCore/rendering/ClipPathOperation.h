@@ -142,11 +142,10 @@ public:
         return adoptRef(new BoxClipPathOperation(referenceBox));
     }
 
-    const Path pathForReferenceRect(const FloatRect&) const
+    const Path pathForReferenceRect(const RoundedRect& boundingRect) const
     {
         Path path;
-        // FIXME: Create clipping path from <box>.
-        // https://bugs.webkit.org/show_bug.cgi?id=126205
+        path.addRoundedRect(boundingRect);
         return path;
     }
     LayoutBox referenceBox() const { return m_referenceBox; }

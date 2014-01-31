@@ -3780,25 +3780,13 @@ bool RenderLayer::setupFontSubpixelQuantization(GraphicsContext* context, bool& 
     return false;
 }
 
-bool RenderLayer::setupClipPath(GraphicsContext* context, const LayerPaintingInfo& paintingInfo, const LayoutPoint& offsetFromRoot, LayoutRect& rootRelativeBounds, bool& rootRelativeBoundsComputed)
+template <class ReferenceBoxClipPathOperation>
+static inline LayoutRect computeReferenceBox(const RenderObject& renderer, const ReferenceBoxClipPathOperation& clippingPath, const LayoutRect& rootRelativeBounds)
 {
-    if (!renderer().hasClipPath() || context->paintingDisabled())
-        return false;
-
-    RenderStyle& style = renderer().style();
-    ASSERT(style.clipPath());
-    if (style.clipPath()->type() == ClipPathOperation::Shape) {
-        ShapeClipPathOperation& clippingPath = toShapeClipPathOperation(*(style.clipPath()));
-
-        if (!rootRelativeBoundsComputed) {
-            rootRelativeBounds = calculateLayerBounds(paintingInfo.rootLayer, &offsetFromRoot, 0);
-            rootRelativeBoundsComputed = true;
-        }
-
-        LayoutRect referenceBox;
-        if (renderer().isBox()) {
-            RenderBox& box = toRenderBox(renderer());
-            switch (clippingPath.referenceBox()) {
+    LayoutRect referenceBox;
+    if (renderer.isBox()) {
+        const RenderBox& box = toRenderBox(renderer);
+        switch (clippingPath.referenceBox()) {
             case ContentBox:
                 referenceBox = box.contentBoxRect();
                 referenceBox.moveBy(rootRelativeBounds.location());
@@ -3813,19 +3801,52 @@ bool RenderLayer::setupClipPath(GraphicsContext* context, const LayerPaintingInf
                 break;
             case MarginBox:
                 // FIXME: Support margin-box. Use bounding client rect for now.
+                // https://bugs.webkit.org/show_bug.cgi?id=127984
             case BoundingBox:
             case BoxMissing:
                 // FIXME: If no reference box was specified the spec demands to use
                 // the border-box. However, the current prefixed version of clip-path uses
                 // bounding-box. Keep bounding-box for now.
                 referenceBox = rootRelativeBounds;
-            }
-        } else
-            // FIXME: Support different reference boxes for inline content.
-            referenceBox = rootRelativeBounds;
+        }
+    } else
+        // FIXME: Support different reference boxes for inline content.
+        referenceBox = rootRelativeBounds;
 
+    return referenceBox;
+}
+
+bool RenderLayer::setupClipPath(GraphicsContext* context, const LayerPaintingInfo& paintingInfo, const LayoutPoint& offsetFromRoot, LayoutRect& rootRelativeBounds, bool& rootRelativeBoundsComputed)
+{
+    if (!renderer().hasClipPath() || context->paintingDisabled())
+        return false;
+
+    if (!rootRelativeBoundsComputed) {
+        rootRelativeBounds = calculateLayerBounds(paintingInfo.rootLayer, &offsetFromRoot, 0);
+        rootRelativeBoundsComputed = true;
+    }
+
+    RenderStyle& style = renderer().style();
+    ASSERT(style.clipPath());
+    if (style.clipPath()->type() == ClipPathOperation::Shape) {
+        ShapeClipPathOperation& clippingPath = toShapeClipPathOperation(*(style.clipPath()));
+
+        LayoutRect referenceBox = computeReferenceBox(renderer(), clippingPath, rootRelativeBounds);
         context->save();
         context->clipPath(clippingPath.pathForReferenceRect(referenceBox), clippingPath.windRule());
+        return true;
+    }
+
+    if (style.clipPath()->type() == ClipPathOperation::Box) {
+        BoxClipPathOperation& clippingPath = toBoxClipPathOperation(*(style.clipPath()));
+
+        LayoutRect referenceBox = computeReferenceBox(renderer(), clippingPath, rootRelativeBounds);
+        // FIXME This does not properly compute the rounded corners as specified in all conditions.
+        // https://bugs.webkit.org/show_bug.cgi?id=127982
+        const RoundedRect& shapeRect = renderer().style().getRoundedBorderFor(referenceBox, &(renderer().view()));
+
+        context->save();
+        context->clipPath(clippingPath.pathForReferenceRect(shapeRect), RULE_NONZERO);
         return true;
     }
 
@@ -3834,11 +3855,6 @@ bool RenderLayer::setupClipPath(GraphicsContext* context, const LayerPaintingInf
         ReferenceClipPathOperation* referenceClipPathOperation = static_cast<ReferenceClipPathOperation*>(style.clipPath());
         Element* element = renderer().document().getElementById(referenceClipPathOperation->fragment());
         if (element && element->hasTagName(SVGNames::clipPathTag) && element->renderer()) {
-            if (!rootRelativeBoundsComputed) {
-                rootRelativeBounds = calculateLayerBounds(paintingInfo.rootLayer, &offsetFromRoot, 0);
-                rootRelativeBoundsComputed = true;
-            }
-
             // FIXME: This should use a safer cast such as toRenderSVGResourceContainer().
             // FIXME: Should this do a context->save() and return true so we restore the context?
             static_cast<RenderSVGResourceClipper*>(element->renderer())->applyClippingToContext(renderer(), rootRelativeBounds, paintingInfo.paintDirtyRect, context);

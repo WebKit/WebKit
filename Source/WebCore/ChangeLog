@@ -1,3 +1,26 @@
+2014-01-31  Bem Jones-Bey  <bjonesbe@adobe.com>
+
+        Create clipping path from <box> value
+        https://bugs.webkit.org/show_bug.cgi?id=126205
+
+        Reviewed by Dirk Schulze.
+
+        This implements <box> values for border, content, and padding boxes.
+        Since margin box is not implemented as a reference box, this does not
+        implement margin box value.
+
+        Tests: css3/masking/clip-path-border-box.html
+               css3/masking/clip-path-content-box.html
+               css3/masking/clip-path-padding-box.html
+
+        * rendering/ClipPathOperation.h:
+        (WebCore::BoxClipPathOperation::pathForReferenceRect): Implement.
+        * rendering/RenderLayer.cpp:
+        (WebCore::computeReferenceBox): Pull out reference box calculation.
+        (WebCore::RenderLayer::setupClipPath): Add support for <box> values.
+        * rendering/shapes/ShapeInfo.cpp:
+        (WebCore::ShapeInfo<RenderType>::computedShape): Add FIXME comment.
+
 2014-01-29  Oliver Hunt  <oliver@apple.com>
 
         Make it possible to implement JS builtins in JS

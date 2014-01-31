@@ -101,6 +101,8 @@ const Shape& ShapeInfo<RenderType>::computedShape() const
         break;
     }
     case ShapeValue::Box: {
+        // FIXME This does not properly compute the rounded corners as specified in all conditions.
+        // https://bugs.webkit.org/show_bug.cgi?id=127982
         const RoundedRect& shapeRect = m_renderer.style().getRoundedBorderFor(LayoutRect(LayoutPoint(), m_shapeLogicalSize), &(m_renderer.view()));
         m_shape = Shape::createLayoutBoxShape(shapeRect, writingMode, margin, padding);
         break;
