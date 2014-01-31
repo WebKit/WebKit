@@ -280,7 +280,7 @@ void GraphicsContext::drawNativeImage(PassNativeImagePtr imagePtr, const FloatSi
 }
 
 // Draws a filled rectangle with a stroked border.
-void GraphicsContext::drawRect(const IntRect& rect)
+void GraphicsContext::drawRect(const FloatRect& rect)
 {
     // FIXME: this function does not handle patterns and gradients
     // like drawPath does, it probably should.
@@ -311,7 +311,7 @@ void GraphicsContext::drawRect(const IntRect& rect)
 }
 
 // This is only used to draw borders.
-void GraphicsContext::drawLine(const IntPoint& point1, const IntPoint& point2)
+void GraphicsContext::drawLine(const FloatPoint& point1, const FloatPoint& point2)
 {
     if (paintingDisabled())
         return;
@@ -327,7 +327,7 @@ void GraphicsContext::drawLine(const IntPoint& point1, const IntPoint& point2)
     
     // For odd widths, we add in 0.5 to the appropriate x/y so that the float arithmetic
     // works out.  For example, with a border width of 3, KHTML will pass us (y1+y2)/2, e.g.,
-    // (50+53)/2 = 103/2 = 51 when we want 51.5.  It is always true that an even width gave
+    // (50+53)/2 = 103/2 = 51 when we want 51.5. It is always true that an even width gave
     // us a perfect position, but an odd width gave us a position that is off by exactly 0.5.
     if (strokeStyle() == DottedStroke || strokeStyle() == DashedStroke) {
         if (isVerticalLine) {
@@ -394,7 +394,7 @@ void GraphicsContext::drawLine(const IntPoint& point1, const IntPoint& point2)
         // Example: 80 pixels with a width of 30 pixels.
         // Remainder is 20.  The maximum pixels of line we could paint
         // will be 50 pixels.
-        int distance = (isVerticalLine ? (point2.y() - point1.y()) : (point2.x() - point1.x())) - 2*(int)width;
+        int distance = (isVerticalLine ? (int)(point2.y() - point1.y()) : (point2.x() - point1.x())) - 2*(int)width;
         int remainder = distance % patWidth;
         int coverage = distance - remainder;
         int numSegments = coverage / patWidth;

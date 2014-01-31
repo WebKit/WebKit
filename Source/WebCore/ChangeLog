@@ -1,3 +1,25 @@
+2014-01-30  Zalan Bujtas  <zalan@apple.com>
+
+        Subpixel rendering: Change drawRect()/drawLine() signature to support subpixel rendering.
+        https://bugs.webkit.org/show_bug.cgi?id=127961
+
+        Reviewed by Simon Fraser.
+
+        IntRect/IntPoint -> FloatRect/FloatPoint.
+
+        Covered by existing tests. No change in functionality.
+
+        * platform/graphics/GraphicsContext.h:
+        * platform/graphics/cairo/GraphicsContextCairo.cpp:
+        (WebCore::GraphicsContext::drawRect):
+        (WebCore::GraphicsContext::drawLine):
+        * platform/graphics/cg/GraphicsContextCG.cpp:
+        (WebCore::GraphicsContext::drawRect):
+        (WebCore::GraphicsContext::drawLine): Keep 'distance' int for DottedStroke and DashedStroke for now.
+        * platform/graphics/wince/GraphicsContextWinCE.cpp:
+        (WebCore::GraphicsContext::drawRect):
+        (WebCore::GraphicsContext::drawLine):
+
 2014-01-30  Simon Fraser  <simon.fraser@apple.com>
 
         Remove ScrollingCoordinator::setLayerIsContainerForFixedPositionLayers() which is no longer used

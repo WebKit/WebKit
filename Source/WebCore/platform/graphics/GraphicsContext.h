@@ -270,8 +270,8 @@ namespace WebCore {
         // FIXME: ...except drawRect(), which fills properly but always strokes
         // using a 1-pixel stroke inset from the rect borders (of the correct
         // stroke color).
-        void drawRect(const IntRect&);
-        void drawLine(const IntPoint&, const IntPoint&);
+        void drawRect(const FloatRect&);
+        void drawLine(const FloatPoint&, const FloatPoint&);
 
 #if PLATFORM(IOS)
         void drawJoinedLines(CGPoint points[], unsigned count, bool antialias, CGLineCap = kCGLineCapButt);

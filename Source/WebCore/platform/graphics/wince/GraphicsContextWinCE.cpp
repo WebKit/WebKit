@@ -624,7 +624,7 @@ void GraphicsContext::restorePlatformState()
     m_data->restore();
 }
 
-void GraphicsContext::drawRect(const IntRect& rect)
+void GraphicsContext::drawRect(const FloatRect& rect)
 {
     if (!m_data->m_opacity || paintingDisabled() || rect.isEmpty())
         return;
@@ -669,7 +669,7 @@ void GraphicsContext::drawRect(const IntRect& rect)
     SelectObject(dc, oldBrush);
 }
 
-void GraphicsContext::drawLine(const IntPoint& point1, const IntPoint& point2)
+void GraphicsContext::drawLine(const FloatPoint& point1, const FloatPoint& point2)
 {
     if (!m_data->m_opacity || paintingDisabled() || strokeStyle() == NoStroke || !strokeColor().alpha())
         return;

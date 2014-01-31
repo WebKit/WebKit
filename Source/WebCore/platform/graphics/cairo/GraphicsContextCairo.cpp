@@ -230,7 +230,7 @@ void GraphicsContext::restorePlatformState()
 }
 
 // Draws a filled rectangle with a stroked border.
-void GraphicsContext::drawRect(const IntRect& rect)
+void GraphicsContext::drawRect(const FloatRect& rect)
 {
     if (paintingDisabled())
         return;
@@ -332,7 +332,7 @@ static void drawLineOnCairoContext(GraphicsContext* graphicsContext, cairo_t* co
 }
 
 // This is only used to draw borders, so we should not draw shadows.
-void GraphicsContext::drawLine(const IntPoint& point1, const IntPoint& point2)
+void GraphicsContext::drawLine(const FloatPoint& point1, const FloatPoint& point2)
 {
     if (paintingDisabled())
         return;
