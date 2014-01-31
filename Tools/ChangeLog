@@ -1,3 +1,14 @@
+2014-01-30  Filip Pizlo  <fpizlo@apple.com>
+
+        copy-webkitlibraries-to-product-directory should accept command-line arguments for extra work required for optional features rather than relying on environment variables
+        https://bugs.webkit.org/show_bug.cgi?id=120221
+
+        Reviewed by Mark Hahnenberg.
+
+        * Scripts/build-jsc:
+        * Scripts/build-webkit:
+        * Scripts/copy-webkitlibraries-to-product-directory:
+
 2014-01-30  Anders Carlsson  <andersca@apple.com>
 
         Add a webView:didStartProvisionalNavigation: delegate method

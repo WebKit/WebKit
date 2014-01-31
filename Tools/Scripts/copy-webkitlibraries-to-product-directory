@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# Copyright (C) 2005, 2008, 2010, 2011, 2012, 2013 Apple Inc. All rights reserved.
+# Copyright (C) 2005, 2008, 2010, 2011, 2012, 2013, 2014 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -25,8 +25,29 @@
 
 use strict;
 use FindBin;
+use Getopt::Long qw(:config pass_through);
 use lib $FindBin::Bin;
 use webkitdirs;
+
+my $showHelp = 0;
+my $ftlJIT = 0;
+
+my $programName = basename($0);
+my $usage = <<EOF;
+Usage: $programName [options]
+  --help                        Show this help message
+  --[no-]ftl-jit                Toggle FTL JIT support (default: $ftlJIT)
+EOF
+
+GetOptions(
+    'help' => \$showHelp,
+    'ftl-jit!' => \$ftlJIT,
+);
+
+if ($showHelp) {
+   print STDERR $usage;
+   exit 1;
+}
 
 my $productDir = shift @ARGV;
 $productDir = $ENV{BUILT_PRODUCTS_DIR} if !$productDir;
@@ -82,7 +103,7 @@ sub dittoHeaders
 
 dittoHeaders("WebKitLibraries/WebKitSystemInterface.h", "$productDir/usr/local/include/WebKitSystemInterface.h");
 
-if ($ENV{ENABLE_FTL_JIT}) {
+if ($ftlJIT) {
     # Determine where to get LLVM binaries and headers.
     my $majorDarwinVersion = (split /\./, `uname -r`)[0];
     my $llvmLibraryPackage;

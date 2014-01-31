@@ -84,14 +84,17 @@ if (cmakeBasedPortName()) {
 
 if (isAppleMacWebKit()) {
     if ($ftlJIT) {
-        $ENV{ENABLE_FTL_JIT} = 1;
         push @options, "ENABLE_FTL_JIT=ENABLE_FTL_JIT";
     }
     if ($forceCLoop) {
-        $ENV{ENABLE_LLINT_C_LOOP} = 1;
         push @options, "ENABLE_LLINT_C_LOOP=ENABLE_LLINT_C_LOOP";
     }
-    (system("perl", "Tools/Scripts/copy-webkitlibraries-to-product-directory", productDir()) == 0) or die;
+    my @copyLibrariesArgs = ("perl", "Tools/Scripts/copy-webkitlibraries-to-product-directory");
+    if ($ftlJIT) {
+        push @copyLibrariesArgs, "--ftl-jit";
+    }
+    push @copyLibrariesArgs, productDir();
+    (system(@copyLibrariesArgs) == 0) or die;
 }
 
 sub buildMyProject

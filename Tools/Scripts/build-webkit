@@ -177,7 +177,6 @@ if (!isIOSWebKit() && !-d "WebKitLibraries") {
 
 my @options = ();
 my $hasFTLJIT = 0;
-my $forceCLoop = 0;
 
 if (isAppleMacWebKit()) {
     push @options, XcodeOptions();
@@ -191,11 +190,8 @@ if (isAppleMacWebKit()) {
     foreach (@features) {
         my $option = option($_->{define}, ${$_->{value}}, $_->{default});
         $hasFTLJIT = 1 if ($_->{define} eq "ENABLE_FTL_JIT") and (${$_->{value}});
-        $forceCLoop = 1 if ($_->{define} eq "ENABLE_LLINT_C_LOOP") and (${$_->{value}});
         push @options, $option unless $option eq "";
     }
-    $ENV{ENABLE_FTL_JIT} = 1 if $hasFTLJIT;
-    $ENV{ENABLE_LLINT_C_LOOP} = 1 if $forceCLoop;
 
     if (isIOSWebKit()) {
         # FIXME: Remove the inclusion of both WebKit System Interface and WebKit Additions projects
@@ -220,7 +216,12 @@ if (isAppleMacWebKit()) {
         unshift @projects, ("Source/WebInspectorUI");
 
         # Copy library and header from WebKitLibraries to a findable place in the product directory.
-        (system("perl", "Tools/Scripts/copy-webkitlibraries-to-product-directory", $productDir) == 0) or die;
+        my @copyLibrariesArgs = ("perl", "Tools/Scripts/copy-webkitlibraries-to-product-directory");
+        if ($hasFTLJIT) {
+            push @copyLibrariesArgs, "--ftl-jit";
+        }
+        push @copyLibrariesArgs, productDir();
+        (system(@copyLibrariesArgs) == 0) or die;
     } else {
         push @projects, ("Source/WebKit2") if !$noWebKit2;
     }
