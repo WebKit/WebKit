@@ -123,7 +123,6 @@ public:
 
     void reload(bool endToEndReload = false);
     void reloadWithOverrideEncoding(const String& overrideEncoding);
-    void reloadWithOverrideURL(const URL& overrideUrl, bool endToEndReload = false);
 
     void open(CachedFrameBase&);
     void loadItem(HistoryItem*, FrameLoadType);
@@ -354,8 +353,6 @@ private:
         const String& frameName, bool lockHistory, FrameLoadType, PassRefPtr<Event>, PassRefPtr<FormState>);
     void loadURL(const URL&, const String& referrer, const String& frameName,          // Called by loadFrameRequest, calls loadWithNavigationAction or dispatches to navigation policy delegate
         bool lockHistory, FrameLoadType, PassRefPtr<Event>, PassRefPtr<FormState>);                                                         
-
-    void reloadWithRequest(const ResourceRequest&, bool endToEndReload);
 
     bool shouldReload(const URL& currentURL, const URL& destinationURL);
 

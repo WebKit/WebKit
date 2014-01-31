@@ -1560,19 +1560,6 @@ void FrameLoader::reloadWithOverrideEncoding(const String& encoding)
     loadWithDocumentLoader(loader.get(), FrameLoadTypeReload, 0);
 }
 
-void FrameLoader::reloadWithOverrideURL(const URL& overrideUrl, bool endToEndReload)
-{
-    if (!m_documentLoader)
-        return;
-
-    if (overrideUrl.isEmpty())
-        return;
-
-    ResourceRequest request = m_documentLoader->request();
-    request.setURL(overrideUrl);
-    reloadWithRequest(request, endToEndReload);
-}
-
 void FrameLoader::reload(bool endToEndReload)
 {
     if (!m_documentLoader)
@@ -1588,13 +1575,6 @@ void FrameLoader::reload(bool endToEndReload)
     URL unreachableURL = m_documentLoader->unreachableURL();
     if (!unreachableURL.isEmpty())
         initialRequest.setURL(unreachableURL);
-
-    reloadWithRequest(initialRequest, endToEndReload);
-}
-
-void FrameLoader::reloadWithRequest(const ResourceRequest& initialRequest, bool endToEndReload)
-{
-    ASSERT(m_documentLoader);
 
     // Create a new document loader for the reload, this will become m_documentLoader eventually,
     // but first it has to be the "policy" document loader, and then the "provisional" document loader.
