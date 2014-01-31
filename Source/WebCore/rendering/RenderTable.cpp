@@ -292,16 +292,16 @@ void RenderTable::updateLogicalWidth()
         setLogicalWidth(std::min<int>(availableContentLogicalWidth, maxPreferredLogicalWidth()));
     }
 
-    // Ensure we aren't smaller than our min preferred width.
-    setLogicalWidth(std::max<int>(logicalWidth(), minPreferredLogicalWidth()));
-
-    
     // Ensure we aren't bigger than our max-width style.
     Length styleMaxLogicalWidth = style().logicalMaxWidth();
     if ((styleMaxLogicalWidth.isSpecified() && !styleMaxLogicalWidth.isNegative()) || styleMaxLogicalWidth.isIntrinsic()) {
         LayoutUnit computedMaxLogicalWidth = convertStyleLogicalWidthToComputedWidth(styleMaxLogicalWidth, availableLogicalWidth);
         setLogicalWidth(std::min<int>(logicalWidth(), computedMaxLogicalWidth));
     }
+    
+    // Ensure we aren't smaller than our min preferred width. This MUST be done after 'max-width' as
+    // we ignore it if it means we wouldn't accomodate our content.
+    setLogicalWidth(std::max<int>(logicalWidth(), minPreferredLogicalWidth()));
 
     // Ensure we aren't smaller than our min-width style.
     Length styleMinLogicalWidth = style().logicalMinWidth();
@@ -328,6 +328,10 @@ void RenderTable::updateLogicalWidth()
         setMarginStart(minimumValueForLength(style().marginStart(), availableLogicalWidth));
         setMarginEnd(minimumValueForLength(style().marginEnd(), availableLogicalWidth));
     }
+
+    // We should NEVER shrink the table below the min-content logical width, or else the table can't accomodate
+    // its own content which doesn't match CSS nor what authors expect.
+    ASSERT(logicalWidth() >= minPreferredLogicalWidth());
 }
 
 // This method takes a RenderStyle's logical width, min-width, or max-width length and computes its actual value.
@@ -778,8 +782,9 @@ void RenderTable::computePreferredLogicalWidths()
 
     // FIXME: This should probably be checking for isSpecified since you should be able to use percentage, calc or viewport relative values for maxWidth.
     if (styleToUse.logicalMaxWidth().isFixed()) {
+        // We don't constrain m_minPreferredLogicalWidth as the table should be at least the size of its min-content, regardless of 'max-width'.
         m_maxPreferredLogicalWidth = std::min(m_maxPreferredLogicalWidth, adjustContentBoxLogicalWidthForBoxSizing(styleToUse.logicalMaxWidth().value()));
-        m_minPreferredLogicalWidth = std::min(m_minPreferredLogicalWidth, adjustContentBoxLogicalWidthForBoxSizing(styleToUse.logicalMaxWidth().value()));
+        m_minPreferredLogicalWidth = std::max(m_minPreferredLogicalWidth, m_maxPreferredLogicalWidth);
     }
 
     // FIXME: We should be adding borderAndPaddingLogicalWidth here, but m_tableLayout->computePreferredLogicalWidths already does,

@@ -10,11 +10,11 @@ Note:The width of the css tables inclusive of its border width.
 PASS maxGreatThanMinWidthAutoLayout.getBoundingClientRect().width is 202
 PASS minGreatThanMaxWidthAutoLayout.getBoundingClientRect().width is 202
 PASS onlyMaxWidthAutoLayout.getBoundingClientRect().width is 202
-PASS maxWidthZeroAutoLayout.getBoundingClientRect().width is 0
+PASS maxWidthZeroAutoLayout.getBoundingClientRect().width is 182
 PASS maxGreatThanMinWidthFixedLayout.getBoundingClientRect().width is 202
 PASS minGreatThanMaxWidthFixedLayout.getBoundingClientRect().width is 202
 PASS onlyMaxWidthFixedLayout.getBoundingClientRect().width is 202
-PASS maxWidthZeroFixedLayout.getBoundingClientRect().width is 0
+PASS maxWidthZeroFixedLayout.getBoundingClientRect().width is 2
 PASS successfullyParsed is true
 
 TEST COMPLETE

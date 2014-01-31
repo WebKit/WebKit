@@ -1,3 +1,29 @@
+2014-01-31  László Langó  <lango@inf.u-szeged.hu>
+
+        Fix table sizing when 'max-width' is used.
+        https://bugs.webkit.org/show_bug.cgi?id=115156
+
+        Reviewed by Andreas Kling.
+
+        r143534 make <table> abide by 'max-width' all the time which is wrong.
+        Per the CSS specification, a table should be wide enough to fit its
+        content, regardless of 'max-width'.
+
+        r140479 fixed part of the regression from that change but made the
+        same fatal mistake by constraining min-content to fit 'max-width'.
+
+        The fix is to avoid constraining min-content and ensure that the table
+        logical width is at least its min-content size.
+
+        Backported from Blink:
+        https://chromium.googlesource.com/chromium/blink/+/0bca0dec4895aeeb2054ba36316e984e4ebed06f
+
+        Test: fast/table/html-table-width-max-width-constrained.html
+
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::updateLogicalWidth):
+        (WebCore::RenderTable::computePreferredLogicalWidths):
+
 2014-01-30  Simon Fraser  <simon.fraser@apple.com>
 
         Fix iOS build after r163156.

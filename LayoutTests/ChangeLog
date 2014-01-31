@@ -1,3 +1,15 @@
+2014-01-31  László Langó  <lango@inf.u-szeged.hu>
+
+        Fix table sizing when 'max-width' is used.
+        https://bugs.webkit.org/show_bug.cgi?id=115156
+
+        Reviewed by Andreas Kling.
+
+        * fast/table/css-table-max-width-expected.txt:
+        * fast/table/css-table-max-width.html:
+        * fast/table/html-table-width-max-width-constrained-expected.txt: Added.
+        * fast/table/html-table-width-max-width-constrained.html: Added.
+
 2014-01-28  Timothy Hatcher  <timothy@apple.com>
 
         Add column number and call timing support to LegacyProfiler.
