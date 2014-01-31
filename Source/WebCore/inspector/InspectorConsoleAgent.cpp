@@ -42,7 +42,6 @@
 #include "ScriptCallFrame.h"
 #include "ScriptCallStack.h"
 #include "ScriptCallStackFactory.h"
-#include "ScriptController.h"
 #include "ScriptProfiler.h"
 #include <bindings/ScriptObject.h>
 #include <wtf/CurrentTime.h>
@@ -57,8 +56,6 @@ namespace WebCore {
 
 static const unsigned maximumConsoleMessages = 1000;
 static const int expireConsoleMessagesStep = 100;
-
-int InspectorConsoleAgent::s_enabledAgentCount = 0;
 
 InspectorConsoleAgent::InspectorConsoleAgent(InstrumentingAgents* instrumentingAgents, PageInjectedScriptManager* injectedScriptManager)
     : InspectorAgentBase(ASCIILiteral("Console"), instrumentingAgents)
@@ -83,9 +80,6 @@ void InspectorConsoleAgent::enable(ErrorString*)
     if (m_enabled)
         return;
     m_enabled = true;
-    if (!s_enabledAgentCount)
-        ScriptController::setCaptureCallStackForUncaughtExceptions(true);
-    ++s_enabledAgentCount;
 
     if (m_expiredConsoleMessageCount) {
         ConsoleMessage expiredMessage(!isWorkerAgent(), OtherMessageSource, LogMessageType, WarningMessageLevel, String::format("%d console messages are not shown.", m_expiredConsoleMessageCount));
@@ -102,8 +96,6 @@ void InspectorConsoleAgent::disable(ErrorString*)
     if (!m_enabled)
         return;
     m_enabled = false;
-    if (!(--s_enabledAgentCount))
-        ScriptController::setCaptureCallStackForUncaughtExceptions(false);
 }
 
 void InspectorConsoleAgent::clearMessages(ErrorString*)

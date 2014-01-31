@@ -1,3 +1,22 @@
+2014-01-30  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Remove now-empty ScriptController::setCaptureCallStackForUncaughtExceptions
+        https://bugs.webkit.org/show_bug.cgi?id=127964
+
+        Reviewed by Timothy Hatcher.
+
+        Remove empty function. It was only needed by v8 at one point.
+
+        * bindings/js/ScriptController.h:
+        * bindings/js/ScriptController.cpp:
+        Remove empty function.
+
+        * inspector/InspectorConsoleAgent.h:
+        * inspector/InspectorConsoleAgent.cpp:
+        (WebCore::InspectorConsoleAgent::enable):
+        (WebCore::InspectorConsoleAgent::disable):
+        Remove callers and related tracking state.
+
 2014-01-30  Roger Fong  <roger_fong@apple.com>
 
         WebGL load policy should be queried for the top level document.
