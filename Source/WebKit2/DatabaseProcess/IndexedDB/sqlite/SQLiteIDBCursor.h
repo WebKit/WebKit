@@ -67,8 +67,7 @@ private:
     SQLiteIDBCursor(SQLiteIDBTransaction*, const IDBIdentifier& cursorIdentifier, int64_t objectStoreID, int64_t indexID, WebCore::IndexedDB::CursorDirection, WebCore::IndexedDB::CursorType, WebCore::IDBDatabaseBackend::TaskType, const WebCore::IDBKeyRangeData&);
 
     bool establishStatement();
-    bool createIndexCursorStatement();
-    bool createObjectStoreCursorStatement();
+    bool createSQLiteStatement(const String& sql, int64_t idToBind);
 
     SQLiteIDBTransaction* m_transaction;
     IDBIdentifier m_cursorIdentifier;
