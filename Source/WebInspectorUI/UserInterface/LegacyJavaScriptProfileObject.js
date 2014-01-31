@@ -23,25 +23,13 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.CanvasObserver = function()
+WebInspector.LegacyJavaScriptProfileObject = function(title, id, recording)
 {
-    WebInspector.Object.call(this);
+    WebInspector.LegacyProfileObject.call(this, WebInspector.LegacyJavaScriptProfileType.TypeId, title, id, recording);
 };
 
-WebInspector.CanvasObserver.prototype = {
-    constructor: WebInspector.CanvasObserver,
-
-    // Events defined by the "Canvas" domain.
-
-    contextCreated: function(frameId)
-    {
-        // FIXME: Implement this.
-    },
-
-    traceLogsRemoved: function(frameId, traceLogId)
-    {
-        // FIXME: Implement this.
-    }
+WebInspector.LegacyJavaScriptProfileObject.prototype = {
+    constructor: WebInspector.LegacyJavaScriptProfileObject
 };
 
-WebInspector.CanvasObserver.prototype.__proto__ = WebInspector.Object.prototype;
+WebInspector.LegacyJavaScriptProfileObject.prototype.__proto__ = WebInspector.LegacyProfileObject.prototype;

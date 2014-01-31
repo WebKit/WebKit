@@ -66,18 +66,18 @@ InspectorFrontendAPI = {
 
     isProfilingJavaScript: function()
     {
-        return WebInspector.profileManager.isProfilingJavaScript();
+        return WebInspector.legacyProfileManager.isProfilingJavaScript();
     },
 
     startProfilingJavaScript: function()
     {
-        WebInspector.profileManager.startProfilingJavaScript();
+        WebInspector.legacyProfileManager.startProfilingJavaScript();
     },
 
     stopProfilingJavaScript: function()
     {
         WebInspector.timelineSidebarPanel.show();
-        WebInspector.profileManager.stopProfilingJavaScript();
+        WebInspector.legacyProfileManager.stopProfilingJavaScript();
     },
 
     setDockSide: function(side)

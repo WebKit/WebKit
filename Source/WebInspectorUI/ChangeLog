@@ -1,3 +1,46 @@
+2014-01-26  Timothy Hatcher  <timothy@apple.com>
+
+        Prefix existing Web Inspector profiler classes with "Legacy".
+
+        Remove a dependency on ProfileView for showTimeAsPercent and selection as a drive-by.
+        Also remove the unfinished Canvas profiler classes, they will need redone for the Timeline view.
+
+        https://bugs.webkit.org/show_bug.cgi?id=127655
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/CanvasDataGridNode.js: Removed.
+        * UserInterface/CanvasObserver.js: Removed.
+        * UserInterface/CanvasProfileObject.js: Removed.
+        * UserInterface/CanvasProfileType.js: Removed.
+        * UserInterface/CanvasProfileView.js: Removed.
+        * UserInterface/ConsoleObserver.js:
+        (WebInspector.ConsoleObserver.prototype.messageAdded):
+        * UserInterface/ContentView.js:
+        (WebInspector.ContentView):
+        (WebInspector.ContentView.isViewable):
+        * UserInterface/InspectorFrontendAPI.js:
+        (InspectorFrontendAPI.isProfilingJavaScript):
+        (InspectorFrontendAPI.startProfilingJavaScript):
+        (InspectorFrontendAPI.stopProfilingJavaScript):
+        * UserInterface/LegacyBottomUpProfileDataGridTree.js: Renamed from Source/WebInspectorUI/UserInterface/BottomUpProfileDataGridTree.js.
+        * UserInterface/LegacyJavaScriptProfileObject.js: Renamed from Source/WebInspectorUI/UserInterface/JavaScriptProfileObject.js.
+        * UserInterface/LegacyJavaScriptProfileType.js: Renamed from Source/WebInspectorUI/UserInterface/JavaScriptProfileType.js.
+        * UserInterface/LegacyJavaScriptProfileView.css: Renamed from Source/WebInspectorUI/UserInterface/JavaScriptProfileView.css.
+        * UserInterface/LegacyJavaScriptProfileView.js: Renamed from Source/WebInspectorUI/UserInterface/JavaScriptProfileView.js.
+        * UserInterface/LegacyProfileDataGridTree.js: Renamed from Source/WebInspectorUI/UserInterface/ProfileDataGridTree.js.
+        * UserInterface/LegacyProfileManager.js: Renamed from Source/WebInspectorUI/UserInterface/ProfileManager.js.
+        * UserInterface/LegacyProfileObject.js: Renamed from Source/WebInspectorUI/UserInterface/ProfileObject.js.
+        * UserInterface/LegacyProfileType.js: Renamed from Source/WebInspectorUI/UserInterface/ProfileType.js.
+        * UserInterface/LegacyProfileView.css: Renamed from Source/WebInspectorUI/UserInterface/ProfileView.css.
+        * UserInterface/LegacyProfileView.js: Renamed from Source/WebInspectorUI/UserInterface/ProfileView.js.
+        * UserInterface/LegacyProfilerObserver.js: Renamed from Source/WebInspectorUI/UserInterface/ProfilerObserver.js.
+        * UserInterface/LegacyTopDownProfileDataGridTree.js: Renamed from Source/WebInspectorUI/UserInterface/TopDownProfileDataGridTree.js.
+        * UserInterface/Main.html:
+        * UserInterface/Main.js:
+        (WebInspector.loaded):
+        (WebInspector.openURL):
+
 2014-01-30  Diego Pino Garcia  <dpino@igalia.com>
 
         Web Inspector: [REGRESSION(r163086)] Missing localized string 'Hide console (%s)'

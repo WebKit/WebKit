@@ -60,8 +60,6 @@ WebInspector.loaded = function()
         InspectorBackend.registerInspectorDispatcher(new WebInspector.InspectorObserver);
     if (InspectorBackend.registerPageDispatcher)
         InspectorBackend.registerPageDispatcher(new WebInspector.PageObserver);
-    if (InspectorBackend.registerCanvasDispatcher)
-        InspectorBackend.registerCanvasDispatcher(new WebInspector.CanvasObserver);
     if (InspectorBackend.registerConsoleDispatcher)
         InspectorBackend.registerConsoleDispatcher(new WebInspector.ConsoleObserver);
     if (InspectorBackend.registerNetworkDispatcher)
@@ -79,7 +77,7 @@ WebInspector.loaded = function()
     if (InspectorBackend.registerTimelineDispatcher)
         InspectorBackend.registerTimelineDispatcher(new WebInspector.TimelineObserver);
     if (InspectorBackend.registerProfilerDispatcher)
-        InspectorBackend.registerProfilerDispatcher(new WebInspector.ProfilerObserver);
+        InspectorBackend.registerProfilerDispatcher(new WebInspector.LegacyProfilerObserver);
     if (InspectorBackend.registerCSSDispatcher)
         InspectorBackend.registerCSSDispatcher(new WebInspector.CSSObserver);
     if (InspectorBackend.registerLayerTreeDispatcher)
@@ -111,7 +109,7 @@ WebInspector.loaded = function()
     this.runtimeManager = new WebInspector.RuntimeManager;
     this.applicationCacheManager = new WebInspector.ApplicationCacheManager;
     this.timelineManager = new WebInspector.TimelineManager;
-    this.profileManager = new WebInspector.ProfileManager;
+    this.legacyProfileManager = new WebInspector.LegacyProfileManager;
     this.debuggerManager = new WebInspector.DebuggerManager;
     this.sourceMapManager = new WebInspector.SourceMapManager;
     this.layerTreeManager = new WebInspector.LayerTreeManager;
@@ -482,7 +480,7 @@ WebInspector.openURL = function(url, frame, alwaysOpenExternally, lineNumber)
     }
 
     var parsedURL = parseURL(url);
-    if (parsedURL.scheme === WebInspector.ProfileType.ProfileScheme) {
+    if (parsedURL.scheme === WebInspector.LegacyProfileType.ProfileScheme) {
         var profileType = parsedURL.host.toUpperCase();
         var profileTitle = parsedURL.path;
 

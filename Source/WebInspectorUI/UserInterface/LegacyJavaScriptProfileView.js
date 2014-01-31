@@ -23,11 +23,11 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.JavaScriptProfileView = function(profile)
+WebInspector.LegacyJavaScriptProfileView = function(profile)
 {
-    console.assert(profile instanceof WebInspector.JavaScriptProfileObject);
+    console.assert(profile instanceof WebInspector.LegacyJavaScriptProfileObject);
 
-    WebInspector.ProfileView.call(this, profile, "javascript-profiler-show-time-as-percent");
+    WebInspector.LegacyProfileView.call(this, profile, "javascript-profiler-show-time-as-percent");
 
     this._showTreeBottomUpSetting = new WebInspector.Setting("javascript-profiler-show-tree-bottom-up", true);
 
@@ -35,14 +35,14 @@ WebInspector.JavaScriptProfileView = function(profile)
     this._showTreeBottomUpNavigationItem.addEventListener(WebInspector.ButtonNavigationItem.Event.Clicked, this._toggleBottomUpView, this);
     this._showTreeBottomUpNavigationItem.activated = this._showTreeBottomUpSetting.value;
 
-    this._viewType = new WebInspector.Setting("javascript-profiler-view", WebInspector.JavaScriptProfileView._TypeHeavy);
+    this._viewType = new WebInspector.Setting("javascript-profiler-view", WebInspector.LegacyJavaScriptProfileView._TypeHeavy);
 }
 
-WebInspector.JavaScriptProfileView._TypeTree = "Tree";
-WebInspector.JavaScriptProfileView._TypeHeavy = "Heavy";
+WebInspector.LegacyJavaScriptProfileView._TypeTree = "Tree";
+WebInspector.LegacyJavaScriptProfileView._TypeHeavy = "Heavy";
 
-WebInspector.JavaScriptProfileView.prototype = {
-    constructor: WebInspector.JavaScriptProfileView,
+WebInspector.LegacyJavaScriptProfileView.prototype = {
+    constructor: WebInspector.LegacyJavaScriptProfileView,
 
     updateLayout: function()
     {
@@ -98,14 +98,14 @@ WebInspector.JavaScriptProfileView.prototype = {
     get bottomUpProfileDataGridTree()
     {
         if (!this._bottomUpProfileDataGridTree)
-            this._bottomUpProfileDataGridTree = new WebInspector.BottomUpProfileDataGridTree(this, this.profile.head);
+            this._bottomUpProfileDataGridTree = new WebInspector.LegacyBottomUpProfileDataGridTree(this.profile.head);
         return this._bottomUpProfileDataGridTree;
     },
 
     get topDownProfileDataGridTree()
     {
         if (!this._topDownProfileDataGridTree)
-            this._topDownProfileDataGridTree = new WebInspector.TopDownProfileDataGridTree(this, this.profile.head);
+            this._topDownProfileDataGridTree = new WebInspector.LegacyTopDownProfileDataGridTree(this.profile.head);
         return this._topDownProfileDataGridTree;
     },
 
@@ -134,7 +134,7 @@ WebInspector.JavaScriptProfileView.prototype = {
     {
         var child = this.dataGrid.children[0];
         while (child) {
-            child.refresh();
+            child.refresh(this.showTimeAsPercent.value);
             child = child.traverseNextNode(false, null, true);
         }
     },
@@ -357,11 +357,11 @@ WebInspector.JavaScriptProfileView.prototype = {
         if (!this._showTreeBottomUpSetting.value) {
             this.profileDataGridTree = this.topDownProfileDataGridTree;
             this._sortProfile();
-            this._viewType.value = WebInspector.JavaScriptProfileView._TypeTree;
+            this._viewType.value = WebInspector.LegacyJavaScriptProfileView._TypeTree;
         } else {
             this.profileDataGridTree = this.bottomUpProfileDataGridTree;
             this._sortProfile();
-            this._viewType.value = WebInspector.JavaScriptProfileView._TypeHeavy;
+            this._viewType.value = WebInspector.LegacyJavaScriptProfileView._TypeHeavy;
         }
 
         if (!this.currentQuery || !this._searchFinishedCallback || !this._searchResults)
@@ -376,7 +376,7 @@ WebInspector.JavaScriptProfileView.prototype = {
 
     toggleTimeDisplay: function(event)
     {
-        WebInspector.ProfileView.prototype.toggleTimeDisplay.call(this, event);
+        WebInspector.LegacyProfileView.prototype.toggleTimeDisplay.call(this, event);
         this.showTimeAsPercent.value = !this.showTimeAsPercent.value;
         this.refreshVisibleData();
     },
@@ -412,16 +412,6 @@ WebInspector.JavaScriptProfileView.prototype = {
         this.refreshVisibleData();
     },
 
-    _dataGridNodeSelected: function(node)
-    {
-        // FIXME: Update UI we have to focus on a data grid node or exclude it from the profile.
-    },
-
-    _dataGridNodeDeselected: function(node)
-    {
-        // FIXME: Update UI we have to focus on a data grid node or exclude it from the profile.
-    },
-
     _sortData: function(event)
     {
         this._sortProfile(this.profile);
@@ -439,7 +429,7 @@ WebInspector.JavaScriptProfileView.prototype = {
                 "function": "functionName"
             }[sortColumnIdentifier];
 
-        this.profileDataGridTree.sort(WebInspector.ProfileDataGridTree.propertyComparator(sortProperty, sortAscending));
+        this.profileDataGridTree.sort(WebInspector.LegacyProfileDataGridTree.propertyComparator(sortProperty, sortAscending));
 
         this.refresh();
     },
@@ -465,4 +455,4 @@ WebInspector.JavaScriptProfileView.prototype = {
     }
 }
 
-WebInspector.JavaScriptProfileView.prototype.__proto__ = WebInspector.ProfileView.prototype;
+WebInspector.LegacyJavaScriptProfileView.prototype.__proto__ = WebInspector.LegacyProfileView.prototype;

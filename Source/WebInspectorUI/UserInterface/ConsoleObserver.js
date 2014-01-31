@@ -40,9 +40,9 @@ WebInspector.ConsoleObserver.prototype = {
 
         if (message.url === "[native code]") {
             if (message.type === "profile")
-                WebInspector.profileManager.profileWasStartedFromConsole(message.text);
+                WebInspector.legacyProfileManager.profileWasStartedFromConsole(message.text);
             else if (message.type === "profileEnd")
-                WebInspector.profileManager.profileWasEndedFromConsole();
+                WebInspector.legacyProfileManager.profileWasEndedFromConsole();
         }
 
         if (message.source === "console-api" && message.type === "clear")

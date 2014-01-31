@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2008, 2013 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,45 +23,65 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.CanvasDataGridNode = function(profileView, data)
+WebInspector.LegacyProfileType = function(id, name)
 {
-    WebInspector.DataGridNode.call(this, data, false);
-    this._profileView = profileView;
+    this._id = id;
+    this._name = name;
 }
 
-WebInspector.CanvasDataGridNode.prototype = {
+WebInspector.LegacyProfileType.URLRegExp = /webkit-profile:\/\/(.+)\/(.+)#([0-9]+)/;
+WebInspector.LegacyProfileType.ProfileScheme = "webkit-profile";
 
-    constructor: WebInspector.CanvasDataGridNode,
-
-    get data()
+WebInspector.LegacyProfileType.prototype = {
+    get buttonTooltip()
     {
-        var data = {};
-        return data;
+        return "";
     },
 
-    get rawData()
+    get id()
     {
-        return this._data;
+        return this._id;
     },
 
-    createCell: function(columnIdentifier)
+    get treeItemTitle()
     {
-        var cell = WebInspector.DataGridNode.prototype.createCell.call(this, columnIdentifier);
-        cell.removeChildren();
-
-        if (this.rawData.url) {
-            var wrapperDiv = cell.createChild("div");
-            wrapperDiv.appendChild(this._linkifyLocation(this.rawData.url, this.rawData.lineNumber, this.rawData.columnNumber));
-        }
-
-        return cell;
+        return this._name;
     },
 
-    _linkifyLocation: function(url, lineNumber, columnNumber)
+    get name()
     {
-        return WebInspector.linkifyLocation(url, lineNumber, columnNumber || 0);
+        return this._name;
+    },
+
+    buttonClicked: function()
+    {
+    },
+
+    viewForProfile: function(profile)
+    {
+        if (!profile._profileView)
+            profile._profileView = this.createView(profile);
+        return profile._profileView;
+    },
+
+    reset: function()
+    {
+    },
+
+    get description()
+    {
+        return "";
+    },
+
+    // Must be implemented by subclasses.
+    createView: function(profile)
+    {
+        throw new Error("Needs implemented.");
+    },
+
+    // Must be implemented by subclasses.
+    createSidebarTreeElementForProfile: function(profile)
+    {
+        throw new Error("Needs implemented.");
     }
 }
-
-WebInspector.CanvasDataGridNode.prototype.__proto__ = WebInspector.DataGridNode.prototype;
-

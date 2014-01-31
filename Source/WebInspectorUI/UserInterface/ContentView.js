@@ -63,11 +63,8 @@ WebInspector.ContentView = function(representedObject)
         if (representedObject instanceof WebInspector.LogObject)
             return new WebInspector.LogContentView(representedObject);
 
-        if (representedObject instanceof WebInspector.JavaScriptProfileObject)
-            return new WebInspector.JavaScriptProfileView(representedObject);
-
-        if (representedObject instanceof WebInspector.CanvasProfileObject)
-            return new WebInspector.CanvasProfileView(representedObject);
+        if (representedObject instanceof WebInspector.LegacyJavaScriptProfileObject)
+            return new WebInspector.LegacyJavaScriptProfileView(representedObject);
 
         if (representedObject instanceof WebInspector.ContentFlow)
             return new WebInspector.ContentFlowDOMTreeContentView(representedObject);
@@ -120,9 +117,7 @@ WebInspector.ContentView.isViewable = function(representedObject)
         return true;
     if (representedObject instanceof WebInspector.LogObject)
         return true;
-    if (representedObject instanceof WebInspector.JavaScriptProfileObject)
-        return true;
-    if (representedObject instanceof WebInspector.CanvasProfileObject)
+    if (representedObject instanceof WebInspector.LegacyJavaScriptProfileObject)
         return true;
     if (representedObject instanceof WebInspector.ContentFlow)
         return true;

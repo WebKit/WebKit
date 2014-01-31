@@ -23,12 +23,11 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.ProfileManager = function()
+WebInspector.LegacyProfileManager = function()
 {
     WebInspector.Object.call(this);
 
-    this._javaScriptProfileType = new WebInspector.JavaScriptProfileType;
-    this._canvasProfileType = new WebInspector.CanvasProfileType;
+    this._javaScriptProfileType = new WebInspector.LegacyJavaScriptProfileType;
 
     if (window.ProfilerAgent) {
         ProfilerAgent.enable();
@@ -40,7 +39,7 @@ WebInspector.ProfileManager = function()
     this.initialize();
 };
 
-WebInspector.ProfileManager.Event = {
+WebInspector.LegacyProfileManager.Event = {
     ProfileWasAdded: "profile-manager-profile-was-added",
     ProfileWasUpdated: "profile-manager-profile-was-updated",
     ProfilingStarted: "profile-manager-profiling-started",
@@ -49,10 +48,10 @@ WebInspector.ProfileManager.Event = {
     Cleared: "profile-manager-cleared"
 };
 
-WebInspector.ProfileManager.UserInitiatedProfileName = "org.webkit.profiles.user-initiated";
+WebInspector.LegacyProfileManager.UserInitiatedProfileName = "org.webkit.profiles.user-initiated";
 
-WebInspector.ProfileManager.prototype = {
-    constructor: WebInspector.ProfileManager,
+WebInspector.LegacyProfileManager.prototype = {
+    constructor: WebInspector.LegacyProfileManager,
 
     // Public
 
@@ -61,11 +60,10 @@ WebInspector.ProfileManager.prototype = {
         this._checkForInterruptions();
 
         this._recordingJavaScriptProfile = null;
-        this._recordingCanvasProfile = null;
 
         this._isProfiling = false;
 
-        this.dispatchEventToListeners(WebInspector.ProfileManager.Event.Cleared);
+        this.dispatchEventToListeners(WebInspector.LegacyProfileManager.Event.Cleared);
     },
 
     isProfilingJavaScript: function()
@@ -83,50 +81,13 @@ WebInspector.ProfileManager.prototype = {
         this._javaScriptProfileType.stopRecordingProfile();
     },
 
-    isProfilingCanvas: function()
-    {
-        return this._canvasProfileType.isRecordingProfile();
-    },
-
-    startProfilingCanvas: function()
-    {
-        this._canvasProfileType.startRecordingProfile();
-
-        var id = this._canvasProfileType.nextProfileId();
-        this._recordingCanvasProfile = new WebInspector.CanvasProfileObject(WebInspector.UIString("Canvas Profile %d").format(id), id, true);
-        this.dispatchEventToListeners(WebInspector.ProfileManager.Event.ProfileWasAdded, {profile: this._recordingCanvasProfile});
-
-        this.dispatchEventToListeners(WebInspector.ProfileManager.Event.ProfilingStarted);
-    },
-
-    stopProfilingCanvas: function()
-    {
-        function canvasProfilingStopped(error, profile)
-        {
-            if (error)
-                return;
-
-            console.assert(this._recordingCanvasProfile);
-
-            this._recordingCanvasProfile.data = profile.data;
-            this._recordingCanvasProfile.recording = false;
-
-            this.dispatchEventToListeners(WebInspector.ProfileManager.Event.ProfileWasUpdated, {profile: this._recordingCanvasProfile});
-            this.dispatchEventToListeners(WebInspector.ProfileManager.Event.ProfilingEnded, {profile: this._recordingCanvasProfile});
-
-            this._recordingCanvasProfile = null;
-        }
-
-        this._canvasProfileType.stopRecordingProfile(canvasProfilingStopped.bind(this));
-    },
-
     profileWasStartedFromConsole: function(title)
     {
         this.setRecordingJavaScriptProfile(true, true);
 
-        if (title.indexOf(WebInspector.ProfileManager.UserInitiatedProfileName) === -1) {
+        if (title.indexOf(WebInspector.LegacyProfileManager.UserInitiatedProfileName) === -1) {
             this._recordingJavaScriptProfile.title = title;
-            this.dispatchEventToListeners(WebInspector.ProfileManager.Event.ProfileWasUpdated, {profile: this._recordingJavaScriptProfile});
+            this.dispatchEventToListeners(WebInspector.LegacyProfileManager.Event.ProfileWasUpdated, {profile: this._recordingJavaScriptProfile});
         }
     },
 
@@ -146,7 +107,7 @@ WebInspector.ProfileManager.prototype = {
         this._recordingJavaScriptProfile.id = profile.uid;
         this._recordingJavaScriptProfile.recording = false;
 
-        this.dispatchEventToListeners(WebInspector.ProfileManager.Event.ProfileWasUpdated, {profile: this._recordingJavaScriptProfile});
+        this.dispatchEventToListeners(WebInspector.LegacyProfileManager.Event.ProfileWasUpdated, {profile: this._recordingJavaScriptProfile});
 
         // We want to reset _recordingJavaScriptProfile so that we can identify
         // interruptions, but we also want to keep track of the last profile
@@ -169,14 +130,14 @@ WebInspector.ProfileManager.prototype = {
             return;
 
         if (isProfiling && !this._recordingJavaScriptProfile)
-            this._recordingJavaScriptProfile = new WebInspector.JavaScriptProfileObject(WebInspector.ProfileManager.UserInitiatedProfileName, -1, true);
+            this._recordingJavaScriptProfile = new WebInspector.LegacyJavaScriptProfileObject(WebInspector.LegacyProfileManager.UserInitiatedProfileName, -1, true);
 
         if (isProfiling) {
-            this.dispatchEventToListeners(WebInspector.ProfileManager.Event.ProfileWasAdded, {profile: this._recordingJavaScriptProfile});
+            this.dispatchEventToListeners(WebInspector.LegacyProfileManager.Event.ProfileWasAdded, {profile: this._recordingJavaScriptProfile});
             if (!fromConsole)
-                this.dispatchEventToListeners(WebInspector.ProfileManager.Event.ProfilingStarted);
+                this.dispatchEventToListeners(WebInspector.LegacyProfileManager.Event.ProfilingStarted);
         } else {
-            this.dispatchEventToListeners(WebInspector.ProfileManager.Event.ProfilingEnded, {
+            this.dispatchEventToListeners(WebInspector.LegacyProfileManager.Event.ProfilingEnded, {
                 profile: this._lastJavaScriptProfileAdded,
                 fromConsole: fromConsole
             });
@@ -204,11 +165,8 @@ WebInspector.ProfileManager.prototype = {
     _checkForInterruptions: function()
     {
         if (this._recordingJavaScriptProfile) {
-            this.dispatchEventToListeners(WebInspector.ProfileManager.Event.ProfilingInterrupted, {profile: this._recordingJavaScriptProfile});
+            this.dispatchEventToListeners(WebInspector.LegacyProfileManager.Event.ProfilingInterrupted, {profile: this._recordingJavaScriptProfile});
             this._javaScriptProfileType.setRecordingProfile(false);
-        } else if (this._recordingCanvasProfile) {
-            this.dispatchEventToListeners(WebInspector.ProfileManager.Event.ProfilingInterrupted, {profile: this._recordingCanvasProfile});
-            this._canvasProfileType.setRecordingProfile(false);
         }
     },
 
@@ -218,9 +176,7 @@ WebInspector.ProfileManager.prototype = {
 
         if (this._recordingJavaScriptProfile)
             this.startProfilingJavaScript();
-        else if (this._recordingCanvasProfile)
-            this.startProfilingCanvas();
     }
 };
 
-WebInspector.ProfileManager.prototype.__proto__ = WebInspector.Object.prototype;
+WebInspector.LegacyProfileManager.prototype.__proto__ = WebInspector.Object.prototype;

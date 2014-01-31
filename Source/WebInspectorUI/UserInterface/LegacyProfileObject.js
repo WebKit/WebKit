@@ -23,13 +23,71 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.JavaScriptProfileObject = function(title, id, recording)
+WebInspector.LegacyProfileObject = function(type, title, id, isRecording)
 {
-    WebInspector.ProfileObject.call(this, WebInspector.JavaScriptProfileType.TypeId, title, id, recording);
+    WebInspector.Object.call(this);
+
+    console.assert(type);
+    console.assert(title);
+    console.assert(id);
+
+    this._type = type;
+    this._title = title;
+    this._id = id;
+    this._isRecording = isRecording || false;
 };
 
-WebInspector.JavaScriptProfileObject.prototype = {
-    constructor: WebInspector.JavaScriptProfileObject
+WebInspector.LegacyProfileObject.Event = {
+    FinshedRecording: "profile-object-finished-recording"
 };
 
-WebInspector.JavaScriptProfileObject.prototype.__proto__ = WebInspector.ProfileObject.prototype;
+WebInspector.LegacyProfileObject.prototype = {
+    constructor: WebInspector.LegacyProfileObject,
+    
+    get type()
+    {
+        return this._type;
+    },
+
+    set type(type)
+    {
+        this._type = type;
+    },
+    
+    get title()
+    {
+        return this._title;
+    },
+
+    set title(title)
+    {
+        this._title = title;
+    },
+
+    get id()
+    {
+        return this._id;
+    },
+
+    set id(id)
+    {
+        this._id = id;
+    },
+
+    get recording()
+    {
+        return this._isRecording;
+    },
+
+    set recording(flag)
+    {
+        if (this._isRecording === flag)
+            return;
+
+        this._isRecording = flag;
+        if (!flag)
+            this.dispatchEventToListeners(WebInspector.LegacyProfileObject.Event.FinshedRecording);
+    }
+};
+
+WebInspector.LegacyProfileObject.prototype.__proto__ = WebInspector.Object.prototype;

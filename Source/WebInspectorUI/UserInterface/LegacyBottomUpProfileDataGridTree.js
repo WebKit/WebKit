@@ -30,15 +30,15 @@
 // each child still represent the root node. We have to be particularly careful of recursion with this mode
 // because a root node can represent itself AND an ancestor.
 
-WebInspector.BottomUpProfileDataGridNode = function(/*ProfileView*/ profileView, /*ProfileNode*/ profileNode, /*BottomUpProfileDataGridTree*/ owningTree)
+WebInspector.LegacyBottomUpProfileDataGridNode = function(profileNode, owningTree)
 {
-    WebInspector.ProfileDataGridNode.call(this, profileView, profileNode, owningTree, this._willHaveChildren(profileNode));
+    WebInspector.LegacyProfileDataGridNode.call(this, profileNode, owningTree, this._willHaveChildren(profileNode));
 
     this._remainingNodeInfos = [];
 }
 
-WebInspector.BottomUpProfileDataGridNode.prototype = {
-    _takePropertiesFromProfileDataGridNode: function(/*ProfileDataGridNode*/ profileDataGridNode)
+WebInspector.LegacyBottomUpProfileDataGridNode.prototype = {
+    _takePropertiesFromProfileDataGridNode: function(profileDataGridNode)
     {
         this._save();
 
@@ -48,7 +48,7 @@ WebInspector.BottomUpProfileDataGridNode.prototype = {
     },
 
     // When focusing, we keep just the members of the callstack.
-    _keepOnlyChild: function(/*ProfileDataGridNode*/ child)
+    _keepOnlyChild: function(child)
     {
         this._save();
 
@@ -77,17 +77,17 @@ WebInspector.BottomUpProfileDataGridNode.prototype = {
 
     _restore: function()
     {
-        WebInspector.ProfileDataGridNode.prototype._restore();
+        WebInspector.LegacyProfileDataGridNode.prototype._restore();
 
         if (!this.children.length)
             this.hasChildren = this._willHaveChildren();
     },
 
-    _merge: function(/*ProfileDataGridNode*/ child, /*Boolean*/ shouldAbsorb)
+    _merge: function(child, shouldAbsorb)
     {
         this.selfTime -= child.selfTime;
 
-        WebInspector.ProfileDataGridNode.prototype._merge.call(this, child, shouldAbsorb);
+        WebInspector.LegacyProfileDataGridNode.prototype._merge.call(this, child, shouldAbsorb);
     },
 
     _sharedPopulate: function()
@@ -113,7 +113,7 @@ WebInspector.BottomUpProfileDataGridNode.prototype = {
             } else {
                 // If not, add it as a true ancestor.
                 // In heavy mode, we take our visual identity from ancestor node...
-                child = new WebInspector.BottomUpProfileDataGridNode(this.profileView, ancestor, this.tree);
+                child = new WebInspector.LegacyBottomUpProfileDataGridNode(ancestor, this.tree, false, this.showTimeAsPercent);
 
                 if (ancestor !== focusNode) {
                     // but the actual statistics from the "root" node (bottom of the callstack).
@@ -144,15 +144,15 @@ WebInspector.BottomUpProfileDataGridNode.prototype = {
     }
 }
 
-WebInspector.BottomUpProfileDataGridNode.prototype.__proto__ = WebInspector.ProfileDataGridNode.prototype;
+WebInspector.LegacyBottomUpProfileDataGridNode.prototype.__proto__ = WebInspector.LegacyProfileDataGridNode.prototype;
 
-WebInspector.BottomUpProfileDataGridTree = function(/*ProfileView*/ aProfileView, /*ProfileNode*/ aProfileNode)
+WebInspector.LegacyBottomUpProfileDataGridTree = function(profileNode)
 {
-    WebInspector.ProfileDataGridTree.call(this, aProfileView, aProfileNode);
+    WebInspector.LegacyProfileDataGridTree.call(this, profileNode);
 
     // Iterate each node in pre-order.
     var profileNodeUIDs = 0;
-    var profileNodeGroups = [[], [aProfileNode]];
+    var profileNodeGroups = [[], [profileNode]];
     var visitedProfileNodesForCallUID = {};
 
     this._remainingNodeInfos = [];
@@ -202,14 +202,14 @@ WebInspector.BottomUpProfileDataGridTree = function(/*ProfileView*/ aProfileView
     }
 
     // Populate the top level nodes.
-    WebInspector.BottomUpProfileDataGridNode.prototype._populate.call(this);
+    WebInspector.LegacyBottomUpProfileDataGridNode.prototype._populate.call(this);
 
     return this;
 }
 
-WebInspector.BottomUpProfileDataGridTree.prototype = {
+WebInspector.LegacyBottomUpProfileDataGridTree.prototype = {
     // When focusing, we keep the entire callstack up to this ancestor.
-    focus: function(/*ProfileDataGridNode*/ profileDataGridNode)
+    focus: function(profileDataGridNode)
     {
         if (!profileDataGridNode)
             return;
@@ -219,13 +219,13 @@ WebInspector.BottomUpProfileDataGridTree.prototype = {
         var currentNode = profileDataGridNode;
         var focusNode = profileDataGridNode;
 
-        while (currentNode.parent && (currentNode instanceof WebInspector.ProfileDataGridNode)) {
+        while (currentNode.parent && (currentNode instanceof WebInspector.LegacyProfileDataGridNode)) {
             currentNode._takePropertiesFromProfileDataGridNode(profileDataGridNode);
 
             focusNode = currentNode;
             currentNode = currentNode.parent;
 
-            if (currentNode instanceof WebInspector.ProfileDataGridNode)
+            if (currentNode instanceof WebInspector.LegacyProfileDataGridNode)
                 currentNode._keepOnlyChild(focusNode);
         }
 
@@ -233,7 +233,7 @@ WebInspector.BottomUpProfileDataGridTree.prototype = {
         this.totalTime = profileDataGridNode.totalTime;
     },
 
-    exclude: function(/*ProfileDataGridNode*/ profileDataGridNode)
+    exclude: function(profileDataGridNode)
     {
         if (!profileDataGridNode)
             return;
@@ -258,8 +258,8 @@ WebInspector.BottomUpProfileDataGridTree.prototype = {
             this.sort(this.lastComparator, true);
     },
 
-    _sharedPopulate: WebInspector.BottomUpProfileDataGridNode.prototype._sharedPopulate
+    _sharedPopulate: WebInspector.LegacyBottomUpProfileDataGridNode.prototype._sharedPopulate
 }
 
-WebInspector.BottomUpProfileDataGridTree.prototype.__proto__ = WebInspector.ProfileDataGridTree.prototype;
+WebInspector.LegacyBottomUpProfileDataGridTree.prototype.__proto__ = WebInspector.LegacyProfileDataGridTree.prototype;
 

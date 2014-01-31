@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.ProfileView = function(profile, settingId)
+WebInspector.LegacyProfileView = function(profile, settingId)
 {
     WebInspector.ContentView.call(this, profile);
 
@@ -38,13 +38,13 @@ WebInspector.ProfileView = function(profile, settingId)
 
     if (profile.recording) {
         this._showRecordingMessage();
-        profile.addEventListener(WebInspector.ProfileObject.Event.FinshedRecording, this._profileFinishedRecording, this);
+        profile.addEventListener(WebInspector.LegacyProfileObject.Event.FinshedRecording, this._profileFinishedRecording, this);
     } else
         this.displayProfile();
 };
 
-WebInspector.ProfileView.prototype = {
-    constructor: WebInspector.ProfileView,
+WebInspector.LegacyProfileView.prototype = {
+    constructor: WebInspector.LegacyProfileView,
 
     // Public
 
@@ -106,4 +106,4 @@ WebInspector.ProfileView.prototype = {
     }
 };
 
-WebInspector.ProfileView.prototype.__proto__ = WebInspector.ContentView.prototype;
+WebInspector.LegacyProfileView.prototype.__proto__ = WebInspector.ContentView.prototype;

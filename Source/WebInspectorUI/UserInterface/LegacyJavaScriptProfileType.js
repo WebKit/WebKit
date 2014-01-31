@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2008, 2013 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,51 +23,40 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.CanvasProfileType = function()
+WebInspector.LegacyJavaScriptProfileType = function()
 {
-    WebInspector.ProfileType.call(this, WebInspector.CanvasProfileType.TypeId, WebInspector.UIString("Collect Canvas Profile"));
+    WebInspector.LegacyProfileType.call(this, WebInspector.LegacyJavaScriptProfileType.TypeId, WebInspector.UIString("Collect JavaScript Profile"));
     this._recording = false;
-    this._profileId = 1;
-    WebInspector.CanvasProfileType.instance = this;
+    WebInspector.LegacyJavaScriptProfileType.instance = this;
 }
 
-WebInspector.CanvasProfileType.TypeId = "CANVAS";
+WebInspector.LegacyJavaScriptProfileType.TypeId = "CPU";
 
-WebInspector.CanvasProfileType.prototype = {
-
-    constructor: WebInspector.CanvasProfileType,
-
+WebInspector.LegacyJavaScriptProfileType.prototype = {
     get buttonTooltip()
     {
-        return this._recording ? WebInspector.UIString("Stop Canvas profiling.") : WebInspector.UIString("Start Canvas profiling.");
+        return this._recording ? WebInspector.UIString("Stop JavaScript profiling.") : WebInspector.UIString("Start JavaScript profiling.");
     },
 
     buttonClicked: function()
     {
-        if (this._recording)
+        if (this._recording) {
             this.stopRecordingProfile();
-        else
+            WebInspector.networkManager.enableResourceTracking();
+        } else {
+            WebInspector.networkManager.disableResourceTracking();
             this.startRecordingProfile();
+        }
     },
 
     get treeItemTitle()
     {
-        return WebInspector.UIString("CANVAS PROFILES");
+        return WebInspector.UIString("JAVASCRIPT PROFILES");
     },
 
     get description()
     {
-        return WebInspector.UIString("Canvas profiles allow you to examine drawing operations on canvas elements.");
-    },
-
-    reset: function()
-    {
-        this._profileId = 1;
-    },
-
-    nextProfileId: function()
-    {
-        return this._profileId++;
+        return WebInspector.UIString("JavaScript profiles show where the execution time is spent in your page's JavaScript functions.");
     },
 
     isRecordingProfile: function()
@@ -75,34 +64,32 @@ WebInspector.CanvasProfileType.prototype = {
         return this._recording;
     },
 
+    startRecordingProfile: function()
+    {
+        this._recording = true;
+        ProfilerAgent.start();
+    },
+
+    stopRecordingProfile: function()
+    {
+        this._recording = false;
+        ProfilerAgent.stop();
+    },
+
     setRecordingProfile: function(isProfiling)
     {
         this._recording = isProfiling;
     },
 
-    startRecordingProfile: function()
-    {
-        this._recording = true;
-        // FIXME: This is where we would ask the Canvas Agent to profile.
-    },
-
-    stopRecordingProfile: function(callback)
-    {
-        this._recording = false;
-        // FIXME: This is where we would ask the Canvas Agent to stop profiling.
-        // For now pass in an empty array of canvas calls.
-        callback(null, {data: []});
-    },
-
     createSidebarTreeElementForProfile: function(profile)
     {
-        return new WebInspector.ProfileSidebarTreeElement(profile, profile.title, "profile-sidebar-tree-item");
+        return new WebInspector.LegacyProfileSidebarTreeElement(profile, WebInspector.UIString("Profile %d"), "profile-sidebar-tree-item");
     },
 
     createView: function(profile)
     {
-        return new WebInspector.CanvasProfileView(profile);
+        return new WebInspector.LegacyJavaScriptProfileView(profile);
     }
 }
 
-WebInspector.CanvasProfileType.prototype.__proto__ = WebInspector.ProfileType.prototype;
+WebInspector.LegacyJavaScriptProfileType.prototype.__proto__ = WebInspector.LegacyProfileType.prototype;

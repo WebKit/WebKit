@@ -23,9 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.ProfileDataGridNode = function(profileView, profileNode, owningTree, hasChildren)
+WebInspector.LegacyProfileDataGridNode = function(profileNode, owningTree, hasChildren, showTimeAsPercent)
 {
-    this.profileView = profileView;
     this.profileNode = profileNode;
 
     WebInspector.DataGridNode.call(this, null, hasChildren);
@@ -43,9 +42,11 @@ WebInspector.ProfileDataGridNode = function(profileView, profileNode, owningTree
     this.functionName = profileNode.functionName;
     this.numberOfCalls = profileNode.numberOfCalls;
     this.url = profileNode.url;
+
+    this._showTimeAsPercent = showTimeAsPercent || false;
 }
 
-WebInspector.ProfileDataGridNode.prototype = {
+WebInspector.LegacyProfileDataGridNode.prototype = {
     get data()
     {
         function formatMilliseconds(time)
@@ -58,7 +59,7 @@ WebInspector.ProfileDataGridNode.prototype = {
         data["function"] = this.functionName;
         data["calls"] = this.numberOfCalls;
 
-        if (this.profileView.showTimeAsPercent.value) {
+        if (this._showTimeAsPercent) {
             data["self"] = WebInspector.UIString("%.2f %%").format(this.selfPercent);
             data["total"] = WebInspector.UIString("%.2f %%").format(this.totalPercent);
             data["average"] = WebInspector.UIString("%.2f %%").format(this.averagePercent);
@@ -69,6 +70,18 @@ WebInspector.ProfileDataGridNode.prototype = {
         }
 
         return data;
+    },
+
+    get showTimeAsPercent()
+    {
+        return this._showTimeAsPercent;
+    },
+
+    refresh: function(showTimeAsPercent)
+    {
+        this._showTimeAsPercent = showTimeAsPercent;
+
+        WebInspector.DataGridNode.prototype.refresh.call(this);
     },
 
     createCell: function(columnIdentifier)
@@ -101,19 +114,7 @@ WebInspector.ProfileDataGridNode.prototype = {
         return cell;
     },
 
-    select: function(supressSelectedEvent)
-    {
-        WebInspector.DataGridNode.prototype.select.call(this, supressSelectedEvent);
-        this.profileView._dataGridNodeSelected(this);
-    },
-
-    deselect: function(supressDeselectedEvent)
-    {
-        WebInspector.DataGridNode.prototype.deselect.call(this, supressDeselectedEvent);
-        this.profileView._dataGridNodeDeselected(this);
-    },
-
-    sort: function(/*Function*/ comparator, /*Boolean*/ force)
+    sort: function(comparator, force)
     {
         var gridNodeGroups = [[this]];
 
@@ -149,28 +150,28 @@ WebInspector.ProfileDataGridNode.prototype = {
         }
     },
 
-    insertChild: function(/*ProfileDataGridNode*/ profileDataGridNode, index)
+    insertChild: function(profileDataGridNode, index)
     {
         WebInspector.DataGridNode.prototype.insertChild.call(this, profileDataGridNode, index);
 
         this.childrenByCallUID[profileDataGridNode.callUID] = profileDataGridNode;
     },
 
-    removeChild: function(/*ProfileDataGridNode*/ profileDataGridNode)
+    removeChild: function(profileDataGridNode)
     {
         WebInspector.DataGridNode.prototype.removeChild.call(this, profileDataGridNode);
 
         delete this.childrenByCallUID[profileDataGridNode.callUID];
     },
 
-    removeChildren: function(/*ProfileDataGridNode*/ profileDataGridNode)
+    removeChildren: function(profileDataGridNode)
     {
         WebInspector.DataGridNode.prototype.removeChildren.call(this);
 
         this.childrenByCallUID = {};
     },
 
-    findChild: function(/*Node*/ node)
+    findChild: function(node)
     {
         if (!node)
             return null;
@@ -294,14 +295,12 @@ WebInspector.ProfileDataGridNode.prototype = {
     }
 }
 
-WebInspector.ProfileDataGridNode.prototype.__proto__ = WebInspector.DataGridNode.prototype;
+WebInspector.LegacyProfileDataGridNode.prototype.__proto__ = WebInspector.DataGridNode.prototype;
 
-WebInspector.ProfileDataGridTree = function(profileView, profileNode)
+WebInspector.LegacyProfileDataGridTree = function(profileNode)
 {
     this.tree = this;
     this.children = [];
-
-    this.profileView = profileView;
 
     this.totalTime = profileNode.totalTime;
     this.lastComparator = null;
@@ -309,7 +308,7 @@ WebInspector.ProfileDataGridTree = function(profileView, profileNode)
     this.childrenByCallUID = {};
 }
 
-WebInspector.ProfileDataGridTree.prototype = {
+WebInspector.LegacyProfileDataGridTree.prototype = {
     get expanded()
     {
         return true;
@@ -332,8 +331,8 @@ WebInspector.ProfileDataGridTree.prototype = {
         this.childrenByCallUID = {};
     },
 
-    findChild: WebInspector.ProfileDataGridNode.prototype.findChild,
-    sort: WebInspector.ProfileDataGridNode.prototype.sort,
+    findChild: WebInspector.LegacyProfileDataGridNode.prototype.findChild,
+    sort: WebInspector.LegacyProfileDataGridNode.prototype.sort,
 
     _save: function()
     {
@@ -362,9 +361,9 @@ WebInspector.ProfileDataGridTree.prototype = {
     }
 }
 
-WebInspector.ProfileDataGridTree.propertyComparators = [{}, {}];
+WebInspector.LegacyProfileDataGridTree.propertyComparators = [{}, {}];
 
-WebInspector.ProfileDataGridTree.propertyComparator = function(/*String*/ property, /*Boolean*/ isAscending)
+WebInspector.LegacyProfileDataGridTree.propertyComparator = function(property, isAscending)
 {
     var comparator = this.propertyComparators[(isAscending ? 1 : 0)][property];
 

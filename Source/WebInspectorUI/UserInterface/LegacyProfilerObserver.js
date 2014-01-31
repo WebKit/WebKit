@@ -23,71 +23,46 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.ProfileObject = function(type, title, id, isRecording)
+WebInspector.LegacyProfilerObserver = function()
 {
     WebInspector.Object.call(this);
-
-    console.assert(type);
-    console.assert(title);
-    console.assert(id);
-
-    this._type = type;
-    this._title = title;
-    this._id = id;
-    this._isRecording = isRecording || false;
 };
 
-WebInspector.ProfileObject.Event = {
-    FinshedRecording: "profile-object-finished-recording"
-};
+WebInspector.LegacyProfilerObserver.prototype = {
+    constructor: WebInspector.LegacyProfilerObserver,
 
-WebInspector.ProfileObject.prototype = {
-    constructor: WebInspector.ProfileObject,
-    
-    get type()
+    // Events defined by the "Profiler" domain.
+
+    resetProfiles: function()
     {
-        return this._type;
+        // FIXME: Implement this.
     },
 
-    set type(type)
+    addProfileHeader: function(profile)
     {
-        this._type = type;
-    },
-    
-    get title()
-    {
-        return this._title;
+        WebInspector.legacyProfileManager.addJavaScriptProfile(profile);
     },
 
-    set title(title)
+    addHeapSnapshotChunk: function(uid, chunk)
     {
-        this._title = title;
+        // FIXME: Implement this (we need heap snapshots).
     },
 
-    get id()
+    finishHeapSnapshot: function(uid)
     {
-        return this._id;
+        // FIXME: Implement this (we need heap snapshots).
     },
 
-    set id(id)
+    setRecordingProfile: function(isProfiling)
     {
-        this._id = id;
+        WebInspector.legacyProfileManager.setRecordingJavaScriptProfile(isProfiling);
     },
 
-    get recording()
+    reportHeapSnapshotProgress: function(done, total)
     {
-        return this._isRecording;
-    },
-
-    set recording(flag)
-    {
-        if (this._isRecording === flag)
-            return;
-
-        this._isRecording = flag;
-        if (!flag)
-            this.dispatchEventToListeners(WebInspector.ProfileObject.Event.FinshedRecording);
+        // FIXME: Implement this (we need heap snapshots).
     }
+
 };
 
-WebInspector.ProfileObject.prototype.__proto__ = WebInspector.Object.prototype;
+WebInspector.LegacyProfilerObserver.prototype.__proto__ = WebInspector.Object.prototype;
