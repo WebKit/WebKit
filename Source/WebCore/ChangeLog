@@ -1,3 +1,29 @@
+2014-01-30  Zalan Bujtas  <zalan@apple.com>
+
+        Subpixel rendering: Change BorderData's width from unsigned to float to enable subpixel border painting.
+        https://bugs.webkit.org/show_bug.cgi?id=127949
+
+        Reviewed by Andreas Kling.
+
+        Covered by existing tests. No change in functionality.
+
+        * css/DeprecatedStyleBuilder.cpp:
+        (WebCore::DeprecatedStyleBuilder::DeprecatedStyleBuilder):
+        * page/animation/CSSPropertyAnimation.cpp:
+        (WebCore::CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap):
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::calcBorderStart):
+        (WebCore::RenderTable::calcBorderEnd):
+        * rendering/style/BorderValue.h:
+        (WebCore::BorderValue::BorderValue):
+        (WebCore::BorderValue::width):
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::borderBeforeWidth):
+        (WebCore::RenderStyle::borderAfterWidth):
+        (WebCore::RenderStyle::borderStartWidth):
+        (WebCore::RenderStyle::borderEndWidth):
+        * rendering/style/RenderStyle.h:
+
 2014-01-30  David Kilzer  <ddkilzer@apple.com>
 
         Add security-checked cast for WebCore::CachedImage

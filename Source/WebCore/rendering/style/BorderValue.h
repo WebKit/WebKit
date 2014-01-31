@@ -34,9 +34,9 @@ class BorderValue {
 friend class RenderStyle;
 public:
     BorderValue()
-        : m_color(0)
+        : m_width(3)
+        , m_color(0)
         , m_colorIsValid(false)
-        , m_width(3)
         , m_style(BNONE)
         , m_isAuto(AUTO_OFF)
     {
@@ -75,14 +75,14 @@ public:
 
     Color color() const { return Color(m_color, m_colorIsValid); }
 
-    unsigned width() const { return m_width; }
+    float width() const { return m_width; }
     EBorderStyle style() const { return static_cast<EBorderStyle>(m_style); }
 
 protected:
+    float m_width;
     RGBA32 m_color;
     unsigned m_colorIsValid : 1;
 
-    unsigned m_width : 26;
     unsigned m_style : 4; // EBorderStyle
 
     // This is only used by OutlineValue but moved here to keep the bits packed.

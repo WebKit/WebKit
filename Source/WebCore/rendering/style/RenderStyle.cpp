@@ -54,8 +54,9 @@
 namespace WebCore {
 
 struct SameSizeAsBorderValue {
+    float m_width;
     RGBA32 m_color;
-    unsigned m_width;
+    int m_restBits;
 };
 
 COMPILE_ASSERT(sizeof(BorderValue) == sizeof(SameSizeAsBorderValue), BorderValue_should_not_grow);
@@ -1682,7 +1683,7 @@ const BorderValue& RenderStyle::borderEnd() const
     return isLeftToRightDirection() ? borderBottom() : borderTop();
 }
 
-unsigned short RenderStyle::borderBeforeWidth() const
+float RenderStyle::borderBeforeWidth() const
 {
     switch (writingMode()) {
     case TopToBottomWritingMode:
@@ -1698,7 +1699,7 @@ unsigned short RenderStyle::borderBeforeWidth() const
     return borderTopWidth();
 }
 
-unsigned short RenderStyle::borderAfterWidth() const
+float RenderStyle::borderAfterWidth() const
 {
     switch (writingMode()) {
     case TopToBottomWritingMode:
@@ -1714,14 +1715,14 @@ unsigned short RenderStyle::borderAfterWidth() const
     return borderBottomWidth();
 }
 
-unsigned short RenderStyle::borderStartWidth() const
+float RenderStyle::borderStartWidth() const
 {
     if (isHorizontalWritingMode())
         return isLeftToRightDirection() ? borderLeftWidth() : borderRightWidth();
     return isLeftToRightDirection() ? borderTopWidth() : borderBottomWidth();
 }
 
-unsigned short RenderStyle::borderEndWidth() const
+float RenderStyle::borderEndWidth() const
 {
     if (isHorizontalWritingMode())
         return isLeftToRightDirection() ? borderRightWidth() : borderLeftWidth();

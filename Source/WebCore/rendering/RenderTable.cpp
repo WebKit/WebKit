@@ -961,7 +961,7 @@ int RenderTable::calcBorderStart() const
     if (!numEffCols())
         return 0;
 
-    unsigned borderWidth = 0;
+    float borderWidth = 0;
 
     const BorderValue& tableStartBorder = style().borderStart();
     if (tableStartBorder.style() == BHIDDEN)
@@ -1015,7 +1015,7 @@ int RenderTable::calcBorderEnd() const
     if (!numEffCols())
         return 0;
 
-    unsigned borderWidth = 0;
+    float borderWidth = 0;
 
     const BorderValue& tableEndBorder = style().borderEnd();
     if (tableEndBorder.style() == BHIDDEN)
