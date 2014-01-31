@@ -155,7 +155,8 @@ void InspectorTimelineAgent::didCallFunction(Frame* frame)
         ASSERT(entry.type == TimelineRecordType::FunctionCall);
 
         RefPtr<ScriptProfile> profile = ScriptProfiler::stop(toJSDOMWindow(frame, debuggerWorld())->globalExec(), ASCIILiteral("Timeline FunctionCall"));
-        TimelineRecordFactory::appendProfile(entry.data.get(), profile.release());
+        if (profile)
+            TimelineRecordFactory::appendProfile(entry.data.get(), profile.release());
 
         m_recordingProfile = false;
     }
@@ -335,7 +336,8 @@ void InspectorTimelineAgent::didEvaluateScript(Frame* frame)
         ASSERT(entry.type == TimelineRecordType::EvaluateScript);
 
         RefPtr<ScriptProfile> profile = ScriptProfiler::stop(toJSDOMWindow(frame, debuggerWorld())->globalExec(), ASCIILiteral("Timeline EvaluateScript"));
-        TimelineRecordFactory::appendProfile(entry.data.get(), profile.release());
+        if (profile)
+            TimelineRecordFactory::appendProfile(entry.data.get(), profile.release());
 
         m_recordingProfile = false;
     }

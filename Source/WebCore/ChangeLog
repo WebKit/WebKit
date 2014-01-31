@@ -1,3 +1,15 @@
+2014-01-31  Timothy Hatcher  <timothy@apple.com>
+
+        Properly handle cases where a profile couldn't be recorded and null is returned.
+
+        <rdar://problem/15957993> Crash with Inspector open at WebCore::ScriptProfile::buildInspectorObject
+
+        Reviewed by Joseph Pecoraro.
+
+        * inspector/InspectorTimelineAgent.cpp:
+        (WebCore::InspectorTimelineAgent::didCallFunction): Null check profile.
+        (WebCore::InspectorTimelineAgent::didEvaluateScript): Ditto.
+
 2014-01-31  Beth Dakin  <bdakin@apple.com>
 
         Extended background should only create margin tiles for pages with background 
