@@ -2964,6 +2964,8 @@ void RenderLayerCompositor::setRootExtendedBackgroundColor(const Color& color)
 
     if (!color.isValid())
         m_layerForOverhangAreas->setCustomAppearance(GraphicsLayer::ScrollingOverhang);
+#else
+    UNUSED_PARAM(color);
 #endif
 }
 
