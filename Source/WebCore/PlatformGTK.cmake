@@ -451,13 +451,13 @@ set_property(
     APPEND
     PROPERTY INCLUDE_DIRECTORIES
         ${WebCore_INCLUDE_DIRECTORIES}
-        ${GTK3_INCLUDE_DIRS}
-        ${GDK3_INCLUDE_DIRS}
+        ${GTK_INCLUDE_DIRS}
+        ${GDK_INCLUDE_DIRS}
 )
 target_link_libraries(WebCorePlatformGTK
     ${WebCore_LIBRARIES}
-    ${GTK3_LIBRARIES}
-    ${GDK3_LIBRARIES}
+    ${GTK_LIBRARIES}
+    ${GDK_LIBRARIES}
 )
 
 if (ENABLE_WEBKIT2)

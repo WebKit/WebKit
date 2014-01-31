@@ -1,3 +1,15 @@
+2014-01-30  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] [CMake] Add support for building against GTK+ 2
+        https://bugs.webkit.org/show_bug.cgi?id=127959
+
+        Reviewed by Anders Carlsson.
+
+        * DumpRenderTree/PlatformGTK.cmake: Use the new API version variable and don't use GTK3 directly.
+        * GtkLauncher/CMakeLists.txt: Ditto.
+        * ImageDiff/PlatformGTK.cmake: Ditto.
+        * TestWebKitAPI/Tests/WebKitGtk/CMakeLists.txt: Ditto.
+
 2014-01-30  Anders Carlsson  <andersca@apple.com>
 
         Add webView:didFinishLoadingNavigation: delegate method

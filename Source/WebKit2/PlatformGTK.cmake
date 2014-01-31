@@ -4,7 +4,7 @@ file(MAKE_DIRECTORY ${FORWARDING_HEADERS_WEBKIT2GTK_DIR})
 file(MAKE_DIRECTORY ${FORWARDING_HEADERS_WEBKIT2GTK_EXTENSION_DIR})
 
 configure_file(UIProcess/API/gtk/WebKitVersion.h.in ${DERIVED_SOURCES_WEBKIT2GTK_API_DIR}/WebKitVersion.h)
-configure_file(webkit2gtk.pc.in ${CMAKE_BINARY_DIR}/Source/WebKit2/webkit2gtk-3.0.pc @ONLY)
+configure_file(webkit2gtk.pc.in ${CMAKE_BINARY_DIR}/Source/WebKit2/webkit2gtk-${WEBKITGTK_API_VERSION}.pc @ONLY)
 
 add_definitions(-DWEBKIT2_COMPILATION)
 add_definitions(-DLIBEXECDIR="${CMAKE_INSTALL_FULL_LIBEXECDIR}")
@@ -425,7 +425,7 @@ set(WebKit2CommonIncludeDirectories ${WebKit2_INCLUDE_DIRECTORIES})
 
 list(APPEND WebKit2_INCLUDE_DIRECTORIES
     ${GLIB_INCLUDE_DIRS}
-    ${GTK3_INCLUDE_DIRS}
+    ${GTK_INCLUDE_DIRS}
 )
 
 list(APPEND WebProcess_SOURCES
@@ -668,7 +668,7 @@ add_dependencies(webkit2gtkinjectedbundle GObjectDOMBindings)
 add_webkit2_prefix_header(webkit2gtkinjectedbundle)
 
 add_custom_command(
-    OUTPUT ${CMAKE_BINARY_DIR}/WebKit2-3.0.gir
+    OUTPUT ${CMAKE_BINARY_DIR}/WebKit2-${WEBKITGTK_API_VERSION}.gir
     DEPENDS WebKit2
     DEPENDS JavaScriptCore-3-gir
     COMMAND CC=${CMAKE_C_COMPILER} CFLAGS=-Wno-deprecated-declarations
@@ -678,20 +678,20 @@ add_custom_command(
         --symbol-prefix=webkit
         --identifier-prefix=WebKit
         --namespace=WebKit2
-        --nsversion=3.0
+        --nsversion=${WEBKITGTK_API_VERSION}
         --include=GObject-2.0
-        --include=Gtk-3.0
+        --include=Gtk-${WEBKITGTK_API_VERSION}
         --include=Soup-2.4
-        --include-uninstalled=${CMAKE_BINARY_DIR}/JavaScriptCore-3.0.gir
-        --library=webkit2gtk-3.0
-        --library=javascriptcoregtk-3.0
+        --include-uninstalled=${CMAKE_BINARY_DIR}/JavaScriptCore-${WEBKITGTK_API_VERSION}.gir
+        --library=webkit2gtk-${WEBKITGTK_API_VERSION}
+        --library=javascriptcoregtk-${WEBKITGTK_API_VERSION}
         -L${CMAKE_LIBRARY_OUTPUT_DIRECTORY}
         --no-libtool
         --pkg=gobject-2.0
-        --pkg=gtk+-3.0
+        --pkg=gtk+-${WEBKITGTK_API_VERSION}
         --pkg=libsoup-2.4
-        --pkg-export=webkit2gtk-3.0
-        --output=${CMAKE_BINARY_DIR}/WebKit2-3.0.gir
+        --pkg-export=webkit2gtk-${WEBKITGTK_API_VERSION}
+        --output=${CMAKE_BINARY_DIR}/WebKit2-${WEBKITGTK_API_VERSION}.gir
         --c-include="webkit2/webkit2.h"
         -DBUILDING_WEBKIT
         -DWEBKIT2_COMPILATION
@@ -706,9 +706,9 @@ add_custom_command(
 )
 
 add_custom_command(
-    OUTPUT ${CMAKE_BINARY_DIR}/WebKit2WebExtension-3.0.gir
+    OUTPUT ${CMAKE_BINARY_DIR}/WebKit2WebExtension-${WEBKITGTK_API_VERSION}.gir
     DEPENDS JavaScriptCore-3-gir
-    DEPENDS ${CMAKE_BINARY_DIR}/WebKit2-3.0.gir
+    DEPENDS ${CMAKE_BINARY_DIR}/WebKit2-${WEBKITGTK_API_VERSION}.gir
     COMMAND CC=${CMAKE_C_COMPILER} CFLAGS=-Wno-deprecated-declarations
         ${INTROSPECTION_SCANNER}
         --quiet
@@ -716,21 +716,21 @@ add_custom_command(
         --symbol-prefix=webkit
         --identifier-prefix=WebKit
         --namespace=WebKit2WebExtension
-        --nsversion=3.0
+        --nsversion=${WEBKITGTK_API_VERSION}
         --include=GObject-2.0
-        --include=Gtk-3.0
+        --include=Gtk-${WEBKITGTK_API_VERSION}
         --include=Soup-2.4
-        --include-uninstalled=${CMAKE_BINARY_DIR}/JavaScriptCore-3.0.gir
-        --include-uninstalled=${CMAKE_BINARY_DIR}/WebKit2-3.0.gir
-        --library=webkit2gtk-3.0
-        --library=javascriptcoregtk-3.0
+        --include-uninstalled=${CMAKE_BINARY_DIR}/JavaScriptCore-${WEBKITGTK_API_VERSION}.gir
+        --include-uninstalled=${CMAKE_BINARY_DIR}/WebKit2-${WEBKITGTK_API_VERSION}.gir
+        --library=webkit2gtk-${WEBKITGTK_API_VERSION}
+        --library=javascriptcoregtk-${WEBKITGTK_API_VERSION}
         -L${CMAKE_LIBRARY_OUTPUT_DIRECTORY}
         --no-libtool
         --pkg=gobject-2.0
-        --pkg=gtk+-3.0
+        --pkg=gtk+-${WEBKITGTK_API_VERSION}
         --pkg=libsoup-2.4
-        --pkg-export=webkit2gtk-3.0
-        --output=${CMAKE_BINARY_DIR}/WebKit2WebExtension-3.0.gir
+        --pkg-export=webkit2gtk-${WEBKITGTK_API_VERSION}
+        --output=${CMAKE_BINARY_DIR}/WebKit2WebExtension-${WEBKITGTK_API_VERSION}.gir
         --c-include="webkit2/webkit-web-extension.h"
         -DBUILDING_WEBKIT
         -DWEBKIT2_COMPILATION
@@ -749,35 +749,35 @@ add_custom_command(
 )
 
 add_custom_command(
-    OUTPUT ${CMAKE_BINARY_DIR}/WebKit2-3.0.typelib
-    DEPENDS ${CMAKE_BINARY_DIR}/WebKit2-3.0.gir
-    COMMAND ${INTROSPECTION_COMPILER} --includedir=${CMAKE_BINARY_DIR} ${CMAKE_BINARY_DIR}/WebKit2-3.0.gir -o ${CMAKE_BINARY_DIR}/WebKit2-3.0.typelib
+    OUTPUT ${CMAKE_BINARY_DIR}/WebKit2-${WEBKITGTK_API_VERSION}.typelib
+    DEPENDS ${CMAKE_BINARY_DIR}/WebKit2-${WEBKITGTK_API_VERSION}.gir
+    COMMAND ${INTROSPECTION_COMPILER} --includedir=${CMAKE_BINARY_DIR} ${CMAKE_BINARY_DIR}/WebKit2-${WEBKITGTK_API_VERSION}.gir -o ${CMAKE_BINARY_DIR}/WebKit2-${WEBKITGTK_API_VERSION}.typelib
 )
 
 add_custom_command(
-    OUTPUT ${CMAKE_BINARY_DIR}/WebKit2WebExtension-3.0.typelib
-    DEPENDS ${CMAKE_BINARY_DIR}/WebKit2WebExtension-3.0.gir
-    COMMAND ${INTROSPECTION_COMPILER} --includedir=${CMAKE_BINARY_DIR} ${CMAKE_BINARY_DIR}/WebKit2WebExtension-3.0.gir -o ${CMAKE_BINARY_DIR}/WebKit2WebExtension-3.0.typelib
+    OUTPUT ${CMAKE_BINARY_DIR}/WebKit2WebExtension-${WEBKITGTK_API_VERSION}.typelib
+    DEPENDS ${CMAKE_BINARY_DIR}/WebKit2WebExtension-${WEBKITGTK_API_VERSION}.gir
+    COMMAND ${INTROSPECTION_COMPILER} --includedir=${CMAKE_BINARY_DIR} ${CMAKE_BINARY_DIR}/WebKit2WebExtension-${WEBKITGTK_API_VERSION}.gir -o ${CMAKE_BINARY_DIR}/WebKit2WebExtension-${WEBKITGTK_API_VERSION}.typelib
 )
 
-ADD_TYPELIB(${CMAKE_BINARY_DIR}/WebKit2-3.0.typelib)
-ADD_TYPELIB(${CMAKE_BINARY_DIR}/WebKit2WebExtension-3.0.typelib)
+ADD_TYPELIB(${CMAKE_BINARY_DIR}/WebKit2-${WEBKITGTK_API_VERSION}.typelib)
+ADD_TYPELIB(${CMAKE_BINARY_DIR}/WebKit2WebExtension-${WEBKITGTK_API_VERSION}.typelib)
 
 install(TARGETS webkit2gtkinjectedbundle
-        DESTINATION "${LIB_INSTALL_DIR}/webkit2gtk-3.0/injected-bundle"
+        DESTINATION "${LIB_INSTALL_DIR}/webkit2gtk-${WEBKITGTK_API_VERSION}/injected-bundle"
 )
-install(FILES "${CMAKE_BINARY_DIR}/Source/WebKit2/webkit2gtk-3.0.pc"
+install(FILES "${CMAKE_BINARY_DIR}/Source/WebKit2/webkit2gtk-${WEBKITGTK_API_VERSION}.pc"
         DESTINATION "${LIB_INSTALL_DIR}/pkgconfig"
 )
 install(FILES ${WebKit2GTK_INSTALLED_HEADERS}
               ${WebKit2WebExtension_INSTALLED_HEADERS}
         DESTINATION "${WEBKITGTK_HEADER_INSTALL_DIR}/webkit2"
 )
-install(FILES ${CMAKE_BINARY_DIR}/WebKit2-3.0.gir
-              ${CMAKE_BINARY_DIR}/WebKit2WebExtension-3.0.gir
+install(FILES ${CMAKE_BINARY_DIR}/WebKit2-${WEBKITGTK_API_VERSION}.gir
+              ${CMAKE_BINARY_DIR}/WebKit2WebExtension-${WEBKITGTK_API_VERSION}.gir
         DESTINATION ${INTROSPECTION_INSTALL_GIRDIR}
 )
-install(FILES ${CMAKE_BINARY_DIR}/WebKit2-3.0.typelib
-              ${CMAKE_BINARY_DIR}/WebKit2WebExtension-3.0.typelib
+install(FILES ${CMAKE_BINARY_DIR}/WebKit2-${WEBKITGTK_API_VERSION}.typelib
+              ${CMAKE_BINARY_DIR}/WebKit2WebExtension-${WEBKITGTK_API_VERSION}.typelib
         DESTINATION ${INTROSPECTION_INSTALL_TYPELIBDIR}
 )
