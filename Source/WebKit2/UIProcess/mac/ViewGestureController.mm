@@ -286,6 +286,10 @@ void ViewGestureController::wheelEventWasNotHandledByWebCore(NSEvent *event)
         return;
 
     m_hasPendingSwipe = false;
+
+    if (event.phase != NSEventPhaseBegan)
+        return;
+
     trackSwipeGesture(event, m_pendingSwipeDirection);
 }
 

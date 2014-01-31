@@ -1,3 +1,22 @@
+2014-01-31  Tim Horton  <timothy_horton@apple.com>
+
+        WebKit2 View Gestures (Swipe): Crashes swiping around a Google Docs spreadsheet
+        https://bugs.webkit.org/show_bug.cgi?id=128013
+        <rdar://problem/15959481>
+
+        Reviewed by Anders Carlsson.
+
+        * UIProcess/mac/ViewGestureController.mm:
+        (WebKit::ViewGestureController::wheelEventWasNotHandledByWebCore):
+        We should never (currently) start a swipe from a non-begin-phase wheel event.
+        We already check this in handleScrollWheelEvent, but can still get
+        non-begin-phase events in wheelEventWasNotHandled.
+
+        We only start "pending" swipes with Begin events, so we should never make them
+        non-pending with anything but a Begin event (we'll get it when it bubbles back up,
+        unhandled, from WebCore). In addition, AppKit throws an exception when we try
+        to start a swipe from end-phase events.
+
 2014-01-31  Brady Eidson  <beidson@apple.com>
 
         IDB: openCursor() needs to prime the cursor with first position values
