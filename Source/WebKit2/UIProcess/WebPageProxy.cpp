@@ -2097,7 +2097,7 @@ void WebPageProxy::didFinishProgress()
     m_loaderClient->didFinishProgress(this);
 }
 
-void WebPageProxy::didStartProvisionalLoadForFrame(uint64_t frameID, const String& url, const String& unreachableURL, IPC::MessageDecoder& decoder)
+void WebPageProxy::didStartProvisionalLoadForFrame(uint64_t frameID, uint64_t navigationID, const String& url, const String& unreachableURL, IPC::MessageDecoder& decoder)
 {
     auto transaction = m_pageLoadState.transaction();
 
@@ -2121,7 +2121,7 @@ void WebPageProxy::didStartProvisionalLoadForFrame(uint64_t frameID, const Strin
     frame->didStartProvisionalLoad(url);
 
     m_pageLoadState.commitChanges();
-    m_loaderClient->didStartProvisionalLoadForFrame(this, frame, userData.get());
+    m_loaderClient->didStartProvisionalLoadForFrame(this, frame, navigationID, userData.get());
 }
 
 void WebPageProxy::didReceiveServerRedirectForProvisionalLoadForFrame(uint64_t frameID, const String& url, IPC::MessageDecoder& decoder)

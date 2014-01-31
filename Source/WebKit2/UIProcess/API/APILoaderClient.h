@@ -53,7 +53,7 @@ class LoaderClient {
 public:
     virtual ~LoaderClient() { }
 
-    virtual void didStartProvisionalLoadForFrame(WebKit::WebPageProxy*, WebKit::WebFrameProxy*, API::Object*) { }
+    virtual void didStartProvisionalLoadForFrame(WebKit::WebPageProxy*, WebKit::WebFrameProxy*, uint64_t navigationID, API::Object*) { }
     virtual void didReceiveServerRedirectForProvisionalLoadForFrame(WebKit::WebPageProxy*, WebKit::WebFrameProxy*, API::Object*) { }
     virtual void didFailProvisionalLoadWithErrorForFrame(WebKit::WebPageProxy*, WebKit::WebFrameProxy*, const WebCore::ResourceError&, API::Object*) { }
     virtual void didCommitLoadForFrame(WebKit::WebPageProxy*, WebKit::WebFrameProxy*, API::Object*) { }

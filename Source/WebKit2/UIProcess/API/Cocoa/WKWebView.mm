@@ -120,6 +120,7 @@ static _UIWebViewportConfiguration standardViewportConfiguration = { { UIWebView
 #endif
 
     _page->setPolicyClient(_navigationState->createPolicyClient());
+    _page->setLoaderClient(_navigationState->createLoaderClient());
 
     return self;
 }

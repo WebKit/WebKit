@@ -32,6 +32,7 @@
 
 #import <wtf/HashMap.h>
 #import <wtf/RetainPtr.h>
+#import "APILoaderClient.h"
 #import "APIPolicyClient.h"
 #import "WeakObjCPtr.h"
 
@@ -47,6 +48,7 @@ public:
     ~NavigationState();
 
     std::unique_ptr<API::PolicyClient> createPolicyClient();
+    std::unique_ptr<API::LoaderClient> createLoaderClient();
 
     RetainPtr<id <WKNavigationDelegate> > navigationDelegate();
     void setNavigationDelegate(id <WKNavigationDelegate>);
@@ -68,9 +70,22 @@ private:
         NavigationState& m_navigationState;
     };
 
+    class LoaderClient : public API::LoaderClient {
+    public:
+        explicit LoaderClient(NavigationState&);
+        ~LoaderClient();
+
+    private:
+        virtual void didStartProvisionalLoadForFrame(WebPageProxy*, WebFrameProxy*, uint64_t navigationID, API::Object*) override;
+
+        NavigationState& m_navigationState;
+    };
+
     struct {
         bool webViewDecidePolicyForNavigationActionDecisionHandler : 1;
         bool webViewDecidePolicyForNavigationResponseDecisionHandler : 1;
+
+        bool webViewDidStartProvisionalNavigation : 1;
     } m_navigationDelegateMethods;
 
     WKWebView *m_webView;

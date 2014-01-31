@@ -29,6 +29,7 @@
 #import <WebKit2/WKNavigationDelegate.h>
 #import <WebKit2/WKWebView.h>
 #import <wtf/RetainPtr.h>
+#import "PlatformUtilities.h"
 #import "Test.h"
 
 #if WK_API_ENABLED
@@ -36,7 +37,19 @@
 @interface NavigationDelegate : NSObject <WKNavigationDelegate>
 @end
 
+static bool isDone;
+static RetainPtr<WKNavigation> currentNavigation;
+
 @implementation NavigationDelegate
+
+- (void)webView:(WKWebView *)webView didStartProvisionalNavigation:(WKNavigation *)navigation
+{
+    EXPECT_EQ(currentNavigation, navigation);
+    EXPECT_NOT_NULL(navigation.request);
+
+    isDone = true;
+}
+
 @end
 
 TEST(WKNavigation, NavigationDelegate)
@@ -58,11 +71,16 @@ TEST(WKNavigation, LoadRequest)
 {
     RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
 
+    RetainPtr<NavigationDelegate> delegate = adoptNS([[NavigationDelegate alloc] init]);
+    [webView setNavigationDelegate:delegate.get()];
+
     NSURLRequest *request = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"simple" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
 
-    WKNavigation *navigation = [webView loadRequest:request];
-    ASSERT_NOT_NULL(navigation);
-    ASSERT_TRUE([navigation.request isEqual:request]);
+    currentNavigation = [webView loadRequest:request];
+    ASSERT_NOT_NULL(currentNavigation);
+    ASSERT_TRUE([[currentNavigation request] isEqual:request]);
+
+    TestWebKitAPI::Util::run(&isDone);
 }
 
 #endif

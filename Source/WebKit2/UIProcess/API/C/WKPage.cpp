@@ -692,7 +692,7 @@ void WKPageSetPageLoaderClient(WKPageRef pageRef, const WKPageLoaderClientBase* 
         }
 
     private:
-        virtual void didStartProvisionalLoadForFrame(WebPageProxy* page, WebFrameProxy* frame, API::Object* userData) override
+        virtual void didStartProvisionalLoadForFrame(WebPageProxy* page, WebFrameProxy* frame, uint64_t navigationID, API::Object* userData) override
         {
             if (!m_client.didStartProvisionalLoadForFrame)
                 return;

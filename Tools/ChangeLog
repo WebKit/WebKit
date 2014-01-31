@@ -1,3 +1,14 @@
+2014-01-30  Anders Carlsson  <andersca@apple.com>
+
+        Add a webView:didStartProvisionalNavigation: delegate method
+        https://bugs.webkit.org/show_bug.cgi?id=127965
+
+        Reviewed by Dan Bernstein.
+
+        * TestWebKitAPI/Tests/WebKit2Cocoa/Navigation.mm:
+        (-[NavigationDelegate webView:didStartProvisionalNavigation:]):
+        (TEST):
+
 2014-01-30  Chris Fleizach  <cfleizach@apple.com>
 
         WebKitTestRunner fails to link - missing rowHeaders and columnHeaders

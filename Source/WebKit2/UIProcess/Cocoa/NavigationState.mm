@@ -30,6 +30,7 @@
 
 #import "WKNavigationDelegate.h"
 #import "WKNavigationInternal.h"
+#import "WebFrameProxy.h"
 
 namespace WebKit {
 
@@ -40,6 +41,16 @@ NavigationState::NavigationState(WKWebView *webView)
 
 NavigationState::~NavigationState()
 {
+}
+
+std::unique_ptr<API::LoaderClient> NavigationState::createLoaderClient()
+{
+    return std::make_unique<LoaderClient>(*this);
+}
+
+std::unique_ptr<API::PolicyClient> NavigationState::createPolicyClient()
+{
+    return std::make_unique<PolicyClient>(*this);
 }
 
 RetainPtr<id <WKNavigationDelegate> > NavigationState::navigationDelegate()
@@ -53,6 +64,8 @@ void NavigationState::setNavigationDelegate(id <WKNavigationDelegate> delegate)
 
     m_navigationDelegateMethods.webViewDecidePolicyForNavigationActionDecisionHandler = [delegate respondsToSelector:@selector(webView:decidePolicyForNavigationAction:decisionHandler:)];
     m_navigationDelegateMethods.webViewDecidePolicyForNavigationResponseDecisionHandler = [delegate respondsToSelector:@selector(webView:decidePolicyForNavigationResponse:decisionHandler:)];
+
+    m_navigationDelegateMethods.webViewDidStartProvisionalNavigation = [delegate respondsToSelector:@selector(webView:didStartProvisionalNavigation:)];
 }
 
 RetainPtr<WKNavigation> NavigationState::createLoadRequestNavigation(uint64_t navigationID, NSURLRequest *request)
@@ -66,11 +79,6 @@ RetainPtr<WKNavigation> NavigationState::createLoadRequestNavigation(uint64_t na
     m_navigations.set(navigationID, navigation);
 
     return navigation;
-}
-
-std::unique_ptr<API::PolicyClient> NavigationState::createPolicyClient()
-{
-    return std::make_unique<PolicyClient>(*this);
 }
 
 NavigationState::PolicyClient::PolicyClient(NavigationState& navigationState)
@@ -149,6 +157,35 @@ void NavigationState::PolicyClient::decidePolicyForResponse(WebPageProxy*, WebFr
             break;
         }
     }];
+}
+
+NavigationState::LoaderClient::LoaderClient(NavigationState& navigationState)
+    : m_navigationState(navigationState)
+{
+}
+
+NavigationState::LoaderClient::~LoaderClient()
+{
+}
+
+void NavigationState::LoaderClient::didStartProvisionalLoadForFrame(WebPageProxy*, WebFrameProxy* webFrameProxy, uint64_t navigationID, API::Object*)
+{
+    if (!webFrameProxy->isMainFrame())
+        return;
+
+    if (!m_navigationState.m_navigationDelegateMethods.webViewDidStartProvisionalNavigation)
+        return;
+
+    auto navigationDelegate = m_navigationState.m_navigationDelegate.get();
+    if (!navigationDelegate)
+        return;
+
+    // FIXME: We should assert that navigationID is not zero here, but it's currently zero for navigations originating from the web process.
+    WKNavigation *navigation = nil;
+    if (navigationID)
+        navigation = m_navigationState.m_navigations.get(navigationID).get();
+
+    [navigationDelegate.get() webView:m_navigationState.m_webView didStartProvisionalNavigation:navigation];
 }
 
 } // namespace WebKit
