@@ -1561,6 +1561,18 @@ LayoutRect FrameView::viewportConstrainedVisibleContentRect() const
     return viewportRect;
 }
 
+LayoutRect FrameView::viewportConstrainedExtentRect() const
+{
+#if PLATFORM(IOS)
+    if (platformWidget())
+        return visibleContentRect(ScrollableArea::LegacyIOSDocumentVisibleRect);
+    
+    return renderView()->unscaledDocumentRect();
+#else
+    return viewportConstrainedVisibleContentRect();
+#endif
+}
+
 IntSize FrameView::scrollOffsetForFixedPosition(const IntRect& visibleContentRect, const IntSize& totalContentsSize, const IntPoint& scrollPosition, const IntPoint& scrollOrigin, float frameScaleFactor, bool fixedElementsLayoutRelativeToFrame, ScrollBehaviorForFixedElements behaviorForFixed, int headerHeight, int footerHeight)
 {
     IntPoint position;

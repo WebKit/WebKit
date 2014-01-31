@@ -1,3 +1,25 @@
+2014-01-30  Simon Fraser  <simon.fraser@apple.com>
+
+        Fixed position objects are clipped in iOS WK2
+        https://bugs.webkit.org/show_bug.cgi?id=127974
+
+        Reviewed by Darin Adler.
+        
+        We clip compositing layers for fixed position objects to the viewport
+        to avoid huge layers. However, because iOS changes the fixed position
+        rect when zooming, we need a different rect for iOS.
+        
+        In WK1 (when we have a platformWidget), we can use
+        visibleContentRect(ScrollableArea::LegacyIOSDocumentVisibleRect)
+        which is effectively the whole document. However in WK2 this is
+        the real visibleContentRect(), so there we use unscaledDocumentRect().
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::viewportConstrainedExtentRect):
+        * page/FrameView.h:
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::updateCompositedBounds):
+
 2014-01-28  Timothy Hatcher  <timothy@apple.com>
 
         Add column number and call timing support to LegacyProfiler.

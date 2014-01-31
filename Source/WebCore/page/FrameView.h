@@ -226,6 +226,9 @@ public:
     // offsets from rubber-banding, and it takes zooming into account. 
     LayoutRect viewportConstrainedVisibleContentRect() const;
 
+    // A rectangle in content coordinates that is used to clip layers for fixed-position objects.
+    LayoutRect viewportConstrainedExtentRect() const;
+
     String mediaType() const;
     void setMediaType(const String&);
     void adjustMediaTypeForPrinting(bool printing);

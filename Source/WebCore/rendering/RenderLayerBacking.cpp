@@ -476,13 +476,9 @@ void RenderLayerBacking::updateCompositedBounds()
         RenderLayer* rootLayer = view.layer();
 
         LayoutRect clippingBounds;
-        if (renderer().style().position() == FixedPosition && renderer().container() == &view) {
-#if PLATFORM(IOS)
-            clippingBounds = view.frameView().visibleContentRect(ScrollableArea::LegacyIOSDocumentVisibleRect);
-#else
-            clippingBounds = view.frameView().viewportConstrainedVisibleContentRect();
-#endif
-        } else
+        if (renderer().style().position() == FixedPosition && renderer().container() == &view)
+            clippingBounds = view.frameView().viewportConstrainedExtentRect();
+        else
             clippingBounds = view.unscaledDocumentRect();
 
         if (&m_owningLayer != rootLayer)
