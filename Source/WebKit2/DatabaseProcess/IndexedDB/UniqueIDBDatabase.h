@@ -87,9 +87,9 @@ public:
     void putRecord(const IDBIdentifier& transactionIdentifier, int64_t objectStoreID, const WebCore::IDBKeyData&, const IPC::DataReference& value, int64_t putMode, const Vector<int64_t>& indexIDs, const Vector<Vector<WebCore::IDBKeyData>>& indexKeys, std::function<void(const WebCore::IDBKeyData&, uint32_t, const String&)> callback);
     void getRecord(const IDBIdentifier& transactionIdentifier, int64_t objectStoreID, int64_t indexID, const WebCore::IDBKeyRangeData&, WebCore::IndexedDB::CursorType, std::function<void(const WebCore::IDBGetResult&, uint32_t, const String&)> callback);
 
-    void openCursor(const IDBIdentifier& transactionIdentifier, int64_t objectStoreID, int64_t indexID, WebCore::IndexedDB::CursorDirection, WebCore::IndexedDB::CursorType, WebCore::IDBDatabaseBackend::TaskType, const WebCore::IDBKeyRangeData&, std::function<void(int64_t, uint32_t, const String&)> callback);
-    void cursorAdvance(const IDBIdentifier& cursorIdentifier, uint64_t count, std::function<void(WebCore::IDBKeyData, WebCore::IDBKeyData, PassRefPtr<WebCore::SharedBuffer>, uint32_t, const String&)> callback);
-    void cursorIterate(const IDBIdentifier& cursorIdentifier, const WebCore::IDBKeyData&, std::function<void(WebCore::IDBKeyData, WebCore::IDBKeyData, PassRefPtr<WebCore::SharedBuffer>, uint32_t, const String&)> callback);
+    void openCursor(const IDBIdentifier& transactionIdentifier, int64_t objectStoreID, int64_t indexID, WebCore::IndexedDB::CursorDirection, WebCore::IndexedDB::CursorType, WebCore::IDBDatabaseBackend::TaskType, const WebCore::IDBKeyRangeData&, std::function<void(int64_t, const WebCore::IDBKeyData&, const WebCore::IDBKeyData&, PassRefPtr<WebCore::SharedBuffer>, uint32_t, const String&)> callback);
+    void cursorAdvance(const IDBIdentifier& cursorIdentifier, uint64_t count, std::function<void(const WebCore::IDBKeyData&, const WebCore::IDBKeyData&, PassRefPtr<WebCore::SharedBuffer>, uint32_t, const String&)> callback);
+    void cursorIterate(const IDBIdentifier& cursorIdentifier, const WebCore::IDBKeyData&, std::function<void(const WebCore::IDBKeyData&, const WebCore::IDBKeyData&, PassRefPtr<WebCore::SharedBuffer>, uint32_t, const String&)> callback);
 
     void count(const IDBIdentifier& transactionIdentifier, int64_t objectStoreID, int64_t indexID, const WebCore::IDBKeyRangeData&, std::function<void(int64_t, uint32_t, const String&)> callback);
     void deleteRange(const IDBIdentifier& transactionIdentifier, int64_t objectStoreID, const WebCore::IDBKeyRangeData&, std::function<void(uint32_t, const String&)> callback);
@@ -159,7 +159,7 @@ private:
     void didDeleteIndex(uint64_t requestID, bool success);
     void didPutRecordInBackingStore(uint64_t requestID, const WebCore::IDBKeyData&, uint32_t errorCode, const String& errorMessage);
     void didGetRecordFromBackingStore(uint64_t requestID, const WebCore::IDBGetResult&, uint32_t errorCode, const String& errorMessage);
-    void didOpenCursorInBackingStore(uint64_t requestID, int64_t cursorID, uint32_t errorCode, const String& errorMessage);
+    void didOpenCursorInBackingStore(uint64_t requestID, int64_t cursorID, const WebCore::IDBKeyData&, const WebCore::IDBKeyData&, const Vector<char>&, uint32_t errorCode, const String& errorMessage);
     void didAdvanceCursorInBackingStore(uint64_t requestID, const WebCore::IDBKeyData&, const WebCore::IDBKeyData&, const Vector<char>&, uint32_t errorCode, const String& errorMessage);
     void didIterateCursorInBackingStore(uint64_t requestID, const WebCore::IDBKeyData&, const WebCore::IDBKeyData&, const Vector<char>&, uint32_t errorCode, const String& errorMessage);
     void didCountInBackingStore(uint64_t requestID, int64_t count, uint32_t errorCode, const String& errorMessage);

@@ -45,6 +45,9 @@ std::unique_ptr<SQLiteIDBCursor> SQLiteIDBCursor::maybeCreate(SQLiteIDBTransacti
     if (!cursor->establishStatement())
         return nullptr;
 
+    if (!cursor->advance(1))
+        return nullptr;
+
     return cursor;
 }
 

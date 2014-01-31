@@ -72,7 +72,7 @@ public:
     virtual void deleteIndex(WebCore::IDBTransactionBackend&, const WebCore::DeleteIndexOperation&, std::function<void(PassRefPtr<WebCore::IDBDatabaseError>)> completionCallback) override;
     virtual void get(WebCore::IDBTransactionBackend&, const WebCore::GetOperation&, std::function<void(const WebCore::IDBGetResult&, PassRefPtr<WebCore::IDBDatabaseError>)> completionCallback) override;
     virtual void put(WebCore::IDBTransactionBackend&, const WebCore::PutOperation&, std::function<void(PassRefPtr<WebCore::IDBKey>, PassRefPtr<WebCore::IDBDatabaseError>)> completionCallback) override;
-    virtual void openCursor(WebCore::IDBTransactionBackend&, const WebCore::OpenCursorOperation&, std::function<void(int64_t, PassRefPtr<WebCore::IDBDatabaseError>)> completionCallback) override;
+    virtual void openCursor(WebCore::IDBTransactionBackend&, const WebCore::OpenCursorOperation&, std::function<void(int64_t, PassRefPtr<WebCore::IDBKey>, PassRefPtr<WebCore::IDBKey>, PassRefPtr<WebCore::SharedBuffer>, PassRefPtr<WebCore::IDBDatabaseError>)> completionCallback) override;
     virtual void count(WebCore::IDBTransactionBackend&, const WebCore::CountOperation&, std::function<void(int64_t, PassRefPtr<WebCore::IDBDatabaseError>)> completionCallback) override;
     virtual void deleteRange(WebCore::IDBTransactionBackend&, const WebCore::DeleteRangeOperation&, std::function<void(PassRefPtr<WebCore::IDBDatabaseError>)> completionCallback) override;
     virtual void clearObjectStore(WebCore::IDBTransactionBackend&, const WebCore::ClearObjectStoreOperation&, std::function<void(PassRefPtr<WebCore::IDBDatabaseError>)> completionCallback) override;
@@ -110,7 +110,7 @@ private:
     void didDeleteIndex(uint64_t requestID, bool success);
     void didPutRecord(uint64_t requestID, const WebCore::IDBKeyData&, uint32_t errorCode, const String& errorMessage);
     void didGetRecord(uint64_t requestID, const WebCore::IDBGetResult&, uint32_t errorCode, const String& errorMessage);
-    void didOpenCursor(uint64_t requestID, int64_t cursorID, uint32_t errorCode, const String& errorMessage);
+    void didOpenCursor(uint64_t requestID, int64_t cursorID, WebCore::IDBKeyData&, WebCore::IDBKeyData&, const IPC::DataReference&, uint32_t errorCode, const String& errorMessage);
     void didAdvanceCursor(uint64_t requestID, WebCore::IDBKeyData&, WebCore::IDBKeyData&, const IPC::DataReference&, uint32_t errorCode, const String& errorMessage);
     void didIterateCursor(uint64_t requestID, WebCore::IDBKeyData&, WebCore::IDBKeyData&, const IPC::DataReference&, uint32_t errorCode, const String& errorMessage);
     void didCount(uint64_t requestID, int64_t count, uint32_t errorCode, const String& errorMessage);

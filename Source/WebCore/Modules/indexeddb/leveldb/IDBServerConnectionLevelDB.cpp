@@ -429,7 +429,7 @@ void IDBServerConnectionLevelDB::put(IDBTransactionBackend& transaction, const P
     });
 }
 
-void IDBServerConnectionLevelDB::openCursor(IDBTransactionBackend& transaction, const OpenCursorOperation& operation, std::function<void(int64_t, PassRefPtr<IDBDatabaseError>)> completionCallback)
+void IDBServerConnectionLevelDB::openCursor(IDBTransactionBackend& transaction, const OpenCursorOperation& operation, std::function<void(int64_t, PassRefPtr<IDBKey>, PassRefPtr<IDBKey>, PassRefPtr<SharedBuffer>, PassRefPtr<IDBDatabaseError>)> completionCallback)
 {
     IDBBackingStoreTransactionLevelDB* backingStoreTransaction = m_backingStoreTransactions.get(transaction.id());
     ASSERT(backingStoreTransaction);
@@ -461,7 +461,8 @@ void IDBServerConnectionLevelDB::openCursor(IDBTransactionBackend& transaction, 
     }
 
     callOnMainThread([completionCallback, cursorID]() {
-        completionCallback(cursorID, nullptr);
+        // FIXME: Need to actually pass the initial key, primaryKey, and value to the callback.
+        completionCallback(cursorID, nullptr, nullptr, nullptr, nullptr);
     });
 }
 

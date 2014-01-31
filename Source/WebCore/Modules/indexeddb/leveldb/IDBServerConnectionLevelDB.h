@@ -68,7 +68,7 @@ public:
     virtual void deleteIndex(IDBTransactionBackend&, const DeleteIndexOperation&, std::function<void(PassRefPtr<IDBDatabaseError>)> completionCallback) override;
     virtual void get(IDBTransactionBackend&, const GetOperation&, std::function<void(const IDBGetResult&, PassRefPtr<IDBDatabaseError>)> completionCallback) override;
     virtual void put(IDBTransactionBackend&, const PutOperation&, std::function<void(PassRefPtr<IDBKey>, PassRefPtr<IDBDatabaseError>)> completionCallback)  override;
-    virtual void openCursor(IDBTransactionBackend&, const OpenCursorOperation&, std::function<void(int64_t, PassRefPtr<IDBDatabaseError>)> completionCallback) override;
+    virtual void openCursor(IDBTransactionBackend&, const OpenCursorOperation&, std::function<void(int64_t, PassRefPtr<IDBKey>, PassRefPtr<IDBKey>, PassRefPtr<SharedBuffer>, PassRefPtr<IDBDatabaseError>)> completionCallback) override;
     virtual void count(IDBTransactionBackend&, const CountOperation&, std::function<void(int64_t, PassRefPtr<IDBDatabaseError>)> completionCallback) override;
     virtual void deleteRange(IDBTransactionBackend&, const DeleteRangeOperation&, std::function<void(PassRefPtr<IDBDatabaseError>)> completionCallback) override;
     virtual void clearObjectStore(IDBTransactionBackend&, const ClearObjectStoreOperation&, std::function<void(PassRefPtr<IDBDatabaseError>)> completionCallback) override;

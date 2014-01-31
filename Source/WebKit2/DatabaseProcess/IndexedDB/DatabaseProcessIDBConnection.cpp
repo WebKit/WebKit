@@ -272,8 +272,9 @@ void DatabaseProcessIDBConnection::openCursor(uint64_t requestID, int64_t transa
 
     LOG(IDB, "DatabaseProcess openCursor request ID %llu, object store id %lli", requestID, objectStoreID);
     RefPtr<DatabaseProcessIDBConnection> connection(this);
-    m_uniqueIDBDatabase->openCursor(IDBIdentifier(*this, transactionID), objectStoreID, indexID, static_cast<IndexedDB::CursorDirection>(cursorDirection), static_cast<IndexedDB::CursorType>(cursorType), static_cast<IDBDatabaseBackend::TaskType>(taskType), keyRangeData, [connection, requestID](int64_t cursorID, uint32_t errorCode, const String& errorMessage) {
-        connection->send(Messages::WebIDBServerConnection::DidOpenCursor(requestID, cursorID, errorCode, errorMessage));
+    m_uniqueIDBDatabase->openCursor(IDBIdentifier(*this, transactionID), objectStoreID, indexID, static_cast<IndexedDB::CursorDirection>(cursorDirection), static_cast<IndexedDB::CursorType>(cursorType), static_cast<IDBDatabaseBackend::TaskType>(taskType), keyRangeData, [connection, requestID](int64_t cursorID, const IDBKeyData& resultKey, const IDBKeyData& primaryKey, PassRefPtr<SharedBuffer> value, uint32_t errorCode, const String& errorMessage) {
+        IPC::DataReference data = value ? IPC::DataReference(reinterpret_cast<const uint8_t*>(value->data()), value->size()) : IPC::DataReference();
+        connection->send(Messages::WebIDBServerConnection::DidOpenCursor(requestID, cursorID, resultKey, primaryKey, data, errorCode, errorMessage));
     });
 }
 

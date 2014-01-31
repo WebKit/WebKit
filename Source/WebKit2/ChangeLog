@@ -1,3 +1,39 @@
+2014-01-31  Brady Eidson  <beidson@apple.com>
+
+        IDB: openCursor() needs to prime the cursor with first position values
+        https://bugs.webkit.org/show_bug.cgi?id=128008
+
+        Reviewed by Alexey Proskuryakov.
+
+        Change openCursor() messaging to pass back the initial keys/values
+        * WebProcess/Databases/IndexedDB/WebIDBServerConnection.cpp:
+        (WebKit::WebIDBServerConnection::didOpenCursor):
+        (WebKit::WebIDBServerConnection::openCursor):
+        * WebProcess/Databases/IndexedDB/WebIDBServerConnection.h:
+        * WebProcess/Databases/IndexedDB/WebIDBServerConnection.messages.in:
+
+        * DatabaseProcess/IndexedDB/DatabaseProcessIDBConnection.cpp:
+        (WebKit::DatabaseProcessIDBConnection::openCursor):
+
+        * DatabaseProcess/IndexedDB/UniqueIDBDatabase.cpp:
+        (WebKit::UniqueIDBDatabase::openCursor):
+        (WebKit::UniqueIDBDatabase::cursorAdvance): Const and reference updates.
+        (WebKit::UniqueIDBDatabase::cursorIterate): Ditto.
+        (WebKit::UniqueIDBDatabase::openCursorInBackingStore):
+        (WebKit::UniqueIDBDatabase::didOpenCursorInBackingStore):
+        * DatabaseProcess/IndexedDB/UniqueIDBDatabase.h:
+
+        * DatabaseProcess/IndexedDB/UniqueIDBDatabaseBackingStore.h:
+        * DatabaseProcess/IndexedDB/sqlite/UniqueIDBDatabaseBackingStoreSQLite.cpp:
+        (WebKit::UniqueIDBDatabaseBackingStoreSQLite::openCursor):
+        * DatabaseProcess/IndexedDB/sqlite/UniqueIDBDatabaseBackingStoreSQLite.h:
+
+        * DatabaseProcess/IndexedDB/sqlite/SQLiteIDBCursor.cpp:
+        (WebKit::SQLiteIDBCursor::maybeCreate): After creating the cursor, advance(1) it.
+
+        * Shared/AsyncTask.h:
+        (WebKit::createAsyncTask):
+
 2014-01-31  Beth Dakin  <bdakin@apple.com>
 
         Sideways 'wobble' when scrolling with trackpad on Mavericks
