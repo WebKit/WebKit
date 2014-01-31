@@ -1,3 +1,27 @@
+2014-01-31  Michael Saboff  <msaboff@apple.com>
+
+        REGRESSION: Crash in sanitizeStackForVMImpl when scrolling @ lifehacker.com.au
+        https://bugs.webkit.org/show_bug.cgi?id=128017
+
+        Reviewed by Filip Pizlo.
+
+        Moved the setting and saving of VM::stackPointerAtVMEntry and the corresponding stack limit
+        to JSLock and JSLock::DropAllLocks.  The saved data is now stored in per-thread in
+        WTFThreadData.
+
+        * runtime/InitializeThreading.cpp:
+        (JSC::initializeThreading):
+        * runtime/JSLock.cpp:
+        (JSC::JSLock::lock):
+        (JSC::JSLock::unlock):
+        (JSC::JSLock::DropAllLocks::DropAllLocks):
+        (JSC::JSLock::DropAllLocks::~DropAllLocks):
+        * runtime/JSLock.h:
+        * runtime/VMEntryScope.cpp:
+        (JSC::VMEntryScope::VMEntryScope):
+        (JSC::VMEntryScope::~VMEntryScope):
+        * runtime/VMEntryScope.h:
+
 2014-01-31  Mark Lam  <mark.lam@apple.com>
 
         Don't need a JSNameScope for the callee name just for the debugger.

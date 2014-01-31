@@ -110,8 +110,6 @@ namespace JSC {
         private:
             intptr_t m_lockCount;
             RefPtr<VM> m_vm;
-            size_t m_savedReservedZoneSize;
-            void* m_savedStackPointerAtVMEntry;
         };
 
     private:
@@ -125,6 +123,7 @@ namespace JSC {
         intptr_t m_lockCount;
         unsigned m_lockDropDepth;
         VM* m_vm;
+        void* entryStackPointer;
     };
 
 } // namespace

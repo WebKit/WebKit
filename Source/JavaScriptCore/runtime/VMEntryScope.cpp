@@ -51,31 +51,20 @@ VMEntryScope::VMEntryScope(VM& vm, JSGlobalObject* globalObject)
         vm.resetDateCache();
     }
 
-    if (!vm.stackPointerAtVMEntry) {
-        vm.stackPointerAtVMEntry = this;
-        m_savedReservedZoneSize = vm.updateStackLimitWithReservedZoneSize(Options::reservedZoneSize());
-    }
-
     // Clear the captured exception stack between entries
     vm.clearExceptionStack();
 }
 
 VMEntryScope::~VMEntryScope()
 {
-    if (m_vm.entryScope == this)
-        m_vm.entryScope = nullptr;
-    if (m_vm.stackPointerAtVMEntry == this) {
-        m_vm.stackPointerAtVMEntry = nullptr;
-        m_vm.updateStackLimitWithReservedZoneSize(m_savedReservedZoneSize);
-    }
+    if (m_vm.entryScope != this)
+        return;
+
+    m_vm.entryScope = nullptr;
 
     if (m_recompilationNeeded) {
-        if (m_vm.entryScope)
-            m_vm.entryScope->setRecompilationNeeded(true);
-        else {
-            if (Debugger* debugger = m_globalObject->debugger())
-                debugger->recompileAllJSFunctions(&m_vm);
-        }
+        if (Debugger* debugger = m_globalObject->debugger())
+            debugger->recompileAllJSFunctions(&m_vm);
     }
 }
 

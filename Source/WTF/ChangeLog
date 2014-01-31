@@ -1,3 +1,24 @@
+2014-01-31  Michael Saboff  <msaboff@apple.com>
+
+        REGRESSION: Crash in sanitizeStackForVMImpl when scrolling @ lifehacker.com.au
+        https://bugs.webkit.org/show_bug.cgi?id=128017
+
+        Reviewed by Filip Pizlo.
+
+        Moved the setting and saving of VM::stackPointerAtVMEntry and the corresponding stack limit
+        to JSLock and JSLock::DropAllLocks.  The saved data is now stored in per-thread in
+        WTFThreadData.
+
+        * wtf/WTFThreadData.cpp:
+        (WTF::WTFThreadData::WTFThreadData):
+        * wtf/WTFThreadData.h:
+        (WTF::WTFThreadData::savedStackPointerAtVMEntry):
+        (WTF::WTFThreadData::setSavedStackPointerAtVMEntry):
+        (WTF::WTFThreadData::savedLastStackTop):
+        (WTF::WTFThreadData::setSavedLastStackTop):
+        (WTF::WTFThreadData::savedReservedZoneSize):
+        (WTF::WTFThreadData::setSavedReservedZoneSize):
+
 2014-01-30  Andrei Bucur  <abucur@adobe.com>
 
         Remove the ACCELERATED_COMPOSITING flag

@@ -49,6 +49,9 @@ WTFThreadData::WTFThreadData()
 #if ENABLE(STACK_STATS)
     , m_stackStats()
 #endif
+    , m_savedStackPointerAtVMEntry(0)
+    , m_savedLastStackTop(stack().origin())
+    , m_savedReservedZoneSize(0)
 {
 #if USE(WEB_THREAD)
     static JSC::IdentifierTable* sharedIdentifierTable = new JSC::IdentifierTable();

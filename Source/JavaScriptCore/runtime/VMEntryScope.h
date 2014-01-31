@@ -46,13 +46,10 @@ public:
 
 private:
     VM& m_vm;
-    StackStats::CheckPoint m_stackCheckPoint;
     JSGlobalObject* m_globalObject;
-    size_t m_savedReservedZoneSize;
     bool m_recompilationNeeded;
 };
 
 } // namespace JSC
 
 #endif // VMEntryScope_h
-
