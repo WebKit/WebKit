@@ -1,3 +1,9 @@
+2014-01-31  Oliver Hunt  <oliver@apple.com>
+
+        Fix 32bit.
+
+        * jit/JITPropertyAccess32_64.cpp:
+
 2014-01-31  Mark Lam  <mark.lam@apple.com>
 
         Add options to force debugger / profiler bytecode generation.
