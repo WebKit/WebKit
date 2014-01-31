@@ -53,7 +53,6 @@ WebInspector.TimelineRecord.TypeIdentifier = "timeline-record";
 WebInspector.TimelineRecord.SourceCodeURLCookieKey = "timeline-record-source-code-url";
 WebInspector.TimelineRecord.SourceCodeLocationLineCookieKey = "timeline-record-source-code-location-line";
 WebInspector.TimelineRecord.SourceCodeLocationColumnCookieKey = "timeline-record-source-code-location-column";
-WebInspector.TimelineRecord.SourceCodeURLCookieKey = "timeline-record-source-code-url";
 WebInspector.TimelineRecord.TypeCookieKey = "timeline-record-type";
 
 WebInspector.TimelineRecord.prototype = {

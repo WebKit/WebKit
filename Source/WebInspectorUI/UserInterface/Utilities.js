@@ -775,6 +775,11 @@ Object.defineProperty(Number, "secondsToString",
     {
         var ms = seconds * 1000;
 
+        if (higherResolution && Math.abs(ms) < 10)
+            return WebInspector.UIString("%.3fms").format(ms);
+        else if (Math.abs(ms) < 10)
+            return WebInspector.UIString("%.2fms").format(ms);
+
         if (higherResolution && Math.abs(ms) < 100)
             return WebInspector.UIString("%.2fms").format(ms);
         else if (Math.abs(ms) < 100)

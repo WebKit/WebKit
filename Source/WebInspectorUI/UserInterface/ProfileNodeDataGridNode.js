@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,34 +23,39 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.ScriptTimelineDataGridNode = function(scriptTimelineRecord, baseStartTime, rangeStartTime, rangeEndTime)
+WebInspector.ProfileNodeDataGridNode = function(profileNode, baseStartTime, rangeStartTime, rangeEndTime)
 {
-    WebInspector.TimelineDataGridNode.call(this, false, null);
+    var hasChildren = !!profileNode.childNodes.length;
 
-    this._record = scriptTimelineRecord;
+    WebInspector.TimelineDataGridNode.call(this, false, null, hasChildren);
+
+    this._profileNode = profileNode;
     this._baseStartTime = baseStartTime || 0;
     this._rangeStartTime = rangeStartTime || 0;
     this._rangeEndTime = typeof rangeEndTime === "number" ? rangeEndTime : Infinity;
+
+    this._data = this._profileNode.computeCallInfoForTimeRange(this._rangeStartTime, this._rangeEndTime);
+    this._data.location = this._profileNode.sourceCodeLocation;
 };
 
-WebInspector.Object.addConstructorFunctions(WebInspector.ScriptTimelineDataGridNode);
+WebInspector.Object.addConstructorFunctions(WebInspector.ProfileNodeDataGridNode);
 
-WebInspector.ScriptTimelineDataGridNode.IconStyleClassName = "icon";
+WebInspector.ProfileNodeDataGridNode.IconStyleClassName = "icon";
 
-WebInspector.ScriptTimelineDataGridNode.prototype = {
-    constructor: WebInspector.ScriptTimelineDataGridNode,
+WebInspector.ProfileNodeDataGridNode.prototype = {
+    constructor: WebInspector.ProfileNodeDataGridNode,
     __proto__: WebInspector.TimelineDataGridNode.prototype,
 
     // Public
 
-    get record()
+    get profileNode()
     {
-        return this._record;
+        return this._profileNode;
     },
 
     get records()
     {
-        return [this._record];
+        return null;
     },
 
     get baseStartTime()
@@ -88,12 +93,15 @@ WebInspector.ScriptTimelineDataGridNode.prototype = {
 
     get data()
     {
-        var startTime = Math.max(this._rangeStartTime, this._record.startTime);
-        var duration = Math.min(this._record.startTime + this._record.duration, this._rangeEndTime) - startTime;
-        var callFrameOrSourceCodeLocation = this._record.initiatorCallFrame || this._record.sourceCodeLocation;
+        return this._data;
+    },
 
-        return {eventType: this._record.eventType, startTime: startTime, selfTime: duration, totalTime: duration,
-            averageTime: duration, callCount: 1, location: callFrameOrSourceCodeLocation};
+    refresh: function()
+    {
+        this._data = this._profileNode.computeCallInfoForTimeRange(this._rangeStartTime, this._rangeEndTime);
+        this._data.location = this._profileNode.sourceCodeLocation;
+
+        WebInspector.TimelineDataGridNode.prototype.refresh.call(this);
     },
 
     createCellContent: function(columnIdentifier, cell)
@@ -102,9 +110,6 @@ WebInspector.ScriptTimelineDataGridNode.prototype = {
         var value = this.data[columnIdentifier];
 
         switch (columnIdentifier) {
-        case "eventType":
-            return WebInspector.ScriptTimelineRecord.EventType.displayName(value, this._record.details);
-
         case "startTime":
             return isNaN(value) ? emptyValuePlaceholderString : Number.secondsToString(value - this._baseStartTime, true);
 

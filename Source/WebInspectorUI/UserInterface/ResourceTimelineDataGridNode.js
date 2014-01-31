@@ -141,12 +141,12 @@ WebInspector.ResourceTimelineDataGridNode.prototype = {
 
         case "size":
         case "transferSize":
-            return isNaN(value) ? emptyValuePlaceholderString : Number.bytesToString(value);
+            return isNaN(value) ? emptyValuePlaceholderString : Number.bytesToString(value, true);
 
         case "requestSent":
         case "latency":
         case "duration":
-            return isNaN(value) ? emptyValuePlaceholderString : Number.secondsToString(value);
+            return isNaN(value) ? emptyValuePlaceholderString : Number.secondsToString(value, true);
         }
 
         return WebInspector.TimelineDataGridNode.prototype.createCellContent.call(this, columnIdentifier, cell);

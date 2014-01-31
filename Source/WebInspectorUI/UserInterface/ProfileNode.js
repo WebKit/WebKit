@@ -144,8 +144,8 @@ WebInspector.ProfileNode.prototype = {
 
     computeCallInfoForTimeRange: function(rangeStartTime, rangeEndTime)
     {
-        rangeStartTime = !isNaN(rangeStartTime) ? rangeStartTime : 0;
-        rangeEndTime = !isNaN(rangeEndTime) ? rangeEndTime : Infinity;
+        console.assert(typeof rangeStartTime === "number");
+        console.assert(typeof rangeEndTime === "number");
 
         var recordCallCount = true;
         var callCount = 0;

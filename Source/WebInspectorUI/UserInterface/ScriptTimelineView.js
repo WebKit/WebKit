@@ -28,32 +28,38 @@ WebInspector.ScriptTimelineView = function(recording)
     WebInspector.TimelineView.call(this);
 
     this.navigationSidebarTreeOutline.onselect = this._treeElementSelected.bind(this);
-    this.navigationSidebarTreeOutline.element.classList.add(WebInspector.NavigationSidebarPanel.HideDisclosureButtonsStyleClassName);
     this.navigationSidebarTreeOutline.element.classList.add(WebInspector.ScriptTimelineView.TreeOutlineStyleClassName);
 
-    var columns = {eventType: {}, location: {}, startTime: {}, duration: {}};
-
-    columns.eventType.title = WebInspector.UIString("Type");
-    columns.eventType.width = "15%";
-    columns.eventType.scopeBar = WebInspector.TimelineDataGrid.createColumnScopeBar("script", WebInspector.ScriptTimelineRecord.EventType);
-    columns.eventType.hidden = true;
+    var columns = {location: {}, callCount: {}, startTime: {}, totalTime: {}, selfTime: {}, averageTime: {}};
 
     columns.location.title = WebInspector.UIString("Location");
     columns.location.width = "15%";
+
+    columns.callCount.title = WebInspector.UIString("Calls");
+    columns.callCount.width = "5%";
+    columns.callCount.aligned = "right";
 
     columns.startTime.title = WebInspector.UIString("Start Time");
     columns.startTime.width = "10%";
     columns.startTime.aligned = "right";
     columns.startTime.sort = "ascending";
 
-    columns.duration.title = WebInspector.UIString("Duration");
-    columns.duration.width = "10%";
-    columns.duration.aligned = "right";
+    columns.totalTime.title = WebInspector.UIString("Total Time");
+    columns.totalTime.width = "10%";
+    columns.totalTime.aligned = "right";
+
+    columns.selfTime.title = WebInspector.UIString("Self Time");
+    columns.selfTime.width = "10%";
+    columns.selfTime.aligned = "right";
+
+    columns.averageTime.title = WebInspector.UIString("Average Time");
+    columns.averageTime.width = "10%";
+    columns.averageTime.aligned = "right";
 
     for (var column in columns)
         columns[column].sortable = true;
 
-    this._dataGrid = new WebInspector.ScriptTimelineDataGrid(this.navigationSidebarTreeOutline, columns);
+    this._dataGrid = new WebInspector.ScriptTimelineDataGrid(this.navigationSidebarTreeOutline, columns, this);
     this._dataGrid.addEventListener(WebInspector.TimelineDataGrid.Event.FiltersDidChange, this._dataGridFiltersDidChange, this);
     this._dataGrid.addEventListener(WebInspector.DataGrid.Event.SelectedNodeChanged, this._dataGridNodeSelected, this);
 
@@ -100,7 +106,47 @@ WebInspector.ScriptTimelineView.prototype = {
 
         this._dataGrid.updateLayout();
 
+        if (this.startTime !== this._oldStartTime || this.endTime !== this._oldEndTime) {
+            var dataGridNode = this._dataGrid.children[0];
+            while (dataGridNode) {
+                dataGridNode.rangeStartTime = this.startTime;
+                dataGridNode.rangeEndTime = this.endTime;
+                if (dataGridNode.revealed)
+                    dataGridNode.refreshIfNeeded();
+                dataGridNode = dataGridNode.traverseNextNode(false, null, true);
+            }
+
+            this._oldStartTime = this.startTime;
+            this._oldEndTime = this.endTime;
+        }
+
         this._processPendingRecords();
+    },
+
+    get selectionPathComponents()
+    {
+        var dataGridNode = this._dataGrid.selectedNode;
+        if (!dataGridNode)
+            return null;
+
+        var pathComponents = [];
+
+        while (dataGridNode && !dataGridNode.root) {
+            var treeElement = this._dataGrid.treeElementForDataGridNode(dataGridNode);
+            console.assert(treeElement);
+            if (!treeElement)
+                break;
+
+            if (treeElement.hidden)
+                return null;
+
+            var pathComponent = new WebInspector.GeneralTreeElementPathComponent(treeElement);
+            pathComponent.addEventListener(WebInspector.HierarchicalPathComponent.Event.SiblingWasSelected, this.treeElementPathComponentSelected, this);
+            pathComponents.unshift(pathComponent);
+            dataGridNode = dataGridNode.parent;
+        }
+
+        return pathComponents;
     },
 
     matchTreeElementAgainstCustomFilters: function(treeElement)
@@ -125,6 +171,26 @@ WebInspector.ScriptTimelineView.prototype = {
         dataGridNode.revealAndSelect();
     },
 
+    dataGridNodeForTreeElement: function(treeElement)
+    {
+        if (treeElement instanceof WebInspector.ProfileNodeTreeElement)
+            return new WebInspector.ProfileNodeDataGridNode(treeElement.profileNode, this.zeroTime, this.startTime, this.endTime);
+        return null;
+    },
+
+    populateProfileNodeTreeElement: function(treeElement)
+    {
+        var zeroTime = this.zeroTime;
+        var startTime = this.startTime;
+        var endTime = this.endTime;
+
+        for (var childProfileNode of treeElement.profileNode.childNodes) {
+            var profileNodeTreeElement = new WebInspector.ProfileNodeTreeElement(childProfileNode, this);
+            var profileNodeDataGridNode = new WebInspector.ProfileNodeDataGridNode(childProfileNode, zeroTime, startTime, endTime);
+            this._dataGrid.addRowInSortOrder(profileNodeTreeElement, profileNodeDataGridNode, treeElement);
+        }
+    },
+
     // Private
 
     _processPendingRecords: function()
@@ -133,10 +199,32 @@ WebInspector.ScriptTimelineView.prototype = {
             return;
 
         for (var scriptTimelineRecord of this._pendingRecords) {
-            var treeElement = new WebInspector.TimelineRecordTreeElement(scriptTimelineRecord, WebInspector.SourceCodeLocation.NameStyle.Short, true);
-            var dataGridNode = new WebInspector.ScriptTimelineDataGridNode(scriptTimelineRecord, this.zeroTime);
+            var rootNodes = [];
+            if (scriptTimelineRecord.profile) {
+                // FIXME: Support using the bottom-up tree once it is implemented.
+                rootNodes = scriptTimelineRecord.profile.topDownRootNodes;
+
+                // If there is only one node, promote its children. The TimelineRecordTreeElement already reflects the root
+                // node in this case (e.g. a "Load Event Dispatched" record with an "onload" root profile node).
+                // FIXME: Only do this for the top-down mode. Doing this for bottom-up would be incorrect.
+                if (rootNodes.length === 1)
+                    rootNodes = rootNodes[0].childNodes;
+            }
+
+            var zeroTime = this.zeroTime;
+            var treeElement = new WebInspector.TimelineRecordTreeElement(scriptTimelineRecord, WebInspector.SourceCodeLocation.NameStyle.Short, rootNodes.length);
+            var dataGridNode = new WebInspector.ScriptTimelineDataGridNode(scriptTimelineRecord, zeroTime);
 
             this._dataGrid.addRowInSortOrder(treeElement, dataGridNode);
+
+            var startTime = this.startTime;
+            var endTime = this.endTime;
+
+            for (var profileNode of rootNodes) {
+                var profileNodeTreeElement = new WebInspector.ProfileNodeTreeElement(profileNode, this);
+                var profileNodeDataGridNode = new WebInspector.ProfileNodeDataGridNode(profileNode, zeroTime, startTime, endTime);
+                this._dataGrid.addRowInSortOrder(profileNodeTreeElement, profileNodeDataGridNode, treeElement);
+            }
         }
 
         this._pendingRecords = [];
@@ -173,16 +261,19 @@ WebInspector.ScriptTimelineView.prototype = {
         if (treeElement instanceof WebInspector.FolderTreeElement)
             return;
 
-        if (!(treeElement instanceof WebInspector.TimelineRecordTreeElement)) {
+        var sourceCodeLocation = null;
+        if (treeElement instanceof WebInspector.TimelineRecordTreeElement)
+            sourceCodeLocation = treeElement.record.sourceCodeLocation;
+        else if (treeElement instanceof WebInspector.ProfileNodeTreeElement)
+            sourceCodeLocation = treeElement.profileNode.sourceCodeLocation;
+        else
             console.error("Unknown tree element selected.");
-            return;
-        }
 
-        if (!treeElement.record.sourceCodeLocation) {
+        if (!sourceCodeLocation) {
             WebInspector.timelineSidebarPanel.showTimelineView(WebInspector.TimelineRecord.Type.Script);
             return;
         }
 
-        WebInspector.resourceSidebarPanel.showOriginalOrFormattedSourceCodeLocation(treeElement.record.sourceCodeLocation);
+        WebInspector.resourceSidebarPanel.showOriginalOrFormattedSourceCodeLocation(sourceCodeLocation);
     }
 };

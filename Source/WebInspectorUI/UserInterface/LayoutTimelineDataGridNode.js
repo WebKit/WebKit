@@ -74,10 +74,10 @@ WebInspector.LayoutTimelineDataGridNode.prototype = {
             return isNaN(value) ? emptyValuePlaceholderString : WebInspector.UIString("%fpx²").format(value);
 
         case "startTime":
-            return isNaN(value) ? emptyValuePlaceholderString : Number.secondsToString(value - this._baseStartTime);
+            return isNaN(value) ? emptyValuePlaceholderString : Number.secondsToString(value - this._baseStartTime, true);
 
         case "duration":
-            return isNaN(value) ? emptyValuePlaceholderString : Number.secondsToString(value);
+            return isNaN(value) ? emptyValuePlaceholderString : Number.secondsToString(value, true);
         }
 
         return WebInspector.TimelineDataGridNode.prototype.createCellContent.call(this, columnIdentifier, cell);

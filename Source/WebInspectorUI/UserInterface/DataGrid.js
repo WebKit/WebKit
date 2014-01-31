@@ -1364,6 +1364,29 @@ WebInspector.DataGridNode.prototype = {
         }
     },
 
+    refreshIfNeeded: function()
+    {
+        if (!this._needsRefresh)
+            return;
+
+        delete this._needsRefresh;
+
+        this.refresh();
+    },
+
+    needsRefresh: function()
+    {
+        this._needsRefresh = true;
+
+        if (!this._revealed)
+            return;
+
+        if (this._scheduledRefreshIdentifier)
+            return;
+
+        this._scheduledRefreshIdentifier = requestAnimationFrame(this.refresh.bind(this));
+    },
+
     get data()
     {
         return this._data;
@@ -1372,7 +1395,7 @@ WebInspector.DataGridNode.prototype = {
     set data(x)
     {
         this._data = x || {};
-        this.refresh();
+        this.needsRefresh();
     },
 
     get revealed()
@@ -1435,6 +1458,8 @@ WebInspector.DataGridNode.prototype = {
             else
                 this._element.classList.remove("revealed");
         }
+
+        this.refreshIfNeeded();
 
         for (var i = 0; i < this.children.length; ++i)
             this.children[i].revealed = x && this.expanded;
@@ -1502,6 +1527,13 @@ WebInspector.DataGridNode.prototype = {
     {
         if (!this._element || !this.dataGrid)
             return;
+
+        if (this._scheduledRefreshIdentifier) {
+            cancelAnimationFrame(this._scheduledRefreshIdentifier);
+            delete this._scheduledRefreshIdentifier;
+        }
+
+        delete this._needsRefresh;
 
         this._element.removeChildren();
         this.createCells();

@@ -23,9 +23,9 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.TimelineDataGridNode = function(graphOnly, graphDataSource)
+WebInspector.TimelineDataGridNode = function(graphOnly, graphDataSource, hasChildren)
 {
-    WebInspector.DataGridNode.call(this, {});
+    WebInspector.DataGridNode.call(this, {}, hasChildren);
 
     this._graphOnly = graphOnly || false;
     this._graphDataSource = graphDataSource || null;
@@ -68,7 +68,7 @@ WebInspector.TimelineDataGridNode.prototype = {
     {
         WebInspector.DataGridNode.prototype.collapse.call(this);
 
-        if (!this.revealed)
+        if (!this._graphDataSource || !this.revealed)
             return;
 
         // Refresh to show child bars in our graph now that we collapsed.
@@ -79,7 +79,7 @@ WebInspector.TimelineDataGridNode.prototype = {
     {
         WebInspector.DataGridNode.prototype.expand.call(this);
 
-        if (!this.revealed)
+        if (!this._graphDataSource || !this.revealed)
             return;
 
         // Refresh to remove child bars from our graph now that we expanded.

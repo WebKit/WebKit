@@ -23,12 +23,13 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.TreeOutlineDataGridSynchronizer = function(treeOutline, dataGrid)
+WebInspector.TreeOutlineDataGridSynchronizer = function(treeOutline, dataGrid, delegate)
 {
     WebInspector.Object.call(this);
 
     this._treeOutline = treeOutline;
     this._dataGrid = dataGrid;
+    this._delegate = delegate || null;
     this._enabled = true;
 
     this._treeOutline.element.parentNode.addEventListener("scroll", this._treeOutlineScrolled.bind(this));
@@ -101,6 +102,11 @@ WebInspector.TreeOutlineDataGridSynchronizer.prototype = {
         return this._dataGrid;
     },
 
+    get delegate()
+    {
+        return this._delegate;
+    },
+
     get enabled()
     {
         return this._enabled;
@@ -136,7 +142,17 @@ WebInspector.TreeOutlineDataGridSynchronizer.prototype = {
 
     dataGridNodeForTreeElement: function(treeElement)
     {
-        return treeElement.__dataGridNode || null;
+        if (treeElement.__dataGridNode)
+            return treeElement.__dataGridNode;
+
+        if (typeof this._delegate.dataGridNodeForTreeElement === "function") {
+            var dataGridNode = this._delegate.dataGridNodeForTreeElement(treeElement);
+            if (dataGridNode)
+                this.associate(treeElement, dataGridNode);
+            return dataGridNode;
+        }
+
+        return null;
     },
 
     // Private
@@ -219,7 +235,7 @@ WebInspector.TreeOutlineDataGridSynchronizer.prototype = {
         if (!this._enabled)
             return;
 
-        var dataGridNode = treeElement.__dataGridNode;
+        var dataGridNode = this.dataGridNodeForTreeElement(treeElement);
         console.assert(dataGridNode);
 
         var parentDataGridNode = treeElement.parent.__dataGridNode;

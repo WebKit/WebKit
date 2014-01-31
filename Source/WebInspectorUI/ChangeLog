@@ -1,5 +1,86 @@
 2014-01-30  Timothy Hatcher  <timothy@apple.com>
 
+        Show profile data in the discrete Scripts timeline view.
+
+        https://bugs.webkit.org/show_bug.cgi?id=127900
+
+        Reviewed by Joseph Pecoraro.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        * UserInterface/DataGrid.js:
+        (WebInspector.DataGridNode.prototype.refreshIfNeeded):
+        (WebInspector.DataGridNode.prototype.needsRefresh):
+        (WebInspector.DataGridNode.prototype.set data):
+        (WebInspector.DataGridNode.prototype.set revealed):
+        (WebInspector.DataGridNode.prototype.refresh):
+        * UserInterface/LayoutTimelineDataGrid.js:
+        (WebInspector.LayoutTimelineDataGrid):
+        * UserInterface/LayoutTimelineDataGridNode.js:
+        (WebInspector.LayoutTimelineDataGridNode.prototype.createCellContent):
+        * UserInterface/Main.html:
+        * UserInterface/NavigationSidebarPanel.js:
+        (WebInspector.NavigationSidebarPanel.prototype._updateFilter):
+        (WebInspector.NavigationSidebarPanel.prototype._treeElementAddedOrChanged):
+        (WebInspector.NavigationSidebarPanel.prototype._generateStyleRulesIfNeeded):
+        * UserInterface/ProfileNodeDataGridNode.js: Added.
+        (WebInspector.ProfileNodeDataGridNode):
+        (WebInspector.ProfileNodeDataGridNode.prototype.get profileNode):
+        (WebInspector.ProfileNodeDataGridNode.prototype.get records):
+        (WebInspector.ProfileNodeDataGridNode.prototype.get baseStartTime):
+        (WebInspector.ProfileNodeDataGridNode.prototype.get rangeStartTime):
+        (WebInspector.ProfileNodeDataGridNode.prototype.set rangeStartTime):
+        (WebInspector.ProfileNodeDataGridNode.prototype.get rangeEndTime):
+        (WebInspector.ProfileNodeDataGridNode.prototype.set rangeEndTime):
+        (WebInspector.ProfileNodeDataGridNode.prototype.get data):
+        (WebInspector.ProfileNodeDataGridNode.prototype.refresh):
+        (WebInspector.ProfileNodeDataGridNode.prototype.createCellContent):
+        * UserInterface/ProfileNodeTreeElement.js: Added.
+        (WebInspector.ProfileNodeTreeElement):
+        (WebInspector.ProfileNodeTreeElement.prototype.get profileNode):
+        (WebInspector.ProfileNodeTreeElement.prototype.get filterableData):
+        (WebInspector.ProfileNodeTreeElement.prototype.onattach):
+        (WebInspector.ProfileNodeTreeElement.prototype.onpopulate):
+        * UserInterface/ResourceTimelineDataGridNode.js:
+        (WebInspector.ResourceTimelineDataGridNode.prototype.createCellContent):
+        * UserInterface/ScriptTimelineDataGrid.js:
+        (WebInspector.ScriptTimelineDataGrid):
+        * UserInterface/ScriptTimelineDataGridNode.js:
+        (WebInspector.ScriptTimelineDataGridNode):
+        (WebInspector.ScriptTimelineDataGridNode.prototype.get baseStartTime):
+        (WebInspector.ScriptTimelineDataGridNode.prototype.get rangeStartTime):
+        (WebInspector.ScriptTimelineDataGridNode.prototype.set rangeStartTime):
+        (WebInspector.ScriptTimelineDataGridNode.prototype.get rangeEndTime):
+        (WebInspector.ScriptTimelineDataGridNode.prototype.set rangeEndTime):
+        (WebInspector.ScriptTimelineDataGridNode.prototype.get data):
+        (WebInspector.ScriptTimelineDataGridNode.prototype.createCellContent):
+        * UserInterface/ScriptTimelineRecord.js:
+        (WebInspector.ScriptTimelineRecord):
+        (WebInspector.ScriptTimelineRecord.prototype.get profile):
+        * UserInterface/ScriptTimelineView.js:
+        (WebInspector.ScriptTimelineView.prototype.updateLayout):
+        (WebInspector.ScriptTimelineView.prototype.get selectionPathComponents):
+        (WebInspector.ScriptTimelineView.prototype.dataGridNodeForTreeElement):
+        (WebInspector.ScriptTimelineView.prototype.populateProfileNodeTreeElement):
+        (WebInspector.ScriptTimelineView.prototype._processPendingRecords):
+        (WebInspector.ScriptTimelineView.prototype._treeElementSelected):
+        * UserInterface/TimelineContentView.js:
+        (WebInspector.TimelineContentView.prototype.matchTreeElementAgainstCustomFilters):
+        * UserInterface/TimelineDataGrid.js:
+        (WebInspector.TimelineDataGrid):
+        (WebInspector.TimelineDataGrid.prototype.addRowInSortOrder):
+        (WebInspector.TimelineDataGrid.prototype._sort):
+        * UserInterface/TimelineDataGridNode.js:
+        (WebInspector.TimelineDataGridNode):
+        (WebInspector.TimelineDataGridNode.prototype.collapse):
+        (WebInspector.TimelineDataGridNode.prototype.expand):
+        * UserInterface/TimelineRecord.js:
+        * UserInterface/TreeOutlineDataGridSynchronizer.js:
+        (WebInspector.TreeOutlineDataGridSynchronizer.prototype.get delegate):
+        (WebInspector.TreeOutlineDataGridSynchronizer.prototype.dataGridNodeForTreeElement):
+        (WebInspector.TreeOutlineDataGridSynchronizer.prototype._treeElementAdded):
+
+2014-01-30  Timothy Hatcher  <timothy@apple.com>
+
         Add the model objects for the new Web Inspector profile data.
 
         https://bugs.webkit.org/show_bug.cgi?id=127899

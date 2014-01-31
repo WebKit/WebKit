@@ -201,6 +201,16 @@ WebInspector.TimelineContentView.prototype = {
             return false;
         }
 
+        if (treeElement instanceof WebInspector.ProfileNodeTreeElement) {
+            var profileNode = treeElement.profileNode;
+            for (var call of profileNode.calls) {
+                if (checkTimeBounds(call.startTime, call.endTime))
+                    return true;
+            }
+
+            return false;
+        }
+
         if (treeElement instanceof WebInspector.TimelineRecordTreeElement) {
             var record = treeElement.record;
             return checkTimeBounds(record.startTime, record.endTime);

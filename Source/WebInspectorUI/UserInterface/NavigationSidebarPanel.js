@@ -486,11 +486,15 @@ WebInspector.NavigationSidebarPanel.prototype = {
         this._textFilterRegex = simpleGlobStringToRegExp(filters.text, "i");
         this._filtersSetting.value = filters;
 
+        // Don't populate if we don't have any active filters.
+        // We only need to populate when a filter needs to reveal.
+        var dontPopulate = !this._filterBar.hasActiveFilters();
+
         // Update the whole tree.
         var currentTreeElement = this._contentTreeOutline.children[0];
         while (currentTreeElement && !currentTreeElement.root) {
             this.applyFiltersToTreeElement(currentTreeElement);
-            currentTreeElement = currentTreeElement.traverseNextTreeElement(false, null, false);
+            currentTreeElement = currentTreeElement.traverseNextTreeElement(false, null, dontPopulate);
         }
 
         this._checkForEmptyFilterResults();
@@ -499,11 +503,15 @@ WebInspector.NavigationSidebarPanel.prototype = {
 
     _treeElementAddedOrChanged: function(treeElement)
     {
+        // Don't populate if we don't have any active filters.
+        // We only need to populate when a filter needs to reveal.
+        var dontPopulate = !this._filterBar.hasActiveFilters();
+
         // Apply the filters to the tree element and its descendants.
         var currentTreeElement = treeElement;
         while (currentTreeElement && !currentTreeElement.root) {
             this.applyFiltersToTreeElement(currentTreeElement);
-            currentTreeElement = currentTreeElement.traverseNextTreeElement(false, treeElement, false);
+            currentTreeElement = currentTreeElement.traverseNextTreeElement(false, treeElement, dontPopulate);
         }
 
         this._checkForEmptyFilterResults();
@@ -523,15 +531,16 @@ WebInspector.NavigationSidebarPanel.prototype = {
 
         WebInspector.NavigationSidebarPanel._styleElement = document.createElement("style");
 
-        const maximumSidebarTreeDepth = 15;
+        const maximumSidebarTreeDepth = 32;
         const baseLeftPadding = 5; // Matches the padding in NavigationSidebarPanel.css for the item class. Keep in sync.
-        const depthPadding = 16;
+        const depthPadding = 10;
 
         var styleText = "";
-        var childrenSubstring = " > ";
+        var childrenSubstring = "";
         for (var i = 1; i <= maximumSidebarTreeDepth; ++i) {
-            childrenSubstring += ".children > ";
-            styleText += "." + WebInspector.NavigationSidebarPanel.ContentTreeOutlineElementStyleClassName + childrenSubstring + ".item { ";
+            // Keep all the elements at the same depth once the maximum is reached.
+            childrenSubstring += i === maximumSidebarTreeDepth ? " .children" : " > .children";
+            styleText += "." + WebInspector.NavigationSidebarPanel.ContentTreeOutlineElementStyleClassName + childrenSubstring + " > .item { ";
             styleText += "padding-left: " + (baseLeftPadding + (depthPadding * i)) + "px; }\n";
         }
 

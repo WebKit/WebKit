@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.ScriptTimelineRecord = function(eventType, startTime, endTime, callFrames, sourceCodeLocation, details)
+WebInspector.ScriptTimelineRecord = function(eventType, startTime, endTime, callFrames, sourceCodeLocation, details, profile)
 {
     WebInspector.TimelineRecord.call(this, WebInspector.TimelineRecord.Type.Script, startTime, endTime, callFrames, sourceCodeLocation);
 
@@ -34,6 +34,7 @@ WebInspector.ScriptTimelineRecord = function(eventType, startTime, endTime, call
 
     this._eventType = eventType;
     this._details = details || "";
+    this._profile = profile || null;
 };
 
 WebInspector.ScriptTimelineRecord.EventType = {
@@ -250,6 +251,11 @@ WebInspector.ScriptTimelineRecord.prototype = {
     get details()
     {
         return this._details;
+    },
+
+    get profile()
+    {
+        return this._profile;
     },
 
     saveIdentityToCookie: function(cookie)

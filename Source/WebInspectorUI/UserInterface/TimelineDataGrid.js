@@ -23,11 +23,11 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.TimelineDataGrid = function(treeOutline, columns, editCallback, deleteCallback)
+WebInspector.TimelineDataGrid = function(treeOutline, columns, delegate, editCallback, deleteCallback)
 {
     WebInspector.DataGrid.call(this, columns, editCallback, deleteCallback);
 
-    this._treeOutlineDataGridSynchronizer = new WebInspector.TreeOutlineDataGridSynchronizer(treeOutline, this);
+    this._treeOutlineDataGridSynchronizer = new WebInspector.TreeOutlineDataGridSynchronizer(treeOutline, this, delegate);
 
     this.element.classList.add(WebInspector.TimelineDataGrid.StyleClassName);
 
@@ -165,20 +165,23 @@ WebInspector.TimelineDataGrid.prototype = {
         return true;
     },
 
-    addRowInSortOrder: function(treeElement, dataGridNode)
+    addRowInSortOrder: function(treeElement, dataGridNode, parentElement)
     {
         this._treeOutlineDataGridSynchronizer.associate(treeElement, dataGridNode);
 
-        var treeOutline = this._treeOutlineDataGridSynchronizer.treeOutline;
+        parentElement = parentElement || this._treeOutlineDataGridSynchronizer.treeOutline;
+        parentNode = parentElement.root ? this : this._treeOutlineDataGridSynchronizer.dataGridNodeForTreeElement(parentElement);
+
+        console.assert(parentNode);
 
         if (this.sortColumnIdentifier) {
-            var insertionIndex = insertionIndexForObjectInListSortedByFunction(dataGridNode, this.children, this._sortComparator.bind(this));
+            var insertionIndex = insertionIndexForObjectInListSortedByFunction(dataGridNode, parentNode.children, this._sortComparator.bind(this));
 
-            // Insert into the tree outline, which will cause the synchronizer to insert into the data grid.
-            treeOutline.insertChild(treeElement, insertionIndex);
+            // Insert into the parent, which will cause the synchronizer to insert into the data grid.
+            parentElement.insertChild(treeElement, insertionIndex);
         } else {
-            // Append to the tree outline, which will cause the synchronizer to append to the data grid.
-            treeOutline.appendChild(treeElement);
+            // Append to the parent, which will cause the synchronizer to append to the data grid.
+            parentElement.appendChild(treeElement);
         }
     },
 
@@ -262,26 +265,45 @@ WebInspector.TimelineDataGrid.prototype = {
         var selectedNode = this.selectedNode;
         this._ignoreSelectionEvent = true;
 
-        var dataGridNodes = this.children.slice();
-        dataGridNodes.sort(this._sortComparator.bind(this));
-
         this._treeOutlineDataGridSynchronizer.enabled = false;
 
         var treeOutline = this._treeOutlineDataGridSynchronizer.treeOutline;
+        if (treeOutline.selectedTreeElement)
+            treeOutline.selectedTreeElement.deselect(true);
 
-        this.removeChildren();
-        treeOutline.removeChildren();
+        // Collect parent nodes that need their children sorted. So this in two phases since
+        // traverseNextNode would get confused if we sort the tree while traversing it.
+        var parentDataGridNodes = [this];
+        var currentDataGridNode = this.children[0];
+        while (currentDataGridNode) {
+            if (currentDataGridNode.children.length)
+                parentDataGridNodes.push(currentDataGridNode);
+            currentDataGridNode = currentDataGridNode.traverseNextNode(false, null, true);
+        }
 
-        for (var dataGridNode of dataGridNodes) {
-            var treeElement = this._treeOutlineDataGridSynchronizer.treeElementForDataGridNode(dataGridNode);
-            console.assert(treeElement);
+        // Sort the children of collected parent nodes.
+        for (var parentDataGridNode of parentDataGridNodes) {
+            var parentTreeElement = parentDataGridNode === this ? treeOutline : this._treeOutlineDataGridSynchronizer.treeElementForDataGridNode(parentDataGridNode);
+            console.assert(parentTreeElement);
 
-            treeOutline.appendChild(treeElement);
-            this.appendChild(dataGridNode);
+            var childDataGridNodes = parentDataGridNode.children.slice();
 
-            // Adding the tree element back to the tree outline subjects it to filters.
-            // Make sure we keep the hidden state in-sync while the synchronizer is disabled.
-            dataGridNode.element.classList.toggle("hidden", treeElement.hidden);
+            parentDataGridNode.removeChildren();
+            parentTreeElement.removeChildren();
+
+            childDataGridNodes.sort(this._sortComparator.bind(this));
+
+            for (var dataGridNode of childDataGridNodes) {
+                var treeElement = this._treeOutlineDataGridSynchronizer.treeElementForDataGridNode(dataGridNode);
+                console.assert(treeElement);
+
+                parentTreeElement.appendChild(treeElement);
+                parentDataGridNode.appendChild(dataGridNode);
+
+                // Adding the tree element back to the tree outline subjects it to filters.
+                // Make sure we keep the hidden state in-sync while the synchronizer is disabled.
+                dataGridNode.element.classList.toggle("hidden", treeElement.hidden);
+            }
         }
 
         this._treeOutlineDataGridSynchronizer.enabled = true;
