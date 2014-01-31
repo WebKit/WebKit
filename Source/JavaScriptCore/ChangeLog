@@ -1,3 +1,15 @@
+2014-01-31  Gabor Rapcsanyi  <rgabor@webkit.org>
+
+        Fix the ARM Thumb2 build after jsCStack branch merge
+        https://bugs.webkit.org/show_bug.cgi?id=127903
+
+        Reviewed by Michael Saboff.
+
+        SP register cannot be used as a destination register of SUB or ADD on Thumb mode.
+
+        * llint/LowLevelInterpreter.asm:
+        * llint/LowLevelInterpreter32_64.asm:
+
 2014-01-31  Julien Brianceau  <jbriance@cisco.com>
 
         [arm] Add missing pushPair/popPair implementations in MacroAssemblerARM.h

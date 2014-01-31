@@ -238,7 +238,12 @@ macro doCallToJavaScript(makeCall)
     # before we start copying the args from the protoCallFrame below.
     bpaeq temp1, VM::m_jsStackLimit[vm], .stackHeightOK
 
-    subp cfr, 8, sp
+    if ARMv7
+        subp cfr, 8, temp2
+        move temp2, sp
+    else
+        subp cfr, 8, sp
+    end
 
     if C_LOOP
         move entry, temp2

@@ -339,7 +339,13 @@ macro callToJavaScriptPrologue()
 end
 
 macro callToJavaScriptEpilogue()
-    addp CallFrameHeaderSlots * 8, cfr, sp
+    if ARMv7
+        addp CallFrameHeaderSlots * 8, cfr, t4
+        move t4, sp
+    else
+        addp CallFrameHeaderSlots * 8, cfr, sp
+    end
+
     loadp CallerFrame[cfr], cfr
 
     if X86
@@ -368,7 +374,12 @@ macro moveStackPointerForCodeBlock(codeBlock, scratch)
     loadi CodeBlock::m_numCalleeRegisters[codeBlock], scratch
     lshiftp 3, scratch
     addp maxFrameExtentForSlowPathCall, scratch
-    subp cfr, scratch, sp
+    if ARMv7
+        subp cfr, scratch, scratch
+        move scratch, sp
+    else
+        subp cfr, scratch, sp
+    end
 end
 
 macro restoreStackPointerAfterCall()
@@ -398,7 +409,12 @@ macro slowPathForCall(slowPath)
         slowPath,
         macro (callee)
             btpz t1, .dontUpdateSP
-            addp CallerFrameAndPCSize, t1, sp
+            if ARMv7
+                addp CallerFrameAndPCSize, t1, t1
+                move t1, sp
+            else
+                addp CallerFrameAndPCSize, t1, sp
+            end
         .dontUpdateSP:
             if C_LOOP
                 cloopCallJSFunction callee
@@ -956,7 +972,12 @@ _llint_op_call_varargs:
         move t1, sp
     else
         # The calleeFrame is not stack aligned, move down by CallerFrameAndPCSize to align
-        subp t1, CallerFrameAndPCSize, sp
+        if ARMv7
+            subp t1, CallerFrameAndPCSize, t2
+            move t2, sp
+        else
+            subp t1, CallerFrameAndPCSize, sp
+        end
     end
     slowPathForCall(_llint_slow_path_call_varargs)
 
