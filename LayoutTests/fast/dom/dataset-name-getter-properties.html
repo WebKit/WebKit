@@ -1,0 +1,18 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body data-webkit-rocks=yes>
+<script>
+description('Test the JavaScript property descriptor of the name getter.');
+
+shouldBe("Object.getOwnPropertyDescriptor(document.body.dataset, 'webkitRocks').configurable", 'false');
+shouldBe("Object.getOwnPropertyDescriptor(document.body.dataset, 'webkitRocks').enumerable", 'false');
+shouldBe("Object.getOwnPropertyDescriptor(document.body.dataset, 'webkitRocks').writable", 'false');
+shouldBeEqualToString("Object.getOwnPropertyDescriptor(document.body.dataset, 'webkitRocks').value", 'yes');
+
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

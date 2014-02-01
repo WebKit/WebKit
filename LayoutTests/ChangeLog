@@ -1,3 +1,13 @@
+2014-02-01  Benjamin Poulain  <bpoulain@apple.com>
+
+        Improve the JavaScript bindings of DatasetDOMStringMap
+        https://bugs.webkit.org/show_bug.cgi?id=127971
+
+        Reviewed by Sam Weinig.
+
+        * fast/dom/dataset-name-getter-properties-expected.txt: Added.
+        * fast/dom/dataset-name-getter-properties.html: Added.
+
 2014-01-31  Oliver Hunt  <oliver@apple.com>
 
         Rollout r163195 and related patches

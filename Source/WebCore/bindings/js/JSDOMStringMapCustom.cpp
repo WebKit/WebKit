@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010, 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,15 +35,15 @@ using namespace JSC;
 
 namespace WebCore {
 
-bool JSDOMStringMap::canGetItemsForName(ExecState*, DOMStringMap* impl, PropertyName propertyName)
+bool JSDOMStringMap::getOwnPropertySlotDelegate(ExecState* exec, PropertyName propertyName, PropertySlot& slot)
 {
-    return impl->contains(propertyNameToAtomicString(propertyName));
-}
-
-EncodedJSValue JSDOMStringMap::nameGetter(ExecState* exec, EncodedJSValue slotBase, EncodedJSValue, PropertyName propertyName)
-{
-    JSDOMStringMap* thisObj = jsCast<JSDOMStringMap*>(JSValue::decode(slotBase));
-    return JSValue::encode(jsStringWithCache(exec, thisObj->impl().item(propertyNameToAtomicString(propertyName))));
+    bool nameIsValid;
+    const AtomicString& item = impl().item(propertyNameToString(propertyName), nameIsValid);
+    if (nameIsValid) {
+        slot.setValue(this, ReadOnly | DontDelete | DontEnum, toJS(exec, globalObject(), item));
+        return true;
+    }
+    return false;
 }
 
 void JSDOMStringMap::getOwnPropertyNames(JSObject* object, ExecState* exec, PropertyNameArray& propertyNames, EnumerationMode mode)
