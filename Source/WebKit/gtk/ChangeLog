@@ -1,3 +1,10 @@
+2014-01-31  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed. Fixing the GTK build after r163232.
+
+        * WebCoreSupport/EditorClientGtk.cpp:
+        (WebKit::collapseSelection): Add an additional FrameSelection::selection() call.
+
 2014-01-31  Ryosuke Niwa  <rniwa@webkit.org>
 
         Remove inline member functions of FrameSelection that access m_selection

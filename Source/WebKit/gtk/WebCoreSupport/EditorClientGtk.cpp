@@ -216,7 +216,7 @@ static void collapseSelection(GtkClipboard* clipboard, WebKitWebView* webView)
     Frame& frame = corePage->focusController().focusedOrMainFrame();
 
     // Collapse the selection without clearing it
-    const VisibleSelection& selection = frame.selection();
+    const VisibleSelection& selection = frame.selection().selection();
     frame.selection().setBase(selection.extent(), selection.affinity());
 }
 
