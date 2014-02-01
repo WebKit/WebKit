@@ -1,5 +1,20 @@
 2014-02-01  Brady Eidson  <beidson@apple.com>
 
+        IDB: Index reading
+        <rdar://problem/15899973> and https://bugs.webkit.org/show_bug.cgi?id=127868
+
+        Reviewed by Jer Noble.
+
+        * DatabaseProcess/IndexedDB/UniqueIDBDatabase.cpp:
+        (WebKit::UniqueIDBDatabase::getRecordFromBackingStore):
+
+        * DatabaseProcess/IndexedDB/UniqueIDBDatabaseBackingStore.h:
+        * DatabaseProcess/IndexedDB/sqlite/UniqueIDBDatabaseBackingStoreSQLite.cpp:
+        (WebKit::UniqueIDBDatabaseBackingStoreSQLite::getIndexRecord): Using an index cursor, read a value.
+        * DatabaseProcess/IndexedDB/sqlite/UniqueIDBDatabaseBackingStoreSQLite.h:
+
+2014-02-01  Brady Eidson  <beidson@apple.com>
+
         IDB: Index cursor complete advance() and iterate() support
         <rdar://problem/15941916> and https://bugs.webkit.org/show_bug.cgi?id=127870
 

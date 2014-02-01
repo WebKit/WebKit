@@ -870,8 +870,13 @@ void UniqueIDBDatabase::getRecordFromBackingStore(uint64_t requestID, const IDBI
 
     // IDBIndex get record
 
-    // FIXME: Implement index gets (<rdar://problem/15779642>)
-    postMainThreadTask(createAsyncTask(*this, &UniqueIDBDatabase::didGetRecordFromBackingStore, requestID, IDBGetResult(), IDBDatabaseException::UnknownError, ASCIILiteral("'get' from indexes not supported yet")));
+    RefPtr<SharedBuffer> result;
+    if (!m_backingStore->getIndexRecord(transaction, objectStoreMetadata.id, indexID, keyRangeData, result)) {
+        postMainThreadTask(createAsyncTask(*this, &UniqueIDBDatabase::didGetRecordFromBackingStore, requestID, IDBGetResult(), IDBDatabaseException::UnknownError, ASCIILiteral("Failed to get index record from backing store")));
+        return;
+    }
+
+    postMainThreadTask(createAsyncTask(*this, &UniqueIDBDatabase::didGetRecordFromBackingStore, requestID, IDBGetResult(result.release()), 0, String(StringImpl::empty())));
 }
 
 void UniqueIDBDatabase::didGetRecordFromBackingStore(uint64_t requestID, const IDBGetResult& result, uint32_t errorCode, const String& errorMessage)

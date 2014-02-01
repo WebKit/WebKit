@@ -808,6 +808,36 @@ bool UniqueIDBDatabaseBackingStoreSQLite::putIndexRecord(const IDBIdentifier& tr
     return true;
 }
 
+bool UniqueIDBDatabaseBackingStoreSQLite::getIndexRecord(const IDBIdentifier& transactionIdentifier, int64_t objectStoreID, int64_t indexID, const IDBKeyRangeData& keyRangeData, RefPtr<SharedBuffer>& result)
+{
+    ASSERT(!isMainThread());
+    ASSERT(m_sqliteDB);
+    ASSERT(m_sqliteDB->isOpen());
+
+    SQLiteIDBTransaction* transaction = m_transactions.get(transactionIdentifier);
+    if (!transaction || !transaction->inProgress()) {
+        LOG_ERROR("Attempt to get count from database without an established, in-progress transaction");
+        return false;
+    }
+
+    SQLiteIDBCursor* cursor = transaction->openCursor(objectStoreID, indexID, IndexedDB::CursorDirection::Next, IndexedDB::CursorType::KeyAndValue, IDBDatabaseBackend::NormalTask, keyRangeData);
+
+    if (!cursor) {
+        LOG_ERROR("Cannot open cursor to perform index get in database");
+        return false;
+    }
+
+    // Even though we're only using this cursor locally, add it to our cursor set.
+    m_cursors.set(cursor->identifier(), cursor);
+
+    result = SharedBuffer::create(cursor->currentValueBuffer().data(), cursor->currentValueBuffer().size());
+
+    // Closing the cursor will destroy the cursor object and remove it from our cursor set.
+    transaction->closeCursor(*cursor);
+
+    return true;
+}
+
 bool UniqueIDBDatabaseBackingStoreSQLite::getKeyRecordFromObjectStore(const IDBIdentifier& transactionIdentifier, int64_t objectStoreID, const IDBKey& key, RefPtr<SharedBuffer>& result)
 {
     ASSERT(!isMainThread());
