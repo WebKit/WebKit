@@ -49,28 +49,6 @@ crypto.subtle.importKey("raw", kekData, "aes-kw", extractable, ["wrapKey", "unwr
     unwrappedKeyData = result;
     shouldBe("bytesToHexString(unwrappedKeyData)", "bytesToHexString(keyData)");
 
-    debug("\nWrapping it as JWK...");
-    return crypto.subtle.wrapKey("jwk", key, kek, "aes-kw");
-}).then(function(result) {
-    wrappedKey = result;
-
-    debug("Unwrapping it...");
-    return crypto.subtle.unwrapKey("jwk", wrappedKey, kek, "aes-kw", "aes-cbc", extractable, ["encrypt", "decrypt", "wrapKey", "unwrapKey"]);
-}).then(function(result) {
-    unwrappedKey = result;
-    shouldBe("unwrappedKey.toString()", "'[object Key]'");
-    shouldBe("unwrappedKey.type", "'secret'");
-    shouldBe("unwrappedKey.extractable", "true");
-    shouldBe("unwrappedKey.algorithm.name", "'AES-CBC'");
-    shouldBe("unwrappedKey.algorithm.length", "128");
-    shouldBe("unwrappedKey.usages", "['decrypt', 'encrypt', 'unwrapKey', 'wrapKey']");
-
-    debug("Exporting it...");
-    return crypto.subtle.exportKey("raw", unwrappedKey);
-}).then(function(result) {
-    unwrappedKeyData = result;
-    shouldBe("bytesToHexString(unwrappedKeyData)", "bytesToHexString(keyData)");
-
     finishJSTest();
 });
 </script>

@@ -23,7 +23,8 @@ PASS exportedJWK.kty is 'oct'
 PASS exportedJWK.k is 'jnOw99oOZFLIEPMrgJB55WL46tJSLGt7'
 PASS exportedJWK.alg is 'A192CBC'
 PASS exportedJWK.ext is true
-PASS exportedJWK.use is 'enc'
+PASS exportedJWK.use is undefined
+PASS exportedJWK.key_ops is ['encrypt', 'decrypt', 'wrap', 'unwrap']
 
 Importing a key that's not extractable...
 

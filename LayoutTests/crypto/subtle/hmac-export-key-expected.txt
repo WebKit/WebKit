@@ -16,7 +16,8 @@ PASS exportedJWK.kty is 'oct'
 PASS exportedJWK.k is 'ahjkn-_387fgnsibf23qsvahjkn-_387fgnsibf23qs'
 PASS exportedJWK.alg is 'HS256'
 PASS exportedJWK.ext is true
-PASS exportedJWK.use is 'sig'
+PASS exportedJWK.use is undefined
+PASS exportedJWK.key_ops is ['sign', 'verify']
 
 Importing a key that's not extractable...
 

@@ -3,53 +3,49 @@ Test importing keys with various uses from JWK.
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-enconly:
+PASS testWithAESCBC(["encrypt"], {key_ops: ["encrypt", "encrypt"]}) threw exception TypeError: JWK key_ops contains a duplicate operation.
+
+{"key_ops":["encrypt"]}:
 PASS key.usages is ["encrypt"]
 
-deconly:
+{"key_ops":["decrypt"]}:
 PASS key.usages is ["decrypt"]
 
-enconly,deconly:
+{"key_ops":["encrypt","decrypt"]}:
 PASS key.usages is ["decrypt","encrypt"]
 
-wrap:
+{"key_ops":["wrap"]}:
 PASS key.usages is ["wrapKey"]
 
-unwrap:
+{"key_ops":["unwrap"]}:
 PASS key.usages is ["unwrapKey"]
 
-wrap,unwrap:
+{"key_ops":["wrap","unwrap"]}:
 PASS key.usages is ["unwrapKey","wrapKey"]
 
-enconly,deconly,wrap:
+{"key_ops":["encrypt","decrypt","wrap"]}:
 PASS key.usages is ["decrypt","encrypt","wrapKey"]
 
-enc:
+{"use":"enc"}:
 PASS key.usages is ["decrypt","encrypt","unwrapKey","wrapKey"]
 
-sigonly:
+{"key_ops":["sign"]}:
 PASS key.usages is ["sign"]
 
-vfyonly:
+{"key_ops":["verify"]}:
 PASS key.usages is ["verify"]
 
-sig:
+{"use":"sig"}:
 PASS key.usages is ["sign","verify"]
 
-'enconly':
+{"key_ops":["'encrypt'"]}:
 PASS key.usages is []
 
-enconly :
+{"key_ops":["encrypt "]}:
 PASS key.usages is []
 
-EncOnly:
+{"key_ops":["Encrypt"]}:
 PASS key.usages is []
-
-enconly, deconly:
-PASS key.usages is ["encrypt"]
-
-enconly,,deconly:
-PASS key.usages is ["decrypt","encrypt"]
 
 PASS successfullyParsed is true
 

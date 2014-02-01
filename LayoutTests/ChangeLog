@@ -1,3 +1,33 @@
+2014-02-01  Alexey Proskuryakov  <ap@apple.com>
+
+        Update WebCrypto JWK mapping to use key_ops
+        https://bugs.webkit.org/show_bug.cgi?id=127609
+
+        Reviewed by Sam Weinig.
+
+        * crypto/subtle/aes-kw-wrap-unwrap-aes-expected.txt:
+        * crypto/subtle/aes-kw-wrap-unwrap-aes.html:
+        Removed a subtest for wrapping JWK. That doesn't really work per the spec, because
+        JWK is arbitatry length, and AES-KW requires 8*n bytes.
+
+        * crypto/subtle/aes-export-key-expected.txt:
+        * crypto/subtle/aes-export-key.html:
+        * crypto/subtle/hmac-export-key-expected.txt:
+        * crypto/subtle/hmac-export-key.html:
+        * crypto/subtle/jwk-export-use-values-expected.txt:
+        * crypto/subtle/jwk-export-use-values.html:
+        * crypto/subtle/jwk-import-use-values-expected.txt:
+        * crypto/subtle/jwk-import-use-values.html:
+        * crypto/subtle/rsa-export-key-expected.txt:
+        * crypto/subtle/rsa-export-key.html:
+        * crypto/subtle/rsa-export-private-key-expected.txt:
+        * crypto/subtle/rsa-export-private-key.html:
+        * crypto/subtle/rsa-oaep-key-manipulation-expected.txt:
+        * crypto/subtle/rsa-oaep-key-manipulation.html:
+        * crypto/subtle/rsa-postMessage-expected.txt:
+        * crypto/subtle/rsa-postMessage.html:
+        Updated for the fix.
+
 2014-02-01  Benjamin Poulain  <bpoulain@apple.com>
 
         Improve the JavaScript bindings of DatasetDOMStringMap

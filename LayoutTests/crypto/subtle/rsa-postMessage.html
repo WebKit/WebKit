@@ -41,7 +41,8 @@ window.addEventListener("message", function(evt) {
         shouldBe("exportedJWK.kty", "'RSA'");
         shouldBe("exportedJWK.alg", "'RS256'");
         shouldBe("exportedJWK.ext", "true");
-        shouldBe("exportedJWK.use", "'sig'");
+        shouldBe("exportedJWK.key_ops", "['sign','verify']");
+        shouldBe("exportedJWK.use", "undefined");
         shouldBe("exportedJWK.n", "privateKeyJSON.n");
         shouldBe("exportedJWK.e", "privateKeyJSON.e");
         shouldBe("exportedJWK.d", "privateKeyJSON.d");

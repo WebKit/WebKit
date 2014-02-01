@@ -19,7 +19,8 @@ PASS exportedJWK.qi is privateKeyJSON.qi
 PASS exportedJWK.oth is privateKeyJSON.oth
 PASS exportedJWK.alg is privateKeyJSON.alg
 PASS exportedJWK.ext is true
-PASS exportedJWK.use is 'sig'
+PASS exportedJWK.key_ops is ['sign', 'verify']
+PASS exportedJWK.use is undefined
 PASS successfullyParsed is true
 
 TEST COMPLETE

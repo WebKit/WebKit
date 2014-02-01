@@ -53,7 +53,8 @@ crypto.subtle.importKey("jwk", jwkKeyAsArrayBuffer, "RSASSA-PKCS1-v1_5", extract
     shouldBe("exportedJWK.oth", "privateKeyJSON.oth");
     shouldBe("exportedJWK.alg", "privateKeyJSON.alg");
     shouldBe("exportedJWK.ext", "true");
-    shouldBe("exportedJWK.use", "'sig'");
+    shouldBe("exportedJWK.key_ops", "['sign', 'verify']");
+    shouldBe("exportedJWK.use", "undefined");
 
     finishJSTest();
 });

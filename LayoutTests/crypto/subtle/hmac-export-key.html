@@ -47,7 +47,8 @@ crypto.subtle.importKey("jwk", jwkKeyAsArrayBuffer, { name: "HMAC", hash: "SHA-2
     shouldBe("exportedJWK.k", "'ahjkn-_387fgnsibf23qsvahjkn-_387fgnsibf23qs'");
     shouldBe("exportedJWK.alg", "'HS256'");
     shouldBe("exportedJWK.ext", "true");
-    shouldBe("exportedJWK.use", "'sig'");
+    shouldBe("exportedJWK.use", "undefined");
+    shouldBe("exportedJWK.key_ops", "['sign', 'verify']");
 
     debug("\nImporting a key that's not extractable...");
     return crypto.subtle.importKey("jwk", jwkKeyAsArrayBuffer, { name: "HMAC", hash: "SHA-256" }, nonExtractable, ["sign", "verify"]);

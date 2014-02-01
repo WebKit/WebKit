@@ -60,7 +60,7 @@ static bool getJSArrayFromJSON(ExecState* exec, JSObject* json, const char* key,
 
     JSValue value = slot.getValue(exec, identifier);
     ASSERT(!exec->hadException());
-    if (isJSArray(value)) {
+    if (!isJSArray(value)) {
         throwTypeError(exec, String::format("Expected an array for \"%s\" JSON key",  key));
         return false;
     }
@@ -248,40 +248,67 @@ bool JSCryptoKeySerializationJWK::reconcileAlgorithm(std::unique_ptr<CryptoAlgor
     return true;
 }
 
+static bool tryJWKKeyOpsValue(ExecState* exec, CryptoKeyUsage& usages, const String& operation, const String& tryOperation, CryptoKeyUsage tryUsage)
+{
+    if (operation == tryOperation) {
+        if (usages & tryUsage) {
+            throwTypeError(exec, "JWK key_ops contains a duplicate operation");
+            return false;
+        }
+        usages |= tryUsage;
+    }
+    return true;
+}
+
 void JSCryptoKeySerializationJWK::reconcileUsages(CryptoKeyUsage& suggestedUsages) const
 {
-    String jwkUseString;
-    if (!getStringFromJSON(m_exec, m_json.get(), "use", jwkUseString)) {
-        // "use" is optional in JWK.
-        return;
-    }
-
-    // Implemented according to a proposal in <https://www.w3.org/Bugs/Public/show_bug.cgi?id=23796>.
-    Vector<String> jwkUsageValues;
-    jwkUseString.split(',', jwkUsageValues);
     CryptoKeyUsage jwkUsages = 0;
-    for (size_t i = 0, size = jwkUsageValues.size(); i < size; ++i) {
-        String jwkUse = jwkUsageValues[i];
-        if (jwkUse == "sig")
-            jwkUsages |= (CryptoKeyUsageSign | CryptoKeyUsageVerify);
-        else if (jwkUse == "enc")
+
+    JSArray* keyOps;
+    if (getJSArrayFromJSON(m_exec, m_json.get(), "key_ops", keyOps)) {
+        for (size_t i = 0; i < keyOps->length(); ++i) {
+            JSValue jsValue = keyOps->getIndex(m_exec, i);
+            String operation;
+            if (!jsValue.getString(m_exec, operation)) {
+                if (!m_exec->hadException())
+                    throwTypeError(m_exec, "JWK key_ops attribute could not be processed");
+                return;
+            }
+            if (!tryJWKKeyOpsValue(m_exec, jwkUsages, operation, ASCIILiteral("sign"), CryptoKeyUsageSign))
+                return;
+            if (!tryJWKKeyOpsValue(m_exec, jwkUsages, operation, ASCIILiteral("verify"), CryptoKeyUsageVerify))
+                return;
+            if (!tryJWKKeyOpsValue(m_exec, jwkUsages, operation, ASCIILiteral("encrypt"), CryptoKeyUsageEncrypt))
+                return;
+            if (!tryJWKKeyOpsValue(m_exec, jwkUsages, operation, ASCIILiteral("decrypt"), CryptoKeyUsageDecrypt))
+                return;
+            if (!tryJWKKeyOpsValue(m_exec, jwkUsages, operation, ASCIILiteral("wrap"), CryptoKeyUsageWrapKey))
+                return;
+            if (!tryJWKKeyOpsValue(m_exec, jwkUsages, operation, ASCIILiteral("unwrap"), CryptoKeyUsageUnwrapKey))
+                return;
+            if (!tryJWKKeyOpsValue(m_exec, jwkUsages, operation, ASCIILiteral("deriveKey"), CryptoKeyUsageDeriveKey))
+                return;
+            if (!tryJWKKeyOpsValue(m_exec, jwkUsages, operation, ASCIILiteral("deriveBits"), CryptoKeyUsageDeriveBits))
+                return;
+        }
+    } else {
+        if (m_exec->hadException())
+            return;
+
+        String jwkUseString;
+        if (!getStringFromJSON(m_exec, m_json.get(), "use", jwkUseString)) {
+            // We have neither key_ops nor use.
+            return;
+        }
+
+        if (jwkUseString == "enc")
             jwkUsages |= (CryptoKeyUsageEncrypt | CryptoKeyUsageDecrypt | CryptoKeyUsageWrapKey | CryptoKeyUsageUnwrapKey);
-        else if (jwkUse == "enconly")
-            jwkUsages |= CryptoKeyUsageEncrypt;
-        else if (jwkUse == "deconly")
-            jwkUsages |= CryptoKeyUsageDecrypt;
-        else if (jwkUse == "sigonly")
-            jwkUsages |= CryptoKeyUsageSign;
-        else if (jwkUse == "vfyonly")
-            jwkUsages |= CryptoKeyUsageVerify;
-        else if (jwkUse == "drvkey")
-            jwkUsages |= CryptoKeyUsageDeriveKey;
-        else if (jwkUse == "drvbits")
-            jwkUsages |= CryptoKeyUsageDeriveBits;
-        else if (jwkUse == "wrap")
-            jwkUsages |= CryptoKeyUsageWrapKey;
-        else if (jwkUse == "unwrap")
-            jwkUsages |= CryptoKeyUsageUnwrapKey;
+        else if (jwkUseString == "sig")
+            jwkUsages |= (CryptoKeyUsageSign | CryptoKeyUsageVerify);
+        else {
+            throwTypeError(m_exec, "Unsupported JWK key use value \"" + jwkUseString + "\"");
+            return;
+        }
     }
 
     suggestedUsages = suggestedUsages & jwkUsages;
@@ -290,10 +317,8 @@ void JSCryptoKeySerializationJWK::reconcileUsages(CryptoKeyUsage& suggestedUsage
 void JSCryptoKeySerializationJWK::reconcileExtractable(bool& suggestedExtractable) const
 {
     bool jwkExtractable;
-    if (!getBooleanFromJSON(m_exec, m_json.get(), "ext", jwkExtractable)) {
-        // "ext" not in JWK or WebCrypto specs yet, implemented according to a proposal in <https://www.w3.org/Bugs/Public/show_bug.cgi?id=23796>.
+    if (!getBooleanFromJSON(m_exec, m_json.get(), "ext", jwkExtractable))
         return;
-    }
 
     suggestedExtractable = suggestedExtractable && jwkExtractable;
 }
@@ -472,13 +497,20 @@ std::unique_ptr<CryptoKeyData> JSCryptoKeySerializationJWK::keyData() const
     return nullptr;
 }
 
-void JSCryptoKeySerializationJWK::buildJSONForOctetSequence(ExecState* exec, const Vector<uint8_t>& keyData, JSObject* result)
+static void addToJSON(ExecState* exec, JSObject* json, const char* key, const String& value)
+{
+    VM& vm = exec->vm();
+    Identifier identifier(&vm, key);
+    json->putDirect(vm, identifier, jsString(exec, value));
+}
+
+static void buildJSONForOctetSequence(ExecState* exec, const Vector<uint8_t>& keyData, JSObject* result)
 {
     addToJSON(exec, result, "kty", "oct");
     addToJSON(exec, result, "k", base64URLEncode(keyData));
 }
 
-void JSCryptoKeySerializationJWK::buildJSONForRSAComponents(JSC::ExecState* exec, const CryptoKeyDataRSAComponents& data, JSC::JSObject* result)
+static void buildJSONForRSAComponents(JSC::ExecState* exec, const CryptoKeyDataRSAComponents& data, JSC::JSObject* result)
 {
     addToJSON(exec, result, "kty", "RSA");
     addToJSON(exec, result, "n", base64URLEncode(data.modulus()));
@@ -512,21 +544,14 @@ void JSCryptoKeySerializationJWK::buildJSONForRSAComponents(JSC::ExecState* exec
     result->putDirect(exec->vm(), Identifier(exec, "oth"), oth);
 }
 
-void JSCryptoKeySerializationJWK::addToJSON(ExecState* exec, JSObject* json, const char* key, const String& value)
-{
-    VM& vm = exec->vm();
-    Identifier identifier(&vm, key);
-    json->putDirect(vm, identifier, jsString(exec, value));
-}
-
-void JSCryptoKeySerializationJWK::addBoolToJSON(ExecState* exec, JSObject* json, const char* key, bool value)
+static void addBoolToJSON(ExecState* exec, JSObject* json, const char* key, bool value)
 {
     VM& vm = exec->vm();
     Identifier identifier(&vm, key);
     json->putDirect(vm, identifier, jsBoolean(value));
 }
 
-void JSCryptoKeySerializationJWK::addJWKAlgorithmToJSON(ExecState* exec, JSObject* json, const CryptoKey& key)
+static void addJWKAlgorithmToJSON(ExecState* exec, JSObject* json, const CryptoKey& key)
 {
     String jwkAlgorithm;
     switch (key.algorithmIdentifier()) {
@@ -627,51 +652,29 @@ void JSCryptoKeySerializationJWK::addJWKAlgorithmToJSON(ExecState* exec, JSObjec
     addToJSON(exec, json, "alg", jwkAlgorithm);
 }
 
-static bool processUseValue(StringBuilder& builder, CryptoKeyUsage& usages, const String& useString, CryptoKeyUsage usagesForUseString)
+static void addUsagesToJSON(ExecState* exec, JSObject* json, CryptoKeyUsage usages)
 {
-    if ((usages & usagesForUseString) != usagesForUseString)
-        return false;
+    JSArray* keyOps = constructEmptyArray(exec, 0, exec->lexicalGlobalObject(), 0);
 
-    if (!builder.isEmpty())
-        builder.append(',');
-    builder.append(useString);
+    unsigned index = 0;
+    if (usages & CryptoKeyUsageSign)
+        keyOps->putDirectIndex(exec, index++, jsString(exec, ASCIILiteral("sign")));
+    if (usages & CryptoKeyUsageVerify)
+        keyOps->putDirectIndex(exec, index++, jsString(exec, ASCIILiteral("verify")));
+    if (usages & CryptoKeyUsageEncrypt)
+        keyOps->putDirectIndex(exec, index++, jsString(exec, ASCIILiteral("encrypt")));
+    if (usages & CryptoKeyUsageDecrypt)
+        keyOps->putDirectIndex(exec, index++, jsString(exec, ASCIILiteral("decrypt")));
+    if (usages & CryptoKeyUsageWrapKey)
+        keyOps->putDirectIndex(exec, index++, jsString(exec, ASCIILiteral("wrap")));
+    if (usages & CryptoKeyUsageUnwrapKey)
+        keyOps->putDirectIndex(exec, index++, jsString(exec, ASCIILiteral("unwrap")));
+    if (usages & CryptoKeyUsageDeriveKey)
+        keyOps->putDirectIndex(exec, index++, jsString(exec, ASCIILiteral("deriveKey")));
+    if (usages & CryptoKeyUsageDeriveBits)
+        keyOps->putDirectIndex(exec, index++, jsString(exec, ASCIILiteral("deriveBits")));
 
-    usages &= ~usagesForUseString;
-
-    return true;
-}
-
-void JSCryptoKeySerializationJWK::addJWKUseToJSON(ExecState* exec, JSObject* json, CryptoKeyUsage usages)
-{
-    // Use mapping implemented according to a proposal in <https://www.w3.org/Bugs/Public/show_bug.cgi?id=23796>.
-    StringBuilder useBuilder;
-    CryptoKeyUsage remainingUsages = usages;
-    while (remainingUsages) {
-        if (processUseValue(useBuilder, remainingUsages, "enc", CryptoKeyUsageEncrypt | CryptoKeyUsageDecrypt | CryptoKeyUsageWrapKey | CryptoKeyUsageUnwrapKey))
-            continue;
-        if (processUseValue(useBuilder, remainingUsages, "sig", CryptoKeyUsageSign | CryptoKeyUsageVerify))
-            continue;
-        if (processUseValue(useBuilder, remainingUsages, "enconly", CryptoKeyUsageEncrypt))
-            continue;
-        if (processUseValue(useBuilder, remainingUsages, "deconly", CryptoKeyUsageDecrypt))
-            continue;
-        if (processUseValue(useBuilder, remainingUsages, "sigonly", CryptoKeyUsageSign))
-            continue;
-        if (processUseValue(useBuilder, remainingUsages, "vfyonly", CryptoKeyUsageVerify))
-            continue;
-        if (processUseValue(useBuilder, remainingUsages, "drvkey", CryptoKeyUsageDeriveKey))
-            continue;
-        if (processUseValue(useBuilder, remainingUsages, "drvbits", CryptoKeyUsageDeriveBits))
-            continue;
-        if (processUseValue(useBuilder, remainingUsages, "wrap", CryptoKeyUsageWrapKey))
-            continue;
-        if (processUseValue(useBuilder, remainingUsages, "unwrap", CryptoKeyUsageUnwrapKey))
-            continue;
-        throwTypeError(exec, "Key usages cannot be represented in JWK.");
-        return;
-    }
-
-    addToJSON(exec, json, "use", useBuilder.toString());
+    json->putDirect(exec->vm(), Identifier(exec, "key_ops"), keyOps);
 }
 
 String JSCryptoKeySerializationJWK::serialize(ExecState* exec, const CryptoKey& key)
@@ -691,7 +694,7 @@ String JSCryptoKeySerializationJWK::serialize(ExecState* exec, const CryptoKey& 
 
     addBoolToJSON(exec, result, "ext", key.extractable());
 
-    addJWKUseToJSON(exec, result, key.usagesBitmap());
+    addUsagesToJSON(exec, result, key.usagesBitmap());
     if (exec->hadException())
         return String();
 

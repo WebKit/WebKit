@@ -15,7 +15,8 @@ Exported back to JWK:
 PASS exportedJWK.kty is 'RSA'
 PASS exportedJWK.alg is 'RS256'
 PASS exportedJWK.ext is true
-PASS exportedJWK.use is 'sig'
+PASS exportedJWK.key_ops is ['sign','verify']
+PASS exportedJWK.use is undefined
 PASS exportedJWK.n is privateKeyJSON.n
 PASS exportedJWK.e is privateKeyJSON.e
 PASS exportedJWK.d is privateKeyJSON.d

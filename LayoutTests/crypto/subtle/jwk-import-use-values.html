@@ -29,47 +29,63 @@ var hmacKeyAsJSON = {
     "k": "ahjkn-_387fgnsibf23qsvahjkn-_387fgnsibf23qs"
 };
 
-function testWithAESCBC(expectedUsages, use)
+function testWithAESCBC(expectedUsages, jwkUsages)
 {
-    aesKeyAsJSON.use = use;
+    if (jwkUsages.key_ops) {
+        aesKeyAsJSON.key_ops = jwkUsages.key_ops;
+        delete aesKeyAsJSON.use;
+    } else {
+        delete aesKeyAsJSON.key_ops;
+        aesKeyAsJSON.use = jwkUsages.use;
+    }
+
     return crypto.subtle.importKey("jwk", asciiToUint8Array(JSON.stringify(aesKeyAsJSON)), "AES-CBC", extractable, ["encrypt", "decrypt", "wrapKey", "unwrapKey"]).then(function(result) {
         key = result;
-        debug(use + ":");
+        debug(JSON.stringify(jwkUsages) + ":");
         shouldBe("key.usages", JSON.stringify(expectedUsages));
         debug("");
     });
 }
 
-function testWithHMAC(expectedUsages, use)
+function testWithHMAC(expectedUsages, jwkUsages)
 {
-    hmacKeyAsJSON.use = use;
+    if (jwkUsages.key_ops) {
+        hmacKeyAsJSON.key_ops = jwkUsages.key_ops;
+        delete hmacKeyAsJSON.use;
+    } else {
+        delete hmacKeyAsJSON.key_ops;
+        hmacKeyAsJSON.use = jwkUsages.use;
+    }
+
     return crypto.subtle.importKey("jwk", asciiToUint8Array(JSON.stringify(hmacKeyAsJSON)), {name: 'hmac', hash: {name: 'sha-256'}}, extractable, ["sign", "verify"]).then(function(result) {
         key = result;
-        debug(use + ":");
+        debug(JSON.stringify(jwkUsages) + ":");
         shouldBe("key.usages", JSON.stringify(expectedUsages));
         debug("");
     });
 }
 
-Promise.all([
-    testWithAESCBC(["encrypt"], "enconly"),
-    testWithAESCBC(["decrypt"], "deconly"),
-    testWithAESCBC(["decrypt", "encrypt"], "enconly,deconly"),
-    testWithAESCBC(["wrapKey"], "wrap"),
-    testWithAESCBC(["unwrapKey"], "unwrap"),
-    testWithAESCBC(["unwrapKey", "wrapKey"], "wrap,unwrap"),
-    testWithAESCBC(["decrypt", "encrypt", "wrapKey"], "enconly,deconly,wrap"),
-    testWithAESCBC(["decrypt", "encrypt", "unwrapKey", "wrapKey"], "enc"),
-    testWithHMAC(["sign"], "sigonly"),
-    testWithHMAC(["verify"], "vfyonly"),
-    testWithHMAC(["sign", "verify"], "sig"),
+// Duplicates are not allowed. We currently raise an exception, although we should reject the promise instead.
+shouldThrow('testWithAESCBC(["encrypt"], {key_ops: ["encrypt", "encrypt"]})');
+debug("");
 
-// Incorrect use strings. There is currently no spec for what to do, but ignoring unknown uses seems right.
-    testWithAESCBC([], "'enconly'"),
-    testWithAESCBC([], "enconly "),
-    testWithAESCBC([], "EncOnly"),
-    testWithAESCBC(["encrypt"], "enconly, deconly"),
-    testWithAESCBC(["decrypt","encrypt"], "enconly,,deconly"),
+Promise.all([
+    testWithAESCBC(["encrypt"], {key_ops: ["encrypt"]}),
+    testWithAESCBC(["decrypt"], {key_ops: ["decrypt"]}),
+    testWithAESCBC(["decrypt", "encrypt"], {key_ops: ["encrypt", "decrypt"]}),
+    testWithAESCBC(["wrapKey"], {key_ops: ["wrap"]}),
+    testWithAESCBC(["unwrapKey"], {key_ops: ["unwrap"]}),
+    testWithAESCBC(["unwrapKey", "wrapKey"], {key_ops: ["wrap", "unwrap"]}),
+    testWithAESCBC(["decrypt", "encrypt", "wrapKey"], {key_ops: ["encrypt", "decrypt", "wrap"]}),
+    testWithAESCBC(["decrypt", "encrypt", "unwrapKey", "wrapKey"], {use: "enc"}),
+    testWithHMAC(["sign"], {key_ops: ["sign"]}),
+    testWithHMAC(["verify"], {key_ops: ["verify"]}),
+    testWithHMAC(["sign", "verify"], {use: "sig"}),
+
+// Unknown key_ops strings are ignored.
+    testWithAESCBC([], {key_ops: ["'encrypt'"]}),
+    testWithAESCBC([], {key_ops: ["encrypt "]}),
+    testWithAESCBC([], {key_ops: ["Encrypt"]}),
 
 ]).then(function() { finishJSTest(); } );
 </script>

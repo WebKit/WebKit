@@ -1,3 +1,33 @@
+2014-02-01  Alexey Proskuryakov  <ap@apple.com>
+
+        Update WebCrypto JWK mapping to use key_ops
+        https://bugs.webkit.org/show_bug.cgi?id=127609
+
+        Reviewed by Sam Weinig.
+
+        Updated JWK support ot match current editor draft.
+
+        * bindings/js/JSCryptoKeySerializationJWK.cpp:
+        (WebCore::getJSArrayFromJSON): Fixed this previously untested function to actually work.
+        (WebCore::tryJWKKeyOpsValue):
+        (WebCore::JSCryptoKeySerializationJWK::reconcileUsages):
+        (WebCore::JSCryptoKeySerializationJWK::reconcileExtractable): Removed an old comment,
+        these things are now specced.
+        (WebCore::addToJSON): Made static functions file static, there is no reason for
+        them to be class members.
+        (WebCore::buildJSONForOctetSequence):
+        (WebCore::buildJSONForRSAComponents):
+        (WebCore::addBoolToJSON):
+        (WebCore::addJWKAlgorithmToJSON):
+        (WebCore::addUsagesToJSON):
+        (WebCore::JSCryptoKeySerializationJWK::serialize):
+        * bindings/js/JSCryptoKeySerializationJWK.h:
+
+        * crypto/mac/CryptoAlgorithmAES_KWMac.cpp:
+        (WebCore::CryptoAlgorithmAES_KW::platformEncrypt):
+        (WebCore::CryptoAlgorithmAES_KW::platformDecrypt):
+        Check for length, so that we don't fail silently.
+
 2014-02-01  David Kilzer  <ddkilzer@apple.com>
 
         Add security-checked casts for all WebCore::CachedResource subclasses

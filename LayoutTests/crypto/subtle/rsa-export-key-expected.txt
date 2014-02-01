@@ -17,7 +17,8 @@ PASS exportedJWK.n is publicKeyJSON.n
 PASS exportedJWK.e is publicKeyJSON.e
 PASS exportedJWK.alg is 'RS256'
 PASS exportedJWK.ext is true
-PASS exportedJWK.use is 'sig'
+PASS exportedJWK.use is undefined
+PASS exportedJWK.key_ops is ['sign', 'verify']
 PASS successfullyParsed is true
 
 TEST COMPLETE

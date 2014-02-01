@@ -53,7 +53,8 @@ crypto.subtle.importKey("jwk", jwkKeyAsArrayBuffer, "AES-CBC", extractable, ['en
     shouldBe("exportedJWK.k", "'jnOw99oOZFLIEPMrgJB55WL46tJSLGt7'");
     shouldBe("exportedJWK.alg", "'A192CBC'");
     shouldBe("exportedJWK.ext", "true");
-    shouldBe("exportedJWK.use", "'enc'");
+    shouldBe("exportedJWK.use", "undefined");
+    shouldBe("exportedJWK.key_ops", "['encrypt', 'decrypt', 'wrap', 'unwrap']");
 
     debug("\nImporting a key that's not extractable...");
     return crypto.subtle.importKey("jwk", jwkKeyAsArrayBuffer, "AES-CBC", nonExtractable, ['encrypt', 'decrypt', 'wrapKey', 'unwrapKey'])

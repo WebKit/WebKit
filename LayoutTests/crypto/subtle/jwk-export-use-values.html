@@ -18,42 +18,44 @@ var extractable = true;
 var aesKeyAsArrayBuffer = Base64URL.parse("jnOw99oOZFLIEPMrgJB55WL46tJSLGt7");
 var hmacKeyAsArrayBuffer = Base64URL.parse("ahjkn-_387fgnsibf23qsvahjkn-_387fgnsibf23qs");
 
-function testWithAESCBC(usages, expectedUse)
+function testWithAESCBC(usages, expectedKeyOps)
 {
     return crypto.subtle.importKey("raw", aesKeyAsArrayBuffer, "AES-CBC", extractable, usages).then(function(result) {
         return crypto.subtle.exportKey("jwk", result);
     }).then(function(result) {
         jwk = JSON.parse(bytesToASCIIString(result));
         debug(usages + ":");
-        shouldBe("jwk.use", "'" + expectedUse + "'");
+        shouldBe("jwk.use", "undefined");
+        shouldBe("jwk.key_ops", JSON.stringify(expectedKeyOps));
         debug("");
     });
 }
 
-function testWithHMAC(usages, expectedUse)
+function testWithHMAC(usages, expectedKeyOps)
 {
     return crypto.subtle.importKey("raw", hmacKeyAsArrayBuffer, {name: 'hmac', hash: {name: 'sha-256'}}, extractable, usages).then(function(result) {
         return crypto.subtle.exportKey("jwk", result);
     }).then(function(result) {
         jwk = JSON.parse(bytesToASCIIString(result));
         debug(usages + ":");
-        shouldBe("jwk.use", "'" + expectedUse + "'");
+        shouldBe("jwk.use", "undefined");
+        shouldBe("jwk.key_ops", JSON.stringify(expectedKeyOps));
         debug("");
     });
 }
 
 Promise.all([
-    testWithAESCBC(["encrypt"], "enconly"),
-    testWithAESCBC(["decrypt"], "deconly"),
-    testWithAESCBC(["encrypt", "decrypt"], "enconly,deconly"),
-    testWithAESCBC(["wrapKey"], "wrap"),
-    testWithAESCBC(["unwrapKey"], "unwrap"),
-    testWithAESCBC(["wrapKey", "unwrapKey"], "wrap,unwrap"),
-    testWithAESCBC(["encrypt", "decrypt", "wrapKey"], "enconly,deconly,wrap"),
-    testWithAESCBC(["encrypt", "decrypt", "wrapKey", "unwrapKey"], "enc"),
-    testWithHMAC(["sign"], "sigonly"),
-    testWithHMAC(["verify"], "vfyonly"),
-    testWithHMAC(["sign", "verify"], "sig"),
+    testWithAESCBC(["encrypt"], ["encrypt"]),
+    testWithAESCBC(["decrypt"], ["decrypt"]),
+    testWithAESCBC(["encrypt", "decrypt"], ["encrypt", "decrypt"]),
+    testWithAESCBC(["wrapKey"], ["wrap"]),
+    testWithAESCBC(["unwrapKey"], ["unwrap"]),
+    testWithAESCBC(["wrapKey", "unwrapKey"], ["wrap", "unwrap"]),
+    testWithAESCBC(["encrypt", "decrypt", "wrapKey"], ["encrypt", "decrypt", "wrap"]),
+    testWithAESCBC(["encrypt", "decrypt", "wrapKey", "unwrapKey"], ["encrypt", "decrypt", "wrap", "unwrap"]),
+    testWithHMAC(["sign"], ["sign"]),
+    testWithHMAC(["verify"], ["verify"]),
+    testWithHMAC(["sign", "verify"], ["sign", "verify"]),
 ]).then(function() { finishJSTest(); } );
 </script>
 

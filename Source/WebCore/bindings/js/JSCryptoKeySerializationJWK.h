@@ -66,13 +66,6 @@ private:
 
     virtual std::unique_ptr<CryptoKeyData> keyData() const override;
 
-    static void buildJSONForOctetSequence(JSC::ExecState*, const Vector<uint8_t>&, JSC::JSObject* result);
-    static void buildJSONForRSAComponents(JSC::ExecState*, const CryptoKeyDataRSAComponents&, JSC::JSObject* result);
-    static void addJWKAlgorithmToJSON(JSC::ExecState*, JSC::JSObject*, const CryptoKey& key);
-    static void addJWKUseToJSON(JSC::ExecState*, JSC::JSObject*, CryptoKeyUsage);
-    static void addToJSON(JSC::ExecState*, JSC::JSObject*, const char* key, const String& value);
-    static void addBoolToJSON(JSC::ExecState*, JSC::JSObject*, const char* key, bool value);
-
     bool keySizeIsValid(size_t sizeInBits) const;
     std::unique_ptr<CryptoKeyData> keyDataOctetSequence() const;
     std::unique_ptr<CryptoKeyData> keyDataRSAComponents() const;

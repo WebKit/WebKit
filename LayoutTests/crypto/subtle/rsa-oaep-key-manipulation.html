@@ -56,7 +56,8 @@ crypto.subtle.generateKey(algorithmKeyGen, extractable, ["encrypt", "decrypt", "
     jwkPublicKey = JSON.parse(bytesToASCIIString(jwkPublicKeyArray));
     shouldBe("jwkPublicKey.alg", "'RSA-OAEP'");
     shouldBe("jwkPublicKey.ext", "true");
-    shouldBe("jwkPublicKey.use", "'enc'");
+    shouldBe("jwkPublicKey.key_ops", "['encrypt', 'decrypt', 'wrap', 'unwrap']");
+    shouldBe("jwkPublicKey.use", "undefined");
     shouldBe("jwkPublicKey.kty", "'RSA'");
     shouldBe("bytesToHexString(Base64URL.parse(jwkPublicKey.e))", "'010001'");
 

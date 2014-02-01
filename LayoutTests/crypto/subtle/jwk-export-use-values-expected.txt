@@ -4,37 +4,48 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 
 encrypt:
-PASS jwk.use is 'enconly'
+PASS jwk.use is undefined
+PASS jwk.key_ops is ["encrypt"]
 
 decrypt:
-PASS jwk.use is 'deconly'
+PASS jwk.use is undefined
+PASS jwk.key_ops is ["decrypt"]
 
 encrypt,decrypt:
-PASS jwk.use is 'enconly,deconly'
+PASS jwk.use is undefined
+PASS jwk.key_ops is ["encrypt","decrypt"]
 
 wrapKey:
-PASS jwk.use is 'wrap'
+PASS jwk.use is undefined
+PASS jwk.key_ops is ["wrap"]
 
 unwrapKey:
-PASS jwk.use is 'unwrap'
+PASS jwk.use is undefined
+PASS jwk.key_ops is ["unwrap"]
 
 wrapKey,unwrapKey:
-PASS jwk.use is 'wrap,unwrap'
+PASS jwk.use is undefined
+PASS jwk.key_ops is ["wrap","unwrap"]
 
 encrypt,decrypt,wrapKey:
-PASS jwk.use is 'enconly,deconly,wrap'
+PASS jwk.use is undefined
+PASS jwk.key_ops is ["encrypt","decrypt","wrap"]
 
 encrypt,decrypt,wrapKey,unwrapKey:
-PASS jwk.use is 'enc'
+PASS jwk.use is undefined
+PASS jwk.key_ops is ["encrypt","decrypt","wrap","unwrap"]
 
 sign:
-PASS jwk.use is 'sigonly'
+PASS jwk.use is undefined
+PASS jwk.key_ops is ["sign"]
 
 verify:
-PASS jwk.use is 'vfyonly'
+PASS jwk.use is undefined
+PASS jwk.key_ops is ["verify"]
 
 sign,verify:
-PASS jwk.use is 'sig'
+PASS jwk.use is undefined
+PASS jwk.key_ops is ["sign","verify"]
 
 PASS successfullyParsed is true
 
