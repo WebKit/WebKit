@@ -1,3 +1,12 @@
+2014-01-31  Mark Lam  <mark.lam@apple.com>
+
+        Gardening: Fix a merge problem to unbreak bots.
+
+        Not reviewed.
+
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::BytecodeGenerator):
+
 2014-01-31  Oliver Hunt  <oliver@apple.com>
 
         Rollout r163195 and related patches

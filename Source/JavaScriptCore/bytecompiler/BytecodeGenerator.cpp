@@ -219,16 +219,6 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionBodyNode* functionBody, Unl
     , m_usesExceptions(false)
     , m_expressionTooDeep(false)
 {
-<<<<<<< Updated upstream
-    if (m_isBuiltinFunction) {
-        m_shouldEmitProfileHooks = false;
-        m_shouldEmitDebugHooks = false;
-    }
-=======
-    if (m_shouldEmitDebugHooks)
-        m_codeBlock->setNeedsFullScopeChain(true);
->>>>>>> Stashed changes
-
     m_symbolTable->setUsesNonStrictEval(codeBlock->usesEval() && !codeBlock->isStrictMode());
     Vector<Identifier> boundParameterProperties;
     FunctionParameters& parameters = *functionBody->parameters();
