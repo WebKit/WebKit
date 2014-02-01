@@ -52,7 +52,7 @@ namespace JSC  {
 
         bool hasActivation() const { return !!uncheckedActivation(); }
         JSActivation* activation() const;
-        inline JSValue uncheckedActivation() const;
+        JSValue uncheckedActivation() const;
 
         // Global object in which execution began.
         JS_EXPORT_PRIVATE JSGlobalObject* vmEntryGlobalObject();
