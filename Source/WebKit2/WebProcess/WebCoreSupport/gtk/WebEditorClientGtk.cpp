@@ -166,7 +166,8 @@ static void collapseSelection(GtkClipboard* clipboard, Frame* frame)
 
     // Collapse the selection without clearing it.
     ASSERT(frame);
-    frame->selection().setBase(frame->selection().extent(), frame->selection().affinity());
+    const VisibleSelection& selection = frame->selection().selection();
+    frame->selection().setBase(selection.extent(), selection.affinity());
 }
 #endif
 

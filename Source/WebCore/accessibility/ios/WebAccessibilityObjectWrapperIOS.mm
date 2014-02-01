@@ -1641,9 +1641,7 @@ static void AXAttributedStringAppendText(NSMutableAttributedString* attrString, 
         return NSMakeRange(NSNotFound, 0);
     
     Document* document = m_object->document();
-    FrameSelection& frameSelection = document->frame()->selection();
-    
-    Element* selectionRoot = frameSelection.rootEditableElement();
+    Element* selectionRoot = document->frame()->selection().selection().rootEditableElement();
     Element* scope = selectionRoot ? selectionRoot : document->documentElement();
     
     // Mouse events may cause TSM to attempt to create an NSRange for a portion of the view
@@ -1679,8 +1677,7 @@ static void AXAttributedStringAppendText(NSMutableAttributedString* attrString, 
     // to use the root editable element of the selection start as the positional base.
     // That fits with AppKit's idea of an input context.
     Document* document = m_object->document();
-    FrameSelection& frameSelection = document->frame()->selection();
-    Element* selectionRoot = frameSelection.rootEditableElement();
+    Element* selectionRoot = document->frame()->selection().selection().rootEditableElement();
     Element* scope = selectionRoot ? selectionRoot : document->documentElement();
     return TextIterator::rangeFromLocationAndLength(scope, nsrange.location, nsrange.length);
 }

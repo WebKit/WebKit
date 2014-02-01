@@ -113,8 +113,10 @@ using WebCore::VisiblePosition;
         frameSelection.modify(FrameSelection::AlterationMove, (SelectionDirection)direction, granularity);
     
     ExceptionCode ignored;
-    range->setStart(frameSelection.start().anchorNode(), frameSelection.start().deprecatedEditingOffset(), ignored);
-    range->setEnd(frameSelection.end().anchorNode(), frameSelection.end().deprecatedEditingOffset(), ignored);
+    Position start = frameSelection.selection().start().parentAnchoredEquivalent();
+    Position end = frameSelection.selection().end().parentAnchoredEquivalent();
+    range->setStart(start.containerNode(), start.offsetInContainerNode(), ignored);
+    range->setEnd(end.containerNode(), end.offsetInContainerNode(), ignored);
 }
 
 - (void)extend:(UInt32)amount inDirection:(WebTextAdjustmentDirection)direction
@@ -127,8 +129,10 @@ using WebCore::VisiblePosition;
         frameSelection.modify(FrameSelection::AlterationExtend, (SelectionDirection)direction, CharacterGranularity);    
     
     ExceptionCode ignored;
-    range->setStart(frameSelection.start().anchorNode(), frameSelection.start().deprecatedEditingOffset(), ignored);
-    range->setEnd(frameSelection.end().anchorNode(), frameSelection.end().deprecatedEditingOffset(), ignored);    
+    Position start = frameSelection.selection().start().parentAnchoredEquivalent();
+    Position end = frameSelection.selection().end().parentAnchoredEquivalent();
+    range->setStart(start.containerNode(), start.offsetInContainerNode(), ignored);
+    range->setEnd(end.containerNode(), end.offsetInContainerNode(), ignored);
 }
 
 - (DOMNode *)firstNode

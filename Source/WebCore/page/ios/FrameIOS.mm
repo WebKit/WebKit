@@ -601,9 +601,10 @@ void Frame::updateLayout() const
 
 NSRect Frame::caretRect() const
 {
-    if (selection().isNone())
+    VisibleSelection visibleSelection = selection().selection();
+    if (visibleSelection.isNone())
         return CGRectZero;
-    return selection().isCaret() ? selection().absoluteCaretBounds() : VisiblePosition(selection().end()).absoluteCaretBounds();
+    return visibleSelection.isCaret() ? selection().absoluteCaretBounds() : VisiblePosition(visibleSelection.end()).absoluteCaretBounds();
 }
 
 NSRect Frame::rectForScrollToVisible() const
@@ -658,7 +659,6 @@ NSRect Frame::rectForSelection(VisibleSelection& selection) const
 
 DOMCSSStyleDeclaration* Frame::styleAtSelectionStart() const
 {
-    Position start = selection().start();
     RefPtr<EditingStyle> editingStyle = EditingStyle::styleAtSelectionStart(selection().selection());
     if (!editingStyle)
         return nullptr;
@@ -737,14 +737,14 @@ void Frame::setRangedSelectionBaseToCurrentSelection()
 
 void Frame::setRangedSelectionBaseToCurrentSelectionStart()
 {
-    FrameSelection& frameSelection = selection();
-    m_rangedSelectionBase = VisibleSelection(frameSelection.selection().start(), frameSelection.affinity());
+    const VisibleSelection& visibleSelection = selection().selection();
+    m_rangedSelectionBase = VisibleSelection(visibleSelection.start(), visibleSelection.affinity());
 }
 
 void Frame::setRangedSelectionBaseToCurrentSelectionEnd()
 {
-    FrameSelection& frameSelection = selection();
-    m_rangedSelectionBase = VisibleSelection(frameSelection.selection().end(), frameSelection.affinity());
+    const VisibleSelection& visibleSelection = selection().selection();
+    m_rangedSelectionBase = VisibleSelection(visibleSelection.end(), visibleSelection.affinity());
 }
 
 VisibleSelection Frame::rangedSelectionBase() const
@@ -759,14 +759,14 @@ void Frame::clearRangedSelectionInitialExtent()
 
 void Frame::setRangedSelectionInitialExtentToCurrentSelectionStart()
 {
-    FrameSelection& frameSelection = selection();
-    m_rangedSelectionInitialExtent = VisibleSelection(frameSelection.selection().start(), frameSelection.affinity());
+    const VisibleSelection& visibleSelection = selection().selection();
+    m_rangedSelectionInitialExtent = VisibleSelection(visibleSelection.start(), visibleSelection.affinity());
 }
 
 void Frame::setRangedSelectionInitialExtentToCurrentSelectionEnd()
 {
-    FrameSelection& frameSelection = selection();
-    m_rangedSelectionInitialExtent = VisibleSelection(frameSelection.selection().end(), frameSelection.affinity());
+    const VisibleSelection& visibleSelection = selection().selection();
+    m_rangedSelectionInitialExtent = VisibleSelection(visibleSelection.end(), visibleSelection.affinity());
 }
 
 VisibleSelection Frame::rangedSelectionInitialExtent() const
@@ -787,7 +787,7 @@ NSArray *Frame::interpretationsForCurrentRoot() const
     if (!document())
         return nil;
 
-    Element* root = selection().selectionType() == VisibleSelection::NoSelection ? document()->body() : selection().rootEditableElement();
+    Element* root = selection().selection().selectionType() == VisibleSelection::NoSelection ? document()->body() : selection().selection().rootEditableElement();
     unsigned rootChildCount = root->childNodeCount();
     RefPtr<Range> rangeOfRootContents = Range::create(*document(), createLegacyEditingPosition(root, 0), createLegacyEditingPosition(root, rootChildCount));
 

@@ -215,8 +215,8 @@ static bool expandSelectionToGranularity(Frame& frame, TextGranularity granulari
         return false;
     if (newRange->collapsed(IGNORE_EXCEPTION))
         return false;
-    RefPtr<Range> oldRange = frame.selection().selection().toNormalizedRange();
-    EAffinity affinity = frame.selection().affinity();
+    RefPtr<Range> oldRange = selection.toNormalizedRange();
+    EAffinity affinity = selection.affinity();
     if (!frame.editor().client()->shouldChangeSelectedRange(oldRange.get(), newRange.get(), affinity, false))
         return false;
     frame.selection().setSelectedRange(newRange.get(), affinity, true);
@@ -1297,7 +1297,8 @@ static bool enabledInEditableTextOrCaretBrowsing(Frame& frame, Event* event, Edi
 
 static bool enabledInRichlyEditableText(Frame& frame, Event*, EditorCommandSource)
 {
-    return frame.selection().isCaretOrRange() && frame.selection().isContentRichlyEditable() && frame.selection().rootEditableElement();
+    const VisibleSelection& selection = frame.selection().selection();
+    return selection.isCaretOrRange() && selection.isContentRichlyEditable() && selection.rootEditableElement();
 }
 
 static bool enabledPaste(Frame& frame, Event*, EditorCommandSource)
@@ -1307,12 +1308,12 @@ static bool enabledPaste(Frame& frame, Event*, EditorCommandSource)
 
 static bool enabledRangeInEditableText(Frame& frame, Event*, EditorCommandSource)
 {
-    return frame.selection().isRange() && frame.selection().isContentEditable();
+    return frame.selection().isRange() && frame.selection().selection().isContentEditable();
 }
 
 static bool enabledRangeInRichlyEditableText(Frame& frame, Event*, EditorCommandSource)
 {
-    return frame.selection().isRange() && frame.selection().isContentRichlyEditable();
+    return frame.selection().isRange() && frame.selection().selection().isContentRichlyEditable();
 }
 
 static bool enabledRedo(Frame& frame, Event*, EditorCommandSource)

@@ -643,16 +643,17 @@ EditorState WebPage::editorState() const
         }
     }
 
-    result.selectionIsNone = frame.selection().isNone();
-    result.selectionIsRange = frame.selection().isRange();
-    result.isContentEditable = frame.selection().isContentEditable();
-    result.isContentRichlyEditable = frame.selection().isContentRichlyEditable();
-    result.isInPasswordField = frame.selection().isInPasswordField();
+    const VisibleSelection& selection = frame.selection().selection();
+
+    result.selectionIsNone = selection.isNone();
+    result.selectionIsRange = selection.isRange();
+    result.isContentEditable = selection.isContentEditable();
+    result.isContentRichlyEditable = selection.isContentRichlyEditable();
+    result.isInPasswordField = selection.isInPasswordField();
     result.hasComposition = frame.editor().hasComposition();
     result.shouldIgnoreCompositionSelectionChange = frame.editor().ignoreCompositionSelectionChange();
 
 #if PLATFORM(IOS)
-    FrameSelection& selection = frame.selection();
     if (frame.editor().hasComposition()) {
         RefPtr<Range> compositionRange = frame.editor().compositionRange();
         Vector<WebCore::SelectionRect> compositionRects;
@@ -666,7 +667,7 @@ EditorState WebPage::editorState() const
         result.markedText = plainText(compositionRange.get());
     }
     if (selection.isCaret()) {
-        result.caretRectAtStart = selection.absoluteCaretBounds();
+        result.caretRectAtStart = frame.selection().absoluteCaretBounds();
         result.caretRectAtEnd = result.caretRectAtStart;
         if (m_shouldReturnWordAtSelection)
             result.wordAtSelection = plainText(wordRangeFromPosition(selection.start()).get());
@@ -3812,7 +3813,7 @@ void WebPage::confirmComposition(const String& compositionString, int64_t select
         return;
     }
 
-    Element* scope = targetFrame->selection().rootEditableElement();
+    Element* scope = targetFrame->selection().selection().rootEditableElement();
     RefPtr<Range> selectionRange = TextIterator::rangeFromLocationAndLength(scope, selectionStart, selectionLength);
     ASSERT_WITH_MESSAGE(selectionRange, "Invalid selection: [%lld:%lld] in text of length %d", static_cast<long long>(selectionStart), static_cast<long long>(selectionLength), scope->innerText().length());
 
@@ -3826,7 +3827,7 @@ void WebPage::confirmComposition(const String& compositionString, int64_t select
 void WebPage::setComposition(const String& text, Vector<CompositionUnderline> underlines, uint64_t selectionStart, uint64_t selectionEnd, uint64_t replacementStart, uint64_t replacementLength)
 {
     Frame* targetFrame = targetFrameForEditing(this);
-    if (!targetFrame || !targetFrame->selection().isContentEditable()) {
+    if (!targetFrame || !targetFrame->selection().selection().isContentEditable()) {
         send(Messages::WebPageProxy::EditorStateChanged(editorState()));
         return;
     }
@@ -3835,7 +3836,7 @@ void WebPage::setComposition(const String& text, Vector<CompositionUnderline> un
         // The layout needs to be uptodate before setting a selection
         targetFrame->document()->updateLayout();
 
-        Element* scope = targetFrame->selection().rootEditableElement();
+        Element* scope = targetFrame->selection().selection().rootEditableElement();
         RefPtr<Range> replacementRange = TextIterator::rangeFromLocationAndLength(scope, replacementStart, replacementLength);
         targetFrame->editor().setIgnoreCompositionSelectionChange(true);
         targetFrame->selection().setSelection(VisibleSelection(replacementRange.get(), SEL_DEFAULT_AFFINITY));

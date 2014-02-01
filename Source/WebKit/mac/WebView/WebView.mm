@@ -7244,7 +7244,7 @@ static NSAppleEventDescriptor* aeDescFromJSValue(ExecState* exec, JSC::JSValue j
     Frame* coreFrame = core([self _selectedOrMainFrame]);
     if (!coreFrame)
         return NSSelectionAffinityDownstream;
-    return kit(coreFrame->selection().affinity());
+    return kit(coreFrame->selection().selection().affinity());
 }
 
 - (void)setEditable:(BOOL)flag

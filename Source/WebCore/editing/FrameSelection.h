@@ -135,12 +135,7 @@ public:
 
     explicit FrameSelection(Frame* = 0);
 
-    Element* rootEditableElement() const { return m_selection.rootEditableElement(); }
     Element* rootEditableElementOrDocumentElement() const;
-
-    bool hasEditableStyle() const { return m_selection.hasEditableStyle(); }
-    bool isContentEditable() const { return m_selection.isContentEditable(); }
-    bool isContentRichlyEditable() const { return m_selection.isContentRichlyEditable(); }
      
     void moveTo(const Range*, EAffinity, EUserTriggered = NotUserTriggered);
     void moveTo(const VisiblePosition&, EUserTriggered = NotUserTriggered, CursorAlignOnScroll = AlignCursorOnScrollIfNeeded);
@@ -157,10 +152,6 @@ public:
 
     bool contains(const LayoutPoint&);
 
-    VisibleSelection::SelectionType selectionType() const { return m_selection.selectionType(); }
-
-    EAffinity affinity() const { return m_selection.affinity(); }
-
     bool modify(EAlteration, SelectionDirection, TextGranularity, EUserTriggered = NotUserTriggered);
     enum VerticalDirection { DirectionUp, DirectionDown };
     bool modify(EAlteration, unsigned verticalDistance, VerticalDirection, EUserTriggered = NotUserTriggered, CursorAlignOnScroll = AlignCursorOnScrollIfNeeded);
@@ -175,9 +166,6 @@ public:
     void setExtent(const VisiblePosition&, EUserTriggered = NotUserTriggered);
     void setExtent(const Position&, EAffinity, EUserTriggered = NotUserTriggered);
 
-    Position base() const { return m_selection.base(); }
-    Position extent() const { return m_selection.extent(); }
-    Position start() const { return m_selection.start(); }
     Position end() const { return m_selection.end(); }
 
     // Return the renderer that is responsible for painting the caret (in the selection start node)
@@ -196,7 +184,6 @@ public:
     bool isCaret() const { return m_selection.isCaret(); }
     bool isRange() const { return m_selection.isRange(); }
     bool isCaretOrRange() const { return m_selection.isCaretOrRange(); }
-    bool isInPasswordField() const;
     bool isAll(EditingBoundaryCrossingRule rule = CannotCrossEditingBoundary) const { return m_selection.isAll(rule); }
     
     PassRefPtr<Range> toNormalizedRange() const { return m_selection.toNormalizedRange(); }
@@ -335,6 +322,7 @@ private:
     LayoutUnit m_xPosForVerticalArrowNavigation;
 
     VisibleSelection m_selection;
+    mutable VisibleSelection m_validatedSelectionCache;
     VisiblePosition m_originalBase; // Used to store base before the adjustment at bidi boundary
     TextGranularity m_granularity;
 

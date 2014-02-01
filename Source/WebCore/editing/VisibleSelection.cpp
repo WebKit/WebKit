@@ -28,6 +28,7 @@
 
 #include "Document.h"
 #include "Element.h"
+#include "HTMLInputElement.h"
 #include "TextIterator.h"
 #include "VisibleUnits.h"
 #include "htmlediting.h"
@@ -664,6 +665,12 @@ Element* VisibleSelection::rootEditableElement() const
 Node* VisibleSelection::nonBoundaryShadowTreeRootNode() const
 {
     return start().deprecatedNode() ? start().deprecatedNode()->nonBoundaryShadowTreeRootNode() : 0;
+}
+
+bool VisibleSelection::isInPasswordField() const
+{
+    HTMLTextFormControlElement* textControl = enclosingTextFormControl(start());
+    return textControl && isHTMLInputElement(textControl) && toHTMLInputElement(textControl)->isPasswordField();
 }
 
 #ifndef NDEBUG

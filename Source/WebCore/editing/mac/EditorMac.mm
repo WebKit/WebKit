@@ -239,7 +239,7 @@ NSDictionary* Editor::fontAttributesForSelectionStart() const
 
 bool Editor::canCopyExcludingStandaloneImages()
 {
-    FrameSelection& selection = m_frame.selection();
+    const VisibleSelection& selection = m_frame.selection().selection();
     return selection.isRange() && !selection.isInPasswordField();
 }
 
@@ -259,7 +259,7 @@ void Editor::takeFindStringFromSelection()
 void Editor::readSelectionFromPasteboard(const String& pasteboardName)
 {
     Pasteboard pasteboard(pasteboardName);
-    if (m_frame.selection().isContentRichlyEditable())
+    if (m_frame.selection().selection().isContentRichlyEditable())
         pasteWithPasteboard(&pasteboard, true);
     else
         pasteAsPlainTextWithPasteboard(pasteboard);

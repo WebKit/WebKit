@@ -1348,7 +1348,7 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
 - (BOOL)hasEditableSelection
 {
     WebCore::Frame *frame = core(self);
-    return frame->selection().isContentEditable();
+    return frame->selection().selection().isContentEditable();
 }
 
 - (int)preferredHeight
@@ -1473,7 +1473,7 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
 - (NSSelectionAffinity)selectionAffinity
 {
     WebCore::Frame *frame = core(self);
-    return (NSSelectionAffinity)(frame->selection().affinity());
+    return (NSSelectionAffinity)(frame->selection().selection().affinity());
 }
 
 - (void)expandSelectionToElementContainingCaretSelection
@@ -1714,8 +1714,9 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
     
     Frame *frame = core(self);
     Document *document = frame->document();
-    
-    Element *root = frame->selection().selectionType() == VisibleSelection::NoSelection ? frame->document()->body() : frame->selection().rootEditableElement();
+
+    const VisibleSelection& selection = frame->selection().selection();
+    Element *root = selection.selectionType() == VisibleSelection::NoSelection ? frame->document()->body() : selection.rootEditableElement();
     
     DOMRange *previousDOMRange = nil;
     id previousMetadata = nil;
@@ -1949,7 +1950,7 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
 
 - (BOOL)hasRichlyEditableSelection
 {
-    return _private->coreFrame->selection().isContentRichlyEditable();
+    return _private->coreFrame->selection().selection().isContentRichlyEditable();
 }
 #endif
 
@@ -2271,11 +2272,12 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
     Frame* coreFrame = _private->coreFrame;
    
     Element* root;
-    if (coreFrame->selection().isNone() || !coreFrame->selection().isContentEditable())
+    const VisibleSelection& selection = coreFrame->selection().selection();
+    if (selection.isNone() || !selection.isContentEditable())
         root = coreFrame->document()->body();
     else {
         // Can't use the focusedNode here because we want the root of the shadow tree for form elements.
-        root = coreFrame->selection().rootEditableElement();
+        root = selection.rootEditableElement();
     }
     // Early return to avoid the expense of creating VisiblePositions.
     // FIXME: We fail to compute a root for SVG, we have a null check here so that we don't crash.

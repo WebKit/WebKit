@@ -281,7 +281,7 @@ bool FocusController::advanceFocusInDocumentOrder(FocusDirection direction, Keyb
     bool caretBrowsing = frame.settings().caretBrowsingEnabled();
 
     if (caretBrowsing && !currentNode)
-        currentNode = frame.selection().start().deprecatedNode();
+        currentNode = frame.selection().selection().start().deprecatedNode();
 
     document->updateLayoutIgnorePendingStylesheets();
 
@@ -553,8 +553,8 @@ static void clearSelectionIfNeeded(Frame* oldFocusedFrame, Frame* newFocusedFram
         
     if (oldFocusedFrame->document() != newFocusedFrame->document())
         return;
-    
-    FrameSelection& selection = oldFocusedFrame->selection();
+
+    const VisibleSelection& selection = oldFocusedFrame->selection().selection();
     if (selection.isNone())
         return;
 
@@ -562,7 +562,7 @@ static void clearSelectionIfNeeded(Frame* oldFocusedFrame, Frame* newFocusedFram
     if (caretBrowsing)
         return;
 
-    Node* selectionStartNode = selection.selection().start().deprecatedNode();
+    Node* selectionStartNode = selection.start().deprecatedNode();
     if (selectionStartNode == newFocusedNode || selectionStartNode->isDescendantOf(newFocusedNode) || selectionStartNode->deprecatedShadowAncestorNode() == newFocusedNode)
         return;
         
@@ -579,8 +579,8 @@ static void clearSelectionIfNeeded(Frame* oldFocusedFrame, Frame* newFocusedFram
             }
         }
     }
-    
-    selection.clear();
+
+    oldFocusedFrame->selection().clear();
 }
 
 bool FocusController::setFocusedElement(Element* element, PassRefPtr<Frame> newFocusedFrame, FocusDirection direction)

@@ -1307,7 +1307,7 @@ static RenderObject* caretRenderer(Node* node)
 
 bool CaretBase::updateCaretRect(Document* document, const VisiblePosition& caretPosition)
 {
-    document->updateStyleIfNeeded();
+    document->updateLayoutIgnorePendingStylesheets();
     m_caretLocalRect = LayoutRect();
 
     m_caretRectNeedsUpdate = false;
@@ -1426,7 +1426,7 @@ bool FrameSelection::recomputeCaretRect()
 
 #if ENABLE(TEXT_CARET)
     if (RenderView* view = m_frame->document()->renderView()) {
-        bool previousOrNewCaretNodeIsContentEditable = isContentEditable() || (m_previousCaretNode && m_previousCaretNode->isContentEditable());
+        bool previousOrNewCaretNodeIsContentEditable = m_selection.isContentEditable() || (m_previousCaretNode && m_previousCaretNode->isContentEditable());
         if (shouldRepaintCaret(view, previousOrNewCaretNodeIsContentEditable)) {
             if (m_previousCaretNode)
                 repaintCaretForLocalRect(m_previousCaretNode.get(), oldRect);
@@ -1675,7 +1675,7 @@ void FrameSelection::selectAll()
 
     RefPtr<Node> root = 0;
     Node* selectStartTarget = 0;
-    if (isContentEditable()) {
+    if (m_selection.isContentEditable()) {
         root = highestEditableRoot(m_selection.start());
         if (Node* shadowRoot = m_selection.nonBoundaryShadowTreeRootNode())
             selectStartTarget = shadowRoot->shadowHost();
@@ -1731,12 +1731,6 @@ bool FrameSelection::setSelectedRange(Range* range, EAffinity affinity, bool clo
 #endif
     setSelection(VisibleSelection(visibleStart, visibleEnd), ClearTypingStyle | (closeTyping ? CloseTyping : 0));
     return true;
-}
-
-bool FrameSelection::isInPasswordField() const
-{
-    HTMLTextFormControlElement* textControl = enclosingTextFormControl(start());
-    return textControl && isHTMLInputElement(textControl) && toHTMLInputElement(textControl)->isPasswordField();
 }
 
 void FrameSelection::focusedOrActiveStateChanged()
@@ -1813,8 +1807,9 @@ void FrameSelection::updateAppearance()
 
     // Paint a block cursor instead of a caret in overtype mode unless the caret is at the end of a line (in this case
     // the FrameSelection will paint a blinking caret as usual).
+    VisibleSelection oldSelection = selection();
     VisiblePosition forwardPosition;
-    if (m_shouldShowBlockCursor && m_selection.isCaret()) {
+    if (m_shouldShowBlockCursor && oldSelection.isCaret()) {
         forwardPosition = modifyExtendingForward(CharacterGranularity);
         m_caretPaint = forwardPosition.isNull();
     }
@@ -1823,7 +1818,7 @@ void FrameSelection::updateAppearance()
     bool caretRectChangedOrCleared = recomputeCaretRect();
 
     bool caretBrowsing = m_frame->settings().caretBrowsingEnabled();
-    bool shouldBlink = caretIsVisible() && isCaret() && (isContentEditable() || caretBrowsing) && forwardPosition.isNull();
+    bool shouldBlink = caretIsVisible() && isCaret() && (oldSelection.isContentEditable() || caretBrowsing) && forwardPosition.isNull();
 
     // If the caret moved, stop the blink timer so we can restart with a
     // black caret in the new location.
@@ -1849,7 +1844,7 @@ void FrameSelection::updateAppearance()
 
     // Construct a new VisibleSolution, since m_selection is not necessarily valid, and the following steps
     // assume a valid selection. See <https://bugs.webkit.org/show_bug.cgi?id=69563> and <rdar://problem/10232866>.
-    VisibleSelection selection(m_selection.visibleStart(), forwardPosition.isNotNull() ? forwardPosition : m_selection.visibleEnd());
+    VisibleSelection selection(oldSelection.visibleStart(), forwardPosition.isNotNull() ? forwardPosition : oldSelection.visibleEnd());
 
     if (!selection.isRange()) {
         view->clearSelection();
@@ -1912,7 +1907,7 @@ void FrameSelection::caretBlinkTimerFired(Timer<FrameSelection>&)
 
 void FrameSelection::updateSelectionCachesIfSelectionIsInsideTextFormControl(EUserTriggered userTriggered)
 {
-    if (HTMLTextFormControlElement* textControl = enclosingTextFormControl(start()))
+    if (HTMLTextFormControlElement* textControl = enclosingTextFormControl(m_selection.start()))
         textControl->selectionChanged(userTriggered == UserTriggered);
 }
 
@@ -1936,13 +1931,13 @@ void FrameSelection::setFocusedElementIfNeeded()
 
     bool caretBrowsing = m_frame->settings().caretBrowsingEnabled();
     if (caretBrowsing) {
-        if (Element* anchor = enclosingAnchorElement(base())) {
+        if (Element* anchor = enclosingAnchorElement(m_selection.base())) {
             m_frame->page()->focusController().setFocusedElement(anchor, m_frame);
             return;
         }
     }
 
-    if (Element* target = rootEditableElement()) {
+    if (Element* target = m_selection.rootEditableElement()) {
         // Walk up the DOM tree to search for an element to focus.
         while (target) {
             // We don't want to set focus on a subframe when selecting in a parent frame,
@@ -2054,7 +2049,7 @@ HTMLFormElement* FrameSelection::currentForm() const
     // Start looking either at the active (first responder) node, or where the selection is.
     Element* start = m_frame->document()->focusedElement();
     if (!start)
-        start = this->start().element();
+        start = m_selection.start().element();
     if (!start)
         return nullptr;
 
@@ -2071,18 +2066,18 @@ void FrameSelection::revealSelection(const ScrollAlignment& alignment, RevealExt
 {
     LayoutRect rect;
 
-    switch (selectionType()) {
+    switch (m_selection.selectionType()) {
     case VisibleSelection::NoSelection:
         return;
     case VisibleSelection::CaretSelection:
         rect = absoluteCaretBounds();
         break;
     case VisibleSelection::RangeSelection:
-        rect = revealExtentOption == RevealExtent ? VisiblePosition(extent()).absoluteCaretBounds() : enclosingIntRect(bounds(false));
+        rect = revealExtentOption == RevealExtent ? VisiblePosition(m_selection.extent()).absoluteCaretBounds() : enclosingIntRect(bounds(false));
         break;
     }
 
-    Position start = this->start();
+    Position start = m_selection.start();
     ASSERT(start.deprecatedNode());
     if (start.deprecatedNode() && start.deprecatedNode()->renderer()) {
 #if PLATFORM(IOS)
@@ -2117,7 +2112,7 @@ void FrameSelection::setSelectionFromNone()
     if (!isNone() || !(document->hasEditableStyle() || caretBrowsing))
         return;
 #else
-    if (!document || !(isNone() || isStartOfDocument(VisiblePosition(selection().start(), selection().affinity()))) || !document->hasEditableStyle())
+    if (!document || !(isNone() || isStartOfDocument(VisiblePosition(m_selection.start(), m_selection.affinity()))) || !document->hasEditableStyle())
         return;
 #endif
 

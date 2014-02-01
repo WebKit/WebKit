@@ -341,15 +341,15 @@ void ContextMenuController::contextMenuItemSelected(ContextMenuItem* item)
         break;
 #endif
     case ContextMenuItemTagSpellingGuess: {
-        FrameSelection& frameSelection = frame->selection();
-        if (frame->editor().shouldInsertText(item->title(), frameSelection.toNormalizedRange().get(), EditorInsertActionPasted)) {
+        VisibleSelection selection = frame->selection().selection();
+        if (frame->editor().shouldInsertText(item->title(), selection.toNormalizedRange().get(), EditorInsertActionPasted)) {
             ReplaceSelectionCommand::CommandOptions replaceOptions = ReplaceSelectionCommand::MatchStyle | ReplaceSelectionCommand::PreventNesting;
 
             if (frame->editor().behavior().shouldAllowSpellingSuggestionsWithoutSelection()) {
-                ASSERT(frameSelection.isCaretOrRange());
-                VisibleSelection wordSelection(frameSelection.base());
+                ASSERT(selection.isCaretOrRange());
+                VisibleSelection wordSelection(selection.base());
                 wordSelection.expandUsingGranularity(WordGranularity);
-                frameSelection.setSelection(wordSelection);
+                frame->selection().setSelection(wordSelection);
             } else {
                 ASSERT(frame->editor().selectedText().length());
                 replaceOptions |= ReplaceSelectionCommand::SelectReplacement;
@@ -359,7 +359,7 @@ void ContextMenuController::contextMenuItemSelected(ContextMenuItem* item)
             ASSERT(document);
             RefPtr<ReplaceSelectionCommand> command = ReplaceSelectionCommand::create(*document, createFragmentFromMarkup(*document, item->title(), ""), replaceOptions);
             applyCommand(command);
-            frameSelection.revealSelection(ScrollAlignment::alignToEdgeIfNeeded);
+            frame->selection().revealSelection(ScrollAlignment::alignToEdgeIfNeeded);
         }
         break;
     }
@@ -921,7 +921,7 @@ void ContextMenuController::populate()
             }
         }
     } else { // Make an editing context menu
-        bool inPasswordField = frame->selection().isInPasswordField();
+        bool inPasswordField = frame->selection().selection().isInPasswordField();
         if (!inPasswordField) {
             bool haveContextMenuItemsForMisspellingOrGrammer = false;
             bool spellCheckingEnabled = frame->editor().isSpellCheckingEnabledFor(node);

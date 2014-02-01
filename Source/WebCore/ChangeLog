@@ -1,3 +1,106 @@
+2014-01-31  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Remove inline member functions of FrameSelection that access m_selection
+        https://bugs.webkit.org/show_bug.cgi?id=127986
+
+        Reviewed by Enrica Casucci.
+
+        Removed numerous inline member functions of FrameSelection that depend on m_selection.
+
+        This is needed to ensure all accesses to m_selection happen through FrameSelection::selection(),
+        which in turn, allows us to update its call sites to use either validated selection that editing
+        and rendering code uses or invalidated selection that's exposed to JavaScript.
+
+        * WebCore.exp.in:
+        * accessibility/ios/WebAccessibilityObjectWrapperIOS.mm:
+        (-[WebAccessibilityObjectWrapper _convertToNSRange:]):
+        (-[WebAccessibilityObjectWrapper _convertToDOMRange:]):
+        * bindings/objc/DOMUIKitExtensions.mm:
+        (-[DOMRange move:inDirection:]):
+        (-[DOMRange extend:inDirection:]):
+        * dom/Element.cpp:
+        (WebCore::Element::updateFocusAppearance):
+        * editing/Editor.cpp:
+        (WebCore::Editor::canEdit):
+        (WebCore::Editor::canEditRichly):
+        (WebCore::Editor::canDHTMLCut):
+        (WebCore::Editor::canDHTMLCopy):
+        (WebCore::Editor::canCopy):
+        (WebCore::Editor::canDelete):
+        (WebCore::Editor::replaceSelectionWithFragment):
+        (WebCore::Editor::tryDHTMLCopy):
+        (WebCore::Editor::tryDHTMLCut):
+        (WebCore::Editor::applyStyle):
+        (WebCore::Editor::applyParagraphStyle):
+        (WebCore::Editor::cut):
+        (WebCore::Editor::copy):
+        (WebCore::Editor::paste):
+        (WebCore::Editor::setComposition):
+        (WebCore::Editor::guessesForMisspelledOrUngrammatical):
+        (WebCore::Editor::markMisspellingsAfterTypingToWord):
+        (WebCore::Editor::isSpellCheckingEnabledInFocusedNode):
+        (WebCore::Editor::markAndReplaceFor):
+        (WebCore::Editor::getCompositionSelection):
+        (WebCore::Editor::selectionStartHasMarkerFor):
+        * editing/EditorCommand.cpp:
+        (WebCore::expandSelectionToGranularity):
+        (WebCore::enabledInRichlyEditableText):
+        (WebCore::enabledRangeInEditableText):
+        (WebCore::enabledRangeInRichlyEditableText):
+        * editing/FrameSelection.cpp:
+        (WebCore::CaretBase::updateCaretRect):
+        (WebCore::FrameSelection::recomputeCaretRect):
+        (WebCore::FrameSelection::selectAll):
+        (WebCore::FrameSelection::updateAppearance):
+        (WebCore::FrameSelection::updateSelectionCachesIfSelectionIsInsideTextFormControl):
+        (WebCore::FrameSelection::setFocusedElementIfNeeded):
+        (WebCore::FrameSelection::currentForm):
+        (WebCore::FrameSelection::revealSelection):
+        (WebCore::FrameSelection::setSelectionFromNone):
+        * editing/FrameSelection.h:
+        (WebCore::FrameSelection::isCaretOrRange):
+        * editing/RemoveFormatCommand.cpp:
+        (WebCore::RemoveFormatCommand::doApply):
+        * editing/VisibleSelection.cpp:
+        (WebCore::VisibleSelection::isInPasswordField):
+        * editing/VisibleSelection.h:
+        * editing/mac/EditorMac.mm:
+        (WebCore::Editor::canCopyExcludingStandaloneImages):
+        (WebCore::Editor::readSelectionFromPasteboard):
+        * html/HTMLAnchorElement.cpp:
+        (WebCore::HTMLAnchorElement::defaultEventHandler):
+        (WebCore::HTMLAnchorElement::setActive):
+        * html/HTMLTextFormControlElement.cpp:
+        (WebCore::HTMLTextFormControlElement::computeSelectionStart):
+        (WebCore::HTMLTextFormControlElement::computeSelectionEnd):
+        * page/ContextMenuController.cpp:
+        (WebCore::ContextMenuController::contextMenuItemSelected):
+        (WebCore::ContextMenuController::populate):
+        * page/DragController.cpp:
+        (WebCore::DragController::dragIsMove):
+        (WebCore::setSelectionToDragCaret):
+        (WebCore::DragController::concludeEditDrag):
+        (WebCore::DragController::startDrag):
+        * page/EventHandler.cpp:
+        (WebCore::nodeIsNotBeingEdited):
+        (WebCore::EventHandler::sendContextMenuEvent):
+        (WebCore::EventHandler::sendContextMenuEventForKey):
+        (WebCore::EventHandler::handleDrag):
+        * page/FocusController.cpp:
+        (WebCore::FocusController::advanceFocusInDocumentOrder):
+        (WebCore::clearSelectionIfNeeded):
+        * page/ios/FrameIOS.mm:
+        (WebCore::Frame::caretRect):
+        (WebCore::Frame::rectForScrollToVisible):
+        (WebCore::Frame::styleAtSelectionStart):
+        (WebCore::Frame::setRangedSelectionBaseToCurrentSelectionStart):
+        (WebCore::Frame::setRangedSelectionBaseToCurrentSelectionEnd):
+        (WebCore::Frame::setRangedSelectionInitialExtentToCurrentSelectionStart):
+        (WebCore::Frame::setRangedSelectionInitialExtentToCurrentSelectionEnd):
+        (WebCore::Frame::interpretationsForCurrentRoot):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::paintCaret):
+
 2014-01-31  Simon Fraser  <simon.fraser@apple.com>
 
         Pass the viewport rect and scroll origin independently into the scrolling tree, and make things floats

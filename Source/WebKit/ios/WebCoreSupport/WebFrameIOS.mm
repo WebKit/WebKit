@@ -194,13 +194,13 @@ using namespace WebCore;
 {
     if ([self selectionState] == WebTextSelectionStateRange) {
         Frame *frame = [self coreFrame];
-        FrameSelection& frameSelection = frame->selection();
+        const VisibleSelection& originalSelection = frame->selection().selection();
         if (start) {
-            VisiblePosition start = startOfWord(frameSelection.start());
-            frameSelection.moveTo(start, frameSelection.end());
+            VisiblePosition start = startOfWord(originalSelection.start());
+            frame->selection().moveTo(start, originalSelection.end());
         } else {
-            VisiblePosition end = endOfWord(frameSelection.end());
-            frameSelection.moveTo(frameSelection.start(), end);
+            VisiblePosition end = endOfWord(originalSelection.end());
+            frame->selection().moveTo(originalSelection.start(), end);
         }
     }    
 }
@@ -475,41 +475,36 @@ using namespace WebCore;
     // longer contains these points. This is the desirable behavior when the
     // user does the tap-and-a-half + drag operation.
     Frame *frame = [self coreFrame];
-    FrameSelection& frameSelection = frame->selection();
+    const VisibleSelection& originalSelection = frame->selection().selection();
     Position ensureStart([self visiblePositionForPoint:initialStartPoint].deepEquivalent());
     Position ensureEnd([self visiblePositionForPoint:initialEndPoint].deepEquivalent());
-    if (frameSelection.start() > ensureStart) {
-        frameSelection.moveTo(ensureStart, frameSelection.end());
-    }
-    else if (frameSelection.end() < ensureEnd) {
-        frameSelection.moveTo(frameSelection.start(), ensureEnd);
-    }
+    if (originalSelection.start() > ensureStart)
+        frame->selection().moveTo(ensureStart, originalSelection.end());
+    else if (originalSelection.end() < ensureEnd)
+        frame->selection().moveTo(originalSelection.start(), ensureEnd);
 }
 
 - (void)aggressivelyExpandSelectionToWordContainingCaretSelection
 {
     Frame *frame = [self coreFrame];
     FrameSelection& frameSelection = frame->selection();
-    VisiblePosition end(frameSelection.end());
-    if (end == endOfDocument(end) && end != startOfDocument(end) && end == startOfLine(end)) {
+    VisiblePosition end = frameSelection.selection().visibleEnd();
+    if (end == endOfDocument(end) && end != startOfDocument(end) && end == startOfLine(end))
         frameSelection.moveTo(end.previous(), end);
-    }
 
     [self expandSelectionToWordContainingCaretSelection];
 
     // This is a temporary hack until we get the improvements
     // I'm working on for RTL selection.
-    if (frameSelection.granularity() == WordGranularity) {
-        frameSelection.moveTo(frameSelection.start(), frameSelection.end());
-    }
+    if (frameSelection.granularity() == WordGranularity)
+        frameSelection.moveTo(frameSelection.selection().start(), frameSelection.selection().end());
     
-    if (frameSelection.isCaret()) {
+    if (frameSelection.selection().isCaret()) {
         VisiblePosition pos(frameSelection.end());
         if (isStartOfLine(pos) && isEndOfLine(pos)) {
             VisiblePosition next(pos.next());
-            if (next.isNotNull()) {
+            if (next.isNotNull())
                 frameSelection.moveTo(end, next);
-            }
         }
         else {
             while (pos.isNotNull()) {
@@ -528,10 +523,10 @@ using namespace WebCore;
 {
     Frame *frame = [self coreFrame];
     FrameSelection& frameSelection = frame->selection();
-    VisiblePosition pos = frameSelection.start();
+    VisiblePosition pos = frameSelection.selection().start();
     VisiblePosition start = startOfSentence(pos);
     VisiblePosition end = endOfSentence(pos);
-    frameSelection.moveTo(start, end);    
+    frameSelection.moveTo(start, end);
 }
 
 - (WKWritingDirection)selectionBaseWritingDirection
@@ -575,7 +570,7 @@ using namespace WebCore;
     WKWritingDirection originalDirection = [self selectionBaseWritingDirection];
 
     Frame *frame = [self coreFrame];
-    if (!frame->selection().isContentEditable())
+    if (!frame->selection().selection().isContentEditable())
         return;
     
     WritingDirection wcDirection = LeftToRightWritingDirection;
@@ -773,8 +768,8 @@ static VisiblePosition SimpleSmartExtendEnd(const VisiblePosition& start, const 
     Frame *frame = [self coreFrame];
     FrameSelection& frameSelection = frame->selection();
     EAffinity affinity = frameSelection.selection().affinity();
-    VisiblePosition start(frameSelection.start(), affinity);
-    VisiblePosition end(frameSelection.end(), affinity);
+    VisiblePosition start(frameSelection.selection().start(), affinity);
+    VisiblePosition end(frameSelection.selection().end(), affinity);
     VisiblePosition base(frame->rangedSelectionBase().base());  // should equal start or end
 
     // Base must equal start or end

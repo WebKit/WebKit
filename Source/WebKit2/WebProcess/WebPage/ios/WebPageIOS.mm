@@ -96,7 +96,7 @@ void WebPage::setComposition(const String& text, Vector<WebCore::CompositionUnde
 {
     Frame& frame = m_page->focusController().focusedOrMainFrame();
 
-    if (frame.selection().isContentEditable())
+    if (frame.selection().selection().isContentEditable())
         frame.editor().setComposition(text, underlines, selectionStart, selectionEnd);
 }
 
@@ -590,7 +590,7 @@ void WebPage::updateSelectionWithTouches(const IntPoint& point, uint32_t touches
             break;
         
         case WKSelectionTouchEnded:
-            if (frame.selection().isContentEditable()) {
+            if (frame.selection().selection().isContentEditable()) {
                 result = closestWordBoundaryForPosition(position);
                 if (result.isNotNull())
                     range = Range::create(*frame.document(), result, result);

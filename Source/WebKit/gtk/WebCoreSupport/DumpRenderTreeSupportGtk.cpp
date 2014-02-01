@@ -67,6 +67,7 @@
 #include "SecurityPolicy.h"
 #include "Settings.h"
 #include "TextIterator.h"
+#include "VisibleSelection.h"
 #include "WebKitAccessibleWrapperAtk.h"
 #include "webkitglobalsprivate.h"
 #include "webkitwebframe.h"
@@ -389,11 +390,12 @@ bool DumpRenderTreeSupportGtk::selectedRange(WebKitWebView* webView, int* start,
 
     Frame& frame = core(webView)->focusController().focusedOrMainFrame();
 
-    RefPtr<Range> range = frame.selection().toNormalizedRange().get();
+    const VisibleSelection& selection = frame.selection().selection();
+    RefPtr<Range> range = selection.toNormalizedRange().get();
     if (!range)
         return false;
 
-    Element* selectionRoot = frame.selection().rootEditableElement();
+    Element* selectionRoot = selection.rootEditableElement();
     Element* scope = selectionRoot ? selectionRoot : frame.document()->documentElement();
 
     RefPtr<Range> testRange = Range::create(scope->document(), scope, 0, range->startContainer(), range->startOffset());

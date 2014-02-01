@@ -1223,7 +1223,7 @@ static bool isSubmitImage(Node* node)
 // Returns true if the node's editable block is not current focused for editing
 static bool nodeIsNotBeingEdited(const Node& node, const Frame& frame)
 {
-    return frame.selection().rootEditableElement() != node.rootEditableElement();
+    return frame.selection().selection().rootEditableElement() != node.rootEditableElement();
 }
 
 bool EventHandler::useHandCursor(Node* node, bool isOverLink, bool shiftKey)
@@ -2606,7 +2606,7 @@ bool EventHandler::sendContextMenuEvent(const PlatformMouseEvent& event)
         // FIXME: In the editable case, word selection sometimes selects content that isn't underneath the mouse.
         // If the selection is non-editable, we do word selection to make it easier to use the contextual menu items
         // available for text selections.  But only if we're above text.
-        && (m_frame.selection().isContentEditable() || (mev.targetNode() && mev.targetNode()->isTextNode()))) {
+        && (m_frame.selection().selection().isContentEditable() || (mev.targetNode() && mev.targetNode()->isTextNode()))) {
         m_mouseDownMayStartSelect = true; // context menu events are always allowed to perform a selection
         selectClosestWordOrLinkFromMouseEvent(mev);
     }
@@ -2639,8 +2639,8 @@ bool EventHandler::sendContextMenuEventForKey()
     IntPoint location;
 
     Element* focusedElement = doc->focusedElement();
-    FrameSelection& selection = m_frame.selection();
-    Position start = selection.selection().start();
+    const VisibleSelection& selection = m_frame.selection().selection();
+    Position start = selection.start();
 
     if (start.deprecatedNode() && (selection.rootEditableElement() || selection.isRange())) {
         RefPtr<Range> selectionRange = selection.toNormalizedRange();
@@ -3239,7 +3239,7 @@ bool EventHandler::handleDrag(const MouseEventWithHitTestResults& event, CheckDr
         } 
         
         m_mouseDownMayStartDrag = dispatchDragSrcEvent(eventNames().dragstartEvent, m_mouseDown)
-            && !m_frame.selection().isInPasswordField();
+            && !m_frame.selection().selection().isInPasswordField();
         
         // Invalidate clipboard here against anymore pasteboard writing for security.  The drag
         // image can still be changed as we drag, but not the pasteboard data.

@@ -1001,7 +1001,7 @@ static NSURL* uniqueURLWithRelativePart(NSString *relativePart)
     Frame* coreFrame = core([self _frame]); 
     if (!coreFrame) 
         return NO; 
-    if (coreFrame->selection().isContentRichlyEditable())
+    if (coreFrame->selection().selection().isContentRichlyEditable())
         [self _pasteWithPasteboard:pasteboard allowPlainText:YES]; 
     else 
         [self _pasteAsPlainTextWithPasteboard:pasteboard]; 
@@ -1986,25 +1986,25 @@ static bool mouseEventIsPartOfClickOrDrag(NSEvent *event)
 - (BOOL)_hasSelection
 {
     Frame* coreFrame = core([self _frame]);
-    return coreFrame && coreFrame->selection().isRange();
+    return coreFrame && coreFrame->selection().selection().isRange();
 }
 
 - (BOOL)_hasSelectionOrInsertionPoint
 {
     Frame* coreFrame = core([self _frame]);
-    return coreFrame && coreFrame->selection().isCaretOrRange();
+    return coreFrame && coreFrame->selection().selection().isCaretOrRange();
 }
 
 - (BOOL)_hasInsertionPoint
 {
     Frame* coreFrame = core([self _frame]);
-    return coreFrame && coreFrame->selection().isCaret();
+    return coreFrame && coreFrame->selection().selection().isCaret();
 }
 
 - (BOOL)_isEditable
 {
     Frame* coreFrame = core([self _frame]);
-    return coreFrame && coreFrame->selection().isContentEditable();
+    return coreFrame && coreFrame->selection().selection().isContentEditable();
 }
 
 - (BOOL)_transparentBackground
@@ -2899,7 +2899,7 @@ WEBCORE_COMMAND(toggleUnderline)
     
     if (action == @selector(pasteAsRichText:))
         return frame && (frame->editor().canDHTMLPaste()
-            || (frame->editor().canPaste() && frame->selection().isContentRichlyEditable()));
+            || (frame->editor().canPaste() && frame->selection().selection().isContentRichlyEditable()));
     
     if (action == @selector(performFindPanelAction:))
         return NO;
@@ -3026,7 +3026,7 @@ WEBCORE_COMMAND(toggleUnderline)
         return YES;
     
     Frame* coreFrame = core([self _frame]);
-    return coreFrame && coreFrame->selection().isContentEditable();
+    return coreFrame && coreFrame->selection().selection().isContentEditable();
 #else
     // This method helps to determine whether the WebHTMLView should maintain
     // an inactive selection when it's not first responder.
@@ -3057,7 +3057,7 @@ WEBCORE_COMMAND(toggleUnderline)
         return YES;
 
     Frame* coreFrame = core([self _frame]);
-    bool selectionIsEditable = coreFrame && coreFrame->selection().isContentEditable();
+    bool selectionIsEditable = coreFrame && coreFrame->selection().selection().isContentEditable();
     bool nextResponderIsInWebView = [nextResponder isKindOfClass:[NSView class]]
         && [nextResponder isDescendantOf:[[[self _webView] mainFrame] frameView]];
 
@@ -4137,13 +4137,16 @@ static bool matchesExtensionOrEquivalent(NSString *filename, NSString *extension
 // API when an editable region is not currently focused.
 static BOOL isTextInput(Frame* coreFrame)
 {
-    return coreFrame && !coreFrame->selection().isNone() && coreFrame->selection().isContentEditable();
+    if (!coreFrame)
+        return NO;
+    const VisibleSelection& selection = coreFrame->selection().selection();
+    return !selection.isNone() && selection.isContentEditable();
 }
 
 #if !PLATFORM(IOS)
 static BOOL isInPasswordField(Frame* coreFrame)
 {
-    return coreFrame && coreFrame->selection().isInPasswordField();
+    return coreFrame && coreFrame->selection().selection().isInPasswordField();
 }
 #endif
 

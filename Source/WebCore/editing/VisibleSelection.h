@@ -105,6 +105,8 @@ public:
     // ShadowRoot node for new shadow trees, or 0 for non-shadow trees.
     Node* nonBoundaryShadowTreeRootNode() const;
 
+    bool isInPasswordField() const;
+
 #ifndef NDEBUG
     void debugPosition() const;
     void formatForDebugger(char* buffer, unsigned length) const;

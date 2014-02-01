@@ -1,3 +1,15 @@
+2014-01-31  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Remove inline member functions of FrameSelection that access m_selection
+        https://bugs.webkit.org/show_bug.cgi?id=127986
+
+        Reviewed by Enrica Casucci.
+
+        * WebCoreSupport/DumpRenderTreeSupportGtk.cpp:
+        (DumpRenderTreeSupportGtk::selectedRange):
+        * WebCoreSupport/EditorClientGtk.cpp:
+        (WebKit::collapseSelection):
+
 2014-01-30  Andrei Bucur  <abucur@adobe.com>
 
         Remove the ACCELERATED_COMPOSITING flag

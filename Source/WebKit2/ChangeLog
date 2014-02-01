@@ -1,3 +1,23 @@
+2014-01-31  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Remove inline member functions of FrameSelection that access m_selection
+        https://bugs.webkit.org/show_bug.cgi?id=127986
+
+        Reviewed by Enrica Casucci.
+
+        * WebProcess/WebCoreSupport/gtk/WebEditorClientGtk.cpp:
+        (WebKit::collapseSelection):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::editorState):
+        (WebKit::WebPage::confirmComposition):
+        (WebKit::WebPage::setComposition):
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::setComposition):
+        (WebKit::WebPage::updateSelectionWithTouches):
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        (WebKit::WebPage::setComposition):
+        (WebKit::WebPage::getAttributedSubstringFromRange):
+
 2014-01-31  Simon Fraser  <simon.fraser@apple.com>
 
         Pass the viewport rect and scroll origin independently into the scrolling tree, and make things floats

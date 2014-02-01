@@ -1,3 +1,29 @@
+2014-01-31  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Remove inline member functions of FrameSelection that access m_selection
+        https://bugs.webkit.org/show_bug.cgi?id=127986
+
+        Reviewed by Enrica Casucci.
+
+        * WebView/WebFrame.mm:
+        (-[WebFrame hasEditableSelection]):
+        (-[WebFrame selectionAffinity]):
+        (-[WebFrame getDictationResultRanges:andMetadatas:]):
+        (-[WebFrame hasRichlyEditableSelection]):
+        (-[WebFrame focusedNodeHasContent]):
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView readSelectionFromPasteboard:]):
+        (-[WebHTMLView _hasSelection]):
+        (-[WebHTMLView _hasSelectionOrInsertionPoint]):
+        (-[WebHTMLView _hasInsertionPoint]):
+        (-[WebHTMLView _isEditable]):
+        (-[WebHTMLView validateUserInterfaceItemWithoutDelegate:]):
+        (-[WebHTMLView maintainsInactiveSelection]):
+        (isTextInput):
+        (isInPasswordField):
+        * WebView/WebView.mm:
+        (-[WebView selectionAffinity]):
+
 2014-01-31  Tim Horton  <timothy_horton@apple.com>
 
         [wk2] PlatformCALayerRemoteCustom doesn't work on iOS

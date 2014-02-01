@@ -260,7 +260,7 @@ void WebPage::setComposition(const String& text, Vector<CompositionUnderline> un
 {
     Frame& frame = m_page->focusController().focusedOrMainFrame();
 
-    if (frame.selection().isContentEditable()) {
+    if (frame.selection().selection().isContentEditable()) {
         RefPtr<Range> replacementRange;
         if (replacementRangeStart != NSNotFound) {
             replacementRange = convertToRange(&frame, NSMakeRange(replacementRangeStart, replacementRangeEnd - replacementRangeStart));
@@ -360,7 +360,8 @@ void WebPage::getAttributedSubstringFromRange(uint64_t location, uint64_t length
 {
     Frame& frame = m_page->focusController().focusedOrMainFrame();
 
-    if (frame.selection().isNone() || !frame.selection().isContentEditable() || frame.selection().isInPasswordField())
+    const VisibleSelection& selection = frame.selection().selection();
+    if (selection.isNone() || !selection.isContentEditable() || selection.isInPasswordField())
         return;
 
     NSRange nsRange = NSMakeRange(location, length - location);

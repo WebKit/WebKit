@@ -158,7 +158,8 @@ static PassRefPtr<DocumentFragment> documentFragmentFromDragData(DragData& dragD
 
 bool DragController::dragIsMove(FrameSelection& selection, DragData& dragData)
 {
-    return m_documentUnderMouse == m_dragInitiator && selection.isContentEditable() && selection.isRange() && !isCopyKeyDown(dragData);
+    const VisibleSelection& visibleSelection = selection.selection();
+    return m_documentUnderMouse == m_dragInitiator && visibleSelection.isContentEditable() && visibleSelection.isRange() && !isCopyKeyDown(dragData);
 }
 
 // FIXME: This method is poorly named.  We're just clearing the selection from the document this drag is exiting.
@@ -413,12 +414,12 @@ DragOperation DragController::operationForLoad(DragData& dragData)
 static bool setSelectionToDragCaret(Frame* frame, VisibleSelection& dragCaret, RefPtr<Range>& range, const IntPoint& point)
 {
     frame->selection().setSelection(dragCaret);
-    if (frame->selection().isNone()) {
+    if (frame->selection().selection().isNone()) {
         dragCaret = frame->visiblePositionForPoint(point);
         frame->selection().setSelection(dragCaret);
         range = dragCaret.toNormalizedRange();
     }
-    return !frame->selection().isNone() && frame->selection().isContentEditable();
+    return !frame->selection().isNone() && frame->selection().selection().isContentEditable();
 }
 
 bool DragController::dispatchTextInputEventFor(Frame* innerFrame, DragData& dragData)
@@ -482,7 +483,7 @@ bool DragController::concludeEditDrag(DragData& dragData)
     VisibleSelection dragCaret = m_page.dragCaretController().caretPosition();
     m_page.dragCaretController().clear();
     RefPtr<Range> range = dragCaret.toNormalizedRange();
-    RefPtr<Element> rootEditableElement = innerFrame->selection().rootEditableElement();
+    RefPtr<Element> rootEditableElement = innerFrame->selection().selection().rootEditableElement();
 
     // For range to be null a WebKit client must have done something bad while
     // manually controlling drag behaviour
@@ -765,7 +766,7 @@ bool DragController::startDrag(Frame& src, const DragState& state, DragOperation
 
             src.editor().willWriteSelectionToPasteboard(selectionRange.get());
 
-            if (enclosingTextFormControl(src.selection().start()))
+            if (enclosingTextFormControl(src.selection().selection().start()))
                 clipboard.pasteboard().writePlainText(src.editor().selectedTextForClipboard(), Pasteboard::CannotSmartReplace);
             else {
 #if PLATFORM(MAC) || PLATFORM(EFL)
@@ -812,11 +813,12 @@ bool DragController::startDrag(Frame& src, const DragState& state, DragOperation
             // on the web page. This includes replacing newlines with spaces.
             src.editor().copyURL(linkURL, hitTestResult.textContent().simplifyWhiteSpace(), clipboard.pasteboard());
 
-        if (src.selection().isCaret() && src.selection().isContentEditable()) {
+        const VisibleSelection& sourceSelection = src.selection().selection();
+        if (sourceSelection.isCaret() && sourceSelection.isContentEditable()) {
             // a user can initiate a drag on a link without having any text
             // selected.  In this case, we should expand the selection to
             // the enclosing anchor element
-            Position pos = src.selection().base();
+            Position pos = sourceSelection.base();
             Node* node = enclosingAnchorElement(pos);
             if (node)
                 src.selection().setSelection(VisibleSelection::selectionFromContentsOfNode(node));
