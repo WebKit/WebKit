@@ -3087,7 +3087,9 @@ __ZN7WebCore26MockMediaPlayerMediaSource19registerMediaEngineEPFvPFN3WTF10PassOw
 #endif
 
 #if ENABLE(INDEXED_DATABASE)
+#if !defined(NDEBUG)
 __ZNK7WebCore10IDBKeyData13loggingStringEv
+#endif
 __ZNK7WebCore10IDBKeyData17maybeCreateIDBKeyEv
 __ZNK7WebCore10IDBKeyData6encodeERNS_12KeyedEncoderE
 __ZNK7WebCore10IDBKeyPath6encodeERNS_12KeyedEncoderE
