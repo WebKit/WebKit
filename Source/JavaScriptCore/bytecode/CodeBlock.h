@@ -305,7 +305,6 @@ public:
     void setThisRegister(VirtualRegister thisRegister) { m_thisRegister = thisRegister; }
     VirtualRegister thisRegister() const { return m_thisRegister; }
 
-    bool needsFullScopeChain() const { return m_unlinkedCode->needsFullScopeChain(); }
     bool usesEval() const { return m_unlinkedCode->usesEval(); }
 
     void setArgumentsRegister(VirtualRegister argumentsRegister)
@@ -332,21 +331,20 @@ public:
 
     VirtualRegister activationRegister() const
     {
-        ASSERT(needsFullScopeChain());
+        ASSERT(m_activationRegister.isValid());
         return m_activationRegister;
     }
 
     VirtualRegister uncheckedActivationRegister()
     {
-        if (!needsFullScopeChain())
-            return VirtualRegister();
-        return activationRegister();
+        return m_activationRegister;
     }
 
     bool usesArguments() const { return m_argumentsRegister.isValid(); }
 
     bool needsActivation() const
     {
+        ASSERT(m_activationRegister.isValid() == m_needsActivation);
         return m_needsActivation;
     }
     

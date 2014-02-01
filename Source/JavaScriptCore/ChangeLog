@@ -1,3 +1,146 @@
+2014-01-31  Mark Lam  <mark.lam@apple.com>
+
+        Avoid eagerly creating the JSActivation when the debugger is attached.
+        <https://webkit.org/b/127910>
+
+        Reviewed by Oliver Hunt.
+
+        Octane scores for this patch:
+            baseline w/o WebInspector: 11621
+            patched  w/o WebInspector: 11801
+            baseline w/ WebInspector:  3295
+            patched  w/ WebInspector:  7070   2.1x improvement
+
+        1. Because debugger can potentially create a closure from any call frame,
+           we need every function to allocate an activation register and check for
+           the need to tear off the activation (if needed) on return.
+
+           However, we do not need to eagerly create the activation object.
+           This patch implements the optimization to defer creation of the
+           activation object until we actually need it i.e. when:
+
+           1. We encounter a "eval", "with", or "catch" statement.
+           2. We've paused in the debugger, and called DebuggerCallFrame::scope().
+
+        2. The UnlinkedCodeBlock provides a needsFullScopeChain flag that is used
+           to indicate whether the linked CodeBlock will need an activation
+           object or not. Under normal circumstances, needsFullScopeChain and
+           needsActivation are synonymous. However, with a debugger attached, we
+           want the CodeBlock to always allocate an activationRegister even if
+           it does not need a "full scope chain".
+
+           Hence, we apply the following definitions to the "flags":
+
+           1. UnlinkedCodeBlock::needsFullScopeChain() - this flag indicates that
+              the parser discovered JS artifacts (e.g. use of "eval", "with", etc.)
+              that requires an activation.
+
+              BytecodeGenerator's destinationForAssignResult() and leftHandSideNeedsCopy()
+              checks needsFullScopeChain().
+
+           2. UnlinkedCodeBlock::hasActivationRegister() - this flag indicates that
+              an activation register was created for the UnlinkedCodeBlock either
+              because it needsFullScopeChain() or because the debugger is attached.
+
+           3. CodeBlock::needsActivation() reflects UnlinkedCodeBlock's
+              hasActivationRegister().
+
+        3. Introduced BytecodeGenerator::emitPushFunctionNameScope() and
+           BytecodeGenerator::emitPushCatchScope() because the JSNameScope
+           pushed for a function name cannot be popped unlike the JSNameScope
+           pushed for a "catch". Hence, we have 2 functions to handle the 2 cases
+           differently.
+
+        4. Removed DebuggerCallFrame::evaluateWithCallFrame() and require that all
+           debugger evaluations go through the DebuggerCallFrame::evaluate(). This
+           ensures that debugger evaluations require a DebuggerCallFrame.
+
+           DebuggerCallFrame::evaluateWithCallFrame() was used previously because
+           we didn't want to instantiate a DebuggerCallFrame on every debug hook
+           callback. However, we now only call the debug hooks when needed, and
+           this no longer poses a performance problem.
+
+           In addition, when the debug hook does an eval to test a breakpoint
+           condition, it is incorrect to evaluate it without a DebuggerCallFrame
+           anyway.
+
+        5. Added some utility functions to the CallFrame to make it easier to work
+           with the activation register in the frame (if present). These utility
+           functions should only be called if the CodeBlock::needsActivation() is
+           true (which indicates the presence of the activation register). The
+           utlity functions are:
+
+           1. CallFrame::hasActivation()
+              - checks if the frame's activation object has been created.
+
+           2. CallFrame::activation()
+              - returns the frame's activation object.
+
+           3. CallFrame::uncheckedActivation()
+              - returns the JSValue in the frame's activation register. May be null.
+
+           4. CallFrame::setActivation()
+              - sets the frame's activation object.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::dumpBytecode):
+        - added symbollic dumping of ResolveMode and ResolveType values for some
+          bytecodes.
+        (JSC::CodeBlock::CodeBlock):
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::activationRegister):
+        (JSC::CodeBlock::uncheckedActivationRegister):
+        (JSC::CodeBlock::needsActivation):
+        * bytecode/UnlinkedCodeBlock.h:
+        (JSC::UnlinkedCodeBlock::needsFullScopeChain):
+        (JSC::UnlinkedCodeBlock::hasActivationRegister):
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::BytecodeGenerator):
+        (JSC::BytecodeGenerator::resolveCallee):
+        (JSC::BytecodeGenerator::createActivationIfNecessary):
+        (JSC::BytecodeGenerator::emitCallEval):
+        (JSC::BytecodeGenerator::emitReturn):
+        (JSC::BytecodeGenerator::emitPushWithScope):
+        (JSC::BytecodeGenerator::emitPushFunctionNameScope):
+        (JSC::BytecodeGenerator::emitPushCatchScope):
+        * bytecompiler/BytecodeGenerator.h:
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::TryNode::emitBytecode):
+        * debugger/Debugger.cpp:
+        (JSC::Debugger::hasBreakpoint):
+        (JSC::Debugger::pauseIfNeeded):
+        * debugger/DebuggerCallFrame.cpp:
+        (JSC::DebuggerCallFrame::scope):
+        (JSC::DebuggerCallFrame::evaluate):
+        * debugger/DebuggerCallFrame.h:
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseCodeBlock):
+        * dfg/DFGGraph.h:
+        - Removed an unused function DFGGraph::needsActivation().
+        * interpreter/CallFrame.cpp:
+        (JSC::CallFrame::activation):
+        (JSC::CallFrame::setActivation):
+        * interpreter/CallFrame.h:
+        (JSC::ExecState::hasActivation):
+        (JSC::ExecState::registers):
+        * interpreter/CallFrameInlines.h:
+        (JSC::CallFrame::uncheckedActivation):
+        * interpreter/Interpreter.cpp:
+        (JSC::unwindCallFrame):
+        (JSC::Interpreter::unwind):
+        * jit/JITOperations.cpp:
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+        * runtime/CommonSlowPaths.cpp:
+        (JSC::SLOW_PATH_DECL):
+
+        * runtime/JSScope.cpp:
+        * runtime/JSScope.h:
+        (JSC::resolveModeName):
+        (JSC::resolveTypeName):
+        - utility functions for decoding names of the ResolveMode and ResolveType.
+          These are used in CodeBlock::dumpBytecode().
+
 2014-01-31  Michael Saboff  <msaboff@apple.com>
 
         REGRESSION: Crash in sanitizeStackForVMImpl when scrolling @ lifehacker.com.au

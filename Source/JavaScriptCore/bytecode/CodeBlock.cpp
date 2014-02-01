@@ -532,7 +532,7 @@ void CodeBlock::dumpBytecode(PrintStream& out)
             argumentsRegister().offset(),
             unmodifiedArgumentsRegister(argumentsRegister()).offset());
     }
-    if (needsFullScopeChain() && codeType() == FunctionCode)
+    if (needsActivation() && codeType() == FunctionCode)
         out.printf("; activation in r%d", activationRegister().offset());
     out.printf("\n");
     
@@ -1382,10 +1382,12 @@ void CodeBlock::dumpBytecode(PrintStream& out, ExecState* exec, const Instructio
         case op_resolve_scope: {
             int r0 = (++it)->u.operand;
             int id0 = (++it)->u.operand;
-            int resolveModeAndType = (++it)->u.operand;
-            ++it; // depth
+            ResolveModeAndType modeAndType = ResolveModeAndType((++it)->u.operand);
+            int depth = (++it)->u.operand;
             printLocationAndOp(out, exec, location, it, "resolve_scope");
-            out.printf("%s, %s, %d", registerName(r0).data(), idName(id0, identifier(id0)).data(), resolveModeAndType);
+            out.printf("%s, %s, %u<%s|%s>, %d", registerName(r0).data(), idName(id0, identifier(id0)).data(),
+                modeAndType.operand(), resolveModeName(modeAndType.mode()), resolveTypeName(modeAndType.type()),
+                depth);
             ++it;
             break;
         }
@@ -1393,23 +1395,29 @@ void CodeBlock::dumpBytecode(PrintStream& out, ExecState* exec, const Instructio
             int r0 = (++it)->u.operand;
             int r1 = (++it)->u.operand;
             int id0 = (++it)->u.operand;
-            int resolveModeAndType = (++it)->u.operand;
+            ResolveModeAndType modeAndType = ResolveModeAndType((++it)->u.operand);
             ++it; // Structure
-            ++it; // Operand
+            int operand = (++it)->u.operand; // Operand
             ++it; // Skip value profile.
             printLocationAndOp(out, exec, location, it, "get_from_scope");
-            out.printf("%s, %s, %s, %d", registerName(r0).data(), registerName(r1).data(), idName(id0, identifier(id0)).data(), resolveModeAndType);
+            out.printf("%s, %s, %s, %u<%s|%s>, <structure>, %d",
+                registerName(r0).data(), registerName(r1).data(), idName(id0, identifier(id0)).data(),
+                modeAndType.operand(), resolveModeName(modeAndType.mode()), resolveTypeName(modeAndType.type()),
+                operand);
             break;
         }
         case op_put_to_scope: {
             int r0 = (++it)->u.operand;
             int id0 = (++it)->u.operand;
             int r1 = (++it)->u.operand;
-            int resolveModeAndType = (++it)->u.operand;
+            ResolveModeAndType modeAndType = ResolveModeAndType((++it)->u.operand);
             ++it; // Structure
-            ++it; // Operand
+            int operand = (++it)->u.operand; // Operand
             printLocationAndOp(out, exec, location, it, "put_to_scope");
-            out.printf("%s, %s, %s, %d", registerName(r0).data(), idName(id0, identifier(id0)).data(), registerName(r1).data(), resolveModeAndType);
+            out.printf("%s, %s, %s, %u<%s|%s>, <structure>, %d",
+                registerName(r0).data(), idName(id0, identifier(id0)).data(), registerName(r1).data(),
+                modeAndType.operand(), resolveModeName(modeAndType.mode()), resolveTypeName(modeAndType.type()),
+                operand);
             break;
         }
 #if ENABLE(LLINT_C_LOOP)
@@ -1542,7 +1550,7 @@ CodeBlock::CodeBlock(ScriptExecutable* ownerExecutable, UnlinkedCodeBlock* unlin
     , m_argumentsRegister(unlinkedCodeBlock->argumentsRegister())
     , m_activationRegister(unlinkedCodeBlock->activationRegister())
     , m_isStrictMode(unlinkedCodeBlock->isStrictMode())
-    , m_needsActivation(unlinkedCodeBlock->needsFullScopeChain() && unlinkedCodeBlock->codeType() == FunctionCode)
+    , m_needsActivation(unlinkedCodeBlock->hasActivationRegister() && unlinkedCodeBlock->codeType() == FunctionCode)
     , m_source(sourceProvider)
     , m_sourceOffset(sourceOffset)
     , m_firstLineColumnOffset(firstLineColumnOffset)
@@ -1867,7 +1875,6 @@ CodeBlock::CodeBlock(ScriptExecutable* ownerExecutable, UnlinkedCodeBlock* unlin
 
     if (Options::dumpGeneratedBytecodes())
         dumpBytecode();
-
     
     m_heap->m_codeBlocks.add(this);
     m_heap->reportExtraMemoryCost(sizeof(CodeBlock) + m_instructions.size() * sizeof(Instruction));

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2008, 2013, 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -62,7 +62,7 @@ public:
     JS_EXPORT_PRIVATE String functionName() const;
     JS_EXPORT_PRIVATE Type type() const;
     JS_EXPORT_PRIVATE JSValue thisValue() const;
-    JS_EXPORT_PRIVATE JSValue evaluate(const String&, JSValue& exception) const;
+    JSValue evaluate(const String&, JSValue& exception);
 
     bool isValid() const { return !!m_callFrame; }
     JS_EXPORT_PRIVATE void invalidate();
@@ -70,7 +70,6 @@ public:
     // The following are only public for the Debugger's use only. They will be
     // made private soon. Other clients should not use these.
 
-    JS_EXPORT_PRIVATE static JSValue evaluateWithCallFrame(CallFrame*, const String& script, JSValue& exception);
     JS_EXPORT_PRIVATE static TextPosition positionForCallFrame(CallFrame*);
     JS_EXPORT_PRIVATE static SourceID sourceIDForCallFrame(CallFrame*);
     static JSValue thisValueForCallFrame(CallFrame*);

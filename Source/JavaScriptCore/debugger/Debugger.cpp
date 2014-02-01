@@ -453,7 +453,8 @@ bool Debugger::hasBreakpoint(SourceID sourceID, const TextPosition& position, Br
     TemporaryPausedState pausedState(*this);
 
     JSValue exception;
-    JSValue result = DebuggerCallFrame::evaluateWithCallFrame(m_currentCallFrame, breakpoints[i].condition, exception);
+    DebuggerCallFrame* debuggerCallFrame = currentDebuggerCallFrame();
+    JSValue result = debuggerCallFrame->evaluate(breakpoints[i].condition, exception);
 
     // We can lose the debugger while executing JavaScript.
     if (!m_currentCallFrame)
@@ -621,14 +622,14 @@ void Debugger::pauseIfNeeded(CallFrame* callFrame)
     bool pauseNow = m_pauseOnNextStatement;
     pauseNow |= (m_pauseOnCallFrame == m_currentCallFrame);
 
+    DebuggerCallFrameScope debuggerCallFrameScope(*this);
+
     intptr_t sourceID = DebuggerCallFrame::sourceIDForCallFrame(m_currentCallFrame);
     TextPosition position = DebuggerCallFrame::positionForCallFrame(m_currentCallFrame);
     pauseNow |= didHitBreakpoint = hasBreakpoint(sourceID, position, &breakpoint);
     m_lastExecutedLine = position.m_line.zeroBasedInt();
     if (!pauseNow)
         return;
-
-    DebuggerCallFrameScope debuggerCallFrameScope(*this);
 
     // Make sure we are not going to pause again on breakpoint actions by
     // reseting the pause state before executing any breakpoint actions.

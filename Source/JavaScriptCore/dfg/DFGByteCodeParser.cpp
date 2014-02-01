@@ -3620,8 +3620,7 @@ void ByteCodeParser::parseCodeBlock()
         }
         dataLog(
             ": captureCount = ", codeBlock->symbolTable() ? codeBlock->symbolTable()->captureCount() : 0,
-            ", needsFullScopeChain = ", codeBlock->needsFullScopeChain(),
-            ", needsActivation = ", codeBlock->ownerExecutable()->needsActivation(),
+            ", needsActivation = ", codeBlock->needsActivation(),
             ", isStrictMode = ", codeBlock->ownerExecutable()->isStrictMode(), "\n");
         codeBlock->baselineVersion()->dumpBytecode();
     }

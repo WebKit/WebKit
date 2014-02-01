@@ -32,7 +32,6 @@
 
 #include "Arguments.h"
 #include "BatchedTransitionOptimizer.h"
-#include "CallFrame.h"
 #include "CallFrameClosure.h"
 #include "CallFrameInlines.h"
 #include "CodeBlock.h"
@@ -428,7 +427,7 @@ static bool unwindCallFrame(StackVisitor& visitor)
 #if ENABLE(DFG_JIT)
         RELEASE_ASSERT(!visitor->isInlinedFrame());
 #endif
-        activation = callFrame->uncheckedR(codeBlock->activationRegister().offset()).jsValue();
+        activation = callFrame->uncheckedActivation();
         if (activation)
             jsCast<JSActivation*>(activation)->tearOff(*scope->vm());
     }
@@ -712,7 +711,7 @@ NEVER_INLINE HandlerInfo* Interpreter::unwind(CallFrame*& callFrame, JSValue& ex
 
     // Unwind the scope chain within the exception handler's call frame.
     int targetScopeDepth = handler->scopeDepth;
-    if (codeBlock->needsActivation() && callFrame->uncheckedR(codeBlock->activationRegister().offset()).jsValue())
+    if (codeBlock->needsActivation() && callFrame->hasActivation())
         ++targetScopeDepth;
 
     JSScope* scope = callFrame->scope();

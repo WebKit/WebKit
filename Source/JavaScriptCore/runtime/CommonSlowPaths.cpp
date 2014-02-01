@@ -270,10 +270,7 @@ SLOW_PATH_DECL(slow_path_new_captured_func)
 {
     BEGIN();
     CodeBlock* codeBlock = exec->codeBlock();
-    ASSERT(
-        codeBlock->codeType() != FunctionCode
-        || !codeBlock->needsFullScopeChain()
-        || exec->uncheckedR(codeBlock->activationRegister().offset()).jsValue());
+    ASSERT(codeBlock->codeType() != FunctionCode || !codeBlock->needsActivation() || exec->hasActivation());
     JSValue value = JSFunction::create(vm, codeBlock->functionDecl(pc[2].u.operand), exec->scope());
     if (VariableWatchpointSet* set = pc[3].u.watchpointSet)
         set->notifyWrite(value);

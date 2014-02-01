@@ -982,9 +982,7 @@ LLINT_SLOW_PATH_DECL(slow_path_new_func)
 {
     LLINT_BEGIN();
     CodeBlock* codeBlock = exec->codeBlock();
-    ASSERT(codeBlock->codeType() != FunctionCode
-           || !codeBlock->needsFullScopeChain()
-           || exec->uncheckedR(codeBlock->activationRegister().offset()).jsValue());
+    ASSERT(codeBlock->codeType() != FunctionCode || !codeBlock->needsActivation() || exec->hasActivation());
 #if LLINT_SLOW_PATH_TRACING
     dataLogF("Creating function!\n");
 #endif
@@ -1210,7 +1208,7 @@ LLINT_SLOW_PATH_DECL(slow_path_call_eval)
 LLINT_SLOW_PATH_DECL(slow_path_tear_off_activation)
 {
     LLINT_BEGIN();
-    ASSERT(exec->codeBlock()->needsFullScopeChain());
+    ASSERT(exec->codeBlock()->needsActivation());
     jsCast<JSActivation*>(LLINT_OP(1).jsValue())->tearOff(vm);
     LLINT_END();
 }

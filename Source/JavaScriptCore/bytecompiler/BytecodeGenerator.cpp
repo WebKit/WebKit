@@ -157,6 +157,7 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, ProgramNode* programNode, UnlinkedP
     , m_scopeNode(programNode)
     , m_codeBlock(vm, codeBlock)
     , m_thisRegister(CallFrame::thisArgumentOffset())
+    , m_activationRegister(0)
     , m_emptyValueRegister(0)
     , m_globalObjectRegister(0)
     , m_finallyDepth(0)
@@ -164,7 +165,6 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, ProgramNode* programNode, UnlinkedP
     , m_codeType(GlobalCode)
     , m_nextConstantOffset(0)
     , m_globalConstantIndex(0)
-    , m_hasCreatedActivation(true)
     , m_firstLazyFunction(0)
     , m_lastLazyFunction(0)
     , m_staticPropertyAnalyzer(&m_instructions)
@@ -177,9 +177,6 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, ProgramNode* programNode, UnlinkedP
     , m_expressionTooDeep(false)
     , m_isBuiltinFunction(false)
 {
-    if (m_shouldEmitDebugHooks)
-        m_codeBlock->setNeedsFullScopeChain(true);
-
     m_codeBlock->setNumParameters(1); // Allocate space for "this"
 
     emitOpcode(op_enter);
@@ -212,7 +209,6 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionBodyNode* functionBody, Unl
     , m_codeType(FunctionCode)
     , m_nextConstantOffset(0)
     , m_globalConstantIndex(0)
-    , m_hasCreatedActivation(false)
     , m_firstLazyFunction(0)
     , m_lastLazyFunction(0)
     , m_staticPropertyAnalyzer(&m_instructions)
@@ -230,9 +226,6 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionBodyNode* functionBody, Unl
         m_shouldEmitDebugHooks = false;
     }
 
-    if (m_shouldEmitDebugHooks)
-        m_codeBlock->setNeedsFullScopeChain(true);
-
     m_symbolTable->setUsesNonStrictEval(codeBlock->usesEval() && !codeBlock->isStrictMode());
     Vector<Identifier> boundParameterProperties;
     FunctionParameters& parameters = *functionBody->parameters();
@@ -246,7 +239,7 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionBodyNode* functionBody, Unl
     m_symbolTable->setParameterCountIncludingThis(functionBody->parameters()->size() + 1);
 
     emitOpcode(op_enter);
-    if (m_codeBlock->needsFullScopeChain()) {
+    if (m_codeBlock->needsFullScopeChain() || m_shouldEmitDebugHooks) {
         m_activationRegister = addVar();
         emitInitLazyRegister(m_activationRegister);
         m_codeBlock->setActivationRegister(m_activationRegister->virtualRegister());
@@ -315,17 +308,11 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionBodyNode* functionBody, Unl
 
     // Captured variables and functions go first so that activations don't have
     // to step over the non-captured locals to mark them.
-    m_hasCreatedActivation = false;
     if (functionBody->hasCapturedVariables()) {
         for (size_t i = 0; i < functionStack.size(); ++i) {
             FunctionBodyNode* function = functionStack[i];
             const Identifier& ident = function->ident();
             if (functionBody->captures(ident)) {
-                if (!m_hasCreatedActivation) {
-                    m_hasCreatedActivation = true;
-                    emitOpcode(op_create_activation);
-                    instructions().append(m_activationRegister->index());
-                }
                 m_functions.add(ident.impl());
                 emitNewFunction(addVar(ident, IsVariable, IsWatchable), IsCaptured, function);
             }
@@ -336,15 +323,10 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionBodyNode* functionBody, Unl
                 addVar(ident, (varStack[i].second & DeclarationStacks::IsConstant) ? IsConstant : IsVariable, IsWatchable);
         }
     }
-    bool canLazilyCreateFunctions = !functionBody->needsActivationForMoreThanVariables() && !m_shouldEmitDebugHooks;
-    if (!canLazilyCreateFunctions && !m_hasCreatedActivation) {
-        m_hasCreatedActivation = true;
-        emitOpcode(op_create_activation);
-        instructions().append(m_activationRegister->index());
-    }
 
     m_symbolTable->setCaptureEnd(virtualRegisterForLocal(codeBlock->m_numVars).offset());
 
+    bool canLazilyCreateFunctions = !functionBody->needsActivationForMoreThanVariables() && !m_shouldEmitDebugHooks;
     m_firstLazyFunction = codeBlock->m_numVars;
     for (size_t i = 0; i < functionStack.size(); ++i) {
         FunctionBodyNode* function = functionStack[i];
@@ -427,6 +409,7 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, EvalNode* evalNode, UnlinkedEvalCod
     , m_scopeNode(evalNode)
     , m_codeBlock(vm, codeBlock)
     , m_thisRegister(CallFrame::thisArgumentOffset())
+    , m_activationRegister(0)
     , m_emptyValueRegister(0)
     , m_globalObjectRegister(0)
     , m_finallyDepth(0)
@@ -434,7 +417,6 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, EvalNode* evalNode, UnlinkedEvalCod
     , m_codeType(EvalCode)
     , m_nextConstantOffset(0)
     , m_globalConstantIndex(0)
-    , m_hasCreatedActivation(true)
     , m_firstLazyFunction(0)
     , m_lastLazyFunction(0)
     , m_staticPropertyAnalyzer(&m_instructions)
@@ -447,8 +429,6 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, EvalNode* evalNode, UnlinkedEvalCod
     , m_expressionTooDeep(false)
     , m_isBuiltinFunction(false)
 {
-    m_codeBlock->setNeedsFullScopeChain(true);
-
     m_symbolTable->setUsesNonStrictEval(codeBlock->usesEval() && !codeBlock->isStrictMode());
     m_codeBlock->setNumParameters(1);
 
@@ -491,7 +471,7 @@ RegisterID* BytecodeGenerator::resolveCallee(FunctionBodyNode* functionBodyNode)
 
     // If non-strict eval is in play, we use a separate object in the scope chain for the callee's name.
     if (m_codeBlock->usesEval() && !m_codeBlock->isStrictMode())
-        emitPushNameScope(functionBodyNode->ident(), &m_calleeRegister, ReadOnly | DontDelete);
+        emitPushFunctionNameScope(functionBodyNode->ident(), &m_calleeRegister, ReadOnly | DontDelete);
 
     if (!functionBodyNode->captures(functionBodyNode->ident()))
         return &m_calleeRegister;
@@ -1642,9 +1622,7 @@ void BytecodeGenerator::createArgumentsIfNecessary()
 
 void BytecodeGenerator::createActivationIfNecessary()
 {
-    if (m_hasCreatedActivation)
-        return;
-    if (!m_codeBlock->needsFullScopeChain())
+    if (!m_activationRegister)
         return;
     emitOpcode(op_create_activation);
     instructions().append(m_activationRegister->index());
@@ -1652,6 +1630,7 @@ void BytecodeGenerator::createActivationIfNecessary()
 
 RegisterID* BytecodeGenerator::emitCallEval(RegisterID* dst, RegisterID* func, CallArguments& callArguments, const JSTextPosition& divot, const JSTextPosition& divotStart, const JSTextPosition& divotEnd)
 {
+    createActivationIfNecessary();
     return emitCall(op_call_eval, dst, func, NoExpectedFunction, callArguments, divot, divotStart, divotEnd);
 }
 
@@ -1824,7 +1803,7 @@ RegisterID* BytecodeGenerator::emitCallVarargs(RegisterID* dst, RegisterID* func
 
 RegisterID* BytecodeGenerator::emitReturn(RegisterID* src)
 {
-    if (m_codeBlock->needsFullScopeChain()) {
+    if (m_activationRegister) {
         emitOpcode(op_tear_off_activation);
         instructions().append(m_activationRegister->index());
     }
@@ -1932,6 +1911,7 @@ RegisterID* BytecodeGenerator::emitPushWithScope(RegisterID* scope)
     m_scopeContextStack.append(context);
     m_localScopeDepth++;
 
+    createActivationIfNecessary();
     return emitUnaryNoDstOp(op_push_with_scope, scope);
 }
 
@@ -2274,8 +2254,18 @@ void BytecodeGenerator::emitThrowReferenceError(const String& message)
     instructions().append(true);
 }
 
-void BytecodeGenerator::emitPushNameScope(const Identifier& property, RegisterID* value, unsigned attributes)
+void BytecodeGenerator::emitPushFunctionNameScope(const Identifier& property, RegisterID* value, unsigned attributes)
 {
+    emitOpcode(op_push_name_scope);
+    instructions().append(addConstant(property));
+    instructions().append(value->index());
+    instructions().append(attributes);
+}
+
+void BytecodeGenerator::emitPushCatchScope(const Identifier& property, RegisterID* value, unsigned attributes)
+{
+    createActivationIfNecessary();
+
     ControlFlowContext context;
     context.isFinallyBlock = false;
     m_scopeContextStack.append(context);

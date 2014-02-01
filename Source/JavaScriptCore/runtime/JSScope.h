@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012, 2013 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2012, 2013, 2014 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -53,6 +53,9 @@ enum ResolveType {
     // Lexical scope didn't prove anything -- probably because of a 'with' scope.
     Dynamic
 };
+
+const char* resolveModeName(ResolveMode mode);
+const char* resolveTypeName(ResolveType type);
 
 inline ResolveType makeType(ResolveType type, bool needsVarInjectionChecks)
 {

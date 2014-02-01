@@ -27,6 +27,7 @@
 #define CallFrameInlines_h
 
 #include "CallFrame.h"
+#include "CodeBlock.h"
 
 namespace JSC  {
 
@@ -136,6 +137,14 @@ inline unsigned CallFrame::locationAsCodeOriginIndex() const
     ASSERT(hasLocationAsCodeOriginIndex());
     ASSERT(codeBlock());
     return Location::decode(locationAsRawBits());
+}
+
+inline JSValue CallFrame::uncheckedActivation() const
+{
+    CodeBlock* codeBlock = this->codeBlock();
+    RELEASE_ASSERT(codeBlock->needsActivation());
+    VirtualRegister activationRegister = codeBlock->activationRegister();
+    return registers()[activationRegister.offset()].jsValue();
 }
 
 } // namespace JSC
