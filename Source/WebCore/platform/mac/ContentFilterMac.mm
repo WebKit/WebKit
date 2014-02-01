@@ -49,6 +49,40 @@ static const OSStatus kWFEStateBuffering = 2;
 SOFT_LINK_PRIVATE_FRAMEWORK(WebContentAnalysis);
 SOFT_LINK_CLASS(WebContentAnalysis, WebFilterEvaluator);
 
+#if HAVE(NE_FILTER_SOURCE)
+
+#if defined(__has_include) && __has_include(<NetworkExtension/NEFilterSource.h>)
+#import <NetworkExtension/NEFilterSource.h>
+#else
+typedef NS_ENUM(NSInteger, NEFilterSourceStatus) {
+    NEFilterSourceStatusPass = 1,
+    NEFilterSourceStatusBlock = 2,
+    NEFilterSourceStatusNeedsMoreData = 3,
+    NEFilterSourceStatusError = 4,
+};
+
+typedef NS_ENUM(NSInteger, NEFilterSourceDirection) {
+    NEFilterSourceDirectionOutbound = 1,
+    NEFilterSourceDirectionInbound = 2,
+};
+
+@interface NEFilterSource : NSObject
++ (BOOL)filterRequired;
+- (id)initWithURL:(NSURL *)url direction:(NEFilterSourceDirection)direction socketIdentifier:(uint64_t)socketIdentifier;
+- (void)addData:(NSData *)data withCompletionQueue:(dispatch_queue_t)queue completionHandler:(void (^)(NEFilterSourceStatus, NSData *))completionHandler;
+- (void)dataCompleteWithCompletionQueue:(dispatch_queue_t)queue completionHandler:(void (^)(NEFilterSourceStatus, NSData *))completionHandler;
+@property (readonly) NEFilterSourceStatus status;
+@property (readonly) NSURL *url;
+@property (readonly) NEFilterSourceDirection direction;
+@property (readonly) uint64_t socketIdentifier;
+@end
+#endif
+
+SOFT_LINK_FRAMEWORK(NetworkExtension);
+SOFT_LINK_CLASS(NetworkExtension, NEFilterSource);
+
+#endif // HAVE(NE_FILTER_SOURCE)
+
 namespace WebCore {
 
 PassRefPtr<ContentFilter> ContentFilter::create(const ResourceResponse& response)
@@ -57,47 +91,116 @@ PassRefPtr<ContentFilter> ContentFilter::create(const ResourceResponse& response
 }
 
 ContentFilter::ContentFilter(const ResourceResponse& response)
-    : m_platformContentFilter(adoptNS([[getWebFilterEvaluatorClass() alloc] initWithResponse:response.nsURLResponse()]))
+#if HAVE(NE_FILTER_SOURCE)
+    : m_neFilterSourceStatus(NEFilterSourceStatusNeedsMoreData)
+#endif
 {
-    ASSERT(m_platformContentFilter);
+    if ([getWebFilterEvaluatorClass() isManagedSession])
+        m_platformContentFilter = adoptNS([[getWebFilterEvaluatorClass() alloc] initWithResponse:response.nsURLResponse()]);
+
+#if HAVE(NE_FILTER_SOURCE)
+    if ([getNEFilterSourceClass() filterRequired]) {
+        m_neFilterSource = adoptNS([[getNEFilterSourceClass() alloc] initWithURL:[response.nsURLResponse() URL] direction:NEFilterSourceDirectionInbound socketIdentifier:0]);
+        m_neFilterSourceQueue = dispatch_queue_create("com.apple.WebCore.NEFilterSourceQueue", DISPATCH_QUEUE_SERIAL);
+    }
+#endif
+}
+
+ContentFilter::~ContentFilter()
+{
+#if HAVE(NE_FILTER_SOURCE)
+    dispatch_release(m_neFilterSourceQueue);
+#endif
 }
 
 bool ContentFilter::isEnabled()
 {
-    return [getWebFilterEvaluatorClass() isManagedSession];
+    return [getWebFilterEvaluatorClass() isManagedSession]
+#if HAVE(NE_FILTER_SOURCE)
+        || [getNEFilterSourceClass() filterRequired]
+#endif
+    ;
 }
 
 void ContentFilter::addData(const char* data, int length)
 {
     ASSERT(needsMoreData());
-    ASSERT(![m_replacementData.get() length]);
-    m_replacementData = [m_platformContentFilter addData:[NSData dataWithBytesNoCopy:(void*)data length:length freeWhenDone:NO]];
-    ASSERT(needsMoreData() || [m_replacementData.get() length]);
+
+    if (m_platformContentFilter) {
+        ASSERT(![m_replacementData.get() length]);
+        m_replacementData = [m_platformContentFilter addData:[NSData dataWithBytesNoCopy:(void*)data length:length freeWhenDone:NO]];
+        ASSERT(needsMoreData() || [m_replacementData.get() length]);
+    }
+
+#if HAVE(NE_FILTER_SOURCE)
+    if (!m_neFilterSource)
+        return;
+
+    ref();
+    [m_neFilterSource addData:[NSData dataWithBytesNoCopy:(void*)data length:length freeWhenDone:NO] withCompletionQueue:m_neFilterSourceQueue completionHandler:^(NEFilterSourceStatus status, NSData *) {
+       m_neFilterSourceStatus = status;
+       deref();
+    }];
+#endif
 }
     
 void ContentFilter::finishedAddingData()
 {
     ASSERT(needsMoreData());
-    ASSERT(![m_replacementData.get() length]);
-    m_replacementData = [m_platformContentFilter dataComplete];
+
+    if (m_platformContentFilter) {
+        ASSERT(![m_replacementData.get() length]);
+        m_replacementData = [m_platformContentFilter dataComplete];
+    }
+
+#if HAVE(NE_FILTER_SOURCE)
+    if (!m_neFilterSource)
+        return;
+
+    ref();
+    m_neFilterSourceSemaphore = dispatch_semaphore_create(0);
+    [m_neFilterSource dataCompleteWithCompletionQueue:m_neFilterSourceQueue completionHandler:^(NEFilterSourceStatus status, NSData *) {
+        m_neFilterSourceStatus = status;
+        deref();
+
+        dispatch_semaphore_signal(m_neFilterSourceSemaphore);
+    }];
+    
+    // FIXME: We have to block here since DocumentLoader expects to have a
+    // blocked/not blocked answer from the filter immediately after calling
+    // finishedAddingData(). We should find a way to make this asynchronous.
+    dispatch_semaphore_wait(m_neFilterSourceSemaphore, DISPATCH_TIME_FOREVER);
+    dispatch_release(m_neFilterSourceSemaphore);
+#endif
+
     ASSERT(!needsMoreData());
 }
 
 bool ContentFilter::needsMoreData() const
 {
-    return [m_platformContentFilter filterState] == kWFEStateBuffering;
+    return [m_platformContentFilter filterState] == kWFEStateBuffering
+#if HAVE(NE_FILTER_SOURCE)
+        || m_neFilterSourceStatus == NEFilterSourceStatusNeedsMoreData
+#endif
+    ;
 }
 
 bool ContentFilter::didBlockData() const
 {
-    return [m_platformContentFilter wasBlocked];
+    return [m_platformContentFilter wasBlocked]
+#if HAVE(NE_FILTER_SOURCE)
+        || m_neFilterSourceStatus == NEFilterSourceStatusBlock
+#endif
+    ;
 }
 
 const char* ContentFilter::getReplacementData(int& length) const
 {
+    // FIXME: This will return a null pointer with length 0 when using
+    // NEFilterSource. We need to show a proper error page instead.
     ASSERT(!needsMoreData());
-    length = [m_replacementData.get() length];
-    return static_cast<const char*>([m_replacementData.get() bytes]);
+    length = [m_replacementData length];
+    return static_cast<const char*>([m_replacementData bytes]);
 }
 
 } // namespace WebCore

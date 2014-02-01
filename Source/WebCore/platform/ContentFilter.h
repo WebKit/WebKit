@@ -29,8 +29,8 @@
 #if USE(CONTENT_FILTERING)
 
 #include <wtf/PassRefPtr.h>
-#include <wtf/RefCounted.h>
 #include <wtf/RetainPtr.h>
+#include <wtf/ThreadSafeRefCounted.h>
 
 #if PLATFORM(IOS)
 #include <wtf/Functional.h>
@@ -40,15 +40,25 @@
 OBJC_CLASS WebFilterEvaluator;
 #endif
 
+#define HAVE_NE_FILTER_SOURCE TARGET_OS_EMBEDDED || (!TARGET_OS_IPHONE && __MAC_OS_X_VERSION_MIN_REQUIRED >= 10100)
+
+#if HAVE(NE_FILTER_SOURCE)
+#import <atomic>
+#import <dispatch/dispatch.h>
+OBJC_CLASS NEFilterSource;
+#endif
+
 namespace WebCore {
 
 class ResourceResponse;
 
-class ContentFilter : public RefCounted<ContentFilter> {
+class ContentFilter : public ThreadSafeRefCounted<ContentFilter> {
 public:
     static PassRefPtr<ContentFilter> create(const ResourceResponse&);
     static bool isEnabled();
-    
+
+    virtual ~ContentFilter();
+
     void addData(const char* data, int length);
     void finishedAddingData();
     bool needsMoreData() const;
@@ -66,6 +76,13 @@ private:
 #if PLATFORM(MAC)
     RetainPtr<WebFilterEvaluator> m_platformContentFilter;
     RetainPtr<NSData> m_replacementData;
+#endif
+
+#if HAVE(NE_FILTER_SOURCE)
+    std::atomic<long> m_neFilterSourceStatus;
+    RetainPtr<NEFilterSource> m_neFilterSource;
+    dispatch_queue_t m_neFilterSourceQueue;
+    dispatch_semaphore_t m_neFilterSourceSemaphore;
 #endif
 };
 

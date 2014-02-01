@@ -1,3 +1,36 @@
+2014-01-30  Andy Estes  <aestes@apple.com>
+
+        [Cocoa] Add NEFilterSource support to ContentFilterMac
+        https://bugs.webkit.org/show_bug.cgi?id=127979
+
+        Reviewed by Sam Weinig.
+
+        Update ContentFilterMac to work with both WebFilterEvaluator and
+        NEFilterSource, if enabled.
+
+        * platform/ContentFilter.h: Set HAVE_NE_FILTER_SOURCE based on platform
+        conditionals, and forward-declare NEFilterSource.
+        * platform/mac/ContentFilterMac.mm: Included NEFilterSource.h if the SDK
+        has it; declared the class directly if not. Also soft-linked
+        NetworkExtension.framework.
+        (WebCore::ContentFilter::ContentFilter): Initialized
+        m_neFilterSourceStatus to NEFilterSourceStatusNeedsMoreData and created
+        m_platformContentFilter and m_neFilterSource objects if their
+        respective filters were enabled.
+        (WebCore::ContentFilter::isEnabled): Returned true if either filter is
+        enabled.
+        (WebCore::ContentFilter::addData): Added incoming data to each filter
+        that is enabled.
+        (WebCore::ContentFilter::finishedAddingData): Notified each enabled
+        filter that we are finished adding data.
+        (WebCore::ContentFilter::needsMoreData): Returned true if either filter
+        needs more data.
+        (WebCore::ContentFilter::didBlockData): Returned true if either filter
+        blocked data.
+        (WebCore::ContentFilter::getReplacementData): Returned
+        m_replacementData. Commented that this will currently return a null
+        string if NEFilterSource blocked the load.
+
 2014-01-31  Oliver Hunt  <oliver@apple.com>
 
         Rollout r163195 and related patches
