@@ -1,3 +1,9 @@
+2014-01-31  Alexey Proskuryakov  <ap@apple.com>
+
+        Update test results for a new DOM URL test (we now pass more).
+
+        * fast/dom/DOMURL/invalid-url-getters-expected.txt:
+
 2014-01-31  Maciej Stachowiak  <mjs@apple.com>
 
         Implement (most of) URL API
