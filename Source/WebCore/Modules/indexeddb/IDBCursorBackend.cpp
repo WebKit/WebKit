@@ -89,19 +89,21 @@ void IDBCursorBackend::close()
     m_savedCursorID = 0;
 }
 
-void IDBCursorBackend::updateCursorData(IDBKey* key, IDBKey* primaryKey, SharedBuffer* value)
+void IDBCursorBackend::updateCursorData(IDBKey* key, IDBKey* primaryKey, SharedBuffer* valueBuffer, IDBKey* valueKey)
 {
     m_currentKey = key;
     m_currentPrimaryKey = primaryKey;
-    m_currentValue = value;
+    m_currentValueBuffer = valueBuffer;
+    m_currentValueKey = valueKey;
 }
 
 void IDBCursorBackend::clear()
 {
     m_cursorID = 0;
-    m_currentKey = 0;
-    m_currentPrimaryKey = 0;
-    m_currentValue = 0;
+    m_currentKey = nullptr;
+    m_currentPrimaryKey = nullptr;
+    m_currentValueBuffer = nullptr;
+    m_currentValueKey = nullptr;
 }
 
 } // namespace WebCore

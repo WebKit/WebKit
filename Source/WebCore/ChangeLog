@@ -1,3 +1,52 @@
+2014-01-31  Brady Eidson  <beidson@apple.com>
+
+        IDB: Index cursors use wrong deserialization for the retrieved value
+        https://bugs.webkit.org/show_bug.cgi?id=128035
+
+        Reviewed by Dan Bernstein.
+
+        For the cursor operations, add an IDBKey value result in the callbacks.
+        If an already deserialized IDBKey value exists it will be preferred over the serialized buffer.
+
+        Change some of the onSuccess() callback formats:
+        * Modules/indexeddb/IDBCallbacks.h:
+        * Modules/indexeddb/IDBRequest.cpp:
+        (WebCore::IDBRequest::onSuccess): Selectively choose between the IDBKey or the SharedBuffer value
+          when choosed what to convert to the ScriptValue.
+        * Modules/indexeddb/IDBRequest.h:
+
+        Let the IDBCursorBackend hold both a value buffer and a value key:
+        * Modules/indexeddb/IDBCursorBackend.cpp:
+        (WebCore::IDBCursorBackend::updateCursorData):
+        (WebCore::IDBCursorBackend::clear):
+        * Modules/indexeddb/IDBCursorBackend.h:
+        (WebCore::IDBCursorBackend::valueBuffer):
+        (WebCore::IDBCursorBackend::valueKey):
+
+        * Modules/indexeddb/IDBCursorBackendOperations.cpp:
+        (WebCore::CursorAdvanceOperation::perform):
+        (WebCore::CursorIterationOperation::perform):
+
+        * Modules/indexeddb/IDBTransactionBackendOperations.cpp:
+        (WebCore::OpenCursorOperation::perform):
+
+        * Modules/indexeddb/IDBServerConnection.h:
+        * Modules/indexeddb/leveldb/IDBServerConnectionLevelDB.cpp:
+        (WebCore::IDBServerConnectionLevelDB::openCursor):
+        (WebCore::IDBServerConnectionLevelDB::cursorAdvance):
+        (WebCore::IDBServerConnectionLevelDB::cursorIterate):
+        * Modules/indexeddb/leveldb/IDBServerConnectionLevelDB.h:
+
+        Add IDBKey/IDBKeyData debug logging utilities:
+        * Modules/indexeddb/IDBKey.cpp:
+        (WebCore::IDBKey::loggingString):
+        * Modules/indexeddb/IDBKey.h:
+        * Modules/indexeddb/IDBKeyData.cpp:
+        (WebCore::IDBKeyData::loggingString):
+        * Modules/indexeddb/IDBKeyData.h:
+
+        * WebCore.exp.in:
+
 2014-01-31  Ryosuke Niwa  <rniwa@webkit.org>
 
         Debug build fix after r163232. Call hasEditableStyle() instead of isContentEditable() which

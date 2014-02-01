@@ -429,7 +429,7 @@ void IDBServerConnectionLevelDB::put(IDBTransactionBackend& transaction, const P
     });
 }
 
-void IDBServerConnectionLevelDB::openCursor(IDBTransactionBackend& transaction, const OpenCursorOperation& operation, std::function<void(int64_t, PassRefPtr<IDBKey>, PassRefPtr<IDBKey>, PassRefPtr<SharedBuffer>, PassRefPtr<IDBDatabaseError>)> completionCallback)
+void IDBServerConnectionLevelDB::openCursor(IDBTransactionBackend& transaction, const OpenCursorOperation& operation, std::function<void(int64_t, PassRefPtr<IDBKey>, PassRefPtr<IDBKey>, PassRefPtr<SharedBuffer>, PassRefPtr<IDBKey>, PassRefPtr<IDBDatabaseError>)> completionCallback)
 {
     IDBBackingStoreTransactionLevelDB* backingStoreTransaction = m_backingStoreTransactions.get(transaction.id());
     ASSERT(backingStoreTransaction);
@@ -462,7 +462,7 @@ void IDBServerConnectionLevelDB::openCursor(IDBTransactionBackend& transaction, 
 
     callOnMainThread([completionCallback, cursorID]() {
         // FIXME: Need to actually pass the initial key, primaryKey, and value to the callback.
-        completionCallback(cursorID, nullptr, nullptr, nullptr, nullptr);
+        completionCallback(cursorID, nullptr, nullptr, nullptr, nullptr, nullptr);
     });
 }
 
@@ -569,7 +569,7 @@ void IDBServerConnectionLevelDB::changeDatabaseVersion(IDBTransactionBackend& tr
     ASYNC_COMPLETION_CALLBACK_WITH_NULL_ARG(completionCallback);
 }
 
-void IDBServerConnectionLevelDB::cursorAdvance(IDBCursorBackend& cursor, const CursorAdvanceOperation& operation, std::function<void(PassRefPtr<IDBKey>, PassRefPtr<IDBKey>, PassRefPtr<SharedBuffer>, PassRefPtr<IDBDatabaseError>)> completionCallback)
+void IDBServerConnectionLevelDB::cursorAdvance(IDBCursorBackend& cursor, const CursorAdvanceOperation& operation, std::function<void(PassRefPtr<IDBKey>, PassRefPtr<IDBKey>, PassRefPtr<SharedBuffer>, PassRefPtr<IDBKey>, PassRefPtr<IDBDatabaseError>)> completionCallback)
 {
     IDBBackingStoreCursorLevelDB* backingStoreCursor = cursor.id() ? m_backingStoreCursors.get(cursor.id()) : 0;
 #ifndef NDEBUG
@@ -581,7 +581,7 @@ void IDBServerConnectionLevelDB::cursorAdvance(IDBCursorBackend& cursor, const C
         m_backingStoreCursors.remove(cursor.id());
 
         callOnMainThread([completionCallback]() {
-            completionCallback(nullptr, nullptr, nullptr, IDBDatabaseError::create(IDBDatabaseException::UnknownError, "Unknown error advancing cursor"));
+            completionCallback(nullptr, nullptr, nullptr, nullptr, IDBDatabaseError::create(IDBDatabaseException::UnknownError, "Unknown error advancing cursor"));
         });
 
         return;
@@ -591,11 +591,11 @@ void IDBServerConnectionLevelDB::cursorAdvance(IDBCursorBackend& cursor, const C
     RefPtr<SharedBuffer> value = backingStoreCursor->value();
 
     callOnMainThread([completionCallback, key, primaryKey, value]() {
-        completionCallback(key, primaryKey, value, IDBDatabaseError::create(IDBDatabaseException::UnknownError, "Unknown error advancing cursor"));
+        completionCallback(key, primaryKey, value, nullptr, IDBDatabaseError::create(IDBDatabaseException::UnknownError, "Unknown error advancing cursor"));
     });
 }
 
-void IDBServerConnectionLevelDB::cursorIterate(IDBCursorBackend& cursor, const CursorIterationOperation& operation, std::function<void(PassRefPtr<IDBKey>, PassRefPtr<IDBKey>, PassRefPtr<SharedBuffer>, PassRefPtr<IDBDatabaseError>)> completionCallback)
+void IDBServerConnectionLevelDB::cursorIterate(IDBCursorBackend& cursor, const CursorIterationOperation& operation, std::function<void(PassRefPtr<IDBKey>, PassRefPtr<IDBKey>, PassRefPtr<SharedBuffer>, PassRefPtr<IDBKey>, PassRefPtr<IDBDatabaseError>)> completionCallback)
 {
     IDBBackingStoreCursorLevelDB* backingStoreCursor = cursor.id() ? m_backingStoreCursors.get(cursor.id()) : 0;
 #ifndef NDEBUG
@@ -607,7 +607,7 @@ void IDBServerConnectionLevelDB::cursorIterate(IDBCursorBackend& cursor, const C
         m_backingStoreCursors.remove(cursor.id());
 
         callOnMainThread([completionCallback]() {
-            completionCallback(nullptr, nullptr, nullptr, IDBDatabaseError::create(IDBDatabaseException::UnknownError, "Unknown error advancing cursor"));
+            completionCallback(nullptr, nullptr, nullptr, nullptr, IDBDatabaseError::create(IDBDatabaseException::UnknownError, "Unknown error advancing cursor"));
         });
 
         return;
@@ -617,7 +617,7 @@ void IDBServerConnectionLevelDB::cursorIterate(IDBCursorBackend& cursor, const C
     RefPtr<SharedBuffer> value = backingStoreCursor->value();
 
     callOnMainThread([completionCallback, key, primaryKey, value]() {
-        completionCallback(key, primaryKey, value, IDBDatabaseError::create(IDBDatabaseException::UnknownError, "Unknown error advancing cursor"));
+        completionCallback(key, primaryKey, value, nullptr, IDBDatabaseError::create(IDBDatabaseException::UnknownError, "Unknown error advancing cursor"));
     });
 }
 

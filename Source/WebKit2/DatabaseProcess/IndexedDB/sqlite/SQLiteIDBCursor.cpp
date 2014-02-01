@@ -244,7 +244,18 @@ bool SQLiteIDBCursor::advance(uint64_t count)
 
     m_currentKey = key;
     m_currentPrimaryKey = key;
-    m_currentValue = keyData;
+    m_currentValueBuffer = keyData;
+
+    if (m_indexID != IDBIndexMetadata::InvalidId) {
+        if (!deserializeIDBKeyData(reinterpret_cast<const uint8_t*>(keyData.data()), keyData.size(), m_currentValueKey)) {
+            LOG_ERROR("Unable to deserialize value data from database while advancing cursor");
+            m_completed = true;
+            return false;
+        }
+
+        // Index cursors should only have a m_currentValueKey, and not m_currentValueBuffer
+        m_currentValueBuffer.clear();
+    }
 
     return true;
 }

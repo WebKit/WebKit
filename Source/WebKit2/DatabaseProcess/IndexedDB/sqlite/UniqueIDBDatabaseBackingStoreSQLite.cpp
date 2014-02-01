@@ -938,7 +938,7 @@ bool UniqueIDBDatabaseBackingStoreSQLite::count(const IDBIdentifier& transaction
     return true;
 }
 
-bool UniqueIDBDatabaseBackingStoreSQLite::openCursor(const IDBIdentifier& transactionIdentifier, int64_t objectStoreID, int64_t indexID, IndexedDB::CursorDirection cursorDirection, IndexedDB::CursorType cursorType, IDBDatabaseBackend::TaskType taskType, const IDBKeyRangeData& keyRange, int64_t& cursorID, IDBKeyData& key, IDBKeyData& primaryKey, Vector<char>& value)
+bool UniqueIDBDatabaseBackingStoreSQLite::openCursor(const IDBIdentifier& transactionIdentifier, int64_t objectStoreID, int64_t indexID, IndexedDB::CursorDirection cursorDirection, IndexedDB::CursorType cursorType, IDBDatabaseBackend::TaskType taskType, const IDBKeyRangeData& keyRange, int64_t& cursorID, IDBKeyData& key, IDBKeyData& primaryKey, Vector<char>& valueBuffer, IDBKeyData& valueKey)
 {
     ASSERT(!isMainThread());
     ASSERT(m_sqliteDB);
@@ -958,12 +958,13 @@ bool UniqueIDBDatabaseBackingStoreSQLite::openCursor(const IDBIdentifier& transa
     cursorID = cursor->identifier().id();
     key = cursor->currentKey();
     primaryKey = cursor->currentPrimaryKey();
-    value = cursor->currentValue();
+    valueBuffer = cursor->currentValueBuffer();
+    valueKey = cursor->currentValueKey();
 
     return true;
 }
 
-bool UniqueIDBDatabaseBackingStoreSQLite::advanceCursor(const IDBIdentifier& cursorIdentifier, uint64_t count, IDBKeyData& key, IDBKeyData& primaryKey, Vector<char>& value)
+bool UniqueIDBDatabaseBackingStoreSQLite::advanceCursor(const IDBIdentifier& cursorIdentifier, uint64_t count, IDBKeyData& key, IDBKeyData& primaryKey, Vector<char>& valueBuffer, IDBKeyData& valueKey)
 {
     ASSERT(!isMainThread());
     ASSERT(m_sqliteDB);
@@ -986,12 +987,13 @@ bool UniqueIDBDatabaseBackingStoreSQLite::advanceCursor(const IDBIdentifier& cur
 
     key = cursor->currentKey();
     primaryKey = cursor->currentPrimaryKey();
-    value = cursor->currentValue();
+    valueBuffer = cursor->currentValueBuffer();
+    valueKey = cursor->currentValueKey();
 
     return true;
 }
 
-bool UniqueIDBDatabaseBackingStoreSQLite::iterateCursor(const IDBIdentifier& cursorIdentifier, const IDBKeyData& targetKey, IDBKeyData& key, IDBKeyData& primaryKey, Vector<char>& value)
+bool UniqueIDBDatabaseBackingStoreSQLite::iterateCursor(const IDBIdentifier& cursorIdentifier, const IDBKeyData& targetKey, IDBKeyData& key, IDBKeyData& primaryKey, Vector<char>& valueBuffer, IDBKeyData& valueKey)
 {
     ASSERT(!isMainThread());
     ASSERT(m_sqliteDB);
@@ -1014,7 +1016,8 @@ bool UniqueIDBDatabaseBackingStoreSQLite::iterateCursor(const IDBIdentifier& cur
 
     key = cursor->currentKey();
     primaryKey = cursor->currentPrimaryKey();
-    value = cursor->currentValue();
+    valueBuffer = cursor->currentValueBuffer();
+    valueKey = cursor->currentValueKey();
 
     return true;
 }

@@ -246,6 +246,38 @@ int IDBKeyData::compare(const IDBKeyData& other)
     return 0;
 }
 
+#ifndef NDEBUG
+String IDBKeyData::loggingString() const
+{
+    if (isNull)
+        return "<null>";
+
+    switch (type) {
+    case IDBKey::InvalidType:
+        return "<invalid>";
+    case IDBKey::ArrayType:
+        {
+            String result = "<array> - { ";
+            for (size_t i = 0; i < arrayValue.size(); ++i) {
+                result.append(arrayValue[i].loggingString());
+                if (i < arrayValue.size() - 1)
+                    result.append(", ");
+            }
+            result.append(" }");
+            return result;
+        }
+    case IDBKey::StringType:
+        return String("<string> - ") + stringValue;
+    case IDBKey::DateType:
+        return String::format("Date type - %f", numberValue);
+    case IDBKey::NumberType:
+        return String::format("<number> - %f", numberValue);
+    case IDBKey::MinType:
+        return "<minimum>";
+    }
+}
+#endif
+
 }
 
 #endif // ENABLE(INDEXED_DATABASE)

@@ -147,6 +147,10 @@ public:
     using RefCounted<IDBKey>::ref;
     using RefCounted<IDBKey>::deref;
 
+#ifndef NDEBUG
+    String loggingString() const;
+#endif
+
 private:
     IDBKey() : m_type(InvalidType), m_number(0), m_sizeEstimate(OverheadSize) { }
     IDBKey(Type type, double number) : m_type(type), m_number(number), m_sizeEstimate(OverheadSize + sizeof(double)) { }

@@ -98,6 +98,13 @@ bool IDBKey::isEqual(const IDBKey* other) const
     return !compare(other);
 }
 
+#ifndef NDEBUG
+String IDBKey::loggingString() const
+{
+    return IDBKeyData(this).loggingString();
+}
+#endif
+
 } // namespace WebCore
 
 #endif

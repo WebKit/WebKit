@@ -52,7 +52,7 @@ public:
     // From IDBFactory.webkitGetDatabaseNames()
     virtual void onSuccess(PassRefPtr<DOMStringList>) = 0;
     // From IDBObjectStore/IDBIndex.openCursor(), IDBIndex.openKeyCursor()
-    virtual void onSuccess(PassRefPtr<IDBCursorBackend>, PassRefPtr<IDBKey>, PassRefPtr<IDBKey> primaryKey, PassRefPtr<SharedBuffer>) = 0;
+    virtual void onSuccess(PassRefPtr<IDBCursorBackend>) = 0;
     // From IDBObjectStore.add()/put(), IDBIndex.getKey()
     virtual void onSuccess(PassRefPtr<IDBKey>) = 0;
     // From IDBObjectStore/IDBIndex.get()/count(), and various methods that yield null/undefined.
@@ -67,6 +67,8 @@ public:
 
     // From IDBCursor.advance()/continue()
     virtual void onSuccess(PassRefPtr<IDBKey>, PassRefPtr<IDBKey> primaryKey, PassRefPtr<SharedBuffer>) = 0;
+    virtual void onSuccess(PassRefPtr<IDBKey>, PassRefPtr<IDBKey> primaryKey, PassRefPtr<SharedBuffer>, PassRefPtr<IDBKey> valueKey) = 0;
+
     // From IDBCursor.advance()/continue()
     virtual void onSuccessWithPrefetch(const Vector<RefPtr<IDBKey>>& keys, const Vector<RefPtr<IDBKey>>& primaryKeys, const Vector<RefPtr<SharedBuffer>>& values) = 0;
     // From IDBFactory.open()/deleteDatabase()

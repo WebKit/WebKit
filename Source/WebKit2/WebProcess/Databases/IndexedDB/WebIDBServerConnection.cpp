@@ -444,7 +444,7 @@ void WebIDBServerConnection::didGetRecord(uint64_t requestID, const WebCore::IDB
     serverRequest->completeRequest(getResult, errorCode ? IDBDatabaseError::create(errorCode, errorMessage) : nullptr);
 }
 
-void WebIDBServerConnection::didOpenCursor(uint64_t requestID, int64_t cursorID, WebCore::IDBKeyData& key, WebCore::IDBKeyData& primaryKey, const IPC::DataReference& valueData, uint32_t errorCode, const String& errorMessage)
+void WebIDBServerConnection::didOpenCursor(uint64_t requestID, int64_t cursorID, const IDBKeyData& key, const IDBKeyData& primaryKey, const IPC::DataReference& valueData, const IDBKeyData& valueKey, uint32_t errorCode, const String& errorMessage)
 {
     LOG(IDB, "WebProcess didOpenCursor request ID %llu (error - %s)", requestID, errorMessage.utf8().data());
 
@@ -454,10 +454,10 @@ void WebIDBServerConnection::didOpenCursor(uint64_t requestID, int64_t cursorID,
         return;
 
     RefPtr<SharedBuffer> value = SharedBuffer::create(valueData.data(), valueData.size());
-    serverRequest->completeRequest(cursorID, key.maybeCreateIDBKey(), primaryKey.maybeCreateIDBKey(), value.release(), errorCode ? IDBDatabaseError::create(errorCode, errorMessage) : nullptr);
+    serverRequest->completeRequest(cursorID, key.maybeCreateIDBKey(), primaryKey.maybeCreateIDBKey(), value.release(), valueKey.maybeCreateIDBKey(), errorCode ? IDBDatabaseError::create(errorCode, errorMessage) : nullptr);
 }
 
-void WebIDBServerConnection::didAdvanceCursor(uint64_t requestID, WebCore::IDBKeyData& key, WebCore::IDBKeyData& primaryKey, const IPC::DataReference& valueData, uint32_t errorCode, const String& errorMessage)
+void WebIDBServerConnection::didAdvanceCursor(uint64_t requestID, const IDBKeyData& key, const IDBKeyData& primaryKey, const IPC::DataReference& valueData, const IDBKeyData& valueKey, uint32_t errorCode, const String& errorMessage)
 {
     LOG(IDB, "WebProcess didAdvanceCursor request ID %llu (error - %s)", requestID, errorMessage.utf8().data());
 
@@ -467,10 +467,10 @@ void WebIDBServerConnection::didAdvanceCursor(uint64_t requestID, WebCore::IDBKe
         return;
 
     RefPtr<SharedBuffer> value = SharedBuffer::create(valueData.data(), valueData.size());
-    serverRequest->completeRequest(key.maybeCreateIDBKey(), primaryKey.maybeCreateIDBKey(), value.release(), errorCode ? IDBDatabaseError::create(errorCode, errorMessage) : nullptr);
+    serverRequest->completeRequest(key.maybeCreateIDBKey(), primaryKey.maybeCreateIDBKey(), value.release(), valueKey.maybeCreateIDBKey(), errorCode ? IDBDatabaseError::create(errorCode, errorMessage) : nullptr);
 }
 
-void WebIDBServerConnection::didIterateCursor(uint64_t requestID, WebCore::IDBKeyData& key, WebCore::IDBKeyData& primaryKey, const IPC::DataReference& valueData, uint32_t errorCode, const String& errorMessage)
+void WebIDBServerConnection::didIterateCursor(uint64_t requestID, const IDBKeyData& key, const IDBKeyData& primaryKey, const IPC::DataReference& valueData, const IDBKeyData& valueKey, uint32_t errorCode, const String& errorMessage)
 {
     LOG(IDB, "WebProcess didIterateCursor request ID %llu (error - %s)", requestID, errorMessage.utf8().data());
 
@@ -480,7 +480,7 @@ void WebIDBServerConnection::didIterateCursor(uint64_t requestID, WebCore::IDBKe
         return;
 
     RefPtr<SharedBuffer> value = SharedBuffer::create(valueData.data(), valueData.size());
-    serverRequest->completeRequest(key.maybeCreateIDBKey(), primaryKey.maybeCreateIDBKey(), value.release(), errorCode ? IDBDatabaseError::create(errorCode, errorMessage) : nullptr);
+    serverRequest->completeRequest(key.maybeCreateIDBKey(), primaryKey.maybeCreateIDBKey(), value.release(), valueKey.maybeCreateIDBKey(), errorCode ? IDBDatabaseError::create(errorCode, errorMessage) : nullptr);
 }
 
 void WebIDBServerConnection::count(IDBTransactionBackend& transaction, const CountOperation& operation, std::function<void(int64_t, PassRefPtr<IDBDatabaseError>)> completionCallback)
@@ -628,12 +628,12 @@ void WebIDBServerConnection::didChangeDatabaseVersion(uint64_t requestID, bool s
     serverRequest->completeRequest(success ? nullptr : IDBDatabaseError::create(IDBDatabaseException::UnknownError, "Unknown error occured changing database version"));
 }
 
-void WebIDBServerConnection::openCursor(IDBTransactionBackend&, const OpenCursorOperation& operation, std::function<void(int64_t, PassRefPtr<IDBKey>, PassRefPtr<IDBKey>, PassRefPtr<SharedBuffer>, PassRefPtr<IDBDatabaseError>)> completionCallback)
+void WebIDBServerConnection::openCursor(IDBTransactionBackend&, const OpenCursorOperation& operation, std::function<void(int64_t, PassRefPtr<IDBKey>, PassRefPtr<IDBKey>, PassRefPtr<SharedBuffer>, PassRefPtr<IDBKey>, PassRefPtr<IDBDatabaseError>)> completionCallback)
 {
-    RefPtr<AsyncRequest> serverRequest = AsyncRequestImpl<int64_t, PassRefPtr<IDBKey>, PassRefPtr<IDBKey>, PassRefPtr<SharedBuffer>, PassRefPtr<IDBDatabaseError>>::create(completionCallback);
+    RefPtr<AsyncRequest> serverRequest = AsyncRequestImpl<int64_t, PassRefPtr<IDBKey>, PassRefPtr<IDBKey>, PassRefPtr<SharedBuffer>, PassRefPtr<IDBKey>, PassRefPtr<IDBDatabaseError>>::create(completionCallback);
 
     serverRequest->setAbortHandler([completionCallback]() {
-        completionCallback(0, nullptr, nullptr, nullptr, IDBDatabaseError::create(IDBDatabaseException::UnknownError, "Unknown error occured opening database cursor"));
+        completionCallback(0, nullptr, nullptr, nullptr, nullptr, IDBDatabaseError::create(IDBDatabaseException::UnknownError, "Unknown error occured opening database cursor"));
     });
 
     uint64_t requestID = serverRequest->requestID();
@@ -645,12 +645,12 @@ void WebIDBServerConnection::openCursor(IDBTransactionBackend&, const OpenCursor
     send(Messages::DatabaseProcessIDBConnection::OpenCursor(requestID, operation.transactionID(), operation.objectStoreID(), operation.indexID(), static_cast<int64_t>(operation.direction()), static_cast<int64_t>(operation.cursorType()), static_cast<int64_t>(operation.taskType()), operation.keyRange()));
 }
 
-void WebIDBServerConnection::cursorAdvance(IDBCursorBackend&, const CursorAdvanceOperation& operation, std::function<void(PassRefPtr<IDBKey>, PassRefPtr<IDBKey>, PassRefPtr<SharedBuffer>, PassRefPtr<IDBDatabaseError>)> completionCallback)
+void WebIDBServerConnection::cursorAdvance(IDBCursorBackend&, const CursorAdvanceOperation& operation, std::function<void(PassRefPtr<IDBKey>, PassRefPtr<IDBKey>, PassRefPtr<SharedBuffer>, PassRefPtr<IDBKey>, PassRefPtr<IDBDatabaseError>)> completionCallback)
 {
-    RefPtr<AsyncRequest> serverRequest = AsyncRequestImpl<PassRefPtr<IDBKey>, PassRefPtr<IDBKey>, PassRefPtr<SharedBuffer>, PassRefPtr<IDBDatabaseError>>::create(completionCallback);
+    RefPtr<AsyncRequest> serverRequest = AsyncRequestImpl<PassRefPtr<IDBKey>, PassRefPtr<IDBKey>, PassRefPtr<SharedBuffer>, PassRefPtr<IDBKey>, PassRefPtr<IDBDatabaseError>>::create(completionCallback);
 
     serverRequest->setAbortHandler([completionCallback]() {
-        completionCallback(nullptr, nullptr, nullptr, IDBDatabaseError::create(IDBDatabaseException::UnknownError, "Unknown error occured advancing database cursor"));
+        completionCallback(nullptr, nullptr, nullptr, nullptr, IDBDatabaseError::create(IDBDatabaseException::UnknownError, "Unknown error occured advancing database cursor"));
     });
 
     uint64_t requestID = serverRequest->requestID();
@@ -662,12 +662,12 @@ void WebIDBServerConnection::cursorAdvance(IDBCursorBackend&, const CursorAdvanc
     send(Messages::DatabaseProcessIDBConnection::CursorAdvance(requestID, operation.cursorID(), operation.count()));
 }
 
-void WebIDBServerConnection::cursorIterate(IDBCursorBackend&, const CursorIterationOperation& operation, std::function<void(PassRefPtr<IDBKey>, PassRefPtr<IDBKey>, PassRefPtr<SharedBuffer>, PassRefPtr<IDBDatabaseError>)> completionCallback)
+void WebIDBServerConnection::cursorIterate(IDBCursorBackend&, const CursorIterationOperation& operation, std::function<void(PassRefPtr<IDBKey>, PassRefPtr<IDBKey>, PassRefPtr<SharedBuffer>, PassRefPtr<IDBKey>, PassRefPtr<IDBDatabaseError>)> completionCallback)
 {
-    RefPtr<AsyncRequest> serverRequest = AsyncRequestImpl<PassRefPtr<IDBKey>, PassRefPtr<IDBKey>, PassRefPtr<SharedBuffer>, PassRefPtr<IDBDatabaseError>>::create(completionCallback);
+    RefPtr<AsyncRequest> serverRequest = AsyncRequestImpl<PassRefPtr<IDBKey>, PassRefPtr<IDBKey>, PassRefPtr<SharedBuffer>, PassRefPtr<IDBKey>, PassRefPtr<IDBDatabaseError>>::create(completionCallback);
 
     serverRequest->setAbortHandler([completionCallback]() {
-        completionCallback(nullptr, nullptr, nullptr, IDBDatabaseError::create(IDBDatabaseException::UnknownError, "Unknown error occured iterating database cursor"));
+        completionCallback(nullptr, nullptr, nullptr, nullptr, IDBDatabaseError::create(IDBDatabaseException::UnknownError, "Unknown error occured iterating database cursor"));
     });
 
     uint64_t requestID = serverRequest->requestID();
