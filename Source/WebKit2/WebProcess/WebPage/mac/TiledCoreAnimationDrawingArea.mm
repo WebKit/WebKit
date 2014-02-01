@@ -696,18 +696,21 @@ void TiledCoreAnimationDrawingArea::adjustTransientZoom(double scale, FloatPoint
     transform.scale(scale);
 
     RenderView* renderView = m_webPage->mainFrameView()->renderView();
-    PlatformCALayer* renderViewLayer = static_cast<GraphicsLayerCA*>(renderView->layer()->backing()->graphicsLayer())->platformCALayer();
+    PlatformCALayer* renderViewLayer = toGraphicsLayerCA(renderView->layer()->backing()->graphicsLayer())->platformCALayer();
     renderViewLayer->setTransform(transform);
     renderViewLayer->setAnchorPoint(FloatPoint3D());
     renderViewLayer->setPosition(FloatPoint3D());
 
-    PlatformCALayer* shadowLayer = static_cast<GraphicsLayerCA*>(renderView->compositor().layerForContentShadow())->platformCALayer();
+    GraphicsLayerCA* shadowGraphicsLayer = toGraphicsLayerCA(renderView->compositor().layerForContentShadow());
+    if (shadowGraphicsLayer) {
+        PlatformCALayer* shadowLayer = shadowGraphicsLayer->platformCALayer();
 
-    FloatRect shadowBounds = FloatRect(FloatPoint(), toFloatSize(renderView->layoutOverflowRect().maxXMaxYCorner()));
-    shadowBounds.scale(scale);
+        FloatRect shadowBounds = FloatRect(FloatPoint(), toFloatSize(renderView->layoutOverflowRect().maxXMaxYCorner()));
+        shadowBounds.scale(scale);
 
-    shadowLayer->setBounds(shadowBounds);
-    shadowLayer->setPosition(origin + shadowBounds.center());
+        shadowLayer->setBounds(shadowBounds);
+        shadowLayer->setPosition(origin + shadowBounds.center());
+    }
 
     m_transientZoomScale = scale;
     m_transientZoomOrigin = origin;
@@ -761,30 +764,36 @@ void TiledCoreAnimationDrawingArea::commitTransientZoom(double scale, FloatPoint
     RefPtr<PlatformCAAnimation> renderViewAnimation = PlatformCAAnimation::create(renderViewAnimationCA.get());
     renderViewAnimation->setToValue(transform);
 
-    RetainPtr<CALayer> shadowLayer = static_cast<GraphicsLayerCA*>(renderView->compositor().layerForContentShadow())->platformCALayer()->platformLayer();
-
-    FloatRect shadowBounds = FloatRect(FloatPoint(), toFloatSize(renderView->layoutOverflowRect().maxXMaxYCorner()));
-    shadowBounds.scale(scale);
-    RetainPtr<CGPathRef> shadowPath = adoptCF(CGPathCreateWithRect(shadowBounds, NULL)).get();
-
-    RetainPtr<CABasicAnimation> shadowBoundsAnimation = transientZoomSnapAnimationForKeyPath("bounds");
-    [shadowBoundsAnimation setToValue:[NSValue valueWithRect:shadowBounds]];
-    RetainPtr<CABasicAnimation> shadowPositionAnimation = transientZoomSnapAnimationForKeyPath("position");
-    [shadowPositionAnimation setToValue:[NSValue valueWithPoint:constrainedOrigin + shadowBounds.center()]];
-    RetainPtr<CABasicAnimation> shadowPathAnimation = transientZoomSnapAnimationForKeyPath("shadowPath");
-    [shadowPathAnimation setToValue:(id)shadowPath.get()];
+    RetainPtr<CALayer> shadowLayer;
+    if (GraphicsLayerCA* shadowGraphicsLayer = toGraphicsLayerCA(renderView->compositor().layerForContentShadow()))
+        shadowLayer = shadowGraphicsLayer->platformCALayer()->platformLayer();
 
     [CATransaction begin];
     [CATransaction setCompletionBlock:^(void) {
         renderViewLayer->removeAnimationForKey("transientZoomCommit");
-        [shadowLayer removeAllAnimations];
+        if (shadowLayer)
+            [shadowLayer removeAllAnimations];
         applyTransientZoomToPage(scale, origin);
     }];
 
     renderViewLayer->addAnimationForKey("transientZoomCommit", renderViewAnimation.get());
-    [shadowLayer addAnimation:shadowBoundsAnimation.get() forKey:@"transientZoomCommitShadowBounds"];
-    [shadowLayer addAnimation:shadowPositionAnimation.get() forKey:@"transientZoomCommitShadowPosition"];
-    [shadowLayer addAnimation:shadowPathAnimation.get() forKey:@"transientZoomCommitShadowPath"];
+
+    if (shadowLayer) {
+        FloatRect shadowBounds = FloatRect(FloatPoint(), toFloatSize(renderView->layoutOverflowRect().maxXMaxYCorner()));
+        shadowBounds.scale(scale);
+        RetainPtr<CGPathRef> shadowPath = adoptCF(CGPathCreateWithRect(shadowBounds, NULL)).get();
+
+        RetainPtr<CABasicAnimation> shadowBoundsAnimation = transientZoomSnapAnimationForKeyPath("bounds");
+        [shadowBoundsAnimation setToValue:[NSValue valueWithRect:shadowBounds]];
+        RetainPtr<CABasicAnimation> shadowPositionAnimation = transientZoomSnapAnimationForKeyPath("position");
+        [shadowPositionAnimation setToValue:[NSValue valueWithPoint:constrainedOrigin + shadowBounds.center()]];
+        RetainPtr<CABasicAnimation> shadowPathAnimation = transientZoomSnapAnimationForKeyPath("shadowPath");
+        [shadowPathAnimation setToValue:(id)shadowPath.get()];
+
+        [shadowLayer addAnimation:shadowBoundsAnimation.get() forKey:@"transientZoomCommitShadowBounds"];
+        [shadowLayer addAnimation:shadowPositionAnimation.get() forKey:@"transientZoomCommitShadowPosition"];
+        [shadowLayer addAnimation:shadowPathAnimation.get() forKey:@"transientZoomCommitShadowPath"];
+    }
 
     [CATransaction commit];
 }
@@ -792,7 +801,7 @@ void TiledCoreAnimationDrawingArea::commitTransientZoom(double scale, FloatPoint
 void TiledCoreAnimationDrawingArea::applyTransientZoomToPage(double scale, FloatPoint origin)
 {
     RenderView* renderView = m_webPage->mainFrameView()->renderView();
-    PlatformCALayer* renderViewLayer = static_cast<GraphicsLayerCA*>(renderView->layer()->backing()->graphicsLayer())->platformCALayer();
+    PlatformCALayer* renderViewLayer = toGraphicsLayerCA(renderView->layer()->backing()->graphicsLayer())->platformCALayer();
 
     TransformationMatrix finalTransform;
     finalTransform.scale(scale);
@@ -801,10 +810,13 @@ void TiledCoreAnimationDrawingArea::applyTransientZoomToPage(double scale, Float
     // and not apply the transform, so we can't depend on it to do so.
     renderViewLayer->setTransform(finalTransform);
 
-    PlatformCALayer* shadowLayer = static_cast<GraphicsLayerCA*>(renderView->compositor().layerForContentShadow())->platformCALayer();
-    IntRect overflowRect = renderView->pixelSnappedLayoutOverflowRect();
-    shadowLayer->setBounds(IntRect(IntPoint(), toIntSize(overflowRect.maxXMaxYCorner())));
-    shadowLayer->setPosition(shadowLayer->bounds().center());
+    GraphicsLayerCA* shadowGraphicsLayer = toGraphicsLayerCA(renderView->compositor().layerForContentShadow());
+    if (shadowGraphicsLayer) {
+        PlatformCALayer* shadowLayer = shadowGraphicsLayer->platformCALayer();
+        IntRect overflowRect = renderView->pixelSnappedLayoutOverflowRect();
+        shadowLayer->setBounds(IntRect(IntPoint(), toIntSize(overflowRect.maxXMaxYCorner())));
+        shadowLayer->setPosition(shadowLayer->bounds().center());
+    }
 
     FloatPoint unscrolledOrigin(origin);
     FloatRect visibleContentRect = m_webPage->mainFrameView()->visibleContentRectIncludingScrollbars();

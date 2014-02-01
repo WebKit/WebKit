@@ -1,3 +1,20 @@
+2014-01-31  Tim Horton  <timothy_horton@apple.com>
+
+        WebKit2 View Gestures: Crash when pinch-zooming on a page that is just a frameset
+        https://bugs.webkit.org/show_bug.cgi?id=127591
+        <rdar://problem/15898349>
+
+        Reviewed by Simon Fraser.
+
+        When we have no shadow layer, we crash in TiledCoreAnimationDrawingArea::adjustTransientZoom.
+        Fix this null deref; also, we always want a shadow layer, even if the page cannot be scrolled,
+        because it can be revealed by pinching out.
+
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.mm:
+        (WebKit::TiledCoreAnimationDrawingArea::adjustTransientZoom):
+        (WebKit::TiledCoreAnimationDrawingArea::commitTransientZoom):
+        (WebKit::TiledCoreAnimationDrawingArea::applyTransientZoomToPage):
+
 2014-01-31  Oliver Hunt  <oliver@apple.com>
 
         Rollout r163195 and related patches
