@@ -3558,14 +3558,14 @@ void CodeBlock::addBreakpoint(unsigned numBreakpoints)
 {
     m_numBreakpoints += numBreakpoints;
     ASSERT(m_numBreakpoints);
-    if (jitType() == JITCode::DFGJIT)
+    if (JITCode::isOptimizingJIT(jitType()))
         jettison();
 }
 
 void CodeBlock::setSteppingMode(CodeBlock::SteppingMode mode)
 {
     m_steppingMode = mode;
-    if (mode == SteppingModeEnabled && jitType() == JITCode::DFGJIT)
+    if (mode == SteppingModeEnabled && JITCode::isOptimizingJIT(jitType()))
         jettison();
 }
 

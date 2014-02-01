@@ -1,3 +1,18 @@
+2014-02-01  Mark Lam  <mark.lam@apple.com>
+
+        Saying "jitType() == JITCode::DFGJIT" is almost never correct.
+        <http://webkit.org/b/128045>
+
+        Reviewed by Filip Pizlo.
+
+        JITCode::isOptimizingJIT(jitType()) is the right way to say it.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::addBreakpoint):
+        (JSC::CodeBlock::setSteppingMode):
+        * runtime/VM.cpp:
+        (JSC::SetEnabledProfilerFunctor::operator()):
+
 2014-02-01  Michael Saboff  <msaboff@apple.com>
 
         REGRESSION (r163027?): CrashTracer: [USER] com.apple.WebKit.WebContent.Development at com.apple.JavaScriptCore: JSC::ArrayProfile::computeUpdatedPrediction + 4
