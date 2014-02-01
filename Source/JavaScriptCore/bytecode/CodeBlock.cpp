@@ -1689,6 +1689,7 @@ CodeBlock::CodeBlock(ScriptExecutable* ownerExecutable, UnlinkedCodeBlock* unlin
             instructions[i + j].u.operand = pc[j].u.operand;
         }
         switch (pc[0].u.opcode) {
+        case op_call_varargs:
         case op_get_by_val:
         case op_get_argument_by_val: {
             int arrayProfileIndex = pc[opLength - 2].u.operand;
@@ -1697,8 +1698,7 @@ CodeBlock::CodeBlock(ScriptExecutable* ownerExecutable, UnlinkedCodeBlock* unlin
             instructions[i + opLength - 2] = &m_arrayProfiles[arrayProfileIndex];
             FALLTHROUGH;
         }
-        case op_get_by_id:
-        case op_call_varargs: {
+        case op_get_by_id: {
             ValueProfile* profile = &m_valueProfiles[pc[opLength - 1].u.operand];
             ASSERT(profile->m_bytecodeOffset == -1);
             profile->m_bytecodeOffset = i;
