@@ -68,7 +68,7 @@ void HashTable::deleteTable() const
 bool setUpStaticFunctionSlot(ExecState* exec, const HashEntry* entry, JSObject* thisObj, PropertyName propertyName, PropertySlot& slot)
 {
     ASSERT(thisObj->globalObject());
-    ASSERT(entry->attributes() & BuiltinOrFunction);
+    ASSERT(entry->attributes() & Function);
     VM& vm = exec->vm();
     unsigned attributes;
     PropertyOffset offset = thisObj->getDirectOffset(vm, propertyName, attributes);
@@ -79,13 +79,9 @@ bool setUpStaticFunctionSlot(ExecState* exec, const HashEntry* entry, JSObject* 
         if (thisObj->staticFunctionsReified())
             return false;
     
-        if (entry->attributes() & Builtin)
-            thisObj->putDirectBuiltinFunction(vm, thisObj->globalObject(), propertyName, entry->builtinGenerator()(vm), entry->attributes());
-        else {
-            thisObj->putDirectNativeFunction(
-                vm, thisObj->globalObject(), propertyName, entry->functionLength(),
-                entry->function(), entry->intrinsic(), entry->attributes());
-        }
+        thisObj->putDirectNativeFunction(
+            vm, thisObj->globalObject(), propertyName, entry->functionLength(),
+            entry->function(), entry->intrinsic(), entry->attributes());
         offset = thisObj->getDirectOffset(vm, propertyName, attributes);
         ASSERT(isValidOffset(offset));
     }

@@ -32,7 +32,6 @@
 #include "JSPromise.h"
 #include "JSPromiseConstructor.h"
 #include "JSPromiseFunctions.h"
-#include "JSStringInlines.h"
 #include "SlotVisitorInlines.h"
 
 namespace JSC {

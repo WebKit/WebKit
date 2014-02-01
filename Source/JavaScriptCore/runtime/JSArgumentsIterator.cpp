@@ -27,7 +27,6 @@
 #include "JSArgumentsIterator.h"
 
 #include "Arguments.h"
-#include "JSCJSValueInlines.h"
 
 namespace JSC {
 

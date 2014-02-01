@@ -27,7 +27,6 @@
 #include "ProtoCallFrame.h"
 
 #include "CodeBlock.h"
-#include "JSCJSValueInlines.h"
 #include "StackAlignment.h"
 
 namespace JSC {

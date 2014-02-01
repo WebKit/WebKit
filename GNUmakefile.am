@@ -68,7 +68,6 @@ ALL_MOFILES :=
 dom_binding_idls :=
 wtf_sources :=
 javascriptcore_h_api :=
-javascriptcore_builtins_js_nosources :=
 javascriptcore_cppflags:=
 javascriptcore_cflags :=
 javascriptcore_sources :=

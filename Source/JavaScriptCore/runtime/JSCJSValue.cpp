@@ -32,9 +32,7 @@
 #include "JSFunction.h"
 #include "JSGlobalObject.h"
 #include "JSNotAnObject.h"
-#include "JSStringInlines.h"
 #include "NumberObject.h"
-#include "Operations.h"
 #include <wtf/MathExtras.h>
 #include <wtf/StringExtras.h>
 

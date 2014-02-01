@@ -36,7 +36,6 @@
 #include "JSPromiseDeferred.h"
 #include "JSPromiseFunctions.h"
 #include "JSPromiseReaction.h"
-#include "JSStringInlines.h"
 #include "Microtask.h"
 #include "StructureInlines.h"
 

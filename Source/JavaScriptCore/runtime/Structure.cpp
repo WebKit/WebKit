@@ -27,18 +27,12 @@
 #include "Structure.h"
 
 #include "CodeBlock.h"
-#include "CommonIdentifiers.h"
 #include "DumpContext.h"
-#include "JSCellInlines.h"
 #include "JSObject.h"
 #include "JSPropertyNameIterator.h"
-#include "JSStringInlines.h"
 #include "Lookup.h"
-#include "PropertyMapHashTable.h"
 #include "PropertyNameArray.h"
-#include "SlotVisitorInlines.h"
 #include "StructureChain.h"
-#include "StructureInlines.h"
 #include "StructureRareDataInlines.h"
 #include <wtf/CommaPrinter.h>
 #include <wtf/RefCountedLeakCounter.h>

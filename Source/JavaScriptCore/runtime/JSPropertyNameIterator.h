@@ -31,6 +31,7 @@
 
 #include "JSObject.h"
 #include "JSString.h"
+#include "Operations.h"
 #include "PropertyNameArray.h"
 #include <memory>
 

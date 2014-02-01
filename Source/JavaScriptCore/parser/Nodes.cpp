@@ -132,12 +132,6 @@ PassRefPtr<ProgramNode> ProgramNode::create(VM* vm, const JSTokenLocation& start
     return node.release();
 }
 
-
-void ProgramNode::setClosedVariables(const Vector<RefPtr<StringImpl>>&& closedVariables)
-{
-    m_closedVariables = std::move(closedVariables);
-}
-
 // ------------------------------ EvalNode -----------------------------
 
 inline EvalNode::EvalNode(VM* vm, const JSTokenLocation& startLocation, const JSTokenLocation& endLocation, unsigned endColumn, SourceElements* children, VarStack* varStack, FunctionStack* funcStack, IdentifierSet& capturedVariables, const SourceCode& source, CodeFeatures features, int numConstants)

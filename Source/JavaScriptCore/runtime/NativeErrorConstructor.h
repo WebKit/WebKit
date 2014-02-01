@@ -51,7 +51,19 @@ namespace JSC {
         Structure* errorStructure() { return m_errorStructure.get(); }
 
     protected:
-        void finishCreation(VM&, JSGlobalObject*, Structure* prototypeStructure, const String& name);
+        void finishCreation(VM& vm, JSGlobalObject* globalObject, Structure* prototypeStructure, const String& name)
+        {
+            Base::finishCreation(vm, name);
+            ASSERT(inherits(info()));
+
+            NativeErrorPrototype* prototype = NativeErrorPrototype::create(vm, globalObject, prototypeStructure, name, this);
+
+            putDirect(vm, vm.propertyNames->length, jsNumber(1), DontDelete | ReadOnly | DontEnum); // ECMA 15.11.7.5
+            putDirect(vm, vm.propertyNames->prototype, prototype, DontDelete | ReadOnly | DontEnum);
+            m_errorStructure.set(vm, this, ErrorInstance::createStructure(vm, globalObject, prototype));
+            ASSERT(m_errorStructure);
+            ASSERT(m_errorStructure->isObject());
+        }
 
     private:
         NativeErrorConstructor(VM&, Structure*);

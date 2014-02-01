@@ -31,7 +31,6 @@
 #include "JSCellInlines.h"
 #include "JSGlobalObject.h"
 #include "JSSet.h"
-#include "JSStringInlines.h"
 #include "MapData.h"
 #include "SetPrototype.h"
 

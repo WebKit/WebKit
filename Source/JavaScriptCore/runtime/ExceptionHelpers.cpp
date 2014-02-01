@@ -81,11 +81,6 @@ JSObject* createStackOverflowError(JSGlobalObject* globalObject)
 
 JSObject* createUndefinedVariableError(ExecState* exec, const Identifier& ident)
 {
-    
-    if (ident.impl()->isEmptyUnique()) {
-        String message(makeString("Can't find private variable: @", exec->propertyNames().getPublicName(ident).string()));
-        return createReferenceError(exec, message);
-    }
     String message(makeString("Can't find variable: ", ident.string()));
     return createReferenceError(exec, message);
 }

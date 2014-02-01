@@ -35,7 +35,6 @@
 #include "JSPromiseDeferred.h"
 #include "JSPromiseFunctions.h"
 #include "JSPromisePrototype.h"
-#include "JSStringInlines.h"
 #include "Lookup.h"
 #include "NumberObject.h"
 #include "StructureInlines.h"

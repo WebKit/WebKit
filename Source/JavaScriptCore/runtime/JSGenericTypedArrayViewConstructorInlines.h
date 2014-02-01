@@ -26,7 +26,6 @@
 #ifndef JSGenericTypedArrayViewConstructorInlines_h
 #define JSGenericTypedArrayViewConstructorInlines_h
 
-#include "CommonIdentifiers.h"
 #include "Error.h"
 #include "JSArrayBuffer.h"
 #include "JSGenericTypedArrayViewConstructor.h"

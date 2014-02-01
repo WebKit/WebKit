@@ -22,7 +22,6 @@
 #define CommonIdentifiers_h
 
 #include "Identifier.h"
-#include "JSCBuiltins.h"
 #include <wtf/Noncopyable.h>
 
 // MarkedArgumentBuffer of property names, passed to a macro so we can do set them up various
@@ -134,10 +133,8 @@
     macro(osrExits) \
     macro(parse) \
     macro(profiledBytecodes) \
-    macro(promise) \
     macro(propertyIsEnumerable) \
     macro(prototype) \
-    macro(resolve) \
     macro(set) \
     macro(size) \
     macro(slice) \
@@ -158,14 +155,7 @@
     macro(values) \
     macro(valueOf) \
     macro(window) \
-    macro(writable) \
-    macro(iterator) \
-    macro(iteratorNext) \
-    macro(reject) \
-    macro(fulfillmentHandler) \
-    macro(rejectionHandler) \
-    macro(deferred) \
-    macro(countdownHolder) \
+    macro(writable)
 
 #define JSC_COMMON_IDENTIFIERS_EACH_KEYWORD(macro) \
     macro(break) \
@@ -213,7 +203,7 @@
     macro(void) \
     macro(while) \
     macro(with) \
-    macro(yield) \
+    macro(yield)
 
 #define JSC_COMMON_PRIVATE_IDENTIFIERS_EACH_PROPERTY_NAME(macro) \
     macro(iterator) \
@@ -226,12 +216,7 @@
     macro(index) \
     macro(values) \
     macro(deferred) \
-    macro(countdownHolder) \
-    macro(Object) \
-    macro(TypeError) \
-    macro(undefinedKeyword) \
-    macro(call) \
-    macro(apply)
+    macro(countdownHolder)
 
 namespace JSC {
 
@@ -255,15 +240,11 @@ namespace JSC {
         
 #define JSC_IDENTIFIER_DECLARE_PROPERTY_NAME_GLOBAL(name) const Identifier name;
         JSC_COMMON_IDENTIFIERS_EACH_PROPERTY_NAME(JSC_IDENTIFIER_DECLARE_PROPERTY_NAME_GLOBAL)
-        JSC_FOREACH_BUILTIN_FUNCTION_NAME(JSC_IDENTIFIER_DECLARE_PROPERTY_NAME_GLOBAL)
 #undef JSC_IDENTIFIER_DECLARE_PROPERTY_NAME_GLOBAL
 
-#define JSC_IDENTIFIER_DECLARE_PRIVATE_PROPERTY_NAME_GLOBAL(name) const Identifier name##PrivateName; const std::pair<Identifier, Identifier> m_##name##PublicStringPair;
+#define JSC_IDENTIFIER_DECLARE_PRIVATE_PROPERTY_NAME_GLOBAL(name) const Identifier name##PrivateName;
         JSC_COMMON_PRIVATE_IDENTIFIERS_EACH_PROPERTY_NAME(JSC_IDENTIFIER_DECLARE_PRIVATE_PROPERTY_NAME_GLOBAL)
 #undef JSC_IDENTIFIER_DECLARE_PRIVATE_PROPERTY_NAME_GLOBAL
-        
-        const Identifier* getPrivateName(const Identifier&) const;
-        Identifier getPublicName(const Identifier&) const;
     };
 
 } // namespace JSC

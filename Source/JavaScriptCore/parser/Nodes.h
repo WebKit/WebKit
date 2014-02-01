@@ -1431,7 +1431,6 @@ namespace JSC {
         bool needsActivation() const { return (hasCapturedVariables()) || (m_features & (EvalFeature | WithFeature | CatchFeature)); }
         bool hasCapturedVariables() const { return !!m_capturedVariables.size(); }
         size_t capturedVariableCount() const { return m_capturedVariables.size(); }
-        const IdentifierSet& capturedVariables() const { return m_capturedVariables; }
         bool captures(const Identifier& ident) { return m_capturedVariables.contains(ident.impl()); }
 
         VarStack& varStack() { return m_varStack; }
@@ -1447,8 +1446,6 @@ namespace JSC {
         StatementNode* singleStatement() const;
 
         void emitStatementsBytecode(BytecodeGenerator&, RegisterID* destination);
-        
-        void setClosedVariables(const Vector<RefPtr<StringImpl>>&&) { }
 
     protected:
         void setSource(const SourceCode& source) { m_source = source; }
@@ -1478,13 +1475,11 @@ namespace JSC {
 
         static const bool scopeIsFunction = false;
 
-        void setClosedVariables(const Vector<RefPtr<StringImpl>>&&);
-        const Vector<RefPtr<StringImpl>>& closedVariables() const { return m_closedVariables; }
     private:
         ProgramNode(VM*, const JSTokenLocation& start, const JSTokenLocation& end, unsigned startColumn, unsigned endColumn, SourceElements*, VarStack*, FunctionStack*, IdentifierSet&, const SourceCode&, CodeFeatures, int numConstants);
 
         virtual void emitBytecode(BytecodeGenerator&, RegisterID* = 0) override;
-        Vector<RefPtr<StringImpl>> m_closedVariables;
+
         unsigned m_startColumn;
         unsigned m_endColumn;
     };

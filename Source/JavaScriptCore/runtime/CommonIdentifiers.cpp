@@ -27,10 +27,7 @@ namespace JSC {
 
 #define INITIALIZE_PROPERTY_NAME(name) , name(vm, #name)
 #define INITIALIZE_KEYWORD(name) , name##Keyword(vm, #name)
-#define INITIALIZE_PRIVATE_NAME(name) \
-    , name##PrivateName(Identifier::from(PrivateName())) \
-    , m_##name##PublicStringPair(name, name##PrivateName) \
-
+#define INITIALIZE_PRIVATE_NAME(name) , name##PrivateName(Identifier::from(PrivateName()))
 
 CommonIdentifiers::CommonIdentifiers(VM* vm)
     : nullIdentifier()
@@ -41,26 +38,8 @@ CommonIdentifiers::CommonIdentifiers(VM* vm)
     , hasNextIdentifier(vm, "hasNext")
     JSC_COMMON_IDENTIFIERS_EACH_KEYWORD(INITIALIZE_KEYWORD)
     JSC_COMMON_IDENTIFIERS_EACH_PROPERTY_NAME(INITIALIZE_PROPERTY_NAME)
-    JSC_FOREACH_BUILTIN_FUNCTION_NAME(INITIALIZE_PROPERTY_NAME)
     JSC_COMMON_PRIVATE_IDENTIFIERS_EACH_PROPERTY_NAME(INITIALIZE_PRIVATE_NAME)
 {
-}
-
-const Identifier* CommonIdentifiers::getPrivateName(const Identifier& ident) const
-{
-#define RETURN_IF_PRIVATE_NAME_MATCHES(name) if (m_##name##PublicStringPair.first == ident) return &m_##name##PublicStringPair.second;
-    JSC_COMMON_PRIVATE_IDENTIFIERS_EACH_PROPERTY_NAME(RETURN_IF_PRIVATE_NAME_MATCHES)
-#undef RETURN_IF_PRIVATE_NAME_MATCHES
-    return 0;
-}
-
-Identifier CommonIdentifiers::getPublicName(const Identifier& ident) const
-{
-#define RETURN_IF_PRIVATE_NAME_MATCHES(name) if (m_##name##PublicStringPair.second == ident) return m_##name##PublicStringPair.first;
-    JSC_COMMON_PRIVATE_IDENTIFIERS_EACH_PROPERTY_NAME(RETURN_IF_PRIVATE_NAME_MATCHES)
-#undef RETURN_IF_PRIVATE_NAME_MATCHES
-    RELEASE_ASSERT_NOT_REACHED();
-    return emptyIdentifier;
 }
 
 } // namespace JSC

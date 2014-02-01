@@ -48,7 +48,6 @@
 #include "JSActivation.h"
 #include "VM.h"
 #include "JSNameScope.h"
-#include "JSStringInlines.h"
 #include "NameInstance.h"
 #include "ObjectConstructor.h"
 #include "Operations.h"

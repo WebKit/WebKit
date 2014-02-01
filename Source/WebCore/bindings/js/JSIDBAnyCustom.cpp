@@ -47,7 +47,6 @@
 #include "JSIDBObjectStore.h"
 #include "JSIDBTransaction.h"
 #include "SerializedScriptValue.h"
-#include <runtime/JSStringInlines.h>
 
 using namespace JSC;
 

@@ -50,7 +50,6 @@
 #include "JSPropertyNameIterator.h"
 #include "JSStackInlines.h"
 #include "JSString.h"
-#include "JSStringInlines.h"
 #include "JSWithScope.h"
 #include "LLIntCLoop.h"
 #include "LLIntThunks.h"

@@ -31,7 +31,6 @@
 #include "CodeBlock.h"
 #include "DFGCommon.h"
 #include "DFGExitProfile.h"
-#include "JSCellInlines.h"
 
 namespace JSC {
 

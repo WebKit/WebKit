@@ -1,3 +1,13 @@
+2014-01-31  Oliver Hunt  <oliver@apple.com>
+
+        Rollout r163195 and related patches
+
+        * js/array-every-expected.txt:
+        * js/dom/array-prototype-properties-expected.txt:
+        * js/regress/array-prototype-every-expected.txt: Removed.
+        * js/regress/array-prototype-every.html: Removed.
+        * js/regress/script-tests/array-prototype-every.js: Removed.
+
 2014-01-31  Alexey Proskuryakov  <ap@apple.com>
 
         Update test results for a new DOM URL test (we now pass more).

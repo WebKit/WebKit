@@ -149,7 +149,6 @@ enum JSTokenType {
     INVALID_NUMERIC_LITERAL_ERRORTOK = 7 | ErrorTokenFlag,
     UNTERMINATED_STRING_LITERAL_ERRORTOK = 8 | ErrorTokenFlag | UnterminatedErrorTokenFlag,
     INVALID_STRING_LITERAL_ERRORTOK = 9 | ErrorTokenFlag,
-    INVALID_PRIVATE_NAME_ERRORTOK = 10 | ErrorTokenFlag
 };
 
 struct JSTextPosition {

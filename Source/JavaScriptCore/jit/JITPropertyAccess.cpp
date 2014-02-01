@@ -29,13 +29,11 @@
 #include "JIT.h"
 
 #include "CodeBlock.h"
-#include "CommonIdentifiers.h"
 #include "GCAwareJITStubRoutine.h"
 #include "GetterSetter.h"
 #include "Interpreter.h"
 #include "JITInlines.h"
 #include "JSArray.h"
-#include "JSCJSValueInlines.h"
 #include "JSFunction.h"
 #include "JSPropertyNameIterator.h"
 #include "JSVariableObject.h"

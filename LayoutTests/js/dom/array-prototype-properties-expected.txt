@@ -15,7 +15,7 @@ PASS Array.prototype.slice.call(undefined, 0, 1) threw exception TypeError: unde
 PASS Array.prototype.sort.call(undefined) threw exception TypeError: undefined is not an object (evaluating 'Array.prototype.sort.call(undefined)').
 PASS Array.prototype.splice.call(undefined, 0, 1) threw exception TypeError: undefined is not an object (evaluating 'Array.prototype.splice.call(undefined, 0, 1)').
 PASS Array.prototype.unshift.call(undefined, {}) threw exception TypeError: undefined is not an object (evaluating 'Array.prototype.unshift.call(undefined, {})').
-PASS Array.prototype.every.call(undefined, toString) threw exception TypeError: Array.prototype.every requires that |this| not be undefined.
+PASS Array.prototype.every.call(undefined, toString) threw exception TypeError: undefined is not an object (evaluating 'Array.prototype.every.call(undefined, toString)').
 PASS Array.prototype.forEach.call(undefined, toString) threw exception TypeError: undefined is not an object (evaluating 'Array.prototype.forEach.call(undefined, toString)').
 PASS Array.prototype.some.call(undefined, toString) threw exception TypeError: undefined is not an object (evaluating 'Array.prototype.some.call(undefined, toString)').
 PASS Array.prototype.indexOf.call(undefined, 0) threw exception TypeError: undefined is not an object (evaluating 'Array.prototype.indexOf.call(undefined, 0)').

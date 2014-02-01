@@ -28,7 +28,6 @@ set(WebKitTestRunner_INCLUDE_DIRECTORIES
     ${WEBKIT_TESTRUNNER_DIR}/InjectedBundle/atk
     ${JAVASCRIPTCORE_DIR}
     ${JAVASCRIPTCORE_DIR}/ForwardingHeaders
-    ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}
     ${WEBCORE_DIR}/editing
     ${WEBCORE_DIR}/platform
     ${WEBCORE_DIR}/platform/graphics

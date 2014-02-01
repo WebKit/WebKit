@@ -29,7 +29,6 @@
 #if ENABLE(DFG_JIT)
 
 #include "CodeBlock.h"
-#include "JSCJSValueInlines.h"
 
 namespace JSC { namespace DFG {
 

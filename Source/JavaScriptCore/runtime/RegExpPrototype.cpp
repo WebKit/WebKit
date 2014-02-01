@@ -24,7 +24,7 @@
 #include "ArrayPrototype.h"
 #include "Error.h"
 #include "JSArray.h"
-#include "JSCJSValueInlines.h"
+#include "JSCJSValue.h"
 #include "JSFunction.h"
 #include "JSObject.h"
 #include "JSString.h"

@@ -28,9 +28,8 @@ VPATH = \
     $(JavaScriptCore) \
     $(JavaScriptCore)/parser \
     $(JavaScriptCore)/runtime \
-	$(JavaScriptCore)/interpreter \
-	$(JavaScriptCore)/jit \
-	$(JavaScriptCore)/builtins \
+    $(JavaScriptCore)/interpreter \
+    $(JavaScriptCore)/jit \
 #
 
 .PHONY : all
@@ -58,17 +57,7 @@ all : \
     RegExpObject.lut.h \
     StringConstructor.lut.h \
     udis86_itab.h \
-    JSCBuiltins \
 #
-
-# builtin functions
-.PHONY: JSCBuiltins
-
-JSCBuiltins: $(JavaScriptCore)/generate-js-builtins JSCBuiltins.h JSCBuiltins.cpp
-JSCBuiltins.h: $(JavaScriptCore)/generate-js-builtins $(JavaScriptCore)/builtins/*.js
-	python $^ $@
-																				 
-JSCBuiltins.cpp: JSCBuiltins.h
 
 # lookup tables for classes
 

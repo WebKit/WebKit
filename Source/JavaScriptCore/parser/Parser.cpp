@@ -204,9 +204,8 @@ Parser<LexerType>::Parser(VM* vm, const SourceCode& source, FunctionParameters* 
     , m_lastIdentifier(0)
     , m_lastFunctionName(nullptr)
     , m_sourceElements(0)
-    , m_parsingBuiltin(strictness == JSParseBuiltin)
 {
-    m_lexer = adoptPtr(new LexerType(vm, strictness));
+    m_lexer = adoptPtr(new LexerType(vm));
     m_arena = m_vm->parserArena.get();
     m_lexer->setCode(source, m_arena);
     m_token.m_location.line = source.firstLine();
@@ -257,7 +256,6 @@ String Parser<LexerType>::parseInner()
     IdentifierSet capturedVariables;
     bool modifiedParameter = false;
     scope->getCapturedVariables(capturedVariables, modifiedParameter);
-    
     CodeFeatures features = context.features();
     if (scope->strictMode())
         features |= StrictModeFeature;
@@ -265,36 +263,21 @@ String Parser<LexerType>::parseInner()
         features |= ShadowsArgumentsFeature;
     if (modifiedParameter)
         features |= ModifiedParameterFeature;
-    
-    Vector<RefPtr<StringImpl>> closedVariables;
-    if (m_parsingBuiltin) {
-        RELEASE_ASSERT(!capturedVariables.size());
-        IdentifierSet usedVariables;
-        scope->getUsedVariables(usedVariables);
-        for (const auto& variable : usedVariables) {
-            if (scope->hasDeclaredVariable(Identifier(m_vm, variable.get())))
-                continue;
-            
-            if (scope->hasDeclaredParameter(Identifier(m_vm, variable.get())))
-                continue;
-            closedVariables.append(variable);
-        }
-    }
+
     didFinishParsing(sourceElements, context.varDeclarations(), context.funcDeclarations(), features,
-        context.numConstants(), capturedVariables, std::move(closedVariables));
+        context.numConstants(), capturedVariables);
 
     return parseError;
 }
 
 template <typename LexerType>
 void Parser<LexerType>::didFinishParsing(SourceElements* sourceElements, ParserArenaData<DeclarationStacks::VarStack>* varStack, 
-    ParserArenaData<DeclarationStacks::FunctionStack>* funcStack, CodeFeatures features, int numConstants, IdentifierSet& capturedVars, const Vector<RefPtr<StringImpl>>&& closedVariables)
+    ParserArenaData<DeclarationStacks::FunctionStack>* funcStack, CodeFeatures features, int numConstants, IdentifierSet& capturedVars)
 {
     m_sourceElements = sourceElements;
     m_varDeclarations = varStack;
     m_funcDeclarations = funcStack;
     m_capturedVariables.swap(capturedVars);
-    m_closedVariables = closedVariables;
     m_features = features;
     m_numConstants = numConstants;
 }
@@ -2362,10 +2345,6 @@ template <typename LexerType> void Parser<LexerType>::printUnexpectedTokenText(W
         
     case RESERVED:
         out.print("Unexpected use of reserved word '", getToken(), "'");
-        return;
-
-    case INVALID_PRIVATE_NAME_ERRORTOK:
-        out.print("Invalid private name '", getToken(), "'");
         return;
             
     case IDENT:

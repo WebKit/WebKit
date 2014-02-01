@@ -29,8 +29,6 @@
 #include "CallFrame.h"
 #include "CodeBlock.h"
 #include "JITExceptions.h"
-#include "JSCJSValueInlines.h"
-#include "JSFunctionInlines.h"
 #include "LLIntCommon.h"
 
 namespace JSC { namespace CommonSlowPaths {

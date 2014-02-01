@@ -7,9 +7,6 @@
     <Filter Include="bindings">
       <UniqueIdentifier>{0bace123-4582-eebc-9314-7819b376c198}</UniqueIdentifier>
     </Filter>
-    <Filter Include="builtins">
-      <UniqueIdentifier>{3b9d72a5-135b-43b3-a524-c6d2b9d29d35}</UniqueIdentifier>
-    </Filter>
     <Filter Include="bytecode">
       <UniqueIdentifier>{766088a0-1216-4854-aa43-560c5e283668}</UniqueIdentifier>
     </Filter>
@@ -110,9 +107,6 @@
     </ClCompile>
     <ClCompile Include="..\assembler\MacroAssembler.cpp">
       <Filter>assembler</Filter>
-    </ClCompile>
-    <ClCompile Include="..\builtins\BuiltinExecutables.cpp">
-      <Filter>builtins</Filter>
     </ClCompile>
     <ClCompile Include="..\bytecode\ArrayAllocationProfile.cpp">
       <Filter>bytecode</Filter>
@@ -1335,9 +1329,6 @@
     <ClCompile Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\InspectorJSTypeBuilders.cpp">
       <Filter>Derived Sources</Filter>
     </ClCompile>
-    <ClCompile Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSCBuiltins.cpp">
-      <Filter>Derived Sources</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\API\APICallbackFunction.h">
@@ -1463,9 +1454,6 @@
     <ClInclude Include="..\assembler\X86Assembler.h">
       <Filter>assembler</Filter>
     </ClInclude>
-    <ClCompile Include="..\builtins\BuiltinExecutables.h">
-      <Filter>builtins</Filter>
-    </ClCompile>
     <ClInclude Include="..\bytecode\ArrayAllocationProfile.h">
       <Filter>bytecode</Filter>
     </ClInclude>
@@ -2560,9 +2548,6 @@
       <Filter>Derived Sources</Filter>
     </ClInclude>
     <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\ArrayPrototype.lut.h">
-      <Filter>Derived Sources</Filter>
-    </ClInclude>
-    <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSCBuiltins.h">
       <Filter>Derived Sources</Filter>
     </ClInclude>
     <ClInclude Include="..\runtime\VM.h">

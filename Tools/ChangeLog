@@ -1,3 +1,11 @@
+2014-01-31  Oliver Hunt  <oliver@apple.com>
+
+        Rollout r163195 and related patches
+
+        * DumpRenderTree/CMakeLists.txt:
+        * WebKitTestRunner/CMakeLists.txt:
+        * WinCELauncher/CMakeLists.txt:
+
 2014-01-31  Daniel Bates  <dabates@apple.com>
 
         Attempt to fix Production Dashboard after <http://trac.webkit.org/changeset/163213>

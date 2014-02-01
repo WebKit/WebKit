@@ -23,7 +23,6 @@
 #ifndef Parser_h
 #define Parser_h
 
-#include "CommonIdentifiers.h"
 #include "Debugger.h"
 #include "ExceptionHelpers.h"
 #include "Executable.h"
@@ -260,10 +259,6 @@ struct Scope {
         return isValidStrictMode ? BindingSucceeded : StrictBindingFailed;
     }
 
-    void getUsedVariables(IdentifierSet& usedVariables)
-    {
-        usedVariables.swap(m_usedVariables);
-    }
 
     void useVariable(const Identifier* ident, bool isEval)
     {
@@ -419,7 +414,6 @@ public:
     PassRefPtr<ParsedNode> parse(ParserError&);
 
     JSTextPosition positionBeforeLastNewline() const { return m_lexer->positionBeforeLastNewline(); }
-    const Vector<RefPtr<StringImpl>>&& closedVariables() { return std::move(m_closedVariables); }
 
 private:
     struct AllowInOverride {
@@ -546,7 +540,7 @@ private:
     String parseInner();
 
     void didFinishParsing(SourceElements*, ParserArenaData<DeclarationStacks::VarStack>*, 
-        ParserArenaData<DeclarationStacks::FunctionStack>*, CodeFeatures, int, IdentifierSet&, const Vector<RefPtr<StringImpl>>&&);
+        ParserArenaData<DeclarationStacks::FunctionStack>*, CodeFeatures, int, IdentifierSet&);
 
     // Used to determine type of error to report.
     bool isFunctionBodyNode(ScopeNode*) { return false; }
@@ -846,11 +840,9 @@ private:
     const Identifier* m_lastFunctionName;
     RefPtr<SourceProviderCache> m_functionCache;
     SourceElements* m_sourceElements;
-    bool m_parsingBuiltin;
     ParserArenaData<DeclarationStacks::VarStack>* m_varDeclarations;
     ParserArenaData<DeclarationStacks::FunctionStack>* m_funcDeclarations;
     IdentifierSet m_capturedVariables;
-    Vector<RefPtr<StringImpl>> m_closedVariables;
     CodeFeatures m_features;
     int m_numConstants;
     
@@ -965,10 +957,6 @@ PassRefPtr<ParsedNode> parse(VM* vm, const SourceCode& source, FunctionParameter
         RefPtr<ParsedNode> result = parser.parse<ParsedNode>(error);
         if (positionBeforeLastNewline)
             *positionBeforeLastNewline = parser.positionBeforeLastNewline();
-        if (strictness == JSParseBuiltin) {
-            RELEASE_ASSERT(result);
-            result->setClosedVariables(std::move(parser.closedVariables()));
-        }
         return result.release();
     }
     Parser<Lexer<UChar>> parser(vm, source, parameters, name, strictness, parserMode);

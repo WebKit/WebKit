@@ -34,7 +34,6 @@
 #include "Heap.h"
 #include "JITInlines.h"
 #include "JSArray.h"
-#include "JSCJSValueInlines.h"
 #include "JSCell.h"
 #include "JSFunction.h"
 #include "JSPropertyNameIterator.h"

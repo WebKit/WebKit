@@ -25,7 +25,6 @@
 #define Arguments_h
 
 #include "CodeOrigin.h"
-#include "CommonIdentifiers.h"
 #include "JSActivation.h"
 #include "JSDestructibleObject.h"
 #include "JSFunction.h"

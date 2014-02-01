@@ -888,9 +888,9 @@ ExpressionNode* ASTBuilder::makeFunctionCallNode(const JSTokenLocation& location
     ASSERT(func->isDotAccessorNode());
     DotAccessorNode* dot = static_cast<DotAccessorNode*>(func);
     FunctionCallDotNode* node;
-    if (dot->identifier() == m_vm->propertyNames->call || dot->identifier() == m_vm->propertyNames->callPrivateName)
+    if (dot->identifier() == m_vm->propertyNames->call)
         node = new (m_vm) CallFunctionCallDotNode(location, dot->base(), dot->identifier(), args, divot, divotStart, divotEnd);
-    else if (dot->identifier() == m_vm->propertyNames->apply || dot->identifier() == m_vm->propertyNames->applyPrivateName)
+    else if (dot->identifier() == m_vm->propertyNames->apply)
         node = new (m_vm) ApplyFunctionCallDotNode(location, dot->base(), dot->identifier(), args, divot, divotStart, divotEnd);
     else
         node = new (m_vm) FunctionCallDotNode(location, dot->base(), dot->identifier(), args, divot, divotStart, divotEnd);

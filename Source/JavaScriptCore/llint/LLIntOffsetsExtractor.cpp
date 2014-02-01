@@ -35,7 +35,7 @@
 #include "JITStubs.h"
 #include "JSArray.h"
 #include "JSCell.h"
-#include "JSFunctionInlines.h"
+#include "JSFunction.h"
 #include "VM.h"
 #include "JSGlobalObject.h"
 #include "JSObject.h"
