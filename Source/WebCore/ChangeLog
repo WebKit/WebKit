@@ -1,3 +1,10 @@
+2014-02-01  Xabier Rodriguez Calvar  <calvaris@igalia.com>
+
+        Unreviewed. Fixed GTK+ CMake build after r162922.
+
+        * PlatformGTK.cmake: Removed SoupURIUtils.cpp from the
+        compilation.
+
 2014-02-01  Benjamin Poulain  <bpoulain@apple.com>
 
         Improve the JavaScript bindings of DatasetDOMStringMap
