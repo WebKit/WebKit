@@ -210,6 +210,41 @@ bool SQLiteIDBCursor::createSQLiteStatement(const String& sql, int64_t idToBind)
 
 bool SQLiteIDBCursor::advance(uint64_t count)
 {
+    bool isUnique = m_cursorDirection == IndexedDB::CursorDirection::NextNoDuplicate || m_cursorDirection == IndexedDB::CursorDirection::PrevNoDuplicate;
+
+    for (uint64_t i = 0; i < count; ++i) {
+        if (!isUnique) {
+            if (!advanceOnce())
+                return false;
+            continue;
+        }
+
+        if (!advanceUnique())
+            return false;
+    }
+
+    return true;
+}
+
+bool SQLiteIDBCursor::advanceUnique()
+{
+    IDBKeyData currentKey = m_currentKey;
+
+    while (!m_completed) {
+        if (!advanceOnce())
+            return false;
+
+        // If the new current key is different from the old current key, we're done.
+        if (currentKey.compare(m_currentKey))
+            return true;
+    }
+
+    return false;
+}
+
+
+bool SQLiteIDBCursor::advanceOnce()
+{
     ASSERT(m_transaction->sqliteTransaction());
     ASSERT(m_statement);
 

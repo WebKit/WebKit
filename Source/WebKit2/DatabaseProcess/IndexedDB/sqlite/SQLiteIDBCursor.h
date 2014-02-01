@@ -70,6 +70,9 @@ private:
     bool establishStatement();
     bool createSQLiteStatement(const String& sql, int64_t idToBind);
 
+    bool advanceOnce();
+    bool advanceUnique();
+
     SQLiteIDBTransaction* m_transaction;
     IDBIdentifier m_cursorIdentifier;
     int64_t m_objectStoreID;

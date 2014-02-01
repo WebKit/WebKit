@@ -1,5 +1,19 @@
 2014-01-31  Brady Eidson  <beidson@apple.com>
 
+        IDB: Handle "nextunique" and "prevunique" cursors, and handle "advance()" correctly
+        https://bugs.webkit.org/show_bug.cgi?id=128040
+
+        Reviewed by Jer Noble.
+
+        * DatabaseProcess/IndexedDB/sqlite/SQLiteIDBCursor.cpp:
+        (WebKit::SQLiteIDBCursor::advance): Entry point for advancing by a number of steps,
+          calls either advanceUnique or advanceOnce the appropriate number of times.
+        (WebKit::SQLiteIDBCursor::advanceUnique): Call advanceOnce until the key has changed.
+        (WebKit::SQLiteIDBCursor::advanceOnce):
+        * DatabaseProcess/IndexedDB/sqlite/SQLiteIDBCursor.h:
+
+2014-01-31  Brady Eidson  <beidson@apple.com>
+
         IDB: Index cursors use wrong deserialization for the retrieved value
         https://bugs.webkit.org/show_bug.cgi?id=128035
 
