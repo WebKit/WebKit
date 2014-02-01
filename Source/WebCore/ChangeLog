@@ -1,3 +1,21 @@
+2014-02-01  Brady Eidson  <beidson@apple.com>
+
+        IDB: Implement IDBObjectStore.delete()
+        https://bugs.webkit.org/show_bug.cgi?id=127880
+
+        Reviewed by Sam Weinig.
+
+        * Modules/indexeddb/IDBKeyData.cpp:
+        (WebCore::IDBKeyData::compare): Make this const.
+        * Modules/indexeddb/IDBKeyData.h:
+
+        * Modules/indexeddb/IDBKeyRangeData.cpp:
+        (WebCore::IDBKeyRangeData::isExactlyOneKey): Returns whether or not
+          the key range is known to represent precisely one key.
+        * Modules/indexeddb/IDBKeyRangeData.h:
+
+        * WebCore.exp.in:
+
 2014-02-01  Anders Carlsson  <andersca@apple.com>
 
         SVGTextLayoutAttributesBuilder shouldn't use RenderText::deprecatedCharacters()

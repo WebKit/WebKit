@@ -59,6 +59,8 @@ struct IDBKeyRangeData {
 
     PassRefPtr<IDBKeyRange> maybeCreateIDBKeyRange() const;
 
+    bool isExactlyOneKey() const;
+
     bool isNull;
 
     IDBKeyData lowerKey;

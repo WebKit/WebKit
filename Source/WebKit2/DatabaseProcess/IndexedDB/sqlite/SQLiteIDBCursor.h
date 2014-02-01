@@ -64,6 +64,8 @@ public:
     bool advance(uint64_t count);
     bool iterate(const WebCore::IDBKeyData& targetKey);
 
+    bool didError() const { return m_errored; }
+
 private:
     SQLiteIDBCursor(SQLiteIDBTransaction*, const IDBIdentifier& cursorIdentifier, int64_t objectStoreID, int64_t indexID, WebCore::IndexedDB::CursorDirection, WebCore::IndexedDB::CursorType, WebCore::IDBDatabaseBackend::TaskType, const WebCore::IDBKeyRangeData&);
 
@@ -88,6 +90,7 @@ private:
     std::unique_ptr<WebCore::SQLiteStatement> m_statement;
 
     bool m_completed;
+    bool m_errored;
 };
 
 } // namespace WebKit

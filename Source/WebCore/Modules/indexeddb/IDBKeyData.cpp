@@ -200,7 +200,7 @@ bool IDBKeyData::decode(KeyedDecoder& decoder, IDBKeyData& result)
     return decoder.decodeObjects("array", result.arrayValue, arrayFunction);
 }
 
-int IDBKeyData::compare(const IDBKeyData& other)
+int IDBKeyData::compare(const IDBKeyData& other) const
 {
     if (type == IDBKey::InvalidType) {
         if (other.type != IDBKey::InvalidType)

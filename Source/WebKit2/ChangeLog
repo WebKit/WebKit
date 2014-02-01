@@ -1,5 +1,32 @@
 2014-02-01  Brady Eidson  <beidson@apple.com>
 
+        IDB: Implement IDBObjectStore.delete()
+        https://bugs.webkit.org/show_bug.cgi?id=127880
+
+        Reviewed by Sam Weinig.
+
+        Implementing IDBObjectStore.delete() involves filling in the already-stubbed deleteRange() method.
+
+        * DatabaseProcess/IndexedDB/UniqueIDBDatabase.cpp:
+        (WebKit::UniqueIDBDatabase::deleteRangeInBackingStore): Call through to the backing store.
+
+        * DatabaseProcess/IndexedDB/UniqueIDBDatabaseBackingStore.h:
+        * DatabaseProcess/IndexedDB/sqlite/UniqueIDBDatabaseBackingStoreSQLite.cpp:
+        (WebKit::UniqueIDBDatabaseBackingStoreSQLite::deleteRange): Call deleteRecord on each key represented
+          by the passed-in keyRange. This involves collecting each key using a cursor.
+        (WebKit::UniqueIDBDatabaseBackingStoreSQLite::deleteRecord): Delete an individual record from the
+          object store and all associated indexes.
+        * DatabaseProcess/IndexedDB/sqlite/UniqueIDBDatabaseBackingStoreSQLite.h:
+
+        Teach the SQLiteIDBCursor to remember if it ended in an error condition:
+        * DatabaseProcess/IndexedDB/sqlite/SQLiteIDBCursor.cpp:
+        (WebKit::SQLiteIDBCursor::SQLiteIDBCursor):
+        (WebKit::SQLiteIDBCursor::advanceOnce):
+        * DatabaseProcess/IndexedDB/sqlite/SQLiteIDBCursor.h:
+        (WebKit::SQLiteIDBCursor::didError):
+
+2014-02-01  Brady Eidson  <beidson@apple.com>
+
         IDB: Index reading
         <rdar://problem/15899973> and https://bugs.webkit.org/show_bug.cgi?id=127868
 

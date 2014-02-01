@@ -989,11 +989,14 @@ void UniqueIDBDatabase::didCountInBackingStore(uint64_t requestID, int64_t count
     request->completeRequest(count, errorCode, errorMessage);
 }
 
-void UniqueIDBDatabase::deleteRangeInBackingStore(uint64_t requestID, const IDBIdentifier& transactionIdentifier, int64_t objectStoreID, const IDBKeyRangeData&)
+void UniqueIDBDatabase::deleteRangeInBackingStore(uint64_t requestID, const IDBIdentifier& transactionIdentifier, int64_t objectStoreID, const IDBKeyRangeData& keyRangeData)
 {
-    // FIXME: Implement
+    if (!m_backingStore->deleteRange(transactionIdentifier, objectStoreID, keyRangeData)) {
+        LOG_ERROR("Failed to delete range from backing store.");
+        postMainThreadTask(createAsyncTask(*this, &UniqueIDBDatabase::didDeleteRangeInBackingStore, requestID, IDBDatabaseException::UnknownError, ASCIILiteral("Failed to get count from backing store")));
+    }
 
-    postMainThreadTask(createAsyncTask(*this, &UniqueIDBDatabase::didDeleteRangeInBackingStore, requestID, IDBDatabaseException::UnknownError, ASCIILiteral("deleteRange in backing store not supported yet")));
+    postMainThreadTask(createAsyncTask(*this, &UniqueIDBDatabase::didDeleteRangeInBackingStore, requestID, 0, String(StringImpl::empty())));
 }
 
 void UniqueIDBDatabase::didDeleteRangeInBackingStore(uint64_t requestID, uint32_t errorCode, const String& errorMessage)

@@ -51,6 +51,14 @@ PassRefPtr<IDBKeyRange> IDBKeyRangeData::maybeCreateIDBKeyRange() const
     return IDBKeyRange::create(lowerKey.maybeCreateIDBKey(), upperKey.maybeCreateIDBKey(), lowerOpen ? IDBKeyRange::LowerBoundOpen : IDBKeyRange::LowerBoundClosed, upperOpen ? IDBKeyRange::UpperBoundOpen : IDBKeyRange::UpperBoundClosed);
 }
 
+bool IDBKeyRangeData::isExactlyOneKey() const
+{
+    if (isNull || lowerOpen || upperOpen)
+        return false;
+
+    return !lowerKey.compare(upperKey);
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(INDEXED_DATABASE)

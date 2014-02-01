@@ -59,6 +59,7 @@ SQLiteIDBCursor::SQLiteIDBCursor(SQLiteIDBTransaction* transaction, const IDBIde
     , m_cursorDirection(cursorDirection)
     , m_keyRange(keyRange)
     , m_completed(false)
+    , m_errored(false)
 {
     ASSERT(m_objectStoreID);
 }
@@ -262,6 +263,7 @@ bool SQLiteIDBCursor::advanceOnce()
     if (result != SQLResultRow) {
         LOG_ERROR("Error advancing cursor - (%i) %s", result, m_transaction->sqliteTransaction()->database().lastErrorMsg());
         m_completed = true;
+        m_errored = true;
         return false;
     }
 
@@ -272,6 +274,7 @@ bool SQLiteIDBCursor::advanceOnce()
     if (!deserializeIDBKeyData(reinterpret_cast<const uint8_t*>(keyData.data()), keyData.size(), key)) {
         LOG_ERROR("Unable to deserialize key data from database while advancing cursor");
         m_completed = true;
+        m_errored = true;
         return false;
     }
 
@@ -285,6 +288,7 @@ bool SQLiteIDBCursor::advanceOnce()
         if (!deserializeIDBKeyData(reinterpret_cast<const uint8_t*>(keyData.data()), keyData.size(), m_currentValueKey)) {
             LOG_ERROR("Unable to deserialize value data from database while advancing index cursor");
             m_completed = true;
+            m_errored = true;
             return false;
         }
 
@@ -295,6 +299,8 @@ bool SQLiteIDBCursor::advanceOnce()
             || objectStoreStatement.bindInt64(2, m_objectStoreID) != SQLResultOk
             || objectStoreStatement.step() != SQLResultRow) {
             LOG_ERROR("Could not create index cursor statement into object store records");
+            m_completed = true;
+            m_errored = true;
             return false;
         }
 

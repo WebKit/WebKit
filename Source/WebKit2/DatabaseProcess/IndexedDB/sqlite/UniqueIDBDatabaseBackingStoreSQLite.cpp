@@ -838,6 +838,108 @@ bool UniqueIDBDatabaseBackingStoreSQLite::getIndexRecord(const IDBIdentifier& tr
     return true;
 }
 
+bool UniqueIDBDatabaseBackingStoreSQLite::deleteRange(const IDBIdentifier& transactionIdentifier, int64_t objectStoreID, const IDBKeyRangeData& keyRangeData)
+{
+    ASSERT(!isMainThread());
+    ASSERT(m_sqliteDB);
+    ASSERT(m_sqliteDB->isOpen());
+
+    SQLiteIDBTransaction* transaction = m_transactions.get(transactionIdentifier);
+    if (!transaction || !transaction->inProgress()) {
+        LOG_ERROR("Attempt to get count from database without an established, in-progress transaction");
+        return false;
+    }
+
+    if (transaction->mode() == IndexedDB::TransactionMode::ReadOnly) {
+        LOG_ERROR("Attempt to delete range from a read-only transaction");
+        return false;
+    }
+
+    // If the range to delete is exactly one key we can delete it right now.
+    if (keyRangeData.isExactlyOneKey()) {
+        if (!deleteRecord(*transaction, objectStoreID, keyRangeData.lowerKey)) {
+            LOG_ERROR("Failed to delete record for key '%s'", keyRangeData.lowerKey.loggingString().utf8().data());
+            return false;
+        }
+        return true;
+    }
+
+    // Otherwise the range might span multiple keys so we collect them with a cursor.
+    SQLiteIDBCursor* cursor = transaction->openCursor(objectStoreID, IDBIndexMetadata::InvalidId, IndexedDB::CursorDirection::Next, IndexedDB::CursorType::KeyAndValue, IDBDatabaseBackend::NormalTask, keyRangeData);
+
+    if (!cursor) {
+        LOG_ERROR("Cannot open cursor to perform index get in database");
+        return false;
+    }
+
+    m_cursors.set(cursor->identifier(), cursor);
+
+    Vector<IDBKeyData> keys;
+    do
+        keys.append(cursor->currentKey());
+    while (cursor->advance(1));
+
+    bool cursorDidError = cursor->didError();
+
+    // closeCursor() will remove the cursor from m_cursors and delete the cursor object
+    transaction->closeCursor(*cursor);
+
+    if (cursorDidError) {
+        LOG_ERROR("Unable to iterate over object store to deleteRange in database");
+        return false;
+    }
+
+    for (auto& key : keys) {
+        if (!deleteRecord(*transaction, objectStoreID, key)) {
+            LOG_ERROR("Failed to delete record for key '%s'", key.loggingString().utf8().data());
+            return false;
+        }
+    }
+
+    return true;
+}
+
+bool UniqueIDBDatabaseBackingStoreSQLite::deleteRecord(SQLiteIDBTransaction& transaction, int64_t objectStoreID, const WebCore::IDBKeyData& key)
+{
+    ASSERT(!isMainThread());
+    ASSERT(m_sqliteDB);
+    ASSERT(m_sqliteDB->isOpen());
+
+    RefPtr<SharedBuffer> keyBuffer = serializeIDBKeyData(key);
+    if (!keyBuffer) {
+        LOG_ERROR("Unable to serialize IDBKeyData to be removed from the database");
+        return false;
+    }
+
+    // Delete record from object store
+    {
+        SQLiteStatement sql(*m_sqliteDB, ASCIILiteral("DELETE FROM Records WHERE objectStoreID = ? AND key = CAST(? AS TEXT);"));
+
+        if (sql.prepare() != SQLResultOk
+            || sql.bindInt64(1, objectStoreID) != SQLResultOk
+            || sql.bindBlob(2, keyBuffer->data(), keyBuffer->size()) != SQLResultOk
+            || sql.step() != SQLResultDone) {
+            LOG_ERROR("Could not delete record from object store %lli (%i) - %s", objectStoreID, m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg());
+            return false;
+        }
+    }
+
+    // Delete record from indexes store
+    {
+        SQLiteStatement sql(*m_sqliteDB, ASCIILiteral("DELETE FROM IndexRecords WHERE objectStoreID = ? AND value = CAST(? AS TEXT);"));
+
+        if (sql.prepare() != SQLResultOk
+            || sql.bindInt64(1, objectStoreID) != SQLResultOk
+            || sql.bindBlob(2, keyBuffer->data(), keyBuffer->size()) != SQLResultOk
+            || sql.step() != SQLResultDone) {
+            LOG_ERROR("Could not delete record from indexes for object store %lli (%i) - %s", objectStoreID, m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg());
+            return false;
+        }
+    }
+
+    return true;
+}
+
 bool UniqueIDBDatabaseBackingStoreSQLite::getKeyRecordFromObjectStore(const IDBIdentifier& transactionIdentifier, int64_t objectStoreID, const IDBKey& key, RefPtr<SharedBuffer>& result)
 {
     ASSERT(!isMainThread());
