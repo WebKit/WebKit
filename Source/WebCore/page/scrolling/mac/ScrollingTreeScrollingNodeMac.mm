@@ -124,7 +124,7 @@ void ScrollingTreeScrollingNodeMac::updateAfterChildren(const ScrollingStateNode
     if (scrollingStateNode.hasChangedProperty(ScrollingStateScrollingNode::RequestedScrollPosition))
         setScrollPosition(scrollingStateNode.requestedScrollPosition());
 
-    if (scrollingStateNode.hasChangedProperty(ScrollingStateNode::ScrollLayer) || scrollingStateNode.hasChangedProperty(ScrollingStateScrollingNode::TotalContentsSize) || scrollingStateNode.hasChangedProperty(ScrollingStateScrollingNode::ViewportRect))
+    if (scrollingStateNode.hasChangedProperty(ScrollingStateNode::ScrollLayer) || scrollingStateNode.hasChangedProperty(ScrollingStateScrollingNode::TotalContentsSize) || scrollingStateNode.hasChangedProperty(ScrollingStateScrollingNode::ViewportConstrainedObjectRect))
         updateMainFramePinState(scrollPosition());
 }
 
@@ -237,7 +237,7 @@ bool ScrollingTreeScrollingNodeMac::shouldRubberBandInDirection(ScrollDirection)
 
 IntPoint ScrollingTreeScrollingNodeMac::absoluteScrollPosition()
 {
-    return scrollPosition();
+    return roundedIntPoint(scrollPosition());
 }
 
 void ScrollingTreeScrollingNodeMac::immediateScrollBy(const FloatSize& offset)
@@ -278,18 +278,18 @@ void ScrollingTreeScrollingNodeMac::stopSnapRubberbandTimer()
 
 void ScrollingTreeScrollingNodeMac::adjustScrollPositionToBoundsIfNecessary()
 {
-    IntPoint currentScrollPosition = absoluteScrollPosition();
-    IntPoint minPosition = minimumScrollPosition();
-    IntPoint maxPosition = maximumScrollPosition();
+    FloatPoint currentScrollPosition = absoluteScrollPosition();
+    FloatPoint minPosition = minimumScrollPosition();
+    FloatPoint maxPosition = maximumScrollPosition();
 
-    int nearestXWithinBounds = std::max<int>(std::min<int>(currentScrollPosition.x(), maxPosition.x()), minPosition.x());
-    int nearestYWithinBounds = std::max<int>(std::min<int>(currentScrollPosition.y(), maxPosition.y()), minPosition.y());
+    float nearestXWithinBounds = std::max(std::min(currentScrollPosition.x(), maxPosition.x()), minPosition.x());
+    float nearestYWithinBounds = std::max(std::min(currentScrollPosition.y(), maxPosition.y()), minPosition.y());
 
-    IntPoint nearestPointWithinBounds(nearestXWithinBounds, nearestYWithinBounds);
+    FloatPoint nearestPointWithinBounds(nearestXWithinBounds, nearestYWithinBounds);
     immediateScrollBy(nearestPointWithinBounds - currentScrollPosition);
 }
 
-IntPoint ScrollingTreeScrollingNodeMac::scrollPosition() const
+FloatPoint ScrollingTreeScrollingNodeMac::scrollPosition() const
 {
     if (shouldUpdateScrollLayerPositionSynchronously())
         return m_probableMainThreadScrollPosition;
@@ -298,9 +298,9 @@ IntPoint ScrollingTreeScrollingNodeMac::scrollPosition() const
     return IntPoint(-scrollLayerPosition.x + scrollOrigin().x(), -scrollLayerPosition.y + scrollOrigin().y());
 }
 
-void ScrollingTreeScrollingNodeMac::setScrollPosition(const IntPoint& scrollPosition)
+void ScrollingTreeScrollingNodeMac::setScrollPosition(const FloatPoint& scrollPosition)
 {
-    IntPoint newScrollPosition = scrollPosition;
+    FloatPoint newScrollPosition = scrollPosition;
     newScrollPosition = newScrollPosition.shrunkTo(maximumScrollPosition());
     newScrollPosition = newScrollPosition.expandedTo(minimumScrollPosition());
 
@@ -310,7 +310,7 @@ void ScrollingTreeScrollingNodeMac::setScrollPosition(const IntPoint& scrollPosi
         logExposedUnfilledArea();
 }
 
-void ScrollingTreeScrollingNodeMac::setScrollPositionWithoutContentEdgeConstraints(const IntPoint& scrollPosition)
+void ScrollingTreeScrollingNodeMac::setScrollPositionWithoutContentEdgeConstraints(const FloatPoint& scrollPosition)
 {
     updateMainFramePinState(scrollPosition);
 
@@ -324,14 +324,15 @@ void ScrollingTreeScrollingNodeMac::setScrollPositionWithoutContentEdgeConstrain
     scrollingTree().scrollingTreeNodeDidScroll(scrollingNodeID(), scrollPosition);
 }
 
-void ScrollingTreeScrollingNodeMac::setScrollLayerPosition(const IntPoint& position)
+void ScrollingTreeScrollingNodeMac::setScrollLayerPosition(const FloatPoint& position)
 {
     ASSERT(!shouldUpdateScrollLayerPositionSynchronously());
     m_scrollLayer.get().position = CGPointMake(-position.x() + scrollOrigin().x(), -position.y() + scrollOrigin().y());
 
     ScrollBehaviorForFixedElements behaviorForFixed = scrollBehaviorForFixedElements();
-    IntPoint scrollOffset = position - toIntSize(scrollOrigin());
-    IntSize scrollOffsetForFixedChildren = FrameView::scrollOffsetForFixedPosition(viewportRect(), totalContentsSize(), scrollOffset, scrollOrigin(), frameScaleFactor(), false, behaviorForFixed, headerHeight(), footerHeight());
+    FloatPoint scrollOffset = position - toFloatSize(scrollOrigin());
+    // FIXME: scrollOffsetForFixedPosition() needs to do float math.
+    FloatSize scrollOffsetForFixedChildren = FrameView::scrollOffsetForFixedPosition(enclosingIntRect(viewportConstrainedObjectRect()), totalContentsSize(), flooredIntPoint(scrollOffset), scrollOrigin(), frameScaleFactor(), false, behaviorForFixed, headerHeight(), footerHeight());
     if (m_counterScrollingLayer)
         m_counterScrollingLayer.get().position = FloatPoint(scrollOffsetForFixedChildren);
 
@@ -340,7 +341,7 @@ void ScrollingTreeScrollingNodeMac::setScrollLayerPosition(const IntPoint& posit
     // then we should recompute scrollOffsetForFixedChildren for the banner with a scale factor of 1.
     float horizontalScrollOffsetForBanner = scrollOffsetForFixedChildren.width();
     if (frameScaleFactor() != 1)
-        horizontalScrollOffsetForBanner = FrameView::scrollOffsetForFixedPosition(viewportRect(), totalContentsSize(), scrollOffset, scrollOrigin(), 1, false, behaviorForFixed, headerHeight(), footerHeight()).width();
+        horizontalScrollOffsetForBanner = FrameView::scrollOffsetForFixedPosition(enclosingIntRect(viewportConstrainedObjectRect()), totalContentsSize(), flooredIntPoint(scrollOffset), scrollOrigin(), 1, false, behaviorForFixed, headerHeight(), footerHeight()).width();
 
     if (m_headerLayer)
         m_headerLayer.get().position = FloatPoint(horizontalScrollOffsetForBanner, 0);
@@ -348,7 +349,7 @@ void ScrollingTreeScrollingNodeMac::setScrollLayerPosition(const IntPoint& posit
     if (m_footerLayer)
         m_footerLayer.get().position = FloatPoint(horizontalScrollOffsetForBanner, totalContentsSize().height() - footerHeight());
 
-    IntRect viewportRect = this->viewportRect();
+    FloatRect viewportRect = viewportConstrainedObjectRect();
 
     if (m_verticalScrollbarPainter || m_horizontalScrollbarPainter) {
         [CATransaction begin];
@@ -376,14 +377,14 @@ void ScrollingTreeScrollingNodeMac::setScrollLayerPosition(const IntPoint& posit
     if (!m_children)
         return;
 
-    viewportRect.setLocation(IntPoint(scrollOffsetForFixedChildren));
+    viewportRect.setLocation(FloatPoint() + scrollOffsetForFixedChildren);
 
     size_t size = m_children->size();
     for (size_t i = 0; i < size; ++i)
         m_children->at(i)->parentScrollPositionDidChange(viewportRect, FloatSize());
 }
 
-IntPoint ScrollingTreeScrollingNodeMac::minimumScrollPosition() const
+FloatPoint ScrollingTreeScrollingNodeMac::minimumScrollPosition() const
 {
     IntPoint position;
     
@@ -393,12 +394,12 @@ IntPoint ScrollingTreeScrollingNodeMac::minimumScrollPosition() const
     return position;
 }
 
-IntPoint ScrollingTreeScrollingNodeMac::maximumScrollPosition() const
+FloatPoint ScrollingTreeScrollingNodeMac::maximumScrollPosition() const
 {
-    IntPoint position(totalContentsSizeForRubberBand().width() - viewportRect().width(),
-                      totalContentsSizeForRubberBand().height() - viewportRect().height());
+    FloatPoint position(totalContentsSizeForRubberBand().width() - viewportConstrainedObjectRect().width(),
+        totalContentsSizeForRubberBand().height() - viewportConstrainedObjectRect().height());
 
-    position.clampNegativeToZero();
+    position = position.expandedTo(FloatPoint());
 
     if (scrollingTree().rootNode() == this && scrollingTree().scrollPinningBehavior() == PinToTop)
         position.setY(minimumScrollPosition().y());
@@ -416,7 +417,7 @@ void ScrollingTreeScrollingNodeMac::scrollByWithoutContentEdgeConstraints(const 
     setScrollPositionWithoutContentEdgeConstraints(scrollPosition() + offset);
 }
 
-void ScrollingTreeScrollingNodeMac::updateMainFramePinState(const IntPoint& scrollPosition)
+void ScrollingTreeScrollingNodeMac::updateMainFramePinState(const FloatPoint& scrollPosition)
 {
     bool pinnedToTheLeft = scrollPosition.x() <= minimumScrollPosition().x();
     bool pinnedToTheRight = scrollPosition.x() >= maximumScrollPosition().x();
@@ -450,8 +451,8 @@ void ScrollingTreeScrollingNodeMac::logExposedUnfilledArea()
         [sublayers release];
     }
 
-    IntPoint scrollPosition = this->scrollPosition();
-    unsigned unfilledArea = TileController::blankPixelCountForTiles(tiles, viewportRect(), IntPoint(-scrollPosition.x(), -scrollPosition.y()));
+    FloatPoint scrollPosition = this->scrollPosition();
+    unsigned unfilledArea = TileController::blankPixelCountForTiles(tiles, viewportConstrainedObjectRect(), IntPoint(-scrollPosition.x(), -scrollPosition.y()));
 
     if (unfilledArea || m_lastScrollHadUnfilledPixels)
         WTFLogAlways("SCROLLING: Exposed tileless area. Time: %f Unfilled Pixels: %u\n", WTF::monotonicallyIncreasingTime(), unfilledArea);

@@ -100,7 +100,7 @@ void ThreadedScrollingTree::commitNewTreeState(PassOwnPtr<ScrollingStateTree> sc
     ScrollingTree::commitNewTreeState(scrollingStateTree);
 }
 
-void ThreadedScrollingTree::scrollingTreeNodeDidScroll(ScrollingNodeID nodeID, const IntPoint& scrollPosition, SetOrSyncScrollingLayerPosition scrollingLayerPositionAction)
+void ThreadedScrollingTree::scrollingTreeNodeDidScroll(ScrollingNodeID nodeID, const FloatPoint& scrollPosition, SetOrSyncScrollingLayerPosition scrollingLayerPositionAction)
 {
     if (!m_scrollingCoordinator)
         return;

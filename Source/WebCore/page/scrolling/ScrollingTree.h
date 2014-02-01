@@ -73,8 +73,8 @@ public:
 
     void setMainFramePinState(bool pinnedToTheLeft, bool pinnedToTheRight, bool pinnedToTheTop, bool pinnedToTheBottom);
 
-    virtual void scrollingTreeNodeDidScroll(ScrollingNodeID, const IntPoint& scrollPosition, SetOrSyncScrollingLayerPosition = SyncScrollingLayerPosition) = 0;
-    IntPoint mainFrameScrollPosition();
+    virtual void scrollingTreeNodeDidScroll(ScrollingNodeID, const FloatPoint& scrollPosition, SetOrSyncScrollingLayerPosition = SyncScrollingLayerPosition) = 0;
+    FloatPoint mainFrameScrollPosition();
 
 #if PLATFORM(MAC) && !PLATFORM(IOS)
     virtual void handleWheelEventPhase(PlatformWheelEventPhase) = 0;
@@ -107,7 +107,7 @@ public:
     void setOrClearLatchedNode(const PlatformWheelEvent&, ScrollingNodeID);
     
 protected:
-    void setMainFrameScrollPosition(IntPoint);
+    void setMainFrameScrollPosition(FloatPoint);
     virtual void handleWheelEvent(const PlatformWheelEvent&);
 
 private:
@@ -125,7 +125,7 @@ private:
 
     Mutex m_mutex;
     Region m_nonFastScrollableRegion;
-    IntPoint m_mainFrameScrollPosition;
+    FloatPoint m_mainFrameScrollPosition;
     bool m_hasWheelEventHandlers;
 
     Mutex m_swipeStateMutex;

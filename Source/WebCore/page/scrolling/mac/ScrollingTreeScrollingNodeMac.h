@@ -65,19 +65,19 @@ private:
     virtual void stopSnapRubberbandTimer() override;
     virtual void adjustScrollPositionToBoundsIfNecessary() override;
 
-    IntPoint scrollPosition() const;
-    void setScrollPosition(const IntPoint&);
-    void setScrollPositionWithoutContentEdgeConstraints(const IntPoint&);
+    FloatPoint scrollPosition() const;
+    virtual void setScrollPosition(const FloatPoint&) override;
+    void setScrollPositionWithoutContentEdgeConstraints(const FloatPoint&);
 
-    void setScrollLayerPosition(const IntPoint&);
+    void setScrollLayerPosition(const FloatPoint&);
 
-    IntPoint minimumScrollPosition() const;
-    IntPoint maximumScrollPosition() const;
+    FloatPoint minimumScrollPosition() const;
+    FloatPoint maximumScrollPosition() const;
 
     void scrollBy(const IntSize&);
     void scrollByWithoutContentEdgeConstraints(const IntSize&);
 
-    void updateMainFramePinState(const IntPoint& scrollPosition);
+    void updateMainFramePinState(const FloatPoint& scrollPosition);
 
     void logExposedUnfilledArea();
 
@@ -90,7 +90,7 @@ private:
     RetainPtr<CALayer> m_footerLayer;
     RetainPtr<ScrollbarPainter> m_verticalScrollbarPainter;
     RetainPtr<ScrollbarPainter> m_horizontalScrollbarPainter;
-    IntPoint m_probableMainThreadScrollPosition;
+    FloatPoint m_probableMainThreadScrollPosition;
     bool m_lastScrollHadUnfilledPixels;
 };
 

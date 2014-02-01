@@ -1,3 +1,80 @@
+2014-01-31  Simon Fraser  <simon.fraser@apple.com>
+
+        Pass the viewport rect and scroll origin independently into the scrolling tree, and make things floats
+        https://bugs.webkit.org/show_bug.cgi?id=128032
+
+        Reviewed by Tim Horton.
+
+        Pass the viewport rect and scroll offset independently into the ScrollingTree
+        via the ScrollingStateScrollingNode, since on iOS the scroll offset doesn't
+        always correspond to the viewport rect.
+        
+        Make the viewport rect and the scroll origin be float-based, since on
+        Retina screens and with zooming these can both be non-integral.
+
+        No behavior change.
+        
+        * WebCore.exp.in:
+        * page/scrolling/AsyncScrollingCoordinator.cpp:
+        (WebCore::AsyncScrollingCoordinator::frameViewLayoutUpdated):
+        (WebCore::AsyncScrollingCoordinator::scheduleUpdateScrollPositionAfterAsyncScroll):
+        (WebCore::AsyncScrollingCoordinator::updateScrollPositionAfterAsyncScroll):
+        * page/scrolling/AsyncScrollingCoordinator.h:
+        (WebCore::AsyncScrollingCoordinator::ScheduledScrollUpdate::ScheduledScrollUpdate):
+        * page/scrolling/ScrollingStateScrollingNode.cpp:
+        (WebCore::ScrollingStateScrollingNode::ScrollingStateScrollingNode):
+        (WebCore::ScrollingStateScrollingNode::setViewportConstrainedObjectRect):
+        (WebCore::ScrollingStateScrollingNode::setScrollPosition):
+        (WebCore::ScrollingStateScrollingNode::dumpProperties):
+        * page/scrolling/ScrollingStateScrollingNode.h:
+        * page/scrolling/ScrollingTree.cpp:
+        (WebCore::ScrollingTree::shouldHandleWheelEventSynchronously):
+        (WebCore::ScrollingTree::commitNewTreeState):
+        (WebCore::ScrollingTree::mainFrameScrollPosition):
+        (WebCore::ScrollingTree::setMainFrameScrollPosition):
+        * page/scrolling/ScrollingTree.h:
+        * page/scrolling/ScrollingTreeNode.h:
+        * page/scrolling/ScrollingTreeScrollingNode.cpp:
+        (WebCore::ScrollingTreeScrollingNode::updateBeforeChildren):
+        * page/scrolling/ScrollingTreeScrollingNode.h:
+        (WebCore::ScrollingTreeScrollingNode::scrollPosition):
+        (WebCore::ScrollingTreeScrollingNode::viewportConstrainedObjectRect):
+        * page/scrolling/ThreadedScrollingTree.cpp:
+        (WebCore::ThreadedScrollingTree::scrollingTreeNodeDidScroll):
+        * page/scrolling/ThreadedScrollingTree.h:
+        * page/scrolling/ios/ScrollingTreeIOS.cpp:
+        (WebCore::ScrollingTreeIOS::scrollingTreeNodeDidScroll):
+        * page/scrolling/ios/ScrollingTreeIOS.h:
+        * page/scrolling/ios/ScrollingTreeScrollingNodeIOS.h:
+        * page/scrolling/ios/ScrollingTreeScrollingNodeIOS.mm:
+        (WebCore::ScrollingTreeScrollingNodeIOS::scrollPosition):
+        (WebCore::ScrollingTreeScrollingNodeIOS::setScrollPosition):
+        (WebCore::ScrollingTreeScrollingNodeIOS::setScrollPositionWithoutContentEdgeConstraints):
+        (WebCore::ScrollingTreeScrollingNodeIOS::setScrollLayerPosition):
+        (WebCore::ScrollingTreeScrollingNodeIOS::minimumScrollPosition):
+        (WebCore::ScrollingTreeScrollingNodeIOS::maximumScrollPosition):
+        * page/scrolling/mac/ScrollingTreeFixedNode.h:
+        * page/scrolling/mac/ScrollingTreeFixedNode.mm:
+        (WebCore::ScrollingTreeFixedNode::parentScrollPositionDidChange):
+        * page/scrolling/mac/ScrollingTreeScrollingNodeMac.h:
+        * page/scrolling/mac/ScrollingTreeScrollingNodeMac.mm:
+        (WebCore::ScrollingTreeScrollingNodeMac::updateAfterChildren):
+        (WebCore::ScrollingTreeScrollingNodeMac::absoluteScrollPosition):
+        (WebCore::ScrollingTreeScrollingNodeMac::adjustScrollPositionToBoundsIfNecessary):
+        (WebCore::ScrollingTreeScrollingNodeMac::scrollPosition):
+        (WebCore::ScrollingTreeScrollingNodeMac::setScrollPosition):
+        (WebCore::ScrollingTreeScrollingNodeMac::setScrollPositionWithoutContentEdgeConstraints):
+        (WebCore::ScrollingTreeScrollingNodeMac::setScrollLayerPosition):
+        (WebCore::ScrollingTreeScrollingNodeMac::minimumScrollPosition):
+        (WebCore::ScrollingTreeScrollingNodeMac::maximumScrollPosition):
+        (WebCore::ScrollingTreeScrollingNodeMac::updateMainFramePinState):
+        (WebCore::ScrollingTreeScrollingNodeMac::logExposedUnfilledArea):
+        * page/scrolling/mac/ScrollingTreeStickyNode.h:
+        * page/scrolling/mac/ScrollingTreeStickyNode.mm:
+        (WebCore::ScrollingTreeStickyNode::parentScrollPositionDidChange):
+        * platform/graphics/FloatPoint.h:
+        (WebCore::FloatPoint::shrunkTo):
+
 2014-01-30  Andy Estes  <aestes@apple.com>
 
         [Cocoa] Add NEFilterSource support to ContentFilterMac

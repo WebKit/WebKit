@@ -48,14 +48,14 @@ private:
     virtual void updateAfterChildren(const ScrollingStateNode&) override;
     virtual void handleWheelEvent(const PlatformWheelEvent&) override { }
 
-    IntPoint scrollPosition() const;
-    void setScrollPosition(const IntPoint&);
-    void setScrollPositionWithoutContentEdgeConstraints(const IntPoint&);
+    FloatPoint scrollPosition() const;
+    virtual void setScrollPosition(const FloatPoint&) override;
+    void setScrollPositionWithoutContentEdgeConstraints(const FloatPoint&);
 
-    void setScrollLayerPosition(const IntPoint&);
+    void setScrollLayerPosition(const FloatPoint&);
 
-    IntPoint minimumScrollPosition() const;
-    IntPoint maximumScrollPosition() const;
+    FloatPoint minimumScrollPosition() const;
+    FloatPoint maximumScrollPosition() const;
 
     void scrollBy(const IntSize&);
     void scrollByWithoutContentEdgeConstraints(const IntSize&);
@@ -64,7 +64,7 @@ private:
     RetainPtr<CALayer> m_counterScrollingLayer;
     RetainPtr<CALayer> m_headerLayer;
     RetainPtr<CALayer> m_footerLayer;
-    IntPoint m_probableMainThreadScrollPosition;
+    FloatPoint m_probableMainThreadScrollPosition;
 };
 
 } // namespace WebCore

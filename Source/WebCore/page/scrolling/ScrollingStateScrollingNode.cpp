@@ -61,8 +61,9 @@ ScrollingStateScrollingNode::ScrollingStateScrollingNode(const ScrollingStateScr
     , m_verticalScrollbarPainter(stateNode.verticalScrollbarPainter())
     , m_horizontalScrollbarPainter(stateNode.horizontalScrollbarPainter())
 #endif
-    , m_viewportRect(stateNode.viewportRect())
+    , m_viewportConstrainedObjectRect(stateNode.viewportConstrainedObjectRect())
     , m_totalContentsSize(stateNode.totalContentsSize())
+    , m_scrollPosition(stateNode.scrollPosition())
     , m_scrollOrigin(stateNode.scrollOrigin())
     , m_scrollableAreaParameters(stateNode.scrollableAreaParameters())
     , m_nonFastScrollableRegion(stateNode.nonFastScrollableRegion())
@@ -94,13 +95,13 @@ PassOwnPtr<ScrollingStateNode> ScrollingStateScrollingNode::clone(ScrollingState
     return adoptPtr(new ScrollingStateScrollingNode(*this, adoptiveTree));
 }
 
-void ScrollingStateScrollingNode::setViewportRect(const IntRect& viewportRect)
+void ScrollingStateScrollingNode::setViewportConstrainedObjectRect(const FloatRect& viewportConstrainedObjectRect)
 {
-    if (m_viewportRect == viewportRect)
+    if (m_viewportConstrainedObjectRect == viewportConstrainedObjectRect)
         return;
 
-    m_viewportRect = viewportRect;
-    setPropertyChanged(ViewportRect);
+    m_viewportConstrainedObjectRect = viewportConstrainedObjectRect;
+    setPropertyChanged(ViewportConstrainedObjectRect);
 }
 
 void ScrollingStateScrollingNode::setTotalContentsSize(const IntSize& totalContentsSize)
@@ -110,6 +111,15 @@ void ScrollingStateScrollingNode::setTotalContentsSize(const IntSize& totalConte
 
     m_totalContentsSize = totalContentsSize;
     setPropertyChanged(TotalContentsSize);
+}
+
+void ScrollingStateScrollingNode::setScrollPosition(const FloatPoint& scrollPosition)
+{
+    if (m_scrollPosition == scrollPosition)
+        return;
+
+    m_scrollPosition = scrollPosition;
+    setPropertyChanged(ScrollPosition);
 }
 
 void ScrollingStateScrollingNode::setScrollOrigin(const IntPoint& scrollOrigin)
@@ -242,9 +252,20 @@ void ScrollingStateScrollingNode::dumpProperties(TextStream& ts, int indent) con
 {
     ts << "(" << "Scrolling node" << "\n";
 
-    if (!m_viewportRect.isEmpty()) {
+    if (!m_viewportConstrainedObjectRect.isEmpty()) {
         writeIndent(ts, indent + 1);
-        ts << "(viewport rect " << m_viewportRect.x() << " " << m_viewportRect.y() << " " << m_viewportRect.width() << " " << m_viewportRect.height() << ")\n";
+        ts << "(viewport rect "
+            << TextStream::FormatNumberRespectingIntegers(m_viewportConstrainedObjectRect.x()) << " "
+            << TextStream::FormatNumberRespectingIntegers(m_viewportConstrainedObjectRect.y()) << " "
+            << TextStream::FormatNumberRespectingIntegers(m_viewportConstrainedObjectRect.width()) << " "
+            << TextStream::FormatNumberRespectingIntegers(m_viewportConstrainedObjectRect.height()) << ")\n";
+    }
+
+    if (m_scrollPosition != FloatPoint()) {
+        writeIndent(ts, indent + 1);
+        ts << "(scroll position "
+            << TextStream::FormatNumberRespectingIntegers(m_scrollPosition.x()) << " "
+            << TextStream::FormatNumberRespectingIntegers(m_scrollPosition.y()) << ")\n";
     }
 
     if (!m_totalContentsSize.isEmpty()) {

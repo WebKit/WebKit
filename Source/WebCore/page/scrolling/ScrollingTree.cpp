@@ -93,9 +93,9 @@ bool ScrollingTree::shouldHandleWheelEventSynchronously(const PlatformWheelEvent
     
     if (!m_nonFastScrollableRegion.isEmpty()) {
         // FIXME: This is not correct for non-default scroll origins.
-        IntPoint position = wheelEvent.position();
+        FloatPoint position = wheelEvent.position();
         position.moveBy(m_mainFrameScrollPosition);
-        if (m_nonFastScrollableRegion.contains(position))
+        if (m_nonFastScrollableRegion.contains(roundedIntPoint(position)))
             return true;
     }
     return false;
@@ -140,7 +140,7 @@ void ScrollingTree::commitNewTreeState(PassOwnPtr<ScrollingStateTree> scrollingS
         MutexLocker lock(m_mutex);
 
         if (rootStateNodeChanged || rootNode->hasChangedProperty(ScrollingStateNode::ScrollLayer))
-            m_mainFrameScrollPosition = IntPoint();
+            m_mainFrameScrollPosition = FloatPoint();
         if (rootStateNodeChanged || rootNode->hasChangedProperty(ScrollingStateScrollingNode::WheelEventHandlerCount))
             m_hasWheelEventHandlers = scrollingStateTree->rootStateNode()->wheelEventHandlerCount();
         if (rootStateNodeChanged || rootNode->hasChangedProperty(ScrollingStateScrollingNode::NonFastScrollableRegion))
@@ -242,13 +242,13 @@ void ScrollingTree::setMainFramePinState(bool pinnedToTheLeft, bool pinnedToTheR
     m_mainFramePinnedToTheBottom = pinnedToTheBottom;
 }
 
-IntPoint ScrollingTree::mainFrameScrollPosition()
+FloatPoint ScrollingTree::mainFrameScrollPosition()
 {
     MutexLocker lock(m_mutex);
     return m_mainFrameScrollPosition;
 }
 
-void ScrollingTree::setMainFrameScrollPosition(IntPoint position)
+void ScrollingTree::setMainFrameScrollPosition(FloatPoint position)
 {
     MutexLocker lock(m_mutex);
     m_mainFrameScrollPosition = position;

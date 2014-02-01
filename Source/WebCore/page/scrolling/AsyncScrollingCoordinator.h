@@ -57,7 +57,7 @@ public:
 
     void scrollingStateTreePropertiesChanged();
 
-    void scheduleUpdateScrollPositionAfterAsyncScroll(ScrollingNodeID, const IntPoint&, bool programmaticScroll, SetOrSyncScrollingLayerPosition);
+    void scheduleUpdateScrollPositionAfterAsyncScroll(ScrollingNodeID, const FloatPoint&, bool programmaticScroll, SetOrSyncScrollingLayerPosition);
 
 protected:
     AsyncScrollingCoordinator(Page*);
@@ -68,7 +68,7 @@ protected:
 
     PassRefPtr<ScrollingTree> releaseScrollingTree() { return m_scrollingTree.release(); }
 
-    void updateScrollPositionAfterAsyncScroll(ScrollingNodeID, const IntPoint&, bool programmaticScroll, SetOrSyncScrollingLayerPosition);
+    void updateScrollPositionAfterAsyncScroll(ScrollingNodeID, const FloatPoint&, bool programmaticScroll, SetOrSyncScrollingLayerPosition);
 
 private:
     virtual bool isAsyncScrollingCoordinator() const override { return true; }
@@ -123,7 +123,7 @@ private:
             , updateLayerPositionAction(SyncScrollingLayerPosition)
         { }
 
-        ScheduledScrollUpdate(ScrollingNodeID scrollingNodeID, IntPoint point, bool isProgrammatic, SetOrSyncScrollingLayerPosition udpateAction)
+        ScheduledScrollUpdate(ScrollingNodeID scrollingNodeID, FloatPoint point, bool isProgrammatic, SetOrSyncScrollingLayerPosition udpateAction)
             : nodeID(scrollingNodeID)
             , scrollPosition(point)
             , isProgrammaticScroll(isProgrammatic)
@@ -131,7 +131,7 @@ private:
         { }
 
         ScrollingNodeID nodeID;
-        IntPoint scrollPosition;
+        FloatPoint scrollPosition;
         bool isProgrammaticScroll;
         SetOrSyncScrollingLayerPosition updateLayerPositionAction;
         

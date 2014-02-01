@@ -76,7 +76,7 @@ void RemoteScrollingTree::handleWheelEventPhase(PlatformWheelEventPhase phase)
 }
 #endif
 
-void RemoteScrollingTree::scrollingTreeNodeDidScroll(ScrollingNodeID nodeID, const IntPoint& scrollPosition, SetOrSyncScrollingLayerPosition)
+void RemoteScrollingTree::scrollingTreeNodeDidScroll(ScrollingNodeID nodeID, const FloatPoint& scrollPosition, SetOrSyncScrollingLayerPosition)
 {
     m_scrollingCoordinatorProxy.scrollPositionChanged(nodeID, scrollPosition);
 }

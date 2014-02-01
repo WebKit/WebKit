@@ -50,8 +50,9 @@ public:
     virtual ~ScrollingStateScrollingNode();
 
     enum ChangedProperty {
-        ViewportRect = NumStateNodeBits,
+        ViewportConstrainedObjectRect = NumStateNodeBits,
         TotalContentsSize,
+        ScrollPosition,
         ScrollOrigin,
         ScrollableAreaParams,
         FrameScaleFactor,
@@ -68,11 +69,14 @@ public:
         BehaviorForFixedElements
     };
 
-    const IntRect& viewportRect() const { return m_viewportRect; }
-    void setViewportRect(const IntRect&);
+    const FloatRect& viewportConstrainedObjectRect() const { return m_viewportConstrainedObjectRect; }
+    void setViewportConstrainedObjectRect(const FloatRect&);
 
     const IntSize& totalContentsSize() const { return m_totalContentsSize; }
     void setTotalContentsSize(const IntSize&);
+
+    const FloatPoint& scrollPosition() const { return m_scrollPosition; }
+    void setScrollPosition(const FloatPoint&);
 
     const IntPoint& scrollOrigin() const { return m_scrollOrigin; }
     void setScrollOrigin(const IntPoint&);
@@ -139,8 +143,9 @@ private:
     RetainPtr<ScrollbarPainter> m_horizontalScrollbarPainter;
 #endif
 
-    IntRect m_viewportRect;
+    FloatRect m_viewportConstrainedObjectRect;
     IntSize m_totalContentsSize;
+    FloatPoint m_scrollPosition;
     IntPoint m_scrollOrigin;
     
     ScrollableAreaParameters m_scrollableAreaParameters;

@@ -1,3 +1,24 @@
+2014-01-31  Simon Fraser  <simon.fraser@apple.com>
+
+        Pass the viewport rect and scroll origin independently into the scrolling tree, and make things floats
+        https://bugs.webkit.org/show_bug.cgi?id=128032
+
+        Reviewed by Tim Horton.
+
+        Pass the viewport rect and scroll offset independently into the ScrollingTree
+        via the ScrollingStateScrollingNode, since on iOS the scroll offset doesn't
+        always correspond to the viewport rect.
+        
+        Make the viewport rect and the scroll origin be float-based, since on
+        Retina screens and with zooming these can both be non-integral.
+
+        * Shared/Scrolling/RemoteScrollingCoordinatorTransaction.cpp:
+        (ArgumentCoder<ScrollingStateScrollingNode>::encode):
+        (ArgumentCoder<ScrollingStateScrollingNode>::decode):
+        * UIProcess/Scrolling/RemoteScrollingTree.cpp:
+        (WebKit::RemoteScrollingTree::scrollingTreeNodeDidScroll):
+        * UIProcess/Scrolling/RemoteScrollingTree.h:
+
 2014-01-31  Tim Horton  <timothy_horton@apple.com>
 
         WebKit2 View Gestures: Crash when pinch-zooming on a page that is just a frameset

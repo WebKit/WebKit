@@ -96,7 +96,7 @@ void ScrollingTreeScrollingNodeIOS::updateAfterChildren(const ScrollingStateNode
         setScrollPosition(scrollingStateNode.requestedScrollPosition());
 }
 
-IntPoint ScrollingTreeScrollingNodeIOS::scrollPosition() const
+FloatPoint ScrollingTreeScrollingNodeIOS::scrollPosition() const
 {
     if (shouldUpdateScrollLayerPositionSynchronously())
         return m_probableMainThreadScrollPosition;
@@ -105,16 +105,16 @@ IntPoint ScrollingTreeScrollingNodeIOS::scrollPosition() const
     return IntPoint(-scrollLayerPosition.x + scrollOrigin().x(), -scrollLayerPosition.y + scrollOrigin().y());
 }
 
-void ScrollingTreeScrollingNodeIOS::setScrollPosition(const IntPoint& scrollPosition)
+void ScrollingTreeScrollingNodeIOS::setScrollPosition(const FloatPoint& scrollPosition)
 {
-    IntPoint newScrollPosition = scrollPosition;
+    FloatPoint newScrollPosition = scrollPosition;
     newScrollPosition = newScrollPosition.shrunkTo(maximumScrollPosition());
     newScrollPosition = newScrollPosition.expandedTo(minimumScrollPosition());
 
     setScrollPositionWithoutContentEdgeConstraints(newScrollPosition);
 }
 
-void ScrollingTreeScrollingNodeIOS::setScrollPositionWithoutContentEdgeConstraints(const IntPoint& scrollPosition)
+void ScrollingTreeScrollingNodeIOS::setScrollPositionWithoutContentEdgeConstraints(const FloatPoint& scrollPosition)
 {
     if (shouldUpdateScrollLayerPositionSynchronously()) {
         m_probableMainThreadScrollPosition = scrollPosition;
@@ -126,14 +126,15 @@ void ScrollingTreeScrollingNodeIOS::setScrollPositionWithoutContentEdgeConstrain
     scrollingTree().scrollingTreeNodeDidScroll(scrollingNodeID(), scrollPosition);
 }
 
-void ScrollingTreeScrollingNodeIOS::setScrollLayerPosition(const IntPoint& position)
+void ScrollingTreeScrollingNodeIOS::setScrollLayerPosition(const FloatPoint& position)
 {
     ASSERT(!shouldUpdateScrollLayerPositionSynchronously());
     m_scrollLayer.get().position = CGPointMake(-position.x() + scrollOrigin().x(), -position.y() + scrollOrigin().y());
 
     ScrollBehaviorForFixedElements behaviorForFixed = scrollBehaviorForFixedElements();
-    IntPoint scrollOffset = position - toIntSize(scrollOrigin());
-    IntSize scrollOffsetForFixedChildren = FrameView::scrollOffsetForFixedPosition(viewportRect(), totalContentsSize(), scrollOffset, scrollOrigin(), frameScaleFactor(), false, behaviorForFixed, headerHeight(), footerHeight());
+    FloatPoint scrollOffset = position - toIntSize(scrollOrigin());
+    // FIXME: scrollOffsetForFixedPosition() needs to do float math.
+    FloatSize scrollOffsetForFixedChildren = FrameView::scrollOffsetForFixedPosition(enclosingIntRect(viewportConstrainedObjectRect()), totalContentsSize(), flooredIntPoint(scrollOffset), scrollOrigin(), frameScaleFactor(), false, behaviorForFixed, headerHeight(), footerHeight());
     if (m_counterScrollingLayer)
         m_counterScrollingLayer.get().position = FloatPoint(scrollOffsetForFixedChildren);
 
@@ -142,7 +143,7 @@ void ScrollingTreeScrollingNodeIOS::setScrollLayerPosition(const IntPoint& posit
     // then we should recompute scrollOffsetForFixedChildren for the banner with a scale factor of 1.
     float horizontalScrollOffsetForBanner = scrollOffsetForFixedChildren.width();
     if (frameScaleFactor() != 1)
-        horizontalScrollOffsetForBanner = FrameView::scrollOffsetForFixedPosition(viewportRect(), totalContentsSize(), scrollOffset, scrollOrigin(), 1, false, behaviorForFixed, headerHeight(), footerHeight()).width();
+        horizontalScrollOffsetForBanner = FrameView::scrollOffsetForFixedPosition(enclosingIntRect(viewportConstrainedObjectRect()), totalContentsSize(), flooredIntPoint(scrollOffset), scrollOrigin(), 1, false, behaviorForFixed, headerHeight(), footerHeight()).width();
 
     if (m_headerLayer)
         m_headerLayer.get().position = FloatPoint(horizontalScrollOffsetForBanner, 0);
@@ -153,17 +154,17 @@ void ScrollingTreeScrollingNodeIOS::setScrollLayerPosition(const IntPoint& posit
     if (!m_children)
         return;
 
-    IntRect viewportRect = this->viewportRect();
-    viewportRect.setLocation(IntPoint(scrollOffsetForFixedChildren));
+    FloatRect viewportRect = viewportConstrainedObjectRect();
+    viewportRect.setLocation(FloatPoint() + scrollOffsetForFixedChildren);
 
     size_t size = m_children->size();
     for (size_t i = 0; i < size; ++i)
         m_children->at(i)->parentScrollPositionDidChange(viewportRect, FloatSize());
 }
 
-IntPoint ScrollingTreeScrollingNodeIOS::minimumScrollPosition() const
+FloatPoint ScrollingTreeScrollingNodeIOS::minimumScrollPosition() const
 {
-    IntPoint position;
+    FloatPoint position;
     
     if (scrollingTree().rootNode() == this && scrollingTree().scrollPinningBehavior() == PinToBottom)
         position.setY(maximumScrollPosition().y());
@@ -171,12 +172,12 @@ IntPoint ScrollingTreeScrollingNodeIOS::minimumScrollPosition() const
     return position;
 }
 
-IntPoint ScrollingTreeScrollingNodeIOS::maximumScrollPosition() const
+FloatPoint ScrollingTreeScrollingNodeIOS::maximumScrollPosition() const
 {
-    IntPoint position(totalContentsSizeForRubberBand().width() - viewportRect().width(),
-                      totalContentsSizeForRubberBand().height() - viewportRect().height());
+    FloatPoint position(totalContentsSizeForRubberBand().width() - viewportConstrainedObjectRect().width(),
+        totalContentsSizeForRubberBand().height() - viewportConstrainedObjectRect().height());
 
-    position.clampNegativeToZero();
+    position = position.expandedTo(FloatPoint());
 
     if (scrollingTree().rootNode() == this && scrollingTree().scrollPinningBehavior() == PinToTop)
         position.setY(minimumScrollPosition().y());

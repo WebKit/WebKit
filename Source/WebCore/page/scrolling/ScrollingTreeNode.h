@@ -49,7 +49,7 @@ public:
     virtual void updateBeforeChildren(const ScrollingStateNode&) = 0;
     virtual void updateAfterChildren(const ScrollingStateNode&) { }
 
-    virtual void parentScrollPositionDidChange(const IntRect& viewportRect, const FloatSize& cumulativeDelta) = 0;
+    virtual void parentScrollPositionDidChange(const FloatRect& viewportRect, const FloatSize& cumulativeDelta) = 0;
 
     ScrollingTreeNode* parent() const { return m_parent; }
     void setParent(ScrollingTreeNode* parent) { m_parent = parent; }

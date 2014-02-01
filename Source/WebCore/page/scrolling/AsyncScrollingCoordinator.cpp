@@ -91,7 +91,7 @@ void AsyncScrollingCoordinator::frameViewLayoutUpdated(FrameView* frameView)
     node->setFooterHeight(frameView->footerHeight());
 
     node->setScrollOrigin(frameView->scrollOrigin());
-    node->setViewportRect(IntRect(IntPoint(), frameView->visibleContentRect().size()));
+    node->setViewportConstrainedObjectRect(FloatRect(FloatPoint(), frameView->visibleContentRect().size()));
     node->setTotalContentsSize(frameView->totalContentsSize());
 
     ScrollableAreaParameters scrollParameters;
@@ -151,7 +151,7 @@ bool AsyncScrollingCoordinator::requestScrollPositionUpdate(FrameView* frameView
     return true;
 }
 
-void AsyncScrollingCoordinator::scheduleUpdateScrollPositionAfterAsyncScroll(ScrollingNodeID nodeID, const IntPoint& scrollPosition, bool programmaticScroll, SetOrSyncScrollingLayerPosition scrollingLayerPositionAction)
+void AsyncScrollingCoordinator::scheduleUpdateScrollPositionAfterAsyncScroll(ScrollingNodeID nodeID, const FloatPoint& scrollPosition, bool programmaticScroll, SetOrSyncScrollingLayerPosition scrollingLayerPositionAction)
 {
     ScheduledScrollUpdate scrollUpdate(nodeID, scrollPosition, programmaticScroll, scrollingLayerPositionAction);
     
@@ -177,7 +177,7 @@ void AsyncScrollingCoordinator::updateScrollPositionAfterAsyncScrollTimerFired(T
     updateScrollPositionAfterAsyncScroll(m_scheduledScrollUpdate.nodeID, m_scheduledScrollUpdate.scrollPosition, m_scheduledScrollUpdate.isProgrammaticScroll, m_scheduledScrollUpdate.updateLayerPositionAction);
 }
 
-void AsyncScrollingCoordinator::updateScrollPositionAfterAsyncScroll(ScrollingNodeID scrollingNodeID, const IntPoint& scrollPosition, bool programmaticScroll, SetOrSyncScrollingLayerPosition scrollingLayerPositionAction)
+void AsyncScrollingCoordinator::updateScrollPositionAfterAsyncScroll(ScrollingNodeID scrollingNodeID, const FloatPoint& scrollPosition, bool programmaticScroll, SetOrSyncScrollingLayerPosition scrollingLayerPositionAction)
 {
     ASSERT(isMainThread());
 
@@ -192,7 +192,7 @@ void AsyncScrollingCoordinator::updateScrollPositionAfterAsyncScroll(ScrollingNo
     frameView->setInProgrammaticScroll(programmaticScroll);
 
     frameView->setConstrainsScrollingToContentEdge(false);
-    frameView->notifyScrollPositionChanged(scrollPosition);
+    frameView->notifyScrollPositionChanged(roundedIntPoint(scrollPosition));
     frameView->setConstrainsScrollingToContentEdge(true);
 
     frameView->setInProgrammaticScroll(oldProgrammaticScroll);

@@ -81,7 +81,7 @@ void ScrollingTreeIOS::commitNewTreeState(PassOwnPtr<ScrollingStateTree> scrolli
     ScrollingTree::commitNewTreeState(scrollingStateTree);
 }
 
-void ScrollingTreeIOS::scrollingTreeNodeDidScroll(ScrollingNodeID nodeID, const IntPoint& scrollPosition, SetOrSyncScrollingLayerPosition scrollingLayerPositionAction)
+void ScrollingTreeIOS::scrollingTreeNodeDidScroll(ScrollingNodeID nodeID, const FloatPoint& scrollPosition, SetOrSyncScrollingLayerPosition scrollingLayerPositionAction)
 {
     if (!m_scrollingCoordinator)
         return;

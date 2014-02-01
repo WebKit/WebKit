@@ -108,8 +108,9 @@ void ArgumentCoder<ScrollingStateScrollingNode>::encode(ArgumentEncoder& encoder
 {
     encoder << static_cast<const ScrollingStateNode&>(node);
     
-    SCROLLING_NODE_ENCODE(ViewportRect, viewportRect)
+    SCROLLING_NODE_ENCODE(ViewportConstrainedObjectRect, viewportConstrainedObjectRect)
     SCROLLING_NODE_ENCODE(TotalContentsSize, totalContentsSize)
+    SCROLLING_NODE_ENCODE(ScrollPosition, scrollPosition)
     SCROLLING_NODE_ENCODE(ScrollOrigin, scrollOrigin)
     SCROLLING_NODE_ENCODE(FrameScaleFactor, frameScaleFactor)
 //    SCROLLING_NODE_ENCODE(NonFastScrollableRegion, nonFastScrollableRegion) // FIXME: no encoder support for Region
@@ -143,8 +144,9 @@ bool ArgumentCoder<ScrollingStateScrollingNode>::decode(ArgumentDecoder& decoder
     if (!decoder.decode(static_cast<ScrollingStateNode&>(node)))
         return false;
 
-    SCROLLING_NODE_DECODE(ViewportRect, IntRect, setViewportRect);
+    SCROLLING_NODE_DECODE(ViewportConstrainedObjectRect, FloatRect, setViewportConstrainedObjectRect);
     SCROLLING_NODE_DECODE(TotalContentsSize, IntSize, setTotalContentsSize);
+    SCROLLING_NODE_DECODE(ScrollPosition, FloatPoint, setScrollPosition);
     SCROLLING_NODE_DECODE(ScrollOrigin, IntPoint, setScrollOrigin);
     SCROLLING_NODE_DECODE(FrameScaleFactor, float, setFrameScaleFactor);
 //    SCROLLING_NODE_DECODE(NonFastScrollableRegion, Region, setNonFastScrollableRegion); // FIXME: no decoder support for Region.
