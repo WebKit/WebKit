@@ -81,12 +81,6 @@ void HTMLMetaElement::process()
 #endif
     else if (equalIgnoringCase(name(), "referrer"))
         document().processReferrerPolicy(contentValue);
-#if ENABLE(LEGACY_VIEWPORT_ADAPTION)
-    else if (equalIgnoringCase(name(), "handheldfriendly") && equalIgnoringCase(contentValue, "true"))
-        document().processViewport("width=device-width", ViewportArguments::HandheldFriendlyMeta);
-    else if (equalIgnoringCase(name(), "mobileoptimized"))
-        document().processViewport("width=device-width, initial-scale=1", ViewportArguments::MobileOptimizedMeta);
-#endif
 
     // Get the document to process the tag, but only if we're actually part of DOM tree (changing a meta tag while
     // it's not in the tree shouldn't have any effect on the document)

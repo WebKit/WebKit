@@ -794,21 +794,7 @@ void Document::childrenChanged(const ChildChange& change)
 {
     ContainerNode::childrenChanged(change);
 
-    // NOTE: Per DOM, dynamically inserting/removing doctype nodes doesn't affect compatibility mode.
-
-#if ENABLE(LEGACY_VIEWPORT_ADAPTION)
-    // FIXME: It's a little strange to add these rules when a DocumentType with this prefix is added,
-    // but not remove these rules when a DocumentType with this prefix is removed. It seems this should
-    // be handled more the way the compatibility mode is, by fetching the doctype at the appropriate time,
-    // rather than by responding when a document type node is inserted.
-    if (DocumentType* documentType = doctype()) {
-        if (documentType->publicId().startsWith("-//wapforum//dtd xhtml mobile 1.", /* caseSensitive */ false))
-            processViewport("width=device-width, height=device-height", ViewportArguments::XHTMLMobileProfile);
-    }
-#endif
-
     Element* newDocumentElement = childrenOfType<Element>(*this).first();
-
     if (newDocumentElement == m_documentElement)
         return;
     m_documentElement = newDocumentElement;

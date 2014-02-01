@@ -58,11 +58,6 @@ struct ViewportArguments {
     enum Type {
         // These are ordered in increasing importance.
         Implicit,
-#if ENABLE(LEGACY_VIEWPORT_ADAPTION)
-        XHTMLMobileProfile,
-        HandheldFriendlyMeta,
-        MobileOptimizedMeta,
-#endif
 #if PLATFORM(IOS)
         PluginDocument,
         ImageDocument,
