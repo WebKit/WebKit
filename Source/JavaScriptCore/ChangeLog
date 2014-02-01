@@ -1,3 +1,20 @@
+2014-01-31  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG->FTL tier-up shouldn't assume that LoopHints stay at the tops of loops
+        https://bugs.webkit.org/show_bug.cgi?id=128030
+
+        Reviewed by Oliver Hunt.
+        
+        Remove a bogus assertion. The only thing that matters is that the LoopHint had at one
+        point in time been at the top of a loop header, and that it is now at the top of a
+        basic block. But the basic block that it's at the top of now doesn't have to be the
+        same as the loop header that it once was the top of.
+
+        * dfg/DFGTierUpCheckInjectionPhase.cpp:
+        (JSC::DFG::TierUpCheckInjectionPhase::run):
+        * tests/stress/tier-up-in-loop-with-cfg-simplification.js: Added.
+        (foo):
+
 2014-01-31  Mark Lam  <mark.lam@apple.com>
 
         Avoid eagerly creating the JSActivation when the debugger is attached.

@@ -98,7 +98,6 @@ public:
                     break;
                 }
                 
-                RELEASE_ASSERT(block->bytecodeBegin == codeOrigin.bytecodeIndex);
                 insertionSet.insertNode(
                     nodeIndex + 1, SpecNone, CheckTierUpAndOSREnter, codeOrigin);
                 break;
