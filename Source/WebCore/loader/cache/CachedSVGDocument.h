@@ -49,6 +49,8 @@ private:
     virtual void finishLoading(ResourceBuffer*) override;
 };
 
+CACHED_RESOURCE_TYPE_CASTS(CachedSVGDocument, CachedResource, CachedResource::SVGDocumentResource)
+
 } // namespace WebCore
 
 #endif // USE(SVG)

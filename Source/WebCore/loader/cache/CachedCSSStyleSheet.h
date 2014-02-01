@@ -67,6 +67,8 @@ namespace WebCore {
         RefPtr<StyleSheetContents> m_parsedStyleSheetCache;
     };
 
+CACHED_RESOURCE_TYPE_CASTS(CachedCSSStyleSheet, CachedResource, CachedResource::CSSStyleSheet)
+
 }
 
 #endif

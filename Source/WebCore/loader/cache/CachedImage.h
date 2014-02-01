@@ -149,7 +149,7 @@ private:
 // FIXME: We should look to incorporate the functionality of CachedImageManual
 // into CachedImage or find a better place for this class.
 // FIXME: Remove the USE(CF) once we make MemoryCache::addImageToCache() platform-independent.
-class CachedImageManual : public CachedImage {
+class CachedImageManual final : public CachedImage {
 public:
     CachedImageManual(const URL&, Image*);
     void addFakeClient() { addClient(m_fakeClient.get()); }

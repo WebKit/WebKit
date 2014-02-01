@@ -57,6 +57,8 @@ namespace WebCore {
         virtual void finishLoading(ResourceBuffer*) override;
     };
 
+CACHED_RESOURCE_TYPE_CASTS(CachedXSLStyleSheet, CachedResource, CachedResource::XSLStyleSheet)
+
 #endif
 
 }

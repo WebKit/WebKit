@@ -44,6 +44,8 @@ private:
     virtual void finishLoading(ResourceBuffer*) override;
 };
 
+CACHED_RESOURCE_TYPE_CASTS(CachedTextTrack, CachedResource, CachedResource::TextTrackResource)
+
 }
 
 #endif

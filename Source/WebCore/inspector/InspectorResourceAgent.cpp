@@ -334,7 +334,7 @@ void InspectorResourceAgent::didLoadResourceFromMemoryCache(DocumentLoader* load
     m_resourcesData->resourceCreated(requestId, loaderId);
     m_resourcesData->addCachedResource(requestId, resource);
     if (resource->type() == CachedResource::RawResource) {
-        CachedRawResource* rawResource = static_cast<CachedRawResource*>(resource);
+        CachedRawResource* rawResource = toCachedRawResource(resource);
         String rawRequestId = IdentifiersFactory::requestId(rawResource->identifier());
         m_resourcesData->reuseXHRReplayData(requestId, rawRequestId);
     }

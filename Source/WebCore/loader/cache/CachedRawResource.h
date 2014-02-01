@@ -88,6 +88,8 @@ private:
     Vector<RedirectPair> m_redirectChain;
 };
 
+TYPE_CASTS_BASE(CachedRawResource, CachedResource, resource, resource->isMainOrRawResource(), resource.isMainOrRawResource())
+
 }
 
 #endif // CachedRawResource_h

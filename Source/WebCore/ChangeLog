@@ -1,3 +1,60 @@
+2014-02-01  David Kilzer  <ddkilzer@apple.com>
+
+        Add security-checked casts for all WebCore::CachedResource subclasses
+        <http://webkit.org/b/127988>
+
+        Reviewed by Darin Adler.
+
+        * inspector/InspectorPageAgent.cpp:
+        (WebCore::InspectorPageAgent::cachedResourceContent):
+        * inspector/InspectorResourceAgent.cpp:
+        (WebCore::InspectorResourceAgent::didLoadResourceFromMemoryCache):
+        - Switch from static_cast<>() to security-checked cast.
+
+        * loader/cache/CachedCSSStyleSheet.h:
+        (WebCore::toCachedCSSStyleSheet): Add.
+        * loader/cache/CachedFont.h:
+        (WebCore::toCachedFont): Add.
+
+        * loader/cache/CachedImage.h: Make CachedImageManual final.
+
+        * loader/cache/CachedRawResource.cpp:
+        (WebCore::CachedRawResource::CachedRawResource): Add assert that
+        only MainResource or RawResource types are used to construct a
+        CachedRawResource.  This may be a security issue depending on
+        what code exists that uses the type() value to cast to a
+        CachedResource subclass.
+        (WebCore::CachedRawResource::switchClientsToRevalidatedResource):
+        Switch from static_cast<>() to toCachedRawResource().
+
+        * loader/cache/CachedRawResource.h:
+        (WebCore::toCachedRawResource): Add.
+        * loader/cache/CachedResource.h:
+        (WebCore::CachedResource::isMainOrRawResource): Add.  A
+        CachedRawResource could be either a MainResource or a
+        RawResource.  Currently only used in assertions.
+
+        * loader/cache/CachedResourceLoader.cpp:
+        (WebCore::CachedResourceLoader::requestFont):
+        (WebCore::CachedResourceLoader::requestTextTrack):
+        (WebCore::CachedResourceLoader::requestCSSStyleSheet):
+        (WebCore::CachedResourceLoader::requestUserCSSStyleSheet):
+        (WebCore::CachedResourceLoader::requestScript):
+        (WebCore::CachedResourceLoader::requestXSLStyleSheet):
+        (WebCore::CachedResourceLoader::requestSVGDocument):
+        (WebCore::CachedResourceLoader::requestRawResource):
+        (WebCore::CachedResourceLoader::requestMainResource):
+        - Switch from static_cast<>() to security-checked cast.
+
+        * loader/cache/CachedSVGDocument.h:
+        (WebCore::toCachedSVGDocument): Add.
+        * loader/cache/CachedScript.h:
+        (WebCore::toCachedScript): Add.
+        * loader/cache/CachedTextTrack.h:
+        (WebCore::toCachedTextTrack): Add.
+        * loader/cache/CachedXSLStyleSheet.h:
+        (WebCore::toCachedXSLStyleSheet): Add.
+
 2014-02-01  Xabier Rodriguez Calvar  <calvaris@igalia.com>
 
         Unreviewed. Fixed GTK+ CMake build after r162922.

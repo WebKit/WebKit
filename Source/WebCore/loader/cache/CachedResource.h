@@ -156,6 +156,8 @@ public:
     SubresourceLoader* loader() { return m_loader.get(); }
 
     bool isImage() const { return type() == ImageResource; }
+    // FIXME: CachedRawResource could be either a main resource or a raw XHR resource.
+    bool isMainOrRawResource() const { return type() == MainResource || type() == RawResource; }
     bool ignoreForRequestCount() const
     {
         return type() == MainResource

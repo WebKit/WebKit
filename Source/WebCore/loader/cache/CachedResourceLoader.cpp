@@ -165,19 +165,19 @@ CachedResourceHandle<CachedImage> CachedResourceLoader::requestImage(CachedResou
 
 CachedResourceHandle<CachedFont> CachedResourceLoader::requestFont(CachedResourceRequest& request)
 {
-    return static_cast<CachedFont*>(requestResource(CachedResource::FontResource, request).get());
+    return toCachedFont(requestResource(CachedResource::FontResource, request).get());
 }
 
 #if ENABLE(VIDEO_TRACK)
 CachedResourceHandle<CachedTextTrack> CachedResourceLoader::requestTextTrack(CachedResourceRequest& request)
 {
-    return static_cast<CachedTextTrack*>(requestResource(CachedResource::TextTrackResource, request).get());
+    return toCachedTextTrack(requestResource(CachedResource::TextTrackResource, request).get());
 }
 #endif
 
 CachedResourceHandle<CachedCSSStyleSheet> CachedResourceLoader::requestCSSStyleSheet(CachedResourceRequest& request)
 {
-    return static_cast<CachedCSSStyleSheet*>(requestResource(CachedResource::CSSStyleSheet, request).get());
+    return toCachedCSSStyleSheet(requestResource(CachedResource::CSSStyleSheet, request).get());
 }
 
 CachedResourceHandle<CachedCSSStyleSheet> CachedResourceLoader::requestUserCSSStyleSheet(CachedResourceRequest& request)
@@ -190,7 +190,7 @@ CachedResourceHandle<CachedCSSStyleSheet> CachedResourceLoader::requestUserCSSSt
 
     if (CachedResource* existing = memoryCache()->resourceForRequest(request.resourceRequest())) {
         if (existing->type() == CachedResource::CSSStyleSheet)
-            return static_cast<CachedCSSStyleSheet*>(existing);
+            return toCachedCSSStyleSheet(existing);
         memoryCache()->remove(existing);
     }
     if (url.string() != request.resourceRequest().url())
@@ -208,20 +208,20 @@ CachedResourceHandle<CachedCSSStyleSheet> CachedResourceLoader::requestUserCSSSt
 
 CachedResourceHandle<CachedScript> CachedResourceLoader::requestScript(CachedResourceRequest& request)
 {
-    return static_cast<CachedScript*>(requestResource(CachedResource::Script, request).get());
+    return toCachedScript(requestResource(CachedResource::Script, request).get());
 }
 
 #if ENABLE(XSLT)
 CachedResourceHandle<CachedXSLStyleSheet> CachedResourceLoader::requestXSLStyleSheet(CachedResourceRequest& request)
 {
-    return static_cast<CachedXSLStyleSheet*>(requestResource(CachedResource::XSLStyleSheet, request).get());
+    return toCachedXSLStyleSheet(requestResource(CachedResource::XSLStyleSheet, request).get());
 }
 #endif
 
 #if ENABLE(SVG)
 CachedResourceHandle<CachedSVGDocument> CachedResourceLoader::requestSVGDocument(CachedResourceRequest& request)
 {
-    return static_cast<CachedSVGDocument*>(requestResource(CachedResource::SVGDocumentResource, request).get());
+    return toCachedSVGDocument(requestResource(CachedResource::SVGDocumentResource, request).get());
 }
 #endif
 
@@ -236,12 +236,12 @@ CachedResourceHandle<CachedResource> CachedResourceLoader::requestLinkResource(C
 
 CachedResourceHandle<CachedRawResource> CachedResourceLoader::requestRawResource(CachedResourceRequest& request)
 {
-    return static_cast<CachedRawResource*>(requestResource(CachedResource::RawResource, request).get());
+    return toCachedRawResource(requestResource(CachedResource::RawResource, request).get());
 }
 
 CachedResourceHandle<CachedRawResource> CachedResourceLoader::requestMainResource(CachedResourceRequest& request)
 {
-    return static_cast<CachedRawResource*>(requestResource(CachedResource::MainResource, request).get());
+    return toCachedRawResource(requestResource(CachedResource::MainResource, request).get());
 }
 
 bool CachedResourceLoader::checkInsecureContent(CachedResource::Type type, const URL& url) const
