@@ -29,26 +29,43 @@
 #import <wtf/OwnPtr.h>
 #import <WebKitSystemInterface.h>
 
+#if __has_include(<QuartzCore/QuartzCorePrivate.h>)
+#import <QuartzCore/QuartzCorePrivate.h>
+#else
+@interface CAContext : NSObject
+@end
+#endif
+
+@interface CAContext (Details)
++ (CAContext *)remoteContextWithOptions:(NSDictionary *)dict;
+@end
+
+extern NSString * const kCAContextIgnoresHitTest;
+
 namespace WebKit {
 
 std::unique_ptr<LayerHostingContext> LayerHostingContext::createForPort(mach_port_t serverPort)
 {
     auto layerHostingContext = std::make_unique<LayerHostingContext>();
 
-    layerHostingContext->m_layerHostingMode = LayerHostingModeDefault;
+    layerHostingContext->m_layerHostingMode = LayerHostingMode::InProcess;
     layerHostingContext->m_context = WKCAContextMakeRemoteWithServerPort(serverPort);
 
     return layerHostingContext;
 }
 
-#if HAVE(LAYER_HOSTING_IN_WINDOW_SERVER)
-std::unique_ptr<LayerHostingContext> LayerHostingContext::createForWindowServer()
+#if HAVE(OUT_OF_PROCESS_LAYER_HOSTING)
+std::unique_ptr<LayerHostingContext> LayerHostingContext::createForExternalHostingProcess()
 {
     auto layerHostingContext = std::make_unique<LayerHostingContext>();
+    layerHostingContext->m_layerHostingMode = LayerHostingMode::OutOfProcess;
 
-    layerHostingContext->m_layerHostingMode = LayerHostingModeInWindowServer;
+#if PLATFORM(IOS)
+    layerHostingContext->m_context = (WKCAContextRef)[CAContext remoteContextWithOptions:@{ kCAContextIgnoresHitTest : @YES }];
+#else
     layerHostingContext->m_context = WKCAContextMakeRemoteForWindowServer();
-
+#endif
+    
     return layerHostingContext;
 }
 #endif

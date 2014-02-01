@@ -61,7 +61,7 @@ extern "C" {
 #include "WebKitPluginHost.h"
 }
 
-#if HAVE(LAYER_HOSTING_IN_WINDOW_SERVER)
+#if HAVE(OUT_OF_PROCESS_LAYER_HOSTING)
 @interface NSWindow (Details)
 - (BOOL)_hostsLayersInWindowServer;
 @end
@@ -114,7 +114,7 @@ extern "C" {
 
 - (BOOL)windowHostsLayersInWindowServer
 {
-#if HAVE(LAYER_HOSTING_IN_WINDOW_SERVER)
+#if HAVE(OUT_OF_PROCESS_LAYER_HOSTING)
     return [[[self webView] window] _hostsLayersInWindowServer];
 #else
     return false;

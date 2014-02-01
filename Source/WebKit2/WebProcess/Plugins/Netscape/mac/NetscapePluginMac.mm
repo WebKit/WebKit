@@ -171,8 +171,8 @@ NPError NetscapePlugin::popUpContextMenu(NPMenu* npMenu)
 
 mach_port_t NetscapePlugin::compositingRenderServerPort()
 {
-#if HAVE(LAYER_HOSTING_IN_WINDOW_SERVER)
-    if (m_layerHostingMode == LayerHostingModeInWindowServer)
+#if HAVE(OUT_OF_PROCESS_LAYER_HOSTING)
+    if (m_layerHostingMode == LayerHostingMode::OutOfProcess)
         return MACH_PORT_NULL;
 #endif
 

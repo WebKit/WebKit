@@ -477,6 +477,10 @@
 
 #endif
 
+#if PLATFORM(IOS) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 1080)
+#define HAVE_OUT_OF_PROCESS_LAYER_HOSTING 1
+#endif
+
 #if PLATFORM(MAC) && !PLATFORM(IOS)
 
 #define WTF_USE_APPKIT 1
@@ -486,10 +490,6 @@
 
 #if CPU(X86_64)
 #define WTF_USE_PLUGIN_HOST_PROCESS 1
-#endif
-
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1080
-#define HAVE_LAYER_HOSTING_IN_WINDOW_SERVER 1
 #endif
 
 /* OS X defines a series of platform macros for debugging. */

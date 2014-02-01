@@ -64,7 +64,7 @@
 - (NSCursor *)_cursorRectCursor;
 @end
 
-#if HAVE(LAYER_HOSTING_IN_WINDOW_SERVER)
+#if HAVE(OUT_OF_PROCESS_LAYER_HOSTING)
 @interface NSWindow (WebNSWindowDetails)
 - (BOOL)_hostsLayersInWindowServer;
 @end
@@ -224,11 +224,11 @@ bool PageClientImpl::isVisuallyIdle()
 
 LayerHostingMode PageClientImpl::viewLayerHostingMode()
 {
-#if HAVE(LAYER_HOSTING_IN_WINDOW_SERVER)
+#if HAVE(OUT_OF_PROCESS_LAYER_HOSTING)
     if ([m_wkView window] && [[m_wkView window] _hostsLayersInWindowServer])
-        return LayerHostingModeInWindowServer;
+        return LayerHostingMode::OutOfProcess;
 #endif
-    return LayerHostingModeDefault;
+    return LayerHostingMode::InProcess;
 }
 
 void PageClientImpl::viewWillMoveToAnotherWindow()

@@ -40,8 +40,8 @@ class LayerHostingContext {
     WTF_MAKE_NONCOPYABLE(LayerHostingContext);
 public:
     static std::unique_ptr<LayerHostingContext> createForPort(mach_port_t serverPort);
-#if HAVE(LAYER_HOSTING_IN_WINDOW_SERVER)
-    static std::unique_ptr<LayerHostingContext> createForWindowServer();
+#if HAVE(OUT_OF_PROCESS_LAYER_HOSTING)
+    static std::unique_ptr<LayerHostingContext> createForExternalHostingProcess();
 #endif
 
     LayerHostingContext();

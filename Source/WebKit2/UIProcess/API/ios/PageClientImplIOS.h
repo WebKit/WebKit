@@ -95,6 +95,7 @@ private:
     virtual void updateAcceleratedCompositingMode(const LayerTreeContext&) override;
     virtual void setAcceleratedCompositingRootLayer(CALayer *rootLayer) override;
     virtual CALayer *acceleratedCompositingRootLayer() const override;
+    virtual LayerHostingMode viewLayerHostingMode() override { return LayerHostingMode::OutOfProcess; }
 
     virtual RetainPtr<CGImageRef> takeViewSnapshot() override;
     virtual void wheelEventWasNotHandledByWebCore(const NativeWebWheelEvent&) override;

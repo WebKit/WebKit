@@ -1,3 +1,48 @@
+2014-01-31  Tim Horton  <timothy_horton@apple.com>
+
+        [wk2] PlatformCALayerRemoteCustom doesn't work on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=128025
+        <rdar://problem/15950271>
+
+        Reviewed by Simon Fraser.
+
+        * Platform/mac/LayerHostingContext.h:
+        * Platform/mac/LayerHostingContext.mm:
+        (WebKit::LayerHostingContext::createForPort):
+        (WebKit::LayerHostingContext::createForExternalHostingProcess):
+        Use the new macro name (in a lot of places).
+        Rename LayerHostingContext::createForWindowServer() to createForExternalHostingProcess().
+        Don't use WKCAContextMakeRemoteForWindowServer on iOS, just use the CAContext
+        SPI directly. We don't want our CAContext to be hit tested because it's purely
+        presentational.
+
+        * UIProcess/API/ios/PageClientImplIOS.h:
+        iOS always hosts layers in an external process.
+
+        * PluginProcess/mac/PluginControllerProxyMac.mm:
+        (WebKit::PluginControllerProxy::updateLayerHostingContext):
+        * Shared/LayerTreeContext.h:
+        * UIProcess/API/mac/PageClientImpl.mm:
+        (WebKit::PageClientImpl::viewLayerHostingMode):
+        * UIProcess/PageClient.h:
+        (WebKit::PageClient::viewLayerHostingMode):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::WebPageProxy):
+        (WebKit::WebPageProxy::viewStateDidChange):
+        * WebProcess/Plugins/Netscape/NetscapePlugin.cpp:
+        (WebKit::NetscapePlugin::NetscapePlugin):
+        * WebProcess/Plugins/Netscape/mac/NetscapePluginMac.mm:
+        (WebKit::NetscapePlugin::compositingRenderServerPort):
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::setLayerHostingMode):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::reinitializeWebPage):
+        * WebProcess/WebPage/mac/PlatformCALayerRemoteCustom.mm:
+        (PlatformCALayerRemoteCustom::PlatformCALayerRemoteCustom):
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.mm:
+        (WebKit::TiledCoreAnimationDrawingArea::updateLayerHostingContext):
+        Use enum class for LayerHostingMode and rename the members to InProcess and OutOfProcess.
+
 2014-01-31  Martin Hock  <mhock@apple.com>
 
         Add session support to WebPlatformStrategies

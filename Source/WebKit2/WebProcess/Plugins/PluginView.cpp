@@ -366,7 +366,7 @@ void PluginView::recreateAndInitialize(PassRefPtr<Plugin> plugin)
 
 void PluginView::setLayerHostingMode(LayerHostingMode layerHostingMode)
 {
-#if HAVE(LAYER_HOSTING_IN_WINDOW_SERVER)
+#if HAVE(OUT_OF_PROCESS_LAYER_HOSTING)
     if (!m_plugin)
         return;
 

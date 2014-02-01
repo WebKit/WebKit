@@ -1,3 +1,15 @@
+2014-01-31  Tim Horton  <timothy_horton@apple.com>
+
+        [wk2] PlatformCALayerRemoteCustom doesn't work on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=128025
+        <rdar://problem/15950271>
+
+        Reviewed by Simon Fraser.
+
+        * Plugins/Hosted/WebHostedNetscapePluginView.mm:
+        (-[WebHostedNetscapePluginView windowHostsLayersInWindowServer]):
+        Use the new macro name.
+
 2014-01-30  David Kilzer  <ddkilzer@apple.com>
 
         Add security-checked cast for WebCore::CachedImage

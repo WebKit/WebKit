@@ -86,7 +86,7 @@ void PluginProxy::setComplexTextInputState(uint64_t complexTextInputState)
 
 void PluginProxy::setLayerHostingMode(LayerHostingMode layerHostingMode)
 {
-    m_connection->connection()->send(Messages::PluginControllerProxy::SetLayerHostingMode(layerHostingMode), m_pluginInstanceID);
+    m_connection->connection()->send(Messages::PluginControllerProxy::SetLayerHostingMode(static_cast<unsigned>(layerHostingMode)), m_pluginInstanceID);
 }
 
 void PluginProxy::setLayerHostingContextID(uint32_t layerHostingContextID)

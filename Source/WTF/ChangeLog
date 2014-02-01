@@ -1,3 +1,15 @@
+2014-01-31  Tim Horton  <timothy_horton@apple.com>
+
+        [wk2] PlatformCALayerRemoteCustom doesn't work on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=128025
+        <rdar://problem/15950271>
+
+        Reviewed by Simon Fraser.
+
+        * wtf/Platform.h:
+        Rename HAVE_LAYER_HOSTING_IN_WINDOW_SERVER to HAVE_OUT_OF_PROCESS_LAYER_HOSTING
+        and make it true on iOS.
+
 2014-01-31  Michael Saboff  <msaboff@apple.com>
 
         REGRESSION: Crash in sanitizeStackForVMImpl when scrolling @ lifehacker.com.au

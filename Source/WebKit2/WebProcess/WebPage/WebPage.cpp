@@ -442,7 +442,7 @@ void WebPage::reinitializeWebPage(const WebPageCreationParameters& parameters)
     if (m_viewState != parameters.viewState)
         setViewStateInternal(parameters.viewState, true);
     if (m_layerHostingMode != parameters.layerHostingMode)
-        setLayerHostingMode(parameters.layerHostingMode);
+        setLayerHostingMode(static_cast<unsigned>(parameters.layerHostingMode));
 }
 
 WebPage::~WebPage()

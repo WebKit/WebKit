@@ -35,10 +35,10 @@ namespace IPC {
 
 namespace WebKit {
 
-enum LayerHostingMode {
-    LayerHostingModeDefault,
-#if HAVE(LAYER_HOSTING_IN_WINDOW_SERVER)
-    LayerHostingModeInWindowServer
+enum class LayerHostingMode {
+    InProcess,
+#if HAVE(OUT_OF_PROCESS_LAYER_HOSTING)
+    OutOfProcess
 #endif
 };
 
