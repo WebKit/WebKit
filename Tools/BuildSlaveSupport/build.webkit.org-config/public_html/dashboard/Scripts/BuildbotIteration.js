@@ -271,7 +271,7 @@ BuildbotIteration.prototype = {
             this.queue.sortIterations();
 
             this.dispatchEventToListeners(BuildbotIteration.Event.Updated);
-        }.bind(this));
+        }.bind(this), {withCredentials: this.queue.buildbot.needsAuthentication});
     },
 
     loadLayoutTestResults: function(callback)
@@ -355,6 +355,6 @@ BuildbotIteration.prototype = {
         function(data) {
             console.log(data.error);
             callback();
-        }, {jsonpCallbackName: "ADD_RESULTS"});
+        }, {jsonpCallbackName: "ADD_RESULTS", withCredentials: this.queue.buildbot.needsAuthentication});
     }
 };
