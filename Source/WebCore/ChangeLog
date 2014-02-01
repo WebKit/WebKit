@@ -1,3 +1,27 @@
+2014-02-01  Anders Carlsson  <andersca@apple.com>
+
+        SVGTextLayoutAttributesBuilder shouldn't use RenderText::deprecatedCharacters()
+        https://bugs.webkit.org/show_bug.cgi?id=128048
+
+        Reviewed by Sam Weinig.
+
+        Change UChar*& lastCharacter to bool& lastCharacterWasSpace since that's what the parameter was used for.
+
+        * rendering/svg/SVGTextLayoutAttributesBuilder.cpp:
+        (WebCore::SVGTextLayoutAttributesBuilder::buildLayoutAttributesForTextRenderer):
+        Initialize lastCharacterWasSpace to true to match the previous behavior.
+
+        (WebCore::SVGTextLayoutAttributesBuilder::buildLayoutAttributesForForSubtree):
+        Ditto.
+
+        (WebCore::processRenderSVGInlineText):
+        Take a reference instead of a pointer, get the character using RenderText::operator[] and compute lastCharacterWasSpace.
+
+        (WebCore::SVGTextLayoutAttributesBuilder::collectTextPositioningElements):
+        This now takes a bool reference instead.
+
+        * rendering/svg/SVGTextLayoutAttributesBuilder.h:
+
 2014-02-01  Brady Eidson  <beidson@apple.com>
 
         IDB: Index cursor complete advance() and iterate() support
