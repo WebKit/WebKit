@@ -287,12 +287,7 @@ void IDBRequest::onSuccess(PassRefPtr<IDBCursorBackend> prpBackend)
     RefPtr<IDBKey> key = backend->key();
     RefPtr<IDBKey> primaryKey = backend->primaryKey();
 
-    Deprecated::ScriptValue value;
-
-    if (backend->valueKey())
-        value = idbKeyToScriptValue(requestState(), backend->valueKey());
-    else
-        value = deserializeIDBValueBuffer(requestState(), backend->valueBuffer());
+    Deprecated::ScriptValue value = deserializeIDBValueBuffer(requestState(), backend->valueBuffer());
 
     ASSERT(!m_pendingCursor);
     RefPtr<IDBCursor> cursor;
@@ -409,7 +404,7 @@ void IDBRequest::onSuccess(PassRefPtr<IDBKey> key, PassRefPtr<IDBKey> primaryKey
     onSuccess(key, primaryKey, buffer, nullptr);
 }
 
-void IDBRequest::onSuccess(PassRefPtr<IDBKey> key, PassRefPtr<IDBKey> primaryKey, PassRefPtr<SharedBuffer> buffer, PassRefPtr<IDBKey> valueKey)
+void IDBRequest::onSuccess(PassRefPtr<IDBKey> key, PassRefPtr<IDBKey> primaryKey, PassRefPtr<SharedBuffer> buffer, PassRefPtr<IDBKey>)
 {
     LOG(StorageAPI, "IDBRequest::onSuccess(key, primaryKey, valueBuffer, valueKey)");
     if (!shouldEnqueueEvent())
@@ -417,11 +412,7 @@ void IDBRequest::onSuccess(PassRefPtr<IDBKey> key, PassRefPtr<IDBKey> primaryKey
 
     DOMRequestState::Scope scope(m_requestState);
 
-    Deprecated::ScriptValue value;
-    if (valueKey)
-        value = idbKeyToScriptValue(requestState(), valueKey);
-    else
-        value = deserializeIDBValueBuffer(requestState(), buffer);
+    Deprecated::ScriptValue value = deserializeIDBValueBuffer(requestState(), buffer);
 
     ASSERT(m_pendingCursor);
     setResultCursor(m_pendingCursor.release(), key, primaryKey, value);

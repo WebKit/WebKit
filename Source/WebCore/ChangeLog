@@ -1,3 +1,13 @@
+2014-02-01  Brady Eidson  <beidson@apple.com>
+
+        IDB: Index cursor complete advance() and iterate() support
+        <rdar://problem/15941916> and https://bugs.webkit.org/show_bug.cgi?id=127870
+
+        Reviewed by Dan Bernstein.
+
+        * Modules/indexeddb/IDBRequest.cpp:
+        (WebCore::IDBRequest::onSuccess): Always use the value buffer for the script object.
+
 2014-02-01  Alexey Proskuryakov  <ap@apple.com>
 
         Update WebCrypto JWK mapping to use key_ops

@@ -1,3 +1,14 @@
+2014-02-01  Brady Eidson  <beidson@apple.com>
+
+        IDB: Index cursor complete advance() and iterate() support
+        <rdar://problem/15941916> and https://bugs.webkit.org/show_bug.cgi?id=127870
+
+        Reviewed by Dan Bernstein.
+
+        * DatabaseProcess/IndexedDB/sqlite/SQLiteIDBCursor.cpp:
+        (WebKit::SQLiteIDBCursor::advanceOnce): Look up the found record value from the
+          object store records based on the key we found from the index.
+
 2014-01-31  Anders Carlsson  <andersca@apple.com>
 
         Add webView:didFailNavigation:withError: delegate method

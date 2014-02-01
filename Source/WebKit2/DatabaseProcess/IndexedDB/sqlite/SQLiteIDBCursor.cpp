@@ -283,13 +283,22 @@ bool SQLiteIDBCursor::advanceOnce()
 
     if (m_indexID != IDBIndexMetadata::InvalidId) {
         if (!deserializeIDBKeyData(reinterpret_cast<const uint8_t*>(keyData.data()), keyData.size(), m_currentValueKey)) {
-            LOG_ERROR("Unable to deserialize value data from database while advancing cursor");
+            LOG_ERROR("Unable to deserialize value data from database while advancing index cursor");
             m_completed = true;
             return false;
         }
 
-        // Index cursors should only have a m_currentValueKey, and not m_currentValueBuffer
-        m_currentValueBuffer.clear();
+        SQLiteStatement objectStoreStatement(*m_statement->database(), "SELECT value FROM Records WHERE key = CAST(? AS TEXT) and objectStoreID = ?;");
+
+        if (objectStoreStatement.prepare() != SQLResultOk
+            || objectStoreStatement.bindBlob(1, m_currentValueBuffer.data(), m_currentValueBuffer.size()) != SQLResultOk
+            || objectStoreStatement.bindInt64(2, m_objectStoreID) != SQLResultOk
+            || objectStoreStatement.step() != SQLResultRow) {
+            LOG_ERROR("Could not create index cursor statement into object store records");
+            return false;
+        }
+
+        objectStoreStatement.getColumnBlobAsVector(0, m_currentValueBuffer);
     }
 
     return true;
