@@ -44,6 +44,14 @@ static HashMap<uint64_t, std::unique_ptr<NetworkStorageSession>>& staticSessionM
     return map.get();
 }
 
+static HashMap<const NetworkStorageSession*, uint64_t>& storageSessionToID()
+{
+    ASSERT(isMainThread());
+
+    static NeverDestroyed<HashMap<const NetworkStorageSession*, uint64_t>> map;
+    return map.get();
+}
+
 static String& identifierBase()
 {
     ASSERT(isMainThread());
@@ -66,20 +74,30 @@ NetworkStorageSession* SessionTracker::session(uint64_t sessionID)
 {
     if (sessionID == defaultSessionID)
         return &NetworkStorageSession::defaultStorageSession();
-    return staticSessionMap().add(sessionID, nullptr).iterator->value.get();
+    return staticSessionMap().get(sessionID);
+}
+
+uint64_t SessionTracker::sessionID(const NetworkStorageSession& session)
+{
+    if (&session == &NetworkStorageSession::defaultStorageSession())
+        return defaultSessionID;
+    return storageSessionToID().get(&session);
 }
 
 void SessionTracker::setSession(uint64_t sessionID, std::unique_ptr<NetworkStorageSession> session)
 {
     ASSERT(sessionID != defaultSessionID);
-    staticSessionMap().add(sessionID, nullptr).iterator->value = std::move(session);
+    storageSessionToID().set(session.get(), sessionID);
+    staticSessionMap().set(sessionID, std::move(session));
 }
 
 void SessionTracker::destroySession(uint64_t sessionID)
 {
     ASSERT(isMainThread());
-
-    staticSessionMap().remove(sessionID);
+    if (staticSessionMap().contains(sessionID)) {
+        storageSessionToID().remove(session(sessionID));
+        staticSessionMap().remove(sessionID);
+    }
 }
 
 void SessionTracker::setIdentifierBase(const String& identifier)

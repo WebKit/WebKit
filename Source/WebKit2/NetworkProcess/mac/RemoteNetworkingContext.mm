@@ -79,6 +79,8 @@ ResourceError RemoteNetworkingContext::blockedError(const ResourceRequest& reque
 
 void RemoteNetworkingContext::ensurePrivateBrowsingSession(uint64_t sessionID)
 {
+    ASSERT(SessionTracker::isEphemeralID(sessionID));
+
     if (SessionTracker::session(sessionID))
         return;
 

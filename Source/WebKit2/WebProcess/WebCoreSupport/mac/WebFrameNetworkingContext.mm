@@ -44,6 +44,8 @@ namespace WebKit {
     
 void WebFrameNetworkingContext::ensurePrivateBrowsingSession(uint64_t sessionID)
 {
+    ASSERT(SessionTracker::isEphemeralID(sessionID));
+
     if (SessionTracker::session(sessionID))
         return;
 
