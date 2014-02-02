@@ -1,5 +1,16 @@
 2014-02-02  Daniel Bates  <dabates@apple.com>
 
+        WebKit Bot Watcher's Dashboard: Access restricted queue should only prompt for HTTP credentials once per page load
+        https://bugs.webkit.org/show_bug.cgi?id=127849
+
+        I inadvertently used the equality operator instead of the identity operator when comparing the
+        value of the error HTTP status code with the numeric literal 401.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/BuildbotQueue.js:
+        (BuildbotQueue.prototype.update):
+
+2014-02-02  Daniel Bates  <dabates@apple.com>
+
         Attempt to fix production dashboard after <http://trac.webkit.org/changeset/163222>
 
         Actually pass option dictionary to JSON.load(); JSON.load() takes four arguments with the

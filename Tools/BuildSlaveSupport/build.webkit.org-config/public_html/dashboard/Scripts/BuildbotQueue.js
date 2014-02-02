@@ -170,7 +170,7 @@ BuildbotQueue.prototype = {
                 this.update();
                 return;
             }
-            if (data.errorType === JSON.LoadError && data.errorHTTPCode == 401) {
+            if (data.errorType === JSON.LoadError && data.errorHTTPCode === 401) {
                 this.buildbot.isAuthenticated = false;
                 this.dispatchEventToListeners(BuildbotQueue.Event.UnauthorizedAccess, { });
             }
