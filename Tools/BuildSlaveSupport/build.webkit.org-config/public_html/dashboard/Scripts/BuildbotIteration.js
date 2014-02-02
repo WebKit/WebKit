@@ -271,7 +271,7 @@ BuildbotIteration.prototype = {
             this.queue.sortIterations();
 
             this.dispatchEventToListeners(BuildbotIteration.Event.Updated);
-        }.bind(this), {withCredentials: this.queue.buildbot.needsAuthentication});
+        }.bind(this), null, {withCredentials: this.queue.buildbot.needsAuthentication});
     },
 
     loadLayoutTestResults: function(callback)

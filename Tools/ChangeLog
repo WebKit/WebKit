@@ -1,3 +1,13 @@
+2014-02-02  Daniel Bates  <dabates@apple.com>
+
+        Attempt to fix production dashboard after <http://trac.webkit.org/changeset/163222>
+
+        Actually pass option dictionary to JSON.load(); JSON.load() takes four arguments with the
+        last-most argument being the option dictionary.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/BuildbotIteration.js:
+        (BuildbotIteration.prototype.update):
+
 2014-02-01  Filip Pizlo  <fpizlo@apple.com>
 
         JSC profiler's stub info profiling support should work again
