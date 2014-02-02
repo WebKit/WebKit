@@ -29,6 +29,7 @@
 
 #include "ExceptionCode.h"
 #include "URL.h"
+#include "URLUtils.h"
 #include <wtf/HashSet.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
@@ -40,47 +41,16 @@ class Blob;
 class ScriptExecutionContext;
 class URLRegistrable;
 
-class DOMURL : public RefCounted<DOMURL> {
+class DOMURL : public RefCounted<DOMURL>, public URLUtils<DOMURL> {
 
 public:
     static PassRefPtr<DOMURL> create(const String& url, const String& base, ExceptionCode&);
     static PassRefPtr<DOMURL> create(const String& url, const DOMURL* base, ExceptionCode&);
     static PassRefPtr<DOMURL> create(const String& url, ExceptionCode&);
 
-    const URL& href() const;
+    URL href() const { return m_url; }
     void setHref(const String& url);
     void setHref(const String&, ExceptionCode&);
-    const String& toString() const;
-
-    String origin() const;
-
-    String protocol() const;
-    void setProtocol(const String&);
-
-    String username() const;
-    void setUsername(const String&);
-
-    String password() const;
-    void setPassword(const String&);
-
-    String host() const;
-    void setHost(const String&);
-
-    String hostname() const;
-    void setHostname(const String&);
-
-    String port() const;
-    void setPort(const String&);
-
-    String pathname() const;
-    void setPathname(const String&);
-
-    String search() const;
-    void setSearch(const String&);
-
-    String hash() const;
-    void setHash(const String&);
-
 
 #if ENABLE(BLOB)
     static void contextDestroyed(ScriptExecutionContext*);

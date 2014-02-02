@@ -11081,6 +11081,9 @@
     <ClInclude Include="..\html\URLInputType.h">
       <Filter>html</Filter>
     </ClInclude>
+    <ClCompile Include="..\html\URLUtils.h">
+      <Filter>html</Filter>
+    </ClCompile>
     <ClInclude Include="..\html\ValidationMessage.h">
       <Filter>html</Filter>
     </ClInclude>

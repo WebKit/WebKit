@@ -3716,6 +3716,7 @@ webcore_sources += \
 	Source/WebCore/html/URLInputType.cpp \
 	Source/WebCore/html/URLInputType.h \
 	Source/WebCore/html/URLRegistry.h \
+	Source/WebCore/html/URLUtils.h \
 	Source/WebCore/html/ValidationMessage.cpp \
 	Source/WebCore/html/ValidationMessage.h \
 	Source/WebCore/html/ValidityState.h \

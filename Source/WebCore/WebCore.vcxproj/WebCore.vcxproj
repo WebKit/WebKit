@@ -20444,6 +20444,7 @@
     <ClInclude Include="..\html\TimeRanges.h" />
     <ClInclude Include="..\html\TypeAhead.h" />
     <ClInclude Include="..\html\URLInputType.h" />
+    <ClInclude Include="..\html\URLUtils.h" />
     <ClInclude Include="..\html\ValidationMessage.h" />
     <ClInclude Include="..\html\ValidityState.h" />
     <ClInclude Include="..\html\VoidCallback.h" />

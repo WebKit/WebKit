@@ -1,3 +1,47 @@
+2014-02-01  Maciej Stachowiak  <mjs@apple.com>
+
+        Factor URL decomposition methods (from URLUtils interface) into a base template
+        https://bugs.webkit.org/show_bug.cgi?id=128052
+
+        Reviewed by Sam Weinig.
+
+        Refactoring only; no new tests.
+
+        * html/DOMURL.cpp:
+        * html/DOMURL.h:
+        (WebCore::DOMURL::href): Moved to header and made inline.
+        * html/URLUtils.h: Added. 
+        (WebCore::URLUtils::href): Downcast and call the derived class.
+        (WebCore::URLUtils::setHref): Downcast and call the derived class.
+        Functions below factored out from DOMURL.cpp.
+        (WebCore::URLUtils<T>::toString):
+        (WebCore::URLUtils<T>::origin):
+        (WebCore::URLUtils<T>::protocol):
+        (WebCore::URLUtils<T>::setProtocol):
+        (WebCore::URLUtils<T>::username):
+        (WebCore::URLUtils<T>::setUsername):
+        (WebCore::URLUtils<T>::password):
+        (WebCore::URLUtils<T>::setPassword):
+        (WebCore::URLUtils<T>::host):
+        (WebCore::parsePortFromStringPosition):
+        (WebCore::URLUtils<T>::setHost):
+        (WebCore::URLUtils<T>::hostname):
+        (WebCore::URLUtils<T>::setHostname):
+        (WebCore::URLUtils<T>::port):
+        (WebCore::URLUtils<T>::setPort):
+        (WebCore::URLUtils<T>::pathname):
+        (WebCore::URLUtils<T>::setPathname):
+        (WebCore::URLUtils<T>::search):
+        (WebCore::URLUtils<T>::setSearch):
+        (WebCore::URLUtils<T>::hash):
+        (WebCore::URLUtils<T>::setHash):
+
+        Add mention of new header.
+        * GNUmakefile.list.am: 
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.vcxproj/WebCore.vcxproj.filters:
+        * WebCore.xcodeproj/project.pbxproj:
+
 2014-02-01  Benjamin Poulain  <bpoulain@apple.com>
 
         Improve the JavaScript bindings of DatasetDOMStringMap

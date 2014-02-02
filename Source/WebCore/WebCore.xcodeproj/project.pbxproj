@@ -8994,6 +8994,7 @@
 		656581E909D1508D000E61D7 /* SVGNames.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = SVGNames.h; sourceTree = "<group>"; };
 		656581EA09D1508D000E61D7 /* XLinkNames.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = XLinkNames.cpp; sourceTree = "<group>"; };
 		656581EB09D1508D000E61D7 /* XLinkNames.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = XLinkNames.h; sourceTree = "<group>"; };
+		656B9DCA189DE10000BB842C /* URLUtils.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = URLUtils.h; sourceTree = "<group>"; };
 		656D371A0ADBA5DE00A4554D /* LoaderNSURLExtras.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = LoaderNSURLExtras.h; sourceTree = "<group>"; };
 		656D371B0ADBA5DE00A4554D /* LoaderNSURLExtras.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = LoaderNSURLExtras.mm; sourceTree = "<group>"; };
 		656D371E0ADBA5DE00A4554D /* DocumentLoader.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = DocumentLoader.h; sourceTree = "<group>"; };
@@ -17455,6 +17456,7 @@
 				F55B3DA91251F12D003EF269 /* URLInputType.cpp */,
 				F55B3DAA1251F12D003EF269 /* URLInputType.h */,
 				CDEE393817974274001D7580 /* URLRegistry.h */,
+				656B9DCA189DE10000BB842C /* URLUtils.h */,
 				F5A154251279534D00D0B0C0 /* ValidationMessage.cpp */,
 				F5A154261279534D00D0B0C0 /* ValidationMessage.h */,
 				15C7708A100D3C6A005BA267 /* ValidityState.h */,
