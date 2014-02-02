@@ -328,10 +328,6 @@ void StyleResolver::pushParentElement(Element* parent)
         m_selectorFilter.setupParentStack(parent);
     else
         m_selectorFilter.pushParent(parent);
-
-    // Note: We mustn't skip ShadowRoot nodes for the scope stack.
-    if (m_scopeResolver)
-        m_scopeResolver->push(parent, parent->parentOrShadowHostNode());
 }
 
 void StyleResolver::popParentElement(Element* parent)
@@ -340,22 +336,6 @@ void StyleResolver::popParentElement(Element* parent)
     // Pause maintaining the stack in this case.
     if (m_selectorFilter.parentStackIsConsistent(parent))
         m_selectorFilter.popParent();
-    if (m_scopeResolver)
-        m_scopeResolver->pop(parent);
-}
-
-void StyleResolver::pushParentShadowRoot(const ShadowRoot* shadowRoot)
-{
-    ASSERT(shadowRoot->hostElement());
-    if (m_scopeResolver)
-        m_scopeResolver->push(shadowRoot, shadowRoot->hostElement());
-}
-
-void StyleResolver::popParentShadowRoot(const ShadowRoot* shadowRoot)
-{
-    ASSERT(shadowRoot->hostElement());
-    if (m_scopeResolver)
-        m_scopeResolver->pop(shadowRoot);
 }
 
 // This is a simplified style setting function for keyframe styles
@@ -395,15 +375,6 @@ void StyleResolver::sweepMatchedPropertiesCache(Timer<StyleResolver>*)
         m_matchedPropertiesCache.remove(toRemove[i]);
 
     m_matchedPropertiesCacheAdditionsSinceLastSweep = 0;
-}
-
-inline bool StyleResolver::styleSharingCandidateMatchesHostRules()
-{
-#if ENABLE(SHADOW_DOM)
-    return m_scopeResolver && m_scopeResolver->styleSharingCandidateMatchesHostRules(m_state.element());
-#else
-    return false;
-#endif
 }
 
 bool StyleResolver::classNamesAffectedByRules(const SpaceSplitString& classNames) const
@@ -775,9 +746,6 @@ RenderStyle* StyleResolver::locateSharedStyle()
     // Can't share if attribute rules apply.
     if (styleSharingCandidateMatchesRuleSet(m_ruleSets.uncommonAttribute()))
         return 0;
-    // Can't share if @host @-rules apply.
-    if (styleSharingCandidateMatchesHostRules())
-        return 0;
     // Tracking child index requires unique style for each node. This may get set by the sibling rule match above.
     if (parentElementPreventsSharing(state.element()->parentElement()))
         return 0;
@@ -839,7 +807,7 @@ PassRef<RenderStyle> StyleResolver::styleForElement(Element* element, RenderStyl
     bool needsCollection = false;
     CSSDefaultStyleSheets::ensureDefaultStyleSheetsForElement(element, needsCollection);
     if (needsCollection)
-        m_ruleSets.collectFeatures(document().isViewSource(), m_scopeResolver.get());
+        m_ruleSets.collectFeatures(document().isViewSource());
 
     ElementRuleCollector collector(this, state);
     collector.setRegionForStyling(regionForStyling);

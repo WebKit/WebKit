@@ -1104,7 +1104,6 @@ set(WebCore_SOURCES
     css/StyleResolver.cpp
     css/StyleRule.cpp
     css/StyleRuleImport.cpp
-    css/StyleScopeResolver.cpp
     css/StyleSheet.cpp
     css/StyleSheetContents.cpp
     css/StyleSheetList.cpp

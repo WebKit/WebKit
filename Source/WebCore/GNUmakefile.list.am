@@ -2694,8 +2694,6 @@ webcore_sources += \
 	Source/WebCore/css/StyleRule.h \
 	Source/WebCore/css/StyleRuleImport.cpp \
 	Source/WebCore/css/StyleRuleImport.h \
-	Source/WebCore/css/StyleScopeResolver.cpp \
-	Source/WebCore/css/StyleScopeResolver.h \
 	Source/WebCore/css/StyleSheet.cpp \
 	Source/WebCore/css/StyleSheet.h \
 	Source/WebCore/css/StyleSheetContents.cpp \

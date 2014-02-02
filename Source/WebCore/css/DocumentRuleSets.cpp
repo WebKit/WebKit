@@ -93,24 +93,14 @@ void DocumentRuleSets::appendAuthorStyleSheets(unsigned firstNew, const Vector<R
         ASSERT(!cssSheet->disabled());
         if (cssSheet->mediaQueries() && !medium->eval(cssSheet->mediaQueries(), resolver))
             continue;
-        StyleSheetContents& sheet = cssSheet->contents();
-#if ENABLE(SHADOW_DOM)
-        if (const ContainerNode* scope = StyleScopeResolver::scopeFor(cssSheet)) {
-            // FIXME: Remove a dependency to calling a StyleResolver's member function.
-            // If we can avoid calling resolver->ensureScopeResolver() here, we don't have to include "StyleResolver.h".
-            // https://bugs.webkit.org/show_bug.cgi?id=108890
-            resolver->ensureScopeResolver()->ensureRuleSetFor(scope)->addRulesFromSheet(&sheet, *medium, resolver, scope);
-            continue;
-        }
-#endif
-        m_authorStyle->addRulesFromSheet(&sheet, *medium, resolver);
+        m_authorStyle->addRulesFromSheet(&cssSheet->contents(), *medium, resolver);
         inspectorCSSOMWrappers.collectFromStyleSheetIfNeeded(cssSheet);
     }
     m_authorStyle->shrinkToFit();
-    collectFeatures(isViewSource, resolver->scopeResolver());
+    collectFeatures(isViewSource);
 }
 
-void DocumentRuleSets::collectFeatures(bool isViewSource, StyleScopeResolver* scopeResolver)
+void DocumentRuleSets::collectFeatures(bool isViewSource)
 {
     m_features.clear();
     // Collect all ids and rules using sibling selectors (:first-child and similar)
@@ -123,8 +113,6 @@ void DocumentRuleSets::collectFeatures(bool isViewSource, StyleScopeResolver* sc
     if (isViewSource)
         m_features.add(CSSDefaultStyleSheets::viewSourceStyle()->features());
 
-    if (scopeResolver)
-        scopeResolver->collectFeaturesTo(m_features);
     if (m_userStyle)
         m_features.add(m_userStyle->features());
 

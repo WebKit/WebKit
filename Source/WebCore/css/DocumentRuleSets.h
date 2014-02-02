@@ -38,7 +38,6 @@ class DocumentStyleSheetCollection;
 class InspectorCSSOMWrappers;
 class MediaQueryEvaluator;
 class RuleSet;
-class StyleScopeResolver;
 
 class DocumentRuleSets {
 public:
@@ -55,7 +54,7 @@ public:
     void resetAuthorStyle();
     void appendAuthorStyleSheets(unsigned firstNew, const Vector<RefPtr<CSSStyleSheet>>&, MediaQueryEvaluator*, InspectorCSSOMWrappers&, bool isViewSource, StyleResolver*);
 
-    void collectFeatures(bool isViewSource, StyleScopeResolver*);
+    void collectFeatures(bool isViewSource);
 
 private:
     void collectRulesFromUserStyleSheets(const Vector<RefPtr<CSSStyleSheet>>&, RuleSet& userStyle, const MediaQueryEvaluator&, StyleResolver&);

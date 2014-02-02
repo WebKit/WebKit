@@ -36,7 +36,6 @@
 #include "SelectorChecker.h"
 #include "SelectorFilter.h"
 #include "StyleInheritedData.h"
-#include "StyleScopeResolver.h"
 #include "ViewportStyleResolver.h"
 #include <memory>
 #include <wtf/HashMap.h>
@@ -77,7 +76,6 @@ class RenderScrollbar;
 class RuleData;
 class RuleSet;
 class Settings;
-class StyleScopeResolver;
 class StyleImage;
 class StyleKeyframe;
 class StylePendingImage;
@@ -147,11 +145,6 @@ public:
     // Using these during tree walk will allow style selector to optimize child and descendant selector lookups.
     void pushParentElement(Element*);
     void popParentElement(Element*);
-    void pushParentShadowRoot(const ShadowRoot*);
-    void popParentShadowRoot(const ShadowRoot*);
-#if ENABLE(SHADOW_DOM)
-    void addHostRule(StyleRuleHost* rule, bool hasDocumentSecurityOrigin, const ContainerNode* scope) { ensureScopeResolver()->addHostRule(rule, hasDocumentSecurityOrigin, scope); }
-#endif
 
     PassRef<RenderStyle> styleForElement(Element*, RenderStyle* parentStyle = 0, StyleSharingBehavior = AllowStyleSharing,
         RuleMatchingBehavior = MatchAllRules, RenderRegion* regionForStyling = 0);
@@ -168,7 +161,6 @@ public:
     RenderStyle* rootElementStyle() const { return m_state.rootElementStyle(); }
     Element* element() { return m_state.element(); }
     Document& document() { return m_document; }
-    StyleScopeResolver* scopeResolver() const { return m_scopeResolver.get(); }
     bool hasParentNode() const { return m_state.parentNode(); }
 
     // FIXME: It could be better to call m_ruleSets.appendAuthorStyleSheets() directly after we factor StyleRsolver further.
@@ -179,21 +171,10 @@ public:
     const DocumentRuleSets& ruleSets() const { return m_ruleSets; }
     SelectorFilter& selectorFilter() { return m_selectorFilter; }
 
-#if ENABLE(SHADOW_DOM)
-    StyleScopeResolver* ensureScopeResolver()
-    {
-        ASSERT(RuntimeEnabledFeatures::sharedFeatures().shadowDOMEnabled());
-        if (!m_scopeResolver)
-            m_scopeResolver = std::make_unique<StyleScopeResolver>();
-        return m_scopeResolver.get();
-    }
-#endif
-
 private:
     void initElement(Element*);
     RenderStyle* locateSharedStyle();
     bool styleSharingCandidateMatchesRuleSet(RuleSet*);
-    bool styleSharingCandidateMatchesHostRules();
     Node* locateCousinList(Element* parent, unsigned& visitedNodeCount) const;
     StyledElement* findSiblingForStyleSharing(Node*, unsigned& count) const;
     bool canShareStyleWithElement(StyledElement*) const;
@@ -545,7 +526,6 @@ private:
 
     const DeprecatedStyleBuilder& m_deprecatedStyleBuilder;
 
-    std::unique_ptr<StyleScopeResolver> m_scopeResolver;
     CSSToStyleMap m_styleMap;
     InspectorCSSOMWrappers m_inspectorCSSOMWrappers;
 

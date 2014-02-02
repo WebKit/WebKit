@@ -466,12 +466,7 @@ static void attachChildren(ContainerNode& current)
 
 static void attachShadowRoot(ShadowRoot& shadowRoot)
 {
-    StyleResolver& styleResolver = shadowRoot.document().ensureStyleResolver();
-    styleResolver.pushParentShadowRoot(&shadowRoot);
-
     attachChildren(shadowRoot);
-
-    styleResolver.popParentShadowRoot(&shadowRoot);
 
     shadowRoot.clearNeedsStyleRecalc();
     shadowRoot.clearChildNeedsStyleRecalc();
@@ -726,19 +721,16 @@ static void resolveShadowTree(ShadowRoot* shadowRoot, Style::Change change)
 {
     if (!shadowRoot)
         return;
-    StyleResolver& styleResolver = shadowRoot->document().ensureStyleResolver();
-    styleResolver.pushParentShadowRoot(shadowRoot);
 
     for (Node* child = shadowRoot->firstChild(); child; child = child->nextSibling()) {
         if (child->isTextNode()) {
-            // Current user agent ShadowRoots don't have immediate text children so this branch is never actually taken.
             updateTextStyle(*toText(child));
             continue;
         }
-        resolveTree(*toElement(child), change);
+        if (child->isElementNode())
+            resolveTree(*toElement(child), change);
     }
 
-    styleResolver.popParentShadowRoot(shadowRoot);
     shadowRoot->clearNeedsStyleRecalc();
     shadowRoot->clearChildNeedsStyleRecalc();
 }

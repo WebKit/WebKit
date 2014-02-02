@@ -37,7 +37,6 @@ class RenderRegion;
 class RuleData;
 class RuleSet;
 class SelectorFilter;
-class StyleScopeResolver;
 
 class ElementRuleCollector {
 public:
@@ -45,7 +44,6 @@ public:
         : m_state(state)
         , m_ruleSets(styleResolver->ruleSets())
         , m_selectorFilter(styleResolver->selectorFilter())
-        , m_scopeResolver(styleResolver->scopeResolver())
         , m_isPrintStyle(false)
         , m_regionForStyling(0)
         , m_pseudoStyleRequest(NOPSEUDO)
@@ -91,7 +89,6 @@ private:
     const StyleResolver::State& m_state;
     DocumentRuleSets& m_ruleSets;
     SelectorFilter& m_selectorFilter;
-    StyleScopeResolver* m_scopeResolver;
 
     bool m_isPrintStyle;
     RenderRegion* m_regionForStyling;

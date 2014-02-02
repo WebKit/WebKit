@@ -306,10 +306,6 @@ void RuleSet::addChildRules(const Vector<RefPtr<StyleRuleBase>>& rules, const Me
             addRegionRule(static_cast<StyleRuleRegion*>(rule), hasDocumentSecurityOrigin);
         }
 #endif
-#if ENABLE(SHADOW_DOM)
-        else if (rule->isHostRule())
-            resolver->addHostRule(static_cast<StyleRuleHost*>(rule), hasDocumentSecurityOrigin, scope);
-#endif
 #if ENABLE(CSS_DEVICE_ADAPTATION)
         else if (rule->isViewportRule() && resolver) {
             // @viewport should not be scoped.
