@@ -751,7 +751,8 @@ void RenderObject::drawLineForBoxSide(GraphicsContext* graphicsContext, LayoutUn
 
     // FIXME: We really would like this check to be an ASSERT as we don't want to draw empty borders. However
     // nothing guarantees that the following recursive calls to drawLineForBoxSide will have non-null dimensions.
-    if (!thickness || !length)
+    // FIXME: flooring is a temporary solution until the device pixel snapping is added here.
+    if (!floor(thickness) || !floor(length))
         return;
 
     if (borderStyle == DOUBLE && thickness < 3)

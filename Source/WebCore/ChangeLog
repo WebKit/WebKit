@@ -1,3 +1,18 @@
+2014-02-02  Zalan Bujtas  <zalan@apple.com>
+
+        Floor thickness and length after switching from int to float.
+        https://bugs.webkit.org/show_bug.cgi?id=128071
+
+        Reviewed by Antti Koivisto.
+
+        This is a temporary solution to fix the assertion on empty line drawing until after
+        device pixel snapping is added.
+
+        Covered by existing tests.
+
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::drawLineForBoxSide):
+
 2014-02-02  Antti Koivisto  <antti@apple.com>
 
         Remove StyleScopeResolver
