@@ -749,14 +749,22 @@ void RenderObject::drawLineForBoxSide(GraphicsContext* graphicsContext, LayoutUn
         length = y2 - y1;
     }
 
-    // FIXME: We really would like this check to be an ASSERT as we don't want to draw empty borders. However
-    // nothing guarantees that the following recursive calls to drawLineForBoxSide will have non-null dimensions.
-    // FIXME: flooring is a temporary solution until the device pixel snapping is added here.
-    if (!floor(thickness) || !floor(length))
-        return;
-
     if (borderStyle == DOUBLE && thickness < 3)
         borderStyle = SOLID;
+
+    float pixelSnappingFactor = graphicsContext->pixelSnappingFactor();
+    // FIXME: We really would like this check to be an ASSERT as we don't want to draw empty borders. However
+    // nothing guarantees that the following recursive calls to drawLineForBoxSide will have non-null dimensions.
+    // FIXME: flooring is a temporary solution until the device pixel snapping is added here for all border types.
+    if (borderStyle == SOLID) {
+        thickness = roundToDevicePixel(thickness, pixelSnappingFactor);
+        length = roundToDevicePixel(length, pixelSnappingFactor);
+    } else {
+        thickness = floorf(thickness);
+        length = floorf(length);
+    }
+    if (!thickness || !length)
+        return;
 
     const RenderStyle& style = this->style();
     switch (borderStyle) {
@@ -925,7 +933,7 @@ void RenderObject::drawLineForBoxSide(GraphicsContext* graphicsContext, LayoutUn
                 // this matters for rects in transformed contexts.
                 bool wasAntialiased = graphicsContext->shouldAntialias();
                 graphicsContext->setShouldAntialias(antialias);
-                graphicsContext->drawRect(IntRect(x1, y1, x2 - x1, y2 - y1));
+                graphicsContext->drawRect(pixelSnappedForPainting(x1, y1, x2 - x1, y2 - y1, pixelSnappingFactor));
                 graphicsContext->setShouldAntialias(wasAntialiased);
                 graphicsContext->setStrokeStyle(oldStrokeStyle);
                 return;

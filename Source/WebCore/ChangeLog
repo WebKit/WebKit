@@ -1,3 +1,24 @@
+2014-02-02  Zalan Bujtas  <zalan@apple.com>
+
+        Subpixel rendering: Enable subpixel positioning/sizing/hairline border painting.
+        https://bugs.webkit.org/show_bug.cgi?id=128009
+
+        Reviewed by Simon Fraser.
+
+        Snap and clip to device pixels when painting boxes. Enable hairline painting
+        for solid border.
+
+        No existing context to test this functionality yet.
+
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::paintFillLayerExtended):
+        (WebCore::RenderBoxModelObject::drawBoxSideFromPath):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::drawLineForBoxSide):
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::getRoundedBorderFor):
+        (WebCore::RenderStyle::getRoundedInnerBorderFor):
+
 2014-02-02  Sam Weinig  <sam@webkit.org>
 
         Add some missing override keywords

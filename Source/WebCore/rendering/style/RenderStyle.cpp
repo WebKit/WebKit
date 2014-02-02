@@ -1132,11 +1132,10 @@ void RenderStyle::setVerticalBorderSpacing(short v) { SET_VAR(inherited, vertica
 
 RoundedRect RenderStyle::getRoundedBorderFor(const LayoutRect& borderRect, RenderView* renderView, bool includeLogicalLeftEdge, bool includeLogicalRightEdge) const
 {
-    IntRect snappedBorderRect(pixelSnappedIntRect(borderRect));
-    RoundedRect roundedRect(snappedBorderRect);
+    RoundedRect roundedRect(borderRect);
     if (hasBorderRadius()) {
-        RoundedRect::Radii radii = calcRadiiFor(surround->border, snappedBorderRect.size(), renderView);
-        radii.scale(calcConstraintScaleFor(snappedBorderRect, radii));
+        RoundedRect::Radii radii = calcRadiiFor(surround->border, borderRect.size(), renderView);
+        radii.scale(calcConstraintScaleFor(borderRect, radii));
         roundedRect.includeLogicalEdges(radii, isHorizontalWritingMode(), includeLogicalLeftEdge, includeLogicalRightEdge);
     }
     return roundedRect;
@@ -1162,7 +1161,7 @@ RoundedRect RenderStyle::getRoundedInnerBorderFor(const LayoutRect& borderRect, 
                borderRect.width() - leftWidth - rightWidth, 
                borderRect.height() - topWidth - bottomWidth);
 
-    RoundedRect roundedRect(pixelSnappedIntRect(innerRect));
+    RoundedRect roundedRect(innerRect);
 
     if (hasBorderRadius()) {
         RoundedRect::Radii radii = getRoundedBorderFor(borderRect).radii();
