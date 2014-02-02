@@ -51,7 +51,7 @@ static void doDrawTextAtPoint(GraphicsContext& context, const String& text, cons
 {
     FontCachePurgePreventer fontCachePurgePreventer;
 
-    TextRun run(text.characters(), text.length());
+    TextRun run(text.deprecatedCharacters(), text.length());
 
     context.setFillColor(color, ColorSpaceDeviceRGB);
     if (isOneLeftToRightRun(run))
@@ -64,12 +64,12 @@ static void doDrawTextAtPoint(GraphicsContext& context, const String& text, cons
 
         int beforeWidth;
         if (underlinedIndex > 0) {
-            TextRun beforeRun(text.characters(), underlinedIndex);
+            TextRun beforeRun(text.deprecatedCharacters(), underlinedIndex);
             beforeWidth = font.width(beforeRun);
         } else
             beforeWidth = 0;
 
-        TextRun underlinedRun(text.characters() + underlinedIndex, 1);
+        TextRun underlinedRun(text.deprecatedCharacters() + underlinedIndex, 1);
         int underlinedWidth = font.width(underlinedRun);
 
         IntPoint underlinePoint(point);

@@ -165,7 +165,7 @@ static String truncateToSingleLine(const String& string)
     String stringBuffer(StringImpl::createUninitialized(oldLength + 1, buffer));
 
     unsigned newLength = 0;
-    const UChar* start = string.characters();
+    const UChar* start = string.deprecatedCharacters();
     for (const UChar* c = start; c < start + oldLength; ++c) {
         if (*c != UChar('\n'))
             buffer[newLength++] = *c;
