@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,24 +23,32 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include "config.h"
-#include "CodeBlockJettisoningWatchpoint.h"
+#ifndef ProfilerJettisonReason_h
+#define ProfilerJettisonReason_h
 
-#include "CodeBlock.h"
-#include "DFGCommon.h"
+namespace JSC { namespace Profiler {
 
-namespace JSC {
+enum JettisonReason {
+    NotJettisoned,
+    JettisonDueToWeakReference,
+    JettisonDueToDebuggerBreakpoint,
+    JettisonDueToDebuggerStepping,
+    JettisonDueToLegacyProfiler,
+    JettisonDueToBaselineLoopReoptimizationTrigger,
+    JettisonDueToBaselineLoopReoptimizationTriggerOnOSREntryFail,
+    JettisonDueToOSRExit,
+    JettisonDueToProfiledWatchpoint,
+    JettisonDueToUnprofiledWatchpoint
+};
 
-void CodeBlockJettisoningWatchpoint::fireInternal()
-{
-    if (DFG::shouldShowDisassembly())
-        dataLog("Firing watchpoint ", RawPointer(this), " on ", *m_codeBlock, "\n");
+} } // namespace JSC::Profiler
 
-    m_codeBlock->jettison(Profiler::JettisonDueToUnprofiledWatchpoint, CountReoptimization);
+namespace WTF {
 
-    if (isOnList())
-        remove();
-}
+class PrintStream;
+void printInternal(PrintStream&, JSC::Profiler::JettisonReason);
 
-} // namespace JSC
+} // namespace WTF
+
+#endif // ProfilerJettisonReason_h
 

@@ -2287,7 +2287,7 @@ void CodeBlock::finalizeUnconditionally()
             }
         }
         
-        jettison();
+        jettison(Profiler::JettisonDueToWeakReference);
         return;
     }
 #endif // ENABLE(DFG_JIT)
@@ -2766,18 +2766,23 @@ DFG::CapabilityLevel FunctionCodeBlock::capabilityLevelInternal()
 }
 #endif
 
-void CodeBlock::jettison(ReoptimizationMode mode)
+void CodeBlock::jettison(Profiler::JettisonReason reason, ReoptimizationMode mode)
 {
+    RELEASE_ASSERT(reason != Profiler::NotJettisoned);
+    
 #if ENABLE(DFG_JIT)
     if (DFG::shouldShowDisassembly()) {
         dataLog("Jettisoning ", *this);
         if (mode == CountReoptimization)
             dataLog(" and counting reoptimization");
-        dataLog(".\n");
+        dataLog(" due to ", reason, ".\n");
     }
     
     DeferGCForAWhile deferGC(*m_heap);
     RELEASE_ASSERT(JITCode::isOptimizingJIT(jitType()));
+    
+    if (Profiler::Compilation* compilation = jitCode()->dfgCommon()->compilation.get())
+        compilation->setJettisonReason(reason);
     
     // We want to accomplish two things here:
     // 1) Make sure that if this CodeBlock is on the stack right now, then if we return to it
@@ -3559,14 +3564,14 @@ void CodeBlock::addBreakpoint(unsigned numBreakpoints)
     m_numBreakpoints += numBreakpoints;
     ASSERT(m_numBreakpoints);
     if (JITCode::isOptimizingJIT(jitType()))
-        jettison();
+        jettison(Profiler::JettisonDueToDebuggerBreakpoint);
 }
 
 void CodeBlock::setSteppingMode(CodeBlock::SteppingMode mode)
 {
     m_steppingMode = mode;
     if (mode == SteppingModeEnabled && JITCode::isOptimizingJIT(jitType()))
-        jettison();
+        jettison(Profiler::JettisonDueToDebuggerStepping);
 }
 
 } // namespace JSC

@@ -114,6 +114,7 @@
     macro(isPrototypeOf) \
     macro(isView) \
     macro(isWatchpoint) \
+    macro(jettisonReason) \
     macro(join) \
     macro(keys) \
     macro(lastIndex) \

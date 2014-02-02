@@ -819,6 +819,8 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/profiler/ProfilerDatabase.cpp \
 	Source/JavaScriptCore/profiler/ProfilerDatabase.h \
 	Source/JavaScriptCore/profiler/ProfilerExecutionCounter.h \
+	Source/JavaScriptCore/profiler/ProfilerJettisonReason.cpp \
+	Source/JavaScriptCore/profiler/ProfilerJettisonReason.h \
 	Source/JavaScriptCore/profiler/ProfilerOrigin.cpp \
 	Source/JavaScriptCore/profiler/ProfilerOrigin.h \
 	Source/JavaScriptCore/profiler/ProfilerOriginStack.cpp \

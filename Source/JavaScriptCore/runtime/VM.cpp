@@ -836,7 +836,7 @@ public:
     bool operator()(CodeBlock* codeBlock)
     {
         if (JITCode::isOptimizingJIT(codeBlock->jitType()))
-            codeBlock->jettison();
+            codeBlock->jettison(Profiler::JettisonDueToLegacyProfiler);
         return false;
     }
 };

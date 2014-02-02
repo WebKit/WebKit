@@ -66,6 +66,7 @@
 #include "LLIntCallLinkInfo.h"
 #include "LazyOperandValueProfile.h"
 #include "ProfilerCompilation.h"
+#include "ProfilerJettisonReason.h"
 #include "RegExpObject.h"
 #include "StructureStubInfo.h"
 #include "UnconditionalFinalizer.h"
@@ -296,7 +297,7 @@ public:
     bool hasOptimizedReplacement(); // the typeToReplace is my JITType
 #endif
 
-    void jettison(ReoptimizationMode = DontCountReoptimization);
+    void jettison(Profiler::JettisonReason, ReoptimizationMode = DontCountReoptimization);
     
     ScriptExecutable* ownerExecutable() const { return m_ownerExecutable.get(); }
 

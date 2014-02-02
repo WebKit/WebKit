@@ -553,6 +553,7 @@
     <ClCompile Include="..\profiler\ProfilerCompilationKind.cpp" />
     <ClCompile Include="..\profiler\ProfilerCompiledBytecode.cpp" />
     <ClCompile Include="..\profiler\ProfilerDatabase.cpp" />
+    <ClCompile Include="..\profiler\ProfilerJettisonReason.cpp" />
     <ClCompile Include="..\profiler\ProfilerOrigin.cpp" />
     <ClCompile Include="..\profiler\ProfilerOriginStack.cpp" />
     <ClCompile Include="..\profiler\ProfilerOSRExit.cpp" />
@@ -1163,6 +1164,7 @@
     <ClInclude Include="..\profiler\ProfilerCompiledBytecode.h" />
     <ClInclude Include="..\profiler\ProfilerDatabase.h" />
     <ClInclude Include="..\profiler\ProfilerExecutionCounter.h" />
+    <ClInclude Include="..\profiler\ProfilerJettisonReason.h" />
     <ClInclude Include="..\profiler\ProfilerOrigin.h" />
     <ClInclude Include="..\profiler\ProfilerOriginStack.h" />
     <ClInclude Include="..\profiler\ProfilerOSRExit.h" />

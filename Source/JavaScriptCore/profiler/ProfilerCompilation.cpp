@@ -37,6 +37,7 @@ namespace JSC { namespace Profiler {
 Compilation::Compilation(Bytecodes* bytecodes, CompilationKind kind)
     : m_bytecodes(bytecodes)
     , m_kind(kind)
+    , m_jettisonReason(NotJettisoned)
     , m_numInlinedGetByIds(0)
     , m_numInlinedPutByIds(0)
     , m_numInlinedCalls(0)
@@ -131,6 +132,7 @@ JSValue Compilation::toJS(ExecState* exec) const
     result->putDirect(exec->vm(), exec->propertyNames().numInlinedGetByIds, jsNumber(m_numInlinedGetByIds));
     result->putDirect(exec->vm(), exec->propertyNames().numInlinedPutByIds, jsNumber(m_numInlinedPutByIds));
     result->putDirect(exec->vm(), exec->propertyNames().numInlinedCalls, jsNumber(m_numInlinedCalls));
+    result->putDirect(exec->vm(), exec->propertyNames().jettisonReason, jsString(exec, String::fromUTF8(toCString(m_jettisonReason))));
     
     return result;
 }

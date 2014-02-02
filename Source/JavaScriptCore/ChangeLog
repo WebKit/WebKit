@@ -1,3 +1,42 @@
+2014-02-01  Filip Pizlo  <fpizlo@apple.com>
+
+        JSC profiler should show reasons for jettison
+        https://bugs.webkit.org/show_bug.cgi?id=128047
+
+        Reviewed by Geoffrey Garen.
+        
+        Henceforth if you want to jettison a CodeBlock, you gotta tell the Profiler why you did
+        it. This makes figuring out convergence issues - where some code seems to take a long
+        time to get into the top tier compiler - a lot easier.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::finalizeUnconditionally):
+        (JSC::CodeBlock::jettison):
+        (JSC::CodeBlock::addBreakpoint):
+        (JSC::CodeBlock::setSteppingMode):
+        * bytecode/CodeBlock.h:
+        * bytecode/CodeBlockJettisoningWatchpoint.cpp:
+        (JSC::CodeBlockJettisoningWatchpoint::fireInternal):
+        * bytecode/ProfiledCodeBlockJettisoningWatchpoint.cpp:
+        (JSC::ProfiledCodeBlockJettisoningWatchpoint::fireInternal):
+        * dfg/DFGOperations.cpp:
+        * jit/JITOperations.cpp:
+        * profiler/ProfilerCompilation.cpp:
+        (JSC::Profiler::Compilation::Compilation):
+        (JSC::Profiler::Compilation::toJS):
+        * profiler/ProfilerCompilation.h:
+        (JSC::Profiler::Compilation::setJettisonReason):
+        * profiler/ProfilerJettisonReason.cpp: Added.
+        (WTF::printInternal):
+        * profiler/ProfilerJettisonReason.h: Added.
+        * runtime/CommonIdentifiers.h:
+        * runtime/VM.cpp:
+        (JSC::SetEnabledProfilerFunctor::operator()):
+
 2014-02-01  Mark Lam  <mark.lam@apple.com>
 
         Saying "jitType() == JITCode::DFGJIT" is almost never correct.

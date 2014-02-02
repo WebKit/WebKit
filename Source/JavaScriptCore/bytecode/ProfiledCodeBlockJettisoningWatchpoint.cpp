@@ -56,7 +56,7 @@ void ProfiledCodeBlockJettisoningWatchpoint::fireInternal()
                 exitingJITTypeFor(m_codeBlock->jitType())));
     }
     
-    m_codeBlock->jettison(CountReoptimization);
+    m_codeBlock->jettison(Profiler::JettisonDueToProfiledWatchpoint, CountReoptimization);
     
     if (isOnList())
         remove();
