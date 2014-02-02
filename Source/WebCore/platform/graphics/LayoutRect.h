@@ -231,6 +231,22 @@ inline IntRect pixelSnappedIntRect(LayoutPoint location, LayoutSize size)
     return IntRect(roundedIntPoint(location), pixelSnappedIntSize(size, location));
 }
 
+inline FloatRect pixelSnappedForPainting(const LayoutRect& rect, float pixelSnappingFactor)
+{
+#if ENABLE(SUBPIXEL_LAYOUT)
+    return FloatRect(roundToDevicePixel(rect.x(), pixelSnappingFactor), roundToDevicePixel(rect.y(), pixelSnappingFactor),
+        snapSizeToDevicePixel(rect.width(), rect.x(), pixelSnappingFactor), snapSizeToDevicePixel(rect.height(), rect.y(), pixelSnappingFactor));
+#else
+    UNUSED_PARAM(pixelSnappingFactor);
+    return FloatRect(rect);
+#endif
+}
+
+inline FloatRect pixelSnappedForPainting(LayoutUnit x, LayoutUnit y, LayoutUnit width, LayoutUnit height, float pixelSnappingFactor)
+{
+    return pixelSnappedForPainting(LayoutRect(x, y, width, height), pixelSnappingFactor);
+}
+
 } // namespace WebCore
 
 #endif // LayoutRect_h

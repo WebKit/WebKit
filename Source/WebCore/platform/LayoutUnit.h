@@ -935,6 +935,22 @@ inline int floorToInt(LayoutUnit value)
     return value.floor();
 }
 
+inline float roundToDevicePixel(LayoutUnit value, float pixelSnappingFactor)
+{
+    return round((value.rawValue() * pixelSnappingFactor) / kEffectiveFixedPointDenominator) / pixelSnappingFactor;
+}
+
+inline float floorToDevicePixel(LayoutUnit value, float pixelSnappingFactor)
+{
+    return floor((value.rawValue() * pixelSnappingFactor) / kEffectiveFixedPointDenominator) / pixelSnappingFactor;
+}
+
+inline float snapSizeToDevicePixel(LayoutUnit size, LayoutUnit location, float pixelSnappingFactor)
+{
+    LayoutUnit fraction = location.fraction();
+    return roundToDevicePixel(fraction + size, pixelSnappingFactor) - roundToDevicePixel(fraction, pixelSnappingFactor);
+}
+
 inline LayoutUnit roundedLayoutUnit(float value)
 {
 #if ENABLE(SUBPIXEL_LAYOUT)

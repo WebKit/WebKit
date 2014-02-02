@@ -1,5 +1,31 @@
 2014-02-02  Zalan Bujtas  <zalan@apple.com>
 
+        Subpixel rendering: Introduce device pixel snapping helper functions.
+        https://bugs.webkit.org/show_bug.cgi?id=128049
+
+        Reviewed by Simon Fraser.
+
+        These functions help device pixel snapping during painting. They follow the logic of
+        the corresponding pixelSnappedInt* functions.
+
+        No change in functionality.
+
+        * platform/LayoutUnit.h:
+        (WebCore::roundToDevicePixel):
+        (WebCore::floorToDevicePixel):
+        (WebCore::snapSizeToPixel):
+        (WebCore::snapSizeToDevicePixel):
+        * platform/graphics/GraphicsContext.cpp:
+        (WebCore::GraphicsContext::GraphicsContext):
+        * platform/graphics/GraphicsContext.h:
+        (WebCore::GraphicsContext::pixelSnappingFactor):
+        * platform/graphics/LayoutRect.h:
+        (WebCore::pixelSnappedForPainting):
+        * platform/graphics/cg/GraphicsContextCG.cpp:
+        (WebCore::GraphicsContext::platformInit):
+
+2014-02-02  Zalan Bujtas  <zalan@apple.com>
+
         Floor thickness and length after switching from int to float.
         https://bugs.webkit.org/show_bug.cgi?id=128071
 
