@@ -27,10 +27,9 @@
 #define DatasetDOMStringMap_h
 
 #include "ScriptWrappable.h"
+#include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/Vector.h>
-#include <wtf/text/AtomicString.h>
-#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 

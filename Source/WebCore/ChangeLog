@@ -1,3 +1,14 @@
+2014-02-01  Benjamin Poulain  <bpoulain@apple.com>
+
+        Improve the JavaScript bindings of DatasetDOMStringMap
+        https://bugs.webkit.org/show_bug.cgi?id=127971
+
+        Unriewed.
+
+        * dom/DatasetDOMStringMap.cpp:
+        * dom/DatasetDOMStringMap.h:
+        Follow up for r163239. Darin pointed out the #includes are wrong.
+
 2014-02-01  Brady Eidson  <beidson@apple.com>
 
         IDB: Implement IDBObjectStore.delete()

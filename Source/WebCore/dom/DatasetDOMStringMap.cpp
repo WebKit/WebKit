@@ -29,7 +29,9 @@
 #include "Element.h"
 #include "ExceptionCode.h"
 #include <wtf/ASCIICType.h>
+#include <wtf/text/AtomicString.h>
 #include <wtf/text/StringBuilder.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
