@@ -1,3 +1,23 @@
+2014-01-31  Enrica Casucci  <enrica@apple.com>
+
+        Text interaction assistant is not deleted when dismissing the keyboard on iPad.
+        https://bugs.webkit.org/show_bug.cgi?id=128034
+        <rdar://problem/15915695>
+
+        Reviewed by Dan Bernstein.
+
+        In iPhone mode, tapping on 'Done' in the accessory view
+        calls the delegate accessoryDone where we correctly blur
+        the assisted node and tear down the text interaction assistant.
+        The code path for the keyboard in iPad mode is different,
+        all we get is resignFirstResponder.
+        The fix is just to move the blurring in resignFirstResponder
+        and it works for both iPhone and iPad.
+
+        * UIProcess/API/ios/WKInteractionView.mm:
+        (-[WKInteractionView resignFirstResponder]):
+        (-[WKInteractionView accessoryDone]):
+
 2014-02-01  Brady Eidson  <beidson@apple.com>
 
         IDB: Implement IDBObjectStore.delete()

@@ -255,6 +255,7 @@ struct WKAutoCorrectionData{
 
 - (BOOL)resignFirstResponder
 {
+    _page->blurAssistedNode();
     [self _cancelInteraction];
     return [super resignFirstResponder];
 }
@@ -1174,7 +1175,6 @@ static void autocorrectionContext(const String& beforeText, const String& marked
 - (void)accessoryDone
 {
     [self resignFirstResponder];
-    _page->blurAssistedNode();
 }
 
 - (void)accessoryTab:(BOOL)isNext
