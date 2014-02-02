@@ -445,7 +445,7 @@ def originToPrintStack(origin)
 end
 
 def originToString(origin)
-    originToPrintStack(origin).join(" ") + "bc\##{origin[-1].bytecodeIndex}"
+    (originToPrintStack(origin) + ["bc\##{origin[-1].bytecodeIndex}"]).join(" ")
 end
 
 if ARGV.length != 1

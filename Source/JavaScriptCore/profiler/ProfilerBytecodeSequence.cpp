@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2012, 2013, 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -48,9 +48,12 @@ BytecodeSequence::BytecodeSequence(CodeBlock* codeBlock)
         m_header.append(out.toCString());
     }
     
+    StubInfoMap stubInfos;
+    codeBlock->getStubInfoMap(stubInfos);
+    
     for (unsigned bytecodeIndex = 0; bytecodeIndex < codeBlock->instructions().size();) {
         out.reset();
-        codeBlock->dumpBytecode(out, bytecodeIndex);
+        codeBlock->dumpBytecode(out, bytecodeIndex, stubInfos);
         m_sequence.append(Bytecode(bytecodeIndex, codeBlock->vm()->interpreter->getOpcodeID(codeBlock->instructions()[bytecodeIndex].u.opcode), out.toCString()));
         bytecodeIndex += opcodeLength(
             codeBlock->vm()->interpreter->getOpcodeID(

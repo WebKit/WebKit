@@ -364,6 +364,9 @@ void CodeBlock::printGetByIdCacheStatus(PrintStream& out, ExecState* exec, int l
 #if ENABLE(JIT)
     if (StructureStubInfo* stubPtr = map.get(CodeOrigin(location))) {
         StructureStubInfo& stubInfo = *stubPtr;
+        if (stubInfo.resetByGC)
+            out.print(" (Reset By GC)");
+        
         if (stubInfo.seen) {
             out.printf(" jit(");
             
@@ -657,6 +660,17 @@ void CodeBlock::dumpRareCaseProfile(PrintStream& out, const char* name, RareCase
     out.print(name, profile->m_counter);
 }
 
+void CodeBlock::printLocationAndOp(PrintStream& out, ExecState*, int location, const Instruction*&, const char* op)
+{
+    out.printf("[%4d] %-17s ", location, op);
+}
+
+void CodeBlock::printLocationOpAndRegisterOperand(PrintStream& out, ExecState* exec, int location, const Instruction*& it, const char* op, int operand)
+{
+    printLocationAndOp(out, exec, location, it, op);
+    out.printf("%s", registerName(operand).data());
+}
+
 void CodeBlock::dumpBytecode(PrintStream& out, ExecState* exec, const Instruction* begin, const Instruction*& it, const StubInfoMap& map)
 {
     int location = it - begin;
@@ -702,7 +716,9 @@ void CodeBlock::dumpBytecode(PrintStream& out, ExecState* exec, const Instructio
         case op_to_this: {
             int r0 = (++it)->u.operand;
             printLocationOpAndRegisterOperand(out, exec, location, it, "to_this", r0);
-            ++it; // Skip value profile.
+            Structure* structure = (++it)->u.structure.get();
+            if (structure)
+                out.print(" cache(struct = ", RawPointer(structure), ")");
             break;
         }
         case op_new_object: {
@@ -1441,11 +1457,11 @@ void CodeBlock::dumpBytecode(PrintStream& out, ExecState* exec, const Instructio
     out.print("\n");
 }
 
-void CodeBlock::dumpBytecode(PrintStream& out, unsigned bytecodeOffset)
+void CodeBlock::dumpBytecode(PrintStream& out, unsigned bytecodeOffset, const StubInfoMap& map)
 {
     ExecState* exec = m_globalObject->globalExec();
     const Instruction* it = instructions().begin() + bytecodeOffset;
-    dumpBytecode(out, exec, instructions().begin(), it);
+    dumpBytecode(out, exec, instructions().begin(), it, map);
 }
 
 #define FOR_EACH_MEMBER_VECTOR(macro) \

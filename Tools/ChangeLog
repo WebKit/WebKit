@@ -1,5 +1,14 @@
 2014-02-01  Filip Pizlo  <fpizlo@apple.com>
 
+        JSC profiler's stub info profiling support should work again
+        https://bugs.webkit.org/show_bug.cgi?id=128057
+
+        Reviewed by Mark Lam.
+
+        * Scripts/display-profiler-output: Just make sure that there's always a space between the origin stack dump and the top bytecode index.
+
+2014-02-01  Filip Pizlo  <fpizlo@apple.com>
+
         JSC profiler should show reasons for jettison
         https://bugs.webkit.org/show_bug.cgi?id=128047
 
