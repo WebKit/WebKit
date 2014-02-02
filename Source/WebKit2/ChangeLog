@@ -1,5 +1,18 @@
 2014-02-02  Enrica Casucci  <enrica@apple.com>
 
+        WK2: Selection is non editable content is not cleared when navigating to a different page.
+        https://bugs.webkit.org/show_bug.cgi?id=128084
+        <rdar://problem/15966166>
+
+        Reviewed by Dan Bernstein.
+
+        When resigning first responder, we need to cleanup the selection.
+
+        * UIProcess/API/ios/WKInteractionView.mm:
+        (-[WKInteractionView resignFirstResponder]):
+
+2014-02-02  Enrica Casucci  <enrica@apple.com>
+
         WK2: Cannot focus a second field in a page after the first has been focused.
         https://bugs.webkit.org/show_bug.cgi?id=128055
         <rdar://problem/15943652>

@@ -266,8 +266,12 @@ struct WKAutoCorrectionData{
 
 - (BOOL)resignFirstResponder
 {
+    // FIXME: Maybe we should call resignFirstResponder on the superclass
+    // and do nothing if the return value is NO.
     _page->blurAssistedNode();
     [self _cancelInteraction];
+    [_webSelectionAssistant resignedFirstResponder];
+
     return [super resignFirstResponder];
 }
 
