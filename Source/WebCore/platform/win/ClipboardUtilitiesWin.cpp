@@ -194,7 +194,7 @@ HGLOBAL createGlobalData(const String& str)
     if (!vm)
         return 0;
     UChar* buffer = static_cast<UChar*>(GlobalLock(vm));
-    memcpy(buffer, str.characters(), str.length() * sizeof(UChar));
+    memcpy(buffer, str.deprecatedCharacters(), str.length() * sizeof(UChar));
     buffer[str.length()] = 0;
     GlobalUnlock(vm);
     return vm;

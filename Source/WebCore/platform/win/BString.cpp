@@ -65,7 +65,7 @@ BString::BString(const String& s)
     if (s.isNull())
         m_bstr = 0;
     else
-        m_bstr = SysAllocStringLen(s.characters(), s.length());
+        m_bstr = SysAllocStringLen(s.deprecatedCharacters(), s.length());
 }
 
 BString::BString(const URL& url)
@@ -73,7 +73,7 @@ BString::BString(const URL& url)
     if (url.isNull())
         m_bstr = 0;
     else
-        m_bstr = SysAllocStringLen(url.string().characters(), url.string().length());
+        m_bstr = SysAllocStringLen(url.string().deprecatedCharacters(), url.string().length());
 }
 
 BString::BString(const AtomicString& s)
@@ -81,7 +81,7 @@ BString::BString(const AtomicString& s)
     if (s.isNull())
         m_bstr = 0;
     else
-        m_bstr = SysAllocStringLen(s.characters(), s.length());
+        m_bstr = SysAllocStringLen(s.string().deprecatedCharacters(), s.length());
 }
 
 #if USE(CF)

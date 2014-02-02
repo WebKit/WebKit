@@ -84,7 +84,7 @@ void handleDataURL(ResourceHandle* handle)
         data = decodeURLEscapeSequences(data, encoding);
         handle->client()->didReceiveResponse(handle, response);
 
-        CString encodedData = encoding.encode(data.characters(), data.length(), URLEncodedEntitiesForUnencodables);
+        CString encodedData = encoding.encode(data.deprecatedCharacters(), data.length(), URLEncodedEntitiesForUnencodables);
         response.setExpectedContentLength(encodedData.length());
         if (encodedData.length())
             handle->client()->didReceiveData(handle, encodedData.data(), encodedData.length(), 0);

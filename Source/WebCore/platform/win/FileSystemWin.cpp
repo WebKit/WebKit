@@ -159,19 +159,19 @@ String pathByAppendingComponent(const String& path, const String& component)
     Vector<UChar> buffer(MAX_PATH);
 
 #if OS(WINCE)
-    buffer.append(path.characters(), path.length());
+    buffer.append(path.deprecatedCharacters(), path.length());
 
     UChar lastPathCharacter = path[path.length() - 1];
     if (lastPathCharacter != L'\\' && lastPathCharacter != L'/' && component[0] != L'\\' && component[0] != L'/')
         buffer.append(PlatformFilePathSeparator);
 
-    buffer.append(component.characters(), component.length());
+    buffer.append(component.deprecatedCharacters(), component.length());
     buffer.shrinkToFit();
 #else
     if (path.length() + 1 > buffer.size())
         return String();
 
-    memcpy(buffer.data(), path.characters(), path.length() * sizeof(UChar));
+    memcpy(buffer.data(), path.deprecatedCharacters(), path.length() * sizeof(UChar));
     buffer[path.length()] = '\0';
 
     String componentCopy = component;
@@ -188,7 +188,7 @@ String pathByAppendingComponent(const String& path, const String& component)
 
 CString fileSystemRepresentation(const String& path)
 {
-    const UChar* characters = path.characters();
+    const UChar* characters = path.deprecatedCharacters();
     int size = WideCharToMultiByte(CP_ACP, 0, characters, path.length(), 0, 0, 0, 0) - 1;
 
     char* buffer;

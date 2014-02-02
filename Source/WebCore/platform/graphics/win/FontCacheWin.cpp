@@ -276,7 +276,7 @@ PassRefPtr<SimpleFontData> FontCache::systemFallbackForCharacters(const FontDesc
 
         LOGFONT logFont;
         logFont.lfCharSet = DEFAULT_CHARSET;
-        memcpy(logFont.lfFaceName, linkedFonts->at(linkedFontIndex).characters(), linkedFonts->at(linkedFontIndex).length() * sizeof(WCHAR));
+        memcpy(logFont.lfFaceName, linkedFonts->at(linkedFontIndex).deprecatedCharacters(), linkedFonts->at(linkedFontIndex).length() * sizeof(WCHAR));
         logFont.lfFaceName[linkedFonts->at(linkedFontIndex).length()] = 0;
         EnumFontFamiliesEx(hdc, &logFont, linkedFontEnumProc, reinterpret_cast<LPARAM>(&hfont), 0);
         linkedFontIndex++;
@@ -447,7 +447,7 @@ static GDIObject<HFONT> createGDIFont(const AtomicString& family, LONG desiredWe
     LOGFONT logFont;
     logFont.lfCharSet = DEFAULT_CHARSET;
     unsigned familyLength = min(family.length(), static_cast<unsigned>(LF_FACESIZE - 1));
-    memcpy(logFont.lfFaceName, family.characters(), familyLength * sizeof(UChar));
+    memcpy(logFont.lfFaceName, family.string().deprecatedCharacters(), familyLength * sizeof(UChar));
     logFont.lfFaceName[familyLength] = 0;
     logFont.lfPitchAndFamily = 0;
 
@@ -529,7 +529,7 @@ void FontCache::getTraitsInFamily(const AtomicString& familyName, Vector<unsigne
     LOGFONT logFont;
     logFont.lfCharSet = DEFAULT_CHARSET;
     unsigned familyLength = min(familyName.length(), static_cast<unsigned>(LF_FACESIZE - 1));
-    memcpy(logFont.lfFaceName, familyName.characters(), familyLength * sizeof(UChar));
+    memcpy(logFont.lfFaceName, familyName.string().deprecatedCharacters(), familyLength * sizeof(UChar));
     logFont.lfFaceName[familyLength] = 0;
     logFont.lfPitchAndFamily = 0;
 
