@@ -30,6 +30,7 @@
 
 #include "ArgumentDecoder.h"
 #include "IDBSerialization.h"
+#include "Logging.h"
 #include "SQLiteIDBCursor.h"
 #include "SQLiteIDBTransaction.h"
 #include <WebCore/FileSystem.h>
@@ -67,6 +68,9 @@ UniqueIDBDatabaseBackingStoreSQLite::UniqueIDBDatabaseBackingStoreSQLite(const U
 UniqueIDBDatabaseBackingStoreSQLite::~UniqueIDBDatabaseBackingStoreSQLite()
 {
     ASSERT(!isMainThread());
+
+    m_transactions.clear();
+    m_sqliteDB = nullptr;
 }
 
 std::unique_ptr<IDBDatabaseMetadata> UniqueIDBDatabaseBackingStoreSQLite::createAndPopulateInitialMetadata()
@@ -294,7 +298,8 @@ std::unique_ptr<IDBDatabaseMetadata> UniqueIDBDatabaseBackingStoreSQLite::getOrE
 {
     ASSERT(!isMainThread());
 
-    String dbFilename = pathByAppendingComponent(m_absoluteDatabaseDirectory, "IndexedDB.sqlite3");
+    String dbFilename = UniqueIDBDatabase::calculateAbsoluteDatabaseFilename(m_absoluteDatabaseDirectory);
+
     m_sqliteDB = openSQLiteDatabaseAtPath(dbFilename);
     if (!m_sqliteDB)
         return nullptr;

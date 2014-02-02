@@ -55,6 +55,11 @@ class UniqueIDBDatabaseBackingStore;
 
 struct SecurityOriginData;
 
+enum class UniqueIDBDatabaseShutdownType {
+    NormalShutdown,
+    DeleteShutdown
+};
+
 class UniqueIDBDatabase : public ThreadSafeRefCounted<UniqueIDBDatabase> {
 public:
     static PassRefPtr<UniqueIDBDatabase> create(const UniqueIDBDatabaseIdentifier& identifier)
@@ -64,10 +69,14 @@ public:
 
     ~UniqueIDBDatabase();
 
+    static String calculateAbsoluteDatabaseFilename(const String& absoluteDatabaseDirectory);
+
     const UniqueIDBDatabaseIdentifier& identifier() const { return m_identifier; }
 
     void registerConnection(DatabaseProcessIDBConnection&);
     void unregisterConnection(DatabaseProcessIDBConnection&);
+
+    void deleteDatabase(std::function<void(bool)> successCallback);
 
     void getOrEstablishIDBDatabaseMetadata(std::function<void(bool, const WebCore::IDBDatabaseMetadata&)> completionCallback);
 
@@ -107,8 +116,13 @@ private:
 
     String absoluteDatabaseDirectory() const;
 
-    void postDatabaseTask(std::unique_ptr<AsyncTask>);
-    void shutdown();
+    enum class DatabaseTaskType {
+        Normal,
+        Shutdown
+    };
+    void postDatabaseTask(std::unique_ptr<AsyncTask>, DatabaseTaskType = DatabaseTaskType::Normal);
+
+    void shutdown(UniqueIDBDatabaseShutdownType);
 
     // Method that attempts to make legal filenames from all legal database names
     String filenameForDatabaseName() const;
@@ -123,7 +137,7 @@ private:
     
     // To be called from the database workqueue thread only
     void performNextDatabaseTask();
-    void postMainThreadTask(std::unique_ptr<AsyncTask>);
+    void postMainThreadTask(std::unique_ptr<AsyncTask>, DatabaseTaskType = DatabaseTaskType::Normal);
     void openBackingStoreAndReadMetadata(const UniqueIDBDatabaseIdentifier&, const String& databaseDirectory);
     void openBackingStoreTransaction(const IDBIdentifier& transactionIdentifier, const Vector<int64_t>& objectStoreIDs, WebCore::IndexedDB::TransactionMode);
     void beginBackingStoreTransaction(const IDBIdentifier&);
@@ -145,7 +159,7 @@ private:
     void countInBackingStore(uint64_t requestID, const IDBIdentifier& transactionIdentifier, int64_t objectStoreID, int64_t indexID, const WebCore::IDBKeyRangeData&);
     void deleteRangeInBackingStore(uint64_t requestID, const IDBIdentifier& transactionIdentifier, int64_t objectStoreID, const WebCore::IDBKeyRangeData&);
 
-    void shutdownBackingStore();
+    void shutdownBackingStore(UniqueIDBDatabaseShutdownType, const String& databaseDirectory);
 
     // Callbacks from the database workqueue thread, to be performed on the main thread only
     void performNextMainThreadTask();
@@ -165,7 +179,7 @@ private:
     void didCountInBackingStore(uint64_t requestID, int64_t count, uint32_t errorCode, const String& errorMessage);
     void didDeleteRangeInBackingStore(uint64_t requestID, uint32_t errorCode, const String& errorMessage);
 
-    void didShutdownBackingStore();
+    void didShutdownBackingStore(UniqueIDBDatabaseShutdownType);
     void didCompleteBoolRequest(uint64_t requestID, bool success);
 
     bool m_acceptingNewRequests;
@@ -173,6 +187,7 @@ private:
     Deque<RefPtr<AsyncRequest>> m_pendingMetadataRequests;
     HashMap<IDBIdentifier, RefPtr<AsyncRequest>> m_pendingTransactionRequests;
     HashMap<uint64_t, RefPtr<AsyncRequest>> m_pendingDatabaseTasks;
+    RefPtr<AsyncRequest> m_pendingShutdownTask;
 
     std::unique_ptr<WebCore::IDBDatabaseMetadata> m_metadata;
     bool m_didGetMetadataFromBackingStore;

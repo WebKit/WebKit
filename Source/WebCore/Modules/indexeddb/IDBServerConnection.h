@@ -59,13 +59,11 @@ public:
 
     typedef std::function<void (bool success)> BoolCallbackFunction;
 
-    // Factory-level operations
-    virtual void deleteDatabase(const String& name, BoolCallbackFunction successCallback) = 0;
-
     // Database-level operations
     typedef std::function<void (const IDBDatabaseMetadata&, bool success)> GetIDBDatabaseMetadataFunction;
     virtual void getOrEstablishIDBDatabaseMetadata(GetIDBDatabaseMetadataFunction) = 0;
     virtual void close() = 0;
+    virtual void deleteDatabase(const String& name, BoolCallbackFunction successCallback) = 0;
 
     // Transaction-level operations
     virtual void openTransaction(int64_t transactionID, const HashSet<int64_t>& objectStoreIds, IndexedDB::TransactionMode, BoolCallbackFunction successCallback) = 0;

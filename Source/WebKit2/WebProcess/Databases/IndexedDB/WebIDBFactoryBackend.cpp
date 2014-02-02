@@ -74,7 +74,7 @@ void WebIDBFactoryBackend::getDatabaseNames(PassRefPtr<IDBCallbacks>, PassRefPtr
 void WebIDBFactoryBackend::open(const String& databaseName, uint64_t version, int64_t transactionId, PassRefPtr<IDBCallbacks> callbacks, PassRefPtr<IDBDatabaseCallbacks> databaseCallbacks, const SecurityOrigin& openingOrigin, const SecurityOrigin& mainFrameOrigin)
 {
     ASSERT(isMainThread());
-    LOG(StorageAPI, "WebIDBFactoryBackend::open");
+    LOG(IDB, "WebIDBFactoryBackend::open");
 
     String databaseIdentifier = uniqueDatabaseIdentifier(databaseName, openingOrigin, mainFrameOrigin);
     if (databaseIdentifier.isNull()) {
@@ -95,9 +95,30 @@ void WebIDBFactoryBackend::open(const String& databaseName, uint64_t version, in
     databaseBackend->openConnection(callbacks, databaseCallbacks, transactionId, version);
 }
 
-void WebIDBFactoryBackend::deleteDatabase(const String&, PassRefPtr<IDBCallbacks>, PassRefPtr<SecurityOrigin>, ScriptExecutionContext*, const String&)
+void WebIDBFactoryBackend::deleteDatabase(const String& databaseName, const SecurityOrigin& openingOrigin, const SecurityOrigin& mainFrameOrigin, PassRefPtr<IDBCallbacks> callbacks, ScriptExecutionContext*, const String&)
 {
-    notImplemented();
+    ASSERT(isMainThread());
+    LOG(IDB, "WebIDBFactoryBackend::deleteDatabase");
+
+    String databaseIdentifier = uniqueDatabaseIdentifier(databaseName, openingOrigin, mainFrameOrigin);
+    if (databaseIdentifier.isNull()) {
+        callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::InvalidAccessError, "Document is not allowed to use Indexed Databases"));
+        return;
+    }
+
+    // If there's already a connection to the database, delete it directly.
+    IDBDatabaseBackendMap::iterator it = sharedDatabaseBackendMap().find(databaseIdentifier);
+    if (it != sharedDatabaseBackendMap().end()) {
+        it->value->deleteDatabase(callbacks);
+        return;
+    }
+
+    RefPtr<IDBServerConnection> serverConnection = WebIDBServerConnection::create(databaseName, openingOrigin, mainFrameOrigin);
+    RefPtr<IDBDatabaseBackend> databaseBackend = IDBDatabaseBackend::create(databaseName, databaseIdentifier, this, *serverConnection);
+
+    sharedDatabaseBackendMap().set(databaseIdentifier, databaseBackend.get());
+    databaseBackend->deleteDatabase(callbacks);
+    sharedDatabaseBackendMap().remove(databaseIdentifier);
 }
 
 void WebIDBFactoryBackend::removeIDBDatabaseBackend(const String& identifier)

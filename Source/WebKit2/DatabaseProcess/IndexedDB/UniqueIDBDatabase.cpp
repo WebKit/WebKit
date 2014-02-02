@@ -33,6 +33,7 @@
 #include "DataReference.h"
 #include "DatabaseProcess.h"
 #include "DatabaseProcessIDBConnection.h"
+#include "Logging.h"
 #include "UniqueIDBDatabaseBackingStoreSQLite.h"
 #include "WebCrossThreadCopier.h"
 #include <WebCore/FileSystem.h>
@@ -46,6 +47,11 @@
 using namespace WebCore;
 
 namespace WebKit {
+
+String UniqueIDBDatabase::calculateAbsoluteDatabaseFilename(const String& absoluteDatabaseDirectory)
+{
+    return pathByAppendingComponent(absoluteDatabaseDirectory, "IndexedDB.sqlite3");
+}
 
 UniqueIDBDatabase::UniqueIDBDatabase(const UniqueIDBDatabaseIdentifier& identifier)
     : m_identifier(identifier)
@@ -106,14 +112,17 @@ void UniqueIDBDatabase::unregisterConnection(DatabaseProcessIDBConnection& conne
     m_connections.remove(&connection);
 
     if (m_connections.isEmpty()) {
-        shutdown();
+        shutdown(UniqueIDBDatabaseShutdownType::NormalShutdown);
         DatabaseProcess::shared().removeUniqueIDBDatabase(*this);
     }
 }
 
-void UniqueIDBDatabase::shutdown()
+void UniqueIDBDatabase::shutdown(UniqueIDBDatabaseShutdownType type)
 {
     ASSERT(isMainThread());
+
+    if (!m_acceptingNewRequests)
+        return;
 
     m_acceptingNewRequests = false;
 
@@ -135,28 +144,66 @@ void UniqueIDBDatabase::shutdown()
 
     for (const auto& it : m_pendingDatabaseTasks)
         it.value->requestAborted();
+
+    m_pendingMetadataRequests.clear();
+    m_pendingTransactionRequests.clear();
+    m_pendingDatabaseTasks.clear();
         
     // Balanced by an adoptRef in ::didShutdownBackingStore()
     ref();
 
-    DatabaseProcess::shared().queue().dispatch(bind(&UniqueIDBDatabase::shutdownBackingStore, this));
+    postDatabaseTask(createAsyncTask(*this, &UniqueIDBDatabase::shutdownBackingStore, type, absoluteDatabaseDirectory()), DatabaseTaskType::Shutdown);
 }
 
-void UniqueIDBDatabase::shutdownBackingStore()
+void UniqueIDBDatabase::shutdownBackingStore(UniqueIDBDatabaseShutdownType type, const String& databaseDirectory)
 {
     ASSERT(!isMainThread());
-    if (m_backingStore)
-        m_backingStore.clear();
 
-    RunLoop::main()->dispatch(bind(&UniqueIDBDatabase::didShutdownBackingStore, this));
+    m_backingStore.clear();
+
+    if (type == UniqueIDBDatabaseShutdownType::DeleteShutdown) {
+        String dbFilename = UniqueIDBDatabase::calculateAbsoluteDatabaseFilename(databaseDirectory);
+        LOG(IDB, "UniqueIDBDatabase::shutdownBackingStore deleting file '%s' on disk", dbFilename.utf8().data());
+        deleteFile(dbFilename);
+        deleteEmptyDirectory(databaseDirectory);
+    }
+
+    postMainThreadTask(createAsyncTask(*this, &UniqueIDBDatabase::didShutdownBackingStore, type), DatabaseTaskType::Shutdown);
 }
 
-void UniqueIDBDatabase::didShutdownBackingStore()
+void UniqueIDBDatabase::didShutdownBackingStore(UniqueIDBDatabaseShutdownType type)
 {
     ASSERT(isMainThread());
 
     // Balanced by a ref in ::shutdown()
     RefPtr<UniqueIDBDatabase> protector(adoptRef(this));
+
+    if (m_pendingShutdownTask)
+        m_pendingShutdownTask->completeRequest(type);
+
+    m_pendingShutdownTask = nullptr;
+}
+
+void UniqueIDBDatabase::deleteDatabase(std::function<void(bool)> successCallback)
+{
+    if (!m_acceptingNewRequests) {
+        // Someone else has already shutdown this database, so we can't request a delete.
+        callOnMainThread([successCallback]() {
+            successCallback(false);
+        });
+        return;
+    }
+
+    RefPtr<UniqueIDBDatabase> protector(this);
+    m_pendingShutdownTask = AsyncRequestImpl<UniqueIDBDatabaseShutdownType>::create([this, protector, successCallback](UniqueIDBDatabaseShutdownType type) {
+        // If the shutdown just completed was a Delete shutdown then we succeeded.
+        // If not report failure instead of trying again.
+        successCallback(type == UniqueIDBDatabaseShutdownType::DeleteShutdown);
+    }, [this, protector, successCallback]() {
+        successCallback(false);
+    });
+
+    shutdown(UniqueIDBDatabaseShutdownType::DeleteShutdown);
 }
 
 void UniqueIDBDatabase::getOrEstablishIDBDatabaseMetadata(std::function<void(bool, const IDBDatabaseMetadata&)> completionCallback)
@@ -1013,11 +1060,11 @@ String UniqueIDBDatabase::absoluteDatabaseDirectory() const
     return DatabaseProcess::shared().absoluteIndexedDatabasePathFromDatabaseRelativePath(m_databaseRelativeDirectory);
 }
 
-void UniqueIDBDatabase::postMainThreadTask(std::unique_ptr<AsyncTask> task)
+void UniqueIDBDatabase::postMainThreadTask(std::unique_ptr<AsyncTask> task, DatabaseTaskType taskType)
 {
     ASSERT(!isMainThread());
 
-    if (!m_acceptingNewRequests)
+    if (!m_acceptingNewRequests && taskType == DatabaseTaskType::Normal)
         return;
 
     MutexLocker locker(m_mainThreadTaskMutex);
@@ -1050,11 +1097,11 @@ void UniqueIDBDatabase::performNextMainThreadTask()
     task->performTask();
 }
 
-void UniqueIDBDatabase::postDatabaseTask(std::unique_ptr<AsyncTask> task)
+void UniqueIDBDatabase::postDatabaseTask(std::unique_ptr<AsyncTask> task, DatabaseTaskType taskType)
 {
     ASSERT(isMainThread());
 
-    if (!m_acceptingNewRequests)
+    if (!m_acceptingNewRequests && taskType == DatabaseTaskType::Normal)
         return;
 
     MutexLocker locker(m_databaseTaskMutex);

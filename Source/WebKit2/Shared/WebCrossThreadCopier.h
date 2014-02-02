@@ -34,6 +34,8 @@
 namespace WebKit {
 class IDBIdentifier;
 class UniqueIDBDatabaseIdentifier;
+
+enum class UniqueIDBDatabaseShutdownType;
 }
 
 namespace WTF {
@@ -48,6 +50,14 @@ template<> struct CrossThreadCopierBase<false, false, WebKit::UniqueIDBDatabaseI
 
 template<> struct CrossThreadCopierBase<false, false, WebKit::IDBIdentifier> {
     static WebKit::IDBIdentifier copy(const WebKit::IDBIdentifier&);
+};
+
+
+template<> struct CrossThreadCopierBase<false, false, WebKit::UniqueIDBDatabaseShutdownType> {
+    static WebKit::UniqueIDBDatabaseShutdownType copy(const WebKit::UniqueIDBDatabaseShutdownType& type)
+    {
+        return type;
+    }
 };
 
 template<> struct CrossThreadCopierBase<false, false, Vector<char>> {

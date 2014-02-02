@@ -48,12 +48,10 @@ public:
 
     virtual bool isClosed() override;
 
-    // Factory-level operations
-    virtual void deleteDatabase(const String& name, BoolCallbackFunction successCallback) override;
-
     // Database-level operations
     virtual void getOrEstablishIDBDatabaseMetadata(GetIDBDatabaseMetadataFunction) override;
     virtual void close() override;
+    virtual void deleteDatabase(const String& name, BoolCallbackFunction successCallback) override;
 
     // Transaction-level operations
     virtual void openTransaction(int64_t transactionID, const HashSet<int64_t>& objectStoreIds, IndexedDB::TransactionMode, BoolCallbackFunction successCallback) override;

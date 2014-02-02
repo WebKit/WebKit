@@ -1,3 +1,37 @@
+2014-02-02  Brady Eidson  <beidson@apple.com>
+
+        IDB: Support IDBFactory.deleteDatabase()
+        https://bugs.webkit.org/show_bug.cgi?id=128060
+
+        Reviewed by Filip Pizlo and Maciej Stachowiak (filesystem parts also Tim Hatcher and Simon Fraser)
+
+        * DatabaseProcess/IndexedDB/DatabaseProcessIDBConnection.cpp:
+        (WebKit::DatabaseProcessIDBConnection::deleteDatabase):
+
+        * DatabaseProcess/IndexedDB/UniqueIDBDatabase.cpp:
+        (WebKit::UniqueIDBDatabase::calculateAbsoluteDatabaseFilename): Central place to
+          calculate the database filename.
+        (WebKit::UniqueIDBDatabase::unregisterConnection):
+        (WebKit::UniqueIDBDatabase::shutdown): Pass shutdown type along. 
+        (WebKit::UniqueIDBDatabase::shutdownBackingStore): If this is a delete shutdown, delete the DB.
+        (WebKit::UniqueIDBDatabase::didShutdownBackingStore): 
+        (WebKit::UniqueIDBDatabase::deleteDatabase):
+        (WebKit::UniqueIDBDatabase::postMainThreadTask): All some tasks to bypass the no-more-request restriction.
+        (WebKit::UniqueIDBDatabase::postDatabaseTask): Ditto.
+        * DatabaseProcess/IndexedDB/UniqueIDBDatabase.h:
+
+        * DatabaseProcess/IndexedDB/sqlite/UniqueIDBDatabaseBackingStoreSQLite.cpp:
+        (WebKit::UniqueIDBDatabaseBackingStoreSQLite::~UniqueIDBDatabaseBackingStoreSQLite):
+        (WebKit::UniqueIDBDatabaseBackingStoreSQLite::getOrEstablishMetadata): Use 
+          calculateAbsoluteDatabaseFilename from UniqueIDBDatabase.
+
+        * WebProcess/Databases/IndexedDB/WebIDBFactoryBackend.cpp:
+        (WebKit::WebIDBFactoryBackend::open): Update logging channel.
+        (WebKit::WebIDBFactoryBackend::deleteDatabase): Implement.
+        * WebProcess/Databases/IndexedDB/WebIDBFactoryBackend.h:
+
+        * Shared/WebCrossThreadCopier.h:
+
 2014-02-01  Darin Adler  <darin@apple.com>
 
         More characters -> deprecatedCharacters (based on more EWS complaints)

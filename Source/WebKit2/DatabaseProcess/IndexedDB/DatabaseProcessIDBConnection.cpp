@@ -81,10 +81,19 @@ void DatabaseProcessIDBConnection::getOrEstablishIDBDatabaseMetadata(uint64_t re
 
 void DatabaseProcessIDBConnection::deleteDatabase(uint64_t requestID, const String& databaseName)
 {
+    ASSERT(m_uniqueIDBDatabase);
+
     LOG(IDB, "DatabaseProcess deleteDatabase request ID %llu", requestID);
 
-    // FIXME: Implement
-    send(Messages::WebIDBServerConnection::DidDeleteDatabase(requestID, false));
+    if (databaseName != m_uniqueIDBDatabase->identifier().databaseName()) {
+        LOG_ERROR("Request to delete database name that doesn't match with this database connection's database name");
+        send(Messages::WebIDBServerConnection::DidDeleteDatabase(requestID, false));
+    }
+
+    RefPtr<DatabaseProcessIDBConnection> connection(this);
+    m_uniqueIDBDatabase->deleteDatabase([connection, requestID](bool success) {
+        connection->send(Messages::WebIDBServerConnection::DidDeleteDatabase(requestID, success));
+    });
 }
 
 void DatabaseProcessIDBConnection::openTransaction(uint64_t requestID, int64_t transactionID, const Vector<int64_t>& objectStoreIDs, uint64_t intMode)

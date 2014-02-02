@@ -1,3 +1,27 @@
+2014-02-02  Brady Eidson  <beidson@apple.com>
+
+        IDB: Support IDBFactory.deleteDatabase()
+        https://bugs.webkit.org/show_bug.cgi?id=128060
+
+        Reviewed by Filip Pizlo and Maciej Stachowiak (filesystem parts also Tim Hatcher and Simon Fraser)
+
+        * Modules/indexeddb/IDBDatabaseBackend.cpp:
+        (WebCore::IDBDatabaseBackend::deleteDatabaseAsync):
+
+        * Modules/indexeddb/IDBFactory.cpp:
+        (WebCore::IDBFactory::deleteDatabase):
+
+        Change factory-level deleteDatabase to take opening and main frame origins:
+        * Modules/indexeddb/IDBFactoryBackendInterface.h:
+        * Modules/indexeddb/leveldb/IDBFactoryBackendLevelDB.cpp:
+        (WebCore::IDBFactoryBackendLevelDB::deleteDatabase):
+        * Modules/indexeddb/leveldb/IDBFactoryBackendLevelDB.h:
+
+        * Modules/indexeddb/IDBServerConnection.h:
+        * Modules/indexeddb/leveldb/IDBServerConnectionLevelDB.h:
+
+        * WebCore.exp.in:
+
 2014-02-02  Zalan Bujtas  <zalan@apple.com>
 
         Subpixel rendering: Introduce device pixel snapping helper functions.

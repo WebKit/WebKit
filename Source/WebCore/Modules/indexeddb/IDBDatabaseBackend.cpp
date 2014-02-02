@@ -555,13 +555,13 @@ bool IDBDatabaseBackend::isDeleteDatabaseBlocked()
     return connectionCount();
 }
 
-void IDBDatabaseBackend::deleteDatabaseAsync(PassRefPtr<IDBCallbacks> callbacks)
+void IDBDatabaseBackend::deleteDatabaseAsync(PassRefPtr<IDBCallbacks> prpCallbacks)
 {
     ASSERT(!isDeleteDatabaseBlocked());
 
     RefPtr<IDBDatabaseBackend> self(this);
+    RefPtr<IDBCallbacks> callbacks = prpCallbacks;
     m_serverConnection->deleteDatabase(m_metadata.name, [self, callbacks](bool success) {
-        ASSERT(self->m_deleteCallbacksWaitingCompletion.contains(callbacks));
         self->m_deleteCallbacksWaitingCompletion.remove(callbacks);
 
         // If this IDBDatabaseBackend was closed while waiting for deleteDatabase to complete, no point in performing any callbacks.
