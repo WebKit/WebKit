@@ -321,6 +321,28 @@ void WebPageProxy::requestPositionInformation(const WebCore::IntPoint& point)
     m_process->send(Messages::WebPage::RequestPositionInformation(point), m_pageID);
 }
 
+void WebPageProxy::startInteractionWithElementAtPosition(const WebCore::IntPoint& point)
+{
+    m_process->send(Messages::WebPage::StartInteractionWithElementAtPosition(point), m_pageID);
+}
+
+void WebPageProxy::stopInteraction()
+{
+    m_process->send(Messages::WebPage::StopInteraction(), m_pageID);
+}
+
+void WebPageProxy::performActionOnElement(uint32_t action)
+{
+    m_process->send(Messages::WebPage::PerformActionOnElement(action), m_pageID);
+}
+
+void WebPageProxy::saveImageToLibrary(const SharedMemory::Handle& imageHandle, uint64_t imageSize)
+{
+    RefPtr<SharedMemory> sharedMemoryBuffer = SharedMemory::create(imageHandle, SharedMemory::ReadOnly);
+    RefPtr<SharedBuffer> buffer = SharedBuffer::create(static_cast<unsigned char*>(sharedMemoryBuffer->data()), imageSize);
+    m_pageClient.saveImageToLibrary(buffer);
+}
+
 void WebPageProxy::notifyRevealedSelection()
 {
     m_pageClient.selectionDidChange();

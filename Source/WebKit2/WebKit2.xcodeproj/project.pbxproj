@@ -1327,6 +1327,10 @@
 		C0E3AA7C1209E83C00A49D01 /* Module.h in Headers */ = {isa = PBXBuildFile; fileRef = C0E3AA441209E2BA00A49D01 /* Module.h */; };
 		C517388112DF8F4F00EE3F47 /* DragControllerAction.h in Headers */ = {isa = PBXBuildFile; fileRef = C517388012DF8F4F00EE3F47 /* DragControllerAction.h */; };
 		C5237F6012441CA300780472 /* WebEditorClientMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = C5237F5F12441CA300780472 /* WebEditorClientMac.mm */; };
+		C5245391189C6B85003DF476 /* WKActionSheetAssistant.h in Headers */ = {isa = PBXBuildFile; fileRef = C524538F189C6B85003DF476 /* WKActionSheetAssistant.h */; };
+		C5245392189C6B85003DF476 /* WKActionSheetAssistant.mm in Sources */ = {isa = PBXBuildFile; fileRef = C5245390189C6B85003DF476 /* WKActionSheetAssistant.mm */; };
+		C535BD5918919CFC0098F1F5 /* WKActionSheet.h in Headers */ = {isa = PBXBuildFile; fileRef = C535BD5718919CFC0098F1F5 /* WKActionSheet.h */; };
+		C535BD5A18919CFC0098F1F5 /* WKActionSheet.mm in Sources */ = {isa = PBXBuildFile; fileRef = C535BD5818919CFC0098F1F5 /* WKActionSheet.mm */; };
 		C574A37712E6099D002DFE98 /* WebDragClientMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = C554FFA212E4E8EA002F22C0 /* WebDragClientMac.mm */; };
 		C574A58112E66681002DFE98 /* PasteboardTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = C574A57F12E66681002DFE98 /* PasteboardTypes.h */; };
 		C574A58212E66681002DFE98 /* PasteboardTypes.mm in Sources */ = {isa = PBXBuildFile; fileRef = C574A58012E66681002DFE98 /* PasteboardTypes.mm */; };
@@ -3081,6 +3085,10 @@
 		C0E3AA481209E45000A49D01 /* ModuleMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ModuleMac.mm; sourceTree = "<group>"; };
 		C517388012DF8F4F00EE3F47 /* DragControllerAction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DragControllerAction.h; sourceTree = "<group>"; };
 		C5237F5F12441CA300780472 /* WebEditorClientMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebEditorClientMac.mm; sourceTree = "<group>"; };
+		C524538F189C6B85003DF476 /* WKActionSheetAssistant.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WKActionSheetAssistant.h; path = ios/WKActionSheetAssistant.h; sourceTree = "<group>"; };
+		C5245390189C6B85003DF476 /* WKActionSheetAssistant.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WKActionSheetAssistant.mm; path = ios/WKActionSheetAssistant.mm; sourceTree = "<group>"; };
+		C535BD5718919CFC0098F1F5 /* WKActionSheet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WKActionSheet.h; path = ios/WKActionSheet.h; sourceTree = "<group>"; };
+		C535BD5818919CFC0098F1F5 /* WKActionSheet.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WKActionSheet.mm; path = ios/WKActionSheet.mm; sourceTree = "<group>"; };
 		C554FFA212E4E8EA002F22C0 /* WebDragClientMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebDragClientMac.mm; sourceTree = "<group>"; };
 		C574A57F12E66681002DFE98 /* PasteboardTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PasteboardTypes.h; sourceTree = "<group>"; };
 		C574A58012E66681002DFE98 /* PasteboardTypes.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PasteboardTypes.mm; sourceTree = "<group>"; };
@@ -4120,6 +4128,10 @@
 				2DA944791884E3B500ED86DB /* PageClientImplIOS.mm */,
 				2DA9447A1884E3B500ED86DB /* UIWKRemoteView.h */,
 				2DA9447B1884E3B500ED86DB /* UIWKRemoteView.mm */,
+				C535BD5718919CFC0098F1F5 /* WKActionSheet.h */,
+				C535BD5818919CFC0098F1F5 /* WKActionSheet.mm */,
+				C524538F189C6B85003DF476 /* WKActionSheetAssistant.h */,
+				C5245390189C6B85003DF476 /* WKActionSheetAssistant.mm */,
 				2DA9447C1884E3B500ED86DB /* WKContentView.h */,
 				2DA9447D1884E3B500ED86DB /* WKContentView.mm */,
 				2DA9447E1884E3B500ED86DB /* WKContentViewInternal.h */,
@@ -6450,6 +6462,7 @@
 				1AB8A1F418400B8F00E9AE69 /* WKPageFindClient.h in Headers */,
 				75E749EA180DBB9800088BA6 /* WebOriginDataManagerMessages.h in Headers */,
 				2DA944931884E3B500ED86DB /* WKScrollView.h in Headers */,
+				C535BD5918919CFC0098F1F5 /* WKActionSheet.h in Headers */,
 				51ACBBA0127A8F2C00D203B9 /* WebContextMenuProxyMac.h in Headers */,
 				BCCB75C61203A1CE00222D1B /* WebContextMessageKinds.h in Headers */,
 				BCEE7D0E12846F69009827DA /* WebContextMessages.h in Headers */,
@@ -6779,6 +6792,7 @@
 				BC8699B7116AADAA002A925B /* WKViewInternal.h in Headers */,
 				BFA6179F12F0B99D0033E0CA /* WKViewPrivate.h in Headers */,
 				755422CC180773CE0046F6A8 /* WebOriginDataManager.h in Headers */,
+				C5245391189C6B85003DF476 /* WKActionSheetAssistant.h in Headers */,
 				C5E1AFE916B20B75006CC1F2 /* WKWebArchive.h in Headers */,
 				C5E1AFEB16B20B7E006CC1F2 /* WKWebArchiveResource.h in Headers */,
 				BC989D82161A7E5D000D46D3 /* WKWebProcessPlugIn.h in Headers */,
@@ -7784,6 +7798,7 @@
 				1AD3306E16B1D991004F60E7 /* StorageAreaImpl.cpp in Sources */,
 				1ACECD2417162DB1001FC9EF /* StorageAreaMap.cpp in Sources */,
 				1A334DED16DE8F88006A8E38 /* StorageAreaMapMessageReceiver.cpp in Sources */,
+				C535BD5A18919CFC0098F1F5 /* WKActionSheet.mm in Sources */,
 				1A44B95B16B73F9F00B7BBD8 /* StorageManager.cpp in Sources */,
 				1AB31A9616BC688100F6DBC9 /* StorageManagerMessageReceiver.cpp in Sources */,
 				1A44B95716B737AA00B7BBD8 /* StorageNamespaceImpl.cpp in Sources */,
@@ -7960,6 +7975,7 @@
 				2DA944A11884E4F000ED86DB /* WebIOSEventFactory.mm in Sources */,
 				BCBD3914125BB1A800D2C29F /* WebPageProxyMessageReceiver.cpp in Sources */,
 				1A3E736211CC2659007BD539 /* WebPlatformStrategies.cpp in Sources */,
+				C5245392189C6B85003DF476 /* WKActionSheetAssistant.mm in Sources */,
 				C0337DDD127A521C008FF4F4 /* WebPlatformTouchPoint.cpp in Sources */,
 				51D0D436183B353D0097041D /* DatabaseProcessIDBConnectionMessageReceiver.cpp in Sources */,
 				31D5929E166E060000E6BF02 /* WebPlugInClient.cpp in Sources */,

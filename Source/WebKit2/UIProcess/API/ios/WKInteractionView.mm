@@ -29,12 +29,14 @@
 #import "InteractionInformationAtPosition.h"
 #import "NativeWebKeyboardEvent.h"
 #import "NativeWebTouchEvent.h"
+#import "WKActionSheetAssistant.h"
 #import "WKBase.h"
 #import "WKGestureTypes.h"
 #import "WebEvent.h"
 #import "WebIOSEventFactory.h"
 #import "WebPageMessages.h"
 #import "WebProcessProxy.h"
+#import <DataDetectorsUI/DDDetectionController.h>
 #import <UIKit/UIFont_Private.h>
 #import <UIKit/UIGestureRecognizer_Private.h>
 #import <UIKit/UIKeyboardImpl.h>
@@ -48,9 +50,14 @@
 #import <WebCore/Color.h>
 #import <WebCore/FloatQuad.h>
 #import <WebCore/NotImplemented.h>
+#import <WebCore/SoftLinking.h>
 #import <WebCore/WebEvent.h>
 #import <WebKit/WebSelectionRect.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/text/WTFString.h>
+
+SOFT_LINK_PRIVATE_FRAMEWORK(DataDetectorsUI)
+SOFT_LINK_CLASS(DataDetectorsUI, DDDetectionController)
 
 using namespace WebCore;
 using namespace WebKit;
@@ -167,6 +174,7 @@ struct WKAutoCorrectionData{
     RetainPtr<NSString> _markedText;
     InteractionInformationAtPosition _positionInformation;
     BOOL _hasValidPositionInformation;
+    RetainPtr<WKActionSheetAssistant> _actionSheetAssistant;
 }
 
 @synthesize inputDelegate = _inputDelegate;
@@ -213,6 +221,7 @@ struct WKAutoCorrectionData{
     // FIXME: This should be called when we get notified that loading has completed.
     [self useSelectionAssistantWithMode:UIWebSelectionModeWeb];
 
+    _actionSheetAssistant = adoptNS([[WKActionSheetAssistant alloc] initWithView:self]);
     return self;
 }
 
@@ -220,6 +229,7 @@ struct WKAutoCorrectionData{
 {
     _webSelectionAssistant = nil;
     _textSelectionAssistant = nil;
+    _actionSheetAssistant = nil;
     [_touchEventGestureRecognizer setDelegate:nil];
     [_singleTapGestureRecognizer setDelegate:nil];
     [_doubleTapGestureRecognizer setDelegate:nil];
@@ -239,6 +249,7 @@ struct WKAutoCorrectionData{
 - (void)setPage:(PassRefPtr<WebKit::WebPageProxy>)page
 {
     _page = page;
+    [_actionSheetAssistant setPage:_page];
 }
 
 - (BOOL)isEditable
@@ -418,22 +429,29 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
 
 - (void)_showImageSheet
 {
-
+    [_actionSheetAssistant showImageSheet];
 }
 
 - (void)_showLinkSheet
 {
+    [_actionSheetAssistant showLinkSheet];
+}
 
+- (void)_showDataDetectorsSheet
+{
+    [_actionSheetAssistant showDataDetectorsSheet];
 }
 
 - (SEL)_actionForLongPress
 {
     if (_positionInformation.clickableElementName == "IMG")
         return @selector(_showImageSheet);
-    else if (_positionInformation.clickableElementName == "A")
+    else if (_positionInformation.clickableElementName == "A") {
+        NSURL *targetURL = [NSURL URLWithString:_positionInformation.url];
+        if ([[getDDDetectionControllerClass() tapAndHoldSchemes] containsObject:[targetURL scheme]])
+            return @selector(_showDataDetectorsSheet);
         return @selector(_showLinkSheet);
-    // FIXME: Add check for links and datadetectors.
-
+    }
     return nil;
 }
 
@@ -443,6 +461,12 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
         _page->getPositionInformation(roundedIntPoint(point), _positionInformation);
         _hasValidPositionInformation = YES;
     }
+}
+
+- (void)_updatePositionInformation
+{
+    _hasValidPositionInformation = NO;
+    _page->requestPositionInformation(_positionInformation.point);
 }
 
 - (BOOL)gestureRecognizerShouldBegin:(UIGestureRecognizer *)gestureRecognizer
@@ -573,18 +597,10 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
 {
     ASSERT(gestureRecognizer == _longPressGestureRecognizer);
 
-    switch ([gestureRecognizer state]) {
-    case UIGestureRecognizerStateBegan:
-        // FIXME: add implementation
-        break;
-    case UIGestureRecognizerStateEnded:
-        // FIXME: add implementation
-        break;
-    case UIGestureRecognizerStateCancelled:
-        // FIXME: add implementation
-        break;
-    default:
-        break;
+    if ([gestureRecognizer state] == UIGestureRecognizerStateBegan) {
+        SEL action = [self _actionForLongPress];
+        if (action)
+            [self performSelector:action];
     }
 }
 
@@ -655,6 +671,8 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
 {
     _positionInformation = info;
     _hasValidPositionInformation = YES;
+    if (_actionSheetAssistant)
+        [_actionSheetAssistant updateSheetPosition];
 }
 
 - (UIView *)inputAccessoryView
@@ -791,6 +809,11 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
 {
     _showingTextStyleOptions = NO;
     [_textSelectionAssistant hideTextStyleOptions];
+}
+
+- (void)_performAction:(WKSheetActions)action
+{
+    _page->performActionOnElement((uint32_t)action);
 }
 
 - (void)copy:(id)sender
@@ -1191,7 +1214,7 @@ static void autocorrectionContext(const String& beforeText, const String& marked
 
 - (void)_updateAccessory
 {
-    // FIXME: need to initialize with valus from the WebProcess.
+    // FIXME: We need to initialize with values from the WebProcess.
     _accessory.nextEnabled = YES;
     _accessory.previousEnabled = YES;
     
@@ -1425,8 +1448,7 @@ static void autocorrectionContext(const String& beforeText, const String& marked
 {
 }
 
-/* Modify text without starting a new undo grouping.
- */
+// Modify text without starting a new undo grouping.
 - (void)replaceRangeWithTextWithoutClosingTyping:(UITextRange *)range replacementText:(NSString *)text
 {
 }

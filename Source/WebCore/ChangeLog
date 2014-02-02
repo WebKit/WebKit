@@ -1,3 +1,15 @@
+2014-02-01  Enrica Casucci  <enrica@apple.com>
+
+        Add support for ActionSheets in WK2 for iOS.
+        https://bugs.webkit.org/show_bug.cgi?id=127586
+        <rdar://problem/15283667>
+
+        Reviewed by Benjamin Poulain.
+
+        Updates the localizable strings for action sheets.
+
+        * English.lproj/Localizable.strings:
+
 2014-02-01  Maciej Stachowiak  <mjs@apple.com>
 
         Factor URL decomposition methods (from URLUtils interface) into a base template

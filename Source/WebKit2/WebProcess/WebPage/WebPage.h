@@ -430,6 +430,9 @@ public:
     void confirmComposition();
     void getPositionInformation(const WebCore::IntPoint&, InteractionInformationAtPosition&);
     void requestPositionInformation(const WebCore::IntPoint&);
+    void startInteractionWithElementAtPosition(const WebCore::IntPoint&);
+    void stopInteraction();
+    void performActionOnElement(uint32_t action);
 #endif
 
     NotificationPermissionRequestManager* notificationPermissionRequestManager();
@@ -1041,6 +1044,7 @@ private:
 #if PLATFORM(IOS)
     RefPtr<WebCore::Node> m_assistedNode;
     RefPtr<WebCore::Range> m_currentWordRange;
+    RefPtr<WebCore::Node> m_interactionNode;
     bool m_shouldReturnWordAtSelection;
 #endif
 

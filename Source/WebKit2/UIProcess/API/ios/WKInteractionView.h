@@ -23,6 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#import "WKGestureTypes.h"
 #import <UIKit/UIWebFormAccessory.h>
 #import <UIKit/UITextInput_Private.h>
 #import <UIKit/UIView.h>
@@ -59,4 +60,9 @@ struct InteractionInformationAtPosition;
 - (void)_selectionChanged;
 - (BOOL)_interpretKeyEvent:(WebIOSEvent *)theEvent isCharEvent:(BOOL)isCharEvent;
 - (void)_positionInformationDidChange:(const WebKit::InteractionInformationAtPosition&)info;
+- (void)_attemptClickAtLocation:(CGPoint)location;
+- (void)_updatePositionInformation;
+- (void)_performAction:(WebKit::WKSheetActions)action;
+
+@property (readonly, nonatomic) WebKit::InteractionInformationAtPosition positionInformation;
 @end

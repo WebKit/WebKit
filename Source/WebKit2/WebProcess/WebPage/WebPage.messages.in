@@ -57,6 +57,9 @@ messages -> WebPage LegacyReceiver {
     ConfirmComposition()
     GetPositionInformation(WebCore::IntPoint point) -> (WebKit::InteractionInformationAtPosition information)
     RequestPositionInformation(WebCore::IntPoint point)
+    StartInteractionWithElementAtPosition(WebCore::IntPoint point)
+    StopInteraction()
+    PerformActionOnElement(uint32_t action)
 #endif
 
 #if ENABLE(TOUCH_EVENTS)

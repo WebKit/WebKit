@@ -44,7 +44,9 @@ struct InteractionInformationAtPosition {
     bool nodeAtPositionIsAssistedNode;
     String clickableElementName;
     String url;
+    String title;
     Vector<WebCore::SelectionRect> selectionRects;
+    WebCore::IntRect bounds;
 
     void encode(IPC::ArgumentEncoder&) const;
     static bool decode(IPC::ArgumentDecoder&, InteractionInformationAtPosition&);

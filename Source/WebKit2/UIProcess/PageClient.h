@@ -249,6 +249,7 @@ public:
     virtual void selectionDidChange() = 0;
     virtual bool interpretKeyEvent(const NativeWebKeyboardEvent&, bool isCharEvent) = 0;
     virtual void positionInformationDidChange(const InteractionInformationAtPosition&) = 0;
+    virtual void saveImageToLibrary(PassRefPtr<WebCore::SharedBuffer>) = 0;
 #endif
 
     // Auxiliary Client Creation

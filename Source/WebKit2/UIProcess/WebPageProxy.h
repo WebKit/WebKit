@@ -449,6 +449,10 @@ public:
     void didReceivePositionInformation(const InteractionInformationAtPosition&);
     void getPositionInformation(const WebCore::IntPoint&, InteractionInformationAtPosition&);
     void requestPositionInformation(const WebCore::IntPoint&);
+    void startInteractionWithElementAtPosition(const WebCore::IntPoint&);
+    void stopInteraction();
+    void performActionOnElement(uint32_t action);
+    void saveImageToLibrary(const SharedMemory::Handle& imageHandle, uint64_t imageSize);
 #endif
 
     const EditorState& editorState() const { return m_editorState; }

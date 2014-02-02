@@ -1,3 +1,120 @@
+2014-02-01  Enrica Casucci  <enrica@apple.com>
+
+        Add support for ActionSheets in WK2 for iOS.
+        https://bugs.webkit.org/show_bug.cgi?id=127586
+        <rdar://problem/15283667>
+
+        Reviewed by Benjamin Poulain.
+
+        This patch adds the default support for Action Sheets
+        in WK2 for iOS. WKActionSheet is the implementation of the
+        sheet itself that inherits from UIActionSheet and handles
+        the repositioning of the sheet after rotation for iPad.
+        WKActionSheetAssistant is the controller class that implements
+        the delegate methods, controls the lifetime of the action sheet
+        object and performs the actions.
+        We have 3 different types of sheets:
+           - link sheet, displayed when the target element is a link
+           - image sheet, when the target element is an image
+           - data detector sheet when the target is an element
+             recognized by the data detectors library.
+        Both link and image sheet have a set of default buttons, whereas
+        datadetector sheet in only populated by custom actions provided
+        by data detectors.
+        The link sheet provides the following default actions:
+            - open, navigates to the URL
+            - copy, copies the URL to the pasteboard
+            - add to reading list
+        The image sheet provides the following actions depending on whether
+        the image is contained inside an anchor element or not.
+        If the image is NOT inside a link the following actions are provided:
+           - copy, copies the image to the pasteboard
+           - save image, saves the image in the photo library
+        Instead, if the image is inside an link:
+           - open, navigates to the URL spcified by the link
+           - copy, copies the link URL to the pasteboard
+            - save image, saves the image in the photo library
+            - add to reading list, adds the link URL to reading list.
+
+        * Shared/InteractionInformationAtPosition.cpp:
+        (WebKit::InteractionInformationAtPosition::encode):
+        (WebKit::InteractionInformationAtPosition::decode):
+        * Shared/InteractionInformationAtPosition.h:
+        * Shared/ios/WKGestureTypes.h:
+        * UIProcess/API/ios/PageClientImplIOS.h:
+        * UIProcess/API/ios/PageClientImplIOS.mm:
+        (WebKit::PageClientImpl::saveImageToLibrary):
+        * UIProcess/API/ios/WKActionSheet.h: Added.
+        * UIProcess/API/ios/WKActionSheet.mm: Added.
+        (-[WKActionSheet initWithView:]):
+        (-[WKActionSheet dealloc]):
+        (-[WKActionSheet presentSheet]):
+        (-[WKActionSheet presentSheetFromRect:]):
+        (-[WKActionSheet doneWithSheet]):
+        (-[WKActionSheet willRotate]):
+        (-[WKActionSheet updateSheetPosition]):
+        (-[WKActionSheet didRotate]):
+        (-[WKElementActionInfo initWithInfo:location:title:rect:]):
+        (-[WKElementActionInfo dealloc]):
+        (-[WKElementAction initWithTitle:actionHandler:type:]):
+        (-[WKElementAction dealloc]):
+        (+[WKElementAction customElementActionWithTitle:actionHandler:]):
+        (copyElement):
+        (saveImage):
+        (addToReadingList):
+        (+[WKElementAction standardElementActionWithType:customTitle:]):
+        (+[WKElementAction standardElementActionWithType:]):
+        (-[WKElementAction runActionWithElementInfo:view:]):
+        * UIProcess/API/ios/WKActionSheetAssistant.h: Added.
+        * UIProcess/API/ios/WKActionSheetAssistant.mm: Added.
+        (-[WKActionSheetAssistant initWithView:]):
+        (-[WKActionSheetAssistant dealloc]):
+        (-[WKActionSheetAssistant setPage:WebKit::]):
+        (-[WKActionSheetAssistant superviewForSheet]):
+        (-[WKActionSheetAssistant _presentationRectForSheetGivenPoint:inHostView:]):
+        (-[WKActionSheetAssistant hostViewForSheet]):
+        (-[WKActionSheetAssistant initialPresentationRectInHostViewForSheet]):
+        (-[WKActionSheetAssistant presentationRectInHostViewForSheet]):
+        (-[WKActionSheetAssistant presentSheet]):
+        (-[WKActionSheetAssistant actionSheet:clickedButtonAtIndex:]):
+        (-[WKActionSheetAssistant updateSheetPosition]):
+        (-[WKActionSheetAssistant _createSheetWithElementActions:showLinkTitle:]):
+        (-[WKActionSheetAssistant showImageSheet]):
+        (-[WKActionSheetAssistant showLinkSheet]):
+        (-[WKActionSheetAssistant showDataDetectorsSheet]):
+        (-[WKActionSheetAssistant cleanupSheet]):
+        * UIProcess/API/ios/WKInteractionView.h:
+        * UIProcess/API/ios/WKInteractionView.mm:
+        (-[WKInteractionView initWithFrame:]):
+        (-[WKInteractionView dealloc]):
+        (-[WKInteractionView setPage:WebKit::]):
+        (-[WKInteractionView _showImageSheet]):
+        (-[WKInteractionView _showLinkSheet]):
+        (-[WKInteractionView _showDataDetectorsSheet]):
+        (-[WKInteractionView _actionForLongPress]):
+        (-[WKInteractionView _updatePositionInformation]):
+        (-[WKInteractionView _longPressRecognized:]):
+        (-[WKInteractionView _positionInformationDidChange:]):
+        (-[WKInteractionView _performAction:]):
+        (-[WKInteractionView _updateAccessory]):
+        * UIProcess/PageClient.h:
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::startInteractionWithElementAtPosition):
+        (WebKit::WebPageProxy::stopInteraction):
+        (WebKit::WebPageProxy::performActionOnElement):
+        (WebKit::WebPageProxy::saveImageToLibrary):
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::containingLinkElement):
+        (WebKit::WebPage::getPositionInformation):
+        (WebKit::WebPage::startInteractionWithElementAtPosition):
+        (WebKit::WebPage::stopInteraction):
+        (WebKit::WebPage::performActionOnElement):
+
 2014-02-01  Brady Eidson  <beidson@apple.com>
 
         IDB: Implement IDBCursor.delete()

@@ -64,6 +64,9 @@
 /* window title for a standalone image (uses multiplication symbol, not x) */
 "<filename> %d×%d pixels" = "<filename> %d×%d pixels";
 
+/* Title for Add to Reading List action button */
+"Add to Reading List" = "Add to Reading List";
+
 /* Undo action name */
 "Align Left (Undo action name)" = "Align Left";
 
@@ -87,6 +90,9 @@
 
 /* Undo action name */
 "Bold (Undo action name)" = "Bold";
+
+/* Title for Cancel button label in button bar */
+"Cancel button label in button bar" = "Cancel";
 
 /* Capitalize context menu item */
 "Capitalize" = "Capitalize";
@@ -135,6 +141,9 @@
 
 /* Copy context menu item */
 "Copy" = "Copy";
+
+/* Title for Copy Link or Image action button */
+"Copy ActionSheet Link" = "Copy";
 
 /* Copy Audio Address Location context menu item */
 "Copy Audio Address" = "Copy Audio Address";
@@ -247,6 +256,9 @@
 /* WebKitErrorJavaUnavailable description */
 "Java is unavailable" = "Java is unavailable";
 
+/* Title for action sheet for JavaScript link */
+"JavaScript Action Sheet Title" = "JavaScript";
+
 /* Undo action name */
 "Justify (Undo action name)" = "Justify";
 
@@ -306,6 +318,9 @@
 
 /* Menu item label for the track that represents disabling closed captions */
 "Off" = "Off";
+
+/* Title for Open Link action button */
+"Open ActionSheet Link" = "Open";
 
 /* Open Audio in New Window context menu item */
 "Open Audio in New Window" = "Open Audio in New Window";
@@ -390,6 +405,9 @@
 
 /* Right to Left context menu item */
 "Right to Left" = "Right to Left";
+
+/* Title for Save Image action button */
+"Save Image" = "Save Image";
 
 /* Search in Spotlight context menu item */
 "Search in Spotlight" = "Search in Spotlight";

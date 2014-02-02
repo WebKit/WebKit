@@ -31,9 +31,11 @@
 #import "WKContentViewInternal.h"
 #import "WebContextMenuProxy.h"
 #import "WebEditCommandProxy.h"
+#import <UIKit/UIImagePickerController_Private.h>
 #import <UIKit/UIWebTouchEventsGestureRecognizer.h>
 #import <WebCore/NotImplemented.h>
 #import <WebCore/PlatformScreen.h>
+#import <WebCore/SharedBuffer.h>
 
 @interface UIView (IPI)
 - (UIScrollView *)_scroller;
@@ -205,6 +207,12 @@ bool PageClientImpl::interpretKeyEvent(const NativeWebKeyboardEvent& event, bool
 void PageClientImpl::positionInformationDidChange(const InteractionInformationAtPosition& info)
 {
     [m_view _positionInformationDidChange:info];
+}
+
+void PageClientImpl::saveImageToLibrary(PassRefPtr<SharedBuffer> imageBuffer)
+{
+    RetainPtr<NSData> imageData = imageBuffer->createNSData();
+    UIImageDataWriteToSavedPhotosAlbum(imageData.get(), nil, NULL, NULL);
 }
 
 bool PageClientImpl::executeSavedCommandBySelector(const String&)

@@ -44,13 +44,16 @@
 #import <WebCore/FrameView.h>
 #import <WebCore/HitTestResult.h>
 #import <WebCore/HTMLElementTypeHelpers.h>
+#import <WebCore/HTMLParserIdioms.h>
 #import <WebCore/MainFrame.h>
 #import <WebCore/Node.h>
 #import <WebCore/NotImplemented.h>
 #import <WebCore/Page.h>
+#import <WebCore/Pasteboard.h>
 #import <WebCore/PlatformKeyboardEvent.h>
 #import <WebCore/PlatformMouseEvent.h>
 #import <WebCore/RenderImage.h>
+#import <WebCore/ResourceBuffer.h>
 #import <WebCore/SharedBuffer.h>
 #import <WebCore/TextIterator.h>
 #import <WebCore/VisibleUnits.h>
@@ -809,6 +812,14 @@ void WebPage::getAutocorrectionContext(String& contextBefore, String& markedText
     computeAutocorrectionContext(m_page->focusController().focusedOrMainFrame(), contextBefore, markedText, selectedText, contextAfter, location, length);
 }
 
+static Element* containingLinkElement(Element* element)
+{
+    for (Element* currentElement = element; currentElement; currentElement = currentElement->parentElement())
+        if (currentElement->isLink())
+            return currentElement;
+    return 0;
+}
+
 void WebPage::getPositionInformation(const IntPoint& point, InteractionInformationAtPosition& info)
 {
     FloatPoint adjustedPoint;
@@ -819,16 +830,20 @@ void WebPage::getPositionInformation(const IntPoint& point, InteractionInformati
     if (hitNode) {
         info.clickableElementName = hitNode->nodeName();
 
-        const HTMLElement* element = toHTMLElement(hitNode);
+        Element* element = hitNode->isElementNode() ? toElement(hitNode) : 0;
         if (!element)
             return;
 
         if (element->renderer() && element->renderer()->isRenderImage()) {
-            URL url = toRenderImage(element->renderer())->cachedImage()->url();
-            if (!url.string().isNull())
-                info.url = url.string();
+            Element* linkElement = containingLinkElement(element);
+
+            if (linkElement)
+                info.url = linkElement->document().completeURL(stripLeadingAndTrailingHTMLSpaces(linkElement->getAttribute(HTMLNames::hrefAttr)));;
         } else if (element->isLink())
-            info.url = element->getAttribute(HTMLNames::hrefAttr).string();
+            info.url = element->document().completeURL(stripLeadingAndTrailingHTMLSpaces(element->getAttribute(HTMLNames::hrefAttr)));
+        info.title = element->getAttribute(HTMLNames::titleAttr).string();
+        if (element->renderer())
+            info.bounds = element->renderer()->absoluteBoundingBoxRect(true);
     } else {
         Frame& frame = m_page->mainFrame();
         hitNode = frame.eventHandler().hitTestResultAtPoint((point), HitTestRequest::ReadOnly | HitTestRequest::Active | HitTestRequest::DisallowShadowContent).innerNode();
@@ -850,6 +865,55 @@ void WebPage::requestPositionInformation(const IntPoint& point)
 
     getPositionInformation(point, info);
     send(Messages::WebPageProxy::DidReceivePositionInformation(info));
+}
+
+void WebPage::startInteractionWithElementAtPosition(const WebCore::IntPoint& point)
+{
+    FloatPoint adjustedPoint;
+    m_interactionNode = m_page->mainFrame().nodeRespondingToClickEvents(point, adjustedPoint);
+}
+
+void WebPage::stopInteraction()
+{
+    m_interactionNode = nullptr;
+}
+
+void WebPage::performActionOnElement(uint32_t action)
+{
+    if (!m_interactionNode || !m_interactionNode->isHTMLElement())
+        return;
+
+    HTMLElement* element = toHTMLElement(m_interactionNode.get());
+    if (!element->renderer())
+        return;
+
+    if (static_cast<WKSheetActions>(action) == WKSheetActionCopy) {
+        if (element->renderer()->isRenderImage()) {
+            Element* linkElement = containingLinkElement(element);
+        
+            if (!linkElement)
+                m_interactionNode->document().frame()->editor().writeImageToPasteboard(*Pasteboard::createForCopyAndPaste(), *element, toRenderImage(element->renderer())->cachedImage()->url(), String());
+            else
+                m_interactionNode->document().frame()->editor().copyURL(linkElement->document().completeURL(stripLeadingAndTrailingHTMLSpaces(linkElement->getAttribute(HTMLNames::hrefAttr))), linkElement->textContent());
+        } else if (element->isLink()) {
+            m_interactionNode->document().frame()->editor().copyURL(element->document().completeURL(stripLeadingAndTrailingHTMLSpaces(element->getAttribute(HTMLNames::hrefAttr))), element->textContent());
+        }
+    } else if (static_cast<WKSelectionTouch>(action) == WKSheetActionSaveImage) {
+        if (!element->renderer()->isRenderImage())
+            return;
+        CachedImage* cachedImage = toRenderImage(element->renderer())->cachedImage();
+        if (cachedImage) {
+            SharedMemory::Handle handle;
+            RefPtr<SharedBuffer> buffer = cachedImage->resourceBuffer()->sharedBuffer();
+            if (buffer) {
+                uint64_t bufferSize = buffer->size();
+                RefPtr<SharedMemory> sharedMemoryBuffer = SharedMemory::create(bufferSize);
+                memcpy(sharedMemoryBuffer->data(), buffer->data(), bufferSize);
+                sharedMemoryBuffer->createHandle(handle, SharedMemory::ReadOnly);
+                send(Messages::WebPageProxy::SaveImageToLibrary(handle, bufferSize));
+            }
+        }
+    }
 }
 
 void WebPage::elementDidFocus(WebCore::Node* node)

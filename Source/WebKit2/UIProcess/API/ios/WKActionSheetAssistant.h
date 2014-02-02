@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,52 +23,28 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WKGestureTypes_h
-#define WKGestureTypes_h
+#import "WKActionSheet.h"
+
+#import <UIKit/UIActionSheet.h>
+#import <UIKit/UIPopoverController.h>
+#import <WebKit2/WKDeclarationSpecifiers.h>
+#import <wtf/RetainPtr.h>
+
+@protocol WKActionSheetDelegate;
+@class WKInteractionView;
 
 namespace WebKit {
+class WebPageProxy;
+}
 
-typedef enum {
-    WKGestureLoupe,
-    WKGestureOneFingerTap,
-    WKGestureTapAndAHalf,
-    WKGestureDoubleTap,
-    WKGestureTapAndHalf,
-    WKGestureDoubleTapInUneditable,
-    WKGestureOneFingerTapInUneditable,
-    WKGestureOneFingerTapSelectsAll,
-    WKGestureOneFingerDoubleTap,
-    WKGestureOneFingerTripleTap,
-    WKGestureTwoFingerSingleTap,
-    WKGestureTwoFingerRangedSelectGesture,
-    WKGestureTapOnLinkWithGesture,
-    WKGestureMakeWebSelection
-} WKGestureType;
+@interface WKActionSheetAssistant : NSObject <WKActionSheetDelegate>
 
-typedef enum {
-    WKSelectionTouchStarted,
-    WKSelectionTouchMoved,
-    WKSelectionTouchEnded,
-    WKSelectionTouchEndedMovingForward,
-    WKSelectionTouchEndedMovingBackward,
-    WKSelectionTouchEndedNotMoving
-} WKSelectionTouch;
+- (id)initWithView:(WKInteractionView *)view;
+- (void)setPage:(PassRefPtr<WebKit::WebPageProxy>)page;
+- (void)showLinkSheet;
+- (void)showImageSheet;
+- (void)showDataDetectorsSheet;
+- (void)cleanupSheet;
+- (void)updateSheetPosition;
+@end
 
-typedef enum {
-    WKGestureRecognizerStatePossible,
-    WKGestureRecognizerStateBegan,
-    WKGestureRecognizerStateChanged,
-    WKGestureRecognizerStateEnded,
-    WKGestureRecognizerStateCancelled,
-    WKGestureRecognizerStateFailed,
-    WKGestureRecognizerStateRecognized = WKGestureRecognizerStateEnded
-} WKGestureRecognizerState;
-
-typedef enum {
-    WKSheetActionCopy,
-    WKSheetActionSaveImage
-} WKSheetActions;
-
-} // namespace WebKit
-
-#endif // WKGestureTypes_h
