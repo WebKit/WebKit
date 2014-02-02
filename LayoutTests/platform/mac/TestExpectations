@@ -1340,6 +1340,8 @@ webkit.org/b/128061 svg/zoom/page/zoom-img-preserveAspectRatio-support-1.html [ 
 webkit.org/b/128061 svg/zoom/page/zoom-svg-float-border-padding.xml [ Failure ]
 webkit.org/b/128061 svg/zoom/page/zoom-svg-through-object-with-auto-size.html [ Failure ]
 webkit.org/b/128061 tables/mozilla_expected_failures/bugs/bug1055-2.html [ Failure ]
+# Non-uniform scaling context.
+webkit.org/b/128081 fast/events/page-scaled-mouse-click-iframe.html
 # End of subpixel failures.
 
 webkit.org/b/35297 media/video-display-aspect-ratio.html [ Pass Failure ]
