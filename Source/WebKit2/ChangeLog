@@ -1,3 +1,20 @@
+2014-02-02  Enrica Casucci  <enrica@apple.com>
+
+        WK2: Cannot focus a second field in a page after the first has been focused.
+        https://bugs.webkit.org/show_bug.cgi?id=128055
+        <rdar://problem/15943652>
+
+        Reviewed by Simon Fraser.
+
+        When handling singleTap, we always need to send
+        a click to WebKit when we are already interacting with text.
+        Also, when we stop assisting the node, we should not call
+        resign responder, since that will trigger another unwanted blur.
+
+        * UIProcess/API/ios/WKInteractionView.mm:
+        (-[WKInteractionView _singleTapRecognized:]):
+        (-[WKInteractionView _stopAssistingNode]):
+
 2014-02-02  Brady Eidson  <beidson@apple.com>
 
         IDB: Support IDBFactory.deleteDatabase()

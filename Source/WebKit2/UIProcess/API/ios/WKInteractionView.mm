@@ -608,7 +608,7 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
 {
     ASSERT(gestureRecognizer == _singleTapGestureRecognizer);
 
-    if (![_webSelectionAssistant shouldHandleSingleTapAtPoint:gestureRecognizer.location])
+    if (_webSelectionAssistant && ![_webSelectionAssistant shouldHandleSingleTapAtPoint:gestureRecognizer.location])
         return;
 
     [_webSelectionAssistant clearSelection];
@@ -1704,9 +1704,7 @@ static void autocorrectionContext(const String& beforeText, const String& marked
 - (void)_stopAssistingNode
 {
     _isEditable = NO;
-    if ([self isFirstResponder])
-        [self resignFirstResponder];
-    
+
     [self _stopAssistingKeyboard];
     [self reloadInputViews];
     [self _updateAccessory];
