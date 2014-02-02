@@ -1068,46 +1068,46 @@ void RenderStyle::setBoxShadow(PassOwnPtr<ShadowData> shadowData, bool add)
     rareData->m_boxShadow = shadowData;
 }
 
-static RoundedRect::Radii calcRadiiFor(const BorderData& border, IntSize size, RenderView* renderView)
+static RoundedRect::Radii calcRadiiFor(const BorderData& border, const LayoutSize& size, RenderView* renderView)
 {
     return RoundedRect::Radii(
-        IntSize(valueForLength(border.topLeft().width(), size.width(), renderView), 
-                valueForLength(border.topLeft().height(), size.height(), renderView)),
-        IntSize(valueForLength(border.topRight().width(), size.width(), renderView),
-                valueForLength(border.topRight().height(), size.height(), renderView)),
-        IntSize(valueForLength(border.bottomLeft().width(), size.width(), renderView), 
-                valueForLength(border.bottomLeft().height(), size.height(), renderView)),
-        IntSize(valueForLength(border.bottomRight().width(), size.width(), renderView), 
-                valueForLength(border.bottomRight().height(), size.height(), renderView)));
+        LayoutSize(valueForLength(border.topLeft().width(), size.width(), renderView),
+            valueForLength(border.topLeft().height(), size.height(), renderView)),
+        LayoutSize(valueForLength(border.topRight().width(), size.width(), renderView),
+            valueForLength(border.topRight().height(), size.height(), renderView)),
+        LayoutSize(valueForLength(border.bottomLeft().width(), size.width(), renderView),
+            valueForLength(border.bottomLeft().height(), size.height(), renderView)),
+        LayoutSize(valueForLength(border.bottomRight().width(), size.width(), renderView),
+            valueForLength(border.bottomRight().height(), size.height(), renderView)));
 }
 
-static float calcConstraintScaleFor(const IntRect& rect, const RoundedRect::Radii& radii)
+static float calcConstraintScaleFor(const LayoutRect& rect, const RoundedRect::Radii& radii)
 {
     // Constrain corner radii using CSS3 rules:
     // http://www.w3.org/TR/css3-background/#the-border-radius
     
     float factor = 1;
-    unsigned radiiSum;
+    float radiiSum;
 
     // top
-    radiiSum = static_cast<unsigned>(radii.topLeft().width()) + static_cast<unsigned>(radii.topRight().width()); // Casts to avoid integer overflow.
-    if (radiiSum > static_cast<unsigned>(rect.width()))
-        factor = std::min(static_cast<float>(rect.width()) / radiiSum, factor);
+    radiiSum = radii.topLeft().width() + radii.topRight().width(); // Casts to avoid integer overflow.
+    if (radiiSum > rect.width())
+        factor = std::min(rect.width() / radiiSum, factor);
 
     // bottom
-    radiiSum = static_cast<unsigned>(radii.bottomLeft().width()) + static_cast<unsigned>(radii.bottomRight().width());
-    if (radiiSum > static_cast<unsigned>(rect.width()))
-        factor = std::min(static_cast<float>(rect.width()) / radiiSum, factor);
+    radiiSum = radii.bottomLeft().width() + radii.bottomRight().width();
+    if (radiiSum > rect.width())
+        factor = std::min(rect.width() / radiiSum, factor);
     
     // left
-    radiiSum = static_cast<unsigned>(radii.topLeft().height()) + static_cast<unsigned>(radii.bottomLeft().height());
-    if (radiiSum > static_cast<unsigned>(rect.height()))
-        factor = std::min(static_cast<float>(rect.height()) / radiiSum, factor);
+    radiiSum = radii.topLeft().height() + radii.bottomLeft().height();
+    if (radiiSum > rect.height())
+        factor = std::min(rect.height() / radiiSum, factor);
     
     // right
-    radiiSum = static_cast<unsigned>(radii.topRight().height()) + static_cast<unsigned>(radii.bottomRight().height());
-    if (radiiSum > static_cast<unsigned>(rect.height()))
-        factor = std::min(static_cast<float>(rect.height()) / radiiSum, factor);
+    radiiSum = radii.topRight().height() + radii.bottomRight().height();
+    if (radiiSum > rect.height())
+        factor = std::min(rect.height() / radiiSum, factor);
     
     ASSERT(factor <= 1);
     return factor;
@@ -1146,16 +1146,16 @@ RoundedRect RenderStyle::getRoundedInnerBorderFor(const LayoutRect& borderRect, 
 {
     bool horizontal = isHorizontalWritingMode();
 
-    int leftWidth = (!horizontal || includeLogicalLeftEdge) ? borderLeftWidth() : 0;
-    int rightWidth = (!horizontal || includeLogicalRightEdge) ? borderRightWidth() : 0;
-    int topWidth = (horizontal || includeLogicalLeftEdge) ? borderTopWidth() : 0;
-    int bottomWidth = (horizontal || includeLogicalRightEdge) ? borderBottomWidth() : 0;
+    LayoutUnit leftWidth = (!horizontal || includeLogicalLeftEdge) ? borderLeftWidth() : 0;
+    LayoutUnit rightWidth = (!horizontal || includeLogicalRightEdge) ? borderRightWidth() : 0;
+    LayoutUnit topWidth = (horizontal || includeLogicalLeftEdge) ? borderTopWidth() : 0;
+    LayoutUnit bottomWidth = (horizontal || includeLogicalRightEdge) ? borderBottomWidth() : 0;
 
     return getRoundedInnerBorderFor(borderRect, topWidth, bottomWidth, leftWidth, rightWidth, includeLogicalLeftEdge, includeLogicalRightEdge);
 }
 
-RoundedRect RenderStyle::getRoundedInnerBorderFor(const LayoutRect& borderRect,
-    int topWidth, int bottomWidth, int leftWidth, int rightWidth, bool includeLogicalLeftEdge, bool includeLogicalRightEdge) const
+RoundedRect RenderStyle::getRoundedInnerBorderFor(const LayoutRect& borderRect, LayoutUnit topWidth, LayoutUnit bottomWidth,
+    LayoutUnit leftWidth, LayoutUnit rightWidth, bool includeLogicalLeftEdge, bool includeLogicalRightEdge) const
 {
     LayoutRect innerRect(borderRect.x() + leftWidth, 
                borderRect.y() + topWidth, 

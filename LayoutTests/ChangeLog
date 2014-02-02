@@ -1,3 +1,17 @@
+2014-02-02  Zalan Bujtas  <zalan@apple.com>
+
+        Subpixel rendering: Make BorderEdge/RoundedRect::Radii LayoutUnit aware.
+        https://bugs.webkit.org/show_bug.cgi?id=128036
+
+        Reviewed by Darin Adler.
+
+        Bug 128061: Subpixel rendering: borders are reporting float values.
+
+        * platform/efl/TestExpectations:
+        * platform/gtk/TestExpectations:
+        * platform/mac/TestExpectations:
+        * platform/win/TestExpectations:
+
 2014-02-01  Alexey Proskuryakov  <ap@apple.com>
 
         Update WebCrypto JWK mapping to use key_ops

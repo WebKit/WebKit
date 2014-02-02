@@ -1320,6 +1320,28 @@ webkit.org/b/126898 css3/flexbox/image-percent-max-height.html [ ImageOnlyFailur
 # Subpixel: misplaced zoomed svg content.
 webkit.org/b/126900 svg/zoom/page/zoom-zoom-coords.xhtml [ Failure ]
 
+# Subpixel rendering: borders are reporting float values.
+webkit.org/b/128061 css1/units/length_units.html [ Failure ]
+webkit.org/b/128061 fast/css/bidi-override-in-anonymous-block.html [ Failure ]
+webkit.org/b/128061 fast/multicol/span/anonymous-style-inheritance.html [ Failure ]
+webkit.org/b/128061 fast/repaint/repaint-during-scroll-with-zoom.html [ Failure ]
+webkit.org/b/128061 ietestcenter/css3/bordersbackgrounds/border-radius-initial-value-001.htm [ Failure ]
+webkit.org/b/128061 ietestcenter/css3/bordersbackgrounds/border-radius-style-001.htm [ Failure ]
+webkit.org/b/128061 ietestcenter/css3/bordersbackgrounds/border-radius-style-002.htm [ Failure ]
+webkit.org/b/128061 ietestcenter/css3/bordersbackgrounds/border-radius-style-004.htm [ Failure ]
+webkit.org/b/128061 ietestcenter/css3/bordersbackgrounds/border-radius-with-three-values-001.htm [ Failure ]
+webkit.org/b/128061 ietestcenter/css3/bordersbackgrounds/border-radius-with-two-values-001.htm [ Failure ]
+webkit.org/b/128061 ietestcenter/css3/bordersbackgrounds/border-top-left-radius-values-003.htm [ Failure ]
+webkit.org/b/128061 media/video-zoom.html [ Failure ]
+webkit.org/b/128061 svg/custom/svg-fonts-in-html.html [ Failure ]
+webkit.org/b/128061 svg/zoom/page/zoom-background-image-tiled.html [ Failure ]
+webkit.org/b/128061 svg/zoom/page/zoom-background-images.html [ Failure ]
+webkit.org/b/128061 svg/zoom/page/zoom-img-preserveAspectRatio-support-1.html [ Failure ]
+webkit.org/b/128061 svg/zoom/page/zoom-svg-float-border-padding.xml [ Failure ]
+webkit.org/b/128061 svg/zoom/page/zoom-svg-through-object-with-auto-size.html [ Failure ]
+webkit.org/b/128061 tables/mozilla_expected_failures/bugs/bug1055-2.html [ Failure ]
+# End of subpixel failures.
+
 webkit.org/b/35297 media/video-display-aspect-ratio.html [ Pass Failure ]
 
 webkit.org/b/127310 svg/filters/feComponentTransfer-style-crash.xhtml [ Pass Failure Timeout ]

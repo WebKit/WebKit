@@ -1,3 +1,36 @@
+2014-02-02  Zalan Bujtas  <zalan@apple.com>
+
+        Subpixel rendering: Make BorderEdge/RoundedRect::Radii LayoutUnit aware.
+        https://bugs.webkit.org/show_bug.cgi?id=128036
+
+        Reviewed by Darin Adler.
+
+        Covered by existing tests.
+
+        * platform/LayoutUnit.h:
+        (WebCore::LayoutUnit::operator++):
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::BorderEdge::BorderEdge):
+        (WebCore::BorderEdge::usedWidth):
+        (WebCore::BorderEdge::getDoubleBorderStripeWidths):
+        (WebCore::RenderBoxModelObject::paintOneBorderSide):
+        (WebCore::RenderBoxModelObject::paintBorder):
+        (WebCore::RenderBoxModelObject::drawBoxSideFromPath):
+        (WebCore::calculateSideRectIncludingInner):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::drawLineForBoxSide):
+        * rendering/RenderObject.h:
+        * rendering/style/BorderData.h:
+        (WebCore::BorderData::borderLeftWidth):
+        (WebCore::BorderData::borderRightWidth):
+        (WebCore::BorderData::borderTopWidth):
+        (WebCore::BorderData::borderBottomWidth):
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::calcRadiiFor):
+        (WebCore::calcConstraintScaleFor):
+        (WebCore::RenderStyle::getRoundedInnerBorderFor):
+        * rendering/style/RenderStyle.h:
+
 2014-02-01  Hunseop Jeong  <hs85.jeong@samsung.com>
 
         REGRESSION(r163234) Debug build is broken

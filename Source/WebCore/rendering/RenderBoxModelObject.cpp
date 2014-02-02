@@ -1396,7 +1396,7 @@ bool RenderBoxModelObject::paintNinePieceImage(GraphicsContext* graphicsContext,
 
 class BorderEdge {
 public:
-    BorderEdge(int edgeWidth, const Color& edgeColor, EBorderStyle edgeStyle, bool edgeIsTransparent, bool edgeIsPresent = true)
+    BorderEdge(LayoutUnit edgeWidth, const Color& edgeColor, EBorderStyle edgeStyle, bool edgeIsTransparent, bool edgeIsPresent = true)
         : width(edgeWidth)
         , color(edgeColor)
         , style(edgeStyle)
@@ -1442,9 +1442,9 @@ public:
         return true;
     }
 
-    int usedWidth() const { return isPresent ? width : 0; }
+    LayoutUnit usedWidth() const { return isPresent ? width : LayoutUnit::fromPixel(0); }
     
-    void getDoubleBorderStripeWidths(int& outerWidth, int& innerWidth) const
+    void getDoubleBorderStripeWidths(LayoutUnit& outerWidth, LayoutUnit& innerWidth) const
     {
         int fullWidth = usedWidth();
         outerWidth = fullWidth / 3;
@@ -1458,7 +1458,7 @@ public:
             innerWidth += 1;
     }
     
-    int width;
+    LayoutUnit width;
     Color color;
     EBorderStyle style;
     bool isTransparent;
@@ -1692,7 +1692,7 @@ void RenderBoxModelObject::paintOneBorderSide(GraphicsContext* graphicsContext, 
         }
         
         drawLineForBoxSide(graphicsContext, sideRect.x(), sideRect.y(), sideRect.maxX(), sideRect.maxY(), side, colorToPaint, edgeToRender.style,
-                mitreAdjacentSide1 ? adjacentEdge1.width : 0, mitreAdjacentSide2 ? adjacentEdge2.width : 0, antialias);
+            mitreAdjacentSide1 ? adjacentEdge1.width : LayoutUnit::fromPixel(0), mitreAdjacentSide2 ? adjacentEdge2.width : LayoutUnit::fromPixel(0), antialias);
     }
 }
 
@@ -1881,8 +1881,8 @@ void RenderBoxModelObject::paintBorder(const PaintInfo& info, const LayoutRect& 
                 LayoutRect innerThirdRect = outerBorder.rect();
                 LayoutRect outerThirdRect = outerBorder.rect();
                 for (int side = BSTop; side <= BSLeft; ++side) {
-                    int outerWidth;
-                    int innerWidth;
+                    LayoutUnit outerWidth;
+                    LayoutUnit innerWidth;
                     edges[side].getDoubleBorderStripeWidths(outerWidth, innerWidth);
 
                     if (side == BSTop) {
@@ -2024,20 +2024,20 @@ void RenderBoxModelObject::drawBoxSideFromPath(GraphicsContext* graphicsContext,
     }
     case DOUBLE: {
         // Get the inner border rects for both the outer border line and the inner border line
-        int outerBorderTopWidth;
-        int innerBorderTopWidth;
+        LayoutUnit outerBorderTopWidth;
+        LayoutUnit innerBorderTopWidth;
         edges[BSTop].getDoubleBorderStripeWidths(outerBorderTopWidth, innerBorderTopWidth);
 
-        int outerBorderRightWidth;
-        int innerBorderRightWidth;
+        LayoutUnit outerBorderRightWidth;
+        LayoutUnit innerBorderRightWidth;
         edges[BSRight].getDoubleBorderStripeWidths(outerBorderRightWidth, innerBorderRightWidth);
 
-        int outerBorderBottomWidth;
-        int innerBorderBottomWidth;
+        LayoutUnit outerBorderBottomWidth;
+        LayoutUnit innerBorderBottomWidth;
         edges[BSBottom].getDoubleBorderStripeWidths(outerBorderBottomWidth, innerBorderBottomWidth);
 
-        int outerBorderLeftWidth;
-        int innerBorderLeftWidth;
+        LayoutUnit outerBorderLeftWidth;
+        LayoutUnit innerBorderLeftWidth;
         edges[BSLeft].getDoubleBorderStripeWidths(outerBorderLeftWidth, innerBorderLeftWidth);
 
         // Draw inner border line
@@ -2239,7 +2239,7 @@ void RenderBoxModelObject::clipBorderSidePolygon(GraphicsContext* graphicsContex
 static LayoutRect calculateSideRectIncludingInner(const RoundedRect& outerBorder, const BorderEdge edges[], BoxSide side)
 {
     LayoutRect sideRect = outerBorder.rect();
-    int width;
+    LayoutUnit width;
 
     switch (side) {
     case BSTop:

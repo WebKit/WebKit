@@ -736,11 +736,11 @@ RenderBlock* RenderObject::containingBlock() const
     return toRenderBlock(o);
 }
 
-void RenderObject::drawLineForBoxSide(GraphicsContext* graphicsContext, int x1, int y1, int x2, int y2,
+void RenderObject::drawLineForBoxSide(GraphicsContext* graphicsContext, LayoutUnit x1, LayoutUnit y1, LayoutUnit x2, LayoutUnit y2,
     BoxSide side, Color color, EBorderStyle borderStyle, int adjacentWidth1, int adjacentWidth2, bool antialias)
 {
-    int thickness;
-    int length;
+    float thickness;
+    float length;
     if (side == BSTop || side == BSBottom) {
         thickness = y2 - y1;
         length = x2 - x1;
