@@ -190,7 +190,7 @@ public:
     operator double() const { return toDouble(); }
     operator bool() const { return m_value; }
 
-    LayoutUnit operator++(int)
+    LayoutUnit& operator++()
     {
         m_value += kEffectiveFixedPointDenominator;
         return *this;
