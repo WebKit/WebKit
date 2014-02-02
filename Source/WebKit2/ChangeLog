@@ -1,5 +1,13 @@
 2014-02-01  Enrica Casucci  <enrica@apple.com>
 
+        Speculative OSX build fix.
+
+        Excluding WKActionSheet.mm and WKActionSheetAssistant.mm.
+
+        * Configurations/WebKit2.xcconfig:
+
+2014-02-01  Enrica Casucci  <enrica@apple.com>
+
         Add support for ActionSheets in WK2 for iOS.
         https://bugs.webkit.org/show_bug.cgi?id=127586
         <rdar://problem/15283667>
