@@ -1,3 +1,13 @@
+2014-02-01  Hunseop Jeong  <hs85.jeong@samsung.com>
+
+        REGRESSION(r163234) Debug build is broken
+        https://bugs.webkit.org/show_bug.cgi?id=128059
+
+        Unreviewed. Debug build is broken with INDEXED_DATABASE.
+
+        * Modules/indexeddb/IDBKeyData.cpp:
+        (WebCore::IDBKeyData::loggingString): Added the default: case.
+
 2014-02-01  Zalan Bujtas  <zalan@apple.com>
 
         Subpixel rendering: LayoutUnit operator++ is broken.

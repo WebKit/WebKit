@@ -274,7 +274,10 @@ String IDBKeyData::loggingString() const
         return String::format("<number> - %f", numberValue);
     case IDBKey::MinType:
         return "<minimum>";
+    default:
+        return String();
     }
+    ASSERT_NOT_REACHED();
 }
 #endif
 
