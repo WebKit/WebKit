@@ -257,6 +257,13 @@ bool SQLiteIDBCursor::advanceOnce()
     int result = m_statement->step();
     if (result == SQLResultDone) {
         m_completed = true;
+
+        // When a cursor reaches its end, that is indicated by having undefined keys/values
+        m_currentKey = IDBKeyData();
+        m_currentPrimaryKey = IDBKeyData();
+        m_currentValueBuffer.clear();
+        m_currentValueKey = IDBKeyData();
+
         return true;
     }
 

@@ -124,9 +124,8 @@ void SQLiteIDBTransaction::closeCursor(SQLiteIDBCursor& cursor)
 
 void SQLiteIDBTransaction::clearCursors()
 {
-    // Iterate over the keys instead of each key/value pair because std::unique_ptr<> can't be iterated over directly.
-    for (auto key : m_cursors.keys())
-        m_backingStore.unregisterCursor(m_cursors.get(key));
+    for (auto& cursor : m_cursors.values())
+        m_backingStore.unregisterCursor(cursor.get());
 
     m_cursors.clear();
 }
