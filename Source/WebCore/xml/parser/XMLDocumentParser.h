@@ -99,15 +99,15 @@ class Text;
         XMLDocumentParser(DocumentFragment&, Element*, ParserContentPolicy);
 
         // From DocumentParser
-        virtual void insert(const SegmentedString&);
-        virtual void append(PassRefPtr<StringImpl>);
-        virtual void finish();
-        virtual bool isWaitingForScripts() const;
-        virtual void stopParsing();
-        virtual void detach();
+        virtual void insert(const SegmentedString&) override;
+        virtual void append(PassRefPtr<StringImpl>) override;
+        virtual void finish() override;
+        virtual bool isWaitingForScripts() const override;
+        virtual void stopParsing() override;
+        virtual void detach() override;
 
         // from CachedResourceClient
-        virtual void notifyFinished(CachedResource*);
+        virtual void notifyFinished(CachedResource*) override;
 
         void end();
 
@@ -116,7 +116,7 @@ class Text;
 
         bool appendFragmentSource(const String&);
 
-public:
+    public:
         // callbacks from parser SAX
         void error(XMLErrors::ErrorType, const char* message, va_list args) WTF_ATTRIBUTE_PRINTF(3, 0);
         void startElementNs(const xmlChar* xmlLocalName, const xmlChar* xmlPrefix, const xmlChar* xmlURI, int nb_namespaces,

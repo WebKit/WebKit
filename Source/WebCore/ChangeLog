@@ -1,3 +1,15 @@
+2014-02-02  Sam Weinig  <sam@webkit.org>
+
+        Add some missing override keywords
+        https://bugs.webkit.org/show_bug.cgi?id=128082
+
+        Reviewed by Antti Koivisto.
+
+        * loader/DocumentThreadableLoader.h:
+        * loader/LinkLoader.h:
+        * loader/TextTrackLoader.h:
+        * xml/parser/XMLDocumentParser.h:
+
 2014-02-02  Brady Eidson  <beidson@apple.com>
 
         IDB: Support IDBFactory.deleteDatabase()

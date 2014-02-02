@@ -71,15 +71,15 @@ public:
 private:
 
     // CachedResourceClient
-    virtual void notifyFinished(CachedResource*);
-    virtual void deprecatedDidReceiveCachedResource(CachedResource*);
+    virtual void notifyFinished(CachedResource*) override;
+    virtual void deprecatedDidReceiveCachedResource(CachedResource*) override;
     
     // WebVTTParserClient
-    virtual void newCuesParsed();
+    virtual void newCuesParsed() override;
 #if ENABLE(WEBVTT_REGIONS)
-    virtual void newRegionsParsed();
+    virtual void newRegionsParsed() override;
 #endif
-    virtual void fileFailedToParse();
+    virtual void fileFailedToParse() override;
     
     TextTrackLoader(TextTrackLoaderClient&, ScriptExecutionContext*);
     

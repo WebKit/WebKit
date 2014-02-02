@@ -53,7 +53,7 @@ public:
     virtual ~LinkLoader();
 
     // from CachedResourceClient
-    virtual void notifyFinished(CachedResource*);
+    virtual void notifyFinished(CachedResource*) override;
 
     void released();
     bool loadLink(const LinkRelAttribute&, const String& type, const String& sizes, const URL&, Document*);
