@@ -1,3 +1,10 @@
+2014-02-03  Darin Adler  <darin@apple.com>
+
+        Try to fix 32-bit Mac build.
+
+        * WebProcess/Plugins/Netscape/mac/NetscapePluginMac.mm:
+        (WebKit::convertStringToKeyCodes): Use deprecatedCharacters.
+
 2014-02-03  Krzysztof Czech  <k.czech@samsung.com>
 
         Build fix after r163289.
