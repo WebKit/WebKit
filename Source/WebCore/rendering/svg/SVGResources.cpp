@@ -279,7 +279,7 @@ bool SVGResources::buildCachedResources(const RenderElement& renderer, const SVG
     return foundResources;
 }
 
-void SVGResources::removeClientFromCache(RenderObject& object, bool markForInvalidation) const
+void SVGResources::removeClientFromCache(RenderElement& renderer, bool markForInvalidation) const
 {
     if (!m_clipperFilterMaskerData && !m_markerData && !m_fillStrokeData && !m_linkedResource)
         return;
@@ -288,35 +288,35 @@ void SVGResources::removeClientFromCache(RenderObject& object, bool markForInval
         ASSERT(!m_clipperFilterMaskerData);
         ASSERT(!m_markerData);
         ASSERT(!m_fillStrokeData);
-        m_linkedResource->removeClientFromCache(object, markForInvalidation);
+        m_linkedResource->removeClientFromCache(renderer, markForInvalidation);
         return;
     }
 
     if (m_clipperFilterMaskerData) {
         if (m_clipperFilterMaskerData->clipper)
-            m_clipperFilterMaskerData->clipper->removeClientFromCache(object, markForInvalidation);
+            m_clipperFilterMaskerData->clipper->removeClientFromCache(renderer, markForInvalidation);
 #if ENABLE(FILTERS)
         if (m_clipperFilterMaskerData->filter)
-            m_clipperFilterMaskerData->filter->removeClientFromCache(object, markForInvalidation);
+            m_clipperFilterMaskerData->filter->removeClientFromCache(renderer, markForInvalidation);
 #endif
         if (m_clipperFilterMaskerData->masker)
-            m_clipperFilterMaskerData->masker->removeClientFromCache(object, markForInvalidation);
+            m_clipperFilterMaskerData->masker->removeClientFromCache(renderer, markForInvalidation);
     }
 
     if (m_markerData) {
         if (m_markerData->markerStart)
-            m_markerData->markerStart->removeClientFromCache(object, markForInvalidation);
+            m_markerData->markerStart->removeClientFromCache(renderer, markForInvalidation);
         if (m_markerData->markerMid)
-            m_markerData->markerMid->removeClientFromCache(object, markForInvalidation);
+            m_markerData->markerMid->removeClientFromCache(renderer, markForInvalidation);
         if (m_markerData->markerEnd)
-            m_markerData->markerEnd->removeClientFromCache(object, markForInvalidation);
+            m_markerData->markerEnd->removeClientFromCache(renderer, markForInvalidation);
     }
 
     if (m_fillStrokeData) {
         if (m_fillStrokeData->fill)
-            m_fillStrokeData->fill->removeClientFromCache(object, markForInvalidation);
+            m_fillStrokeData->fill->removeClientFromCache(renderer, markForInvalidation);
         if (m_fillStrokeData->stroke)
-            m_fillStrokeData->stroke->removeClientFromCache(object, markForInvalidation);
+            m_fillStrokeData->stroke->removeClientFromCache(renderer, markForInvalidation);
     }
 }
 

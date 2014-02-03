@@ -48,7 +48,7 @@ void RenderSVGResourceGradient::removeAllClientsFromCache(bool markForInvalidati
     markAllClientsForInvalidation(markForInvalidation ? RepaintInvalidation : ParentOnlyInvalidation);
 }
 
-void RenderSVGResourceGradient::removeClientFromCache(RenderObject& client, bool markForInvalidation)
+void RenderSVGResourceGradient::removeClientFromCache(RenderElement& client, bool markForInvalidation)
 {
     m_gradientMap.remove(&client);
     markClientForInvalidation(client, markForInvalidation ? RepaintInvalidation : ParentOnlyInvalidation);

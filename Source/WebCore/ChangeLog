@@ -1,3 +1,46 @@
+2014-02-03  Andreas Kling  <akling@apple.com>
+
+        RenderSVGResource::removeClientFromCache() should take RenderElement&.
+        <https://webkit.org/b/128097>
+
+        Text renderers never have resources associated with them.
+        This is yet another step towards enforcing that at compile-time
+        by making all the resource cache interfaces deal in RenderElement.
+
+        Also marked the RenderSVGResourceSolidColor class final.
+
+        Reviewed by Darin Adler.
+
+        * rendering/svg/RenderSVGResource.cpp:
+        (WebCore::removeFromCacheAndInvalidateDependencies):
+        (WebCore::RenderSVGResource::markForLayoutAndParentResourceInvalidation):
+        * rendering/svg/RenderSVGResource.h:
+        * rendering/svg/RenderSVGResourceClipper.cpp:
+        (WebCore::RenderSVGResourceClipper::removeClientFromCache):
+        * rendering/svg/RenderSVGResourceClipper.h:
+        * rendering/svg/RenderSVGResourceFilter.cpp:
+        (WebCore::RenderSVGResourceFilter::removeClientFromCache):
+        * rendering/svg/RenderSVGResourceFilter.h:
+        * rendering/svg/RenderSVGResourceGradient.cpp:
+        (WebCore::RenderSVGResourceGradient::removeClientFromCache):
+        * rendering/svg/RenderSVGResourceGradient.h:
+        * rendering/svg/RenderSVGResourceMarker.cpp:
+        (WebCore::RenderSVGResourceMarker::removeClientFromCache):
+        * rendering/svg/RenderSVGResourceMarker.h:
+        * rendering/svg/RenderSVGResourceMasker.cpp:
+        (WebCore::RenderSVGResourceMasker::removeClientFromCache):
+        * rendering/svg/RenderSVGResourceMasker.h:
+        * rendering/svg/RenderSVGResourcePattern.cpp:
+        (WebCore::RenderSVGResourcePattern::removeClientFromCache):
+        * rendering/svg/RenderSVGResourcePattern.h:
+        * rendering/svg/RenderSVGResourceSolidColor.h:
+        * rendering/svg/SVGRenderSupport.cpp:
+        (WebCore::invalidateResourcesOfChildren):
+        (WebCore::SVGRenderSupport::layoutChildren):
+        * rendering/svg/SVGResources.cpp:
+        (WebCore::SVGResources::removeClientFromCache):
+        * rendering/svg/SVGResources.h:
+
 2014-02-03  Dan Bernstein  <mitz@apple.com>
 
         More iOS build fixing.

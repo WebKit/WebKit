@@ -64,7 +64,7 @@ void RenderSVGResourceFilter::removeAllClientsFromCache(bool markForInvalidation
     markAllClientsForInvalidation(markForInvalidation ? LayoutAndBoundariesInvalidation : ParentOnlyInvalidation);
 }
 
-void RenderSVGResourceFilter::removeClientFromCache(RenderObject& client, bool markForInvalidation)
+void RenderSVGResourceFilter::removeClientFromCache(RenderElement& client, bool markForInvalidation)
 {
     if (FilterData* filterData = m_filter.get(&client)) {
         if (filterData->savedContext)

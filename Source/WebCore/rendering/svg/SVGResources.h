@@ -72,7 +72,7 @@ public:
     void buildSetOfResources(HashSet<RenderSVGResourceContainer*>&);
 
     // Methods operating on all cached resources
-    void removeClientFromCache(RenderObject&, bool markForInvalidation = true) const;
+    void removeClientFromCache(RenderElement&, bool markForInvalidation = true) const;
     void resourceDestroyed(RenderSVGResourceContainer&);
 
 #ifndef NDEBUG

@@ -185,14 +185,14 @@ const RenderSVGRoot& SVGRenderSupport::findTreeRootObject(const RenderElement& s
     return *lineageOfType<RenderSVGRoot>(start).first();
 }
 
-static inline void invalidateResourcesOfChildren(RenderObject& start)
+static inline void invalidateResourcesOfChildren(RenderElement& renderer)
 {
-    ASSERT(!start.needsLayout());
-    if (SVGResources* resources = SVGResourcesCache::cachedResourcesForRenderObject(start))
-        resources->removeClientFromCache(start, false);
+    ASSERT(!renderer.needsLayout());
+    if (SVGResources* resources = SVGResourcesCache::cachedResourcesForRenderObject(renderer))
+        resources->removeClientFromCache(renderer, false);
 
-    for (RenderObject* child = start.firstChildSlow(); child; child = child->nextSibling())
-        invalidateResourcesOfChildren(*child);
+    for (auto& child : childrenOfType<RenderElement>(renderer))
+        invalidateResourcesOfChildren(child);
 }
 
 static inline bool layoutSizeOfNearestViewportChanged(const RenderElement& renderer)
@@ -288,8 +288,10 @@ void SVGRenderSupport::layoutChildren(RenderElement& start, bool selfNeedsLayout
     }
 
     // If the layout size changed, invalidate all resources of all children that didn't go through the layout() code path.
-    for (auto child : notlayoutedObjects)
-        invalidateResourcesOfChildren(*child);
+    for (auto child : notlayoutedObjects) {
+        if (child->isRenderElement())
+            invalidateResourcesOfChildren(toRenderElement(*child));
+    }
 }
 
 bool SVGRenderSupport::isOverflowHidden(const RenderElement& renderer)

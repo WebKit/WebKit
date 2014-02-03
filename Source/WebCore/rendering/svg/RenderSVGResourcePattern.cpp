@@ -52,7 +52,7 @@ void RenderSVGResourcePattern::removeAllClientsFromCache(bool markForInvalidatio
     markAllClientsForInvalidation(markForInvalidation ? RepaintInvalidation : ParentOnlyInvalidation);
 }
 
-void RenderSVGResourcePattern::removeClientFromCache(RenderObject& client, bool markForInvalidation)
+void RenderSVGResourcePattern::removeClientFromCache(RenderElement& client, bool markForInvalidation)
 {
     m_patternMap.remove(&client);
     markClientForInvalidation(client, markForInvalidation ? RepaintInvalidation : ParentOnlyInvalidation);

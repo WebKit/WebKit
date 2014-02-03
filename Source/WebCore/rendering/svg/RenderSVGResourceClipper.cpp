@@ -61,7 +61,7 @@ void RenderSVGResourceClipper::removeAllClientsFromCache(bool markForInvalidatio
     markAllClientsForInvalidation(markForInvalidation ? LayoutAndBoundariesInvalidation : ParentOnlyInvalidation);
 }
 
-void RenderSVGResourceClipper::removeClientFromCache(RenderObject& client, bool markForInvalidation)
+void RenderSVGResourceClipper::removeClientFromCache(RenderElement& client, bool markForInvalidation)
 {
     m_clipper.remove(&client);
 

@@ -26,19 +26,19 @@
 
 namespace WebCore {
 
-class RenderSVGResourceSolidColor : public RenderSVGResource {
+class RenderSVGResourceSolidColor final : public RenderSVGResource {
 public:
     RenderSVGResourceSolidColor();
     virtual ~RenderSVGResourceSolidColor();
 
-    virtual void removeAllClientsFromCache(bool = true) { }
-    virtual void removeClientFromCache(RenderObject&, bool = true) { }
+    virtual void removeAllClientsFromCache(bool = true) override { }
+    virtual void removeClientFromCache(RenderElement&, bool = true) override { }
 
     virtual bool applyResource(RenderElement&, const RenderStyle&, GraphicsContext*&, unsigned short resourceMode) override;
     virtual void postApplyResource(RenderElement&, GraphicsContext*&, unsigned short resourceMode, const Path*, const RenderSVGShape*) override;
     virtual FloatRect resourceBoundingBox(const RenderObject&) override { return FloatRect(); }
 
-    virtual RenderSVGResourceType resourceType() const { return s_resourceType; }
+    virtual RenderSVGResourceType resourceType() const override { return s_resourceType; }
     static RenderSVGResourceType s_resourceType;
 
     const Color& color() const { return m_color; }

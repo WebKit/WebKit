@@ -46,7 +46,7 @@ public:
     SVGGradientElement& gradientElement() const { return static_cast<SVGGradientElement&>(RenderSVGResourceContainer::element()); }
 
     virtual void removeAllClientsFromCache(bool markForInvalidation = true) override final;
-    virtual void removeClientFromCache(RenderObject&, bool markForInvalidation = true) override final;
+    virtual void removeClientFromCache(RenderElement&, bool markForInvalidation = true) override final;
 
     virtual bool applyResource(RenderElement&, const RenderStyle&, GraphicsContext*&, unsigned short resourceMode) override final;
     virtual void postApplyResource(RenderElement&, GraphicsContext*&, unsigned short resourceMode, const Path*, const RenderSVGShape*) override final;
