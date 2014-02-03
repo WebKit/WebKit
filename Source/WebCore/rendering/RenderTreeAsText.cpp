@@ -66,6 +66,7 @@
 #include "RenderSVGImage.h"
 #include "RenderSVGInlineText.h"
 #include "RenderSVGPath.h"
+#include "RenderSVGResourceContainer.h"
 #include "RenderSVGRoot.h"
 #include "RenderSVGText.h"
 #include "SVGRenderTreeAsText.h"
@@ -518,11 +519,11 @@ void write(TextStream& ts, const RenderObject& o, int indent, RenderAsTextBehavi
         return;
     }
     if (o.isSVGResourceContainer()) {
-        writeSVGResourceContainer(ts, o, indent);
+        writeSVGResourceContainer(ts, toRenderSVGResourceContainer(o), indent);
         return;
     }
     if (o.isSVGContainer()) {
-        writeSVGContainer(ts, o, indent);
+        writeSVGContainer(ts, toRenderSVGContainer(o), indent);
         return;
     }
     if (o.isSVGRoot()) {

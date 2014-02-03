@@ -1,3 +1,36 @@
+2014-02-03  Andreas Kling  <akling@apple.com>
+
+        CTTE: Grab bag of SVGRenderTreeAsText cleanups.
+        <https://webkit.org/b/128099>
+
+        Made some of the DRT SVG functions take more specific types than
+        RenderObject. Removed some redundant casts.
+
+        Reviewed by Anders Carlsson.
+
+        * rendering/RenderTreeAsText.cpp:
+        (WebCore::write):
+        * rendering/svg/SVGRenderTreeAsText.h:
+        * rendering/svg/SVGRenderTreeAsText.cpp:
+        (WebCore::writeSVGResourceContainer):
+        (WebCore::writeSVGContainer):
+
+            Make writeSVGResourceContainer() and writeSVGContainer() take the
+            final type instead of RenderObject.
+
+        (WebCore::writeStyle):
+        (WebCore::writePositionAndStyle):
+
+            Make these take RenderElement instead of RenderObject.
+
+        (WebCore::writeChildren):
+
+            Use child renderer iterator.
+
+        (WebCore::writeResources):
+
+            Remove unnecessary cast.
+
 2014-01-25  Darin Adler  <darin@apple.com>
 
         Stop using Unicode.h
