@@ -1,3 +1,25 @@
+2014-02-03  Oliver Hunt  <oliver@apple.com>
+
+        Deconstructed parameters aren't being placed in the correct scope
+        https://bugs.webkit.org/show_bug.cgi?id=128126
+
+        Reviewed by Antti Koivisto.
+
+        Make sure we declare the bound parameter names as variables when
+        we reparse.  In the BytecodeGenerator we now also directly ensure
+        that bound parameters are placed in the symbol table of the function
+        we're currently compiling.  We then delay binding until just before
+        we start codegen for the body of the function so that we can ensure
+        the function has completely initialised all scope details.
+
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::generate):
+        (JSC::BytecodeGenerator::BytecodeGenerator):
+        * bytecompiler/BytecodeGenerator.h:
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::Parser):
+        (JSC::Parser<LexerType>::createBindingPattern):
+
 2014-02-03  Alexey Proskuryakov  <ap@apple.com>
 
         Update JS whitespace definition for changes in Unicode 6.3

@@ -219,11 +219,25 @@ Parser<LexerType>::Parser(VM* vm, const SourceCode& source, FunctionParameters* 
     if (strictness == JSParseStrict)
         scope->setStrictMode();
     if (parameters) {
+        bool hadBindingParameters = false;
         for (unsigned i = 0; i < parameters->size(); i++) {
             auto parameter = parameters->at(i);
-            if (!parameter->isBindingNode())
+            if (!parameter->isBindingNode()) {
+                hadBindingParameters = true;
                 continue;
+            }
             scope->declareParameter(&static_cast<BindingNode*>(parameter)->boundProperty());
+        }
+        if (hadBindingParameters) {
+            Vector<Identifier> boundParameterNames;
+            for (unsigned i = 0; i < parameters->size(); i++) {
+                auto parameter = parameters->at(i);
+                if (parameter->isBindingNode())
+                    continue;
+                parameter->collectBoundIdentifiers(boundParameterNames);
+            }
+            for (auto boundParameterName : boundParameterNames)
+                scope->declareVariable(&boundParameterName);
         }
     }
     if (!name.isNull())
@@ -498,7 +512,8 @@ template <class TreeBuilder> TreeDeconstructionPattern Parser<LexerType>::create
             }
         }
         if (kind != DeconstructToExpressions)
-            context.addVar(&name, kind == DeconstructToParameters ? 0 : DeclarationStacks::HasInitializer);
+            context.addVar(&name, DeclarationStacks::HasInitializer);
+
     } else {
         if (kind == DeconstructToVariables) {
             failIfFalseIfStrict(declareVariable(&name), "Cannot declare a variable named '", name.impl(), "' in strict mode");

@@ -63,6 +63,10 @@ ParserError BytecodeGenerator::generate()
     SamplingRegion samplingRegion("Bytecode Generation");
     
     m_codeBlock->setThisRegister(m_thisRegister.virtualRegister());
+    for (size_t i = 0; i < m_deconstructedParameters.size(); i++) {
+        auto& entry = m_deconstructedParameters[i];
+        entry.second->bindValue(*this, entry.first.get());
+    }
 
     m_scopeNode->emitBytecode(*this);
 
@@ -298,10 +302,16 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionBodyNode* functionBody, Unl
 
     const DeclarationStacks::FunctionStack& functionStack = functionBody->functionStack();
     const DeclarationStacks::VarStack& varStack = functionBody->varStack();
+    IdentifierSet test;
 
     // Captured variables and functions go first so that activations don't have
     // to step over the non-captured locals to mark them.
     if (functionBody->hasCapturedVariables()) {
+        for (size_t i = 0; i < boundParameterProperties.size(); i++) {
+            const Identifier& ident = boundParameterProperties[i];
+            if (functionBody->captures(ident))
+                addVar(ident, IsVariable, IsWatchable);
+        }
         for (size_t i = 0; i < functionStack.size(); ++i) {
             FunctionBodyNode* function = functionStack[i];
             const Identifier& ident = function->ident();
@@ -338,6 +348,11 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionBodyNode* functionBody, Unl
         }
     }
     m_lastLazyFunction = canLazilyCreateFunctions ? codeBlock->m_numVars : m_firstLazyFunction;
+    for (size_t i = 0; i < boundParameterProperties.size(); i++) {
+        const Identifier& ident = boundParameterProperties[i];
+        if (!functionBody->captures(ident))
+            addVar(ident, IsVariable, IsWatchable);
+    }
     for (size_t i = 0; i < varStack.size(); ++i) {
         const Identifier& ident = varStack[i].first;
         if (!functionBody->captures(ident))
@@ -356,7 +371,6 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionBodyNode* functionBody, Unl
     int nextParameterIndex = CallFrame::thisArgumentOffset();
     m_thisRegister.setIndex(nextParameterIndex++);
     m_codeBlock->addParameter();
-    Vector<std::pair<RegisterID*, const DeconstructionPatternNode*>> deconstructedParameters;
     for (size_t i = 0; i < parameters.size(); ++i, ++nextParameterIndex) {
         int index = nextParameterIndex;
         auto pattern = parameters.at(i);
@@ -364,7 +378,7 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionBodyNode* functionBody, Unl
             m_codeBlock->addParameter();
             RegisterID& parameter = registerFor(index);
             parameter.setIndex(index);
-            deconstructedParameters.append(std::make_pair(&parameter, pattern));
+            m_deconstructedParameters.append(std::make_pair(&parameter, pattern));
             continue;
         }
         auto simpleParameter = static_cast<const BindingNode*>(pattern);
@@ -388,10 +402,6 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionBodyNode* functionBody, Unl
         emitOpcode(op_to_this);
         instructions().append(kill(&m_thisRegister));
         instructions().append(0);
-    }
-    for (size_t i = 0; i < deconstructedParameters.size(); i++) {
-        auto& entry = deconstructedParameters[i];
-        entry.second->bindValue(*this, entry.first);
     }
 }
 

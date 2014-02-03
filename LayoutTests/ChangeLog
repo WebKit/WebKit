@@ -1,3 +1,20 @@
+2014-02-03  Oliver Hunt  <oliver@apple.com>
+
+        Deconstructed parameters aren't being placed in the correct scope
+        https://bugs.webkit.org/show_bug.cgi?id=128126
+
+        Reviewed by Antti Koivisto.
+
+        Added tests for correct behaviour.
+
+        * js/deconstructing-parameters-should-be-locals-expected.txt: Added.
+        * js/deconstructing-parameters-should-be-locals.html: Added.
+        * js/script-tests/deconstructing-parameters-should-be-locals.js: Added.
+        (description.value.string_appeared_here.readDeconstructedParameter):
+        (overwriteDeconstructedParameter):
+        (readCapturedDeconstructedParameter):
+        (overwriteCapturedDeconstructedParameter):
+
 2014-01-31  Geoffrey Garen  <ggaren@apple.com>
 
         Simplified name scope creation for function expressions
