@@ -26,7 +26,7 @@
 #ifndef Watchdog_h
 #define Watchdog_h
 
-#if PLATFORM(MAC) || PLATFORM(IOS)
+#if OS(DARWIN)
 #include <dispatch/dispatch.h>    
 #endif
 
@@ -93,7 +93,7 @@ private:
     void* m_callbackData1;
     void* m_callbackData2;
 
-#if PLATFORM(MAC) || PLATFORM(IOS)
+#if OS(DARWIN)
     dispatch_queue_t m_queue;
     dispatch_source_t m_timer;
 #endif
