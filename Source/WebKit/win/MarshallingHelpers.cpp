@@ -51,7 +51,7 @@ BSTR MarshallingHelpers::URLToBSTR(const URL& url)
 
 CFURLRef MarshallingHelpers::PathStringToFileCFURLRef(const String& string)
 {
-    CFStringRef cfPath = CFStringCreateWithCharactersNoCopy(0, (const UniChar*)string.characters(), string.length(), kCFAllocatorNull);
+    CFStringRef cfPath = CFStringCreateWithCharactersNoCopy(0, (const UniChar*)string.deprecatedCharacters(), string.length(), kCFAllocatorNull);
     CFURLRef pathURL = CFURLCreateWithFileSystemPath(0, cfPath, kCFURLWindowsPathStyle, false);
     CFRelease(cfPath);
     return pathURL;

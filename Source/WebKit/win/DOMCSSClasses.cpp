@@ -102,7 +102,7 @@ HRESULT STDMETHODCALLTYPE DOMCSSStyleDeclaration::getPropertyValue(
 {
     WTF::String propertyNameString(propertyName);
     WTF::String value = m_style->getPropertyValue(propertyNameString);
-    *result = SysAllocStringLen(value.characters(), value.length());
+    *result = SysAllocStringLen(value.deprecatedCharacters(), value.length());
     if (value.length() && !*result)
         return E_OUTOFMEMORY;
     return S_OK;

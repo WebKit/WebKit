@@ -1,3 +1,15 @@
+2014-02-02  Darin Adler  <darin@apple.com>
+
+        Still more characters -> deprecatedCharacters (EWS keeps finding more)
+        https://bugs.webkit.org/show_bug.cgi?id=128076
+
+        Reviewed by Andreas Kling.
+
+        * platform/graphics/harfbuzz/HarfBuzzShaper.cpp:
+        (WebCore::HarfBuzzShaper::setFontFeatures):
+        (WebCore::HarfBuzzShaper::shapeHarfBuzzRuns):
+        Use deprecatedCharacters.
+
 2014-02-02  Zalan Bujtas  <zalan@apple.com>
 
         Subpixel rendering: Enable subpixel positioning/sizing/hairline border painting.

@@ -567,6 +567,6 @@ void WebHistory::addVisitedLinksToPageGroup(PageGroup& group)
 {
     for (auto it = m_entriesByURL.begin(); it != m_entriesByURL.end(); ++it) {
         const String& url = it->key;
-        group.addVisitedLink(url.characters(), url.length());
+        group.addVisitedLink(url.deprecatedCharacters(), url.length());
     }
 }

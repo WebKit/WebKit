@@ -149,7 +149,7 @@ HRESULT STDMETHODCALLTYPE WebDownload::bundlePathForTargetPath(
         bundle.truncate(1);
 
     bundle.append(DownloadBundle::fileExtension());
-    *bundlePath = SysAllocStringLen(bundle.characters(), bundle.length());
+    *bundlePath = SysAllocStringLen(bundle.deprecatedCharacters(), bundle.length());
     if (!*bundlePath)
        return E_FAIL;
     return S_OK;

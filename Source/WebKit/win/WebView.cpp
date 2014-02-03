@@ -3173,7 +3173,7 @@ HRESULT STDMETHODCALLTYPE WebView::setApplicationNameForUserAgent(
 HRESULT STDMETHODCALLTYPE WebView::applicationNameForUserAgent( 
     /* [retval][out] */ BSTR* applicationName)
 {
-    *applicationName = SysAllocStringLen(m_applicationName.characters(), m_applicationName.length());
+    *applicationName = SysAllocStringLen(m_applicationName.deprecatedCharacters(), m_applicationName.length());
     if (!*applicationName && m_applicationName.length())
         return E_OUTOFMEMORY;
     return S_OK;
@@ -3193,7 +3193,7 @@ HRESULT STDMETHODCALLTYPE WebView::customUserAgent(
     *userAgentString = 0;
     if (!m_userAgentOverridden)
         return S_OK;
-    *userAgentString = SysAllocStringLen(m_userAgentCustom.characters(), m_userAgentCustom.length());
+    *userAgentString = SysAllocStringLen(m_userAgentCustom.deprecatedCharacters(), m_userAgentCustom.length());
     if (!*userAgentString && m_userAgentCustom.length())
         return E_OUTOFMEMORY;
     return S_OK;
@@ -3641,7 +3641,7 @@ HRESULT STDMETHODCALLTYPE WebView::groupName(
     if (!m_page)
         return S_OK;
     String groupNameString = m_page->groupName();
-    *groupName = SysAllocStringLen(groupNameString.characters(), groupNameString.length());
+    *groupName = SysAllocStringLen(groupNameString.deprecatedCharacters(), groupNameString.length());
     if (!*groupName && groupNameString.length())
         return E_OUTOFMEMORY;
     return S_OK;
@@ -3751,7 +3751,7 @@ HRESULT STDMETHODCALLTYPE WebView::selectedText(
         return E_FAIL;
 
     String frameSelectedText = focusedFrame->editor().selectedText();
-    *text = SysAllocStringLen(frameSelectedText.characters(), frameSelectedText.length());
+    *text = SysAllocStringLen(frameSelectedText.deprecatedCharacters(), frameSelectedText.length());
     if (!*text && frameSelectedText.length())
         return E_OUTOFMEMORY;
     return S_OK;
@@ -5823,7 +5823,7 @@ LRESULT WebView::onIMERequestReconvertString(Frame* targetFrame, RECONVERTSTRING
     reconvertString->dwStrLen = text.length();
     reconvertString->dwTargetStrLen = text.length();
     reconvertString->dwStrOffset = sizeof(RECONVERTSTRING);
-    memcpy(reconvertString + 1, text.characters(), text.length() * sizeof(UChar));
+    memcpy(reconvertString + 1, text.deprecatedCharacters(), text.length() * sizeof(UChar));
     return totalSize;
 }
 

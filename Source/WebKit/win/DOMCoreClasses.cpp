@@ -122,7 +122,7 @@ HRESULT STDMETHODCALLTYPE DOMNode::nodeValue(
     if (!m_node)
         return E_FAIL;
     WTF::String nodeValueStr = m_node->nodeValue();
-    *result = SysAllocStringLen(nodeValueStr.characters(), nodeValueStr.length());
+    *result = SysAllocStringLen(nodeValueStr.deprecatedCharacters(), nodeValueStr.length());
     if (nodeValueStr.length() && !*result)
         return E_OUTOFMEMORY;
     return S_OK;
@@ -1033,7 +1033,7 @@ HRESULT STDMETHODCALLTYPE DOMElement::getAttribute(
         return E_FAIL;
     WTF::String nameString(name, SysStringLen(name));
     WTF::String& attrValueString = (WTF::String&) m_element->getAttribute(nameString);
-    *result = SysAllocStringLen(attrValueString.characters(), attrValueString.length());
+    *result = SysAllocStringLen(attrValueString.deprecatedCharacters(), attrValueString.length());
     if (attrValueString.length() && !*result)
         return E_OUTOFMEMORY;
     return S_OK;
@@ -1257,7 +1257,7 @@ HRESULT STDMETHODCALLTYPE DOMElement::font(WebFontDescription* webFontDescriptio
 
     FontDescription fontDescription = renderer->style().font().fontDescription();
     AtomicString family = fontDescription.firstFamily();
-    webFontDescription->family = family.characters();
+    webFontDescription->family = family.string().deprecatedCharacters();
     webFontDescription->familyLength = family.length();
     webFontDescription->size = fontDescription.computedSize();
     webFontDescription->bold = fontDescription.weight() >= WebCore::FontWeight600;

@@ -371,7 +371,7 @@ void HarfBuzzShaper::setFontFeatures()
     unsigned numFeatures = settings->size();
     for (unsigned i = 0; i < numFeatures; ++i) {
         hb_feature_t feature;
-        const UChar* tag = settings->at(i).tag().characters();
+        const UChar* tag = settings->at(i).tag().string().deprecatedCharacters();
         feature.tag = HB_TAG(tag[0], tag[1], tag[2], tag[3]);
         feature.value = settings->at(i).value();
         feature.start = 0;
@@ -496,7 +496,7 @@ bool HarfBuzzShaper::shapeHarfBuzzRuns(bool shouldSetDirection)
         if (m_font->isSmallCaps() && u_islower(m_normalizedBuffer[currentRun->startIndex()])) {
             String upperText = String(m_normalizedBuffer.get() + currentRun->startIndex(), currentRun->numCharacters()).upper();
             currentFontData = m_font->glyphDataForCharacter(upperText[0], false, SmallCapsVariant).fontData;
-            hb_buffer_add_utf16(harfBuzzBuffer.get(), reinterpret_cast<const uint16_t*>(upperText.characters()), currentRun->numCharacters(), 0, currentRun->numCharacters());
+            hb_buffer_add_utf16(harfBuzzBuffer.get(), reinterpret_cast<const uint16_t*>(upperText.deprecatedCharacters()), currentRun->numCharacters(), 0, currentRun->numCharacters());
         } else
             hb_buffer_add_utf16(harfBuzzBuffer.get(), reinterpret_cast<const uint16_t*>(m_normalizedBuffer.get() + currentRun->startIndex()), currentRun->numCharacters(), 0, currentRun->numCharacters());
 

@@ -483,7 +483,7 @@ HRESULT STDMETHODCALLTYPE DOMHTMLElement::innerText(
 {
     ASSERT(m_element && m_element->isHTMLElement());
     WTF::String innerTextString = toHTMLElement(m_element)->innerText();
-    *result = BString(innerTextString.characters(), innerTextString.length()).release();
+    *result = BString(innerTextString.deprecatedCharacters(), innerTextString.length()).release();
     return S_OK;
 }
         
@@ -561,7 +561,7 @@ HRESULT STDMETHODCALLTYPE DOMHTMLFormElement::action(
 {
     ASSERT(m_element && isHTMLFormElement(m_element));
     WTF::String actionString = toHTMLFormElement(m_element)->action();
-    *result = BString(actionString.characters(), actionString.length()).release();
+    *result = BString(actionString.deprecatedCharacters(), actionString.length()).release();
     return S_OK;
 }
     
@@ -591,7 +591,7 @@ HRESULT STDMETHODCALLTYPE DOMHTMLFormElement::method(
 {
     ASSERT(m_element && isHTMLFormElement(m_element));
     WTF::String methodString = toHTMLFormElement(m_element)->method();
-    *result = BString(methodString.characters(), methodString.length()).release();
+    *result = BString(methodString.deprecatedCharacters(), methodString.length()).release();
     return S_OK;
 }
     
@@ -1210,7 +1210,7 @@ HRESULT STDMETHODCALLTYPE DOMHTMLInputElement::value(
     ASSERT(m_element && isHTMLInputElement(m_element));
     HTMLInputElement* inputElement = toHTMLInputElement(m_element);
     WTF::String valueString = inputElement->value();
-    *result = BString(valueString.characters(), valueString.length()).release();
+    *result = BString(valueString.deprecatedCharacters(), valueString.length()).release();
     if (valueString.length() && !*result)
         return E_OUTOFMEMORY;
     return S_OK;
@@ -1547,7 +1547,7 @@ HRESULT STDMETHODCALLTYPE DOMHTMLTextAreaElement::value(
     ASSERT(m_element && isHTMLTextAreaElement(m_element));
     HTMLTextAreaElement* textareaElement = toHTMLTextAreaElement(m_element);
     WTF::String valueString = textareaElement->value();
-    *result = BString(valueString.characters(), valueString.length()).release();
+    *result = BString(valueString.deprecatedCharacters(), valueString.length()).release();
     if (valueString.length() && !*result)
         return E_OUTOFMEMORY;
     return S_OK;
