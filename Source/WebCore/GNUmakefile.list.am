@@ -3468,9 +3468,6 @@ webcore_sources += \
 	Source/WebCore/html/HTMLParagraphElement.h \
 	Source/WebCore/html/HTMLParamElement.cpp \
 	Source/WebCore/html/HTMLParamElement.h \
-	Source/WebCore/html/HTMLParserErrorCodes.cpp \
-	Source/WebCore/html/HTMLParserErrorCodes.h \
-	Source/WebCore/html/HTMLParserQuirks.h \
 	Source/WebCore/html/HTMLPlugInElement.cpp \
 	Source/WebCore/html/HTMLPlugInElement.h \
 	Source/WebCore/html/HTMLPlugInImageElement.cpp \

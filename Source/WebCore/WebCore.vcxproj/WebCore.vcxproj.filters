@@ -3882,9 +3882,6 @@
     <ClCompile Include="..\html\HTMLParamElement.cpp">
       <Filter>html</Filter>
     </ClCompile>
-    <ClCompile Include="..\html\HTMLParserErrorCodes.cpp">
-      <Filter>html</Filter>
-    </ClCompile>
     <ClCompile Include="..\html\HTMLPlugInElement.cpp">
       <Filter>html</Filter>
     </ClCompile>
@@ -10899,9 +10896,6 @@
       <Filter>html</Filter>
     </ClInclude>
     <ClInclude Include="..\html\HTMLParamElement.h">
-      <Filter>html</Filter>
-    </ClInclude>
-    <ClInclude Include="..\html\HTMLParserErrorCodes.h">
       <Filter>html</Filter>
     </ClInclude>
     <ClInclude Include="..\html\HTMLPlugInElement.h">

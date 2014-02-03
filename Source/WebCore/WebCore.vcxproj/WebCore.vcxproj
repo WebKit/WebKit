@@ -15267,7 +15267,6 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Production|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Production|x64'">true</ExcludedFromBuild>
     </ClCompile>
-    <ClCompile Include="..\html\HTMLParserErrorCodes.cpp" />
     <ClCompile Include="..\html\HTMLPlugInElement.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
@@ -20384,7 +20383,6 @@
     <ClInclude Include="..\html\HTMLOutputElement.h" />
     <ClInclude Include="..\html\HTMLParagraphElement.h" />
     <ClInclude Include="..\html\HTMLParamElement.h" />
-    <ClInclude Include="..\html\HTMLParserErrorCodes.h" />
     <ClInclude Include="..\html\HTMLPlugInElement.h" />
     <ClInclude Include="..\html\HTMLPlugInImageElement.h" />
     <ClInclude Include="..\html\HTMLPreElement.h" />

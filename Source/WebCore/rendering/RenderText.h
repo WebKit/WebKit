@@ -74,11 +74,10 @@ public:
 
     virtual VisiblePosition positionForPoint(const LayoutPoint&) override;
 
-    bool is8Bit() const { return m_text.is8Bit(); }
+    bool is8Bit() const { return m_text.impl()->is8Bit(); }
     const LChar* characters8() const { return m_text.impl()->characters8(); }
     const UChar* characters16() const { return m_text.impl()->characters16(); }
-    const UChar* characters() const { return deprecatedCharacters(); } // FIXME: Delete this.
-    const UChar* deprecatedCharacters() const { return m_text.deprecatedCharacters(); }
+    const UChar* deprecatedCharacters() const { return m_text.impl()->deprecatedCharacters(); }
     UChar characterAt(unsigned i) const { return is8Bit() ? characters8()[i] : characters16()[i]; }
     UChar operator[](unsigned i) const { return characterAt(i); }
     unsigned textLength() const { return m_text.impl()->length(); } // non virtual implementation of length()

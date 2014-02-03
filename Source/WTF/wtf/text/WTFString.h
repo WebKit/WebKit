@@ -112,6 +112,7 @@ public:
     WTF_EXPORT_STRING_API String(const char* characters);
 
     // Construct a string referencing an existing StringImpl.
+    String(StringImpl& impl) : m_impl(&impl) { }
     String(StringImpl* impl) : m_impl(impl) { }
     String(PassRefPtr<StringImpl> impl) : m_impl(impl) { }
     String(PassRef<StringImpl> impl) : m_impl(std::move(impl)) { }
@@ -156,7 +157,6 @@ public:
         return m_impl->length();
     }
 
-    const UChar* characters() const { return deprecatedCharacters(); } // FIXME: Delete this.
     const UChar* deprecatedCharacters() const
     {
         if (!m_impl)

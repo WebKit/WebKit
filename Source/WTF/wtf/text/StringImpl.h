@@ -452,7 +452,6 @@ public:
 
     ALWAYS_INLINE const LChar* characters8() const { ASSERT(is8Bit()); return m_data8; }
     ALWAYS_INLINE const UChar* characters16() const { ASSERT(!is8Bit()); return m_data16; }
-    const UChar* characters() const { return deprecatedCharacters(); } // FIXME: Delete this.
     ALWAYS_INLINE const UChar* deprecatedCharacters() const
     {
         if (!is8Bit())

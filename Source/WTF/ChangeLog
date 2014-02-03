@@ -1,3 +1,17 @@
+2014-02-02  Darin Adler  <darin@apple.com>
+
+        Obey "delete this" comments, including deleting String::characters and friends
+        https://bugs.webkit.org/show_bug.cgi?id=126865
+
+        Reviewed by Andreas Kling.
+
+        * wtf/text/AtomicString.h: Deleted the characters function.
+        * wtf/text/StringBuilder.h: Deleted the characters function, leaving behind the
+        deprecatedCharacters function.
+        * wtf/text/StringImpl.h: Ditto.
+        * wtf/text/WTFString.h: Ditto. Also added a constructor that takes a StringImpl&,
+        helpful for later string refactoring.
+
 2014-02-02  Dan Bernstein  <mitz@apple.com>
 
         Stop using PLATFORM(MAC) in WTF except where it means “OS X but not iOS”

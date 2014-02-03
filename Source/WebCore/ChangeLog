@@ -1,3 +1,23 @@
+2014-02-02  Darin Adler  <darin@apple.com>
+
+        Obey "delete this" comments, including deleting String::characters and friends
+        https://bugs.webkit.org/show_bug.cgi?id=126865
+
+        Reviewed by Andreas Kling.
+
+        * CMakeLists.txt: Deleted HTMLParserErrorCodes.cpp.
+        * GNUmakefile.list.am: Deleted HTMLParserErrorCodes.cpp/h, and HTMLParserQuirks.h.
+        * WebCore.vcxproj/WebCore.vcxproj: Deleted HTMLParserErrorCodes.cpp/h.
+        * WebCore.vcxproj/WebCore.vcxproj.filters: Ditto.
+        * WebCore.xcodeproj/project.pbxproj: Ditto.
+
+        * html/HTMLParserErrorCodes.cpp: Removed.
+        * html/HTMLParserErrorCodes.h: Removed.
+        * html/HTMLParserQuirks.h: Removed.
+
+        * rendering/RenderText.h: Deleted the characters function, leaving behind the
+        deprecatedCharacters function.
+
 2014-02-02  Brady Eidson  <beidson@apple.com>
 
         IDB: Cannot open new databases with the default version

@@ -1423,7 +1423,6 @@ set(WebCore_SOURCES
     html/HTMLOutputElement.cpp
     html/HTMLParagraphElement.cpp
     html/HTMLParamElement.cpp
-    html/HTMLParserErrorCodes.cpp
     html/HTMLPlugInElement.cpp
     html/HTMLPlugInImageElement.cpp
     html/HTMLPreElement.cpp

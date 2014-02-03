@@ -248,7 +248,6 @@ public:
         return m_buffer->characters16();
     }
     
-    const UChar* characters() const { return deprecatedCharacters(); } // FIXME: Delete this.
     const UChar* deprecatedCharacters() const
     {
         if (!m_length)
