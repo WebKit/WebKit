@@ -255,10 +255,6 @@
 		A8A4745F151A825B004123FF /* Collator.h in Headers */ = {isa = PBXBuildFile; fileRef = A8A4734A151A825B004123FF /* Collator.h */; };
 		A8A47460151A825B004123FF /* CollatorDefault.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8A4734B151A825B004123FF /* CollatorDefault.cpp */; };
 		A8A47463151A825B004123FF /* CollatorICU.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8A47350151A825B004123FF /* CollatorICU.cpp */; };
-		A8A47464151A825B004123FF /* UnicodeIcu.h in Headers */ = {isa = PBXBuildFile; fileRef = A8A47351151A825B004123FF /* UnicodeIcu.h */; };
-		A8A47466151A825B004123FF /* ScriptCodesFromICU.h in Headers */ = {isa = PBXBuildFile; fileRef = A8A47354151A825B004123FF /* ScriptCodesFromICU.h */; };
-		A8A47467151A825B004123FF /* Unicode.h in Headers */ = {isa = PBXBuildFile; fileRef = A8A47355151A825B004123FF /* Unicode.h */; };
-		A8A47468151A825B004123FF /* UnicodeMacrosFromICU.h in Headers */ = {isa = PBXBuildFile; fileRef = A8A47356151A825B004123FF /* UnicodeMacrosFromICU.h */; };
 		A8A47469151A825B004123FF /* UTF8.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8A47357151A825B004123FF /* UTF8.cpp */; };
 		A8A4746A151A825B004123FF /* UTF8.h in Headers */ = {isa = PBXBuildFile; fileRef = A8A47358151A825B004123FF /* UTF8.h */; };
 		A8A4746D151A825B004123FF /* UnionFind.h in Headers */ = {isa = PBXBuildFile; fileRef = A8A4735C151A825B004123FF /* UnionFind.h */; };
@@ -533,10 +529,6 @@
 		A8A4734A151A825B004123FF /* Collator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Collator.h; sourceTree = "<group>"; };
 		A8A4734B151A825B004123FF /* CollatorDefault.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CollatorDefault.cpp; sourceTree = "<group>"; };
 		A8A47350151A825B004123FF /* CollatorICU.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CollatorICU.cpp; sourceTree = "<group>"; };
-		A8A47351151A825B004123FF /* UnicodeIcu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UnicodeIcu.h; sourceTree = "<group>"; };
-		A8A47354151A825B004123FF /* ScriptCodesFromICU.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScriptCodesFromICU.h; sourceTree = "<group>"; };
-		A8A47355151A825B004123FF /* Unicode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Unicode.h; sourceTree = "<group>"; };
-		A8A47356151A825B004123FF /* UnicodeMacrosFromICU.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UnicodeMacrosFromICU.h; sourceTree = "<group>"; };
 		A8A47357151A825B004123FF /* UTF8.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UTF8.cpp; sourceTree = "<group>"; };
 		A8A47358151A825B004123FF /* UTF8.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UTF8.h; sourceTree = "<group>"; };
 		A8A4735C151A825B004123FF /* UnionFind.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UnionFind.h; sourceTree = "<group>"; };
@@ -931,9 +923,6 @@
 				A8A47349151A825B004123FF /* CharacterNames.h */,
 				A8A4734A151A825B004123FF /* Collator.h */,
 				A8A4734B151A825B004123FF /* CollatorDefault.cpp */,
-				A8A47354151A825B004123FF /* ScriptCodesFromICU.h */,
-				A8A47355151A825B004123FF /* Unicode.h */,
-				A8A47356151A825B004123FF /* UnicodeMacrosFromICU.h */,
 				A8A47357151A825B004123FF /* UTF8.cpp */,
 				A8A47358151A825B004123FF /* UTF8.h */,
 			);
@@ -944,7 +933,6 @@
 			isa = PBXGroup;
 			children = (
 				A8A47350151A825B004123FF /* CollatorICU.cpp */,
-				A8A47351151A825B004123FF /* UnicodeIcu.h */,
 			);
 			path = icu;
 			sourceTree = "<group>";
@@ -1083,7 +1071,6 @@
 				1469419216EAAF6D0024E146 /* RunLoopTimer.h in Headers */,
 				14F3B0F715E45E4600210069 /* SaturatedArithmetic.h in Headers */,
 				1469419616EAAFF80024E146 /* SchedulePair.h in Headers */,
-				A8A47466151A825B004123FF /* ScriptCodesFromICU.h in Headers */,
 				A8A4741F151A825B004123FF /* SegmentedVector.h in Headers */,
 				A8A47420151A825B004123FF /* SentinelLinkedList.h in Headers */,
 				A8A47422151A825B004123FF /* SHA1.h in Headers */,
@@ -1121,9 +1108,6 @@
 				A8A47454151A825B004123FF /* ThreadSafeRefCounted.h in Headers */,
 				A8A47455151A825B004123FF /* ThreadSpecific.h in Headers */,
 				149EF16316BBFE0D000A4331 /* TriState.h in Headers */,
-				A8A47467151A825B004123FF /* Unicode.h in Headers */,
-				A8A47464151A825B004123FF /* UnicodeIcu.h in Headers */,
-				A8A47468151A825B004123FF /* UnicodeMacrosFromICU.h in Headers */,
 				A8A4746D151A825B004123FF /* UnionFind.h in Headers */,
 				A8A4746A151A825B004123FF /* UTF8.h in Headers */,
 				A8A473B9151A825B004123FF /* utils.h in Headers */,

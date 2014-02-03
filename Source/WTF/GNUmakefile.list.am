@@ -251,10 +251,6 @@ wtf_sources += \
     Source/WTF/wtf/unicode/CharacterNames.h \
     Source/WTF/wtf/unicode/Collator.h \
     Source/WTF/wtf/unicode/CollatorDefault.cpp \
-    Source/WTF/wtf/unicode/ScriptCodesFromICU.h \
     Source/WTF/wtf/unicode/UTF8.cpp \
     Source/WTF/wtf/unicode/UTF8.h \
-    Source/WTF/wtf/unicode/Unicode.h \
-    Source/WTF/wtf/unicode/UnicodeMacrosFromICU.h \
-    Source/WTF/wtf/unicode/icu/CollatorICU.cpp \
-    Source/WTF/wtf/unicode/icu/UnicodeIcu.h
+    Source/WTF/wtf/unicode/icu/CollatorICU.cpp

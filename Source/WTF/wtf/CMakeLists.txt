@@ -142,7 +142,6 @@ set(WTF_HEADERS
     unicode/CharacterNames.h
     unicode/Collator.h
     unicode/UTF8.h
-    unicode/Unicode.h
 )
 
 set(WTF_SOURCES
@@ -223,9 +222,6 @@ set(WTF_LIBRARIES
     ${CMAKE_DL_LIBS}
 )
 
-list(APPEND WTF_HEADERS
-    unicode/icu/UnicodeIcu.h
-)
 list(APPEND WTF_SOURCES
     unicode/icu/CollatorICU.cpp
 )

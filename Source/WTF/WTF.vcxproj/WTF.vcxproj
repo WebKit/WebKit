@@ -301,9 +301,6 @@
     <ClInclude Include="..\wtf\threads\BinarySemaphore.h" />
     <ClInclude Include="..\wtf\unicode\CharacterNames.h" />
     <ClInclude Include="..\wtf\unicode\Collator.h" />
-    <ClInclude Include="..\wtf\unicode\icu\UnicodeIcu.h" />
-    <ClInclude Include="..\wtf\unicode\Unicode.h" />
-    <ClInclude Include="..\wtf\unicode\UnicodeMacrosFromICU.h" />
     <ClInclude Include="..\wtf\unicode\UTF8.h" />
     <ClInclude Include="..\wtf\ValueCheck.h" />
     <ClInclude Include="..\wtf\Vector.h" />

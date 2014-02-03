@@ -336,19 +336,10 @@
     <ClInclude Include="..\wtf\threadspecific.h">
       <Filter>wtf</Filter>
     </ClInclude>
-    <ClInclude Include="..\wtf\unicode\icu\UnicodeIcu.h">
-      <Filter>wtf\unicode\icu</Filter>
-    </ClInclude>
     <ClInclude Include="..\wtf\unicode\CharacterNames.h">
       <Filter>wtf\unicode</Filter>
     </ClInclude>
     <ClInclude Include="..\wtf\unicode\Collator.h">
-      <Filter>wtf\unicode</Filter>
-    </ClInclude>
-    <ClInclude Include="..\wtf\unicode\Unicode.h">
-      <Filter>wtf\unicode</Filter>
-    </ClInclude>
-    <ClInclude Include="..\wtf\unicode\UnicodeMacrosFromICU.h">
       <Filter>wtf\unicode</Filter>
     </ClInclude>
     <ClInclude Include="..\wtf\unicode\UTF8.h">
