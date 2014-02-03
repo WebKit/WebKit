@@ -76,20 +76,16 @@ void SVGResourcesCache::removeResourcesFromRenderer(RenderElement& renderer)
         (*it)->removeClient(&renderer);
 }
 
-static inline SVGResourcesCache* resourcesCacheFromRenderObject(const RenderObject& renderer)
+static inline SVGResourcesCache& resourcesCacheFromRenderer(const RenderObject& renderer)
 {
     SVGDocumentExtensions* extensions = renderer.document().accessSVGExtensions();
     ASSERT(extensions);
-
-    SVGResourcesCache* cache = extensions->resourcesCache();
-    ASSERT(cache);
-
-    return cache;
+    return extensions->resourcesCache();
 }
 
 SVGResources* SVGResourcesCache::cachedResourcesForRenderObject(const RenderObject& renderer)
 {
-    return resourcesCacheFromRenderObject(renderer)->m_cache.get(&renderer);
+    return resourcesCacheFromRenderer(renderer).m_cache.get(&renderer);
 }
 
 void SVGResourcesCache::clientLayoutChanged(RenderElement& renderer)
@@ -122,9 +118,9 @@ void SVGResourcesCache::clientStyleChanged(RenderElement& renderer, StyleDiffere
     // FIXME: Avoid passing in a useless StyleDifference, but instead compare oldStyle/newStyle to see which resources changed
     // to be able to selectively rebuild individual resources, instead of all of them.
     if (rendererCanHaveResources(renderer)) {
-        SVGResourcesCache* cache = resourcesCacheFromRenderObject(renderer);
-        cache->removeResourcesFromRenderer(renderer);
-        cache->addResourcesFromRenderer(renderer, newStyle);
+        auto& cache = resourcesCacheFromRenderer(renderer);
+        cache.removeResourcesFromRenderer(renderer);
+        cache.addResourcesFromRenderer(renderer, newStyle);
     }
 
     RenderSVGResource::markForLayoutAndParentResourceInvalidation(renderer, false);
@@ -143,8 +139,7 @@ void SVGResourcesCache::clientWasAddedToTree(RenderObject& renderer)
     if (!rendererCanHaveResources(renderer))
         return;
     RenderElement& elementRenderer = toRenderElement(renderer);
-    SVGResourcesCache* cache = resourcesCacheFromRenderObject(elementRenderer);
-    cache->addResourcesFromRenderer(elementRenderer, elementRenderer.style());
+    resourcesCacheFromRenderer(elementRenderer).addResourcesFromRenderer(elementRenderer, elementRenderer.style());
 }
 
 void SVGResourcesCache::clientWillBeRemovedFromTree(RenderObject& renderer)
@@ -157,8 +152,7 @@ void SVGResourcesCache::clientWillBeRemovedFromTree(RenderObject& renderer)
     if (!rendererCanHaveResources(renderer))
         return;
     RenderElement& elementRenderer = toRenderElement(renderer);
-    SVGResourcesCache* cache = resourcesCacheFromRenderObject(elementRenderer);
-    cache->removeResourcesFromRenderer(elementRenderer);
+    resourcesCacheFromRenderer(elementRenderer).removeResourcesFromRenderer(elementRenderer);
 }
 
 void SVGResourcesCache::clientDestroyed(RenderElement& renderer)
@@ -167,23 +161,22 @@ void SVGResourcesCache::clientDestroyed(RenderElement& renderer)
     if (resources)
         resources->removeClientFromCache(renderer);
 
-    SVGResourcesCache* cache = resourcesCacheFromRenderObject(renderer);
-    cache->removeResourcesFromRenderer(renderer);
+    resourcesCacheFromRenderer(renderer).removeResourcesFromRenderer(renderer);
 }
 
 void SVGResourcesCache::resourceDestroyed(RenderSVGResourceContainer& resource)
 {
-    SVGResourcesCache* cache = resourcesCacheFromRenderObject(resource);
+    auto& cache = resourcesCacheFromRenderer(resource);
 
     // The resource itself may have clients, that need to be notified.
-    cache->removeResourcesFromRenderer(resource);
+    cache.removeResourcesFromRenderer(resource);
 
-    for (auto it = cache->m_cache.begin(), end = cache->m_cache.end(); it != end; ++it) {
-        it->value->resourceDestroyed(resource);
+    for (auto& it : cache.m_cache) {
+        it.value->resourceDestroyed(resource);
 
         // Mark users of destroyed resources as pending resolution based on the id of the old resource.
         Element& resourceElement = resource.element();
-        Element* clientElement = toElement(it->key->node());
+        Element* clientElement = toElement(it.key->node());
         SVGDocumentExtensions* extensions = clientElement->document().accessSVGExtensions();
 
         extensions->addPendingResource(resourceElement.getIdAttribute(), clientElement);

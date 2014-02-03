@@ -1,5 +1,30 @@
 2014-02-02  Andreas Kling  <akling@apple.com>
 
+        SVGDocumentExtensions::resourcesCache() should return a reference.
+        <https://webkit.org/b/128087>
+
+        The SVGResourcesCache is always present when the Document is using
+        SVG extensions, so make this return a reference and propagate that
+        knowledge to the call site.
+
+        This gets rid of an assertion and some rickety looking ->'s.
+        Also converted a loop to use C++11 range for syntax.
+
+        Reviewed by Sam Weinig.
+
+        * rendering/svg/SVGResourcesCache.cpp:
+        (WebCore::resourcesCacheFromRenderer):
+        (WebCore::SVGResourcesCache::cachedResourcesForRenderObject):
+        (WebCore::SVGResourcesCache::clientStyleChanged):
+        (WebCore::SVGResourcesCache::clientWasAddedToTree):
+        (WebCore::SVGResourcesCache::clientWillBeRemovedFromTree):
+        (WebCore::SVGResourcesCache::clientDestroyed):
+        (WebCore::SVGResourcesCache::resourceDestroyed):
+        * svg/SVGDocumentExtensions.h:
+        (WebCore::SVGDocumentExtensions::resourcesCache):
+
+2014-02-02  Andreas Kling  <akling@apple.com>
+
         RenderSVGInlineText::computeNewScaledFontForStyle() should take references.
         <https://webkit.org/b/128086>
 

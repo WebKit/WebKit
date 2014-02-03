@@ -62,7 +62,7 @@ public:
     void reportWarning(const String&);
     void reportError(const String&);
 
-    SVGResourcesCache* resourcesCache() const { return m_resourcesCache.get(); }
+    SVGResourcesCache& resourcesCache() { return *m_resourcesCache; }
 
     HashSet<SVGElement*>* setOfElementsReferencingTarget(SVGElement* referencedElement) const;
     void addElementReferencingTarget(SVGElement* referencingElement, SVGElement* referencedElement);
