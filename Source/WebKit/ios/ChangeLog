@@ -1,3 +1,11 @@
+2014-02-03  Dan Bernstein  <mitz@apple.com>
+
+        More iOS build fixing.
+
+        * Misc/WebNSStringDrawing.mm:
+        (-[NSString __web_drawAtPoint:forWidth:withFont:ellipsis:letterSpacing:includeEmoji:measureOnly:renderedStringOut:drawUnderline:]):
+        (-[NSString __web_drawInRect:withFont:ellipsis:alignment:letterSpacing:lineSpacing:includeEmoji:truncationRect:measureOnly:renderedStringOut:drawUnderline:]):
+
 2014-01-31  Ryosuke Niwa  <rniwa@webkit.org>
 
         Remove inline member functions of FrameSelection that access m_selection

@@ -1,3 +1,14 @@
+2014-02-03  Dan Bernstein  <mitz@apple.com>
+
+        More iOS build fixing.
+
+        * accessibility/ios/WebAccessibilityObjectWrapperIOS.mm:
+        (-[WebAccessibilityObjectWrapper arrayOfTextForTextMarkers:attributed:]):
+        * html/parser/HTMLTreeBuilder.cpp:
+        (WebCore::HTMLTreeBuilder::linkifyPhoneNumbers):
+        * page/ios/FrameIOS.mm:
+        (WebCore::Frame::interpretationsForCurrentRoot):
+
 2014-02-03  Darin Adler  <darin@apple.com>
 
         Try to fix iOS build.

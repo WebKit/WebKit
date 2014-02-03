@@ -270,7 +270,7 @@ static bool needsBidiLayout(const UChar *characters, unsigned length, UCharDirec
 
     String fullString(self);
     UCharDirection base = U_LEFT_TO_RIGHT;
-    bool stringNeedsBidi = needsBidiLayout(fullString.characters(), fullString.length(), base);
+    bool stringNeedsBidi = needsBidiLayout(fullString.deprecatedCharacters(), fullString.length(), base);
     float stringWidth;
     String s = (width >= FLT_MAX && !measureOnly) ? fullString : applyEllipsisStyle(fullString, ellipsisStyle, width, renderer, shouldDisableWordRounding() ? StringTruncator::DisableRoundingHacks : StringTruncator::EnableRoundingHacks, &stringWidth);
     
@@ -284,9 +284,9 @@ static bool needsBidiLayout(const UChar *characters, unsigned length, UCharDirec
             // FIXME: For proper bidi rendering, we need to pass the whole string, rather than the truncated string.
             // Otherwise, weak/neutral characters on either side of the ellipsis may pick up the wrong direction
             // if there are strong characters ellided.
-            stringWidth = drawAtPoint(s.characters(), s.length(), point, renderer, &context, drawUnderline, &status);
+            stringWidth = drawAtPoint(s.deprecatedCharacters(), s.length(), point, renderer, &context, drawUnderline, &status);
         } else {
-            stringWidth = drawAtPoint(s.characters(), s.length(), point, renderer, &context, drawUnderline);
+            stringWidth = drawAtPoint(s.deprecatedCharacters(), s.length(), point, renderer, &context, drawUnderline);
         }
     }
     
@@ -396,7 +396,7 @@ static bool needsBidiLayout(const UChar *characters, unsigned length, UCharDirec
     float maxLineWidth = 0;
     cursor.y += ascent;
 
-    const UniChar *buffer = drawString.characters();
+    const UniChar *buffer = drawString.deprecatedCharacters();
     const UniChar *startOfLine = buffer;
 
     BOOL lastLine = NO;
@@ -610,9 +610,9 @@ static bool needsBidiLayout(const UChar *characters, unsigned length, UCharDirec
                 // FIXME: For proper bidi rendering, we need to pass the whole string, rather than the truncated string.
                 // Otherwise, weak/neutral characters on either side of the ellipsis may pick up the wrong direction
                 // if there are strong characters ellided.
-                lineWidth = drawAtPoint(ellipsisResult.characters(), ellipsisResult.length(), textPoint, renderer, &context, drawUnderline, paragraphNeedsBidi ? &status : 0);
+                lineWidth = drawAtPoint(ellipsisResult.deprecatedCharacters(), ellipsisResult.length(), textPoint, renderer, &context, drawUnderline, paragraphNeedsBidi ? &status : 0);
                 if (!renderedString.isNull())
-                    renderedString.append(ellipsisResult.characters(), ellipsisResult.length());
+                    renderedString.append(ellipsisResult.deprecatedCharacters(), ellipsisResult.length());
                 
                 if (truncationRect) {
                     if (ellipsisResult == lastLine && !droppingLines) {

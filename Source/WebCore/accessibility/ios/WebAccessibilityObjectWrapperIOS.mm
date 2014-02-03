@@ -1602,7 +1602,7 @@ static void AXAttributedStringAppendText(NSMutableAttributedString* attrString, 
                 String listMarkerText = m_object->listMarkerTextForNodeAndPosition(node, VisiblePosition(it.range()->startPosition())); 
                 
                 if (!listMarkerText.isEmpty()) 
-                    [array addObject:[NSString stringWithCharacters:listMarkerText.characters() length:listMarkerText.length()]];
+                    [array addObject:[NSString stringWithCharacters:listMarkerText.deprecatedCharacters() length:listMarkerText.length()]];
                 // There was not an element representation, so just return the text.
                 [array addObject:[NSString stringWithCharacters:it.characters() length:it.length()]];
             }
@@ -1612,7 +1612,7 @@ static void AXAttributedStringAppendText(NSMutableAttributedString* attrString, 
 
                 if (!listMarkerText.isEmpty()) {
                     NSMutableAttributedString* attrString = [[NSMutableAttributedString alloc] init];
-                    AXAttributedStringAppendText(attrString, node, listMarkerText.characters(), listMarkerText.length());
+                    AXAttributedStringAppendText(attrString, node, listMarkerText.deprecatedCharacters(), listMarkerText.length());
                     [array addObject:attrString];
                     [attrString release];
                 }

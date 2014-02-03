@@ -2397,7 +2397,7 @@ void HTMLTreeBuilder::linkifyPhoneNumbers(const String& string)
     int relativeEndPosition = 0;
 
     // While there's a phone number in the rest of the string...
-    while ((scannerPosition < length) && DDDFAScannerFirstResultInUnicharArray(phoneNumbersScanner, &string.characters()[scannerPosition], length - scannerPosition, &relativeStartPosition, &relativeEndPosition)) {
+    while ((scannerPosition < length) && DDDFAScannerFirstResultInUnicharArray(phoneNumbersScanner, &string.deprecatedCharacters()[scannerPosition], length - scannerPosition, &relativeStartPosition, &relativeEndPosition)) {
         // The convention in the Data Detectors framework is that the end position is the first character NOT in the phone number
         // (that is, the length of the range is relativeEndPosition - relativeStartPosition). So substract 1 to get the same
         // convention as the old WebCore phone number parser (so that the rest of the code is still valid if we want to go back
