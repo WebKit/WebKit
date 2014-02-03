@@ -1,3 +1,23 @@
+2014-02-03  Andreas Kling  <akling@apple.com>
+
+        CTTE: RenderSVGGradientStop always has a SVGStopElement.
+        <https://webkit.org/b/128107>
+
+        RenderSVGGradientStop is never anonymous and always has a
+        corresponding SVGStopElement. Codify this by adding an element()
+        overload that returns an SVGStopElement&.
+
+        Also added missing overrides and made most functions private.
+
+        Reviewed by Darin Adler.
+
+        * rendering/svg/RenderSVGGradientStop.cpp:
+        (WebCore::RenderSVGGradientStop::styleDidChange):
+        (WebCore::RenderSVGGradientStop::gradientElement):
+        * rendering/svg/RenderSVGGradientStop.h:
+        * rendering/svg/SVGRenderTreeAsText.cpp:
+        (WebCore::writeSVGGradientStop):
+
 2014-02-03  David Kilzer  <ddkilzer@apple.com>
 
         Remove CachedImageManual class

@@ -608,10 +608,7 @@ void writeSVGGradientStop(TextStream& ts, const RenderSVGGradientStop& stop, int
 {
     writeStandardPrefix(ts, stop, indent);
 
-    SVGStopElement* stopElement = toSVGStopElement(toSVGElement(stop.element()));
-    ASSERT(stopElement);
-
-    ts << " [offset=" << stopElement->offset() << "] [color=" << stopElement->stopColorIncludingOpacity() << "]\n";
+    ts << " [offset=" << stop.element().offset() << "] [color=" << stop.element().stopColorIncludingOpacity() << "]\n";
 }
 
 void writeResources(TextStream& ts, const RenderObject& renderer, int indent)
