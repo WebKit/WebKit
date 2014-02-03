@@ -1,5 +1,12 @@
 2014-02-03  Dan Bernstein  <mitz@apple.com>
 
+        Correctly address Darin’s review comment on the last change.
+
+        * runtime/Watchdog.h: Changed an OS(DARWIN) guard around formerly PLATFORM(MAC)-only member
+        variables to the equivalent OS(DARWIN) && !PLATFORM(EFL) && !PLATFORM(GTK).
+
+2014-02-03  Dan Bernstein  <mitz@apple.com>
+
         Stop using PLATFORM(MAC) in JavaScriptCore except where it means “OS X but not iOS”
         https://bugs.webkit.org/show_bug.cgi?id=128098
 

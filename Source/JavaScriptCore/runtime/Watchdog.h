@@ -93,7 +93,7 @@ private:
     void* m_callbackData1;
     void* m_callbackData2;
 
-#if OS(DARWIN)
+#if OS(DARWIN) && !PLATFORM(EFL) && !PLATFORM(GTK)
     dispatch_queue_t m_queue;
     dispatch_source_t m_timer;
 #endif
