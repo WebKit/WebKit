@@ -187,6 +187,7 @@ public:
     // ARIA specific
     PassRefPtr<AccessibilityUIElement> ariaOwnsElementAtIndex(unsigned);
     PassRefPtr<AccessibilityUIElement> ariaFlowToElementAtIndex(unsigned);
+    PassRefPtr<AccessibilityUIElement> ariaControlsElementAtIndex(unsigned);
 
     // ARIA Drag and Drop
     bool ariaIsGrabbed() const;

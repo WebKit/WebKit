@@ -182,6 +182,8 @@ public:
     virtual void ariaFlowToElements(AccessibilityChildrenVector&) const override;
     virtual bool supportsARIADescribedBy() const override;
     virtual void ariaDescribedByElements(AccessibilityChildrenVector&) const override;
+    virtual bool supportsARIAControls() const override;
+    virtual void ariaControlsElements(AccessibilityChildrenVector&) const override;
     virtual bool ariaHasPopup() const override;
 
     virtual bool supportsARIADropping() const override;

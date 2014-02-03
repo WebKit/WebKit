@@ -1,0 +1,13 @@
+Panel 1
+Panel 2
+This tests that aria-controls returns correct element at the given index
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS tab1.ariaControlsElementAtIndex(0).stringValue is 'AXValue: Panel 1'
+PASS tab1.ariaControlsElementAtIndex(1).stringValue is 'AXValue: Panel 2'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

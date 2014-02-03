@@ -555,6 +555,8 @@ public:
     virtual void ariaFlowToElements(AccessibilityChildrenVector&) const { }
     virtual bool supportsARIADescribedBy() const { return false; }
     virtual void ariaDescribedByElements(AccessibilityChildrenVector&) const { }
+    virtual bool supportsARIAControls() const { return false; }
+    virtual void ariaControlsElements(AccessibilityChildrenVector&) const { }
     virtual bool ariaHasPopup() const { return false; }
     virtual bool ariaPressedIsPresent() const;
     bool ariaIsMultiline() const;

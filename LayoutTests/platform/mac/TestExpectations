@@ -50,6 +50,9 @@ accessibility/multiselect-list-reports-active-option.html
 # isIndeterminate is not implemented in mac
 webkit.org/b/125855 accessibility/aria-checked-mixed-value.html [ Skip ]
 
+# ariaControlsElementAtIndex is not implemented in mac
+webkit.org/b/127908 accessibility/aria-controls.html [ Skip ]
+
 # Need to add functionality to DumpRenderTree to handle error pages
 fast/history/back-forward-reset-after-error-handling.html
 

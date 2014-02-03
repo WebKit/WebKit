@@ -1,3 +1,42 @@
+2014-02-03  Krzysztof Czech  <k.czech@samsung.com>
+
+        [ATK] Expose aria-controls through ATK_RELATION_CONTROLLER_FOR
+        https://bugs.webkit.org/show_bug.cgi?id=127908
+
+        Reviewed by Chris Fleizach.
+
+        Updated AccessibilityUIElement both in WKTR and DRT so that aria-controls support could be tested properly.
+        Added empty stubs to not break mac builds.
+
+        * DumpRenderTree/AccessibilityUIElement.cpp:
+        (ariaControlsElementAtIndexCallback):
+        (AccessibilityUIElement::getJSClass):
+        * DumpRenderTree/AccessibilityUIElement.h:
+        * DumpRenderTree/atk/AccessibilityUIElementAtk.cpp:
+        (accessibilityElementAtIndex):
+        (AccessibilityUIElement::disclosedRowAtIndex):
+        (AccessibilityUIElement::ariaOwnsElementAtIndex):
+        (AccessibilityUIElement::ariaFlowToElementAtIndex):
+        (AccessibilityUIElement::ariaControlsElementAtIndex):
+        * DumpRenderTree/ios/AccessibilityUIElementIOS.mm:
+        (AccessibilityUIElement::ariaControlsElementAtIndex):
+        * DumpRenderTree/mac/AccessibilityUIElementMac.mm:
+        (AccessibilityUIElement::ariaControlsElementAtIndex):
+        * DumpRenderTree/win/AccessibilityUIElementWin.cpp:
+        (AccessibilityUIElement::ariaControlsElementAtIndex):
+        * WebKitTestRunner/InjectedBundle/AccessibilityUIElement.h:
+        * WebKitTestRunner/InjectedBundle/Bindings/AccessibilityUIElement.idl:
+        * WebKitTestRunner/InjectedBundle/atk/AccessibilityUIElementAtk.cpp:
+        (WTR::accessibilityElementAtIndex):
+        (WTR::AccessibilityUIElement::linkedUIElementAtIndex):
+        (WTR::AccessibilityUIElement::ariaOwnsElementAtIndex):
+        (WTR::AccessibilityUIElement::ariaFlowToElementAtIndex):
+        (WTR::AccessibilityUIElement::ariaControlsElementAtIndex):
+        * WebKitTestRunner/InjectedBundle/ios/AccessibilityUIElementIOS.mm:
+        (WTR::AccessibilityUIElement::ariaControlsElementAtIndex):
+        * WebKitTestRunner/InjectedBundle/mac/AccessibilityUIElementMac.mm:
+        (WTR::AccessibilityUIElement::ariaControlsElementAtIndex):
+
 2014-02-02  Daniel Bates  <dabates@apple.com>
 
         WebKit Bot Watcher's Dashboard: Access restricted queue should only prompt for HTTP credentials once per page load

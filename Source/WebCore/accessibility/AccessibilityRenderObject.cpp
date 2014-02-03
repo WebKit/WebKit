@@ -1041,6 +1041,16 @@ void AccessibilityRenderObject::ariaDescribedByElements(AccessibilityChildrenVec
     ariaElementsFromAttribute(ariaDescribedBy, aria_describedbyAttr);
 }
 
+bool AccessibilityRenderObject::supportsARIAControls() const
+{
+    return !getAttribute(aria_controlsAttr).isEmpty();
+}
+
+void AccessibilityRenderObject::ariaControlsElements(AccessibilityChildrenVector& ariaControls) const
+{
+    ariaElementsFromAttribute(ariaControls, aria_controlsAttr);
+}
+
 bool AccessibilityRenderObject::supportsARIADropping() const 
 {
     const AtomicString& dropEffect = getAttribute(aria_dropeffectAttr);

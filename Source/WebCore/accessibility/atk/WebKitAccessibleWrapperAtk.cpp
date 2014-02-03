@@ -254,6 +254,15 @@ static void setAtkRelationSetFromCoreObject(AccessibilityObject* coreObject, Atk
         for (const auto& accessibilityObject : ariaDescribedByElements)
             atk_relation_set_add_relation_by_type(relationSet, ATK_RELATION_DESCRIBED_BY, accessibilityObject->wrapper());
     }
+
+    // Check whether object supports aria-controls. It provides information about elements that are controlled by the current object.
+    if (coreObject->supportsARIAControls()) {
+        removeAtkRelationByType(relationSet, ATK_RELATION_CONTROLLER_FOR);
+        AccessibilityObject::AccessibilityChildrenVector ariaControls;
+        coreObject->ariaControlsElements(ariaControls);
+        for (const auto& accessibilityObject : ariaControls)
+            atk_relation_set_add_relation_by_type(relationSet, ATK_RELATION_CONTROLLER_FOR, accessibilityObject->wrapper());
+    }
 }
 
 static gpointer webkitAccessibleParentClass = 0;

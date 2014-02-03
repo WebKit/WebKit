@@ -1,3 +1,25 @@
+2014-02-03  Krzysztof Czech  <k.czech@samsung.com>
+
+        [ATK] Expose aria-controls through ATK_RELATION_CONTROLLER_FOR
+        https://bugs.webkit.org/show_bug.cgi?id=127908
+
+        Reviewed by Chris Fleizach.
+
+        Based on w3c, aria-controls could be exposed through ATK_RELATION_CONTROLLER_FOR.
+
+        Test: accessibility/aria-controls.html
+
+        * accessibility/AccessibilityObject.h:
+        (WebCore::AccessibilityObject::supportsARIAControls):
+        (WebCore::AccessibilityObject::ariaControlsElements):
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::supportsARIAFlowTo):
+        (WebCore::AccessibilityRenderObject::supportsARIAControls):
+        (WebCore::AccessibilityRenderObject::ariaControlsElements):
+        * accessibility/AccessibilityRenderObject.h:
+        * accessibility/atk/WebKitAccessibleWrapperAtk.cpp:
+        (setAtkRelationSetFromCoreObject):
+
 2014-02-03  Andreas Kling  <akling@apple.com>
 
         RenderSVGResource::removeClientFromCache() should take RenderElement&.

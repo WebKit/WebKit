@@ -1,3 +1,16 @@
+2014-02-03  Krzysztof Czech  <k.czech@samsung.com>
+
+        [ATK] Expose aria-controls through ATK_RELATION_CONTROLLER_FOR
+        https://bugs.webkit.org/show_bug.cgi?id=127908
+
+        Reviewed by Chris Fleizach.
+
+        Tests whether aria-controls returns correct element at the given index.
+
+        * accessibility/aria-controls-expected.txt: Added.
+        * accessibility/aria-controls.html: Added.
+        * platform/mac/TestExpectations: Skipped it, missing implementation.
+
 2014-01-30  Oliver Hunt  <oliver@apple.com>
         Push DOM attributes into the prototype chain
         https://bugs.webkit.org/show_bug.cgi?id=127969
