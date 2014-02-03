@@ -1,3 +1,10 @@
+2014-02-03  Dan Bernstein  <mitz@apple.com>
+
+        Build fix.
+
+        * WebProcess/Plugins/Netscape/mac/NetscapePluginMac.mm:
+        (WebKit::convertStringToKeyCodes):
+
 2014-02-03  Alberto Garcia  <berto@igalia.com>
 
         Fix wrong mix of fcntl commands and flags

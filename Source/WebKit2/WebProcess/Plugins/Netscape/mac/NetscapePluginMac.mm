@@ -986,7 +986,7 @@ static bool convertStringToKeyCodes(const String& string, ScriptCode scriptCode,
     ByteCount maxOutputLength = string.length() * sizeof(UniChar);
 
     Vector<UInt8> outputData(maxOutputLength);
-    OSStatus status = ConvertFromUnicodeToText(textInfo, inputLength, string.characters(), kNilOptions, 0, 0, 0, 0, maxOutputLength, &inputRead, &outputLength, outputData.data());
+    OSStatus status = ConvertFromUnicodeToText(textInfo, inputLength, string.deprecatedCharacters(), kNilOptions, 0, 0, 0, 0, maxOutputLength, &inputRead, &outputLength, outputData.data());
     
     DisposeUnicodeToTextInfo(&textInfo);
     
