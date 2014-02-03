@@ -30,17 +30,25 @@
 
 #import "WKNavigationDelegate.h"
 #import "WKNavigationInternal.h"
+#import "WKWebViewInternal.h"
+#import "PageLoadState.h"
 #import "WebFrameProxy.h"
+#import "WebPageProxy.h"
 
 namespace WebKit {
 
 NavigationState::NavigationState(WKWebView *webView)
-    : m_navigationDelegateMethods()
+    : m_webView(webView)
+    , m_navigationDelegateMethods()
 {
+    ASSERT(m_webView->_page);
+
+    m_webView->_page->pageLoadState().addObserver(*this);
 }
 
 NavigationState::~NavigationState()
 {
+    m_webView->_page->pageLoadState().removeObserver(*this);
 }
 
 std::unique_ptr<API::LoaderClient> NavigationState::createLoaderClient()
@@ -293,6 +301,46 @@ void NavigationState::LoaderClient::didFailLoadWithErrorForFrame(WebPageProxy*, 
         navigation = m_navigationState.m_navigations.get(navigationID).get();
 
     [navigationDelegate webView:m_navigationState.m_webView didFailNavigation:navigation withError:error];
+}
+
+void NavigationState::willChangeIsLoading()
+{
+}
+
+void NavigationState::didChangeIsLoading()
+{
+}
+
+void NavigationState::willChangeTitle()
+{
+}
+
+void NavigationState::didChangeTitle()
+{
+}
+
+void NavigationState::willChangeActiveURL()
+{
+}
+
+void NavigationState::didChangeActiveURL()
+{
+}
+
+void NavigationState::willChangeHasOnlySecureContent()
+{
+}
+
+void NavigationState::didChangeHasOnlySecureContent()
+{
+}
+
+void NavigationState::willChangeEstimatedProgress()
+{
+}
+
+void NavigationState::didChangeEstimatedProgress()
+{
 }
 
 } // namespace WebKit

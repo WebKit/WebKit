@@ -34,6 +34,7 @@
 #import <wtf/RetainPtr.h>
 #import "APILoaderClient.h"
 #import "APIPolicyClient.h"
+#import "PageLoadState.h"
 #import "WeakObjCPtr.h"
 
 @class WKNavigation;
@@ -42,7 +43,7 @@
 
 namespace WebKit {
 
-class NavigationState {
+class NavigationState : private PageLoadState::Observer {
 public:
     explicit NavigationState(WKWebView *);
     ~NavigationState();
@@ -86,6 +87,21 @@ private:
         NavigationState& m_navigationState;
     };
 
+    // PageLoadState::Observer
+    virtual void willChangeIsLoading() override;
+    virtual void didChangeIsLoading() override;
+    virtual void willChangeTitle() override;
+    virtual void didChangeTitle() override;
+    virtual void willChangeActiveURL() override;
+    virtual void didChangeActiveURL() override;
+    virtual void willChangeHasOnlySecureContent() override;
+    virtual void didChangeHasOnlySecureContent() override;
+    virtual void willChangeEstimatedProgress() override;
+    virtual void didChangeEstimatedProgress() override;
+
+    WKWebView *m_webView;
+    WeakObjCPtr<id <WKNavigationDelegate> > m_navigationDelegate;
+
     struct {
         bool webViewDecidePolicyForNavigationActionDecisionHandler : 1;
         bool webViewDecidePolicyForNavigationResponseDecisionHandler : 1;
@@ -97,9 +113,6 @@ private:
         bool webViewDidFinishLoadingNavigation : 1;
         bool webViewDidFailNavigationWithError : 1;
     } m_navigationDelegateMethods;
-
-    WKWebView *m_webView;
-    WeakObjCPtr<id <WKNavigationDelegate> > m_navigationDelegate;
 
     HashMap<uint64_t, RetainPtr<WKNavigation>> m_navigations;
 };

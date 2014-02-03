@@ -24,7 +24,7 @@
  */
 
 #import "config.h"
-#import "WKWebView.h"
+#import "WKWebViewInternal.h"
 
 #if WK_API_ENABLED
 
@@ -37,18 +37,13 @@
 #import <wtf/RetainPtr.h>
 
 #if PLATFORM(IOS)
-#import "WKContentViewInternal.h"
 #import "WKScrollView.h"
-#import <UIKit/UIScrollView_Private.h>
-#import <UIKit/_UIWebViewportHandler.h>
 
 static const float minWebViewScale = 0.25;
 static const float maxWebViewScale = 5;
 static _UIWebViewportConfiguration standardViewportConfiguration = { { UIWebViewportStandardViewportWidth, UIWebViewportGrowsAndShrinksToFitHeight }, UIWebViewportScaleForScalesToFit, minWebViewScale, maxWebViewScale, true
 };
 
-@interface WKWebView () <UIScrollViewDelegate, WKContentViewDelegate, _UIWebViewportHandlerDelegate>
-@end
 #endif
 
 #if PLATFORM(MAC) && !PLATFORM(IOS)
@@ -58,8 +53,6 @@ static _UIWebViewportConfiguration standardViewportConfiguration = { { UIWebView
 @implementation WKWebView {
     RetainPtr<WKWebViewConfiguration> _configuration;
     std::unique_ptr<WebKit::NavigationState> _navigationState;
-
-    RefPtr<WebKit::WebPageProxy> _page;
 
 #if PLATFORM(IOS)
     RetainPtr<WKScrollView> _scrollView;
@@ -89,8 +82,6 @@ static _UIWebViewportConfiguration standardViewportConfiguration = { { UIWebView
     if (![_configuration processClass])
         [_configuration setProcessClass:adoptNS([[WKProcessClass alloc] init]).get()];
 
-    _navigationState = std::make_unique<WebKit::NavigationState>(self);
-
     CGRect bounds = self.bounds;
 
 #if PLATFORM(IOS)
@@ -119,6 +110,7 @@ static _UIWebViewportConfiguration standardViewportConfiguration = { { UIWebView
     _page = WebKit::toImpl([_wkView pageRef]);
 #endif
 
+    _navigationState = std::make_unique<WebKit::NavigationState>(self);
     _page->setPolicyClient(_navigationState->createPolicyClient());
     _page->setLoaderClient(_navigationState->createLoaderClient());
 

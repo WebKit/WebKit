@@ -190,6 +190,7 @@
 		1A64230912DD09EB00CAAE2C /* DrawingAreaProxyMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A64230712DD09EB00CAAE2C /* DrawingAreaProxyMessages.h */; };
 		1A64245E12DE29A100CAAE2C /* UpdateInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A64245C12DE29A100CAAE2C /* UpdateInfo.h */; };
 		1A64245F12DE29A100CAAE2C /* UpdateInfo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A64245D12DE29A100CAAE2C /* UpdateInfo.cpp */; };
+		1A66BF8F18A052ED002071B4 /* WKWebViewInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A66BF8E18A052ED002071B4 /* WKWebViewInternal.h */; };
 		1A6F9F9011E13EFC00DB1371 /* CommandLine.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A6F9F8E11E13EFC00DB1371 /* CommandLine.h */; };
 		1A6F9FB711E1408500DB1371 /* CommandLineMac.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A6F9FB611E1408500DB1371 /* CommandLineMac.cpp */; };
 		1A6FB7AE11E64B6800DB1371 /* PluginView.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A6FB7AC11E64B6800DB1371 /* PluginView.cpp */; };
@@ -1837,6 +1838,7 @@
 		1A64230712DD09EB00CAAE2C /* DrawingAreaProxyMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DrawingAreaProxyMessages.h; sourceTree = "<group>"; };
 		1A64245C12DE29A100CAAE2C /* UpdateInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UpdateInfo.h; sourceTree = "<group>"; };
 		1A64245D12DE29A100CAAE2C /* UpdateInfo.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UpdateInfo.cpp; sourceTree = "<group>"; };
+		1A66BF8E18A052ED002071B4 /* WKWebViewInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKWebViewInternal.h; sourceTree = "<group>"; };
 		1A6F9F8E11E13EFC00DB1371 /* CommandLine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CommandLine.h; sourceTree = "<group>"; };
 		1A6F9FB611E1408500DB1371 /* CommandLineMac.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CommandLineMac.cpp; sourceTree = "<group>"; };
 		1A6FB7AC11E64B6800DB1371 /* PluginView.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PluginView.cpp; sourceTree = "<group>"; };
@@ -4295,6 +4297,7 @@
 				1A3CC16418906ACF001E6ED8 /* WKWebView.mm */,
 				1ADF59191890528E0043C145 /* WKWebViewConfiguration.h */,
 				1ADF59181890528E0043C145 /* WKWebViewConfiguration.mm */,
+				1A66BF8E18A052ED002071B4 /* WKWebViewInternal.h */,
 			);
 			path = Cocoa;
 			sourceTree = "<group>";
@@ -6773,6 +6776,7 @@
 				BC407606124FF0270068F20A /* WKString.h in Headers */,
 				7C9D1537184584DA009D3918 /* WKBrowsingContextGroupInternal.h in Headers */,
 				373CEAD81859553F008C363D /* WKPagePolicyClientInternal.h in Headers */,
+				1A66BF8F18A052ED002071B4 /* WKWebViewInternal.h in Headers */,
 				BC40761A124FF0370068F20A /* WKStringCF.h in Headers */,
 				759CCD591808F1690078E8A8 /* WebOriginDataManagerProxyChangeClient.h in Headers */,
 				BC9099801256A98200083756 /* WKStringPrivate.h in Headers */,

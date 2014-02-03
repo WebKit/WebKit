@@ -1,3 +1,31 @@
+2014-02-03  Anders Carlsson  <andersca@apple.com>
+
+        NavigationState should be a PageLoadState::Observer
+        https://bugs.webkit.org/show_bug.cgi?id=128130
+
+        Reviewed by Darin Adler.
+
+        This will make it easier to provide load related KVO properties on WKWebView.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView initWithFrame:configuration:]):
+        * UIProcess/API/Cocoa/WKWebViewInternal.h: Added.
+        * UIProcess/Cocoa/NavigationState.h:
+        * UIProcess/Cocoa/NavigationState.mm:
+        (WebKit::NavigationState::NavigationState):
+        (WebKit::NavigationState::~NavigationState):
+        (WebKit::NavigationState::willChangeIsLoading):
+        (WebKit::NavigationState::didChangeIsLoading):
+        (WebKit::NavigationState::willChangeTitle):
+        (WebKit::NavigationState::didChangeTitle):
+        (WebKit::NavigationState::willChangeActiveURL):
+        (WebKit::NavigationState::didChangeActiveURL):
+        (WebKit::NavigationState::willChangeHasOnlySecureContent):
+        (WebKit::NavigationState::didChangeHasOnlySecureContent):
+        (WebKit::NavigationState::willChangeEstimatedProgress):
+        (WebKit::NavigationState::didChangeEstimatedProgress):
+        * WebKit2.xcodeproj/project.pbxproj:
+
 2014-02-03  Tim Horton  <timothy_horton@apple.com>
 
         WebKit2 View Gestures: Two smart magnifications in a row without moving the mouse should zoom out
