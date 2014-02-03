@@ -355,15 +355,28 @@ static inline Vector<IntPoint> createVectorWithWKArray(WKArrayRef array, size_t 
 void GestureRecognizer::noGesture(WKTouchEventRef eventRef)
 {
     switch (WKTouchEventGetType(eventRef)) {
-    case kWKEventTypeTouchStart:
-        m_gestureHandler->reset();
-
-        m_recognizerFunction = &GestureRecognizer::singleTapGesture;
-        m_firstPressedPoint = toIntPoint(getPointAtIndex(WKTouchEventGetTouchPoints(eventRef), 0));
-        ASSERT(!m_tapAndHoldTimer);
-        m_tapAndHoldTimer = ecore_timer_add(s_tapAndHoldTimeoutInSeconds, tapAndHoldTimerCallback, this);
-        m_doubleTapTimer = ecore_timer_add(s_doubleTapTimeoutInSeconds, doubleTapTimerCallback, this);
+    case kWKEventTypeTouchStart: {
+        WKArrayRef touchPoints = WKTouchEventGetTouchPoints(eventRef);
+        switch (WKArrayGetSize(touchPoints)) {
+        case 1:
+            m_gestureHandler->reset();
+            m_recognizerFunction = &GestureRecognizer::singleTapGesture;
+            m_firstPressedPoint = toIntPoint(getPointAtIndex(touchPoints, 0));
+            ASSERT(!m_tapAndHoldTimer);
+            m_tapAndHoldTimer = ecore_timer_add(s_tapAndHoldTimeoutInSeconds, tapAndHoldTimerCallback, this);
+            m_doubleTapTimer = ecore_timer_add(s_doubleTapTimeoutInSeconds, doubleTapTimerCallback, this);
+            break;
+        case 2:
+            m_recognizerFunction = &GestureRecognizer::pinchGesture;
+            m_gestureHandler->handlePinchStarted(createVectorWithWKArray(touchPoints, 2));
+            break;
+        default:
+            // There's no defined gesture when we touch three or more points.
+            notImplemented();
+            break;
+        }
         break;
+    }
     case kWKEventTypeTouchMove:
     case kWKEventTypeTouchEnd:
         break;

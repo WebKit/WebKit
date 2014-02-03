@@ -1,3 +1,17 @@
+2014-02-02  Sanghyup Lee  <sh53.lee@samsung.com>
+
+        [EFL][WK2] Add a logic for checking multi touch in GestureRecognizer::noGesture
+        https://bugs.webkit.org/show_bug.cgi?id=127675
+
+        Reviewed by Gyuyoung Kim.
+
+        When processing TouchStart event in GestureRecognizer::noGesture(), we should
+        check the number of touch points to distinguish if the gesture is single tap
+        or pinch zoom. Current logic only considers the event as single tap.
+
+        * UIProcess/API/efl/GestureRecognizer.cpp:
+        (WebKit::GestureRecognizer::noGesture):
+
 2014-02-02  Enrica Casucci  <enrica@apple.com>
 
         WK2: Selection is non editable content is not cleared when navigating to a different page.
