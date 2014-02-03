@@ -26,12 +26,24 @@
 JSON.LoadError = "JSONLoadError";
 JSON.ParseError = "JSONParseError";
 
+// JSON.load() may be called using the following forms:
+//
+// JSON.load("http://www.apple.com", function() {/* success */})
+// OR
+// JSON.load("http://www.apple.com", function() {/* success */}, {withCredentials: true, ...})
+// OR
+// JSON.load("http://www.apple.com", function() {/* success */}, function() {/* failure */})
+// OR
+// JSON.load("http://www.apple.com", function() {/* success */}, function() {/* failure */}, {withCredentials: true, ...})
 JSON.load = function(url, successCallback, failureCallback, options)
 {
     console.assert(url);
 
     if (!(successCallback instanceof Function))
         return;
+
+    if (failureCallback && typeof failureCallback === "object")
+        options = failureCallback;
 
     if (!(failureCallback instanceof Function))
         failureCallback = function() { };

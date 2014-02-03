@@ -1,3 +1,19 @@
+2014-02-03  Daniel Bates  <dabates@apple.com>
+
+        WebKit Bot Watcher's Dashboard: Teach JSON.load() to interpret third argument as either an
+        option dictionary or a failure callback
+        https://bugs.webkit.org/show_bug.cgi?id=128080
+
+        Reviewed by Alexey Proskuryakov.
+
+        Currently JSON.load() takes a failure callback function as its third argument and
+        an option dictionary as its fourth argument. So, a caller that wants to ignore errors
+        and pass an option dictionary must pass null or a reference to an empty function for
+        the value of third argument. Instead, we should make the third argument polymorphic for
+        convenience. Then a caller can either pass a failure callback function or an option dictionary.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/Utilities.js:
+
 2014-02-03  Krzysztof Czech  <k.czech@samsung.com>
 
         [ATK] Expose aria-controls through ATK_RELATION_CONTROLLER_FOR
