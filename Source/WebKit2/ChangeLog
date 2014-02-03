@@ -1,3 +1,22 @@
+2014-02-03  Tim Horton  <timothy_horton@apple.com>
+
+        WebKit2 View Gestures: Two smart magnifications in a row without moving the mouse should zoom out
+        https://bugs.webkit.org/show_bug.cgi?id=128108
+        <rdar://problem/15914539>
+
+        Reviewed by Darin Adler.
+
+        * UIProcess/mac/ViewGestureController.h:
+        * UIProcess/mac/ViewGestureController.mm:
+        (WebKit::ViewGestureController::ViewGestureController):
+        (WebKit::ViewGestureController::handleMagnificationGesture):
+        Clear the bit that tells us that we should do "smart" things (because the
+        last gesture was also a smart magnification gesture) when the user manually pinch-magnifies.
+
+        (WebKit::ViewGestureController::didCollectGeometryForSmartMagnificationGesture):
+        Zoom out if the mouse hasn't moved since the last pinch-magnification gesture.
+
+
 2014-02-03  Darin Adler  <darin@apple.com>
 
         Try to fix 32-bit Mac build.

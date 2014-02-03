@@ -93,7 +93,7 @@ namespace WebKit {
 
 ViewGestureController::ViewGestureController(WebPageProxy& webPageProxy)
     : m_webPageProxy(webPageProxy)
-    , m_lastSmartMagnificationUnscaledTargetRectIsValid(false)
+    , m_lastMagnificationGestureWasSmartMagnification(false)
     , m_activeGestureType(ViewGestureType::None)
     , m_visibleContentRectIsValid(false)
     , m_frameHandlesMagnificationGesture(false)
@@ -153,6 +153,7 @@ void ViewGestureController::handleMagnificationGesture(double scale, FloatPoint 
         // FIXME: We drop the first frame of the gesture on the floor, because we don't have the visible content bounds yet.
         m_magnification = m_webPageProxy.pageScaleFactor();
         m_webPageProxy.process().send(Messages::ViewGestureGeometryCollector::CollectGeometryForMagnificationGesture(), m_webPageProxy.pageID());
+        m_lastMagnificationGestureWasSmartMagnification = false;
 
         return;
     }
@@ -225,11 +226,14 @@ void ViewGestureController::didCollectGeometryForSmartMagnificationGesture(Float
     targetMagnification = std::min(std::max(targetMagnification, minMagnification), maxMagnification);
 
     // Allow panning between elements via double-tap while magnified, unless the target rect is
-    // similar to the last one, in which case we'll zoom all the way out.
-    if (currentScaleFactor > 1
-        && m_lastSmartMagnificationUnscaledTargetRectIsValid
-        && maximumRectangleComponentDelta(m_lastSmartMagnificationUnscaledTargetRect, unscaledTargetRect) < smartMagnificationPanScrollThreshold)
-        targetMagnification = 1;
+    // similar to the last one or the mouse has not moved, in which case we'll zoom all the way out.
+    if (currentScaleFactor > 1 && m_lastMagnificationGestureWasSmartMagnification) {
+        if (maximumRectangleComponentDelta(m_lastSmartMagnificationUnscaledTargetRect, unscaledTargetRect) < smartMagnificationPanScrollThreshold)
+            targetMagnification = 1;
+
+        if (m_lastSmartMagnificationOrigin == origin)
+            targetMagnification = 1;
+    }
 
     FloatRect targetRect(unscaledTargetRect);
     targetRect.scale(targetMagnification);
@@ -240,7 +244,9 @@ void ViewGestureController::didCollectGeometryForSmartMagnificationGesture(Float
     m_webPageProxy.drawingArea()->commitTransientZoom(targetMagnification, targetOrigin);
 
     m_lastSmartMagnificationUnscaledTargetRect = unscaledTargetRect;
-    m_lastSmartMagnificationUnscaledTargetRectIsValid = true;
+    m_lastSmartMagnificationOrigin = origin;
+
+    m_lastMagnificationGestureWasSmartMagnification = true;
 }
 
 bool ViewGestureController::handleScrollWheelEvent(NSEvent *event)
