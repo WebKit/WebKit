@@ -1,3 +1,14 @@
+2014-02-03  Krzysztof Czech  <k.czech@samsung.com>
+
+        Build fix after r163289.
+
+        Unreviewed EFL build fix.
+
+        Use deprecatedCharacters.
+
+        * UIProcess/efl/TextCheckerEfl.cpp:
+        (WebKit::TextChecker::requestCheckingOfString):
+
 2014-02-03  Dan Bernstein  <mitz@apple.com>
 
         Build fix.

@@ -272,7 +272,7 @@ void TextChecker::requestCheckingOfString(PassRefPtr<TextCheckerCompletion> comp
     ASSERT(request.mask() != TextCheckingTypeNone);
 
     String text = request.text();
-    Vector<TextCheckingResult> result = checkTextOfParagraph(completion->spellDocumentTag(), text.characters(), text.length(), request.mask());
+    Vector<TextCheckingResult> result = checkTextOfParagraph(completion->spellDocumentTag(), text.deprecatedCharacters(), text.length(), request.mask());
 
     completion->didFinishCheckingText(result);
 #else
