@@ -1,5 +1,42 @@
 2014-02-02  Andreas Kling  <akling@apple.com>
 
+        Modernize RenderSVGText::locateRenderSVGTextAncestor().
+        <https://webkit.org/b/128093>
+
+        Make locateRenderSVGTextAncestor() take a reference, and simplify it
+        internally with lineageOfType.
+
+        Switched callers to use 'auto' for the return type so we get some
+        devirtualization freebies.
+
+        Reviewed by Anders Carlsson.
+
+        * rendering/svg/RenderSVGInline.cpp:
+        (WebCore::RenderSVGInline::objectBoundingBox):
+        (WebCore::RenderSVGInline::strokeBoundingBox):
+        (WebCore::RenderSVGInline::repaintRectInLocalCoordinates):
+        (WebCore::RenderSVGInline::absoluteQuads):
+        (WebCore::RenderSVGInline::addChild):
+        (WebCore::RenderSVGInline::removeChild):
+        * rendering/svg/RenderSVGInlineText.cpp:
+        (WebCore::RenderSVGInlineText::setTextInternal):
+        (WebCore::RenderSVGInlineText::styleDidChange):
+        * rendering/svg/RenderSVGResourceGradient.cpp:
+        (WebCore::createMaskAndSwapContextForTextGradient):
+        (WebCore::clipToTextMask):
+        * rendering/svg/RenderSVGText.cpp:
+        (WebCore::RenderSVGText::locateRenderSVGTextAncestor):
+        * rendering/svg/RenderSVGText.h:
+        (WebCore::RenderSVGText>):
+        * rendering/svg/SVGTextLayoutAttributesBuilder.cpp:
+        (WebCore::SVGTextLayoutAttributesBuilder::buildLayoutAttributesForTextRenderer):
+        * rendering/svg/SVGTextMetricsBuilder.cpp:
+        (WebCore::SVGTextMetricsBuilder::measureTextRenderer):
+        * svg/SVGTextPositioningElement.cpp:
+        (WebCore::SVGTextPositioningElement::svgAttributeChanged):
+
+2014-02-02  Andreas Kling  <akling@apple.com>
+
         Modernize the toRenderSVGResourceContainer() helper.
         <https://webkit.org/b/128091>
 

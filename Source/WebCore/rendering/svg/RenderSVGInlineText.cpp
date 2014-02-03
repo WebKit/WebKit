@@ -82,8 +82,8 @@ String RenderSVGInlineText::originalText() const
 void RenderSVGInlineText::setTextInternal(const String& text)
 {
     RenderText::setTextInternal(text);
-    if (RenderSVGText* textRenderer = RenderSVGText::locateRenderSVGTextAncestor(this))
-        textRenderer->subtreeTextDidChange(this);
+    if (auto* textAncestor = RenderSVGText::locateRenderSVGTextAncestor(*this))
+        textAncestor->subtreeTextDidChange(this);
 }
 
 void RenderSVGInlineText::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
@@ -107,8 +107,8 @@ void RenderSVGInlineText::styleDidChange(StyleDifference diff, const RenderStyle
         return;
 
     // The text metrics may be influenced by style changes.
-    if (RenderSVGText* textRenderer = RenderSVGText::locateRenderSVGTextAncestor(this))
-        textRenderer->subtreeStyleDidChange(this);
+    if (auto* textAncestor = RenderSVGText::locateRenderSVGTextAncestor(*this))
+        textAncestor->subtreeStyleDidChange(this);
 }
 
 std::unique_ptr<InlineTextBox> RenderSVGInlineText::createTextBox()

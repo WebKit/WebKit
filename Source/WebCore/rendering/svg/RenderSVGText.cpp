@@ -36,6 +36,7 @@
 #include "HitTestResult.h"
 #include "LayoutRepainter.h"
 #include "PointerEventsHitRules.h"
+#include "RenderIterator.h"
 #include "RenderSVGInlineText.h"
 #include "RenderSVGResource.h"
 #include "RenderSVGRoot.h"
@@ -77,24 +78,14 @@ bool RenderSVGText::isChildAllowed(const RenderObject& child, const RenderStyle&
     return child.isInline();
 }
 
-RenderSVGText* RenderSVGText::locateRenderSVGTextAncestor(RenderObject* start)
+RenderSVGText* RenderSVGText::locateRenderSVGTextAncestor(RenderObject& start)
 {
-    ASSERT(start);
-    while (start && !start->isSVGText())
-        start = start->parent();
-    if (!start || !start->isSVGText())
-        return 0;
-    return toRenderSVGText(start);
+    return lineageOfType<RenderSVGText>(start).first();
 }
 
-const RenderSVGText* RenderSVGText::locateRenderSVGTextAncestor(const RenderObject* start)
+const RenderSVGText* RenderSVGText::locateRenderSVGTextAncestor(const RenderObject& start)
 {
-    ASSERT(start);
-    while (start && !start->isSVGText())
-        start = start->parent();
-    if (!start || !start->isSVGText())
-        return 0;
-    return toRenderSVGText(start);
+    return lineageOfType<RenderSVGText>(start).first();
 }
 
 LayoutRect RenderSVGText::clippedOverflowRectForRepaint(const RenderLayerModelObject* repaintContainer) const

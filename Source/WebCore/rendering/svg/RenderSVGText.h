@@ -47,8 +47,8 @@ public:
     void setNeedsTextMetricsUpdate() { m_needsTextMetricsUpdate = true; }
     virtual FloatRect repaintRectInLocalCoordinates() const;
 
-    static RenderSVGText* locateRenderSVGTextAncestor(RenderObject*);
-    static const RenderSVGText* locateRenderSVGTextAncestor(const RenderObject*);
+    static RenderSVGText* locateRenderSVGTextAncestor(RenderObject&);
+    static const RenderSVGText* locateRenderSVGTextAncestor(const RenderObject&);
 
     bool needsReordering() const { return m_needsReordering; }
     Vector<SVGTextLayoutAttributes*>& layoutAttributes() { return m_layoutAttributes; }
@@ -58,6 +58,9 @@ public:
     void subtreeChildWasRemoved(const Vector<SVGTextLayoutAttributes*, 2>& affectedAttributes);
     void subtreeStyleDidChange(RenderSVGInlineText*);
     void subtreeTextDidChange(RenderSVGInlineText*);
+
+    virtual FloatRect objectBoundingBox() const override { return frameRect(); }
+    virtual FloatRect strokeBoundingBox() const override;
 
 private:
     void graphicsElement() const = delete;
@@ -85,9 +88,6 @@ private:
     virtual void removeChild(RenderObject&) override;
     virtual void willBeDestroyed() override;
 
-    virtual FloatRect objectBoundingBox() const { return frameRect(); }
-    virtual FloatRect strokeBoundingBox() const;
-
     virtual const AffineTransform& localToParentTransform() const { return m_localTransform; }
     virtual AffineTransform localTransform() const { return m_localTransform; }
     virtual std::unique_ptr<RootInlineBox> createRootInlineBox() override;
@@ -106,6 +106,7 @@ private:
     Vector<SVGTextLayoutAttributes*> m_layoutAttributes;
 };
 
+template<> inline bool isRendererOfType<const RenderSVGText>(const RenderObject& renderer) { return renderer.isSVGText(); }
 RENDER_OBJECT_TYPE_CASTS(RenderSVGText, isSVGText())
 
 }

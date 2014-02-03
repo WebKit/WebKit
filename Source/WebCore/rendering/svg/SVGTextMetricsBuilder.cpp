@@ -207,7 +207,7 @@ void SVGTextMetricsBuilder::measureTextRenderer(RenderSVGInlineText* text)
 {
     ASSERT(text);
 
-    RenderSVGText* textRoot = RenderSVGText::locateRenderSVGTextAncestor(text);
+    auto* textRoot = RenderSVGText::locateRenderSVGTextAncestor(*text);
     if (!textRoot)
         return;
 

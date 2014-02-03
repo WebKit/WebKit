@@ -57,7 +57,7 @@ void RenderSVGResourceGradient::removeClientFromCache(RenderObject& client, bool
 #if USE(CG)
 static inline bool createMaskAndSwapContextForTextGradient(GraphicsContext*& context, GraphicsContext*& savedContext, std::unique_ptr<ImageBuffer>& imageBuffer, RenderObject* object)
 {
-    RenderObject* textRootBlock = RenderSVGText::locateRenderSVGTextAncestor(object);
+    auto* textRootBlock = RenderSVGText::locateRenderSVGTextAncestor(*object);
     ASSERT(textRootBlock);
 
     AffineTransform absoluteTransform;
@@ -79,7 +79,7 @@ static inline bool createMaskAndSwapContextForTextGradient(GraphicsContext*& con
 
 static inline AffineTransform clipToTextMask(GraphicsContext* context, std::unique_ptr<ImageBuffer>& imageBuffer, FloatRect& targetRect, RenderObject* object, bool boundingBoxMode, const AffineTransform& gradientTransform)
 {
-    RenderObject* textRootBlock = RenderSVGText::locateRenderSVGTextAncestor(object);
+    auto* textRootBlock = RenderSVGText::locateRenderSVGTextAncestor(*object);
     ASSERT(textRootBlock);
 
     AffineTransform absoluteTransform;

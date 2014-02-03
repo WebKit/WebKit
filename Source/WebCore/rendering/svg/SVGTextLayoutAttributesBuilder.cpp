@@ -35,7 +35,7 @@ SVGTextLayoutAttributesBuilder::SVGTextLayoutAttributesBuilder()
 
 void SVGTextLayoutAttributesBuilder::buildLayoutAttributesForTextRenderer(RenderSVGInlineText& text)
 {
-    RenderSVGText* textRoot = RenderSVGText::locateRenderSVGTextAncestor(&text);
+    auto* textRoot = RenderSVGText::locateRenderSVGTextAncestor(text);
     if (!textRoot)
         return;
 
