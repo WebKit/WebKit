@@ -1,5 +1,34 @@
 2014-02-03  Daniel Bates  <dabates@apple.com>
 
+        WebKit Bot Watcher's Dashboard: Defer subsequent resource loads from access-restricted build bot when
+        iteration fails to load with HTTP 401 status code
+        https://bugs.webkit.org/show_bug.cgi?id=128077
+
+        Reviewed by Alexey Proskuryakov.
+
+        Similar to the fix for <https://bugs.webkit.org/show_bug.cgi?id=127849>, we should only prompt for
+        the HTTP credentials of a build bot so long as an earlier authentication request wasn't cancelled
+        (i.e. failed with an HTTP 401 Unauthorized status code). Currently an authentication dialog will be
+        presented for an iteration each time the update queue timer fires until a person successfully
+        authenticates. Instead we should update the authentication status of the build bot on receiving an
+        HTTP 401 response code such that we defer subsequent requests to load any resource from the access-
+        restricted build bot when the queue update timer fires.
+
+        A person must explicitly click the "unauthorized" status line shown for the queue associated with the
+        iteration in the dashboard and authenticate successfully for the iteration to be loaded once an
+        authentication request for an iteration is cancelled.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/BuildbotIteration.js:
+        (BuildbotIteration.prototype.update): Early return if the associated Buildbot was given invalid credentials.
+        Also notify the associated Buildbot and update the queue view when a load failed with an HTTP 401 status code.
+        (BuildbotIteration.prototype.loadLayoutTestResults): Ditto.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/BuildbotQueueView.js:
+        (BuildbotQueueView): Modified to call BuildbotQueueView.prototype._unauthorizedAccess instead of
+        QueueView.prototype._updateSoon when event BuildbotQueue.Event.UnauthorizedAccess is received.
+        (BuildbotQueueView.prototype._unauthorizedAccess): Added.
+
+2014-02-03  Daniel Bates  <dabates@apple.com>
+
         WebKit Bot Watcher's Dashboard: Teach JSON.load() to interpret third argument as either an
         option dictionary or a failure callback
         https://bugs.webkit.org/show_bug.cgi?id=128080

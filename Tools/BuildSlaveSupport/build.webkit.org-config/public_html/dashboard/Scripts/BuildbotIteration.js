@@ -59,7 +59,8 @@ BuildbotIteration.EXCEPTION = 4;
 BuildbotIteration.RETRY = 5;
 
 BuildbotIteration.Event = {
-    Updated: "updated"
+    Updated: "updated",
+    UnauthorizedAccess: "unauthorized-access"
 };
 
 // See <http://docs.buildbot.net/0.8.8/manual/cfg-properties.html>.
@@ -157,6 +158,9 @@ BuildbotIteration.prototype = {
         if (this.loaded && this._finished)
             return;
 
+        if (this.queue.buildbot.needsAuthentication && this.queue.buildbot.authenticationStatus === Buildbot.AuthenticationStatus.InvalidCredentials)
+            return;
+
         function collectTestResults(data, stepName)
         {
             var testStep = data.steps.findFirst(function(step) { return step.name === stepName; });
@@ -211,6 +215,7 @@ BuildbotIteration.prototype = {
         }
 
         JSON.load(this.queue.baseURL + "/builds/" + this.id, function(data) {
+            this.queue.buildbot.isAuthenticated = true;
             if (!data || !data.properties)
                 return;
 
@@ -271,11 +276,20 @@ BuildbotIteration.prototype = {
             this.queue.sortIterations();
 
             this.dispatchEventToListeners(BuildbotIteration.Event.Updated);
-        }.bind(this), null, {withCredentials: this.queue.buildbot.needsAuthentication});
+        }.bind(this),
+        function(data) {
+            if (data.errorType === JSON.LoadError && data.errorHTTPCode === 401) {
+                this.queue.buildbot.isAuthenticated = false;
+                this.dispatchEventToListeners(BuildbotIteration.Event.UnauthorizedAccess);
+            }
+        }.bind(this), {withCredentials: this.queue.buildbot.needsAuthentication});
     },
 
     loadLayoutTestResults: function(callback)
     {
+        if (this.queue.buildbot.needsAuthentication && this.queue.buildbot.authenticationStatus === Buildbot.AuthenticationStatus.InvalidCredentials)
+            return;
+
         function collectResults(subtree, predicate)
         {
             // Results object is a trie:
@@ -339,6 +353,7 @@ BuildbotIteration.prototype = {
         }
 
         JSON.load(this.queue.buildbot.layoutTestFullResultsURLForIteration(this), function(data) {
+            this.queue.buildbot.isAuthenticated = true;
             this.hasPrettyPatch = data.has_pretty_patch;
 
             this.layoutTestResults.regressions = collectResults(data.tests, function(info) { return info["report"] === "REGRESSION" });
@@ -353,8 +368,12 @@ BuildbotIteration.prototype = {
             callback();
         }.bind(this),
         function(data) {
+            if (data.errorType === JSON.LoadError && data.errorHTTPCode === 401) {
+                this.queue.buildbot.isAuthenticated = false;
+                this.dispatchEventToListeners(BuildbotIteration.Event.UnauthorizedAccess);
+            }
             console.log(data.error);
             callback();
-        }, {jsonpCallbackName: "ADD_RESULTS", withCredentials: this.queue.buildbot.needsAuthentication});
+        }.bind(this), {jsonpCallbackName: "ADD_RESULTS", withCredentials: this.queue.buildbot.needsAuthentication});
     }
 };

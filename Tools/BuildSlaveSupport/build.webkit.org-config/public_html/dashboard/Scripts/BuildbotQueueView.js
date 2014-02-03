@@ -36,7 +36,7 @@ BuildbotQueueView = function(debugQueues, releaseQueues)
         else
             this.platform = queue.platform;
         queue.addEventListener(BuildbotQueue.Event.IterationsAdded, this._queueIterationsAdded, this);
-        queue.addEventListener(BuildbotQueue.Event.UnauthorizedAccess, this.updateSoon, this);
+        queue.addEventListener(BuildbotQueue.Event.UnauthorizedAccess, this._unauthorizedAccess, this);
     }.bind(this));
 
     this.debugQueues.forEach(function(queue) {
@@ -45,7 +45,7 @@ BuildbotQueueView = function(debugQueues, releaseQueues)
         else
             this.platform = queue.platform;
         queue.addEventListener(BuildbotQueue.Event.IterationsAdded, this._queueIterationsAdded, this);
-        queue.addEventListener(BuildbotQueue.Event.UnauthorizedAccess, this.updateSoon, this);
+        queue.addEventListener(BuildbotQueue.Event.UnauthorizedAccess, this._unauthorizedAccess, this);
     }.bind(this));
 
     webkitTrac.addEventListener(Trac.Event.NewCommitsRecorded, this._newCommitsRecorded, this);
@@ -298,6 +298,7 @@ BuildbotQueueView.prototype = {
 
         event.data.addedIterations.forEach(function(iteration) {
             iteration.addEventListener(BuildbotIteration.Event.Updated, this._iterationUpdated, this);
+            iteration.addEventListener(BuildbotIteration.Event.UnauthorizedAccess, this._unauthorizedAccess, this);
         }.bind(this));
     },
 
@@ -307,6 +308,11 @@ BuildbotQueueView.prototype = {
     },
     
     _newCommitsRecorded: function(event)
+    {
+        this.updateSoon();
+    },
+
+    _unauthorizedAccess: function(event)
     {
         this.updateSoon();
     }
