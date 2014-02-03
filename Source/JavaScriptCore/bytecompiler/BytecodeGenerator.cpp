@@ -383,7 +383,7 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionBodyNode* functionBody, Unl
 
     if (isConstructor()) {
         emitCreateThis(&m_thisRegister);
-    } else if (functionBody->usesThis() || codeBlock->usesEval() || m_shouldEmitDebugHooks) {
+    } else if (functionBody->usesThis() || codeBlock->usesEval()) {
         m_codeBlock->addPropertyAccessInstruction(instructions().size());
         emitOpcode(op_to_this);
         instructions().append(kill(&m_thisRegister));
@@ -456,32 +456,24 @@ RegisterID* BytecodeGenerator::emitInitLazyRegister(RegisterID* reg)
 
 RegisterID* BytecodeGenerator::resolveCallee(FunctionBodyNode* functionBodyNode)
 {
-    if (functionBodyNode->ident().isNull() || !functionBodyNode->functionNameIsInScope())
+    if (!functionNameIsInScope(functionBodyNode->ident(), functionBodyNode->functionMode()))
+        return 0;
+
+    if (functionNameScopeIsDynamic(m_codeBlock->usesEval(), m_codeBlock->isStrictMode()))
         return 0;
 
     m_calleeRegister.setIndex(JSStack::Callee);
+    if (functionBodyNode->captures(functionBodyNode->ident()))
+        return emitMove(addVar(), IsCaptured, &m_calleeRegister);
 
-    // If non-strict eval is in play, we use a separate object in the scope chain for the callee's name.
-    if (m_codeBlock->usesEval() && !m_codeBlock->isStrictMode())
-        emitPushFunctionNameScope(functionBodyNode->ident(), &m_calleeRegister, ReadOnly | DontDelete);
-
-    if (!functionBodyNode->captures(functionBodyNode->ident()))
-        return &m_calleeRegister;
-
-    // Move the callee into the captured section of the stack.
-    return emitMove(addVar(), IsCaptured, &m_calleeRegister);
+    return &m_calleeRegister;
 }
 
 void BytecodeGenerator::addCallee(FunctionBodyNode* functionBodyNode, RegisterID* calleeRegister)
 {
-    if (functionBodyNode->ident().isNull() || !functionBodyNode->functionNameIsInScope())
+    if (!calleeRegister)
         return;
 
-    // If non-strict eval is in play, we use a separate object in the scope chain for the callee's name.
-    if (m_codeBlock->usesEval() && !m_codeBlock->isStrictMode())
-        return;
-
-    ASSERT(calleeRegister);
     symbolTable().add(functionBodyNode->ident().impl(), SymbolTableEntry(calleeRegister->index(), ReadOnly));
 }
 

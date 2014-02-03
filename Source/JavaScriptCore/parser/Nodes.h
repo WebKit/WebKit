@@ -1532,15 +1532,14 @@ namespace JSC {
 
         virtual void emitBytecode(BytecodeGenerator&, RegisterID* = 0) override;
 
-        void finishParsing(const SourceCode&, ParameterNode*, const Identifier&, FunctionNameIsInScopeToggle);
-        void finishParsing(PassRefPtr<FunctionParameters>, const Identifier&, FunctionNameIsInScopeToggle);
+        void finishParsing(const SourceCode&, ParameterNode*, const Identifier&, FunctionMode);
+        void finishParsing(PassRefPtr<FunctionParameters>, const Identifier&, FunctionMode);
         
         const Identifier& ident() { return m_ident; }
         void setInferredName(const Identifier& inferredName) { ASSERT(!inferredName.isNull()); m_inferredName = inferredName; }
         const Identifier& inferredName() { return m_inferredName.isEmpty() ? m_ident : m_inferredName; }
 
-        bool functionNameIsInScope() { return m_functionNameIsInScopeToggle == FunctionNameIsInScope; }
-        FunctionNameIsInScopeToggle functionNameIsInScopeToggle() { return m_functionNameIsInScopeToggle; }
+        FunctionMode functionMode() { return m_functionMode; }
 
         void setFunctionNameStart(int functionNameStart) { m_functionNameStart = functionNameStart; }
         int functionNameStart() const { return m_functionNameStart; }
@@ -1557,7 +1556,7 @@ namespace JSC {
 
         Identifier m_ident;
         Identifier m_inferredName;
-        FunctionNameIsInScopeToggle m_functionNameIsInScopeToggle;
+        FunctionMode m_functionMode;
         RefPtr<FunctionParameters> m_parameters;
         int m_functionNameStart;
         unsigned m_startColumn;

@@ -75,14 +75,15 @@ static EncodedJSValue JSC_HOST_CALL arrayProtoFuncEntries(ExecState*);
 
 namespace JSC {
 
-static inline bool isNumericCompareFunction(ExecState* exec, CallType callType, const CallData& callData)
+static inline bool isNumericCompareFunction(ExecState* exec, JSValue function, CallType callType, const CallData& callData)
 {
     if (callType != CallTypeJS)
         return false;
 
     FunctionExecutable* executable = callData.js.functionExecutable;
+    JSScope* scope = callData.js.scope;
 
-    JSObject* error = executable->prepareForExecution(exec, callData.js.scope, CodeForCall);
+    JSObject* error = executable->prepareForExecution(exec, jsCast<JSFunction*>(function), &scope, CodeForCall);
     if (error)
         return false;
 
@@ -614,7 +615,7 @@ static bool attemptFastSort(ExecState* exec, JSObject* thisObj, JSValue function
         || shouldUseSlowPut(thisObj->structure()->indexingType()))
         return false;
     
-    if (isNumericCompareFunction(exec, callType, callData))
+    if (isNumericCompareFunction(exec, function, callType, callData))
         asArray(thisObj)->sortNumeric(exec, function, callType, callData);
     else if (callType != CallTypeNone)
         asArray(thisObj)->sort(exec, function, callType, callData);

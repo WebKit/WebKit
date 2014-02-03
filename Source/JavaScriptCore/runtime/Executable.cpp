@@ -180,9 +180,9 @@ void ScriptExecutable::installCode(CodeBlock* genericCodeBlock)
 }
 
 PassRefPtr<CodeBlock> ScriptExecutable::newCodeBlockFor(
-    CodeSpecializationKind kind, JSScope* scope, JSObject*& exception)
+    CodeSpecializationKind kind, JSFunction* function, JSScope** scope, JSObject*& exception)
 {
-    VM* vm = scope->vm();
+    VM* vm = (*scope)->vm();
 
     ASSERT(vm->heap.isDeferred());
     ASSERT(startColumn() != UINT_MAX);
@@ -192,8 +192,9 @@ PassRefPtr<CodeBlock> ScriptExecutable::newCodeBlockFor(
         EvalExecutable* executable = jsCast<EvalExecutable*>(this);
         RELEASE_ASSERT(kind == CodeForCall);
         RELEASE_ASSERT(!executable->m_evalCodeBlock);
+        RELEASE_ASSERT(!function);
         return adoptRef(new EvalCodeBlock(
-            executable, executable->m_unlinkedEvalCodeBlock.get(), scope,
+            executable, executable->m_unlinkedEvalCodeBlock.get(), *scope,
             executable->source().provider()));
     }
     
@@ -201,15 +202,17 @@ PassRefPtr<CodeBlock> ScriptExecutable::newCodeBlockFor(
         ProgramExecutable* executable = jsCast<ProgramExecutable*>(this);
         RELEASE_ASSERT(kind == CodeForCall);
         RELEASE_ASSERT(!executable->m_programCodeBlock);
+        RELEASE_ASSERT(!function);
         return adoptRef(new ProgramCodeBlock(
-            executable, executable->m_unlinkedProgramCodeBlock.get(), scope,
+            executable, executable->m_unlinkedProgramCodeBlock.get(), *scope,
             executable->source().provider(), executable->source().startColumn()));
     }
     
     RELEASE_ASSERT(classInfo() == FunctionExecutable::info());
+    RELEASE_ASSERT(function);
     FunctionExecutable* executable = jsCast<FunctionExecutable*>(this);
     RELEASE_ASSERT(!executable->codeBlockFor(kind));
-    JSGlobalObject* globalObject = scope->globalObject();
+    JSGlobalObject* globalObject = (*scope)->globalObject();
     ParserError error;
     DebuggerMode debuggerMode = globalObject->hasDebugger() ? DebuggerOn : DebuggerOff;
     ProfilerMode profilerMode = globalObject->hasProfiler() ? ProfilerOn : ProfilerOff;
@@ -223,13 +226,21 @@ PassRefPtr<CodeBlock> ScriptExecutable::newCodeBlockFor(
             error.toErrorObject(globalObject, executable->m_source));
         return 0;
     }
+
+    // Parsing reveals whether our function uses features that require a separate function name object in the scope chain.
+    // Be sure to add this scope before linking the bytecode because this scope will change the resolution depth of non-local variables.
+    if (!executable->m_didParseForTheFirstTime) {
+        executable->m_didParseForTheFirstTime = true;
+        function->addNameScopeIfNeeded(*vm);
+        *scope = function->scope();
+    }
     
     SourceProvider* provider = executable->source().provider();
     unsigned sourceOffset = executable->source().startOffset();
     unsigned startColumn = executable->source().startColumn();
 
     return adoptRef(new FunctionCodeBlock(
-        executable, unlinkedCodeBlock, scope, provider, sourceOffset, startColumn));
+        executable, unlinkedCodeBlock, *scope, provider, sourceOffset, startColumn));
 }
 
 PassRefPtr<CodeBlock> ScriptExecutable::newReplacementCodeBlockFor(
@@ -291,13 +302,13 @@ static void setupJIT(VM& vm, CodeBlock* codeBlock)
 }
 
 JSObject* ScriptExecutable::prepareForExecutionImpl(
-    ExecState* exec, JSScope* scope, CodeSpecializationKind kind)
+    ExecState* exec, JSFunction* function, JSScope** scope, CodeSpecializationKind kind)
 {
     VM& vm = exec->vm();
     DeferGC deferGC(vm.heap);
     
     JSObject* exception = 0;
-    RefPtr<CodeBlock> codeBlock = newCodeBlockFor(kind, scope, exception);
+    RefPtr<CodeBlock> codeBlock = newCodeBlockFor(kind, function, scope, exception);
     if (!codeBlock) {
         RELEASE_ASSERT(exception);
         return exception;
@@ -376,6 +387,7 @@ FunctionExecutable::FunctionExecutable(VM& vm, const SourceCode& source, Unlinke
     : ScriptExecutable(vm.functionExecutableStructure.get(), vm, source, unlinkedExecutable->isInStrictContext())
     , m_unlinkedExecutable(vm, this, unlinkedExecutable)
     , m_bodyIncludesBraces(bodyIncludesBraces)
+    , m_didParseForTheFirstTime(false)
 {
     RELEASE_ASSERT(!source.isNull());
     ASSERT(source.length());

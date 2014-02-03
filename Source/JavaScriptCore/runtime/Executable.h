@@ -419,18 +419,18 @@ public:
     }
 
     void installCode(CodeBlock*);
-    PassRefPtr<CodeBlock> newCodeBlockFor(CodeSpecializationKind, JSScope*, JSObject*& exception);
+    PassRefPtr<CodeBlock> newCodeBlockFor(CodeSpecializationKind, JSFunction*, JSScope**, JSObject*& exception);
     PassRefPtr<CodeBlock> newReplacementCodeBlockFor(CodeSpecializationKind);
     
-    JSObject* prepareForExecution(ExecState* exec, JSScope* scope, CodeSpecializationKind kind)
+    JSObject* prepareForExecution(ExecState* exec, JSFunction* function, JSScope** scope, CodeSpecializationKind kind)
     {
         if (hasJITCodeFor(kind))
             return 0;
-        return prepareForExecutionImpl(exec, scope, kind);
+        return prepareForExecutionImpl(exec, function, scope, kind);
     }
 
 private:
-    JSObject* prepareForExecutionImpl(ExecState*, JSScope*, CodeSpecializationKind);
+    JSObject* prepareForExecutionImpl(ExecState*, JSFunction*, JSScope**, CodeSpecializationKind);
 
 protected:
     void finishCreation(VM& vm)
@@ -629,6 +629,7 @@ public:
         return baselineCodeBlockFor(kind);
     }
         
+    FunctionMode functionMode() { return m_unlinkedExecutable->functionMode(); }
     const Identifier& name() { return m_unlinkedExecutable->name(); }
     const Identifier& inferredName() { return m_unlinkedExecutable->inferredName(); }
     JSString* nameValue() const { return m_unlinkedExecutable->nameValue(); }
@@ -673,6 +674,7 @@ private:
     RefPtr<FunctionCodeBlock> m_codeBlockForCall;
     RefPtr<FunctionCodeBlock> m_codeBlockForConstruct;
     bool m_bodyIncludesBraces;
+    bool m_didParseForTheFirstTime;
 };
 
 inline bool isHostFunction(JSValue value, NativeFunction nativeFunction)

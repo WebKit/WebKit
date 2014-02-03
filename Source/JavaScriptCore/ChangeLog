@@ -1,3 +1,84 @@
+2014-01-31  Geoffrey Garen  <ggaren@apple.com>
+
+        Simplified name scope creation for function expressions
+        https://bugs.webkit.org/show_bug.cgi?id=128031
+
+        Reviewed by Mark Lam.
+
+        3X speedup on js/regress/script-tests/function-with-eval.js.
+
+        We used to emit bytecode to push a name into local scope every
+        time a function that needed such a name executed. Now, we push the name
+        into scope once on the function object, and leave it there.
+
+        This is faster, and it also reduces the number of variable resolution
+        modes you have to worry about when thinking about bytecode and the
+        debugger.
+
+        This patch is slightly complicated by the fact that we don't know if
+        a function needs a name scope until we parse its body. So, there's some
+        glue code in here to delay filling in a function's scope until we parse
+        its body for the first time.
+
+        * bytecode/UnlinkedCodeBlock.cpp:
+        (JSC::generateFunctionCodeBlock):
+        (JSC::UnlinkedFunctionExecutable::UnlinkedFunctionExecutable):
+        * bytecode/UnlinkedCodeBlock.h:
+        (JSC::UnlinkedFunctionExecutable::functionMode): Renamed
+        functionNameIsInScopeToggle to functionMode.
+
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::BytecodeGenerator): No need to emit convert_this
+        when debugging. The debugger will perform the conversion as needed.
+
+        (JSC::BytecodeGenerator::resolveCallee):
+        (JSC::BytecodeGenerator::addCallee): Simplified this code by removing
+        the "my function needs a name scope, but didn't allocate one" mode.
+
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::execute):
+        (JSC::Interpreter::executeCall):
+        (JSC::Interpreter::executeConstruct):
+        (JSC::Interpreter::prepareForRepeatCall): Pass a scope slot through to
+        CodeBlock generation, so we can add a function name scope if the parsed
+        function body requires one.
+
+        * jit/JITOperations.cpp:
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::setUpCall): Ditto.
+
+        * parser/NodeConstructors.h:
+        (JSC::FuncExprNode::FuncExprNode):
+        (JSC::FuncDeclNode::FuncDeclNode):
+        * parser/Nodes.cpp:
+        (JSC::FunctionBodyNode::finishParsing):
+        * parser/Nodes.h:
+        (JSC::FunctionBodyNode::functionMode): Updated for rename.
+
+        * parser/ParserModes.h:
+        (JSC::functionNameIsInScope):
+        (JSC::functionNameScopeIsDynamic): Helper functions for reasoning about
+        how crazy JavaScript language semantics are.
+
+        * runtime/ArrayPrototype.cpp:
+        (JSC::isNumericCompareFunction):
+        (JSC::attemptFastSort): Updated for interface changes above.
+
+        * runtime/Executable.cpp:
+        (JSC::ScriptExecutable::newCodeBlockFor):
+        (JSC::ScriptExecutable::prepareForExecutionImpl):
+        (JSC::FunctionExecutable::FunctionExecutable):
+        * runtime/Executable.h:
+        (JSC::ScriptExecutable::prepareForExecution):
+        (JSC::FunctionExecutable::functionMode):
+        * runtime/JSFunction.cpp:
+        (JSC::JSFunction::addNameScopeIfNeeded):
+        * runtime/JSFunction.h:
+        * runtime/JSNameScope.h:
+        (JSC::JSNameScope::create):
+        (JSC::JSNameScope::JSNameScope): Added machinery for pushing a function
+        name scope onto a function when we first discover that it's needed.
+
 2014-01-25  Darin Adler  <darin@apple.com>
 
         Stop using Unicode.h

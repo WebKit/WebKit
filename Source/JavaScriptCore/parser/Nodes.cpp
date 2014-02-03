@@ -195,18 +195,18 @@ inline FunctionBodyNode::FunctionBodyNode(VM* vm, const JSTokenLocation& startLo
 {
 }
 
-void FunctionBodyNode::finishParsing(const SourceCode& source, ParameterNode* firstParameter, const Identifier& ident, FunctionNameIsInScopeToggle functionNameIsInScopeToggle)
+void FunctionBodyNode::finishParsing(const SourceCode& source, ParameterNode* firstParameter, const Identifier& ident, enum FunctionMode functionMode)
 {
     setSource(source);
-    finishParsing(FunctionParameters::create(firstParameter), ident, functionNameIsInScopeToggle);
+    finishParsing(FunctionParameters::create(firstParameter), ident, functionMode);
 }
 
-void FunctionBodyNode::finishParsing(PassRefPtr<FunctionParameters> parameters, const Identifier& ident, FunctionNameIsInScopeToggle functionNameIsInScopeToggle)
+void FunctionBodyNode::finishParsing(PassRefPtr<FunctionParameters> parameters, const Identifier& ident, enum FunctionMode functionMode)
 {
     ASSERT(!source().isNull());
     m_parameters = parameters;
     m_ident = ident;
-    m_functionNameIsInScopeToggle = functionNameIsInScopeToggle;
+    m_functionMode = functionMode;
 }
 
 FunctionBodyNode* FunctionBodyNode::create(VM* vm, const JSTokenLocation& startLocation, const JSTokenLocation& endLocation, unsigned startColumn, unsigned endColumn, bool inStrictContext)

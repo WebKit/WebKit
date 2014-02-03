@@ -99,7 +99,7 @@ public:
     }
     size_t parameterCount() const;
     bool isInStrictContext() const { return m_isInStrictContext; }
-    FunctionNameIsInScopeToggle functionNameIsInScopeToggle() const { return m_functionNameIsInScopeToggle; }
+    FunctionMode functionMode() const { return m_functionMode; }
 
     unsigned firstLineOffset() const { return m_firstLineOffset; }
     unsigned lineCount() const { return m_lineCount; }
@@ -169,7 +169,7 @@ private:
 
     CodeFeatures m_features;
 
-    FunctionNameIsInScopeToggle m_functionNameIsInScopeToggle;
+    FunctionMode m_functionMode;
 
 protected:
     void finishCreation(VM& vm)

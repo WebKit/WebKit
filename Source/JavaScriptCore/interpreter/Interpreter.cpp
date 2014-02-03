@@ -875,7 +875,7 @@ failedJSONP:
     if (JSObject* error = program->initializeGlobalProperties(vm, callFrame, scope))
         return checkedReturn(callFrame->vm().throwException(callFrame, error));
 
-    if (JSObject* error = program->prepareForExecution(callFrame, scope, CodeForCall))
+    if (JSObject* error = program->prepareForExecution(callFrame, nullptr, &scope, CodeForCall))
         return checkedReturn(callFrame->vm().throwException(callFrame, error));
 
     ProgramCodeBlock* codeBlock = program->codeBlock();
@@ -932,7 +932,7 @@ JSValue Interpreter::executeCall(CallFrame* callFrame, JSObject* function, CallT
 
     if (isJSCall) {
         // Compile the callee:
-        JSObject* compileError = callData.js.functionExecutable->prepareForExecution(callFrame, scope, CodeForCall);
+        JSObject* compileError = callData.js.functionExecutable->prepareForExecution(callFrame, jsCast<JSFunction*>(function), &scope, CodeForCall);
         if (UNLIKELY(!!compileError)) {
             return checkedReturn(callFrame->vm().throwException(callFrame, compileError));
         }
@@ -1000,7 +1000,7 @@ JSObject* Interpreter::executeConstruct(CallFrame* callFrame, JSObject* construc
 
     if (isJSConstruct) {
         // Compile the callee:
-        JSObject* compileError = constructData.js.functionExecutable->prepareForExecution(callFrame, scope, CodeForConstruct);
+        JSObject* compileError = constructData.js.functionExecutable->prepareForExecution(callFrame, jsCast<JSFunction*>(constructor), &scope, CodeForConstruct);
         if (UNLIKELY(!!compileError)) {
             return checkedReturn(callFrame->vm().throwException(callFrame, compileError));
         }
@@ -1053,7 +1053,7 @@ CallFrameClosure Interpreter::prepareForRepeatCall(FunctionExecutable* functionE
         return CallFrameClosure();
 
     // Compile the callee:
-    JSObject* error = functionExecutable->prepareForExecution(callFrame, scope, CodeForCall);
+    JSObject* error = functionExecutable->prepareForExecution(callFrame, function, &scope, CodeForCall);
     if (error) {
         callFrame->vm().throwException(callFrame, error);
         return CallFrameClosure();
@@ -1134,7 +1134,7 @@ JSValue Interpreter::execute(EvalExecutable* eval, CallFrame* callFrame, JSValue
         }
     }
 
-    JSObject* compileError = eval->prepareForExecution(callFrame, scope, CodeForCall);
+    JSObject* compileError = eval->prepareForExecution(callFrame, nullptr, &scope, CodeForCall);
     if (UNLIKELY(!!compileError))
         return checkedReturn(callFrame->vm().throwException(callFrame, compileError));
     EvalCodeBlock* codeBlock = eval->codeBlock();

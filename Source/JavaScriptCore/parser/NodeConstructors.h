@@ -769,14 +769,14 @@ inline ResolveNode::ResolveNode(const JSTokenLocation& location, const Identifie
         : ExpressionNode(location)
         , m_body(body)
     {
-        m_body->finishParsing(source, parameter, ident, FunctionNameIsInScope);
+        m_body->finishParsing(source, parameter, ident, FunctionExpression);
     }
 
     inline FuncDeclNode::FuncDeclNode(const JSTokenLocation& location, const Identifier& ident, FunctionBodyNode* body, const SourceCode& source, ParameterNode* parameter)
         : StatementNode(location)
         , m_body(body)
     {
-        m_body->finishParsing(source, parameter, ident, FunctionNameIsNotInScope);
+        m_body->finishParsing(source, parameter, ident, FunctionDeclaration);
     }
 
     inline CaseClauseNode::CaseClauseNode(ExpressionNode* expr, SourceElements* statements)

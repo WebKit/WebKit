@@ -36,6 +36,7 @@
 #include "JSArray.h"
 #include "JSBoundFunction.h" 
 #include "JSGlobalObject.h"
+#include "JSNameScope.h" 
 #include "JSNotAnObject.h"
 #include "Interpreter.h"
 #include "ObjectConstructor.h"
@@ -107,6 +108,16 @@ void JSFunction::finishCreation(VM& vm, NativeExecutable* executable, int length
     m_executable.set(vm, this, executable);
     putDirect(vm, vm.propertyNames->name, jsString(&vm, name), DontDelete | ReadOnly | DontEnum);
     putDirect(vm, vm.propertyNames->length, jsNumber(length), DontDelete | ReadOnly | DontEnum);
+}
+
+void JSFunction::addNameScopeIfNeeded(VM& vm)
+{
+    FunctionExecutable* executable = jsCast<FunctionExecutable*>(m_executable.get());
+    if (!functionNameIsInScope(executable->name(), executable->functionMode()))
+        return;
+    if (!functionNameScopeIsDynamic(executable->usesEval(), executable->isStrictMode()))
+        return;
+    m_scope.set(vm, this, JSNameScope::create(vm, m_scope->globalObject(), executable->name(), this, ReadOnly | DontDelete, m_scope.get()));
 }
 
 ObjectAllocationProfile* JSFunction::createAllocationProfile(ExecState* exec, size_t inlineCapacity)

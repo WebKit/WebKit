@@ -39,15 +39,14 @@ public:
     static JSNameScope* create(ExecState* exec, const Identifier& identifier, JSValue value, unsigned attributes)
     {
         VM& vm = exec->vm();
-        JSNameScope* scopeObject = new (NotNull, allocateCell<JSNameScope>(vm.heap)) JSNameScope(exec, exec->scope());
+        JSNameScope* scopeObject = new (NotNull, allocateCell<JSNameScope>(vm.heap)) JSNameScope(vm, exec->lexicalGlobalObject(), exec->scope());
         scopeObject->finishCreation(vm, identifier, value, attributes);
         return scopeObject;
     }
 
-    static JSNameScope* create(ExecState* exec, const Identifier& identifier, JSValue value, unsigned attributes, JSScope* next)
+    static JSNameScope* create(VM& vm, JSGlobalObject* globalObject, const Identifier& identifier, JSValue value, unsigned attributes, JSScope* next)
     {
-        VM& vm = exec->vm();
-        JSNameScope* scopeObject = new (NotNull, allocateCell<JSNameScope>(vm.heap)) JSNameScope(exec, next);
+        JSNameScope* scopeObject = new (NotNull, allocateCell<JSNameScope>(vm.heap)) JSNameScope(vm, globalObject, next);
         scopeObject->finishCreation(vm, identifier, value, attributes);
         return scopeObject;
     }
@@ -72,10 +71,10 @@ protected:
     static const unsigned StructureFlags = OverridesGetOwnPropertySlot | OverridesVisitChildren | Base::StructureFlags;
 
 private:
-    JSNameScope(ExecState* exec, JSScope* next)
+    JSNameScope(VM& vm, JSGlobalObject* globalObject, JSScope* next)
         : Base(
-            exec->vm(),
-            exec->lexicalGlobalObject()->nameScopeStructure(),
+            vm,
+            globalObject->nameScopeStructure(),
             reinterpret_cast<Register*>(&m_registerStore + 1),
             next
         )

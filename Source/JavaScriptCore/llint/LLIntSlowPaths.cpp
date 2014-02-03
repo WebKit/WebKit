@@ -1081,7 +1081,8 @@ inline SlowPathReturnType setUpCall(ExecState* execCallee, Instruction* pc, Code
         codePtr = executable->entrypointFor(vm, kind, MustCheckArity, RegisterPreservationNotRequired);
     else {
         FunctionExecutable* functionExecutable = static_cast<FunctionExecutable*>(executable);
-        JSObject* error = functionExecutable->prepareForExecution(execCallee, callee->scope(), kind);
+        JSObject* error = functionExecutable->prepareForExecution(execCallee, callee, &scope, kind);
+        execCallee->setScope(scope);
         if (error)
             LLINT_CALL_THROW(execCallee->callerFrame(), error);
         codeBlock = functionExecutable->codeBlockFor(kind);

@@ -1,3 +1,18 @@
+2014-01-31  Geoffrey Garen  <ggaren@apple.com>
+
+        Simplified name scope creation for function expressions
+        https://bugs.webkit.org/show_bug.cgi?id=128031
+
+        Reviewed by Mark Lam.
+
+        Added a performance regression test.
+
+        * js/regress/function-with-eval-expected.txt: Added.
+        * js/regress/function-with-eval.html: Added.
+        * js/regress/script-tests/function-with-eval.js: Added.
+        (foo):
+        (bar):
+
 2014-02-03  Chris Fleizach  <cfleizach@apple.com>
 
         AX: WebKit should support @headers/@id for complex accessible web tables

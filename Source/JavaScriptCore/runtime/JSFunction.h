@@ -93,6 +93,7 @@ namespace JSC {
             ASSERT(!isHostFunctionNonInline());
             m_scope.set(vm, this, scope);
         }
+        void addNameScopeIfNeeded(VM&);
 
         ExecutableBase* executable() const { return m_executable.get(); }
 

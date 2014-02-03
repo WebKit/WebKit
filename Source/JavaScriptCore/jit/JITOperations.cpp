@@ -693,7 +693,8 @@ inline char* linkFor(
         return reinterpret_cast<char*>(handleHostCall(execCallee, calleeAsValue, kind));
 
     JSFunction* callee = jsCast<JSFunction*>(calleeAsFunctionCell);
-    execCallee->setScope(callee->scopeUnchecked());
+    JSScope* scope = callee->scopeUnchecked();
+    execCallee->setScope(scope);
     ExecutableBase* executable = callee->executable();
 
     MacroAssemblerCodePtr codePtr;
@@ -703,7 +704,8 @@ inline char* linkFor(
         codePtr = executable->entrypointFor(*vm, kind, MustCheckArity, registers);
     else {
         FunctionExecutable* functionExecutable = static_cast<FunctionExecutable*>(executable);
-        JSObject* error = functionExecutable->prepareForExecution(execCallee, callee->scope(), kind);
+        JSObject* error = functionExecutable->prepareForExecution(execCallee, callee, &scope, kind);
+        execCallee->setScope(scope);
         if (error) {
             throwStackOverflowError(exec);
             return reinterpret_cast<char*>(vm->getCTIStub(throwExceptionFromCallSlowPathGenerator).code().executableAddress());
@@ -757,11 +759,13 @@ inline char* virtualForWithFunction(
         return reinterpret_cast<char*>(handleHostCall(execCallee, calleeAsValue, kind));
     
     JSFunction* function = jsCast<JSFunction*>(calleeAsFunctionCell);
-    execCallee->setScope(function->scopeUnchecked());
+    JSScope* scope = function->scopeUnchecked();
+    execCallee->setScope(scope);
     ExecutableBase* executable = function->executable();
     if (UNLIKELY(!executable->hasJITCodeFor(kind))) {
         FunctionExecutable* functionExecutable = static_cast<FunctionExecutable*>(executable);
-        JSObject* error = functionExecutable->prepareForExecution(execCallee, function->scope(), kind);
+        JSObject* error = functionExecutable->prepareForExecution(execCallee, function, &scope, kind);
+        execCallee->setScope(scope);
         if (error) {
             exec->vm().throwException(execCallee, error);
             return reinterpret_cast<char*>(vm->getCTIStub(throwExceptionFromCallSlowPathGenerator).code().executableAddress());

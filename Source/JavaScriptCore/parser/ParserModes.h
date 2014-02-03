@@ -27,6 +27,8 @@
 #ifndef ParserModes_h
 #define ParserModes_h
 
+#include "Identifier.h"
+
 namespace JSC {
 
 enum JSParserStrictness { JSParseNormal, JSParseStrict };
@@ -35,7 +37,32 @@ enum JSParserMode { JSParseProgramCode, JSParseFunctionCode };
 enum ProfilerMode { ProfilerOff, ProfilerOn };
 enum DebuggerMode { DebuggerOff, DebuggerOn };
 
-enum FunctionNameIsInScopeToggle { FunctionNameIsNotInScope, FunctionNameIsInScope };
+enum FunctionMode { FunctionExpression, FunctionDeclaration };
+
+inline bool functionNameIsInScope(const Identifier& name, FunctionMode functionMode)
+{
+    if (name.isNull())
+        return false;
+
+    if (functionMode != FunctionExpression)
+        return false;
+
+    return true;
+}
+
+inline bool functionNameScopeIsDynamic(bool usesEval, bool isStrictMode)
+{
+    // If non-strict eval is in play, a function gets a separate object in the scope chain for its name.
+    // This enables eval to declare and then delete a name that shadows the function's name.
+
+    if (!usesEval)
+        return false;
+
+    if (isStrictMode)
+        return false;
+
+    return true;
+}
 
 typedef unsigned CodeFeatures;
 

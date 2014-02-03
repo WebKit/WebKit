@@ -60,7 +60,7 @@ static UnlinkedFunctionCodeBlock* generateFunctionCodeBlock(VM& vm, UnlinkedFunc
 
     if (executable->forceUsesArguments())
         body->setUsesArguments();
-    body->finishParsing(executable->parameters(), executable->name(), executable->functionNameIsInScopeToggle());
+    body->finishParsing(executable->parameters(), executable->name(), executable->functionMode());
     executable->recordParse(body->features(), body->hasCapturedVariables());
     
     UnlinkedFunctionCodeBlock* result = UnlinkedFunctionCodeBlock::create(&vm, FunctionCode, ExecutableInfo(body->needsActivation(), body->usesEval(), body->isStrictMode(), kind == CodeForConstruct));
@@ -100,7 +100,7 @@ UnlinkedFunctionExecutable::UnlinkedFunctionExecutable(VM* vm, Structure* struct
     , m_startOffset(node->source().startOffset() - source.startOffset())
     , m_sourceLength(node->source().length())
     , m_features(node->features())
-    , m_functionNameIsInScopeToggle(node->functionNameIsInScopeToggle())
+    , m_functionMode(node->functionMode())
 {
 }
 
