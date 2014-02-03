@@ -46,7 +46,6 @@
 #include "Text.h"
 #include "TextPaintStyle.h"
 #include "break_lines.h"
-#include <wtf/unicode/Unicode.h>
 
 namespace WebCore {
 namespace SimpleLineLayout {

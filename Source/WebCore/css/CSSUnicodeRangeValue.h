@@ -28,7 +28,6 @@
 
 #include "CSSValue.h"
 #include <wtf/PassRefPtr.h>
-#include <wtf/unicode/Unicode.h>
 
 namespace WebCore {
 

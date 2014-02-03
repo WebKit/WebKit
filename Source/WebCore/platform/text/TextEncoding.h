@@ -28,7 +28,6 @@
 
 #include "TextCodec.h"
 #include <wtf/Forward.h>
-#include <wtf/unicode/Unicode.h>
 
 namespace WebCore {
 

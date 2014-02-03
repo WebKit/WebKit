@@ -42,7 +42,6 @@
 #include "WidthIterator.h"
 #include <wtf/MathExtras.h>
 #include <wtf/OwnPtr.h>
-#include <wtf/unicode/Unicode.h>
 
 #include <windows.h>
 

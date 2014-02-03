@@ -23,8 +23,6 @@
 #if ENABLE(SVG_FONTS)
 #include "SVGGlyph.h"
 
-#include <wtf/unicode/Unicode.h>
-
 namespace WebCore {
 
 // Helper functions to determine the arabic character forms (initial, medial, terminal, isolated)

@@ -35,7 +35,6 @@
 #include <wtf/dtoa.h>
 #include <wtf/unicode/CharacterNames.h>
 #include <wtf/unicode/UTF8.h>
-#include <wtf/unicode/Unicode.h>
 
 namespace WTF {
 

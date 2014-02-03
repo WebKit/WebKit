@@ -24,6 +24,8 @@
 #define StringImpl_h
 
 #include <limits.h>
+#include <unicode/uchar.h>
+#include <unicode/ustring.h>
 #include <wtf/ASCIICType.h>
 #include <wtf/CompilationThread.h>
 #include <wtf/CryptographicallyRandomNumber.h>
@@ -33,7 +35,6 @@
 #include <wtf/StringHasher.h>
 #include <wtf/Vector.h>
 #include <wtf/text/ConversionMode.h>
-#include <wtf/unicode/Unicode.h>
 
 #if USE(CF)
 typedef const struct __CFString * CFStringRef;

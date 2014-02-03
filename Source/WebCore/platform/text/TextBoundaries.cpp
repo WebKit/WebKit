@@ -29,7 +29,6 @@
 
 #include "TextBreakIterator.h"
 #include <wtf/text/StringImpl.h>
-#include <wtf/unicode/Unicode.h>
 
 namespace WebCore {
 

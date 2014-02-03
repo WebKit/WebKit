@@ -1,3 +1,64 @@
+2014-01-25  Darin Adler  <darin@apple.com>
+
+        Stop using Unicode.h
+        https://bugs.webkit.org/show_bug.cgi?id=127633
+
+        Reviewed by Anders Carlsson.
+
+        * Modules/indexeddb/IDBKeyPath.cpp:
+        * css/CSSFontFace.h:
+        * css/CSSOMUtils.h:
+        * css/CSSSegmentedFontFace.h:
+        * css/CSSUnicodeRangeValue.h:
+        * editing/Editor.cpp:
+        * editing/SmartReplace.h:
+        * html/parser/HTMLTokenizer.cpp:
+        * loader/DocumentLoader.cpp:
+        * page/ContextMenuController.cpp:
+        * page/Settings.h:
+        * platform/DateComponents.h:
+        * platform/SharedBuffer.cpp:
+        * platform/graphics/Color.h:
+        * platform/graphics/FontCache.h:
+        * platform/graphics/FontData.h:
+        * platform/graphics/FontDescription.h:
+        * platform/graphics/FontFastPath.cpp:
+        * platform/graphics/FontGenericFamilies.h:
+        * platform/graphics/FontGlyphs.cpp:
+        * platform/graphics/GlyphMetricsMap.h:
+        * platform/graphics/GlyphPage.h:
+        * platform/graphics/GlyphPageTreeNode.cpp:
+        * platform/graphics/GlyphPageTreeNode.h:
+        * platform/graphics/SVGGlyph.cpp:
+        * platform/graphics/WidthIterator.h:
+        * platform/graphics/freetype/SimpleFontDataFreeType.cpp:
+        * platform/graphics/harfbuzz/HarfBuzzShaper.cpp:
+        * platform/graphics/mac/ComplexTextController.h:
+        * platform/graphics/win/QTMovie.h:
+        * platform/graphics/wince/FontWinCE.cpp:
+        * platform/text/BidiContext.h:
+        * platform/text/Hyphenation.h:
+        * platform/text/LocaleToScriptMapping.h:
+        * platform/text/TextBoundaries.cpp:
+        * platform/text/TextBoundaries.h:
+        * platform/text/TextBreakIterator.h:
+        * platform/text/TextCodec.h:
+        * platform/text/TextEncoding.h:
+        * platform/text/TextEncodingRegistry.h:
+        * platform/text/TextStream.h:
+        * platform/text/icu/UTextProvider.h:
+        * platform/text/icu/UTextProviderLatin1.h:
+        * platform/text/icu/UTextProviderUTF16.h:
+        * platform/text/wchar/TextBreakIteratorWchar.cpp:
+        * platform/win/WebCoreTextRenderer.cpp:
+        * rendering/RootInlineBox.cpp:
+        * rendering/SimpleLineLayout.cpp:
+        * rendering/SimpleLineLayoutFunctions.cpp:
+        * rendering/break_lines.h:
+        * svg/SVGFontData.cpp:
+        Removed includes of <wtf/unicode/Unicode.h>, adding includes of
+        ICU headers and <wtf/text/LChar.h> as needed to replace it.
+
 2014-02-03  Jessie Berlin  <jberlin@apple.com>
 
         Revert r163299 since it broke the ML 32-bit Release build

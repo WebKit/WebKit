@@ -30,8 +30,8 @@
 #define StringBuffer_h
 
 #include <wtf/Assertions.h>
-#include <wtf/unicode/Unicode.h>
 #include <limits>
+#include <unicode/utypes.h>
 
 namespace WTF {
 

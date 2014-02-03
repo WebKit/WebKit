@@ -35,7 +35,6 @@
 #include <wtf/ASCIICType.h>
 #include <wtf/CurrentTime.h>
 #include <wtf/text/CString.h>
-#include <wtf/unicode/Unicode.h>
 
 using namespace WTF;
 

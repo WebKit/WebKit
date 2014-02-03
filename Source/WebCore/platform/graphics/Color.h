@@ -27,9 +27,10 @@
 #define Color_h
 
 #include "AnimationUtilities.h"
+#include <unicode/uchar.h>
 #include <wtf/FastMalloc.h>
 #include <wtf/Forward.h>
-#include <wtf/unicode/Unicode.h>
+#include <wtf/text/LChar.h>
 
 #if USE(CG)
 #include "ColorSpace.h"

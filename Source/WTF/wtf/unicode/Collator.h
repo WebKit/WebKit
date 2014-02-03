@@ -29,9 +29,10 @@
 #ifndef WTF_Collator_h
 #define WTF_Collator_h
 
+#include <unicode/uconfig.h>
+#include <unicode/utypes.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/OwnPtr.h>
-#include <wtf/unicode/Unicode.h>
 
 struct UCollator;
 

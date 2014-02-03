@@ -26,7 +26,8 @@
 #ifndef WTF_UTF8_h
 #define WTF_UTF8_h
 
-#include <wtf/unicode/Unicode.h>
+#include <unicode/utypes.h>
+#include <wtf/text/LChar.h>
 
 namespace WTF {
 namespace Unicode {

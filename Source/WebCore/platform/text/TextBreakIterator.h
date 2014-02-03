@@ -24,7 +24,6 @@
 
 #include <wtf/text/AtomicString.h>
 #include <wtf/text/StringView.h>
-#include <wtf/unicode/Unicode.h>
 
 namespace WebCore {
 

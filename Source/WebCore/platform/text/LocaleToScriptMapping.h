@@ -31,8 +31,8 @@
 #ifndef LocaleToScriptMapping_h
 #define LocaleToScriptMapping_h
 
+#include <unicode/uscript.h>
 #include <wtf/Forward.h>
-#include <wtf/unicode/Unicode.h>
 
 namespace WebCore {
 

@@ -27,7 +27,7 @@
 #define UTextProviderLatin1_h
 
 #include <unicode/utext.h>
-#include <wtf/unicode/Unicode.h>
+#include <wtf/text/LChar.h>
 
 namespace WebCore {
 

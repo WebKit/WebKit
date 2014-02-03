@@ -26,7 +26,6 @@
 #include <wtf/ASCIICType.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/unicode/CharacterNames.h>
-#include <wtf/unicode/Unicode.h>
 
 namespace WebCore {
 

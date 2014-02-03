@@ -26,7 +26,7 @@
 #ifndef TextBoundaries_h
 #define TextBoundaries_h
 
-#include <wtf/unicode/Unicode.h>
+#include <unicode/uchar.h>
 
 namespace WebCore {
 

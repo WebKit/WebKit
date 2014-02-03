@@ -28,7 +28,6 @@
 
 #include "QTTrack.h"
 #include <wtf/Vector.h>
-#include <wtf/unicode/Unicode.h>
 
 #ifdef QTMOVIEWIN_EXPORTS
 #define QTMOVIEWIN_API __declspec(dllexport)

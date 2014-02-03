@@ -32,7 +32,6 @@
 #include "Font.h"
 #include "FontCache.h"
 #include "SegmentedFontData.h"
-#include <wtf/unicode/Unicode.h>
 
 namespace WebCore {
 

@@ -21,9 +21,10 @@
 #ifndef WTF_dtoa_h
 #define WTF_dtoa_h
 
+#include <unicode/utypes.h>
 #include <wtf/ASCIICType.h>
 #include <wtf/dtoa/double-conversion.h>
-#include <wtf/unicode/Unicode.h>
+#include <wtf/text/LChar.h>
 
 namespace WTF {
 

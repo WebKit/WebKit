@@ -27,7 +27,6 @@
 #define UTextProvider_h
 
 #include <unicode/utext.h>
-#include <wtf/unicode/Unicode.h>
 
 namespace WebCore {
 

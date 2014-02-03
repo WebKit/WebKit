@@ -28,7 +28,6 @@
 
 #include "YarrPattern.h"
 #include <wtf/PassOwnPtr.h>
-#include <wtf/unicode/Unicode.h>
 
 namespace WTF {
 class BumpPointerAllocator;

@@ -26,8 +26,8 @@
 #ifndef Hyphenation_h
 #define Hyphenation_h
 
+#include <unicode/utypes.h>
 #include <wtf/Forward.h>
-#include <wtf/unicode/Unicode.h>
 
 namespace WebCore {
 

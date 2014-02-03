@@ -30,7 +30,6 @@
 #include "PurgeableBuffer.h"
 #include <wtf/PassOwnPtr.h>
 #include <wtf/unicode/UTF8.h>
-#include <wtf/unicode/Unicode.h>
 
 #if ENABLE(DISK_IMAGE_CACHE)
 #include "DiskImageCacheIOS.h"

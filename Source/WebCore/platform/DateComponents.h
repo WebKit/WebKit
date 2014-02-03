@@ -32,8 +32,8 @@
 #define DateComponents_h
 
 #include <limits>
+#include <unicode/utypes.h>
 #include <wtf/Forward.h>
-#include <wtf/unicode/Unicode.h>
 
 namespace WebCore {
 

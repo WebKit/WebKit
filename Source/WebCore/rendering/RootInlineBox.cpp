@@ -36,7 +36,6 @@
 #include "RenderView.h"
 #include "VerticalPositionCache.h"
 #include <wtf/NeverDestroyed.h>
-#include <wtf/unicode/Unicode.h>
 
 namespace WebCore {
     

@@ -26,6 +26,7 @@
 #ifndef FontGenericFamilies_h
 #define FontGenericFamilies_h
 
+#include <unicode/uscript.h>
 #include <wtf/HashMap.h>
 #include <wtf/text/AtomicString.h>
 

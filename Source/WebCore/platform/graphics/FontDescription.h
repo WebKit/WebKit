@@ -34,6 +34,7 @@
 #include "NonCJKGlyphOrientation.h"
 #include "TextRenderingMode.h"
 #include "WebKitFontFamilyNames.h"
+#include <unicode/uscript.h>
 #include <wtf/MathExtras.h>
 #include <wtf/RefCountedArray.h>
 #include <wtf/RefPtr.h>

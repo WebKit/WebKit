@@ -31,7 +31,6 @@
 #include "KeyedCoding.h"
 #include <wtf/ASCIICType.h>
 #include <wtf/dtoa.h>
-#include <wtf/unicode/Unicode.h>
 
 namespace WebCore {
 

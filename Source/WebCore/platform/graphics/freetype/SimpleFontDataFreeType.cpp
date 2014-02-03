@@ -49,7 +49,6 @@
 #include FT_TRUETYPE_TAGS_H
 #include <unicode/normlzr.h>
 #include <wtf/MathExtras.h>
-#include <wtf/unicode/Unicode.h>
 
 namespace WebCore {
 

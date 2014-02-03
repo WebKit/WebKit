@@ -37,7 +37,6 @@
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
-#include <wtf/unicode/Unicode.h>
 
 #if PLATFORM(IOS)
 #include <CoreText/CTFont.h>

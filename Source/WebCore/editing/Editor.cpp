@@ -89,7 +89,6 @@
 #include "htmlediting.h"
 #include "markup.h"
 #include <wtf/unicode/CharacterNames.h>
-#include <wtf/unicode/Unicode.h>
 
 #if ENABLE(DELETION_UI)
 #include "DeleteButtonController.h"

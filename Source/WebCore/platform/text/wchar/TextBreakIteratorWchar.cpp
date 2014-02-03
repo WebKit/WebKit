@@ -25,7 +25,6 @@
 #include <wtf/Atomics.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/WTFString.h>
-#include <wtf/unicode/Unicode.h>
 
 using namespace WTF;
 using namespace std;

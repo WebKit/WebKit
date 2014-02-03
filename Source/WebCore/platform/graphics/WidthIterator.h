@@ -27,7 +27,6 @@
 #include "TextRun.h"
 #include <wtf/HashSet.h>
 #include <wtf/Vector.h>
-#include <wtf/unicode/Unicode.h>
 
 namespace WebCore {
 

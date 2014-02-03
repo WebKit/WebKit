@@ -22,11 +22,11 @@
 #ifndef BidiContext_h
 #define BidiContext_h
 
+#include <unicode/uchar.h>
 #include <wtf/Assertions.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
-#include <wtf/unicode/Unicode.h>
 
 namespace WebCore {
 

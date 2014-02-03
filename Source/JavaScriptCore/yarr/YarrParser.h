@@ -29,7 +29,6 @@
 #include "Yarr.h"
 #include <wtf/ASCIICType.h>
 #include <wtf/text/WTFString.h>
-#include <wtf/unicode/Unicode.h>
 
 namespace JSC { namespace Yarr {
 

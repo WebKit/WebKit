@@ -35,7 +35,6 @@
 #include <wtf/OwnPtr.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
-#include <wtf/unicode/Unicode.h>
 
 #ifndef NDEBUG
 void showGlyphPageTrees();

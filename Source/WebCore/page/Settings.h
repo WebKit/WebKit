@@ -35,11 +35,11 @@
 #include "SettingsMacros.h"
 #include "Timer.h"
 #include <chrono>
+#include <unicode/uscript.h>
 #include <wtf/HashMap.h>
 #include <wtf/RefCounted.h>
 #include <wtf/text/AtomicString.h>
 #include <wtf/text/AtomicStringHash.h>
-#include <wtf/unicode/Unicode.h>
 
 namespace WebCore {
 

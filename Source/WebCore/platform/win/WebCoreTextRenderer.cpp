@@ -31,7 +31,6 @@
 #include "GraphicsContext.h"
 #include "StringTruncator.h"
 #include "TextRun.h"
-#include <wtf/unicode/Unicode.h>
 
 namespace WebCore {
 
