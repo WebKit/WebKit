@@ -176,7 +176,7 @@ void WebPageProxy::restoreFromSessionStateData(API::Data* apiData)
     }
 
     if (provisionalURL)
-        loadURL(provisionalURL);
+        loadRequest(URL(URL(), provisionalURL));
 }
 
 static RetainPtr<CFStringRef> autosaveKey(const String& name)

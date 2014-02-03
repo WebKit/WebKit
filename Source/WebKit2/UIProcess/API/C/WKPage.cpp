@@ -82,22 +82,22 @@ WKPageGroupRef WKPageGetPageGroup(WKPageRef pageRef)
 
 void WKPageLoadURL(WKPageRef pageRef, WKURLRef URLRef)
 {
-    toImpl(pageRef)->loadURL(toWTFString(URLRef));
+    toImpl(pageRef)->loadRequest(toWTFString(URLRef));
 }
 
 void WKPageLoadURLWithUserData(WKPageRef pageRef, WKURLRef URLRef, WKTypeRef userDataRef)
 {
-    toImpl(pageRef)->loadURL(toWTFString(URLRef), toImpl(userDataRef));
+    toImpl(pageRef)->loadRequest(URL(URL(), toWTFString(URLRef)), toImpl(userDataRef));
 }
 
 void WKPageLoadURLRequest(WKPageRef pageRef, WKURLRequestRef urlRequestRef)
 {
-    toImpl(pageRef)->loadURLRequest(toImpl(urlRequestRef));    
+    toImpl(pageRef)->loadRequest(toImpl(urlRequestRef)->resourceRequest());
 }
 
 void WKPageLoadURLRequestWithUserData(WKPageRef pageRef, WKURLRequestRef urlRequestRef, WKTypeRef userDataRef)
 {
-    toImpl(pageRef)->loadURLRequest(toImpl(urlRequestRef), toImpl(userDataRef));    
+    toImpl(pageRef)->loadRequest(toImpl(urlRequestRef)->resourceRequest(), toImpl(userDataRef));
 }
 
 void WKPageLoadFile(WKPageRef pageRef, WKURLRef fileURL, WKURLRef resourceDirectoryURL)

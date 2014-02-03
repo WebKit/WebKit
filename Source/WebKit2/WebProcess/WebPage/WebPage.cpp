@@ -891,11 +891,6 @@ void WebPage::sendClose()
     send(Messages::WebPageProxy::ClosePage(false));
 }
 
-void WebPage::loadURL(const String& url, const SandboxExtension::Handle& sandboxExtensionHandle, IPC::MessageDecoder& decoder)
-{
-    loadURLRequest(ResourceRequest(URL(URL(), url)), sandboxExtensionHandle, decoder);
-}
-
 void WebPage::loadURLInFrame(const String& url, uint64_t frameID)
 {
     WebFrame* frame = WebProcess::shared().webFrame(frameID);
@@ -905,7 +900,7 @@ void WebPage::loadURLInFrame(const String& url, uint64_t frameID)
     frame->coreFrame()->loader().load(FrameLoadRequest(frame->coreFrame(), ResourceRequest(URL(URL(), url))));
 }
 
-void WebPage::loadURLRequest(const ResourceRequest& request, const SandboxExtension::Handle& sandboxExtensionHandle, IPC::MessageDecoder& decoder)
+void WebPage::loadRequest(const ResourceRequest& request, const SandboxExtension::Handle& sandboxExtensionHandle, IPC::MessageDecoder& decoder)
 {
     SendStopResponsivenessTimer stopper(this);
 

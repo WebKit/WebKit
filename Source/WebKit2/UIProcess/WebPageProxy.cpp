@@ -607,37 +607,20 @@ bool WebPageProxy::maybeInitializeSandboxExtensionHandle(const URL& url, Sandbox
     return true;
 }
 
-void WebPageProxy::loadURL(const String& url, API::Object* userData)
+void WebPageProxy::loadRequest(const ResourceRequest& request, API::Object* userData)
 {
     auto transaction = m_pageLoadState.transaction();
 
-    m_pageLoadState.setPendingAPIRequestURL(transaction, url);
+    m_pageLoadState.setPendingAPIRequestURL(transaction, request.url());
 
     if (!isValid())
         reattachToWebProcess();
 
     SandboxExtension::Handle sandboxExtensionHandle;
-    bool createdExtension = maybeInitializeSandboxExtensionHandle(URL(URL(), url), sandboxExtensionHandle);
+    bool createdExtension = maybeInitializeSandboxExtensionHandle(request.url(), sandboxExtensionHandle);
     if (createdExtension)
         m_process->willAcquireUniversalFileReadSandboxExtension();
-    m_process->send(Messages::WebPage::LoadURL(url, sandboxExtensionHandle, WebContextUserMessageEncoder(userData, process())), m_pageID);
-    m_process->responsivenessTimer()->start();
-}
-
-void WebPageProxy::loadURLRequest(API::URLRequest* urlRequest, API::Object* userData)
-{
-    auto transaction = m_pageLoadState.transaction();
-
-    m_pageLoadState.setPendingAPIRequestURL(transaction, urlRequest->resourceRequest().url());
-
-    if (!isValid())
-        reattachToWebProcess();
-
-    SandboxExtension::Handle sandboxExtensionHandle;
-    bool createdExtension = maybeInitializeSandboxExtensionHandle(urlRequest->resourceRequest().url(), sandboxExtensionHandle);
-    if (createdExtension)
-        m_process->willAcquireUniversalFileReadSandboxExtension();
-    m_process->send(Messages::WebPage::LoadURLRequest(urlRequest->resourceRequest(), sandboxExtensionHandle, WebContextUserMessageEncoder(userData, process())), m_pageID);
+    m_process->send(Messages::WebPage::LoadRequest(request, sandboxExtensionHandle, WebContextUserMessageEncoder(userData, process())), m_pageID);
     m_process->responsivenessTimer()->start();
 }
 
@@ -664,7 +647,7 @@ void WebPageProxy::loadFile(const String& fileURLString, const String& resourceD
     SandboxExtension::Handle sandboxExtensionHandle;
     SandboxExtension::createHandle(resourceDirectoryPath, SandboxExtension::ReadOnly, sandboxExtensionHandle);
     m_process->assumeReadAccessToBaseURL(resourceDirectoryURL);
-    m_process->send(Messages::WebPage::LoadURL(fileURL, sandboxExtensionHandle, WebContextUserMessageEncoder(userData, process())), m_pageID);
+    m_process->send(Messages::WebPage::LoadRequest(fileURL, sandboxExtensionHandle, WebContextUserMessageEncoder(userData, process())), m_pageID);
     m_process->responsivenessTimer()->start();
 }
 

@@ -187,13 +187,11 @@ static HashMap<WebPageProxy*, WKBrowsingContextController *>& browsingContextCon
 
 - (void)loadRequest:(NSURLRequest *)request userData:(id)userData
 {
-    RefPtr<API::URLRequest> wkURLRequest = API::URLRequest::create(request);
-
     RefPtr<ObjCObjectGraph> wkUserData;
     if (userData)
         wkUserData = ObjCObjectGraph::create(userData);
 
-    _page->loadURLRequest(wkURLRequest.get(), wkUserData.get());
+    _page->loadRequest(request, wkUserData.get());
 }
 
 - (void)loadFileURL:(NSURL *)URL restrictToFilesWithin:(NSURL *)allowedDirectory

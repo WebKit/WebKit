@@ -723,8 +723,7 @@ private:
 
     // Actions
     void tryClose();
-    void loadURL(const String&, const SandboxExtension::Handle&, IPC::MessageDecoder&);
-    void loadURLRequest(const WebCore::ResourceRequest&, const SandboxExtension::Handle&, IPC::MessageDecoder&);
+    void loadRequest(const WebCore::ResourceRequest&, const SandboxExtension::Handle&, IPC::MessageDecoder&);
     void loadData(const IPC::DataReference&, const String& MIMEType, const String& encodingName, const String& baseURL, IPC::MessageDecoder&);
     void loadHTMLString(const String& htmlString, const String& baseURL, IPC::MessageDecoder&);
     void loadAlternateHTMLString(const String& htmlString, const String& baseURL, const String& unreachableURL, IPC::MessageDecoder&);
