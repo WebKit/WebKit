@@ -1,3 +1,18 @@
+2014-02-03  Anders Carlsson  <andersca@apple.com>
+
+        Consolidate StringImpl tail handling into two functions
+        https://bugs.webkit.org/show_bug.cgi?id=128122
+
+        Reviewed by Andreas Kling.
+
+        * wtf/text/StringImpl.cpp:
+        (WTF::StringImpl::createUninitializedInternalNonEmpty):
+        (WTF::StringImpl::reallocateInternal):
+        * wtf/text/StringImpl.h:
+        (WTF::StringImpl::tryCreateUninitialized):
+        (WTF::StringImpl::allocationSize):
+        (WTF::StringImpl::tailPointer):
+
 2014-02-03  Darin Adler  <darin@apple.com>
 
         Remove Unicode.h

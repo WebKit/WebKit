@@ -408,11 +408,11 @@ public:
             return 0;
         }
         StringImpl* resultImpl;
-        if (!tryFastMalloc(sizeof(T) * length + sizeof(StringImpl)).getValue(resultImpl)) {
+        if (!tryFastMalloc(allocationSize<T>(length)).getValue(resultImpl)) {
             output = 0;
             return 0;
         }
-        output = reinterpret_cast<T*>(resultImpl + 1);
+        output = resultImpl->tailPointer<T>();
 
         return constructInternal<T>(resultImpl, length);
     }
@@ -767,6 +767,18 @@ private:
         if (is8Bit())
             return reinterpret_cast<const void*>(m_data8) == reinterpret_cast<const void*>(this + 1);
         return reinterpret_cast<const void*>(m_data16) == reinterpret_cast<const void*>(this + 1);
+    }
+
+    template<typename T>
+    static size_t allocationSize(unsigned tailElementCount)
+    {
+        return sizeof(StringImpl) + tailElementCount * sizeof(T);
+    }
+
+    template<typename T>
+    T* tailPointer()
+    {
+        return reinterpret_cast<T*>(this + 1);
     }
 
     // This number must be at least 2 to avoid sharing empty, null as well as 1 character strings from SmallStrings.

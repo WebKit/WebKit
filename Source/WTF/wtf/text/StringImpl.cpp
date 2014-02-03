@@ -195,8 +195,7 @@ inline PassRef<StringImpl> StringImpl::createUninitializedInternalNonEmpty(unsig
     // heap allocation from this call.
     if (length > ((std::numeric_limits<unsigned>::max() - sizeof(StringImpl)) / sizeof(CharType)))
         CRASH();
-    size_t size = sizeof(StringImpl) + length * sizeof(CharType);
-    StringImpl* string = static_cast<StringImpl*>(fastMalloc(size));
+    StringImpl* string = static_cast<StringImpl*>(fastMalloc(allocationSize<CharType>(length)));
 
     data = reinterpret_cast<CharType*>(string + 1);
     return constructInternal<CharType>(string, length);
@@ -226,11 +225,11 @@ inline PassRef<StringImpl> StringImpl::reallocateInternal(PassRefPtr<StringImpl>
     // Same as createUninitialized() except here we use fastRealloc.
     if (length > ((std::numeric_limits<unsigned>::max() - sizeof(StringImpl)) / sizeof(CharType)))
         CRASH();
-    size_t size = sizeof(StringImpl) + length * sizeof(CharType);
-    originalString->~StringImpl();
-    StringImpl* string = static_cast<StringImpl*>(fastRealloc(originalString.leakRef(), size));
 
-    data = reinterpret_cast<CharType*>(string + 1);
+    originalString->~StringImpl();
+    StringImpl* string = static_cast<StringImpl*>(fastRealloc(originalString.leakRef(), allocationSize<CharType>(length)));
+
+    data = string->tailPointer<CharType>();
     return constructInternal<CharType>(string, length);
 }
 
