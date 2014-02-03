@@ -2,6 +2,9 @@
 #
 # See http://trac.webkit.org/wiki/TestExpectations for more information on this file.
 
+# Incomplete implementation of eventSender causes this test to fail
+webkit.org/b/42194 fast/scrolling/scroll-select-list.html [ ImageOnlyFailure ]
+
 # pending functional patch and per-port verification
 webkit.org/b/109954 css3/line-break [ Skip ]
 

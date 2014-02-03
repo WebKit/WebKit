@@ -1,3 +1,18 @@
+2014-02-03  Radu Stavila  <stavila@adobe.com>
+
+        REGRESSION (r163018): Can’t scroll in <select> lists
+        https://bugs.webkit.org/show_bug.cgi?id=128090
+
+        New test validates scrolling using the mouse wheel inside a select list.
+        This test is for the moment added as a ImageOnlyFailure expectation
+        because the current implementation of eventSender cannot simulate mouse wheel events.
+
+        Reviewed by Simon Fraser.
+
+        * TestExpectations:
+        * fast/scrolling/scroll-select-list-expected.html: Added.
+        * fast/scrolling/scroll-select-list.html: Added.
+
 2014-02-03  Oliver Hunt  <oliver@apple.com>
 
         Deconstructed parameters aren't being placed in the correct scope

@@ -281,7 +281,7 @@ static inline ScrollGranularity wheelGranularityToScrollGranularity(unsigned del
     }
 }
 
-static inline bool scrollNode(float delta, ScrollGranularity granularity, ScrollDirection positiveDirection, ScrollDirection negativeDirection, Node* node, Element** stopElement, const IntPoint& absolutePoint)
+static inline bool scrollNode(float delta, ScrollGranularity granularity, ScrollDirection positiveDirection, ScrollDirection negativeDirection, Node* node, Element** stopElement, const IntPoint& wheelEventAbsolutePoint)
 {
     if (!delta)
         return false;
@@ -290,7 +290,7 @@ static inline bool scrollNode(float delta, ScrollGranularity granularity, Scroll
     RenderBox* enclosingBox = node->renderer()->enclosingBox();
     float absDelta = delta > 0 ? delta : -delta;
 
-    return enclosingBox->scrollWithWheelEventLocation(delta < 0 ? negativeDirection : positiveDirection, granularity, absDelta, enclosingBox, stopElement, absolutePoint);
+    return enclosingBox->scroll(delta < 0 ? negativeDirection : positiveDirection, granularity, absDelta, stopElement, enclosingBox, wheelEventAbsolutePoint);
 }
 
 #if (ENABLE(TOUCH_EVENTS) && !PLATFORM(IOS))

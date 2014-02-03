@@ -1,3 +1,34 @@
+2014-02-03  Radu Stavila  <stavila@adobe.com>
+
+        REGRESSION (r163018): Can’t scroll in <select> lists
+        https://bugs.webkit.org/show_bug.cgi?id=128090
+
+        The regression was caused by the fact that a new method scrollWithWheelEventLocation() was added
+        to RenderBox to replace the generic scroll() method for the particular case of scrolling using 
+        the mouse wheel. This turned out to be a mistake because in the case of some elements, like select lists, 
+        the scroll method was overriden and now the incorrect method was being called.
+        The solution was to remove the new method and just add two default parameters to the generic
+        scroll method.
+
+        Reviewed by Simon Fraser.
+
+        Test: fast/scrolling/scroll-select-list.html
+
+        * page/EventHandler.cpp:
+        (WebCore::scrollNode):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::scroll):
+        * rendering/RenderBox.h:
+        * rendering/RenderEmbeddedObject.cpp:
+        (WebCore::RenderEmbeddedObject::scroll):
+        * rendering/RenderEmbeddedObject.h:
+        * rendering/RenderListBox.cpp:
+        (WebCore::RenderListBox::scroll):
+        * rendering/RenderListBox.h:
+        * rendering/RenderTextControlSingleLine.cpp:
+        (WebCore::RenderTextControlSingleLine::scroll):
+        * rendering/RenderTextControlSingleLine.h:
+
 2014-02-03  Chris Fleizach  <cfleizach@apple.com>
 
         AX: WebKit should support @headers/@id for complex accessible web tables
