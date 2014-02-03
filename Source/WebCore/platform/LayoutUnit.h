@@ -937,12 +937,12 @@ inline int floorToInt(LayoutUnit value)
 
 inline float roundToDevicePixel(LayoutUnit value, float pixelSnappingFactor)
 {
-    return round((value.rawValue() * pixelSnappingFactor) / kEffectiveFixedPointDenominator) / pixelSnappingFactor;
+    return roundf((value.rawValue() * pixelSnappingFactor) / kEffectiveFixedPointDenominator) / pixelSnappingFactor;
 }
 
 inline float floorToDevicePixel(LayoutUnit value, float pixelSnappingFactor)
 {
-    return floor((value.rawValue() * pixelSnappingFactor) / kEffectiveFixedPointDenominator) / pixelSnappingFactor;
+    return floorf((value.rawValue() * pixelSnappingFactor) / kEffectiveFixedPointDenominator) / pixelSnappingFactor;
 }
 
 inline float snapSizeToDevicePixel(LayoutUnit size, LayoutUnit location, float pixelSnappingFactor)

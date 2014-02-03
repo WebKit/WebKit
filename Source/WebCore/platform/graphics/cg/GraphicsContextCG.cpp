@@ -140,7 +140,7 @@ void GraphicsContext::platformInit(CGContextRef cgContext, bool shouldUseContext
     }
 
     CGAffineTransform baseDeviceMatrix = CGContextGetUserSpaceToDeviceSpaceTransform(cgContext);
-    ASSERT(abs(baseDeviceMatrix.a) == abs(baseDeviceMatrix.d));
+    ASSERT(fabs(baseDeviceMatrix.a) == fabs(baseDeviceMatrix.d));
     m_pixelSnappingFactor = baseDeviceMatrix.a;
 }
 

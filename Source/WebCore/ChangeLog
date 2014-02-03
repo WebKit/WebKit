@@ -1,3 +1,18 @@
+2014-02-02  Zalan Bujtas  <zalan@apple.com>
+
+        Subpixel rendering: Use floorf/roundf/fabs in device snapping helpers.
+        https://bugs.webkit.org/show_bug.cgi?id=128075
+
+        Reviewed by Darin Adler.
+
+        No change in functionality.
+
+        * platform/LayoutUnit.h:
+        (WebCore::roundToDevicePixel):
+        (WebCore::floorToDevicePixel):
+        * platform/graphics/cg/GraphicsContextCG.cpp:
+        (WebCore::GraphicsContext::platformInit):
+
 2014-02-02  Andreas Kling  <akling@apple.com>
 
         SVGDocumentExtensions::resourcesCache() should return a reference.
