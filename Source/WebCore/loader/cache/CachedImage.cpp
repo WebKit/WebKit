@@ -66,6 +66,7 @@ namespace WebCore {
 CachedImage::CachedImage(const ResourceRequest& resourceRequest)
     : CachedResource(resourceRequest, ImageResource)
     , m_image(0)
+    , m_isManuallyCached(false)
     , m_shouldPaintBrokenImage(true)
 {
     setStatus(Unknown);
@@ -74,19 +75,27 @@ CachedImage::CachedImage(const ResourceRequest& resourceRequest)
 CachedImage::CachedImage(Image* image)
     : CachedResource(ResourceRequest(), ImageResource)
     , m_image(image)
+    , m_isManuallyCached(false)
     , m_shouldPaintBrokenImage(true)
 {
     setStatus(Cached);
     setLoading(false);
 }
 
-CachedImage::CachedImage(const URL& url, Image* image)
+CachedImage::CachedImage(const URL& url, Image* image, CachedImage::CacheBehaviorType type)
     : CachedResource(ResourceRequest(url), ImageResource)
     , m_image(image)
+    , m_isManuallyCached(type == CachedImage::ManuallyCached)
     , m_shouldPaintBrokenImage(true)
 {
     setStatus(Cached);
     setLoading(false);
+    if (UNLIKELY(isManuallyCached())) {
+        // Use the incoming URL in the response field. This ensures that code
+        // using the response directly, such as origin checks for security,
+        // actually see something.
+        m_response.setURL(url);
+    }
 }
 
 CachedImage::~CachedImage()
@@ -612,29 +621,17 @@ bool CachedImage::isOriginClean(SecurityOrigin* securityOrigin)
     return !securityOrigin->taintsCanvas(response().url());
 }
 
-#if USE(CF)
-// FIXME: We should look to incorporate the functionality of CachedImageManual
-// into CachedImage or find a better place for this class.
-// FIXME: Remove the USE(CF) once we make MemoryCache::addImageToCache() platform-independent.
-CachedImageManual::CachedImageManual(const URL& url, Image* image)
-    : CachedImage(url, image)
-    , m_fakeClient(std::make_unique<CachedImageClient>())
+bool CachedImage::mustRevalidateDueToCacheHeaders(CachePolicy policy) const
 {
-    // Use the incoming URL in the response field. This ensures that code
-    // using the response directly, such as origin checks for security,
-    // actually see something.
-    m_response.setURL(url);
+    if (UNLIKELY(isManuallyCached())) {
+        // Do not revalidate manually cached images. This mechanism is used as a
+        // way to efficiently share an image from the client to content and
+        // the URL for that image may not represent a resource that can be
+        // retrieved by standard means. If the manual caching SPI is used, it is
+        // incumbent on the client to only use valid resources.
+        return false;
+    }
+    return CachedResource::mustRevalidateDueToCacheHeaders(policy);
 }
-
-bool CachedImageManual::mustRevalidateDueToCacheHeaders(CachePolicy) const
-{
-    // Do not revalidate manually cached images. This mechanism is used as a
-    // way to efficiently share an image from the client to content and
-    // the URL for that image may not represent a resource that can be
-    // retrieved by standard means. If the manual caching SPI is used, it is
-    // incumbent on the client to only use valid resources.
-    return false;
-}
-#endif
 
 } // namespace WebCore

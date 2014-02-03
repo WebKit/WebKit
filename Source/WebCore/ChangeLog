@@ -1,3 +1,43 @@
+2014-02-03  David Kilzer  <ddkilzer@apple.com>
+
+        Remove CachedImageManual class
+        <http://webkit.org/b/128043>
+
+        Reviewed by Darin Adler.
+
+        Get rid of the CachedImageManual class by inlining its
+        functionality into CachedImage.  This makes it possible to
+        de-virtual-ize isManual() (renamed to isManuallyCached()) and to
+        make CachedImage final.  The size of CachedImage does not
+        increase because we turn an existing bool into a bitfield to add
+        an m_isManuallyCached bit, and create a static CachedImageClient
+        in MemoryCache.cpp as the "fake" client to keep the manually
+        cached image alive in the cache.
+
+        * loader/cache/CachedImage.cpp:
+        (WebCore::CachedImage::CachedImage): Set m_isManuallyCached
+        bitfield.  For one overloaded constructor, move the
+        CachedImageManual code into the CachedImage constructor.
+        (WebCore::CachedImageManual::CachedImageManual): Remove.
+        (WebCore::CachedImage::mustRevalidateDueToCacheHeaders): Move
+        method from CachedImageManual to CachedImage, and put
+        ManuallyCached behavior behind a check.
+        * loader/cache/CachedImage.h: Update includes.  Make CachedImage
+        final.  Add CachedImage::CacheBehaviorType enum when manually
+        cached images are created.  Move CachedImageManual methods into
+        CachedImage, remove addFakeClient() and removeFakeClient()
+        methods (MemoryCache methods use addClient() and removeClient()
+        with a static CachedImageClient), and remove the
+        CachedImageManual class definition.  Change
+        m_shouldPaintBrokenImage to a bitfield and add
+        m_isManuallyCached bitfield.
+
+        * loader/cache/MemoryCache.cpp:
+        (WebCore::MemoryCache::addImageToCache): Use std::unique_ptr and
+        remove useless NULL check after calling CachedImage constructor.
+        (WebCore::MemoryCache::removeImageFromCache):
+        - Update to use CachedImage class instead of CachedImageManual.
+
 2014-02-03  Zan Dobersek  <zdobersek@igalia.com>
 
         Move the webdatabase module source code to std::unique_ptr

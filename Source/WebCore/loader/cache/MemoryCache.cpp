@@ -25,6 +25,7 @@
 
 #include "BitmapImage.h"
 #include "CachedImage.h"
+#include "CachedImageClient.h"
 #include "CachedResource.h"
 #include "CachedResourceHandle.h"
 #include "CrossThreadTask.h"
@@ -215,6 +216,12 @@ unsigned MemoryCache::liveCapacity() const
 #if USE(CG)
 // FIXME: Remove the USE(CG) once we either make NativeImagePtr a smart pointer on all platforms or
 // remove the usage of CFRetain() in MemoryCache::addImageToCache() so as to make the code platform-independent.
+static CachedImageClient& dummyCachedImageClient()
+{
+    DEFINE_STATIC_LOCAL(CachedImageClient, client, ());
+    return client;
+}
+
 bool MemoryCache::addImageToCache(NativeImagePtr image, const URL& url, const String& cachePartition)
 {
     ASSERT(image);
@@ -224,18 +231,16 @@ bool MemoryCache::addImageToCache(NativeImagePtr image, const URL& url, const St
     if (!bitmapImage)
         return false;
 
-    CachedImageManual* cachedImage = new CachedImageManual(url, bitmapImage.get());
-    if (!cachedImage)
-        return false;
+    std::unique_ptr<CachedImage> cachedImage = std::make_unique<CachedImage>(url, bitmapImage.get(), CachedImage::ManuallyCached);
 
     // Actual release of the CGImageRef is done in BitmapImage.
     CFRetain(image);
-    cachedImage->addFakeClient();
+    cachedImage->addClient(&dummyCachedImageClient());
     cachedImage->setDecodedSize(bitmapImage->decodedSize());
 #if ENABLE(CACHE_PARTITIONING)
     cachedImage->resourceRequest().setCachePartition(cachePartition);
 #endif
-    add(cachedImage);
+    add(cachedImage.release());
     return true;
 }
 
@@ -255,7 +260,7 @@ void MemoryCache::removeImageFromCache(const URL& url, const String& cachePartit
         return;
 
     // A resource exists and is not a manually cached image, so just remove it.
-    if (!resource->isImage() || !toCachedImage(resource)->isManual()) {
+    if (!resource->isImage() || !toCachedImage(resource)->isManuallyCached()) {
         evict(resource);
         return;
     }
@@ -265,7 +270,7 @@ void MemoryCache::removeImageFromCache(const URL& url, const String& cachePartit
     // dead resources are pruned. That might be immediately since
     // removing the last client triggers a MemoryCache::prune, so the
     // resource may be deleted after this call.
-    toCachedImageManual(toCachedImage(resource))->removeFakeClient();
+    toCachedImage(resource)->removeClient(&dummyCachedImageClient());
 }
 #endif
 
