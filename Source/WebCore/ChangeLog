@@ -1,3 +1,17 @@
+2014-02-03  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: WebKit should support @headers/@id for complex accessible web tables
+        https://bugs.webkit.org/show_bug.cgi?id=128114
+
+        Reviewed by Darin Adler.
+
+        Expose the headers attribute for table cells to accessibility.
+
+        Test: platform/mac/accessibility/table-headers-attribute.html
+
+        * accessibility/AccessibilityTableCell.cpp:
+        (WebCore::AccessibilityTableCell::columnHeaders):
+
 2014-02-03  Andreas Kling  <akling@apple.com>
 
         CTTE: RenderSVGGradientStop always has a SVGStopElement.

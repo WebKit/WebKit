@@ -1,0 +1,18 @@
+Course Name	Course Tutor	Summary	Code	Fee
+After the Civil War	Dr. John Wroughton	October	H27	Â£32	Â£32
+This tests that the headers attribute returns the correct headers for a table cell.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS colHeaders.length is 3
+PASS colHeaders[0].isEqual(table.cellForColumnAndRow(0, 0)) is true
+PASS colHeaders[1].isEqual(table.cellForColumnAndRow(2, 0)) is true
+PASS colHeaders[2].isEqual(table.cellForColumnAndRow(4, 0)) is true
+PASS colHeaders.length is 2
+PASS colHeaders[0].isEqual(table.cellForColumnAndRow(3, 0)) is true
+PASS colHeaders[1].isEqual(table.cellForColumnAndRow(2, 0)) is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

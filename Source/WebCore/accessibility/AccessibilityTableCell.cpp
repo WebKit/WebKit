@@ -148,6 +148,19 @@ void AccessibilityTableCell::columnHeaders(AccessibilityChildrenVector& headers)
     if (!parent)
         return;
 
+    // Choose columnHeaders as the place where the "headers" attribute is reported.
+    AXObjectCache* cache = axObjectCache();
+    Vector<Element*> elements;
+    elementsFromAttribute(elements, headersAttr);
+    for (auto& element : elements) {
+        if (AccessibilityObject* object = cache->getOrCreate(element))
+            headers.append(object);
+    }
+    
+    // If the headers attribute returned valid values, then do not further search for column headers.
+    if (!headers.isEmpty())
+        return;
+    
     std::pair<unsigned, unsigned> rowRange;
     rowIndexRange(rowRange);
     

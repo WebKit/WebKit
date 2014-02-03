@@ -1,3 +1,13 @@
+2014-02-03  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: WebKit should support @headers/@id for complex accessible web tables
+        https://bugs.webkit.org/show_bug.cgi?id=128114
+
+        Reviewed by Darin Adler.
+
+        * platform/mac/accessibility/table-headers-attribute-expected.txt: Added.
+        * platform/mac/accessibility/table-headers-attribute.html: Added.
+
 2014-02-03  Jessie Berlin  <jberlin@apple.com>
 
         Revert r163299 since it broke the ML 32-bit Release build
