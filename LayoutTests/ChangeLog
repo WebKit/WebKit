@@ -1,3 +1,16 @@
+2014-02-03  Jessie Berlin  <jberlin@apple.com>
+
+        Revert r163299 since it broke the ML 32-bit Release build
+
+        * fast/dom/HTMLAnchorElement/anchor-password-expected.txt: Removed.
+        * fast/dom/HTMLAnchorElement/anchor-password.html: Removed.
+        * fast/dom/HTMLAnchorElement/anchor-username-expected.txt: Removed.
+        * fast/dom/HTMLAnchorElement/anchor-username.html: Removed.
+        * fast/dom/HTMLAreaElement/area-password.html: Removed.
+        * fast/dom/HTMLAreaElement/area-username.html: Removed.
+        * js/dom/dom-static-property-for-in-iteration-expected.txt:
+        * js/dom/dom-static-property-for-in-iteration.html:
+
 2014-02-03  Mihai Maerean  <mmaerean@adobe.com>
 
         [CSS Regions] Fix selection and hover effect of content in region with overflow:hidden

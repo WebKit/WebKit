@@ -1,3 +1,30 @@
+2014-02-03  Jessie Berlin  <jberlin@apple.com>
+
+        Revert r163299 since it broke the ML 32-bit Release build
+
+        * html/HTMLAnchorElement.cpp:
+        (WebCore::parsePortFromStringPosition):
+        (WebCore::HTMLAnchorElement::hash):
+        (WebCore::HTMLAnchorElement::setHash):
+        (WebCore::HTMLAnchorElement::host):
+        (WebCore::HTMLAnchorElement::setHost):
+        (WebCore::HTMLAnchorElement::hostname):
+        (WebCore::HTMLAnchorElement::setHostname):
+        (WebCore::HTMLAnchorElement::pathname):
+        (WebCore::HTMLAnchorElement::setPathname):
+        (WebCore::HTMLAnchorElement::port):
+        (WebCore::HTMLAnchorElement::setPort):
+        (WebCore::HTMLAnchorElement::protocol):
+        (WebCore::HTMLAnchorElement::setProtocol):
+        (WebCore::HTMLAnchorElement::search):
+        (WebCore::HTMLAnchorElement::origin):
+        (WebCore::HTMLAnchorElement::setSearch):
+        (WebCore::HTMLAnchorElement::toString):
+        * html/HTMLAnchorElement.h:
+        * html/HTMLAnchorElement.idl:
+        * html/HTMLAreaElement.idl:
+        * html/URLUtils.idl:
+
 2014-02-03  Mihai Maerean  <mmaerean@adobe.com>
 
         [CSS Regions] Fix selection and hover effect of content in region with overflow:hidden

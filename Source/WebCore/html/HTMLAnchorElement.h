@@ -27,7 +27,6 @@
 #include "HTMLElement.h"
 #include "HTMLNames.h"
 #include "LinkHash.h"
-#include "URLUtils.h"
 
 namespace WebCore {
 
@@ -54,7 +53,7 @@ enum {
 //     RelationUp          = 0x00020000,
 };
 
-class HTMLAnchorElement : public HTMLElement, public URLUtils<HTMLAnchorElement> {
+class HTMLAnchorElement : public HTMLElement {
 public:
     static PassRefPtr<HTMLAnchorElement> create(Document&);
     static PassRefPtr<HTMLAnchorElement> create(const QualifiedName&, Document&);
@@ -63,11 +62,35 @@ public:
 
     URL href() const;
     void setHref(const AtomicString&);
-    void setHref(const AtomicString& value, ExceptionCode&) { setHref(value); }
 
     const AtomicString& name() const;
 
+    String hash() const;
+    void setHash(const String&);
+
+    String host() const;
+    void setHost(const String&);
+
+    String hostname() const;
+    void setHostname(const String&);
+
+    String pathname() const;
+    void setPathname(const String&);
+
+    String port() const;
+    void setPort(const String&);
+
+    String protocol() const;
+    void setProtocol(const String&);
+
+    String search() const;
+    void setSearch(const String&);
+
+    String origin() const;
+
     String text();
+
+    String toString() const;
 
     bool isLiveLink() const;
 
