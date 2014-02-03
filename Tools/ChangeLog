@@ -1,3 +1,10 @@
+2014-02-03  Zoltan Horvath  <zoltan@webkit.org>
+
+        Unreviewed. Reorder my e-mail addresses in contributors.json,
+        so bugzilla will auto complete my actual bugzilla username.
+
+        * Scripts/webkitpy/common/config/contributors.json:
+
 2014-02-03  Daniel Bates  <dabates@apple.com>
 
         WebKit Bot Watcher's Dashboard: Defer subsequent resource loads from access-restricted build bot when
