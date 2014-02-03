@@ -1206,16 +1206,6 @@ bool WKPreferencesGetMediaStreamEnabled(WKPreferencesRef preferencesRef)
     return toImpl(preferencesRef)->mediaStreamEnabled();
 }
 
-void WKPreferencesSetVideoPluginProxyEnabled(WKPreferencesRef preferencesRef, bool enabled)
-{
-    toImpl(preferencesRef)->setVideoPluginProxyEnabled(enabled);
-}
-
-bool WKPreferencesGetVideoPluginProxyEnabled(WKPreferencesRef preferencesRef)
-{
-    return toImpl(preferencesRef)->isVideoPluginProxyEnabled();
-}
-
 void WKPreferencesSetSpatialNavigationEnabled(WKPreferencesRef preferencesRef, bool enabled)
 {
     toImpl(preferencesRef)->setSpatialNavigationEnabled(enabled);

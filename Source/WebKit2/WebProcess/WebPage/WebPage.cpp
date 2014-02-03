@@ -2530,7 +2530,7 @@ void WebPage::updatePreferences(const WebPreferencesStore& store)
 #endif
 
 #if USE(PLUGIN_PROXY_FOR_VIDEO)
-    settings->setVideoPluginProxyEnabled(store.getBoolValueForKey(WebPreferencesKey::isVideoPluginProxyEnabledKey()));
+    settings->setVideoPluginProxyEnabled(false);
 #endif
 
 #if ENABLE(WEB_AUDIO)

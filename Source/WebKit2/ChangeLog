@@ -1,3 +1,18 @@
+2014-02-03  Jer Noble  <jer.noble@apple.com>
+
+        [WK2] Remove the VideoPluginProxyEnabled preference in WK2
+        https://bugs.webkit.org/show_bug.cgi?id=128128
+
+        Reviewed by Brady Eidson.
+
+        The plugin proxy is iOS WK1 only, and has no meaning in WebKit2. Just set the preference to false.
+
+        * Shared/WebPreferencesStore.h:
+        * UIProcess/API/C/WKPreferences.cpp:
+        * UIProcess/API/C/WKPreferencesRef.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::updatePreferences):
+
 2014-02-03  Dean Jackson  <dino@apple.com>
 
         Feature flag for shape-inside

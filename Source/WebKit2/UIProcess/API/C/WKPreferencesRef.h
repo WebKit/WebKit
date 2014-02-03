@@ -244,10 +244,6 @@ WK_EXPORT bool WKPreferencesGetAsynchronousSpellCheckingEnabled(WKPreferencesRef
 WK_EXPORT void WKPreferencesSetMediaStreamEnabled(WKPreferencesRef preferencesRef, bool enabled);
 WK_EXPORT bool WKPreferencesGetMediaStreamEnabled(WKPreferencesRef preferencesRef);
 
-// Defaults to true.
-WK_EXPORT void WKPreferencesSetVideoPluginProxyEnabled(WKPreferencesRef preferencesRef, bool enabled);
-WK_EXPORT bool WKPreferencesGetVideoPluginProxyEnabled(WKPreferencesRef preferencesRef);
-
 // Defaults to false.
 WK_EXPORT void WKPreferencesSetSpatialNavigationEnabled(WKPreferencesRef preferencesRef, bool enabled);
 WK_EXPORT bool WKPreferencesGetSpatialNavigationEnabled(WKPreferencesRef preferencesRef);
