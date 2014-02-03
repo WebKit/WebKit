@@ -5,7 +5,10 @@
 
         Reviewed by Mark Lam.
 
-        Start redoing code generation for attributes.
+        This patch does the actual work of moving dom attributes up the
+        prototype chain. There are still a few class and edge cases
+        where we can't do this without impacting existing behaviour,
+        but they can be fixed separately in later patches.
 
         * bindings/js/JSDOMBinding.h:
         (WebCore::getStaticPropertySlotEntryWithoutCaching):
