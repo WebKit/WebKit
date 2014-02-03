@@ -1,3 +1,13 @@
+2014-02-03  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Fix the LLInt C loop
+
+        Rubber stamped by Mark Lam.
+
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::llint_write_barrier_slow):
+        * llint/LLIntSlowPaths.h:
+
 2014-02-03  Dean Jackson  <dino@apple.com>
 
         Feature flag for shape-inside
