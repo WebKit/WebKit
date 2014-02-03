@@ -25,13 +25,22 @@
 
 [NoInterfaceObject]
 interface URLUtils {
-    [SetterRaisesException, URL] attribute DOMString href;
+    [SetterRaisesException, TreatNullAs=NullString, URL] attribute DOMString href;
 #if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT
     [NotEnumerable] DOMString toString();
 #endif
 
     readonly attribute DOMString origin;
 
+#if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C
+    readonly attribute DOMString protocol;
+    readonly attribute DOMString host;
+    readonly attribute DOMString hostname;
+    readonly attribute DOMString port;
+    readonly attribute DOMString pathname;
+    readonly attribute DOMString search;
+    readonly attribute DOMString hash;
+#else
     [TreatNullAs=NullString] attribute DOMString protocol;
     [TreatNullAs=NullString] attribute DOMString username;
     [TreatNullAs=NullString] attribute DOMString password;
@@ -42,4 +51,6 @@ interface URLUtils {
     [TreatNullAs=NullString] attribute DOMString search;
     //    attribute URLSearchParams? searchParams;
     [TreatNullAs=NullString] attribute DOMString hash;
+#endif
+
 };

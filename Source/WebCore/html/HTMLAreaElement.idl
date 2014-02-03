@@ -21,7 +21,6 @@
 interface HTMLAreaElement : HTMLElement {
     [Reflect] attribute DOMString alt;
     [Reflect] attribute DOMString coords;
-    [Reflect, URL] attribute DOMString href;
     [Reflect] attribute boolean noHref;
     [Reflect] attribute DOMString ping;
     [Reflect] attribute DOMString shape;
@@ -30,14 +29,6 @@ interface HTMLAreaElement : HTMLElement {
 #if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C
     [Reflect] attribute DOMString accessKey;
 #endif
-    // IE Extensions
-    readonly attribute DOMString hash;
-    readonly attribute DOMString host;
-    readonly attribute DOMString hostname;
-    readonly attribute DOMString pathname;
-    readonly attribute DOMString port;
-    readonly attribute DOMString protocol;
-    readonly attribute DOMString search;
 
 #if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C
     // Objective-C extension:
@@ -45,3 +36,4 @@ interface HTMLAreaElement : HTMLElement {
 #endif
 };
 
+HTMLAreaElement implements URLUtils;

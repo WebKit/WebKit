@@ -1,3 +1,25 @@
+2014-02-02  Maciej Stachowiak  <mjs@apple.com>
+
+        Adopt URLUtils interface and template in HTMLAnchorElement and HTMLAreaElement
+        https://bugs.webkit.org/show_bug.cgi?id=128067
+
+        Reviewed by Antti Koivisto.
+
+        Tests: fast/dom/HTMLAnchorElement/anchor-password.html
+               fast/dom/HTMLAnchorElement/anchor-username.html
+               fast/dom/HTMLAreaElement/area-password.html
+               fast/dom/HTMLAreaElement/area-username.html
+
+        * html/HTMLAnchorElement.cpp:
+        * html/HTMLAnchorElement.h:
+        (WebCore::HTMLAnchorElement::setHref): Add version that takes
+        (and ignores) ExceptionCode. This is needed because the URLUtil
+        base interface is used for URL, which can throw an exception,
+        and HTMLAnchorElement, which cannot.
+        * html/HTMLAnchorElement.idl: implement URLUtils
+        * html/HTMLAreaElement.idl: implement URLUtils
+        * html/URLUtils.idl: Treat null as empty string for href
+
 2014-02-03  Krzysztof Czech  <k.czech@samsung.com>
 
         [ATK] Expose aria-controls through ATK_RELATION_CONTROLLER_FOR

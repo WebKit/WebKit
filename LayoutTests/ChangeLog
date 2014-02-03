@@ -1,3 +1,22 @@
+2014-02-02  Maciej Stachowiak  <mjs@apple.com>
+
+        Adopt URLUtils interface and template in HTMLAnchorElement and HTMLAreaElement
+        https://bugs.webkit.org/show_bug.cgi?id=128067
+
+        Reviewed by Antti Koivisto.
+
+        New tests for the newly added attributes.
+        * fast/dom/HTMLAnchorElement/anchor-password-expected.txt: Added.
+        * fast/dom/HTMLAnchorElement/anchor-password.html: Added.
+        * fast/dom/HTMLAnchorElement/anchor-username-expected.txt: Added.
+        * fast/dom/HTMLAnchorElement/anchor-username.html: Added.
+        * fast/dom/HTMLAreaElement/area-password.html: Added.
+        * fast/dom/HTMLAreaElement/area-username.html: Added.
+
+        Update a test to handle the new anchor properties.
+        * js/dom/dom-static-property-for-in-iteration-expected.txt:
+        * js/dom/dom-static-property-for-in-iteration.html:
+
 2014-02-03  Krzysztof Czech  <k.czech@samsung.com>
 
         [ATK] Expose aria-controls through ATK_RELATION_CONTROLLER_FOR

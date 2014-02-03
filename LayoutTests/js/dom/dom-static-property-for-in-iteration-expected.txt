@@ -1,3 +1,4 @@
+nerget
 Checks that get_by_pname doesn't get confused about which properties go where when it comes to stacic properties.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
@@ -16,17 +17,19 @@ PASS a["text"] is nerget
 PASS a["hostname"] is 
 PASS a["rel"] is 
 PASS a["hreflang"] is 
+PASS a["password"] is 
 PASS a["ping"] is 
 PASS a["rev"] is 
 PASS a["host"] is 
 PASS a["charset"] is 
+PASS a["username"] is 
 PASS a["target"] is 
 PASS a["type"] is 
 PASS a["coords"] is 
 PASS a["name"] is 
 PASS a["shape"] is 
-PASS a["port"] is 
 PASS a["protocol"] is file:
+PASS a["port"] is 
 PASS a["outerHTML"] is <a id="foo" href="bar">nerget</a>
 PASS a["spellcheck"] is true
 PASS a["webkitdropzone"] is 
@@ -59,9 +62,9 @@ PASS a["className"] is
 PASS a["clientTop"] is 0
 PASS a["lastElementChild"] is null
 PASS a["offsetParent"] is [object HTMLBodyElement]
-PASS a["nextElementSibling"] is [object HTMLScriptElement]
+PASS a["nextElementSibling"] is [object HTMLParagraphElement]
 PASS a["tagName"] is A
-PASS a["previousElementSibling"] is [object HTMLDivElement]
+PASS a["previousElementSibling"] is null
 PASS a["childElementCount"] is 0
 PASS a["scrollLeft"] is 0
 PASS a["firstElementChild"] is null
@@ -69,7 +72,7 @@ PASS a["uiactions"] is
 PASS a["clientLeft"] is 0
 PASS a["offsetHeight"] is 18
 PASS a["clientHeight"] is 0
-PASS a["offsetTop"] is 1074
+PASS a["offsetTop"] is 8
 PASS a["scrollTop"] is 0
 PASS a["scrollHeight"] is 0
 PASS a["previousSibling"] is [object Text]
@@ -108,4 +111,4 @@ PASS a["DOCUMENT_POSITION_CONTAINS"] is 8
 PASS successfullyParsed is true
 
 TEST COMPLETE
-nerget
+
