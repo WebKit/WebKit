@@ -94,7 +94,6 @@ my (
     $inputTypeTimeSupport,
     $inputTypeWeekSupport,
     $inspectorSupport,
-    $javascriptDebuggerSupport,
     $legacyNotificationsSupport,
     $legacyVendorPrefixSupport,
     $legacyWebAudioSupport,
