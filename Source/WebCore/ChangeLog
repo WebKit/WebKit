@@ -1,5 +1,38 @@
 2014-02-02  Andreas Kling  <akling@apple.com>
 
+        Modernize the toRenderSVGResourceContainer() helper.
+        <https://webkit.org/b/128091>
+
+        Make toRenderSVGResourceContainer() a free function like all the
+        other casting helpers. Use references instead of pointers where
+        applicable.
+
+        Reviewed by Anders Carlsson.
+
+        * rendering/RenderLayerFilterInfo.cpp:
+        (WebCore::RenderLayer::FilterInfo::updateReferenceFilterClients):
+        (WebCore::RenderLayer::FilterInfo::removeReferenceFilterClients):
+        * rendering/RenderObject.cpp:
+        * rendering/RenderObject.h:
+        * rendering/svg/RenderSVGGradientStop.cpp:
+        (WebCore::RenderSVGGradientStop::styleDidChange):
+        * rendering/svg/RenderSVGResource.cpp:
+        (WebCore::RenderSVGResource::markForLayoutAndParentResourceInvalidation):
+        * rendering/svg/RenderSVGResourceContainer.cpp:
+        (WebCore::RenderSVGResourceContainer::markAllClientsForInvalidation):
+        * rendering/svg/RenderSVGResourceContainer.h:
+        * rendering/svg/RenderSVGResourceFilter.cpp:
+        (WebCore::RenderSVGResourceFilter::buildPrimitives):
+        * rendering/svg/RenderSVGResourceFilter.h:
+        * rendering/svg/SVGRenderTreeAsText.cpp:
+        (WebCore::writeSVGResourceContainer):
+        * rendering/svg/SVGResourcesCycleSolver.cpp:
+        (WebCore::SVGResourcesCycleSolver::resolveCycles):
+        * svg/SVGElement.cpp:
+        (WebCore::SVGElement::svgAttributeChanged):
+
+2014-02-02  Andreas Kling  <akling@apple.com>
+
         Minor SVGRootInlineBox cleanup.
         <https://webkit.org/b/128094>
 

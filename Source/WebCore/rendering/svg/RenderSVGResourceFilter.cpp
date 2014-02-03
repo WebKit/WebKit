@@ -76,7 +76,7 @@ void RenderSVGResourceFilter::removeClientFromCache(RenderObject& client, bool m
     markClientForInvalidation(client, markForInvalidation ? BoundariesInvalidation : ParentOnlyInvalidation);
 }
 
-std::unique_ptr<SVGFilterBuilder> RenderSVGResourceFilter::buildPrimitives(SVGFilter* filter)
+std::unique_ptr<SVGFilterBuilder> RenderSVGResourceFilter::buildPrimitives(SVGFilter* filter) const
 {
     FloatRect targetBoundingBox = filter->targetBoundingBox();
 

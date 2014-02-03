@@ -122,7 +122,7 @@ void RenderLayer::FilterInfo::updateReferenceFilterClients(const FilterOperation
             Element* filter = m_layer.renderer().element()->document().getElementById(referenceFilterOperation->fragment());
             if (!filter || !filter->renderer() || !filter->renderer()->isSVGResourceFilter())
                 continue;
-            filter->renderer()->toRenderSVGResourceContainer()->addClientRenderLayer(&m_layer);
+            toRenderSVGResourceContainer(*filter->renderer()).addClientRenderLayer(&m_layer);
             m_internalSVGReferences.append(filter);
         }
     }
@@ -137,7 +137,7 @@ void RenderLayer::FilterInfo::removeReferenceFilterClients()
         Element* filter = m_internalSVGReferences[i].get();
         if (!filter->renderer())
             continue;
-        filter->renderer()->toRenderSVGResourceContainer()->removeClientRenderLayer(&m_layer);
+        toRenderSVGResourceContainer(*filter->renderer()).removeClientRenderLayer(&m_layer);
     }
     m_internalSVGReferences.clear();
 }

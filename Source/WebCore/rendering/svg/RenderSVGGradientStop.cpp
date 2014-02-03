@@ -58,9 +58,7 @@ void RenderSVGGradientStop::styleDidChange(StyleDifference diff, const RenderSty
     if (!renderer)
         return;
 
-    ASSERT(renderer->isSVGResourceContainer());
-    RenderSVGResourceContainer* container = renderer->toRenderSVGResourceContainer();
-    container->removeAllClientsFromCache();
+    toRenderSVGResourceContainer(*renderer).removeAllClientsFromCache();
 }
 
 void RenderSVGGradientStop::layout()

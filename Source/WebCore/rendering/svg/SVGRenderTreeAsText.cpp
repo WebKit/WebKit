@@ -476,48 +476,47 @@ void writeSVGResourceContainer(TextStream& ts, const RenderObject& object, int i
     const AtomicString& id = element->getIdAttribute();
     writeNameAndQuotedValue(ts, "id", id);    
 
-    RenderSVGResourceContainer* resource = const_cast<RenderObject&>(object).toRenderSVGResourceContainer();
-    ASSERT(resource);
+    const auto& resource = toRenderSVGResourceContainer(object);
 
-    if (resource->resourceType() == MaskerResourceType) {
-        RenderSVGResourceMasker* masker = static_cast<RenderSVGResourceMasker*>(resource);
-        writeNameValuePair(ts, "maskUnits", masker->maskUnits());
-        writeNameValuePair(ts, "maskContentUnits", masker->maskContentUnits());
+    if (resource.resourceType() == MaskerResourceType) {
+        const auto& masker = static_cast<const RenderSVGResourceMasker&>(resource);
+        writeNameValuePair(ts, "maskUnits", masker.maskUnits());
+        writeNameValuePair(ts, "maskContentUnits", masker.maskContentUnits());
         ts << "\n";
 #if ENABLE(FILTERS)
-    } else if (resource->resourceType() == FilterResourceType) {
-        RenderSVGResourceFilter* filter = static_cast<RenderSVGResourceFilter*>(resource);
-        writeNameValuePair(ts, "filterUnits", filter->filterUnits());
-        writeNameValuePair(ts, "primitiveUnits", filter->primitiveUnits());
+    } else if (resource.resourceType() == FilterResourceType) {
+        const auto& filter = static_cast<const RenderSVGResourceFilter&>(resource);
+        writeNameValuePair(ts, "filterUnits", filter.filterUnits());
+        writeNameValuePair(ts, "primitiveUnits", filter.primitiveUnits());
         ts << "\n";
         // Creating a placeholder filter which is passed to the builder.
         FloatRect dummyRect;
         RefPtr<SVGFilter> dummyFilter = SVGFilter::create(AffineTransform(), dummyRect, dummyRect, dummyRect, true);
-        if (auto builder = filter->buildPrimitives(dummyFilter.get())) {
+        if (auto builder = filter.buildPrimitives(dummyFilter.get())) {
             if (FilterEffect* lastEffect = builder->lastEffect())
                 lastEffect->externalRepresentation(ts, indent + 1);
         }
 #endif
-    } else if (resource->resourceType() == ClipperResourceType) {
-        RenderSVGResourceClipper* clipper = static_cast<RenderSVGResourceClipper*>(resource);
-        writeNameValuePair(ts, "clipPathUnits", clipper->clipPathUnits());
+    } else if (resource.resourceType() == ClipperResourceType) {
+        const auto& clipper = static_cast<const RenderSVGResourceClipper&>(resource);
+        writeNameValuePair(ts, "clipPathUnits", clipper.clipPathUnits());
         ts << "\n";
-    } else if (resource->resourceType() == MarkerResourceType) {
-        RenderSVGResourceMarker* marker = static_cast<RenderSVGResourceMarker*>(resource);
-        writeNameValuePair(ts, "markerUnits", marker->markerUnits());
-        ts << " [ref at " << marker->referencePoint() << "]";
+    } else if (resource.resourceType() == MarkerResourceType) {
+        const auto& marker = static_cast<const RenderSVGResourceMarker&>(resource);
+        writeNameValuePair(ts, "markerUnits", marker.markerUnits());
+        ts << " [ref at " << marker.referencePoint() << "]";
         ts << " [angle=";
-        if (marker->angle() == -1)
+        if (marker.angle() == -1)
             ts << "auto" << "]\n";
         else
-            ts << marker->angle() << "]\n";
-    } else if (resource->resourceType() == PatternResourceType) {
-        RenderSVGResourcePattern* pattern = static_cast<RenderSVGResourcePattern*>(resource);
+            ts << marker.angle() << "]\n";
+    } else if (resource.resourceType() == PatternResourceType) {
+        const auto& pattern = static_cast<const RenderSVGResourcePattern&>(resource);
 
         // Dump final results that are used for rendering. No use in asking SVGPatternElement for its patternUnits(), as it may
         // link to other patterns using xlink:href, we need to build the full inheritance chain, aka. collectPatternProperties()
         PatternAttributes attributes;
-        pattern->patternElement().collectPatternAttributes(attributes);
+        pattern.patternElement().collectPatternAttributes(attributes);
 
         writeNameValuePair(ts, "patternUnits", attributes.patternUnits());
         writeNameValuePair(ts, "patternContentUnits", attributes.patternContentUnits());
@@ -526,29 +525,29 @@ void writeSVGResourceContainer(TextStream& ts, const RenderObject& object, int i
         if (!transform.isIdentity())
             ts << " [patternTransform=" << transform << "]";
         ts << "\n";
-    } else if (resource->resourceType() == LinearGradientResourceType) {
-        RenderSVGResourceLinearGradient* gradient = static_cast<RenderSVGResourceLinearGradient*>(resource);
+    } else if (resource.resourceType() == LinearGradientResourceType) {
+        const auto& gradient = static_cast<const RenderSVGResourceLinearGradient&>(resource);
 
         // Dump final results that are used for rendering. No use in asking SVGGradientElement for its gradientUnits(), as it may
         // link to other gradients using xlink:href, we need to build the full inheritance chain, aka. collectGradientProperties()
         LinearGradientAttributes attributes;
-        gradient->linearGradientElement().collectGradientAttributes(attributes);
+        gradient.linearGradientElement().collectGradientAttributes(attributes);
         writeCommonGradientProperties(ts, attributes.spreadMethod(), attributes.gradientTransform(), attributes.gradientUnits());
 
-        ts << " [start=" << gradient->startPoint(attributes) << "] [end=" << gradient->endPoint(attributes) << "]\n";
-    }  else if (resource->resourceType() == RadialGradientResourceType) {
-        RenderSVGResourceRadialGradient* gradient = static_cast<RenderSVGResourceRadialGradient*>(resource);
+        ts << " [start=" << gradient.startPoint(attributes) << "] [end=" << gradient.endPoint(attributes) << "]\n";
+    }  else if (resource.resourceType() == RadialGradientResourceType) {
+        const auto& gradient = static_cast<const RenderSVGResourceRadialGradient&>(resource);
 
         // Dump final results that are used for rendering. No use in asking SVGGradientElement for its gradientUnits(), as it may
         // link to other gradients using xlink:href, we need to build the full inheritance chain, aka. collectGradientProperties()
         RadialGradientAttributes attributes;
-        gradient->radialGradientElement().collectGradientAttributes(attributes);
+        gradient.radialGradientElement().collectGradientAttributes(attributes);
         writeCommonGradientProperties(ts, attributes.spreadMethod(), attributes.gradientTransform(), attributes.gradientUnits());
 
-        FloatPoint focalPoint = gradient->focalPoint(attributes);
-        FloatPoint centerPoint = gradient->centerPoint(attributes);
-        float radius = gradient->radius(attributes);
-        float focalRadius = gradient->focalRadius(attributes);
+        FloatPoint focalPoint = gradient.focalPoint(attributes);
+        FloatPoint centerPoint = gradient.centerPoint(attributes);
+        float radius = gradient.radius(attributes);
+        float focalRadius = gradient.focalRadius(attributes);
 
         ts << " [center=" << centerPoint << "] [focal=" << focalPoint << "] [radius=" << radius << "] [focalRadius=" << focalRadius << "]\n";
     } else

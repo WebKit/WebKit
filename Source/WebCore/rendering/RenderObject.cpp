@@ -2414,12 +2414,6 @@ bool RenderObject::canBeReplacedWithInlineRunIn() const
 
 #if ENABLE(SVG)
 
-RenderSVGResourceContainer* RenderObject::toRenderSVGResourceContainer()
-{
-    ASSERT_NOT_REACHED();
-    return 0;
-}
-
 void RenderObject::setNeedsBoundariesUpdate()
 {
     if (auto renderer = parent())

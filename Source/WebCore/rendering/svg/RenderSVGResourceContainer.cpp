@@ -100,7 +100,7 @@ void RenderSVGResourceContainer::markAllClientsForInvalidation(InvalidationMode 
 
     for (auto client : m_clients) {
         if (client->isSVGResourceContainer()) {
-            client->toRenderSVGResourceContainer()->removeAllClientsFromCache(markForInvalidation);
+            toRenderSVGResourceContainer(*client).removeAllClientsFromCache(markForInvalidation);
             continue;
         }
 

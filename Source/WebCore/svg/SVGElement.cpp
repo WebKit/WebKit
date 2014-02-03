@@ -1010,10 +1010,10 @@ void SVGElement::svgAttributeChanged(const QualifiedName& attrName)
     }
 
     if (isIdAttributeName(attrName)) {
-        RenderObject* object = renderer();
+        auto renderer = this->renderer();
         // Notify resources about id changes, this is important as we cache resources by id in SVGDocumentExtensions
-        if (object && object->isSVGResourceContainer())
-            object->toRenderSVGResourceContainer()->idChanged();
+        if (renderer && renderer->isSVGResourceContainer())
+            toRenderSVGResourceContainer(*renderer).idChanged();
         if (inDocument())
             buildPendingResourcesIfNeeded();
         SVGElementInstance::invalidateAllInstancesOfElement(this);

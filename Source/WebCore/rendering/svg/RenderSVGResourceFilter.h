@@ -76,7 +76,7 @@ public:
 
     virtual FloatRect resourceBoundingBox(const RenderObject&) override;
 
-    std::unique_ptr<SVGFilterBuilder> buildPrimitives(SVGFilter*);
+    std::unique_ptr<SVGFilterBuilder> buildPrimitives(SVGFilter*) const;
 
     SVGUnitTypes::SVGUnitType filterUnits() const { return filterElement().filterUnits(); }
     SVGUnitTypes::SVGUnitType primitiveUnits() const { return filterElement().primitiveUnits(); }
