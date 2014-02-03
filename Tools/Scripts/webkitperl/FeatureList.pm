@@ -64,6 +64,7 @@ my (
     $cssRegionsSupport,
     $cssShadersSupport,
     $cssShapesSupport,
+    $cssShapeInsideSupport,
     $cssStickyPositionSupport,
     $cssCompositingSupport,
     $cssAnimationsTransformsUnprefixedSupport,
@@ -190,6 +191,9 @@ my @features = (
 
     { option => "css-shapes", desc => "Toggle CSS Shapes support",
       define => "ENABLE_CSS_SHAPES", default => 1, value => \$cssShapesSupport },
+
+    { option => "css-shape-inside", desc => "Toggle CSS Shapes shape-inside support",
+      define => "ENABLE_CSS_SHAPE_INSIDE", default => 1, value => \$cssShapeInsideSupport },
 
     { option => "css-filters", desc => "Toggle CSS Filters support",
       define => "ENABLE_CSS_FILTERS", default => (isAppleMacWebKit() || isIOSWebKit()), value => \$cssFiltersSupport },

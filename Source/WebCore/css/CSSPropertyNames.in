@@ -429,11 +429,13 @@ text-emphasis-style = -webkit-text-emphasis-style
 -webkit-region-break-before
 -webkit-region-break-inside
 #endif
-#if defined(ENABLE_CSS_SHAPES) && ENABLE_CSS_SHAPES
+#if defined(ENABLE_CSS_SHAPES) && ENABLE_CSS_SHAPES && defined(ENABLE_CSS_SHAPE_INSIDE) && ENABLE_CSS_SHAPE_INSIDE
 -webkit-shape-inside
+-webkit-shape-padding
+#endif
+#if defined(ENABLE_CSS_SHAPES) && ENABLE_CSS_SHAPES
 -webkit-shape-outside
 -webkit-shape-margin
--webkit-shape-padding
 -webkit-shape-image-threshold
 #endif
 #if defined(ENABLE_CSS_EXCLUSIONS) && ENABLE_CSS_EXCLUSIONS

@@ -1492,7 +1492,7 @@ public:
     void setKerning(SVGLength k) { accessSVGStyle().setKerning(k); }
 #endif
 
-#if ENABLE(CSS_SHAPES)
+#if ENABLE(CSS_SHAPES) && ENABLE(CSS_SHAPE_INSIDE)
     void setShapeInside(PassRefPtr<ShapeValue> value)
     {
         if (rareNonInheritedData->m_shapeInside == value)
@@ -1508,6 +1508,9 @@ public:
         return shapeInside;
     }
 
+    static ShapeValue* initialShapeInside() { return 0; }
+#endif
+#if ENABLE(CSS_SHAPES)
     void setShapeOutside(PassRefPtr<ShapeValue> value)
     {
         if (rareNonInheritedData->m_shapeOutside == value)
@@ -1516,7 +1519,6 @@ public:
     }
     ShapeValue* shapeOutside() const { return rareNonInheritedData->m_shapeOutside.get(); }
 
-    static ShapeValue* initialShapeInside() { return 0; }
     static ShapeValue* initialShapeOutside() { return 0; }
 
     const Length& shapePadding() const { return rareNonInheritedData->m_shapePadding; }

@@ -338,8 +338,10 @@ static const CSSPropertyID computedProperties[] = {
     // we should move it outside the PLATFORM(IOS)-guard. See <https://bugs.webkit.org/show_bug.cgi?id=126296>.
     CSSPropertyWebkitCompositionFillColor,
 #endif
-#if ENABLE(CSS_SHAPES)
+#if ENABLE(CSS_SHAPES) && ENABLE(CSS_SHAPE_INSIDE)
     CSSPropertyWebkitShapeInside,
+#endif
+#if ENABLE(CSS_SHAPES)
     CSSPropertyWebkitShapeOutside,
 #endif
 #if ENABLE(TOUCH_EVENTS)
@@ -383,8 +385,10 @@ static const CSSPropertyID computedProperties[] = {
 #endif
 #if ENABLE(CSS_SHAPES)
     CSSPropertyWebkitShapeMargin,
-    CSSPropertyWebkitShapePadding,
     CSSPropertyWebkitShapeImageThreshold,
+#if ENABLE(CSS_SHAPE_INSIDE)
+    CSSPropertyWebkitShapePadding,
+#endif
 #endif
 #if ENABLE(SVG)
     CSSPropertyBufferedRendering,
@@ -2801,12 +2805,14 @@ PassRefPtr<CSSValue> ComputedStyleExtractor::propertyValue(CSSPropertyID propert
 #if ENABLE(CSS_SHAPES)
         case CSSPropertyWebkitShapeMargin:
             return cssValuePool().createValue(style->shapeMargin());
-        case CSSPropertyWebkitShapePadding:
-            return cssValuePool().createValue(style->shapePadding());
         case CSSPropertyWebkitShapeImageThreshold:
             return cssValuePool().createValue(style->shapeImageThreshold(), CSSPrimitiveValue::CSS_NUMBER);
+#if ENABLE(CSS_SHAPE_INSIDE)
+        case CSSPropertyWebkitShapePadding:
+            return cssValuePool().createValue(style->shapePadding());
         case CSSPropertyWebkitShapeInside:
             return shapePropertyValue(style.get(), style->shapeInside());
+#endif
         case CSSPropertyWebkitShapeOutside:
             return shapePropertyValue(style.get(), style->shapeOutside());
 #endif

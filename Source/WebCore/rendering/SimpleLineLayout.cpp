@@ -122,7 +122,7 @@ bool canUseFor(const RenderBlockFlow& flow)
         return false;
     // These tests only works during layout. Outside layout this function may give false positives.
     if (flow.view().layoutState()) {
-#if ENABLE(CSS_SHAPES)
+#if ENABLE(CSS_SHAPES) && ENABLE(CSS_SHAPE_INSIDE)
         if (flow.view().layoutState()->shapeInsideInfo())
             return false;
 #endif
@@ -163,7 +163,7 @@ bool canUseFor(const RenderBlockFlow& flow)
         return false;
     if (style.textShadow())
         return false;
-#if ENABLE(CSS_SHAPES)
+#if ENABLE(CSS_SHAPES) && ENABLE(CSS_SHAPE_INSIDE)
     if (style.resolvedShapeInside())
         return true;
 #endif

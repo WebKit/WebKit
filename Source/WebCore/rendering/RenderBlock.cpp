@@ -69,8 +69,10 @@
 #include <wtf/StackStats.h>
 #include <wtf/TemporaryChange.h>
 
-#if ENABLE(CSS_SHAPES)
+#if ENABLE(CSS_SHAPES) && ENABLE(CSS_SHAPE_INSIDE)
 #include "ShapeInsideInfo.h"
+#endif
+#if ENABLE(CSS_SHAPES)
 #include "ShapeOutsideInfo.h"
 #endif
 
@@ -118,7 +120,7 @@ public:
     LayoutUnit m_paginationStrut;
     LayoutUnit m_pageLogicalOffset;
 
-#if ENABLE(CSS_SHAPES)
+#if ENABLE(CSS_SHAPES) && ENABLE(CSS_SHAPE_INSIDE)
     std::unique_ptr<ShapeInsideInfo> m_shapeInsideInfo;
 #endif
 };
@@ -311,7 +313,7 @@ void RenderBlock::styleDidChange(StyleDifference diff, const RenderStyle* oldSty
     
     RenderStyle& newStyle = style();
     
-#if ENABLE(CSS_SHAPES)
+#if ENABLE(CSS_SHAPES) && ENABLE(CSS_SHAPE_INSIDE)
     updateShapeInsideInfoAfterStyleChange(newStyle.resolvedShapeInside(), oldStyle ? oldStyle->resolvedShapeInside() : 0);
 #endif
 
@@ -1338,6 +1340,29 @@ static RenderBlockRareData& ensureRareData(const RenderBlock* block)
 }
 
 #if ENABLE(CSS_SHAPES)
+void RenderBlock::imageChanged(WrappedImagePtr image, const IntRect*)
+{
+    RenderBox::imageChanged(image);
+
+    if (!parent() || !everHadLayout())
+        return;
+
+#if ENABLE(CSS_SHAPE_INSIDE)
+    ShapeValue* shapeValue = style().shapeInside();
+    if (shapeValue && shapeValue->image() && shapeValue->image()->data() == image) {
+        ShapeInsideInfo& shapeInsideInfo = ensureShapeInsideInfo();
+        shapeInsideInfo.dirtyShapeSize();
+        markShapeInsideDescendantsForLayout();
+    }
+#endif
+
+    ShapeValue* shapeOutsideValue = style().shapeOutside();
+    if (isFloating() && shapeOutsideValue && shapeOutsideValue->image() && shapeOutsideValue->image()->data() == image)
+        parent()->setNeedsLayoutAndPrefWidthsRecalc();
+}
+#endif
+
+#if ENABLE(CSS_SHAPES) && ENABLE(CSS_SHAPE_INSIDE)
 void RenderBlock::relayoutShapeDescendantIfMoved(RenderBlock* child, LayoutSize offset)
 {
     LayoutUnit left = isHorizontalWritingMode() ? offset.width() : offset.height();
@@ -1380,25 +1405,6 @@ LayoutSize RenderBlock::logicalOffsetFromShapeAncestorContainer(const RenderBloc
 
     LayoutSize result = isHorizontalWritingMode() ? LayoutSize(blockRect.x(), blockRect.y()) : LayoutSize(blockRect.y(), blockRect.x());
     return result;
-}
-
-void RenderBlock::imageChanged(WrappedImagePtr image, const IntRect*)
-{
-    RenderBox::imageChanged(image);
-
-    if (!parent() || !everHadLayout())
-        return;
-
-    ShapeValue* shapeValue = style().shapeInside();
-    if (shapeValue && shapeValue->image() && shapeValue->image()->data() == image) {
-        ShapeInsideInfo& shapeInsideInfo = ensureShapeInsideInfo();
-        shapeInsideInfo.dirtyShapeSize();
-        markShapeInsideDescendantsForLayout();
-    }
-
-    ShapeValue* shapeOutsideValue = style().shapeOutside();
-    if (isFloating() && shapeOutsideValue && shapeOutsideValue->image() && shapeOutsideValue->image()->data() == image)
-        parent()->setNeedsLayoutAndPrefWidthsRecalc();
 }
 
 void RenderBlock::updateShapeInsideInfoAfterStyleChange(const ShapeValue* shapeInside, const ShapeValue* oldShapeInside)
@@ -1499,7 +1505,7 @@ void RenderBlock::computeShapeSize()
 
 bool RenderBlock::updateShapesBeforeBlockLayout()
 {
-#if ENABLE(CSS_SHAPES)
+#if ENABLE(CSS_SHAPES) && ENABLE(CSS_SHAPE_INSIDE)
     if (!flowThreadContainingBlock() && !shapeInsideInfo())
         return shapeInfoRequiresRelayout(this);
 
@@ -1524,7 +1530,7 @@ bool RenderBlock::updateShapesBeforeBlockLayout()
 
 void RenderBlock::updateShapesAfterBlockLayout(bool heightChanged)
 {
-#if ENABLE(CSS_SHAPES)
+#if ENABLE(CSS_SHAPES) && ENABLE(CSS_SHAPE_INSIDE)
     // A previous sibling has changed dimension, so we need to relayout the shape with the content
     ShapeInsideInfo* shapeInsideInfo = layoutShapeInsideInfo();
     if (heightChanged && shapeInsideInfo)

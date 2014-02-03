@@ -42,7 +42,7 @@
 #include "RenderSVGInlineText.h"
 #endif
 
-#if ENABLE(CSS_SHAPES)
+#if ENABLE(CSS_SHAPES) && ENABLE(CSS_SHAPE_INSIDE)
 #include "ShapeInsideInfo.h"
 #endif
 
@@ -468,7 +468,7 @@ inline float firstPositiveWidth(const WordMeasurements& wordMeasurements)
     return 0;
 }
 
-#if ENABLE(CSS_SHAPES)
+#if ENABLE(CSS_SHAPES) && ENABLE(CSS_SHAPE_INSIDE)
 inline void updateSegmentsForShapes(RenderBlockFlow& block, const FloatingObject* lastFloatFromPreviousLine, const WordMeasurements& wordMeasurements, LineWidth& width, bool isFirstLine)
 {
     ASSERT(lastFloatFromPreviousLine);
@@ -785,7 +785,7 @@ inline bool BreakingContext::handleText(WordMeasurements& wordMeasurements, bool
                 m_appliedStartWidth = true;
             }
 
-#if ENABLE(CSS_SHAPES)
+#if ENABLE(CSS_SHAPES) && ENABLE(CSS_SHAPE_INSIDE)
             if (m_lastFloatFromPreviousLine)
                 updateSegmentsForShapes(m_block, m_lastFloatFromPreviousLine, wordMeasurements, m_width, m_lineInfo.isFirstLine());
 #endif
@@ -1086,7 +1086,7 @@ inline void checkMidpoints(LineMidpointState& lineMidpointState, InlineIterator&
 
 inline InlineIterator BreakingContext::handleEndOfLine()
 {
-#if ENABLE(CSS_SHAPES)
+#if ENABLE(CSS_SHAPES) && ENABLE(CSS_SHAPE_INSIDE)
     ShapeInsideInfo* shapeInfo = m_block.layoutShapeInsideInfo();
     bool segmentAllowsOverflow = !shapeInfo || !shapeInfo->hasSegments();
 #else

@@ -80,7 +80,7 @@ void LineBreaker::skipLeadingWhitespace(InlineBidiResolver& resolver, LineInfo& 
 
 InlineIterator LineBreaker::nextLineBreak(InlineBidiResolver& resolver, LineInfo& lineInfo, RenderTextInfo& renderTextInfo, FloatingObject* lastFloatFromPreviousLine, unsigned consecutiveHyphenatedLines, WordMeasurements& wordMeasurements)
 {
-#if !ENABLE(CSS_SHAPES)
+#if !ENABLE(CSS_SHAPES) || !ENABLE(CSS_SHAPE_INSIDE)
     return nextSegmentBreak(resolver, lineInfo, renderTextInfo, lastFloatFromPreviousLine, consecutiveHyphenatedLines, wordMeasurements);
 #else
     ShapeInsideInfo* shapeInsideInfo = m_block.layoutShapeInsideInfo();

@@ -30,7 +30,7 @@
 #ifndef ShapeInsideInfo_h
 #define ShapeInsideInfo_h
 
-#if ENABLE(CSS_SHAPES)
+#if ENABLE(CSS_SHAPES) && ENABLE(CSS_SHAPE_INSIDE)
 
 #include "ShapeInfo.h"
 #include <wtf/PassOwnPtr.h>

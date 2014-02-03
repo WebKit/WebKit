@@ -489,7 +489,7 @@ bool RenderStyle::changeRequiresLayout(const RenderStyle* other, unsigned& chang
             return true;
 #endif
 
-#if ENABLE(CSS_SHAPES)
+#if ENABLE(CSS_SHAPES) && ENABLE(CSS_SHAPE_INSIDE)
         if (rareNonInheritedData->m_shapeInside != other->rareNonInheritedData->m_shapeInside)
             return true;
 #endif

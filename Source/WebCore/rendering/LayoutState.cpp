@@ -38,7 +38,7 @@ LayoutState::LayoutState(std::unique_ptr<LayoutState> next, RenderBox* renderer,
     : m_columnInfo(columnInfo)
     , m_lineGrid(0)
     , m_next(std::move(next))
-#if ENABLE(CSS_SHAPES)
+#if ENABLE(CSS_SHAPES) && ENABLE(CSS_SHAPE_INSIDE)
     , m_shapeInsideInfo(nullptr)
 #endif
 #ifndef NDEBUG
@@ -109,7 +109,7 @@ LayoutState::LayoutState(std::unique_ptr<LayoutState> next, RenderBox* renderer,
     if (!m_columnInfo)
         m_columnInfo = m_next->m_columnInfo;
 
-#if ENABLE(CSS_SHAPES)
+#if ENABLE(CSS_SHAPES) && ENABLE(CSS_SHAPE_INSIDE)
     if (renderer->isRenderBlock()) {
         const RenderBlock* renderBlock = toRenderBlock(renderer);
         m_shapeInsideInfo = renderBlock->shapeInsideInfo();
@@ -146,7 +146,7 @@ LayoutState::LayoutState(RenderObject& root)
 #endif    
     , m_columnInfo(0)
     , m_lineGrid(0)
-#if ENABLE(CSS_SHAPES)
+#if ENABLE(CSS_SHAPES) && ENABLE(CSS_SHAPE_INSIDE)
     , m_shapeInsideInfo(nullptr)
 #endif
     , m_pageLogicalHeight(0)

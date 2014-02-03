@@ -1,3 +1,15 @@
+2014-02-03  Dean Jackson  <dino@apple.com>
+
+        Feature flag for shape-inside
+        https://bugs.webkit.org/show_bug.cgi?id=128001
+
+        Reviewed by Simon Fraser.
+
+        Add CSS_SHAPE_INSIDE flag, and -css-shape-inside build
+        flag.
+
+        * Scripts/webkitperl/FeatureList.pm:
+
 2014-02-03  Zoltan Horvath  <zoltan@webkit.org>
 
         Unreviewed. Reorder my e-mail addresses in contributors.json,

@@ -33,7 +33,7 @@
 #include "RenderBlockFlow.h"
 #include "RenderRubyRun.h"
 
-#if ENABLE(CSS_SHAPES)
+#if ENABLE(CSS_SHAPES) && ENABLE(CSS_SHAPE_INSIDE)
 #include "ShapeInsideInfo.h"
 #endif
 
@@ -49,13 +49,13 @@ LineWidth::LineWidth(RenderBlockFlow& block, bool isFirstLine, IndentTextOrNot s
     , m_left(0)
     , m_right(0)
     , m_availableWidth(0)
-#if ENABLE(CSS_SHAPES)
+#if ENABLE(CSS_SHAPES) && ENABLE(CSS_SHAPE_INSIDE)
     , m_segment(0)
 #endif
     , m_isFirstLine(isFirstLine)
     , m_shouldIndentText(shouldIndentText)
 {
-#if ENABLE(CSS_SHAPES)
+#if ENABLE(CSS_SHAPES) && ENABLE(CSS_SHAPE_INSIDE)
     updateCurrentShapeSegment();
 #endif
     updateAvailableWidth();
@@ -83,7 +83,7 @@ void LineWidth::updateAvailableWidth(LayoutUnit replacedHeight)
     m_left = m_block.logicalLeftOffsetForLine(height, shouldIndentText(), logicalHeight);
     m_right = m_block.logicalRightOffsetForLine(height, shouldIndentText(), logicalHeight);
 
-#if ENABLE(CSS_SHAPES)
+#if ENABLE(CSS_SHAPES) && ENABLE(CSS_SHAPE_INSIDE)
     if (m_segment) {
         m_left = std::max<float>(m_segment->logicalLeft, m_left);
         m_right = std::min<float>(m_segment->logicalRight, m_right);
@@ -178,7 +178,7 @@ void LineWidth::fitBelowFloats()
         newLineWidth = std::max(0.0f, newLineRight - newLineLeft);
         lastFloatLogicalBottom = floatLogicalBottom;
 
-#if ENABLE(CSS_SHAPES)
+#if ENABLE(CSS_SHAPES) && ENABLE(CSS_SHAPE_INSIDE)
         // FIXME: This code should be refactored to incorporate with the code above.
         ShapeInsideInfo* shapeInsideInfo = m_block.layoutShapeInsideInfo();
         if (shapeInsideInfo) {
@@ -207,7 +207,7 @@ void LineWidth::setTrailingWhitespaceWidth(float collapsedWhitespace, float bord
     m_trailingWhitespaceWidth = collapsedWhitespace + borderPaddingMargin;
 }
 
-#if ENABLE(CSS_SHAPES)
+#if ENABLE(CSS_SHAPES) && ENABLE(CSS_SHAPE_INSIDE)
 void LineWidth::updateCurrentShapeSegment()
 {
     if (ShapeInsideInfo* shapeInsideInfo = m_block.layoutShapeInsideInfo())

@@ -36,7 +36,7 @@ class LineLayoutState;
 class LogicalSelectionOffsetCaches;
 class RenderInline;
 class RenderText;
-#if ENABLE(CSS_SHAPES)
+#if ENABLE(CSS_SHAPES) && ENABLE(CSS_SHAPE_INSIDE)
 class ShapeInsideInfo;
 class ShapeValue;
 #endif
@@ -349,7 +349,12 @@ public:
     virtual void showLineTreeAndMark(const InlineBox* = nullptr, const char* = nullptr, const InlineBox* = nullptr, const char* = nullptr, const RenderObject* = nullptr) const;
 #endif
 
+
 #if ENABLE(CSS_SHAPES)
+    virtual void imageChanged(WrappedImagePtr, const IntRect* = 0) override;
+#endif
+
+#if ENABLE(CSS_SHAPES) && ENABLE(CSS_SHAPE_INSIDE)
     ShapeInsideInfo& ensureShapeInsideInfo();
     ShapeInsideInfo* shapeInsideInfo() const;
     void setShapeInsideInfo(std::unique_ptr<ShapeInsideInfo>);
@@ -358,7 +363,6 @@ public:
     ShapeInsideInfo* layoutShapeInsideInfo() const;
     bool allowsShapeInsideInfoSharing() const { return !isInline() && !isFloating(); }
     LayoutSize logicalOffsetFromShapeAncestorContainer(const RenderBlock* container) const;
-    virtual void imageChanged(WrappedImagePtr, const IntRect* = 0) override;
 #endif
 
     virtual void updateHitTestResult(HitTestResult&, const LayoutPoint&) override;
@@ -457,7 +461,7 @@ private:
     LayoutUnit adjustLogicalRightOffsetForLine(LayoutUnit offsetFromFloats, bool applyTextIndent) const;
     LayoutUnit adjustLogicalLeftOffsetForLine(LayoutUnit offsetFromFloats, bool applyTextIndent) const;
 
-#if ENABLE(CSS_SHAPES)
+#if ENABLE(CSS_SHAPES) && ENABLE(CSS_SHAPE_INSIDE)
     void computeShapeSize();
     void updateShapeInsideInfoAfterStyleChange(const ShapeValue*, const ShapeValue* oldShape);
     void relayoutShapeDescendantIfMoved(RenderBlock* child, LayoutSize offset);

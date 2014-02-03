@@ -64,7 +64,7 @@ PassRef<RenderStyle> RenderNamedFlowFragment::createStyle(const RenderStyle& par
     style.get().setRegionFragment(parentStyle.regionFragment());
     style.get().setOverflowX(parentStyle.overflowX());
     style.get().setOverflowY(parentStyle.overflowY());
-#if ENABLE(CSS_SHAPES)
+#if ENABLE(CSS_SHAPES) && ENABLE(CSS_SHAPE_INSIDE)
     style.get().setShapeInside(parentStyle.shapeInside());
 #endif
 

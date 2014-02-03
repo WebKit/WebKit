@@ -3027,11 +3027,13 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue* value)
     case CSSPropertyWebkitUserModify:
     case CSSPropertyWebkitUserSelect:
     case CSSPropertyWebkitClipPath:
+#if ENABLE(CSS_SHAPES) && ENABLE(CSS_SHAPE_INSIDE)
+    case CSSPropertyWebkitShapeInside:
+    case CSSPropertyWebkitShapePadding:
+#endif
 #if ENABLE(CSS_SHAPES)
     case CSSPropertyWebkitShapeMargin:
-    case CSSPropertyWebkitShapePadding:
     case CSSPropertyWebkitShapeImageThreshold:
-    case CSSPropertyWebkitShapeInside:
     case CSSPropertyWebkitShapeOutside:
 #endif
 #if ENABLE(CSS_EXCLUSIONS)
@@ -3628,10 +3630,12 @@ void StyleResolver::loadPendingImages()
             }
             break;
         }
-#if ENABLE(CSS_SHAPES)
+#if ENABLE(CSS_SHAPES) && ENABLE(CSS_SHAPE_INSIDE)
         case CSSPropertyWebkitShapeInside:
             loadPendingShapeImage(m_state.style()->shapeInside());
             break;
+#endif
+#if ENABLE(CSS_SHAPES)
         case CSSPropertyWebkitShapeOutside:
             loadPendingShapeImage(m_state.style()->shapeOutside());
             break;
