@@ -581,15 +581,17 @@ void SVGInlineTextBox::paintTextWithShadows(GraphicsContext* context, RenderStyl
 
         context->restore();
 
+        if (shadow) {
+            if (shadow->next())
+                context->restore();
+            else
+                context->clearShadow();
+        }
+
         restoreGraphicsContextAfterTextPainting(context, textRun);
 
         if (!shadow)
             break;
-
-        if (shadow->next())
-            context->restore();
-        else
-            context->clearShadow();
 
         shadow = shadow->next();
     } while (shadow);

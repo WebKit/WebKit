@@ -1,3 +1,15 @@
+2014-02-02  Darin Adler  <darin@apple.com>
+
+        Fix context save/restore mistake spotted in SVGInlineTextBox::paintTextWithShadows
+        https://bugs.webkit.org/show_bug.cgi?id=128095
+
+        Reviewed by Andreas Kling.
+
+        * rendering/svg/SVGInlineTextBox.cpp:
+        (WebCore::SVGInlineTextBox::paintTextWithShadows): Move calls to GraphicsContext::restore
+        and GraphicsContext::clearShadow before restoreGraphicsContextAfterTextPainting, since that
+        function can swap contexts.
+
 2014-02-02  Andreas Kling  <akling@apple.com>
 
         Modernize RenderSVGText::locateRenderSVGTextAncestor().
