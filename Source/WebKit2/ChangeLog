@@ -1,3 +1,22 @@
+2014-02-03  Alberto Garcia  <berto@igalia.com>
+
+        Fix wrong mix of fcntl commands and flags
+        https://bugs.webkit.org/show_bug.cgi?id=127842
+
+        Reviewed by Darin Adler.
+
+        We are mixing the commands to set file descriptor and file status
+        flags in a couple of fcntl() calls. FD_CLOEXEC must be set using
+        F_SETFD, and the access mode flags (O_RDONLY, O_WRONLY, O_RDWR)
+        with F_SETFL.
+
+        This combines patches by Guillem Jover and Sergio Correia.
+
+        * Platform/IPC/unix/ConnectionUnix.cpp:
+        (IPC::readBytesFromSocket):
+        * Platform/unix/SharedMemoryUnix.cpp:
+        (WebKit::SharedMemory::createHandle):
+
 2014-02-02  Brady Eidson  <beidson@apple.com>
 
         IDB: Cannot open new databases with the default version
