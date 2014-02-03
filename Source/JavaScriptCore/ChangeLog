@@ -1,3 +1,28 @@
+2014-02-03  Mark Lam  <mark.lam@apple.com>
+
+        Debugger created JSActivations should account for CodeBlock::framePointerOffsetToGetActivationRegisters().
+        <https://webkit.org/b/128112>
+
+        Reviewed by Geoffrey Garen.
+
+        Currently, when the DebuggerCallFrame creates the JSActivation object
+        for a frame, it does not account for the framePointerOffsetToGetActivationRegisters()
+        offset that needs to be added for DFG frames.
+
+        Instead of special casing the fix in DebuggerCallFrame::scope(), we fix
+        this by adding CodeBlock::framePointerOffsetToGetActivationRegisters() to
+        callFrame->registers() in the JSActivation::create() method that does not
+        explicitly take a Register*. This ensures that JSActivation::create() will
+        always do the right thing instead of only being a special case for the
+        LLINT and baselineJIT.
+
+        Apart from the DebuggerCallFrame, this create() function is only called by
+        slow paths in the LLINT and baselineJIT. Hence, it is not performance
+        critical.
+
+        * runtime/JSActivation.h:
+        (JSC::JSActivation::create):
+
 2014-01-31  Geoffrey Garen  <ggaren@apple.com>
 
         Simplified name scope creation for function expressions

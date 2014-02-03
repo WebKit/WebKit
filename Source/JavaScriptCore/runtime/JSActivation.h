@@ -63,7 +63,7 @@ public:
         
     static JSActivation* create(VM& vm, CallFrame* callFrame, CodeBlock* codeBlock)
     {
-        return create(vm, callFrame, callFrame->registers(), codeBlock);
+        return create(vm, callFrame, callFrame->registers() + codeBlock->framePointerOffsetToGetActivationRegisters(), codeBlock);
     }
 
     static void visitChildren(JSCell*, SlotVisitor&);
