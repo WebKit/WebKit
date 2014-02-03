@@ -4661,6 +4661,11 @@ static bool isHitCandidate(const RenderLayer* hitLayer, bool canDepthSort, doubl
 {
     if (!hitLayer)
         return false;
+    
+    // RenderNamedFlowFragments are not hit candidates. The hit test algorithm will pick the parent
+    // layer, the one of the region.
+    if (hitLayer->renderer().isRenderNamedFlowFragment())
+        return false;
 
     // The hit layer is depth-sorting with other layers, so just say that it was hit.
     if (canDepthSort)

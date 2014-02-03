@@ -1,0 +1,35 @@
+<!doctype html>
+<html>
+<head>
+    <title>Test - Bug 127101: [CSS Regions] Fix selection and hover effect of content in region with overflow:hidden</title>
+    <style>
+        .content {
+            -webkit-flow-into: flow;
+            box-shadow: 0px 0px 0px 10px Red;
+            margin: 10px;
+        }
+        .content:hover {
+            box-shadow: 0px 0px 0px 10px Green;
+        }
+        .region {
+            -webkit-flow-from: flow;
+            overflow: hidden;
+        }
+        body {
+            margin: 0;
+            padding: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="content">hover me</div>
+    <div class="region">region</div>
+
+    <script type="text/javascript">
+        if (window.eventSender) {
+            var box = document.querySelector(".content").getBoundingClientRect();
+            window.eventSender.mouseMoveTo((box.right + box.left) / 2, (box.top + box.bottom) / 2);
+        }
+    </script>
+</body>
+</html>

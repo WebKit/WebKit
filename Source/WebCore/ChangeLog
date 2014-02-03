@@ -1,3 +1,18 @@
+2014-02-03  Mihai Maerean  <mmaerean@adobe.com>
+
+        [CSS Regions] Fix selection and hover effect of content in region with overflow:hidden
+        https://bugs.webkit.org/show_bug.cgi?id=127101
+
+        Reviewed by Mihnea Ovidenie.
+
+        RenderNamedFlowFragments are not hit candidates. The hit test algorithm will pick the
+        parent layer, the one of the region.
+
+        Test: fast/regions/hover-overflow-hidden.html
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::isHitCandidate):
+
 2014-02-02  Maciej Stachowiak  <mjs@apple.com>
 
         Adopt URLUtils interface and template in HTMLAnchorElement and HTMLAreaElement
