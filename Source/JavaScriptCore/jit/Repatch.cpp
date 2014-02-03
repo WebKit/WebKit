@@ -330,7 +330,7 @@ static ProtoChainGenerationResult generateProtoChainAccessStub(ExecState* exec, 
 #endif
         MacroAssembler::Jump noException = stubJit.emitExceptionCheck(CCallHelpers::InvertedExceptionCheck);
 
-        stubJit.setupArgumentsExecState();
+        stubJit.setupArguments(CCallHelpers::TrustedImmPtr(vm), GPRInfo::callFrameRegister);
         handlerCall = stubJit.call();
         stubJit.jumpToExceptionHandler();
         

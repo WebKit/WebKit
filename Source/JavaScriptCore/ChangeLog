@@ -1,3 +1,19 @@
+2014-02-02  Mark Lam  <mark.lam@apple.com>
+
+        Repatch code is passing the wrong args to lookupExceptionHandler.
+        <https://webkit.org/b/128085>
+
+        Reviewed by Oliver Hunt.
+
+        lookupExceptionHandler() is expecting 2 args: VM*, ExecState*.
+        The repatch code was only passing an ExecState*. A crash ensues.
+        This is now fixed.
+
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileExceptionHandlers):
+        * jit/Repatch.cpp:
+        (JSC::generateProtoChainAccessStub):
+
 2014-02-01  Filip Pizlo  <fpizlo@apple.com>
 
         JSC profiler's stub info profiling support should work again

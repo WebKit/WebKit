@@ -714,7 +714,7 @@ void JIT::privateCompileExceptionHandlers()
     if (!m_exceptionChecks.empty())
         m_exceptionChecks.link(this);
     
-    // lookupExceptionHandler is passed one argument, the exec (the CallFrame*).
+    // lookupExceptionHandler is passed two arguments, the VM and the exec (the CallFrame*).
     move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR1);
 
     if (doLookup.isSet())
