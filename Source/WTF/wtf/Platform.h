@@ -755,8 +755,12 @@
 
 /* Generational collector for JSC */
 #if !defined(ENABLE_GGC)
+#if CPU(X86_64)
+#define ENABLE_GGC 1
+#else
 #define ENABLE_GGC 0
-#endif
+#endif // CPU(X86_64)
+#endif // !defined(ENABLE_GGC)
 
 /* Counts uses of write barriers using sampling counters. Be sure to also
    set ENABLE_SAMPLING_COUNTERS to 1. */
