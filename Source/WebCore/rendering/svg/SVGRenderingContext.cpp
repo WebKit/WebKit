@@ -180,34 +180,32 @@ static AffineTransform& currentContentTransformation()
     return s_currentContentTransformation;
 }
 
-float SVGRenderingContext::calculateScreenFontSizeScalingFactor(const RenderObject* renderer)
+float SVGRenderingContext::calculateScreenFontSizeScalingFactor(const RenderObject& renderer)
 {
-    ASSERT(renderer);
-
     AffineTransform ctm;
     calculateTransformationToOutermostCoordinateSystem(renderer, ctm);
     return narrowPrecisionToFloat(sqrt((pow(ctm.xScale(), 2) + pow(ctm.yScale(), 2)) / 2));
 }
 
-void SVGRenderingContext::calculateTransformationToOutermostCoordinateSystem(const RenderObject* renderer, AffineTransform& absoluteTransform)
+void SVGRenderingContext::calculateTransformationToOutermostCoordinateSystem(const RenderObject& renderer, AffineTransform& absoluteTransform)
 {
-    ASSERT(renderer);
     absoluteTransform = currentContentTransformation();
 
     float deviceScaleFactor = 1;
-    if (Page* page = renderer->document().page())
+    if (Page* page = renderer.document().page())
         deviceScaleFactor = page->deviceScaleFactor();
 
     // Walk up the render tree, accumulating SVG transforms.
-    while (renderer) {
-        absoluteTransform = renderer->localToParentTransform() * absoluteTransform;
-        if (renderer->isSVGRoot())
+    const RenderObject* ancestor = &renderer;
+    while (ancestor) {
+        absoluteTransform = ancestor->localToParentTransform() * absoluteTransform;
+        if (ancestor->isSVGRoot())
             break;
-        renderer = renderer->parent();
+        ancestor = ancestor->parent();
     }
 
     // Continue walking up the layer tree, accumulating CSS transforms.
-    RenderLayer* layer = renderer ? renderer->enclosingLayer() : 0;
+    RenderLayer* layer = ancestor ? ancestor->enclosingLayer() : nullptr;
     while (layer) {
         if (TransformationMatrix* layerTransform = layer->transform())
             absoluteTransform = layerTransform->toAffineTransform() * absoluteTransform;

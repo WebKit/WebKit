@@ -69,7 +69,7 @@ bool RenderSVGResourceMasker::applyResource(RenderElement& renderer, const Rende
     MaskerData* maskerData = m_masker.get(&renderer);
 
     AffineTransform absoluteTransform;
-    SVGRenderingContext::calculateTransformationToOutermostCoordinateSystem(&renderer, absoluteTransform);
+    SVGRenderingContext::calculateTransformationToOutermostCoordinateSystem(renderer, absoluteTransform);
 
     FloatRect repaintRect = renderer.repaintRectInLocalCoordinates();
 

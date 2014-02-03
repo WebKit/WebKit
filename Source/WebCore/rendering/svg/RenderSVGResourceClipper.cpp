@@ -148,7 +148,7 @@ bool RenderSVGResourceClipper::applyClippingToContext(RenderElement& renderer, c
     }
 
     AffineTransform absoluteTransform;
-    SVGRenderingContext::calculateTransformationToOutermostCoordinateSystem(&renderer, absoluteTransform);
+    SVGRenderingContext::calculateTransformationToOutermostCoordinateSystem(renderer, absoluteTransform);
 
     if (shouldCreateClipData && !repaintRect.isEmpty()) {
         if (!SVGRenderingContext::createImageBuffer(repaintRect, absoluteTransform, clipperData->clipMaskImage, ColorSpaceDeviceRGB, Unaccelerated))

@@ -1,3 +1,37 @@
+2014-02-02  Andreas Kling  <akling@apple.com>
+
+        RenderSVGInlineText::computeNewScaledFontForStyle() should take references.
+        <https://webkit.org/b/128086>
+
+        Make computeNewScaledFontForStyle() take renderer and style by reference
+        instead of taking a pointer and asserting that it's non-null.
+
+        Reviewed by Darin Adler.
+
+        * rendering/svg/RenderSVGInlineText.cpp:
+        (WebCore::RenderSVGInlineText::updateScaledFont):
+        (WebCore::RenderSVGInlineText::computeNewScaledFontForStyle):
+        * rendering/svg/RenderSVGInlineText.h:
+        * rendering/svg/RenderSVGResourceClipper.cpp:
+        (WebCore::RenderSVGResourceClipper::applyClippingToContext):
+        * rendering/svg/RenderSVGResourceContainer.cpp:
+        (WebCore::RenderSVGResourceContainer::shouldTransformOnTextPainting):
+        * rendering/svg/RenderSVGResourceFilter.cpp:
+        (WebCore::RenderSVGResourceFilter::applyResource):
+        * rendering/svg/RenderSVGResourceGradient.cpp:
+        (WebCore::createMaskAndSwapContextForTextGradient):
+        (WebCore::clipToTextMask):
+        * rendering/svg/RenderSVGResourceMasker.cpp:
+        (WebCore::RenderSVGResourceMasker::applyResource):
+        * rendering/svg/RenderSVGResourcePattern.cpp:
+        (WebCore::RenderSVGResourcePattern::buildPattern):
+        * rendering/svg/SVGInlineTextBox.cpp:
+        (WebCore::SVGInlineTextBox::paintDecorationWithStyle):
+        * rendering/svg/SVGRenderingContext.cpp:
+        (WebCore::SVGRenderingContext::calculateScreenFontSizeScalingFactor):
+        (WebCore::SVGRenderingContext::calculateTransformationToOutermostCoordinateSystem):
+        * rendering/svg/SVGRenderingContext.h:
+
 2014-02-02  Darin Adler  <darin@apple.com>
 
         Still more characters -> deprecatedCharacters (EWS keeps finding more)

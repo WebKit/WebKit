@@ -133,7 +133,7 @@ bool RenderSVGResourceFilter::applyResource(RenderElement& renderer, const Rende
 
     // Determine absolute transformation matrix for filter. 
     AffineTransform absoluteTransform;
-    SVGRenderingContext::calculateTransformationToOutermostCoordinateSystem(&renderer, absoluteTransform);
+    SVGRenderingContext::calculateTransformationToOutermostCoordinateSystem(renderer, absoluteTransform);
     if (!absoluteTransform.isInvertible())
         return false;
 

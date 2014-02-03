@@ -87,7 +87,7 @@ PatternData* RenderSVGResourcePattern::buildPattern(RenderObject* object, unsign
         return 0;
 
     AffineTransform absoluteTransformIgnoringRotation;
-    SVGRenderingContext::calculateTransformationToOutermostCoordinateSystem(object, absoluteTransformIgnoringRotation);
+    SVGRenderingContext::calculateTransformationToOutermostCoordinateSystem(*object, absoluteTransformIgnoringRotation);
 
     // Ignore 2D rotation, as it doesn't affect the size of the tile.
     SVGRenderingContext::clear2DRotation(absoluteTransformIgnoringRotation);

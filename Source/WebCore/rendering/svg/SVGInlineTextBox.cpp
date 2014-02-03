@@ -519,7 +519,7 @@ void SVGInlineTextBox::paintDecorationWithStyle(GraphicsContext* context, TextDe
 
     float scalingFactor = 1;
     Font scaledFont;
-    RenderSVGInlineText::computeNewScaledFontForStyle(&decorationRenderer, &decorationStyle, scalingFactor, scaledFont);
+    RenderSVGInlineText::computeNewScaledFontForStyle(decorationRenderer, decorationStyle, scalingFactor, scaledFont);
     ASSERT(scalingFactor);
 
     // The initial y value refers to overline position.

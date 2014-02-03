@@ -205,7 +205,7 @@ bool RenderSVGResourceContainer::shouldTransformOnTextPainting(RenderObject* obj
     // In text drawing, the scaling part of the graphics context CTM is removed, compare SVGInlineTextBox::paintTextWithShadows.
     // So, we use that scaling factor here, too, and then push it down to pattern or gradient space
     // in order to keep the pattern or gradient correctly scaled.
-    float scalingFactor = SVGRenderingContext::calculateScreenFontSizeScalingFactor(object);
+    float scalingFactor = SVGRenderingContext::calculateScreenFontSizeScalingFactor(*object);
     if (scalingFactor == 1)
         return false;
     resourceTransform.scale(scalingFactor);

@@ -61,7 +61,7 @@ static inline bool createMaskAndSwapContextForTextGradient(GraphicsContext*& con
     ASSERT(textRootBlock);
 
     AffineTransform absoluteTransform;
-    SVGRenderingContext::calculateTransformationToOutermostCoordinateSystem(textRootBlock, absoluteTransform);
+    SVGRenderingContext::calculateTransformationToOutermostCoordinateSystem(*textRootBlock, absoluteTransform);
 
     FloatRect repaintRect = textRootBlock->repaintRectInLocalCoordinates();
     std::unique_ptr<ImageBuffer> maskImage;
@@ -83,7 +83,7 @@ static inline AffineTransform clipToTextMask(GraphicsContext* context, std::uniq
     ASSERT(textRootBlock);
 
     AffineTransform absoluteTransform;
-    SVGRenderingContext::calculateTransformationToOutermostCoordinateSystem(textRootBlock, absoluteTransform);
+    SVGRenderingContext::calculateTransformationToOutermostCoordinateSystem(*textRootBlock, absoluteTransform);
 
     targetRect = textRootBlock->repaintRectInLocalCoordinates();
     SVGRenderingContext::clipToImageBuffer(context, absoluteTransform, targetRect, imageBuffer, false);
