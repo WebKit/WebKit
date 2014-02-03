@@ -34,6 +34,7 @@
 #include "AbstractSQLTransactionBackend.h"
 #include "DatabaseBasicTypes.h"
 #include "SQLTransactionStateMachine.h"
+#include <memory>
 #include <wtf/Deque.h>
 #include <wtf/Forward.h>
 #include <wtf/text/WTFString.h>
@@ -85,7 +86,7 @@ private:
     virtual PassRefPtr<SQLError> transactionError() override;
     virtual AbstractSQLStatement* currentStatement() override;
     virtual void setShouldRetryCurrentStatement(bool) override;
-    virtual void executeSQL(PassOwnPtr<AbstractSQLStatement>, const String& statement,
+    virtual void executeSQL(std::unique_ptr<AbstractSQLStatement>, const String& statement,
         const Vector<SQLValue>& arguments, int permissions) override;
 
     void doCleanup();
@@ -135,7 +136,7 @@ private:
     Mutex m_statementMutex;
     Deque<RefPtr<SQLStatementBackend>> m_statementQueue;
 
-    OwnPtr<SQLiteTransaction> m_sqliteTransaction;
+    std::unique_ptr<SQLiteTransaction> m_sqliteTransaction;
     RefPtr<OriginLock> m_originLock;
 };
 

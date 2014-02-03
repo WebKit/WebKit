@@ -33,7 +33,6 @@
 #include "AbstractSQLStatementBackend.h"
 #include "SQLValue.h"
 #include <wtf/Forward.h>
-#include <wtf/PassOwnPtr.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
@@ -46,7 +45,7 @@ class SQLTransactionBackend;
 
 class SQLStatementBackend : public AbstractSQLStatementBackend {
 public:
-    static PassRefPtr<SQLStatementBackend> create(PassOwnPtr<AbstractSQLStatement>,
+    static PassRefPtr<SQLStatementBackend> create(std::unique_ptr<AbstractSQLStatement>,
         const String& sqlStatement, const Vector<SQLValue>& arguments, int permissions);
 
     bool execute(DatabaseBackend*);
@@ -63,13 +62,13 @@ public:
     virtual PassRefPtr<SQLResultSet> sqlResultSet() const;
 
 private:
-    SQLStatementBackend(PassOwnPtr<AbstractSQLStatement>, const String& statement,
+    SQLStatementBackend(std::unique_ptr<AbstractSQLStatement>, const String& statement,
         const Vector<SQLValue>& arguments, int permissions);
 
     void setFailureDueToQuota();
     void clearFailureDueToQuota();
 
-    OwnPtr<AbstractSQLStatement> m_frontend;
+    std::unique_ptr<AbstractSQLStatement> m_frontend;
     String m_statement;
     Vector<SQLValue> m_arguments;
     bool m_hasCallback;

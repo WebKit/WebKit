@@ -29,7 +29,6 @@
 #if ENABLE(SQL_DATABASE)
 
 #include "FileSystem.h"
-#include <wtf/PassOwnPtr.h>
 
 namespace WebCore {
 

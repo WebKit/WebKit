@@ -30,12 +30,11 @@
 
 #if ENABLE(SQL_DATABASE)
 
+#include <memory>
 #include <wtf/Deque.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/MessageQueue.h>
-#include <wtf/OwnPtr.h>
-#include <wtf/PassOwnPtr.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Threading.h>
@@ -95,8 +94,8 @@ private:
     typedef HashSet<RefPtr<DatabaseBackend>> DatabaseSet;
     DatabaseSet m_openDatabaseSet;
 
-    OwnPtr<SQLTransactionClient> m_transactionClient;
-    OwnPtr<SQLTransactionCoordinator> m_transactionCoordinator;
+    std::unique_ptr<SQLTransactionClient> m_transactionClient;
+    std::unique_ptr<SQLTransactionCoordinator> m_transactionCoordinator;
     DatabaseTaskSynchronizer* m_cleanupSync;
 };
 

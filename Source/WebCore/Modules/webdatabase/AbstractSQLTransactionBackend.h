@@ -32,7 +32,7 @@
 #include "SQLError.h"
 #include "SQLTransactionState.h"
 #include "SQLValue.h"
-#include <wtf/PassOwnPtr.h>
+#include <memory>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
@@ -49,7 +49,7 @@ public:
     virtual AbstractSQLStatement* currentStatement() = 0;
     virtual void setShouldRetryCurrentStatement(bool) = 0;
 
-    virtual void executeSQL(PassOwnPtr<AbstractSQLStatement>, const String& statement,
+    virtual void executeSQL(std::unique_ptr<AbstractSQLStatement>, const String& statement,
         const Vector<SQLValue>& arguments, int permissions) = 0;
 
 };

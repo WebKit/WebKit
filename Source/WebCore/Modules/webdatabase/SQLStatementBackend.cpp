@@ -47,13 +47,13 @@
 //     At birth (in SQLTransactionBackend::executeSQL()):
 //     =================================================
 //     SQLTransactionBackend           // Deque<RefPtr<SQLStatementBackend>> m_statementQueue points to ...
-//     --> SQLStatementBackend         // OwnPtr<SQLStatement> m_frontend points to ...
+//     --> SQLStatementBackend         // std::unique_ptr<SQLStatement> m_frontend points to ...
 //         --> SQLStatement
 //
 //     After grabbing the statement for execution (in SQLTransactionBackend::getNextStatement()):
 //     =========================================================================================
 //     SQLTransactionBackend           // RefPtr<SQLStatementBackend> m_currentStatementBackend points to ...
-//     --> SQLStatementBackend         // OwnPtr<SQLStatement> m_frontend points to ...
+//     --> SQLStatementBackend         // std::unique_ptr<SQLStatement> m_frontend points to ...
 //         --> SQLStatement
 //
 //     Then we execute the statement in SQLTransactionBackend::runCurrentStatementAndGetNextState().
@@ -74,15 +74,15 @@
 
 namespace WebCore {
 
-PassRefPtr<SQLStatementBackend> SQLStatementBackend::create(PassOwnPtr<AbstractSQLStatement> frontend,
+PassRefPtr<SQLStatementBackend> SQLStatementBackend::create(std::unique_ptr<AbstractSQLStatement> frontend,
     const String& statement, const Vector<SQLValue>& arguments, int permissions)
 {
-    return adoptRef(new SQLStatementBackend(frontend, statement, arguments, permissions));
+    return adoptRef(new SQLStatementBackend(std::move(frontend), statement, arguments, permissions));
 }
 
-SQLStatementBackend::SQLStatementBackend(PassOwnPtr<AbstractSQLStatement> frontend,
+SQLStatementBackend::SQLStatementBackend(std::unique_ptr<AbstractSQLStatement> frontend,
     const String& statement, const Vector<SQLValue>& arguments, int permissions)
-    : m_frontend(frontend)
+    : m_frontend(std::move(frontend))
     , m_statement(statement.isolatedCopy())
     , m_arguments(arguments)
     , m_hasCallback(m_frontend->hasCallback())

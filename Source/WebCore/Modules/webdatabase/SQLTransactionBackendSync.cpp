@@ -58,7 +58,7 @@ SQLTransactionBackendSync::SQLTransactionBackendSync(DatabaseSync* db, PassRefPt
     , m_readOnly(readOnly)
     , m_hasVersionMismatch(false)
     , m_modifiedDatabase(false)
-    , m_transactionClient(adoptPtr(new SQLTransactionClient()))
+    , m_transactionClient(std::make_unique<SQLTransactionClient>())
 {
     ASSERT(m_database->scriptExecutionContext()->isContextThread());
 }
@@ -142,7 +142,7 @@ ExceptionCode SQLTransactionBackendSync::begin()
         m_database->sqliteDatabase().setMaximumSize(m_database->maximumSize());
 
     ASSERT(!m_sqliteTransaction);
-    m_sqliteTransaction = adoptPtr(new SQLiteTransaction(m_database->sqliteDatabase(), m_readOnly));
+    m_sqliteTransaction = std::make_unique<SQLiteTransaction>(m_database->sqliteDatabase(), m_readOnly);
 
     m_database->resetDeletes();
     m_database->disableAuthorizer();
@@ -154,7 +154,7 @@ ExceptionCode SQLTransactionBackendSync::begin()
         ASSERT(!m_database->sqliteDatabase().transactionInProgress());
         m_database->setLastErrorMessage("unable to begin transaction",
             m_database->sqliteDatabase().lastError(), m_database->sqliteDatabase().lastErrorMsg());
-        m_sqliteTransaction.clear();
+        m_sqliteTransaction = nullptr;
         return SQLException::DATABASE_ERR;
     }
 
@@ -207,7 +207,7 @@ ExceptionCode SQLTransactionBackendSync::commit()
         return SQLException::DATABASE_ERR;
     }
 
-    m_sqliteTransaction.clear();
+    m_sqliteTransaction = nullptr;
 
     // Vacuum the database if anything was deleted.
     if (m_database->hadDeletes())
@@ -225,7 +225,7 @@ void SQLTransactionBackendSync::rollback()
     m_database->disableAuthorizer();
     if (m_sqliteTransaction) {
         m_sqliteTransaction->rollback();
-        m_sqliteTransaction.clear();
+        m_sqliteTransaction = nullptr;
     }
     m_database->enableAuthorizer();
 

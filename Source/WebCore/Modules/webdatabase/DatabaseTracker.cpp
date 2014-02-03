@@ -557,7 +557,7 @@ void DatabaseTracker::addOpenDatabase(DatabaseBackendBase* database)
         MutexLocker openDatabaseMapLock(m_openDatabaseMapGuard);
 
         if (!m_openDatabaseMap)
-            m_openDatabaseMap = adoptPtr(new DatabaseOriginMap);
+            m_openDatabaseMap = std::make_unique<DatabaseOriginMap>();
 
         String name(database->stringIdentifier());
         DatabaseNameMap* nameMap = m_openDatabaseMap->get(database->securityOrigin());

@@ -34,8 +34,6 @@
 #include "DatabaseBasicTypes.h"
 #include "DatabaseError.h"
 #include "SQLTransactionBackend.h"
-#include <wtf/OwnPtr.h>
-#include <wtf/PassOwnPtr.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/Threading.h>
 #include <wtf/Vector.h>

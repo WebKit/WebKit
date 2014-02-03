@@ -260,7 +260,7 @@
 //
 //     When executing the transaction (in DatabaseThread::databaseThread()):
 //     ====================================================================
-//     OwnPtr<DatabaseTask> task;             // points to ...
+//     std::unique_ptr<DatabaseTask> task;    // points to ...
 //     --> DatabaseTransactionTask            // RefPtr<SQLTransactionBackend> m_transaction points to ...
 //         --> SQLTransactionBackend          // RefPtr<SQLTransaction> m_frontend;
 //             --> SQLTransaction             // RefPtr<SQLTransactionBackend> m_backend points to ...
@@ -284,7 +284,7 @@
 //     However, there will still be a DatabaseTask pointing to the SQLTransactionBackend (see
 //     the "When executing the transaction" chain above). This will keep the
 //     SQLTransactionBackend alive until DatabaseThread::databaseThread() releases its
-//     task OwnPtr.
+//     task std::unique_ptr.
 //
 //     What happens if a transaction is interrupted?
 //     ============================================
@@ -393,7 +393,7 @@ void SQLTransactionBackend::doCleanup()
         // m_sqliteTransaction invokes SQLiteTransaction's destructor which does
         // just that. We might as well do this unconditionally and free up its
         // resources because we're already terminating.
-        m_sqliteTransaction.clear();
+        m_sqliteTransaction = nullptr;
     }
 
     // Release the lock on this database
@@ -500,7 +500,7 @@ void SQLTransactionBackend::computeNextStateAndCleanupIfNeeded()
     // The current SQLite transaction should be stopped, as well
     if (m_sqliteTransaction) {
         m_sqliteTransaction->stop();
-        m_sqliteTransaction.clear();
+        m_sqliteTransaction = nullptr;
     }
 
     // Terminate the frontend state machine. This also gets the frontend to
@@ -526,11 +526,11 @@ bool SQLTransactionBackend::shouldPerformWhilePaused() const
 }
 #endif
 
-void SQLTransactionBackend::executeSQL(PassOwnPtr<AbstractSQLStatement> statement,
+void SQLTransactionBackend::executeSQL(std::unique_ptr<AbstractSQLStatement> statement,
     const String& sqlStatement, const Vector<SQLValue>& arguments, int permissions)
 {
     RefPtr<SQLStatementBackend> statementBackend;
-    statementBackend = SQLStatementBackend::create(statement, sqlStatement, arguments, permissions);
+    statementBackend = SQLStatementBackend::create(std::move(statement), sqlStatement, arguments, permissions);
 
     if (Database::from(m_database.get())->deleted())
         statementBackend->setDatabaseDeletedError();
@@ -582,7 +582,7 @@ SQLTransactionState SQLTransactionBackend::openTransactionAndPreflight()
     }
 
     ASSERT(!m_sqliteTransaction);
-    m_sqliteTransaction = adoptPtr(new SQLiteTransaction(m_database->sqliteDatabase(), m_readOnly));
+    m_sqliteTransaction = std::make_unique<SQLiteTransaction>(m_database->sqliteDatabase(), m_readOnly);
 
     m_database->resetDeletes();
     m_database->disableAuthorizer();
@@ -594,7 +594,7 @@ SQLTransactionState SQLTransactionBackend::openTransactionAndPreflight()
         ASSERT(!m_database->sqliteDatabase().transactionInProgress());
         m_transactionError = SQLError::create(SQLError::DATABASE_ERR, "unable to begin transaction",
             m_database->sqliteDatabase().lastError(), m_database->sqliteDatabase().lastErrorMsg());
-        m_sqliteTransaction.clear();
+        m_sqliteTransaction = nullptr;
         return nextStateForTransactionError();
     }
 
@@ -606,7 +606,7 @@ SQLTransactionState SQLTransactionBackend::openTransactionAndPreflight()
         m_transactionError = SQLError::create(SQLError::DATABASE_ERR, "unable to read version",
             m_database->sqliteDatabase().lastError(), m_database->sqliteDatabase().lastErrorMsg());
         m_database->disableAuthorizer();
-        m_sqliteTransaction.clear();
+        m_sqliteTransaction = nullptr;
         m_database->enableAuthorizer();
         return nextStateForTransactionError();
     }
@@ -615,7 +615,7 @@ SQLTransactionState SQLTransactionBackend::openTransactionAndPreflight()
     // Spec 4.3.2.3: Perform preflight steps, jumping to the error callback if they fail
     if (m_wrapper && !m_wrapper->performPreflight(this)) {
         m_database->disableAuthorizer();
-        m_sqliteTransaction.clear();
+        m_sqliteTransaction = nullptr;
         m_database->enableAuthorizer();
         m_transactionError = m_wrapper->sqlError();
         if (!m_transactionError)
@@ -799,7 +799,7 @@ SQLTransactionState SQLTransactionBackend::cleanupAfterTransactionErrorCallback(
         m_sqliteTransaction->rollback();
 
         ASSERT(!m_database->sqliteDatabase().transactionInProgress());
-        m_sqliteTransaction.clear();
+        m_sqliteTransaction = nullptr;
     }
     m_database->enableAuthorizer();
 

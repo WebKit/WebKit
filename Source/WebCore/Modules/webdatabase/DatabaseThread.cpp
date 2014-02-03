@@ -45,8 +45,8 @@ DatabaseThread::DatabaseThread()
 #if PLATFORM(IOS)
     , m_paused(false)
 #endif
-    , m_transactionClient(adoptPtr(new SQLTransactionClient()))
-    , m_transactionCoordinator(adoptPtr(new SQLTransactionCoordinator()))
+    , m_transactionClient(std::make_unique<SQLTransactionClient>())
+    , m_transactionCoordinator(std::make_unique<SQLTransactionCoordinator>())
     , m_cleanupSync(0)
 {
     m_selfRef = this;

@@ -35,6 +35,7 @@
 #if ENABLE(SQL_DATABASE)
 
 #include "DatabaseBasicTypes.h"
+#include <memory>
 #include <wtf/Forward.h>
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
@@ -73,8 +74,8 @@ private:
     bool m_hasVersionMismatch;
 
     bool m_modifiedDatabase;
-    OwnPtr<SQLTransactionClient> m_transactionClient;
-    OwnPtr<SQLiteTransaction> m_sqliteTransaction;
+    std::unique_ptr<SQLTransactionClient> m_transactionClient;
+    std::unique_ptr<SQLiteTransaction> m_sqliteTransaction;
 
     friend class SQLTransactionSync; // FIXME: Remove this once the front-end has been properly isolated.
 };

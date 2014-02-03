@@ -37,7 +37,6 @@
 #include "SecurityOriginHash.h"
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
-#include <wtf/OwnPtr.h>
 #include <wtf/text/StringHash.h>
 #include <wtf/text/WTFString.h>
 
@@ -152,7 +151,7 @@ private:
     typedef HashMap<RefPtr<SecurityOrigin>, DatabaseNameMap*> DatabaseOriginMap;
 
     Mutex m_openDatabaseMapGuard;
-    mutable OwnPtr<DatabaseOriginMap> m_openDatabaseMap;
+    mutable std::unique_ptr<DatabaseOriginMap> m_openDatabaseMap;
 
     // This lock protects m_database, m_originLockMap, m_databaseDirectoryPath, m_originsBeingDeleted, m_beingCreated, and m_beingDeleted.
     Mutex m_databaseGuard;

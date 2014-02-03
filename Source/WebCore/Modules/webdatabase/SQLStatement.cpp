@@ -45,12 +45,6 @@
 
 namespace WebCore {
 
-PassOwnPtr<SQLStatement> SQLStatement::create(Database* database,
-    PassRefPtr<SQLStatementCallback> callback, PassRefPtr<SQLStatementErrorCallback> errorCallback)
-{
-    return adoptPtr(new SQLStatement(database, callback, errorCallback));
-}
-
 SQLStatement::SQLStatement(Database* database, PassRefPtr<SQLStatementCallback> callback,
     PassRefPtr<SQLStatementErrorCallback> errorCallback)
     : m_statementCallbackWrapper(callback, database->scriptExecutionContext())

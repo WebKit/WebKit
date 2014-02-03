@@ -1,3 +1,45 @@
+2014-02-03  Zan Dobersek  <zdobersek@igalia.com>
+
+        Move the webdatabase module source code to std::unique_ptr
+        https://bugs.webkit.org/show_bug.cgi?id=127278
+
+        Reviewed by Antti Koivisto.
+
+        Replace the majority of OwnPtr uses in the webdatabase module with std::unique_ptr.
+        The only remaining uses are due to ScriptExecutionContext::Task subclasses.
+
+        * Modules/webdatabase/AbstractSQLTransactionBackend.h:
+        * Modules/webdatabase/Database.cpp:
+        * Modules/webdatabase/DatabaseTask.h:
+        * Modules/webdatabase/DatabaseThread.cpp:
+        (WebCore::DatabaseThread::DatabaseThread):
+        * Modules/webdatabase/DatabaseThread.h:
+        * Modules/webdatabase/DatabaseTracker.cpp:
+        (WebCore::DatabaseTracker::addOpenDatabase):
+        * Modules/webdatabase/DatabaseTracker.h:
+        * Modules/webdatabase/OriginLock.cpp:
+        * Modules/webdatabase/SQLStatement.cpp:
+        * Modules/webdatabase/SQLStatement.h:
+        * Modules/webdatabase/SQLStatementBackend.cpp:
+        (WebCore::SQLStatementBackend::create):
+        (WebCore::SQLStatementBackend::SQLStatementBackend):
+        * Modules/webdatabase/SQLStatementBackend.h:
+        * Modules/webdatabase/SQLTransaction.cpp:
+        (WebCore::SQLTransaction::executeSQL):
+        * Modules/webdatabase/SQLTransactionBackend.cpp:
+        (WebCore::SQLTransactionBackend::doCleanup):
+        (WebCore::SQLTransactionBackend::computeNextStateAndCleanupIfNeeded):
+        (WebCore::SQLTransactionBackend::executeSQL):
+        (WebCore::SQLTransactionBackend::openTransactionAndPreflight):
+        (WebCore::SQLTransactionBackend::cleanupAfterTransactionErrorCallback):
+        * Modules/webdatabase/SQLTransactionBackend.h:
+        * Modules/webdatabase/SQLTransactionBackendSync.cpp:
+        (WebCore::SQLTransactionBackendSync::SQLTransactionBackendSync):
+        (WebCore::SQLTransactionBackendSync::begin):
+        (WebCore::SQLTransactionBackendSync::commit):
+        (WebCore::SQLTransactionBackendSync::rollback):
+        * Modules/webdatabase/SQLTransactionBackendSync.h:
+
 2014-02-03  Andreas Kling  <akling@apple.com>
 
         CTTE: Grab bag of SVGRenderTreeAsText cleanups.
