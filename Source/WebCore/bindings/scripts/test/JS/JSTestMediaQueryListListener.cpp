@@ -32,15 +32,6 @@ using namespace JSC;
 
 namespace WebCore {
 
-/* Hash table */
-
-static const HashTableValue JSTestMediaQueryListListenerTableValues[] =
-{
-    { "constructor", DontEnum | ReadOnly, NoIntrinsic, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestMediaQueryListListenerConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) },
-    { 0, 0, NoIntrinsic, 0, 0 }
-};
-
-static const HashTable JSTestMediaQueryListListenerTable = { 2, 1, true, JSTestMediaQueryListListenerTableValues, 0 };
 /* Hash table for constructor */
 
 static const HashTableValue JSTestMediaQueryListListenerConstructorTableValues[] =
@@ -73,11 +64,12 @@ bool JSTestMediaQueryListListenerConstructor::getOwnPropertySlot(JSObject* objec
 
 static const HashTableValue JSTestMediaQueryListListenerPrototypeTableValues[] =
 {
+    { "constructor", DontEnum | ReadOnly, NoIntrinsic, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestMediaQueryListListenerConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) },
     { "method", JSC::Function, NoIntrinsic, (intptr_t)static_cast<NativeFunction>(jsTestMediaQueryListListenerPrototypeFunctionMethod), (intptr_t) (1) },
     { 0, 0, NoIntrinsic, 0, 0 }
 };
 
-static const HashTable JSTestMediaQueryListListenerPrototypeTable = { 2, 1, false, JSTestMediaQueryListListenerPrototypeTableValues, 0 };
+static const HashTable JSTestMediaQueryListListenerPrototypeTable = { 4, 3, true, JSTestMediaQueryListListenerPrototypeTableValues, 0 };
 const ClassInfo JSTestMediaQueryListListenerPrototype::s_info = { "TestMediaQueryListListenerPrototype", &Base::s_info, &JSTestMediaQueryListListenerPrototypeTable, 0, CREATE_METHOD_TABLE(JSTestMediaQueryListListenerPrototype) };
 
 JSObject* JSTestMediaQueryListListenerPrototype::self(VM& vm, JSGlobalObject* globalObject)
@@ -88,10 +80,10 @@ JSObject* JSTestMediaQueryListListenerPrototype::self(VM& vm, JSGlobalObject* gl
 bool JSTestMediaQueryListListenerPrototype::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
 {
     JSTestMediaQueryListListenerPrototype* thisObject = jsCast<JSTestMediaQueryListListenerPrototype*>(object);
-    return getStaticFunctionSlot<JSObject>(exec, JSTestMediaQueryListListenerPrototypeTable, thisObject, propertyName, slot);
+    return getStaticPropertySlot<JSTestMediaQueryListListenerPrototype, JSObject>(exec, JSTestMediaQueryListListenerPrototypeTable, thisObject, propertyName, slot);
 }
 
-const ClassInfo JSTestMediaQueryListListener::s_info = { "TestMediaQueryListListener", &Base::s_info, &JSTestMediaQueryListListenerTable, 0 , CREATE_METHOD_TABLE(JSTestMediaQueryListListener) };
+const ClassInfo JSTestMediaQueryListListener::s_info = { "TestMediaQueryListListener", &Base::s_info, 0, 0 , CREATE_METHOD_TABLE(JSTestMediaQueryListListener) };
 
 JSTestMediaQueryListListener::JSTestMediaQueryListListener(Structure* structure, JSDOMGlobalObject* globalObject, PassRefPtr<TestMediaQueryListListener> impl)
     : JSDOMWrapper(structure, globalObject)
@@ -125,12 +117,14 @@ bool JSTestMediaQueryListListener::getOwnPropertySlot(JSObject* object, ExecStat
 {
     JSTestMediaQueryListListener* thisObject = jsCast<JSTestMediaQueryListListener*>(object);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
-    return getStaticValueSlot<JSTestMediaQueryListListener, Base>(exec, JSTestMediaQueryListListenerTable, thisObject, propertyName, slot);
+    return Base::getOwnPropertySlot(thisObject, exec, propertyName, slot);
 }
 
-EncodedJSValue jsTestMediaQueryListListenerConstructor(ExecState* exec, EncodedJSValue, EncodedJSValue thisValue, PropertyName)
+EncodedJSValue jsTestMediaQueryListListenerConstructor(ExecState* exec, EncodedJSValue baseValue, EncodedJSValue thisValue, PropertyName)
 {
-    JSTestMediaQueryListListener* domObject = jsDynamicCast<JSTestMediaQueryListListener*>(JSValue::decode(thisValue));
+    UNUSED_PARAM(baseValue);
+    UNUSED_PARAM(thisValue);
+    JSTestMediaQueryListListenerPrototype* domObject = jsDynamicCast<JSTestMediaQueryListListenerPrototype*>(JSValue::decode(baseValue));
     if (!domObject)
         return throwVMTypeError(exec);
     return JSValue::encode(JSTestMediaQueryListListener::getConstructor(exec->vm(), domObject->globalObject()));

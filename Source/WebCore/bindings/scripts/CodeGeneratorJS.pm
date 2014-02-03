@@ -413,7 +413,7 @@ sub GenerateGetOwnPropertySlotBody
         }
     };
 
-    if (!$interface->extendedAttributes->{"CustomNamedGetter"}) {
+    if (!$interface->extendedAttributes->{"CustomNamedGetter"} and InstanceAttributeCount($interface) > 0) {
         &$manualLookupGetterGeneration();
     }
 
@@ -586,22 +586,9 @@ sub GetSpecialAccessorFunctionForType
     return 0;
 }
 
-sub GetIndexedGetterFunction
+sub HasComplexGetOwnProperty
 {
     my $interface = shift;
-    return GetSpecialAccessorFunctionForType($interface, "getter", "unsigned long", 1);
-}
-
-sub GetNamedGetterFunction
-{
-    my $interface = shift;
-    return GetSpecialAccessorFunctionForType($interface, "getter", "DOMString", 1);
-}
-
-sub InstanceOverridesGetOwnPropertySlot
-{
-    my $interface = shift;
-    my $numAttributes = @{$interface->attributes};
 
     my $namedGetterFunction = GetNamedGetterFunction($interface);
     my $indexedGetterFunction = GetIndexedGetterFunction($interface);
@@ -615,16 +602,134 @@ sub InstanceOverridesGetOwnPropertySlot
         || $interface->extendedAttributes->{"JSCustomGetOwnPropertySlotAndDescriptor"}
         || $hasImpureNamedGetter;
 
-    return $numAttributes > 0 || !$interface->extendedAttributes->{"NoInterfaceObject"} || $hasComplexGetter;
+    return 1 if $interface->extendedAttributes->{"CheckSecurity"};
+    return 1 if IsDOMGlobalObject($interface);
+    return 1 if $hasComplexGetter;
+    return 0;
+}
+
+sub ConstructorShouldBeOnInstance
+{
+    my $interface = shift;
+    my $interfaceName = $interface->name;
+    return HasComplexGetOwnProperty($interface);
+}
+
+sub AttributeShouldBeOnInstance
+{
+    my $interface = shift;
+    my $attribute = shift;
+
+    my $interfaceName = $interface->name;
+    my $namedGetterFunction = GetNamedGetterFunction($interface);
+    my $indexedGetterFunction = GetIndexedGetterFunction($interface);
+    my $hasNumericIndexedGetter = $indexedGetterFunction ? $codeGenerator->IsNumericType($indexedGetterFunction->signature->type) : 0;
+    
+    # FIXME: All these return 1 if ... should ideally be removed.
+    # Some of them are unavoidable due to DOM weirdness, in which case we should
+    # add an IDL attribute for them
+    
+    # FIXME: We should rearrange how custom named getters and getOwnPropertySlot
+    # overrides are handled so that we get the correct semantics and lookup ordering
+    my $hasImpureNamedGetter = $namedGetterFunction
+        || $interface->extendedAttributes->{"CustomNamedGetter"}
+        || $interface->extendedAttributes->{"CustomGetOwnPropertySlot"};
+    return 1 if $hasImpureNamedGetter;
+    
+    
+    return 1 if IsDOMGlobalObject($interface);
+    return 1 if $attribute->signature->type =~ /Constructor$/;
+    return 1 if HasCustomGetter($attribute->signature->extendedAttributes);
+    return 1 if HasCustomSetter($attribute->signature->extendedAttributes);
+    
+    
+    # FIXME: These two should be fixed by removing the custom override of message, etc
+    return 1 if $interfaceName =~ "Exception";
+    return 1 if $interfaceName =~ "Error";
+
+    # FIXME: Length is a tricky attribute to handle correctly as it is frequently tied to
+    # objects which also have magic named attributes that can end up being named "length"
+    # and so interfere with lookup ordering.  I'm not sure what the correct solution is
+    # here.
+    return 1 if ($attribute->signature->name eq "length");
+    
+    # It becomes hard to reason about attributes that require security checks if we push
+    # them down the prototype chain, so before we do these we'll need to carefully consider
+    # the possible pitfalls.
+    return 1 if $attribute->signature->extendedAttributes->{"CheckSecurityForNode"};
+
+    if ($interface->extendedAttributes->{"CheckSecurity"}) {
+        if ($attribute->signature->extendedAttributes->{"DoNotCheckSecurity"} or
+            $attribute->signature->extendedAttributes->{"DoNotCheckSecurityOnGetter"}) {
+            return 0;
+        }
+        return 1;
+    }
+    return 0;
+}
+
+sub GetIndexedGetterFunction
+{
+    my $interface = shift;
+    return GetSpecialAccessorFunctionForType($interface, "getter", "unsigned long", 1);
+}
+
+sub GetNamedGetterFunction
+{
+    my $interface = shift;
+    return GetSpecialAccessorFunctionForType($interface, "getter", "DOMString", 1);
+}
+
+sub InstanceAttributeCount
+{
+    my $interface = shift;
+    my $count = 0;
+    foreach my $attribute (@{$interface->attributes}) {
+        $count = $count + AttributeShouldBeOnInstance($interface, $attribute);
+    }
+    $count = $count + 1 if ConstructorShouldBeOnInstance($interface);
+    return $count;
+}
+
+sub PrototypeAttributeCount
+{
+    my $interface = shift;
+    my $count = 0;
+    foreach my $attribute (@{$interface->attributes}) {
+        $count = $count + 1 if !AttributeShouldBeOnInstance($interface, $attribute);
+    }
+    $count = $count + 1 if !ConstructorShouldBeOnInstance($interface);
+    return $count;
+}
+
+sub InstanceOverridesGetOwnPropertySlot
+{
+    my $interface = shift;
+    my $numInstanceAttributes = InstanceAttributeCount($interface);
+
+    my $namedGetterFunction = GetNamedGetterFunction($interface);
+    my $indexedGetterFunction = GetIndexedGetterFunction($interface);
+    my $hasNumericIndexedGetter = $indexedGetterFunction ? $codeGenerator->IsNumericType($indexedGetterFunction->signature->type) : 0;
+
+    my $hasImpureNamedGetter = $namedGetterFunction
+        || $interface->extendedAttributes->{"CustomNamedGetter"}
+        || $interface->extendedAttributes->{"CustomGetOwnPropertySlot"};
+
+    my $hasComplexGetter = $indexedGetterFunction
+        || $interface->extendedAttributes->{"JSCustomGetOwnPropertySlotAndDescriptor"}
+        || $hasImpureNamedGetter;
+
+    return $numInstanceAttributes > 0 || !$interface->extendedAttributes->{"NoInterfaceObject"} || $hasComplexGetter;
 
 }
 
 sub PrototypeOverridesGetOwnPropertySlot
 {
     my $interface = shift;
+    my $numPrototypeAttributes = PrototypeAttributeCount($interface);
     my $numConstants = @{$interface->constants};
     my $numFunctions = @{$interface->functions};
-    return $numFunctions > 0 || $numConstants > 0;
+    return $numFunctions > 0 || $numConstants > 0 || $numPrototypeAttributes > 0;
 }
 
 sub InstanceOverridesPutImplementation
@@ -1176,20 +1281,44 @@ sub GenerateHeader
 
 sub GenerateAttributesHashTable
 {
-    my ($object, $interface, $hashKeys, $hashSpecials, $hashValue1, $hashValue2, $conditionals, $entries) = @_;
+    my ($object, $interface, $isInstance, $hashKeys, $hashSpecials, $hashValue1, $hashValue2, $conditionals, $entries) = @_;
 
     # FIXME: These should be functions on $interface.
     my $interfaceName = $interface->name;
     my $className = "JS$interfaceName";
     
     # - Add all attributes in a hashtable definition
-    my $numAttributes = @{$interface->attributes};
-    $numAttributes++ if !$interface->extendedAttributes->{"NoInterfaceObject"};
+    my $numAttributes = 0;
+    if ($isInstance) {
+        $numAttributes = InstanceAttributeCount($interface);
+    } else {
+        $numAttributes = PrototypeAttributeCount($interface);
+    }
 
-    return 0  if !$numAttributes;
+
+    if (ConstructorShouldBeOnInstance($interface) == $isInstance) {
+
+        if (!$interface->extendedAttributes->{"NoInterfaceObject"}) {
+            die if !$numAttributes;
+            push(@$hashKeys, "constructor");
+            my $getter = "js" . $interfaceName . "Constructor";
+            push(@$hashValue1, $getter);
+            if ($interface->extendedAttributes->{"ReplaceableConstructor"}) {
+                my $setter = "setJS" . $interfaceName . "Constructor";
+                push(@$hashValue2, $setter);
+                push(@$hashSpecials, "DontEnum | DontDelete");
+            } else {
+                push(@$hashValue2, "0");
+                push(@$hashSpecials, "DontEnum | ReadOnly");
+            }
+        }
+    }
+
+    return 0 if !$numAttributes;
 
     foreach my $attribute (@{$interface->attributes}) {
         next if ($attribute->isStatic);
+        next if AttributeShouldBeOnInstance($interface, $attribute) != $isInstance;
         my $name = $attribute->signature->name;
         push(@$hashKeys, $name);
 
@@ -1220,19 +1349,6 @@ sub GenerateAttributesHashTable
         }
     }
 
-    if (!$interface->extendedAttributes->{"NoInterfaceObject"}) {
-        push(@$hashKeys, "constructor");
-        my $getter = "js" . $interfaceName . "Constructor";
-        push(@$hashValue1, $getter);
-        if ($interface->extendedAttributes->{"ReplaceableConstructor"}) {
-            my $setter = "setJS" . $interfaceName . "Constructor";
-            push(@$hashValue2, $setter);
-            push(@$hashSpecials, "DontEnum | DontDelete");
-        } else {            
-            push(@$hashValue2, "0");
-            push(@$hashSpecials, "DontEnum | ReadOnly");
-        }
-    }
     return $numAttributes;
 }
 
@@ -1577,17 +1693,17 @@ sub GenerateImplementation
     my %conditionals = ();
     my $hashName = $className . "Table";
 
-    my $numAttributes = GenerateAttributesHashTable($object, $interface,
+    my $numInstanceAttributes = GenerateAttributesHashTable($object, $interface, 1,
         \@hashKeys, \@hashSpecials,
         \@hashValue1, \@hashValue2,
         \%conditionals);
 
     my $numConstants = @{$interface->constants};
     my $numFunctions = @{$interface->functions};
-    $object->GenerateHashTable($hashName, $numAttributes,
+    $object->GenerateHashTable($hashName, $numInstanceAttributes,
         \@hashKeys, \@hashSpecials,
         \@hashValue1, \@hashValue2,
-        \%conditionals) if $numAttributes > 0;
+        \%conditionals) if $numInstanceAttributes > 0;
 
     # - Add all constants
     if (!$interface->extendedAttributes->{"NoInterfaceObject"}) {
@@ -1687,7 +1803,7 @@ sub GenerateImplementation
     }
 
     # - Add functions and constants to a hashtable definition
-    my $hashSize = $numFunctions + $numConstants;
+
     $hashName = $className . "PrototypeTable";
 
     @hashKeys = ();
@@ -1695,6 +1811,13 @@ sub GenerateImplementation
     @hashValue2 = ();
     @hashSpecials = ();
     %conditionals = ();
+
+
+    my $numPrototypeAttributes = GenerateAttributesHashTable($object, $interface, 0,
+        \@hashKeys, \@hashSpecials,
+        \@hashValue1, \@hashValue2,
+        \%conditionals);
+    my $hashSize = $numFunctions + $numConstants + $numPrototypeAttributes;
 
     # FIXME: we should not need a function for every constant.
     foreach my $constant (@{$interface->constants}) {
@@ -1763,11 +1886,12 @@ sub GenerateImplementation
         push(@implContent, "{\n");
         push(@implContent, "    ${className}Prototype* thisObject = jsCast<${className}Prototype*>(object);\n");
 
-        if ($numConstants eq 0 && $numFunctions eq 0) {
+        my $numPrototypeAttributes = PrototypeAttributeCount($interface);
+        if ($numConstants eq 0 && $numFunctions eq 0 && $numPrototypeAttributes eq 0) {
             push(@implContent, "    return Base::getOwnPropertySlot(thisObject, exec, propertyName, slot);\n");        
-        } elsif ($numConstants eq 0) {
+        } elsif ($numConstants eq 0 && $numPrototypeAttributes eq 0) {
             push(@implContent, "    return getStaticFunctionSlot<JSObject>(exec, " . prototypeHashTableAccessor($interface->extendedAttributes->{"JSNoStaticTables"}, $className) . ", thisObject, propertyName, slot);\n");
-        } elsif ($numFunctions eq 0) {
+        } elsif ($numFunctions eq 0 && $numPrototypeAttributes eq 0) {
             push(@implContent, "    return getStaticValueSlot<${className}Prototype, JSObject>(exec, " . prototypeHashTableAccessor($interface->extendedAttributes->{"JSNoStaticTables"}, $className) . ", thisObject, propertyName, slot);\n");
         } else {
             push(@implContent, "    return getStaticPropertySlot<${className}Prototype, JSObject>(exec, " . prototypeHashTableAccessor($interface->extendedAttributes->{"JSNoStaticTables"}, $className) . ", thisObject, propertyName, slot);\n");
@@ -1786,7 +1910,7 @@ sub GenerateImplementation
     }
 
     # - Initialize static ClassInfo object
-    if ($numAttributes > 0 && $interface->extendedAttributes->{"JSNoStaticTables"}) {
+    if ($numInstanceAttributes > 0 && $interface->extendedAttributes->{"JSNoStaticTables"}) {
         push(@implContent, "static const HashTable& get${className}Table(VM& vm)\n");
         push(@implContent, "{\n");
         push(@implContent, "    return getHashTableForGlobalData(vm, ${className}Table);\n");
@@ -1795,12 +1919,12 @@ sub GenerateImplementation
 
     push(@implContent, "const ClassInfo $className" . "::s_info = { \"${visibleInterfaceName}\", &Base::s_info, ");
 
-    if ($numAttributes > 0 && !$interface->extendedAttributes->{"JSNoStaticTables"}) {
+    if ($numInstanceAttributes > 0 && !$interface->extendedAttributes->{"JSNoStaticTables"}) {
         push(@implContent, "&${className}Table");
     } else {
         push(@implContent, "0");
     }
-    if ($numAttributes > 0 && $interface->extendedAttributes->{"JSNoStaticTables"}) {
+    if ($numInstanceAttributes > 0 && $interface->extendedAttributes->{"JSNoStaticTables"}) {
         push(@implContent, ", get${className}Table ");
     } else {
         push(@implContent, ", 0 ");
@@ -1888,7 +2012,7 @@ sub GenerateImplementation
             push(@implContent, "{\n");
             push(@implContent, "    ${className}* thisObject = jsCast<${className}*>(object);\n");
             push(@implContent, "    ASSERT_GC_OBJECT_INHERITS(thisObject, info());\n");
-            push(@implContent, GenerateGetOwnPropertySlotBody($interface, $interfaceName, $className, $numAttributes > 0, 0));
+            push(@implContent, GenerateGetOwnPropertySlotBody($interface, $interfaceName, $className, $numInstanceAttributes > 0, 0));
             push(@implContent, "}\n\n");
         }
 
@@ -1952,6 +2076,8 @@ sub GenerateImplementation
         }
 
     }
+    my $numAttributes = @{$interface->attributes};
+    $numAttributes = $numAttributes + 1 if !$interface->extendedAttributes->{"NoInterfaceObject"};
     if ($numAttributes > 0) {
         foreach my $attribute (@{$interface->attributes}) {
             my $name = $attribute->signature->name;
@@ -2147,8 +2273,10 @@ sub GenerateImplementation
         if (!$interface->extendedAttributes->{"NoInterfaceObject"}) {
             my $constructorFunctionName = "js" . $interfaceName . "Constructor";
 
-            push(@implContent, "EncodedJSValue ${constructorFunctionName}(ExecState* exec, EncodedJSValue, EncodedJSValue thisValue, PropertyName)\n");
+            push(@implContent, "EncodedJSValue ${constructorFunctionName}(ExecState* exec, EncodedJSValue baseValue, EncodedJSValue thisValue, PropertyName)\n");
             push(@implContent, "{\n");
+            push(@implContent, "    UNUSED_PARAM(baseValue);\n");
+            push(@implContent, "    UNUSED_PARAM(thisValue);\n");
             if ($interfaceName eq "DOMWindow") {
                 push(@implContent, "    ${className}* domObject = jsDynamicCast<$className*>(JSValue::decode(thisValue));\n");
                 push(@implContent, "    if (!domObject) {\n");
@@ -2156,12 +2284,14 @@ sub GenerateImplementation
                 push(@implContent, "            domObject = shell->window();\n");
                 push(@implContent, "    }\n");
             } else {
-                push(@implContent, "    ${className}* domObject = jsDynamicCast<$className*>(JSValue::decode(thisValue));\n");
+                push(@implContent, "    ${className}* domObject = jsDynamicCast<${className}*>(JSValue::decode(thisValue));\n") if ConstructorShouldBeOnInstance($interface);
+                push(@implContent, "    ${className}Prototype* domObject = jsDynamicCast<${className}Prototype*>(JSValue::decode(baseValue));\n") if !ConstructorShouldBeOnInstance($interface);
             }
             push(@implContent, "    if (!domObject)\n");
             push(@implContent, "        return throwVMTypeError(exec);\n");
 
             if ($interface->extendedAttributes->{"CheckSecurity"}) {
+                die if !ConstructorShouldBeOnInstance($interface);
                 push(@implContent, "    if (!BindingSecurity::shouldAllowAccessToDOMWindow(exec, domObject->impl()))\n");
                 push(@implContent, "        return JSValue::encode(jsUndefined());\n");
             }
@@ -2764,6 +2894,8 @@ sub GenerateImplementation
                 $rootString .= "        return false;\n";
                 $rootString .= "    void* root = WebCore::root(element);\n";
             } elsif ($interfaceName eq "CanvasRenderingContext") {
+                $implIncludes{"Element.h"} = 1;
+                $implIncludes{"JSNodeCustom.h"} = 1;
                 $rootString  = "    void* root = WebCore::root(js${interfaceName}->impl().canvas());\n";
             } elsif (GetGenerateIsReachable($interface) eq "ImplOwnerNodeRoot") {
                 $implIncludes{"Element.h"} = 1;

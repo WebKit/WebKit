@@ -1,3 +1,27 @@
+2014-01-30  Oliver Hunt  <oliver@apple.com>
+
+        Push DOM attributes into the prototype chain
+        https://bugs.webkit.org/show_bug.cgi?id=127969
+
+        Reviewed by Mark Lam.
+
+        Start redoing code generation for attributes.
+
+        * bindings/js/JSDOMBinding.h:
+        (WebCore::getStaticPropertySlotEntryWithoutCaching):
+        (WebCore::getStaticPropertySlotEntryWithoutCaching<JSDOMWrapper>):
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateGetOwnPropertySlotBody):
+        (HasComplexGetOwnProperty):
+        (ConstructorShouldBeOnInstance):
+        (AttributeShouldBeOnInstance):
+        (InstanceAttributeCount):
+        (PrototypeAttributeCount):
+        (InstanceOverridesGetOwnPropertySlot):
+        (PrototypeOverridesGetOwnPropertySlot):
+        (GenerateAttributesHashTable):
+        (GenerateImplementation):
+
 2014-02-02  Andreas Kling  <akling@apple.com>
 
         RenderSVGResourceContainer clients are always RenderElement.

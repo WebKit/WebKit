@@ -39,4 +39,4 @@ checkConstructor("SyntaxError.prototype");
 checkConstructor("TypeError.prototype");
 checkConstructor("URIError.prototype");
 
-checkConstructor("document.createTextNode('')");
+checkConstructor("document.createTextNode('').__proto__");
