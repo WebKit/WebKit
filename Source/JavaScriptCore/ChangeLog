@@ -1,3 +1,21 @@
+2014-02-03  Matthew Mirman  <mmirman@apple.com>
+
+        Added GetTypedArrayByteOffset to FTL
+        https://bugs.webkit.org/show_bug.cgi?id=127589
+
+        Reviewed by Filip Pizlo.
+
+        * ftl/FTLAbstractHeapRepository.h:
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::LowerDFGToLLVM::compileNode):
+        (JSC::FTL::LowerDFGToLLVM::compileGetTypedArrayByteOffset):
+        * tests/stress/ftl-gettypedarrayoffset-simple.js: Added.
+        (foo):
+        * tests/stress/ftl-gettypedarrayoffset-wasteful.js: Added.
+        (foo):
+
 2014-02-03  Mark Lam  <mark.lam@apple.com>
 
         Debugger created JSActivations should account for CodeBlock::framePointerOffsetToGetActivationRegisters().

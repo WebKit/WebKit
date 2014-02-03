@@ -109,6 +109,7 @@ inline CapabilityLevel canCompile(Node* node)
     case AllocatePropertyStorage:
     case FunctionReentryWatchpoint:
     case TypedArrayWatchpoint:
+    case GetTypedArrayByteOffset:
     case VariableWatchpoint:
     case NotifyWrite:
     case StoreBarrier:

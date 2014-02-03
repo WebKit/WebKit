@@ -42,6 +42,8 @@ namespace JSC { namespace FTL {
     macro(WriteBarrierBuffer_bufferContents)
 
 #define FOR_EACH_ABSTRACT_FIELD(macro) \
+    macro(ArrayBuffer_data, ArrayBuffer::offsetOfData()) \
+    macro(Butterfly_arrayBuffer, Butterfly::offsetOfArrayBuffer()) \
     macro(Butterfly_publicLength, Butterfly::offsetOfPublicLength()) \
     macro(Butterfly_vectorLength, Butterfly::offsetOfVectorLength()) \
     macro(CallFrame_callerFrame, CallFrame::callerFrameOffset()) \

@@ -434,6 +434,9 @@ private:
         case NewArrayWithSize:
             compileNewArrayWithSize();
             break;
+        case GetTypedArrayByteOffset:
+            compileGetTypedArrayByteOffset();
+            break;
         case AllocatePropertyStorage:
             compileAllocatePropertyStorage();
             break;
@@ -1724,6 +1727,41 @@ private:
         speculate(
             BadIndexingType, jsValueValue(cell), 0,
             m_out.bitNot(isArrayType(cell, m_node->arrayMode())));
+    }
+
+    void compileGetTypedArrayByteOffset()
+    {
+        LValue basePtr = lowCell(m_node->child1());    
+
+        LBasicBlock simpleCase = FTL_NEW_BLOCK(m_out, ("wasteless typed array"));
+        LBasicBlock wastefulCase = FTL_NEW_BLOCK(m_out, ("wasteful typed array"));
+        LBasicBlock continuation = FTL_NEW_BLOCK(m_out, ("continuation branch"));
+        
+        LValue baseAddress = m_out.addPtr(basePtr, JSArrayBufferView::offsetOfMode());
+        m_out.branch(m_out.notEqual(baseAddress , m_out.constIntPtr(WastefulTypedArray)), simpleCase, wastefulCase);
+
+        // begin simple case        
+        LBasicBlock lastNext = m_out.appendTo(simpleCase, wastefulCase);
+
+        ValueFromBlock simpleOut = m_out.anchor(m_out.constIntPtr(0));
+
+        m_out.jump(continuation);
+
+        // begin wasteful case
+        m_out.appendTo(wastefulCase, continuation);
+
+        LValue vectorPtr = m_out.loadPtr(basePtr, m_heaps.JSArrayBufferView_vector);
+        LValue butterflyPtr = m_out.loadPtr(basePtr, m_heaps.JSObject_butterfly);
+        LValue arrayBufferPtr = m_out.loadPtr(butterflyPtr, m_heaps.Butterfly_arrayBuffer);
+        LValue dataPtr = m_out.loadPtr(arrayBufferPtr, m_heaps.ArrayBuffer_data);
+
+        ValueFromBlock wastefulOut = m_out.anchor(m_out.sub(dataPtr, vectorPtr));        
+
+        m_out.jump(continuation);
+        m_out.appendTo(continuation, lastNext);
+
+        // output
+        setInt32(m_out.castToInt32(m_out.phi(m_out.intPtr, simpleOut, wastefulOut)));
     }
     
     void compileGetArrayLength()
