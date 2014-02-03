@@ -63,7 +63,7 @@ public:
     WTF_EXPORT_PRIVATE void stop();
     WTF_EXPORT_PRIVATE void wakeUp();
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     WTF_EXPORT_PRIVATE void runForDuration(double duration);
 #endif
     
@@ -90,7 +90,7 @@ public:
         static void timerFired(RunLoop*, uint64_t ID);
         uint64_t m_ID;
         bool m_isRepeating;
-#elif PLATFORM(MAC)
+#elif PLATFORM(COCOA)
         static void timerFired(CFRunLoopTimerRef, void*);
         RetainPtr<CFRunLoopTimerRef> m_timer;
 #elif PLATFORM(EFL)
@@ -143,7 +143,7 @@ private:
 
     typedef HashMap<uint64_t, TimerBase*> TimerMap;
     TimerMap m_activeTimers;
-#elif PLATFORM(MAC)
+#elif PLATFORM(COCOA)
     static void performWork(void*);
     RetainPtr<CFRunLoopRef> m_runLoop;
     RetainPtr<CFRunLoopSourceRef> m_runLoopSource;

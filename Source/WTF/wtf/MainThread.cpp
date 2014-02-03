@@ -65,7 +65,7 @@ public:
 typedef Deque<FunctionWithContext> FunctionQueue;
 
 static bool callbacksPaused; // This global variable is only accessed from main thread.
-#if !PLATFORM(MAC)
+#if !OS(DARWIN) || PLATFORM(EFL) || PLATFORM(GTK)
 static ThreadIdentifier mainThreadIdentifier;
 #endif
 
@@ -83,7 +83,7 @@ static FunctionQueue& functionQueue()
 }
 
 
-#if !PLATFORM(MAC)
+#if !OS(DARWIN) || PLATFORM(EFL) || PLATFORM(GTK)
 
 void initializeMainThread()
 {
@@ -230,7 +230,7 @@ void setMainThreadCallbacksPaused(bool paused)
         scheduleDispatchFunctionsOnMainThread();
 }
 
-#if !PLATFORM(MAC)
+#if !OS(DARWIN) || PLATFORM(EFL) || PLATFORM(GTK)
 bool isMainThread()
 {
     return currentThread() == mainThreadIdentifier;
@@ -274,7 +274,7 @@ bool isMainThreadOrGCThread()
 
     return isMainThread();
 }
-#elif PLATFORM(MAC)
+#elif OS(DARWIN) && !PLATFORM(EFL) && !PLATFORM(GTK)
 // This is necessary because JavaScriptCore.exp doesn't support preprocessor macros.
 bool isMainThreadOrGCThread()
 {

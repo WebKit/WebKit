@@ -31,7 +31,7 @@
 
 #include <wtf/Noncopyable.h>
 
-#if PLATFORM(MAC) && !defined(__OBJC__)
+#if USE(FOUNDATION) && !defined(__OBJC__)
 typedef struct objc_object *id;
 #endif
 
@@ -40,7 +40,7 @@ namespace WTF {
 class AutodrainedPool {
     WTF_MAKE_NONCOPYABLE(AutodrainedPool);
 public:
-#if PLATFORM(MAC)
+#if USE(FOUNDATION)
     WTF_EXPORT_PRIVATE AutodrainedPool();
     WTF_EXPORT_PRIVATE ~AutodrainedPool();
 #else
@@ -49,7 +49,7 @@ public:
 #endif
     
 private:
-#if PLATFORM(MAC)
+#if USE(FOUNDATION)
     id m_pool;
 #endif
 };

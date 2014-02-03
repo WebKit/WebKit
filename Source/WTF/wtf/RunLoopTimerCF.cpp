@@ -28,7 +28,7 @@
 
 #include "config.h"
 
-#if PLATFORM(MAC) && HAVE(RUNLOOP_TIMER)
+#if PLATFORM(COCOA) && HAVE(RUNLOOP_TIMER)
 
 #include "RunLoopTimer.h"
 
@@ -89,4 +89,4 @@ bool RunLoopTimerBase::isActive() const
 
 } // namespace WTF
 
-#endif // PLATFORM(MAC) && HAVE(RUNLOOP_TIMER)
+#endif // PLATFORM(COCOA) && HAVE(RUNLOOP_TIMER)

@@ -249,7 +249,21 @@ double currentTime()
 
 #endif
 
-#if PLATFORM(MAC)
+#if PLATFORM(EFL)
+
+double monotonicallyIncreasingTime()
+{
+    return ecore_time_get();
+}
+
+#elif USE(GLIB)
+
+double monotonicallyIncreasingTime()
+{
+    return static_cast<double>(g_get_monotonic_time() / 1000000.0);
+}
+
+#elif OS(DARWIN)
 
 double monotonicallyIncreasingTime()
 {
@@ -260,20 +274,6 @@ double monotonicallyIncreasingTime()
         ASSERT_UNUSED(kr, kr == KERN_SUCCESS);
     }
     return (mach_absolute_time() * timebaseInfo.numer) / (1.0e9 * timebaseInfo.denom);
-}
-
-#elif PLATFORM(EFL)
-
-double monotonicallyIncreasingTime()
-{
-    return ecore_time_get();
-}
-
-#elif USE(GLIB) && !PLATFORM(EFL)
-
-double monotonicallyIncreasingTime()
-{
-    return static_cast<double>(g_get_monotonic_time() / 1000000.0);
 }
 
 #else
