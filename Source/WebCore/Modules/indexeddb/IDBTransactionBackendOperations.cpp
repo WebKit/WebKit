@@ -243,7 +243,7 @@ void IDBDatabaseBackend::VersionChangeOperation::perform(std::function<void()> c
 
     uint64_t oldVersion = m_transaction->database().metadata().version;
     RefPtr<IDBDatabaseBackend::VersionChangeOperation> operation(this);
-    ASSERT(static_cast<uint64_t>(m_version) > oldVersion);
+    ASSERT(static_cast<uint64_t>(m_version) > oldVersion || oldVersion == IDBDatabaseMetadata::NoIntVersion);
 
     std::function<void(PassRefPtr<IDBDatabaseError>)> operationCallback = [oldVersion, operation, this, completionCallback](PassRefPtr<IDBDatabaseError> prpError) {
         RefPtr<IDBDatabaseError> error = prpError;

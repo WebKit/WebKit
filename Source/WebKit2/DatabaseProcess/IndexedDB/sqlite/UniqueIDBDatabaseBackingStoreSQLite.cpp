@@ -140,7 +140,7 @@ std::unique_ptr<IDBDatabaseMetadata> UniqueIDBDatabaseBackingStoreSQLite::create
         // Therefore we'll store the version as a String.
         SQLiteStatement sql(*m_sqliteDB, ASCIILiteral("INSERT INTO IDBDatabaseInfo VALUES ('DatabaseVersion', ?);"));
         if (sql.prepare() != SQLResultOk
-            || sql.bindText(1, String::number(0)) != SQLResultOk
+            || sql.bindText(1, String::number(IDBDatabaseMetadata::NoIntVersion)) != SQLResultOk
             || sql.step() != SQLResultDone) {
             LOG_ERROR("Could not insert default version into IDBDatabaseInfo table (%i) - %s", m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg());
             m_sqliteDB = nullptr;
@@ -157,7 +157,7 @@ std::unique_ptr<IDBDatabaseMetadata> UniqueIDBDatabaseBackingStoreSQLite::create
     // This initial metadata matches the default values we just put into the metadata database.
     auto metadata = std::make_unique<IDBDatabaseMetadata>();
     metadata->name = m_identifier.databaseName();
-    metadata->version = 0;
+    metadata->version = IDBDatabaseMetadata::NoIntVersion;
     metadata->maxObjectStoreId = 1;
 
     return metadata;

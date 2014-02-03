@@ -1,3 +1,14 @@
+2014-02-02  Brady Eidson  <beidson@apple.com>
+
+        IDB: Cannot open new databases with the default version
+        https://bugs.webkit.org/show_bug.cgi?id=128096
+
+        Reviewed by Tim Horton.
+
+        * DatabaseProcess/IndexedDB/sqlite/UniqueIDBDatabaseBackingStoreSQLite.cpp:
+        (WebKit::UniqueIDBDatabaseBackingStoreSQLite::createAndPopulateInitialMetadata): New databases should
+          have the magic "no version set" version.
+
 2014-02-02  Sanghyup Lee  <sh53.lee@samsung.com>
 
         [EFL][WK2] Add a logic for checking multi touch in GestureRecognizer::noGesture

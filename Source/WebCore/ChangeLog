@@ -1,3 +1,17 @@
+2014-02-02  Brady Eidson  <beidson@apple.com>
+
+        IDB: Cannot open new databases with the default version
+        https://bugs.webkit.org/show_bug.cgi?id=128096
+
+        Reviewed by Tim Horton.
+
+        * Modules/indexeddb/IDBDatabaseBackend.cpp:
+        (WebCore::IDBDatabaseBackend::openConnectionInternal): Update logic to handle the
+          current version being NoIntVersion.
+
+        * Modules/indexeddb/IDBTransactionBackendOperations.cpp:
+        (WebCore::IDBDatabaseBackend::VersionChangeOperation::perform): Update ASSERT.
+
 2014-02-02  Darin Adler  <darin@apple.com>
 
         Fix context save/restore mistake spotted in SVGInlineTextBox::paintTextWithShadows
