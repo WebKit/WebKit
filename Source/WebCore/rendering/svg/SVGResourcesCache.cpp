@@ -58,8 +58,8 @@ void SVGResourcesCache::addResourcesFromRenderer(RenderElement& renderer, const 
     HashSet<RenderSVGResourceContainer*> resourceSet;
     resources.buildSetOfResources(resourceSet);
 
-    for (auto it = resourceSet.begin(), end = resourceSet.end(); it != end; ++it)
-        (*it)->addClient(&renderer);
+    for (auto* resourceContainer : resourceSet)
+        resourceContainer->addClient(renderer);
 }
 
 void SVGResourcesCache::removeResourcesFromRenderer(RenderElement& renderer)
@@ -72,8 +72,8 @@ void SVGResourcesCache::removeResourcesFromRenderer(RenderElement& renderer)
     HashSet<RenderSVGResourceContainer*> resourceSet;
     resources->buildSetOfResources(resourceSet);
 
-    for (auto it = resourceSet.begin(), end = resourceSet.end(); it != end; ++it)
-        (*it)->removeClient(&renderer);
+    for (auto* resourceContainer : resourceSet)
+        resourceContainer->removeClient(renderer);
 }
 
 static inline SVGResourcesCache& resourcesCacheFromRenderer(const RenderObject& renderer)

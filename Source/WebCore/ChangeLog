@@ -1,3 +1,23 @@
+2014-02-02  Andreas Kling  <akling@apple.com>
+
+        RenderSVGResourceContainer clients are always RenderElement.
+        <https://webkit.org/b/128088>
+
+        All clients of RenderSVGResourceContainer are going to be RenderElement,
+        so make the interface take RenderElement& instead of RenderObject*.
+
+        Also modernized the code a bit with C++11 range for loops.
+
+        Reviewed by Sam Weinig.
+
+        * rendering/svg/RenderSVGResourceContainer.cpp:
+        (WebCore::RenderSVGResourceContainer::addClient):
+        (WebCore::RenderSVGResourceContainer::removeClient):
+        * rendering/svg/RenderSVGResourceContainer.h:
+        * rendering/svg/SVGResourcesCache.cpp:
+        (WebCore::SVGResourcesCache::addResourcesFromRenderer):
+        (WebCore::SVGResourcesCache::removeResourcesFromRenderer):
+
 2014-02-02  Zalan Bujtas  <zalan@apple.com>
 
         Subpixel rendering: Use floorf/roundf/fabs in device snapping helpers.

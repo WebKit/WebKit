@@ -141,17 +141,15 @@ void RenderSVGResourceContainer::markClientForInvalidation(RenderObject& client,
     }
 }
 
-void RenderSVGResourceContainer::addClient(RenderObject* client)
+void RenderSVGResourceContainer::addClient(RenderElement& client)
 {
-    ASSERT(client);
-    m_clients.add(client);
+    m_clients.add(&client);
 }
 
-void RenderSVGResourceContainer::removeClient(RenderObject* client)
+void RenderSVGResourceContainer::removeClient(RenderElement& client)
 {
-    ASSERT(client);
-    removeClientFromCache(*client, false);
-    m_clients.remove(client);
+    removeClientFromCache(client, false);
+    m_clients.remove(&client);
 }
 
 void RenderSVGResourceContainer::addClientRenderLayer(RenderLayer* client)

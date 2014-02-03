@@ -63,8 +63,8 @@ protected:
 
 private:
     friend class SVGResourcesCache;
-    void addClient(RenderObject*);
-    void removeClient(RenderObject*);
+    void addClient(RenderElement&);
+    void removeClient(RenderElement&);
 
 private:
     virtual void willBeDestroyed() override final;
@@ -73,7 +73,7 @@ private:
     AtomicString m_id;
     bool m_registered : 1;
     bool m_isInvalidating : 1;
-    HashSet<RenderObject*> m_clients;
+    HashSet<RenderElement*> m_clients;
     HashSet<RenderLayer*> m_clientLayers;
 };
 
