@@ -210,7 +210,7 @@ static inline bool isCSSTokenAString(int yytype)
 %type <mediaQueryExp> media_query_exp
 %destructor { delete $$; } media_query_exp
 
-%union { Vector<OwnPtr<MediaQueryExp>>* mediaQueryExpList; }
+%union { Vector<std::unique_ptr<MediaQueryExp>>* mediaQueryExpList; }
 %type <mediaQueryExpList> media_query_exp_list maybe_and_media_query_exp_list
 %destructor { delete $$; } media_query_exp_list maybe_and_media_query_exp_list
 
@@ -326,7 +326,7 @@ webkit_value:
     }
 ;
 
-webkit_mediaquery: WEBKIT_MEDIAQUERY_SYM WHITESPACE maybe_space media_query '}' { parser->m_mediaQuery = adoptPtr($4); } ;
+webkit_mediaquery: WEBKIT_MEDIAQUERY_SYM WHITESPACE maybe_space media_query '}' { parser->m_mediaQuery = std::move(std::unique_ptr<MediaQuery>($4)); } ;
 
 webkit_selector:
     WEBKIT_SELECTOR_SYM '{' maybe_space selector_list '}' {
@@ -503,28 +503,28 @@ media_query_exp:
         // Create empty media query expression and continue parsing media query.
         OwnPtr<CSSParserValueList> mediaValue = adoptPtr($7);
         if ($1 != MediaQuery::None)
-            $$ = MediaQueryExp::create(emptyString(), nullptr).leakPtr();
+            $$ = new MediaQueryExp(emptyString(), nullptr);
         else {
             $5.lower();
-            $$ = MediaQueryExp::create($5, mediaValue.get()).leakPtr();
+            $$ = new MediaQueryExp($5, mediaValue.get());
         }
     }
     ;
 
 media_query_exp_list:
     media_query_exp {
-        $$ = new Vector<OwnPtr<MediaQueryExp>>;
-        $$->append(adoptPtr($1));
+        $$ = new Vector<std::unique_ptr<MediaQueryExp>>;
+        $$->append(std::unique_ptr<MediaQueryExp>($1));
     }
     | media_query_exp_list maybe_space MEDIA_AND maybe_space media_query_exp {
         $$ = $1;
-        $$->append(adoptPtr($5));
+        $$->append(std::unique_ptr<MediaQueryExp>($5));
     }
     ;
 
 maybe_and_media_query_exp_list:
     /*empty*/ {
-        $$ = new Vector<OwnPtr<MediaQueryExp>>;
+        $$ = new Vector<std::unique_ptr<MediaQueryExp>>;
     }
     | MEDIA_AND maybe_space media_query_exp_list {
         $$ = $3;
@@ -545,12 +545,12 @@ maybe_media_restrictor:
 
 media_query:
     media_query_exp_list {
-        $$ = new MediaQuery(MediaQuery::None, "all", adoptPtr($1));
+        $$ = new MediaQuery(MediaQuery::None, "all", std::unique_ptr<Vector<std::unique_ptr<MediaQueryExp>>>($1));
     }
     |
     maybe_media_restrictor maybe_space IDENT maybe_space maybe_and_media_query_exp_list {
         $3.lower();
-        $$ = new MediaQuery($1, $3, adoptPtr($5));
+        $$ = new MediaQuery($1, $3, std::unique_ptr<Vector<std::unique_ptr<MediaQueryExp>>>($5));
     }
     ;
 
@@ -559,14 +559,14 @@ maybe_media_list: /* empty */ { $$ = MediaQuerySet::create().leakRef(); } | medi
 media_list:
     media_query {
         $$ = MediaQuerySet::create().leakRef();
-        $$->addMediaQuery(adoptPtr($1));
+        $$->addMediaQuery(std::unique_ptr<MediaQuery>($1));
         parser->updateLastMediaLine($$);
     }
     | media_list ',' maybe_space media_query {
         $$ = $1;
-        OwnPtr<MediaQuery> mediaQuery = adoptPtr($4);
+        std::unique_ptr<MediaQuery> mediaQuery($4);
         if ($$) {
-            $$->addMediaQuery(mediaQuery.release());
+            $$->addMediaQuery(std::move(mediaQuery));
             parser->updateLastMediaLine($$);
         }
     }

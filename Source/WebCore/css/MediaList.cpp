@@ -125,7 +125,7 @@ bool MediaQuerySet::parse(const String& mediaString)
 {
     CSSParser parser(CSSStrictMode);
     
-    Vector<OwnPtr<MediaQuery>> result;
+    Vector<std::unique_ptr<MediaQuery>> result;
     Vector<String> list;
     mediaString.split(',', list);
     for (unsigned i = 0; i < list.size(); ++i) {
@@ -135,16 +135,16 @@ bool MediaQuerySet::parse(const String& mediaString)
                 return false;
             continue;
         }
-        OwnPtr<MediaQuery> mediaQuery = parser.parseMediaQuery(medium);
+        std::unique_ptr<MediaQuery> mediaQuery = parser.parseMediaQuery(medium);
         if (!mediaQuery) {
             if (!m_fallbackToDescriptor)
                 return false;
             String mediaDescriptor = parseMediaDescriptor(medium);
             if (mediaDescriptor.isNull())
                 continue;
-            mediaQuery = adoptPtr(new MediaQuery(MediaQuery::None, mediaDescriptor, nullptr));
+            mediaQuery = std::make_unique<MediaQuery>(MediaQuery::None, mediaDescriptor, nullptr);
         }
-        result.append(mediaQuery.release());
+        result.append(std::move(mediaQuery));
     }
     // ",,,," falls straight through, but is not valid unless fallback
     if (!m_fallbackToDescriptor && list.isEmpty()) {
@@ -152,7 +152,7 @@ bool MediaQuerySet::parse(const String& mediaString)
         if (!strippedMediaString.isEmpty())
             return false;
     }
-    m_queries.swap(result);
+    m_queries = std::move(result);
     return true;
 }
 
@@ -160,16 +160,16 @@ bool MediaQuerySet::add(const String& queryString)
 {
     CSSParser parser(CSSStrictMode);
 
-    OwnPtr<MediaQuery> parsedQuery = parser.parseMediaQuery(queryString);
+    std::unique_ptr<MediaQuery> parsedQuery = parser.parseMediaQuery(queryString);
     if (!parsedQuery && m_fallbackToDescriptor) {
         String medium = parseMediaDescriptor(queryString);
         if (!medium.isNull())
-            parsedQuery = adoptPtr(new MediaQuery(MediaQuery::None, medium, nullptr));
+            parsedQuery = std::make_unique<MediaQuery>(MediaQuery::None, medium, nullptr);
     }
     if (!parsedQuery)
         return false;
 
-    m_queries.append(parsedQuery.release());
+    m_queries.append(std::move(parsedQuery));
     return true;
 }
 
@@ -177,11 +177,11 @@ bool MediaQuerySet::remove(const String& queryStringToRemove)
 {
     CSSParser parser(CSSStrictMode);
 
-    OwnPtr<MediaQuery> parsedQuery = parser.parseMediaQuery(queryStringToRemove);
+    std::unique_ptr<MediaQuery> parsedQuery = parser.parseMediaQuery(queryStringToRemove);
     if (!parsedQuery && m_fallbackToDescriptor) {
         String medium = parseMediaDescriptor(queryStringToRemove);
         if (!medium.isNull())
-            parsedQuery = adoptPtr(new MediaQuery(MediaQuery::None, medium, nullptr));
+            parsedQuery = std::make_unique<MediaQuery>(MediaQuery::None, medium, nullptr);
     }
     if (!parsedQuery)
         return false;
@@ -196,9 +196,9 @@ bool MediaQuerySet::remove(const String& queryStringToRemove)
     return false;
 }
 
-void MediaQuerySet::addMediaQuery(PassOwnPtr<MediaQuery> mediaQuery)
+void MediaQuerySet::addMediaQuery(std::unique_ptr<MediaQuery> mediaQuery)
 {
-    m_queries.append(mediaQuery);
+    m_queries.append(std::move(mediaQuery));
 }
 
 String MediaQuerySet::mediaText() const
@@ -249,7 +249,7 @@ void MediaList::setMediaText(const String& value, ExceptionCode& ec)
 
 String MediaList::item(unsigned index) const
 {
-    const Vector<OwnPtr<MediaQuery>>& queries = m_mediaQueries->queryVector();
+    auto& queries = m_mediaQueries->queryVector();
     if (index < queries.size())
         return queries[index]->cssText();
     return String();
@@ -318,7 +318,7 @@ void reportMediaQueryWarningIfNeeded(Document* document, const MediaQuerySet* me
     if (!mediaQuerySet || !document)
         return;
 
-    const Vector<OwnPtr<MediaQuery>>& mediaQueries = mediaQuerySet->queryVector();
+    auto& mediaQueries = mediaQuerySet->queryVector();
     const size_t queryCount = mediaQueries.size();
 
     if (!queryCount)
@@ -328,7 +328,7 @@ void reportMediaQueryWarningIfNeeded(Document* document, const MediaQuerySet* me
         const MediaQuery* query = mediaQueries[i].get();
         String mediaType = query->mediaType();
         if (!query->ignored() && !equalIgnoringCase(mediaType, "print")) {
-            const Vector<OwnPtr<MediaQueryExp>>& expressions = query->expressions();
+            auto& expressions = query->expressions();
             for (size_t j = 0; j < expressions.size(); ++j) {
                 const MediaQueryExp* exp = expressions.at(j).get();
                 if (exp->mediaFeature() == MediaFeatureNames::resolutionMediaFeature || exp->mediaFeature() == MediaFeatureNames::max_resolutionMediaFeature || exp->mediaFeature() == MediaFeatureNames::min_resolutionMediaFeature) {

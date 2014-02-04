@@ -22,6 +22,7 @@
 #define MediaList_h
 
 #include "ExceptionCode.h"
+#include <memory>
 #include <wtf/Forward.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
@@ -56,9 +57,9 @@ public:
     bool add(const String&);
     bool remove(const String&);
 
-    void addMediaQuery(PassOwnPtr<MediaQuery>);
+    void addMediaQuery(std::unique_ptr<MediaQuery>);
 
-    const Vector<OwnPtr<MediaQuery>>& queryVector() const { return m_queries; }
+    const Vector<std::unique_ptr<MediaQuery>>& queryVector() const { return m_queries; }
     
     int lastLine() const { return m_lastLine; }
     void setLastLine(int lastLine) { m_lastLine = lastLine; }
@@ -74,7 +75,7 @@ private:
     
     unsigned m_fallbackToDescriptor : 1; // true if failed media query parsing should fallback to media description parsing.
     signed m_lastLine : 31;
-    Vector<OwnPtr<MediaQuery>> m_queries;
+    Vector<std::unique_ptr<MediaQuery>> m_queries;
 };
 
 class MediaList : public RefCounted<MediaList> {

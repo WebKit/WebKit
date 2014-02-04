@@ -29,7 +29,7 @@
 #ifndef MediaQuery_h
 #define MediaQuery_h
 
-#include <wtf/PassOwnPtr.h>
+#include <memory>
 #include <wtf/Vector.h>
 #include <wtf/text/StringHash.h>
 #include <wtf/text/WTFString.h>
@@ -44,26 +44,25 @@ public:
         Only, Not, None
     };
 
-    typedef Vector<OwnPtr<MediaQueryExp>> ExpressionVector;
+    typedef Vector<std::unique_ptr<MediaQueryExp>> ExpressionVector;
 
-    MediaQuery(Restrictor, const String& mediaType, PassOwnPtr<Vector<OwnPtr<MediaQueryExp>>> exprs);
+    MediaQuery(Restrictor, const String& mediaType, std::unique_ptr<Vector<std::unique_ptr<MediaQueryExp>>> exprs);
+    MediaQuery(const MediaQuery&);
     ~MediaQuery();
 
     Restrictor restrictor() const { return m_restrictor; }
-    const Vector<OwnPtr<MediaQueryExp>>& expressions() const { return *m_expressions; }
+    const Vector<std::unique_ptr<MediaQueryExp>>& expressions() const { return *m_expressions; }
     String mediaType() const { return m_mediaType; }
     bool operator==(const MediaQuery& other) const;
     String cssText() const;
     bool ignored() const { return m_ignored; }
 
-    PassOwnPtr<MediaQuery> copy() const { return adoptPtr(new MediaQuery(*this)); }
+    std::unique_ptr<MediaQuery> copy() const { return std::make_unique<MediaQuery>(*this); }
 
  private:
-    MediaQuery(const MediaQuery&);
-
     Restrictor m_restrictor;
     String m_mediaType;
-    OwnPtr<ExpressionVector> m_expressions;
+    std::unique_ptr<ExpressionVector> m_expressions;
     bool m_ignored;
     String m_serializationCache;
 

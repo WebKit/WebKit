@@ -1,3 +1,37 @@
+2014-02-03  Zan Dobersek  <zdobersek@igalia.com>
+
+        Manage MediaQuery and MediaQueryExp classes through std::unique_ptr instead of OwnPtr
+        https://bugs.webkit.org/show_bug.cgi?id=128117
+
+        Reviewed by Darin Adler.
+
+        Replace uses of OwnPtr for the MediaQuery and MediaQueryExp classes with std::unique_ptr.
+
+        * css/CSSGrammar.y.in:
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseMediaQuery):
+        * css/CSSParser.h:
+        * css/MediaList.cpp:
+        (WebCore::MediaQuerySet::parse):
+        (WebCore::MediaQuerySet::add):
+        (WebCore::MediaQuerySet::remove):
+        (WebCore::MediaQuerySet::addMediaQuery):
+        (WebCore::MediaList::item):
+        (WebCore::reportMediaQueryWarningIfNeeded):
+        * css/MediaList.h:
+        (WebCore::MediaQuerySet::queryVector):
+        * css/MediaQuery.cpp:
+        (WebCore::MediaQuery::MediaQuery):
+        * css/MediaQuery.h:
+        (WebCore::MediaQuery::expressions):
+        (WebCore::MediaQuery::copy):
+        * css/MediaQueryEvaluator.cpp:
+        (WebCore::MediaQueryEvaluator::eval):
+        * css/MediaQueryExp.cpp:
+        (WebCore::MediaQueryExp::MediaQueryExp):
+        * css/MediaQueryExp.h:
+        (WebCore::MediaQueryExp::copy):
+
 2014-02-04  Tamas Gergely  <tgergely.u-szeged@partner.samsung.com>
 
         Remove SVG_DOM_OBJC_BINDINGS after r161638.

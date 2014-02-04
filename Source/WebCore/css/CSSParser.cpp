@@ -1455,7 +1455,7 @@ bool CSSParser::parseDeclaration(MutableStyleProperties* declaration, const Stri
     return ok;
 }
 
-PassOwnPtr<MediaQuery> CSSParser::parseMediaQuery(const String& string)
+std::unique_ptr<MediaQuery> CSSParser::parseMediaQuery(const String& string)
 {
     if (string.isEmpty())
         return nullptr;
@@ -1467,7 +1467,7 @@ PassOwnPtr<MediaQuery> CSSParser::parseMediaQuery(const String& string)
     setupParser("@-webkit-mediaquery ", string, "} ");
     cssyyparse(this);
 
-    return m_mediaQuery.release();
+    return std::move(m_mediaQuery);
 }
 
 static inline void filterProperties(bool important, const CSSParser::ParsedPropertyVector& input, Vector<CSSProperty, 256>& output, size_t& unusedEntries, std::bitset<numCSSProperties>& seenProperties)

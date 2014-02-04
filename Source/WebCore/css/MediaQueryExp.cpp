@@ -154,7 +154,7 @@ static inline bool featureWithoutValue(const AtomicString& mediaFeature)
         || mediaFeature == MediaFeatureNames::resolutionMediaFeature;
 }
 
-inline MediaQueryExp::MediaQueryExp(const AtomicString& mediaFeature, CSSParserValueList* valueList)
+MediaQueryExp::MediaQueryExp(const AtomicString& mediaFeature, CSSParserValueList* valueList)
     : m_mediaFeature(mediaFeature)
     , m_value(0)
     , m_isValid(false)
@@ -220,11 +220,6 @@ inline MediaQueryExp::MediaQueryExp(const AtomicString& mediaFeature, CSSParserV
         }
     } else if (featureWithoutValue(mediaFeature))
         m_isValid = true;
-}
-
-PassOwnPtr<MediaQueryExp> MediaQueryExp::create(const AtomicString& mediaFeature, CSSParserValueList* values)
-{
-    return adoptPtr(new MediaQueryExp(mediaFeature, values));
 }
 
 MediaQueryExp::~MediaQueryExp()
