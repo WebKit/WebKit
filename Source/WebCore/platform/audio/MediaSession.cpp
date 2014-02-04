@@ -32,6 +32,7 @@
 
 namespace WebCore {
 
+#if !LOG_DISABLED
 static const char* stateName(MediaSession::State state)
 {
 #define CASE(_state) case MediaSession::_state: return #_state; break;
@@ -45,7 +46,8 @@ static const char* stateName(MediaSession::State state)
     ASSERT_NOT_REACHED();
     return "";
 }
-    
+#endif
+
 std::unique_ptr<MediaSession> MediaSession::create(MediaSessionClient& client)
 {
     return std::make_unique<MediaSession>(client);
