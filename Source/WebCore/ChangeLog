@@ -1,3 +1,16 @@
+2014-02-03  Hunseop Jeong  <hs85.jeong@samsung.com>
+
+        [Cairo] GraphicsContext::m_pixelSnappingFactor is uninitialized
+        https://bugs.webkit.org/show_bug.cgi?id=128102
+
+        Reviewed by Csaba Osztrogonác.
+
+        Initalize m_pixelSnappingFactor to 1
+
+        * platform/graphics/cairo/GraphicsContextCairo.cpp:
+        (WebCore::GraphicsContext::GraphicsContext): Initialized pixelSnappingFactor to 1 and 
+        fixed the coding style violation.
+
 2014-02-03  Brian Burg  <bburg@apple.com>
 
         Web Replay: upstream base input classes and the input cursor interface
