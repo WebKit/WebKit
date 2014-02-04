@@ -51,9 +51,7 @@
     [Replaceable] readonly attribute Navigator navigator;
     [Replaceable] readonly attribute Navigator clientInformation;
     readonly attribute Crypto crypto;
-#if !defined(LANGUAGE_CPP) || !LANGUAGE_CPP
     [DoNotCheckSecurity, CustomSetter] attribute Location location;
-#endif
     [Replaceable, CustomGetter] readonly attribute Event event;
 
     DOMSelection getSelection();

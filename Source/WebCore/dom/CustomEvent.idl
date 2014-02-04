@@ -23,7 +23,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#if !defined(LANGUAGE_CPP) || !LANGUAGE_CPP
 // Introduced in DOM Level 3:
 [
     ConstructorTemplate=Event,
@@ -35,5 +34,4 @@
                          [Default=Undefined] optional boolean cancelableArg, 
                          [Default=Undefined] optional any detailArg);
 };
-#endif
 

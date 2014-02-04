@@ -1,3 +1,89 @@
+2014-02-04  Andreas Kling  <akling@apple.com>
+
+        Remove CPP bindings generator.
+        <https://webkit.org/b/128189>
+
+        Scrub out some leftover Blackberry gunk.
+
+        Reviewed by Anders Carlsson.
+
+        * Modules/webdatabase/SQLResultSet.idl:
+        * bindings/cpp/WebDOMCString.cpp: Removed.
+        * bindings/cpp/WebDOMCString.h: Removed.
+        * bindings/cpp/WebDOMDOMWindowCustom.cpp: Removed.
+        * bindings/cpp/WebDOMEventListenerCustom.cpp: Removed.
+        * bindings/cpp/WebDOMEventTarget.cpp: Removed.
+        * bindings/cpp/WebDOMEventTarget.h: Removed.
+        * bindings/cpp/WebDOMHTMLCollectionCustom.cpp: Removed.
+        * bindings/cpp/WebDOMHTMLDocumentCustom.cpp: Removed.
+        * bindings/cpp/WebDOMHTMLOptionsCollectionCustom.cpp: Removed.
+        * bindings/cpp/WebDOMNodeCustom.cpp: Removed.
+        * bindings/cpp/WebDOMNodeFilterCustom.cpp: Removed.
+        * bindings/cpp/WebDOMObject.h: Removed.
+        * bindings/cpp/WebDOMString.cpp: Removed.
+        * bindings/cpp/WebDOMString.h: Removed.
+        * bindings/cpp/WebExceptionHandler.cpp: Removed.
+        * bindings/cpp/WebExceptionHandler.h: Removed.
+        * bindings/cpp/WebNativeEventListener.cpp: Removed.
+        * bindings/cpp/WebNativeEventListener.h: Removed.
+        * bindings/cpp/WebNativeNodeFilterCondition.cpp: Removed.
+        * bindings/cpp/WebNativeNodeFilterCondition.h: Removed.
+        * bindings/scripts/CodeGeneratorCPP.pm: Removed.
+        * bindings/scripts/test/CPP/CPPTestSupplemental.cpp: Removed.
+        * bindings/scripts/test/CPP/CPPTestSupplemental.h: Removed.
+        * bindings/scripts/test/CPP/WebDOMFloat64Array.cpp: Removed.
+        * bindings/scripts/test/CPP/WebDOMFloat64Array.h: Removed.
+        * bindings/scripts/test/CPP/WebDOMTestActiveDOMObject.cpp: Removed.
+        * bindings/scripts/test/CPP/WebDOMTestActiveDOMObject.h: Removed.
+        * bindings/scripts/test/CPP/WebDOMTestCallback.cpp: Removed.
+        * bindings/scripts/test/CPP/WebDOMTestCallback.h: Removed.
+        * bindings/scripts/test/CPP/WebDOMTestCustomNamedGetter.cpp: Removed.
+        * bindings/scripts/test/CPP/WebDOMTestCustomNamedGetter.h: Removed.
+        * bindings/scripts/test/CPP/WebDOMTestEventConstructor.cpp: Removed.
+        * bindings/scripts/test/CPP/WebDOMTestEventConstructor.h: Removed.
+        * bindings/scripts/test/CPP/WebDOMTestEventTarget.cpp: Removed.
+        * bindings/scripts/test/CPP/WebDOMTestEventTarget.h: Removed.
+        * bindings/scripts/test/CPP/WebDOMTestException.cpp: Removed.
+        * bindings/scripts/test/CPP/WebDOMTestException.h: Removed.
+        * bindings/scripts/test/CPP/WebDOMTestGenerateIsReachable.cpp: Removed.
+        * bindings/scripts/test/CPP/WebDOMTestGenerateIsReachable.h: Removed.
+        * bindings/scripts/test/CPP/WebDOMTestImplements.cpp: Removed.
+        * bindings/scripts/test/CPP/WebDOMTestImplements.h: Removed.
+        * bindings/scripts/test/CPP/WebDOMTestInterface.cpp: Removed.
+        * bindings/scripts/test/CPP/WebDOMTestInterface.h: Removed.
+        * bindings/scripts/test/CPP/WebDOMTestMediaQueryListListener.cpp: Removed.
+        * bindings/scripts/test/CPP/WebDOMTestMediaQueryListListener.h: Removed.
+        * bindings/scripts/test/CPP/WebDOMTestNamedConstructor.cpp: Removed.
+        * bindings/scripts/test/CPP/WebDOMTestNamedConstructor.h: Removed.
+        * bindings/scripts/test/CPP/WebDOMTestNode.cpp: Removed.
+        * bindings/scripts/test/CPP/WebDOMTestNode.h: Removed.
+        * bindings/scripts/test/CPP/WebDOMTestObj.cpp: Removed.
+        * bindings/scripts/test/CPP/WebDOMTestObj.h: Removed.
+        * bindings/scripts/test/CPP/WebDOMTestOverloadedConstructors.cpp: Removed.
+        * bindings/scripts/test/CPP/WebDOMTestOverloadedConstructors.h: Removed.
+        * bindings/scripts/test/CPP/WebDOMTestSerializedScriptValueInterface.cpp: Removed.
+        * bindings/scripts/test/CPP/WebDOMTestSerializedScriptValueInterface.h: Removed.
+        * bindings/scripts/test/CPP/WebDOMTestSupplemental.cpp: Removed.
+        * bindings/scripts/test/CPP/WebDOMTestSupplemental.h: Removed.
+        * bindings/scripts/test/CPP/WebDOMTestTypedefs.cpp: Removed.
+        * bindings/scripts/test/CPP/WebDOMTestTypedefs.h: Removed.
+        * bindings/scripts/test/CPP/WebDOMattribute.cpp: Removed.
+        * bindings/scripts/test/CPP/WebDOMattribute.h: Removed.
+        * bindings/scripts/test/CPP/WebDOMreadonly.cpp: Removed.
+        * bindings/scripts/test/CPP/WebDOMreadonly.h: Removed.
+        * css/StyleSheet.idl:
+        * dom/CustomEvent.idl:
+        * dom/Document.idl:
+        * dom/Event.idl:
+        * dom/Node.idl:
+        * dom/PopStateEvent.idl:
+        * html/HTMLCanvasElement.idl:
+        * html/HTMLInputElement.idl:
+        * html/canvas/CanvasRenderingContext2D.idl:
+        * page/DOMWindow.idl:
+        * page/Location.idl:
+        * workers/DedicatedWorkerGlobalScope.idl:
+
 2014-02-04  Dan Bernstein  <mitz@apple.com>
 
         iOS build fix.

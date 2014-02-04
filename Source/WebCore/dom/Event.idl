@@ -79,11 +79,5 @@
     [Custom] readonly attribute Clipboard        clipboardData;
 #endif
 
-#if defined(LANGUAGE_CPP) && LANGUAGE_CPP
-    // Extra WebCore methods exposed to allow compile-time casting in C++
-    boolean isMouseEvent();
-    boolean isUIEvent();
-#endif
-
 };
 

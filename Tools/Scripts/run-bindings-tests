@@ -44,8 +44,7 @@ def main(argv):
     generators = [
         'JS',
         'ObjC',
-        'GObject',
-        'CPP'
+        'GObject'
     ]
 
     from webkitpy.bindings.main import BindingsTests

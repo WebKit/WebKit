@@ -24,11 +24,9 @@
  *
  */
 
-#if !defined(LANGUAGE_CPP) || !LANGUAGE_CPP
 [
     ConstructorTemplate=Event
 ] interface PopStateEvent : Event {
     [InitializedByEventConstructor, CachedAttribute, CustomGetter] readonly attribute any state;
 };
-#endif
 

@@ -37,26 +37,22 @@
     JSCustomDefineOwnPropertyOnPrototype,
     OperationsNotDeletable
 ] interface Location {
-#if !defined(LANGUAGE_CPP) || !LANGUAGE_CPP
-             [DoNotCheckSecurityOnSetter, CustomSetter] attribute DOMString href;
-#endif
+    [DoNotCheckSecurityOnSetter, CustomSetter] attribute DOMString href;
 
     [Custom] void assign([Default=Undefined] optional DOMString url);
     [Custom] void replace([Default=Undefined] optional DOMString url);
     [Custom] void reload();
 
     // URI decomposition attributes
-#if !defined(LANGUAGE_CPP) || !LANGUAGE_CPP
-             [CustomSetter] attribute DOMString protocol;
-             [CustomSetter] attribute DOMString host;
-             [CustomSetter] attribute DOMString hostname;
-             [CustomSetter] attribute DOMString port;
-             [CustomSetter] attribute DOMString pathname;
-             [CustomSetter] attribute DOMString search;
-             [CustomSetter] attribute DOMString hash;
+    [CustomSetter] attribute DOMString protocol;
+    [CustomSetter] attribute DOMString host;
+    [CustomSetter] attribute DOMString hostname;
+    [CustomSetter] attribute DOMString port;
+    [CustomSetter] attribute DOMString pathname;
+    [CustomSetter] attribute DOMString search;
+    [CustomSetter] attribute DOMString hash;
 
-             readonly attribute DOMString origin;
-#endif
+    readonly attribute DOMString origin;
 
     readonly attribute DOMStringList ancestorOrigins;
 
