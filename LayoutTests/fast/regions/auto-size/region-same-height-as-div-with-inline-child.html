@@ -1,0 +1,42 @@
+<!doctype html>
+<html>
+<head>
+    <title>Test - Bug 123329: [CSS Regions] Fix Assert SHOULD NEVER BE REACHED in RenderLayer::enclosingElement()</title>
+    <style>
+        img {
+            width: 100px;
+            height: 100px;
+        }
+        .content {
+            -webkit-flow-into: flow;
+        }
+        .region {
+            -webkit-flow-from: flow;
+        }
+    </style>
+</head>
+<body>
+    <img src="../resources/ipad.jpg" class="content"/>
+    <div class="region"></div>
+
+    <div class="nonRegion">
+        <img src="../resources/ipad.jpg"/>
+    </div>
+
+    <div>
+        The test passes if the height of the region/flowthread is the same as the height of the div containing the same inline content.
+    </div>
+
+    <div class="result"></div>
+
+    <script type="text/javascript">
+        if (window.testRunner)
+            window.testRunner.dumpAsText(false);
+
+        var expected = document.querySelector(".nonRegion").offsetHeight;
+        var actual = document.querySelector(".region").offsetHeight;
+        document.querySelector(".result").innerHTML = (actual == expected) ? "PASS" : "FAIL expected=" + expected + " actual=" + actual;
+    </script>
+
+</body>
+</html>

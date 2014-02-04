@@ -1,3 +1,20 @@
+2014-02-04  Mihai Maerean  <mmaerean@adobe.com>
+
+        [CSS Regions] Fix Assert SHOULD NEVER BE REACHED in RenderLayer::enclosingElement()
+        https://bugs.webkit.org/show_bug.cgi?id=123329
+
+        Reviewed by Mihnea Ovidenie.
+
+        The flowthread doesn't have an enclosing element, so when hitting the layer of the
+        flowthread (e.g. the descent area of the RootInlineBox for the image flowed alone
+        inside the flow thread) we're letting the hit testing continue so it will hit the region.
+
+        Tests: fast/regions/assert-hit-test-image.html
+               fast/regions/auto-size/region-same-height-as-div-with-inline-child.html
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::hitTestContents):
+
 2014-02-04  Mihnea Ovidenie  <mihnea@adobe.com>
 
         ASSERTION FAILED: !object || (object->isRenderBlock())

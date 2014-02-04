@@ -1,3 +1,15 @@
+2014-02-04  Mihai Maerean  <mmaerean@adobe.com>
+
+        [CSS Regions] Fix Assert SHOULD NEVER BE REACHED in RenderLayer::enclosingElement()
+        https://bugs.webkit.org/show_bug.cgi?id=123329
+
+        Reviewed by Mihnea Ovidenie.
+
+        * fast/regions/assert-hit-test-image.html: Added.
+        * fast/regions/assert-hit-test-image-expected.txt: Added.
+        * fast/regions/auto-size/region-same-height-as-div-with-inline-child.html: Added.
+        * fast/regions/auto-size/region-same-height-as-div-with-inline-child-expected.txt: Added.
+
 2014-02-04  Mihnea Ovidenie  <mihnea@adobe.com>
 
         ASSERTION FAILED: !object || (object->isRenderBlock())
