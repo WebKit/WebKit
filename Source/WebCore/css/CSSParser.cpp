@@ -2408,7 +2408,6 @@ bool CSSParser::parseValue(CSSPropertyID propId, bool important)
             RefPtr<CSSValue> currValue;
             if (!parseFilter(m_valueList.get(), currValue))
                 return false;
-            // m_valueList->next();
             addProperty(propId, currValue, important);
             return true;
         }
