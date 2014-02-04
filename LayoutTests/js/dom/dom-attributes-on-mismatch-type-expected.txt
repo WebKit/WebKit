@@ -6,7 +6,7 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 PASS objectWithDocumentAsPrototype.all threw exception TypeError: Type error.
 See what happens if we put the anchor prototype on a div
 PASS testDiv instanceof HTMLAnchorElement is true
-PASS testDiv.href threw exception TypeError: Type error.
+PASS testDiv.href is undefined.
 PASS testDiv instanceof HTMLAnchorElement is true
 PASS testDiv.href threw exception TypeError: Type error.
 PASS successfullyParsed is true

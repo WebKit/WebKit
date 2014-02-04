@@ -75,10 +75,10 @@ PASS URIError.prototype.hasOwnProperty('constructor') is true
 PASS canEnum(URIError.prototype, 'constructor') is false
 PASS x = URIError.prototype; x.constructor = 4; x.constructor is 4
 PASS x = URIError.prototype; delete x.constructor; x.hasOwnProperty('constructor') is false
-PASS document.createTextNode('').__proto__.hasOwnProperty('constructor') is true
-PASS canEnum(document.createTextNode('').__proto__, 'constructor') is false
-FAIL x = document.createTextNode('').__proto__; x.constructor = 4; x.constructor should be 4 (of type number). Was [object TextConstructor] (of type object).
-FAIL x = document.createTextNode('').__proto__; delete x.constructor; x.hasOwnProperty('constructor') should be false. Was true.
+PASS document.createTextNode('').hasOwnProperty('constructor') is true
+PASS canEnum(document.createTextNode(''), 'constructor') is false
+FAIL x = document.createTextNode(''); x.constructor = 4; x.constructor should be 4 (of type number). Was [object TextConstructor] (of type object).
+FAIL x = document.createTextNode(''); delete x.constructor; x.hasOwnProperty('constructor') should be false. Was true.
 PASS successfullyParsed is true
 
 TEST COMPLETE

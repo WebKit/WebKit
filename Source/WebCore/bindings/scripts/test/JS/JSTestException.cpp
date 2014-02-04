@@ -35,10 +35,11 @@ namespace WebCore {
 static const HashTableValue JSTestExceptionTableValues[] =
 {
     { "name", DontDelete | ReadOnly | CustomAccessor, NoIntrinsic, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestExceptionName), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) },
+    { "constructor", DontEnum | ReadOnly, NoIntrinsic, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestExceptionConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) },
     { 0, 0, NoIntrinsic, 0, 0 }
 };
 
-static const HashTable JSTestExceptionTable = { 2, 1, true, JSTestExceptionTableValues, 0 };
+static const HashTable JSTestExceptionTable = { 5, 3, true, JSTestExceptionTableValues, 0 };
 /* Hash table for constructor */
 
 static const HashTableValue JSTestExceptionConstructorTableValues[] =
@@ -71,22 +72,15 @@ bool JSTestExceptionConstructor::getOwnPropertySlot(JSObject* object, ExecState*
 
 static const HashTableValue JSTestExceptionPrototypeTableValues[] =
 {
-    { "constructor", DontEnum | ReadOnly, NoIntrinsic, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestExceptionConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) },
     { 0, 0, NoIntrinsic, 0, 0 }
 };
 
-static const HashTable JSTestExceptionPrototypeTable = { 2, 1, true, JSTestExceptionPrototypeTableValues, 0 };
+static const HashTable JSTestExceptionPrototypeTable = { 1, 0, false, JSTestExceptionPrototypeTableValues, 0 };
 const ClassInfo JSTestExceptionPrototype::s_info = { "TestExceptionPrototype", &Base::s_info, &JSTestExceptionPrototypeTable, 0, CREATE_METHOD_TABLE(JSTestExceptionPrototype) };
 
 JSObject* JSTestExceptionPrototype::self(VM& vm, JSGlobalObject* globalObject)
 {
     return getDOMPrototype<JSTestException>(vm, globalObject);
-}
-
-bool JSTestExceptionPrototype::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
-{
-    JSTestExceptionPrototype* thisObject = jsCast<JSTestExceptionPrototype*>(object);
-    return getStaticPropertySlot<JSTestExceptionPrototype, JSObject>(exec, JSTestExceptionPrototypeTable, thisObject, propertyName, slot);
 }
 
 const ClassInfo JSTestException::s_info = { "TestException", &Base::s_info, &JSTestExceptionTable, 0 , CREATE_METHOD_TABLE(JSTestException) };
@@ -139,11 +133,9 @@ EncodedJSValue jsTestExceptionName(ExecState* exec, EncodedJSValue slotBase, Enc
 }
 
 
-EncodedJSValue jsTestExceptionConstructor(ExecState* exec, EncodedJSValue baseValue, EncodedJSValue thisValue, PropertyName)
+EncodedJSValue jsTestExceptionConstructor(ExecState* exec, EncodedJSValue, EncodedJSValue thisValue, PropertyName)
 {
-    UNUSED_PARAM(baseValue);
-    UNUSED_PARAM(thisValue);
-    JSTestExceptionPrototype* domObject = jsDynamicCast<JSTestExceptionPrototype*>(JSValue::decode(baseValue));
+    JSTestException* domObject = jsDynamicCast<JSTestException*>(JSValue::decode(thisValue));
     if (!domObject)
         return throwVMTypeError(exec);
     return JSValue::encode(JSTestException::getConstructor(exec->vm(), domObject->globalObject()));

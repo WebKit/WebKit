@@ -33,6 +33,15 @@ namespace WebCore {
 
 /* Hash table for constructor */
 
+static const HashTableValue JSTestNamedConstructorTableValues[] =
+{
+    { "constructor", DontEnum | ReadOnly, NoIntrinsic, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestNamedConstructorConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) },
+    { 0, 0, NoIntrinsic, 0, 0 }
+};
+
+static const HashTable JSTestNamedConstructorTable = { 2, 1, true, JSTestNamedConstructorTableValues, 0 };
+/* Hash table for constructor */
+
 static const HashTableValue JSTestNamedConstructorConstructorTableValues[] =
 {
     { 0, 0, NoIntrinsic, 0, 0 }
@@ -107,11 +116,10 @@ ConstructType JSTestNamedConstructorNamedConstructor::getConstructData(JSCell*, 
 
 static const HashTableValue JSTestNamedConstructorPrototypeTableValues[] =
 {
-    { "constructor", DontEnum | ReadOnly, NoIntrinsic, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestNamedConstructorConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) },
     { 0, 0, NoIntrinsic, 0, 0 }
 };
 
-static const HashTable JSTestNamedConstructorPrototypeTable = { 2, 1, true, JSTestNamedConstructorPrototypeTableValues, 0 };
+static const HashTable JSTestNamedConstructorPrototypeTable = { 1, 0, false, JSTestNamedConstructorPrototypeTableValues, 0 };
 const ClassInfo JSTestNamedConstructorPrototype::s_info = { "TestNamedConstructorPrototype", &Base::s_info, &JSTestNamedConstructorPrototypeTable, 0, CREATE_METHOD_TABLE(JSTestNamedConstructorPrototype) };
 
 JSObject* JSTestNamedConstructorPrototype::self(VM& vm, JSGlobalObject* globalObject)
@@ -119,13 +127,7 @@ JSObject* JSTestNamedConstructorPrototype::self(VM& vm, JSGlobalObject* globalOb
     return getDOMPrototype<JSTestNamedConstructor>(vm, globalObject);
 }
 
-bool JSTestNamedConstructorPrototype::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
-{
-    JSTestNamedConstructorPrototype* thisObject = jsCast<JSTestNamedConstructorPrototype*>(object);
-    return getStaticPropertySlot<JSTestNamedConstructorPrototype, JSObject>(exec, JSTestNamedConstructorPrototypeTable, thisObject, propertyName, slot);
-}
-
-const ClassInfo JSTestNamedConstructor::s_info = { "TestNamedConstructor", &Base::s_info, 0, 0 , CREATE_METHOD_TABLE(JSTestNamedConstructor) };
+const ClassInfo JSTestNamedConstructor::s_info = { "TestNamedConstructor", &Base::s_info, &JSTestNamedConstructorTable, 0 , CREATE_METHOD_TABLE(JSTestNamedConstructor) };
 
 JSTestNamedConstructor::JSTestNamedConstructor(Structure* structure, JSDOMGlobalObject* globalObject, PassRefPtr<TestNamedConstructor> impl)
     : JSDOMWrapper(structure, globalObject)
@@ -159,14 +161,12 @@ bool JSTestNamedConstructor::getOwnPropertySlot(JSObject* object, ExecState* exe
 {
     JSTestNamedConstructor* thisObject = jsCast<JSTestNamedConstructor*>(object);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
-    return Base::getOwnPropertySlot(thisObject, exec, propertyName, slot);
+    return getStaticValueSlot<JSTestNamedConstructor, Base>(exec, JSTestNamedConstructorTable, thisObject, propertyName, slot);
 }
 
-EncodedJSValue jsTestNamedConstructorConstructor(ExecState* exec, EncodedJSValue baseValue, EncodedJSValue thisValue, PropertyName)
+EncodedJSValue jsTestNamedConstructorConstructor(ExecState* exec, EncodedJSValue, EncodedJSValue thisValue, PropertyName)
 {
-    UNUSED_PARAM(baseValue);
-    UNUSED_PARAM(thisValue);
-    JSTestNamedConstructorPrototype* domObject = jsDynamicCast<JSTestNamedConstructorPrototype*>(JSValue::decode(baseValue));
+    JSTestNamedConstructor* domObject = jsDynamicCast<JSTestNamedConstructor*>(JSValue::decode(thisValue));
     if (!domObject)
         return throwVMTypeError(exec);
     return JSValue::encode(JSTestNamedConstructor::getConstructor(exec->vm(), domObject->globalObject()));

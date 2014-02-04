@@ -1,3 +1,26 @@
+2014-02-04  Geoffrey Garen  <ggaren@apple.com>
+
+        Rolled out <http://trac.webkit.org/changeset/163280>:
+
+            Push DOM attributes into the prototype chain
+            https://bugs.webkit.org/show_bug.cgi?id=127969
+
+        It caused performance regressions, and broken websites on iOS.
+
+        Reviewed by Geoffrey Garen.
+
+        * fast/dom/Geolocation/enabled-expected.txt:
+        * fast/dom/Geolocation/script-tests/enabled.js:
+        * fast/dom/wrapper-classes-expected.txt:
+        * http/tests/security/cross-frame-access-enumeration-expected.txt:
+        * js/dom/constructor-attributes-expected.txt:
+        * js/dom/delete-syntax-expected.txt:
+        * js/dom/dom-attributes-on-mismatch-type-expected.txt:
+        * js/dom/dom-attributes-on-mismatch-type.html:
+        * js/dom/dom-static-property-for-in-iteration-expected.txt:
+        * js/dom/script-tests/constructor-attributes.js:
+        * js/dom/script-tests/delete-syntax.js:
+
 2014-02-04  Eric Carlson  <eric.carlson@apple.com>
 
         Refine MediaSession interruptions

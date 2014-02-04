@@ -30,32 +30,19 @@ PASS RegExp.prototype.compile is regExpPrototypeCompile
 PASS RegExp.prototype.exec is undefined
 PASS RegExp.prototype.test is null
 PASS Object.getOwnPropertyNames(Object.prototype).indexOf('__defineSetter__') is -1
-PASS navigatorPropertyNames.indexOf('appName') == -1 is true
-PASS navigatorPropertyNames.indexOf('appVersion') == -1 is true
-PASS navigatorPropertyNames.indexOf('language') == -1 is true
-PASS navigatorPropertyNames.indexOf('userAgent') == -1 is true
-PASS navigatorPropertyNames.indexOf('platform') == -1 is true
-PASS navigatorPropertyNames.indexOf('plugins') == -1 is true
-PASS navigatorPropertyNames.indexOf('mimeTypes') == -1 is true
-PASS navigatorPropertyNames.indexOf('product') == -1 is true
-PASS navigatorPropertyNames.indexOf('productSub') == -1 is true
-PASS navigatorPropertyNames.indexOf('vendor') == -1 is true
-PASS navigatorPropertyNames.indexOf('vendorSub') == -1 is true
-PASS navigatorPropertyNames.indexOf('cookieEnabled') == -1 is true
-PASS navigatorPropertyNames.indexOf('onLine') == -1 is true
-PASS navigatorPrototypePropertyNames.indexOf('appName') != -1 is true
-PASS navigatorPrototypePropertyNames.indexOf('appVersion') != -1 is true
-PASS navigatorPrototypePropertyNames.indexOf('language') != -1 is true
-PASS navigatorPrototypePropertyNames.indexOf('userAgent') != -1 is true
-PASS navigatorPrototypePropertyNames.indexOf('platform') != -1 is true
-PASS navigatorPrototypePropertyNames.indexOf('plugins') != -1 is true
-PASS navigatorPrototypePropertyNames.indexOf('mimeTypes') != -1 is true
-PASS navigatorPrototypePropertyNames.indexOf('product') != -1 is true
-PASS navigatorPrototypePropertyNames.indexOf('productSub') != -1 is true
-PASS navigatorPrototypePropertyNames.indexOf('vendor') != -1 is true
-PASS navigatorPrototypePropertyNames.indexOf('vendorSub') != -1 is true
-PASS navigatorPrototypePropertyNames.indexOf('cookieEnabled') != -1 is true
-PASS navigatorPrototypePropertyNames.indexOf('onLine') != -1 is true
+PASS navigatorPropertyNames.indexOf('appName') != -1 is true
+PASS navigatorPropertyNames.indexOf('appVersion') != -1 is true
+PASS navigatorPropertyNames.indexOf('language') != -1 is true
+PASS navigatorPropertyNames.indexOf('userAgent') != -1 is true
+PASS navigatorPropertyNames.indexOf('platform') != -1 is true
+PASS navigatorPropertyNames.indexOf('plugins') != -1 is true
+PASS navigatorPropertyNames.indexOf('mimeTypes') != -1 is true
+PASS navigatorPropertyNames.indexOf('product') != -1 is true
+PASS navigatorPropertyNames.indexOf('productSub') != -1 is true
+PASS navigatorPropertyNames.indexOf('vendor') != -1 is true
+PASS navigatorPropertyNames.indexOf('vendorSub') != -1 is true
+PASS navigatorPropertyNames.indexOf('cookieEnabled') != -1 is true
+PASS navigatorPropertyNames.indexOf('onLine') != -1 is true
 PASS successfullyParsed is true
 
 TEST COMPLETE

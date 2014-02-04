@@ -91,7 +91,4 @@ var expectedPropertyNames = [
 ];
 
 for (var i = 0; i < expectedPropertyNames.length; ++i)
-    shouldBeTrue("navigatorPropertyNames.indexOf('" + expectedPropertyNames[i] +"') == -1");
-var navigatorPrototypePropertyNames = Object.getOwnPropertyNames(navigator.__proto__);
-for (var i = 0; i < expectedPropertyNames.length; ++i)
-    shouldBeTrue("navigatorPrototypePropertyNames.indexOf('" + expectedPropertyNames[i] +"') != -1");
+    shouldBeTrue("navigatorPropertyNames.indexOf('" + expectedPropertyNames[i] +"') != -1");

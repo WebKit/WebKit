@@ -614,10 +614,7 @@ inline AtomicString propertyNameToAtomicString(JSC::PropertyName propertyName)
 template <class ThisImp>
 inline const JSC::HashEntry* getStaticValueSlotEntryWithoutCaching(JSC::ExecState* exec, JSC::PropertyName propertyName)
 {
-    const JSC::HashTable* table = ThisImp::info()->propHashTable(exec);
-    if (!table)
-        return getStaticValueSlotEntryWithoutCaching<typename ThisImp::Base>(exec, propertyName);
-    const JSC::HashEntry* entry = table->entry(exec, propertyName);
+    const JSC::HashEntry* entry = ThisImp::info()->propHashTable(exec)->entry(exec, propertyName);
     if (!entry) // not found, forward to parent
         return getStaticValueSlotEntryWithoutCaching<typename ThisImp::Base>(exec, propertyName);
     return entry;

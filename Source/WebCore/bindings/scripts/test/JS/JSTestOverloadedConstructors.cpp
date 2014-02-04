@@ -34,6 +34,15 @@ namespace WebCore {
 
 /* Hash table for constructor */
 
+static const HashTableValue JSTestOverloadedConstructorsTableValues[] =
+{
+    { "constructor", DontEnum | ReadOnly, NoIntrinsic, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestOverloadedConstructorsConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) },
+    { 0, 0, NoIntrinsic, 0, 0 }
+};
+
+static const HashTable JSTestOverloadedConstructorsTable = { 2, 1, true, JSTestOverloadedConstructorsTableValues, 0 };
+/* Hash table for constructor */
+
 static const HashTableValue JSTestOverloadedConstructorsConstructorTableValues[] =
 {
     { 0, 0, NoIntrinsic, 0, 0 }
@@ -135,11 +144,10 @@ ConstructType JSTestOverloadedConstructorsConstructor::getConstructData(JSCell*,
 
 static const HashTableValue JSTestOverloadedConstructorsPrototypeTableValues[] =
 {
-    { "constructor", DontEnum | ReadOnly, NoIntrinsic, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestOverloadedConstructorsConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) },
     { 0, 0, NoIntrinsic, 0, 0 }
 };
 
-static const HashTable JSTestOverloadedConstructorsPrototypeTable = { 2, 1, true, JSTestOverloadedConstructorsPrototypeTableValues, 0 };
+static const HashTable JSTestOverloadedConstructorsPrototypeTable = { 1, 0, false, JSTestOverloadedConstructorsPrototypeTableValues, 0 };
 const ClassInfo JSTestOverloadedConstructorsPrototype::s_info = { "TestOverloadedConstructorsPrototype", &Base::s_info, &JSTestOverloadedConstructorsPrototypeTable, 0, CREATE_METHOD_TABLE(JSTestOverloadedConstructorsPrototype) };
 
 JSObject* JSTestOverloadedConstructorsPrototype::self(VM& vm, JSGlobalObject* globalObject)
@@ -147,13 +155,7 @@ JSObject* JSTestOverloadedConstructorsPrototype::self(VM& vm, JSGlobalObject* gl
     return getDOMPrototype<JSTestOverloadedConstructors>(vm, globalObject);
 }
 
-bool JSTestOverloadedConstructorsPrototype::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
-{
-    JSTestOverloadedConstructorsPrototype* thisObject = jsCast<JSTestOverloadedConstructorsPrototype*>(object);
-    return getStaticPropertySlot<JSTestOverloadedConstructorsPrototype, JSObject>(exec, JSTestOverloadedConstructorsPrototypeTable, thisObject, propertyName, slot);
-}
-
-const ClassInfo JSTestOverloadedConstructors::s_info = { "TestOverloadedConstructors", &Base::s_info, 0, 0 , CREATE_METHOD_TABLE(JSTestOverloadedConstructors) };
+const ClassInfo JSTestOverloadedConstructors::s_info = { "TestOverloadedConstructors", &Base::s_info, &JSTestOverloadedConstructorsTable, 0 , CREATE_METHOD_TABLE(JSTestOverloadedConstructors) };
 
 JSTestOverloadedConstructors::JSTestOverloadedConstructors(Structure* structure, JSDOMGlobalObject* globalObject, PassRefPtr<TestOverloadedConstructors> impl)
     : JSDOMWrapper(structure, globalObject)
@@ -187,14 +189,12 @@ bool JSTestOverloadedConstructors::getOwnPropertySlot(JSObject* object, ExecStat
 {
     JSTestOverloadedConstructors* thisObject = jsCast<JSTestOverloadedConstructors*>(object);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
-    return Base::getOwnPropertySlot(thisObject, exec, propertyName, slot);
+    return getStaticValueSlot<JSTestOverloadedConstructors, Base>(exec, JSTestOverloadedConstructorsTable, thisObject, propertyName, slot);
 }
 
-EncodedJSValue jsTestOverloadedConstructorsConstructor(ExecState* exec, EncodedJSValue baseValue, EncodedJSValue thisValue, PropertyName)
+EncodedJSValue jsTestOverloadedConstructorsConstructor(ExecState* exec, EncodedJSValue, EncodedJSValue thisValue, PropertyName)
 {
-    UNUSED_PARAM(baseValue);
-    UNUSED_PARAM(thisValue);
-    JSTestOverloadedConstructorsPrototype* domObject = jsDynamicCast<JSTestOverloadedConstructorsPrototype*>(JSValue::decode(baseValue));
+    JSTestOverloadedConstructors* domObject = jsDynamicCast<JSTestOverloadedConstructors*>(JSValue::decode(thisValue));
     if (!domObject)
         return throwVMTypeError(exec);
     return JSValue::encode(JSTestOverloadedConstructors::getConstructor(exec->vm(), domObject->globalObject()));
