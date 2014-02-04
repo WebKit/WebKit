@@ -66,8 +66,10 @@
 #include "MediaPlayerPrivateWinCE.h"
 #define PlatformMediaEngineClassName MediaPlayerPrivate
 #elif PLATFORM(WIN)
+#if defined(_M_IX86)
 #include "MediaPlayerPrivateQuickTimeVisualContext.h"
 #define PlatformMediaEngineClassName MediaPlayerPrivateQuickTimeVisualContext
+#endif
 #if USE(AVFOUNDATION)
 #include "MediaPlayerPrivateAVFoundationCF.h"
 #endif

@@ -26,6 +26,9 @@
 #include "config.h"
 
 #if ENABLE(VIDEO)
+
+#if defined(_M_IX86)
+
 #include "MediaPlayerPrivateQuickTimeVisualContext.h"
 
 #include "Cookie.h"
@@ -1270,4 +1273,5 @@ void MediaPlayerPrivateQuickTimeVisualContext::setPrivateBrowsingMode(bool priva
 
 }
 
+#endif
 #endif

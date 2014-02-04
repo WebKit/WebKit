@@ -28,6 +28,9 @@
 
 #if ENABLE(VIDEO)
 
+// Do not build this component for 64-bit architecture
+#if defined(_M_IX86)
+
 #include "MediaPlayerPrivate.h"
 #include "Timer.h"
 #include <CoreGraphics/CGAffineTransform.h>
@@ -214,5 +217,6 @@ private:
 
 }
 
+#endif
 #endif
 #endif
