@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html style="font: 20px/1 monospace;">
+<head>
+    <link rel="stylesheet" href="../resources/region-style.css"></link>
+    <style>
+        .region {
+            margin: 50px 0px 50px 0px;
+            border: 5px solid black;
+            width: 500px;
+        }
+
+        #debug {
+            border: 1px solid black;
+        }
+    </style>
+    <script src="../resources/helper.js"></script>
+    <script>
+        onMouseUpLogSelectionAndFocus("selected-content", "focus-node", "focus-offset");
+        function selectText() {
+            if (window.testRunner) {
+                window.testRunner.dumpAsText();
+
+                var selectedText = document.getElementById("debug");
+                selectedText.style.display = "none";
+
+                var region1 = document.getElementById("region-1");
+                var region1Rect = region1.getBoundingClientRect();
+
+                clearSelection();
+
+                selectContentByIds("beforeRegion", "region-1");
+                checkSelectionResult("result", /* id of element to log the result */
+                    "word1 before empty region word2", /* expected selection */
+                    "region-1", /* expected focus node id */
+                    "0");    /* expected focus offset */
+            }
+        }
+    </script>
+</head>
+<body onload="selectText();">
+    <div id="beforeRegion">word1 before empty region word2</div>
+    <div id="region-1" class="greyBigBox regionArticle region"></div>
+    <div id="afterRegion">after empty region</div>
+    <div id="desc" class="description">
+        <p>Test that when you start the selection outside an empty region and end the selection inside the empty region, only the content before the empty region is selected.</p>
+        <p>To manually test, start selection from "word1" and move to the middle of the box with black border, representing the empty region.</p>
+        <p>Focus node should be the empty region.</p>
+        <p>Selected content should go from "word1" to "word2": <span id="result"></span></p>
+    </div>
+    <div id="debug">
+        <ul>
+            <li>Focus node: <span id="focus-node"></span></li>
+            <li>Focus offset: <span id="focus-offset"></span></li>
+            <li>Selected content: <span id="selected-content"></span></li>
+        </ul>
+    </div>
+</body>
+</html>

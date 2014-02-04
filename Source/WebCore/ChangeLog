@@ -1,3 +1,29 @@
+2014-02-04  Mihnea Ovidenie  <mihnea@adobe.com>
+
+        ASSERTION FAILED: !object || (object->isRenderBlock())
+        https://bugs.webkit.org/show_bug.cgi?id=127687
+
+        Reviewed by Ryosuke Niwa.
+
+        Currently, when computing the visible position for a point inside a region,
+        we transform the point into flow thread coordinates and delegate the processing
+        to the first child of the flow thread which we incorrectly assume is a block.
+        However, we can specify flow-into also on inline elements which leads to the
+        assertion.
+
+        Instead of delegating the processing to the first child when the flow thread
+        has children, delegate the computation of the visible position to the
+        flow thread and avoid any assumption about the nature of the flow thread
+        first child. If the flow thread does not have any children that should be
+        rendered by the region, let the region behave like an ordinary element
+        with no children.
+
+        Tests: fast/regions/selection/position-for-point-inline-content-node.html
+               fast/regions/selection/selection-ended-in-empty-region.html
+
+        * rendering/RenderRegion.cpp:
+        (WebCore::RenderRegion::positionForPoint):
+
 2014-02-03  Andreas Kling  <akling@apple.com>
 
         Remove stray vestige from ::-webkit-distributed selector.

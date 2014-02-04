@@ -1,3 +1,21 @@
+2014-02-04  Mihnea Ovidenie  <mihnea@adobe.com>
+
+        ASSERTION FAILED: !object || (object->isRenderBlock())
+        https://bugs.webkit.org/show_bug.cgi?id=127687
+
+        Reviewed by Ryosuke Niwa.
+
+        Added test showing that the content of an inline content node, having
+        flow-into specified, can be properly selected without hitting the assertion.
+        Also added another test to make sure that when the selection starts
+        outside an empty region and ends inside the empty region, the region behaves
+        like an ordinary element with no children.
+
+        * fast/regions/selection/position-for-point-inline-content-node-expected.txt: Added.
+        * fast/regions/selection/position-for-point-inline-content-node.html: Added.
+        * fast/regions/selection/selection-ended-in-empty-region-expected.txt: Added.
+        * fast/regions/selection/selection-ended-in-empty-region.html: Added.
+
 2014-02-03  Mark Lam  <mark.lam@apple.com>
 
         Need regression test for the debugger modifying locals in a DFG frame.

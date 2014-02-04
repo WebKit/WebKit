@@ -110,7 +110,7 @@ VisiblePosition RenderRegion::positionForPoint(const LayoutPoint& point)
     if (!isValid() || !m_flowThread->firstChild()) // checking for empty region blocks.
         return RenderBlock::positionForPoint(point);
 
-    return toRenderBlock(m_flowThread->firstChild())->positionForPoint(mapRegionPointIntoFlowThreadCoordinates(point));
+    return m_flowThread->positionForPoint(mapRegionPointIntoFlowThreadCoordinates(point));
 }
 
 LayoutUnit RenderRegion::pageLogicalWidth() const
