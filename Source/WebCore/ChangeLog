@@ -1,3 +1,13 @@
+2014-02-04  Zan Dobersek  <zdobersek@igalia.com>
+
+        Partially revert r162947 so that Document::topDocument() again Walk over the chain of
+        owner Elements. This fixes the crashes related to creating and accessing the AXObjectCache
+        of documents that were introduced in that revision, which determined the top document by
+        returning the Document of the main frame. This fails badly when the frame in question is cached.
+
+        * dom/Document.cpp:
+        (WebCore::Document::topDocument):
+
 2014-01-31  Anders Carlsson  <andersca@apple.com>
 
         Don't allocate a new XMLHttpRequestStaticData every time staticData() is called
