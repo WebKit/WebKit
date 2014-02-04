@@ -135,7 +135,7 @@ private:
         case JSConstant:
         case WeakJSConstant: {
             SpeculatedType type = speculationFromValue(m_graph.valueOfJSConstant(node));
-            if (type == SpecInt52AsDouble)
+            if (type == SpecInt52AsDouble && enableInt52())
                 type = SpecInt52;
             changed |= setPrediction(type);
             break;
