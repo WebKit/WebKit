@@ -28,7 +28,9 @@
 
 #if WK_API_ENABLED
 
+#import "NavigationActionData.h"
 #import "PageLoadState.h"
+#import "WKNavigationActionInternal.h"
 #import "WKNavigationDelegate.h"
 #import "WKNavigationInternal.h"
 #import "WKWebViewInternal.h"
@@ -103,7 +105,28 @@ NavigationState::PolicyClient::~PolicyClient()
 {
 }
 
-void NavigationState::PolicyClient::decidePolicyForNavigationAction(WebPageProxy*, WebFrameProxy* destinationFrame, const NavigationActionData&, WebFrameProxy* sourceFrame, const WebCore::ResourceRequest& originalRequest, const WebCore::ResourceRequest&, RefPtr<WebFramePolicyListenerProxy> listener, API::Object* userData)
+static WKNavigationType toWKNavigationType(WebCore::NavigationType navigationType)
+{
+    switch (navigationType) {
+    case WebCore::NavigationTypeLinkClicked:
+        return WKNavigationTypeLinkActivated;
+    case WebCore::NavigationTypeFormSubmitted:
+        return WKNavigationTypeFormSubmitted;
+    case WebCore::NavigationTypeBackForward:
+        return WKNavigationTypeBackForward;
+    case WebCore::NavigationTypeReload:
+        return WKNavigationTypeReload;
+    case WebCore::NavigationTypeFormResubmitted:
+        return WKNavigationTypeFormResubmitted;
+    case WebCore::NavigationTypeOther:
+        return WKNavigationTypeOther;
+    }
+
+    ASSERT_NOT_REACHED();
+    return WKNavigationTypeOther;
+}
+
+void NavigationState::PolicyClient::decidePolicyForNavigationAction(WebPageProxy*, WebFrameProxy* destinationFrame, const NavigationActionData& navigationActionData, WebFrameProxy* sourceFrame, const WebCore::ResourceRequest& originalRequest, const WebCore::ResourceRequest&, RefPtr<WebFramePolicyListenerProxy> listener, API::Object* userData)
 {
     if (!m_navigationState.m_navigationDelegateMethods.webViewDecidePolicyForNavigationActionDecisionHandler) {
         // FIXME: <rdar://problem/15949822> Figure out what the "default delegate behavior" should be here.
@@ -116,9 +139,11 @@ void NavigationState::PolicyClient::decidePolicyForNavigationAction(WebPageProxy
         return;
 
     // FIXME: Set up the navigation action object.
-    WKNavigationAction *navigationAction = nil;
+    auto navigationAction = adoptNS([[WKNavigationAction alloc] init]);
 
-    [navigationDelegate webView:m_navigationState.m_webView decidePolicyForNavigationAction:navigationAction decisionHandler:[listener](WKNavigationPolicyDecision policyDecision) {
+    [navigationAction setNavigationType:toWKNavigationType(navigationActionData.navigationType)];
+
+    [navigationDelegate webView:m_navigationState.m_webView decidePolicyForNavigationAction:navigationAction.get() decisionHandler:[listener](WKNavigationPolicyDecision policyDecision) {
         switch (policyDecision) {
         case WKNavigationPolicyDecisionAllow:
             listener->use();

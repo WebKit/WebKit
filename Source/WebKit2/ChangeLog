@@ -1,5 +1,21 @@
 2014-02-04  Anders Carlsson  <andersca@apple.com>
 
+        Add a WKNavigationAction object
+        https://bugs.webkit.org/show_bug.cgi?id=128212
+
+        Reviewed by Dan Bernstein.
+
+        * UIProcess/API/Cocoa/WKNavigationAction.h: Added.
+        (NS_ENUM):
+        * UIProcess/API/Cocoa/WKNavigationAction.mm: Added.
+        * UIProcess/API/Cocoa/WKNavigationActionInternal.h: Added.
+        * UIProcess/Cocoa/NavigationState.mm:
+        (WebKit::toWKNavigationType):
+        (WebKit::NavigationState::PolicyClient::decidePolicyForNavigationAction):
+        * WebKit2.xcodeproj/project.pbxproj:
+
+2014-02-04  Anders Carlsson  <andersca@apple.com>
+
         Add back/forward related methods to WKWebView
         https://bugs.webkit.org/show_bug.cgi?id=128209
 
