@@ -1,3 +1,19 @@
+2014-02-03  Brent Fulgham  <bfulgham@apple.com>
+
+        Merge r154394
+
+    2013-08-20  Brent Fulgham  <bfulgham@apple.com>
+
+            <https://webkit.org/b/120098> [Windows] Enable the New Web Inspector
+
+            Reviewed by Brian Weinstein.
+
+            * WebCoreSupport/WebInspectorClient.cpp:
+            (WebInspectorClient::openInspectorFrontend): Use the new inspector
+            if present in the WebKit distribution.
+            (WebInspectorFrontendClient::localizedStringsURL): Use the new
+            Web Inspector's localized strings (if present).
+
 2013-12-23  Matthew Hanson  <matthew_hanson@apple.com>
 
         Update copyright strings.
