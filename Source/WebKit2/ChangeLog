@@ -1,3 +1,14 @@
+2014-02-04  Alexey Proskuryakov  <ap@apple.com>
+
+        webKitCookieStorageCopyRequestHeaderFieldsForURL builds an empty Cookie header when there are no cookies
+        https://bugs.webkit.org/show_bug.cgi?id=128201
+
+        Reviewed by Sam Weinig.
+
+        * Shared/mac/CookieStorageShim.mm: (WebKit::webKitCookieStorageCopyRequestHeaderFieldsForURL):
+        Return null when NetworkProcess provided a null string, don't build a header dictionary
+        with an empty Cookie value.
+
 2014-02-04  Anders Carlsson  <andersca@apple.com>
 
         Add a WKNavigationAction object

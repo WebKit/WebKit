@@ -61,6 +61,9 @@ static CFDictionaryRef webKitCookieStorageCopyRequestHeaderFieldsForURL(CFHTTPCo
     if (!WebProcess::shared().networkConnection()->connection()->sendSync(Messages::NetworkConnectionToWebProcess::CookieRequestHeaderFieldValue(SessionTracker::defaultSessionID, firstPartyForCookiesURL, inRequestURL), Messages::NetworkConnectionToWebProcess::CookiesForDOM::Reply(cookies), 0))
         return 0;
 
+    if (cookies.isNull())
+        return 0;
+
     RetainPtr<CFStringRef> cfCookies = cookies.createCFString();
     static const void* cookieKeys[] = { CFSTR("Cookie") };
     const void* cookieValues[] = { cfCookies.get() };
