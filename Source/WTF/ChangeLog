@@ -1,5 +1,21 @@
 2014-02-04  Anders Carlsson  <andersca@apple.com>
 
+        Get rid of StringImpl::m_buffer
+        https://bugs.webkit.org/show_bug.cgi?id=128200
+
+        Reviewed by Michael Saboff.
+
+        Trade one lousy hack for another by changing the CreateEmptyUnique StringImpl
+        constructor to initialize its character buffer to point to m_length instead
+        since it will always be null.
+
+        Also change it to be an 8-bit string because why not.
+
+        * wtf/text/StringImpl.h:
+        (WTF::StringImpl::StringImpl):
+
+2014-02-04  Anders Carlsson  <andersca@apple.com>
+
         Rename String::getCharacters to String::characters
         https://bugs.webkit.org/show_bug.cgi?id=128196
 

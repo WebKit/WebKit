@@ -162,7 +162,6 @@ private:
         : m_refCount(s_refCountFlagIsStaticString)
         , m_length(length)
         , m_data16(characters)
-        , m_buffer(0)
         , m_hashAndFlags(s_hashFlagIsIdentifier | BufferOwned)
     {
         // Ensure that the hash is computed so that AtomicStringHash can call existingHash()
@@ -180,7 +179,6 @@ private:
         : m_refCount(s_refCountFlagIsStaticString)
         , m_length(length)
         , m_data8(characters)
-        , m_buffer(0)
         , m_hashAndFlags(s_hashFlag8BitBuffer | s_hashFlagIsIdentifier | BufferOwned)
     {
         // Ensure that the hash is computed so that AtomicStringHash can call existingHash()
@@ -198,7 +196,6 @@ private:
         : m_refCount(s_refCountIncrement)
         , m_length(length)
         , m_data8(tailPointer<LChar>())
-        , m_buffer(0)
         , m_hashAndFlags(s_hashFlag8BitBuffer | BufferInternal)
     {
         ASSERT(m_data8);
@@ -212,7 +209,6 @@ private:
         : m_refCount(s_refCountIncrement)
         , m_length(length)
         , m_data16(tailPointer<UChar>())
-        , m_buffer(0)
         , m_hashAndFlags(BufferInternal)
     {
         ASSERT(m_data16);
@@ -226,7 +222,6 @@ private:
         : m_refCount(s_refCountIncrement)
         , m_length(length)
         , m_data8(characters.leakPtr())
-        , m_buffer(0)
         , m_hashAndFlags(s_hashFlag8BitBuffer | BufferOwned)
     {
         ASSERT(m_data8);
@@ -240,7 +235,6 @@ private:
         : m_refCount(s_refCountIncrement)
         , m_length(length)
         , m_data16(characters)
-        , m_buffer(0)
         , m_hashAndFlags(BufferInternal)
     {
         ASSERT(m_data16);
@@ -253,7 +247,6 @@ private:
         : m_refCount(s_refCountIncrement)
         , m_length(length)
         , m_data8(characters)
-        , m_buffer(0)
         , m_hashAndFlags(s_hashFlag8BitBuffer | BufferInternal)
     {
         ASSERT(m_data8);
@@ -267,7 +260,6 @@ private:
         : m_refCount(s_refCountIncrement)
         , m_length(length)
         , m_data16(characters.leakPtr())
-        , m_buffer(0)
         , m_hashAndFlags(BufferOwned)
     {
         ASSERT(m_data16);
@@ -308,16 +300,15 @@ private:
         STRING_STATS_ADD_16BIT_STRING2(m_length, true);
     }
 
-    enum CreateEmptyUnique_T { CreateEmptyUnique };
-    StringImpl(CreateEmptyUnique_T)
+    enum CreateEmptyUniqueTag { CreateEmptyUnique };
+    StringImpl(CreateEmptyUniqueTag)
         : m_refCount(s_refCountIncrement)
         , m_length(0)
-        // We expect m_buffer to be initialized to 0 as we use it
+        // We expect m_length to be initialized to 0 as we use it
         // to represent a null terminated buffer.
-        , m_data16(reinterpret_cast<const UChar*>(&m_buffer))
-        , m_buffer(0)
+        , m_data8(reinterpret_cast<const LChar*>(&m_length))
     {
-        ASSERT(m_data16);
+        ASSERT(m_data8);
         // Set the hash early, so that all empty unique StringImpls have a hash,
         // and don't use the normal hashing algorithm - the unique nature of these
         // keys means that we don't need them to match any other string (in fact,
@@ -327,9 +318,9 @@ private:
         hash <<= s_flagCount;
         if (!hash)
             hash = 1 << s_flagCount;
-        m_hashAndFlags = hash | BufferInternal;
+        m_hashAndFlags = hash | BufferInternal | s_hashFlag8BitBuffer;
 
-        STRING_STATS_ADD_16BIT_STRING(m_length);
+        STRING_STATS_ADD_8BIT_STRING(m_length);
     }
 
     ~StringImpl();
@@ -838,7 +829,7 @@ public:
         unsigned m_refCount;
         unsigned m_length;
         const LChar* m_data8;
-        void* m_buffer;
+        mutable UChar* m_copyData16;
         unsigned m_hashAndFlags;
 
         // These values mimic ConstructFromLiteral.
@@ -864,14 +855,13 @@ private:
         const UChar* m_data16;
     };
     union {
-        void* m_buffer;
         StringImpl* m_substringBuffer;
         mutable UChar* m_copyData16;
     };
     mutable unsigned m_hashAndFlags;
 };
 
-COMPILE_ASSERT(sizeof(StringImpl) == sizeof(StringImpl::StaticASCIILiteral), StringImpl_should_match_its_StaticASCIILiteral);
+static_assert(sizeof(StringImpl) == sizeof(StringImpl::StaticASCIILiteral), "");
 
 #if !ASSERT_DISABLED
 // StringImpls created from StaticASCIILiteral will ASSERT
