@@ -1,5 +1,12 @@
 2014-02-03  Brady Eidson  <beidson@apple.com>
 
+        Unreviewed build fix after http://trac.webkit.org/changeset/163364
+
+        * DatabaseProcess/IndexedDB/sqlite/SQLiteIDBCursor.cpp:
+        (WebKit::getObjectStoreStatement): Args need the new names, and I need to save the file before committing.  :(
+
+2014-02-03  Brady Eidson  <beidson@apple.com>
+
         IDB: HTML5 Rocks Indexed Database demo fails
         https://bugs.webkit.org/show_bug.cgi?id=128157
 

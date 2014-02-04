@@ -116,7 +116,7 @@ static const String& getIndexStatement(bool hasLowerKey, bool isLowerOpen, bool 
     return indexStatements[i];
 }
 
-static const String& getObjectStoreStatement(bool lowerKey, bool lowerOpen, bool upperKey, bool upperOpen, bool descending)
+static const String& getObjectStoreStatement(bool hasLowerKey, bool isLowerOpen, bool hasUpperKey, bool isUpperOpen, bool descending)
 {
     DEFINE_STATIC_LOCAL(Vector<String>, indexStatements, ());
 
