@@ -157,11 +157,7 @@ using WebCore::VisiblePosition;
             DOMCSSStyleDeclaration *style = [document getComputedStyle:(DOMElement *)self pseudoElement:@""];
             if ([[style getPropertyValue:@"display"] isEqualToString:@"inline"])
                 rects = [self lineBoxRects];
-        } else if ([self isKindOfClass:[DOMText class]]
-#if ENABLE(SVG_DOM_OBJC_BINDINGS)
-                   && ![[self parentNode] isKindOfClass:NSClassFromString(@"DOMSVGElement")]
-#endif
-                  )
+        } else if ([self isKindOfClass:[DOMText class]])
             rects = [self lineBoxRects];
     }
 
@@ -181,11 +177,7 @@ using WebCore::VisiblePosition;
             DOMCSSStyleDeclaration *style = [document getComputedStyle:(DOMElement *)self pseudoElement:@""];
             if ([[style getPropertyValue:@"display"] isEqualToString:@"inline"])
                 quads = [self lineBoxQuads];
-        } else if ([self isKindOfClass:[DOMText class]]
-#if ENABLE(SVG_DOM_OBJC_BINDINGS)
-                   && ![[self parentNode] isKindOfClass:NSClassFromString(@"DOMSVGElement")]
-#endif
-                   )
+        } else if ([self isKindOfClass:[DOMText class]])
             quads = [self lineBoxQuads];
     }
 

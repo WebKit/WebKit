@@ -1,3 +1,18 @@
+2014-02-04  Tamas Gergely  <tgergely.u-szeged@partner.samsung.com>
+
+        Remove SVG_DOM_OBJC_BINDINGS after r161638.
+        https://bugs.webkit.org/show_bug.cgi?id=128182
+
+        Reviewed by Andreas Kling.
+
+        Removed ENABLE(SVG_DOM_OBJC_BINDINGS).
+
+        No tests required.
+
+        * bindings/objc/DOMUIKitExtensions.mm:
+        (-[DOMNode boundingBoxes]):
+        (-[DOMNode absoluteQuads]):
+
 2014-02-04  Radu Stavila  <stavila@adobe.com>
 
         REGRESSION (r159609): Images are corrupted when hovering over buttons @ github.com
