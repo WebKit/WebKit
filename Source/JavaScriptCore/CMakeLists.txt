@@ -677,6 +677,7 @@ if (ENABLE_FTL_JIT)
         ftl/FTLCapabilities.cpp
         ftl/FTLCommonValues.cpp
         ftl/FTLCompile.cpp
+        ftl/FTLDWARFDebugLineInfo.cpp
         ftl/FTLExitArgument.cpp
         ftl/FTLExitArgumentForOperand.cpp
         ftl/FTLExitThunkGenerator.cpp

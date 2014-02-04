@@ -449,6 +449,8 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/ftl/FTLCommonValues.h \
 	Source/JavaScriptCore/ftl/FTLCompile.cpp \
 	Source/JavaScriptCore/ftl/FTLCompile.h \
+	Source/JavaScriptCore/ftl/FTLDWARFDebugLineInfo.cpp \
+	Source/JavaScriptCore/ftl/FTLDWARFDebugLineInfo.h \
 	Source/JavaScriptCore/ftl/FTLExitArgument.cpp \
 	Source/JavaScriptCore/ftl/FTLExitArgumentForOperand.cpp \
 	Source/JavaScriptCore/ftl/FTLExitArgumentForOperand.h \
