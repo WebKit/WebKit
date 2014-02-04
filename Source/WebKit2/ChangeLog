@@ -1,5 +1,25 @@
 2014-02-04  Enrica Casucci  <enrica@apple.com>
 
+        WK: Cannot select text inside clickable containers.
+        https://bugs.webkit.org/show_bug.cgi?id=128197
+        <rdar://problem/15970890>
+
+        Reviewed by Simon Fraser.
+
+        When retrieving position information, we first try to
+        find the node responding to click events because we want
+        to know whether we are on a link or an image to show
+        the appropriate action sheet.
+        We could still have a node responding to click events if
+        for example we have a DIV with a click handler but that
+        doesn't require any special handling and we still need to
+        perform regular hit testing.
+
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::getPositionInformation):
+
+2014-02-04  Enrica Casucci  <enrica@apple.com>
+
         WK2: Selection callout bar does not scroll with the selection.
         https://bugs.webkit.org/show_bug.cgi?id=128142
         <rdar://problem/15970812>

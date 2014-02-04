@@ -827,6 +827,7 @@ void WebPage::getPositionInformation(const IntPoint& point, InteractionInformati
 
     info.point = point;
     info.nodeAtPositionIsAssistedNode = (hitNode == m_assistedNode);
+    bool elementIsLinkOrImage = false;
     if (hitNode) {
         info.clickableElementName = hitNode->nodeName();
 
@@ -834,17 +835,23 @@ void WebPage::getPositionInformation(const IntPoint& point, InteractionInformati
         if (!element)
             return;
 
+        Element* linkElement = nullptr;
         if (element->renderer() && element->renderer()->isRenderImage()) {
-            Element* linkElement = containingLinkElement(element);
+            elementIsLinkOrImage = true;
+            linkElement = containingLinkElement(element);
 
-            if (linkElement)
-                info.url = linkElement->document().completeURL(stripLeadingAndTrailingHTMLSpaces(linkElement->getAttribute(HTMLNames::hrefAttr)));;
-        } else if (element->isLink())
-            info.url = element->document().completeURL(stripLeadingAndTrailingHTMLSpaces(element->getAttribute(HTMLNames::hrefAttr)));
+        } else if (element->isLink()) {
+            linkElement = element;
+            elementIsLinkOrImage = true;
+        }
+        if (linkElement)
+            info.url = linkElement->document().completeURL(stripLeadingAndTrailingHTMLSpaces(linkElement->getAttribute(HTMLNames::hrefAttr)));
         info.title = element->getAttribute(HTMLNames::titleAttr).string();
         if (element->renderer())
             info.bounds = element->renderer()->absoluteBoundingBoxRect(true);
-    } else {
+    }
+
+    if (!elementIsLinkOrImage) {
         Frame& frame = m_page->mainFrame();
         hitNode = frame.eventHandler().hitTestResultAtPoint((point), HitTestRequest::ReadOnly | HitTestRequest::Active | HitTestRequest::DisallowShadowContent).innerNode();
         if (hitNode->isTextNode()) {
