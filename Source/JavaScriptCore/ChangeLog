@@ -1,5 +1,23 @@
 2014-02-04  Anders Carlsson  <andersca@apple.com>
 
+        Rename the substring sharing StringImpl::create variants to better indicate what they do
+        https://bugs.webkit.org/show_bug.cgi?id=128214
+
+        Reviewed by Geoffrey Garen.
+
+        * runtime/JSString.h:
+        (JSC::jsSingleCharacterSubstring):
+        (JSC::jsSubstring8):
+        (JSC::jsSubstring):
+        * runtime/SmallStrings.cpp:
+        (JSC::SmallStringsStorage::SmallStringsStorage):
+        * runtime/StringPrototype.cpp:
+        (JSC::jsSpliceSubstrings):
+        (JSC::jsSpliceSubstringsWithSeparators):
+        (JSC::replaceUsingStringSearch):
+
+2014-02-04  Anders Carlsson  <andersca@apple.com>
+
         Rename StringImpl::getCharacters to StringImpl::characters
         https://bugs.webkit.org/show_bug.cgi?id=128205
 

@@ -58,7 +58,7 @@ SmallStringsStorage::SmallStringsStorage()
     RefPtr<StringImpl> baseString = StringImpl::createUninitialized(singleCharacterStringCount, characterBuffer);
     for (unsigned i = 0; i < singleCharacterStringCount; ++i) {
         characterBuffer[i] = i;
-        m_reps[i] = StringImpl::create(baseString, i, 1);
+        m_reps[i] = StringImpl::createSubstringSharingImpl(baseString, i, 1);
     }
 }
 

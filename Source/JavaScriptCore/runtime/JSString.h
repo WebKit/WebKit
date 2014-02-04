@@ -360,7 +360,7 @@ namespace JSC {
         UChar c = s.characterAt(offset);
         if (c <= maxSingleCharacterString)
             return vm->smallStrings.singleCharacterString(c);
-        return JSString::create(*vm, StringImpl::create(s.impl(), offset, 1));
+        return JSString::create(*vm, StringImpl::createSubstringSharingImpl(s.impl(), offset, 1));
     }
 
     inline JSString* jsNontrivialString(VM* vm, const String& s)
@@ -428,7 +428,7 @@ namespace JSC {
             if (c <= maxSingleCharacterString)
                 return vm->smallStrings.singleCharacterString(c);
         }
-        return JSString::createHasOtherOwner(*vm, StringImpl::create8(s.impl(), offset, length));
+        return JSString::createHasOtherOwner(*vm, StringImpl::createSubstringSharingImpl8(s.impl(), offset, length));
     }
 
     inline JSString* jsSubstring(VM* vm, const String& s, unsigned offset, unsigned length)
@@ -443,7 +443,7 @@ namespace JSC {
             if (c <= maxSingleCharacterString)
                 return vm->smallStrings.singleCharacterString(c);
         }
-        return JSString::createHasOtherOwner(*vm, StringImpl::create(s.impl(), offset, length));
+        return JSString::createHasOtherOwner(*vm, StringImpl::createSubstringSharingImpl(s.impl(), offset, length));
     }
 
     inline JSString* jsOwnedString(VM* vm, const String& s)

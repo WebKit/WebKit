@@ -1,3 +1,21 @@
+2014-02-04  Anders Carlsson  <andersca@apple.com>
+
+        Rename the substring sharing StringImpl::create variants to better indicate what they do
+        https://bugs.webkit.org/show_bug.cgi?id=128214
+
+        Reviewed by Geoffrey Garen.
+
+        * wtf/text/AtomicString.cpp:
+        (WTF::SubstringTranslator::translate):
+        * wtf/text/StringBuilder.cpp:
+        (WTF::StringBuilder::reifyString):
+        (WTF::StringBuilder::resize):
+        * wtf/text/StringImpl.h:
+        (WTF::StringImpl::createSubstringSharingImpl8):
+        (WTF::StringImpl::createSubstringSharingImpl):
+        * wtf/text/WTFString.cpp:
+        (WTF::String::substringSharingImpl):
+
 2014-02-04  Alexey Proskuryakov  <ap@apple.com>
 
         WebCrypto HMAC verification uses a non-constant-time memcmp

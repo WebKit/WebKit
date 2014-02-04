@@ -317,7 +317,7 @@ String String::substringSharingImpl(unsigned offset, unsigned length) const
 
     if (!offset && length == stringLength)
         return *this;
-    return String(StringImpl::create(m_impl, offset, length));
+    return String(StringImpl::createSubstringSharingImpl(m_impl, offset, length));
 }
 
 String String::lower() const

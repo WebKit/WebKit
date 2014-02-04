@@ -342,7 +342,7 @@ public:
     WTF_EXPORT_STRING_API static PassRef<StringImpl> create(const LChar*);
     ALWAYS_INLINE static PassRef<StringImpl> create(const char* s) { return create(reinterpret_cast<const LChar*>(s)); }
 
-    static ALWAYS_INLINE PassRef<StringImpl> create8(PassRefPtr<StringImpl> rep, unsigned offset, unsigned length)
+    static ALWAYS_INLINE PassRef<StringImpl> createSubstringSharingImpl8(PassRefPtr<StringImpl> rep, unsigned offset, unsigned length)
     {
         ASSERT(rep);
         ASSERT(length <= rep->length());
@@ -355,7 +355,7 @@ public:
         return adoptRef(*new StringImpl(rep->m_data8 + offset, length, ownerRep));
     }
 
-    static ALWAYS_INLINE PassRef<StringImpl> create(PassRefPtr<StringImpl> rep, unsigned offset, unsigned length)
+    static ALWAYS_INLINE PassRef<StringImpl> createSubstringSharingImpl(PassRefPtr<StringImpl> rep, unsigned offset, unsigned length)
     {
         ASSERT(rep);
         ASSERT(length <= rep->length());
