@@ -1402,7 +1402,7 @@ template <typename CharacterType>
 static inline StringWithDirection canonicalizedTitle(Document* document, const StringWithDirection& titleWithDirection)
 {
     const String& title = titleWithDirection.string();
-    const CharacterType* characters = title.getCharacters<CharacterType>();
+    const CharacterType* characters = title.characters<CharacterType>();
     unsigned length = title.length();
     unsigned i;
 

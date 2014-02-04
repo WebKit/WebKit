@@ -1,3 +1,15 @@
+2014-02-04  Anders Carlsson  <andersca@apple.com>
+
+        Rename String::getCharacters to String::characters
+        https://bugs.webkit.org/show_bug.cgi?id=128196
+
+        Reviewed by Andreas Kling.
+
+        Update for WTF::String changes.
+
+        * dom/Document.cpp:
+        (WebCore::canonicalizedTitle):
+
 2014-02-04  Eric Carlson  <eric.carlson@apple.com>
 
         Fix Release build after r163390.

@@ -1,3 +1,20 @@
+2014-02-04  Anders Carlsson  <andersca@apple.com>
+
+        Rename String::getCharacters to String::characters
+        https://bugs.webkit.org/show_bug.cgi?id=128196
+
+        Reviewed by Andreas Kling.
+
+        This means String::characters() will end up calling either characters8() or characters16() which
+        makes more logical sense. It also frees up the getCharacters name so we can use it for a new function
+        that will do upconversion.
+        
+        * wtf/text/StringBuilder.cpp:
+        (WTF::StringBuilder::appendUninitializedSlow):
+        * wtf/text/WTFString.h:
+        (WTF::String::characters<LChar>):
+        (WTF::String::characters<UChar>):
+
 2014-02-03  Anders Carlsson  <andersca@apple.com>
 
         Fix Windows build.

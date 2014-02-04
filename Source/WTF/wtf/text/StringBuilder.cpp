@@ -233,7 +233,7 @@ CharType* StringBuilder::appendUninitializedSlow(unsigned requiredLength)
         reallocateBuffer<CharType>(expandedCapacity(capacity(), requiredLength));
     } else {
         ASSERT(m_string.length() == m_length);
-        allocateBuffer(m_length ? m_string.getCharacters<CharType>() : 0, expandedCapacity(capacity(), requiredLength));
+        allocateBuffer(m_length ? m_string.characters<CharType>() : 0, expandedCapacity(capacity(), requiredLength));
     }
     
     CharType* result = getBufferCharacters<CharType>() + m_length;

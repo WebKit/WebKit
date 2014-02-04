@@ -232,7 +232,7 @@ private:
         : m_delegate(delegate)
         , m_backReferenceLimit(backReferenceLimit)
         , m_err(NoError)
-        , m_data(pattern.getCharacters<CharType>())
+        , m_data(pattern.characters<CharType>())
         , m_size(pattern.length())
         , m_index(0)
         , m_parenthesesNestingDepth(0)

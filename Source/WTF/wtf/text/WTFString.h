@@ -182,9 +182,9 @@ public:
 
     // Return characters8() or characters16() depending on CharacterType.
     template <typename CharacterType>
-    inline const CharacterType* getCharacters() const;
+    inline const CharacterType* characters() const;
 
-    // Like getCharacters() and upconvert if CharacterType is UChar on a 8bit string.
+    // Like characters() and upconvert if CharacterType is UChar on a 8bit string.
     template <typename CharacterType>
     inline const CharacterType* getCharactersWithUpconvert() const;
 
@@ -518,14 +518,14 @@ String::String(const Vector<UChar, inlineCapacity, OverflowHandler>& vector)
 }
 
 template<>
-inline const LChar* String::getCharacters<LChar>() const
+inline const LChar* String::characters<LChar>() const
 {
     ASSERT(is8Bit());
     return characters8();
 }
 
 template<>
-inline const UChar* String::getCharacters<UChar>() const
+inline const UChar* String::characters<UChar>() const
 {
     ASSERT(!is8Bit());
     return characters16();

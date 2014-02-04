@@ -1,3 +1,15 @@
+2014-02-04  Anders Carlsson  <andersca@apple.com>
+
+        Rename String::getCharacters to String::characters
+        https://bugs.webkit.org/show_bug.cgi?id=128196
+
+        Reviewed by Andreas Kling.
+
+        Update for WTF::String changes.
+
+        * yarr/YarrParser.h:
+        (JSC::Yarr::Parser::Parser):
+
 2014-02-04  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         ASSERT in speculateMachineInt on 32-bit platforms
