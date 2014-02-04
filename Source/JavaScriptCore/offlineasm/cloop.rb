@@ -548,6 +548,10 @@ def cloopEmitCallSlowPath(operands)
     $asm.putc "}"
 end
 
+def cloopEmitCallSlowPathVoid(operands)
+    $asm.putc "#{operands[0].cLabel}(#{operands[1].clDump}, #{operands[2].clDump});"
+end
+
 class Instruction
     @@didReturnFromJSLabelCounter = 0
 
@@ -1088,9 +1092,15 @@ class Instruction
         when "memfence"
 
         when "push"
-            $asm.putc "PUSH(#{operands[0].clDump});"
+            operands.each {
+                | op |
+                $asm.putc "PUSH(#{op.clDump});"
+            }
         when "pop"
-            $asm.putc "POP(#{operands[0].clDump});"
+            operands.each {
+                | op |
+                $asm.putc "POP(#{op.clDump});"
+            }
 
         when "pushCalleeSaves"
         when "popCalleeSaves"
@@ -1132,6 +1142,9 @@ class Instruction
         # have a fixed prototype too. See cloopEmitCallSlowPath() for details.
         when "cloopCallSlowPath"
             cloopEmitCallSlowPath(operands)
+
+        when "cloopCallSlowPathVoid"
+            cloopEmitCallSlowPathVoid(operands)
 
         # For debugging only. This is used to insert instrumentation into the
         # generated LLIntAssembly.h during llint development only. Do not use

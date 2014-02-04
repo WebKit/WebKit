@@ -68,6 +68,14 @@ macro cCall2(function, arg1, arg2)
     end
 end
 
+macro cCall2Void(function, arg1, arg2)
+    if C_LOOP
+        cloopCallSlowPathVoid function, arg1, arg2
+    else
+        cCall2(function, arg1, arg2)
+    end
+end
+
 # This barely works. arg3 and arg4 should probably be immediates.
 macro cCall4(function, arg1, arg2, arg3, arg4)
     checkStackPointerAlignment(t4, 0xbad0c004)
@@ -390,7 +398,7 @@ macro writeBarrierOnOperand(cellOperand)
             macro(marked)
                 btbz marked, .writeBarrierDone
                 push PB, PC
-                cCall2(_llint_write_barrier_slow, cfr, t2)
+                cCall2Void(_llint_write_barrier_slow, cfr, t2)
                 pop PC, PB
             end
         )
@@ -421,7 +429,7 @@ macro writeBarrierOnGlobalObject(valueOperand)
             macro(marked)
                 btbz marked, .writeBarrierDone
                 push PB, PC
-                cCall2(_llint_write_barrier_slow, cfr, t3)
+                cCall2Void(_llint_write_barrier_slow, cfr, t3)
                 pop PC, PB
             end
         )

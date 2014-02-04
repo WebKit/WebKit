@@ -1436,10 +1436,9 @@ extern "C" SlowPathReturnType llint_stack_check_at_vm_entry(VM* vm, Register* ne
 }
 #endif
 
-extern "C" SlowPathReturnType llint_write_barrier_slow(ExecState*, JSCell* cell)
+extern "C" void llint_write_barrier_slow(ExecState*, JSCell* cell)
 {
     Heap::writeBarrier(cell);
-    return encodeResult(0, 0);
 }
 
 } } // namespace JSC::LLInt

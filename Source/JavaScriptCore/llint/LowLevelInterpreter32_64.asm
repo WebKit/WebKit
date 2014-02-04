@@ -117,6 +117,14 @@ macro cCall2(function, arg1, arg2)
     end
 end
 
+macro cCall2Void(function, arg1, arg2)
+    if C_LOOP
+        cloopCallSlowPathVoid function, arg1, arg2
+    else
+        cCall2(function, arg1, arg2)
+    end
+end
+
 # This barely works. arg3 and arg4 should probably be immediates.
 macro cCall4(function, arg1, arg2, arg3, arg4)
     if ARM or ARMv7 or ARMv7_TRADITIONAL or MIPS
@@ -525,7 +533,7 @@ macro writeBarrierOnOperand(cellOperand)
                 push cfr, PC
                 # We make two extra slots because cCall2 will poke.
                 subp 8, sp
-                cCall2(_llint_write_barrier_slow, cfr, t2)
+                cCall2Void(_llint_write_barrier_slow, cfr, t2)
                 addp 8, sp
                 pop PC, cfr
             end
@@ -558,7 +566,7 @@ macro writeBarrierOnGlobalObject(valueOperand)
                 push cfr, PC
                 # We make two extra slots because cCall2 will poke.
                 subp 8, sp
-                cCall2(_llint_write_barrier_slow, cfr, t3)
+                cCall2Void(_llint_write_barrier_slow, cfr, t3)
                 addp 8, sp
                 pop PC, cfr
             end

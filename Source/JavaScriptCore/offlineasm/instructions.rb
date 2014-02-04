@@ -304,10 +304,11 @@ SH4_INSTRUCTIONS =
 
 CXX_INSTRUCTIONS =
     [
-     "cloopCrash",           # no operands
-     "cloopCallJSFunction",  # operands: callee
-     "cloopCallNative",      # operands: callee
-     "cloopCallSlowPath",    # operands: callTarget, currentFrame, currentPC
+     "cloopCrash",              # no operands
+     "cloopCallJSFunction",     # operands: callee
+     "cloopCallNative",         # operands: callee
+     "cloopCallSlowPath",       # operands: callTarget, currentFrame, currentPC
+     "cloopCallSlowPathVoid",   # operands: callTarget, currentFrame, currentPC
 
      # For debugging only:
      # Takes no operands but simply emits whatever follows in // comments as

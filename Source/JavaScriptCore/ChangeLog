@@ -1,3 +1,20 @@
+2014-02-03  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Fix the cloop due to GenGC
+        https://bugs.webkit.org/show_bug.cgi?id=128137
+
+        Reviewed by Geoffrey Garen.
+
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::llint_write_barrier_slow):
+        * llint/LLIntSlowPaths.h:
+        * llint/LowLevelInterpreter.cpp:
+        (JSC::CLoopRegister::operator JSCell*):
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+        * offlineasm/cloop.rb:
+        * offlineasm/instructions.rb:
+
 2014-02-03  Michael Saboff  <msaboff@apple.com>
 
         REGRESSION (r163011-r163031): Web Inspector: Latest nightly crashes when showing the Web Inspector

@@ -225,6 +225,7 @@ struct CLoopRegister {
         ExecState* execState;
         void* instruction;
         VM* vm;
+        JSCell* cell;
         ProtoCallFrame* protoCallFrame;
         NativeFunction nativeFunc;
 #if USE(JSVALUE64)
@@ -241,6 +242,7 @@ struct CLoopRegister {
     operator VM*() { return vm; }
     operator ProtoCallFrame*() { return protoCallFrame; }
     operator Register*() { return reinterpret_cast<Register*>(vp); }
+    operator JSCell*() { return cell; }
 
 #if USE(JSVALUE64)
     inline void clearHighWord() { i32padding = 0; }
