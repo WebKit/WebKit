@@ -1,3 +1,15 @@
+2014-02-04  Tamas Gergely  <tgergely.u-szeged@partner.samsung.com>
+
+        Code cleanup: remove leftover occurrence of ENABLE(GESTURE_EVENTS)
+        https://bugs.webkit.org/show_bug.cgi?id=128180
+
+        Reviewed by Csaba Osztrogonác.
+
+        Removed last occurrence of ENABLE(GESTURE_EVENTS).
+
+        * WebProcess/Plugins/Netscape/x11/NetscapePluginX11.cpp:
+        (WebKit::NetscapePlugin::platformHandleMouseEvent):
+
 2014-02-04  Eunmi Lee  <eunmi15.lee@samsung.com>
 
         [EFL][WK2] ewk_context needs to route InjectedBundle messages correctly.
