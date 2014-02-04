@@ -28,10 +28,10 @@
 
 #if WK_API_ENABLED
 
+#import "PageLoadState.h"
 #import "WKNavigationDelegate.h"
 #import "WKNavigationInternal.h"
 #import "WKWebViewInternal.h"
-#import "PageLoadState.h"
 #import "WebFrameProxy.h"
 #import "WebPageProxy.h"
 
@@ -305,10 +305,12 @@ void NavigationState::LoaderClient::didFailLoadWithErrorForFrame(WebPageProxy*, 
 
 void NavigationState::willChangeIsLoading()
 {
+    [m_webView willChangeValueForKey:@"loading"];
 }
 
 void NavigationState::didChangeIsLoading()
 {
+    [m_webView willChangeValueForKey:@"loading"];
 }
 
 void NavigationState::willChangeTitle()

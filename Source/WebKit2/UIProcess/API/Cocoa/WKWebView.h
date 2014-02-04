@@ -73,6 +73,10 @@ WK_API_CLASS
 
 - (WKNavigation *)loadRequest:(NSURLRequest *)request;
 
+/*! @abstract Whether the view is loading content. @link WKWebView @/link is KVO-compliant for this
+ property. */
+@property (nonatomic, readonly, getter=isLoading) BOOL loading;
+
 @end
 
 #endif

@@ -140,6 +140,11 @@ static _UIWebViewportConfiguration standardViewportConfiguration = { { UIWebView
     return [navigation.leakRef() autorelease];
 }
 
+- (BOOL)isLoading
+{
+    return _page->pageLoadState().isLoading();
+}
+
 #pragma mark iOS-specific methods
 
 #if PLATFORM(IOS)
