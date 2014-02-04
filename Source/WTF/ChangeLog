@@ -1,3 +1,22 @@
+2014-02-03  Anders Carlsson  <andersca@apple.com>
+
+        More tail pointer consolidation
+        https://bugs.webkit.org/show_bug.cgi?id=128139
+
+        Reviewed by Andreas Kling.
+
+        Add a new tailOffset() function and reimplement allocationSize() and tailPointer()
+        in terms of it. Use tailPointer() instead of reinterpret_cast-ing this + 1.
+
+        * wtf/text/StringImpl.cpp:
+        (WTF::StringImpl::createUninitializedInternalNonEmpty):
+        * wtf/text/StringImpl.h:
+        (WTF::StringImpl::StringImpl):
+        (WTF::StringImpl::requiresCopy):
+        (WTF::StringImpl::allocationSize):
+        (WTF::StringImpl::tailOffset):
+        (WTF::StringImpl::tailPointer):
+
 2014-02-03  Gustavo Noronha Silva  <gns@gnome.org>
 
         [GTK][CMake] Enable SUBPIXEL_LAYOUT in FeatureDefines.h like EFL does

@@ -197,7 +197,7 @@ inline PassRef<StringImpl> StringImpl::createUninitializedInternalNonEmpty(unsig
         CRASH();
     StringImpl* string = static_cast<StringImpl*>(fastMalloc(allocationSize<CharType>(length)));
 
-    data = reinterpret_cast<CharType*>(string + 1);
+    data = string->tailPointer<CharType>();
     return constructInternal<CharType>(string, length);
 }
 

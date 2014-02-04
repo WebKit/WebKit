@@ -197,7 +197,7 @@ private:
     StringImpl(unsigned length, Force8Bit)
         : m_refCount(s_refCountIncrement)
         , m_length(length)
-        , m_data8(reinterpret_cast<const LChar*>(this + 1))
+        , m_data8(tailPointer<LChar>())
         , m_buffer(0)
         , m_hashAndFlags(s_hashFlag8BitBuffer | BufferInternal)
     {
@@ -211,7 +211,7 @@ private:
     StringImpl(unsigned length)
         : m_refCount(s_refCountIncrement)
         , m_length(length)
-        , m_data16(reinterpret_cast<const UChar*>(this + 1))
+        , m_data16(tailPointer<UChar>())
         , m_buffer(0)
         , m_hashAndFlags(BufferInternal)
     {
@@ -765,20 +765,32 @@ private:
             return true;
 
         if (is8Bit())
-            return reinterpret_cast<const void*>(m_data8) == reinterpret_cast<const void*>(this + 1);
-        return reinterpret_cast<const void*>(m_data16) == reinterpret_cast<const void*>(this + 1);
+            return m_data8 == tailPointer<LChar>();
+        return m_data16 == tailPointer<UChar>();
     }
 
     template<typename T>
     static size_t allocationSize(unsigned tailElementCount)
     {
-        return sizeof(StringImpl) + tailElementCount * sizeof(T);
+        return tailOffset<T>() + tailElementCount * sizeof(T);
+    }
+
+    template<typename T>
+    static ptrdiff_t tailOffset()
+    {
+        return roundUpToMultipleOf<alignof(T)>(sizeof(StringImpl));
+    }
+
+    template<typename T>
+    const T* tailPointer() const
+    {
+        return reinterpret_cast<const T*>(reinterpret_cast<const uint8_t*>(this) + tailOffset<T>());
     }
 
     template<typename T>
     T* tailPointer()
     {
-        return reinterpret_cast<T*>(this + 1);
+        return reinterpret_cast<T*>(reinterpret_cast<uint8_t*>(this) + tailOffset<T>());
     }
 
     // This number must be at least 2 to avoid sharing empty, null as well as 1 character strings from SmallStrings.
