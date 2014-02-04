@@ -274,5 +274,7 @@
 
     void beginMediaSessionInterruption();
     void endMediaSessionInterruption(DOMString flags);
+    void applicationWillEnterForeground();
+    void applicationWillEnterBackground();
     [RaisesException] void setMediaSessionRestrictions(DOMString mediaType, DOMString restrictions);
 };

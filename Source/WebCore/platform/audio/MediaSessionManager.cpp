@@ -26,6 +26,7 @@
 #include "config.h"
 #include "MediaSessionManager.h"
 
+#include "Logging.h"
 #include "MediaSession.h"
 
 namespace WebCore {
@@ -39,7 +40,7 @@ MediaSessionManager& MediaSessionManager::sharedManager()
 #endif
 
 MediaSessionManager::MediaSessionManager()
-    : m_interruptions(0)
+    : m_interrupted(false)
 {
     resetRestrictions();
 }
@@ -78,19 +79,18 @@ int MediaSessionManager::count(MediaSession::MediaType type) const
 
 void MediaSessionManager::beginInterruption()
 {
-    if (++m_interruptions > 1)
-        return;
+    LOG(Media, "MediaSessionManager::beginInterruption");
 
+    m_interrupted = true;
     for (auto* session : m_sessions)
         session->beginInterruption();
 }
 
 void MediaSessionManager::endInterruption(MediaSession::EndInterruptionFlags flags)
 {
-    ASSERT(m_interruptions > 0);
-    if (--m_interruptions)
-        return;
-    
+    LOG(Media, "MediaSessionManager::endInterruption");
+
+    m_interrupted = false;
     for (auto* session : m_sessions)
         session->endInterruption(flags);
 }
@@ -98,7 +98,8 @@ void MediaSessionManager::endInterruption(MediaSession::EndInterruptionFlags fla
 void MediaSessionManager::addSession(MediaSession& session)
 {
     m_sessions.append(&session);
-    session.setState(m_interruptions ? MediaSession::Interrupted : MediaSession::Running);
+    if (m_interrupted)
+        session.setState(MediaSession::Interrupted);
     updateSessionState();
 }
 
@@ -155,6 +156,24 @@ bool MediaSessionManager::sessionRestrictsInlineVideoPlayback(const MediaSession
         return false;
 
     return m_restrictions[sessionType] & InlineVideoPlaybackRestricted;
+}
+
+void MediaSessionManager::applicationWillEnterBackground() const
+{
+    LOG(Media, "MediaSessionManager::applicationWillEnterBackground");
+    for (auto* session : m_sessions) {
+        if (m_restrictions[session->mediaType()] & BackgroundPlaybackNotPermitted)
+            session->beginInterruption();
+    }
+}
+
+void MediaSessionManager::applicationWillEnterForeground() const
+{
+    LOG(Media, "MediaSessionManager::applicationWillEnterForeground");
+    for (auto* session : m_sessions) {
+        if (m_restrictions[session->mediaType()] & BackgroundPlaybackNotPermitted)
+            session->endInterruption(MediaSession::MayResumePlaying);
+    }
 }
 
 #if !PLATFORM(MAC)

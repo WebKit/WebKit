@@ -326,6 +326,8 @@ public:
 
     void beginMediaSessionInterruption();
     void endMediaSessionInterruption(const String&);
+    void applicationWillEnterForeground() const;
+    void applicationWillEnterBackground() const;
     void setMediaSessionRestrictions(const String& mediaType, const String& restrictions, ExceptionCode& ec);
 
 private:

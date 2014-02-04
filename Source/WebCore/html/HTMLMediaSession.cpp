@@ -42,6 +42,27 @@
 
 namespace WebCore {
 
+#if !LOG_DISABLED
+static const char* restrictionName(HTMLMediaSession::BehaviorRestrictions restriction)
+{
+#define CASE(_restriction) case HTMLMediaSession::_restriction: return #_restriction; break;
+    switch (restriction) {
+    CASE(NoRestrictions);
+    CASE(RequireUserGestureForLoad);
+    CASE(RequireUserGestureForRateChange);
+    CASE(RequireUserGestureForFullscreen);
+    CASE(RequirePageConsentToLoadMedia);
+    CASE(RequirePageConsentToResumeMedia);
+#if ENABLE(IOS_AIRPLAY)
+    CASE(RequireUserGestureToShowPlaybackTargetPicker);
+#endif
+    }
+
+    ASSERT_NOT_REACHED();
+    return "";
+}
+#endif
+
 static void initializeAudioSession()
 {
 #if PLATFORM(IOS)
@@ -71,11 +92,13 @@ HTMLMediaSession::HTMLMediaSession(MediaSessionClient& client)
 
 void HTMLMediaSession::addBehaviorRestriction(BehaviorRestrictions restriction)
 {
+    LOG(Media, "HTMLMediaSession::addBehaviorRestriction - adding %s", restrictionName(restriction));
     m_restrictions |= restriction;
 }
 
 void HTMLMediaSession::removeBehaviorRestriction(BehaviorRestrictions restriction)
 {
+    LOG(Media, "HTMLMediaSession::removeBehaviorRestriction - removing %s", restrictionName(restriction));
     m_restrictions &= ~restriction;
 }
 
@@ -157,11 +180,6 @@ MediaPlayer::Preload HTMLMediaSession::effectivePreloadForElement(const HTMLMedi
     }
 
     return preload;
-}
-
-void HTMLMediaSession::clientWillBeginPlayback() const
-{
-    MediaSessionManager::sharedManager().sessionWillBeginPlayback(*this);
 }
 
 bool HTMLMediaSession::requiresFullscreenForVideoPlayback(const HTMLMediaElement& element) const

@@ -42,8 +42,6 @@ public:
     HTMLMediaSession(MediaSessionClient&);
     virtual ~HTMLMediaSession() { }
 
-    void clientWillBeginPlayback() const;
-
     bool playbackPermitted(const HTMLMediaElement&) const;
     bool dataLoadingPermitted(const HTMLMediaElement&) const;
     bool fullscreenPermitted(const HTMLMediaElement&) const;

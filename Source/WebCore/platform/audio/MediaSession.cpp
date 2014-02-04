@@ -32,6 +32,20 @@
 
 namespace WebCore {
 
+static const char* stateName(MediaSession::State state)
+{
+#define CASE(_state) case MediaSession::_state: return #_state; break;
+    switch (state) {
+    CASE(Idle);
+    CASE(Playing);
+    CASE(Paused);
+    CASE(Interrupted);
+    }
+
+    ASSERT_NOT_REACHED();
+    return "";
+}
+    
 std::unique_ptr<MediaSession> MediaSession::create(MediaSessionClient& client)
 {
     return std::make_unique<MediaSession>(client);
@@ -39,10 +53,11 @@ std::unique_ptr<MediaSession> MediaSession::create(MediaSessionClient& client)
 
 MediaSession::MediaSession(MediaSessionClient& client)
     : m_client(client)
-    , m_state(Running)
+    , m_state(Idle)
+    , m_stateToRestore(Idle)
+    , m_notifyingClient(false)
 {
-    m_type = m_client.mediaType();
-    ASSERT(m_type >= None && m_type <= WebAudio);
+    ASSERT(m_client.mediaType() >= None && m_client.mediaType() <= WebAudio);
     MediaSessionManager::sharedManager().addSession(*this);
 }
 
@@ -51,18 +66,54 @@ MediaSession::~MediaSession()
     MediaSessionManager::sharedManager().removeSession(*this);
 }
 
+void MediaSession::setState(State state)
+{
+    LOG(Media, "MediaSession::setState - %s", stateName(state));
+    m_state = state;
+}
+
 void MediaSession::beginInterruption()
 {
     LOG(Media, "MediaSession::beginInterruption");
-    m_state = Interrupted;
-    m_client.beginInterruption();
+
+    m_stateToRestore = state();
+    m_notifyingClient = true;
+    client().pausePlayback();
+    setState(Interrupted);
+    m_notifyingClient = false;
 }
 
 void MediaSession::endInterruption(EndInterruptionFlags flags)
 {
-    LOG(Media, "MediaSession::endInterruption");
-    m_state = Running;
-    m_client.endInterruption(flags);
+    LOG(Media, "MediaSession::endInterruption - flags = %i, stateToRestore = %s", (int)flags, stateName(m_stateToRestore));
+
+    State stateToRestore = m_stateToRestore;
+    m_stateToRestore = Idle;
+    setState(Paused);
+
+    if (flags & MayResumePlaying && stateToRestore == Playing) {
+        LOG(Media, "MediaSession::endInterruption - resuming playback");
+        client().resumePlayback();
+    }
+}
+
+bool MediaSession::clientWillBeginPlayback()
+{
+    setState(Playing);
+    MediaSessionManager::sharedManager().sessionWillBeginPlayback(*this);
+    return true;
+}
+
+bool MediaSession::clientWillPausePlayback()
+{
+    if (state() == Interrupted) {
+        if (!m_notifyingClient)
+            m_stateToRestore = Paused;
+        return false;
+    }
+    
+    setState(Paused);
+    return true;
 }
 
 void MediaSession::pauseSession()
@@ -71,4 +122,9 @@ void MediaSession::pauseSession()
     m_client.pausePlayback();
 }
 
+MediaSession::MediaType MediaSession::mediaType() const
+{
+    return m_client.mediaType();
+}
+    
 }
