@@ -128,8 +128,6 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSCSSFontFaceLoadEvent.h \
 	DerivedSources/WebCore/JSCSSFontFaceRule.cpp \
 	DerivedSources/WebCore/JSCSSFontFaceRule.h \
-	DerivedSources/WebCore/JSCSSHostRule.cpp \
-	DerivedSources/WebCore/JSCSSHostRule.h \
 	DerivedSources/WebCore/JSCSSImportRule.cpp \
 	DerivedSources/WebCore/JSCSSImportRule.h \
 	DerivedSources/WebCore/JSCSSMediaRule.cpp \
@@ -1303,7 +1301,6 @@ dom_binding_idls += \
 	$(WebCore)/css/CSSCharsetRule.idl \
 	$(WebCore)/css/CSSFontFaceLoadEvent.idl \
 	$(WebCore)/css/CSSFontFaceRule.idl \
-	$(WebCore)/css/CSSHostRule.idl \
 	$(WebCore)/css/CSSImportRule.idl \
 	$(WebCore)/css/CSSMediaRule.idl \
 	$(WebCore)/css/CSSPageRule.idl \
@@ -2563,8 +2560,6 @@ webcore_sources += \
 	Source/WebCore/css/CSSGroupingRule.cpp \
 	Source/WebCore/css/CSSGroupingRule.h \
 	Source/WebCore/css/CSSHelper.h \
-	Source/WebCore/css/CSSHostRule.cpp \
-	Source/WebCore/css/CSSHostRule.h \
 	Source/WebCore/css/CSSImageGeneratorValue.cpp \
 	Source/WebCore/css/CSSImageGeneratorValue.h \
 	Source/WebCore/css/CSSImageSetValue.cpp \

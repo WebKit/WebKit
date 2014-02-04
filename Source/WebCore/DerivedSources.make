@@ -210,7 +210,6 @@ BINDING_IDLS = \
     $(WebCore)/css/CSSCharsetRule.idl \
     $(WebCore)/css/CSSFontFaceLoadEvent.idl \
     $(WebCore)/css/CSSFontFaceRule.idl \
-    $(WebCore)/css/CSSHostRule.idl \
     $(WebCore)/css/CSSImportRule.idl \
     $(WebCore)/css/CSSMediaRule.idl \
     $(WebCore)/css/CSSPageRule.idl \

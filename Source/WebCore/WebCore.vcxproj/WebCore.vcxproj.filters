@@ -2133,9 +2133,6 @@
     <ClCompile Include="..\css\CSSGroupingRule.cpp">
       <Filter>css</Filter>
     </ClCompile>
-    <ClCompile Include="..\css\CSSHostRule.cpp">
-      <Filter>css</Filter>
-    </ClCompile>
     <ClCompile Include="..\css\CSSImageGeneratorValue.cpp">
       <Filter>css</Filter>
     </ClCompile>
@@ -5270,9 +5267,6 @@
       <Filter>DerivedSources</Filter>
     </ClCompile>
     <ClCompile Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSCSSFontFaceRule.cpp">
-      <Filter>DerivedSources</Filter>
-    </ClCompile>
-    <ClCompile Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSCSSHostRule.cpp">
       <Filter>DerivedSources</Filter>
     </ClCompile>
     <ClCompile Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSCSSImportRule.cpp">
@@ -8949,9 +8943,6 @@
       <Filter>css</Filter>
     </ClInclude>
     <ClInclude Include="..\css\CSSHelper.h">
-      <Filter>css</Filter>
-    </ClInclude>
-    <ClInclude Include="..\css\CSSHostRule.h">
       <Filter>css</Filter>
     </ClInclude>
     <ClInclude Include="..\css\CSSImageGeneratorValue.h">
@@ -13028,9 +13019,6 @@
       <Filter>DerivedSources</Filter>
     </ClInclude>
     <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSCSSFontFaceRule.h">
-      <Filter>DerivedSources</Filter>
-    </ClInclude>
-    <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSCSSHostRule.h">
       <Filter>DerivedSources</Filter>
     </ClInclude>
     <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSCSSImportRule.h">

@@ -30,7 +30,6 @@
 #include "InspectorCSSOMWrappers.h"
 
 #include "CSSDefaultStyleSheets.h"
-#include "CSSHostRule.h"
 #include "CSSImportRule.h"
 #include "CSSMediaRule.h"
 #include "CSSRule.h"
@@ -72,11 +71,6 @@ void InspectorCSSOMWrappers::collect(ListType* listType)
 #if ENABLE(CSS_REGIONS)
         case CSSRule::WEBKIT_REGION_RULE:
             collect(static_cast<WebKitCSSRegionRule*>(cssRule));
-            break;
-#endif
-#if ENABLE(SHADOW_DOM)
-        case CSSRule::HOST_RULE:
-            collect(static_cast<CSSHostRule*>(cssRule));
             break;
 #endif
         case CSSRule::STYLE_RULE:

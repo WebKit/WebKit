@@ -1,3 +1,49 @@
+2014-02-03  Andreas Kling  <akling@apple.com>
+
+        Remove the CSS @host rule.
+        <https://webkit.org/b/128146>
+
+        The @host rule is no longer part of the spec, and besides this code
+        was behind ENABLE(SHADOW_DOM) so nobody was building it.
+
+        Reviewed by Anders Carlsson.
+
+        * CMakeLists.txt:
+        * DerivedSources.cpp:
+        * DerivedSources.make:
+        * GNUmakefile.list.am:
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.vcxproj/WebCore.vcxproj.filters:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSCSSRuleCustom.cpp:
+        (WebCore::toJS):
+        * bindings/objc/DOMCSS.mm:
+        (kitClass):
+        * css/CSSAllInOne.cpp:
+        * css/CSSGrammar.y.in:
+        * css/CSSHostRule.cpp: Removed.
+        * css/CSSHostRule.h: Removed.
+        * css/CSSHostRule.idl: Removed.
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::detectDashToken):
+        (WebCore::CSSParser::detectAtToken):
+        * css/CSSParser.h:
+        * css/CSSRule.h:
+        * css/CSSRule.idl:
+        * css/InspectorCSSOMWrappers.cpp:
+        (WebCore::InspectorCSSOMWrappers::collect):
+        * css/StyleResolver.h:
+        * css/StyleRule.cpp:
+        (WebCore::StyleRuleBase::destroy):
+        (WebCore::StyleRuleBase::copy):
+        (WebCore::StyleRuleBase::createCSSOMWrapper):
+        * css/StyleRule.h:
+        * css/StyleSheetContents.cpp:
+        (WebCore::childRulesHaveFailedOrCanceledSubresources):
+        * inspector/InspectorStyleSheet.cpp:
+        (flattenSourceData):
+        (WebCore::asCSSRuleList):
+
 2014-02-03  Zalan Bujtas  <zalan@apple.com>
 
         Subpixel rendering: Do not query the scaling factor when the graphics context is invalid.

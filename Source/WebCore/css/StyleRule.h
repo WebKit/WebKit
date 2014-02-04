@@ -55,9 +55,6 @@ public:
         Viewport = 15,
 #endif
         Region = 16,
-#if ENABLE(SHADOW_DOM)
-        HostInternal = 18, // Spec says Host = 1001, but we can use only 5 bit for type().
-#endif
     };
 
     Type type() const { return static_cast<Type>(m_type); }
@@ -76,9 +73,6 @@ public:
     bool isViewportRule() const { return type() == Viewport; }
 #endif
     bool isImportRule() const { return type() == Import; }
-#if ENABLE(SHADOW_DOM)
-    bool isHostRule() const { return type() == HostInternal; }
-#endif
 
     PassRef<StyleRuleBase> copy() const;
 
@@ -262,22 +256,6 @@ private:
     
     CSSSelectorList m_selectorList;
 };
-
-#if ENABLE(SHADOW_DOM)
-class StyleRuleHost : public StyleRuleGroup {
-public:
-    static PassRef<StyleRuleHost> create(Vector<RefPtr<StyleRuleBase>>& adoptRules)
-    {
-        return adoptRef(*new StyleRuleHost(adoptRules));
-    }
-
-    PassRef<StyleRuleHost> copy() const { return adoptRef(*new StyleRuleHost(*this)); }
-
-private:
-    StyleRuleHost(Vector<RefPtr<StyleRuleBase>>& adoptRules) : StyleRuleGroup(HostInternal, adoptRules) { }
-    StyleRuleHost(const StyleRuleHost& o) : StyleRuleGroup(o) { }
-};
-#endif
 
 #if ENABLE(CSS_DEVICE_ADAPTATION)
 class StyleRuleViewport : public StyleRuleBase {

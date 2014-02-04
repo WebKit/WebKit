@@ -24,7 +24,6 @@
 
 #include "CSSCharsetRule.h"
 #include "CSSFontFaceRule.h"
-#include "CSSHostRule.h"
 #include "CSSImportRule.h"
 #include "CSSMediaRule.h"
 #include "CSSPageRule.h"
@@ -87,11 +86,6 @@ void StyleRuleBase::destroy()
     case Keyframes:
         delete static_cast<StyleRuleKeyframes*>(this);
         return;
-#if ENABLE(SHADOW_DOM)
-    case HostInternal:
-        delete static_cast<StyleRuleHost*>(this);
-        return;
-#endif
 #if ENABLE(CSS_DEVICE_ADAPTATION)
     case Viewport:
         delete static_cast<StyleRuleViewport*>(this);
@@ -130,10 +124,6 @@ PassRef<StyleRuleBase> StyleRuleBase::copy() const
 #endif
     case Keyframes:
         return static_cast<const StyleRuleKeyframes*>(this)->copy();
-#if ENABLE(SHADOW_DOM)
-    case HostInternal:
-        return static_cast<const StyleRuleHost*>(this)->copy();
-#endif
 #if ENABLE(CSS_DEVICE_ADAPTATION)
     case Viewport:
         return static_cast<const StyleRuleViewport*>(this)->copy();
@@ -190,11 +180,6 @@ PassRefPtr<CSSRule> StyleRuleBase::createCSSOMWrapper(CSSStyleSheet* parentSheet
 #if ENABLE(CSS_DEVICE_ADAPTATION)
     case Viewport:
         rule = WebKitCSSViewportRule::create(static_cast<StyleRuleViewport*>(self), parentSheet);
-        break;
-#endif
-#if ENABLE(SHADOW_DOM)
-    case HostInternal:
-        rule = CSSHostRule::create(static_cast<StyleRuleHost*>(self), parentSheet);
         break;
 #endif
     case Unknown:

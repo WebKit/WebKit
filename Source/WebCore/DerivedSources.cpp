@@ -89,7 +89,6 @@
 #include "JSCSSFontFaceLoadEvent.cpp"
 #endif
 #include "JSCSSFontFaceRule.cpp"
-#include "JSCSSHostRule.cpp"
 #include "JSCSSImportRule.cpp"
 #include "JSCSSMediaRule.cpp"
 #include "JSCSSPageRule.cpp"

@@ -81,9 +81,6 @@ class StyleKeyframe;
 class StylePendingImage;
 class StyleProperties;
 class StyleRule;
-#if ENABLE(SHADOW_DOM)
-class StyleRuleHost;
-#endif
 class StyleRuleKeyframes;
 class StyleRulePage;
 class StyleRuleRegion;

@@ -6154,7 +6154,6 @@
 		FB3056C2169E5DAC0096A232 /* CSSGroupingRule.h in Headers */ = {isa = PBXBuildFile; fileRef = FB3056C1169E5DAC0096A232 /* CSSGroupingRule.h */; };
 		FB484F4C171F821E00040755 /* TransformFunctions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FB484F4A171F821E00040755 /* TransformFunctions.cpp */; };
 		FB484F4D171F821E00040755 /* TransformFunctions.h in Headers */ = {isa = PBXBuildFile; fileRef = FB484F4B171F821E00040755 /* TransformFunctions.h */; };
-		FB49C39D16784947007FFB5D /* CSSHostRule.h in Headers */ = {isa = PBXBuildFile; fileRef = FB49C39C16784947007FFB5D /* CSSHostRule.h */; };
 		FB78AD2E151BF5E600FE54D3 /* CSSParserMode.h in Headers */ = {isa = PBXBuildFile; fileRef = FB78AD2C151BF5D200FE54D3 /* CSSParserMode.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FB91392416AE4C17001FE682 /* DOMPath.h in Headers */ = {isa = PBXBuildFile; fileRef = FB91392016AE4B0B001FE682 /* DOMPath.h */; };
 		FB91392616AE4C2F001FE682 /* CanvasPathMethods.h in Headers */ = {isa = PBXBuildFile; fileRef = FB91391F16AE4B0B001FE682 /* CanvasPathMethods.h */; };
@@ -13493,8 +13492,6 @@
 		FB3056C1169E5DAC0096A232 /* CSSGroupingRule.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CSSGroupingRule.h; sourceTree = "<group>"; };
 		FB484F4A171F821E00040755 /* TransformFunctions.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TransformFunctions.cpp; sourceTree = "<group>"; };
 		FB484F4B171F821E00040755 /* TransformFunctions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TransformFunctions.h; sourceTree = "<group>"; };
-		FB49C39C16784947007FFB5D /* CSSHostRule.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CSSHostRule.h; sourceTree = "<group>"; };
-		FB49C39E16784954007FFB5D /* CSSHostRule.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CSSHostRule.idl; sourceTree = "<group>"; };
 		FB78AD2C151BF5D200FE54D3 /* CSSParserMode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CSSParserMode.h; sourceTree = "<group>"; };
 		FB91391E16AE4B0B001FE682 /* CanvasPathMethods.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CanvasPathMethods.cpp; path = canvas/CanvasPathMethods.cpp; sourceTree = "<group>"; };
 		FB91391F16AE4B0B001FE682 /* CanvasPathMethods.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CanvasPathMethods.h; path = canvas/CanvasPathMethods.h; sourceTree = "<group>"; };
@@ -21363,8 +21360,6 @@
 				FBF89044169E9F1F0052D86E /* CSSGroupingRule.cpp */,
 				FB3056C1169E5DAC0096A232 /* CSSGroupingRule.h */,
 				BC772B360C4EA91E0083285F /* CSSHelper.h */,
-				FB49C39C16784947007FFB5D /* CSSHostRule.h */,
-				FB49C39E16784954007FFB5D /* CSSHostRule.idl */,
 				BC23E76B0DAE88A9009FDC91 /* CSSImageGeneratorValue.cpp */,
 				BC23EE910DAED2BC009FDC91 /* CSSImageGeneratorValue.h */,
 				9393E5FD151A99F200066F06 /* CSSImageSetValue.cpp */,
@@ -22949,7 +22944,6 @@
 				51EAC5B218163F4E004F1BA4 /* IDBRecordIdentifier.h in Headers */,
 				FB3056C2169E5DAC0096A232 /* CSSGroupingRule.h in Headers */,
 				BC772B3C0C4EA91E0083285F /* CSSHelper.h in Headers */,
-				FB49C39D16784947007FFB5D /* CSSHostRule.h in Headers */,
 				E1F80B8E183172B5007885C3 /* JSCryptoKeyPair.h in Headers */,
 				BC23EE920DAED2BC009FDC91 /* CSSImageGeneratorValue.h in Headers */,
 				9393E600151A99F200066F06 /* CSSImageSetValue.h in Headers */,

@@ -10689,10 +10689,6 @@ inline void CSSParser::detectDashToken(int length)
             m_token = MAXFUNCTION;
     } else if (length == 12 && isEqualToCSSIdentifier(name + 1, "webkit-calc"))
         m_token = CALCFUNCTION;
-#if ENABLE(SHADOW_DOM)
-    else if (length == 19 && isEqualToCSSIdentifier(name + 1, "webkit-distributed"))
-        m_token = DISTRIBUTEDFUNCTION;
-#endif
 }
 
 template <typename CharacterType>
@@ -10745,13 +10741,6 @@ inline void CSSParser::detectAtToken(int length, bool hasEscape)
         if (length == 10 && isEqualToCSSIdentifier(name + 2, "ont-face"))
             m_token = FONT_FACE_SYM;
         return;
-
-#if ENABLE(SHADOW_DOM)
-    case 'h':
-        if (length == 5 && isEqualToCSSIdentifier(name + 2, "ost"))
-            m_token = HOST_SYM;
-        return;
-#endif
 
     case 'i':
         if (length == 7 && isEqualToCSSIdentifier(name + 2, "mport")) {
@@ -11551,22 +11540,6 @@ PassRefPtr<StyleRuleBase> CSSParser::createFontFaceRule()
     processAndAddNewRuleToSourceTreeIfNeeded();
     return rule.release();
 }
-
-#if ENABLE(SHADOW_DOM)
-PassRefPtr<StyleRuleBase> CSSParser::createHostRule(RuleList* rules)
-{
-    m_allowImportRules = m_allowNamespaceDeclarations = false;
-    RefPtr<StyleRuleHost> rule;
-    if (rules)
-        rule = StyleRuleHost::create(*rules);
-    else {
-        RuleList emptyRules;
-        rule = StyleRuleHost::create(emptyRules);
-    }
-    processAndAddNewRuleToSourceTreeIfNeeded();
-    return rule.release();
-}
-#endif
 
 void CSSParser::addNamespace(const AtomicString& prefix, const AtomicString& uri)
 {

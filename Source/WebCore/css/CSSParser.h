@@ -310,9 +310,6 @@ public:
     void markSupportsRuleHeaderEnd();
     PassRefPtr<CSSRuleSourceData> popSupportsRuleData();
 #endif
-#if ENABLE(SHADOW_DOM)
-    PassRefPtr<StyleRuleBase> createHostRule(RuleList*);
-#endif
 
     void startDeclarationsForMarginBox();
     void endDeclarationsForMarginBox();
