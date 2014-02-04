@@ -13,6 +13,7 @@ set(WTF_HEADERS
     CompilationThread.h
     Compiler.h
     Compression.h
+    CryptographicUtilities.h
     CryptographicallyRandomNumber.h
     CurrentTime.h
     DataLog.h
@@ -150,6 +151,7 @@ set(WTF_SOURCES
     BitVector.cpp
     CompilationThread.cpp
     Compression.cpp
+    CryptographicUtilities.cpp
     CryptographicallyRandomNumber.cpp
     CurrentTime.cpp
     DataLog.cpp

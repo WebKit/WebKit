@@ -32,6 +32,7 @@
 #include "CryptoKeyHMAC.h"
 #include "ExceptionCode.h"
 #include <CommonCrypto/CommonHMAC.h>
+#include <wtf/CryptographicUtilities.h>
 
 namespace WebCore {
 
@@ -111,7 +112,8 @@ void CryptoAlgorithmHMAC::platformVerify(const CryptoAlgorithmHmacParams& parame
 
     Vector<uint8_t> signature = calculateSignature(algorithm, key.key(), data);
 
-    bool result = signature.size() == expectedSignature.second && !memcmp(signature.data(), expectedSignature.first, signature.size());
+    // Using a constant time comparison to prevent timing attacks.
+    bool result = signature.size() == expectedSignature.second && !constantTimeMemcmp(signature.data(), expectedSignature.first, signature.size());
 
     callback(result);
 }

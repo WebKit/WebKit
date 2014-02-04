@@ -27,6 +27,8 @@ wtf_sources += \
     Source/WTF/wtf/CompilationThread.h \
     Source/WTF/wtf/Compression.h \
     Source/WTF/wtf/Compression.cpp \
+    Source/WTF/wtf/CryptographicUtilities.cpp \
+    Source/WTF/wtf/CryptographicUtilities.h \
     Source/WTF/wtf/CryptographicallyRandomNumber.cpp \
     Source/WTF/wtf/CryptographicallyRandomNumber.h \
     Source/WTF/wtf/CurrentTime.cpp \
