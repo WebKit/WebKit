@@ -2554,20 +2554,6 @@ set(WebCore_SOURCES
     xml/parser/XMLDocumentParserScope.cpp
 )
 
-# GCC 4.6.x crashes when building this file with -O3 and -DNDEBUG.
-# References: https://bugs.webkit.org/show_bug.cgi?id=97268
-#             https://bugs.webkit.org/show_bug.cgi?id=114627
-if (CMAKE_COMPILER_IS_GNUCXX) # Can restrict based on the version.
-    string(TOUPPER "CMAKE_CXX_FLAGS_${CMAKE_BUILD_TYPE}" _CXXFLAGS_VARNAME)
-
-    string(FIND "${${_CXXFLAGS_VARNAME}}" "-O3" _CXXFLAGS_O3_INDEX)
-    if (_CXXFLAGS_O3_INDEX GREATER -1)
-        string(REPLACE "-O3" "-O2" _CXXFLAGS ${${_CXXFLAGS_VARNAME}})
-        set_source_files_properties(Modules/websockets/WebSocketDeflater.cpp
-                                    PROPERTIES COMPILE_FLAGS "${_CXXFLAGS}")
-    endif ()
-endif ()
-
 set(WebCore_CSS_PROPERTY_NAMES
     ${WEBCORE_DIR}/css/CSSPropertyNames.in
 )
