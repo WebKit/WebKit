@@ -1,3 +1,19 @@
+2014-02-04  Eric Carlson  <eric.carlson@apple.com>
+
+        Refine MediaSession interruptions
+        https://bugs.webkit.org/show_bug.cgi?id=128125
+
+        Reviewed by Jer Noble.
+
+        * media/video-background-playback-expected.txt: Added.
+        * media/video-background-playback.html: Added.
+        * media/video-interruption-active-when-element-created-expected.txt: Removed.
+        * media/video-interruption-active-when-element-created.html: Removed.
+        * media/video-interruption-with-resume-allowing-play-expected.txt:
+        * media/video-interruption-with-resume-allowing-play.html:
+        * media/video-interruption-with-resume-not-allowing-play-expected.txt:
+        * media/video-interruption-with-resume-not-allowing-play.html:
+
 2014-02-04  Andrzej Badowski   <a.badowski@samsung.com>
 
         [EFL] Add expectations for three flaky media layout tests

@@ -7,15 +7,13 @@
 
             function playing()
             {
-                if (state == "resuming")
-                    failTest("<b>Playback started after interruption.</b>");
-                else
-                    failTest("<b>Playback started during interruption.</b>");
+                run("internals.beginMediaSessionInterruption()");;
+                setTimeout(checkState, 100);
             }
 
             function checkState()
             {
-                consoleWrite("100ms timer fired...");
+                consoleWrite("<br>100ms timer fired...");
                 testExpected("video.paused", true);
                 switch (state) {
                 case "interrupted":
@@ -32,12 +30,9 @@
 
             function canplaythrough()
             {
-                consoleWrite("");
-
-                run("internals.beginMediaSessionInterruption()");;
                 state = "interrupted";
                 run("video.play()");
-                setTimeout(checkState, 100);
+                consoleWrite("");
             }
 
             function start()
@@ -57,6 +52,6 @@
 
     <body onload="start()">
         <video controls ></video>
-        <p>Test that play() during interruption does nothing, ending interruption does not allow playback to resume.</p>
+        <p>Test that playback is paused by an interruption, and that ending the interruption does automatically resume playback.</p>
     </body>
 </html>

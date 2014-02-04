@@ -1,3 +1,74 @@
+2014-02-04  Eric Carlson  <eric.carlson@apple.com>
+
+        Refine MediaSession interruptions
+        https://bugs.webkit.org/show_bug.cgi?id=128125
+
+        Reviewed by Jer Noble.
+
+        Test: media/video-background-playback.html
+
+        * WebCore.exp.in: Export applicationWillEnterForeground and applicationWillEnterBackground for
+            Internals.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::play): Ask the media session if playback is allowed instead of check
+            to see if it is interrupted directly.
+        (WebCore::HTMLMediaElement::pause): Ask the media session if pausing is allowed instead of check
+            to see if it is interrupted directly.
+        (WebCore::HTMLMediaElement::mediaType): Return media type based on media characteristics once
+            the information is available.
+        (WebCore::HTMLMediaElement::resumePlayback): New.
+        * html/HTMLMediaElement.h:
+
+        * html/HTMLMediaSession.cpp:
+        (WebCore::restrictionName): New, use for logging only.
+        (WebCore::HTMLMediaSession::addBehaviorRestriction): Log  restriction changes.
+        (WebCore::HTMLMediaSession::removeBehaviorRestriction): Ditto.
+        * html/HTMLMediaSession.h:
+
+        * platform/audio/MediaSession.cpp:
+        (WebCore::stateName): New, used for logging.
+        (WebCore::MediaSession::MediaSession): Don't cache client media type because it can change.
+        (WebCore::MediaSession::setState): Log state changes.
+        (WebCore::MediaSession::beginInterruption): Remember the current state in case we want to use it
+            to restore state when the interruption ends.
+        (WebCore::MediaSession::endInterruption): Resume playback if appropriate.
+        (WebCore::MediaSession::clientWillBeginPlayback): Track the client's playback state.
+        (WebCore::MediaSession::clientWillPausePlayback): Ditto.
+        (WebCore::MediaSession::mediaType): Ask client for state.
+        * platform/audio/MediaSession.h:
+
+        * platform/audio/MediaSessionManager.cpp:
+        (WebCore::MediaSessionManager::MediaSessionManager): m_interruptions -> m_interrupted.
+        (WebCore::MediaSessionManager::beginInterruption): Don't assume interruptions are always balanced.
+        (WebCore::MediaSessionManager::endInterruption): Ditto.
+        (WebCore::MediaSessionManager::addSession): 
+        (WebCore::MediaSessionManager::applicationWillEnterBackground): Interrupt client if it is not
+            allowed to play in the background.
+        (WebCore::MediaSessionManager::applicationWillEnterForeground): End client interruption if it
+            was stopped by an interruption.
+        * platform/audio/MediaSessionManager.h:
+
+        * platform/audio/ios/MediaSessionManagerIOS.h:
+        * platform/audio/ios/MediaSessionManagerIOS.mm:
+        (WebCore::MediaSessionManageriOS::~MediaSessionManageriOS): Clear the helper callback.
+        (WebCore::MediaSessionManageriOS::resetRestrictions): Mark video as not allowed to play
+            while the application is in the background. Register for application suspend/resume
+            notifications.
+        (-[WebMediaSessionHelper clearCallback]): Set _callback to nil.
+        (-[WebMediaSessionHelper applicationWillEnterForeground:]): New, notify client of application 
+            state change.
+        (-[WebMediaSessionHelper applicationWillResignActive:]): Ditto.
+
+        * platform/audio/mac/AudioDestinationMac.h: Add resumePlayback.
+
+        * testing/Internals.cpp:
+        (WebCore::Internals::applicationWillEnterForeground): New, simulate application context switch.
+        (WebCore::Internals::applicationWillEnterBackground): Ditto.
+        (WebCore::Internals::setMediaSessionRestrictions): Add "BackgroundPlaybackNotPermitted" restriction.
+        * testing/Internals.h:
+        * testing/Internals.idl:
+
 2014-02-04  Mihai Maerean  <mmaerean@adobe.com>
 
         [CSS Regions] Fix Assert SHOULD NEVER BE REACHED in RenderLayer::enclosingElement()

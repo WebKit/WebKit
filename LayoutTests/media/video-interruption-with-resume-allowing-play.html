@@ -7,33 +7,34 @@
 
             function checkState()
             {
-                consoleWrite("100ms timer fired...");
-                testExpected("video.paused", true);
-                state = "resuming";
-                run("internals.endMediaSessionInterruption('MayResumePlaying')");
-            }
-
-            function playing()
-            {
-                if (state != "resuming")
-                {
+                switch (state) {
+                case "playing":
+                    testExpected("video.paused", false);
+                    state = "interrupted";
+                    run("internals.beginMediaSessionInterruption()");;
+                    setTimeout(checkState, 100);
                     consoleWrite("");
-                    failTest("<b>Playback started during interruption.</b>");
-                    return;
+                    break;
+                case "interrupted":
+                    consoleWrite("100ms timer fired...");
+                    testExpected("video.paused", true);
+                    state = "resuming";
+                    run("internals.endMediaSessionInterruption('MayResumePlaying')");
+                    consoleWrite("");
+                    break;
+                case "resuming":
+                    testExpected("video.paused", false);
+                    consoleWrite("");
+                    endTest();
+                    break;
                 }
-
-                consoleWrite("");
-                endTest();
             }
 
             function canplaythrough()
             {
-                consoleWrite("");
-
-                run("internals.beginMediaSessionInterruption()");;
-                state = "interrupted";
+                state = "playing";
                 run("video.play()");
-                setTimeout(checkState, 100);
+                consoleWrite("");
             }
 
             function start()
@@ -45,7 +46,7 @@
 
                 findMediaElement();
                 waitForEvent('canplaythrough', canplaythrough);
-                waitForEvent('playing', playing);
+                waitForEvent('playing', checkState);
                 video.src = findMediaFile("video", "content/test");
             }
         </script>

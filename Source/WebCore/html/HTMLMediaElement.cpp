@@ -2648,8 +2648,8 @@ void HTMLMediaElement::play()
     if (ScriptController::processingUserGesture())
         removeBehaviorsRestrictionsAfterFirstUserGesture();
 
-    if (m_mediaSession->state() == MediaSession::Interrupted) {
-        m_resumePlaybackAfterInterruption = true;
+    if (!m_mediaSession->clientWillBeginPlayback()) {
+        LOG(Media, "  returning because of interruption");
         return;
     }
     
@@ -2695,11 +2695,11 @@ void HTMLMediaElement::pause()
     if (!m_mediaSession->playbackPermitted(*this))
         return;
 
-    if (m_mediaSession->state() == MediaSession::Interrupted) {
-        m_resumePlaybackAfterInterruption = false;
+    if (!m_mediaSession->clientWillPausePlayback()) {
+        LOG(Media, "  returning because of interruption");
         return;
     }
-    
+
     pauseInternal();
 }
 
@@ -4268,8 +4268,6 @@ void HTMLMediaElement::updatePlayState()
         invalidateCachedTime();
 
         if (playerPaused) {
-            m_mediaSession->clientWillBeginPlayback();
-
             if (m_mediaSession->requiresFullscreenForVideoPlayback(*this))
                 enterFullscreen();
 
@@ -4289,7 +4287,7 @@ void HTMLMediaElement::updatePlayState()
         startPlaybackProgressTimer();
         m_playing = true;
 
-    } else { // Should not be playing right now
+    } else {
         if (!playerPaused)
             m_player->pause();
         refreshCachedTime();
@@ -5762,37 +5760,25 @@ unsigned long long HTMLMediaElement::fileSize() const
 
 MediaSession::MediaType HTMLMediaElement::mediaType() const
 {
+    if (m_player && m_readyState >= HAVE_METADATA)
+        return hasVideo() ? MediaSession::Video : MediaSession::Audio;
+
     if (hasTagName(HTMLNames::videoTag))
         return MediaSession::Video;
 
     return MediaSession::Audio;
 }
 
-void HTMLMediaElement::beginInterruption()
-{
-    LOG(Media, "HTMLMediaElement::beginInterruption");
-    
-    m_resumePlaybackAfterInterruption = !paused();
-    if (m_resumePlaybackAfterInterruption)
-        pause();
-}
-
-void HTMLMediaElement::endInterruption(MediaSession::EndInterruptionFlags flags)
-{
-    bool shouldResumePlayback = m_resumePlaybackAfterInterruption;
-    m_resumePlaybackAfterInterruption = false;
-
-    if (!flags & MediaSession::MayResumePlaying)
-        return;
-
-    if (shouldResumePlayback)
-        play();
-}
-
 void HTMLMediaElement::pausePlayback()
 {
     if (!paused())
         pause();
+}
+
+void HTMLMediaElement::resumePlayback()
+{
+    if (paused())
+        play();
 }
 
 }
