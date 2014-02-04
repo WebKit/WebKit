@@ -1,3 +1,12 @@
+2014-02-03  Filip Pizlo  <fpizlo@apple.com>
+
+        Lift the FTL tier-up threshold from 25000 to 100000
+        https://bugs.webkit.org/show_bug.cgi?id=128158
+
+        Rubber stamped by Michael Saboff.
+
+        * runtime/Options.h:
+
 2014-02-03  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         LLInt: Regex for pseudo-instructions is too big

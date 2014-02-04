@@ -192,7 +192,7 @@ typedef OptionRange optionRange;
     v(int32, executionCounterIncrementForLoop, 1) \
     v(int32, executionCounterIncrementForEntry, 15) \
     \
-    v(int32, thresholdForFTLOptimizeAfterWarmUp, 25000) \
+    v(int32, thresholdForFTLOptimizeAfterWarmUp, 100000) \
     v(int32, thresholdForFTLOptimizeSoon, 1000) \
     v(int32, ftlTierUpCounterIncrementForLoop, 1) \
     v(int32, ftlTierUpCounterIncrementForReturn, 15) \
