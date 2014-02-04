@@ -95,6 +95,7 @@ void DefaultGCActivityCallback::doWork()
         return;
     }
 #endif
+    heap->gcTimerDidFire();
     heap->collect();
 }
     

@@ -147,6 +147,7 @@ namespace JSC {
 
         JS_EXPORT_PRIVATE void collectAllGarbage();
         bool shouldCollect();
+        void gcTimerDidFire() { m_shouldDoFullCollection = true; }
         void collect();
         bool collectIfNecessaryOrDefer(); // Returns true if it did collect.
 

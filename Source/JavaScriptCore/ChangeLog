@@ -1,3 +1,23 @@
+2014-02-04  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        GC timer should always do a FullCollection
+        https://bugs.webkit.org/show_bug.cgi?id=128186
+
+        Reviewed by Michael Saboff.
+
+        Right now the GC timer does whatever type of collection the next collection 
+        would have been, which is almost always an EdenCollection. It then thinks 
+        that it has done all of the work it was supposed to do and never schedules 
+        another GC. Ideally we'd like to have some heuristics for the timer that 
+        would schedule both EdenCollections and FullCollections, but the easiest 
+        fix for now is to always do FullCollections since that will at least be 
+        a non-regression.
+
+        * heap/Heap.h:
+        (JSC::Heap::gcTimerDidFire):
+        * runtime/GCActivityCallback.cpp:
+        (JSC::DefaultGCActivityCallback::doWork):
+
 2014-02-03  Filip Pizlo  <fpizlo@apple.com>
 
         Lift the FTL tier-up threshold from 25000 to 100000
