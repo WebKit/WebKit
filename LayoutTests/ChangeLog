@@ -1,3 +1,12 @@
+2014-02-04  Andrzej Badowski  <a.badowski@samsung.com>
+
+        [EFL] Add expectations for two flaky media layout tests
+        https://bugs.webkit.org/show_bug.cgi?id=127994
+
+        Unreviewed EFL gardening.
+
+        * platform/efl/TestExpectations:
+
 2014-02-04  Mihai Maerean  <mmaerean@adobe.com>
 
         [CSS Regions] Fix Assert SHOULD NEVER BE REACHED in RenderLayer::enclosingElement()
