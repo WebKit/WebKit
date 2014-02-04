@@ -1,3 +1,12 @@
+2014-02-03  Gustavo Noronha Silva  <gns@gnome.org>
+
+        [GTK][CMake] Enable SUBPIXEL_LAYOUT in FeatureDefines.h like EFL does
+        https://bugs.webkit.org/show_bug.cgi?id=128136
+
+        Reviewed by Martin Robinson.
+
+        * wtf/FeatureDefines.h: enable SUBPIXEL_LAYOUT if it's not set, for GTK+.
+
 2014-02-03  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Turn GenGC on
