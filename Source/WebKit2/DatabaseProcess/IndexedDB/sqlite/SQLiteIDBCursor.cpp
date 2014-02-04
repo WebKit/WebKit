@@ -64,7 +64,7 @@ SQLiteIDBCursor::SQLiteIDBCursor(SQLiteIDBTransaction* transaction, const IDBIde
     ASSERT(m_objectStoreID);
 }
 
-static const String& getIndexStatement(bool lowerKey, bool lowerOpen, bool upperKey, bool upperOpen, bool descending)
+static const String& getIndexStatement(bool hasLowerKey, bool isLowerOpen, bool hasUpperKey, bool isUpperOpen, bool descending)
 {
     DEFINE_STATIC_LOCAL(Vector<String>, indexStatements, ());
 
@@ -74,10 +74,10 @@ static const String& getIndexStatement(bool lowerKey, bool lowerOpen, bool upper
         // No lower key statements (6)
         indexStatements.append(ASCIILiteral("SELECT key, value FROM IndexRecords WHERE indexID = ? ORDER BY key;"));
         indexStatements.append(ASCIILiteral("SELECT key, value FROM IndexRecords WHERE indexID = ? ORDER BY key DESC;"));
-        indexStatements.append(ASCIILiteral("SELECT key, value FROM IndexRecords WHERE indexID = ? AND key < CAST(? AS TEXT) ORDER BY key;"));
-        indexStatements.append(ASCIILiteral("SELECT key, value FROM IndexRecords WHERE indexID = ? AND key < CAST(? AS TEXT) ORDER BY key DESC;"));
         indexStatements.append(ASCIILiteral("SELECT key, value FROM IndexRecords WHERE indexID = ? AND key <= CAST(? AS TEXT) ORDER BY key;"));
         indexStatements.append(ASCIILiteral("SELECT key, value FROM IndexRecords WHERE indexID = ? AND key <= CAST(? AS TEXT) ORDER BY key DESC;"));
+        indexStatements.append(ASCIILiteral("SELECT key, value FROM IndexRecords WHERE indexID = ? AND key < CAST(? AS TEXT) ORDER BY key;"));
+        indexStatements.append(ASCIILiteral("SELECT key, value FROM IndexRecords WHERE indexID = ? AND key < CAST(? AS TEXT) ORDER BY key DESC;"));
 
         // Closed lower key statements (6)
         indexStatements.append(ASCIILiteral("SELECT key, value FROM IndexRecords WHERE indexID = ? AND key >= CAST(? AS TEXT) ORDER BY key;"));
@@ -97,14 +97,19 @@ static const String& getIndexStatement(bool lowerKey, bool lowerOpen, bool upper
     }
 
     size_t i = 0;
-    if (lowerKey)
+
+    if (hasLowerKey) {
         i += 6;
-    if (lowerOpen)
-        i += 6;
-    if (upperKey)
+        if (isLowerOpen)
+            i += 6;
+    }
+
+    if (hasUpperKey) {
         i += 2;
-    if (upperOpen)
-        i += 2;
+        if (isUpperOpen)
+            i += 2;
+    }
+
     if (descending)
         i += 1;
 
@@ -144,14 +149,19 @@ static const String& getObjectStoreStatement(bool lowerKey, bool lowerOpen, bool
     }
 
     size_t i = 0;
-    if (lowerKey)
+
+    if (hasLowerKey) {
         i += 6;
-    if (lowerOpen)
-        i += 6;
-    if (upperKey)
+        if (isLowerOpen)
+            i += 6;
+    }
+
+    if (hasUpperKey) {
         i += 2;
-    if (upperOpen)
-        i += 2;
+        if (isUpperOpen)
+            i += 2;
+    }
+
     if (descending)
         i += 1;
 

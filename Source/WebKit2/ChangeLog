@@ -1,3 +1,15 @@
+2014-02-03  Brady Eidson  <beidson@apple.com>
+
+        IDB: HTML5 Rocks Indexed Database demo fails
+        https://bugs.webkit.org/show_bug.cgi?id=128157
+
+        Reviewed by Anders Carlsson (Provisional review by Jon Lee)
+
+        * DatabaseProcess/IndexedDB/sqlite/SQLiteIDBCursor.cpp:
+        (WebKit::getIndexStatement): Only increment the open/closed counters if those keys exist.
+          Fix order of statements for no lower key.
+        (WebKit::getObjectStoreStatement): Only increment the open/closed counters if those keys exist.
+
 2014-02-03  Jae Hyun Park  <jae.park@company100.net>
 
         Use nullptr in ShareableBitmap
