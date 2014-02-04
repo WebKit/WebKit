@@ -76,7 +76,11 @@ def main():
         "DumpRenderTree",
         "TestWebKitAPI Web Content",
         "TestWebKitAPI",
-        "WebKitPluginAgen", # FIXME: Why no 't'?
+        "PluginProcess",
+        "com.apple.WebKit.Plugin.64",
+        "com.apple.WebKit.Plugin.32",
+        "com.apple.WebKit.PluginProcess",
+        "com.apple.WebKit.PluginProcess.Development"
         "WebKitTestRunner Web Content",
         "WebKitTestRunner",
         "WebProcess",

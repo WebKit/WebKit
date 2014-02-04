@@ -1,3 +1,15 @@
+2014-02-03  Ryosuke Niwa  <rniwa@webkit.org>
+
+        kill-old-processes doesn't kill plugin processes
+        https://bugs.webkit.org/show_bug.cgi?id=128138
+
+        Reviewed by Andreas Kling.
+
+        Add plugin process names to the list of processes to kill.
+
+        * BuildSlaveSupport/kill-old-processes:
+        (main):
+
 2014-02-03  Dean Jackson  <dino@apple.com>
 
         Feature flag for shape-inside
