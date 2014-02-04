@@ -120,28 +120,24 @@ CGColorSpaceRef linearRGBColorSpaceRef()
 }
 #endif
 
-#if !PLATFORM(IOS)
-void GraphicsContext::platformInit(CGContextRef cgContext)
-#else
 void GraphicsContext::platformInit(CGContextRef cgContext, bool shouldUseContextColors)
-#endif
 {
     m_data = new GraphicsContextPlatformPrivate(cgContext);
     setPaintingDisabled(!cgContext);
-#if !PLATFORM(IOS)
     if (cgContext) {
+        CGAffineTransform baseDeviceMatrix = CGContextGetUserSpaceToDeviceSpaceTransform(cgContext);
+        ASSERT(fabs(baseDeviceMatrix.a) == fabs(baseDeviceMatrix.d));
+        m_pixelSnappingFactor = baseDeviceMatrix.a;
+#if PLATFORM(IOS)
+        m_state.shouldUseContextColors = shouldUseContextColors;
+        if (shouldUseContextColors) {
 #else
-    m_state.shouldUseContextColors = shouldUseContextColors;
-    if (cgContext && shouldUseContextColors) {
+        UNUSED_PARAM(shouldUseContextColors);
 #endif
         // Make sure the context starts in sync with our state.
         setPlatformFillColor(fillColor(), fillColorSpace());
         setPlatformStrokeColor(strokeColor(), strokeColorSpace());
     }
-
-    CGAffineTransform baseDeviceMatrix = CGContextGetUserSpaceToDeviceSpaceTransform(cgContext);
-    ASSERT(fabs(baseDeviceMatrix.a) == fabs(baseDeviceMatrix.d));
-    m_pixelSnappingFactor = baseDeviceMatrix.a;
 }
 
 void GraphicsContext::platformDestroy()

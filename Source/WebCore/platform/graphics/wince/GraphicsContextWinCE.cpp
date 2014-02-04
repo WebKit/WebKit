@@ -587,7 +587,7 @@ private:
 };
 
 
-void GraphicsContext::platformInit(PlatformGraphicsContext* dc)
+void GraphicsContext::platformInit(PlatformGraphicsContext* dc, bool)
 {
     m_data = new GraphicsContextPlatformPrivate(dc);
 }

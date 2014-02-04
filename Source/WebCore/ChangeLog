@@ -1,3 +1,20 @@
+2014-02-03  Zalan Bujtas  <zalan@apple.com>
+
+        Subpixel rendering: Do not query the scaling factor when the graphics context is invalid.
+        https://bugs.webkit.org/show_bug.cgi?id=128131
+
+        Reviewed by Simon Fraser.
+
+        No existing context to test it.
+
+        * platform/graphics/GraphicsContext.h:
+        * platform/graphics/cairo/GraphicsContextCairo.cpp:
+        (WebCore::GraphicsContext::platformInit):
+        * platform/graphics/cg/GraphicsContextCG.cpp:
+        (WebCore::GraphicsContext::platformInit):
+        * platform/graphics/wince/GraphicsContextWinCE.cpp:
+        (WebCore::GraphicsContext::platformInit):
+
 2014-02-03  Hunseop Jeong  <hs85.jeong@samsung.com>
 
         [Cairo] GraphicsContext::m_pixelSnappingFactor is uninitialized

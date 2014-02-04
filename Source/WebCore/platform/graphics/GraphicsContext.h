@@ -536,11 +536,7 @@ namespace WebCore {
         static void adjustLineToPixelBoundaries(FloatPoint& p1, FloatPoint& p2, float strokeWidth, StrokeStyle);
 
     private:
-#if !PLATFORM(IOS)
-        void platformInit(PlatformGraphicsContext*);
-#else
-        void platformInit(PlatformGraphicsContext*, bool shouldUseContextColors);
-#endif
+        void platformInit(PlatformGraphicsContext*, bool shouldUseContextColors = false);
         void platformDestroy();
 
 #if PLATFORM(WIN) && !USE(WINGDI)
