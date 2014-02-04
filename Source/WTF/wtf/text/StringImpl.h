@@ -778,7 +778,12 @@ private:
     template<typename T>
     static ptrdiff_t tailOffset()
     {
+#if COMPILER(MSVC)
+        // MSVC doesn't support alignof yet.
         return roundUpToMultipleOf<alignof(T)>(sizeof(StringImpl));
+#else
+        return roundUpToMultipleOf<__alignof(T)>(offsetof(StringImpl, m_hashAndFlags) + sizeof(StringImpl::m_hashAndFlags));
+#endif
     }
 
     template<typename T>
