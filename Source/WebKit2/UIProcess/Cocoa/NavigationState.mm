@@ -310,15 +310,17 @@ void NavigationState::willChangeIsLoading()
 
 void NavigationState::didChangeIsLoading()
 {
-    [m_webView willChangeValueForKey:@"loading"];
+    [m_webView didChangeValueForKey:@"loading"];
 }
 
 void NavigationState::willChangeTitle()
 {
+    [m_webView willChangeValueForKey:@"title"];
 }
 
 void NavigationState::didChangeTitle()
 {
+    [m_webView didChangeValueForKey:@"title"];
 }
 
 void NavigationState::willChangeActiveURL()
@@ -331,10 +333,12 @@ void NavigationState::didChangeActiveURL()
 
 void NavigationState::willChangeHasOnlySecureContent()
 {
+    [m_webView willChangeValueForKey:@"hasOnlySecureContent"];
 }
 
 void NavigationState::didChangeHasOnlySecureContent()
 {
+    [m_webView didChangeValueForKey:@"hasOnlySecureContent"];
 }
 
 void NavigationState::willChangeEstimatedProgress()

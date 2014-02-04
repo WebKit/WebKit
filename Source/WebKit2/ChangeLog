@@ -1,3 +1,21 @@
+2014-02-03  Anders Carlsson  <andersca@apple.com>
+
+        Add title and hasOnlySecureContent properties to WKWebView
+        https://bugs.webkit.org/show_bug.cgi?id=128152
+
+        Reviewed by Dan Bernstein.
+
+        * UIProcess/API/Cocoa/WKWebView.h:
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView title]):
+        (-[WKWebView hasOnlySecureContent]):
+        * UIProcess/Cocoa/NavigationState.mm:
+        (WebKit::NavigationState::didChangeIsLoading):
+        (WebKit::NavigationState::willChangeTitle):
+        (WebKit::NavigationState::didChangeTitle):
+        (WebKit::NavigationState::willChangeHasOnlySecureContent):
+        (WebKit::NavigationState::didChangeHasOnlySecureContent):
+
 2014-02-03  Sam Weinig  <sam@webkit.org>
 
         Fix spelling.
