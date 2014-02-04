@@ -63,7 +63,7 @@ PassRefPtr<ShareableBitmap> ShareableBitmap::create(const IntSize& size, Flags f
     
     void* data = 0;
     if (!tryFastMalloc(numBytes).getValue(data))
-        return 0;
+        return nullptr;
 
     return adoptRef(new ShareableBitmap(size, flags, data));
 }
@@ -74,7 +74,7 @@ PassRefPtr<ShareableBitmap> ShareableBitmap::createShareable(const IntSize& size
 
     RefPtr<SharedMemory> sharedMemory = SharedMemory::create(numBytes);
     if (!sharedMemory)
-        return 0;
+        return nullptr;
 
     return adoptRef(new ShareableBitmap(size, flags, sharedMemory));
 }
@@ -94,7 +94,7 @@ PassRefPtr<ShareableBitmap> ShareableBitmap::create(const Handle& handle, Shared
     // Create the shared memory.
     RefPtr<SharedMemory> sharedMemory = SharedMemory::create(handle.m_handle, protection);
     if (!sharedMemory)
-        return 0;
+        return nullptr;
 
     return create(handle.m_size, handle.m_flags, sharedMemory.release());
 }

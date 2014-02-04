@@ -1,3 +1,14 @@
+2014-02-03  Jae Hyun Park  <jae.park@company100.net>
+
+        Use nullptr in ShareableBitmap
+        https://bugs.webkit.org/show_bug.cgi?id=128153
+
+        Reviewed by Gyuyoung Kim.
+
+        * Shared/ShareableBitmap.cpp:
+        (WebKit::ShareableBitmap::create):
+        (WebKit::ShareableBitmap::createShareable):
+
 2014-02-03  Anders Carlsson  <andersca@apple.com>
 
         Add title and hasOnlySecureContent properties to WKWebView
