@@ -70,6 +70,12 @@ namespace WebKit {
 #define DEFAULT_VIDEO_PLUGIN_PROXY_ENABLED false
 #endif
 
+#if PLATFORM(IOS)
+#define DEFAULT_CANVAS_USES_ACCELERATED_DRAWING false
+#else
+#define DEFAULT_CANVAS_USES_ACCELERATED_DRAWING true
+#endif
+
 #define FOR_EACH_WEBKIT_BOOL_PREFERENCE(macro) \
     macro(JavaScriptEnabled, javaScriptEnabled, Bool, bool, true) \
     macro(JavaScriptMarkupEnabled, javaScriptMarkupEnabled, Bool, bool, true) \
@@ -93,7 +99,7 @@ namespace WebKit {
     macro(AcceleratedCompositingEnabled, acceleratedCompositingEnabled, Bool, bool, true) \
     macro(ForceCompositingMode, forceCompositingMode, Bool, bool, false) \
     macro(AcceleratedDrawingEnabled, acceleratedDrawingEnabled, Bool, bool, false) \
-    macro(CanvasUsesAcceleratedDrawing, canvasUsesAcceleratedDrawing, Bool, bool, true) \
+    macro(CanvasUsesAcceleratedDrawing, canvasUsesAcceleratedDrawing, Bool, bool, DEFAULT_CANVAS_USES_ACCELERATED_DRAWING) \
     macro(CompositingBordersVisible, compositingBordersVisible, Bool, bool, false) \
     macro(CompositingRepaintCountersVisible, compositingRepaintCountersVisible, Bool, bool, false) \
     macro(TiledScrollingIndicatorVisible, tiledScrollingIndicatorVisible, Bool, bool, false) \

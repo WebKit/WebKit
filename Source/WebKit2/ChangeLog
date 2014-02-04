@@ -1,3 +1,13 @@
+2014-02-03  Tim Horton  <timothy_horton@apple.com>
+
+        [iOS][wk2] Temporarily disable accelerated drawing for canvas
+        https://bugs.webkit.org/show_bug.cgi?id=128147
+
+        Reviewed by Simon Fraser.
+
+        * Shared/WebPreferencesStore.h:
+        Temporarily disable accelerated canvas for WebKit2 on iOS.
+
 2014-02-03  Anders Carlsson  <andersca@apple.com>
 
         Add loading property to WKWebView
