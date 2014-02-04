@@ -96,10 +96,10 @@ private:
         {
         }
 
-        uint32_t totalLength;
+        uint64_t totalLength;
         DwarfFormat format;
         uint16_t version;
-        size_t prologueLength;
+        uint64_t prologueLength;
         uint8_t minimumInstructionLength;
         uint8_t defaultIsStatement;
         int8_t lineBase;

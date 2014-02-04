@@ -1,3 +1,9 @@
+2014-02-04  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Fix a mismatch of uint64_t and size_t on 32-bit platforms.
+
+        * ftl/FTLDWARFDebugLineInfo.h:
+
 2014-01-21  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         JSC needs to be able to parse DWARF debug_line info
