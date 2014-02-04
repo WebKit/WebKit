@@ -153,13 +153,13 @@ def isRegister(token)
 end
 
 def isInstruction(token)
-    token =~ INSTRUCTION_PATTERN
+    INSTRUCTION_SET.member? token.string
 end
 
 def isKeyword(token)
     token =~ /\A((true)|(false)|(if)|(then)|(else)|(elsif)|(end)|(and)|(or)|(not)|(macro)|(const)|(sizeof)|(error)|(include))\Z/ or
         token =~ REGISTER_PATTERN or
-        token =~ INSTRUCTION_PATTERN
+        isInstruction(token)
 end
 
 def isIdentifier(token)

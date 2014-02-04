@@ -22,6 +22,7 @@
 # THE POSSIBILITY OF SUCH DAMAGE.
 
 require "config"
+require "set"
 
 # Interesting invariant, which we take advantage of: branching instructions
 # always begin with "b", and no non-branching instructions begin with "b".
@@ -321,7 +322,7 @@ CXX_INSTRUCTIONS =
 
 INSTRUCTIONS = MACRO_INSTRUCTIONS + X86_INSTRUCTIONS + ARM_INSTRUCTIONS + ARM64_INSTRUCTIONS + RISC_INSTRUCTIONS + MIPS_INSTRUCTIONS + SH4_INSTRUCTIONS + CXX_INSTRUCTIONS
 
-INSTRUCTION_PATTERN = Regexp.new('\\A((' + INSTRUCTIONS.join(')|(') + '))\\Z')
+INSTRUCTION_SET = INSTRUCTIONS.to_set
 
 def isBranch(instruction)
     instruction =~ /^b/

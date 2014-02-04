@@ -1,3 +1,13 @@
+2014-02-03  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        LLInt: Regex for pseudo-instructions is too big
+        https://bugs.webkit.org/show_bug.cgi?id=128148
+
+        Reviewed by Mark Lam.
+
+        * offlineasm/instructions.rb:
+        * offlineasm/parser.rb:
+
 2014-02-03  Brian Burg  <bburg@apple.com>
 
         Web Replay: upstream base input classes and the input cursor interface
