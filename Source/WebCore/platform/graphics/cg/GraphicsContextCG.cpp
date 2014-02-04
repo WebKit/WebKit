@@ -137,6 +137,9 @@ void GraphicsContext::platformInit(CGContextRef cgContext, bool shouldUseContext
         // Make sure the context starts in sync with our state.
         setPlatformFillColor(fillColor(), fillColorSpace());
         setPlatformStrokeColor(strokeColor(), strokeColorSpace());
+#if PLATFORM(IOS)
+        }
+#endif
     }
 }
 

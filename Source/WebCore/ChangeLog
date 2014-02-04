@@ -1,3 +1,10 @@
+2014-02-04  Dan Bernstein  <mitz@apple.com>
+
+        iOS build fix.
+
+        * platform/graphics/cg/GraphicsContextCG.cpp:
+        (WebCore::GraphicsContext::platformInit):
+
 2014-02-03  Zan Dobersek  <zdobersek@igalia.com>
 
         Manage MediaQuery and MediaQueryExp classes through std::unique_ptr instead of OwnPtr
