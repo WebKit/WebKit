@@ -679,6 +679,18 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
         [_actionSheetAssistant updateSheetPosition];
 }
 
+- (void)_willStartScrollingOrZooming
+{
+    [_webSelectionAssistant willStartScrollingOrZoomingPage];
+    [_textSelectionAssistant willStartScrollingOverflow];
+}
+
+- (void)_didEndScrollingOrZooming
+{
+    [_webSelectionAssistant didEndScrollingOrZoomingPage];
+    [_textSelectionAssistant didEndScrollingOverflow];
+}
+
 - (UIView *)inputAccessoryView
 {
     if (!_isEditable)

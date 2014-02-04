@@ -271,6 +271,12 @@ static _UIWebViewportConfiguration standardViewportConfiguration = { { UIWebView
 {
     if (scrollView.pinchGestureRecognizer.state == UIGestureRecognizerStateBegan)
         _userHasChangedPageScale = YES;
+    [_contentView willStartZoomOrScroll];
+}
+
+- (void)scrollViewWillBeginDragging:(UIScrollView *)scrollView
+{
+    [_contentView willStartZoomOrScroll];
 }
 
 - (void)_didFinishScroll

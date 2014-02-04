@@ -215,6 +215,7 @@ using namespace WebKit;
     _page->didFinishScrolling(contentOffset);
     [self _updateViewExposedRect];
     [self _updateFixedPositionRect];
+    [_interactionView _didEndScrollingOrZooming];
 }
 
 - (void)didScrollTo:(CGPoint)contentOffset
@@ -225,11 +226,17 @@ using namespace WebKit;
     _page->scrollingCoordinatorProxy()->scrollPositionChangedViaDelegatedScrolling(_page->scrollingCoordinatorProxy()->rootScrollingNodeID(), roundedIntPoint(contentOffset));
 }
 
+- (void)willStartZoomOrScroll
+{
+    [_interactionView _willStartScrollingOrZooming];
+}
+
 - (void)didZoomToScale:(CGFloat)scale
 {
     _page->didFinishZooming(scale);
     [self _updateViewExposedRect];
     [self _updateFixedPositionRect];
+    [_interactionView _didEndScrollingOrZooming];
 }
 
 #pragma mark Internal

@@ -1,3 +1,32 @@
+2014-02-04  Enrica Casucci  <enrica@apple.com>
+
+        WK2: Selection callout bar does not scroll with the selection.
+        https://bugs.webkit.org/show_bug.cgi?id=128142
+        <rdar://problem/15970812>
+
+        Reviewed by Benjamin Poulain.
+
+        Adding notifications to WKContentView to all the delegates
+        for scrolling and zooming to let WKInteractionView about it.
+        This allows the interaction assistants to hide the callout
+        while scrolling or zooming and to fade it in again at the end.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView scrollViewWillBeginZooming:withView:]):
+        (-[WKWebView scrollViewWillBeginDragging:]):
+        * UIProcess/API/ios/WKContentView.h:
+        * UIProcess/API/ios/WKContentView.mm:
+        (-[WKContentView didFinishScrollTo:]):
+        (-[WKContentView willStartZoomOrScroll]):
+        (-[WKContentView didZoomToScale:]):
+        * UIProcess/API/ios/WKInteractionView.h:
+        * UIProcess/API/ios/WKInteractionView.mm:
+        (-[WKInteractionView _willStartScrollingOrZooming]):
+        (-[WKInteractionView _didEndScrollingOrZooming]):
+        * UIProcess/API/ios/WKViewIOS.mm:
+        (-[WKView scrollViewWillBeginZooming:withView:]):
+        (-[WKView scrollViewWillBeginDragging:]):
+
 2014-02-04  Tamas Gergely  <tgergely.u-szeged@partner.samsung.com>
 
         Code cleanup: remove leftover occurrence of ENABLE(GESTURE_EVENTS)

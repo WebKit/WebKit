@@ -70,5 +70,6 @@ WK_API_CLASS
 - (void)didFinishScrollTo:(CGPoint)contentOffset;
 - (void)didScrollTo:(CGPoint)contentOffset;
 - (void)didZoomToScale:(CGFloat)scale;
+- (void)willStartZoomOrScroll;
 
 @end

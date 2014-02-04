@@ -191,6 +191,12 @@ static struct _UIWebViewportConfiguration standardViewportConfiguration = { { UI
 {
     if (scrollView.pinchGestureRecognizer.state == UIGestureRecognizerStateBegan)
         _userHasChangedPageScale = YES;
+    [_contentView willStartZoomOrScroll];
+}
+
+- (void)scrollViewWillBeginDragging:(UIScrollView *)scrollView
+{
+    [_contentView willStartZoomOrScroll];
 }
 
 - (void)_didFinishScroll

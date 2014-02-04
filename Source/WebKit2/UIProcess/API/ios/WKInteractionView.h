@@ -63,6 +63,7 @@ struct InteractionInformationAtPosition;
 - (void)_attemptClickAtLocation:(CGPoint)location;
 - (void)_updatePositionInformation;
 - (void)_performAction:(WebKit::WKSheetActions)action;
-
+- (void)_willStartScrollingOrZooming;
+- (void)_didEndScrollingOrZooming;
 @property (readonly, nonatomic) WebKit::InteractionInformationAtPosition positionInformation;
 @end
