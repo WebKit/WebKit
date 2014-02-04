@@ -1,3 +1,15 @@
+2014-02-04  Radu Stavila  <stavila@adobe.com>
+
+        REGRESSION (r159609): Images are corrupted when hovering over buttons @ github.com
+        https://bugs.webkit.org/show_bug.cgi?id=127729
+
+        Reviewed by Antti Koivisto.
+
+        Added test for the correct repainting of buttons with border radius when hovering.
+
+        * fast/regions/repaint/hover-border-radius-expected.txt: Added.
+        * fast/regions/repaint/hover-border-radius.html: Added.
+
 2014-02-04  Andrzej Badowski  <a.badowski@samsung.com>
 
         [EFL] Add expectations for two flaky media layout tests

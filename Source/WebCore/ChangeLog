@@ -1,3 +1,20 @@
+2014-02-04  Radu Stavila  <stavila@adobe.com>
+
+        REGRESSION (r159609): Images are corrupted when hovering over buttons @ github.com
+        https://bugs.webkit.org/show_bug.cgi?id=127729
+
+        Reviewed by Antti Koivisto.
+
+        When clipping a rect, the RenderLayer would not properly save the context when
+        the clipping rect is the same as the paint rect and the clipping rect
+        has radius.
+
+        Test: fast/regions/repaint/hover-border-radius.html
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::clipToRect):
+        (WebCore::RenderLayer::restoreClip):
+
 2014-02-04  Ryuan Choi  <ryuan.choi@samsung.com>
 
         [CMAKE] Remove workaround for GCC 4.6
