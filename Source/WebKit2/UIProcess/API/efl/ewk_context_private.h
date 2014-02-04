@@ -88,6 +88,11 @@ public:
 
     JSGlobalContextRef jsGlobalContext();
 
+    static void didReceiveMessageFromInjectedBundle(WKContextRef, WKStringRef messageName, WKTypeRef messageBody, const void* clientInfo);
+    static void didReceiveSynchronousMessageFromInjectedBundle(WKContextRef, WKStringRef messageName, WKTypeRef messageBody, WKTypeRef* returnData, const void* clientInfo);
+    void setMessageFromInjectedBundleCallback(Ewk_Context_Message_From_Injected_Bundle_Cb, void*);
+    void processReceivedMessageFromInjectedBundle(WKStringRef messageName, WKTypeRef messageBody, WKTypeRef* returnData);
+
 private:
     explicit EwkContext(WKContextRef);
 
@@ -111,6 +116,11 @@ private:
     std::unique_ptr<WebKit::ContextHistoryClientEfl> m_historyClient;
 
     JSGlobalContextRef m_jsGlobalContext;
+
+    struct {
+        Ewk_Context_Message_From_Injected_Bundle_Cb callback;
+        void* userData;
+    } m_callbackForMessageFromInjectedBundle;
 };
 
 #endif // ewk_context_private_h

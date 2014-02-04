@@ -94,6 +94,9 @@ EwkContext::EwkContext(WKContextRef context)
     // independently of checking spelling while typing setting.
     TextCheckerClientEfl::instance().ensureSpellCheckingLanguage();
 #endif
+
+    m_callbackForMessageFromInjectedBundle.callback = nullptr;
+    m_callbackForMessageFromInjectedBundle.userData = nullptr;
 }
 
 EwkContext::~EwkContext()
@@ -291,6 +294,66 @@ ContextHistoryClientEfl* EwkContext::historyClient()
     return m_historyClient.get();
 }
 
+static inline EwkContext* toEwkContext(const void* clientInfo)
+{
+    return static_cast<EwkContext*>(const_cast<void*>(clientInfo));
+}
+
+void EwkContext::didReceiveMessageFromInjectedBundle(WKContextRef, WKStringRef messageName, WKTypeRef messageBody, const void* clientInfo)
+{
+    toEwkContext(clientInfo)->processReceivedMessageFromInjectedBundle(messageName, messageBody, nullptr);
+}
+
+void EwkContext::didReceiveSynchronousMessageFromInjectedBundle(WKContextRef, WKStringRef messageName, WKTypeRef messageBody, WKTypeRef* returnData, const void* clientInfo)
+{
+    toEwkContext(clientInfo)->processReceivedMessageFromInjectedBundle(messageName, messageBody, returnData);
+}
+
+void EwkContext::setMessageFromInjectedBundleCallback(Ewk_Context_Message_From_Injected_Bundle_Cb callback, void* userData)
+{
+    m_callbackForMessageFromInjectedBundle.userData = userData;
+
+    if (m_callbackForMessageFromInjectedBundle.callback == callback)
+        return;
+
+    if (!m_callbackForMessageFromInjectedBundle.callback) {
+        WKContextInjectedBundleClientV1 client;
+        memset(&client, 0, sizeof(client));
+
+        client.base.version = 1;
+        client.base.clientInfo = this;
+        client.didReceiveMessageFromInjectedBundle = didReceiveMessageFromInjectedBundle;
+        client.didReceiveSynchronousMessageFromInjectedBundle = didReceiveSynchronousMessageFromInjectedBundle;
+
+        WKContextSetInjectedBundleClient(m_context.get(), &client.base);
+    } else if (!callback)
+        WKContextSetInjectedBundleClient(m_context.get(), nullptr);
+
+    m_callbackForMessageFromInjectedBundle.callback = callback;
+}
+
+void EwkContext::processReceivedMessageFromInjectedBundle(WKStringRef messageName, WKTypeRef messageBody, WKTypeRef* returnData)
+{
+    if (!m_callbackForMessageFromInjectedBundle.callback)
+        return;
+
+    CString name = toImpl(messageName)->string().utf8();
+    CString body;
+    if (messageBody && WKStringGetTypeID() == WKGetTypeID(messageBody))
+        body = toImpl(static_cast<WKStringRef>(messageBody))->string().utf8();
+
+    if (returnData) {
+        char* returnString = nullptr;
+        m_callbackForMessageFromInjectedBundle.callback(name.data(), body.data(), &returnString, m_callbackForMessageFromInjectedBundle.userData);
+        if (returnString) {
+            *returnData = WKStringCreateWithUTF8CString(returnString);
+            free(returnString);
+        } else
+            *returnData = WKStringCreateWithUTF8CString("");
+    } else
+        m_callbackForMessageFromInjectedBundle.callback(name.data(), body.data(), nullptr, m_callbackForMessageFromInjectedBundle.userData);
+}
+
 Ewk_Context* ewk_context_default_get()
 {
     return EwkContext::defaultContext();
@@ -372,3 +435,20 @@ void ewk_context_resource_cache_clear(Ewk_Context* ewkContext)
     impl->clearResourceCache();
 }
 
+void ewk_context_message_post_to_injected_bundle(Ewk_Context* ewkContext, const char* name, const char* body)
+{
+    EWK_OBJ_GET_IMPL_OR_RETURN(EwkContext, ewkContext, impl);
+    EINA_SAFETY_ON_NULL_RETURN(name);
+    EINA_SAFETY_ON_NULL_RETURN(body);
+
+    WKRetainPtr<WKStringRef> messageName(AdoptWK, WKStringCreateWithUTF8CString(name));
+    WKRetainPtr<WKStringRef> messageBody(AdoptWK, WKStringCreateWithUTF8CString(body));
+    WKContextPostMessageToInjectedBundle(impl->wkContext(), messageName.get(), messageBody.get());
+}
+
+void ewk_context_message_from_injected_bundle_callback_set(Ewk_Context* ewkContext, Ewk_Context_Message_From_Injected_Bundle_Cb callback, void* userData)
+{
+    EWK_OBJ_GET_IMPL_OR_RETURN(EwkContext, ewkContext, impl);
+
+    impl->setMessageFromInjectedBundleCallback(callback, userData);
+}

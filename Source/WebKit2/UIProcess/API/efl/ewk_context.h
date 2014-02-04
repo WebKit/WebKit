@@ -112,6 +112,19 @@ typedef void (*Ewk_History_Title_Update_Cb)(const Evas_Object *view, const char 
 typedef void (*Ewk_History_Populate_Visited_Links_Cb)(void *user_data);
 
 /**
+ * Callback for didReceiveMessageFromInjectedBundle and didReceiveSynchronousMessageFromInjectedBundle
+ *
+ * User should allocate new string for return_data before setting it.
+ * The return_data string will be freed on WebKit side.
+ *
+ * @param name name of message from injected bundle
+ * @param body body of message from injected bundle
+ * @param return_data return_data string from application
+ * @param user_data user_data will be passsed when receiving message from injected bundle
+ */
+typedef void (*Ewk_Context_Message_From_Injected_Bundle_Cb)(const char *name, const char *body, char **return_data, void *user_data);
+
+/**
  * Gets default Ewk_Context instance.
  *
  * The returned Ewk_Context object @b should not be unref'ed if application
@@ -318,6 +331,26 @@ EAPI Eina_Bool ewk_context_additional_plugin_path_set(Ewk_Context *context, cons
  * @param context context object to clear all resource caches
  */
 EAPI void ewk_context_resource_cache_clear(Ewk_Context *context);
+
+/**
+ * Posts message to injected bundle.
+ *
+ * @param context context object to post message to injected bundle
+ * @param name message name
+ * @param body message body
+ */
+EAPI void ewk_context_message_post_to_injected_bundle(Ewk_Context *context, const char *name, const char *body);
+
+/**
+ * Sets callback for received injected bundle message.
+ *
+ * Client can pass @c NULL for callback to stop listening for messages.
+ *
+ * @param context context object
+ * @param callback callback for received injected bundle message or @c NULL
+ * @param user_data user data
+ */
+EAPI void ewk_context_message_from_injected_bundle_callback_set(Ewk_Context *context, Ewk_Context_Message_From_Injected_Bundle_Cb callback, void *user_data);
 
 #ifdef __cplusplus
 }
