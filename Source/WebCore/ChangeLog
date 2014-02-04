@@ -1,3 +1,37 @@
+2014-02-04  Simon Fraser  <simon.fraser@apple.com>
+
+        Add WK2 event handling path for iOS, and make Mac and iOS code more similar
+        https://bugs.webkit.org/show_bug.cgi?id=128199
+
+        Reviewed by Sam Weinig.
+
+        EventHandlerIOS need some changes for WebKit2, where we have no native
+        widget. Merge those changes from EventHandlerMac.
+        
+        Make a few drive-by changes to match EventHandlerMac behavior.
+        
+        Clean up EventHandlerMac, removing trailing whitespace and fixing
+        the odd comment.
+
+        * page/ios/EventHandlerIOS.mm:
+        (WebCore::EventHandler::passWidgetMouseDownEventToWidget):
+        (WebCore::EventHandler::passMouseDownEventToWidget):
+        (WebCore::EventHandler::passSubframeEventToSubframe):
+        (WebCore::EventHandler::passWheelEventToWidget):
+        (WebCore::EventHandler::mouseDown):
+        (WebCore::EventHandler::mouseMoved):
+        (WebCore::frameHasPlatformWidget):
+        (WebCore::EventHandler::passMousePressEventToSubframe):
+        (WebCore::EventHandler::passMouseMoveEventToSubframe):
+        (WebCore::EventHandler::passMouseReleaseEventToSubframe):
+        * page/mac/EventHandlerMac.mm:
+        (WebCore::EventHandler::passWidgetMouseDownEventToWidget):
+        (WebCore::EventHandler::passMouseDownEventToWidget):
+        (WebCore::findViewInSubviews):
+        (WebCore::EventHandler::eventLoopHandleMouseUp):
+        (WebCore::EventHandler::passWheelEventToWidget):
+        (WebCore::EventHandler::mouseMoved):
+
 2014-02-04  Benjamin Poulain  <bpoulain@apple.com>
 
         [OSX] Limit progress bar's dimensions to ushort

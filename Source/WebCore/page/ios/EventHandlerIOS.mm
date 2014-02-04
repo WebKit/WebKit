@@ -169,7 +169,7 @@ void EventHandler::focusDocumentView()
 bool EventHandler::passWidgetMouseDownEventToWidget(const MouseEventWithHitTestResults& event)
 {
     // Figure out which view to send the event to.
-    RenderObject* target = event.targetNode() ? event.targetNode()->renderer() : nullptr;
+    auto target = event.targetNode() ? event.targetNode()->renderer() : nullptr;
     if (!target || !target->isWidget())
         return false;
 
@@ -216,6 +216,11 @@ bool EventHandler::passMouseDownEventToWidget(Widget* pWidget)
         return true;
     }
 
+    // In WebKit2 we will never have a native widget. Just return early and let the regular event handler machinery take care of
+    // dispatching the event.
+    if (!widget->platformWidget())
+        return false;
+
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
 
     NSView *nodeView = widget->platformWidget();
@@ -251,7 +256,12 @@ bool EventHandler::passMouseDownEventToWidget(Widget* pWidget)
 
     ASSERT(!m_sendingEventToSubview);
     m_sendingEventToSubview = true;
-    [view mouseDown:currentEvent()];
+
+    {
+        WidgetHierarchyUpdatesSuspensionScope suspendWidgetHierarchyUpdates;
+        [view mouseDown:currentEvent()];
+    }
+
     m_sendingEventToSubview = false;
     
     if (!wasDeferringLoading)
@@ -353,7 +363,7 @@ bool EventHandler::passSubframeEventToSubframe(MouseEventWithHitTestResults& eve
             Node* node = event.targetNode();
             if (!node)
                 return false;
-            RenderObject* renderer = node->renderer();
+            auto renderer = node->renderer();
             if (!renderer || !renderer->isWidget())
                 return false;
             Widget* widget = toRenderWidget(renderer)->widget();
@@ -391,10 +401,18 @@ bool EventHandler::passWheelEventToWidget(const PlatformWheelEvent&, Widget* wid
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
 
-    if (currentEvent().type != WebEventScrollWheel || m_sendingEventToSubview || !widget)
+    if (!widget)
         return false;
 
     NSView* nodeView = widget->platformWidget();
+    if (!nodeView) {
+        // WK2 code path. No wheel events on iOS anyway.
+        return false;
+    }
+
+    if (currentEvent().type != WebEventScrollWheel || m_sendingEventToSubview || !widget)
+        return false;
+
     ASSERT(nodeView);
     ASSERT([nodeView superview]);
     NSView *view = [nodeView hitTest:[[nodeView superview] convertPoint:currentEvent().locationInWindow fromView:nil]];
@@ -421,6 +439,7 @@ void EventHandler::mouseDown(WebEvent *event)
 
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
 
+    // FIXME: Why is this here? EventHandler::handleMousePressEvent() calls it.
     m_frame.loader().resetMultipleFormSubmissionProtection();
 
     m_mouseDownView = nil;
@@ -463,25 +482,54 @@ void EventHandler::mouseMoved(WebEvent *event)
     WKBeginObservingContentChanges(true);
     CurrentEventScope scope(event);
     event.wasHandled = mouseMoved(currentPlatformMouseEvent());
+    
+    // FIXME: Why is this here?
     m_frame.document()->updateStyleIfNeeded();
     WKStopObservingContentChanges();
 
     END_BLOCK_OBJC_EXCEPTIONS;
 }
 
+static bool frameHasPlatformWidget(const Frame& frame)
+{
+    if (FrameView* frameView = frame.view()) {
+        if (frameView->platformWidget())
+            return true;
+    }
+
+    return false;
+}
+
 bool EventHandler::passMousePressEventToSubframe(MouseEventWithHitTestResults& mev, Frame* subframe)
 {
-    return passSubframeEventToSubframe(mev, subframe);
+    // WebKit1 code path.
+    if (frameHasPlatformWidget(m_frame))
+        return passSubframeEventToSubframe(mev, subframe);
+
+    // WebKit2 code path.
+    subframe->eventHandler().handleMousePressEvent(mev.event());
+    return true;
 }
 
 bool EventHandler::passMouseMoveEventToSubframe(MouseEventWithHitTestResults& mev, Frame* subframe, HitTestResult* hoveredNode)
 {
-    return passSubframeEventToSubframe(mev, subframe, hoveredNode);
+    // WebKit1 code path.
+    if (frameHasPlatformWidget(m_frame))
+        return passSubframeEventToSubframe(mev, subframe, hoveredNode);
+
+    subframe->eventHandler().handleMouseMoveEvent(mev.event(), hoveredNode);
+    return true;
 }
 
 bool EventHandler::passMouseReleaseEventToSubframe(MouseEventWithHitTestResults& mev, Frame* subframe)
 {
-    return passSubframeEventToSubframe(mev, subframe);
+    // WebKit1 code path.
+    if (frameHasPlatformWidget(m_frame))
+        return passSubframeEventToSubframe(mev, subframe);
+
+    // WebKit2 code path.
+    subframe->eventHandler().handleMouseReleaseEvent(mev.event());
+    return true;
 }
 
 unsigned EventHandler::accessKeyModifiers()

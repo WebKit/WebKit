@@ -138,13 +138,13 @@ void EventHandler::focusDocumentView()
 bool EventHandler::passWidgetMouseDownEventToWidget(const MouseEventWithHitTestResults& event)
 {
     // Figure out which view to send the event to.
-    auto target = event.targetNode() ? event.targetNode()->renderer() : 0;
+    auto target = event.targetNode() ? event.targetNode()->renderer() : nullptr;
     if (!target || !target->isWidget())
         return false;
-    
-    // Double-click events don't exist in Cocoa. Since passWidgetMouseDownEventToWidget will
+
+    // Double-click events don't exist in Cocoa. Since passWidgetMouseDownEventToWidget() will
     // just pass currentEvent down to the widget, we don't want to call it for events that
-    // don't correspond to Cocoa events.  The mousedown/ups will have already been passed on as
+    // don't correspond to Cocoa events. The mousedown/ups will have already been passed on as
     // part of the pressed/released handling.
     return passMouseDownEventToWidget(toRenderWidget(target)->widget());
 }
@@ -176,7 +176,7 @@ bool EventHandler::passMouseDownEventToWidget(Widget* pWidget)
 {
     // FIXME: This function always returns true. It should be changed either to return
     // false in some cases or the return value should be removed.
-    
+
     RefPtr<Widget> widget = pWidget;
 
     if (!widget) {
@@ -184,13 +184,13 @@ bool EventHandler::passMouseDownEventToWidget(Widget* pWidget)
         return true;
     }
 
-    // In WebKit2 we will never have an NSView. Just return early and let the regular event handler machinery take care of
+    // In WebKit2 we will never have a native widget. Just return early and let the regular event handler machinery take care of
     // dispatching the event.
     if (!widget->platformWidget())
         return false;
 
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    
+
     NSView *nodeView = widget->platformWidget();
     ASSERT([nodeView superview]);
     NSView *view = [nodeView hitTest:[[nodeView superview] convertPoint:[currentNSEvent() locationInWindow] fromView:nil]];
@@ -198,7 +198,7 @@ bool EventHandler::passMouseDownEventToWidget(Widget* pWidget)
         // We probably hit the border of a RenderWidget
         return true;
     }
-    
+
     Page* page = m_frame.page();
     if (!page)
         return true;
@@ -212,11 +212,11 @@ bool EventHandler::passMouseDownEventToWidget(Widget* pWidget)
 
     // We need to "defer loading" while tracking the mouse, because tearing down the
     // page while an AppKit control is tracking the mouse can cause a crash.
-    
+
     // FIXME: In theory, WebCore now tolerates tear-down while tracking the
     // mouse. We should confirm that, and then remove the deferrsLoading
     // hack entirely.
-    
+
     bool wasDeferringLoading = page->defersLoading();
     if (!wasDeferringLoading)
         page->setDefersLoading(true);
@@ -237,7 +237,7 @@ bool EventHandler::passMouseDownEventToWidget(Widget* pWidget)
     // Remember which view we sent the event to, so we can direct the release event properly.
     m_mouseDownView = view;
     m_mouseDownWasInSubframe = false;
-    
+
     // Many AppKit widgets run their own event loops and consume events while the mouse is down.
     // When they finish, currentEvent is the mouseUp that they exited on.  We need to update
     // the EventHandler state with this mouseUp, which we never saw.
@@ -250,7 +250,7 @@ bool EventHandler::passMouseDownEventToWidget(Widget* pWidget)
 
     return true;
 }
-    
+
 // Note that this does the same kind of check as [target isDescendantOf:superview].
 // There are two differences: This is a lot slower because it has to walk the whole
 // tree, and this works in cases where the target has already been deallocated.
@@ -265,7 +265,7 @@ static bool findViewInSubviews(NSView *superview, NSView *target)
         }
     }
     END_BLOCK_OBJC_EXCEPTIONS;
-    
+
     return false;
 }
 
@@ -307,13 +307,13 @@ bool EventHandler::eventLoopHandleMouseDragged(const MouseEventWithHitTestResult
     return true;
 }
 #endif // ENABLE(DRAG_SUPPORT)
-    
+
 bool EventHandler::eventLoopHandleMouseUp(const MouseEventWithHitTestResults&)
 {
     NSView *view = mouseDownViewIfStillGood();
     if (!view)
         return false;
-    
+
     if (!m_mouseDownWasInSubframe) {
         ASSERT(!m_sendingEventToSubview);
         m_sendingEventToSubview = true;
@@ -440,9 +440,10 @@ bool EventHandler::passWheelEventToWidget(const PlatformWheelEvent& wheelEvent, 
     ASSERT(nodeView);
     ASSERT([nodeView superview]);
     NSView *view = [nodeView hitTest:[[nodeView superview] convertPoint:[currentNSEvent() locationInWindow] fromView:nil]];
-    if (!view)
+    if (!view) {
         // We probably hit the border of a RenderWidget
         return false;
+    }
 
     ASSERT(!m_sendingEventToSubview);
     m_sendingEventToSubview = true;
@@ -454,7 +455,7 @@ bool EventHandler::passWheelEventToWidget(const PlatformWheelEvent& wheelEvent, 
     setNSScrollViewScrollWheelShouldRetainSelf(false);
     m_sendingEventToSubview = false;
     return true;
-            
+
     END_BLOCK_OBJC_EXCEPTIONS;
     return false;
 }
@@ -591,7 +592,7 @@ void EventHandler::mouseMoved(NSEvent *event)
     // These happen because WebKit sometimes has to fake up moved events.
     if (!m_frame.view() || m_mousePressed || m_sendingEventToSubview)
         return;
-    
+
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
     CurrentEventScope scope(event);
     mouseMoved(currentPlatformMouseEvent());
