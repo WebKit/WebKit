@@ -81,6 +81,12 @@ WK_API_CLASS
 
 @property (nonatomic, readonly) BOOL hasOnlySecureContent;
 
+@property(readonly) BOOL canGoBack;
+@property(readonly) BOOL canGoForward;
+
+- (void)goBack;
+- (void)goForward;
+
 @end
 
 #endif

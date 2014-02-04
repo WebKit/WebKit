@@ -33,6 +33,7 @@
 #import "WKNavigationInternal.h"
 #import "WKProcessClass.h"
 #import "WKWebViewConfiguration.h"
+#import "WebBackForwardList.h"
 #import "WebPageProxy.h"
 #import <wtf/RetainPtr.h>
 
@@ -153,6 +154,30 @@ static _UIWebViewportConfiguration standardViewportConfiguration = { { UIWebView
 - (BOOL)hasOnlySecureContent
 {
     return _page->pageLoadState().hasOnlySecureContent();
+}
+
+// FIXME: This should be KVO compliant.
+- (BOOL)canGoBack
+{
+    return !!_page->backForwardList().backItem();
+}
+
+// FIXME: This should be KVO compliant.
+- (BOOL)canGoForward
+{
+    return !!_page->backForwardList().forwardItem();
+}
+
+// FIXME: This should return a WKNavigation object.
+- (void)goBack
+{
+    _page->goBack();
+}
+
+// FIXME: This should return a WKNavigation object.
+- (void)goForward
+{
+    _page->goForward();
 }
 
 #pragma mark iOS-specific methods
