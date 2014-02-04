@@ -65,9 +65,9 @@ namespace WebKit {
 #endif
 
 #if PLATFORM(IOS)
-#define DEFAULT_VIDEO_PLUGIN_PROXY_ENABLED true
+#define DEFAULT_FRAME_FLATTENTING_ENABLED true
 #else
-#define DEFAULT_VIDEO_PLUGIN_PROXY_ENABLED false
+#define DEFAULT_FRAME_FLATTENTING_ENABLED false
 #endif
 
 #if PLATFORM(IOS)
@@ -88,7 +88,7 @@ namespace WebKit {
     macro(LocalStorageEnabled, localStorageEnabled, Bool, bool, true) \
     macro(DatabasesEnabled, databasesEnabled, Bool, bool, true) \
     macro(XSSAuditorEnabled, xssAuditorEnabled, Bool, bool, true) \
-    macro(FrameFlatteningEnabled, frameFlatteningEnabled, Bool, bool, false) \
+    macro(FrameFlatteningEnabled, frameFlatteningEnabled, Bool, bool, DEFAULT_FRAME_FLATTENTING_ENABLED) \
     macro(DeveloperExtrasEnabled, developerExtrasEnabled, Bool, bool, false) \
     macro(JavaScriptExperimentsEnabled, javaScriptExperimentsEnabled, Bool, bool, false) \
     macro(PrivateBrowsingEnabled, privateBrowsingEnabled, Bool, bool, false) \

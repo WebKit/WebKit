@@ -1,3 +1,13 @@
+2014-02-03  Sam Weinig  <sam@webkit.org>
+
+        [WebKit2, iOS] Enable frame flattening by default on iOS
+        <rdar://problem/15975983>
+        https://bugs.webkit.org/show_bug.cgi?id=128151
+
+        Reviewed by Tim Horton.
+
+        * Shared/WebPreferencesStore.h:
+
 2014-02-03  Tim Horton  <timothy_horton@apple.com>
 
         [iOS][wk2] Temporarily disable accelerated drawing for canvas
