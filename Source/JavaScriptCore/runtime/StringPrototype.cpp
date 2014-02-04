@@ -942,7 +942,7 @@ static ALWAYS_INLINE bool splitStringByOneCharacterImpl(ExecState* exec, JSArray
 {
     // 12. Let q = p.
     size_t matchPosition;
-    const CharacterType* characters = string->getCharacters<CharacterType>();
+    const CharacterType* characters = string->characters<CharacterType>();
     // 13. Repeat, while q != s
     //   a. Call SplitMatch(S, q, R) and let z be its MatchResult result.
     //   b. If z is failure, then let q = q+1.

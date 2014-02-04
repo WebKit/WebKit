@@ -414,7 +414,7 @@ void createTextRuns(Layout::RunVector& runs, unsigned& lineCount, RenderBlockFlo
 {
     const Style style(flow.style());
 
-    const CharacterType* text = textRenderer.text()->getCharacters<CharacterType>();
+    const CharacterType* text = textRenderer.text()->characters<CharacterType>();
     const unsigned textLength = textRenderer.textLength();
 
     LayoutUnit borderAndPaddingBefore = flow.borderAndPaddingBefore();

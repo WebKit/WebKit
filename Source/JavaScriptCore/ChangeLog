@@ -1,3 +1,17 @@
+2014-02-04  Anders Carlsson  <andersca@apple.com>
+
+        Rename StringImpl::getCharacters to StringImpl::characters
+        https://bugs.webkit.org/show_bug.cgi?id=128205
+
+        Reviewed by Antti Koivisto.
+
+        Update for WTF changes.
+
+        * runtime/JSStringJoiner.cpp:
+        (JSC::joinStrings):
+        * runtime/StringPrototype.cpp:
+        (JSC::splitStringByOneCharacterImpl):
+
 2014-02-04  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Fix a mismatch of uint64_t and size_t on 32-bit platforms.

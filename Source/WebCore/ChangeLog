@@ -1,5 +1,17 @@
 2014-02-04  Anders Carlsson  <andersca@apple.com>
 
+        Rename StringImpl::getCharacters to StringImpl::characters
+        https://bugs.webkit.org/show_bug.cgi?id=128205
+
+        Reviewed by Antti Koivisto.
+
+        Update for WTF changes.
+
+        * rendering/SimpleLineLayout.cpp:
+        (WebCore::SimpleLineLayout::createTextRuns):
+
+2014-02-04  Anders Carlsson  <andersca@apple.com>
+
         Rename equalNonNull to equal and make it take const StringImpl& instead
         https://bugs.webkit.org/show_bug.cgi?id=128206
 

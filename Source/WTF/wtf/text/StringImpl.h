@@ -453,7 +453,7 @@ public:
     }
 
     template <typename CharType>
-    ALWAYS_INLINE const CharType * getCharacters() const;
+    ALWAYS_INLINE const CharType *characters() const;
 
     size_t cost() const
     {
@@ -881,10 +881,10 @@ template <>
 ALWAYS_INLINE PassRef<StringImpl> StringImpl::constructInternal<UChar>(StringImpl* impl, unsigned length) { return adoptRef(*new (NotNull, impl) StringImpl(length)); }
 
 template <>
-ALWAYS_INLINE const LChar* StringImpl::getCharacters<LChar>() const { return characters8(); }
+ALWAYS_INLINE const LChar* StringImpl::characters<LChar>() const { return characters8(); }
 
 template <>
-ALWAYS_INLINE const UChar* StringImpl::getCharacters<UChar>() const { return deprecatedCharacters(); }
+ALWAYS_INLINE const UChar* StringImpl::characters<UChar>() const { return characters16(); }
 
 WTF_EXPORT_STRING_API bool equal(const StringImpl*, const StringImpl*);
 WTF_EXPORT_STRING_API bool equal(const StringImpl*, const LChar*);

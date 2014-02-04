@@ -817,7 +817,7 @@ inline PassRef<StringImpl> StringImpl::simplifyMatchedCharactersToSpace(UCharPre
 {
     StringBuffer<CharType> data(m_length);
 
-    const CharType* from = getCharacters<CharType>();
+    const CharType* from = characters<CharType>();
     const CharType* fromend = from + m_length;
     int outc = 0;
     bool changedToSpace = false;

@@ -80,7 +80,7 @@ static inline PassRefPtr<StringImpl> joinStrings(const Vector<String>& strings, 
     CharacterType* data;
     RefPtr<StringImpl> outputStringImpl = StringImpl::tryCreateUninitialized(outputLength, data);
     if (!outputStringImpl)
-        return PassRefPtr<StringImpl>();
+        return nullptr;
 
     const String firstString = strings.first();
     appendStringToData(data, firstString);
@@ -90,7 +90,7 @@ static inline PassRefPtr<StringImpl> joinStrings(const Vector<String>& strings, 
         appendStringToData(data, strings[i]);
     }
 
-    ASSERT(data == (outputStringImpl->getCharacters<CharacterType>() + outputStringImpl->length()));
+    ASSERT(data == (outputStringImpl->characters<CharacterType>() + outputStringImpl->length()));
     return outputStringImpl.release();
 }
 

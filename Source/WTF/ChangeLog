@@ -1,5 +1,24 @@
 2014-02-04  Anders Carlsson  <andersca@apple.com>
 
+        Rename StringImpl::getCharacters to StringImpl::characters
+        https://bugs.webkit.org/show_bug.cgi?id=128205
+
+        Reviewed by Antti Koivisto.
+
+        This lets us use StringImpl::getCharacters for the upconverting version.
+        Also, change StringImpl::characters<UChar>() to call characters16() instead of deprecatedCharacters()
+        and audit all call sites to make sure we weren't relying on upconversion anywhere.
+
+        * wtf/text/AtomicString.cpp:
+        (WTF::findString):
+        * wtf/text/StringImpl.cpp:
+        (WTF::StringImpl::simplifyMatchedCharactersToSpace):
+        * wtf/text/StringImpl.h:
+        (WTF::StringImpl::characters<LChar>):
+        (WTF::StringImpl::characters<UChar>):
+
+2014-02-04  Anders Carlsson  <andersca@apple.com>
+
         Rename equalNonNull to equal and make it take const StringImpl& instead
         https://bugs.webkit.org/show_bug.cgi?id=128206
 
