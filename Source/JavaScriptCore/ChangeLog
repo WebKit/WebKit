@@ -1,3 +1,20 @@
+2014-02-03  Andreas Kling  <akling@apple.com>
+
+        Keep only captured symbols in CodeBlock symbol tables.
+        <https://webkit.org/b/128050>
+
+        Discard all uncaptured symbols at the end of codegen since only
+        the captured ones will be used after that point.
+
+        ~2MB progression on Membuster OSUS.
+
+        Reviewed by Geoffrey Garen.
+
+        * bytecode/UnlinkedCodeBlock.h:
+        (JSC::UnlinkedCodeBlock::setSymbolTable):
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::generate):
+
 2014-02-03  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Fix the LLInt C loop

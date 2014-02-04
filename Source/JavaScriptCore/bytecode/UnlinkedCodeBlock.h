@@ -383,6 +383,7 @@ public:
     UnlinkedHandlerInfo& exceptionHandler(int index) { ASSERT(m_rareData); return m_rareData->m_exceptionHandlers[index]; }
 
     SymbolTable* symbolTable() const { return m_symbolTable.get(); }
+    void setSymbolTable(SymbolTable* table) { m_symbolTable.set(*m_vm, this, table); }
 
     VM* vm() const { return m_vm; }
 

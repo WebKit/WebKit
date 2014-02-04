@@ -115,6 +115,9 @@ ParserError BytecodeGenerator::generate()
 
     m_codeBlock->shrinkToFit();
 
+    if (m_codeBlock->symbolTable())
+        m_codeBlock->setSymbolTable(m_codeBlock->symbolTable()->cloneCapturedNames(*m_codeBlock->vm()));
+
     if (m_expressionTooDeep)
         return ParserError(ParserError::OutOfMemory);
     return ParserError(ParserError::ErrorNone);
