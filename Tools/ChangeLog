@@ -1,3 +1,14 @@
+2014-02-04  Filip Pizlo  <fpizlo@apple.com>
+
+        export-llvm-build should work with git checkouts
+        https://bugs.webkit.org/show_bug.cgi?id=128217
+
+        Reviewed by Mark Hahnenberg.
+        
+        If svn export fails, just do ditto.
+
+        * Scripts/export-llvm-build:
+
 2014-02-04  Carlos Garnacho  <carlosg@gnome.org>
 
         [Automake] Add missing $(feature_defines) when generating InjectedBundle bindings

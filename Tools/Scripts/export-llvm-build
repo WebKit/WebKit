@@ -32,7 +32,7 @@ def mysys(*cmd)
     cmd = cmd.map{|value| value.to_s}
     commandArray = cmd.map{|value| Shellwords.shellescape(value)}.join(' ')
     $stderr.puts ">> #{commandArray}"
-    riase unless system(*cmd)
+    raise unless system(*cmd)
 end
 
 $libraryPackage = Pathname.new("LLVMLibraries.tar.bz2")
@@ -110,7 +110,11 @@ Dir.mktmpdir {
     | directory |
     directory = Pathname.new(directory).realpath
     Dir.chdir($llvmPath) {
-        mysys("svn", "export", "include", (directory + "include").to_s)
+        begin
+            mysys("svn", "export", "include", directory + "include")
+        rescue
+            mysys("ditto", "include", directory + "include")
+        end
     }
     ["include/llvm/Config"].each {
         | genDirName |
