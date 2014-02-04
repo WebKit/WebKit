@@ -987,18 +987,21 @@ const int* RenderThemeMac::progressBarMargins(NSControlSize controlSize) const
 
 IntRect RenderThemeMac::progressBarRectForBounds(const RenderObject* renderObject, const IntRect& bounds) const
 {
+    // Workaround until <rdar://problem/15855086> is fixed.
+    int maxDimension = static_cast<int>(std::numeric_limits<ushort>::max());
+    IntRect progressBarBounds(bounds.x(), bounds.y(), std::min(bounds.width(), maxDimension), std::min(bounds.height(), maxDimension));
     if (NoControlPart == renderObject->style().appearance())
-        return bounds;
+        return progressBarBounds;
 
     float zoomLevel = renderObject->style().effectiveZoom();
     NSControlSize controlSize = controlSizeForFont(&renderObject->style());
     IntSize size = progressBarSizes()[controlSize];
     size.setHeight(size.height() * zoomLevel);
-    size.setWidth(bounds.width());
+    size.setWidth(progressBarBounds.width());
 
     // Now inflate it to account for the shadow.
-    IntRect inflatedRect = bounds;
-    if (bounds.height() <= minimumProgressBarHeight(&renderObject->style()))
+    IntRect inflatedRect = progressBarBounds;
+    if (progressBarBounds.height() <= minimumProgressBarHeight(&renderObject->style()))
         inflatedRect = inflateRect(inflatedRect, size, progressBarMargins(controlSize), zoomLevel);
 
     return inflatedRect;

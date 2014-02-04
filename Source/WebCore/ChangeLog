@@ -1,3 +1,15 @@
+2014-02-04  Benjamin Poulain  <bpoulain@apple.com>
+
+        [OSX] Limit progress bar's dimensions to ushort
+        https://bugs.webkit.org/show_bug.cgi?id=128019
+
+        Wordaround a crash in Quartz until <rdar://problem/15855086> is fixed.
+
+        Reviewed by Sam Weinig.
+
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::progressBarRectForBounds):
+
 2014-02-04  Anders Carlsson  <andersca@apple.com>
 
         Rename StringImpl::getCharacters to StringImpl::characters
