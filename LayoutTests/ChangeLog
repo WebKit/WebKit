@@ -1,5 +1,39 @@
 2014-02-03  Mark Lam  <mark.lam@apple.com>
 
+        Need regression test for the debugger modifying locals in a DFG frame.
+        https://bugs.webkit.org/show_bug.cgi?id=128120.
+
+        Reviewed by Geoffrey Garen.
+
+        Regression test for https://bugs.webkit.org/show_bug.cgi?id=128112.
+
+        This test does the following:
+        1. Warm up a DFG function.
+        2. Sets a breakpoint in a function breakpointBasic() that will be called
+           by the DFG function, but has never been called yet.
+        3. Call a driver function which in turn calls the DFG function, and expect
+           the debugger to break.
+        4. At the breakpoint in breakpointBasic(), evaluate an expression on its
+           caller i.e. the DFG function, and change a local variable in it.
+        5. Resume from the debugger, and let the DFG function and its driver
+           function run to completion. The DFG function will return a value
+           computed using the modified local.
+        6. At the end of the driver function, verify that the returned computed
+           value reflects the modified value.
+
+        This test has been verified with tracing enabled to ensure that the test
+        DFG function was indeed DFG compiled, and that the test passed with the
+        expected results.
+
+        * inspector-protocol/debugger/resources/breakpoint.js:
+        (notInlineable2):
+        (dfgWithoutInline2):
+        (callNotInlineable2):
+        * inspector-protocol/debugger/setBreakpoint-dfg-and-modify-local-expected.txt: Added.
+        * inspector-protocol/debugger/setBreakpoint-dfg-and-modify-local.html: Added.
+
+2014-02-03  Mark Lam  <mark.lam@apple.com>
+
         Need regression test to ensure that the debugger does not attempt to execute a bad script from its console.
         <https://webkit.org/b/128121>
 

@@ -56,3 +56,29 @@ function dfgWithInline()
         result += inliningFoo(i);
     log("dfgWithInline result: " + result);    
 }
+
+function notInlineable2(x, callFunctionWithBreakpoint)
+{
+    var func = new Function("return x + 100;");
+    if (callFunctionWithBreakpoint)
+        breakpointBasic();
+    return x + 3;
+}
+
+function dfgWithoutInline2()
+{
+    var i;
+    var result = 0;
+    for (i = 0; i < 1000; i++)
+        result += notInlineable2(i, false);
+    log("result: " + result);
+}
+
+function callNotInlineable2()
+{
+    var result = notInlineable2(10000, true);
+    if (result == 20003)
+        log("PASS: result is " + result);
+    else
+        log("FAIL: result is " + result + ", expecting 20003");
+}

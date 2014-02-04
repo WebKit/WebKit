@@ -1,0 +1,72 @@
+<html>
+<head>
+<script src="../../http/tests/inspector-protocol/resources/protocol-test.js"></script>
+<script src="resources/breakpoint.js"></script>
+
+<script>
+// Put this here instead of on <body onload> to prevent an extra Debugger.scriptParsed event.
+window.onload = runTest;
+
+function test()
+{
+    // This test setting 2 breakpoints in DFG compiled functions: one inlined,
+    // and one not inlined.
+
+    InspectorTest.sendCommand("Debugger.enable", {});
+
+    var breakpointId = null;
+    var scriptId = 0;
+    var startLine = 0;
+
+    InspectorTest.eventHandler["Debugger.scriptParsed"] = function(messageObject)
+    {
+        if (/resources\/breakpoint\.js$/.test(messageObject.params.url)) {
+            InspectorTest.log("Found breakpoint.js");
+            scriptId = messageObject.params.scriptId;
+            startLine = messageObject.params.startLine;
+
+            InspectorTest.sendCommand("Runtime.evaluate", {
+                expression: "dfgWithoutInline2();"
+            }, function(responseObject) {
+                InspectorTest.log("dfg function warmed up\n");
+
+                var location1 = {scriptId: scriptId, lineNumber: 2, columnNumber: 0};
+
+                InspectorTest.sendCommand("Debugger.setBreakpoint", {location: location1}, function(responseObject) {
+                    InspectorTest.checkForError(responseObject);
+                    InspectorTest.log("Breakpoint set in breakpointBasic()");
+
+                    breakpointId = responseObject.result.breakpointId;
+                    InspectorTest.sendCommand("Runtime.evaluate", {
+                        expression: "callNotInlineable2();"
+                    }, function(responseObject) {
+                        InspectorTest.log("Test complete");
+                        InspectorTest.completeTest();
+                    });
+                });
+            });
+        }
+    }
+
+    InspectorTest.eventHandler["Debugger.paused"] = function(messageObject)
+    {
+        InspectorTest.log("Hit Breakpoint!");
+        var callFrames = messageObject.params.callFrames;
+        if (callFrames.length < 3)
+            InspectorTest.log("FAIL: too few frames in stack trace");
+
+        var callFrameId = callFrames[1].callFrameId;
+        InspectorTest.log("Evaluating in DFG frame at frame[1]: 'x = 20000;'");
+        InspectorTest.sendCommand("Debugger.evaluateOnCallFrame", { callFrameId: callFrameId, expression: "x = 20000;" }, function(responseObject) {
+            InspectorTest.sendCommand("Debugger.resume", {}, function(responseObject) {
+                InspectorTest.log("Resumed from breakpoint");
+            });
+        });
+    }
+}
+</script>
+</head>
+<body>
+<p>Debugger.evaluateOnCallFrame in a DFG compiled functions.</p>
+</body>
+</html>
