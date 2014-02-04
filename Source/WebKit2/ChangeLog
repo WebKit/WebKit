@@ -1,3 +1,20 @@
+2014-02-03  Simon Fraser  <simon.fraser@apple.com>
+
+        Allow WK2 to read from NSUserDefaults when it has no prefs identifier
+        https://bugs.webkit.org/show_bug.cgi?id=128124
+
+        Reviewed by Sam Weinig.
+        
+        WebPreferences would never read from NSUserDefaults if no identifier
+        had been set, but this prevents us from reading useful debugging prefs.
+        
+        Fix to read pref names using a "WebKit2" prefix when no identifier
+        is set.
+
+        * UIProcess/mac/WebPreferencesMac.mm:
+        (WebKit::makeKey):
+        (WebKit::WebPreferences::platformInitializeStore):
+
 2014-02-03  Jer Noble  <jer.noble@apple.com>
 
         [WK2] Remove the VideoPluginProxyEnabled preference in WK2

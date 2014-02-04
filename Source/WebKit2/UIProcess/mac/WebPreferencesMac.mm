@@ -33,6 +33,9 @@ namespace WebKit {
 
 static inline NSString* makeKey(const String& identifier, const String& baseKey)
 {
+    if (!identifier)
+        return nsStringFromWebCoreString(makeString("WebKit2", baseKey));
+
     return nsStringFromWebCoreString(makeString(identifier, ".WebKit2", baseKey));
 }
 
@@ -82,9 +85,6 @@ static void setDoubleValueIfInUserDefaults(const String& identifier, const Strin
 
 void WebPreferences::platformInitializeStore()
 {
-    if (!m_identifier)
-        return;
-
 #define INITIALIZE_PREFERENCE_FROM_NSUSERDEFAULTS(KeyUpper, KeyLower, TypeName, Type, DefaultValue) \
     set##TypeName##ValueIfInUserDefaults(m_identifier, WebPreferencesKey::KeyLower##Key(), m_store);
 
