@@ -1,3 +1,15 @@
+2014-02-03  Brent Fulgham  <bfulgham@apple.com>
+
+        [Mac] WK1 Clients Only Latch on Momentum Scroll
+        https://bugs.webkit.org/show_bug.cgi?id=128133
+
+        Reviewed by Simon Fraser.
+
+        * platform/PlatformWheelEvent.h:
+        (WebCore::PlatformWheelEvent::useLatchedEventElement): Update
+        predicate to recognize the start and change phases of the wheel
+        event as latchable (not just momentum start/change).
+
 2014-02-03  Dean Jackson  <dino@apple.com>
 
         Feature flag for shape-inside
