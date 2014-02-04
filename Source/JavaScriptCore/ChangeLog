@@ -1,3 +1,43 @@
+2014-02-03  Brian Burg  <bburg@apple.com>
+
+        Web Replay: upstream base input classes and the input cursor interface
+        https://bugs.webkit.org/show_bug.cgi?id=128110
+
+        Reviewed by Joseph Pecoraro.
+
+        Add the base class for all replay inputs. Add InputTraits, a trait that
+        provides an input's queue, type, and encode/decode methods statically so
+        that they can be used within templated helper functions in InputCursor and
+        EncodedValue.
+
+        Add the InputCursor base class which mediates the saving and fetching of
+        replay inputs from a replay recording by instrumented nondeterministic code.
+
+        Add a dummy cursor implementation. This allows us to return a cursor reference
+        to clients even if no capturing or replaying is happening.
+
+        Add the ability to set an InputCursor instance on a JSGlobalObject. This
+        is the means for connecting a replay recording to a script context.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * replay/EmptyInputCursor.h: Added.
+        (JSC::EmptyInputCursor::~EmptyInputCursor):
+        (JSC::EmptyInputCursor::create):
+        (JSC::EmptyInputCursor::EmptyInputCursor):
+        * replay/InputCursor.h: Added.
+        (JSC::InputCursor::InputCursor):
+        (JSC::InputCursor::~InputCursor):
+        (JSC::InputCursor::appendInput):
+        (JSC::InputCursor::fetchInput):
+        * replay/NondeterministicInput.h: Added.
+        (JSC::NondeterministicInputBase::NondeterministicInputBase):
+        (JSC::NondeterministicInputBase::~NondeterministicInputBase):
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::JSGlobalObject):
+        (JSC::JSGlobalObject::setInputCursor):
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::inputCursor):
+
 2014-02-03  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Fix the cloop due to GenGC

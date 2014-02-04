@@ -127,6 +127,10 @@
 #include "RemoteInspector.h"
 #endif
 
+#if ENABLE(WEB_REPLAY)
+#include "EmptyInputCursor.h"
+#endif
+
 #include "JSGlobalObject.lut.h"
 
 namespace JSC {
@@ -152,6 +156,9 @@ const GlobalObjectMethodTable JSGlobalObject::s_globalObjectMethodTable = { &all
 
 JSGlobalObject::JSGlobalObject(VM& vm, Structure* structure, const GlobalObjectMethodTable* globalObjectMethodTable)
     : Base(vm, structure, 0)
+#if ENABLE(WEB_REPLAY)
+    , m_inputCursor(EmptyInputCursor::create())
+#endif
     , m_masqueradesAsUndefinedWatchpoint(adoptRef(new WatchpointSet(IsWatched)))
     , m_havingABadTimeWatchpoint(adoptRef(new WatchpointSet(IsWatched)))
     , m_varInjectionWatchpoint(adoptRef(new WatchpointSet(IsWatched)))
@@ -769,6 +776,13 @@ bool JSGlobalObject::remoteDebuggingEnabled() const
     return false;
 #endif
 }
+
+#if ENABLE(WEB_REPLAY)
+void JSGlobalObject::setInputCursor(PassRefPtr<InputCursor> prpCursor)
+{
+    m_inputCursor = prpCursor;
+}
+#endif
 
 void JSGlobalObject::setName(const String& name)
 {

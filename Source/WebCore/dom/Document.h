@@ -59,6 +59,10 @@
 #include <wtf/PassRefPtr.h>
 #include <wtf/WeakPtr.h>
 
+#if ENABLE(WEB_REPLAY)
+#include <replay/InputCursor.h>
+#endif
+
 namespace WebCore {
 
 class AXObjectCache;
@@ -441,6 +445,11 @@ public:
     void setDocumentURI(const String&);
 
     virtual URL baseURI() const override;
+
+#if ENABLE(WEB_REPLAY)
+    InputCursor& inputCursor() const { return *m_inputCursor; }
+    void setInputCursor(PassRefPtr<InputCursor> cursor) { m_inputCursor = cursor; }
+#endif
 
 #if ENABLE(PAGE_VISIBILITY_API)
     void visibilityStateChanged();
@@ -1643,6 +1652,10 @@ private:
 
 #if ENABLE(FONT_LOAD_EVENTS)
     RefPtr<FontLoader> m_fontloader;
+#endif
+
+#if ENABLE(WEB_REPLAY)
+    RefPtr<InputCursor> m_inputCursor;
 #endif
 
     Timer<Document> m_didAssociateFormControlsTimer;

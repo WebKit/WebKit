@@ -220,6 +220,10 @@
 #include "CaptionUserPreferences.h"
 #endif
 
+#if ENABLE(WEB_REPLAY)
+#include <replay/EmptyInputCursor.h>
+#endif
+
 using namespace WTF;
 using namespace Unicode;
 
@@ -495,6 +499,9 @@ Document::Document(Frame* frame, const URL& url, unsigned documentClasses, unsig
 #endif
 #if ENABLE(TEMPLATE_ELEMENT)
     , m_templateDocumentHost(nullptr)
+#endif
+#if ENABLE(WEB_REPLAY)
+    , m_inputCursor(EmptyInputCursor::create())
 #endif
     , m_didAssociateFormControlsTimer(this, &Document::didAssociateFormControlsTimerFired)
     , m_hasInjectedPlugInsScript(false)

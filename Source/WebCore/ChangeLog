@@ -1,3 +1,40 @@
+2014-02-03  Brian Burg  <bburg@apple.com>
+
+        Web Replay: upstream base input classes and the input cursor interface
+        https://bugs.webkit.org/show_bug.cgi?id=128110
+
+        Reviewed by Joseph Pecoraro.
+
+        Add EventLoopInput, a base class for replay inputs that are handled
+        as if they begin a new run loop. For example, navigations, user input,
+        network callbacks, and asynchronous timers are modeled by inputs which
+        derive from this base class.
+
+        Add the ability to set an InputCursor instance on a Document. This
+        is the means for connecting a replay recording to a document context.
+
+        Add forwarding headers for some fundamental replay classes.
+
+        No new tests; no new functionality is exposed.
+
+        * ForwardingHeaders/replay/EmptyInputCursor.h: Added.
+        * ForwardingHeaders/replay/InputCursor.h: Added.
+        * ForwardingHeaders/replay/NondeterministicInput.h: Added.
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/Document.cpp:
+        (WebCore::Document::Document):
+        * dom/Document.h:
+        (WebCore::Document::inputCursor):
+        (WebCore::Document::setInputCursor):
+        * replay/EventLoopInput.h: Added.
+        (WebCore::ReplayPosition::ReplayPosition):
+        (WebCore::ReplayPosition::index):
+        (WebCore::ReplayPosition::time):
+        (WebCore::EventLoopInputBase::EventLoopInputBase):
+        (WebCore::EventLoopInputBase::~EventLoopInputBase):
+        (WebCore::EventLoopInputBase::setPosition):
+        (WebCore::EventLoopInputBase::position):
+
 2014-02-03  Jinwoo Song  <jinwoo7.song@samsung.com>
 
         Remove unused code in CSSParser.cpp

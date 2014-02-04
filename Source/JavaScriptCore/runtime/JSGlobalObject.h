@@ -60,6 +60,7 @@ class FunctionExecutable;
 class FunctionPrototype;
 class GetterSetter;
 class GlobalCodeBlock;
+class InputCursor;
 class JSGlobalObjectDebuggable;
 class JSPromiseConstructor;
 class JSPromisePrototype;
@@ -224,6 +225,10 @@ protected:
     String m_name;
 
     Debugger* m_debugger;
+
+#if ENABLE(WEB_REPLAY)
+    RefPtr<InputCursor> m_inputCursor;
+#endif
 
 #if ENABLE(REMOTE_INSPECTOR)
     std::unique_ptr<JSGlobalObjectDebuggable> m_inspectorDebuggable;
@@ -416,6 +421,11 @@ public:
 
     JS_EXPORT_PRIVATE void setRemoteDebuggingEnabled(bool);
     JS_EXPORT_PRIVATE bool remoteDebuggingEnabled() const;
+
+#if ENABLE(WEB_REPLAY)
+    JS_EXPORT_PRIVATE void setInputCursor(PassRefPtr<InputCursor>);
+    InputCursor& inputCursor() const { return *m_inputCursor; }
+#endif
 
     void setName(const String&);
     const String& name() const { return m_name; }
