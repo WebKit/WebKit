@@ -581,6 +581,9 @@ webkit.org/b/127550 media/audio-concurrent-supported.html [ Failure Pass ]
 webkit.org/b/127551 media/video-duration-known-after-eos.html [ Failure Pass ]
 webkit.org/b/122507 media/track/track-cue-rendering.html [ Failure Pass ]
 webkit.org/b/76280  media/W3C/video/networkState/networkState_during_progress.html [ Failure Pass ]
+webkit.org/b/128101 media/video-loop.html [ Pass Failure ]
+webkit.org/b/128103 media/media-element-play-after-eos.html [ Pass Failure ]
+webkit.org/b/116704 media/video-zoom.html [ Pass Failure ]
 
 # Opera-submitted tests to W3C for <track>, a lot of failures still.
 webkit.org/b/103926 media/track/opera/idl/media-idl-tests.html [ Skip ]
