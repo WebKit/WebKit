@@ -1,3 +1,12 @@
+2014-02-04  Andrzej Badowski  <a.badowski@samsung.com>
+
+        [EFL] Add expectations for two flaky media layout tests
+        https://bugs.webkit.org/show_bug.cgi?id=128183
+
+        Unreviewed EFL gardening.
+
+        * platform/efl/TestExpectations:
+
 2014-02-04  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r163376.
