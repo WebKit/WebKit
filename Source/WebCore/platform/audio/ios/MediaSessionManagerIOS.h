@@ -37,7 +37,7 @@ namespace WebCore {
 
 class MediaSessionManageriOS : public MediaSessionManager {
 public:
-    virtual ~MediaSessionManageriOS();
+    virtual ~MediaSessionManageriOS() { }
 
 private:
     friend class MediaSessionManager;

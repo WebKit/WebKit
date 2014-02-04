@@ -45,16 +45,15 @@ public:
         Audio,
         WebAudio,
     };
-    MediaType mediaType() const;
+    
+    MediaType mediaType() const { return m_type; }
 
     enum State {
-        Idle,
-        Playing,
-        Paused,
+        Running,
         Interrupted,
     };
     State state() const { return m_state; }
-    void setState(State);
+    void setState(State state) { m_state = state; }
 
     enum EndInterruptionFlags {
         NoFlags = 0,
@@ -63,12 +62,6 @@ public:
     void beginInterruption();
     void endInterruption(EndInterruptionFlags);
 
-    void applicationWillEnterForeground() const;
-    void applicationWillEnterBackground() const;
-
-    bool clientWillBeginPlayback();
-    bool clientWillPausePlayback();
-
     void pauseSession();
 
 protected:
@@ -76,9 +69,8 @@ protected:
 
 private:
     MediaSessionClient& m_client;
+    MediaType m_type;
     State m_state;
-    State m_stateToRestore;
-    bool m_notifyingClient;
 };
 
 class MediaSessionClient {
@@ -87,7 +79,10 @@ public:
     MediaSessionClient() { }
     
     virtual MediaSession::MediaType mediaType() const = 0;
-    virtual void resumePlayback() = 0;
+    
+    virtual void beginInterruption() { }
+    virtual void endInterruption(MediaSession::EndInterruptionFlags) { }
+
     virtual void pausePlayback() = 0;
 
 protected:

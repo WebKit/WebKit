@@ -29,9 +29,6 @@
             function canplaythrough()
             {
                 consoleWrite("");
-
-                run("internals.beginMediaSessionInterruption()");;
-                state = "interrupted";
                 run("video.play()");
                 setTimeout(checkState, 100);
             }
@@ -42,17 +39,18 @@
                     failTest('This test requires window.internals.');
                     return;
                 }
-
-                findMediaElement();
+                run("internals.beginMediaSessionInterruption()");;
+                run("video = document.createElement('video')");
+                run("document.body.appendChild(video)");
                 waitForEvent('canplaythrough', canplaythrough);
                 waitForEvent('playing', playing);
                 video.src = findMediaFile("video", "content/test");
+                state = "interrupted";
             }
         </script>
     </head>
 
     <body onload="start()">
-        <video controls ></video>
-        <p>Test that play() during interruption does nothing, ending interruption allows playback to resume.</p>
+        <p>Test a &lt;video&gt; element crated during interruption behaves correctly.</p>
     </body>
 </html>

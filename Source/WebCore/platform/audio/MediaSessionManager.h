@@ -47,16 +47,12 @@ public:
     void beginInterruption();
     void endInterruption(MediaSession::EndInterruptionFlags);
 
-    void applicationWillEnterForeground() const;
-    void applicationWillEnterBackground() const;
-
     enum SessionRestrictionFlags {
         NoRestrictions = 0,
         ConcurrentPlaybackNotPermitted = 1 << 0,
         InlineVideoPlaybackRestricted = 1 << 1,
         MetadataPreloadingNotPermitted = 1 << 2,
         AutoPreloadingNotPermitted = 1 << 3,
-        BackgroundPlaybackNotPermitted = 1 << 4,
     };
     typedef unsigned SessionRestrictions;
     
@@ -66,7 +62,6 @@ public:
     virtual void resetRestrictions();
 
     void sessionWillBeginPlayback(const MediaSession&) const;
-
     bool sessionRestrictsInlineVideoPlayback(const MediaSession&) const;
 
 protected:
@@ -82,7 +77,7 @@ private:
     SessionRestrictions m_restrictions[MediaSession::WebAudio + 1];
 
     Vector<MediaSession*> m_sessions;
-    bool m_interrupted;
+    int m_interruptions;
 };
 
 }

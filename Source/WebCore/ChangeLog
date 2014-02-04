@@ -1,3 +1,47 @@
+2014-02-04  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r163376.
+        http://trac.webkit.org/changeset/163376
+        https://bugs.webkit.org/show_bug.cgi?id=128184
+
+        Unexpected test failures. (Requested by eric_carlson on
+        #webkit).
+
+        * WebCore.exp.in:
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::parseAttribute):
+        * html/HTMLMediaElement.h:
+        * html/HTMLMediaSession.cpp:
+        (WebCore::HTMLMediaSession::addBehaviorRestriction):
+        (WebCore::HTMLMediaSession::removeBehaviorRestriction):
+        (WebCore::HTMLMediaSession::clientWillBeginPlayback):
+        * html/HTMLMediaSession.h:
+        * platform/audio/MediaSession.cpp:
+        (WebCore::MediaSession::MediaSession):
+        (WebCore::MediaSession::beginInterruption):
+        (WebCore::MediaSession::endInterruption):
+        * platform/audio/MediaSession.h:
+        (WebCore::MediaSession::mediaType):
+        (WebCore::MediaSession::setState):
+        (WebCore::MediaSessionClient::beginInterruption):
+        (WebCore::MediaSessionClient::endInterruption):
+        * platform/audio/MediaSessionManager.cpp:
+        (WebCore::MediaSessionManager::MediaSessionManager):
+        (WebCore::MediaSessionManager::beginInterruption):
+        (WebCore::MediaSessionManager::endInterruption):
+        (WebCore::MediaSessionManager::addSession):
+        * platform/audio/MediaSessionManager.h:
+        * platform/audio/ios/MediaSessionManagerIOS.h:
+        (WebCore::MediaSessionManageriOS::~MediaSessionManageriOS):
+        * platform/audio/ios/MediaSessionManagerIOS.mm:
+        (WebCore::MediaSessionManageriOS::resetRestrictions):
+        (-[WebMediaSessionHelper initWithCallback:]):
+        * platform/audio/mac/AudioDestinationMac.h:
+        * testing/Internals.cpp:
+        (WebCore::Internals::setMediaSessionRestrictions):
+        * testing/Internals.h:
+        * testing/Internals.idl:
+
 2014-02-04  Eric Carlson  <eric.carlson@apple.com>
 
         Refine MediaSession interruptions

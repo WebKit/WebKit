@@ -669,8 +669,10 @@ private:
 #endif
 
     virtual MediaSession::MediaType mediaType() const override;
+
+    virtual void beginInterruption() override;
+    virtual void endInterruption(MediaSession::EndInterruptionFlags) override;
     virtual void pausePlayback() override;
-    virtual void resumePlayback() override;
 
     Timer<HTMLMediaElement> m_loadTimer;
     Timer<HTMLMediaElement> m_progressEventTimer;
@@ -777,6 +779,8 @@ private:
     bool m_requestingPlay : 1;
     bool m_platformLayerBorrowed : 1;
 #endif
+
+    bool m_resumePlaybackAfterInterruption : 1;
 
 #if ENABLE(VIDEO_TRACK)
     bool m_tracksAreReady : 1;

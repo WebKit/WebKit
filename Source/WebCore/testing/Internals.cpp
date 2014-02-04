@@ -2188,16 +2188,6 @@ void Internals::endMediaSessionInterruption(const String& flagsString)
     MediaSessionManager::sharedManager().endInterruption(flags);
 }
 
-void Internals::applicationWillEnterForeground() const
-{
-    MediaSessionManager::sharedManager().applicationWillEnterForeground();
-}
-
-void Internals::applicationWillEnterBackground() const
-{
-    MediaSessionManager::sharedManager().applicationWillEnterBackground();
-}
-
 void Internals::setMediaSessionRestrictions(const String& mediaTypeString, const String& restrictionsString, ExceptionCode& ec)
 {
     MediaSession::MediaType mediaType = MediaSession::None;
@@ -2225,8 +2215,6 @@ void Internals::setMediaSessionRestrictions(const String& mediaTypeString, const
         restrictions += MediaSessionManager::MetadataPreloadingNotPermitted;
     if (equalIgnoringCase(restrictionsString, "AutoPreloadingNotPermitted"))
         restrictions += MediaSessionManager::AutoPreloadingNotPermitted;
-    if (equalIgnoringCase(restrictionsString, "BackgroundPlaybackNotPermitted"))
-        restrictions += MediaSessionManager::BackgroundPlaybackNotPermitted;
 
     MediaSessionManager::sharedManager().addRestriction(mediaType, restrictions);
 }

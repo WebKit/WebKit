@@ -1,3 +1,21 @@
+2014-02-04  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r163376.
+        http://trac.webkit.org/changeset/163376
+        https://bugs.webkit.org/show_bug.cgi?id=128184
+
+        Unexpected test failures. (Requested by eric_carlson on
+        #webkit).
+
+        * media/video-background-playback-expected.txt: Removed.
+        * media/video-background-playback.html: Removed.
+        * media/video-interruption-active-when-element-created-expected.txt: Copied from LayoutTests/media/video-interruption-with-resume-allowing-play-expected.txt.
+        * media/video-interruption-active-when-element-created.html: Copied from LayoutTests/media/video-interruption-with-resume-not-allowing-play.html.
+        * media/video-interruption-with-resume-allowing-play-expected.txt:
+        * media/video-interruption-with-resume-allowing-play.html:
+        * media/video-interruption-with-resume-not-allowing-play-expected.txt:
+        * media/video-interruption-with-resume-not-allowing-play.html:
+
 2014-02-04  Eric Carlson  <eric.carlson@apple.com>
 
         Refine MediaSession interruptions
