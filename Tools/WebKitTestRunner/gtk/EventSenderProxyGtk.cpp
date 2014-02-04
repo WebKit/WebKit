@@ -109,6 +109,22 @@ static unsigned eventSenderButtonToGDKButton(unsigned button)
     return mouseButton;
 }
 
+static guint webkitModifiersToGDKModifiers(WKEventModifiers wkModifiers)
+{
+    guint modifiers = 0;
+
+    if (wkModifiers & kWKEventModifiersControlKey)
+        modifiers |= GDK_CONTROL_MASK;
+    if (wkModifiers & kWKEventModifiersShiftKey)
+        modifiers |= GDK_SHIFT_MASK;
+    if (wkModifiers & kWKEventModifiersAltKey)
+        modifiers |= GDK_MOD1_MASK;
+    if (wkModifiers & kWKEventModifiersMetaKey)
+        modifiers |= GDK_META_MASK;
+
+    return modifiers;
+}
+
 GdkEvent* EventSenderProxy::createMouseButtonEvent(GdkEventType eventType, unsigned button, WKEventModifiers modifiers)
 {
     GdkEvent* mouseEvent = gdk_event_new(eventType);
@@ -119,7 +135,7 @@ GdkEvent* EventSenderProxy::createMouseButtonEvent(GdkEventType eventType, unsig
     mouseEvent->button.window = gtk_widget_get_window(GTK_WIDGET(m_testController->mainWebView()->platformView()));
     g_object_ref(mouseEvent->button.window);
     gdk_event_set_device(mouseEvent, gdk_device_manager_get_client_pointer(gdk_display_get_device_manager(gdk_window_get_display(mouseEvent->button.window))));
-    mouseEvent->button.state = modifiers | getMouseButtonModifiers(mouseEvent->button.button);
+    mouseEvent->button.state = webkitModifiersToGDKModifiers(modifiers) | getMouseButtonModifiers(mouseEvent->button.button);
     mouseEvent->button.time = GDK_CURRENT_TIME;
     mouseEvent->button.axes = 0;
 
@@ -171,22 +187,6 @@ void EventSenderProxy::sendOrQueueEvent(GdkEvent* event)
 
     m_eventQueue.last().event = event;
     replaySavedEvents();
-}
-
-static guint webkitModifiersToGDKModifiers(WKEventModifiers wkModifiers)
-{
-    guint modifiers = 0;
-
-    if (wkModifiers & kWKEventModifiersControlKey)
-        modifiers |= GDK_CONTROL_MASK;
-    if (wkModifiers & kWKEventModifiersShiftKey)
-        modifiers |= GDK_SHIFT_MASK;
-    if (wkModifiers & kWKEventModifiersAltKey)
-        modifiers |= GDK_MOD1_MASK;
-    if (wkModifiers & kWKEventModifiersMetaKey)
-        modifiers |= GDK_META_MASK;
-
-    return modifiers;
 }
 
 int getGDKKeySymForKeyRef(WKStringRef keyRef, unsigned location, guint* modifiers)
@@ -290,7 +290,7 @@ void EventSenderProxy::keyDown(WKStringRef keyRef, WKEventModifiers wkModifiers,
 
     GdkEvent* pressEvent = gdk_event_new(GDK_KEY_PRESS);
     pressEvent->key.keyval = gdkKeySym;
-    pressEvent->key.state = modifiers;
+    pressEvent->key.state = webkitModifiersToGDKModifiers(modifiers);
     pressEvent->key.window = gtk_widget_get_window(GTK_WIDGET(m_testController->mainWebView()->platformWindow()));
     g_object_ref(pressEvent->key.window);
     gdk_event_set_device(pressEvent, gdk_device_manager_get_client_pointer(gdk_display_get_device_manager(gdk_window_get_display(pressEvent->key.window))));
