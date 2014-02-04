@@ -321,6 +321,7 @@ static ProtoChainGenerationResult generateProtoChainAccessStub(ExecState* exec, 
         // right now!
         stubJit.store32(MacroAssembler::TrustedImm32(exec->locationAsRawBits()),
             CCallHelpers::tagFor(static_cast<VirtualRegister>(JSStack::ArgumentCount)));
+        stubJit.storePtr(GPRInfo::callFrameRegister, &vm->topCallFrame);
 
         operationCall = stubJit.call();
 #if USE(JSVALUE64)
@@ -634,6 +635,7 @@ static bool tryBuildGetByIDList(ExecState* exec, JSValue baseValue, const Identi
             stubJit.store32(
                 MacroAssembler::TrustedImm32(exec->locationAsRawBits()),
                 CCallHelpers::tagFor(static_cast<VirtualRegister>(JSStack::ArgumentCount)));
+            stubJit.storePtr(GPRInfo::callFrameRegister, &vm->topCallFrame);
             
             operationCall = stubJit.call();
 #if USE(JSVALUE64)
