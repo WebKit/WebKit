@@ -1,5 +1,12 @@
 2014-02-03  Anders Carlsson  <andersca@apple.com>
 
+        Fix Windows build.
+
+        * wtf/text/StringImpl.h:
+        (WTF::StringImpl::tailOffset):
+
+2014-02-03  Anders Carlsson  <andersca@apple.com>
+
         StringImpl::tailOffset() should return the offset right after m_hashAndFlags
         https://bugs.webkit.org/show_bug.cgi?id=128141
 

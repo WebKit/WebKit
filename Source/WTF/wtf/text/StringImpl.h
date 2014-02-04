@@ -780,9 +780,9 @@ private:
     {
 #if COMPILER(MSVC)
         // MSVC doesn't support alignof yet.
-        return roundUpToMultipleOf<alignof(T)>(sizeof(StringImpl));
+        return roundUpToMultipleOf<sizeof(T)>(sizeof(StringImpl));
 #else
-        return roundUpToMultipleOf<__alignof(T)>(offsetof(StringImpl, m_hashAndFlags) + sizeof(StringImpl::m_hashAndFlags));
+        return roundUpToMultipleOf<alignof(T)>(offsetof(StringImpl, m_hashAndFlags) + sizeof(StringImpl::m_hashAndFlags));
 #endif
     }
 
