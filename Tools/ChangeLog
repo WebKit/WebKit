@@ -1,3 +1,17 @@
+2014-02-04  Gabor Rapcsanyi  <rgabor@webkit.org>
+
+        Fine tuning the ARM EFL bots
+        https://bugs.webkit.org/show_bug.cgi?id=128168
+
+        Reviewed by Csaba Osztrogonác.
+
+        * BuildSlaveSupport/build.webkit.org-config/config.json: Add custom SVN mirror.
+        * BuildSlaveSupport/build.webkit.org-config/master.cfg:
+        (WaitForSVNServer): Make it not to halt before the first repository checkout.
+        (WaitForSVNServer.evaluateCommand):
+        (Factory.__init__): Disable kill-old-processes step on EFL ARM bots, because these
+        bots run on the same machine and they kill the processes of each other.
+
 2014-02-03  Ryosuke Niwa  <rniwa@webkit.org>
 
         kill-old-processes doesn't kill plugin processes

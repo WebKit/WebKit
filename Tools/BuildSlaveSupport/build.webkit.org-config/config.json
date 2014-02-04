@@ -189,11 +189,13 @@
                     {
                       "name": "EFL Linux ARMv7 Thumb2 Release (Build)", "type": "Build", "builddir": "efl-linux-armv7-thumb2-release",
                       "platform": "efl", "configuration": "release", "architectures": ["armv7"],
+                      "SVNMirror": "svn://webkit.inf.u-szeged.hu/webkit/",
                       "slavenames": ["efl-linux-szeged-slave-1"]
                     },
                     {
                       "name": "EFL Linux ARMv7 Traditional Release (Build)", "type": "Build", "builddir": "efl-linux-armv7-traditional-release",
                       "platform": "efl", "configuration": "release", "architectures": ["armv7"],
+                      "SVNMirror": "svn://webkit.inf.u-szeged.hu/webkit/",
                       "slavenames": ["efl-linux-szeged-slave-2"]
                     }
                   ],
