@@ -1,5 +1,16 @@
 2014-02-04  Anders Carlsson  <andersca@apple.com>
 
+        Rename equalNonNull to equal and make it take const StringImpl& instead
+        https://bugs.webkit.org/show_bug.cgi?id=128206
+
+        Reviewed by Andreas Kling.
+
+        * html/parser/HTMLParserIdioms.cpp:
+        (WebCore::threadSafeEqual):
+        (WebCore::threadSafeMatch):
+
+2014-02-04  Anders Carlsson  <andersca@apple.com>
+
         Rename String::getCharacters to String::characters
         https://bugs.webkit.org/show_bug.cgi?id=128196
 

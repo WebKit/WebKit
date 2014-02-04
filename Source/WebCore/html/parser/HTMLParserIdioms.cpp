@@ -276,18 +276,18 @@ bool parseHTMLNonNegativeInteger(const String& input, unsigned& value)
     return parseHTMLNonNegativeIntegerInternal(start, start + length, value);
 }
 
-static bool threadSafeEqual(const StringImpl* a, const StringImpl* b)
+static bool threadSafeEqual(const StringImpl& a, const StringImpl& b)
 {
-    if (a == b)
+    if (&a == &b)
         return true;
-    if (a->hash() != b->hash())
+    if (a.hash() != b.hash())
         return false;
-    return equalNonNull(a, b);
+    return equal(a, b);
 }
 
 bool threadSafeMatch(const QualifiedName& a, const QualifiedName& b)
 {
-    return threadSafeEqual(a.localName().impl(), b.localName().impl());
+    return threadSafeEqual(*a.localName().impl(), *b.localName().impl());
 }
 
 struct ImageWithScale {

@@ -45,7 +45,7 @@ namespace WTF {
         static unsigned hash(StringImpl* key) { return key->hash(); }
         static inline bool equal(const StringImpl* a, const StringImpl* b)
         {
-            return equalNonNull(a, b);
+            return WTF::equal(*a, *b);
         }
 
         static unsigned hash(const RefPtr<StringImpl>& key) { return key->hash(); }

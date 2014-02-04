@@ -1769,24 +1769,24 @@ PassRef<StringImpl> StringImpl::replace(StringImpl* pattern, StringImpl* replace
     return newImpl;
 }
 
-static inline bool stringImplContentEqual(const StringImpl* a, const StringImpl* b)
+static inline bool stringImplContentEqual(const StringImpl& a, const StringImpl& b)
 {
-    unsigned aLength = a->length();
-    unsigned bLength = b->length();
+    unsigned aLength = a.length();
+    unsigned bLength = b.length();
     if (aLength != bLength)
         return false;
 
-    if (a->is8Bit()) {
-        if (b->is8Bit())
-            return equal(a->characters8(), b->characters8(), aLength);
+    if (a.is8Bit()) {
+        if (b.is8Bit())
+            return equal(a.characters8(), b.characters8(), aLength);
 
-        return equal(a->characters8(), b->characters16(), aLength);
+        return equal(a.characters8(), b.characters16(), aLength);
     }
 
-    if (b->is8Bit())
-        return equal(a->characters16(), b->characters8(), aLength);
+    if (b.is8Bit())
+        return equal(a.characters16(), b.characters8(), aLength);
 
-    return equal(a->characters16(), b->characters16(), aLength);
+    return equal(a.characters16(), b.characters16(), aLength);
 }
 
 bool equal(const StringImpl* a, const StringImpl* b)
@@ -1796,7 +1796,7 @@ bool equal(const StringImpl* a, const StringImpl* b)
     if (!a || !b)
         return false;
 
-    return stringImplContentEqual(a, b);
+    return stringImplContentEqual(*a, *b);
 }
 
 template <typename CharType>
@@ -1859,10 +1859,9 @@ bool equal(const StringImpl* a, const LChar* b)
     return !b[length];
 }
 
-bool equalNonNull(const StringImpl* a, const StringImpl* b)
+bool equal(const StringImpl& a, const StringImpl& b)
 {
-    ASSERT(a && b);
-    if (a == b)
+    if (&a == &b)
         return true;
 
     return stringImplContentEqual(a, b);
