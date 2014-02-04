@@ -401,9 +401,6 @@ void CSSSelector::extractPseudoType() const
     case PseudoFirstLine:
         compat = true;
         FALLTHROUGH;
-#if ENABLE(SHADOW_DOM)
-    case PseudoDistributed:
-#endif
     case PseudoResizer:
     case PseudoScrollbar:
     case PseudoScrollbarCorner:

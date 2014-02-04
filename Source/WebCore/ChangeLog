@@ -1,5 +1,15 @@
 2014-02-03  Andreas Kling  <akling@apple.com>
 
+        Remove stray vestige from ::-webkit-distributed selector.
+        <https://webkit.org/b/128154>
+
+        Reviewed by Anders Carlsson.
+
+        * css/CSSSelector.cpp:
+        (WebCore::CSSSelector::extractPseudoType):
+
+2014-02-03  Andreas Kling  <akling@apple.com>
+
         Remove the CSS @host rule.
         <https://webkit.org/b/128146>
 
