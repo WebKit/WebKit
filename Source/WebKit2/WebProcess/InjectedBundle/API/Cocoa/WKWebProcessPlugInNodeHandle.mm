@@ -27,6 +27,7 @@
 #import "WKWebProcessPlugInNodeHandleInternal.h"
 
 #import "WKWebProcessPlugInFrameInternal.h"
+#import <WebCore/IntRect.h>
 
 #if WK_API_ENABLED
 
@@ -57,18 +58,48 @@ using namespace WebKit;
     return wrapper(*frame.release().leakRef());
 }
 
-#pragma mark WKObject protocol implementation
+- (CGRect)elementBounds
+{
+    return _nodeHandle->elementBounds();
+}
 
-- (API::Object&)_apiObject
+- (BOOL)HTMLInputElementIsAutoFilled
+{
+    return _nodeHandle->isHTMLInputElementAutofilled();
+}
+
+- (void)setHTMLInputElementIsAutoFilled:(BOOL)isAutoFilled
+{
+    _nodeHandle->setHTMLInputElementAutofilled(isAutoFilled);
+}
+
+- (BOOL)HTMLInputELementIsUserEdited
+{
+    return _nodeHandle->htmlInputElementLastChangeWasUserEdit();
+}
+
+- (BOOL)HTMLTextAreaELementIsUserEdited
+{
+    return _nodeHandle->htmlTextAreaElementLastChangeWasUserEdit();
+}
+
+- (WKWebProcessPlugInNodeHandle *)HTMLTableCellElementCellAbove
+{
+    auto nodeHandle = _nodeHandle->htmlTableCellElementCellAbove();
+    if (!nodeHandle)
+        return nil;
+
+    return [wrapper(*nodeHandle.leakRef()) autorelease];
+}
+
+- (InjectedBundleNodeHandle&)_nodeHandle
 {
     return *_nodeHandle;
 }
 
-@end
+#pragma mark WKObject protocol implementation
 
-@implementation WKWebProcessPlugInNodeHandle (Internal)
-
-- (InjectedBundleNodeHandle&)_nodeHandle
+- (API::Object&)_apiObject
 {
     return *_nodeHandle;
 }

@@ -41,9 +41,6 @@ inline WKWebProcessPlugInNodeHandle *wrapper(InjectedBundleNodeHandle& nodeHandl
 }
 
 @interface WKWebProcessPlugInNodeHandle () <WKObject>
-@end
-
-@interface WKWebProcessPlugInNodeHandle (Internal)
 
 @property (readonly) WebKit::InjectedBundleNodeHandle& _nodeHandle;
 

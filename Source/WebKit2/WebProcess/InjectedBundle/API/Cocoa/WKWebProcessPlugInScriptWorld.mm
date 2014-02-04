@@ -51,18 +51,19 @@ using namespace WebKit;
     [super dealloc];
 }
 
-#pragma mark WKObject protocol implementation
+- (void)clearWrappers
+{
+    _world->clearWrappers();
+}
 
-- (API::Object&)_apiObject
+- (InjectedBundleScriptWorld&)_scriptWorld
 {
     return *_world;
 }
 
-@end
+#pragma mark WKObject protocol implementation
 
-@implementation WKWebProcessPlugInScriptWorld (Internal)
-
-- (InjectedBundleScriptWorld&)_scriptWorld
+- (API::Object&)_apiObject
 {
     return *_world;
 }

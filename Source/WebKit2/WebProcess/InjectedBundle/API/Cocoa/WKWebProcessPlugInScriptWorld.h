@@ -35,6 +35,8 @@ WK_API_CLASS
 + (WKWebProcessPlugInScriptWorld *)world;
 + (WKWebProcessPlugInScriptWorld *)normalWorld;
 
+- (void)clearWrappers;
+
 @end
 
 #endif // WK_API_ENABLED

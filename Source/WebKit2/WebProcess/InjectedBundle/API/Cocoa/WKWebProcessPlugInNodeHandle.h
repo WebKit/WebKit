@@ -38,6 +38,12 @@ WK_API_CLASS
 + (WKWebProcessPlugInNodeHandle *)nodeHandleWithJSValue:(JSValue *)value inContext:(JSContext *)context;
 - (WKWebProcessPlugInFrame *)htmlIFrameElementContentFrame;
 
+@property (nonatomic, readonly) CGRect elementBounds;
+@property (nonatomic) BOOL HTMLInputElementIsAutoFilled;
+@property (nonatomic, readonly) BOOL HTMLInputElementIsUserEdited;
+@property (nonatomic, readonly) BOOL HTMLTextAreaElementIsUserEdited;
+@property (nonatomic, readonly) WKWebProcessPlugInNodeHandle *HTMLTableCellElementCellAbove;
+
 @end
 
 #endif // WK_API_ENABLED

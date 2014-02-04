@@ -41,9 +41,6 @@ inline WKWebProcessPlugInScriptWorld *wrapper(InjectedBundleScriptWorld& world)
 }
 
 @interface WKWebProcessPlugInScriptWorld () <WKObject>
-@end
-
-@interface WKWebProcessPlugInScriptWorld (Internal)
 
 @property (readonly) WebKit::InjectedBundleScriptWorld& _scriptWorld;
 

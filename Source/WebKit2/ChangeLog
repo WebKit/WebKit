@@ -1,3 +1,29 @@
+2014-02-04  Dan Bernstein  <mitz@apple.com>
+
+        [Cocoa] Expose more WKWebProcessPlugInNodeHandle properties
+        https://bugs.webkit.org/show_bug.cgi?id=128219
+
+        Reviewed by Anders Carlsson.
+
+        * WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInNodeHandle.h: Declared new
+        properties.
+        * WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInNodeHandle.mm:
+        (-[WKWebProcessPlugInNodeHandle elementBounds]): Added.
+        (-[WKWebProcessPlugInNodeHandle HTMLInputElementIsAutoFilled]): Added.
+        (-[WKWebProcessPlugInNodeHandle setHTMLInputElementIsAutoFilled:]): Added.
+        (-[WKWebProcessPlugInNodeHandle HTMLInputELementIsUserEdited]): Added.
+        (-[WKWebProcessPlugInNodeHandle HTMLTextAreaELementIsUserEdited]): Added.
+        (-[WKWebProcessPlugInNodeHandle HTMLTableCellElementCellAbove]): Added.
+        * WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInNodeHandleInternal.h: Rolled
+        Internal category into the class extension.
+
+        * WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInScriptWorld.h: Declared
+        -clearWrappers.
+        * WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInScriptWorld.mm:
+        (-[WKWebProcessPlugInScriptWorld clearWrappers]): Added. Calls through to clearWrappers().
+        * WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInScriptWorldInternal.h: Rolled
+        Internal category into the class extension.
+
 2014-02-04  Alexey Proskuryakov  <ap@apple.com>
 
         webKitCookieStorageCopyRequestHeaderFieldsForURL builds an empty Cookie header when there are no cookies
