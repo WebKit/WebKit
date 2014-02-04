@@ -26,11 +26,6 @@
 #ifndef ewk_private_h
 #define ewk_private_h
 
-#include <wtf/Assertions.h>
-
-#define COMPILE_ASSERT_MATCHING_ENUM(ewkName, webcoreName) \
-        COMPILE_ASSERT(int(ewkName) == int(webcoreName), mismatchingEnums)
-
 extern int _ewk_log_dom;
 
 #define CRITICAL(...) EINA_LOG_DOM_CRIT(_ewk_log_dom, __VA_ARGS__)

@@ -198,9 +198,25 @@ void EwkContext::addVisitedLink(const String& visitedURL)
     WKContextAddVisitedLink(m_context.get(), adoptWK(toCopiedAPI(visitedURL)).get());
 }
 
+// Ewk_Cache_Model enum validation
+inline WKCacheModel toWKCacheModel(Ewk_Cache_Model cacheModel)
+{
+    switch (cacheModel) {
+    case EWK_CACHE_MODEL_DOCUMENT_VIEWER:
+        return kWKCacheModelDocumentViewer;
+    case EWK_CACHE_MODEL_DOCUMENT_BROWSER:
+        return kWKCacheModelDocumentBrowser;
+    case EWK_CACHE_MODEL_PRIMARY_WEBBROWSER:
+        return kWKCacheModelPrimaryWebBrowser;
+    }
+    ASSERT_NOT_REACHED();
+
+    return kWKCacheModelDocumentViewer;
+}
+
 void EwkContext::setCacheModel(Ewk_Cache_Model cacheModel)
 {
-    WKContextSetCacheModel(m_context.get(), static_cast<WebKit::CacheModel>(cacheModel));
+    WKContextSetCacheModel(m_context.get(), toWKCacheModel(cacheModel));
 }
 
 Ewk_Cache_Model EwkContext::cacheModel() const
@@ -317,11 +333,6 @@ void ewk_context_visited_link_add(Ewk_Context* ewkContext, const char* visitedUR
 
     impl->addVisitedLink(visitedURL);
 }
-
-// Ewk_Cache_Model enum validation
-COMPILE_ASSERT_MATCHING_ENUM(EWK_CACHE_MODEL_DOCUMENT_VIEWER, kWKCacheModelDocumentViewer);
-COMPILE_ASSERT_MATCHING_ENUM(EWK_CACHE_MODEL_DOCUMENT_BROWSER, kWKCacheModelDocumentBrowser);
-COMPILE_ASSERT_MATCHING_ENUM(EWK_CACHE_MODEL_PRIMARY_WEBBROWSER, kWKCacheModelPrimaryWebBrowser);
 
 Eina_Bool ewk_context_cache_model_set(Ewk_Context* ewkContext, Ewk_Cache_Model cacheModel)
 {

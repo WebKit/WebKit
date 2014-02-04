@@ -1,3 +1,41 @@
+2014-02-04  Jinwoo Song  <jinwoo7.song@samsung.com>
+
+        [EFL][WK2] Stop using COMPILE_ASSERT_MATCHING_ENUM macros in EFL WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=128156
+
+        Reviewed by Anders Carlsson.
+
+        * UIProcess/API/efl/EwkView.cpp:
+        (EwkView::requestPopupMenu):
+        * UIProcess/API/efl/ewk_context.cpp:
+        (toWKCacheModel):
+        (EwkContext::setCacheModel):
+        * UIProcess/API/efl/ewk_cookie_manager.cpp:
+        (ewk_cookie_manager_persistent_storage_set):
+        (ewk_cookie_manager_accept_policy_set):
+        * UIProcess/API/efl/ewk_navigation_policy_decision.cpp:
+        (toEwkNavigationType):
+        (toEventMouseButton):
+        (toEventModifierKeys):
+        (EwkNavigationPolicyDecision::EwkNavigationPolicyDecision):
+        (EwkNavigationPolicyDecision::navigationType):
+        (EwkNavigationPolicyDecision::mouseButton):
+        (EwkNavigationPolicyDecision::modifiers):
+        (ewk_navigation_policy_decision_download):
+        * UIProcess/API/efl/ewk_navigation_policy_decision_private.h:
+        (EwkNavigationPolicyDecision::create):
+        * UIProcess/API/efl/ewk_popup_menu_item.cpp:
+        (EwkPopupMenuItem::type):
+        (EwkPopupMenuItem::textDirection):
+        * UIProcess/API/efl/ewk_private.h:
+        * UIProcess/API/efl/ewk_view.cpp:
+        (toWKFindOptions):
+        (ewk_view_text_find):
+        (toWKPaginationMode):
+        (toEwkPaginationMode):
+        (ewk_view_pagination_mode_set):
+        (ewk_view_pagination_mode_get):
+
 2014-02-03  Brady Eidson  <beidson@apple.com>
 
         Unreviewed build fix after http://trac.webkit.org/changeset/163364

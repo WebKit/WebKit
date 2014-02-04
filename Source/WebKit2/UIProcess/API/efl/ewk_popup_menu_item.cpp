@@ -34,17 +34,30 @@ EwkPopupMenuItem::EwkPopupMenuItem(WKPopupItemRef item)
     : m_wkItem(item)
 { }
 
-COMPILE_ASSERT_MATCHING_ENUM(EWK_POPUP_MENU_SEPARATOR, kWKPopupItemTypeSeparator);
-COMPILE_ASSERT_MATCHING_ENUM(EWK_POPUP_MENU_ITEM, kWKPopupItemTypeItem);
-
 Ewk_Popup_Menu_Item_Type EwkPopupMenuItem::type() const
 {
-    return static_cast<Ewk_Popup_Menu_Item_Type>(WKPopupItemGetType(m_wkItem.get()));
+    switch (WKPopupItemGetType(m_wkItem.get())) {
+    case kWKPopupItemTypeSeparator:
+        return EWK_POPUP_MENU_SEPARATOR;
+    case kWKPopupItemTypeItem:
+        return EWK_POPUP_MENU_ITEM;
+    }
+    ASSERT_NOT_REACHED();
+
+    return EWK_POPUP_MENU_UNKNOWN;
 }
 
 Ewk_Text_Direction EwkPopupMenuItem::textDirection() const
 {
-    return static_cast<Ewk_Text_Direction>(WKPopupItemGetTextDirection(m_wkItem.get()));
+    switch (WKPopupItemGetTextDirection(m_wkItem.get())) {
+    case kWKPopupItemTextDirectionRTL:
+        return EWK_TEXT_DIRECTION_RIGHT_TO_LEFT;
+    case kWKPopupItemTextDirectionLTR:
+        return EWK_TEXT_DIRECTION_LEFT_TO_RIGHT;
+    }
+    ASSERT_NOT_REACHED();
+
+    return EWK_TEXT_DIRECTION_LEFT_TO_RIGHT;
 }
 
 const char* EwkPopupMenuItem::text() const

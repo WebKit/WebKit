@@ -32,7 +32,59 @@
 
 using namespace WebKit;
 
-EwkNavigationPolicyDecision::EwkNavigationPolicyDecision(WKFramePolicyListenerRef listener, Ewk_Navigation_Type navigationType, Event_Mouse_Button mouseButton, Event_Modifier_Keys modifiers, PassRefPtr<EwkUrlRequest> request, const char* frameName)
+inline static Ewk_Navigation_Type toEwkNavigationType(WKFrameNavigationType navigationType)
+{
+    switch (navigationType) {
+    case kWKFrameNavigationTypeLinkClicked:
+        return EWK_NAVIGATION_TYPE_LINK_ACTIVATED;
+    case kWKFrameNavigationTypeFormSubmitted:
+        return EWK_NAVIGATION_TYPE_FORM_SUBMITTED;
+    case kWKFrameNavigationTypeBackForward:
+        return EWK_NAVIGATION_TYPE_BACK_FORWARD;
+    case kWKFrameNavigationTypeReload:
+        return EWK_NAVIGATION_TYPE_RELOAD;
+    case kWKFrameNavigationTypeFormResubmitted:
+        return EWK_NAVIGATION_TYPE_FORM_RESUBMITTED;
+    case kWKFrameNavigationTypeOther:
+        return EWK_NAVIGATION_TYPE_OTHER;
+    }
+    ASSERT_NOT_REACHED();
+
+    return EWK_NAVIGATION_TYPE_LINK_ACTIVATED;
+}
+
+inline static Event_Mouse_Button toEventMouseButton(WKEventMouseButton mouseButton)
+{
+    switch (mouseButton) {
+    case kWKEventMouseButtonNoButton:
+        return EVENT_MOUSE_BUTTON_NONE;
+    case kWKEventMouseButtonLeftButton:
+        return EVENT_MOUSE_BUTTON_LEFT;
+    case kWKEventMouseButtonMiddleButton:
+        return EVENT_MOUSE_BUTTON_MIDDLE;
+    case kWKEventMouseButtonRightButton:
+        return EVENT_MOUSE_BUTTON_RIGHT;
+    }
+    ASSERT_NOT_REACHED();
+
+    return EVENT_MOUSE_BUTTON_NONE;
+}
+
+inline static Event_Modifier_Keys toEventModifierKeys(WKEventModifiers modifiers)
+{
+    unsigned keys = 0;
+    if (modifiers & kWKEventModifiersShiftKey)
+        keys |= EVENT_MODIFIER_KEY_SHIFT;
+    if (modifiers & kWKEventModifiersControlKey)
+        keys |= kWKEventModifiersControlKey;
+    if (modifiers & kWKEventModifiersAltKey)
+        keys |= EVENT_MODIFIER_KEY_ALT;
+    if (modifiers & kWKEventModifiersMetaKey)
+        keys |= EVENT_MODIFIER_KEY_META;
+    return static_cast<Event_Modifier_Keys>(keys);
+}
+
+EwkNavigationPolicyDecision::EwkNavigationPolicyDecision(WKFramePolicyListenerRef listener, WKFrameNavigationType navigationType, WKEventMouseButton mouseButton, WKEventModifiers modifiers, PassRefPtr<EwkUrlRequest> request, const char* frameName)
     : m_listener(listener)
     , m_actedUponByClient(false)
     , m_navigationType(navigationType)
@@ -51,17 +103,17 @@ EwkNavigationPolicyDecision::~EwkNavigationPolicyDecision()
 
 Ewk_Navigation_Type EwkNavigationPolicyDecision::navigationType() const
 {
-    return m_navigationType;
+    return toEwkNavigationType(m_navigationType);
 }
 
 Event_Mouse_Button EwkNavigationPolicyDecision::mouseButton() const
 {
-    return m_mouseButton;
+    return toEventMouseButton(m_mouseButton);
 }
 
 Event_Modifier_Keys EwkNavigationPolicyDecision::modifiers() const
 {
-    return m_modifiers;
+    return toEventModifierKeys(m_modifiers);
 }
 
 const char* EwkNavigationPolicyDecision::frameName() const
@@ -147,23 +199,3 @@ void ewk_navigation_policy_decision_download(Ewk_Navigation_Policy_Decision* dec
 
     impl->download();
 }
-
-// Ewk_Navigation_Type enum validation
-COMPILE_ASSERT_MATCHING_ENUM(EWK_NAVIGATION_TYPE_LINK_ACTIVATED, kWKFrameNavigationTypeLinkClicked);
-COMPILE_ASSERT_MATCHING_ENUM(EWK_NAVIGATION_TYPE_FORM_SUBMITTED, kWKFrameNavigationTypeFormSubmitted);
-COMPILE_ASSERT_MATCHING_ENUM(EWK_NAVIGATION_TYPE_BACK_FORWARD, kWKFrameNavigationTypeBackForward);
-COMPILE_ASSERT_MATCHING_ENUM(EWK_NAVIGATION_TYPE_RELOAD, kWKFrameNavigationTypeReload);
-COMPILE_ASSERT_MATCHING_ENUM(EWK_NAVIGATION_TYPE_FORM_RESUBMITTED, kWKFrameNavigationTypeFormResubmitted);
-COMPILE_ASSERT_MATCHING_ENUM(EWK_NAVIGATION_TYPE_OTHER, kWKFrameNavigationTypeOther);
-
-// Event_Mouse_Button enum validation
-COMPILE_ASSERT_MATCHING_ENUM(EVENT_MOUSE_BUTTON_NONE, kWKEventMouseButtonNoButton);
-COMPILE_ASSERT_MATCHING_ENUM(EVENT_MOUSE_BUTTON_LEFT, kWKEventMouseButtonLeftButton);
-COMPILE_ASSERT_MATCHING_ENUM(EVENT_MOUSE_BUTTON_MIDDLE, kWKEventMouseButtonMiddleButton);
-COMPILE_ASSERT_MATCHING_ENUM(EVENT_MOUSE_BUTTON_RIGHT, kWKEventMouseButtonRightButton);
-
-// Event_Modifier_Keys validation
-COMPILE_ASSERT_MATCHING_ENUM(EVENT_MODIFIER_KEY_SHIFT, kWKEventModifiersShiftKey);
-COMPILE_ASSERT_MATCHING_ENUM(EVENT_MODIFIER_KEY_CTRL, kWKEventModifiersControlKey);
-COMPILE_ASSERT_MATCHING_ENUM(EVENT_MODIFIER_KEY_ALT, kWKEventModifiersAltKey);
-COMPILE_ASSERT_MATCHING_ENUM(EVENT_MODIFIER_KEY_META, kWKEventModifiersMetaKey);

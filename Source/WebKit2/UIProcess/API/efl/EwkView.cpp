@@ -876,9 +876,6 @@ void EwkView::dismissColorPicker()
 }
 #endif
 
-COMPILE_ASSERT_MATCHING_ENUM(EWK_TEXT_DIRECTION_RIGHT_TO_LEFT, RTL);
-COMPILE_ASSERT_MATCHING_ENUM(EWK_TEXT_DIRECTION_LEFT_TO_RIGHT, LTR);
-
 void EwkView::customContextMenuItemSelected(WKContextMenuItemRef contextMenuItem)
 {
     Ewk_View_Smart_Data* sd = smartData();
@@ -924,9 +921,6 @@ void EwkView::hideContextMenu()
     m_contextMenu.clear();
 }
 
-COMPILE_ASSERT_MATCHING_ENUM(EWK_TEXT_DIRECTION_RIGHT_TO_LEFT, kWKPopupItemTextDirectionRTL);
-COMPILE_ASSERT_MATCHING_ENUM(EWK_TEXT_DIRECTION_LEFT_TO_RIGHT, kWKPopupItemTextDirectionLTR);
-
 void EwkView::requestPopupMenu(WKPopupMenuListenerRef popupMenuListener, const WKRect& rect, WKPopupItemTextDirection textDirection, double pageScaleFactor, WKArrayRef items, int32_t selectedIndex)
 {
     Ewk_View_Smart_Data* sd = smartData();
@@ -947,7 +941,14 @@ void EwkView::requestPopupMenu(WKPopupMenuListenerRef popupMenuListener, const W
     Eina_Rectangle einaRect;
     EINA_RECTANGLE_SET(&einaRect, popupMenuPosition.x, popupMenuPosition.y, rect.size.width, rect.size.height);
 
-    sd->api->popup_menu_show(sd, einaRect, static_cast<Ewk_Text_Direction>(textDirection), pageScaleFactor, m_popupMenu.get());
+    switch (textDirection) {
+    case kWKPopupItemTextDirectionRTL:
+        sd->api->popup_menu_show(sd, einaRect, EWK_TEXT_DIRECTION_RIGHT_TO_LEFT, pageScaleFactor, m_popupMenu.get());
+        break;
+    case EWK_TEXT_DIRECTION_LEFT_TO_RIGHT:
+        sd->api->popup_menu_show(sd, einaRect, EWK_TEXT_DIRECTION_LEFT_TO_RIGHT, pageScaleFactor, m_popupMenu.get());
+        break;
+    }
 }
 
 void EwkView::closePopupMenu()

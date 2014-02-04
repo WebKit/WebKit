@@ -33,6 +33,7 @@
 #include "ewk_cookie_manager_private.h"
 #include "ewk_error_private.h"
 #include "ewk_private.h"
+#include <wtf/Assertions.h>
 #include <wtf/OwnPtr.h>
 
 using namespace WebKit;
@@ -120,28 +121,48 @@ void EwkCookieManager::cookiesDidChange(WKCookieManagerRef, const void* clientIn
     manager->m_changeHandler.callback(manager->m_changeHandler.userData);
 }
 
-// Ewk_Cookie_Persistent_Storage enum validation.
-COMPILE_ASSERT_MATCHING_ENUM(EWK_COOKIE_PERSISTENT_STORAGE_TEXT, kWKCookieStorageTypeText);
-COMPILE_ASSERT_MATCHING_ENUM(EWK_COOKIE_PERSISTENT_STORAGE_SQLITE, kWKCookieStorageTypeSQLite);
-
 void ewk_cookie_manager_persistent_storage_set(Ewk_Cookie_Manager* manager, const char* filename, Ewk_Cookie_Persistent_Storage storage)
 {
     EINA_SAFETY_ON_NULL_RETURN(manager);
     EINA_SAFETY_ON_NULL_RETURN(filename);
 
-    manager->setPersistentStorage(filename, static_cast<WKCookieStorageType>(storage));
-}
+    WKCookieStorageType wkCookieStorageType = kWKCookieStorageTypeText;
 
-// Ewk_Cookie_Accept_Policy enum validation.
-COMPILE_ASSERT_MATCHING_ENUM(EWK_COOKIE_ACCEPT_POLICY_ALWAYS, kWKHTTPCookieAcceptPolicyAlways);
-COMPILE_ASSERT_MATCHING_ENUM(EWK_COOKIE_ACCEPT_POLICY_NEVER, kWKHTTPCookieAcceptPolicyNever);
-COMPILE_ASSERT_MATCHING_ENUM(EWK_COOKIE_ACCEPT_POLICY_NO_THIRD_PARTY, kWKHTTPCookieAcceptPolicyOnlyFromMainDocumentDomain);
+    switch (storage) {
+    case EWK_COOKIE_PERSISTENT_STORAGE_TEXT:
+        wkCookieStorageType = kWKCookieStorageTypeText;
+        break;
+    case EWK_COOKIE_PERSISTENT_STORAGE_SQLITE:
+        wkCookieStorageType = kWKCookieStorageTypeSQLite;
+        break;
+    default:
+        ASSERT_NOT_REACHED();
+    }
+
+    manager->setPersistentStorage(filename, wkCookieStorageType);
+}
 
 void ewk_cookie_manager_accept_policy_set(Ewk_Cookie_Manager* manager, Ewk_Cookie_Accept_Policy policy)
 {
     EINA_SAFETY_ON_NULL_RETURN(manager);
 
-    manager->setHTTPAcceptPolicy(static_cast<WKHTTPCookieAcceptPolicy>(policy));
+    WKHTTPCookieAcceptPolicy wkPolicy = kWKHTTPCookieAcceptPolicyAlways;
+
+    switch (policy) {
+    case EWK_COOKIE_ACCEPT_POLICY_ALWAYS:
+        wkPolicy = kWKHTTPCookieAcceptPolicyAlways;
+        break;
+    case EWK_COOKIE_ACCEPT_POLICY_NEVER:
+        wkPolicy = kWKHTTPCookieAcceptPolicyNever;
+        break;
+    case EWK_COOKIE_ACCEPT_POLICY_NO_THIRD_PARTY:
+        wkPolicy = kWKHTTPCookieAcceptPolicyOnlyFromMainDocumentDomain;
+        break;
+    default:
+        ASSERT_NOT_REACHED();
+    }
+
+    manager->setHTTPAcceptPolicy(wkPolicy);
 }
 
 struct Get_Policy_Async_Data {
