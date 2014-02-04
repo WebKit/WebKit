@@ -48,13 +48,13 @@ DocumentRuleSets::~DocumentRuleSets()
 
 void DocumentRuleSets::initUserStyle(DocumentStyleSheetCollection& styleSheetCollection, const MediaQueryEvaluator& medium, StyleResolver& resolver)
 {
-    OwnPtr<RuleSet> tempUserStyle = RuleSet::create();
+    auto tempUserStyle = std::make_unique<RuleSet>();
     if (CSSStyleSheet* pageUserSheet = styleSheetCollection.pageUserSheet())
         tempUserStyle->addRulesFromSheet(&pageUserSheet->contents(), medium, &resolver);
     collectRulesFromUserStyleSheets(styleSheetCollection.injectedUserStyleSheets(), *tempUserStyle, medium, resolver);
     collectRulesFromUserStyleSheets(styleSheetCollection.documentUserStyleSheets(), *tempUserStyle, medium, resolver);
     if (tempUserStyle->ruleCount() > 0 || tempUserStyle->pageRules().size() > 0)
-        m_userStyle = tempUserStyle.release();
+        m_userStyle = std::move(tempUserStyle);
 }
 
 void DocumentRuleSets::collectRulesFromUserStyleSheets(const Vector<RefPtr<CSSStyleSheet>>& userSheets, RuleSet& userStyle, const MediaQueryEvaluator& medium, StyleResolver& resolver)
@@ -65,21 +65,21 @@ void DocumentRuleSets::collectRulesFromUserStyleSheets(const Vector<RefPtr<CSSSt
     }
 }
 
-static PassOwnPtr<RuleSet> makeRuleSet(const Vector<RuleFeature>& rules)
+static std::unique_ptr<RuleSet> makeRuleSet(const Vector<RuleFeature>& rules)
 {
     size_t size = rules.size();
     if (!size)
         return nullptr;
-    OwnPtr<RuleSet> ruleSet = RuleSet::create();
+    auto ruleSet = std::make_unique<RuleSet>();
     for (size_t i = 0; i < size; ++i)
         ruleSet->addRule(rules[i].rule, rules[i].selectorIndex, rules[i].hasDocumentSecurityOrigin ? RuleHasDocumentSecurityOrigin : RuleHasNoSpecialState);
     ruleSet->shrinkToFit();
-    return ruleSet.release();
+    return ruleSet;
 }
 
 void DocumentRuleSets::resetAuthorStyle()
 {
-    m_authorStyle = RuleSet::create();
+    m_authorStyle = std::make_unique<RuleSet>();
     m_authorStyle->disableAutoShrinkToFit();
 }
 

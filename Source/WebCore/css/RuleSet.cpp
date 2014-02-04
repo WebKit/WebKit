@@ -171,9 +171,9 @@ void RuleSet::addToRuleSet(AtomicStringImpl* key, AtomRuleMap& map, const RuleDa
 {
     if (!key)
         return;
-    OwnPtr<Vector<RuleData>>& rules = map.add(key, nullptr).iterator->value;
+    std::unique_ptr<Vector<RuleData>>& rules = map.add(key, nullptr).iterator->value;
     if (!rules)
-        rules = adoptPtr(new Vector<RuleData>);
+        rules = std::make_unique<Vector<RuleData>>();
     rules->append(ruleData);
 }
 
@@ -248,7 +248,7 @@ void RuleSet::addPageRule(StyleRulePage* rule)
 
 void RuleSet::addRegionRule(StyleRuleRegion* regionRule, bool hasDocumentSecurityOrigin)
 {
-    OwnPtr<RuleSet> regionRuleSet = RuleSet::create();
+    auto regionRuleSet = std::make_unique<RuleSet>();
     // The region rule set should take into account the position inside the parent rule set.
     // Otherwise, the rules inside region block might be incorrectly positioned before other similar rules from
     // the stylesheet that contains the region block.
@@ -267,7 +267,7 @@ void RuleSet::addRegionRule(StyleRuleRegion* regionRule, bool hasDocumentSecurit
     // Update the "global" rule count so that proper order is maintained
     m_ruleCount = regionRuleSet->m_ruleCount;
 
-    m_regionSelectorsAndRuleSets.append(RuleSetSelectorPair(regionRule->selectorList().first(), regionRuleSet.release()));
+    m_regionSelectorsAndRuleSets.append(RuleSetSelectorPair(regionRule->selectorList().first(), std::move(regionRuleSet)));
 }
 
 void RuleSet::addChildRules(const Vector<RefPtr<StyleRuleBase>>& rules, const MediaQueryEvaluator& medium, StyleResolver* resolver, const ContainerNode* scope, bool hasDocumentSecurityOrigin, AddRuleFlags addRuleFlags)

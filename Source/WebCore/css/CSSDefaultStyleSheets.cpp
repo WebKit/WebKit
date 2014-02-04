@@ -107,14 +107,14 @@ void CSSDefaultStyleSheets::loadFullDefaultStyle()
         ASSERT(defaultPrintStyle == defaultStyle);
         delete defaultStyle;
         simpleDefaultStyleSheet->deref();
-        defaultStyle = RuleSet::create().leakPtr();
-        defaultPrintStyle = RuleSet::create().leakPtr();
+        defaultStyle = std::make_unique<RuleSet>().release();
+        defaultPrintStyle = std::make_unique<RuleSet>().release();
         simpleDefaultStyleSheet = 0;
     } else {
         ASSERT(!defaultStyle);
-        defaultStyle = RuleSet::create().leakPtr();
-        defaultPrintStyle = RuleSet::create().leakPtr();
-        defaultQuirksStyle = RuleSet::create().leakPtr();
+        defaultStyle = std::make_unique<RuleSet>().release();
+        defaultPrintStyle = std::make_unique<RuleSet>().release();
+        defaultQuirksStyle = std::make_unique<RuleSet>().release();
     }
 
     // Strict-mode rules.
@@ -134,10 +134,10 @@ void CSSDefaultStyleSheets::loadSimpleDefaultStyle()
     ASSERT(!defaultStyle);
     ASSERT(!simpleDefaultStyleSheet);
 
-    defaultStyle = RuleSet::create().leakPtr();
+    defaultStyle = std::make_unique<RuleSet>().release();
     // There are no media-specific rules in the simple default style.
     defaultPrintStyle = defaultStyle;
-    defaultQuirksStyle = RuleSet::create().leakPtr();
+    defaultQuirksStyle = std::make_unique<RuleSet>().release();
 
     simpleDefaultStyleSheet = parseUASheet(simpleUserAgentStyleSheet, strlen(simpleUserAgentStyleSheet));
     defaultStyle->addRulesFromSheet(simpleDefaultStyleSheet, screenEval());
@@ -149,7 +149,7 @@ RuleSet* CSSDefaultStyleSheets::viewSourceStyle()
 {
     if (!defaultViewSourceStyle) {
         static StyleSheetContents* viewSourceStyleSheet = parseUASheet(sourceUserAgentStyleSheet, sizeof(sourceUserAgentStyleSheet));
-        defaultViewSourceStyle = RuleSet::create().leakPtr();
+        defaultViewSourceStyle = std::make_unique<RuleSet>().release();
         defaultViewSourceStyle->addRulesFromSheet(viewSourceStyleSheet, screenEval());
     }
     return defaultViewSourceStyle;

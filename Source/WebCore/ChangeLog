@@ -1,3 +1,27 @@
+2014-02-04  Zan Dobersek  <zdobersek@igalia.com>
+
+        Manage RuleSet and RuleData classes through std::unique_ptr instead of OwnPtr
+        https://bugs.webkit.org/show_bug.cgi?id=128116
+
+        Reviewed by Darin Adler.
+
+        Replace uses of OwnPtr for the RuleSet and RuleData classes with std::unique_ptr.
+
+        * css/CSSDefaultStyleSheets.cpp:
+        (WebCore::CSSDefaultStyleSheets::loadFullDefaultStyle):
+        (WebCore::CSSDefaultStyleSheets::loadSimpleDefaultStyle):
+        (WebCore::CSSDefaultStyleSheets::viewSourceStyle):
+        * css/DocumentRuleSets.cpp:
+        (WebCore::DocumentRuleSets::initUserStyle):
+        (WebCore::makeRuleSet):
+        (WebCore::DocumentRuleSets::resetAuthorStyle):
+        * css/DocumentRuleSets.h:
+        * css/RuleSet.cpp:
+        (WebCore::RuleSet::addToRuleSet):
+        (WebCore::RuleSet::addRegionRule):
+        * css/RuleSet.h:
+        (WebCore::RuleSet::RuleSetSelectorPair::RuleSetSelectorPair):
+
 2014-02-04  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r163376.
