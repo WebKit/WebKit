@@ -460,46 +460,32 @@ static String buildInsetString(const String& top, const String& right, const Str
     return result.toString();
 }
 
+static inline void updateCornerRadiusWidthAndHeight(CSSPrimitiveValue* corner, String& width, String& height)
+{
+    if (!corner)
+        return;
+
+    Pair* radius = corner->getPairValue();
+    width = radius->first() ? radius->first()->cssText() : String("0");
+    if (radius->second())
+        height = radius->second()->cssText();
+}
+
 String CSSBasicShapeInset::cssText() const
 {
     String topLeftRadiusWidth;
     String topLeftRadiusHeight;
-    if (topLeftRadius()) {
-        Pair* topLeftRadius = m_topLeftRadius->getPairValue();
-        topLeftRadiusWidth = topLeftRadius->first() ? topLeftRadius->first()->cssText() : String("0");
-        if (topLeftRadius->second())
-            topLeftRadiusHeight = topLeftRadius->second()->cssText();
-    }
-
     String topRightRadiusWidth;
     String topRightRadiusHeight;
-    if (topRightRadius()) {
-        Pair* topRightRadius = m_topRightRadius->getPairValue();
-        if (topRightRadius->first())
-            topRightRadiusWidth = topRightRadius->first()->cssText();
-        if (topRightRadius->second())
-            topRightRadiusHeight = topRightRadius->second()->cssText();
-    }
-
     String bottomRightRadiusWidth;
     String bottomRightRadiusHeight;
-    if (bottomRightRadius()) {
-        Pair* bottomRightRadius = m_bottomRightRadius->getPairValue();
-        if (bottomRightRadius->first())
-            bottomRightRadiusWidth = bottomRightRadius->first()->cssText();
-        if (bottomRightRadius->second())
-            bottomRightRadiusHeight = bottomRightRadius->second()->cssText();
-    }
-
     String bottomLeftRadiusWidth;
     String bottomLeftRadiusHeight;
-    if (bottomLeftRadius()) {
-        Pair* bottomLeftRadius = m_bottomLeftRadius->getPairValue();
-        if (bottomLeftRadius->first())
-            bottomLeftRadiusWidth = bottomLeftRadius->first()->cssText();
-        if (bottomLeftRadius->second())
-            bottomLeftRadiusHeight = bottomLeftRadius->second()->cssText();
-    }
+
+    updateCornerRadiusWidthAndHeight(topLeftRadius(), topLeftRadiusWidth, topLeftRadiusHeight);
+    updateCornerRadiusWidthAndHeight(topRightRadius(), topRightRadiusWidth, topRightRadiusHeight);
+    updateCornerRadiusWidthAndHeight(bottomRightRadius(), bottomRightRadiusWidth, bottomRightRadiusHeight);
+    updateCornerRadiusWidthAndHeight(bottomLeftRadius(), bottomLeftRadiusWidth, bottomLeftRadiusHeight);
 
     return buildInsetString(m_top ? m_top->cssText() : String(),
         m_right ? m_right->cssText() : String(),

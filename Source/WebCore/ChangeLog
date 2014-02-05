@@ -1,5 +1,20 @@
 2014-02-05  Zoltan Horvath  <zoltan@webkit.org>
 
+        [CSS Shapes] Simplify CSSBasicShapeInset::cssText
+        https://bugs.webkit.org/show_bug.cgi?id=127841
+
+        Reviewed by David Hyatt.
+
+        I introduced the updateCornerRadiusWidthAndHeight helper function, which makes the code of cssText method clearer.
+
+        No new tests, no behavior change.
+
+        * css/CSSBasicShapes.cpp:
+        (WebCore::updateCornerRadiusWidthAndHeight): Add helper function.
+        (WebCore::CSSBasicShapeInset::cssText):
+
+2014-02-05  Zoltan Horvath  <zoltan@webkit.org>
+
         [CSS Shapes] Simplify BasicShapeInset::path
         https://bugs.webkit.org/show_bug.cgi?id=127920
 
