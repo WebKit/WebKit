@@ -1053,7 +1053,7 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
 
 - (BOOL)_firstLayoutDone
 {
-    return _private->coreFrame->loader().stateMachine()->firstLayoutDone();
+    return _private->coreFrame->loader().stateMachine().firstLayoutDone();
 }
 
 - (BOOL)_isVisuallyNonEmpty

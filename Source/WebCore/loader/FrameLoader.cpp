@@ -1161,9 +1161,9 @@ void FrameLoader::prepareForHistoryNavigation()
         history().setCurrentItem(currentItem.get());
         m_frame.page()->backForward().setCurrentItem(currentItem.get());
 
-        ASSERT(stateMachine()->isDisplayingInitialEmptyDocument());
-        stateMachine()->advanceTo(FrameLoaderStateMachine::DisplayingInitialEmptyDocumentPostCommit);
-        stateMachine()->advanceTo(FrameLoaderStateMachine::CommittedFirstRealLoad);
+        ASSERT(stateMachine().isDisplayingInitialEmptyDocument());
+        stateMachine().advanceTo(FrameLoaderStateMachine::DisplayingInitialEmptyDocumentPostCommit);
+        stateMachine().advanceTo(FrameLoaderStateMachine::CommittedFirstRealLoad);
     }
 }
 

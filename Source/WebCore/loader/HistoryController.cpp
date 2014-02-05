@@ -110,7 +110,7 @@ void HistoryController::clearScrollPositionAndViewState()
 */
 void HistoryController::restoreScrollPositionAndViewState()
 {
-    if (!m_frame.loader().stateMachine()->committedFirstRealDocumentLoad())
+    if (!m_frame.loader().stateMachine().committedFirstRealDocumentLoad())
         return;
 
     ASSERT(m_currentItem);
@@ -160,7 +160,7 @@ void HistoryController::saveDocumentState()
 {
     // FIXME: Reading this bit of FrameLoader state here is unfortunate.  I need to study
     // this more to see if we can remove this dependency.
-    if (m_frame.loader().stateMachine()->creatingInitialEmptyDocument())
+    if (m_frame.loader().stateMachine().creatingInitialEmptyDocument())
         return;
 
     // For a standard page load, we will have a previous item set, which will be used to

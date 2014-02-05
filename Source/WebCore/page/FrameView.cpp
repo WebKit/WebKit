@@ -3670,7 +3670,7 @@ bool FrameView::qualifiesAsVisuallyNonEmpty() const
         return false;
 
     // Ensure that we always get marked visually non-empty eventually.
-    if (!frame().document()->parsing() && frame().loader().stateMachine()->committedFirstRealDocumentLoad())
+    if (!frame().document()->parsing() && frame().loader().stateMachine().committedFirstRealDocumentLoad())
         return true;
 
     // Require the document to grow a bit.

@@ -245,7 +245,7 @@ public:
     void setLoadsSynchronously(bool loadsSynchronously) { m_loadsSynchronously = loadsSynchronously; }
     bool loadsSynchronously() const { return m_loadsSynchronously; }
 
-    FrameLoaderStateMachine* stateMachine() const { return &m_stateMachine; }
+    FrameLoaderStateMachine& stateMachine() { return m_stateMachine; }
 
     Frame* findFrameForNavigation(const AtomicString& name, Document* activeDocument = 0);
 

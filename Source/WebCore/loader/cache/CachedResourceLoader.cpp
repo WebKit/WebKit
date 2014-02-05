@@ -518,7 +518,7 @@ void CachedResourceLoader::storeResourceTimingInitiatorInformation(const CachedR
 {
     if (resource->type() == CachedResource::MainResource) {
         // <iframe>s should report the initial navigation requested by the parent document, but not subsequent navigations.
-        if (frame()->ownerElement() && m_documentLoader->frameLoader()->stateMachine()->committingFirstRealLoad()) {
+        if (frame()->ownerElement() && m_documentLoader->frameLoader()->stateMachine().committingFirstRealLoad()) {
             InitiatorInfo info = { frame()->ownerElement()->localName(), monotonicallyIncreasingTime() };
             m_initiatorMap.add(resource.get(), info);
         }

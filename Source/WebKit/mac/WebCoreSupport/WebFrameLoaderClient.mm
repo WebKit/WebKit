@@ -1458,7 +1458,7 @@ void WebFrameLoaderClient::transitionToCommittedForNewPage()
     // FIXME (Viewless): I assume we want the equivalent of this optimization for viewless mode too.
     bool willProduceHTMLView = [m_webFrame->_private->webFrameView _viewClassForMIMEType:[dataSource _responseMIMEType]] == [WebHTMLView class];
 #endif
-    bool canSkipCreation = core(m_webFrame.get())->loader().stateMachine()->committingFirstRealLoad() && willProduceHTMLView;
+    bool canSkipCreation = core(m_webFrame.get())->loader().stateMachine().committingFirstRealLoad() && willProduceHTMLView;
     if (canSkipCreation) {
         [[m_webFrame->_private->webFrameView documentView] setDataSource:dataSource];
         return;

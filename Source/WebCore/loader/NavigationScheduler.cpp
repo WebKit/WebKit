@@ -362,7 +362,7 @@ void NavigationScheduler::scheduleLocationChange(SecurityOrigin* securityOrigin,
 
     // Handle a location change of a page with no document as a special case.
     // This may happen when a frame changes the location of another frame.
-    bool duringLoad = !loader.stateMachine()->committedFirstRealDocumentLoad();
+    bool duringLoad = !loader.stateMachine().committedFirstRealDocumentLoad();
 
     schedule(std::make_unique<ScheduledLocationChange>(securityOrigin, url, referrer, lockHistory, lockBackForwardList, duringLoad));
 }
@@ -376,7 +376,7 @@ void NavigationScheduler::scheduleFormSubmission(PassRefPtr<FormSubmission> subm
 
     // Handle a location change of a page with no document as a special case.
     // This may happen when a frame changes the location of another frame.
-    bool duringLoad = !m_frame.loader().stateMachine()->committedFirstRealDocumentLoad();
+    bool duringLoad = !m_frame.loader().stateMachine().committedFirstRealDocumentLoad();
 
     // If this is a child frame and the form submission was triggered by a script, lock the back/forward list
     // to match IE and Opera.

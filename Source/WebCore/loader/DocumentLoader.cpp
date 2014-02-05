@@ -440,7 +440,7 @@ void DocumentLoader::finishedLoading(double finishTime)
     if (!m_mainDocumentError.isNull())
         return;
     clearMainResourceLoader();
-    if (!frameLoader()->stateMachine()->creatingInitialEmptyDocument())
+    if (!frameLoader()->stateMachine().creatingInitialEmptyDocument())
         frameLoader()->checkLoadComplete();
 
     // If the document specified an application cache manifest, it violates the author's intent if we store it in the memory cache
@@ -800,7 +800,7 @@ void DocumentLoader::commitData(const char* bytes, size_t length)
             m_frame->document()->securityOrigin()->grantLoadLocalResources();
         }
 
-        if (frameLoader()->stateMachine()->creatingInitialEmptyDocument())
+        if (frameLoader()->stateMachine().creatingInitialEmptyDocument())
             return;
         
 #if ENABLE(MHTML)
@@ -1382,7 +1382,7 @@ bool DocumentLoader::maybeLoadEmpty()
     if (!shouldLoadEmpty && !frameLoader()->client().representationExistsForURLScheme(m_request.url().protocol()))
         return false;
 
-    if (m_request.url().isEmpty() && !frameLoader()->stateMachine()->creatingInitialEmptyDocument())
+    if (m_request.url().isEmpty() && !frameLoader()->stateMachine().creatingInitialEmptyDocument())
         m_request.setURL(blankURL());
     String mimeType = shouldLoadEmpty ? "text/html" : frameLoader()->client().generatedMIMETypeForURLScheme(m_request.url().protocol());
     m_response = ResourceResponse(m_request.url(), mimeType, 0, String(), String());

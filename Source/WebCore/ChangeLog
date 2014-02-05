@@ -1,3 +1,41 @@
+2014-02-05  Andreas Kling  <akling@apple.com>
+
+        FrameLoader::stateMachine() should return a reference.
+        <https://webkit.org/b/128263>
+
+        There is always a FrameLoaderStateMatchine, so return it by
+        reference since it can never be null.
+
+        Reviewed by Anders Carlsson.
+
+        * history/PageCache.cpp:
+        (WebCore::logCanCachePageDecision):
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::finishedLoading):
+        (WebCore::DocumentLoader::commitData):
+        (WebCore::DocumentLoader::maybeLoadEmpty):
+        * loader/DocumentWriter.cpp:
+        (WebCore::DocumentWriter::createDocument):
+        (WebCore::DocumentWriter::begin):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::prepareForHistoryNavigation):
+        * loader/FrameLoader.h:
+        (WebCore::FrameLoader::stateMachine):
+        * loader/HistoryController.cpp:
+        (WebCore::HistoryController::restoreScrollPositionAndViewState):
+        (WebCore::HistoryController::saveDocumentState):
+        * loader/NavigationScheduler.cpp:
+        (WebCore::NavigationScheduler::scheduleLocationChange):
+        (WebCore::NavigationScheduler::scheduleFormSubmission):
+        * loader/ProgressTracker.cpp:
+        (WebCore::ProgressTracker::incrementProgress):
+        * loader/cache/CachedResourceLoader.cpp:
+        (WebCore::CachedResourceLoader::storeResourceTimingInitiatorInformation):
+        * page/Frame.cpp:
+        (WebCore::Frame::injectUserScripts):
+        * page/FrameView.cpp:
+        (WebCore::FrameView::qualifiesAsVisuallyNonEmpty):
+
 2014-02-04  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Move characterAt index checks from InlineIterator to RenderText

@@ -217,7 +217,7 @@ COMPILE_ASSERT(NumberOfReasonsPagesCannotBeInPageCache <= sizeof(unsigned)*8, Re
 static void logCanCachePageDecision(Page* page)
 {
     // Only bother logging for main frames that have actually loaded and have content.
-    if (page->mainFrame().loader().stateMachine()->creatingInitialEmptyDocument())
+    if (page->mainFrame().loader().stateMachine().creatingInitialEmptyDocument())
         return;
     URL currentURL = page->mainFrame().loader().documentLoader() ? page->mainFrame().loader().documentLoader()->url() : URL();
     if (currentURL.isEmpty())
