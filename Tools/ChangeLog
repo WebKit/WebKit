@@ -1,3 +1,17 @@
+2014-02-05  Alexey Proskuryakov  <ap@apple.com>
+
+        Copying failing test paths from build.webkit.org/dashboard popovers also copies non-selectable links
+        https://bugs.webkit.org/show_bug.cgi?id=128236
+
+        Reviewed by Timothy Hatcher.
+
+        Work around bug 80159 - copying should always respect user-select:none, but it doesn't yet.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/BuildbotTesterQueueView.js:
+        When copying, temporarily make non-selectable parts invisible, and put text of
+        the selection onto pasteboard. Since we immediately make everything visible again,
+        there is even no blinking.
+
 2014-02-05  Nick Diego Yamane  <nick.yamane@openbossa.org>
 
         Unreviewed. Add myself to contributors.json

@@ -214,6 +214,31 @@ BuildbotTesterQueueView.prototype = {
             content.appendChild(rowElement);
         }
 
+        // Work around bug 80159: -webkit-user-select:none not respected when copying content.
+        // We set clipboard data manually, temporarily making non-selectable content hidden
+        // to easily get accurate selection text.
+        content.oncopy = function(event) {
+            var iterator = document.createNodeIterator(
+                event.currentTarget,
+                NodeFilter.SHOW_ELEMENT,
+                {
+                    acceptNode: function(element) {
+                        if (window.getComputedStyle(element).webkitUserSelect !== "none")
+                            return NodeFilter.FILTER_ACCEPT;
+                        return NodeFilter.FILTER_SKIP;
+                    }
+                }
+            );
+
+            while ((node = iterator.nextNode()))
+                node.style.visibility = "visible";
+
+            event.currentTarget.style.visibility = "hidden";
+            event.clipboardData.setData('text', window.getSelection());
+            event.currentTarget.style.visibility = "";
+            return false;
+        }
+
         return content;
     },
 
