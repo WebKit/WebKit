@@ -35,7 +35,7 @@
 #include "CSSPrimitiveValue.h"
 #include "CSSValue.h"
 #include "CalculationValue.h"
-#include <wtf/PassOwnPtr.h>
+#include <memory>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 
@@ -66,7 +66,7 @@ public:
 
     virtual ~CSSCalcExpressionNode() = 0;
     virtual bool isZero() const = 0;
-    virtual PassOwnPtr<CalcExpressionNode> toCalcValue(const RenderStyle*, const RenderStyle* rootStyle, double zoom = 1.0) const = 0;
+    virtual std::unique_ptr<CalcExpressionNode> toCalcValue(const RenderStyle*, const RenderStyle* rootStyle, double zoom = 1.0) const = 0;
     virtual double doubleValue() const = 0;
     virtual double computeLengthPx(const RenderStyle* currentStyle, const RenderStyle* rootStyle, double multiplier = 1.0, bool computingFontSize = false) const = 0;
     virtual String customCSSText() const = 0;

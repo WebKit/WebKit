@@ -51,10 +51,10 @@ void BasicShapeCenterCoordinate::updateComputedLength()
         return;
     }
 
-    OwnPtr<CalcExpressionLength> lhs = adoptPtr(new CalcExpressionLength(Length(100, Percent)));
-    OwnPtr<CalcExpressionLength> rhs = adoptPtr(new CalcExpressionLength(m_length));
-    OwnPtr<CalcExpressionBinaryOperation> op = adoptPtr(new CalcExpressionBinaryOperation(lhs.release(), rhs.release(), CalcSubtract));
-    m_computedLength = Length(CalculationValue::create(op.release(), CalculationRangeAll));
+    auto lhs = std::make_unique<CalcExpressionLength>(Length(100, Percent));
+    auto rhs = std::make_unique<CalcExpressionLength>(m_length);
+    auto op = std::make_unique<CalcExpressionBinaryOperation>(std::move(lhs), std::move(rhs), CalcSubtract);
+    m_computedLength = Length(CalculationValue::create(std::move(op), CalculationRangeAll));
 }
 
 bool BasicShape::canBlend(const BasicShape* other) const

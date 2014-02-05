@@ -33,8 +33,7 @@
 
 #include "Length.h"
 #include "LengthFunctions.h"
-#include <wtf/OwnPtr.h>
-#include <wtf/PassOwnPtr.h>
+#include <memory>
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
 
@@ -83,7 +82,7 @@ protected:
 
 class CalculationValue : public RefCounted<CalculationValue> {
 public:
-    static PassRefPtr<CalculationValue> create(PassOwnPtr<CalcExpressionNode> value, CalculationPermittedValueRange);
+    static PassRefPtr<CalculationValue> create(std::unique_ptr<CalcExpressionNode> value, CalculationPermittedValueRange);
     float evaluate(float maxValue) const;
 
     bool operator==(const CalculationValue& o) const
@@ -95,13 +94,13 @@ public:
     const CalcExpressionNode* expression() const { return m_value.get(); }
 
 private:
-    CalculationValue(PassOwnPtr<CalcExpressionNode> value, CalculationPermittedValueRange range)
-        : m_value(value)
+    CalculationValue(std::unique_ptr<CalcExpressionNode> value, CalculationPermittedValueRange range)
+        : m_value(std::move(value))
         , m_isNonNegative(range == CalculationRangeNonNegative)
     {
     }
 
-    OwnPtr<CalcExpressionNode> m_value;
+    std::unique_ptr<CalcExpressionNode> m_value;
     bool m_isNonNegative;
 };
 
@@ -177,9 +176,9 @@ inline const CalcExpressionLength* toCalcExpressionLength(const CalcExpressionNo
 
 class CalcExpressionBinaryOperation : public CalcExpressionNode {
 public:
-    CalcExpressionBinaryOperation(PassOwnPtr<CalcExpressionNode> leftSide, PassOwnPtr<CalcExpressionNode> rightSide, CalcOperator op)
-        : m_leftSide(leftSide)
-        , m_rightSide(rightSide)
+    CalcExpressionBinaryOperation(std::unique_ptr<CalcExpressionNode> leftSide, std::unique_ptr<CalcExpressionNode> rightSide, CalcOperator op)
+        : m_leftSide(std::move(leftSide))
+        , m_rightSide(std::move(rightSide))
         , m_operator(op)
     {
         m_type = CalcExpressionNodeBinaryOperation;
@@ -202,8 +201,8 @@ public:
     CalcOperator getOperator() const { return m_operator; }
 
 private:
-    OwnPtr<CalcExpressionNode> m_leftSide;
-    OwnPtr<CalcExpressionNode> m_rightSide;
+    std::unique_ptr<CalcExpressionNode> m_leftSide;
+    std::unique_ptr<CalcExpressionNode> m_rightSide;
     CalcOperator m_operator;
 };
 

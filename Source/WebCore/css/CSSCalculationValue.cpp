@@ -37,8 +37,6 @@
 #include "StyleResolver.h"
 
 #include <wtf/MathExtras.h>
-#include <wtf/OwnPtr.h>
-#include <wtf/PassOwnPtr.h>
 #include <wtf/text/StringBuilder.h>
 
 static const int maxExpressionDepth = 100;
@@ -207,19 +205,18 @@ public:
         return m_value->cssText();
     }
 
-    virtual PassOwnPtr<CalcExpressionNode> toCalcValue(const RenderStyle* style, const RenderStyle* rootStyle, double zoom) const
+    virtual std::unique_ptr<CalcExpressionNode> toCalcValue(const RenderStyle* style, const RenderStyle* rootStyle, double zoom) const
     {
         switch (m_category) {
         case CalcNumber:
-            return adoptPtr(new CalcExpressionNumber(m_value->getFloatValue()));
+            return std::make_unique<CalcExpressionNumber>(m_value->getFloatValue());
         case CalcLength:
-            return adoptPtr(new CalcExpressionNumber(m_value->computeLength<float>(style, rootStyle, zoom)));
+            return std::make_unique<CalcExpressionNumber>(m_value->computeLength<float>(style, rootStyle, zoom));
         case CalcPercent:
         case CalcPercentLength: {
             CSSPrimitiveValue* primitiveValue = m_value.get();
-            return adoptPtr(new CalcExpressionLength(primitiveValue
-                ? primitiveValue->convertToLength<FixedFloatConversion | PercentConversion | FractionConversion>(style, rootStyle, zoom)
-                : Length(Undefined)));
+            return std::make_unique<CalcExpressionLength>(primitiveValue
+                ? primitiveValue->convertToLength<FixedFloatConversion | PercentConversion | FractionConversion>(style, rootStyle, zoom) : Length(Undefined));
         }
         // Only types that could be part of a Length expression can be converted
         // to a CalcExpressionNode. CalcPercentNumber makes no sense as a Length.
@@ -399,15 +396,15 @@ public:
         return !doubleValue();
     }
 
-    virtual PassOwnPtr<CalcExpressionNode> toCalcValue(const RenderStyle* style, const RenderStyle* rootStyle, double zoom) const
+    virtual std::unique_ptr<CalcExpressionNode> toCalcValue(const RenderStyle* style, const RenderStyle* rootStyle, double zoom) const
     {
-        OwnPtr<CalcExpressionNode> left(m_leftSide->toCalcValue(style, rootStyle, zoom));
+        std::unique_ptr<CalcExpressionNode> left(m_leftSide->toCalcValue(style, rootStyle, zoom));
         if (!left)
             return nullptr;
-        OwnPtr<CalcExpressionNode> right(m_rightSide->toCalcValue(style, rootStyle, zoom));
+        std::unique_ptr<CalcExpressionNode> right(m_rightSide->toCalcValue(style, rootStyle, zoom));
         if (!right)
             return nullptr;
-        return adoptPtr(new CalcExpressionBinaryOperation(left.release(), right.release(), m_operator));
+        return std::make_unique<CalcExpressionBinaryOperation>(std::move(left), std::move(right), m_operator);
     }
 
     virtual double doubleValue() const

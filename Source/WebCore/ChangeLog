@@ -1,5 +1,28 @@
 2014-02-05  Zan Dobersek  <zdobersek@igalia.com>
 
+        Manage CalcExpressionNode and derived classes through std::unique_ptr instead of OwnPtr
+        https://bugs.webkit.org/show_bug.cgi?id=128118
+
+        Reviewed by Darin Adler.
+
+        Replace uses of OwnPtr for CalcExpressionNode and derived classes with std::unique_ptr.
+
+        * css/CSSCalculationValue.cpp:
+        (WebCore::CSSCalcPrimitiveValue::toCalcValue):
+        (WebCore::CSSCalcBinaryOperation::toCalcValue):
+        * css/CSSCalculationValue.h:
+        * platform/CalculationValue.cpp:
+        (WebCore::CalculationValue::create):
+        * platform/CalculationValue.h:
+        (WebCore::CalculationValue::CalculationValue):
+        (WebCore::CalcExpressionBinaryOperation::CalcExpressionBinaryOperation):
+        * platform/Length.cpp:
+        (WebCore::Length::blendMixedTypes):
+        * rendering/style/BasicShapes.cpp:
+        (WebCore::BasicShapeCenterCoordinate::updateComputedLength):
+
+2014-02-05  Zan Dobersek  <zdobersek@igalia.com>
+
         Remove CLASS_IF_GCC workarounds
         https://bugs.webkit.org/show_bug.cgi?id=128207
 

@@ -55,9 +55,9 @@ float CalcExpressionBinaryOperation::evaluate(float maxValue) const
     return std::numeric_limits<float>::quiet_NaN();
 }
 
-PassRefPtr<CalculationValue> CalculationValue::create(PassOwnPtr<CalcExpressionNode> value, CalculationPermittedValueRange range)
+PassRefPtr<CalculationValue> CalculationValue::create(std::unique_ptr<CalcExpressionNode> value, CalculationPermittedValueRange range)
 {
-    return adoptRef(new CalculationValue(value, range));
+    return adoptRef(new CalculationValue(std::move(value), range));
 }
 
 float CalculationValue::evaluate(float maxValue) const

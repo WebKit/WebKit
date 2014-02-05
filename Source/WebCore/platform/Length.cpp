@@ -223,8 +223,8 @@ Length Length::blendMixedTypes(const Length& from, double progress) const
     if (progress >= 1.0)
         return *this;
         
-    OwnPtr<CalcExpressionNode> blend = adoptPtr(new CalcExpressionBlendLength(from, *this, progress));
-    return Length(CalculationValue::create(blend.release(), CalculationRangeAll));
+    auto blend = std::make_unique<CalcExpressionBlendLength>(from, *this, progress);
+    return Length(CalculationValue::create(std::move(blend), CalculationRangeAll));
 }
           
 PassRefPtr<CalculationValue> Length::calculationValue() const
