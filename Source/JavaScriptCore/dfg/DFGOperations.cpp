@@ -823,6 +823,8 @@ size_t JIT_OPERATION operationIsFunction(EncodedJSValue value)
 
 JSCell* JIT_OPERATION operationTypeOf(ExecState* exec, JSCell* value)
 {
+    VM& vm = exec->vm();
+    NativeCallFrameTracer tracer(&vm, exec);
     return jsTypeStringForValue(exec, JSValue(value)).asCell();
 }
 

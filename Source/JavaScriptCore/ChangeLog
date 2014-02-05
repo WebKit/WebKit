@@ -1,3 +1,15 @@
+2014-02-04  Mark Lam  <mark.lam@apple.com>
+
+        DFG::operationTypeOf() needs to set the VM::topCallFrame.
+        <https://webkit.org/b/128228>
+
+        Reviewed by Mark Hahnenberg.
+
+        * dfg/DFGOperations.cpp:
+        - operationTypeOf() can end up calling into WebCore which may in turn
+          call back to JSC, and need a valid VM::topCallFrame. So, we need to
+          set the value of VM::topCallFrame at the top of operationTypeOf().
+
 2014-02-04  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Fix !ENABLE(JIT) builds after r163418
