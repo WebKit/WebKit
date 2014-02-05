@@ -1,3 +1,12 @@
+2014-02-05  Gabor Rapcsanyi  <rgabor@webkit.org>
+
+        Fix WaitForSVNServer build step after r163372.
+
+        Rubber-stamped by Csaba Osztrogonác.
+
+        * BuildSlaveSupport/build.webkit.org-config/master.cfg:
+        (WaitForSVNServer.evaluateCommand): add missing return SUCCESS
+
 2014-02-05  Csaba Osztrogonác  <ossy@webkit.org>
 
         Remove ENABLE(SVG) guards
