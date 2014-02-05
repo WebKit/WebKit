@@ -93,11 +93,9 @@ sub dittoHeaders
     }
 }
 
-if ($llvm || $wksi) {
-    (system("mkdir", "-p", "$productDir/usr/local/include") == 0) or die;
-}
-
 if ($wksi) {
+    (system("mkdir", "-p", "$productDir/usr/local/include") == 0) or die;
+
     my @librariesToCopy = (
         "libWebKitSystemInterfaceLion.a",
         "libWebKitSystemInterfaceMountainLion.a",
@@ -118,6 +116,8 @@ if ($wksi) {
 }
 
 if ($llvm) {
+    (system("mkdir", "-p", "$productDir/usr/local/LLVMForJavaScriptCore/include") == 0) or die;
+
     # Determine where to get LLVM binaries and headers.
     my $majorDarwinVersion = (split /\./, `uname -r`)[0];
     my $useOwnLLVM = 0;
@@ -230,15 +230,15 @@ if ($llvm) {
     }
 
     if ($useOwnLLVM) {
-        (system("rm", "-rf", "$productDir/usr/local/include/llvm") == 0) or die;
-        (system("rm", "-rf", "$productDir/usr/local/include/llvm-c") == 0) or die;
-        symlink("$ownLLVMDirectory/include/llvm", "$productDir/usr/local/include/llvm") or die;
-        symlink("$ownLLVMDirectory/include/llvm-c", "$productDir/usr/local/include/llvm-c") or die;
+        (system("rm", "-rf", "$productDir/usr/local/LLVMForJavaScriptCore/include/llvm") == 0) or die;
+        (system("rm", "-rf", "$productDir/usr/local/LLVMForJavaScriptCore/include/llvm-c") == 0) or die;
+        symlink("$ownLLVMDirectory/include/llvm", "$productDir/usr/local/LLVMForJavaScriptCore/include/llvm") or die;
+        symlink("$ownLLVMDirectory/include/llvm-c", "$productDir/usr/local/LLVMForJavaScriptCore/include/llvm-c") or die;
     } else {
-        unpackIfNecessary("$productDir/usr/local/include", "$productDir/usr/local/include/llvm-c/Core.h", $llvmIncludePackage, 0);
+        unpackIfNecessary("$productDir/usr/local/LLVMForJavaScriptCore/include", "$productDir/usr/local/LLVMForJavaScriptCore/include/llvm-c/Core.h", $llvmIncludePackage, 0);
     }
 
-    my $llvmLibraryToken = "$productDir/usr/local/include/WebKitLLVMLibraryToken.h";
+    my $llvmLibraryToken = "$productDir/usr/local/LLVMForJavaScriptCore/include/WebKitLLVMLibraryToken.h";
     if ($shouldUpdateLLVMLibraryToken || !-e $llvmLibraryToken) {
         (open my $fileHandle, ">", $llvmLibraryToken) or die;
         print {$fileHandle} "/* This file fools WebKit's build system into relinking JavaScriptCore if the LLVM libraries changed. */\n";
