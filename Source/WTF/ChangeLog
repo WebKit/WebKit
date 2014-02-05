@@ -1,3 +1,24 @@
+2014-02-04  Mark Lam  <mark.lam@apple.com>
+
+        The stack limit computation does not work for Windows.
+        <https://webkit.org/b/128226>
+
+        Reviewed by Geoffrey Garen.
+
+        The current stack limit computation assumes that the stack is allocated
+        in high memory. On Windows, the stack seems to be allocated very near
+        address 0, and is smaller in size than our Options::maxPerThreadStackUsage().
+        This combination triggers a bug where StackBounds::recursionLimit()
+        underflows and computes a limit address that is ridiculously high in memory.
+        The net effect is that the Windows port thinks its out of stack space all
+        the time.
+
+        We now check for potential underflows in StackBounds and return an
+        appropriate limit address.
+
+        * wtf/StackBounds.h:
+        (WTF::StackBounds::recursionLimit):
+
 2014-02-04  Andreas Kling  <akling@apple.com>
 
         Remove <iframe seamless> support.

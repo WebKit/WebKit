@@ -745,8 +745,7 @@ size_t VM::updateStackLimitWithReservedZoneSize(size_t reservedZoneSize)
     if (stackPointerAtVMEntry) {
         ASSERT(wtfThreadData().stack().isGrowingDownward());
         char* startOfStack = reinterpret_cast<char*>(stackPointerAtVMEntry);
-        char* desiredStackLimit = startOfStack - Options::maxPerThreadStackUsage() + reservedZoneSize;
-        stackLimit = wtfThreadData().stack().recursionLimit(reservedZoneSize, desiredStackLimit);
+        stackLimit = wtfThreadData().stack().recursionLimit(startOfStack, Options::maxPerThreadStackUsage(), reservedZoneSize);
     } else
         stackLimit = wtfThreadData().stack().recursionLimit(reservedZoneSize);
 

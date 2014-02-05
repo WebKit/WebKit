@@ -1,3 +1,19 @@
+2014-02-04  Mark Lam  <mark.lam@apple.com>
+
+        The stack limit computation does not work for Windows.
+        <https://webkit.org/b/128226>
+
+        Reviewed by Geoffrey Garen.
+
+        * llint/LowLevelInterpreter.cpp:
+        (JSC::CLoopRegister::CLoopRegister):
+        (JSC::CLoop::execute):
+        - Suppressed some compiler warnings for the C loop build.
+        * runtime/VM.cpp:
+        (JSC::VM::updateStackLimitWithReservedZoneSize):
+        - Use the new StackBounds::recursionLimit() to compute the stack limit
+          the right way.
+
 2014-02-04  Andreas Kling  <akling@apple.com>
 
         Remove <iframe seamless> support.
