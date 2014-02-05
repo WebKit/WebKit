@@ -1,3 +1,20 @@
+2014-02-04  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG PutByVal on typed arrays should detect OutOfBounds sooner
+        https://bugs.webkit.org/show_bug.cgi?id=128162
+
+        Reviewed by Mark Hahnenberg.
+        
+        dfg-string-out-of-blahblah was moved to JSC/tests/stress.
+        
+        dfg-convert-this-dom-window was using dfgShouldBe() incorrectly and this got revealed
+        by my TestRunnerUtils refactoring.
+        
+        * js/dfg-string-out-of-bounds-negative-proto-value-expected.txt: Removed.
+        * js/dfg-string-out-of-bounds-negative-proto-value.html: Removed.
+        * js/script-tests/dfg-convert-this-dom-window.js:
+        * js/script-tests/dfg-string-out-of-bounds-negative-proto-value.js: Removed.
+
 2014-02-04  Brady Eidson  <beidson@apple.com>
 
         IDB: indexeddb/mozilla/add-twice-failure.html fails

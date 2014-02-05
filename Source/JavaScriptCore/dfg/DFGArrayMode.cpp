@@ -49,7 +49,7 @@ ArrayMode ArrayMode::fromObserved(const ConcurrentJITLocker& locker, ArrayProfil
     case asArrayModes(NonArray):
         if (action == Array::Write && !profile->mayInterceptIndexedAccesses(locker))
             return ArrayMode(Array::Undecided, nonArray, Array::OutOfBounds, Array::Convert);
-        return ArrayMode(Array::SelectUsingPredictions, nonArray);
+        return ArrayMode(Array::SelectUsingPredictions, nonArray).withSpeculationFromProfile(locker, profile, makeSafe);
 
     case asArrayModes(ArrayWithUndecided):
         if (action == Array::Write)
@@ -59,7 +59,7 @@ ArrayMode ArrayMode::fromObserved(const ConcurrentJITLocker& locker, ArrayProfil
     case asArrayModes(NonArray) | asArrayModes(ArrayWithUndecided):
         if (action == Array::Write && !profile->mayInterceptIndexedAccesses(locker))
             return ArrayMode(Array::Undecided, Array::PossiblyArray, Array::OutOfBounds, Array::Convert);
-        return ArrayMode(Array::SelectUsingPredictions);
+        return ArrayMode(Array::SelectUsingPredictions).withSpeculationFromProfile(locker, profile, makeSafe);
 
     case asArrayModes(NonArrayWithInt32):
         return ArrayMode(Array::Int32, nonArray, Array::AsIs).withProfile(locker, profile, makeSafe);
@@ -100,7 +100,7 @@ ArrayMode ArrayMode::fromObserved(const ConcurrentJITLocker& locker, ArrayProfil
 
     default:
         if ((observed & asArrayModes(NonArray)) && profile->mayInterceptIndexedAccesses(locker))
-            return ArrayMode(Array::SelectUsingPredictions);
+            return ArrayMode(Array::SelectUsingPredictions).withSpeculationFromProfile(locker, profile, makeSafe);
         
         Array::Type type;
         Array::Class arrayClass;
@@ -199,10 +199,10 @@ ArrayMode ArrayMode::refine(
             return withType(Array::Arguments);
         
         ArrayMode result;
-        if (graph.hasExitSite(codeOrigin, OutOfBounds))
+        if (graph.hasExitSite(codeOrigin, OutOfBounds) || !isInBounds())
             result = withSpeculation(Array::OutOfBounds);
         else
-            result = *this;
+            result = withSpeculation(Array::InBounds);
         
         if (isInt8ArraySpeculation(base))
             return result.withType(Array::Int8Array);

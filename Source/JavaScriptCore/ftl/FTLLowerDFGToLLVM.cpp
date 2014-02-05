@@ -2217,7 +2217,7 @@ private:
                     }
                 }
                 
-                if (m_node->arrayMode().isInBounds())
+                if (m_node->arrayMode().isInBounds() || m_node->op() == PutByValAlias)
                     m_out.store(valueToStore, pointer, refType);
                 else {
                     LBasicBlock isInBounds = FTL_NEW_BLOCK(m_out, ("PutByVal typed array in bounds case"));

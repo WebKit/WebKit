@@ -19,5 +19,5 @@ dfgShouldBe(myFunction, "myFunction.aliasedCall()", '[this, "myFunction", undefi
 dfgShouldBe(myFunction, "myFunction.aliasedCall(null)", '[this, "myFunction", undefined]');
 dfgShouldBe(myFunction, "myFunction.aliasedCall(undefined)", '[this, "myFunction", undefined]');
 dfgShouldBe(myFunctionWithCall.call, "myFunctionWithCall.call(myObject, 'arg1')", '[myFunctionWithCall, "myFunctionWithCall.call", myObject]');
-dfgShouldBe(myFunctionWithCall.aliasedCall, "myFunctionWithCall.aliasedCall(myObject, 'arg1')", '[myObject, "myFunctionWithCall", "arg1"]');
+dfgShouldBe(myFunctionWithCall, "myFunctionWithCall.aliasedCall(myObject, 'arg1')", '[myObject, "myFunctionWithCall", "arg1"]');
 

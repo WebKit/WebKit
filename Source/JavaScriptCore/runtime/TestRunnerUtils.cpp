@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,7 +31,7 @@
 
 namespace JSC {
 
-static FunctionExecutable* getExecutable(JSValue theFunctionValue)
+FunctionExecutable* getExecutableForFunction(JSValue theFunctionValue)
 {
     JSFunction* theFunction = jsDynamicCast<JSFunction*>(theFunctionValue);
     if (!theFunction)
@@ -40,6 +40,20 @@ static FunctionExecutable* getExecutable(JSValue theFunctionValue)
     FunctionExecutable* executable = jsDynamicCast<FunctionExecutable*>(
         theFunction->executable());
     return executable;
+}
+
+CodeBlock* getSomeBaselineCodeBlockForFunction(JSValue theFunctionValue)
+{
+    FunctionExecutable* executable = getExecutableForFunction(theFunctionValue);
+    if (!executable)
+        return 0;
+    
+    CodeBlock* baselineCodeBlock = executable->baselineCodeBlockFor(CodeForCall);
+    
+    if (!baselineCodeBlock)
+        baselineCodeBlock = executable->baselineCodeBlockFor(CodeForConstruct);
+    
+    return baselineCodeBlock;
 }
 
 JSValue numberOfDFGCompiles(JSValue theFunctionValue)
@@ -51,27 +65,19 @@ JSValue numberOfDFGCompiles(JSValue theFunctionValue)
 #else
     pretendToHaveManyCompiles = true;
 #endif
-    
-    if (FunctionExecutable* executable = getExecutable(theFunctionValue)) {
-        CodeBlock* baselineCodeBlock = executable->baselineCodeBlockFor(CodeForCall);
-        
-        if (!baselineCodeBlock)
-            baselineCodeBlock = executable->baselineCodeBlockFor(CodeForConstruct);
-        
-        if (!baselineCodeBlock)
-            return jsNumber(0);
 
+    if (CodeBlock* baselineCodeBlock = getSomeBaselineCodeBlockForFunction(theFunctionValue)) {
         if (pretendToHaveManyCompiles)
             return jsNumber(1000000.0);
         return jsNumber(baselineCodeBlock->numberOfDFGCompiles());
     }
     
-    return jsUndefined();
+    return jsNumber(0);
 }
 
 JSValue setNeverInline(JSValue theFunctionValue)
 {
-    if (FunctionExecutable* executable = getExecutable(theFunctionValue))
+    if (FunctionExecutable* executable = getExecutableForFunction(theFunctionValue))
         executable->setNeverInline(true);
     
     return jsUndefined();

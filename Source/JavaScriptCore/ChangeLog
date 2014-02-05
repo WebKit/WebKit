@@ -1,3 +1,47 @@
+2014-02-04  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG PutByVal on typed arrays should detect OutOfBounds sooner
+        https://bugs.webkit.org/show_bug.cgi?id=128162
+
+        Reviewed by Mark Hahnenberg.
+        
+        Just wire the m_outOfBounds flag in ArrayProfile into the OutOfBounds speculation in
+        DFG::ArrayMode for typed arrays.
+        
+        Also make it possible to have tests for convergence.
+        
+        Also turn one of the LayoutTests/js/dfg- tests into a stress test because it
+        was relying on a specific number of recompiles. Stress tests instead take
+        the approach of just running for a while. That's more robust.
+
+        * bytecode/CodeBlock.h:
+        * dfg/DFGArrayMode.cpp:
+        (JSC::DFG::ArrayMode::fromObserved):
+        (JSC::DFG::ArrayMode::refine):
+        * dfg/DFGArrayMode.h:
+        (JSC::DFG::ArrayMode::withSpeculationFromProfile):
+        (JSC::DFG::ArrayMode::withProfile):
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::LowerDFGToLLVM::compilePutByVal):
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::emitIntTypedArrayPutByVal):
+        (JSC::JIT::emitFloatTypedArrayPutByVal):
+        * jsc.cpp:
+        (GlobalObject::finishCreation):
+        (functionReoptimizationRetryCount):
+        * runtime/TestRunnerUtils.cpp:
+        (JSC::getExecutableForFunction):
+        (JSC::getSomeBaselineCodeBlockForFunction):
+        (JSC::numberOfDFGCompiles):
+        (JSC::setNeverInline):
+        * runtime/TestRunnerUtils.h:
+        * tests/stress/float32-repeat-out-of-bounds.js: Added.
+        (foo):
+        * tests/stress/int8-repeat-out-of-bounds.js: Added.
+        (foo):
+        * tests/stress/string-out-of-bounds-negative-proto-value.js: Added.
+        (foo):
+
 2014-02-04  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Refactor MarkStackArray to allow more than JSCells to be stored

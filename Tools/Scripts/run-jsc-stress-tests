@@ -603,6 +603,13 @@ def defaultQuickRun
     end
 end
 
+# This is expected to not do eager runs because eager runs can have a lot of recompilations
+# for reasons that don't arise in the real world. It's used for tests that assert convergence
+# by counting recompilations.
+def defaultNoEagerRun
+    defaultQuickRun
+end
+
 def runProfiler
     profilerOutput = uniqueFilename(".json")
     if $canRunDisplayProfilerOutput

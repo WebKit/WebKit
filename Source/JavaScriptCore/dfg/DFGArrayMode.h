@@ -173,17 +173,28 @@ public:
         return ArrayMode(type(), arrayClass(), speculation, conversion());
     }
     
-    ArrayMode withProfile(const ConcurrentJITLocker& locker, ArrayProfile* profile, bool makeSafe) const
+    ArrayMode withArrayClass(Array::Class arrayClass) const
+    {
+        return ArrayMode(type(), arrayClass, speculation(), conversion());
+    }
+    
+    ArrayMode withSpeculationFromProfile(const ConcurrentJITLocker& locker, ArrayProfile* profile, bool makeSafe) const
     {
         Array::Speculation mySpeculation;
-        Array::Class myArrayClass;
-        
+
         if (makeSafe)
             mySpeculation = Array::OutOfBounds;
         else if (profile->mayStoreToHole(locker))
             mySpeculation = Array::ToHole;
         else
             mySpeculation = Array::InBounds;
+        
+        return withSpeculation(mySpeculation);
+    }
+    
+    ArrayMode withProfile(const ConcurrentJITLocker& locker, ArrayProfile* profile, bool makeSafe) const
+    {
+        Array::Class myArrayClass;
         
         if (isJSArray()) {
             if (profile->usesOriginalArrayStructures(locker) && benefitsFromOriginalArray())
@@ -193,7 +204,7 @@ public:
         } else
             myArrayClass = arrayClass();
         
-        return ArrayMode(type(), myArrayClass, mySpeculation, conversion());
+        return withArrayClass(myArrayClass).withSpeculationFromProfile(locker, profile, makeSafe);
     }
     
     ArrayMode withType(Array::Type type) const

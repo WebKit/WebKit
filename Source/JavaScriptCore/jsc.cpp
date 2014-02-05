@@ -112,6 +112,7 @@ static EncodedJSValue JSC_HOST_CALL functionReadline(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionPreciseTime(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionNeverInlineFunction(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionNumberOfDFGCompiles(ExecState*);
+static EncodedJSValue JSC_HOST_CALL functionReoptimizationRetryCount(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionTransferArrayBuffer(ExecState*);
 static NO_RETURN_WITH_VALUE EncodedJSValue JSC_HOST_CALL functionQuit(ExecState*);
 
@@ -234,6 +235,7 @@ protected:
         addFunction(vm, "neverInlineFunction", functionNeverInlineFunction, 1);
         addFunction(vm, "noInline", functionNeverInlineFunction, 1);
         addFunction(vm, "numberOfDFGCompiles", functionNumberOfDFGCompiles, 1);
+        addFunction(vm, "reoptimizationRetryCount", functionReoptimizationRetryCount, 1);
         addFunction(vm, "transferArrayBuffer", functionTransferArrayBuffer, 1);
 #if ENABLE(SAMPLING_FLAGS)
         addFunction(vm, "setSamplingFlags", functionSetSamplingFlags, 1);
@@ -503,6 +505,18 @@ EncodedJSValue JSC_HOST_CALL functionNeverInlineFunction(ExecState* exec)
 EncodedJSValue JSC_HOST_CALL functionNumberOfDFGCompiles(ExecState* exec)
 {
     return JSValue::encode(numberOfDFGCompiles(exec));
+}
+
+EncodedJSValue JSC_HOST_CALL functionReoptimizationRetryCount(ExecState* exec)
+{
+    if (exec->argumentCount() < 1)
+        return JSValue::encode(jsUndefined());
+    
+    CodeBlock* block = getSomeBaselineCodeBlockForFunction(exec->argument(0));
+    if (!block)
+        return JSValue::encode(jsNumber(0));
+    
+    return JSValue::encode(jsNumber(block->reoptimizationRetryCounter()));
 }
 
 EncodedJSValue JSC_HOST_CALL functionTransferArrayBuffer(ExecState* exec)
