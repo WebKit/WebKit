@@ -10,11 +10,13 @@ ${GENSOURCES_WEBINSPECTOR_UI}/GResourceBundle.xml: GNUmakefile \
 	$(AM_V_GEN)
 	$(AM_V_at)mkdir -p ${GENSOURCES_WEBINSPECTOR_UI}
 	$(AM_V_at)$(srcdir)/Tools/gtk/generate-inspector-gresource-manifest.py $@
+	$(AM_V_at)touch $@
 
 ${GENSOURCES_WEBINSPECTOR_UI}/GResourceBundle.c: DerivedSources/WebInspectorUI/GResourceBundle.xml
 	$(AM_V_GEN)
 	$(AM_V_at)glib-compile-resources --generate --sourcedir=$(WebInspectorUI) \
 		--target=${GENSOURCES_WEBINSPECTOR_UI}/GResourceBundle.c ${GENSOURCES_WEBINSPECTOR_UI}/GResourceBundle.xml
+	$(AM_V_at)touch $@
 
 BUILT_SOURCES += \
 	DerivedSources/WebInspectorUI/GResourceBundle.xml

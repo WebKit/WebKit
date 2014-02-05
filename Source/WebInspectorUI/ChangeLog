@@ -1,3 +1,18 @@
+2014-02-05  Zan Dobersek  <zdobersek@igalia.com>
+
+        [GTK] Avoid no-op regenerations of GResourceBundle.xml, GResourceBundle.c
+        https://bugs.webkit.org/show_bug.cgi?id=128192
+
+        Reviewed by Carlos Garcia Campos.
+
+        When doing incremental builds, GResourceBundle.xml and GResourceBundle.c can be
+        generated when the dependencies are newer than the products, but the generation
+        doesn't necessarily produce a new or different product. This results in constant
+        regenerations for these two build targets. Touch the products at the end of
+        generation to avoid this looping.
+
+        * GNUmakefile.am:
+
 2014-01-30  Timothy Hatcher  <timothy@apple.com>
 
         Show profile data in the discrete Scripts timeline view.
