@@ -1,3 +1,16 @@
+2014-02-05  Andreas Kling  <akling@apple.com>
+
+        Remove leftover seamless iframe logic from containerForRepaint().
+        <https://webkit.org/b/128235>
+
+        The parent-flow-thread-in-different-document case is no longer
+        relevant after <iframe seamless> was removed.
+
+        Reviewed by David Hyatt.
+
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::containerForRepaint):
+
 2014-02-05  Hans Muller  <hmuller@adobe.com>
 
         [CSS Shapes] Dynamically created element with image valued shape-outside doesn't update automatically
