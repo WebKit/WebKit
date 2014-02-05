@@ -160,6 +160,7 @@ void reifyInlinedCallFrames(CCallHelpers& jit, const OSRExitBase& exit)
     jit.store32(AssemblyHelpers::TrustedImm32(locationBits), AssemblyHelpers::tagFor((VirtualRegister)(JSStack::ArgumentCount)));
 }
 
+#if ENABLE(GGC)
 static void osrWriteBarrier(CCallHelpers& jit, GPRReg owner, GPRReg scratch1, GPRReg scratch2)
 {
     AssemblyHelpers::Jump definitelyNotMarked = jit.genericWriteBarrier(owner, scratch1, scratch2);
@@ -179,6 +180,7 @@ static void osrWriteBarrier(CCallHelpers& jit, GPRReg owner, GPRReg scratch1, GP
 
     definitelyNotMarked.link(&jit);
 }
+#endif // ENABLE(GGC)
 
 void adjustAndJumpToTarget(CCallHelpers& jit, const OSRExitBase& exit)
 {

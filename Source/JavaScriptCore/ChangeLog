@@ -1,5 +1,11 @@
 2014-02-05  Mark Hahnenberg  <mhahnenberg@apple.com>
 
+        Fix 32-bit builds after r163471
+
+        * dfg/DFGOSRExitCompilerCommon.cpp:
+
+2014-02-05  Mark Hahnenberg  <mhahnenberg@apple.com>
+
         Can no longer run OctaneV2 in browser, crashes in speculationFromCell
         https://bugs.webkit.org/show_bug.cgi?id=128266
 
