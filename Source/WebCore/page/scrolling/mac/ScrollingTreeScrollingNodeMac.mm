@@ -207,10 +207,10 @@ bool ScrollingTreeScrollingNodeMac::pinnedInDirection(const FloatSize& delta)
     } else if (delta.width()) {
         if (delta.width() < 0) {
             // We are trying to scroll left.  Make sure we are not pinned to the left
-            limitDelta.setHeight(scrollPosition().x() - minimumScrollPosition().x());
+            limitDelta.setWidth(scrollPosition().x() - minimumScrollPosition().x());
         } else {
             // We are trying to scroll right.  Make sure we are not pinned to the right
-            limitDelta.setHeight(maximumScrollPosition().x() - scrollPosition().x());
+            limitDelta.setWidth(maximumScrollPosition().x() - scrollPosition().x());
         }
     }
 
