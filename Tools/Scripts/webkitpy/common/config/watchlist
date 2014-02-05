@@ -282,6 +282,14 @@
         "ANGLE": {
             "filename": r"Source/ThirdParty/ANGLE",
         },
+        "CSSGridLayout": {
+            "filename": r"Source/WebCore/rendering/.*Grid.*"
+                        r"|Source/WebCore/css/.*Grid.*"
+                        r"|LayoutTests/fast/css-grid-layout/"
+                        r"|LayoutTests/ietestcenter/css3/grid/"
+                        r"|LayoutTests/platform/.*/fast/css-grid-layout/"
+                        r"|LayoutTests/platform/.*/ietestcenter/css3/grid/",
+        },
     },
     "CC_RULES": {
         # Note: All email addresses listed must be registered with bugzilla.
@@ -299,6 +307,7 @@
         "ContentSecurityPolicyFiles|ContentSecurityPolicyUsage" : [ "mkwst@chromium.org" ],
         "CoreAnimation" : [ "simon.fraser@apple.com" ],
         "CSS": [ "alexis@webkit.org", "macpherson@chromium.org", "esprehn+autocc@chromium.org", "glenn@skynav.com", "gyuyoung.kim@webkit.org" ],
+        "CSSGridLayout": [ "svillar@igalia.com", "jfernandez@igalia.com", "rego@igalia.com" ],
         "cURLNetwork": [ "galpeter@inf.u-szeged.hu" ],
         "DOM": [ "esprehn+autocc@chromium.org", "kangil.han@samsung.com" ],
         "DOMAttributes": [ "cmarcelo@webkit.org", ],

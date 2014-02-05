@@ -1,3 +1,17 @@
+2014-02-05  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        Create CSS Grid Layout watchlist
+        https://bugs.webkit.org/show_bug.cgi?id=128241
+
+        Reviewed by Andreas Kling.
+
+        Add Sergio Villar, Javier Fernandez and myself to it.
+
+        Add Javier Fernandez as contributor.
+
+        * Scripts/webkitpy/common/config/contributors.json:
+        * Scripts/webkitpy/common/config/watchlist:
+
 2014-02-05  Alexey Proskuryakov  <ap@apple.com>
 
         Copying failing test paths from build.webkit.org/dashboard popovers also copies non-selectable links
