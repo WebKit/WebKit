@@ -1,3 +1,15 @@
+2014-02-04  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Reduce boilerplate in BlockAllocator.h
+        https://bugs.webkit.org/show_bug.cgi?id=128222
+
+        Reviewed by Filip Pizlo.
+
+        There are a lot of template specializations for the various types of HeapBlocks 
+        in BlockAllocator.h. We could reduce the spew by using a macro.
+
+        * heap/BlockAllocator.h:
+
 2014-02-04  Filip Pizlo  <fpizlo@apple.com>
 
         DFG PutByVal on typed arrays should detect OutOfBounds sooner

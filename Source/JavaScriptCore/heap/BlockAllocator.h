@@ -217,77 +217,26 @@ inline void BlockAllocator::deallocateCustomSize(T* block)
     region->destroy();
 }
 
-template <>
-inline BlockAllocator::RegionSet& BlockAllocator::regionSetFor<CopiedBlock>()
-{
-    return m_copiedRegionSet;
-}
+#define REGION_SET_FOR(blockType, set) \
+    template <> \
+    inline BlockAllocator::RegionSet& BlockAllocator::regionSetFor<blockType>() \
+    { \
+        return set; \
+    } \
+    template <> \
+    inline BlockAllocator::RegionSet& BlockAllocator::regionSetFor<HeapBlock<blockType>>() \
+    { \
+        return set; \
+    } \
 
-template <>
-inline BlockAllocator::RegionSet& BlockAllocator::regionSetFor<MarkedBlock>()
-{
-    return m_markedRegionSet;
-}
+REGION_SET_FOR(MarkedBlock, m_markedRegionSet);
+REGION_SET_FOR(CopiedBlock, m_copiedRegionSet);
+REGION_SET_FOR(WeakBlock, m_fourKBBlockRegionSet);
+REGION_SET_FOR(GCArraySegment<const JSCell*>, m_fourKBBlockRegionSet);
+REGION_SET_FOR(CopyWorkListSegment, m_workListRegionSet);
+REGION_SET_FOR(HandleBlock, m_fourKBBlockRegionSet);
 
-template <>
-inline BlockAllocator::RegionSet& BlockAllocator::regionSetFor<WeakBlock>()
-{
-    return m_fourKBBlockRegionSet;
-}
-
-template <>
-inline BlockAllocator::RegionSet& BlockAllocator::regionSetFor<GCArraySegment<const JSCell*>>()
-{
-    return m_fourKBBlockRegionSet;
-}
-
-template <>
-inline BlockAllocator::RegionSet& BlockAllocator::regionSetFor<CopyWorkListSegment>()
-{
-    return m_workListRegionSet;
-}
-
-template <>
-inline BlockAllocator::RegionSet& BlockAllocator::regionSetFor<HandleBlock>()
-{
-    return m_fourKBBlockRegionSet;
-}
-
-template <>
-inline BlockAllocator::RegionSet& BlockAllocator::regionSetFor<HeapBlock<CopiedBlock>>()
-{
-    return m_copiedRegionSet;
-}
-
-template <>
-inline BlockAllocator::RegionSet& BlockAllocator::regionSetFor<HeapBlock<MarkedBlock>>()
-{
-    return m_markedRegionSet;
-}
-
-template <>
-inline BlockAllocator::RegionSet& BlockAllocator::regionSetFor<HeapBlock<WeakBlock>>()
-{
-    return m_fourKBBlockRegionSet;
-}
-
-template <>
-inline BlockAllocator::RegionSet& BlockAllocator::regionSetFor<HeapBlock<GCArraySegment<const JSCell*>>>()
-{
-    return m_fourKBBlockRegionSet;
-}
-
-template <>
-inline BlockAllocator::RegionSet& BlockAllocator::regionSetFor<HeapBlock<CopyWorkListSegment>>()
-{
-    return m_workListRegionSet;
-}
-
-template <>
-inline BlockAllocator::RegionSet& BlockAllocator::regionSetFor<HeapBlock<HandleBlock>>()
-{
-    return m_fourKBBlockRegionSet;
-}
+#undef REGION_SET_FOR
 
 template <typename T>
 inline BlockAllocator::RegionSet& BlockAllocator::regionSetFor()
