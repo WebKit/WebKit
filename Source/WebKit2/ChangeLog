@@ -1,3 +1,20 @@
+2014-02-04  Tim Horton  <timothy_horton@apple.com>
+
+        [iOS][wk2] Make development builds of WebKit work on device
+        https://bugs.webkit.org/show_bug.cgi?id=128230
+
+        Reviewed by Anders Carlsson.
+
+        * Configurations/NetworkService.Development.xcconfig:
+        * Configurations/WebContentService.Development.xcconfig:
+        * NetworkProcess/EntryPoint/mac/XPCService/NetworkService.Development/Info-OSX.plist: Copied from Source/WebKit2/NetworkProcess/EntryPoint/mac/XPCService/NetworkService.Development/Info.plist.
+        * NetworkProcess/EntryPoint/mac/XPCService/NetworkService.Development/Info-iOS.plist: Copied from Source/WebKit2/NetworkProcess/EntryPoint/mac/XPCService/NetworkService.Development/Info.plist.
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/EntryPoint/mac/XPCService/WebContentService.Development/Info-OSX.plist: Renamed from Source/WebKit2/WebProcess/EntryPoint/mac/XPCService/WebContentService.Development/Info.plist.
+        * WebProcess/EntryPoint/mac/XPCService/WebContentService.Development/Info-iOS.plist: Renamed from Source/WebKit2/NetworkProcess/EntryPoint/mac/XPCService/NetworkService.Development/Info.plist.
+        The Development services should match the non-Development version's behavior
+        of having separate plists for OS X and iOS.
+
 2014-02-04  Brady Eidson  <beidson@apple.com>
 
         IDB: indexeddb/mozilla/add-twice-failure.html fails

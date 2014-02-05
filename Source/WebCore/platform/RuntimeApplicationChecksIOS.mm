@@ -110,7 +110,7 @@ bool applicationIsTheEconomistOnIPhone()
 // FIXME: this needs to be changed when the WebProcess is changed to an XPC service.
 bool applicationIsWebProcess()
 {
-    static bool isWebProcess = [[[NSBundle mainBundle] bundleIdentifier] isEqualToString:@"com.apple.WebKit.WebContent"] || [[[NSBundle mainBundle] bundleIdentifier] isEqualToString:@"com.apple.WebProcess"];
+    static bool isWebProcess = [[[NSBundle mainBundle] bundleIdentifier] isEqualToString:@"com.apple.WebKit.WebContent.Development"] || [[[NSBundle mainBundle] bundleIdentifier] isEqualToString:@"com.apple.WebKit.WebContent"] || [[[NSBundle mainBundle] bundleIdentifier] isEqualToString:@"com.apple.WebProcess"];
     return isWebProcess;
 }
 

@@ -1,3 +1,14 @@
+2014-02-04  Tim Horton  <timothy_horton@apple.com>
+
+        [iOS][wk2] Make development builds of WebKit work on device
+        https://bugs.webkit.org/show_bug.cgi?id=128230
+
+        Reviewed by Anders Carlsson.
+
+        * platform/RuntimeApplicationChecksIOS.mm:
+        (WebCore::applicationIsWebProcess):
+        Add WebContent.Development as an additional name for the WebContent process.
+
 2014-02-04  Brady Eidson  <beidson@apple.com>
 
         IDB: indexeddb/mozilla/add-twice-failure.html fails

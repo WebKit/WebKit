@@ -2111,6 +2111,8 @@
 		2D47B56B1810714E003A3AEE /* RemoteLayerBackingStore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RemoteLayerBackingStore.h; sourceTree = "<group>"; };
 		2D6CD117189058A500E5A4A0 /* ViewSnapshotStore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ViewSnapshotStore.h; sourceTree = "<group>"; };
 		2D6CD118189058A500E5A4A0 /* ViewSnapshotStore.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ViewSnapshotStore.mm; sourceTree = "<group>"; };
+		2D70AB1318A1D51A00026D6E /* Info-iOS.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Info-iOS.plist"; sourceTree = "<group>"; };
+		2D70AB1418A1D57C00026D6E /* Info-iOS.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Info-iOS.plist"; sourceTree = "<group>"; };
 		2D819B99186275B3001F03D1 /* ViewGestureGeometryCollector.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ViewGestureGeometryCollector.cpp; sourceTree = "<group>"; };
 		2D819B9A186275B3001F03D1 /* ViewGestureGeometryCollector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ViewGestureGeometryCollector.h; sourceTree = "<group>"; };
 		2D819B9B186275B3001F03D1 /* ViewGestureGeometryCollector.messages.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ViewGestureGeometryCollector.messages.in; sourceTree = "<group>"; };
@@ -2881,7 +2883,7 @@
 		BC82839716B480F600A278FE /* XPCServiceMain.Development.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = XPCServiceMain.Development.mm; sourceTree = "<group>"; };
 		BC82839816B48DC000A278FE /* WebContentServiceEntryPoint.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebContentServiceEntryPoint.mm; sourceTree = "<group>"; };
 		BC8283A316B4BD9100A278FE /* Info-OSX.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Info-OSX.plist"; sourceTree = "<group>"; };
-		BC8283A616B4BD9100A278FE /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		BC8283A616B4BD9100A278FE /* Info-OSX.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Info-OSX.plist"; sourceTree = "<group>"; };
 		BC8283A816B4BD9100A278FE /* NetworkServiceEntryPoint.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = NetworkServiceEntryPoint.mm; sourceTree = "<group>"; };
 		BC8283AA16B4BEAD00A278FE /* NetworkService.Development.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = NetworkService.Development.xcconfig; sourceTree = "<group>"; };
 		BC8283AB16B4BEAD00A278FE /* NetworkService.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = NetworkService.xcconfig; sourceTree = "<group>"; };
@@ -2943,7 +2945,7 @@
 		BCACC40E16B0B8A800B6E092 /* WebContentService.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = WebContentService.xcconfig; sourceTree = "<group>"; };
 		BCACC40F16B0B8A800B6E092 /* WebContentService.Development.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = WebContentService.Development.xcconfig; sourceTree = "<group>"; };
 		BCACC44016B24CAA00B6E092 /* Info-OSX.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "Info-OSX.plist"; sourceTree = "<group>"; };
-		BCACC44316B24CAA00B6E092 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		BCACC44316B24CAA00B6E092 /* Info-OSX.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "Info-OSX.plist"; sourceTree = "<group>"; };
 		BCAE9DE9160C097400A33217 /* com.apple.WebKit.WebContent.Development.xpc */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = com.apple.WebKit.WebContent.Development.xpc; sourceTree = BUILT_PRODUCTS_DIR; };
 		BCB0AEE7122F53E300B1341E /* MutableDictionary.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MutableDictionary.h; sourceTree = "<group>"; };
 		BCB0AEE8122F53E300B1341E /* MutableDictionary.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MutableDictionary.cpp; sourceTree = "<group>"; };
@@ -5594,7 +5596,8 @@
 		BC8283A516B4BD9100A278FE /* NetworkService.Development */ = {
 			isa = PBXGroup;
 			children = (
-				BC8283A616B4BD9100A278FE /* Info.plist */,
+				2D70AB1318A1D51A00026D6E /* Info-iOS.plist */,
+				BC8283A616B4BD9100A278FE /* Info-OSX.plist */,
 			);
 			path = NetworkService.Development;
 			sourceTree = "<group>";
@@ -5711,7 +5714,8 @@
 		BCACC44216B24CAA00B6E092 /* WebContentService.Development */ = {
 			isa = PBXGroup;
 			children = (
-				BCACC44316B24CAA00B6E092 /* Info.plist */,
+				2D70AB1418A1D57C00026D6E /* Info-iOS.plist */,
+				BCACC44316B24CAA00B6E092 /* Info-OSX.plist */,
 			);
 			path = WebContentService.Development;
 			sourceTree = "<group>";
