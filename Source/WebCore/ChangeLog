@@ -1,3 +1,19 @@
+2014-02-05  Zoltan Horvath  <zoltan@webkit.org>
+
+        [CSS Shapes] Simplify BasicShapeInset::path
+        https://bugs.webkit.org/show_bug.cgi?id=127920
+
+        Reviewed by David Hyatt.
+
+        I introduced a new static helper function called floatSizeForLengthSize
+        in order to simplify BasicShapeInset::path method.
+
+        No new tests, no behavior change.
+
+        * rendering/style/BasicShapes.cpp:
+        (WebCore::floatSizeForLengthSize): New helper function.
+        (WebCore::BasicShapeInset::path):
+
 2014-02-05  Wojciech Bielawski  <w.bielawski@samsung.com>
 
         XMLHttpRequest performs too many copies for ArrayBuffer results
