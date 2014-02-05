@@ -1,3 +1,9 @@
+2014-02-05  Alberto Garcia  <berto@igalia.com>
+
+        Unreviewed. Add myself to some watchlists.
+
+        * Scripts/webkitpy/common/config/watchlist:
+
 2014-02-05  Gabor Rapcsanyi  <rgabor@webkit.org>
 
         Fix WaitForSVNServer build step after r163372.
