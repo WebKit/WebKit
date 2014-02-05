@@ -1,5 +1,12 @@
 2014-02-04  Mark Hahnenberg  <mhahnenberg@apple.com>
 
+        Fix !ENABLE(JIT) builds after r163418
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::reoptimizationRetryCounter): Return 0 if there's no way for us to reoptimize.
+
+2014-02-04  Mark Hahnenberg  <mhahnenberg@apple.com>
+
         Reduce boilerplate in BlockAllocator.h
         https://bugs.webkit.org/show_bug.cgi?id=128222
 

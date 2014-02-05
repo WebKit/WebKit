@@ -2916,13 +2916,17 @@ void CodeBlock::noticeIncomingCall(ExecState* callerFrame)
 #endif
 }
 
-#if ENABLE(JIT)
 unsigned CodeBlock::reoptimizationRetryCounter() const
 {
+#if ENABLE(JIT)
     ASSERT(m_reoptimizationRetryCounter <= Options::reoptimizationRetryCounterMax());
     return m_reoptimizationRetryCounter;
+#else
+    return 0;
+#endif // ENABLE(JIT)
 }
 
+#if ENABLE(JIT)
 void CodeBlock::countReoptimization()
 {
     m_reoptimizationRetryCounter++;
