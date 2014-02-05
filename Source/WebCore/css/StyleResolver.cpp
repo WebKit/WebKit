@@ -486,7 +486,7 @@ bool StyleResolver::styleSharingCandidateMatchesRuleSet(RuleSet* ruleSet)
     if (!ruleSet)
         return false;
 
-    ElementRuleCollector collector(this, m_state);
+    ElementRuleCollector collector(*m_state.element(), m_state.style(), m_ruleSets, m_selectorFilter);
     return collector.hasAnyMatchingRules(ruleSet);
 }
 
@@ -796,7 +796,7 @@ PassRef<RenderStyle> StyleResolver::styleForElement(Element* element, RenderStyl
     if (needsCollection)
         m_ruleSets.collectFeatures(document().isViewSource());
 
-    ElementRuleCollector collector(this, state);
+    ElementRuleCollector collector(*element, state.style(), m_ruleSets, m_selectorFilter);
     collector.setRegionForStyling(regionForStyling);
     collector.setMedium(m_medium.get());
 
@@ -939,17 +939,17 @@ void StyleResolver::keyframeStylesForAnimation(Element* e, const RenderStyle* el
     }
 }
 
-PassRefPtr<RenderStyle> StyleResolver::pseudoStyleForElement(Element* e, const PseudoStyleRequest& pseudoStyleRequest, RenderStyle* parentStyle)
+PassRefPtr<RenderStyle> StyleResolver::pseudoStyleForElement(Element* element, const PseudoStyleRequest& pseudoStyleRequest, RenderStyle* parentStyle)
 {
     ASSERT(parentStyle);
-    if (!e)
+    if (!element)
         return 0;
 
     State& state = m_state;
 
-    initElement(e);
+    initElement(element);
 
-    state.initForStyleResolve(document(), e, parentStyle);
+    state.initForStyleResolve(document(), element, parentStyle);
 
     if (m_state.parentStyle()) {
         state.setStyle(RenderStyle::create());
@@ -963,7 +963,7 @@ PassRefPtr<RenderStyle> StyleResolver::pseudoStyleForElement(Element* e, const P
     // those rules.
 
     // Check UA, user and author rules.
-    ElementRuleCollector collector(this, state);
+    ElementRuleCollector collector(*element, m_state.style(), m_ruleSets, m_selectorFilter);
     collector.setPseudoStyleRequest(pseudoStyleRequest);
     collector.setMedium(m_medium.get());
     collector.matchUARules();
@@ -978,7 +978,7 @@ PassRefPtr<RenderStyle> StyleResolver::pseudoStyleForElement(Element* e, const P
 
     state.style()->setStyleType(pseudoStyleRequest.pseudoId);
 
-    applyMatchedProperties(collector.matchedResult(), e);
+    applyMatchedProperties(collector.matchedResult(), element);
 
     // Clean up our style object's display and text decorations (among other fixups).
     adjustRenderStyle(*state.style(), *m_state.parentStyle(), 0);
@@ -1452,15 +1452,15 @@ Vector<RefPtr<StyleRuleBase>> StyleResolver::styleRulesForElement(Element* e, un
     return pseudoStyleRulesForElement(e, NOPSEUDO, rulesToInclude);
 }
 
-Vector<RefPtr<StyleRuleBase>> StyleResolver::pseudoStyleRulesForElement(Element* e, PseudoId pseudoId, unsigned rulesToInclude)
+Vector<RefPtr<StyleRuleBase>> StyleResolver::pseudoStyleRulesForElement(Element* element, PseudoId pseudoId, unsigned rulesToInclude)
 {
-    if (!e || !e->document().haveStylesheetsLoaded())
+    if (!element || !element->document().haveStylesheetsLoaded())
         return Vector<RefPtr<StyleRuleBase>>();
 
-    initElement(e);
-    m_state.initForStyleResolve(document(), e, 0);
+    initElement(element);
+    m_state.initForStyleResolve(document(), element, 0);
 
-    ElementRuleCollector collector(this, m_state);
+    ElementRuleCollector collector(*element, m_state.style(), m_ruleSets, m_selectorFilter);
     collector.setMode(SelectorChecker::CollectingRules);
     collector.setPseudoStyleRequest(PseudoStyleRequest(pseudoId));
     collector.setMedium(m_medium.get());

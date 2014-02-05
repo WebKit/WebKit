@@ -1,3 +1,25 @@
+2014-02-05  Antti Koivisto  <antti@apple.com>
+
+        ElementRuleCollector should not use StyleResolver::State
+        https://bugs.webkit.org/show_bug.cgi?id=128247
+
+        Reviewed by Andreas Kling.
+        
+        Make ElementRuleCollector more reusable.
+
+        * css/ElementRuleCollector.cpp:
+        (WebCore::ElementRuleCollector::collectMatchingRules):
+        (WebCore::ElementRuleCollector::sortAndTransferMatchedRules):
+        (WebCore::ElementRuleCollector::matchAuthorRules):
+        (WebCore::ElementRuleCollector::matchUARules):
+        (WebCore::ElementRuleCollector::ruleMatches):
+        (WebCore::ElementRuleCollector::collectMatchingRulesForList):
+        (WebCore::ElementRuleCollector::matchAllRules):
+        * css/ElementRuleCollector.h:
+        (WebCore::ElementRuleCollector::ElementRuleCollector):
+        
+            Pass the objects that are actually needed rather than the entire State.
+
 2014-02-05  Brent Fulgham  <bfulgham@apple.com>
 
         [Mac] Correct copy/paste error in scrolling code.
