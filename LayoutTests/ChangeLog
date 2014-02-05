@@ -1,5 +1,11 @@
 2014-02-04  Zalan Bujtas  <zalan@apple.com>
 
+        And one more test to tag with ImageOnlyFailure.
+
+        * TestExpectations:
+
+2014-02-04  Zalan Bujtas  <zalan@apple.com>
+
         Some tests introduced by 163415 need ImageOnlyFailure tag.
 
         Unreviewed gardering.
