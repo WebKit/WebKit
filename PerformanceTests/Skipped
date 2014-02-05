@@ -91,3 +91,6 @@ Layout/LineLayoutJapanese.html
 
 # Don't run the interactive runner. We run Full.html
 DoYouEvenBench/InteractiveRunner.html
+
+# We skip Shapes tests for now: https://bugs.webkit.org/show_bug.cgi?id=128188
+Layout/Shapes
