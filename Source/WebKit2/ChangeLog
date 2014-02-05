@@ -1,3 +1,15 @@
+2014-02-05  Jer Noble  <jer.noble@apple.com>
+
+        [WK2] [iOS] No video on embedded YouTube
+        https://bugs.webkit.org/show_bug.cgi?id=128237
+
+        Reviewed by Sam Weinig.
+
+        We were using the wrong #if directive; PLUGIN_PROXY_FOR_VIDEO is an ENABLE not a USE.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::updatePreferences):
+
 2014-02-05  Dan Bernstein  <mitz@apple.com>
 
         [Cocoa] Expose more WKWebProcessPlugInFrame properties

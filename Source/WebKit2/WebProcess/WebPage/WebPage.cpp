@@ -2529,8 +2529,8 @@ void WebPage::updatePreferences(const WebPreferencesStore& store)
     settings.setQTKitEnabled(store.getBoolValueForKey(WebPreferencesKey::isQTKitEnabledKey()));
 #endif
 
-#if USE(PLUGIN_PROXY_FOR_VIDEO)
-    settings->setVideoPluginProxyEnabled(false);
+#if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
+    settings.setVideoPluginProxyEnabled(false);
 #endif
 
 #if ENABLE(WEB_AUDIO)
