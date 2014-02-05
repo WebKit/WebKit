@@ -1,3 +1,25 @@
+2014-02-05  Sergio Correia  <sergio.correia@openbossa.org>
+
+        SVG preserveAspectRatio=none is not honored.
+        https://bugs.webkit.org/show_bug.cgi?id=111402
+
+        Reviewed by Andreas Kling.
+
+        Previously, preserveAspectRatio=none had no effect on SVG images. This change fixes this so
+        we follow the special handling of preserveAspectRatio on images as defined in the spec:
+        http://www.w3.org/TR/SVG/single-page.html, 7.8 The ‘preserveAspectRatio’ attribute.
+
+        Images that depend on a container size (such as SVG images) require a call to
+        setContainerSizeForRenderer(...) to set this size. By passing the image's intrinsic size
+        as the container size, the non-uniform scaling defined in the spec will be achieved.
+
+        Merged from Blink: https://chromiumcodereview.appspot.com/14964004
+
+        Test: svg/custom/image-with-preserveAspectRatio-none.html
+
+        * rendering/svg/RenderSVGImage.cpp:
+        (WebCore::RenderSVGImage::updateImageViewport):
+
 2014-02-05  Zoltan Horvath  <zoltan@webkit.org>
 
         [CSS Shapes] Simplify CSSBasicShapeInset::cssText

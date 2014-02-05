@@ -1,3 +1,17 @@
+2014-02-05  Sergio Correia  <sergio.correia@openbossa.org>
+
+        SVG preserveAspectRatio=none is not honored.
+        https://bugs.webkit.org/show_bug.cgi?id=111402
+
+        Reviewed by Andreas Kling.
+
+        New test for SVG with preserveAspectRatio=none.
+
+        Merged from Blink: https://chromiumcodereview.appspot.com/14964004
+
+        * svg/custom/image-with-preserveAspectRatio-none-expected.html: Added.
+        * svg/custom/image-with-preserveAspectRatio-none.html: Added.
+
 2014-02-05  Zalan Bujtas  <zalan@apple.com>
 
         fast/hidpi/image-srcset-relative-svg-canvas.html needs ImageOnlyFailure tag.
