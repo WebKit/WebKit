@@ -1,3 +1,11 @@
+2014-02-05  Alexey Proskuryakov  <ap@apple.com>
+
+        Layout Tests compositing/columns/composited-rl-paginated-repaint.html and
+        compositing/columns/composited-lr-paginated-repaint.html are flaky
+        https://bugs.webkit.org/show_bug.cgi?id=128255
+
+        * platform/mac-wk2/TestExpectations: Marked them as such.
+
 2014-02-05  Sergio Correia  <sergio.correia@openbossa.org>
 
         SVG preserveAspectRatio=none is not honored.

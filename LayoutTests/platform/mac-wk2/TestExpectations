@@ -432,6 +432,9 @@ webkit.org/b/126962 plugins/plugin-document-load-prevented-userscript.html [ Cra
 
 webkit.org/b/127316 svg/dom/SVGPolygonElement-baseVal-list-removal-crash.html [ Pass Timeout ]
 
+webkit.org/b/128255 compositing/columns/composited-lr-paginated-repaint.html [ Pass Failure ]
+webkit.org/b/128255 compositing/columns/composited-rl-paginated-repaint.html [ Pass Failure ]
+
 ### END OF (3) Unclassified failures
 ########################################
 
