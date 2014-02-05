@@ -1,4 +1,24 @@
 =================
+WebKitGTK+  2.3.5
+=================
+
+What's new in WebKitGTK+ 2.3.5?
+
+  - Add API to allow setting a multiple web process model.
+  - Add API to pass initialization user data from the UI process to
+    the web extensions.
+  - Implement languages support with network process.
+  - Implement custom URI schemes with network process.
+  - Disable MemoryCache when the DOCUMENT_VIEWER cache model is set.
+  - Expose aria-describedby with ATK_RELATION_DESCRIBED_BY.
+  - Fix a bug that prevented from entering fullscreen again in HTML5
+    videos after fullscreen was left with ESC.
+  - Set playback rate when pipeline is not ready in GStreamer media backend.
+  - Fix a lockup when playing Icecast radio in GStreamer media backend.
+  - Fix a web process crash when a download is cancelled.
+  - Fix several crashes when printing via JavaScript.
+
+=================
 WebKitGTK+  2.3.4
 =================
 
