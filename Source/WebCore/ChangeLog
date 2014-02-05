@@ -1,3 +1,56 @@
+2014-02-05  Andreas Kling  <akling@apple.com>
+
+        CTTE: ImageLoader is always owned by an Element.
+        <https://webkit.org/b/128254>
+
+        - Codify this by making the constructor take Element& or better.
+        - Make element() return Element&.
+        - Marked HTMLImageLoader and SVGImageLoader final.
+        - Made the ImageLoader constructor protected.
+
+        Reviewed by Sam Weinig.
+
+        * html/HTMLEmbedElement.cpp:
+        (WebCore::HTMLEmbedElement::parseAttribute):
+        * html/HTMLImageElement.cpp:
+        (WebCore::HTMLImageElement::HTMLImageElement):
+        * html/HTMLImageLoader.cpp:
+        (WebCore::HTMLImageLoader::HTMLImageLoader):
+        (WebCore::HTMLImageLoader::dispatchLoadEvent):
+        (WebCore::HTMLImageLoader::sourceURI):
+        (WebCore::HTMLImageLoader::notifyFinished):
+        * html/HTMLImageLoader.h:
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::imageLoader):
+        * html/HTMLObjectElement.cpp:
+        (WebCore::HTMLObjectElement::parseAttribute):
+        * html/HTMLPlugInImageElement.cpp:
+        (WebCore::HTMLPlugInImageElement::startLoadingImage):
+        * html/HTMLVideoElement.cpp:
+        (WebCore::HTMLVideoElement::didAttachRenderers):
+        (WebCore::HTMLVideoElement::parseAttribute):
+        * loader/ImageLoader.cpp:
+        (WebCore::ImageLoader::ImageLoader):
+        (WebCore::ImageLoader::~ImageLoader):
+        (WebCore::ImageLoader::updateFromElement):
+        (WebCore::ImageLoader::notifyFinished):
+        (WebCore::ImageLoader::renderImageResource):
+        (WebCore::ImageLoader::updatedHasPendingEvent):
+        (WebCore::ImageLoader::timerFired):
+        (WebCore::ImageLoader::dispatchPendingBeforeLoadEvent):
+        (WebCore::ImageLoader::dispatchPendingLoadEvent):
+        (WebCore::ImageLoader::dispatchPendingErrorEvent):
+        * loader/ImageLoader.h:
+        (WebCore::ImageLoader::element):
+        * svg/SVGImageElement.cpp:
+        (WebCore::SVGImageElement::SVGImageElement):
+        * svg/SVGImageLoader.cpp:
+        (WebCore::SVGImageLoader::SVGImageLoader):
+        (WebCore::SVGImageLoader::~SVGImageLoader):
+        (WebCore::SVGImageLoader::dispatchLoadEvent):
+        (WebCore::SVGImageLoader::sourceURI):
+        * svg/SVGImageLoader.h:
+
 2014-02-05  Sergio Correia  <sergio.correia@openbossa.org>
 
         SVG preserveAspectRatio=none is not honored.

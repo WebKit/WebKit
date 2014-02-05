@@ -26,9 +26,10 @@ namespace WebCore {
 
 class SVGImageElement;
 
-class SVGImageLoader : public ImageLoader {
+class SVGImageLoader final : public ImageLoader {
 public:
-    SVGImageLoader(SVGImageElement*);
+    explicit SVGImageLoader(SVGImageElement&);
+    virtual ~SVGImageLoader();
 
 private:
     virtual void dispatchLoadEvent() override;

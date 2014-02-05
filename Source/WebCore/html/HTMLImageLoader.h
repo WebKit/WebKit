@@ -27,9 +27,9 @@
 
 namespace WebCore {
 
-class HTMLImageLoader : public ImageLoader {
+class HTMLImageLoader final : public ImageLoader {
 public:
-    HTMLImageLoader(Element*);
+    explicit HTMLImageLoader(Element&);
     virtual ~HTMLImageLoader();
 
     virtual void dispatchLoadEvent() override;

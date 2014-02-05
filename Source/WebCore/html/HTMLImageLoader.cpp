@@ -37,8 +37,8 @@
 
 namespace WebCore {
 
-HTMLImageLoader::HTMLImageLoader(Element* node)
-    : ImageLoader(node)
+HTMLImageLoader::HTMLImageLoader(Element& element)
+    : ImageLoader(element)
 {
 }
 
@@ -55,13 +55,13 @@ void HTMLImageLoader::dispatchLoadEvent()
     bool errorOccurred = image()->errorOccurred();
     if (!errorOccurred && image()->response().httpStatusCode() >= 400)
         errorOccurred = isHTMLObjectElement(element()); // An <object> considers a 404 to be an error and should fire onerror.
-    element()->dispatchEvent(Event::create(errorOccurred ? eventNames().errorEvent : eventNames().loadEvent, false, false));
+    element().dispatchEvent(Event::create(errorOccurred ? eventNames().errorEvent : eventNames().loadEvent, false, false));
 }
 
 String HTMLImageLoader::sourceURI(const AtomicString& attr) const
 {
 #if ENABLE(DASHBOARD_SUPPORT)
-    Settings* settings = element()->document().settings();
+    Settings* settings = element().document().settings();
     if (settings && settings->usesDashboardBackwardCompatibilityMode() && attr.length() > 7 && attr.startsWith("url(\"") && attr.endsWith("\")"))
         return attr.string().substring(5, attr.length() - 7);
 #endif
@@ -73,20 +73,20 @@ void HTMLImageLoader::notifyFinished(CachedResource*)
 {
     CachedImage* cachedImage = image();
 
-    RefPtr<Element> element = this->element();
+    Ref<Element> protect(element());
     ImageLoader::notifyFinished(cachedImage);
 
     bool loadError = cachedImage->errorOccurred() || cachedImage->response().httpStatusCode() >= 400;
     if (!loadError) {
-        if (!element->inDocument()) {
+        if (!element().inDocument()) {
             JSC::VM* vm = JSDOMWindowBase::commonVM();
             JSC::JSLockHolder lock(vm);
             vm->heap.reportExtraMemoryCost(cachedImage->encodedSize());
         }
     }
 
-    if (loadError && isHTMLObjectElement(element.get()))
-        toHTMLObjectElement(element.get())->renderFallbackContent();
+    if (loadError && isHTMLObjectElement(element()))
+        toHTMLObjectElement(element()).renderFallbackContent();
 }
 
 }

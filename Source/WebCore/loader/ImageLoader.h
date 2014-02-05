@@ -39,7 +39,6 @@ typedef EventSender<ImageLoader> ImageEventSender;
 
 class ImageLoader : public CachedImageClient {
 public:
-    explicit ImageLoader(Element*);
     virtual ~ImageLoader();
 
     // This function should be called when the element is attached to a document; starts
@@ -52,7 +51,9 @@ public:
 
     void elementDidMoveToNewDocument();
 
-    Element* element() const { return m_element; }
+    Element& element() { return m_element; }
+    const Element& element() const { return m_element; }
+
     bool imageComplete() const { return m_imageComplete; }
 
     CachedImage* image() const { return m_image.get(); }
@@ -70,6 +71,7 @@ public:
     static void dispatchPendingErrorEvents();
 
 protected:
+    explicit ImageLoader(Element&);
     virtual void notifyFinished(CachedResource*) override;
 
 private:
@@ -90,7 +92,7 @@ private:
 
     void timerFired(Timer<ImageLoader>&);
 
-    Element* m_element;
+    Element& m_element;
     CachedResourceHandle<CachedImage> m_image;
     Timer<ImageLoader> m_derefElementTimer;
     AtomicString m_failedLoadURL;

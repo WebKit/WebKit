@@ -42,7 +42,7 @@ using namespace HTMLNames;
 
 HTMLImageElement::HTMLImageElement(const QualifiedName& tagName, Document& document, HTMLFormElement* form)
     : HTMLElement(tagName, document)
-    , m_imageLoader(this)
+    , m_imageLoader(*this)
     , m_form(form)
     , m_compositeOperator(CompositeSourceOver)
     , m_imageDevicePixelRatio(1.0f)

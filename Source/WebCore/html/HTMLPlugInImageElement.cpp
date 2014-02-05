@@ -329,7 +329,7 @@ void HTMLPlugInImageElement::updateWidgetCallback(Node& node, unsigned)
 void HTMLPlugInImageElement::startLoadingImage()
 {
     if (!m_imageLoader)
-        m_imageLoader = adoptPtr(new HTMLImageLoader(this));
+        m_imageLoader = adoptPtr(new HTMLImageLoader(*this));
     m_imageLoader->updateFromElement();
 }
 

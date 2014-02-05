@@ -142,7 +142,7 @@ PassRefPtr<HTMLInputElement> HTMLInputElement::create(const QualifiedName& tagNa
 HTMLImageLoader* HTMLInputElement::imageLoader()
 {
     if (!m_imageLoader)
-        m_imageLoader = adoptPtr(new HTMLImageLoader(this));
+        m_imageLoader = adoptPtr(new HTMLImageLoader(*this));
     return m_imageLoader.get();
 }
 

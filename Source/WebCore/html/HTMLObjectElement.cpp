@@ -120,7 +120,7 @@ void HTMLObjectElement::parseAttribute(const QualifiedName& name, const AtomicSt
             setNeedsWidgetUpdate(true);
             if (isImageType()) {
                 if (!m_imageLoader)
-                    m_imageLoader = adoptPtr(new HTMLImageLoader(this));
+                    m_imageLoader = adoptPtr(new HTMLImageLoader(*this));
                 m_imageLoader->updateFromElementIgnoringPreviousError();
             }
         }

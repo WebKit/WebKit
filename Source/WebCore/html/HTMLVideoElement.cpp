@@ -86,7 +86,7 @@ void HTMLVideoElement::didAttachRenderers()
         updateDisplayState();
         if (shouldDisplayPosterImage()) {
             if (!m_imageLoader)
-                m_imageLoader = adoptPtr(new HTMLImageLoader(this));
+                m_imageLoader = adoptPtr(new HTMLImageLoader(*this));
             m_imageLoader->updateFromElement();
             if (renderer())
                 toRenderImage(renderer())->imageResource().setCachedImage(m_imageLoader->image());
@@ -125,7 +125,7 @@ void HTMLVideoElement::parseAttribute(const QualifiedName& name, const AtomicStr
 #endif
         if (shouldDisplayPosterImage()) {
             if (!m_imageLoader)
-                m_imageLoader = adoptPtr(new HTMLImageLoader(this));
+                m_imageLoader = adoptPtr(new HTMLImageLoader(*this));
             m_imageLoader->updateFromElementIgnoringPreviousError();
         } else {
             if (renderer())

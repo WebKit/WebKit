@@ -108,7 +108,7 @@ void HTMLEmbedElement::parseAttribute(const QualifiedName& name, const AtomicStr
         document().updateStyleIfNeeded();
         if (renderer() && isImageType()) {
             if (!m_imageLoader)
-                m_imageLoader = adoptPtr(new HTMLImageLoader(this));
+                m_imageLoader = adoptPtr(new HTMLImageLoader(*this));
             m_imageLoader->updateFromElementIgnoringPreviousError();
         }
     } else
