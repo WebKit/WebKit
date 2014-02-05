@@ -182,7 +182,7 @@ if ($llvm) {
 
         print("Building LLVM.\n");
         chdir $ownLLVMDirectory;
-        (system("make -j `sysctl -n hw.activecpu`") == 0) or die;
+        (system("(unset PROJECT_NAME ; make -j `sysctl -n hw.activecpu`)") == 0) or die;
         chdirWebKit();
         
         my $ownLLVMBuildMode = "";
