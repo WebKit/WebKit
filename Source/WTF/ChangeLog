@@ -1,3 +1,17 @@
+2014-02-05  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        HashMap can't be used with std::unique_ptr as value when it has a custom deleter
+        https://bugs.webkit.org/show_bug.cgi?id=128250
+
+        Reviewed by Darin Adler.
+
+        The problem is that the HashMap is using a unique_ptr with the
+        default deleter, so that when trying to move the unique_ptr the
+        deleters don't match.
+
+        * wtf/HashTraits.h: Add the deleter also in the template
+        definitation of the parent class for the HashTraits<std::unique_ptr<T, Deleter>>
+
 2014-02-05  Csaba Osztrogonác  <ossy@webkit.org>
 
         Remove ENABLE(SVG) guards

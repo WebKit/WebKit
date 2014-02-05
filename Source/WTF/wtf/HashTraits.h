@@ -101,7 +101,7 @@ template<typename T> struct SimpleClassHashTraits : GenericHashTraits<T> {
     static bool isDeletedValue(const T& value) { return value.isHashTableDeletedValue(); }
 };
 
-template<typename T, typename Deleter> struct HashTraits<std::unique_ptr<T, Deleter>> : SimpleClassHashTraits<std::unique_ptr<T>> {
+template<typename T, typename Deleter> struct HashTraits<std::unique_ptr<T, Deleter>> : SimpleClassHashTraits<std::unique_ptr<T, Deleter>> {
     typedef std::nullptr_t EmptyValueType;
     static EmptyValueType emptyValue() { return nullptr; }
 
