@@ -28,6 +28,8 @@
 
 #if WK_API_ENABLED
 
+#import "WKNSArray.h"
+#import "WKNSURLExtras.h"
 #import "WKWebProcessPlugInHitTestResultInternal.h"
 #import "WKWebProcessPlugInNodeHandleInternal.h"
 #import "WKWebProcessPlugInScriptWorldInternal.h"
@@ -61,6 +63,21 @@ using namespace WebKit;
 {
     JSValueRef valueRef = _frame->jsWrapperForWorld(&[nodeHandle _nodeHandle], &[world _scriptWorld]);
     return [JSValue valueWithJSValueRef:valueRef inContext:[self jsContextForWorld:world]];
+}
+
+- (NSURL *)URL
+{
+    return [NSURL _web_URLWithWTFString:_frame->url()];
+}
+
+- (NSArray *)childFrames
+{
+    return [wrapper(*_frame->childFrames().leakRef()) autorelease];
+}
+
+- (BOOL)containsAnyFormElements
+{
+    return !!_frame->containsAnyFormElements();
 }
 
 #pragma mark WKObject protocol implementation

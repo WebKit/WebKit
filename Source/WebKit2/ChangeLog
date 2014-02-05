@@ -1,5 +1,18 @@
 2014-02-05  Dan Bernstein  <mitz@apple.com>
 
+        [Cocoa] Expose more WKWebProcessPlugInFrame properties
+        https://bugs.webkit.org/show_bug.cgi?id=128240
+
+        Reviewed by Anders Carlsson.
+
+        * WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInFrame.h: Declared new properties.
+        * WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInFrame.mm:
+        (-[WKWebProcessPlugInFrame URL]): Added.
+        (-[WKWebProcessPlugInFrame childFrames]): Added.
+        (-[WKWebProcessPlugInFrame containsAnyFormElements]): Added.
+
+2014-02-05  Dan Bernstein  <mitz@apple.com>
+
         [Cocoa] Notify WKWebProcessPlugInLoadDelegate when a frame is removed from the frame hierarchy
         https://bugs.webkit.org/show_bug.cgi?id=128239
 

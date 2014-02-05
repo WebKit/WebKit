@@ -38,6 +38,10 @@
 WK_API_CLASS
 @interface WKWebProcessPlugInFrame : NSObject
 
+@property (nonatomic, readonly) NSURL *URL;
+@property (nonatomic, readonly) NSArray *childFrames;
+@property (nonatomic, readonly) BOOL containsAnyFormElements;
+
 - (JSContext *)jsContextForWorld:(WKWebProcessPlugInScriptWorld *)world;
 - (WKWebProcessPlugInHitTestResult *)hitTest:(CGPoint)point;
 - (JSValue *)jsNodeForNodeHandle:(WKWebProcessPlugInNodeHandle *)nodeHandle inWorld:(WKWebProcessPlugInScriptWorld *)world;
