@@ -1,5 +1,11 @@
 2014-02-04  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Undelete the "build" directory erroneously removed in r163427.
+
+        * DoYouEvenBench/resources/todomvc/labs/architecture-examples/react/bower_components/director/build:
+
+2014-02-04  Ryosuke Niwa  <rniwa@webkit.org>
+
         Revert the change made in r162216 as it broke the benchmark on shipping Safari.
 
         * DoYouEvenBench/resources/benchmark-runner.js:

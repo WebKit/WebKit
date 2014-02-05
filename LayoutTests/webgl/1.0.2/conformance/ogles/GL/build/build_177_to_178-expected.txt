@@ -1,0 +1,5 @@
+This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
+
+Test: ../../../../resources/webgl_test_files/conformance/ogles/GL/build/build_177_to_178.html
+PASS
+

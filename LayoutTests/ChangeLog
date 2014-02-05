@@ -1,3 +1,11 @@
+2014-02-04  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Undelete the "build" directories erroneously removed in r163427.
+
+        * webgl/1.0.2/conformance/ogles/GL/build:
+        * webgl/1.0.2/resources/webgl_test_files/conformance/ogles/GL/build:
+        * webgl/resources/webgl_test_files/conformance/ogles/GL/build:
+
 2014-02-04  Andreas Kling  <akling@apple.com>
 
         Remove <iframe seamless> support.
