@@ -1,3 +1,22 @@
+2014-02-05  Brady Eidson  <beidson@apple.com>
+
+        IDB: storage/indexeddb/mozilla/autoincrement-indexes.html fails
+        https://bugs.webkit.org/show_bug.cgi?id=128257
+
+        Reviewed by Sam Weinig.
+
+        Tests: storage/indexeddb/mozilla/autoincrement-indexes.html
+
+        Add some IDBKeyData utility methods for WK2 to use:
+        * Modules/indexeddb/IDBKeyData.cpp:
+        (WebCore::IDBKeyData::setArrayValue):
+        (WebCore::IDBKeyData::setStringValue):
+        (WebCore::IDBKeyData::setDateValue):
+        (WebCore::IDBKeyData::setNumberValue):
+        * Modules/indexeddb/IDBKeyData.h:
+
+        * WebCore.exp.in:
+
 2014-02-05  Andreas Kling  <akling@apple.com>
 
         Turn on ENABLE(8BIT_TEXTRUN) for everyone.

@@ -281,6 +281,38 @@ String IDBKeyData::loggingString() const
 }
 #endif
 
+void IDBKeyData::setArrayValue(const Vector<IDBKeyData>& value)
+{
+    *this = IDBKeyData();
+    arrayValue = value;
+    type = IDBKey::ArrayType;
+    isNull = false;
+}
+
+void IDBKeyData::setStringValue(const String& value)
+{
+    *this = IDBKeyData();
+    stringValue = value;
+    type = IDBKey::StringType;
+    isNull = false;
+}
+
+void IDBKeyData::setDateValue(double value)
+{
+    *this = IDBKeyData();
+    numberValue = value;
+    type = IDBKey::DateType;
+    isNull = false;
+}
+
+void IDBKeyData::setNumberValue(double value)
+{
+    *this = IDBKeyData();
+    numberValue = value;
+    type = IDBKey::NumberType;
+    isNull = false;
+}
+
 }
 
 #endif // ENABLE(INDEXED_DATABASE)

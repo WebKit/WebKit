@@ -813,31 +813,28 @@ void UniqueIDBDatabase::deleteIndexInBackingStore(uint64_t requestID, const IDBI
     postMainThreadTask(createAsyncTask(*this, &UniqueIDBDatabase::didDeleteIndex, requestID, success));
 }
 
-void UniqueIDBDatabase::putRecordInBackingStore(uint64_t requestID, const IDBIdentifier& transaction, const IDBObjectStoreMetadata& objectStoreMetadata, const IDBKeyData& keyData, const Vector<uint8_t>& value, int64_t putMode, const Vector<int64_t>& indexIDs, const Vector<Vector<IDBKeyData>>& indexKeys)
+void UniqueIDBDatabase::putRecordInBackingStore(uint64_t requestID, const IDBIdentifier& transaction, const IDBObjectStoreMetadata& objectStoreMetadata, const IDBKeyData& inputKeyData, const Vector<uint8_t>& value, int64_t putMode, const Vector<int64_t>& indexIDs, const Vector<Vector<IDBKeyData>>& indexKeys)
 {
     ASSERT(!isMainThread());
     ASSERT(m_backingStore);
 
     bool keyWasGenerated = false;
-    RefPtr<IDBKey> key;
+    IDBKeyData key;
     int64_t keyNumber = 0;
 
-    if (putMode != IDBDatabaseBackend::CursorUpdate && objectStoreMetadata.autoIncrement && keyData.isNull) {
+    if (putMode != IDBDatabaseBackend::CursorUpdate && objectStoreMetadata.autoIncrement && inputKeyData.isNull) {
         if (!m_backingStore->generateKeyNumber(transaction, objectStoreMetadata.id, keyNumber)) {
             postMainThreadTask(createAsyncTask(*this, &UniqueIDBDatabase::didPutRecordInBackingStore, requestID, IDBKeyData(), IDBDatabaseException::UnknownError, ASCIILiteral("Internal backing store error checking for key existence")));
             return;
         }
-        key = IDBKey::createNumber(keyNumber);
+        key.setNumberValue(keyNumber);
         keyWasGenerated = true;
     } else
-        key = keyData.maybeCreateIDBKey();
-
-    ASSERT(key);
-    ASSERT(key->isValid());
+        key = inputKeyData;
 
     if (putMode == IDBDatabaseBackend::AddOnly) {
         bool keyExists;
-        if (!m_backingStore->keyExistsInObjectStore(transaction, objectStoreMetadata.id, keyData, keyExists)) {
+        if (!m_backingStore->keyExistsInObjectStore(transaction, objectStoreMetadata.id, key, keyExists)) {
             postMainThreadTask(createAsyncTask(*this, &UniqueIDBDatabase::didPutRecordInBackingStore, requestID, IDBKeyData(), IDBDatabaseException::UnknownError, ASCIILiteral("Internal backing store error checking for key existence")));
             return;
         }
@@ -849,12 +846,12 @@ void UniqueIDBDatabase::putRecordInBackingStore(uint64_t requestID, const IDBIde
 
     // The spec says that even if we're about to overwrite the record, perform the steps to delete it first.
     // This is important because formally deleting it from from the object store also removes it from the appropriate indexes.
-    if (!m_backingStore->deleteRecord(transaction, objectStoreMetadata.id, keyData)) {
+    if (!m_backingStore->deleteRecord(transaction, objectStoreMetadata.id, key)) {
         postMainThreadTask(createAsyncTask(*this, &UniqueIDBDatabase::didPutRecordInBackingStore, requestID, IDBKeyData(), IDBDatabaseException::UnknownError, ASCIILiteral("Replacing an existing key in backing store, unable to delete previous record.")));
         return;
     }
 
-    if (!m_backingStore->putRecord(transaction, objectStoreMetadata.id, *key, value.data(), value.size())) {
+    if (!m_backingStore->putRecord(transaction, objectStoreMetadata.id, key, value.data(), value.size())) {
         postMainThreadTask(createAsyncTask(*this, &UniqueIDBDatabase::didPutRecordInBackingStore, requestID, IDBKeyData(), IDBDatabaseException::UnknownError, ASCIILiteral("Internal backing store error putting a record")));
         return;
     }
@@ -862,21 +859,21 @@ void UniqueIDBDatabase::putRecordInBackingStore(uint64_t requestID, const IDBIde
     ASSERT(indexIDs.size() == indexKeys.size());
     for (size_t i = 0; i < indexIDs.size(); ++i) {
         for (size_t j = 0; j < indexKeys[i].size(); ++j) {
-            if (!m_backingStore->putIndexRecord(transaction, objectStoreMetadata.id, indexIDs[i], keyData, indexKeys[i][j])) {
+            if (!m_backingStore->putIndexRecord(transaction, objectStoreMetadata.id, indexIDs[i], key, indexKeys[i][j])) {
                 postMainThreadTask(createAsyncTask(*this, &UniqueIDBDatabase::didPutRecordInBackingStore, requestID, IDBKeyData(), IDBDatabaseException::UnknownError, ASCIILiteral("Internal backing store error writing index key")));
                 return;
             }
         }
     }
 
-    if (putMode != IDBDatabaseBackend::CursorUpdate && objectStoreMetadata.autoIncrement && key->type() == IDBKey::NumberType) {
+    if (putMode != IDBDatabaseBackend::CursorUpdate && objectStoreMetadata.autoIncrement && key.type == IDBKey::NumberType) {
         if (!m_backingStore->updateKeyGeneratorNumber(transaction, objectStoreMetadata.id, keyNumber, keyWasGenerated)) {
             postMainThreadTask(createAsyncTask(*this, &UniqueIDBDatabase::didPutRecordInBackingStore, requestID, IDBKeyData(), IDBDatabaseException::UnknownError, ASCIILiteral("Internal backing store error updating key generator")));
             return;
         }
     }
 
-    postMainThreadTask(createAsyncTask(*this, &UniqueIDBDatabase::didPutRecordInBackingStore, requestID, IDBKeyData(key.get()), 0, String(StringImpl::empty())));
+    postMainThreadTask(createAsyncTask(*this, &UniqueIDBDatabase::didPutRecordInBackingStore, requestID, key, 0, String(StringImpl::empty())));
 }
 
 void UniqueIDBDatabase::didPutRecordInBackingStore(uint64_t requestID, const IDBKeyData& keyData, uint32_t errorCode, const String& errorMessage)
@@ -924,13 +921,18 @@ void UniqueIDBDatabase::getRecordFromBackingStore(uint64_t requestID, const IDBI
 
     // IDBIndex get record
 
-    RefPtr<SharedBuffer> result;
+    IDBGetResult result;
     if (!m_backingStore->getIndexRecord(transaction, objectStoreMetadata.id, indexID, keyRangeData, result)) {
         postMainThreadTask(createAsyncTask(*this, &UniqueIDBDatabase::didGetRecordFromBackingStore, requestID, IDBGetResult(), IDBDatabaseException::UnknownError, ASCIILiteral("Failed to get index record from backing store")));
         return;
     }
 
-    postMainThreadTask(createAsyncTask(*this, &UniqueIDBDatabase::didGetRecordFromBackingStore, requestID, IDBGetResult(result.release()), 0, String(StringImpl::empty())));
+    // A get request that meets the following conditions needs to know the object store keypath
+    // to inject the result key into the result value object.
+    if (objectStoreMetadata.autoIncrement && !objectStoreMetadata.keyPath.isNull())
+        result.keyPath = objectStoreMetadata.keyPath;
+
+    postMainThreadTask(createAsyncTask(*this, &UniqueIDBDatabase::didGetRecordFromBackingStore, requestID, result, 0, String(StringImpl::empty())));
 }
 
 void UniqueIDBDatabase::didGetRecordFromBackingStore(uint64_t requestID, const IDBGetResult& result, uint32_t errorCode, const String& errorMessage)

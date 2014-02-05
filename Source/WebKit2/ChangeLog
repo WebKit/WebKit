@@ -1,3 +1,23 @@
+2014-02-05  Brady Eidson  <beidson@apple.com>
+
+        IDB: storage/indexeddb/mozilla/autoincrement-indexes.html fails
+        https://bugs.webkit.org/show_bug.cgi?id=128257
+
+        Reviewed by Sam Weinig.
+
+        * DatabaseProcess/IndexedDB/UniqueIDBDatabase.cpp:
+        (WebKit::UniqueIDBDatabase::putRecordInBackingStore): Write the correct key to the index if it was auto generated.
+        (WebKit::UniqueIDBDatabase::getRecordFromBackingStore): If this is an auto increment object store with
+          a non-empty key path, save the key path to the get result.
+
+        * DatabaseProcess/IndexedDB/UniqueIDBDatabaseBackingStore.h:
+        * DatabaseProcess/IndexedDB/sqlite/UniqueIDBDatabaseBackingStoreSQLite.cpp:
+        (WebKit::UniqueIDBDatabaseBackingStoreSQLite::createAndPopulateInitialMetadata): The IndexRecord schema shouldn’t
+          have key uniqueness.
+        (WebKit::UniqueIDBDatabaseBackingStoreSQLite::putRecord): Take IDBKeyData instead of IDBKey.
+        (WebKit::UniqueIDBDatabaseBackingStoreSQLite::getIndexRecord): Fill in the primary key from the fetch.
+        * DatabaseProcess/IndexedDB/sqlite/UniqueIDBDatabaseBackingStoreSQLite.h:
+
 2014-02-05  Anders Carlsson  <andersca@apple.com>
 
         Get rid of WebUIClient

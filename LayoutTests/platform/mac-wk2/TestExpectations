@@ -470,6 +470,8 @@ fullscreen/anonymous-block-merge-crash.html [ Pass ]
 # All IndexedDB tests are skipped in WK1.
 # Reenable individual tests here that are known to pass, with the eventual goal of re-enabling the entire directory.
 storage/indexeddb/mozilla/add-twice-failure.html [ Pass ]
+storage/indexeddb/mozilla/autoincrement-indexes.html [ Pass ]
+
 
 ### END OF (5) Features that are not supported in WebKit1, so skipped in mac/TestExpectations then re-enabled here
 ########################################

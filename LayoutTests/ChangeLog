@@ -1,3 +1,12 @@
+2014-02-05  Brady Eidson  <beidson@apple.com>
+
+        IDB: storage/indexeddb/mozilla/autoincrement-indexes.html fails
+        https://bugs.webkit.org/show_bug.cgi?id=128257
+
+        Reviewed by Sam Weinig.
+
+        * platform/mac-wk2/TestExpectations: Enable the test.
+
 2014-02-05  Brian Burg  <bburg@apple.com>
 
         Web Inspector: add probe manager and model objects to the frontend

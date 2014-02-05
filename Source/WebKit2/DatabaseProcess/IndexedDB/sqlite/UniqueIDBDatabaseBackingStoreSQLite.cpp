@@ -35,6 +35,7 @@
 #include "SQLiteIDBTransaction.h"
 #include <WebCore/FileSystem.h>
 #include <WebCore/IDBDatabaseMetadata.h>
+#include <WebCore/IDBGetResult.h>
 #include <WebCore/IDBKeyData.h>
 #include <WebCore/IDBKeyRange.h>
 #include <WebCore/SQLiteDatabase.h>
@@ -103,8 +104,8 @@ std::unique_ptr<IDBDatabaseMetadata> UniqueIDBDatabaseBackingStoreSQLite::create
         return nullptr;
     }
 
-    if (!m_sqliteDB->executeCommand("CREATE TABLE IndexRecords (indexID INTEGER NOT NULL ON CONFLICT FAIL, objectStoreID INTEGER NOT NULL ON CONFLICT FAIL, key TEXT COLLATE IDBKEY NOT NULL ON CONFLICT FAIL UNIQUE ON CONFLICT REPLACE, value NOT NULL ON CONFLICT FAIL);")) {
-        LOG_ERROR("Could not create Records table in database (%i) - %s", m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg());
+    if (!m_sqliteDB->executeCommand("CREATE TABLE IndexRecords (indexID INTEGER NOT NULL ON CONFLICT FAIL, objectStoreID INTEGER NOT NULL ON CONFLICT FAIL, key TEXT COLLATE IDBKEY NOT NULL ON CONFLICT FAIL, value NOT NULL ON CONFLICT FAIL);")) {
+        LOG_ERROR("Could not create IndexRecords table in database (%i) - %s", m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg());
         m_sqliteDB = nullptr;
         return nullptr;
     }
@@ -772,7 +773,7 @@ bool UniqueIDBDatabaseBackingStoreSQLite::keyExistsInObjectStore(const IDBIdenti
     return true;
 }
 
-bool UniqueIDBDatabaseBackingStoreSQLite::putRecord(const IDBIdentifier& transactionIdentifier, int64_t objectStoreID, const IDBKey& key, const uint8_t* valueBuffer, size_t valueSize)
+bool UniqueIDBDatabaseBackingStoreSQLite::putRecord(const IDBIdentifier& transactionIdentifier, int64_t objectStoreID, const IDBKeyData& keyData, const uint8_t* valueBuffer, size_t valueSize)
 {
     ASSERT(!isMainThread());
     ASSERT(m_sqliteDB);
@@ -788,7 +789,7 @@ bool UniqueIDBDatabaseBackingStoreSQLite::putRecord(const IDBIdentifier& transac
         return false;
     }
 
-    RefPtr<SharedBuffer> keyBuffer = serializeIDBKeyData(IDBKeyData(&key));
+    RefPtr<SharedBuffer> keyBuffer = serializeIDBKeyData(keyData);
     if (!keyBuffer) {
         LOG_ERROR("Unable to serialize IDBKey to be stored in the database");
         return false;
@@ -851,7 +852,7 @@ bool UniqueIDBDatabaseBackingStoreSQLite::putIndexRecord(const IDBIdentifier& tr
     return true;
 }
 
-bool UniqueIDBDatabaseBackingStoreSQLite::getIndexRecord(const IDBIdentifier& transactionIdentifier, int64_t objectStoreID, int64_t indexID, const IDBKeyRangeData& keyRangeData, RefPtr<SharedBuffer>& result)
+bool UniqueIDBDatabaseBackingStoreSQLite::getIndexRecord(const IDBIdentifier& transactionIdentifier, int64_t objectStoreID, int64_t indexID, const IDBKeyRangeData& keyRangeData, IDBGetResult& result)
 {
     ASSERT(!isMainThread());
     ASSERT(m_sqliteDB);
@@ -873,7 +874,8 @@ bool UniqueIDBDatabaseBackingStoreSQLite::getIndexRecord(const IDBIdentifier& tr
     // Even though we're only using this cursor locally, add it to our cursor set.
     m_cursors.set(cursor->identifier(), cursor);
 
-    result = SharedBuffer::create(cursor->currentValueBuffer().data(), cursor->currentValueBuffer().size());
+    result = IDBGetResult(SharedBuffer::create(cursor->currentValueBuffer().data(), cursor->currentValueBuffer().size()));
+    result.keyData = cursor->currentValueKey();
 
     // Closing the cursor will destroy the cursor object and remove it from our cursor set.
     transaction->closeCursor(*cursor);

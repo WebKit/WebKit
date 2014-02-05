@@ -58,6 +58,11 @@ struct IDBKeyData {
     //   - Returns zero if this IDBKeyData is equal to other.
     int compare(const IDBKeyData& other) const;
 
+    void setArrayValue(const Vector<IDBKeyData>&);
+    void setStringValue(const String&);
+    void setDateValue(double);
+    void setNumberValue(double);
+
 #ifndef NDEBUG
     String loggingString() const;
 #endif
