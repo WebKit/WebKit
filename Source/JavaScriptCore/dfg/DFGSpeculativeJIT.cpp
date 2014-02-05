@@ -5518,26 +5518,6 @@ void SpeculativeJIT::writeBarrier(GPRReg ownerGPR, JSCell* value, GPRReg scratch
     definitelyNotMarked.link(&m_jit);
 }
 
-void SpeculativeJIT::osrWriteBarrier(CCallHelpers& jit, GPRReg owner, GPRReg scratch1, GPRReg scratch2)
-{
-    JITCompiler::Jump definitelyNotMarked = genericWriteBarrier(jit, owner, scratch1, scratch2);
-
-    // We need these extra slots because setupArgumentsWithExecState will use poke on x86.
-#if CPU(X86)
-    jit.subPtr(TrustedImm32(sizeof(void*) * 3), MacroAssembler::stackPointerRegister);
-#endif
-
-    jit.setupArgumentsWithExecState(owner);
-    jit.move(TrustedImmPtr(reinterpret_cast<void*>(operationOSRWriteBarrier)), scratch1);
-    jit.call(scratch1);
-
-#if CPU(X86)
-    jit.addPtr(TrustedImm32(sizeof(void*) * 3), MacroAssembler::stackPointerRegister);
-#endif
-
-    definitelyNotMarked.link(&jit);
-}
-
 void SpeculativeJIT::writeBarrier(GPRReg ownerGPR, GPRReg scratch1, GPRReg scratch2)
 {
     JITCompiler::Jump definitelyNotMarked = genericWriteBarrier(m_jit, ownerGPR, scratch1, scratch2);

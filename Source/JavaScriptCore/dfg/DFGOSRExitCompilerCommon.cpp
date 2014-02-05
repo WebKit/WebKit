@@ -160,8 +160,39 @@ void reifyInlinedCallFrames(CCallHelpers& jit, const OSRExitBase& exit)
     jit.store32(AssemblyHelpers::TrustedImm32(locationBits), AssemblyHelpers::tagFor((VirtualRegister)(JSStack::ArgumentCount)));
 }
 
+static void osrWriteBarrier(CCallHelpers& jit, GPRReg owner, GPRReg scratch1, GPRReg scratch2)
+{
+    AssemblyHelpers::Jump definitelyNotMarked = jit.genericWriteBarrier(owner, scratch1, scratch2);
+
+    // We need these extra slots because setupArgumentsWithExecState will use poke on x86.
+#if CPU(X86)
+    jit.subPtr(MacroAssembler::TrustedImm32(sizeof(void*) * 3), MacroAssembler::stackPointerRegister);
+#endif
+
+    jit.setupArgumentsWithExecState(owner);
+    jit.move(MacroAssembler::TrustedImmPtr(reinterpret_cast<void*>(operationOSRWriteBarrier)), scratch1);
+    jit.call(scratch1);
+
+#if CPU(X86)
+    jit.addPtr(MacroAssembler::TrustedImm32(sizeof(void*) * 3), MacroAssembler::stackPointerRegister);
+#endif
+
+    definitelyNotMarked.link(&jit);
+}
+
 void adjustAndJumpToTarget(CCallHelpers& jit, const OSRExitBase& exit)
 {
+#if ENABLE(GGC) 
+    // 11) Write barrier the owner executable because we're jumping into a different block.
+    for (CodeOrigin codeOrigin = exit.m_codeOrigin; ; codeOrigin = codeOrigin.inlineCallFrame->caller) {
+        CodeBlock* baselineCodeBlock = jit.baselineCodeBlockFor(codeOrigin);
+        jit.move(AssemblyHelpers::TrustedImmPtr(baselineCodeBlock->ownerExecutable()), GPRInfo::nonArgGPR0); 
+        osrWriteBarrier(jit, GPRInfo::nonArgGPR0, GPRInfo::nonArgGPR1, GPRInfo::nonArgGPR2);
+        if (!codeOrigin.inlineCallFrame)
+            break;
+    }
+#endif
+
     if (exit.m_codeOrigin.inlineCallFrame)
         jit.addPtr(AssemblyHelpers::TrustedImm32(exit.m_codeOrigin.inlineCallFrame->stackOffset * sizeof(EncodedJSValue)), GPRInfo::callFrameRegister);
 

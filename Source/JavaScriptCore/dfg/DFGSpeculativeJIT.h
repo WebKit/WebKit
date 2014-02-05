@@ -298,7 +298,6 @@ public:
 
     static JITCompiler::Jump genericWriteBarrier(CCallHelpers& jit, GPRReg owner, GPRReg scratch1, GPRReg scratch2);
     static JITCompiler::Jump genericWriteBarrier(CCallHelpers& jit, JSCell* owner);
-    static void osrWriteBarrier(CCallHelpers&, GPRReg owner, GPRReg scratch1, GPRReg scratch2);
     void writeBarrier(GPRReg owner, GPRReg scratch1, GPRReg scratch2);
     void writeBarrier(GPRReg owner, JSCell* value, GPRReg scratch1, GPRReg scratch2);
 

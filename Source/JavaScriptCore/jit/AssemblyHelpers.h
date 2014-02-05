@@ -389,6 +389,23 @@ public:
     void jitAssertArgumentCountSane() { }
 #endif
 
+    Jump genericWriteBarrier(GPRReg owner, GPRReg scratch1, GPRReg scratch2)
+    {
+        move(owner, scratch1);
+        move(owner, scratch2);
+    
+        andPtr(TrustedImmPtr(MarkedBlock::blockMask), scratch1);
+        andPtr(TrustedImmPtr(~MarkedBlock::blockMask), scratch2);
+    
+#if USE(JSVALUE64)
+        rshift64(TrustedImm32(MarkedBlock::atomShiftAmount + MarkedBlock::markByteShiftAmount), scratch2);
+#else
+        rshift32(TrustedImm32(MarkedBlock::atomShiftAmount + MarkedBlock::markByteShiftAmount), scratch2);
+#endif
+    
+        return branchTest8(Zero, BaseIndex(scratch1, scratch2, TimesOne, MarkedBlock::offsetOfMarks()));
+    }
+
     // These methods convert between doubles, and doubles boxed and JSValues.
 #if USE(JSVALUE64)
     GPRReg boxDouble(FPRReg fpr, GPRReg gpr)

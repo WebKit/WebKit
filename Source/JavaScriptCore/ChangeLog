@@ -1,5 +1,27 @@
 2014-02-05  Mark Hahnenberg  <mhahnenberg@apple.com>
 
+        Can no longer run OctaneV2 in browser, crashes in speculationFromCell
+        https://bugs.webkit.org/show_bug.cgi?id=128266
+
+        Reviewed by Filip Pizlo.
+
+        Move the OSR exit write barriers into OSRExitCompilerCommon. Also reorganize some 
+        of the code to be in more appropriate places.
+
+        * dfg/DFGOSRExitCompiler32_64.cpp:
+        (JSC::DFG::OSRExitCompiler::compileExit):
+        * dfg/DFGOSRExitCompiler64.cpp:
+        (JSC::DFG::OSRExitCompiler::compileExit):
+        * dfg/DFGOSRExitCompilerCommon.cpp:
+        (JSC::DFG::osrWriteBarrier):
+        (JSC::DFG::adjustAndJumpToTarget):
+        * dfg/DFGSpeculativeJIT.cpp:
+        * dfg/DFGSpeculativeJIT.h:
+        * jit/AssemblyHelpers.h:
+        (JSC::AssemblyHelpers::genericWriteBarrier):
+
+2014-02-05  Mark Hahnenberg  <mhahnenberg@apple.com>
+
         Malloc called beneath MachineThreads::gatherFromOtherThread(), while forbidden
         https://bugs.webkit.org/show_bug.cgi?id=128202
 
