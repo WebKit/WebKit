@@ -1,3 +1,15 @@
+2014-02-05  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        MediaPlayerPrivateGStreamerBase should have virtual destructor
+        https://bugs.webkit.org/show_bug.cgi?id=128238
+
+        Reviewed by Carlos Garcia Campos.
+
+        MediaPlayerPrivateGStreamer inherit MediaPlayerPrivateGStreamerBase.
+        So MediaPlayerPrivateGStreamerBase should have virtual destructor.
+
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.h: Made destructor as virtual.
+
 2014-02-04  Andreas Kling  <akling@apple.com>
 
         Remove <iframe seamless> support.
