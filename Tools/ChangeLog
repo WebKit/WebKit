@@ -1,5 +1,13 @@
 2014-02-05  Filip Pizlo  <fpizlo@apple.com>
 
+        Rename useExperimentalFTL to useFTLJIT.
+
+        Rubber stamped by Mark Hahnenberg.
+
+        * Scripts/run-jsc-stress-tests:
+
+2014-02-05  Filip Pizlo  <fpizlo@apple.com>
+
         JSC on Mac should pull LLVM from prefix=/usr/local/LLVMForJavaScriptCore and not /usr/local
         https://bugs.webkit.org/show_bug.cgi?id=128269
 

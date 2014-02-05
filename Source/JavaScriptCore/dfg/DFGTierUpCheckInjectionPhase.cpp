@@ -47,7 +47,7 @@ public:
     {
         RELEASE_ASSERT(m_graph.m_plan.mode == DFGMode);
         
-        if (!Options::useExperimentalFTL())
+        if (!Options::useFTLJIT())
             return false;
         
         if (m_graph.m_profiledBlock->m_didFailFTLCompilation)

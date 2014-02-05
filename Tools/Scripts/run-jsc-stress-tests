@@ -180,7 +180,7 @@ $numFailures = 0
 
 EAGER_OPTIONS = ["--thresholdForJITAfterWarmUp=10", "--thresholdForJITSoon=10", "--thresholdForOptimizeAfterWarmUp=20", "--thresholdForOptimizeAfterLongWarmUp=20", "--thresholdForOptimizeSoon=20", "--thresholdForFTLOptimizeAfterWarmUp=20", "--thresholdForFTLOptimizeSoon=20"]
 
-FTL_OPTIONS = ["--useExperimentalFTL=true", "--enableExperimentalFTLCoverage=true"]
+FTL_OPTIONS = ["--useFTLJIT=true", "--enableExperimentalFTLCoverage=true"]
 
 $runlist = []
 
