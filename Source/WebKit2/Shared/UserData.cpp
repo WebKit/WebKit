@@ -138,6 +138,10 @@ void UserData::encode(IPC::ArgumentEncoder& encoder, const API::Object& object) 
         break;
     }
 
+    case API::Object::Type::Double:
+        static_cast<const API::Double&>(object).encode(encoder);
+        break;
+
     case API::Object::Type::Error:
         static_cast<const API::Error&>(object).encode(encoder);
         break;

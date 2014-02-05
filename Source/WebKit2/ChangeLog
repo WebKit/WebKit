@@ -1,3 +1,20 @@
+2014-02-05  Dan Bernstein  <mitz@apple.com>
+
+        [Cocoa] WKRemoteObjectInterface fails with doubles, NSNull, and empty NSStrings
+        https://bugs.webkit.org/show_bug.cgi?id=128268
+
+        Reviewed by Anders Carlsson.
+
+        * Shared/API/Cocoa/WKRemoteObjectCoder.mm:
+        (-[WKRemoteObjectDecoder decodeBytesForKey:returnedLength:]): When returning nullptr, also
+        set the length out parameter to 0.
+
+        * Shared/API/Cocoa/WKRemoteObjectInterface.mm:
+        (propertyListClasses): Added NSNull.
+
+        * Shared/UserData.cpp:
+        (WebKit::UserData::encode): Encode the Double type.
+
 2014-02-05  Jer Noble  <jer.noble@apple.com>
 
         [WK2] [iOS] No video on embedded YouTube

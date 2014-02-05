@@ -554,8 +554,10 @@ static id decodeObject(WKRemoteObjectDecoder *decoder, const ImmutableDictionary
 - (const uint8_t *)decodeBytesForKey:(NSString *)key returnedLength:(NSUInteger *)length
 {
     auto* data = _currentDictionary->get<API::Data>(escapeKey(key));
-    if (!data || !data->size())
+    if (!data || !data->size()) {
+        *length = 0;
         return nullptr;
+    }
 
     *length = data->size();
     return data->bytes();

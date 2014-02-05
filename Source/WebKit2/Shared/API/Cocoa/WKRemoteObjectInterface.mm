@@ -55,7 +55,7 @@ static bool isContainerClass(Class objectClass)
 static NSSet *propertyListClasses()
 {
     // FIXME: Add more property list classes if needed.
-    static NSSet *propertyListClasses = [[NSSet alloc] initWithObjects:[NSArray class], [NSDictionary class], [NSNumber class], [NSString class], nil];
+    static NSSet *propertyListClasses = [[NSSet alloc] initWithObjects:[NSArray class], [NSDictionary class], [NSNull class], [NSNumber class], [NSString class], nil];
 
     return propertyListClasses;
 }
