@@ -1,56 +1,60 @@
-This tests if the "spellcheck" attribute is implemented as written in its specification. If this test succeeds, you can see forms filled with an invalid word 'zz '. Nevertheless, the 'zz ' is not marked as misspelled in all of them.
+This tests if the "spellcheck" attribute is implemented as written in its specification. If this test succeeds, you can see forms filled with an invalid word "zz". Nevertheless, the "zz" is not marked as misspelled in all of them.
 
-id=test1_1 type=text spellcheck=true parent's spellcheck=true
-PASS internals.hasSpellingMarker(0, 2) is true
-id=test1_2 type=text spellcheck=true parent's spellcheck=true
-PASS internals.hasSpellingMarker(0, 2) is true
-id=test1_3 type=text spellcheck=false parent's spellcheck=true
-PASS internals.hasSpellingMarker(0, 2) is false
-id=test1_4 type=text spellcheck=true parent's spellcheck=true
-PASS internals.hasSpellingMarker(0, 2) is true
-id=test1_5 type=text spellcheck=true parent's spellcheck=true
-PASS internals.hasSpellingMarker(0, 2) is true
-id=test1_6 type=text spellcheck=true parent's spellcheck=true
-PASS internals.hasSpellingMarker(0, 2) is true
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
-id=test2_1 type=text spellcheck=false parent's spellcheck=false
-PASS internals.hasSpellingMarker(0, 2) is false
-id=test2_2 type=text spellcheck=true parent's spellcheck=false
-PASS internals.hasSpellingMarker(0, 2) is true
-id=test2_3 type=text spellcheck=false parent's spellcheck=false
-PASS internals.hasSpellingMarker(0, 2) is false
-id=test2_4 type=text spellcheck=false parent's spellcheck=false
-PASS internals.hasSpellingMarker(0, 2) is false
-id=test2_5 type=text spellcheck=true parent's spellcheck=false
-PASS internals.hasSpellingMarker(0, 2) is true
-id=test2_6 type=text spellcheck=false parent's spellcheck=false
-PASS internals.hasSpellingMarker(0, 2) is false
 
-id=test3_1 type=search spellcheck=true parent's spellcheck=true
-PASS internals.hasSpellingMarker(0, 2) is true
-id=test3_2 type=search spellcheck=true parent's spellcheck=true
-PASS internals.hasSpellingMarker(0, 2) is true
-id=test3_3 type=search spellcheck=false parent's spellcheck=true
-PASS internals.hasSpellingMarker(0, 2) is false
-id=test3_4 type=search spellcheck=true parent's spellcheck=true
-PASS internals.hasSpellingMarker(0, 2) is true
-id=test3_5 type=search spellcheck=true parent's spellcheck=true
-PASS internals.hasSpellingMarker(0, 2) is true
-id=test3_6 type=search spellcheck=true parent's spellcheck=true
-PASS internals.hasSpellingMarker(0, 2) is true
+<DIV id=div1 spellcheck=true>
+<INPUT id=test1_1 type=text>zz </INPUT>
+PASS internals.hasSpellingMarker(0, 2) became true
+<INPUT id=test1_2 type=text spellcheck=true>zz </INPUT>
+PASS internals.hasSpellingMarker(0, 2) became true
+<INPUT id=test1_3 type=text spellcheck=false>zz </INPUT>
+PASS internals.hasSpellingMarker(0, 2) became false
+<INPUT id=test1_4 type=text spellcheck=InvalidValue>zz </INPUT>
+PASS internals.hasSpellingMarker(0, 2) became true
+<INPUT id=test1_5 type=text spellcheck>zz </INPUT>
+PASS internals.hasSpellingMarker(0, 2) became true
+</DIV>
 
-id=test4_1 type=search spellcheck=false parent's spellcheck=false
-PASS internals.hasSpellingMarker(0, 2) is false
-id=test4_2 type=search spellcheck=true parent's spellcheck=false
-PASS internals.hasSpellingMarker(0, 2) is true
-id=test4_3 type=search spellcheck=false parent's spellcheck=false
-PASS internals.hasSpellingMarker(0, 2) is false
-id=test4_4 type=search spellcheck=false parent's spellcheck=false
-PASS internals.hasSpellingMarker(0, 2) is false
-id=test4_5 type=search spellcheck=true parent's spellcheck=false
-PASS internals.hasSpellingMarker(0, 2) is true
-id=test4_6 type=search spellcheck=false parent's spellcheck=false
-PASS internals.hasSpellingMarker(0, 2) is false
+<DIV id=div2 spellcheck=false>
+<INPUT id=test2_1 type=text>zz </INPUT>
+PASS internals.hasSpellingMarker(0, 2) became false
+<INPUT id=test2_2 type=text spellcheck=true>zz </INPUT>
+PASS internals.hasSpellingMarker(0, 2) became true
+<INPUT id=test2_3 type=text spellcheck=false>zz </INPUT>
+PASS internals.hasSpellingMarker(0, 2) became false
+<INPUT id=test2_4 type=text spellcheck=InvalidValue>zz </INPUT>
+PASS internals.hasSpellingMarker(0, 2) became false
+<INPUT id=test2_5 type=text spellcheck>zz </INPUT>
+PASS internals.hasSpellingMarker(0, 2) became true
+</DIV>
+
+<DIV id=div3 spellcheck=true>
+<INPUT id=test3_1 type=search>zz </INPUT>
+PASS internals.hasSpellingMarker(0, 2) became true
+<INPUT id=test3_2 type=search spellcheck=true>zz </INPUT>
+PASS internals.hasSpellingMarker(0, 2) became true
+<INPUT id=test3_3 type=search spellcheck=false>zz </INPUT>
+PASS internals.hasSpellingMarker(0, 2) became false
+<INPUT id=test3_4 type=search spellcheck=InvalidValue>zz </INPUT>
+PASS internals.hasSpellingMarker(0, 2) became true
+<INPUT id=test3_5 type=search spellcheck>zz </INPUT>
+PASS internals.hasSpellingMarker(0, 2) became true
+</DIV>
+
+<DIV id=div4 spellcheck=false>
+<INPUT id=test4_1 type=search>zz </INPUT>
+PASS internals.hasSpellingMarker(0, 2) became false
+<INPUT id=test4_2 type=search spellcheck=true>zz </INPUT>
+PASS internals.hasSpellingMarker(0, 2) became true
+<INPUT id=test4_3 type=search spellcheck=false>zz </INPUT>
+PASS internals.hasSpellingMarker(0, 2) became false
+<INPUT id=test4_4 type=search spellcheck=InvalidValue>zz </INPUT>
+PASS internals.hasSpellingMarker(0, 2) became false
+<INPUT id=test4_5 type=search spellcheck>zz </INPUT>
+PASS internals.hasSpellingMarker(0, 2) became true
+</DIV>
+
 PASS successfullyParsed is true
 
 TEST COMPLETE

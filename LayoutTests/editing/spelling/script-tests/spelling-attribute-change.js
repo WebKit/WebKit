@@ -1,5 +1,12 @@
 description('Tests if the spellchecker behavior change after the spellcheck attribute changed by the script.');
 
+jsTestIsAsync = true;
+
+if (window.internals) {
+    internals.settings.setUnifiedTextCheckerEnabled(true);
+    internals.settings.setAsynchronousSpellCheckingEnabled(true);
+}
+
 var parent = document.createElement("div");
 document.body.appendChild(parent);
 var sel = document.getSelection();
@@ -22,7 +29,7 @@ function testSpellCheckingEnabled(target, enabled)
 
     window.target = target;
     shouldBe("target.spellcheck", enabled ? "true" : "false");
-    shouldBe("internals.hasSpellingMarker(6, 2)", enabled ? "true" : "false");
+    shouldBecomeEqual("internals.hasSpellingMarker(6, 2)", enabled ? "true" : "false", done);
 }
 
 function createElement(tagName, spellcheck)
@@ -41,46 +48,41 @@ function testFor(tagName, initialAttribute, expectation)
     parent.appendChild(target);
 
     testSpellCheckingEnabled(target, expectation);
-    parent.innerHTML = "";
 }
 
-// default -> true
-testFor("SPAN", undefined, true);
-// default -> false
-testFor("SPAN", undefined, false);
-// true -> true
-testFor("SPAN", true, true);
-// true -> false
-testFor("SPAN", true, false);
-// false -> true
-testFor("SPAN", false, true);
-// false -> false
-testFor("SPAN", false, false);
+var tests = [ function() { testFor("SPAN", undefined, true); }, // default -> true
+              function() { testFor("SPAN", undefined, false); }, // default -> false
+              function() { testFor("SPAN", true, true); }, // true -> true
+              function() { testFor("SPAN", true, false); }, // true -> false
+              function() { testFor("SPAN", false, true); }, // false -> true
+              function() { testFor("SPAN", false, false); }, // false -> false
 
-// default -> true
-testFor("INPUT", undefined, true);
-// default -> false
-testFor("INPUT", undefined, false);
-// true -> true
-testFor("INPUT", true, true);
-// true -> false
-testFor("INPUT", true, false);
-// false -> true
-testFor("INPUT", false, true);
-// false -> false
-testFor("INPUT", false, false);
+              function() { testFor("INPUT", undefined, true); }, // default -> true
+              function() { testFor("INPUT", undefined, false); }, // default -> false
+              function() { testFor("INPUT", true, true); }, // true -> true
+              function() { testFor("INPUT", true, false); }, // true -> false
+              function() { testFor("INPUT", false, true); }, // false -> true
+              function() { testFor("INPUT", false, false); }, // false -> false
 
-// default -> true
-testFor("TEXTAREA", undefined, true);
-// default -> false
-testFor("TEXTAREA", undefined, false);
-// true -> true
-testFor("TEXTAREA", true, true);
-// true -> false
-testFor("TEXTAREA", true, false);
-// false -> true
-testFor("TEXTAREA", false, true);
-// false -> false
-testFor("TEXTAREA", false, false);
+              function() { testFor("TEXTAREA", undefined, true); }, // default -> true
+              function() { testFor("TEXTAREA", undefined, false); }, // default -> false
+              function() { testFor("TEXTAREA", true, true); }, // true -> true
+              function() { testFor("TEXTAREA", true, false); }, // true -> false
+              function() { testFor("TEXTAREA", false, true); }, // false -> true
+              function() { testFor("TEXTAREA", false, false); }, // false -> false
+            ];
+
+function done()
+{
+    if (window.internals) {
+        var next = tests.shift();
+        if (next)
+            return window.setTimeout(next, 0);
+
+        parent.innerHTML = "";
+    }
+    finishJSTest();
+}
+done();
 
 var successfullyParsed = true;

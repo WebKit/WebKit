@@ -3,15 +3,33 @@ Tests if the spellchecker behavior change after the spellcheck attribute changed
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS childHasSpellingMarker("<div contentEditable>Foo <span spellcheck='false' id='child'>[]</span> Baz</div>") is false
-PASS childHasSpellingMarker("<div contentEditable>Foo <span id='child'>[]</span> Baz</div>") is true
-PASS childHasSpellingMarker("<div contentEditable>Foo <span spellcheck='true' id='child'>[]</span> Baz</div>") is true
-PASS childHasSpellingMarker("<div spellcheck='false' contentEditable>Foo <span spellcheck='false' id='child'>[]</span> Baz</div>") is false
-PASS childHasSpellingMarker("<div spellcheck='false' contentEditable>Foo <span id='child'>[]</span> Baz</div>") is false
-PASS childHasSpellingMarker("<div spellcheck='false' contentEditable>Foo <span spellcheck='true' id='child'>[]</span> Baz</div>") is true
-PASS childHasSpellingMarker("<div spellcheck='true' contentEditable>Foo <span spellcheck='false' id='child'>[]</span> Baz</div>") is false
-PASS childHasSpellingMarker("<div spellcheck='true' contentEditable>Foo <span id='child'>[]</span> Baz</div>") is true
-PASS childHasSpellingMarker("<div spellcheck='true' contentEditable>Foo <span spellcheck='true' id='child'>[]</span> Baz</div>") is true
+<div contenteditable="">Foo <span spellcheck="false" id="child">[zz ]</span> Baz</div>
+PASS internals.hasSpellingMarker(1, 2) became false
+
+<div contenteditable="">Foo <span id="child">[zz ]</span> Baz</div>
+PASS internals.hasSpellingMarker(1, 2) became true
+
+<div contenteditable="">Foo <span spellcheck="true" id="child">[zz ]</span> Baz</div>
+PASS internals.hasSpellingMarker(1, 2) became true
+
+<div spellcheck="false" contenteditable="">Foo <span spellcheck="false" id="child">[zz ]</span> Baz</div>
+PASS internals.hasSpellingMarker(1, 2) became false
+
+<div spellcheck="false" contenteditable="">Foo <span id="child">[zz ]</span> Baz</div>
+PASS internals.hasSpellingMarker(1, 2) became false
+
+<div spellcheck="false" contenteditable="">Foo <span spellcheck="true" id="child">[zz ]</span> Baz</div>
+PASS internals.hasSpellingMarker(1, 2) became true
+
+<div spellcheck="true" contenteditable="">Foo <span spellcheck="false" id="child">[zz ]</span> Baz</div>
+PASS internals.hasSpellingMarker(1, 2) became false
+
+<div spellcheck="true" contenteditable="">Foo <span id="child">[zz ]</span> Baz</div>
+PASS internals.hasSpellingMarker(1, 2) became true
+
+<div spellcheck="true" contenteditable="">Foo <span spellcheck="true" id="child">[zz ]</span> Baz</div>
+PASS internals.hasSpellingMarker(1, 2) became true
+
 PASS successfullyParsed is true
 
 TEST COMPLETE

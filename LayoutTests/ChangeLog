@@ -1,3 +1,28 @@
+2014-02-05  Grzegorz Czajkowski  <g.czajkowski@samsung.com>
+
+        Verify spellcheck attribute asynchronously
+        https://bugs.webkit.org/show_bug.cgi?id=128174
+
+        Reviewed by Sam Weinig.
+
+        Refactoring spelling tests that verify spellcheck attribute to use
+        asynchronous text checking.
+
+        * editing/spelling/spelling-attribute-at-child-expected.txt:
+        * editing/spelling/script-tests/spelling-attribute-at-child.js:
+        Do not use getElementById if more than one element has the same
+        id ('child'). Although we defined a bunch of elements with id
+        'child', however only first one was retrieved and tested.
+        Additionally, dump current markup so that user is able to see
+        which element is being tested.
+
+        * editing/spelling/spelling-attribute-change-expected.txt:
+        * editing/spelling/script-tests/spelling-attribute-change.js:
+
+        * editing/spelling/spellcheck-attribute-expected.txt:
+        * editing/spelling/spellcheck-attribute.html:
+        Dump markup to increase readability of test expectation.
+
 2014-02-04  Ryosuke Niwa  <rniwa@webkit.org>
 
         Undelete the "build" directories erroneously removed in r163427.
