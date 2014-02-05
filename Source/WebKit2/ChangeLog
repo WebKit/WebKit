@@ -1,3 +1,22 @@
+2014-02-05  Zan Dobersek  <zdobersek@igalia.com>
+
+        [GTK] Replace DEFINE_STATIC_LOCAL with NeverDestroyed<T> in GTK WK1 and WK2 code
+        https://bugs.webkit.org/show_bug.cgi?id=128195
+
+        Reviewed by Martin Robinson.
+
+        Use static NeverDestroyed<T> variables instead of the DEFINE_STATIC_LOCAL macro.
+
+        * UIProcess/API/gtk/WebKitBackForwardListItem.cpp:
+        (historyItemsMap):
+        * UIProcess/API/gtk/WebKitWebContext.cpp:
+        (downloadsMap):
+        * UIProcess/gtk/WebPageProxyGtk.cpp:
+        (WebKit::pluginWindowMap):
+        * WebProcess/gtk/WebGtkExtensionManager.cpp:
+        (WebKit::WebGtkExtensionManager::shared):
+        * WebProcess/gtk/WebGtkExtensionManager.h:
+
 2014-02-04  Andreas Kling  <akling@apple.com>
 
         Remove <iframe seamless> support.

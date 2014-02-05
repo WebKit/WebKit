@@ -35,10 +35,11 @@
 #include "webkitglobalsprivate.h"
 #include "webkitversion.h"
 #include "webkitwebsettingsprivate.h"
+#include <glib/gi18n-lib.h>
+#include <wtf/NeverDestroyed.h>
 #include <wtf/gobject/GUniquePtr.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringConcatenate.h>
-#include <glib/gi18n-lib.h>
 
 /**
  * SECTION:webkitwebsettings
@@ -1586,23 +1587,23 @@ static void initializeOtherGoogleDomains(Vector<String>& otherGoogleDomains)
 
 static bool isGoogleDomain(String host)
 {
-    DEFINE_STATIC_LOCAL(HashSet<String>, googleDomains, ());
-    DEFINE_STATIC_LOCAL(Vector<String>, otherGoogleDomains, ());
+    static NeverDestroyed<HashSet<String>> googleDomains;
+    static NeverDestroyed<Vector<String>> otherGoogleDomains;
 
-    if (googleDomains.isEmpty())
-        initializeDomainsList(googleDomains);
+    if (googleDomains.get().isEmpty())
+        initializeDomainsList(googleDomains.get());
 
-    if (otherGoogleDomains.isEmpty())
-        initializeOtherGoogleDomains(otherGoogleDomains);
+    if (otherGoogleDomains.get().isEmpty())
+        initializeOtherGoogleDomains(otherGoogleDomains.get());
 
     // First check if this is one of the various google.com international domains.
     int position = host.find(".google.");
-    if (position > 0 && googleDomains.contains(host.substring(position + sizeof(".google.") - 1)))
+    if (position > 0 && googleDomains.get().contains(host.substring(position + sizeof(".google.") - 1)))
         return true;
 
     // Then we check the possibility of it being one of the other, .com-only google domains.
-    for (unsigned int i = 0; i < otherGoogleDomains.size(); i++) {
-        if (host.endsWith(otherGoogleDomains.at(i)))
+    for (unsigned i = 0; i < otherGoogleDomains.get().size(); i++) {
+        if (host.endsWith(otherGoogleDomains.get().at(i)))
             return true;
     }
 

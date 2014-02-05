@@ -22,6 +22,7 @@
 
 #include "Module.h"
 #include "WKBundle.h"
+#include <wtf/NeverDestroyed.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/Vector.h>
 #include <wtf/gobject/GRefPtr.h>
@@ -50,6 +51,8 @@ private:
 
     Vector<Module*> m_extensionModules;
     GRefPtr<WebKitWebExtension> m_extension;
+
+    friend class NeverDestroyed<WebGtkExtensionManager>;
 };
 
 } // namespace WebKit

@@ -34,7 +34,7 @@ namespace WebKit {
 
 WebGtkExtensionManager& WebGtkExtensionManager::shared()
 {
-    DEFINE_STATIC_LOCAL(WebGtkExtensionManager, extensionManager, ());
+    static NeverDestroyed<WebGtkExtensionManager> extensionManager;
     return extensionManager;
 }
 

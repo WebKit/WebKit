@@ -28,6 +28,7 @@
 #include "SharedWorkerStrategy.h"
 #include "StorageStrategy.h"
 #include "VisitedLinkStrategy.h"
+#include <wtf/NeverDestroyed.h>
 
 class PlatformStrategiesGtk : public WebCore::PlatformStrategies, private WebCore::CookiesStrategy, private WebCore::DatabaseStrategy, private WebCore::LoaderStrategy, private WebCore::PluginStrategy, private WebCore::SharedWorkerStrategy, private WebCore::StorageStrategy, private WebCore::VisitedLinkStrategy {
 public:
@@ -64,6 +65,8 @@ private:
     // WebCore::VisitedLinkStrategy
     virtual bool isLinkVisited(WebCore::Page*, WebCore::LinkHash, const WebCore::URL& baseURL, const WTF::AtomicString& attributeURL);
     virtual void addVisitedLink(WebCore::Page*, WebCore::LinkHash);
+
+    friend class NeverDestroyed<PlatformStrategiesGtk>;
 };
 
 #endif // PlatformStrategiesGtk_h

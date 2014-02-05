@@ -47,6 +47,7 @@
 #include <WebCore/IconDatabase.h>
 #include <WebCore/Language.h>
 #include <wtf/HashMap.h>
+#include <wtf/NeverDestroyed.h>
 #include <wtf/OwnPtr.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
@@ -357,7 +358,7 @@ typedef HashMap<DownloadProxy*, GRefPtr<WebKitDownload> > DownloadsMap;
 
 static DownloadsMap& downloadsMap()
 {
-    DEFINE_STATIC_LOCAL(DownloadsMap, downloads, ());
+    static NeverDestroyed<DownloadsMap> downloads;
     return downloads;
 }
 

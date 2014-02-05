@@ -30,8 +30,8 @@ using namespace WebCore;
 
 void PlatformStrategiesGtk::initialize()
 {
-    DEFINE_STATIC_LOCAL(PlatformStrategiesGtk, platformStrategies, ());
-    setPlatformStrategies(&platformStrategies);
+    static NeverDestroyed<PlatformStrategiesGtk> platformStrategies;
+    setPlatformStrategies(&platformStrategies.get());
 }
 
 PlatformStrategiesGtk::PlatformStrategiesGtk()

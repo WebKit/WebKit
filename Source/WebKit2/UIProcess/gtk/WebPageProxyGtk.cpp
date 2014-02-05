@@ -35,6 +35,7 @@
 #include "WebProcessProxy.h"
 #include <WebCore/UserAgentGtk.h>
 #include <gtk/gtkx.h>
+#include <wtf/NeverDestroyed.h>
 
 namespace WebKit {
 
@@ -79,7 +80,7 @@ void WebPageProxy::loadRecentSearches(const String&, Vector<String>&)
 typedef HashMap<uint64_t, GtkWidget* > PluginWindowMap;
 static PluginWindowMap& pluginWindowMap()
 {
-    DEFINE_STATIC_LOCAL(PluginWindowMap, map, ());
+    static NeverDestroyed<PluginWindowMap> map;
     return map;
 }
 
