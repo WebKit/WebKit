@@ -1,3 +1,10 @@
+2014-02-05  Sergio Correia  <sergio.correia@openbossa.org>
+
+        Unreviewed. Add myself to contributor and watch lists
+
+        * Scripts/webkitpy/common/config/contributors.json:
+        * Scripts/webkitpy/common/config/watchlist:
+
 2014-02-05  Alberto Garcia  <berto@igalia.com>
 
         Unreviewed. Add myself to some watchlists.
