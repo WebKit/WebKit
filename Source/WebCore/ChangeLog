@@ -1,3 +1,20 @@
+2014-02-05  Yuki Sekiguchi  <yuki.sekiguchi@access-company.com>
+
+        Ruby base oddly justify its text when the text is ideograph and it contains <br> on Mac.
+        https://bugs.webkit.org/show_bug.cgi?id=106417
+
+        Reviewed by David Hyatt.
+
+        Ruby base always justify even if a line have hard break.
+        Even if next leaf child is line break, InlineTextBox allow trailing expansion.
+        This make <br> expanded, and there is odd space at the end of the line.
+
+        Test: fast/text/ruby-justification-br.html
+
+        * rendering/InlineTextBox.h:
+        (WebCore::InlineTextBox::expansionBehavior):
+         - If next leaf child is line break, we should forbid trailing expansion.
+
 2014-02-05  Andreas Kling  <akling@apple.com>
 
         FrameLoader::stateMachine() should return a reference.
