@@ -1,3 +1,33 @@
+2014-02-05  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Malloc called beneath MachineThreads::gatherFromOtherThread(), while forbidden
+        https://bugs.webkit.org/show_bug.cgi?id=128202
+
+        Reviewed by Geoffrey Garen.
+
+        This patch uses the new GCSegmentedArray to replace the Vector that was used 
+        to record the set of currently executing CodeBlocks during the conservative 
+        stack scan. This is primarily to avoid the possibility of the Vector resizing 
+        while FastMalloc is forbidden.
+
+        * heap/BlockAllocator.h:
+        * heap/CodeBlockSet.cpp:
+        (JSC::CodeBlockSet::CodeBlockSet):
+        (JSC::CodeBlockSet::rememberCurrentlyExecutingCodeBlocks):
+        * heap/CodeBlockSet.h:
+        * heap/GCSegmentedArray.h:
+        (JSC::GCSegmentedArray::begin):
+        (JSC::GCSegmentedArray::end):
+        (JSC::GCSegmentedArrayIterator::GCSegmentedArrayIterator):
+        (JSC::GCSegmentedArrayIterator::get):
+        (JSC::GCSegmentedArrayIterator::operator*):
+        (JSC::GCSegmentedArrayIterator::operator->):
+        (JSC::GCSegmentedArrayIterator::operator==):
+        (JSC::GCSegmentedArrayIterator::operator!=):
+        (JSC::GCSegmentedArrayIterator::operator++):
+        * heap/Heap.cpp:
+        (JSC::Heap::Heap):
+
 2014-02-05  Wojciech Bielawski  <w.bielawski@samsung.com>
 
         XMLHttpRequest performs too many copies for ArrayBuffer results

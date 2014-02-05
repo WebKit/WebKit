@@ -33,7 +33,10 @@ namespace JSC {
 
 static const bool verbose = false;
 
-CodeBlockSet::CodeBlockSet() { }
+CodeBlockSet::CodeBlockSet(BlockAllocator& blockAllocator)
+    : m_currentlyExecuting(blockAllocator)
+{
+}
 
 CodeBlockSet::~CodeBlockSet()
 {
@@ -109,8 +112,8 @@ void CodeBlockSet::traceMarked(SlotVisitor& visitor)
 void CodeBlockSet::rememberCurrentlyExecutingCodeBlocks(Heap* heap)
 {
 #if ENABLE(GGC)
-    for (size_t i = 0; i < m_currentlyExecuting.size(); ++i)
-        heap->addToRememberedSet(m_currentlyExecuting[i]->ownerExecutable());
+    for (CodeBlock* codeBlock : m_currentlyExecuting)
+        heap->addToRememberedSet(codeBlock->ownerExecutable());
     m_currentlyExecuting.clear();
 #else
     UNUSED_PARAM(heap);

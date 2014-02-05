@@ -39,6 +39,7 @@
 namespace JSC {
 
 class BlockAllocator;
+class CodeBlock;
 class CopiedBlock;
 class CopyWorkListSegment;
 template <typename T> class GCArraySegment;
@@ -233,6 +234,7 @@ REGION_SET_FOR(MarkedBlock, m_markedRegionSet);
 REGION_SET_FOR(CopiedBlock, m_copiedRegionSet);
 REGION_SET_FOR(WeakBlock, m_fourKBBlockRegionSet);
 REGION_SET_FOR(GCArraySegment<const JSCell*>, m_fourKBBlockRegionSet);
+REGION_SET_FOR(GCArraySegment<CodeBlock*>, m_fourKBBlockRegionSet);
 REGION_SET_FOR(CopyWorkListSegment, m_workListRegionSet);
 REGION_SET_FOR(HandleBlock, m_fourKBBlockRegionSet);
 

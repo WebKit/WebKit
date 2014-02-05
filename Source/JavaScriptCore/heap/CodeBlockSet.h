@@ -26,14 +26,15 @@
 #ifndef CodeBlockSet_h
 #define CodeBlockSet_h
 
+#include "GCSegmentedArray.h"
 #include <wtf/HashSet.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
-#include <wtf/Vector.h>
 
 namespace JSC {
 
+class BlockAllocator;
 class CodeBlock;
 class Heap;
 class SlotVisitor;
@@ -46,7 +47,7 @@ class CodeBlockSet {
     WTF_MAKE_NONCOPYABLE(CodeBlockSet);
 
 public:
-    CodeBlockSet();
+    CodeBlockSet(BlockAllocator&);
     ~CodeBlockSet();
     
     // Add a CodeBlock. This is only called by CodeBlock constructors.
@@ -88,7 +89,7 @@ private:
     // arbitrary bogus pointers. I could have written a thingy that had peek types
     // and all, but that seemed like overkill.
     HashSet<CodeBlock* > m_set;
-    Vector<CodeBlock*> m_currentlyExecuting;
+    GCSegmentedArray<CodeBlock*> m_currentlyExecuting;
 };
 
 } // namespace JSC
