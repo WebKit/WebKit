@@ -137,8 +137,8 @@ StringImpl::~StringImpl()
     }
 
     ASSERT(ownership == BufferSubstring);
-    ASSERT(m_substringBuffer);
-    m_substringBuffer->deref();
+    ASSERT(substringBuffer());
+    substringBuffer()->deref();
 }
 
 void StringImpl::destroy(StringImpl* stringImpl)
@@ -307,8 +307,8 @@ const UChar* StringImpl::getData16SlowCase() const
     if (bufferOwnership() == BufferSubstring) {
         // If this is a substring, return a pointer into the parent string.
         // TODO: Consider severing this string from the parent string
-        unsigned offset = m_data8 - m_substringBuffer->characters8();
-        return m_substringBuffer->deprecatedCharacters() + offset;
+        unsigned offset = m_data8 - substringBuffer()->characters8();
+        return substringBuffer()->deprecatedCharacters() + offset;
     }
 
     STRING_STATS_ADD_UPCONVERTED_STRING(m_length);

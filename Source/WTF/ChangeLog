@@ -1,5 +1,25 @@
 2014-02-04  Anders Carlsson  <andersca@apple.com>
 
+        Store StringImpl substring backpointers as tail data
+        https://bugs.webkit.org/show_bug.cgi?id=128220
+
+        Reviewed by Geoffrey Garen.
+
+        This lets us get rid of m_substringBuffer from the union.
+
+        * wtf/text/StringImpl.cpp:
+        (WTF::StringImpl::~StringImpl):
+        (WTF::StringImpl::getData16SlowCase):
+        * wtf/text/StringImpl.h:
+        (WTF::StringImpl::StringImpl):
+        (WTF::StringImpl::createSubstringSharingImpl8):
+        (WTF::StringImpl::createSubstringSharingImpl):
+        (WTF::StringImpl::cost):
+        (WTF::StringImpl::costDuringGC):
+        (WTF::StringImpl::substringBuffer):
+
+2014-02-04  Anders Carlsson  <andersca@apple.com>
+
         Rename the substring sharing StringImpl::create variants to better indicate what they do
         https://bugs.webkit.org/show_bug.cgi?id=128214
 

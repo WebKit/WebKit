@@ -273,13 +273,14 @@ private:
         : m_refCount(s_refCountIncrement)
         , m_length(length)
         , m_data8(characters)
-        , m_substringBuffer(base.leakRef())
         , m_hashAndFlags(s_hashFlag8BitBuffer | BufferSubstring)
     {
         ASSERT(is8Bit());
         ASSERT(m_data8);
         ASSERT(m_length);
-        ASSERT(m_substringBuffer->bufferOwnership() != BufferSubstring);
+        ASSERT(base->bufferOwnership() != BufferSubstring);
+
+        substringBuffer() = base.leakRef();
 
         STRING_STATS_ADD_8BIT_STRING2(m_length, true);
     }
@@ -289,13 +290,14 @@ private:
         : m_refCount(s_refCountIncrement)
         , m_length(length)
         , m_data16(characters)
-        , m_substringBuffer(base.leakRef())
         , m_hashAndFlags(BufferSubstring)
     {
         ASSERT(!is8Bit());
         ASSERT(m_data16);
         ASSERT(m_length);
-        ASSERT(m_substringBuffer->bufferOwnership() != BufferSubstring);
+        ASSERT(base->bufferOwnership() != BufferSubstring);
+
+        substringBuffer() = base.leakRef();
 
         STRING_STATS_ADD_16BIT_STRING2(m_length, true);
     }
@@ -351,8 +353,11 @@ public:
             return *empty();
 
         ASSERT(rep->is8Bit());
-        StringImpl* ownerRep = (rep->bufferOwnership() == BufferSubstring) ? rep->m_substringBuffer : rep.get();
-        return adoptRef(*new StringImpl(rep->m_data8 + offset, length, ownerRep));
+        StringImpl* ownerRep = (rep->bufferOwnership() == BufferSubstring) ? rep->substringBuffer() : rep.get();
+
+        // We allocate a buffer that contains both the StringImpl struct as well as the pointer to the owner string.
+        StringImpl* stringImpl = static_cast<StringImpl*>(fastMalloc(allocationSize<StringImpl*>(1)));
+        return adoptRef(*new (NotNull, stringImpl) StringImpl(rep->m_data8 + offset, length, ownerRep));
     }
 
     static ALWAYS_INLINE PassRef<StringImpl> createSubstringSharingImpl(PassRefPtr<StringImpl> rep, unsigned offset, unsigned length)
@@ -363,10 +368,13 @@ public:
         if (!length)
             return *empty();
 
-        StringImpl* ownerRep = (rep->bufferOwnership() == BufferSubstring) ? rep->m_substringBuffer : rep.get();
+        StringImpl* ownerRep = (rep->bufferOwnership() == BufferSubstring) ? rep->substringBuffer() : rep.get();
+
+        // We allocate a buffer that contains both the StringImpl struct as well as the pointer to the owner string.
+        StringImpl* stringImpl = static_cast<StringImpl*>(fastMalloc(allocationSize<StringImpl*>(1)));
         if (rep->is8Bit())
-            return adoptRef(*new StringImpl(rep->m_data8 + offset, length, ownerRep));
-        return adoptRef(*new StringImpl(rep->m_data16 + offset, length, ownerRep));
+            return adoptRef(*new (NotNull, stringImpl) StringImpl(rep->m_data8 + offset, length, ownerRep));
+        return adoptRef(*new (NotNull, stringImpl) StringImpl(rep->m_data16 + offset, length, ownerRep));
     }
 
     template<unsigned charactersCount>
@@ -459,7 +467,7 @@ public:
     {
         // For substrings, return the cost of the base string.
         if (bufferOwnership() == BufferSubstring)
-            return m_substringBuffer->cost();
+            return substringBuffer()->cost();
 
         if (m_hashAndFlags & s_hashFlagDidReportCost)
             return 0;
@@ -477,7 +485,7 @@ public:
             return 0;
         
         if (bufferOwnership() == BufferSubstring)
-            return divideRoundedUp(m_substringBuffer->costDuringGC(), refCount());
+            return divideRoundedUp(substringBuffer()->costDuringGC(), refCount());
         
         size_t result = m_length;
         if (!is8Bit())
@@ -789,6 +797,20 @@ private:
         return reinterpret_cast<T*>(reinterpret_cast<uint8_t*>(this) + tailOffset<T>());
     }
 
+    StringImpl* const& substringBuffer() const
+    {
+        ASSERT(bufferOwnership() == BufferSubstring);
+
+        return *tailPointer<StringImpl*>();
+    }
+
+    StringImpl*& substringBuffer()
+    {
+        ASSERT(bufferOwnership() == BufferSubstring);
+
+        return *tailPointer<StringImpl*>();
+    }
+
     // This number must be at least 2 to avoid sharing empty, null as well as 1 character strings from SmallStrings.
     static const unsigned s_copyCharsInlineCutOff = 20;
 
@@ -854,10 +876,7 @@ private:
         const LChar* m_data8;
         const UChar* m_data16;
     };
-    union {
-        StringImpl* m_substringBuffer;
-        mutable UChar* m_copyData16;
-    };
+    mutable UChar* m_copyData16;
     mutable unsigned m_hashAndFlags;
 };
 
