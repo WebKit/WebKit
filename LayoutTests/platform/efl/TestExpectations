@@ -586,6 +586,8 @@ webkit.org/b/128103 media/media-element-play-after-eos.html [ Pass Failure ]
 webkit.org/b/116704 media/video-zoom.html [ Pass Failure ]
 webkit.org/b/122039 media/track/track-cue-overlap-snap-to-lines-not-set.html [ Pass Failure ]
 webkit.org/b/128179 media/video-timeupdate-reverse-play.html [ Pass Failure ]
+webkit.org/b/128251 media/video-preload.html [ Pass Failure ]
+webkit.org/b/128252 media/track/track-kind.html [ Pass Failure ]
 
 # Opera-submitted tests to W3C for <track>, a lot of failures still.
 webkit.org/b/103926 media/track/opera/idl/media-idl-tests.html [ Skip ]
