@@ -1,3 +1,64 @@
+2014-02-04  Yoav Weiss  <yoav@yoav.ws>
+
+        Use srcset's pixel density to determine intrinsic size
+        https://bugs.webkit.org/show_bug.cgi?id=123832
+
+        Reviewed by Dean Jackson.
+
+        The patch is a port of a similar Blink patch: https://codereview.chromium.org/25105004
+        According to the spec "When an img element has a current pixel density that is not 1.0,
+        the element's image data must be treated as if its resolution, in device pixels per CSS pixels,
+        was the current pixel density."
+
+        I've added that support using the following changes:
+        - bestFitSourceForImageAttributes now returns the image candidate to HTMLImageElement.
+        - HTMLImageElement passes the devicePixelRatio data to RenderImage, which stores it.
+        - Bitmap images are scaled using the devicePixelRatio at RenderImageResource's intrinsicSize() and imageSize().
+        - SVG images are scaled using the devicePixelRatio at RenderReplaced::computeAspectRatioInformationForRenderBox.
+        - Canvas support added at CanvasRenderingContext2D::size.
+
+        Tests: fast/hidpi/image-srcset-intrinsic-size.html
+               fast/hidpi/image-srcset-png-canvas.html
+               fast/hidpi/image-srcset-png.html
+               fast/hidpi/image-srcset-relative-svg-canvas-2x.html
+               fast/hidpi/image-srcset-relative-svg.html
+               fast/hidpi/image-srcset-space-left-nomodifier.html
+               fast/hidpi/image-srcset-svg-canvas-2x.html
+               fast/hidpi/image-srcset-svg-canvas.html
+               fast/hidpi/image-srcset-svg.html
+               fast/hidpi/image-srcset-svg2.html
+
+        * html/HTMLImageElement.cpp:
+        (WebCore::HTMLImageElement::HTMLImageElement):
+        (WebCore::HTMLImageElement::parseAttribute):
+        (WebCore::HTMLImageElement::createRenderer):
+        * html/HTMLImageElement.h:
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::size):
+        (WebCore::CanvasRenderingContext2D::drawImage):
+        * html/parser/HTMLParserIdioms.cpp:
+        (WebCore::compareByScaleFactor):
+        (WebCore::parseImagesWithScaleFromSrcsetAttribute):
+        (WebCore::bestFitSourceForImageAttributes):
+        * html/parser/HTMLParserIdioms.h:
+        (WebCore::ImageWithScale::ImageWithScale):
+        (WebCore::ImageWithScale::imageURL):
+        (WebCore::ImageWithScale::scaleFactor):
+        * html/parser/HTMLPreloadScanner.cpp:
+        (WebCore::TokenPreloadScanner::StartTagScanner::processAttributes):
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::RenderImage):
+        * rendering/RenderImage.h:
+        (WebCore::RenderImage::setImageDevicePixelRatio):
+        (WebCore::RenderImage::imageDevicePixelRatio):
+        * rendering/RenderImageResource.cpp:
+        (WebCore::RenderImageResource::imageSize):
+        (WebCore::RenderImageResource::intrinsicSize):
+        (WebCore::RenderImageResource::getImageSize):
+        * rendering/RenderImageResource.h:
+        * rendering/RenderReplaced.cpp:
+        (WebCore::RenderReplaced::computeAspectRatioInformationForRenderBox):
+
 2014-02-04  Geoffrey Garen  <ggaren@apple.com>
 
         Rolled out <http://trac.webkit.org/changeset/163280>:

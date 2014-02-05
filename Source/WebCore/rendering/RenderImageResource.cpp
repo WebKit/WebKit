@@ -31,6 +31,7 @@
 #include "CachedImage.h"
 #include "Image.h"
 #include "RenderElement.h"
+#include "RenderImage.h"
 #include "RenderImageResourceStyleImage.h"
 
 namespace WebCore {
@@ -118,12 +119,22 @@ bool RenderImageResource::imageHasRelativeHeight() const
 
 LayoutSize RenderImageResource::imageSize(float multiplier) const
 {
-    return m_cachedImage ? m_cachedImage->imageSizeForRenderer(m_renderer, multiplier) : LayoutSize();
+    return getImageSize(multiplier, CachedImage::UsedSize);
 }
 
 LayoutSize RenderImageResource::intrinsicSize(float multiplier) const
 {
-    return m_cachedImage ? m_cachedImage->imageSizeForRenderer(m_renderer, multiplier, CachedImage::IntrinsicSize) : LayoutSize();
+    return getImageSize(multiplier, CachedImage::IntrinsicSize);
+}
+
+LayoutSize RenderImageResource::getImageSize(float multiplier, CachedImage::SizeType type) const
+{
+    if (!m_cachedImage)
+        return LayoutSize();
+    LayoutSize size = m_cachedImage->imageSizeForRenderer(m_renderer, multiplier, type);
+    if (m_renderer && m_renderer->isRenderImage())
+        size.scale(toRenderImage(m_renderer)->imageDevicePixelRatio());
+    return size;
 }
 
 } // namespace WebCore

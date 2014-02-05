@@ -5,12 +5,13 @@
 <script>
     if (window.testRunner) {
         testRunner.dumpAsText();
+        testRunner.dumpResourceResponseMIMETypes();
     }
 
     function updateSrc() {
         var img = document.getElementById("foo");
         // srcset must be set first, otherwise 'src' is loaded as well
-        img.srcset = "resources/green-200-px-square.png 2x";
+        img.srcset = "resources/blue-100-px-square.png 1x, resources/green-400-px-square.png 2x";
         img.src = "resources/blue-100-px-square.png"
     }
 
@@ -18,8 +19,6 @@
         updateSrc();
     }, false);
     addEventListener("load", function() {
-        if (internals)
-            shouldBeFalse('internals.isPreloaded("resources/blue-100-px-square.png")');
         shouldBeTrue('document.getElementById("foo").clientWidth==200');
     }, false);
 </script>

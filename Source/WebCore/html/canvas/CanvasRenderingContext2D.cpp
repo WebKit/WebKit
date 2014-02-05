@@ -48,6 +48,7 @@
 #include "HTMLVideoElement.h"
 #include "ImageData.h"
 #include "RenderElement.h"
+#include "RenderImage.h"
 #include "RenderLayer.h"
 #include "SecurityOrigin.h"
 #include "StrokeStyleApplier.h"
@@ -1196,11 +1197,21 @@ bool CanvasRenderingContext2D::shouldDrawShadows() const
     return alphaChannel(state().m_shadowColor) && (state().m_shadowBlur || !state().m_shadowOffset.isZero());
 }
 
-static LayoutSize size(HTMLImageElement* image)
+enum ImageSizeType {
+    ImageSizeAfterDevicePixelRatio,
+    ImageSizeBeforeDevicePixelRatio
+};
+
+static LayoutSize size(HTMLImageElement* image, ImageSizeType sizeType)
 {
-    if (CachedImage* cachedImage = image->cachedImage())
-        return cachedImage->imageSizeForRenderer(image->renderer(), 1.0f); // FIXME: Not sure about this.
-    return IntSize();
+    LayoutSize size;
+    if (CachedImage* cachedImage = image->cachedImage()) {
+        size = cachedImage->imageSizeForRenderer(image->renderer(), 1.0f); // FIXME: Not sure about this.
+
+        if (sizeType == ImageSizeAfterDevicePixelRatio && image->renderer() && image->renderer()->isRenderImage() && cachedImage->image() && !cachedImage->image()->hasRelativeWidth())
+            size.scale(toRenderImage(image->renderer())->imageDevicePixelRatio());
+    }
+    return size;
 }
 
 #if ENABLE(VIDEO)
@@ -1226,8 +1237,8 @@ void CanvasRenderingContext2D::drawImage(HTMLImageElement* image, float x, float
         ec = TYPE_MISMATCH_ERR;
         return;
     }
-    LayoutSize s = size(image);
-    drawImage(image, x, y, s.width(), s.height(), ec);
+    LayoutSize destRectSize = size(image, ImageSizeAfterDevicePixelRatio);
+    drawImage(image, x, y, destRectSize.width(), destRectSize.height(), ec);
 }
 
 void CanvasRenderingContext2D::drawImage(HTMLImageElement* image,
@@ -1237,8 +1248,8 @@ void CanvasRenderingContext2D::drawImage(HTMLImageElement* image,
         ec = TYPE_MISMATCH_ERR;
         return;
     }
-    LayoutSize s = size(image);
-    drawImage(image, FloatRect(0, 0, s.width(), s.height()), FloatRect(x, y, width, height), ec);
+    LayoutSize sourceRectSize = size(image, ImageSizeBeforeDevicePixelRatio);
+    drawImage(image, FloatRect(0, 0, sourceRectSize.width(), sourceRectSize.height()), FloatRect(x, y, width, height), ec);
 }
 
 void CanvasRenderingContext2D::drawImage(HTMLImageElement* image,
@@ -1275,7 +1286,7 @@ void CanvasRenderingContext2D::drawImage(HTMLImageElement* image, const FloatRec
     FloatRect normalizedSrcRect = normalizeRect(srcRect);
     FloatRect normalizedDstRect = normalizeRect(dstRect);
 
-    FloatRect imageRect = FloatRect(FloatPoint(), size(image));
+    FloatRect imageRect = FloatRect(FloatPoint(), size(image, ImageSizeBeforeDevicePixelRatio));
     if (!srcRect.width() || !srcRect.height()) {
         ec = INDEX_SIZE_ERR;
         return;

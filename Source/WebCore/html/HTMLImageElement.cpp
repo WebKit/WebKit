@@ -45,6 +45,7 @@ HTMLImageElement::HTMLImageElement(const QualifiedName& tagName, Document& docum
     , m_imageLoader(this)
     , m_form(form)
     , m_compositeOperator(CompositeSourceOver)
+    , m_imageDevicePixelRatio(1.0f)
 {
     ASSERT(hasTagName(imgTag));
     setHasCustomStyleResolveCallbacks();
@@ -118,7 +119,13 @@ void HTMLImageElement::parseAttribute(const QualifiedName& name, const AtomicStr
         if (renderer() && renderer()->isRenderImage())
             toRenderImage(renderer())->updateAltText();
     } else if (name == srcAttr || name == srcsetAttr) {
-        m_bestFitImageURL = bestFitSourceForImageAttributes(document().deviceScaleFactor(), fastGetAttribute(srcAttr), fastGetAttribute(srcsetAttr));
+        ImageWithScale candidate = bestFitSourceForImageAttributes(document().deviceScaleFactor(), fastGetAttribute(srcAttr), fastGetAttribute(srcsetAttr));
+        m_bestFitImageURL = candidate.imageURL(fastGetAttribute(srcAttr), fastGetAttribute(srcsetAttr));
+        float candidateScaleFactor = candidate.scaleFactor();
+        if (candidateScaleFactor > 0)
+            m_imageDevicePixelRatio = 1 / candidateScaleFactor;
+        if (renderer() && renderer()->isImage())
+            toRenderImage(renderer())->setImageDevicePixelRatio(m_imageDevicePixelRatio);
         m_imageLoader.updateFromElementIgnoringPreviousError();
     } else if (name == usemapAttr) {
         setIsLink(!value.isNull() && !shouldProhibitLinks(this));
@@ -179,7 +186,7 @@ RenderPtr<RenderElement> HTMLImageElement::createElementRenderer(PassRef<RenderS
     if (style.get().hasContent())
         return RenderElement::createFor(*this, std::move(style));
 
-    return createRenderer<RenderImage>(*this, std::move(style));
+    return createRenderer<RenderImage>(*this, std::move(style), nullptr, m_imageDevicePixelRatio);
 }
 
 bool HTMLImageElement::canStartSelection() const

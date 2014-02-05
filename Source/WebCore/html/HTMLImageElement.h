@@ -121,6 +121,7 @@ private:
     CompositeOperator m_compositeOperator;
     AtomicString m_bestFitImageURL;
     AtomicString m_lowercasedUsemap;
+    float m_imageDevicePixelRatio;
 };
 
 NODE_TYPE_CASTS(HTMLImageElement)

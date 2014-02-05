@@ -6,18 +6,14 @@
 <script src="resources/srcset-helper.js"></script>
 <script src="../../resources/js-test-pre.js"></script>
 <script>
-    if (window.testRunner) {
-        testRunner.dumpAsText();
-    }
-
     addEventListener("load", function() {
-        shouldBeTrue('document.getElementById("foo").clientWidth==800');
+        shouldBeTrue('document.getElementById("foo").clientWidth==200');
     }, false);
 </script>
 </head>
 
 <body id="body">
     <div>This test passes if the image below says 1x with a reddish background when the deviceScaleFactor is 1, and if says 2x with a greenish background when the deviceScaleFactor is 2.</div>
-    <img id="foo" src="" srcset="resources/image-set-1x.png 1x, resources/deleteButton.png 3x, resources/image-set-2x.png 2x">
+    <img id="foo" src="" srcset="resources/blue-100-px-square.png 1x, resources/deleteButton.png 3x, resources/green-400-px-square.png 2x">
 </body>
 </html>

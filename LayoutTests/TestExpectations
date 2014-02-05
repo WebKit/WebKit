@@ -58,6 +58,11 @@ webkit.org/b/120148 [ Debug ] webaudio/javascriptaudionode-upmix2-8channel-input
 webkit.org/b/120148 [ Release ] webaudio/javascriptaudionode-downmix8-2channel-input.html [ Pass Failure ]
 webkit.org/b/120148 [ Debug ] webaudio/javascriptaudionode-downmix8-2channel-input.html [ Pass Crash ]
 
+webkit.org/b/124342 fast/hidpi/image-srcset-svg-canvas.html [ Failure ]
+webkit.org/b/124342 fast/hidpi/image-srcset-svg-canvas-2x.html [ Failure ]
+webkit.org/b/124349 fast/hidpi/image-srcset-relative-svg-canvas-2x.html [ Failure ]
+webkit.org/b/124349 fast/hidpi/image-srcset-relative-svg-canvas.html [ Failure ]
+
 webaudio/javascriptaudionode-downmix8-2channel-input.html
 
 # The test frequently times out, and is just unsuccessful at detecting incorrect behavior when it passes.

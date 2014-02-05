@@ -116,12 +116,13 @@ void RenderImage::collectSelectionRects(Vector<SelectionRect>& rects, unsigned, 
 
 using namespace HTMLNames;
 
-RenderImage::RenderImage(Element& element, PassRef<RenderStyle> style, StyleImage* styleImage)
+RenderImage::RenderImage(Element& element, PassRef<RenderStyle> style, StyleImage* styleImage, const float imageDevicePixelRatio)
     : RenderReplaced(element, std::move(style), IntSize())
     , m_imageResource(styleImage ? std::make_unique<RenderImageResourceStyleImage>(*styleImage) : std::make_unique<RenderImageResource>())
     , m_needsToSetSizeForAltText(false)
     , m_didIncrementVisuallyNonEmptyPixelCount(false)
     , m_isGeneratedContent(false)
+    , m_imageDevicePixelRatio(imageDevicePixelRatio)
 {
     updateAltText();
     imageResource().initialize(this);
@@ -133,6 +134,7 @@ RenderImage::RenderImage(Document& document, PassRef<RenderStyle> style, StyleIm
     , m_needsToSetSizeForAltText(false)
     , m_didIncrementVisuallyNonEmptyPixelCount(false)
     , m_isGeneratedContent(false)
+    , m_imageDevicePixelRatio(1.0f)
 {
     imageResource().initialize(this);
 }

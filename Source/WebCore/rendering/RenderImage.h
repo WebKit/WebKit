@@ -35,7 +35,7 @@ class HTMLMapElement;
 
 class RenderImage : public RenderReplaced {
 public:
-    RenderImage(Element&, PassRef<RenderStyle>, StyleImage* = nullptr);
+    RenderImage(Element&, PassRef<RenderStyle>, StyleImage* = nullptr, const float = 1.0f);
     RenderImage(Document&, PassRef<RenderStyle>, StyleImage* = nullptr);
     virtual ~RenderImage();
 
@@ -62,7 +62,10 @@ public:
 
     const String& altText() const { return m_altText; }
     void setAltText(const String& altText) { m_altText = altText; }
-    
+
+    inline void setImageDevicePixelRatio(float factor) { m_imageDevicePixelRatio = factor; }
+    float imageDevicePixelRatio() const { return m_imageDevicePixelRatio; }
+
 protected:
     virtual bool needsPreferredWidthsRecalculation() const override final;
     virtual RenderBox* embeddedContentBox() const override final;
@@ -113,6 +116,7 @@ private:
     bool m_needsToSetSizeForAltText;
     bool m_didIncrementVisuallyNonEmptyPixelCount;
     bool m_isGeneratedContent;
+    float m_imageDevicePixelRatio;
 
     friend class RenderImageScaleObserver;
 };

@@ -1,3 +1,75 @@
+2014-02-04  Yoav Weiss  <yoav@yoav.ws>
+
+        Use srcset's pixel density to determine intrinsic size
+        https://bugs.webkit.org/show_bug.cgi?id=123832
+
+        Reviewed by Dean Jackson.
+
+        The patch is a port of a similar Blink patch: https://codereview.chromium.org/25105004
+        According to the spec "When an img element has a current pixel density that is not 1.0,
+        the element's image data must be treated as if its resolution, in device pixels per CSS pixels,
+        was the current pixel density."
+
+        Layout test changes include modifications of existing tests to accomodate the new image dimensions, as well as new tests for this
+        specific functionality.
+
+        * fast/hidpi/image-srcset-change-dynamically-from-js-2x-expected.txt:
+        * fast/hidpi/image-srcset-change-dynamically-from-js-2x.html:
+        * fast/hidpi/image-srcset-data-escaped-srcset-expected.txt:
+        * fast/hidpi/image-srcset-data-escaped-srcset.html:
+        * fast/hidpi/image-srcset-data-src.html:
+        * fast/hidpi/image-srcset-data-srcset.html:
+        * fast/hidpi/image-srcset-fraction.html:
+        * fast/hidpi/image-srcset-intrinsic-size-expected.txt: Added.
+        * fast/hidpi/image-srcset-intrinsic-size.html: Added.
+        * fast/hidpi/image-srcset-invalid-inputs-correct-src-expected.txt:
+        * fast/hidpi/image-srcset-invalid-inputs-correct-src.html:
+        * fast/hidpi/image-srcset-invalid-inputs.html:
+        * fast/hidpi/image-srcset-invalid-inputs-expected.txt: Added.
+        * fast/hidpi/image-srcset-only-src-attribute-expected.txt: Added.
+        * fast/hidpi/image-srcset-only-src-attribute.html:
+        * fast/hidpi/image-srcset-png-canvas-expected.html: Added.
+        * fast/hidpi/image-srcset-png-canvas.html: Added.
+        * fast/hidpi/image-srcset-png-expected.html: Added.
+        * fast/hidpi/image-srcset-png.html: Added.
+        * fast/hidpi/image-srcset-relative-svg-expected.html: Added.
+        * fast/hidpi/image-srcset-relative-svg.html: Added.
+        * fast/hidpi/image-srcset-remove-dynamically-from-js.html:
+        * fast/hidpi/image-srcset-simple-2x-expected.txt:
+        * fast/hidpi/image-srcset-simple-2x.html:
+        * fast/hidpi/image-srcset-space-left-nomodifier-expected.txt: Added.
+        * fast/hidpi/image-srcset-space-left-nomodifier.html: Copied from LayoutTests/fast/hidpi/image-srcset-data-srcset.html.
+        * fast/hidpi/image-srcset-svg-expected.html: Added.
+        * fast/hidpi/image-srcset-svg.html: Added.
+        * fast/hidpi/image-srcset-svg2-expected.html: Added.
+        * fast/hidpi/image-srcset-svg2.html: Added.
+        * fast/hidpi/resources/green-400-px-square.png: Added.
+        * fast/hidpi/resources/relativesrcset.svg: Added.
+        * fast/hidpi/resources/srcset-helper.js:
+        (runTest):
+        * fast/hidpi/resources/srcset.png: Added.
+        * fast/hidpi/resources/srcset.svg: Added.
+        * fast/hidpi/resources/srcset_100px.svg: Added.
+        * fast/hidpi/resources/svg_canvas_helper.js: Added.
+        (drawCanvas):
+        * fast/hidpi/resources/svg_tests.css: Added.
+        (.test):
+        (.test img, .test canvas):
+        (.test .stats):
+        (.expected, .actual):
+        * platform/mac/fast/hidpi/image-srcset-only-src-attribute-expected.png: Removed.
+        * platform/mac/fast/hidpi/image-srcset-only-src-attribute-expected.txt: Removed.
+
+        The following tests were added, but skipped, since they reveal an unrelated SVG on canvas rendering issue:
+        * fast/hidpi/image-srcset-svg-canvas-2x-expected.html: Added.
+        * fast/hidpi/image-srcset-svg-canvas-2x.html: Added.
+        * fast/hidpi/image-srcset-svg-canvas-expected.html: Added.
+        * fast/hidpi/image-srcset-svg-canvas.html: Added.
+        * fast/hidpi/image-srcset-relative-svg-canvas-2x-expected.html: Added.
+        * fast/hidpi/image-srcset-relative-svg-canvas-2x.html: Added.
+        * fast/hidpi/image-srcset-relative-svg-canvas-expected.html: Added.
+        * fast/hidpi/image-srcset-relative-svg-canvas.html: Added.
+
 2014-02-04  Geoffrey Garen  <ggaren@apple.com>
 
         Rolled out <http://trac.webkit.org/changeset/163280>:

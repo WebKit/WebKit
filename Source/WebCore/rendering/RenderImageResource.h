@@ -26,6 +26,7 @@
 #ifndef RenderImageResource_h
 #define RenderImageResource_h
 
+#include "CachedImage.h"
 #include "CachedResourceHandle.h"
 #include "StyleImage.h"
 #include <wtf/PassOwnPtr.h>
@@ -65,6 +66,9 @@ public:
 protected:
     RenderElement* m_renderer;
     CachedResourceHandle<CachedImage> m_cachedImage;
+
+private:
+    LayoutSize getImageSize(float multiplier, CachedImage::SizeType) const;
 };
 
 } // namespace WebCore

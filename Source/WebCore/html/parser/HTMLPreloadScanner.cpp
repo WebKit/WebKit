@@ -104,7 +104,8 @@ public:
 
         // Resolve between src and srcSet if we have them.
         if (!m_srcSetAttribute.isEmpty()) {
-            String srcMatchingScale = bestFitSourceForImageAttributes(m_deviceScaleFactor, m_urlToLoad, m_srcSetAttribute);
+            ImageWithScale imageCandidate = bestFitSourceForImageAttributes(m_deviceScaleFactor, m_urlToLoad, m_srcSetAttribute);
+            String srcMatchingScale = imageCandidate.imageURL(m_urlToLoad, m_srcSetAttribute);
             setUrlToLoad(srcMatchingScale, true);
         }
     }

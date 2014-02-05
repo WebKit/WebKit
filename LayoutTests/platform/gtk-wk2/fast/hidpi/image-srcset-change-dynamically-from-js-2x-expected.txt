@@ -1,0 +1,8 @@
+blue-100-px-square.png has MIME type image/png
+image-srcset-change-dynamically-from-js-2x.html has MIME type text/html
+srcset-helper.js has MIME type application/javascript
+js-test-pre.js has MIME type application/javascript
+green-400-px-square.png has MIME type image/png
+PASS document.getElementById("foo").clientWidth==200 is true
+This test passes if this img tag below is a green square when the scale factor is 2. It ensures that attributes can be changed dynamically from javascript, and that only the correct resource is loaded.
+

@@ -1,0 +1,33 @@
+<html>
+<head>
+<script>
+    window.targetScaleFactor = 2;
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+    }
+</script>
+<script src="resources/srcset-helper.js"></script>
+<script src="../../resources/js-test-pre.js"></script>
+<script>
+    addEventListener("load", function() {
+        shouldBeTrue('document.getElementById("foo").clientWidth==200');
+        shouldBeTrue('document.getElementById("foo2").clientWidth==400');
+        shouldBeTrue('document.getElementById("foo3").clientWidth==100');
+        shouldBeTrue('document.getElementById("foo4").clientWidth==200');
+    }, false);
+</script>
+</head>
+
+<body id="body">
+    <div>
+        This test passes if the images are all displayed with appropriate dimensions.
+    </div>
+    <img id="foo" srcset="resources/green-400-px-square.png 2x">
+    <br>
+    <img id="foo2" src="resources/green-400-px-square.png">
+    <br>
+    <img id="foo3" srcset="resources/srcset.svg 2x">
+    <br>
+    <img id="foo4" src="resources/srcset.svg">
+</body>
+</html>

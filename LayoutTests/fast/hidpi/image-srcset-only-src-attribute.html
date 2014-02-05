@@ -1,10 +1,18 @@
-<html>
 <head>
+<html>
 <script src="resources/srcset-helper.js"></script>
+<script src="../../resources/js-test-pre.js"></script>
+<script>
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+    }
+    addEventListener("load", function() {
+        shouldBeTrue('document.getElementById("foo").clientWidth==200');
+    }, false);
+</script>
 </head>
-
 <body id="body">
     <div>This test passes if this img tag below is a green square when the scale factor is 2. It ensures that the selection algorithm does not change the behavior of the src attribute, even with a scale factor greater than 1</div>
-    <img height="100" width="100" src="resources/green-200-px-square.png"></img>
+    <img id="foo" src="resources/green-200-px-square.png"></img>
 </body>
 </html>
